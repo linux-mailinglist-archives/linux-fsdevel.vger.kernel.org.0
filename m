@@ -2,116 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EB2E278A9E8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Aug 2023 12:17:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02C7278ABC6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Aug 2023 12:35:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230075AbjH1KRY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Aug 2023 06:17:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35312 "EHLO
+        id S231506AbjH1Kec (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Aug 2023 06:34:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230501AbjH1KRP (ORCPT
+        with ESMTP id S231535AbjH1KeE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Aug 2023 06:17:15 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 857E710C;
-        Mon, 28 Aug 2023 03:17:02 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 459A51F460;
-        Mon, 28 Aug 2023 10:17:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1693217821; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=8WzDkkOqXyxAW32MenOUeYu097Eo7SdlcGQval63I74=;
-        b=EEBmCGQOH+CjpytQ23tFboiOF5bUumEY42hJJmF9uR7EkxZGEF7NpwuSdKVnkYVGiyq9ph
-        btR4PFUGX2KK96gSKU7+t7x+AadDXdkhXvSdKoUh0M5Rz1i+Wz2YcROCo6UHkpal/UHsbt
-        +bN9l1hmQ0Yip+ggLTWWdAAzC/7pIfQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1693217821;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=8WzDkkOqXyxAW32MenOUeYu097Eo7SdlcGQval63I74=;
-        b=iJfZWaN15mnddcMeDrgjmcOL1xf+ot/rKn3Bjl7gEH7L0hVn9qRHB1AOCGhQPtY8CyGCUP
-        kAtYDa9Yuvbf0oBQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 30A66139CC;
-        Mon, 28 Aug 2023 10:17:01 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id +D7WCx107GQvTgAAMHmgww
-        (envelope-from <jack@suse.cz>); Mon, 28 Aug 2023 10:17:01 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 7A6CAA0774; Mon, 28 Aug 2023 12:17:00 +0200 (CEST)
-Date:   Mon, 28 Aug 2023 12:17:00 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Edward AD <eadavis@sina.com>
-Cc:     syzbot+b3123e6d9842e526de39@syzkaller.appspotmail.com,
-        adilger.kernel@dilger.ca, jack@suse.cz, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        llvm@lists.linux.dev, nathan@kernel.org, ndesaulniers@google.com,
-        syzkaller-bugs@googlegroups.com, trix@redhat.com, tytso@mit.edu,
-        yi.zhang@huawei.com
-Subject: Re: [PATCH] ext4: fix ext4_calculate_overhead use invliad j_inode
-Message-ID: <20230828101700.i3exsxt7bxz53kau@quack3>
-References: <000000000000b1426e0603bc40b6@google.com>
- <20230826035554.2849316-1-eadavis@sina.com>
+        Mon, 28 Aug 2023 06:34:04 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C3281B7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Aug 2023 03:33:43 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-99bed101b70so372128966b.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Aug 2023 03:33:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1693218821; x=1693823621;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=22ptF9+OdBflNqC3CG8ILMY9HWSZbV+I/2T7CmbQO3c=;
+        b=To1BmKHZB7kG6GNDI5B1m/wCGHr9V+Hkx819UDThqUpH7lDwaaZpQCCsDHGWpGBLRh
+         VCJdqkiOYk3mHZOcjoJ+qyd5ZwFo/lxytdNXk9b69Iec1FU6fUu7dw5PaatX8WExB75b
+         IWwQjOKgM1E1RoqMPr+WA5VMc9l3Qy+3FczDg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1693218821; x=1693823621;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=22ptF9+OdBflNqC3CG8ILMY9HWSZbV+I/2T7CmbQO3c=;
+        b=Pjl5YdQ9KAnk7U//iuxOLEDqjetRE52G6Ju5NaxkKKrdiQZSUBwzlWUo5zUv8oZ96R
+         W3GidXafaYdztANOtuA1eNBxmWqdhzvXEBoFlvpIpv8mFt5tSvcW0MS38XlVmrDFllYo
+         KDwflDqO71QbBF95bcpB/H6MVYJdR1a83ZvP6hUSin86YrfLmuQsM3GfF1NR7CcGQiwO
+         zzkcEiUDpghQN3qczBF+6oSIZmX7LWrDACqkToopf1X6R0tB+fXSLnpWfI6oj8Tn1yxA
+         nSlm22OZp4MQV5IGl35/N8ueyNsbkyb8JXSNj7ZMg1eZi158LIW3jiIoPXZJ4a0wxGsZ
+         eNNg==
+X-Gm-Message-State: AOJu0Ywbs2hwUXLyNk9HuV6fWgSHNn4aS5b6OM1LMcWxwKIz92a57AZr
+        b0X6pViRH9fX2/XYX+P6lGTL2LkzDfm85aHRFy+xhA==
+X-Google-Smtp-Source: AGHT+IE37BQNrHHOXPnVONaGS122iVKRfBaukLLMr8k9fspjz2CnEKrk8m8E4xp4kSjCA6kgHCS0EagRTrnC5s7O8K8=
+X-Received: by 2002:a17:906:2253:b0:9a1:d077:b74f with SMTP id
+ 19-20020a170906225300b009a1d077b74fmr11249679ejr.49.1693218821640; Mon, 28
+ Aug 2023 03:33:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230826035554.2849316-1-eadavis@sina.com>
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+References: <20230824150533.2788317-1-bschubert@ddn.com> <20230824150533.2788317-3-bschubert@ddn.com>
+In-Reply-To: <20230824150533.2788317-3-bschubert@ddn.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 28 Aug 2023 12:33:30 +0200
+Message-ID: <CAJfpegvo3X==3cQYSfCb2TyWq8UT1MikdvDZ-gez1yEb+d8JzQ@mail.gmail.com>
+Subject: Re: [PATCH 2/5] fuse: Create helper function if DIO write needs
+ exclusive lock
+To:     Bernd Schubert <bschubert@ddn.com>
+Cc:     linux-fsdevel@vger.kernel.org, bernd.schubert@fastmail.fm,
+        dsingh@ddn.com, Hao Xu <howeyxu@tencent.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_SOFTFAIL autolearn=no autolearn_force=no
-        version=3.4.6
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat 26-08-23 11:55:54, Edward AD wrote:
-> In ext4_calculate_overhead(), ext4_get_journal_inode() returned an invalid inode 
-> pointer without processing. Here, an invalid pointer judgment condition is added 
-> to avoid incorrect operation of invalid pointer j_inode.
-> 
-> Reported-by: syzbot+b3123e6d9842e526de39@syzkaller.appspotmail.com
-> Fixes: 99d6c5d892bf ("ext4: ext4_get_{dev}_journal return proper error value")
-> Signed-off-by: Edward AD <eadavis@sina.com>
-
-Thanks for the fixup but Ted has already merged the fixup from Zhang Yi [1].
-
-								Honza
-
-[1] https://lore.kernel.org/all/20230826011029.2023140-1-yi.zhang@huaweicloud.com
-
-
+On Thu, 24 Aug 2023 at 17:06, Bernd Schubert <bschubert@ddn.com> wrote:
+>
+> This is just a preparation to avoid code duplication in the next
+> commit.
+>
+> Cc: Hao Xu <howeyxu@tencent.com>
+> Cc: Miklos Szeredi <miklos@szeredi.hu>
+> Cc: Dharmendra Singh <dsingh@ddn.com>
+> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
 > ---
->  fs/ext4/super.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> index 34f5406c08da..0dac00954d25 100644
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -4178,7 +4178,7 @@ int ext4_calculate_overhead(struct super_block *sb)
->  	else if (ext4_has_feature_journal(sb) && !sbi->s_journal && j_inum) {
->  		/* j_inum for internal journal is non-zero */
->  		j_inode = ext4_get_journal_inode(sb, j_inum);
-> -		if (j_inode) {
-> +		if (j_inode && !IS_ERR(j_inode)) {
->  			j_blocks = j_inode->i_size >> sb->s_blocksize_bits;
->  			overhead += EXT4_NUM_B2C(sbi, j_blocks);
->  			iput(j_inode);
-> -- 
-> 2.25.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>  fs/fuse/file.c | 36 ++++++++++++++++++++++--------------
+>  1 file changed, 22 insertions(+), 14 deletions(-)
+>
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index b1b9f2b9a37d..a16f9b6888de 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -1298,6 +1298,27 @@ static ssize_t fuse_perform_write(struct kiocb *iocb, struct iov_iter *ii)
+>         return res;
+>  }
+>
+> +static bool fuse_direct_write_extending_i_size(struct kiocb *iocb,
+> +                                              struct iov_iter *iter)
+> +{
+> +       struct inode *inode = file_inode(iocb->ki_filp);
+> +
+> +       return iocb->ki_pos + iov_iter_count(iter) > i_size_read(inode);
+> +}
+
+The name suggests that this helper test for write as well as for
+direct IO.  It does neither, instead it just checks whether the I/O
+reaches past EOF.  So I'd name it e.g. io_past_eof().
+
+> +/*
+> + * @return true if an exclusive lock direct IO writes is needed
+> + */
+> +static bool fuse_dio_wr_exclusive_lock(struct kiocb *iocb, struct iov_iter *from)
+> +{
+> +       struct file *file = iocb->ki_filp;
+> +       struct fuse_file *ff = file->private_data;
+> +
+> +       return  !(ff->open_flags & FOPEN_PARALLEL_DIRECT_WRITES) ||
+> +               iocb->ki_flags & IOCB_APPEND ||
+> +               fuse_direct_write_extending_i_size(iocb, from);
+> +}
+> +
+
+Now that this is a function it's possible to rewrite it as a series of
+single-condition ifs.
+
+Thanks,
+Miklos
