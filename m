@@ -2,71 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 830B278A5D6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Aug 2023 08:37:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8C0878A62A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Aug 2023 08:59:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229571AbjH1GhW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Aug 2023 02:37:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47808 "EHLO
+        id S229556AbjH1G6b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Aug 2023 02:58:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229509AbjH1GhV (ORCPT
+        with ESMTP id S229597AbjH1G6J (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Aug 2023 02:37:21 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E34F0126;
-        Sun, 27 Aug 2023 23:37:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=5xtken3ztdTUny1OMfzFaKlaMxo854CajVDA38Kiekk=; b=NcopADFc2/ECJJnc4sPTJV2HCs
-        oucoi3FqWUgmmWL2TBAkAp6f5/UWWSPbYwMK2t1FmNf9DCFana51kICNmLtKkXJ761PmFHB0kIciE
-        tDPU+fPlvqzYN8rAM/mSYi0biQaE2nJXWR4/LhXs6sXOwn+rDi85UgDnSeFEYvprxuyB0OJDS3X7o
-        v2xpNI5oF0c/7+f4qUhZDe9jzBoCkqp/fWoSoiT+ozzUuABOWCY4mt+L1Go7qVWjjcWLM8JX/eIsZ
-        5tjE66X7sfMtVGm7PjjSjRMkHZipPHTZVAj/5fkfJ06RMhfPBT227rR2yLfmee/6rVsL/f24aLc1t
-        55V7kRVw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1qaVri-008xc2-1x;
-        Mon, 28 Aug 2023 06:36:46 +0000
-Date:   Sun, 27 Aug 2023 23:36:46 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Jan Kara <jack@suse.cz>, Xueshi Hu <xueshi.hu@smartx.com>,
-        dan.j.williams@intel.com, vishal.l.verma@intel.com,
-        dave.jiang@intel.com, jayalk@intworks.biz, daniel@ffwll.ch,
-        deller@gmx.de, bcrl@kvack.org, viro@zeniv.linux.org.uk,
-        brauner@kernel.org, jack@suse.com, tytso@mit.edu,
-        adilger.kernel@dilger.ca, miklos@szeredi.hu,
-        mike.kravetz@oracle.com, muchun.song@linux.dev, djwong@kernel.org,
-        akpm@linux-foundation.org, hughd@google.com,
-        nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-aio@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-mm@kvack.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH] fs: clean up usage of noop_dirty_folio
-Message-ID: <ZOxAfrz9etoVUfLQ@infradead.org>
-References: <20230819124225.1703147-1-xueshi.hu@smartx.com>
- <20230821111643.5vxtktznjqk42cak@quack3>
- <ZONWka8NpDVGzI8h@casper.infradead.org>
+        Mon, 28 Aug 2023 02:58:09 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5225CA2;
+        Sun, 27 Aug 2023 23:58:00 -0700 (PDT)
+Received: from [192.168.100.7] (unknown [59.103.217.254])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: usama.anjum)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 860806606E9D;
+        Mon, 28 Aug 2023 07:57:50 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1693205878;
+        bh=HhsU8AkTByw0hcLD8Of9x5RBa5g/fpRR/eFqHC92OFs=;
+        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+        b=ndlTZXvtxIZR+jz3o5U447EFR3/LjVag2wTe//HGvH8z6NEdkiOSClZrEjEDeHkv5
+         5IaXWMOeDutPhGS/bZOk4S0E9O4bHjIznUT4jae24qHDZdGcB2NnchnWqbT84j/CuC
+         iujMeg1+4OK2osK3PNUn1IMrf56T9aORvJ0Z6+VSdClyQEYIBDIOVEcbwuv+QY0h3E
+         3eeF3PP/LHuku+DDJ+ECAYVzx5NMx7Qpn9mf1+Ki5ZgXKkHC0HaYkU2eZ0hUzCU8OP
+         3BgiC8XZSnj6mFgsnlbnET4OClM2e8nA1aRO1/k5y+FPUhlPEXYalNYZcO6N9NbPFr
+         iepHsSDRVGm3Q==
+Message-ID: <31981423-9edd-46b6-b5f8-17aae07b8336@collabora.com>
+Date:   Mon, 28 Aug 2023 11:57:44 +0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZONWka8NpDVGzI8h@casper.infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@Oracle.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        David Hildenbrand <david@redhat.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Paul Gofman <pgofman@codeweavers.com>,
+        Peter Xu <peterx@redhat.com>
+Subject: Re: [PATCH v33 2/6] fs/proc/task_mmu: Implement IOCTL to get and
+ optionally clear info about PTEs
+To:     Andrew Morton <akpm@linux-foundation.org>
+References: <20230821141518.870589-1-usama.anjum@collabora.com>
+ <20230821141518.870589-3-usama.anjum@collabora.com>
+Content-Language: en-US
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <20230821141518.870589-3-usama.anjum@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 21, 2023 at 01:20:33PM +0100, Matthew Wilcox wrote:
-> I was hoping Christoph would weigh in ;-)  I don't have a strong
+On 8/21/23 7:15 PM, Muhammad Usama Anjum wrote:
+> The PAGEMAP_SCAN IOCTL on the pagemap file can be used to get or optionally
+> clear the info about page table entries. The following operations are
+> supported in this IOCTL:
+> - Scan the address range and get the memory ranges matching the provided
+>   criteria. This is performed when the output buffer is specified.
+> - Write-protect the pages. The PM_SCAN_WP_MATCHING is used to write-protect
+>   the pages of interest. The PM_SCAN_CHECK_WPASYNC aborts the operation if
+>   non-Async Write Protected pages are found. The ``PM_SCAN_WP_MATCHING``
+>   can be used with or without PM_SCAN_CHECK_WPASYNC.
+> - Both of those operations can be combined into one atomic operation where
+>   we can get and write protect the pages as well.
+> 
+> Following flags about pages are currently supported:
+> - PAGE_IS_WPALLOWED - Page has async-write-protection enabled
+> - PAGE_IS_WRITTEN - Page has been written to from the time it was write protected
+> - PAGE_IS_FILE - Page is file backed
+> - PAGE_IS_PRESENT - Page is present in the memory
+> - PAGE_IS_SWAPPED - Page is in swapped
+> - PAGE_IS_PFNZERO - Page has zero PFN
+> - PAGE_IS_HUGE - Page is THP or Hugetlb backed
+> 
+> This IOCTL can be extended to get information about more PTE bits. The
+> entire address range passed by user [start, end) is scanned until either
+> the user provided buffer is full or max_pages have been found.
+> 
+> Reviewed-by: Andrei Vagin <avagin@gmail.com>
+> Reviewed-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+> Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+Now we have the reviewed-by tags as well. The reviewers are happy with
+current version. Can you please have a look and possibly pick these up?
 
-I've enjoyed 2 weeks of almost uninterrupted vacation.
-
-I agree with this patch and also your incremental improvements.
-
+-- 
+BR,
+Muhammad Usama Anjum
