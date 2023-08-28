@@ -2,84 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3155378B050
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Aug 2023 14:31:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1035878B05F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Aug 2023 14:32:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231955AbjH1Mb0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Aug 2023 08:31:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41606 "EHLO
+        id S232606AbjH1Mb5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Aug 2023 08:31:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51072 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232228AbjH1Max (ORCPT
+        with ESMTP id S232673AbjH1Mbd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Aug 2023 08:30:53 -0400
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6389107;
-        Mon, 28 Aug 2023 05:30:37 -0700 (PDT)
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 981DA68D05; Mon, 28 Aug 2023 14:30:25 +0200 (CEST)
-Date:   Mon, 28 Aug 2023 14:30:23 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>, Xiubo Li <xiubli@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        Damien Le Moal <dlemoal@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-block@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        linux-xfs@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-mm@kvack.org, Hannes Reinecke <hare@suse.de>
-Subject: Re: [PATCH 03/12] filemap: update ki_pos in generic_perform_write
-Message-ID: <20230828123023.GA11084@lst.de>
-References: <20230601145904.1385409-1-hch@lst.de> <20230601145904.1385409-4-hch@lst.de> <20230827194122.GA325446@ZenIV>
+        Mon, 28 Aug 2023 08:31:33 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6FA3189;
+        Mon, 28 Aug 2023 05:31:17 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7706A61414;
+        Mon, 28 Aug 2023 12:30:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FBDDC433C8;
+        Mon, 28 Aug 2023 12:30:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1693225846;
+        bh=T9DfSbmWQGLkXxxawCTqh4iy6bnZSsXXChHmtZR5SvU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=eRbbO/TIyio+cPX7Pp68MCWNSqs6AILAUjVcwJJsGCI0lYRaQE4+LNbRiDcg15ySX
+         H4L6cOyeCfDogNV/R7zflpINPktSWynphtaZ2ePSYsqxTFzYYHlMTvGpZCebGUjtfT
+         8V6Q1anGqsBdB/OgMuTelmiWFLcYEBoKcnqbM8tTFVUZOPjfG60KS0576heHHjd5ZL
+         T4kcCsMlUULMPuGAGDubE0wgpGjJbVM1ZEBUfWOCf/CJx8KgXGNM99YuatbAzNTCpp
+         0fdSw+muVyTQPaq5vAp2Z4p6A8chvo2679l+UcPh7PBKUGyRrHi4a1AIeA8MrRlraI
+         RbqRdGOqS4dpg==
+Date:   Mon, 28 Aug 2023 14:30:42 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Kemeng Shi <shikemeng@huaweicloud.com>, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] vfs: use helpers for calling f_op->{read,write}_iter()
+ in read_write.c
+Message-ID: <20230828-alarm-entzug-923f1f8cc109@brauner>
+References: <20230828155056.4100924-1-shikemeng@huaweicloud.com>
+ <ZOyMZO2i3rKS/4tU@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230827194122.GA325446@ZenIV>
-User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <ZOyMZO2i3rKS/4tU@infradead.org>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Aug 27, 2023 at 08:41:22PM +0100, Al Viro wrote:
-> That part is somewhat fishy - there's a case where you return a positive value
-> and advance ->ki_pos by more than that amount.  I really wonder if all callers
-> of ->write_iter() are OK with that.  Consider e.g. this:
-
-This should not exist in the latest version merged by Jens.  Can you
-check if you still  see issues in the version in the block tree or
-linux-next.
-
-> Suppose ->write_iter() ends up doing returning a positive value smaller than
-> the increment of kiocb.ki_pos.  What do we get?  ret is positive, so
-> kiocb.ki_pos gets copied into *ppos, which is ksys_write's pos and there
-> we copy it into file->f_pos.
+On Mon, Aug 28, 2023 at 05:00:36AM -0700, Christoph Hellwig wrote:
+> On Mon, Aug 28, 2023 at 11:50:56PM +0800, Kemeng Shi wrote:
+> > use helpers for calling f_op->{read,write}_iter() in read_write.c
+> > 
 > 
-> Is it really OK to have write() return 4096 and advance the file position
-> by 16K?  AFAICS, userland wouldn't get any indication of something
-> odd going on - just a short write to a regular file, with followup write
-> of remaining 12K getting quietly written in the range 16K..28K.
-> 
-> I don't remember what POSIX says about that, but it would qualify as
-> nasty surprise for any userland program - sure, one can check fsync()
-> results before closing the sucker and see if everything looks fine,
-> but the way it's usually discussed could easily lead to assumption that
-> (synchronous) O_DIRECT writes would not be affected by anything of that
-> sort.
+> Why?  We really should just remove the completely pointless wrappers
+> instead.
 
-ki_pos should always be updated by the write return value.  Everything
-else is a bug.
+Especially because it means you chase this helper to figure out what's
+actually going on. If there was more to it then it would make sense but
+not just as a pointless wrapper.
