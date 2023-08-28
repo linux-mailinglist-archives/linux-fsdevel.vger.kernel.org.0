@@ -2,382 +2,343 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AC44B78A633
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Aug 2023 09:01:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E220978A6EF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Aug 2023 09:59:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229558AbjH1HAk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Aug 2023 03:00:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34016 "EHLO
+        id S229890AbjH1H65 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Aug 2023 03:58:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42318 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229682AbjH1HAf (ORCPT
+        with ESMTP id S229871AbjH1H62 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Aug 2023 03:00:35 -0400
-Received: from esa1.hc1455-7.c3s2.iphmx.com (esa1.hc1455-7.c3s2.iphmx.com [207.54.90.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5EAFE0;
-        Mon, 28 Aug 2023 00:00:29 -0700 (PDT)
-X-IronPort-AV: E=McAfee;i="6600,9927,10815"; a="129534442"
-X-IronPort-AV: E=Sophos;i="6.02,207,1688396400"; 
-   d="scan'208";a="129534442"
-Received: from unknown (HELO oym-r2.gw.nic.fujitsu.com) ([210.162.30.90])
-  by esa1.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2023 16:00:27 +0900
-Received: from oym-m2.gw.nic.fujitsu.com (oym-nat-oym-m2.gw.nic.fujitsu.com [192.168.87.59])
-        by oym-r2.gw.nic.fujitsu.com (Postfix) with ESMTP id 09629CD7EA;
-        Mon, 28 Aug 2023 16:00:25 +0900 (JST)
-Received: from kws-ab4.gw.nic.fujitsu.com (kws-ab4.gw.nic.fujitsu.com [192.51.206.22])
-        by oym-m2.gw.nic.fujitsu.com (Postfix) with ESMTP id 23002BF3EC;
-        Mon, 28 Aug 2023 16:00:24 +0900 (JST)
-Received: from irides.g08.fujitsu.local (unknown [10.167.234.230])
-        by kws-ab4.gw.nic.fujitsu.com (Postfix) with ESMTP id 9784F6B828;
-        Mon, 28 Aug 2023 16:00:20 +0900 (JST)
-From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
-To:     linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
-        linux-xfs@vger.kernel.org, linux-mm@kvack.org
-Cc:     dan.j.williams@intel.com, willy@infradead.org, jack@suse.cz,
-        akpm@linux-foundation.org, djwong@kernel.org, mcgrof@kernel.org
-Subject: [PATCH v14] mm, pmem, xfs: Introduce MF_MEM_PRE_REMOVE for unbind
-Date:   Mon, 28 Aug 2023 14:57:44 +0800
-Message-ID: <20230828065744.1446462-1-ruansy.fnst@fujitsu.com>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230629081651.253626-3-ruansy.fnst@fujitsu.com>
-References: <20230629081651.253626-3-ruansy.fnst@fujitsu.com>
+        Mon, 28 Aug 2023 03:58:28 -0400
+Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9C87119
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Aug 2023 00:58:23 -0700 (PDT)
+Received: by mail-pg1-x543.google.com with SMTP id 41be03b00d2f7-517ab9a4a13so1659239a12.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Aug 2023 00:58:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=smartx-com.20221208.gappssmtp.com; s=20221208; t=1693209503; x=1693814303;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=k/QhZG6ZDZ8kFya2emkAkHMTf8vyMHNtbVCiU5m1tXU=;
+        b=VRbPxyeENdl3s1Qey3hv6yOlZ+4CfxWyDhTKUoUUymqkuI5AP/WJxQYPM820UoSUL9
+         mASd9g8eED4jR5/UGsvPMM8Iq0mGYCyDj5+27xZ2APl3EDzsyBUjjIr1Z5cP1yPafCnH
+         VEIaYfvDmVMLmwGul5InZHe434etHpqOAgOIso2MFC422b6qVaJ5khu2gCC9fIEx5mEX
+         wrEZLQ0TsTAayd1qneRDw5nHqqlg8MzfhWBEmclhJRhkwfdvTRAULmC3atVB1e9ankYI
+         HlCP7jetH6AKg+/M+j0qDyDD3cYZ6RXcqRjk2PEt4HzN6R1d2iGYXpPtQVxoLdsblBE3
+         MzDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1693209503; x=1693814303;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=k/QhZG6ZDZ8kFya2emkAkHMTf8vyMHNtbVCiU5m1tXU=;
+        b=B0LTtIiUT5+kNKtXJO/twWMKApX588lINq7PuWTVM3sBs5Brom4jbAJDlen2i5f+tC
+         pRD/P9a2MHUIPjYFJYWmwUg5pzS5XgeOA92Wpa7LnBINAx/rkIQ9Znzp1fjy573pJS0s
+         2TWNS7gjZKO1U139wlUmkV0vzdWymjKro4stER3jAkWoVz3++ztPxTwovJjjDEumpbNs
+         WmAV4f069BNFLInAv9pucWcN2gN7+rCssIgLah8SudjQPALKvR+CK4DRQEp0ow04Ap0o
+         bVhT9XJqjm577uxiLcwl2C7y/tF7mVaxxAbYRbiTn/MiveMRepr7oKfg0cyMCW7902jK
+         OhoQ==
+X-Gm-Message-State: AOJu0YzO6oyNfgDyLMzEtAp6rEWVNHZexffcy5X8OM6BfPRu+JvMitsv
+        4f4WktLsanV3OppXTFO4Di3O+g==
+X-Google-Smtp-Source: AGHT+IFajBr6AnYgt/7FmhK0WkzPHs+3hSx8KYTxkpY+YHQONQ8b8t1fBHX+N/4s0hTxlKIr6q/SNQ==
+X-Received: by 2002:a17:90a:df07:b0:268:ac3:b1f6 with SMTP id gp7-20020a17090adf0700b002680ac3b1f6mr21616297pjb.24.1693209503018;
+        Mon, 28 Aug 2023 00:58:23 -0700 (PDT)
+Received: from nixos.tailf4e9e.ts.net ([8.210.91.195])
+        by smtp.googlemail.com with ESMTPSA id ds1-20020a17090b08c100b00262e485156esm8269343pjb.57.2023.08.28.00.58.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Aug 2023 00:58:22 -0700 (PDT)
+From:   Xueshi Hu <xueshi.hu@smartx.com>
+To:     hch@infradead.org, dan.j.williams@intel.com,
+        vishal.l.verma@intel.com, dave.jiang@intel.com,
+        jayalk@intworks.biz, daniel@ffwll.ch, deller@gmx.de,
+        bcrl@kvack.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
+        jack@suse.com, tytso@mit.edu, adilger.kernel@dilger.ca,
+        miklos@szeredi.hu, mike.kravetz@oracle.com, muchun.song@linux.dev,
+        djwong@kernel.org, willy@infradead.org, akpm@linux-foundation.org,
+        hughd@google.com
+Cc:     nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-mm@kvack.org, linux-xfs@vger.kernel.org,
+        Xueshi Hu <xueshi.hu@smartx.com>
+Subject: [PATCH v2] fs: clean up usage of noop_dirty_folio
+Date:   Mon, 28 Aug 2023 15:54:49 +0800
+Message-Id: <20230828075449.262510-1-xueshi.hu@smartx.com>
+X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-TM-AS-Product-Ver: IMSS-9.1.0.1417-9.0.0.1002-27840.005
-X-TM-AS-User-Approved-Sender: Yes
-X-TMASE-Version: IMSS-9.1.0.1417-9.0.1002-27840.005
-X-TMASE-Result: 10--16.469700-10.000000
-X-TMASE-MatchedRID: jgU2RAHsY2ePIr9Wpu0YXBFbgtHjUWLyLBZz7nFdWD6cpGufbGiAqPqQ
-        KB8jIv6PZhxMKXer4QCoY906646KIf7SNC59lToUXK5keCa+bmhN8rmPQRlvK3H5y9+1Ef46TxS
-        ugU04anu/8Jvj1aeHb+nrwwvtGVhI3isjZmoLKfe5x7uAXGEprTgN1uze3QYJl0Ik8/WjLEtrQg
-        SRg6yiRdd/4MACznuqKao4mTYQoAJkQckJEC3Q2uQoIU4rAATMKQNhMboqZlqp3QxRZDyTwzCTE
-        d+L/eo9d8mnSvYsqD7mn3xyPJAJogKQjoxqav1/b/oIJuUAIuEFeeAjqMW+l4EBeX0uQ+npwPgx
-        kqlR8CkMiVaxvErZjVDhyrIzFNxiYwDOL7t3RyEJslazArifUie0Z6pse6+bMoh6scCF9jGm6ck
-        WzzisdtBKZ4nBEMJk2YheuNJRVHAE2I7wiq93mN9JA2lmQRNU3SkTY86NiDhongMszlmbxhhBvW
-        gZlX+84vM1YF6AJbbCCfuIMF6xLbxAi7jPoeEQftwZ3X11IV0=
-X-TMASE-SNAP-Result: 1.821001.0001-0-1-22:0,33:0,34:0-0
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_PASS,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-====
-Changes since v13:
- 1. don't return error if _freeze(FREEZE_HOLDER_KERNEL) got other error
-====
+In folio_mark_dirty(), it can automatically fallback to
+noop_dirty_folio() if a_ops->dirty_folio is not registered.
 
-Now, if we suddenly remove a PMEM device(by calling unbind) which
-contains FSDAX while programs are still accessing data in this device,
-e.g.:
-```
- $FSSTRESS_PROG -d $SCRATCH_MNT -n 99999 -p 4 &
- # $FSX_PROG -N 1000000 -o 8192 -l 500000 $SCRATCH_MNT/t001 &
- echo "pfn1.1" > /sys/bus/nd/drivers/nd_pmem/unbind
-```
-it could come into an unacceptable state:
-  1. device has gone but mount point still exists, and umount will fail
-       with "target is busy"
-  2. programs will hang and cannot be killed
-  3. may crash with NULL pointer dereference
+As anon_aops, dev_dax_aops and fb_deferred_io_aops becames empty, remove
+them too.
 
-To fix this, we introduce a MF_MEM_PRE_REMOVE flag to let it know that we
-are going to remove the whole device, and make sure all related processes
-could be notified so that they could end up gracefully.
-
-This patch is inspired by Dan's "mm, dax, pmem: Introduce
-dev_pagemap_failure()"[1].  With the help of dax_holder and
-->notify_failure() mechanism, the pmem driver is able to ask filesystem
-on it to unmap all files in use, and notify processes who are using
-those files.
-
-Call trace:
-trigger unbind
- -> unbind_store()
-  -> ... (skip)
-   -> devres_release_all()
-    -> kill_dax()
-     -> dax_holder_notify_failure(dax_dev, 0, U64_MAX, MF_MEM_PRE_REMOVE)
-      -> xfs_dax_notify_failure()
-      `-> freeze_super()             // freeze (kernel call)
-      `-> do xfs rmap
-      ` -> mf_dax_kill_procs()
-      `  -> collect_procs_fsdax()    // all associated processes
-      `  -> unmap_and_kill()
-      ` -> invalidate_inode_pages2_range() // drop file's cache
-      `-> thaw_super()               // thaw (both kernel & user call)
-
-Introduce MF_MEM_PRE_REMOVE to let filesystem know this is a remove
-event.  Use the exclusive freeze/thaw[2] to lock the filesystem to prevent
-new dax mapping from being created.  Do not shutdown filesystem directly
-if configuration is not supported, or if failure range includes metadata
-area.  Make sure all files and processes(not only the current progress)
-are handled correctly.  Also drop the cache of associated files before
-pmem is removed.
-
-[1]: https://lore.kernel.org/linux-mm/161604050314.1463742.14151665140035795571.stgit@dwillia2-desk3.amr.corp.intel.com/
-[2]: https://lore.kernel.org/linux-xfs/169116275623.3187159.16862410128731457358.stg-ugh@frogsfrogsfrogs/
-
-Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+Signed-off-by: Xueshi Hu <xueshi.hu@smartx.com>
 ---
- drivers/dax/super.c         |  3 +-
- fs/xfs/xfs_notify_failure.c | 99 ++++++++++++++++++++++++++++++++++---
- include/linux/mm.h          |  1 +
- mm/memory-failure.c         | 17 +++++--
- 4 files changed, 109 insertions(+), 11 deletions(-)
+Changes in v2:
+- make noop_dirty_folio() inline as suggested by Matthew
+- v1: https://lore.kernel.org/linux-mm/ZOxAfrz9etoVUfLQ@infradead.org/T/#m073d45909b1df03ff09f382557dc4e84d0607c49
 
-diff --git a/drivers/dax/super.c b/drivers/dax/super.c
-index 0da9232ea175..f4b635526345 100644
---- a/drivers/dax/super.c
-+++ b/drivers/dax/super.c
-@@ -326,7 +326,8 @@ void kill_dax(struct dax_device *dax_dev)
- 		return;
- 
- 	if (dax_dev->holder_data != NULL)
--		dax_holder_notify_failure(dax_dev, 0, U64_MAX, 0);
-+		dax_holder_notify_failure(dax_dev, 0, U64_MAX,
-+				MF_MEM_PRE_REMOVE);
- 
- 	clear_bit(DAXDEV_ALIVE, &dax_dev->flags);
- 	synchronize_srcu(&dax_srcu);
-diff --git a/fs/xfs/xfs_notify_failure.c b/fs/xfs/xfs_notify_failure.c
-index 4a9bbd3fe120..79586abc75bf 100644
---- a/fs/xfs/xfs_notify_failure.c
-+++ b/fs/xfs/xfs_notify_failure.c
-@@ -22,6 +22,7 @@
- 
- #include <linux/mm.h>
- #include <linux/dax.h>
-+#include <linux/fs.h>
- 
- struct xfs_failure_info {
- 	xfs_agblock_t		startblock;
-@@ -73,10 +74,16 @@ xfs_dax_failure_fn(
- 	struct xfs_mount		*mp = cur->bc_mp;
- 	struct xfs_inode		*ip;
- 	struct xfs_failure_info		*notify = data;
-+	struct address_space		*mapping;
-+	pgoff_t				pgoff;
-+	unsigned long			pgcnt;
- 	int				error = 0;
- 
- 	if (XFS_RMAP_NON_INODE_OWNER(rec->rm_owner) ||
- 	    (rec->rm_flags & (XFS_RMAP_ATTR_FORK | XFS_RMAP_BMBT_BLOCK))) {
-+		/* Continue the query because this isn't a failure. */
-+		if (notify->mf_flags & MF_MEM_PRE_REMOVE)
-+			return 0;
- 		notify->want_shutdown = true;
- 		return 0;
- 	}
-@@ -92,14 +99,60 @@ xfs_dax_failure_fn(
- 		return 0;
- 	}
- 
--	error = mf_dax_kill_procs(VFS_I(ip)->i_mapping,
--				  xfs_failure_pgoff(mp, rec, notify),
--				  xfs_failure_pgcnt(mp, rec, notify),
--				  notify->mf_flags);
-+	mapping = VFS_I(ip)->i_mapping;
-+	pgoff = xfs_failure_pgoff(mp, rec, notify);
-+	pgcnt = xfs_failure_pgcnt(mp, rec, notify);
-+
-+	/* Continue the rmap query if the inode isn't a dax file. */
-+	if (dax_mapping(mapping))
-+		error = mf_dax_kill_procs(mapping, pgoff, pgcnt,
-+					  notify->mf_flags);
-+
-+	/* Invalidate the cache in dax pages. */
-+	if (notify->mf_flags & MF_MEM_PRE_REMOVE)
-+		invalidate_inode_pages2_range(mapping, pgoff,
-+					      pgoff + pgcnt - 1);
-+
- 	xfs_irele(ip);
- 	return error;
+ drivers/dax/device.c                |  5 -----
+ drivers/video/fbdev/core/fb_defio.c |  5 -----
+ fs/aio.c                            |  1 -
+ fs/ext2/inode.c                     |  1 -
+ fs/ext4/inode.c                     |  1 -
+ fs/fuse/dax.c                       |  1 -
+ fs/hugetlbfs/inode.c                |  1 -
+ fs/libfs.c                          |  5 -----
+ fs/xfs/xfs_aops.c                   |  1 -
+ include/linux/pagemap.h             |  1 -
+ mm/page-writeback.c                 | 18 +++++-------------
+ mm/secretmem.c                      |  1 -
+ mm/shmem.c                          |  1 -
+ mm/swap_state.c                     |  1 -
+ 14 files changed, 5 insertions(+), 38 deletions(-)
+
+diff --git a/drivers/dax/device.c b/drivers/dax/device.c
+index 30665a3ff6ea..018aa9f88ec7 100644
+--- a/drivers/dax/device.c
++++ b/drivers/dax/device.c
+@@ -345,10 +345,6 @@ static unsigned long dax_get_unmapped_area(struct file *filp,
+ 	return current->mm->get_unmapped_area(filp, addr, len, pgoff, flags);
  }
  
-+static int
-+xfs_dax_notify_failure_freeze(
-+	struct xfs_mount	*mp)
-+{
-+	struct super_block	*sb = mp->m_super;
-+	int			error;
-+
-+	error = freeze_super(sb, FREEZE_HOLDER_KERNEL);
-+	if (error)
-+		xfs_emerg(mp, "already frozen by kernel, err=%d", error);
-+
-+	return error;
-+}
-+
-+static void
-+xfs_dax_notify_failure_thaw(
-+	struct xfs_mount	*mp,
-+	bool			kernel_frozen)
-+{
-+	struct super_block	*sb = mp->m_super;
-+	int			error;
-+
-+	if (kernel_frozen) {
-+		error = thaw_super(sb, FREEZE_HOLDER_KERNEL);
-+		if (error)
-+			xfs_emerg(mp, "still frozen after notify failure, err=%d",
-+				error);
-+	}
-+
-+	/*
-+	 * Also thaw userspace call anyway because the device is about to be
-+	 * removed immediately.
-+	 */
-+	thaw_super(sb, FREEZE_HOLDER_USERSPACE);
-+}
-+
- static int
- xfs_dax_notify_ddev_failure(
- 	struct xfs_mount	*mp,
-@@ -112,15 +165,29 @@ xfs_dax_notify_ddev_failure(
- 	struct xfs_btree_cur	*cur = NULL;
- 	struct xfs_buf		*agf_bp = NULL;
- 	int			error = 0;
-+	bool			kernel_frozen = false;
- 	xfs_fsblock_t		fsbno = XFS_DADDR_TO_FSB(mp, daddr);
- 	xfs_agnumber_t		agno = XFS_FSB_TO_AGNO(mp, fsbno);
- 	xfs_fsblock_t		end_fsbno = XFS_DADDR_TO_FSB(mp,
- 							     daddr + bblen - 1);
- 	xfs_agnumber_t		end_agno = XFS_FSB_TO_AGNO(mp, end_fsbno);
- 
-+	if (mf_flags & MF_MEM_PRE_REMOVE) {
-+		xfs_info(mp, "Device is about to be removed!");
-+		/*
-+		 * Freeze fs to prevent new mappings from being created.
-+		 * - Keep going on if others already hold the kernel forzen.
-+		 * - Keep going on if other errors too because this device is
-+		 *   starting to fail.
-+		 * - If kernel frozen state is hold successfully here, thaw it
-+		 *   here as well at the end.
-+		 */
-+		kernel_frozen = xfs_dax_notify_failure_freeze(mp) == 0;
-+	}
-+
- 	error = xfs_trans_alloc_empty(mp, &tp);
- 	if (error)
--		return error;
-+		goto out;
- 
- 	for (; agno <= end_agno; agno++) {
- 		struct xfs_rmap_irec	ri_low = { };
-@@ -165,11 +232,23 @@ xfs_dax_notify_ddev_failure(
- 	}
- 
- 	xfs_trans_cancel(tp);
-+
-+	/*
-+	 * Determine how to shutdown the filesystem according to the
-+	 * error code and flags.
-+	 */
- 	if (error || notify.want_shutdown) {
- 		xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_ONDISK);
- 		if (!error)
- 			error = -EFSCORRUPTED;
--	}
-+	} else if (mf_flags & MF_MEM_PRE_REMOVE)
-+		xfs_force_shutdown(mp, SHUTDOWN_FORCE_UMOUNT);
-+
-+out:
-+	/* Thaw the fs if it is frozen before. */
-+	if (mf_flags & MF_MEM_PRE_REMOVE)
-+		xfs_dax_notify_failure_thaw(mp, kernel_frozen);
-+
- 	return error;
- }
- 
-@@ -197,6 +276,8 @@ xfs_dax_notify_failure(
- 
- 	if (mp->m_logdev_targp && mp->m_logdev_targp->bt_daxdev == dax_dev &&
- 	    mp->m_logdev_targp != mp->m_ddev_targp) {
-+		if (mf_flags & MF_MEM_PRE_REMOVE)
-+			return 0;
- 		xfs_err(mp, "ondisk log corrupt, shutting down fs!");
- 		xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_ONDISK);
- 		return -EFSCORRUPTED;
-@@ -210,6 +291,12 @@ xfs_dax_notify_failure(
- 	ddev_start = mp->m_ddev_targp->bt_dax_part_off;
- 	ddev_end = ddev_start + bdev_nr_bytes(mp->m_ddev_targp->bt_bdev) - 1;
- 
-+	/* Notify failure on the whole device. */
-+	if (offset == 0 && len == U64_MAX) {
-+		offset = ddev_start;
-+		len = bdev_nr_bytes(mp->m_ddev_targp->bt_bdev);
-+	}
-+
- 	/* Ignore the range out of filesystem area */
- 	if (offset + len - 1 < ddev_start)
- 		return -ENXIO;
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 2dd73e4f3d8e..a10c75bebd6d 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -3665,6 +3665,7 @@ enum mf_flags {
- 	MF_UNPOISON = 1 << 4,
- 	MF_SW_SIMULATED = 1 << 5,
- 	MF_NO_RETRY = 1 << 6,
-+	MF_MEM_PRE_REMOVE = 1 << 7,
- };
- int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index,
- 		      unsigned long count, int mf_flags);
-diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-index e245191e6b04..e71616ccc643 100644
---- a/mm/memory-failure.c
-+++ b/mm/memory-failure.c
-@@ -683,7 +683,7 @@ static void add_to_kill_fsdax(struct task_struct *tsk, struct page *p,
-  */
- static void collect_procs_fsdax(struct page *page,
- 		struct address_space *mapping, pgoff_t pgoff,
--		struct list_head *to_kill)
-+		struct list_head *to_kill, bool pre_remove)
+-static const struct address_space_operations dev_dax_aops = {
+-	.dirty_folio	= noop_dirty_folio,
+-};
+-
+ static int dax_open(struct inode *inode, struct file *filp)
  {
- 	struct vm_area_struct *vma;
- 	struct task_struct *tsk;
-@@ -691,8 +691,15 @@ static void collect_procs_fsdax(struct page *page,
- 	i_mmap_lock_read(mapping);
- 	read_lock(&tasklist_lock);
- 	for_each_process(tsk) {
--		struct task_struct *t = task_early_kill(tsk, true);
-+		struct task_struct *t = tsk;
+ 	struct dax_device *dax_dev = inode_dax(inode);
+@@ -358,7 +354,6 @@ static int dax_open(struct inode *inode, struct file *filp)
+ 	dev_dbg(&dev_dax->dev, "trace\n");
+ 	inode->i_mapping = __dax_inode->i_mapping;
+ 	inode->i_mapping->host = __dax_inode;
+-	inode->i_mapping->a_ops = &dev_dax_aops;
+ 	filp->f_mapping = inode->i_mapping;
+ 	filp->f_wb_err = filemap_sample_wb_err(filp->f_mapping);
+ 	filp->f_sb_err = file_sample_sb_err(filp);
+diff --git a/drivers/video/fbdev/core/fb_defio.c b/drivers/video/fbdev/core/fb_defio.c
+index 274f5d0fa247..08be3592281f 100644
+--- a/drivers/video/fbdev/core/fb_defio.c
++++ b/drivers/video/fbdev/core/fb_defio.c
+@@ -221,10 +221,6 @@ static const struct vm_operations_struct fb_deferred_io_vm_ops = {
+ 	.page_mkwrite	= fb_deferred_io_mkwrite,
+ };
  
-+		/*
-+		 * Search for all tasks while MF_MEM_PRE_REMOVE is set, because
-+		 * the current may not be the one accessing the fsdax page.
-+		 * Otherwise, search for the current task.
-+		 */
-+		if (!pre_remove)
-+			t = task_early_kill(tsk, true);
- 		if (!t)
- 			continue;
- 		vma_interval_tree_foreach(vma, &mapping->i_mmap, pgoff, pgoff) {
-@@ -1788,6 +1795,7 @@ int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index,
- 	dax_entry_t cookie;
- 	struct page *page;
- 	size_t end = index + count;
-+	bool pre_remove = mf_flags & MF_MEM_PRE_REMOVE;
+-static const struct address_space_operations fb_deferred_io_aops = {
+-	.dirty_folio	= noop_dirty_folio,
+-};
+-
+ int fb_deferred_io_mmap(struct fb_info *info, struct vm_area_struct *vma)
+ {
+ 	vma->vm_ops = &fb_deferred_io_vm_ops;
+@@ -307,7 +303,6 @@ void fb_deferred_io_open(struct fb_info *info,
+ {
+ 	struct fb_deferred_io *fbdefio = info->fbdefio;
  
- 	mf_flags |= MF_ACTION_REQUIRED | MF_MUST_KILL;
+-	file->f_mapping->a_ops = &fb_deferred_io_aops;
+ 	fbdefio->open_count++;
+ }
+ EXPORT_SYMBOL_GPL(fb_deferred_io_open);
+diff --git a/fs/aio.c b/fs/aio.c
+index 77e33619de40..4cf386f9cb1c 100644
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -484,7 +484,6 @@ static int aio_migrate_folio(struct address_space *mapping, struct folio *dst,
+ #endif
  
-@@ -1799,9 +1807,10 @@ int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index,
- 		if (!page)
- 			goto unlock;
+ static const struct address_space_operations aio_ctx_aops = {
+-	.dirty_folio	= noop_dirty_folio,
+ 	.migrate_folio	= aio_migrate_folio,
+ };
  
--		SetPageHWPoison(page);
-+		if (!pre_remove)
-+			SetPageHWPoison(page);
+diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
+index 75983215c7a1..ce191bdf1c78 100644
+--- a/fs/ext2/inode.c
++++ b/fs/ext2/inode.c
+@@ -971,7 +971,6 @@ const struct address_space_operations ext2_aops = {
+ static const struct address_space_operations ext2_dax_aops = {
+ 	.writepages		= ext2_dax_writepages,
+ 	.direct_IO		= noop_direct_IO,
+-	.dirty_folio		= noop_dirty_folio,
+ };
  
--		collect_procs_fsdax(page, mapping, index, &to_kill);
-+		collect_procs_fsdax(page, mapping, index, &to_kill, pre_remove);
- 		unmap_and_kill(&to_kill, page_to_pfn(page), mapping,
- 				index, mf_flags);
- unlock:
+ /*
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 43775a6ca505..67c1710c01b0 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -3561,7 +3561,6 @@ static const struct address_space_operations ext4_da_aops = {
+ static const struct address_space_operations ext4_dax_aops = {
+ 	.writepages		= ext4_dax_writepages,
+ 	.direct_IO		= noop_direct_IO,
+-	.dirty_folio		= noop_dirty_folio,
+ 	.bmap			= ext4_bmap,
+ 	.swap_activate		= ext4_iomap_swap_activate,
+ };
+diff --git a/fs/fuse/dax.c b/fs/fuse/dax.c
+index 8e74f278a3f6..50ca767cbd5e 100644
+--- a/fs/fuse/dax.c
++++ b/fs/fuse/dax.c
+@@ -1326,7 +1326,6 @@ bool fuse_dax_inode_alloc(struct super_block *sb, struct fuse_inode *fi)
+ static const struct address_space_operations fuse_dax_file_aops  = {
+ 	.writepages	= fuse_dax_writepages,
+ 	.direct_IO	= noop_direct_IO,
+-	.dirty_folio	= noop_dirty_folio,
+ };
+ 
+ static bool fuse_should_enable_dax(struct inode *inode, unsigned int flags)
+diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+index 7b17ccfa039d..5404286f0c13 100644
+--- a/fs/hugetlbfs/inode.c
++++ b/fs/hugetlbfs/inode.c
+@@ -1266,7 +1266,6 @@ static void hugetlbfs_destroy_inode(struct inode *inode)
+ static const struct address_space_operations hugetlbfs_aops = {
+ 	.write_begin	= hugetlbfs_write_begin,
+ 	.write_end	= hugetlbfs_write_end,
+-	.dirty_folio	= noop_dirty_folio,
+ 	.migrate_folio  = hugetlbfs_migrate_folio,
+ 	.error_remove_page	= hugetlbfs_error_remove_page,
+ };
+diff --git a/fs/libfs.c b/fs/libfs.c
+index 5b851315eeed..982f220a9ee3 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -627,7 +627,6 @@ const struct address_space_operations ram_aops = {
+ 	.read_folio	= simple_read_folio,
+ 	.write_begin	= simple_write_begin,
+ 	.write_end	= simple_write_end,
+-	.dirty_folio	= noop_dirty_folio,
+ };
+ EXPORT_SYMBOL(ram_aops);
+ 
+@@ -1231,16 +1230,12 @@ EXPORT_SYMBOL(kfree_link);
+ 
+ struct inode *alloc_anon_inode(struct super_block *s)
+ {
+-	static const struct address_space_operations anon_aops = {
+-		.dirty_folio	= noop_dirty_folio,
+-	};
+ 	struct inode *inode = new_inode_pseudo(s);
+ 
+ 	if (!inode)
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	inode->i_ino = get_next_ino();
+-	inode->i_mapping->a_ops = &anon_aops;
+ 
+ 	/*
+ 	 * Mark the inode dirty from the very beginning,
+diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+index 451942fb38ec..300acea9ee63 100644
+--- a/fs/xfs/xfs_aops.c
++++ b/fs/xfs/xfs_aops.c
+@@ -590,6 +590,5 @@ const struct address_space_operations xfs_address_space_operations = {
+ 
+ const struct address_space_operations xfs_dax_aops = {
+ 	.writepages		= xfs_dax_writepages,
+-	.dirty_folio		= noop_dirty_folio,
+ 	.swap_activate		= xfs_iomap_swapfile_activate,
+ };
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index 716953ee1ebd..9de3be51dee2 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -1074,7 +1074,6 @@ bool folio_clear_dirty_for_io(struct folio *folio);
+ bool clear_page_dirty_for_io(struct page *page);
+ void folio_invalidate(struct folio *folio, size_t offset, size_t length);
+ int __set_page_dirty_nobuffers(struct page *page);
+-bool noop_dirty_folio(struct address_space *mapping, struct folio *folio);
+ 
+ #ifdef CONFIG_MIGRATION
+ int filemap_migrate_folio(struct address_space *mapping, struct folio *dst,
+diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+index d3f42009bb70..d2d739109bfe 100644
+--- a/mm/page-writeback.c
++++ b/mm/page-writeback.c
+@@ -2585,17 +2585,6 @@ int do_writepages(struct address_space *mapping, struct writeback_control *wbc)
+ 	return ret;
+ }
+ 
+-/*
+- * For address_spaces which do not use buffers nor write back.
+- */
+-bool noop_dirty_folio(struct address_space *mapping, struct folio *folio)
+-{
+-	if (!folio_test_dirty(folio))
+-		return !folio_test_set_dirty(folio);
+-	return false;
+-}
+-EXPORT_SYMBOL(noop_dirty_folio);
+-
+ /*
+  * Helper function for set_page_dirty family.
+  *
+@@ -2799,10 +2788,13 @@ bool folio_mark_dirty(struct folio *folio)
+ 		 */
+ 		if (folio_test_reclaim(folio))
+ 			folio_clear_reclaim(folio);
+-		return mapping->a_ops->dirty_folio(mapping, folio);
++		if (mapping->a_ops->dirty_folio)
++			return mapping->a_ops->dirty_folio(mapping, folio);
+ 	}
+ 
+-	return noop_dirty_folio(mapping, folio);
++	if (!folio_test_dirty(folio))
++		return !folio_test_set_dirty(folio);
++	return false;
+ }
+ EXPORT_SYMBOL(folio_mark_dirty);
+ 
+diff --git a/mm/secretmem.c b/mm/secretmem.c
+index 86442a15d12f..3fe1c35f9c8d 100644
+--- a/mm/secretmem.c
++++ b/mm/secretmem.c
+@@ -157,7 +157,6 @@ static void secretmem_free_folio(struct folio *folio)
+ }
+ 
+ const struct address_space_operations secretmem_aops = {
+-	.dirty_folio	= noop_dirty_folio,
+ 	.free_folio	= secretmem_free_folio,
+ 	.migrate_folio	= secretmem_migrate_folio,
+ };
+diff --git a/mm/shmem.c b/mm/shmem.c
+index d963c747dabc..9bdef68a088a 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -4090,7 +4090,6 @@ static int shmem_error_remove_page(struct address_space *mapping,
+ 
+ const struct address_space_operations shmem_aops = {
+ 	.writepage	= shmem_writepage,
+-	.dirty_folio	= noop_dirty_folio,
+ #ifdef CONFIG_TMPFS
+ 	.write_begin	= shmem_write_begin,
+ 	.write_end	= shmem_write_end,
+diff --git a/mm/swap_state.c b/mm/swap_state.c
+index f8ea7015bad4..3666439487db 100644
+--- a/mm/swap_state.c
++++ b/mm/swap_state.c
+@@ -30,7 +30,6 @@
+  */
+ static const struct address_space_operations swap_aops = {
+ 	.writepage	= swap_writepage,
+-	.dirty_folio	= noop_dirty_folio,
+ #ifdef CONFIG_MIGRATION
+ 	.migrate_folio	= migrate_folio,
+ #endif
 -- 
-2.41.0
+2.40.1
 
