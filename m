@@ -2,191 +2,167 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 78F0C78A3E4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Aug 2023 03:22:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C053D78A3E6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Aug 2023 03:27:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229576AbjH1BWF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 27 Aug 2023 21:22:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43498 "EHLO
+        id S229581AbjH1B1H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 27 Aug 2023 21:27:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229570AbjH1BWF (ORCPT
+        with ESMTP id S229563AbjH1B0k (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 27 Aug 2023 21:22:05 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 031B7116
-        for <linux-fsdevel@vger.kernel.org>; Sun, 27 Aug 2023 18:21:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1693185680;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=xmja/1PLodDJgYWKao/T5BYA/P9CEUYhsXxvzaEDO84=;
-        b=Vb+g0Akiiuda7ZFswM5zT5HPzJcCnqCew7wm3QBM5L78I9Wj35iQI8vXqfVdjbOQ44P+qM
-        UEzUFH7vp5hjIP+BKxGxI3w2Lgclor4rAJt1Slo0j8JKq663RxzhEJyAz3vcaCJa1vigrz
-        eXSblJkS9E4JVENDKfyanFxmPfjo1Os=
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
- [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-595-RKNBreczONiVo6kPsz0q2g-1; Sun, 27 Aug 2023 21:21:18 -0400
-X-MC-Unique: RKNBreczONiVo6kPsz0q2g-1
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-1c0a90de7a2so33394055ad.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 27 Aug 2023 18:21:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693185677; x=1693790477;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xmja/1PLodDJgYWKao/T5BYA/P9CEUYhsXxvzaEDO84=;
-        b=GA1p0p6xSRj1zIEfnGi+BDAC7E7RG13yA7GQgg7gLt0PwTGLKGylMpsFDxbJPJWV8a
-         365NnEgUi3aSS7U8s3yKzcOh+uNMo+clpg6yDFgdunlh+AV+gbQ2i45W59WNTqVWAlSl
-         8Qko9lewyHCxSgaVx9/dmYZ1GucTd1U+k2swFagf9wDFs5xexNzayzlWW7RAoC7AhLv3
-         OAKuwyQ54eFYCvLeE6NND5jz6SeQaVttQrKLEGUaTdoTYK3VRtNmZy0ePmMhIqIqJ2Mq
-         8KMv007VOEWJUK9bS6wn71jwjAhL1S4qVXNkcRtSwj5PDwFoSMLoM7fK4DEQwLnvhk36
-         pfEg==
-X-Gm-Message-State: AOJu0YyAhc8YjaglBQlr5PfifR1bYyhS0CXIDefHigYWnYZ9qbDFwtPu
-        SB/S72x+2u3GE0mtOAEEsuhgt6OSMzlhlOLfQHACWN4sl+/FdeH2H9T95bbe3M7q1gNTxKMVmur
-        2TjE0pl75N6bnSJXn8u8IP7hNSg==
-X-Received: by 2002:a17:902:7c94:b0:1bb:cf58:531d with SMTP id y20-20020a1709027c9400b001bbcf58531dmr24304261pll.10.1693185677417;
-        Sun, 27 Aug 2023 18:21:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFk7z2kv2pO70y4enOxW6mKR03gcRasV88Uo9MokFbyZ79hWpRSjOtbgeIVRTN8HiEMpDLkug==
-X-Received: by 2002:a17:902:7c94:b0:1bb:cf58:531d with SMTP id y20-20020a1709027c9400b001bbcf58531dmr24304256pll.10.1693185677109;
-        Sun, 27 Aug 2023 18:21:17 -0700 (PDT)
-Received: from [10.72.112.71] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id d20-20020a170902c19400b001bd41b70b65sm5918115pld.49.2023.08.27.18.21.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 27 Aug 2023 18:21:16 -0700 (PDT)
-Message-ID: <ac005096-defd-0c3f-e5ef-37ca8dae9ed4@redhat.com>
-Date:   Mon, 28 Aug 2023 09:21:13 +0800
+        Sun, 27 Aug 2023 21:26:40 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBC34CA;
+        Sun, 27 Aug 2023 18:26:35 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5AAC560D14;
+        Mon, 28 Aug 2023 01:26:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B326FC433C7;
+        Mon, 28 Aug 2023 01:26:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1693185994;
+        bh=GwVLq3OkJrbkUyp31uBASPopWfhS3izyPrOJi4XbiEY=;
+        h=Date:From:To:Cc:Subject:From;
+        b=YXBwHraKOp8FKvsRAACfZ6QmmRH7l+EE/fGkInKlhNcew5Tlpo22n2R6OopH/u1JS
+         jAAU0dUANBzDwjhROi5WcamJMV0WxYK/vlzjQKYnqw54x2m8r5KEFApHqiShey29wG
+         kLGRLrqekIA9mz/G8aTLSVtXiUcs45QplDMvuP0ne5EUiB4QkN9K19lZUuv0noikku
+         YjNs16OIDNcOb4qpzoLgbsGVStF9LH/IQwh/f0kTMd5tLREQWsbYornz873OmUF+yq
+         7fjS6iDkR4ksC6RvMbHn1XRAQKXsbuqc3YWMG1Co+SE2Y4RFFV++QgZlvBltkrzCDn
+         BhJ0X9IHFBPEw==
+Date:   Sun, 27 Aug 2023 18:26:34 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     david@fromorbit.com, djwong@kernel.org,
+        torvalds@linux-foundation.org
+Cc:     araherle@in.ibm.com, axboe@kernel.dk, bfoster@redhat.com,
+        dchinner@redhat.com, hch@lst.de, kent.overstreet@linux.dev,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        ritesh.list@gmail.com, willy@infradead.org
+Subject: [GIT PULL] iomap: new code for 6.6
+Message-ID: <169318520367.1841050.6633820486162376921.stg-ugh@frogsfrogsfrogs>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH 02/15] ceph: Convert ceph_page_mkwrite() to use a folio
-Content-Language: en-US
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Ilya Dryomov <idryomov@gmail.com>
-Cc:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
-        linux-fsdevel@vger.kernel.org
-References: <20230825201225.348148-1-willy@infradead.org>
- <20230825201225.348148-3-willy@infradead.org>
-From:   Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <20230825201225.348148-3-willy@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi Linus,
 
-On 8/26/23 04:12, Matthew Wilcox (Oracle) wrote:
-> Operate on the entire folio instead of just the page.  There was an
-> earlier effort to do this with thp_size(), but it had the exact type
-> confusion between head & tail pages that folios are designed to avoid.
->
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
->   fs/ceph/addr.c | 35 +++++++++++++++++------------------
->   1 file changed, 17 insertions(+), 18 deletions(-)
->
-> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> index 9a0a79833eb0..7c7dfcd63cd1 100644
-> --- a/fs/ceph/addr.c
-> +++ b/fs/ceph/addr.c
-> @@ -1677,8 +1677,8 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
->   	struct ceph_inode_info *ci = ceph_inode(inode);
->   	struct ceph_file_info *fi = vma->vm_file->private_data;
->   	struct ceph_cap_flush *prealloc_cf;
-> -	struct page *page = vmf->page;
-> -	loff_t off = page_offset(page);
-> +	struct folio *folio = page_folio(vmf->page);
-> +	loff_t pos = folio_pos(folio);
->   	loff_t size = i_size_read(inode);
->   	size_t len;
->   	int want, got, err;
-> @@ -1695,50 +1695,49 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
->   	sb_start_pagefault(inode->i_sb);
->   	ceph_block_sigs(&oldset);
->   
-> -	if (off + thp_size(page) <= size)
-> -		len = thp_size(page);
-> -	else
-> -		len = offset_in_thp(page, size);
-> +	len = folio_size(folio);
-> +	if (pos + folio_size(folio) > size)
+Please pull this branch with changes for iomap for 6.6-rc1.  We've got
+some big changes for this release -- I'm very happy to be landing
+willy's work to enable large folios for the page cache for general read
+and write IOs when the fs can make contiguous space allocations, and
+Ritesh's work to track sub-folio dirty state to eliminate the write
+amplification problems inherent in using large folios.  As a bonus,
+io_uring can now process write completions in the caller's context
+instead of bouncing through a workqueue, which should reduce io latency
+dramatically.  IOWs, XFS should see a nice performance bump for both IO
+paths.
 
-s/folio_size(folio)/len/ ?
+I did a test-merge with the main upstream branch as of a few minutes
+ago, and didn't see any conflicts.  Please let me know if you encounter
+any problems.
 
+As for XFS -- as has been widely covered elsewhere, I have stepped down
+from the maintainer role and welcome Chandan Babu as the new release
+manager.  Please expect the XFS pull request for 6.6 to come from him in
+a few days.  He and I haven't quite finished the gpg-and-korg git tree
+transition process yet, so please excuse any bumps along the way.
+Nearly all the patches are from me anyway, so he and I have both been
+running QA on the 6.6 merge branch in parallel for the past few weeks.
 
-> +		len = size - pos;
->   
->   	dout("page_mkwrite %p %llx.%llx %llu~%zd getting caps i_size %llu\n",
-> -	     inode, ceph_vinop(inode), off, len, size);
-> +	     inode, ceph_vinop(inode), pos, len, size);
->   	if (fi->fmode & CEPH_FILE_MODE_LAZY)
->   		want = CEPH_CAP_FILE_BUFFER | CEPH_CAP_FILE_LAZYIO;
->   	else
->   		want = CEPH_CAP_FILE_BUFFER;
->   
->   	got = 0;
-> -	err = ceph_get_caps(vma->vm_file, CEPH_CAP_FILE_WR, want, off + len, &got);
-> +	err = ceph_get_caps(vma->vm_file, CEPH_CAP_FILE_WR, want, pos + len, &got);
->   	if (err < 0)
->   		goto out_free;
->   
->   	dout("page_mkwrite %p %llu~%zd got cap refs on %s\n",
-> -	     inode, off, len, ceph_cap_string(got));
-> +	     inode, pos, len, ceph_cap_string(got));
->   
-> -	/* Update time before taking page lock */
-> +	/* Update time before taking folio lock */
->   	file_update_time(vma->vm_file);
->   	inode_inc_iversion_raw(inode);
->   
->   	do {
->   		struct ceph_snap_context *snapc;
->   
-> -		lock_page(page);
-> +		folio_lock(folio);
->   
-> -		if (page_mkwrite_check_truncate(page, inode) < 0) {
-> -			unlock_page(page);
-> +		if (folio_mkwrite_check_truncate(folio, inode) < 0) {
-> +			folio_unlock(folio);
->   			ret = VM_FAULT_NOPAGE;
->   			break;
->   		}
->   
-> -		snapc = ceph_find_incompatible(page);
-> +		snapc = ceph_find_incompatible(&folio->page);
->   		if (!snapc) {
-> -			/* success.  we'll keep the page locked. */
-> -			set_page_dirty(page);
-> +			/* success.  we'll keep the folio locked. */
-> +			folio_mark_dirty(folio);
->   			ret = VM_FAULT_LOCKED;
->   			break;
->   		}
->   
-> -		unlock_page(page);
-> +		folio_unlock(folio);
->   
->   		if (IS_ERR(snapc)) {
->   			ret = VM_FAULT_SIGBUS;
-> @@ -1762,7 +1761,7 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
->   	}
->   
->   	dout("page_mkwrite %p %llu~%zd dropping cap refs on %s ret %x\n",
-> -	     inode, off, len, ceph_cap_string(got), ret);
-> +	     inode, pos, len, ceph_cap_string(got), ret);
->   	ceph_put_cap_refs_async(ci, got);
->   out_free:
->   	ceph_restore_sigs(&oldset);
+--D
 
+The following changes since commit 6eaae198076080886b9e7d57f4ae06fa782f90ef:
+
+Linux 6.5-rc3 (2023-07-23 15:24:10 -0700)
+
+are available in the Git repository at:
+
+https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/iomap-6.6-merge-3
+
+for you to fetch changes up to 377698d4abe2cd118dd866d5ef19e2f1aa6b9758:
+
+Merge tag 'xfs-async-dio.6-2023-08-01' of git://git.kernel.dk/linux into iomap-6.6-mergeA (2023-08-01 16:41:49 -0700)
+
+----------------------------------------------------------------
+New code for 6.6:
+
+* Make large writes to the page cache fill sparse parts of the cache
+with large folios, then use large memcpy calls for the large folio.
+* Track the per-block dirty state of each large folio so that a
+buffered write to a single byte on a large folio does not result in a
+(potentially) multi-megabyte writeback IO.
+* Allow some directio completions to be performed in the initiating
+task's context instead of punting through a workqueue.  This will
+reduce latency for some io_uring requests.
+
+Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+
+----------------------------------------------------------------
+Darrick J. Wong (3):
+Merge tag 'large-folio-writes' of git://git.infradead.org/users/willy/pagecache into iomap-6.6-merge
+Merge tag 'iomap-per-block-dirty-tracking' of https://github.com/riteshharjani/linux into iomap-6.6-merge
+Merge tag 'xfs-async-dio.6-2023-08-01' of git://git.kernel.dk/linux into iomap-6.6-mergeA
+
+Jens Axboe (8):
+iomap: cleanup up iomap_dio_bio_end_io()
+iomap: use an unsigned type for IOMAP_DIO_* defines
+iomap: treat a write through cache the same as FUA
+iomap: only set iocb->private for polled bio
+iomap: add IOMAP_DIO_INLINE_COMP
+fs: add IOCB flags related to passing back dio completions
+io_uring/rw: add write support for IOCB_DIO_CALLER_COMP
+iomap: support IOCB_DIO_CALLER_COMP
+
+Matthew Wilcox (Oracle) (10):
+iov_iter: Map the page later in copy_page_from_iter_atomic()
+iov_iter: Handle compound highmem pages in copy_page_from_iter_atomic()
+iov_iter: Add copy_folio_from_iter_atomic()
+iomap: Remove large folio handling in iomap_invalidate_folio()
+doc: Correct the description of ->release_folio
+iomap: Remove unnecessary test from iomap_release_folio()
+filemap: Add fgf_t typedef
+filemap: Allow __filemap_get_folio to allocate large folios
+iomap: Create large folios in the buffered write path
+iomap: Copy larger chunks from userspace
+
+Ritesh Harjani (IBM) (8):
+iomap: Rename iomap_page to iomap_folio_state and others
+iomap: Drop ifs argument from iomap_set_range_uptodate()
+iomap: Add some uptodate state handling helpers for ifs state bitmap
+iomap: Fix possible overflow condition in iomap_write_delalloc_scan
+iomap: Use iomap_punch_t typedef
+iomap: Refactor iomap_write_delalloc_punch() function out
+iomap: Allocate ifs in ->write_begin() early
+iomap: Add per-block dirty state tracking to improve performance
+
+Documentation/filesystems/locking.rst |  15 +-
+fs/btrfs/file.c                       |   6 +-
+fs/f2fs/compress.c                    |   2 +-
+fs/f2fs/f2fs.h                        |   2 +-
+fs/gfs2/aops.c                        |   2 +-
+fs/gfs2/bmap.c                        |   2 +-
+fs/iomap/buffered-io.c                | 469 +++++++++++++++++++++++-----------
+fs/iomap/direct-io.c                  | 161 +++++++++---
+fs/xfs/xfs_aops.c                     |   2 +-
+fs/zonefs/file.c                      |   2 +-
+include/linux/fs.h                    |  35 ++-
+include/linux/iomap.h                 |   3 +-
+include/linux/pagemap.h               |  82 +++++-
+include/linux/uio.h                   |   9 +-
+io_uring/rw.c                         |  27 +-
+lib/iov_iter.c                        |  43 ++--
+mm/filemap.c                          |  65 ++---
+mm/folio-compat.c                     |   2 +-
+mm/readahead.c                        |  13 -
+19 files changed, 660 insertions(+), 282 deletions(-)
