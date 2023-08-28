@@ -2,63 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 28A5578A8CA
+	by mail.lfdr.de (Postfix) with ESMTP id 7655278A8CC
 	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Aug 2023 11:21:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229920AbjH1JVH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Aug 2023 05:21:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47100 "EHLO
+        id S230124AbjH1JVN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Aug 2023 05:21:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230207AbjH1JUe (ORCPT
+        with ESMTP id S230152AbjH1JU4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Aug 2023 05:20:34 -0400
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD43B124
-        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Aug 2023 02:20:26 -0700 (PDT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-1c0e161e18fso23600065ad.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Aug 2023 02:20:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693214426; x=1693819226;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4NjVq1Z/oMa2sXmtYIkTscVFUho6LoOShE43iizaRVs=;
-        b=F5P5/3oNsLiYFPUv1tb2TsYpzzcdw/bUKzpz5kBhXEuwR32yPMGct5c7XJ94EuRiuv
-         c193V7FDK3qaKj9iYW/DjW2AgU8utYtF/jjIQaO65sS5TGiFbjjVbnQzEA6Cxax79n/0
-         QPt5/me7MW7AeacUeyy5aC7b+zCRQsFsXdBYtw8b9ARx3hYJR55+fcOcfAyeseTKzB8O
-         IU4hlRS0tbtaaUuA1iLQXYdYtJeKsqdfQ6XhArLFwv+4VQsgZgYr5EMyyMseO2eMIiED
-         RhlS8IibI5Gce8Yhjtd2fKyYJ66GfUUARJN+gNec2gZobmPxIlbzp/sMhFSNviuP6leZ
-         xVMg==
-X-Gm-Message-State: AOJu0YyZeq4eDHsnIT6ZvyrMe4Un1v3Ta03LZ/aIB+2233GWuPNArE5F
-        1KXAqigivXHDwikrAFWdsTYe30zUAbKyW5/XWECJYtza3DUg
-X-Google-Smtp-Source: AGHT+IFwKeCBWgC1DX1LPBdk1QA9ny0nkU+5FxOLBCGi9TyKmLytzDKG906xwutAxEps8RwhnOht6aretJL+sMA6FaE8OnNW97B9
+        Mon, 28 Aug 2023 05:20:56 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDD8019F;
+        Mon, 28 Aug 2023 02:20:43 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 72ADB617A3;
+        Mon, 28 Aug 2023 09:20:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C77EC433C9;
+        Mon, 28 Aug 2023 09:20:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1693214442;
+        bh=2Jz6MwB5q9EjiEODTH2uREHsQFEeyxWdlot1lPdULao=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=cbbTSw9VnWcCI+i95j+p1H9ZsrrEwyCYm3QJkBcZi40SE9NRjr9DFfAgSOC1CSUs2
+         wF5CFGRfWQox7idr5N/2yLS9VEGawGFkinUJTtNXvhrLAwBqGe4xoXafdjwa4AUvOC
+         fOyuBS+BsJyN98ZtPpLBMb3KxmEJ7C6C7HRGf0yPA6ilkujMVMWpemgZHx26/jJwG4
+         nVSQBblhAhQNdOYjDCOSMxGkBErKa1Km1CQ+499c7G2h2PIr6WS/fy+7TbD2B/xryb
+         5yVI6FkK0T8zZa6EwZZ2vn3C/S8OsJ1tE6Msjt640EAhzNmc6zKoZitriqvoK6jBZ7
+         uKsqi5IswLBjQ==
+Date:   Mon, 28 Aug 2023 11:20:38 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     syzbot <syzbot+f25c61df1ec3d235d52f@syzkaller.appspotmail.com>
+Cc:     gregkh@linuxfoundation.org, jack@suse.cz,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, tj@kernel.org
+Subject: Re: [syzbot] [kernfs?] KASAN: slab-use-after-free Read in
+ kernfs_test_super
+Message-ID: <20230828-schande-hungrig-b2a6ebffb5f6@brauner>
+References: <0000000000005231870603d64bac@google.com>
 MIME-Version: 1.0
-X-Received: by 2002:a17:902:cec4:b0:1bb:ad19:6b77 with SMTP id
- d4-20020a170902cec400b001bbad196b77mr9087222plg.2.1693214426325; Mon, 28 Aug
- 2023 02:20:26 -0700 (PDT)
-Date:   Mon, 28 Aug 2023 02:20:26 -0700
-In-Reply-To: <20230828-storch-einbehalten-96130664f1f1@brauner>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000068eb580603f834d3@google.com>
-Subject: Re: [syzbot] [ceph?] [fs?] KASAN: slab-use-after-free Read in ceph_compare_super
-From:   syzbot <syzbot+2b8cbfa6e34e51b6aa50@syzkaller.appspotmail.com>
-To:     brauner@kernel.org
-Cc:     brauner@kernel.org, ceph-devel@vger.kernel.org, idryomov@gmail.com,
-        jack@suse.cz, jlayton@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        xiubli@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <0000000000005231870603d64bac@google.com>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> #syz dup: [syzbot] [fuse?] KASAN: slab-use-after-free Read in fuse_test_super
-
-can't find the dup bug
-
+#syz dup: [syzbot] [fuse?] KASAN: slab-use-after-free Read in fuse_test_super
