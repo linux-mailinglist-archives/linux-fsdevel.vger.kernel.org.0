@@ -2,63 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B4F4B78B06F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Aug 2023 14:34:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B438D78B10B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Aug 2023 14:52:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230221AbjH1Mdd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Aug 2023 08:33:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60420 "EHLO
+        id S231549AbjH1Mvu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Aug 2023 08:51:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232709AbjH1MdX (ORCPT
+        with ESMTP id S232243AbjH1Mvh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Aug 2023 08:33:23 -0400
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 395EA131;
-        Mon, 28 Aug 2023 05:33:06 -0700 (PDT)
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 580D668AA6; Mon, 28 Aug 2023 14:33:00 +0200 (CEST)
-Date:   Mon, 28 Aug 2023 14:32:59 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>, Xiubo Li <xiubli@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        Damien Le Moal <dlemoal@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-block@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        linux-xfs@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-mm@kvack.org, Hannes Reinecke <hare@suse.de>
-Subject: Re: [PATCH 03/12] filemap: update ki_pos in generic_perform_write
-Message-ID: <20230828123259.GB11084@lst.de>
-References: <20230601145904.1385409-1-hch@lst.de> <20230601145904.1385409-4-hch@lst.de> <20230827194122.GA325446@ZenIV> <20230827214518.GU3390869@ZenIV>
+        Mon, 28 Aug 2023 08:51:37 -0400
+X-Greylist: delayed 601 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 28 Aug 2023 05:51:34 PDT
+Received: from mail1.g1.pair.com (mail1.g1.pair.com [66.39.3.162])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 494F1102;
+        Mon, 28 Aug 2023 05:51:34 -0700 (PDT)
+Received: from mail1.g1.pair.com (localhost [127.0.0.1])
+        by mail1.g1.pair.com (Postfix) with ESMTP id DB5B35475B2;
+        Mon, 28 Aug 2023 08:33:14 -0400 (EDT)
+Received: from harpe.intellique.com (82-65-97-13.subs.proxad.net [82.65.97.13])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail1.g1.pair.com (Postfix) with ESMTPSA id 4B2AA60AE4B;
+        Mon, 28 Aug 2023 08:33:14 -0400 (EDT)
+Date:   Mon, 28 Aug 2023 14:33:17 +0200
+From:   Emmanuel Florac <eflorac@intellique.com>
+To:     "Darrick J. Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [ANNOUNCE] xfs: online repair is completely finished!
+Message-ID: <20230828143317.1353fc3f@harpe.intellique.com>
+In-Reply-To: <20230822002204.GA11263@frogsfrogsfrogs>
+References: <20230822002204.GA11263@frogsfrogsfrogs>
+Organization: Intellique
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.31; x86_64-slackware-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230827214518.GU3390869@ZenIV>
-User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: multipart/signed; boundary="Sig_/wnV4DjYm.QRFJhbHv_ucyer";
+ protocol="application/pgp-signature"; micalg=pgp-sha1
+X-Scanned-By: mailmunge 3.11 on 66.39.3.162
+X-Spam-Status: No, score=0.0 required=5.0 tests=BAYES_20,RCVD_IN_DNSWL_BLOCKED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Aug 27, 2023 at 10:45:18PM +0100, Al Viro wrote:
-> IOW, I suspect that the right thing to do would be something along the lines
-> of
+--Sig_/wnV4DjYm.QRFJhbHv_ucyer
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-The idea looks sensible to me, but we'll also need to do it for the
-filemap_write_and_wait_range failure case.
+Le Mon, 21 Aug 2023 17:22:04 -0700
+"Darrick J. Wong" <djwong@kernel.org> =C3=A9crivait:
 
+> Hi folks,
+>=20
+> I am /very/ pleased to announce that online repair for XFS is
+> completely finished.  For those of you who have been following along
+> all this time, this means that part 1 and part 2 are done!
+>=20
+
+As nobody chimed in to congratulate you, I'll tell it : you're a hero,
+Darrick :)
+
+cheers
+--=20
+------------------------------------------------------------------------
+Emmanuel Florac     |   Direction technique
+                    |   Intellique
+                    |	<eflorac@intellique.com>
+                    |   +33 1 78 94 84 02
+------------------------------------------------------------------------
+
+--Sig_/wnV4DjYm.QRFJhbHv_ucyer
+Content-Type: application/pgp-signature
+Content-Description: Signature digitale OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EARECAB0WIQSAqoYluUD5h4D+mbZfeNBc1SJxVgUCZOyUDQAKCRBfeNBc1SJx
+VlsuAKCJq7GnxD8P4diO3xL0qwmRC6lDGgCghEhuU7aSAwx1IrTtHd9RNorsTF0=
+=+vht
+-----END PGP SIGNATURE-----
+
+--Sig_/wnV4DjYm.QRFJhbHv_ucyer--
