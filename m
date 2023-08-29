@@ -2,167 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4644278CF04
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Aug 2023 23:59:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E0FC78CFA3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Aug 2023 00:47:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237400AbjH2V6f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Aug 2023 17:58:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55052 "EHLO
+        id S239684AbjH2WrY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Aug 2023 18:47:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46894 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236990AbjH2V6D (ORCPT
+        with ESMTP id S239944AbjH2WrF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Aug 2023 17:58:03 -0400
-Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1920FD;
-        Tue, 29 Aug 2023 14:57:59 -0700 (PDT)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id 272FB5C0258;
-        Tue, 29 Aug 2023 17:57:59 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Tue, 29 Aug 2023 17:57:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-        cc:cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm1; t=
-        1693346279; x=1693432679; bh=pyw5d94QAnr8PZVn2x1/vPBbr481BfBpiMv
-        3gEajRU4=; b=lvBOYEVHmIpwAhzXRE5EgVU+hRr/1GQcjFoeodfBnVH+RsdgLPC
-        1AwYzBbVpoALqwIlhtSO5XyYAir1Aj4nHApJ+NVW05dLwIiI/fnaHLsH24J/FHXm
-        KP47PsKBq0BbUD2ek/FlztESwqAI9XGHO8dQN9lDsrn65SDfyvqbhUa1TQfqc9Io
-        T0WYXbS11TLHHQKy0aAPGhYm75xw7Am3Jf2rGWVptj1OYGbHjg91gUHREyFmCvPZ
-        hq0dkausxIUoplf0lhcfe4UMSpuoXTEfj6cnKcRq768cjvtUNLoMnAfhNElCp8rq
-        C9RrGeAYj3dwtskVerki+OhFAPN4qgitpGw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-        1693346279; x=1693432679; bh=pyw5d94QAnr8PZVn2x1/vPBbr481BfBpiMv
-        3gEajRU4=; b=OjScocuZgjucGeOKxaTrn9u3hmarTaZsSvElTn7LRWUYtNy35qw
-        HE4PgK9XgSNgPchg9zpifJHXZ2tWL16gCXF69lrSxwEUV0UbrhAsiYRDxAMtHkZy
-        qY8WMPzN9HsnbuT+PFn8dZKUWuDPu1u4YpAOt29anK44GUOj1n6rTcW/BnocRBVe
-        Y9T6QJVZUhwfN5Jz8lGtfeaV91Z2Ui3TuXqjqZOWHhuafgLdoTK0CxffcpYQnPoM
-        FJpWfnpNNZUFu1DufesbhxXjnwliPiPORYnBBrwJGfCcMSceJOJN6BH/dceSqERu
-        DJ48u+SItFivbfS0/zaC/4BPxfp/tzrP7Pw==
-X-ME-Sender: <xms:5mnuZGQK2oFCzj1iazlI3jshjkq_sG9va2-uVe2LRvQ5VZ8XX6XYvg>
-    <xme:5mnuZLxgUsPHLy7x_2ruLSmtdn-VBgkKi3NgW9tWWm1rBk_astItYR5_xszkIrAEk
-    1TNM62zVcsQErhx>
-X-ME-Received: <xmr:5mnuZD1wrFm--fukL1ZIoQuEWnvg69RjLcexcL_YM0ZZ1zZzb7nZ_5tB4iv4F-Q3VCzF-lq0rLXYka6szOyeAZO5GFjpSzmiNg8t5gLipgjPeGr7CjLy>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrudefjedgtddvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtfeejnecuhfhrohhmpeeuvghr
-    nhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrih
-    hlrdhfmheqnecuggftrfgrthhtvghrnhepkeehveekleekkeejhfehgeeftdffuddujeej
-    ieehheduueelleeghfeukeefvedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdr
-    fhhm
-X-ME-Proxy: <xmx:5mnuZCAEYr5qKbtaeTYN5xOLjmij9BAIkNkhnFCxfJP1RhLdaXXTfw>
-    <xmx:5mnuZPhFNOlDk098yfTHTk9tCwG_bHAeWlkfcDPsyREw-2PMlynNQw>
-    <xmx:5mnuZOo2pVP_BOgAcHectHoc-HFqxaxrTVCvHhbjV_tzPF57dp0JEQ>
-    <xmx:52nuZMvP4ZBgbi4Tu_w_VaZOOvyknTVOUUbj-OsBaZrpVKoKaNV9LQ>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 29 Aug 2023 17:57:57 -0400 (EDT)
-Message-ID: <572dcce8-f70c-2d24-f844-a3e8abbd4bd8@fastmail.fm>
-Date:   Tue, 29 Aug 2023 23:57:55 +0200
+        Tue, 29 Aug 2023 18:47:05 -0400
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 872BFCDC;
+        Tue, 29 Aug 2023 15:47:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=XGuBrJRA9Fd4AduQK/hSseIFrv8V5F+R7owbTsvIznw=; b=q1V5fHa/AXkRLdmnc9TtDTItxb
+        sjv5FpbdJarUSWDm8h5uqmHXkHTGtBOUlKVK5U/4PExCLqpYcowYZaV/PvP/kk1bfsDWLvRZIDMi6
+        J4YRKXkMJOy3sqhHWZHu4Fl1bfB/qtOHn3XYeh3dGmGOC0qbSQkD2Y+wYSoEusMnNBuy4+VyYQnkY
+        Lc4KlaQORaxPNCRh9pBUGO98Ft5v23nvU0WQJiozkEiistd3znn+J2fx0QgNh+u6E23YopsyfOSpr
+        Rmce2YRpGqgEixjkKJHtsYkWfKbeh3RTX6XJKjEhssGOmTvrkXGjl1f8Qxu8W6gub1Ziw1YBVxlnq
+        0FDl8ZIQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1qb7SA-001wYO-34;
+        Tue, 29 Aug 2023 22:44:55 +0000
+Date:   Tue, 29 Aug 2023 23:44:54 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Eric Van Hensbergen <ericvh@kernel.org>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Christian Schoenebeck <linux_oss@crudebyte.com>,
+        David Howells <dhowells@redhat.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, Xiubo Li <xiubli@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu,
+        Tyler Hicks <code@tyhicks.com>, Gao Xiang <xiang@kernel.org>,
+        Chao Yu <chao@kernel.org>, Yue Hu <huyue2@coolpad.com>,
+        Jeffle Xu <jefflexu@linux.alibaba.com>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        Jan Kara <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tejun Heo <tj@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Martin Brandenburg <martin@omnibond.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Steve French <sfrench@samba.org>,
+        Paulo Alcantara <pc@manguebit.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        Tom Talpey <tom@talpey.com>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Richard Weinberger <richard@nod.at>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Anthony Iliopoulos <ailiop@suse.com>, v9fs@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        cluster-devel@redhat.com, linux-nfs@vger.kernel.org,
+        ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
+        devel@lists.orangefs.org, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-mtd@lists.infradead.org,
+        linux-mm@kvack.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v6 1/7] fs: pass the request_mask to generic_fillattr
+Message-ID: <20230829224454.GA461907@ZenIV>
+References: <20230725-mgctime-v6-0-a794c2b7abca@kernel.org>
+ <20230725-mgctime-v6-1-a794c2b7abca@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
-Subject: Re: [PATCH v1] fs/fuse: Fix missing FOLL_PIN for direct-io
-Content-Language: en-US, de-DE
-To:     Lei Huang <lei.huang@linux.intel.com>, linux-kernel@vger.kernel.org
-Cc:     miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
-        David Howells <dhowells@redhat.com>
-References: <1693334193-7733-1-git-send-email-lei.huang@linux.intel.com>
-From:   Bernd Schubert <bernd.schubert@fastmail.fm>
-In-Reply-To: <1693334193-7733-1-git-send-email-lei.huang@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230725-mgctime-v6-1-a794c2b7abca@kernel.org>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 8/29/23 20:36, Lei Huang wrote:
-> Our user space filesystem relies on fuse to provide POSIX interface.
-> In our test, a known string is written into a file and the content
-> is read back later to verify correct data returned. We observed wrong
-> data returned in read buffer in rare cases although correct data are
-> stored in our filesystem.
+On Tue, Jul 25, 2023 at 10:58:14AM -0400, Jeff Layton wrote:
+> generic_fillattr just fills in the entire stat struct indiscriminately
+> today, copying data from the inode. There is at least one attribute
+> (STATX_CHANGE_COOKIE) that can have side effects when it is reported,
+> and we're looking at adding more with the addition of multigrain
+> timestamps.
 > 
-> Fuse kernel module calls iov_iter_get_pages2() to get the physical
-> pages of the user-space read buffer passed in read(). The pages are
-> not pinned to avoid page migration. When page migration occurs, the
-> consequence are two-folds.
-> 
-> 1) Applications do not receive correct data in read buffer.
-> 2) fuse kernel writes data into a wrong place.
-> 
-> Using iov_iter_extract_pages() to pin pages fixes the issue in our
-> test.
+> Add a request_mask argument to generic_fillattr and have most callers
+> just pass in the value that is passed to getattr. Have other callers
+> (e.g. ksmbd) just pass in STATX_BASIC_STATS. Also move the setting of
+> STATX_CHANGE_COOKIE into generic_fillattr.
 
-Hmm, iov_iter_extract_pages does not exists for a long time and the code 
-in fuse_get_user_pages didn't change much. So if you are right, there 
-would be a long term data corruption for page migrations? And a back 
-port to old kernels would not be obvious?
+Out of curiosity - how much PITA would it be to put request_mask into
+kstat?  Set it in vfs_getattr_nosec() (and those get_file_..._info()
+on smbd side) and don't bother with that kind of propagation boilerplate
+- just have generic_fillattr() pick it there...
 
-What confuses me further is that
-commit 85dd2c8ff368 does not mention migration or corruption, although 
-lists several other advantages for iov_iter_extract_pages. Other commits 
-using iov_iter_extract_pages point to fork - i.e. would your data 
-corruption be possibly related that?
-
-
-Thanks,
-Bernd
-
-
-> 
-> An auxiliary variable "struct page **pt_pages" is used in the patch
-> to prepare the 2nd parameter for iov_iter_extract_pages() since
-> iov_iter_get_pages2() uses a different type for the 2nd parameter.
-> 
-> Signed-off-by: Lei Huang <lei.huang@linux.intel.com>
-> ---
->   fs/fuse/file.c | 13 ++++++++-----
->   1 file changed, 8 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index bc41152..715de3b 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -670,7 +670,7 @@ static void fuse_release_user_pages(struct fuse_args_pages *ap,
->   	for (i = 0; i < ap->num_pages; i++) {
->   		if (should_dirty)
->   			set_page_dirty_lock(ap->pages[i]);
-> -		put_page(ap->pages[i]);
-> +		unpin_user_page(ap->pages[i]);
->   	}
->   }
->   
-> @@ -1428,10 +1428,13 @@ static int fuse_get_user_pages(struct fuse_args_pages *ap, struct iov_iter *ii,
->   	while (nbytes < *nbytesp && ap->num_pages < max_pages) {
->   		unsigned npages;
->   		size_t start;
-> -		ret = iov_iter_get_pages2(ii, &ap->pages[ap->num_pages],
-> -					*nbytesp - nbytes,
-> -					max_pages - ap->num_pages,
-> -					&start);
-> +		struct page **pt_pages;
-> +
-> +		pt_pages = &ap->pages[ap->num_pages];
-> +		ret = iov_iter_extract_pages(ii, &pt_pages,
-> +					     *nbytesp - nbytes,
-> +					     max_pages - ap->num_pages,
-> +					     0, &start);
->   		if (ret < 0)
->   			break;
->   
+Reduces the patchset size quite a bit...
