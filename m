@@ -2,151 +2,167 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EF75878CEE4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Aug 2023 23:42:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4644278CF04
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Aug 2023 23:59:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231536AbjH2Vl3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Aug 2023 17:41:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33472 "EHLO
+        id S237400AbjH2V6f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Aug 2023 17:58:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241271AbjH2Vky (ORCPT
+        with ESMTP id S236990AbjH2V6D (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Aug 2023 17:40:54 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCF47CED;
-        Tue, 29 Aug 2023 14:40:49 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id AF6636186D;
-        Tue, 29 Aug 2023 21:40:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A859C433C8;
-        Tue, 29 Aug 2023 21:40:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1693345238;
-        bh=G/IXVEbHXbA/TNJfDio2u2EqSl6QI/byoc4E/Nv9cN0=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=bCQk3rTf7Ez3IOhyIvVhdAoR78ip8YgIYMZeHYRU+T30zLVM6ukBh5y7DYVkEvHz5
-         cvvTse4kRdCkdeML65OSlWIisYrp+25eaRG9/4T9UdV6YtA4cgPV0gM8gHvgbsNP3k
-         7fy3OeglHZaufir7pMNz99HCRqZPlnX2Sn3Q51UN8vSUq/noboS1O/jNKeYPwpGrXb
-         siQ10pie8Q1sxbrLwnsXNqpkY2J4JwVmOCD67j5Znj8MSSD3a3DBkTJcNTpmFiybvb
-         PcGyBdQUJKiwjsbxkG2lOkQYqC4lJO/huaKWVxtSvUp9AUc+bxa6gh6X7gYl3rFu5K
-         t6SSRPcIypOCg==
-Message-ID: <941ad196-c6ae-728c-a8d5-2a866c20114a@kernel.org>
-Date:   Tue, 29 Aug 2023 23:40:34 +0200
+        Tue, 29 Aug 2023 17:58:03 -0400
+Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1920FD;
+        Tue, 29 Aug 2023 14:57:59 -0700 (PDT)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id 272FB5C0258;
+        Tue, 29 Aug 2023 17:57:59 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Tue, 29 Aug 2023 17:57:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+        cc:cc:content-transfer-encoding:content-type:content-type:date
+        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to; s=fm1; t=
+        1693346279; x=1693432679; bh=pyw5d94QAnr8PZVn2x1/vPBbr481BfBpiMv
+        3gEajRU4=; b=lvBOYEVHmIpwAhzXRE5EgVU+hRr/1GQcjFoeodfBnVH+RsdgLPC
+        1AwYzBbVpoALqwIlhtSO5XyYAir1Aj4nHApJ+NVW05dLwIiI/fnaHLsH24J/FHXm
+        KP47PsKBq0BbUD2ek/FlztESwqAI9XGHO8dQN9lDsrn65SDfyvqbhUa1TQfqc9Io
+        T0WYXbS11TLHHQKy0aAPGhYm75xw7Am3Jf2rGWVptj1OYGbHjg91gUHREyFmCvPZ
+        hq0dkausxIUoplf0lhcfe4UMSpuoXTEfj6cnKcRq768cjvtUNLoMnAfhNElCp8rq
+        C9RrGeAYj3dwtskVerki+OhFAPN4qgitpGw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:content-type:date:date:feedback-id:feedback-id
+        :from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+        1693346279; x=1693432679; bh=pyw5d94QAnr8PZVn2x1/vPBbr481BfBpiMv
+        3gEajRU4=; b=OjScocuZgjucGeOKxaTrn9u3hmarTaZsSvElTn7LRWUYtNy35qw
+        HE4PgK9XgSNgPchg9zpifJHXZ2tWL16gCXF69lrSxwEUV0UbrhAsiYRDxAMtHkZy
+        qY8WMPzN9HsnbuT+PFn8dZKUWuDPu1u4YpAOt29anK44GUOj1n6rTcW/BnocRBVe
+        Y9T6QJVZUhwfN5Jz8lGtfeaV91Z2Ui3TuXqjqZOWHhuafgLdoTK0CxffcpYQnPoM
+        FJpWfnpNNZUFu1DufesbhxXjnwliPiPORYnBBrwJGfCcMSceJOJN6BH/dceSqERu
+        DJ48u+SItFivbfS0/zaC/4BPxfp/tzrP7Pw==
+X-ME-Sender: <xms:5mnuZGQK2oFCzj1iazlI3jshjkq_sG9va2-uVe2LRvQ5VZ8XX6XYvg>
+    <xme:5mnuZLxgUsPHLy7x_2ruLSmtdn-VBgkKi3NgW9tWWm1rBk_astItYR5_xszkIrAEk
+    1TNM62zVcsQErhx>
+X-ME-Received: <xmr:5mnuZD1wrFm--fukL1ZIoQuEWnvg69RjLcexcL_YM0ZZ1zZzb7nZ_5tB4iv4F-Q3VCzF-lq0rLXYka6szOyeAZO5GFjpSzmiNg8t5gLipgjPeGr7CjLy>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrudefjedgtddvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtfeejnecuhfhrohhmpeeuvghr
+    nhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrih
+    hlrdhfmheqnecuggftrfgrthhtvghrnhepkeehveekleekkeejhfehgeeftdffuddujeej
+    ieehheduueelleeghfeukeefvedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdr
+    fhhm
+X-ME-Proxy: <xmx:5mnuZCAEYr5qKbtaeTYN5xOLjmij9BAIkNkhnFCxfJP1RhLdaXXTfw>
+    <xmx:5mnuZPhFNOlDk098yfTHTk9tCwG_bHAeWlkfcDPsyREw-2PMlynNQw>
+    <xmx:5mnuZOo2pVP_BOgAcHectHoc-HFqxaxrTVCvHhbjV_tzPF57dp0JEQ>
+    <xmx:52nuZMvP4ZBgbi4Tu_w_VaZOOvyknTVOUUbj-OsBaZrpVKoKaNV9LQ>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 29 Aug 2023 17:57:57 -0400 (EDT)
+Message-ID: <572dcce8-f70c-2d24-f844-a3e8abbd4bd8@fastmail.fm>
+Date:   Tue, 29 Aug 2023 23:57:55 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.1
-Subject: Re: [PATCH 2/3] user_namespaces.7: Document pitfall with negative
- permissions and user namespaces
-Content-Language: en-US
-To:     Richard Weinberger <richard@nod.at>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
-        christian <christian@brauner.io>, ipedrosa <ipedrosa@redhat.com>,
-        gscrivan <gscrivan@redhat.com>,
-        =?UTF-8?Q?Andreas_Gr=c3=bcnbacher?= <andreas.gruenbacher@gmail.com>,
-        acl-devel <acl-devel@nongnu.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        ebiederm <ebiederm@xmission.com>
-References: <20230829205833.14873-1-richard@nod.at>
- <20230829205833.14873-3-richard@nod.at>
- <51d4691d-dbc8-2e70-edc8-3b5814213c3f@kernel.org>
- <300010998.1870230.1693345150665.JavaMail.zimbra@nod.at>
-From:   Alejandro Colomar <alx@kernel.org>
-Organization: Linux
-In-Reply-To: <300010998.1870230.1693345150665.JavaMail.zimbra@nod.at>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------hdbah5UsGbLpBhayX3BQA1Wr"
-X-Spam-Status: No, score=-5.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+ Thunderbird/102.15.0
+Subject: Re: [PATCH v1] fs/fuse: Fix missing FOLL_PIN for direct-io
+Content-Language: en-US, de-DE
+To:     Lei Huang <lei.huang@linux.intel.com>, linux-kernel@vger.kernel.org
+Cc:     miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
+        David Howells <dhowells@redhat.com>
+References: <1693334193-7733-1-git-send-email-lei.huang@linux.intel.com>
+From:   Bernd Schubert <bernd.schubert@fastmail.fm>
+In-Reply-To: <1693334193-7733-1-git-send-email-lei.huang@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------hdbah5UsGbLpBhayX3BQA1Wr
-Content-Type: multipart/mixed; boundary="------------22zWt3urw070L00gNi9pBi0X";
- protected-headers="v1"
-From: Alejandro Colomar <alx@kernel.org>
-To: Richard Weinberger <richard@nod.at>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>, christian <christian@brauner.io>,
- ipedrosa <ipedrosa@redhat.com>, gscrivan <gscrivan@redhat.com>,
- =?UTF-8?Q?Andreas_Gr=c3=bcnbacher?= <andreas.gruenbacher@gmail.com>,
- acl-devel <acl-devel@nongnu.org>, linux-man <linux-man@vger.kernel.org>,
- linux-api <linux-api@vger.kernel.org>,
- linux-fsdevel <linux-fsdevel@vger.kernel.org>,
- ebiederm <ebiederm@xmission.com>
-Message-ID: <941ad196-c6ae-728c-a8d5-2a866c20114a@kernel.org>
-Subject: Re: [PATCH 2/3] user_namespaces.7: Document pitfall with negative
- permissions and user namespaces
-References: <20230829205833.14873-1-richard@nod.at>
- <20230829205833.14873-3-richard@nod.at>
- <51d4691d-dbc8-2e70-edc8-3b5814213c3f@kernel.org>
- <300010998.1870230.1693345150665.JavaMail.zimbra@nod.at>
-In-Reply-To: <300010998.1870230.1693345150665.JavaMail.zimbra@nod.at>
-
---------------22zWt3urw070L00gNi9pBi0X
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-
-On 2023-08-29 23:39, Richard Weinberger wrote:
-> ----- Urspr=C3=BCngliche Mail -----
->> Von: "Alejandro Colomar" <alx@kernel.org>
->> $ unshare =E2=80=90S 0 =E2=80=90G 0 =E2=80=90=E2=80=90map=E2=80=90user=
-s=3D100000,0,65536 =E2=80=90=E2=80=90map=E2=80=90groups=3D100000,0,65536 =
-id
->> unshare: failed to execute =E2=80=90S: No such file or directory
->=20
-> Well, maybe your unshare tool is too old.
-> AFAIK it uses newuidmap only in recent versions.
-
-I'm on Debian Sid.  That's quite unlikely :p
-(Although Debian Sid still runs make-4.3, so it wouldn't be crazy).
-
->=20
-> You can achieve the very same als using podman in rootless mode.
-> e.g.
-> podman run -it -v /scratch:/scratch/ bash -c "cat /scratch/games/game.t=
-xt"
->=20
-> Thanks,
-> //richard
-
---=20
-<http://www.alejandro-colomar.es/>
-GPG key fingerprint: A9348594CE31283A826FBDD8D57633D441E25BB5
 
 
---------------22zWt3urw070L00gNi9pBi0X--
+On 8/29/23 20:36, Lei Huang wrote:
+> Our user space filesystem relies on fuse to provide POSIX interface.
+> In our test, a known string is written into a file and the content
+> is read back later to verify correct data returned. We observed wrong
+> data returned in read buffer in rare cases although correct data are
+> stored in our filesystem.
+> 
+> Fuse kernel module calls iov_iter_get_pages2() to get the physical
+> pages of the user-space read buffer passed in read(). The pages are
+> not pinned to avoid page migration. When page migration occurs, the
+> consequence are two-folds.
+> 
+> 1) Applications do not receive correct data in read buffer.
+> 2) fuse kernel writes data into a wrong place.
+> 
+> Using iov_iter_extract_pages() to pin pages fixes the issue in our
+> test.
 
---------------hdbah5UsGbLpBhayX3BQA1Wr
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature"
+Hmm, iov_iter_extract_pages does not exists for a long time and the code 
+in fuse_get_user_pages didn't change much. So if you are right, there 
+would be a long term data corruption for page migrations? And a back 
+port to old kernels would not be obvious?
 
------BEGIN PGP SIGNATURE-----
+What confuses me further is that
+commit 85dd2c8ff368 does not mention migration or corruption, although 
+lists several other advantages for iov_iter_extract_pages. Other commits 
+using iov_iter_extract_pages point to fork - i.e. would your data 
+corruption be possibly related that?
 
-iQIzBAEBCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmTuZdIACgkQnowa+77/
-2zJ/yA//Wu0ZmKl7U/cReJWoZ3OeUjJYt/vHjm5gTUYYaViVVAGLiErshcL5I6E7
-ZCCoCXZcAblxBBahQp3+LzhmPdBBviwxCQfQKcb2wNOPpX0h6tPAwY98PzzFbomQ
-BsqeKUYoth90jN8YFd/liV86M5/zHJTA8F3LHLkMXtSsPvYspbCWYqfEgKrmY0ia
-SN++xNLLiVAyfIJlB6bWd1OROJTm+o+sInsQyHNpSmy7dh5n0wgQyBnYk1qQ+P+n
-9MlSmQ4/C+RkTNIvaPLqodInLC+RGyJrwm9xeZKgqnpaTg3EM69q16ncdgl1oj3E
-MrMwozfUxj9vJ7+9cMC8xxiUbdwDMWCyYmB+oeYZtBGLjssqllbMMUE1gwEczsmk
-FxvVF4iZJ+tmBQ6JIVKQoGcKYMl68cNYgc8LJaBXn+9lufG53q1bwf1KrfiZthOz
-UrGxAhVOr+4JhEa0Ow7VbyPpSy3b13mytMJUCe+iEmw5ecT6zm7hC6hczSnIqCnQ
-fQaF12NByEr7KmhbysBv7CG8OPR0SQea6EfsSH9r6Oy0ipqdavCeg7J3ATz7hcTU
-rMg/qysPo3md7zNfZbCFWg/7vSe7RMrcP3ywGCi06mxs2J0yFi/H8AA+tNK0kdR7
-bC5Xi00FtAnyQ9bxEHatSc5AwC2ILEizUlJLOFm0hDaWpsqfFhM=
-=d9yg
------END PGP SIGNATURE-----
 
---------------hdbah5UsGbLpBhayX3BQA1Wr--
+Thanks,
+Bernd
+
+
+> 
+> An auxiliary variable "struct page **pt_pages" is used in the patch
+> to prepare the 2nd parameter for iov_iter_extract_pages() since
+> iov_iter_get_pages2() uses a different type for the 2nd parameter.
+> 
+> Signed-off-by: Lei Huang <lei.huang@linux.intel.com>
+> ---
+>   fs/fuse/file.c | 13 ++++++++-----
+>   1 file changed, 8 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index bc41152..715de3b 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -670,7 +670,7 @@ static void fuse_release_user_pages(struct fuse_args_pages *ap,
+>   	for (i = 0; i < ap->num_pages; i++) {
+>   		if (should_dirty)
+>   			set_page_dirty_lock(ap->pages[i]);
+> -		put_page(ap->pages[i]);
+> +		unpin_user_page(ap->pages[i]);
+>   	}
+>   }
+>   
+> @@ -1428,10 +1428,13 @@ static int fuse_get_user_pages(struct fuse_args_pages *ap, struct iov_iter *ii,
+>   	while (nbytes < *nbytesp && ap->num_pages < max_pages) {
+>   		unsigned npages;
+>   		size_t start;
+> -		ret = iov_iter_get_pages2(ii, &ap->pages[ap->num_pages],
+> -					*nbytesp - nbytes,
+> -					max_pages - ap->num_pages,
+> -					&start);
+> +		struct page **pt_pages;
+> +
+> +		pt_pages = &ap->pages[ap->num_pages];
+> +		ret = iov_iter_extract_pages(ii, &pt_pages,
+> +					     *nbytesp - nbytes,
+> +					     max_pages - ap->num_pages,
+> +					     0, &start);
+>   		if (ret < 0)
+>   			break;
+>   
