@@ -2,57 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 377B778BFC8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Aug 2023 10:00:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6A8278BFFD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Aug 2023 10:12:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232424AbjH2IAS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Aug 2023 04:00:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52584 "EHLO
+        id S234049AbjH2IMG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Aug 2023 04:12:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58966 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232958AbjH2IAN (ORCPT
+        with ESMTP id S234054AbjH2IME (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Aug 2023 04:00:13 -0400
+        Tue, 29 Aug 2023 04:12:04 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C7BB124;
-        Tue, 29 Aug 2023 01:00:10 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F019E9;
+        Tue, 29 Aug 2023 01:12:02 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2BF1C61AC9;
-        Tue, 29 Aug 2023 08:00:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C1F5C433C8;
-        Tue, 29 Aug 2023 08:00:09 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1D7756325E;
+        Tue, 29 Aug 2023 08:12:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08D93C433C9;
+        Tue, 29 Aug 2023 08:11:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1693296009;
-        bh=/WBnF8Kf421MH6rWwaKwrpXlKths8TSnWWJHr2sN9V4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=DQVGyOKh0PxISNwoZvmBzRfjHN4ij2OEqU2aLjtKRk9Gtb6mWaoDlUDtzh5UWnuTv
-         UbmUOscsHAlai+JRLXdm7RSK3JWvA/67er4qjTXsk1cpFca8bLun1MOmQJHwVQkG9r
-         W2/rsmbEpcdb2a139+QrHgBJ9z9ZJ4rWOt46d/7xrCpD9XZ4OK6sPJUkFZVMLW8+eJ
-         Ugb66pLBI0+QufW3ldU2e8ULRz3/kTcn4AninZkWRHRf2SaIAyMUXvO8JccZXd5yVW
-         n71M+ocGYXWEQiITwLOdb37csGsVRcXkrHOWmYOKdpUh9CgjWnfdVdIzOFIXvY1nSc
-         bj+LMHe04VbUg==
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2b9f0b7af65so60136041fa.1;
-        Tue, 29 Aug 2023 01:00:09 -0700 (PDT)
-X-Gm-Message-State: AOJu0YwHbfOQv8WJX7Z1TBnNgrZKMdU/lvjM8gtiYX8NRiziVumtHFkb
-        Tg7OgfeJDXOGH5roPEG8fzUwrpa5nQATpVRuuws=
-X-Google-Smtp-Source: AGHT+IGOYevtbmNIKh0vL4EvtXWp1hfSt0dDOuCzvk+CP0CM5YX3lAyIFUu3lxEh7soUXD757YeDRMxV4Qqrc63PA3Y=
-X-Received: by 2002:ac2:5449:0:b0:500:b14a:cc63 with SMTP id
- d9-20020ac25449000000b00500b14acc63mr6158776lfn.12.1693296007526; Tue, 29 Aug
- 2023 01:00:07 -0700 (PDT)
+        s=k20201202; t=1693296721;
+        bh=RKsitqruLeakZo1D6/gvmm5Cw17kgJDQ6/wtIhtx3Xc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=t7GaHq0+LRKigL5Kn8yCcnQq3fr1wVnM+Jarqi0qWe98pvwdAxhGSivWnnq+xZKEI
+         UoYioIzBdYJ+9J8sggSh8yBFyTVXf5MQ51CO7QgeAQ+/RxnI+UrsaVtSYRGfXf8JKR
+         68DRbZKiVzOt4dB1gFsrvLhI30EdrbT5P2zAVlpOrU/+1w+X2PUf7YB4YsTJmW7EwJ
+         7TvXnet70vdkNT+hB1gB+WHulUHBhsOh7Qx/MKpmwtp2oeaQ1eFil8VCk34nFM+Sp1
+         gXyVQJcB1bB+5LCK/yXhcPcjAvh59Scq1Q1dhm9wHnCXlQ/FdWCSkxADQSAPQPB6vB
+         GkmKqCowkBxLw==
+From:   Christian Brauner <brauner@kernel.org>
+To:     Xueshi Hu <xueshi.hu@smartx.com>
+Cc:     Christian Brauner <brauner@kernel.org>, nvdimm@lists.linux.dev,
+        linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-mm@kvack.org,
+        linux-xfs@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        Christoph Hellwig <hch@lst.de>, hch@infradead.org,
+        dan.j.williams@intel.com, vishal.l.verma@intel.com,
+        dave.jiang@intel.com, jayalk@intworks.biz, daniel@ffwll.ch,
+        deller@gmx.de, bcrl@kvack.org, viro@zeniv.linux.org.uk,
+        jack@suse.com, tytso@mit.edu, adilger.kernel@dilger.ca,
+        miklos@szeredi.hu, mike.kravetz@oracle.com, muchun.song@linux.dev,
+        djwong@kernel.org, willy@infradead.org, akpm@linux-foundation.org,
+        hughd@google.com
+Subject: Re: [PATCH v3] fs: clean up usage of noop_dirty_folio
+Date:   Tue, 29 Aug 2023 10:11:50 +0200
+Message-Id: <20230829-kappen-meinen-0c51bfa4472a@brauner>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230829040029.473810-1-xueshi.hu@smartx.com>
+References: <20230829040029.473810-1-xueshi.hu@smartx.com>
 MIME-Version: 1.0
-References: <20230822162350.1.I96423a31e88428004c2f4a28ccad13828adf433e@changeid>
-In-Reply-To: <20230822162350.1.I96423a31e88428004c2f4a28ccad13828adf433e@changeid>
-From:   Ard Biesheuvel <ardb@kernel.org>
-Date:   Tue, 29 Aug 2023 09:59:54 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXFBEk9cjE1dhNkm09yregAaHcVofUXRB8GhaYT2Ft-Fyg@mail.gmail.com>
-Message-ID: <CAMj1kXFBEk9cjE1dhNkm09yregAaHcVofUXRB8GhaYT2Ft-Fyg@mail.gmail.com>
-Subject: Re: [PATCH] kernel: Add Mount Option For Efivarfs
-To:     Jiao Zhou <jiaozhou@google.com>
-Cc:     linux-fsdevel@vger.kernel.org, Jeremy Kerr <jk@ozlabs.org>,
-        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1181; i=brauner@kernel.org; h=from:subject:message-id; bh=RKsitqruLeakZo1D6/gvmm5Cw17kgJDQ6/wtIhtx3Xc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS8XeE0X7zC/+a5ToXwkP6tq+ffe+sq23qzeTUrp2C3uJho fe+ajlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgImU9DAyNBh8vvFMVubWufawk0/v5z ds+Kuc8/L2Q+tlArpzys41XWRkuDDXYfo74/2PbWIrF2j+aXK07m/J2JfZXJkcbrtn7zE7ZgA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
         RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
@@ -63,161 +70,31 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 22 Aug 2023 at 18:24, Jiao Zhou <jiaozhou@google.com> wrote:
->
-> Add uid and gid in efivarfs's mount option, so that
-> we can mount the file system with ownership. This approach
-> is used by a number of other filesystems that don't have
-> native support for ownership
->
-> Signed-off-by: Jiao Zhou <jiaozhou@google.com>
-> ---
->
->  fs/efivarfs/inode.c    |  4 ++++
->  fs/efivarfs/internal.h |  9 +++++++
->  fs/efivarfs/super.c    | 54 ++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 67 insertions(+)
->
-> diff --git a/fs/efivarfs/inode.c b/fs/efivarfs/inode.c
-> index b973a2c03dde..86175e229b0f 100644
-> --- a/fs/efivarfs/inode.c
-> +++ b/fs/efivarfs/inode.c
-> @@ -20,9 +20,13 @@ struct inode *efivarfs_get_inode(struct super_block *sb,
->                                 const struct inode *dir, int mode,
->                                 dev_t dev, bool is_removable)
->  {
-> +       struct efivarfs_fs_info *fsi = sb->s_fs_info;
->         struct inode *inode = new_inode(sb);
-> +       struct efivarfs_mount_opts *opts = &fsi->mount_opts;
->
->         if (inode) {
-> +               inode->i_uid = opts->uid;
-> +               inode->i_gid = opts->gid;
->                 inode->i_ino = get_next_ino();
->                 inode->i_mode = mode;
->                 inode->i_atime = inode->i_mtime = inode->i_ctime = current_time(inode);
-> diff --git a/fs/efivarfs/internal.h b/fs/efivarfs/internal.h
-> index 8ebf3a6a8aa2..2c7b6b24df19 100644
-> --- a/fs/efivarfs/internal.h
-> +++ b/fs/efivarfs/internal.h
-> @@ -48,6 +48,15 @@ bool efivar_validate(efi_guid_t vendor, efi_char16_t *var_name, u8 *data,
->  bool efivar_variable_is_removable(efi_guid_t vendor, const char *name,
->                                   size_t len);
->
-> +struct efivarfs_mount_opts {
-> +       kuid_t uid;
-> +       kgid_t gid;
-> +};
-> +
-> +struct efivarfs_fs_info {
-> +       struct efivarfs_mount_opts mount_opts;
-> +};
-> +
->  extern const struct file_operations efivarfs_file_operations;
->  extern const struct inode_operations efivarfs_dir_inode_operations;
->  extern bool efivarfs_valid_name(const char *str, int len);
-> diff --git a/fs/efivarfs/super.c b/fs/efivarfs/super.c
-> index e028fafa04f3..e3c81fac8208 100644
-> --- a/fs/efivarfs/super.c
-> +++ b/fs/efivarfs/super.c
-> @@ -8,6 +8,7 @@
->  #include <linux/efi.h>
->  #include <linux/fs.h>
->  #include <linux/fs_context.h>
-> +#include <linux/fs_parser.h>
->  #include <linux/module.h>
->  #include <linux/pagemap.h>
->  #include <linux/ucs2_string.h>
-> @@ -60,10 +61,27 @@ static int efivarfs_statfs(struct dentry *dentry, struct kstatfs *buf)
->
->         return 0;
->  }
-> +static int efivarfs_show_options(struct seq_file *m, struct dentry *root)
-> +{
-> +       struct super_block *sb = root->d_sb;
-> +       struct efivarfs_fs_info *sbi = sb->s_fs_info;
-> +       struct efivarfs_mount_opts *opts = &sbi->mount_opts;
-> +
-> +       /* Show partition info */
-> +       if (!uid_eq(opts->uid, GLOBAL_ROOT_UID))
-> +               seq_printf(m, ",uid=%u",
-> +                               from_kuid_munged(&init_user_ns, opts->uid));
-> +       if (!gid_eq(opts->gid, GLOBAL_ROOT_GID))
-> +               seq_printf(m, ",gid=%u",
-> +                               from_kgid_munged(&init_user_ns, opts->gid));
-> +       return 0;
-> +}
-> +
->  static const struct super_operations efivarfs_ops = {
->         .statfs = efivarfs_statfs,
->         .drop_inode = generic_delete_inode,
->         .evict_inode = efivarfs_evict_inode,
-> +       .show_options   = efivarfs_show_options,
->  };
->
->  /*
-> @@ -225,6 +243,40 @@ static int efivarfs_destroy(struct efivar_entry *entry, void *data)
->         return 0;
->  }
->
-> +enum {
-> +       Opt_uid, Opt_gid,
-> +};
-> +
-> +static const struct fs_parameter_spec efivarfs_parameters[] = {
-> +       fsparam_u32("uid",                      Opt_uid),
-> +       fsparam_u32("gid",                      Opt_gid),
-> +};
-> +
+On Tue, 29 Aug 2023 12:00:29 +0800, Xueshi Hu wrote:
+> In folio_mark_dirty(), it can automatically fallback to
+> noop_dirty_folio() if a_ops->dirty_folio is not registered.
+> 
+> In anon_aops, dev_dax_aops and fb_deferred_io_aops, replacing .dirty_folio
+> with NULL makes them identical to default (empty_aops) and since we never
+> compare ->a_ops pointer with either of those, we can remove them
+> completely.
+> 
+> [...]
 
-The kasan report seems to suggest that this array needs a trailing
-empty entry {}
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-> +static int efivarfs_parse_param(struct fs_context *fc, struct fs_parameter *param)
-> +{
-> +       struct efivarfs_fs_info *sbi = fc->s_fs_info;
-> +       struct efivarfs_mount_opts *opts = &sbi->mount_opts;
-> +       struct fs_parse_result result;
-> +       int opt;
-> +
-> +       opt = fs_parse(fc, efivarfs_parameters, param, &result);
-> +       if (opt < 0)
-> +               return opt;
-> +
-> +       switch (opt) {
-> +       case Opt_uid:
-> +               opts->uid = make_kuid(current_user_ns(), result.uint_32);
-> +               break;
-> +       case Opt_gid:
-> +               opts->gid = make_kgid(current_user_ns(), result.uint_32);
-> +               break;
-> +       default:
-> +               return -EINVAL;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
->  static int efivarfs_fill_super(struct super_block *sb, struct fs_context *fc)
->  {
->         struct inode *inode = NULL;
-> @@ -271,6 +323,7 @@ static int efivarfs_get_tree(struct fs_context *fc)
->
->  static const struct fs_context_operations efivarfs_context_ops = {
->         .get_tree       = efivarfs_get_tree,
-> +       .parse_param    = efivarfs_parse_param,
->  };
->
->  static int efivarfs_init_fs_context(struct fs_context *fc)
-> @@ -295,6 +348,7 @@ static struct file_system_type efivarfs_type = {
->         .name    = "efivarfs",
->         .init_fs_context = efivarfs_init_fs_context,
->         .kill_sb = efivarfs_kill_sb,
-> +       .parameters             = efivarfs_parameters,
->  };
->
->  static __init int efivarfs_init(void)
-> --
-> 2.42.0.rc1.204.g551eb34607-goog
->
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/1] fs: clean up usage of noop_dirty_folio
+      https://git.kernel.org/vfs/vfs/c/ffb2bc01caae
