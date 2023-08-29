@@ -2,165 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A8C178C679
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Aug 2023 15:53:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 644B078C700
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Aug 2023 16:12:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233074AbjH2Nw4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Aug 2023 09:52:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58390 "EHLO
+        id S234700AbjH2OLg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Aug 2023 10:11:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232172AbjH2Nw1 (ORCPT
+        with ESMTP id S236898AbjH2OL2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Aug 2023 09:52:27 -0400
-Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D2959C
-        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Aug 2023 06:52:24 -0700 (PDT)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id 049505C00C3;
-        Tue, 29 Aug 2023 09:52:24 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Tue, 29 Aug 2023 09:52:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-        cc:cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm1; t=
-        1693317144; x=1693403544; bh=VeDaEr8XCebGRLZuR7RQweA/XHq0rXvvS9T
-        TD1b+Kv4=; b=mRcNatrMSNk8RNfwWUtaiyRs0ta0csqQBVPQlkCwgOAK07fsDS7
-        Z7k9VAfPSVKc3UpENGkVVVnjf0upSnd1kkLvPromITWUmzOf+DzrNktYCt0xS7lY
-        dXXbYdEC3AlkIxfii0SH7B0oPguyUQFnYDYTS+ZU32YTmbgVwNYSAoY7QtUwSKD4
-        oHPmQTh3VJia/9awgrXkIxgucjgul/baUeHN95mZIJnnmXuywxTtnJCdtwK4YoJT
-        oqgdjnXi4DGSSOP3ArAVMXBc2wlviGaXNfL1gfFZytoc+H22N8N5EnbCNv1uxtvL
-        DhFLvmMcC1jQzINj+paPRoIqu93OqdmWIJg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-        1693317144; x=1693403544; bh=VeDaEr8XCebGRLZuR7RQweA/XHq0rXvvS9T
-        TD1b+Kv4=; b=rfRo1PQqAic1X9dk5L4KIPbCZfZSaIJzeNPtyzxjya1d9rTpNvT
-        F/BV7hJiWdjfBVYsHt6ZxL299TLw/DCvlCY1aDwWaXMCo/ea/rxyEYFIR4eW1u5z
-        hnZTBRdbAQxLle5YH6Ja4DjppXskDqZyWUGlKJbqo1NIcFOFJuuqQx7RRaz8xJG3
-        KDOAbhnmmSFTOghJRUE9p9exuyGZtCDp+gGlbWcGx4Cv8eRG7oKX5VSwK1QsZy0o
-        D/Xcbos/Pvc7bnOHEorQKpSxrkgAgbRBuRzfQCn9ZT54q2c9vDTrlWH7Rbz77WZI
-        QV4jBP5mBBXborcKxTnulIgFMntYo8/Zifg==
-X-ME-Sender: <xms:F_jtZEAyI17BEOVrivfBH1wS4ov_6SlBjO7_I4cM6ESNj9yEL9RqGg>
-    <xme:F_jtZGgBGM9lyQMW5slnFPpRGMkvX81DA9S8lq5rImhjzHF5mgCCIUMokH3eulLwe
-    zW-tpKklRcm3tqs>
-X-ME-Received: <xmr:F_jtZHlhvDHma1E8C4p-GF34yFAspFKI6de-CX7n_0FUUOd8-1MlLLUZit1cYw28iJOEtdYAH0CG1ngQpdDNNf-gLNQptwRLPGPn0XzNeaZvhlv_EJ3P>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrudefiedgieelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtfeejnecuhfhrohhmpeeuvghr
-    nhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrih
-    hlrdhfmheqnecuggftrfgrthhtvghrnhepfffhtddvveeivdduuedujeetffekkeelgfdv
-    fefgueffieefjefgjeffhedttdefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdr
-    fhhm
-X-ME-Proxy: <xmx:F_jtZKyiN3swZxL9ROSRzhKAAvI34VqmwPRzeZ3-JofPnB5WL8Um7g>
-    <xmx:F_jtZJSPqs0MvnXtQUkmsaRCgpIR78mRYtTz3ZHG55eG1x662jKcDA>
-    <xmx:F_jtZFa29AOy8SKg29qFUjoVa53iKgG42YRFeJnA56aXhl5NSXsvvg>
-    <xmx:GPjtZLdQ4SnFkx9m6fbxDvMA85CXoLo8cb-Ge4bY7BPJQCOU6iq2EA>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 29 Aug 2023 09:52:22 -0400 (EDT)
-Message-ID: <4f80aad3-8c40-551f-05bb-eb5e47472015@fastmail.fm>
-Date:   Tue, 29 Aug 2023 15:52:21 +0200
+        Tue, 29 Aug 2023 10:11:28 -0400
+X-Greylist: delayed 944 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 29 Aug 2023 07:11:25 PDT
+Received: from sender-of-o51.zoho.in (sender-of-o51.zoho.in [103.117.158.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A0F6C0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Aug 2023 07:11:25 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1693317319; cv=none; 
+        d=zohomail.in; s=zohoarc; 
+        b=OnODIJxYju35qlu66FlnfeJFZ3S7G/4VtefJiTfj1ZF+FbFEgdG3wIajHq5aSQ8Ye41f5Tk6QWvFme05hovIzGdE+5PxiXvxPjYkfwPZuAqzkTUfeU56KD5vhVT+M8O91EsXHJvf+jo4jaIVoxReCzTUdMSBDDVM3S4uErxNnew=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.in; s=zohoarc; 
+        t=1693317319; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
+        bh=spi4Ydxh+1QfTlN9XTslVGcpfaMmajEct0+HRe/RZLY=; 
+        b=bZwiJYns4ZzrAZOqCyFjIyyWxS7DU8DARtqUiLO4iv4j+3qfxI1D2qVgEUM3AcemzZtFXwllXlI7uAxvk+xT09Wd/YMeg1IX4U0XB75kHTNXg29AlW2d9+nya9KdR7ia9ny4j5ofakntDa+jKRN9YmMXcWqny8MOZHrn/SSCxwM=
+ARC-Authentication-Results: i=1; mx.zohomail.in;
+        dkim=pass  header.i=siddh.me;
+        spf=pass  smtp.mailfrom=code@siddh.me;
+        dmarc=pass header.from=<code@siddh.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1693317319;
+        s=zmail; d=siddh.me; i=code@siddh.me;
+        h=Message-ID:Date:Date:MIME-Version:To:To:Cc:Cc:References:Subject:Subject:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+        bh=spi4Ydxh+1QfTlN9XTslVGcpfaMmajEct0+HRe/RZLY=;
+        b=atUdcPjMJom1vNauMUZ0mNFjvZh7x/eQaQLFcdtPDhYPkNOJ95Q/iGMMWQAOqTM1
+        49gS60hMhisoKTxxmuOVFrubWjG7oKiUEkhGHGqJQQugBVyxgncHoCz5HqROw+pHao8
+        3GNBDzclHh3h9xI2HMoL6QoALSOhBZ684dtpdYW8=
+Received: from [192.168.1.10] (110.226.17.164 [110.226.17.164]) by mx.zoho.in
+        with SMTPS id 1693317317031777.2897551691909; Tue, 29 Aug 2023 19:25:17 +0530 (IST)
+Message-ID: <834085d4-8a3c-43aa-a0ba-22207b70c1cf@siddh.me>
+Date:   Tue, 29 Aug 2023 19:25:11 +0530
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
-Subject: Re: [PATCH 4/5] [RFC] fuse: Set and use IOCB_DIRECT when
- FOPEN_DIRECT_IO is set
-Content-Language: en-US, de-DE
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Bernd Schubert <bschubert@ddn.com>, linux-fsdevel@vger.kernel.org,
-        dsingh@ddn.com, Hao Xu <howeyxu@tencent.com>
-References: <20230824150533.2788317-1-bschubert@ddn.com>
- <20230824150533.2788317-5-bschubert@ddn.com>
- <CAJfpegvW=9TCB+-CX0jPBA5KDufSj0hKzU3YfEYojWdHHh57eQ@mail.gmail.com>
- <d2a7e7a3-6273-475c-8e7c-96de547a5d71@fastmail.fm>
- <CAJfpegu9MDSB-pCmZr_mz64Cc1r-q8TkNmR7BH6TO3SCq2HAVA@mail.gmail.com>
- <6e0cc058-7163-ffc6-3b7e-b459af4d6f8c@fastmail.fm>
- <058bb99c-b722-c5f1-6f0c-759f194ed5ff@fastmail.fm>
-From:   Bernd Schubert <bernd.schubert@fastmail.fm>
-In-Reply-To: <058bb99c-b722-c5f1-6f0c-759f194ed5ff@fastmail.fm>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_PASS,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla Thunderbird
+To:     syzbot+65bb53688b6052f09c28@syzkaller.appspotmail.com
+Cc:     clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        terrelln@fb.com
+References: <0000000000006512230604076562@google.com>
+Subject: Re: [syzbot] [btrfs?] KASAN: use-after-free Read in btrfs_test_super
+From:   Siddh Raman Pant <code@siddh.me>
+Content-Language: en-US, en-GB, hi-IN
+In-Reply-To: <0000000000006512230604076562@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
+X-Spam-Status: No, score=0.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Might be fixed by recent commits.
 
-
-On 8/29/23 15:26, Bernd Schubert wrote:
-> 
-> 
-> On 8/29/23 15:08, Bernd Schubert wrote:
->>
->>
->> On 8/28/23 17:05, Miklos Szeredi wrote:
->>> On Mon, 28 Aug 2023 at 16:48, Bernd Schubert 
->>> <bernd.schubert@fastmail.fm> wrote:
->>>>
->>>> On 8/28/23 13:59, Miklos Szeredi wrote:
->>>>> On Thu, 24 Aug 2023 at 17:07, Bernd Schubert <bschubert@ddn.com> 
->>>>> wrote:
->>>
->>>>>> -               if (!is_sync_kiocb(iocb) && iocb->ki_flags & 
->>>>>> IOCB_DIRECT) {
->>>>>> -                       res = fuse_direct_IO(iocb, from);
->>>>>> -               } else {
->>>>>> -                       res = fuse_direct_io(&io, from, 
->>>>>> &iocb->ki_pos,
->>>>>> -                                            FUSE_DIO_WRITE);
->>>>>> -                       fuse_write_update_attr(inode, 
->>>>>> iocb->ki_pos, res);
->>>>>
->>>>> While I think this is correct, I'd really like if the code to be
->>>>> replaced and the replacement are at least somewhat comparable.
->>>>
->>>> Sorry, I have a hard to time to understand "I'd really like if the code
->>>> to be replaced".
->>>
->>> What I meant is that generic_file_direct_write() is not an obvious
->>> replacement for the  above lines of code.
->>>
->>> The reason is that fuse_direct_IO() is handling the sync and async
->>> cases in one function, while the above splits handling it based on
->>> IOCB_DIRECT (which is now lost) and is_sync_kiocb(iocb).  If it's okay
->>> to lose IOCB_DIRECT then what's the explanation for the above
->>> condition?  It could be historic garbage, but we still need to
->>> understand what is exactly happening.
->>
->> While checking all code path again, I found an additional difference, 
->> which I had missed before. FOPEN_DIRECT_IO will now act on 
->> ff->fm->fc->async_dio when is is_sync_kiocb(iocb) is set.
->>
->> Do you think that is a problem? If so, I could fix it in fuse_direct_IO.
-> 
-> What I mean is something like this
-> 
-> +    /* FOPEN_DIRECT_IO historically does not use async for blocking 
-> O_DIRECT */
-> +    if (ff->open_flags & FOPEN_DIRECT_IO) {
-> +        if (!is_sync_kiocb(iocb) && ff->iocb_direct) {
-> +            /* no change */
-> +        } else {
-> +            io->async = 0;
-> +        }
-> +    }
-
-Besides that it could use file->f_flags & O_DIRECT, I guess we can keep 
-async. It relates to commit
-23c94e1cdcbf5953cd380555d0781caa42311870, which actually introduced 
-async for FOPEN_DIRECT_IO. I'm just going to add it to the commit message.
-
-
-Thanks,
-Bernd
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.super
