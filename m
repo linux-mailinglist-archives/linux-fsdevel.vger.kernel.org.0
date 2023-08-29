@@ -2,143 +2,159 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 29D3C78CFC3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Aug 2023 00:59:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 213EA78CFDC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Aug 2023 01:06:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240553AbjH2W7Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Aug 2023 18:59:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49354 "EHLO
+        id S239173AbjH2XGO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Aug 2023 19:06:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57944 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240656AbjH2W67 (ORCPT
+        with ESMTP id S241194AbjH2XGJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Aug 2023 18:58:59 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3102FD7;
-        Tue, 29 Aug 2023 15:58:56 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C2A37635CE;
-        Tue, 29 Aug 2023 22:58:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9FABC433C7;
-        Tue, 29 Aug 2023 22:58:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1693349935;
-        bh=rn2r8LG5beXDEpNUXXmAsWk7K7Z6B0SkbbGrSUfCikA=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=UJJSRKRH7LTjcnDdUPp7RtBE/dB7QJhjeEB1YQbMKrKaYzMACob4EBI4SsR0sy5Ye
-         mt7wmIqsOOWPvL2AjZ5YQtEhH9AU5fAVtL4UeL7OEXz9q6ZHDNk6+YIdzODX8+wqil
-         jlsqG5Nirzs8oHVVRgwIrBWk+tU4uj4vEMyBjQFrJmh/cCsnnPwHApt0qQlEh4VPoV
-         fx7tHB0NGyHo231wK83vtI9suH/0L3cn9cyGLY9db8p4Yc0AKTTsIBFPHCXTIrOvy6
-         YzP3/2IXTyd/Lvsgr1kAOQEzWJjTRoatnNjA657yXZ2FiJLFoy7sfB1K1HWwMGB4Ek
-         xBWdtuLvgMoog==
-Message-ID: <e1c4a6d5001d029548542a1f10425c5639ce28e4.camel@kernel.org>
-Subject: Re: [PATCH v6 1/7] fs: pass the request_mask to generic_fillattr
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Eric Van Hensbergen <ericvh@kernel.org>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Christian Schoenebeck <linux_oss@crudebyte.com>,
-        David Howells <dhowells@redhat.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, Xiubo Li <xiubli@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu,
-        Tyler Hicks <code@tyhicks.com>, Gao Xiang <xiang@kernel.org>,
-        Chao Yu <chao@kernel.org>, Yue Hu <huyue2@coolpad.com>,
-        Jeffle Xu <jefflexu@linux.alibaba.com>,
-        Namjae Jeon <linkinjeon@kernel.org>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        Jan Kara <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tejun Heo <tj@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Mike Marshall <hubcap@omnibond.com>,
-        Martin Brandenburg <martin@omnibond.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Steve French <sfrench@samba.org>,
-        Paulo Alcantara <pc@manguebit.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        Shyam Prasad N <sprasad@microsoft.com>,
-        Tom Talpey <tom@talpey.com>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Richard Weinberger <richard@nod.at>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Anthony Iliopoulos <ailiop@suse.com>, v9fs@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        cluster-devel@redhat.com, linux-nfs@vger.kernel.org,
-        ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
-        devel@lists.orangefs.org, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, linux-mtd@lists.infradead.org,
-        linux-mm@kvack.org, linux-xfs@vger.kernel.org
-Date:   Tue, 29 Aug 2023 18:58:47 -0400
-In-Reply-To: <20230829224454.GA461907@ZenIV>
-References: <20230725-mgctime-v6-0-a794c2b7abca@kernel.org>
-         <20230725-mgctime-v6-1-a794c2b7abca@kernel.org>
-         <20230829224454.GA461907@ZenIV>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
-MIME-Version: 1.0
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        Tue, 29 Aug 2023 19:06:09 -0400
+Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79CC41BF;
+        Tue, 29 Aug 2023 16:05:37 -0700 (PDT)
+Received: by nautica.notk.org (Postfix, from userid 108)
+        id EFDE8C023; Wed, 30 Aug 2023 01:05:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1693350335; bh=dQHdkT5Gp4NzAC/U19NudWM0qbVpz/0YzX6DXUrgrU8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XS4D5XU0wXBqa5VoXoKJqu7ZT3qrIwS0cTp+M8Bstdu1h55bk9CxOITynDdloV3Dm
+         UeVlL6si6gTbL//h1GUju0n9dZgGjCYtHunz+ZwhFhmzSi7nSnEm+/qJOIvTkJ1pxl
+         wwu96KMlOjdg1Xuj1DU05QK8B4JIvitma8cQ6A2N0xjq/B5wtb94QxBDvg4Mg/HemL
+         vLIkmL+aGpcFPnJ4QOp8GonouZ9SqcAbjmg+jXHiEJ/j5rP28+lLElfYSGo1RF4B/q
+         fR2+drhPF5vk6ddhOHttRrdNFhNdN4jwAFRn7QmHHXvFOc579eHAidqgZd13OdlAiq
+         Gq9qMztLDxY0Q==
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Received: from gaia (localhost [127.0.0.1])
+        by nautica.notk.org (Postfix) with ESMTPS id CB810C009;
+        Wed, 30 Aug 2023 01:05:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1693350334; bh=dQHdkT5Gp4NzAC/U19NudWM0qbVpz/0YzX6DXUrgrU8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Z8K02d90bU3sYHjw49onFq3FMgLLGv0QmiMPW43N2x2S26ncmvtmX+HBX9c+0MaSl
+         mtxekmDUFFLy26mN0DlHj1Urq0sKG7N93V2upft+EXuNvPHANDBu3DtLXQ+VB2ZRfC
+         eK2uy7RW6btEIkbjz9BU11u+/SWghJTAfMzl07fqhR+AmeBLITI2iJIfvJG7UO0nsr
+         +VTurKbqWkEvFLkDiuE7+oi1dDM0dMcJHAez3S6WBTvN61fNNd+IzNHtsAxDaMgP3n
+         E1/xa7VpfJJ/GQcSMBW2nTXXyGHZEEDVd+SFJD4b784h9WMQOjHcWl8cMyAmoOMYbV
+         mZnJ7AqkLmyFw==
+Received: from localhost (gaia [local])
+        by gaia (OpenSMTPD) with ESMTPA id 3031a51d;
+        Tue, 29 Aug 2023 23:05:22 +0000 (UTC)
+Date:   Wed, 30 Aug 2023 08:05:07 +0900
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Marco Elver <elver@google.com>
+Cc:     syzbot <syzbot+e441aeeb422763cc5511@syzkaller.appspotmail.com>,
+        davem@davemloft.net, edumazet@google.com, ericvh@kernel.org,
+        kuba@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux_oss@crudebyte.com,
+        lucho@ionkov.net, netdev@vger.kernel.org, pabeni@redhat.com,
+        syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev
+Subject: Re: [syzbot] [net?] [v9fs?] KCSAN: data-race in p9_fd_create /
+ p9_fd_create (2)
+Message-ID: <ZO55o4lE2rKO5AlI@codewreck.org>
+References: <000000000000d26ff606040c9719@google.com>
+ <ZO3PFO_OpNfBW7bd@codewreck.org>
+ <ZO38mqkS0TYUlpFp@elver.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZO38mqkS0TYUlpFp@elver.google.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2023-08-29 at 23:44 +0100, Al Viro wrote:
-> On Tue, Jul 25, 2023 at 10:58:14AM -0400, Jeff Layton wrote:
-> > generic_fillattr just fills in the entire stat struct indiscriminately
-> > today, copying data from the inode. There is at least one attribute
-> > (STATX_CHANGE_COOKIE) that can have side effects when it is reported,
-> > and we're looking at adding more with the addition of multigrain
-> > timestamps.
-> >=20
-> > Add a request_mask argument to generic_fillattr and have most callers
-> > just pass in the value that is passed to getattr. Have other callers
-> > (e.g. ksmbd) just pass in STATX_BASIC_STATS. Also move the setting of
-> > STATX_CHANGE_COOKIE into generic_fillattr.
->=20
-> Out of curiosity - how much PITA would it be to put request_mask into
-> kstat?  Set it in vfs_getattr_nosec() (and those get_file_..._info()
-> on smbd side) and don't bother with that kind of propagation boilerplate
-> - just have generic_fillattr() pick it there...
->=20
-> Reduces the patchset size quite a bit...
+Marco Elver wrote on Tue, Aug 29, 2023 at 04:11:38PM +0200:
+> On Tue, Aug 29, 2023 at 07:57PM +0900, Dominique Martinet wrote:
+> [...]
+> > Yes well that doesn't seem too hard to hit, both threads are just
+> > setting O_NONBLOCK to the same fd in parallel (0x800 is 04000,
+> > O_NONBLOCK)
+> > 
+> > I'm not quite sure why that'd be a problem; and I'm also pretty sure
+> > that wouldn't work anyway (9p has no muxing or anything that'd allow
+> > sharing the same fd between multiple mounts)
+> > 
+> > Can this be flagged "don't care" ?
+> 
+> If it's an intentional data race, it could be marked data_race() [1].
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/memory-model/Documentation/access-marking.txt
 
-It could be done. To do that right, I think we'd want to drop
-request_mask from the ->getattr prototype as well and just have
-everything use the mask in the kstat.
+Thanks!
 
-I don't think it'd reduce the size of the patchset in any meaningful
-way, but it might make for a more sensible API over the long haul.
---=20
-Jeff Layton <jlayton@kernel.org>
+> However, staring at this code for a bit, I wonder why the f_flags are
+> set on open, and not on initialization somewhere...
+
+This open is during the mount initialization (mount/p9_client_create,
+full path in the stack); there's no more initialization-ish code we
+have.
+The problem here is that we allow to pass any old arbitrary fd, so the
+user can open their fd how they want and abuse mount to use it on
+multiple mounts, even if that has no way of working (as I mentionned,
+there's no control flow at all -- you'll create two completely separate
+client state machines that'll both try to read and/or write (separate
+fds) on the same fd, and it'll all get jumbled up.
+> 
+> Anyway, a patch like the below would document that the data race is
+> intended and we assume that there is no way (famous last words) the
+> compiler or the CPU can mess it up (and KCSAN won't report it again).
+
+That's good enough for me as my position really is just "don't do
+that"... Would that also protect from syzcaller sending the fd to mount
+on one side, and calling fcntl(F_SETFL) on the side?
+At this rate we might as well just take the file's f_lock as setfl does,
+but perhaps there's a way to steal the fd from userspace somehow?
+
+It's not just "don't use this fd for another mount", it really is "don't
+use this fd anymore while it is used by a mount".
+
+This is made complicated that we only want to steal half of the fd, you
+could imagine a weird setup like this:
+
+ ┌────────────────────────────────────┐         ┌─────────────────┐
+ │                                    │         │                 │
+ │                                    │         │  kernel client  │
+ │   fd3 tcp to server                │         │                 │
+ │       write end  ◄─────────────────┼─────────┤                 │
+ │                                    │         │                 │
+ │       read end   ──┐               │         │                 │
+ │                    │               │         │                 │
+ │   fd4 pipeA        │ MITMing...    │         │                 │
+ │                    │               │         │                 │
+ │       write end  ◄─┘               │         │                 │
+ │                                    │         │                 │
+ │   fd5 pipeB                        │         │                 │
+ │                                    │         │                 │
+ │       read end  ───────────────────┼────────►│                 │
+ │                                    │         │                 │
+ │                                    │         │                 │
+ └────────────────────────────────────┘         └─────────────────┘
+
+I'm not sure we actually want to support something like that, but it's
+currently possible and making mount act like close() on the fd would
+break this... :|
+
+So, yeah, well; this is one of these "please don't do this" that
+syzcaller has no way of knowing about; it's good to test (please don't
+do this has no security guarantee so the kernel shouldn't blow up!),
+but if the only fallout is breakage then yeah data_race() is fine.
+
+Compilers and/or CPU might be able to blow this out of proportion, but
+hopefully they won't go around modifying another unrelated value in
+memory somewhere, and we do fdget so it shouldn't turn into a UAF, so I
+guess it's fine?... Just taking f_lock here won't solve anything and
+might give the impression we support concurrent uses.
+
+
+Sorry for rambling, and thanks for the patch; I'm not sure if Eric has
+anything planned for next cycle but either of us can take it and call it
+a day.
+-- 
+Dominique Martinet | Asmadeus
