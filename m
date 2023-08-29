@@ -2,116 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E784A78CC42
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Aug 2023 20:37:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4289078CC90
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Aug 2023 20:59:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238174AbjH2ShV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Aug 2023 14:37:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39104 "EHLO
+        id S238631AbjH2S6x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Aug 2023 14:58:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238314AbjH2ShQ (ORCPT
+        with ESMTP id S238613AbjH2S6d (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Aug 2023 14:37:16 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8111819A;
-        Tue, 29 Aug 2023 11:37:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1693334232; x=1724870232;
-  h=from:to:cc:subject:date:message-id;
-  bh=37xlcaOtL6KOTBNqSaqyUovRmlSDjWqMKlcT72bG2cc=;
-  b=FmjSVKC2d2avRLhqJ3lZ/lA/Tm5E9vtVfUZbES2jVlVemPMwxDtTK5wO
-   ywvsSqfJcuf9cEfb3G3ztwOn3/tbFZ9UzC5ARmPVA2gNVGr8O9iN5QeNN
-   uZ1OdHYtrFcdLNbUE061WfSLRBkiFsSqS7COC/tb7z08JdTnrcXrq+eQG
-   nxtrbyCuyR5TWPKh6eEKHuWMLAomSz76EwabV1qtp59mrCepPKPLi4GYT
-   hQCgwyqBsbcqLCRD5TUvwVFIGRbd89lrFjiCiNyiRUpc/L7C30dTqqOPu
-   Fp+U5004Pz4mRE3FHUtt9qxLQY9fUI7IJvwEtZ36Ju97O31jGxfIPCv42
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10817"; a="379213495"
-X-IronPort-AV: E=Sophos;i="6.02,211,1688454000"; 
-   d="scan'208";a="379213495"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2023 11:37:12 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10817"; a="715641490"
-X-IronPort-AV: E=Sophos;i="6.02,211,1688454000"; 
-   d="scan'208";a="715641490"
-Received: from leihuan1-mobl.amr.corp.intel.com (HELO localhost.localdomain.localdomain) ([10.92.27.231])
-  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2023 11:37:09 -0700
-From:   Lei Huang <lei.huang@linux.intel.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     lei.huang@linux.intel.com, miklos@szeredi.hu,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH v1] fs/fuse: Fix missing FOLL_PIN for direct-io
-Date:   Tue, 29 Aug 2023 14:36:33 -0400
-Message-Id: <1693334193-7733-1-git-send-email-lei.huang@linux.intel.com>
-X-Mailer: git-send-email 1.8.3.1
-X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+        Tue, 29 Aug 2023 14:58:33 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1781D7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Aug 2023 11:58:30 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id a640c23a62f3a-99c3c8adb27so594842166b.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Aug 2023 11:58:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1693335509; x=1693940309;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=XptbQaF/TmqMzXqMFitdSA+1Ea5JhH7OV4FqHHSEswk=;
+        b=MzOH9ntoAa4tre9LGFBbm0kW96r5U6m0Hbco+L7dUsgXWOvDQcwCIAeoavMJ8m0o8F
+         ycLlIzAUfuv54nMVhIvc3ZWLr8U3ITmw2eFLzswjLhhs9NiFEzn6u9ynWuCobMDrtaqq
+         9ZARfr6rUoH/mZ0FV3yft6KM0QmsdqImsO0Aw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1693335509; x=1693940309;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XptbQaF/TmqMzXqMFitdSA+1Ea5JhH7OV4FqHHSEswk=;
+        b=kDu2iTlLXh5s8gOM1NO3yaO9w2PUFBguPhnKmWci2MgP3whOgbmlX0C6dOWl6N9N5i
+         JfQ81U2vWpJ1iM7H6tOlsoHCYCYiCetuiP3ojKskjHc423DVNspOmSy4gdjYa5ylTWtr
+         cTBAn9l62PZFKLOrZsiOWQbCIA3ZJyRq/epCiLsHF+6Q7fNuPri5jfagOoilmZC8XqzI
+         Fl7qkUYdLBxRjFEKrcpODJNKdY2Uh3tzovrJ45Jy43q/vfawnKnktoPF5UR6ja2z4DhE
+         xV5N9DqI0YgPI4hTJVh2utk3rbq7FZrTrPE0Uf7cViTelHF9mgkmFZauk2QqwedSrYfI
+         q2aw==
+X-Gm-Message-State: AOJu0YyV3e2HjXnxxaeDC1t5FsGlgz9jm/oR7iNby11eHuBqL95PYS0o
+        ciEGEiOzA079diX93ikCPAre4dzn0mzPhikz/J2G3j8f
+X-Google-Smtp-Source: AGHT+IGMbKKAyyGgCLqTyvASnxAHHsm4u06FL4HBbBAn5TXl0wveCxh4JmFLCwl6VRMTK2XK1m0E+w==
+X-Received: by 2002:a17:907:a066:b0:9a2:200:b694 with SMTP id ia6-20020a170907a06600b009a20200b694mr12246537ejc.11.1693335509080;
+        Tue, 29 Aug 2023 11:58:29 -0700 (PDT)
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com. [209.85.208.43])
+        by smtp.gmail.com with ESMTPSA id y16-20020a1709064b1000b00992e94bcfabsm6206985eju.167.2023.08.29.11.58.28
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Aug 2023 11:58:28 -0700 (PDT)
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-52a069edca6so6586488a12.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Aug 2023 11:58:28 -0700 (PDT)
+X-Received: by 2002:a17:906:249:b0:9a1:cbe4:d033 with SMTP id
+ 9-20020a170906024900b009a1cbe4d033mr16078457ejl.53.1693335507850; Tue, 29 Aug
+ 2023 11:58:27 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230829103512.2245736-1-amir73il@gmail.com>
+In-Reply-To: <20230829103512.2245736-1-amir73il@gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 29 Aug 2023 11:58:11 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiVaYx8+S4KFK0h_PdvG_-WpTgUagTcmt70_13LbHas3g@mail.gmail.com>
+Message-ID: <CAHk-=wiVaYx8+S4KFK0h_PdvG_-WpTgUagTcmt70_13LbHas3g@mail.gmail.com>
+Subject: Re: [GIT PULL] overlayfs update for 6.6
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-unionfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Our user space filesystem relies on fuse to provide POSIX interface.
-In our test, a known string is written into a file and the content
-is read back later to verify correct data returned. We observed wrong
-data returned in read buffer in rare cases although correct data are
-stored in our filesystem.
+On Tue, 29 Aug 2023 at 03:35, Amir Goldstein <amir73il@gmail.com> wrote:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/overlayfs/vfs.git overlayfs-next
 
-Fuse kernel module calls iov_iter_get_pages2() to get the physical
-pages of the user-space read buffer passed in read(). The pages are
-not pinned to avoid page migration. When page migration occurs, the
-consequence are two-folds.
+Please send me a pull with signed tag, not a bare branch.
 
-1) Applications do not receive correct data in read buffer.
-2) fuse kernel writes data into a wrong place.
+I know you can do that, since you've done that before...
 
-Using iov_iter_extract_pages() to pin pages fixes the issue in our
-test.
-
-An auxiliary variable "struct page **pt_pages" is used in the patch
-to prepare the 2nd parameter for iov_iter_extract_pages() since
-iov_iter_get_pages2() uses a different type for the 2nd parameter.
-
-Signed-off-by: Lei Huang <lei.huang@linux.intel.com>
----
- fs/fuse/file.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
-
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index bc41152..715de3b 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -670,7 +670,7 @@ static void fuse_release_user_pages(struct fuse_args_pages *ap,
- 	for (i = 0; i < ap->num_pages; i++) {
- 		if (should_dirty)
- 			set_page_dirty_lock(ap->pages[i]);
--		put_page(ap->pages[i]);
-+		unpin_user_page(ap->pages[i]);
- 	}
- }
- 
-@@ -1428,10 +1428,13 @@ static int fuse_get_user_pages(struct fuse_args_pages *ap, struct iov_iter *ii,
- 	while (nbytes < *nbytesp && ap->num_pages < max_pages) {
- 		unsigned npages;
- 		size_t start;
--		ret = iov_iter_get_pages2(ii, &ap->pages[ap->num_pages],
--					*nbytesp - nbytes,
--					max_pages - ap->num_pages,
--					&start);
-+		struct page **pt_pages;
-+
-+		pt_pages = &ap->pages[ap->num_pages];
-+		ret = iov_iter_extract_pages(ii, &pt_pages,
-+					     *nbytesp - nbytes,
-+					     max_pages - ap->num_pages,
-+					     0, &start);
- 		if (ret < 0)
- 			break;
- 
--- 
-1.8.3.1
-
+               Linus
