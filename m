@@ -2,214 +2,354 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F30B578BD39
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Aug 2023 05:28:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18A4778BD6C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Aug 2023 06:02:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235174AbjH2D2I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Aug 2023 23:28:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36916 "EHLO
+        id S233804AbjH2EB1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Aug 2023 00:01:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38166 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234891AbjH2D16 (ORCPT
+        with ESMTP id S232310AbjH2EBY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Aug 2023 23:27:58 -0400
-Received: from mail-pl1-f207.google.com (mail-pl1-f207.google.com [209.85.214.207])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E848123
-        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Aug 2023 20:27:53 -0700 (PDT)
-Received: by mail-pl1-f207.google.com with SMTP id d9443c01a7336-1bf703dd21fso38235685ad.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Aug 2023 20:27:53 -0700 (PDT)
+        Tue, 29 Aug 2023 00:01:24 -0400
+Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69E2D185
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Aug 2023 21:01:21 -0700 (PDT)
+Received: by mail-pl1-x642.google.com with SMTP id d9443c01a7336-1bf11b1c7d0so32628615ad.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Aug 2023 21:01:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=smartx-com.20221208.gappssmtp.com; s=20221208; t=1693281681; x=1693886481;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vW2xZrgOBf7/lcfCHTYPKJqiFUoci6FDNrP7hA/F5mY=;
+        b=N4OjkWgHlNm2j+1sJQ/VfYSaViy1jFytlyQldIKp/1RVYyqLDfa9yHV/jsQU3l6nom
+         07Xnja18i+9oKhTgew9NY6am5zPtY0ZrMNPwbn9xv/Ko26wleErRFr//r1j6kxWQrZD+
+         elhQbaBTb2bWEPTgQn3v8SMtBpn+g9zI66kOZ6BmqO8K05ivfOwNmW+XgLSLzwPY2buE
+         NqCUSbLHQc7hrruuE/j73gdu1OQNy7QcobHfCbFFAlcuob3B4wrPbvotw144wSOlEbH/
+         vvDtZVJvU1oLwpc1w0TLiFNrE0qFzMXEM6DSDJZJnasJbGv4YLu5KUs0XMZMJQPDb0FX
+         JRMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693279672; x=1693884472;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yDPKTIwDlYvm7zzsU2/yOXQF9Xuxc0XNFTO/v4Pa4UQ=;
-        b=BZF4zYtmi6enyeSCeeEIOTfDtXNzkJWyrhGp7OS6undliGRrAH+dJSCCGKciN0Z0et
-         hYKbfzXkru50LOmsQU9ZIO9jp4GXSyQtYXTlzzExenjFmHdUwggIsZRO3OFeOjAHXmh/
-         pfwvh632Os4TGMc4Eb4CCAukp/I1AqWP9srQALYbXE2RvLGQ1TWnrmlIyVw8m9gRhuKV
-         PiLwkgj1tl0mSeWUHjmwaB/orX/ULytv22uBHzXn9viAiTqeYMjyiyxXCAb/QBZQ2Gfq
-         JNXsBdJSzn/crHJeNjpRhUvOo4B9iTzaJO2Xe96fsjtB5ZMOQvr6lN5AjlGF/uyu4Jo4
-         eU3Q==
-X-Gm-Message-State: AOJu0Yy2wwRB36B8fKbRSRNYvC4rrBI3E88EHzSAyCo1PGFM4/0MYpAx
-        RyvTR5Po4Z+z6Zy6rpgedzIbnPaZQObB5es5TqwPq4PF2sTb
-X-Google-Smtp-Source: AGHT+IGC/m3WZEZ4OM2rzqnGDS95J76gOa62+/mXiGZXFnedYUGD+7bFYEkt2PBg3CRxoh9WCL9aDIsSo6PbcSyZBgtgLJ8usXGi
+        d=1e100.net; s=20221208; t=1693281681; x=1693886481;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vW2xZrgOBf7/lcfCHTYPKJqiFUoci6FDNrP7hA/F5mY=;
+        b=WW5yZO+W5YowKtR7SmCMBdhyYUcSWgqIW8+HVanoU/7B1Xx7e+s5QFv2bQ08SWfMOO
+         sPNEUDD/wR0VBscFGeaxGpADocYxg6Jo/s4t9kLFSto/u4wyIqdKt8t4N9gBzF8Gc4td
+         VJo83+wKSu53L+3UUG7FMJhJ7SjlGDZ/ttMlXrvEQW+IrjlVuJCD+J6VzB2rCV6fAaKL
+         0FEtZ0GO/RXkNE8fWqj0Y8YdmZRh6LZk8TWWxNa11ZjCmQh/d+YKBn4DrUgRpozJ0xXY
+         d0ZR2Fup8n8HmA5MYZA4pn+54g2xN69D6DBGW+h+qgvRq6r007+BeiFhrsFcDaidGWbB
+         W1rQ==
+X-Gm-Message-State: AOJu0Yw3lGNWDpuqzewtDXqOkbA7A1IeKCV+363+9amgdK4TxUtWEWFF
+        /wi6b+eUrIHVghxpalhR7cL6Vg==
+X-Google-Smtp-Source: AGHT+IGWoGnsHFtszBF+Q8YxqB32W7pP7GM/+pMqWGPpzcZTlPbv9SDSMuD+nBTjjNKxZd3XIUYTZg==
+X-Received: by 2002:a17:90a:e2ce:b0:269:3757:54bb with SMTP id fr14-20020a17090ae2ce00b00269375754bbmr2123024pjb.11.1693281680391;
+        Mon, 28 Aug 2023 21:01:20 -0700 (PDT)
+Received: from nixos.tailf4e9e.ts.net ([8.210.91.195])
+        by smtp.googlemail.com with ESMTPSA id a6-20020a17090a008600b00268188ea4b9sm8551079pja.19.2023.08.28.21.01.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Aug 2023 21:01:20 -0700 (PDT)
+From:   Xueshi Hu <xueshi.hu@smartx.com>
+To:     hch@infradead.org, dan.j.williams@intel.com,
+        vishal.l.verma@intel.com, dave.jiang@intel.com,
+        jayalk@intworks.biz, daniel@ffwll.ch, deller@gmx.de,
+        bcrl@kvack.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
+        jack@suse.com, tytso@mit.edu, adilger.kernel@dilger.ca,
+        miklos@szeredi.hu, mike.kravetz@oracle.com, muchun.song@linux.dev,
+        djwong@kernel.org, willy@infradead.org, akpm@linux-foundation.org,
+        hughd@google.com
+Cc:     nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-mm@kvack.org, linux-xfs@vger.kernel.org,
+        Xueshi Hu <xueshi.hu@smartx.com>, Jan Kara <jack@suse.cz>,
+        Christoph Hellwig <hch@lst.de>
+Subject: [PATCH v3] fs: clean up usage of noop_dirty_folio
+Date:   Tue, 29 Aug 2023 12:00:29 +0800
+Message-Id: <20230829040029.473810-1-xueshi.hu@smartx.com>
+X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
-X-Received: by 2002:a17:903:1d2:b0:1bd:e2ba:83d9 with SMTP id
- e18-20020a17090301d200b001bde2ba83d9mr9993560plh.7.1693279672666; Mon, 28 Aug
- 2023 20:27:52 -0700 (PDT)
-Date:   Mon, 28 Aug 2023 20:27:52 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000006512230604076562@google.com>
-Subject: [syzbot] [btrfs?] KASAN: use-after-free Read in btrfs_test_super
-From:   syzbot <syzbot+65bb53688b6052f09c28@syzkaller.appspotmail.com>
-To:     clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        terrelln@fb.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+In folio_mark_dirty(), it can automatically fallback to
+noop_dirty_folio() if a_ops->dirty_folio is not registered.
 
-syzbot found the following issue on:
+In anon_aops, dev_dax_aops and fb_deferred_io_aops, replacing .dirty_folio
+with NULL makes them identical to default (empty_aops) and since we never
+compare ->a_ops pointer with either of those, we can remove them
+completely.
 
-HEAD commit:    626932085009 Add linux-next specific files for 20230825
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=15b1c0c0680000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8a8c992a790e5073
-dashboard link: https://syzkaller.appspot.com/bug?extid=65bb53688b6052f09c28
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=126ab89fa80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10c9371fa80000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/46ec18b3c2fb/disk-62693208.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/b4ea0cb78498/vmlinux-62693208.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/5fb3938c7272/bzImage-62693208.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/29599ed4793a/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+65bb53688b6052f09c28@syzkaller.appspotmail.com
-
-loop0: detected capacity change from 0 to 32768
-BTRFS: device fsid d552757d-9c39-40e3-95f0-16d819589928 devid 1 transid 8 /dev/loop0 scanned by syz-executor324 (6049)
-==================================================================
-BUG: KASAN: use-after-free in btrfs_test_super+0x9b/0xa0 fs/btrfs/super.c:1348
-Read of size 8 at addr ffff88807812d110 by task syz-executor324/6049
-
-CPU: 0 PID: 6049 Comm: syz-executor324 Not tainted 6.5.0-rc7-next-20230825-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/26/2023
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xd9/0x1b0 lib/dump_stack.c:106
- print_address_description mm/kasan/report.c:364 [inline]
- print_report+0xc4/0x620 mm/kasan/report.c:475
- kasan_report+0xda/0x110 mm/kasan/report.c:588
- btrfs_test_super+0x9b/0xa0 fs/btrfs/super.c:1348
- sget+0x3de/0x610 fs/super.c:861
- btrfs_mount_root+0x692/0xdd0 fs/btrfs/super.c:1508
- legacy_get_tree+0x109/0x220 fs/fs_context.c:638
- vfs_get_tree+0x8c/0x370 fs/super.c:1713
- fc_mount fs/namespace.c:1112 [inline]
- vfs_kern_mount.part.0+0xcb/0x170 fs/namespace.c:1142
- vfs_kern_mount+0x3f/0x60 fs/namespace.c:1129
- btrfs_mount+0x292/0xb10 fs/btrfs/super.c:1585
- legacy_get_tree+0x109/0x220 fs/fs_context.c:638
- vfs_get_tree+0x8c/0x370 fs/super.c:1713
- do_new_mount fs/namespace.c:3335 [inline]
- path_mount+0x1492/0x1ed0 fs/namespace.c:3662
- do_mount fs/namespace.c:3675 [inline]
- __do_sys_mount fs/namespace.c:3884 [inline]
- __se_sys_mount fs/namespace.c:3861 [inline]
- __x64_sys_mount+0x293/0x310 fs/namespace.c:3861
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x38/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f4920f7088a
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 3e 06 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f4920f29088 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 00007f4920f7088a
-RDX: 00000000200055c0 RSI: 0000000020005600 RDI: 00007f4920f290a0
-RBP: 00007f4920f290a0 R08: 00007f4920f290e0 R09: 00000000000055a2
-R10: 0000000000000000 R11: 0000000000000282 R12: 00007f4920f290e0
-R13: 0000000000000000 R14: 0000000000000003 R15: 0000000001000000
- </TASK>
-
-The buggy address belongs to the physical page:
-page:ffffea0001e04b40 refcount:0 mapcount:0 mapping:0000000000000000 index:0x400000000 pfn:0x7812d
-flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
-page_type: 0xffffffff()
-raw: 00fff00000000000 0000000000000000 dead000000000122 0000000000000000
-raw: 0000000400000000 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as freed
-page last allocated via order 2, migratetype Unmovable, gfp_mask 0x152dc0(GFP_USER|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_ZERO), pid 6045, tgid 6043 (syz-executor324), ts 596852111149, free_ts 598062789716
- set_page_owner include/linux/page_owner.h:31 [inline]
- post_alloc_hook+0x2cf/0x340 mm/page_alloc.c:1530
- prep_new_page mm/page_alloc.c:1537 [inline]
- get_page_from_freelist+0xf17/0x2e50 mm/page_alloc.c:3200
- __alloc_pages+0x1d0/0x4a0 mm/page_alloc.c:4456
- __alloc_pages_node include/linux/gfp.h:237 [inline]
- alloc_pages_node include/linux/gfp.h:260 [inline]
- __kmalloc_large_node+0x87/0x1c0 mm/slab_common.c:1164
- __do_kmalloc_node mm/slab_common.c:1011 [inline]
- __kmalloc_node.cold+0x5/0xdd mm/slab_common.c:1030
- kmalloc_node include/linux/slab.h:619 [inline]
- kvmalloc_node+0x6f/0x1a0 mm/util.c:607
- kvmalloc include/linux/slab.h:737 [inline]
- kvzalloc include/linux/slab.h:745 [inline]
- btrfs_mount_root+0x130/0xdd0 fs/btrfs/super.c:1466
- legacy_get_tree+0x109/0x220 fs/fs_context.c:638
- vfs_get_tree+0x8c/0x370 fs/super.c:1713
- fc_mount fs/namespace.c:1112 [inline]
- vfs_kern_mount.part.0+0xcb/0x170 fs/namespace.c:1142
- vfs_kern_mount+0x3f/0x60 fs/namespace.c:1129
- btrfs_mount+0x292/0xb10 fs/btrfs/super.c:1585
- legacy_get_tree+0x109/0x220 fs/fs_context.c:638
- vfs_get_tree+0x8c/0x370 fs/super.c:1713
- do_new_mount fs/namespace.c:3335 [inline]
- path_mount+0x1492/0x1ed0 fs/namespace.c:3662
- do_mount fs/namespace.c:3675 [inline]
- __do_sys_mount fs/namespace.c:3884 [inline]
- __se_sys_mount fs/namespace.c:3861 [inline]
- __x64_sys_mount+0x293/0x310 fs/namespace.c:3861
-page last free stack trace:
- reset_page_owner include/linux/page_owner.h:24 [inline]
- free_pages_prepare mm/page_alloc.c:1130 [inline]
- free_unref_page_prepare+0x476/0xa40 mm/page_alloc.c:2342
- free_unref_page+0x33/0x3b0 mm/page_alloc.c:2435
- kvfree+0x47/0x50 mm/util.c:653
- deactivate_locked_super+0xa0/0x2d0 fs/super.c:454
- deactivate_super+0xde/0x100 fs/super.c:504
- cleanup_mnt+0x222/0x3d0 fs/namespace.c:1254
- task_work_run+0x14d/0x240 kernel/task_work.c:179
- resume_user_mode_work include/linux/resume_user_mode.h:49 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:171 [inline]
- exit_to_user_mode_prepare+0x210/0x240 kernel/entry/common.c:204
- __syscall_exit_to_user_mode_work kernel/entry/common.c:285 [inline]
- syscall_exit_to_user_mode+0x1d/0x60 kernel/entry/common.c:296
- do_syscall_64+0x44/0xb0 arch/x86/entry/common.c:86
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
-Memory state around the buggy address:
- ffff88807812d000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
- ffff88807812d080: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
->ffff88807812d100: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-                         ^
- ffff88807812d180: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
- ffff88807812d200: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-==================================================================
-
-
+Acked-by: Al Viro <viro@zeniv.linux.org.uk>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Xueshi Hu <xueshi.hu@smartx.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Changes in v3:
+- correct the rationale of removal three empty aops
+- v2: https://lore.kernel.org/linux-mm/20230828144242.GZ3390869@ZenIV/T/#t
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Changes in v2:
+- make noop_dirty_folio() inline as suggested by Matthew
+- v1: https://lore.kernel.org/linux-mm/ZOxAfrz9etoVUfLQ@infradead.org/T/#m073d45909b1df03ff09f382557dc4e84d0607c49
 
-If the bug is already fixed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+ drivers/dax/device.c                |  5 -----
+ drivers/video/fbdev/core/fb_defio.c |  5 -----
+ fs/aio.c                            |  1 -
+ fs/ext2/inode.c                     |  1 -
+ fs/ext4/inode.c                     |  1 -
+ fs/fuse/dax.c                       |  1 -
+ fs/hugetlbfs/inode.c                |  1 -
+ fs/libfs.c                          |  5 -----
+ fs/xfs/xfs_aops.c                   |  1 -
+ include/linux/pagemap.h             |  1 -
+ mm/page-writeback.c                 | 18 +++++-------------
+ mm/secretmem.c                      |  1 -
+ mm/shmem.c                          |  1 -
+ mm/swap_state.c                     |  1 -
+ 14 files changed, 5 insertions(+), 38 deletions(-)
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+diff --git a/drivers/dax/device.c b/drivers/dax/device.c
+index 30665a3ff6ea..018aa9f88ec7 100644
+--- a/drivers/dax/device.c
++++ b/drivers/dax/device.c
+@@ -345,10 +345,6 @@ static unsigned long dax_get_unmapped_area(struct file *filp,
+ 	return current->mm->get_unmapped_area(filp, addr, len, pgoff, flags);
+ }
+ 
+-static const struct address_space_operations dev_dax_aops = {
+-	.dirty_folio	= noop_dirty_folio,
+-};
+-
+ static int dax_open(struct inode *inode, struct file *filp)
+ {
+ 	struct dax_device *dax_dev = inode_dax(inode);
+@@ -358,7 +354,6 @@ static int dax_open(struct inode *inode, struct file *filp)
+ 	dev_dbg(&dev_dax->dev, "trace\n");
+ 	inode->i_mapping = __dax_inode->i_mapping;
+ 	inode->i_mapping->host = __dax_inode;
+-	inode->i_mapping->a_ops = &dev_dax_aops;
+ 	filp->f_mapping = inode->i_mapping;
+ 	filp->f_wb_err = filemap_sample_wb_err(filp->f_mapping);
+ 	filp->f_sb_err = file_sample_sb_err(filp);
+diff --git a/drivers/video/fbdev/core/fb_defio.c b/drivers/video/fbdev/core/fb_defio.c
+index 274f5d0fa247..08be3592281f 100644
+--- a/drivers/video/fbdev/core/fb_defio.c
++++ b/drivers/video/fbdev/core/fb_defio.c
+@@ -221,10 +221,6 @@ static const struct vm_operations_struct fb_deferred_io_vm_ops = {
+ 	.page_mkwrite	= fb_deferred_io_mkwrite,
+ };
+ 
+-static const struct address_space_operations fb_deferred_io_aops = {
+-	.dirty_folio	= noop_dirty_folio,
+-};
+-
+ int fb_deferred_io_mmap(struct fb_info *info, struct vm_area_struct *vma)
+ {
+ 	vma->vm_ops = &fb_deferred_io_vm_ops;
+@@ -307,7 +303,6 @@ void fb_deferred_io_open(struct fb_info *info,
+ {
+ 	struct fb_deferred_io *fbdefio = info->fbdefio;
+ 
+-	file->f_mapping->a_ops = &fb_deferred_io_aops;
+ 	fbdefio->open_count++;
+ }
+ EXPORT_SYMBOL_GPL(fb_deferred_io_open);
+diff --git a/fs/aio.c b/fs/aio.c
+index 77e33619de40..4cf386f9cb1c 100644
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -484,7 +484,6 @@ static int aio_migrate_folio(struct address_space *mapping, struct folio *dst,
+ #endif
+ 
+ static const struct address_space_operations aio_ctx_aops = {
+-	.dirty_folio	= noop_dirty_folio,
+ 	.migrate_folio	= aio_migrate_folio,
+ };
+ 
+diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
+index 75983215c7a1..ce191bdf1c78 100644
+--- a/fs/ext2/inode.c
++++ b/fs/ext2/inode.c
+@@ -971,7 +971,6 @@ const struct address_space_operations ext2_aops = {
+ static const struct address_space_operations ext2_dax_aops = {
+ 	.writepages		= ext2_dax_writepages,
+ 	.direct_IO		= noop_direct_IO,
+-	.dirty_folio		= noop_dirty_folio,
+ };
+ 
+ /*
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 43775a6ca505..67c1710c01b0 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -3561,7 +3561,6 @@ static const struct address_space_operations ext4_da_aops = {
+ static const struct address_space_operations ext4_dax_aops = {
+ 	.writepages		= ext4_dax_writepages,
+ 	.direct_IO		= noop_direct_IO,
+-	.dirty_folio		= noop_dirty_folio,
+ 	.bmap			= ext4_bmap,
+ 	.swap_activate		= ext4_iomap_swap_activate,
+ };
+diff --git a/fs/fuse/dax.c b/fs/fuse/dax.c
+index 8e74f278a3f6..50ca767cbd5e 100644
+--- a/fs/fuse/dax.c
++++ b/fs/fuse/dax.c
+@@ -1326,7 +1326,6 @@ bool fuse_dax_inode_alloc(struct super_block *sb, struct fuse_inode *fi)
+ static const struct address_space_operations fuse_dax_file_aops  = {
+ 	.writepages	= fuse_dax_writepages,
+ 	.direct_IO	= noop_direct_IO,
+-	.dirty_folio	= noop_dirty_folio,
+ };
+ 
+ static bool fuse_should_enable_dax(struct inode *inode, unsigned int flags)
+diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+index 7b17ccfa039d..5404286f0c13 100644
+--- a/fs/hugetlbfs/inode.c
++++ b/fs/hugetlbfs/inode.c
+@@ -1266,7 +1266,6 @@ static void hugetlbfs_destroy_inode(struct inode *inode)
+ static const struct address_space_operations hugetlbfs_aops = {
+ 	.write_begin	= hugetlbfs_write_begin,
+ 	.write_end	= hugetlbfs_write_end,
+-	.dirty_folio	= noop_dirty_folio,
+ 	.migrate_folio  = hugetlbfs_migrate_folio,
+ 	.error_remove_page	= hugetlbfs_error_remove_page,
+ };
+diff --git a/fs/libfs.c b/fs/libfs.c
+index 5b851315eeed..982f220a9ee3 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -627,7 +627,6 @@ const struct address_space_operations ram_aops = {
+ 	.read_folio	= simple_read_folio,
+ 	.write_begin	= simple_write_begin,
+ 	.write_end	= simple_write_end,
+-	.dirty_folio	= noop_dirty_folio,
+ };
+ EXPORT_SYMBOL(ram_aops);
+ 
+@@ -1231,16 +1230,12 @@ EXPORT_SYMBOL(kfree_link);
+ 
+ struct inode *alloc_anon_inode(struct super_block *s)
+ {
+-	static const struct address_space_operations anon_aops = {
+-		.dirty_folio	= noop_dirty_folio,
+-	};
+ 	struct inode *inode = new_inode_pseudo(s);
+ 
+ 	if (!inode)
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	inode->i_ino = get_next_ino();
+-	inode->i_mapping->a_ops = &anon_aops;
+ 
+ 	/*
+ 	 * Mark the inode dirty from the very beginning,
+diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+index 451942fb38ec..300acea9ee63 100644
+--- a/fs/xfs/xfs_aops.c
++++ b/fs/xfs/xfs_aops.c
+@@ -590,6 +590,5 @@ const struct address_space_operations xfs_address_space_operations = {
+ 
+ const struct address_space_operations xfs_dax_aops = {
+ 	.writepages		= xfs_dax_writepages,
+-	.dirty_folio		= noop_dirty_folio,
+ 	.swap_activate		= xfs_iomap_swapfile_activate,
+ };
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index 716953ee1ebd..9de3be51dee2 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -1074,7 +1074,6 @@ bool folio_clear_dirty_for_io(struct folio *folio);
+ bool clear_page_dirty_for_io(struct page *page);
+ void folio_invalidate(struct folio *folio, size_t offset, size_t length);
+ int __set_page_dirty_nobuffers(struct page *page);
+-bool noop_dirty_folio(struct address_space *mapping, struct folio *folio);
+ 
+ #ifdef CONFIG_MIGRATION
+ int filemap_migrate_folio(struct address_space *mapping, struct folio *dst,
+diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+index d3f42009bb70..d2d739109bfe 100644
+--- a/mm/page-writeback.c
++++ b/mm/page-writeback.c
+@@ -2585,17 +2585,6 @@ int do_writepages(struct address_space *mapping, struct writeback_control *wbc)
+ 	return ret;
+ }
+ 
+-/*
+- * For address_spaces which do not use buffers nor write back.
+- */
+-bool noop_dirty_folio(struct address_space *mapping, struct folio *folio)
+-{
+-	if (!folio_test_dirty(folio))
+-		return !folio_test_set_dirty(folio);
+-	return false;
+-}
+-EXPORT_SYMBOL(noop_dirty_folio);
+-
+ /*
+  * Helper function for set_page_dirty family.
+  *
+@@ -2799,10 +2788,13 @@ bool folio_mark_dirty(struct folio *folio)
+ 		 */
+ 		if (folio_test_reclaim(folio))
+ 			folio_clear_reclaim(folio);
+-		return mapping->a_ops->dirty_folio(mapping, folio);
++		if (mapping->a_ops->dirty_folio)
++			return mapping->a_ops->dirty_folio(mapping, folio);
+ 	}
+ 
+-	return noop_dirty_folio(mapping, folio);
++	if (!folio_test_dirty(folio))
++		return !folio_test_set_dirty(folio);
++	return false;
+ }
+ EXPORT_SYMBOL(folio_mark_dirty);
+ 
+diff --git a/mm/secretmem.c b/mm/secretmem.c
+index 86442a15d12f..3fe1c35f9c8d 100644
+--- a/mm/secretmem.c
++++ b/mm/secretmem.c
+@@ -157,7 +157,6 @@ static void secretmem_free_folio(struct folio *folio)
+ }
+ 
+ const struct address_space_operations secretmem_aops = {
+-	.dirty_folio	= noop_dirty_folio,
+ 	.free_folio	= secretmem_free_folio,
+ 	.migrate_folio	= secretmem_migrate_folio,
+ };
+diff --git a/mm/shmem.c b/mm/shmem.c
+index d963c747dabc..9bdef68a088a 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -4090,7 +4090,6 @@ static int shmem_error_remove_page(struct address_space *mapping,
+ 
+ const struct address_space_operations shmem_aops = {
+ 	.writepage	= shmem_writepage,
+-	.dirty_folio	= noop_dirty_folio,
+ #ifdef CONFIG_TMPFS
+ 	.write_begin	= shmem_write_begin,
+ 	.write_end	= shmem_write_end,
+diff --git a/mm/swap_state.c b/mm/swap_state.c
+index f8ea7015bad4..3666439487db 100644
+--- a/mm/swap_state.c
++++ b/mm/swap_state.c
+@@ -30,7 +30,6 @@
+  */
+ static const struct address_space_operations swap_aops = {
+ 	.writepage	= swap_writepage,
+-	.dirty_folio	= noop_dirty_folio,
+ #ifdef CONFIG_MIGRATION
+ 	.migrate_folio	= migrate_folio,
+ #endif
+-- 
+2.40.1
 
-If you want to overwrite bug's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the bug is a duplicate of another bug, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
