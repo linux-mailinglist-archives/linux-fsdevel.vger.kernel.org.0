@@ -2,156 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 06BC378DA9E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Aug 2023 20:37:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C185F78DBC9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Aug 2023 20:46:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234772AbjH3Sgo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Aug 2023 14:36:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33992 "EHLO
+        id S231381AbjH3Shl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Aug 2023 14:37:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53938 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244305AbjH3M4k (ORCPT
+        with ESMTP id S244314AbjH3M5q (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Aug 2023 08:56:40 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAC96185
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Aug 2023 05:55:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1693400151;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=8gj/kkqvSdBg9gM5suDHTT489MFnXm9/ZuicaQfNNO8=;
-        b=gV0IejqFPwpStIz3h9tTxYRymSUU+WqvHHTzdP5ionH7rPnGH8Es8lGUCsgoMcp1DS3e37
-        OnYbYcJyKuZ7Z0AwljHw1eLU8s8FntzvKzTPvSeb+Beao6OoSiNKjnDboHgKMo9GKvjJAi
-        luveaYWGTwTmKVBNke4rFGU1WJzm89w=
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com
- [209.85.210.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-227-u5K3rIi5NbyWT_QGd5PolQ-1; Wed, 30 Aug 2023 08:55:49 -0400
-X-MC-Unique: u5K3rIi5NbyWT_QGd5PolQ-1
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-68bec515fa9so6766172b3a.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Aug 2023 05:55:49 -0700 (PDT)
+        Wed, 30 Aug 2023 08:57:46 -0400
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F7CF185
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Aug 2023 05:57:19 -0700 (PDT)
+Received: by mail-pl1-x62d.google.com with SMTP id d9443c01a7336-1c0ecb9a075so23528195ad.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Aug 2023 05:57:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1693400239; x=1694005039; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dtd6q3SyxBvaZmQAvE8P+QtZVZRCjxwa7BoiOx4Ow2A=;
+        b=hXcYwd19n0oHlzatNp4OoAc9g+V+yogC6I0LGKFx/Mh/qFYIBfg0navOsaPrr2/Bwe
+         DwwOlGRaHQU9Tl7prr4Q0u4zjsubk3TYs6duoWEsqibWe3rCT39pvnzvxyw5+5qxCrTD
+         d+kxtTa2Ws5FpmUAS863F5h4NDx6nzaPMN6F5EscaWybPVkmTp9d6vkSq2oBzp7gG1Bs
+         9OoJXae9XkpnJ9t73GxwRk79qkbvjXTxy/6Fq+nc9MzwxAP8+4CNfLOxzLKY3nStnt7m
+         wpRRmwl9uGYmFA+kPTGmaZeyf4DQQI6gZGSwm+DjcEBgLTJ170ZK/hEz5JqnMjwREDbu
+         uhtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693400148; x=1694004948;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8gj/kkqvSdBg9gM5suDHTT489MFnXm9/ZuicaQfNNO8=;
-        b=MP0nPSZl/IlgbX7C5xZZtf4y+jrQTzJFUFLwJNJoXeqBKPVzonP0W2V15nS+0mnVkc
-         9B5EDYJt6KvyNzGIUMsQX9tXZ/sxe1sWzeXDN+VLloyWAYoVkUYvqjO+J6LylusIZF0B
-         9Stc/lTrNxcnzNIesalnvGuHZ62GRNe/S6Qi7om1BJfwwbCWXplaiIHszfpM4vP5DWq1
-         F4aBY3LuTw8KTrdzLyZmMr6WtwzDHrG3aTYIxWeE/Sm4yJA1hnSknpAjk7XXtULn5/zj
-         joskvEl36iWkQz7Gfqc+aWYNWJm64DXr5dTtPTubh0wvNTDRL1f+71V+0924SD2ttoXo
-         FguQ==
-X-Gm-Message-State: AOJu0YxaxULsTd1HmroObQgsalrJVeIeXLkly+I9OWvJS+6cZzReR5qM
-        kYWicxWPYh6JSJZP/GFH09Fb3VVvbgdUyK4R4e6zcKe/nQa0ewz0N2Rs71/nNiMrOLu3yzQn+F2
-        +TzjAMjwrCR6GVpdYXHWu7v0HpQ==
-X-Received: by 2002:a05:6a00:1393:b0:68c:57c7:1eb0 with SMTP id t19-20020a056a00139300b0068c57c71eb0mr2442350pfg.11.1693400148619;
-        Wed, 30 Aug 2023 05:55:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH4YJ5wmCeyn5temyXgtN3k4eROEzFKu80i/MWNBecBpVdA9/skK+WmoR79XsCIkWrmc56ang==
-X-Received: by 2002:a05:6a00:1393:b0:68c:57c7:1eb0 with SMTP id t19-20020a056a00139300b0068c57c71eb0mr2442339pfg.11.1693400148367;
-        Wed, 30 Aug 2023 05:55:48 -0700 (PDT)
-Received: from zlang-mailbox ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id ey20-20020a056a0038d400b006877ec47f82sm10094700pfb.66.2023.08.30.05.55.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Aug 2023 05:55:47 -0700 (PDT)
-Date:   Wed, 30 Aug 2023 20:55:44 +0800
-From:   Zorro Lang <zlang@redhat.com>
-To:     Yongcheng Yang <yoyang@redhat.com>
-Cc:     fstests@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH fstests v3 2/2] generic/578: add a check to ensure that
- fiemap is supported
-Message-ID: <20230830125544.chmzf5trejj4tppz@zlang-mailbox>
-References: <20230825-fixes-v3-0-6484c098f8e8@kernel.org>
- <20230825-fixes-v3-2-6484c098f8e8@kernel.org>
- <ZO6vh5+ZLdLSFbB7@yoyang-vm.hosts.qa.psi.pek2.redhat.com>
+        d=1e100.net; s=20221208; t=1693400239; x=1694005039;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dtd6q3SyxBvaZmQAvE8P+QtZVZRCjxwa7BoiOx4Ow2A=;
+        b=Z7wGITtjR3kOW0pQy+z/Wmt4P1aW+eZ+3V9w88oFtK92eKxbwq6kc5aT6ekJsSTrUO
+         46SHMeY53VeZBqZXN8gm33wwaHSxy8Lm4ea/gxjCsQtf8sk1Bu0j8WcU0QNs7sOqfC+L
+         Ta8RL7jLIx+jzQy4dObCw5sncW2od8IlJGMnD+kOWaqU7Qas0mRJF3hleDCor+L7zdvY
+         AnB82z8fofe6buAoT4owKsgApysRuaXVXLZYw6qfN/Jbz7tCoSugnyFMeqTDjX8SfR5i
+         niwjobikGpF+3Yd5mNbIig0GpyxROFYOwCDVKuZS6s/K+AVd1q1mfm23qCXw/A15DcTY
+         nyag==
+X-Gm-Message-State: AOJu0Yz5qO9W4c22Mh1NBS8nlRkgoZi8cE0JEwZh2CUD41Qb2pbz/VH4
+        /jHHLtHK/b7x+33sjjRUYxdRmQ==
+X-Google-Smtp-Source: AGHT+IGKPuYQWBKa1a4+1P4c5NUAY3fS0w+iEhxnmdtT4j9dZZVQZKmRW9OE8TVjanTCPupqydzJDg==
+X-Received: by 2002:a17:903:110d:b0:1bf:6c4e:4d60 with SMTP id n13-20020a170903110d00b001bf6c4e4d60mr2040423plh.3.1693400238850;
+        Wed, 30 Aug 2023 05:57:18 -0700 (PDT)
+Received: from GL4FX4PXWL.bytedance.net ([139.177.225.247])
+        by smtp.gmail.com with ESMTPSA id iw1-20020a170903044100b001bbd8cf6b57sm11023265plb.230.2023.08.30.05.57.12
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 30 Aug 2023 05:57:18 -0700 (PDT)
+From:   Peng Zhang <zhangpeng.00@bytedance.com>
+To:     Liam.Howlett@oracle.com, corbet@lwn.net, akpm@linux-foundation.org,
+        willy@infradead.org, brauner@kernel.org, surenb@google.com,
+        michael.christie@oracle.com, peterz@infradead.org,
+        mathieu.desnoyers@efficios.com, npiggin@gmail.com, avagin@gmail.com
+Cc:     linux-mm@kvack.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Peng Zhang <zhangpeng.00@bytedance.com>
+Subject: [PATCH v2 0/6] Introduce __mt_dup() to improve the performance of fork()
+Date:   Wed, 30 Aug 2023 20:56:48 +0800
+Message-Id: <20230830125654.21257-1-zhangpeng.00@bytedance.com>
+X-Mailer: git-send-email 2.37.0 (Apple Git-136)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZO6vh5+ZLdLSFbB7@yoyang-vm.hosts.qa.psi.pek2.redhat.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 30, 2023 at 10:55:03AM +0800, Yongcheng Yang wrote:
-> Hi Zorro,
-> 
-> Can we assume all the FIEMAP tests need this check first?
-> If so, there are some others need the same patch.
-> 
-> I.e.
-> [yoyang@yoyang-vm xfstests-dev]$ grep url .git/config
->         url = git://git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git
-> [yoyang@yoyang-vm xfstests-dev]$ git pl
-> Already up to date.
-> [yoyang@yoyang-vm xfstests-dev]$ git grep _begin_fstest tests/ | grep fiemap | wc -l
-> 101
-> [yoyang@yoyang-vm xfstests-dev]$ git grep _require_xfs_io_command tests/ | grep fiemap | wc -l
-> 86
-> [yoyang@yoyang-vm xfstests-dev]$
+In the process of duplicating mmap in fork(), VMAs will be inserted into the new
+maple tree one by one. When inserting into the maple tree, the maple tree will
+be rebalanced multiple times. The rebalancing of maple tree is not as fast as
+the rebalancing of red-black tree and will be slower. Therefore, __mt_dup() is
+introduced to directly duplicate the structure of the old maple tree, and then
+modify each element of the new maple tree. This avoids rebalancing and some extra
+copying, so is faster than the original method.
+More information can refer to [1].
 
-Hi Yongcheng,
+There is a "spawn" in byte-unixbench[2], which can be used to test the performance
+of fork(). I modified it slightly to make it work with different number of VMAs.
 
-Thanks for taking attention on it. 101 - 86 = 15, let's check these 15 cases
-one by one:
+Below are the test numbers. There are 21 VMAs by default. The first row indicates
+the number of added VMAs. The following two lines are the number of fork() calls
+every 10 seconds. These numbers are different from the test results in v1 because
+this time the benchmark is bound to a CPU. This way the numbers are more stable.
 
-[zorro@zlang-laptop xfstests-dev]$ for i in `egrep -rsnl _begin_fstest.*fiemap tests`;do grep -q $i < <(egrep -rsnl _require_xfs_io_command.*fiemap tests) || echo $i;done
-tests/btrfs/079
-tests/btrfs/140
-tests/btrfs/004
-tests/ext4/001
-tests/ext4/308
-tests/generic/655
-tests/generic/654
-tests/generic/578
-tests/generic/541
-tests/generic/542
-tests/generic/516
-tests/generic/519
-tests/generic/540
-tests/generic/543
-tests/overlay/066
+  Increment of VMAs: 0      100     200     400     800     1600    3200    6400
+6.5.0-next-20230829: 111878 75531   53683   35282   20741   11317   6110    3158
+Apply this patchset: 114531 85420   64541   44592   28660   16371   9038    4831
+                     +2.37% +13.09% +20.23% +26.39% +38.18% +44.66% +47.92% +52.98%
 
-btrfs/079: It doesn't use fiemap direclty, it use filefrag command to trigger
-           fiemap (if support). If FIEMAP is not supported then filefrag will
-	   fall back to using FIBMAP. So it's not necessary to _notrun this case
-	   if FIEMAP isn't supported I think.
-btrfs/140: Similar as above
-btrfs/004: Similar as above
-ext4/001:  It use fiemap through _test_generic_punch helper, so I think it should
-	   has "_require_xfs_io_command fiemap"
-ext4/308:  I think it missed the `_require_xfs_io_command fiemap`
-g/655:     It doesn't use fiemap, but use filefrag. And filefrag will fall back to
-           FIBMAP, if FIEMAP isn't supported.
-g/654:     Similar as above
-g/578:     Similar as above
-g/541:	   Similar as above
-g/542:	   Similar as above
-g/516:	   Similar as above
-g/519:	   Similar as above
-g/540:	   Similar as above
-g/543:	   Similar as above
-overlay/066: Similar as above
+Todo:
+  - Update the documentation.
 
-(If anything I said above is wrong, feel free to tell me:)
+Changes since v1:
+ - Reimplement __mt_dup() and mtree_dup(). Loops are implemented without using
+   goto instructions.
+ - The new tree also needs to be locked to avoid some lockdep warnings.
+ - Drop and add some helpers.
+ - Add test for duplicating full tree.
+ - Drop mas_replace_entry(), it doesn't seem to have a big impact on the
+   performance of fork().
 
-So I think ext4/001 and ext4/308 can have the `_require_xfs_io_command fiemap`.
-But as they're ext4 specific test cases (not generic), so they won't affect
-other fs (which doesn't support fiemap) testing. If you'd like, you can add
-`_require_xfs_io_command fiemap` to these two cases.
+[1] https://lore.kernel.org/lkml/463899aa-6cbd-f08e-0aca-077b0e4e4475@bytedance.com/
+[2] https://github.com/kdlucas/byte-unixbench/tree/master
 
-Thanks,
-Zorro
+v1: https://lore.kernel.org/lkml/20230726080916.17454-1-zhangpeng.00@bytedance.com/
 
-> 
-> Best Regards,
-> Yongcheng
-> 
+Peng Zhang (6):
+  maple_tree: Add two helpers
+  maple_tree: Introduce interfaces __mt_dup() and mtree_dup()
+  maple_tree: Add test for mtree_dup()
+  maple_tree: Skip other tests when BENCH is enabled
+  maple_tree: Update check_forking() and bench_forking()
+  fork: Use __mt_dup() to duplicate maple tree in dup_mmap()
+
+ include/linux/maple_tree.h       |   3 +
+ kernel/fork.c                    |  34 ++-
+ lib/maple_tree.c                 | 277 ++++++++++++++++++++++++-
+ lib/test_maple_tree.c            |  69 +++---
+ mm/mmap.c                        |  14 +-
+ tools/testing/radix-tree/maple.c | 346 +++++++++++++++++++++++++++++++
+ 6 files changed, 697 insertions(+), 46 deletions(-)
+
+-- 
+2.20.1
 
