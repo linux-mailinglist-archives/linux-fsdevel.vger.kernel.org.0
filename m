@@ -2,124 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E90CD78DBD6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Aug 2023 20:46:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B83078DAE7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Aug 2023 20:38:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238528AbjH3Shy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Aug 2023 14:37:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54648 "EHLO
+        id S233136AbjH3SiG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Aug 2023 14:38:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58186 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244702AbjH3Nqd (ORCPT
+        with ESMTP id S244810AbjH3OHr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Aug 2023 09:46:33 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 026A1107;
-        Wed, 30 Aug 2023 06:46:30 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8C4BF62644;
-        Wed, 30 Aug 2023 13:46:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 025A4C433C8;
-        Wed, 30 Aug 2023 13:46:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1693403189;
-        bh=M3S4ULSzV0rQcR545KOciYQ0SZPxCkvzOHG2fj4EpUw=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=PDYIPoqyNRkkbiEG4FvBOlh3ObTWvh+pB0ntD7ubfQbfKyHeT5EPRTbGmUD+Drxs8
-         IyKToBKbufA8RlMdsq/gM4+Vy2INylYfGJBMLANtZLtZGDav4UjphQpTyOfB4Bna/P
-         RQSvkhDyNyhGud9Wz95aypfDCLmqJ8VylPqSUz3E3Hmov/SgfS2VdzUhqAvU4niPiU
-         GIB8lcSWQ+u/8dAvGPs0iVuT4PiMYdiXr4b6utnT+vpG7YicV2zv2Kd0nKNBy+OMM/
-         M7CSNkKUpBwjayg9fRKRhU69A/khN44OEPmyV7ilf8RKd95sARgpfFCokhw9LMfe5R
-         1qljU49WbtFFQ==
-Message-ID: <35f7ca6a61b0e90a537badf2bea056b76b75cb12.camel@kernel.org>
-Subject: Re: [PATCH 6/7] dlm: use FL_SLEEP to determine blocking vs
- non-blocking
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Alexander Aring <aahringo@redhat.com>
-Cc:     linux-nfs@vger.kernel.org, cluster-devel@redhat.com,
-        ocfs2-devel@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-        teigland@redhat.com, rpeterso@redhat.com, agruenba@redhat.com,
-        trond.myklebust@hammerspace.com, anna@kernel.org,
-        chuck.lever@oracle.com
-Date:   Wed, 30 Aug 2023 09:46:26 -0400
-In-Reply-To: <CAK-6q+i+j1TUmWGH+fdYHix5TwujH8_kuR5ayUv9h6Ah8OQecQ@mail.gmail.com>
-References: <20230823213352.1971009-1-aahringo@redhat.com>
-         <20230823213352.1971009-7-aahringo@redhat.com>
-         <9a8ead64cdd32fdad29cae3aff0bd447f33a32c2.camel@kernel.org>
-         <CAK-6q+i+j1TUmWGH+fdYHix5TwujH8_kuR5ayUv9h6Ah8OQecQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+        Wed, 30 Aug 2023 10:07:47 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91BE2B9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Aug 2023 07:07:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Type:MIME-Version:Message-ID:
+        Subject:To:From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=TukzlC5Spp+/gapZ9N8BtFW9oYA5bh7dnxW32trZiQc=; b=kbf/OKou2W5PCFLgHm8sLBhYoH
+        XXUiHr0ySrPElULbp0uCIqWess6zAJm4twDR8XsiNeXhtW6l3Ct7yt0IdND3e7XONogvaa7nuS0nf
+        IVAj3bWzvkPuObfzbRkAU9WkTValvqyhpRu4QExjUxPpsekX/uQ2XSSgX1w6nxikZ6xO3N6jshfiZ
+        FudmpYphLeUgdJ3kF2SK22LHT8jLyXnB/vCLu5crW1NhopJWEgH4ipOpQuDgcYVrn82ZjNvXylR69
+        yfYJku/Xd+sAHchnQhA2ZyqQs02CLYflKReSCGb2u/clEBgy6rSd05nhsidjpgW7j6oVS0LF2Tf0f
+        hmfZNa6Q==;
+Received: from 2a02-8389-2341-5b80-39d3-4735-9a3c-88d8.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:39d3:4735:9a3c:88d8] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+        id 1qbLrD-00De9q-0P;
+        Wed, 30 Aug 2023 14:07:43 +0000
+Date:   Wed, 30 Aug 2023 16:07:39 +0200
+From:   Christoph Hellwig <hch@infradead.org>
+To:     ksummit@lists.linux.dev, linux-fsdevel@vger.kernel.org
+Subject: [MAINTAINERS/KERNEL SUMMIT] Trust and maintenance of file systems
+Message-ID: <ZO9NK0FchtYjOuIH@infradead.org>
 MIME-Version: 1.0
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2023-08-30 at 08:38 -0400, Alexander Aring wrote:
-> Hi,
->=20
-> On Fri, Aug 25, 2023 at 2:18=E2=80=AFPM Jeff Layton <jlayton@kernel.org> =
-wrote:
-> >=20
-> > On Wed, 2023-08-23 at 17:33 -0400, Alexander Aring wrote:
-> > > This patch uses the FL_SLEEP flag in struct file_lock to determine if
-> > > the lock request is a blocking or non-blocking request. Before dlm wa=
-s
-> > > using IS_SETLKW() was being used which is not usable for lock request=
-s
-> > > coming from lockd when EXPORT_OP_SAFE_ASYNC_LOCK inside the export fl=
-ags
-> > > is set.
-> > >=20
-> > > Signed-off-by: Alexander Aring <aahringo@redhat.com>
-> > > ---
-> > >  fs/dlm/plock.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >=20
-> > > diff --git a/fs/dlm/plock.c b/fs/dlm/plock.c
-> > > index 0094fa4004cc..0c6ed5eeb840 100644
-> > > --- a/fs/dlm/plock.c
-> > > +++ b/fs/dlm/plock.c
-> > > @@ -140,7 +140,7 @@ int dlm_posix_lock(dlm_lockspace_t *lockspace, u6=
-4 number, struct file *file,
-> > >       op->info.optype         =3D DLM_PLOCK_OP_LOCK;
-> > >       op->info.pid            =3D fl->fl_pid;
-> > >       op->info.ex             =3D (fl->fl_type =3D=3D F_WRLCK);
-> > > -     op->info.wait           =3D IS_SETLKW(cmd);
-> > > +     op->info.wait           =3D !!(fl->fl_flags & FL_SLEEP);
-> > >       op->info.fsid           =3D ls->ls_global_id;
-> > >       op->info.number         =3D number;
-> > >       op->info.start          =3D fl->fl_start;
-> >=20
-> > Not sure you really need the !!, but ok...
-> >=20
->=20
-> The wait is a byte value and FL_SLEEP doesn't fit into it, I already
-> run into problems with it. I don't think somebody does a if (foo->wait
-> =3D=3D 1) but it should be set to 1 or 0.
->=20
+Hi all,
 
-AIUI, any halfway decent compiler should take the result of the &, and
-implicitly cast that properly to bool. Basically, any value other than 0
-should be true.
+we have a lot of on-disk file system drivers in Linux, which I consider
+a good thing as it allows a lot of interoperability.  At the same time
+maintaining them is a burden, and there is a lot expectation on how
+they are maintained.
 
-If the compiler just blindly casts the lowest byte though, then you do
-need the double-negative.
+Part 1: untrusted file systems
 
-> An alternative would be: ((fl->fl_flags & FL_SLEEP) =3D=3D FL_SLEEP). I a=
-m
-> not sure what the coding style says here. I think it's more important
-> what the C standard says about !!(condition), but there are other
-> users of this in the Linux kernel. :-/
+There has been a lot of syzbot fuzzing using generated file system
+images, which I again consider a very good thing as syzbot is good
+a finding bugs.  Unfortunately it also finds a lot of bugs that no
+one is interested in fixing.   The reason for that is that file system
+maintainers only consider a tiny subset of the file system drivers,
+and for some of them a subset of the format options to be trusted vs
+untrusted input.  It thus is not just a waste of time for syzbot itself,
+but even more so for the maintainers to report fuzzing bugs in other
+implementations.
 
-I don't care too much either way, but my understanding was that you
-don't need to do the !! trick in most cases with modern compilers.
---=20
-Jeff Layton <jlayton@kernel.org>
+What can we do to only mark certain file systems (and format options)
+as trusted on untrusted input and remove a lot of the current tension
+and make everyone work more efficiently?  Note that this isn't even
+getting into really trusted on-disk formats, which is a security
+discussion on it's own, but just into formats where the maintainers
+are interested in dealing with fuzzed images.
+
+Part 2: unmaintained file systems
+
+A lot of our file system drivers are either de facto or formally
+unmaintained.  If we want to move the kernel forward by finishing
+API transitions (new mount API, buffer_head removal for the I/O path,
+->writepage removal, etc) these file systems need to change as well
+and need some kind of testing.  The easiest way forward would be
+to remove everything that is not fully maintained, but that would
+remove a lot of useful features.
+
+E.g. the hfsplus driver is unmaintained despite collecting odd fixes.
+It collects odd fixes because it is really useful for interoperating
+with MacOS and it would be a pity to remove it.  At the same time
+it is impossible to test changes to hfsplus sanely as there is no
+mkfs.hfsplus or fsck.hfsplus available for Linux.  We used to have
+one that was ported from the open source Darwin code drops, and
+I managed to get xfstests to run on hfsplus with them, but this
+old version doesn't compile on any modern Linux distribution and
+new versions of the code aren't trivially portable to Linux.
+
+Do we have volunteers with old enough distros that we can list as
+testers for this code?  Do we have any other way to proceed?
+
+If we don't, are we just going to untested API changes to these
+code bases, or keep the old APIs around forever?
