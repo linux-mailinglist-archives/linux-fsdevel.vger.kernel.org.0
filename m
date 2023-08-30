@@ -2,257 +2,180 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DA2ED78DB1D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Aug 2023 20:43:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0213D78DE33
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Aug 2023 21:03:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237633AbjH3Sid (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Aug 2023 14:38:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36950 "EHLO
+        id S233905AbjH3S65 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Aug 2023 14:58:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45854 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344179AbjH3SPp (ORCPT
+        with ESMTP id S240565AbjH3Slq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Aug 2023 14:15:45 -0400
-Received: from outbound-ip7a.ess.barracuda.com (outbound-ip7a.ess.barracuda.com [209.222.82.174])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10AC0132
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Aug 2023 11:15:35 -0700 (PDT)
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2176.outbound.protection.outlook.com [104.47.59.176]) by mx-outbound12-16.us-east-2a.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Wed, 30 Aug 2023 18:15:30 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=AkaXen7/n8vAWbOMDuhtCSxXfhPRChUSC2vMgapd8d4o5QXQB4GRyEVbCzLCGg2uwfN2iKu2vkiPdqsuO98VcI2KJfgs/CcIADWDVGsO7/beTs/NbfpskH3CFTOWk1LeNTpHNtHc6fuwmJDeye0cArMti8vBoiOoOor3naLAYTG+//jSrGq1NGx+wedAUlqS5qHoKVvxYStwZPzqnB4tErT5pyi6/gpm803vihT8IplEZNNYEa0QcGxB+Exhy94i5mzE2PeftZOXte7BaoT78EklirwRh8pkw/aZJMTF0jRWf4ta2C8wXFz5BAzXcMiPnquCVhkCyYDd0zH9bX8oDg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JH1IRVqwi5yaAlGJWt4Jx4JOmTtWYWQE7IEL5yxEOSw=;
- b=jxf2OlfMKQiXhiNKalq9Qc0292G1h1OLpCRTdPwjjGWS4L6yV2gJ4ExcOBt25q7qQoqaXuI1UZI3/wgkeo1tdHnzxke/ELc5gbqjemxxYQ3rROp6C93JcQLVvuRVnR55USJnvZLhI58e6fB7jbO0f8PRyIft6FwAP0xyfZ6FcASaFVeTF/pZqeKmj4u5IHvQCYhRqhGkdCoL9LpGh+OZ5QrO+wLwf0WLOevIHBg5uIeBgi0lrrAVeqsDnRwFkq7+P25rVjnVnL2mXap9CKfljUgwZouGIZdyZ0Z+pwd2JX9wBIPBKgS4uplh5R9kygOD75mscGqMlyBAyLSjTtq7Hw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 50.222.100.11) smtp.rcpttodomain=ddn.com smtp.mailfrom=ddn.com; dmarc=pass
- (p=reject sp=reject pct=100) action=none header.from=ddn.com; dkim=none
- (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ddn.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JH1IRVqwi5yaAlGJWt4Jx4JOmTtWYWQE7IEL5yxEOSw=;
- b=VMvvXNbrPlP1xgZPeznqXxF2z58MT6sqaLqOLmaH11mO9RLC3qs4ttWcFFRb++LsZNambfeR8XYTBsbNgHI7IPGYScvrarKvP8mhZrawe5KRTqjI/nhsxlBvaS6oP2MG81ClnQ7ciJs6o2PdrDeUciYdau5ODui4VJJJCTx8gVs=
-Received: from SJ0PR05CA0017.namprd05.prod.outlook.com (2603:10b6:a03:33b::22)
- by SN7PR19MB7733.namprd19.prod.outlook.com (2603:10b6:806:2eb::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6699.34; Wed, 30 Aug
- 2023 18:15:26 +0000
-Received: from MW2NAM04FT067.eop-NAM04.prod.protection.outlook.com
- (2603:10b6:a03:33b:cafe::9c) by SJ0PR05CA0017.outlook.office365.com
- (2603:10b6:a03:33b::22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6745.18 via Frontend
- Transport; Wed, 30 Aug 2023 18:15:26 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 50.222.100.11)
- smtp.mailfrom=ddn.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=ddn.com;
-Received-SPF: Pass (protection.outlook.com: domain of ddn.com designates
- 50.222.100.11 as permitted sender) receiver=protection.outlook.com;
- client-ip=50.222.100.11; helo=uww-mx01.datadirectnet.com; pr=C
-Received: from uww-mx01.datadirectnet.com (50.222.100.11) by
- MW2NAM04FT067.mail.protection.outlook.com (10.13.31.174) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6745.21 via Frontend Transport; Wed, 30 Aug 2023 18:15:25 +0000
-Received: from localhost (unknown [10.68.0.8])
-        by uww-mx01.datadirectnet.com (Postfix) with ESMTP id 691F020C684D;
-        Wed, 30 Aug 2023 12:16:31 -0600 (MDT)
-From:   Bernd Schubert <bschubert@ddn.com>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     bernd.schubert@fastmail.fm, miklos@szeredi.hu, dsingh@ddn.com,
-        Bernd Schubert <bschubert@ddn.com>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
-Subject: [PATCH 2/2] btrfs: file_remove_privs needs an exclusive lock
-Date:   Wed, 30 Aug 2023 20:15:19 +0200
-Message-Id: <20230830181519.2964941-3-bschubert@ddn.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230830181519.2964941-1-bschubert@ddn.com>
-References: <20230830181519.2964941-1-bschubert@ddn.com>
+        Wed, 30 Aug 2023 14:41:46 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCA1FA3;
+        Wed, 30 Aug 2023 11:28:51 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 436F0612AF;
+        Wed, 30 Aug 2023 18:28:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37208C433C9;
+        Wed, 30 Aug 2023 18:28:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1693420130;
+        bh=rEAPvYU4MwSkvBKxGKCKmGZYh4Dc+YPUfa1bf0LFA0o=;
+        h=From:Date:Subject:To:Cc:From;
+        b=Mxdgfg0Szuu03us5SXGBsvD07gbRBlbelfO7aFFQghkUSPEDfZDoq+EASq3WUNzrg
+         YB5QyBFnEc1Crzr4Vk71HsP84y0pb9E7hIvWLdGatIrHn80CbRp4MIWp9lG4jlA4h7
+         3qN4pxztaw6oR6EZqaYKiWWko8ot+OVvAwJCcml1D9vg0syXsN56qKU9B3k06sg7Vz
+         QL0OXOmZdD8+PmA4Gw32p1rVFnyVoJDPjq2yV/H5DCq6ge2G1ftMyIB18vL6iG4Abn
+         PUpewXcBLkJkjyNgSQ2rD1u2VRFKdJJmwMidUIzLZauq0DF2mrqbPnUGiGNnh0GF3M
+         7zR7W2E+dAI2A==
+From:   Jeff Layton <jlayton@kernel.org>
+Date:   Wed, 30 Aug 2023 14:28:43 -0400
+Subject: [PATCH] fs: have setattr_copy handle multigrain timestamps
+ appropriately
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW2NAM04FT067:EE_|SN7PR19MB7733:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: c490965c-38c2-402d-9eb4-08dba9851571
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 9XojB2xQSsmwN2dWbmsdfCwcp7f3IRFK5dTrcUIeZyh6Z7rAN8K5Re3kmKOk2Sf6q2Ht3YEiCYvLIXReaAvAv6rkMfJr2qNwsSh20Z6k0VU3QNFMeEi4QFsJik4oV7Rzwf29yC5n3IFE11O0wZJE+d6FbalhLjacMn5uFv+ni2E/rtQTy+g1Up8LSkoXkI2Q+JpLAclbgw6VDSa56CSQjHkVkL/7V6zR8FvP2NM5DckSFU8omOcsEgayaLq+aBeJ8ZJJU9alM7yJFoSktPkpsm0kRWNHjYxV2Yy9P82WFDsnWqkKpGRgTstHrobMdL0TdAz25jzPHg0RJfZySJmOCf+8Tz7/yNi1STzMgWGF/s7+nHsXQITZeNSh7M2LXMZXAMiQEynhVOhxtfrNAz7GQjSUZHwcm7PHMYxUqQUGXaWmNNxOMyxOENgX33jElRwJzA945ZFN92aFNTmk3sJ6k2I7rnJuuTpssWgvZHMI36aHTQKzCWbtPXImgwiYMOet++QJS1wTxpCnx86uVipmGqAbCXsuPQKUjxv623RzyCS4gwVWqI4bER4kjVlTLb05alNt4dD8P+IzeiFD9Eyo+SitbYIhNNmWsab2jWKuhX/fXDdRVZGzDXHFobkgB3WmgxX7fmSwtVmVjPrmTomprDE8VcFbX7T/cMT1uEPIDd3WFe5E6+rUR8eSm7mWJQ8MyuKEM0lqiS/yKelgiXkEUrIrZ83k8mwi9r86fZlOFmNd90ig5B4u3GIrachRSi+e
-X-Forefront-Antispam-Report: CIP:50.222.100.11;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:uww-mx01.datadirectnet.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(4636009)(376002)(136003)(346002)(396003)(39850400004)(186009)(1800799009)(451199024)(82310400011)(46966006)(36840700001)(36860700001)(41300700001)(26005)(356005)(81166007)(82740400003)(6666004)(86362001)(83380400001)(478600001)(47076005)(336012)(1076003)(6266002)(2616005)(40480700001)(70206006)(70586007)(6916009)(2906002)(54906003)(36756003)(316002)(5660300002)(4326008)(8936002)(8676002)(36900700001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: =?us-ascii?Q?4eKDDvpAC7dG0DgGBo6jE5/RluR9IXqniC9Fr96kJQj1sAtugIlhOuaR8V7e?=
- =?us-ascii?Q?KCJb1GGnDVGmgTz/noPkQdYleh76GkB93YaNvZkLoJ3yF4j5Yi11Nr/ElOU5?=
- =?us-ascii?Q?Tz3r+Xcdh/4mPndF8OhFDplBoADf+XK5Xxt+gMUP6duRz++kIu5scajZxKGK?=
- =?us-ascii?Q?i7y3EnjiAocEFOn0JNZWNP0B83oAc9U4brdscin/Yyy3AmfQpZK59NxzcB1H?=
- =?us-ascii?Q?6IYaqp0jvyKTrYa+nCwRMRru5kTyQ/F8k8MbTbS0XbWJrcXLv6TPsxlARTig?=
- =?us-ascii?Q?fcGWzWvWWkgGHxFEH7jgLYoxybEnm6m14tVJjIrhdNLHffN4GI4htjIWg6e8?=
- =?us-ascii?Q?IGgqTlAEX8mLj1RfQ5PT31v9wEKSi5mT7JeaWoFt0zRY8J9OlQ8UT/EXZ4GO?=
- =?us-ascii?Q?opAAthk0E5kCzfXqW18csKMbLIP6o98sAbVAfeb0wckisNyy9RLLX8k0A6e9?=
- =?us-ascii?Q?k4lfiRrrXrhK+QiC4QCst0e4HPwUJndCRGnfUYdCurgRskUvISey36KOpB9n?=
- =?us-ascii?Q?tUzg17d/EaRUKL2zChoKS/QddOR2wTejPxr1Vr+uO2cLkdSZVylaZueK0DCh?=
- =?us-ascii?Q?l4rNN+B8Y6FJAR0anYbfUD+yfeDpSj4cSW0of+5heW37sLuODLpVkv4NdDAc?=
- =?us-ascii?Q?QV0iZLJi4mzadj4uWCavsKokfGnJkWYiSqitttO41LWBrkNB2RzPS8N5ub2Q?=
- =?us-ascii?Q?9BJ54fL27Ju9CPfB2CP3Kil3Se2WSA4JcE+Y4TYyG+738+jObX1LSbd+8/Pt?=
- =?us-ascii?Q?KrZ1rdb8FFRlt7rTMbe3Oe55kZPghPF9Ancd1jP72zjULeZLYtzdOfLJwbnF?=
- =?us-ascii?Q?Cs+ARS19UB9ZwYiDzZeznwZhvERztRE+jCcCL6/+tHVT5QGzqBpoJOiHfYaN?=
- =?us-ascii?Q?aka1AoA0muZQ+KZyAn4HSdqURcOyYXP7MfsxdskdEiEYRO/mrrvMmv5yi9cB?=
-X-OriginatorOrg: ddn.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Aug 2023 18:15:25.7631
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c490965c-38c2-402d-9eb4-08dba9851571
-X-MS-Exchange-CrossTenant-Id: 753b6e26-6fd3-43e6-8248-3f1735d59bb4
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=753b6e26-6fd3-43e6-8248-3f1735d59bb4;Ip=[50.222.100.11];Helo=[uww-mx01.datadirectnet.com]
-X-MS-Exchange-CrossTenant-AuthSource: MW2NAM04FT067.eop-NAM04.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR19MB7733
-X-BESS-ID: 1693419330-103088-22887-1172-1
-X-BESS-VER: 2019.1_20230830.1749
-X-BESS-Apparent-Source-IP: 104.47.59.176
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKViYG5kZAVgZQ0DIt2TLNzMgo2T
-        A5KS3NIC3RzDTVwsQwLTU5NdHMOM1AqTYWAOYOC11BAAAA
-X-BESS-Outbound-Spam-Score: 0.00
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.250495 [from 
-        cloudscan23-177.us-east-2b.ess.aws.cudaops.com]
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------
-        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS124931 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
-X-BESS-BRTS-Status: 1
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20230830-kdevops-v1-1-ef2be57755dd@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAFqK72QC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI2MDC2MD3eyU1LL8gmJdozRDUxMTY5O0tBRjJaDqgqLUtMwKsEnRsbW1AFL
+ BCm9ZAAAA
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3444; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=rEAPvYU4MwSkvBKxGKCKmGZYh4Dc+YPUfa1bf0LFA0o=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBk74phUaUcOMlN97H0RCFi/ryQ91nTIjRDD69NV
+ EurUnmIW52JAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZO+KYQAKCRAADmhBGVaC
+ FcKMD/487xVSNRPFtmh3BuR09cvDvXHJx4dJiKTbFFTu2MbN2Wzh9poD7WyfGic+a8uKu+OnFRK
+ 1t7EFIpu1s+OyBtreAq328cQFCUa3XcZ6GR4u6NMPlnks8jP1miLGcBlIbqo0wrEggD9biFBFh7
+ Z5+2bxt4UwWaJZVhkhZhJe/wk+6oPsuR3VkUEKNnkk/VbimkwdSiqugN+TZIvgNCsZkHHVxJPnx
+ bnHDSZFCn0OaB6HTKU7L4ydbkUBT4HNTorXrDC38lqNBeCCeJhtY5FAyrJIZ3GPYYX+vlqXcFvF
+ eBybPuyTrFdKEp9VWDMqhrljDj40N8acbummVQ8QFDQhTCEO9cuUMr/xjBaPzOPBx+ji2Sa/31s
+ C/Y5TOsMKxMb6lbqU2PUTfmeiAUYo10P46i+NIpATGopl5NFVxAFR8AD9YYbAowHCJg05jsuzAZ
+ K2XIFDtbsE53tzZnjfYh+vyIw0evBTBc34jHKnnJsUU2YnkncSlt3xxVTKj+Bex/Tl3VMG94+5B
+ oKnaedfnVVKWddQbJlZd5+EJJcF1v4TeJYsdDse80XJnuRIIjqw9bh2ZzzQOxDgtl5hqOo6N00b
+ w2kmjhF92ZC41AGsHCO3DieMXblw1lBrR9Pn9XU1qtbo3spgRg0bJGnCOCJ4PWHs0PlpH5ERB+T
+ CuknfDNbR3np6tw==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-file_remove_privs might call into notify_change(), which
-requires to hold an exclusive lock.
-In order to keep the shared lock for most IOs it now first
-checks if privilege changes are needed, then switches to
-the exclusive lock, rechecks and only then calls file_remove_privs.
-This makes usage of the new exported function
-file_needs_remove_privs().
+The setattr codepath is still using coarse-grained timestamps, even on
+multigrain filesystems. To fix this, we need to fetch the timestamp for
+ctime updates later, at the point where the assignment occurs in
+setattr_copy.
 
-The file_remove_privs code path is not optimized, under the
-assumption that it would be a rare call (file_remove_privs
-calls file_needs_remove_privs a 2nd time).
+On a multigrain inode, ignore the ia_ctime in the attrs, and always
+update the ctime to the current clock value. Update the atime and mtime
+with the same value (if needed) unless they are being set to other
+specific values, a'la utimes().
 
-Fixes: e9adabb9712e ("btrfs: use shared lock for direct writes within EOF")
-Cc: Goldwyn Rodrigues <rgoldwyn@suse.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Dharmendra Singh <dsingh@ddn.com>
-Cc: Chris Mason <clm@fb.com>
-Cc: Josef Bacik <josef@toxicpanda.com>
-Cc: David Sterba <dsterba@suse.com>
-Cc: linux-btrfs@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: Bernd Schubert <bschubert@ddn.com>
+Note that we don't want to do this universally however, as some
+filesystems (e.g. most networked fs) want to do an explicit update
+elsewhere before updating the local inode.
+
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/btrfs/file.c | 37 +++++++++++++++++++++++++++++--------
- 1 file changed, 29 insertions(+), 8 deletions(-)
+ fs/attr.c | 52 ++++++++++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 46 insertions(+), 6 deletions(-)
 
-diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
-index fd03e689a6be..89c869ab131d 100644
---- a/fs/btrfs/file.c
-+++ b/fs/btrfs/file.c
-@@ -1125,7 +1125,7 @@ static void update_time_for_write(struct inode *inode)
+diff --git a/fs/attr.c b/fs/attr.c
+index a8ae5f6d9b16..8ba330e6a582 100644
+--- a/fs/attr.c
++++ b/fs/attr.c
+@@ -275,6 +275,42 @@ int inode_newsize_ok(const struct inode *inode, loff_t offset)
  }
+ EXPORT_SYMBOL(inode_newsize_ok);
  
- static int btrfs_write_check(struct kiocb *iocb, struct iov_iter *from,
--			     size_t count)
-+			     size_t count, unsigned int *ilock_flags)
- {
- 	struct file *file = iocb->ki_filp;
- 	struct inode *inode = file_inode(file);
-@@ -1145,9 +1145,17 @@ static int btrfs_write_check(struct kiocb *iocb, struct iov_iter *from,
- 	    !(BTRFS_I(inode)->flags & (BTRFS_INODE_NODATACOW | BTRFS_INODE_PREALLOC)))
- 		return -EAGAIN;
- 
--	ret = file_remove_privs(file);
--	if (ret)
--		return ret;
-+	ret = file_needs_remove_privs(file);
-+	if (ret) {
-+		if (ilock_flags && *ilock_flags & BTRFS_ILOCK_SHARED) {
-+			*ilock_flags &= ~BTRFS_ILOCK_SHARED;
-+			return -EAGAIN;
-+		}
++/**
++ * setattr_copy_mgtime - update timestamps for mgtime inodes
++ * @inode: inode timestamps to be updated
++ * @attr: attrs for the update
++ *
++ * With multigrain timestamps, we need to take more care to prevent races
++ * when updating the ctime. Always update the ctime to the very latest
++ * using the standard mechanism, and use that to populate the atime and
++ * mtime appropriately (unless we're setting those to specific values).
++ */
++static void setattr_copy_mgtime(struct inode *inode, const struct iattr *attr)
++{
++	unsigned int ia_valid = attr->ia_valid;
++	struct timespec64 now;
 +
-+		ret = file_remove_privs(file);
-+		if (ret)
-+			return ret;
++	/*
++	 * If the ctime isn't being updated then nothing else should be
++	 * either.
++	 */
++	if (!(ia_valid & ATTR_CTIME)) {
++		WARN_ON_ONCE(ia_valid & (ATTR_ATIME|ATTR_MTIME));
++		return;
 +	}
- 
- 	/*
- 	 * We reserve space for updating the inode when we reserve space for the
-@@ -1204,7 +1212,7 @@ static noinline ssize_t btrfs_buffered_write(struct kiocb *iocb,
- 	if (ret <= 0)
- 		goto out;
- 
--	ret = btrfs_write_check(iocb, i, ret);
-+	ret = btrfs_write_check(iocb, i, ret, NULL);
- 	if (ret < 0)
- 		goto out;
- 
-@@ -1462,13 +1470,16 @@ static ssize_t btrfs_direct_write(struct kiocb *iocb, struct iov_iter *from)
- 	ssize_t err;
- 	unsigned int ilock_flags = 0;
- 	struct iomap_dio *dio;
-+	bool has_shared_lock;
- 
- 	if (iocb->ki_flags & IOCB_NOWAIT)
- 		ilock_flags |= BTRFS_ILOCK_TRY;
- 
- 	/* If the write DIO is within EOF, use a shared lock */
--	if (iocb->ki_pos + iov_iter_count(from) <= i_size_read(inode))
-+	if (iocb->ki_pos + iov_iter_count(from) <= i_size_read(inode)) {
- 		ilock_flags |= BTRFS_ILOCK_SHARED;
-+		has_shared_lock = true;
-+	}
- 
- relock:
- 	err = btrfs_inode_lock(BTRFS_I(inode), ilock_flags);
-@@ -1481,8 +1492,17 @@ static ssize_t btrfs_direct_write(struct kiocb *iocb, struct iov_iter *from)
- 		return err;
- 	}
- 
--	err = btrfs_write_check(iocb, from, err);
-+	/* might uset BTRFS_ILOCK_SHARED */
-+	err = btrfs_write_check(iocb, from, err, &ilock_flags);
- 	if (err < 0) {
-+		if (err == -EAGAIN && has_shared_lock &&
-+		    !(ilock_flags & BTRFS_ILOCK_SHARED)) {
-+			btrfs_inode_unlock(BTRFS_I(inode),
-+					   ilock_flags | BTRFS_ILOCK_SHARED);
-+			has_shared_lock = false;
-+			goto relock;
-+		}
 +
- 		btrfs_inode_unlock(BTRFS_I(inode), ilock_flags);
- 		goto out;
++	now = inode_set_ctime_current(inode);
++	if (ia_valid & ATTR_ATIME_SET)
++		inode->i_atime = attr->ia_atime;
++	else if (ia_valid & ATTR_ATIME)
++		inode->i_atime = now;
++
++	if (ia_valid & ATTR_MTIME_SET)
++		inode->i_mtime = attr->ia_mtime;
++	else if (ia_valid & ATTR_MTIME)
++		inode->i_mtime = now;
++}
++
+ /**
+  * setattr_copy - copy simple metadata updates into the generic inode
+  * @idmap:	idmap of the mount the inode was found from
+@@ -307,12 +343,6 @@ void setattr_copy(struct mnt_idmap *idmap, struct inode *inode,
+ 
+ 	i_uid_update(idmap, attr, inode);
+ 	i_gid_update(idmap, attr, inode);
+-	if (ia_valid & ATTR_ATIME)
+-		inode->i_atime = attr->ia_atime;
+-	if (ia_valid & ATTR_MTIME)
+-		inode->i_mtime = attr->ia_mtime;
+-	if (ia_valid & ATTR_CTIME)
+-		inode_set_ctime_to_ts(inode, attr->ia_ctime);
+ 	if (ia_valid & ATTR_MODE) {
+ 		umode_t mode = attr->ia_mode;
+ 		if (!in_group_or_capable(idmap, inode,
+@@ -320,6 +350,16 @@ void setattr_copy(struct mnt_idmap *idmap, struct inode *inode,
+ 			mode &= ~S_ISGID;
+ 		inode->i_mode = mode;
  	}
-@@ -1496,6 +1516,7 @@ static ssize_t btrfs_direct_write(struct kiocb *iocb, struct iov_iter *from)
- 	    pos + iov_iter_count(from) > i_size_read(inode)) {
- 		btrfs_inode_unlock(BTRFS_I(inode), ilock_flags);
- 		ilock_flags &= ~BTRFS_ILOCK_SHARED;
-+		has_shared_lock = false;
- 		goto relock;
- 	}
++
++	if (is_mgtime(inode))
++		return setattr_copy_mgtime(inode, attr);
++
++	if (ia_valid & ATTR_ATIME)
++		inode->i_atime = attr->ia_atime;
++	if (ia_valid & ATTR_MTIME)
++		inode->i_mtime = attr->ia_mtime;
++	if (ia_valid & ATTR_CTIME)
++		inode_set_ctime_to_ts(inode, attr->ia_ctime);
+ }
+ EXPORT_SYMBOL(setattr_copy);
  
-@@ -1632,7 +1653,7 @@ static ssize_t btrfs_encoded_write(struct kiocb *iocb, struct iov_iter *from,
- 	if (ret || encoded->len == 0)
- 		goto out;
- 
--	ret = btrfs_write_check(iocb, from, encoded->len);
-+	ret = btrfs_write_check(iocb, from, encoded->len, NULL);
- 	if (ret < 0)
- 		goto out;
- 
+
+---
+base-commit: c5d9e87c18026d4caee80cd60a143f2b6564d446
+change-id: 20230830-kdevops-2f154434ffd3
+
+Best regards,
 -- 
-2.39.2
+Jeff Layton <jlayton@kernel.org>
 
