@@ -2,99 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B83078DAE7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Aug 2023 20:38:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4448C78DA98
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Aug 2023 20:37:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233136AbjH3SiG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Aug 2023 14:38:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58186 "EHLO
+        id S237768AbjH3Sgl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Aug 2023 14:36:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244810AbjH3OHr (ORCPT
+        with ESMTP id S244962AbjH3ONz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Aug 2023 10:07:47 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91BE2B9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Aug 2023 07:07:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Type:MIME-Version:Message-ID:
-        Subject:To:From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=TukzlC5Spp+/gapZ9N8BtFW9oYA5bh7dnxW32trZiQc=; b=kbf/OKou2W5PCFLgHm8sLBhYoH
-        XXUiHr0ySrPElULbp0uCIqWess6zAJm4twDR8XsiNeXhtW6l3Ct7yt0IdND3e7XONogvaa7nuS0nf
-        IVAj3bWzvkPuObfzbRkAU9WkTValvqyhpRu4QExjUxPpsekX/uQ2XSSgX1w6nxikZ6xO3N6jshfiZ
-        FudmpYphLeUgdJ3kF2SK22LHT8jLyXnB/vCLu5crW1NhopJWEgH4ipOpQuDgcYVrn82ZjNvXylR69
-        yfYJku/Xd+sAHchnQhA2ZyqQs02CLYflKReSCGb2u/clEBgy6rSd05nhsidjpgW7j6oVS0LF2Tf0f
-        hmfZNa6Q==;
-Received: from 2a02-8389-2341-5b80-39d3-4735-9a3c-88d8.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:39d3:4735:9a3c:88d8] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1qbLrD-00De9q-0P;
-        Wed, 30 Aug 2023 14:07:43 +0000
-Date:   Wed, 30 Aug 2023 16:07:39 +0200
-From:   Christoph Hellwig <hch@infradead.org>
-To:     ksummit@lists.linux.dev, linux-fsdevel@vger.kernel.org
-Subject: [MAINTAINERS/KERNEL SUMMIT] Trust and maintenance of file systems
-Message-ID: <ZO9NK0FchtYjOuIH@infradead.org>
+        Wed, 30 Aug 2023 10:13:55 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78F50122;
+        Wed, 30 Aug 2023 07:13:53 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 17526622C7;
+        Wed, 30 Aug 2023 14:13:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 754DDC433C7;
+        Wed, 30 Aug 2023 14:13:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1693404832;
+        bh=M/S0ZIPByNJ3DtBtCr9KpYCokyyfuLn19Zpy0SNttjA=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=eoLFlQzktzeMNc34Py3fqcYdVSmVzP6f2rf2HvCH5Wbiu3L8nqY/NzXGGO4DANtaR
+         AFlPuaZWEbpA8S+mk1GQLlNd7Nq1+jMvI6pNbpFXk45naeqA+SqtCb7FkrYV7aRqIX
+         jzQsUpVnEAvDYELgRE8F8ZmBz8rfD9RjA53WK7Rp35c6hFkzTpUO/n4L1vtioS/xfI
+         Ik0A2o5DdBJGZBz2DGbSCPIF6ZWAz6rqOpjA/ujZNE5hIkG5lIoKOdra7AfZlMMkKx
+         vdadYgauKfE/kiKJhTZYmoYo8qqZSV25uMkbFDPdDNBCEj+6P1JQI94QH3Jeoo+fpw
+         0RP7HD5s5mU1w==
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-573449a364fso3116812eaf.1;
+        Wed, 30 Aug 2023 07:13:52 -0700 (PDT)
+X-Gm-Message-State: AOJu0YwPzVivzIZNkNywKablx+HNTeGR2TDjNndDqlnm7w2GI29ho6Iu
+        8ToF6uayeRRhdhS05cwq3Bbxub7CESDy9+Dn4Ho=
+X-Google-Smtp-Source: AGHT+IHkCkn14xv2qXc7hapukvbg48Y7CXu5qoJcS35J6o9zS0kJ4XujL1U+SRRTW0MP6rhxD0GkkwtOzwXGkh3JWVk=
+X-Received: by 2002:a4a:7502:0:b0:56e:4ddd:e333 with SMTP id
+ j2-20020a4a7502000000b0056e4ddde333mr1883187ooc.9.1693404831643; Wed, 30 Aug
+ 2023 07:13:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Received: by 2002:a05:6802:1090:b0:4f6:2c4a:5156 with HTTP; Wed, 30 Aug 2023
+ 07:13:50 -0700 (PDT)
+In-Reply-To: <30bfc906-1d73-01c9-71d0-aa441ac34b96@gmail.com>
+References: <30bfc906-1d73-01c9-71d0-aa441ac34b96@gmail.com>
+From:   Namjae Jeon <linkinjeon@kernel.org>
+Date:   Wed, 30 Aug 2023 23:13:50 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd9q5=NsbeoiC4sL0P-0M_cA-Dpma8Uu0AhWbp7=hbK_QA@mail.gmail.com>
+Message-ID: <CAKYAXd9q5=NsbeoiC4sL0P-0M_cA-Dpma8Uu0AhWbp7=hbK_QA@mail.gmail.com>
+Subject: Re: [PATCH v2] exfat: add ioctls for accessing attributes
+To:     Jan Cincera <hcincera@gmail.com>
+Cc:     Sungjong Seo <sj1557.seo@samsung.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi all,
-
-we have a lot of on-disk file system drivers in Linux, which I consider
-a good thing as it allows a lot of interoperability.  At the same time
-maintaining them is a burden, and there is a lot expectation on how
-they are maintained.
-
-Part 1: untrusted file systems
-
-There has been a lot of syzbot fuzzing using generated file system
-images, which I again consider a very good thing as syzbot is good
-a finding bugs.  Unfortunately it also finds a lot of bugs that no
-one is interested in fixing.   The reason for that is that file system
-maintainers only consider a tiny subset of the file system drivers,
-and for some of them a subset of the format options to be trusted vs
-untrusted input.  It thus is not just a waste of time for syzbot itself,
-but even more so for the maintainers to report fuzzing bugs in other
-implementations.
-
-What can we do to only mark certain file systems (and format options)
-as trusted on untrusted input and remove a lot of the current tension
-and make everyone work more efficiently?  Note that this isn't even
-getting into really trusted on-disk formats, which is a security
-discussion on it's own, but just into formats where the maintainers
-are interested in dealing with fuzzed images.
-
-Part 2: unmaintained file systems
-
-A lot of our file system drivers are either de facto or formally
-unmaintained.  If we want to move the kernel forward by finishing
-API transitions (new mount API, buffer_head removal for the I/O path,
-->writepage removal, etc) these file systems need to change as well
-and need some kind of testing.  The easiest way forward would be
-to remove everything that is not fully maintained, but that would
-remove a lot of useful features.
-
-E.g. the hfsplus driver is unmaintained despite collecting odd fixes.
-It collects odd fixes because it is really useful for interoperating
-with MacOS and it would be a pity to remove it.  At the same time
-it is impossible to test changes to hfsplus sanely as there is no
-mkfs.hfsplus or fsck.hfsplus available for Linux.  We used to have
-one that was ported from the open source Darwin code drops, and
-I managed to get xfstests to run on hfsplus with them, but this
-old version doesn't compile on any modern Linux distribution and
-new versions of the code aren't trivially portable to Linux.
-
-Do we have volunteers with old enough distros that we can list as
-testers for this code?  Do we have any other way to proceed?
-
-If we don't, are we just going to untested API changes to these
-code bases, or keep the old APIs around forever?
+2023-08-27 19:42 GMT+09:00, Jan Cincera <hcincera@gmail.com>:
+> Add GET and SET attributes ioctls to enable attribute modification.
+> We already do this in FAT and a few userspace utils made for it would
+> benefit from this also working on exFAT, namely fatattr.
+>
+> Signed-off-by: Jan Cincera <hcincera@gmail.com>
+Applied, Thanks for your patch!
