@@ -2,152 +2,185 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 86B2078DB15
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Aug 2023 20:43:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73AFF78DBD3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Aug 2023 20:46:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236116AbjH3Sia (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Aug 2023 14:38:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38904 "EHLO
+        id S238495AbjH3Shw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Aug 2023 14:37:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54002 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343718AbjH3Qmk (ORCPT
+        with ESMTP id S1343759AbjH3Qo4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Aug 2023 12:42:40 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5FEA19A;
-        Wed, 30 Aug 2023 09:42:32 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 81AD762119;
-        Wed, 30 Aug 2023 16:42:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F379C433C7;
-        Wed, 30 Aug 2023 16:42:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1693413751;
-        bh=+cegdjpC7G5umSHFHbrmT1BIlMdov4rtt+v2oJEk1tM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VjbX4CCwh2T7VRmcGdTip7u/f/TaIxuYGePqe7e+D4VSLmbiZHbmccKJEensZqdYd
-         /SkVtQoHfFek1l/akYZpl6ne+8eKdaeb9A2TuvGKtHgX54qQvFDVWxI1azmcGgWe2A
-         TCS6C1oK4Z9Yi4kRDMDic1bnoquUGBouKD5MDQ3AY/kt+9FcjbvW5qvdsxbxoapCQj
-         m6CelcYTizHCgj7uEUvmooKRW1IDpuIbzMXpLTY63MW/y+bD0wODuEHfxQZ27KwMGs
-         UK+r1H9fjVVo3zf7MJOTbhSZBfN9GnYmDVX/HSF7zUQGGf3T2s6/zw2yHd96jP9gqw
-         cyxOybFWimvpA==
-Date:   Wed, 30 Aug 2023 17:42:18 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Szabolcs Nagy <Szabolcs.Nagy@arm.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Marc Zyngier <maz@kernel.org>,
-        Oliver Upton <oliver.upton@linux.dev>,
-        James Morse <james.morse@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        Shuah Khan <shuah@kernel.org>,
-        "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-        Deepak Gupta <debug@rivosinc.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        "H.J. Lu" <hjl.tools@gmail.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v4 03/36] arm64/gcs: Document the ABI for Guarded Control
- Stacks
-Message-ID: <9992beaf-f57d-41f8-9dbb-8044c783ddf4@sirena.org.uk>
-References: <aaea542c-929c-4c9b-8caa-ca67e0eb9c1e@sirena.org.uk>
- <ZOTnL1SDJWZjHPUW@arm.com>
- <43ec219d-bf20-47b8-a5f8-32bc3b64d487@sirena.org.uk>
- <ZOXa98SqwYPwxzNP@arm.com>
- <227e6552-353c-40a9-86c1-280587a40e3c@sirena.org.uk>
- <ZOY3lz+Zyhd5ZyQ9@arm.com>
- <ZOZEmO6WGyVAcOqK@arm.com>
- <ef7272d2-d807-428f-9915-6fc9febadb5c@sirena.org.uk>
- <ZOd6lzj29VksAp7L@arm.com>
- <ZO84DWEiYk6dU3iR@arm.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="K/vjy3MP44rS/waF"
-Content-Disposition: inline
-In-Reply-To: <ZO84DWEiYk6dU3iR@arm.com>
-X-Cookie: Immanuel doesn't pun, he Kant.
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        Wed, 30 Aug 2023 12:44:56 -0400
+Received: from mail-yw1-x1149.google.com (mail-yw1-x1149.google.com [IPv6:2607:f8b0:4864:20::1149])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E713C1A2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Aug 2023 09:44:53 -0700 (PDT)
+Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-58e4d2b7d16so81993237b3.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Aug 2023 09:44:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1693413893; x=1694018693; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Q7U5WETyc0Qx792+SyKBjLV43d3DHT0ObMpMrFVoeXw=;
+        b=Vrqu6jdVSxGa28aE1migk5YVHh9PHn+K3BQigSsynTqZy+1FdBGBQl1nQH4In9WVRs
+         KF+yQOaHMyhG/7vylvJ5xFxpXhxbdaWq++yLYUP/fN2VQ82tBRyWoQyVgRPj/MMHCpZe
+         jO+0V9PUab495XMFnTawLOr1RRUfzotX6k9V6ER1+dm9TYtelUtxG92oglhZ+G48OHTA
+         bw77cd5ga08rV8S2iervR+8tUMuXpINKvMhop7uskl+N/C/qylZpwCA4vMTQyd1AjsSG
+         0geLp1xw/hWTZsN/r98ZAoO7y0K3ubKpSdpRpvOm2LmVQAtpWFwGs0HAi3r6ak9bzn/q
+         y+rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1693413893; x=1694018693;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q7U5WETyc0Qx792+SyKBjLV43d3DHT0ObMpMrFVoeXw=;
+        b=FU3HJwdPZkzgmgfu7SoG2AmcMcUMZQf9Gk99Z+KirF4KA6YCgdMhHwMhxO5+jS/GTw
+         OEAbtEsmQegjJdp3H7qn8R9u86jh7Qhk/pASwPZszNdha2EV7z8OVT0ofiTTCyZgVAVu
+         ATi104ao/5cPtinsTvNtDujI5vyqHvXued7FhYUoNwADO6yZUAI/FrjtyjPlQKHdds/y
+         KFDzp86WzBsFOpKTYTKCVi/6LqbjlWyqUTJIWPnqVeQ+A5s0cxppA278gJxY9GHjP3Wu
+         O2hplvPfGcWTK/0yOEqGNh/cU2y62veunu3D17mnnJsZvXRxhmEQfF3f97IhL1fxJtw8
+         ioRQ==
+X-Gm-Message-State: AOJu0YxsGR1WpIajfVLX+uVa0vssBUeADSznLsCHVD6cHUeWNWk2kGo/
+        JJTVyQpVa2v8R1oBNzBVaHXln72NkaZZQ78a8g==
+X-Google-Smtp-Source: AGHT+IHtp9pD/5ci3MqPyr+0sXpcwrOb70482adH4y9FFBhT1onMN4Y2Yo7VfYMaFeFIQUgnoauWykiqo7sAzbNhxQ==
+X-Received: from ackerleytng-ctop.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:13f8])
+ (user=ackerleytng job=sendgmr) by 2002:a81:eb0b:0:b0:57a:793:7fb0 with SMTP
+ id n11-20020a81eb0b000000b0057a07937fb0mr78438ywm.3.1693413893177; Wed, 30
+ Aug 2023 09:44:53 -0700 (PDT)
+Date:   Wed, 30 Aug 2023 16:44:51 +0000
+In-Reply-To: <30ffe039-c9e2-b996-500d-5e11bf6ea789@linux.intel.com> (message
+ from Binbin Wu on Wed, 30 Aug 2023 23:12:19 +0800)
+Mime-Version: 1.0
+Message-ID: <diqz5y4wfpj0.fsf@ackerleytng-ctop.c.googlers.com>
+Subject: Re: [RFC PATCH v11 12/29] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
+ guest-specific backing memory
+From:   Ackerley Tng <ackerleytng@google.com>
+To:     Binbin Wu <binbin.wu@linux.intel.com>
+Cc:     seanjc@google.com, kvm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, pbonzini@redhat.com, maz@kernel.org,
+        oliver.upton@linux.dev, chenhuacai@kernel.org, mpe@ellerman.id.au,
+        anup@brainfault.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
+        aou@eecs.berkeley.edu, willy@infradead.org,
+        akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, chao.p.peng@linux.intel.com, tabba@google.com,
+        jarkko@kernel.org, yu.c.zhang@linux.intel.com,
+        vannapurve@google.com, mail@maciej.szmigiero.name, vbabka@suse.cz,
+        david@redhat.com, qperret@google.com, michael.roth@amd.com,
+        wei.w.wang@intel.com, liam.merwick@oracle.com,
+        isaku.yamahata@gmail.com, kirill.shutemov@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Binbin Wu <binbin.wu@linux.intel.com> writes:
 
---K/vjy3MP44rS/waF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+>> <snip>
+>>
+>> +static long kvm_gmem_allocate(struct inode *inode, loff_t offset, loff_t len)
+>> +{
+>> +	struct address_space *mapping = inode->i_mapping;
+>> +	pgoff_t start, index, end;
+>> +	int r;
+>> +
+>> +	/* Dedicated guest is immutable by default. */
+>> +	if (offset + len > i_size_read(inode))
+>> +		return -EINVAL;
+>> +
+>> +	filemap_invalidate_lock_shared(mapping);
+>> +
+>> +	start = offset >> PAGE_SHIFT;
+>> +	end = (offset + len) >> PAGE_SHIFT;
+>> +
+>> +	r = 0;
+>> +	for (index = start; index < end; ) {
+>> +		struct folio *folio;
+>> +
+>> +		if (signal_pending(current)) {
+>> +			r = -EINTR;
+>> +			break;
+>> +		}
+>> +
+>> +		folio = kvm_gmem_get_folio(inode, index);
+>> +		if (!folio) {
+>> +			r = -ENOMEM;
+>> +			break;
+>> +		}
+>> +
+>> +		index = folio_next_index(folio);
+>> +
+>> +		folio_unlock(folio);
+>> +		folio_put(folio);
+> May be a dumb question, why we get the folio and then put it immediately?
+> Will it make the folio be released back to the page allocator?
+>
 
-On Wed, Aug 30, 2023 at 01:37:33PM +0100, Szabolcs Nagy wrote:
-> The 08/24/2023 16:43, Catalin Marinas wrote:
+I was wondering this too, but it is correct.
 
-> > Is there a use-case for the unlocked configuration to allow disabling
-> > the GCS implicitly via a clone syscall?
+In filemap_grab_folio(), the refcount is incremented in three places:
 
-> how would you handle clone or clone3 without gcs specified?
-> (in the cases when clone creates a new thread with new stack)
++ When the folio is created in filemap_alloc_folio(), it is given a
+  refcount of 1 in
 
-> (1) fail.
-> (2) allocate gcs.
-> (3) disable gcs.
+    filemap_alloc_folio() -> folio_alloc() -> __folio_alloc_node() ->
+    __folio_alloc() -> __alloc_pages() -> get_page_from_freelist() ->
+    prep_new_page() -> post_alloc_hook() -> set_page_refcounted()
 
-...
++ Then, in filemap_add_folio(), the refcount is incremented twice:
 
-> problem with (2) is that the size policy and lifetime management
-> is in the kernel then. (since only special cases are affected i
-> guess that is ok, but i assumed we want to avoid this by moving
-> to clone3 and user managed gcs).
+    + The first is from the filemap (1 refcount per page if this is a
+      hugepage):
 
-Right, it seems like if we go with this then we may as well just allow
-plain clone() too.
+        filemap_add_folio() -> __filemap_add_folio() -> folio_ref_add()
 
-> the problem with (3) is escaping the security measure, however
-> it only applies to very special threads that can always decide
-> to opt-in to gcs, so i don't see this as such a bad option and
-> at least bw compat with existing code. (in my threat model the
-> attacker cannot hijack clone syscalls as that seems stronger
-> than hijacking return addresses.)
+    + The second is a refcount from the lru list
 
-It doesn't seem great to have a feature which is to a large extent a
-security feature where we provide a fairly straightforward mechanism for
-disabling the feature and actively expect things to be using it.
+        filemap_add_folio() -> folio_add_lru() -> folio_get() ->
+        folio_ref_inc()
 
-Given the timescales until this gets practically deployed on arm64 I
-would be inclined to go with making things fail and forcing updates in
-the users, though obviously that's less helpful for x86 where the
-hardware is in user hands already so it's more of a pressing issue (and
-there's already what is effectively option 2 in the code).  We could
-have the architectures diverge, as you say the effect is likely to be
-mainly in very low level code rather than general software.
+In the other path, if the folio exists in the page cache (filemap), the
+refcount is also incremented through
 
---K/vjy3MP44rS/waF
-Content-Type: application/pgp-signature; name="signature.asc"
+    filemap_grab_folio() -> __filemap_get_folio() -> filemap_get_entry()
+    -> folio_try_get_rcu()
 
------BEGIN PGP SIGNATURE-----
+I believe all the branches in kvm_gmem_get_folio() are taking a refcount
+on the folio while the kernel does some work on the folio like clearing
+the folio in clear_highpage() or getting the next index, and then when
+done, the kernel does folio_put().
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmTvcWkACgkQJNaLcl1U
-h9BrNwf/ZAr2lf9jr/JbNkYpu9zm6Fga4tZrLQoMWCDnP9PGxphhBn9iAMWz6X+F
-0X05x9pIN7D4g7qLffjEzsFOpfukbLwIQ4wH/AdjNW7MvFpuH+4kt7iWwiDparY/
-wliRfw6VyCf8lMA40bSac+jlTEJowbBmX+nh1z+EI924BOUXDONu/PGGfoVtn9U0
-mOVw+DFx3lACf5cjCPKSE9JfYf74s+y9cH8fk9x1/D6jHuJuX5IOafLld3PytL/v
-Yxbc/C9XY0Qa9If9yV/NWPb7irX1i7vTMOcHJ8AAzwzHV7LjOOk2cBgRj0IJ2TBI
-1fuiPsv3RNuj2GUC01Od5Md0pPjifQ==
-=qSdV
------END PGP SIGNATURE-----
+This pattern is also used in shmem and hugetlb. :)
 
---K/vjy3MP44rS/waF--
+I'm not sure whose refcount the folio_put() in kvm_gmem_allocate() is
+dropping though:
+
++ The refcount for the filemap depends on whether this is a hugepage or
+  not, but folio_put() strictly drops a refcount of 1.
++ The refcount for the lru list is just 1, but doesn't the page still
+  remain in the lru list?
+
+>> +
+>> +		/* 64-bit only, wrapping the index should be impossible. */
+>> +		if (WARN_ON_ONCE(!index))
+>> +			break;
+>> +
+>> +		cond_resched();
+>> +	}
+>> +
+>> +	filemap_invalidate_unlock_shared(mapping);
+>> +
+>> +	return r;
+>> +}
+>> +
+>>
+>> <snip>
