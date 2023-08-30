@@ -2,127 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B1A578DAB0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Aug 2023 20:38:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87EED78DAE8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Aug 2023 20:38:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237797AbjH3Sgy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Aug 2023 14:36:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56938 "EHLO
+        id S233677AbjH3SiH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Aug 2023 14:38:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244177AbjH3Mj6 (ORCPT
+        with ESMTP id S244208AbjH3MpG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Aug 2023 08:39:58 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD098D2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Aug 2023 05:39:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1693399148;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=v2sZJy7coZxAVZRyjBbEYGHy7Fw4aLyn9Mmqx4qqxfs=;
-        b=WPsERkRm4a330G0taRSjAVNgtKTx/F//CWQqQuzlqfLn3gklJU/fljdPAHuAVVNkGYSnRf
-        ldqDcOyr9IND5aAVbh8pZfJiRV1IRTOb3NnzT6KxuUf9Zv/k2Cune+MdQg+VQW6+oNxG+K
-        E5O99/QTka2dFUnPi2OWXHsip8V28JY=
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
- [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-437-kCXLl_pPM5GjfpBCSm5Crw-1; Wed, 30 Aug 2023 08:39:07 -0400
-X-MC-Unique: kCXLl_pPM5GjfpBCSm5Crw-1
-Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-52a3e9c53e7so4367487a12.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Aug 2023 05:39:07 -0700 (PDT)
+        Wed, 30 Aug 2023 08:45:06 -0400
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DB79C2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Aug 2023 05:45:02 -0700 (PDT)
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2680f0cc480so5413541a91.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Aug 2023 05:45:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693399146; x=1694003946;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v2sZJy7coZxAVZRyjBbEYGHy7Fw4aLyn9Mmqx4qqxfs=;
-        b=QyO6cuk+nwn+9lkxpZACplRp2ceuZtfbU0t0u7+ErxDrLMCkbHka/A6mRltP+J6qrp
-         sGkStzLfDJ+qdh7gwXPeAnL0aqNXxmxqsMP9HODnGW4sp6wdPrAK7RylFWRTpmevcxXf
-         R+k5mUMkYSvjcif7xeXHUKPbUeoo7qXVxz7i3NEuwpYRgq5bptbUwAy3wqy9oW4xd6p4
-         61IhUzRa2/8HvPkBqWD4tM9TQvkXZDtUMOvmVhooQoFSYeqauRRR4H5PHT0W7Pwl970B
-         LHZUKWXh3AcNatKyVEB//Y6q7TyiV77rEGclEghe31y9caEYfSdaouGq5ZBIqXpLTS2g
-         OMeQ==
-X-Gm-Message-State: AOJu0YxAgRsg1UNOib5IZRH9EgMPf3tEUqTsKCB+Qd6GuruiMBpX3r6+
-        756b5t++AKifBHTuI2ZNjkquI0hWgFdN8f2TnYLPNk8AiN15tLU3ayWPyhb6HoTVLm4ZL2G4j3J
-        l+ELlD7mEktJirgoIunGV1GlwNxympcCSam6XhsGY0A==
-X-Received: by 2002:a50:ef1a:0:b0:51b:c714:a2a1 with SMTP id m26-20020a50ef1a000000b0051bc714a2a1mr1972653eds.7.1693399146288;
-        Wed, 30 Aug 2023 05:39:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGfewQayRTjS+ETA5KSggFgeSlv49VrL0zQXHu5OfkWiTGdWkUo1JPaTBQ/aMX8Dt5k7rGTtcbDWOy5lMZ3Qew=
-X-Received: by 2002:a50:ef1a:0:b0:51b:c714:a2a1 with SMTP id
- m26-20020a50ef1a000000b0051bc714a2a1mr1972643eds.7.1693399146053; Wed, 30 Aug
- 2023 05:39:06 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1693399502; x=1694004302;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Jt3l9FGOI3Y5tt5qjFm1J8GEZChx9Hp7h/Vbc/JsQ3E=;
+        b=IitTytlNNzJFe+bxzqfT6+jDpm9nUEkq0HrE/Uo3xr5esyVyzRcmoJqxSvLSA/SsEL
+         MhlMQGYqRz5u9NfuuyfnRMRaknkB6Vw3LG8hhq8FoS5h7WZIWi/LqM8+kIdeoBQFTa4A
+         uXudlZRvpvBhEX7D7aMDpgT2O4aQFlb2oDF3Sabpd5tQvEOeySEN7/KgLXc6wyGU/Sc3
+         kJA8jGcbWCFYc0f87S3/KeKCrCsTFWeNUp2NFN81eQCX3C1wwF1TdR8tltrmw9SUpBU0
+         8Pt3XjuBpSDkm7xPdkRu63FktR7eTA5ysYF6t13pPBaOmO36DXKA75u7RQBBqiAASxKp
+         CMKA==
+X-Gm-Message-State: AOJu0Ywcg4IUszOeZt1RymFUUAjDkNld0axIMntqaYP/dtvz3hRHjKjb
+        rETTkEKMrg0Jir6mRDjX7UbYz4Rho2SvigVFboY9LEYnGFvH
+X-Google-Smtp-Source: AGHT+IF+BZ7YLC7iad66BUKll9riZuoAtEuwnKIWiTyEBoJRJpmCovwoB1+N8tFGqnTgUi6y3R9KLMCmbW1zGWpjn7BI9GeuhISD
 MIME-Version: 1.0
-References: <20230823213352.1971009-1-aahringo@redhat.com> <20230823213352.1971009-7-aahringo@redhat.com>
- <9a8ead64cdd32fdad29cae3aff0bd447f33a32c2.camel@kernel.org>
-In-Reply-To: <9a8ead64cdd32fdad29cae3aff0bd447f33a32c2.camel@kernel.org>
-From:   Alexander Aring <aahringo@redhat.com>
-Date:   Wed, 30 Aug 2023 08:38:54 -0400
-Message-ID: <CAK-6q+i+j1TUmWGH+fdYHix5TwujH8_kuR5ayUv9h6Ah8OQecQ@mail.gmail.com>
-Subject: Re: [PATCH 6/7] dlm: use FL_SLEEP to determine blocking vs non-blocking
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     linux-nfs@vger.kernel.org, cluster-devel@redhat.com,
-        ocfs2-devel@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-        teigland@redhat.com, rpeterso@redhat.com, agruenba@redhat.com,
-        trond.myklebust@hammerspace.com, anna@kernel.org,
-        chuck.lever@oracle.com
+X-Received: by 2002:a17:902:db08:b0:1bb:b74c:88fa with SMTP id
+ m8-20020a170902db0800b001bbb74c88famr618138plx.6.1693399502045; Wed, 30 Aug
+ 2023 05:45:02 -0700 (PDT)
+Date:   Wed, 30 Aug 2023 05:45:01 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c849190604234b66@google.com>
+Subject: [syzbot] Monthly ntfs3 report (Aug 2023)
+From:   syzbot <syzbot+list2fdacf96ea1991346bcd@syzkaller.appspotmail.com>
+To:     almaz.alexandrovich@paragon-software.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,
+        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+Hello ntfs3 maintainers/developers,
 
-On Fri, Aug 25, 2023 at 2:18=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wr=
-ote:
->
-> On Wed, 2023-08-23 at 17:33 -0400, Alexander Aring wrote:
-> > This patch uses the FL_SLEEP flag in struct file_lock to determine if
-> > the lock request is a blocking or non-blocking request. Before dlm was
-> > using IS_SETLKW() was being used which is not usable for lock requests
-> > coming from lockd when EXPORT_OP_SAFE_ASYNC_LOCK inside the export flag=
-s
-> > is set.
-> >
-> > Signed-off-by: Alexander Aring <aahringo@redhat.com>
-> > ---
-> >  fs/dlm/plock.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/fs/dlm/plock.c b/fs/dlm/plock.c
-> > index 0094fa4004cc..0c6ed5eeb840 100644
-> > --- a/fs/dlm/plock.c
-> > +++ b/fs/dlm/plock.c
-> > @@ -140,7 +140,7 @@ int dlm_posix_lock(dlm_lockspace_t *lockspace, u64 =
-number, struct file *file,
-> >       op->info.optype         =3D DLM_PLOCK_OP_LOCK;
-> >       op->info.pid            =3D fl->fl_pid;
-> >       op->info.ex             =3D (fl->fl_type =3D=3D F_WRLCK);
-> > -     op->info.wait           =3D IS_SETLKW(cmd);
-> > +     op->info.wait           =3D !!(fl->fl_flags & FL_SLEEP);
-> >       op->info.fsid           =3D ls->ls_global_id;
-> >       op->info.number         =3D number;
-> >       op->info.start          =3D fl->fl_start;
->
-> Not sure you really need the !!, but ok...
->
+This is a 31-day syzbot report for the ntfs3 subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/ntfs3
 
-The wait is a byte value and FL_SLEEP doesn't fit into it, I already
-run into problems with it. I don't think somebody does a if (foo->wait
-=3D=3D 1) but it should be set to 1 or 0.
+During the period, 1 new issues were detected and 0 were fixed.
+In total, 57 issues are still open and 24 have been fixed so far.
 
-An alternative would be: ((fl->fl_flags & FL_SLEEP) =3D=3D FL_SLEEP). I am
-not sure what the coding style says here. I think it's more important
-what the C standard says about !!(condition), but there are other
-users of this in the Linux kernel. :-/
+Some of the still happening issues:
 
-- Alex
+Ref  Crashes Repro Title
+<1>  5004    Yes   UBSAN: shift-out-of-bounds in ntfs_fill_super (2)
+                   https://syzkaller.appspot.com/bug?extid=478c1bf0e6bf4a8f3a04
+<2>  3598    Yes   KASAN: slab-out-of-bounds Read in ntfs_iget5
+                   https://syzkaller.appspot.com/bug?extid=b4084c18420f9fad0b4f
+<3>  1912    Yes   possible deadlock in ni_fiemap
+                   https://syzkaller.appspot.com/bug?extid=c300ab283ba3bc072439
+<4>  1564    Yes   KASAN: out-of-bounds Write in end_buffer_read_sync
+                   https://syzkaller.appspot.com/bug?extid=3f7f291a3d327486073c
+<5>  1281    Yes   possible deadlock in ntfs_set_state
+                   https://syzkaller.appspot.com/bug?extid=f91c29a5d5a01ada051a
+<6>  1260    Yes   possible deadlock in attr_data_get_block
+                   https://syzkaller.appspot.com/bug?extid=36bb70085ef6edc2ebb9
+<7>  780     No    possible deadlock in ntfs_mark_rec_free
+                   https://syzkaller.appspot.com/bug?extid=f83f0dbef763c426e3cf
+<8>  537     Yes   possible deadlock in mi_read
+                   https://syzkaller.appspot.com/bug?extid=bc7ca0ae4591cb2550f9
+<9>  512     Yes   possible deadlock in filemap_fault
+                   https://syzkaller.appspot.com/bug?extid=7736960b837908f3a81d
+<10> 455     Yes   possible deadlock in ntfs_fiemap
+                   https://syzkaller.appspot.com/bug?extid=96cee7d33ca3f87eee86
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
