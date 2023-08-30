@@ -2,51 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 179FB78DA83
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Aug 2023 20:37:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE9C278DAD0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Aug 2023 20:38:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232952AbjH3Sg2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Aug 2023 14:36:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59172 "EHLO
+        id S237370AbjH3ShN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Aug 2023 14:37:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242872AbjH3Jyx (ORCPT
+        with ESMTP id S242995AbjH3KCz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Aug 2023 05:54:53 -0400
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C80D6CD2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Aug 2023 02:54:50 -0700 (PDT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-1c093862623so66539735ad.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Aug 2023 02:54:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693389290; x=1693994090;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=futJjrISsM49zoZxDR8r/Bu6gXuRV0qm6uZRuxXz32A=;
-        b=Hy8eUfkquDzfqgv9YXm2xGreRZYr3j/166NjwhR3b0jMp0kzCSKBIy7h3b7NqM5r79
-         m6T8tK1rvIXZLcuBFOeY5pxgFmkpglvDnMf5iJ+7r1xqm+AO15VY9Hz+jR1Q9v3iejCz
-         CnnJQHaWY3vekIiClbPpWAWFWbtz0R6nrT5TNc9t5eluSQd+YHktoIYwsDVzgWy6KUm/
-         ayK2cIKQ40ri9z/TVsHnuPbGiDuljrn5PZl3VeH1rDTH7xlkq8fThEPUWcW+jxTmOozG
-         rFKN8tzcf50R/janO7IQMVm2FXquICZbqrwUPBVFj6Lf7c+4j7Nm60C1gT/9dGzHrQP0
-         X9OQ==
-X-Gm-Message-State: AOJu0YyWAqdGTI9//SGmlGxAtrulz4AcjsmKHsOjZz7LB+yykqAhZwup
-        2W+JaUnq9/DEShZtOh8HPJAvY5/nJOq2+KJLDGDL90bVYkpyd+Y=
-X-Google-Smtp-Source: AGHT+IHOxuCxq5X1Y0klYh2UO5uaBWsMBRNIoRkZnnME2Rftp2OQGQKGq6gJKIpcqFHeUd7eDkbtCeTvPTAoXglZOkIRRe+VckVl
+        Wed, 30 Aug 2023 06:02:55 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E367C1B0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Aug 2023 03:02:52 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 739C262643
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Aug 2023 10:02:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39F44C433C7;
+        Wed, 30 Aug 2023 10:02:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1693389771;
+        bh=21KpJvsxmen+6ltxslnavLUss7C8n6CYIrpV8T6qub8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=c/m6uqfPOwtPSKlaXs9m67r/QL9JLEqrF9sLTeU3bDqWTeD4GBm93iknTCupun88O
+         ZAPieOkVfWTo0CDEK0Pq1K+dFKJ94bgt0AAxpMc86JDAbRcpK+/4UaOPvreJeuuXbx
+         UZz6hrKzHbv/27R6uuYCzaiGWndIVJYrkPBOleEB5mAFhes3VGudZnwDa1ormIYJlu
+         Q8ktSHnNmM1FwTKpDGBlMyYDMNrXeGLL8tb8HTujAodzvirPOT5PuwW7LdpcxTQcaW
+         ajOhFlCCIh/IhYlUdFSbmznUu2TpEWJm+fNpkjmwMuJp1YUnw8+lq6AeHSiJomudAe
+         MpMr0MJngJe7Q==
+Date:   Wed, 30 Aug 2023 12:02:47 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>
+Cc:     Richard Weinberger <richard@nod.at>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/2] fs: export sget_dev()
+Message-ID: <20230830-theater-quizsendung-4ba64e87df36@brauner>
+References: <20230829-vfs-super-mtd-v1-0-fecb572e5df3@kernel.org>
+ <20230829-vfs-super-mtd-v1-1-fecb572e5df3@kernel.org>
+ <20230830061409.GB17785@lst.de>
+ <20230830-befanden-geahndet-2f084125d861@brauner>
+ <20230830093851.uwdgpt645niysuji@quack3>
+ <20230830-ohnedies-umland-fb2b1a45db10@brauner>
 MIME-Version: 1.0
-X-Received: by 2002:a17:903:5c7:b0:1ba:a36d:f82c with SMTP id
- kf7-20020a17090305c700b001baa36df82cmr437545plb.7.1693389290445; Wed, 30 Aug
- 2023 02:54:50 -0700 (PDT)
-Date:   Wed, 30 Aug 2023 02:54:50 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000001fa20c060420eb39@google.com>
-Subject: [syzbot] Monthly reiserfs report (Aug 2023)
-From:   syzbot <syzbot+lista2084c97a93c18a7715f@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS autolearn=no
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20230830-ohnedies-umland-fb2b1a45db10@brauner>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -54,48 +62,122 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello reiserfs maintainers/developers,
+> Yeah, good point. Done.
 
-This is a 31-day syzbot report for the reiserfs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/reiserfs
+From fe40c7fe1a87814f92f9b1d0b9fb78ac69404c33 Mon Sep 17 00:00:00 2001
+From: Christian Brauner <brauner@kernel.org>
+Date: Tue, 29 Aug 2023 15:05:28 +0200
+Subject: [PATCH 1/2] fs: export sget_dev()
 
-During the period, 2 new issues were detected and 0 were fixed.
-In total, 88 issues are still open and 18 have been fixed so far.
+They will be used for mtd devices as well.
 
-Some of the still happening issues:
-
-Ref  Crashes Repro Title
-<1>  27921   Yes   KASAN: null-ptr-deref Read in do_journal_end (2)
-                   https://syzkaller.appspot.com/bug?extid=845cd8e5c47f2a125683
-<2>  4228    Yes   possible deadlock in open_xa_dir
-                   https://syzkaller.appspot.com/bug?extid=8fb64a61fdd96b50f3b8
-<3>  4054    No    UBSAN: array-index-out-of-bounds in direntry_create_vi
-                   https://syzkaller.appspot.com/bug?extid=e5bb9eb00a5a5ed2a9a2
-<4>  1698    No    KASAN: slab-out-of-bounds Read in search_by_key (2)
-                   https://syzkaller.appspot.com/bug?extid=b3b14fb9f8a14c5d0267
-<5>  1421    Yes   kernel BUG at fs/reiserfs/journal.c:LINE!
-                   https://syzkaller.appspot.com/bug?extid=6820505ae5978f4f8f2f
-<6>  1224    Yes   WARNING in reiserfs_lookup
-                   https://syzkaller.appspot.com/bug?extid=392ac209604cc18792e5
-<7>  990     Yes   possible deadlock in mnt_want_write_file
-                   https://syzkaller.appspot.com/bug?extid=1047e42179f502f2b0a2
-<8>  297     Yes   possible deadlock in reiserfs_ioctl
-                   https://syzkaller.appspot.com/bug?extid=79c303ad05f4041e0dad
-<9>  248     Yes   KASAN: out-of-bounds Read in leaf_paste_entries (2)
-                   https://syzkaller.appspot.com/bug?extid=38b79774b6c990637f95
-<10> 218     Yes   possible deadlock in do_journal_begin_r
-                   https://syzkaller.appspot.com/bug?extid=5e385bfa7d505b075d9f
-
+Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ fs/super.c         | 64 ++++++++++++++++++++++++++++++++--------------
+ include/linux/fs.h |  1 +
+ 2 files changed, 46 insertions(+), 19 deletions(-)
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+diff --git a/fs/super.c b/fs/super.c
+index ad7ac3a24d38..d27d80bf7c43 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -1371,6 +1371,50 @@ int get_tree_keyed(struct fs_context *fc,
+ }
+ EXPORT_SYMBOL(get_tree_keyed);
+ 
++static int set_bdev_super(struct super_block *s, void *data)
++{
++	s->s_dev = *(dev_t *)data;
++	return 0;
++}
++
++static int super_s_dev_set(struct super_block *s, struct fs_context *fc)
++{
++	return set_bdev_super(s, fc->sget_key);
++}
++
++static int super_s_dev_test(struct super_block *s, struct fs_context *fc)
++{
++	return !(s->s_iflags & SB_I_RETIRED) &&
++		s->s_dev == *(dev_t *)fc->sget_key;
++}
++
++/**
++ * sget_dev - Find or create a superblock by device number
++ * @fc: Filesystem context.
++ * @dev: device number
++ *
++ * Find or create a superblock using the provided device number that
++ * will be stored in fc->sget_key.
++ *
++ * If an extant superblock is matched, then that will be returned with
++ * an elevated reference count that the caller must transfer or discard.
++ *
++ * If no match is made, a new superblock will be allocated and basic
++ * initialisation will be performed (s_type, s_fs_info, s_id, s_dev will
++ * be set). The superblock will be published and it will be returned in
++ * a partially constructed state with SB_BORN and SB_ACTIVE as yet
++ * unset.
++ *
++ * Return: an existing or newly created superblock on success, an error
++ *         pointer on failure.
++ */
++struct super_block *sget_dev(struct fs_context *fc, dev_t dev)
++{
++	fc->sget_key = &dev;
++	return sget_fc(fc, super_s_dev_test, super_s_dev_set);
++}
++EXPORT_SYMBOL(sget_dev);
++
+ #ifdef CONFIG_BLOCK
+ /*
+  * Lock a super block that the callers holds a reference to.
+@@ -1429,23 +1473,6 @@ const struct blk_holder_ops fs_holder_ops = {
+ };
+ EXPORT_SYMBOL_GPL(fs_holder_ops);
+ 
+-static int set_bdev_super(struct super_block *s, void *data)
+-{
+-	s->s_dev = *(dev_t *)data;
+-	return 0;
+-}
+-
+-static int set_bdev_super_fc(struct super_block *s, struct fs_context *fc)
+-{
+-	return set_bdev_super(s, fc->sget_key);
+-}
+-
+-static int test_bdev_super_fc(struct super_block *s, struct fs_context *fc)
+-{
+-	return !(s->s_iflags & SB_I_RETIRED) &&
+-		s->s_dev == *(dev_t *)fc->sget_key;
+-}
+-
+ int setup_bdev_super(struct super_block *sb, int sb_flags,
+ 		struct fs_context *fc)
+ {
+@@ -1523,8 +1550,7 @@ int get_tree_bdev(struct fs_context *fc,
+ 	}
+ 
+ 	fc->sb_flags |= SB_NOSEC;
+-	fc->sget_key = &dev;
+-	s = sget_fc(fc, test_bdev_super_fc, set_bdev_super_fc);
++	s = sget_dev(fc, dev);
+ 	if (IS_ERR(s))
+ 		return PTR_ERR(s);
+ 
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index ca8ceccde3d6..8a8d1cd5b0a9 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2274,6 +2274,7 @@ struct super_block *sget(struct file_system_type *type,
+ 			int (*test)(struct super_block *,void *),
+ 			int (*set)(struct super_block *,void *),
+ 			int flags, void *data);
++struct super_block *sget_dev(struct fs_context *fc, dev_t dev);
+ 
+ /* Alas, no aliases. Too much hassle with bringing module.h everywhere */
+ #define fops_get(fops) \
+-- 
+2.34.1
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
