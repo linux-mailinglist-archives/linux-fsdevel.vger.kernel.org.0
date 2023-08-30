@@ -2,125 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F278E78DB0D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Aug 2023 20:39:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECC4E78DBC4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Aug 2023 20:46:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234075AbjH3Si0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Aug 2023 14:38:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57026 "EHLO
+        id S238326AbjH3Shh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Aug 2023 14:37:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244017AbjH3MOz (ORCPT
+        with ESMTP id S244031AbjH3MQN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Aug 2023 08:14:55 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7673A1B0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Aug 2023 05:14:52 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-99c1c66876aso711530866b.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Aug 2023 05:14:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1693397691; x=1694002491; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=6pxLXz9WpKF5WM7fCSR8+13AwuJ8TPRJvpKPYiMiK4E=;
-        b=XNI7NnV6+P46/0WIDEkdNfuxqyuwN/E46chrS6Ripw84sx4YCjydHo6eEosRyMoPH2
-         f8Zyqi8zxMFIjpxe7gBlm64OW5x98sA1nLvUPEhqaqoj2FHeZm1sKyB8HYhFh+XTzeQo
-         Bnr2202Bhz2Fo9iV+25OI38TcAp4e7cz/1ulA=
+        Wed, 30 Aug 2023 08:16:13 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AA00CC9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Aug 2023 05:15:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1693397724;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=pXW+YJ7Es1NUxs1wO/8B0lyOdXp6T+rmiitd4bvcpy8=;
+        b=SG+WuMrf5wj6EH0bpIhdtMrbBWrcJEbV1Dq2liUzRemjDqjiHbSKd6vob/iCylWdFKlbNg
+        JyvpUGUoIn82lAOvdJ1LX888EfBHKbPI0PQpUlt5bKwIGIAaq2cK6QWDYQ43VwzSzZdZkJ
+        VHBneZzBphz5VtUCi+nlLgHCdAaw10Y=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-599-MyflNwU3M1KqQ8t-zusS_w-1; Wed, 30 Aug 2023 08:15:22 -0400
+X-MC-Unique: MyflNwU3M1KqQ8t-zusS_w-1
+Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-50091a3fd87so6117585e87.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Aug 2023 05:15:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693397691; x=1694002491;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6pxLXz9WpKF5WM7fCSR8+13AwuJ8TPRJvpKPYiMiK4E=;
-        b=Zpv+9ipPFzflkgRb7AtFZnQq53MRC6nkXFXVzdbtJCOcJ1k6uhDUXBMPZ77vr5dA5i
-         1CGZuRFtYLf/AsgO8KM6OeAZ62G8n9TmvKMdTuSk1yj5wQin/iXaC5VWVE+f56M0MJa/
-         fzBr1NiWedw02Puuc3KTLJ5ohRCBn4TYGLxIhUkKzuKjkYq8mhx6HeDAShbYuSItRAK9
-         vxfNHJaTYxsfuvVXW8M7ErjhdGBl4egO+RnbwIYTm+nfPsIhgGVdfLWCv6jWjipf57uU
-         3o1cywavY/YhlwZuU7Cs9TuOUotl5++2G3XdH2220yniyByiq6UpIMVP08Hhhq9WZVJ+
-         lUbQ==
-X-Gm-Message-State: AOJu0Yw47gWfPOQl9Tz0N08GxZvjG1RB7NaGO1cwO4510wfzDLqzNDBN
-        /mCw0gt+cXYxjJsYMhR0RlQFrlmkO/PIk4B2BpTpww==
-X-Google-Smtp-Source: AGHT+IG3LXg05B7s81pCeSXgIKCINtHhHADnrYstPy1HktWtg3BYi2ln4ollIV8SLp2A9yoFUNXWktGXCoqNA63Dr8U=
-X-Received: by 2002:a17:906:518e:b0:9a1:ab86:5f27 with SMTP id
- y14-20020a170906518e00b009a1ab865f27mr1420645ejk.45.1693397690826; Wed, 30
- Aug 2023 05:14:50 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1693397721; x=1694002521;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pXW+YJ7Es1NUxs1wO/8B0lyOdXp6T+rmiitd4bvcpy8=;
+        b=J9/hnZL7xRAPFE5hpKG120Usu7kIVhS5CD/NhOM8s5cQzgfT8jcGo/b174FTMt1brt
+         nCJGPLXZJAV/sCu99IVj0ObXE8xo09gA9pkOiZAo5l8KU1rqlXSkmctYRB6pv1VUCF8U
+         IaBTCjvctTkJoiezRPbNEa0JiSUsc5K4yjWNAoKsAhHcxGA8C2qhjFNtE3NoD04dRFb3
+         7FYoiBnX/+pVJxddyI9HIsvNmetoIFp22VtzNWVu/xqynK7QtOQ2LjsoIRVi8EXCSGxR
+         sq5V4BFblojRP4Fwg5Ddb7Z+OfZX4ofyS6/Pw6jP5QvDIWvQuKv4FoEDt3zIgm4DQAPS
+         fWEQ==
+X-Gm-Message-State: AOJu0YxOxXS2zpz62jXsZbd9PfFuZjX79SRxs0njNDnjwJ7yGh6Q1SvO
+        5JEG6kQYOn2gf4ZfmJ14sCUbWHlSzqko6ac/XxvyVXpNLPM2bvjOX9voCmgKZSq0unbHElbdqTo
+        bW148YClICdBACddI41N0v3bzDMMxb2Z1c6AKc5yq4g==
+X-Received: by 2002:a05:6512:3a8e:b0:500:bc5a:517a with SMTP id q14-20020a0565123a8e00b00500bc5a517amr1599278lfu.56.1693397721195;
+        Wed, 30 Aug 2023 05:15:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFH4CTWLGIc2/L6PKaTeIATaE0rFTOba0dxmf+/1WydwsNUiyEi5RRMTlB/tcj2GzHwHxxqFM7q4A7ioapsKgE=
+X-Received: by 2002:a05:6512:3a8e:b0:500:bc5a:517a with SMTP id
+ q14-20020a0565123a8e00b00500bc5a517amr1599259lfu.56.1693397720785; Wed, 30
+ Aug 2023 05:15:20 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230829161116.2914040-1-bschubert@ddn.com> <20230829161116.2914040-3-bschubert@ddn.com>
- <CAJfpegvnxrmU=GgxGxZCh4oyhBk3HrPeWGLqwR7quJ2RPv5JjQ@mail.gmail.com> <efade42b-2c32-2f22-07a4-7541b60d3c32@fastmail.fm>
-In-Reply-To: <efade42b-2c32-2f22-07a4-7541b60d3c32@fastmail.fm>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 30 Aug 2023 14:14:39 +0200
-Message-ID: <CAJfpegvm=6Onn5ezgfctknmjh3VRsAajguAWoRGEXVN3upT4sA@mail.gmail.com>
-Subject: Re: [PATCH 2/6] fuse: Create helper function if DIO write needs
- exclusive lock
-To:     Bernd Schubert <aakef@fastmail.fm>
-Cc:     Bernd Schubert <bschubert@ddn.com>, linux-fsdevel@vger.kernel.org,
-        bernd.schubert@fastmail.fm, dsingh@ddn.com,
-        Hao Xu <howeyxu@tencent.com>
+References: <20230823213352.1971009-1-aahringo@redhat.com> <20230823213352.1971009-3-aahringo@redhat.com>
+ <ae36349af354dcf40c29ff1c6bf7d930f08e7115.camel@kernel.org>
+In-Reply-To: <ae36349af354dcf40c29ff1c6bf7d930f08e7115.camel@kernel.org>
+From:   Alexander Aring <aahringo@redhat.com>
+Date:   Wed, 30 Aug 2023 08:15:09 -0400
+Message-ID: <CAK-6q+hZ8T+Ji5kkmrE4xfA0mf+B7k44nySJqDf2zyJEO3n9Ng@mail.gmail.com>
+Subject: Re: [PATCH 2/7] lockd: don't call vfs_lock_file() for pending requests
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     linux-nfs@vger.kernel.org, cluster-devel@redhat.com,
+        ocfs2-devel@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+        teigland@redhat.com, rpeterso@redhat.com, agruenba@redhat.com,
+        trond.myklebust@hammerspace.com, anna@kernel.org,
+        chuck.lever@oracle.com, fstests@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 30 Aug 2023 at 14:13, Bernd Schubert <aakef@fastmail.fm> wrote:
+Hi,
+
+On Fri, Aug 25, 2023 at 2:10=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wr=
+ote:
 >
->
->
-> On 8/30/23 12:57, Miklos Szeredi wrote:
-> > On Tue, 29 Aug 2023 at 18:11, Bernd Schubert <bschubert@ddn.com> wrote:
-> >>
-> >> This is just a preparation to avoid code duplication in the next
-> >> commit.
-> >>
-> >> Cc: Hao Xu <howeyxu@tencent.com>
-> >> Cc: Miklos Szeredi <miklos@szeredi.hu>
-> >> Cc: Dharmendra Singh <dsingh@ddn.com>
-> >> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
-> >> ---
-> >>   fs/fuse/file.c | 48 +++++++++++++++++++++++++++++++++---------------
-> >>   1 file changed, 33 insertions(+), 15 deletions(-)
-> >>
-> >> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> >> index b1b9f2b9a37d..6b8b9512c336 100644
-> >> --- a/fs/fuse/file.c
-> >> +++ b/fs/fuse/file.c
-> >> @@ -1298,6 +1298,37 @@ static ssize_t fuse_perform_write(struct kiocb *iocb, struct iov_iter *ii)
-> >>          return res;
-> >>   }
-> >>
-> >> +static bool fuse_io_past_eof(struct kiocb *iocb,
-> >> +                                              struct iov_iter *iter)
-> >> +{
-> >> +       struct inode *inode = file_inode(iocb->ki_filp);
-> >> +
-> >> +       return iocb->ki_pos + iov_iter_count(iter) > i_size_read(inode);
-> >> +}
-> >> +
-> >> +/*
-> >> + * @return true if an exclusive lock direct IO writes is needed
-> >> + */
-> >> +static bool fuse_dio_wr_exclusive_lock(struct kiocb *iocb, struct iov_iter *from)
-> >> +{
-> >> +       struct file *file = iocb->ki_filp;
-> >> +       struct fuse_file *ff = file->private_data;
-> >> +
-> >> +       /* server side has to advise that it supports parallel dio writes */
-> >> +       if (!(ff->open_flags & FOPEN_PARALLEL_DIRECT_WRITES))
-> >> +               return false;
+> On Wed, 2023-08-23 at 17:33 -0400, Alexander Aring wrote:
+> > This patch returns nlm_lck_blocked in nlmsvc_lock() when an asynchronou=
+s
+> > lock request is pending. During testing I ran into the case with the
+> > side-effects that lockd is waiting for only one lm_grant() callback
+> > because it's already part of the nlm_blocked list. If another
+> > asynchronous for the same nlm_block is triggered two lm_grant()
+> > callbacks will occur but lockd was only waiting for one.
 > >
-> > You got the return values the wrong way around.  I can fix this, no
-> > need to resend.
+> > To avoid any change of existing users this handling will only being mad=
+e
+> > when export_op_support_safe_async_lock() returns true.
+> >
+> > Signed-off-by: Alexander Aring <aahringo@redhat.com>
+> > ---
+> >  fs/lockd/svclock.c | 24 +++++++++++++++++-------
+> >  1 file changed, 17 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/fs/lockd/svclock.c b/fs/lockd/svclock.c
+> > index 6e3b230e8317..aa4174fbaf5b 100644
+> > --- a/fs/lockd/svclock.c
+> > +++ b/fs/lockd/svclock.c
+> > @@ -531,6 +531,23 @@ nlmsvc_lock(struct svc_rqst *rqstp, struct nlm_fil=
+e *file,
+> >               goto out;
+> >       }
+> >
+> > +     spin_lock(&nlm_blocked_lock);
+> > +     /*
+> > +      * If this is a lock request for an already pending
+> > +      * lock request we return nlm_lck_blocked without calling
+> > +      * vfs_lock_file() again. Otherwise we have two pending
+> > +      * requests on the underlaying ->lock() implementation but
+> > +      * only one nlm_block to being granted by lm_grant().
+> > +      */
+> > +     if (export_op_support_safe_async_lock(inode->i_sb->s_export_op,
+> > +                                           nlmsvc_file_file(file)->f_o=
+p) &&
+> > +         !list_empty(&block->b_list)) {
+> > +             spin_unlock(&nlm_blocked_lock);
+> > +             ret =3D nlm_lck_blocked;
+> > +             goto out;
+> > +     }
 >
-> Ooops, sorry! Do you mind to take this series for next merge round? I
-> obviously didn't test the latest series yet and I would like to first
-> test performance and do several rounds of xfs tests. That should be done
-> by Monday, but might be a bit late for 6.6
+> Looks reasonable. The block->b_list check is subtle, but the comment
+> helps.
 
-Right, this should aim for 6.7.
+thanks. To be honest, I am "a little bit" worried (I am thinking of
+this scenario) that we might have a problem here with multiple
+identically lock requests being granted at the same time. In such
+cases the most fields of struct file_lock are mostly the same and
+nlm_compare_locks() checks exactly on those fields. I am concerned
+this corner case could cause problems, but it is a very rare case and
+it makes totally no sense that an application is doing such a request.
 
-Thanks,
-Miklos
+I am currently trying to get an xfstest for this upstream.
+
+- Alex
+
