@@ -2,144 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ECC4E78DBC4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Aug 2023 20:46:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC18678DAAC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Aug 2023 20:38:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238326AbjH3Shh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Aug 2023 14:37:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56918 "EHLO
+        id S236925AbjH3Sgw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Aug 2023 14:36:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244031AbjH3MQN (ORCPT
+        with ESMTP id S244042AbjH3MTq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Aug 2023 08:16:13 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AA00CC9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Aug 2023 05:15:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1693397724;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=pXW+YJ7Es1NUxs1wO/8B0lyOdXp6T+rmiitd4bvcpy8=;
-        b=SG+WuMrf5wj6EH0bpIhdtMrbBWrcJEbV1Dq2liUzRemjDqjiHbSKd6vob/iCylWdFKlbNg
-        JyvpUGUoIn82lAOvdJ1LX888EfBHKbPI0PQpUlt5bKwIGIAaq2cK6QWDYQ43VwzSzZdZkJ
-        VHBneZzBphz5VtUCi+nlLgHCdAaw10Y=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-599-MyflNwU3M1KqQ8t-zusS_w-1; Wed, 30 Aug 2023 08:15:22 -0400
-X-MC-Unique: MyflNwU3M1KqQ8t-zusS_w-1
-Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-50091a3fd87so6117585e87.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Aug 2023 05:15:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693397721; x=1694002521;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pXW+YJ7Es1NUxs1wO/8B0lyOdXp6T+rmiitd4bvcpy8=;
-        b=J9/hnZL7xRAPFE5hpKG120Usu7kIVhS5CD/NhOM8s5cQzgfT8jcGo/b174FTMt1brt
-         nCJGPLXZJAV/sCu99IVj0ObXE8xo09gA9pkOiZAo5l8KU1rqlXSkmctYRB6pv1VUCF8U
-         IaBTCjvctTkJoiezRPbNEa0JiSUsc5K4yjWNAoKsAhHcxGA8C2qhjFNtE3NoD04dRFb3
-         7FYoiBnX/+pVJxddyI9HIsvNmetoIFp22VtzNWVu/xqynK7QtOQ2LjsoIRVi8EXCSGxR
-         sq5V4BFblojRP4Fwg5Ddb7Z+OfZX4ofyS6/Pw6jP5QvDIWvQuKv4FoEDt3zIgm4DQAPS
-         fWEQ==
-X-Gm-Message-State: AOJu0YxOxXS2zpz62jXsZbd9PfFuZjX79SRxs0njNDnjwJ7yGh6Q1SvO
-        5JEG6kQYOn2gf4ZfmJ14sCUbWHlSzqko6ac/XxvyVXpNLPM2bvjOX9voCmgKZSq0unbHElbdqTo
-        bW148YClICdBACddI41N0v3bzDMMxb2Z1c6AKc5yq4g==
-X-Received: by 2002:a05:6512:3a8e:b0:500:bc5a:517a with SMTP id q14-20020a0565123a8e00b00500bc5a517amr1599278lfu.56.1693397721195;
-        Wed, 30 Aug 2023 05:15:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFH4CTWLGIc2/L6PKaTeIATaE0rFTOba0dxmf+/1WydwsNUiyEi5RRMTlB/tcj2GzHwHxxqFM7q4A7ioapsKgE=
-X-Received: by 2002:a05:6512:3a8e:b0:500:bc5a:517a with SMTP id
- q14-20020a0565123a8e00b00500bc5a517amr1599259lfu.56.1693397720785; Wed, 30
- Aug 2023 05:15:20 -0700 (PDT)
+        Wed, 30 Aug 2023 08:19:46 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13F14CC5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Aug 2023 05:19:44 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9E82D6264E
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Aug 2023 12:19:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35276C433C7;
+        Wed, 30 Aug 2023 12:19:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1693397983;
+        bh=0ZJakMDxCfcw2QZ9pOt6kXe0KlVTEjDGHCfwEPNgDRM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=uc9Vso8xRKGBDD1JsnyeAauloHfTi+eHmouQXVWP8RurJW43pBA5sfSP7qwsUQdhz
+         tEUQZRkFZ7FMVw/cCZ7ykArxQXJ222UxNMz092/r54633OMkc+GMSKCrSYNtr4lKPl
+         F3bffAGjAXBEaeMKLOLagNAkoKZxquanpGgto3CMW0sEhkezXps9F+smCl4ahQR1X7
+         QWa88BZ5T2UKCfAbf5fbWGbIeCmGpjhJz6pBOHzckWZxi2S2DzYlRennf/kEjAx5dM
+         BFOdEtpfp4MiqlnXtVstAu9QcYqtDb7kXirCtX02jx5koVHnegmPIAGA8WUyuaGXhI
+         YUSqkLyOMlKfw==
+From:   Christian Brauner <brauner@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>,
+        Richard Weinberger <richard@nod.at>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 0/2] mtd: switch to keying by dev_t
+Date:   Wed, 30 Aug 2023 14:19:26 +0200
+Message-Id: <20230830-vorabend-tanzsaal-690a955d976b@brauner>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230829-vfs-super-mtd-v1-0-fecb572e5df3@kernel.org>
+References: <20230829-vfs-super-mtd-v1-0-fecb572e5df3@kernel.org>
 MIME-Version: 1.0
-References: <20230823213352.1971009-1-aahringo@redhat.com> <20230823213352.1971009-3-aahringo@redhat.com>
- <ae36349af354dcf40c29ff1c6bf7d930f08e7115.camel@kernel.org>
-In-Reply-To: <ae36349af354dcf40c29ff1c6bf7d930f08e7115.camel@kernel.org>
-From:   Alexander Aring <aahringo@redhat.com>
-Date:   Wed, 30 Aug 2023 08:15:09 -0400
-Message-ID: <CAK-6q+hZ8T+Ji5kkmrE4xfA0mf+B7k44nySJqDf2zyJEO3n9Ng@mail.gmail.com>
-Subject: Re: [PATCH 2/7] lockd: don't call vfs_lock_file() for pending requests
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     linux-nfs@vger.kernel.org, cluster-devel@redhat.com,
-        ocfs2-devel@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-        teigland@redhat.com, rpeterso@redhat.com, agruenba@redhat.com,
-        trond.myklebust@hammerspace.com, anna@kernel.org,
-        chuck.lever@oracle.com, fstests@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1313; i=brauner@kernel.org; h=from:subject:message-id; bh=0ZJakMDxCfcw2QZ9pOt6kXe0KlVTEjDGHCfwEPNgDRM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS8N17XP8c4Ia/6llXepwVKKyLWZn3ft8KhxHmuprdc7aGY 4katjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIncbmVkuHHo2XGB6D8BCU/CU1XSrh ztXv29TGCF2aspha3uop2LdBgZOm101kpluTNtdm7beMD80AGlM2reP5aahHvrXuuxuM7BCQA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Tue, 29 Aug 2023 17:23:55 +0200, Christian Brauner wrote:
+> Hey,
+> 
+> For this cycle Jan, Christoph, and myself switched the generic super
+> code to key superblocks for block devices by device number (sb->s_dev)
+> instead of block device pointers (sb->s_bdev).
+> 
+> Not just does this allow us to defer opening block devices after we
+> allocated a superblock it also allows us to move closing block devices
+> to a later point to avoid various deadlocks.
+> 
+> [...]
 
-On Fri, Aug 25, 2023 at 2:10=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wr=
-ote:
->
-> On Wed, 2023-08-23 at 17:33 -0400, Alexander Aring wrote:
-> > This patch returns nlm_lck_blocked in nlmsvc_lock() when an asynchronou=
-s
-> > lock request is pending. During testing I ran into the case with the
-> > side-effects that lockd is waiting for only one lm_grant() callback
-> > because it's already part of the nlm_blocked list. If another
-> > asynchronous for the same nlm_block is triggered two lm_grant()
-> > callbacks will occur but lockd was only waiting for one.
-> >
-> > To avoid any change of existing users this handling will only being mad=
-e
-> > when export_op_support_safe_async_lock() returns true.
-> >
-> > Signed-off-by: Alexander Aring <aahringo@redhat.com>
-> > ---
-> >  fs/lockd/svclock.c | 24 +++++++++++++++++-------
-> >  1 file changed, 17 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/fs/lockd/svclock.c b/fs/lockd/svclock.c
-> > index 6e3b230e8317..aa4174fbaf5b 100644
-> > --- a/fs/lockd/svclock.c
-> > +++ b/fs/lockd/svclock.c
-> > @@ -531,6 +531,23 @@ nlmsvc_lock(struct svc_rqst *rqstp, struct nlm_fil=
-e *file,
-> >               goto out;
-> >       }
-> >
-> > +     spin_lock(&nlm_blocked_lock);
-> > +     /*
-> > +      * If this is a lock request for an already pending
-> > +      * lock request we return nlm_lck_blocked without calling
-> > +      * vfs_lock_file() again. Otherwise we have two pending
-> > +      * requests on the underlaying ->lock() implementation but
-> > +      * only one nlm_block to being granted by lm_grant().
-> > +      */
-> > +     if (export_op_support_safe_async_lock(inode->i_sb->s_export_op,
-> > +                                           nlmsvc_file_file(file)->f_o=
-p) &&
-> > +         !list_empty(&block->b_list)) {
-> > +             spin_unlock(&nlm_blocked_lock);
-> > +             ret =3D nlm_lck_blocked;
-> > +             goto out;
-> > +     }
->
-> Looks reasonable. The block->b_list check is subtle, but the comment
-> helps.
+Applied to the vfs.super branch of the vfs/vfs.git tree.
+Patches in the vfs.super branch should appear in linux-next soon.
 
-thanks. To be honest, I am "a little bit" worried (I am thinking of
-this scenario) that we might have a problem here with multiple
-identically lock requests being granted at the same time. In such
-cases the most fields of struct file_lock are mostly the same and
-nlm_compare_locks() checks exactly on those fields. I am concerned
-this corner case could cause problems, but it is a very rare case and
-it makes totally no sense that an application is doing such a request.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-I am currently trying to get an xfstest for this upstream.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-- Alex
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.super
+
+[1/2] fs: export sget_dev()
+      https://git.kernel.org/vfs/vfs/c/9c4d12957d16
+[2/2] mtd: key superblock by device number
+      https://git.kernel.org/vfs/vfs/c/ff7c9910eaad
