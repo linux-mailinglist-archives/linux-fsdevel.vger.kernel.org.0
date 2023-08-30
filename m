@@ -2,68 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6826178DABB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Aug 2023 20:38:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82F3278DAD7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Aug 2023 20:38:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237890AbjH3ShA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Aug 2023 14:37:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36350 "EHLO
+        id S238065AbjH3ShR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Aug 2023 14:37:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243430AbjH3K7R (ORCPT
+        with ESMTP id S243431AbjH3K7S (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Aug 2023 06:59:17 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42B381BF;
-        Wed, 30 Aug 2023 03:59:15 -0700 (PDT)
+        Wed, 30 Aug 2023 06:59:18 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 088C9CC2;
+        Wed, 30 Aug 2023 03:59:16 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D52E6627B9;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 92BBE627EA;
+        Wed, 30 Aug 2023 10:59:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E576C433C9;
         Wed, 30 Aug 2023 10:59:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA506C433C7;
-        Wed, 30 Aug 2023 10:59:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1693393154;
-        bh=wYJq4N2YWcxC3zxarH9JteFYm6SgG77yA/UCDOnm3qM=;
-        h=From:Subject:Date:To:Cc:From;
-        b=SP8hXdfwFGAWsl+o+1KC2rwsEwUN9EaDmWRKs+zuH3zbKUeVcaa1KmiU5Et8SVBb4
-         5tHBKWa80W28l5VJy3XN35qFpt2qa2IEDjZiGstjPHMvVsCTV3aQ8rJklDQMpKM46h
-         m4KsmvV4XOK1O9xNj+4P//mF08NUitvradFDE4c2OMA7Mn31u/piDjai31U5JSA+2u
-         w1cL6wfqH5bn7hgPpQJKl8cRvEng+YS+Z7LkZ8BP4MEyXSSqij38pY0d7uZUDd+hY7
-         RimARwtNh0WCzAS9w9AbPuZFU41tnCGndhHoTfSqKJ24PMixbl1soflrWS79On0oQx
-         XC/jZa4Y7W6lQ==
+        s=k20201202; t=1693393155;
+        bh=+EGk3NTklNsc2mqEzAy8hcuNClQWSDUYGoK8D+J3qxI=;
+        h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+        b=HJKkPYl+80xt3cr3ksqLc9vrQLf0AMttch+vwqRR1UXmGCizQ8kRBAdNY1XT5kLu8
+         /t3aFnH16twgpM1rS/lX/TK6E7tuaRZigY9ffSZ6xn1mviiMeXfvndX1ftgrSLtxZY
+         xaeR+pAki01BEY2NBH3R7jXQvclq1cfeYerzHTORPPb/iwgm5nTVn1qhlnG0BOdA5K
+         QkC+RHdiYLCS/Zk7uB3ztCPP4hnCCrEtiil2HmsASPn1VrOtwRKmi/dgo++0PXtUua
+         VMkrqhiHUivuJAskvyziwKL74esK1K1gqJoKUeh3FEyZnYGlhNSqrGZ/YzUOxzrFL3
+         igFqVAVV0sw4A==
 From:   Jeff Layton <jlayton@kernel.org>
-Subject: [PATCH fstests v4 0/3] fstests: add appropriate checks for fs
- features for some tests
-Date:   Wed, 30 Aug 2023 06:58:49 -0400
-Message-Id: <20230830-fixes-v4-0-88d7b8572aa3@kernel.org>
+Date:   Wed, 30 Aug 2023 06:58:50 -0400
+Subject: [PATCH fstests v4 1/3] common/attr: fix the _require_acl test
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAOkg72QC/12MQQrCMBBFr1JmbSSdpG3qynuIi5JO2qC0kglBK
- b27ISCoy8/7723AFDwxnKoNAiXPfl3y0IcK7DwsEwk/5g0oUUmDWjj/JBZ9ra1VrifXIeTvI1A
- B+XoBx5E4MlwzmD3HNbxKP2HBf6mEQoqxlRbd4GrZdOcbhYXuxzVMJZHUt9Z8NJW1VhttZW+cI
- fOj7fv+BkvCq2rbAAAA
+Message-Id: <20230830-fixes-v4-1-88d7b8572aa3@kernel.org>
+References: <20230830-fixes-v4-0-88d7b8572aa3@kernel.org>
+In-Reply-To: <20230830-fixes-v4-0-88d7b8572aa3@kernel.org>
 To:     fstests@vger.kernel.org
 Cc:     linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Darrick Wong <djwong@kernel.org>,
         Zorro Lang <zlang@redhat.com>, Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1417; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=wYJq4N2YWcxC3zxarH9JteFYm6SgG77yA/UCDOnm3qM=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBk7yD8bOeZoKJMFfEptvIwbvbAY687tDs7TVOH3
- vtJE50rk/mJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZO8g/AAKCRAADmhBGVaC
- FaN3D/95nz68PF+QEWyKvDmk1rUNczW0Eqb7mnzIVJbUoCk8wwpxZx8v9RZKF4AQ61Wx++n/0Bh
- JrS8twY63A5EWXM+85i37EISI++toVfdrIVSkf2Wv+8m/GxSUwtKe+GX+ZaSk1EiHw0GuRDlIzd
- Kn0F61ciHW9S94ptuhZABaHkfOrknrVKRn+h9hTL1YlOypbvQ68jBYqBASkVWmjguQMWqmcnzv/
- i6RE0YX7jKUCe7N7OglemzDO2Iz2QNUtnqZWHqyP0jYQH0HGZz+mxamr4JLsi96mCkiCo2GkjCs
- wstp7NIozzH6xDR/tsXvO63XXsNagv4VkC2rR5Dy1ylyYAPvLlksos+xBDrF3zcfOA21REyWj4H
- VBftbqHLi6vHqpWApSKiS+9J/jSDwZkAp253bI8VwYLcTh+WZOzr2nSNvFpisjxD29uLd5xPnOl
- 62SqSjhkV3k2TRZNiwJ0ajCZlWojwJC1FdR4XsoYAOzqIB0cT8cOxI77dMmNl3eeU2wjPoML4DX
- prL0y0giIYyZozB72jR+2EhVj13s9RUgM4Ty7COAXlQzOQHJses0Yx077OhcPEwN1HRUX8vUd+J
- 3cFIgIY2Qq6Sb/38hFDpT8Rrxrtrfq45mFKoeVOxC4vqC7Z8mR1i14A/5L2Ljh/FHfBFQTEsBWA
- tCBepxGl+DPC6Ig==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1618; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=+EGk3NTklNsc2mqEzAy8hcuNClQWSDUYGoK8D+J3qxI=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBk7yEB+KrnLZBnmvDBQ6RkoJULB2rLono8mikw6
+ J3t/Z8cxaaJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZO8hAQAKCRAADmhBGVaC
+ FcLmD/0Se/EGHVSdAsXx108kCr6W5Dfog5bvWgnxi0875ZhLbwQ9Xl86/YdajGfNUZ1pjUCgjbz
+ AQ1hph5OHQoW4h/fGjMmKPqOSG6ibLzZ6DwnndKE3OWevXAX63E4lMSfmkWQMrijO5p1GpH97Dw
+ rqf2eLIEkvh99ujTPtw1MJSjQw0XDHFDN85GGjSSyMDlucaHx/rVos7CPdhAeIKAnkXt6H148Aa
+ nIKrP7+vlGK3RXpNQ/T1nv9AfbDS4rcG9QDR2p+NpV+iotk5vypydn5Kb+OlY/GEp95/yDIz42U
+ JN7KdmJ4iG5SvmjB8AzZeT8IUwwlmTaP/sg2+aWaK53KotY4c1QRF4pQMGHayKEsxpDX0aRGkIf
+ Nyzlnnt7TK8AWg11vTe5286wbxHQEBxb6o/4Th5Qpki2501w/kf3dQ337hBPUkC0c4V/fx04LH+
+ OX6+WNT0Op5TU3KMg2coIdEX8x8Snkciu0+bTj60Nih1vuo8Ch6nsakFibFMN322XacW5ZqSUUa
+ aoXcXQn9h96M+q2Oe+wTgXXoqRmk78e2m3CWfVnR+6f9c2br/Kq0DOPycbwEHcDm5H8GKeZMLQ8
+ Uyx9yq9FPOXGkBerWpg2I80MCK9TYdhi5wXZkjNfArn+gFHqtv2g1nGNbE9Q3JImn6DLxA7OAF5
+ gKcHogIng2ShkaA==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -76,45 +73,43 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-A number of fstests fail on NFS, primarily because it lacks certain
-features that are widely supported on local Linux filesystems. Fix
-up the test for POSIX ACLs and add a new requirement for fiemap support
-in generic/578.
+_require_acl tests whether you're able to fetch the ACL from a file
+using chacl, and then tests for an -EOPNOTSUPP error return.
+Unfortunately, filesystems that don't support them (like NFSv4) just
+return -ENODATA when someone calls getxattr for the POSIX ACL, so the
+test doesn't work.
+
+Fix the test to have chacl set an ACL on the file instead, which should
+reliably fail on filesystems that don't support them.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
-Changes in v4:
-- use "_require_attrs security" instead of special setcap test
-- use '_require_xfs_io_command "fiemap"' instead of special fiemap test
-- Link to v3: https://lore.kernel.org/r/20230825-fixes-v3-0-6484c098f8e8@kernel.org
+ common/attr | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-Changes in v2:
-- add new checks for fiemap and setcap
-- Link to v2: https://lore.kernel.org/r/20230824-fixes-v2-0-d60c2faf1057@kernel.org
+diff --git a/common/attr b/common/attr
+index cce4d1b201b2..3ebba682c894 100644
+--- a/common/attr
++++ b/common/attr
+@@ -163,13 +163,12 @@ _require_acls()
+     [ -n "$CHACL_PROG" ] || _notrun "chacl command not found"
+ 
+     #
+-    # Test if chacl is able to list ACLs on the target filesystems.  On really
+-    # old kernels the system calls might not be implemented at all, but the
+-    # more common case is that the tested filesystem simply doesn't support
+-    # ACLs.
++    # Test if chacl is able to set an ACL on a file.  On really old kernels
++    # the system calls might not be implemented at all, but the more common
++    # case is that the tested filesystem simply doesn't support ACLs.
+     #
+     touch $TEST_DIR/syscalltest
+-    chacl -l $TEST_DIR/syscalltest > $TEST_DIR/syscalltest.out 2>&1
++    chacl 'u::rw-,g::---,o::---' $TEST_DIR/syscalltest > $TEST_DIR/syscalltest.out 2>&1
+     cat $TEST_DIR/syscalltest.out >> $seqres.full
+ 
+     if grep -q 'Function not implemented' $TEST_DIR/syscalltest.out; then
 
-Changes in v3:
-- use _require_xfs_io_command "fiemap" in generic/578
-- drop the _require_setcap patch (Zorro has similar that adds a _require_capabilities)
-
----
-Jeff Layton (3):
-      common/attr: fix the _require_acl test
-      generic/578: add a check to ensure that fiemap is supported
-      generic/*: add a check for security attrs
-
- common/attr       | 9 ++++-----
- tests/generic/270 | 2 ++
- tests/generic/513 | 2 ++
- tests/generic/578 | 1 +
- tests/generic/675 | 2 ++
- tests/generic/688 | 2 ++
- tests/generic/727 | 2 ++
- 7 files changed, 15 insertions(+), 5 deletions(-)
----
-base-commit: 0ca1d4fbb2e9a492968f2951df101f24477f7991
-change-id: 20230824-fixes-914cc3f9ef72
-
-Best regards,
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.41.0
 
