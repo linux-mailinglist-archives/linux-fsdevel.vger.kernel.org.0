@@ -2,111 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D92678DAA1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Aug 2023 20:37:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6826178DABB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Aug 2023 20:38:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237778AbjH3Sgq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Aug 2023 14:36:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44250 "EHLO
+        id S237890AbjH3ShA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Aug 2023 14:37:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36350 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243421AbjH3K5m (ORCPT
+        with ESMTP id S243430AbjH3K7R (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Aug 2023 06:57:42 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B81041A1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Aug 2023 03:57:38 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id a640c23a62f3a-99bcf2de59cso719842266b.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Aug 2023 03:57:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1693393057; x=1693997857; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/L+MYmRv4PKWD0Xf33WOV5Foq2uHuWDUSSf9j3EgBD8=;
-        b=an9+cOHl9rRnMl1GBF8Q3QEcYnPuBVnYgEfBhmb73UPp3ogA1z+8i7xc+5Qu7Aw89B
-         z/CaHKq/QYDLT0gE7PQqyyeYXigHDDhyk8T7esV/lfNyX97TUJ2yXSR8TeGLx405U/BB
-         WD9fgkoar32n4gDITwDXMYgQJHMylHTEAHh/s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693393057; x=1693997857;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/L+MYmRv4PKWD0Xf33WOV5Foq2uHuWDUSSf9j3EgBD8=;
-        b=ZJRv2TVAFrppM5OK2C8djYQFICpJu31mhw6sMqpO/t3Htwyf8M+HUkPuqONe6D9ZpW
-         NwH/UKUkvsB2xD6NCp6s6FWf3l8k6UngDan2mlz71gSQp5xZif33TOFZzUPDiRcF1+zs
-         VnF+e6f99NHGnTGjZM9eQWsqAy5sdP3q7Yitfz2vcCoFcE8hjTAI0UMGdMuqKCKMsT8X
-         RIiqA0cHztMuXri8+rjri3CdJbjobrc8Mj8Nqy57JFCNFgX6n87z5sQ28MpwOguBQJRx
-         wZPMz9d7w77yclj2pkU7Y69M06paW48TwsnpZult/Ob+dD2wrUW0bnvN+gOF/BI8UNm6
-         mYJw==
-X-Gm-Message-State: AOJu0YwEm6OorW2UrwDLjtGHNN57MlxoD9raUqOjbLpc51mMGFNLcccS
-        RyV6Mdxbq9mxMtPUdVb+62JXbyK65brNzxAJ6Bjt7NWjiXumFfCj
-X-Google-Smtp-Source: AGHT+IE0caqx24tMo1luI/7c7MVB83bSLJIR4xpYS0rXDYbh4yFUcrg34SXFrsFsDxIP+MW6e8dgdMvZYorUguFFJV4=
-X-Received: by 2002:a17:906:738d:b0:9a5:7ade:b5e9 with SMTP id
- f13-20020a170906738d00b009a57adeb5e9mr1304014ejl.51.1693393057243; Wed, 30
- Aug 2023 03:57:37 -0700 (PDT)
+        Wed, 30 Aug 2023 06:59:17 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42B381BF;
+        Wed, 30 Aug 2023 03:59:15 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D52E6627B9;
+        Wed, 30 Aug 2023 10:59:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA506C433C7;
+        Wed, 30 Aug 2023 10:59:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1693393154;
+        bh=wYJq4N2YWcxC3zxarH9JteFYm6SgG77yA/UCDOnm3qM=;
+        h=From:Subject:Date:To:Cc:From;
+        b=SP8hXdfwFGAWsl+o+1KC2rwsEwUN9EaDmWRKs+zuH3zbKUeVcaa1KmiU5Et8SVBb4
+         5tHBKWa80W28l5VJy3XN35qFpt2qa2IEDjZiGstjPHMvVsCTV3aQ8rJklDQMpKM46h
+         m4KsmvV4XOK1O9xNj+4P//mF08NUitvradFDE4c2OMA7Mn31u/piDjai31U5JSA+2u
+         w1cL6wfqH5bn7hgPpQJKl8cRvEng+YS+Z7LkZ8BP4MEyXSSqij38pY0d7uZUDd+hY7
+         RimARwtNh0WCzAS9w9AbPuZFU41tnCGndhHoTfSqKJ24PMixbl1soflrWS79On0oQx
+         XC/jZa4Y7W6lQ==
+From:   Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH fstests v4 0/3] fstests: add appropriate checks for fs
+ features for some tests
+Date:   Wed, 30 Aug 2023 06:58:49 -0400
+Message-Id: <20230830-fixes-v4-0-88d7b8572aa3@kernel.org>
 MIME-Version: 1.0
-References: <20230829161116.2914040-1-bschubert@ddn.com> <20230829161116.2914040-3-bschubert@ddn.com>
-In-Reply-To: <20230829161116.2914040-3-bschubert@ddn.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 30 Aug 2023 12:57:25 +0200
-Message-ID: <CAJfpegvnxrmU=GgxGxZCh4oyhBk3HrPeWGLqwR7quJ2RPv5JjQ@mail.gmail.com>
-Subject: Re: [PATCH 2/6] fuse: Create helper function if DIO write needs
- exclusive lock
-To:     Bernd Schubert <bschubert@ddn.com>
-Cc:     linux-fsdevel@vger.kernel.org, bernd.schubert@fastmail.fm,
-        dsingh@ddn.com, Hao Xu <howeyxu@tencent.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOkg72QC/12MQQrCMBBFr1JmbSSdpG3qynuIi5JO2qC0kglBK
+ b27ISCoy8/7723AFDwxnKoNAiXPfl3y0IcK7DwsEwk/5g0oUUmDWjj/JBZ9ra1VrifXIeTvI1A
+ B+XoBx5E4MlwzmD3HNbxKP2HBf6mEQoqxlRbd4GrZdOcbhYXuxzVMJZHUt9Z8NJW1VhttZW+cI
+ fOj7fv+BkvCq2rbAAAA
+To:     fstests@vger.kernel.org
+Cc:     linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Darrick Wong <djwong@kernel.org>,
+        Zorro Lang <zlang@redhat.com>, Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1417; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=wYJq4N2YWcxC3zxarH9JteFYm6SgG77yA/UCDOnm3qM=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBk7yD8bOeZoKJMFfEptvIwbvbAY687tDs7TVOH3
+ vtJE50rk/mJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZO8g/AAKCRAADmhBGVaC
+ FaN3D/95nz68PF+QEWyKvDmk1rUNczW0Eqb7mnzIVJbUoCk8wwpxZx8v9RZKF4AQ61Wx++n/0Bh
+ JrS8twY63A5EWXM+85i37EISI++toVfdrIVSkf2Wv+8m/GxSUwtKe+GX+ZaSk1EiHw0GuRDlIzd
+ Kn0F61ciHW9S94ptuhZABaHkfOrknrVKRn+h9hTL1YlOypbvQ68jBYqBASkVWmjguQMWqmcnzv/
+ i6RE0YX7jKUCe7N7OglemzDO2Iz2QNUtnqZWHqyP0jYQH0HGZz+mxamr4JLsi96mCkiCo2GkjCs
+ wstp7NIozzH6xDR/tsXvO63XXsNagv4VkC2rR5Dy1ylyYAPvLlksos+xBDrF3zcfOA21REyWj4H
+ VBftbqHLi6vHqpWApSKiS+9J/jSDwZkAp253bI8VwYLcTh+WZOzr2nSNvFpisjxD29uLd5xPnOl
+ 62SqSjhkV3k2TRZNiwJ0ajCZlWojwJC1FdR4XsoYAOzqIB0cT8cOxI77dMmNl3eeU2wjPoML4DX
+ prL0y0giIYyZozB72jR+2EhVj13s9RUgM4Ty7COAXlQzOQHJses0Yx077OhcPEwN1HRUX8vUd+J
+ 3cFIgIY2Qq6Sb/38hFDpT8Rrxrtrfq45mFKoeVOxC4vqC7Z8mR1i14A/5L2Ljh/FHfBFQTEsBWA
+ tCBepxGl+DPC6Ig==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 29 Aug 2023 at 18:11, Bernd Schubert <bschubert@ddn.com> wrote:
->
-> This is just a preparation to avoid code duplication in the next
-> commit.
->
-> Cc: Hao Xu <howeyxu@tencent.com>
-> Cc: Miklos Szeredi <miklos@szeredi.hu>
-> Cc: Dharmendra Singh <dsingh@ddn.com>
-> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
-> ---
->  fs/fuse/file.c | 48 +++++++++++++++++++++++++++++++++---------------
->  1 file changed, 33 insertions(+), 15 deletions(-)
->
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index b1b9f2b9a37d..6b8b9512c336 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -1298,6 +1298,37 @@ static ssize_t fuse_perform_write(struct kiocb *iocb, struct iov_iter *ii)
->         return res;
->  }
->
-> +static bool fuse_io_past_eof(struct kiocb *iocb,
-> +                                              struct iov_iter *iter)
-> +{
-> +       struct inode *inode = file_inode(iocb->ki_filp);
-> +
-> +       return iocb->ki_pos + iov_iter_count(iter) > i_size_read(inode);
-> +}
-> +
-> +/*
-> + * @return true if an exclusive lock direct IO writes is needed
-> + */
-> +static bool fuse_dio_wr_exclusive_lock(struct kiocb *iocb, struct iov_iter *from)
-> +{
-> +       struct file *file = iocb->ki_filp;
-> +       struct fuse_file *ff = file->private_data;
-> +
-> +       /* server side has to advise that it supports parallel dio writes */
-> +       if (!(ff->open_flags & FOPEN_PARALLEL_DIRECT_WRITES))
-> +               return false;
+A number of fstests fail on NFS, primarily because it lacks certain
+features that are widely supported on local Linux filesystems. Fix
+up the test for POSIX ACLs and add a new requirement for fiemap support
+in generic/578.
 
-You got the return values the wrong way around.  I can fix this, no
-need to resend.
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+Changes in v4:
+- use "_require_attrs security" instead of special setcap test
+- use '_require_xfs_io_command "fiemap"' instead of special fiemap test
+- Link to v3: https://lore.kernel.org/r/20230825-fixes-v3-0-6484c098f8e8@kernel.org
 
-Thanks,
-Miklos
+Changes in v2:
+- add new checks for fiemap and setcap
+- Link to v2: https://lore.kernel.org/r/20230824-fixes-v2-0-d60c2faf1057@kernel.org
+
+Changes in v3:
+- use _require_xfs_io_command "fiemap" in generic/578
+- drop the _require_setcap patch (Zorro has similar that adds a _require_capabilities)
+
+---
+Jeff Layton (3):
+      common/attr: fix the _require_acl test
+      generic/578: add a check to ensure that fiemap is supported
+      generic/*: add a check for security attrs
+
+ common/attr       | 9 ++++-----
+ tests/generic/270 | 2 ++
+ tests/generic/513 | 2 ++
+ tests/generic/578 | 1 +
+ tests/generic/675 | 2 ++
+ tests/generic/688 | 2 ++
+ tests/generic/727 | 2 ++
+ 7 files changed, 15 insertions(+), 5 deletions(-)
+---
+base-commit: 0ca1d4fbb2e9a492968f2951df101f24477f7991
+change-id: 20230824-fixes-914cc3f9ef72
+
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
+
