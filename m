@@ -2,54 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 59D7578DAF5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Aug 2023 20:39:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C087C78DBD4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Aug 2023 20:46:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237495AbjH3SiL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Aug 2023 14:38:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33964 "EHLO
+        id S238518AbjH3Shx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Aug 2023 14:37:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242854AbjH3JvG (ORCPT
+        with ESMTP id S242858AbjH3JxN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Aug 2023 05:51:06 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 472E81B0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Aug 2023 02:51:04 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D138A60B20
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Aug 2023 09:51:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7BE5C433C7;
-        Wed, 30 Aug 2023 09:51:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1693389063;
-        bh=ehF1qeecU8C9Dk3tvvD0cjYP9mJCNsSMX4fo+qTQ0VE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ENChhhxspR7hLye0MICDkGdbfnt+U6kq3HzpEaKQKcPodnPtQoPoBMQoWkmSmp9e4
-         j+KRmCMQ3mNq48zt1xkRmXocFkn87B4WwTO1RLaQrfHKYigEZAfvB3WltkOQhpnPy+
-         vIZaZu8BoGwpuwmv+DnVXhLC8EJnla3L5BvY8kwTROR1NyOZMMcfGvlKpuqBAMYNMB
-         7HFLqMA0DRf9F9J6/cMy80y8QCB7milHwLHkr9IhWn6Cy+QV7avOdI/FWNe7fMigzn
-         Gc08LyC/ECbuGynnX67zKP62MAY1vX1IhmOZhRNT5Fq93t86q0/KNEWu03/U3LQAY8
-         VuN1yXscoeeqA==
-Date:   Wed, 30 Aug 2023 11:50:58 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>,
-        Richard Weinberger <richard@nod.at>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/2] mtd: switch to keying by dev_t
-Message-ID: <20230830-strahl-turnier-8e082a720041@brauner>
-References: <20230829-vfs-super-mtd-v1-0-fecb572e5df3@kernel.org>
+        Wed, 30 Aug 2023 05:53:13 -0400
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F9461B1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Aug 2023 02:53:09 -0700 (PDT)
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-68a2d9a6b5fso6743395b3a.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Aug 2023 02:53:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1693389189; x=1693993989;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bzHfCFTnMqiRc3QC+Ez91qszxdCPJ8z3TEmrMibThBo=;
+        b=UyaYJLCzjDrXjQisTOC7pfWVCD4Mtipkf9lJq3lGbq2HMGoKTjnF3zJINaaS73RynF
+         Jp6yldbcGpj6WeY/iwq/nax+l/nOiuekOaMdyyMSZ0gtk1dKwZd4ltDFCmD5R5Tixry7
+         H40Qqft8SqFuk5KwdP8XA4KCwhEgLeb5iabIHyVSzceDyDym+zdY41YUeI+hrTWshNOg
+         AO2vwdyZh8rduPP+H2XQnVsY1skNdGaDIxcAnNsHD71EdPuWQSu+RCmIDhmSAhBs3fIx
+         9NEDsGDgy0MqRAjg8XEh3fhd9+PAvFZZuqHwDMo5xYCiKwunaV22KXWmMYZXLeLYYuZR
+         A74Q==
+X-Gm-Message-State: AOJu0Yy72inOorW1V+6m3Ah3cba0xvOIyJtZsKLI9/BoJqyJvLqKE26p
+        O/SdFrjN5BDMRScPszIjQOI6x1RPSJ0+OicFJyAnYKQD/AUA
+X-Google-Smtp-Source: AGHT+IEFbtW9dUlVtXjbvzQEeZ3dBkPMebb+v/x8PTR70mT5YNAC4VJuW4mF4Sl+HGZj2RTmt4R+j6UhLQLFI1PLR7U4bup+E6wz
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230829-vfs-super-mtd-v1-0-fecb572e5df3@kernel.org>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Received: by 2002:a05:6a00:21cf:b0:68a:5cf8:dadd with SMTP id
+ t15-20020a056a0021cf00b0068a5cf8daddmr631221pfj.4.1693389189024; Wed, 30 Aug
+ 2023 02:53:09 -0700 (PDT)
+Date:   Wed, 30 Aug 2023 02:53:08 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001411fa060420e5f4@google.com>
+Subject: [syzbot] Monthly btrfs report (Aug 2023)
+From:   syzbot <syzbot+list902b4a7ca2aca212df12@syzkaller.appspotmail.com>
+To:     clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,
+        RCVD_IN_MSPIKE_WL,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -57,11 +55,48 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> I plan on taking this upstream as a fix during the merge window.
+Hello btrfs maintainers/developers,
 
-Btw, I tested this all with jffs2:
+This is a 31-day syzbot report for the btrfs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/btrfs
 
-sudo flash_erase -j /dev/mtd0 0 0
-sudo mount -t jffs2 mtd0 /mnt
+During the period, 8 new issues were detected and 1 were fixed.
+In total, 55 issues are still open and 37 have been fixed so far.
 
-and then some variants with racing umounts and mounts.
+Some of the still happening issues:
+
+Ref  Crashes Repro Title
+<1>  8234    Yes   VFS: Busy inodes after unmount (use-after-free)
+                   https://syzkaller.appspot.com/bug?extid=0af00f6a2cba2058b5db
+<2>  5325    Yes   kernel BUG in close_ctree
+                   https://syzkaller.appspot.com/bug?extid=2665d678fffcc4608e18
+<3>  1042    Yes   WARNING in btrfs_space_info_update_bytes_may_use
+                   https://syzkaller.appspot.com/bug?extid=8edfa01e46fd9fe3fbfb
+<4>  809     Yes   WARNING in __kernel_write_iter
+                   https://syzkaller.appspot.com/bug?extid=12e098239d20385264d3
+<5>  310     Yes   kernel BUG at fs/inode.c:LINE! (2)
+                   https://syzkaller.appspot.com/bug?extid=c92c93d1f1aaaacdb9db
+<6>  273     Yes   WARNING in lookup_inline_extent_backref
+                   https://syzkaller.appspot.com/bug?extid=d6f9ff86c1d804ba2bc6
+<7>  211     Yes   WARNING in btrfs_remove_chunk
+                   https://syzkaller.appspot.com/bug?extid=e8582cc16881ec70a430
+<8>  202     Yes   WARNING in btrfs_chunk_alloc
+                   https://syzkaller.appspot.com/bug?extid=e8e56d5d31d38b5b47e7
+<9>  147     Yes   INFO: task hung in lock_extent
+                   https://syzkaller.appspot.com/bug?extid=eaa05fbc7563874b7ad2
+<10> 89      Yes   WARNING in cleanup_transaction
+                   https://syzkaller.appspot.com/bug?extid=021d10c4d4edc87daa03
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
