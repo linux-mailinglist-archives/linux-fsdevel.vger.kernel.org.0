@@ -2,63 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C1E478DA94
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Aug 2023 20:37:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE24578DBBE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Aug 2023 20:46:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234353AbjH3Sgj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Aug 2023 14:36:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58982 "EHLO
+        id S238285AbjH3Shd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Aug 2023 14:37:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242862AbjH3Jxn (ORCPT
+        with ESMTP id S242867AbjH3Jyw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Aug 2023 05:53:43 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F276D1B0;
-        Wed, 30 Aug 2023 02:53:40 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 801C260F0C;
-        Wed, 30 Aug 2023 09:53:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B009C433C8;
-        Wed, 30 Aug 2023 09:53:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1693389219;
-        bh=nknoL9w3Y4YI7sgEzXEgy31hHjSBtW5t6+EKdvixVT4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PGeSqtlADXPNsSRMnED5y2bc51bStrsRKgRLsG0vFmeuS7ZjsjtBx9snAHe0G8Vr2
-         puIswmGZMwYKKpvbAUG4hgCkBPfAo5LnG+Zqi6zCKquDATicIUaBHr5eqdyzNoLlT+
-         eDLqK7F5l64Ce6vhg3+b1Cyvv77qi6SuOOpM4UfSj8i00ym6zp0iNwdRQNPeW8AsCh
-         s7jTGiZrttnG7dc7MMCLuv2nzzC2OWwW1dpk2JWvAsdtCdcLabRj31KBbnR0Ga2XvP
-         vjAjcw2evRgbmv/HS/X8EAdywyIIJ9VzMleY3re1+0iiynu1XGC3tw9hN+y2/tEsbr
-         Pj2cy6RWLJA5g==
-Date:   Wed, 30 Aug 2023 11:53:32 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, viro@zeniv.linux.org.uk,
-        chuck.lever@oracle.com, jlayton@kernel.org,
-        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, dhowells@redhat.com, jarkko@kernel.org,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        casey@schaufler-ca.com, linux-fsdevel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stefanb@linux.ibm.com, Roberto Sassu <roberto.sassu@huawei.com>
-Subject: Re: [PATCH 15/28] security: Introduce inode_post_removexattr hook
-Message-ID: <20230830-kultfigur-verrohen-a689c59911d6@brauner>
-References: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
- <20230303181842.1087717-16-roberto.sassu@huaweicloud.com>
- <f5a61c0f09c1b8d8aaeb99ad7ba4aab15818c5ed.camel@linux.ibm.com>
- <9d482f25475a9d9bc0c93a8cbaf8bd4bb67d2cd6.camel@huaweicloud.com>
+        Wed, 30 Aug 2023 05:54:52 -0400
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 137AB1B0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Aug 2023 02:54:50 -0700 (PDT)
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-26b10a6da80so4931605a91.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Aug 2023 02:54:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1693389289; x=1693994089;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7dOnceopneHFIwGJjPr+ZbkIEpTrg3pEXAn0bK5utkU=;
+        b=ZnKPrnU0GqoQuRYudsnBNbjEMl9rCP9YR/BplgYWJvDNmYQwLxQCX/TS8u4QBb40zR
+         7EGsN8cl/2OlWCrISEqEiIT+5EV9dKA8b1f0HUp1SJ/bLeDBN+leJ0kQWtWv631SK5db
+         KUisHSRifv/A7fbGZ9u0eXt7I9bPwcVa+KDJS05w6+RU4CMTt0dytNz4OL8dpr9O/060
+         Bht7796h5WrDHBPuTtGuG4O5mhIEvEuG6iQqoINROGISYzopjsnZs/1NhTQ/f5DwS7GN
+         APK4NWlhVo0GGt2RdTYXYwlIjANLsr198yF0mZwgZYZZrAUYTjBzqOkzCjDrwlJh0Bk6
+         jVhA==
+X-Gm-Message-State: AOJu0Yy1oP7jYeUgt2KNeokvGMP4rlBL+R6CMUPAgabN4chFTMjcfJsV
+        Fg7pLq9Cu8s4D+IXO6rErubMDREVdvgquXB4/Yik9vnpYlPz
+X-Google-Smtp-Source: AGHT+IHE+85JmPsj7CXySs2bvJEktSQoEz/ARlemBnkgj1ziRCIw4KCxlNzjzGCoOWMvtjg+n6+IMzBASXi68eZPJ0QSHVnNW3o2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <9d482f25475a9d9bc0c93a8cbaf8bd4bb67d2cd6.camel@huaweicloud.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Received: by 2002:a17:90b:314:b0:262:da02:8a27 with SMTP id
+ ay20-20020a17090b031400b00262da028a27mr426994pjb.6.1693389289674; Wed, 30 Aug
+ 2023 02:54:49 -0700 (PDT)
+Date:   Wed, 30 Aug 2023 02:54:49 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000013deeb060420eb13@google.com>
+Subject: [syzbot] Monthly jfs report (Aug 2023)
+From:   syzbot <syzbot+list2602cd20bb7c69a5a167@syzkaller.appspotmail.com>
+To:     jfs-discussion@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shaggy@kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,
+        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -66,58 +55,48 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 30, 2023 at 11:31:35AM +0200, Roberto Sassu wrote:
-> On Wed, 2023-03-08 at 10:43 -0500, Mimi Zohar wrote:
-> > Hi Roberto,
-> > 
-> > On Fri, 2023-03-03 at 19:18 +0100, Roberto Sassu wrote:
-> > > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > > 
-> > > In preparation for moving IMA and EVM to the LSM infrastructure, introduce
-> > > the inode_post_removexattr hook.
-> > > 
-> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > ---
-> > >  fs/xattr.c                    |  1 +
-> > >  include/linux/lsm_hook_defs.h |  2 ++
-> > >  include/linux/security.h      |  5 +++++
-> > >  security/security.c           | 14 ++++++++++++++
-> > >  4 files changed, 22 insertions(+)
-> > > 
-> > > diff --git a/fs/xattr.c b/fs/xattr.c
-> > > index 14a7eb3c8fa..10c959d9fc6 100644
-> > > --- a/fs/xattr.c
-> > > +++ b/fs/xattr.c
-> > > @@ -534,6 +534,7 @@ __vfs_removexattr_locked(struct mnt_idmap *idmap,
-> > >  
-> > >  	if (!error) {
-> > >  		fsnotify_xattr(dentry);
-> > > +		security_inode_post_removexattr(dentry, name);
-> > >  		evm_inode_post_removexattr(dentry, name);
-> > >  	}
-> > 
-> > Nothing wrong with this, but other places in this function test "if
-> > (error) goto ...".   Perhaps it is time to clean this up.
-> > 
-> > >  
-> > > diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-> > > index eedefbcdde3..2ae5224d967 100644
-> > > --- a/include/linux/lsm_hook_defs.h
-> > > +++ b/include/linux/lsm_hook_defs.h
-> > > @@ -147,6 +147,8 @@ LSM_HOOK(int, 0, inode_getxattr, struct dentry *dentry, const char *name)
-> > >  LSM_HOOK(int, 0, inode_listxattr, struct dentry *dentry)
-> > >  LSM_HOOK(int, 0, inode_removexattr, struct mnt_idmap *idmap,
-> > >  	 struct dentry *dentry, const char *name)
-> > > +LSM_HOOK(void, LSM_RET_VOID, inode_post_removexattr, struct dentry *dentry,
-> > > +	 const char *name)
-> > 
-> > @Christian should the security_inode_removexattr() and
-> > security_inode_post_removexattr() arguments be the same?
-> 
-> Probably this got lost.
-> 
-> Christian, should security_inode_post_removexattr() have the idmap
-> parameter as well?
+Hello jfs maintainers/developers,
 
-Only if you call anything from any implementers of the hook that needs
-access to the idmap.
+This is a 31-day syzbot report for the jfs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/jfs
+
+During the period, 1 new issues were detected and 0 were fixed.
+In total, 52 issues are still open and 14 have been fixed so far.
+
+Some of the still happening issues:
+
+Ref  Crashes Repro Title
+<1>  1086    Yes   general protection fault in lmLogSync (2)
+                   https://syzkaller.appspot.com/bug?extid=e14b1036481911ae4d77
+<2>  759     Yes   kernel BUG in jfs_evict_inode
+                   https://syzkaller.appspot.com/bug?extid=9c0c58ea2e4887ab502e
+<3>  629     Yes   general protection fault in write_special_inodes
+                   https://syzkaller.appspot.com/bug?extid=c732e285f8fc38d15916
+<4>  362     Yes   kernel BUG in txUnlock
+                   https://syzkaller.appspot.com/bug?extid=a63afa301d1258d09267
+<5>  352     Yes   UBSAN: array-index-out-of-bounds in txCommit
+                   https://syzkaller.appspot.com/bug?extid=0558d19c373e44da3c18
+<6>  236     Yes   general protection fault in jfs_flush_journal
+                   https://syzkaller.appspot.com/bug?extid=194bfe3476f96782c0b6
+<7>  162     Yes   KASAN: use-after-free Read in release_metapage
+                   https://syzkaller.appspot.com/bug?extid=f1521383cec5f7baaa94
+<8>  102     Yes   UBSAN: array-index-out-of-bounds in xtSearch
+                   https://syzkaller.appspot.com/bug?extid=76a072c2f8a60280bd70
+<9>  96      Yes   KASAN: use-after-free Read in diFree
+                   https://syzkaller.appspot.com/bug?extid=1964c915c8c3913b3d7a
+<10> 87      Yes   kernel BUG in dbFindLeaf
+                   https://syzkaller.appspot.com/bug?extid=dcea2548c903300a400e
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
