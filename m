@@ -2,109 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A0A7D78DA91
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Aug 2023 20:37:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D92678DAA1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Aug 2023 20:37:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235872AbjH3Sgf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Aug 2023 14:36:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50936 "EHLO
+        id S237778AbjH3Sgq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Aug 2023 14:36:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44250 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243332AbjH3Ko7 (ORCPT
+        with ESMTP id S243421AbjH3K5m (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Aug 2023 06:44:59 -0400
-Received: from mail-oo1-xc30.google.com (mail-oo1-xc30.google.com [IPv6:2607:f8b0:4864:20::c30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58A071BB;
-        Wed, 30 Aug 2023 03:44:56 -0700 (PDT)
-Received: by mail-oo1-xc30.google.com with SMTP id 006d021491bc7-5735282d713so2915195eaf.2;
-        Wed, 30 Aug 2023 03:44:56 -0700 (PDT)
+        Wed, 30 Aug 2023 06:57:42 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B81041A1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Aug 2023 03:57:38 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id a640c23a62f3a-99bcf2de59cso719842266b.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Aug 2023 03:57:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1693392295; x=1693997095; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uDg1gJ54LhcHGraF0W90P36J7iWVIjIASj7u9px6qZ0=;
-        b=jowOUlmksXh6WJMDBM5SUMOEg3JeZwxrs8MOgWbnYq8oIXcDxqFSZ3yuaNCYj005VC
-         eMuSUPbdOXjT39lJn2irSfFWsCx1VYW2EXC1cWZnM6SJntnWaBYMFiRXwKh4JvzjQwS+
-         sidXy4W1/N1CbahK4saZN975Rum8LXaYm3AwfYwETHh17cK4uqqEpvbFzlzWxTn3JtES
-         EP+wikRZOYXIy5AX8TdzW8aMmroQbW2YrIxwKgqU2YCPn6yqVQGSi5iggxzTpQ+VkmQk
-         XtGeSIKapbo9QkENzHrdXTcCBFF73TC/5fC4/tnMz7xhLTYtQAD1M2xehWmrhGZxcQOT
-         pghg==
+        d=szeredi.hu; s=google; t=1693393057; x=1693997857; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/L+MYmRv4PKWD0Xf33WOV5Foq2uHuWDUSSf9j3EgBD8=;
+        b=an9+cOHl9rRnMl1GBF8Q3QEcYnPuBVnYgEfBhmb73UPp3ogA1z+8i7xc+5Qu7Aw89B
+         z/CaHKq/QYDLT0gE7PQqyyeYXigHDDhyk8T7esV/lfNyX97TUJ2yXSR8TeGLx405U/BB
+         WD9fgkoar32n4gDITwDXMYgQJHMylHTEAHh/s=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693392295; x=1693997095;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uDg1gJ54LhcHGraF0W90P36J7iWVIjIASj7u9px6qZ0=;
-        b=Fgno/+213BF72oUXGwhr1X07yMIJCYReVJTbDVcKizB10uqURozJy5WgyVbPcYZ8a3
-         R8OK1rfnN5fKcNfd/iDk7pM8SVmfnaJ4G9993bfAFcefQTZntj0GUK3/IWmDzoszIweP
-         PyjTk3EmCyO3Chb36rX6O0ydUZ+rFThRtXJocj2KlrbwiGwdZXOhb4VjkXD3oEGKKbvw
-         7NOgtOTJ8KPz+gNLjWbu8i/qe9JcdQwte+VWCwrDT4psCdahi7qAU96UQn933Me+6a3x
-         myYtoxWu33/DzOzTIERe3sprgQAEYwviDum0RYEw6K4AwNHTilE6j0ORmnEgKiqbRA/o
-         Fcyg==
-X-Gm-Message-State: AOJu0YwYX6yrb0UUF6+6zEAr7Q6MwLS4AtWrKMSvlWbgSo4frkIJaUCe
-        651mWd7MiIdiyBkn3ye9SJemNezNUa+7ICjZFrHYWexhzpk=
-X-Google-Smtp-Source: AGHT+IF95KpxWvZiq1byVjvKpPp7KVB4uGJagT9Ba6+51ZVenyWr+nBiHv9bHLBzZ7hUjhBvu1uBZOvdzeVVNsfCYpk=
-X-Received: by 2002:a4a:3954:0:b0:573:3fe0:cdd6 with SMTP id
- x20-20020a4a3954000000b005733fe0cdd6mr1411313oog.6.1693392295590; Wed, 30 Aug
- 2023 03:44:55 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1693393057; x=1693997857;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/L+MYmRv4PKWD0Xf33WOV5Foq2uHuWDUSSf9j3EgBD8=;
+        b=ZJRv2TVAFrppM5OK2C8djYQFICpJu31mhw6sMqpO/t3Htwyf8M+HUkPuqONe6D9ZpW
+         NwH/UKUkvsB2xD6NCp6s6FWf3l8k6UngDan2mlz71gSQp5xZif33TOFZzUPDiRcF1+zs
+         VnF+e6f99NHGnTGjZM9eQWsqAy5sdP3q7Yitfz2vcCoFcE8hjTAI0UMGdMuqKCKMsT8X
+         RIiqA0cHztMuXri8+rjri3CdJbjobrc8Mj8Nqy57JFCNFgX6n87z5sQ28MpwOguBQJRx
+         wZPMz9d7w77yclj2pkU7Y69M06paW48TwsnpZult/Ob+dD2wrUW0bnvN+gOF/BI8UNm6
+         mYJw==
+X-Gm-Message-State: AOJu0YwEm6OorW2UrwDLjtGHNN57MlxoD9raUqOjbLpc51mMGFNLcccS
+        RyV6Mdxbq9mxMtPUdVb+62JXbyK65brNzxAJ6Bjt7NWjiXumFfCj
+X-Google-Smtp-Source: AGHT+IE0caqx24tMo1luI/7c7MVB83bSLJIR4xpYS0rXDYbh4yFUcrg34SXFrsFsDxIP+MW6e8dgdMvZYorUguFFJV4=
+X-Received: by 2002:a17:906:738d:b0:9a5:7ade:b5e9 with SMTP id
+ f13-20020a170906738d00b009a57adeb5e9mr1304014ejl.51.1693393057243; Wed, 30
+ Aug 2023 03:57:37 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230825201225.348148-1-willy@infradead.org> <20230825201225.348148-10-willy@infradead.org>
- <ZOlq5HmcdYGPwH2i@casper.infradead.org> <2f1e16e5-1034-b064-7a92-e89f08fd2ac1@redhat.com>
- <668b6e07047bdc97dfa1d522606ec2b28420bdce.camel@kernel.org> <ZO3y9ZixzE4c5oHU@casper.infradead.org>
-In-Reply-To: <ZO3y9ZixzE4c5oHU@casper.infradead.org>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Wed, 30 Aug 2023 12:44:43 +0200
-Message-ID: <CAOi1vP-jc+GqUKgewEaVRC8TuDjKzh4PeKmWyDf3qxSAWC4dTw@mail.gmail.com>
-Subject: Re: [PATCH 09/15] ceph: Use a folio in ceph_filemap_fault()
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Jeff Layton <jlayton@kernel.org>, Xiubo Li <xiubli@redhat.com>,
-        ceph-devel@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        linux-fsdevel@vger.kernel.org
+References: <20230829161116.2914040-1-bschubert@ddn.com> <20230829161116.2914040-3-bschubert@ddn.com>
+In-Reply-To: <20230829161116.2914040-3-bschubert@ddn.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 30 Aug 2023 12:57:25 +0200
+Message-ID: <CAJfpegvnxrmU=GgxGxZCh4oyhBk3HrPeWGLqwR7quJ2RPv5JjQ@mail.gmail.com>
+Subject: Re: [PATCH 2/6] fuse: Create helper function if DIO write needs
+ exclusive lock
+To:     Bernd Schubert <bschubert@ddn.com>
+Cc:     linux-fsdevel@vger.kernel.org, bernd.schubert@fastmail.fm,
+        dsingh@ddn.com, Hao Xu <howeyxu@tencent.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 29, 2023 at 3:30=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
-> wrote:
+On Tue, 29 Aug 2023 at 18:11, Bernd Schubert <bschubert@ddn.com> wrote:
 >
-> On Tue, Aug 29, 2023 at 07:55:01AM -0400, Jeff Layton wrote:
-> > On Mon, 2023-08-28 at 09:19 +0800, Xiubo Li wrote:
-> > > Next time please rebase to the latest ceph-client latest upstream
-> > > 'testing' branch, we need to test this series by using the qa
-> > > teuthology, which is running based on the 'testing' branch.
-> >
-> > People working on wide-scale changes to the kernel really shouldn't hav=
-e
-> > to go hunting down random branches to base their changes on. That's the
-> > purpose of linux-next.
+> This is just a preparation to avoid code duplication in the next
+> commit.
 >
-> Yes.  As I said last time this came up
-> https://lore.kernel.org/linux-fsdevel/ZH94oBBFct9b9g3z@casper.infradead.o=
-rg/
+> Cc: Hao Xu <howeyxu@tencent.com>
+> Cc: Miklos Szeredi <miklos@szeredi.hu>
+> Cc: Dharmendra Singh <dsingh@ddn.com>
+> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
+> ---
+>  fs/fuse/file.c | 48 +++++++++++++++++++++++++++++++++---------------
+>  1 file changed, 33 insertions(+), 15 deletions(-)
 >
-> it's not reasonable for me to track down every filesystem's private
-> git tree.  I'm happy to re-do these patches against linux-next in a
-> week or two, but I'm not going to start working against your ceph tree.
-> I'm not a Ceph developer, I'm a Linux developer.  I work against Linus'
-> tree or Stephen's tree.
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index b1b9f2b9a37d..6b8b9512c336 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -1298,6 +1298,37 @@ static ssize_t fuse_perform_write(struct kiocb *iocb, struct iov_iter *ii)
+>         return res;
+>  }
+>
+> +static bool fuse_io_past_eof(struct kiocb *iocb,
+> +                                              struct iov_iter *iter)
+> +{
+> +       struct inode *inode = file_inode(iocb->ki_filp);
+> +
+> +       return iocb->ki_pos + iov_iter_count(iter) > i_size_read(inode);
+> +}
+> +
+> +/*
+> + * @return true if an exclusive lock direct IO writes is needed
+> + */
+> +static bool fuse_dio_wr_exclusive_lock(struct kiocb *iocb, struct iov_iter *from)
+> +{
+> +       struct file *file = iocb->ki_filp;
+> +       struct fuse_file *ff = file->private_data;
+> +
+> +       /* server side has to advise that it supports parallel dio writes */
+> +       if (!(ff->open_flags & FOPEN_PARALLEL_DIRECT_WRITES))
+> +               return false;
 
-Agreed.  Definitely not reasonable, it's the CephFS team's job to sort
-out conflicts when applying patches to the testing branch.
-
-The problem is that the testing branch is also carrying a bunch of "DO
-NOT MERGE" fail-fast and/or debugging patches that aren't suitable for
-linux-next.  The corollary of that is that we end up testing something
-slightly different in our CI.  Xiubo, please review that list and let's
-try to get it down to a bare minimum.
+You got the return values the wrong way around.  I can fix this, no
+need to resend.
 
 Thanks,
-
-                Ilya
+Miklos
