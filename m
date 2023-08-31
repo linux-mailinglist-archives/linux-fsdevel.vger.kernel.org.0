@@ -2,125 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E36D78EB25
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Aug 2023 12:54:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86FD078EB55
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Aug 2023 13:05:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244120AbjHaKy4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 31 Aug 2023 06:54:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42218 "EHLO
+        id S1345203AbjHaLFC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 31 Aug 2023 07:05:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232759AbjHaKy4 (ORCPT
+        with ESMTP id S1345243AbjHaLE6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 31 Aug 2023 06:54:56 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45F73CDD;
-        Thu, 31 Aug 2023 03:54:52 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        Thu, 31 Aug 2023 07:04:58 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E60CE43;
+        Thu, 31 Aug 2023 04:04:56 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id F0353211CE;
-        Thu, 31 Aug 2023 10:54:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1693479290; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=zL35cb2cbV/aZEdQfn5WUt1+RtMwa4sJY7cweJYRIBQ=;
-        b=edp5Bjn8Z/6zG+gYXBdCnRvbC4HD5N/O0EKP02n7t3b9RcPVKGOl1OFGVEna53xLsxmoji
-        vVCWALCyuerTDA5pvRjsb+NIVVycF1r7cGN8oKE2NQvWeN1wf2Bcn3ghno43tPaO57qk5o
-        QyGgmY+yUyEU6zYZzBAXthHSUPZWUvk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1693479290;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=zL35cb2cbV/aZEdQfn5WUt1+RtMwa4sJY7cweJYRIBQ=;
-        b=jbh3cgZbamSfqw/PIFNRYiceCvoDRdbiH5jaNR7REh3SJ48G5gz1nrx9ltgsrJuaIOmteQ
-        z2v7wmOylMLnwWBg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id E135A13583;
-        Thu, 31 Aug 2023 10:54:50 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id tmb7Nnpx8GQaSQAAMHmgww
-        (envelope-from <jack@suse.cz>); Thu, 31 Aug 2023 10:54:50 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 561C0A0767; Thu, 31 Aug 2023 12:54:50 +0200 (CEST)
-Date:   Thu, 31 Aug 2023 12:54:50 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     brauner@kernel.org, trond.myklebust@hammerspace.com,
-        anna@kernel.org, jack@suse.cz, linux-nfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] NFS: switch back to using kill_anon_super
-Message-ID: <20230831105450.sdwtqnxp5vwmq5ej@quack3>
-References: <20230831052940.256193-1-hch@lst.de>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9393063221;
+        Thu, 31 Aug 2023 11:04:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D800BC433C8;
+        Thu, 31 Aug 2023 11:04:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1693479895;
+        bh=vWoc8KTXEEK6B+D0jPTgV83l+LRGF5l6NIZxozLDDOE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=ilvGCw/JT1csKQG5NraDS+HWFddlwK4YxWxqTwGd6/yX4TSiZBvgKilQGQ4wEBj4g
+         gj38eP7fHg/X3Bc6DdAViTsDJvHgKwj4cPpccjlYyb1NcXuAnyL+bOTjTCMNULxQ8a
+         Ueydy2Ux+jOvEd+9bc2nOtUAqU0vyx321M67dNJKkCRegCk29h1eKS+ZkkuX+Oo04v
+         EhaPBYfLsbsNTOTeOueKuLtR/ZipqOP8rAkLBBYgaU6ZSJFSbPLY74FfidPkpEtNhv
+         UJGljOQdlg7k0vNPsL46tMt875K675jG7Nbt2PcMVm/eebsV5d1yW6tyd8SwmYsxaK
+         3C5z6eKmeemPA==
+From:   Christian Brauner <brauner@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL for v6.6] super fixes
+Date:   Thu, 31 Aug 2023 13:04:04 +0200
+Message-Id: <20230831-innung-pumpwerk-dd12f922783b@brauner>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230831052940.256193-1-hch@lst.de>
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_SOFTFAIL autolearn=no autolearn_force=no
-        version=3.4.6
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2522; i=brauner@kernel.org; h=from:subject:message-id; bh=vWoc8KTXEEK6B+D0jPTgV83l+LRGF5l6NIZxozLDDOE=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaR8KJ5SvIr1qXb9XhGLZZm3kqQn/7h3Qo+/ZbLBrRkTZ+4V 7lt9q6OUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiHjMY/hnvmd2iq8QX/s3mqrqTtS I7+9WnZ+umL+D6a3L9+/yjf88wMqzcdt09gFdB83mVH9vvy495v166pylw/kts6ZyoZo5JfmwA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 31-08-23 07:29:40, Christoph Hellwig wrote:
-> NFS switch to open coding kill_anon_super in 7b14a213890a
-> ("nfs: don't call bdi_unregister") to avoid the extra bdi_unregister
-> call.  At that point bdi_destroy was called in nfs_free_server and
-> thus it required a later freeing of the anon dev_t.  But since
-> 0db10944a76b ("nfs: Convert to separately allocated bdi") the bdi has
-> been free implicitly by the sb destruction, so this isn't needed
-> anymore.
-> 
-> By not open coding kill_anon_super, nfs now inherits the fix in
-> dc3216b14160 ("super: ensure valid info"), and we remove the only
-> open coded version of kill_anon_super.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+Hey Linus,
 
-Looks good to me. Feel free to add:
+/* Summary */
+This contains two more small follow-up fixes for the super work this
+cycle. I went through all filesystems once more and detected two minor
+issues that still needed fixing:
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+* Some filesystems support mtd devices (e.g., mount -t jffs2 mtd2 /mnt).
+  The mtd infrastructure uses the sb->s_mtd pointer to find an existing
+  superblock. When the mtd device is put and sb->s_mtd cleared the
+  superblock can still be found fs_supers and so this risks a
+  use-after-free.
 
-								Honza
+  Add a small patch that aligns mtd with what we did for regular block
+  devices and switch keying to rely on sb->s_dev.
 
-> ---
->  fs/nfs/super.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/fs/nfs/super.c b/fs/nfs/super.c
-> index 2284f749d89246..0d6473cb00cb3e 100644
-> --- a/fs/nfs/super.c
-> +++ b/fs/nfs/super.c
-> @@ -1339,15 +1339,13 @@ int nfs_get_tree_common(struct fs_context *fc)
->  void nfs_kill_super(struct super_block *s)
->  {
->  	struct nfs_server *server = NFS_SB(s);
-> -	dev_t dev = s->s_dev;
->  
->  	nfs_sysfs_move_sb_to_server(server);
-> -	generic_shutdown_super(s);
-> +	kill_anon_super(s);
->  
->  	nfs_fscache_release_super_cookie(s);
->  
->  	nfs_free_server(server);
-> -	free_anon_bdev(dev);
->  }
->  EXPORT_SYMBOL_GPL(nfs_kill_super);
->  
-> -- 
-> 2.39.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+  (This was tested with mtd devices and jffs2 as xfstests doesn't
+   support mtd devices.)
+
+* Switch nfs back to rely on kill_anon_super() so the superblock is
+  removed from the list of active supers before sb->s_fs_info is freed.
+
+/* Testing */
+clang: Ubuntu clang version 15.0.7
+gcc: (Ubuntu 12.2.0-3ubuntu1) 12.2.0
+
+All patches are based on v6.6-vfs.super and have been sitting in
+linux-next. No build failures or warnings were observed. All old and new
+tests in selftests, and LTP pass without regressions.
+
+/* Conflicts */
+At the time of creating this PR no merge conflicts were reported from
+linux-next and no merge conflicts showed up doing a test-merge with
+current mainline.
+
+The following changes since commit b97d64c722598ffed42ece814a2cb791336c6679:
+
+  Merge tag '6.6-rc-smb3-client-fixes-part1' of git://git.samba.org/sfrench/cifs-2.6 (2023-08-30 21:01:40 -0700)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/v6.6-vfs.super.fixes.2
+
+for you to fetch changes up to 5069ba84b5e67873a2dfa4bf73a24506950fa1bf:
+
+  NFS: switch back to using kill_anon_super (2023-08-31 12:47:16 +0200)
+
+Please consider pulling these changes from the signed v6.6-vfs.super.fixes.2 tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+v6.6-vfs.super.fixes.2
+
+----------------------------------------------------------------
+Christian Brauner (2):
+      fs: export sget_dev()
+      mtd: key superblock by device number
+
+Christoph Hellwig (1):
+      NFS: switch back to using kill_anon_super
+
+ drivers/mtd/mtdsuper.c | 45 +++++++++--------------------------
+ fs/nfs/super.c         |  4 +---
+ fs/super.c             | 64 +++++++++++++++++++++++++++++++++++---------------
+ include/linux/fs.h     |  1 +
+ 4 files changed, 58 insertions(+), 56 deletions(-)
