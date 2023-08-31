@@ -2,143 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7521378EF6D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Aug 2023 16:17:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48E9F78EFA8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Aug 2023 16:38:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245433AbjHaORO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 31 Aug 2023 10:17:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58146 "EHLO
+        id S244962AbjHaOiY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 31 Aug 2023 10:38:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232317AbjHaORN (ORCPT
+        with ESMTP id S244332AbjHaOiY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 31 Aug 2023 10:17:13 -0400
-Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C44CBCF;
-        Thu, 31 Aug 2023 07:17:06 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 1BE325C00E2;
-        Thu, 31 Aug 2023 10:17:06 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Thu, 31 Aug 2023 10:17:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-        cc:cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm1; t=
-        1693491426; x=1693577826; bh=ujBGhyhAt9A8hQUJddVzAjIRR29GE6IRQ6g
-        2wif/pL4=; b=LdFZzrqvYgQoom2bVXh8spsMZACL3YcIBnxs7RUhQn/vbpy3y+S
-        FcfiMtl6VyU8mGxqGwnMxTSgr1r4vjcqXbtlk2WhHL2bGLeTe5LAAWOYSnLIwtaH
-        Pudr1yuGk5n7AQkvDFyIkCBgPLrul6HuyYDLaOHj8Eyuwo0jyCSfXHvKUQ3Aw/JM
-        x8hpbvufU8PAiiCRabaydvFpWLqt0FIATXsSKzfE5vom1MKjnQwqU0r0/LGUT2EA
-        hHHNzot2vvayYjWHyKZGeHQdrkOwgWPXoR62+IGjgfH3aMM22LSgfw7gWacLataw
-        c4qNteY1hDthmb/DQQg4AKhZgWSrnHoXUZw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-        1693491426; x=1693577826; bh=ujBGhyhAt9A8hQUJddVzAjIRR29GE6IRQ6g
-        2wif/pL4=; b=reSfwTuvMBYHT4M91/Q30vNWXUyJj5sUmNLIn04K9OqJPaoNtvU
-        JLDKzmazzvNAowIaH2zw0iNBz+tneDrPFz5VBAnOS77dqGIhXi8crH3Z2YwU+VY3
-        UfvMLid8+tLm25Xp7rDkytvheuJ/pJQMh47KPtTwb153SsLfISFWPjnvptX4Kl4X
-        frA49vMQk1ic+00eUY05ROApcdBg5myqXkkY7d5LWoSIhFrO1v48lBKR/lmSlSn+
-        OFvLwVBQDXYAIwNdb0OGkFcviLm/C3QNGuXQkwm7Pn01apk5iX0BqOI/9eUgDIvY
-        1v24pHBddSOs8eubm/LCFakc01xjMf7y4cw==
-X-ME-Sender: <xms:4aDwZOvBoOC1TRdyUNl-cjohmHhRtBatHCKYdHo7MRvVv15fJQ-Rqg>
-    <xme:4aDwZDfPRentEcW0fnWplR6DWH-QrvjJhwpfhlYnmyMG77-Cv6EhwotvQ6XjSUx6A
-    uQvuz2iXvBIKh5A>
-X-ME-Received: <xmr:4aDwZJz8-Lp05ULMBNBMJ97qWQYgfU9UPi70eP28x1fI65X_aKg8V_tHQWnjcyS3q7jmmGYKj1CR54rHd24HxppF8aca-8peNSYjZ6ngsW8xCrePq2BX>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrudegtddgjeegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtfeejnecuhfhrohhmpeeuvghr
-    nhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrih
-    hlrdhfmheqnecuggftrfgrthhtvghrnhepkeehveekleekkeejhfehgeeftdffuddujeej
-    ieehheduueelleeghfeukeefvedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdr
-    fhhm
-X-ME-Proxy: <xmx:4aDwZJMiq7uA6vHBh_9Vlf6gZsm373tR4LneFkisdmM4AM7T1RbynQ>
-    <xmx:4aDwZO-OtT6rb_ewUfnz45nirZF-ao0hWieh_DyOBTuPWuyRvaavVQ>
-    <xmx:4aDwZBUy81hc973LTBlL16HjBeus9dRTWci32rpBEhsks2uF0V6NTA>
-    <xmx:4qDwZOx3PvTsf3rRxK6UmJFZAtrAL8X_sLSb3CskQ06Yw_cpARP1UA>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 31 Aug 2023 10:17:04 -0400 (EDT)
-Message-ID: <99bc64c2-44e2-5000-45b7-d9343bcc8fb8@fastmail.fm>
-Date:   Thu, 31 Aug 2023 16:17:01 +0200
+        Thu, 31 Aug 2023 10:38:24 -0400
+Received: from mail-yw1-x1133.google.com (mail-yw1-x1133.google.com [IPv6:2607:f8b0:4864:20::1133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06DC1CD8
+        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Aug 2023 07:38:21 -0700 (PDT)
+Received: by mail-yw1-x1133.google.com with SMTP id 00721157ae682-58d9ba95c78so10500527b3.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Aug 2023 07:38:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1693492700; x=1694097500; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bcyVkDYCOI2rKfi2M1vEAgKLKKC7urxEAXKeaIUF3H0=;
+        b=BsJfr8Po2W4Q0oITn/AxhrKvoSDQYl52mw+vfBS/nBAhKOMYInXEQ6mUHJ4L2ur+D6
+         V/Qnl8Ujq6rzjh4VD+1dGNetsiHVwhjnM9YH1r1iCwn2DYAaxGvwRLgvdSMa/l0vC0TF
+         J/Mzo2cVVhDmiyCcXbHH8IBY8gfSPCAIcmxBvGc7n6gZUbtWlKwNHl1vcYY3EqUGyawK
+         CX7XqAy1OJlLWhMw6PyFNxOuN3Coqfy2NFuvqovOc/dX1j0LTVsjnl1yguHwPiJwWHmi
+         kCfj9Z7mr0YlecP/2VZcLKdT5dD3LTRP2NzVpWf0Qg+3fcPXoZ3XzJfzaVLw6jr+KzMO
+         PS8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1693492700; x=1694097500;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bcyVkDYCOI2rKfi2M1vEAgKLKKC7urxEAXKeaIUF3H0=;
+        b=IdZHEOI8Au9vSjtBmHLwkUyo6S3I7BxIi/f+yoAsl3mctaeOnwc2zqA7Cn+mz5HNdg
+         rv4uejqiDturVIH8zhuohYp+40Nq3mgWIITEDtWvZTxb/G3eLI7SwC4P9PGkbeAx4icU
+         dG0tprQ250mU4wcvwE444uA7aiwk1J8ngF3i4rie13aaLTzMEL37V6FZyDyK4iHLfxRn
+         k7d/5V/14pAHPhLzXzzWWKDHYfoGdAk+NDFODCvXsxvZ1QXSO6zhDBX7gpL7yYf56qWx
+         xKTD723B+av/aSCpU0gtZkRGNGOZIsZT3i2fGeQycje1Budsm/WBD0IZvPKpbq9bDaSU
+         Db9g==
+X-Gm-Message-State: AOJu0Yy1BgLhuIHoost1g7evi1nZFIvY7HvZ7c+Gt8INp/n+Cfd/tGGr
+        Uv879Xw47u+lrZ7yHUYdyxFykdzM5KYLMFA2K37x
+X-Google-Smtp-Source: AGHT+IEhc4F4zDBy+s8wPqwmbXTXjZ7v64ZTtBzO6nl3pNFJdZqDUxKDrhawZgrMFHACatuTCnjz16v02RldI/XZMYQ=
+X-Received: by 2002:a81:84c4:0:b0:58c:54f8:bd45 with SMTP id
+ u187-20020a8184c4000000b0058c54f8bd45mr5270617ywf.44.1693492700172; Thu, 31
+ Aug 2023 07:38:20 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
-Subject: Re: [PATCH 1/2] fs: Add and export file_needs_remove_privs
-To:     Christian Brauner <brauner@kernel.org>,
-        Bernd Schubert <bschubert@ddn.com>
-Cc:     linux-fsdevel@vger.kernel.org, miklos@szeredi.hu, dsingh@ddn.com,
-        Josef Bacik <josef@toxicpanda.com>,
-        linux-btrfs@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-References: <20230831112431.2998368-1-bschubert@ddn.com>
- <20230831112431.2998368-2-bschubert@ddn.com>
- <20230831-letzlich-eruption-9187c3adaca6@brauner>
-Content-Language: en-US, de-DE
-From:   Bernd Schubert <bernd.schubert@fastmail.fm>
-In-Reply-To: <20230831-letzlich-eruption-9187c3adaca6@brauner>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-5.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_PASS,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20230831053157.256319-1-hch@lst.de> <20230831-dazulernen-gepflanzt-8a64056bf362@brauner>
+ <20230831-tiefbau-freuden-3e8225acc81d@brauner> <20230831123619.GB11156@lst.de>
+ <20230831-wohlig-lehrveranstaltung-7c27e05dc9ae@brauner>
+In-Reply-To: <20230831-wohlig-lehrveranstaltung-7c27e05dc9ae@brauner>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 31 Aug 2023 10:38:09 -0400
+Message-ID: <CAHC9VhQOpy=rLNmirT7afkEdf5_PRnLVsdPJQvxqaF0G4JrCgQ@mail.gmail.com>
+Subject: Re: sb->s_fs_info freeing fixes
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>, linux-s390@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Thu, Aug 31, 2023 at 9:11=E2=80=AFAM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+> > > If that is good enough for people then I can grab it.
+> >
+> > Fine with me.  And yes, I'd rather not have private data freed before
+> > SB_ACTIVE is cleared even if it is fine right now.  It's just a bug
+> > waiting to happen.
+>
+> Applied to the vfs.super branch of the vfs/vfs.git tree.
+> Patches in the vfs.super branch should appear in linux-next soon.
+>
+> Please report any outstanding bugs that were missed during review in a
+> new review to the original patch series allowing us to drop it.
+>
+> It's encouraged to provide Acked-bys and Reviewed-bys even though the
+> patch has now been applied. If possible patch trailers will be updated.
+>
+> Note that commit hashes shown below are subject to change due to rebase,
+> trailer updates or similar. If in doubt, please check the listed branch.
+>
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+> branch: vfs.super
+>
+> [1/4] ramfs: free sb->s_fs_info after shutting down the super block
+>       https://git.kernel.org/vfs/vfs/c/c5725dff056d
+> [2/4] devpts: free sb->s_fs_info after shutting down the super block
+>       https://git.kernel.org/vfs/vfs/c/fee7516be512
+> [3/4] selinuxfs: free sb->s_fs_info after shutting down the super block
+>       https://git.kernel.org/vfs/vfs/c/3105b94e7d62
+> [4/4] hypfs: free sb->s_fs_info after shutting down the super block
+>       https://git.kernel.org/vfs/vfs/c/993d214eb394
 
+No need to change anything in this case, but in the future if there
+are no patch dependency or ordering issues can you let me take the
+SELinux patches via the SELinux tree?  It helps prevent merge
+conflicts during the next merge window and quiets the daily automated
+checks I have in place to detect SELinux changes outside of the
+SELinux tree.
 
-On 8/31/23 15:40, Christian Brauner wrote:
-> On Thu, Aug 31, 2023 at 01:24:30PM +0200, Bernd Schubert wrote:
->> File systems want to hold a shared lock for DIO writes,
->> but may need to drop file priveliges - that a requires an
->> exclusive lock. The new export function file_needs_remove_privs()
->> is added in order to first check if that is needed.
->>
->> Cc: Miklos Szeredi <miklos@szeredi.hu>
->> Cc: Dharmendra Singh <dsingh@ddn.com>
->> Cc: Josef Bacik <josef@toxicpanda.com>
->> Cc: linux-btrfs@vger.kernel.org
->> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
->> Cc: Christian Brauner <brauner@kernel.org>
->> Cc: linux-fsdevel@vger.kernel.org
->> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
->> ---
->>   fs/inode.c         | 8 ++++++++
->>   include/linux/fs.h | 1 +
->>   2 files changed, 9 insertions(+)
->>
->> diff --git a/fs/inode.c b/fs/inode.c
->> index 67611a360031..9b05db602e41 100644
->> --- a/fs/inode.c
->> +++ b/fs/inode.c
->> @@ -2013,6 +2013,14 @@ int dentry_needs_remove_privs(struct mnt_idmap *idmap,
->>   	return mask;
->>   }
->>   
->> +int file_needs_remove_privs(struct file *file)
->> +{
->> +	struct dentry *dentry = file_dentry(file);
->> +
->> +	return dentry_needs_remove_privs(file_mnt_idmap(file), dentry);
-> 
-> Ugh, I wanted to propose to get rid of this dentry dance but I propsed
-> that before and remembered it's because of __vfs_getxattr() which is
-> called from the capability security hook that we need it...
+Thanks.
 
-Is there anything specific you are suggesting?
-
-And thanks for typo/grammar annotations, I'm going to wait for btrfs 
-feedback before I'm going to send a new version.
-
-
-Thanks,
-Bernd
+--=20
+paul-moore.com
