@@ -2,129 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ECDA978E52E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Aug 2023 05:53:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B090C78E5A2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Aug 2023 07:29:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242484AbjHaDxk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Aug 2023 23:53:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50156 "EHLO
+        id S242925AbjHaF3z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 31 Aug 2023 01:29:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57470 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241778AbjHaDxj (ORCPT
+        with ESMTP id S229924AbjHaF3z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Aug 2023 23:53:39 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75770CDA
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Aug 2023 20:52:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1693453972;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=k4G2J3yaU4Ahm/CeQvnEPj3w1MykmpIHM4D6dSpmIRg=;
-        b=Ls+uQYUyVteeuufh1OYlwx4Xdt83phkeQxcee8iVVwhCEqnRUrGYFnDB1rRhdQucP40j4Y
-        +btxZxrO4xk8LrRKuT5FlizO+2etJCuzZgflWJMg9ofzqOO6Stjtu8va3wtoxEt9GjhHWT
-        tPoO/0BJkvpwkA1NvIrk+Mrs3ezjuGI=
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
- [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-63-ORS1IQV1MUmWHDT92H_3jQ-1; Wed, 30 Aug 2023 23:52:50 -0400
-X-MC-Unique: ORS1IQV1MUmWHDT92H_3jQ-1
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-26f9107479bso383247a91.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Aug 2023 20:52:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693453970; x=1694058770;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=k4G2J3yaU4Ahm/CeQvnEPj3w1MykmpIHM4D6dSpmIRg=;
-        b=VlYlKVEPxdgZPEVtCXNddthdqHwkSuO5fHoZIgSncHryqjX/zUXqDmzb5r28C/D/0B
-         2rqNLB/vbTGR5+0dBYfAnTRO3ULQBh1QyCH9mJsMXSTqgOI/ue5IgIC1MyvSW/GBJMOD
-         ndcguKyxlvtV7NyPFaL9LCh2o99dLPVoizpyaP4ZTodVd23mFRu4oxqQTyxbndPdgkvS
-         9KN/NNf6421bUGN2X6IcigC0ih1BJm2jiTCNAI7EkQ07iMNRlox7PzZ9I9gQXRFaUZYT
-         c5/OUX68lH6xOHd++d+GUZxt57ZFj1pNBfeLKQVUBAcSfRYGJdoRvgy/SvmfYYCF0Zmx
-         H8VA==
-X-Gm-Message-State: AOJu0YxNIv8R7US2i/v4BKlFEnYyIwxew/NwczG+Qn0aItQ00Ucp5NGS
-        bFj7MjZQzfFXzB8Ypfl+gf3YYaFsybJSIFyx7QNS7+FlN/lobGk4tA0oc90uh1I+gSE72CalkUz
-        Tx3ryNOlFh+FD9ZBgXoF5pQLWig==
-X-Received: by 2002:a17:90a:12c7:b0:26b:3625:d1a2 with SMTP id b7-20020a17090a12c700b0026b3625d1a2mr3734683pjg.41.1693453969820;
-        Wed, 30 Aug 2023 20:52:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFQGVy7U4gKVOlStGzV7J8dRoxJwOU6HweEgcUyaYfMNQjS0ve6u6QKzeNdwnuDB8SKWAf5/A==
-X-Received: by 2002:a17:90a:12c7:b0:26b:3625:d1a2 with SMTP id b7-20020a17090a12c700b0026b3625d1a2mr3734676pjg.41.1693453969494;
-        Wed, 30 Aug 2023 20:52:49 -0700 (PDT)
-Received: from [10.72.112.230] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id s7-20020a17090a5d0700b0026b12768e46sm333883pji.42.2023.08.30.20.52.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Aug 2023 20:52:49 -0700 (PDT)
-Message-ID: <b0f42122-8384-4892-7498-e110a0ce4475@redhat.com>
-Date:   Thu, 31 Aug 2023 11:52:45 +0800
+        Thu, 31 Aug 2023 01:29:55 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1E1FE0;
+        Wed, 30 Aug 2023 22:29:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=jy2QIfkb1SiUcs2Z5SbQvY3u75WHmQMCBX/FVC1yq+Y=; b=KawAmdeS5BFUEXFdjkgNXn+OnP
+        udAk/rzRY8Kz8MbGIbsUXbYMOCqav6KpIi9H1Fu0fnwuZks97oppH0mESjlU8JZHIlw9zpdxkQXlY
+        tYNyKCCnbQYE9/eXK+PeP9Ye8QBQvCmFsnwhAZ+j7vVWqmxYNUeBQs59YSPS6WsOkE2WZ/82/97tQ
+        Bh5NU7SE2hum5p79Q+PTaG5v6gJtAKIA7xhargxxjYefYzXBFvGqfvdMTZOlt4pbnnDpxriQKLLUd
+        U7oVZcoxIRamhMT0nPnUHY57uFpnACIo4DIGrS9+yacJbA1eC0K/atmOXYM9/WTexQ2DHL5itSnGn
+        CCr6snkA==;
+Received: from 2a02-8389-2341-5b80-39d3-4735-9a3c-88d8.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:39d3:4735:9a3c:88d8] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+        id 1qbaFW-00EgfY-03;
+        Thu, 31 Aug 2023 05:29:46 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     brauner@kernel.org
+Cc:     trond.myklebust@hammerspace.com, anna@kernel.org, jack@suse.cz,
+        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH] NFS: switch back to using kill_anon_super
+Date:   Thu, 31 Aug 2023 07:29:40 +0200
+Message-Id: <20230831052940.256193-1-hch@lst.de>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH 09/15] ceph: Use a folio in ceph_filemap_fault()
-Content-Language: en-US
-To:     Ilya Dryomov <idryomov@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>
-Cc:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
-        linux-fsdevel@vger.kernel.org
-References: <20230825201225.348148-1-willy@infradead.org>
- <20230825201225.348148-10-willy@infradead.org>
- <ZOlq5HmcdYGPwH2i@casper.infradead.org>
- <2f1e16e5-1034-b064-7a92-e89f08fd2ac1@redhat.com>
- <668b6e07047bdc97dfa1d522606ec2b28420bdce.camel@kernel.org>
- <ZO3y9ZixzE4c5oHU@casper.infradead.org>
- <CAOi1vP-jc+GqUKgewEaVRC8TuDjKzh4PeKmWyDf3qxSAWC4dTw@mail.gmail.com>
-From:   Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <CAOi1vP-jc+GqUKgewEaVRC8TuDjKzh4PeKmWyDf3qxSAWC4dTw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+NFS switch to open coding kill_anon_super in 7b14a213890a
+("nfs: don't call bdi_unregister") to avoid the extra bdi_unregister
+call.  At that point bdi_destroy was called in nfs_free_server and
+thus it required a later freeing of the anon dev_t.  But since
+0db10944a76b ("nfs: Convert to separately allocated bdi") the bdi has
+been free implicitly by the sb destruction, so this isn't needed
+anymore.
 
-On 8/30/23 18:44, Ilya Dryomov wrote:
-> On Tue, Aug 29, 2023 at 3:30 PM Matthew Wilcox <willy@infradead.org> wrote:
->> On Tue, Aug 29, 2023 at 07:55:01AM -0400, Jeff Layton wrote:
->>> On Mon, 2023-08-28 at 09:19 +0800, Xiubo Li wrote:
->>>> Next time please rebase to the latest ceph-client latest upstream
->>>> 'testing' branch, we need to test this series by using the qa
->>>> teuthology, which is running based on the 'testing' branch.
->>> People working on wide-scale changes to the kernel really shouldn't have
->>> to go hunting down random branches to base their changes on. That's the
->>> purpose of linux-next.
->> Yes.  As I said last time this came up
->> https://lore.kernel.org/linux-fsdevel/ZH94oBBFct9b9g3z@casper.infradead.org/
->>
->> it's not reasonable for me to track down every filesystem's private
->> git tree.  I'm happy to re-do these patches against linux-next in a
->> week or two, but I'm not going to start working against your ceph tree.
->> I'm not a Ceph developer, I'm a Linux developer.  I work against Linus'
->> tree or Stephen's tree.
-> Agreed.  Definitely not reasonable, it's the CephFS team's job to sort
-> out conflicts when applying patches to the testing branch.
->
-> The problem is that the testing branch is also carrying a bunch of "DO
-> NOT MERGE" fail-fast and/or debugging patches that aren't suitable for
-> linux-next.  The corollary of that is that we end up testing something
-> slightly different in our CI.  Xiubo, please review that list and let's
-> try to get it down to a bare minimum.
+By not open coding kill_anon_super, nfs now inherits the fix in
+dc3216b14160 ("super: ensure valid info"), and we remove the only
+open coded version of kill_anon_super.
 
-Sure. Thanks!
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ fs/nfs/super.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-- Xiubo
-
-
-> Thanks,
->
->                  Ilya
->
+diff --git a/fs/nfs/super.c b/fs/nfs/super.c
+index 2284f749d89246..0d6473cb00cb3e 100644
+--- a/fs/nfs/super.c
++++ b/fs/nfs/super.c
+@@ -1339,15 +1339,13 @@ int nfs_get_tree_common(struct fs_context *fc)
+ void nfs_kill_super(struct super_block *s)
+ {
+ 	struct nfs_server *server = NFS_SB(s);
+-	dev_t dev = s->s_dev;
+ 
+ 	nfs_sysfs_move_sb_to_server(server);
+-	generic_shutdown_super(s);
++	kill_anon_super(s);
+ 
+ 	nfs_fscache_release_super_cookie(s);
+ 
+ 	nfs_free_server(server);
+-	free_anon_bdev(dev);
+ }
+ EXPORT_SYMBOL_GPL(nfs_kill_super);
+ 
+-- 
+2.39.2
 
