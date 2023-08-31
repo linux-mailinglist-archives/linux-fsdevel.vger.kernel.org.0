@@ -2,175 +2,240 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 84E2678F043
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Aug 2023 17:27:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D72378F05C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Aug 2023 17:31:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346598AbjHaP1P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 31 Aug 2023 11:27:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43516 "EHLO
+        id S230094AbjHaPbT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 31 Aug 2023 11:31:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244978AbjHaP1O (ORCPT
+        with ESMTP id S244788AbjHaPbS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 31 Aug 2023 11:27:14 -0400
-Received: from mail-yw1-x112a.google.com (mail-yw1-x112a.google.com [IPv6:2607:f8b0:4864:20::112a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFD01E4F
-        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Aug 2023 08:27:09 -0700 (PDT)
-Received: by mail-yw1-x112a.google.com with SMTP id 00721157ae682-579de633419so11009617b3.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Aug 2023 08:27:09 -0700 (PDT)
+        Thu, 31 Aug 2023 11:31:18 -0400
+Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13BCAE50
+        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Aug 2023 08:31:15 -0700 (PDT)
+Received: by mail-yb1-xb4a.google.com with SMTP id 3f1490d57ef6-d7493fcd829so763317276.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Aug 2023 08:31:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1693495629; x=1694100429; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3p4KVcplnkmAq97aJFuRfPluC00MQY2jsCtIut4Z1Gw=;
-        b=DQBGsuogfAfIuaqpGxsVAGXkchKMaZDVSLGUmnqMpHQ9GBbEDh8NoGsYinCnTMy+o8
-         WkEP0ZrBdyEctGnC1R39gRkr9G4WgQvt3TCWXr5QN065qOvUP2noBYmO46C5AZCZKbSK
-         cK8CeOzgsEI7RbisvKeCT+41AS7Aiwl6bv5ikWmep8+9tLb/7ZcN/XraE02UOq8rj3mq
-         Qjxtyz0LMkf93mneJc+vbZg4CA4TqSIJPvkBYzWuGC5d+rUMabPVvlKn4JEcBeMUseK4
-         4ZMc843c7Vtc/ObMtSZVMRS2eV7Yme+5X4fIgTGPF16Tv4lQ37qwaIUSBE0s4H6Z9adc
-         V0Gg==
+        d=google.com; s=20221208; t=1693495874; x=1694100674; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=YYGG+XzZagKaNgC6mCifv/7D9GeC0jOA4/MyNnHVbhA=;
+        b=v7ZoRswLLJHq4g26c6qRoNEwLsfNBEtBuBpc0PFXhWDZ44RewrHh6mZZiqFB4pd+8L
+         TsSTtbxhSBUdYYNu6yCqDKMIK0oEWdXJ81rgX6oDFoWTYPxuAt3Av32AtRC6CITOZvEZ
+         AuBgpQOx8x9GtLpt+PPf2kQBB4LUPcwl5KipDXE6MJ9yY+hXPpjYeA3Sx0izAed8GEW4
+         zxY9e9leGwcWBl5cwKDXNCoc45YfGWCTu8ggqHOLHMeRqQAIdfPFw219M45JrDKJnGlk
+         lNevUM0x2j9C7w9jhTif/PO/eZqLw0J7toNvLZVBppBTLIh15CbVrfk3ba8iO0SF+v7y
+         VFng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693495629; x=1694100429;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3p4KVcplnkmAq97aJFuRfPluC00MQY2jsCtIut4Z1Gw=;
-        b=Ntxcxdg3yGKA5LQ3ZZLwVnfTfS8OxnTQ9TKgD4EHP/0xwFyl3xmy/YU5gNfucetwlS
-         k8s/jZj/ejzPsVBPg01osvNxFCUgzDfflODB8qN8127CgL8qhCBA9YUnS3f02Xck5ypa
-         wqsSww6+jhvOggQfH+R2ETy0v6WWCyEuCcWVI318QUcglPCPqzn7u7p3LbXSjd207D8N
-         UMuOTzLjMeiX6db9oEqi38adMWVrGf9JbSnkEBuOGSvgxx2HXHu/79lH56z7cgpjunSl
-         aKSo09aF6Hy6iBXLwSP420bGGab0TcVX2IrdFMZrPKw3SWIyfnadgWGuQuGFFtX8YYUj
-         x7vQ==
-X-Gm-Message-State: AOJu0YwdplEZKCbHlPnAe/3FN81JU538TUxW2pXXCy6myraSfZTiNqHx
-        YF7BE3wMOoU4IomYX6QVlb08Wr1bD4YvhZCbi46S
-X-Google-Smtp-Source: AGHT+IEbAPJPHeshhRY/Lhxcw/6oRYRPRw32NnYy3eYgXlznsnIjt+TNPp9z+bpcymHvBZK/BtkQ6Ltb5kMj49p25ig=
-X-Received: by 2002:a81:6cd8:0:b0:58f:a19f:2b79 with SMTP id
- h207-20020a816cd8000000b0058fa19f2b79mr6137570ywc.9.1693495629007; Thu, 31
- Aug 2023 08:27:09 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAHC9VhQr2cpes2W0oWa8OENPFAgFKyGZQu3_m7-hjEdib_3s3Q@mail.gmail.com>
- <f75539a8-adf0-159b-15b9-4cc4a674e623@google.com> <20230831-nachverfolgen-meditation-dcde56b10df7@brauner>
- <cd76e05c82d294a9d0965a2d98b8e51782489b5f.camel@linux.ibm.com>
-In-Reply-To: <cd76e05c82d294a9d0965a2d98b8e51782489b5f.camel@linux.ibm.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 31 Aug 2023 11:26:58 -0400
-Message-ID: <CAHC9VhRLJ+WLBAq_2mDWEC06Umx3Fj-z-2Qem_50izZHYF-vJQ@mail.gmail.com>
-Subject: Re: LSM hook ordering in shmem_mknod() and shmem_tmpfile()?
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Hugh Dickins <hughd@google.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, selinux@vger.kernel.org,
-        linux-mm@kvack.org, linux-integrity@vger.kernel.org
+        d=1e100.net; s=20221208; t=1693495874; x=1694100674;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YYGG+XzZagKaNgC6mCifv/7D9GeC0jOA4/MyNnHVbhA=;
+        b=jN6Llz5d3LEkw8lU60a9J3tLMovvxREa5vltGGBDN4w2OCeHMMCBaVX4T/sTxQfoue
+         QgodSlRR5figkpH6qX5mTju2rHaxQx1j/Fl6yuI53zICGDyO9uMTff+KRsjxwAbJm0fO
+         neR5Tm5l/tw6WB6acNeHfPuVKN1IB7V7Tn8NKiyBH5S+KJ8l5vTi6hPlshGxSTIiKVvB
+         tjWM46UjzTtkniQyMxhW5yY+Vc9eRiBT1Y/Afs3qJ995hMXzpcUoXolc5SMvCh1k+WJT
+         leGvGDFb8peyVBQvAzSrTEmp3/RLxH0wbUPbs9gN38/e7QXpEZFaRskT+kAG4Z/6EYe3
+         dgkg==
+X-Gm-Message-State: AOJu0YxoU9TFsPqlfQKzWSFZl9Kf3yKUyawKdyG/Oz5XYRBsCbMYjw+N
+        2E2h8L+5KVZx4/wJl645Qa1sXqejHdCjCRoGuV/F53stMtMpXCuKwUNHO3i0q5NVAHoii9mE3XM
+        9AFAiDJDFqYZgrBhHrOhB/tgTOng4OejH5jc65LHSZOij65PTdCyayjgVTNXBH5AkQr66g1oAGL
+        7e
+X-Google-Smtp-Source: AGHT+IEIHYQdIhGB2Ji1oeSVhSO+5aRlsotSLt3BwRj5CHDEB8OxnCqh7cVIonfM7celv0tWBDGKSJWtWjG97A==
+X-Received: from jiao.c.googlers.com ([fda3:e722:ac3:cc00:2b:7d90:c0a8:10f3])
+ (user=jiaozhou job=sendgmr) by 2002:a05:6902:11c9:b0:d20:7752:e384 with SMTP
+ id n9-20020a05690211c900b00d207752e384mr560ybu.3.1693495874213; Thu, 31 Aug
+ 2023 08:31:14 -0700 (PDT)
+Date:   Thu, 31 Aug 2023 15:31:07 +0000
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.42.0.rc2.253.gd59a3bf2b4-goog
+Message-ID: <20230831153108.2021554-1-jiaozhou@google.com>
+Subject: [PATCH] kernel: Add Mount Option For Efivarfs
+From:   Jiao Zhou <jiaozhou@google.com>
+To:     Linux FS Development <linux-fsdevel@vger.kernel.org>
+Cc:     Jiao Zhou <jiaozhou@google.com>, Ard Biesheuvel <ardb@kernel.org>,
+        Jeremy Kerr <jk@ozlabs.org>, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        kernel test robot <oliver.sang@intel.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 31, 2023 at 11:13=E2=80=AFAM Mimi Zohar <zohar@linux.ibm.com> w=
-rote:
-> On Thu, 2023-08-31 at 14:36 +0200, Christian Brauner wrote:
-> > On Thu, Aug 31, 2023 at 02:19:20AM -0700, Hugh Dickins wrote:
-> > > On Wed, 30 Aug 2023, Paul Moore wrote:
-> > >
-> > > > Hello all,
-> > > >
-> > > > While looking at some recent changes in mm/shmem.c I noticed that t=
-he
-> > > > ordering between simple_acl_create() and
-> > > > security_inode_init_security() is different between shmem_mknod() a=
-nd
-> > > > shmem_tmpfile().  In shmem_mknod() the ACL call comes before the LS=
-M
-> > > > hook, and in shmem_tmpfile() the LSM call comes before the ACL call=
-.
-> > > >
-> > > > Perhaps this is correct, but it seemed a little odd to me so I want=
-ed
-> > > > to check with all of you to make sure there is a good reason for th=
-e
-> > > > difference between the two functions.  Looking back to when
-> > > > shmem_tmpfile() was created ~2013 I don't see any explicit mention =
-as
-> > > > to why the ordering is different so I'm looking for a bit of a sani=
-ty
-> > > > check to see if I'm missing something obvious.
-> > > >
-> > > > My initial thinking this morning is that the
-> > > > security_inode_init_security() call should come before
-> > > > simple_acl_create() in both cases, but I'm open to different opinio=
-ns
-> > > > on this.
-> > >
-> > > Good eye.  The crucial commit here appears to be Mimi's 3.11 commit
-> > > 37ec43cdc4c7 "evm: calculate HMAC after initializing posix acl on tmp=
-fs"
-> > > which intentionally moved shmem_mknod()'s generic_acl_init() up befor=
-e
-> > > the security_inode_init_security(), around the same time as Al was
-> > > copying shmem_mknod() to introduce shmem_tmpfile().
-> > >
-> > > I'd have agreed with you, Paul, until reading Mimi's commit:
-> > > now it looks more like shmem_tmpfile() is the one to be changed,
-> > > except (I'm out of my depth) maybe it's irrelevant on tmpfiles.
-> >
-> > POSIX ACLs generally need to be set first as they are may change inode
-> > properties that security_inode_init_security() may rely on to be stable=
-.
-> > That specifically incudes inode->i_mode:
-> >
-> > * If the filesystem doesn't support POSIX ACLs then the umask is
-> >   stripped in the VFS before it ever gets to the filesystems. For such
-> >   cases the order of *_init_security() and setting POSIX ACLs doesn't
-> >   matter.
-> > * If the filesystem does support POSIX ACLs and the directory of the
-> >   resulting file does have default POSIX ACLs with mode settings then
-> >   the inode->i_mode will be updated.
-> > * If the filesystem does support POSIX ACLs but the directory doesn't
-> >   have default POSIX ACLs the umask will be stripped.
-> >
-> > (roughly from memory)
-> >
-> > If tmpfs is compiled with POSIX ACL support the mode might change and i=
-f
-> > anything in *_init_security() relies on inode->i_mode being stable it
-> > needs to be called after they have been set.
-> >
-> > EVM hashes do use the mode and the hash gets updated when POSIX ACLs ar=
-e
-> > changed - which caused me immense pain when I redid these codepaths las=
-t
-> > year.
-> >
-> > IMHO, the easiest fix really is to lump all this together for all
-> > creation paths. This is what most filesystems do. For examples, see
-> >
-> > xfs_generic_create()
-> > -> posix_acl_create(&mode)
-> > -> xfs_create{_tmpfile}(mode)
-> > -> xfs_inode_init_security()
-> >
-> > or
-> >
-> > __ext4_new_inode()
-> > -> ext4_init_acl()
-> > -> ext4_init_security()
->
-> Agreed.  Thanks, Hugh, Christian for the clear explanation.
+Add uid and gid in efivarfs's mount option, so that
+we can mount the file system with ownership. This approach
+ is used by a number of other filesystems that don't have
+native support for ownership.
 
-Yes, thanks all.  I figured something was a little wonky but wasn't
-smart enough to know the correct fix.
+TEST=FEATURES=test emerge-reven chromeos-kernel-5_15
 
-So .... who wants to submit a patch?
+Signed-off-by: Jiao Zhou <jiaozhou@google.com>
+Reported-by: kernel test robot <oliver.sang@intel.com>
+Closes: https://lore.kernel.org/oe-lkp/202308291443.ea96ac66-oliver.sang@intel.com
+---
+ fs/efivarfs/inode.c    |  4 +++
+ fs/efivarfs/internal.h |  9 ++++++
+ fs/efivarfs/super.c    | 65 ++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 78 insertions(+)
 
---=20
-paul-moore.com
+diff --git a/fs/efivarfs/inode.c b/fs/efivarfs/inode.c
+index 939e5e242b98..de57fb6c28e1 100644
+--- a/fs/efivarfs/inode.c
++++ b/fs/efivarfs/inode.c
+@@ -20,9 +20,13 @@ struct inode *efivarfs_get_inode(struct super_block *sb,
+ 				const struct inode *dir, int mode,
+ 				dev_t dev, bool is_removable)
+ {
++	struct efivarfs_fs_info *fsi = sb->s_fs_info;
+ 	struct inode *inode = new_inode(sb);
++	struct efivarfs_mount_opts *opts = &fsi->mount_opts;
+ 
+ 	if (inode) {
++		inode->i_uid = opts->uid;
++		inode->i_gid = opts->gid;
+ 		inode->i_ino = get_next_ino();
+ 		inode->i_mode = mode;
+ 		inode->i_atime = inode->i_mtime = inode->i_ctime = current_time(inode);
+diff --git a/fs/efivarfs/internal.h b/fs/efivarfs/internal.h
+index 30ae44cb7453..57deaf56d8e2 100644
+--- a/fs/efivarfs/internal.h
++++ b/fs/efivarfs/internal.h
+@@ -8,6 +8,15 @@
+ 
+ #include <linux/list.h>
+ 
++struct efivarfs_mount_opts {
++	kuid_t uid;
++	kgid_t gid;
++};
++
++struct efivarfs_fs_info {
++	struct efivarfs_mount_opts mount_opts;
++};
++
+ extern const struct file_operations efivarfs_file_operations;
+ extern const struct inode_operations efivarfs_dir_inode_operations;
+ extern bool efivarfs_valid_name(const char *str, int len);
+diff --git a/fs/efivarfs/super.c b/fs/efivarfs/super.c
+index 15880a68faad..d67b0d157ff5 100644
+--- a/fs/efivarfs/super.c
++++ b/fs/efivarfs/super.c
+@@ -8,6 +8,7 @@
+ #include <linux/efi.h>
+ #include <linux/fs.h>
+ #include <linux/fs_context.h>
++#include <linux/fs_parser.h>
+ #include <linux/module.h>
+ #include <linux/pagemap.h>
+ #include <linux/ucs2_string.h>
+@@ -23,10 +24,27 @@ static void efivarfs_evict_inode(struct inode *inode)
+ 	clear_inode(inode);
+ }
+ 
++static int efivarfs_show_options(struct seq_file *m, struct dentry *root)
++{
++	struct super_block *sb = root->d_sb;
++	struct efivarfs_fs_info *sbi = sb->s_fs_info;
++	struct efivarfs_mount_opts *opts = &sbi->mount_opts;
++
++	/* Show partition info */
++	if (!uid_eq(opts->uid, GLOBAL_ROOT_UID))
++		seq_printf(m, ",uid=%u",
++				from_kuid_munged(&init_user_ns, opts->uid));
++	if (!gid_eq(opts->gid, GLOBAL_ROOT_GID))
++		seq_printf(m, ",gid=%u",
++				from_kgid_munged(&init_user_ns, opts->gid));
++	return 0;
++}
++
+ static const struct super_operations efivarfs_ops = {
+ 	.statfs = simple_statfs,
+ 	.drop_inode = generic_delete_inode,
+ 	.evict_inode = efivarfs_evict_inode,
++	.show_options	= efivarfs_show_options,
+ };
+ 
+ /*
+@@ -190,6 +208,41 @@ static int efivarfs_destroy(struct efivar_entry *entry, void *data)
+ 	return 0;
+ }
+ 
++enum {
++	Opt_uid, Opt_gid,
++};
++
++static const struct fs_parameter_spec efivarfs_parameters[] = {
++	fsparam_u32("uid",			Opt_uid),
++	fsparam_u32("gid",			Opt_gid),
++	{},
++};
++
++static int efivarfs_parse_param(struct fs_context *fc, struct fs_parameter *param)
++{
++	struct efivarfs_fs_info *sbi = fc->s_fs_info;
++	struct efivarfs_mount_opts *opts = &sbi->mount_opts;
++	struct fs_parse_result result;
++	int opt;
++
++	opt = fs_parse(fc, efivarfs_parameters, param, &result);
++	if (opt < 0)
++		return opt;
++
++	switch (opt) {
++	case Opt_uid:
++		opts->uid = make_kuid(current_user_ns(), result.uint_32);
++		break;
++	case Opt_gid:
++		opts->gid = make_kgid(current_user_ns(), result.uint_32);
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
+ static int efivarfs_fill_super(struct super_block *sb, struct fs_context *fc)
+ {
+ 	struct inode *inode = NULL;
+@@ -233,10 +286,21 @@ static int efivarfs_get_tree(struct fs_context *fc)
+ 
+ static const struct fs_context_operations efivarfs_context_ops = {
+ 	.get_tree	= efivarfs_get_tree,
++	.parse_param	= efivarfs_parse_param,
+ };
+ 
+ static int efivarfs_init_fs_context(struct fs_context *fc)
+ {
++	struct efivarfs_fs_info *sfi;
++
++	sfi = kzalloc(sizeof(struct efivarfs_fs_info), GFP_KERNEL);
++	if (!sfi)
++		return -ENOMEM;
++
++	sfi->mount_opts.uid = current_uid();
++	sfi->mount_opts.gid = current_gid();
++
++	fc->s_fs_info = sfi;
+ 	fc->ops = &efivarfs_context_ops;
+ 	return 0;
+ }
+@@ -254,6 +318,7 @@ static struct file_system_type efivarfs_type = {
+ 	.name    = "efivarfs",
+ 	.init_fs_context = efivarfs_init_fs_context,
+ 	.kill_sb = efivarfs_kill_sb,
++	.parameters		= efivarfs_parameters,
+ };
+ 
+ static __init int efivarfs_init(void)
+-- 
+2.42.0.rc2.253.gd59a3bf2b4-goog
+
