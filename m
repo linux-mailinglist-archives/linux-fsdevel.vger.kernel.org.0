@@ -2,63 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8ADB778F56E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Sep 2023 00:31:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 736AF78F574
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Sep 2023 00:33:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345376AbjHaWbI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 31 Aug 2023 18:31:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37358 "EHLO
+        id S1347694AbjHaWde (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 31 Aug 2023 18:33:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240157AbjHaWbG (ORCPT
+        with ESMTP id S236119AbjHaWde (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 31 Aug 2023 18:31:06 -0400
-Received: from sonic309-27.consmr.mail.ne1.yahoo.com (sonic309-27.consmr.mail.ne1.yahoo.com [66.163.184.153])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C740E66
-        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Aug 2023 15:31:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1693521062; bh=s03qU1EPYaO4PcsqM7OOZRQKPrE+3wLRBq2scPo08MQ=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=e4axbn+ooC1WbiX816lg5j2tJcTXyazl96BudFVILQjSnv0R4+8BdF3VbegRYo9VCDVFBxJbbne2YGINlGnE6H0eEQae45Cs/pBMr7cSut+NjY3VKhouy+jFDBnmMk3KiOyR6BFoDrt9WPYBlYlEfrL6vvjFHVqq/IzHogldRDlQJZqJJ6EwDmAdDLlqU345V3LykEo4yvpPcL+SSNfm0V9RCkJhdO+vRHgggqNuOkRXsep93FAdsdLYp4hmtj7U+u6QDYaWaocCSczad0sFdqr35OXwGsYlnS7ieBEWZWx6KIdlSoSkP1oZsnR/osY3WRchD6xKHR1SjMLJiPj2aA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1693521062; bh=1Y1PmljuqGZVQQ+RjXhLC089ltG6mqsxjodSB8b1rI4=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=WahDngz4ORx3tuhYTS8FFATAD7z5OY5CtewkZ3BH7rCNRsM9fAqj6wgNZaFR4wPHig7Y3bJYsiL8yx9Ac6SQXhhzSynFehm/LEw5n0JfB/hjzxpgW1RVDi62zD3uLaJq68mwPLOk/voEs1TMpN+Cow13YBKzsUvBBXWP4SdDEMVJfjwwEncIxq/55ML4a0QEGvkq84ZPzPecy9WUqw2EEh/yr6KdR3oMDiMu9M+hH+/DpYzRkvy87ycVd4mA80WBatZMTZdxXFvLWllSV4KHIVxOQSXeJCDt9cPiZjS0AZQa+JuP8kZcep7WPhEkInXuaEmF9TWTth/fi0Z6U+GbXA==
-X-YMail-OSG: 15hnpoAVM1kW.TsuLvEPgaEYarONH29t8nHBeNeHjvIFDCYpkwyxs6kU7T_mY9e
- 1t0xoK.3FfdB8VufY2cDFCkKdKSDqZR.M9sD3co7Ss8bBKsxdWwF713qnDBCNPuPg7zQgUa_fkkK
- O_2zisBQGyJFrH2cbpxWBUp44HUv4GmRMSdwA9fGJkJNz25HhnvLzxm_mCzFFwwAXIFlBjxdD8je
- 6U.qhJFPw_9yL0g922LboxoVCq4AkewZ.qzHDd24FxOUVa_PKfCcgQktmeY8uGjJoQJH0g0oU7BQ
- qhVS240HvVWEPCuNF1lpzsjI4AzrBS4wv0SkjK9CGZm7_Ihbe9lw6vm0BCYStXaMnjx142niux.k
- P1T35OEXuI8SijS_0zZegROkmstBKUpXQORAy8z341QPeO88xnutil88Zl33netwEvUfErQFtRYd
- _L1wrZ3kqWK11xuaWankMUpNJ22nkrBZQRSnTbOSChcO9UJHAxgdYGulxiPjdbHVdskrtXMcP8tz
- WB9Iw5ZXCJrsEhwncSEeBxZD3EbBqXqyYNSGKYWPsyjJmeYHTse0eFToR7cMhkr7N0lmqLW07VsK
- iSfO1rAU9o9S2sJsni7GkK2kvhl2r59YOK8s1EEUi3j9aN1sfV9LYE311yPo1iLiA9fl_BkNcdE9
- CB9Q8fa_jqC8dO.lEqNy886Vke78lN4LFfdNv43UlHpqfkZ8qyymiDjP1tCHTgyqMHxbHly_0GTQ
- QXdp2638f8K7M.kL2vnyhScHkgJakBaJQXBcE6SQIxEvrlu52K81cP69Lit8QvukinOsW0Chmowj
- sawQRsnL1Vr4RJjkuh6NcSDkrj3z36Q8xoM7U1oxAyoz3xpHiskIf35R0Hp.U0VlvuSp92cjRuNy
- V_aZ1Xubabu2lEtXWi5hdVo.3UbhtwqWNtf0Qi2ysVnZAZTKA5SygThlBhdExWRljM1nLERYbyvu
- 4.IUXzh80fXJUfgvuT0O2_6MxjIPgPIxoMPuXUjDSok1ifG0ZluId7NDt3dCF9ce8NJEylX4a8BO
- kM8jSzColmPQl5OQ_k3uOz2.uPs7DLsG4f4KRxKeVhyczZOD3rywFoopoXE1dffhant13hc4yZuB
- CclggMazurB.ITUwnqGlCOBId1JHU7x5OdIxACmn9nkc4LsR2MiOc5k66D5Lmp1GKUn7s5p6WJMw
- oj1pHTkM2i5ZQg75epJtqnyDtfLqcX_H4wiEMrXY94JKj8bxbQub4PJZ_0s3pHaohf081vUY_SJR
- IhT7IvxHUU6LH5cpfG84s1RGgVYbrjja6BKgdxM_8DP.0kaVzWz96yBLVloi54EHIpMTuWdGJ9w4
- WhiKvRPia75vqamQtDsoZcXR7kklbmrWqdlsCNJJoo0vKBOELaOEmR057ecR.R_XIq16YMuu6hkN
- 58ovsKI6YvbwJ2dHSQqEeAqfcFsQQk1vu6L5DmG90DJQ.SZS_BNKeSFv9mvpaRTe9xq3CbNdYz9h
- uTr.wR3a6By8u.xN288H7KTXGnte.XHLKoaayTqLnEwhdVjDSTAT6_3bUMZM1jDgLFEdUIXgV6WZ
- Z2VX82LUUg4t34f3MpP9KOXn5zgSw3pp58LLzVDYJhlp28.oVI9m_9EhCM4RQeyE_GUhKZMuc2Av
- YQ0zOos4cMj6Y0xs9zS6H0JIZIXcuEHgeFtvCkdSEXPMwWhLz8UzlnaL1mxDyV0Hw6h613NtHunm
- dSARAvfEnn2X2Y9uxsW70Ut4249vby5fdiVKeij3e6.R6BK1iVSFDtw.6onwmgSVkedr0NT_T0tj
- M5NTUdOEHc3_J6W_dBP5E1IO.e3OBac.1K_6o67MqlN10jG0hNUsXQKlSnF3ZG855BNTcadUBQzp
- jSaCpXBsrxQuWZ1KoDNylisawgXUJvXlczQkmqV_6awbnIiGElKqrHaauW1Q1IsbLF.vqcYgMtM6
- Cms3scFY24Z_PgNqh2hatttsWzazY2GYmo_slSR1wuFsemUmy84LuevPpY.lzSJyVxZ6rN4jqWhd
- mMwb.QwswKW8SUIaekIjYrLNMw3jsNxa5VcEa54Tz0HUZjGJGq5wxLhMBJpY_HDmWXtjOOv2bJvc
- N7QrMXHlLTM9waoVNctOYvMqbw2ocUYpOYHiS89VlU_m7PGUznm7uGI4I0n0QCTQ2CTm11biaeSU
- 4doVAeepfOUAEbdf7IUlCpBPMwohIw3GZvISH9OgEjiH7WKbNY7KQZj25pP00gsrrWiaLYuQQpqm
- fHKotcMW2CEG73IUOGhca.XxxrnFZU2WgwYd_db2n.SSNSAKUPDNTSZbP927UYcJX44LAUk0-
+        Thu, 31 Aug 2023 18:33:34 -0400
+Received: from sonic317-39.consmr.mail.ne1.yahoo.com (sonic317-39.consmr.mail.ne1.yahoo.com [66.163.184.50])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61D07E65
+        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Aug 2023 15:33:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1693521210; bh=e70bISLuY6fb7J+z0kqSKLRiLDSz6GGBBOClneQup2E=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=fIjafN482tBGp4AfLJnh2MKXyHMGiXttv6o1606DmXCZCSlk3OadepjEZ9WY+NNLUFOS6cvyZM2OYrmN/siyd9xr4V4AHLz5rdkzYCYrHf7M/E33Q9V0OUVVDtaUnwvNWO8i1b0o/RCcpEQPuXjtiLzgzzSTw8Fbp+QWlsCs2zgc+vartYObSfZyYxc6Qsps9lT6LsSUyQRQjT6qEKrRRLnW6phbbfiJw7yQuUgSGvW5qsybKHwSFsmhmXlQl0KOMgNDI2u4/vt/ErUPUAykseQdVYbCga1dTviTt0mFIooGJCLOC6X7GOcTeuJq2V47b9+O3nPaxC1Gi8zq4bmBgg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1693521210; bh=PF32S8cVKFvmAaph02A9hH2vmQsdVxpbmYXtHwo3Z1s=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=YGLsSc/IrlYwOZtJAaA363aP3OlvLqEJJFOQoHp+Jove4Toqf9rwmwk0aXuAXDWXFeYi8zqERfI07vF9FWvhUINMukPCskC6qU6prwzBQ/QQvn+n24IwktsLJesw69zWLjxiX0JP4tTWs3uDXTjuF4IPSld8uWiRbYy/0GY2AXhSdMwyQklCLfNJ3ZLTDEuZwqhsjQX0N8/cX3WpyHND4yd8z5KY1A27Rkx1uXq2Q7W6s7/zwCxz9GK6x6oPvrv5E2DsohIEAC1pIoresfPcLQ5vgwTt9g87cHDSyfdqByllSvtHYwVIAclvTEVizFgmA2Gd9XeDavwr8OEr6WBvsg==
+X-YMail-OSG: QbCFSPwVM1m0KzDasUhM.IXS5OHf6EczNyg2hRMzoJiRC7sc2Qu72JtINxAl_o3
+ kdZ0vL.55gtf2gHEm2DQXETx3Zs7gbZ3Yb8cjgrEK4zpIRXpOzzJw2i5lV_bpelCV33JJxVdDRCP
+ 50NWHNDxF4DWOHvjZ_YwdoiJU0AWkM1X8UjlAI0n1AX_Qnh.cCk8fPCTPZ06ldVK2KuqZRorH7WK
+ x3woP5zhhUMjjvq_0nFInLY05O8HksGnRUROyi.6kIacrRtJ0muFmj98uRGHUkkgmDNINBZFf6Xw
+ ZGrX3J50OF8UTffFBI2vTguDwn1ML5ajk9SrpwKGE5xxWuC9hiW2PwbzfWRVnuJt52S3LBAAepE7
+ hX2uW4DO52PJixD5hVDPh4pw1DOH1YWxOjKzqg.I2KZrdiplY3LXkrSLefxTsDizyqo967TWXgsS
+ kt7MzxAklByG_8Tmy.LeZcgEbF51GMwYTIhIkY.xbeCz2BrszDHutm8okk9guesarG49K_yZWtIy
+ eshhTt8._mYaINN.A76gSB5mx_Khq_1jx0XEgDzNvVdKPVljzG1KZf6o5sN9bTInNt6fyG8dBIb2
+ fq1SXh8GVmBRXVXEwCL_iN6f68Tzv7EomIKtwzn2pR.8LE4NB9X7hoaVMs6EUscX0hDoFfg7qdeB
+ 8wnH3CpX0c1r_Yxxdr.RJ1Ot_PHWYxc4E6_JAb11RyGPNKUylECJd1ZRJMuWCEJL1v_6xHhzKFwP
+ k9WNvfvwF9q3YeDQYLdU98EYSzCQgOOKc2DPujaTESTaQaTBZcuhsYHIV.97GLl4EI5HIDKsv4MU
+ JGnwy1MVYZOeV1Fpha1lvDrg5NrFAyIP4o3V.cmfDbLgogs18AWT4zq9IC9eXqLdv2ZjxC0v.QTt
+ 5uxP.o1IXpMpsVguo4Au.Ra1fQXcpViCeCwToAAxoRs48DTEKFw.c.ewcVr9mvuxeULMwt63YfNJ
+ lrmHmHfHISa6vXIvw6qD3OqDjBdkeDrG0fUPLMPOsENWYhT7R5SSFCDt5mVx0vSIyJ0FL8VHTueH
+ MBw3Rutc0U_FXRPsJTcSOpOCAMXRCghR3EXxyf4qYgio6XzxWPhMtF9GW7l3A3hujVMVTdwsSygf
+ lEV3EvyiEXbdv6nI2gIh_qi0f8K_NliAqKXJatSQaNKCLAhlGTu.Gs11MaLNkWP3knsTCTMhhF1W
+ NsoarOgv5YA75c8lsJwXOBXdzMAlgKL4CFNUVB9Bn6osmpsB8jmN4eYjVhip4A1Btx0PGCe1vVA9
+ gQjpTNTDPrbzue54aRr58EMbusyWbiMtWay0hpO572qeb9GU.mCZHXwzGF2T45BfVnOI2HQTKQ.g
+ qkBbX4UiMGXbDMLB2MKIBJ6C1R_Nzq8575bWTgRTylhob7QLbk5q1jHNBbJbfzVKyWd5zLHil1pm
+ OoTqelrdNfkeoeC2nk4Ozp26pmRysoZpNA7Lhok_S3Ej3h.8MuIZw9RoDPL9ZlojPK29P9SkY4hk
+ OBPNJtopfXMEgVFFtTzBLljvr_8fbHv1K138IAmZZLxwAnUoaUQfaHcaLAPq5v2K9Gu3900aWzZO
+ aJ_BcmRNlg3uIyTEfIvV1D49KpjSBKD3C5tMsrIQbj2FbiMpRHrgQZlZUsDWnrGntixsqO3wc0jy
+ I1cDdudRLJYaCYzzIiq8ciTKGwhATRI3bwj3D8Rw1gq_uyUkaHbfscqvNB21v0dRT_4erMdD9B8C
+ Y.XgBJHi0FLAZRolbQv8U90Tazv9Md0Ca4JSDWiC3YTNwR44UgUixEopZr43UJ_78pkLjGr95XSF
+ sy_TpW4DU.v5w3pmA9G3r99dLc6iAe6h9e4sRtAA0MuwEG70dPatpvg6FdB69Y2rZ6J_mccbGvYm
+ VCaMWvcsn6Roje318.B4fYDhL4Jw.0UD2mfxZiFWC0YC8W0ISAj3utnDfBGEACQ0sFro43oa.vSH
+ muQAkPWM3coQHak2.jWDbhYDUCPOLXK80TXkNvahiJUnPJLDFtnfNPgMmBqOgwL1Tuspzg43Nt0d
+ eHC_qX8nrMEnmBfy_7bO1SW6dNCqmcJUP_j4wkGgtgGYBsCz_zyxSFq8AeTN2.qo9V_XP8W6B_Ph
+ HIHZAHwVILMpF9.SMyBXz9YlnJUmAQyU9Nq3r45zzdE0V7foDCmHXQIs_vRURUqQ7iigdmKiP7ef
+ Dx6wLuOYPgye_iCwHiEx3KzO3hqkCs4g3nua8qc1VMHXsxWE.tVfVl2DRR32mv8F9Y1exJuu8Bhl
+ .PkCmLjhFvfoDxOO50JdDQhYAIh6PeH6dxB1KI6bc3w--
 X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 25b6638a-be32-488f-910b-fbcbbc466835
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Thu, 31 Aug 2023 22:31:02 +0000
-Received: by hermes--production-bf1-865889d799-sjjww (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID aefbc0a6450dcf793468959f28e0b194;
-          Thu, 31 Aug 2023 22:30:56 +0000 (UTC)
-Message-ID: <bd4a2d7e-3c00-9066-63ed-59027cc4fdb7@schaufler-ca.com>
-Date:   Thu, 31 Aug 2023 15:30:52 -0700
+X-Sonic-ID: 3a4dc40c-12bc-46c5-81bb-d0810b34db21
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic317.consmr.mail.ne1.yahoo.com with HTTP; Thu, 31 Aug 2023 22:33:30 +0000
+Received: by hermes--production-bf1-865889d799-7bb4c (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID a8e0777d67c5e3dfe11e628230291f30;
+          Thu, 31 Aug 2023 22:33:24 +0000 (UTC)
+Message-ID: <acb13c4f-8ecb-076c-f730-cb5e14e018af@schaufler-ca.com>
+Date:   Thu, 31 Aug 2023 15:33:19 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.14.0
-Subject: Re: [PATCH v2 13/25] security: Introduce inode_post_removexattr hook
+Subject: Re: [PATCH v2 14/25] security: Introduce file_post_open hook
 Content-Language: en-US
 To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
         viro@zeniv.linux.org.uk, brauner@kernel.org,
@@ -75,30 +75,29 @@ Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         Stefan Berger <stefanb@linux.ibm.com>,
         Casey Schaufler <casey@schaufler-ca.com>
 References: <20230831104136.903180-1-roberto.sassu@huaweicloud.com>
- <20230831104136.903180-14-roberto.sassu@huaweicloud.com>
+ <20230831104136.903180-15-roberto.sassu@huaweicloud.com>
 From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20230831104136.903180-14-roberto.sassu@huaweicloud.com>
+In-Reply-To: <20230831104136.903180-15-roberto.sassu@huaweicloud.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Mailer: WebService/1.1.21763 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 X-Spam-Status: No, score=-5.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+
 On 8/31/2023 3:41 AM, Roberto Sassu wrote:
 > From: Roberto Sassu <roberto.sassu@huawei.com>
 >
-> In preparation for moving IMA and EVM to the LSM infrastructure, introduce
-> the inode_post_removexattr hook.
+> In preparation to move IMA and EVM to the LSM infrastructure, introduce the
+> file_post_open hook. Also, export security_file_post_open() for NFS.
 
-This applies to all new LSM hooks:
-
+Repeat of new LSM hook general comment:
 Would you please include some explanation of how an LSM would use this hook?
 You might start with a description of how it is used in IMA/EVM, and why that
 could be generally useful.
@@ -107,91 +106,104 @@ could be generally useful.
 > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 > Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
 > ---
->  fs/xattr.c                    |  9 +++++----
->  include/linux/lsm_hook_defs.h |  2 ++
->  include/linux/security.h      |  5 +++++
->  security/security.c           | 14 ++++++++++++++
->  4 files changed, 26 insertions(+), 4 deletions(-)
+>  fs/namei.c                    |  2 ++
+>  fs/nfsd/vfs.c                 |  6 ++++++
+>  include/linux/lsm_hook_defs.h |  1 +
+>  include/linux/security.h      |  6 ++++++
+>  security/security.c           | 17 +++++++++++++++++
+>  5 files changed, 32 insertions(+)
 >
-> diff --git a/fs/xattr.c b/fs/xattr.c
-> index e7bbb7f57557..4a0280295686 100644
-> --- a/fs/xattr.c
-> +++ b/fs/xattr.c
-> @@ -552,11 +552,12 @@ __vfs_removexattr_locked(struct mnt_idmap *idmap,
->  		goto out;
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 1f5ec71360de..7dc4626859f0 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -3634,6 +3634,8 @@ static int do_open(struct nameidata *nd,
+>  	error = may_open(idmap, &nd->path, acc_mode, open_flag);
+>  	if (!error && !(file->f_mode & FMODE_OPENED))
+>  		error = vfs_open(&nd->path, file);
+> +	if (!error)
+> +		error = security_file_post_open(file, op->acc_mode);
+>  	if (!error)
+>  		error = ima_file_check(file, op->acc_mode);
+>  	if (!error && do_truncate)
+> diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+> index 8a2321d19194..3450bb1c8a18 100644
+> --- a/fs/nfsd/vfs.c
+> +++ b/fs/nfsd/vfs.c
+> @@ -862,6 +862,12 @@ __nfsd_open(struct svc_rqst *rqstp, struct svc_fh *fhp, umode_t type,
+>  		goto out_nfserr;
+>  	}
 >  
->  	error = __vfs_removexattr(idmap, dentry, name);
-> +	if (error)
-> +		goto out;
->  
-> -	if (!error) {
-> -		fsnotify_xattr(dentry);
-> -		evm_inode_post_removexattr(dentry, name);
-> -	}
-> +	fsnotify_xattr(dentry);
-> +	security_inode_post_removexattr(dentry, name);
-> +	evm_inode_post_removexattr(dentry, name);
->  
->  out:
->  	return error;
+> +	host_err = security_file_post_open(file, may_flags);
+> +	if (host_err) {
+> +		fput(file);
+> +		goto out_nfserr;
+> +	}
+> +
+>  	host_err = ima_file_check(file, may_flags);
+>  	if (host_err) {
+>  		fput(file);
 > diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-> index 995d30336cfa..1153e7163b8b 100644
+> index 1153e7163b8b..60ed33f0c80d 100644
 > --- a/include/linux/lsm_hook_defs.h
 > +++ b/include/linux/lsm_hook_defs.h
-> @@ -148,6 +148,8 @@ LSM_HOOK(int, 0, inode_getxattr, struct dentry *dentry, const char *name)
->  LSM_HOOK(int, 0, inode_listxattr, struct dentry *dentry)
->  LSM_HOOK(int, 0, inode_removexattr, struct mnt_idmap *idmap,
->  	 struct dentry *dentry, const char *name)
-> +LSM_HOOK(void, LSM_RET_VOID, inode_post_removexattr, struct dentry *dentry,
-> +	 const char *name)
->  LSM_HOOK(int, 0, inode_set_acl, struct mnt_idmap *idmap,
->  	 struct dentry *dentry, const char *acl_name, struct posix_acl *kacl)
->  LSM_HOOK(int, 0, inode_get_acl, struct mnt_idmap *idmap,
+> @@ -188,6 +188,7 @@ LSM_HOOK(int, 0, file_send_sigiotask, struct task_struct *tsk,
+>  	 struct fown_struct *fown, int sig)
+>  LSM_HOOK(int, 0, file_receive, struct file *file)
+>  LSM_HOOK(int, 0, file_open, struct file *file)
+> +LSM_HOOK(int, 0, file_post_open, struct file *file, int mask)
+>  LSM_HOOK(int, 0, file_truncate, struct file *file)
+>  LSM_HOOK(int, 0, task_alloc, struct task_struct *task,
+>  	 unsigned long clone_flags)
 > diff --git a/include/linux/security.h b/include/linux/security.h
-> index 820899db5276..665bba3e0081 100644
+> index 665bba3e0081..a0f16511c059 100644
 > --- a/include/linux/security.h
 > +++ b/include/linux/security.h
-> @@ -374,6 +374,7 @@ int security_inode_getxattr(struct dentry *dentry, const char *name);
->  int security_inode_listxattr(struct dentry *dentry);
->  int security_inode_removexattr(struct mnt_idmap *idmap,
->  			       struct dentry *dentry, const char *name);
-> +void security_inode_post_removexattr(struct dentry *dentry, const char *name);
->  int security_inode_need_killpriv(struct dentry *dentry);
->  int security_inode_killpriv(struct mnt_idmap *idmap, struct dentry *dentry);
->  int security_inode_getsecurity(struct mnt_idmap *idmap,
-> @@ -919,6 +920,10 @@ static inline int security_inode_removexattr(struct mnt_idmap *idmap,
->  	return cap_inode_removexattr(idmap, dentry, name);
+> @@ -403,6 +403,7 @@ int security_file_send_sigiotask(struct task_struct *tsk,
+>  				 struct fown_struct *fown, int sig);
+>  int security_file_receive(struct file *file);
+>  int security_file_open(struct file *file);
+> +int security_file_post_open(struct file *file, int mask);
+>  int security_file_truncate(struct file *file);
+>  int security_task_alloc(struct task_struct *task, unsigned long clone_flags);
+>  void security_task_free(struct task_struct *task);
+> @@ -1044,6 +1045,11 @@ static inline int security_file_open(struct file *file)
+>  	return 0;
 >  }
 >  
-> +static inline void security_inode_post_removexattr(struct dentry *dentry,
-> +						   const char *name)
-> +{ }
+> +static inline int security_file_post_open(struct file *file, int mask)
+> +{
+> +	return 0;
+> +}
 > +
->  static inline int security_inode_need_killpriv(struct dentry *dentry)
+>  static inline int security_file_truncate(struct file *file)
 >  {
->  	return cap_inode_need_killpriv(dentry);
+>  	return 0;
 > diff --git a/security/security.c b/security/security.c
-> index 764a6f28b3b9..3947159ba5e9 100644
+> index 3947159ba5e9..3e0078b51e46 100644
 > --- a/security/security.c
 > +++ b/security/security.c
-> @@ -2354,6 +2354,20 @@ int security_inode_removexattr(struct mnt_idmap *idmap,
->  	return evm_inode_removexattr(idmap, dentry, name);
+> @@ -2856,6 +2856,23 @@ int security_file_open(struct file *file)
+>  	return fsnotify_perm(file, MAY_OPEN);
 >  }
 >  
 > +/**
-> + * security_inode_post_removexattr() - Update the inode after a removexattr op
-> + * @dentry: file
-> + * @name: xattr name
+> + * security_file_post_open() - Recheck access to a file after it has been opened
+> + * @file: the file
+> + * @mask: access mask
 > + *
-> + * Update the inode after a successful removexattr operation.
+> + * Recheck access with mask after the file has been opened. The hook is useful
+> + * for LSMs that require the file content to be available in order to make
+> + * decisions.
+> + *
+> + * Return: Returns 0 if permission is granted.
 > + */
-> +void security_inode_post_removexattr(struct dentry *dentry, const char *name)
+> +int security_file_post_open(struct file *file, int mask)
 > +{
-> +	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
-> +		return;
-> +	call_void_hook(inode_post_removexattr, dentry, name);
+> +	return call_int_hook(file_post_open, 0, file, mask);
 > +}
+> +EXPORT_SYMBOL_GPL(security_file_post_open);
 > +
 >  /**
->   * security_inode_need_killpriv() - Check if security_inode_killpriv() required
->   * @dentry: associated dentry
+>   * security_file_truncate() - Check if truncating a file is allowed
+>   * @file: file
