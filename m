@@ -2,33 +2,33 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 34F8278E68C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Aug 2023 08:31:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9335E78E697
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Aug 2023 08:33:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245148AbjHaGbV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 31 Aug 2023 02:31:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46664 "EHLO
+        id S1346091AbjHaGeA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 31 Aug 2023 02:34:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36258 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232908AbjHaGbU (ORCPT
+        with ESMTP id S1346074AbjHaGd7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 31 Aug 2023 02:31:20 -0400
+        Thu, 31 Aug 2023 02:33:59 -0400
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48F32A4;
-        Wed, 30 Aug 2023 23:31:17 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E051A4;
+        Wed, 30 Aug 2023 23:33:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=x7jecP7KFnSNkO2DSlLMkbDbDAg7iq2vacoSweuUVPc=; b=cVawuss1wNIoGZOcmN5C7meYKF
-        Vy/kJWEd5OD5HtcqD5T2XqYl4Fu7WSBl/JvhwO6onCzavlF4hgvO+lJ/RBKNOA04cP/J6c3GXp/qv
-        MWarK/P/RwpPZkPbV8mufXhmeVUEb45//PNdFCnFMB81GGV+YFf7JwBeo7lZf9+wPjcnNxjgJ68b+
-        NyjAoZsBRBNcegK/KVhNZhvhwMMyZ6nYXbApok/wChR5rIktiYBlA/FwMHdhtQqj74X0fpCy2+m/L
-        7Vic6kGymDoa8x2qdIArpOB782pBILazZq0wRwby7lrPMhIUsmvS9HFfU/vvU/S1nQGRhDB1RqIHs
-        77n9Vp2A==;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
+        Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
+        bh=m7ZNAD+mu1nvLKxN0YL1DZsRCd8xWr1zWeyKm/p/2Kc=; b=quU2UCffpQaWx2E9I3k9a/YyZR
+        v/LTBB7/Opl416AqY0SrjDDt813lNCB8bPcyRwjFsk/+MNjUnCw5oI3FnvMPiw6gjrwvHcOkMuiPu
+        w+b7g26m5lsG3vacgKbwSrCLEV4wqrMCCokViqTrQg7jEU0ZnZB3O8wp5XSlMdo8uhD66YqeQ2k9l
+        j145GPcljm62MFpjeg14YElhOP3Zjfa/GZYjBvashoEK/3q8yWBxVA5/bqHwc5k8h9RIEQt8q5jNJ
+        8eTzA9yqc+R1bZG+bXis/ANCvcydii57HprxWx+6SYTFCN9jDXZW6qsDAUU3NhJkY5dUpKImXYHqG
+        9LmRBXfA==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1qbbCu-002GyT-2b;
-        Thu, 31 Aug 2023 06:31:08 +0000
-Date:   Thu, 31 Aug 2023 07:31:08 +0100
+        id 1qbbFV-002H1W-2w;
+        Thu, 31 Aug 2023 06:33:50 +0000
+Date:   Thu, 31 Aug 2023 07:33:49 +0100
 From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Christian Brauner <brauner@kernel.org>,
@@ -39,15 +39,16 @@ Cc:     Christian Brauner <brauner@kernel.org>,
         Stephen Smalley <stephen.smalley.work@gmail.com>,
         Eric Paris <eparis@parisplace.org>, linux-s390@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH 2/4] devpts: free sb->s_fs_info after shutting down the
- super block
-Message-ID: <20230831063108.GE3390869@ZenIV>
+Subject: Re: [PATCH 3/4] selinuxfs: free sb->s_fs_info after shutting down
+ the super block
+Message-ID: <20230831063349.GF3390869@ZenIV>
 References: <20230831053157.256319-1-hch@lst.de>
- <20230831053157.256319-3-hch@lst.de>
+ <20230831053157.256319-4-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230831053157.256319-3-hch@lst.de>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230831053157.256319-4-hch@lst.de>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE
@@ -58,12 +59,16 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 31, 2023 at 07:31:55AM +0200, Christoph Hellwig wrote:
+On Thu, Aug 31, 2023 at 07:31:56AM +0200, Christoph Hellwig wrote:
 > sb->s_fs_info can only be safely freed after generic_shutdown_super was
 > called and all access to the super_block has stopped.
+> 
+> Thus only free the private data after calling kill_litter_super, which
+> calls generic_shutdown_super internally.
 
-Similar to ramfs case; nothing in dentry/inode eviction codepaths is
-using anything in ->s_fs_info.  And references in tty are holding
-an active ref to superblock in question, preventing ->kill_sb(), so
-nothing from the outside is going to play with e.g. devpts_{new,kill}_index()
-under us.
+Same as for ramfs, AFAICS.
+
+> Also remove the duplicate freeing in the sel_fill_super error path given
+> that ->kіll_sb is also called on ->fill_super failure.
+
+Reasonable cleanup, that.
