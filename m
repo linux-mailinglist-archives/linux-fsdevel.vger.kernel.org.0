@@ -2,53 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B5ED778EFF9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Aug 2023 17:13:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC3E278F000
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Aug 2023 17:13:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346494AbjHaPMH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 31 Aug 2023 11:12:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35460 "EHLO
+        id S1346497AbjHaPNd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 31 Aug 2023 11:13:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344701AbjHaPMG (ORCPT
+        with ESMTP id S241208AbjHaPNc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 31 Aug 2023 11:12:06 -0400
-Received: from mail-pj1-f77.google.com (mail-pj1-f77.google.com [209.85.216.77])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD8DFE4F
-        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Aug 2023 08:12:01 -0700 (PDT)
-Received: by mail-pj1-f77.google.com with SMTP id 98e67ed59e1d1-26d63b60934so1101843a91.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Aug 2023 08:12:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693494720; x=1694099520;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=73T5VhzIYfyXx1BlIn+rQpmkj/AzBZfrfI73pg6gsRQ=;
-        b=Qlk+RvMaDb4hMPPEJVkeBiGBhoTbhPA+MtZGMHdhQPy56F25X+ADgFCb/0tzKcY3M7
-         8isGLtE26vPAC75ti+uvYZZvcGeVRkwyV8Y6OkNsxjycehjzobsH8y3j1SM9E2JXPeLP
-         jK388GiD+6jxkgSswuG3zH7hBMnKw0snETn8MM8ENACPgIRkzwWZ2b/z/+RcR3n7RlpU
-         VitkVZTE6ygE0djHUgueHSvnwHhyJwRERyPRShLL/o2nSDvzPAum61jQn7TGUEud2I1D
-         HtqK5F7ov4fVR8i8iu3LzlzFN+iAej7ojjF31PZdz+5rXfGJs21ewHFBO+5Wtaw3y2Wq
-         jmvw==
-X-Gm-Message-State: AOJu0YxuJYybHhuo9W7cLLBcUixH7CHNXtAQYlPAU58wfFN3gTrZJwvg
-        LAF4tkFrvowY+ONR+k0p/DSqZMYfnGKSPuqsya4gXBgLHK35
-X-Google-Smtp-Source: AGHT+IE+n5U6gPEuIVgdvvqKVxBkdD8wzcdp0/xAS7Ek6WqWs2uLnTGexuh4H6dvyrUcZ1auiGkJDt2JAxYPCv1CaNRZoqOSuJDB
-MIME-Version: 1.0
-X-Received: by 2002:a17:90b:a08:b0:26d:2b05:4926 with SMTP id
- gg8-20020a17090b0a0800b0026d2b054926mr952109pjb.1.1693494720590; Thu, 31 Aug
- 2023 08:12:00 -0700 (PDT)
-Date:   Thu, 31 Aug 2023 08:12:00 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003ffd3806043977e1@google.com>
-Subject: [syzbot] [ext4?] general protection fault in inode_permission (2)
-From:   syzbot <syzbot+f5b965c58efb9c510227@syzkaller.appspotmail.com>
-To:     adilger.kernel@dilger.ca, brauner@kernel.org,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        tytso@mit.edu, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no
+        Thu, 31 Aug 2023 11:13:32 -0400
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A126CE59;
+        Thu, 31 Aug 2023 08:13:27 -0700 (PDT)
+Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37VFApXQ025576;
+        Thu, 31 Aug 2023 15:13:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=9RvTIMXhjg+qCqq55rO5Im9gWOH18IqnefVeYQcqlpw=;
+ b=sUKzuSaLWqVaK7xzlZZKc/neNRUMtC96rpENhfE9ftLEChfAO8G1/jGU5Xlo/HAb+Eb1
+ S1pIInrtkMOt9rm2u5G4quxpgoMbf2H8G4RIv9joUHgvXnaIIMzfY2nJf03PURlf3NkW
+ mehkbsI4WLaD2Q2CrJAC1c3FYxD/2iQUdg/oHlt4YNqdTVBe+ZTAESt5NcNrC3oUJsOv
+ GQyHluIPNgvePTlXbG9b6tMRU3O+7dkYCTq+IRzj60conEFv6u5JUohaIsASNSk1cpKj
+ rqUByt7uGkdz3/mfKHEiSteQNaT/uo2SeBwlPURrmCpNPkoXWaHeo0l7PyUD/LnMF4aa wg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3stvcu9prc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 31 Aug 2023 15:13:19 +0000
+Received: from m0353723.ppops.net (m0353723.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 37VFCre6004922;
+        Thu, 31 Aug 2023 15:13:18 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3stvcu9pr0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 31 Aug 2023 15:13:18 +0000
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+        by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 37VDeZm0020344;
+        Thu, 31 Aug 2023 15:13:17 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
+        by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3sqv3ywm34-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 31 Aug 2023 15:13:17 +0000
+Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
+        by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 37VFDHU665863978
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 31 Aug 2023 15:13:17 GMT
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 388E0582B8;
+        Thu, 31 Aug 2023 15:13:17 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2E4FA582B7;
+        Thu, 31 Aug 2023 15:13:16 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.61.58.247])
+        by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Thu, 31 Aug 2023 15:13:16 +0000 (GMT)
+Message-ID: <cd76e05c82d294a9d0965a2d98b8e51782489b5f.camel@linux.ibm.com>
+Subject: Re: LSM hook ordering in shmem_mknod() and shmem_tmpfile()?
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Christian Brauner <brauner@kernel.org>,
+        Hugh Dickins <hughd@google.com>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, selinux@vger.kernel.org,
+        linux-mm@kvack.org, linux-integrity@vger.kernel.org
+Date:   Thu, 31 Aug 2023 11:13:15 -0400
+In-Reply-To: <20230831-nachverfolgen-meditation-dcde56b10df7@brauner>
+References: <CAHC9VhQr2cpes2W0oWa8OENPFAgFKyGZQu3_m7-hjEdib_3s3Q@mail.gmail.com>
+         <f75539a8-adf0-159b-15b9-4cc4a674e623@google.com>
+         <20230831-nachverfolgen-meditation-dcde56b10df7@brauner>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: usbwRtpZUpkBHG1yUJFauP0_n1EYK3rs
+X-Proofpoint-GUID: X0Ta0lRbupOh8WdDS0J7wA2c2Tdi1No1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
+ definitions=2023-08-31_13,2023-08-31_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ clxscore=1011 malwarescore=0 mlxlogscore=999 impostorscore=0 spamscore=0
+ mlxscore=0 phishscore=0 lowpriorityscore=0 bulkscore=0 adultscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2308100000 definitions=main-2308310135
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,
+        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -56,114 +99,77 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Thu, 2023-08-31 at 14:36 +0200, Christian Brauner wrote:
+> On Thu, Aug 31, 2023 at 02:19:20AM -0700, Hugh Dickins wrote:
+> > On Wed, 30 Aug 2023, Paul Moore wrote:
+> > 
+> > > Hello all,
+> > > 
+> > > While looking at some recent changes in mm/shmem.c I noticed that the
+> > > ordering between simple_acl_create() and
+> > > security_inode_init_security() is different between shmem_mknod() and
+> > > shmem_tmpfile().  In shmem_mknod() the ACL call comes before the LSM
+> > > hook, and in shmem_tmpfile() the LSM call comes before the ACL call.
+> > > 
+> > > Perhaps this is correct, but it seemed a little odd to me so I wanted
+> > > to check with all of you to make sure there is a good reason for the
+> > > difference between the two functions.  Looking back to when
+> > > shmem_tmpfile() was created ~2013 I don't see any explicit mention as
+> > > to why the ordering is different so I'm looking for a bit of a sanity
+> > > check to see if I'm missing something obvious.
+> > > 
+> > > My initial thinking this morning is that the
+> > > security_inode_init_security() call should come before
+> > > simple_acl_create() in both cases, but I'm open to different opinions
+> > > on this.
+> > 
+> > Good eye.  The crucial commit here appears to be Mimi's 3.11 commit
+> > 37ec43cdc4c7 "evm: calculate HMAC after initializing posix acl on tmpfs"
+> > which intentionally moved shmem_mknod()'s generic_acl_init() up before
+> > the security_inode_init_security(), around the same time as Al was
+> > copying shmem_mknod() to introduce shmem_tmpfile().
+> > 
+> > I'd have agreed with you, Paul, until reading Mimi's commit:
+> > now it looks more like shmem_tmpfile() is the one to be changed,
+> > except (I'm out of my depth) maybe it's irrelevant on tmpfiles.
+> 
+> POSIX ACLs generally need to be set first as they are may change inode
+> properties that security_inode_init_security() may rely on to be stable.
+> That specifically incudes inode->i_mode:
+> 
+> * If the filesystem doesn't support POSIX ACLs then the umask is
+>   stripped in the VFS before it ever gets to the filesystems. For such
+>   cases the order of *_init_security() and setting POSIX ACLs doesn't
+>   matter.
+> * If the filesystem does support POSIX ACLs and the directory of the
+>   resulting file does have default POSIX ACLs with mode settings then
+>   the inode->i_mode will be updated.
+> * If the filesystem does support POSIX ACLs but the directory doesn't
+>   have default POSIX ACLs the umask will be stripped.
+> 
+> (roughly from memory)
+> 
+> If tmpfs is compiled with POSIX ACL support the mode might change and if
+> anything in *_init_security() relies on inode->i_mode being stable it
+> needs to be called after they have been set.
+> 
+> EVM hashes do use the mode and the hash gets updated when POSIX ACLs are
+> changed - which caused me immense pain when I redid these codepaths last
+> year.
+> 
+> IMHO, the easiest fix really is to lump all this together for all
+> creation paths. This is what most filesystems do. For examples, see
+> 
+> xfs_generic_create()
+> -> posix_acl_create(&mode)
+> -> xfs_create{_tmpfile}(mode)
+> -> xfs_inode_init_security()
+> 
+> or
+> 
+> __ext4_new_inode()
+> -> ext4_init_acl()
+> -> ext4_init_security()
 
-syzbot found the following issue on:
+Agreed.  Thanks, Hugh, Christian for the clear explanation.
 
-HEAD commit:    28f20a19294d Merge tag 'x86-urgent-2023-08-26' of git://gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=153271dfa80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1e4a882f77ed77bd
-dashboard link: https://syzkaller.appspot.com/bug?extid=f5b965c58efb9c510227
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16aab870680000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=175a687ba80000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/6b7215a1c9ca/disk-28f20a19.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c5935df3c66a/vmlinux-28f20a19.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/3974ee7fd77d/bzImage-28f20a19.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/4d843a4575f5/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f5b965c58efb9c510227@syzkaller.appspotmail.com
-
-general protection fault, probably for non-canonical address 0xeeb017db1ffff112: 0000 [#1] PREEMPT SMP KASAN
-KASAN: maybe wild-memory-access in range [0x7580ded8ffff8890-0x7580ded8ffff8897]
-CPU: 0 PID: 5055 Comm: syz-executor397 Not tainted 6.5.0-rc7-syzkaller-00185-g28f20a19294d #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/26/2023
-RIP: 0010:do_inode_permission fs/namei.c:460 [inline]
-RIP: 0010:inode_permission fs/namei.c:528 [inline]
-RIP: 0010:inode_permission+0x35d/0x5e0 fs/namei.c:503
-Code: 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 5d 02 00 00 48 b8 00 00 00 00 00 fc ff df 4c 8b 73 20 49 8d 7e 10 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 30 02 00 00 4d 8b 76 10 4d 85 f6 0f 84 ab 01 00
-RSP: 0000:ffffc90003caf5a0 EFLAGS: 00010216
-RAX: dffffc0000000000 RBX: ffff88807580dcb0 RCX: 0000000000000000
-RDX: 0eb01bdb1ffff112 RSI: ffffffff81ec15b5 RDI: 7580ded8ffff8890
-RBP: 0000000000000081 R08: 0000000000000003 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000000 R12: ffffffff8cb84420
-R13: 0000000000000000 R14: 7580ded8ffff8880 R15: ffff88807580dcb2
-FS:  0000555555f8d3c0(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffffffffc7 CR3: 000000002a981000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- may_lookup fs/namei.c:1716 [inline]
- link_path_walk.part.0.constprop.0+0x26f/0xce0 fs/namei.c:2267
- link_path_walk fs/namei.c:2250 [inline]
- path_parentat+0xaa/0x1b0 fs/namei.c:2526
- __filename_parentat+0x1f2/0x640 fs/namei.c:2550
- filename_parentat fs/namei.c:2568 [inline]
- do_unlinkat+0x109/0x6d0 fs/namei.c:4368
- do_coredump+0x18bd/0x3fc0 fs/coredump.c:675
- get_signal+0x2464/0x2770 kernel/signal.c:2867
- arch_do_signal_or_restart+0x89/0x5f0 arch/x86/kernel/signal.c:308
- exit_to_user_mode_loop kernel/entry/common.c:168 [inline]
- exit_to_user_mode_prepare+0x11f/0x240 kernel/entry/common.c:204
- irqentry_exit_to_user_mode+0x9/0x40 kernel/entry/common.c:310
- asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:570
-RIP: 0033:0x7f96f653c143
-Code: e8 46 45 00 00 66 0f 1f 44 00 00 48 83 ec 08 48 89 fa 48 89 f1 31 ff 31 f6 e8 4d 01 03 00 85 c0 75 09 48 83 c4 08 c3 0f 1f 40 <00> 48 c7 c2 b0 ff ff ff 64 89 02 b8 ff ff ff ff eb e6 66 2e 0f 1f
-RSP: 002b:00007ffc5e7c7220 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 000000000006cd02 RCX: 00007f96f656c2b3
-RDX: 00007ffc5e7c7230 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000066 R08: 00000000000001be R09: 0000000000000001
-R10: 0000000000000000 R11: 0000000000000202 R12: 00007ffc5e7c7300
-R13: 0000000000000025 R14: 431bde82d7b634db R15: 00007ffc5e7c7284
- </TASK>
-Modules linked in:
-----------------
-Code disassembly (best guess):
-   0:	48 89 fa             	mov    %rdi,%rdx
-   3:	48 c1 ea 03          	shr    $0x3,%rdx
-   7:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1)
-   b:	0f 85 5d 02 00 00    	jne    0x26e
-  11:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
-  18:	fc ff df
-  1b:	4c 8b 73 20          	mov    0x20(%rbx),%r14
-  1f:	49 8d 7e 10          	lea    0x10(%r14),%rdi
-  23:	48 89 fa             	mov    %rdi,%rdx
-  26:	48 c1 ea 03          	shr    $0x3,%rdx
-* 2a:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1) <-- trapping instruction
-  2e:	0f 85 30 02 00 00    	jne    0x264
-  34:	4d 8b 76 10          	mov    0x10(%r14),%r14
-  38:	4d 85 f6             	test   %r14,%r14
-  3b:	0f                   	.byte 0xf
-  3c:	84                   	.byte 0x84
-  3d:	ab                   	stos   %eax,%es:(%rdi)
-  3e:	01 00                	add    %eax,(%rax)
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the bug is already fixed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite bug's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the bug is a duplicate of another bug, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
