@@ -2,65 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 356A178F5EE
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Sep 2023 01:01:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97F7678F5F8
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Sep 2023 01:06:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343648AbjHaXBr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 31 Aug 2023 19:01:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40536 "EHLO
+        id S1345619AbjHaXGK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 31 Aug 2023 19:06:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36760 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344814AbjHaXBq (ORCPT
+        with ESMTP id S1345205AbjHaXGJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 31 Aug 2023 19:01:46 -0400
-Received: from sonic311-31.consmr.mail.ne1.yahoo.com (sonic311-31.consmr.mail.ne1.yahoo.com [66.163.188.212])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12686110
-        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Aug 2023 16:01:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1693522901; bh=+6T1p/rhLk9I37VciR6gyF41ODEw3XRBP94uwIX4k+Q=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=GqEmRxx6AW0roPc7S2EhIsIlwaduMemxmLs44Zr9kwLBNozaZhnbkJBGPO4Vqby/zYMp/jbYcfb9NhGC+cIlBDEsBcyCJzPHhvVC1usxrckNCoT3HjVX8ASn9XW1HDz7ZR8Vm+RsPpiqx+fFaKj9MokdhQXjCl9zSxo5TSEdAzn9+x9BYqKwE4Ey/WjANqMPxFgg24t9XeVkNT/hoWj8qY2Uo2MN14dQ+Qmb95QnFmYx24aG0em9BjQySXI+SQ1UYX5zioeDWTQu4NxDyO+mMiKid00ybaCHaflJcBI2S9TaA7+8qZIYe77ZymCG2yGwx5teDVCJYlVAWkmgb02J5Q==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1693522901; bh=03CDcU853UrGsOxCSFhpceFcTsABrnD4ibKV7m5KZ/g=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=PfYfzdYhccQto1elnCRK8t2Wc0VlLsjniXAuYN0mHI0Y1aF/9cunKqlsVx/2F1XxG6D81QaRcaR+nh9h6YJGSs8+wKhsrPWQZIwg1gKKU4G4qAur3Jqe8g6TZ8sWjlTDOZhCPR6hezNHuSAJDn5SeatXi+BB/O6Dh1Ddr2Dv5ZYGCcSUr/KERBJI9NgHiv7BsxZwIeRzR7502QzizTEHIqTe96+Zx9yQf2HvOMgRJnFBzdJpFbUl6tgeUz84+7mbEtMlR4nw+98gFxu8aNmVJWL/CWbNESACB6rVATZz5+c7vPCPGxL3Dj0b8RjXiY5d5kFIdMBfSIZgAUM0pAklbQ==
-X-YMail-OSG: 8mceQoAVM1nNxvO2ZiypaR3guAyo04eePlFUfaJG.KGyJuUIM9cmYYNXSUuvVC9
- 4rwoNsVP.nRLgc_FH_tF7lgQ0ezbZBzrhQPyJbrCtAY5GxH8EWwMtE.TvKTM3GAE2KDVGsctqCBJ
- 1x8OBNe96tFDP5UuNpx_FObQkufaHyLTSSF.BY2jI9rhUOfXJDi52CHwl55QIsJ_1wbPIJvCvBPA
- MynvZHWV33xHSto9K4XjPt9bb0jjwt1uOx_cPJqtHrKUcVvO5L5ShjWXo7oWoeog4pqxcdIrd_t2
- .64.ujbGOz3sNGgTLcsFBZrLvboaf1fx1EtyRp5koeKj9JIkGGpQpB9ijhMPJSX4dqhxcwyLnfpm
- j2waGk2mmwGlX8UauYsLl2K.HTPvDUbJeiQvcuFphzR4OvlYbIgQF6L3CqM6_Vr7zWB2psXe8q1a
- JzTFfZsRzvmpDJiqeZbAolh3eOjgZclPIH.UH_IF9LGiF0jAixsc2HZuUtfKVXfeGDSVB6tXvj8p
- V54mn._Shr2YE_TgKeKzPS0ZRA0I1_08v6v45QxVB706HNC4X8VB6H9AGM8R6b1eKefjNsfrd8A6
- uiVsVyKJvtkd7jQ9yiicqDk4jDl.AHwDVvHLvhEFI5j2Q5sNPezujItUwcgLDeTWLulILgCuWXJm
- f8DmtMTYH21LFkk9JxaZxrTjoSLvAenFgyPQD97BRJlzFEWXdxwZDjggwz6oxLd6ZSIUF31mPH2S
- niN3UqG8SFhmgKOmGYmf1rsI_0.Y3lVx3rS42ohLUJRBTeWmGlYAg5oFSzwEEv5qPeaXsDZyrLcC
- paq6Om9eLcAlEZ1GdhjpYocIxfiwt_gCWRWtp.8u6y1HfOiAYTIuVK2kF_HGbbYj5zddyaNtdSSK
- 3P.mFYfX6vGhrCelZKjkLNC.cCtvvZyZfa0v8jHg7hScf44AyvCG0WaFjnC_3wkQvTKJ_OAjJhCV
- MMEC_oYRRZdH2FyhhRUz9xQfYVCUIWS6xj_OdQ.xNZnIgjWOB5FtnM4AzDo4No5uDeqhU6cChk8G
- 3cY_T3eDkZO9F.y6R7_x6xEG054Rkt4NCH6Ph8ARuZW_tmcfklghye6egKwNS8b6hOROH78WDGpe
- Ni5ncmvJJNV4kYVM_iqyHz39f4pQOsjsrtjXHWyE4lzhnsvw7G01m9S7HPWM.e2yHC1pEZOB676h
- UlzzghE.Ycs2LOjx555GoYFIaAGjy3lsZBKNIP7GTgNM1QCHWQ0iuCuOeuHSJWSYW3z7zYy9Yxzm
- GITF5Rz050E9Wt2fBV_4TTEdr_C2C.jjgvk3G6ipd6hbyR.zMw5SQ9gvaMYUgrSnQ7A7ZEBFZhna
- jMA6vpaObf5.AkOKxHiAqn6hHJiIsyDkQsHQMo8nRcKESV2XpGqAH46iXwNdha3vsK77rDUO.WwC
- ru1GpLZaCRixMFEElcrcwqNvx9t4VR.ZJAR2DQFzac6tX0E7jY2YLPLIC3nxZy9jz_fAPMBtrbez
- 0zX11hHR.Y8YI04IgsR7r.VNXpmimKhEnWXrbhJ1JMsI7jpbMPqYxyeG._nJO8i3c3yz.7KDD9oT
- NLOZ5dlb9N768vOM6uxJTtrKuf7mB75qkmdBkD9PGTRaBbkCM_3xfIDxF9XV03_1bT1NLz1MQvHH
- ipdYlMO1qMWMegUy2yylLz9dE54_Kvgya8l47.XRyVqpdqXYuS228wZIv8e2JfFZ_1pl1YHmAfL9
- u3nVLHqeMvAGD4LzqjGogalVevK_35h8hMdyZ_rPmCq_rj1N1m7c_mV0pbBZ6cXNbsekaqGGqCPr
- 3dYJ1xue43y2cJgVn14iYgUUCSaDy1Kb72Xc7OCna1lQdaCitle2pElHEsyN9Gu0D7IlwctFvLT9
- knrH2pzRRO5XWpZrWvdV_hBQR3Hzz6kDVtMCz7bs70IZQiwYTg2myM9GmX_8QH2qsQvOgXcOUM2F
- WX_nyCgWZ1GdmzLShobRWPw5CpVG2vL2TGyy5g9gklBVghesIIhNr_wQpxDdFTMt7gNvPjgiK6CM
- QpADVrI1vOjfsvP377H.TrLvJs_LxmkN.I3NHkwiZjdSwwsvzPM79TCyJYXsBAyct2ypYulHlp2v
- kT_4Da3Z66xOjkw4LuVZssbaeznJMRNzqkJ8_XmPMZIbdpGaxpoFIX6.u3tTJtlf5jL0YI_vpCPI
- GYcda81096C1yqz5qIV6RL1iDuLlbIlueQPw0rdloZ3jH1wSNlO2PflJ5zAg2S1rn8CV6viRovYt
- WjQ9VNcMkcslnNKVr2T.yv4UPGSkHnA5MH7K6QYX5X3AHkAn39dkf8cw9meJrd57PqSwoX3dBxPq
- arSpW
+        Thu, 31 Aug 2023 19:06:09 -0400
+Received: from sonic313-15.consmr.mail.ne1.yahoo.com (sonic313-15.consmr.mail.ne1.yahoo.com [66.163.185.38])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72B52CD6
+        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Aug 2023 16:06:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1693523163; bh=IKjdHSoMLXSBm/VJ2hHyu0MclhV3JrrnQG299THmcqA=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=Wu6QLDOnBYszMCHU6EMSkNk16HPayMjyLX0N7KAtCKFYTZbHN1FnIfq0140IoAcrt0BArxmaaQ5XZF/orWYAJ+PQUixIKXpV0P5M3SqBNXwOVieBdRfQFgOqlNNW1PIb+EqruBnw/df5HqODTUS4WpKBNUtr3li7poc2yTPWke+UP6Z/hKDmZ4eqs79E9vxcOj13eMlCVahXBBSpfvlbg+XaYTT4OBrMnYHFucIiwOX4DP916ORPbmkhyIFycfjyJ5MJge5zZAjVKGHYj2tx/sd9J7xJGoTLXkUS6GAI9ntKofdMJ4oSr4EylaSYG1El8Q+vZqVlnUGUG7ganX/7Ng==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1693523163; bh=+IqfpZmmMv3417Jr2579Jz9wRiieGVpSjfIEwkr/I1n=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=hLHahi0nco00Yg4aimF3/0zwmoGq/VJBabQ0RJVkVlFDComgleSShwLol1/7QPv9i0FG8aoeDrWRXRumepooSBVGOttDfaShTB6B84T2IX1dpnbOJWlzktc/PvUtVtcw7jY12s6JG5RNHrr+v/4KzSFI2EHKtz1ZPHXd0799TJRmZradrauUBWrbDO41Ig68QMkrnsN7iSB9SmMOYvN7JIj/9AtO9j6F/eDvQERSNoKhErJ7K3y4bxBuBvX0DKkiGfFsehFBRnb7nm2snQ5LSQU589eaZxCahdq0TlkpkbOkzFSehYvZjDq6cj4kQLlvI/CHvcnXxFhsmfZfX7D0Dg==
+X-YMail-OSG: lsoW0M4VM1mZpCb3UWHQrf2oXOhf7LnzxsmX_NozGqDdf_St.WQA7oJAiZR79Mn
+ h3RAhestktmzqQH4IAefdeFg24fr1nbNV6tZSNta0glSeGivS8NykMkMjcCClxDVl7bXgiXhWrcO
+ VqtjTy0V14EhdbkEybujxkBdQL3wEAwK2MTikVriPzpICV0eCCx67wX1QaejO44sENfo1GepD60Q
+ ubATjtVTaBzEEqMf2p8OwdV6iclFzVRJIPh4anuGumZ0FP8IZSPiD2EzAFrfrrhJhE3xA0oWK9uc
+ dTYNjtkrFe7zQcBRVsgLuQHpLxlO9hGgQrr2fRvB55Ov7xyf8ZkldNNTuF9GaT8wDY8rRHp0_C53
+ Ousp0W179UMJStYxWeDeOpr6ZiHsW9YfsGgj7jTKj7kD1xCfE95DgV5o1N_igCphIOOIrmkeYl_W
+ 3cwDpm7YjLvk_n6n8w2weCjM4k_AP_LfeL5I8UNK95DNQGdw1oCdu3YYAZ_t3tZDcOnb9As1J.aF
+ cTfYj9ylbmiXplV.yxBZyurFwEZ9ha4DQlJnhFj0CkQc.V8rsRq2XBcCQ07y6W6qCuWNxTKtvEkm
+ cJ2P.vTxDOFHvblmoYiq2L82Oy5b5KEhgY1jiakKgXln1TWu02yp18GEr02G.tGmlRQd54KPBbjW
+ aJdRWk8vjibAyshyJhBX0hlf09BH7vnmMTQg8f.7jjqrXGJsEqi8ALwG_uOxXPf6QCy7tVrJY4yi
+ zO6t1G4TbhTqRvkNnF3nmreQcFybBx3l9fT1u74g2rR0FkH7RCL_OY6hQEAp_feViGPJ5rodvjWW
+ 9vJCNHhVKNl.ETz4.NRBVBHt2pnojJmssptsKPyncgxsKqmxiGk.H_2goXUyUa6N0tvlfr1s4VVc
+ 4kw48XHaal9PhgC_kV0xU6CTFmoXrVi38PXojQiaUubs_cw8ph519g.LWdCDhZeBGxGlyoFjwFvC
+ 4_iNZ.xciaQgUYFw1jwjOwokggHI9W2GVR3bGfsrfIp7gHb6beFC9AQhy3nSbewcpwR7gJEp9Ggu
+ vazk9ARL9abKJBHsi3dvws1kZCcKsmQStCV33hYORnfnYrvpXTMOY1E0UU.ZqrSPSKETokL0vajK
+ 0bh0xMcIdvt8re1kv7JK8kRqmhuWaDzWQFQkHOOCHXADfBG3ByHBnusLMElzZmIfYlO26E9TYwRr
+ ewupwESRSEEeLH0CV5l8aSULZ192bJ66.D2pb4KQhNoKsdTyIhtOi.vVtpOLG5mE0Mht_uLPbSXH
+ k2AMkTBylEGrPVjirL_dgVjvMWLsI.erllhcQY60SHR8dKRtdBAGw2BBG8KAydfWGVgihjiv3qdf
+ 4XQJlxpAOeXsGU5.kva8QeKUKIwfwwAV6FLXzpgPo5xXCTDp3QtDI5Qdx10.Edjl8m1nZCrvMlwn
+ LJXI_QmpqlgbRrwxcSKJ1QVtc0951KDoI0r2s5jc0_a0Zf6oLnWFuFsYJU7B7fKSWzKSWrRj5DNl
+ mKWmWiTst40u4.il6ihJ0UwW0sMvMpp1BMPSEcvaoZT.cyx0tld4.mTLpSldS6A1lGpWUs1BZ60R
+ IZyRIh5uek8UGjOJyt21g.xiqJ6ZjTuoRhOPcnUJQp4k4YLb8kkn5rbE.8zTcwmQ1NUbJvY7XQ32
+ RDYBYC4S65DcMiUMs.mfMPlzXUTr2L8_5y7wrXUjMK7NToy4wbc_cZGxeyVY7ZvkkdD.IqRoHSZn
+ lZdo59bggi9egUF5P.8UoWb5wN6cWxpF0w_xtaVYVkuSY7cItP56ol4qrdx_AVbMZ7QaP3abCtGK
+ jsddOVTS40uy6I8s2qlz.dkmc5ViXuQytiVbSyzOIBUIayxiJNzKkyyTRB8F5gxng0Nw85jdLsrR
+ aH09L515iUCxNifdzskqFjgRBvim5e.s6YypwuoSDR5BWlFtm28XZfj.V_.wO7Tsx0UlfU1fZNYi
+ V85g9DhJG1BUroziW2xJQeVa12sw240UwxL1TGSoyeBCoI63ESW1huRaTQtRM3UH9pKpY990kx1U
+ EJ7Zd8tyoNUqTsHyeCZmaQq_30u_OWr9Ib4LSp37.y8hN5ttTommhP1WU43XRB_uxf9GL_t1Krwc
+ MGgcdNkffgiCOUdp0EAP3jjg6mosvG49SiwwXyHV_.W3Mt_uAuC_LJOXHaCKYXnlibpd7TA37d18
+ lmlzLvLw.dqQpzIRigZHER79StYvmk8mqM9EaPQ3zCylfQl9aTjHzxDcN8Qjf7lMznCCaL_gaxPF
+ gBRk3vlpXFU3XEX0onCv01_.HsYSG86OAGB3tRtoMPGScqU8UJNjO
 X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: a6327dd2-cc5e-415a-8107-72409134d7df
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ne1.yahoo.com with HTTP; Thu, 31 Aug 2023 23:01:41 +0000
-Received: by hermes--production-bf1-865889d799-k7hdq (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID ec66d5285539eae986581f3ea1896b9c;
-          Thu, 31 Aug 2023 23:01:37 +0000 (UTC)
-Message-ID: <21bea0a7-c8b1-87b5-b03c-d13deef6025f@schaufler-ca.com>
-Date:   Thu, 31 Aug 2023 16:01:31 -0700
+X-Sonic-ID: fdfa2e87-cb35-473a-9d2d-8faac18858bf
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.ne1.yahoo.com with HTTP; Thu, 31 Aug 2023 23:06:03 +0000
+Received: by hermes--production-bf1-865889d799-scr2n (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 3ba1991f30e41c6780f3de0d210d3f1c;
+          Thu, 31 Aug 2023 23:05:57 +0000 (UTC)
+Message-ID: <ac31c465-7789-46f0-2e54-29725b3bb5da@schaufler-ca.com>
+Date:   Thu, 31 Aug 2023 16:05:52 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.14.0
-Subject: Re: [PATCH v2 00/25] security: Move IMA and EVM to the LSM
- infrastructure
+Subject: Re: [PATCH v2 25/25] integrity: Switch from rbtree to LSM-managed
+ blob for integrity_iint_cache
 Content-Language: en-US
 To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
         viro@zeniv.linux.org.uk, brauner@kernel.org,
@@ -76,8 +75,9 @@ Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>,
         Casey Schaufler <casey@schaufler-ca.com>
 References: <20230831104136.903180-1-roberto.sassu@huaweicloud.com>
+ <20230831113803.910630-6-roberto.sassu@huaweicloud.com>
 From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20230831104136.903180-1-roberto.sassu@huaweicloud.com>
+In-Reply-To: <20230831113803.910630-6-roberto.sassu@huaweicloud.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Mailer: WebService/1.1.21763 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
@@ -91,132 +91,202 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/31/2023 3:41 AM, Roberto Sassu wrote:
+On 8/31/2023 4:38 AM, Roberto Sassu wrote:
 > From: Roberto Sassu <roberto.sassu@huawei.com>
 >
-> IMA and EVM are not effectively LSMs, especially due the fact that in the
-> past they could not provide a security blob while there is another LSM
-> active.
+> Before the security field of kernel objects could be shared among LSMs with
+> the LSM stacking feature, IMA and EVM had to rely on an alternative storage
+> of inode metadata. The association between inode metadata and inode is
+> maintained through an rbtree.
 >
-> That changed in the recent years, the LSM stacking feature now makes it
-> possible to stack together multiple LSMs, and allows them to provide a
-> security blob for most kernel objects. While the LSM stacking feature has
-> some limitations being worked out, it is already suitable to make IMA and
-> EVM as LSMs.
+> With the reservation mechanism offered by the LSM infrastructure, the
+> rbtree is no longer necessary, as each LSM could reserve a space in the
+> security blob for each inode. Thus, request from the 'integrity' LSM a
+> space in the security blob for the pointer of inode metadata
+> (integrity_iint_cache structure).
 >
-> In short, while this patch set is big, it does not make any functional
-> change to IMA and EVM. IMA and EVM functions are called by the LSM
-> infrastructure in the same places as before (except ima_post_path_mknod()),
-> rather being hardcoded calls, and the inode metadata pointer is directly
-> stored in the inode security blob rather than in a separate rbtree.
+> Prefer this to allocating the integrity_iint_cache structure directly, as
+> IMA would require it only for a subset of inodes. Always allocating it
+> would cause a waste of memory.
 >
-> More specifically, patches 1-11 make IMA and EVM functions suitable to
-> be registered to the LSM infrastructure, by aligning function parameters.
+> Introduce two primitives for getting and setting the pointer of
+> integrity_iint_cache in the security blob, respectively
+> integrity_inode_get_iint() and integrity_inode_set_iint(). This would make
+> the code more understandable, as they directly replace rbtree operations.
 >
-> Patches 12-20 add new LSM hooks in the same places where IMA and EVM
-> functions are called, if there is no LSM hook already.
+> Locking is not needed, as access to inode metadata is not shared, it is per
+> inode.
+>
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 
-I've commented on the individual patches, but it seems like a general comment
-might be in order. When a new LSM hook is proposed we want to see more than
-"project XYZZY needs this hook" to justify it. We want to know how it is useful
-for XYZZY and how it could be used in another LSM. If I were creating a new LSM
-it could be useful to understand the difference between security_inode_setattr()
-and security_inode_post_setattr(). As a reviewer who has had only incidental
-exposure to the IMA code it's important to understand why it doesn't use the
-existing hooks.
+Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
 
+> ---
+>  security/integrity/iint.c      | 67 +++-------------------------------
+>  security/integrity/integrity.h | 19 +++++++++-
+>  2 files changed, 24 insertions(+), 62 deletions(-)
 >
-> Patches 21-24 do the bulk of the work, remove hardcoded calls to IMA, EVM
-> and integrity functions, register those functions in the LSM
-> infrastructure, and let the latter call them. In addition, they also
-> reserve one slot for EVM to supply an xattr to the inode_init_security
-> hook.
->
-> Finally, patch 25 removes the rbtree used to bind metadata to the inodes,
-> and instead reserve a space in the inode security blob to store the pointer
-> to metadata. This also brings performance improvements due to retrieving
-> metadata in constant time, as opposed to logarithmic.
->
-> The patch set applies on top of lsm/next, commit 8e4672d6f902 ("lsm:
-> constify the 'file' parameter in security_binder_transfer_file()")
->
-> Changelog:
->
-> v1:
->  - Drop 'evm: Complete description of evm_inode_setattr()', 'fs: Fix
->    description of vfs_tmpfile()' and 'security: Introduce LSM_ORDER_LAST',
->    they were sent separately (suggested by Christian Brauner)
->  - Replace dentry with file descriptor parameter for
->    security_inode_post_create_tmpfile()
->  - Introduce mode_stripped and pass it as mode argument to
->    security_path_mknod() and security_path_post_mknod()
->  - Use goto in do_mknodat() and __vfs_removexattr_locked() (suggested by
->    Mimi)
->  - Replace __lsm_ro_after_init with __ro_after_init
->  - Modify short description of security_inode_post_create_tmpfile() and
->    security_inode_post_set_acl() (suggested by Stefan)
->  - Move security_inode_post_setattr() just after security_inode_setattr()
->    (suggested by Mimi)
->  - Modify short description of security_key_post_create_or_update()
->    (suggested by Mimi)
->  - Add back exported functions ima_file_check() and
->    evm_inode_init_security() respectively to ima.h and evm.h (reported by
->    kernel robot)
->  - Remove extern from prototype declarations and fix style issues
->  - Remove unnecessary include of linux/lsm_hooks.h in ima_main.c and
->    ima_appraise.c
->
-> Roberto Sassu (25):
->   ima: Align ima_inode_post_setattr() definition with LSM infrastructure
->   ima: Align ima_post_path_mknod() definition with LSM infrastructure
->   ima: Align ima_post_create_tmpfile() definition with LSM
->     infrastructure
->   ima: Align ima_file_mprotect() definition with LSM infrastructure
->   ima: Align ima_inode_setxattr() definition with LSM infrastructure
->   ima: Align ima_inode_removexattr() definition with LSM infrastructure
->   ima: Align ima_post_read_file() definition with LSM infrastructure
->   evm: Align evm_inode_post_setattr() definition with LSM infrastructure
->   evm: Align evm_inode_setxattr() definition with LSM infrastructure
->   evm: Align evm_inode_post_setxattr() definition with LSM
->     infrastructure
->   security: Align inode_setattr hook definition with EVM
->   security: Introduce inode_post_setattr hook
->   security: Introduce inode_post_removexattr hook
->   security: Introduce file_post_open hook
->   security: Introduce file_pre_free_security hook
->   security: Introduce path_post_mknod hook
->   security: Introduce inode_post_create_tmpfile hook
->   security: Introduce inode_post_set_acl hook
->   security: Introduce inode_post_remove_acl hook
->   security: Introduce key_post_create_or_update hook
->   ima: Move to LSM infrastructure
->   ima: Move IMA-Appraisal to LSM infrastructure
->   evm: Move to LSM infrastructure
->   integrity: Move integrity functions to the LSM infrastructure
->   integrity: Switch from rbtree to LSM-managed blob for
->     integrity_iint_cache
->
->  fs/attr.c                             |   5 +-
->  fs/file_table.c                       |   3 +-
->  fs/namei.c                            |  18 +-
->  fs/nfsd/vfs.c                         |   3 +-
->  fs/open.c                             |   1 -
->  fs/posix_acl.c                        |   5 +-
->  fs/xattr.c                            |   9 +-
->  include/linux/evm.h                   | 103 ----------
->  include/linux/ima.h                   | 136 -------------
->  include/linux/integrity.h             |  26 ---
->  include/linux/lsm_hook_defs.h         |  21 +-
->  include/linux/security.h              |  65 +++++++
->  security/integrity/evm/evm_main.c     | 104 ++++++++--
->  security/integrity/iint.c             |  92 +++------
->  security/integrity/ima/ima.h          |  11 ++
->  security/integrity/ima/ima_appraise.c |  37 +++-
->  security/integrity/ima/ima_main.c     |  76 ++++++--
->  security/integrity/integrity.h        |  44 ++++-
->  security/keys/key.c                   |  10 +-
->  security/security.c                   | 265 ++++++++++++++++----------
->  security/selinux/hooks.c              |   3 +-
->  security/smack/smack_lsm.c            |   4 +-
->  22 files changed, 540 insertions(+), 501 deletions(-)
->
+> diff --git a/security/integrity/iint.c b/security/integrity/iint.c
+> index 70ee803a33ea..c2fba8afbbdb 100644
+> --- a/security/integrity/iint.c
+> +++ b/security/integrity/iint.c
+> @@ -14,56 +14,25 @@
+>  #include <linux/slab.h>
+>  #include <linux/init.h>
+>  #include <linux/spinlock.h>
+> -#include <linux/rbtree.h>
+>  #include <linux/file.h>
+>  #include <linux/uaccess.h>
+>  #include <linux/security.h>
+>  #include <linux/lsm_hooks.h>
+>  #include "integrity.h"
+>  
+> -static struct rb_root integrity_iint_tree = RB_ROOT;
+> -static DEFINE_RWLOCK(integrity_iint_lock);
+>  static struct kmem_cache *iint_cache __read_mostly;
+>  
+>  struct dentry *integrity_dir;
+>  
+> -/*
+> - * __integrity_iint_find - return the iint associated with an inode
+> - */
+> -static struct integrity_iint_cache *__integrity_iint_find(struct inode *inode)
+> -{
+> -	struct integrity_iint_cache *iint;
+> -	struct rb_node *n = integrity_iint_tree.rb_node;
+> -
+> -	while (n) {
+> -		iint = rb_entry(n, struct integrity_iint_cache, rb_node);
+> -
+> -		if (inode < iint->inode)
+> -			n = n->rb_left;
+> -		else if (inode > iint->inode)
+> -			n = n->rb_right;
+> -		else
+> -			return iint;
+> -	}
+> -
+> -	return NULL;
+> -}
+> -
+>  /*
+>   * integrity_iint_find - return the iint associated with an inode
+>   */
+>  struct integrity_iint_cache *integrity_iint_find(struct inode *inode)
+>  {
+> -	struct integrity_iint_cache *iint;
+> -
+>  	if (!IS_IMA(inode))
+>  		return NULL;
+>  
+> -	read_lock(&integrity_iint_lock);
+> -	iint = __integrity_iint_find(inode);
+> -	read_unlock(&integrity_iint_lock);
+> -
+> -	return iint;
+> +	return integrity_inode_get_iint(inode);
+>  }
+>  
+>  static void iint_free(struct integrity_iint_cache *iint)
+> @@ -92,9 +61,7 @@ static void iint_free(struct integrity_iint_cache *iint)
+>   */
+>  struct integrity_iint_cache *integrity_inode_get(struct inode *inode)
+>  {
+> -	struct rb_node **p;
+> -	struct rb_node *node, *parent = NULL;
+> -	struct integrity_iint_cache *iint, *test_iint;
+> +	struct integrity_iint_cache *iint;
+>  
+>  	iint = integrity_iint_find(inode);
+>  	if (iint)
+> @@ -104,31 +71,10 @@ struct integrity_iint_cache *integrity_inode_get(struct inode *inode)
+>  	if (!iint)
+>  		return NULL;
+>  
+> -	write_lock(&integrity_iint_lock);
+> -
+> -	p = &integrity_iint_tree.rb_node;
+> -	while (*p) {
+> -		parent = *p;
+> -		test_iint = rb_entry(parent, struct integrity_iint_cache,
+> -				     rb_node);
+> -		if (inode < test_iint->inode) {
+> -			p = &(*p)->rb_left;
+> -		} else if (inode > test_iint->inode) {
+> -			p = &(*p)->rb_right;
+> -		} else {
+> -			write_unlock(&integrity_iint_lock);
+> -			kmem_cache_free(iint_cache, iint);
+> -			return test_iint;
+> -		}
+> -	}
+> -
+>  	iint->inode = inode;
+> -	node = &iint->rb_node;
+>  	inode->i_flags |= S_IMA;
+> -	rb_link_node(node, parent, p);
+> -	rb_insert_color(node, &integrity_iint_tree);
+> +	integrity_inode_set_iint(inode, iint);
+>  
+> -	write_unlock(&integrity_iint_lock);
+>  	return iint;
+>  }
+>  
+> @@ -145,10 +91,8 @@ static void integrity_inode_free(struct inode *inode)
+>  	if (!IS_IMA(inode))
+>  		return;
+>  
+> -	write_lock(&integrity_iint_lock);
+> -	iint = __integrity_iint_find(inode);
+> -	rb_erase(&iint->rb_node, &integrity_iint_tree);
+> -	write_unlock(&integrity_iint_lock);
+> +	iint = integrity_iint_find(inode);
+> +	integrity_inode_set_iint(inode, NULL);
+>  
+>  	iint_free(iint);
+>  }
+> @@ -188,6 +132,7 @@ static int __init integrity_lsm_init(void)
+>  }
+>  
+>  struct lsm_blob_sizes integrity_blob_sizes __ro_after_init = {
+> +	.lbs_inode = sizeof(struct integrity_iint_cache *),
+>  	.lbs_xattr_count = 1,
+>  };
+>  
+> diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+> index e020c365997b..24de4ad4a37e 100644
+> --- a/security/integrity/integrity.h
+> +++ b/security/integrity/integrity.h
+> @@ -158,7 +158,6 @@ struct ima_file_id {
+>  
+>  /* integrity data associated with an inode */
+>  struct integrity_iint_cache {
+> -	struct rb_node rb_node;	/* rooted in integrity_iint_tree */
+>  	struct mutex mutex;	/* protects: version, flags, digest */
+>  	struct inode *inode;	/* back pointer to inode in question */
+>  	u64 version;		/* track inode changes */
+> @@ -192,6 +191,24 @@ int integrity_kernel_read(struct file *file, loff_t offset,
+>  extern struct dentry *integrity_dir;
+>  extern struct lsm_blob_sizes integrity_blob_sizes;
+>  
+> +static inline struct integrity_iint_cache *
+> +integrity_inode_get_iint(const struct inode *inode)
+> +{
+> +	struct integrity_iint_cache **iint_sec;
+> +
+> +	iint_sec = inode->i_security + integrity_blob_sizes.lbs_inode;
+> +	return *iint_sec;
+> +}
+> +
+> +static inline void integrity_inode_set_iint(const struct inode *inode,
+> +					    struct integrity_iint_cache *iint)
+> +{
+> +	struct integrity_iint_cache **iint_sec;
+> +
+> +	iint_sec = inode->i_security + integrity_blob_sizes.lbs_inode;
+> +	*iint_sec = iint;
+> +}
+> +
+>  struct modsig;
+>  
+>  #ifdef CONFIG_IMA
