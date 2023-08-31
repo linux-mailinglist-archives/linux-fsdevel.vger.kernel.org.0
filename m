@@ -2,65 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3014378F58C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Sep 2023 00:35:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA6F078F594
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Sep 2023 00:36:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345983AbjHaWfv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 31 Aug 2023 18:35:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39986 "EHLO
+        id S1347732AbjHaWg0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 31 Aug 2023 18:36:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231271AbjHaWft (ORCPT
+        with ESMTP id S242308AbjHaWgZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 31 Aug 2023 18:35:49 -0400
-Received: from sonic311-30.consmr.mail.ne1.yahoo.com (sonic311-30.consmr.mail.ne1.yahoo.com [66.163.188.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42500E66
-        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Aug 2023 15:35:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1693521339; bh=cH3RUuazZiO0DLttmnoHQUB/etzY50Gjb0VyP9sDJKY=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=euAUybG7+MmSGWj2ufbEhDywTfRPgU2f5tIm8J2dpgvmWXpwTUQY8op2FQwGMmqRJDDglXPx7+/rZekuyA/EOQ2ZiRItQikDrw1LUX8Vs+8pJj0rsYjpVMgVbtBylpjgfq4oisSzCu0W6AnkPshn2JwMUwr4CLVC52ssLVXelSED0UjRBMVt9ho23kyo0UPUpkq/uP3CthC2UoU+O0I6dHlVY7yVm2PrGtUr0gf2Dn9vHBUtH64Pt433fHQsu1M4+YjFUXuwLu+Cc7KnwamN7d91b1HzXg8LiybXfATaYHy0feF/FMXn2yrXYujUvdl49klc8bN8cTVKRxmsPrGfXQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1693521339; bh=Ftm/U9+eeSjpXCSU56mK8EDq6eBnDOPrb7DmDGx2mos=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=Odv+3eEYzkfCsi5OHiDcp9rRPpOsGAuLVCfk7iJihvP4Kfq7UJnjkJQ2Wn8XrhTnsdbW8dfzyA1Ra4IlWBXP583y2RDqQV6I4UJrYCiK7qMwTC68YI6jS3tzejEDl30x91fiP2uSs5mWoGFvJWObUDvHXEKuUANQxGthynB5ZIRMDj0Msg7sut7v+V936abG+QNJNgEAC0qJkC94MoO3RbiptlofqzZTN31U0oczdftBGoez/0OIw12nO0xxb8WIgV3ul9mnrwRa6mxYeNeQz/tbRPiUcRk1zvbOG4Fvg50bu+36Ca02K+6RjNcAAGhywClqPszV0LAnW9oUvQ3AUQ==
-X-YMail-OSG: Y86W7ssVM1n7f15tjvS8PN1X7msRLkbh0vpA0S.LLtJCtVRtJw3v5PsA9945CXw
- Tem_9OeHPcHvd7fw.l5ohM.VcZQeyXmSSj.nR9u_1awDB8MVuFxlsT0TVadEwtNAHYlCy6I.AsMe
- 55KCsWll7ob.ywNffxXJ8.XznUEbA0btBCn68jsc1xopYoOEqwfoFGuvPDbvtnMjNETwomkqOpTm
- rwr0ckuTfB4dyDh7zkwRWfBPOdm79Xu4CZjR2r09Vi61s0zfRbFSmhfHI0u0iQySdKFn2BjFC.mx
- 2e3hYcmHwc5POJ1KL.kzN9zoEf.SEgKtw2Wn8ilbSzuRwG_31NKM.t2aEhnJA_PwZjyUuYlBmxF4
- uHFcg67_05xCo7BIZfT.1nGh2mCwuiEM2MKivXgcQpuUJQfn_rJ4KlmXLMqvbuS8C5ropJwKLVIp
- 7AVf9JKc_sSeLl9uKzGn3nvyC_n5mt0lFqWYj011dBsfm5tGJ0Mg4JVUkqETuSuv2VYaDgDqJSn4
- pDZuL0kxonzuxEWq_YxtKXwUGxk6OenJgKcyb5NziC1cPlkyOIdrJB8AWoqL3eqE5OVa_mOpKp71
- B4DxjxswTs030URXxQL7p2l._ne3tLjS0OrK0tNiWBQMDPAuT1MSP4TbnzI_hpuynrbPTGDfX.6W
- VdZHDfIru8cZZkm8Ql2Gf6XIKW3E0JmLcPCYKO7ew2.2B4vpc3W4gih.G.e24OGzS5AWa852tlX0
- .4bVEcs6uMLpu0CAdDBC1aQbW_HbIr3eAP5GunUw4jiW.RcIjdleBIkYhgkfXKY7H.NfICJhqxMz
- 9o3jCsj6Q0o_A2GyrJZ45x8tjogji2fy6b3G0TjnEPnIskham_cMgtnMS9MDHOODM0H9MmCoY4_S
- 3uo0bF80vQwpbHH6UNVnWN5bkwK62jds8laaVrNSVI3oXsRjhDpUc1uezY5kejfuJ.KOj9zvd5lN
- bZNFj5IsyPRiwNOGBN0O8vqzLO4MOfkHeN56DgRrLXxQsfVPOSIglSW_LL2OPRBYCTUhCr1omtU_
- 066RvvfzOhsZyxTWuK6uJwWvJLFew7xZSdcfJJDrnfY9DqYeKB3lIhnIKKShdWPd62wrNSeh6EY2
- X5q9xtqyskOQ8fOwLNhI1KKcKA9lWHbfrVlnZLiTM4CTf1WoL_EYMQQXy1Pql6GmI1_4qVjdrQPl
- DFlyPcOJWfBBXnX6Xwfy.DUA.cYryEhDAetUGdsMModMMwPH1mIrKJEYNR5YrMxCtPMLaC3rGAaD
- WtpI0NUwxBQWe.GoLcSQfX_sixH9sjrM8AM_mISD5XRiYccEqc3Ji9euC8ferVfk8ONJhQbRYSF3
- 5ezm0terKuSX5PsuWCzCzFkEdL8NeGy.LQDwiaIJ6NR9GF6kVoFD6imNcbJugcUeHiRzj93zI1c_
- 8zzZq8w68FH48KT9tIsbWRfUxqO_ahDIpSzrnpjaNZth4scNcQa5nI9rwsMRCBH_ovpM_T9vfiJp
- UfxXGF0EMUmsy5o1IVLv2qcD.Y9gH4tLa.k_7CL5LCwWuTYJ7psEBxK17jMTU2ed6XZa3QMHPHSW
- jomnnadki5kJkulYY2KOG.wTnjacqwQhIPYObvWwD4T.lmigtmyK8kXSiQDJvNrRbSRrIorjai2k
- HCI_1c.fuQIKW5mQZKnRqvp1r2UvYTPKKvVK3kUhID5Z9hgR5aqaB1s3qTMxTsv02j56BKqniGib
- wUk7X21NrTyizmrWrj.saJoN7Ymi2900WRuWZFi9ElHTh4TvOBo.6mT7VXXpsyyIvJ612j2B7eX_
- AtG5p_a_9_ACqdgCsmbkhJlE8FHZkj8Qs6VCjtlKLCK6M35YohfO5A_6Tnfjy9bS8tWscmnrjEw7
- HHUrbeOx3EVQUtilnoE6fVj2dtunBv7nW07tMEtp5MRIuMipro9XClGUSAX6NrUhs.lcdULsw9Fg
- tcwWC4geyGh_H1RdsPDFc3BJ57q42zSDvTvf6cFUtZNqnxP.GZGMlt_Myxw.p7KwiFGLJWz.ePiz
- ktX3Fb3BpkqUinjneHLzXV7WW4sAwJ1MxvhPQR1bQnBJjLB1K4Sr16lzGrVEluncSomItmSAVgRQ
- K5j1LK1XPSFowLMV8vRKvsuz1opp1doP8SxMu4sTn0XNKuFWOgIYJeOhy7QFIMPcXrXIzAT5Cv0P
- zwKDlBuG8SR9xO5Dt5onB.CbM0QvdeQJIaocFWSrn2szuF5WnRYB7jdUsRJlnwKWtNTrkUD3.iSr
- E0KpDQFL3C7sb6JokvF_c6SP8LMbnexBBe4CY45Li9xhKUmry_SHucWlZwbZ2ODpOfzFAbiO20LW
- G
+        Thu, 31 Aug 2023 18:36:25 -0400
+Received: from sonic313-15.consmr.mail.ne1.yahoo.com (sonic313-15.consmr.mail.ne1.yahoo.com [66.163.185.38])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CC7410D0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Aug 2023 15:36:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1693521371; bh=bk9yXQ/KcBHq32uN5j8gHXdS7ohUg4yI6/GyhFrx53o=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=U61ubqTGMedZt160N5a8IgobfZR/yeGf/ETDdQC0TqQTtx4RKB6rPoVEPfNx1B0QRgpkdixN52d0jevVWZA8aYIYarztlxZ0hrAwRuUZWdxEgV27hpI2aJC7Nw8/Fi0KDdeQ+4aI8p4pl8PkCxowQ5hpbff/1Ca7q8vSKNIDppN4s0c97z9e5ZVgOhT7caAiFKhVeoSk28QevDlXMIOAJ2xO1krt6A2xioMeogOGvLdNOm2LjThq4YbJykFyQq0ZIw6HP4JgCv6YIg+kTCzWBpz/pTmBaaseliB6ZIAZi0ffPtYnS957fgiXQ6/IAGPgrTqc5gf2GWd8mtP9uk2eCw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1693521371; bh=t56ANimtrzMmjUWCO6FcjvUxWWY/CJ+VKB/Q5plRHNA=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=VGUMgmMUz3JbzBP5j7iSSZS/3/HRsRcuWg6syeFJO7MM4UvsSV9a4NNqsnUqXX1M5Tw/zCdWnNchykGXGmHxidFutGA025SotIRGCGcAzQzGwWMvAV/lEoGBKhvxe22VrLOvD3235wQ5tV4LGO8VJK//n94gu4YvG4rSxAZO3Fasds96nmMJm2PruoyRnLrIATwcmiaQvVdu1iCmrEIjBhUZ/v3X9e9A5BZWVcLr+dzugZKe4prBsebVeY9OqpJK3iPwb10W1bbXRhCOGcnTBIGMaYJCw40ca6fW+5nYmJljadbdu1Lr037hgfuA0Mg+wSD5kZftVlm6IpSQtP3l6A==
+X-YMail-OSG: aE7jCPcVM1nuoQfP9rIL3jLSrZbUZOtB3s8VNuhhG0wsDXoyDBnsDi5tYtEGjKL
+ atVXe3xYJm.H.cYqNE.5B7c.59F57inxxDHyTvVWscQwfBp8_zKqcHJVnfu79ukBIh7VTQwpZhOY
+ 8WddrOuL2h4pEDimsfJihvmOUXdwSy.iX8PJJ62tcvKaNpmRS0jcNthSqbBMJA9SxIsXBydgOLIb
+ H0Aes0ohPCICCfcvcYbJmmuJf4caLPCtXOcG6OivhgFEKmpuPew346XIdui6JuG1E7rvjJ3cKJLc
+ CeqlDmQ40iMVrJP8ML2cybwuPJK_Va1ZNiAkykv5r5MpFayH.54hnrudVdGjnM9ga4hk2J9CMoNz
+ YF3DlipIghPBgFCVOnvj4HSRR8LGTwGxtmWW9pVD5v0oyJb2ThNGb1r5cNNxtw1_lBbh2NkVgaHL
+ zVoZixemtXg_xOBT_eBMGIMCrAoOXKW1H5tVBb0E6WUnnR8r8kmg1iUDuGFtLbJZ85F2SjHgvDt_
+ qb9s_2MQinIL2VifsvGRXbEV8xzyZl65lpaWTkPJodhbkxtNDHfOz9k74XZVMXKEGwWJ4PGA0401
+ uaX3NklszPbcsGfPspiY_WWksvnSi6O5kZkH3T38Uth2lnRtwPphsb3FnwFayR9junstvSuxf8Ae
+ NSGzRXDEMiTP4cQp.eQE.UiO_jgvdeh7BiCc5IJu4agiXsLVJnTOO.owY9BiPODUNzh19KkC8gb0
+ XHh6fvcsEDlX9DxayF.4maJ4a8xA219kMXOAY7YdfK9kqD21Jaj7q8h.66tUdaGF2Zx48ALpmgOf
+ tqOHGiK3qIUBvLD_a2B1_2Lf5jofTd_kPh3jljY6k.BTDuotTV8mFJJnqu9eBnO8THVvXtqrcFlm
+ 2rEc4DXdQvnKxL9JU9BDzE2oxtL4ZhYo0npL4QONX_wcH2VX4PptKowOABNGw5u9mc12YCyBCduC
+ Xs17x0R_Hzj8NWpDcaSzFWFzuSevVULTDb5QLdhHAvvuzk1PrDTNIBmPGzBes9UhnKmCpeax0zP0
+ ZAy.iVdcFlejvqiBL5PSJKvTgBoUKysvbuswbMp5h6XHcXloPnv.51LCeBYfd9dX.7WQMkzOXaA6
+ YYrJfr7O6QmmW5cQlIlNzlJhajfU1ILrTqiUxYZjprJxtudk4Aa0yp6kMUf9BEhQ7DDSDECpn4fo
+ FSozn20.r2sytZDWxgBveLISGH9lvLE2IuFDJwoLKxYoS6K_xz2tZ7bQuheIoQUFgAXsbDPqOWQI
+ e6lYZBJ4faEmkT3BuAArPO0jco86flQUVndiF0MCtB2P5dcMcXblCilx_IqWbm298rye.rkNt4Sq
+ X972auTQ9pfOB7J_ClliOBRvuuYdHVyDvpEekk20HP8KrKPuXTOdb5Hs2XJCopPWkW.5keo7qbSQ
+ FmnO9CV4b7aT8FQLJBEMvOWbgbZT3Ngu2oOvmumjNWwPNyGICoq7lSTo43WiYYzUPhaF8q_iL0ES
+ obM9sKrXQc8LyeMoaq4APJlXsFGzJAHUekhos3anca9ph4LQcBDynbzD2dD.3ewc2DCtS8CgmVSD
+ fMicil6qmXuaqCuG0uSClVI8_4QpHUqG9qdRZFGuQ7RAtLTf20YehodWiwK41JxkNiaETaLWBfm1
+ HszLXltmORjW5wnDFglNHwJNDinjclg6UXovPKRI_kmpt4Lg89csczEQECqO0JlPL3smdYdMC0Gz
+ 25xaNyXthJYNpIlA6ZINVsmmkG0qp.5Tt0fMKO0kEAFkBrA7667R__eXrKGthjBxWLjUz8BTlFD6
+ PTQeyKYhHo7vpjz2PSj2dhhoonQDmKbm7.4z5LzDsOA4Y8_qFZDqrHMC4gyqpMMFrMGW71lhjIzO
+ OfR8YlOyZ3CpUQUOYXRcbXW6SkGecBubATcfDLI6t4MzIp5deMzo4bAgHj8HpkIQ6kivSEGfprg8
+ sukHMyPytMuprdnxiNbKixRF1Y6FaOmrekM8LLC8.a3DT73flbJnekg8dRAGQDIce4KL5GUQEXco
+ Ui2a5KlhbENV9vjsX3rtUlhSMdIiYT3zksDTFd58oNekW0ZovVb5CHCc6V0THgNB45M0KTYPeXMs
+ a9Rc1rEOILCRZNKGQnOG2Oj.VtW7vhJvk79uYLrsx9ChIAgZCSyBPfpHfm18j2FsjTmpJPTS18Vk
+ idfFGDpoDUfj01sXOsctZGgyKtzQiX6rfUbMKrO857t4Ax_yPA4MhnUNEPZo9tl8GhcqioMpyJn7
+ Mo91HQXwgJ1YCVUmg1XxHcpzhD4SLg9hfbe.eFE8QqzmizSZINhklnTILXHTV8eL9fh6izIs_IZp
+ Z
 X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 4af33dee-e9e3-4bd9-a701-7875bbc650fb
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ne1.yahoo.com with HTTP; Thu, 31 Aug 2023 22:35:39 +0000
-Received: by hermes--production-bf1-865889d799-5m62n (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID a04c43917fa64fd9ee76e27396465a3e;
-          Thu, 31 Aug 2023 22:35:35 +0000 (UTC)
-Message-ID: <0da757b6-d3a9-f030-57d7-3f9dc77ca7ae@schaufler-ca.com>
-Date:   Thu, 31 Aug 2023 15:35:30 -0700
+X-Sonic-ID: 608a7783-6f11-4802-8b02-5ad0b18070d0
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.ne1.yahoo.com with HTTP; Thu, 31 Aug 2023 22:36:11 +0000
+Received: by hermes--production-bf1-865889d799-k5x9p (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 5541ff03f96d20f128753c942c5668d0;
+          Thu, 31 Aug 2023 22:36:06 +0000 (UTC)
+Message-ID: <f2f711e1-1c4d-888d-0dc7-5eb87ecbf5eb@schaufler-ca.com>
+Date:   Thu, 31 Aug 2023 15:36:00 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.14.0
-Subject: Re: [PATCH v2 17/25] security: Introduce inode_post_create_tmpfile
- hook
+Subject: Re: [PATCH v2 18/25] security: Introduce inode_post_set_acl hook
 Content-Language: en-US
 To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
         viro@zeniv.linux.org.uk, brauner@kernel.org,
@@ -77,9 +76,9 @@ Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         Stefan Berger <stefanb@linux.ibm.com>,
         Casey Schaufler <casey@schaufler-ca.com>
 References: <20230831104136.903180-1-roberto.sassu@huaweicloud.com>
- <20230831104136.903180-18-roberto.sassu@huaweicloud.com>
+ <20230831104136.903180-19-roberto.sassu@huaweicloud.com>
 From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20230831104136.903180-18-roberto.sassu@huaweicloud.com>
+In-Reply-To: <20230831104136.903180-19-roberto.sassu@huaweicloud.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Mailer: WebService/1.1.21763 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
@@ -97,7 +96,7 @@ On 8/31/2023 3:41 AM, Roberto Sassu wrote:
 > From: Roberto Sassu <roberto.sassu@huawei.com>
 >
 > In preparation for moving IMA and EVM to the LSM infrastructure, introduce
-> the inode_post_create_tmpfile hook.
+> the inode_post_set_acl hook.
 
 Repeat of new LSM hook general comment:
 Would you please include some explanation of how an LSM would use this hook?
@@ -109,89 +108,87 @@ could be generally useful.
 > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 > Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
 > ---
->  fs/namei.c                    |  1 +
+>  fs/posix_acl.c                |  1 +
 >  include/linux/lsm_hook_defs.h |  2 ++
->  include/linux/security.h      |  8 ++++++++
->  security/security.c           | 18 ++++++++++++++++++
->  4 files changed, 29 insertions(+)
+>  include/linux/security.h      |  7 +++++++
+>  security/security.c           | 17 +++++++++++++++++
+>  4 files changed, 27 insertions(+)
 >
-> diff --git a/fs/namei.c b/fs/namei.c
-> index c8c4ab26b52a..efed0e1e93f5 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -3700,6 +3700,7 @@ static int vfs_tmpfile(struct mnt_idmap *idmap,
->  		inode->i_state |= I_LINKABLE;
->  		spin_unlock(&inode->i_lock);
+> diff --git a/fs/posix_acl.c b/fs/posix_acl.c
+> index 7fa1b738bbab..3b7dbea5c3ff 100644
+> --- a/fs/posix_acl.c
+> +++ b/fs/posix_acl.c
+> @@ -1137,6 +1137,7 @@ int vfs_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
+>  		error = -EIO;
+>  	if (!error) {
+>  		fsnotify_xattr(dentry);
+> +		security_inode_post_set_acl(dentry, acl_name, kacl);
+>  		evm_inode_post_set_acl(dentry, acl_name, kacl);
 >  	}
-> +	security_inode_post_create_tmpfile(idmap, dir, file, mode);
->  	ima_post_create_tmpfile(idmap, dir, file, mode);
->  	return 0;
->  }
+>  
 > diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-> index b1634b5de98c..9ae573b83737 100644
+> index 9ae573b83737..bba1fbd97207 100644
 > --- a/include/linux/lsm_hook_defs.h
 > +++ b/include/linux/lsm_hook_defs.h
-> @@ -121,6 +121,8 @@ LSM_HOOK(int, 0, inode_init_security_anon, struct inode *inode,
->  	 const struct qstr *name, const struct inode *context_inode)
->  LSM_HOOK(int, 0, inode_create, struct inode *dir, struct dentry *dentry,
->  	 umode_t mode)
-> +LSM_HOOK(void, LSM_RET_VOID, inode_post_create_tmpfile, struct mnt_idmap *idmap,
-> +	 struct inode *dir, struct file *file, umode_t mode)
->  LSM_HOOK(int, 0, inode_link, struct dentry *old_dentry, struct inode *dir,
->  	 struct dentry *new_dentry)
->  LSM_HOOK(int, 0, inode_unlink, struct inode *dir, struct dentry *dentry)
+> @@ -157,6 +157,8 @@ LSM_HOOK(void, LSM_RET_VOID, inode_post_removexattr, struct dentry *dentry,
+>  	 const char *name)
+>  LSM_HOOK(int, 0, inode_set_acl, struct mnt_idmap *idmap,
+>  	 struct dentry *dentry, const char *acl_name, struct posix_acl *kacl)
+> +LSM_HOOK(void, LSM_RET_VOID, inode_post_set_acl, struct dentry *dentry,
+> +	 const char *acl_name, struct posix_acl *kacl)
+>  LSM_HOOK(int, 0, inode_get_acl, struct mnt_idmap *idmap,
+>  	 struct dentry *dentry, const char *acl_name)
+>  LSM_HOOK(int, 0, inode_remove_acl, struct mnt_idmap *idmap,
 > diff --git a/include/linux/security.h b/include/linux/security.h
-> index f210bd66e939..5f296761883f 100644
+> index 5f296761883f..556d019ebe5c 100644
 > --- a/include/linux/security.h
 > +++ b/include/linux/security.h
-> @@ -338,6 +338,9 @@ int security_inode_init_security_anon(struct inode *inode,
->  				      const struct qstr *name,
->  				      const struct inode *context_inode);
->  int security_inode_create(struct inode *dir, struct dentry *dentry, umode_t mode);
-> +void security_inode_post_create_tmpfile(struct mnt_idmap *idmap,
-> +					struct inode *dir, struct file *file,
-> +					umode_t mode);
->  int security_inode_link(struct dentry *old_dentry, struct inode *dir,
->  			 struct dentry *new_dentry);
->  int security_inode_unlink(struct inode *dir, struct dentry *dentry);
-> @@ -788,6 +791,11 @@ static inline int security_inode_create(struct inode *dir,
+> @@ -367,6 +367,8 @@ int security_inode_setxattr(struct mnt_idmap *idmap,
+>  int security_inode_set_acl(struct mnt_idmap *idmap,
+>  			   struct dentry *dentry, const char *acl_name,
+>  			   struct posix_acl *kacl);
+> +void security_inode_post_set_acl(struct dentry *dentry, const char *acl_name,
+> +				 struct posix_acl *kacl);
+>  int security_inode_get_acl(struct mnt_idmap *idmap,
+>  			   struct dentry *dentry, const char *acl_name);
+>  int security_inode_remove_acl(struct mnt_idmap *idmap,
+> @@ -894,6 +896,11 @@ static inline int security_inode_set_acl(struct mnt_idmap *idmap,
 >  	return 0;
 >  }
 >  
-> +static inline void
-> +security_inode_post_create_tmpfile(struct mnt_idmap *idmap, struct inode *dir,
-> +				   struct file *file, umode_t mode)
+> +static inline void security_inode_post_set_acl(struct dentry *dentry,
+> +					       const char *acl_name,
+> +					       struct posix_acl *kacl)
 > +{ }
 > +
->  static inline int security_inode_link(struct dentry *old_dentry,
->  				       struct inode *dir,
->  				       struct dentry *new_dentry)
+>  static inline int security_inode_get_acl(struct mnt_idmap *idmap,
+>  					 struct dentry *dentry,
+>  					 const char *acl_name)
 > diff --git a/security/security.c b/security/security.c
-> index 56c1c1e66fd1..e5acb11f6ebd 100644
+> index e5acb11f6ebd..4392fd878d58 100644
 > --- a/security/security.c
 > +++ b/security/security.c
-> @@ -1920,6 +1920,24 @@ int security_inode_create(struct inode *dir, struct dentry *dentry,
+> @@ -2260,6 +2260,23 @@ int security_inode_set_acl(struct mnt_idmap *idmap,
+>  	return evm_inode_set_acl(idmap, dentry, acl_name, kacl);
 >  }
->  EXPORT_SYMBOL_GPL(security_inode_create);
 >  
 > +/**
-> + * security_inode_post_create_tmpfile() - Update inode security field after creation of tmpfile
-> + * @idmap: idmap of the mount
-> + * @dir: the inode of the base directory
-> + * @file: file descriptor of the new tmpfile
-> + * @mode: the mode of the new tmpfile
+> + * security_inode_post_set_acl() - Update inode security after set_acl()
+> + * @dentry: file
+> + * @acl_name: acl name
+> + * @kacl: acl struct
 > + *
-> + * Update inode security field after a tmpfile has been created.
+> + * Update inode security field after successful set_acl operation on @dentry.
+> + * The posix acls in @kacl are identified by @acl_name.
 > + */
-> +void security_inode_post_create_tmpfile(struct mnt_idmap *idmap,
-> +					struct inode *dir,
-> +					struct file *file, umode_t mode)
+> +void security_inode_post_set_acl(struct dentry *dentry, const char *acl_name,
+> +				 struct posix_acl *kacl)
 > +{
-> +	if (unlikely(IS_PRIVATE(dir)))
+> +	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
 > +		return;
-> +	call_void_hook(inode_post_create_tmpfile, idmap, dir, file, mode);
+> +	call_void_hook(inode_post_set_acl, dentry, acl_name, kacl);
 > +}
 > +
 >  /**
->   * security_inode_link() - Check if creating a hard link is allowed
->   * @old_dentry: existing file
+>   * security_inode_get_acl() - Check if reading posix acls is allowed
+>   * @idmap: idmap of the mount
