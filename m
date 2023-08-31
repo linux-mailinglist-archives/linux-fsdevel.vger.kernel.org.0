@@ -2,144 +2,187 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 475F278F432
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Aug 2023 22:37:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73E8178F4E6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Aug 2023 23:56:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347435AbjHaUhq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 31 Aug 2023 16:37:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50460 "EHLO
+        id S244215AbjHaV4D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 31 Aug 2023 17:56:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347429AbjHaUho (ORCPT
+        with ESMTP id S232057AbjHaV4C (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 31 Aug 2023 16:37:44 -0400
-Received: from mail-yw1-x1149.google.com (mail-yw1-x1149.google.com [IPv6:2607:f8b0:4864:20::1149])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C40F0E5F
-        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Aug 2023 13:37:38 -0700 (PDT)
-Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-58e49935630so21799047b3.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Aug 2023 13:37:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1693514258; x=1694119058; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xGxCZUuxbWSlNwkUI6nwNutDuYApOwCOxRWfVwGAJ3o=;
-        b=aPRx0fT3CkSVIUrV1PmRN5ysG5vkys23TxgntCvZjZmRN3QniZCggOCA9k7y7K3v9h
-         FrI4K80Xv1u9VMu9jmSo4bhQacOu1p2oqbOhfUI5Kbv+wMBWBXBNSCLaduV+uI4DDtq8
-         Z1GFMFhr5LPG+g91Z98MRMwvrnqBy3wlV/pDdgdBz5TWQlbGqhR4FFCpUXOWQYz+CpWw
-         X+YUHGmAhuIwkPHdJR5JhVYargvNqzLZlSAY2Y2BqOX/ritvItNqFvn4l5g0CiO58vz1
-         APGqJ0r93JUep3jiNB4pqvtZXvMXWBurUia7FZgC64riK11fv7j/bW9yGJinxYytA67E
-         vhKg==
+        Thu, 31 Aug 2023 17:56:02 -0400
+Received: from mail-pl1-f207.google.com (mail-pl1-f207.google.com [209.85.214.207])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4B3111B
+        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Aug 2023 14:55:58 -0700 (PDT)
+Received: by mail-pl1-f207.google.com with SMTP id d9443c01a7336-1bb29dc715bso13432425ad.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Aug 2023 14:55:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693514258; x=1694119058;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xGxCZUuxbWSlNwkUI6nwNutDuYApOwCOxRWfVwGAJ3o=;
-        b=Nc5jBs5sC/Hl07BK/9d7twzOdWHZ3jQwec5WfyJeLrBI4UrimnQ1ZUSX1kP8kuh59V
-         nsNNHIV81JPcLSCGkECdK16s0R+q3bcDXL2wRCnWhJjGFmxNdmy66UNq94wHym4KYjHd
-         97mc9IVgEgWQfRtB5e1Ex2ArTSQE7Qm98G5cakTm7nFE2xO94h/EYzqlWkQcYGclwij8
-         xWTIfjFX6odsYYdCk0qnC5xB2pD03HPITxrZmKE/37nw2MwzOcvtt4h/BOlrqoXSpIqe
-         bKXwoXIcHMJixnoPyVNYwBYuSSjpT+PFULY0HERw/ojppwh62c4d3dyK+XVinMSkwr5Z
-         e+YA==
-X-Gm-Message-State: AOJu0YzD9/nGCKWHddQ+FXfLlWpJLOQbPYMsl1tIdlnl582n7SoSOGy5
-        M9qBa6Bk6li4frT8BknPa9hZWjM6AIDyUGfK
-X-Google-Smtp-Source: AGHT+IERJHbjR+c/ciTN5Esvviq3kVNk3iU0MzA8FlGygkmNX9iS6RTXYbmmUYknoi7aexCc3wAuxahV5uNuP5zC
-X-Received: from mclapinski.waw.corp.google.com ([2a00:79e0:9b:0:36f8:f0a:6df2:a7d5])
- (user=mclapinski job=sendgmr) by 2002:a05:690c:2b8b:b0:594:f596:e232 with
- SMTP id en11-20020a05690c2b8b00b00594f596e232mr20144ywb.2.1693514257991; Thu,
- 31 Aug 2023 13:37:37 -0700 (PDT)
-Date:   Thu, 31 Aug 2023 22:36:47 +0200
-In-Reply-To: <20230831203647.558079-1-mclapinski@google.com>
-Mime-Version: 1.0
-References: <20230831203647.558079-1-mclapinski@google.com>
-X-Mailer: git-send-email 2.42.0.283.g2d96d420d3-goog
-Message-ID: <20230831203647.558079-3-mclapinski@google.com>
-Subject: [PATCH 2/2] selftests: test fcntl(F_CHECK_ORIGINAL_MEMFD)
-From:   Michal Clapinski <mclapinski@google.com>
-To:     Jeff Layton <jlayton@kernel.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jeff Xu <jeffxu@google.com>, Aleksa Sarai <cyphar@cyphar.com>,
-        Daniel Verkamp <dverkamp@chromium.org>,
-        Kees Cook <keescook@chromium.org>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Cc:     Michal Clapinski <mclapinski@google.com>
+        d=1e100.net; s=20221208; t=1693518958; x=1694123758;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WlgV8wrYCLE7nM5q2YQjmftKxu1TXPg1tFkhluAyzHI=;
+        b=ivm1AHL6cTvASarWwjJx2co/F8+olqAHb8h/JaFcBncuAPz/A6sRNflWoy6Ms/saV5
+         4r27X9hPcCcZ5aPZInUadNde4Mqui5WaY7K4LzI3yqKGycJx+qt/aB4D44ywEDgCBxRg
+         r5G7c033UaaqWPQor1nscPsuOjmcqhkouHZlTWkb0WjZQedqi3Vwo0ZBDZ148SZXS8H6
+         ivCFwNJDRycCg4NR6Db3dhyJcb5R5V1YOp1DXgwEBWs3nUWl2iiRohM+zpwkD/yMJXIX
+         AmvsGmNH1oUFIVu6+MiRVZQZ00Q41xJYz+RyMkBGr/2MQUAZ3U4DV64tXYVxfaMKk99m
+         xACA==
+X-Gm-Message-State: AOJu0YxJzE9f7FaQ2fJ68CutDGNhxacwpNQWNaU/m1xd3l84NAadhmjY
+        GirAMNH0imaDZIls97kqvjobUYscqwguk2bJbaxQrdW53Y9baoPerw==
+X-Google-Smtp-Source: AGHT+IEMa+7OoF8rPhRMSuOTOd+TToApfjLKNhg9gHUwCviU0tWvzFBAbQcDYmm1Ay4GzZXxEXRwq4u9ure6IfJf2IG9pgg94w+/
+MIME-Version: 1.0
+X-Received: by 2002:a17:902:ec88:b0:1bc:7312:78e0 with SMTP id
+ x8-20020a170902ec8800b001bc731278e0mr188385plg.6.1693518958158; Thu, 31 Aug
+ 2023 14:55:58 -0700 (PDT)
+Date:   Thu, 31 Aug 2023 14:55:58 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ebea2b06043f1b1f@google.com>
+Subject: [syzbot] [reiserfs?] BUG: unable to handle kernel paging request in __raw_callee_save___kvm_vcpu_is_preempted
+From:   syzbot <syzbot+1f1de29389f950944703@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Signed-off-by: Michal Clapinski <mclapinski@google.com>
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    b97d64c72259 Merge tag '6.6-rc-smb3-client-fixes-part1' of..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14b1212fa80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=958c1fdc38118172
+dashboard link: https://syzkaller.appspot.com/bug?extid=1f1de29389f950944703
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/99875b49c50b/disk-b97d64c7.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/5bcacc1a3f5b/vmlinux-b97d64c7.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e2fe9c8de38a/bzImage-b97d64c7.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+1f1de29389f950944703@syzkaller.appspotmail.com
+
+loop3: detected capacity change from 0 to 1024
+BUG: unable to handle page fault for address: 000000078ccae8f8
+#PF: supervisor read access in kernel mode
+#PF: error_code(0x0000) - not-present page
+PGD 83d20067 P4D 83d20067 PUD 0 
+Oops: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 31278 Comm: syz-executor.3 Not tainted 6.5.0-syzkaller-08894-gb97d64c72259 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/26/2023
+RIP: 0010:__raw_callee_save___kvm_vcpu_is_preempted+0x4/0x20
+Code: 21 10 01 c0 be 03 00 00 00 e8 c8 ea 36 03 bf 21 10 01 c0 be 0e 00 00 00 e9 b9 ea 36 03 66 0f 1f 84 00 00 00 00 00 f3 0f 1e fa <48> 8b 04 fd 00 e9 ca 8c 80 b8 d0 83 02 00 00 0f 95 c0 c3 66 0f 1f
+RSP: 0018:ffffc90015d2f560 EFLAGS: 00010286
+RAX: 1ffffffff1a3373f RBX: ffff888030204028 RCX: ffffffff816ba91d
+RDX: 0000000000000000 RSI: 0000000000000008 RDI: 00000000ffffffff
+RBP: 00000000ffffffff R08: ffff88803020402f R09: 1ffff11006040805
+R10: dffffc0000000000 R11: ffffed1006040806 R12: ffff88802b268014
+R13: dffffc0000000000 R14: 0000000000000000 R15: 0000000000000000
+FS:  00007f5de3a856c0(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000078ccae8f8 CR3: 000000002f2a1000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ pv_vcpu_is_preempted arch/x86/include/asm/paravirt.h:608 [inline]
+ vcpu_is_preempted arch/x86/include/asm/qspinlock.h:63 [inline]
+ owner_on_cpu include/linux/sched.h:2306 [inline]
+ mutex_can_spin_on_owner kernel/locking/mutex.c:409 [inline]
+ mutex_optimistic_spin+0x17b/0x2b0 kernel/locking/mutex.c:452
+ __mutex_lock_common+0x20a/0x2530 kernel/locking/mutex.c:607
+ __mutex_lock kernel/locking/mutex.c:747 [inline]
+ mutex_lock_nested+0x1b/0x20 kernel/locking/mutex.c:799
+ reiserfs_write_lock+0x7a/0xd0 fs/reiserfs/lock.c:27
+ reiserfs_lookup+0x162/0x580 fs/reiserfs/namei.c:364
+ lookup_open fs/namei.c:3473 [inline]
+ open_last_lookups fs/namei.c:3563 [inline]
+ path_openat+0x11f1/0x3180 fs/namei.c:3793
+ do_filp_open+0x234/0x490 fs/namei.c:3823
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1422
+ do_sys_open fs/open.c:1437 [inline]
+ __do_sys_open fs/open.c:1445 [inline]
+ __se_sys_open fs/open.c:1441 [inline]
+ __x64_sys_open+0x225/0x270 fs/open.c:1441
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f5de2c7cae9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f5de3a850c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
+RAX: ffffffffffffffda RBX: 00007f5de2d9bf80 RCX: 00007f5de2c7cae9
+RDX: 0000000000000000 RSI: 0000000000145142 RDI: 0000000020007f80
+RBP: 00007f5de2cc847a R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000000b R14: 00007f5de2d9bf80 R15: 00007ffcdd81fee8
+ </TASK>
+Modules linked in:
+CR2: 000000078ccae8f8
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__raw_callee_save___kvm_vcpu_is_preempted+0x4/0x20
+Code: 21 10 01 c0 be 03 00 00 00 e8 c8 ea 36 03 bf 21 10 01 c0 be 0e 00 00 00 e9 b9 ea 36 03 66 0f 1f 84 00 00 00 00 00 f3 0f 1e fa <48> 8b 04 fd 00 e9 ca 8c 80 b8 d0 83 02 00 00 0f 95 c0 c3 66 0f 1f
+RSP: 0018:ffffc90015d2f560 EFLAGS: 00010286
+RAX: 1ffffffff1a3373f RBX: ffff888030204028 RCX: ffffffff816ba91d
+RDX: 0000000000000000 RSI: 0000000000000008 RDI: 00000000ffffffff
+RBP: 00000000ffffffff R08: ffff88803020402f R09: 1ffff11006040805
+R10: dffffc0000000000 R11: ffffed1006040806 R12: ffff88802b268014
+R13: dffffc0000000000 R14: 0000000000000000 R15: 0000000000000000
+FS:  00007f5de3a856c0(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000078ccae8f8 CR3: 000000002f2a1000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	21 10                	and    %edx,(%rax)
+   2:	01 c0                	add    %eax,%eax
+   4:	be 03 00 00 00       	mov    $0x3,%esi
+   9:	e8 c8 ea 36 03       	call   0x336ead6
+   e:	bf 21 10 01 c0       	mov    $0xc0011021,%edi
+  13:	be 0e 00 00 00       	mov    $0xe,%esi
+  18:	e9 b9 ea 36 03       	jmp    0x336ead6
+  1d:	66 0f 1f 84 00 00 00 	nopw   0x0(%rax,%rax,1)
+  24:	00 00
+  26:	f3 0f 1e fa          	endbr64
+* 2a:	48 8b 04 fd 00 e9 ca 	mov    -0x73351700(,%rdi,8),%rax <-- trapping instruction
+  31:	8c
+  32:	80 b8 d0 83 02 00 00 	cmpb   $0x0,0x283d0(%rax)
+  39:	0f 95 c0             	setne  %al
+  3c:	c3                   	ret
+  3d:	66                   	data16
+  3e:	0f                   	.byte 0xf
+  3f:	1f                   	(bad)
+
+
 ---
- tools/testing/selftests/memfd/memfd_test.c | 32 ++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/tools/testing/selftests/memfd/memfd_test.c b/tools/testing/selftests/memfd/memfd_test.c
-index 3df008677239..4f3b7615ca87 100644
---- a/tools/testing/selftests/memfd/memfd_test.c
-+++ b/tools/testing/selftests/memfd/memfd_test.c
-@@ -39,6 +39,10 @@
- 
- #define MFD_NOEXEC_SEAL	0x0008U
- 
-+#ifndef F_CHECK_ORIGINAL_MEMFD
-+#define F_CHECK_ORIGINAL_MEMFD	(1024 + 15)
-+#endif
-+
- /*
-  * Default is not to test hugetlbfs
-  */
-@@ -1567,6 +1571,32 @@ static void test_share_fork(char *banner, char *b_suffix)
- 	close(fd);
- }
- 
-+static void test_fcntl_check_original(void)
-+{
-+	int fd, fd2;
-+	char path[128];
-+
-+	printf("%s FCNTL-CHECK-ORIGINAL\n", memfd_str);
-+	fd = sys_memfd_create("kern_memfd_exec_reopen", 0);
-+	if (fd < 0) {
-+		printf("memfd_create failed: %m\n");
-+		abort();
-+	}
-+	if (fcntl(fd, F_CHECK_ORIGINAL_MEMFD) != 1) {
-+		printf("fcntl(F_CHECK_ORIGINAL_MEMFD) failed\n");
-+		abort();
-+	}
-+
-+	fd2 = mfd_assert_reopen_fd(fd);
-+	if (fcntl(fd2, F_CHECK_ORIGINAL_MEMFD) != 0) {
-+		printf("fcntl(F_CHECK_ORIGINAL_MEMFD) failed\n");
-+		abort();
-+	}
-+
-+	close(fd);
-+	close(fd2);
-+}
-+
- int main(int argc, char **argv)
- {
- 	pid_t pid;
-@@ -1609,6 +1639,8 @@ int main(int argc, char **argv)
- 	test_share_open("SHARE-OPEN", "");
- 	test_share_fork("SHARE-FORK", "");
- 
-+	test_fcntl_check_original();
-+
- 	/* Run test-suite in a multi-threaded environment with a shared
- 	 * file-table. */
- 	pid = spawn_idle_thread(CLONE_FILES | CLONE_FS | CLONE_VM);
--- 
-2.42.0.283.g2d96d420d3-goog
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
