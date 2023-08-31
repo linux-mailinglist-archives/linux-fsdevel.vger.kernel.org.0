@@ -2,55 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E48F78E77A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Aug 2023 09:59:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E8C178E84F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Aug 2023 10:33:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244303AbjHaH7T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 31 Aug 2023 03:59:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43164 "EHLO
+        id S1345683AbjHaIcp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 31 Aug 2023 04:32:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51814 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241346AbjHaH7T (ORCPT
+        with ESMTP id S1344815AbjHaIbx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 31 Aug 2023 03:59:19 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C5DF1A4;
-        Thu, 31 Aug 2023 00:59:16 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E460362B3B;
-        Thu, 31 Aug 2023 07:59:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5DFBC433C8;
-        Thu, 31 Aug 2023 07:59:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1693468755;
-        bh=1IDargtq6F+yIc84SteCGwgylhMk1XwO1s/IaQI5xmY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gT5POzm8IpA/aBwRqaRgfXhzV5u+7f+9x8vGVcp4PF8KxEgaySyFBKLfIRZUXWekw
-         1ewxIkIIjVnn3/xN0ZIGIIjpj65f75P+3Vel8WwfGN2UL2KBcQg0m6KjGrLzYN7mfL
-         v89OwXNvNxxRxPTTk8Iu7C+1cK2z0Ow6XPZ49c1pB0QXfTkwypZmePHYrsgkSSRJ5M
-         IWhsBI7ZIWSJDg8qBqQwd18alxtHl1i85QIIcVMYYjhjxkg9JAAYzMqfD9wDm8Z5vF
-         p6nxYOe8HP40JBY/EiL2QAi5uUTOEYofvSXAzVgTphj+8n5JCdYQ+W25i9lAL61Qtg
-         tmzbuFu+kHNqg==
-From:   Christian Brauner <brauner@kernel.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        trond.myklebust@hammerspace.com, anna@kernel.org, jack@suse.cz,
-        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] NFS: switch back to using kill_anon_super
-Date:   Thu, 31 Aug 2023 09:59:08 +0200
-Message-Id: <20230831-alphabet-exzess-305e114f6597@brauner>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230831052940.256193-1-hch@lst.de>
-References: <20230831052940.256193-1-hch@lst.de>
+        Thu, 31 Aug 2023 04:31:53 -0400
+Received: from out-253.mta0.migadu.com (out-253.mta0.migadu.com [91.218.175.253])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D6581981
+        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Aug 2023 01:31:06 -0700 (PDT)
+Message-ID: <a7c2c7bf-f4ea-22cb-86a0-f24461c87fe7@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1693470652;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=BQ6NeiZJ/qqcuBGIHVjY0QPJ3ZymN7XEekFE6LjqM9c=;
+        b=U7akOY1NOW9+q/D7jhJsiRnDBzkPxaIRdOEahWBrRTLQaznxmnBbxhsVdQOWpMaLq5IC+G
+        GptDRF0YBo5/sUzTouTU8Ue3kzOJj6CBKv6/McLqoZgBEq/1YwsF0NLI1In3o45GVIRRel
+        pj4a86ds89u77F+MOvXkSPENsYaw0ZE=
+Date:   Thu, 31 Aug 2023 16:30:38 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1471; i=brauner@kernel.org; h=from:subject:message-id; bh=1IDargtq6F+yIc84SteCGwgylhMk1XwO1s/IaQI5xmY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaR88HDTVnAxPZTV/95vXsWJ4IVa4keuK7zXm9Vo77z5iWhg 8eN1HaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABN50MbIcGXJjAOrazqmf1BLf5f0fc t+G4ZONu6/jbsnZ4Rf8T7f38nI8CDfRS2s4V7zl0/i+qxttYE2jeoqFRW3ZReYBPHk6cfwAgA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+Subject: Re: [PATCH 3/6] fuse: Allow parallel direct writes for O_DIRECT
+Content-Language: en-US
+To:     Bernd Schubert <bschubert@ddn.com>, linux-fsdevel@vger.kernel.org
+Cc:     bernd.schubert@fastmail.fm, miklos@szeredi.hu, dsingh@ddn.com,
+        Hao Xu <howeyxu@tencent.com>
+References: <20230829161116.2914040-1-bschubert@ddn.com>
+ <20230829161116.2914040-4-bschubert@ddn.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Hao Xu <hao.xu@linux.dev>
+In-Reply-To: <20230829161116.2914040-4-bschubert@ddn.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -58,37 +50,85 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 31 Aug 2023 07:29:40 +0200, Christoph Hellwig wrote:
-> NFS switch to open coding kill_anon_super in 7b14a213890a
-> ("nfs: don't call bdi_unregister") to avoid the extra bdi_unregister
-> call.  At that point bdi_destroy was called in nfs_free_server and
-> thus it required a later freeing of the anon dev_t.  But since
-> 0db10944a76b ("nfs: Convert to separately allocated bdi") the bdi has
-> been free implicitly by the sb destruction, so this isn't needed
-> anymore.
+On 8/30/23 00:11, Bernd Schubert wrote:
+> Take a shared lock in fuse_cache_write_iter. This was already
+> done for FOPEN_DIRECT_IO in
 > 
-> [...]
+> commit 153524053bbb ("fuse: allow non-extending parallel direct
+> writes on the same file")
+> 
+> but so far missing for plain O_DIRECT. Server side needs
+> to set FOPEN_PARALLEL_DIRECT_WRITES in order to signal that
+> it supports parallel dio writes.
+> 
+> Cc: Hao Xu <howeyxu@tencent.com>
+> Cc: Miklos Szeredi <miklos@szeredi.hu>
+> Cc: Dharmendra Singh <dsingh@ddn.com>
+> Cc: linux-fsdevel@vger.kernel.org
+> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
+> ---
+>   fs/fuse/file.c | 18 ++++++++++++++++--
+>   1 file changed, 16 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index 6b8b9512c336..a6b99bc80fe7 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -1314,6 +1314,10 @@ static bool fuse_dio_wr_exclusive_lock(struct kiocb *iocb, struct iov_iter *from
+>   	struct file *file = iocb->ki_filp;
+>   	struct fuse_file *ff = file->private_data;
+>   
+> +	/* this function is about direct IO only */
+> +	if (!(iocb->ki_flags & IOCB_DIRECT))
+> +		return false;
 
-This fix is needed to account for new changes to the generic super code.
-So I'll put this into the same set of fixes as the mtd superblock changes.
-The plan is to have this all fixed up before -rc1 is out.
+This means for buffered write in fuse_cache_write_iter(), we grab shared 
+lock, looks not right.
 
----
+> +
+>   	/* server side has to advise that it supports parallel dio writes */
+>   	if (!(ff->open_flags & FOPEN_PARALLEL_DIRECT_WRITES))
+>   		return false;
+> @@ -1337,6 +1341,7 @@ static ssize_t fuse_cache_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>   	struct inode *inode = mapping->host;
+>   	ssize_t err;
+>   	struct fuse_conn *fc = get_fuse_conn(inode);
+> +	bool excl_lock = fuse_dio_wr_exclusive_lock(iocb, from);
+>   
+>   	if (fc->writeback_cache && !(iocb->ki_flags & IOCB_DIRECT)) {
+>   		/* Update size (EOF optimization) and mode (SUID clearing) */
+> @@ -1355,7 +1360,10 @@ static ssize_t fuse_cache_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>   	}
+>   
+>   writethrough:
+> -	inode_lock(inode);
+> +	if (excl_lock)
+> +		inode_lock(inode);
+> +	else
+> +		inode_lock_shared(inode);
+>   
+>   	err = generic_write_checks(iocb, from);
+>   	if (err <= 0)
+> @@ -1370,6 +1378,9 @@ static ssize_t fuse_cache_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>   		goto out;
+>   
+>   	if (iocb->ki_flags & IOCB_DIRECT) {
+> +		/* file extending writes will trigger i_size_write - exclusive
+> +		 * lock is needed
+> +		 */
+>   		written = generic_file_direct_write(iocb, from);
+>   		if (written < 0 || !iov_iter_count(from))
+>   			goto out;
+> @@ -1379,7 +1390,10 @@ static ssize_t fuse_cache_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>   		written = fuse_perform_write(iocb, from);
+>   	}
+>   out:
+> -	inode_unlock(inode);
+> +	if (excl_lock)
+> +		inode_unlock(inode);
+> +	else
+> +		inode_unlock_shared(inode);
+>   	if (written > 0)
+>   		written = generic_write_sync(iocb, written);
+>   
 
-Applied to the vfs.super branch of the vfs/vfs.git tree.
-Patches in the vfs.super branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.super
-
-[1/1] NFS: switch back to using kill_anon_super
-      https://git.kernel.org/vfs/vfs/c/db80f8437753
