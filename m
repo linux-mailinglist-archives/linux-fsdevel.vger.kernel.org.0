@@ -2,79 +2,192 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4879E78F8B8
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Sep 2023 08:49:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 588E378F9DD
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Sep 2023 10:20:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348398AbjIAGtY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 Sep 2023 02:49:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33480 "EHLO
+        id S243379AbjIAIUg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 Sep 2023 04:20:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57850 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348397AbjIAGtY (ORCPT
+        with ESMTP id S241886AbjIAIUf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 Sep 2023 02:49:24 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DC2DE7E;
-        Thu, 31 Aug 2023 23:49:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=PA+yNU4lPn9KieY83YfnLjgiFKNzsnzdpdHO0b2nVFs=; b=CcIUGfC6963GwJ4rFhGTRJxf5i
-        u5bGK54JOuEuzE9vY5sPmxb7Rd8MR+iSFQftbM01j2aL3KLkkHKzaVFDc1sAFy7/7fWOwRrZWDHoD
-        8VyyHPjgscpxr9vCqpUTVeDmDQZX1y6sgM9OwvQ0jsjCbnpWnooOqbo4bPSby/Z1UnMBP9Z6i9iWQ
-        8o6zhlX/ru1bFvG7M40SsHyOvo3a+0m0SXSLTeJwtPF6DbHSdjMKJDHpxdAjI4jyexPVNCR4WW7ao
-        8MWHiD/z6zkjigjTvpCkSosd0L+K9R8WCYnkOHbbm82FTLz9f356DZghcxlEzIxBwy0e2+e20ll0u
-        hvJa4nug==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1qbxy4-00GZ85-2F;
-        Fri, 01 Sep 2023 06:49:20 +0000
-Date:   Thu, 31 Aug 2023 23:49:20 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Mateusz Guzik <mjguzik@gmail.com>
-Cc:     Bernd Schubert <bschubert@ddn.com>, linux-fsdevel@vger.kernel.org,
-        bernd.schubert@fastmail.fm, miklos@szeredi.hu, dsingh@ddn.com,
-        Josef Bacik <josef@toxicpanda.com>,
-        linux-btrfs@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH 0/2] Use exclusive lock for file_remove_privs
-Message-ID: <ZPGJcMy+S2DjYutF@infradead.org>
-References: <20230830181519.2964941-1-bschubert@ddn.com>
- <20230831101824.qdko4daizgh7phav@f>
+        Fri, 1 Sep 2023 04:20:35 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69B3610DE;
+        Fri,  1 Sep 2023 01:20:32 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id B16B32185C;
+        Fri,  1 Sep 2023 08:20:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1693556430; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=0WI96qvBSKjcD8skIYDzJyfhIXrX2VNlBg1bDAXSO7w=;
+        b=r4AvfguvEQvHBhS4L8lDsEaveieeJTkNCYi5f+9IRURkHs9QHXGXU55bgZKYP/UIN96eLm
+        Su7gVEZFmwF5EXNaNlCErp7Hgj8GQqdQewKT6RBq+dcvYVgxoLUZe9WovHMiX8iQwt+NsA
+        NGR32KTwfyM1j9J07mti1C+WlqZc3DM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1693556430;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=0WI96qvBSKjcD8skIYDzJyfhIXrX2VNlBg1bDAXSO7w=;
+        b=LDBeIJn7DjHmpeWPe/JUiDen1A1u3hmJEXiXvjRyh5pbOBnd20g14NvrGZHMhmcFppSIaI
+        jb3axaR9hQtT2aCA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 27C7D1358B;
+        Fri,  1 Sep 2023 08:20:30 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id M/8FCc6e8WSYGwAAMHmgww
+        (envelope-from <vbabka@suse.cz>); Fri, 01 Sep 2023 08:20:30 +0000
+From:   Vlastimil Babka <vbabka@suse.cz>
+To:     seanjc@google.com
+Cc:     ackerleytng@google.com, akpm@linux-foundation.org,
+        anup@brainfault.org, aou@eecs.berkeley.edu,
+        chao.p.peng@linux.intel.com, chenhuacai@kernel.org,
+        david@redhat.com, isaku.yamahata@gmail.com, jarkko@kernel.org,
+        jmorris@namei.org, kirill.shutemov@linux.intel.com,
+        kvm-riscv@lists.infradead.org, kvm@vger.kernel.org,
+        kvmarm@lists.linux.dev, liam.merwick@oracle.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-mm@kvack.org,
+        linux-riscv@lists.infradead.org,
+        linux-security-module@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, mail@maciej.szmigiero.name,
+        maz@kernel.org, michael.roth@amd.com, mpe@ellerman.id.au,
+        oliver.upton@linux.dev, palmer@dabbelt.com,
+        paul.walmsley@sifive.com, paul@paul-moore.com, pbonzini@redhat.com,
+        qperret@google.com, serge@hallyn.com, tabba@google.com,
+        vannapurve@google.com, vbabka@suse.cz, wei.w.wang@intel.com,
+        willy@infradead.org, yu.c.zhang@linux.intel.com
+Subject: [PATCH gmem FIXUP] mm, compaction: make testing mapping_unmovable() safe
+Date:   Fri,  1 Sep 2023 10:20:26 +0200
+Message-ID: <20230901082025.20548-2-vbabka@suse.cz>
+X-Mailer: git-send-email 2.41.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230831101824.qdko4daizgh7phav@f>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 31, 2023 at 12:18:24PM +0200, Mateusz Guzik wrote:
-> Turns out notify_change has the following:
->         WARN_ON_ONCE(!inode_is_locked(inode));
-> 
-> Which expands to:
-> static inline int rwsem_is_locked(struct rw_semaphore *sem)
-> {
->         return atomic_long_read(&sem->count) != 0;
-> }
-> 
-> So it does check the lock, except it passes *any* locked state,
-> including just readers.
-> 
-> According to git blame this regressed from commit 5955102c9984
-> ("wrappers for ->i_mutex access") by Al -- a bunch of mutex_is_locked
-> were replaced with inode_is_locked, which unintentionally provides
-> weaker guarantees.
-> 
-> I don't see a rwsem helper for wlock check and I don't think it is all
-> that beneficial to add. Instead, how about a bunch of lockdep, like so:
+As Kirill pointed out, mapping can be removed under us due to
+truncation. Test it under folio lock as already done for the async
+compaction / dirty folio case. To prevent locking every folio with
+mapping to do the test, do it only for unevictable folios, as we can
+expect the unmovable mapping folios are also unevictable - it is the
+case for guest memfd folios.
 
-Yes, that's a good idea.
+Also incorporate comment update suggested by Matthew.
+
+Fixes: 3424873596ce ("mm: Add AS_UNMOVABLE to mark mapping as completely unmovable")
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+---
+Feel free to squash into 3424873596ce.
+
+ mm/compaction.c | 49 ++++++++++++++++++++++++++++++++-----------------
+ 1 file changed, 32 insertions(+), 17 deletions(-)
+
+diff --git a/mm/compaction.c b/mm/compaction.c
+index a3d2b132df52..e0e439b105b5 100644
+--- a/mm/compaction.c
++++ b/mm/compaction.c
+@@ -862,6 +862,7 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
+ 
+ 	/* Time to isolate some pages for migration */
+ 	for (; low_pfn < end_pfn; low_pfn++) {
++		bool is_dirty, is_unevictable;
+ 
+ 		if (skip_on_failure && low_pfn >= next_skip_pfn) {
+ 			/*
+@@ -1047,10 +1048,6 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
+ 		if (!mapping && (folio_ref_count(folio) - 1) > folio_mapcount(folio))
+ 			goto isolate_fail_put;
+ 
+-		/* The mapping truly isn't movable. */
+-		if (mapping && mapping_unmovable(mapping))
+-			goto isolate_fail_put;
+-
+ 		/*
+ 		 * Only allow to migrate anonymous pages in GFP_NOFS context
+ 		 * because those do not depend on fs locks.
+@@ -1062,8 +1059,10 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
+ 		if (!folio_test_lru(folio))
+ 			goto isolate_fail_put;
+ 
++		is_unevictable = folio_test_unevictable(folio);
++
+ 		/* Compaction might skip unevictable pages but CMA takes them */
+-		if (!(mode & ISOLATE_UNEVICTABLE) && folio_test_unevictable(folio))
++		if (!(mode & ISOLATE_UNEVICTABLE) && is_unevictable)
+ 			goto isolate_fail_put;
+ 
+ 		/*
+@@ -1075,26 +1074,42 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
+ 		if ((mode & ISOLATE_ASYNC_MIGRATE) && folio_test_writeback(folio))
+ 			goto isolate_fail_put;
+ 
+-		if ((mode & ISOLATE_ASYNC_MIGRATE) && folio_test_dirty(folio)) {
+-			bool migrate_dirty;
++		is_dirty = folio_test_dirty(folio);
++
++		if (((mode & ISOLATE_ASYNC_MIGRATE) && is_dirty)
++		    || (mapping && is_unevictable)) {
++			bool migrate_dirty = true;
++			bool is_unmovable;
+ 
+ 			/*
+-			 * Only pages without mappings or that have a
+-			 * ->migrate_folio callback are possible to migrate
+-			 * without blocking. However, we can be racing with
+-			 * truncation so it's necessary to lock the page
+-			 * to stabilise the mapping as truncation holds
+-			 * the page lock until after the page is removed
+-			 * from the page cache.
++			 * Only folios without mappings or that have
++			 * a ->migrate_folio callback are possible to migrate
++			 * without blocking.
++			 *
++			 * Folios from unmovable mappings are not migratable.
++			 *
++			 * However, we can be racing with truncation, which can
++			 * free the mapping that we need to check. Truncation
++			 * holds the folio lock until after the folio is removed
++			 * from the page so holding it ourselves is sufficient.
++			 *
++			 * To avoid this folio locking to inspect every folio
++			 * with mapping for being unmovable, we assume every
++			 * such folio is also unevictable, which is a cheaper
++			 * test. If our assumption goes wrong, it's not a bug,
++			 * just potentially wasted cycles.
+ 			 */
+ 			if (!folio_trylock(folio))
+ 				goto isolate_fail_put;
+ 
+ 			mapping = folio_mapping(folio);
+-			migrate_dirty = !mapping ||
+-					mapping->a_ops->migrate_folio;
++			if ((mode & ISOLATE_ASYNC_MIGRATE) && is_dirty) {
++				migrate_dirty = !mapping ||
++						mapping->a_ops->migrate_folio;
++			}
++			is_unmovable = mapping && mapping_unmovable(mapping);
+ 			folio_unlock(folio);
+-			if (!migrate_dirty)
++			if (!migrate_dirty || is_unmovable)
+ 				goto isolate_fail_put;
+ 		}
+ 
+-- 
+2.41.0
 
