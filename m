@@ -2,141 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D67B278FE5C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Sep 2023 15:36:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 58CC078FF79
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Sep 2023 16:51:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349765AbjIANgP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 Sep 2023 09:36:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38378 "EHLO
+        id S1345991AbjIAOvJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 Sep 2023 10:51:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345434AbjIANgO (ORCPT
+        with ESMTP id S229553AbjIAOvJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 Sep 2023 09:36:14 -0400
-Received: from mail-ed1-x549.google.com (mail-ed1-x549.google.com [IPv6:2a00:1450:4864:20::549])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02D6CE7E
-        for <linux-fsdevel@vger.kernel.org>; Fri,  1 Sep 2023 06:36:11 -0700 (PDT)
-Received: by mail-ed1-x549.google.com with SMTP id 4fb4d7f45d1cf-52a1ce52ad4so3136779a12.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 01 Sep 2023 06:36:10 -0700 (PDT)
+        Fri, 1 Sep 2023 10:51:09 -0400
+Received: from mail-qv1-xf2a.google.com (mail-qv1-xf2a.google.com [IPv6:2607:f8b0:4864:20::f2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 197A8E7E
+        for <linux-fsdevel@vger.kernel.org>; Fri,  1 Sep 2023 07:51:05 -0700 (PDT)
+Received: by mail-qv1-xf2a.google.com with SMTP id 6a1803df08f44-64f3ad95ec0so11649076d6.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 01 Sep 2023 07:51:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1693575369; x=1694180169; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:references
-         :mime-version:message-id:in-reply-to:date:from:to:cc:subject:date
+        d=google.com; s=20221208; t=1693579864; x=1694184664; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hs96RkX0Bs6rVbSS5Vlf14y81FA8kuiJnqayrwEbecQ=;
-        b=dKRgxqOZGKu63Rw4FJrDude6R/e+npStAq5wo/2ASjM0liCuvsw0V1Ma+dED6Xjvrj
-         kXbszk5nELDOT3C92ayLb9cJ7jNlpt8MZoxfpIGJ4x03yUVLF0xbI2HlEfKKlAtC0prj
-         PGjT5FCrqb5L1xr36jqPFIWdCmh6ySy9EeLifP7RMPZ8ED2zpGGUQw2Quyk4A98ZXs0Y
-         ksbhSwxbgZVSNT7GQP+jWSqZeANq74axo1Vc095yNQHv6+JXFzXfD6DrHBHobxOOzo4w
-         WsvuOJfd+LH5PYKdOhjlSTaGxmIXX/OPPnKc1CXQPALt1f/xNicBi90FRQXqGBvItsBP
-         qJNQ==
+        bh=o+Vg8RKjnZm0MdBVeotaim9wQ28HoXAXQAGIgDSwDvc=;
+        b=Tv5z/YwkHkThQEQq6QpYYA+/9Nj2DVoKVNnXR+5gQuyw9jU0c8zMBy9IC6vRneK0hj
+         yI/1joWECQpTB7zJIDKUVGIqRHHgeagAwraZ3H0l09HFDTIanFlKMK+lk38RZ5/eQLtO
+         l7pdzAmsa78P/GzNST1DzUcNSVbfgT52RvmnGwwJZcWWtPaQiUX015BypIjv0+u8aSVL
+         yMgWFOcQu0zkraSJixJX9pHBozQwKjkdP4UYNb+723LVy8PjEbwh1LuXthplLZYE4zCi
+         ClVXA4CpE/VuANHElCLPB6e4AY1teUGkGg6LkC+abnA5CLxsS9WO6M0x92/jyzDygQHi
+         jjsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693575369; x=1694180169;
-        h=content-transfer-encoding:cc:to:from:subject:references
-         :mime-version:message-id:in-reply-to:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=hs96RkX0Bs6rVbSS5Vlf14y81FA8kuiJnqayrwEbecQ=;
-        b=MiWTo9vtYcsa6pLhXrcWU3i+VfMX9yEPfgAKYMOnJXA8TU75FKudEZaJ7fICx0tQoE
-         +Qn7BtPliGMpJUWg2NTMiom+0Qrzbu7eLHZGCL1+z7tnp+0YNvUrymy2kA4B6e6QGH4P
-         JzMH6gmx1U+FnXEXbwWfCHrqT8/CqCVAj8Kg6oN2gs5RGG1pyR2V0zUa+1oaWdIutu+a
-         snCZk+MiNTXLUL5SOb9qi2xpLvYCiaa8/hqJNoVH7xJFLo+Zakhr5PtoiUkajnr6ILMa
-         QmUVJESoIijtcEVFG+8TrgS2a488+hQya2DDtP7UuAtU06xye6Ftg9WghOSyT42FDhaL
-         iyOA==
-X-Gm-Message-State: AOJu0Yy+2BdB1ekxZT2D9l+OgecT+0t3ak93Rwi0kOe4CmJJEeixrPVZ
-        NX7B4Ae6bVzXkE0x8NSdkI03kMUgv98=
-X-Google-Smtp-Source: AGHT+IGiFKa3PCjqpf7I5iosL5+T4ukZZPg+2WmP+4QgF490P0QuVsIKcJMTlUKtCTXXjrDlVBJGz9fet/w=
-X-Received: from sport.zrh.corp.google.com ([2a00:79e0:9d:4:bd96:fa13:5419:ea62])
- (user=gnoack job=sendgmr) by 2002:aa7:cd6f:0:b0:52a:f5f:8574 with SMTP id
- ca15-20020aa7cd6f000000b0052a0f5f8574mr87797edb.1.1693575369494; Fri, 01 Sep
- 2023 06:36:09 -0700 (PDT)
-Date:   Fri, 1 Sep 2023 15:35:59 +0200
-In-Reply-To: <20230825.ohtoh6aivahX@digikod.net>
-Message-Id: <20230901133559.gazeeteejw2ebpxm@google.com>
-Mime-Version: 1.0
-References: <20230814172816.3907299-1-gnoack@google.com> <20230814172816.3907299-3-gnoack@google.com>
- <20230818.HopaLahS0qua@digikod.net> <ZOjN7dub5QGJOzSX@google.com> <20230825.ohtoh6aivahX@digikod.net>
-Subject: Re: [PATCH v3 2/5] selftests/landlock: Test ioctl support
-From:   "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
-To:     "=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>
-Cc:     linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>,
-        Jorge Lucangeli Obes <jorgelo@chromium.org>,
-        Allen Webb <allenwebb@google.com>,
-        Dmitry Torokhov <dtor@google.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        Matt Bobrowski <repnop@google.com>,
-        linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+        d=1e100.net; s=20221208; t=1693579864; x=1694184664;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=o+Vg8RKjnZm0MdBVeotaim9wQ28HoXAXQAGIgDSwDvc=;
+        b=HtTpvbxp44hNCeFi6XFZ/2Dr7YKtVs72DqEp655xuTEbNQ8hOHG/Kqyc6ZtzAa0a/y
+         Cc2Z0nsXPIN5V048C4aklX0wRpaTacAR4ribFCWz00Ph/ddkVx54Ju5wYus1Lplo9WOi
+         3W2zdIT/oRse2eS92ncLOKh+capxCPUit8BdB2pTUv0z2csuY0LwF/ndlp6m49cPfxnc
+         QBf5flfJ8LRRPu2+XFUtdenADup+DeuNiLkTLLdyFrWOYCqRSgUN999E6/Maj1gUy3do
+         UpNPpjVSklZJzveRy7wzUYReY/B61kKSjKFXvQKsxaDc0wrTrAwN1CZh8OlgHOy3/i/H
+         0cNA==
+X-Gm-Message-State: AOJu0YytqW8HWPRkaVUMY9KwtHcnd6eYH11Ahdv/uTDwidvWvjL/a+dW
+        fWYNqjojwCikFxTnvqhYLNxjfgQoVxb0/7+W4g8arw==
+X-Google-Smtp-Source: AGHT+IGt6vgaVsXTsBi+UPDBHzORzZrCU8BtLF5CuWK7yQLdQ9iNgvQ0h8CZqcsGkenoaFmo4fmlzP5HFdi/x+/ykO4=
+X-Received: by 2002:a0c:a99e:0:b0:626:f3d:9e46 with SMTP id
+ a30-20020a0ca99e000000b006260f3d9e46mr2236138qvb.18.1693579864076; Fri, 01
+ Sep 2023 07:51:04 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230831203647.558079-1-mclapinski@google.com>
+ <20230831203647.558079-2-mclapinski@google.com> <20230901-lockt-erbfolge-e1f9a26f0d63@brauner>
+In-Reply-To: <20230901-lockt-erbfolge-e1f9a26f0d63@brauner>
+From:   =?UTF-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>
+Date:   Fri, 1 Sep 2023 16:50:53 +0200
+Message-ID: <CAAi7L5f1KYrAyCYLzUN0dSy6xuQCGcC7SQML4+KUdxnQ6RaFfg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] fcntl: add fcntl(F_CHECK_ORIGINAL_MEMFD)
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jeff Xu <jeffxu@google.com>, Aleksa Sarai <cyphar@cyphar.com>,
+        Daniel Verkamp <dverkamp@chromium.org>,
+        Kees Cook <keescook@chromium.org>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello!
+On Fri, Sep 1, 2023 at 2:56=E2=80=AFPM Christian Brauner <brauner@kernel.or=
+g> wrote:
+>
+> On Thu, Aug 31, 2023 at 10:36:46PM +0200, Michal Clapinski wrote:
+> > Add a way to check if an fd points to the memfd's original open fd
+> > (the one created by memfd_create).
+> > Useful because only the original open fd can be both writable and
+> > executable.
+> >
+> > Signed-off-by: Michal Clapinski <mclapinski@google.com>
+> > ---
+> >  fs/fcntl.c                 | 3 +++
+> >  include/uapi/linux/fcntl.h | 9 +++++++++
+> >  2 files changed, 12 insertions(+)
+> >
+> > diff --git a/fs/fcntl.c b/fs/fcntl.c
+> > index e871009f6c88..301527e07a4d 100644
+> > --- a/fs/fcntl.c
+> > +++ b/fs/fcntl.c
+> > @@ -419,6 +419,9 @@ static long do_fcntl(int fd, unsigned int cmd, unsi=
+gned long arg,
+> >       case F_SET_RW_HINT:
+> >               err =3D fcntl_rw_hint(filp, cmd, arg);
+> >               break;
+> > +     case F_CHECK_ORIGINAL_MEMFD:
+> > +             err =3D !(filp->f_mode & FMODE_WRITER);
+> > +             break;
+>
+> Honestly, make this an ioctl on memfds. This is so specific that it
+> really doesn't belong into fcntl().
 
-On Fri, Aug 25, 2023 at 07:07:01PM +0200, Micka=C3=ABl Sala=C3=BCn wrote:
-> On Fri, Aug 25, 2023 at 05:51:09PM +0200, G=C3=BCnther Noack wrote:
-> > Hello!
-> >=20
-> > On Fri, Aug 18, 2023 at 07:06:07PM +0200, Micka=C3=ABl Sala=C3=BCn wrot=
-e:
-> > > On Mon, Aug 14, 2023 at 07:28:13PM +0200, G=C3=BCnther Noack wrote:
-> > > > @@ -3639,7 +3639,7 @@ TEST_F_FORK(ftruncate, open_and_ftruncate)
-> > > >  	};
-> > > >  	int fd, ruleset_fd;
-> > > > =20
-> > > > -	/* Enable Landlock. */
-> > > > +	/* Enables Landlock. */
-> > > >  	ruleset_fd =3D create_ruleset(_metadata, variant->handled, rules)=
-;
-> > > >  	ASSERT_LE(0, ruleset_fd);
-> > > >  	enforce_ruleset(_metadata, ruleset_fd);
-> > > > @@ -3732,6 +3732,96 @@ TEST(memfd_ftruncate)
-> > > >  	ASSERT_EQ(0, close(fd));
-> > > >  }
-> > >=20
-> > > We should also check with O_PATH to make sure the correct error is
-> > > returned (and not EACCES).
-> >=20
-> > Is this remark referring to the code before it or after it?
-> >=20
-> > My interpretation is that you are asking to test that test_fioqsize_ioc=
-tl() will
-> > return errnos correctly?  Do I understand that correctly?  (I think tha=
-t would
-> > be a little bit overdone, IMHO - it's just a test utility of ~10 lines =
-after
-> > all, which is below the threshold where it can be verified by staring a=
-t it for
-> > a bit. :))
->=20
-> I was refering to the previous memfd_ftruncate test, which is changed
-> with a next patch. We should check the access rights tied (and checkd)
-> to FD (i.e. truncate and ioctl) opened with O_PATH.
-
-OK, I added a test that checks ioctl(2) and ftruncate(2) on files that
-were opened with O_PATH, both before and after enabling Landlock.
-ftruncate() and ioctl() always give an EBADF error, both before and
-after enabling Landlock (as described in open(2) in the section about
-O_PATH).
-
-A bit outside of the IOCTL path set scope:
-
-I was surprised that it is even possible to successfully open a file
-with O_PATH, even after Landlock is enabled and restricts all it can
-in that file hierarchy.  This lets you detect that a file exists, even
-when that file is in a directory whose contents you are otherwise not
-permitted to list due to Landlock.
-
-The logic for that is in the get_required_file_open_access() function.
-Should we add a "LANDLOCK_ACCESS_FS_PATH_FILE" right, which would work
-similar to LANDLOCK_ACCESS_FS_READ_FILE and
-LANDLOCK_ACCESS_FS_WRITE_FILE, so that this can be restricted?
-
-=E2=80=94G=C3=BCnther
-
+I've never touched ioctls but if I'm correct, I can't just add it to
+memfd. I would have to add it to the underlying fs, so hugetlbfs and
+shmem (which I think can be defined as ramfs so also there). File
+sealing fcntl is already memfd specific. Are you sure ioctl will be a
+better idea?
