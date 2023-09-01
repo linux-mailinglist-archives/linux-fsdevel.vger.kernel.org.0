@@ -2,100 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B5387903DD
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Sep 2023 00:55:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BC9479038F
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Sep 2023 00:17:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351054AbjIAWzF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 Sep 2023 18:55:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43350 "EHLO
+        id S1350817AbjIAWOe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 Sep 2023 18:14:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244369AbjIAWzE (ORCPT
+        with ESMTP id S1350889AbjIAWOU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 Sep 2023 18:55:04 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 124B81730;
-        Fri,  1 Sep 2023 14:06:08 -0700 (PDT)
+        Fri, 1 Sep 2023 18:14:20 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 207B63589;
+        Fri,  1 Sep 2023 15:02:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1693602368; x=1725138368;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=XHxocslFLQU8xD6gE26XwrfQlSg9WQxfvtoRwUmoXd4=;
-  b=fs73fJm9bRJyKBZKwbD5mEgyXK9s/AowGNS+H0gXHA0EQQMa1nzj0JyO
-   4ivvodVmSEvCTmNx1xrrPG92m1n7/EkRzmofX9AcXraGnN9/xc4Xh6ZG3
-   r17c6FwtwVCMhafLGgi3Sd3anIHvouYoJWsbVtWB5atZgqa0tZ4kh6j80
-   EFKQ+sRpiruArmeWkbRk9jIoYa/6oLBssZoPneaIcO7Ca9aqEuR30pD4j
-   bKFwnbrDOw1uWI+bsld1+fUELpibsdIlhMv8O6msge/MjCVUs3juuNPv0
-   Bu48qxjBE2vnB0/wR3uxxdkcZAipPR81Pe31J6LaK0FJtf82Ckk21l7eo
+  t=1693605736; x=1725141736;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=nVfmxbqDXIh8A00RhIxKfwpnsfXzBnk7+8/dEd/IxcY=;
+  b=HyombUfGICAFZXOK8ShUSLCvD94Cp/7oB4uMd6qnVMTXoBLYdWegwges
+   i59rlSL+7hm7e+c7/JAOI7sWdHGpwyj+opENZ7ahuW6KxeFVBHxsq5UZT
+   J12g4EfRGpIRF2EnogQgMsGic9R7RBdaUC0XVZXOnBAhhONiNX6it7PfG
+   AOp3zb+uMBh/qPyHhGGxG5z+EHsW6SyydcmtJlkfCNytmGGZqYLJXW/PF
+   68StLWdHu0Cs7Yp9wEcOOcJuJ6uvCjYrdyqjD+5VDAvS1aT4hVZ5kMalF
+   hHFTwBNDtlrmiXXULxATR+44VixJIBimnLLYcne4X5/0o2y/zM9z5nXKb
    w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10819"; a="379031042"
-X-IronPort-AV: E=Sophos;i="6.02,220,1688454000"; 
-   d="scan'208";a="379031042"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2023 14:06:07 -0700
+X-IronPort-AV: E=McAfee;i="6600,9927,10819"; a="442715689"
+X-IronPort-AV: E=Sophos;i="6.02,221,1688454000"; 
+   d="scan'208";a="442715689"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2023 15:02:15 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10819"; a="1070871974"
-X-IronPort-AV: E=Sophos;i="6.02,220,1688454000"; 
-   d="scan'208";a="1070871974"
-Received: from jroorda-mobl4.ger.corp.intel.com (HELO box.shutemov.name) ([10.252.32.118])
-  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2023 14:05:58 -0700
-Received: by box.shutemov.name (Postfix, from userid 1000)
-        id 94702104994; Sat,  2 Sep 2023 00:05:55 +0300 (+03)
-Date:   Sat, 2 Sep 2023 00:05:55 +0300
-From:   kirill.shutemov@linux.intel.com
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     seanjc@google.com, ackerleytng@google.com,
-        akpm@linux-foundation.org, anup@brainfault.org,
-        aou@eecs.berkeley.edu, chao.p.peng@linux.intel.com,
-        chenhuacai@kernel.org, david@redhat.com, isaku.yamahata@gmail.com,
-        jarkko@kernel.org, jmorris@namei.org,
-        kvm-riscv@lists.infradead.org, kvm@vger.kernel.org,
-        kvmarm@lists.linux.dev, liam.merwick@oracle.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-mm@kvack.org,
-        linux-riscv@lists.infradead.org,
-        linux-security-module@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, mail@maciej.szmigiero.name,
-        maz@kernel.org, michael.roth@amd.com, mpe@ellerman.id.au,
-        oliver.upton@linux.dev, palmer@dabbelt.com,
-        paul.walmsley@sifive.com, paul@paul-moore.com, pbonzini@redhat.com,
-        qperret@google.com, serge@hallyn.com, tabba@google.com,
-        vannapurve@google.com, wei.w.wang@intel.com, willy@infradead.org,
-        yu.c.zhang@linux.intel.com
-Subject: Re: [PATCH gmem FIXUP] mm, compaction: make testing
- mapping_unmovable() safe
-Message-ID: <20230901210555.j5d5a4azmkxzlnn2@box.shutemov.name>
-References: <20230901082025.20548-2-vbabka@suse.cz>
+X-IronPort-AV: E=McAfee;i="6600,9927,10819"; a="913841298"
+X-IronPort-AV: E=Sophos;i="6.02,221,1688454000"; 
+   d="scan'208";a="913841298"
+Received: from leihuan1-mobl.amr.corp.intel.com (HELO [10.0.2.15]) ([10.92.27.231])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2023 15:02:10 -0700
+Message-ID: <ec4c69a4-c1fb-d18f-d467-316161c51ac4@linux.intel.com>
+Date:   Fri, 1 Sep 2023 18:02:03 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230901082025.20548-2-vbabka@suse.cz>
-X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH v1] fs/fuse: Fix missing FOLL_PIN for direct-io
+Content-Language: en-US
+To:     Bernd Schubert <bschubert@ddn.com>,
+        Bernd Schubert <bernd.schubert@fastmail.fm>,
+        linux-kernel@vger.kernel.org
+Cc:     miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
+        David Howells <dhowells@redhat.com>
+References: <1693334193-7733-1-git-send-email-lei.huang@linux.intel.com>
+ <572dcce8-f70c-2d24-f844-a3e8abbd4bd8@fastmail.fm>
+ <5eedd8a6-02d9-bc85-df43-6aa5f7497288@linux.intel.com>
+ <0ffc15ea-6803-acf3-d840-378a15c7c073@ddn.com>
+From:   Lei Huang <lei.huang@linux.intel.com>
+In-Reply-To: <0ffc15ea-6803-acf3-d840-378a15c7c073@ddn.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-7.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 01, 2023 at 10:20:26AM +0200, Vlastimil Babka wrote:
-> As Kirill pointed out, mapping can be removed under us due to
-> truncation. Test it under folio lock as already done for the async
-> compaction / dirty folio case. To prevent locking every folio with
-> mapping to do the test, do it only for unevictable folios, as we can
-> expect the unmovable mapping folios are also unevictable - it is the
-> case for guest memfd folios.
-> 
-> Also incorporate comment update suggested by Matthew.
-> 
-> Fixes: 3424873596ce ("mm: Add AS_UNMOVABLE to mark mapping as completely unmovable")
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+Hi Bernd,
 
-Superficially looks good to me. But I don't really understand this
-code path to Ack.
+Actually, we do not have a simple code to reproduce this issue yet. We 
+observed the issues in a suite of tests. There are up to 8 tests 
+scheduled to run concurrently with many small tests. I could observe 
+about 5~10 cases with wrong data in one day. I tried repeating a single 
+test for very long time and did not observe the issue. I guess it would 
+help to run simultaneously multiple processes causing bad memory 
+fragmentation. Please let me know if you need more information. Thank 
+you very much for looking into this issue. Have a great weekend!
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+Best Regards,
+-lei
+
+On 9/1/23 14:05, Bernd Schubert wrote:
+> Hi Lei,
+> 
+> On 8/30/23 03:03, Lei Huang wrote:
+>> Hi Bernd,
+>>
+>> Thank you very much for your reply!
+>>
+>>  > Hmm, iov_iter_extract_pages does not exists for a long time and the 
+>> code
+>>  > in fuse_get_user_pages didn't change much. So if you are right, there
+>>  > would be a long term data corruption for page migrations? And a back
+>>  > port to old kernels would not be obvious?
+>>
+>> Right. The issue has been reproduced under various versions of 
+>> kernels, ranging from 3.10.0 to 6.3.6 in my tests. It would be 
+>> different to make a patch under older kernels like 3.10.0. One way I 
+>> tested, one can query
+>> the physical pages associated with read buffer after data is ready 
+>> (right before writing the data into read buffer). This seems resolving 
+>> the issue in my tests.
+>>
+>>
+>>  > What confuses me further is that
+>>  > commit 85dd2c8ff368 does not mention migration or corruption, although
+>>  > lists several other advantages for iov_iter_extract_pages. Other 
+>> commits
+>>  > using iov_iter_extract_pages point to fork - i.e. would your data
+>>  > corruption be possibly related that?
+>>
+>> As I mentioned above, the issue seems resolved if we query the 
+>> physical pages as late as right before writing data into read buffer. 
+>> I think the root cause is page migration.
+>>
+> 
+> out of interest, what is your exact reproducer and how much time does i 
+> take? I'm just trying passthrough_hp(*) and ql-fstest (**) and don't get 
+> and issue after about 1h run time. I let it continue over the weekend. 
+> The system is an older dual socket xeon.
+> 
+> (*) with slight modification for passthrough_hp to disable O_DIRECT for 
+> the underlying file system. It is running on xfs on an nvme.
+> 
+> (**) https://github.com/bsbernd/ql-fstest
+> 
+> 
+> Pinning the pages is certainly a good idea, I would just like to 
+> understand how severe the issue is. And would like to test 
+> backports/different patch on older kernels.
+> 
+> 
+> Thanks,
+> Bernd
+> 
+> 
