@@ -2,55 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 05B1178FDC0
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Sep 2023 14:51:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DA2578FDD8
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Sep 2023 14:56:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244228AbjIAMvP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 Sep 2023 08:51:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50052 "EHLO
+        id S1349491AbjIAM4h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 Sep 2023 08:56:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32832 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244118AbjIAMvP (ORCPT
+        with ESMTP id S245413AbjIAM4g (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 Sep 2023 08:51:15 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 479BE1726;
-        Fri,  1 Sep 2023 05:50:51 -0700 (PDT)
+        Fri, 1 Sep 2023 08:56:36 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B23010EF;
+        Fri,  1 Sep 2023 05:56:23 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id EE22260DFF;
-        Fri,  1 Sep 2023 12:50:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92AD8C433C8;
-        Fri,  1 Sep 2023 12:50:36 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id AEE6CB8252D;
+        Fri,  1 Sep 2023 12:56:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E410C433C7;
+        Fri,  1 Sep 2023 12:56:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1693572638;
-        bh=nMZ96azLHYWOYXamjxieuqFfT91YKa/NfwWGHknuPOA=;
+        s=k20201202; t=1693572980;
+        bh=32kmGOuLmvSvjrq9/iH5am+PYDV+51XH+7LUiRgdtyQ=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Z8wsQTwLmYV87LF3PK4H2AQ7G1wx/tK9CDEsJ/DyuLkl21MZG6X5XYFgyIrPrP7Vq
-         a7NP/uk99iNgEq6sSEUfRzicNdhdarQM0aI0Je56+u4rmDeO9xkiCzV561wHIXOM4q
-         x8MaI0RWxXkHXLJCLZsaKRBOtiYGRUcJaODa6gPqTOAiAzJ26qL6DBEVsF6Ace5KjC
-         +G4rdN1g1utaP9bkhWy6SoNufaCKGaR50a9tkSHr2HgB/HIfQg1VRU49174lyRcTe4
-         /0QR7t888E4uYAZFkq5a8rMhFbPbAO5ZncJbbWxn3n03+EQyOzYlm9b9CO5+jupH1L
-         qaoteLrPPTfbw==
-Date:   Fri, 1 Sep 2023 14:50:33 +0200
+        b=agKgWGYzqr9AMz06E7FZAKXggRL+XYnvCI6w+0J+eP9qmZrfPDgzoEMRWeqqD2KLN
+         hdIc08wBTD57fdfCiLegx5Y6YtMagxrIBi6svc/nLKOBrFzUOoL/MYAoP2D3bIAxwL
+         +osxDjtT4fcRTX31kSN4sTRHz1SQHo3mS0w31DYZwji7tHlPS2r8pkPhsJJFM+rEf+
+         THYKVJmdg0D7f4dheChHut/+D9PxDSTDQ/W6sQgysq4HQ/QtmJ/6JOcBGmwluOZPvh
+         NS3BmKVwt7bxo7ci5oJzxl6AYmMp05+OOrFFwOaoGxhSReu9vxzM3dM2qxtEH/fI3f
+         G4St1cd9LpQUA==
+Date:   Fri, 1 Sep 2023 14:56:14 +0200
 From:   Christian Brauner <brauner@kernel.org>
-To:     Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc:     Bernd Schubert <bschubert@ddn.com>, linux-fsdevel@vger.kernel.org,
-        miklos@szeredi.hu, dsingh@ddn.com,
-        Josef Bacik <josef@toxicpanda.com>,
-        linux-btrfs@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH 1/2] fs: Add and export file_needs_remove_privs
-Message-ID: <20230901-briefe-amtieren-0c8b555219cb@brauner>
-References: <20230831112431.2998368-1-bschubert@ddn.com>
- <20230831112431.2998368-2-bschubert@ddn.com>
- <20230831-letzlich-eruption-9187c3adaca6@brauner>
- <99bc64c2-44e2-5000-45b7-d9343bcc8fb8@fastmail.fm>
+To:     Michal Clapinski <mclapinski@google.com>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jeff Xu <jeffxu@google.com>, Aleksa Sarai <cyphar@cyphar.com>,
+        Daniel Verkamp <dverkamp@chromium.org>,
+        Kees Cook <keescook@chromium.org>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH 1/2] fcntl: add fcntl(F_CHECK_ORIGINAL_MEMFD)
+Message-ID: <20230901-lockt-erbfolge-e1f9a26f0d63@brauner>
+References: <20230831203647.558079-1-mclapinski@google.com>
+ <20230831203647.558079-2-mclapinski@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <99bc64c2-44e2-5000-45b7-d9343bcc8fb8@fastmail.fm>
+In-Reply-To: <20230831203647.558079-2-mclapinski@google.com>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
         RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
@@ -61,61 +65,29 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 31, 2023 at 04:17:01PM +0200, Bernd Schubert wrote:
+On Thu, Aug 31, 2023 at 10:36:46PM +0200, Michal Clapinski wrote:
+> Add a way to check if an fd points to the memfd's original open fd
+> (the one created by memfd_create).
+> Useful because only the original open fd can be both writable and
+> executable.
 > 
+> Signed-off-by: Michal Clapinski <mclapinski@google.com>
+> ---
+>  fs/fcntl.c                 | 3 +++
+>  include/uapi/linux/fcntl.h | 9 +++++++++
+>  2 files changed, 12 insertions(+)
 > 
-> On 8/31/23 15:40, Christian Brauner wrote:
-> > On Thu, Aug 31, 2023 at 01:24:30PM +0200, Bernd Schubert wrote:
-> > > File systems want to hold a shared lock for DIO writes,
-> > > but may need to drop file priveliges - that a requires an
-> > > exclusive lock. The new export function file_needs_remove_privs()
-> > > is added in order to first check if that is needed.
-> > > 
-> > > Cc: Miklos Szeredi <miklos@szeredi.hu>
-> > > Cc: Dharmendra Singh <dsingh@ddn.com>
-> > > Cc: Josef Bacik <josef@toxicpanda.com>
-> > > Cc: linux-btrfs@vger.kernel.org
-> > > Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> > > Cc: Christian Brauner <brauner@kernel.org>
-> > > Cc: linux-fsdevel@vger.kernel.org
-> > > Signed-off-by: Bernd Schubert <bschubert@ddn.com>
-> > > ---
-> > >   fs/inode.c         | 8 ++++++++
-> > >   include/linux/fs.h | 1 +
-> > >   2 files changed, 9 insertions(+)
-> > > 
-> > > diff --git a/fs/inode.c b/fs/inode.c
-> > > index 67611a360031..9b05db602e41 100644
-> > > --- a/fs/inode.c
-> > > +++ b/fs/inode.c
-> > > @@ -2013,6 +2013,14 @@ int dentry_needs_remove_privs(struct mnt_idmap *idmap,
-> > >   	return mask;
-> > >   }
-> > > +int file_needs_remove_privs(struct file *file)
-> > > +{
-> > > +	struct dentry *dentry = file_dentry(file);
-> > > +
-> > > +	return dentry_needs_remove_privs(file_mnt_idmap(file), dentry);
-> > 
-> > Ugh, I wanted to propose to get rid of this dentry dance but I propsed
-> > that before and remembered it's because of __vfs_getxattr() which is
-> > called from the capability security hook that we need it...
-> 
-> Is there anything specific you are suggesting?
+> diff --git a/fs/fcntl.c b/fs/fcntl.c
+> index e871009f6c88..301527e07a4d 100644
+> --- a/fs/fcntl.c
+> +++ b/fs/fcntl.c
+> @@ -419,6 +419,9 @@ static long do_fcntl(int fd, unsigned int cmd, unsigned long arg,
+>  	case F_SET_RW_HINT:
+>  		err = fcntl_rw_hint(filp, cmd, arg);
+>  		break;
+> +	case F_CHECK_ORIGINAL_MEMFD:
+> +		err = !(filp->f_mode & FMODE_WRITER);
+> +		break;
 
-No, it's not actionable for you here. It would require adding inode
-methods to set and get filesystem capabilities and then converting it in
-such a way that we don't need to rely on passing dentries around. That's
-a separate larger patchset that we would need with surgery across a
-bunch of filesystems and the vfs - Seth (Forshee) has been working on this.
-
-The callchains are just pointless which I remembered when I saw the
-patchset:
-
-file_needs_remove_privs(file)
--> dentry_needs_remove_privs(dentry)
-   -> inode = d_inode(dentry)
-      // do inode stuff
-      // security_needs_*(dentry)
-
-point is ideally we shouldn't need the dentry in *remove_privs() at all.
+Honestly, make this an ioctl on memfds. This is so specific that it
+really doesn't belong into fcntl().
