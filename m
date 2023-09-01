@@ -2,125 +2,183 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 29AA3790212
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Sep 2023 20:34:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E4847902CE
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Sep 2023 22:25:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350596AbjIASei (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 Sep 2023 14:34:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54422 "EHLO
+        id S1350720AbjIAUZC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 Sep 2023 16:25:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36024 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232021AbjIASeh (ORCPT
+        with ESMTP id S1350717AbjIAUZB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 Sep 2023 14:34:37 -0400
-Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA84E19E
-        for <linux-fsdevel@vger.kernel.org>; Fri,  1 Sep 2023 11:34:33 -0700 (PDT)
-Received: by mail-pl1-x62c.google.com with SMTP id d9443c01a7336-1c1ff5b741cso18917765ad.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 01 Sep 2023 11:34:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1693593273; x=1694198073; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Tq1EURtK5iT/JOAA9Bn+fOSTaz8ZmzG3v1Z2miOriec=;
-        b=Sh07G1cA259YD6yFoXtHN42kG7guoGfOiTjjthwTEd+vzIV7SUtV6cSQgp1h6aVqGu
-         i+T4RJ6Q8j9knuxgV4ak3RlGOpQgmWDTT3FwbwFLgS33xkaec/t9fX3ETABJrUiUlQa6
-         gwM0vHf38liWh0kYbFyjFRtNHto8rH1bp9JtA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693593273; x=1694198073;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Tq1EURtK5iT/JOAA9Bn+fOSTaz8ZmzG3v1Z2miOriec=;
-        b=FgT2JJcsQ/T3zmGWTMLz4dbXq6M3aN06AhUy1SSFChBvHfKSysJANnmleh+Okl0Uh5
-         +mdcYMe1FV3zQTWtF5oUOg+M77pJ8ZGTcTlLIMjGVoU+KhTdl8I/5pfXPzyxweHe5gC9
-         cZnwk3EoGGa8OQCTj9cFIWIq0MS4MAumNZUbOZwk1WADC99ax16TimMSu2ORIFqRSAuu
-         fKA/c9X0Gk6iF3hNGiHodQ/w/9j+yCdlVn30mtf/1xEWLn8TBgiGIPYBygH8uRCocXWL
-         TV0TDzAxAB1tWrp7FS/S0O8ihkPGY9xTEEj7Nw4kd5OyYhIfzXX39SFpkxXtRp97Vmys
-         rusg==
-X-Gm-Message-State: AOJu0YxX8X6rYb+BLfVx8wMZLgdbBjWkci6YVMxxC/RqgsSIYiHwDZqg
-        vKv9fVFIyWvF0xZcgtSIQ8GdBQ==
-X-Google-Smtp-Source: AGHT+IFryZGHKWCVOHEdkh98Zm1lPohKlq7V2+pyDpR6BzIqdx+03ZDWCYThp7Q1cOAgeQiMqcM8nA==
-X-Received: by 2002:a17:902:c1ca:b0:1b8:8223:8bdd with SMTP id c10-20020a170902c1ca00b001b882238bddmr3566419plc.59.1693593273272;
-        Fri, 01 Sep 2023 11:34:33 -0700 (PDT)
-Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id 21-20020a170902c25500b001aaecc0b6ffsm3314254plg.160.2023.09.01.11.34.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Sep 2023 11:34:32 -0700 (PDT)
-Date:   Fri, 1 Sep 2023 11:34:32 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     =?utf-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jeff Xu <jeffxu@google.com>, Aleksa Sarai <cyphar@cyphar.com>,
-        Daniel Verkamp <dverkamp@chromium.org>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH 1/2] fcntl: add fcntl(F_CHECK_ORIGINAL_MEMFD)
-Message-ID: <202309011133.10D66D0785@keescook>
-References: <20230831203647.558079-1-mclapinski@google.com>
- <20230831203647.558079-2-mclapinski@google.com>
- <20230901-lockt-erbfolge-e1f9a26f0d63@brauner>
- <CAAi7L5f1KYrAyCYLzUN0dSy6xuQCGcC7SQML4+KUdxnQ6RaFfg@mail.gmail.com>
+        Fri, 1 Sep 2023 16:25:01 -0400
+Received: from smtp-bc0b.mail.infomaniak.ch (smtp-bc0b.mail.infomaniak.ch [IPv6:2001:1600:3:17::bc0b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDF05E7E
+        for <linux-fsdevel@vger.kernel.org>; Fri,  1 Sep 2023 13:24:56 -0700 (PDT)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4RcqJk4phnzMqJ78;
+        Fri,  1 Sep 2023 20:24:54 +0000 (UTC)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4RcqJj6f1pzMpnPd;
+        Fri,  1 Sep 2023 22:24:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1693599894;
+        bh=EgaudXTLVB2Z3ZuXye/H8fFu5K/48RR41qfT8koWAoA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=IbPX/HCJQAuKsDQgr2BmAGc3Pjryrjdw7irGRXwkVjJ9Av8Y78+BcA/RgJgPq1M0a
+         +jual7Izi5b8VKage26qXj/Ulr3C4gzpMcFjL72HXNIXpvslc17cYnsVhGDatj/UPU
+         zHizYs+Gj9JuURNoSuKj9MWJjd4aihiG/Lk9I6hw=
+Date:   Fri, 1 Sep 2023 22:24:43 +0200
+From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To:     =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Cc:     linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>,
+        Jorge Lucangeli Obes <jorgelo@chromium.org>,
+        Allen Webb <allenwebb@google.com>,
+        Dmitry Torokhov <dtor@google.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        Matt Bobrowski <repnop@google.com>,
+        linux-fsdevel@vger.kernel.org,
+        Christian Brauner <brauner@kernel.org>,
+        Xiu Jianfeng <xiujianfeng@huawei.com>
+Subject: Re: [PATCH v3 2/5] selftests/landlock: Test ioctl support
+Message-ID: <20230901.OhT2suinooGh@digikod.net>
+References: <20230814172816.3907299-1-gnoack@google.com>
+ <20230814172816.3907299-3-gnoack@google.com>
+ <20230818.HopaLahS0qua@digikod.net>
+ <ZOjN7dub5QGJOzSX@google.com>
+ <20230825.ohtoh6aivahX@digikod.net>
+ <20230901133559.gazeeteejw2ebpxm@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAAi7L5f1KYrAyCYLzUN0dSy6xuQCGcC7SQML4+KUdxnQ6RaFfg@mail.gmail.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-        autolearn_force=no version=3.4.6
+In-Reply-To: <20230901133559.gazeeteejw2ebpxm@google.com>
+X-Infomaniak-Routing: alpha
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 01, 2023 at 04:50:53PM +0200, MichaÅ‚ CÅ‚apiÅ„ski wrote:
-> On Fri, Sep 1, 2023 at 2:56â€¯PM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > On Thu, Aug 31, 2023 at 10:36:46PM +0200, Michal Clapinski wrote:
-> > > Add a way to check if an fd points to the memfd's original open fd
-> > > (the one created by memfd_create).
-> > > Useful because only the original open fd can be both writable and
-> > > executable.
-> > >
-> > > Signed-off-by: Michal Clapinski <mclapinski@google.com>
-> > > ---
-> > >  fs/fcntl.c                 | 3 +++
-> > >  include/uapi/linux/fcntl.h | 9 +++++++++
-> > >  2 files changed, 12 insertions(+)
-> > >
-> > > diff --git a/fs/fcntl.c b/fs/fcntl.c
-> > > index e871009f6c88..301527e07a4d 100644
-> > > --- a/fs/fcntl.c
-> > > +++ b/fs/fcntl.c
-> > > @@ -419,6 +419,9 @@ static long do_fcntl(int fd, unsigned int cmd, unsigned long arg,
-> > >       case F_SET_RW_HINT:
-> > >               err = fcntl_rw_hint(filp, cmd, arg);
-> > >               break;
-> > > +     case F_CHECK_ORIGINAL_MEMFD:
-> > > +             err = !(filp->f_mode & FMODE_WRITER);
-> > > +             break;
-> >
-> > Honestly, make this an ioctl on memfds. This is so specific that it
-> > really doesn't belong into fcntl().
+On Fri, Sep 01, 2023 at 03:35:59PM +0200, Günther Noack wrote:
+> Hello!
 > 
-> I've never touched ioctls but if I'm correct, I can't just add it to
-> memfd. I would have to add it to the underlying fs, so hugetlbfs and
-> shmem (which I think can be defined as ramfs so also there). File
-> sealing fcntl is already memfd specific. Are you sure ioctl will be a
-> better idea?
+> On Fri, Aug 25, 2023 at 07:07:01PM +0200, Mickaël Salaün wrote:
+> > On Fri, Aug 25, 2023 at 05:51:09PM +0200, Günther Noack wrote:
+> > > Hello!
+> > > 
+> > > On Fri, Aug 18, 2023 at 07:06:07PM +0200, Mickaël Salaün wrote:
+> > > > On Mon, Aug 14, 2023 at 07:28:13PM +0200, Günther Noack wrote:
+> > > > > @@ -3639,7 +3639,7 @@ TEST_F_FORK(ftruncate, open_and_ftruncate)
+> > > > >  	};
+> > > > >  	int fd, ruleset_fd;
+> > > > >  
+> > > > > -	/* Enable Landlock. */
+> > > > > +	/* Enables Landlock. */
+> > > > >  	ruleset_fd = create_ruleset(_metadata, variant->handled, rules);
+> > > > >  	ASSERT_LE(0, ruleset_fd);
+> > > > >  	enforce_ruleset(_metadata, ruleset_fd);
+> > > > > @@ -3732,6 +3732,96 @@ TEST(memfd_ftruncate)
+> > > > >  	ASSERT_EQ(0, close(fd));
+> > > > >  }
+> > > > 
+> > > > We should also check with O_PATH to make sure the correct error is
+> > > > returned (and not EACCES).
+> > > 
+> > > Is this remark referring to the code before it or after it?
+> > > 
+> > > My interpretation is that you are asking to test that test_fioqsize_ioctl() will
+> > > return errnos correctly?  Do I understand that correctly?  (I think that would
+> > > be a little bit overdone, IMHO - it's just a test utility of ~10 lines after
+> > > all, which is below the threshold where it can be verified by staring at it for
+> > > a bit. :))
+> > 
+> > I was refering to the previous memfd_ftruncate test, which is changed
+> > with a next patch. We should check the access rights tied (and checkd)
+> > to FD (i.e. truncate and ioctl) opened with O_PATH.
+> 
+> OK, I added a test that checks ioctl(2) and ftruncate(2) on files that
+> were opened with O_PATH, both before and after enabling Landlock.
+> ftruncate() and ioctl() always give an EBADF error, both before and
+> after enabling Landlock (as described in open(2) in the section about
+> O_PATH).
 
-Does this check "mean" anything for other files? Because if it's
-generically useful (and got renamed) it maybe would be right for
-fcntl...
+Good!
 
--- 
-Kees Cook
+> 
+> A bit outside of the IOCTL path set scope:
+> 
+> I was surprised that it is even possible to successfully open a file
+> with O_PATH, even after Landlock is enabled and restricts all it can
+> in that file hierarchy.  This lets you detect that a file exists, even
+> when that file is in a directory whose contents you are otherwise not
+> permitted to list due to Landlock.
+
+This is indeed intended and tested with the effective_access test.
+O_PATH is handled the same way as chdir (and similar path-based
+syscalls) and always allowed. However, I just realized that the O_PATH
+case is not explicitly mentioned in the documentation.
+
+> 
+> The logic for that is in the get_required_file_open_access() function.
+> Should we add a "LANDLOCK_ACCESS_FS_PATH_FILE" right, which would work
+> similar to LANDLOCK_ACCESS_FS_READ_FILE and
+> LANDLOCK_ACCESS_FS_WRITE_FILE, so that this can be restricted?
+
+Having a file descriptor opened with O_PATH should not give any specific
+access (hence the need to test with IOCTLs). O_PATH is designed to get an
+explicit reference to the filesystem (without the issues of paths) and
+use the related FD with *at() syscalls, including landlock_add_rule()
+with a path_beneath rule.  FDs opened with O_PATH should not be an issue
+by themselves for a sandbox, but the real issue is to discover paths,
+i.e. the directory's execute access right.  This is why I think it would
+make more sense to have something like a LANDLOCK_ACCESS_FS_WALK right
+instead. This would enable to definitely deny any access to a file
+hierarchy.
+
+For chdir-like syscalls, we could rely on path_permission(), but for a
+more holistic approach we need to properly handle the execute permission
+on directories. See Christian's comment on chdir/path_permission and the
+limit of what an LSM can infer from paths:
+https://lore.kernel.org/r/20230530-mietfrei-zynisch-8b63a8566f66@brauner
+
+We could rely on the last walked (leaf) dentry to allow or deny such
+walk, but that would still enable malicious processes to infer path
+because of intermediate walk that may return ENOENT. We could also
+return ENOENT instead of EACCES, but this would not handle the case of
+other access controls returning EACCES.
+
+With this in mind, I think the better solution is to properly check each
+intermediate directory during a path walk. This is not
+currently possible with path-based LSM hooks but I think that we could
+add a new LSM hook in filename_lookup(), close to the audit_inode()
+call, to get the necessary information about the currently walked
+directory.
+
+Simply using this new hook with Landlock would add a significant
+performance impact because of the way Landlock identifies paths (i.e.
+walk back). An interesting approach to efficiently check Landlock access
+right would be to store the collected access rights of a path in a
+cache, and use it when checking a "child" of this path. According to
+task_struct, there is only one path walk at a time per thread, which
+would enable us to have only one cached path per task and
+opportunistically use it in Landlock's is_access_to_paths_allowed() as a
+backstop to end the walk. With this trick, I think in most cases no walk
+back would be required, which would be great for performance. The main
+challenge would be to efficiently handle the ".." directories.
+See an initial approach of caching for Landlock:
+https://lore.kernel.org/r/20210630224856.1313928-1-mic@digikod.net
+
+Being able to control path walks would be a way to use (most?)
+inode-based LSM hooks for Landlock, especially the
+security_inode_permission(). Indeed. we could then tie an inode to a
+path (resolution) thanks to the cache (and potentially other caches
+according to the number of checked inodes).  This would be great for new
+access rights such as LANDLOCK_ACCESS_FS_{READ,WRITE}_METADATA.
+
+Xiu, that would be a good opportunity to continue your work, and
+probably without waiting for IMA to be converted to a proper LSM. What
+do you think?
