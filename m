@@ -2,100 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EE7B4790AF0
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Sep 2023 07:25:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16827790B3C
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Sep 2023 10:34:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235837AbjICFZh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 3 Sep 2023 01:25:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38166 "EHLO
+        id S236075AbjICIeH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 3 Sep 2023 04:34:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232157AbjICFZg (ORCPT
+        with ESMTP id S236047AbjICIeG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 3 Sep 2023 01:25:36 -0400
-Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46368CD7
-        for <linux-fsdevel@vger.kernel.org>; Sat,  2 Sep 2023 22:25:33 -0700 (PDT)
-Received: by mail-oi1-x233.google.com with SMTP id 5614622812f47-3a7e68f4214so375388b6e.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 02 Sep 2023 22:25:33 -0700 (PDT)
+        Sun, 3 Sep 2023 04:34:06 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB853189;
+        Sun,  3 Sep 2023 01:34:02 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-99bf1f632b8so75709766b.1;
+        Sun, 03 Sep 2023 01:34:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1693718732; x=1694323532; darn=vger.kernel.org;
+        d=gmail.com; s=20221208; t=1693730041; x=1694334841; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=j+Eh2A53idbaKGC4D48PHUvqh0huBtkkZ1MnEHrGGnU=;
-        b=k53OCDljq8CEDYEIqPT+yjaAypALkomF873o/7Oh7ZG1Lq0DI4C4Za0AFbp/WRJtpJ
-         26GzAhVCthjzamlHtmR7idga8OPCnNZ6lOVrxpdlWNsq4MribsUXswf3Xpa5iKnxc9bv
-         VGx1ZBqcI7ZHsITWTuDWEEeAHjHOf3XhJmVkyZrFoupcnwk0mD0thA/K5+UdsLP8bFzU
-         RbYhj2a25NvI/GdmRr9hxxVrmZ/YHJN8QoKugg5PkttUN6bsotPJkGhVBzDNSctY2K1H
-         2Mic0gS8GccvXsRUgUvoJmMq1o6yZZA1ltAt4ujnCErWue+k1pMvM6Nsde41ag8E/2rz
-         0NBg==
+        bh=bRudmkh8iHtCDXikKDGZnGkARDgSd/PV3cdSFjM4RgY=;
+        b=IPaxhmJx6JDAqesHN8IWaxBT+gqfr+/s9B9eexQNynGJN1jRAWoUNFEDwl/bQtFpFm
+         xpszhwjo/9EoT+uzZ3s3hVsVhkA64+w1pRNauFZZb+eiGkCN84kpCk6VyHAfK5w8WxIG
+         NZKzmzJyYgOfS9Uhnf8zBJHzq3lxcBFSzYm/IoKUgRH56aXF5vbtIEjQMskEnVZcGUML
+         gi8Lbb9gaz+rH7NGHBhr48pc/6Ry356bHmR+VOD761LoK0llmiq24UwMVyRw3alnyLt7
+         WiCqWsbjrzqYIVG740JJB+I7p0H+LI8N2iHnVBLDKUSBEB8ZMPzay+HOpLemQkiHqp5d
+         f+/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693718732; x=1694323532;
+        d=1e100.net; s=20221208; t=1693730041; x=1694334841;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=j+Eh2A53idbaKGC4D48PHUvqh0huBtkkZ1MnEHrGGnU=;
-        b=Xyvr8cgG+mibo8vwbkg2M4lI13rwzzJShkAaNzrFRTUcDlIbiKoir76FOzcriMfaRb
-         4D967ZZ9S3O9T+q0FyKeoNhEbiu6SxgwcY/ddeG7Iw1s/ZPpxmCjJZYQJXq5RJ4Xs/9N
-         VSMiP9JcpalDCpIQ/2Z4SS/ZB0fT3AwF7QAaDv90NAETvyBFwjCA3xrfjPcjhNlGEVNF
-         mpVkoAZ9v3Wt+i+V2Qy3RHfxPHCzE/P1CEZc/u1AHR3EMboxE1Ai7veanTUhLQIa2Ucp
-         Ib8S+RlTALTvn1h6Pt4E7Lkj69x/g69nErsLeU6rwn9UZHqmT9waqTo8gTYaEM8vsUmf
-         mvkw==
-X-Gm-Message-State: AOJu0YwE+GqfoQr0uUSsZY1/8MxDFroaGQX6GXNOU7ZpQjvOwviK6UWZ
-        FgXGpp3senNRmqBzz/LsWTUVg70nM5eUuUY+fgc=
-X-Google-Smtp-Source: AGHT+IGNq/nmzcBfE8tNNcctP8MOqZWNtdKzxAcW4XkHpsLIVYvoFFHRLzprcuZfIYR0M4JgREsJXw==
-X-Received: by 2002:a05:6808:138d:b0:3a7:82e8:8fd1 with SMTP id c13-20020a056808138d00b003a782e88fd1mr8799733oiw.20.1693718732506;
-        Sat, 02 Sep 2023 22:25:32 -0700 (PDT)
-Received: from dread.disaster.area (pa49-195-66-88.pa.nsw.optusnet.com.au. [49.195.66.88])
-        by smtp.gmail.com with ESMTPSA id 5-20020a170902c24500b001bbd1562e75sm5391337plg.55.2023.09.02.22.25.31
+        bh=bRudmkh8iHtCDXikKDGZnGkARDgSd/PV3cdSFjM4RgY=;
+        b=llmyBYbKibTh+tFvvY0AhPPVkiMeOYrKogXxf6l72MRnR4zJMx0IVBuVta/A72+g0o
+         UFKrDkWouAj5HuiH2DCdZdle05vvBB2F4Evcwx7JVWmxPOy6ueIXjZfeyQABUAFRlIJp
+         uwrZMUe/01Hcvurhj+TASQ/N5kbVwYxH0bNcuDucjSrC35A00KeMITjo3hB5xcEpWlnu
+         yBnubXjd6J/9nKJkbPUjy1C+mhgf5CxEQEcsCAg/RzHqXhReuTvZZJIrvkzUbNANPT87
+         z7xWN28WXPHCTlJ0ilCrEfOqLf5BsoiEEQAXiL8N4hV3C8C9ymXX3pgO0z1uB7J8yFlZ
+         EE/A==
+X-Gm-Message-State: AOJu0YzxBEbVKN3xPz8mlPc5VDmr5pPL4nJ6u3sIaTh0a+ch+V3Fy9qb
+        e5aSp4ySLrW02Nusp7oIwB8=
+X-Google-Smtp-Source: AGHT+IFtmzLedMqLCZW5vLdu7ViMHcVf42AWHB002lZzxWPjY7i8+/989qug0MXV+5wiJ8JBGayUjw==
+X-Received: by 2002:a17:906:3147:b0:9a5:b876:b1e3 with SMTP id e7-20020a170906314700b009a5b876b1e3mr5300019eje.20.1693730041163;
+        Sun, 03 Sep 2023 01:34:01 -0700 (PDT)
+Received: from f (cst-prg-30-15.cust.vodafone.cz. [46.135.30.15])
+        by smtp.gmail.com with ESMTPSA id i2-20020a1709064ec200b0099bc8db97bcsm4509918ejv.131.2023.09.03.01.33.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Sep 2023 22:25:31 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-        (envelope-from <david@fromorbit.com>)
-        id 1qcfc0-00A8ep-2J;
-        Sun, 03 Sep 2023 15:25:28 +1000
-Date:   Sun, 3 Sep 2023 15:25:28 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     syzbot <syzbot+e245f0516ee625aaa412@syzkaller.appspotmail.com>
-Cc:     brauner@kernel.org, djwong@kernel.org,
+        Sun, 03 Sep 2023 01:34:00 -0700 (PDT)
+Date:   Sun, 3 Sep 2023 10:33:57 +0200
+From:   Mateusz Guzik <mjguzik@gmail.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     syzbot <syzbot+e245f0516ee625aaa412@syzkaller.appspotmail.com>,
+        brauner@kernel.org, djwong@kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-xfs@vger.kernel.org, llvm@lists.linux.dev, nathan@kernel.org,
         ndesaulniers@google.com, syzkaller-bugs@googlegroups.com,
         trix@redhat.com, viro@zeniv.linux.org.uk
 Subject: Re: [syzbot] [xfs?] INFO: task hung in __fdget_pos (4)
-Message-ID: <ZPQYyMBFmqrfqafL@dread.disaster.area>
+Message-ID: <20230903083357.75mq5l43gakuc2z7@f>
 References: <000000000000e6432a06046c96a5@google.com>
+ <ZPQYyMBFmqrfqafL@dread.disaster.area>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <000000000000e6432a06046c96a5@google.com>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+In-Reply-To: <ZPQYyMBFmqrfqafL@dread.disaster.area>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Sep 02, 2023 at 09:11:34PM -0700, syzbot wrote:
-> Hello,
+On Sun, Sep 03, 2023 at 03:25:28PM +1000, Dave Chinner wrote:
+> On Sat, Sep 02, 2023 at 09:11:34PM -0700, syzbot wrote:
+> > Hello,
+> > 
+> > syzbot found the following issue on:
+> > 
+> > HEAD commit:    b97d64c72259 Merge tag '6.6-rc-smb3-client-fixes-part1' of..
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=14136d8fa80000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=958c1fdc38118172
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=e245f0516ee625aaa412
+> > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> > 
+> > Unfortunately, I don't have any reproducer for this issue yet.
 > 
-> syzbot found the following issue on:
+> Been happening for months, apparently, yet for some reason it now
+> thinks a locking hang in __fdget_pos() is an XFS issue?
 > 
-> HEAD commit:    b97d64c72259 Merge tag '6.6-rc-smb3-client-fixes-part1' of..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=14136d8fa80000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=958c1fdc38118172
-> dashboard link: https://syzkaller.appspot.com/bug?extid=e245f0516ee625aaa412
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> #syz set subsystems: fs
 > 
-> Unfortunately, I don't have any reproducer for this issue yet.
 
-Been happening for months, apparently, yet for some reason it now
-thinks a locking hang in __fdget_pos() is an XFS issue?
+The report does not have info necessary to figure this out -- no
+backtrace for whichever thread which holds f_pos_lock. I clicked on a
+bunch of other reports and it is the same story.
 
-#syz set subsystems: fs
+Can the kernel be configured to dump backtraces from *all* threads?
 
--- 
-Dave Chinner
-david@fromorbit.com
+If there is no feature like that I can hack it up.
