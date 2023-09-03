@@ -2,146 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A9389790EF8
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Sep 2023 00:31:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CE23790F1E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Sep 2023 00:47:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349021AbjICWbG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 3 Sep 2023 18:31:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35184 "EHLO
+        id S1349355AbjICWr7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 3 Sep 2023 18:47:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347982AbjICWbE (ORCPT
+        with ESMTP id S231418AbjICWr6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 3 Sep 2023 18:31:04 -0400
-Received: from mail-oa1-x2c.google.com (mail-oa1-x2c.google.com [IPv6:2001:4860:4864:20::2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0C14DD
-        for <linux-fsdevel@vger.kernel.org>; Sun,  3 Sep 2023 15:30:55 -0700 (PDT)
-Received: by mail-oa1-x2c.google.com with SMTP id 586e51a60fabf-1c50438636fso786003fac.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 03 Sep 2023 15:30:55 -0700 (PDT)
+        Sun, 3 Sep 2023 18:47:58 -0400
+Received: from mail-oo1-xc35.google.com (mail-oo1-xc35.google.com [IPv6:2607:f8b0:4864:20::c35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1846DDA;
+        Sun,  3 Sep 2023 15:47:55 -0700 (PDT)
+Received: by mail-oo1-xc35.google.com with SMTP id 006d021491bc7-57325fcd970so579583eaf.1;
+        Sun, 03 Sep 2023 15:47:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1693780255; x=1694385055; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nv6YpToDNZJcA/Ccz8YHJKQ8zE37n7OYKvDh05ivZ8M=;
-        b=eLvFMZ6HweV3i75Mje3KyiQMHp72f3fVYJp4X8QBR1sUoWt5LbUe2oYe6gz7J03xSV
-         aHsv7iDil4KTnD32vRddboJhyW5dIQThpWZBfmdQlNdU/+SQKnZqTkI+8YNmhDFqSNM4
-         M/5uOEBZigGEpPC3vmfjiwnDFOd47IixsMl044OpUX7QG234XdFYwtba/jPyi6PCo/kZ
-         okP+nX6zzbLjyilv/Ocy1qCe5aC4gkdgDOfyh92JWGe8bVg+DmwjlPuuV3kM/V8mAkRG
-         YMrGVWwsvVs5uRT8A9BN8JD3DAOcyXyqtn49LxBGuGru+09OFjvSzk6tINPlQnplnbJD
-         r/Aw==
+        d=gmail.com; s=20221208; t=1693781274; x=1694386074; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=jTpRzKKPcflfMotZqn/EuHDpmA3Dpx0bR9KzRWNQ8CA=;
+        b=MaoIxzoXeCkiJw6JUTSM5r4edBjL36206sQax/WRTXWhub4beIxp6PL7AYTq9bsYOT
+         mpdXSao3zyPEY1F0RGOK3lK76VleRMkpUgvr2Id0FmjyM9DmOjNYxjX2xMyxEeIXccKj
+         ebG8m0OZAAsW9vCPCi0aR+NQ02gpobP4p2/mgEHsPxySvKrHVGCly0QWoof2AnfJ0P0c
+         v6oNxTxC1no3wM1rNExN282IpIb2BPeTVxIW91c126EWoKlJdxMPEr93sVH/K2+/l0LY
+         RwDiTU4DBGJjQ+bgcmG/iMh69HQOO0H8ndnaGY6aarJn3hFvBQhRObICqIh9XouCEB37
+         AaBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693780255; x=1694385055;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Nv6YpToDNZJcA/Ccz8YHJKQ8zE37n7OYKvDh05ivZ8M=;
-        b=jF/4bLwCjeD02yXqN5O3xyiOSj/DzFy5OV9Z7Z2HzRdzBZgq8J+hlyq9uXSPXrr/I+
-         3T2pPC/R6awwNvmcK425FYFE4YtomYrik5vacz5rj++aPEehjO5FJmFT43dC7NVkRIf4
-         NysCKFDLDhxjPgzfWlTLtp6yFv7xC0FyoHZKwJoMVLwjPqcPsB5BxkH5QLtZZjKEatPW
-         pBxRFxeKWN3pPSYpTCRKBHXR/lXfi24BF6u0dkveyxTJ2S62WrzPENSrOllRDGEl6hZ+
-         E86z9o9hP6shDMXm1Z7gdH+vVQ7tRVAV4v2yDD3jBcK//WBnupSjHJieakzeuTwdcyAC
-         NpBQ==
-X-Gm-Message-State: AOJu0YzCuv7hPdvbt2eta9uqtV/WmvEeEXD3UjBKELqzDRvJtVZR3Lf7
-        R368HKgsMArcfR/qRks6+c9Jcw==
-X-Google-Smtp-Source: AGHT+IGLu9Ypqvz2HQH6Ke2apJHDtGTD5ZHmV6+9u1MT+8XuCmbNG2jkA6AQg79Zc5mY+kWQOWShIA==
-X-Received: by 2002:a05:6870:568d:b0:1be:c8e2:3ec3 with SMTP id p13-20020a056870568d00b001bec8e23ec3mr11536784oao.14.1693780255066;
-        Sun, 03 Sep 2023 15:30:55 -0700 (PDT)
-Received: from dread.disaster.area (pa49-195-66-88.pa.nsw.optusnet.com.au. [49.195.66.88])
-        by smtp.gmail.com with ESMTPSA id i15-20020a63bf4f000000b00565e96d9874sm5648132pgo.89.2023.09.03.15.30.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Sep 2023 15:30:54 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-        (envelope-from <david@fromorbit.com>)
-        id 1qcvcK-00ASFy-0F;
-        Mon, 04 Sep 2023 08:30:52 +1000
-Date:   Mon, 4 Sep 2023 08:30:52 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Hao Xu <hao.xu@linux.dev>
-Cc:     Matthew Wilcox <willy@infradead.org>, io-uring@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-cachefs@redhat.com,
-        ecryptfs@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-unionfs@vger.kernel.org, bpf@vger.kernel.org,
-        netdev@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, codalist@coda.cs.cmu.edu,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        linux-mm@kvack.org, linux-nilfs@vger.kernel.org,
-        devel@lists.orangefs.org, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, linux-mtd@lists.infradead.org,
-        Wanpeng Li <wanpengli@tencent.com>
-Subject: Re: [PATCH 07/11] vfs: add nowait parameter for file_accessed()
-Message-ID: <ZPUJHAKzxvXiEDYA@dread.disaster.area>
-References: <20230827132835.1373581-1-hao.xu@linux.dev>
- <20230827132835.1373581-8-hao.xu@linux.dev>
- <ZOvA5DJDZN0FRymp@casper.infradead.org>
- <c728bf3f-d9db-4865-8473-058b26c11c06@linux.dev>
- <ZO3cI+DkotHQo3md@casper.infradead.org>
- <642de4e6-801d-fcad-a7ce-bfc6dec3b6e5@linux.dev>
+        d=1e100.net; s=20221208; t=1693781274; x=1694386074;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jTpRzKKPcflfMotZqn/EuHDpmA3Dpx0bR9KzRWNQ8CA=;
+        b=XdERH+oXVRrQm/j+IMSPtCteUoFLxRkCA1OUrAnDTt5+YRfjYd5E2inT1X2dN0lg6K
+         AapGKV5jrM5i+DDBNVuWu9DlYqJxbZhjdDB6cLgLQBagxdsDE014Ep9BjnKH/i4FKbSr
+         qAQmfqA9Z1LZ2c5zOIVVqJHGfdMrsPfqw2QfVnnzhyfRVxd18aVRotpTOAcV/WzsRu9I
+         eT6pmcdaDIDzPY5yhBuF+whXq0gRnn5RZxD+F+6fjpnIWrhjvW/IqfR7a/NuVQVyOxQz
+         0haah05f81KDRUU9zNnRZEeraDVl2Z6h8aJf7eW6LTsTo/ICGT7OFilbSYjU7cHyIT5/
+         tFWQ==
+X-Gm-Message-State: AOJu0Yxk1RfUWxFgHs1/2wrbFk2f416MSAAUF6zm8j1rhkh2aDfhlzy1
+        PNiLatHqNugzHRgmFAS+IDiU1fxYhpghPAQZ9e2UZtxTCD8=
+X-Google-Smtp-Source: AGHT+IHTd6MlXrnOCrfi9djKCiTH2QWP90e7G83CiNXHFAlfTnFmDirKNEOi/0fmGWMf/Ypx/Z30DjjRWhA4Zv/VtkI=
+X-Received: by 2002:a4a:3410:0:b0:56d:e6:21bf with SMTP id b16-20020a4a3410000000b0056d00e621bfmr6787218ooa.0.1693781274367;
+ Sun, 03 Sep 2023 15:47:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <642de4e6-801d-fcad-a7ce-bfc6dec3b6e5@linux.dev>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Received: by 2002:a8a:60c:0:b0:4f0:1250:dd51 with HTTP; Sun, 3 Sep 2023
+ 15:47:53 -0700 (PDT)
+In-Reply-To: <ZPUIQzsCSNlnBFHB@dread.disaster.area>
+References: <000000000000e6432a06046c96a5@google.com> <ZPQYyMBFmqrfqafL@dread.disaster.area>
+ <20230903083357.75mq5l43gakuc2z7@f> <ZPUIQzsCSNlnBFHB@dread.disaster.area>
+From:   Mateusz Guzik <mjguzik@gmail.com>
+Date:   Mon, 4 Sep 2023 00:47:53 +0200
+Message-ID: <CAGudoHE_-2765EttOV_6B9EeSuOxqo1MiRCyFP9y=GbSeCMtZg@mail.gmail.com>
+Subject: Re: [syzbot] [xfs?] INFO: task hung in __fdget_pos (4)
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     syzbot <syzbot+e245f0516ee625aaa412@syzkaller.appspotmail.com>,
+        brauner@kernel.org, djwong@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, llvm@lists.linux.dev, nathan@kernel.org,
+        ndesaulniers@google.com, syzkaller-bugs@googlegroups.com,
+        trix@redhat.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 30, 2023 at 02:11:31PM +0800, Hao Xu wrote:
-> On 8/29/23 19:53, Matthew Wilcox wrote:
-> > On Tue, Aug 29, 2023 at 03:46:13PM +0800, Hao Xu wrote:
-> > > On 8/28/23 05:32, Matthew Wilcox wrote:
-> > > > On Sun, Aug 27, 2023 at 09:28:31PM +0800, Hao Xu wrote:
-> > > > > From: Hao Xu <howeyxu@tencent.com>
-> > > > > 
-> > > > > Add a boolean parameter for file_accessed() to support nowait semantics.
-> > > > > Currently it is true only with io_uring as its initial caller.
-> > > > 
-> > > > So why do we need to do this as part of this series?  Apparently it
-> > > > hasn't caused any problems for filemap_read().
-> > > > 
-> > > 
-> > > We need this parameter to indicate if nowait semantics should be enforced in
-> > > touch_atime(), There are locks and maybe IOs in it.
-> > 
-> > That's not my point.  We currently call file_accessed() and
-> > touch_atime() for nowait reads and nowait writes.  You haven't done
-> > anything to fix those.
-> > 
-> > I suspect you can trim this patchset down significantly by avoiding
-> > fixing the file_accessed() problem.  And then come back with a later
-> > patchset that fixes it for all nowait i/o.  Or do a separate prep series
-> 
-> I'm ok to do that.
-> 
-> > first that fixes it for the existing nowait users, and then a second
-> > series to do all the directory stuff.
-> > 
-> > I'd do the first thing.  Just ignore the problem.  Directory atime
-> > updates cause I/O so rarely that you can afford to ignore it.  Almost
-> > everyone uses relatime or nodiratime.
-> 
-> Hi Matthew,
-> The previous discussion shows this does cause issues in real
-> producations: https://lore.kernel.org/io-uring/2785f009-2ebb-028d-8250-d5f3a30510f0@gmail.com/#:~:text=fwiw%2C%20we%27ve%20just%20recently%20had%20similar%20problems%20with%20io_uring%20read/write
-> 
+On 9/4/23, Dave Chinner <david@fromorbit.com> wrote:
+> On Sun, Sep 03, 2023 at 10:33:57AM +0200, Mateusz Guzik wrote:
+>> On Sun, Sep 03, 2023 at 03:25:28PM +1000, Dave Chinner wrote:
+>> > On Sat, Sep 02, 2023 at 09:11:34PM -0700, syzbot wrote:
+>> > > Hello,
+>> > >
+>> > > syzbot found the following issue on:
+>> > >
+>> > > HEAD commit:    b97d64c72259 Merge tag
+>> > > '6.6-rc-smb3-client-fixes-part1' of..
+>> > > git tree:       upstream
+>> > > console output:
+>> > > https://syzkaller.appspot.com/x/log.txt?x=14136d8fa80000
+>> > > kernel config:
+>> > > https://syzkaller.appspot.com/x/.config?x=958c1fdc38118172
+>> > > dashboard link:
+>> > > https://syzkaller.appspot.com/bug?extid=e245f0516ee625aaa412
+>> > > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for
+>> > > Debian) 2.40
+>> > >
+>> > > Unfortunately, I don't have any reproducer for this issue yet.
+>> >
+>> > Been happening for months, apparently, yet for some reason it now
+>> > thinks a locking hang in __fdget_pos() is an XFS issue?
+>> >
+>> > #syz set subsystems: fs
+>> >
+>>
+>> The report does not have info necessary to figure this out -- no
+>> backtrace for whichever thread which holds f_pos_lock. I clicked on a
+>> bunch of other reports and it is the same story.
+>
+> That's true, but there's nothing that points at XFS in *any* of the
+> bug reports. Indeed, log from the most recent report doesn't have
+> any of the output from the time stuff hung. i.e. the log starts
+> at kernel time 669.487771 seconds, and the hung task report is at:
+>
 
-Then separate it out into it's own patch set so we can have a
-discussion on the merits of requiring using noatime, relatime or
-lazytime for really latency sensitive IO applications. Changing code
-is not always the right solution...
+I did not mean to imply this is an xfs problem.
 
--Dave.
+You wrote reports have been coming in for months so it is pretty clear
+nobody is investigating. I figured I'm going to change that bit.
+
+>> Can the kernel be configured to dump backtraces from *all* threads?
+>
+> It already is (sysrq-t), but I'm not sure that will help - if it is
+> a leaked unlock then nothing will show up at all.
+>
+
+See the other part of the thread, I roped in someone from syzkaller
+along with the question if they can use sysrq t.
+
 -- 
-Dave Chinner
-david@fromorbit.com
+Mateusz Guzik <mjguzik gmail.com>
