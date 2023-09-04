@@ -2,195 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A18C3791EED
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Sep 2023 23:11:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4965792506
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Sep 2023 18:01:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239137AbjIDVLo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Sep 2023 17:11:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48622 "EHLO
+        id S234357AbjIEQAw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 Sep 2023 12:00:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37520 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230474AbjIDVLn (ORCPT
+        with ESMTP id S1353830AbjIEIUb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Sep 2023 17:11:43 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F2B4AB;
-        Mon,  4 Sep 2023 14:11:40 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2C8E4616B9;
-        Mon,  4 Sep 2023 21:11:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1AA8C433C8;
-        Mon,  4 Sep 2023 21:11:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1693861899;
-        bh=VzvHqwUb07vEXlaVops1vdy2zPHGYNdkCkt5uHSloaA=;
-        h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-        b=ddz547fbWNEZYh4XmkCjutITZI2zx5CPl24OevlCHTj4CuIMwtObSYLKM6j8qxyA1
-         jEjlOJlUX5qAWm4zkJMYLWAV1yxnuDX500KQCuXmKctIm1ZLfs60tyTAKdIJwcWv44
-         ZPyViGDT/eyWRGhW2H8V6eprLryI67b1bC+1mNJxeA22qt2Z3zTMEOizqysx/W0xg7
-         KtwYBpNGTYD8ISv5tT03A1n6NMoJ4qSxkTM6MN+XfNbJkKJqc3+0VfyKgfCHDlfD3J
-         1xAXa4qV9OIHk6PdWe2fQCRylnvUZoVTCH8Uym3KGfOiu0IR/cIITMOU8WzrYtA4O8
-         li6a38VP1qeRw==
-Mime-Version: 1.0
+        Tue, 5 Sep 2023 04:20:31 -0400
+X-Greylist: delayed 86462 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 05 Sep 2023 01:20:26 PDT
+Received: from mail.equinoxrise.pl (mail.equinoxrise.pl [217.61.112.157])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6F581AE
+        for <linux-fsdevel@vger.kernel.org>; Tue,  5 Sep 2023 01:20:26 -0700 (PDT)
+Received: by mail.equinoxrise.pl (Postfix, from userid 1002)
+        id 762AA83740; Mon,  4 Sep 2023 09:41:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=equinoxrise.pl;
+        s=mail; t=1693813350;
+        bh=v6OgBfK5dN7P5dQ0wCu59rOfZaiqziJeLNblJ8dOcGI=;
+        h=Date:From:To:Subject:From;
+        b=tUvuzJdwFGLJEajxi2k1aJCKGIpkVGBwZk1ik+Ql4oceYkqQNB0GXRd7HquCSzgfZ
+         Uhf60aPdQXQUeAbspQnVWYZAT46tiYjQc7MFrthUOzsvt1vL+N7d7k7lh37sKxOcgg
+         LTSzZIreCwtQ/2R4w3M2hfhdZ0q8aDSXRuRSA7rENLr5dgf79l7FFMcvBgrkwgGTtE
+         wbszpIUDm2eQqIiy3ek9Ivsc8rJNVUXjIttvneuPbGVquGFFUoXp+ALteI5oNSEq1z
+         nJuQqqK1VSvIDOSTODGkUKCQorLbnwegteRPBwlI0Q6tW7rRijfu+ePtCDdzRWGav+
+         ZTwyZdekIi97w==
+Received: by mail.equinoxrise.pl for <linux-fsdevel@vger.kernel.org>; Mon,  4 Sep 2023 07:40:34 GMT
+Message-ID: <20230904084500-0.1.7.rli.0.413oimjrso@equinoxrise.pl>
+Date:   Mon,  4 Sep 2023 07:40:34 GMT
+From:   "Mateusz Talaga" <mateusz.talaga@equinoxrise.pl>
+To:     <linux-fsdevel@vger.kernel.org>
+Subject: Prezentacja
+X-Mailer: mail.equinoxrise.pl
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date:   Tue, 05 Sep 2023 00:11:32 +0300
-Message-Id: <CVAFXF2BQ14B.19BO7F9P62WGT@suppilovahvero>
-Cc:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-nfs@vger.kernel.org>, <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <keyrings@vger.kernel.org>, <selinux@vger.kernel.org>,
-        "Roberto Sassu" <roberto.sassu@huawei.com>,
-        "Stefan Berger" <stefanb@linux.ibm.com>
-Subject: Re: [PATCH v2 13/25] security: Introduce inode_post_removexattr
- hook
-From:   "Jarkko Sakkinen" <jarkko@kernel.org>
-To:     "Roberto Sassu" <roberto.sassu@huaweicloud.com>,
-        <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
-        <chuck.lever@oracle.com>, <jlayton@kernel.org>, <neilb@suse.de>,
-        <kolga@netapp.com>, <Dai.Ngo@oracle.com>, <tom@talpey.com>,
-        <zohar@linux.ibm.com>, <dmitry.kasatkin@gmail.com>,
-        <paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>,
-        <dhowells@redhat.com>, <stephen.smalley.work@gmail.com>,
-        <eparis@parisplace.org>, <casey@schaufler-ca.com>
-X-Mailer: aerc 0.14.0
-References: <20230831104136.903180-1-roberto.sassu@huaweicloud.com>
- <20230831104136.903180-14-roberto.sassu@huaweicloud.com>
-In-Reply-To: <20230831104136.903180-14-roberto.sassu@huaweicloud.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=3.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        RCVD_IN_SBL_CSS,SPF_HELO_NONE,SPF_PASS,URIBL_CSS_A,URIBL_DBL_SPAM
+        autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Level: ***
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu Aug 31, 2023 at 1:41 PM EEST, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
->
-> In preparation for moving IMA and EVM to the LSM infrastructure, introduc=
-e
-> the inode_post_removexattr hook.
->
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-> ---
->  fs/xattr.c                    |  9 +++++----
->  include/linux/lsm_hook_defs.h |  2 ++
->  include/linux/security.h      |  5 +++++
->  security/security.c           | 14 ++++++++++++++
->  4 files changed, 26 insertions(+), 4 deletions(-)
->
-> diff --git a/fs/xattr.c b/fs/xattr.c
-> index e7bbb7f57557..4a0280295686 100644
-> --- a/fs/xattr.c
-> +++ b/fs/xattr.c
-> @@ -552,11 +552,12 @@ __vfs_removexattr_locked(struct mnt_idmap *idmap,
->  		goto out;
-> =20
->  	error =3D __vfs_removexattr(idmap, dentry, name);
-> +	if (error)
-> +		goto out;
-> =20
-> -	if (!error) {
-> -		fsnotify_xattr(dentry);
-> -		evm_inode_post_removexattr(dentry, name);
-> -	}
-> +	fsnotify_xattr(dentry);
-> +	security_inode_post_removexattr(dentry, name);
-> +	evm_inode_post_removexattr(dentry, name);
-> =20
->  out:
->  	return error;
-> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.=
-h
-> index 995d30336cfa..1153e7163b8b 100644
-> --- a/include/linux/lsm_hook_defs.h
-> +++ b/include/linux/lsm_hook_defs.h
-> @@ -148,6 +148,8 @@ LSM_HOOK(int, 0, inode_getxattr, struct dentry *dentr=
-y, const char *name)
->  LSM_HOOK(int, 0, inode_listxattr, struct dentry *dentry)
->  LSM_HOOK(int, 0, inode_removexattr, struct mnt_idmap *idmap,
->  	 struct dentry *dentry, const char *name)
-> +LSM_HOOK(void, LSM_RET_VOID, inode_post_removexattr, struct dentry *dent=
-ry,
-> +	 const char *name)
->  LSM_HOOK(int, 0, inode_set_acl, struct mnt_idmap *idmap,
->  	 struct dentry *dentry, const char *acl_name, struct posix_acl *kacl)
->  LSM_HOOK(int, 0, inode_get_acl, struct mnt_idmap *idmap,
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index 820899db5276..665bba3e0081 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -374,6 +374,7 @@ int security_inode_getxattr(struct dentry *dentry, co=
-nst char *name);
->  int security_inode_listxattr(struct dentry *dentry);
->  int security_inode_removexattr(struct mnt_idmap *idmap,
->  			       struct dentry *dentry, const char *name);
-> +void security_inode_post_removexattr(struct dentry *dentry, const char *=
-name);
->  int security_inode_need_killpriv(struct dentry *dentry);
->  int security_inode_killpriv(struct mnt_idmap *idmap, struct dentry *dent=
-ry);
->  int security_inode_getsecurity(struct mnt_idmap *idmap,
-> @@ -919,6 +920,10 @@ static inline int security_inode_removexattr(struct =
-mnt_idmap *idmap,
->  	return cap_inode_removexattr(idmap, dentry, name);
->  }
-> =20
-> +static inline void security_inode_post_removexattr(struct dentry *dentry=
-,
-> +						   const char *name)
-> +{ }
+Dzie=C5=84 dobry!
 
-static inline void security_inode_post_removexattr(struct dentry *dentry, c=
-onst char *name)
-{
-}
+Czy m=C3=B3g=C5=82bym przedstawi=C4=87 rozwi=C4=85zanie, kt=C3=B3re umo=C5=
+=BCliwia monitoring ka=C5=BCdego auta w czasie rzeczywistym w tym jego po=
+zycj=C4=99, zu=C5=BCycie paliwa i przebieg?
 
-> +
->  static inline int security_inode_need_killpriv(struct dentry *dentry)
->  {
->  	return cap_inode_need_killpriv(dentry);
-> diff --git a/security/security.c b/security/security.c
-> index 764a6f28b3b9..3947159ba5e9 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -2354,6 +2354,20 @@ int security_inode_removexattr(struct mnt_idmap *i=
-dmap,
->  	return evm_inode_removexattr(idmap, dentry, name);
->  }
-> =20
-> +/**
-> + * security_inode_post_removexattr() - Update the inode after a removexa=
-ttr op
-> + * @dentry: file
-> + * @name: xattr name
-> + *
-> + * Update the inode after a successful removexattr operation.
-> + */
-> +void security_inode_post_removexattr(struct dentry *dentry, const char *=
-name)
-> +{
-> +	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
-> +		return;
-> +	call_void_hook(inode_post_removexattr, dentry, name);
-> +}
-> +
->  /**
->   * security_inode_need_killpriv() - Check if security_inode_killpriv() r=
-equired
->   * @dentry: associated dentry
-> --=20
-> 2.34.1
+Dodatkowo nasze narz=C4=99dzie minimalizuje koszty utrzymania samochod=C3=
+=B3w, skraca czas przejazd=C3=B3w, a tak=C5=BCe tworzenie planu tras czy =
+dostaw.
+
+Z naszej wiedzy i do=C5=9Bwiadczenia korzysta ju=C5=BC ponad 49 tys. Klie=
+nt=C3=B3w. Monitorujemy 809 000 pojazd=C3=B3w na ca=C5=82ym =C5=9Bwiecie,=
+ co jest nasz=C4=85 najlepsz=C4=85 wizyt=C3=B3wk=C4=85.
+
+Bardzo prosz=C4=99 o e-maila zwrotnego, je=C5=9Bli mogliby=C5=9Bmy wsp=C3=
+=B3lnie om=C3=B3wi=C4=87 potencja=C5=82 wykorzystania takiego rozwi=C4=85=
+zania w Pa=C5=84stwa firmie.
 
 
-These odd splits are everywhere in the patch set. Just (nit)picking some.
-
-It is huge patch set so I don't really get for addign extra lines for no
-good reason.
-
-BR, Jarkko
+Pozdrawiam
+Mateusz Talaga
