@@ -2,48 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AB0A791374
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Sep 2023 10:31:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FBD479137F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Sep 2023 10:33:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245155AbjIDIb4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Sep 2023 04:31:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46056 "EHLO
+        id S1349741AbjIDIdZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Sep 2023 04:33:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41944 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234609AbjIDIbz (ORCPT
+        with ESMTP id S1351432AbjIDIdX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Sep 2023 04:31:55 -0400
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31C2B94
-        for <linux-fsdevel@vger.kernel.org>; Mon,  4 Sep 2023 01:31:51 -0700 (PDT)
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-1bf60f85d78so18041705ad.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Sep 2023 01:31:51 -0700 (PDT)
+        Mon, 4 Sep 2023 04:33:23 -0400
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E61013D
+        for <linux-fsdevel@vger.kernel.org>; Mon,  4 Sep 2023 01:33:18 -0700 (PDT)
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-68bec4380edso1451386b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Sep 2023 01:33:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693816310; x=1694421110;
+        d=1e100.net; s=20221208; t=1693816398; x=1694421198;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=u2OmTOCFNK30sKwAH23PKfFifyHLUed/0eso+ICjivA=;
-        b=cc/8kMAX3rlzWJS7coasz8BvI/nPwYyn2TrHGMwqpQrw5uezdQEUgsLUOtGlqLrWRu
-         nvlxbY4JVqTozVJPDFdQ+VTBdIdjy2qswFkkcap374p6Gmv623ndXGsf2Luk6/+1IW+Z
-         mLQmgQq7dwS/LRsoqUFQtgXJY80zxJrKV8A48OMBgpzHzpQrWdlsDpBrTSv3HShMN/fo
-         spjDwP8PiRUt0OxFypz6icWwrRYMkWsioVTjENZu8l73C8klCLctJTHhxiS1/tRIQDWA
-         HDbt41SlFcPhBK96dKae5BJuvbN3JyNyrs9jpPUB1+yhI6+IEAQOzVSAKYwa0cfeX/fQ
-         T5XA==
-X-Gm-Message-State: AOJu0YyjMdsJuxClNc8PJg3XSZvjz4g7fxvJ85a9OxZ/TYdMUrmMZYSV
-        QJV/jGztJsVO4pY0IjsIsVQJcnUYYuWyYOT0+pmDlNhvMwEN
-X-Google-Smtp-Source: AGHT+IGpt2ftf95l/L/nnDQ6ee2mdYHv2fp0o/2P7wmxTTVnU3kxj0nn6GNWriZkj427vEzU0WNk8O3FJ074X+K9J6bLpneNwz1b
+        bh=HrGFGOU2JHGHY3uenWpbxy9f+g1nyoQzetE2yd9LSVo=;
+        b=e5AyCXUAyfFrEiBf3XQTtVpj+9u0N+82hGu6TO5HJ/GovZz5D748QrfIJkGguyxV3U
+         YbwoEFX/kFBObY4HUTZMzg2Bk1HOK/ys489zqHLRnZLZK0hEcJw+x71E+SDy3uGcixtj
+         vg8emi9bWY86ElSGbS3CHr/DS/Ebw4r05GVC6uidvg67Kqlaotrs1Lk1y/jNNRaL2NtF
+         qxEOScARvWRl6OS6JTNu83mf9d/P00tvG8RJA9grM2EcY28qJTZXapH27m/aW69G2HqG
+         7e8X0nnKy9m+8cITbvHMQhVQAXdR4EcTmKw0v7f+fdrgALYBSPkxSf5jVnRdzUeg5clL
+         Oa/A==
+X-Gm-Message-State: AOJu0YxtCODBBe8ogbvcT4hNRFaihDgHXVmMwkA7ZAlCV/urhBQfDFbI
+        yrkD9shYkzJm3+MJ4qmStAaVtB3DB0u4yfRtfLE5XWfIo430
+X-Google-Smtp-Source: AGHT+IHDoUNA6dwekWEKHoI4XenoIYPrSAlWMWZ/w4ctM2R+WneLeJWGFR0m8FcLMu7s0rUFMZGrUymlu0Ny03CDBu0dvLMsUbVG
 MIME-Version: 1.0
-X-Received: by 2002:a17:902:da86:b0:1c3:2af5:19e5 with SMTP id
- j6-20020a170902da8600b001c32af519e5mr1985746plx.4.1693816310722; Mon, 04 Sep
- 2023 01:31:50 -0700 (PDT)
-Date:   Mon, 04 Sep 2023 01:31:50 -0700
+X-Received: by 2002:a05:6a00:98e:b0:68a:5cf8:daf3 with SMTP id
+ u14-20020a056a00098e00b0068a5cf8daf3mr3722004pfg.2.1693816397905; Mon, 04 Sep
+ 2023 01:33:17 -0700 (PDT)
+Date:   Mon, 04 Sep 2023 01:33:17 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000083fba206048457b2@google.com>
-Subject: [syzbot] Monthly ntfs report (Sep 2023)
-From:   syzbot <syzbot+liste99d2b62937cf3368a1d@syzkaller.appspotmail.com>
-To:     anton@tuxera.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
-        syzkaller-bugs@googlegroups.com
+Message-ID: <000000000000b644840604845c46@google.com>
+Subject: [syzbot] Monthly gfs2 report (Sep 2023)
+From:   syzbot <syzbot+list4cf369d7337ac966cd70@syzkaller.appspotmail.com>
+To:     cluster-devel@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
         HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
@@ -55,38 +54,34 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello ntfs maintainers/developers,
+Hello gfs2 maintainers/developers,
 
-This is a 31-day syzbot report for the ntfs subsystem.
+This is a 31-day syzbot report for the gfs2 subsystem.
 All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/ntfs
+https://syzkaller.appspot.com/upstream/s/gfs2
 
-During the period, 1 new issues were detected and 0 were fixed.
-In total, 25 issues are still open and 7 have been fixed so far.
+During the period, 0 new issues were detected and 0 were fixed.
+In total, 17 issues are still open and 20 have been fixed so far.
 
 Some of the still happening issues:
 
-Ref  Crashes Repro Title
-<1>  3784    Yes   possible deadlock in ntfs_read_folio
-                   https://syzkaller.appspot.com/bug?extid=8ef76b0b1f86c382ad37
-<2>  3075    Yes   kernel BUG at fs/ntfs/aops.c:LINE!
-                   https://syzkaller.appspot.com/bug?extid=6a5a7672f663cce8b156
-<3>  1303    Yes   kernel BUG in __ntfs_grab_cache_pages
-                   https://syzkaller.appspot.com/bug?extid=01b3ade7c86f7dd584d7
-<4>  604     Yes   possible deadlock in map_mft_record
-                   https://syzkaller.appspot.com/bug?extid=cb1fdea540b46f0ce394
-<5>  388     Yes   KASAN: slab-out-of-bounds Read in ntfs_readdir
-                   https://syzkaller.appspot.com/bug?extid=d36761079ac1b585a6df
-<6>  297     No    KASAN: use-after-free Read in ntfs_test_inode
-                   https://syzkaller.appspot.com/bug?extid=2751da923b5eb8307b0b
-<7>  211     No    possible deadlock in __ntfs_clear_inode
-                   https://syzkaller.appspot.com/bug?extid=5ebb8d0e9b8c47867596
-<8>  33      Yes   kernel BUG in ntfs_lookup_inode_by_name
-                   https://syzkaller.appspot.com/bug?extid=d532380eef771ac0034b
-<9>  28      Yes   kernel BUG in ntfs_iget
-                   https://syzkaller.appspot.com/bug?extid=d62e6bd2a2d05103d105
-<10> 12      Yes   KASAN: use-after-free Read in ntfs_lookup_inode_by_name
-                   https://syzkaller.appspot.com/bug?extid=3625b78845a725e80f61
+Ref Crashes Repro Title
+<1> 2679    Yes   WARNING in __folio_mark_dirty (2)
+                  https://syzkaller.appspot.com/bug?extid=e14d6cd6ec241f507ba7
+<2> 577     Yes   kernel BUG in gfs2_glock_nq (2)
+                  https://syzkaller.appspot.com/bug?extid=70f4e455dee59ab40c80
+<3> 77      Yes   INFO: task hung in gfs2_gl_hash_clear (3)
+                  https://syzkaller.appspot.com/bug?extid=ed7d0f71a89e28557a77
+<4> 54      Yes   WARNING in gfs2_check_blk_type
+                  https://syzkaller.appspot.com/bug?extid=092b28923eb79e0f3c41
+<5> 35      Yes   general protection fault in gfs2_dump_glock (2)
+                  https://syzkaller.appspot.com/bug?extid=427fed3295e9a7e887f2
+<6> 7       Yes   BUG: unable to handle kernel NULL pointer dereference in gfs2_rgrp_dump
+                  https://syzkaller.appspot.com/bug?extid=da0fc229cc1ff4bb2e6d
+<7> 4       Yes   BUG: unable to handle kernel NULL pointer dereference in gfs2_rindex_update
+                  https://syzkaller.appspot.com/bug?extid=2b32df23ff6b5b307565
+<8> 1       Yes   BUG: sleeping function called from invalid context in gfs2_make_fs_ro
+                  https://syzkaller.appspot.com/bug?extid=60369f4775c014dd1804
 
 ---
 This report is generated by a bot. It may contain errors.
