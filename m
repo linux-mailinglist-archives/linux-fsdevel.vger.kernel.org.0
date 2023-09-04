@@ -2,58 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 15FE0791C6B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Sep 2023 20:11:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E233C791C82
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Sep 2023 20:11:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353429AbjIDSLQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Sep 2023 14:11:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41162 "EHLO
+        id S1353466AbjIDSLX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Sep 2023 14:11:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353411AbjIDSLO (ORCPT
+        with ESMTP id S1353426AbjIDSLQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Sep 2023 14:11:14 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F8C4E6;
-        Mon,  4 Sep 2023 11:11:11 -0700 (PDT)
+        Mon, 4 Sep 2023 14:11:16 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86573197;
+        Mon,  4 Sep 2023 11:11:12 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 20CB2B80ED0;
+        by sin.source.kernel.org (Postfix) with ESMTPS id 9A8C7CE0E24;
         Mon,  4 Sep 2023 18:11:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D11E1C433C9;
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C9A2DC433C8;
         Mon,  4 Sep 2023 18:11:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1693851068;
-        bh=r/KSGQSC2NTgHdn0OJxxPyQs5JUPuWZgLFSrloxRrHA=;
+        bh=KWuluqFF5yFV+lOCkFnoct0phRXw96Jca/CuZaTU2kY=;
         h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=WY31BwYbsVaGAsAtOYrlZpg1KnLgAs5RHjbBmkE63X+qnTxnsbYUW9NjQiKOCOSGM
-         35dAjc/16r8x9+4UIY1GQvYdcgSsF77G7M2umeI4achKQwD1r8kxyKpsMJDAeQKbTj
-         u6bTnoPshfWTKPGcNpvjSFXZ9frMcmaQ0P9oEyxf+sCu7ki/Kd6jSbGw0PTGvlI3UD
-         RA7tIDXWOm7Wp2tIjI5uMzknfLnXGn9YM9MyAad0LLRUPYtXYJ8QofSzgrkLH468um
-         4pvwF6c7OW0hlvH9nqUhoyMV8I8+BpXY3iW5/itS6xyJ86O/cYKn3kkqQsfYzZub2B
-         DuKDMXXQ3sPjg==
+        b=K3gkbkhJRwgpsacHeBsq0A7kucjUSGo8OzMP1ouPw/XPyf9sD5QK/Sf142+usc7ZE
+         C827H7oMTO9xQURopm4EWqGoFioLBjSEY4gmbRDnvHI4L+ywXrxJRVy5ldQmRaAtfj
+         1pffFi8IArgTV4dPuYUPdlhMXVuT7Hb/6kEuD4lj+4NJdrul8tjUb9OXjEUjpGn+jT
+         2ndFdt5oPLx5wHtLQ20DiaB9Xl09djxp9OA/4zW9QgSOHR3JDKxABg9kMIgFr5Ox62
+         wqlEdaiOf1aM8ubxkjKV3yvjnRyA83mc2npN6NfYoiPdtaZLbxGvWm4TgDkfWkglX8
+         L2qkw/qB1Voxg==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B6BD6C0C3FD;
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id A2BE4C04E26;
         Mon,  4 Sep 2023 18:11:08 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [f2fs-dev] [PATCH 01/17] fs: unexport buffer_check_dirty_writeback
+Subject: Re: [f2fs-dev] [PATCH v7 00/13] fs: implement multigrain timestamps
 From:   patchwork-bot+f2fs@kernel.org
-Message-Id: <169385106874.19669.13506137748616735375.git-patchwork-notify@kernel.org>
+Message-Id: <169385106866.19669.14483196627780303129.git-patchwork-notify@kernel.org>
 Date:   Mon, 04 Sep 2023 18:11:08 +0000
-References: <20230424054926.26927-2-hch@lst.de>
-In-Reply-To: <20230424054926.26927-2-hch@lst.de>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     axboe@kernel.dk, linux-block@vger.kernel.org,
-        linux-nfs@vger.kernel.org, cluster-devel@redhat.com,
-        linux-xfs@vger.kernel.org, miklos@szeredi.hu, djwong@kernel.org,
-        linux-kernel@vger.kernel.org, willy@infradead.org,
-        linux-f2fs-devel@lists.sourceforge.net, dhowells@redhat.com,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        akpm@linux-foundation.org, linux-ext4@vger.kernel.org,
-        ceph-devel@vger.kernel.org
+References: <20230807-mgctime-v7-0-d1dec143a704@kernel.org>
+In-Reply-To: <20230807-mgctime-v7-0-d1dec143a704@kernel.org>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     viro@zeniv.linux.org.uk, brauner@kernel.org, ericvh@kernel.org,
+        lucho@ionkov.net, asmadeus@codewreck.org, linux_oss@crudebyte.com,
+        dhowells@redhat.com, marc.dionne@auristor.com, clm@fb.com,
+        josef@toxicpanda.com, dsterba@suse.com, xiubli@redhat.com,
+        idryomov@gmail.com, jaharkes@cs.cmu.edu, coda@cs.cmu.edu,
+        code@tyhicks.com, xiang@kernel.org, chao@kernel.org,
+        huyue2@coolpad.com, jefflexu@linux.alibaba.com,
+        linkinjeon@kernel.org, sj1557.seo@samsung.com, jack@suse.com,
+        tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org,
+        hirofumi@mail.parknet.co.jp, miklos@szeredi.hu,
+        rpeterso@redhat.com, agruenba@redhat.com,
+        gregkh@linuxfoundation.org, tj@kernel.org,
+        trond.myklebust@hammerspace.com, anna@kernel.org,
+        almaz.alexandrovich@paragon-software.com, mark@fasheh.com,
+        jlbec@evilplan.org, joseph.qi@linux.alibaba.com,
+        hubcap@omnibond.com, martin@omnibond.com, mcgrof@kernel.org,
+        keescook@chromium.org, yzaikin@google.com, sfrench@samba.org,
+        pc@manguebit.com, ronniesahlberg@gmail.com, sprasad@microsoft.com,
+        tom@talpey.com, senozhatsky@chromium.org, richard@nod.at,
+        hdegoede@redhat.com, hughd@google.com, akpm@linux-foundation.org,
+        amir73il@gmail.com, djwong@kernel.org, bcodding@redhat.com,
+        jack@suse.cz, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-mtd@lists.infradead.org, linux-afs@lists.infradead.org,
+        linux-cifs@vger.kernel.org, codalist@coda.cs.cmu.edu,
+        cluster-devel@redhat.com, linux-ext4@vger.kernel.org,
+        devel@lists.orangefs.org, ecryptfs@vger.kernel.org,
+        ocfs2-devel@lists.linux.dev, ceph-devel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, v9fs@lists.linux.dev,
+        samba-technical@lists.samba.org, linux-unionfs@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, ntfs3@lists.linux.dev,
+        linux-erofs@lists.ozlabs.org, linux-btrfs@vger.kernel.org
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
         RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
@@ -67,52 +91,48 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 Hello:
 
 This series was applied to jaegeuk/f2fs.git (dev)
-by Jens Axboe <axboe@kernel.dk>:
+by Christian Brauner <brauner@kernel.org>:
 
-On Mon, 24 Apr 2023 07:49:10 +0200 you wrote:
-> buffer_check_dirty_writeback is only used by the block device aops,
-> remove the export.
+On Mon, 07 Aug 2023 15:38:31 -0400 you wrote:
+> The VFS always uses coarse-grained timestamps when updating the
+> ctime and mtime after a change. This has the benefit of allowing
+> filesystems to optimize away a lot metadata updates, down to around 1
+> per jiffy, even when a file is under heavy writes.
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  fs/buffer.c | 1 -
->  1 file changed, 1 deletion(-)
+> Unfortunately, this coarseness has always been an issue when we're
+> exporting via NFSv3, which relies on timestamps to validate caches. A
+> lot of changes can happen in a jiffy, so timestamps aren't sufficient to
+> help the client decide to invalidate the cache.
+> 
+> [...]
 
 Here is the summary with links:
-  - [f2fs-dev,01/17] fs: unexport buffer_check_dirty_writeback
+  - [f2fs-dev,v7,01/13] fs: remove silly warning from current_time
+    https://git.kernel.org/jaegeuk/f2fs/c/b3030e4f2344
+  - [f2fs-dev,v7,02/13] fs: pass the request_mask to generic_fillattr
+    https://git.kernel.org/jaegeuk/f2fs/c/0d72b92883c6
+  - [f2fs-dev,v7,03/13] fs: drop the timespec64 arg from generic_update_time
+    https://git.kernel.org/jaegeuk/f2fs/c/541d4c798a59
+  - [f2fs-dev,v7,04/13] btrfs: have it use inode_update_timestamps
+    https://git.kernel.org/jaegeuk/f2fs/c/bb7cc0a62e47
+  - [f2fs-dev,v7,05/13] fat: make fat_update_time get its own timestamp
     (no matching commit)
-  - [f2fs-dev,02/17] fs: remove the special !CONFIG_BLOCK def_blk_fops
+  - [f2fs-dev,v7,06/13] ubifs: have ubifs_update_time use inode_update_timestamps
     (no matching commit)
-  - [f2fs-dev,03/17] fs: rename and move block_page_mkwrite_return
+  - [f2fs-dev,v7,07/13] xfs: have xfs_vn_update_time gets its own timestamp
     (no matching commit)
-  - [f2fs-dev,04/17] fs: remove emergency_thaw_bdev
-    https://git.kernel.org/jaegeuk/f2fs/c/4a8b719f95c0
-  - [f2fs-dev,05/17] filemap: update ki_pos in generic_perform_write
+  - [f2fs-dev,v7,08/13] fs: drop the timespec64 argument from update_time
     (no matching commit)
-  - [f2fs-dev,06/17] filemap: add a kiocb_write_and_wait helper
+  - [f2fs-dev,v7,09/13] fs: add infrastructure for multigrain timestamps
+    https://git.kernel.org/jaegeuk/f2fs/c/ffb6cf19e063
+  - [f2fs-dev,v7,10/13] tmpfs: add support for multigrain timestamps
+    https://git.kernel.org/jaegeuk/f2fs/c/d48c33972916
+  - [f2fs-dev,v7,11/13] xfs: switch to multigrain timestamps
     (no matching commit)
-  - [f2fs-dev,07/17] filemap: add a kiocb_invalidate_pages helper
-    (no matching commit)
-  - [f2fs-dev,08/17] filemap: add a kiocb_invalidate_post_write helper
-    (no matching commit)
-  - [f2fs-dev,09/17] fs: factor out a direct_write_fallback helper
-    (no matching commit)
-  - [f2fs-dev,10/17] iomap: use kiocb_write_and_wait and kiocb_invalidate_pages
-    (no matching commit)
-  - [f2fs-dev,11/17] iomap: assign current->backing_dev_info in iomap_file_buffered_write
-    (no matching commit)
-  - [f2fs-dev,12/17] fuse: use direct_write_fallback
-    (no matching commit)
-  - [f2fs-dev,13/17] block: don't plug in blkdev_write_iter
-    (no matching commit)
-  - [f2fs-dev,14/17] block: open code __generic_file_write_iter for blkdev writes
-    (no matching commit)
-  - [f2fs-dev,15/17] block: stop setting ->direct_IO
-    (no matching commit)
-  - [f2fs-dev,16/17] block: use iomap for writes to block devices
-    (no matching commit)
-  - [f2fs-dev,17/17] fs: add CONFIG_BUFFER_HEAD
-    (no matching commit)
+  - [f2fs-dev,v7,12/13] ext4: switch to multigrain timestamps
+    https://git.kernel.org/jaegeuk/f2fs/c/0269b585868e
+  - [f2fs-dev,v7,13/13] btrfs: convert to multigrain timestamps
+    https://git.kernel.org/jaegeuk/f2fs/c/50e9ceef1d4f
 
 You are awesome, thank you!
 -- 
