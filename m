@@ -2,69 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C2939791659
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Sep 2023 13:44:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C0C07916F4
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Sep 2023 14:17:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236349AbjIDLoe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Sep 2023 07:44:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52576 "EHLO
+        id S233693AbjIDMRV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Sep 2023 08:17:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232492AbjIDLod (ORCPT
+        with ESMTP id S229660AbjIDMRU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Sep 2023 07:44:33 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3890B18C;
-        Mon,  4 Sep 2023 04:44:30 -0700 (PDT)
+        Mon, 4 Sep 2023 08:17:20 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A9FFCC4;
+        Mon,  4 Sep 2023 05:17:13 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id EEE31B80E1B;
-        Mon,  4 Sep 2023 11:44:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46F5BC433C7;
-        Mon,  4 Sep 2023 11:44:23 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id ED4CB6162A;
+        Mon,  4 Sep 2023 12:17:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4BA0C433C8;
+        Mon,  4 Sep 2023 12:17:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1693827867;
-        bh=fYR3tc02KRKsQWWGmBLxr9JQRojGSNYY9TDLjFmJUSs=;
+        s=k20201202; t=1693829832;
+        bh=HHXY3v7221b+SxrYI/jDf93gMIgyLJsAK1IX5/+dU2k=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bltXaApYnLmdRt6ZqB6BIbyO2XcnmQKbtZMC+OGux2/kbAyHo1+a6SkQ54MopeAtm
-         ospAwLs0JrnreoYGzUN4pc4OjZUNLtu79pEdr4WvHhoWzUn9zcVABhNkmws4cKa47g
-         kMxiR+ftLWeVisIYTpn5HCEc8JOn7gTeFVqbmZXgVuRqijO7oExyjOki4NxC3Mcaww
-         pPs22gl6fdJ5Ip9bMFpoMDGLWr5Lm6rFbiKRw+kDGtk3leZT+PekUYlKBKjM3igFIf
-         UovfihIZqpC8zQTtfCvBheaW3vENIofypxiEPEIJ+QeRpm2fgqiN09IO+YmD5w9XRk
-         BwijyodYuu4yw==
-Date:   Mon, 4 Sep 2023 13:44:20 +0200
+        b=eVx9Hwy/MKXb5WGL9r/z7C8Gyt5scaL8nY8H6JYFtCrwB7N+2INJ7fBcXDxOtLqVz
+         c4agcMTPyI7GI2UzW/lIpxTeAdzkLyYVeB3myh8PmxiwDZDqYOhjr9STAz8GipAoWb
+         Ect0o4qNiePgdcelvGz2zT2zK96IW0hcfJd290C5SRqh2Whc//xE7aAdshnV7BYHUQ
+         sCoSJtjsA1evjh1Fnlpg2xk4NNjPh2evvO+bH44iucFtfP+tqaRDZ/aiCVUDElTUpd
+         wigeWvtMN3sfnURzy8GihSrQT55sY7Hu7SrOeUwYpz26aCDlD7O12iug+nkfqtvdP7
+         +/vibpZEmskOg==
+Date:   Mon, 4 Sep 2023 14:17:08 +0200
 From:   Christian Brauner <brauner@kernel.org>
-To:     Alexander Mikhalitsyn <alexander@mihalicyn.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Michael =?utf-8?B?V2Vpw58=?= <michael.weiss@aisec.fraunhofer.de>
-Cc:     Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Stanislav Fomichev <sdf@google.com>,
-        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-        Quentin Monnet <quentin@isovalent.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>, bpf@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        gyroidos@aisec.fraunhofer.de, paul@paul-moore.com,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Amir Goldstein <amir73il@gmail.com>
-Subject: Re: [PATCH RFC 1/4] bpf: add cgroup device guard to flag a cgroup
- device prog
-Message-ID: <20230904-harfe-haargenau-4c6cb31c304a@brauner>
-References: <20230814-devcg_guard-v1-0-654971ab88b1@aisec.fraunhofer.de>
- <20230814-devcg_guard-v1-1-654971ab88b1@aisec.fraunhofer.de>
- <20230815-feigling-kopfsache-56c2d31275bd@brauner>
- <20230817221102.6hexih3uki3jf6w3@macbook-pro-8.dhcp.thefacebook.com>
- <CAJqdLrpx4v4To=XSK0gyM4Ks2+c=Jrni2ttw4ZViKv-jK=tJKQ@mail.gmail.com>
+To:     Jiao Zhou <jiaozhou@google.com>
+Cc:     Linux FS Development <linux-fsdevel@vger.kernel.org>,
+        Ard Biesheuvel <ardb@kernel.org>, Jeremy Kerr <jk@ozlabs.org>,
+        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel test robot <oliver.sang@intel.com>
+Subject: Re: [PATCH] kernel: Add Mount Option For Efivarfs
+Message-ID: <20230904-erben-coachen-7ca9a30cdc05@brauner>
+References: <20230831153108.2021554-1-jiaozhou@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJqdLrpx4v4To=XSK0gyM4Ks2+c=Jrni2ttw4ZViKv-jK=tJKQ@mail.gmail.com>
+In-Reply-To: <20230831153108.2021554-1-jiaozhou@google.com>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -74,96 +56,151 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 29, 2023 at 03:35:46PM +0200, Alexander Mikhalitsyn wrote:
-> On Fri, Aug 18, 2023 at 12:11 AM Alexei Starovoitov
-> <alexei.starovoitov@gmail.com> wrote:
-> >
-> > On Tue, Aug 15, 2023 at 10:59:22AM +0200, Christian Brauner wrote:
-> > > On Mon, Aug 14, 2023 at 04:26:09PM +0200, Michael Weiß wrote:
-> > > > Introduce the BPF_F_CGROUP_DEVICE_GUARD flag for BPF_PROG_LOAD
-> > > > which allows to set a cgroup device program to be a device guard.
-> > >
-> > > Currently we block access to devices unconditionally in may_open_dev().
-> > > Anything that's mounted by an unprivileged containers will get
-> > > SB_I_NODEV set in s_i_flags.
-> > >
-> > > Then we currently mediate device access in:
-> > >
-> > > * inode_permission()
-> > >   -> devcgroup_inode_permission()
-> > > * vfs_mknod()
-> > >   -> devcgroup_inode_mknod()
-> > > * blkdev_get_by_dev() // sget()/sget_fc(), other ways to open block devices and friends
-> > >   -> devcgroup_check_permission()
-> > > * drivers/gpu/drm/amd/amdkfd // weird restrictions on showing gpu info afaict
-> > >   -> devcgroup_check_permission()
-> > >
-> > > All your new flag does is to bypass that SB_I_NODEV check afaict and let
-> > > it proceed to the devcgroup_*() checks for the vfs layer.
-> > >
-> > > But I don't get the semantics yet.
-> > > Is that a flag which is set on BPF_PROG_TYPE_CGROUP_DEVICE programs or
-> > > is that a flag on random bpf programs? It looks like it would be the
-> > > latter but design-wise I would expect this to be a property of the
-> > > device program itself.
-> >
-> > Looks like patch 4 attemps to bypass usual permission checks with:
-> > @@ -3976,9 +3979,19 @@ int vfs_mknod(struct mnt_idmap *idmap, struct inode *dir,
-> >         if (error)
-> >                 return error;
-> >
-> > -       if ((S_ISCHR(mode) || S_ISBLK(mode)) && !is_whiteout &&
-> > -           !capable(CAP_MKNOD))
-> > -               return -EPERM;
-> > +       /*
-> > +        * In case of a device cgroup restirction allow mknod in user
-> > +        * namespace. Otherwise just check global capability; thus,
-> > +        * mknod is also disabled for user namespace other than the
-> > +        * initial one.
-> > +        */
-> > +       if ((S_ISCHR(mode) || S_ISBLK(mode)) && !is_whiteout) {
-> > +               if (devcgroup_task_is_guarded(current)) {
-> > +                       if (!ns_capable(current_user_ns(), CAP_MKNOD))
-> > +                               return -EPERM;
-> > +               } else if (!capable(CAP_MKNOD))
-> > +                       return -EPERM;
-> > +       }
-> >
+On Thu, Aug 31, 2023 at 03:31:07PM +0000, Jiao Zhou wrote:
+> Add uid and gid in efivarfs's mount option, so that
+> we can mount the file system with ownership. This approach
+>  is used by a number of other filesystems that don't have
+> native support for ownership.
 > 
-> Dear colleagues,
+> TEST=FEATURES=test emerge-reven chromeos-kernel-5_15
 > 
-> > which pretty much sounds like authoritative LSM that was brought up in the past
-> > and LSM folks didn't like it.
+> Signed-off-by: Jiao Zhou <jiaozhou@google.com>
+> Reported-by: kernel test robot <oliver.sang@intel.com>
+> Closes: https://lore.kernel.org/oe-lkp/202308291443.ea96ac66-oliver.sang@intel.com
+> ---
+>  fs/efivarfs/inode.c    |  4 +++
+>  fs/efivarfs/internal.h |  9 ++++++
+>  fs/efivarfs/super.c    | 65 ++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 78 insertions(+)
 > 
-> Thanks for pointing this out, Alexei!
-> I've searched through the LKML archives and found a thread about this:
-> https://lore.kernel.org/all/CAEf4BzaBt0W3sWh_L4RRXEFYdBotzVEnQdqC7BO+PNWtD7eSUA@mail.gmail.com/
-> 
-> As far as I understand, disagreement here is about a practice of
-> skipping kernel-built capability checks based
-> on LSM hooks, right?
-> 
-> +CC Paul Moore <paul@paul-moore.com>
-> 
-> >
-> > If vfs folks are ok with this special bypass of permissions in vfs_mknod()
-> > we can talk about kernel->bpf api details.
-> > The way it's done with BPF_F_CGROUP_DEVICE_GUARD flag is definitely no go,
-> > but no point going into bpf details now until agreement on bypass is made.
+> diff --git a/fs/efivarfs/inode.c b/fs/efivarfs/inode.c
+> index 939e5e242b98..de57fb6c28e1 100644
+> --- a/fs/efivarfs/inode.c
+> +++ b/fs/efivarfs/inode.c
+> @@ -20,9 +20,13 @@ struct inode *efivarfs_get_inode(struct super_block *sb,
+>  				const struct inode *dir, int mode,
+>  				dev_t dev, bool is_removable)
+>  {
+> +	struct efivarfs_fs_info *fsi = sb->s_fs_info;
+>  	struct inode *inode = new_inode(sb);
+> +	struct efivarfs_mount_opts *opts = &fsi->mount_opts;
+>  
+>  	if (inode) {
+> +		inode->i_uid = opts->uid;
+> +		inode->i_gid = opts->gid;
+>  		inode->i_ino = get_next_ino();
+>  		inode->i_mode = mode;
+>  		inode->i_atime = inode->i_mtime = inode->i_ctime = current_time(inode);
+> diff --git a/fs/efivarfs/internal.h b/fs/efivarfs/internal.h
+> index 30ae44cb7453..57deaf56d8e2 100644
+> --- a/fs/efivarfs/internal.h
+> +++ b/fs/efivarfs/internal.h
+> @@ -8,6 +8,15 @@
+>  
+>  #include <linux/list.h>
+>  
+> +struct efivarfs_mount_opts {
+> +	kuid_t uid;
+> +	kgid_t gid;
+> +};
+> +
+> +struct efivarfs_fs_info {
+> +	struct efivarfs_mount_opts mount_opts;
+> +};
+> +
+>  extern const struct file_operations efivarfs_file_operations;
+>  extern const struct inode_operations efivarfs_dir_inode_operations;
+>  extern bool efivarfs_valid_name(const char *str, int len);
+> diff --git a/fs/efivarfs/super.c b/fs/efivarfs/super.c
+> index 15880a68faad..d67b0d157ff5 100644
+> --- a/fs/efivarfs/super.c
+> +++ b/fs/efivarfs/super.c
+> @@ -8,6 +8,7 @@
+>  #include <linux/efi.h>
+>  #include <linux/fs.h>
+>  #include <linux/fs_context.h>
+> +#include <linux/fs_parser.h>
+>  #include <linux/module.h>
+>  #include <linux/pagemap.h>
+>  #include <linux/ucs2_string.h>
+> @@ -23,10 +24,27 @@ static void efivarfs_evict_inode(struct inode *inode)
+>  	clear_inode(inode);
+>  }
+>  
+> +static int efivarfs_show_options(struct seq_file *m, struct dentry *root)
+> +{
+> +	struct super_block *sb = root->d_sb;
+> +	struct efivarfs_fs_info *sbi = sb->s_fs_info;
+> +	struct efivarfs_mount_opts *opts = &sbi->mount_opts;
+> +
+> +	/* Show partition info */
+> +	if (!uid_eq(opts->uid, GLOBAL_ROOT_UID))
+> +		seq_printf(m, ",uid=%u",
+> +				from_kuid_munged(&init_user_ns, opts->uid));
+> +	if (!gid_eq(opts->gid, GLOBAL_ROOT_GID))
+> +		seq_printf(m, ",gid=%u",
+> +				from_kgid_munged(&init_user_ns, opts->gid));
+> +	return 0;
+> +}
+> +
+>  static const struct super_operations efivarfs_ops = {
+>  	.statfs = simple_statfs,
+>  	.drop_inode = generic_delete_inode,
+>  	.evict_inode = efivarfs_evict_inode,
+> +	.show_options	= efivarfs_show_options,
+>  };
+>  
+>  /*
+> @@ -190,6 +208,41 @@ static int efivarfs_destroy(struct efivar_entry *entry, void *data)
+>  	return 0;
+>  }
+>  
+> +enum {
+> +	Opt_uid, Opt_gid,
+> +};
+> +
+> +static const struct fs_parameter_spec efivarfs_parameters[] = {
+> +	fsparam_u32("uid",			Opt_uid),
+> +	fsparam_u32("gid",			Opt_gid),
+> +	{},
+> +};
+> +
+> +static int efivarfs_parse_param(struct fs_context *fc, struct fs_parameter *param)
+> +{
+> +	struct efivarfs_fs_info *sbi = fc->s_fs_info;
+> +	struct efivarfs_mount_opts *opts = &sbi->mount_opts;
+> +	struct fs_parse_result result;
+> +	int opt;
+> +
+> +	opt = fs_parse(fc, efivarfs_parameters, param, &result);
+> +	if (opt < 0)
+> +		return opt;
+> +
+> +	switch (opt) {
+> +	case Opt_uid:
+> +		opts->uid = make_kuid(current_user_ns(), result.uint_32);
+> +		break;
+> +	case Opt_gid:
+> +		opts->gid = make_kgid(current_user_ns(), result.uint_32);
+> +		break;
 
-Afaiu the original concern was specifically about an LSM allowing to
-bypass other LSMs or DAC permissions. But this wouldn't be the case
-here. The general inode access LSM permission mediation is separate from
-specific device access management: the security_inode_permission() LSM
-hook would still be called and thus LSMs restrictions would continue to
-apply exactly as they do now.
+This will allow the following:
 
-For cgroup v1 device access management was a cgroup controller with
-management interface through files. It then was ported to an eBPF
-program attachable to cgroups for cgroup v2. Arguably, it should
-probably have been ported to an LSM hook or a separate LSM and untied
-from cgroups completely. The confusion here seems to indicate that that
-would have been the right way to go.
+# initial user namespace
+fd_fs = fsopen("efivarfs")
 
-Because right now device access management seems its own form of
-mandatory access control.
+# switch to some unprivileged userns
+fsconfig(fd_fs, FSCONFIG_SET_STRING, "uid", "1000")
+==> This now resolves within the caller's user namespace which might
+    have an idmapping where 1000 cannot be resolved causing sb->{g,u}id
+    to be set to INVALID_{G,U}ID.
+
+    In fact this is also possible in your patch right now without the
+    namespace switching. The caller could just pass -1 and that would
+    cause inodes with INVALID_{G,U}ID to be created.
+    So you want a check for {g,u}id_valid().
+
+# send fd back to init_user_ns
+fsconfig(fd_fs, FSCONFIG_CMD_CREATE)
+fd_mnt = fsmount(fd_fs, ...)
+move_mount(fd_fs, "", -EBADF, "/somehwere", ...)
