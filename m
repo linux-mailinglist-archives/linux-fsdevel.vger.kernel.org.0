@@ -2,50 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DDF69791ED6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Sep 2023 23:08:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E87B791EE3
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Sep 2023 23:10:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238157AbjIDVIz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Sep 2023 17:08:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38114 "EHLO
+        id S238818AbjIDVKL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Sep 2023 17:10:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229481AbjIDVIy (ORCPT
+        with ESMTP id S230254AbjIDVKL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Sep 2023 17:08:54 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D421A1B6;
-        Mon,  4 Sep 2023 14:08:50 -0700 (PDT)
+        Mon, 4 Sep 2023 17:10:11 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 830D3AB;
+        Mon,  4 Sep 2023 14:10:07 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 704D261708;
-        Mon,  4 Sep 2023 21:08:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04CF9C433C8;
-        Mon,  4 Sep 2023 21:08:44 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id D98A8CE0F9B;
+        Mon,  4 Sep 2023 21:10:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DADB6C433C7;
+        Mon,  4 Sep 2023 21:09:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1693861729;
-        bh=c/K0v1f1fOXVzFbawIYNQ7qFhq1at121qQ4pgUfYVaU=;
+        s=k20201202; t=1693861804;
+        bh=7Y9LseJ8Ifb4Qe/c73MwbTJetx8TAAeqrdV7KuJsZM4=;
         h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-        b=q0BatMXZee/hoOID0g6Y+zDdWfb54DoZlDDmyQKupB+mJxT5Q26glReDoLfGI3AU8
-         GG2PAkZBxyEVSgIGMEq7rrKvLqG38c6FNhfSgtCtKY1AcS9V0Mgqya7KVg4d6p1Cbh
-         YipxbCju6etroCrF/7BDJWy+xm65bqKyMlm4wmiExXeV8bOEcJRgpwquvrxRZL/LaY
-         pZ1IKjRk0l9BW30p4tIKLP7IML1F3jzlMkW3gBd4aonK5oZJVDF/PEiV5Hb6bZpDsZ
-         lM6p+nPfSqbOHBvTU41hKVXSj2+fZIcdcxcvDaTw0Ib7VjIKiInwRu2eHAfd7E2mge
-         Mk/WF2xYAlJqg==
+        b=fbR6MDUzYjIgnblyfLIyfVORPBbGiZo+VhH1UdDXOtbiR3BokmzPxgsnrriPbkCxA
+         zMzYqAtccjAc0z+Zti90QUvuXBf+smw+q5591IPRmwvFDmdZGX6Uh7c2yqoGj+5VVd
+         DgEnBCrediXuMNj6U0hTL9m4+0IdFJGdNqDlJwefZaap2dh270SD4YX5ljrKurds7Z
+         y969BDgc1mc2CozKiIz1gX24hq/IZ04KKO2kC8QV8bQr8cRdcGUX/bXOE+lwHFUeAc
+         ZHRuBaFRPw4qrLMB11LfWC2VCiiiTzLvDfztQEtePED2O434/kTlKsR+vSHHEm4QzL
+         /7ZdGNIXy61wQ==
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date:   Tue, 05 Sep 2023 00:08:43 +0300
-Message-Id: <CVAFV92MONCH.257Y9YQ3OEU4B@suppilovahvero>
+Date:   Tue, 05 Sep 2023 00:09:56 +0300
+Message-Id: <CVAFW71NZJ2X.EVVE8XAX3NS@suppilovahvero>
 Cc:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-nfs@vger.kernel.org>, <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
         <keyrings@vger.kernel.org>, <selinux@vger.kernel.org>,
         "Roberto Sassu" <roberto.sassu@huawei.com>,
         "Stefan Berger" <stefanb@linux.ibm.com>
-Subject: Re: [PATCH v2 11/25] security: Align inode_setattr hook definition
- with EVM
+Subject: Re: [PATCH v2 12/25] security: Introduce inode_post_setattr hook
 From:   "Jarkko Sakkinen" <jarkko@kernel.org>
 To:     "Roberto Sassu" <roberto.sassu@huaweicloud.com>,
         <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
@@ -57,10 +56,10 @@ To:     "Roberto Sassu" <roberto.sassu@huaweicloud.com>,
         <eparis@parisplace.org>, <casey@schaufler-ca.com>
 X-Mailer: aerc 0.14.0
 References: <20230831104136.903180-1-roberto.sassu@huaweicloud.com>
- <20230831104136.903180-12-roberto.sassu@huaweicloud.com>
-In-Reply-To: <20230831104136.903180-12-roberto.sassu@huaweicloud.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+ <20230831104136.903180-13-roberto.sassu@huaweicloud.com>
+In-Reply-To: <20230831104136.903180-13-roberto.sassu@huaweicloud.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -71,105 +70,122 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 On Thu Aug 31, 2023 at 1:41 PM EEST, Roberto Sassu wrote:
 > From: Roberto Sassu <roberto.sassu@huawei.com>
 >
-> Add the idmap parameter to the definition, so that evm_inode_setattr() ca=
-n
-> be registered as this hook implementation.
+> In preparation for moving IMA and EVM to the LSM infrastructure, introduc=
+e
+> the inode_post_setattr hook.
 >
 > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 > Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 > ---
->  include/linux/lsm_hook_defs.h | 3 ++-
->  security/security.c           | 2 +-
->  security/selinux/hooks.c      | 3 ++-
->  security/smack/smack_lsm.c    | 4 +++-
->  4 files changed, 8 insertions(+), 4 deletions(-)
+>  fs/attr.c                     |  1 +
+>  include/linux/lsm_hook_defs.h |  2 ++
+>  include/linux/security.h      |  7 +++++++
+>  security/security.c           | 16 ++++++++++++++++
+>  4 files changed, 26 insertions(+)
 >
+> diff --git a/fs/attr.c b/fs/attr.c
+> index 431f667726c7..3c309eb456c6 100644
+> --- a/fs/attr.c
+> +++ b/fs/attr.c
+> @@ -486,6 +486,7 @@ int notify_change(struct mnt_idmap *idmap, struct den=
+try *dentry,
+> =20
+>  	if (!error) {
+>  		fsnotify_change(dentry, ia_valid);
+> +		security_inode_post_setattr(idmap, dentry, ia_valid);
+>  		ima_inode_post_setattr(idmap, dentry, ia_valid);
+>  		evm_inode_post_setattr(idmap, dentry, ia_valid);
+>  	}
 > diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.=
 h
-> index 4bdddb52a8fe..fdf075a6b1bb 100644
+> index fdf075a6b1bb..995d30336cfa 100644
 > --- a/include/linux/lsm_hook_defs.h
 > +++ b/include/linux/lsm_hook_defs.h
-> @@ -134,7 +134,8 @@ LSM_HOOK(int, 0, inode_readlink, struct dentry *dentr=
-y)
->  LSM_HOOK(int, 0, inode_follow_link, struct dentry *dentry, struct inode =
-*inode,
->  	 bool rcu)
+> @@ -136,6 +136,8 @@ LSM_HOOK(int, 0, inode_follow_link, struct dentry *de=
+ntry, struct inode *inode,
 >  LSM_HOOK(int, 0, inode_permission, struct inode *inode, int mask)
-> -LSM_HOOK(int, 0, inode_setattr, struct dentry *dentry, struct iattr *att=
-r)
-> +LSM_HOOK(int, 0, inode_setattr, struct mnt_idmap *idmap, struct dentry *=
+>  LSM_HOOK(int, 0, inode_setattr, struct mnt_idmap *idmap, struct dentry *=
 dentry,
-> +	 struct iattr *attr)
+>  	 struct iattr *attr)
+> +LSM_HOOK(void, LSM_RET_VOID, inode_post_setattr, struct mnt_idmap *idmap=
+,
+> +	 struct dentry *dentry, int ia_valid)
 
-LSM_HOOK(int, 0, inode_setattr, struct mnt_idmap *idmap, struct dentry *den=
-try, struct iattr *attr)
-
-Only 99 characters, i.e. breaking into two lines is not necessary.
+LSM_HOOK(void, LSM_RET_VOID, inode_post_setattr, struct mnt_idmap *idmap, s=
+truct dentry *dentry,
+	 int ia_valid)
 
 >  LSM_HOOK(int, 0, inode_getattr, const struct path *path)
 >  LSM_HOOK(int, 0, inode_setxattr, struct mnt_idmap *idmap,
 >  	 struct dentry *dentry, const char *name, const void *value,
-> diff --git a/security/security.c b/security/security.c
-> index cb6242feb968..2b24d01cf181 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -2117,7 +2117,7 @@ int security_inode_setattr(struct mnt_idmap *idmap,
-> =20
->  	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
->  		return 0;
-> -	ret =3D call_int_hook(inode_setattr, 0, dentry, attr);
-> +	ret =3D call_int_hook(inode_setattr, 0, idmap, dentry, attr);
->  	if (ret)
->  		return ret;
->  	return evm_inode_setattr(idmap, dentry, attr);
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index ee7c49c2cfd3..bfcc4d9aa5ab 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -3075,7 +3075,8 @@ static int selinux_inode_permission(struct inode *i=
-node, int mask)
->  	return rc;
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index dcb3604ffab8..820899db5276 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -355,6 +355,8 @@ int security_inode_follow_link(struct dentry *dentry,=
+ struct inode *inode,
+>  int security_inode_permission(struct inode *inode, int mask);
+>  int security_inode_setattr(struct mnt_idmap *idmap,
+>  			   struct dentry *dentry, struct iattr *attr);
+> +void security_inode_post_setattr(struct mnt_idmap *idmap, struct dentry =
+*dentry,
+> +				 int ia_valid);
+
+void security_inode_post_setattr(struct mnt_idmap *idmap, struct dentry *de=
+ntry, int ia_valid);
+
+>  int security_inode_getattr(const struct path *path);
+>  int security_inode_setxattr(struct mnt_idmap *idmap,
+>  			    struct dentry *dentry, const char *name,
+> @@ -856,6 +858,11 @@ static inline int security_inode_setattr(struct mnt_=
+idmap *idmap,
+>  	return 0;
 >  }
 > =20
-> -static int selinux_inode_setattr(struct dentry *dentry, struct iattr *ia=
-ttr)
-> +static int selinux_inode_setattr(struct mnt_idmap *idmap, struct dentry =
-*dentry,
-> +				 struct iattr *iattr)
+> +static inline void
+> +security_inode_post_setattr(struct mnt_idmap *idmap, struct dentry *dent=
+ry,
+> +			    int ia_valid)
+> +{ }
+> +
+>  static inline int security_inode_getattr(const struct path *path)
 >  {
->  	const struct cred *cred =3D current_cred();
->  	struct inode *inode =3D d_backing_inode(dentry);
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index 679156601a10..89f2669d50a9 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -1181,12 +1181,14 @@ static int smack_inode_permission(struct inode *i=
-node, int mask)
+>  	return 0;
+> diff --git a/security/security.c b/security/security.c
+> index 2b24d01cf181..764a6f28b3b9 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -2124,6 +2124,22 @@ int security_inode_setattr(struct mnt_idmap *idmap=
+,
+>  }
+>  EXPORT_SYMBOL_GPL(security_inode_setattr);
 > =20
->  /**
->   * smack_inode_setattr - Smack check for setting attributes
+> +/**
+> + * security_inode_post_setattr() - Update the inode after a setattr oper=
+ation
 > + * @idmap: idmap of the mount
->   * @dentry: the object
->   * @iattr: for the force flag
->   *
->   * Returns 0 if access is permitted, an error code otherwise
->   */
-> -static int smack_inode_setattr(struct dentry *dentry, struct iattr *iatt=
-r)
-> +static int smack_inode_setattr(struct mnt_idmap *idmap, struct dentry *d=
-entry,
-> +			       struct iattr *iattr)
+> + * @dentry: file
+> + * @ia_valid: file attributes set
+> + *
+> + * Update inode security field after successful setting file attributes.
+> + */
+> +void security_inode_post_setattr(struct mnt_idmap *idmap, struct dentry =
+*dentry,
+> +				 int ia_valid)
 
-static int smack_inode_setattr(struct mnt_idmap *idmap, struct dentry *dent=
-ry, struct iattr *iattr)
+Ditto.
 
-Can be still in a single line (100 characters exactly).
-
-
->  {
->  	struct smk_audit_info ad;
->  	int rc;
+> +{
+> +	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
+> +		return;
+> +	call_void_hook(inode_post_setattr, idmap, dentry, ia_valid);
+> +}
+> +
+>  /**
+>   * security_inode_getattr() - Check if getting file attributes is allowe=
+d
+>   * @path: file
 > --=20
 > 2.34.1
 
