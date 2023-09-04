@@ -2,36 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 56E8479103E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Sep 2023 05:02:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00116791065
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Sep 2023 05:27:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351229AbjIDDCn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 3 Sep 2023 23:02:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35330 "EHLO
+        id S234654AbjIDD10 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 3 Sep 2023 23:27:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42154 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230418AbjIDDCm (ORCPT
+        with ESMTP id S230464AbjIDD1Z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 3 Sep 2023 23:02:42 -0400
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F9EC10E;
-        Sun,  3 Sep 2023 20:02:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=f0F1mT0oTx0cuxqaIamdvQUQP90eouQn4jLAgHy5Lho=; b=SH9O2kzmjwTcdAresHcuTllhNM
-        wIJ50gPWrtRS0vyNfVkhn/+IYH9mvdX8xPUtTAjGr/2IbW94zxkwtNBIkhNbN6IS69JtYdD1q/XAo
-        t13UXd8hxOqeKHncB/mMFr7tOaTuZy0LnQ0SR+3szubrB4KoRF8OMZCBzuai3yuYPcF9F+5GLSzsu
-        ulrnW8EicTg5oyx+KdWadfkfR9+L5+qEBP4zQ+VSkSCDZTSuIY4x0b1lVx9YdWzQklQGgE9ZiHfjV
-        u7kNO6l9vk7MeCq6xDN7KVS0+s6rDIf2g4n9WKwgHGVdBCoNcuW9YoOtkc9rjFTjQuyX5glDhDtRb
-        cKPVBeiA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1qczrF-003DLH-2p;
-        Mon, 04 Sep 2023 03:02:33 +0000
-Date:   Mon, 4 Sep 2023 04:02:33 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
+        Sun, 3 Sep 2023 23:27:25 -0400
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31863BF
+        for <linux-fsdevel@vger.kernel.org>; Sun,  3 Sep 2023 20:27:21 -0700 (PDT)
+Received: from cwcc.thunk.org (pool-173-48-116-73.bstnma.fios.verizon.net [173.48.116.73])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 3843QwSA015276
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 3 Sep 2023 23:26:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+        t=1693798021; bh=rkbpgkYC4jb0fCkXOsy0wxyXQNhK/Ytcz9Jdb2AKGa4=;
+        h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+        b=m5/geuHtX6zIYvlw4QQeq3Hwr3/5EQEjCeLuobQX/JLKigD7+gU4k/ENkKy+P0G4u
+         dvsi0mXvo6yAEMm9g1WO9D/huSK5TnY2eAkapw9OfYiFj49Gxev2c+A6Da6+e/Z31Q
+         AkDSqA4WsTziMNG2VuuxMAR8k5cwlFGnO3TxODyTDqoO1AM/ky0GLIgw5lWU+YsZax
+         9wOgUYzGcEW8dvy4KKpR3WKEFmtFEvQdxX/DjxyAOdPQEFdQwNf7vIWFHKw2NHV7PK
+         UyIuGe5GnLbAIAgM3NkFmNhG0oFzJQJg2Eh5cLmIWtucbFMgLYA8Dlo2w6mug03yIf
+         trVKcU6ObmdMg==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id 4A22215C023F; Sun,  3 Sep 2023 23:26:58 -0400 (EDT)
+Date:   Sun, 3 Sep 2023 23:26:58 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
 To:     Dave Chinner <david@fromorbit.com>
-Cc:     Mateusz Guzik <mjguzik@gmail.com>,
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Mateusz Guzik <mjguzik@gmail.com>,
         syzbot <syzbot+e245f0516ee625aaa412@syzkaller.appspotmail.com>,
         brauner@kernel.org, djwong@kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -39,7 +44,7 @@ Cc:     Mateusz Guzik <mjguzik@gmail.com>,
         ndesaulniers@google.com, syzkaller-bugs@googlegroups.com,
         trix@redhat.com
 Subject: Re: [syzbot] [xfs?] INFO: task hung in __fdget_pos (4)
-Message-ID: <20230904030233.GP3390869@ZenIV>
+Message-ID: <20230904032658.GA701295@mit.edu>
 References: <000000000000e6432a06046c96a5@google.com>
  <ZPQYyMBFmqrfqafL@dread.disaster.area>
  <20230903083357.75mq5l43gakuc2z7@f>
@@ -50,10 +55,9 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <ZPU2n48GoSRMBc7j@dread.disaster.area>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -61,44 +65,41 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Mon, Sep 04, 2023 at 11:45:03AM +1000, Dave Chinner wrote:
-
-> > thread B: write()
-> > 	finds file
-> > 	grabs ->f_pos_lock
-> > 	calls into filesystem
-> > 	blocks on fs lock held by A
-> > thread C: read()/write()/lseek() on the same file
-> > 	blocks on ->f_pos_lock
+> Entirely possible - this is syzbot we are talking about here.
+> Especially if reiser or ntfs has been tested back before the logs we
+> have start, as both are known to corrupt memory and/or leak locks
+> when trying to parse corrupt filesystem images that syzbot feeds
+> them.  That's why we largely ignore syzbot reports that involve
+> those filesystems...
 > 
-> Yes, that's exactly what I said in a followup email - we need to
-> know what happened to thread A, because that might be where we are
-> stuck on a leaked lock.
+> Unfortunately, the logs from what was being done around when the
+> tasks actually hung are long gone (seems like only the last 20-30s
+> of log activity is reported) so when the hung task timer goes off
+> at 143s, there is nothing left to tell us what might have caused it.
 > 
-> I saw quite a few reports where lookup/readdir are also stuck trying
-> to get an inode lock - those at the "thread B"s in the above example
-> - but there's no indication left of what happened with thread A.
-> 
-> If thread A was blocked iall that time on something, then the hung
-> task timer should fire on it, too.  If it is running in a tight
-> loop, the NMI would have dumped a stack trace from it.
-> 
-> But neither of those things happened, so it's either leaked
-> something or it's in a loop with a short term sleep so doesn't
-> trigger the hung task timer. sysrq-w output will capture that
-> without all the noise of sysrq-t....
+> IOWs, it's entirely possible that it is a memory corruption that
+> has resulted in a leaked lock somewhere...
 
-Here's what brought sysrq-t:
+... and this is why I ignore any syzbot report that doesn't have a C
+reproducer.  Life is too short to waste time with what is very likely
+syzbot noise....  And I'd much rather opt out of the gamification of
+syzbot dashboards designed to use dark patterns to guilt developers to
+work on "issues" that very likely have no real impact on real life
+actual user impact, if it might cause developers and maintainers to
+burn out and quit.
 
-| > The report does not have info necessary to figure this out -- no
-| > backtrace for whichever thread which holds f_pos_lock. I clicked on a
-| > bunch of other reports and it is the same story.
-| > 
-| > Can the kernel be configured to dump backtraces from *all* threads?
-| > 
-| > If there is no feature like that I can hack it up.
-|
-| <break>t
-|
-| over serial console, or echo t >/proc/sysrq-trigger would do it...
+Basically, if syzbot won't prioritize things for us, it's encumbent on
+us to prioritize things for our own mental health.  And so syzbot
+issues without a real reproducer are very low on my priority list; I
+have things I can work on that are much more likely to make real world
+impact.  Even ones that have a real reproducer, there are certain
+classes of bugs (e.g., "locking bugs" that require a badly corrupted
+file system, or things that are just denial of service attacks if
+you're too stupid to insert a USB thumb drive found in a parking lock
+--- made worse by GNOME who has decided to default mount any random
+USB thumb drive inserted into a system, even a server system that has
+GNOME installed, thanks to some idiotic decision made by some random
+Red Hat product manager), that I just ignore because I don't have
+infinite amounts of time to coddle stupid Red Hat distro tricks.
 
-A question specifically about getting the stack traces...
+						- Ted
