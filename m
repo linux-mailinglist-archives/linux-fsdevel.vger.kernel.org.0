@@ -2,60 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C1AD793128
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Sep 2023 23:45:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BDA079312A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Sep 2023 23:45:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244576AbjIEVpC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 Sep 2023 17:45:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46776 "EHLO
+        id S244584AbjIEVpD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 Sep 2023 17:45:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46786 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244638AbjIEVol (ORCPT
+        with ESMTP id S236782AbjIEVoo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 Sep 2023 17:44:41 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89093E5C
-        for <linux-fsdevel@vger.kernel.org>; Tue,  5 Sep 2023 14:42:48 -0700 (PDT)
+        Tue, 5 Sep 2023 17:44:44 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6F3A199
+        for <linux-fsdevel@vger.kernel.org>; Tue,  5 Sep 2023 14:42:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1693950167;
+        s=mimecast20190719; t=1693950168;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=cw3DqXN0nAqgICZcLU+deZuKVK3JziD/s0/YHmFn328=;
-        b=F8vv3UVlUcnGG3TwQmHglH33tfViEKeFb971EE/527Rj4rX4jbzU+spgRdlHDZgxVngJ0v
-        Q/Np+UbNap1Fc13YgLFYYZ5kKTLarXqWuuLsCCiV4fkU+4mCF5SS1aoeytA+FkoNxdU9E0
-        sbqNxGsQ6KGlxhGuxYMV+TKDoa5CD9Q=
+        bh=eXvYIDhk9Xunttv7gLZeZ6m5tePV5F/iEIjQTI0WMa4=;
+        b=PwGwsk6P1xWHNl0u6nlKM/1aRicywEQ3mMHqic9Vs0nM5tP9pGIl7wNTQxE2Nou9oR++sF
+        CaGKG6T49+S4/Mti4MkG0L7SnTKwUGSZWjINbt6gXeF7t+R5NYwdFTdQv/NcEa+ByGSlbi
+        qz5tPNT/U4EXgBhLBf3FZOOmYPho9so=
 Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
  [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-353-x7Yhf8inNwiBmUTOilUZUg-1; Tue, 05 Sep 2023 17:42:46 -0400
-X-MC-Unique: x7Yhf8inNwiBmUTOilUZUg-1
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-76f191e26f5so91401085a.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Sep 2023 14:42:46 -0700 (PDT)
+ us-mta-226-g1ZEE6SxOQOcRNlXN23eRA-1; Tue, 05 Sep 2023 17:42:47 -0400
+X-MC-Unique: g1ZEE6SxOQOcRNlXN23eRA-1
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7708c1ae500so2640185a.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Sep 2023 14:42:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693950166; x=1694554966;
+        d=1e100.net; s=20221208; t=1693950167; x=1694554967;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cw3DqXN0nAqgICZcLU+deZuKVK3JziD/s0/YHmFn328=;
-        b=eHyCL/qwHvzYKhIx7sX+gb10bTHSZBHGX07pJcv2vD+taCEvK/VGpGCOutJfrTUtsN
-         n24e1/OZOXJSn5rpSd2zgW7KzjPyN9oxrpUT03iJ//pZIBbINYhQVoxF5l4TuHnnQHT0
-         xz0Hkef+jWStJwHB5twI+duoUneIaDrXAjzZE+sCtcnZtyNahv+LQwjjCjlUG45bF3yb
-         tv3woVC5TYZe+LpBaNJp/++YKGKuiyuj1vKYB8uZb7NaC09oMUbNNJXqGCCRMJk+XBVh
-         l+mDlUiiA0fvcftXbx0wnt6LUNRBwTX75piYHAzxuhQb8fc4XBFvkthHpKolfHIH2lHc
-         GGnA==
-X-Gm-Message-State: AOJu0YxQZs57dZDRQxu3dPApz/muUeKiPD+xa06TJt+199zDZpE/+hP5
-        +rDf1uxBfUbzHQiaT3jF+XG3qDuzyubDFMDNy6qd02r+gYbA4xzVsxWUtMbveEGfPKei4i4PRDU
-        7US/ShC79ZGvGu6jGImETG74t5A==
-X-Received: by 2002:a05:620a:4712:b0:76f:1b38:e74a with SMTP id bs18-20020a05620a471200b0076f1b38e74amr15367604qkb.4.1693950165774;
-        Tue, 05 Sep 2023 14:42:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEjHmAQEBZtigx4G4B3sp1ASlOU6CNSzPZeJM4WgpbfHkl1dq3l/QojNcctzg5rIDRzuMLaUA==
-X-Received: by 2002:a05:620a:4712:b0:76f:1b38:e74a with SMTP id bs18-20020a05620a471200b0076f1b38e74amr15367597qkb.4.1693950165524;
-        Tue, 05 Sep 2023 14:42:45 -0700 (PDT)
+        bh=eXvYIDhk9Xunttv7gLZeZ6m5tePV5F/iEIjQTI0WMa4=;
+        b=B8/93SiVOipEivxT1g7WR53hLqeHQr5LJwvOR9NGCiQeG7LWdFfPJaFgGBNuj8hr6l
+         LoKifNazX5w2oBm/6dlsyt0Phh+gcO000Qcz5NjmrZdvDPOg+uJ8ZixuG73LAMQeokyM
+         /EGFaNcYQ9f1IhK9NIqwKDJXxzrAFs/eNFx7G3blV2ru0virDheWiRhG0tnk1S0FZ7Wh
+         xXZlBT7DFaWmlLSuveD/R20Kkpk254/Ocwn12gV3hu19FzzAAT2M5LYpEF7JkA2V48ss
+         UwodeL84ps5gs2S6Jtv/Eki1AnaV/Pih9nlBRCulRB8vV0CQDtNpOXgxIOIsj9l8/JRB
+         8xZw==
+X-Gm-Message-State: AOJu0YxG4JBnNaZmeNGgZXEZSdIJQw7I3Mu6hPLNjYaa8fPOX1uap+kU
+        vhlFNTinhmT1f3QQ+kH1W6FCYDTmEAKzePMNbqk+TQ/ubuKyDzcGO+lw5TT9zXiE3NKPFQ89UEn
+        stGwVRCOkbYh88NvpuZ10rIubpQ==
+X-Received: by 2002:a05:620a:1a26:b0:76c:ed4e:ac10 with SMTP id bk38-20020a05620a1a2600b0076ced4eac10mr16770229qkb.6.1693950167013;
+        Tue, 05 Sep 2023 14:42:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEGbQRi3lj2GCHZMrI9G7N8PmFSehzLMjlA7R138X4fKreXMS+kXyyfOvFWMrTvBreLVK2oMg==
+X-Received: by 2002:a05:620a:1a26:b0:76c:ed4e:ac10 with SMTP id bk38-20020a05620a1a2600b0076ced4eac10mr16770206qkb.6.1693950166761;
+        Tue, 05 Sep 2023 14:42:46 -0700 (PDT)
 Received: from x1n.redhat.com (cpe5c7695f3aee0-cm5c7695f3aede.cpe.net.cable.rogers.com. [99.254.144.39])
-        by smtp.gmail.com with ESMTPSA id i2-20020a37c202000000b007682af2c8aasm4396938qkm.126.2023.09.05.14.42.44
+        by smtp.gmail.com with ESMTPSA id i2-20020a37c202000000b007682af2c8aasm4396938qkm.126.2023.09.05.14.42.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Sep 2023 14:42:45 -0700 (PDT)
+        Tue, 05 Sep 2023 14:42:46 -0700 (PDT)
 From:   Peter Xu <peterx@redhat.com>
 To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org
 Cc:     Anish Moorthy <amoorthy@google.com>,
@@ -71,179 +71,308 @@ Cc:     Anish Moorthy <amoorthy@google.com>,
         Ingo Molnar <mingo@redhat.com>,
         James Houghton <jthoughton@google.com>,
         Nadav Amit <nadav.amit@gmail.com>
-Subject: [PATCH 6/7] selftests/mm: Create uffd_fault_thread_create|join()
-Date:   Tue,  5 Sep 2023 17:42:34 -0400
-Message-ID: <20230905214235.320571-7-peterx@redhat.com>
+Subject: [PATCH 7/7] selftests/mm: uffd perf test
+Date:   Tue,  5 Sep 2023 17:42:35 -0400
+Message-ID: <20230905214235.320571-8-peterx@redhat.com>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20230905214235.320571-1-peterx@redhat.com>
 References: <20230905214235.320571-1-peterx@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Make them common functions to be reused.
+Add a simple perf test for userfaultfd missing mode, on private anon only.
+It mostly only tests the messaging, so memory type / fault type may not
+that much yet.
 
 Signed-off-by: Peter Xu <peterx@redhat.com>
 ---
- tools/testing/selftests/mm/uffd-common.c | 46 ++++++++++++++++++++++
- tools/testing/selftests/mm/uffd-common.h |  4 ++
- tools/testing/selftests/mm/uffd-stress.c | 49 ++++--------------------
- 3 files changed, 57 insertions(+), 42 deletions(-)
+ tools/testing/selftests/mm/Makefile      |   2 +
+ tools/testing/selftests/mm/uffd-common.c |  18 ++
+ tools/testing/selftests/mm/uffd-common.h |   1 +
+ tools/testing/selftests/mm/uffd-perf.c   | 207 +++++++++++++++++++++++
+ 4 files changed, 228 insertions(+)
+ create mode 100644 tools/testing/selftests/mm/uffd-perf.c
 
+diff --git a/tools/testing/selftests/mm/Makefile b/tools/testing/selftests/mm/Makefile
+index 6a9fc5693145..acb22517d37e 100644
+--- a/tools/testing/selftests/mm/Makefile
++++ b/tools/testing/selftests/mm/Makefile
+@@ -64,6 +64,7 @@ TEST_GEN_FILES += thuge-gen
+ TEST_GEN_FILES += transhuge-stress
+ TEST_GEN_FILES += uffd-stress
+ TEST_GEN_FILES += uffd-unit-tests
++TEST_GEN_FILES += uffd-perf
+ TEST_GEN_FILES += split_huge_page_test
+ TEST_GEN_FILES += ksm_tests
+ TEST_GEN_FILES += ksm_functional_tests
+@@ -120,6 +121,7 @@ $(TEST_GEN_FILES): vm_util.c
+ 
+ $(OUTPUT)/uffd-stress: uffd-common.c
+ $(OUTPUT)/uffd-unit-tests: uffd-common.c
++$(OUTPUT)/uffd-perf: uffd-common.c
+ 
+ ifeq ($(ARCH),x86_64)
+ BINARIES_32 := $(patsubst %,$(OUTPUT)/%,$(BINARIES_32))
 diff --git a/tools/testing/selftests/mm/uffd-common.c b/tools/testing/selftests/mm/uffd-common.c
-index aded06cab285..851284395b29 100644
+index 851284395b29..afbf2f7add56 100644
 --- a/tools/testing/selftests/mm/uffd-common.c
 +++ b/tools/testing/selftests/mm/uffd-common.c
-@@ -555,6 +555,52 @@ void *uffd_poll_thread(void *arg)
- 	return NULL;
- }
+@@ -725,3 +725,21 @@ int uffd_get_features(uint64_t *features)
  
-+void *uffd_read_thread(void *arg)
+ 	return 0;
+ }
++
++uint64_t get_usec(void)
 +{
-+	struct uffd_args *args = (struct uffd_args *)arg;
-+	struct uffd_msg msg;
++    uint64_t val = 0;
++    struct timespec t;
++    int ret = clock_gettime(CLOCK_MONOTONIC, &t);
 +
-+	sem_post(&uffd_read_sem);
-+	/* from here cancellation is ok */
++    if (ret == -1) {
++        perror("clock_gettime() failed");
++        /* should never happen */
++        exit(-1);
++    }
 +
-+	for (;;) {
-+		if (uffd_read_msg(uffd, &msg))
-+			continue;
-+		uffd_handle_page_fault(&msg, args);
-+	}
++    val = t.tv_nsec / 1000;     /* ns -> us */
++    val += t.tv_sec * 1000000;  /* s -> us */
++
++    return val;
++}
+diff --git a/tools/testing/selftests/mm/uffd-common.h b/tools/testing/selftests/mm/uffd-common.h
+index 9d66ad5c52cb..4273201ae19f 100644
+--- a/tools/testing/selftests/mm/uffd-common.h
++++ b/tools/testing/selftests/mm/uffd-common.h
+@@ -123,6 +123,7 @@ int uffd_open_dev(unsigned int flags);
+ int uffd_open_sys(unsigned int flags);
+ int uffd_open(unsigned int flags);
+ int uffd_get_features(uint64_t *features);
++uint64_t get_usec(void);
+ 
+ #define TEST_ANON	1
+ #define TEST_HUGETLB	2
+diff --git a/tools/testing/selftests/mm/uffd-perf.c b/tools/testing/selftests/mm/uffd-perf.c
+new file mode 100644
+index 000000000000..eda99718311a
+--- /dev/null
++++ b/tools/testing/selftests/mm/uffd-perf.c
+@@ -0,0 +1,207 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Userfaultfd performance tests.
++ *
++ *  Copyright (C) 2023  Red Hat, Inc.
++ */
++
++#include "uffd-common.h"
++
++#ifdef __NR_userfaultfd
++
++#define  DEF_MEM_SIZE_MB  (512)
++#define  MB(x)  ((x) * 1024 * 1024)
++#define  DEF_N_TESTS  5
++
++static volatile bool perf_test_started;
++static unsigned int n_uffd_threads, n_worker_threads;
++static uint64_t nr_pages_per_worker;
++static unsigned long n_tests = DEF_N_TESTS;
++
++static void setup_env(unsigned long mem_size_mb)
++{
++	/* Test private anon only for now */
++	map_shared = false;
++	uffd_test_ops = &anon_uffd_test_ops;
++	page_size = psize();
++	nr_cpus = n_uffd_threads;
++	nr_pages = MB(mem_size_mb) / page_size;
++	nr_pages_per_worker = nr_pages / n_worker_threads;
++	if (nr_pages_per_worker == 0)
++		err("each worker should at least own one page");
++}
++
++void *worker_fn(void *opaque)
++{
++	unsigned long i = (unsigned long) opaque;
++	unsigned long page_nr, start_nr, end_nr;
++	int v = 0;
++
++	start_nr = i * nr_pages_per_worker;
++	end_nr = (i + 1) * nr_pages_per_worker;
++
++	while (!perf_test_started);
++
++	for (page_nr = start_nr; page_nr < end_nr; page_nr++)
++		v += *(volatile int *)(area_dst + page_nr * page_size);
 +
 +	return NULL;
 +}
 +
-+void uffd_fault_thread_create(pthread_t *thread, pthread_attr_t *attr,
-+			      struct uffd_args *args, bool poll)
++static uint64_t run_perf(uint64_t mem_size_mb, bool poll)
 +{
-+	if (poll) {
-+		if (pthread_create(thread, attr, uffd_poll_thread, args))
-+			err("uffd_poll_thread create");
-+	} else {
-+		if (pthread_create(thread, attr, uffd_read_thread, args))
-+			err("uffd_read_thread create");
-+		sem_wait(&uffd_read_sem);
++	pthread_t worker_threads[n_worker_threads];
++	pthread_t uffd_threads[n_uffd_threads];
++	const char *errmsg = NULL;
++	struct uffd_args *args;
++	uint64_t start, end;
++	int i, ret;
++
++	if (uffd_test_ctx_init(0, &errmsg))
++		err("%s", errmsg);
++
++	/*
++	 * By default, uffd is opened with NONBLOCK mode; use block mode
++	 * when test read()
++	 */
++	if (!poll) {
++		int flags = fcntl(uffd, F_GETFL);
++
++		if (flags < 0)
++			err("fcntl(F_GETFL) failed");
++
++		if (flags & O_NONBLOCK)
++			flags &= ~O_NONBLOCK;
++
++		if (fcntl(uffd, F_SETFL, flags))
++			err("fcntl(F_SETFL) failed");
 +	}
++
++	ret = uffd_register(uffd, area_dst, MB(mem_size_mb),
++			    true, false, false);
++	if (ret)
++		err("uffd_register() failed");
++
++	args = calloc(nr_cpus, sizeof(struct uffd_args));
++	if (!args)
++		err("calloc()");
++
++	for (i = 0; i < n_uffd_threads; i++) {
++		args[i].cpu = i;
++		uffd_fault_thread_create(&uffd_threads[i], NULL,
++					 &args[i], poll);
++	}
++
++	for (i = 0; i < n_worker_threads; i++) {
++		if (pthread_create(&worker_threads[i], NULL,
++				   worker_fn, (void *)(uintptr_t)i))
++			err("create uffd threads");
++	}
++
++	start = get_usec();
++	perf_test_started = true;
++	for (i = 0; i < n_worker_threads; i++)
++		pthread_join(worker_threads[i], NULL);
++	end = get_usec();
++
++	for (i = 0; i < n_uffd_threads; i++) {
++		struct uffd_args *p = &args[i];
++
++		uffd_fault_thread_join(uffd_threads[i], i, poll);
++
++		assert(p->wp_faults == 0 && p->minor_faults == 0);
++	}
++
++	free(args);
++
++	ret = uffd_unregister(uffd, area_dst, MB(mem_size_mb));
++	if (ret)
++		err("uffd_unregister() failed");
++
++	return end - start;
 +}
 +
-+void uffd_fault_thread_join(pthread_t thread, int cpu, bool poll)
++static void usage(const char *prog)
 +{
-+	char c = 1;
-+
-+	if (poll) {
-+		if (write(pipefd[cpu*2+1], &c, 1) != 1)
-+			err("pipefd write error");
-+	} else {
-+		if (pthread_cancel(thread))
-+			err("pthread_cancel()");
-+	}
-+
-+	if (pthread_join(thread, NULL))
-+		err("pthread_join()");
++	printf("usage: %s <options>\n", prog);
++	puts("");
++	printf("  -m: size of memory to test (in MB, default: %u)\n",
++	       DEF_MEM_SIZE_MB);
++	puts("  -p: use poll() (the default)");
++	puts("  -r: use read()");
++	printf("  -t: test rounds (default: %u)\n", DEF_N_TESTS);
++	puts("  -u: number of uffd threads (default: n_cpus)");
++	puts("  -w: number of worker threads (default: n_cpus)");
++	puts("");
++	exit(KSFT_FAIL);
 +}
 +
- static void retry_copy_page(int ufd, struct uffdio_copy *uffdio_copy,
- 			    unsigned long offset)
- {
-diff --git a/tools/testing/selftests/mm/uffd-common.h b/tools/testing/selftests/mm/uffd-common.h
-index 521523baded1..9d66ad5c52cb 100644
---- a/tools/testing/selftests/mm/uffd-common.h
-+++ b/tools/testing/selftests/mm/uffd-common.h
-@@ -114,6 +114,10 @@ void uffd_handle_page_fault(struct uffd_msg *msg, struct uffd_args *args);
- int __copy_page(int ufd, unsigned long offset, bool retry, bool wp);
- int copy_page(int ufd, unsigned long offset, bool wp);
- void *uffd_poll_thread(void *arg);
-+void *uffd_read_thread(void *arg);
-+void uffd_fault_thread_create(pthread_t *thread, pthread_attr_t *attr,
-+			      struct uffd_args *args, bool poll);
-+void uffd_fault_thread_join(pthread_t thread, int cpu, bool poll);
- 
- int uffd_open_dev(unsigned int flags);
- int uffd_open_sys(unsigned int flags);
-diff --git a/tools/testing/selftests/mm/uffd-stress.c b/tools/testing/selftests/mm/uffd-stress.c
-index 7219f55ae794..915795e33432 100644
---- a/tools/testing/selftests/mm/uffd-stress.c
-+++ b/tools/testing/selftests/mm/uffd-stress.c
-@@ -125,23 +125,6 @@ static int copy_page_retry(int ufd, unsigned long offset)
- 	return __copy_page(ufd, offset, true, test_uffdio_wp);
- }
- 
--static void *uffd_read_thread(void *arg)
--{
--	struct uffd_args *args = (struct uffd_args *)arg;
--	struct uffd_msg msg;
--
--	sem_post(&uffd_read_sem);
--	/* from here cancellation is ok */
--
--	for (;;) {
--		if (uffd_read_msg(uffd, &msg))
--			continue;
--		uffd_handle_page_fault(&msg, args);
--	}
--
--	return NULL;
--}
--
- static void *background_thread(void *arg)
- {
- 	unsigned long cpu = (unsigned long) arg;
-@@ -186,16 +169,10 @@ static int stress(struct uffd_args *args)
- 		if (pthread_create(&locking_threads[cpu], &attr,
- 				   locking_thread, (void *)cpu))
- 			return 1;
--		if (bounces & BOUNCE_POLL) {
--			if (pthread_create(&uffd_threads[cpu], &attr, uffd_poll_thread, &args[cpu]))
--				err("uffd_poll_thread create");
--		} else {
--			if (pthread_create(&uffd_threads[cpu], &attr,
--					   uffd_read_thread,
--					   (void *)&args[cpu]))
--				return 1;
--			sem_wait(&uffd_read_sem);
--		}
++int main(int argc, char *argv[])
++{
++	unsigned long mem_size_mb = DEF_MEM_SIZE_MB;
++	uint64_t result, sum = 0;
++	bool use_poll = true;
++	int opt, count;
 +
-+		uffd_fault_thread_create(&uffd_threads[cpu], &attr,
-+					 &args[cpu], bounces & BOUNCE_POLL);
++	n_uffd_threads = n_worker_threads = sysconf(_SC_NPROCESSORS_ONLN);
 +
- 		if (pthread_create(&background_threads[cpu], &attr,
- 				   background_thread, (void *)cpu))
- 			return 1;
-@@ -220,21 +197,9 @@ static int stress(struct uffd_args *args)
- 		if (pthread_join(locking_threads[cpu], NULL))
- 			return 1;
- 
--	for (cpu = 0; cpu < nr_cpus; cpu++) {
--		char c;
--		if (bounces & BOUNCE_POLL) {
--			if (write(pipefd[cpu*2+1], &c, 1) != 1)
--				err("pipefd write error");
--			if (pthread_join(uffd_threads[cpu],
--					 (void *)&args[cpu]))
--				return 1;
--		} else {
--			if (pthread_cancel(uffd_threads[cpu]))
--				return 1;
--			if (pthread_join(uffd_threads[cpu], NULL))
--				return 1;
--		}
--	}
-+	for (cpu = 0; cpu < nr_cpus; cpu++)
-+		uffd_fault_thread_join(uffd_threads[cpu], cpu,
-+				       bounces & BOUNCE_POLL);
- 
- 	return 0;
- }
++	while ((opt = getopt(argc, argv, "hm:prt:u:w:")) != -1) {
++		switch (opt) {
++		case 'm':
++			mem_size_mb = strtoul(optarg, NULL, 10);
++			break;
++		case 'p':
++			use_poll = true;
++			break;
++		case 'r':
++			use_poll = false;
++			break;
++		case 't':
++			n_tests = strtoul(optarg, NULL, 10);
++			break;
++		case 'u':
++			n_uffd_threads = strtoul(optarg, NULL, 10);
++			break;
++		case 'w':
++			n_worker_threads = strtoul(optarg, NULL, 10);
++			break;
++		case 'h':
++		default:
++			/* Unknown */
++			usage(argv[0]);
++			break;
++		}
++	}
++
++	setup_env(mem_size_mb);
++
++	printf("Message mode: \t\t%s\n", use_poll ? "poll" : "read");
++	printf("Mem size: \t\t%lu (MB)\n", mem_size_mb);
++	printf("Uffd threads: \t\t%u\n", n_uffd_threads);
++	printf("Worker threads: \t%u\n", n_worker_threads);
++	printf("Test rounds: \t\t%lu\n", n_tests);
++	printf("Time used (us): \t");
++
++	for (count = 0; count < n_tests; count++) {
++		result = run_perf(mem_size_mb, use_poll);
++		sum += result;
++		printf("%" PRIu64 ", ", result);
++		fflush(stdout);
++	}
++	printf("\b\b \n");
++	printf("Average (us): \t\t%"PRIu64"\n", sum / n_tests);
++
++	return KSFT_PASS;
++}
++
++#else /* __NR_userfaultfd */
++
++#warning "missing __NR_userfaultfd definition"
++
++int main(void)
++{
++	printf("Skipping %s (missing __NR_userfaultfd)\n", __file__);
++	return KSFT_SKIP;
++}
++
++#endif /* __NR_userfaultfd */
 -- 
 2.41.0
 
