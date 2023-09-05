@@ -2,188 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EDB92793287
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Sep 2023 01:28:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E50ED7932BB
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Sep 2023 01:56:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238273AbjIEX2O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 Sep 2023 19:28:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54904 "EHLO
+        id S241887AbjIEX4j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 Sep 2023 19:56:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232289AbjIEX2O (ORCPT
+        with ESMTP id S229639AbjIEX4h (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 Sep 2023 19:28:14 -0400
-Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8A939E
-        for <linux-fsdevel@vger.kernel.org>; Tue,  5 Sep 2023 16:28:07 -0700 (PDT)
-Received: from submission (posteo.de [185.67.36.169]) 
-        by mout01.posteo.de (Postfix) with ESMTPS id D11FE240028
-        for <linux-fsdevel@vger.kernel.org>; Wed,  6 Sep 2023 01:28:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
-        t=1693956485; bh=tFVPhBBWaN4G4tPkkecVkR72dlmFDkMrFM8fwsAtMZ8=;
-        h=Mime-Version:Content-Transfer-Encoding:Date:Message-Id:Cc:Subject:
-         From:To:From;
-        b=c058gnytzEYpeZDYe4PGKWPHtC8Ss7YQo+OSm5riUXyX7T936oBtFmvbjZSYybr5v
-         qTl9jRKu1sQyGnRqTvIYeGXsomDjdbQ9k6YvkL0iWNQBR5Zs7a05qR25t/SR5F+PGF
-         VYhvxPgxtdpMGe+98djPImonFwLPEfLGMtMp8oFINTTmqHbRj9yvGvhmufXis6XALJ
-         59ijHA0Xzv9nCEEFZswJ1c89BzwXvd8awj7HA8ww925yN1+04H2bP8KM03Q5xQTmPB
-         dJgOa2A6aCyXSMCapEnEtaJaLU+gpbMpRaGKV6bcgGFlF6i8DNlp6vG7UmF0RD5blL
-         PJH0DIxlpCtaA==
-Received: from customer (localhost [127.0.0.1])
-        by submission (posteo.de) with ESMTPSA id 4RgMBD5hQJz6tx5;
-        Wed,  6 Sep 2023 01:28:04 +0200 (CEST)
+        Tue, 5 Sep 2023 19:56:37 -0400
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86CBE1AB
+        for <linux-fsdevel@vger.kernel.org>; Tue,  5 Sep 2023 16:56:33 -0700 (PDT)
+Received: by mail-yb1-xb49.google.com with SMTP id 3f1490d57ef6-d7c676651c7so713689276.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Sep 2023 16:56:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1693958193; x=1694562993; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BTMdUX0G2lv2+kU2WiYySTJObpffzgV002stI1a1W7I=;
+        b=e7n6Yjksn2CMZRtFHL5RDakHGb5NbF8DYWqlKCV2VtvDz+bekmAxT60g6N1QEt4Q9x
+         TnsqFvLITcWcza8/3XwZpqAt0gi0gYzd1nGQYtSJxMLnJNH2oHGZIMTvMrQVoz/ZFZik
+         tbKvfANIdod5uVbLAZYsDMDpiT3PiNLOr8kAox4fLx9MwiOZYQKmhuLC6uF8FytOaf5d
+         qY3XUntd/mCB+S4TE8YGHPYj5zzee1tN1PA42iKcQUw5WQLVQW/JKAEVFoQlof+IXjgO
+         Fcy86VDmQgAqbHsdDgcGCn8ZxzB3Jb49XYlt7LU9Mv15oAV8iTZFBLCCmUqI4wpgNEW6
+         QFFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1693958193; x=1694562993;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BTMdUX0G2lv2+kU2WiYySTJObpffzgV002stI1a1W7I=;
+        b=arPqTjH+m3hRuGIMFGnyGOvfZs1yS6vVPbiUpoN5mhbP3+rIUTXhhJm1fOjoyqhBN6
+         C5cYpmJLjaFfSmdyMSbehW/3FHeuK+y33tCeG70NIt6TXj6vRX9Wp+uZgmhhbBin7MM3
+         Ip9m8bMY8re6TM4zXZtHZ0+pDwCQm53blqPEfZVdXCQV54cRoiwF5TRqxbrNCA3th3Xx
+         +z4r0BukkhyKngpQyN2VrVgrANO2z0/MqaCtnXX2QYVleYyww/JaU21xq8v26TdSOTpu
+         oRqIaDov86LGKoOwRmARJEtg5j3hKOE2sFaMDqxfZb3C2lpxj2F9rBfLuDAeMRXKPKD2
+         KUJw==
+X-Gm-Message-State: AOJu0YyowxV/vwdq3b3HkSB9+BVi4l2vnK+sdZzQxxx726tAQtcIlHj2
+        ZEoBu6axQuDtqAGXtZZWbALdnPK6BbY=
+X-Google-Smtp-Source: AGHT+IGHRLIyxOEOlqNogao+wtJt3d7D+zZNTRSCijTepfZz1QuZZsrU81NGe3dzgdfi+rQuqyfdUQCuPic=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a25:4211:0:b0:d7e:c4af:22d2 with SMTP id
+ p17-20020a254211000000b00d7ec4af22d2mr293199yba.4.1693958192804; Tue, 05 Sep
+ 2023 16:56:32 -0700 (PDT)
+Date:   Tue, 5 Sep 2023 16:56:31 -0700
+In-Reply-To: <20230901082025.20548-2-vbabka@suse.cz>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date:   Tue, 05 Sep 2023 23:27:01 +0000
-Message-Id: <CVBDFOQTOWJ4.2NWF9JNF4IUFL@posteo.de>
-Cc:     "Jan Kara" <jack@suse.cz>, "Jeff Layton" <jlayton@poochiereds.net>,
-        "Christian Brauner" <brauner@kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-man@vger.kernel.org>
-Subject: Re: [PATCH] name_to_handle_at.2,fanotify_mark.2: Document the
- AT_HANDLE_FID flag
-From:   "Tom Schwindl" <schwindl@posteo.de>
-To:     "Amir Goldstein" <amir73il@gmail.com>,
-        "Alejandro Colomar" <alx.manpages@gmail.com>
-References: <20230903120433.2605027-1-amir73il@gmail.com>
-In-Reply-To: <20230903120433.2605027-1-amir73il@gmail.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+References: <20230901082025.20548-2-vbabka@suse.cz>
+Message-ID: <ZPfAL0D95AwXD9tg@google.com>
+Subject: Re: [PATCH gmem FIXUP] mm, compaction: make testing
+ mapping_unmovable() safe
+From:   Sean Christopherson <seanjc@google.com>
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     ackerleytng@google.com, akpm@linux-foundation.org,
+        anup@brainfault.org, aou@eecs.berkeley.edu,
+        chao.p.peng@linux.intel.com, chenhuacai@kernel.org,
+        david@redhat.com, isaku.yamahata@gmail.com, jarkko@kernel.org,
+        jmorris@namei.org, kirill.shutemov@linux.intel.com,
+        kvm-riscv@lists.infradead.org, kvm@vger.kernel.org,
+        kvmarm@lists.linux.dev, liam.merwick@oracle.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-mm@kvack.org,
+        linux-riscv@lists.infradead.org,
+        linux-security-module@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, mail@maciej.szmigiero.name,
+        maz@kernel.org, michael.roth@amd.com, mpe@ellerman.id.au,
+        oliver.upton@linux.dev, palmer@dabbelt.com,
+        paul.walmsley@sifive.com, paul@paul-moore.com, pbonzini@redhat.com,
+        qperret@google.com, serge@hallyn.com, tabba@google.com,
+        vannapurve@google.com, wei.w.wang@intel.com, willy@infradead.org,
+        yu.c.zhang@linux.intel.com
+Content-Type: text/plain; charset="us-ascii"
+X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Fri, Sep 01, 2023, Vlastimil Babka wrote:
+> As Kirill pointed out, mapping can be removed under us due to
+> truncation. Test it under folio lock as already done for the async
+> compaction / dirty folio case. To prevent locking every folio with
+> mapping to do the test, do it only for unevictable folios, as we can
+> expect the unmovable mapping folios are also unevictable - it is the
+> case for guest memfd folios.
 
-On Sun Sep 3, 2023 at 2:04 PM CEST, Amir Goldstein wrote:
-> A flag to indicate that the requested file_handle is not intended
-> to be used for open_by_handle_at(2) and may be needed to identify
-> filesystem objects reported in fanotify events.
->
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> ---
->
-> Hi Alejandro,
->
-> This is a followup on AT_HANDLE_FID feature from v6.5.
->
-> Thanks,
-> Amir.
->
->  man2/fanotify_mark.2     | 11 +++++++++--
->  man2/open_by_handle_at.2 | 42 +++++++++++++++++++++++++++++++++++++---
->  2 files changed, 48 insertions(+), 5 deletions(-)
->
-> diff --git a/man2/fanotify_mark.2 b/man2/fanotify_mark.2
-> index 3f85deb23..8e885af69 100644
-> --- a/man2/fanotify_mark.2
-> +++ b/man2/fanotify_mark.2
-> @@ -743,10 +743,17 @@ do not specify a directory.
->  .B EOPNOTSUPP
->  The object indicated by
->  .I pathname
-> -is associated with a filesystem that does not support the encoding of fi=
-le
-> -handles.
-> +is associated with a filesystem
-> +that does not support the encoding of file handles.
->  This error can be returned only with an fanotify group that identifies
->  filesystem objects by file handles.
-> +Calling
-> +.BR name_to_handle_at (2)
-> +with the flag
-> +.BR AT_HANDLE_FID " (since Linux 6.5)"
-> +.\" commit 96b2b072ee62be8ae68c8ecf14854c4d0505a8f8
-> +can be used as a test
-> +to check if a filesystem supports reporting events with file handles.
->  .TP
->  .B EPERM
->  The operation is not permitted because the caller lacks a required capab=
-ility.
-> diff --git a/man2/open_by_handle_at.2 b/man2/open_by_handle_at.2
-> index 4061faea9..4cfa21d9c 100644
-> --- a/man2/open_by_handle_at.2
-> +++ b/man2/open_by_handle_at.2
-> @@ -109,17 +109,44 @@ structure as an opaque data type: the
->  .I handle_type
->  and
->  .I f_handle
-> -fields are needed only by a subsequent call to
-> +fields can be used in a subsequent call to
->  .BR open_by_handle_at ().
-> +The caller can also use the opaque
-> +.I file_handle
-> +to compare the identity of filesystem objects
-> +that were queried at different times and possibly
-> +at different paths.
-> +The
-> +.BR fanotify (7)
-> +subsystem can report events
-> +with an information record containing a
-> +.I file_handle
-> +to identify the filesystem object.
->  .PP
->  The
->  .I flags
->  argument is a bit mask constructed by ORing together zero or more of
-> -.B AT_EMPTY_PATH
-> +.BR AT_HANDLE_FID ,
-> +.BR AT_EMPTY_PATH ,
->  and
->  .BR AT_SYMLINK_FOLLOW ,
->  described below.
->  .PP
-> +When
-> +.I flags
-> +contain the
-> +.BR AT_HANDLE_FID " (since Linux 6.5)"
-> +.\" commit 96b2b072ee62be8ae68c8ecf14854c4d0505a8f8
-> +flag, the caller indicates that the returned
-> +.I file_handle
-> +is needed to identify the filesystem object,
-> +and not for opening the file later,
-> +so it should be expected that a subsequent call to
-> +.BR open_by_handle_at ()
-> +with the returned
-> +.I file_handle
-> +may fail.
-> +.PP
->  Together, the
->  .I pathname
->  and
-> @@ -363,8 +390,14 @@ capability.
->  .B ESTALE
->  The specified
->  .I handle
-> -is not valid.
-> +is not valid for opening a file.
->  This error will occur if, for example, the file has been deleted.
-> +This error can also occur if the
-> +.I handle
-> +was aquired using the
-
-This should probably be s/aquired/acquired/
-
-> +.B AT_HANDLE_FID
-> +flag and the filesystem does not support
-> +.BR open_by_handle_at ().
->  .SH VERSIONS
->  FreeBSD has a broadly similar pair of system calls in the form of
->  .BR getfh ()
-> @@ -386,6 +419,9 @@ file handles, for example,
->  .IR /proc ,
->  .IR /sys ,
->  and various network filesystems.
-> +Some filesystem support the translation of pathnames to
-
-You should use the plural, filesystems, here.
-
-> +file handles, but do not support using those file handles in
-> +.BR open_by_handle_at ().
->  .PP
->  A file handle may become invalid ("stale") if a file is deleted,
->  or for other filesystem-specific reasons.
-
+Rather than expect/assume that unmovable mappings are always unevictable, how about
+requiring that?  E.g. either through a VM_WARN_ON in mapping_set_unmovable(), or by
+simply having that helper forcefully set AS_UNEVICTABLE as well.
