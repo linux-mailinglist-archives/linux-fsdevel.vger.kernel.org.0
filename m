@@ -2,377 +2,205 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BDA079312A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Sep 2023 23:45:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FDB2793241
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Sep 2023 01:06:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244584AbjIEVpD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 Sep 2023 17:45:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46786 "EHLO
+        id S229993AbjIEXGb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 Sep 2023 19:06:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236782AbjIEVoo (ORCPT
+        with ESMTP id S229549AbjIEXGa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 Sep 2023 17:44:44 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6F3A199
-        for <linux-fsdevel@vger.kernel.org>; Tue,  5 Sep 2023 14:42:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1693950168;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=eXvYIDhk9Xunttv7gLZeZ6m5tePV5F/iEIjQTI0WMa4=;
-        b=PwGwsk6P1xWHNl0u6nlKM/1aRicywEQ3mMHqic9Vs0nM5tP9pGIl7wNTQxE2Nou9oR++sF
-        CaGKG6T49+S4/Mti4MkG0L7SnTKwUGSZWjINbt6gXeF7t+R5NYwdFTdQv/NcEa+ByGSlbi
-        qz5tPNT/U4EXgBhLBf3FZOOmYPho9so=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-226-g1ZEE6SxOQOcRNlXN23eRA-1; Tue, 05 Sep 2023 17:42:47 -0400
-X-MC-Unique: g1ZEE6SxOQOcRNlXN23eRA-1
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7708c1ae500so2640185a.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Sep 2023 14:42:47 -0700 (PDT)
+        Tue, 5 Sep 2023 19:06:30 -0400
+Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA933199
+        for <linux-fsdevel@vger.kernel.org>; Tue,  5 Sep 2023 16:06:26 -0700 (PDT)
+Received: by mail-pg1-x534.google.com with SMTP id 41be03b00d2f7-573d52030fbso1059263a12.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Sep 2023 16:06:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1693955186; x=1694559986; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dO/dIcLU4UrEWRYNP8worgvjS2fDG6114grtK8ATUpc=;
+        b=USOBNKSoc8zgyXxqKw2N79ITmJY8Fl935WLOeELNGip6U6T8Dh75jKZsmZQslnY8W9
+         va06L6tmLQGCUmv1/qx2pQmiTJgDe9Zg6kyAS5jDdWzQShnDDTeEY2M7JF0inb8rJIEU
+         sSeVl3sslBtNmk2fP3zh9V23VpUa3gWhWpY8x4vPgRs3RoOUt9A8GH9fzyqsL/sy0K+7
+         laBASpa8P5DCVGyHORHh+4O3H1GW2COFGJj2l1fNQXyOT4wB/nN9u0joQegj1OlHzl0c
+         4c3fdd2oQ0koo5P9/dTNBpZDdkstpwsCpys5Xcrqs64bXVAa80AJHdBdT2agJfS2Ir6t
+         IWWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693950167; x=1694554967;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eXvYIDhk9Xunttv7gLZeZ6m5tePV5F/iEIjQTI0WMa4=;
-        b=B8/93SiVOipEivxT1g7WR53hLqeHQr5LJwvOR9NGCiQeG7LWdFfPJaFgGBNuj8hr6l
-         LoKifNazX5w2oBm/6dlsyt0Phh+gcO000Qcz5NjmrZdvDPOg+uJ8ZixuG73LAMQeokyM
-         /EGFaNcYQ9f1IhK9NIqwKDJXxzrAFs/eNFx7G3blV2ru0virDheWiRhG0tnk1S0FZ7Wh
-         xXZlBT7DFaWmlLSuveD/R20Kkpk254/Ocwn12gV3hu19FzzAAT2M5LYpEF7JkA2V48ss
-         UwodeL84ps5gs2S6Jtv/Eki1AnaV/Pih9nlBRCulRB8vV0CQDtNpOXgxIOIsj9l8/JRB
-         8xZw==
-X-Gm-Message-State: AOJu0YxG4JBnNaZmeNGgZXEZSdIJQw7I3Mu6hPLNjYaa8fPOX1uap+kU
-        vhlFNTinhmT1f3QQ+kH1W6FCYDTmEAKzePMNbqk+TQ/ubuKyDzcGO+lw5TT9zXiE3NKPFQ89UEn
-        stGwVRCOkbYh88NvpuZ10rIubpQ==
-X-Received: by 2002:a05:620a:1a26:b0:76c:ed4e:ac10 with SMTP id bk38-20020a05620a1a2600b0076ced4eac10mr16770229qkb.6.1693950167013;
-        Tue, 05 Sep 2023 14:42:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEGbQRi3lj2GCHZMrI9G7N8PmFSehzLMjlA7R138X4fKreXMS+kXyyfOvFWMrTvBreLVK2oMg==
-X-Received: by 2002:a05:620a:1a26:b0:76c:ed4e:ac10 with SMTP id bk38-20020a05620a1a2600b0076ced4eac10mr16770206qkb.6.1693950166761;
-        Tue, 05 Sep 2023 14:42:46 -0700 (PDT)
-Received: from x1n.redhat.com (cpe5c7695f3aee0-cm5c7695f3aede.cpe.net.cable.rogers.com. [99.254.144.39])
-        by smtp.gmail.com with ESMTPSA id i2-20020a37c202000000b007682af2c8aasm4396938qkm.126.2023.09.05.14.42.45
+        d=1e100.net; s=20221208; t=1693955186; x=1694559986;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dO/dIcLU4UrEWRYNP8worgvjS2fDG6114grtK8ATUpc=;
+        b=Q7xBAlvUIHHXqXF1r8EUcxKM/jQ2QyY4DL2uCCM8cV4wmQw/y+p2+Z0eErDFZAfeRl
+         sJxxd6s8Qr2PnWwj2KB/KKJ9aBh9213KqWRp7oGrd/iufmzfVxE5K+HBEsc2QZK+8nG7
+         lMrphoKrW2zdLDiO8XJtGH36CuHJte3Yet4VDn+iGOZhddM9ByqIVA+xT/c8LdMpl3F4
+         L9qu3rEBruRUHokxaU+StbgYb6PKggiMNAZWFYZ0kpQ3UP9Z+GRk/8H5jbj0JNou3HKZ
+         mYiOsIx2HIef+Dwe2qaSSF+/dZpST161FwUopkUOTQV6sdf8UsKB5PwcFNBVOB4T4sFz
+         vRYA==
+X-Gm-Message-State: AOJu0YxcBQDgElUe0O9GhhnGd7tyqT+CmhE1nfC+AcE6r4K1jxNnMZFy
+        PXRE0yR1vIpLZ0DpQiLstHw/9e3motUqprZlNNo=
+X-Google-Smtp-Source: AGHT+IGi4exKmtuxmoPipzJLXqM/ad3tO/t+gcfoH7IB0Pe/nikdOzrtE04yJHW1SDWAq/fGD0xdyg==
+X-Received: by 2002:a17:90a:43e4:b0:26b:6a2f:7d90 with SMTP id r91-20020a17090a43e400b0026b6a2f7d90mr11194046pjg.23.1693955186057;
+        Tue, 05 Sep 2023 16:06:26 -0700 (PDT)
+Received: from dread.disaster.area (pa49-195-66-88.pa.nsw.optusnet.com.au. [49.195.66.88])
+        by smtp.gmail.com with ESMTPSA id 29-20020a17090a035d00b00264040322desm10487241pjf.40.2023.09.05.16.06.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Sep 2023 14:42:46 -0700 (PDT)
-From:   Peter Xu <peterx@redhat.com>
-To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Cc:     Anish Moorthy <amoorthy@google.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@kernel.org>,
-        Christian Brauner <brauner@kernel.org>, peterx@redhat.com,
-        linux-fsdevel@vger.kernel.org,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        James Houghton <jthoughton@google.com>,
-        Nadav Amit <nadav.amit@gmail.com>
-Subject: [PATCH 7/7] selftests/mm: uffd perf test
-Date:   Tue,  5 Sep 2023 17:42:35 -0400
-Message-ID: <20230905214235.320571-8-peterx@redhat.com>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230905214235.320571-1-peterx@redhat.com>
-References: <20230905214235.320571-1-peterx@redhat.com>
+        Tue, 05 Sep 2023 16:06:25 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+        (envelope-from <david@fromorbit.com>)
+        id 1qdf7l-00BLP2-3B;
+        Wed, 06 Sep 2023 09:06:22 +1000
+Date:   Wed, 6 Sep 2023 09:06:21 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     ksummit@lists.linux.dev, linux-fsdevel@vger.kernel.org
+Subject: Re: [MAINTAINERS/KERNEL SUMMIT] Trust and maintenance of file systems
+Message-ID: <ZPe0bSW10Gj7rvAW@dread.disaster.area>
+References: <ZO9NK0FchtYjOuIH@infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZO9NK0FchtYjOuIH@infradead.org>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a simple perf test for userfaultfd missing mode, on private anon only.
-It mostly only tests the messaging, so memory type / fault type may not
-that much yet.
+On Wed, Aug 30, 2023 at 04:07:39PM +0200, Christoph Hellwig wrote:
+> Hi all,
+> 
+> we have a lot of on-disk file system drivers in Linux, which I consider
+> a good thing as it allows a lot of interoperability.  At the same time
+> maintaining them is a burden, and there is a lot expectation on how
+> they are maintained.
+> 
+> Part 1: untrusted file systems
+> 
+> There has been a lot of syzbot fuzzing using generated file system
+> images, which I again consider a very good thing as syzbot is good
+> a finding bugs.  Unfortunately it also finds a lot of bugs that no
+> one is interested in fixing.   The reason for that is that file system
+> maintainers only consider a tiny subset of the file system drivers,
+> and for some of them a subset of the format options to be trusted vs
+> untrusted input.  It thus is not just a waste of time for syzbot itself,
+> but even more so for the maintainers to report fuzzing bugs in other
+> implementations.
+> 
+> What can we do to only mark certain file systems (and format options)
+> as trusted on untrusted input and remove a lot of the current tension
+> and make everyone work more efficiently?  Note that this isn't even
+> getting into really trusted on-disk formats, which is a security
+> discussion on it's own, but just into formats where the maintainers
+> are interested in dealing with fuzzed images.
 
-Signed-off-by: Peter Xu <peterx@redhat.com>
----
- tools/testing/selftests/mm/Makefile      |   2 +
- tools/testing/selftests/mm/uffd-common.c |  18 ++
- tools/testing/selftests/mm/uffd-common.h |   1 +
- tools/testing/selftests/mm/uffd-perf.c   | 207 +++++++++++++++++++++++
- 4 files changed, 228 insertions(+)
- create mode 100644 tools/testing/selftests/mm/uffd-perf.c
+I think this completely misses the point of contention of the larger
+syzbot vs filesystem discussion: the assertion that "testing via
+syzbot means the subsystem is secure" where "secure" means "can be
+used safely for operations that involve trust model violations".
 
-diff --git a/tools/testing/selftests/mm/Makefile b/tools/testing/selftests/mm/Makefile
-index 6a9fc5693145..acb22517d37e 100644
---- a/tools/testing/selftests/mm/Makefile
-+++ b/tools/testing/selftests/mm/Makefile
-@@ -64,6 +64,7 @@ TEST_GEN_FILES += thuge-gen
- TEST_GEN_FILES += transhuge-stress
- TEST_GEN_FILES += uffd-stress
- TEST_GEN_FILES += uffd-unit-tests
-+TEST_GEN_FILES += uffd-perf
- TEST_GEN_FILES += split_huge_page_test
- TEST_GEN_FILES += ksm_tests
- TEST_GEN_FILES += ksm_functional_tests
-@@ -120,6 +121,7 @@ $(TEST_GEN_FILES): vm_util.c
- 
- $(OUTPUT)/uffd-stress: uffd-common.c
- $(OUTPUT)/uffd-unit-tests: uffd-common.c
-+$(OUTPUT)/uffd-perf: uffd-common.c
- 
- ifeq ($(ARCH),x86_64)
- BINARIES_32 := $(patsubst %,$(OUTPUT)/%,$(BINARIES_32))
-diff --git a/tools/testing/selftests/mm/uffd-common.c b/tools/testing/selftests/mm/uffd-common.c
-index 851284395b29..afbf2f7add56 100644
---- a/tools/testing/selftests/mm/uffd-common.c
-+++ b/tools/testing/selftests/mm/uffd-common.c
-@@ -725,3 +725,21 @@ int uffd_get_features(uint64_t *features)
- 
- 	return 0;
- }
-+
-+uint64_t get_usec(void)
-+{
-+    uint64_t val = 0;
-+    struct timespec t;
-+    int ret = clock_gettime(CLOCK_MONOTONIC, &t);
-+
-+    if (ret == -1) {
-+        perror("clock_gettime() failed");
-+        /* should never happen */
-+        exit(-1);
-+    }
-+
-+    val = t.tv_nsec / 1000;     /* ns -> us */
-+    val += t.tv_sec * 1000000;  /* s -> us */
-+
-+    return val;
-+}
-diff --git a/tools/testing/selftests/mm/uffd-common.h b/tools/testing/selftests/mm/uffd-common.h
-index 9d66ad5c52cb..4273201ae19f 100644
---- a/tools/testing/selftests/mm/uffd-common.h
-+++ b/tools/testing/selftests/mm/uffd-common.h
-@@ -123,6 +123,7 @@ int uffd_open_dev(unsigned int flags);
- int uffd_open_sys(unsigned int flags);
- int uffd_open(unsigned int flags);
- int uffd_get_features(uint64_t *features);
-+uint64_t get_usec(void);
- 
- #define TEST_ANON	1
- #define TEST_HUGETLB	2
-diff --git a/tools/testing/selftests/mm/uffd-perf.c b/tools/testing/selftests/mm/uffd-perf.c
-new file mode 100644
-index 000000000000..eda99718311a
---- /dev/null
-+++ b/tools/testing/selftests/mm/uffd-perf.c
-@@ -0,0 +1,207 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Userfaultfd performance tests.
-+ *
-+ *  Copyright (C) 2023  Red Hat, Inc.
-+ */
-+
-+#include "uffd-common.h"
-+
-+#ifdef __NR_userfaultfd
-+
-+#define  DEF_MEM_SIZE_MB  (512)
-+#define  MB(x)  ((x) * 1024 * 1024)
-+#define  DEF_N_TESTS  5
-+
-+static volatile bool perf_test_started;
-+static unsigned int n_uffd_threads, n_worker_threads;
-+static uint64_t nr_pages_per_worker;
-+static unsigned long n_tests = DEF_N_TESTS;
-+
-+static void setup_env(unsigned long mem_size_mb)
-+{
-+	/* Test private anon only for now */
-+	map_shared = false;
-+	uffd_test_ops = &anon_uffd_test_ops;
-+	page_size = psize();
-+	nr_cpus = n_uffd_threads;
-+	nr_pages = MB(mem_size_mb) / page_size;
-+	nr_pages_per_worker = nr_pages / n_worker_threads;
-+	if (nr_pages_per_worker == 0)
-+		err("each worker should at least own one page");
-+}
-+
-+void *worker_fn(void *opaque)
-+{
-+	unsigned long i = (unsigned long) opaque;
-+	unsigned long page_nr, start_nr, end_nr;
-+	int v = 0;
-+
-+	start_nr = i * nr_pages_per_worker;
-+	end_nr = (i + 1) * nr_pages_per_worker;
-+
-+	while (!perf_test_started);
-+
-+	for (page_nr = start_nr; page_nr < end_nr; page_nr++)
-+		v += *(volatile int *)(area_dst + page_nr * page_size);
-+
-+	return NULL;
-+}
-+
-+static uint64_t run_perf(uint64_t mem_size_mb, bool poll)
-+{
-+	pthread_t worker_threads[n_worker_threads];
-+	pthread_t uffd_threads[n_uffd_threads];
-+	const char *errmsg = NULL;
-+	struct uffd_args *args;
-+	uint64_t start, end;
-+	int i, ret;
-+
-+	if (uffd_test_ctx_init(0, &errmsg))
-+		err("%s", errmsg);
-+
-+	/*
-+	 * By default, uffd is opened with NONBLOCK mode; use block mode
-+	 * when test read()
-+	 */
-+	if (!poll) {
-+		int flags = fcntl(uffd, F_GETFL);
-+
-+		if (flags < 0)
-+			err("fcntl(F_GETFL) failed");
-+
-+		if (flags & O_NONBLOCK)
-+			flags &= ~O_NONBLOCK;
-+
-+		if (fcntl(uffd, F_SETFL, flags))
-+			err("fcntl(F_SETFL) failed");
-+	}
-+
-+	ret = uffd_register(uffd, area_dst, MB(mem_size_mb),
-+			    true, false, false);
-+	if (ret)
-+		err("uffd_register() failed");
-+
-+	args = calloc(nr_cpus, sizeof(struct uffd_args));
-+	if (!args)
-+		err("calloc()");
-+
-+	for (i = 0; i < n_uffd_threads; i++) {
-+		args[i].cpu = i;
-+		uffd_fault_thread_create(&uffd_threads[i], NULL,
-+					 &args[i], poll);
-+	}
-+
-+	for (i = 0; i < n_worker_threads; i++) {
-+		if (pthread_create(&worker_threads[i], NULL,
-+				   worker_fn, (void *)(uintptr_t)i))
-+			err("create uffd threads");
-+	}
-+
-+	start = get_usec();
-+	perf_test_started = true;
-+	for (i = 0; i < n_worker_threads; i++)
-+		pthread_join(worker_threads[i], NULL);
-+	end = get_usec();
-+
-+	for (i = 0; i < n_uffd_threads; i++) {
-+		struct uffd_args *p = &args[i];
-+
-+		uffd_fault_thread_join(uffd_threads[i], i, poll);
-+
-+		assert(p->wp_faults == 0 && p->minor_faults == 0);
-+	}
-+
-+	free(args);
-+
-+	ret = uffd_unregister(uffd, area_dst, MB(mem_size_mb));
-+	if (ret)
-+		err("uffd_unregister() failed");
-+
-+	return end - start;
-+}
-+
-+static void usage(const char *prog)
-+{
-+	printf("usage: %s <options>\n", prog);
-+	puts("");
-+	printf("  -m: size of memory to test (in MB, default: %u)\n",
-+	       DEF_MEM_SIZE_MB);
-+	puts("  -p: use poll() (the default)");
-+	puts("  -r: use read()");
-+	printf("  -t: test rounds (default: %u)\n", DEF_N_TESTS);
-+	puts("  -u: number of uffd threads (default: n_cpus)");
-+	puts("  -w: number of worker threads (default: n_cpus)");
-+	puts("");
-+	exit(KSFT_FAIL);
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	unsigned long mem_size_mb = DEF_MEM_SIZE_MB;
-+	uint64_t result, sum = 0;
-+	bool use_poll = true;
-+	int opt, count;
-+
-+	n_uffd_threads = n_worker_threads = sysconf(_SC_NPROCESSORS_ONLN);
-+
-+	while ((opt = getopt(argc, argv, "hm:prt:u:w:")) != -1) {
-+		switch (opt) {
-+		case 'm':
-+			mem_size_mb = strtoul(optarg, NULL, 10);
-+			break;
-+		case 'p':
-+			use_poll = true;
-+			break;
-+		case 'r':
-+			use_poll = false;
-+			break;
-+		case 't':
-+			n_tests = strtoul(optarg, NULL, 10);
-+			break;
-+		case 'u':
-+			n_uffd_threads = strtoul(optarg, NULL, 10);
-+			break;
-+		case 'w':
-+			n_worker_threads = strtoul(optarg, NULL, 10);
-+			break;
-+		case 'h':
-+		default:
-+			/* Unknown */
-+			usage(argv[0]);
-+			break;
-+		}
-+	}
-+
-+	setup_env(mem_size_mb);
-+
-+	printf("Message mode: \t\t%s\n", use_poll ? "poll" : "read");
-+	printf("Mem size: \t\t%lu (MB)\n", mem_size_mb);
-+	printf("Uffd threads: \t\t%u\n", n_uffd_threads);
-+	printf("Worker threads: \t%u\n", n_worker_threads);
-+	printf("Test rounds: \t\t%lu\n", n_tests);
-+	printf("Time used (us): \t");
-+
-+	for (count = 0; count < n_tests; count++) {
-+		result = run_perf(mem_size_mb, use_poll);
-+		sum += result;
-+		printf("%" PRIu64 ", ", result);
-+		fflush(stdout);
-+	}
-+	printf("\b\b \n");
-+	printf("Average (us): \t\t%"PRIu64"\n", sum / n_tests);
-+
-+	return KSFT_PASS;
-+}
-+
-+#else /* __NR_userfaultfd */
-+
-+#warning "missing __NR_userfaultfd definition"
-+
-+int main(void)
-+{
-+	printf("Skipping %s (missing __NR_userfaultfd)\n", __file__);
-+	return KSFT_SKIP;
-+}
-+
-+#endif /* __NR_userfaultfd */
+Fundamentally, syzbot does nothing to actually validate the
+filesystem is "secure". Fuzzing can only find existing bugs by
+simulating an attacker, but it does nothing to address the
+underlying issues that allow that attack channel to exist.
+
+All "syzbot doesn't find bugs" means is that -random bit
+manipulation- of the filesystem's metadata *hasn't found issues*.
+
+Even though the XFS V5 format is pretty robust against random bit
+manipulation, it's certainly not invulnerable and cannot detect
+coordinated, multiple object corruptions (cross linked blocks,
+cycles in trees, etc) without a full filesystem scan. These sorts of
+corruptions are almost never going to be exercised by random bit
+manipulation fuzzers like syzbot, but they are exactly the sort of
+thing a malicious attacker with some knowledge of how the filesystem
+works would look at....
+
+Let's also address the elephant in the room: malicious attackers
+don't need to to exploit flaws in the filesystem metadata structure
+to trojan an unsuspecting user.
+
+i.e. We cannot detect changes to metadata that are within valid
+bounds and may be security sensitive - things like UIDs and GIDs,
+inode permissions, inode flags, link counts, symbolic links, etc. We
+also can't determine if the file data is unchanged, so it's easy to
+trojan the contents of an executable file on a filesystem image.
+
+IOWs, all the attacker needs to do is trojan an installer script on
+an application or device driver disk/image, and the user will run it
+as root themselves....
+
+There are whole classes of malicious modifications that syzbot
+doesn't exercise and we cannot detect nor defend against at the
+filesystem level without changing the trust model the filesystem
+operates under. And if we change the trust model, we are now talking
+about on-disk format changes and using robust crypto for all the
+data and metadata in the filesystem. At which point, we may as well
+require a full disk encryption layer via dm-crypt....
+
+If we say "filesystem is secure against untrusted input" then that
+is what users will expect us to provide. It will also means that
+every bug that syzbot might find will result in a high priority CVE,
+because any issue arising from untrusted input is a now a major
+system security issue.
+
+As such, I just don't see how "tested with syzbot" equates with
+"safe for untrusted use cases" whilst also reducing the impact of
+the problems that syzbot finds and reports...
+
+> Part 2: unmaintained file systems
+> 
+> A lot of our file system drivers are either de facto or formally
+> unmaintained.  If we want to move the kernel forward by finishing
+> API transitions (new mount API, buffer_head removal for the I/O path,
+> ->writepage removal, etc) these file systems need to change as well
+> and need some kind of testing.  The easiest way forward would be
+> to remove everything that is not fully maintained, but that would
+> remove a lot of useful features.
+
+Linus has explicitly NACKed that approach.
+
+https://lore.kernel.org/linux-fsdevel/CAHk-=wg7DSNsHY6tWc=WLeqDBYtXges_12fFk1c+-No+fZ0xYQ@mail.gmail.com/
+
+Which is a problem, because historically we've taken code into
+the kernel without requiring a maintainer, or the people who
+maintained the code have moved on, yet we don't have a policy for
+removing code that is slowly bit-rotting to uselessness.
+
+> E.g. the hfsplus driver is unmaintained despite collecting odd fixes.
+> It collects odd fixes because it is really useful for interoperating
+> with MacOS and it would be a pity to remove it.  At the same time
+> it is impossible to test changes to hfsplus sanely as there is no
+> mkfs.hfsplus or fsck.hfsplus available for Linux.  We used to have
+> one that was ported from the open source Darwin code drops, and
+> I managed to get xfstests to run on hfsplus with them, but this
+> old version doesn't compile on any modern Linux distribution and
+> new versions of the code aren't trivially portable to Linux.
+> 
+> Do we have volunteers with old enough distros that we can list as
+> testers for this code?  Do we have any other way to proceed?
+>
+> If we don't, are we just going to untested API changes to these
+> code bases, or keep the old APIs around forever?
+
+We do slowly remove device drivers and platforms as the hardware,
+developers and users disappear. We do also just change driver APIs
+in device drivers for hardware that no-one is actually able to test.
+The assumption is that if it gets broken during API changes,
+someone who needs it to work will fix it and send patches.
+
+That seems to be the historical model for removing unused/obsolete
+code from the kernel, so why should we treat unmaintained/obsolete
+filesystems any differently?  i.e. Just change the API, mark it
+CONFIG_BROKEN until someone comes along and starts fixing it...
+
+-Dave.
 -- 
-2.41.0
-
+Dave Chinner
+david@fromorbit.com
