@@ -2,193 +2,194 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 164E27924C2
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Sep 2023 18:00:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7B817926A6
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Sep 2023 18:28:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232697AbjIEP7h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 Sep 2023 11:59:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58962 "EHLO
+        id S233908AbjIEQA3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 Sep 2023 12:00:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354926AbjIEP41 (ORCPT
+        with ESMTP id S1350806AbjIEFEv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 Sep 2023 11:56:27 -0400
-Received: from sonic317-38.consmr.mail.ne1.yahoo.com (sonic317-38.consmr.mail.ne1.yahoo.com [66.163.184.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 147CF198
-        for <linux-fsdevel@vger.kernel.org>; Tue,  5 Sep 2023 08:56:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1693929382; bh=THyHfKoPV2fsuUoiXFpq6kpXStlY1R/c05SvFssw8ic=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=nL/MCo2EaOVqeGvQVmPkAgdSTBQbXlbl3f9rZgHSTvBlgYky5+NOpmukm4tFGhxMO8jC3h4Kb8vSYSbZzmEiquFJ8novV5wGGi01YJeRQAwKr3L67KBO4CGOdQFucw5aRGYPcmE0zfx/JspHgZI00SfFWzekolOHFDDivqn6w+VKizmP7KXgzjIQDuvlv3uCRzsYuRBpNXTRnicS61wf0BZBVtBv+id8eJFW3Md2rUgFAAfr7vsSp36lbtc6ray61vMJgCj/G//5WovoZ/jFbE/mo4EuWeTDJEr5wBNW0NofS5VpH28Mwjj4we78bHNQMnxlAuZlNa50Cfy/Eczymg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1693929382; bh=DkaHx4C6jwSxjVSNZ5qs87/z6Ie3ZQRDV6CUZw2QUMp=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=jJGG+AJRYrIJ1NDDUdmLlhcBNyn02E5/iy31ivu44RK3Xj9sKJEMywy0yxw9khQ7LQdA8BFC8BKGWKc5XKbzCWM5B15jZqa6w/qiZ8iwvhc5g8X2DLTksd/yGRxFIv9RKfRjM/zqljetV+e+aVQAcVlor9Fpuo9Qas5rD8LT2w1m1futPR27pAylaTWtX1A+aipty0jAceCRtDrZW2XBl1F/+4ZnSHghOo8v7eiHSoXznzM0uLOeARA5ypRGbgQx5ol8ofiERyoVhxEqWTd66YMNKsxoFVq6JCADef3JMRMYaEsxRJfb/pQjs25iOwRpNDUy4osynLPZluWy/Cz1/Q==
-X-YMail-OSG: k9OkTWIVM1ldty.fWbkXGTKLls.RiXQNn_V.9WMitM5BuQk9.mji_TZb73rvWDt
- 2G4d2n3DNfceBrop4oIfE26eITf..qCEQ3ynZ_SmqYIlMM.gflwN2aflioiUcK_uqFS05Y8lvVod
- YdDyA9VsyAX9BqStXDFlOvKNgcJWSytWF0kKm02ZMnvnUnNOkFG.sjj.lhhgAjcHrOBrtkFBOdN4
- vRvh8qQIDMIntuC3m1f.FaMQTORFHiMpSQaN5F0zL0MuWAcRwNuxkdO66AudRNlKcwnoz0MLk4gi
- HpXAdLVXAu11.jPOV2NuHO4a8VYWNDz6Y7RXGbrlZ75z_yypqTjrxFA1CStMN6PhbF8z_.72Xbvn
- Qf4uJ93lbdFj3Ze6YmwbfY5sAm.OsVny9s7FXLyYzBS3crMN8t6ti_lv_JQPGysl9f4gOcyZexdD
- 9kOZZrKMkorjo1PbmKE3WJHsqCFgPRAbKNL_IGdQ6S0H17WoTGxZv6mi6CBzwzmwkE.xa2PVgsQz
- k5Gc6LAqRizzDZYWsAPhD4XdbiVn1pZlAZ2LAjtF4Vd2VQM9DsnVc5xebzQyffKcKNYpJPNHsTnN
- 7YW2yLNPL73QsdXj7hpn__mEKDhHnOLR6MyeXgTshYzhsisf.iwqFZ6rVG05KfK4YbZWvc2wCkOA
- pNwDY5ssnf4D0FLl6n2KbWUnjUeQAbajLp9ZDkyb1gXFLGqPkVhbMfpIWlhk_oRTFm.2nmflv7Rf
- oUccSSeFpx6N_VmI5AXB2HsvA_gPuKpMdGVq7zaPKa2nllz01NbJYl8sZmiL3tGoZcjt1VUcJe1N
- G.7cPvEYFineyvxdJ39jPNoeTI8pWbwWD7pm5su.yl6lgfA7x6QomHf58O.dfqJ3L6qmwXGUlx6X
- 0sEh6brNUlVUD63FGFJfemhPEF8xFNCLwClV3DsC8MS_tnNlDpppJl_CU9S09fhO7D84bv2jAcnA
- gOlG04QuuG5x.BoROlXyU1DZFIj1LCwqLuRA3GvItkTPuUP7PNl75AraQbxxvbf2wEtgSnQmqTkt
- qbkzz3ofX.ztFupgMjx5PzSZ8Lz0i.I34ToMu2Wv_ayPltP.VKcgx8ouflSTGqBKB782.sxewDkk
- 7EScJHPtfFlETKPfcfn6ycj7CTirwJP4WnVkIFfO._fHq7aRTOJujd0dQv6gec.Qi0ud5GXhdNqr
- 6QVPYhg6ZOSiDzMZJHbtrUCVbtGdaWIANtxP0Q.HzplEYm6lJbPpigaNkT.NXhjV1PN79YceIDhr
- thQcLl4PjmG6YHtzQgNjWtWrAASRU1I2PxP9.Wk1Jn6log.eU_EtCJOc2nYDzFdBoj8eQwz3MZc_
- y21f9eQqWafVA0IWNYUOVWZ5rcjl_X2HEgpufWnwGNzslnTWnBvT1qNSB1oNj7EhotsfpqLHnaLL
- 7UAJrbW.xeHFqdc.434riLleeytm8pD3AnzXK62lpnepko3Hbzxyw3NPSmi3REeM.1hVzTZd3UHt
- NmCt6xeESYhdvkkehfPu37LNKbRjNDn5pQwi5.jLAlsVbRAp.FIiQR67xWrOIHc13128yc6xV4hD
- P9TZGmMhytguxLb9AoTAcEX.Wy2VJaEADkECSXNdXoVFJrXpzOhTdRjoklAvsm3zJc0lDme0Dt1U
- fsOT162D.MZbOMnizIZjeVmW_9t1MBeUnz_1vVI8M1GNTTrV1SQlXgZzhukp986FBWN2J9agwXH7
- _.U14P0fxKw0ZTw6UG30FHO._HAQaQr4Rw3jUdrMu14Q9UYceS3dKwhE5S1aRN4Z6bvNMeq3Dvfh
- xp9LHkWUe676tAdVqJkanKbm0Mv9ZK7W.CiHBoyoGYNa6hA6_iWyil26PRggQTY8rgNNZaw15vbn
- CCngWJpgZkb74SaefEIxE_Z4AVBsAbwwX_e2olh.dbwY4V_m4QFxx7kbLSvSOY10pKRgENSOSogN
- UV1l3ufpBsJLF3vC3ENKxfAk1vCasx.eKoSMFFPrkrS9Pc7gwBLZWK5KsrV80WkqRz.ZvH3uIrQP
- xvwM3QeZptygrwEKsjJtD2FEE0EF22N3J578jZGFKqpbxONR00ILBIxeXbruwprjH7gBiclJoMFo
- 6s2D1e5ZX_N09VZJpCUo3f4wcNwxoABccGsBSzp.5Hwky2wy3sR0Z1RFZYoVuUZPh8w.cWP.sWw8
- RKqgpRZ9ymR0UwexFMktwjjisAsfGe2UzqNYfOS8BMZjqNktQ6.b04uhpKCJyMzeyZYtFEwCKERq
- SSyuQeIW7lRU2WnHA8sZ3H8cX8yuUGDOQLWPkCUF3W4A2pdj_vS219mU7Uj.MBBKE
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 4921507d-37f7-4ee8-b527-766546420342
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic317.consmr.mail.ne1.yahoo.com with HTTP; Tue, 5 Sep 2023 15:56:22 +0000
-Received: by hermes--production-bf1-865889d799-k7hdq (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 2ef8773b1b277e360687bb4b263a51ff;
-          Tue, 05 Sep 2023 15:56:20 +0000 (UTC)
-Message-ID: <19943e35-2e7c-d27a-1a5d-189eea439dfd@schaufler-ca.com>
-Date:   Tue, 5 Sep 2023 08:56:15 -0700
+        Tue, 5 Sep 2023 01:04:51 -0400
+Received: from mail-pg1-f207.google.com (mail-pg1-f207.google.com [209.85.215.207])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44F8ECC5
+        for <linux-fsdevel@vger.kernel.org>; Mon,  4 Sep 2023 22:04:48 -0700 (PDT)
+Received: by mail-pg1-f207.google.com with SMTP id 41be03b00d2f7-5709e2551bcso1364342a12.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Sep 2023 22:04:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1693890288; x=1694495088;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3jQMmqvgVuqqI0/4tn2U3AbzO0j9wRg/SU0o9IZdAvU=;
+        b=IybwvgLIKwwuhYesHwclz65gFq3OQIx9CpfB9Fb4JAsFlnsP5jd/9UIR6NMy91EChU
+         tUZXdEhwtVKuYqiryQXAxhW7NYqrrN15LkkFVC9MO7U42/imXpWrxXrHmvDlsN7oRu7z
+         YN8g3z53GNvpp7bM0keNV3jKmc4SjQIQpkQMWeKpuHA2aPZUyhWIGh+yXnuWLYre2gB5
+         IE13tbD6d33xAc7xbaxyJfVAQtlfnqbfCvl3p8ycxpayfA9XQ6ZIQoBo6nawGQnjcvI0
+         7LXMAJiYusn1MccCPWm68eKvvhaeNFc/MerHgQ8C+yr7TkjkrsvnrU3ylcOWV2Y7XVRS
+         qtvg==
+X-Gm-Message-State: AOJu0Yysply01GAvq6f7F3s6RrSx4b49mBkRHctvH2/siHzFJT7kHCXo
+        NDcXz+QtI3PpggD/i+SOABPJCFFbRgZyAKMKMJHKJuYCKvVV
+X-Google-Smtp-Source: AGHT+IGSp8NVJ2v6Vn3RHOrrpukycUEo09Q/eHQYzIbPWN9gBtznkdH8V9n+w50NgYe/Lxwvr9fGOnuKVTpR7SF34X60h0QDU7vq
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Subject: Re: [PATCH v2 11/25] security: Align inode_setattr hook definition
- with EVM
-Content-Language: en-US
-To:     Jarkko Sakkinen <jarkko@kernel.org>,
-        Roberto Sassu <roberto.sassu@huaweicloud.com>,
-        viro@zeniv.linux.org.uk, brauner@kernel.org,
-        chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de,
-        kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
-        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        dhowells@redhat.com, stephen.smalley.work@gmail.com,
-        eparis@parisplace.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20230831104136.903180-1-roberto.sassu@huaweicloud.com>
- <20230831104136.903180-12-roberto.sassu@huaweicloud.com>
- <CVAFV92MONCH.257Y9YQ3OEU4B@suppilovahvero>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CVAFV92MONCH.257Y9YQ3OEU4B@suppilovahvero>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.21763 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
-X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+X-Received: by 2002:a63:774b:0:b0:553:3ba2:f36 with SMTP id
+ s72-20020a63774b000000b005533ba20f36mr2601841pgc.9.1693890287840; Mon, 04 Sep
+ 2023 22:04:47 -0700 (PDT)
+Date:   Mon, 04 Sep 2023 22:04:47 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e534bb0604959011@google.com>
+Subject: [syzbot] [xfs?] INFO: task hung in clean_bdev_aliases
+From:   syzbot <syzbot+1fa947e7f09e136925b8@syzkaller.appspotmail.com>
+To:     djwong@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/4/2023 2:08 PM, Jarkko Sakkinen wrote:
-> On Thu Aug 31, 2023 at 1:41 PM EEST, Roberto Sassu wrote:
->> From: Roberto Sassu <roberto.sassu@huawei.com>
->>
->> Add the idmap parameter to the definition, so that evm_inode_setattr() can
->> be registered as this hook implementation.
->>
->> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
->> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
->> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
->> ---
->>  include/linux/lsm_hook_defs.h | 3 ++-
->>  security/security.c           | 2 +-
->>  security/selinux/hooks.c      | 3 ++-
->>  security/smack/smack_lsm.c    | 4 +++-
->>  4 files changed, 8 insertions(+), 4 deletions(-)
->>
->> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
->> index 4bdddb52a8fe..fdf075a6b1bb 100644
->> --- a/include/linux/lsm_hook_defs.h
->> +++ b/include/linux/lsm_hook_defs.h
->> @@ -134,7 +134,8 @@ LSM_HOOK(int, 0, inode_readlink, struct dentry *dentry)
->>  LSM_HOOK(int, 0, inode_follow_link, struct dentry *dentry, struct inode *inode,
->>  	 bool rcu)
->>  LSM_HOOK(int, 0, inode_permission, struct inode *inode, int mask)
->> -LSM_HOOK(int, 0, inode_setattr, struct dentry *dentry, struct iattr *attr)
->> +LSM_HOOK(int, 0, inode_setattr, struct mnt_idmap *idmap, struct dentry *dentry,
->> +	 struct iattr *attr)
-> LSM_HOOK(int, 0, inode_setattr, struct mnt_idmap *idmap, struct dentry *dentry, struct iattr *attr)
->
-> Only 99 characters, i.e. breaking into two lines is not necessary.
+Hello,
 
-We're keeping the LSM code in the ancient 80 character format.
-Until we get some fresh, young maintainers involved who can convince
-us that line wrapped 80 character terminals are kewl we're sticking
-with what we know.
+syzbot found the following issue on:
 
-	https://lwn.net/Articles/822168/
+HEAD commit:    92901222f83d Merge tag 'f2fs-for-6-6-rc1' of git://git.ker..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=1485e78fa80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3bd57a1ac08277b0
+dashboard link: https://syzkaller.appspot.com/bug?extid=1fa947e7f09e136925b8
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13fcf738680000
 
->
->>  LSM_HOOK(int, 0, inode_getattr, const struct path *path)
->>  LSM_HOOK(int, 0, inode_setxattr, struct mnt_idmap *idmap,
->>  	 struct dentry *dentry, const char *name, const void *value,
->> diff --git a/security/security.c b/security/security.c
->> index cb6242feb968..2b24d01cf181 100644
->> --- a/security/security.c
->> +++ b/security/security.c
->> @@ -2117,7 +2117,7 @@ int security_inode_setattr(struct mnt_idmap *idmap,
->>  
->>  	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
->>  		return 0;
->> -	ret = call_int_hook(inode_setattr, 0, dentry, attr);
->> +	ret = call_int_hook(inode_setattr, 0, idmap, dentry, attr);
->>  	if (ret)
->>  		return ret;
->>  	return evm_inode_setattr(idmap, dentry, attr);
->> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
->> index ee7c49c2cfd3..bfcc4d9aa5ab 100644
->> --- a/security/selinux/hooks.c
->> +++ b/security/selinux/hooks.c
->> @@ -3075,7 +3075,8 @@ static int selinux_inode_permission(struct inode *inode, int mask)
->>  	return rc;
->>  }
->>  
->> -static int selinux_inode_setattr(struct dentry *dentry, struct iattr *iattr)
->> +static int selinux_inode_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
->> +				 struct iattr *iattr)
->>  {
->>  	const struct cred *cred = current_cred();
->>  	struct inode *inode = d_backing_inode(dentry);
->> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
->> index 679156601a10..89f2669d50a9 100644
->> --- a/security/smack/smack_lsm.c
->> +++ b/security/smack/smack_lsm.c
->> @@ -1181,12 +1181,14 @@ static int smack_inode_permission(struct inode *inode, int mask)
->>  
->>  /**
->>   * smack_inode_setattr - Smack check for setting attributes
->> + * @idmap: idmap of the mount
->>   * @dentry: the object
->>   * @iattr: for the force flag
->>   *
->>   * Returns 0 if access is permitted, an error code otherwise
->>   */
->> -static int smack_inode_setattr(struct dentry *dentry, struct iattr *iattr)
->> +static int smack_inode_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
->> +			       struct iattr *iattr)
-> static int smack_inode_setattr(struct mnt_idmap *idmap, struct dentry *dentry, struct iattr *iattr)
->
-> Can be still in a single line (100 characters exactly).
->
->
->>  {
->>  	struct smk_audit_info ad;
->>  	int rc;
->> -- 
->> 2.34.1
->
-> BR, Jarkko
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/ee486d884228/disk-92901222.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b5187db0b1d1/vmlinux-92901222.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/82c4e42d693e/bzImage-92901222.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+1fa947e7f09e136925b8@syzkaller.appspotmail.com
+
+INFO: task syz-executor.5:10017 blocked for more than 143 seconds.
+      Not tainted 6.5.0-syzkaller-11075-g92901222f83d #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor.5  state:D stack:27624 pid:10017 ppid:5071   flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5382 [inline]
+ __schedule+0xee1/0x59f0 kernel/sched/core.c:6695
+ schedule+0xe7/0x1b0 kernel/sched/core.c:6771
+ io_schedule+0xbe/0x130 kernel/sched/core.c:9026
+ folio_wait_bit_common+0x3d2/0x9b0 mm/filemap.c:1304
+ folio_lock include/linux/pagemap.h:1042 [inline]
+ clean_bdev_aliases+0x56b/0x610 fs/buffer.c:1725
+ clean_bdev_bh_alias include/linux/buffer_head.h:219 [inline]
+ __block_write_begin_int+0x8d6/0x1470 fs/buffer.c:2115
+ iomap_write_begin+0x5be/0x17b0 fs/iomap/buffered-io.c:772
+ iomap_write_iter fs/iomap/buffered-io.c:907 [inline]
+ iomap_file_buffered_write+0x3d6/0x9a0 fs/iomap/buffered-io.c:968
+ blkdev_buffered_write block/fops.c:634 [inline]
+ blkdev_write_iter+0x572/0xca0 block/fops.c:688
+ call_write_iter include/linux/fs.h:1985 [inline]
+ do_iter_readv_writev+0x21e/0x3c0 fs/read_write.c:735
+ do_iter_write+0x17f/0x830 fs/read_write.c:860
+ vfs_iter_write+0x7a/0xb0 fs/read_write.c:901
+ iter_file_splice_write+0x698/0xbf0 fs/splice.c:736
+ do_splice_from fs/splice.c:933 [inline]
+ direct_splice_actor+0x118/0x180 fs/splice.c:1142
+ splice_direct_to_actor+0x347/0xa30 fs/splice.c:1088
+ do_splice_direct+0x1af/0x280 fs/splice.c:1194
+ do_sendfile+0xb88/0x1390 fs/read_write.c:1254
+ __do_sys_sendfile64 fs/read_write.c:1322 [inline]
+ __se_sys_sendfile64 fs/read_write.c:1308 [inline]
+ __x64_sys_sendfile64+0x1d6/0x220 fs/read_write.c:1308
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x38/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7fdb8ca7cae9
+RSP: 002b:00007ffcd642da18 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
+RAX: ffffffffffffffda RBX: 00007fdb8cb9bf80 RCX: 00007fdb8ca7cae9
+RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000003
+RBP: 00007fdb8cac847a R08: 0000000000000000 R09: 0000000000000000
+R10: 0100000000000042 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000be7 R14: 00007fdb8cb9bf80 R15: 00007fdb8cb9bf80
+ </TASK>
+INFO: lockdep is turned off.
+NMI backtrace for cpu 1
+CPU: 1 PID: 29 Comm: khungtaskd Not tainted 6.5.0-syzkaller-11075-g92901222f83d #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/26/2023
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xd9/0x1b0 lib/dump_stack.c:106
+ nmi_cpu_backtrace+0x277/0x380 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x299/0x300 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:222 [inline]
+ watchdog+0xfac/0x1230 kernel/hung_task.c:379
+ kthread+0x33a/0x430 kernel/kthread.c:388
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x11/0x20 arch/x86/entry/entry_64.S:304
+ </TASK>
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0
+CPU: 0 PID: 17 Comm: rcu_preempt Not tainted 6.5.0-syzkaller-11075-g92901222f83d #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/26/2023
+RIP: 0010:load_balance+0x10a/0x3130 kernel/sched/fair.c:10983
+Code: 4a 8d 3c f5 40 aa 5c 8c 48 ba 00 00 00 00 00 fc ff df 48 89 f9 48 c1 e9 03 80 3c 11 00 0f 85 2f 2e 00 00 31 c0 b9 0c 00 00 00 <4e> 8b 1c f5 40 aa 5c 8c 4c 89 94 24 f8 00 00 00 48 8d bc 24 00 01
+RSP: 0018:ffffc900001676c8 EFLAGS: 00000046
+RAX: 0000000000000000 RBX: ffff8880b983c700 RCX: 000000000000000c
+RDX: dffffc0000000000 RSI: ffffffff8ae90360 RDI: ffffffff8c5caa40
+RBP: ffffc90000167898 R08: ffffc90000167960 R09: 0000000000000000
+R10: ffff88801525ac00 R11: 0000000000000000 R12: 00000000000287d8
+R13: ffffc90000167960 R14: 0000000000000000 R15: 0000000100004d48
+FS:  0000000000000000(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020000240 CR3: 000000000c976000 CR4: 0000000000350ef0
+Call Trace:
+ <NMI>
+ </NMI>
+ <TASK>
+ newidle_balance+0x710/0x1210 kernel/sched/fair.c:12059
+ pick_next_task_fair+0x87/0x1200 kernel/sched/fair.c:8234
+ __pick_next_task kernel/sched/core.c:6004 [inline]
+ pick_next_task kernel/sched/core.c:6079 [inline]
+ __schedule+0x493/0x59f0 kernel/sched/core.c:6659
+ schedule+0xe7/0x1b0 kernel/sched/core.c:6771
+ schedule_timeout+0x157/0x2c0 kernel/time/timer.c:2167
+ rcu_gp_fqs_loop+0x1ec/0xa50 kernel/rcu/tree.c:1613
+ rcu_gp_kthread+0x249/0x380 kernel/rcu/tree.c:1812
+ kthread+0x33a/0x430 kernel/kthread.c:388
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x11/0x20 arch/x86/entry/entry_64.S:304
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
