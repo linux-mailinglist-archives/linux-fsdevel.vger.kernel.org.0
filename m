@@ -2,59 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 390F479311D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Sep 2023 23:43:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77A4B79311F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Sep 2023 23:43:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242830AbjIEVn4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 Sep 2023 17:43:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54858 "EHLO
+        id S233637AbjIEVoA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 Sep 2023 17:44:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233637AbjIEVny (ORCPT
+        with ESMTP id S244212AbjIEVnz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 Sep 2023 17:43:54 -0400
+        Tue, 5 Sep 2023 17:43:55 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4594A1AB
-        for <linux-fsdevel@vger.kernel.org>; Tue,  5 Sep 2023 14:42:40 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 781C4CCB
+        for <linux-fsdevel@vger.kernel.org>; Tue,  5 Sep 2023 14:42:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1693950159;
+        s=mimecast20190719; t=1693950160;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=2votGtQ/EmYNPgTamqeLYt96PKfJV24HUJfzovJnoxc=;
-        b=TbwCBz8MIGGi2CjIVhfivGUCQWbOqqvNji/1te/8P6UH7lTSdYUAVsRhNSR4XwZNX6YPf7
-        h6h21x25fUAUN36qMtt6TgoFRN3Fd7EmWj9RUMuRSeVAjTfnsbpShdDB8bet3kLPYkXQws
-        9pazDYsvoOBlLY1FVDGuDSlaVw2WgpI=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=yL/LhjyJgEaE1ERsjh3smTILDBi2p+nbzGXe8vQHohc=;
+        b=cExvXWBzwFl1JDZHXDuFq5M1VzgMv2DqitvxY09rqBT/BtoQBAPX+KrZZelMhZK7VX4HbU
+        RSGr7B2beMoy0ooDg1W/e2PTRNHQve6gf1JNV/8/rvxqHG1HLf+yImRdGYMWu0Lzsp8yn3
+        Ggd2iOPryx+gZ+cCCdyzTPByQiFd2/g=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-675-TZZb8U5yMSOp9nCZpASSlw-1; Tue, 05 Sep 2023 17:42:38 -0400
-X-MC-Unique: TZZb8U5yMSOp9nCZpASSlw-1
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-637948b24bdso7829026d6.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Sep 2023 14:42:38 -0700 (PDT)
+ us-mta-25-qqeJ7uK4MSSohBCoqVFJog-1; Tue, 05 Sep 2023 17:42:39 -0400
+X-MC-Unique: qqeJ7uK4MSSohBCoqVFJog-1
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-76f025ed860so44174685a.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Sep 2023 14:42:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693950158; x=1694554958;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2votGtQ/EmYNPgTamqeLYt96PKfJV24HUJfzovJnoxc=;
-        b=X6ZM4+iuHQUeRM4kX7xa3qMIt9IVc1jvJONHCBh5Lf3Ff/88V3dtQ08tPG8XPIjttc
-         SPvaxU07Uy+eaZhbIxUVEq9TJ663U8VqK58WQSZ+Of52+lB+imh1XnkEmbDXVsLZX1/p
-         yAhyBd69Aia++R+ly7Fs3FjUFJKcP6aLhytk5SJ2oZdMPImm0tk48tTaRphDzowI5VFr
-         ocPkWeyNw7c1r1C00/hndGsla4PykLqoK6w7e8hjAEgogsH8aO5h848PcrF0I580XQsg
-         EWr6Z08Ov/U3I8GgxEHInEk1DItht5DcLsd7BywfMOS9BvtO0pOPEzp9vQf5AWVT2lKi
-         0EGg==
-X-Gm-Message-State: AOJu0Yzz2bm7C/G3iUy/rsYQwnKgdln77ejj6vAy9OIGeW4fdB9s4K7j
-        26RXo2AM4YQFqd5SNRfWG4KlcKdf9FECOZLemU00zArDZ1yW5QcLBKahnrSby12p8iYN0RbYKyh
-        WpGTVgkuLZSsuAJ9IS5cU4m2qQQ==
-X-Received: by 2002:a0c:e9d1:0:b0:653:576d:1ea with SMTP id q17-20020a0ce9d1000000b00653576d01eamr16086394qvo.1.1693950157738;
-        Tue, 05 Sep 2023 14:42:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEHBe5ptOe+VReq+OVr1GVxtc25t18NWKbckRbhhKeOXRYvyzzK/YbOev4YaqKhe9uOKa0FSQ==
-X-Received: by 2002:a0c:e9d1:0:b0:653:576d:1ea with SMTP id q17-20020a0ce9d1000000b00653576d01eamr16086382qvo.1.1693950157387;
-        Tue, 05 Sep 2023 14:42:37 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1693950159; x=1694554959;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yL/LhjyJgEaE1ERsjh3smTILDBi2p+nbzGXe8vQHohc=;
+        b=RMlkXC1icrE9DFyNwzUI7I0QMu86fB8WtHV7wZctVfagcWr+fOjkCamGtb6Qrfcf5p
+         zG9J7Urnvi8CHoC2RagupCn5lrL67MSQRJQDZtlo0i0XK1Bh9RuTofXPjVqWT5wDd3Cv
+         SNbfNYA+aM45rGvZiHheU2LCk95AQUxXmS+/FELQrB8EYGBmgTGbEZAN+k2ThpdcSJRg
+         UGBAPC5COUSmoxeXCd+AJxV6u2jE3WUhHdjvGK3+c2toDEUOyD5kzbN04Nv/Of/Nbbq2
+         AOGPczlY/qbZlg+e+xmtc23n7bUAzMni2fKoUCdoAu/0Pf1WxfJKZ/OjSU3ImZ0NPYqN
+         C1gg==
+X-Gm-Message-State: AOJu0YwxyRtmwRpUgUy6NqsPwPAAMbIJtR6/1yzk+xZHJRj3mSl8u03g
+        NuZt4VWK7cbowl69HnvlzEIP0UdQqGoZ1u/jWYKKXbJReN/rhlM+n4JcFo/AVcK+HL7TN/IxixE
+        22zrj2Flox/FtoHRlQ9PbXjWu2Q==
+X-Received: by 2002:a05:620a:1aa4:b0:76f:1614:577d with SMTP id bl36-20020a05620a1aa400b0076f1614577dmr16479343qkb.4.1693950158925;
+        Tue, 05 Sep 2023 14:42:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEdEZxCLbQuYXO7d4fPer9qvq4VofEooWqnv//Ff0/KOa/Ui0Gkdskd8CCG0Sg9WRZVsAXIfA==
+X-Received: by 2002:a05:620a:1aa4:b0:76f:1614:577d with SMTP id bl36-20020a05620a1aa400b0076f1614577dmr16479333qkb.4.1693950158658;
+        Tue, 05 Sep 2023 14:42:38 -0700 (PDT)
 Received: from x1n.redhat.com (cpe5c7695f3aee0-cm5c7695f3aede.cpe.net.cable.rogers.com. [99.254.144.39])
-        by smtp.gmail.com with ESMTPSA id i2-20020a37c202000000b007682af2c8aasm4396938qkm.126.2023.09.05.14.42.36
+        by smtp.gmail.com with ESMTPSA id i2-20020a37c202000000b007682af2c8aasm4396938qkm.126.2023.09.05.14.42.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Sep 2023 14:42:37 -0700 (PDT)
+        Tue, 05 Sep 2023 14:42:38 -0700 (PDT)
 From:   Peter Xu <peterx@redhat.com>
 To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org
 Cc:     Anish Moorthy <amoorthy@google.com>,
@@ -70,11 +71,12 @@ Cc:     Anish Moorthy <amoorthy@google.com>,
         Ingo Molnar <mingo@redhat.com>,
         James Houghton <jthoughton@google.com>,
         Nadav Amit <nadav.amit@gmail.com>
-Subject: [PATCH 0/7] mm/userfaultfd/poll: Scale userfaultfd wakeups
-Date:   Tue,  5 Sep 2023 17:42:28 -0400
-Message-ID: <20230905214235.320571-1-peterx@redhat.com>
+Subject: [PATCH 1/7] mm/userfaultfd: Make uffd read() wait event exclusive
+Date:   Tue,  5 Sep 2023 17:42:29 -0400
+Message-ID: <20230905214235.320571-2-peterx@redhat.com>
 X-Mailer: git-send-email 2.41.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20230905214235.320571-1-peterx@redhat.com>
+References: <20230905214235.320571-1-peterx@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -87,79 +89,43 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Userfaultfd is the type of file that doesn't need wake-all semantics: if
-there is a message enqueued (for either a fault address, or an event), we
-only need to wake up one service thread to handle it.  Waking up more
-normally means a waste of cpu cycles.  Besides that, and more importantly,
-that just doesn't scale.
+From: Andrea Arcangeli <aarcange@redhat.com>
 
-Andrea used to have one patch that made read() to be O(1) but never hit
-upstream.  This is my effort to try upstreaming that (which is a
-oneliner..), meanwhile on top of that I also made poll() O(1) on wakeup,
-too (more or less bring EPOLLEXCLUSIVE to poll()), with some tests showing
-that effect.
+When a new message is generated for an userfaultfd, instead of waking up
+all the readers, we can wake up only one exclusive reader to process the
+event.  Waking up >1 readers for 1 message will be a waste of resource,
+where the rest readers will see nothing again and re-queue.
 
-To verify this, I added a test called uffd-perf (leveraging the refactored
-uffd selftest suite) that will measure the messaging channel latencies on
-wakeups, and the waitqueue optimizations can be reflected by the new test:
+This should make userfaultfd read() O(1) on wakeups.
 
-        Constants: 40 uffd threads, on N_CPUS=40, memsize=512M
-        Units: milliseconds (to finish the test)
-        |-----------------+--------+-------+------------|
-        | test case       | before | after |   diff (%) |
-        |-----------------+--------+-------+------------|
-        | workers=8,poll  |   1762 |  1133 | -55.516328 |
-        | workers=8,read  |   1437 |   585 | -145.64103 |
-        | workers=16,poll |   1117 |  1097 | -1.8231541 |
-        | workers=16,read |   1159 |   759 | -52.700922 |
-        | workers=32,poll |   1001 |   973 | -2.8776978 |
-        | workers=32,read |    866 |   713 | -21.458626 |
-        |-----------------+--------+-------+------------|
+Note that queuing on head is intended (rather than tail) to make sure the
+readers are waked up in LIFO fashion; fairness doesn't matter much here,
+but caching does.
 
-The more threads hanging on the fd_wqh, a bigger difference will be there
-shown in the numbers.  "8 worker threads" is the worst case here because it
-means there can be a worst case of 40-8=32 threads hanging idle on fd_wqh
-queue.
+Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
+[peterx: modified subjects / commit message]
+Signed-off-by: Peter Xu <peterx@redhat.com>
+---
+ fs/userfaultfd.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-In real life, workers can be more than this, but small number of active
-worker threads will cause similar effect.
-
-This is currently based on Andrew's mm-unstable branch, but assuming this
-is applicable to most of the not-so-old trees.
-
-Comments welcomed, thanks.
-
-Andrea Arcangeli (1):
-  mm/userfaultfd: Make uffd read() wait event exclusive
-
-Peter Xu (6):
-  poll: Add a poll_flags for poll_queue_proc()
-  poll: POLL_ENQUEUE_EXCLUSIVE
-  fs/userfaultfd: Use exclusive waitqueue for poll()
-  selftests/mm: Replace uffd_read_mutex with a semaphore
-  selftests/mm: Create uffd_fault_thread_create|join()
-  selftests/mm: uffd perf test
-
- drivers/vfio/virqfd.c                    |   4 +-
- drivers/vhost/vhost.c                    |   2 +-
- drivers/virt/acrn/irqfd.c                |   2 +-
- fs/aio.c                                 |   2 +-
- fs/eventpoll.c                           |   2 +-
- fs/select.c                              |   9 +-
- fs/userfaultfd.c                         |   8 +-
- include/linux/poll.h                     |  25 ++-
- io_uring/poll.c                          |   4 +-
- mm/memcontrol.c                          |   4 +-
- net/9p/trans_fd.c                        |   3 +-
- tools/testing/selftests/mm/Makefile      |   2 +
- tools/testing/selftests/mm/uffd-common.c |  65 +++++++
- tools/testing/selftests/mm/uffd-common.h |   7 +
- tools/testing/selftests/mm/uffd-perf.c   | 207 +++++++++++++++++++++++
- tools/testing/selftests/mm/uffd-stress.c |  53 +-----
- virt/kvm/eventfd.c                       |   2 +-
- 17 files changed, 337 insertions(+), 64 deletions(-)
- create mode 100644 tools/testing/selftests/mm/uffd-perf.c
-
+diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+index 56eaae9dac1a..f7fda7d0c994 100644
+--- a/fs/userfaultfd.c
++++ b/fs/userfaultfd.c
+@@ -1061,7 +1061,11 @@ static ssize_t userfaultfd_ctx_read(struct userfaultfd_ctx *ctx, int no_wait,
+ 
+ 	/* always take the fd_wqh lock before the fault_pending_wqh lock */
+ 	spin_lock_irq(&ctx->fd_wqh.lock);
+-	__add_wait_queue(&ctx->fd_wqh, &wait);
++	/*
++	 * Only wake up one exclusive reader each time there's an event.
++	 * Paired with wake_up_poll() when e.g. a new page fault msg generated.
++	 */
++	__add_wait_queue_exclusive(&ctx->fd_wqh, &wait);
+ 	for (;;) {
+ 		set_current_state(TASK_INTERRUPTIBLE);
+ 		spin_lock(&ctx->fault_pending_wqh.lock);
 -- 
 2.41.0
 
