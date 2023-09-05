@@ -2,68 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DC1FD792504
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Sep 2023 18:01:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00F4C7924E4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Sep 2023 18:00:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232806AbjIEQAu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 Sep 2023 12:00:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46470 "EHLO
+        id S231577AbjIEQAI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 Sep 2023 12:00:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354541AbjIEM1G (ORCPT
+        with ESMTP id S1354564AbjIEMle (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 Sep 2023 08:27:06 -0400
+        Tue, 5 Sep 2023 08:41:34 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 158081A8;
-        Tue,  5 Sep 2023 05:27:01 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 007071A8;
+        Tue,  5 Sep 2023 05:41:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=eVxmERvkhRQsWzv7hKcub8nBL8Ebk3iyCYi7oJyr1Qk=; b=y1nZcAesjx2xv+SqYWukES/nxx
-        qxVnUugSjtZ7Rv+bkJJ6GZIdmJGlCLcs8CZEB+opdncPZkN8ySSXTFFA9n3825sRirzrtgHedCb6Y
-        xVaJXXjwPg3j1NrmFUhs2YDq66bVYir9KESsctaZ/K7zI5iJ/7/Syy9Tjm4oJ53hAypHgRYapUnBI
-        Du1mmz4gZGYHfNXUaeRFE1/vD4OBuZO6WRSug9LrHMCZd+Fxeo+r5eEjX0DEnDHXqjQn/VtktT/OS
-        lT97QzO09PtP3N5ZNy00mxVHFBt85fKdar8/4wc/er2Bx8o3t5+AcoVG2flc6LAz8j2jfr7gmohWf
-        LJKCN9qg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1qdV8x-0060Oq-0K;
-        Tue, 05 Sep 2023 12:26:55 +0000
-Date:   Tue, 5 Sep 2023 05:26:55 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     syzbot <syzbot+4a08ffdf3667b36650a1@syzkaller.appspotmail.com>
-Cc:     adilger.kernel@dilger.ca, djwong@kernel.org, hch@infradead.org,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        nogikh@google.com, song@kernel.org,
-        syzkaller-bugs@googlegroups.com, tytso@mit.edu, yukuai3@huawei.com,
-        zhang_shurong@foxmail.com
-Subject: Re: [syzbot] [block] kernel BUG in __block_write_begin_int
-Message-ID: <ZPcej+rJjg+6SgzK@infradead.org>
-References: <CANp29Y65sCETzq3CttPHww40W_tQ2S=0HockV-aSUi9dE8HGow@mail.gmail.com>
- <000000000000d9daf4060499c0c9@google.com>
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=I66u7n0qR7e4t2l/vHkn1+P4nfDofW3E+lXSWKAdYBU=; b=co4MG+2W+W6XTXPz7WYRQmR0j3
+        8PQGEq6qlCieyDdFq9+M9pPX4W+lm+6znAs21w9o70fhf8OAT5SUkzrJX65xgRBneV3lT2xCIXD4i
+        FIq7l+ln9X3FyQEMJZcp4TnnSXmZWEyJqMy3HO484PNKmlSYZrXiFR+T0OFMjoaIjyD0FO8pnuCIu
+        EvMqoGUbQMILy+A88Cnlq6gPlLvBtV0qScgqPxZD9oo2JPnY42oKZdu/A6t8wXTsrWt5JmZOE+1fx
+        p102lXJwc/3BYIHykX9h9GIJI1Su7xaY0FMYbccjaMQjn9c8CZ2TXq80xXrJPqWXBXHXeXlalvirN
+        XanECvGg==;
+Received: from 2a02-8389-2341-5b80-39d3-4735-9a3c-88d8.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:39d3:4735:9a3c:88d8] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+        id 1qdVMz-0062IL-16;
+        Tue, 05 Sep 2023 12:41:25 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     djwong@kernel.org
+Cc:     viro@zeniv.linux.org.uk, brauner@kernel.org, axboe@kernel.dk,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        syzbot+4a08ffdf3667b36650a1@syzkaller.appspotmail.com
+Subject: [PATCH] iomap: handle error conditions more gracefully in iomap_to_bh
+Date:   Tue,  5 Sep 2023 14:41:20 +0200
+Message-Id: <20230905124120.325518-1-hch@lst.de>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000000000000d9daf4060499c0c9@google.com>
+Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SORTED_RECIPS,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 05, 2023 at 03:04:32AM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-> WARNING in __kthread_create_on_node
+iomap_to_bh currently BUG()s when the passed in block number is not
+in the iomap.  For file systems that have proper synchronization this
+should never happen and so far hasn't in mainline, but for block devices
+size changes aren't fully synchronized against ongoing I/O.  Instead
+of BUG()ing in this case, return -EIO to the caller, which already has
+proper error handling.  While we're at it, also return -EIO for an
+unknown iomap state instead of returning garbage.
 
-Well, that is
+Fixes: 487c607df790 ("block: use iomap for writes to block devices")
+Reported-by: syzbot+4a08ffdf3667b36650a1@syzkaller.appspotmail.com
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ fs/buffer.c | 25 ++++++++++++++-----------
+ 1 file changed, 14 insertions(+), 11 deletions(-)
 
-
- a) a different issue in ext4
- b) just a warning
+diff --git a/fs/buffer.c b/fs/buffer.c
+index 2379564e5aeadf..a6785cd07081cb 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -2011,7 +2011,7 @@ void folio_zero_new_buffers(struct folio *folio, size_t from, size_t to)
+ }
+ EXPORT_SYMBOL(folio_zero_new_buffers);
+ 
+-static void
++static int
+ iomap_to_bh(struct inode *inode, sector_t block, struct buffer_head *bh,
+ 		const struct iomap *iomap)
+ {
+@@ -2025,7 +2025,8 @@ iomap_to_bh(struct inode *inode, sector_t block, struct buffer_head *bh,
+ 	 * current block, then do not map the buffer and let the caller
+ 	 * handle it.
+ 	 */
+-	BUG_ON(offset >= iomap->offset + iomap->length);
++	if (offset >= iomap->offset + iomap->length)
++		return -EIO;
+ 
+ 	switch (iomap->type) {
+ 	case IOMAP_HOLE:
+@@ -2037,7 +2038,7 @@ iomap_to_bh(struct inode *inode, sector_t block, struct buffer_head *bh,
+ 		if (!buffer_uptodate(bh) ||
+ 		    (offset >= i_size_read(inode)))
+ 			set_buffer_new(bh);
+-		break;
++		return 0;
+ 	case IOMAP_DELALLOC:
+ 		if (!buffer_uptodate(bh) ||
+ 		    (offset >= i_size_read(inode)))
+@@ -2045,7 +2046,7 @@ iomap_to_bh(struct inode *inode, sector_t block, struct buffer_head *bh,
+ 		set_buffer_uptodate(bh);
+ 		set_buffer_mapped(bh);
+ 		set_buffer_delay(bh);
+-		break;
++		return 0;
+ 	case IOMAP_UNWRITTEN:
+ 		/*
+ 		 * For unwritten regions, we always need to ensure that regions
+@@ -2062,7 +2063,10 @@ iomap_to_bh(struct inode *inode, sector_t block, struct buffer_head *bh,
+ 		bh->b_blocknr = (iomap->addr + offset - iomap->offset) >>
+ 				inode->i_blkbits;
+ 		set_buffer_mapped(bh);
+-		break;
++		return 0;
++	default:
++		WARN_ON_ONCE(1);
++		return -EIO;
+ 	}
+ }
+ 
+@@ -2103,13 +2107,12 @@ int __block_write_begin_int(struct folio *folio, loff_t pos, unsigned len,
+ 			clear_buffer_new(bh);
+ 		if (!buffer_mapped(bh)) {
+ 			WARN_ON(bh->b_size != blocksize);
+-			if (get_block) {
++			if (get_block)
+ 				err = get_block(inode, block, bh, 1);
+-				if (err)
+-					break;
+-			} else {
+-				iomap_to_bh(inode, block, bh, iomap);
+-			}
++			else
++				err = iomap_to_bh(inode, block, bh, iomap);
++			if (err)
++				break;
+ 
+ 			if (buffer_new(bh)) {
+ 				clean_bdev_bh_alias(bh);
+-- 
+2.39.2
 
