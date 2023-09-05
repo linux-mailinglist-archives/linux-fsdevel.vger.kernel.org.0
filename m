@@ -2,53 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E2151792FCF
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Sep 2023 22:19:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C388792FE5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Sep 2023 22:24:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231444AbjIEUTO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 Sep 2023 16:19:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59202 "EHLO
+        id S243496AbjIEUYH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 Sep 2023 16:24:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242312AbjIEUTO (ORCPT
+        with ESMTP id S235836AbjIEUYG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 Sep 2023 16:19:14 -0400
-X-Greylist: delayed 253 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 05 Sep 2023 13:18:57 PDT
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 187E819B;
-        Tue,  5 Sep 2023 13:18:57 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 593AAC433BD;
-        Tue,  5 Sep 2023 20:14:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1693944841;
-        bh=GFO5GRJejDTxCXECXiFVVLrIOOshgiMddxUgAHIkTE4=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=S1L2siA1e8otRX4aviagit6PAHoAtkeUwOGbICCrPC+/m9/vo80TPfxnOYLf01SE+
-         qNslU4lnAZ4DfCctFo+GcNo0TsPljujlwmuwdrsqlpZKGMkS3HmcCmUj1r3Zvuo0p2
-         k+GLFkaeeVC7FcmCPAou/CIeHumcXtpMA2caAWiwaoF1VACBecMNZ6a8Vy5WHYkQpc
-         KM05iAfr4zY4QOOo8mr0yO0SyHco/pBuWHpcz9oKUhUxtymdZGp+3KPs/cK58SKP62
-         Xz4evbfFgoTbWvlJ656E27EZIk6HiFbsH0TGf8rtyBHHAMQAQVVU4eRcQI5jjtEeDZ
-         3/WcaL9yxB2bw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 45EB1C04E24;
-        Tue,  5 Sep 2023 20:14:01 +0000 (UTC)
-Subject: Re: [GIT PULL] fuse update for 6.6
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <ZPYxd0g9S4og17QN@maszat.piliscsaba.szeredi.hu>
-References: <ZPYxd0g9S4og17QN@maszat.piliscsaba.szeredi.hu>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <ZPYxd0g9S4og17QN@maszat.piliscsaba.szeredi.hu>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git tags/fuse-update-6.6
-X-PR-Tracked-Commit-Id: f73016b63b09edec8adf7e182600c52465c56ee7
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 9e310ea5c8f6f20c1b2ac50736bcd3e189931610
-Message-Id: <169394484127.28658.8202824816427131970.pr-tracker-bot@kernel.org>
-Date:   Tue, 05 Sep 2023 20:14:01 +0000
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        Tue, 5 Sep 2023 16:24:06 -0400
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B106BDF;
+        Tue,  5 Sep 2023 13:24:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=5Nzcz3SPhwbmqIj714ya6YKCT+j1fbnO2mOQICXxLIU=; b=qT0gC/Rw84aCtEczU2CjGGRhUT
+        Tl5i6+48Fr/UyhHcHkdyn0P3UzNf9FwaPE8lMZHv0qjBN4b8r1lIlpcctkehcpZ4xvilXCEHYcK9d
+        FUc1BpaEsDQlQmEM+mG8HIwcSjX7yID6G+TX+VB3WZtGaSWe2mEwly42TAHTV8mFxOW9QnDDGknbf
+        6yE4Ldq2sFJAaOgEE474W6XkHCWoLE9JXQDqu01yUVa/x1lV9EBylVIIh7lNcQmKsu7QbpSQC4sFv
+        de6+7aaT1Cyl9taBAQTKhbFM5FzydaUO90FL9NCCtTQxnjepbjwlHH1XJaCU7MkYmejeWmPcEVzkU
+        x8fHKKtQ==;
+Received: from [179.232.147.2] (helo=[192.168.0.5])
+        by fanzine2.igalia.com with esmtpsa 
+        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+        id 1qdcaa-002ky8-Di; Tue, 05 Sep 2023 22:23:56 +0200
+Message-ID: <5a9ca846-e72b-3ee1-f163-dd9765b3b62e@igalia.com>
+Date:   Tue, 5 Sep 2023 17:23:48 -0300
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.0
+Subject: Re: [PATCH V3 2/2] btrfs: Introduce the single-dev feature
+To:     dsterba@suse.cz
+Cc:     linux-btrfs@vger.kernel.org, clm@fb.com, josef@toxicpanda.com,
+        dsterba@suse.com, linux-fsdevel@vger.kernel.org,
+        kernel@gpiccoli.net, kernel-dev@igalia.com, anand.jain@oracle.com,
+        david@fromorbit.com, kreijack@libero.it, johns@valvesoftware.com,
+        ludovico.denittis@collabora.com, quwenruo.btrfs@gmx.com,
+        wqu@suse.com, vivek@collabora.com
+References: <20230831001544.3379273-1-gpiccoli@igalia.com>
+ <20230831001544.3379273-3-gpiccoli@igalia.com>
+ <20230905165041.GF14420@twin.jikos.cz>
+Content-Language: en-US
+From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+In-Reply-To: <20230905165041.GF14420@twin.jikos.cz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
         RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -57,15 +62,35 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pull request you sent on Mon, 4 Sep 2023 21:35:19 +0200:
+On 05/09/2023 13:50, David Sterba wrote:
+> [...]
+> I'd like to pick this as a feature for 6.7, it's extending code we
+> already have for metadata_uuid so this is a low risk feature. The only
+> problem I see for now is the name, using the word 'single'.
+> 
+> We have single as a block group profile name and a filesystem can exist
+> on a single device too, this is would be confusing when referring to it.
+> Single-dev can be a working name but for a final release we should
+> really try to pick something more unique. I don't have a suggestion for
+> now.
+> 
+> The plan for now is that I'll add the patch to a topic branch and add it
+> to for-next so it could be tested but there might be some updates still
+> needed. Either as changes to this patch or as separate patches, that
+> depends.
+> 
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git tags/fuse-update-6.6
+Hi David, thanks for your feedback! I agree with you that this name is a
+bit confusing, we can easily change that! How about virtual-fsid?
+I confess I'm not the best (by far!) to name stuff, so I'll be glad to
+follow a suggestion from anyone here heheh
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/9e310ea5c8f6f20c1b2ac50736bcd3e189931610
+I also agree we could have this merged in your -next tree, and once a
+new (good) name is proposed, I can re-submit with that and you'd replace
+the patch in your tree, if that makes sense to you. Of course an extra
+patch changing the name is also valid, if it's your preference.
 
-Thank you!
+Cheers,
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+
+Guilherme
