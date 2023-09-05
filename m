@@ -2,105 +2,188 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 745BE79327A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Sep 2023 01:23:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDB92793287
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Sep 2023 01:28:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232389AbjIEXXl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 Sep 2023 19:23:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48870 "EHLO
+        id S238273AbjIEX2O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 Sep 2023 19:28:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54904 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229861AbjIEXXk (ORCPT
+        with ESMTP id S232289AbjIEX2O (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 Sep 2023 19:23:40 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87801B0
-        for <linux-fsdevel@vger.kernel.org>; Tue,  5 Sep 2023 16:23:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=QF0lefaut/7y5ErwShPnn4OJeHvxH9Dxkxy4uPBeatU=; b=nCZjt/AQYCacBPtIsf4wE7x+L7
-        so80nKJ4HeZCgNBv/7bQTM9AJZ6TPNE+UpMDtVYHKsdsg+EwLUh70lvsEgFvJ40FAfju06vAWRuDl
-        l+kA1/kUWntAGklDmclGsTX8CLGAwRdZTH5S+pG9sZLd0q0/CwW7YZmDXchf+abOgoXPJH4qHlzo2
-        ZGVfdmpG3VFiwyVnjLtaCWlnLraoHJP93pq+R0EXUzell5Q1hyAfynAcEd51uBIIA5jo8nh1od2fx
-        1/F0k0BvFUlsVpxcLKIjFZK11o3BOxetSL1YzFLVSxfRA+9EcEkh6zzwryiVNUmU8voYAPg5Q+Gxf
-        usxkZumg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qdfOE-00EVyZ-6p; Tue, 05 Sep 2023 23:23:22 +0000
-Date:   Wed, 6 Sep 2023 00:23:22 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Christoph Hellwig <hch@infradead.org>, ksummit@lists.linux.dev,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [MAINTAINERS/KERNEL SUMMIT] Trust and maintenance of file systems
-Message-ID: <ZPe4aqbEuQ7xxJnj@casper.infradead.org>
-References: <ZO9NK0FchtYjOuIH@infradead.org>
- <ZPe0bSW10Gj7rvAW@dread.disaster.area>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZPe0bSW10Gj7rvAW@dread.disaster.area>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+        Tue, 5 Sep 2023 19:28:14 -0400
+Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8A939E
+        for <linux-fsdevel@vger.kernel.org>; Tue,  5 Sep 2023 16:28:07 -0700 (PDT)
+Received: from submission (posteo.de [185.67.36.169]) 
+        by mout01.posteo.de (Postfix) with ESMTPS id D11FE240028
+        for <linux-fsdevel@vger.kernel.org>; Wed,  6 Sep 2023 01:28:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
+        t=1693956485; bh=tFVPhBBWaN4G4tPkkecVkR72dlmFDkMrFM8fwsAtMZ8=;
+        h=Mime-Version:Content-Transfer-Encoding:Date:Message-Id:Cc:Subject:
+         From:To:From;
+        b=c058gnytzEYpeZDYe4PGKWPHtC8Ss7YQo+OSm5riUXyX7T936oBtFmvbjZSYybr5v
+         qTl9jRKu1sQyGnRqTvIYeGXsomDjdbQ9k6YvkL0iWNQBR5Zs7a05qR25t/SR5F+PGF
+         VYhvxPgxtdpMGe+98djPImonFwLPEfLGMtMp8oFINTTmqHbRj9yvGvhmufXis6XALJ
+         59ijHA0Xzv9nCEEFZswJ1c89BzwXvd8awj7HA8ww925yN1+04H2bP8KM03Q5xQTmPB
+         dJgOa2A6aCyXSMCapEnEtaJaLU+gpbMpRaGKV6bcgGFlF6i8DNlp6vG7UmF0RD5blL
+         PJH0DIxlpCtaA==
+Received: from customer (localhost [127.0.0.1])
+        by submission (posteo.de) with ESMTPSA id 4RgMBD5hQJz6tx5;
+        Wed,  6 Sep 2023 01:28:04 +0200 (CEST)
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date:   Tue, 05 Sep 2023 23:27:01 +0000
+Message-Id: <CVBDFOQTOWJ4.2NWF9JNF4IUFL@posteo.de>
+Cc:     "Jan Kara" <jack@suse.cz>, "Jeff Layton" <jlayton@poochiereds.net>,
+        "Christian Brauner" <brauner@kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-man@vger.kernel.org>
+Subject: Re: [PATCH] name_to_handle_at.2,fanotify_mark.2: Document the
+ AT_HANDLE_FID flag
+From:   "Tom Schwindl" <schwindl@posteo.de>
+To:     "Amir Goldstein" <amir73il@gmail.com>,
+        "Alejandro Colomar" <alx.manpages@gmail.com>
+References: <20230903120433.2605027-1-amir73il@gmail.com>
+In-Reply-To: <20230903120433.2605027-1-amir73il@gmail.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 06, 2023 at 09:06:21AM +1000, Dave Chinner wrote:
-> > Part 2: unmaintained file systems
-> > 
-> > A lot of our file system drivers are either de facto or formally
-> > unmaintained.  If we want to move the kernel forward by finishing
-> > API transitions (new mount API, buffer_head removal for the I/O path,
-> > ->writepage removal, etc) these file systems need to change as well
-> > and need some kind of testing.  The easiest way forward would be
-> > to remove everything that is not fully maintained, but that would
-> > remove a lot of useful features.
-> 
-> Linus has explicitly NACKed that approach.
-> 
-> https://lore.kernel.org/linux-fsdevel/CAHk-=wg7DSNsHY6tWc=WLeqDBYtXges_12fFk1c+-No+fZ0xYQ@mail.gmail.com/
-> 
-> Which is a problem, because historically we've taken code into
-> the kernel without requiring a maintainer, or the people who
-> maintained the code have moved on, yet we don't have a policy for
-> removing code that is slowly bit-rotting to uselessness.
-> 
-> > E.g. the hfsplus driver is unmaintained despite collecting odd fixes.
-> > It collects odd fixes because it is really useful for interoperating
-> > with MacOS and it would be a pity to remove it.  At the same time
-> > it is impossible to test changes to hfsplus sanely as there is no
-> > mkfs.hfsplus or fsck.hfsplus available for Linux.  We used to have
-> > one that was ported from the open source Darwin code drops, and
-> > I managed to get xfstests to run on hfsplus with them, but this
-> > old version doesn't compile on any modern Linux distribution and
-> > new versions of the code aren't trivially portable to Linux.
-> > 
-> > Do we have volunteers with old enough distros that we can list as
-> > testers for this code?  Do we have any other way to proceed?
-> >
-> > If we don't, are we just going to untested API changes to these
-> > code bases, or keep the old APIs around forever?
-> 
-> We do slowly remove device drivers and platforms as the hardware,
-> developers and users disappear. We do also just change driver APIs
-> in device drivers for hardware that no-one is actually able to test.
-> The assumption is that if it gets broken during API changes,
-> someone who needs it to work will fix it and send patches.
-> 
-> That seems to be the historical model for removing unused/obsolete
-> code from the kernel, so why should we treat unmaintained/obsolete
-> filesystems any differently?  i.e. Just change the API, mark it
-> CONFIG_BROKEN until someone comes along and starts fixing it...
+Hi,
 
-Umm.  If I change ->write_begin and ->write_end to take a folio,
-convert only the filesystems I can test via Luis' kdevops and mark the
-rest as CONFIG_BROKEN, I can guarantee you that Linus will reject that
-pull request.
+On Sun Sep 3, 2023 at 2:04 PM CEST, Amir Goldstein wrote:
+> A flag to indicate that the requested file_handle is not intended
+> to be used for open_by_handle_at(2) and may be needed to identify
+> filesystem objects reported in fanotify events.
+>
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> ---
+>
+> Hi Alejandro,
+>
+> This is a followup on AT_HANDLE_FID feature from v6.5.
+>
+> Thanks,
+> Amir.
+>
+>  man2/fanotify_mark.2     | 11 +++++++++--
+>  man2/open_by_handle_at.2 | 42 +++++++++++++++++++++++++++++++++++++---
+>  2 files changed, 48 insertions(+), 5 deletions(-)
+>
+> diff --git a/man2/fanotify_mark.2 b/man2/fanotify_mark.2
+> index 3f85deb23..8e885af69 100644
+> --- a/man2/fanotify_mark.2
+> +++ b/man2/fanotify_mark.2
+> @@ -743,10 +743,17 @@ do not specify a directory.
+>  .B EOPNOTSUPP
+>  The object indicated by
+>  .I pathname
+> -is associated with a filesystem that does not support the encoding of fi=
+le
+> -handles.
+> +is associated with a filesystem
+> +that does not support the encoding of file handles.
+>  This error can be returned only with an fanotify group that identifies
+>  filesystem objects by file handles.
+> +Calling
+> +.BR name_to_handle_at (2)
+> +with the flag
+> +.BR AT_HANDLE_FID " (since Linux 6.5)"
+> +.\" commit 96b2b072ee62be8ae68c8ecf14854c4d0505a8f8
+> +can be used as a test
+> +to check if a filesystem supports reporting events with file handles.
+>  .TP
+>  .B EPERM
+>  The operation is not permitted because the caller lacks a required capab=
+ility.
+> diff --git a/man2/open_by_handle_at.2 b/man2/open_by_handle_at.2
+> index 4061faea9..4cfa21d9c 100644
+> --- a/man2/open_by_handle_at.2
+> +++ b/man2/open_by_handle_at.2
+> @@ -109,17 +109,44 @@ structure as an opaque data type: the
+>  .I handle_type
+>  and
+>  .I f_handle
+> -fields are needed only by a subsequent call to
+> +fields can be used in a subsequent call to
+>  .BR open_by_handle_at ().
+> +The caller can also use the opaque
+> +.I file_handle
+> +to compare the identity of filesystem objects
+> +that were queried at different times and possibly
+> +at different paths.
+> +The
+> +.BR fanotify (7)
+> +subsystem can report events
+> +with an information record containing a
+> +.I file_handle
+> +to identify the filesystem object.
+>  .PP
+>  The
+>  .I flags
+>  argument is a bit mask constructed by ORing together zero or more of
+> -.B AT_EMPTY_PATH
+> +.BR AT_HANDLE_FID ,
+> +.BR AT_EMPTY_PATH ,
+>  and
+>  .BR AT_SYMLINK_FOLLOW ,
+>  described below.
+>  .PP
+> +When
+> +.I flags
+> +contain the
+> +.BR AT_HANDLE_FID " (since Linux 6.5)"
+> +.\" commit 96b2b072ee62be8ae68c8ecf14854c4d0505a8f8
+> +flag, the caller indicates that the returned
+> +.I file_handle
+> +is needed to identify the filesystem object,
+> +and not for opening the file later,
+> +so it should be expected that a subsequent call to
+> +.BR open_by_handle_at ()
+> +with the returned
+> +.I file_handle
+> +may fail.
+> +.PP
+>  Together, the
+>  .I pathname
+>  and
+> @@ -363,8 +390,14 @@ capability.
+>  .B ESTALE
+>  The specified
+>  .I handle
+> -is not valid.
+> +is not valid for opening a file.
+>  This error will occur if, for example, the file has been deleted.
+> +This error can also occur if the
+> +.I handle
+> +was aquired using the
 
-I really feel we're between a rock and a hard place with our unmaintained
-filesystems.  They have users who care passionately, but not the ability
-to maintain them.
+This should probably be s/aquired/acquired/
+
+> +.B AT_HANDLE_FID
+> +flag and the filesystem does not support
+> +.BR open_by_handle_at ().
+>  .SH VERSIONS
+>  FreeBSD has a broadly similar pair of system calls in the form of
+>  .BR getfh ()
+> @@ -386,6 +419,9 @@ file handles, for example,
+>  .IR /proc ,
+>  .IR /sys ,
+>  and various network filesystems.
+> +Some filesystem support the translation of pathnames to
+
+You should use the plural, filesystems, here.
+
+> +file handles, but do not support using those file handles in
+> +.BR open_by_handle_at ().
+>  .PP
+>  A file handle may become invalid ("stale") if a file is deleted,
+>  or for other filesystem-specific reasons.
+
