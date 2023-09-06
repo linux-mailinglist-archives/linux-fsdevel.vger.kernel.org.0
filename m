@@ -2,88 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 873CF793759
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Sep 2023 10:46:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36B9979382B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Sep 2023 11:27:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235757AbjIFIrA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Sep 2023 04:47:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51652 "EHLO
+        id S236798AbjIFJ1U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Sep 2023 05:27:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235703AbjIFIq7 (ORCPT
+        with ESMTP id S236807AbjIFJ1O (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Sep 2023 04:46:59 -0400
-Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C39BB10C8
-        for <linux-fsdevel@vger.kernel.org>; Wed,  6 Sep 2023 01:46:48 -0700 (PDT)
-Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-56c3a952aaeso3086146a12.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Sep 2023 01:46:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693990008; x=1694594808;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DC68Fan9U1mDvvm9HS7/KL5cq/tCfXtYDl7pvERFoFo=;
-        b=KRfVDc+0kRSB5pGaw3aGySCtDHPKrsTs9+scQ9uuTKsjZbAxGPrZ1xAlslAbCfaMO5
-         xX8b0Qn4peJMIS8JD/Dfrg3ti/ITAA6adGLnubkEfKF51KU6d9pzBJ4y896DTS2QcBxz
-         1TPjRMvkWlEJajuJsRPzsWI6UICSrDSEH/d+57vjg/okzCm3vlHM9OmUnatVRUwi9cv4
-         eH6kBhIko3/G/SE599QpovqjkEiX5xWm8GhvH3HnTv+k9A25YzT5wsDW/Sh3c7Jdk2iq
-         TiuKr2oKX1Ldfe47IdmZNG1kD9yw2pUCHSH/zB9PQF1oUaVCMROOAVOUSX8POYI9iNvV
-         0f6Q==
-X-Gm-Message-State: AOJu0YynovUwWlhleFtuo1FSd/K3lmbOlor0WCSYnsGDO2T0n9inyr0P
-        QN8n/b1MassNol2BGRPK/jBZh6WSOCg6fExBLgzp8k83ZISS
-X-Google-Smtp-Source: AGHT+IEFMOLh1T2xs1astZ5dXqyIxaln1m/XHAlDreu7OlpLkCxeBGfc94pxv+l04VMdB8jR916vxEYBQbJu8sSh8qDP5euhEKFm
+        Wed, 6 Sep 2023 05:27:14 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07B24171F;
+        Wed,  6 Sep 2023 02:26:56 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id BF7A222443;
+        Wed,  6 Sep 2023 09:26:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1693992414; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=I3rIv+HN01Web1KGJNNDUY+0CQGW+JW+xYMEz2h5hWo=;
+        b=lhq5Wdk3BgvB+cWFcsR0byMu0ym4CyA2QpF28RXJwBCt1WYds8ndsSH2LdYQTUZfLHuY1c
+        4wJX/hlGWwlkxjRmQS/pP9qiDCl5dcUCtsrDR5Qk1UDqF9V5AOxXRd0uIZl0ZoqHM4rU+H
+        0wNNBWWWRUUi7YbHS3uFmwBg2ts13as=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1693992414;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=I3rIv+HN01Web1KGJNNDUY+0CQGW+JW+xYMEz2h5hWo=;
+        b=Nnz/GWrGwYjJ1ViI8zDUOPZTlsWutz/riRUdXQ5yRYApSlIfmfMJJatwh31cFr9ERdBax8
+        RrUmWYiAQXnzCKDQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 9046A1333E;
+        Wed,  6 Sep 2023 09:26:54 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id wKO1Id5F+GSJDQAAMHmgww
+        (envelope-from <hare@suse.de>); Wed, 06 Sep 2023 09:26:54 +0000
+Message-ID: <71c1213b-a5e0-4d14-9bbd-352d85361d67@suse.de>
+Date:   Wed, 6 Sep 2023 11:26:52 +0200
 MIME-Version: 1.0
-X-Received: by 2002:a63:9306:0:b0:570:275c:7431 with SMTP id
- b6-20020a639306000000b00570275c7431mr3244671pge.11.1693990008181; Wed, 06 Sep
- 2023 01:46:48 -0700 (PDT)
-Date:   Wed, 06 Sep 2023 01:46:48 -0700
-In-Reply-To: <000000000000dfd6a105f71001d7@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b0daee0604acc811@google.com>
-Subject: Re: [syzbot] kernel BUG in ext4_write_inline_data
-From:   syzbot <syzbot+f4582777a19ec422b517@syzkaller.appspotmail.com>
-To:     adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        nogikh@google.com, syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] iomap: handle error conditions more gracefully in
+ iomap_to_bh
+Content-Language: en-US
+To:     Christoph Hellwig <hch@lst.de>, djwong@kernel.org
+Cc:     viro@zeniv.linux.org.uk, brauner@kernel.org, axboe@kernel.dk,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        syzbot+4a08ffdf3667b36650a1@syzkaller.appspotmail.com
+References: <20230905124120.325518-1-hch@lst.de>
+From:   Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20230905124120.325518-1-hch@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This bug is marked as fixed by commit:
-ext4: fix race condition between buffer write and page_mkwrite
+On 9/5/23 14:41, Christoph Hellwig wrote:
+> iomap_to_bh currently BUG()s when the passed in block number is not
+> in the iomap.  For file systems that have proper synchronization this
+> should never happen and so far hasn't in mainline, but for block devices
+> size changes aren't fully synchronized against ongoing I/O.  Instead
+> of BUG()ing in this case, return -EIO to the caller, which already has
+> proper error handling.  While we're at it, also return -EIO for an
+> unknown iomap state instead of returning garbage.
+> 
+> Fixes: 487c607df790 ("block: use iomap for writes to block devices")
+> Reported-by: syzbot+4a08ffdf3667b36650a1@syzkaller.appspotmail.com
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>   fs/buffer.c | 25 ++++++++++++++-----------
+>   1 file changed, 14 insertions(+), 11 deletions(-)
+> 
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 
-But I can't find it in the tested trees[1] for more than 90 days.
-Is it a correct commit? Please update it by replying:
+Cheers,
 
-#syz fix: exact-commit-title
+Hannes
+-- 
+Dr. Hannes Reinecke                Kernel Storage Architect
+hare@suse.de                              +49 911 74053 688
+SUSE Software Solutions GmbH, Maxfeldstr. 5, 90409 Nürnberg
+HRB 36809 (AG Nürnberg), Geschäftsführer: Ivo Totev, Andrew
+Myers, Andrew McDonald, Martje Boudien Moerman
 
-Until then the bug is still considered open and new crashes with
-the same signature are ignored.
-
-Kernel: Linux
-Dashboard link: https://syzkaller.appspot.com/bug?extid=f4582777a19ec422b517
-
----
-[1] I expect the commit to be present in:
-
-1. for-kernelci branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
-
-2. master branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git
-
-3. master branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git
-
-4. main branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
-
-The full list of 9 trees can be found at
-https://syzkaller.appspot.com/upstream/repos
