@@ -2,39 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F17D79405B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Sep 2023 17:27:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28C96794065
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Sep 2023 17:29:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235679AbjIFP1y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Sep 2023 11:27:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47156 "EHLO
+        id S242614AbjIFP3y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Sep 2023 11:29:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242620AbjIFP1l (ORCPT
+        with ESMTP id S232846AbjIFP3w (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Sep 2023 11:27:41 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81805199C;
-        Wed,  6 Sep 2023 08:27:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=h6ulJViuQWjxq6lzZiww+qH62G6UOtP0FWuJOUQoXnY=; b=Wkyzg8fTRw+lBBs5qTiqPbv5NZ
-        T26Uh5rTUzeBrJhKKfW6R0Y+KmrRdvY8e9gdOIaKTHbg+r96r2emSzcQWOz84u0P7PGPHp2hIStg4
-        sAWIBE4T5THlWxLChO0xPty//leBMdnWIPlBUZPYjmjwK37k3gqdV6ZDTh2otlyWbRPgkhbULr1hM
-        8EukQND8SLa6zbzVYZcARQsm4pXNE4Q0Fw7czVPNEztJ4eM/p0rbNW/JvATDMnSEhXlHKReScVQvN
-        y07BTOmY2vbzuJADAUmi+rp+pFl3F4/Dgs+mLM/oLzRuqksOCB6ljA7/6/Aa89WJlq0Pg6fFngwaz
-        ZB+/PYow==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qduRG-003RqM-MP; Wed, 06 Sep 2023 15:27:30 +0000
-Date:   Wed, 6 Sep 2023 16:27:30 +0100
-From:   Matthew Wilcox <willy@infradead.org>
+        Wed, 6 Sep 2023 11:29:52 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 543A4E6B;
+        Wed,  6 Sep 2023 08:29:49 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1902C433C7;
+        Wed,  6 Sep 2023 15:29:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1694014188;
+        bh=yPIKHivU99a/V2wrPQLBZTJtxUZbBoyAdSHgdSVbW5o=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=VWnCa6V4PW3i8j4jYKKXLou8KIeCEyyj37WwmoRm2etNW4Sl2leRgfxTkMNcvnnsX
+         WKqLHbKQFYIbH21hf1v+ym2fXg5XuykVT3NBoRc44WacLOYSNHvCypOW8alwNnRU3X
+         3DiRmILjoMHNuUTpPg4Uq3oq7ND2XffCjtJMqb18B6A2E4PjtOUhKam/yRs3dkWUvL
+         J7xeKkfRqQY7/t/9zHn8v3/dKQThSFXDpQti37LMzLqtT2EsDsYD4fDtUngVuEK/oO
+         vRvyqACEsWfnzJLdxJeAgGANPwuDWIwGOffKEBSIbsRgQozFsj+kEB4KiYHVXMM+cc
+         PsGX9drpA0b3w==
+Date:   Wed, 6 Sep 2023 08:29:48 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc:     Mateusz Guzik <mjguzik@gmail.com>, brauner@kernel.org,
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Mateusz Guzik <mjguzik@gmail.com>, brauner@kernel.org,
         viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
 Subject: Re: [RFC PATCH] vfs: add inode lockdep assertions
-Message-ID: <ZPiaYjcTMyuM0JL5@casper.infradead.org>
+Message-ID: <20230906152948.GE28160@frogsfrogsfrogs>
 References: <20230831151414.2714750-1-mjguzik@gmail.com>
  <ZPiYp+t6JTUscc81@casper.infradead.org>
  <b0434328-01f9-dc5c-fe25-4a249130a81d@fastmail.fm>
@@ -42,9 +43,10 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <b0434328-01f9-dc5c-fe25-4a249130a81d@fastmail.fm>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -99,4 +101,7 @@ On Wed, Sep 06, 2023 at 05:23:42PM +0200, Bernd Schubert wrote:
 > 
 > Which is exactly what I had suggested in the other thread :)
 
-Yes, but apparently comments in that thread don't count :eyeroll:
+Or hoist the XFS mrlock, because it actually /does/ know if the rwsem is
+held in shared or exclusive mode.
+
+--D
