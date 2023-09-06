@@ -2,251 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 838B47935E4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Sep 2023 09:06:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A06D4793669
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Sep 2023 09:39:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229757AbjIFHGs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Sep 2023 03:06:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60736 "EHLO
+        id S233777AbjIFHjY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Sep 2023 03:39:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229445AbjIFHGq (ORCPT
+        with ESMTP id S229920AbjIFHjY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Sep 2023 03:06:46 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E5D183;
-        Wed,  6 Sep 2023 00:06:43 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7F5DC433C7;
-        Wed,  6 Sep 2023 07:06:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1693984002;
-        bh=QlKqOiuJcXJ+UJetTjnpr9pfdN0x0FuCwfVIo5GBkBs=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=KK4BDgGIlXB8No81pdYiryeL5qSOuHM8UAEsMZ15KODIa4tk0ksko4ZINc6iuSlQr
-         Q7KjjPWJSXq1MHoNb/bU8xEe3qTkoONvukVR9b4pQiph4fPYkE0hW2VmmFP2CYsese
-         0j30XdQybX1QPbw5M0wkV81FLXedOwQZYZGsL6KY/ixYEgfN+Bd1jPS5e7UAu/vnfq
-         5h71ZPj4dcidFJcw4oBpDXPVSg9wRx9k4kXx3eoDefQZm8ct3E6e6PEkg/h+eWhrPw
-         k0/WoreWZzpibWgeYCR2LpXMg5sRCVZGg0QTBxIP4/Tw+yZQzOFF/okf+G4pstOCXe
-         7h7mEqORy3LaA==
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5008d16cc36so5546403e87.2;
-        Wed, 06 Sep 2023 00:06:42 -0700 (PDT)
-X-Gm-Message-State: AOJu0YzT7Is/r8pLjy+HkhVHYfdMF+TUREpYeN1Pua6gFlBsoaAJED5L
-        VoIC3tBGHNmKgkyIDzSAjdnIiJrZt8k//aobS54=
-X-Google-Smtp-Source: AGHT+IE841z3r8oL+9aJtgeVSdQWFQn+moBKacdcuvomzpmaDTDBpnpeNr+fPTUhJfMtvvPI04QZFav6gQMzTsLegXg=
-X-Received: by 2002:a05:6512:220f:b0:4fb:7cea:882a with SMTP id
- h15-20020a056512220f00b004fb7cea882amr1943544lfu.3.1693984000686; Wed, 06 Sep
- 2023 00:06:40 -0700 (PDT)
+        Wed, 6 Sep 2023 03:39:24 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6FEACC;
+        Wed,  6 Sep 2023 00:39:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1693985960; x=1725521960;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=9DWfOXctPMjyadaaUcywDcWCHVuND2DRm2KBk4DeAY8=;
+  b=SYpAbwH6H1O0voyJXpKmnycv4wDM2s2Hao5sIA/KfF67AvgxszyYkZOH
+   /G+5YLhBGq2T8GK5LjKyv1IJFTG/P7bL1LCEj/RRQD4J1Rzd9bwsiPbc7
+   4KJ7RszGFxBC3m1lEcuva/sw6X5FHeF4oWvzEm2jxnUcpMWUt9aa+bkVZ
+   A6aD0QeNOy3N9nRhKMUgsOYkRvmciq/wokWOPArj348EIbtwUfRtRPX/b
+   ff8DuybYVokZHe/hzUtlF/HKb+rXAZHijIDsj5nOBKO4r2xmCZdq3TLV1
+   iFrFNTxBFKg5S3/rYaW38noAEhuJd7ISA6VhJJbk/GEFjo169OKp7G4SA
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10824"; a="375898434"
+X-IronPort-AV: E=Sophos;i="6.02,231,1688454000"; 
+   d="scan'208";a="375898434"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2023 00:39:20 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10824"; a="988133778"
+X-IronPort-AV: E=Sophos;i="6.02,231,1688454000"; 
+   d="scan'208";a="988133778"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO ahunter-VirtualBox.home\044ger.corp.intel.com) ([10.252.60.154])
+  by fmsmga006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2023 00:39:16 -0700
+From:   Adrian Hunter <adrian.hunter@intel.com>
+To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Dave Hansen <dave.hansen@intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Lorenzo Stoakes <lstoakes@gmail.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
+        Dave Young <dyoung@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-coco@lists.linux.dev, linux-efi@vger.kernel.org,
+        kexec@lists.infradead.org
+Subject: [PATCH 0/3] Do not map unaccepted memory
+Date:   Wed,  6 Sep 2023 10:38:59 +0300
+Message-Id: <20230906073902.4229-1-adrian.hunter@intel.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <20230831153108.2021554-1-jiaozhou@google.com> <20230904-erben-coachen-7ca9a30cdc05@brauner>
- <CAFyYRf0xyZSLypcHvpzCXQ5dUztTXbE4Ea1xAcQLfbP4+9N9sQ@mail.gmail.com>
-In-Reply-To: <CAFyYRf0xyZSLypcHvpzCXQ5dUztTXbE4Ea1xAcQLfbP4+9N9sQ@mail.gmail.com>
-From:   Ard Biesheuvel <ardb@kernel.org>
-Date:   Wed, 6 Sep 2023 09:06:29 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXFRaMgPi1X-WRMkunBhBqfVFyDZu6f7CdCh6mU5Mtqh1A@mail.gmail.com>
-Message-ID: <CAMj1kXFRaMgPi1X-WRMkunBhBqfVFyDZu6f7CdCh6mU5Mtqh1A@mail.gmail.com>
-Subject: Re: [PATCH] kernel: Add Mount Option For Efivarfs
-To:     Jiao Zhou <jiaozhou@google.com>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Linux FS Development <linux-fsdevel@vger.kernel.org>,
-        Jeremy Kerr <jk@ozlabs.org>, linux-efi@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        kernel test robot <oliver.sang@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 5 Sept 2023 at 20:05, Jiao Zhou <jiaozhou@google.com> wrote:
->
-> Hi Christian,
->
-> Thanks for your reply, will adding a guid and uid check like the below be=
- sufficient? I saw this is how most file systems check their gid and uid. I=
- am not quite sure about how to send fd back to init_user_ns. Can you pleas=
-e clarify a little bit? Thank you so much.
-...
+Hi
 
->
+Support for unaccepted memory was added recently, refer commit
+dcdfdd40fa82 ("mm: Add support for unaccepted memory"), whereby
+a virtual machine may need to accept memory before it can be used.
 
-Please don't top post and please only send plaintext email to the mailing l=
-ists.
-
-Please consult Documentation/process/submitting-patches.rst in the
-Linux source tree if you are unfamiliar with the upstream contribution
-process (and since you appear to be at Google, you might want to
-consult go/kernel-upstream as well)
-
-Thanks,
-Ard.
+Plug a few gaps where RAM is exposed without checking if it is
+unaccepted memory.
 
 
->
->
-> On Mon, Sep 4, 2023 at 1:17=E2=80=AFPM Christian Brauner <brauner@kernel.=
-org> wrote:
->>
->> On Thu, Aug 31, 2023 at 03:31:07PM +0000, Jiao Zhou wrote:
->> > Add uid and gid in efivarfs's mount option, so that
->> > we can mount the file system with ownership. This approach
->> >  is used by a number of other filesystems that don't have
->> > native support for ownership.
->> >
->> > TEST=3DFEATURES=3Dtest emerge-reven chromeos-kernel-5_15
->> >
->> > Signed-off-by: Jiao Zhou <jiaozhou@google.com>
->> > Reported-by: kernel test robot <oliver.sang@intel.com>
->> > Closes: https://lore.kernel.org/oe-lkp/202308291443.ea96ac66-oliver.sa=
-ng@intel.com
->> > ---
->> >  fs/efivarfs/inode.c    |  4 +++
->> >  fs/efivarfs/internal.h |  9 ++++++
->> >  fs/efivarfs/super.c    | 65 +++++++++++++++++++++++++++++++++++++++++=
-+
->> >  3 files changed, 78 insertions(+)
->> >
->> > diff --git a/fs/efivarfs/inode.c b/fs/efivarfs/inode.c
->> > index 939e5e242b98..de57fb6c28e1 100644
->> > --- a/fs/efivarfs/inode.c
->> > +++ b/fs/efivarfs/inode.c
->> > @@ -20,9 +20,13 @@ struct inode *efivarfs_get_inode(struct super_block=
- *sb,
->> >                               const struct inode *dir, int mode,
->> >                               dev_t dev, bool is_removable)
->> >  {
->> > +     struct efivarfs_fs_info *fsi =3D sb->s_fs_info;
->> >       struct inode *inode =3D new_inode(sb);
->> > +     struct efivarfs_mount_opts *opts =3D &fsi->mount_opts;
->> >
->> >       if (inode) {
->> > +             inode->i_uid =3D opts->uid;
->> > +             inode->i_gid =3D opts->gid;
->> >               inode->i_ino =3D get_next_ino();
->> >               inode->i_mode =3D mode;
->> >               inode->i_atime =3D inode->i_mtime =3D inode->i_ctime =3D=
- current_time(inode);
->> > diff --git a/fs/efivarfs/internal.h b/fs/efivarfs/internal.h
->> > index 30ae44cb7453..57deaf56d8e2 100644
->> > --- a/fs/efivarfs/internal.h
->> > +++ b/fs/efivarfs/internal.h
->> > @@ -8,6 +8,15 @@
->> >
->> >  #include <linux/list.h>
->> >
->> > +struct efivarfs_mount_opts {
->> > +     kuid_t uid;
->> > +     kgid_t gid;
->> > +};
->> > +
->> > +struct efivarfs_fs_info {
->> > +     struct efivarfs_mount_opts mount_opts;
->> > +};
->> > +
->> >  extern const struct file_operations efivarfs_file_operations;
->> >  extern const struct inode_operations efivarfs_dir_inode_operations;
->> >  extern bool efivarfs_valid_name(const char *str, int len);
->> > diff --git a/fs/efivarfs/super.c b/fs/efivarfs/super.c
->> > index 15880a68faad..d67b0d157ff5 100644
->> > --- a/fs/efivarfs/super.c
->> > +++ b/fs/efivarfs/super.c
->> > @@ -8,6 +8,7 @@
->> >  #include <linux/efi.h>
->> >  #include <linux/fs.h>
->> >  #include <linux/fs_context.h>
->> > +#include <linux/fs_parser.h>
->> >  #include <linux/module.h>
->> >  #include <linux/pagemap.h>
->> >  #include <linux/ucs2_string.h>
->> > @@ -23,10 +24,27 @@ static void efivarfs_evict_inode(struct inode *ino=
-de)
->> >       clear_inode(inode);
->> >  }
->> >
->> > +static int efivarfs_show_options(struct seq_file *m, struct dentry *r=
-oot)
->> > +{
->> > +     struct super_block *sb =3D root->d_sb;
->> > +     struct efivarfs_fs_info *sbi =3D sb->s_fs_info;
->> > +     struct efivarfs_mount_opts *opts =3D &sbi->mount_opts;
->> > +
->> > +     /* Show partition info */
->> > +     if (!uid_eq(opts->uid, GLOBAL_ROOT_UID))
->> > +             seq_printf(m, ",uid=3D%u",
->> > +                             from_kuid_munged(&init_user_ns, opts->ui=
-d));
->> > +     if (!gid_eq(opts->gid, GLOBAL_ROOT_GID))
->> > +             seq_printf(m, ",gid=3D%u",
->> > +                             from_kgid_munged(&init_user_ns, opts->gi=
-d));
->> > +     return 0;
->> > +}
->> > +
->> >  static const struct super_operations efivarfs_ops =3D {
->> >       .statfs =3D simple_statfs,
->> >       .drop_inode =3D generic_delete_inode,
->> >       .evict_inode =3D efivarfs_evict_inode,
->> > +     .show_options   =3D efivarfs_show_options,
->> >  };
->> >
->> >  /*
->> > @@ -190,6 +208,41 @@ static int efivarfs_destroy(struct efivar_entry *=
-entry, void *data)
->> >       return 0;
->> >  }
->> >
->> > +enum {
->> > +     Opt_uid, Opt_gid,
->> > +};
->> > +
->> > +static const struct fs_parameter_spec efivarfs_parameters[] =3D {
->> > +     fsparam_u32("uid",                      Opt_uid),
->> > +     fsparam_u32("gid",                      Opt_gid),
->> > +     {},
->> > +};
->> > +
->> > +static int efivarfs_parse_param(struct fs_context *fc, struct fs_para=
-meter *param)
->> > +{
->> > +     struct efivarfs_fs_info *sbi =3D fc->s_fs_info;
->> > +     struct efivarfs_mount_opts *opts =3D &sbi->mount_opts;
->> > +     struct fs_parse_result result;
->> > +     int opt;
->> > +
->> > +     opt =3D fs_parse(fc, efivarfs_parameters, param, &result);
->> > +     if (opt < 0)
->> > +             return opt;
->> > +
->> > +     switch (opt) {
->> > +     case Opt_uid:
->> > +             opts->uid =3D make_kuid(current_user_ns(), result.uint_3=
-2);
->> > +             break;
->> > +     case Opt_gid:
->> > +             opts->gid =3D make_kgid(current_user_ns(), result.uint_3=
-2);
->> > +             break;
->>
->> This will allow the following:
->>
->> # initial user namespace
->> fd_fs =3D fsopen("efivarfs")
->>
->> # switch to some unprivileged userns
->> fsconfig(fd_fs, FSCONFIG_SET_STRING, "uid", "1000")
->> =3D=3D> This now resolves within the caller's user namespace which might
->>     have an idmapping where 1000 cannot be resolved causing sb->{g,u}id
->>     to be set to INVALID_{G,U}ID.
->>
->>     In fact this is also possible in your patch right now without the
->>     namespace switching. The caller could just pass -1 and that would
->>     cause inodes with INVALID_{G,U}ID to be created.
->>     So you want a check for {g,u}id_valid().
->>
->> # send fd back to init_user_ns
->> fsconfig(fd_fs, FSCONFIG_CMD_CREATE)
->> fd_mnt =3D fsmount(fd_fs, ...)
->> move_mount(fd_fs, "", -EBADF, "/somehwere", ...)
+Adrian Hunter (3):
+      proc/vmcore: Do not map unaccepted memory
+      proc/kcore: Do not map unaccepted memory
+      /dev/mem: Do not map unaccepted memory
+
+ drivers/char/mem.c |  9 +++++++--
+ fs/proc/kcore.c    | 10 +++++++++-
+ fs/proc/vmcore.c   | 15 ++++++++++++---
+ 3 files changed, 28 insertions(+), 6 deletions(-)
+
+
+Regards
+Adrian
