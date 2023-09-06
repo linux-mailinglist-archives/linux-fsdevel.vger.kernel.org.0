@@ -2,141 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 86132793FE4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Sep 2023 17:04:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69A47793FEB
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Sep 2023 17:06:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236493AbjIFPEh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Sep 2023 11:04:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46504 "EHLO
+        id S242330AbjIFPGk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Sep 2023 11:06:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235832AbjIFPEg (ORCPT
+        with ESMTP id S237523AbjIFPGj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Sep 2023 11:04:36 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29F351992
-        for <linux-fsdevel@vger.kernel.org>; Wed,  6 Sep 2023 08:03:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1694012619;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=bA3Z59EBa88YEWKPW5Pibx0Xocr0hzgWVcA/01NMcDk=;
-        b=I63JMTNNlVWutI8hYUzEuTrczjzK4RAH2CWv7v8jVbQm66wpBEuxlPI25LCLJD9Jt2cSzg
-        QNEadANFtYkitmeDbZA2Cz8aVcVjUUxtnAev5gILGlYCw61JjChdd1IDrROllDj94GR65G
-        2Jfsj7ijZnAKZZ3ochHeY90SnthIEg4=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-20-9Sj-0DwfP1CdyyoLM7eeDg-1; Wed, 06 Sep 2023 11:03:35 -0400
-X-MC-Unique: 9Sj-0DwfP1CdyyoLM7eeDg-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 2E04910487A9;
-        Wed,  6 Sep 2023 15:03:35 +0000 (UTC)
-Received: from file1-rdu.file-001.prod.rdu2.dc.redhat.com (unknown [10.11.5.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E82AD404119;
-        Wed,  6 Sep 2023 15:03:34 +0000 (UTC)
-Received: by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix, from userid 12668)
-        id CE98630C1C07; Wed,  6 Sep 2023 15:03:34 +0000 (UTC)
-Received: from localhost (localhost [127.0.0.1])
-        by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix) with ESMTP id C9EEF3FD6A;
-        Wed,  6 Sep 2023 17:03:34 +0200 (CEST)
-Date:   Wed, 6 Sep 2023 17:03:34 +0200 (CEST)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-To:     Christian Brauner <brauner@kernel.org>
-cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Zdenek Kabelac <zkabelac@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dm-devel@redhat.com, Jan Kara <jack@suse.cz>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH] fix writing to the filesystem after unmount
-In-Reply-To: <20230906-launenhaft-kinder-118ea59706c8@brauner>
-Message-ID: <f5d63867-5b3e-294b-d1f5-a128817cfc7@redhat.com>
-References: <59b54cc3-b98b-aff9-14fc-dc25c61111c6@redhat.com> <20230906-launenhaft-kinder-118ea59706c8@brauner>
+        Wed, 6 Sep 2023 11:06:39 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CB041700
+        for <linux-fsdevel@vger.kernel.org>; Wed,  6 Sep 2023 08:06:34 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B033AC433B9;
+        Wed,  6 Sep 2023 15:06:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1694012793;
+        bh=rqUSLd/RansXrmz9JwpYhaB6PrcplZZeoZ9HQxNdhJA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=NZf/HijNhs1B902/qW7OYUNqmi+OixWYp/0Any1ZX1DN1WdycALxbWj1QklndnMh9
+         /sq7WfFI8r3ybmbQwglii33jTKHNeGwADMI9UlrCJcmp0MkGX6A5UcpYSjsEv7ILUa
+         HlyBxn4xf2oq+L5MDA9UFuqzIr/DOms6ri+GW7fVcjWzQ6uDi4ORlagd/Fdg2H7XSf
+         xhd7Zl1UKupWdtcFGwFCY9ktQ041Y5rcNxzNzfLLdYlS3ImKmoek+s++clWP5D+C1P
+         Ib9LGT/gF8kRmgpKyBgCxeayBIW1K6yncI2QGUkLoEe/5sB02B0pS8rBIzyNP7zQ9R
+         pzDUFViRMVYCg==
+Date:   Wed, 6 Sep 2023 17:06:29 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>, ksummit@lists.linux.dev,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [MAINTAINERS/KERNEL SUMMIT] Trust and maintenance of file systems
+Message-ID: <20230906-wildhasen-vorkehrungen-6ecb4ee012f1@brauner>
+References: <ZO9NK0FchtYjOuIH@infradead.org>
+ <ZPe0bSW10Gj7rvAW@dread.disaster.area>
+ <ZPe4aqbEuQ7xxJnj@casper.infradead.org>
+ <ZPffYYnVMIkuCK9x@dread.disaster.area>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.10
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZPffYYnVMIkuCK9x@dread.disaster.area>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On Wed, 6 Sep 2023, Christian Brauner wrote:
-
-> > What happens:
-> > * dmsetup suspend calls freeze_bdev, that goes to freeze_super and it
-> >   increments sb->s_active
-> > * then we unmount the filesystem, we go to cleanup_mnt, cleanup_mnt calls
-> >   deactivate_super, deactivate_super sees that sb->s_active is 2, so it
-> >   decreases it to 1 and does nothing - the umount syscall returns
-> >   successfully
-> > * now we have a mounted filesystem despite the fact that umount returned
+On Wed, Sep 06, 2023 at 12:09:37PM +1000, Dave Chinner wrote:
+> On Wed, Sep 06, 2023 at 12:23:22AM +0100, Matthew Wilcox wrote:
+> > On Wed, Sep 06, 2023 at 09:06:21AM +1000, Dave Chinner wrote:
+> > > > Part 2: unmaintained file systems
+> > > > 
+> > > > A lot of our file system drivers are either de facto or formally
+> > > > unmaintained.  If we want to move the kernel forward by finishing
+> > > > API transitions (new mount API, buffer_head removal for the I/O path,
+> > > > ->writepage removal, etc) these file systems need to change as well
+> > > > and need some kind of testing.  The easiest way forward would be
+> > > > to remove everything that is not fully maintained, but that would
+> > > > remove a lot of useful features.
+> > > 
+> > > Linus has explicitly NACKed that approach.
+> > > 
+> > > https://lore.kernel.org/linux-fsdevel/CAHk-=wg7DSNsHY6tWc=WLeqDBYtXges_12fFk1c+-No+fZ0xYQ@mail.gmail.com/
+> > > 
+> > > Which is a problem, because historically we've taken code into
+> > > the kernel without requiring a maintainer, or the people who
+> > > maintained the code have moved on, yet we don't have a policy for
+> > > removing code that is slowly bit-rotting to uselessness.
+> > > 
+> > > > E.g. the hfsplus driver is unmaintained despite collecting odd fixes.
+> > > > It collects odd fixes because it is really useful for interoperating
+> > > > with MacOS and it would be a pity to remove it.  At the same time
+> > > > it is impossible to test changes to hfsplus sanely as there is no
+> > > > mkfs.hfsplus or fsck.hfsplus available for Linux.  We used to have
+> > > > one that was ported from the open source Darwin code drops, and
+> > > > I managed to get xfstests to run on hfsplus with them, but this
+> > > > old version doesn't compile on any modern Linux distribution and
+> > > > new versions of the code aren't trivially portable to Linux.
+> > > > 
+> > > > Do we have volunteers with old enough distros that we can list as
+> > > > testers for this code?  Do we have any other way to proceed?
+> > > >
+> > > > If we don't, are we just going to untested API changes to these
+> > > > code bases, or keep the old APIs around forever?
+> > > 
+> > > We do slowly remove device drivers and platforms as the hardware,
+> > > developers and users disappear. We do also just change driver APIs
+> > > in device drivers for hardware that no-one is actually able to test.
+> > > The assumption is that if it gets broken during API changes,
+> > > someone who needs it to work will fix it and send patches.
+> > > 
+> > > That seems to be the historical model for removing unused/obsolete
+> > > code from the kernel, so why should we treat unmaintained/obsolete
+> > > filesystems any differently?  i.e. Just change the API, mark it
+> > > CONFIG_BROKEN until someone comes along and starts fixing it...
+> > 
+> > Umm.  If I change ->write_begin and ->write_end to take a folio,
+> > convert only the filesystems I can test via Luis' kdevops and mark the
+> > rest as CONFIG_BROKEN, I can guarantee you that Linus will reject that
+> > pull request.
 > 
-> That can happen for any number of reasons. Other codepaths might very
-> well still hold active references to the superblock. The same thing can
-> happen when you have your filesystem pinned in another mount namespace.
+> No, that's not what I was suggesting. I suggest that we -change all
+> the API users when we need to, but in doing so we also need to 
+> formalise the fact we do not know if the filesystems nobody can/will
+> maintain function correctly or not.
 > 
-> If you really want to be absolutely sure that the superblock is
-> destroyed you must use a mechanism like fanotify which allows you to get
-> notified on superblock destruction.
+> Reflect that with CONFIG_BROKEN or some other mechanism that
+> forces people to acknowledge that the filesystem implementation is
+> not fit for purpose before they attempt to use it. e.g.
+> write some code that emits a log warning about the filesystem being
+> unmaintained at mount time and should not be used in situations
+> where stability, security or data integrity guarantees are required.
 
-If the administrator runs a script that performs unmount and then back-up 
-of the underlying block device, it may read corrupted data. I think that 
-this is a problem.
+In addition to this e need to involve low-level userspace. We already
+started this a while ago.
 
-> > @@ -1251,7 +1251,7 @@ static void cleanup_mnt(struct mount *mn
-> >  	}
-> >  	fsnotify_vfsmount_delete(&mnt->mnt);
-> >  	dput(mnt->mnt.mnt_root);
-> > -	deactivate_super(mnt->mnt.mnt_sb);
-> > +	wait_and_deactivate_super(mnt->mnt.mnt_sb);
-> 
-> Your patch means that we hang on any umount when the filesystem is
-> frozen.
+util-linux has already implemented X-mount.auto-fstypes which we
+requested. For example, X-mount.auto-fstypes="ext4,xfs" accepts only
+ext4 and xfs, and X-mount.auto-fstypes="novfat,reiserfs" accepts all
+filesystems except vfat and reiserfs.
 
-Currently, if we freeze a filesystem with "fsfreeze" and unmount it, the 
-mount point is removed, but the filesystem stays active and it is leaked. 
-You can't unfreeze it with "fsfreeze --unfreeze" because the mount point 
-is gone. (the only way how to recover it is "echo j>/proc/sysrq-trigger").
+https://github.com/util-linux/util-linux/commit/1592425a0a1472db3168cd9247f001d7c5dd84b6
 
-> IOW, you'd also hang on any umount of a bind-mount. IOW, every
-> single container making use of this filesystems via bind-mounts would
-> hang on umount and shutdown.
+IOW,
+        mount -t X-mount.auto-fstypes="ext4,xfs,btrfs,erofs" /dev/bla /mnt
+would only mount these for filesystems and refuse the rest.
 
-bind-mount doesn't modify "s->s_writers.frozen", so the patch does nothing 
-in this case. I tried unmounting bind-mounts and there was no deadlock.
+Of course, that's optional so if userspace only uses
+        mount /dev/bla /mnt
+then libmount will currently happily mount anything that's on /dev/bla.
 
-> You'd effectively build a deadlock trap for userspace when the
-> filesystem is frozen. And nothing can make progress until that thing is
-> thawed. Umount can't block if the block device is frozen.
+So adding another RFE to libmount to add support for a global allowlist
+or denylist of filesystems and refuse to mount anything else might also
+be a good thing. Actually, might go and do this now.
 
-unmounting a filesystem frozen with "fsfreeze" doesn't work in the current 
-kernel. We can say that the administrator shouldn't do it. But reading the 
-block device after umount finishes is something that the administrator may 
-do.
-
-BTW. what do you think that unmount of a frozen filesystem should properly 
-do? Fail with -EBUSY? Or, unfreeze the filesystem and unmount it? Or 
-something else?
-
-> That msleep(1) alone is a pretty nasty hack. We should definitely not
-> spin in code like this. That superblock could stay frozen for a long
-> time without s_umount held. So this is spinning.
-> 
-> Even if we wanted to do this it would need to use a similar wait
-> mechanism for the filesystem to be thawed like we do in
-> thaw_super_locked().
-
-Yes, it may be possible to rework it using a wait queue.
-
-Mikulas
-
+So that we can slowly move userspace towards a smaller set of
+filesystems and then distros can start turning off more and more
+filesystems.
