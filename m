@@ -2,88 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FA7E7932F3
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Sep 2023 02:41:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1E0B79330F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Sep 2023 02:53:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241235AbjIFAld (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 Sep 2023 20:41:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40660 "EHLO
+        id S243353AbjIFAxM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 Sep 2023 20:53:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233345AbjIFAlc (ORCPT
+        with ESMTP id S230394AbjIFAxM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 Sep 2023 20:41:32 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73D599E;
-        Tue,  5 Sep 2023 17:41:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=E7pBRBhK3Jt0eDT1MWkzf/iGRarf5P4om5PK0eit8tA=; b=v/SxE1mymw+1Ba9X0SsuWFk/rh
-        2PWTEigtMD5GHa7tGO4uIuEEwacTpFK6EHtBFtm12bCOEJoC+H4FMyRdZTrNA96QxjQ+bugm9w6h5
-        Ve5UbKhE5TceQYcHN2cUi4JAgXs3gEAp2a+uItmHRxVAAyVE9WMk8dsWRbEsKnj4ExKeYFwER8K7z
-        qeBext4m+1sw1osqtEsNkNlSRgU/7aScaXvUwT8WbodHAFcioN2GGV7pBABmsbh2km9tZP9ipBuSC
-        2UQQ9BhwnXpZp1bsgfBblVVZ+Kx6Cfi1J9GGn4a0RD7npBMsvSn4Nwl6Dzlyt46b9mCqz+ezyP8Ol
-        vwvOyqBw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qdgbi-00F1eQ-8L; Wed, 06 Sep 2023 00:41:22 +0000
-Date:   Wed, 6 Sep 2023 01:41:22 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Kent Overstreet <kent.overstreet@linux.dev>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-bcachefs@vger.kernel.org,
-        Christian Brauner <christian@brauner.io>
-Subject: Re: [GIT PULL] bcachefs
-Message-ID: <ZPfKsp9/LVHbk4Px@casper.infradead.org>
-References: <20230903032555.np6lu5mouv5tw4ff@moria.home.lan>
- <ZPcsHyWOHGJid82J@infradead.org>
- <20230906000007.ry5rmk35vt57kppx@moria.home.lan>
+        Tue, 5 Sep 2023 20:53:12 -0400
+Received: from mail-pl1-f208.google.com (mail-pl1-f208.google.com [209.85.214.208])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 158521A3
+        for <linux-fsdevel@vger.kernel.org>; Tue,  5 Sep 2023 17:53:08 -0700 (PDT)
+Received: by mail-pl1-f208.google.com with SMTP id d9443c01a7336-1bf6e47b5efso32849525ad.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Sep 2023 17:53:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1693961586; x=1694566386;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kdwrxuKw3aDgC7TsPyfzDkWDKgXCuVtFUYAIf25m1dw=;
+        b=MYwP0VfiYVH03+8puufbC1D2ehRmzwEeHO0tlINMRBEoBIqK1EA5uRBmuhht69gNmD
+         rR2VUIN12+PfjA1nJOuDysdSziXorv9pJizp6yLEDky5VCb+8r+TM8HnHMLhcdeZ/MTc
+         xvi8VXFWuQqqpOPdCM6+SjL/pwXeeExQAHxp4QAJa8bk4ltiOLrvBUD2GGR+dxUW16KW
+         ck5AojzkvOSQrLHTuOLHxR5wL6EPLnhMIx2sHXGk/Xu7NXH9z6h6NZPR4Ar20nesYZl0
+         Kl0MqlTfa9MESrDdY/ndpn420EiAoGXXPFSPAILdNKlFfVLos2iKzqBeUi0G/glgf2wy
+         5zTA==
+X-Gm-Message-State: AOJu0Yz/Ils6L6hqd+2PGA84emnJi3IyZcD4+fQYlME8ATO7spcfKXt0
+        usRpcKLP0fBoZec0rF7ht/s7riVd+CNYFd2ZEBlbfEAOJCeX
+X-Google-Smtp-Source: AGHT+IGt/gmyyr1MtBbz39IpBNMgCLuXvqFPZKZJCsUwhDll6WqgzQZK3CV9ezLZYRftQtuSHkSBKMqpkwEC0WI6XQQ+CDGaVU2/
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230906000007.ry5rmk35vt57kppx@moria.home.lan>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a17:902:e803:b0:1b9:e8e5:b0a4 with SMTP id
+ u3-20020a170902e80300b001b9e8e5b0a4mr5009843plg.8.1693961586558; Tue, 05 Sep
+ 2023 17:53:06 -0700 (PDT)
+Date:   Tue, 05 Sep 2023 17:53:06 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a14f020604a62a98@google.com>
+Subject: [syzbot] [f2fs?] kernel BUG in f2fs_put_super
+From:   syzbot <syzbot+ebd7072191e2eddd7d6e@syzkaller.appspotmail.com>
+To:     chao@kernel.org, jaegeuk@kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, terrelln@fb.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
+        RCVD_IN_MSPIKE_WL,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 05, 2023 at 08:00:07PM -0400, Kent Overstreet wrote:
-> On Tue, Sep 05, 2023 at 06:24:47AM -0700, Christoph Hellwig wrote:
-> > Hi Kent,
-> > 
-> > I thought you'd follow Christians proposal to actually work with
-> > people to try to use common APIs (i.e. to use iomap once it's been
-> > even more iter-like, for which I'm still waiting for suggestions),
-> > and make your new APIs used more widely if they are a good idea
-> > (which also requires explaining them better) and aim for 6.7 once
-> > that is done.
-> 
-> Christoph, I get that iomap is your pet project and you want to make it
-> better and see it more widely used.
-> 
-> But the reasons bcachefs doesn't use iomap have been discussed at
-> length, and I've posted and talked about the bcachefs equivalents of
-> that code. You were AWOL on those discussions; you consistently say
-> "bcachefs should use iomap" and then walk away, so those discussions
-> haven't moved forwards.
-> 
-> To recap, besides being more iterator like (passing data structures
-> around with iterators, vs. indirect function calls into the filesystem),
-> bcachefs also hangs a bit more state off the pagecache, due to being
-> multi device and also using the same data structure for tracking disk
-> reservations (because why make the buffered write paths look that up
-> separately?).
+Hello,
 
-I /thought/ the proposal was to use iomap for bcachefs DIO and leave
-buffered writes for a different day.  I agree the iomap buffered write
-path is inappropriate for bcachefs today.  I'd like that to change,
-but there's a lot of functionality that it would need to support.
+syzbot found the following issue on:
 
-I don't see the point in keeping bcachefs out of tree for another cycle.
-Yes, more use of iomap would be great, but I don't think that it being
-in-tree is going to hinder anything.  It's not like it uses bufferheads.
+HEAD commit:    e0152e7481c6 Merge tag 'riscv-for-linus-6.6-mw1' of git://..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11072fdfa80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=30b036635ccf91ce
+dashboard link: https://syzkaller.appspot.com/bug?extid=ebd7072191e2eddd7d6e
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-e0152e74.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/8159e43fa183/vmlinux-e0152e74.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/b0ced23e91f7/bzImage-e0152e74.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ebd7072191e2eddd7d6e@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+kernel BUG at fs/f2fs/super.c:1639!
+invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 15451 Comm: syz-executor.1 Not tainted 6.5.0-syzkaller-09338-ge0152e7481c6 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+RIP: 0010:f2fs_put_super+0xce1/0xed0 fs/f2fs/super.c:1639
+Code: 03 0f b6 14 02 48 89 d8 83 e0 07 83 c0 03 38 d0 7c 04 84 d2 75 27 48 63 0b 89 ea 48 c7 c6 40 f9 ba 8a 4c 89 e7 e8 ff 77 ff ff <0f> 0b 4c 89 ee 48 c7 c7 c0 d2 18 8d e8 5e bd a1 00 eb a6 48 89 df
+RSP: 0018:ffffc9000420fc00 EFLAGS: 00010282
+
+RAX: 0000000000000000 RBX: ffff888058dd4f80 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff816a3a30 RDI: 0000000000000005
+RBP: 000000000000000a R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000080000000 R11: 2073662d53463246 R12: ffff888058dd4000
+R13: 000000000000000a R14: dffffc0000000000 R15: 0000000000000001
+FS:  00007fbbc86656c0(0000) GS:ffff88806b600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f621a85f000 CR3: 0000000111785000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ generic_shutdown_super+0x161/0x3c0 fs/super.c:693
+ kill_block_super+0x3b/0x70 fs/super.c:1646
+ kill_f2fs_super+0x2b7/0x3d0 fs/f2fs/super.c:4879
+ deactivate_locked_super+0x9a/0x170 fs/super.c:481
+ deactivate_super+0xde/0x100 fs/super.c:514
+ cleanup_mnt+0x222/0x3d0 fs/namespace.c:1254
+ task_work_run+0x14d/0x240 kernel/task_work.c:179
+ resume_user_mode_work include/linux/resume_user_mode.h:49 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:171 [inline]
+ exit_to_user_mode_prepare+0x210/0x240 kernel/entry/common.c:204
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:285 [inline]
+ syscall_exit_to_user_mode+0x1d/0x60 kernel/entry/common.c:296
+ do_syscall_64+0x44/0xb0 arch/x86/entry/common.c:86
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7fbbc787e1ea
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 09 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fbbc8664ee8 EFLAGS: 00000202
+ ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffec RBX: 00007fbbc8664f80 RCX: 00007fbbc787e1ea
+RDX: 0000000020000040 RSI: 0000000020000080 RDI: 00007fbbc8664f40
+RBP: 0000000020000040 R08: 00007fbbc8664f80 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000202 R12: 0000000020000080
+R13: 00007fbbc8664f40 R14: 00000000000054f4 R15: 0000000020000540
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:f2fs_put_super+0xce1/0xed0 fs/f2fs/super.c:1639
+Code: 03 0f b6 14 02 48 89 d8 83 e0 07 83 c0 03 38 d0 7c 04 84 d2 75 27 48 63 0b 89 ea 48 c7 c6 40 f9 ba 8a 4c 89 e7 e8 ff 77 ff ff <0f> 0b 4c 89 ee 48 c7 c7 c0 d2 18 8d e8 5e bd a1 00 eb a6 48 89 df
+RSP: 0018:ffffc9000420fc00 EFLAGS: 00010282
+RAX: 0000000000000000 RBX: ffff888058dd4f80 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff816a3a30 RDI: 0000000000000005
+RBP: 000000000000000a R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000080000000 R11: 2073662d53463246 R12: ffff888058dd4000
+R13: 000000000000000a R14: dffffc0000000000 R15: 0000000000000001
+FS:  00007fbbc86656c0(0000) GS:ffff88806b600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fffb061dfa8 CR3: 0000000111785000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
