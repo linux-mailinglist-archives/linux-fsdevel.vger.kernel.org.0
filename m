@@ -2,166 +2,197 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BED2A794511
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Sep 2023 23:26:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E119794527
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Sep 2023 23:35:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235794AbjIFV0V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Sep 2023 17:26:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41852 "EHLO
+        id S235823AbjIFVfW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Sep 2023 17:35:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231781AbjIFV0V (ORCPT
+        with ESMTP id S230427AbjIFVfV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Sep 2023 17:26:21 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A115B173B;
-        Wed,  6 Sep 2023 14:26:17 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B4C4C433C7;
-        Wed,  6 Sep 2023 21:26:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694035577;
-        bh=BlBtuzP4WLhslFzCA4A573BYCXxi0Cf+G4azjlhW7Co=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=M0kZbLVTCZfH42OQoJmZX2RUXcBcsPUmH4P1PmAnTPyqzugHJjnRi8rz52qPJ5DkA
-         KDzY9+xgRjofRpJvxpWD+upFSkTl/a/TYN6rYFz8ZsGaNUrBlxvwGqqqT7uFfcdSr+
-         KwTTxUUUREqjQB7gDxwEdBccZSFxtetmTqjdq2Xs/ayuj6BBzKXQFXH4Jp9z0m7FEV
-         no5SlE2VMZqLg+WCKDuxjP4d7tMHpOIxG9BZKGS5eD4TcwYSIOt/tFAfvATS1l3175
-         /09HuBOpJUeNe9atdJYPyEwPu2a18P0BSm+jKls0fcJ8r97JVwBPa4oT2F2n7vMx+O
-         4Xr7HPWssbQYA==
-Date:   Wed, 6 Sep 2023 14:26:16 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Bernd Schubert <bernd.schubert@fastmail.fm>,
-        Mateusz Guzik <mjguzik@gmail.com>, brauner@kernel.org,
-        viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH] vfs: add inode lockdep assertions
-Message-ID: <20230906212616.GI28160@frogsfrogsfrogs>
-References: <20230831151414.2714750-1-mjguzik@gmail.com>
- <ZPiYp+t6JTUscc81@casper.infradead.org>
- <b0434328-01f9-dc5c-fe25-4a249130a81d@fastmail.fm>
- <20230906152948.GE28160@frogsfrogsfrogs>
- <ZPiiDj1T3lGp2w2c@casper.infradead.org>
- <20230906170724.GI28202@frogsfrogsfrogs>
- <ZPjqwUq+lUOhYOEa@casper.infradead.org>
+        Wed, 6 Sep 2023 17:35:21 -0400
+Received: from mail-pl1-f207.google.com (mail-pl1-f207.google.com [209.85.214.207])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B89C519A6
+        for <linux-fsdevel@vger.kernel.org>; Wed,  6 Sep 2023 14:35:15 -0700 (PDT)
+Received: by mail-pl1-f207.google.com with SMTP id d9443c01a7336-1c0aaf4caaaso3459665ad.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Sep 2023 14:35:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1694036115; x=1694640915;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AF+QLvnv3Ner2dzu27pFKXA8E2NnGG2JZHcD6NYjSTI=;
+        b=Uh1kKLoiJ6D+bMPSWPO0tH46WiHgvBojL6rfPKz6Y9qrUFFPle23wZ6uxtPdFt0y8F
+         dqFkaHe4DX7tJwE4iImcZCHC2Mf68t9Kcibxezq2eCgqTINBL3Uxr2xFCvVU5yUYdBVL
+         LdvnxBfXDlHxs+U+5CHoSJaZ1+5xJVRjza0fd0JhgMJjQk6XYu0I0oNcOOxz+IYBYT7t
+         Q59k1DrOzy23tJOt+4N1/dGdYpjy16QEZD+81l2pJIxJOJO2Th9QrkETHEk3JHctDTf3
+         v0MIdelZs8kLOXbY1S+GzG60znb6viyV7UfaQrk9fzN4z/p8izFsPoUlerzolshMrgin
+         B2yg==
+X-Gm-Message-State: AOJu0YyGpt90C3YonuvszzNVVOtdyPuQfnJG29yzsJZTN/vS0YIBqVED
+        Q4KCFzGnQ5fNJ9c/xcK2svRfBwVkStuv+Lz6FxsXqmntz1Ca
+X-Google-Smtp-Source: AGHT+IH0jSaJ5gLdKHr1IhZJSXcBBHTZfRV9OrYpfiO+gssm8XYSHAYVpdiIXR6iEoGEJCxpEXIPZwNawlIAsLKG2kfYUYmzWVXN
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZPjqwUq+lUOhYOEa@casper.infradead.org>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Received: by 2002:a17:902:f686:b0:1c1:f00a:64d5 with SMTP id
+ l6-20020a170902f68600b001c1f00a64d5mr5936399plg.4.1694036115176; Wed, 06 Sep
+ 2023 14:35:15 -0700 (PDT)
+Date:   Wed, 06 Sep 2023 14:35:15 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e1c4c10604b7849d@google.com>
+Subject: [syzbot] [reiserfs?] BUG: unable to handle kernel paging request in mas_alloc_nodes
+From:   syzbot <syzbot+de4269ef04437bffcaa9@syzkaller.appspotmail.com>
+To:     bpf@vger.kernel.org, brauner@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 06, 2023 at 10:10:25PM +0100, Matthew Wilcox wrote:
-> On Wed, Sep 06, 2023 at 10:07:24AM -0700, Darrick J. Wong wrote:
-> > You'd be better off converting this to:
-> > 
-> > 	return __xfs_rwsem_islocked(&ip->i_lock.mr_lock,
-> > 				(lock_flags & XFS_ILOCK_SHARED));
-> > 
-> > And then fixing __xfs_rwsem_islocked to do:
-> > 
-> > static inline bool
-> > __xfs_rwsem_islocked(
-> > 	struct rw_semaphore	*rwsem,
-> > 	bool			shared)
-> > {
-> > 	if (!debug_locks) {
-> > 		if (!shared)
-> > 			return rwsem_is_write_locked(rwsem);
-> > 		return rwsem_is_locked(rwsem);
-> > 	}
-> > 
-> > 	...
-> > }
-> 
-> so ... I did that.  And then many isilocked() calls started failing.
-> generic/017 was the first one:
-> 
-> 00030 XFS: Assertion failed: xfs_isilocked(ip, XFS_ILOCK_EXCL), file: fs/xfs/libxfs/xfs_trans_inode.c, line: 93
-> 00030 ------------[ cut here ]------------
-> 00030 WARNING: CPU: 5 PID: 77 at fs/xfs/xfs_message.c:104 assfail+0x2c/0x40
-> 00030 Modules linked in:
-> 00030 CPU: 5 PID: 77 Comm: kworker/5:1 Kdump: loaded Not tainted 6.5.0-00006-g88a61c17df8f-dirty #14
-> 00030 Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-> 00030 Workqueue: xfsalloc xfs_btree_split_worker
-> 00030 RIP: 0010:assfail+0x2c/0x40
-> 00030 Code: 89 d0 41 89 c9 48 c7 c2 80 70 0f 82 48 89 f1 48 89 e5 48 89 fe 48 c7
->  c7 08 4f 07 82 e8 fd fd ff ff 80 3d 26 cc ed 00 00 75 04 <0f> 0b 5d c3 0f 0b 66 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 55 48
-> 00030 RSP: 0018:ffff888003f0bc28 EFLAGS: 00010246
-> 00030 RAX: 00000000ffffffea RBX: ffff88800d9a0000 RCX: 000000007fffffff
-> 00030 RDX: 0000000000000021 RSI: 0000000000000000 RDI: ffffffff82074f08
-> 00030 RBP: ffff888003f0bc28 R08: 0000000000000000 R09: 000000000000000a
-> 00030 R10: 000000000000000a R11: 0fffffffffffffff R12: ffff888009ff6000
-> 00030 R13: ffff88800ac8a000 R14: 0000000000000001 R15: ffff88800af0a000
-> 00030 FS:  0000000000000000(0000) GS:ffff88807d940000(0000) knlGS:0000000000000000
-> 00030 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> 00030 CR2: 00007ff177b05d58 CR3: 0000000007aa2002 CR4: 0000000000770ea0
-> 00030 PKRU: 55555554
-> 00030 Call Trace:
-> 00030  <TASK>
-> 00030  ? show_regs+0x5c/0x70
-> 00030  ? __warn+0x84/0x180
-> 00030  ? assfail+0x2c/0x40
-> 00030  ? report_bug+0x18e/0x1c0
-> 00030  ? handle_bug+0x3e/0x70
-> 00030  ? exc_invalid_op+0x18/0x70
-> 00030  ? asm_exc_invalid_op+0x1b/0x20
-> 00030  ? assfail+0x2c/0x40
-> 00030  ? assfail+0x23/0x40
-> 00030  xfs_trans_log_inode+0xf9/0x120
-> 00030  xfs_bmbt_alloc_block+0xf0/0x1c0
-> 00030  __xfs_btree_split+0xf8/0x6c0
-> 00030  ? __this_cpu_preempt_check+0x13/0x20
-> 00030  ? lock_acquire+0xc8/0x280
-> 00030  xfs_btree_split_worker+0x8a/0x110
-> 00030  process_one_work+0x23f/0x510
-> 00030  worker_thread+0x4d/0x3b0
-> 00030  ? process_one_work+0x510/0x510
-> 00030  kthread+0x106/0x140
-> 00030  ? kthread_complete_and_exit+0x20/0x20
-> 00030  ret_from_fork+0x31/0x50
-> 00030  ? kthread_complete_and_exit+0x20/0x20
-> 00030  ret_from_fork_asm+0x11/0x20
-> 00030  </TASK>
-> 00030 irq event stamp: 2901
-> 00030 hardirqs last  enabled at (2909): [<ffffffff810e4d83>] __up_console_sem+0x53/0x60
-> 00030 hardirqs last disabled at (2916): [<ffffffff810e4d68>] __up_console_sem+0x38/0x60
-> 00030 softirqs last  enabled at (0): [<ffffffff81067bd0>] copy_process+0x830/0x1c10
-> 00030 softirqs last disabled at (0): [<0000000000000000>] 0x0
-> 00030 ---[ end trace 0000000000000000 ]---
-> 
-> but here's the thing, I have lockdep enabled.  So it's not testing my
-> new rwsem_is_write_locked() code, it's testing the current lockdep
-> stuff.
-> 
-> So I have a feeling that we're not telling lockdep that we've acquired
-> the i_lock.  Or something?  Seems unlikely that this is a real bug;
-> surely we'd've noticed before now.
-> 
-> Code here:
-> https://git.infradead.org/users/willy/pagecache.git/shortlog/refs/heads/mrlock
-> 
-> ie git clone git://git.infradead.org/users/willy/pagecache.git mrlock
-> 
-> You don't need the top commit.  754fb6a68dae is enough to provoke it,
-> as long as you have CONFIG_LOCKDEP enabled.
+Hello,
 
-Yeah.  The lockdep assertions in __xfs_rwsem_islocked are broken because
-the fsstress thread takes the ILOCK_EXCL, decides to defer a bmap btree
-split to a workqueue to avoid overflowing the kernel stack, and doesn't
-tell lockdep that the workqueue is (effectively) the rwsem owner until
-it completes.
+syzbot found the following issue on:
 
-The last time we tried to get rid of mrlock_t, dchinner suggested using
-lockdep_assert_held_non_owner to fix the assertions, but (a) that
-doesn't seem to exist in TOT 6.5 and (b) the inode rwsems protect the
-inode data structure, not threads.  Hence you could just get rid of the
-lockdep assertions and use the rwsem_* versions unconditionally.
+HEAD commit:    a47fc304d2b6 Add linux-next specific files for 20230831
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1709eb67a80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6ecd2a74f20953b9
+dashboard link: https://syzkaller.appspot.com/bug?extid=de4269ef04437bffcaa9
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=103ea770680000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13206d04680000
 
---D
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/b2e8f4217527/disk-a47fc304.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ed6cdcc09339/vmlinux-a47fc304.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/bd9b2475bf5a/bzImage-a47fc304.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/2c0bbd58005c/mount_1.gz
+
+Bisection is inconclusive: the issue happens on the oldest tested release.
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=173b59afa80000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=14bb59afa80000
+console output: https://syzkaller.appspot.com/x/log.txt?x=10bb59afa80000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+de4269ef04437bffcaa9@syzkaller.appspotmail.com
+
+BUG: unable to handle page fault for address: 00000076000400c8
+#PF: supervisor read access in kernel mode
+#PF: error_code(0x0000) - not-present page
+PGD 0 P4D 0 
+Oops: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 4494 Comm: udevd Not tainted 6.5.0-next-20230831-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/26/2023
+RIP: 0010:__kmem_cache_alloc_bulk mm/slub.c:3986 [inline]
+RIP: 0010:kmem_cache_alloc_bulk+0x16a/0x7c0 mm/slub.c:4049
+Code: 00 0f 85 1b 05 00 00 45 31 d2 4c 89 3c 24 65 48 8b 0c 25 c0 bc 03 00 4d 89 d7 48 89 4d 28 31 ed 48 89 4c 24 18 eb 2d 8b 43 28 <48> 8b 04 07 49 89 04 24 49 89 3b 0f 1f 44 00 00 4c 8b 1c 24 41 81
+RSP: 0018:ffffc900031af878 EFLAGS: 00010006
+
+RAX: 0000000000000080 RBX: ffff88801364d000 RCX: ffff88807d56bb80
+RDX: 0000000000000000 RSI: ffffffff8ae925a0 RDI: 0000007600040048
+RBP: 0000000000000000 R08: 0000000000000000 R09: fffffbfff1d9c40a
+R10: 0000000000000000 R11: ffff888073edee10 R12: ffff8880b9841830
+R13: 000000000000000e R14: ffff888073edee10 R15: 0000000000000000
+FS:  00007ff1acb30c80(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000076000400c8 CR3: 00000000290ce000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ mt_alloc_bulk lib/maple_tree.c:165 [inline]
+ mas_alloc_nodes+0x39c/0x830 lib/maple_tree.c:1271
+ mas_node_count_gfp+0x105/0x130 lib/maple_tree.c:1329
+ mas_node_count lib/maple_tree.c:1343 [inline]
+ mas_expected_entries+0x116/0x200 lib/maple_tree.c:5577
+ vma_iter_bulk_alloc include/linux/mm.h:985 [inline]
+ dup_mmap+0x4f8/0x1d80 kernel/fork.c:681
+ dup_mm kernel/fork.c:1686 [inline]
+ copy_mm kernel/fork.c:1735 [inline]
+ copy_process+0x6c11/0x7400 kernel/fork.c:2501
+ kernel_clone+0xfd/0x930 kernel/fork.c:2909
+ __do_sys_clone+0xba/0x100 kernel/fork.c:3052
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x38/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7ff1ac6fca12
+Code: 41 5d 41 5e 41 5f c3 64 48 8b 04 25 10 00 00 00 45 31 c0 31 d2 31 f6 bf 11 00 20 01 4c 8d 90 d0 02 00 00 b8 38 00 00 00 0f 05 <48> 3d 00 f0 ff ff 76 10 48 8b 15 e7 43 0f 00 f7 d8 64 89 02 48 83
+RSP: 002b:00007fffc6413228 EFLAGS: 00000246 ORIG_RAX: 0000000000000038
+RAX: ffffffffffffffda RBX: 0000562ccc95ee01 RCX: 00007ff1ac6fca12
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000001200011
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000562ccc94b910
+R10: 00007ff1acb30f50 R11: 0000000000000246 R12: 0000562ccc973450
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000562ccc94b910
+ </TASK>
+Modules linked in:
+CR2: 00000076000400c8
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__kmem_cache_alloc_bulk mm/slub.c:3986 [inline]
+RIP: 0010:kmem_cache_alloc_bulk+0x16a/0x7c0 mm/slub.c:4049
+Code: 00 0f 85 1b 05 00 00 45 31 d2 4c 89 3c 24 65 48 8b 0c 25 c0 bc 03 00 4d 89 d7 48 89 4d 28 31 ed 48 89 4c 24 18 eb 2d 8b 43 28 <48> 8b 04 07 49 89 04 24 49 89 3b 0f 1f 44 00 00 4c 8b 1c 24 41 81
+RSP: 0018:ffffc900031af878 EFLAGS: 00010006
+RAX: 0000000000000080 RBX: ffff88801364d000 RCX: ffff88807d56bb80
+RDX: 0000000000000000 RSI: ffffffff8ae925a0 RDI: 0000007600040048
+RBP: 0000000000000000 R08: 0000000000000000 R09: fffffbfff1d9c40a
+R10: 0000000000000000 R11: ffff888073edee10 R12: ffff8880b9841830
+R13: 000000000000000e R14: ffff888073edee10 R15: 0000000000000000
+FS:  00007ff1acb30c80(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000076000400c8 CR3: 00000000290ce000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	00 0f                	add    %cl,(%rdi)
+   2:	85 1b                	test   %ebx,(%rbx)
+   4:	05 00 00 45 31       	add    $0x31450000,%eax
+   9:	d2 4c 89 3c          	rorb   %cl,0x3c(%rcx,%rcx,4)
+   d:	24 65                	and    $0x65,%al
+   f:	48 8b 0c 25 c0 bc 03 	mov    0x3bcc0,%rcx
+  16:	00
+  17:	4d 89 d7             	mov    %r10,%r15
+  1a:	48 89 4d 28          	mov    %rcx,0x28(%rbp)
+  1e:	31 ed                	xor    %ebp,%ebp
+  20:	48 89 4c 24 18       	mov    %rcx,0x18(%rsp)
+  25:	eb 2d                	jmp    0x54
+  27:	8b 43 28             	mov    0x28(%rbx),%eax
+* 2a:	48 8b 04 07          	mov    (%rdi,%rax,1),%rax <-- trapping instruction
+  2e:	49 89 04 24          	mov    %rax,(%r12)
+  32:	49 89 3b             	mov    %rdi,(%r11)
+  35:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+  3a:	4c 8b 1c 24          	mov    (%rsp),%r11
+  3e:	41                   	rex.B
+  3f:	81                   	.byte 0x81
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
