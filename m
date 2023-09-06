@@ -2,265 +2,200 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F3597941F3
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Sep 2023 19:20:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 076E279420E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Sep 2023 19:31:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237811AbjIFRUg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Sep 2023 13:20:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57302 "EHLO
+        id S242795AbjIFRb5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Sep 2023 13:31:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233890AbjIFRUf (ORCPT
+        with ESMTP id S230258AbjIFRb5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Sep 2023 13:20:35 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22F43199F
-        for <linux-fsdevel@vger.kernel.org>; Wed,  6 Sep 2023 10:20:31 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-402c80b71ecso5075e9.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Sep 2023 10:20:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1694020829; x=1694625629; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+N77K5asCDO6mBYz5WiqLrKnSl+GRx2Mp7esKxryFKg=;
-        b=JPaT1r8pE9HPBtg8REXgkXnKxr5Ayegv3Gc0uDjdEM8QytYnCd89LtVafVMPBF4AIH
-         nblGcEQlwet2fsw4nrf9UD7JubSJEGlfhJw8Uvjg5LQp3jocKNBYr9vISD4FC5mfjqgz
-         w41PGZifJ/vMVr/H/0DkjOsOb5au/xy46QVi9E2sSCYmyPwNb7rrpD9eTYD6+bit43ty
-         8i/DCJQ/lDE/Qs+KVby7z7D6YkGt+iw7cW6QaVBbuJP3Hsmp9A9L/BCb0IY73W67HMbg
-         x+MK+mkBrApyMKuzishgaubdpcQ+cq6S7XN0jqzJ3wGZX0Ya+kUYB7/ezM7n6VMPwkdZ
-         hBGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1694020829; x=1694625629;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+N77K5asCDO6mBYz5WiqLrKnSl+GRx2Mp7esKxryFKg=;
-        b=FG9jgf4Ar7lv8NJPBpVVxXHvks9mWOWzyAZ37JIy7MKB9eEbTbvig285hK9yAV4QA2
-         Uy3QEULgBLS3drD+8gXSdHDis4Qj6ebFmj+hUJTci7v80K2M9TkdW3YqfwbyGEMzzgg8
-         eA7p4owAtwkucbjB/It/7Q3jMKhF0DSIBWtdwQEQ++W/COOvQUVlFPlky0C4yOOVqLqu
-         ZIZcFyew9UIE6fzefml4k/8dIOlm70SZcTLWeHLmzi7S4WXNHQTAk7LOVAw+LYkScr4x
-         nu64szNujLVB1JaxU1sbm9nDwb8tZv4Rwn5uVduuatf03FjJnZlJUXasEvbzcjpcmS0s
-         HmNA==
-X-Gm-Message-State: AOJu0YyeHuF2mxw17S+7EWzqaTA1opzN6uyc1UbTGC32zW+lHQIZDi1M
-        bsgZfnDGLwsn/Vxn06TLaUkSg2qhd3VAHtfs9iVOjw==
-X-Google-Smtp-Source: AGHT+IHCatey3yZfUTLwMWiUTqgPKUuT5WGhxakTu7ICjfYTxwE/a5hvT0i+XMS+mYt0wXPp6Y3Y1PhDsYZjAluMKl8=
-X-Received: by 2002:a05:600c:46cc:b0:3fe:f32f:c57f with SMTP id
- q12-20020a05600c46cc00b003fef32fc57fmr6328wmo.0.1694020829456; Wed, 06 Sep
- 2023 10:20:29 -0700 (PDT)
+        Wed, 6 Sep 2023 13:31:57 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFF1B19A2;
+        Wed,  6 Sep 2023 10:31:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1694021512; x=1725557512;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=CZ59n4Ux4qiEnv0AVHLukHmA42VAOZ5j2gNn6FmckzA=;
+  b=dn3HSSfZq7XIUrwPKZN1EwQ+MXNORxzxjkzrol/mMI7fU5Lao0maQpf2
+   bVf64dwVb4/GkXMzCwslBVQP6B5iff4SSpv/z44B1wvSlVq+KJNiaYN9H
+   yg1gxmb8vRorTciahzwgrhpKKGJr8dFh6QDOyhXGGfN/C8NH22dFWQKvE
+   OhHC4KGOc6KT7D5e3rfO5GDzFMFXlfui65hcF50BmizBi6XW/x9gQmg65
+   L+MuOfVSXNfqz08JnmpM4d3J7hJcejmuvWOUS2auNzXDqqjheCcBhnTJF
+   HSxnrDDMBwAvX4yTU3HErJ5b+578vb4ODfjfPfXYhQfax0Uo/Mr2e21UC
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10825"; a="441111901"
+X-IronPort-AV: E=Sophos;i="6.02,232,1688454000"; 
+   d="scan'208";a="441111901"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2023 10:31:52 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10825"; a="741642679"
+X-IronPort-AV: E=Sophos;i="6.02,232,1688454000"; 
+   d="scan'208";a="741642679"
+Received: from lkp-server01.sh.intel.com (HELO 59b3c6e06877) ([10.239.97.150])
+  by orsmga002.jf.intel.com with ESMTP; 06 Sep 2023 10:31:43 -0700
+Received: from kbuild by 59b3c6e06877 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1qdwNQ-0000Rf-17;
+        Wed, 06 Sep 2023 17:31:40 +0000
+Date:   Thu, 7 Sep 2023 01:31:10 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Cc:     oe-kbuild-all@lists.linux.dev, Anish Moorthy <amoorthy@google.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        Christian Brauner <brauner@kernel.org>, peterx@redhat.com,
+        linux-fsdevel@vger.kernel.org,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        James Houghton <jthoughton@google.com>,
+        Nadav Amit <nadav.amit@gmail.com>
+Subject: Re: [PATCH 2/7] poll: Add a poll_flags for poll_queue_proc()
+Message-ID: <202309070146.47KrWvAH-lkp@intel.com>
+References: <20230905214235.320571-3-peterx@redhat.com>
 MIME-Version: 1.0
-References: <000000000000e534bb0604959011@google.com> <ZPeaH+K75a0nIyBk@dread.disaster.area>
-In-Reply-To: <ZPeaH+K75a0nIyBk@dread.disaster.area>
-From:   Aleksandr Nogikh <nogikh@google.com>
-Date:   Wed, 6 Sep 2023 19:20:15 +0200
-Message-ID: <CANp29Y4AK9dzmpMj4E9iz3gqTwhG=-_7DfA8knrWYaHy4QxrEg@mail.gmail.com>
-Subject: Re: [syzbot] [xfs?] INFO: task hung in clean_bdev_aliases
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     syzbot <syzbot+1fa947e7f09e136925b8@syzkaller.appspotmail.com>,
-        djwong@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, linux-block@vger.kernel.org,
-        hch@lst.de
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230905214235.320571-3-peterx@redhat.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 5, 2023 at 11:14=E2=80=AFPM 'Dave Chinner' via syzkaller-bugs
-<syzkaller-bugs@googlegroups.com> wrote:
->
-> [cc linux-block, Christoph]
->
-> Another iomap-blockdev related issue.
->
-> #syz set subsystems: block
->
-> syzbot developers: Please review how you are classifying subsystems,
-> this is the third false XFS classification in 24 hours.
+Hi Peter,
 
-The reason why syzbot marked this report as xfs is that, per
-MAINTAINERS, fs/iomap/ points to linux-xfs@vger.kernel.org. I can
-adjust the rules syzbot uses so that these are routed to "block".
+kernel test robot noticed the following build errors:
 
-But should MAINTAINERS actually also not relate IOMAP FILESYSTEM
-LIBRARY with xfs in this case?
+[auto build test ERROR on akpm-mm/mm-everything]
 
---=20
-Aleksandr
+url:    https://github.com/intel-lab-lkp/linux/commits/Peter-Xu/mm-userfaultfd-Make-uffd-read-wait-event-exclusive/20230906-054430
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20230905214235.320571-3-peterx%40redhat.com
+patch subject: [PATCH 2/7] poll: Add a poll_flags for poll_queue_proc()
+config: x86_64-buildonly-randconfig-005-20230906 (https://download.01.org/0day-ci/archive/20230907/202309070146.47KrWvAH-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20230907/202309070146.47KrWvAH-lkp@intel.com/reproduce)
 
->
-> -Dave.
->
-> On Mon, Sep 04, 2023 at 10:04:47PM -0700, syzbot wrote:
-> > Hello,
-> >
-> > syzbot found the following issue on:
-> >
-> > HEAD commit:    92901222f83d Merge tag 'f2fs-for-6-6-rc1' of git://git.=
-ker..
-> > git tree:       upstream
-> > console+strace: https://syzkaller.appspot.com/x/log.txt?x=3D1485e78fa80=
-000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D3bd57a1ac08=
-277b0
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D1fa947e7f09e1=
-36925b8
-> > compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for=
- Debian) 2.40
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D13fcf7386=
-80000
-> >
-> > Downloadable assets:
-> > disk image: https://storage.googleapis.com/syzbot-assets/ee486d884228/d=
-isk-92901222.raw.xz
-> > vmlinux: https://storage.googleapis.com/syzbot-assets/b5187db0b1d1/vmli=
-nux-92901222.xz
-> > kernel image: https://storage.googleapis.com/syzbot-assets/82c4e42d693e=
-/bzImage-92901222.xz
-> >
-> > IMPORTANT: if you fix the issue, please add the following tag to the co=
-mmit:
-> > Reported-by: syzbot+1fa947e7f09e136925b8@syzkaller.appspotmail.com
-> >
-> > INFO: task syz-executor.5:10017 blocked for more than 143 seconds.
-> >       Not tainted 6.5.0-syzkaller-11075-g92901222f83d #0
-> > "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this messag=
-e.
-> > task:syz-executor.5  state:D stack:27624 pid:10017 ppid:5071   flags:0x=
-00004006
-> > Call Trace:
-> >  <TASK>
-> >  context_switch kernel/sched/core.c:5382 [inline]
-> >  __schedule+0xee1/0x59f0 kernel/sched/core.c:6695
-> >  schedule+0xe7/0x1b0 kernel/sched/core.c:6771
-> >  io_schedule+0xbe/0x130 kernel/sched/core.c:9026
-> >  folio_wait_bit_common+0x3d2/0x9b0 mm/filemap.c:1304
-> >  folio_lock include/linux/pagemap.h:1042 [inline]
-> >  clean_bdev_aliases+0x56b/0x610 fs/buffer.c:1725
-> >  clean_bdev_bh_alias include/linux/buffer_head.h:219 [inline]
-> >  __block_write_begin_int+0x8d6/0x1470 fs/buffer.c:2115
-> >  iomap_write_begin+0x5be/0x17b0 fs/iomap/buffered-io.c:772
-> >  iomap_write_iter fs/iomap/buffered-io.c:907 [inline]
-> >  iomap_file_buffered_write+0x3d6/0x9a0 fs/iomap/buffered-io.c:968
-> >  blkdev_buffered_write block/fops.c:634 [inline]
-> >  blkdev_write_iter+0x572/0xca0 block/fops.c:688
-> >  call_write_iter include/linux/fs.h:1985 [inline]
-> >  do_iter_readv_writev+0x21e/0x3c0 fs/read_write.c:735
-> >  do_iter_write+0x17f/0x830 fs/read_write.c:860
-> >  vfs_iter_write+0x7a/0xb0 fs/read_write.c:901
-> >  iter_file_splice_write+0x698/0xbf0 fs/splice.c:736
-> >  do_splice_from fs/splice.c:933 [inline]
-> >  direct_splice_actor+0x118/0x180 fs/splice.c:1142
-> >  splice_direct_to_actor+0x347/0xa30 fs/splice.c:1088
-> >  do_splice_direct+0x1af/0x280 fs/splice.c:1194
-> >  do_sendfile+0xb88/0x1390 fs/read_write.c:1254
-> >  __do_sys_sendfile64 fs/read_write.c:1322 [inline]
-> >  __se_sys_sendfile64 fs/read_write.c:1308 [inline]
-> >  __x64_sys_sendfile64+0x1d6/0x220 fs/read_write.c:1308
-> >  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-> >  do_syscall_64+0x38/0xb0 arch/x86/entry/common.c:80
-> >  entry_SYSCALL_64_after_hwframe+0x63/0xcd
-> > RIP: 0033:0x7fdb8ca7cae9
-> > RSP: 002b:00007ffcd642da18 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
-> > RAX: ffffffffffffffda RBX: 00007fdb8cb9bf80 RCX: 00007fdb8ca7cae9
-> > RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000003
-> > RBP: 00007fdb8cac847a R08: 0000000000000000 R09: 0000000000000000
-> > R10: 0100000000000042 R11: 0000000000000246 R12: 0000000000000000
-> > R13: 0000000000000be7 R14: 00007fdb8cb9bf80 R15: 00007fdb8cb9bf80
-> >  </TASK>
-> > INFO: lockdep is turned off.
-> > NMI backtrace for cpu 1
-> > CPU: 1 PID: 29 Comm: khungtaskd Not tainted 6.5.0-syzkaller-11075-g9290=
-1222f83d #0
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS=
- Google 07/26/2023
-> > Call Trace:
-> >  <TASK>
-> >  __dump_stack lib/dump_stack.c:88 [inline]
-> >  dump_stack_lvl+0xd9/0x1b0 lib/dump_stack.c:106
-> >  nmi_cpu_backtrace+0x277/0x380 lib/nmi_backtrace.c:113
-> >  nmi_trigger_cpumask_backtrace+0x299/0x300 lib/nmi_backtrace.c:62
-> >  trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
-> >  check_hung_uninterruptible_tasks kernel/hung_task.c:222 [inline]
-> >  watchdog+0xfac/0x1230 kernel/hung_task.c:379
-> >  kthread+0x33a/0x430 kernel/kthread.c:388
-> >  ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
-> >  ret_from_fork_asm+0x11/0x20 arch/x86/entry/entry_64.S:304
-> >  </TASK>
-> > Sending NMI from CPU 1 to CPUs 0:
-> > NMI backtrace for cpu 0
-> > CPU: 0 PID: 17 Comm: rcu_preempt Not tainted 6.5.0-syzkaller-11075-g929=
-01222f83d #0
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS=
- Google 07/26/2023
-> > RIP: 0010:load_balance+0x10a/0x3130 kernel/sched/fair.c:10983
-> > Code: 4a 8d 3c f5 40 aa 5c 8c 48 ba 00 00 00 00 00 fc ff df 48 89 f9 48=
- c1 e9 03 80 3c 11 00 0f 85 2f 2e 00 00 31 c0 b9 0c 00 00 00 <4e> 8b 1c f5 =
-40 aa 5c 8c 4c 89 94 24 f8 00 00 00 48 8d bc 24 00 01
-> > RSP: 0018:ffffc900001676c8 EFLAGS: 00000046
-> > RAX: 0000000000000000 RBX: ffff8880b983c700 RCX: 000000000000000c
-> > RDX: dffffc0000000000 RSI: ffffffff8ae90360 RDI: ffffffff8c5caa40
-> > RBP: ffffc90000167898 R08: ffffc90000167960 R09: 0000000000000000
-> > R10: ffff88801525ac00 R11: 0000000000000000 R12: 00000000000287d8
-> > R13: ffffc90000167960 R14: 0000000000000000 R15: 0000000100004d48
-> > FS:  0000000000000000(0000) GS:ffff8880b9800000(0000) knlGS:00000000000=
-00000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 0000000020000240 CR3: 000000000c976000 CR4: 0000000000350ef0
-> > Call Trace:
-> >  <NMI>
-> >  </NMI>
-> >  <TASK>
-> >  newidle_balance+0x710/0x1210 kernel/sched/fair.c:12059
-> >  pick_next_task_fair+0x87/0x1200 kernel/sched/fair.c:8234
-> >  __pick_next_task kernel/sched/core.c:6004 [inline]
-> >  pick_next_task kernel/sched/core.c:6079 [inline]
-> >  __schedule+0x493/0x59f0 kernel/sched/core.c:6659
-> >  schedule+0xe7/0x1b0 kernel/sched/core.c:6771
-> >  schedule_timeout+0x157/0x2c0 kernel/time/timer.c:2167
-> >  rcu_gp_fqs_loop+0x1ec/0xa50 kernel/rcu/tree.c:1613
-> >  rcu_gp_kthread+0x249/0x380 kernel/rcu/tree.c:1812
-> >  kthread+0x33a/0x430 kernel/kthread.c:388
-> >  ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
-> >  ret_from_fork_asm+0x11/0x20 arch/x86/entry/entry_64.S:304
-> >  </TASK>
-> >
-> >
-> > ---
-> > This report is generated by a bot. It may contain errors.
-> > See https://goo.gl/tpsmEJ for more information about syzbot.
-> > syzbot engineers can be reached at syzkaller@googlegroups.com.
-> >
-> > syzbot will keep track of this issue. See:
-> > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> >
-> > If the bug is already fixed, let syzbot know by replying with:
-> > #syz fix: exact-commit-title
-> >
-> > If you want syzbot to run the reproducer, reply with:
-> > #syz test: git://repo/address.git branch-or-commit-hash
-> > If you attach or paste a git patch, syzbot will apply it before testing=
-.
-> >
-> > If you want to overwrite bug's subsystems, reply with:
-> > #syz set subsystems: new-subsystem
-> > (See the list of subsystem names on the web dashboard)
-> >
-> > If the bug is a duplicate of another bug, reply with:
-> > #syz dup: exact-subject-of-another-report
-> >
-> > If you want to undo deduplication, reply with:
-> > #syz undup
-> >
->
-> --
-> Dave Chinner
-> david@fromorbit.com
->
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202309070146.47KrWvAH-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/xen/privcmd.c: In function 'privcmd_irqfd_assign':
+>> drivers/xen/privcmd.c:965:40: error: passing argument 2 of 'init_poll_funcptr' from incompatible pointer type [-Werror=incompatible-pointer-types]
+     965 |         init_poll_funcptr(&kirqfd->pt, irqfd_poll_func);
+         |                                        ^~~~~~~~~~~~~~~
+         |                                        |
+         |                                        void (*)(struct file *, wait_queue_head_t *, poll_table *) {aka void (*)(struct file *, struct wait_queue_head *, struct poll_table_struct *)}
+   In file included from drivers/xen/privcmd.c:17:
+   include/linux/poll.h:76:70: note: expected 'poll_queue_proc' {aka 'void (*)(struct file *, struct wait_queue_head *, struct poll_table_struct *, unsigned int)'} but argument is of type 'void (*)(struct file *, wait_queue_head_t *, poll_table *)' {aka 'void (*)(struct file *, struct wait_queue_head *, struct poll_table_struct *)'}
+      76 | static inline void init_poll_funcptr(poll_table *pt, poll_queue_proc qproc)
+         |                                                      ~~~~~~~~~~~~~~~~^~~~~
+   cc1: some warnings being treated as errors
+
+
+vim +/init_poll_funcptr +965 drivers/xen/privcmd.c
+
+f8941e6c4c7129 Viresh Kumar 2023-08-22   924  
+f8941e6c4c7129 Viresh Kumar 2023-08-22   925  static int privcmd_irqfd_assign(struct privcmd_irqfd *irqfd)
+f8941e6c4c7129 Viresh Kumar 2023-08-22   926  {
+f8941e6c4c7129 Viresh Kumar 2023-08-22   927  	struct privcmd_kernel_irqfd *kirqfd, *tmp;
+f8941e6c4c7129 Viresh Kumar 2023-08-22   928  	__poll_t events;
+f8941e6c4c7129 Viresh Kumar 2023-08-22   929  	struct fd f;
+f8941e6c4c7129 Viresh Kumar 2023-08-22   930  	void *dm_op;
+f8941e6c4c7129 Viresh Kumar 2023-08-22   931  	int ret;
+f8941e6c4c7129 Viresh Kumar 2023-08-22   932  
+f8941e6c4c7129 Viresh Kumar 2023-08-22   933  	kirqfd = kzalloc(sizeof(*kirqfd) + irqfd->size, GFP_KERNEL);
+f8941e6c4c7129 Viresh Kumar 2023-08-22   934  	if (!kirqfd)
+f8941e6c4c7129 Viresh Kumar 2023-08-22   935  		return -ENOMEM;
+f8941e6c4c7129 Viresh Kumar 2023-08-22   936  	dm_op = kirqfd + 1;
+f8941e6c4c7129 Viresh Kumar 2023-08-22   937  
+f8941e6c4c7129 Viresh Kumar 2023-08-22   938  	if (copy_from_user(dm_op, irqfd->dm_op, irqfd->size)) {
+f8941e6c4c7129 Viresh Kumar 2023-08-22   939  		ret = -EFAULT;
+f8941e6c4c7129 Viresh Kumar 2023-08-22   940  		goto error_kfree;
+f8941e6c4c7129 Viresh Kumar 2023-08-22   941  	}
+f8941e6c4c7129 Viresh Kumar 2023-08-22   942  
+f8941e6c4c7129 Viresh Kumar 2023-08-22   943  	kirqfd->xbufs.size = irqfd->size;
+f8941e6c4c7129 Viresh Kumar 2023-08-22   944  	set_xen_guest_handle(kirqfd->xbufs.h, dm_op);
+f8941e6c4c7129 Viresh Kumar 2023-08-22   945  	kirqfd->dom = irqfd->dom;
+f8941e6c4c7129 Viresh Kumar 2023-08-22   946  	INIT_WORK(&kirqfd->shutdown, irqfd_shutdown);
+f8941e6c4c7129 Viresh Kumar 2023-08-22   947  
+f8941e6c4c7129 Viresh Kumar 2023-08-22   948  	f = fdget(irqfd->fd);
+f8941e6c4c7129 Viresh Kumar 2023-08-22   949  	if (!f.file) {
+f8941e6c4c7129 Viresh Kumar 2023-08-22   950  		ret = -EBADF;
+f8941e6c4c7129 Viresh Kumar 2023-08-22   951  		goto error_kfree;
+f8941e6c4c7129 Viresh Kumar 2023-08-22   952  	}
+f8941e6c4c7129 Viresh Kumar 2023-08-22   953  
+f8941e6c4c7129 Viresh Kumar 2023-08-22   954  	kirqfd->eventfd = eventfd_ctx_fileget(f.file);
+f8941e6c4c7129 Viresh Kumar 2023-08-22   955  	if (IS_ERR(kirqfd->eventfd)) {
+f8941e6c4c7129 Viresh Kumar 2023-08-22   956  		ret = PTR_ERR(kirqfd->eventfd);
+f8941e6c4c7129 Viresh Kumar 2023-08-22   957  		goto error_fd_put;
+f8941e6c4c7129 Viresh Kumar 2023-08-22   958  	}
+f8941e6c4c7129 Viresh Kumar 2023-08-22   959  
+f8941e6c4c7129 Viresh Kumar 2023-08-22   960  	/*
+f8941e6c4c7129 Viresh Kumar 2023-08-22   961  	 * Install our own custom wake-up handling so we are notified via a
+f8941e6c4c7129 Viresh Kumar 2023-08-22   962  	 * callback whenever someone signals the underlying eventfd.
+f8941e6c4c7129 Viresh Kumar 2023-08-22   963  	 */
+f8941e6c4c7129 Viresh Kumar 2023-08-22   964  	init_waitqueue_func_entry(&kirqfd->wait, irqfd_wakeup);
+f8941e6c4c7129 Viresh Kumar 2023-08-22  @965  	init_poll_funcptr(&kirqfd->pt, irqfd_poll_func);
+f8941e6c4c7129 Viresh Kumar 2023-08-22   966  
+f8941e6c4c7129 Viresh Kumar 2023-08-22   967  	mutex_lock(&irqfds_lock);
+f8941e6c4c7129 Viresh Kumar 2023-08-22   968  
+f8941e6c4c7129 Viresh Kumar 2023-08-22   969  	list_for_each_entry(tmp, &irqfds_list, list) {
+f8941e6c4c7129 Viresh Kumar 2023-08-22   970  		if (kirqfd->eventfd == tmp->eventfd) {
+f8941e6c4c7129 Viresh Kumar 2023-08-22   971  			ret = -EBUSY;
+f8941e6c4c7129 Viresh Kumar 2023-08-22   972  			mutex_unlock(&irqfds_lock);
+f8941e6c4c7129 Viresh Kumar 2023-08-22   973  			goto error_eventfd;
+f8941e6c4c7129 Viresh Kumar 2023-08-22   974  		}
+f8941e6c4c7129 Viresh Kumar 2023-08-22   975  	}
+f8941e6c4c7129 Viresh Kumar 2023-08-22   976  
+f8941e6c4c7129 Viresh Kumar 2023-08-22   977  	list_add_tail(&kirqfd->list, &irqfds_list);
+f8941e6c4c7129 Viresh Kumar 2023-08-22   978  	mutex_unlock(&irqfds_lock);
+f8941e6c4c7129 Viresh Kumar 2023-08-22   979  
+f8941e6c4c7129 Viresh Kumar 2023-08-22   980  	/*
+f8941e6c4c7129 Viresh Kumar 2023-08-22   981  	 * Check if there was an event already pending on the eventfd before we
+f8941e6c4c7129 Viresh Kumar 2023-08-22   982  	 * registered, and trigger it as if we didn't miss it.
+f8941e6c4c7129 Viresh Kumar 2023-08-22   983  	 */
+f8941e6c4c7129 Viresh Kumar 2023-08-22   984  	events = vfs_poll(f.file, &kirqfd->pt);
+f8941e6c4c7129 Viresh Kumar 2023-08-22   985  	if (events & EPOLLIN)
+f8941e6c4c7129 Viresh Kumar 2023-08-22   986  		irqfd_inject(kirqfd);
+f8941e6c4c7129 Viresh Kumar 2023-08-22   987  
+f8941e6c4c7129 Viresh Kumar 2023-08-22   988  	/*
+f8941e6c4c7129 Viresh Kumar 2023-08-22   989  	 * Do not drop the file until the kirqfd is fully initialized, otherwise
+f8941e6c4c7129 Viresh Kumar 2023-08-22   990  	 * we might race against the EPOLLHUP.
+f8941e6c4c7129 Viresh Kumar 2023-08-22   991  	 */
+f8941e6c4c7129 Viresh Kumar 2023-08-22   992  	fdput(f);
+f8941e6c4c7129 Viresh Kumar 2023-08-22   993  	return 0;
+f8941e6c4c7129 Viresh Kumar 2023-08-22   994  
+f8941e6c4c7129 Viresh Kumar 2023-08-22   995  error_eventfd:
+f8941e6c4c7129 Viresh Kumar 2023-08-22   996  	eventfd_ctx_put(kirqfd->eventfd);
+f8941e6c4c7129 Viresh Kumar 2023-08-22   997  
+f8941e6c4c7129 Viresh Kumar 2023-08-22   998  error_fd_put:
+f8941e6c4c7129 Viresh Kumar 2023-08-22   999  	fdput(f);
+f8941e6c4c7129 Viresh Kumar 2023-08-22  1000  
+f8941e6c4c7129 Viresh Kumar 2023-08-22  1001  error_kfree:
+f8941e6c4c7129 Viresh Kumar 2023-08-22  1002  	kfree(kirqfd);
+f8941e6c4c7129 Viresh Kumar 2023-08-22  1003  	return ret;
+f8941e6c4c7129 Viresh Kumar 2023-08-22  1004  }
+f8941e6c4c7129 Viresh Kumar 2023-08-22  1005  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
