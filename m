@@ -2,125 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A93927943BD
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Sep 2023 21:19:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AADD97943DA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Sep 2023 21:36:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243812AbjIFTT6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Sep 2023 15:19:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33054 "EHLO
+        id S244222AbjIFTgo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Sep 2023 15:36:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244221AbjIFTTx (ORCPT
+        with ESMTP id S244206AbjIFTgn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Sep 2023 15:19:53 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 250D61BDC;
-        Wed,  6 Sep 2023 12:19:12 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B00D7C433C7;
-        Wed,  6 Sep 2023 19:19:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694027951;
-        bh=fDiQ1DFoxubnMjhSHE4t+Y28KnhW4AGvaGOqfQ+YewY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=eCs2csUwRXVlc+RT23GNCY8Mk7/cvHz/ZMCJ+CWctYefv6TC0Vw3p53LF/+lI1fwy
-         cr/SUEwI3DEt6diAtE6GGZX5w8mrvJg/oqcF1DbdZC3w+IlRbez7PwUuUgB6C6lmcf
-         AmlitduG2UOOeip1gmUymKo+KVjRDNubn7VEsUNNG7DEco3r+dbjfcQojEbBaH2vNc
-         oQLaSZEXBL58VDC7NrDerrJpSrRkXVDX4flOPRANASDbVd6uQ292Z7lzALVorHmiKs
-         KL0dTvxD1QxogPW6Y6KlwSxizwSACIXd92fnqcwpaO8dXdrnoxgddgNMKtaKIytHAD
-         oAvvs4KnLwpvQ==
-Date:   Wed, 6 Sep 2023 12:19:11 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Bernd Schubert <bernd.schubert@fastmail.fm>,
-        Mateusz Guzik <mjguzik@gmail.com>, brauner@kernel.org,
-        viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH] vfs: add inode lockdep assertions
-Message-ID: <20230906191911.GJ28202@frogsfrogsfrogs>
-References: <20230831151414.2714750-1-mjguzik@gmail.com>
- <ZPiYp+t6JTUscc81@casper.infradead.org>
- <b0434328-01f9-dc5c-fe25-4a249130a81d@fastmail.fm>
- <20230906152948.GE28160@frogsfrogsfrogs>
- <ZPiiDj1T3lGp2w2c@casper.infradead.org>
- <20230906170724.GI28202@frogsfrogsfrogs>
- <ZPjGDGyDf2/ngML9@casper.infradead.org>
- <20230906184336.GH28160@frogsfrogsfrogs>
- <ZPjMpIKh+xxLbEZI@casper.infradead.org>
+        Wed, 6 Sep 2023 15:36:43 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE2821BF
+        for <linux-fsdevel@vger.kernel.org>; Wed,  6 Sep 2023 12:36:38 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-52a1ce52ef4so143853a12.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Sep 2023 12:36:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1694028997; x=1694633797; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=mtg/nQGifsLU9qENmxHQ00cXrbdcS8vGgWh6gQnrcGw=;
+        b=XJTTyExyrCZTjrBfDnQQ/HMwGqwX2BPUSBxIIHdqUV2ciXhUa8L6Os2ZahiyUO6XyC
+         MalAgtXIrD3yl1YmsZO6+toCC9Fi6tyu08ew8ZOQCwLSz+z7QyPHI1H8cPTPEYppGvSi
+         ZcCipA14wvU1hg9bMcUkOH2uXG9N/dw3eSJhc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1694028997; x=1694633797;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mtg/nQGifsLU9qENmxHQ00cXrbdcS8vGgWh6gQnrcGw=;
+        b=gsdlwVbkUpMDMhsJ9OW+I2JL/qwZtA2opDDrjQibokDqEJ4w7dbK8bpvidOQ27hn0R
+         zIoFMxagIq3ixh4p6lT1Ok4Iffeo/rce5aodRyjUZOh6BlUy6cBusUwHdH5Mpi+2BB5V
+         r2DdtOze1X5yb/UtcfopqrrmJROm/kWOayyQHv8BcAstRatFSzZRPoeQtXA3IRHajrvY
+         HN/BnwzJo0R4+CfHcJo8o4jvvgZgR+0vFSN3HXK8ko/mJQrlJJgV+wmgSuSkPz+VnGoN
+         +HDF884FDx7w1hqBU/ZHFMDuFP6Dkit9Pd4TFsBHyp5SEeSOHOhJfsFbhOhRDHT0ESZR
+         EoJw==
+X-Gm-Message-State: AOJu0Yw/rqg+bkjWHrnV3WKr1OCihYPur8hpFq0uRRZZqlCprlhwH2wz
+        4gASyEj0i+izjLWcV2kPwyd7w1GrYrn8LNfxKfSU1Q==
+X-Google-Smtp-Source: AGHT+IFGnkZ+XyW3GndBJ1x648GkPWYfAZxpuBsAvAKyuAdjCKL9QN6uVjs7JFA1iNZNYwXAxKxzFQ==
+X-Received: by 2002:aa7:c394:0:b0:522:afec:3ca5 with SMTP id k20-20020aa7c394000000b00522afec3ca5mr3087676edq.28.1694028996775;
+        Wed, 06 Sep 2023 12:36:36 -0700 (PDT)
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com. [209.85.208.52])
+        by smtp.gmail.com with ESMTPSA id d4-20020a50ea84000000b00521d2f7459fsm8714471edo.49.2023.09.06.12.36.35
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Sep 2023 12:36:36 -0700 (PDT)
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5230a22cfd1so150918a12.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Sep 2023 12:36:35 -0700 (PDT)
+X-Received: by 2002:a05:6402:334:b0:525:6d6e:ed4a with SMTP id
+ q20-20020a056402033400b005256d6eed4amr3250657edw.23.1694028995634; Wed, 06
+ Sep 2023 12:36:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZPjMpIKh+xxLbEZI@casper.infradead.org>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+References: <20230903032555.np6lu5mouv5tw4ff@moria.home.lan>
+In-Reply-To: <20230903032555.np6lu5mouv5tw4ff@moria.home.lan>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 6 Sep 2023 12:36:18 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjUX287gJCKDXUY02Wpot1n0VkjQk-PmDOmrsrEfwPfPg@mail.gmail.com>
+Message-ID: <CAHk-=wjUX287gJCKDXUY02Wpot1n0VkjQk-PmDOmrsrEfwPfPg@mail.gmail.com>
+Subject: Re: [GIT PULL] bcachefs
+To:     Kent Overstreet <kent.overstreet@linux.dev>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-bcachefs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 06, 2023 at 08:01:56PM +0100, Matthew Wilcox wrote:
-> On Wed, Sep 06, 2023 at 11:43:36AM -0700, Darrick J. Wong wrote:
-> > On Wed, Sep 06, 2023 at 07:33:48PM +0100, Matthew Wilcox wrote:
-> > > On Wed, Sep 06, 2023 at 10:07:24AM -0700, Darrick J. Wong wrote:
-> > > > On Wed, Sep 06, 2023 at 05:00:14PM +0100, Matthew Wilcox wrote:
-> > > > > +++ b/fs/xfs/xfs_inode.c
-> > > > > @@ -361,7 +361,7 @@ xfs_isilocked(
-> > > > >  {
-> > > > >  	if (lock_flags & (XFS_ILOCK_EXCL|XFS_ILOCK_SHARED)) {
-> > > > >  		if (!(lock_flags & XFS_ILOCK_SHARED))
-> > > > > -			return !!ip->i_lock.mr_writer;
-> > > > > +			return rwsem_is_write_locked(&ip->i_lock.mr_lock);
-> > > > 
-> > > > You'd be better off converting this to:
-> > > > 
-> > > > 	return __xfs_rwsem_islocked(&ip->i_lock.mr_lock,
-> > > > 				(lock_flags & XFS_ILOCK_SHARED));
-> > > > 
-> > > > And then fixing __xfs_rwsem_islocked to do:
-> > > > 
-> > > > static inline bool
-> > > > __xfs_rwsem_islocked(
-> > > > 	struct rw_semaphore	*rwsem,
-> > > > 	bool			shared)
-> > > > {
-> > > > 	if (!debug_locks) {
-> > > > 		if (!shared)
-> > > > 			return rwsem_is_write_locked(rwsem);
-> > > > 		return rwsem_is_locked(rwsem);
-> > > > 	}
-> > > > 
-> > > > 	...
-> > > > }
-> > > 
-> > > Thanks.
-> > > 
-> > > > > +++ b/include/linux/rwsem.h
-> > > > > @@ -72,6 +72,11 @@ static inline int rwsem_is_locked(struct rw_semaphore *sem)
-> > > > >  	return atomic_long_read(&sem->count) != 0;
-> > > > >  }
-> > > > >  
-> > > > > +static inline int rwsem_is_write_locked(struct rw_semaphore *sem)
-> > > > > +{
-> > > > > +	return atomic_long_read(&sem->count) & 1;
-> > > > 
-> > > > 
-> > > > atomic_long_read(&sem->count) & RWSEM_WRITER_LOCKED ?
-> > > 
-> > > Then this would either have to be in rwsem.c or we'd have to move the
-> > > definition of RWSEM_WRITER_LOCKED to rwsem.h.  All three options are
-> > > kind of bad.  I think I hate the bare '1' least.
-> > 
-> > I disagree, because using the bare 1 brings the most risk that someone
-> > will subtly break the locking assertions some day when they get the
-> > bright idea to move RWSEM_WRITER_LOCKED to the upper bit and fail to
-> > notice this predicate and its magic number.  IMO moving it to the header
-> > file (possibly with the usual __ prefix) would be preferable to leaving
-> > a landmine.
-> 
-> +       return atomic_long_read(&sem->count) & 1 /* RWSEM_WRITER_LOCKED */;
-> 
-> works for you?
+So I'm starting to look at this because I have most other pull
+requests done, and while I realize there's no universal support for it
+I suspect any further changes are better done in-tree. The out-of-tree
+thing has been done.
 
-Yeah I guess that works.
+However, while I'll continue to look at it in this form, I just
+realized that it's completely unacceptable for one very obvious
+reason:
 
---D
+On Sat, 2 Sept 2023 at 20:26, Kent Overstreet <kent.overstreet@linux.dev> wrote:
+>
+>   https://evilpiepirate.org/git/bcachefs.git bcachefs-for-upstream
+
+No way am I pulling that without a signed tag and a pgp key with a
+chain of trust. You've been around for long enough that having such a
+key shouldn't be a problem for you, so make it happen.
+
+There are a few other issues that I have with this, and Christoph did
+mention a big one: it's not been in linux-next. I don't know why I
+thought it had been, it's just such an obvious thing for any new "I
+want this merged upstream" tree.
+
+So these kinds of "I'll just ignore _all_ basic rules" kinds of issues
+do annoy me.
+
+I need to know that you understand that if you actually want this
+upstream, you need to work with upstream.
+
+That very much means *NOT* continuing this "I'll just do it my way".
+You need to show that you can work with others, that you can work
+within the framework of upstream, and that not every single thread you
+get into becomes an argument.
+
+This, btw, is not negotiable.  If you feel uncomfortable with that
+basic notion, you had better just continue doing development outside
+the main kernel tree for another decade.
+
+The fact that I only now notice that you never submitted this to
+linux-next is obviously on me. My bad.
+
+But at the same time it worries me that it might be a sign of you just
+thinking that your way is special.
+
+                Linus
