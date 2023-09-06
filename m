@@ -2,193 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 46B9A7946AC
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Sep 2023 00:54:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62C267946BB
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Sep 2023 00:59:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233803AbjIFWyt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Sep 2023 18:54:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53688 "EHLO
+        id S244513AbjIFW7T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Sep 2023 18:59:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40022 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231475AbjIFWys (ORCPT
+        with ESMTP id S231475AbjIFW7T (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Sep 2023 18:54:48 -0400
-Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A75619A9
-        for <linux-fsdevel@vger.kernel.org>; Wed,  6 Sep 2023 15:54:44 -0700 (PDT)
-Received: by mail-pl1-x62a.google.com with SMTP id d9443c01a7336-1c34c9cc9b9so2684625ad.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Sep 2023 15:54:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1694040884; x=1694645684; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+N2Dpt8hCyK/GCOhgZdHPa9hp5pWTWAPcK1f0tlZvUU=;
-        b=Y+VB9HmG/F3mxeiviPAy9GIc7OnxGb90twzRgjmvNzDI8eeK/cmQS69B6ti5yWM8pP
-         FV30ILvUmINGtIXbpovMDs9mFbe4/1+8MySaJcFEjFZBnR+WU+dzeeD2becdgHFNUVR7
-         nWXl9K7k/vtRCnfhciDgXFH94V+9odOm6pI4qG6NTC9/Asskhe3X4g4my4onLWj6mTsb
-         06kV+vOl9pmbE1BwVHTq9RLrkQY41bNzGpoqNOwiiH0nFWnKGflyiyOP0QEBFQtEjgVb
-         wNllK0NmrKCd/nXpeLuVz7XJkukE+R8C9IUw6xlbNBc5HD6TwMKPuZ6FYEr6H5g6m+Uc
-         j3GQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1694040884; x=1694645684;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+N2Dpt8hCyK/GCOhgZdHPa9hp5pWTWAPcK1f0tlZvUU=;
-        b=iNFzb+Ukr2CSIAwljB6Wy4yWG9Xfbzn9qmY5PfM3IYD6pP1eKVhbZQEdvXWDNRqgUg
-         v0ZJDNd2xnNKkm9EuuJg5oEpKmKi8PHqDoEE0KQr5KesE5JkInIrx2iTxe3RdQjC23aj
-         qThxuKLkT5ryZFNUHoVFa1Lm2Ko8HTPIq5fr0buR7Pq8OS0RADqDJhJqXIFXYlwD2tFp
-         iZD+8B/3NjatT2LnURoq8aCql3nmJv4JqJLnpStz5vkhCYNp5qfOv3JVmoJ1YSZoFWo5
-         23qicuEAq6lGWngC7jBWrfJf6wVP9G7etT0hBBfbgQhp0pY9BuH36+tV+Jl4TdQkxROF
-         QIUA==
-X-Gm-Message-State: AOJu0Yx++khDCFA73URtQi5HXYW9HDd4LlJZiN2G3f6PHM8c0dKVm7BH
-        H+4NMragQYqHLx6NA7rCB9eilgAzomimi8f4VAc=
-X-Google-Smtp-Source: AGHT+IE1Q3+f6DmiLoBBl0Ogm5XFOczxHZDTXx++n9QuBTo2Z6Wb6M/2STLDRv7HeUT8IOv1pOib7w==
-X-Received: by 2002:a17:902:ce83:b0:1b8:a389:4410 with SMTP id f3-20020a170902ce8300b001b8a3894410mr18887840plg.0.1694040883579;
-        Wed, 06 Sep 2023 15:54:43 -0700 (PDT)
-Received: from dread.disaster.area (pa49-195-66-88.pa.nsw.optusnet.com.au. [49.195.66.88])
-        by smtp.gmail.com with ESMTPSA id b11-20020a170902bd4b00b001ab39cd875csm11512937plx.133.2023.09.06.15.54.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Sep 2023 15:54:42 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-        (envelope-from <david@fromorbit.com>)
-        id 1qe1Py-00BmHE-3C;
-        Thu, 07 Sep 2023 08:54:39 +1000
-Date:   Thu, 7 Sep 2023 08:54:38 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Christoph Hellwig <hch@infradead.org>, ksummit@lists.linux.dev,
+        Wed, 6 Sep 2023 18:59:19 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BA7819A9;
+        Wed,  6 Sep 2023 15:59:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1694041155; x=1725577155;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=iZpacsJmtPibvRYCVTNE2cwagSSO7Bbbq8tQpQEh6CI=;
+  b=jMdG8uWYkmbLcw8PDu2Me4eS7cVHoJLWNjsYqHwXA1IXNl7PgKyjz3tc
+   TB1KLGAHGxVMmTn8bjjxv1qJ8AQUvhWJwTWaQGYuWVSdxMuQb1nhjIzKU
+   a9gW1vN907KAfwbwyt5780n7yXS7VamyunJNlE7p4EB09yvITSXmHItFs
+   4SAtdQacKqxWj5sh1k1xsdAiW/2mfCjRKyS2v39G50tHgokShFkLiREBL
+   x3dce893sHuBfTNd1ZlPGU5m1uwo3ZemhEkZ/GAx45q2P7QK3EAYvaFwC
+   1PtcTJFy4WgTQJ2NWuSsKuHAEqBkuxahJtMLLaIHhzo+iAwUBvf6p89sT
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10825"; a="463582382"
+X-IronPort-AV: E=Sophos;i="6.02,233,1688454000"; 
+   d="scan'208";a="463582382"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2023 15:59:14 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10825"; a="691498791"
+X-IronPort-AV: E=Sophos;i="6.02,233,1688454000"; 
+   d="scan'208";a="691498791"
+Received: from lkp-server01.sh.intel.com (HELO 59b3c6e06877) ([10.239.97.150])
+  by orsmga003.jf.intel.com with ESMTP; 06 Sep 2023 15:59:08 -0700
+Received: from kbuild by 59b3c6e06877 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1qe1UI-0000ff-0E;
+        Wed, 06 Sep 2023 22:59:06 +0000
+Date:   Thu, 7 Sep 2023 06:58:45 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Nitesh Shetty <nj.shetty@samsung.com>,
+        Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@kernel.org>, dm-devel@redhat.com,
+        Keith Busch <kbusch@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Chaitanya Kulkarni <kch@nvidia.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>
+Cc:     oe-kbuild-all@lists.linux.dev, martin.petersen@oracle.com,
+        mcgrof@kernel.org, gost.dev@samsung.com,
+        Nitesh Shetty <nj.shetty@samsung.com>,
+        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        Anuj Gupta <anuj20.g@samsung.com>,
+        Vincent Fu <vincent.fu@samsung.com>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-nvme@lists.infradead.org,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [MAINTAINERS/KERNEL SUMMIT] Trust and maintenance of file systems
-Message-ID: <ZPkDLp0jyteubQhh@dread.disaster.area>
-References: <ZO9NK0FchtYjOuIH@infradead.org>
- <8718a8a3-1e62-0e2b-09d0-7bce3155b045@roeck-us.net>
+Subject: Re: [PATCH v15 12/12] null_blk: add support for copy offload
+Message-ID: <202309070607.akFEF327-lkp@intel.com>
+References: <20230906163844.18754-13-nj.shetty@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8718a8a3-1e62-0e2b-09d0-7bce3155b045@roeck-us.net>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <20230906163844.18754-13-nj.shetty@samsung.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 06, 2023 at 03:32:28PM -0700, Guenter Roeck wrote:
-> On 8/30/23 07:07, Christoph Hellwig wrote:
-> > Hi all,
-> > 
-> > we have a lot of on-disk file system drivers in Linux, which I consider
-> > a good thing as it allows a lot of interoperability.  At the same time
-> > maintaining them is a burden, and there is a lot expectation on how
-> > they are maintained.
-> > 
-> > Part 1: untrusted file systems
-> > 
-> > There has been a lot of syzbot fuzzing using generated file system
-> > images, which I again consider a very good thing as syzbot is good
-> > a finding bugs.  Unfortunately it also finds a lot of bugs that no
-> > one is interested in fixing.   The reason for that is that file system
-> > maintainers only consider a tiny subset of the file system drivers,
-> > and for some of them a subset of the format options to be trusted vs
-> > untrusted input.  It thus is not just a waste of time for syzbot itself,
-> > but even more so for the maintainers to report fuzzing bugs in other
-> > implementations.
-> > 
-> > What can we do to only mark certain file systems (and format options)
-> > as trusted on untrusted input and remove a lot of the current tension
-> > and make everyone work more efficiently?  Note that this isn't even
-> > getting into really trusted on-disk formats, which is a security
-> > discussion on it's own, but just into formats where the maintainers
-> > are interested in dealing with fuzzed images.
-> > 
-> > Part 2: unmaintained file systems
-> > 
-> > A lot of our file system drivers are either de facto or formally
-> > unmaintained.  If we want to move the kernel forward by finishing
-> > API transitions (new mount API, buffer_head removal for the I/O path,
-> > ->writepage removal, etc) these file systems need to change as well
-> > and need some kind of testing.  The easiest way forward would be
-> > to remove everything that is not fully maintained, but that would
-> > remove a lot of useful features.
-> > 
-> > E.g. the hfsplus driver is unmaintained despite collecting odd fixes.
-> > It collects odd fixes because it is really useful for interoperating
-> > with MacOS and it would be a pity to remove it.  At the same time
-> > it is impossible to test changes to hfsplus sanely as there is no
-> > mkfs.hfsplus or fsck.hfsplus available for Linux.  We used to have
-> > one that was ported from the open source Darwin code drops, and
-> > I managed to get xfstests to run on hfsplus with them, but this
-> > old version doesn't compile on any modern Linux distribution and
-> > new versions of the code aren't trivially portable to Linux.
-> > 
-> > Do we have volunteers with old enough distros that we can list as
-> > testers for this code?  Do we have any other way to proceed?
-> > 
-> > If we don't, are we just going to untested API changes to these
-> > code bases, or keep the old APIs around forever?
-> > 
-> 
-> In this context, it might be worthwhile trying to determine if and when
-> to call a file system broken.
-> 
-> Case in point: After this e-mail, I tried playing with a few file systems.
-> The most interesting exercise was with ntfsv3.
-> Create it, mount it, copy a few files onto it, remove some of them, repeat.
-> A script doing that only takes a few seconds to corrupt the file system.
-> Trying to unmount it with the current upstream typically results in
-> a backtrace and/or crash.
-> 
-> Does that warrant marking it as BROKEN ? If not, what does ?
+Hi Nitesh,
 
-There's a bigger policy question around that.
+kernel test robot noticed the following build warnings:
 
-I think that if we are going to have filesystems be "community
-maintained" because they have no explicit maintainer, we need some
-kind of standard policy to be applied.
+[auto build test WARNING on c50216cfa084d5eb67dc10e646a3283da1595bb6]
 
-I'd argue that the filesystem needs, at minimum, a working mkfs and
-fsck implementation, and that it is supported by fstests so anyone
-changing core infrastructure can simply run fstests against the
-filesystem to smoke test the infrastructure changes they are making.
+url:    https://github.com/intel-lab-lkp/linux/commits/Nitesh-Shetty/block-Introduce-queue-limits-and-sysfs-for-copy-offload-support/20230907-015817
+base:   c50216cfa084d5eb67dc10e646a3283da1595bb6
+patch link:    https://lore.kernel.org/r/20230906163844.18754-13-nj.shetty%40samsung.com
+patch subject: [PATCH v15 12/12] null_blk: add support for copy offload
+config: parisc-allyesconfig (https://download.01.org/0day-ci/archive/20230907/202309070607.akFEF327-lkp@intel.com/config)
+compiler: hppa-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20230907/202309070607.akFEF327-lkp@intel.com/reproduce)
 
-I'd suggest that syzbot coverage of such filesystems is not desired,
-because nobody is going to be fixing problems related to on-disk
-format verification. All we really care about is that a user can
-read and write to the filesystem without trashing anything.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202309070607.akFEF327-lkp@intel.com/
 
-I'd also suggest that we mark filesystem support state via fstype
-flags rather than config options. That way we aren't reliant on
-distros setting config options correctly to include/indicate the
-state of the filesystem implementation. We could also use similar
-flags for indicating deprecation and obsolete state (i.e. pending
-removal) and have code in the high level mount path issue the
-relevant warnings.
+All warnings (new ones prefixed by >>):
 
-This method of marking would also allow us to document and implement
-a formal policy for removal of unmaintained and/or obsolete
-filesystems without having to be dependent on distros juggling
-config variables to allow users to continue using deprecated, broken
-and/or obsolete filesystem implementations right up to the point
-where they are removed from the kernel.
+   In file included from include/trace/define_trace.h:102,
+                    from drivers/block/null_blk/trace.h:104,
+                    from drivers/block/null_blk/main.c:15:
+   drivers/block/null_blk/./trace.h: In function 'trace_raw_output_nullb_copy_op':
+>> drivers/block/null_blk/./trace.h:91:27: warning: format '%lu' expects argument of type 'long unsigned int', but argument 7 has type 'size_t' {aka 'unsigned int'} [-Wformat=]
+      91 |                 TP_printk("%s req=%-15s: dst=%llu, src=%llu, len=%lu",
+         |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/trace/trace_events.h:203:34: note: in definition of macro 'DECLARE_EVENT_CLASS'
+     203 |         trace_event_printf(iter, print);                                \
+         |                                  ^~~~~
+   include/trace/trace_events.h:45:30: note: in expansion of macro 'PARAMS'
+      45 |                              PARAMS(print));                   \
+         |                              ^~~~~~
+   drivers/block/null_blk/./trace.h:73:1: note: in expansion of macro 'TRACE_EVENT'
+      73 | TRACE_EVENT(nullb_copy_op,
+         | ^~~~~~~~~~~
+   drivers/block/null_blk/./trace.h:91:17: note: in expansion of macro 'TP_printk'
+      91 |                 TP_printk("%s req=%-15s: dst=%llu, src=%llu, len=%lu",
+         |                 ^~~~~~~~~
+   In file included from include/trace/trace_events.h:237:
+   drivers/block/null_blk/./trace.h:91:68: note: format string is defined here
+      91 |                 TP_printk("%s req=%-15s: dst=%llu, src=%llu, len=%lu",
+         |                                                                  ~~^
+         |                                                                    |
+         |                                                                    long unsigned int
+         |                                                                  %u
 
-And let's not forget: removing a filesystem from the kernel is not
-removing end user support for extracting data from old filesystems.
-We have VMs for that - we can run pretty much any kernel ever built
-inside a VM, so users that need to extract data from a really old
-filesystem we no longer support in a modern kernel can simply boot
-up an old distro that did support it and extract the data that way.
 
-We need to get away from the idea that we have to support old
-filesystems forever because someone, somewhere might have an old
-disk on the shelf with that filesystem on it and they might plug it
-in one day. If that day ever happens, they can go to the effort of
-booting an era-relevant distro in a VM to extract that data. It
-makes no sense to put an ongoing burden on current development to
-support this sort of rare, niche use case....
+vim +91 drivers/block/null_blk/./trace.h
 
--Dave.
+    72	
+    73	TRACE_EVENT(nullb_copy_op,
+    74			TP_PROTO(struct request *req,
+    75				 sector_t dst, sector_t src, size_t len),
+    76			TP_ARGS(req, dst, src, len),
+    77			TP_STRUCT__entry(
+    78					 __array(char, disk, DISK_NAME_LEN)
+    79					 __field(enum req_op, op)
+    80					 __field(sector_t, dst)
+    81					 __field(sector_t, src)
+    82					 __field(size_t, len)
+    83			),
+    84			TP_fast_assign(
+    85				       __entry->op = req_op(req);
+    86				       __assign_disk_name(__entry->disk, req->q->disk);
+    87				       __entry->dst = dst;
+    88				       __entry->src = src;
+    89				       __entry->len = len;
+    90			),
+  > 91			TP_printk("%s req=%-15s: dst=%llu, src=%llu, len=%lu",
+    92				  __print_disk_name(__entry->disk),
+    93				  blk_op_str(__entry->op),
+    94				  __entry->dst, __entry->src, __entry->len)
+    95	);
+    96	#endif /* _TRACE_NULLB_H */
+    97	
+
 -- 
-Dave Chinner
-david@fromorbit.com
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
