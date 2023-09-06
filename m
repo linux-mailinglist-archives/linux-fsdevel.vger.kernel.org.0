@@ -2,146 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 230A279457B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Sep 2023 23:55:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 366FA794589
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Sep 2023 23:59:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244898AbjIFVzq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Sep 2023 17:55:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43302 "EHLO
+        id S244907AbjIFV7B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Sep 2023 17:59:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231368AbjIFVzp (ORCPT
+        with ESMTP id S235690AbjIFV7A (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Sep 2023 17:55:45 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36CA3172E;
-        Wed,  6 Sep 2023 14:55:42 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6218C433C7;
-        Wed,  6 Sep 2023 21:55:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694037341;
-        bh=S0dSiLl5xZTuBxsoFaJ1P9nZl7K0AtLwTDW92i1gWBw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=eeg9aV/XP/zUpseBnf6ghy/nfRZUKrDg/rqvQ5fd4UjnA4GBuC4a/oiy76DLWaTw6
-         EKUUmFqsbtxq3Tf5rcQE5pBuRKzXr5nZ+Le0cKgBBHKLyenyZenAe1fAekmD1jJoU8
-         TMedl4hjXfN1is7pZXWOcedyV1UwRE6JhZzfrfdJtaWzNWm/4DIKuj2lZd/07h/dnn
-         Pc7knmX3vyEncAmtqtkqaDwBUuYxC8uhwEr59leMAO82AQCsJTVFcgJ/y6EDXPwM0R
-         PvR2jBN0obLqnFPeIaFDCvPGWoajvpDxT9TTgCfPzIB3iofb3s2LuUGMPOay57ghXV
-         CxhdJhuUBVB0g==
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id BFF75403F4; Wed,  6 Sep 2023 18:55:38 -0300 (-03)
-Date:   Wed, 6 Sep 2023 18:55:38 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Kent Overstreet <kent.overstreet@linux.dev>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-bcachefs@vger.kernel.org
-Subject: Re: [GIT PULL] bcachefs
-Message-ID: <ZPj1WuwKKnvVEZnl@kernel.org>
-References: <20230903032555.np6lu5mouv5tw4ff@moria.home.lan>
- <CAHk-=wjUX287gJCKDXUY02Wpot1n0VkjQk-PmDOmrsrEfwPfPg@mail.gmail.com>
- <CAHk-=whaiVhuO7W1tb8Yb-CuUHWn7bBnJ3bM7bvcQiEQwv_WrQ@mail.gmail.com>
- <CAHk-=wi6EAPRzYttb+qnZJuzinUnH9xXy-a1Y5kvx5Qs=6xDew@mail.gmail.com>
+        Wed, 6 Sep 2023 17:59:00 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 051E1172E;
+        Wed,  6 Sep 2023 14:58:57 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id ffacd0b85a97d-31c5cac3ae2so305517f8f.3;
+        Wed, 06 Sep 2023 14:58:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1694037535; x=1694642335; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fUEsUDVRFl9we3IvMz1iDQ5wrm80qIsR/HrhiCU8qwU=;
+        b=kQYYj8qGkAuKLI7d7WD/+tivDtKxDqsaxAp5uA1cWYaszSsU8X4wq7G/BRiEfObbIM
+         Mla4HSaUaYMxmefL4xy4/uRsxwItsqUPonRO8CoIDEd/WJbwkdTjWXCks1DNeEa9g3nU
+         5kvQnDvM92aoYi5Io67y37m26h+eV5mHTh5DlVdDxj99/asYPAVJXk+8XBJYGANIYUBl
+         YHtySgm9W2Z8G9YZnUANJysNaozE+kj6hdVaJC/hZVh1LgEqW9Z41R8EKrhtj783uRop
+         1B7PHOk6L0ueIJ5lTEt4GCDk8QlmrQMEUt5nhEQM0uIx8hWq29k7oQAglztfmGg3HShx
+         0NNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1694037535; x=1694642335;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fUEsUDVRFl9we3IvMz1iDQ5wrm80qIsR/HrhiCU8qwU=;
+        b=YUSbc0rTygLZ5FnH359Jl2n7x6o8ySCb3SC+UIV7tZH+u7g1ieJE7zLPFgbNBN5D9P
+         JEBM7Fz+7FZRFg0t1IuWZSHwEFgTIFw2/dqBNScAtidirPlhiKkTt9eI4/xnUiteJPoU
+         4IT/Yg0VKrrUihcMJyG+qMVRgIDf+KneYPDYRiPdBiGAj3g1VK5y/XuulsadfR8TM/xN
+         UXTxr/l1lq7qybRL6cQhWVPcosIgLFrN1AXXQ4OSLXf9UlXUWYF2Xa/JtN0yEAyhhAJ/
+         tss50SZf3X1eXlTNjNdtXs1kgP/D8gGFlNy/f6SzXHsEkPMtdT0fOnwzeR0YBsATViZp
+         THcA==
+X-Gm-Message-State: AOJu0YxTzhFXU/yPUb9ksfDR0viFF1k19UA7AV2BwowdaryM9O7jAAKV
+        H0A2fCl2unEJ2EvuxWKFJ4Q=
+X-Google-Smtp-Source: AGHT+IG5nMeuL/VoGmcwCLwFLhOfCIhRsiIb9391lHp1yY958vfciaCR4r3uuUZhhDYYQHGkLNQJgQ==
+X-Received: by 2002:a5d:604b:0:b0:30e:3da5:46e5 with SMTP id j11-20020a5d604b000000b0030e3da546e5mr3830642wrt.59.1694037535283;
+        Wed, 06 Sep 2023 14:58:55 -0700 (PDT)
+Received: from gmail.com (1F2EF6A2.nat.pool.telekom.hu. [31.46.246.162])
+        by smtp.gmail.com with ESMTPSA id n10-20020adffe0a000000b003140f47224csm21447397wrr.15.2023.09.06.14.58.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Sep 2023 14:58:50 -0700 (PDT)
+Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
+Date:   Wed, 6 Sep 2023 23:58:47 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     j.granados@samsung.com, Luis Chamberlain <mcgrof@kernel.org>,
+        willy@infradead.org, josh@joshtriplett.org,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Guo Ren <guoren@kernel.org>, linux-fsdevel@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-riscv@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+        linux-ia64@vger.kernel.org, linux-csky@vger.kernel.org
+Subject: Re: [PATCH 3/8] arch/x86: Remove sentinel elem from ctl_table arrays
+Message-ID: <ZPj2F4retSgg3vAj@gmail.com>
+References: <20230906-jag-sysctl_remove_empty_elem_arch-v1-0-3935d4854248@samsung.com>
+ <20230906-jag-sysctl_remove_empty_elem_arch-v1-3-3935d4854248@samsung.com>
+ <d0d30ad4-7837-b0c4-39f4-3e317e35a41b@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHk-=wi6EAPRzYttb+qnZJuzinUnH9xXy-a1Y5kvx5Qs=6xDew@mail.gmail.com>
-X-Url:  http://acmel.wordpress.com
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <d0d30ad4-7837-b0c4-39f4-3e317e35a41b@intel.com>
+X-Spam-Status: No, score=-1.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,
+        SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Em Wed, Sep 06, 2023 at 01:20:59PM -0700, Linus Torvalds escreveu:
-> On Wed, 6 Sept 2023 at 13:02, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > And guess what happens when you have (unsigned char)-1? It does *not*
-> > cast back to -1.
-> 
-> Side note: again, this may be one of those "it works in practice",
-> because if we have -fshort-enums, I think 'enum
-> btree_node_locked_type' in turn ends up being represented as a 'signed
-> char', because that's the smallest simple type that can fit all those
-> values.
- 
-> I don't think gcc ever uses less than that (ie while a six_lock_type
-> could fit in two bits, it's still going to be considered at least a
-> 8-bit value in practice).
 
-There are some cases where people stuff the enum into a bitfield, but
-no, no simple type.
+* Dave Hansen <dave.hansen@intel.com> wrote:
 
-⬢[acme@toolbox perf-tools-next]$ pahole | grep -w enum | grep :
-	enum btrfs_rsv_type        type:8;               /*    28:16  4 */
-	enum btrfs_delayed_item_type type:8;             /*   100: 0  4 */
-	enum kernel_pkey_operation op:8;                 /*    40: 0  4 */
-	enum integrity_status      ima_file_status:4;    /*    96: 0  4 */
-	enum integrity_status      ima_mmap_status:4;    /*    96: 4  4 */
-	enum integrity_status      ima_bprm_status:4;    /*    96: 8  4 */
-	enum integrity_status      ima_read_status:4;    /*    96:12  4 */
-	enum integrity_status      ima_creds_status:4;   /*    96:16  4 */
-	enum integrity_status      evm_status:4;         /*    96:20  4 */
-	enum fs_context_purpose    purpose:8;            /*   152: 0  4 */
-	enum fs_context_phase      phase:8;              /*   152: 8  4 */
-	enum fs_value_type         type:8;               /*     8: 0  4 */
-	enum sgx_page_type         type:16;              /*     8: 8  4 */
-	enum nf_hook_ops_type      hook_ops_type:8;      /*    24: 8  4 */
-		enum resctrl_event_id evtid:8;         /*     0:10  4 */
-		enum _cache_type   type:5;             /*     0: 0  4 */
-⬢[acme@toolbox perf-tools-next]$ pahole _cache_type
-enum _cache_type {
-	CTYPE_NULL    = 0,
-	CTYPE_DATA    = 1,
-	CTYPE_INST    = 2,
-	CTYPE_UNIFIED = 3,
-};
+> On 9/6/23 03:03, Joel Granados via B4 Relay wrote:
+> > This commit comes at the tail end of a greater effort to remove the
+> > empty elements at the end of the ctl_table arrays (sentinels) which
+> > will reduce the overall build time size of the kernel and run time
+> > memory bloat by ~64 bytes per sentinel (further information Link :
+> > https://lore.kernel.org/all/ZO5Yx5JFogGi%2FcBo@bombadil.infradead.org/)
+> > 
+> > Remove sentinel element from sld_sysctl and itmt_kern_table.
+> 
+> There's a *LOT* of content to read for a reviewer to figure out what's
+> going on here between all the links.  I would have appreciated one more
+> sentence here, maybe:
+> 
+> 	This is now safe because the sysctl registration code
+> 	(register_sysctl()) implicitly uses ARRAY_SIZE() in addition
+> 	to checking for a sentinel.
+> 
+> That needs to be more prominent _somewhere_.  Maybe here, or maybe in
+> the cover letter, but _somewhere_.
+> 
+> That said, feel free to add this to the two x86 patches:
+> 
+> Acked-by: Dave Hansen <dave.hansen@linux.intel.com> # for x86
 
-⬢[acme@toolbox perf-tools-next]$ pahole integrity_status
-enum integrity_status {
-	INTEGRITY_PASS           = 0,
-	INTEGRITY_PASS_IMMUTABLE = 1,
-	INTEGRITY_FAIL           = 2,
-	INTEGRITY_FAIL_IMMUTABLE = 3,
-	INTEGRITY_NOLABEL        = 4,
-	INTEGRITY_NOXATTRS       = 5,
-	INTEGRITY_UNKNOWN        = 6,
-};
+Absolutely needs to be in the title as well, something like:
 
-⬢[acme@toolbox perf-tools-next]
-> 
-> So we may have 'enum six_lock_type' essentially being 'unsigned char',
-> and when the code does
-> 
->     mark_btree_node_locked(trans, path, 0, BTREE_NODE_UNLOCKED);
-> 
-> that BTREE_NODE_UNLOCKED value might actually be 255.
-> 
-> And then when it's cast to 'enum btree_node_locked_type' in the inline
-> function, the 255 will be cast to 'signed char', and we'll end up
-> compatible with '(enum btree_node_locked_type)-1' again.
-> 
-> So it's one of those things that are seriously wrong to do, but might
-> generate the expected code anyway.
-> 
-> Unless the compiler adds any other sanity checks, like UBSAN or
-> something, that actually uses the exact range of the enums.
-> 
-> It could happen even without UBSAN, if the compiler ends up going "I
-> can see that the original value came from a 'enum six_lock_type', so I
-> know the original value can't be signed, so any comparison with
-> BTREE_NODE_UNLOCKED can never be true.
-> 
-> But again, I suspect that in practice this all just happens to work.
-> That doesn't make it right.
-> 
->                Linus
+   arch/x86: Remove now superfluous sentinel elem from ctl_table arrays
 
--- 
+With that propagated into the whole series:
 
-- Arnaldo
+   Reviewed-by: Ingo Molnar <mingo@kernel.org>
+
+Thanks,
+
+	Ingo
