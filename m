@@ -2,176 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EFDB79403E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Sep 2023 17:22:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BA00794046
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Sep 2023 17:23:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236453AbjIFPWv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Sep 2023 11:22:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48458 "EHLO
+        id S239788AbjIFPXu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Sep 2023 11:23:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234736AbjIFPWv (ORCPT
+        with ESMTP id S231313AbjIFPXt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Sep 2023 11:22:51 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5A44172E;
-        Wed,  6 Sep 2023 08:22:46 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53C0EC433C8;
-        Wed,  6 Sep 2023 15:22:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694013766;
-        bh=ZpETVXaP8t8ZxVf9W+I+jzQkTe6mAyP9zXmCgtDphEY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=sLTCM9HXanXMCy8eYmtWEyvtTDe5k56EQOdl43cUie1EhuzIqedRCYTz9ZsLdhDmR
-         WNIGgjXZcGUdhTXT1vv23/qUl6ZjfsCipfEo16z1pnib+AzD85w/FWSY1rpQW51LHX
-         3MHSotzE0a7I8jxMnyptZ49heayZpYeqtxcpnO3TbITVgUny0bynbYzLUcGj1B/S+A
-         fbQ0tzrhuprdmgQ862Wm8hv7xuERlm7efslki2Sa3+SDb9R7gsYVwu5uy9w9u28UJt
-         OPNN5piFTct0gAwSnUCzb5qAj6KVOWZeiILqwFJrc2u1iy+YY76Uydj9yhJt+cFxsH
-         SG9Zmrg/rACdg==
-Date:   Wed, 6 Sep 2023 08:22:45 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Mikulas Patocka <mpatocka@redhat.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Zdenek Kabelac <zkabelac@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dm-devel@redhat.com
-Subject: Re: [PATCH] fix writing to the filesystem after unmount
-Message-ID: <20230906152245.GD28160@frogsfrogsfrogs>
-References: <59b54cc3-b98b-aff9-14fc-dc25c61111c6@redhat.com>
+        Wed, 6 Sep 2023 11:23:49 -0400
+Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C549D172C;
+        Wed,  6 Sep 2023 08:23:45 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id 3E2B15C01B5;
+        Wed,  6 Sep 2023 11:23:45 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute4.internal (MEProxy); Wed, 06 Sep 2023 11:23:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+        cc:cc:content-transfer-encoding:content-type:content-type:date
+        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to; s=fm1; t=
+        1694013825; x=1694100225; bh=U1O/y0QDcTrLAYLcVNVYUrsxfMF7TRIG9SX
+        zqupPaGE=; b=daUzH/0cNzXT88KBnDRo9bYsWPmGYsqUXgu0xSFSBR0Exbh9lg0
+        fbtvfw8k640FGMQcP1+1Py2dhTyZBqrWirRX2BwT0/eb4bcDAKjq/7NTipJdBm8I
+        OmgQUU2uA9qzOT3Lv24rbnffY9ki200SQJ+JRzsKtRn0dcM+308VYcqgL8pPs/Va
+        KRzWaV83I/EcuYBajzNIuDzbEtSJGPcucmhWgzeWG1tHiIO0jhhdBgp0kigU8/RZ
+        qCHsZblixwV/Vyqa8ZT6+B7QrIA1/Tr1vocJAROQnd2Y9TaI6LyoskLrbBfExc+H
+        XSmAnOLxKhFmvGBiX+B5/zY8mIT17L0qL2g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:content-type:date:date:feedback-id:feedback-id
+        :from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+        1694013825; x=1694100225; bh=U1O/y0QDcTrLAYLcVNVYUrsxfMF7TRIG9SX
+        zqupPaGE=; b=dqVz8P3KP0xR9pitIZuY5sm18x0LuDjtTV+9T6atiwj+WsXdw5q
+        nzaThYYspi2l4qyYHc1e3rrvsKyIG9O3712da2WqqvJmkfwikocmGwdwIbXcorhg
+        BcuRnb24dFRh1rhs6d/e0fOdKPcYNkUQz6hv9/zRK6SmCysotmlCbx3e0EUw1cUS
+        7U1iaC2/zWWSk5PbvYzJRomEtODrhKbco+PWMlMMWlLP1MgE3VcpiSZiYy8rKM+O
+        wKAQoyw7LLV+1lwzBpmOAXxVqVwLZ5aGlxwwibpP6BTR9BiB8ZlD7BHZ1p0ALuOi
+        cO8ug6bLXoyu8jrBSkQb2mOxUXn2k4iotVA==
+X-ME-Sender: <xms:gJn4ZKVUwaMbNHpwyKbZlPbjnNjCNeWcF0vwm4wyk9OA-eGJvUW6Pg>
+    <xme:gJn4ZGlkb9FZrwZu6g2bUMlPVNNH5Ym-89hMS-L14Yngh5auLzJIcB3kAHf5ptoQx
+    yGrWSv5SjpENddq>
+X-ME-Received: <xmr:gJn4ZOZu0NY0DqBgu4to2aubpBbAM3D3llea_F7W21iZt5MNAiqclr3BkGLNlRvnPKd7CJ2NfD-C0mCOj4ZNyvGMamjNJuq2UJDpO-y_d7bMFCzHCJ7V>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrudehfedgkeejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtfeejnecuhfhrohhmpeeuvghr
+    nhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrih
+    hlrdhfmheqnecuggftrfgrthhtvghrnhepkeehveekleekkeejhfehgeeftdffuddujeej
+    ieehheduueelleeghfeukeefvedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdr
+    fhhm
+X-ME-Proxy: <xmx:gZn4ZBVITa9mzDjVh7_OfkX2T8vuz1iNDhGRvjEIdrz6ZEK_g8PVfA>
+    <xmx:gZn4ZElTSvgzJqaHfwBDdWi60hcrxskYJ_WoWb-pYrwv1i9XuJaxsg>
+    <xmx:gZn4ZGeoqxTLuxcFsxuGhdzikuG77GhNNDt339DbByzIIXI2b8Zz0Q>
+    <xmx:gZn4ZFCJUuIVO7qnpshzOHY0rCyiiz1AcMpedShGIXpI_KpQwqJSJQ>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 6 Sep 2023 11:23:44 -0400 (EDT)
+Message-ID: <b0434328-01f9-dc5c-fe25-4a249130a81d@fastmail.fm>
+Date:   Wed, 6 Sep 2023 17:23:42 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <59b54cc3-b98b-aff9-14fc-dc25c61111c6@redhat.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.0
+Subject: Re: [RFC PATCH] vfs: add inode lockdep assertions
+Content-Language: en-US, de-DE
+To:     Matthew Wilcox <willy@infradead.org>,
+        Mateusz Guzik <mjguzik@gmail.com>
+Cc:     brauner@kernel.org, viro@zeniv.linux.org.uk,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20230831151414.2714750-1-mjguzik@gmail.com>
+ <ZPiYp+t6JTUscc81@casper.infradead.org>
+From:   Bernd Schubert <bernd.schubert@fastmail.fm>
+In-Reply-To: <ZPiYp+t6JTUscc81@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_PASS,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 06, 2023 at 03:26:21PM +0200, Mikulas Patocka wrote:
-> lvm may suspend any logical volume anytime. If lvm suspend races with
-> unmount, it may be possible that the kernel writes to the filesystem after
-> unmount successfully returned. The problem can be demonstrated with this
-> script:
+
+
+On 9/6/23 17:20, Matthew Wilcox wrote:
+> On Thu, Aug 31, 2023 at 05:14:14PM +0200, Mateusz Guzik wrote:
+>> +++ b/include/linux/fs.h
+>> @@ -842,6 +842,16 @@ static inline void inode_lock_shared_nested(struct inode *inode, unsigned subcla
+>>   	down_read_nested(&inode->i_rwsem, subclass);
+>>   }
+>>   
+>> +static inline void inode_assert_locked(struct inode *inode)
+>> +{
+>> +	lockdep_assert_held(&inode->i_rwsem);
+>> +}
+>> +
+>> +static inline void inode_assert_write_locked(struct inode *inode)
+>> +{
+>> +	lockdep_assert_held_write(&inode->i_rwsem);
+>> +}
 > 
-> #!/bin/sh -ex
-> modprobe brd rd_size=4194304
-> vgcreate vg /dev/ram0
-> lvcreate -L 16M -n lv vg
-> mkfs.ext4 /dev/vg/lv
-> mount -t ext4 /dev/vg/lv /mnt/test
-> dmsetup suspend /dev/vg/lv
-> (sleep 1; dmsetup resume /dev/vg/lv) &
-> umount /mnt/test
-> md5sum /dev/vg/lv
-> md5sum /dev/vg/lv
-> dmsetup remove_all
-> rmmod brd
+> This mirrors what we have in mm, but it's only going to trigger on
+> builds that have lockdep enabled.  Lockdep is very expensive; it
+> easily doubles the time it takes to run xfstests on my laptop, so
+> I don't generally enable it.  So what we also have in MM is:
 > 
-> The script unmounts the filesystem and runs md5sum twice, the result is
-> that these two invocations return different hash.
+> static inline void mmap_assert_write_locked(struct mm_struct *mm)
+> {
+>          lockdep_assert_held_write(&mm->mmap_lock);
+>          VM_BUG_ON_MM(!rwsem_is_locked(&mm->mmap_lock), mm);
+> }
 > 
-> What happens:
-> * dmsetup suspend calls freeze_bdev, that goes to freeze_super and it
->   increments sb->s_active
-> * then we unmount the filesystem, we go to cleanup_mnt, cleanup_mnt calls
->   deactivate_super, deactivate_super sees that sb->s_active is 2, so it
->   decreases it to 1 and does nothing - the umount syscall returns
->   successfully
-> * now we have a mounted filesystem despite the fact that umount returned
-> * we call md5sum, this waits for the block device being unblocked
-> * dmsetup resume unblocks the block device and calls thaw_bdev, that calls
->   thaw_super and thaw_super_locked
-> * thaw_super_locked calls deactivate_locked_super, this actually drops the
->   refcount and performs the unmount. The unmount races with md5sum. md5sum
->   wins the race and it returns the hash of the filesystem before it was
->   unmounted
-> * the second md5sum returns the hash after the filesystem was unmounted
+> Now if you have lockdep enabled, you get the lockdep check which
+> gives you all the lovely lockdep information, but if you don't, you
+> at least get the cheap check that someone is holding the lock at all.
 > 
-> In order to fix this bug, this patch introduces a new function
-> wait_and_deactivate_super that will wait if the filesystem is frozen and
-> perform deactivate_locked_super only after that.
+> ie I would make this:
 > 
-> Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-> Cc: stable@vger.kernel.org
-> 
-> ---
->  fs/namespace.c     |    2 +-
->  fs/super.c         |   20 ++++++++++++++++++++
->  include/linux/fs.h |    1 +
->  3 files changed, 22 insertions(+), 1 deletion(-)
-> 
-> Index: linux-2.6/fs/namespace.c
-> ===================================================================
-> --- linux-2.6.orig/fs/namespace.c	2023-09-06 09:45:54.000000000 +0200
-> +++ linux-2.6/fs/namespace.c	2023-09-06 09:47:15.000000000 +0200
-> @@ -1251,7 +1251,7 @@ static void cleanup_mnt(struct mount *mn
->  	}
->  	fsnotify_vfsmount_delete(&mnt->mnt);
->  	dput(mnt->mnt.mnt_root);
-> -	deactivate_super(mnt->mnt.mnt_sb);
-> +	wait_and_deactivate_super(mnt->mnt.mnt_sb);
->  	mnt_free_id(mnt);
->  	call_rcu(&mnt->mnt_rcu, delayed_free_vfsmnt);
->  }
-> Index: linux-2.6/fs/super.c
-> ===================================================================
-> --- linux-2.6.orig/fs/super.c	2023-09-05 21:09:16.000000000 +0200
-> +++ linux-2.6/fs/super.c	2023-09-06 09:52:20.000000000 +0200
-> @@ -36,6 +36,7 @@
->  #include <linux/lockdep.h>
->  #include <linux/user_namespace.h>
->  #include <linux/fs_context.h>
-> +#include <linux/delay.h>
->  #include <uapi/linux/mount.h>
->  #include "internal.h"
->  
-> @@ -365,6 +366,25 @@ void deactivate_super(struct super_block
->  EXPORT_SYMBOL(deactivate_super);
->  
->  /**
-> + *	wait_and_deactivate_super	-	wait for unfreeze and drop a reference
-> + *	@s: superblock to deactivate
-> + *
-> + *	Variant of deactivate_super(), except that we wait if the filesystem is
-> + *	frozen. This is required on unmount, to make sure that the filesystem is
-> + *	really unmounted when this function returns.
-> + */
-> +void wait_and_deactivate_super(struct super_block *s)
+> +static inline void inode_assert_write_locked(struct inode *inode)
 > +{
-> +	down_write(&s->s_umount);
-> +	while (s->s_writers.frozen != SB_UNFROZEN) {
-> +		up_write(&s->s_umount);
-> +		msleep(1);
-> +		down_write(&s->s_umount);
-> +	}
-
-Instead of msleep, could you use wait_var_event_killable like
-wait_for_partially_frozen() does?
-
---D
-
-> +	deactivate_locked_super(s);
+> +	lockdep_assert_held_write(&inode->i_rwsem);
+> +	WARN_ON_ONCE(!inode_is_locked(inode));
 > +}
-> +
-> +/**
->   *	grab_super - acquire an active reference
->   *	@s: reference we are trying to make active
->   *
-> Index: linux-2.6/include/linux/fs.h
-> ===================================================================
-> --- linux-2.6.orig/include/linux/fs.h	2023-09-05 21:09:16.000000000 +0200
-> +++ linux-2.6/include/linux/fs.h	2023-09-06 09:46:56.000000000 +0200
-> @@ -2262,6 +2262,7 @@ void kill_anon_super(struct super_block
->  void kill_litter_super(struct super_block *sb);
->  void deactivate_super(struct super_block *sb);
->  void deactivate_locked_super(struct super_block *sb);
-> +void wait_and_deactivate_super(struct super_block *sb);
->  int set_anon_super(struct super_block *s, void *data);
->  int set_anon_super_fc(struct super_block *s, struct fs_context *fc);
->  int get_anon_bdev(dev_t *);
 > 
+> Maybe the locking people could give us a rwsem_is_write_locked()
+> predicate, but until then, this is the best solution we came up with.
+
+
+Which is exactly what I had suggested in the other thread :)
