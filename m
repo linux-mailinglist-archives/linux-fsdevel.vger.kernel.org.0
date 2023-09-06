@@ -2,232 +2,288 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 224577938E0
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Sep 2023 11:51:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9670F79394E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Sep 2023 12:04:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235072AbjIFJvv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Sep 2023 05:51:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42470 "EHLO
+        id S238457AbjIFKEO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Sep 2023 06:04:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43814 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229661AbjIFJvu (ORCPT
+        with ESMTP id S238414AbjIFKEN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Sep 2023 05:51:50 -0400
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAF2392;
-        Wed,  6 Sep 2023 02:51:46 -0700 (PDT)
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3869Z3bK011429;
-        Wed, 6 Sep 2023 09:51:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : date :
- subject : to : cc : references : from : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=corp-2023-03-30;
- bh=rneZTu361a8CPbgNBTwD2KhYK0j0jwpxjcfyJJwnfLk=;
- b=qJ+oEuB6fVl6Pcs9W+WKSRM2UCdPt1maO1GVpVa6H72K3EKrjVxBI/ROKKj5wuLxBUz4
- mjZE5sjZUAkN671OHEvv7MSN0nse7aVldaawKU3WZjts/iOBr/mlqujQ+l4+yGITKopT
- 1HWXSi/ngdT8LRNc8q9WkHYd57vxcxwYl9Gq1EMULIUSlQsonaqksPJXpcXcjkarMiqW
- sT8nVxJCLmFOrjCXoq3RFET16vCc+ioclfJNN8nQDid7EAaatuNN3pZqTYi8JqqUVmcQ
- IngUx1jPBOkMWBpPxDaE0zAgElmJ83EeyNMY3UiB/gi2EqtR04/cLtDTV2lIqSEhRWs1 7A== 
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3sxpwqr1nx-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 06 Sep 2023 09:51:06 +0000
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 3868qWg1010424;
-        Wed, 6 Sep 2023 09:49:21 GMT
-Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2100.outbound.protection.outlook.com [104.47.58.100])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3suugc82ks-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 06 Sep 2023 09:49:21 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ksZGdiNKfF5QarC7HJSh+sd2fzXuCIFL+0XnQ1kySPOYolAm7K/tviyBYZerPGRd5Kce8KUNZJW44w73zxA/zogYjRmSAd0aGL4P2zXWK7pV0EqXktU31P+Wh++6L3bcNdcsdlh/DjoWEluffemJhusssEQaAth+4OG1YvdZaTieAUON6Q6/OWw/xRGmB0YAwlMwVkTkU378V30xqdUwXwpqFYVYP1AcMl8Vtusjvdvk6XV2ELlluW7/IZu9Sp/YpUuTm49gtYtxkTLjQWtATiFQAWrZoVeOfo6Yl3SgUunuap9sxvAo0xqhZeT4RNROHQiU6W4rVNkHNWgPnmgknw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rneZTu361a8CPbgNBTwD2KhYK0j0jwpxjcfyJJwnfLk=;
- b=F4AA1oaiV9Uz+xWWACMW5wu7iTLiyGbXns7/IoLCuekAWYnwJrJcDtMz4uVKEtFAYU/UJgWsnb6Un4Smt1cgMZLIFLgQJ9MCW0oiqRxaTQSyoXHktqHU/dPfCOLJKcR1hQWac8yXJoY1MX2dsru/KxzrE3spe7vpRGvi5H/kTkJZYwSxXWh52TgxXgFONIK+DJWMQcJzyjABSea2bT4kw/O+jDAETRA0IbmeTShKQa06jP2/6pLEaRFhqtsjvsajhGbwCURZdDhuRiDu0C0lN3OA1jc0dnLZZL8QuSaBEIiKOWFD7xOD77ZK19GGS6RD/B47fL5GhEVNvqZyDyrm2Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rneZTu361a8CPbgNBTwD2KhYK0j0jwpxjcfyJJwnfLk=;
- b=bs3UCXOUM/6tOyZ3BCWX/di3GSlxV1RXX+ZZkb8V9v9lo/s51Eq8yc9FJUqOVUHhPfTq3YH5nbREKP1eBPkTTe6besLJdQsJY/1ag2XfXJD7aRyODPMfFTNh6f1XTr5JNB8wfrMhctUdRp1SD/VK7XNGVz0B3XHCSPHB4RbsiSU=
-Received: from PH0PR10MB5706.namprd10.prod.outlook.com (2603:10b6:510:148::10)
- by CY8PR10MB6778.namprd10.prod.outlook.com (2603:10b6:930:99::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6745.34; Wed, 6 Sep
- 2023 09:49:19 +0000
-Received: from PH0PR10MB5706.namprd10.prod.outlook.com
- ([fe80::2bbc:60da:ba6c:f685]) by PH0PR10MB5706.namprd10.prod.outlook.com
- ([fe80::2bbc:60da:ba6c:f685%2]) with mapi id 15.20.6745.030; Wed, 6 Sep 2023
- 09:49:19 +0000
-Message-ID: <fe879df8-c493-e959-0f45-6a3621c128e7@oracle.com>
-Date:   Wed, 6 Sep 2023 17:49:05 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.14.0
-Subject: Re: [PATCH V3 2/2] btrfs: Introduce the single-dev feature
-To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>, dsterba@suse.cz
-Cc:     linux-btrfs@vger.kernel.org, clm@fb.com, josef@toxicpanda.com,
-        dsterba@suse.com, linux-fsdevel@vger.kernel.org,
-        kernel@gpiccoli.net, kernel-dev@igalia.com, david@fromorbit.com,
-        kreijack@libero.it, johns@valvesoftware.com,
-        ludovico.denittis@collabora.com, quwenruo.btrfs@gmx.com,
-        wqu@suse.com, vivek@collabora.com
-References: <20230831001544.3379273-1-gpiccoli@igalia.com>
- <20230831001544.3379273-3-gpiccoli@igalia.com>
- <20230905165041.GF14420@twin.jikos.cz>
- <5a9ca846-e72b-3ee1-f163-dd9765b3b62e@igalia.com>
-From:   Anand Jain <anand.jain@oracle.com>
-In-Reply-To: <5a9ca846-e72b-3ee1-f163-dd9765b3b62e@igalia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SI2P153CA0008.APCP153.PROD.OUTLOOK.COM
- (2603:1096:4:140::19) To PH0PR10MB5706.namprd10.prod.outlook.com
- (2603:10b6:510:148::10)
+        Wed, 6 Sep 2023 06:04:13 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4413A10C6;
+        Wed,  6 Sep 2023 03:04:09 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 94ABBC433C7;
+        Wed,  6 Sep 2023 10:04:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1693994648;
+        bh=RZlV/34Vua6RtOG2tuKplOnqI0FsyqjllBam2o71Lr0=;
+        h=From:Subject:Date:To:Cc:Reply-To:From;
+        b=ese8C4pRWP6sY3+OCXNcdC9B9Ipym4Ex+ewzusA1Zs0AkrZPJZZY2VICLL4eKVsiI
+         a8TNKVvmiffN6QZJkZY8XSy0dKpBtMBhSZI/CNr48thLuWUBpIVxOOcMopUcuDlANm
+         Kun4QmDOty8OpcB8RepxUa5/x/bzCTcZJzeQOBkolfk7JxJayJD7pBnxvN503nNOUK
+         94iwF1PL+EqNLU8wEGX/wGR9FV4dQk96MRZOydTcwRQ/J+zeHk2Hcd+/FH7YAGni04
+         5VumWZ8CNzAzkKFtDCGxQhL2cO6NEFuhVFRjMUC44nJ3m56DRjdrA3wna1+ry5O2Ka
+         O7320tIeDGr9Q==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.lore.kernel.org (Postfix) with ESMTP id 6CE12EB8FAD;
+        Wed,  6 Sep 2023 10:04:08 +0000 (UTC)
+From:   Joel Granados via B4 Relay 
+        <devnull+j.granados.samsung.com@kernel.org>
+Subject: [PATCH 0/8] sysctl: Remove sentinel elements from arch
+Date:   Wed, 06 Sep 2023 12:03:21 +0200
+Message-Id: <20230906-jag-sysctl_remove_empty_elem_arch-v1-0-3935d4854248@samsung.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR10MB5706:EE_|CY8PR10MB6778:EE_
-X-MS-Office365-Filtering-Correlation-Id: 09c012bd-4b3e-4b0f-43cf-08dbaebe8a61
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: eAT0hZXqzxVWpQjDDXq3CjLv4DniEmErksz4s1yoiiqRuprjwO+w5g/FHUT4MD3jr7JiuPjf32zoSZi7nf5/OSbUpRaDeC52zHuO74SAjfvEXtpXZsKTvN1rCiLErpKpTkGRMto89emPV9Qefg2NusBeCIaLqrKv3f2mSBoPa6Bm8KqBttuavb+FNgawhshDJ6tPJxmD0CGpdszG/o9pZoMN03HvW3Kv8saMOuU6liIoKpmnBrSjv3lFvsGoBpAUQx6+GZPJu8N98n8c7XBPf6YpOSPJcf0wQx9BdaChwUbbfM6P/L2w1oEEvmHq/OoMk8YFu4Bp8WhJYb8TVTGRAiK3F15dEL6h2uegT+iWskmPCLSGxrupiruCnatekzXSs4EbUEiuBMFJqmjv7Y1E705nqqy5/HQcsMPqOOZkKafNKNEfYOFhwQ7d0e0Djax+G0CojWPRXcw0T1uyBd/zuc9BpFWHhde4FgzfXhuR+j3Zf3vRoqevqY/ac1h61/SiZF96wJsw8kZRUorxumt+MMN2H5VL9thL04no2dl/K4ZMK95I7OsxoxvbKXDZCCaP0Ck5ypnVguwrAu6THQaSiByrYNeCqIPqY2JCtN9dBMQrV8+ZS2KAQMVVf4mCH/ZE6+nugxs5rBooF6jH1yKDuQ==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB5706.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366004)(396003)(346002)(376002)(136003)(39860400002)(1800799009)(451199024)(186009)(31686004)(36756003)(5660300002)(83380400001)(31696002)(86362001)(7416002)(4326008)(44832011)(41300700001)(8936002)(8676002)(53546011)(6506007)(6666004)(6486002)(2616005)(26005)(6512007)(316002)(478600001)(2906002)(38100700002)(66476007)(66556008)(66946007)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?S3kwaFpxZ0Mwem5xd081NjU3ZHdJdGNGbVNEdmRZZmF6OWU2aHFkcW9xdHFw?=
- =?utf-8?B?QzBoVGtaVXV6V1E0Q2pkZ2RDTEgvamxOVXUzQ256WGh6QVdOSXh6aEtXMVpK?=
- =?utf-8?B?QUpKVTUrOTQxOW4rWUM3aWJQQkRnRzU4ek9XbUhIZy9FTXYvZzZLcUdITXpB?=
- =?utf-8?B?S013eTlwaUFPU05JRGVNSGUyVTlaN215RnhOaEFkNWxLaERZWEtrWUdNVk9p?=
- =?utf-8?B?Ukl1VVRXYjNqcE1SbC9jWmgyK0JIK3I1ZTRPVkl5bkVkcjc2QW42bUhaRStl?=
- =?utf-8?B?Tks4aTd5R3ZkUkZ1ZjdzRkFScWUxSmVjQlRBMHYzV01EQVdhaXFRZXAwZlRz?=
- =?utf-8?B?NFJ5Rm55L1BjaDNheWRSVjR6T015YnRnZi8xQ3FQWDA0VXZneXQwODNiSE82?=
- =?utf-8?B?NmRnSmxOUXFDUzM2RjJMNWI1QUdKdkQrUFRQVW0xaVNxdjJ0YW96NkVteWZB?=
- =?utf-8?B?MzA2Vm5iWTNCajlQL05IcTRXRXhSRUwyMEdqRERiYkpTeHJ5dnZRK2lzajBs?=
- =?utf-8?B?eW43ejVtRkdzMkR2MWhPREZyMmtRQnU3RkY1d0pQY0F6Tkk5dE8vTmdnbGJN?=
- =?utf-8?B?NHJNaGtFWU1xSHorRUdxNlp0RC9DT3huQWFPVjdncHEzdjJnNGdBU2VoQkRy?=
- =?utf-8?B?M29Od0RaYU92QVBFSHZOQTh2MUNKZnhoUmIzYkZNTVdYcUMwQ2RjVXk3Tnpi?=
- =?utf-8?B?TVByYW5SQmZucmNoQmk0eWwrQVdDMmFqMVhKUXNjNDkzR1Urc3IrSWtJYVhy?=
- =?utf-8?B?Uis5K3BjbnhacDFWRmNEanhLbXo3ZlVPZENWd2xFTmN1aEhQb2xFOWZZSzBm?=
- =?utf-8?B?WXVlV3pRSW1pTFlFRVBWVVFIQURUNWFpeVlKcm5UUVQ2U2R6VytFT2d0VGti?=
- =?utf-8?B?N0g3d2JSdU9RdGl1dzJXMVZKOHJLamlvRnI1OEQ5M3BwZmlWdTU1SHJDSnRl?=
- =?utf-8?B?RnY5alF4RzJwOTByZGlQYmF4SmpBOFBraXRVbjBnWUFmYkhUWkgrdzQ5b2Q5?=
- =?utf-8?B?ZDlHcDNEaEdVdXczNExBZE03NnBqaXZZdG9Jc1hsRDZIcGVsZjQzaDJFWi9y?=
- =?utf-8?B?MEdhc21aZHoyQ0p5T3kyTDB4bWF0UWd0YTc0d2FwaHgzOE95aHhqMUpIT3l1?=
- =?utf-8?B?UmxhUElTVlZkR2ozanVzN2grOXFqWVZ1YVk0V2VwQXFhZjkzN3JPaGV6M1NP?=
- =?utf-8?B?RVF4U0NvSnJPOU5LZWJ6dmE4b0hJQVB1eFRPRXhra1RIQTRDNlZ5YVZmc21h?=
- =?utf-8?B?Y0oxZ1lXWlZLSDRqUmpXaVdFdEhhY1NUVExEZXFSbGlLNHlLbGFySGV4UVIw?=
- =?utf-8?B?M0pHQjFZVU9JRCtuZXpEOFJWQzFoK3lVNzZYRmVROGczTUhtWFZPTHBpK0xS?=
- =?utf-8?B?YkVjYWhFM3AyM3hxcVo3WTk2ZlRWbDd6VitSR2REM05lSkNGWVRnVDJ4dno3?=
- =?utf-8?B?bEVWakg4ZnlmRnNLYVBadDBwNVRDM3FhdXd0c0E2OTFDcXB5RWdTdmRCK3pO?=
- =?utf-8?B?QTE4NFBsVnZxenp4NGlOQnZMU3hLZUpVS1lVYzdtWFlBdGs1aklWdWE4eXE4?=
- =?utf-8?B?bmNqaTE1Rkd1WllENGd0QjFnQWFKakdEajUrc1FvV3Y5RjBCd1ZOVUR6RHRE?=
- =?utf-8?B?MXIvT1ZYa1I2TFRzMlpqRFhJQ1J5Y21GZEVua0RTdzZiTEFSTGxsd2Q4N2Fm?=
- =?utf-8?B?eUEvOHR5MEtMWGpDL3VsUXM0QktUdjZ3SWtNUFkzang1Qnp4SVdMQ0VkTmtM?=
- =?utf-8?B?YWZ6WnVpL1U3WEY0ZzMrT25XejE0NHluWkFDaDhBTktYVU5lT2dFRUQrOXRl?=
- =?utf-8?B?UnJBQ0JuOE55S2pPbFRSZVBNMnpoTjJESWp1UXNGOGh2cUpkWXBjVENsbXNC?=
- =?utf-8?B?WU1ReGxZMEkrSm1vOG1mMGJ2M0o3K2YzemhUS1h5ZW8yWGdxbVVBSzkzS1I4?=
- =?utf-8?B?bDNmSTlSYmdrMnJnZHBoZHRFelpQNVUzMkhacG5HYVZ5RExlWVdKOEhQZTZY?=
- =?utf-8?B?REpCajVwRXlTQ0JJcXhQbWhTY1NVb3ZPU2x4NENobElSdUV5cG5nMDNuaWhU?=
- =?utf-8?B?MXpPTUpQeHNLR2lQUThOZGN1RURNQ04vU0JZdEVXazc5clZFdm5NNEdrVTZN?=
- =?utf-8?Q?fFrMtWfqomo0Tagy95rwAOu3P?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: =?utf-8?B?VE1ZMjI5U1lkMUczN1hVeTlZR2pKeVdON0pwNUk5UGtOWElJNFZiZFFYYytN?=
- =?utf-8?B?QnZpK2pHRkFQZUdETExud0w3bHFBaG0za0JtV3pTbEF0YjV1YzNibWNVTHl0?=
- =?utf-8?B?MjYxU0YxcVEzbHBLUmVpL3o4emU5M0NjWEtxdGppL0lQWUNDL05vQUlhcmpS?=
- =?utf-8?B?Vno5VFBZNFFpVXp6QmpMT2ZnaWd1a25kckgvV0FJcSswQWFlZzdIZ2pNeUhK?=
- =?utf-8?B?RjZiOWJVRG0xTzUwQzRrcHkydFAxTnZWRng4U1lZNmZWTFIvZE5YM0N0QmJr?=
- =?utf-8?B?SDF3V0M0ZDc4alhGcjFzTmRnUm54Q1AzL0d4Yjc4bHFoZ3QrVXpWY2FxS1kw?=
- =?utf-8?B?dkhOY2lvZ3BNV0didUJNaStCQjVuQ2RvcWUrb0kwd3U2Z3NpRXhCZzF3a1l4?=
- =?utf-8?B?NEVtT1ZISGFqd3BkckZLQ3o4R3JkbmQwT2h5b085L3hnNFlWcjBQaXBHSThs?=
- =?utf-8?B?czhsL0VIdWVhM3B5dEhiVVZCeWhWaWxKWGtPK1pwaEJWUDVQbnJSMDkvdjF3?=
- =?utf-8?B?UWRkbWdIRmZXYVpPdnBjSTZtTmVBTEVleGx2dkMzQjlrQ3RDYUlDenJXb2lD?=
- =?utf-8?B?YmlDaWN4VmNNWWxhZzFoT1lpV2JjZXE3NU5JV1hFeXVLYkx1cmkyMTZmSS9G?=
- =?utf-8?B?Y2p6a2IzWjZkTklVS1pUQXFvYnp1WnlyNFhQdmc2VkIzaFRqZE9sNWlqLzVq?=
- =?utf-8?B?elJ3dmtFZFVweEkybWNOSTRzbE1aZGs2dkhoY040V2R1dFFQSFJMRWR4WU5x?=
- =?utf-8?B?S1lPa3BEUjlVNzBZR29TSzkvTFBuWGdtNXVRN0ZkY2hCcldYRkdVd3ZHL0Ru?=
- =?utf-8?B?K0orQ2lkbHZGQ2ZlWFc4WkdZc0F2UGFTRitpWm1tanRrM3pzRGpIOTRndUZk?=
- =?utf-8?B?MVVLWXRtVGpHTDE1ZWwzbUJFbHJPcFY3eldIUnVONm5oNytSeHIvYXNnWEhY?=
- =?utf-8?B?UWV1V1FRbGo5eW44eGo1SFBsZHgzaExHL1dtOGdad2xBQXRvU015M1NidjZz?=
- =?utf-8?B?eTVRSjBybmIyc3hMOHYxU1N0UTR2eGJZOVBnbXhGelNSK2NRRWVYOWZTQlJS?=
- =?utf-8?B?ajV3YWphMDdDTGxqSnNqQUwyMCtOcUw4dHVtaXFSLzlVR3lHWDNwWGZPamhF?=
- =?utf-8?B?eEp3Q1lGZ0ZUa21raERsa3NaT1pQeE9tWHBDcjVMNE9oMnJCWnJxVTNVdHBW?=
- =?utf-8?B?bkRuajhvNldJLzhIVWk0aFQwRXdaQ2g4TlNGMEVMSkZ6OUQ4M3MxQVF1ZXRs?=
- =?utf-8?B?OE1xcmQ2N0pLTWV2cDhER1NucjJSU2o3WVFsVkovSEZaSkQ0WFNCZjNFZE5V?=
- =?utf-8?B?VFFEQUE5MEpkRkVmREdKdUx4ekQrOEJRWG5xUlh6ZXA4YVFMQVZLcE54Rzly?=
- =?utf-8?B?c2xqaGJUcjc3NEUwZDU2NVZ6Z1F5aWdIV001WEhzRi9hVVY4bTNaRmhBZ3lG?=
- =?utf-8?B?VFM5UGdXd2lnRk16bWtvYjZCeHM1N3VlY2FRTnZBPT0=?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 09c012bd-4b3e-4b0f-43cf-08dbaebe8a61
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB5706.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2023 09:49:19.5485
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: IDijb9GHB1dvfXwDx+Z8V6OeDtZrNE7ulKtyrBZF808Chflz+2a1xJ4OF+wGXPjH6+SbTRfn+jjgehMsAw/W2A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR10MB6778
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-09-06_03,2023-09-05_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 bulkscore=0
- suspectscore=0 mlxlogscore=783 malwarescore=0 adultscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2308100000
- definitions=main-2309060083
-X-Proofpoint-GUID: QMd__LdVDUBdLpR5rU_iNoRswKLRitvL
-X-Proofpoint-ORIG-GUID: QMd__LdVDUBdLpR5rU_iNoRswKLRitvL
-X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGlO+GQC/x3NWwqDMBBG4a3IPDcQL0jbrZQS0vGvTjEqMyIVc
+ e8NffxezjnIoAKje3GQYhOTecooLwXxEKceTrpsqnxV+5tv3Cf2znbjdQyKNG8ISMu6B4xIISo
+ P7lp2Lx9btMwN5c6ieMv3/3g8z/MHGVjrR3MAAAA=
+To:     Luis Chamberlain <mcgrof@kernel.org>, willy@infradead.org,
+        josh@joshtriplett.org, Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Guo Ren <guoren@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-riscv@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+        linux-ia64@vger.kernel.org, linux-csky@vger.kernel.org,
+        Joel Granados <j.granados@samsung.com>
+X-Mailer: b4 0.13-dev-86aa5
+X-Developer-Signature: v=1; a=openpgp-sha256; l=8530;
+ i=j.granados@samsung.com; h=from:subject:message-id;
+ bh=yV8IUVtpYik//LpZ/IfLgtpn217RZWSw2cuIGmPdr2I=;
+ b=owEB7QES/pANAwAKAbqXzVK3lkFPAcsmYgBk+E6RSaFgJaXIBYPqWoRCs+nSM68bDy7gJkBbN
+ VhSeKZt+2+JAbMEAAEKAB0WIQSuRwlXJeYxJc7LJ5C6l81St5ZBTwUCZPhOkQAKCRC6l81St5ZB
+ T5h2C/0RyAVnXCKcWDruWBXTX/Nondl8NBwULb74ObwLNamHm0CYtKL5NwOozUcq+O0Ukkt2yRg
+ sEgpDscIbsoe+TjDUKn1Sd9YYIasdB7UE4gxOPZydkJvk8sIWRf7knr7PTpBIXqSIEDBfjd2zWJ
+ hqOheXtxPT+ctxIRV8mw5Y9JRlr8ECZcE5rogXAlssFCAM+ICnyGVMvG+vJtu0BRHhL+YJkn+jx
+ o/tNRp5qoIgGNvjQrq+fDNXtIk+q/yn3nMo01ty6KHGYLOV0ingU/pLfSy7ougzV4vwgODMt+gA
+ BG835F3bTbdXaX72HlOw8zGTzdodDr5aCoMtkLENcUrA2J5qBfCANhl22VJxxb3pbpEBm7KehFg
+ e07TDiN+NCXXcLJhPsRedx6yDE75tQu4HJSORbK7wHQzXLwrTSLYdQ50E2fdqwZUk7oFmq3mDx/
+ 0iKUMx/8TtfqRtvuSbp11fWpXo8c2FQa36rdpra2HbhbxqpliJ+Vpv0bDJVgmtRYlPZBQ=
+X-Developer-Key: i=j.granados@samsung.com; a=openpgp;
+ fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
+X-Endpoint-Received: by B4 Relay for j.granados@samsung.com/default with auth_id=70
+X-Original-From: Joel Granados <j.granados@samsung.com>
+Reply-To: <j.granados@samsung.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/6/23 04:23, Guilherme G. Piccoli wrote:
-> On 05/09/2023 13:50, David Sterba wrote:
->> [...]
->> I'd like to pick this as a feature for 6.7, it's extending code we
->> already have for metadata_uuid so this is a low risk feature. The only
->> problem I see for now is the name, using the word 'single'.
->>
->> We have single as a block group profile name and a filesystem can exist
->> on a single device too, this is would be confusing when referring to it.
->> Single-dev can be a working name but for a final release we should
->> really try to pick something more unique. I don't have a suggestion for
->> now.
->>
->> The plan for now is that I'll add the patch to a topic branch and add it
->> to for-next so it could be tested but there might be some updates still
->> needed. Either as changes to this patch or as separate patches, that
->> depends.
->>
-> 
-> Hi David, thanks for your feedback! I agree with you that this name is a
-> bit confusing, we can easily change that! How about virtual-fsid?
-> I confess I'm not the best (by far!) to name stuff, so I'll be glad to
-> follow a suggestion from anyone here heheh
-> 
+From: Joel Granados <j.granados@samsung.com>
 
-This feature might also be expanded to support multiple devices, so 
-removing 'single' makes sense.
+What?
+These commits remove the sentinel element (last empty element) from the
+sysctl arrays of all the files under the "arch/" directory that use a
+sysctl array for registration. The merging of the preparation patches
+(in https://lore.kernel.org/all/ZO5Yx5JFogGi%2FcBo@bombadil.infradead.org/)
+to mainline allows us to just remove sentinel elements without changing
+behavior (more info on how this was done here [1]).
 
-virtual-fsid is good.
-or
-random-fsid
+These commits are part of a bigger set (bigger patchset here
+https://github.com/Joelgranados/linux/tree/tag/sysctl_remove_empty_elem_V4)
+that remove the ctl_table sentinel. The idea is to make the review
+process easier by chunking the 52 commits into manageable pieces. By
+sending out one chunk at a time, they can be reviewed separately without
+noise from parallel sets. After the "arch/" commits in this set are
+reviewed, I will continue with drivers/*, fs/*, kernel/*, net/* and
+miscellaneous. The final set will remove the unneeded check for
+->procname == NULL.
 
-Thanks, Anand
+Why?
+By removing the sysctl sentinel elements we avoid kernel bloat as
+ctl_table arrays get moved out of kernel/sysctl.c into their own
+respective subsystems. This move was started long ago to avoid merge
+conflicts; the sentinel removal bit came after Mathew Wilcox suggested
+it to avoid bloating the kernel by one element as arrays moved out. This
+patchset will reduce the overall build time size of the kernel and run
+time memory bloat by about ~64 bytes per declared ctl_table array. I
+have consolidated some links that shed light on the history of this
+effort [2].
 
-> I also agree we could have this merged in your -next tree, and once a
-> new (good) name is proposed, I can re-submit with that and you'd replace
-> the patch in your tree, if that makes sense to you. Of course an extra
-> patch changing the name is also valid, if it's your preference.
-> 
-> Cheers,
-> 
-> 
-> Guilherme
+Testing:
+* Ran sysctl selftests (./tools/testing/selftests/sysctl/sysctl.sh)
+* Ran this through 0-day with no errors or warnings
+
+Size saving after removing all sentinels:
+  A consequence of eventually removing all the sentinels (64 bytes per
+  sentinel) is the bytes we save. These are *not* numbers that we will
+  get after this patch set; these are the numbers that we will get after
+  removing all the sentinels. I included them here because they are
+  relevant and to get an idea of just how much memory we are talking
+  about.
+    * bloat-o-meter:
+        - The "yesall" configuration results save 9158 bytes (bloat-o-meter output here
+          https://lore.kernel.org/all/20230621091000.424843-1-j.granados@samsung.com/)
+        - The "tiny" config + CONFIG_SYSCTL save 1215 bytes (bloat-o-meter output here
+          https://lore.kernel.org/all/20230809105006.1198165-1-j.granados@samsung.com/)
+    * memory usage:
+        we save some bytes in main memory as well. In my testing kernel
+        I measured a difference of 7296 bytes. I include the way to
+        measure in [3]
+
+Size saving after this patchset:
+  Here I give the values that I measured for the architecture that I'm
+  running (x86_64). This can give an approximation of how many bytes are
+  saved for each arch. I won't publish for all the archs because I don't
+  have access to all of them.
+    * bloat-o-meter
+        - The "yesall" config saves 192 bytes (bloat-o-meter output [4])
+        - The "tiny" config saves 64 bytes (bloat-o-meter output [5])
+    * memory usage:
+        In this case there were no bytes saved. To measure it comment the
+        printk in `new_dir` and uncomment the if conditional in `new_links`
+        [3].
+
+Comments/feedback greatly appreciated
+
+Best
+Joel
+
+[1]
+We are able to remove a sentinel table without behavioral change by
+introducing a table_size argument in the same place where procname is
+checked for NULL. The idea is for it to keep stopping when it hits
+->procname == NULL, while the sentinel is still present. And when the
+sentinel is removed, it will stop on the table_size. You can go to 
+(https://lore.kernel.org/all/20230809105006.1198165-1-j.granados@samsung.com/)
+for more information.
+
+[2]
+Links Related to the ctl_table sentinel removal:
+* Good summary from Luis sent with the "pull request" for the
+  preparation patches.
+  https://lore.kernel.org/all/ZO5Yx5JFogGi%2FcBo@bombadil.infradead.org/
+* Another very good summary from Luis.
+  https://lore.kernel.org/all/ZMFizKFkVxUFtSqa@bombadil.infradead.org/
+* This is a patch set that replaces register_sysctl_table with register_sysctl
+  https://lore.kernel.org/all/20230302204612.782387-1-mcgrof@kernel.org/
+* Patch set to deprecate register_sysctl_paths()
+  https://lore.kernel.org/all/20230302202826.776286-1-mcgrof@kernel.org/
+* Here there is an explicit expectation for the removal of the sentinel element.
+  https://lore.kernel.org/all/20230321130908.6972-1-frank.li@vivo.com
+* The "ARRAY_SIZE" approach was mentioned (proposed?) in this thread
+  https://lore.kernel.org/all/20220220060626.15885-1-tangmeng@uniontech.com
+
+[3]
+To measure the in memory savings apply this on top of this patchset.
+
+"
+diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+index c88854df0b62..e0073a627bac 100644
+--- a/fs/proc/proc_sysctl.c
++++ b/fs/proc/proc_sysctl.c
+@@ -976,6 +976,8 @@ static struct ctl_dir *new_dir(struct ctl_table_set *set,
+        table[0].procname = new_name;
+        table[0].mode = S_IFDIR|S_IRUGO|S_IXUGO;
+        init_header(&new->header, set->dir.header.root, set, node, table, 1);
++       // Counts additional sentinel used for each new dir.
++       printk("%ld sysctl saved mem kzalloc \n", sizeof(struct ctl_table));
+
+        return new;
+ }
+@@ -1199,6 +1201,9 @@ static struct ctl_table_header *new_links(struct ctl_dir *dir, struct ctl_table_
+                link_name += len;
+                link++;
+        }
++       // Counts additional sentinel used for each new registration
++       //if ((head->ctl_table + head->ctl_table_size)->procname)
++               printk("%ld sysctl saved mem kzalloc \n", sizeof(struct ctl_table));
+        init_header(links, dir->header.root, dir->header.set, node, link_table,
+                    head->ctl_table_size);
+        links->nreg = nr_entries;
+"
+and then run the following bash script in the kernel:
+
+accum=0
+for n in $(dmesg | grep kzalloc | awk '{print $3}') ; do
+    echo $n
+    accum=$(calc "$accum + $n")
+done
+echo $accum
+
+[4]
+add/remove: 0/0 grow/shrink: 0/3 up/down: 0/-192 (-192)
+Function                                     old     new   delta
+sld_sysctls                                  128      64     -64
+itmt_kern_table                              128      64     -64
+abi_table2                                   128      64     -64
+Total: Before=429173594, After=429173402, chg -0.00%
+
+[5]
+add/remove: 0/0 grow/shrink: 1/0 up/down: 64/0 (64)
+Function                                     old     new   delta
+sld_sysctls                                   64     128     +64
+Total: Before=1886119, After=1886183, chg +0.00%
+
+Signed-off-by: Joel Granados <j.granados@samsung.com>
+
+---
+
+---
+Joel Granados (8):
+      S390: Remove sentinel elem from ctl_table arrays
+      arm: Remove sentinel elem from ctl_table arrays
+      arch/x86: Remove sentinel elem from ctl_table arrays
+      x86 vdso: rm sentinel element from ctl_table array
+      riscv: Remove sentinel element from ctl_table array
+      powerpc: Remove sentinel element from ctl_table arrays
+      ia64: Remove sentinel element from ctl_table array
+      c-sky: rm sentinel element from ctl_talbe array
+
+ arch/arm/kernel/isa.c                     | 4 ++--
+ arch/arm64/kernel/armv8_deprecated.c      | 8 +++-----
+ arch/arm64/kernel/fpsimd.c                | 6 ++----
+ arch/arm64/kernel/process.c               | 3 +--
+ arch/csky/abiv1/alignment.c               | 3 +--
+ arch/ia64/kernel/crash.c                  | 3 +--
+ arch/powerpc/kernel/idle.c                | 3 +--
+ arch/powerpc/platforms/pseries/mobility.c | 3 +--
+ arch/riscv/kernel/vector.c                | 3 +--
+ arch/s390/appldata/appldata_base.c        | 6 ++----
+ arch/s390/kernel/debug.c                  | 3 +--
+ arch/s390/kernel/topology.c               | 3 +--
+ arch/s390/mm/cmm.c                        | 3 +--
+ arch/s390/mm/pgalloc.c                    | 3 +--
+ arch/x86/entry/vdso/vdso32-setup.c        | 3 +--
+ arch/x86/kernel/cpu/intel.c               | 3 +--
+ arch/x86/kernel/itmt.c                    | 3 +--
+ drivers/perf/arm_pmuv3.c                  | 3 +--
+ 18 files changed, 23 insertions(+), 43 deletions(-)
+---
+base-commit: 708283abf896dd4853e673cc8cba70acaf9bf4ea
+change-id: 20230904-jag-sysctl_remove_empty_elem_arch-81db0a6e6cc4
+
+Best regards,
+-- 
+Joel Granados <j.granados@samsung.com>
 
