@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 804C4793967
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Sep 2023 12:04:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3861793976
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Sep 2023 12:04:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238845AbjIFKEh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Sep 2023 06:04:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43870 "EHLO
+        id S238414AbjIFKEx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Sep 2023 06:04:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43898 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238451AbjIFKEO (ORCPT
+        with ESMTP id S238492AbjIFKEV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Sep 2023 06:04:14 -0400
+        Wed, 6 Sep 2023 06:04:21 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68D0610F8;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E414A10F9;
         Wed,  6 Sep 2023 03:04:10 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 1D9ADC116A2;
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 30DD3C4AF6A;
         Wed,  6 Sep 2023 10:04:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1693994649;
-        bh=m1cfhtf5co0SyEVc4g5k99olH3r1EV1pr3M4Ks98BKI=;
+        bh=h0a5x4tcjiRLI8hBcyPKIVxtaEtL9PHUZfFV4ZC2g6Y=;
         h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-        b=rHjbTrJA8Ol/ra6GvSNM/5CbMP9tw+BWHyBhWHREs6Eh//HNReNirASBef90qLXoz
-         ISEHVhwviP31Se+2fU14toRUalRaXtGugYFUYeITbzFaZwfhbyaoHgS5dTXZEkmKGD
-         w7D5JOOGVKlx+hlkl+Iwjb8GS1Ticp3Mji3/V/iK3xjgnPYa8NIwV66sTb0YN07X/F
-         i0GB39n7sVbU0sAuNgiawZPQfe7p1Vjl2YipwCfFdfExemqKeXeF+xN4J5gpCAjPf2
-         3VrmhTxm5q3ohBXLxJIA6qfDuDaCy8ZWguOOSv8pwLWqmME8n7P8q7Px6pr57Jvdhr
-         d6BYJx/7CzO7g==
+        b=AvJt7V+5voaWDvo82nQl2Rw6T11YgG4afxMzvHyyxnIcmbw5kcK+qFHjnW+PHVU9B
+         Fud0JMe7TPH4Dvn3AjYKpKOCUO5S9e51+dz2SDencAHrwF1i9D46Wmg24VdR4+7UV+
+         ZX1WaMuOCtLFE4IKchvqCBSri48qndIH5Aa8ttMHybFQYfEhJrWDJ4OetnUnOKh0x6
+         OgS59PEZQX22SqHGJamFivJGssHHrFozSancic+89UND9ML4CQuhR5X5ptvW3chOKY
+         QUCym4fANBCGPbSEV1PMnHEH8unlrog1mxFAxGSmPPC/rDJ6Xcd7waqLVWeHxVDr8h
+         0y90e1GdV1nkA==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.lore.kernel.org (Postfix) with ESMTP id 08C82EB8FB7;
+        by smtp.lore.kernel.org (Postfix) with ESMTP id 1C85AEB8FB9;
         Wed,  6 Sep 2023 10:04:09 +0000 (UTC)
 From:   Joel Granados via B4 Relay 
         <devnull+j.granados.samsung.com@kernel.org>
-Date:   Wed, 06 Sep 2023 12:03:27 +0200
-Subject: [PATCH 6/8] powerpc: Remove sentinel element from ctl_table arrays
+Date:   Wed, 06 Sep 2023 12:03:28 +0200
+Subject: [PATCH 7/8] ia64: Remove sentinel element from ctl_table array
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230906-jag-sysctl_remove_empty_elem_arch-v1-6-3935d4854248@samsung.com>
+Message-Id: <20230906-jag-sysctl_remove_empty_elem_arch-v1-7-3935d4854248@samsung.com>
 References: <20230906-jag-sysctl_remove_empty_elem_arch-v1-0-3935d4854248@samsung.com>
 In-Reply-To: <20230906-jag-sysctl_remove_empty_elem_arch-v1-0-3935d4854248@samsung.com>
 To:     Luis Chamberlain <mcgrof@kernel.org>, willy@infradead.org,
@@ -71,18 +71,17 @@ Cc:     linux-fsdevel@vger.kernel.org, linux-s390@vger.kernel.org,
         linux-ia64@vger.kernel.org, linux-csky@vger.kernel.org,
         Joel Granados <j.granados@samsung.com>
 X-Mailer: b4 0.13-dev-86aa5
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1535;
- i=j.granados@samsung.com; h=from:subject:message-id;
- bh=AZTpWnc9Tguavv1ZBhlcXyvQ/Aep0cCp/ystxsndzeE=;
- b=owEB7QES/pANAwAKAbqXzVK3lkFPAcsmYgBk+E6VsYQJgrM4mDejh0WIgkXQmNLCYTtV63a0m
- wnyXdpdhsKJAbMEAAEKAB0WIQSuRwlXJeYxJc7LJ5C6l81St5ZBTwUCZPhOlQAKCRC6l81St5ZB
- T1diC/9d0C4FHbpBiaJFHXtbACOtzqulSee1sbUdPEA8KxQ38moE5wkRMEO48j7ULAr22+oAFlU
- tOWZNZeTuM3vykNUDZui/AuCFCaBlo+8+659sAQGGDLI6Cw9IGSxUisCkBoMAvQeAPR2FJvqlpu
- IyjOWb5aigsLR15eNNa71GZPhep9GswNIFgSdPX8f/OnMkdtzwjsXgeCLf1n+hnqjgPdVIzNsTb
- /6ECd8xd/EoPfk3zXZFjti0T6ceK0OihOvoG464xemHH0HvbVp2/iaqTtU0aP4b5eqh8qmnJNr4
- MYVty9B0v4w480KUw5mZhqBTBYDdLnMbBNoIU5r0Tk4HQcjlaay5caQeovavKkZZRZtk7u9qlbk
- P3rb7b9Sy7QVJ8nc9pbGk1n2JB0Z59x96C8MNYei+sdvmEEpE3Neq7GvZ6zP3lvAplVYLrhAs0s
- TZ8uvUbxjeB0IP+b3e6Sb+x6fOVoKl176Gju0I8XYPTyc2gbXtqvtnCJWbJuLFgTbC63c=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=904; i=j.granados@samsung.com;
+ h=from:subject:message-id; bh=KVD0r38Cili5TZDRzSBYSSUVuCqs3hfxf9D58EVeiJs=;
+ b=owEB7QES/pANAwAKAbqXzVK3lkFPAcsmYgBk+E6WE//Xcwga/1NK2RLvtOot92IMQidneKT5p
+ v+BAfqJ9cuJAbMEAAEKAB0WIQSuRwlXJeYxJc7LJ5C6l81St5ZBTwUCZPhOlgAKCRC6l81St5ZB
+ TydxC/9h8/rccF341foOCgTiAME0wS/e9CbIyL0MBWHLnGQcnYp+RhqdOL0GqHAz726Be1j15kO
+ v6YfgptJJw0OJvMP2WWim+xDgOYuBwfWffbIOEjiAZuahyU2itf1YdleanEZfHhbUqci//oJqSh
+ 0ajDFBrA+FJKGxCR89VZ01mvGJI5OzswbPnBN32NY4P6KwIE5UoxBLOyxfcT7EtwIQWKpqTk8Pk
+ Tulducj2tt8/hPjMNRJetxGELK6ZaYDuLeG7JX3IXgv06/gZXR08QuTLJXmTBEC7oy80w8isUKr
+ hY3CrAwd+3lFltSZdYchIvP73k94L3GvSEJz/G4tAoYa/ULVVQw5ClmPo4Se9AmCl7KWNCFFxk3
+ YU67Wru1bC8mqE+BTU32baxgXb4PMz/bRGO5NXF5C2K7CYClJy4ZobHb94Ib7QdkgbMhGjwyBoE
+ AxKe/dAVVCRcQ7EK66c3SmG+78AEf84jHaVHhmR0xjp7NumHR5XRJFCWi13YS3+jpgjhc=
 X-Developer-Key: i=j.granados@samsung.com; a=openpgp;
  fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
 X-Endpoint-Received: by B4 Relay for j.granados@samsung.com/default with auth_id=70
@@ -106,43 +105,27 @@ will reduce the overall build time size of the kernel and run time
 memory bloat by ~64 bytes per sentinel (further information Link :
 https://lore.kernel.org/all/ZO5Yx5JFogGi%2FcBo@bombadil.infradead.org/)
 
-Remove sentinel from powersave_nap_ctl_table and
-nmi_wd_lpm_factor_ctl_table.
+Remove sentinel from kdump_ctl_table.
 
 Signed-off-by: Joel Granados <j.granados@samsung.com>
 ---
- arch/powerpc/kernel/idle.c                | 3 +--
- arch/powerpc/platforms/pseries/mobility.c | 3 +--
- 2 files changed, 2 insertions(+), 4 deletions(-)
+ arch/ia64/kernel/crash.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/arch/powerpc/kernel/idle.c b/arch/powerpc/kernel/idle.c
-index b1c0418b25c8..a8591f5fa70e 100644
---- a/arch/powerpc/kernel/idle.c
-+++ b/arch/powerpc/kernel/idle.c
-@@ -104,8 +104,7 @@ static struct ctl_table powersave_nap_ctl_table[] = {
- 		.maxlen		= sizeof(int),
- 		.mode		= 0644,
- 		.proc_handler	= proc_dointvec,
+diff --git a/arch/ia64/kernel/crash.c b/arch/ia64/kernel/crash.c
+index 88b3ce3e66cd..fbf8893a570c 100644
+--- a/arch/ia64/kernel/crash.c
++++ b/arch/ia64/kernel/crash.c
+@@ -231,8 +231,7 @@ static struct ctl_table kdump_ctl_table[] = {
+ 		.maxlen = sizeof(int),
+ 		.mode = 0644,
+ 		.proc_handler = proc_dointvec,
 -	},
--	{}
+-	{ }
 +	}
  };
+ #endif
  
- static int __init
-diff --git a/arch/powerpc/platforms/pseries/mobility.c b/arch/powerpc/platforms/pseries/mobility.c
-index 0161226d8fec..d82b0c802fbb 100644
---- a/arch/powerpc/platforms/pseries/mobility.c
-+++ b/arch/powerpc/platforms/pseries/mobility.c
-@@ -60,8 +60,7 @@ static struct ctl_table nmi_wd_lpm_factor_ctl_table[] = {
- 		.maxlen		= sizeof(int),
- 		.mode		= 0644,
- 		.proc_handler	= proc_douintvec_minmax,
--	},
--	{}
-+	}
- };
- 
- static int __init register_nmi_wd_lpm_factor_sysctl(void)
 
 -- 
 2.30.2
