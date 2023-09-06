@@ -2,50 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 14643793F25
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Sep 2023 16:43:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2349B793F2E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Sep 2023 16:45:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241822AbjIFOnc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Sep 2023 10:43:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54052 "EHLO
+        id S241841AbjIFOpP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Sep 2023 10:45:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230085AbjIFOnb (ORCPT
+        with ESMTP id S237678AbjIFOpP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Sep 2023 10:43:31 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DB37172C;
-        Wed,  6 Sep 2023 07:43:28 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B69FFC433C8;
-        Wed,  6 Sep 2023 14:43:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694011407;
-        bh=IWUByzzc0x8VTk7GxjqtRSfBS1rfBMXUkPE1kGJH2Wg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=udmAKjne5yO0WTd/0iKxCZuuPpqVFUBLKTvSv+oipocoscl/b0mvtTcKzDYpNmABo
-         LtaJ+clLCTlvwES65xPSF0lzguQbAmbPVXbL2dkhjLrDS8/sHA5iYrNe3Thl2QjGKg
-         rSJ1lOVdIEXCqY3nwcclrbkXPDkqMiAcqHFyJlnxcRxSowG1OC4kAQXKJ4fRpULVVb
-         hQwmMM6NQlOqc6qqJrucmAowejLT9Yj6ua+2AIChy2RKYqupdggqioEGsht/2PueML
-         paeKPwgnfIInCUMvFk/3hNLCxRtsGglnmCYkchLy2NozKx0RQ+GtqlD6H6rmdONLd/
-         fUOzBd7s2fu4g==
-Date:   Wed, 6 Sep 2023 16:43:22 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     David Sterba <dsterba@suse.cz>
-Cc:     Bernd Schubert <bschubert@ddn.com>, linux-fsdevel@vger.kernel.org,
-        bernd.schubert@fastmail.fm, miklos@szeredi.hu, dsingh@ddn.com,
-        Josef Bacik <josef@toxicpanda.com>,
-        linux-btrfs@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH v2 0/2] Use exclusive lock for file_remove_privs
-Message-ID: <20230906-teeservice-erbfolge-a23bfa3180eb@brauner>
-References: <20230831112431.2998368-1-bschubert@ddn.com>
- <20230905180259.GG14420@twin.jikos.cz>
+        Wed, 6 Sep 2023 10:45:15 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26769172C;
+        Wed,  6 Sep 2023 07:45:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1694011511; x=1725547511;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=HKIKo8gJxS6xNqAxkMxzWOKQ5+W7pcHDwu58cyKSvBQ=;
+  b=OOuPPinN4LxTy7L0QxtKdAySp8/EiQe3KsxeBqvNZ4pYOObCfFXJVc9B
+   dZpxbTWTNjEh0PvN54sMULJmc6lXBdVHI5ZCSP7Y+sOT4KCxglAK2kGZF
+   2HjQPUsmgsj/ZyUdu4sTIBAq5BqFSKE36RpUoHFrymA8gfaxlSTmq3sYP
+   67uid6ayaMNcqgpTyvDH8+zPoXChcIS91y5fJPCZS9mK1d8Gw9+cqt2uv
+   BA4bipRwXIQ5N+I/RKGea4iyuSLtJijMhobzHfNDLH0wH0CUguIIGn8M+
+   nv+ZjiKqlkt3I/IecfWUxJPpwWkYlTuQN3CsWxEV2sAUFA9Kc+Ihd2CMM
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10825"; a="357393634"
+X-IronPort-AV: E=Sophos;i="6.02,232,1688454000"; 
+   d="scan'208";a="357393634"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2023 07:45:10 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10825"; a="770777884"
+X-IronPort-AV: E=Sophos;i="6.02,232,1688454000"; 
+   d="scan'208";a="770777884"
+Received: from lmgabald-mobl2.amr.corp.intel.com (HELO [10.212.242.149]) ([10.212.242.149])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2023 07:45:09 -0700
+Message-ID: <d0d30ad4-7837-b0c4-39f4-3e317e35a41b@intel.com>
+Date:   Wed, 6 Sep 2023 07:45:09 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230905180259.GG14420@twin.jikos.cz>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.0
+Subject: Re: [PATCH 3/8] arch/x86: Remove sentinel elem from ctl_table arrays
+Content-Language: en-US
+To:     j.granados@samsung.com, Luis Chamberlain <mcgrof@kernel.org>,
+        willy@infradead.org, josh@joshtriplett.org,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Guo Ren <guoren@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-riscv@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+        linux-ia64@vger.kernel.org, linux-csky@vger.kernel.org
+References: <20230906-jag-sysctl_remove_empty_elem_arch-v1-0-3935d4854248@samsung.com>
+ <20230906-jag-sysctl_remove_empty_elem_arch-v1-3-3935d4854248@samsung.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+In-Reply-To: <20230906-jag-sysctl_remove_empty_elem_arch-v1-3-3935d4854248@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-5.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -53,28 +92,26 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 05, 2023 at 08:02:59PM +0200, David Sterba wrote:
-> On Thu, Aug 31, 2023 at 01:24:29PM +0200, Bernd Schubert wrote:
-> > While adding shared direct IO write locks to fuse Miklos noticed
-> > that file_remove_privs() needs an exclusive lock. I then
-> > noticed that btrfs actually has the same issue as I had in my patch,
-> > it was calling into that function with a shared lock.
-> > This series adds a new exported function file_needs_remove_privs(),
-> > which used by the follow up btrfs patch and will be used by the
-> > DIO code path in fuse as well. If that function returns any mask
-> > the shared lock needs to be dropped and replaced by the exclusive
-> > variant.
-> > 
-> > Note: Compilation tested only.
+On 9/6/23 03:03, Joel Granados via B4 Relay wrote:
+> This commit comes at the tail end of a greater effort to remove the
+> empty elements at the end of the ctl_table arrays (sentinels) which
+> will reduce the overall build time size of the kernel and run time
+> memory bloat by ~64 bytes per sentinel (further information Link :
+> https://lore.kernel.org/all/ZO5Yx5JFogGi%2FcBo@bombadil.infradead.org/)
 > 
-> The fix makes sense, there should be no noticeable performance impact,
-> basically the same check is done in the newly exported helper for the
-> IS_NOSEC bit.  I can give it a test locally for the default case, I'm
-> not sure if we have specific tests for the security layers in fstests.
-> 
-> Regarding merge, I can take the two patches via btrfs tree or can wait
-> until the export is present in Linus' tree in case FUSE needs it
-> independently.
+> Remove sentinel element from sld_sysctl and itmt_kern_table.
 
-Both fuse and btrfs need it afaict. We can grab it and provide a tag
-post -rc1? Whatever works best.
+There's a *LOT* of content to read for a reviewer to figure out what's
+going on here between all the links.  I would have appreciated one more
+sentence here, maybe:
+
+	This is now safe because the sysctl registration code
+	(register_sysctl()) implicitly uses ARRAY_SIZE() in addition
+	to checking for a sentinel.
+
+That needs to be more prominent _somewhere_.  Maybe here, or maybe in
+the cover letter, but _somewhere_.
+
+That said, feel free to add this to the two x86 patches:
+
+Acked-by: Dave Hansen <dave.hansen@linux.intel.com> # for x86
