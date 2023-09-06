@@ -2,123 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 248CA793739
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Sep 2023 10:37:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 126F6793752
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Sep 2023 10:46:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234659AbjIFIha (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Sep 2023 04:37:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46402 "EHLO
+        id S235570AbjIFIqj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Sep 2023 04:46:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231225AbjIFIh3 (ORCPT
+        with ESMTP id S235540AbjIFIqi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Sep 2023 04:37:29 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18F1EE43
-        for <linux-fsdevel@vger.kernel.org>; Wed,  6 Sep 2023 01:36:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1693989399;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=8kxl0a4T7fw0FkcqLI3LPI8DvJ1AdEWlSu5wSZFK0FM=;
-        b=i1TxdcZcLFxLIFsvaKRsQNC5u2YG7E3kKOqkT1nPeuZKZES6osmxfUIcerPUK4cSKw5G57
-        vUfzUaMVL1fsurnkxyDU+RCNJJdP1DZrzj204hxpc6BJtfVlLwt0wlCDl1OrGBo1+D1sGF
-        GJcICoDUCLsZqHjzjs8BVt098X4p6m4=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-107-vj52HvuGNjGNzbPwJPtRcw-1; Wed, 06 Sep 2023 04:36:38 -0400
-X-MC-Unique: vj52HvuGNjGNzbPwJPtRcw-1
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3180237cef3so1859556f8f.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Sep 2023 01:36:37 -0700 (PDT)
+        Wed, 6 Sep 2023 04:46:38 -0400
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16BABCFD
+        for <linux-fsdevel@vger.kernel.org>; Wed,  6 Sep 2023 01:46:35 -0700 (PDT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-1bf39e73558so46065875ad.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Sep 2023 01:46:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693989397; x=1694594197;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20221208; t=1693989994; x=1694594794;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8kxl0a4T7fw0FkcqLI3LPI8DvJ1AdEWlSu5wSZFK0FM=;
-        b=OkrL2hpYfOz3DTq3a/Nsw+IBVFHLl4PuK5SogFajYp4a3+My+Jm0VWjnzZlVgtN3Eo
-         HWeP29rQiK4BqcWdl4UJdTtLbAYTOt3BChc8+TdUSpiBkcPpVlqYLJTO8yDrkx2oB9C1
-         LvberAuMdE0NxcvwQ1AOracKxRNOw+oYXLrA4pmaMsAwjG0k4KTeKs1FMgnd+iVMTYNU
-         5n6tBGkE6efC+MSS1YvMAJavyANDg6NiYY1niqzgmLKx6tX7SRg0oT+w+o/WSzTFVSQ5
-         AwT6RrNh1AlNdocDeAytCRreBhBFutHlXRjceZCr06KpByb2lW6vSNSDGyzBiMX8Hb0w
-         jK+Q==
-X-Gm-Message-State: AOJu0Yz1o8WeFH/bfDbwtIUHIkF+/t5U/MFJbXE8ovb2Sb6RUdI3EPsN
-        0Ih8zh0K6cgkMTG1C/TGYR2+dnxIEKiS40HgnvxfZP2r7dbngbbzx29UHWS+0UneK25zHiyJCGk
-        5skBcELSDZzz7vjbKwPVDvRBzt2b7pZbyZQ==
-X-Received: by 2002:adf:f106:0:b0:319:6d20:49c7 with SMTP id r6-20020adff106000000b003196d2049c7mr1970071wro.3.1693989396875;
-        Wed, 06 Sep 2023 01:36:36 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFovfwa+rNzl6czUglrSJTNG8ZOkBhlMPLZKJyE4MkoRjEEuhGKhjJyrYPse3cVSXxQhy3ecA==
-X-Received: by 2002:adf:f106:0:b0:319:6d20:49c7 with SMTP id r6-20020adff106000000b003196d2049c7mr1970055wro.3.1693989396597;
-        Wed, 06 Sep 2023 01:36:36 -0700 (PDT)
-Received: from [192.168.1.165] (cpc76484-cwma10-2-0-cust967.7-3.cable.virginm.net. [82.31.203.200])
-        by smtp.gmail.com with ESMTPSA id s12-20020a5d4ecc000000b0031423a8f4f7sm19895490wrv.56.2023.09.06.01.36.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Sep 2023 01:36:35 -0700 (PDT)
-Message-ID: <91aae40f-deed-1637-b083-764a5dff4a41@redhat.com>
-Date:   Wed, 6 Sep 2023 09:36:34 +0100
+        bh=F82xWmip9IdB9K1IuccZ0lyqvzI+AMyxxyRv3A0SdbA=;
+        b=l7k6dyfXV8jolDq1UANaJUIuBGUmXntieM9u3FORHJ+LZOVwMsp+eD+SQ94JuCxrXw
+         NzChbAHHVmY1Kz45CfFGrqgLpBpk/qzldp+imxE0kgYNPEAABTw4vkDzZOHa9dOETv5Y
+         sz/PLn3AMojiBKIjVices47FjJbN4PFn4YjhjtjuJIFKFceOX0CW1WSSQQpB+du31mSW
+         emvMvJuLHFBLV3jHk4Bt7zrN1/vg9SR2G6YS2XxgxRpNaqr5t56iGrXCbXr7XTEonznL
+         tJ3tRz0d8VXBZSE/uF+fI3Xx9Fm0mV7gz1gfQhiloa9JhX7D0qYLCAUK2TyPMN0/fCvV
+         fANw==
+X-Gm-Message-State: AOJu0YzaLy9jm1bJ88q0OhiZOMUyS8qMNfql5txW26HtgNL3ETgtz5gz
+        EavVgm8yjebJjpDttmE1I6y50WMg6YjvZECyLfU+zrtUYLvd
+X-Google-Smtp-Source: AGHT+IERdvXTN0zg2NK9HGOO67xq14GfcjLS9O8KCfPWx8VrJav+JpS5RMKQHJN1Q/BZPwTJBzxRvlw8ZbKcgAIWaJJjbOdOuFmy
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [ANNOUNCE] Goodbye cluster-devel, hello gfs2@lists.linux.dev
-Content-Language: en-US
-From:   Andrew Price <anprice@redhat.com>
-To:     cluster-devel <cluster-devel@redhat.com>
-Cc:     gfs2@lists.linux.dev, linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <9830d291-a86b-df63-0b03-c99c583609c8@redhat.com>
-In-Reply-To: <9830d291-a86b-df63-0b03-c99c583609c8@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a17:903:1d1:b0:1b8:d44:32aa with SMTP id
+ e17-20020a17090301d100b001b80d4432aamr5528873plh.1.1693989994384; Wed, 06 Sep
+ 2023 01:46:34 -0700 (PDT)
+Date:   Wed, 06 Sep 2023 01:46:34 -0700
+In-Reply-To: <00000000000057049306049e0525@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000de54840604acc740@google.com>
+Subject: Re: [syzbot] [gfs2?] BUG: sleeping function called from invalid
+ context in glock_hash_walk
+From:   syzbot <syzbot+10c6178a65acf04efe47@syzkaller.appspotmail.com>
+To:     agruenba@redhat.com, cluster-devel@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        rpeterso@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,
+        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 29/08/2023 18:07, Andrew Price wrote:
-> Hi all,
-> 
-> As cluster-devel is now only used for gfs2 and dlm development, we will 
-> be moving them to a new list hosted by kernel.org alongside other Linux 
-> subsystems' lists. The new list is gfs2@lists.linux.dev and it will be 
-> used for both gfs2 and dlm development.
-> 
-> The Linux MAINTAINERS file and other references will be updated shortly 
-> to reflect the change. Information about the list hosting can be found 
-> here:
+syzbot has bisected this issue to:
 
-Updates to the MAINTAINERS file have now been merged into mainline so 
-gfs2@lists.linux.dev is now the official mailing list for gfs2 and dlm 
-development.
+commit 0be8432166a61abc537e1247e530f4b85970b56b
+Author: Bob Peterson <rpeterso@redhat.com>
+Date:   Wed Aug 2 14:24:12 2023 +0000
 
-(CC+ linux-fsdevel for awareness.)
+    gfs2: Don't use filemap_splice_read
 
-Thanks,
-Andy
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1470c620680000
+start commit:   3f86ed6ec0b3 Merge tag 'arc-6.6-rc1' of git://git.kernel.o..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=1670c620680000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1270c620680000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ff0db7a15ba54ead
+dashboard link: https://syzkaller.appspot.com/bug?extid=10c6178a65acf04efe47
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13e4ea14680000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13f76f10680000
 
+Reported-by: syzbot+10c6178a65acf04efe47@syzkaller.appspotmail.com
+Fixes: 0be8432166a6 ("gfs2: Don't use filemap_splice_read")
 
-> https://subspace.kernel.org/lists.linux.dev.html
-> 
-> To subscribe, send an email (the subject and body doesn't matter) to:
-> 
-> Subscribe:   gfs2+subscribe@lists.linux.dev
-> Unsubscribe: gfs2+unsubscribe@lists.linux.dev
-> 
-> If you prefer, the list can also be read via NNTP at:
-> 
-> nntp://nntp.lore.kernel.org/dev.linux.lists.gfs2
-> 
-> The archives can be found here:
-> 
-> https://lore.kernel.org/gfs2/
-> 
-> and filters can use the "List-Id: <gfs2.lists.linux.dev>" header.
-> 
-> Thanks,
-> Andy
-
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
