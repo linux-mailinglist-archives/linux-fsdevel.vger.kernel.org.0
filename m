@@ -2,211 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 152527944C5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Sep 2023 22:54:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97D397944F1
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Sep 2023 23:10:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243404AbjIFUyM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Sep 2023 16:54:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33856 "EHLO
+        id S244666AbjIFVKh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Sep 2023 17:10:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233023AbjIFUyM (ORCPT
+        with ESMTP id S232411AbjIFVKh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Sep 2023 16:54:12 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6954EE9;
-        Wed,  6 Sep 2023 13:54:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1694033648; x=1725569648;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=VqeF0aeYObOh3hd+HV3wpbgpW4Kt9ciCv6dvaF8ZXEw=;
-  b=eSG3M1USxnzK2Nh534LefQvZCLDLQnBEOwyoyUIu9u9rsmOzcjQl0k9a
-   CyMxGDWPvocwW6FnwLaA22F+V5/tvFfxNDJkyNH7A4OuVaiMhnCkl6FEB
-   tkMp3aRWNJ5g9fRLNjwcD6vtoxBduJ8LalW4xJQXcRrWsiSHuFfRloc8x
-   ODoY6kJ4zFAM4Uxek03Crm+R+/sqH3WobAMQYNTSpFq6C3YzyqEA/Rtge
-   JPOnrrVEcuqAIAcayuqQpHGZSduImmrjbc+bUdkPBrg/BAaVMpjgS5fa4
-   ZEvu1GRbFuSwCsJAbQV5eIXLa6wIrtdJt5RtdOxY+o3DSv/4rYQyAYmyP
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10825"; a="374574264"
-X-IronPort-AV: E=Sophos;i="6.02,233,1688454000"; 
-   d="scan'208";a="374574264"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2023 13:54:07 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10825"; a="915430165"
-X-IronPort-AV: E=Sophos;i="6.02,233,1688454000"; 
-   d="scan'208";a="915430165"
-Received: from lkp-server01.sh.intel.com (HELO 59b3c6e06877) ([10.239.97.150])
-  by orsmga005.jf.intel.com with ESMTP; 06 Sep 2023 13:54:02 -0700
-Received: from kbuild by 59b3c6e06877 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qdzXE-0000Zn-1e;
-        Wed, 06 Sep 2023 20:54:00 +0000
-Date:   Thu, 7 Sep 2023 04:53:20 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        Anish Moorthy <amoorthy@google.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Mike Rapoport <rppt@kernel.org>,
-        Christian Brauner <brauner@kernel.org>, peterx@redhat.com,
-        linux-fsdevel@vger.kernel.org,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        James Houghton <jthoughton@google.com>,
-        Nadav Amit <nadav.amit@gmail.com>
-Subject: Re: [PATCH 2/7] poll: Add a poll_flags for poll_queue_proc()
-Message-ID: <202309070440.eKzBcg8X-lkp@intel.com>
-References: <20230905214235.320571-3-peterx@redhat.com>
+        Wed, 6 Sep 2023 17:10:37 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F96110E9;
+        Wed,  6 Sep 2023 14:10:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=4gA/etLrTZoq9cKPZGvMa6mc+IZPHR3kwciERc0pMbQ=; b=EBMpPWgFauBGwfxMT20Yu843ok
+        B7zpLsd1xCs7oLL6x+f3W6xeoRcSiAt+MGOUFXU6DkcedHet5/IsmiEJOfJuYNKI6Ez+c4ri7C/A0
+        IrFgipMid7rH52jc0yBDmFgFBeLAyA9wU8qLeEfbgsllbC5zUcsqH9+3kfq4hiua6HCWDDqwlefuh
+        mj+gZwfKtIrBRhgeQnShRaZB27m4y/NTkJ61NhlIzgxD+iJ/E6z5rLn1f47XdZDWQxjC24oK8kdBv
+        +wH4W6MJGyko2SgFW155m958KN8EZnRZ2VTjCcBIlhCbFYbXf8RRNiWC8SpXR1FqJxj/Sxa4WRIpS
+        q83VryFg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1qdzn7-005Zlg-86; Wed, 06 Sep 2023 21:10:25 +0000
+Date:   Wed, 6 Sep 2023 22:10:25 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Bernd Schubert <bernd.schubert@fastmail.fm>,
+        Mateusz Guzik <mjguzik@gmail.com>, brauner@kernel.org,
+        viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH] vfs: add inode lockdep assertions
+Message-ID: <ZPjqwUq+lUOhYOEa@casper.infradead.org>
+References: <20230831151414.2714750-1-mjguzik@gmail.com>
+ <ZPiYp+t6JTUscc81@casper.infradead.org>
+ <b0434328-01f9-dc5c-fe25-4a249130a81d@fastmail.fm>
+ <20230906152948.GE28160@frogsfrogsfrogs>
+ <ZPiiDj1T3lGp2w2c@casper.infradead.org>
+ <20230906170724.GI28202@frogsfrogsfrogs>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230905214235.320571-3-peterx@redhat.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <20230906170724.GI28202@frogsfrogsfrogs>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Peter,
+On Wed, Sep 06, 2023 at 10:07:24AM -0700, Darrick J. Wong wrote:
+> You'd be better off converting this to:
+> 
+> 	return __xfs_rwsem_islocked(&ip->i_lock.mr_lock,
+> 				(lock_flags & XFS_ILOCK_SHARED));
+> 
+> And then fixing __xfs_rwsem_islocked to do:
+> 
+> static inline bool
+> __xfs_rwsem_islocked(
+> 	struct rw_semaphore	*rwsem,
+> 	bool			shared)
+> {
+> 	if (!debug_locks) {
+> 		if (!shared)
+> 			return rwsem_is_write_locked(rwsem);
+> 		return rwsem_is_locked(rwsem);
+> 	}
+> 
+> 	...
+> }
 
-kernel test robot noticed the following build errors:
+so ... I did that.  And then many isilocked() calls started failing.
+generic/017 was the first one:
 
-[auto build test ERROR on akpm-mm/mm-everything]
+00030 XFS: Assertion failed: xfs_isilocked(ip, XFS_ILOCK_EXCL), file: fs/xfs/libxfs/xfs_trans_inode.c, line: 93
+00030 ------------[ cut here ]------------
+00030 WARNING: CPU: 5 PID: 77 at fs/xfs/xfs_message.c:104 assfail+0x2c/0x40
+00030 Modules linked in:
+00030 CPU: 5 PID: 77 Comm: kworker/5:1 Kdump: loaded Not tainted 6.5.0-00006-g88a61c17df8f-dirty #14
+00030 Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+00030 Workqueue: xfsalloc xfs_btree_split_worker
+00030 RIP: 0010:assfail+0x2c/0x40
+00030 Code: 89 d0 41 89 c9 48 c7 c2 80 70 0f 82 48 89 f1 48 89 e5 48 89 fe 48 c7
+ c7 08 4f 07 82 e8 fd fd ff ff 80 3d 26 cc ed 00 00 75 04 <0f> 0b 5d c3 0f 0b 66 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 55 48
+00030 RSP: 0018:ffff888003f0bc28 EFLAGS: 00010246
+00030 RAX: 00000000ffffffea RBX: ffff88800d9a0000 RCX: 000000007fffffff
+00030 RDX: 0000000000000021 RSI: 0000000000000000 RDI: ffffffff82074f08
+00030 RBP: ffff888003f0bc28 R08: 0000000000000000 R09: 000000000000000a
+00030 R10: 000000000000000a R11: 0fffffffffffffff R12: ffff888009ff6000
+00030 R13: ffff88800ac8a000 R14: 0000000000000001 R15: ffff88800af0a000
+00030 FS:  0000000000000000(0000) GS:ffff88807d940000(0000) knlGS:0000000000000000
+00030 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+00030 CR2: 00007ff177b05d58 CR3: 0000000007aa2002 CR4: 0000000000770ea0
+00030 PKRU: 55555554
+00030 Call Trace:
+00030  <TASK>
+00030  ? show_regs+0x5c/0x70
+00030  ? __warn+0x84/0x180
+00030  ? assfail+0x2c/0x40
+00030  ? report_bug+0x18e/0x1c0
+00030  ? handle_bug+0x3e/0x70
+00030  ? exc_invalid_op+0x18/0x70
+00030  ? asm_exc_invalid_op+0x1b/0x20
+00030  ? assfail+0x2c/0x40
+00030  ? assfail+0x23/0x40
+00030  xfs_trans_log_inode+0xf9/0x120
+00030  xfs_bmbt_alloc_block+0xf0/0x1c0
+00030  __xfs_btree_split+0xf8/0x6c0
+00030  ? __this_cpu_preempt_check+0x13/0x20
+00030  ? lock_acquire+0xc8/0x280
+00030  xfs_btree_split_worker+0x8a/0x110
+00030  process_one_work+0x23f/0x510
+00030  worker_thread+0x4d/0x3b0
+00030  ? process_one_work+0x510/0x510
+00030  kthread+0x106/0x140
+00030  ? kthread_complete_and_exit+0x20/0x20
+00030  ret_from_fork+0x31/0x50
+00030  ? kthread_complete_and_exit+0x20/0x20
+00030  ret_from_fork_asm+0x11/0x20
+00030  </TASK>
+00030 irq event stamp: 2901
+00030 hardirqs last  enabled at (2909): [<ffffffff810e4d83>] __up_console_sem+0x53/0x60
+00030 hardirqs last disabled at (2916): [<ffffffff810e4d68>] __up_console_sem+0x38/0x60
+00030 softirqs last  enabled at (0): [<ffffffff81067bd0>] copy_process+0x830/0x1c10
+00030 softirqs last disabled at (0): [<0000000000000000>] 0x0
+00030 ---[ end trace 0000000000000000 ]---
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Peter-Xu/mm-userfaultfd-Make-uffd-read-wait-event-exclusive/20230906-054430
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20230905214235.320571-3-peterx%40redhat.com
-patch subject: [PATCH 2/7] poll: Add a poll_flags for poll_queue_proc()
-config: hexagon-randconfig-002-20230906 (https://download.01.org/0day-ci/archive/20230907/202309070440.eKzBcg8X-lkp@intel.com/config)
-compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project.git f28c006a5895fc0e329fe15fead81e37457cb1d1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20230907/202309070440.eKzBcg8X-lkp@intel.com/reproduce)
+but here's the thing, I have lockdep enabled.  So it's not testing my
+new rwsem_is_write_locked() code, it's testing the current lockdep
+stuff.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202309070440.eKzBcg8X-lkp@intel.com/
+So I have a feeling that we're not telling lockdep that we've acquired
+the i_lock.  Or something?  Seems unlikely that this is a real bug;
+surely we'd've noticed before now.
 
-All errors (new ones prefixed by >>):
+Code here:
+https://git.infradead.org/users/willy/pagecache.git/shortlog/refs/heads/mrlock
 
-   In file included from drivers/vhost/vhost.c:14:
-   In file included from include/uapi/linux/vhost.h:14:
-   In file included from include/uapi/linux/vhost_types.h:16:
-   In file included from include/linux/virtio_config.h:7:
-   In file included from include/linux/virtio.h:7:
-   In file included from include/linux/scatterlist.h:9:
-   In file included from arch/hexagon/include/asm/io.h:337:
-   include/asm-generic/io.h:547:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           val = __raw_readb(PCI_IOBASE + addr);
-                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:560:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-                                                           ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
-   #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
-                                                     ^
-   In file included from drivers/vhost/vhost.c:14:
-   In file included from include/uapi/linux/vhost.h:14:
-   In file included from include/uapi/linux/vhost_types.h:16:
-   In file included from include/linux/virtio_config.h:7:
-   In file included from include/linux/virtio.h:7:
-   In file included from include/linux/scatterlist.h:9:
-   In file included from arch/hexagon/include/asm/io.h:337:
-   include/asm-generic/io.h:573:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-                                                           ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
-   #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
-                                                     ^
-   In file included from drivers/vhost/vhost.c:14:
-   In file included from include/uapi/linux/vhost.h:14:
-   In file included from include/uapi/linux/vhost_types.h:16:
-   In file included from include/linux/virtio_config.h:7:
-   In file included from include/linux/virtio.h:7:
-   In file included from include/linux/scatterlist.h:9:
-   In file included from arch/hexagon/include/asm/io.h:337:
-   include/asm-generic/io.h:584:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           __raw_writeb(value, PCI_IOBASE + addr);
-                               ~~~~~~~~~~ ^
-   include/asm-generic/io.h:594:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-                                                         ~~~~~~~~~~ ^
-   include/asm-generic/io.h:604:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-                                                         ~~~~~~~~~~ ^
->> drivers/vhost/vhost.c:193:41: error: incompatible function pointer types passing 'int (wait_queue_entry_t *, unsigned int, int, void *, poll_flags)' (aka 'int (struct wait_queue_entry *, unsigned int, int, void *, unsigned int)') to parameter of type 'wait_queue_func_t' (aka 'int (*)(struct wait_queue_entry *, unsigned int, int, void *)') [-Werror,-Wincompatible-function-pointer-types]
-           init_waitqueue_func_entry(&poll->wait, vhost_poll_wakeup);
-                                                  ^~~~~~~~~~~~~~~~~
-   include/linux/wait.h:90:80: note: passing argument to parameter 'func' here
-   init_waitqueue_func_entry(struct wait_queue_entry *wq_entry, wait_queue_func_t func)
-                                                                                  ^
->> drivers/vhost/vhost.c:194:34: error: incompatible function pointer types passing 'void (struct file *, wait_queue_head_t *, poll_table *)' (aka 'void (struct file *, struct wait_queue_head *, struct poll_table_struct *)') to parameter of type 'poll_queue_proc' (aka 'void (*)(struct file *, struct wait_queue_head *, struct poll_table_struct *, unsigned int)') [-Werror,-Wincompatible-function-pointer-types]
-           init_poll_funcptr(&poll->table, vhost_poll_func);
-                                           ^~~~~~~~~~~~~~~
-   include/linux/poll.h:76:70: note: passing argument to parameter 'qproc' here
-   static inline void init_poll_funcptr(poll_table *pt, poll_queue_proc qproc)
-                                                                        ^
->> drivers/vhost/vhost.c:215:57: error: too few arguments to function call, expected 5, have 4
-                   vhost_poll_wakeup(&poll->wait, 0, 0, poll_to_key(mask));
-                   ~~~~~~~~~~~~~~~~~                                     ^
-   drivers/vhost/vhost.c:164:12: note: 'vhost_poll_wakeup' declared here
-   static int vhost_poll_wakeup(wait_queue_entry_t *wait, unsigned mode, int sync,
-              ^
-   6 warnings and 3 errors generated.
+ie git clone git://git.infradead.org/users/willy/pagecache.git mrlock
 
+You don't need the top commit.  754fb6a68dae is enough to provoke it,
+as long as you have CONFIG_LOCKDEP enabled.
 
-vim +193 drivers/vhost/vhost.c
-
-87d6a412bd1ed8 Michael S. Tsirkin 2010-09-02  187  
-3a4d5c94e95935 Michael S. Tsirkin 2010-01-14  188  /* Init poll structure */
-c23f3445e68e1d Tejun Heo          2010-06-02  189  void vhost_poll_init(struct vhost_poll *poll, vhost_work_fn_t fn,
-493b94bf5ae0f6 Mike Christie      2023-06-26  190  		     __poll_t mask, struct vhost_dev *dev,
-493b94bf5ae0f6 Mike Christie      2023-06-26  191  		     struct vhost_virtqueue *vq)
-3a4d5c94e95935 Michael S. Tsirkin 2010-01-14  192  {
-3a4d5c94e95935 Michael S. Tsirkin 2010-01-14 @193  	init_waitqueue_func_entry(&poll->wait, vhost_poll_wakeup);
-3a4d5c94e95935 Michael S. Tsirkin 2010-01-14 @194  	init_poll_funcptr(&poll->table, vhost_poll_func);
-3a4d5c94e95935 Michael S. Tsirkin 2010-01-14  195  	poll->mask = mask;
-c23f3445e68e1d Tejun Heo          2010-06-02  196  	poll->dev = dev;
-2b8b328b61c799 Jason Wang         2013-01-28  197  	poll->wqh = NULL;
-493b94bf5ae0f6 Mike Christie      2023-06-26  198  	poll->vq = vq;
-c23f3445e68e1d Tejun Heo          2010-06-02  199  
-87d6a412bd1ed8 Michael S. Tsirkin 2010-09-02  200  	vhost_work_init(&poll->work, fn);
-3a4d5c94e95935 Michael S. Tsirkin 2010-01-14  201  }
-6ac1afbf6132df Asias He           2013-05-06  202  EXPORT_SYMBOL_GPL(vhost_poll_init);
-3a4d5c94e95935 Michael S. Tsirkin 2010-01-14  203  
-3a4d5c94e95935 Michael S. Tsirkin 2010-01-14  204  /* Start polling a file. We add ourselves to file's wait queue. The caller must
-3a4d5c94e95935 Michael S. Tsirkin 2010-01-14  205   * keep a reference to a file until after vhost_poll_stop is called. */
-2b8b328b61c799 Jason Wang         2013-01-28  206  int vhost_poll_start(struct vhost_poll *poll, struct file *file)
-3a4d5c94e95935 Michael S. Tsirkin 2010-01-14  207  {
-e6c8adca20ba45 Al Viro            2017-07-03  208  	__poll_t mask;
-d47effe1be0c4f Krishna Kumar      2011-03-01  209  
-70181d51209cbc Jason Wang         2013-04-10  210  	if (poll->wqh)
-70181d51209cbc Jason Wang         2013-04-10  211  		return 0;
-70181d51209cbc Jason Wang         2013-04-10  212  
-9965ed174e7d38 Christoph Hellwig  2018-03-05  213  	mask = vfs_poll(file, &poll->table);
-3a4d5c94e95935 Michael S. Tsirkin 2010-01-14  214  	if (mask)
-3ad6f93e98d6df Al Viro            2017-07-03 @215  		vhost_poll_wakeup(&poll->wait, 0, 0, poll_to_key(mask));
-a9a08845e9acbd Linus Torvalds     2018-02-11  216  	if (mask & EPOLLERR) {
-dc6455a71c7fc5 Jason Wang         2018-03-27  217  		vhost_poll_stop(poll);
-896fc242bc1d26 Yunsheng Lin       2019-08-20  218  		return -EINVAL;
-2b8b328b61c799 Jason Wang         2013-01-28  219  	}
-2b8b328b61c799 Jason Wang         2013-01-28  220  
-896fc242bc1d26 Yunsheng Lin       2019-08-20  221  	return 0;
-3a4d5c94e95935 Michael S. Tsirkin 2010-01-14  222  }
-6ac1afbf6132df Asias He           2013-05-06  223  EXPORT_SYMBOL_GPL(vhost_poll_start);
-3a4d5c94e95935 Michael S. Tsirkin 2010-01-14  224  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
