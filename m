@@ -2,126 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 50045797025
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Sep 2023 07:39:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C99C779748A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Sep 2023 17:39:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233573AbjIGFjW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Sep 2023 01:39:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46190 "EHLO
+        id S232425AbjIGPjr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Sep 2023 11:39:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229488AbjIGFjV (ORCPT
+        with ESMTP id S242602AbjIGPYu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Sep 2023 01:39:21 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C69B19BD;
-        Wed,  6 Sep 2023 22:39:17 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 2C08A1F459;
-        Thu,  7 Sep 2023 05:39:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1694065156; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=vEzdXwzrXnDTeO0P+aNFlsgJ60oxO7RTr/+XEDVnWGU=;
-        b=zr7k3C3k5bcifoR7lksFXR5wYxINEnL5SHX7Hgtw8PH/VB7pxIJltEsBEDIsWKJhtOBllg
-        kjBlPikKsXRR3aBkuHtcwqVYAsGuRiCE+5YdeJ9Gj/nMdolzpBxh0W+LWzTQsmgCtsl0GU
-        nx8up8cqOng/NvIWPUVsz5QE5LyTNmQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1694065156;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=vEzdXwzrXnDTeO0P+aNFlsgJ60oxO7RTr/+XEDVnWGU=;
-        b=cwHd6RbV9kQqZVcKJLf2ZxshTikYkz2/zqjz1vx77H0a2bb63I00umYAVZa6h4IjnOM5ZK
-        fpOti423Zoa7T8Ag==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 7AB0513458;
-        Thu,  7 Sep 2023 05:39:15 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id r6UMGwNi+WQ6XAAAMHmgww
-        (envelope-from <hare@suse.de>); Thu, 07 Sep 2023 05:39:15 +0000
-Message-ID: <d2c3a257-0505-4d3e-ae71-28015952cef6@suse.de>
-Date:   Thu, 7 Sep 2023 07:39:14 +0200
+        Thu, 7 Sep 2023 11:24:50 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C5701BF2;
+        Thu,  7 Sep 2023 08:24:32 -0700 (PDT)
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3878cQU1000733;
+        Thu, 7 Sep 2023 08:51:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
+ subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=pp1; bh=fJTpsIq+wH0+3ox3kqJA6Hnx5aFY/FIBfaKD7qgThbI=;
+ b=CNxc4Rg/FziXKrAmAX9b17mRW5qa3qbczx7XylObPkLT8so50YN5p8IrZiDA1EQUPAbL
+ 8ZwYN09z/JXvrqUg03mhYGFqDn1XeNIajYTna00yLknCffFtPgy7lBaN11x+jFOvoRtX
+ DnqsV3Bzp3skHmj4/LWkjHBF2xPO1HR17j8dU0rRXYe+DOLk5yEBr2wpTw5yglj7XWYh
+ wiZ8CiepLf3OZpjTyQ980DNX9I/DoCCB9LXQK4+ibY+88IpcuC9yJS98LVfuMJqc3Y4U
+ nCnG1b5VJFzVnhj/Yzu8oJzb9rgccEZIloYRHmoDZebSjed5MfWNIFkHzzD5LZXhi7L3 Dg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3syay10gst-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 07 Sep 2023 08:51:29 +0000
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3878dY8b005926;
+        Thu, 7 Sep 2023 08:51:28 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3syay10gs5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 07 Sep 2023 08:51:28 +0000
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+        by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 3877rAYs021360;
+        Thu, 7 Sep 2023 08:51:27 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+        by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3svfrytgtj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 07 Sep 2023 08:51:27 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+        by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 3878pN6X62652826
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 7 Sep 2023 08:51:24 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D842720040;
+        Thu,  7 Sep 2023 08:51:23 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EF02720043;
+        Thu,  7 Sep 2023 08:51:22 +0000 (GMT)
+Received: from osiris (unknown [9.152.212.60])
+        by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+        Thu,  7 Sep 2023 08:51:22 +0000 (GMT)
+Date:   Thu, 7 Sep 2023 10:51:19 +0200
+From:   Heiko Carstens <hca@linux.ibm.com>
+To:     j.granados@samsung.com
+Cc:     Luis Chamberlain <mcgrof@kernel.org>, willy@infradead.org,
+        josh@joshtriplett.org, Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Guo Ren <guoren@kernel.org>, linux-fsdevel@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-riscv@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+        linux-ia64@vger.kernel.org, linux-csky@vger.kernel.org
+Subject: Re: [PATCH 1/8] S390: Remove sentinel elem from ctl_table arrays
+Message-ID: <20230907085119.6134-A-hca@linux.ibm.com>
+References: <20230906-jag-sysctl_remove_empty_elem_arch-v1-0-3935d4854248@samsung.com>
+ <20230906-jag-sysctl_remove_empty_elem_arch-v1-1-3935d4854248@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230906-jag-sysctl_remove_empty_elem_arch-v1-1-3935d4854248@samsung.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: MpEEAkP1vgr2ZFXBjpilhxpWoREunUug
+X-Proofpoint-GUID: 9vYERwk7Ox9_cC-DaXYkOIKd1FOzxdpR
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 02/12] Add infrastructure for copy offload in block
- and request layer.
-Content-Language: en-US
-To:     Nitesh Shetty <nj.shetty@samsung.com>,
-        Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@kernel.org>, dm-devel@redhat.com,
-        Keith Busch <kbusch@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Chaitanya Kulkarni <kch@nvidia.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>
-Cc:     martin.petersen@oracle.com, mcgrof@kernel.org,
-        gost.dev@samsung.com, Anuj Gupta <anuj20.g@samsung.com>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org
-References: <20230906163844.18754-1-nj.shetty@samsung.com>
- <CGME20230906164303epcas5p1c2d3ec21feac347f0f1d68adc97c61f5@epcas5p1.samsung.com>
- <20230906163844.18754-3-nj.shetty@samsung.com>
-From:   Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20230906163844.18754-3-nj.shetty@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
+ definitions=2023-09-06_12,2023-09-05_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=720
+ lowpriorityscore=0 bulkscore=0 adultscore=0 phishscore=0 spamscore=0
+ malwarescore=0 clxscore=1011 priorityscore=1501 suspectscore=0
+ impostorscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2308100000 definitions=main-2309070074
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,
+        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/6/23 18:38, Nitesh Shetty wrote:
-> We add two new opcode REQ_OP_COPY_SRC, REQ_OP_COPY_DST.
-> Since copy is a composite operation involving src and dst sectors/lba,
-> each needs to be represented by a separate bio to make it compatible
-> with device mapper.
-> We expect caller to take a plug and send bio with source information,
-> followed by bio with destination information.
-> Once the src bio arrives we form a request and wait for destination
-> bio. Upon arrival of destination we merge these two bio's and send
-> corresponding request down to device driver.
+On Wed, Sep 06, 2023 at 12:03:22PM +0200, Joel Granados via B4 Relay wrote:
+> From: Joel Granados <j.granados@samsung.com>
 > 
-> Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
-> Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
+> This commit comes at the tail end of a greater effort to remove the
+> empty elements at the end of the ctl_table arrays (sentinels) which
+> will reduce the overall build time size of the kernel and run time
+> memory bloat by ~64 bytes per sentinel (further information Link :
+> https://lore.kernel.org/all/ZO5Yx5JFogGi%2FcBo@bombadil.infradead.org/)
+> 
+> Remove the sentinel element from appldata_table, s390dbf_table,
+> topology_ctl_table, cmm_table and page_table_sysctl. Reduced the
+> memory allocation in appldata_register_ops by 1 effectively removing the
+> sentinel from ops->ctl_table.
+> 
+> Signed-off-by: Joel Granados <j.granados@samsung.com>
 > ---
->   block/blk-core.c          |  7 +++++++
->   block/blk-merge.c         | 41 +++++++++++++++++++++++++++++++++++++++
->   block/blk.h               | 16 +++++++++++++++
->   block/elevator.h          |  1 +
->   include/linux/bio.h       |  6 +-----
->   include/linux/blk_types.h | 10 ++++++++++
->   6 files changed, 76 insertions(+), 5 deletions(-)
-> 
-Having two separate bios is okay, and what one would expect.
-What is slightly strange is the merging functionality;
-That could do with some more explanation why this approach was taken.
-And also some checks in the merging code to avoid merging non-copy 
-offload  bios.
+>  arch/s390/appldata/appldata_base.c | 6 ++----
+>  arch/s390/kernel/debug.c           | 3 +--
+>  arch/s390/kernel/topology.c        | 3 +--
+>  arch/s390/mm/cmm.c                 | 3 +--
+>  arch/s390/mm/pgalloc.c             | 3 +--
+>  5 files changed, 6 insertions(+), 12 deletions(-)
 
-Cheers,
-
-Hannes
--- 
-Dr. Hannes Reinecke                Kernel Storage Architect
-hare@suse.de                              +49 911 74053 688
-SUSE Software Solutions GmbH, Maxfeldstr. 5, 90409 Nürnberg
-HRB 36809 (AG Nürnberg), Geschäftsführer: Ivo Totev, Andrew
-Myers, Andrew McDonald, Martje Boudien Moerman
-
+Acked-by: Heiko Carstens <hca@linux.ibm.com>
