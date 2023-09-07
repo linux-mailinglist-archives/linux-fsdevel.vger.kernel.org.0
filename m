@@ -2,101 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A8536797908
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Sep 2023 19:00:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E9BB47979C3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Sep 2023 19:20:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240641AbjIGRAq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Sep 2023 13:00:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38014 "EHLO
+        id S243023AbjIGRUq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Sep 2023 13:20:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240736AbjIGRAW (ORCPT
+        with ESMTP id S243066AbjIGRUl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Sep 2023 13:00:22 -0400
-Received: from mail-oo1-f71.google.com (mail-oo1-f71.google.com [209.85.161.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 549922128
-        for <linux-fsdevel@vger.kernel.org>; Thu,  7 Sep 2023 09:59:49 -0700 (PDT)
-Received: by mail-oo1-f71.google.com with SMTP id 006d021491bc7-56e9cb3fc9dso1082208eaf.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Sep 2023 09:59:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1694105924; x=1694710724;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=54RnD0/eaUNNcZhsg2FpPlchnXTxP0bbQAOVgGCedQA=;
-        b=b/tM0XWN71CGFUJQzW39mefN0RCwfbSnwyCMgo5/DIXvdKt/XPPwJh5MOGV5wxoApB
-         yhWEOnkvR/Je6pL3d7SuGcG1xJcPlTjkcveGP8jieA5XMd34KEBJDMgBIO8oJhXLQDCC
-         6fXzUWblu1GP7C4WI1T+WrqdKvV29B65LHhTHMfSG9j6fZ2XKG1EOBiUuzYO9bvKP8mw
-         0q6o/YmcLwtkjV99RNnxUrKTwKt3Ro3bbiFivOJc/YVB1EgJR78Hv6jnGB06pP9t9AEn
-         TXuJjAldtWoxgCMl8yZy13rW/vmxgWdBQRt6PTl0s9Y24yHlawtSqcKv8B59PsReZolB
-         bHbg==
-X-Gm-Message-State: AOJu0YwcY4ugUsZaMhtJRTiLWAJwjThr8HCZNMgRHf8ekQvFKUJWyjbj
-        6GeJ7LimfUcB4+gMU9DRG7c4Ukc/gPrs3IMQKktZtLhDuC2Z
-X-Google-Smtp-Source: AGHT+IF7nJp7WfGi/JuZ3Xso9VmPQE+Eu5dyn+9jnS4PZNmBcTODjnhA1xHWBvLIq3kc3jCCDDcd8W091tI9+51MmrUx3l8NWUou
-MIME-Version: 1.0
-X-Received: by 2002:a17:90a:c286:b0:263:317f:7ca4 with SMTP id
- f6-20020a17090ac28600b00263317f7ca4mr4271411pjt.9.1694078750527; Thu, 07 Sep
- 2023 02:25:50 -0700 (PDT)
-Date:   Thu, 07 Sep 2023 02:25:50 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000002598420604c1721a@google.com>
-Subject: [syzbot] Monthly ext4 report (Sep 2023)
-From:   syzbot <syzbot+list8aecbc15d3f04988df93@syzkaller.appspotmail.com>
-To:     adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        Thu, 7 Sep 2023 13:20:41 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B352190;
+        Thu,  7 Sep 2023 10:20:21 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 2E2F71F459;
+        Thu,  7 Sep 2023 09:44:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1694079898; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=IQKrvoRpVQJFQhwOguupeVlEjouTylOwLzLmWuGsjm4=;
+        b=yXfYCT//3NYk/IIvJQmLc230SnFy+DGFE6NMTLPUGoKXXmrt6TPdXl2F+YivPZIgKAyW+a
+        UVNQkYZ3PCJKmN/SN5B7pOKfVus74F66dP1Fvn2zH0sxaGoH/08TvbyIeeKYNwem1r8gxF
+        SW63ivzjn5x/VQY3NQ/nUIK6AwMtSoY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1694079898;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=IQKrvoRpVQJFQhwOguupeVlEjouTylOwLzLmWuGsjm4=;
+        b=DeUApml2wtvIj0k60NHvdFJR0szgr5vYwRKs3ynUY2tPBffcp+LRThvobbONsq48Zi8hgW
+        XOXo8fu/Zh9toCBg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 1B15C138F9;
+        Thu,  7 Sep 2023 09:44:58 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 4n+FBpqb+WT+QQAAMHmgww
+        (envelope-from <jack@suse.cz>); Thu, 07 Sep 2023 09:44:58 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 6D8EFA06E5; Thu,  7 Sep 2023 11:44:57 +0200 (CEST)
+Date:   Thu, 7 Sep 2023 11:44:57 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Mikulas Patocka <mpatocka@redhat.com>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Zdenek Kabelac <zkabelac@redhat.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-0.1 required=5.0 tests=BAYES_00,DATE_IN_PAST_06_12,
-        FROM_LOCAL_HEX,HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS
-        autolearn=no autolearn_force=no version=3.4.6
+        dm-devel@redhat.com, Jan Kara <jack@suse.cz>,
+        Christoph Hellwig <hch@lst.de>,
+        "Darrick J. Wong" <djwong@kernel.org>
+Subject: Re: [PATCH] fix writing to the filesystem after unmount
+Message-ID: <20230907094457.vcvmixi23dk3pzqe@quack3>
+References: <59b54cc3-b98b-aff9-14fc-dc25c61111c6@redhat.com>
+ <20230906-launenhaft-kinder-118ea59706c8@brauner>
+ <f5d63867-5b3e-294b-d1f5-a128817cfc7@redhat.com>
+ <20230906-aufheben-hagel-9925501b7822@brauner>
+ <60f244be-803b-fa70-665e-b5cba15212e@redhat.com>
+ <20230906-aufkam-bareinlage-6e7d06d58e90@brauner>
+ <818a3cc0-c17b-22c0-4413-252dfb579cca@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <818a3cc0-c17b-22c0-4413-252dfb579cca@redhat.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello ext4 maintainers/developers,
+On Wed 06-09-23 18:52:39, Mikulas Patocka wrote:
+> On Wed, 6 Sep 2023, Christian Brauner wrote:
+> > On Wed, Sep 06, 2023 at 06:01:06PM +0200, Mikulas Patocka wrote:
+> > > > > BTW. what do you think that unmount of a frozen filesystem should properly 
+> > > > > do? Fail with -EBUSY? Or, unfreeze the filesystem and unmount it? Or 
+> > > > > something else?
+> > > > 
+> > > > In my opinion we should refuse to unmount frozen filesystems and log an
+> > > > error that the filesystem is frozen. Waiting forever isn't a good idea
+> > > > in my opinion.
+> > > 
+> > > But lvm may freeze filesystems anytime - so we'd get randomly returned 
+> > > errors then.
+> > 
+> > So? Or you might hang at anytime.
+> 
+> lvm doesn't keep logical volumes suspended for a prolonged amount of time. 
+> It will unfreeze them after it made updates to the dm table and to the 
+> metadata. So, it won't hang forever.
+> 
+> I think it's better to sleep for a short time in umount than to return an 
+> error.
 
-This is a 31-day syzbot report for the ext4 subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/ext4
+I think we've got too deep down into "how to fix things" but I'm not 100%
+sure what the "bug" actually is. In the initial posting Mikulas writes "the
+kernel writes to the filesystem after unmount successfully returned" - is
+that really such a big issue? Anybody else can open the device and write to
+it as well. Or even mount the device again. So userspace that relies on
+this is kind of flaky anyway (and always has been).
 
-During the period, 3 new issues were detected and 2 were fixed.
-In total, 40 issues are still open and 118 have been fixed so far.
+I understand the need for userspace to make sure the device is not being
+modified to do its thing - but then it should perhaps freeze the bdev if
+it wants to be certain? Or at least open it O_EXCL to make sure it's not
+mounted?
 
-Some of the still happening issues:
+WRT the umount behavior for frozen filesystem - as Al writes it's a tricky
+issue and we've been discussing that several times over the years and it
+never went anywhere because of nasty corner-cases (which current behavior
+also has but trading one nasty case for another isn't really a win). Now
+that we distinguish between kernel-initiated freeze (with well defined
+freeze owner and lifetime) and userspace-initiated freeze, I can image we'd
+make last unmount of the superblock wait for the kernel-initiated freeze to
+thaw. But as Al writes with lazy unmounts, bind mounts in multiple
+namespaces etc. I'm not sure such behavior brings much value...
 
-Ref  Crashes Repro Title
-<1>  2826    Yes   WARNING: locking bug in ext4_move_extents
-                   https://syzkaller.appspot.com/bug?extid=7f4a6f7f7051474e40ad
-<2>  221     Yes   WARNING: locking bug in __ext4_ioctl
-                   https://syzkaller.appspot.com/bug?extid=a537ff48a9cb940d314c
-<3>  138     No    possible deadlock in evict (3)
-                   https://syzkaller.appspot.com/bug?extid=dd426ae4af71f1e74729
-<4>  117     Yes   WARNING: locking bug in ext4_ioctl
-                   https://syzkaller.appspot.com/bug?extid=a3c8e9ac9f9d77240afd
-<5>  73      Yes   INFO: task hung in sync_inodes_sb (5)
-                   https://syzkaller.appspot.com/bug?extid=30476ec1b6dc84471133
-<6>  28      Yes   kernel BUG in ext4_write_inline_data_end
-                   https://syzkaller.appspot.com/bug?extid=198e7455f3a4f38b838a
-<7>  14      No    KASAN: slab-use-after-free Read in check_igot_inode
-                   https://syzkaller.appspot.com/bug?extid=741810aea4ac24243b2f
-<8>  7       Yes   KASAN: slab-use-after-free Read in ext4_convert_inline_data_nolock
-                   https://syzkaller.appspot.com/bug?extid=db6caad9ebd2c8022b41
-<9>  6       Yes   INFO: task hung in ext4_evict_ea_inode
-                   https://syzkaller.appspot.com/bug?extid=38e6635a03c83c76297a
-<10> 6       Yes   KASAN: out-of-bounds Read in ext4_ext_remove_space
-                   https://syzkaller.appspot.com/bug?extid=6e5f2db05775244c73b7
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
