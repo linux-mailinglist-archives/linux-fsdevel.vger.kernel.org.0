@@ -2,140 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D4D5797813
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Sep 2023 18:41:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E1EF797829
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Sep 2023 18:42:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241242AbjIGQlb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Sep 2023 12:41:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52626 "EHLO
+        id S236735AbjIGQmX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Sep 2023 12:42:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240010AbjIGQlU (ORCPT
+        with ESMTP id S242104AbjIGQl6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Sep 2023 12:41:20 -0400
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24BEF284CE
-        for <linux-fsdevel@vger.kernel.org>; Thu,  7 Sep 2023 08:47:40 -0700 (PDT)
-Received: by mail-lj1-x232.google.com with SMTP id 38308e7fff4ca-2bcb54226e7so13117391fa.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Sep 2023 08:47:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694101585; x=1694706385; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+/xavPfeHKkM5Edb1Fs57Ak7muWryzIAsBFEjQC6YKw=;
-        b=slHYvwBz5rr519lRAazUqONDu3ppRmtQZwq0h7L2Nz1JBxeTRKNGTPk+7TNtZS1+LK
-         0aU5KQinc8M5WSQx7X6bp3eHuaIxS+7O26tp2sIJfudpwD6119EOHigQuNyoGm7dpvO2
-         wTjRmvqY/Zj7KDSOwfBUAHSwQEBpbkNXLotZqurPm5Cj9c+s63gkmKfeBErAf/vwo0Tq
-         waFEesnN3NPkyxptcGo38ZiZ7xVsWv1hXC4GPyM+/JObmUcmPa0sXC372KRqdB52vPlr
-         3Qf8XeU94dNaxneieH2LeHsDfYcFgs1EZcIzPyyiOXZurw9oM3T26k3uL3A1j73oMyRI
-         C7UA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1694101585; x=1694706385;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+/xavPfeHKkM5Edb1Fs57Ak7muWryzIAsBFEjQC6YKw=;
-        b=A6/x7VnhAP8p31FOrJA6cUWXawBHyoGrOuTGACbx3TQT3ZlRWPNa/j1kh3pdKE2GPx
-         Z5z2sBzyd1qjWLEHH+WDaZvwcHSzeji+4pdMt5gRA00C7LNuw6vjp7swu/8Jfh0TAek+
-         1fmjDaBwkJpo2dqJB8EsqHPlFN5tEl9r4fZm4JM80zdliZLb6l/Ist4jcmdawCJFAxiZ
-         BKOoq/KHe543nryvFvW9NlrhWnxwbi7TOWyeKKn0FKzC6X+FjM8PoMLJOrknyrFAwell
-         ga11lernXCQrzG3J0eufeZKhu/bI4NnAON6cwWZSMcZ8immP6Mi0+vZ2RxrsxfrYU0nY
-         Cl9A==
-X-Gm-Message-State: AOJu0YwqtqnFp+H3a9mSz/5phzUcfU62EpGX0avGtj3kQXpRwIZb9u6c
-        NWW4sWN9dDC3uAg0jzTaK/bNyyQBuk5SjGWfCiw=
-X-Google-Smtp-Source: AGHT+IECB9k1RoR69ENUNhn2CpFuTYnYdpxvNiieJ33Nc1+rYNTbtaD4fi9Kzgag3CTTMvD+59exlg==
-X-Received: by 2002:a05:600c:492f:b0:401:431e:2d03 with SMTP id f47-20020a05600c492f00b00401431e2d03mr1584782wmp.14.1694080109945;
-        Thu, 07 Sep 2023 02:48:29 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id e6-20020a05600c218600b003fe1c332810sm1971573wme.33.2023.09.07.02.48.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Sep 2023 02:48:29 -0700 (PDT)
-Date:   Thu, 7 Sep 2023 12:48:25 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Christoph Hellwig <hch@infradead.org>, ksummit@lists.linux.dev,
-        linux-fsdevel@vger.kernel.org, gcc-patches@gcc.gnu.org
-Subject: Re: [MAINTAINERS/KERNEL SUMMIT] Trust and maintenance of file systems
-Message-ID: <4af7c904-ac36-44c9-83c4-2cb30c732672@kadam.mountain>
-References: <ZO9NK0FchtYjOuIH@infradead.org>
- <8718a8a3-1e62-0e2b-09d0-7bce3155b045@roeck-us.net>
- <ZPkDLp0jyteubQhh@dread.disaster.area>
- <20230906215327.18a45c89@gandalf.local.home>
+        Thu, 7 Sep 2023 12:41:58 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D31B24696;
+        Thu,  7 Sep 2023 09:07:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1694102852; x=1725638852;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=XrtgQdDTZL5BjJSbu5lQThCpM5CmzSeBRvH2o+zR2m0=;
+  b=mk60zAzQScQrXQJIKsqyb+wqhd/eLKjMk6oFEKjIdvQs2myScrEASEmX
+   jLZu5cuRYt7tOmLqH1DfCPxTBIDGlMYnPDoDIuEt1bBgtv775ALVWdV0g
+   18OZ6vOsZRa8rJf3+cmjJMKlhEpQR2vnDPZpEV8EnesUNg9RHyXM2h5NU
+   ABroCfDwHlostRzn8GfUOy5Tn8goPVSq2Ctki/rEjy0oxIDO6A6H5bcSi
+   yZ09OBQeRPQJ08JmbPMMWfpjRGhPaCYlXV6LEBH1Mk9Ku2WUOJqNeHVaw
+   3XWx4C14OoEv+A4hyC1HIjEE1F6zylDTllwrFiz6wsE0xEuWP6tPZUV4j
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10825"; a="380029834"
+X-IronPort-AV: E=Sophos;i="6.02,234,1688454000"; 
+   d="scan'208";a="380029834"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2023 03:06:21 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10825"; a="718649065"
+X-IronPort-AV: E=Sophos;i="6.02,234,1688454000"; 
+   d="scan'208";a="718649065"
+Received: from rbhaumik-mobl2.ger.corp.intel.com (HELO box.shutemov.name) ([10.249.44.38])
+  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2023 03:06:17 -0700
+Received: by box.shutemov.name (Postfix, from userid 1000)
+        id 0691D1042C5; Thu,  7 Sep 2023 13:06:15 +0300 (+03)
+Date:   Thu, 7 Sep 2023 13:06:14 +0300
+From:   "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To:     Adrian Hunter <adrian.hunter@intel.com>
+Cc:     Borislav Petkov <bp@alien8.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Lorenzo Stoakes <lstoakes@gmail.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
+        Dave Young <dyoung@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-coco@lists.linux.dev, linux-efi@vger.kernel.org,
+        kexec@lists.infradead.org
+Subject: Re: [PATCH 3/3] /dev/mem: Do not map unaccepted memory
+Message-ID: <20230907100614.35mxxo63xwkz7ohw@box.shutemov.name>
+References: <20230906073902.4229-1-adrian.hunter@intel.com>
+ <20230906073902.4229-4-adrian.hunter@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230906215327.18a45c89@gandalf.local.home>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20230906073902.4229-4-adrian.hunter@intel.com>
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 06, 2023 at 09:53:27PM -0400, Steven Rostedt wrote:
-> On Thu, 7 Sep 2023 08:54:38 +1000
-> Dave Chinner <david@fromorbit.com> wrote:
+On Wed, Sep 06, 2023 at 10:39:02AM +0300, Adrian Hunter wrote:
+> Support for unaccepted memory was added recently, refer commit
+> dcdfdd40fa82 ("mm: Add support for unaccepted memory"), whereby
+> a virtual machine may need to accept memory before it can be used.
 > 
-> > And let's not forget: removing a filesystem from the kernel is not
-> > removing end user support for extracting data from old filesystems.
-> > We have VMs for that - we can run pretty much any kernel ever built
-> > inside a VM, so users that need to extract data from a really old
-> > filesystem we no longer support in a modern kernel can simply boot
-> > up an old distro that did support it and extract the data that way.
+> Do not map unaccepted memory because it can cause the guest to fail.
 > 
-> Of course there's the case of trying to recreate a OS that can run on a
-> very old kernel. Just building an old kernel is difficult today because
-> today's compilers will refuse to build them (I've hit issues in bisections
-> because of that!)
+> For /dev/mem, this means a read of unaccepted memory will return zeros,
+> a write to unaccepted memory will be ignored, but an mmap of unaccepted
+> memory will return an error.
 
-Yeah.  I can't run Smatch on obsolete kernels because I can't build the
-tools/ directory etc.  For example, it would be interesting to look at
-really ancient kernels to see how buggy they are.  I started to hunt
-down all the Makefile which add a -Werror but there are a lot and
-eventually I got bored and gave up.
+I am unsure who currently uses /dev/mem. The change to the mmap path has the
+potential to cause issues as it is a new behavior. However, it appears to
+be a common practice as we also fail to mmap if PAT is set on a page in
+the rang. I suppose it is acceptable.
 
-Someone should patch GCC so there it checks an environment variable to
-ignore -Werror.  Somethine like this?
+Another option is to accept the memory on mmap, but it seems excessive at
+this point.
 
-diff --git a/gcc/opts.cc b/gcc/opts.cc
-index ac81d4e42944..2de69300d4fe 100644
---- a/gcc/opts.cc
-+++ b/gcc/opts.cc
-@@ -2598,6 +2598,17 @@ print_help (struct gcc_options *opts, unsigned int lang_mask,
- 			 lang_mask);
- }
- 
-+static bool
-+ignore_w_error(void)
-+{
-+  char *str;
-+
-+  str = getenv("IGNORE_WERROR");
-+  if (str && strcmp(str, "1") == 0)
-+    return true;
-+  return false;
-+}
-+
- /* Handle target- and language-independent options.  Return zero to
-    generate an "unknown option" message.  Only options that need
-    extra handling need to be listed here; if you simply want
-@@ -2773,11 +2784,15 @@ common_handle_option (struct gcc_options *opts,
-       break;
- 
-     case OPT_Werror:
-+      if (ignore_w_error())
-+	break;
-       dc->warning_as_error_requested = value;
-       break;
- 
-     case OPT_Werror_:
--      if (lang_mask == CL_DRIVER)
-+     if (ignore_w_error())
-+	break;
-+     if (lang_mask == CL_DRIVER)
- 	break;
- 
-       enable_warning_as_error (arg, value, lang_mask, handlers,
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
