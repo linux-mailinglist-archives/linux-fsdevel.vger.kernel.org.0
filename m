@@ -2,129 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CDE8E796FA6
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Sep 2023 06:42:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50045797025
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Sep 2023 07:39:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241402AbjIGEm7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Sep 2023 00:42:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48626 "EHLO
+        id S233573AbjIGFjW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Sep 2023 01:39:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240868AbjIGEm7 (ORCPT
+        with ESMTP id S229488AbjIGFjV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Sep 2023 00:42:59 -0400
-Received: from mail-pl1-f207.google.com (mail-pl1-f207.google.com [209.85.214.207])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F3B019AF
-        for <linux-fsdevel@vger.kernel.org>; Wed,  6 Sep 2023 21:42:55 -0700 (PDT)
-Received: by mail-pl1-f207.google.com with SMTP id d9443c01a7336-1bf703dd1c0so8120885ad.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Sep 2023 21:42:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1694061775; x=1694666575;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QO4jiycN6dbg6wkvNucUtETxjzNo8ws6A658O5yfUKs=;
-        b=ZT7+Vy7sgWZrmoJRt0foxftGppfdjirS7xh6mxbEmYUHfBA4ea59/wpTyu2+iA38tZ
-         wyuk70UThV6FLWQbZL2iYqS4YTjC9xt2hrrEmySatTxe4hwMCi6Z5k2/pFWGL+73bQ4N
-         AaUcaK/YOIyFy6kzfiKBM1wvBcskqDtOuR1SAqDkUo8s/8fcgOZq46QX8WG2yOP4M+9X
-         frk851/OwD6AtoNZIv270vzNkBiXJD4BezW5JhrlxQws3xjYJYAkAu3QpSPngRddooXK
-         ndl9+PkB4coXnw/ozxYMGNEsZpGdTg53BDA4LOiHV792CHZfUraKOs6/v69y3zmiloOC
-         mi/A==
-X-Gm-Message-State: AOJu0YzCLrbDjabS+sVgTHDxX7Kx/kcoKkWCUlqSFzBRB4vBW2PNjzEx
-        3FTfd2zbHkaz9rFHAYauQ/VRmQN3/JXpuJ2JHx+sIhywu9rV
-X-Google-Smtp-Source: AGHT+IGnUXfN5EzBjU00HtB0u2T/SapYwSUSYKMagEKr7olR9IlF0kcFbFNVMNrIeV8PScdj82MjHyRocM8u29RyAw1QEDvp/U7g
+        Thu, 7 Sep 2023 01:39:21 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C69B19BD;
+        Wed,  6 Sep 2023 22:39:17 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 2C08A1F459;
+        Thu,  7 Sep 2023 05:39:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1694065156; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=vEzdXwzrXnDTeO0P+aNFlsgJ60oxO7RTr/+XEDVnWGU=;
+        b=zr7k3C3k5bcifoR7lksFXR5wYxINEnL5SHX7Hgtw8PH/VB7pxIJltEsBEDIsWKJhtOBllg
+        kjBlPikKsXRR3aBkuHtcwqVYAsGuRiCE+5YdeJ9Gj/nMdolzpBxh0W+LWzTQsmgCtsl0GU
+        nx8up8cqOng/NvIWPUVsz5QE5LyTNmQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1694065156;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=vEzdXwzrXnDTeO0P+aNFlsgJ60oxO7RTr/+XEDVnWGU=;
+        b=cwHd6RbV9kQqZVcKJLf2ZxshTikYkz2/zqjz1vx77H0a2bb63I00umYAVZa6h4IjnOM5ZK
+        fpOti423Zoa7T8Ag==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 7AB0513458;
+        Thu,  7 Sep 2023 05:39:15 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id r6UMGwNi+WQ6XAAAMHmgww
+        (envelope-from <hare@suse.de>); Thu, 07 Sep 2023 05:39:15 +0000
+Message-ID: <d2c3a257-0505-4d3e-ae71-28015952cef6@suse.de>
+Date:   Thu, 7 Sep 2023 07:39:14 +0200
 MIME-Version: 1.0
-X-Received: by 2002:a17:902:e850:b0:1bd:dcdf:6179 with SMTP id
- t16-20020a170902e85000b001bddcdf6179mr6076952plg.2.1694061775253; Wed, 06 Sep
- 2023 21:42:55 -0700 (PDT)
-Date:   Wed, 06 Sep 2023 21:42:55 -0700
-In-Reply-To: <000000000000a13b2c06049391bf@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005777c90604bd7ef0@google.com>
-Subject: Re: [syzbot] [btrfs?] WARNING in __btrfs_run_delayed_items
-From:   syzbot <syzbot+90ad99829e4f013084b7@syzkaller.appspotmail.com>
-To:     clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 02/12] Add infrastructure for copy offload in block
+ and request layer.
+Content-Language: en-US
+To:     Nitesh Shetty <nj.shetty@samsung.com>,
+        Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@kernel.org>, dm-devel@redhat.com,
+        Keith Busch <kbusch@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Chaitanya Kulkarni <kch@nvidia.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>
+Cc:     martin.petersen@oracle.com, mcgrof@kernel.org,
+        gost.dev@samsung.com, Anuj Gupta <anuj20.g@samsung.com>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org
+References: <20230906163844.18754-1-nj.shetty@samsung.com>
+ <CGME20230906164303epcas5p1c2d3ec21feac347f0f1d68adc97c61f5@epcas5p1.samsung.com>
+ <20230906163844.18754-3-nj.shetty@samsung.com>
+From:   Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20230906163844.18754-3-nj.shetty@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has found a reproducer for the following issue on:
+On 9/6/23 18:38, Nitesh Shetty wrote:
+> We add two new opcode REQ_OP_COPY_SRC, REQ_OP_COPY_DST.
+> Since copy is a composite operation involving src and dst sectors/lba,
+> each needs to be represented by a separate bio to make it compatible
+> with device mapper.
+> We expect caller to take a plug and send bio with source information,
+> followed by bio with destination information.
+> Once the src bio arrives we form a request and wait for destination
+> bio. Upon arrival of destination we merge these two bio's and send
+> corresponding request down to device driver.
+> 
+> Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
+> Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
+> ---
+>   block/blk-core.c          |  7 +++++++
+>   block/blk-merge.c         | 41 +++++++++++++++++++++++++++++++++++++++
+>   block/blk.h               | 16 +++++++++++++++
+>   block/elevator.h          |  1 +
+>   include/linux/bio.h       |  6 +-----
+>   include/linux/blk_types.h | 10 ++++++++++
+>   6 files changed, 76 insertions(+), 5 deletions(-)
+> 
+Having two separate bios is okay, and what one would expect.
+What is slightly strange is the merging functionality;
+That could do with some more explanation why this approach was taken.
+And also some checks in the merging code to avoid merging non-copy 
+offload  bios.
 
-HEAD commit:    744a759492b5 Merge tag 'input-for-v6.6-rc0' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12c49cdc680000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ed626705db308b2d
-dashboard link: https://syzkaller.appspot.com/bug?extid=90ad99829e4f013084b7
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=150173d0680000
+Cheers,
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/4cd3ef7a61fb/disk-744a7594.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/dfb7ed3ce6d6/vmlinux-744a7594.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/e4c0866ee45c/bzImage-744a7594.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/2efc34fa9036/mount_0.gz
+Hannes
+-- 
+Dr. Hannes Reinecke                Kernel Storage Architect
+hare@suse.de                              +49 911 74053 688
+SUSE Software Solutions GmbH, Maxfeldstr. 5, 90409 Nürnberg
+HRB 36809 (AG Nürnberg), Geschäftsführer: Ivo Totev, Andrew
+Myers, Andrew McDonald, Martje Boudien Moerman
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+90ad99829e4f013084b7@syzkaller.appspotmail.com
-
-BTRFS info (device loop3): force zlib compression, level 3
-BTRFS info (device loop3): allowing degraded mounts
-BTRFS info (device loop3): using free space tree
-BTRFS info (device loop3): auto enabling async discard
-------------[ cut here ]------------
-BTRFS: Transaction aborted (error -17)
-WARNING: CPU: 1 PID: 5219 at fs/btrfs/delayed-inode.c:1158 __btrfs_run_delayed_items+0x3d3/0x430 fs/btrfs/delayed-inode.c:1158
-Modules linked in:
-CPU: 1 PID: 5219 Comm: syz-executor.3 Not tainted 6.5.0-syzkaller-12053-g744a759492b5 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/26/2023
-RIP: 0010:__btrfs_run_delayed_items+0x3d3/0x430 fs/btrfs/delayed-inode.c:1158
-Code: fe c1 38 c1 0f 8c b5 fc ff ff 48 89 ef e8 c5 31 42 fe e9 a8 fc ff ff e8 3b 48 e8 fd 48 c7 c7 60 3c 4c 8b 89 de e8 dd c2 ae fd <0f> 0b e9 69 ff ff ff f3 0f 1e fa e8 1d 48 e8 fd 48 8b 44 24 10 42
-RSP: 0018:ffffc90004d1f8f0 EFLAGS: 00010246
-RAX: c983e039b4061000 RBX: 00000000ffffffef RCX: ffff888021dd8000
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: ffff888077a2f8b0 R08: ffffffff81541672 R09: 1ffff920009a3e88
-R10: dffffc0000000000 R11: fffff520009a3e89 R12: dffffc0000000000
-R13: ffff888077a2f888 R14: 0000000000000000 R15: ffff888077a2f8b0
-FS:  00007fbab9d0b6c0(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ff8cad4b028 CR3: 0000000078e4d000 CR4: 00000000003506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- btrfs_commit_transaction+0xf44/0x2ff0 fs/btrfs/transaction.c:2393
- create_snapshot+0x4a5/0x7e0 fs/btrfs/ioctl.c:845
- btrfs_mksubvol+0x5d0/0x750 fs/btrfs/ioctl.c:995
- btrfs_mksnapshot+0xb5/0xf0 fs/btrfs/ioctl.c:1041
- __btrfs_ioctl_snap_create+0x344/0x460 fs/btrfs/ioctl.c:1294
- btrfs_ioctl_snap_create+0x13c/0x190 fs/btrfs/ioctl.c:1321
- btrfs_ioctl+0xbbf/0xd40
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:871 [inline]
- __se_sys_ioctl+0xf8/0x170 fs/ioctl.c:857
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7fbab907cae9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fbab9d0b0c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007fbab919bf80 RCX: 00007fbab907cae9
-RDX: 0000000020002180 RSI: 0000000050009401 RDI: 0000000000000009
-RBP: 00007fbab90c847a R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000000b R14: 00007fbab919bf80 R15: 00007ffd6831ff58
- </TASK>
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
