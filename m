@@ -2,76 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E9BB47979C3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Sep 2023 19:20:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D4D5797813
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Sep 2023 18:41:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243023AbjIGRUq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Sep 2023 13:20:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49788 "EHLO
+        id S241242AbjIGQlb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Sep 2023 12:41:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243066AbjIGRUl (ORCPT
+        with ESMTP id S240010AbjIGQlU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Sep 2023 13:20:41 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B352190;
-        Thu,  7 Sep 2023 10:20:21 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 2E2F71F459;
-        Thu,  7 Sep 2023 09:44:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1694079898; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=IQKrvoRpVQJFQhwOguupeVlEjouTylOwLzLmWuGsjm4=;
-        b=yXfYCT//3NYk/IIvJQmLc230SnFy+DGFE6NMTLPUGoKXXmrt6TPdXl2F+YivPZIgKAyW+a
-        UVNQkYZ3PCJKmN/SN5B7pOKfVus74F66dP1Fvn2zH0sxaGoH/08TvbyIeeKYNwem1r8gxF
-        SW63ivzjn5x/VQY3NQ/nUIK6AwMtSoY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1694079898;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=IQKrvoRpVQJFQhwOguupeVlEjouTylOwLzLmWuGsjm4=;
-        b=DeUApml2wtvIj0k60NHvdFJR0szgr5vYwRKs3ynUY2tPBffcp+LRThvobbONsq48Zi8hgW
-        XOXo8fu/Zh9toCBg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 1B15C138F9;
-        Thu,  7 Sep 2023 09:44:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 4n+FBpqb+WT+QQAAMHmgww
-        (envelope-from <jack@suse.cz>); Thu, 07 Sep 2023 09:44:58 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 6D8EFA06E5; Thu,  7 Sep 2023 11:44:57 +0200 (CEST)
-Date:   Thu, 7 Sep 2023 11:44:57 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Mikulas Patocka <mpatocka@redhat.com>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Zdenek Kabelac <zkabelac@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dm-devel@redhat.com, Jan Kara <jack@suse.cz>,
-        Christoph Hellwig <hch@lst.de>,
-        "Darrick J. Wong" <djwong@kernel.org>
-Subject: Re: [PATCH] fix writing to the filesystem after unmount
-Message-ID: <20230907094457.vcvmixi23dk3pzqe@quack3>
-References: <59b54cc3-b98b-aff9-14fc-dc25c61111c6@redhat.com>
- <20230906-launenhaft-kinder-118ea59706c8@brauner>
- <f5d63867-5b3e-294b-d1f5-a128817cfc7@redhat.com>
- <20230906-aufheben-hagel-9925501b7822@brauner>
- <60f244be-803b-fa70-665e-b5cba15212e@redhat.com>
- <20230906-aufkam-bareinlage-6e7d06d58e90@brauner>
- <818a3cc0-c17b-22c0-4413-252dfb579cca@redhat.com>
+        Thu, 7 Sep 2023 12:41:20 -0400
+Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24BEF284CE
+        for <linux-fsdevel@vger.kernel.org>; Thu,  7 Sep 2023 08:47:40 -0700 (PDT)
+Received: by mail-lj1-x232.google.com with SMTP id 38308e7fff4ca-2bcb54226e7so13117391fa.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Sep 2023 08:47:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1694101585; x=1694706385; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+/xavPfeHKkM5Edb1Fs57Ak7muWryzIAsBFEjQC6YKw=;
+        b=slHYvwBz5rr519lRAazUqONDu3ppRmtQZwq0h7L2Nz1JBxeTRKNGTPk+7TNtZS1+LK
+         0aU5KQinc8M5WSQx7X6bp3eHuaIxS+7O26tp2sIJfudpwD6119EOHigQuNyoGm7dpvO2
+         wTjRmvqY/Zj7KDSOwfBUAHSwQEBpbkNXLotZqurPm5Cj9c+s63gkmKfeBErAf/vwo0Tq
+         waFEesnN3NPkyxptcGo38ZiZ7xVsWv1hXC4GPyM+/JObmUcmPa0sXC372KRqdB52vPlr
+         3Qf8XeU94dNaxneieH2LeHsDfYcFgs1EZcIzPyyiOXZurw9oM3T26k3uL3A1j73oMyRI
+         C7UA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1694101585; x=1694706385;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+/xavPfeHKkM5Edb1Fs57Ak7muWryzIAsBFEjQC6YKw=;
+        b=A6/x7VnhAP8p31FOrJA6cUWXawBHyoGrOuTGACbx3TQT3ZlRWPNa/j1kh3pdKE2GPx
+         Z5z2sBzyd1qjWLEHH+WDaZvwcHSzeji+4pdMt5gRA00C7LNuw6vjp7swu/8Jfh0TAek+
+         1fmjDaBwkJpo2dqJB8EsqHPlFN5tEl9r4fZm4JM80zdliZLb6l/Ist4jcmdawCJFAxiZ
+         BKOoq/KHe543nryvFvW9NlrhWnxwbi7TOWyeKKn0FKzC6X+FjM8PoMLJOrknyrFAwell
+         ga11lernXCQrzG3J0eufeZKhu/bI4NnAON6cwWZSMcZ8immP6Mi0+vZ2RxrsxfrYU0nY
+         Cl9A==
+X-Gm-Message-State: AOJu0YwqtqnFp+H3a9mSz/5phzUcfU62EpGX0avGtj3kQXpRwIZb9u6c
+        NWW4sWN9dDC3uAg0jzTaK/bNyyQBuk5SjGWfCiw=
+X-Google-Smtp-Source: AGHT+IECB9k1RoR69ENUNhn2CpFuTYnYdpxvNiieJ33Nc1+rYNTbtaD4fi9Kzgag3CTTMvD+59exlg==
+X-Received: by 2002:a05:600c:492f:b0:401:431e:2d03 with SMTP id f47-20020a05600c492f00b00401431e2d03mr1584782wmp.14.1694080109945;
+        Thu, 07 Sep 2023 02:48:29 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id e6-20020a05600c218600b003fe1c332810sm1971573wme.33.2023.09.07.02.48.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Sep 2023 02:48:29 -0700 (PDT)
+Date:   Thu, 7 Sep 2023 12:48:25 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Christoph Hellwig <hch@infradead.org>, ksummit@lists.linux.dev,
+        linux-fsdevel@vger.kernel.org, gcc-patches@gcc.gnu.org
+Subject: Re: [MAINTAINERS/KERNEL SUMMIT] Trust and maintenance of file systems
+Message-ID: <4af7c904-ac36-44c9-83c4-2cb30c732672@kadam.mountain>
+References: <ZO9NK0FchtYjOuIH@infradead.org>
+ <8718a8a3-1e62-0e2b-09d0-7bce3155b045@roeck-us.net>
+ <ZPkDLp0jyteubQhh@dread.disaster.area>
+ <20230906215327.18a45c89@gandalf.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <818a3cc0-c17b-22c0-4413-252dfb579cca@redhat.com>
+In-Reply-To: <20230906215327.18a45c89@gandalf.local.home>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -81,52 +75,67 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 06-09-23 18:52:39, Mikulas Patocka wrote:
-> On Wed, 6 Sep 2023, Christian Brauner wrote:
-> > On Wed, Sep 06, 2023 at 06:01:06PM +0200, Mikulas Patocka wrote:
-> > > > > BTW. what do you think that unmount of a frozen filesystem should properly 
-> > > > > do? Fail with -EBUSY? Or, unfreeze the filesystem and unmount it? Or 
-> > > > > something else?
-> > > > 
-> > > > In my opinion we should refuse to unmount frozen filesystems and log an
-> > > > error that the filesystem is frozen. Waiting forever isn't a good idea
-> > > > in my opinion.
-> > > 
-> > > But lvm may freeze filesystems anytime - so we'd get randomly returned 
-> > > errors then.
-> > 
-> > So? Or you might hang at anytime.
+On Wed, Sep 06, 2023 at 09:53:27PM -0400, Steven Rostedt wrote:
+> On Thu, 7 Sep 2023 08:54:38 +1000
+> Dave Chinner <david@fromorbit.com> wrote:
 > 
-> lvm doesn't keep logical volumes suspended for a prolonged amount of time. 
-> It will unfreeze them after it made updates to the dm table and to the 
-> metadata. So, it won't hang forever.
+> > And let's not forget: removing a filesystem from the kernel is not
+> > removing end user support for extracting data from old filesystems.
+> > We have VMs for that - we can run pretty much any kernel ever built
+> > inside a VM, so users that need to extract data from a really old
+> > filesystem we no longer support in a modern kernel can simply boot
+> > up an old distro that did support it and extract the data that way.
 > 
-> I think it's better to sleep for a short time in umount than to return an 
-> error.
+> Of course there's the case of trying to recreate a OS that can run on a
+> very old kernel. Just building an old kernel is difficult today because
+> today's compilers will refuse to build them (I've hit issues in bisections
+> because of that!)
 
-I think we've got too deep down into "how to fix things" but I'm not 100%
-sure what the "bug" actually is. In the initial posting Mikulas writes "the
-kernel writes to the filesystem after unmount successfully returned" - is
-that really such a big issue? Anybody else can open the device and write to
-it as well. Or even mount the device again. So userspace that relies on
-this is kind of flaky anyway (and always has been).
+Yeah.  I can't run Smatch on obsolete kernels because I can't build the
+tools/ directory etc.  For example, it would be interesting to look at
+really ancient kernels to see how buggy they are.  I started to hunt
+down all the Makefile which add a -Werror but there are a lot and
+eventually I got bored and gave up.
 
-I understand the need for userspace to make sure the device is not being
-modified to do its thing - but then it should perhaps freeze the bdev if
-it wants to be certain? Or at least open it O_EXCL to make sure it's not
-mounted?
+Someone should patch GCC so there it checks an environment variable to
+ignore -Werror.  Somethine like this?
 
-WRT the umount behavior for frozen filesystem - as Al writes it's a tricky
-issue and we've been discussing that several times over the years and it
-never went anywhere because of nasty corner-cases (which current behavior
-also has but trading one nasty case for another isn't really a win). Now
-that we distinguish between kernel-initiated freeze (with well defined
-freeze owner and lifetime) and userspace-initiated freeze, I can image we'd
-make last unmount of the superblock wait for the kernel-initiated freeze to
-thaw. But as Al writes with lazy unmounts, bind mounts in multiple
-namespaces etc. I'm not sure such behavior brings much value...
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+diff --git a/gcc/opts.cc b/gcc/opts.cc
+index ac81d4e42944..2de69300d4fe 100644
+--- a/gcc/opts.cc
++++ b/gcc/opts.cc
+@@ -2598,6 +2598,17 @@ print_help (struct gcc_options *opts, unsigned int lang_mask,
+ 			 lang_mask);
+ }
+ 
++static bool
++ignore_w_error(void)
++{
++  char *str;
++
++  str = getenv("IGNORE_WERROR");
++  if (str && strcmp(str, "1") == 0)
++    return true;
++  return false;
++}
++
+ /* Handle target- and language-independent options.  Return zero to
+    generate an "unknown option" message.  Only options that need
+    extra handling need to be listed here; if you simply want
+@@ -2773,11 +2784,15 @@ common_handle_option (struct gcc_options *opts,
+       break;
+ 
+     case OPT_Werror:
++      if (ignore_w_error())
++	break;
+       dc->warning_as_error_requested = value;
+       break;
+ 
+     case OPT_Werror_:
+-      if (lang_mask == CL_DRIVER)
++     if (ignore_w_error())
++	break;
++     if (lang_mask == CL_DRIVER)
+ 	break;
+ 
+       enable_warning_as_error (arg, value, lang_mask, handlers,
