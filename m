@@ -2,114 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E37217974A7
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Sep 2023 17:40:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B578797492
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Sep 2023 17:40:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233593AbjIGPk0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Sep 2023 11:40:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35464 "EHLO
+        id S236112AbjIGPkB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Sep 2023 11:40:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344305AbjIGPcw (ORCPT
+        with ESMTP id S245715AbjIGPaO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Sep 2023 11:32:52 -0400
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 116EA10F7;
-        Thu,  7 Sep 2023 08:32:35 -0700 (PDT)
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3879caOR000951;
-        Thu, 7 Sep 2023 10:00:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
- subject : message-id : references : content-type : in-reply-to :
- mime-version; s=pp1; bh=I6yKRPq+c/Elou32cUh1duley7ZNzCzx4dQ/LkpfUxA=;
- b=DHZPQ3XGt33x5GrsId/vXYrG/iE6E+gLrOKL+U/VBJeW1vQgM6j4lPAkPytg5yNyn4yC
- NnLZ5I7eNikiD1CNmPx8keD5poJzm+agENSTbS0nTQ9Suh3Z74JOzOoxlyxj6w4UuPDe
- 6FGh3s703rP9WxKOILztdPuC6HHT3j0oU/XrJGheS6W5kfMlMLbcLsZNXiXPTIPa+X8k
- Dd/VnjBmIij+CBeIxHBAsYfT8aUL+BWpmN1xeapO8VO+rKi7r/QP2ks34gKCEgzCz+qQ
- l3l+d10nbE06eDslOYbDPbHR3lzBRFReLxGBevEkdsg3sN5IUhD94CoFPZFOVRgYkv+a Bg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3sybvkrphg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 07 Sep 2023 10:00:53 +0000
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3879cqIs002126;
-        Thu, 7 Sep 2023 10:00:52 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3sybvkrpe2-9
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 07 Sep 2023 10:00:52 +0000
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-        by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 3877lVZc021441;
-        Thu, 7 Sep 2023 09:08:22 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-        by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3svfrytjyw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 07 Sep 2023 09:08:22 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-        by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 38798JP624511186
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 7 Sep 2023 09:08:19 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 24B6E20067;
-        Thu,  7 Sep 2023 09:08:19 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9BBF92006C;
-        Thu,  7 Sep 2023 09:08:16 +0000 (GMT)
-Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.171.70.29])
-        by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-        Thu,  7 Sep 2023 09:08:16 +0000 (GMT)
-Date:   Thu, 7 Sep 2023 11:08:15 +0200
-From:   Alexander Gordeev <agordeev@linux.ibm.com>
-To:     j.granados@samsung.com
-Cc:     Luis Chamberlain <mcgrof@kernel.org>, willy@infradead.org,
-        josh@joshtriplett.org, Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Guo Ren <guoren@kernel.org>, linux-fsdevel@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-riscv@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-        linux-ia64@vger.kernel.org, linux-csky@vger.kernel.org
-Subject: Re: [PATCH 1/8] S390: Remove sentinel elem from ctl_table arrays
-Message-ID: <ZPmS/zkAs66pLcum@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
-References: <20230906-jag-sysctl_remove_empty_elem_arch-v1-0-3935d4854248@samsung.com>
- <20230906-jag-sysctl_remove_empty_elem_arch-v1-1-3935d4854248@samsung.com>
+        Thu, 7 Sep 2023 11:30:14 -0400
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FD941BF9
+        for <linux-fsdevel@vger.kernel.org>; Thu,  7 Sep 2023 08:29:51 -0700 (PDT)
+Received: by mail-wr1-x42c.google.com with SMTP id ffacd0b85a97d-31c5c06e8bbso1072646f8f.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Sep 2023 08:29:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1694100538; x=1694705338; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WfXAsmoB4WfS+F7T1nJonWeYIccVQBht5j3GC7Xo5VQ=;
+        b=l12NoQaADeX1wQV8OPkhENU1v8u3+chj038uXBn6ovKUuBAE9+3CcRJ8DE7RB3TuzZ
+         Nm2rqXQhRUriBG/ECojNfdFZD7ul1Ecdx/+3sMvJXurNmnZ4THV547wq/NwqNCPmlMIZ
+         BCVbpFmoTBlNFH/L9uw7ssW8lXkFI6rkDfjgPKKQVQsSUq4m51M05/HhPbyFBajOaWsT
+         jk4YpipTaFnZnpKUIPPwFDw5drDJyboR8jJ5CGwtefnMP4SPR0Wr3ugkYZE3iGk7ltjR
+         AJNuZRsysZnGJgFU9oANMnpqSyvM+fU7Opk774hKsBiapQdBsmstSOrqtn4bhhqfiwWH
+         XVOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1694100538; x=1694705338;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WfXAsmoB4WfS+F7T1nJonWeYIccVQBht5j3GC7Xo5VQ=;
+        b=E5BdT0vSZc1weFb3R3SOCc0otmZKlxJjicj6akQrHQF1nFn9FJxtONgL/Zszp23sWj
+         KyNiCN8wlgkBIkK7Alw9mL/STWI32Nfn8GwumsEww7gyQGDt1I5On3aIb8HJm0iky7MK
+         ApVfB+r4YPW2jxWHGUUCTFmpM7oLCOEbk1oM+N0UR68oOehewl4pgTSX5ijGXSwKQm+J
+         m2N4DFQKIZXAhG0TUtv2CuNxHOvFgHGrQkZwc1X118GxdBhboAL3HDl7OSZVtXlY6Ak4
+         UbOMlu7h7XutJcE6rE0FVZGWty4VD1O2yH0b/QA2ti4lWlIMmgVFlowGeOOS2pDrwpN4
+         mMPA==
+X-Gm-Message-State: AOJu0YySi9lJAKX/RQdtd3DAqDD4gHfMmc6p8jTRkqNlwdJNdqn4l5lB
+        2ZLFg3/SA7XYjtgD6Mw0i/4mduPSUT3mpI3QCgo=
+X-Google-Smtp-Source: AGHT+IG5FsrtNwEQuNvPmbB9vmAGew+7DEruqR4J6dlaEKAvYhDUHjzzZrxVYkb/967NrsZmUgv7Jw==
+X-Received: by 2002:a05:600c:1d09:b0:402:eaae:e6e0 with SMTP id l9-20020a05600c1d0900b00402eaaee6e0mr2224356wms.8.1694085783074;
+        Thu, 07 Sep 2023 04:23:03 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id y25-20020a7bcd99000000b0040210a27e29sm2221206wmj.32.2023.09.07.04.23.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Sep 2023 04:23:02 -0700 (PDT)
+Date:   Thu, 7 Sep 2023 14:23:00 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Segher Boessenkool <segher@kernel.crashing.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Christoph Hellwig <hch@infradead.org>, ksummit@lists.linux.dev,
+        linux-fsdevel@vger.kernel.org, gcc-patches@gcc.gnu.org
+Subject: Re: [MAINTAINERS/KERNEL SUMMIT] Trust and maintenance of file systems
+Message-ID: <bd1fb81a-6bb7-4ab4-9f8c-55307f3e9590@kadam.mountain>
+References: <ZO9NK0FchtYjOuIH@infradead.org>
+ <8718a8a3-1e62-0e2b-09d0-7bce3155b045@roeck-us.net>
+ <ZPkDLp0jyteubQhh@dread.disaster.area>
+ <20230906215327.18a45c89@gandalf.local.home>
+ <4af7c904-ac36-44c9-83c4-2cb30c732672@kadam.mountain>
+ <20230907110409.GH19790@gate.crashing.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230906-jag-sysctl_remove_empty_elem_arch-v1-1-3935d4854248@samsung.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: GQagwlLX8g4Qk39DU96L0orHwbmZ3MCK
-X-Proofpoint-GUID: zMgjc5iBGTBt0dXVXUPsKepJtgT9tqBy
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
-MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-09-07_01,2023-09-05_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 mlxscore=0 phishscore=0 bulkscore=0 clxscore=1011
- mlxlogscore=794 spamscore=0 suspectscore=0 impostorscore=0 adultscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2308100000 definitions=main-2309070084
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
+In-Reply-To: <20230907110409.GH19790@gate.crashing.org>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -117,27 +78,39 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 06, 2023 at 12:03:22PM +0200, Joel Granados via B4 Relay wrote:
-> From: Joel Granados <j.granados@samsung.com>
+On Thu, Sep 07, 2023 at 06:04:09AM -0500, Segher Boessenkool wrote:
+> On Thu, Sep 07, 2023 at 12:48:25PM +0300, Dan Carpenter via Gcc-patches wrote:
+> > I started to hunt
+> > down all the Makefile which add a -Werror but there are a lot and
+> > eventually I got bored and gave up.
 > 
-> This commit comes at the tail end of a greater effort to remove the
-> empty elements at the end of the ctl_table arrays (sentinels) which
-> will reduce the overall build time size of the kernel and run time
-> memory bloat by ~64 bytes per sentinel (further information Link :
-> https://lore.kernel.org/all/ZO5Yx5JFogGi%2FcBo@bombadil.infradead.org/)
+> I have a patch stack for that, since 2014 or so.  I build Linux with
+> unreleased GCC versions all the time, so pretty much any new warning is
+> fatal if you unwisely use -Werror.
 > 
-> Remove the sentinel element from appldata_table, s390dbf_table,
-> topology_ctl_table, cmm_table and page_table_sysctl. Reduced the
-> memory allocation in appldata_register_ops by 1 effectively removing the
-> sentinel from ops->ctl_table.
+> > Someone should patch GCC so there it checks an environment variable to
+> > ignore -Werror.  Somethine like this?
 > 
-> Signed-off-by: Joel Granados <j.granados@samsung.com>
-> ---
->  arch/s390/appldata/appldata_base.c | 6 ++----
->  arch/s390/kernel/debug.c           | 3 +--
->  arch/s390/kernel/topology.c        | 3 +--
->  arch/s390/mm/cmm.c                 | 3 +--
->  arch/s390/mm/pgalloc.c             | 3 +--
->  5 files changed, 6 insertions(+), 12 deletions(-)
+> No.  You should patch your program, instead.
 
-Tested-by: Alexander Gordeev <agordeev@linux.ibm.com>
+There are 2930 Makefiles in the kernel source.
+
+> One easy way is to add a
+> -Wno-error at the end of your command lines.  Or even just -w if you
+> want or need a bigger hammer.
+
+I tried that.  Some of the Makefiles check an environemnt variable as
+well if you want to turn off -Werror.  It's not a complete solution at
+all.  I have no idea what a complete solution looks like because I gave
+up.
+
+> 
+> Or nicer, put it all in Kconfig, like powerpc already has for example.
+> There is a CONFIG_WERROR as well, so maybe use that in all places?
+
+That's a good idea but I'm trying to compile old kernels and not the
+current kernel.
+
+regards,
+dan carpenter
+
