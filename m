@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 85536797A6B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Sep 2023 19:39:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D56F87977C0
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Sep 2023 18:32:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245280AbjIGRjr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Sep 2023 13:39:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36140 "EHLO
+        id S240400AbjIGQcL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Sep 2023 12:32:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245279AbjIGRj3 (ORCPT
+        with ESMTP id S237826AbjIGQbn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Sep 2023 13:39:29 -0400
+        Thu, 7 Sep 2023 12:31:43 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 096BB2132
-        for <linux-fsdevel@vger.kernel.org>; Thu,  7 Sep 2023 10:38:54 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10C61C116B3;
-        Thu,  7 Sep 2023 10:29:52 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDF37729D;
+        Thu,  7 Sep 2023 09:19:45 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47749C4163D;
+        Thu,  7 Sep 2023 10:43:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694082594;
-        bh=I5vny7qUROC8Da2C/sZSRv3leB/a+ax29yWPx9758F4=;
+        s=k20201202; t=1694083425;
+        bh=1vXm+N0KQAmOUF0rkbuYz8BuTT/Y/M1TZb80uOOLxBE=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MPlMhsBhxY6IznKAllq8kKKqCPS+RMZDae+Un2tI2ha9ad1+XrIf7WmMAupPDvust
-         pPO7oTgT3hMVfZev/0mYFKR9Nvvz3x+tEiuARbkcWNASKYECIdZ4A/K0rEaAMe9Chk
-         dle9qLwhtYZQyBybrQXD/CWL2Pt8p9wC4B+HJwhnREM0KuZJVjv1EGWc+txnz4T4av
-         nqjrXoFpLkY4X+Z8U8AENiMyJ/MbRHDuEeI+F4i23Z/unxixaPw5IV21/KfZrZlSmV
-         1kJHwSfSS7PcVaw/klxM3DD2PStv/KungQqhtPquqVJL4NhqUN12/nXoXGMMCFRcSH
-         Wksx9WSBC07xg==
-Date:   Thu, 7 Sep 2023 12:29:50 +0200
+        b=Fe/+0m7vI5L4s3w22eRJ8BLMFELOVYkfJ6kVol8/cK8OppAeCZti0ensvkP99bj+f
+         1QSl3CbpRe45f1eNmENJTorrh4H0QwCcWyg+lxCHeKuFZGBEH1ehR4SaaDCqSnBiG9
+         f24bFSQEWhVFHR8DqY0zkiLdbsgj2F4+1NIFvR1Woiz7ewQrXiXyKYaS3ikRQIFBB8
+         0DCZ1Oz+VYuhHjOcsRLB9hEqeg5jV9TVDiVlOqMoo7H4mBfqqFxaiWX14fmovvjhoN
+         NEtp++Swq9pI8uVAotln55KmC4p/WG4yk48JoLonoWK64O6DZ4Rwy4afge8osS0LAw
+         g823czBcOE6RQ==
+Date:   Thu, 7 Sep 2023 12:43:40 +0200
 From:   Christian Brauner <brauner@kernel.org>
-To:     Thorsten Leemhuis <linux@leemhuis.info>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Christoph Hellwig <hch@infradead.org>, ksummit@lists.linux.dev,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [MAINTAINERS/KERNEL SUMMIT] Trust and maintenance of file systems
-Message-ID: <20230907-kauern-kopfkissen-d8147fb40469@brauner>
-References: <ZO9NK0FchtYjOuIH@infradead.org>
- <8718a8a3-1e62-0e2b-09d0-7bce3155b045@roeck-us.net>
- <ZPkDLp0jyteubQhh@dread.disaster.area>
- <20230906215327.18a45c89@gandalf.local.home>
- <ZPkz86RRLaYOkmx+@dread.disaster.area>
- <20230906225139.6ffe953c@gandalf.local.home>
- <ZPlC0pf2XA1ZGr6j@casper.infradead.org>
- <c89ebbb2-1249-49f3-b80f-0b08711bc29b@leemhuis.info>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Mikulas Patocka <mpatocka@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Zdenek Kabelac <zkabelac@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dm-devel@redhat.com, Christoph Hellwig <hch@lst.de>,
+        "Darrick J. Wong" <djwong@kernel.org>
+Subject: Re: [PATCH] fix writing to the filesystem after unmount
+Message-ID: <20230907-abgrenzen-achtung-b17e9a1ad136@brauner>
+References: <59b54cc3-b98b-aff9-14fc-dc25c61111c6@redhat.com>
+ <20230906-launenhaft-kinder-118ea59706c8@brauner>
+ <f5d63867-5b3e-294b-d1f5-a128817cfc7@redhat.com>
+ <20230906-aufheben-hagel-9925501b7822@brauner>
+ <60f244be-803b-fa70-665e-b5cba15212e@redhat.com>
+ <20230906-aufkam-bareinlage-6e7d06d58e90@brauner>
+ <818a3cc0-c17b-22c0-4413-252dfb579cca@redhat.com>
+ <20230907094457.vcvmixi23dk3pzqe@quack3>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <c89ebbb2-1249-49f3-b80f-0b08711bc29b@leemhuis.info>
+In-Reply-To: <20230907094457.vcvmixi23dk3pzqe@quack3>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
         RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
@@ -60,73 +60,43 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> So why can't that work similarly for unmaintained file systems? We could
-> even establish the rule that Linus should only apply patches to some
-> parts of the kernel if the test suite for unmaintained file systems
-> succeeded without regressions. And only accept new file system code if a
+> I think we've got too deep down into "how to fix things" but I'm not 100%
 
-Reading this mail scared me. The list of reiserfs bugs alone is crazy.
-And syzbot keeps piling them on. It can't even succeed an xfstests run
-without splatting all over the place last I checked. And there's no
-maintainer for it. We'll pick up patches if we get sent them but none of
-the vfs maintainers and reviewers has the bandwith to take care of
-rotting filesystems and their various ailments.
+We did.
 
-Yes, we should have a discussion under what circumstances we can remove
-a filesystem. I think that's absolutely what we should do and we should
-nudge userspace to stop compiling known orphaned filesystems. If most
-distros have stopped compiling support for a filesystem then I think
-that's a good indication that we can at least start to talk about
-how to remove it. And we should probably tell distros that a filesystem
-is orphaned and unmaintained more aggressively.
+> sure what the "bug" actually is. In the initial posting Mikulas writes "the
+> kernel writes to the filesystem after unmount successfully returned" - is
+> that really such a big issue? Anybody else can open the device and write to
+> it as well. Or even mount the device again. So userspace that relies on
+> this is kind of flaky anyway (and always has been).
 
-But even if we decide or it is decided for us that we have to keep such
-old filesystems in tree forever then the contract with userspaces must
-be that such filesystems are zombies. They should however not become an
-even bigger burden or obstacle to improve actively maintained
-filesystems or the vfs than they are already.
+Yeah, agreed.
 
-I think it's also worth clarifying something:
-Right now, everyone who does fs wide changes does their absolute best to
-account for every filesytem that's in the tree. And for people not
-familiar or even refusing to care about any other filesystems the
-maintainers and reviewers will remind them about consequences for other
-filesystems as far as they have that knowledge. And that's already a
-major task.
+> namespaces etc. I'm not sure such behavior brings much value...
 
-For every single fs/ wide change we try to make absolutely sure that if
-it regresses anything - even the deadest-of-dead filesystems - it will
-be fixed as soon as we get a report. That's what we did for the
-superblock rework this cycle, the posix acl rework last cycles, the
-timestamp patches, the freezing patches.
+It would in any case mean complicating our code for little gain imho.
+And as I showed in my initial reply the current patch would hang on any
+bind-mount unmount. IOW, any container. And Al correctly points out
+issues with exit(), close() and friends on top of that.
 
-But it is very scary to think that we might be put even more under the
-yoke of dead filesystems. They put enough of a burden on us by not just
-having to keep the filesystems itself around but quite often legacy
-infrastructure and hacks in various places.
+But I also hate the idea of waiting on the last umount because that can
+also lead to new unexpected behavior when e.g., the system is shutdown
+and systemd goes on to unmount all things and then suddenly just hangs
+when before it was able to make progress.
 
-The burden of unmaintained filesystems is very very real. fs/ wide
-changes are very costly in development time.
+And returning EBUSY is tricky as well as we somehow would need to have a
+way to refcount in a manner that let's us differentiate between last-
+"user-visible"-superblock-reference" and
+last-active-superblock-reference which would complicate things even more.
 
-> test suite that is easy to integrate in CI systems exists (e.g.
-> something smaller and faster than what the ext4 and xfs developers run
-> regularly, but smaller and faster should likely be good enough here).
+I propose we clearly document that unmounting a frozen filesystem will
+mean that the superblock stays active at least until the filesystem is
+unfrozen.
 
-The big question of course is who is going to do that? We have a large
-number of filesystems. And only a subset of them is integrated or even
-integratable with xfstests. And xfstests is the standard for fs testing.
+And if userspace wants to make sure to not recycle such a frozen
+superblock they can now use FSCONFIG_CMD_CREATE_EXCL to detect that.
 
-So either a filesystem is integrated with xfstests and we can test it or
-it isn't and we can't. And if a legacy filesystem becomes integrated
-then someone needs to do the work to determine what the baseline of
-tests is that need to pass and then fix all bugs to get to a clean
-baseline run.
-
-That'll be a fulltime job for quite a while I would expect.
-
-Imho, mounting an unmaintained filesystem that isn't integrated with
-xfstests is a gamble with your data.
-
-(And what really I would rather see happen before that is that we get
-stuff like vfs.git to be auto-integrated with xfstests runs/CI at some
-point.)
+What might be useful is to extend fanotify. Right now we have
+fsnotify_sb_delete() which lets you detect that a superblock has been
+destroyed (generic_shutdown_super()). It could be useful to also get
+notified when a superblock is frozen and unfrozen?
