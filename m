@@ -2,57 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 90F4E797847
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Sep 2023 18:45:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7754C797922
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Sep 2023 19:03:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232001AbjIGQpZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Sep 2023 12:45:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56706 "EHLO
+        id S237144AbjIGRDU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Sep 2023 13:03:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233378AbjIGQpX (ORCPT
+        with ESMTP id S238087AbjIGRDT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Sep 2023 12:45:23 -0400
+        Thu, 7 Sep 2023 13:03:19 -0400
 Received: from mail-yw1-x1149.google.com (mail-yw1-x1149.google.com [IPv6:2607:f8b0:4864:20::1149])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC3DF1FD2
-        for <linux-fsdevel@vger.kernel.org>; Thu,  7 Sep 2023 09:44:51 -0700 (PDT)
-Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-594e1154756so12453437b3.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Sep 2023 09:44:51 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24FDC1BF4
+        for <linux-fsdevel@vger.kernel.org>; Thu,  7 Sep 2023 10:02:55 -0700 (PDT)
+Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-5925fb6087bso13198217b3.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Sep 2023 10:02:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1694105027; x=1694709827; darn=vger.kernel.org;
+        d=google.com; s=20221208; t=1694106108; x=1694710908; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=dUxh38L3ayN3NN/LJvYi1H0xhcT6Df4QILSfV/pw6ZE=;
-        b=JWzY8KHa4FYnYYKu2BE/wSTG6k6HBkTZREOJ7XAPx8epBIKwU/CzUDij+5LdIxNgZ/
-         M62IzIzUFUHsipwDfI9PG9bYbJpLI3ESl/6V+BsDJQn/r27ABnZdhqhZmBVPniUGCIy5
-         CR1q6S/SI+/COSGifJGUqgwuLGk02QaWsPK9dr0eXCmZoc/8D5nB/ln8vtvvp0E9UPn5
-         D+24XKoU+bjk1cQ1GthQM3Rk7vV7TdUcqvzzc/og5hGrtrotdxcS6V09JxA4KqyFcHC5
-         JCzRpRqUr8gF7Yn4P3vUlPQtPqDQ+VxRukFQJ0z2gffEbgJxhDELgYkQrKD/hGk8cKoA
-         COcg==
+        bh=T/WqaSkwJ/wvgxciY6xG5yXoKMXUwDNF7ZMhyjAl3dg=;
+        b=Zoy6/8frpbrylGHHAyT4djGKi0qnFo0jUZd2+XPWBD6z1XIyolDLfvBNphbUkBNANE
+         it/PHT39kDqyUKMwB68VeEhJwCGAenL62FVbSK6LxTMrhA+X4DdkD2ZuXInRW2Aa2Lpl
+         QQDoo+9uB26925ngpVkriw93BfD84r/jud5y27t1IPCacek0N5V31eS1T1PifUfyBiy0
+         9qsVO3v9/ey4x1rhxyZzbJ7p9uOqNQiT8gXjmyAPzQu9isDDZ4dPWYQukNAluUqSnVur
+         86bFn5cYF87NQ5TPtWLCZfT5w4lk1UoIvaMhnKldED1n8rDHKY1qXCfemfVvpm2FD38v
+         lEUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694105027; x=1694709827;
+        d=1e100.net; s=20221208; t=1694106108; x=1694710908;
         h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=dUxh38L3ayN3NN/LJvYi1H0xhcT6Df4QILSfV/pw6ZE=;
-        b=R4DlW+nYT/vyokMrQo2zTwAMbkBjdas2PzcOx3J05ZrvcfxG77Q3UGIdu0FdQPU0vu
-         /PNVjX4Mr6YmwePsnvGy0A22LwLaAFocQwJkVBAOhScYrC2MkBcKPz7lI3PHCRQb7MuD
-         Om5FChMb7QvyuswVs7X66JlEHBNU6l4ZWdyv4AyiMPpru2QMIBaoSVog0VzIHLrFNJlL
-         2mYAfnvkqEo2GpKrseffA1ppFtl0rk8432JYe76iRCVaJ7GLmN7WEpInMgy4n/xM98ja
-         1kaPrIMejgkk8yqtTQt2iSXeq8NU+NB3Cac3WQtIpxBOhKDRAjFc7sqRHh49vfkuNHbt
-         LWDA==
-X-Gm-Message-State: AOJu0YyDkBkluEuUdN0deH7ApBttAtR81rwpV+qBYPjb2J8+E9MJHvdF
-        P53av5YgXdcuIGUYqDihgdRPf64qw8e4fBFGc0Xkqpn2NgS0GPv30tOQgGOzjhvYizY+T3juahg
-        VDv/ef6joDr7KtMp1UVEss6cSOyhKtU+OaPzzFPOmfrX/2niZOF3mDuVWvBvseS9CIT/gu6016D
-        28
-X-Google-Smtp-Source: AGHT+IFcp+tGWlVPIKf8K18rRH9EtPFpnkl5HnM0JLtjKuzxX6WRGnUfrh6BQq0EpOEUnXJYCYRHnfDsKqDEyg==
+        bh=T/WqaSkwJ/wvgxciY6xG5yXoKMXUwDNF7ZMhyjAl3dg=;
+        b=UxFUKeC6IReDTgB5l/CdeRoD4xbCDuG09E+bQDfL7/qUe54iLIliBj+TM/HkbHmPU6
+         jlsvoZSGgLXCUGprgIjhgqBQ1JxUzTiwB2SfNCGFOZWlUdf39j78frsTQvbvM805MrSI
+         3oEKUzdjMzdnWwRaOCRa0mBeWc5HERQUYGReG3lepOSWf7ETbwDoIyctXTPBSGDhF80X
+         85flZ2U4MgLH30YxQP5GXiBNrkogVJsq93uDa6+g37HrlQpJcohvkk/gpETR+MIV3r7+
+         UlSzLAYViczZilFbvqwUAMTYsaB2D+IRVM1kSdGjPxHgk4n+je2xKR816VUG0qHwqrcx
+         SzMg==
+X-Gm-Message-State: AOJu0Yzp5RnFKym7TXL8IbtaVz0ysK7Pzs2nodqrunxMCm1vrZyl7T26
+        xXy2RACmoA66m1XU+CoJ1TG3E4e5yLLALeboW9kqQhkZXbMV7v/hhiI+okvKfi8PAuRATq0+hHw
+        ewntLN3nR40n8j+UzYYRDYEVGqw0Q8I8Yx2IJkY3f6tCtOGMTsQIc6ANH3F2DmBH+02chncDrQI
+        pv
+X-Google-Smtp-Source: AGHT+IE2Uit7N3S9SR5qftU0oDHFbdy+GAjL3k4RaTzFuKFUAbWpfVTvea/hgEAbk4PmwL4jjFvknP/BCQlIsg==
 X-Received: from jiao.c.googlers.com ([fda3:e722:ac3:cc00:2b:7d90:c0a8:10f3])
- (user=jiaozhou job=sendgmr) by 2002:a81:ac02:0:b0:589:a644:d328 with SMTP id
- k2-20020a81ac02000000b00589a644d328mr2946ywh.9.1694105027126; Thu, 07 Sep
- 2023 09:43:47 -0700 (PDT)
-Date:   Thu,  7 Sep 2023 16:43:41 +0000
+ (user=jiaozhou job=sendgmr) by 2002:a81:b708:0:b0:573:8316:8d04 with SMTP id
+ v8-20020a81b708000000b0057383168d04mr5076ywh.4.1694106108565; Thu, 07 Sep
+ 2023 10:01:48 -0700 (PDT)
+Date:   Thu,  7 Sep 2023 17:01:46 +0000
 Mime-Version: 1.0
 X-Mailer: git-send-email 2.42.0.283.g2d96d420d3-goog
-Message-ID: <20230907164341.1051637-1-jiaozhou@google.com>
-Subject: [PATCH v4] efivarfs: Add uid/gid mount options
+Message-ID: <20230907170146.1055954-1-jiaozhou@google.com>
+Subject: [PATCH v5] efivarfs: Add uid/gid mount options
 From:   Jiao Zhou <jiaozhou@google.com>
 To:     Linux FS Development <linux-fsdevel@vger.kernel.org>
 Cc:     Jiao Zhou <jiaozhou@google.com>, Ard Biesheuvel <ardb@kernel.org>,
@@ -86,14 +86,18 @@ Changelog since v2:
 - Format the patch description.
 
 Changelog since v3:
-- Use sizeof(*sfi) to allocate memory to avoids future problems if sfi ever changes type.
 - Add gid and uid check to make sure that ids are valid.
 - Drop the indentation for one block.
+- Use sizeof(*sfi) to allocate memory to avoids future problems if sfi ever changes type.
 
+Changelog since v4:
+- Fix the use of sizeof.
+
+---
  fs/efivarfs/inode.c    |  4 +++
  fs/efivarfs/internal.h |  9 +++++
- fs/efivarfs/super.c    | 75 ++++++++++++++++++++++++++++++++++++++++--
- 3 files changed, 85 insertions(+), 3 deletions(-)
+ fs/efivarfs/super.c    | 74 ++++++++++++++++++++++++++++++++++++++++--
+ 3 files changed, 84 insertions(+), 3 deletions(-)
 
 diff --git a/fs/efivarfs/inode.c b/fs/efivarfs/inode.c
 index db9231f0e77b..06dfc73fda04 100644
@@ -134,7 +138,7 @@ index 8ebf3a6a8aa2..c66647f5c0bd 100644
  	efi_char16_t  VariableName[EFI_VAR_NAME_LEN/sizeof(efi_char16_t)];
  	efi_guid_t    VendorGuid;
 diff --git a/fs/efivarfs/super.c b/fs/efivarfs/super.c
-index e028fafa04f3..c53cebf45ac5 100644
+index e028fafa04f3..ba14736ebae0 100644
 --- a/fs/efivarfs/super.c
 +++ b/fs/efivarfs/super.c
 @@ -8,6 +8,7 @@
@@ -145,7 +149,7 @@ index e028fafa04f3..c53cebf45ac5 100644
  #include <linux/module.h>
  #include <linux/pagemap.h>
  #include <linux/ucs2_string.h>
-@@ -24,6 +25,22 @@ static void efivarfs_evict_inode(struct inode *inode)
+@@ -24,6 +25,21 @@ static void efivarfs_evict_inode(struct inode *inode)
  	clear_inode(inode);
  }
  
@@ -155,7 +159,6 @@ index e028fafa04f3..c53cebf45ac5 100644
 +	struct efivarfs_fs_info *sbi = sb->s_fs_info;
 +	struct efivarfs_mount_opts *opts = &sbi->mount_opts;
 +
-+	/* Show partition info */
 +	if (!uid_eq(opts->uid, GLOBAL_ROOT_UID))
 +		seq_printf(m, ",uid=%u",
 +				from_kuid_munged(&init_user_ns, opts->uid));
@@ -168,7 +171,7 @@ index e028fafa04f3..c53cebf45ac5 100644
  static int efivarfs_statfs(struct dentry *dentry, struct kstatfs *buf)
  {
  	const u32 attr = EFI_VARIABLE_NON_VOLATILE |
-@@ -64,6 +81,7 @@ static const struct super_operations efivarfs_ops = {
+@@ -64,6 +80,7 @@ static const struct super_operations efivarfs_ops = {
  	.statfs = efivarfs_statfs,
  	.drop_inode = generic_delete_inode,
  	.evict_inode = efivarfs_evict_inode,
@@ -176,7 +179,7 @@ index e028fafa04f3..c53cebf45ac5 100644
  };
  
  /*
-@@ -225,6 +243,45 @@ static int efivarfs_destroy(struct efivar_entry *entry, void *data)
+@@ -225,6 +242,45 @@ static int efivarfs_destroy(struct efivar_entry *entry, void *data)
  	return 0;
  }
  
@@ -222,7 +225,7 @@ index e028fafa04f3..c53cebf45ac5 100644
  static int efivarfs_fill_super(struct super_block *sb, struct fs_context *fc)
  {
  	struct inode *inode = NULL;
-@@ -270,11 +327,22 @@ static int efivarfs_get_tree(struct fs_context *fc)
+@@ -270,11 +326,22 @@ static int efivarfs_get_tree(struct fs_context *fc)
  }
  
  static const struct fs_context_operations efivarfs_context_ops = {
@@ -235,8 +238,8 @@ index e028fafa04f3..c53cebf45ac5 100644
  {
 +	struct efivarfs_fs_info *sfi;
 +
-+	sfi = kzalloc(sizeof(struct efivarfs_fs_info), GFP_KERNEL);
-+	if (!sizeof(*sfi))
++	sfi = kzalloc(sizeof(*sfi), GFP_KERNEL);
++	if (!sfi)
 +		return -ENOMEM;
 +
 +	sfi->mount_opts.uid = GLOBAL_ROOT_UID;
@@ -246,7 +249,7 @@ index e028fafa04f3..c53cebf45ac5 100644
  	fc->ops = &efivarfs_context_ops;
  	return 0;
  }
-@@ -291,10 +359,11 @@ static void efivarfs_kill_sb(struct super_block *sb)
+@@ -291,10 +358,11 @@ static void efivarfs_kill_sb(struct super_block *sb)
  }
  
  static struct file_system_type efivarfs_type = {
@@ -262,4 +265,3 @@ index e028fafa04f3..c53cebf45ac5 100644
  static __init int efivarfs_init(void)
 -- 
 2.42.0.283.g2d96d420d3-goog
-
