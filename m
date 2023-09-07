@@ -2,50 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F9027976AA
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Sep 2023 18:14:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BA6B79769D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Sep 2023 18:13:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231911AbjIGQOS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Sep 2023 12:14:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42138 "EHLO
+        id S238962AbjIGQNw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Sep 2023 12:13:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239113AbjIGQOB (ORCPT
+        with ESMTP id S241570AbjIGQNL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Sep 2023 12:14:01 -0400
+        Thu, 7 Sep 2023 12:13:11 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF608284CF;
-        Thu,  7 Sep 2023 08:47:40 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CA45C4E663;
-        Thu,  7 Sep 2023 15:44:13 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82B5CBE43;
+        Thu,  7 Sep 2023 08:48:15 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6746CC4E67B;
+        Thu,  7 Sep 2023 15:44:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694101455;
-        bh=5UamJ9ke8+7Uvtdu9TDUqApCfgI2GisAxIGGy4At/hI=;
+        s=k20201202; t=1694101469;
+        bh=/90n+yBHs+nBlvmbMDViQCzRtfY37asFoB0k3l1ZX7U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SHNJtSIJlr8nRhN6424p6M1z36bwSCy/n6t+8Sd3Xj5nXy+lclogWlkhUSD8w2x5C
-         o9GVP7pVh0ZAGTcF+Efo7toK7NvX9VIg+luGDwEy5c1VDSnpWBtyW3MbZiBuBXwY1T
-         d7srHyLnnDbpLydGwwlaoAu5ebOIbJIYHHuwKzf/SU2YVeBiXbiHpX6qSRC1KkxPpz
-         34/aJnEOVovQ84Cd3uB9cNZ7xzeXDzF6KivAqhUHkiT6Y5MZ3x38vvfg14qJnHnK4T
-         kw56ZhTSohMQnMtuDDjHXMKT0LrEmMxupKvz6Oaq0k76gMOEBEBLobOBsxpYqN1KPU
-         IHjdZt4Oc9D0g==
+        b=bgixuuQNyTN3cYUDKPhhQxUebaIjXKlciKPEZzbXVg8dP0blMa6QxtMpdz1bJWcKm
+         9LontNFd+O/xXd8nsTAk+9UjSqnNutl4kIGb6eXOAfw7I4219i16at+UjKPeHlNiIN
+         argauBNoWhZgjhblWbqhDzc1sso6/DDz9SxmGJvQYxHioX60bI3LccRUQLMUlHJzD/
+         qnnyRJQDShdcMypD/D2Kg1JR97tzypVWhed35KReSERqk6fyR60K/rRA6zIqNdfwX3
+         ZPJHG+tWbEbEs0brhgIcDXJMQcn9B06T7XJOGXILMLvZ6LaEkvh07HkeKUp8kil9lf
+         11vS79+Qhz+3Q==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Will Shiu <Will.Shiu@mediatek.com>,
         Jeff Layton <jlayton@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, chuck.lever@oracle.com,
-        viro@zeniv.linux.org.uk, brauner@kernel.org,
-        matthias.bgg@gmail.com, linux-fsdevel@vger.kernel.org,
+        Sasha Levin <sashal@kernel.org>, viro@zeniv.linux.org.uk,
+        brauner@kernel.org, chuck.lever@oracle.com, matthias.bgg@gmail.com,
+        linux-fsdevel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.15 3/3] locks: fix KASAN: use-after-free in trace_event_raw_event_filelock_lock
-Date:   Thu,  7 Sep 2023 11:44:08 -0400
-Message-Id: <20230907154408.3421918-3-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 3/3] locks: fix KASAN: use-after-free in trace_event_raw_event_filelock_lock
+Date:   Thu,  7 Sep 2023 11:44:23 -0400
+Message-Id: <20230907154423.3422014-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20230907154408.3421918-1-sashal@kernel.org>
-References: <20230907154408.3421918-1-sashal@kernel.org>
+In-Reply-To: <20230907154423.3422014-1-sashal@kernel.org>
+References: <20230907154423.3422014-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.15.131
+X-stable-base: Linux 5.4.256
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
@@ -117,10 +117,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/fs/locks.c b/fs/locks.c
-index 881fd16905c61..4899a4666f24d 100644
+index b8a31c1c4fff3..90f92784aa554 100644
 --- a/fs/locks.c
 +++ b/fs/locks.c
-@@ -1339,6 +1339,7 @@ static int posix_lock_inode(struct inode *inode, struct file_lock *request,
+@@ -1338,6 +1338,7 @@ static int posix_lock_inode(struct inode *inode, struct file_lock *request,
   out:
  	spin_unlock(&ctx->flc_lock);
  	percpu_up_read(&file_rwsem);
@@ -128,7 +128,7 @@ index 881fd16905c61..4899a4666f24d 100644
  	/*
  	 * Free any unused locks.
  	 */
-@@ -1347,7 +1348,6 @@ static int posix_lock_inode(struct inode *inode, struct file_lock *request,
+@@ -1346,7 +1347,6 @@ static int posix_lock_inode(struct inode *inode, struct file_lock *request,
  	if (new_fl2)
  		locks_free_lock(new_fl2);
  	locks_dispose_list(&dispose);
