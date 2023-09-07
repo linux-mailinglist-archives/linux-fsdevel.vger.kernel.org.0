@@ -2,61 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E2B6D797AD8
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Sep 2023 19:53:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA1857977D6
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Sep 2023 18:35:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237042AbjIGRxC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Sep 2023 13:53:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52546 "EHLO
+        id S231835AbjIGQf1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Sep 2023 12:35:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38260 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229710AbjIGRxC (ORCPT
+        with ESMTP id S234869AbjIGQf0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Sep 2023 13:53:02 -0400
+        Thu, 7 Sep 2023 12:35:26 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CED31700;
-        Thu,  7 Sep 2023 10:52:39 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85E06C433D9;
-        Thu,  7 Sep 2023 16:33:58 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2EA5E57;
+        Thu,  7 Sep 2023 09:34:58 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 724F9C433CB;
+        Thu,  7 Sep 2023 16:33:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694104439;
-        bh=Tl7vhegXVwuJ4ZvlyXuRvL1PMLNp1QhwYV2qByndv0M=;
-        h=From:Subject:Date:To:Cc:From;
-        b=LyHzwRhW/1WH8vGEjolJBeAxo+0fnV54+EKtfS7fbcWru4PkPuic4KaNfEqOOHvo+
-         UMf9YAvH1RllPXOjbZQpYuzNI552aIcmiGGsyD8x0cLUoEMwXraz9kjmbfcXMD0FZl
-         rKQicb7RlhznhMKqRQk3EoeMGsMl2HjASoF5GK2jGgJty2REhwxmPUncErJlNNmkfm
-         VMeGlQ9454qnCCGZT9OjQtNLvTsdkPv2FxYlAXK7bemuYZ4y8MKegFMNYT9ort1H+p
-         zSVEGZNmls9dWhxLa7BsgCQbrbT/1P+swRvoUI1DPE88hQJf7SXsdLd6lfx/HVvXdR
-         CwHMSmyn+ArXg==
+        s=k20201202; t=1694104440;
+        bh=JP9tUiLZ6T/k5I6nBBltrDdOGnjoSsJgaiX+JXKr3so=;
+        h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+        b=hdFbPPEzdSggibPtiqud6tUTPGMrh4MM86UWNxl9U3J28kRJoe+NUIQq+qzv2mje6
+         Ja2aq6qq2GkG+BDPQWzl2bIZr2AYMmYYX0dvu9txwAR4+BmCRL6iQAy+l5BS2KHf9R
+         L7gsz0OgS9poH0dwdoqLJSmHoBhTg83wfdN8XiSGVTxJwtQqvmVnNieX3WtGq7Qxi7
+         FCTHt945til2Bt8OkSEcyzDaickDMZjoM49bzDucTwOY4Iex0VDRJpj99XZB9yMrvc
+         7HL/KThu0iddy0hyBBpdZIX105Oq1xfP4aj41OqLFYN4/CHe1Y3crJbtWHCWTcUgVc
+         WvJQz1IJXrm3A==
 From:   Jeff Layton <jlayton@kernel.org>
-Subject: [PATCH 0/2] fs: fixes for multigrain ctime code
-Date:   Thu, 07 Sep 2023 12:33:46 -0400
-Message-Id: <20230907-ctime-fixes-v1-0-3b74c970d934@kernel.org>
+Date:   Thu, 07 Sep 2023 12:33:47 -0400
+Subject: [PATCH 1/2] fs: initialize inode->__i_ctime to the epoch
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAGr7+WQC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI2MDSwNz3eSSzNxU3bTMitRi3dRkM2NDy+REA8OkVCWgjoKiVLAEUEN0bG0
- tAB/Kz5VdAAAA
+Message-Id: <20230907-ctime-fixes-v1-1-3b74c970d934@kernel.org>
+References: <20230907-ctime-fixes-v1-0-3b74c970d934@kernel.org>
+In-Reply-To: <20230907-ctime-fixes-v1-0-3b74c970d934@kernel.org>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
 Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
         kernel test robot <oliver.sang@intel.com>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1116; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=Tl7vhegXVwuJ4ZvlyXuRvL1PMLNp1QhwYV2qByndv0M=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBk+ft2JmbTYxfi47ZsnUhmwPG2XIyZJofSPLphP
- 9TqCH5nSyCJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZPn7dgAKCRAADmhBGVaC
- FVFfD/9dO1oz+QsPO5nQ9QVPnj3TUFlSi/iws7NHnnTbVApK4PtoR0eDkE4oTZsXh6LXeNvky++
- GxDGDgBDF7Q6pY6+zvH4juGZ2ovrZcgruV0PcqgbJ2+ktLIsxHeFnSWyU1qLjrIQGyJXnXlPVB9
- W8861z/XlNUNTJaLiNawfKts7Td414e7psyj+SrZDi5Om5HvCz+smue7KUiwXwwYaRd5OGv3ikp
- gb7pdoY4yIwlIJi0h2PlaEjWEYoaZpXwVATrg4Uykr3/5S3sVOi7ddeLPzLSFisaLj2XxU1gwTI
- HVUQaLk9EP1hS+FOsv09z0tz2qNp4aFLrBCf/dZvZFwcfQRwWxyl9FjWivJJHj711rRzHW2EsuW
- 4DQv6nT+WPrJkpTZot2DVetRN6yQpHS9mqNBLzOwkRoP00wCvmVPKy2ZVfnk3miCR51MbiWycPe
- QbwdQdfEaK1SH6gG3iC1x63Od4g+SCC2hgznD6DpE4iqT98C4zlLAg3TQvBlGfxT232+ikl4Ps+
- TYkJ6a5kSi10qPt9j4QBKa5AEd6iYtxVGtnvlosOqOBQWv+cBGa1vkM/f/PqPrBGho9xzci5ksS
- gILN0yMLurzYelhEpDVw+CP9Hiy083RmP6JzkSLSC0XK8wDAcIZmTYEATPmfZntc2q3CVjeo8pd
- ZWI7SNFEWgAvIww==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1130; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=JP9tUiLZ6T/k5I6nBBltrDdOGnjoSsJgaiX+JXKr3so=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBk+ft2F+0r47Otgg6Kb6XEIaO9dJBYAFU8gjygE
+ 8uEhYSQQs2JAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZPn7dgAKCRAADmhBGVaC
+ Fc5OD/0bSZpmszFw2mR0jS9vvjyJK3F4b0SARjnyo1q9za9QbR3U8c8lrWzVlySgIRm6ISqeg+C
+ irV1RBOgwNkJRO3/EnwPLcA0K8UAN1VzTC2pn9M7qy6uaxpRlBsFN67vJcdj6I+lmO2QWeTtkkf
+ lMZqAWOh2lR7jc7LqoFT7/Q0hLd0mWFiqtsw2SsSUNj7kIJ8O/QRbpXEfdwPS2Kp4vXtxBFZ34s
+ uyVJFb9N2ZMnDUJiP6cHCnJ8zkAd/ggrB3G5Ea/ydtkv94vSMnJdmr2JYmnUp4QyrNG0qSID0YH
+ XYiQZtdNX8+RGKgBqo4yvR2jrzy8nYAdtXJfejw++Yg22v9gtG26j2eXD9TZWFrYg9w3iPns1mz
+ WRGVVRFZTlfDxJnZggpAYC/S1kCq9xgc4+gFVwmJYfELyIkG74thIdPu8+RSFGQIfTzarjCCytX
+ LoO0DjJMuDA7fcIq7CHGvrn6XLG7AFr1K13ECVagnzBxBXalayHS+ynyi6Al8lW+JjwnIwwd0d8
+ DbnQCw/H+jM1pllv2qM00QHrq8zwnNekLI/jcZ9OojuPzfxmBby3hA+imSR8zeZdfwRasO7RNZC
+ twEjfkwQ5XzhrFa1e/DlzOrJC2JW/JAqjeXKtqoLrQ0YUIqE1KyW0qN8Aeb5BvS/kH42jezqvTp
+ kG2YAXIFgW/nmJw==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -69,34 +68,36 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The kernel test robot noted some test failures with the LTP mount03 test
-on tmpfs. From the test output, it looked like the atime had gone
-backward.
+With the advent of multigrain timestamps, we use inode_set_ctime_current
+to set the ctime, which can skip updating if the existing ctime appears
+to be in the future. Because we don't initialize this field at
+allocation time, that could prevent the ctime from being initialized
+properly when the inode is instantiated.
 
-One way this could happen would be for tmpfs to get a new inode from the
-slab that had a ctime that appeared to be in the future.
-inode_update_ctime_current would just return that time and then the
-mtime and atime would be set to the same value. Then later, the atime
-gets overwritten by "now" which is still lower than the garbage ctime
-value.
+Always initialize the ctime field to the epoch so that the filesystem
+can set the timestamps properly later.
 
-I've not been able to reproduce this on my test rig, so I'm not certain
-this fixes the problem that was reported. I'm hopeful though, so I've
-left the KTR tags in place.
-
+Reported-by: kernel test robot <oliver.sang@intel.com>
+Closes: https://lore.kernel.org/oe-lkp/202309071017.a64aca5e-oliver.sang@intel.com
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
-Jeff Layton (2):
-      fs: initialize inode->__i_ctime to the epoch
-      fs: don't update the atime if existing atime is newer than "now"
+ fs/inode.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
- fs/inode.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
----
-base-commit: 7ba2090ca64ea1aa435744884124387db1fac70f
-change-id: 20230907-ctime-fixes-ec6319ca01be
+diff --git a/fs/inode.c b/fs/inode.c
+index 35fd688168c5..54237f4242ff 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -168,6 +168,8 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
+ 	inode->i_fop = &no_open_fops;
+ 	inode->i_ino = 0;
+ 	inode->__i_nlink = 1;
++	inode->__i_ctime.tv_sec = 0;
++	inode->__i_ctime.tv_nsec = 0;
+ 	inode->i_opflags = 0;
+ 	if (sb->s_xattr)
+ 		inode->i_opflags |= IOP_XATTR;
 
-Best regards,
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.41.0
 
