@@ -2,184 +2,258 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 789D9797496
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Sep 2023 17:40:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F02079748E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Sep 2023 17:40:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236287AbjIGPkE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Sep 2023 11:40:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37768 "EHLO
+        id S234553AbjIGPjx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Sep 2023 11:39:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345171AbjIGPfG (ORCPT
+        with ESMTP id S245473AbjIGPgj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Sep 2023 11:35:06 -0400
-Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68AD21BC7;
-        Thu,  7 Sep 2023 08:34:31 -0700 (PDT)
-Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
-        by m0001303.ppops.net (8.17.1.19/8.17.1.19) with ESMTP id 387E4nPu028204;
-        Thu, 7 Sep 2023 07:29:51 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=message-id : date :
- subject : to : cc : references : from : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=s2048-2021-q4;
- bh=66brWm8vsT2xti/gCj0nsPvANoYcoNKWz3SSp99o9Js=;
- b=MGda45LGq5BjaeGCUq42M0o73YY+jXFqvKeB2dLi3C12i/sWm/Cc2pzU0Rw55RP90iDt
- eEHlX5XxG5Vb+BKlAQcZnETFCOP/LbgyuhRMC7nhWoZyL2bVsNc8wpRvMQ2MBNf8WVqo
- UlrXowmDmAU3OhDSuL1lcFaHhVW9u5+44TUhDebmYkTK4K6vvPqeIvq5JmVE5iVEbcaB
- ANnBHpyqDwUoJ8LqlmFvmCN+WpuNWShqTmjg1z9LzTBz43O4bDGqQUP1dlvcAii9aOTX
- dNkTb8eH5eWP9xZ9fxf6aAeYyKQkmoNUHweKUV2UWxXoXh37U0luPOjCivzyjVKBIuOc OQ== 
-Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2103.outbound.protection.outlook.com [104.47.55.103])
-        by m0001303.ppops.net (PPS) with ESMTPS id 3sy62h4wm6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 07 Sep 2023 07:29:51 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LRi6eBlQ95Dm5lDD7FrB8uv21CldbQRRSHVitEZHl9mx7K8ycezTTKcL9sW2OPd8ruFT5IaY3qwzeGVX9C99MKsxzxNChbEP/3d66Us04Nb2bACht2yzGzqJw5KJO1xZLbW9cyTLrzCDY0a/PFFiMghTqncbZW73t3q4S30XEQs2VKhYNTyy0btiX5e0LRfuimp+YeK360XZWkXEmiSiyUAhMMxGOff/PJTjb/vzaA9ugxZdBpVfUUI4jppacLyaMt6tH4624K/UZHW5QiD94/de6DJMT8S544aQ2VliQt2KWzgGKBhQtnZgaR77q0CHrS+sbsKl+ra7vGkH8CN8Yw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=66brWm8vsT2xti/gCj0nsPvANoYcoNKWz3SSp99o9Js=;
- b=YgoK08pjaFUj3s4fyXurIj5ccQ5xNZvnKDo4o9PuFSBwvwypXl/zfSAYHOhDGEmoU77JAYMbm5FVQH4HGDl/QkSOTpJr1KrLAq/1i6weKmWjvguKZ4PvXd+RnxnKNYGIqbsIpqbTIFQN4YHGNw0FtNSdzNACJQvt/UdPfJN4fkTIBdGldOLi4dXGtnOE1aQZNLzFSdvqYQAQ0CER7rl8s/GJF4kyOGq4c54qHaGaXWobFMyx+PYUg0IQzYBDceVn2rKpOgAFiiauGRC+uz0YeU+8CgWoaYcSGbCBjppLHXYnje7itSgy666eTQJBpqZRBCAYrPfRkhE2CP2NvpJONA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=meta.com; dmarc=pass action=none header.from=meta.com;
- dkim=pass header.d=meta.com; arc=none
-Received: from MN2PR15MB4287.namprd15.prod.outlook.com (2603:10b6:208:1b6::13)
- by IA1PR15MB5535.namprd15.prod.outlook.com (2603:10b6:208:418::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6745.33; Thu, 7 Sep
- 2023 14:29:48 +0000
-Received: from MN2PR15MB4287.namprd15.prod.outlook.com
- ([fe80::ee15:4e9e:105b:b27a]) by MN2PR15MB4287.namprd15.prod.outlook.com
- ([fe80::ee15:4e9e:105b:b27a%6]) with mapi id 15.20.6745.034; Thu, 7 Sep 2023
- 14:29:48 +0000
-Message-ID: <2aeebe7c-c769-a258-a2b7-c96816f97dbe@meta.com>
-Date:   Thu, 7 Sep 2023 10:29:45 -0400
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.15.0
-Subject: Re: [GIT PULL] bcachefs
+        Thu, 7 Sep 2023 11:36:39 -0400
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DFCE1FEF;
+        Thu,  7 Sep 2023 08:36:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=15P0rxQmct0H/vxkeXgXMbJboUm3Wf8cAnjBEyPzXk8=; b=mQjaRNaqtU6hXc+r/oaKH0ipIj
+        yK9pXs0w+8uqMI5SYGjLaaglGoQoAemOFBz/kqBuRjnvw4wxrFrWAJ4Nlt+q3TNlW97LxTGYcL0zw
+        f09VYyFofiiipJYvVQjyD6vPrboCxydNB+yLRApcltA4paVzAaMWbCP2pIv5tIBSKafCppXeP6+WQ
+        tZdPgl32xnBVtPJhLXKo5pYKp9zZmsUDdyeU10K9W8jvykreVx7wcakPoKD3db7IRf96UdAQJhATH
+        fvi79wYjyuOOGG0fiWS3tR+/jcVGiGOspg8g3X/9NJqA7IJRdWfjNcLHFsNbN0y8ERoZdT3iIU45D
+        PF1D33Rw==;
+Received: from [179.232.147.2] (helo=[192.168.0.5])
+        by fanzine2.igalia.com with esmtpsa 
+        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+        id 1qeGaa-000YCI-PE; Thu, 07 Sep 2023 17:06:36 +0200
+Message-ID: <e73ba527-52e8-4795-a2e6-33a9298a58a1@igalia.com>
+Date:   Thu, 7 Sep 2023 12:06:27 -0300
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.0
+Subject: Re: [PATCH V3 2/2] btrfs: Introduce the single-dev feature
 Content-Language: en-US
-To:     Kees Cook <keescook@chromium.org>,
-        Kent Overstreet <kent.overstreet@linux.dev>
-Cc:     Nathan Chancellor <nathan@kernel.org>,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-bcachefs@vger.kernel.org
-References: <20230903032555.np6lu5mouv5tw4ff@moria.home.lan>
- <20230906222847.GA230622@dev-arch.thelio-3990X>
- <202309061658.59013483F@keescook>
-From:   Chris Mason <clm@meta.com>
-In-Reply-To: <202309061658.59013483F@keescook>
+To:     Anand Jain <anand.jain@oracle.com>, linux-btrfs@vger.kernel.org
+Cc:     clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
+        linux-fsdevel@vger.kernel.org, kernel@gpiccoli.net,
+        kernel-dev@igalia.com, david@fromorbit.com, kreijack@libero.it,
+        johns@valvesoftware.com, ludovico.denittis@collabora.com,
+        quwenruo.btrfs@gmx.com, wqu@suse.com, vivek@collabora.com
+References: <20230831001544.3379273-1-gpiccoli@igalia.com>
+ <20230831001544.3379273-3-gpiccoli@igalia.com>
+ <f700b53e-328d-cc69-937f-e4b8bfd8c37d@oracle.com>
+From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+In-Reply-To: <f700b53e-328d-cc69-937f-e4b8bfd8c37d@oracle.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MN2PR19CA0028.namprd19.prod.outlook.com
- (2603:10b6:208:178::41) To MN2PR15MB4287.namprd15.prod.outlook.com
- (2603:10b6:208:1b6::13)
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR15MB4287:EE_|IA1PR15MB5535:EE_
-X-MS-Office365-Filtering-Correlation-Id: 10d64d95-acc0-49c9-871b-08dbafaee3b7
-X-FB-Source: Internal
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: wShZH0ryXQYval86+Vkqm+GM31S5BMnljFbSBHDW0KKHmRdVCVs7t5bWO1XEpOi9STpzMUaOPcuzB6YsqNIkdothErsj43rTO0UbDhZCQpYluq5fEYNLjPXNcorK3ZwjfsogCLaJdBOb+HZ+7kLeXXF4b0R8M99Adw+yCtd5GhjK1GW+ncQEQVeOBRBTd3oZ3albqUhBu+cgILWtf6qmFF1Zax5PP9Y/XsAJCAxa3+ExMzRiynXDCseuq1EvKXkCTnu6ncK2zsH4mHRbK9pEzmPFFyTJkoTMmIMW+hOUYt8GmO8PppD3Z8yPM/z+D2ggSMtazrR6zmHjQCorcPg5uVTqATU2QVWvOCIeW9HqqmFwIKndH1Z26HY8T3TCHUM8LL/lx/n6q2v2g4SWBkjqxt1UN5J7FsL+uyvYf7Fu6RDNnsocTKkxTzmyIVxnF46Tmw+midOiJvJiRDuABurLqzbtax+PWlAXtx/Lg/UCTpjArOFQSdlMUreZuJ+UTHk0M0e2cfxyjjOIoFWLBMCiNIPVrJs+Wrof1AM+0Z0DA2NcB8GgEj2rTsFHWRzGtNixOf8h7h7g9iU4hlIXaqoUY2BRQ5Qo5LmQu4q+FaHQi8PGdXastAS+HeSh9deIcJIlfrgj2qRei9Fr1ndIKvCO+A==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR15MB4287.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(346002)(396003)(366004)(136003)(376002)(39860400002)(1800799009)(451199024)(186009)(41300700001)(6506007)(31696002)(478600001)(6666004)(86362001)(38100700002)(2616005)(83380400001)(53546011)(6512007)(6486002)(66476007)(110136005)(316002)(66946007)(66556008)(2906002)(36756003)(8936002)(5660300002)(31686004)(8676002)(4326008)(45980500001)(43740500002);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dEl1QWc1Q3N3K0xMNlBqQUVqbEZPWjRrWFJ5L1hwN2FsWEVWSG9qTGtzNzJt?=
- =?utf-8?B?MDZlTWQ4eGtKSkdBOUVzYTdWV3E2K013ajBEZFkyWXM2ekFNc2d2Z1ZFSE01?=
- =?utf-8?B?UmpNVWxXZkFmVlhBdS8zR25uZzQ5ZDBaOWE0WlFHc3kzWUJoNGIvT2NxRjVO?=
- =?utf-8?B?Yk0wZFhZdklScGh3U05DeGZIa0ROVnJ4TzdJU25wZ1pJajN3MGZBakZXMzhl?=
- =?utf-8?B?clBVWnZzTGJtMGVCMmlPV2xDblV5dk43TW9FdW1RVmFHL1M2ZXB4VWFEMGFQ?=
- =?utf-8?B?M29MNTRhSys3cnVab3J1T01jUExvL1B2M1BMUVhGY0RMeUFjOXh0cTEySnl3?=
- =?utf-8?B?dDBNSEJ1LzlGeDR5ZzRhanpqWjlVa0VSUEgrQTFMRlB6SS8xRU5odUFKRThQ?=
- =?utf-8?B?MWNBR3dHQndmeGI2NExJc0xSTks5OEhzSURMZ2czLzluMWJWS21jZGw2OEFx?=
- =?utf-8?B?aEtwek1lSzRIeEZhRjBSRkFPc1RCR2NpOVIrc3ltai9oeE5URGpVanZwK2FP?=
- =?utf-8?B?dG1HUWwrWDlLNVduaFd6VWJqQmxKUVBON29SM3hXbFhNZ0RLd00xYXVxV1pM?=
- =?utf-8?B?cE5ZZWNEREE5WG5DS3h0MlBmRmI4R0daQll1UnZsQjJuaVc2VmN2UTZNdHNv?=
- =?utf-8?B?djJESi9iRERHOUdFV2h5SlMzdUdwVDdvN0EyVmlzR0ljbit5RlcrSzZSMFlP?=
- =?utf-8?B?Tk5VeEdleTdZZEJrZmhHK2ZSSjhzN3g4YUlzNUpNZ0ZyelEycmNWbng1UDd3?=
- =?utf-8?B?amIrV1VuUDErTGdweUpXdUdyWGthRzc5U042MVpacmVGS2I3L1BSZXQzWExZ?=
- =?utf-8?B?ZGdlekFHQW5TY0l2UzlIMndRMThHUG51ektnMW5LNXRHYlo1SE1qQkUzcHk2?=
- =?utf-8?B?ZHdnNWdEOGhwUDVrSXQwY0tFUEZLVWFqYUVoT1V1Uk9zWUUwNkdjK0gvcDNt?=
- =?utf-8?B?SjA4SGZTMUJ6UGw2VWJxbUVsdjRLU2RNWmF2aDhIdml2NFo4NXdzYTNqQ29E?=
- =?utf-8?B?UU8vVHlXNy9HL3BLd2s3RElqUGNXN1cxc2s3a2Erc1RIUWpmKzAvY21LRWtm?=
- =?utf-8?B?UlJ2Y0x4UXcvTDROcTExZExUc0g2b2ZDaGdmUlo3ODBLVEo4NzBVZENkOTV4?=
- =?utf-8?B?bkJHSHd2aWhXYWw1VitiQ01ML3FHWTJET0NkajlOMk4zc0NOZHc0T2pjcWgv?=
- =?utf-8?B?ckVIYlBPZU9wTERFdzNDSUxRd0I5WG00elB4bEZJNmtUMUZXM1pvTVpEK0JB?=
- =?utf-8?B?WUFqaDY1MnNWSVdyZWhYZW9YcGVpL3VjOWpURUJBclgydW5aV0RIVWRwajRT?=
- =?utf-8?B?TEFkalpTenBVMVEwNEdJN0J2N3Bka1k5T0JtYjZTdkhRZ2haMHA2ZDdTZE5T?=
- =?utf-8?B?a0dORTZpQ3d3ZXBkbVVtTG0yc3VqNmdlNEpCSlpRNit1MHhGWWxnNUc4cm1k?=
- =?utf-8?B?UVpONDdoWVVkZ1MvWHp0bmhFTFNhb3UyYVFIU3pLb2lzZGpPMktMTGJJWFpx?=
- =?utf-8?B?M21ocXk0d3A1NnJuV1k1Ky9CVk83TjlqMTBMSm0zSVZGV2ZSNlBZcWZnKzUv?=
- =?utf-8?B?UkJjSFc1UFcyd0M3ZkV0MUQ2aWlITkJ4T0wvQnMrN3QyL1VGSmZaZDMxTFVH?=
- =?utf-8?B?djhVMDgzb2NkTnc1WlRzaGlwaHVWaTVpS2RVUVQrQVJlRW1EblV4d3M4Y0hh?=
- =?utf-8?B?UUZqVTc0VXE5d0g1OC93eXhTa2d4cDFvSWlzelRzbElCbncwL1g3ZmdUQkd0?=
- =?utf-8?B?TkVVNXBuYVJhRWpTT0FpVGprTFFuNm5BWFhudElmblBjbktkQ2RXRjk1R2E2?=
- =?utf-8?B?T1pPZkRHMWdzSkQ0cTdHdU9LZXI5aHNiTWY1bm5FQTdyakRJT0tiZWJHL01n?=
- =?utf-8?B?L01jVGRlSmVIZWw2c2dDTVBweGtRWDZwR3pZY0tlNUcvQVZyR3ROdzN6TlJ6?=
- =?utf-8?B?bDZpQWoweXp0bjJvRUdhYVVzQ3RYaUI0MGd5aCszZ0pFak8vMG5VN2I0K29L?=
- =?utf-8?B?VHZFNzBnakZHZndzYmxxOWd6c3VtVkUzNnE0VVFzZytiUnQ4NklFOFcxVzYr?=
- =?utf-8?B?aG5iT1N0R0x3eTZMSWRZbGMxNW85Yy9vR3Exa1Q3MVRpZWtzZHZmeDI3SWNL?=
- =?utf-8?B?azRDUUhLUk1ick5uNTFUT1AydDRBcVh4UklQU1ZBVmZkRHA3TzhaUURreHRW?=
- =?utf-8?B?M1E9PQ==?=
-X-OriginatorOrg: meta.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 10d64d95-acc0-49c9-871b-08dbafaee3b7
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR15MB4287.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Sep 2023 14:29:48.4377
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Ry+/LWGXtNP4z4IIF943KLfVAGaePj9kewSMvrWPkh8iNKXIdpfK+7KkV5P10tXp
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR15MB5535
-X-Proofpoint-ORIG-GUID: 6tuUd3mu48I8FDqbFhg9KyGQ8JZlb7UC
-X-Proofpoint-GUID: 6tuUd3mu48I8FDqbFhg9KyGQ8JZlb7UC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-09-07_07,2023-09-05_01,2023-05-22_02
 X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/6/23 8:03 PM, Kees Cook wrote:
-> On Wed, Sep 06, 2023 at 03:28:47PM -0700, Nathan Chancellor wrote:
->> Hi Kent,
->>
->> On Sat, Sep 02, 2023 at 11:25:55PM -0400, Kent Overstreet wrote:
->>> here's the bcachefs pull request, for 6.6. Hopefully everything
->>> outstanding from the previous PR thread has been resolved; the block
->>> layer prereqs are in now via Jens's tree and the dcache helper has a
->>> reviewed-by from Christain.
->>
->> I pulled this into mainline locally and did an LLVM build, which found
->> an immediate issue. It appears the bcachefs codes uses zero length
+Hi Anand, thanks for the feedback / review, much appreciated!
+You're definitely helping a lot with this patch =)
+
+
+On 06/09/2023 13:14, Anand Jain wrote:
+> [...]
+>> Anand: the distinction of fsid/metadata_uuid is indeed required on
+>> btrfs_validate_super() - since we don't write the virtual/rand fsid to
+>> the disk, and such function operates on the superblock that is read
+>> from the disk, it fails for the single_dev case unless we condition check
+>> there - thanks for noticing that though, was interesting to experiment
+>> and validate =)
 > 
-> It looks like this series hasn't been in -next at all? That seems like a
-> pretty important step.
+> Yep, that makes sense. Thanks. I have added cases 1 and 2 in an upcoming
+> patch, and as part of this patch, you could add case 3 as below. Case 4
+> is just for discussion.
 > 
-> Also, when I look at the PR, it seems to be a branch history going
-> back _years_. For this kind of a feature, I'd expect a short series of
-> "here's the code" in incremental additions (e.g. look at the x86 shstk
-> series), not the development history from it being out of tree -- this
-> could easily lead to ugly bisection problems, etc.
+> 
+> 1. Normally
+> 
+>      fs_devices->fsid == fs_devices->metadata_uuid == sb->fsid;
+>      sb->metadata_uuid == 0;
+> 
+> 2. BTRFS_FEATURE_INCOMPAT_METADATA_UUID
+> 
+>      fs_devices->fsid == sb->fsid;
+>      fs_devices->metadata_uuid == sb->metadata_uuid;
+> 
+> 
+> 3. BTRFS_FEATURE_COMPAT_RO_SINGLE_DEV
+> 
+>      fs_devices->fsid == random();
+>      fs_devices->metadata_uuid = sb->fsid;
+>      sb->metadata_uuid == 0;
+> 
+> 
+> 
+> For future development: (ignore for now)
+> 
+> 4. BTRFS_FEATURE_INCOMPAT_METADATA_UUID |\
+>      BTRFS_FEATURE_COMPAT_RO_SINGLE_DEV
+> 
+>      fs_devices->fsid == random();
+>      sb->fsid == actual_fsid (unused);
+>      fs_devices->metadata_uuid == sb->metadata_uuid;
+> 
+This is a very good way of expressing the differences, quite good as
+documentation! Thanks for that, it makes sense for me.
 
-When we merged btrfs, Linus helped redo all of the btrfs out of tree
-commits on top of kernel git.  I can't remember at this point if it was
-his idea or mine, but git history is obviously improved by remembering
-my sparse file joy:
+What do you mean by "you could add case 3 as below"? I'm already doing
+that in the code, correct? Or do you mean somehow document that? I guess
+this could be kinda copy/paste as a comment or in the wiki, for example.
 
-commit 3a686375629da5d2e2ad019265b66ef113c87455
-Author: Chris Mason <chris.mason@oracle.com>
-Date:   Thu May 24 13:35:57 2007 -0400
+[Looking in the list I think I found a patch from you adding these
+comments to volumes.h =) ]
 
-    Btrfs: sparse files!
+> [...]
+>> +		btrfs_err(fs_info,
+>> +			  "device removal is unsupported on SINGLE_DEV devices\n");
+> 
+> No \n at the end. btrfs_err() already adds one.
+> 
+>> +		btrfs_err(fs_info,
+>> +			  "device removal is unsupported on SINGLE_DEV devices\n");
+> 
+> here too.
+>> +		btrfs_err(fs_info,
+>> +			  "device replace is unsupported on SINGLE_DEV devices\n");
+> 
+> and here.
+> 
 
-I'd have a preference for keeping the old history, warts and all, but
-wanted to give a data point to help jog people's memory around problems
-it might have caused.
+Good catch, will fix that!
 
--chris
+
+> [...]
+>> @@ -889,7 +889,7 @@ static int btrfs_parse_device_options(const char *options, blk_mode_t flags)
+>>   				error = -ENOMEM;
+>>   				goto out;
+>>   			}
+>> -			device = btrfs_scan_one_device(device_name, flags);
+> 
+>> +			device = btrfs_scan_one_device(device_name, flags, true);
+> 
+> Why do we have to pass 'true' in btrfs_scan_one_device() here? It is
+> single device and I don't see any special handle for the seed device.
+>>   	case BTRFS_IOC_SCAN_DEV:
+>>   		mutex_lock(&uuid_mutex);
+>> -		device = btrfs_scan_one_device(vol->name, BLK_OPEN_READ);
+>> +		device = btrfs_scan_one_device(vol->name, BLK_OPEN_READ, false);
+>>   		ret = PTR_ERR_OR_ZERO(device);
+>>   		mutex_unlock(&uuid_mutex);
+>>   		break;
+>> @@ -2210,7 +2210,7 @@ static long btrfs_control_ioctl(struct file *file, unsigned int cmd,
+>>   		break;
+>>   	case BTRFS_IOC_DEVICES_READY:
+>>   		mutex_lock(&uuid_mutex);
+>> -		device = btrfs_scan_one_device(vol->name, BLK_OPEN_READ);
+>> +		device = btrfs_scan_one_device(vol->name, BLK_OPEN_READ, false);
+>>   		if (IS_ERR(device)) {
+>>   			mutex_unlock(&uuid_mutex);
+>>   			ret = PTR_ERR(device);
+> 
+> With this patch, command 'btrfs device scan' and 'btrfs device ready'
+> returns -EINVAL for the single-device?  Some os distributions checks
+> the status using these commands during boot. Instead, it is ok to
+> just return success here.
+
+These are related things. So, regarding the
+btrfs_parse_device_options(), as per my understanding this a mount
+option that causes a device scan - so, it is a mount-time operation
+somehow, correct? But I'm glad to s/true/false and prevent such
+scanning, if you think it's more appropriate.
+
+Now, about "just return success" on device scans, just return 0 then? OK
+for me...
+
+
+> [...] 
+>> +	if (single_dev) {
+>> +		if (has_metadata_uuid || fsid_change_in_progress) {
+>> +			btrfs_err(NULL,
+>> +		"SINGLE_DEV devices don't support the metadata_uuid feature\n");
+>> +			return ERR_PTR(-EINVAL);
+> 
+> It could right?
+
+In theory, yes. But notice that we have a special situation with
+SINGLE_DEV - we make use of the metadata_uuid infrastructure
+*partially*; the in-memory structures are affected, but the superblock
+is not touched. Now, to support both metadata_uuid and SINGLE_DEV, it
+means for example that the user wants to mount two identical devices
+(with metadata_uuid enabled) at same time, which is not currently
+supported. But then SINGLE_DEV can't use metadata_uuid for that, since
+this infrastructure is in use already, we'd need to have like a third
+fsid entity, IIUC.
+
+I think this could be achieved but I'm not sure the value for that, and
+specially in the first iteration of the patch. I'd vote to merge this as
+simple as possible and maybe extend that in the future to support
+co-existing metadata_uuid, if that makes sense for some users. OK for you?
+
+
+> [...]
+>> @@ -1402,6 +1444,16 @@ struct btrfs_device *btrfs_scan_one_device(const char *path, blk_mode_t flags)
+>>   		goto error_bdev_put;
+>>   	}
+>>   
+>> +	single_dev = btrfs_super_compat_ro_flags(disk_super) &
+>> +			BTRFS_FEATURE_COMPAT_RO_SINGLE_DEV;
+>> +
+>> +	if (!mounting && single_dev) {
+>> +		pr_info("BTRFS: skipped non-mount scan on SINGLE_DEV device %s\n",
+>> +			path);
+>> +		btrfs_release_disk_super(disk_super);
+> 
+> leaks bdev?
+> 
+
+Ugh, apparently yes, thanks for noticing this!
+
+
+>> +		return ERR_PTR(-EINVAL);
+> 
+> We need to let seed device scan even for the single device.
+> 
+> In fact we can make no-scan required for the any fs with the total_devs 
+> == 1.
+> 
+> I wrote a patch send it out for the review. So no special handling for
+> single-device will be required.
+
+This one?
+https://lore.kernel.org/linux-btrfs/b0e0240254557461c137cd9b943f00b0d5048083.1693959204.git.anand.jain@oracle.com/
+
+OK, seems it does directly affect my patch, if yours is merged I can
+remove part of the code I'm proposing, which is nice. I'll wait David /
+Josef feedback on your patch to move on from here, if that's accepted,
+I'll incorporate yours in my next iteration.
+--
+
+If possible, could you CC me in your patches related to metadata_uuid
+and fsid for now, since I'm also working on that? This helps me to be
+aware of the stuff.
+
+For example, looking in the list, I just found:
+https://lore.kernel.org/linux-btrfs/0b71460e3a52cf77cd0f7d533e28d2502e285c11.1693820430.git.anand.jain@oracle.com/
+
+This is the perfect place to add the comment above, related to fsid's
+right? I'll do that in my next version.
+
+Thanks,
+
+
+Guilherme
+
