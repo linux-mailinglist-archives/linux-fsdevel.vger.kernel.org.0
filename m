@@ -2,72 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B165A797D98
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Sep 2023 22:52:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A42C0797E9A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Sep 2023 00:10:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240336AbjIGUwQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Sep 2023 16:52:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58422 "EHLO
+        id S239936AbjIGWKi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Sep 2023 18:10:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58646 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239373AbjIGUwP (ORCPT
+        with ESMTP id S237290AbjIGWKi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Sep 2023 16:52:15 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E49E01BCE
-        for <linux-fsdevel@vger.kernel.org>; Thu,  7 Sep 2023 13:52:10 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-9936b3d0286so178426566b.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Sep 2023 13:52:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1694119929; x=1694724729; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=D+L9op70z4Tpmb4XlT5693A5llhh03vxW4gvGPs2i44=;
-        b=AArLCjcbLc2cQGPDtIHz8MDWZwtvD675aYPWuf/aEjpGAmrBsGa1iSXreWEbR0IgJg
-         KGfwWK/+FunAjqoJRXLggPuDbxU9rLDwrds5pR/uCeCYG7jyiOFlQ0pCoMwaZ1cuwS4P
-         MZuAmmVNloi19QGas0WaHZhBfEzD1PQo8RYQ0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694119929; x=1694724729;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=D+L9op70z4Tpmb4XlT5693A5llhh03vxW4gvGPs2i44=;
-        b=Fp2Uzpcf4dxtGAn/b4QLGzE/iCA0/f7sqr2OQxMMaZRskugHu+1Ukij1GbVZkYpUY7
-         hkKllt+GJSo84/0X6rczB2jHTUZlkwPHj3kiJycqBKfs2z6DlJ0EtN0NkaX4znOpYIMb
-         nm42f/GNdT2pkjlBwmKbUB599nIFcFFpcxjo1bIosm30yDiwNKGrxRnecoSa9kT1dIo7
-         jnqEpLCzovwpGMxpNh+D3h/FaJncZ2M1drstehbqZYAbd6QuR89AOojZCihkupKt91cQ
-         4df/M6qF9Nu0cQO+QwZqhvrsuVi0Ps0DsSisx2JES0z7ifdrAm9Ung1cTGPhKYMIE+Jz
-         7WSw==
-X-Gm-Message-State: AOJu0YxGXHnRgJSvY+wgAzMvWdX12wsBFMp9tuPXta5zxWFKbAsHLTL3
-        lP16cmuIhr/840Rf4MlZBgodnHUa7tAH6R1Em0REcGjC
-X-Google-Smtp-Source: AGHT+IFGnR7K8piQmT18btkhijkpSFCXUb6zc4ScQ2vnLv6TQhdqXOyYCuTZ98zvWg7htRkCjCDs9g==
-X-Received: by 2002:a17:906:32c7:b0:99b:d0dc:7e68 with SMTP id k7-20020a17090632c700b0099bd0dc7e68mr371935ejk.72.1694119929168;
-        Thu, 07 Sep 2023 13:52:09 -0700 (PDT)
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com. [209.85.208.47])
-        by smtp.gmail.com with ESMTPSA id e14-20020a1709067e0e00b0098f33157e7dsm105870ejr.82.2023.09.07.13.52.08
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Sep 2023 13:52:08 -0700 (PDT)
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-52a5c0d949eso1852905a12.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Sep 2023 13:52:08 -0700 (PDT)
-X-Received: by 2002:a05:6402:156:b0:52d:212d:78ee with SMTP id
- s22-20020a056402015600b0052d212d78eemr314041edu.25.1694119928158; Thu, 07 Sep
- 2023 13:52:08 -0700 (PDT)
+        Thu, 7 Sep 2023 18:10:38 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EA7E1BC6;
+        Thu,  7 Sep 2023 15:10:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=XC05CLRxBxiWntbZw3VKKBal5n44I+j/00vdUNPZdpU=; b=WLHW6hF/Z9PC6VVw4G4kyqPqb+
+        x4h5apJUuVz98FM4kZRzYZylmarTmEx6bqjdYgUdGhmdvdzXPEU6OB8SjRAP8iB7E06Qfmfr+sLDt
+        8a6dXy3ZszlRIyxLqBz92RWMGYWL5LNx0h6nhNDkkHX3g3+uQqyQwgVXXaxKMVsw3lHpS6FMH8nau
+        8RwR0kF2MqrWb4DAXiBrd1ij7DRfy/n5GJNo0lY9YFX07D/5m6yVjlzRXOXubqwShSJ1OAPjHqtuC
+        hrfnLyVIA7Qnd8GFGDA8L6TRxmWa+xDFMHVfVNFSlsa7xd7Xcpl2TCZljgzmJPc+9QRHdEPJEYddj
+        A4+e6Zvw==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1qeNCr-00CkFa-1d;
+        Thu, 07 Sep 2023 22:10:33 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     fstests@vger.kernel.org, aalbersh@redhat.com,
+        chandan.babu@oracle.com, amir73il@gmail.com, djwong@kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, patches@lists.linux.dev,
+        Luis Chamberlain <mcgrof@kernel.org>
+Subject: [PATCH] check: add support for --start-after
+Date:   Thu,  7 Sep 2023 15:10:30 -0700
+Message-Id: <20230907221030.3037715-1-mcgrof@kernel.org>
+X-Mailer: git-send-email 2.38.1
 MIME-Version: 1.0
-References: <20230903032555.np6lu5mouv5tw4ff@moria.home.lan>
- <CAHk-=wjUX287gJCKDXUY02Wpot1n0VkjQk-PmDOmrsrEfwPfPg@mail.gmail.com> <20230907203718.upkukiylhbmu5wjh@moria.home.lan>
-In-Reply-To: <20230907203718.upkukiylhbmu5wjh@moria.home.lan>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 7 Sep 2023 13:51:50 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjnjyOOU+NDcJy5Q7kQrA65UQQJCYUYADbr1Pz7up-8mw@mail.gmail.com>
-Message-ID: <CAHk-=wjnjyOOU+NDcJy5Q7kQrA65UQQJCYUYADbr1Pz7up-8mw@mail.gmail.com>
-Subject: Re: [GIT PULL] bcachefs
-To:     Kent Overstreet <kent.overstreet@linux.dev>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-bcachefs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+Content-Transfer-Encoding: 8bit
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -75,20 +50,71 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 7 Sept 2023 at 13:37, Kent Overstreet <kent.overstreet@linux.dev> wrote:
->
-> Linus, I specifically asked you about linux-next in the offlist pre-pull
-> request thread back in May. It would have been nice if I could've gotten
-> an answer back then; instead, I'm only getting a definitive answer on
-> that now.
+Often times one is running a new test baseline we want to continue to
+start testing where we left off if the last test was a crash. To do
+this the first thing that occurred to me was to use the check.time
+file as an expunge file but that doesn't work so well if you crashed
+as the file turns out empty.
 
-I may not have answered because it was so *obvious*.
+So instead add super simple argument --start-after which let's you
+skip all tests until the test infrastructure has "seen" the test
+you want to skip. This does obviously work best if you are not using
+a random order, but that is rather implied.
 
-Was there really any question about it?
+Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+---
+ check | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-Anyway, the fact that the code doesn't even build for me is kind of a
-show-stopper regardless. It's the kind of things linux-next is
-supposed to notice early, so that we aren't in the situation where the
-code has not even been build-tested properly.
+diff --git a/check b/check
+index 71b9fbd07522..1ecf07c1cb37 100755
+--- a/check
++++ b/check
+@@ -18,6 +18,8 @@ showme=false
+ have_test_arg=false
+ randomize=false
+ exact_order=false
++start_after=false
++start_after_test=""
+ export here=`pwd`
+ xfile=""
+ subdir_xfile=""
+@@ -80,6 +82,7 @@ check options
+     -b			brief test summary
+     -R fmt[,fmt]	generate report in formats specified. Supported formats: xunit, xunit-quiet
+     --large-fs		optimise scratch device for large filesystems
++    --start-after	only start testing after the test specified
+     -s section		run only specified section from config file
+     -S section		exclude the specified section from the config file
+     -L <n>		loop tests <n> times following a failure, measuring aggregate pass/fail metrics
+@@ -313,6 +316,11 @@ while [ $# -gt 0 ]; do
+ 				<(sed "s/#.*$//" $xfile)
+ 		fi
+ 		;;
++	--start-after)
++		start_after=true
++		start_after_test="$2"
++		shift
++		;;
+ 	-s)	RUN_SECTION="$RUN_SECTION $2"; shift ;;
+ 	-S)	EXCLUDE_SECTION="$EXCLUDE_SECTION $2"; shift ;;
+ 	-l)	diff="diff" ;;
+@@ -591,6 +599,15 @@ _expunge_test()
+ {
+ 	local TEST_ID="$1"
+ 
++	if $start_after; then
++		if [[ "$start_after_test" == ${TEST_ID}* ]]; then
++			start_after=false
++		fi
++		echo "       [skipped]"
++		return 0
++
++	fi
++
+ 	for f in "${exclude_tests[@]}"; do
+ 		# $f may contain traling spaces and comments
+ 		local id_regex="^${TEST_ID}\b"
+-- 
+2.39.2
 
-                   Linus
