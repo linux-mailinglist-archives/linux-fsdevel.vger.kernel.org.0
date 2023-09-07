@@ -2,132 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E4F5797EEC
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Sep 2023 01:04:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FBA1797F47
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Sep 2023 01:40:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234150AbjIGXEJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Sep 2023 19:04:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41714 "EHLO
+        id S238889AbjIGXkM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Sep 2023 19:40:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230385AbjIGXEI (ORCPT
+        with ESMTP id S234518AbjIGXkM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Sep 2023 19:04:08 -0400
-Received: from mail-pj1-f80.google.com (mail-pj1-f80.google.com [209.85.216.80])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0E621BD2
-        for <linux-fsdevel@vger.kernel.org>; Thu,  7 Sep 2023 16:04:04 -0700 (PDT)
-Received: by mail-pj1-f80.google.com with SMTP id 98e67ed59e1d1-27183f4cc79so2034269a91.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Sep 2023 16:04:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694127844; x=1694732644;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6qIVdRmDrLBZvUQgIhZ+mgd7I9aUWm7XLJQ2fXiufrs=;
-        b=ojva3fySebK6CsWJzsyo3CPXGztEJAjgMrlFsxXCcMF3g/e9Enlkqs0Duq+g0w18AC
-         LYZi7hTb21In77Dmj4f3FDdvz5BpsD6V0oSfMvrS+nmUAvwle3gM64xLzhyDZjIg5+bt
-         dd8zQn3SNkZeQFRpk3Lu5YZ9FFVrqEVIllmxqbp/ZDTSA+TUcpJYeJE65uVJBN779j9O
-         Lx+TScC+ydqhCFhfDWukxl4Ajs1ohtJvx4oTn2ozMBiNbRo+2/vubMK25U28815xo2Zx
-         juGZFq6dLcfP06w1If08N3IHMw6+OWqhXcSrpGRF24z6QlMiQjuICzbf8UBXXl+yJ0iX
-         nHPw==
-X-Gm-Message-State: AOJu0Yymj7KO//IUepiz6RpAR/xU8HNmXdWMqLLwYFuZD9Y0vrx3OCbh
-        lvHaTGo68j2WL3SwkeCUAn1MJGDDkPS3+i12OdmR1IMdSdaQ
-X-Google-Smtp-Source: AGHT+IGjFM79VIw0E5WUJx5G1zVppF7bce/T74F7G7tTulEu1jqtVclFnpL+a50hmITRN9O2pAiGamjUDwI3vodd28iu3mpnxdk+
+        Thu, 7 Sep 2023 19:40:12 -0400
+Received: from out-214.mta0.migadu.com (out-214.mta0.migadu.com [91.218.175.214])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BA5A1BC6
+        for <linux-fsdevel@vger.kernel.org>; Thu,  7 Sep 2023 16:40:07 -0700 (PDT)
+Date:   Thu, 7 Sep 2023 19:40:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1694130005;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=RWoDi3uV46oY7SIh3m0rhGAD6sZcLL9xJq9LF0bY/sg=;
+        b=XWMTynq1Bzwny1usLjn4Le2XylzeIFJpbafRMoAau0HyAlZ0bjSgMCYyHv2yE2hPP61svM
+        jM16YJWJSslPWvh2/wNy9fciQOSqw8VchwqBilx7YOqI0GJNvCZXU4o2IEahN7AgZB+7Pz
+        yFuWLDf6zgAk8Tg5sNVu95XrKOX9lHM=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Kent Overstreet <kent.overstreet@linux.dev>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-bcachefs@vger.kernel.org
+Subject: Re: [GIT PULL] bcachefs
+Message-ID: <20230907234001.oe4uypp6anb5vqem@moria.home.lan>
+References: <20230903032555.np6lu5mouv5tw4ff@moria.home.lan>
+ <CAHk-=wjUX287gJCKDXUY02Wpot1n0VkjQk-PmDOmrsrEfwPfPg@mail.gmail.com>
 MIME-Version: 1.0
-X-Received: by 2002:a17:902:ea0a:b0:1c3:5d5b:e294 with SMTP id
- s10-20020a170902ea0a00b001c35d5be294mr368960plg.7.1694127844341; Thu, 07 Sep
- 2023 16:04:04 -0700 (PDT)
-Date:   Thu, 07 Sep 2023 16:04:04 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005dc3d00604cce08d@google.com>
-Subject: [syzbot] [gfs2?] memory leak in gfs2_trans_begin
-From:   syzbot <syzbot+45a7939b6f493f374ee1@syzkaller.appspotmail.com>
-To:     agruenba@redhat.com, cluster-devel@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        rpeterso@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS autolearn=no
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjUX287gJCKDXUY02Wpot1n0VkjQk-PmDOmrsrEfwPfPg@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Wed, Sep 06, 2023 at 12:36:18PM -0700, Linus Torvalds wrote:
+> So I'm starting to look at this because I have most other pull
+> requests done, and while I realize there's no universal support for it
+> I suspect any further changes are better done in-tree. The out-of-tree
+> thing has been done.
+> 
+> However, while I'll continue to look at it in this form, I just
+> realized that it's completely unacceptable for one very obvious
+> reason:
+> 
+> On Sat, 2 Sept 2023 at 20:26, Kent Overstreet <kent.overstreet@linux.dev> wrote:
+> >
+> >   https://evilpiepirate.org/git/bcachefs.git bcachefs-for-upstream
+> 
+> No way am I pulling that without a signed tag and a pgp key with a
+> chain of trust. You've been around for long enough that having such a
+> key shouldn't be a problem for you, so make it happen.
+> 
+> There are a few other issues that I have with this, and Christoph did
+> mention a big one: it's not been in linux-next. I don't know why I
+> thought it had been, it's just such an obvious thing for any new "I
+> want this merged upstream" tree.
+> 
+> So these kinds of "I'll just ignore _all_ basic rules" kinds of issues
+> do annoy me.
+> 
+> I need to know that you understand that if you actually want this
+> upstream, you need to work with upstream.
+> 
+> That very much means *NOT* continuing this "I'll just do it my way".
+> You need to show that you can work with others, that you can work
+> within the framework of upstream, and that not every single thread you
+> get into becomes an argument.
+> 
+> This, btw, is not negotiable.  If you feel uncomfortable with that
+> basic notion, you had better just continue doing development outside
+> the main kernel tree for another decade.
+> 
+> The fact that I only now notice that you never submitted this to
+> linux-next is obviously on me. My bad.
+> 
+> But at the same time it worries me that it might be a sign of you just
+> thinking that your way is special.
+> 
+>                 Linus
 
-syzbot found the following issue on:
+Honestly, though, this process is getting entirely kafkaesque.
 
-HEAD commit:    3f86ed6ec0b3 Merge tag 'arc-6.6-rc1' of git://git.kernel.o..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12cda4e7a80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fe0cf825f8fbc075
-dashboard link: https://syzkaller.appspot.com/bug?extid=45a7939b6f493f374ee1
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16f3a658680000
+I've been spending the past month or two working laying the groundwork
+for putting together a team to work on this, because god knows we need
+fresh blood in filesystem land - but that's on hold. Getting blindsided
+by another three month delay hurts, but that's not even the main thing.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/0a6ca0af2bd5/disk-3f86ed6e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ba67b3d88c83/vmlinux-3f86ed6e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/4a64bda3d2e5/bzImage-3f86ed6e.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/6406b55aec21/mount_0.gz
+The biggest thing has just been the non stop hostility and accusations -
+everything from "fracturing the community" too "ignoring all the rules"
+and my favorite, "is this the hill Kent wants to die on?" - when I'm
+just trying to get work done.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+45a7939b6f493f374ee1@syzkaller.appspotmail.com
+I don't generally think of myself as being particularly difficult to
+work with, I get along fine with most of the filesystem developers I
+interact with - regularly sharing ideas back and forth with the XFS
+people - but these review discussions have been entirely dominated by
+the most divisive people in our community, and I'm being told it's
+entirely on me to work with the guy whos one constant in the past 15
+years has been to try and block everything I submit?
 
-2023/09/05 14:30:51 executed programs: 30
-BUG: memory leak
-unreferenced object 0xffff8881214cbc60 (size 144):
-  comm "syz-executor.7", pid 5069, jiffies 4294970978 (age 14.110s)
-  hex dump (first 32 bytes):
-    ae 04 1f 82 ff ff ff ff 02 00 00 00 00 00 00 00  ................
-    08 00 00 00 00 00 00 00 06 00 00 00 00 00 00 00  ................
-  backtrace:
-    [<ffffffff821f3e39>] kmem_cache_zalloc include/linux/slab.h:710 [inline]
-    [<ffffffff821f3e39>] gfs2_trans_begin+0x29/0xa0 fs/gfs2/trans.c:115
-    [<ffffffff821f04ae>] gfs2_statfs_sync+0x1ae/0x250 fs/gfs2/super.c:298
-    [<ffffffff821f0d01>] gfs2_make_fs_ro+0x1b1/0x430 fs/gfs2/super.c:566
-    [<ffffffff821f14ac>] gfs2_put_super+0x2bc/0x2d0 fs/gfs2/super.c:623
-    [<ffffffff8168f43e>] generic_shutdown_super+0x9e/0x170 fs/super.c:693
-    [<ffffffff8168f58d>] kill_block_super+0x1d/0x50 fs/super.c:1646
-    [<ffffffff821d4a7f>] gfs2_kill_sb+0x1bf/0x1f0 fs/gfs2/ops_fstype.c:1795
-    [<ffffffff8169065a>] deactivate_locked_super+0x4a/0x110 fs/super.c:481
-    [<ffffffff816907bc>] deactivate_super fs/super.c:514 [inline]
-    [<ffffffff816907bc>] deactivate_super+0x9c/0xb0 fs/super.c:510
-    [<ffffffff816cd041>] cleanup_mnt+0x121/0x210 fs/namespace.c:1254
-    [<ffffffff812d2b5f>] task_work_run+0x8f/0xe0 kernel/task_work.c:179
-    [<ffffffff81361556>] resume_user_mode_work include/linux/resume_user_mode.h:49 [inline]
-    [<ffffffff81361556>] exit_to_user_mode_loop kernel/entry/common.c:171 [inline]
-    [<ffffffff81361556>] exit_to_user_mode_prepare+0x116/0x140 kernel/entry/common.c:204
-    [<ffffffff84b29c41>] __syscall_exit_to_user_mode_work kernel/entry/common.c:285 [inline]
-    [<ffffffff84b29c41>] syscall_exit_to_user_mode+0x21/0x50 kernel/entry/common.c:296
-    [<ffffffff84b25fb4>] do_syscall_64+0x44/0xb0 arch/x86/entry/common.c:86
-    [<ffffffff84c0008b>] entry_SYSCALL_64_after_hwframe+0x63/0xcd
+I'm just trying to get work done here. I'm not trying to ignore the
+rules. I'm trying to work with people who are willing to have reasonable
+discussions.
 
+-------------------
 
+When I was a teenager, I wanted nothing more than to be a Linux kernel
+programmer. I thought it utterly amazing that this huge group of people
+from around the world were working together over the internet, and that
+anyone could take part if they had the chops.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+That was my escape from a shitty family situation and the assholes in my
+life.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+But my life is different now; I have new and better people in my life,
+and I have to be thinking about them, and if merging bcachefs means I
+have to spend a lot more time in interactions like this then it's going
+to make me a shitty person to be around; and I don't want to do that to
+myself and I definitely don't want to do that to the people I care
+about.
 
-If the bug is already fixed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite bug's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the bug is a duplicate of another bug, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+I'm going to go offline for awhile and think about what I want to do
+next.
