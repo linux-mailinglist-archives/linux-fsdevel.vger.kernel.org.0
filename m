@@ -2,72 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FFBE797590
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Sep 2023 17:52:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16BD97975E0
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Sep 2023 18:00:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236779AbjIGPw1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Sep 2023 11:52:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38404 "EHLO
+        id S236765AbjIGQAf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Sep 2023 12:00:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241560AbjIGPtU (ORCPT
+        with ESMTP id S235721AbjIGP5l (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Sep 2023 11:49:20 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 784814EC4;
-        Thu,  7 Sep 2023 08:40:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1694101215; x=1725637215;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Gc47Wmv9yvPizcQSt3RG5ZLyHOAm3FccQUQk5XxXERw=;
-  b=EGGLuLRfnlmP7SJn923tcSJVztk5A2fx8i4A01N2aNCmfLzhd5HFKPcK
-   pMHVyeF9dIJDE79ZrIYlfZedqK/OEebFlId7jSHK0A718WAlVOQU36lwM
-   WWwuPDJ1VQReDQXBOAFjIcAX0hHPSVicVFvdflRPx9zrUSdG9yTAd3A08
-   NdtTVTLaTr5GZqu0ib++MqR8frjmjW6b3DCGo4mnyNXcfRZWNYO3vQXFX
-   bYA9oCL1ucplV659SCHu5gm8Y9q/jUxNMwY7fov2nxEIb+RNFqamiuZX4
-   1sebnl/qVc8enHSbgrIlAiPPuLP/BhVcVu1kXy+OAfIcfg1Mg92HwBqAl
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10826"; a="463768156"
-X-IronPort-AV: E=Sophos;i="6.02,235,1688454000"; 
-   d="scan'208";a="463768156"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2023 08:39:16 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10826"; a="865686230"
-X-IronPort-AV: E=Sophos;i="6.02,235,1688454000"; 
-   d="scan'208";a="865686230"
-Received: from ningle-mobl2.amr.corp.intel.com (HELO [10.209.13.77]) ([10.209.13.77])
-  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2023 08:39:13 -0700
-Message-ID: <21bf2e44-3316-2372-44cb-1488f88650f5@intel.com>
-Date:   Thu, 7 Sep 2023 08:39:13 -0700
+        Thu, 7 Sep 2023 11:57:41 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51A13A5E8;
+        Thu,  7 Sep 2023 08:45:08 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D3E1C43395;
+        Thu,  7 Sep 2023 15:43:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1694101421;
+        bh=gPv1hrWujrYrqcEzo6YrUNSY/Ae1f3uO3rmjz4i7sUY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=jPF3cRxboKs/FmnIXmlF95nO9MrK9e2kAZ1S5CZQpQdz1yvhZI3SBDBwlgMCqeRm2
+         BOSgmsMLMMRaHvIyZ4GEiZxqrt1X2U4rSb1CpSkwNy9BaZmnzfzYuecZLLTJjIjcwi
+         /4IbyiuOMdS1l+bXgu/5bhLvqBj4XA348ZrEIGscf/XxVeJrcFfhysNkEo6z/awCcL
+         Y0Stt4UKPGsQtSW3beMMxjF3a03tvhD8bLOjQBw1V8VgEAe1SKJcBQVEjjWL2BQEYj
+         hB9zRUgWRbWDNplGWRu99SbRgEzKyw/yWGjNE8lXEu1vRSQPdGKMNmm6H4ADjjRPUw
+         zKT77vhV9Fn0Q==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.5 1/6] iomap: Fix possible overflow condition in iomap_write_delalloc_scan
+Date:   Thu,  7 Sep 2023 11:43:32 -0400
+Message-Id: <20230907154338.3421582-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
-Subject: Re: [PATCH 1/3] proc/vmcore: Do not map unaccepted memory
-Content-Language: en-US
-To:     Adrian Hunter <adrian.hunter@intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Vlastimil Babka <vbabka@suse.cz>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Lorenzo Stoakes <lstoakes@gmail.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
-        Dave Young <dyoung@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-coco@lists.linux.dev, linux-efi@vger.kernel.org,
-        kexec@lists.infradead.org
-References: <20230906073902.4229-1-adrian.hunter@intel.com>
- <20230906073902.4229-2-adrian.hunter@intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-In-Reply-To: <20230906073902.4229-2-adrian.hunter@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE autolearn=ham
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.5.2
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -75,21 +53,35 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/6/23 00:39, Adrian Hunter wrote:
-> @@ -559,7 +567,8 @@ static int vmcore_remap_oldmem_pfn(struct vm_area_struct *vma,
->  	 * pages without a reason.
->  	 */
->  	idx = srcu_read_lock(&vmcore_cb_srcu);
-> -	if (!list_empty(&vmcore_cb_list))
-> +	if (!list_empty(&vmcore_cb_list) ||
-> +	    range_contains_unaccepted_memory(paddr, paddr + size))
->  		ret = remap_oldmem_pfn_checked(vma, from, pfn, size, prot);
->  	else
->  		ret = remap_oldmem_pfn_range(vma, from, pfn, size, prot);
+From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
 
-The whole callback mechanism which fs/proc/vmcore.c::pfn_is_ram()
-implements seems to be in place to ensure that there aren't a billion
-different "ram" checks in here.
+[ Upstream commit eee2d2e6ea5550118170dbd5bb1316ceb38455fb ]
 
-Is there a reason you can't register_vmcore_cb() a callback to check for
-unaccepted memory?
+folio_next_index() returns an unsigned long value which left shifted
+by PAGE_SHIFT could possibly cause an overflow on 32-bit system. Instead
+use folio_pos(folio) + folio_size(folio), which does this correctly.
+
+Suggested-by: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/iomap/buffered-io.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index aa8967cca1a31..4dc4bbc4be10a 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -932,7 +932,7 @@ static int iomap_write_delalloc_scan(struct inode *inode,
+ 			 * the end of this data range, not the end of the folio.
+ 			 */
+ 			*punch_start_byte = min_t(loff_t, end_byte,
+-					folio_next_index(folio) << PAGE_SHIFT);
++					folio_pos(folio) + folio_size(folio));
+ 		}
+ 
+ 		/* move offset to start of next folio in range */
+-- 
+2.40.1
+
