@@ -2,163 +2,226 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D949797C5C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Sep 2023 20:51:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2ADBB797BAF
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Sep 2023 20:26:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234070AbjIGSvo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Sep 2023 14:51:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57842 "EHLO
+        id S240259AbjIGS0d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Sep 2023 14:26:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243710AbjIGSvm (ORCPT
+        with ESMTP id S236306AbjIGS0b (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Sep 2023 14:51:42 -0400
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18F28CC
-        for <linux-fsdevel@vger.kernel.org>; Thu,  7 Sep 2023 11:50:56 -0700 (PDT)
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20230907080933epoutp01544b31953dfd6c23e6be32f4a7b1f09b~Cj3wnJIgd0328403284epoutp01W
-        for <linux-fsdevel@vger.kernel.org>; Thu,  7 Sep 2023 08:09:33 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20230907080933epoutp01544b31953dfd6c23e6be32f4a7b1f09b~Cj3wnJIgd0328403284epoutp01W
+        Thu, 7 Sep 2023 14:26:31 -0400
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AEC7A8;
+        Thu,  7 Sep 2023 11:26:27 -0700 (PDT)
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20230907073821euoutp01002074b8606e62b1296829278d0af8f5~Cjchfey8w0992609926euoutp01n;
+        Thu,  7 Sep 2023 07:38:21 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20230907073821euoutp01002074b8606e62b1296829278d0af8f5~Cjchfey8w0992609926euoutp01n
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1694074173;
-        bh=V6wr2bHKFf1JJGBntBJklQKl0KYjTY7rWeAV22neHUc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=FuIsvGFBvEa3mSAuwbudLT13WTEF4irSeTJwTLS02ZR1lw4VXAkTtF7Mp51f/FSdv
-         4FsOsII2UFfacQCYclmXd/ERK+PuP7Dwzw1kKP7v8NGj2jOzCZdkT5/Z4KdjQ7Eeb+
-         em53o6sbb4Vimt9FBI1xdjZ+xsanhssjNly3gvzU=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-        20230907080932epcas5p29191997c30b6c069da4ec6098457f9ed~Cj3v7N0E82859528595epcas5p27;
-        Thu,  7 Sep 2023 08:09:32 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.181]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4RhBjQ5pMQz4x9Q6; Thu,  7 Sep
-        2023 08:09:30 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        61.40.09638.A3589F46; Thu,  7 Sep 2023 17:09:30 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-        20230907071936epcas5p1ae555e75c8ee278f08e4537d0839cc72~CjMJf8lev2653926539epcas5p1y;
-        Thu,  7 Sep 2023 07:19:36 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20230907071936epsmtrp17265aa18f417f5e035967b86ea7c0b17~CjMJe6os_1235812358epsmtrp1B;
-        Thu,  7 Sep 2023 07:19:36 +0000 (GMT)
-X-AuditID: b6c32a4a-92df9700000025a6-ff-64f9853a35a9
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        D0.0D.18916.88979F46; Thu,  7 Sep 2023 16:19:36 +0900 (KST)
-Received: from green245 (unknown [107.99.41.245]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20230907071933epsmtip2c2f2ef6298194cfcf6c7db10e2733a19~CjMGmu15-2489124891epsmtip2B;
-        Thu,  7 Sep 2023 07:19:32 +0000 (GMT)
-Date:   Thu, 7 Sep 2023 12:46:11 +0530
-From:   Nitesh Shetty <nj.shetty@samsung.com>
-To:     Hannes Reinecke <hare@suse.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@kernel.org>, dm-devel@redhat.com,
-        Keith Busch <kbusch@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Chaitanya Kulkarni <kch@nvidia.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        martin.petersen@oracle.com, mcgrof@kernel.org,
-        gost.dev@samsung.com, Anuj Gupta <anuj20.g@samsung.com>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v15 03/12] block: add copy offload support
-Message-ID: <20230907071611.rgukw7fory2xh5sy@green245>
+        s=mail20170921; t=1694072301;
+        bh=BXg5O6SPZ8P1tGzXTPI/wb0rr63NnHvgAcD+Vug4myU=;
+        h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+        b=CUBouVPc62jGHERVpVmLNya0vV9VQdPLQBWVNVnHrtfwrdzTJHvq4udyRdm86GlYS
+         Kh7OLqiWje+o7JbiXygKFpsEtup2xm2FJXQkNZ6IPuAEqlyEEQO0CMvhV1rBOdgpUm
+         YnpycD6F/uWg0AqL1Gm2H+2rr/bM6gRuVGAELQug=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20230907073820eucas1p2cea3f66d64ae8ae736c4734b87434645~Cjcg45TxF2457924579eucas1p2m;
+        Thu,  7 Sep 2023 07:38:20 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id EA.FA.37758.CED79F46; Thu,  7
+        Sep 2023 08:38:20 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20230907073820eucas1p15d62f2cb2f0b6e47279f8840e7d1c468~CjcgYTmvn2390823908eucas1p1Z;
+        Thu,  7 Sep 2023 07:38:20 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20230907073820eusmtrp218fd55524709f7729da4cdaf1fb21500~CjcgXEsNT0114801148eusmtrp2x;
+        Thu,  7 Sep 2023 07:38:20 +0000 (GMT)
+X-AuditID: cbfec7f5-7ffff7000002937e-51-64f97dec075b
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id BC.E9.10549.CED79F46; Thu,  7
+        Sep 2023 08:38:20 +0100 (BST)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20230907073820eusmtip1522243b150116f1fd23668e31649b0f5~CjcgImOqA2199121991eusmtip1X;
+        Thu,  7 Sep 2023 07:38:20 +0000 (GMT)
+Received: from localhost (106.210.248.249) by CAMSVWEXC02.scsc.local
+        (2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+        Thu, 7 Sep 2023 08:38:19 +0100
+Date:   Thu, 7 Sep 2023 09:38:18 +0200
+From:   Joel Granados <j.granados@samsung.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+CC:     Luis Chamberlain <mcgrof@kernel.org>, <willy@infradead.org>,
+        <josh@joshtriplett.org>, Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Guo Ren <guoren@kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-s390@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-riscv@lists.infradead.org>, <linuxppc-dev@lists.ozlabs.org>,
+        <linux-ia64@vger.kernel.org>, <linux-csky@vger.kernel.org>
+Subject: Re: [PATCH 3/8] arch/x86: Remove sentinel elem from ctl_table
+ arrays
+Message-ID: <20230907073818.n5dcc7sqpvzkpeaa@localhost>
 MIME-Version: 1.0
-In-Reply-To: <b0f3d320-047b-4bd8-a6fc-25b468caf5b3@suse.de>
-User-Agent: NeoMutt/20171215
-X-Brightmail-Tracker: H4sIAAAAAAAAA02TfVCTdRzA+z3Psxc8V09D7AdU0rC7kAM32uYzYuAp1z2XdQennlndwWKP
-        jGNsuz0bYHY1UUC4YIoUMKlAKN6E5SCP9yMMgVHxh4GAQsIxDZD3GyIEtLHh+d/n+/52XzbK
-        TWf5sBNUOkqrkil5zF3YrdsBAUGh6c/k/KKcAMJsvYMSaZc3UKJm1MgkZm4vAWKyIxMQbXPX
-        GMRwRxNCtF7PQ4iqmi6EyOscBIRtwIQQbSOBRGlGOUa0tvVixN3mYibx4882FlHRvYkQQ5dt
-        gKibmceInhFfon+jm3HYi+wfu4mRd//Uk5bqLCZZX/412TJsYJJluVcZZM6FOSa5aBvByPn2
-        ASaZ21ANyPq+c+Sy5U3SMjmLRHE+SQxTUDI5pfWjVHFqeYIqXso7djzmaIxIzBcECSTEIZ6f
-        SpZESXmRH0YFvZ+gdMzL80uWKfUOVZSMpnkHw8O0ar2O8lOoaZ2UR2nkSo1QE0zLkmi9Kj5Y
-        RelCBXx+iMjhGJuoWMtewDRbrNTKrCamATxgZgMPNsSFMGtzGMsGu9hcvAXAjMe/sFzCEoDz
-        tR3M54J9ogzZCbHPNCIuQxOABXPDLKeBiz8CsH5ht5MxfD+8uLHlcGKzmXgg7NtiO9V7cB5c
-        zOzcroDi6Qy4VrO0ndQTD4cTK5sMJ3NwMZw5X4q6+FXYWzSJOdkDfw8aV8e3+/bCX4eFP9lR
-        ZyKIF3jA8sJld3eRsLBpg+FiTzjd3cBysQ+cMma4OQVW5VcyXcEXATTdMwGXIQKmW43blVFc
-        AZ9MjWIu/RvwW2sd4tK/DHPWJ93FOLDxhx32hzfMJe6tesPBp+fdTMLJp7XuDS0AaJg9chns
-        M70wnOmFci4OhVkLaQyTY3ko7gsrNtkuDIDm5oMlgFENvCkNnRRP0SJNiIpKeX7xOHWSBWz/
-        w4EPGsH4w4XgToCwQSeAbJS3hzO3b0XO5chlZ7+gtOoYrV5J0Z1A5DjWFdTHK07teCiVLkYg
-        lPCFYrFYKHlXLOC9xplJ/17OxeNlOiqRojSUdicOYXv4GJCKa/nWM/cubJmjuoo2PFdQ6+/B
-        x0kpdyTTctJ66I93vO/M7R8fM0R+XDAsT/4r9p/kmOK6hvw6USkbiCZ+WzxWzIe3lKsaq2BN
-        n9N+OjmCHp2iLPd9bxR+FVGWUlVVuTeyR3Ip/mZT34DhvwKPElq43nzWOK1t7Xmr2Jb25Du7
-        f8RLVv+EL0uiU/8+9XaYRa7g9knW1yOH8kJ7uNgle605rpKCD6dbVsnBX7m+it2nsgIrTCfO
-        zfZa64zBA4+vPLDY+s+kfrRy+v7ecE7XSqv5aOx63pD18HUzEv5o6pV/2zLJT9ujk77xlEQf
-        ORlSNPbs6mcnYtOW2+yoVPN5wqI0l4fRCpngAKqlZf8D0vdD9ZgEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEIsWRmVeSWpSXmKPExsWy7bCSvG5H5c8Ug52beS3WnzrGbNE04S+z
-        xeq7/WwWrw9/YrR4cqCd0WLvu9msFjcP7GSy2LNoEpPFytVHmSwmHbrGaPH06iwmi723tC0W
-        ti1hsdiz9ySLxeVdc9gs5i97ym6x/Pg/JosbE54yWqx7/Z7F4sQtaYvzf4+zOoh6nL+3kcXj
-        8tlSj02rOtk8Ni+p99h9s4HNY3HfZFaP3uZ3bB4fn95i8Xi/7yqbR9+WVYwem09Xe3zeJOex
-        6clbpgDeKC6blNSczLLUIn27BK6M8613WAs2slYc3dnE1sC4gqWLkZNDQsBE4uvrHUxdjFwc
-        QgLbGSWezX3KDJGQlFj29wiULSyx8t9zdhBbSOAJo8TyPVEgNouAikTL3/9AzRwcbALaEqf/
-        c4CERQSUJD62H2IHmcks0M4q0b/gFSNIQljATuLRt3+sIDavgJnE68aFzBCLPzBKXNp+kxki
-        IShxcuYTsOuYgYrmbX7IDLKAWUBaYvk/sAWcAtYS/T8esoHYogIyEjOWfmWewCg4C0n3LCTd
-        sxC6FzAyr2IUTS0ozk3PTS4w1CtOzC0uzUvXS87P3cQIjmatoB2My9b/1TvEyMTBeIhRgoNZ
-        SYT3nfy3FCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8yjmdKUIC6YklqdmpqQWpRTBZJg5OqQYm
-        psVGUjocv0PKF1veYZ6r5CabX2m7J+v1ubSIoFPLQiZPSBackunI5m6f/aTmt5Csv8qiRuby
-        fYdsMlgPZThaXf/x13umoG4Qw4d/i/+GRTnsZJJL6LmXxsCXyHo9dVXFIc2+2MaQsLOK2TJu
-        PpdSXB5kHMvvPzlvW2GI8sPbpqpJX97oRK1JeV1W0H6U+bHzwvnch6cp5Vrcj/kRnBH4+O67
-        NYI1D7eLP/68patKUlN/xY9p7d7HjtawHlBOenbhwTaeN+yZ91M29xubxqS6MoYobvfu3s0V
-        zyAaJmBn9jk+MuJ4e8GM/+ZS3g8M1hmeuvL5/auvU9Yd5JrsviNBdkb5+4Rjfw7d4mRqalRi
-        Kc5INNRiLipOBABGGkG3VQMAAA==
-X-CMS-MailID: 20230907071936epcas5p1ae555e75c8ee278f08e4537d0839cc72
+Content-Type: multipart/signed; micalg="pgp-sha512";
+        protocol="application/pgp-signature"; boundary="vbdr6hobr7rarecx"
+Content-Disposition: inline
+In-Reply-To: <d0d30ad4-7837-b0c4-39f4-3e317e35a41b@intel.com>
+X-Originating-IP: [106.210.248.249]
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+        CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA2WTe0xTVxzHc+697S1l4LWgPYEFBZlGUETm3DEbsi1u3sRlG4uJ2bIJVe7A
+        AC1rZaAZsQ5UYEigPAwFoUAsyGu1hSqPTtZtNDxWxCIwV5kKC5T3QMAGVtfuusxk/31+v+/v
+        +3uc5PBwQSHpwzslPs1IxaKEAC6f0HfZ+3fPpNljQh3Te9GNXhsXtawpSTT2l5GLljQOLppX
+        5wBkVUyQaNH2EKBJzSWA5tOPozvKFQ6aNJwn0HR5HUDFN4TomUqC+r5NRNqxIQ7SX8vAUIeh
+        m0ALmXMcZGkr4yL9UgYX5VWm48hYZABobdXBQf1tjRx0bXgAQyN5fwB0t1OFoWa5c7p9coRA
+        NksOji4qNyD1d40k0mmLcJRhfQ2tPXV2e6oZ4yB16wdvbadXL+QSdEN5A6AtQwM4XSofIOjl
+        X80YPWOzEfSPmU9IusomJ+hW5QOSVmmTaV1tEF3dYcPo+9PhtLYui0vPmc0knVfVCT4Sfsp/
+        M4ZJOPUVI91zMJofl99yD0/q2ZSqNJeRcqAQZAMeD1L7oO52QDZw4wmoWgAVJVuyAd/JTwDs
+        0LTgbLAEYOlKIcdV5TLcfPgDhxVqAJwYLeaydmdVYfcBlpsBvP6zyMUEFQhv9U0BF3OpXbB/
+        xoq72JvaAXuu15CuRjjVz4dZj6swl+BFfQiXlFn/TPOgXoeNlnGM5Y2wu2SccDFOpcLLleuE
+        6wSc8oU1Dp4r7UaFw7sl5YBddBvsumwlWE6DPc33MdcsSOncoW22FGOFQ3BR3oyz7AWnTM0k
+        yy/DZ60Vzw0FAN52LJBsUA+g+vzyc/cbMGNwnGQf8m04Vv0Fi55wZHYju6cnVOiv4GzaA2Ze
+        FLDG7bB+dIbIA9uUL1ymfOEy5X+XseldUNW+yP1fOhiqK6dxlsNhU9M8oQJkHRAyybLEWEb2
+        qphJCZGJEmXJ4tiQk5JELXB+ll6HafkWqJ36M8QIMB4wgkCn+bGm/g7wIcQSMRPg7TG3ZSVG
+        4BEjOnOWkUqipMkJjMwIfHlEgNAjOLz7pICKFZ1m4hkmiZH+q2I8Nx85lvRJ/qzQP/NC9Ijv
+        98KqWEurJd8vxRSZ+zHZWSA+azGWa+8JUzV57dE5OT6W/V6msLb3tGkVzOZDj7yOhg5G6Op+
+        vzrf93Wr/6ajfE5XweGeY9UK8y87uWWRRblb+VrZleKoI5M71BUnwhpklev700fFB5vOBKrj
+        Lz3Q7YyXZXvzygwTue96HvPPC3KETgvnPzvnN3bk5nG/NM2qfUXcLqxPt872p1iHwwy76wrn
+        flpPSTh8Ljc4cmip3a8yali/uMFu9Xwlrn5N9dI7NVtN9uCIwfc3/9aWs6Atk3QkKdquVun3
+        nPjSnfnmc/cIgcS0fsAgjzMX9D4KFuwbWq3wXp+wBBCyONHeIFwqE/0Nr1kOa6cEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA2WSe0xTVxzHPffe3hYSsmuh4wqauYqaMCktUDgQi9sSx2Vzi3N/ba66Dm54
+        SFtsKdFtTAwMEIF1TmQt8tyoG/IsrAMmC1SjwwdYqrUuoB0PSymBMd4B6wp1mcn++5zv73w/
+        5+TksFB2Ox7ASpFl0AqZJI2Le2O3XDeGQ6ayVhL552wEbL3lwOHPq1omHH1qxOFciwuHM7oi
+        AIfO2Znwb4cNwImWfABnco7Au9pFBpzoPo1BZ2U9gBda/eGzajm8fVYK9aMWBjTU5SLwSncf
+        Bv8qmGZAc9dFHBrmcnGorslBobG0G8DVJRcDDnQ1MmDdAxMCrepxAAd7qhHYnu0+fWXCikGH
+        uQiFedqXoK65kQnb9KUozB0SwtVlt225ZZQBdZ3vvb6LWvqqBKMaKhsAZbaYUKo824RRCw/7
+        EWrK4cCoqwXzTKrWkY1RndphJlWtV1FtPwZT319xINQfThGlrz+DU9P9/UxKXdsDDvp/xNur
+        kKsy6O3JcmWGiHtYAMN4gmjIC4uI5gnCo8QxYUJuaOzeRDotJZNWhMZ+wkv+WqNF0n/nnCgv
+        9M8GanYh8GKRRAT5i62XUQi8WWyiDpCGMR3qGWwlW+fvMzzsS65ZCnHPpllAmr+rQTyLdkAO
+        VT/eaGBEENlxexKsM07sIQemhjZyP2I3efOnS8z1Akrc8SafNLZsaH2Jd8n7j54x19mHiCIb
+        zWPPrfUIuXCt+flgM9mnGcPWGSUyybIZsztnuTmQvORircdehIgc1FQCz1V3kNeLhzAPZ5Fz
+        T58ANfDVvmDSvmDS/mfyxMGk1eVA/he/RupqnKiHRWRT0wxWDZj1wI9WKaVJUqWAp5RIlSpZ
+        Ei9BLtUD95c1XF9p6wCVk7M8I0BYwAiC3M2Rlst3QQAmk8torp/P9CuLiWyfRMnJz2iF/KhC
+        lUYrjUDofsZv0ABOgtz9/2UZRwWRfKEgIjKaL4yODOf6+8SnF0jYRJIkgz5G0+m04t8ewvIK
+        yEZ+jcO7y17uWbLdsCJvBx45n3/Id5+uYPSkxqrZNm4czLnpDIwaOTVQ1iDa+WdRb3EMj1M1
+        92XdSI7LlB915ouOsd0LRZc/eMOQFzi+P5U6vj3+LZFCFGfPPCCMqTBYfPfd8f88kBcecqqk
+        rzs+Xdxcpz7NepT6cfHx5v49izuLw89eTEy/Wr42Pf1mYwW/lNWZWWET/yAti+VnbbOYUuG8
+        Yy3u/Am/UcuOY+/0bmre+lBjs0+Kug47f7OzQ8HB8Qv7N+mFH3IeLD/O4VvzOCoFbt+1Jbnk
+        mhgJEd+rLZ89dE8XNGxxVm3p6k1JqCpgpG7+tJczfsDY5EK5drHJ59v3X+ViymSJIBhVKCX/
+        ABZq0BhHBAAA
+X-CMS-MailID: 20230907073820eucas1p15d62f2cb2f0b6e47279f8840e7d1c468
 X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-        boundary="----1B4_PwnuBgjs5al8.ARo7bB9J1Y4sbiuOmsCUR3u7pWcBekA=_3ae06_"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20230906164312epcas5p397662c68dde1dbc4dc14c3e80ca260b3
-References: <20230906163844.18754-1-nj.shetty@samsung.com>
-        <CGME20230906164312epcas5p397662c68dde1dbc4dc14c3e80ca260b3@epcas5p3.samsung.com>
-        <20230906163844.18754-4-nj.shetty@samsung.com>
-        <b0f3d320-047b-4bd8-a6fc-25b468caf5b3@suse.de>
+X-RootMTR: 20230906144515eucas1p286690ee141d507d7d3a72cd8afa28408
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20230906144515eucas1p286690ee141d507d7d3a72cd8afa28408
+References: <20230906-jag-sysctl_remove_empty_elem_arch-v1-0-3935d4854248@samsung.com>
+        <20230906-jag-sysctl_remove_empty_elem_arch-v1-3-3935d4854248@samsung.com>
+        <CGME20230906144515eucas1p286690ee141d507d7d3a72cd8afa28408@eucas1p2.samsung.com>
+        <d0d30ad4-7837-b0c4-39f4-3e317e35a41b@intel.com>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
         RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_PASS,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        SPF_HELO_PASS,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-------1B4_PwnuBgjs5al8.ARo7bB9J1Y4sbiuOmsCUR3u7pWcBekA=_3ae06_
-Content-Type: text/plain; charset="utf-8"; format="flowed"
+--vbdr6hobr7rarecx
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 07/09/23 07:49AM, Hannes Reinecke wrote:
->On 9/6/23 18:38, Nitesh Shetty wrote:
->
->Hmm. That looks a bit odd. Why do you have to use wait_for_completion?
+On Wed, Sep 06, 2023 at 07:45:09AM -0700, Dave Hansen wrote:
+> On 9/6/23 03:03, Joel Granados via B4 Relay wrote:
+> > This commit comes at the tail end of a greater effort to remove the
+> > empty elements at the end of the ctl_table arrays (sentinels) which
+> > will reduce the overall build time size of the kernel and run time
+> > memory bloat by ~64 bytes per sentinel (further information Link :
+> > https://lore.kernel.org/all/ZO5Yx5JFogGi%2FcBo@bombadil.infradead.org/)
+> >=20
+> > Remove sentinel element from sld_sysctl and itmt_kern_table.
+>=20
+> There's a *LOT* of content to read for a reviewer to figure out what's
+> going on here between all the links.  I would have appreciated one more
+> sentence here, maybe:
+>=20
+> 	This is now safe because the sysctl registration code
+> 	(register_sysctl()) implicitly uses ARRAY_SIZE() in addition
+> 	to checking for a sentinel.
+Thx for the feedback. This is a great sentence to add at the end of the
+first paragraph instead of the link. I'll add it with a few changes as
+there are more than just one register function and the use of ARRAY_SIZE
+is implicit most of the time.
 
-wait_for_completion is waiting for all the copy IOs to complete,
-when caller does not pass endio handler.
-Copy IO submissions are still async, as in previous revisions.
+  This is now safe because the sysctl registration code
+  (register_sysctl() and friends) use the array size in addition to
+  checking for a sentinel.
 
->Can't you submit the 'src' bio, and then submit the 'dst' bio from the 
->endio handler of the 'src' bio?
-We can't do this with the current bio merging approach.
-'src' bio waits for the 'dst' bio to arrive in request layer.
-Note that both bio's should be present in request reaching the driver,
-to form the copy-cmd.
+I have changed my cover letter in case I send a V2 and for the other
+batches that are coming after the architecture one.
 
-Thank You,
-Nitesh Shetty
+>=20
+> That needs to be more prominent _somewhere_.  Maybe here, or maybe in
+> the cover letter, but _somewhere_.
+This is also a good point. I think having it in both the cover letter
+and each of the commits is an added value.
 
-------1B4_PwnuBgjs5al8.ARo7bB9J1Y4sbiuOmsCUR3u7pWcBekA=_3ae06_
-Content-Type: text/plain; charset="utf-8"
+>=20
+> That said, feel free to add this to the two x86 patches:
+>=20
+> Acked-by: Dave Hansen <dave.hansen@linux.intel.com> # for x86
 
+Best
 
-------1B4_PwnuBgjs5al8.ARo7bB9J1Y4sbiuOmsCUR3u7pWcBekA=_3ae06_--
+--=20
+
+Joel Granados
+
+--vbdr6hobr7rarecx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmT5fecACgkQupfNUreW
+QU9Bhgv8DyTYJvCgE8sg+/Ap/JjJPKvGWZBDXfBIHFzHCpKXizcVg8yYUJfBl62v
+KxZtrKUrKnByfeqeUsYLmdzZVgYNpru/Ds1piqa9nr2dEYtnxCeV2Vl+GduB0J/O
++XHzHnLZMldSfYdwmJ9hIsT0YoyiPZAQYKTvHfk2XhDx7oXaN83xqZwiQ/4KevGG
+hFHCDjYjn2NaD6+DtaZj7g3l+GUApVap07K6jTaWNLScoQsQ3ew89jYA/qvUuXJ8
+uiCeTLZhu1bCSSr0wAwrb9+PTwhgIABI/dP7UXnXXF/CNfsAacPnLTVYXwSFI18e
+cGsApL10swjpqwPITulSjYS0kVIcX7OYWTknodCBRpIebCshB0JftTXxnrTY007M
+FEKIDMwER++/mXSU3R7Oj18AWp4/IBNYcNIw9ajYmdbK9MdhVyLu2g83dVTDaWFA
+zwKLH+vJXrgAk+uQBlFo8mCvuGPBk9fHv2kmG/kjufz8X560KHQVxkPGPj8V0k9E
+387iV6oU
+=1yPf
+-----END PGP SIGNATURE-----
+
+--vbdr6hobr7rarecx--
