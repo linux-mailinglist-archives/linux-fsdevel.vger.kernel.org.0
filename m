@@ -2,51 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BA6B79769D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Sep 2023 18:13:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BC6F79774D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Sep 2023 18:24:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238962AbjIGQNw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Sep 2023 12:13:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60220 "EHLO
+        id S241576AbjIGQYN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Sep 2023 12:24:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241570AbjIGQNL (ORCPT
+        with ESMTP id S244264AbjIGQX1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Sep 2023 12:13:11 -0400
+        Thu, 7 Sep 2023 12:23:27 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82B5CBE43;
-        Thu,  7 Sep 2023 08:48:15 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6746CC4E67B;
-        Thu,  7 Sep 2023 15:44:28 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91F777EF3;
+        Thu,  7 Sep 2023 09:13:25 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B04F5C433C9;
+        Thu,  7 Sep 2023 15:49:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694101469;
-        bh=/90n+yBHs+nBlvmbMDViQCzRtfY37asFoB0k3l1ZX7U=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bgixuuQNyTN3cYUDKPhhQxUebaIjXKlciKPEZzbXVg8dP0blMa6QxtMpdz1bJWcKm
-         9LontNFd+O/xXd8nsTAk+9UjSqnNutl4kIGb6eXOAfw7I4219i16at+UjKPeHlNiIN
-         argauBNoWhZgjhblWbqhDzc1sso6/DDz9SxmGJvQYxHioX60bI3LccRUQLMUlHJzD/
-         qnnyRJQDShdcMypD/D2Kg1JR97tzypVWhed35KReSERqk6fyR60K/rRA6zIqNdfwX3
-         ZPJHG+tWbEbEs0brhgIcDXJMQcn9B06T7XJOGXILMLvZ6LaEkvh07HkeKUp8kil9lf
-         11vS79+Qhz+3Q==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Will Shiu <Will.Shiu@mediatek.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, viro@zeniv.linux.org.uk,
-        brauner@kernel.org, chuck.lever@oracle.com, matthias.bgg@gmail.com,
-        linux-fsdevel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.4 3/3] locks: fix KASAN: use-after-free in trace_event_raw_event_filelock_lock
-Date:   Thu,  7 Sep 2023 11:44:23 -0400
-Message-Id: <20230907154423.3422014-3-sashal@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20230907154423.3422014-1-sashal@kernel.org>
-References: <20230907154423.3422014-1-sashal@kernel.org>
+        s=k20201202; t=1694101800;
+        bh=ogud9LayuNxA5epVuVZz59vt/VQoyZTG7PTl81uTp8g=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nUgap7cWFuKCa4PzjEmfD7qA5bEg4ToR1RgTOSE+0anALQLA8rb0aoaa3HkXVFJ5O
+         LDB+OVa6mYfYspsYNajmp2hazKUJujr7/ujwdKBxCQO9xzQjcUhed3cKKf7or7kVJQ
+         zEaJHLUzIkrN4dVjplI5gvrGQy1JSFgJ289/eNpe3MI2GuE1ujn2jmG5HE5qt8gYVM
+         Lo423kUOLaO7NzTBlkgos06S3xuR9Rqn3KUzcBxuyDYaiA4kZFUISaBw5VbRdqqBmw
+         jFSohpUZokXHmNQaJ+RZ126vvjlbM85JLeatZeu1dTGenf0kuzVxOXIAPHhw4MpVME
+         uHd7r0J3NIWsw==
+Date:   Thu, 7 Sep 2023 17:49:54 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        ntfs3@lists.linux.dev, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 13/13] ntfs3: free the sbi in ->kill_sb
+Message-ID: <20230907-liebgeworden-leidwesen-331fc399f71e@brauner>
+References: <20230809220545.1308228-1-hch@lst.de>
+ <20230809220545.1308228-14-hch@lst.de>
+ <56f72849-178a-4cb7-b2e1-b7fc6695a6ef@roeck-us.net>
+ <20230907-lektion-organismus-f223e15828d9@brauner>
+ <dc4b7b2c-89c0-d16f-43e2-0aec5c9b8e1b@roeck-us.net>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.4.256
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <dc4b7b2c-89c0-d16f-43e2-0aec5c9b8e1b@roeck-us.net>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
         RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
@@ -57,85 +60,33 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Will Shiu <Will.Shiu@mediatek.com>
+On Thu, Sep 07, 2023 at 08:23:09AM -0700, Guenter Roeck wrote:
+> On 9/7/23 06:54, Christian Brauner wrote:
+> > On Thu, Sep 07, 2023 at 06:05:40AM -0700, Guenter Roeck wrote:
+> > > On Wed, Aug 09, 2023 at 03:05:45PM -0700, Christoph Hellwig wrote:
+> > > > As a rule of thumb everything allocated to the fs_context and moved into
+> > > > the super_block should be freed by ->kill_sb so that the teardown
+> > > > handling doesn't need to be duplicated between the fill_super error
+> > > > path and put_super.  Implement an ntfs3-specific kill_sb method to do
+> > > > that.
+> > > > 
+> > > > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> > > > Reviewed-by: Christian Brauner <brauner@kernel.org>
+> > > 
+> > > This patch results in:
+> > 
+> > The appended patch should fix this. Are you able to test it?
+> > I will as well.
+> 
+> Yes, this patch restores the previous behavior (no more backtrace or crash).
 
-[ Upstream commit 74f6f5912693ce454384eaeec48705646a21c74f ]
+Great, I'll get this fixed in upstream.
 
-As following backtrace, the struct file_lock request , in posix_lock_inode
-is free before ftrace function using.
-Replace the ftrace function ahead free flow could fix the use-after-free
-issue.
+> 
+> Tested-by: Guenter Roeck <linux@roeck-us.net>
+> 
+> I say "restore previous behavior" because my simple "recursive copy; partially
+> remove copied files" test still fails. That problem apparently existed since
+> ntfs3 has been introduced (I see it as far back as v5.15).
 
-[name:report&]===============================================
-BUG:KASAN: use-after-free in trace_event_raw_event_filelock_lock+0x80/0x12c
-[name:report&]Read at addr f6ffff8025622620 by task NativeThread/16753
-[name:report_hw_tags&]Pointer tag: [f6], memory tag: [fe]
-[name:report&]
-BT:
-Hardware name: MT6897 (DT)
-Call trace:
- dump_backtrace+0xf8/0x148
- show_stack+0x18/0x24
- dump_stack_lvl+0x60/0x7c
- print_report+0x2c8/0xa08
- kasan_report+0xb0/0x120
- __do_kernel_fault+0xc8/0x248
- do_bad_area+0x30/0xdc
- do_tag_check_fault+0x1c/0x30
- do_mem_abort+0x58/0xbc
- el1_abort+0x3c/0x5c
- el1h_64_sync_handler+0x54/0x90
- el1h_64_sync+0x68/0x6c
- trace_event_raw_event_filelock_lock+0x80/0x12c
- posix_lock_inode+0xd0c/0xd60
- do_lock_file_wait+0xb8/0x190
- fcntl_setlk+0x2d8/0x440
-...
-[name:report&]
-[name:report&]Allocated by task 16752:
-...
- slab_post_alloc_hook+0x74/0x340
- kmem_cache_alloc+0x1b0/0x2f0
- posix_lock_inode+0xb0/0xd60
-...
- [name:report&]
- [name:report&]Freed by task 16752:
-...
-  kmem_cache_free+0x274/0x5b0
-  locks_dispose_list+0x3c/0x148
-  posix_lock_inode+0xc40/0xd60
-  do_lock_file_wait+0xb8/0x190
-  fcntl_setlk+0x2d8/0x440
-  do_fcntl+0x150/0xc18
-...
-
-Signed-off-by: Will Shiu <Will.Shiu@mediatek.com>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/locks.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/locks.c b/fs/locks.c
-index b8a31c1c4fff3..90f92784aa554 100644
---- a/fs/locks.c
-+++ b/fs/locks.c
-@@ -1338,6 +1338,7 @@ static int posix_lock_inode(struct inode *inode, struct file_lock *request,
-  out:
- 	spin_unlock(&ctx->flc_lock);
- 	percpu_up_read(&file_rwsem);
-+	trace_posix_lock_inode(inode, request, error);
- 	/*
- 	 * Free any unused locks.
- 	 */
-@@ -1346,7 +1347,6 @@ static int posix_lock_inode(struct inode *inode, struct file_lock *request,
- 	if (new_fl2)
- 		locks_free_lock(new_fl2);
- 	locks_dispose_list(&dispose);
--	trace_posix_lock_inode(inode, request, error);
- 
- 	return error;
- }
--- 
-2.40.1
-
+I don't think anyone finds that surprising.
