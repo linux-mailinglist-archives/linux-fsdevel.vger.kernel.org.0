@@ -2,58 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F704798458
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Sep 2023 10:45:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1104C798479
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Sep 2023 10:55:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233273AbjIHIpR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Sep 2023 04:45:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58594 "EHLO
+        id S234918AbjIHIzR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Sep 2023 04:55:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42028 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230267AbjIHIpQ (ORCPT
+        with ESMTP id S229844AbjIHIzQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Sep 2023 04:45:16 -0400
+        Fri, 8 Sep 2023 04:55:16 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 517761BEA
-        for <linux-fsdevel@vger.kernel.org>; Fri,  8 Sep 2023 01:45:12 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC9CB1BEA
+        for <linux-fsdevel@vger.kernel.org>; Fri,  8 Sep 2023 01:55:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
         :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=KWd4KSw99oCNryENUOdeFCqyw64DVwBYPBIbYise178=; b=HEVKJjMHl106gHpddbpxmBWjMk
-        BnztUPqepZ8iBIRg7rPF8oYQE8BanQXU7KH+Z4TDBeK1J96mQlAG/H3HN0MA2Br6xUDXV+JbErWVL
-        hUb93RvEWdHXaOPM3JsMdQ3NFBu8DthH59/ZEBHaPCV352l2RZFJxSjf3pK94hiQKr5PPN7y9rL0x
-        WvTPOfayQEJ74AngGTV8MzMLus66Af9tkHyinuufdhSZFPD0Ei+UDgVP8CMYT9oPQ1M+tbTucRVdj
-        mcHFSLWoS8UolqauSMqJjBYVG+x31n0QtJ+DhD343bP6T/Ofzx1r0FMW4PB/A+cB2LLduiuQ54G0B
-        qzRAN0UQ==;
+        bh=H8K/XrghSHxCL6s/bo9FD1IkrVMvH7WV4gO6kwb9oWI=; b=E5vl7U9ac+Qs05naYWAfjpTo4o
+        paN9NxhCtlikWZuR9SUxdcZz8fBxo88NSG3YeJ1xPJpS2dmRC8lv+K0xTDRPXp6Lg2+lD40LpRLT7
+        D7M3z0NXcUAEoUoDVg6qwEnCwWz7daF3ya/IAHrAVL7SWlkK/DP3G+yW0f7Tzy1VYGE8ZWCf1T6fy
+        8xbAkIvMqh1dQpW5JyuE4oFwb9RE8WbtRJLXu+aQFqQLQKYgTZjyqkxpMOusTADldiTrJ4wftN/TR
+        +hxZM1m3+epgGztWecvqGznVRZFxJrHbih5ONUPZleGX4TN7/qY7mA2op64/yOiAsH8P9xRhz7pgr
+        PUtYoURg==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1qeX6o-00DLJB-2H;
-        Fri, 08 Sep 2023 08:44:58 +0000
-Date:   Fri, 8 Sep 2023 01:44:58 -0700
+        id 1qeXGh-00DM5M-23;
+        Fri, 08 Sep 2023 08:55:11 +0000
+Date:   Fri, 8 Sep 2023 01:55:11 -0700
 From:   Christoph Hellwig <hch@infradead.org>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Thorsten Leemhuis <linux@leemhuis.info>,
-        Christian Brauner <brauner@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@infradead.org>, ksummit@lists.linux.dev,
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Christoph Hellwig <hch@infradead.org>, ksummit@lists.linux.dev,
         linux-fsdevel@vger.kernel.org
 Subject: Re: [MAINTAINERS/KERNEL SUMMIT] Trust and maintenance of file systems
-Message-ID: <ZPrfCvorp9XIUPYY@infradead.org>
-References: <8718a8a3-1e62-0e2b-09d0-7bce3155b045@roeck-us.net>
- <ZPkDLp0jyteubQhh@dread.disaster.area>
- <20230906215327.18a45c89@gandalf.local.home>
- <ZPkz86RRLaYOkmx+@dread.disaster.area>
- <20230906225139.6ffe953c@gandalf.local.home>
- <ZPlC0pf2XA1ZGr6j@casper.infradead.org>
- <c89ebbb2-1249-49f3-b80f-0b08711bc29b@leemhuis.info>
- <20230907-kauern-kopfkissen-d8147fb40469@brauner>
- <d62225ae-73dc-4b45-a1d9-078137224eb5@leemhuis.info>
- <0ece94aa-141e-564c-f43c-2d6d4b9e61c4@roeck-us.net>
+Message-ID: <ZPrhb9ncxrylmVyP@infradead.org>
+References: <ZO9NK0FchtYjOuIH@infradead.org>
+ <ZPe0bSW10Gj7rvAW@dread.disaster.area>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0ece94aa-141e-564c-f43c-2d6d4b9e61c4@roeck-us.net>
+In-Reply-To: <ZPe0bSW10Gj7rvAW@dread.disaster.area>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
@@ -64,10 +51,43 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 07, 2023 at 05:57:47AM -0700, Guenter Roeck wrote:
-> $ sudo apt-get install hfsprogs
+On Wed, Sep 06, 2023 at 09:06:21AM +1000, Dave Chinner wrote:
+> I think this completely misses the point of contention of the larger
+> syzbot vs filesystem discussion: the assertion that "testing via
+> syzbot means the subsystem is secure" where "secure" means "can be
+> used safely for operations that involve trust model violations".
+> 
+> Fundamentally, syzbot does nothing to actually validate the
+> filesystem is "secure". Fuzzing can only find existing bugs by
+> simulating an attacker, but it does nothing to address the
+> underlying issues that allow that attack channel to exist.
 
-Oh, looks like ohn Paul Adrian Glaubitz actually resurrected it after
-a 7 year hiatus when it was dropped entirely.  That's good news to at
-least keep hfsplus on life support.
+I don't think anyone makes that assertation.  Instead the assumptions
+is something that is handling untrusted input should be available to
+surive fuzzing by syzbot, and that's an assumption I agree with.  That
+doesn't imply anything surving syzbot is secure, but it if doesn't
+survive syzbot it surely can't deal with untrusted input.
+
+> > unmaintained.  If we want to move the kernel forward by finishing
+> > API transitions (new mount API, buffer_head removal for the I/O path,
+> > ->writepage removal, etc) these file systems need to change as well
+> > and need some kind of testing.  The easiest way forward would be
+> > to remove everything that is not fully maintained, but that would
+> > remove a lot of useful features.
+> 
+> Linus has explicitly NACKed that approach.
+> 
+> https://lore.kernel.org/linux-fsdevel/CAHk-=wg7DSNsHY6tWc=WLeqDBYtXges_12fFk1c+-No+fZ0xYQ@mail.gmail.com/
+
+.. and that is why I'm bring this up in a place where we can have
+a proper procedural discussion instead of snarky remarks.  This is
+a fundamental problem we;ll need to sort out.
+
+> Which is a problem, because historically we've taken code into
+> the kernel without requiring a maintainer, or the people who
+> maintained the code have moved on, yet we don't have a policy for
+> removing code that is slowly bit-rotting to uselessness.
+
+... and we keep merging crap that goes against all established normal
+requirements when people things it's new and shiny and cool :(
 
