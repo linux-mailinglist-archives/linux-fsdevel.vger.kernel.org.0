@@ -2,67 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EE885798441
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Sep 2023 10:40:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D1D079844B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Sep 2023 10:42:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229844AbjIHIkE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Sep 2023 04:40:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43098 "EHLO
+        id S233273AbjIHImx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Sep 2023 04:42:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233049AbjIHIkE (ORCPT
+        with ESMTP id S235180AbjIHImh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Sep 2023 04:40:04 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B3C11BEA
-        for <linux-fsdevel@vger.kernel.org>; Fri,  8 Sep 2023 01:39:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=yVA95xW2Ie/ug2jQfFDc5ddfNVZM0aNIhd4I9iNmjSo=; b=Yy/12rCry74UVbjrJyam9lO4L9
-        /3xDzBZnBjVcO2a1dg+qggwHeku+bmBsBw7Zo8RIaKDAkzZBAVdKvjlC+J2hyYUuImIMqZjujb0Ae
-        NqnVXvCFBQefMufRawRd7XirecFiSioP0nWEWKo8Wh82SfDxULlJ7zsDw8+15KeUUhrUlpsGsizYH
-        vl1VBz2Cd+EZGxco8FjIVfrXie4nyBYdC1W4JrqSQfL7TSQWY2+370K+qdzH+JIl7HfUPbX0U2l9+
-        F36R5VWn12WhvBEdPEeFJ4cYfEFIgCTXnRPBwkpKpEPlPZDRcKyunuYaD3r14D7oiGCob2GDzXJJQ
-        iezPy3Qg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1qeX1r-00DKhb-09;
-        Fri, 08 Sep 2023 08:39:51 +0000
-Date:   Fri, 8 Sep 2023 01:39:51 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Christoph Hellwig <hch@infradead.org>, ksummit@lists.linux.dev,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [MAINTAINERS/KERNEL SUMMIT] Trust and maintenance of file systems
-Message-ID: <ZPrd1yAVdm9Yjw9B@infradead.org>
-References: <ZO9NK0FchtYjOuIH@infradead.org>
- <8718a8a3-1e62-0e2b-09d0-7bce3155b045@roeck-us.net>
- <ZPkDLp0jyteubQhh@dread.disaster.area>
- <20230906215327.18a45c89@gandalf.local.home>
+        Fri, 8 Sep 2023 04:42:37 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FEF61BDA
+        for <linux-fsdevel@vger.kernel.org>; Fri,  8 Sep 2023 01:41:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1694162507;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=hY8tZO882Jl0E+LR6+k1KutgEB/prW8NTGo4X92b6p4=;
+        b=A0zgYvdlhQnrAeWIepXFolyft/4cNVkDxmCzS6/V3NJrz5uVM6xWKOYzr/eh8YS+Wpmrjx
+        SBeW3szu6XNtpW5eNQOkjFLp2H4gvU7ngp7jeNYuY5n133GQr8SRw2VN3OAdzh0X8Pctxr
+        BIFcEe1hAQXB3JaQO30zZANXnZK1RBY=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-367-cb6fuJdoPgeyTvXtnnt2jQ-1; Fri, 08 Sep 2023 04:41:42 -0400
+X-MC-Unique: cb6fuJdoPgeyTvXtnnt2jQ-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7FCE2817077;
+        Fri,  8 Sep 2023 08:41:41 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.148])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 85397525726;
+        Fri,  8 Sep 2023 08:41:37 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20230905141604.GA27370@lst.de>
+References: <20230905141604.GA27370@lst.de>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     dhowells@redhat.com, Jan Kara <jack@suse.cz>,
+        David Hildenbrand <david@redhat.com>,
+        Peter Xu <peterx@redhat.com>,
+        Lei Huang <lei.huang@linux.intel.com>, miklos@szeredi.hu,
+        Xiubo Li <xiubli@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Christian Schoenebeck <linux_oss@crudebyte.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Jakub Sitnicki <jakub@cloudflare.com>,
+        Boris Pismenny <borisp@nvidia.com>, linux-nfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-mm@kvack.org, v9fs@lists.linux.dev, netdev@vger.kernel.org
+Subject: Re: getting rid of the last memory modifitions through gup(FOLL_GET)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230906215327.18a45c89@gandalf.local.home>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1520559.1694162496.1@warthog.procyon.org.uk>
+Date:   Fri, 08 Sep 2023 09:41:36 +0100
+Message-ID: <1520560.1694162496@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.10
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 06, 2023 at 09:53:27PM -0400, Steven Rostedt wrote:
-> Anyway, what about just having read-only be the minimum for supporting a
-> file system? We can say "sorry, due to no one maintaining this file system,
-> we will no longer allow write access." But I'm guessing that just
-> supporting reading an old file system is much easier than modifying one
-> (wasn't that what we did with NTFS for the longest time?)
+Christoph Hellwig <hch@lst.de> wrote:
 
-read-only is just as annoying, because all our normal test infrastruture
-doesn't work for that at all.  So you'd need not only a test harness
-for that, but also a lot of publically shared images and/or a tool
-to generate filled images.
+> we've made some nice progress on converting code that modifies user
+> memory to the pin_user_pages interface, especially though the work
+> from David Howells on iov_iter_extract_pages.  This thread tries to
+> coordinate on how to finish off this work.
+
+Right at this moment, I'm writing some kunit tests for iov_iter and I've found
+at least one bug.
+
+David
+
