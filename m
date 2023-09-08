@@ -2,105 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 54CD77983D3
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Sep 2023 10:15:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 491917983ED
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Sep 2023 10:22:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232410AbjIHIPz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Sep 2023 04:15:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42834 "EHLO
+        id S238785AbjIHIWQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Sep 2023 04:22:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230272AbjIHIPz (ORCPT
+        with ESMTP id S236386AbjIHIWP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Sep 2023 04:15:55 -0400
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 123E01BD3;
-        Fri,  8 Sep 2023 01:15:51 -0700 (PDT)
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id D265168B05; Fri,  8 Sep 2023 10:15:44 +0200 (CEST)
-Date:   Fri, 8 Sep 2023 10:15:44 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>,
-        David Howells <dhowells@redhat.com>,
-        Peter Xu <peterx@redhat.com>,
-        Lei Huang <lei.huang@linux.intel.com>, miklos@szeredi.hu,
-        Xiubo Li <xiubli@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Christian Schoenebeck <linux_oss@crudebyte.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Jakub Sitnicki <jakub@cloudflare.com>,
-        Boris Pismenny <borisp@nvidia.com>, linux-nfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-mm@kvack.org, v9fs@lists.linux.dev, netdev@vger.kernel.org
-Subject: Re: getting rid of the last memory modifitions through
- gup(FOLL_GET)
-Message-ID: <20230908081544.GB8240@lst.de>
-References: <20230905141604.GA27370@lst.de> <0240468f-3cc5-157b-9b10-f0cd7979daf0@redhat.com>
+        Fri, 8 Sep 2023 04:22:15 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E77EF1BDA;
+        Fri,  8 Sep 2023 01:22:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=6D470cIvCGiPdXU/MnoROZejPxD2v9P20lFztg+Jwq0=; b=matuwfW8dn31iALbrcQUfwHKmQ
+        ofRmFp2j8cU+9E8L6S0FJlFRqUDjYfAp7CEiRgGXCdxYyKk++82wEu/qGJ+ZS80/8OrgxnKQYc7ZI
+        6eCMFjzC8/QELDt6mPdK5yaRS+4/bTZ/hvktWfYzcLt5vnTPiPhEokGlj/O1h/DOc3lbPnUOJ2w4S
+        pOL3/vwPka8Jl+JGdZTkvixyZXVmgoeEPa2vomSP6k+guVN/5/ORjA9jHMbqmkpPvXxSg0cvd0ArY
+        HYrOfISvkJANWVFq3B/GRAnuI7Vq2SwlPBF2W0ECtpyYOhLkRJiKOBZaEJvbx52vsGogzYXZ+bZSd
+        qS940VGg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1qeWkh-00DJNE-2U;
+        Fri, 08 Sep 2023 08:22:07 +0000
+Date:   Fri, 8 Sep 2023 01:22:07 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Bernd Schubert <bschubert@ddn.com>
+Cc:     linux-btrfs@vger.kernel.org, bernd.schubert@fastmail.fm,
+        miklos@szeredi.hu, dsingh@ddn.com,
+        Christoph Hellwig <hch@infradead.org>,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        David Sterba <dsterba@suse.com>, linux-fsdevel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 1/1] btrfs: file_remove_privs needs an exclusive lock
+Message-ID: <ZPrZr4PEwnyYCPpC@infradead.org>
+References: <20230906155903.3287672-1-bschubert@ddn.com>
+ <20230906155903.3287672-2-bschubert@ddn.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0240468f-3cc5-157b-9b10-f0cd7979daf0@redhat.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <20230906155903.3287672-2-bschubert@ddn.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 06, 2023 at 11:42:33AM +0200, David Hildenbrand wrote:
->> and iov_iter_get_pages_alloc2.  We have three file system direct I/O
->> users of those left: ceph, fuse and nfs.  Lei Huang has sent patches
->> to convert fuse to iov_iter_extract_pages which I'd love to see merged,
->> and we'd need equivalent work for ceph and nfs.
->>
->> The non-file system uses are in the vmsplice code, which only reads
->
-> vmsplice really has to be fixed to specify FOLL_PIN|FOLL_LONGTERM for good; 
-> I recall that David Howells had patches for that at one point. (at least to 
-> use FOLL_PIN)
+On Wed, Sep 06, 2023 at 05:59:03PM +0200, Bernd Schubert wrote:
+> file_remove_privs might call into notify_change(), which
+> requires to hold an exclusive lock.
 
-Hmm, unless I'm misreading the code vmsplace is only using
-iov_iter_get_pages2 for reading from the user address space anyway.
-Or am I missing something?
+Looks good:
 
->> After that we might have to do an audit of the raw get_user_pages APIs,
->> but there probably aren't many that modify file backed memory.
->
-> ptrace should apply that ends up doing a FOLL_GET|FOLL_WRITE.
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 
-Yes, if that ends up on file backed shared mappings we also need a pin.
-
-> Further, KVM ends up using FOLL_GET|FOLL_WRITE to populate the second-level 
-> page tables for VMs, and uses MMU notifiers to synchronize the second-level 
-> page tables with process page table changes. So once a PTE goes from 
-> writable -> r/o in the process page table, the second level page tables for 
-> the VM will get updated. Such MMU users are quite different from ordinary 
-> GUP users.
-
-Can KVM page tables use file backed shared mappings?
-
-> Converting ptrace might not be desired/required as well (the reference is 
-> dropped immediately after the read/write access).
-
-But the pin is needed to make sure the file system can account for
-dirtying the pages.  Something we fundamentally can't do with get.
-
-> The end goal as discussed a couple of times would be the to limit FOLL_GET 
-> in general only to a couple of users that can be audited and keep using it 
-> for a good reason. Arbitrary drivers that perform DMA should stop using it 
-> (and ideally be prevented from using it) and switch to FOLL_PIN.
-
-Agreed, that's where I'd like to get to.  Preferably with the non-pin
-API not even beeing epxorted to modules.
+FYI, I'd be really curious about benchmarking this against you version
+that checks xattrs for shared locked writes on files that have xattrs
+but not security ones or setuid bits.  On the one hand being able to
+do the shared lock sounds nice, on the other hand even just looking up
+the xattrs will probably make it slower at least for smaller I/O.
