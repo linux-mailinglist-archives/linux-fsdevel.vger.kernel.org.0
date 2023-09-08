@@ -2,58 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1653779821E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Sep 2023 08:13:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E7EB798222
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Sep 2023 08:14:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236064AbjIHGNo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Sep 2023 02:13:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41978 "EHLO
+        id S238454AbjIHGON (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Sep 2023 02:14:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53260 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230228AbjIHGNn (ORCPT
+        with ESMTP id S230228AbjIHGOM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Sep 2023 02:13:43 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFFCF1990;
-        Thu,  7 Sep 2023 23:13:39 -0700 (PDT)
+        Fri, 8 Sep 2023 02:14:12 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 060F61BD9;
+        Thu,  7 Sep 2023 23:14:08 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 8DB54218E9;
-        Fri,  8 Sep 2023 06:13:38 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id B13221F45A;
+        Fri,  8 Sep 2023 06:14:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1694153618; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1694153646; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=34ts/sZLoOfVW2XbTvlcGR+VmUDspiKitFY4Ya68t3s=;
-        b=V9nxEUcpxeFNOtHIyMMy+Q8turvt85KDM32KGaliDf0I8Dy6oRMvE0A5pi7ScgdPboHRTS
-        fV5FhWuvBK8ClqYODXD5v1d6OZ606bvDQYAIaMYNYpoEV9raGKWkNcBFXMgg5t2i/Sdh4Y
-        s8bpi8FeIqKnTglsDUNCko7LrNtp+7Q=
+        bh=u70NF1V9pWl9eEz7YZwVeuG+ejy85zfIYBi8ygYJwcs=;
+        b=DfeVirnZxhbQk1vAmjPAszH9kgnjQ3mOjdsW6PQxPQoqn25ABy9S9M94hBjvfqWlB1Rcot
+        OhTa3zhpxuizP08v7mUneOy36Jcv03CCEqTfdAUUWJn/+w4m3DUWlfxNC+Gd83kvXJfyDK
+        evrDTPIBagGq4EXSJ3pJmeU15gkkenU=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1694153618;
+        s=susede2_ed25519; t=1694153646;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=34ts/sZLoOfVW2XbTvlcGR+VmUDspiKitFY4Ya68t3s=;
-        b=Vz8Fpv4mKyUQZEi+urezblo8dETHY2TrzCiharhXXPPkt5tlJn7swm/J447x2acVffBB6x
-        B2fCzymJfPd05gBA==
+        bh=u70NF1V9pWl9eEz7YZwVeuG+ejy85zfIYBi8ygYJwcs=;
+        b=8pVjwALs0VCba9DB+/tcyO7UMWlunbPcm56DD/pKbGKFHTDC57S/iVM0F+Qvf6MyKkqZp2
+        msgmNvwoPd7uHgCw==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 2A170131FD;
-        Fri,  8 Sep 2023 06:13:38 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 37819131FD;
+        Fri,  8 Sep 2023 06:14:06 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id kbvpCJK7+mSabAAAMHmgww
-        (envelope-from <hare@suse.de>); Fri, 08 Sep 2023 06:13:38 +0000
-Message-ID: <cb767dc9-1732-4e31-bcc6-51c187750d66@suse.de>
-Date:   Fri, 8 Sep 2023 08:13:37 +0200
+        id CKh6DK67+mSabAAAMHmgww
+        (envelope-from <hare@suse.de>); Fri, 08 Sep 2023 06:14:06 +0000
+Message-ID: <ee307498-7d15-48e0-9f9f-518c928e8ebc@suse.de>
+Date:   Fri, 8 Sep 2023 08:14:06 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 09/12] dm: Add support for copy offload
+Subject: Re: [PATCH v15 10/12] dm: Enable copy offload for dm-linear target
 Content-Language: en-US
 To:     Nitesh Shetty <nj.shetty@samsung.com>,
         Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
@@ -70,10 +70,10 @@ Cc:     martin.petersen@oracle.com, mcgrof@kernel.org,
         linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
         linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
 References: <20230906163844.18754-1-nj.shetty@samsung.com>
- <CGME20230906164407epcas5p3f9e9f33e15d7648fd1381cdfb97d11f2@epcas5p3.samsung.com>
- <20230906163844.18754-10-nj.shetty@samsung.com>
+ <CGME20230906164416epcas5p307df0f4ab0a6a6a670fb50f6a8420a2a@epcas5p3.samsung.com>
+ <20230906163844.18754-11-nj.shetty@samsung.com>
 From:   Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20230906163844.18754-10-nj.shetty@samsung.com>
+In-Reply-To: <20230906163844.18754-11-nj.shetty@samsung.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -86,16 +86,26 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 9/6/23 18:38, Nitesh Shetty wrote:
-> Before enabling copy for dm target, check if underlying devices and
-> dm target support copy. Avoid split happening inside dm target.
-> Fail early if the request needs split, currently splitting copy
-> request is not supported.
+> Setting copy_offload_supported flag to enable offload.
 > 
-And here is where I would have expected the emulation to take place;
-didn't you have it in one of the earlier iterations?
-After all, device-mapper already has the infrastructure for copying
-data between devices, so adding a copy-offload emulation for 
-device-mapper should be trivial.
+> Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
+> ---
+>   drivers/md/dm-linear.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/md/dm-linear.c b/drivers/md/dm-linear.c
+> index f4448d520ee9..1d1ee30bbefb 100644
+> --- a/drivers/md/dm-linear.c
+> +++ b/drivers/md/dm-linear.c
+> @@ -62,6 +62,7 @@ static int linear_ctr(struct dm_target *ti, unsigned int argc, char **argv)
+>   	ti->num_discard_bios = 1;
+>   	ti->num_secure_erase_bios = 1;
+>   	ti->num_write_zeroes_bios = 1;
+> +	ti->copy_offload_supported = 1;
+>   	ti->private = lc;
+>   	return 0;
+>   
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 
 Cheers,
 
