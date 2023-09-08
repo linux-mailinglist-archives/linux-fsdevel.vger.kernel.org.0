@@ -2,74 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C69A798498
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Sep 2023 11:11:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65C327984A8
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Sep 2023 11:17:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241416AbjIHJLQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Sep 2023 05:11:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35652 "EHLO
+        id S241930AbjIHJRL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Sep 2023 05:17:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240773AbjIHJLP (ORCPT
+        with ESMTP id S236197AbjIHJRK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Sep 2023 05:11:15 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6930F1997
-        for <linux-fsdevel@vger.kernel.org>; Fri,  8 Sep 2023 02:11:09 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-400a087b0bfso19339135e9.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Sep 2023 02:11:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=froggi.es; s=google; t=1694164268; x=1694769068; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uucPgAlGBQZ8LNzLV0XU3oBxm9XKuhvV3ldf5KCnJas=;
-        b=KFTrR103szWJEVVrwrOh3S5yIePmAzay2NB6PFt/uuy3m7O/JxRVNNdzZkzciTproH
-         3v8xwblhNzTDV1uo0m4/p5wR9GMFix1uGRNY0tjAI8FXgLRMX7FbeSJSwo5TdUwofpft
-         nvztFi9NemEqR16ZeE+wtHJdHE7ceZXDNxXcYtsL5OoFaddDJfbqBc0tSBCe9NW/71mY
-         nVd4VORQIrH72GdWhuu1G4EG11p34BgmGDav8jPY2m2NMFcUOwU3BR+H5bPJNSITQstl
-         j+b373W00j2OxP/ygsSj8XuTaes00BZsqS3aoyq9ZlZtVIdwpFqOAOkfv5rQqXwMo2DA
-         qbRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694164268; x=1694769068;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uucPgAlGBQZ8LNzLV0XU3oBxm9XKuhvV3ldf5KCnJas=;
-        b=AV1lX4Lxu30m3hbvzgcnAxo2GRQWhFUoEDUR99LwitvpIAh2JB5t9iFCQ73vvFA1tX
-         bbM69QTrNFLoZb/EzZk6i2SHBgsstiISVzObldfEhC4807FIbz0hw8gyGm0I4dNc9oAc
-         y06A1tlwbB+IyF5vwPpckSZqmDRnwd7wi7hElEzLOPe+hiEij+3v857UYcr2puO0tERe
-         QEtT+JorESCofiZ70mH3/aDhY3XrjL5oVAW1tay4JWd7+NuHAwAuJ8cvWTNhlflDeB0m
-         ff3gZl4dmT+K7ZVtRAwTUX6nF7nLOAlFcsft6V1LylRvMLXeTjC+n/7uP+vDye0yNTYO
-         y6cw==
-X-Gm-Message-State: AOJu0YyQ0hT6MNLbWrvHdq8c631pzMj+D3zaiS+CSlyLq+oCiCedh8ZF
-        qoZWjss0xojFJyq5jncqdbU/Xw==
-X-Google-Smtp-Source: AGHT+IHXFm0k3Ng9rEIihR13gx7EBn8TISG7UZBX/S9GUomLYkv0qz2Sp94jomnPytBSKb0AniVSKQ==
-X-Received: by 2002:a7b:c01a:0:b0:3fb:d1db:545b with SMTP id c26-20020a7bc01a000000b003fbd1db545bmr1557599wmb.20.1694164267671;
-        Fri, 08 Sep 2023 02:11:07 -0700 (PDT)
-Received: from [192.168.0.89] (darl-09-b2-v4wan-165404-cust288.vm5.cable.virginm.net. [86.17.61.33])
-        by smtp.gmail.com with ESMTPSA id v17-20020a5d6791000000b0031c5ce91ad6sm1535225wru.97.2023.09.08.02.11.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Sep 2023 02:11:07 -0700 (PDT)
-Message-ID: <689a856d-4c4a-4d65-b4f2-a5b11e61d75b@froggi.es>
-Date:   Fri, 8 Sep 2023 10:11:06 +0100
+        Fri, 8 Sep 2023 05:17:10 -0400
+Received: from wout2-smtp.messagingengine.com (wout2-smtp.messagingengine.com [64.147.123.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3FD51FD0;
+        Fri,  8 Sep 2023 02:17:00 -0700 (PDT)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+        by mailout.west.internal (Postfix) with ESMTP id 301AE32009A5;
+        Fri,  8 Sep 2023 05:16:57 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Fri, 08 Sep 2023 05:16:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+        cc:cc:content-transfer-encoding:content-type:content-type:date
+        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to; s=fm1; t=
+        1694164616; x=1694251016; bh=s594X3Pv8Q20DGgzxtmI6FameSh057YuP7w
+        8HNnn36I=; b=IENODDH7AzFSwGtTbR3rHgPPj2JQzS8oBWBXdbGlhVuufz4koPa
+        sJGlFlndbaiRcHGxxggDPhKl7B85dYhj2B6/j6xfzIW2hM4jowg3EMJa6+S1pXU+
+        7B3YFceQNlNZLl5EUiWB25ar1UEIqFl62eYDG1tbpJC5HsscpBWFHxesa1+fdmom
+        6vYplJLT3nKiZheyW/Qvk1JzKERg6rjrogbj9Vml/zcfAugkpJlR8xj/+HqWb+FH
+        1lFTMleN6ptEyV37EhLqX7t7HqqLgPxBPRgRCVlmmeQNucjGokVrJQV+2miBN5/7
+        JYShFBCPOJlG9Pl9EfLjXO0QhXmdTy9mEHA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:content-type:date:date:feedback-id:feedback-id
+        :from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+        1694164616; x=1694251016; bh=s594X3Pv8Q20DGgzxtmI6FameSh057YuP7w
+        8HNnn36I=; b=UQtokjSsACbcBigP/XC3C+rwYfKaW21sebnKTfvoblKcbFOqrkw
+        ye9wdi1JUMuqbAC7trTpLK7mNiOk9btysJt/X3UxE8cJ7CDVvvxncEGggdstt2Hj
+        1YZEIUvpHrY+SaWIqPJ9Ub59TuIqIEwiwdqCi+yGfzd8fYlmhkfBhO5wQpgv6tif
+        MHA33h1oiZBYlByxn6V04uVRb6Xk5PAppLKDvITNXgiyyFjtSyI3+ApIFTvVcGNs
+        NObhBb8DZnZJFUgA14oeuKpO8ino8K/qWFDCXzdm7gzxVjc3Rv/mWur6a3atu0bN
+        qLyvljp2n/LMpGfVBBhc52I/c6DhT41KlfA==
+X-ME-Sender: <xms:iOb6ZOTqNrmGMvNRjj_3stWdXZxbF5F1Ve1FseVBIKMUe_cdFffPqg>
+    <xme:iOb6ZDz3kL2ERV4tip-a-vlpuPwTpMEbk8sgBM6pHSjFGuRc1khSp7MY0AAkIdqbN
+    9_-qr1Ve4M_KMG4>
+X-ME-Received: <xmr:iOb6ZL2Eid8IEISuA9VuE3vQwzOfI0z6ZUrhOZD_Tmj6RpT492-O8mbJtthEOm0_lyNAG0kE0ub5qMsPg54h2MNfjjmToBIFz3ECsMdl3wbsHXcmT1TJ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrudehjedgudefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtfeejnecuhfhrohhmpeeuvghr
+    nhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrih
+    hlrdhfmheqnecuggftrfgrthhtvghrnhepkeehveekleekkeejhfehgeeftdffuddujeej
+    ieehheduueelleeghfeukeefvedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdr
+    fhhm
+X-ME-Proxy: <xmx:iOb6ZKC-7kPfCCCFIz8BCG1pn7IeIokZxrjbtsfhAcFP_9hkFIeEGQ>
+    <xmx:iOb6ZHiuriNpr8IWWU1TU3mr1PO7ZcBTr739J7p9J6xe9qngRGs44g>
+    <xmx:iOb6ZGq1ponF-bzOVIsE_07ZMUA4mpXVQi5kr1F3_LKtwsEf1oYa3g>
+    <xmx:iOb6ZHjIVr0xP_5ZawYaJcpUYIJX7qxmy789zWfXAvjOJAmc9J-0Zw>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 8 Sep 2023 05:16:55 -0400 (EDT)
+Message-ID: <6db09157-2797-b159-9687-3f8e57e35b28@fastmail.fm>
+Date:   Fri, 8 Sep 2023 11:16:52 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] bcachefs
-To:     Kent Overstreet <kent.overstreet@linux.dev>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-bcachefs@vger.kernel.org
-References: <20230903032555.np6lu5mouv5tw4ff@moria.home.lan>
- <CAHk-=wjUX287gJCKDXUY02Wpot1n0VkjQk-PmDOmrsrEfwPfPg@mail.gmail.com>
- <20230907234001.oe4uypp6anb5vqem@moria.home.lan>
-Content-Language: en-US
-From:   Joshua Ashton <joshua@froggi.es>
-In-Reply-To: <20230907234001.oe4uypp6anb5vqem@moria.home.lan>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.0
+Subject: Re: [PATCH 1/1] btrfs: file_remove_privs needs an exclusive lock
+Content-Language: en-US, de-DE
+To:     Christoph Hellwig <hch@infradead.org>,
+        Bernd Schubert <bschubert@ddn.com>
+Cc:     linux-btrfs@vger.kernel.org, miklos@szeredi.hu, dsingh@ddn.com,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        David Sterba <dsterba@suse.com>, linux-fsdevel@vger.kernel.org,
+        stable@vger.kernel.org
+References: <20230906155903.3287672-1-bschubert@ddn.com>
+ <20230906155903.3287672-2-bschubert@ddn.com> <ZPrZr4PEwnyYCPpC@infradead.org>
+From:   Bernd Schubert <bernd.schubert@fastmail.fm>
+In-Reply-To: <ZPrZr4PEwnyYCPpC@infradead.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_PASS,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -78,135 +95,34 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
 
-On 9/8/23 00:40, Kent Overstreet wrote:
-> On Wed, Sep 06, 2023 at 12:36:18PM -0700, Linus Torvalds wrote:
->> So I'm starting to look at this because I have most other pull
->> requests done, and while I realize there's no universal support for it
->> I suspect any further changes are better done in-tree. The out-of-tree
->> thing has been done.
->>
->> However, while I'll continue to look at it in this form, I just
->> realized that it's completely unacceptable for one very obvious
->> reason:
->>
->> On Sat, 2 Sept 2023 at 20:26, Kent Overstreet <kent.overstreet@linux.dev> wrote:
->>>
->>>    https://evilpiepirate.org/git/bcachefs.git bcachefs-for-upstream
->>
->> No way am I pulling that without a signed tag and a pgp key with a
->> chain of trust. You've been around for long enough that having such a
->> key shouldn't be a problem for you, so make it happen.
->>
->> There are a few other issues that I have with this, and Christoph did
->> mention a big one: it's not been in linux-next. I don't know why I
->> thought it had been, it's just such an obvious thing for any new "I
->> want this merged upstream" tree.
->>
->> So these kinds of "I'll just ignore _all_ basic rules" kinds of issues
->> do annoy me.
->>
->> I need to know that you understand that if you actually want this
->> upstream, you need to work with upstream.
->>
->> That very much means *NOT* continuing this "I'll just do it my way".
->> You need to show that you can work with others, that you can work
->> within the framework of upstream, and that not every single thread you
->> get into becomes an argument.
->>
->> This, btw, is not negotiable.  If you feel uncomfortable with that
->> basic notion, you had better just continue doing development outside
->> the main kernel tree for another decade.
->>
->> The fact that I only now notice that you never submitted this to
->> linux-next is obviously on me. My bad.
->>
->> But at the same time it worries me that it might be a sign of you just
->> thinking that your way is special.
->>
->>                  Linus
+On 9/8/23 10:22, Christoph Hellwig wrote:
+> On Wed, Sep 06, 2023 at 05:59:03PM +0200, Bernd Schubert wrote:
+>> file_remove_privs might call into notify_change(), which
+>> requires to hold an exclusive lock.
 > 
-> Honestly, though, this process is getting entirely kafkaesque.
+> Looks good:
 > 
-> I've been spending the past month or two working laying the groundwork
-> for putting together a team to work on this, because god knows we need
-> fresh blood in filesystem land - but that's on hold. Getting blindsided
-> by another three month delay hurts, but that's not even the main thing.
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
 > 
-> The biggest thing has just been the non stop hostility and accusations -
-> everything from "fracturing the community" too "ignoring all the rules"
-> and my favorite, "is this the hill Kent wants to die on?" - when I'm
-> just trying to get work done.
-> 
-> I don't generally think of myself as being particularly difficult to
-> work with, I get along fine with most of the filesystem developers I
-> interact with - regularly sharing ideas back and forth with the XFS
-> people - but these review discussions have been entirely dominated by
-> the most divisive people in our community, and I'm being told it's
-> entirely on me to work with the guy whos one constant in the past 15
-> years has been to try and block everything I submit?
-> 
-> I'm just trying to get work done here. I'm not trying to ignore the
-> rules. I'm trying to work with people who are willing to have reasonable
-> discussions.
-> 
-> -------------------
-> 
-> When I was a teenager, I wanted nothing more than to be a Linux kernel
-> programmer. I thought it utterly amazing that this huge group of people
-> from around the world were working together over the internet, and that
-> anyone could take part if they had the chops.
-> 
-> That was my escape from a shitty family situation and the assholes in my
-> life.
-> 
-> But my life is different now; I have new and better people in my life,
-> and I have to be thinking about them, and if merging bcachefs means I
-> have to spend a lot more time in interactions like this then it's going
-> to make me a shitty person to be around; and I don't want to do that to
-> myself and I definitely don't want to do that to the people I care
-> about.
-> 
-> I'm going to go offline for awhile and think about what I want to do
-> next.
+> FYI, I'd be really curious about benchmarking this against you version
+> that checks xattrs for shared locked writes on files that have xattrs
+> but not security ones or setuid bits.  On the one hand being able to
+> do the shared lock sounds nice, on the other hand even just looking up
+> the xattrs will probably make it slower at least for smaller I/O.
 
-I've been holding off replying here for a while because I really hoped 
-that this situation would just work itself out. (I apologise for adding 
-more noise in advance)
 
-I agree that it really sucks that sometimes you don't get replies to 
-things sometimes or the review from the people you need it from all the 
-time, or didn't tell you something you needed to know.
+I had checked the history of S_NOSEC and I guess that already tells that
+the xattr lookup is too slow (commit 69b4573296469fd3f70cf7044693074980517067)
+I don't promise that I benchmark it today, but I can
+try to find some time in the next week or the week after. Although I
+guess there won't be any difference with my initial patch, as
+dentry_needs_remove_privs() also checks for IS_NOSEC(inode) - overhead
+was just the additional non inlined function call to
+file_needs_remove_privs(). And if the flag was not set, overhead was
+looking up xattr two times.
 
-But, I think it's really important though to realize that you are 
-talking to other people on the ML and not review machines (unless that 
-person is Dave Airlie on Zink ;P) and very often, other work can come up 
-that would block them being able to spend time reviewing or guiding you 
-on this process.
 
-Everyone on here is another person who has their own huuuge slog of work 
-that is super important for security, stability, shipping a 
-product/feature, keeping their job, etc.
+Bernd
 
-Eg. I proposed several revisions on the casefolding support for 
-bcachefs, but right now I am busy doing some other AMDGPU and 
-Gamescope/Proton + color work so I haven't had a chance to follow up 
-more on that since the last discussion.
 
-You might think that because X takes a while to respond/review or a 
-didn't mention that you actually needed to do Y or missed your meeting; 
-it's because they don't care, but it's probably way more likely that 
-they are just busy and going through their own personal hell.
 
-One of the harsh things about open source is rationalizing that nobody 
-owes you a review or any of their time. If people are willing to review 
-your features and changes in any capacity, then they also have an 
-interest in your project.
-
-If you can understand that, then you are going to have a much better 
-time proposing things upstream.
-
-I also really want to see bcachefs in mainline, and I know you can do 
-it. :-)
-
-Cheers
-- Joshie 🐸✨
