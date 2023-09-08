@@ -2,110 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0543E798687
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Sep 2023 13:41:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4D6F7986A6
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Sep 2023 13:59:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242263AbjIHLlw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Sep 2023 07:41:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34558 "EHLO
+        id S242852AbjIHL7a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Sep 2023 07:59:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236522AbjIHLlw (ORCPT
+        with ESMTP id S238565AbjIHL7a (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Sep 2023 07:41:52 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 376D11BE7;
-        Fri,  8 Sep 2023 04:41:48 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DACDC433C8;
-        Fri,  8 Sep 2023 11:41:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694173307;
-        bh=Th07n2ZiEJs6k4933TKSCYY2PxyWJc5qY0ucWzXC3Gk=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=hvYP+e5t0mw5oeIG5WhIGoBSXGvgHI8rCzYUQYWMpxFm+41b19/o7DzyDXW/K25Am
-         f1+gdRDRAZ2Uho2ktUBsnfI5poscWnV1DHgf9JDR0UBbeyGwtK9Qe77djKydKqK7iG
-         WxVVsicdJpV3XN9+2Zo+4r9KRKOQlstOgjRzHATa9nEvz3fNtblmYjfAHhUs1s5bdI
-         a3svBjEf1oE0NWdEgcAWa/0sr4gFcoS8K5btnIk0RqowjjuT2S/UbvbUZM7p9bork/
-         gPxC3M4/xnLuwmGdgzEyEb65ghFAYdd2q3t7HHy9QW6yySFsxQ5L447IMU8fiT8qj7
-         5lMhpC9/FfF8A==
-Message-ID: <0716e97eadc834ac4be97af5d6bbab82c5dc4ac9.camel@kernel.org>
-Subject: Re: [PATCH 1/2] fs: initialize inode->__i_ctime to the epoch
-From:   Jeff Layton <jlayton@kernel.org>
+        Fri, 8 Sep 2023 07:59:30 -0400
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F2A019BC;
+        Fri,  8 Sep 2023 04:59:25 -0700 (PDT)
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id E07661C0019; Fri,  8 Sep 2023 13:59:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+        t=1694174362;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=pgszQD84t0zWFYtdlm4co33mPCbsZOXmieVbxsc8Tu0=;
+        b=KQJ4R4+KQNuGIamlwHNZfjp2dSVDBl+R6ONq5VGA9+welTSi2VRQYjEDUl8tW1XFSrGwTy
+        c2Oh41Uvh6ViJZfc9q4RpM9Cj62ySxO78pNrhkQYp3/wUpIdBYEEzh+6x+UJ2FJfHBXwEq
+        GekWoxjSfU/nA2a3b19axQx2jFgDC+E=
+Date:   Fri, 8 Sep 2023 13:59:22 +0200
+From:   Pavel Machek <pavel@ucw.cz>
 To:     Jan Kara <jack@suse.cz>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, linux-mm@kvack.org,
+Cc:     Mikulas Patocka <mpatocka@redhat.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Zdenek Kabelac <zkabelac@redhat.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel test robot <oliver.sang@intel.com>
-Date:   Fri, 08 Sep 2023 07:41:45 -0400
-In-Reply-To: <20230908104229.5tsr2sn7oyfy53ih@quack3>
-References: <20230907-ctime-fixes-v1-0-3b74c970d934@kernel.org>
-         <20230907-ctime-fixes-v1-1-3b74c970d934@kernel.org>
-         <20230908104229.5tsr2sn7oyfy53ih@quack3>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+        dm-devel@redhat.com, Christoph Hellwig <hch@lst.de>,
+        "Darrick J. Wong" <djwong@kernel.org>
+Subject: Re: [PATCH] fix writing to the filesystem after unmount
+Message-ID: <ZPsMmjFXGFmdRP+d@duo.ucw.cz>
+References: <59b54cc3-b98b-aff9-14fc-dc25c61111c6@redhat.com>
+ <20230906-launenhaft-kinder-118ea59706c8@brauner>
+ <f5d63867-5b3e-294b-d1f5-a128817cfc7@redhat.com>
+ <20230906-aufheben-hagel-9925501b7822@brauner>
+ <60f244be-803b-fa70-665e-b5cba15212e@redhat.com>
+ <20230906-aufkam-bareinlage-6e7d06d58e90@brauner>
+ <818a3cc0-c17b-22c0-4413-252dfb579cca@redhat.com>
+ <20230907094457.vcvmixi23dk3pzqe@quack3>
 MIME-Version: 1.0
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="VV/11Z1/4RYJMo7q"
+Content-Disposition: inline
+In-Reply-To: <20230907094457.vcvmixi23dk3pzqe@quack3>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_PASS,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 2023-09-08 at 12:42 +0200, Jan Kara wrote:
-> On Thu 07-09-23 12:33:47, Jeff Layton wrote:
-> > With the advent of multigrain timestamps, we use inode_set_ctime_curren=
-t
-> > to set the ctime, which can skip updating if the existing ctime appears
-> > to be in the future. Because we don't initialize this field at
-> > allocation time, that could prevent the ctime from being initialized
-> > properly when the inode is instantiated.
+
+--VV/11Z1/4RYJMo7q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu 2023-09-07 11:44:57, Jan Kara wrote:
+> On Wed 06-09-23 18:52:39, Mikulas Patocka wrote:
+> > On Wed, 6 Sep 2023, Christian Brauner wrote:
+> > > On Wed, Sep 06, 2023 at 06:01:06PM +0200, Mikulas Patocka wrote:
+> > > > > > BTW. what do you think that unmount of a frozen filesystem shou=
+ld properly=20
+> > > > > > do? Fail with -EBUSY? Or, unfreeze the filesystem and unmount i=
+t? Or=20
+> > > > > > something else?
+> > > > >=20
+> > > > > In my opinion we should refuse to unmount frozen filesystems and =
+log an
+> > > > > error that the filesystem is frozen. Waiting forever isn't a good=
+ idea
+> > > > > in my opinion.
+> > > >=20
+> > > > But lvm may freeze filesystems anytime - so we'd get randomly retur=
+ned=20
+> > > > errors then.
+> > >=20
+> > > So? Or you might hang at anytime.
 > >=20
-> > Always initialize the ctime field to the epoch so that the filesystem
-> > can set the timestamps properly later.
+> > lvm doesn't keep logical volumes suspended for a prolonged amount of ti=
+me.=20
+> > It will unfreeze them after it made updates to the dm table and to the=
+=20
+> > metadata. So, it won't hang forever.
 > >=20
-> > Reported-by: kernel test robot <oliver.sang@intel.com>
-> > Closes: https://lore.kernel.org/oe-lkp/202309071017.a64aca5e-oliver.san=
-g@intel.com
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > I think it's better to sleep for a short time in umount than to return =
+an=20
+> > error.
 >=20
-> Looks good but don't you need the same treatment to atime after your patc=
-h
-> 2/2?
->=20
->=20
+> I think we've got too deep down into "how to fix things" but I'm not 100%
+> sure what the "bug" actually is. In the initial posting Mikulas writes "t=
+he
+> kernel writes to the filesystem after unmount successfully returned" - is
+> that really such a big issue? Anybody else can open the device and write =
+to
+> it as well. Or even mount the device again. So userspace that relies on
+> this is kind of flaky anyway (and always has been).
 
-I don't think so. Most filesystems are doing something along the lines
-of this when allocating a new inode:
+Umm. No? I admin my own systems; I'm responsible for my
+userspace. Maybe I'm in single user mode.
 
-    inode->i_atime =3D inode->i_mtime =3D inode_set_ctime_current(inode);
+Noone writes to my block devices without my permissions.
 
-...and I think they pretty much all have to initialize i_atime properly,
-since someone could stat the inode before an atime update occurs.
+By mount, I give such permission to the kernel. By umount, I take
+such permission away.
 
-> > ---
-> >  fs/inode.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >=20
-> > diff --git a/fs/inode.c b/fs/inode.c
-> > index 35fd688168c5..54237f4242ff 100644
-> > --- a/fs/inode.c
-> > +++ b/fs/inode.c
-> > @@ -168,6 +168,8 @@ int inode_init_always(struct super_block *sb, struc=
-t inode *inode)
-> >  	inode->i_fop =3D &no_open_fops;
-> >  	inode->i_ino =3D 0;
-> >  	inode->__i_nlink =3D 1;
-> > +	inode->__i_ctime.tv_sec =3D 0;
-> > +	inode->__i_ctime.tv_nsec =3D 0;
-> >  	inode->i_opflags =3D 0;
-> >  	if (sb->s_xattr)
-> >  		inode->i_opflags |=3D IOP_XATTR;
-> >=20
-> > --=20
-> > 2.41.0
-> >=20
+There's nothing flaky about that. Kernel is simply buggy. Fix it.
 
+[Remember that "you should umount before disconnecting USB devices to
+prevent data corruption"? How is that working with kernel writing to
+devices after umount?]
+
+Best regards,
+									Pavel
 --=20
-Jeff Layton <jlayton@kernel.org>
+People of Russia, stop Putin before his war on Ukraine escalates.
+
+--VV/11Z1/4RYJMo7q
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZPsMmgAKCRAw5/Bqldv6
+8jwpAKCloP9g2vbKKoXzhQ/ur0UU/OPQBQCfYxXaWEstMzVxbkv+WoWbEeYTPxE=
+=jKlj
+-----END PGP SIGNATURE-----
+
+--VV/11Z1/4RYJMo7q--
