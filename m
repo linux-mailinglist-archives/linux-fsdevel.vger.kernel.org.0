@@ -2,88 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AB00798B8F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Sep 2023 19:44:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71F1B798C3C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Sep 2023 20:07:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244955AbjIHRoU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Sep 2023 13:44:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60862 "EHLO
+        id S235055AbjIHSHD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Sep 2023 14:07:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232496AbjIHRoT (ORCPT
+        with ESMTP id S233087AbjIHSHC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Sep 2023 13:44:19 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C22441FCF;
-        Fri,  8 Sep 2023 10:44:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=zyF0jvVhbr8PSp/2Xh6a0Bf8cbSHNg5Ra4S8V/25hsw=; b=BxFupsDJl5Xc8SZpg5zCOi2QJU
-        Hs1ZYTl4fnfw96yWSuBvf33JUCGZOl0aO9XnbzjJCJXbJepXjgdtmn+P6zof1QBjM0GCCYUIBgRRU
-        pChwakrt+jqOh4XH40G/Uvf9meAJB6uCFciyoAOiN/U50oBLnCwyAr80e0yBj7/oNmxupI25PmSqN
-        hy2fFuw+fn9Yw1FHhgaFPN2rxk8bPDayikiUos0vRaCDUooDmgYH3AXWHuVC+oJY3ByyOuHvkh2t/
-        CiLoOx56FwCzc5BAdz5v5iVAXwEKjVlQgFg7lYxMr8Iogzmz562NIDpHeTvJAEE8fa9idlO+IZX+m
-        ZmTufnGw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qefWf-001Ugv-8P; Fri, 08 Sep 2023 17:44:13 +0000
-Date:   Fri, 8 Sep 2023 18:44:13 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: [GIT PULL] XArray for 6.6
-Message-ID: <ZPtdbS6FTadc3LVA@casper.infradead.org>
+        Fri, 8 Sep 2023 14:07:02 -0400
+Received: from mail-pf1-x447.google.com (mail-pf1-x447.google.com [IPv6:2607:f8b0:4864:20::447])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 225102111
+        for <linux-fsdevel@vger.kernel.org>; Fri,  8 Sep 2023 11:06:40 -0700 (PDT)
+Received: by mail-pf1-x447.google.com with SMTP id d2e1a72fcca58-68bf02547dbso3311691b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Sep 2023 11:06:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694196270; x=1694801070;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0lAvPiHpQzYJH2/Evbqeae0jEIobBXd5mkIT/JR5mjU=;
+        b=c3XJxY1e4u4g+5xkGx3o0XRD8vgka2PBG5fqNSb5gaTV1/3nBmNWvcGPunP3CGTHT9
+         M1WVlvx4iZZILCCvUK9V7RqlVaUAfjoj31VWFXhdwOcdiTTtaFEJ8dxYVAgnJqYGJhcb
+         I0CqniDPFSs69pPztX3ekB3osHmHTChXIQWX5rpLLVHKF24ldrsjOKTM606XsN9c6aTX
+         3weeyz6e8gHS+y4K1S54ZNVWFhqG1Ym3h89+ElcZ0hLcpZky7fxugBeIlroLDASnULWL
+         YA/fqHLTGVgK1H2EFGoQ9bQjVNwt27T9LXQ9+KCjDNf22mhTOUsVpOwmgcPzYCdcLyLL
+         iDkQ==
+X-Gm-Message-State: AOJu0Yx9Y38iPxzYOWM2j6XTy3547tsAx02Jy/1IG5uqox2FvsVRs4UN
+        jaYjqLyrOEBeA1kbSUArswfsUvP3eIzYpVwrkUOmAV3deTz4
+X-Google-Smtp-Source: AGHT+IFG6oZqBOayFovKE0NVKEQ0Xnwtd+Nskzg2qKPXIoko6vfMv+elInHkBKWJh6QlQckbllDdPD2ESA+Mlnx+N1cgB86kBYBd
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a05:6a00:80c:b0:68a:3c7a:128c with SMTP id
+ m12-20020a056a00080c00b0068a3c7a128cmr1357477pfk.2.1694196270440; Fri, 08 Sep
+ 2023 11:04:30 -0700 (PDT)
+Date:   Fri, 08 Sep 2023 11:04:30 -0700
+In-Reply-To: <000000000000f392a60604a65085@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e127ec0604dcce27@google.com>
+Subject: Re: [syzbot] [mm?] kernel BUG in vma_replace_policy
+From:   syzbot <syzbot+b591856e0f0139f83023@syzkaller.appspotmail.com>
+To:     42.hyeyoo@gmail.com, Liam.Howlett@Oracle.com,
+        agordeev@linux.ibm.com, akpm@linux-foundation.org,
+        alexghiti@rivosinc.com, aou@eecs.berkeley.edu,
+        borntraeger@linux.ibm.com, cgroups@vger.kernel.org,
+        christophe.leroy@csgroup.eu, damon@lists.linux.dev,
+        david@redhat.com, eadavis@sina.com, frankja@linux.ibm.com,
+        gerald.schaefer@linux.ibm.com, gor@linux.ibm.com,
+        hannes@cmpxchg.org, hca@linux.ibm.com, imbrenda@linux.ibm.com,
+        jeeheng.sia@starfivetech.com, jglisse@redhat.com,
+        kvm@vger.kernel.org, leyfoon.tan@starfivetech.com,
+        linmiaohe@huawei.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, mason.huo@starfivetech.com,
+        mhocko@kernel.org, mpe@ellerman.id.au, muchun.song@linux.dev,
+        naoya.horiguchi@nec.com, npiggin@gmail.com, palmer@dabbelt.com,
+        paul.walmsley@sifive.com, roman.gushchin@linux.dev,
+        sebastian.reichel@collabora.com, shakeelb@google.com,
+        sj@kernel.org, surenb@google.com, svens@linux.ibm.com,
+        syzkaller-bugs@googlegroups.com, willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,SORTED_RECIPS,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I had to update the expiration on my signing key.  I don't know if you
-pay attention to that, or whether my attempts to get my updated expiration
-date into the system were successful.
+syzbot has bisected this issue to:
 
-The following changes since commit f837f0a3c94882a29e38ff211a36c1c8a0f07804:
+commit 49b0638502da097c15d46cd4e871dbaa022caf7c
+Author: Suren Baghdasaryan <surenb@google.com>
+Date:   Fri Aug 4 15:27:19 2023 +0000
 
-  Merge tag 'arm64-fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux (2023-07-28 11:21:57 -0700)
+    mm: enable page walking API to lock vmas during the walk
 
-are available in the Git repository at:
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11fd2348680000
+start commit:   7733171926cc Merge tag 'mailbox-v6.6' of git://git.linaro...
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=13fd2348680000
+console output: https://syzkaller.appspot.com/x/log.txt?x=15fd2348680000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b273cdfbc13e9a4b
+dashboard link: https://syzkaller.appspot.com/bug?extid=b591856e0f0139f83023
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15d4ecd0680000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1055c284680000
 
-  git://git.infradead.org/users/willy/xarray.git tags/xarray-6.6
+Reported-by: syzbot+b591856e0f0139f83023@syzkaller.appspotmail.com
+Fixes: 49b0638502da ("mm: enable page walking API to lock vmas during the walk")
 
-for you to fetch changes up to 2a15de80dd0f7e04a823291aa9eb49c5294f56af:
-
-  idr: fix param name in idr_alloc_cyclic() doc (2023-09-05 19:01:38 -0400)
-
-----------------------------------------------------------------
-XArray/IDA updates for 6.6
-
- - Fix a bug encountered by people using bittorrent where they'd get
-   NULL pointer dereferences on page cache lookups when using XFS
-
- - Two documentation fixes
-
-----------------------------------------------------------------
-Ariel Marcovitch (1):
-      idr: fix param name in idr_alloc_cyclic() doc
-
-Matthew Wilcox (Oracle) (1):
-      XArray: Do not return sibling entries from xa_load()
-
-Philipp Stanner (1):
-      xarray: Document necessary flag in alloc functions
-
- include/linux/xarray.h                | 18 ++++++++++
- lib/idr.c                             |  2 +-
- lib/xarray.c                          |  8 ++++-
- tools/testing/radix-tree/multiorder.c | 68 +++++++++++++++++++++++++++++++++--
- 4 files changed, 92 insertions(+), 4 deletions(-)
-
-
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
