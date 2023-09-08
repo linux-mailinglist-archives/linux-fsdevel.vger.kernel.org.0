@@ -2,84 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BBE317984FC
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Sep 2023 11:47:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE5BB798559
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Sep 2023 12:01:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231779AbjIHJrV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Sep 2023 05:47:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36014 "EHLO
+        id S236850AbjIHKBd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Sep 2023 06:01:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230475AbjIHJrU (ORCPT
+        with ESMTP id S229542AbjIHKBc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Sep 2023 05:47:20 -0400
-Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEB2F1BEA
-        for <linux-fsdevel@vger.kernel.org>; Fri,  8 Sep 2023 02:47:15 -0700 (PDT)
-Received: by mail-pg1-x52f.google.com with SMTP id 41be03b00d2f7-54290603887so1464918a12.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Sep 2023 02:47:15 -0700 (PDT)
+        Fri, 8 Sep 2023 06:01:32 -0400
+Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A430E1FEE
+        for <linux-fsdevel@vger.kernel.org>; Fri,  8 Sep 2023 03:00:24 -0700 (PDT)
+Received: by mail-pl1-x629.google.com with SMTP id d9443c01a7336-1bf11b1c7d0so21552255ad.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Sep 2023 03:00:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1694166435; x=1694771235; darn=vger.kernel.org;
+        d=bytedance.com; s=google; t=1694167145; x=1694771945; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:to:subject
          :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZOFDh/D3nnnbGTYfl9jTSGlOLCGKw3LCJaJiKQKzt8k=;
-        b=dPheguVJYjnsPoinyllXvG/HS/mjZ3x3CWYR9tfJAaosai5ovyV0E0Y/xiOhwPofCo
-         +DBFhqDlVq8KA62edHd7j6QPRqBO01ZSoWRhQFdrDzLfBmIeX4hj+AZdz4m2xDYcq7aj
-         CbLXRCZlSxLgVh6HEEnx7cu8VHuJhOcMlaHCTpoOX6rzu49GaDmGV17lVEgY7veNJ1Tk
-         bWDeaZJw6RwEr2LYS1AoYnzifFpnx8zRadnE7pC2+T3Mtgk6yWNUPOIvrjnemCIoV+Qq
-         P9y/WQ61dcK2iWhOd5Y6Hs1XLwy0orn35/ZQ12ius1OwEghPQGhdAuF05Xqm+0D3Zz0X
-         jqwA==
+        bh=3bXTeQpdjQRua5NdbqlMCWj/ycDFicrMQeBdM0bMGMw=;
+        b=ZiFN1LLDL6sDVu4ON/wkI4bAEvJ2RNe5ShlKFp00uUyWiGgA+yu9ajYeZF5t2+K38G
+         DQEp0DNNu3/73r89a1SwU+rda0PnAHXnMW8IJ/8S4Bth5wwQieOra3OHsOqyV1ivvquw
+         G2jGHQLPbl6TaWRH+xJyxts5zLqAUiTSXS+SEVLZzphGRghgdViNZF/hFxKW+LlSX8u1
+         SoJ5uW8gvM/91C+Jl1iQPNdW4xhecY450a2TvjcyGzCRCo7yUflNNntDFlE3pq+slzD7
+         qVxNyHqB6b3sriliEeRE0F3ODcp/8WUmWi5x9SeFLkobcaZS6wvjoSiwYcUzi5gZ/LAs
+         Fung==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694166435; x=1694771235;
+        d=1e100.net; s=20230601; t=1694167145; x=1694771945;
         h=content-transfer-encoding:in-reply-to:from:references:to:subject
          :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=ZOFDh/D3nnnbGTYfl9jTSGlOLCGKw3LCJaJiKQKzt8k=;
-        b=lRvBo7P50IIwWGkFRL9SbIYECR20tWHZLMQqZeA8XyAdxVgmrSaU20VfieR2P0iGzi
-         I557v2hejwD0Nq4OwXkfVtmE9cp6IyL9Tw26drk/IP9F+RpuoKOtJr/zbEXUb5NXw+4I
-         0D9MokoFZxqzvuxXbC+mD4R7rF1h4ryrFQjDPs5iscMmO0fRQkSVhZdtSYXlLzw801oN
-         EHBwCHjGEH+DwCsX8oKhjvI1omEnYDWcPOlxptBvIJ6n5bsOLlUtTpmBS/VdxeBHIBfI
-         q0gVVb1tLmaGCB5zkljzmEBBOzBbpzbm5rlAUV7yaayDglNt7/u1d3gVmXg+MifPBsn8
-         eVGg==
-X-Gm-Message-State: AOJu0YyTE18zyO9HIDmODEEIo6BLYh2Ksq6fvf9UZ2BAnc+H142pt5Ym
-        JEsZjGPhHFBFqYxhkYaauTbNDw==
-X-Google-Smtp-Source: AGHT+IGToacl2IfMv5vF0nuGEuNbbaTH2uXstB2lcyAVK5QoZX/d+uZ0rVygQlbRD+yxYwSf4/OO+w==
-X-Received: by 2002:a05:6a20:1441:b0:153:588c:f197 with SMTP id a1-20020a056a20144100b00153588cf197mr2569108pzi.35.1694166435181;
-        Fri, 08 Sep 2023 02:47:15 -0700 (PDT)
+        bh=3bXTeQpdjQRua5NdbqlMCWj/ycDFicrMQeBdM0bMGMw=;
+        b=JmFE9grmmK+pdtAd3aIvVwfxfYsrpwkTHaFYVcVJDO2O5xi+e5rJtysLXIKq8Lyvt+
+         BRTNRCQykoNAOiEJAkBkx8i7Mf9MLxmH1n+ULzztv4UIETGqm/+LQ25rzHYJj2sfFY6W
+         1EZFSXWsTjMa9fe0lc4UuPXzXUNnIVieZuqzz9RRrseaSQWeOx4EJumcGyf4xCbd7Fu/
+         44TIS5mmJIZB9D06G/ktpVQ3/p2AxaF+nd2A4S+v0rg1RRksvcI52pKh/ix3nwsDneAS
+         wZl4n7s+8JACUZFDHwxK/UUomYSnWaN9fg/8HwojoOLwthv5hwZnww6Tm06TNAKC8nd/
+         Qv3A==
+X-Gm-Message-State: AOJu0YyE0BykKrwLk8NyZpgvuGhetCrIg7lEQkEUfSAX4mvu+Flhex+X
+        OAcWSrUmTF9g1t5XflRN7GxySw==
+X-Google-Smtp-Source: AGHT+IGedR76hVXK1WBcaqFuQUXJzaKlwoEvzzggHuGYxkzUO76lUrRz9GzNXg+wcSGY1vog4i33bg==
+X-Received: by 2002:a17:902:e54e:b0:1c0:bcbc:d67 with SMTP id n14-20020a170902e54e00b001c0bcbc0d67mr6761333plf.22.1694167144904;
+        Fri, 08 Sep 2023 02:59:04 -0700 (PDT)
 Received: from [10.254.232.87] ([139.177.225.246])
-        by smtp.gmail.com with ESMTPSA id p5-20020a170902bd0500b001bba7aab822sm439696pls.5.2023.09.08.02.47.07
+        by smtp.gmail.com with ESMTPSA id bi4-20020a170902bf0400b001bc45408d26sm1199081plb.36.2023.09.08.02.58.58
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Sep 2023 02:47:14 -0700 (PDT)
-Message-ID: <bbb0959d-5ad1-846b-b896-eb4c5dd900bf@bytedance.com>
-Date:   Fri, 8 Sep 2023 17:47:03 +0800
+        Fri, 08 Sep 2023 02:59:04 -0700 (PDT)
+Message-ID: <ab29ca4d-a7dc-9115-930d-86c6425e2b9c@bytedance.com>
+Date:   Fri, 8 Sep 2023 17:58:56 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
  Gecko/20100101 Thunderbird/102.15.0
-Subject: Re: [PATCH v2 5/6] maple_tree: Update check_forking() and
- bench_forking()
-To:     Matthew Wilcox <willy@infradead.org>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Peng Zhang <zhangpeng.00@bytedance.com>,
-        kernel test robot <oliver.sang@intel.com>,
-        oe-lkp@lists.linux.dev, lkp@intel.com,
-        maple-tree@lists.infradead.org, linux-mm@kvack.org, corbet@lwn.net,
-        akpm@linux-foundation.org, brauner@kernel.org, surenb@google.com,
-        michael.christie@oracle.com, peterz@infradead.org,
-        mathieu.desnoyers@efficios.com, npiggin@gmail.com,
-        avagin@gmail.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <202308312115.cad34fed-oliver.sang@intel.com>
- <0e9a87d9-410f-a906-e95c-976a141f24f0@bytedance.com>
- <20230907180301.lms4ihtwfuwj7bkb@revolver>
- <ZPoThAU9zoW2q/YR@casper.infradead.org>
+Subject: Re: [PATCH v2 6/6] fork: Use __mt_dup() to duplicate maple tree in
+ dup_mmap()
+To:     "Liam R. Howlett" <Liam.Howlett@Oracle.com>,
+        Peng Zhang <zhangpeng.00@bytedance.com>, corbet@lwn.net,
+        akpm@linux-foundation.org, willy@infradead.org, brauner@kernel.org,
+        surenb@google.com, michael.christie@oracle.com,
+        peterz@infradead.org, mathieu.desnoyers@efficios.com,
+        npiggin@gmail.com, avagin@gmail.com, linux-mm@kvack.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+References: <20230830125654.21257-1-zhangpeng.00@bytedance.com>
+ <20230830125654.21257-7-zhangpeng.00@bytedance.com>
+ <20230907201414.dagnqxfnu7f7qzxd@revolver>
 From:   Peng Zhang <zhangpeng.00@bytedance.com>
-In-Reply-To: <ZPoThAU9zoW2q/YR@casper.infradead.org>
+In-Reply-To: <20230907201414.dagnqxfnu7f7qzxd@revolver>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -88,36 +84,217 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
 
-在 2023/9/8 02:16, Matthew Wilcox 写道:
-> On Thu, Sep 07, 2023 at 02:03:01PM -0400, Liam R. Howlett wrote:
->>>>   WARNING: possible recursive locking detected
->>>>   6.5.0-rc4-00632-g2730245bd6b1 #1 Tainted: G                TN
->>>>   --------------------------------------------
->>>>   swapper/1 is trying to acquire lock:
->>>> ffffffff86485058 (&mt->ma_lock){+.+.}-{2:2}, at: check_forking (include/linux/spinlock.h:? lib/test_maple_tree.c:1854)
->>>>
->>>>   but task is already holding lock:
->>>>   ffff888110847a30 (&mt->ma_lock){+.+.}-{2:2}, at: check_forking (include/linux/spinlock.h:351 lib/test_maple_tree.c:1854)
->>> Thanks for the test. I checked that these are two different locks, why
->>> is this warning reported? Did I miss something?
+在 2023/9/8 04:14, Liam R. Howlett 写道:
+> * Peng Zhang <zhangpeng.00@bytedance.com> [230830 08:58]:
+>> Use __mt_dup() to duplicate the old maple tree in dup_mmap(), and then
+>> directly modify the entries of VMAs in the new maple tree, which can
+>> get better performance. The optimization effect is proportional to the
+>> number of VMAs.
 >>
->> I don't think you can nest spinlocks like this.  In my previous test I
->> avoided nesting, but in your case we cannot avoid having both locks at
->> the same time.
+>> There is a "spawn" in byte-unixbench[1], which can be used to test the
+>> performance of fork(). I modified it slightly to make it work with
+>> different number of VMAs.
 >>
->> You can get around this by using an rwsemaphore, set the two trees as
->> external and use down_write_nested(&lock2, SINGLE_DEPTH_NESTING) like
->> the real fork.  Basically, switch the locking to exactly what fork does.
-Here I can use rwsemaphore to avoid the warning. But what about in
-mtree_dup()? mtree_dup() handles locks internally.
+>> Below are the test numbers. There are 21 VMAs by default. The first row
+>> indicates the number of added VMAs. The following two lines are the
+>> number of fork() calls every 10 seconds. These numbers are different
+>> from the test results in v1 because this time the benchmark is bound to
+>> a CPU. This way the numbers are more stable.
+>>
+>>    Increment of VMAs: 0      100     200     400     800     1600    3200    6400
+>> 6.5.0-next-20230829: 111878 75531   53683   35282   20741   11317   6110    3158
+>> Apply this patchset: 114531 85420   64541   44592   28660   16371   9038    4831
+>>                       +2.37% +13.09% +20.23% +26.39% +38.18% +44.66% +47.92% +52.98%
+> 
+> Thanks!
+> 
+> Can you include 21 in this table since it's the default?
+Maybe I didn't express clearly, "Increment of VMAs" means the number of
+VMAs added on the basis of 21 VMAs.
+> 
+>>
+>> [1] https://github.com/kdlucas/byte-unixbench/tree/master
+>>
+>> Signed-off-by: Peng Zhang <zhangpeng.00@bytedance.com>
+>> ---
+>>   kernel/fork.c | 34 ++++++++++++++++++++++++++--------
+>>   mm/mmap.c     | 14 ++++++++++++--
+>>   2 files changed, 38 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/kernel/fork.c b/kernel/fork.c
+>> index 3b6d20dfb9a8..e6299adefbd8 100644
+>> --- a/kernel/fork.c
+>> +++ b/kernel/fork.c
+>> @@ -650,7 +650,6 @@ static __latent_entropy int dup_mmap(struct mm_struct *mm,
+>>   	int retval;
+>>   	unsigned long charge = 0;
+>>   	LIST_HEAD(uf);
+>> -	VMA_ITERATOR(old_vmi, oldmm, 0);
+>>   	VMA_ITERATOR(vmi, mm, 0);
+>>   
+>>   	uprobe_start_dup_mmap();
+>> @@ -678,17 +677,39 @@ static __latent_entropy int dup_mmap(struct mm_struct *mm,
+>>   		goto out;
+>>   	khugepaged_fork(mm, oldmm);
+>>   
+>> -	retval = vma_iter_bulk_alloc(&vmi, oldmm->map_count);
+>> -	if (retval)
+>> +	/* Use __mt_dup() to efficiently build an identical maple tree. */
+>> +	retval = __mt_dup(&oldmm->mm_mt, &mm->mm_mt, GFP_NOWAIT | __GFP_NOWARN);
+> 
+> Apparently the flags should be GFP_KERNEL here so that compaction can
+> run.
+OK, I'll change it to GFP_KERNEL.
+> 
+>> +	if (unlikely(retval))
+>>   		goto out;
+>>   
+>>   	mt_clear_in_rcu(vmi.mas.tree);
+>> -	for_each_vma(old_vmi, mpnt) {
+>> +	for_each_vma(vmi, mpnt) {
+>>   		struct file *file;
+>>   
+>>   		vma_start_write(mpnt);
+>>   		if (mpnt->vm_flags & VM_DONTCOPY) {
+>>   			vm_stat_account(mm, mpnt->vm_flags, -vma_pages(mpnt));
+>> +
+>> +			/*
+>> +			 * Since the new tree is exactly the same as the old one,
+>> +			 * we need to remove the unneeded VMAs.
+>> +			 */
+>> +			mas_store(&vmi.mas, NULL);
+>> +
+>> +			/*
+>> +			 * Even removing an entry may require memory allocation,
+>> +			 * and if removal fails, we use XA_ZERO_ENTRY to mark
+>> +			 * from which VMA it failed. The case of encountering
+>> +			 * XA_ZERO_ENTRY will be handled in exit_mmap().
+>> +			 */
+>> +			if (unlikely(mas_is_err(&vmi.mas))) {
+>> +				retval = xa_err(vmi.mas.node);
+>> +				mas_reset(&vmi.mas);
+>> +				if (mas_find(&vmi.mas, ULONG_MAX))
+>> +					mas_store(&vmi.mas, XA_ZERO_ENTRY);
+>> +				goto loop_out;
+>> +			}
+>> +
+> 
+> Storing NULL may need extra space as you noted, so we need to be careful
+> what happens if we don't have that space.  We should have a testcase to
+> test this scenario.
+> 
+> mas_store_gfp() should be used with GFP_KERNEL.  The VMAs use GFP_KERNEL
+> in this function, see vm_area_dup().
+> 
+> Don't use the exit_mmap() path to undo a failed fork.  You've added
+> checks and complications to the exit path for all tasks in the very
+> unlikely event that we run out of memory when we hit a very unlikely
+> VM_DONTCOPY flag.
+> 
+> I see the issue with having a portion of the tree with new VMAs that are
+> accounted and a portion of the tree that has old VMAs that should not be
+> looked at.  It was clever to use the XA_ZERO_ENTRY as a stop point, but
+> we cannot add that complication to the exit path and then there is the
+> OOM race to worry about (maybe, I am not sure since this MM isn't
+> active yet).
+> 
+> Using what is done in exit_mmap() and do_vmi_align_munmap() as a
+> prototype, we can do something like the *untested* code below:
+> 
+> if (unlikely(mas_is_err(&vmi.mas))) {
+> 	unsigned long max = vmi.index;
+> 
+> 	retval = xa_err(vmi.mas.node);
+> 	mas_set(&vmi.mas, 0);
+> 	tmp = mas_find(&vmi.mas, ULONG_MAX);
+> 	if (tmp) { /* Not the first VMA failed */
+> 		unsigned long nr_accounted = 0;
+> 
+> 		unmap_region(mm, &vmi.mas, vma, NULL, mpnt, 0, max, max,
+> 				true);
+> 		do {
+> 			if (vma->vm_flags & VM_ACCOUNT)
+> 				nr_accounted += vma_pages(vma);
+> 			remove_vma(vma, true);
+> 			cond_resched();
+> 			vma = mas_find(&vmi.mas, max - 1);
+> 		} while (vma != NULL);
+> 
+> 		vm_unacct_memory(nr_accounted);
+> 	}
+> 	__mt_destroy(&mm->mm_mt);
+> 	goto loop_out;
+> }
+> 
+> Once exit_mmap() is called, the check for OOM (no vma) will catch that
+> nothing is left to do.
+> 
+> It might be worth making an inline function to do this to keep the fork
+> code clean.  We should test this by detecting a specific task name and
+> returning a failure at a given interval:
+> 
+> if (!strcmp(current->comm, "fork_test") {
+> ...
+> }
 
-Maybe spin_lock_nested() mentioned by Matthew can be used in
-mtree_dup().
+Thank you for your suggestion, I will do this in the next version.
 > 
-> spin_lock_nested() exists.
-Thanks for mentioning this, I'll have a look.
 > 
-> You should probably both read through
-> Documentation/locking/lockdep-design.rst It's not the best user
-> documentation in the world, but it's what we have.
+>>   			continue;
+>>   		}
+>>   		charge = 0;
+>> @@ -750,8 +771,7 @@ static __latent_entropy int dup_mmap(struct mm_struct *mm,
+>>   			hugetlb_dup_vma_private(tmp);
+>>   
+>>   		/* Link the vma into the MT */
+>> -		if (vma_iter_bulk_store(&vmi, tmp))
+>> -			goto fail_nomem_vmi_store;
+>> +		mas_store(&vmi.mas, tmp);
+>>   
+>>   		mm->map_count++;
+>>   		if (!(tmp->vm_flags & VM_WIPEONFORK))
+>> @@ -778,8 +798,6 @@ static __latent_entropy int dup_mmap(struct mm_struct *mm,
+>>   	uprobe_end_dup_mmap();
+>>   	return retval;
+>>   
+>> -fail_nomem_vmi_store:
+>> -	unlink_anon_vmas(tmp);
+>>   fail_nomem_anon_vma_fork:
+>>   	mpol_put(vma_policy(tmp));
+>>   fail_nomem_policy:
+>> diff --git a/mm/mmap.c b/mm/mmap.c
+>> index b56a7f0c9f85..dfc6881be81c 100644
+>> --- a/mm/mmap.c
+>> +++ b/mm/mmap.c
+>> @@ -3196,7 +3196,11 @@ void exit_mmap(struct mm_struct *mm)
+>>   	arch_exit_mmap(mm);
+>>   
+>>   	vma = mas_find(&mas, ULONG_MAX);
+>> -	if (!vma) {
+>> +	/*
+>> +	 * If dup_mmap() fails to remove a VMA marked VM_DONTCOPY,
+>> +	 * xa_is_zero(vma) may be true.
+>> +	 */
+>> +	if (!vma || xa_is_zero(vma)) {
+>>   		/* Can happen if dup_mmap() received an OOM */
+>>   		mmap_read_unlock(mm);
+>>   		return;
+>> @@ -3234,7 +3238,13 @@ void exit_mmap(struct mm_struct *mm)
+>>   		remove_vma(vma, true);
+>>   		count++;
+>>   		cond_resched();
+>> -	} while ((vma = mas_find(&mas, ULONG_MAX)) != NULL);
+>> +		vma = mas_find(&mas, ULONG_MAX);
+>> +		/*
+>> +		 * If xa_is_zero(vma) is true, it means that subsequent VMAs
+>> +		 * donot need to be removed. Can happen if dup_mmap() fails to
+>> +		 * remove a VMA marked VM_DONTCOPY.
+>> +		 */
+>> +	} while (vma != NULL && !xa_is_zero(vma));
+>>   
+>>   	BUG_ON(count != mm->map_count);
+>>   
+>> -- 
+>> 2.20.1
+>>
 > 
