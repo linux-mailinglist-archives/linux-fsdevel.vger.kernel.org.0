@@ -2,128 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C066E7988D5
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Sep 2023 16:33:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E042079892A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Sep 2023 16:48:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244031AbjIHOdS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Sep 2023 10:33:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48640 "EHLO
+        id S241622AbjIHOsL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Sep 2023 10:48:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234410AbjIHOdQ (ORCPT
+        with ESMTP id S231670AbjIHOsL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Sep 2023 10:33:16 -0400
-Received: from mail-qk1-x735.google.com (mail-qk1-x735.google.com [IPv6:2607:f8b0:4864:20::735])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3318E1FCA
-        for <linux-fsdevel@vger.kernel.org>; Fri,  8 Sep 2023 07:32:28 -0700 (PDT)
-Received: by mail-qk1-x735.google.com with SMTP id af79cd13be357-76dc7b0da9fso118059885a.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Sep 2023 07:32:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1694183542; x=1694788342; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eqflo34t1bqFAJXeK+YOL7o2AWecrnJO6HNSkie8mrY=;
-        b=VoBWa6k1TYOIzWO7l2F6hunmRVfFcuLzk8ZdAtn0mrZ6MStjrpPg4CtC9kLgw1Uled
-         3g9IdNf94EK106G45S5JrzR+6jiiYyxe6gnpOJFh4S9NzBjgZShfb2G2rN6vSqHICTzU
-         43G9JIIsjJz1JXKxoPEDVHhfbfoMrJgG9+V/5IRFAfujb0HIpefNuAODu0qF6y2+Drzq
-         A468paJDiM3SK9scx44cwSUYj2FpgZ9qwag9sEW73C9P/Gn6jeBxnGxIa3mZo0dq7Qle
-         +nQRod3jNF2nEKCBdNXBc95A48EMEbjmlftwZ3BeIsUzm283mzIhNswloNg5ppwpRTQx
-         LKiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694183542; x=1694788342;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eqflo34t1bqFAJXeK+YOL7o2AWecrnJO6HNSkie8mrY=;
-        b=aVTfpMdqC+nzjzjZeyCsk4w2fVoDHllWQphlmaK155PgHwNRgknl7WV8Ehq3rCIQJX
-         8txKIARPsw3kx7oVF6gm/8jmPg10vBHn29x1uydNHrulfuYbCmYmSpe1nPy9Ou1NBG+f
-         WoMMx+rThnFiVEqrILrrR1BcQApn1a+tm8h0+hAW9wdPsnSWX5SAXUU6l0f1MzgPEReO
-         e2JZIMpMUvwn512AqyymbGSABsoU0Oj8ohEczW8jOjP+LzbW071/tA1NYmdiDnwF/mRY
-         toHyufDAmGevXOp/IvOv4ZUmIGpHXBkAZNdea4mZAa2pDkbebO1E/dyT2+sYNOeOaLYs
-         g7hg==
-X-Gm-Message-State: AOJu0YyI202JzuNEMXRBs0vB1cCVkbAAGN8f4mpSUprmrBdR7kIsBFUL
-        98b42/CAvIc9YegcxQqRuNT+ZQ==
-X-Google-Smtp-Source: AGHT+IHVqcAqdw71hMzlTIpaD3uzf6GU1A3mIbOyxCzLUR4FOd6RMd2dUe39WbAFppYPcbirVeA2oA==
-X-Received: by 2002:a05:620a:4155:b0:76e:f98f:3b6a with SMTP id k21-20020a05620a415500b0076ef98f3b6amr2987634qko.0.1694183542558;
-        Fri, 08 Sep 2023 07:32:22 -0700 (PDT)
-Received: from localhost (cpe-76-182-20-124.nc.res.rr.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id j11-20020a37c24b000000b00765ab6d3e81sm614385qkm.122.2023.09.08.07.32.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Sep 2023 07:32:22 -0700 (PDT)
-Date:   Fri, 8 Sep 2023 10:32:21 -0400
-From:   Josef Bacik <josef@toxicpanda.com>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     David Sterba <dsterba@suse.com>, Jan Kara <jack@suse.cz>,
-        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org
-Subject: Re: btrfs freezing question
-Message-ID: <20230908143221.GA1977092@perftesting>
-References: <20230908-merklich-bebauen-11914a630db4@brauner>
+        Fri, 8 Sep 2023 10:48:11 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A40CF1BF1;
+        Fri,  8 Sep 2023 07:48:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=7xlscfo05JscexfNcziiC+6mff2O4c5hxO5GC5sFXAQ=; b=Yx6BRn4uR/lV4JdnbRIPa6+o6j
+        BcX6/AOsunRmMYDzdqG5InlkJU8xBoRu2T5CB/22qcDL5rsl+0gYx0qilgqEiALCUw7NsXJMM+lR8
+        dUs7ilc8FIeSZ0gNt7xVM2wttsDqn4uWw9DE6udjWQFN50cK/RzafBoYx8XSeIQHKdIMwFbXiMWp5
+        1zDF7aDqohkuyhZBFcyg88QrtfI4IAEna/p1+JkN9li9bR25YT9dXB5SaxgQ5B2zL0vZeFxz6RBDp
+        xP1SW4El6etQWHvrsivuxqjNkzruBmEdGOIiDpCe5dQHzgwCZ+E722OeJ2IxeBh8g7tK83d3fYJxy
+        JADdLd/w==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1qecmB-000ix0-K2; Fri, 08 Sep 2023 14:48:04 +0000
+Date:   Fri, 8 Sep 2023 15:48:03 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     linux-xfs@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: Why doesn't XFS need ->launder_folio?
+Message-ID: <ZPs0I9ZTxfAQtyI9@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230908-merklich-bebauen-11914a630db4@brauner>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 08, 2023 at 11:41:40AM +0200, Christian Brauner wrote:
-> Hey everyone,
-> 
-> I have a patch series unrelated to btrfs that moves block device
-> freezing and thawing to block device holder operations - Jan and
-> Christoph are aware. As part of that I took a look at various freezing
-> implementations to make sure that there are no regressions and that I'm
-> testing correctly.
-> 
-> So what puzzled me with btrfs is that freezing operations triggered
-> through freeze_bdev() seem broken.
-> 
-> For example, triggering a freeze through dm_ioctl() would currently do:
-> 
-> freeze_bdev()
-> -> get_active_super()
->    -> sb->freeze_fs()
-> 
-> And get_active_super() (which will go away with my patch series) walks
-> all super blocks on the systems and matches on sb->s_bdev to find any
-> superblock associated with that device. But afaict - at least on a
-> regular mount - btrfs doesn't set that pointer to anything right now.
-> 
+I want to remove ->launder_folio.  So I'm looking at commit e3db7691e9f3
+which introduced ->launder_page.  The race described there is pretty
+clear:
 
-Eesh, no you're right, seems like we only set this when we're moving devices
-around, so it must have gotten removed at some point.
+     invalidate_inode_pages2() may find the dirty bit has been set on a page
+     owing to the fact that the page may still be mapped after it was locked.
+     Only after the call to unmap_mapping_range() are we sure that the page
+     can no longer be dirtied.
 
-> IOW, get_active_super() can never find the btrfs superblock that is
-> associated with that device mapper device (sticking with the example).
-> That means while we freeze the underlying block device the btrfs
-> filesystem making use of that block device isn't.
-> 
-> Is that known/expected? Am I missing something else why that's ok? Or am
-> I misanalysing? Probably not a very common use-case/scenario but still.
-> 
+ie this happens:
 
-Nope this is for sure unexpected and a bug.
+Task A				Task B
+mmaps a file, writes to page A
+				open(O_DIRECT)
+				read()
+				kiocb_invalidate_pages()
+				filemap_write_and_wait_range()
+				__filemap_fdatawrite_range()
+				filemap_fdatawrite_wbc()
+				do_writepages()
+				iomap_writepages()
+				write_cache_pages()
+				page A gets cleaned
+writes to page A again
+				invalidate_inode_pages2_range()
+				folio_mapped() is true, so we unmap it
+				folio_launder() returns 0
+				invalidate_complete_folio2() returns 0
+				ret = -EBUSY
+				kiocb_invalidate_pages() returns EBUSY
 
-> I'm pretty sure this would be fixable with my series. It just requires
-> that btrfs would finally move to the new model where bdev->bd_holder is
-> set to the superblock instead of the filesystem type and would start
-> using fs_holder_ops if that's possible.
-> 
-> Because implementing block device freeze/thaw as holder operations
-> wouldn't need to match on s_bdev anymore at all. It can go straight from
-> bdev->bd_holder to the superblock and call the necessary ops.
-> 
-> My series can proceed independent of fixing btrfs but I'm just trying to
-> make people aware in case that somehow wasn't known.
+and the DIO read fails, despite it being totally reasonable to return
+the now-stale data on storage.  A DIO write would be a different matter;
+we really do need to get page A out of cache.
 
-Thanks for that, we definitely need to get this fixed.  Is the bdev->bd_holder
-part of the new mount api, or is it some other thing that we can do right now
-and then be in a good spot when your new patchset lands?  Let me know and we can
-prioritize that work.  Thanks,
-
-Josef
+So would it be reasonable to unmap the pages earlier and rely on
+invalidate_lock to prevent page faults making the page writable
+between the call to filemap_write_and_wait_range() and the call to
+invalidate_complete_folio2() ?  Then we could get rid of ->launder_folio()
+as well as making DIO a little more reliable when racing with page faults.
