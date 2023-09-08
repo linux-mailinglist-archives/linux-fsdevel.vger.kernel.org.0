@@ -2,148 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EDF06798B4F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Sep 2023 19:14:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AB00798B8F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Sep 2023 19:44:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239126AbjIHROY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Sep 2023 13:14:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59370 "EHLO
+        id S244955AbjIHRoU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Sep 2023 13:44:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229492AbjIHROY (ORCPT
+        with ESMTP id S232496AbjIHRoT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Sep 2023 13:14:24 -0400
-X-Greylist: delayed 899 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 08 Sep 2023 10:14:18 PDT
-Received: from mail.stoffel.org (mail.stoffel.org [172.104.24.175])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF9121FD5;
-        Fri,  8 Sep 2023 10:14:18 -0700 (PDT)
-Received: from quad.stoffel.org (097-095-183-072.res.spectrum.com [97.95.183.72])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.stoffel.org (Postfix) with ESMTPSA id 1BBD61E4FA;
-        Fri,  8 Sep 2023 12:49:08 -0400 (EDT)
-Received: by quad.stoffel.org (Postfix, from userid 1000)
-        id B999DA8915; Fri,  8 Sep 2023 12:49:07 -0400 (EDT)
+        Fri, 8 Sep 2023 13:44:19 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C22441FCF;
+        Fri,  8 Sep 2023 10:44:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=zyF0jvVhbr8PSp/2Xh6a0Bf8cbSHNg5Ra4S8V/25hsw=; b=BxFupsDJl5Xc8SZpg5zCOi2QJU
+        Hs1ZYTl4fnfw96yWSuBvf33JUCGZOl0aO9XnbzjJCJXbJepXjgdtmn+P6zof1QBjM0GCCYUIBgRRU
+        pChwakrt+jqOh4XH40G/Uvf9meAJB6uCFciyoAOiN/U50oBLnCwyAr80e0yBj7/oNmxupI25PmSqN
+        hy2fFuw+fn9Yw1FHhgaFPN2rxk8bPDayikiUos0vRaCDUooDmgYH3AXWHuVC+oJY3ByyOuHvkh2t/
+        CiLoOx56FwCzc5BAdz5v5iVAXwEKjVlQgFg7lYxMr8Iogzmz562NIDpHeTvJAEE8fa9idlO+IZX+m
+        ZmTufnGw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1qefWf-001Ugv-8P; Fri, 08 Sep 2023 17:44:13 +0000
+Date:   Fri, 8 Sep 2023 18:44:13 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: [GIT PULL] XArray for 6.6
+Message-ID: <ZPtdbS6FTadc3LVA@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Message-ID: <25851.20611.732252.455034@quad.stoffel.home>
-Date:   Fri, 8 Sep 2023 12:49:07 -0400
-From:   "John Stoffel" <john@stoffel.org>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Jan Kara <jack@suse.cz>, Zdenek Kabelac <zkabelac@redhat.com>,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dm-devel@redhat.com, Christoph Hellwig <hch@lst.de>,
-        "Darrick J. Wong" <djwong@kernel.org>
-Subject: Re: [PATCH] fix writing to the filesystem after unmount
-In-Reply-To: <20230908-verflachen-neudefinition-4da649d673a9@brauner>
-References: <20230906-aufheben-hagel-9925501b7822@brauner>
-        <60f244be-803b-fa70-665e-b5cba15212e@redhat.com>
-        <20230906-aufkam-bareinlage-6e7d06d58e90@brauner>
-        <818a3cc0-c17b-22c0-4413-252dfb579cca@redhat.com>
-        <20230907094457.vcvmixi23dk3pzqe@quack3>
-        <20230907-abgrenzen-achtung-b17e9a1ad136@brauner>
-        <513f337e-d254-2454-6197-82df564ed5fc@redhat.com>
-        <20230908073244.wyriwwxahd3im2rw@quack3>
-        <86235d7a-a7ea-49da-968e-c5810cbf4a7b@redhat.com>
-        <20230908102014.xgtcf5wth2l2cwup@quack3>
-        <20230908-verflachen-neudefinition-4da649d673a9@brauner>
-X-Mailer: VM 8.2.0b under 27.1 (x86_64-pc-linux-gnu)
-X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,SPF_PASS,T_SPF_HELO_PERMERROR autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Disposition: inline
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
->>>>> "Christian" == Christian Brauner <brauner@kernel.org> writes:
+I had to update the expiration on my signing key.  I don't know if you
+pay attention to that, or whether my attempts to get my updated expiration
+date into the system were successful.
 
->> Well, currently you click some "Eject / safely remove / whatever" button
->> and then you get a "wait" dialog until everything is done after which
->> you're told the stick is safe to remove. What I imagine is that the "wait"
->> dialog needs to be there while there are any (or exclusive at minimum) openers
->> of the device. Not until umount(2) syscall has returned. And yes, the
+The following changes since commit f837f0a3c94882a29e38ff211a36c1c8a0f07804:
 
-> Agreed. umount(2) doesn't give guarantees about a filesystem being
-> really gone once it has returned. And it really shouldn't. There's
-> too many cases where that doesn't work and it's not a commitment we
-> should make.
+  Merge tag 'arm64-fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux (2023-07-28 11:21:57 -0700)
 
-So how the heck is someone supposed to know, from userspace, that a
-filesystem is unmounted?  Just wearing my SysAdmin hat, this strikes
-me as really potentially painful and annoying.  But then again, so are
-bind mounts from alot of views too.  
+are available in the Git repository at:
 
-Don't people remember how bad it can be when you are trying to
-shutdown and system and it hangs because a remote NFS server is down
-and not responding?  And your client system hangs completely?  
+  git://git.infradead.org/users/willy/xarray.git tags/xarray-6.6
 
-> And there are ways to wait until superblock shutdown that I've
-> mentioned before in other places where it somehow really
-> matters. inotify's IN_UMOUNT will notify about superblock
-> shutdown. IOW, when it really hits generic_shutdown_super() which
-> can only be hit after unfreezing as that requires active references.
+for you to fetch changes up to 2a15de80dd0f7e04a823291aa9eb49c5294f56af:
 
-Can we maybe invert this discussion and think about it from the
-userspace side of things?  How does the user(space) mount/unmount
-devices cleanly and reliably?  
+  idr: fix param name in idr_alloc_cyclic() doc (2023-09-05 19:01:38 -0400)
 
-> So this really can be used to wait for a filesystem to go away across
-> all namespaces, and across filesytem freezing and it's available to
-> unprivileged users. Simple example:
+----------------------------------------------------------------
+XArray/IDA updates for 6.6
 
-> # shell 1
-> sudo mount -t xfs /dev/sda /mnt
-> sudo mount --bind /mnt /opt
-> inotifywait -e unmount /mnt
+ - Fix a bug encountered by people using bittorrent where they'd get
+   NULL pointer dereferences on page cache lookups when using XFS
 
-> #shell 2
-> sudo umount /opt # nothing happens in shell 1
-> sudo umount /mnt # shell 1 gets woken
+ - Two documentation fixes
 
-So what makes this *useful* to anyone?  Why doesn't the bind mount
-A) lock /mnt into place, but B) give you some way of seeing that
-there's a bindmount in place?  
+----------------------------------------------------------------
+Ariel Marcovitch (1):
+      idr: fix param name in idr_alloc_cyclic() doc
 
->> corner-cases. So does the current behavior, I agree, but improving
->> situation for one usecase while breaking another usecase isn't really a way
->> forward...
+Matthew Wilcox (Oracle) (1):
+      XArray: Do not return sibling entries from xa_load()
 
-> Agreed.
+Philipp Stanner (1):
+      xarray: Document necessary flag in alloc functions
 
->> Well, the filesystem (struct superblock to be exact) is invisible
->> in /proc/mounts (or whatever), that is true. But it is still very
->> much associated with that block device and if you do 'mount
->> <device> <mntpoint>', you'll get it back. But yes, the filesystem
->> will not go away
+ include/linux/xarray.h                | 18 ++++++++++
+ lib/idr.c                             |  2 +-
+ lib/xarray.c                          |  8 ++++-
+ tools/testing/radix-tree/multiorder.c | 68 +++++++++++++++++++++++++++++++++--
+ 4 files changed, 92 insertions(+), 4 deletions(-)
 
-Then should it be unmountable in the first place?  I mean yes, we
-always need a way to force an unmount no matter what, even if that
-breaks some other process on the system, but for regular use,
-shouldn't it just give back an error like:
 
-	  /mnt in use by bind mount /opt
-
-or something like that?  Give the poor sysadmin some information on
-what's going on here. 
-
-> And now we at least have an api to detect that case and refuse to reuse
-> the superblock.
-
->> until all references to it are dropped and you cannot easily find
->> who holds those references and how to get rid of them.
-
-ding ding ding!!!!  I don't want to have to run 'lsof' or something
-like that.
-
-> Namespaces make this even messier. You have no easy way of knowing
-> whether the filesystem isn't pinned somewhere else through an
-> explicit bind-mount or when it was copied during mount namespace
-> creation.
-
-This is the biggest downside of namespaces and bind mounts in my
-mind.  The lack of traceability back to the source.  
