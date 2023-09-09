@@ -2,359 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AC457997AC
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Sep 2023 13:30:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC7C7799816
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Sep 2023 14:50:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344607AbjIILaM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 9 Sep 2023 07:30:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45746 "EHLO
+        id S1344629AbjIIMux (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 9 Sep 2023 08:50:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233881AbjIILaM (ORCPT
+        with ESMTP id S231560AbjIIMuv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 9 Sep 2023 07:30:12 -0400
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2BD1E46;
-        Sat,  9 Sep 2023 04:30:07 -0700 (PDT)
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 054DC68B05; Sat,  9 Sep 2023 13:30:01 +0200 (CEST)
-Date:   Sat, 9 Sep 2023 13:30:00 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@lst.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christian Brauner <brauner@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] iov_iter: Kunit tests for copying to/from an
- iterator
-Message-ID: <20230909113000.GB12045@lst.de>
-References: <20230908160322.1714302-1-dhowells@redhat.com> <20230908160322.1714302-3-dhowells@redhat.com>
+        Sat, 9 Sep 2023 08:50:51 -0400
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [IPv6:2607:fcd0:100:8a00::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7185E40
+        for <linux-fsdevel@vger.kernel.org>; Sat,  9 Sep 2023 05:50:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1694263842;
+        bh=isEerib5SWvsMoxF1NbrZcLu/kLf4dgXjZGd4YKJlgg=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=nL8SnV4o9dfrCSv7XQL3omOnB0AXNbL4zdztRMduss20ABtFLUi4gDbFb/r+fbvHX
+         +PgRps33AHi9GYMGm/XnCXMimXf/qO8se1OxugtNq6l4ZvukgksfTWQAOxp0aQ1Qkm
+         azOnlNod0VpUZXqoY1y7e5xTnPGtoamLdS6O8LVw=
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 189491288B4A;
+        Sat,  9 Sep 2023 08:50:42 -0400 (EDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id ACRfUgCY5kQp; Sat,  9 Sep 2023 08:50:41 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1694263841;
+        bh=isEerib5SWvsMoxF1NbrZcLu/kLf4dgXjZGd4YKJlgg=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=u16KPGedeUzbkFfJHIMgiQAd30OmMeCS1hRvkAUZeVFaXNlu/AuoidOB7EuBsEf1w
+         HYIzUbRZsWSQeVGs3CDQGaOic575KL35iIP9qyd/cAudiyoj8n9k0wBmb3J3w3AVw3
+         aMZb+oaJdrqrlGR2A5lwGn6h2sd6LP24thgA1LBg=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::c14])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (Client did not present a certificate)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 132EB1288B49;
+        Sat,  9 Sep 2023 08:50:40 -0400 (EDT)
+Message-ID: <8dd2f626f16b0fc863d6a71561196950da7e893f.camel@HansenPartnership.com>
+Subject: Re: [MAINTAINERS/KERNEL SUMMIT] Trust and maintenance of file
+ systems
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>
+Cc:     Christoph Hellwig <hch@infradead.org>, ksummit@lists.linux.dev,
+        linux-fsdevel@vger.kernel.org
+Date:   Sat, 09 Sep 2023 08:50:39 -0400
+In-Reply-To: <ZPe4aqbEuQ7xxJnj@casper.infradead.org>
+References: <ZO9NK0FchtYjOuIH@infradead.org>
+         <ZPe0bSW10Gj7rvAW@dread.disaster.area>
+         <ZPe4aqbEuQ7xxJnj@casper.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230908160322.1714302-3-dhowells@redhat.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_PASS,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> +/* I/O iterator tests.  This can only test kernel-backed iterator types.
+On Wed, 2023-09-06 at 00:23 +0100, Matthew Wilcox wrote:
+> On Wed, Sep 06, 2023 at 09:06:21AM +1000, Dave Chinner wrote:
+[...]
+> > > E.g. the hfsplus driver is unmaintained despite collecting odd
+> > > fixes. It collects odd fixes because it is really useful for
+> > > interoperating with MacOS and it would be a pity to remove it. 
+> > > At the same time it is impossible to test changes to hfsplus
+> > > sanely as there is no mkfs.hfsplus or fsck.hfsplus available for
+> > > Linux.  We used to have one that was ported from the open source
+> > > Darwin code drops, and I managed to get xfstests to run on
+> > > hfsplus with them, but this old version doesn't compile on any
+> > > modern Linux distribution and new versions of the code aren't
+> > > trivially portable to Linux.
+> > > 
+> > > Do we have volunteers with old enough distros that we can list as
+> > > testers for this code?  Do we have any other way to proceed?
+> > > 
+> > > If we don't, are we just going to untested API changes to these
+> > > code bases, or keep the old APIs around forever?
+> > 
+> > We do slowly remove device drivers and platforms as the hardware,
+> > developers and users disappear. We do also just change driver APIs
+> > in device drivers for hardware that no-one is actually able to
+> > test. The assumption is that if it gets broken during API changes,
+> > someone who needs it to work will fix it and send patches.
+> > 
+> > That seems to be the historical model for removing unused/obsolete
+> > code from the kernel, so why should we treat unmaintained/obsolete
+> > filesystems any differently?  i.e. Just change the API, mark it
+> > CONFIG_BROKEN until someone comes along and starts fixing it...
+> 
+> Umm.  If I change ->write_begin and ->write_end to take a folio,
+> convert only the filesystems I can test via Luis' kdevops and mark
+> the rest as CONFIG_BROKEN, I can guarantee you that Linus will reject
+> that pull request.
 
-kernel comments start with a:
+I think really everyone in this debate needs to recognize two things:
 
-/*
+   1. There are older systems out there that have an active group of
+      maintainers and which depend on some of these older filesystems
+   2. Data image archives will ipso facto be in older formats and
+      preserving access to them is a historical necessity.
 
-and nothing else on the line.  (for brevity I'm not going to repeat
-the comment for the rest of this series)
+So the problem of what to do with older, less well maintained,
+filesystems isn't one that can be solved by simply deleting them and we
+have to figure out a way to move forward supporting them (obviously for
+some value of the word "support"). 
 
-> +static const struct kvec_test_range kvec_test_ranges[] = {
-> +	{ 0x00002, 0x00002 },
-> +	{ 0x00027, 0x03000 },
-> +	{ 0x05193, 0x18794 },
-> +	{ 0x20000, 0x20000 },
-> +	{ 0x20000, 0x24000 },
-> +	{ 0x24000, 0x27001 },
-> +	{ 0x29000, 0xffffb },
-> +	{ 0xffffd, 0xffffe },
+By the way, people who think virtualization is the answer to this
+should remember that virtual hardware is evolving just as fast as
+physical hardware.
 
-How were these values picked?  Should there be a comment explaining them?
+> I really feel we're between a rock and a hard place with our
+> unmaintained filesystems.  They have users who care passionately, but
+> not the ability to maintain them.
 
-> +	buffer = vmap(pages, npages, VM_MAP | VM_MAP_PUT_PAGES, PAGE_KERNEL);
-> +        KUNIT_ASSERT_NOT_ERR_OR_NULL(test, buffer);
+So why is everybody making this a hard either or? The volunteer
+communities that grow around older things like filesystems are going to
+be enthusiastic, but not really acquainted with the technical
+intricacies of the modern VFS and mm. Requiring that they cope with all
+the new stuff like iomap and folios is building an unbridgeable chasm
+they're never going to cross. Give them an easier way and they might
+get there.
 
-The KUNIT_ASSERT_NOT_ERR_OR_NULL seems misindented.
+So why can't we figure out that easier way? What's wrong with trying to
+figure out if we can do some sort of helper or library set that assists
+supporting and porting older filesystems. If we can do that it will not
+only make the job of an old fs maintainer a lot easier, but it might
+just provide the stepping stones we need to encourage more people climb
+up into the modern VFS world.
 
-> + */
-> +static void __init iov_kunit_copy_to_bvec(struct kunit *test)
-> +{
-> +	const struct bvec_test_range *pr;
-> +	struct iov_iter iter;
-> +	struct bio_vec bvec[8];
-> +	struct page **spages, **bpages;
-> +	u8 *scratch, *buffer;
-> +	size_t bufsize, npages, size, copied;
-> +	int i, b, patt;
-> +
-> +	bufsize = 0x100000;
-> +	npages = bufsize / PAGE_SIZE;
-> +
-> +	scratch = iov_kunit_create_buffer(test, &spages, npages);
-> +	for (i = 0; i < bufsize; i++)
-> +		scratch[i] = pattern(i);
-> +
-> +	buffer = iov_kunit_create_buffer(test, &bpages, npages);
-> +	memset(buffer, 0, bufsize);
-> +
-> +	iov_kunit_load_bvec(test, &iter, READ, bvec, ARRAY_SIZE(bvec),
-> +			    bpages, npages, bufsize, bvec_test_ranges);
-> +	size = iter.count;
-> +
-> +	copied = copy_to_iter(scratch, size, &iter);
-> +
-> +	KUNIT_EXPECT_EQ(test, copied, size);
-> +	KUNIT_EXPECT_EQ(test, iter.count, 0);
-> +	KUNIT_EXPECT_EQ(test, iter.nr_segs, 0);
-> +
-> +	/* Build the expected image in the scratch buffer. */
-> +	b = 0;
-> +	patt = 0;
-> +	memset(scratch, 0, bufsize);
-> +	for (pr = bvec_test_ranges; pr->from >= 0; pr++, b++) {
-> +		u8 *p = scratch + pr->page * PAGE_SIZE;
-> +
-> +		for (i = pr->from; i < pr->to; i++)
-> +			p[i] = pattern(patt++);
-> +	}
-> +
-> +	/* Compare the images */
-> +	for (i = 0; i < bufsize; i++) {
-> +		KUNIT_EXPECT_EQ_MSG(test, buffer[i], scratch[i], "at i=%x", i);
-> +		if (buffer[i] != scratch[i])
-> +			return;
-> +	}
-> +
-> +	KUNIT_SUCCEED();
-> +}
-> +
-> +/*
-> + * Test copying from a ITER_BVEC-type iterator.
-> + */
-> +static void __init iov_kunit_copy_from_bvec(struct kunit *test)
-> +{
-> +	const struct bvec_test_range *pr;
-> +	struct iov_iter iter;
-> +	struct bio_vec bvec[8];
-> +	struct page **spages, **bpages;
-> +	u8 *scratch, *buffer;
-> +	size_t bufsize, npages, size, copied;
-> +	int i, j;
-> +
-> +	bufsize = 0x100000;
-> +	npages = bufsize / PAGE_SIZE;
-> +
-> +	buffer = iov_kunit_create_buffer(test, &bpages, npages);
-> +	for (i = 0; i < bufsize; i++)
-> +		buffer[i] = pattern(i);
-> +
-> +	scratch = iov_kunit_create_buffer(test, &spages, npages);
-> +	memset(scratch, 0, bufsize);
-> +
-> +	iov_kunit_load_bvec(test, &iter, WRITE, bvec, ARRAY_SIZE(bvec),
-> +			    bpages, npages, bufsize, bvec_test_ranges);
-> +	size = iter.count;
-> +
-> +	copied = copy_from_iter(scratch, size, &iter);
-> +
-> +	KUNIT_EXPECT_EQ(test, copied, size);
-> +	KUNIT_EXPECT_EQ(test, iter.count, 0);
-> +	KUNIT_EXPECT_EQ(test, iter.nr_segs, 0);
-> +
-> +	/* Build the expected image in the main buffer. */
-> +	i = 0;
-> +	memset(buffer, 0, bufsize);
-> +	for (pr = bvec_test_ranges; pr->from >= 0; pr++) {
-> +		size_t patt = pr->page * PAGE_SIZE;
-> +
-> +		for (j = pr->from; j < pr->to; j++) {
-> +			buffer[i++] = pattern(patt + j);
-> +			if (i >= bufsize)
-> +				goto stop;
-> +		}
-> +	}
-> +stop:
-> +
-> +	/* Compare the images */
-> +	for (i = 0; i < bufsize; i++) {
-> +		KUNIT_EXPECT_EQ_MSG(test, scratch[i], buffer[i], "at i=%x", i);
-> +		if (scratch[i] != buffer[i])
-> +			return;
-> +	}
-> +
-> +	KUNIT_SUCCEED();
-> +}
-> +
-> +static void iov_kunit_destroy_xarray(void *data)
-> +{
-> +	struct xarray *xarray = data;
-> +
-> +	xa_destroy(xarray);
-> +	kfree(xarray);
-> +}
-> +
-> +static void __init iov_kunit_load_xarray(struct kunit *test,
-> +					 struct iov_iter *iter, int dir,
-> +					 struct xarray *xarray,
-> +					 struct page **pages, size_t npages)
-> +{
-> +	size_t size = 0;
-> +	int i;
-> +
-> +	for (i = 0; i < npages; i++) {
-> +		void *x = xa_store(xarray, i, pages[i], GFP_KERNEL);
-> +
-> +		KUNIT_ASSERT_FALSE(test, xa_is_err(x));
-> +		size += PAGE_SIZE;
-> +	}
-> +	iov_iter_xarray(iter, dir, xarray, 0, size);
-> +}
-> +
-> +static struct xarray *iov_kunit_create_xarray(struct kunit *test)
-> +{
-> +	struct xarray *xarray;
-> +
-> +	xarray = kzalloc(sizeof(struct xarray), GFP_KERNEL);
-> +	xa_init(xarray);
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, xarray);
-> +	kunit_add_action_or_reset(test, iov_kunit_destroy_xarray, xarray);
-> +	return xarray;
-> +}
-> +
-> +/*
-> + * Test copying to a ITER_XARRAY-type iterator.
-> + */
-> +static void __init iov_kunit_copy_to_xarray(struct kunit *test)
-> +{
-> +	const struct kvec_test_range *pr;
-> +	struct iov_iter iter;
-> +	struct xarray *xarray;
-> +	struct page **spages, **bpages;
-> +	u8 *scratch, *buffer;
-> +	size_t bufsize, npages, size, copied;
-> +	int i, patt;
-> +
-> +	bufsize = 0x100000;
-> +	npages = bufsize / PAGE_SIZE;
-> +
-> +	xarray = iov_kunit_create_xarray(test);
-> +
-> +	scratch = iov_kunit_create_buffer(test, &spages, npages);
-> +	for (i = 0; i < bufsize; i++)
-> +		scratch[i] = pattern(i);
-> +
-> +	buffer = iov_kunit_create_buffer(test, &bpages, npages);
-> +	memset(buffer, 0, bufsize);
-> +
-> +	iov_kunit_load_xarray(test, &iter, READ, xarray, bpages, npages);
-> +
-> +	i = 0;
-> +	for (pr = kvec_test_ranges; pr->from >= 0; pr++) {
-> +		size = pr->to - pr->from;
-> +		KUNIT_ASSERT_LE(test, pr->to, bufsize);
-> +
-> +		iov_iter_xarray(&iter, READ, xarray, pr->from, size);
-> +		copied = copy_to_iter(scratch + i, size, &iter);
-> +
-> +		KUNIT_EXPECT_EQ(test, copied, size);
-> +		KUNIT_EXPECT_EQ(test, iter.count, 0);
-> +		KUNIT_EXPECT_EQ(test, iter.iov_offset, size);
-> +		i += size;
-> +	}
-> +
-> +	/* Build the expected image in the scratch buffer. */
-> +	patt = 0;
-> +	memset(scratch, 0, bufsize);
-> +	for (pr = kvec_test_ranges; pr->from >= 0; pr++)
-> +		for (i = pr->from; i < pr->to; i++)
-> +			scratch[i] = pattern(patt++);
-> +
-> +	/* Compare the images */
-> +	for (i = 0; i < bufsize; i++) {
-> +		KUNIT_EXPECT_EQ_MSG(test, buffer[i], scratch[i], "at i=%x", i);
-> +		if (buffer[i] != scratch[i])
-> +			return;
-> +	}
-> +
-> +	KUNIT_SUCCEED();
-> +}
-> +
-> +/*
-> + * Test copying from a ITER_XARRAY-type iterator.
-> + */
-> +static void __init iov_kunit_copy_from_xarray(struct kunit *test)
-> +{
-> +	const struct kvec_test_range *pr;
-> +	struct iov_iter iter;
-> +	struct xarray *xarray;
-> +	struct page **spages, **bpages;
-> +	u8 *scratch, *buffer;
-> +	size_t bufsize, npages, size, copied;
-> +	int i, j;
-> +
-> +	bufsize = 0x100000;
-> +	npages = bufsize / PAGE_SIZE;
-> +
-> +	xarray = iov_kunit_create_xarray(test);
-> +
-> +	buffer = iov_kunit_create_buffer(test, &bpages, npages);
-> +	for (i = 0; i < bufsize; i++)
-> +		buffer[i] = pattern(i);
-> +
-> +	scratch = iov_kunit_create_buffer(test, &spages, npages);
-> +	memset(scratch, 0, bufsize);
-> +
-> +	iov_kunit_load_xarray(test, &iter, READ, xarray, bpages, npages);
-> +
-> +	i = 0;
-> +	for (pr = kvec_test_ranges; pr->from >= 0; pr++) {
-> +		size = pr->to - pr->from;
-> +		KUNIT_ASSERT_LE(test, pr->to, bufsize);
-> +
-> +		iov_iter_xarray(&iter, WRITE, xarray, pr->from, size);
-> +		copied = copy_from_iter(scratch + i, size, &iter);
-> +
-> +		KUNIT_EXPECT_EQ(test, copied, size);
-> +		KUNIT_EXPECT_EQ(test, iter.count, 0);
-> +		KUNIT_EXPECT_EQ(test, iter.iov_offset, size);
-> +		i += size;
-> +	}
-> +
-> +	/* Build the expected image in the main buffer. */
-> +	i = 0;
-> +	memset(buffer, 0, bufsize);
-> +	for (pr = kvec_test_ranges; pr->from >= 0; pr++) {
-> +		for (j = pr->from; j < pr->to; j++) {
-> +			buffer[i++] = pattern(j);
-> +			if (i >= bufsize)
-> +				goto stop;
-> +		}
-> +	}
-> +stop:
-> +
-> +	/* Compare the images */
-> +	for (i = 0; i < bufsize; i++) {
-> +		KUNIT_EXPECT_EQ_MSG(test, scratch[i], buffer[i], "at i=%x", i);
-> +		if (scratch[i] != buffer[i])
-> +			return;
-> +	}
-> +
-> +	KUNIT_SUCCEED();
-> +}
-> +
-> +static struct kunit_case __refdata iov_kunit_cases[] = {
-> +	KUNIT_CASE(iov_kunit_copy_to_kvec),
-> +	KUNIT_CASE(iov_kunit_copy_from_kvec),
-> +	KUNIT_CASE(iov_kunit_copy_to_bvec),
-> +	KUNIT_CASE(iov_kunit_copy_from_bvec),
-> +	KUNIT_CASE(iov_kunit_copy_to_xarray),
-> +	KUNIT_CASE(iov_kunit_copy_from_xarray),
-> +	{}
-> +};
-> +
-> +static struct kunit_suite iov_kunit_suite = {
-> +	.name = "iov_iter",
-> +	.test_cases = iov_kunit_cases,
-> +};
-> +
-> +kunit_test_suites(&iov_kunit_suite);
----end quoted text---
+I'd like to propose that we add to this topic discussion of mechanisms
+by which we assist people taking on older filesystems to fit into the
+modern world.
+
+James
+
