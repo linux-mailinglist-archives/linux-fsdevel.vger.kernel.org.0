@@ -2,151 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 00D8F7992C8
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Sep 2023 01:22:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DBDE799310
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Sep 2023 02:16:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345191AbjIHXWK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Sep 2023 19:22:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41616 "EHLO
+        id S1345351AbjIIAPz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Sep 2023 20:15:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345197AbjIHXWJ (ORCPT
+        with ESMTP id S1345352AbjIIAPz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Sep 2023 19:22:09 -0400
-Received: from mail-oi1-x22f.google.com (mail-oi1-x22f.google.com [IPv6:2607:f8b0:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85CDA210B
-        for <linux-fsdevel@vger.kernel.org>; Fri,  8 Sep 2023 16:22:01 -0700 (PDT)
-Received: by mail-oi1-x22f.google.com with SMTP id 5614622812f47-3ab3aa9ae33so1894194b6e.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Sep 2023 16:22:01 -0700 (PDT)
+        Fri, 8 Sep 2023 20:15:55 -0400
+Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8304DE46
+        for <linux-fsdevel@vger.kernel.org>; Fri,  8 Sep 2023 17:15:50 -0700 (PDT)
+Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-58e49935630so48652967b3.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Sep 2023 17:15:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1694215321; x=1694820121; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=syNNnHGjFyimA65ZLjV7ktwTwR7ohH9BRu/o/01Ja9Y=;
-        b=DmMmEBx90mfJhSzR8uCQm/3BpD+nG4sAdIytTa8WAca2wYcL8qD69njjQkGp17S1so
-         Hf+cdTbMdlCr1WsKZhwDmy+aW1n/SDSzvI6CqXrFixqzmV8bL6odvgZX14cXFXi6S1YI
-         cYpPjWUUDjblQcaXyfiSbffs6Z3Dx9yeXNB+Q+q4mrczemdfF6vVihYCLRTFKh66wRV5
-         dmBHvhLOMyJQb8LdwQfviuMuVWX0ZJESFE2mdHdG/3GgN+D3XRORiRHZ+0dAySPT+WQ7
-         Mh29q/BFRnLCV2ZoLYyE31PoAicbKagx0KOELPB8d8z3aVwpyKLHbHzGtx1+BfJRfPVm
-         rqrQ==
+        d=google.com; s=20221208; t=1694218549; x=1694823349; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gaKhly8Aj9nDlRectFKYGw3FxO6EGE4C2aH6vsrGIcs=;
+        b=KKQYboSqcTfMiYuHqb6JaslyaUwLzygQtr54knTg8NFmKZzW9Nk9F02RAnx7QH76ia
+         RSnP7F+UCzWFEgW1vS7n2nD/rmqu97xxXhcj5PwkUBzHhxGFYXhOM0um0yr9FX8DpsCH
+         21bYQnWQAdXtwyqFTHsM9D2GXmjWt7d51G5geMz2N4THsLnsSmGJFJh325W3DOtzhQG+
+         mKmymS6dV9lG4v1aHafJwZMd4+rREJjtGYyKpGi9L+IMoZ3vprp5C3XlcQHUBn1z2+j9
+         MaVh85U/qkraojXJqCxJBnLJIvLcUlXYYdEsb1ph6ov4zAOxrXGLaXGELdxBclajwmko
+         Lk4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694215321; x=1694820121;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=syNNnHGjFyimA65ZLjV7ktwTwR7ohH9BRu/o/01Ja9Y=;
-        b=RpNpOi5zUeP/BrLGuBK65BgeRP2QwdMdbpev0k2aqEtOSnHC3UNYZwHXpDuyjZp+Kt
-         RjaLreC6p6vqX9ZAwJOA87vV+xUg6bcllA3l5ylwD4WRz0PHtkyin+HZtVygw1WqKaIC
-         ZD0ciWVxp7ccSgNtISfxbuGF6HOSsbKraRd2PdMG8J8RHomOsfTbtCWo3hkcO6TD0bjI
-         kTDvR4meDXi+HArt5urOUgXWbjA4CeCwO82L/ZXuk8ZhKp2x+PENsl73ggUZcyOwszmS
-         BI6dgp2Yd9brBwNI17LEey1V5oNBa4Owboau+mDY0MLZuww18OH4YTYDJfkq0OAK4i+J
-         gJ/w==
-X-Gm-Message-State: AOJu0Yz9FwnyKaHDjWnCkFWjVqlQXlaK13x0N7OZ1JU4BMbSNnlDiqSF
-        dU1JoUPBPwZTnH3GxRAaREnPTCj82wHN1/88F20=
-X-Google-Smtp-Source: AGHT+IFCknF6+J8C5jUO0k1Opi9mR8wmU3LkZT/E6IXbbbk19C4lK/P+s2l7FwwzqhQM+J8Zu3nbBg==
-X-Received: by 2002:aca:2806:0:b0:3a7:a299:1201 with SMTP id 6-20020aca2806000000b003a7a2991201mr3804137oix.23.1694215320838;
-        Fri, 08 Sep 2023 16:22:00 -0700 (PDT)
-Received: from dread.disaster.area (pa49-195-66-88.pa.nsw.optusnet.com.au. [49.195.66.88])
-        by smtp.gmail.com with ESMTPSA id x20-20020a656ab4000000b00574164301d1sm1400452pgu.47.2023.09.08.16.22.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Sep 2023 16:22:00 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-        (envelope-from <david@fromorbit.com>)
-        id 1qeknV-00CfLL-2m;
-        Sat, 09 Sep 2023 09:21:57 +1000
-Date:   Sat, 9 Sep 2023 09:21:57 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Guenter Roeck <linux@roeck-us.net>, ksummit@lists.linux.dev,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [MAINTAINERS/KERNEL SUMMIT] Trust and maintenance of file systems
-Message-ID: <ZPuslQOwcNmDHVo/@dread.disaster.area>
-References: <ZO9NK0FchtYjOuIH@infradead.org>
- <8718a8a3-1e62-0e2b-09d0-7bce3155b045@roeck-us.net>
- <ZPkDLp0jyteubQhh@dread.disaster.area>
- <ZPrdgyy9gam+DdEr@infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZPrdgyy9gam+DdEr@infradead.org>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        d=1e100.net; s=20230601; t=1694218549; x=1694823349;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gaKhly8Aj9nDlRectFKYGw3FxO6EGE4C2aH6vsrGIcs=;
+        b=uH3Z6rse/9LFhJKMCHHQXKP7rrfPz+R3KFqZlIzZFU9A2pej+ePUq9S+hvW+AenR0E
+         aHOWSoWFpWPLquQf83fkZptp4TqJDiCuvhusZtv5/WoDgZT+NT9fldRdDb5bMqj5USd9
+         o3jgkoReWt3OT5Cnhipps6Iw6mSb40F4MLCNSn8vIH5mkFc4Snun/7ovHw5VFAANI6iS
+         LmYKjWSCC1Lmf0SzbfhVQVB5zttbdjgWtpRyzET5zhYXY8I0/RhZkBibtDAJi3Et6tEo
+         xgbLCjqdEgalFOmbnY8ZXKdjKVe+HFNbxhl/TNZPpdpGHsKh7mlbmbDmQHeAzxjVD5Ba
+         18wQ==
+X-Gm-Message-State: AOJu0YwpZMy63dwPsvwyul8LRorZFiZht/UAwlG+BHXRN2e25C373bAC
+        cHHc2uq1nwDPIKSFteT5W5P2I6+MnpA=
+X-Google-Smtp-Source: AGHT+IF1C60bg2DJN40Ko3jIsOcOxP0NOjMSP0DFTt+pfC3PQMs+2qr1EtNSX5EQJ2FP9+vXkLa3AHa75+U=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a81:9848:0:b0:59b:5a5b:3a91 with SMTP id
+ p69-20020a819848000000b0059b5a5b3a91mr89060ywg.2.1694218549752; Fri, 08 Sep
+ 2023 17:15:49 -0700 (PDT)
+Date:   Fri,  8 Sep 2023 17:15:33 -0700
+In-Reply-To: <20230908074222.28723-2-vbabka@suse.cz>
+Mime-Version: 1.0
+References: <20230908074222.28723-2-vbabka@suse.cz>
+X-Mailer: git-send-email 2.42.0.283.g2d96d420d3-goog
+Message-ID: <169421599820.98577.9267896589643015779.b4-ty@google.com>
+Subject: Re: [PATCH gmem FIXUP v2] mm, compaction: make testing
+ mapping_unmovable() safe
+From:   Sean Christopherson <seanjc@google.com>
+To:     Sean Christopherson <seanjc@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>
+Cc:     ackerleytng@google.com, akpm@linux-foundation.org,
+        anup@brainfault.org, aou@eecs.berkeley.edu,
+        chao.p.peng@linux.intel.com, chenhuacai@kernel.org,
+        david@redhat.com, isaku.yamahata@gmail.com, jarkko@kernel.org,
+        jmorris@namei.org, kirill.shutemov@linux.intel.com,
+        kvm-riscv@lists.infradead.org, kvm@vger.kernel.org,
+        kvmarm@lists.linux.dev, liam.merwick@oracle.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-mm@kvack.org,
+        linux-riscv@lists.infradead.org,
+        linux-security-module@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, mail@maciej.szmigiero.name,
+        maz@kernel.org, michael.roth@amd.com, mpe@ellerman.id.au,
+        oliver.upton@linux.dev, palmer@dabbelt.com,
+        paul.walmsley@sifive.com, paul@paul-moore.com, pbonzini@redhat.com,
+        qperret@google.com, serge@hallyn.com, tabba@google.com,
+        vannapurve@google.com, wei.w.wang@intel.com, willy@infradead.org,
+        yu.c.zhang@linux.intel.com
+Content-Type: text/plain; charset="utf-8"
+X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 08, 2023 at 01:38:27AM -0700, Christoph Hellwig wrote:
-> On Thu, Sep 07, 2023 at 08:54:38AM +1000, Dave Chinner wrote:
-> > There's a bigger policy question around that.
-> > 
-> > I think that if we are going to have filesystems be "community
-> > maintained" because they have no explicit maintainer, we need some
-> > kind of standard policy to be applied.
-> > 
-> > I'd argue that the filesystem needs, at minimum, a working mkfs and
-> > fsck implementation, and that it is supported by fstests so anyone
-> > changing core infrastructure can simply run fstests against the
-> > filesystem to smoke test the infrastructure changes they are making.
+On Fri, 08 Sep 2023 09:42:23 +0200, Vlastimil Babka wrote:
+> As Kirill pointed out, mapping can be removed under us due to
+> truncation. Test it under folio lock as already done for the async
+> compaction / dirty folio case. To prevent locking every folio with
+> mapping to do the test, do it only for unevictable folios, as we can
+> expect the unmovable mapping folios are also unevictable. To enforce
+> that expecation, make mapping_set_unmovable() also set AS_UNEVICTABLE.
 > 
-> Yes, that's what I tried to imply above.  We could relax fsck a bit
-> (even if that is playing fast and lose), but without mkfs there is
-> no way anyone can verify anything
-> 
-> > 
-> > I'd suggest that syzbot coverage of such filesystems is not desired,
-> > because nobody is going to be fixing problems related to on-disk
-> > format verification. All we really care about is that a user can
-> > read and write to the filesystem without trashing anything.
-> 
-> Agreed.
-> 
-> > I'd also suggest that we mark filesystem support state via fstype
-> > flags rather than config options. That way we aren't reliant on
-> > distros setting config options correctly to include/indicate the
-> > state of the filesystem implementation. We could also use similar
-> > flags for indicating deprecation and obsolete state (i.e. pending
-> > removal) and have code in the high level mount path issue the
-> > relevant warnings.
-> 
-> Agreed.
-> 
-> > This method of marking would also allow us to document and implement
-> > a formal policy for removal of unmaintained and/or obsolete
-> > filesystems without having to be dependent on distros juggling
-> > config variables to allow users to continue using deprecated, broken
-> > and/or obsolete filesystem implementations right up to the point
-> > where they are removed from the kernel.
-> 
-> I'd love to get there, but that might be a harder sell.
+> [...]
 
-Yet that is exactly what we need. We need a well defined life-cycle
-policy for features like filesystems. Just as much as we need a
-clear, well defined process for removing obsolete filesystems, we
-need a well defined policy for merging new filesystems.
+Applied to kvm-x86 guest_memfd, thanks!
 
-The lack of well defined policies leads to arguments, arbitary
-roadblocks being dropped again and again in front of merges, and it
-does not prevent things like "dumping" from occurring. i.e. the
-filesystem is merged, and then the "maintainer" immediately goes
-AWOL and this new filesystem becomes an instant burden on the rest
-of the fs development community to the point where fs developers
-already immediately disregard any issue on a kernel that has used
-that filesystem.
+[1/1] mm, compaction: make testing mapping_unmovable() safe
+      https://github.com/kvm-x86/linux/commit/4876a35647b9
 
-Without defined policies and processes to avoid repeating the same
-mistakes and arguments and disagreements over and over for each new
-filesystem someone wants to merge or remove, we aren't going to pull
-ourselves out of the hole we've dug. This isn't the wild west here;
-this is a room full of professional engineers. Defining new
-processes and policies to make things easier, take less resources,
-cause less friction, make operations more efficient, etc is part of
-what we are supposed to do. Not everything can be solved with code;
-the lack of defined processes for making major changes is the
-biggest single issue leading to the problems we have right now....
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+--
+https://github.com/kvm-x86/linux/tree/next
+https://github.com/kvm-x86/linux/tree/fixes
