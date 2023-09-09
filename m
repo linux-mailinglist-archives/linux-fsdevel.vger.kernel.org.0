@@ -2,106 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DBDE799310
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Sep 2023 02:16:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0441799652
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Sep 2023 06:39:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345351AbjIIAPz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Sep 2023 20:15:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40178 "EHLO
+        id S236671AbjIIEjS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 9 Sep 2023 00:39:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53688 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345352AbjIIAPz (ORCPT
+        with ESMTP id S233015AbjIIEjQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Sep 2023 20:15:55 -0400
-Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8304DE46
-        for <linux-fsdevel@vger.kernel.org>; Fri,  8 Sep 2023 17:15:50 -0700 (PDT)
-Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-58e49935630so48652967b3.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Sep 2023 17:15:50 -0700 (PDT)
+        Sat, 9 Sep 2023 00:39:16 -0400
+Received: from mail-oa1-x36.google.com (mail-oa1-x36.google.com [IPv6:2001:4860:4864:20::36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 819841FC4
+        for <linux-fsdevel@vger.kernel.org>; Fri,  8 Sep 2023 21:39:12 -0700 (PDT)
+Received: by mail-oa1-x36.google.com with SMTP id 586e51a60fabf-1a2dd615ddcso802345fac.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Sep 2023 21:39:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1694218549; x=1694823349; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gaKhly8Aj9nDlRectFKYGw3FxO6EGE4C2aH6vsrGIcs=;
-        b=KKQYboSqcTfMiYuHqb6JaslyaUwLzygQtr54knTg8NFmKZzW9Nk9F02RAnx7QH76ia
-         RSnP7F+UCzWFEgW1vS7n2nD/rmqu97xxXhcj5PwkUBzHhxGFYXhOM0um0yr9FX8DpsCH
-         21bYQnWQAdXtwyqFTHsM9D2GXmjWt7d51G5geMz2N4THsLnsSmGJFJh325W3DOtzhQG+
-         mKmymS6dV9lG4v1aHafJwZMd4+rREJjtGYyKpGi9L+IMoZ3vprp5C3XlcQHUBn1z2+j9
-         MaVh85U/qkraojXJqCxJBnLJIvLcUlXYYdEsb1ph6ov4zAOxrXGLaXGELdxBclajwmko
-         Lk4w==
+        d=gmail.com; s=20221208; t=1694234351; x=1694839151; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mhvBSGcdwV31C1SYJQtO0sVcH2QZ1kB2UqKoOP29X9Q=;
+        b=ic2U7hPd8GeA1nrJDP4AuP40fy5/hPo3ZZndLOEPSGW+JV0KsmIEV0RmEDwRKvovQC
+         kR+AnzwB9urGMuv8SxDwUuBmkPz8G3giBWZxm6q1hkaqSfeVJh63yvYEBBqj528uFQMF
+         DZtjthk4fXv0iv9xkR/loIEnRZoDHK2zWDXKaQr5E6bQvipapX0XSFFFbGEKxvMQiERa
+         ZY8Tw8c0tjAh2kzt7WZEEDTOiQ18tPrmjTMreFABgW6O0Pi77hwM9G8m/hCrTVQXJusR
+         qh1IXMLvDjqLj2X8V64d6+v3niqhcaKn5T4nLEeInYaMI0opOwdZkmlJH+c+dDYUXNEi
+         4IPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694218549; x=1694823349;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gaKhly8Aj9nDlRectFKYGw3FxO6EGE4C2aH6vsrGIcs=;
-        b=uH3Z6rse/9LFhJKMCHHQXKP7rrfPz+R3KFqZlIzZFU9A2pej+ePUq9S+hvW+AenR0E
-         aHOWSoWFpWPLquQf83fkZptp4TqJDiCuvhusZtv5/WoDgZT+NT9fldRdDb5bMqj5USd9
-         o3jgkoReWt3OT5Cnhipps6Iw6mSb40F4MLCNSn8vIH5mkFc4Snun/7ovHw5VFAANI6iS
-         LmYKjWSCC1Lmf0SzbfhVQVB5zttbdjgWtpRyzET5zhYXY8I0/RhZkBibtDAJi3Et6tEo
-         xgbLCjqdEgalFOmbnY8ZXKdjKVe+HFNbxhl/TNZPpdpGHsKh7mlbmbDmQHeAzxjVD5Ba
-         18wQ==
-X-Gm-Message-State: AOJu0YwpZMy63dwPsvwyul8LRorZFiZht/UAwlG+BHXRN2e25C373bAC
-        cHHc2uq1nwDPIKSFteT5W5P2I6+MnpA=
-X-Google-Smtp-Source: AGHT+IF1C60bg2DJN40Ko3jIsOcOxP0NOjMSP0DFTt+pfC3PQMs+2qr1EtNSX5EQJ2FP9+vXkLa3AHa75+U=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a81:9848:0:b0:59b:5a5b:3a91 with SMTP id
- p69-20020a819848000000b0059b5a5b3a91mr89060ywg.2.1694218549752; Fri, 08 Sep
- 2023 17:15:49 -0700 (PDT)
-Date:   Fri,  8 Sep 2023 17:15:33 -0700
-In-Reply-To: <20230908074222.28723-2-vbabka@suse.cz>
-Mime-Version: 1.0
-References: <20230908074222.28723-2-vbabka@suse.cz>
-X-Mailer: git-send-email 2.42.0.283.g2d96d420d3-goog
-Message-ID: <169421599820.98577.9267896589643015779.b4-ty@google.com>
-Subject: Re: [PATCH gmem FIXUP v2] mm, compaction: make testing
- mapping_unmovable() safe
-From:   Sean Christopherson <seanjc@google.com>
-To:     Sean Christopherson <seanjc@google.com>,
-        Vlastimil Babka <vbabka@suse.cz>
-Cc:     ackerleytng@google.com, akpm@linux-foundation.org,
-        anup@brainfault.org, aou@eecs.berkeley.edu,
-        chao.p.peng@linux.intel.com, chenhuacai@kernel.org,
-        david@redhat.com, isaku.yamahata@gmail.com, jarkko@kernel.org,
-        jmorris@namei.org, kirill.shutemov@linux.intel.com,
-        kvm-riscv@lists.infradead.org, kvm@vger.kernel.org,
-        kvmarm@lists.linux.dev, liam.merwick@oracle.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-mm@kvack.org,
-        linux-riscv@lists.infradead.org,
-        linux-security-module@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, mail@maciej.szmigiero.name,
-        maz@kernel.org, michael.roth@amd.com, mpe@ellerman.id.au,
-        oliver.upton@linux.dev, palmer@dabbelt.com,
-        paul.walmsley@sifive.com, paul@paul-moore.com, pbonzini@redhat.com,
-        qperret@google.com, serge@hallyn.com, tabba@google.com,
-        vannapurve@google.com, wei.w.wang@intel.com, willy@infradead.org,
-        yu.c.zhang@linux.intel.com
-Content-Type: text/plain; charset="utf-8"
-X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        d=1e100.net; s=20230601; t=1694234351; x=1694839151;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mhvBSGcdwV31C1SYJQtO0sVcH2QZ1kB2UqKoOP29X9Q=;
+        b=L7izKOHwN+AtBsLvqT7QkhjcWQSOmJ0EUAJ4V1VeVhRVG1BGON+Wv1Axo7ZDn+3DHO
+         9+irM2nmtmZOQPeDMDYfuT2hjBjIHy8bnyST+n8jlfv+2JRoooNJbekxtM9HsMYD5G7i
+         ZicIEjszSs/Wl2QNSf9MaIN4Hnu3ktP5wI5kQ5hIy2kQq6e2GTZ0X5BMqQ/6xSAKqy8Q
+         iRXAsYQUIq8S9WAxwFqLIxwu+4IXgANMXFdshu/yEsPZrvglDVn8+j9wgnPQRlHyufRZ
+         lI3QUHJWb4TSZuUoZ0pDce+fU2AujppqAN6g8zO8BwQr2knxQKBHvRb/iyIxAiC3LoOD
+         Mpnw==
+X-Gm-Message-State: AOJu0Yw7g4V+wlvPjQU56PeI+TUKPnsoys5im2+b9SB2BJjBfiiAFZyB
+        RtzBDd6MEzM8NjBRNp4pmUa25KxX1Y8=
+X-Google-Smtp-Source: AGHT+IEljCm1qQe6NHT0otp5XyvH4bz9kXZqIIh5oRiaxOiAg7DDw6Niw3Qkxo4TH3IekLdaBikPBw==
+X-Received: by 2002:a4a:b382:0:b0:573:4a72:6ec with SMTP id p2-20020a4ab382000000b005734a7206ecmr4395882ooo.1.1694234351297;
+        Fri, 08 Sep 2023 21:39:11 -0700 (PDT)
+Received: from node202.. ([209.16.91.231])
+        by smtp.gmail.com with ESMTPSA id t3-20020a0568301e2300b006b8bf76174fsm1339645otr.21.2023.09.08.21.39.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Sep 2023 21:39:10 -0700 (PDT)
+From:   Reuben Hawkins <reubenhwk@gmail.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     amir73il@gmail.com, mszeredi@redhat.com, willy@infradead.org,
+        viro@zeniv.linux.org.uk, brauner@kernel.org,
+        Reuben Hawkins <reubenhwk@gmail.com>
+Subject: [PATCH] vfs: fix readahead(2) on block devices
+Date:   Fri,  8 Sep 2023 23:38:06 -0500
+Message-Id: <20230909043806.3539-1-reubenhwk@gmail.com>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 08 Sep 2023 09:42:23 +0200, Vlastimil Babka wrote:
-> As Kirill pointed out, mapping can be removed under us due to
-> truncation. Test it under folio lock as already done for the async
-> compaction / dirty folio case. To prevent locking every folio with
-> mapping to do the test, do it only for unevictable folios, as we can
-> expect the unmovable mapping folios are also unevictable. To enforce
-> that expecation, make mapping_set_unmovable() also set AS_UNEVICTABLE.
-> 
-> [...]
+Readahead was factored to call generic_fadvise.  That refactor broke
+readahead on block devices.
 
-Applied to kvm-x86 guest_memfd, thanks!
+The fix is to check F_ISFIFO rather than F_ISREG.  It would also work to
+not check and let generic_fadvise to do the checking, but then the
+generic_fadvise return value would have to be checked and changed from
+-ESPIPE to -EINVAL to comply with the readahead(2) man-pages.
 
-[1/1] mm, compaction: make testing mapping_unmovable() safe
-      https://github.com/kvm-x86/linux/commit/4876a35647b9
+Fixes: 3d8f7615319b ("vfs: implement readahead(2) using POSIX_FADV_WILLNEED")
+Signed-off-by: Reuben Hawkins <reubenhwk@gmail.com>
+---
+ mm/readahead.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---
-https://github.com/kvm-x86/linux/tree/next
-https://github.com/kvm-x86/linux/tree/fixes
+diff --git a/mm/readahead.c b/mm/readahead.c
+index 47afbca1d122..877ddcb61c76 100644
+--- a/mm/readahead.c
++++ b/mm/readahead.c
+@@ -749,7 +749,7 @@ ssize_t ksys_readahead(int fd, loff_t offset, size_t count)
+ 	 */
+ 	ret = -EINVAL;
+ 	if (!f.file->f_mapping || !f.file->f_mapping->a_ops ||
+-	    !S_ISREG(file_inode(f.file)->i_mode))
++	    S_ISFIFO(file_inode(f.file)->i_mode))
+ 		goto out;
+ 
+ 	ret = vfs_fadvise(f.file, offset, count, POSIX_FADV_WILLNEED);
+-- 
+2.34.1
+
