@@ -2,79 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A05DC799C46
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Sep 2023 03:56:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1500799C9B
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Sep 2023 06:31:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344843AbjIJB4h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 9 Sep 2023 21:56:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52794 "EHLO
+        id S1345894AbjIJEbb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 10 Sep 2023 00:31:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232301AbjIJB4h (ORCPT
+        with ESMTP id S239833AbjIJEb3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 9 Sep 2023 21:56:37 -0400
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37B4212F
-        for <linux-fsdevel@vger.kernel.org>; Sat,  9 Sep 2023 18:56:33 -0700 (PDT)
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-1c3ae0043f0so342925ad.0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 09 Sep 2023 18:56:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694310992; x=1694915792;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=g1AnbtdmHLxtYiw5SSlT3Mzclo1imdNxgM3fzBo8Y6I=;
-        b=VtQN3pJ7f1dv2pOgA8zAWDhwM0eK7ALJdXOOKFMvUs49VLN26S1hKbJYhFuy6JyubJ
-         g6XKM/Kryy3ntag8KsqyEeiY5BqLH9mAaXOmMXkr5oijJNZ/JL5wCmOUjlREtOkiVSfP
-         uluRQF3w+QQOGBg5PEC5xWQTJ+9ruomQ3komPEHxNsS44gM+2dr3htymquk4bV2ncV2n
-         98ig0Pz/sDnDS4UcM3kYft3qs7A8YYJESLMzHf9ct0kXY1c2FUd4SIEiYbMbRn+W+jOM
-         9EYnnmpS6E4YuTKmQpDO9Kxou412UPxDkz9sxH66PGsYD4QWN4JPW4nKj5XCutKK8t/X
-         Sl+w==
-X-Gm-Message-State: AOJu0Yww09RcKgNYwb3X3sQ5DfCOZ7joKGf6oQsFDpx6leFAjoXlP0Dr
-        4d4fiQajje2an3lsLzFuqb8tWDXhhknikGazH1jnOhggYg7G
-X-Google-Smtp-Source: AGHT+IHiUFnYR5e4ZxlOCvxRqzDbIqM/FX2HwdXWmfaqC03/C7L5M31f5pyYJ99GJ9Mjc0cInXFJjLtDqAyIvRPodQqxHEOcKuqO
+        Sun, 10 Sep 2023 00:31:29 -0400
+Received: from out-221.mta1.migadu.com (out-221.mta1.migadu.com [95.215.58.221])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A9C518E
+        for <linux-fsdevel@vger.kernel.org>; Sat,  9 Sep 2023 21:31:24 -0700 (PDT)
+Date:   Sun, 10 Sep 2023 00:31:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1694320282;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+        bh=4tNz0B7X1/PEX9tMB65gdEDeC5vTYbpdG6j1hg+l2p8=;
+        b=TmYYNAVinh2tMEhzdx+cka8W11d3lL7JuuuNsr+K0eJS6QtQxFgqo2G+bSBWjQzbDY+wb9
+        bHpkQOWdKR8a5xUytTRaefPvZ6zsBU5bwrA/7DAQTu7bUuBOkXghV7ii5hx2Op61NWYrrP
+        RkO9fG0fAHqqHIDOrtJjNdPh2IbiaiM=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Kent Overstreet <kent.overstreet@linux.dev>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        torvalds@linux-foundation.org
+Subject: bcachefs tree for next
+Message-ID: <20230910043118.6xf6jgeffj5es572@moria.home.lan>
 MIME-Version: 1.0
-X-Received: by 2002:a17:902:eb8c:b0:1bb:cdea:d959 with SMTP id
- q12-20020a170902eb8c00b001bbcdead959mr2473963plg.0.1694310992663; Sat, 09 Sep
- 2023 18:56:32 -0700 (PDT)
-Date:   Sat, 09 Sep 2023 18:56:32 -0700
-In-Reply-To: <000000000000885d8605e91963fd@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000db589b0604f784dd@google.com>
-Subject: Re: [syzbot] [ntfs3?] KASAN: stack-out-of-bounds Read in iput
-From:   syzbot <syzbot+870ae3a4c7a251c996bd@syzkaller.appspotmail.com>
-To:     almaz.alexandrovich@paragon-software.com, elver@google.com,
-        jacob.e.keller@intel.com, kuba@kernel.org, leonro@nvidia.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Migadu-Flow: FLOW_OUT
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot suspects this issue was fixed by commit:
+Hi Stephen,
 
-commit c1b05105573b2cd5845921eb0d2caa26e2144a34
-Author: Jakub Kicinski <kuba@kernel.org>
-Date:   Wed Nov 9 18:32:54 2022 +0000
+Please include a new tree in linux-next:
 
-    genetlink: fix single op policy dump when do is present
+http://evilpiepirate.org/git/bcachefs.git for-next
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17eb48a0680000
-start commit:   105a36f3694e Merge tag 'kbuild-fixes-v6.0-3' of git://git...
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c221af36f6d1d811
-dashboard link: https://syzkaller.appspot.com/bug?extid=870ae3a4c7a251c996bd
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17274404880000
+I don't see any merge conflicts with the linux-next master branch
 
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: genetlink: fix single op policy dump when do is present
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Cheers,
+Kent
