@@ -2,118 +2,165 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B24179A00C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Sep 2023 23:16:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FFA479A074
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Sep 2023 00:01:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230013AbjIJVQD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 10 Sep 2023 17:16:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33246 "EHLO
+        id S231682AbjIJWBf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 10 Sep 2023 18:01:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229713AbjIJVQC (ORCPT
+        with ESMTP id S231407AbjIJWBe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 10 Sep 2023 17:16:02 -0400
-Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91114188
-        for <linux-fsdevel@vger.kernel.org>; Sun, 10 Sep 2023 14:15:58 -0700 (PDT)
-Received: by mail-il1-x133.google.com with SMTP id e9e14a558f8ab-34f6fd04fbeso2293575ab.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 10 Sep 2023 14:15:58 -0700 (PDT)
+        Sun, 10 Sep 2023 18:01:34 -0400
+Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAD6E13E
+        for <linux-fsdevel@vger.kernel.org>; Sun, 10 Sep 2023 15:01:28 -0700 (PDT)
+Received: by mail-pf1-x430.google.com with SMTP id d2e1a72fcca58-68c576d35feso3658721b3a.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 10 Sep 2023 15:01:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1694380558; x=1694985358; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:subject:from:references:cc:to
-         :content-language:user-agent:mime-version:date:message-id:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=l2Q/e9FABMnbJiVlA+l81WIj96q3GIBpGDriFNDSINE=;
-        b=oTnmIY/RyxS7XMTVDen+JQclmSsLbtYHxQCxINH3F/H3ZD8ZwpPFMyUZI8PefaPmMS
-         YhjfAYgrB7uodDB4gUG9tyww3qtehUec/vDzk9am7cRWuliBEgAjQByfZYE8T9MvZE4u
-         pHhETZ52TRq7Dei8LnqRy2mMIkxKUFaM7bWLd60oOumohFZIPqq46ibOctuguoTqZdno
-         FJc0zgct8NmxqfjpoBKPHjc1PA0XNXnOn3fSaw6d2Zh7HoFvuQStS0fQ4mCi3/jaJPYw
-         P6ItAZGvcX2QO/mw9gYeHRQrNYnbwcT3wAEiZBIj02LGNf1E4NWVgjJZxja6jvQBeRYD
-         3cMQ==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1694383288; x=1694988088; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=EyybjuBSw2AsBAibBPVqGccWs6P0JtTeGBB0Kwx90Dw=;
+        b=b1Q+Djrc6DRgK0lSMIXf6OVmm1S98Rb1dJdV/4AjeMobXYoqxa/k4Xb7XAYcmCuvbB
+         T8pFPhiJHk/Ig8CcU4is+jZGfReesXQjqK7ULjc+VZz110Uqhy1NjrWTu4Ej2kgb1UEn
+         ZHgnS7dDfuM0nrDuRkgBy+D/YOBtPecXxWCyUh6h/0/NlsJyyOwKHQwSKYYxfVY7xjkS
+         7I+QxdaDiDVRMV8qekGuV48jZlbOlbc6skR8a29kp5hS8zsrhWfeCv9XIJ/gwMURSkPX
+         Ncgzq9d3+KaDgvRq3XsvmeqBjcqt9Lc7ewxeY00IZtUnccPI4WIduUYqP2aDlo+H2VFl
+         7yRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694380558; x=1694985358;
-        h=content-transfer-encoding:in-reply-to:subject:from:references:cc:to
-         :content-language:user-agent:mime-version:date:message-id:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=l2Q/e9FABMnbJiVlA+l81WIj96q3GIBpGDriFNDSINE=;
-        b=mHUjNPDaB00IcoDG4j9dj0K9t0Ulv7qztk6GLwquhp0HWeVkYK7s38Pm8cROTukwLa
-         WvNW8AyzjXj/jV/vnPh+Qe5/b73ulwezSoeDXSO9pvwwGxN8bFc8G9XpXu6f0hnjn/bm
-         b5JS4ofGGg6b20CaYsHkbQOxDhVJJywv8HhB5mLkjQ3gucTqVRLoa9AwnrfP8b3wTVfy
-         qV+S4FbPpze+K8vLNZafhx2pHqy7sxX86XLIg2kf/TD5R+V+ixVBv9oJukQKAwB1brrr
-         HIpnryYnaLzCqhcsam63x0Vb+Dqu4aaoLoueywSfoftM+VGdskQceVqGNtBPR6D70L44
-         Qeng==
-X-Gm-Message-State: AOJu0YzIASaskn4uDpKWlEaxv6sV00atsD/z5OkRmcCJQWCIQY9BsAOm
-        qVIuYuCSreIfwOvb+vhSKi4HBlDfaOE=
-X-Google-Smtp-Source: AGHT+IFtKQJRJu52kvtK9rfE/b719WGZQk49SrRB/+aJebwSdzUOAU+xIeNZ0r5sx5aWue8JxLaDag==
-X-Received: by 2002:a05:6e02:2198:b0:34f:1e9c:45d5 with SMTP id j24-20020a056e02219800b0034f1e9c45d5mr10700253ila.32.1694380557679;
-        Sun, 10 Sep 2023 14:15:57 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id j18-20020a056e02015200b0034989674ad7sm1898093ilr.52.2023.09.10.14.15.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 10 Sep 2023 14:15:56 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <2b1765a8-3c3a-d4eb-0561-11c67570c92b@roeck-us.net>
-Date:   Sun, 10 Sep 2023 14:15:55 -0700
+        d=1e100.net; s=20230601; t=1694383288; x=1694988088;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EyybjuBSw2AsBAibBPVqGccWs6P0JtTeGBB0Kwx90Dw=;
+        b=YfWYQ1QSSXetmejzrwVPEafn9yTL91vYINt9VnLbq0cYSR3gTyi/2Cq0DWpNR1OwkM
+         COVNadYwpyhXiTk2NUuGG3JaJ6jTihQz/hyUUADKJZAQsZCQCw2icFZLzsBLz9RvpfMP
+         hgguGVigfBaxJ9UgzyYL/BbsZRuLV22vCyMrGx+l2IKkO8R5Ur/Bi8B6QQXXBUcjA6og
+         2TmY2fVxkQeypP/rgWSLmlfcDOPsYQwDdSpgzu3XmO6I0Iq+GWKxOVDaOIbiF2BYbKkG
+         c8Tut/zkV4SfLfW0cF0WkIuLO725W19MGWRNvgnSLRcrPNV0AkWT1ot28hcdZZl5dXJH
+         f2eg==
+X-Gm-Message-State: AOJu0Yyj5fjoEfzRiHX+vRlaxTNNEyY06g1CA59UA/2bWUEGk0Dl6b82
+        HAOVX8WuJdQhCmWjncOOCAb6BQ==
+X-Google-Smtp-Source: AGHT+IHSYFPf3w2qdTZr9bikkzuSsvPYQjYYZyW+Zfc616rQWXs3Eeo2BzwinmhhOfJVOtnHj1lBTA==
+X-Received: by 2002:a05:6a00:1a0c:b0:68c:57c7:1eb0 with SMTP id g12-20020a056a001a0c00b0068c57c71eb0mr9371853pfv.11.1694383287795;
+        Sun, 10 Sep 2023 15:01:27 -0700 (PDT)
+Received: from dread.disaster.area (pa49-195-66-88.pa.nsw.optusnet.com.au. [49.195.66.88])
+        by smtp.gmail.com with ESMTPSA id u10-20020a62ed0a000000b0068a3dd6c1dasm4403641pfh.142.2023.09.10.15.01.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 10 Sep 2023 15:01:27 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+        (envelope-from <david@fromorbit.com>)
+        id 1qfSUe-00DWBA-0u;
+        Mon, 11 Sep 2023 08:01:24 +1000
+Date:   Mon, 11 Sep 2023 08:01:24 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Hao Xu <hao.xu@linux.dev>, Matthew Wilcox <willy@infradead.org>,
+        io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-cachefs@redhat.com,
+        ecryptfs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-unionfs@vger.kernel.org, bpf@vger.kernel.org,
+        netdev@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, codalist@coda.cs.cmu.edu,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-mm@kvack.org, linux-nilfs@vger.kernel.org,
+        devel@lists.orangefs.org, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-mtd@lists.infradead.org,
+        Wanpeng Li <wanpengli@tencent.com>
+Subject: Re: [PATCH 07/11] vfs: add nowait parameter for file_accessed()
+Message-ID: <ZP48tAg2iS0UzKQf@dread.disaster.area>
+References: <20230827132835.1373581-1-hao.xu@linux.dev>
+ <20230827132835.1373581-8-hao.xu@linux.dev>
+ <ZOvA5DJDZN0FRymp@casper.infradead.org>
+ <c728bf3f-d9db-4865-8473-058b26c11c06@linux.dev>
+ <ZO3cI+DkotHQo3md@casper.infradead.org>
+ <642de4e6-801d-fcad-a7ce-bfc6dec3b6e5@linux.dev>
+ <ZPUJHAKzxvXiEDYA@dread.disaster.area>
+ <6489b8cb-7d54-1e29-f192-a3449ed87fa1@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
-Content-Language: en-US
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Matthew Wilcox <willy@infradead.org>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@infradead.org>, ksummit@lists.linux.dev,
-        linux-fsdevel@vger.kernel.org
-References: <ZO9NK0FchtYjOuIH@infradead.org>
- <ZPe0bSW10Gj7rvAW@dread.disaster.area>
- <ZPe4aqbEuQ7xxJnj@casper.infradead.org>
- <8dd2f626f16b0fc863d6a71561196950da7e893f.camel@HansenPartnership.com>
- <ZPyS4J55gV8DBn8x@casper.infradead.org>
- <a21038464ad0afd5dfb88355e1c244152db9b8da.camel@HansenPartnership.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [MAINTAINERS/KERNEL SUMMIT] Trust and maintenance of file systems
-In-Reply-To: <a21038464ad0afd5dfb88355e1c244152db9b8da.camel@HansenPartnership.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        NICE_REPLY_A,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6489b8cb-7d54-1e29-f192-a3449ed87fa1@gmail.com>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/10/23 12:51, James Bottomley wrote:
-[ ... ]
->> I think that's a red herring.  Of course there are advances in
->> virtual hardware for those who need the best performance.  But
->> there's also qemu's ability to provide to you a 1981-vintage PC (or
->> more likely a 2000-era PC).  That's not going away.
+On Fri, Sep 08, 2023 at 01:29:55AM +0100, Pavel Begunkov wrote:
+> On 9/3/23 23:30, Dave Chinner wrote:
+> > On Wed, Aug 30, 2023 at 02:11:31PM +0800, Hao Xu wrote:
+> > > On 8/29/23 19:53, Matthew Wilcox wrote:
+> > > > On Tue, Aug 29, 2023 at 03:46:13PM +0800, Hao Xu wrote:
+> > > > > On 8/28/23 05:32, Matthew Wilcox wrote:
+> > > > > > On Sun, Aug 27, 2023 at 09:28:31PM +0800, Hao Xu wrote:
+> > > > > > > From: Hao Xu <howeyxu@tencent.com>
+> > > > > > > 
+> > > > > > > Add a boolean parameter for file_accessed() to support nowait semantics.
+> > > > > > > Currently it is true only with io_uring as its initial caller.
+> > > > > > 
+> > > > > > So why do we need to do this as part of this series?  Apparently it
+> > > > > > hasn't caused any problems for filemap_read().
+> > > > > > 
+> > > > > 
+> > > > > We need this parameter to indicate if nowait semantics should be enforced in
+> > > > > touch_atime(), There are locks and maybe IOs in it.
+> > > > 
+> > > > That's not my point.  We currently call file_accessed() and
+> > > > touch_atime() for nowait reads and nowait writes.  You haven't done
+> > > > anything to fix those.
+> > > > 
+> > > > I suspect you can trim this patchset down significantly by avoiding
+> > > > fixing the file_accessed() problem.  And then come back with a later
+> > > > patchset that fixes it for all nowait i/o.  Or do a separate prep series
+> > > 
+> > > I'm ok to do that.
+> > > 
+> > > > first that fixes it for the existing nowait users, and then a second
+> > > > series to do all the directory stuff.
+> > > > 
+> > > > I'd do the first thing.  Just ignore the problem.  Directory atime
+> > > > updates cause I/O so rarely that you can afford to ignore it.  Almost
+> > > > everyone uses relatime or nodiratime.
+> > > 
+> > > Hi Matthew,
+> > > The previous discussion shows this does cause issues in real
+> > > producations: https://lore.kernel.org/io-uring/2785f009-2ebb-028d-8250-d5f3a30510f0@gmail.com/#:~:text=fwiw%2C%20we%27ve%20just%20recently%20had%20similar%20problems%20with%20io_uring%20read/write
+> > > 
+> > 
+> > Then separate it out into it's own patch set so we can have a
+> > discussion on the merits of requiring using noatime, relatime or
+> > lazytime for really latency sensitive IO applications. Changing code
+> > is not always the right solution...
 > 
-> So Red Hat dropping support for the pc type (alias i440fx)
-> 
-> https://bugzilla.redhat.com/show_bug.cgi?id=1946898
-> 
-> And the QEMU deprecation schedule
-> 
-> https://www.qemu.org/docs/master/about/deprecated.html
-> 
-> showing it as deprecated after 7.0 are wrong?  That's not to say
-> virtualization can't help at all; it can certainly lengthen the time
-> horizon, it's just not a panacea.
+> Separation sounds reasonable, but it can hardly be said that only
+> latency sensitive apps would care about >1s nowait/async submission
+> delays. Presumably, btrfs can improve on that, but it still looks
+> like it's perfectly legit for filesystems do heavy stuff in
+> timestamping like waiting for IO. Right?
 
-deprecated.html says:
+Yes, it is, no-one is denying that. And some filesystems are worse
+than others, but none of that means it has to be fixed so getdents
+can be converted to NOWAIT semantics.
 
-pc-i440fx-1.4 up to pc-i440fx-1.7 (since 7.0)
-           ^^^                 ^^^
-These old machine types are quite neglected nowadays and thus might have
-various pitfalls with regards to live migration. Use a newer machine type
-instead.
+ie. this patchset is about the getdents NOWAIT machinery, and
+fiddling around with timestamps has much, much wider scope than just
+NOWAIT getdents machinery. We'll have this discussion about NOWAIT
+timestamp updates when a RFC is proposed to address the wider
+problem of how timestamp updates should behave in NOWAIT context.
 
-Unless the qemu documentation is severely misleading, that does not
-include pc-i440fx-{2-8}.{0-12}, and there is no indication that the
-machine type "pc" (current alias of pc-i440fx-8.1) has been deprecated.
-
-Guenter
-
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
