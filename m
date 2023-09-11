@@ -2,114 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 36EB179A0CC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Sep 2023 02:38:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD13779A0E6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Sep 2023 03:05:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231676AbjIKAic (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 10 Sep 2023 20:38:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59384 "EHLO
+        id S230498AbjIKBFS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 10 Sep 2023 21:05:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229560AbjIKAib (ORCPT
+        with ESMTP id S230367AbjIKBFR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 10 Sep 2023 20:38:31 -0400
-Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1293312D;
-        Sun, 10 Sep 2023 17:38:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-        s=201702; t=1694392700;
-        bh=ANfA5L7JPBnRQNkXFKOzlsKc4BVTTyeB/dwlNRzdJsQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=lcskjcVOQ5Xnw2vHYL3gDT78c4YstoHwQu7/73boSWOlKtN8S+H6V16zer5RxF6/p
-         Og59DnJ/5n0mVicyL7TloY1QaSudgD1qqn2l66OAEa8S+ZUbl9xXIUumYlIQi52gUI
-         hW5EjCIiPiolNOiSDKUJxnBd6yyTTnaj60daFHp7LahcFNJIYbcO+5ECMb4H3Q71Y8
-         wqoU7llGgNuhnWc/v8BwNZjJo9YO6F5wKbf11bCalRezgnmWuAW14gkR5dsCCSzAj/
-         WPrB9+l70+GUNPVp50NZyZV0bWdhPNDy3oLyUCR3zVYODAxkJMleJYTSHRRkmSHKVY
-         RwlGl5nqZPPRw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4RkSW01Xlwz4xNs;
-        Mon, 11 Sep 2023 10:38:20 +1000 (AEST)
-Date:   Mon, 11 Sep 2023 10:38:18 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
+        Sun, 10 Sep 2023 21:05:17 -0400
+Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F5DE1A5
+        for <linux-fsdevel@vger.kernel.org>; Sun, 10 Sep 2023 18:05:13 -0700 (PDT)
+Received: by mail-pj1-x1032.google.com with SMTP id 98e67ed59e1d1-268bc714ce0so3472168a91.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 10 Sep 2023 18:05:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1694394313; x=1694999113; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XGsb5tA6YviorNgYPYAcuSq2xr/+oYqZlEkB4PA46Ig=;
+        b=siTFZYaAlbN8ZHintoicJOHMa37bp8u47jZMJUZJ5rWp5aHpA0vAYOSuW1QVSl1Vde
+         2qJL5dDToGxbISUsikddeOrtLu0rUiDd4R81OLRTo9WRxghmN7TDKJhtzzeJo+Q+Pk60
+         eJOgFsuMQCoqmw+a/zVeV51lY9jNLcWT5WQlxGIggpYmOf+NOEc3sPgSDe8KFquv7NBF
+         /tsqlXAZYBFZubpzcColK0ZP2CgF+vVipCExJwVnkAYvjOa85cu8heCP0mH4nAQdkhRb
+         mKa7Wh1dZknMDdPa+FT/4F+8ehSm0NurZWZyxsoiYYvbtrkuQnyjsQ8tNRgBuRpsNzQn
+         cXrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694394313; x=1694999113;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XGsb5tA6YviorNgYPYAcuSq2xr/+oYqZlEkB4PA46Ig=;
+        b=k9/Z0fNwENHg3VG09zafPc0qepZX6QXCpwWYYtd1/zCaYHeiIZJQIgt1zmXxwkxSR/
+         fY0rsif9SvT1uigtfuxnMw7+pOzF7waSM6f1Yav298GQdL/ecgz9z6cw9Ns/IGDS+TJP
+         zFDybIyiOqOONcqgfHIWngtA3OsqyQfhC1g20jy6oXiOxoM1OFRWx+OQDQQrzUpLrALw
+         hrYFcQan7MTJxJ4BbnlKR7PhQKhjZpQ6lIbYwR/x71hu72A66omB6JNzZT838wD8usec
+         MoBcOfrIzQNK9Ar3jJePclp9IaCxP3yH+/y2Oks4YyyXJqG5MwQFbYIAwRLbXV1z+0wz
+         mPbA==
+X-Gm-Message-State: AOJu0YxWSQDNADkKOLSiS2GXpypLilJtpdDa8bLnS5/AVOUL+BfYb/um
+        3RcrsJpgV3yHRbJ6YlMmQgJqhw==
+X-Google-Smtp-Source: AGHT+IEkW6xGC3kWXEa6X9EHtzzFluPS/ng0ICT4L0VFLSr3f08T6/z/BrKseFYgb260beyu2Eyv1A==
+X-Received: by 2002:a17:90a:c082:b0:273:e090:6096 with SMTP id o2-20020a17090ac08200b00273e0906096mr9125516pjs.11.1694394313037;
+        Sun, 10 Sep 2023 18:05:13 -0700 (PDT)
+Received: from dread.disaster.area (pa49-195-66-88.pa.nsw.optusnet.com.au. [49.195.66.88])
+        by smtp.gmail.com with ESMTPSA id j7-20020a17090ae60700b0027360359b70sm6225535pjy.48.2023.09.10.18.05.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 10 Sep 2023 18:05:12 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+        (envelope-from <david@fromorbit.com>)
+        id 1qfVMT-00DZb6-0s;
+        Mon, 11 Sep 2023 11:05:09 +1000
+Date:   Mon, 11 Sep 2023 11:05:09 +1000
+From:   Dave Chinner <david@fromorbit.com>
 To:     Kent Overstreet <kent.overstreet@linux.dev>
-Cc:     linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        torvalds@linux-foundation.org
-Subject: Re: bcachefs tree for next
-Message-ID: <20230911103818.30272bd6@canb.auug.org.au>
-In-Reply-To: <20230910043118.6xf6jgeffj5es572@moria.home.lan>
-References: <20230910043118.6xf6jgeffj5es572@moria.home.lan>
+Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>, ksummit@lists.linux.dev,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [MAINTAINERS/KERNEL SUMMIT] Trust and maintenance of file systems
+Message-ID: <ZP5nxdbazqirMKAA@dread.disaster.area>
+References: <ZO9NK0FchtYjOuIH@infradead.org>
+ <ZPe0bSW10Gj7rvAW@dread.disaster.area>
+ <ZPe4aqbEuQ7xxJnj@casper.infradead.org>
+ <8dd2f626f16b0fc863d6a71561196950da7e893f.camel@HansenPartnership.com>
+ <20230909224230.3hm4rqln33qspmma@moria.home.lan>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/NuXFXjSSRn17H09M1KLPAaV";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_PASS,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230909224230.3hm4rqln33qspmma@moria.home.lan>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---Sig_/NuXFXjSSRn17H09M1KLPAaV
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sat, Sep 09, 2023 at 06:42:30PM -0400, Kent Overstreet wrote:
+> On Sat, Sep 09, 2023 at 08:50:39AM -0400, James Bottomley wrote:
+> > So why can't we figure out that easier way? What's wrong with trying to
+> > figure out if we can do some sort of helper or library set that assists
+> > supporting and porting older filesystems. If we can do that it will not
+> > only make the job of an old fs maintainer a lot easier, but it might
+> > just provide the stepping stones we need to encourage more people climb
+> > up into the modern VFS world.
+> 
+> What if we could run our existing filesystem code in userspace?
 
-Hi Kent,
+You mean like lklfuse already enables?
 
-On Sun, 10 Sep 2023 00:31:18 -0400 Kent Overstreet <kent.overstreet@linux.d=
-ev> wrote:
->
-> Please include a new tree in linux-next:
->=20
-> http://evilpiepirate.org/git/bcachefs.git for-next
->=20
-> I don't see any merge conflicts with the linux-next master branch
+https://github.com/lkl/linux
 
-I will include this from tomorrow as I don't normally add branches
-during the merge window (which Linus has closed this morning (my time)).
+Looks like the upstream repo is currently based on 6.1, so there's
+already a mechanism to use relatively recent kernel filesystem
+implementations as a FUSE filesystem without needed to support a
+userspace code base....
 
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgement of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
-
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-        Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
-
---=20
 Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/NuXFXjSSRn17H09M1KLPAaV
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmT+YXoACgkQAVBC80lX
-0GwYsgf/W0PSE8KZD6gytc0kFgaWk0Vjbf6MuszmDjhqa2vIM5bfZ/t9AQBvKCH/
-AEWH5nzVcf2zBWfQitDGUp0wN28Ac5s4B6vnp8ijdKjx4HJCe1aUD3kRKl8ZauX+
-oDlsFIJ1puyC6S9jwC63dZbuQhu1bER/jbW7bdrIYcqU50UuW/UJI02lHDjqwjnl
-0hGiA2vRPTNQxfL+z2EOSnZ7JBYzMcDuBn/4M686+LNiq8BImvJBS+AchLy+9LZe
-zTSKZNZzp+UtYXK4Dp1HsA9vadPd0mOXIyFE0DZxbUFU5X2w3dVccGdHa2aw4ons
-ZkDI0AkNV34Je6o3SVfnytpbNjszzw==
-=Ft0s
------END PGP SIGNATURE-----
-
---Sig_/NuXFXjSSRn17H09M1KLPAaV--
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
