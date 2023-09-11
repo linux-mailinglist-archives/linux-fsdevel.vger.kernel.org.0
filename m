@@ -2,165 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FFA479A074
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Sep 2023 00:01:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA72579A0B3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Sep 2023 02:02:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231682AbjIJWBf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 10 Sep 2023 18:01:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46152 "EHLO
+        id S231468AbjIKACd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 10 Sep 2023 20:02:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231407AbjIJWBe (ORCPT
+        with ESMTP id S231253AbjIKACc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 10 Sep 2023 18:01:34 -0400
-Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAD6E13E
-        for <linux-fsdevel@vger.kernel.org>; Sun, 10 Sep 2023 15:01:28 -0700 (PDT)
-Received: by mail-pf1-x430.google.com with SMTP id d2e1a72fcca58-68c576d35feso3658721b3a.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 10 Sep 2023 15:01:28 -0700 (PDT)
+        Sun, 10 Sep 2023 20:02:32 -0400
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54F6218C
+        for <linux-fsdevel@vger.kernel.org>; Sun, 10 Sep 2023 17:02:28 -0700 (PDT)
+Received: by mail-pj1-x1029.google.com with SMTP id 98e67ed59e1d1-271b102659fso2556142a91.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 10 Sep 2023 17:02:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1694383288; x=1694988088; darn=vger.kernel.org;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1694390547; x=1694995347; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EyybjuBSw2AsBAibBPVqGccWs6P0JtTeGBB0Kwx90Dw=;
-        b=b1Q+Djrc6DRgK0lSMIXf6OVmm1S98Rb1dJdV/4AjeMobXYoqxa/k4Xb7XAYcmCuvbB
-         T8pFPhiJHk/Ig8CcU4is+jZGfReesXQjqK7ULjc+VZz110Uqhy1NjrWTu4Ej2kgb1UEn
-         ZHgnS7dDfuM0nrDuRkgBy+D/YOBtPecXxWCyUh6h/0/NlsJyyOwKHQwSKYYxfVY7xjkS
-         7I+QxdaDiDVRMV8qekGuV48jZlbOlbc6skR8a29kp5hS8zsrhWfeCv9XIJ/gwMURSkPX
-         Ncgzq9d3+KaDgvRq3XsvmeqBjcqt9Lc7ewxeY00IZtUnccPI4WIduUYqP2aDlo+H2VFl
-         7yRw==
+        bh=BuWXcolwPZF0Fjx2Nrn9ky4gQs3B+XaH1BVryYGb0Co=;
+        b=c8KN4FLkfPCUHTfiy19GYLycQcT8gBVwY7jkwh1ccK8Pj3LGUfdcnnaY0XgpuSwAnM
+         DtAft9TFaQb/PHFAzwEOhh/9bK1WK2xyP9MJQv9uLFDtQcWaTvf0HHvvkeJ8S0UtTARU
+         aYHvfBbnobRYSHY1vLgZcTeV3GT7+zy/afyNZD6npqzG2xnWVDY88vW8xxU1zLXfuQL/
+         9RgKrlKSYqHzFgLAyGtZmuU2ueKCMdEz2LRW5apemrfKDFe5KVbEkajA0EXNluPJd9xi
+         2sjP6aDZLJfq7qInJUgP1JyUSA4Lc0q5sR+WJ9+Bj5+HdDUHoRZbimNEycVs6dtFEl9H
+         knpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694383288; x=1694988088;
+        d=1e100.net; s=20230601; t=1694390547; x=1694995347;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EyybjuBSw2AsBAibBPVqGccWs6P0JtTeGBB0Kwx90Dw=;
-        b=YfWYQ1QSSXetmejzrwVPEafn9yTL91vYINt9VnLbq0cYSR3gTyi/2Cq0DWpNR1OwkM
-         COVNadYwpyhXiTk2NUuGG3JaJ6jTihQz/hyUUADKJZAQsZCQCw2icFZLzsBLz9RvpfMP
-         hgguGVigfBaxJ9UgzyYL/BbsZRuLV22vCyMrGx+l2IKkO8R5Ur/Bi8B6QQXXBUcjA6og
-         2TmY2fVxkQeypP/rgWSLmlfcDOPsYQwDdSpgzu3XmO6I0Iq+GWKxOVDaOIbiF2BYbKkG
-         c8Tut/zkV4SfLfW0cF0WkIuLO725W19MGWRNvgnSLRcrPNV0AkWT1ot28hcdZZl5dXJH
-         f2eg==
-X-Gm-Message-State: AOJu0Yyj5fjoEfzRiHX+vRlaxTNNEyY06g1CA59UA/2bWUEGk0Dl6b82
-        HAOVX8WuJdQhCmWjncOOCAb6BQ==
-X-Google-Smtp-Source: AGHT+IHSYFPf3w2qdTZr9bikkzuSsvPYQjYYZyW+Zfc616rQWXs3Eeo2BzwinmhhOfJVOtnHj1lBTA==
-X-Received: by 2002:a05:6a00:1a0c:b0:68c:57c7:1eb0 with SMTP id g12-20020a056a001a0c00b0068c57c71eb0mr9371853pfv.11.1694383287795;
-        Sun, 10 Sep 2023 15:01:27 -0700 (PDT)
+        bh=BuWXcolwPZF0Fjx2Nrn9ky4gQs3B+XaH1BVryYGb0Co=;
+        b=eqaU+3ez+YYH/8xHT8BoQZoiLwD0odektifaJwq35FnJ7lqd1r1wJQR62j0YK+K9dj
+         5OL07cupf220jnpX3wKLL30WDnFnCAq2Em/3gwmvhge4x819/FSs8A3cNScYrg20Joye
+         tKg4Gu5wozsXGwBwR7kRVkJFWeviMCDNG91Zu3yXtPYpXKavpFHy0gMLH+4t1nmmsa8I
+         1iBV555glgmZTpO9+HhLQGGnKYu2ksA07FjxWtM0/kN7/y3xd4H5JUWafM3YPIWHMd0a
+         KhzRxgF0064v1zyKAmjKFVjAbm4OoZt78cuTJgunUhvG81s8+3E0NNwPar8OOmAzP3N6
+         yMow==
+X-Gm-Message-State: AOJu0YzT2gWM9igBjbed+u4p3EpS04ERy1K3v4zLaR+RMHXoVm83qGSa
+        p8mYoN2BsBwbrLgS1Dcds7dGa0KFzCqOP63LEMk=
+X-Google-Smtp-Source: AGHT+IFQ++RMuB2iOMKQJRmWJ07rzBy0hTVUbQZHy9DpVP7lEXHFez2sgjbuucCLul0nqDJHfTsy7Q==
+X-Received: by 2002:a17:90b:ec5:b0:26d:4d1c:5395 with SMTP id gz5-20020a17090b0ec500b0026d4d1c5395mr15420486pjb.18.1694390547083;
+        Sun, 10 Sep 2023 17:02:27 -0700 (PDT)
 Received: from dread.disaster.area (pa49-195-66-88.pa.nsw.optusnet.com.au. [49.195.66.88])
-        by smtp.gmail.com with ESMTPSA id u10-20020a62ed0a000000b0068a3dd6c1dasm4403641pfh.142.2023.09.10.15.01.27
+        by smtp.gmail.com with ESMTPSA id bt22-20020a17090af01600b002612150d958sm6285602pjb.16.2023.09.10.17.02.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Sep 2023 15:01:27 -0700 (PDT)
+        Sun, 10 Sep 2023 17:02:26 -0700 (PDT)
 Received: from dave by dread.disaster.area with local (Exim 4.96)
         (envelope-from <david@fromorbit.com>)
-        id 1qfSUe-00DWBA-0u;
-        Mon, 11 Sep 2023 08:01:24 +1000
-Date:   Mon, 11 Sep 2023 08:01:24 +1000
+        id 1qfUNj-00DYQy-2l;
+        Mon, 11 Sep 2023 10:02:23 +1000
+Date:   Mon, 11 Sep 2023 10:02:23 +1000
 From:   Dave Chinner <david@fromorbit.com>
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     Hao Xu <hao.xu@linux.dev>, Matthew Wilcox <willy@infradead.org>,
-        io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-cachefs@redhat.com,
-        ecryptfs@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-unionfs@vger.kernel.org, bpf@vger.kernel.org,
-        netdev@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, codalist@coda.cs.cmu.edu,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        linux-mm@kvack.org, linux-nilfs@vger.kernel.org,
-        devel@lists.orangefs.org, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, linux-mtd@lists.infradead.org,
-        Wanpeng Li <wanpengli@tencent.com>
-Subject: Re: [PATCH 07/11] vfs: add nowait parameter for file_accessed()
-Message-ID: <ZP48tAg2iS0UzKQf@dread.disaster.area>
-References: <20230827132835.1373581-1-hao.xu@linux.dev>
- <20230827132835.1373581-8-hao.xu@linux.dev>
- <ZOvA5DJDZN0FRymp@casper.infradead.org>
- <c728bf3f-d9db-4865-8473-058b26c11c06@linux.dev>
- <ZO3cI+DkotHQo3md@casper.infradead.org>
- <642de4e6-801d-fcad-a7ce-bfc6dec3b6e5@linux.dev>
- <ZPUJHAKzxvXiEDYA@dread.disaster.area>
- <6489b8cb-7d54-1e29-f192-a3449ed87fa1@gmail.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: Why doesn't XFS need ->launder_folio?
+Message-ID: <ZP5ZD0v6IEiauFHB@dread.disaster.area>
+References: <ZPs0I9ZTxfAQtyI9@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6489b8cb-7d54-1e29-f192-a3449ed87fa1@gmail.com>
+In-Reply-To: <ZPs0I9ZTxfAQtyI9@casper.infradead.org>
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 08, 2023 at 01:29:55AM +0100, Pavel Begunkov wrote:
-> On 9/3/23 23:30, Dave Chinner wrote:
-> > On Wed, Aug 30, 2023 at 02:11:31PM +0800, Hao Xu wrote:
-> > > On 8/29/23 19:53, Matthew Wilcox wrote:
-> > > > On Tue, Aug 29, 2023 at 03:46:13PM +0800, Hao Xu wrote:
-> > > > > On 8/28/23 05:32, Matthew Wilcox wrote:
-> > > > > > On Sun, Aug 27, 2023 at 09:28:31PM +0800, Hao Xu wrote:
-> > > > > > > From: Hao Xu <howeyxu@tencent.com>
-> > > > > > > 
-> > > > > > > Add a boolean parameter for file_accessed() to support nowait semantics.
-> > > > > > > Currently it is true only with io_uring as its initial caller.
-> > > > > > 
-> > > > > > So why do we need to do this as part of this series?  Apparently it
-> > > > > > hasn't caused any problems for filemap_read().
-> > > > > > 
-> > > > > 
-> > > > > We need this parameter to indicate if nowait semantics should be enforced in
-> > > > > touch_atime(), There are locks and maybe IOs in it.
-> > > > 
-> > > > That's not my point.  We currently call file_accessed() and
-> > > > touch_atime() for nowait reads and nowait writes.  You haven't done
-> > > > anything to fix those.
-> > > > 
-> > > > I suspect you can trim this patchset down significantly by avoiding
-> > > > fixing the file_accessed() problem.  And then come back with a later
-> > > > patchset that fixes it for all nowait i/o.  Or do a separate prep series
-> > > 
-> > > I'm ok to do that.
-> > > 
-> > > > first that fixes it for the existing nowait users, and then a second
-> > > > series to do all the directory stuff.
-> > > > 
-> > > > I'd do the first thing.  Just ignore the problem.  Directory atime
-> > > > updates cause I/O so rarely that you can afford to ignore it.  Almost
-> > > > everyone uses relatime or nodiratime.
-> > > 
-> > > Hi Matthew,
-> > > The previous discussion shows this does cause issues in real
-> > > producations: https://lore.kernel.org/io-uring/2785f009-2ebb-028d-8250-d5f3a30510f0@gmail.com/#:~:text=fwiw%2C%20we%27ve%20just%20recently%20had%20similar%20problems%20with%20io_uring%20read/write
-> > > 
-> > 
-> > Then separate it out into it's own patch set so we can have a
-> > discussion on the merits of requiring using noatime, relatime or
-> > lazytime for really latency sensitive IO applications. Changing code
-> > is not always the right solution...
+On Fri, Sep 08, 2023 at 03:48:03PM +0100, Matthew Wilcox wrote:
+> I want to remove ->launder_folio.  So I'm looking at commit e3db7691e9f3
+> which introduced ->launder_page.  The race described there is pretty
+> clear:
 > 
-> Separation sounds reasonable, but it can hardly be said that only
-> latency sensitive apps would care about >1s nowait/async submission
-> delays. Presumably, btrfs can improve on that, but it still looks
-> like it's perfectly legit for filesystems do heavy stuff in
-> timestamping like waiting for IO. Right?
+>      invalidate_inode_pages2() may find the dirty bit has been set on a page
+>      owing to the fact that the page may still be mapped after it was locked.
+>      Only after the call to unmap_mapping_range() are we sure that the page
+>      can no longer be dirtied.
+> 
+> ie this happens:
+> 
+> Task A				Task B
+> mmaps a file, writes to page A
+> 				open(O_DIRECT)
+> 				read()
+> 				kiocb_invalidate_pages()
+> 				filemap_write_and_wait_range()
+> 				__filemap_fdatawrite_range()
+> 				filemap_fdatawrite_wbc()
+> 				do_writepages()
+> 				iomap_writepages()
+> 				write_cache_pages()
+> 				page A gets cleaned
+> writes to page A again
+> 				invalidate_inode_pages2_range()
+> 				folio_mapped() is true, so we unmap it
+> 				folio_launder() returns 0
+> 				invalidate_complete_folio2() returns 0
+> 				ret = -EBUSY
+> 				kiocb_invalidate_pages() returns EBUSY
+> 
+> and the DIO read fails, despite it being totally reasonable to return
+> the now-stale data on storage.
 
-Yes, it is, no-one is denying that. And some filesystems are worse
-than others, but none of that means it has to be fixed so getdents
-can be converted to NOWAIT semantics.
+I think you've read the __iomap_dio_rw() call path incorrectly -
+kiocb_invalidate_pages() is only called from the DIO write
+submission call path, not the DIO read call path.
 
-ie. this patchset is about the getdents NOWAIT machinery, and
-fiddling around with timestamps has much, much wider scope than just
-NOWAIT getdents machinery. We'll have this discussion about NOWAIT
-timestamp updates when a RFC is proposed to address the wider
-problem of how timestamp updates should behave in NOWAIT context.
+For a DIO read, we only call kiocb_write_and_wait() to write back
+dirty cached pages and we don't invalidate anything in the page
+cache. Hence IO submission never calls
+invalidate_inode_pages2_range(), so the data returned by the DIO
+read will only contain the first write. On DIO read completion, we
+still don't do any page cache invalidation, so AFAICT it returns
+stale data that doesn't include the second mmap write task A made to
+the file while the DIO read was in progress.
 
--Dave.
+This looks like the iomap DIO read path is working as intended to
+me...
+
+> A DIO write would be a different matter;
+> we really do need to get page A out of cache.
+
+No, I don't think we need to.
+
+On a dio write, if invalidate_inode_pages2_range() fails with -EBUSY
+as per above it will result in iomap_dio_rw() returning -ENOTBLK to
+the filesystem. That gets caught at xfs_file_write_iter() and the
+DIO write is then executed as buffered IO instead. This means the
+write is then directed through the page cache and so second write
+that Task A made is captured and does not get lost.
+
+IOWs, this looks like it is all working as it is supposed to,
+without the need to implement ->launder_folio()...
+
+Cheers,
+
+Dave.
 -- 
 Dave Chinner
 david@fromorbit.com
