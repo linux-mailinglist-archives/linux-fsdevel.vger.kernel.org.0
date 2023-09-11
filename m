@@ -2,28 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3021379B4B2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Sep 2023 02:02:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F2C179AE66
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Sep 2023 01:44:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238187AbjIKUxp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Sep 2023 16:53:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48482 "EHLO
+        id S236081AbjIKUzZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Sep 2023 16:55:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53772 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238228AbjIKNvv (ORCPT
+        with ESMTP id S239889AbjIKOa6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Sep 2023 09:51:51 -0400
+        Mon, 11 Sep 2023 10:30:58 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA39BFA;
-        Mon, 11 Sep 2023 06:51:45 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02F07C433C8;
-        Mon, 11 Sep 2023 13:51:45 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F908E4B;
+        Mon, 11 Sep 2023 07:30:53 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1001C433C8;
+        Mon, 11 Sep 2023 14:30:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1694440305;
-        bh=kZH60FwrEAPowQXptljuiq/VxOKalPgpPZUtkBymir0=;
+        s=korg; t=1694442653;
+        bh=snYNGcr82QoUeAqSC3YazeHaX6MLgfAk52uGDJwlVZ8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C1DqiQT9Kqe1xRfoB4j5wmg9tNfEKL1mTCJ5Jrwp/y6OMQf6aJGKiQyPCN41QQb3d
-         J/ZweD03gZrlXhTLNno6ngM6Y8+0AKgi6dHZjx/15UZng6ypMQQdma5eTVfhGJTS9M
-         Ikw/eGDnnSSPcPwwYtNomZ0504FQfTGILHqrGTls=
+        b=gKn3VB35J76aOA9HHG/AVwwPD32ldQweziRlnzKe+8p6aWdPyCuIwF5Cut/r1KMLP
+         PHKjSyfL5Ba6oR+dhpo5e0Yqwtibxz5KGCSmWPgxNNpFRmcpJpzfj73EaDa1pF3UjI
+         p4rAwzt6cksTXqs+p+VX7ZbdL5ckTx6k76Decwoo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -36,12 +36,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Matthew Wilcox <willy@infradead.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.5 015/739] eventfd: prevent underflow for eventfd semaphores
-Date:   Mon, 11 Sep 2023 15:36:54 +0200
-Message-ID: <20230911134651.447637692@linuxfoundation.org>
+Subject: [PATCH 6.4 101/737] eventfd: prevent underflow for eventfd semaphores
+Date:   Mon, 11 Sep 2023 15:39:20 +0200
+Message-ID: <20230911134653.335839649@linuxfoundation.org>
 X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20230911134650.921299741@linuxfoundation.org>
-References: <20230911134650.921299741@linuxfoundation.org>
+In-Reply-To: <20230911134650.286315610@linuxfoundation.org>
+References: <20230911134650.286315610@linuxfoundation.org>
 User-Agent: quilt/0.67
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -57,7 +57,7 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-6.5-stable review patch.  If anyone has any objections, please let me know.
+6.4-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
@@ -117,7 +117,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/fs/eventfd.c b/fs/eventfd.c
-index 8aa36cd373516..33a918f9566c3 100644
+index 95850a13ce8d0..1ffbf7c1cd16d 100644
 --- a/fs/eventfd.c
 +++ b/fs/eventfd.c
 @@ -189,7 +189,7 @@ void eventfd_ctx_do_read(struct eventfd_ctx *ctx, __u64 *cnt)
