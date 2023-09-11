@@ -2,127 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F55479ADEA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Sep 2023 01:41:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BAB8979B211
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Sep 2023 01:58:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241893AbjIKU5Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Sep 2023 16:57:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51610 "EHLO
+        id S241071AbjIKU4u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Sep 2023 16:56:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235483AbjIKInn (ORCPT
+        with ESMTP id S235711AbjIKJ0A (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Sep 2023 04:43:43 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F26D125
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Sep 2023 01:42:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1694421775;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=v1O9Hjy9rHsZrvC8iggQtpHWHNRqlOhd3zFoat4Zny8=;
-        b=C5Tg82z+HLUCB88FTfk/FmyTzdXfr70uDOO3sms5trfYjvk/iuhAiGxoGdYIZdcLrqbPMJ
-        7VrxqeiVg6lEFmGtAoQFNawk3ja7+CUGpJJTSXvCjigL7HLYhknIOmC1IDo+XJgMVPkHQq
-        TPyPsH3r+tIQKhGfRVjcjs7pj40sFWA=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-395-iNsvKP1-NbSUCd4lprYsFQ-1; Mon, 11 Sep 2023 04:42:54 -0400
-X-MC-Unique: iNsvKP1-NbSUCd4lprYsFQ-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-3fd0fa4d08cso31441415e9.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Sep 2023 01:42:54 -0700 (PDT)
+        Mon, 11 Sep 2023 05:26:00 -0400
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9383BCD3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Sep 2023 02:25:55 -0700 (PDT)
+Received: by mail-pf1-x42e.google.com with SMTP id d2e1a72fcca58-68e3c6aa339so761249b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Sep 2023 02:25:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1694424355; x=1695029155; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BVX9WeWGptEOVbuDunuTR7x+0VEpx5JzgLCEo/pvZQ8=;
+        b=DbOajRgy2xFmheWiYFJNiF/VqFWhMN7MqRf1KIZ/fq6Bs63joSkDy1w3+5EvoBQV28
+         yGKKd4Iz+CS2aFASp+sR9WS7RBZb2YXCzIvyFiFhI711CORejhkt7/lsD9FkZ6v5rlDF
+         5r5nbSVGp8nhXVcii06hLJqTdphitOJg5pyHMtNSvteWcTfXQv6E+YO24oXzlMs3LkRY
+         Z4ZayDdRe1KGQ5wD+LADkzCR2ikO2nvW5/Cbn9MHDJ0o8Smu9BDAk/q2vdON1YmnKMZp
+         F+kaH/lHExQy1jGBPgC2OVX73tuHvdULyq7oNaZk0o/Cf2+P03iVOJsh0QFA/tJs8AgI
+         fONw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694421773; x=1695026573;
-        h=content-transfer-encoding:in-reply-to:organization:from:references
-         :cc:to:content-language:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1694424355; x=1695029155;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=v1O9Hjy9rHsZrvC8iggQtpHWHNRqlOhd3zFoat4Zny8=;
-        b=eMKg48mv11v8fVgiED9nyiutht7qQgYn6bCLA6Sku7bFdMs094KWg0m9PhLhuSfYJ9
-         5GRkSnW4UPKXGI+xzkbNVpQuV53t1wuGPPrnJX21f7QHXPTba+rKYsTKD56NCUg32nji
-         fEA3g6ME0QoUSko4Oj1H3LGlSy+f5Clh/LPhvstg5qQ8fvmsPtsRrgYcOMxBJBe7Atd/
-         LbiEYc4JWWVmeh/ZcsTPBXOIXCOZxOsC0uJISYDq2E9R/nnbD9h3itlIcvx5cDnY902V
-         Ywyy9I/1XcLlKHEzN1ZrFvpxH5vjcEsRZCio81K82+tWGLbHrxbvB66L9ExPWnjLdQTq
-         8ziw==
-X-Gm-Message-State: AOJu0YwdlEEVCayPKkKO4EMjqc7LgERnliT6tom+TmscKY0tqvahiG5D
-        32EbkJcdTrcHBtZ6qWPvR7uyX2MR2M6psyPpZIKYV+XRdhu30YL4RS0ZthLg2ysagWOJOiSCB8W
-        +mQB10aox9UQ6hCzYXZB5YHF3ug==
-X-Received: by 2002:a1c:ed0b:0:b0:3fc:21:2c43 with SMTP id l11-20020a1ced0b000000b003fc00212c43mr7346852wmh.13.1694421773453;
-        Mon, 11 Sep 2023 01:42:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH8aoBWfTO9D3ZTCmaaRT0GwaH8BSrY/roXA5t7CzHxEaXPavXU1Y6T8UuPI7Q1KEVVmKAG3w==
-X-Received: by 2002:a1c:ed0b:0:b0:3fc:21:2c43 with SMTP id l11-20020a1ced0b000000b003fc00212c43mr7346817wmh.13.1694421772969;
-        Mon, 11 Sep 2023 01:42:52 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c743:5500:a9bd:94ab:74e9:782f? (p200300cbc7435500a9bd94ab74e9782f.dip0.t-ipconnect.de. [2003:cb:c743:5500:a9bd:94ab:74e9:782f])
-        by smtp.gmail.com with ESMTPSA id g12-20020a7bc4cc000000b003fee849df23sm9372755wmk.22.2023.09.11.01.42.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Sep 2023 01:42:52 -0700 (PDT)
-Message-ID: <49ab74c8-553b-b3d0-6a72-2d259a2b5bdf@redhat.com>
-Date:   Mon, 11 Sep 2023 10:42:51 +0200
+        bh=BVX9WeWGptEOVbuDunuTR7x+0VEpx5JzgLCEo/pvZQ8=;
+        b=tVm3OdM3GLZSzx4nWZWoPw0zqjgtEKFQFjVHeYK60MPKMRor0OHKqWTKgX/U4Zi/6Z
+         oaDksKKn8IuJKMjgn9DnavAZHb0fM66iGdzqIUNiMUtfcmz8m6TgZwZ1lpktSO8PICtZ
+         Wr2QgIJIfKZljhGO+H8D4UCJk+CILEzWoyd5cpPxIKfIDs5/mX2BbM9xcfYhjAARvI0R
+         KaFj5Gc7TsNYLiFGoNU+dhuuAUO9uW/gkcZ4MLTJz7Ns9UJ04lDv1O3lCDeborBHEyK3
+         Rex0yDuOalWViSpIqWlMYdlTUrEUyv+joa7wGZ3PZNFpIPeVsxSCgO3/ZVj42isCTeQV
+         BFpA==
+X-Gm-Message-State: AOJu0Yz7TuqZ2HO/0vvo73BAT+ITi6PQthGoPHzht8HTAtvvAaGCd2Qj
+        gUVkZv3kqCEitbSSbN3hhBbNsg==
+X-Google-Smtp-Source: AGHT+IFA8N2LVaGnVCnfvNYWcDqv3xveqW6PwXfspm7irjG2TpwEtxpwFLm2nXmkPtV/jExbnj34Wg==
+X-Received: by 2002:a05:6a20:5498:b0:145:3bd9:1377 with SMTP id i24-20020a056a20549800b001453bd91377mr11799129pzk.5.1694424355065;
+        Mon, 11 Sep 2023 02:25:55 -0700 (PDT)
+Received: from C02DW0BEMD6R.bytedance.net ([203.208.167.146])
+        by smtp.gmail.com with ESMTPSA id q9-20020a170902788900b001b89466a5f4sm5964623pll.105.2023.09.11.02.25.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Sep 2023 02:25:54 -0700 (PDT)
+From:   Qi Zheng <zhengqi.arch@bytedance.com>
+To:     akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
+        vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org,
+        brauner@kernel.org, paulmck@kernel.org, tytso@mit.edu,
+        steven.price@arm.com, cel@kernel.org, senozhatsky@chromium.org,
+        yujie.liu@intel.com, gregkh@linuxfoundation.org,
+        muchun.song@linux.dev, joel@joelfernandes.org,
+        christian.koenig@amd.com, daniel@ffwll.ch
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        dri-devel@lists.freedesktop.org, linux-fsdevel@vger.kernel.org,
+        Qi Zheng <zhengqi.arch@bytedance.com>
+Subject: [PATCH v4 0/4] cleanups for lockless slab shrink
+Date:   Mon, 11 Sep 2023 17:25:13 +0800
+Message-Id: <20230911092517.64141-1-zhengqi.arch@bytedance.com>
+X-Mailer: git-send-email 2.24.3 (Apple Git-128)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH 1/3] proc/vmcore: Do not map unaccepted memory
-Content-Language: en-US
-To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Lorenzo Stoakes <lstoakes@gmail.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
-        Dave Young <dyoung@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-coco@lists.linux.dev, linux-efi@vger.kernel.org,
-        kexec@lists.infradead.org
-References: <20230906073902.4229-1-adrian.hunter@intel.com>
- <20230906073902.4229-2-adrian.hunter@intel.com>
- <ef97f466-b27a-a883-7131-c2051480dd87@redhat.com>
- <20230911084148.l6han7jxob42rdvm@box.shutemov.name>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-In-Reply-To: <20230911084148.l6han7jxob42rdvm@box.shutemov.name>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11.09.23 10:41, Kirill A. Shutemov wrote:
-> On Mon, Sep 11, 2023 at 10:03:36AM +0200, David Hildenbrand wrote:
->> On 06.09.23 09:39, Adrian Hunter wrote:
->>> Support for unaccepted memory was added recently, refer commit
->>> dcdfdd40fa82 ("mm: Add support for unaccepted memory"), whereby
->>> a virtual machine may need to accept memory before it can be used.
->>>
->>> Do not map unaccepted memory because it can cause the guest to fail.
->>>
->>> For /proc/vmcore, which is read-only, this means a read or mmap of
->>> unaccepted memory will return zeros.
->>
->> Does a second (kdump) kernel that exposes /proc/vmcore reliably get access
->> to the information whether memory of the first kernel is unaccepted (IOW,
->> not its memory, but the memory of the first kernel it is supposed to expose
->> via /proc/vmcore)?
-> 
-> There are few patches in my queue to few related issue, but generally,
-> yes, the information is available to the target kernel via EFI
-> configuration table.
+Hi all,
 
-I assume that table provided by the first kernel, and not read directly 
-from HW, correct?
+This series is some cleanups for lockless slab shrink, I dropped the
+[PATCH v2 5/5] which is more related to the main lockless patch.
+
+This series is based on the v6.6-rc1.
+
+Comments and suggestions are welcome.
+
+Thanks,
+Qi
+
+Changlog in v3 -> v4:
+ - rebase onto the v6.6-rc1
+
+Changlog in part 1 v2 -> part 1 v3:
+ - drop [PATCH v2 5/5]
+ - collect Acked-by
+ - rebase onto the next-20230823
+
+Changlog in part 1 v1 -> part 1 v2:
+ - fix compilation warning in [PATCH 1/5]
+ - rename synchronize_shrinkers() to ttm_pool_synchronize_shrinkers()
+   (pointed by Christian König)
+ - collect Reviewed-by
+
+Changlog in v4 -> part 1 v1:
+ - split from the previous large patchset
+ - fix comment format in [PATCH v4 01/48] (pointed by Muchun Song)
+ - change to use kzalloc_node() and fix typo in [PATCH v4 44/48]
+   (pointed by Dave Chinner)
+ - collect Reviewed-bys
+ - rebase onto the next-20230815
+
+Qi Zheng (4):
+  mm: move some shrinker-related function declarations to mm/internal.h
+  mm: vmscan: move shrinker-related code into a separate file
+  mm: shrinker: remove redundant shrinker_rwsem in debugfs operations
+  drm/ttm: introduce pool_shrink_rwsem
+
+ drivers/gpu/drm/ttm/ttm_pool.c |  17 +-
+ include/linux/shrinker.h       |  20 -
+ mm/Makefile                    |   4 +-
+ mm/internal.h                  |  28 ++
+ mm/shrinker.c                  | 694 ++++++++++++++++++++++++++++++++
+ mm/shrinker_debug.c            |  18 +-
+ mm/vmscan.c                    | 701 ---------------------------------
+ 7 files changed, 743 insertions(+), 739 deletions(-)
+ create mode 100644 mm/shrinker.c
 
 -- 
-Cheers,
-
-David / dhildenb
+2.30.2
 
