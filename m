@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C404179BD6E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Sep 2023 02:16:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8F5B79BA79
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Sep 2023 02:11:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239583AbjIKUzI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Sep 2023 16:55:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51516 "EHLO
+        id S238660AbjIKUyL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Sep 2023 16:54:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36246 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236031AbjIKJta (ORCPT
+        with ESMTP id S236060AbjIKJt5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Sep 2023 05:49:30 -0400
-Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65555E40
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Sep 2023 02:49:26 -0700 (PDT)
-Received: by mail-pj1-x102b.google.com with SMTP id 98e67ed59e1d1-2684e225a6cso580442a91.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Sep 2023 02:49:26 -0700 (PDT)
+        Mon, 11 Sep 2023 05:49:57 -0400
+Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22796E40
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Sep 2023 02:49:35 -0700 (PDT)
+Received: by mail-pl1-x62f.google.com with SMTP id d9443c01a7336-1bf7b5e1f06so7712375ad.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Sep 2023 02:49:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1694425766; x=1695030566; darn=vger.kernel.org;
+        d=bytedance.com; s=google; t=1694425774; x=1695030574; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EOFLy8aeJhd3LY/OhniqtUCJXkFQlNJLK1Gu0rv7etI=;
-        b=PwsYykAGeRm1LMFnCOnXSEssUJlijcCLgN2DDAMGhdKKzPStOgksiV7+gXk/lHChiO
-         tv1g6tycdghdPdcM/Ut9n5V8qKtXWp+RIORlQjjL46cUJOU8RR8/fx69s0pTNLU/D5jF
-         pZOASRHB26JFkVtS5tzxw6EfjJH3PKjQhErePXe1uB8DfnX7LsMgIPH3u7btGVLvY3+G
-         aLZNtMDkX65DUqVK6Nmz7+TfJmV1a/JajBVPCXQRAxVos5odvCINs/qd4SOu9hVFZ2JN
-         7OidZaCCvkWyF4IuXbMp0m24R0Od/F7tL1vcgElU7EIAHRthekCjX2wty1fwk2Lkzk0P
-         nsEA==
+        bh=CtzA3GFH4NUmzMiy9OwB7HPEUi8j2KPzX996I7+AsIY=;
+        b=e8jTyELsuImvVjGWPgjt0PJLYA3E0Oty3t0rdMHv1Rjk6jhy/h1TkzY8gxMBeqBGx4
+         q/fR+F770L3MLEL5mmrv4PnjqpgDaGz18xIIDCEYsNPyFAZrw/sEWi2XHApA3VmUaL4q
+         VSU3XOyuf+1PWgCuGS6xKls/R9z661XrqM2Dc9FR8Jb7L7tLrIG7z7BJz/YwW55Ql0wM
+         zgPq5b3ZIYVqaA5/qcBQYXI5hR16E5MPNDe5Ph6IqbcQKMYrA9ztZlm1O49NagCPc3HF
+         mt9Bu+ttsTkU/7xLvGewJ6TdZnEzs7IzVBwG+ei51eKL/65KEzPTqb2PQQ9uujDopNsu
+         fPCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694425766; x=1695030566;
+        d=1e100.net; s=20230601; t=1694425774; x=1695030574;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EOFLy8aeJhd3LY/OhniqtUCJXkFQlNJLK1Gu0rv7etI=;
-        b=SF1chcFaHZZ5s6m0ReGnIGRzueo7CRHKJ/Fu97Ewn0MLgdV5MYByBcofWrzeg/pyHO
-         SMVB187qLVGonKac3ziuJrdkesy//3RNqTv3b3V4EqjUmedCQtVi+UgOr32159rVI7kq
-         znG8eY9LVzd6qWgLa9SozyA4MfmuqWxPi/AgrMg5rHaTK6EJP/jvcYd0zg60AYNjRybv
-         amoqhgR4XyrbcYMsVQVBd/+GVmoJVQwhS/8JviLQdDlbmEtXaUs7c7O5C3EQtWRHBsjK
-         Zopkbmo/l+nKKKLBcDhNyWtBghkaUA+gs3GeGyx8lPpkSCKZaMokCeVQ2dyzEIEwO2lr
-         R/vQ==
-X-Gm-Message-State: AOJu0YzEneUg57+g+z2zsmDGHJ07lmAKv+2stKg8cWp92H06wS6JWaA1
-        3EaSoTGfJywqtSTGc3dkcF31Ug==
-X-Google-Smtp-Source: AGHT+IFDkXMADJzJ5jjUq9PfJV9F8/TFu1J7WhBiuuPnpwyRrr8PIbDWnsDRVAoYbT3X6OqKjBwp8A==
-X-Received: by 2002:a17:90a:6d26:b0:26b:5fad:e71c with SMTP id z35-20020a17090a6d2600b0026b5fade71cmr8202972pjj.2.1694425765927;
-        Mon, 11 Sep 2023 02:49:25 -0700 (PDT)
+        bh=CtzA3GFH4NUmzMiy9OwB7HPEUi8j2KPzX996I7+AsIY=;
+        b=XoDUykCQOf7VS/QzSU0PDwlFrVAsRIyoEBDb8yIs2aPr3omno0yPUsiHaDbsWdmjpZ
+         4kgxGvBXuFLakg8VP4eS8HgQ9oug8rYV5+LK0die7+yqUUQDjVDhD/tOm4hPc3OK4txg
+         U6fKh2ai/UGy7txH47nin6B4cAk6NA60zVpz8UlVbF41tDR10/K0u6AW+LvEjdwFlOEE
+         iiG0craFNs9Ag4nuJs4tBY8SUQBwKAF6omTkp8biqZCGG7L+g8n+R+gd+f84lMtirEE8
+         n4pBGGHhZxfqGh6ML8TrWNjVzEAhpkkxArcke4p9CYY+Nc0kkBHXw2X3Hu0JOO5MNbFU
+         DemQ==
+X-Gm-Message-State: AOJu0YxlwJ80dZXEBOdtf6CMC/klf0izGqR6zEEh9hh0Qajhfmv3/J+h
+        trB/c6WMOI+FlD8ubT4y2fziag==
+X-Google-Smtp-Source: AGHT+IGPH5rXG2DhyxB6chvRHKVjx+5Bo9SHNmAMgS3dYgtQNb6hmClqPMLOMBQwFJcONSVD+tzP0w==
+X-Received: by 2002:a17:903:2448:b0:1c1:ee23:bb75 with SMTP id l8-20020a170903244800b001c1ee23bb75mr10949821pls.1.1694425774641;
+        Mon, 11 Sep 2023 02:49:34 -0700 (PDT)
 Received: from C02DW0BEMD6R.bytedance.net ([203.208.167.146])
-        by smtp.gmail.com with ESMTPSA id az7-20020a170902a58700b001bdc2fdcf7esm5988188plb.129.2023.09.11.02.49.16
+        by smtp.gmail.com with ESMTPSA id az7-20020a170902a58700b001bdc2fdcf7esm5988188plb.129.2023.09.11.02.49.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Sep 2023 02:49:25 -0700 (PDT)
+        Mon, 11 Sep 2023 02:49:34 -0700 (PDT)
 From:   Qi Zheng <zhengqi.arch@bytedance.com>
 To:     akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
         vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org,
@@ -61,14 +61,10 @@ Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org,
         Qi Zheng <zhengqi.arch@bytedance.com>,
         Muchun Song <songmuchun@bytedance.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-        virtualization@lists.linux-foundation.org
-Subject: [PATCH v6 28/45] virtio_balloon: dynamically allocate the virtio-balloon shrinker
-Date:   Mon, 11 Sep 2023 17:44:27 +0800
-Message-Id: <20230911094444.68966-29-zhengqi.arch@bytedance.com>
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH v6 29/45] mbcache: dynamically allocate the mbcache shrinker
+Date:   Mon, 11 Sep 2023 17:44:28 +0800
+Message-Id: <20230911094444.68966-30-zhengqi.arch@bytedance.com>
 X-Mailer: git-send-email 2.24.3 (Apple Git-128)
 In-Reply-To: <20230911094444.68966-1-zhengqi.arch@bytedance.com>
 References: <20230911094444.68966-1-zhengqi.arch@bytedance.com>
@@ -76,8 +72,7 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -85,82 +80,84 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 In preparation for implementing lockless slab shrink, use new APIs to
-dynamically allocate the virtio-balloon shrinker, so that it can be freed
+dynamically allocate the mbcache shrinker, so that it can be freed
 asynchronously via RCU. Then it doesn't need to wait for RCU read-side
-critical section when releasing the struct virtio_balloon.
+critical section when releasing the struct mb_cache.
 
 Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
 Reviewed-by: Muchun Song <songmuchun@bytedance.com>
-CC: "Michael S. Tsirkin" <mst@redhat.com>
-CC: David Hildenbrand <david@redhat.com>
-CC: Jason Wang <jasowang@redhat.com>
-CC: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-CC: virtualization@lists.linux-foundation.org
+CC: Alexander Viro <viro@zeniv.linux.org.uk>
+CC: Christian Brauner <brauner@kernel.org>
 ---
- drivers/virtio/virtio_balloon.c | 24 ++++++++++++++----------
- 1 file changed, 14 insertions(+), 10 deletions(-)
+ fs/mbcache.c | 22 ++++++++++++----------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
-index 5b15936a5214..5cdc7b081baa 100644
---- a/drivers/virtio/virtio_balloon.c
-+++ b/drivers/virtio/virtio_balloon.c
-@@ -111,7 +111,7 @@ struct virtio_balloon {
- 	struct virtio_balloon_stat stats[VIRTIO_BALLOON_S_NR];
- 
- 	/* Shrinker to return free pages - VIRTIO_BALLOON_F_FREE_PAGE_HINT */
--	struct shrinker shrinker;
-+	struct shrinker *shrinker;
- 
- 	/* OOM notifier to deflate on OOM - VIRTIO_BALLOON_F_DEFLATE_ON_OOM */
- 	struct notifier_block oom_nb;
-@@ -816,8 +816,7 @@ static unsigned long shrink_free_pages(struct virtio_balloon *vb,
- static unsigned long virtio_balloon_shrinker_scan(struct shrinker *shrinker,
- 						  struct shrink_control *sc)
+diff --git a/fs/mbcache.c b/fs/mbcache.c
+index 2a4b8b549e93..82aa7a35db26 100644
+--- a/fs/mbcache.c
++++ b/fs/mbcache.c
+@@ -37,7 +37,7 @@ struct mb_cache {
+ 	struct list_head	c_list;
+ 	/* Number of entries in cache */
+ 	unsigned long		c_entry_count;
+-	struct shrinker		c_shrink;
++	struct shrinker		*c_shrink;
+ 	/* Work for shrinking when the cache has too many entries */
+ 	struct work_struct	c_shrink_work;
+ };
+@@ -293,8 +293,7 @@ EXPORT_SYMBOL(mb_cache_entry_touch);
+ static unsigned long mb_cache_count(struct shrinker *shrink,
+ 				    struct shrink_control *sc)
  {
--	struct virtio_balloon *vb = container_of(shrinker,
--					struct virtio_balloon, shrinker);
-+	struct virtio_balloon *vb = shrinker->private_data;
+-	struct mb_cache *cache = container_of(shrink, struct mb_cache,
+-					      c_shrink);
++	struct mb_cache *cache = shrink->private_data;
  
- 	return shrink_free_pages(vb, sc->nr_to_scan);
+ 	return cache->c_entry_count;
  }
-@@ -825,8 +824,7 @@ static unsigned long virtio_balloon_shrinker_scan(struct shrinker *shrinker,
- static unsigned long virtio_balloon_shrinker_count(struct shrinker *shrinker,
- 						   struct shrink_control *sc)
+@@ -333,8 +332,7 @@ static unsigned long mb_cache_shrink(struct mb_cache *cache,
+ static unsigned long mb_cache_scan(struct shrinker *shrink,
+ 				   struct shrink_control *sc)
  {
--	struct virtio_balloon *vb = container_of(shrinker,
--					struct virtio_balloon, shrinker);
-+	struct virtio_balloon *vb = shrinker->private_data;
- 
- 	return vb->num_free_page_blocks * VIRTIO_BALLOON_HINT_BLOCK_PAGES;
- }
-@@ -847,16 +845,22 @@ static int virtio_balloon_oom_notify(struct notifier_block *nb,
- 
- static void virtio_balloon_unregister_shrinker(struct virtio_balloon *vb)
- {
--	unregister_shrinker(&vb->shrinker);
-+	shrinker_free(vb->shrinker);
+-	struct mb_cache *cache = container_of(shrink, struct mb_cache,
+-					      c_shrink);
++	struct mb_cache *cache = shrink->private_data;
+ 	return mb_cache_shrink(cache, sc->nr_to_scan);
  }
  
- static int virtio_balloon_register_shrinker(struct virtio_balloon *vb)
- {
--	vb->shrinker.scan_objects = virtio_balloon_shrinker_scan;
--	vb->shrinker.count_objects = virtio_balloon_shrinker_count;
--	vb->shrinker.seeks = DEFAULT_SEEKS;
-+	vb->shrinker = shrinker_alloc(0, "virtio-balloon");
-+	if (!vb->shrinker)
-+		return -ENOMEM;
+@@ -377,15 +375,19 @@ struct mb_cache *mb_cache_create(int bucket_bits)
+ 	for (i = 0; i < bucket_count; i++)
+ 		INIT_HLIST_BL_HEAD(&cache->c_hash[i]);
  
--	return register_shrinker(&vb->shrinker, "virtio-balloon");
-+	vb->shrinker->scan_objects = virtio_balloon_shrinker_scan;
-+	vb->shrinker->count_objects = virtio_balloon_shrinker_count;
-+	vb->shrinker->private_data = vb;
+-	cache->c_shrink.count_objects = mb_cache_count;
+-	cache->c_shrink.scan_objects = mb_cache_scan;
+-	cache->c_shrink.seeks = DEFAULT_SEEKS;
+-	if (register_shrinker(&cache->c_shrink, "mbcache-shrinker")) {
++	cache->c_shrink = shrinker_alloc(0, "mbcache-shrinker");
++	if (!cache->c_shrink) {
+ 		kfree(cache->c_hash);
+ 		kfree(cache);
+ 		goto err_out;
+ 	}
+ 
++	cache->c_shrink->count_objects = mb_cache_count;
++	cache->c_shrink->scan_objects = mb_cache_scan;
++	cache->c_shrink->private_data = cache;
 +
-+	shrinker_register(vb->shrinker);
++	shrinker_register(cache->c_shrink);
 +
-+	return 0;
- }
+ 	INIT_WORK(&cache->c_shrink_work, mb_cache_shrink_worker);
  
- static int virtballoon_probe(struct virtio_device *vdev)
+ 	return cache;
+@@ -406,7 +408,7 @@ void mb_cache_destroy(struct mb_cache *cache)
+ {
+ 	struct mb_cache_entry *entry, *next;
+ 
+-	unregister_shrinker(&cache->c_shrink);
++	shrinker_free(cache->c_shrink);
+ 
+ 	/*
+ 	 * We don't bother with any locking. Cache must not be used at this
 -- 
 2.30.2
 
