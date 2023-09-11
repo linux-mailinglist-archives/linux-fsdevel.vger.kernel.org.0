@@ -2,115 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EB7FA79A56E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Sep 2023 10:06:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4F0079A5A9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Sep 2023 10:10:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233852AbjIKIGX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Sep 2023 04:06:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52732 "EHLO
+        id S232285AbjIKIK6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Sep 2023 04:10:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230389AbjIKIGX (ORCPT
+        with ESMTP id S232263AbjIKIK5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Sep 2023 04:06:23 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03FF1CD7;
-        Mon, 11 Sep 2023 01:06:08 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id ffacd0b85a97d-31f4a286ae1so3811835f8f.3;
-        Mon, 11 Sep 2023 01:06:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1694419566; x=1695024366; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XDXBfh7oY4pmFmGSF4PND0R5OaSxpWXbzV+EwmN9Pdw=;
-        b=Exth6Ca9CLd3UXafGJSXVaY+v1jFTIAeKdkbwOksZM3AuyBL46VowEeo3FV6t3M9jI
-         BgbTaL6rRGGB9Q1IOuA63qBo5FJlOQqnw+sXZ6lU1hAlv7U8q0Dq4DDgRXlzxXQosd/r
-         0/u2xSghQEvN7IY9is/P8vc5700qZ5WvFgMwM41SVf+HyOIY9orMrskQgf/1xaV0tlb7
-         7SeKFv9t0w7iwFvYJPi8GbPDwvrrj+GHSa1saBlLJ1+KGMcADtraRe86IN+CpGcFb9bl
-         HvTA3dgNovmmvFWby64FiKch+5AaX0AFsTV/zfq4K9jJoD5SuMGDh55A0eC+mbJkawd2
-         fMWg==
+        Mon, 11 Sep 2023 04:10:57 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64033E6F
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Sep 2023 01:09:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1694419789;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=OE5jHWIoTi0oDDOVSbCQAUkm2GG93rVvkvjC/9s+zDo=;
+        b=KWIIgAC1S2/3x63tiausX3L2lAowr/B/rsJgovCKBRAFS2tz59MwWN+p0IBM2cE0LKXu4l
+        0LDUjPJTgpJts/czq4frOiwBT6NnluTk/RFXskktkK+swd9jgI8UYlCnN/LvaDOVnfRbao
+        fmZNKyGWxYGBbTHFZENOCU6roE+s1eM=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-384-ewqCgZnPN2-m1k3lOxqiSw-1; Mon, 11 Sep 2023 04:09:48 -0400
+X-MC-Unique: ewqCgZnPN2-m1k3lOxqiSw-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-3fe1521678fso30218865e9.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Sep 2023 01:09:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694419566; x=1695024366;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1694419787; x=1695024587;
+        h=content-transfer-encoding:in-reply-to:organization:from:references
+         :cc:to:content-language:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=XDXBfh7oY4pmFmGSF4PND0R5OaSxpWXbzV+EwmN9Pdw=;
-        b=xAzmHjZAsSdHt+4HlzvKgQmSmgZFlHlbQ33yhIAqolcEhhHKoSWtPKz/ixVsAZKQXX
-         jZufGOQg5gSwrCs1x/MWzxskK1r6HiVNGRPlTAPUOmDdiAUafBDZ1Yh6EEMlmFBTcfXd
-         b83Cb3vQNU8enG15hOUewl6ZakdYmemgC2YFvZ6i5zsiw8f6wQp086P8LZGfkUJhX9DQ
-         pzGSUjO49HcOKEj2nTnbhBL2QXfh2pT0lG+6qbrwByNFKIOyKzHkk/LnDDXX8aMFE3ZR
-         3LxKAiA+obBPtMCYbsQ9VYXQruMi2c16iF9fUZCxprwLvqz8wSYZ7OttZHrm3iRfyroK
-         FMLg==
-X-Gm-Message-State: AOJu0YxJto23nNfdw4IKtcMKgdMkFIB4lgF2of5fXNh/hwt8XOUtmlh/
-        jmlMVNvOQAfgX671B8CIVn4=
-X-Google-Smtp-Source: AGHT+IFdax2hVRIOrZsTiUvyn39s51JCtfiYuOHBeWdbv0V7Ww7JkD8FS7pTk1aCIKgGSX/58mOh7Q==
-X-Received: by 2002:a05:6000:137b:b0:314:1b36:f440 with SMTP id q27-20020a056000137b00b003141b36f440mr6505126wrz.70.1694419566094;
-        Mon, 11 Sep 2023 01:06:06 -0700 (PDT)
-Received: from amir-ThinkPad-T480.ctera.local (bzq-166-168-31-246.red.bezeqint.net. [31.168.166.246])
-        by smtp.gmail.com with ESMTPSA id i9-20020a5d5589000000b003141e629cb6sm9216396wrv.101.2023.09.11.01.06.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Sep 2023 01:06:05 -0700 (PDT)
-From:   Amir Goldstein <amir73il@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-unionfs@vger.kernel.org
-Subject: [GIT PULL] overlayfs fixes for 6.6-rc2
-Date:   Mon, 11 Sep 2023 11:06:01 +0300
-Message-Id: <20230911080601.3145430-1-amir73il@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        bh=OE5jHWIoTi0oDDOVSbCQAUkm2GG93rVvkvjC/9s+zDo=;
+        b=Zq2LfK/RA8zu7TTObPZiKdOawMOq/nINssCiHPEfJ4eo7CmLU+LKTx7FktRYVOqxMP
+         UyuwtQ3zaLeYrWMPXgb05F1r8r/762c8za628iqaklLsG1BXhhgBmxmMkffn722XxXHy
+         U9eRpcLYUtc5bnT8Osh6nY0d5/q7Aq2gxD1rqyHyKxYNzx4tX3Ewyg8zTE7G68O775S7
+         WRyMyx5KNbRDD+yc74FtZeLDd60xBHgjj/IOmYTTWCb1vXGA9IbmoJlIOlK5cJ875avk
+         xsBOeDRjqzE/z8oBUILE1umpyKf2xdeqYBDoR/tjLNZynQStC18s7BvbrC/AUwNo3EIo
+         0egA==
+X-Gm-Message-State: AOJu0YzdQoOABG6e1GPnoiHekb/K10l/w43nampRUh6nzasopRl8bOSC
+        Z5JGD8AJ7/U8kM0mEozSoon6CJV/yR2AFfMAl1FU7aoBSQQglAkSL5qam6tRtttCj1j2MYmDl61
+        nqWrR+MKbKVK4K8rNoeo4BnI8oYv9vtmYQQ==
+X-Received: by 2002:a7b:cd97:0:b0:3f6:9634:c8d6 with SMTP id y23-20020a7bcd97000000b003f69634c8d6mr7756887wmj.18.1694419786953;
+        Mon, 11 Sep 2023 01:09:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEP/fXfkIDU6FsZ0+ujLPL6eiYP/U8dRfUXceL70QbvmQvHtk7DVWUJv4/1OPaMnnx/ifbxFQ==
+X-Received: by 2002:a7b:cd97:0:b0:3f6:9634:c8d6 with SMTP id y23-20020a7bcd97000000b003f69634c8d6mr7756871wmj.18.1694419786499;
+        Mon, 11 Sep 2023 01:09:46 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c743:5500:a9bd:94ab:74e9:782f? (p200300cbc7435500a9bd94ab74e9782f.dip0.t-ipconnect.de. [2003:cb:c743:5500:a9bd:94ab:74e9:782f])
+        by smtp.gmail.com with ESMTPSA id gw18-20020a05600c851200b004030c778396sm3452549wmb.4.2023.09.11.01.09.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Sep 2023 01:09:46 -0700 (PDT)
+Message-ID: <c60df0e4-4214-bbd0-7fc6-8f04e5888f53@redhat.com>
+Date:   Mon, 11 Sep 2023 10:09:44 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH 3/3] /dev/mem: Do not map unaccepted memory
+Content-Language: en-US
+To:     Dave Hansen <dave.hansen@intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Lorenzo Stoakes <lstoakes@gmail.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
+        Dave Young <dyoung@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-coco@lists.linux.dev, linux-efi@vger.kernel.org,
+        kexec@lists.infradead.org
+References: <20230906073902.4229-1-adrian.hunter@intel.com>
+ <20230906073902.4229-4-adrian.hunter@intel.com>
+ <9ffb7a3b-cf20-617a-e4f1-8a6a8a2c5972@intel.com>
+ <20230907142510.vcj57cvnewqt4m37@box.shutemov.name>
+ <7a50d04f-63ee-a901-6f39-7d341e423a77@intel.com>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+In-Reply-To: <7a50d04f-63ee-a901-6f39-7d341e423a77@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+On 07.09.23 16:46, Dave Hansen wrote:
+> On 9/7/23 07:25, Kirill A. Shutemov wrote:
+>> On Thu, Sep 07, 2023 at 07:15:21AM -0700, Dave Hansen wrote:
+>>> On 9/6/23 00:39, Adrian Hunter wrote:
+>>>> Support for unaccepted memory was added recently, refer commit
+>>>> dcdfdd40fa82 ("mm: Add support for unaccepted memory"), whereby
+>>>> a virtual machine may need to accept memory before it can be used.
+>>>>
+>>>> Do not map unaccepted memory because it can cause the guest to fail.
+>>> Doesn't /dev/mem already provide a billion ways for someone to shoot
+>>> themselves in the foot?  TDX seems to have added the 1,000,000,001st.
+>>> Is this really worth patching?
+>> Is it better to let TD die silently? I don't think so.
+> 
+> First, let's take a look at all of the distro kernels that folks will
+> run under TDX.  Do they have STRICT_DEVMEM set?
 
-Please pull these two fixes for pretty old regressions.
-They have no relation to the ovl updates in 6.6-rc1, except for
-the timing. They were reported late in the merge window.
+For virtio-mem, we do
 
-I could have sent the fixes last week, during the merge window,
-but they are not so urgent, so I preferred to test them against rc1.
+	config VIRTIO_MEM
+		...
+		depends on EXCLUSIVE_SYSTEM_RAM
 
-This branch has been sitting in linux-next for over a week and
-it has gone through all the usual overlayfs test routines.
+Which in turn:
 
-The branch merges cleanly with master branch of the moment
-and I even signed it this time ;)
+	config EXCLUSIVE_SYSTEM_RAM
+		...
+		depends on !DEVMEM || STRICT_DEVMEM
 
-Thanks,
-Amir.
 
-----------------------------------------------------------------
+Not supported on all archs, but at least on RHEL9 on x86_64 and aarch64.
 
-The following changes since commit 92901222f83d988617aee37680cb29e1a743b5e4:
+So, making unaccepted memory similarly depend on "!DEVMEM || 
+STRICT_DEVMEM" does not sound too far off ...
 
-  Merge tag 'f2fs-for-6-6-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs (2023-09-02 15:37:59 -0700)
 
-are available in the Git repository at:
+-- 
+Cheers,
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/overlayfs/vfs.git tags/ovl-fixes-6.6-rc2
+David / dhildenb
 
-for you to fetch changes up to 724768a39374d35b70eaeae8dd87048a2ec7ae8e:
-
-  ovl: fix incorrect fdput() on aio completion (2023-09-04 18:27:38 +0300)
-
-----------------------------------------------------------------
-overlayfs fixes for 6.6-rc2
-
-----------------------------------------------------------------
-Amir Goldstein (2):
-      ovl: fix failed copyup of fileattr on a symlink
-      ovl: fix incorrect fdput() on aio completion
-
- fs/overlayfs/copy_up.c | 3 ++-
- fs/overlayfs/file.c    | 9 +++------
- 2 files changed, 5 insertions(+), 7 deletions(-)
