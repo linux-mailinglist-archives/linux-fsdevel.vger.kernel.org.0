@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C521479B259
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Sep 2023 01:58:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBF1579AEE0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Sep 2023 01:46:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242016AbjIKU5c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Sep 2023 16:57:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39032 "EHLO
+        id S239998AbjIKUz6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Sep 2023 16:55:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235984AbjIKJsD (ORCPT
+        with ESMTP id S236017AbjIKJtF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Sep 2023 05:48:03 -0400
-Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56738E4F
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Sep 2023 02:47:59 -0700 (PDT)
-Received: by mail-pl1-x635.google.com with SMTP id d9443c01a7336-1c3c4eafe95so466785ad.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Sep 2023 02:47:59 -0700 (PDT)
+        Mon, 11 Sep 2023 05:49:05 -0400
+Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBE6E116
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Sep 2023 02:48:38 -0700 (PDT)
+Received: by mail-pl1-x634.google.com with SMTP id d9443c01a7336-1bf7b5e1f06so7710595ad.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Sep 2023 02:48:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1694425679; x=1695030479; darn=vger.kernel.org;
+        d=bytedance.com; s=google; t=1694425718; x=1695030518; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hBwbAk8n+4/KwMrK4IB+eTsyBHwRgi9e5IimtDnToKs=;
-        b=grxfq7WvsSoVHQNxPULxBS6QQSQl2lb0Y7fX+PN3c7TaFHTQ7mmNI5OlV5WQQKs7zs
-         ewKmM8JecqhYTs69yf9EfS0QavN/btWrM7c6uMSfLht7f1GeoeiN5BhjlfOUnY1tr4tJ
-         YZgrLGadJELJNp2umYJ56oJP9uJSW4Mx4Lb2lT0Q9fRny9nNJn7VYbbKrlj3ZcePTLXM
-         44lsfWsdHejTMlbDd/FLeT5yAtAfd+fO+0bbY0JMCL00pRtaZj+WwLn5xKx9WAaz21r0
-         3DOHnddKesPhvnUfdPkiCKoozx/cyfTvYprlzYaxrXCnfREmFj6sfCwJ7ugVajt1M6xP
-         RPuw==
+        bh=DERoMXizB4tQD41l3IFVDcK/UoRWwvr52IaKs7kkWyE=;
+        b=ejjwZ+8GIKCEgoOcZJDS+IncP/f/Ag3eiKgk+mzuI8+fWZMXVSH/Z7dxG8CVKF4HeH
+         mYszEwhfeG+QPjFXQxvhYtj8TI04bitmaW4/rBm0BJ41gTwz9Cctna1xobyJ+aKcL8wC
+         7MmhDyr+0n1yr2re82N/jREfGXrXYF6NRkFlkK0mU+1SqXgmiuiDcDsFittwdae/aMxY
+         6G6tdWz2uF1dZvUHakt+StqFBLJ18Fl1pniiGm03k64Ih4VHo0nsY1jBG+8iUoCqNu7N
+         RGcW1ZEybN3UolilfGhQyqiRqmKprZxDKX+vGGy6BY59OqJIYKwOJ9s/eYiTHqVpzmnn
+         jR+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694425679; x=1695030479;
+        d=1e100.net; s=20230601; t=1694425718; x=1695030518;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hBwbAk8n+4/KwMrK4IB+eTsyBHwRgi9e5IimtDnToKs=;
-        b=f+lKTskiUuBFrElH0/YTd9lsWEivqle2GJrYi/tRXMzKVSbbesYykVtYW/CourMT9k
-         6jygHhdAPy7bL5vwGnoTXDa9hTIbJQJznHIAFRAXUo3oH69adyzAgHGlyZRRE5kprZ6a
-         0WGKR5lrPxiZDfNgYursMbNO+dMXqa6t92DrmkUZpAwldWfK0YBEC+OjF8WqCHFhQ6PV
-         wMUlpTrCHw72QLU89FB/b6coGFe73N5kPgLK7mKFRPCglswYqmGiD3iUQFI8g7AV4y2l
-         JSrAG2jlZlacJ842IikJoyBwRUjCJLJ2hlWKH0jCO0+5pVV7dSOwdl1rPtp1A/BJr/Mg
-         uNBQ==
-X-Gm-Message-State: AOJu0YyjmHPL23RMBzbCxhzOLgUHpuJ8hbvt8RcqU9RbfXEbyr2fK480
-        2ZEFitUo9dx7KX+Cvc9GnpjMFQ==
-X-Google-Smtp-Source: AGHT+IGdro6LiLO9vRH4IIg6fznBAneFLTeHoPfwnGVLVhVa7r8b9KXvi4A+Mo8zyY74vr4cIKuVLg==
-X-Received: by 2002:a17:902:e546:b0:1bb:9e6e:a9f3 with SMTP id n6-20020a170902e54600b001bb9e6ea9f3mr10988406plf.4.1694425678844;
-        Mon, 11 Sep 2023 02:47:58 -0700 (PDT)
+        bh=DERoMXizB4tQD41l3IFVDcK/UoRWwvr52IaKs7kkWyE=;
+        b=QWajUa2N7adVb1f0uFkFlYP5lhfqdjajSy6B7pWVIks/KAroJ8t5aHrHsp4TChwOHJ
+         Re11Wg2/qv2acMeFHsv14yiivLB8+hYF/ebXHWN94FCwmKvqUqDjsE6MN1zJm5nV/Z0y
+         95JjUs0kcbO9DF9l7hVpO4bEn7wNfiY2eCU3mdvxXrxvKcTVUwMpDPVwWPgieeNLz0Al
+         POQnNJ0k9zyrvsClB1pkTT0mpZQw9AfqbFqp2LiGapwlUcLoHzoiqCxjum7DqRlKgtW9
+         bilaH1lo9HT3SDCm0ARRf9v4B0YPfXUU/vG0mQYBycCHDWPDyK59BUN6lB8SWfujO4m4
+         iJZQ==
+X-Gm-Message-State: AOJu0YyVryeIhOahf/YsbHQMKqNXmJNEw2UDOqOl8BQjfxAltindqAxe
+        q6cEJ+wig5dTfOE+HF7VIq6s5A==
+X-Google-Smtp-Source: AGHT+IEof/1ztyaPWaM/x9VlgcIownTF4cXEcNkOuH5WUE9F6/4W1qtB9/ubZOdVJeDf39167O8pew==
+X-Received: by 2002:a17:902:d48d:b0:1c2:c60:8387 with SMTP id c13-20020a170902d48d00b001c20c608387mr11160274plg.0.1694425718378;
+        Mon, 11 Sep 2023 02:48:38 -0700 (PDT)
 Received: from C02DW0BEMD6R.bytedance.net ([203.208.167.146])
-        by smtp.gmail.com with ESMTPSA id az7-20020a170902a58700b001bdc2fdcf7esm5988188plb.129.2023.09.11.02.47.51
+        by smtp.gmail.com with ESMTPSA id az7-20020a170902a58700b001bdc2fdcf7esm5988188plb.129.2023.09.11.02.48.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Sep 2023 02:47:58 -0700 (PDT)
+        Mon, 11 Sep 2023 02:48:38 -0700 (PDT)
 From:   Qi Zheng <zhengqi.arch@bytedance.com>
 To:     akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
         vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org,
@@ -59,10 +59,13 @@ To:     akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
         muchun.song@linux.dev
 Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org,
-        Qi Zheng <zhengqi.arch@bytedance.com>
-Subject: [PATCH v6 19/45] mm: workingset: dynamically allocate the mm-shadow shrinker
-Date:   Mon, 11 Sep 2023 17:44:18 +0800
-Message-Id: <20230911094444.68966-20-zhengqi.arch@bytedance.com>
+        Qi Zheng <zhengqi.arch@bytedance.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@kernel.org>, dm-devel@redhat.com
+Subject: [PATCH v6 23/45] dm: dynamically allocate the dm-bufio shrinker
+Date:   Mon, 11 Sep 2023 17:44:22 +0800
+Message-Id: <20230911094444.68966-24-zhengqi.arch@bytedance.com>
 X-Mailer: git-send-email 2.24.3 (Apple Git-128)
 In-Reply-To: <20230911094444.68966-1-zhengqi.arch@bytedance.com>
 References: <20230911094444.68966-1-zhengqi.arch@bytedance.com>
@@ -78,75 +81,88 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use new APIs to dynamically allocate the mm-shadow shrinker.
+In preparation for implementing lockless slab shrink, use new APIs to
+dynamically allocate the dm-bufio shrinker, so that it can be freed
+asynchronously via RCU. Then it doesn't need to wait for RCU read-side
+critical section when releasing the struct dm_bufio_client.
 
 Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+Reviewed-by: Muchun Song <songmuchun@bytedance.com>
+CC: Alasdair Kergon <agk@redhat.com>
+CC: Mike Snitzer <snitzer@kernel.org>
+CC: dm-devel@redhat.com
 ---
- mm/workingset.c | 29 ++++++++++++++++-------------
- 1 file changed, 16 insertions(+), 13 deletions(-)
+ drivers/md/dm-bufio.c | 28 +++++++++++++++++-----------
+ 1 file changed, 17 insertions(+), 11 deletions(-)
 
-diff --git a/mm/workingset.c b/mm/workingset.c
-index da58a26d0d4d..b192e44a0e7c 100644
---- a/mm/workingset.c
-+++ b/mm/workingset.c
-@@ -763,13 +763,6 @@ static unsigned long scan_shadow_nodes(struct shrinker *shrinker,
- 					NULL);
- }
+diff --git a/drivers/md/dm-bufio.c b/drivers/md/dm-bufio.c
+index bc309e41d074..62eb27639c9b 100644
+--- a/drivers/md/dm-bufio.c
++++ b/drivers/md/dm-bufio.c
+@@ -963,7 +963,7 @@ struct dm_bufio_client {
  
--static struct shrinker workingset_shadow_shrinker = {
--	.count_objects = count_shadow_nodes,
--	.scan_objects = scan_shadow_nodes,
--	.seeks = 0, /* ->count reports only fully expendable nodes */
--	.flags = SHRINKER_NUMA_AWARE | SHRINKER_MEMCG_AWARE,
--};
--
- /*
-  * Our list_lru->lock is IRQ-safe as it nests inside the IRQ-safe
-  * i_pages lock.
-@@ -778,9 +771,10 @@ static struct lock_class_key shadow_nodes_key;
+ 	sector_t start;
  
- static int __init workingset_init(void)
+-	struct shrinker shrinker;
++	struct shrinker *shrinker;
+ 	struct work_struct shrink_work;
+ 	atomic_long_t need_shrink;
+ 
+@@ -2368,7 +2368,7 @@ static unsigned long dm_bufio_shrink_scan(struct shrinker *shrink, struct shrink
  {
-+	struct shrinker *workingset_shadow_shrinker;
- 	unsigned int timestamp_bits;
- 	unsigned int max_order;
--	int ret;
-+	int ret = -ENOMEM;
+ 	struct dm_bufio_client *c;
  
- 	BUILD_BUG_ON(BITS_PER_LONG < EVICTION_SHIFT);
- 	/*
-@@ -797,17 +791,26 @@ static int __init workingset_init(void)
- 	pr_info("workingset: timestamp_bits=%d max_order=%d bucket_order=%u\n",
- 	       timestamp_bits, max_order, bucket_order);
+-	c = container_of(shrink, struct dm_bufio_client, shrinker);
++	c = shrink->private_data;
+ 	atomic_long_add(sc->nr_to_scan, &c->need_shrink);
+ 	queue_work(dm_bufio_wq, &c->shrink_work);
  
--	ret = prealloc_shrinker(&workingset_shadow_shrinker, "mm-shadow");
--	if (ret)
-+	workingset_shadow_shrinker = shrinker_alloc(SHRINKER_NUMA_AWARE |
-+						    SHRINKER_MEMCG_AWARE,
-+						    "mm-shadow");
-+	if (!workingset_shadow_shrinker)
- 		goto err;
+@@ -2377,7 +2377,7 @@ static unsigned long dm_bufio_shrink_scan(struct shrinker *shrink, struct shrink
+ 
+ static unsigned long dm_bufio_shrink_count(struct shrinker *shrink, struct shrink_control *sc)
+ {
+-	struct dm_bufio_client *c = container_of(shrink, struct dm_bufio_client, shrinker);
++	struct dm_bufio_client *c = shrink->private_data;
+ 	unsigned long count = cache_total(&c->cache);
+ 	unsigned long retain_target = get_retain_buffers(c);
+ 	unsigned long queued_for_cleanup = atomic_long_read(&c->need_shrink);
+@@ -2490,14 +2490,20 @@ struct dm_bufio_client *dm_bufio_client_create(struct block_device *bdev, unsign
+ 	INIT_WORK(&c->shrink_work, shrink_work);
+ 	atomic_long_set(&c->need_shrink, 0);
+ 
+-	c->shrinker.count_objects = dm_bufio_shrink_count;
+-	c->shrinker.scan_objects = dm_bufio_shrink_scan;
+-	c->shrinker.seeks = 1;
+-	c->shrinker.batch = 0;
+-	r = register_shrinker(&c->shrinker, "dm-bufio:(%u:%u)",
+-			      MAJOR(bdev->bd_dev), MINOR(bdev->bd_dev));
+-	if (r)
++	c->shrinker = shrinker_alloc(0, "dm-bufio:(%u:%u)",
++				     MAJOR(bdev->bd_dev), MINOR(bdev->bd_dev));
++	if (!c->shrinker) {
++		r = -ENOMEM;
+ 		goto bad;
++	}
 +
- 	ret = __list_lru_init(&shadow_nodes, true, &shadow_nodes_key,
--			      &workingset_shadow_shrinker);
-+			      workingset_shadow_shrinker);
- 	if (ret)
- 		goto err_list_lru;
--	register_shrinker_prepared(&workingset_shadow_shrinker);
++	c->shrinker->count_objects = dm_bufio_shrink_count;
++	c->shrinker->scan_objects = dm_bufio_shrink_scan;
++	c->shrinker->seeks = 1;
++	c->shrinker->batch = 0;
++	c->shrinker->private_data = c;
 +
-+	workingset_shadow_shrinker->count_objects = count_shadow_nodes;
-+	workingset_shadow_shrinker->scan_objects = scan_shadow_nodes;
-+	/* ->count reports only fully expendable nodes */
-+	workingset_shadow_shrinker->seeks = 0;
-+
-+	shrinker_register(workingset_shadow_shrinker);
- 	return 0;
- err_list_lru:
--	free_prealloced_shrinker(&workingset_shadow_shrinker);
-+	shrinker_free(workingset_shadow_shrinker);
- err:
- 	return ret;
- }
++	shrinker_register(c->shrinker);
+ 
+ 	mutex_lock(&dm_bufio_clients_lock);
+ 	dm_bufio_client_count++;
+@@ -2537,7 +2543,7 @@ void dm_bufio_client_destroy(struct dm_bufio_client *c)
+ 
+ 	drop_buffers(c);
+ 
+-	unregister_shrinker(&c->shrinker);
++	shrinker_free(c->shrinker);
+ 	flush_work(&c->shrink_work);
+ 
+ 	mutex_lock(&dm_bufio_clients_lock);
 -- 
 2.30.2
 
