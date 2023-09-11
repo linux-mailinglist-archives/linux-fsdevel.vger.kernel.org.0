@@ -2,161 +2,169 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4361E79C163
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Sep 2023 02:58:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F6E879C356
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Sep 2023 04:53:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232294AbjILA6W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Sep 2023 20:58:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44156 "EHLO
+        id S240512AbjILCxG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Sep 2023 22:53:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232073AbjILA6I (ORCPT
+        with ESMTP id S240952AbjILCw5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Sep 2023 20:58:08 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B6E1144EB4;
-        Mon, 11 Sep 2023 17:49:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1694479762; x=1726015762;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=oLzf0xFFu11Gps4vsJbzS9rWCswHgzXvG1WtldyxkjU=;
-  b=P6TvxlYMLGuF9M7f123yoNr6B3yQstBodA/ica6TRNKo7TlErUbntqUc
-   kJWNG3FchCYwcqjBLCkEnz7Dbta51IuKRwgIWrxUaxavrekftER3X6cZ9
-   eslFJh52M8f2Sh0ZyG5VszY7y7uzrBOcY/j5E+SoBnRMhMRlmRdBWjmo8
-   JyA44iXezZWFHA+N3eGGIdmw1f9WcTc4p7/l9qjcSY6folRZysCN0aofF
-   OylTnVYBdEFpyph1DxoGXf2xFbtotlyzK8roEhYZ0mxb+Xp4Tp2HzV2gP
-   fJKtQNbn4kr9/Sqkp9XZbW4ECe1G3Y6Rj32URIpLnC0XSPPLhvGEhGVEo
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10830"; a="380945743"
-X-IronPort-AV: E=Sophos;i="6.02,244,1688454000"; 
-   d="scan'208";a="380945743"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2023 17:47:04 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10830"; a="867153834"
-X-IronPort-AV: E=Sophos;i="6.02,244,1688454000"; 
-   d="scan'208";a="867153834"
-Received: from lkp-server01.sh.intel.com (HELO 59b3c6e06877) ([10.239.97.150])
-  by orsmga004.jf.intel.com with ESMTP; 11 Sep 2023 17:47:01 -0700
-Received: from kbuild by 59b3c6e06877 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qfrYR-0006zu-1p;
-        Tue, 12 Sep 2023 00:46:59 +0000
-Date:   Tue, 12 Sep 2023 08:46:47 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Krister Johansen <kjlx@templeofstupid.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel@vger.kernel.org
-Cc:     oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-        German Maglione <gmaglione@redhat.com>,
-        Greg Kurz <groug@kaod.org>, Max Reitz <mreitz@redhat.com>
-Subject: Re: [PATCH 1/2] fuse: revalidate: move lookup into a separate
- function
-Message-ID: <202309120853.QbAMM1to-lkp@intel.com>
-References: <9a2b0c5b625cd88c561289bf7d4d7dfe305c10ed.1693440240.git.kjlx@templeofstupid.com>
+        Mon, 11 Sep 2023 22:52:57 -0400
+Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1959A510D
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Sep 2023 16:07:10 -0700 (PDT)
+Received: by mail-pl1-x634.google.com with SMTP id d9443c01a7336-1c3cbfa40d6so6398915ad.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Sep 2023 16:07:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1694473552; x=1695078352; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XuOvAuitgVpwNW68IEhm3g9qIi8Riz123zMf3hveQBs=;
+        b=Ld8oRuE6tcUY4lp3b7qTfSjiPCNxHb2sxyj1e+McTzDIrf4NP4jhDPUACtIrW3Bfla
+         l3f+qH7EpMu6Zi1clsZMbCGUbxiyHk+x+BAfUK7hA+eg7lBpfN5ymHdcI7Lwk4jmrxGb
+         tisg7IaqXRYKiX7y3O5zVnC3oBuDn+ohuGbJ+ZL+2SA4ccFApcfm0eVAidn1UfDrI/9C
+         M8xXuvGg4VrGdOLlQapK6feqYsdLYe4uo8ISOJZhmLnqg+1BPOCy7Uco+SR4IUOlkeRz
+         Ju2uk2XVAMKy8zAoFML96G/LUnbTh+woZyL2arcYPfhegV6MuZho2XQh9od/3cfcsA8C
+         TwrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694473552; x=1695078352;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XuOvAuitgVpwNW68IEhm3g9qIi8Riz123zMf3hveQBs=;
+        b=GKyhB6aEuV8Qm44rdgWgpqmLwwK7iNeS3hRLupgdGuhlE5k7nCxVPOw/ajp49MRAm2
+         NllHh6FXxkMya5EbXIVIrQi39Qojb5ihgQj/GkxF89ajLCfQZZAz5IJRgwMXzkOPcJi2
+         RI2Xoft5zHaDh83ce9KBltCtstpBLGGng7lHF13rBQG1NE6b+GhGf/szkPV5bX4UKXlH
+         BbuXvUBCrO/UZ4cNLDLuENTmD0oHwTNp2QIfVXua0zg5gihPv6LQi6QZHuNC+MEvJ1wt
+         mXDuBHsyiRTWtqQVz+hstS7WSP1+LkdNGv4JXL2Mc/bB9BP1Ln4bVa/EluriVMXKlukS
+         7k0g==
+X-Gm-Message-State: AOJu0Yx+2aXtOc8Ijj3tx8d02ONsoDXdLlOD8GP4Ie3nP2n9h8LQdFXr
+        5AolY7SevFGbo2f+qNSjsyzoAO1pH6X9JfveDek=
+X-Google-Smtp-Source: AGHT+IHBqWEpAfZoVXfFa5/vR2XzTrXg9hy5GECmWfGXDiZ4BuZu7eo2+Nh2xoOFUY2UwQvCoBZtIw==
+X-Received: by 2002:a17:902:e84e:b0:1b8:6cae:3570 with SMTP id t14-20020a170902e84e00b001b86cae3570mr13674878plg.11.1694473552602;
+        Mon, 11 Sep 2023 16:05:52 -0700 (PDT)
+Received: from dread.disaster.area (pa49-195-66-88.pa.nsw.optusnet.com.au. [49.195.66.88])
+        by smtp.gmail.com with ESMTPSA id q7-20020a170902dac700b001b392bf9192sm6987910plx.145.2023.09.11.16.05.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Sep 2023 16:05:52 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+        (envelope-from <david@fromorbit.com>)
+        id 1qfpyX-00Dyh3-1h;
+        Tue, 12 Sep 2023 09:05:49 +1000
+Date:   Tue, 12 Sep 2023 09:05:49 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     David Disseldorp <ddiss@suse.de>
+Cc:     Kent Overstreet <kent.overstreet@linux.dev>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>, ksummit@lists.linux.dev,
+        linux-fsdevel@vger.kernel.org, Hajime Tazaki <thehajime@gmail.com>,
+        Octavian Purdila <tavi.purdila@gmail.com>
+Subject: Re: [MAINTAINERS/KERNEL SUMMIT] Trust and maintenance of file systems
+Message-ID: <ZP+dTfwJP44wZwSV@dread.disaster.area>
+References: <ZO9NK0FchtYjOuIH@infradead.org>
+ <ZPe0bSW10Gj7rvAW@dread.disaster.area>
+ <ZPe4aqbEuQ7xxJnj@casper.infradead.org>
+ <8dd2f626f16b0fc863d6a71561196950da7e893f.camel@HansenPartnership.com>
+ <20230909224230.3hm4rqln33qspmma@moria.home.lan>
+ <ZP5nxdbazqirMKAA@dread.disaster.area>
+ <20230911012914.xoeowcbruxxonw7u@moria.home.lan>
+ <ZP52S8jPsNt0IvQE@dread.disaster.area>
+ <20230911153515.2a256856@echidna.fritz.box>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9a2b0c5b625cd88c561289bf7d4d7dfe305c10ed.1693440240.git.kjlx@templeofstupid.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20230911153515.2a256856@echidna.fritz.box>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Krister,
+On Mon, Sep 11, 2023 at 03:35:15PM +0200, David Disseldorp wrote:
+> On Mon, 11 Sep 2023 12:07:07 +1000, Dave Chinner wrote:
+> > On Sun, Sep 10, 2023 at 09:29:14PM -0400, Kent Overstreet wrote:
+> > > What I've got in bcachefs-tools is a much thinner mapping from e.g.
+> > > kthreads -> pthreads, block layer -> aio, etc.  
+> > 
+> > Right, and we've got that in userspace for XFS, too. If we really
+> > cared that much about XFS-FUSE, I'd be converting userspace to use
+> > ublk w/ io_uring on top of a port of the kernel XFS buffer cache as
+> > the basis for a performant fuse implementation. However, there's a
+> > massive amount of userspace work needed to get a native XFS FUSE
+> > implementation up and running (even ignoring performance), so it's
+> > just not a viable short-term - or even medium-term - solution to the
+> > current problems.
+> > 
+> > Indeed, if you do a fuse->fs ops wrapper, I'd argue that lklfuse is
+> > the place to do it so that there is a single code base that supports
+> > all kernel filesystems without requiring anyone to support a
+> > separate userspace code base. Requiring every filesystem to do their
+> > own FUSE ports and then support them doesn't reduce the overall
+> > maintenance overhead burden on filesystem developers....
+> 
+> LKL is still implemented as a non-mmu architecture. The only fs specific
+> downstream change that lklfuse depends on is non-mmu xfs_buf support:
+> https://lore.kernel.org/linux-xfs/1447800381-20167-1-git-send-email-octavian.purdila@intel.com/
 
-kernel test robot noticed the following build warnings:
+That was proposed in 2015.
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v6.6-rc1 next-20230911]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> Does your lklfuse enthusiasm here imply that you'd be willing to
+> reconsider Octavian's earlier proposal for XFS non-mmu support?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Krister-Johansen/fuse-revalidate-move-lookup-into-a-separate-function/20230912-051352
-base:   linus/master
-patch link:    https://lore.kernel.org/r/9a2b0c5b625cd88c561289bf7d4d7dfe305c10ed.1693440240.git.kjlx%40templeofstupid.com
-patch subject: [PATCH 1/2] fuse: revalidate: move lookup into a separate function
-config: m68k-allyesconfig (https://download.01.org/0day-ci/archive/20230912/202309120853.QbAMM1to-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20230912/202309120853.QbAMM1to-lkp@intel.com/reproduce)
+8 years a long time, circumstances change and we should always be
+open to changing our minds when presented with new circumstances
+and/or evidence.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202309120853.QbAMM1to-lkp@intel.com/
+Context: back in 2015 I was in the middle of a significant revamp of
+the kernel and userspace code - that was when the shared libxfs
+codebase was new and being actively developed, along with a
+significant rework of all the userspace shims.  One of the things
+that I was looking at the time was pulling everything into userspace
+via libxfs that was needed for a native XFS-FUSE implementation.
+That project never got that far - maintainer burnout happened before
+that ever became a reality.
 
-All warnings (new ones prefixed by >>):
+In that context, lklfuse didn't really make a whole lot of sense for
+providing userspace XFS support via fuse because a native FUSE
+solution would be much better in most regards (especially
+performance). Things have changed a whole lot since then. We have
+less fs developers, we have a antagonistic, uncooperative testing
+"community", we have more code and releases to support, etc.
 
-   fs/fuse/dir.c: In function 'fuse_dentry_revalidate_lookup':
->> fs/fuse/dir.c:194:28: warning: variable 'fi' set but not used [-Wunused-but-set-variable]
-     194 |         struct fuse_inode *fi;
-         |                            ^~
+If we go back to what I said earlier about the minimum requirements
+for a "community supported filesystem", it was about needing three
+things:
 
+- mkfs and fsck coverage
+- fstests support
+- syzbot doesn't get run on it
 
-vim +/fi +194 fs/fuse/dir.c
+Now reconsider lklfuse from this perspective. We have #1 for most
+filesystems, #2 is pretty trivial, and #3 is basically "syzbot +
+lklfuse > /dev/null"...
 
-   185	
-   186	static int fuse_dentry_revalidate_lookup(struct fuse_mount *fm,
-   187						 struct dentry *entry,
-   188						 struct inode *inode,
-   189						 struct fuse_entry_out *outarg,
-   190						 bool *lookedup)
-   191	{
-   192		struct dentry *parent;
-   193		struct fuse_forget_link *forget;
- > 194		struct fuse_inode *fi;
-   195		FUSE_ARGS(args);
-   196		int ret;
-   197	
-   198		forget = fuse_alloc_forget();
-   199		ret = -ENOMEM;
-   200		if (!forget)
-   201			goto out;
-   202	
-   203		parent = dget_parent(entry);
-   204		fuse_lookup_init(fm->fc, &args, get_node_id(d_inode(parent)),
-   205				 &entry->d_name, outarg);
-   206		ret = fuse_simple_request(fm, &args);
-   207		dput(parent);
-   208	
-   209		/* Zero nodeid is same as -ENOENT */
-   210		if (!ret && !outarg->nodeid)
-   211			ret = -ENOENT;
-   212		if (!ret) {
-   213			fi = get_fuse_inode(inode);
-   214			if (outarg->nodeid != get_node_id(inode) ||
-   215			    (bool) IS_AUTOMOUNT(inode) != (bool) (outarg->attr.flags & FUSE_ATTR_SUBMOUNT)) {
-   216				fuse_queue_forget(fm->fc, forget,
-   217						  outarg->nodeid, 1);
-   218				goto invalid;
-   219			}
-   220			*lookedup = true;
-   221		}
-   222		kfree(forget);
-   223		if (ret == -ENOMEM || ret == -EINTR)
-   224			goto out;
-   225		if (ret || fuse_invalid_attr(&outarg->attr) ||
-   226		    fuse_stale_inode(inode, outarg->generation, &outarg->attr)) {
-   227			goto invalid;
-   228		}
-   229	
-   230		ret = 1;
-   231	out:
-   232		return ret;
-   233	
-   234	invalid:
-   235		ret = 0;
-   236		goto out;
-   237	}
-   238	
+IOWs, we can largely validate that lklfuse doesn't eat your data
+with relatively little extra effort. We can provide userspace with a
+viable, supported mechanism for unprivileged mounts of untrusted
+filesystem images that can't lead to kernel compromise. And,
+largely, we retain control of the quality of the lklfuse
+implementation because it's running the kernel code that we already
+maintain and support.
 
+Times change, circumstances change, and if we aren't willing to
+change our minds because we need to solve the new challenges
+presented to us then we should not be in decision making
+positions....
+
+Cheers,
+
+Dave.
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Dave Chinner
+david@fromorbit.com
