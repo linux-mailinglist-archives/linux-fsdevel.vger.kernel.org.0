@@ -2,136 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C2A1B79A4E8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Sep 2023 09:47:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34CB779A54C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Sep 2023 10:04:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232471AbjIKHri (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Sep 2023 03:47:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43308 "EHLO
+        id S230083AbjIKIE1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Sep 2023 04:04:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57904 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231694AbjIKHrh (ORCPT
+        with ESMTP id S229445AbjIKIE1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Sep 2023 03:47:37 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4602A10EC;
-        Mon, 11 Sep 2023 00:46:57 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 4788D218DF;
-        Mon, 11 Sep 2023 07:45:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1694418320; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        Mon, 11 Sep 2023 04:04:27 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65C67BB
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Sep 2023 01:03:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1694419421;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=MJNZv4oXxKfQte9TmKBOGgbcbZkRHW4Xw8D72ufYQcU=;
-        b=FXLMifnFPT7Hb2E+ShASn04gLJntaLjHbkNCb5FIgVq+TQHG4ji0js9e+MaxWqd87JMUtf
-        aYYWObtWLVLBQyYCcSY88Q0nU7ydYBIuobf0nFnW053ZEronfsYxdSi8uUodVfUF6LNfnb
-        iyv3X0jfskigaZ0/y2JzFgdHqO763vw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1694418320;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=MJNZv4oXxKfQte9TmKBOGgbcbZkRHW4Xw8D72ufYQcU=;
-        b=4sbFVSbW7T87o/hysAf1k2UEqWUhYOWt8vEOal8rAj0tiWDlPuyYtl68yTIiyJojt7nuia
-        t0DOtzliX3u6XTAg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id DF5C9139CC;
-        Mon, 11 Sep 2023 07:45:19 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id mrbHNY/F/mTKbAAAMHmgww
-        (envelope-from <hare@suse.de>); Mon, 11 Sep 2023 07:45:19 +0000
-Message-ID: <19be4f1f-dc2a-47e7-a7d0-94f3a18778d3@suse.de>
-Date:   Mon, 11 Sep 2023 09:45:19 +0200
+        bh=rrV+UHvgaplY9/k+vBVt5n0teGN9bGsHMMAwUGo1dQ4=;
+        b=FbL5rWxUq3SEePjUP3/v6nbZYfKhML0eBZwCJi6aO8N3k+eJwFemmmL6nqeOxAuqBknPQe
+        n/zgk5OaMK+wZwxCFLRmxt3SDPORNVlTKOI+nX9A+bztFuiEIiVjmBEUz5pVovcgPRRLVF
+        HuWefuSN77EJEdikENSrA5VzLRJRe+o=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-587-YKEKIX-vPq6P47ir3pglog-1; Mon, 11 Sep 2023 04:03:39 -0400
+X-MC-Unique: YKEKIX-vPq6P47ir3pglog-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-3f5df65fa35so31026945e9.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Sep 2023 01:03:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694419418; x=1695024218;
+        h=content-transfer-encoding:in-reply-to:subject:organization:from
+         :references:cc:to:content-language:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rrV+UHvgaplY9/k+vBVt5n0teGN9bGsHMMAwUGo1dQ4=;
+        b=raUYVG6ouVMw4OGKerE43i/QGROCMIMl3SoIBQb9uPm5tHT+YiKwQm9R5OWoZGwK3B
+         e2shGr9VRGSexypTSn0shJZPBbZ2UQORJjHS/0/qnsoQqny9H6jGqcTmakX9CLYampkx
+         D0BCnKy11PvTUEXpycIx4uqe/BH7YfPFYLBKmzU0I5c5O88uY0kDFdAJf+7PQe+3iGOT
+         DUXoDc/SRdiA4/xwSgiUEBjvr6wa8O7y7oBDx7WdZNLUzc0NTiW5MVNPfAe5WUT7bdC5
+         JpdJ6mBcFTtBvRUc2yZIlbB5L0pV66QAmuQ8Eo6gRjfTSKKA2Jzyp1Dx4UNG3sZo4eii
+         E/qg==
+X-Gm-Message-State: AOJu0YxlhqLGhXU9bQt2v3jyUA8gcIbwLcDoti93MgS1iioat/hJwy5d
+        /rNV+6TP19pfylP44q+x+MA6mekNyuZ2ff/DmmMdJPzSsxhkoM5XdbZsjGi89SCXEq+1uAxQvt3
+        OqEuo9MIpTiRFtkGsFAHn9yHm8Qb8sz5NcA==
+X-Received: by 2002:a7b:cbd7:0:b0:403:bb3:28bf with SMTP id n23-20020a7bcbd7000000b004030bb328bfmr2323545wmi.23.1694419418732;
+        Mon, 11 Sep 2023 01:03:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE7EvIVVm6lIu/W9CgMSy8CEDYEwYaFhdi1B8VWOvJfeNjozxmbl+32f4PcpqOmD3Ruy38Uwg==
+X-Received: by 2002:a7b:cbd7:0:b0:403:bb3:28bf with SMTP id n23-20020a7bcbd7000000b004030bb328bfmr2323518wmi.23.1694419418297;
+        Mon, 11 Sep 2023 01:03:38 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c743:5500:a9bd:94ab:74e9:782f? (p200300cbc7435500a9bd94ab74e9782f.dip0.t-ipconnect.de. [2003:cb:c743:5500:a9bd:94ab:74e9:782f])
+        by smtp.gmail.com with ESMTPSA id r23-20020a05600c321700b00402b9d611d9sm5118569wmp.0.2023.09.11.01.03.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Sep 2023 01:03:37 -0700 (PDT)
+Message-ID: <ef97f466-b27a-a883-7131-c2051480dd87@redhat.com>
+Date:   Mon, 11 Sep 2023 10:03:36 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 09/12] dm: Add support for copy offload
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
 Content-Language: en-US
-To:     Nitesh Shetty <nj.shetty@samsung.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@kernel.org>, dm-devel@redhat.com,
-        Keith Busch <kbusch@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Chaitanya Kulkarni <kch@nvidia.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        martin.petersen@oracle.com, mcgrof@kernel.org,
-        gost.dev@samsung.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
-References: <20230906163844.18754-1-nj.shetty@samsung.com>
- <CGME20230906164407epcas5p3f9e9f33e15d7648fd1381cdfb97d11f2@epcas5p3.samsung.com>
- <20230906163844.18754-10-nj.shetty@samsung.com>
- <cb767dc9-1732-4e31-bcc6-51c187750d66@suse.de>
- <20230911070724.GA28177@green245>
-From:   Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20230911070724.GA28177@green245>
+To:     Adrian Hunter <adrian.hunter@intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Dave Hansen <dave.hansen@intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Lorenzo Stoakes <lstoakes@gmail.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
+        Dave Young <dyoung@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-coco@lists.linux.dev, linux-efi@vger.kernel.org,
+        kexec@lists.infradead.org
+References: <20230906073902.4229-1-adrian.hunter@intel.com>
+ <20230906073902.4229-2-adrian.hunter@intel.com>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+Subject: Re: [PATCH 1/3] proc/vmcore: Do not map unaccepted memory
+In-Reply-To: <20230906073902.4229-2-adrian.hunter@intel.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_NONE autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/11/23 09:07, Nitesh Shetty wrote:
-> On Fri, Sep 08, 2023 at 08:13:37AM +0200, Hannes Reinecke wrote:
->> On 9/6/23 18:38, Nitesh Shetty wrote:
->>> Before enabling copy for dm target, check if underlying devices and
->>> dm target support copy. Avoid split happening inside dm target.
->>> Fail early if the request needs split, currently splitting copy
->>> request is not supported.
->>>
->> And here is where I would have expected the emulation to take place;
->> didn't you have it in one of the earlier iterations?
+On 06.09.23 09:39, Adrian Hunter wrote:
+> Support for unaccepted memory was added recently, refer commit
+> dcdfdd40fa82 ("mm: Add support for unaccepted memory"), whereby
+> a virtual machine may need to accept memory before it can be used.
 > 
-> No, but it was the other way round.
-> In dm-kcopyd we used device offload, if that was possible, before using default
-> dm-mapper copy. It was dropped in the current series,
-> to streamline the patches and make the series easier to review.
+> Do not map unaccepted memory because it can cause the guest to fail.
 > 
->> After all, device-mapper already has the infrastructure for copying
->> data between devices, so adding a copy-offload emulation for device-mapper
->> should be trivial.
-> I did not understand this, can you please elaborate ?
-> 
-Please see my comments to patch 04.
-We should only implement copy-offload if there is a dedicated 
-infrastructure in place. But we should not have a 'generic' copy-offload 
-emulation.
-Problem is that 'real' copy-offload functionalities (ie for NVMe or 
-SCSI) are riddled with corner-cases where copy-offload does _not_ work,
-and where commands might fail if particular conditions are not met.
-Falling back to a generic implementation will cause applications to 
-assume that copy-offload worked, and that it gained performance as
-the application just had to issue a single command.
-Whereas in fact the opposite is true; it wasn't a single command, and 
-the application might have performed better by issuing the commands
-itself.
-Returning -EOPNOTSUPP in these cases will inform the application that 
-the attempt didn't work, and that it will have to fall back to the
-'normal' copy.
+> For /proc/vmcore, which is read-only, this means a read or mmap of
+> unaccepted memory will return zeros.
 
+Does a second (kdump) kernel that exposes /proc/vmcore reliably get 
+access to the information whether memory of the first kernel is 
+unaccepted (IOW, not its memory, but the memory of the first kernel it 
+is supposed to expose via /proc/vmcore)?
+
+I recall there might be other kdump-related issues for TDX and friends 
+to solve. Especially, which information the second kernel gets provided 
+by the first kernel.
+
+So can this patch even be tested reasonably (IOW, get into a kdump 
+kernel in an environment where the first kernel has unaccepted memory, 
+and verify that unaccepted memory is handled accordingly? ... while 
+kdump doing anything reasonable in such an environment at all?)
+
+-- 
 Cheers,
 
-Hannes
--- 
-Dr. Hannes Reinecke                Kernel Storage Architect
-hare@suse.de                              +49 911 74053 688
-SUSE Software Solutions GmbH, Maxfeldstr. 5, 90409 Nürnberg
-HRB 36809 (AG Nürnberg), Geschäftsführer: Ivo Totev, Andrew
-Myers, Andrew McDonald, Martje Boudien Moerman
+David / dhildenb
 
