@@ -2,77 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B37F79BF37
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Sep 2023 02:18:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6FD879BF5F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Sep 2023 02:18:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239501AbjIKUy7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Sep 2023 16:54:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49452 "EHLO
+        id S238150AbjIKUxn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Sep 2023 16:53:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244157AbjIKTT7 (ORCPT
+        with ESMTP id S244082AbjIKTD7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Sep 2023 15:19:59 -0400
-X-Greylist: delayed 1537 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 11 Sep 2023 12:19:54 PDT
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A23BFF9;
-        Mon, 11 Sep 2023 12:19:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=hvtgfazEDfD/ESc/aDVpO+amH0zNM0AgcdVremR6roI=; b=cdnTajZlOlBLZ/FHvontAz4Gwc
-        9l80zvpR+3R/TQbYWYLVlT/3TQFoCCxLNOUgmH3CImeJt8QdYsFU0Yp1wQvVN5MMb0j0xzT5Ba0Bh
-        j5LX46+Ep9n9J0YHdn91ZQ9ad4q1dqRH0hTdrWjUrtokiqGla//UVB/SP5TX+SA6JZAw/qtGHLDDa
-        2tk+n59UQ7qfoqyjAsx81tVTJqs/37wb8UMArGgXYq284MFPMI/0W1ssOfClP27YzDJGaRR7gdsen
-        Pg46m47jDyzDyb2Av733cjeiNYVEYQmHD+8UCvtCxm51q+GCasH0Xoo5xKfPbvsxS52qKLGRX0gwT
-        dcrZUfyw==;
-Received: from [187.116.122.196] (helo=[192.168.1.60])
-        by fanzine2.igalia.com with esmtpsa 
-        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-        id 1qfm30-002QWn-6v; Mon, 11 Sep 2023 20:54:10 +0200
-Message-ID: <daea5aef-e5f9-09af-cdf3-13faa204497b@igalia.com>
-Date:   Mon, 11 Sep 2023 15:53:54 -0300
+        Mon, 11 Sep 2023 15:03:59 -0400
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [IPv6:2607:fcd0:100:8a00::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39DD1DB
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Sep 2023 12:03:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1694459030;
+        bh=5AvBVXwbkkod10a/5EG2d/zEeWlAiJtQeNJz/f07Xvk=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=uGlXnqbyJUv+WppXTXaGItNVK9UFhi8czcKG0kf04tR8M/IQgqC8jkam0TkrPRT9Q
+         83Fw55LrKyR/6IAl/7XkDC6UHJHX2dj5B2TvpS3ADC7hRKg2rk04p3yknUh9IGLCj2
+         DO/m1G+zUTTJ9D7qVgghLchsuWB7IpnFgqOk/wvU=
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id E797C1285F3A;
+        Mon, 11 Sep 2023 15:03:50 -0400 (EDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id 7hNSTzYXy-wG; Mon, 11 Sep 2023 15:03:50 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1694459030;
+        bh=5AvBVXwbkkod10a/5EG2d/zEeWlAiJtQeNJz/f07Xvk=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=uGlXnqbyJUv+WppXTXaGItNVK9UFhi8czcKG0kf04tR8M/IQgqC8jkam0TkrPRT9Q
+         83Fw55LrKyR/6IAl/7XkDC6UHJHX2dj5B2TvpS3ADC7hRKg2rk04p3yknUh9IGLCj2
+         DO/m1G+zUTTJ9D7qVgghLchsuWB7IpnFgqOk/wvU=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::c14])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (Client did not present a certificate)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 699E01285F31;
+        Mon, 11 Sep 2023 15:03:49 -0400 (EDT)
+Message-ID: <5dd21470139df5de7f02608f453469023f50d704.camel@HansenPartnership.com>
+Subject: Re: [MAINTAINERS/KERNEL SUMMIT] Trust and maintenance of file
+ systems
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Theodore Ts'o <tytso@mit.edu>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@infradead.org>, ksummit@lists.linux.dev,
+        linux-fsdevel@vger.kernel.org
+Date:   Mon, 11 Sep 2023 15:03:45 -0400
+In-Reply-To: <20230911031015.GF701295@mit.edu>
+References: <ZO9NK0FchtYjOuIH@infradead.org>
+         <ZPe0bSW10Gj7rvAW@dread.disaster.area>
+         <ZPe4aqbEuQ7xxJnj@casper.infradead.org>
+         <8dd2f626f16b0fc863d6a71561196950da7e893f.camel@HansenPartnership.com>
+         <ZPyS4J55gV8DBn8x@casper.infradead.org>
+         <a21038464ad0afd5dfb88355e1c244152db9b8da.camel@HansenPartnership.com>
+         <20230911031015.GF701295@mit.edu>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
-Subject: Re: [PATCH V3 2/2] btrfs: Introduce the single-dev feature
-Content-Language: en-US
-To:     dsterba@suse.cz, josef@toxicpanda.com
-Cc:     linux-btrfs@vger.kernel.org, clm@fb.com, dsterba@suse.com,
-        linux-fsdevel@vger.kernel.org, kernel@gpiccoli.net,
-        kernel-dev@igalia.com, anand.jain@oracle.com, david@fromorbit.com,
-        kreijack@libero.it, johns@valvesoftware.com,
-        ludovico.denittis@collabora.com, quwenruo.btrfs@gmx.com,
-        wqu@suse.com, vivek@collabora.com
-References: <20230831001544.3379273-1-gpiccoli@igalia.com>
- <20230831001544.3379273-3-gpiccoli@igalia.com>
- <20230911182804.GA20408@twin.jikos.cz>
-From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-In-Reply-To: <20230911182804.GA20408@twin.jikos.cz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/09/2023 15:28, David Sterba wrote:
-> On Wed, Aug 30, 2023 at 09:12:34PM -0300, Guilherme G. Piccoli wrote:
-> I've added Anand's patch
-> https://lore.kernel.org/linux-btrfs/de8d71b1b08f2c6ce75e3c45ee801659ecd4dc43.1694164368.git.anand.jain@oracle.com/
-> to misc-next that implements subset of your patch, namely extending
-> btrfs_scan_one_device() with the 'mounting' parameter. I haven't looked
-> if the semantics is the same so I let you take a look.
+On Sun, 2023-09-10 at 23:10 -0400, Theodore Ts'o wrote:
+> On Sun, Sep 10, 2023 at 03:51:42PM -0400, James Bottomley wrote:
+[...]
+> > Perhaps we should also go back to seeing if we can prize some
+> > resources out of the major moneymakers in the cloud space.  After
+> > all, a bug that could cause a cloud exploit might not be even
+> > exploitable on a personal laptop that has no untrusted users.
 > 
-> As there were more comments to V3, please fix that and resend. Thanks.
-> 
+> Actually, I'd say this is backwards.  Many of these issues, and I'd
+> argue all that involve an maliciously corrupted file system, are not
+> actually an issue in the cloud space, because we *already* assume
+> that the attacker may have root.  After all, anyone can pay their $5
+> CPU/hour, and get an Amazon or Google or Azure VM, and then run
+> arbitrary workloads as root.
 
-Thanks David, will do.
-Did we agree about the name of the feature? temp_fsid maybe?
+Well, that was just one example.  Another way cloud companies could
+potentially help is their various AI projects: I seem to get daily
+requests from AI people for me to tell them just how AI could help
+Linux.  When I suggest bug report triage and classification would be my
+number one thing, they all back off faster than a mouse crashing a cat
+convention with claims like "That's too hard a problem" and also that
+in spite of ChatGPT getting its facts wrong and spewing rubbish for
+student essays, it wouldn't survive the embarrassment of being
+ridiculed by kernel developers for misclassifying bug reports.
+
+I'm not sure peer pressure works on the AI community, but surely if
+enough of us asked, they might one day overcome their fear of trying it
+...
+
+James
+
