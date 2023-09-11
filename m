@@ -2,45 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B47B79C013
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Sep 2023 02:19:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A7BE79B6D4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Sep 2023 02:05:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234541AbjIKUws (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Sep 2023 16:52:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57444 "EHLO
+        id S240973AbjIKU4n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Sep 2023 16:56:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237612AbjIKNAj (ORCPT
+        with ESMTP id S237690AbjIKNJY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Sep 2023 09:00:39 -0400
+        Mon, 11 Sep 2023 09:09:24 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 775A0CD7;
-        Mon, 11 Sep 2023 06:00:34 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D58AC433CA;
-        Mon, 11 Sep 2023 13:00:31 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04ED2E5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Sep 2023 06:09:20 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1263C433C7;
+        Mon, 11 Sep 2023 13:09:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694437234;
-        bh=gTtArNuZ0vo/RYfzma1n4Nj7HrwLli9DtJUfB6Thws4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dDFDXJKS6/Y2QkjEBjP2l9kxDeFHwcUhOkRE5Hd4b2kqfzjlNiT9ZDfOkcczPTNC+
-         TCuE8jW4hntfldk3SqtzM4OYoxztc/Vq7ypUBq8AMkO3wTqyyV8abd2yC/969cSAuq
-         Y7T3+FqQpNK1ZYKottqqDrOucAbSlXEWGVU/As/EmxxwLl5dxN16SGcxdp4YmB1ovG
-         Dgk2zNtzOfDbdenCJansYRsOeDE2ryvCvu56Iz+tS0d9s44v7wwu4TjULA4tDVPj6J
-         ALqktbowU323PXO3ZQISMbPVFolDyaYWk9Y0S1MxPPbvW3aL4otvrxVYOciSgjodxe
-         0GjTS/5X5+ADw==
-Date:   Mon, 11 Sep 2023 15:00:28 +0200
+        s=k20201202; t=1694437759;
+        bh=o2ZKqdFAsh/45+9d1aPhwz7zyijMCz7e88gIz/GOqAo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=gff8ZdLxuyoFt865fcIjFfj+vrx6FvLaAkNpHc67lX2QyoVY3OLawNwZ6B7Bb7z0J
+         u/POoqjX9+tY0sLIPOB7NAgiA6ioTX3f68KEBPvgJJT5aerheOeq5SGWf7GisJ7Ern
+         /h+DizYmmwSKm2PoDtpW4Z0PW7V3g9bFLppgXWQEuVsjPW6NH5GIfdARxJ2Bb5R9Wj
+         ybuOg9GEOL6w9j/5Dh3/83W3sry2hjFhx6bxwnVDuL5yhn1J3VVTAxcTfMD2vH1vjS
+         9y9D8Kb3dcJY+Xhzeo/leK4LCfZqTGFGqQ3D5AQSQYUc2yeuLIiV6AdE3yjuLL/dpY
+         Am7n8kwlXt7Lg==
 From:   Christian Brauner <brauner@kernel.org>
-To:     Josef Bacik <josef@toxicpanda.com>
-Cc:     David Sterba <dsterba@suse.com>, Jan Kara <jack@suse.cz>,
-        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org
-Subject: Re: btrfs freezing question
-Message-ID: <20230911-spotten-tadel-4a4cf4e17729@brauner>
-References: <20230908-merklich-bebauen-11914a630db4@brauner>
- <20230908143221.GA1977092@perftesting>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>, Jan Kara <jack@suse.cz>,
+        Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 0/2] Rename and export some vfs helpers
+Date:   Mon, 11 Sep 2023 15:09:01 +0200
+Message-Id: <20230911-unrealistisch-stilisieren-a06591402375@brauner>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230908132900.2983519-1-amir73il@gmail.com>
+References: <20230908132900.2983519-1-amir73il@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230908143221.GA1977092@perftesting>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1359; i=brauner@kernel.org; h=from:subject:message-id; bh=o2ZKqdFAsh/45+9d1aPhwz7zyijMCz7e88gIz/GOqAo=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT8Fwx/uUtqtboae0RdnQtn8Oz58w4mXHE9bz3jT+iLRLfv 0z/6dZSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzE/jYjw+6tE74aS0Y/aLJcYxx4Rn TxqWwDgfCrP//Nffq6+l2aXhwjw5pTzJNmHFlb+9PEkmuj/+wcsaCZTevqvzLHbLkZ/u2PDQcA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
         RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
@@ -51,48 +55,38 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> Eesh, no you're right, seems like we only set this when we're moving devices
-> around, so it must have gotten removed at some point.
-
-Thanks for taking a look, Josef!
-
-> > My series can proceed independent of fixing btrfs but I'm just trying to
-> > make people aware in case that somehow wasn't known.
+On Fri, 08 Sep 2023 16:28:58 +0300, Amir Goldstein wrote:
+> Christian,
 > 
-> Thanks for that, we definitely need to get this fixed.  Is the bdev->bd_holder
-> part of the new mount api, or is it some other thing that we can do right now
-> and then be in a good spot when your new patchset lands?  Let me know and we can
-> prioritize that work.  Thanks,
+> This is the rename that you proposed, for the helpers needed by
+> overlayfs.
+> 
+> I could stage this in the overlayfs tree for 6.7, but it has a bit
+> of conflict potential, so maybe best if you stage this in vfs tree.
+> 
+> [...]
 
-This is independent of converting btrfs to the new mount api.
+Applied to a branch that's expected to stay stable on v6.6-rc1. I have
+no strong feelings about these exports so if someone does, please yell.
 
-Christoph has landed a patch series this cycle that sets bdev->bd_holder
-to the superblock owning the block device. Before his work
-bdev->bd_holder was set to the filesystem type. Roughly, this has
-enabled us to go from a block device straight to the owning superblock.
+---
 
-Associated with changing bdev->bd_holder is using a set of holder
-operations: fs_holder_ops (see fs/super.c). These can be used to perform
-various operations on the holder: in this case on the superblock.
+Applied to the vfs.mount.write branch of the vfs/vfs.git tree.
+Patches in the vfs.mount.write branch should appear in linux-next soon.
 
-IOW, we don't need to find the owning superblock anymore we just need to
-go straight from block device to owning superblock. You can see this
-e.g., in block/bdev.c:bdev_mark_dead() = fs/super.c:fs_bdev_mark_dead().
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-What we need is to switch btrfs to bdev->bd_holder = sb and the usage of
-fs/super.c:fs_holder_ops if possible. We did this anyway to avoid
-deadlocks, allow dropping of s_umount when opening block devices and
-ultimately we can find matching superblocks before opening block devices
-which will allow us to restrict writers to block devices in v6.7 (Jan's
-work).
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-We converted all block-based filesystems to use this new mechanism but
-David insisted on taking the btrfs portion through btrfs itself. So none
-of the btrfs patches in the series linked below have made it upstream
-for v6.6 and so you're unfortunately the only fs which still uses the
-old mechanism:
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-Subject: [PATCH 05/17] btrfs: open block devices after superblock
-https://lore.kernel.org/linux-block/20230811100828.1897174-6-hch@lst.de
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.mount.write
 
-What would help is if you would start to take these patches.
+[1/2] fs: rename __mnt_{want,drop}_write*() helpers
+      https://git.kernel.org/vfs/vfs/c/3e15dcf77b23
+[2/2] fs: export mnt_{get,put}_write_access() to modules
+      https://git.kernel.org/vfs/vfs/c/ddf9e2ff67a9
