@@ -2,116 +2,242 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 558C979B3F3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Sep 2023 02:01:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD02A79B03F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Sep 2023 01:49:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235891AbjIKUx1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Sep 2023 16:53:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46224 "EHLO
+        id S229495AbjIKUwc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Sep 2023 16:52:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243979AbjIKSep (ORCPT
+        with ESMTP id S244001AbjIKSir (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Sep 2023 14:34:45 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F10A3198;
-        Mon, 11 Sep 2023 11:34:40 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        Mon, 11 Sep 2023 14:38:47 -0400
+Received: from bee.birch.relay.mailchannels.net (bee.birch.relay.mailchannels.net [23.83.209.14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 825E61AE
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Sep 2023 11:38:42 -0700 (PDT)
+X-Sender-Id: dreamhost|x-authsender|kjlx@templeofstupid.com
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+        by relay.mailchannels.net (Postfix) with ESMTP id D6B6B9027AB
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Sep 2023 18:38:41 +0000 (UTC)
+Received: from pdx1-sub0-mail-a294.dreamhost.com (unknown [127.0.0.6])
+        (Authenticated sender: dreamhost)
+        by relay.mailchannels.net (Postfix) with ESMTPA id 7A06F9021FA
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Sep 2023 18:38:41 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1694457521; a=rsa-sha256;
+        cv=none;
+        b=rwkssJPvoWOHis2U+aa0cd2lRHend2grB7EWyoNLl50KWodQ4Nh8rXLt7h+hQ+l6qV+bC3
+        +TnEVQyZ7sw0bjbI5sHozQrv+ywOR3SpXdtoQeDJWz7bOHCNWQTfTg+0h70twulEu0vRQH
+        qRqmBwky3F9iLGC0AOrhuG1oGnb4JsF7DxruwdbiSDQBYMaldtdnms2vs1CZLMSFKZKpD9
+        9UW7dkz6SdCl/ylIMONhm7NTllhuP47tcFnrdqW7gT32EGPcBm7RWnUtl+pjEvgZulSFuF
+        1/74+70C9ZnXzmzLmRUd0+qifc7GoYaxpA+ZwjxNj1VA55XU3oG/bsZ09917MQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+        s=arc-2022; t=1694457521;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references:dkim-signature;
+        bh=FSUK8pOwpvuxQ+JLt0jdCQPxsw4/FtxlxfMUCOvi2Vo=;
+        b=pKZNnGGhdxQEPbNjq2v1M6fXpEW0nv0STxj5uhPzgJaYN+VZ6Gs86cEeJnGTR6pH6BmFqk
+        QNTCAe0q3vJm0Le41xAlxG2f2oiezfLY8dlF8HOJ1a0Hlf52FlztEh4C6u2Wln5xWog9Oi
+        CjAfU2SIYqjNuO2COGSuw0Iq1LzBIRNVmySuES/wF3VUA1gCqob7WHMOzJlD1+zsuBBvuU
+        561yMRq42IvwzKdeV/50XTorWt+Mfv421rgcGk0saIDZmweZaNJSmbiiwNl+zSu8vobUSK
+        9bU5qjKroAevdrcvB2fL406lNd3M74EBUpPkWKayxetFainbk+NWqKO1sNBK2g==
+ARC-Authentication-Results: i=1;
+        rspamd-7d5dc8fd68-drktx;
+        auth=pass smtp.auth=dreamhost smtp.mailfrom=kjlx@templeofstupid.com
+X-Sender-Id: dreamhost|x-authsender|kjlx@templeofstupid.com
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|kjlx@templeofstupid.com
+X-MailChannels-Auth-Id: dreamhost
+X-Ruddy-Belong: 415201571428fd05_1694457521709_2227481475
+X-MC-Loop-Signature: 1694457521709:3455281592
+X-MC-Ingress-Time: 1694457521709
+Received: from pdx1-sub0-mail-a294.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+        by 100.99.54.176 (trex/6.9.1);
+        Mon, 11 Sep 2023 18:38:41 +0000
+Received: from kmjvbox (c-73-231-176-24.hsd1.ca.comcast.net [73.231.176.24])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 7A3F61F8B3;
-        Mon, 11 Sep 2023 18:34:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1694457279;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=9v3Jt/6g+t5nFOrTmf56koBNQUy/6/9gfu4eoY4EblY=;
-        b=17yeN5BsMO++pJEtuT6paNE2uy6dg81sskoexYs59omHu047w4aMp8g4POm4l3J5dvxpm/
-        nyO/xckMio3c45i/JMh/8Nysjfkhf0rZvMcnpN6Dd5d67yYy2HD+ZEO3Q2j5GTa2Aj4jlm
-        oD7hBKQLznYm8TT6wVevYe1pOkJu/2Q=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1694457279;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=9v3Jt/6g+t5nFOrTmf56koBNQUy/6/9gfu4eoY4EblY=;
-        b=TW+ygxcqojzxZNzgiqAZ/EaepEdivo9iuXvsShUUguvCDYYRJ4Y4LFO5/Z+k7NBIiLss/q
-        k/0eAxrcqNBNZZCg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 3108913780;
-        Mon, 11 Sep 2023 18:34:39 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id C6AsC79d/2RiQwAAMHmgww
-        (envelope-from <dsterba@suse.cz>); Mon, 11 Sep 2023 18:34:39 +0000
-Date:   Mon, 11 Sep 2023 20:28:05 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-Cc:     linux-btrfs@vger.kernel.org, clm@fb.com, josef@toxicpanda.com,
-        dsterba@suse.com, linux-fsdevel@vger.kernel.org,
-        kernel@gpiccoli.net, kernel-dev@igalia.com, anand.jain@oracle.com,
-        david@fromorbit.com, kreijack@libero.it, johns@valvesoftware.com,
-        ludovico.denittis@collabora.com, quwenruo.btrfs@gmx.com,
-        wqu@suse.com, vivek@collabora.com
-Subject: Re: [PATCH V3 2/2] btrfs: Introduce the single-dev feature
-Message-ID: <20230911182804.GA20408@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <20230831001544.3379273-1-gpiccoli@igalia.com>
- <20230831001544.3379273-3-gpiccoli@igalia.com>
+        (Authenticated sender: kjlx@templeofstupid.com)
+        by pdx1-sub0-mail-a294.dreamhost.com (Postfix) with ESMTPSA id 4RkwTY1P2DzRn
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Sep 2023 11:38:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=templeofstupid.com;
+        s=dreamhost; t=1694457521;
+        bh=FSUK8pOwpvuxQ+JLt0jdCQPxsw4/FtxlxfMUCOvi2Vo=;
+        h=Date:From:To:Cc:Subject:Content-Type;
+        b=eLwToKe9t9/l6uyz4YUCl6xOhB4/7ZyDAweU7Jz4u/ulkpHnakUSCJU4WryiTG92u
+         vzjJO7ofzGfXcxHina7YbbZ1vXedBZ5COGZ8mNe1jzMTN0DGxZOr6+NT7O8kJalfV+
+         9b6a56/e+TNXhUhITfG6LXW2/1dGsFNdXPNUZQAjXZHB3vDrHbCNhMDCi1mQLuyzy+
+         ot0uaQIFb+MZj5fW6WefrRCWjm6dtVSPDFwCnPWHXYXKd7BQ/MWtaotbDFKFl+TX8k
+         YnjOo+1zCx8aSBPPnL+R+sXspSanqwvq5sGOEb7mI3y7x/c9t96qOZliZhe0yt/bdY
+         qBWu9iBCjufnw==
+Received: from johansen (uid 1000)
+        (envelope-from kjlx@templeofstupid.com)
+        id e00c8
+        by kmjvbox (DragonFly Mail Agent v0.12);
+        Mon, 11 Sep 2023 11:38:38 -0700
+Date:   Mon, 11 Sep 2023 11:38:38 -0700
+From:   Krister Johansen <kjlx@templeofstupid.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        German Maglione <gmaglione@redhat.com>,
+        Greg Kurz <groug@kaod.org>, Max Reitz <mreitz@redhat.com>
+Subject: [PATCH 1/2] fuse: revalidate: move lookup into a separate function
+Message-ID: <9a2b0c5b625cd88c561289bf7d4d7dfe305c10ed.1693440240.git.kjlx@templeofstupid.com>
+References: <cover.1693440240.git.kjlx@templeofstupid.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230831001544.3379273-3-gpiccoli@igalia.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+In-Reply-To: <cover.1693440240.git.kjlx@templeofstupid.com>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
+        UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 30, 2023 at 09:12:34PM -0300, Guilherme G. Piccoli wrote:
-> Btrfs doesn't currently support to mount 2 different devices holding the
-> same filesystem - the fsid is exposed as a unique identifier by the
-> driver. This case is supported though in some other common filesystems,
-> like ext4.
-> 
-> Supporting the same-fsid mounts has the advantage of allowing btrfs to
-> be used in A/B partitioned devices, like mobile phones or the Steam Deck
-> for example. Without this support, it's not safe for users to keep the
-> same "image version" in both A and B partitions, a setup that is quite
-> common for development, for example. Also, as a big bonus, it allows fs
-> integrity check based on block devices for RO devices (whereas currently
-> it is required that both have different fsid, breaking the block device
-> hash comparison).
-> 
-> Such same-fsid mounting is hereby added through the usage of the
-> filesystem feature "single-dev" - when such feature is used, btrfs
-> generates a random fsid for the filesystem and leverages the long-term
-> present metadata_uuid infrastructure to enable the usage of this
-> secondary virtual fsid, effectively requiring few non-invasive changes
-> to the code and no new potential corner cases.
-> 
-> In order to prevent more code complexity and corner cases, given
-> the nature of this mechanism (single devices), the single-dev feature
-> is not allowed when the metadata_uuid flag is already present on the
-> fs, or if the device is on fsid-change state. Device removal/replace
-> is also disabled for devices presenting the single-dev feature.
-> 
-> Suggested-by: John Schoenick <johns@valvesoftware.com>
-> Suggested-by: Qu Wenruo <wqu@suse.com>
-> Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
+If this refactoring seems cumbersome, it's because the goal is to move
+the lookup parts of fuse_dentry_revalidate into a common function.  This
+function will be used in a subsequent commit.  In the meantime, the new
+function fuse_dentry_revalidate_lookup is responsible for just the
+lookup and validation portions of the revalidate dance.  The
+fuse_dentry_revalidate function retains the responsibility for
+invalidating and mutating any state associated with the origial
+fuse_inode and dentry.
 
-I've added Anand's patch
-https://lore.kernel.org/linux-btrfs/de8d71b1b08f2c6ce75e3c45ee801659ecd4dc43.1694164368.git.anand.jain@oracle.com/
-to misc-next that implements subset of your patch, namely extending
-btrfs_scan_one_device() with the 'mounting' parameter. I haven't looked
-if the semantics is the same so I let you take a look.
+Cc: stable@vger.kernel.org
+Fixes: 1866d779d5d2 ("fuse: Allow fuse_fill_super_common() for submounts")
+Signed-off-by: Krister Johansen <kjlx@templeofstupid.com>
+---
+ fs/fuse/dir.c | 87 +++++++++++++++++++++++++++++++++++----------------
+ 1 file changed, 60 insertions(+), 27 deletions(-)
 
-As there were more comments to V3, please fix that and resend. Thanks.
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index e190d09f220d..afbdd223b0f3 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -183,6 +183,59 @@ static void fuse_lookup_init(struct fuse_conn *fc, struct fuse_args *args,
+ 	args->out_args[0].value = outarg;
+ }
+ 
++static int fuse_dentry_revalidate_lookup(struct fuse_mount *fm,
++					 struct dentry *entry,
++					 struct inode *inode,
++					 struct fuse_entry_out *outarg,
++					 bool *lookedup)
++{
++	struct dentry *parent;
++	struct fuse_forget_link *forget;
++	struct fuse_inode *fi;
++	FUSE_ARGS(args);
++	int ret;
++
++	forget = fuse_alloc_forget();
++	ret = -ENOMEM;
++	if (!forget)
++		goto out;
++
++	parent = dget_parent(entry);
++	fuse_lookup_init(fm->fc, &args, get_node_id(d_inode(parent)),
++			 &entry->d_name, outarg);
++	ret = fuse_simple_request(fm, &args);
++	dput(parent);
++
++	/* Zero nodeid is same as -ENOENT */
++	if (!ret && !outarg->nodeid)
++		ret = -ENOENT;
++	if (!ret) {
++		fi = get_fuse_inode(inode);
++		if (outarg->nodeid != get_node_id(inode) ||
++		    (bool) IS_AUTOMOUNT(inode) != (bool) (outarg->attr.flags & FUSE_ATTR_SUBMOUNT)) {
++			fuse_queue_forget(fm->fc, forget,
++					  outarg->nodeid, 1);
++			goto invalid;
++		}
++		*lookedup = true;
++	}
++	kfree(forget);
++	if (ret == -ENOMEM || ret == -EINTR)
++		goto out;
++	if (ret || fuse_invalid_attr(&outarg->attr) ||
++	    fuse_stale_inode(inode, outarg->generation, &outarg->attr)) {
++		goto invalid;
++	}
++
++	ret = 1;
++out:
++	return ret;
++
++invalid:
++	ret = 0;
++	goto out;
++}
++
+ /*
+  * Check whether the dentry is still valid
+  *
+@@ -206,9 +259,8 @@ static int fuse_dentry_revalidate(struct dentry *entry, unsigned int flags)
+ 	else if (time_before64(fuse_dentry_time(entry), get_jiffies_64()) ||
+ 		 (flags & (LOOKUP_EXCL | LOOKUP_REVAL | LOOKUP_RENAME_TARGET))) {
+ 		struct fuse_entry_out outarg;
+-		FUSE_ARGS(args);
+-		struct fuse_forget_link *forget;
+ 		u64 attr_version;
++		bool lookedup = false;
+ 
+ 		/* For negative dentries, always do a fresh lookup */
+ 		if (!inode)
+@@ -220,38 +272,19 @@ static int fuse_dentry_revalidate(struct dentry *entry, unsigned int flags)
+ 
+ 		fm = get_fuse_mount(inode);
+ 
+-		forget = fuse_alloc_forget();
+-		ret = -ENOMEM;
+-		if (!forget)
+-			goto out;
+-
+ 		attr_version = fuse_get_attr_version(fm->fc);
+ 
+-		parent = dget_parent(entry);
+-		fuse_lookup_init(fm->fc, &args, get_node_id(d_inode(parent)),
+-				 &entry->d_name, &outarg);
+-		ret = fuse_simple_request(fm, &args);
+-		dput(parent);
+-		/* Zero nodeid is same as -ENOENT */
+-		if (!ret && !outarg.nodeid)
+-			ret = -ENOENT;
+-		if (!ret) {
++		ret = fuse_dentry_revalidate_lookup(fm, entry, inode, &outarg,
++						    &lookedup);
++		if (ret == -ENOMEM || ret == -EINTR)
++			goto out;
++		if (lookedup) {
+ 			fi = get_fuse_inode(inode);
+-			if (outarg.nodeid != get_node_id(inode) ||
+-			    (bool) IS_AUTOMOUNT(inode) != (bool) (outarg.attr.flags & FUSE_ATTR_SUBMOUNT)) {
+-				fuse_queue_forget(fm->fc, forget,
+-						  outarg.nodeid, 1);
+-				goto invalid;
+-			}
+ 			spin_lock(&fi->lock);
+ 			fi->nlookup++;
+ 			spin_unlock(&fi->lock);
+ 		}
+-		kfree(forget);
+-		if (ret == -ENOMEM || ret == -EINTR)
+-			goto out;
+-		if (ret || fuse_invalid_attr(&outarg.attr) ||
+-		    fuse_stale_inode(inode, outarg.generation, &outarg.attr))
++		if (ret <= 0)
+ 			goto invalid;
+ 
+ 		forget_all_cached_acls(inode);
+-- 
+2.25.1
+
