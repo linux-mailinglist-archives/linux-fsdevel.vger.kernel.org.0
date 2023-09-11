@@ -2,50 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F2C179AE66
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Sep 2023 01:44:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 100DD79ADA2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Sep 2023 01:40:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236081AbjIKUzZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Sep 2023 16:55:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53772 "EHLO
+        id S237357AbjIKUxM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Sep 2023 16:53:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239889AbjIKOa6 (ORCPT
+        with ESMTP id S238214AbjIKNv3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Sep 2023 10:30:58 -0400
+        Mon, 11 Sep 2023 09:51:29 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F908E4B;
-        Mon, 11 Sep 2023 07:30:53 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1001C433C8;
-        Mon, 11 Sep 2023 14:30:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1694442653;
-        bh=snYNGcr82QoUeAqSC3YazeHaX6MLgfAk52uGDJwlVZ8=;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F14BBFA
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Sep 2023 06:51:24 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9752C433C8;
+        Mon, 11 Sep 2023 13:51:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1694440284;
+        bh=+xei6KDA/BXmaQMqJkhsjOTENISNPYrcTQHHI/FT+38=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gKn3VB35J76aOA9HHG/AVwwPD32ldQweziRlnzKe+8p6aWdPyCuIwF5Cut/r1KMLP
-         PHKjSyfL5Ba6oR+dhpo5e0Yqwtibxz5KGCSmWPgxNNpFRmcpJpzfj73EaDa1pF3UjI
-         p4rAwzt6cksTXqs+p+VX7ZbdL5ckTx6k76Decwoo=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     stable@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        patches@lists.linux.dev, Wen Yang <wenyang.linux@foxmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>,
-        Christian Brauner <brauner@kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Dylan Yudaken <dylany@fb.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.4 101/737] eventfd: prevent underflow for eventfd semaphores
-Date:   Mon, 11 Sep 2023 15:39:20 +0200
-Message-ID: <20230911134653.335839649@linuxfoundation.org>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20230911134650.286315610@linuxfoundation.org>
-References: <20230911134650.286315610@linuxfoundation.org>
-User-Agent: quilt/0.67
-X-stable: review
-X-Patchwork-Hint: ignore
+        b=rBxNtdpr6yNtZFmZRdzXwj2uzapfsvZoTVJisEF5kYxDXFOilp1WF19QXkwraF5vQ
+         Bi753pZIKTZyQrIoDmTpR2dOqVOwyHrFT9k8trQPiPBHhLa24eOd17hkRVNBrzAIaz
+         3FOD6Nll5pXJi5a9tEfhogbA70GxyDe5NLNML+juzsrqlm75l6JdwNEyraug2BAIfD
+         wgTZFy53ixdpEjt5heyPndbE11dAcWF8Mc7uWntt+fU/DATweOF2ql05D8ig4lud5E
+         nIfbbfQG/8tEvHG3a/R9h9OLakffWhHcE+3+B6uCgsO2rfeNRZ92gVoi3fvgVZSI0r
+         wWmCxDFq3Vmhw==
+From:   Christian Brauner <brauner@kernel.org>
+To:     Reuben Hawkins <reubenhwk@gmail.com>
+Cc:     Christian Brauner <brauner@kernel.org>, amir73il@gmail.com,
+        mszeredi@redhat.com, willy@infradead.org, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2] vfs: fix readahead(2) on block devices
+Date:   Mon, 11 Sep 2023 15:51:15 +0200
+Message-Id: <20230911-plakat-machwerk-7cb027631a5e@brauner>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230911114713.25625-1-reubenhwk@gmail.com>
+References: <20230911114713.25625-1-reubenhwk@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1139; i=brauner@kernel.org; h=from:subject:message-id; bh=+xei6KDA/BXmaQMqJkhsjOTENISNPYrcTQHHI/FT+38=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT8l/bPOnI3+b2qU+CrAqfNrt4z9doWfs41dLb+JjjpZ86i N3fvdZSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEwkm4/hN3tkzwemre6NO7krdDQ5Wd KLNix8+fb9ifYbjv9sjqz478jwV1rbe8GMGaJ1LfP7vSrE36wwD7+wePmOai/pDdyTc79s5QYA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
@@ -57,80 +53,30 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-6.4-stable review patch.  If anyone has any objections, please let me know.
+On Mon, 11 Sep 2023 06:47:13 -0500, Reuben Hawkins wrote:
+> Readahead was factored to call generic_fadvise.  That refactor added an
+> S_ISREG restriction which broke readahead on block devices.
+> 
+> This change removes the S_ISREG restriction to fix block device readahead.
+> The change also means that readahead will return -ESPIPE on FIFO files
+> instead of -EINVAL.
+> 
+> [...]
 
-------------------
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
-From: Wen Yang <wenyang.linux@foxmail.com>
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-[ Upstream commit 758b492047816a3158d027e9fca660bc5bcf20bf ]
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-For eventfd with flag EFD_SEMAPHORE, when its ctx->count is 0, calling
-eventfd_ctx_do_read will cause ctx->count to overflow to ULLONG_MAX.
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-An underflow can happen with EFD_SEMAPHORE eventfds in at least the
-following three subsystems:
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
 
-(1) virt/kvm/eventfd.c
-(2) drivers/vfio/virqfd.c
-(3) drivers/virt/acrn/irqfd.c
-
-where (2) and (3) are just modeled after (1). An eventfd must be
-specified for use with the KVM_IRQFD ioctl(). This can also be an
-EFD_SEMAPHORE eventfd. When the eventfd count is zero or has been
-decremented to zero an underflow can be triggered when the irqfd is shut
-down by raising the KVM_IRQFD_FLAG_DEASSIGN flag in the KVM_IRQFD
-ioctl():
-
-        // ctx->count == 0
-        kvm_vm_ioctl()
-        -> kvm_irqfd()
-           -> kvm_irqfd_deassign()
-              -> irqfd_deactivate()
-                 -> irqfd_shutdown()
-                    -> eventfd_ctx_remove_wait_queue(&cnt)
-                       -> eventfd_ctx_do_read(&cnt)
-
-Userspace polling on the eventfd wouldn't notice the underflow because 1
-is always returned as the value from eventfd_read() while ctx->count
-would've underflowed. It's not a huge deal because this should only be
-happening when the irqfd is shutdown but we should still fix it and
-avoid the spurious wakeup.
-
-Fixes: cb289d6244a3 ("eventfd - allow atomic read and waitqueue remove")
-Signed-off-by: Wen Yang <wenyang.linux@foxmail.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Dylan Yudaken <dylany@fb.com>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Message-Id: <tencent_7588DFD1F365950A757310D764517A14B306@qq.com>
-[brauner: rewrite commit message and add explanation how this underflow can happen]
-Signed-off-by: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/eventfd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/eventfd.c b/fs/eventfd.c
-index 95850a13ce8d0..1ffbf7c1cd16d 100644
---- a/fs/eventfd.c
-+++ b/fs/eventfd.c
-@@ -189,7 +189,7 @@ void eventfd_ctx_do_read(struct eventfd_ctx *ctx, __u64 *cnt)
- {
- 	lockdep_assert_held(&ctx->wqh.lock);
- 
--	*cnt = (ctx->flags & EFD_SEMAPHORE) ? 1 : ctx->count;
-+	*cnt = ((ctx->flags & EFD_SEMAPHORE) && ctx->count) ? 1 : ctx->count;
- 	ctx->count -= *cnt;
- }
- EXPORT_SYMBOL_GPL(eventfd_ctx_do_read);
--- 
-2.40.1
-
-
-
+[1/1] vfs: fix readahead(2) on block devices
+      https://git.kernel.org/vfs/vfs/c/d05ad99006a6
