@@ -2,53 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E1F4379BC83
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Sep 2023 02:14:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E98D79C0CD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Sep 2023 02:21:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230004AbjIKUwY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Sep 2023 16:52:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38100 "EHLO
+        id S242090AbjIKU5d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Sep 2023 16:57:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235446AbjIKIjF (ORCPT
+        with ESMTP id S235444AbjIKIjF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Mon, 11 Sep 2023 04:39:05 -0400
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57B35FB
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Sep 2023 01:39:01 -0700 (PDT)
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-26b10a6dbcaso5296131a91.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Sep 2023 01:39:01 -0700 (PDT)
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC573110
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Sep 2023 01:39:00 -0700 (PDT)
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-27405baf9fdso1193980a91.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Sep 2023 01:39:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1694421540; x=1695026340;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=HxyTrS612uNKWLRlaUPNGhJmV5igMh7sLf46Do9wjCw=;
-        b=WibXr0TqF0CAZL17wtlBaOefi8MvEHmOitZZatwsR4eZaOcry6BWETdB5p4IV3RWfd
-         wCWs+WIpFg1UtJCDMqMT0ZJTgU0FNQjZI/2oUUTh/RTgwM/72SvM16pi4r7qfRDzDHn/
-         g6Ja6kwspUwbgssDl638LV8ei+w7Bi2c3RA/HNW2LjzF7tElUNcWmh2qLVvG+ya0wQFj
-         GNnKrW2+sWdjveV1x8fRKX0If8f4Hf9dXXmnFAAyfX4Z763SV9j6IQZwmuxCQSyFcmqI
-         tYWDK/oZ3uUrtSh7Xz3NT4VCDTtC4FfGCryu4PzxJSE89YjdWXL+iFqfu82rr/6RnQba
-         F1Gg==
-X-Gm-Message-State: AOJu0Yxar7fZXEnX/Tpr2WRPdwGcV/SzJbHlJyBqDt5hGto4uxvCPrp7
-        NhuUup66UcHbstejTwrdoYEXRCubPuyMzssGQmjUCjogzu4o
-X-Google-Smtp-Source: AGHT+IHKHEgB1RR9mmJEKW34kFroUCHNZp5Vp9br5ZbLneb8mLVH4M/WR/IvGtAsOTq1oOqZc5l0j76YqKyoZ6G2LvFEqBGW1k0p
+        bh=uyaN6rEQvrtqvuoz0J35ELkTel097NqC/K/27b1sa8g=;
+        b=dBkjBGBp3vlkafAblUv7sru6i2jL+8cnu9uTrTHJph3Nqgk+pj12Itwx8rD5uYr2H/
+         TcuYF9A14I2h+4Qkv8RAAT7Cgjp1WfUAjORKvmiKL4OkLEGg0PLL9xTgu7oESzqlSLoL
+         sP3eC+LFbJvLyI0nfTcknlWec6g1b6SRqp2G93K9keSp3aW1ji7OTlt9HhHdDjYvoEQN
+         xY9vSJiY/VjaLgw0DbzdRYKLRySetpeQhynnQFHHSVQWsgNUmU2okYvOUmsOHKX6r8/i
+         dxgiH0BlqR6HZIKTySWEFCEBagGNzowpO7xBsP5D2DxcyrnXbjjIqDflrJQ1Jdhikqjs
+         48nQ==
+X-Gm-Message-State: AOJu0YwsHflqYz3hX6udWjjlicH+1yvW+uvE/HDmwT6huOuzqerBErV6
+        5PXKMEXxJBwSBstMuowbK89OG+FcGazavLEkb/pNZpLo/nzU
+X-Google-Smtp-Source: AGHT+IHv+XQ5yVHtiGfe01TaQaLlKHXS2m34PsHNh68tLbH/A0BiyQ2a9le/dycfkurYDGPUBpxy7/ge7NEdOdPg3RfU88HIGTsH
 MIME-Version: 1.0
-X-Received: by 2002:a17:90b:8ca:b0:26b:159a:3a9e with SMTP id
- ds10-20020a17090b08ca00b0026b159a3a9emr2306611pjb.7.1694421540810; Mon, 11
+X-Received: by 2002:a17:90b:fd8:b0:26d:1f4b:ed2e with SMTP id
+ gd24-20020a17090b0fd800b0026d1f4bed2emr2328167pjb.0.1694421540393; Mon, 11
  Sep 2023 01:39:00 -0700 (PDT)
 Date:   Mon, 11 Sep 2023 01:39:00 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000a353f06051142fb@google.com>
-Subject: [syzbot] Monthly v9fs report (Sep 2023)
-From:   syzbot <syzbot+list71a44b7d71b8fc9417b4@syzkaller.appspotmail.com>
-To:     asmadeus@codewreck.org, ericvh@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        lucho@ionkov.net, syzkaller-bugs@googlegroups.com,
-        v9fs@lists.linux.dev
+Message-ID: <00000000000003da0a0605114267@google.com>
+Subject: [syzbot] Monthly exfat report (Sep 2023)
+From:   syzbot <syzbot+listcc1f634ca16d17342a27@syzkaller.appspotmail.com>
+To:     linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, sj1557.seo@samsung.com,
+        syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no
+X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
+        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -56,26 +55,24 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello v9fs maintainers/developers,
+Hello exfat maintainers/developers,
 
-This is a 31-day syzbot report for the v9fs subsystem.
+This is a 31-day syzbot report for the exfat subsystem.
 All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/v9fs
+https://syzkaller.appspot.com/upstream/s/exfat
 
-During the period, 2 new issues were detected and 0 were fixed.
-In total, 7 issues are still open and 27 have been fixed so far.
+During the period, 0 new issues were detected and 0 were fixed.
+In total, 5 issues are still open and 12 have been fixed so far.
 
 Some of the still happening issues:
 
 Ref Crashes Repro Title
-<1> 793     Yes   WARNING in v9fs_fid_get_acl
-                  https://syzkaller.appspot.com/bug?extid=a83dc51a78f0f4cf20da
-<2> 561     Yes   WARNING in inc_nlink (3)
-                  https://syzkaller.appspot.com/bug?extid=2b3af42c0644df1e4da9
-<3> 205     Yes   BUG: corrupted list in p9_fd_cancelled (2)
-                  https://syzkaller.appspot.com/bug?extid=1d26c4ed77bc6c5ed5e6
-<4> 9       No    WARNING: refcount bug in p9_req_put (2)
-                  https://syzkaller.appspot.com/bug?extid=3ba8f2097df93bc26d2f
+<1> 62      No    INFO: task hung in exfat_sync_fs
+                  https://syzkaller.appspot.com/bug?extid=205c2644abdff9d3f9fc
+<2> 26      Yes   INFO: task hung in exfat_write_inode
+                  https://syzkaller.appspot.com/bug?extid=2f73ed585f115e98aee8
+<3> 8       Yes   INFO: task hung in __generic_file_fsync (3)
+                  https://syzkaller.appspot.com/bug?extid=ed920a72fd23eb735158
 
 ---
 This report is generated by a bot. It may contain errors.
