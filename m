@@ -2,162 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 28A9079C17E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Sep 2023 03:14:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4361E79C163
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Sep 2023 02:58:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233394AbjILBOs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Sep 2023 21:14:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57572 "EHLO
+        id S232294AbjILA6W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Sep 2023 20:58:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233384AbjILBO2 (ORCPT
+        with ESMTP id S232073AbjILA6I (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Sep 2023 21:14:28 -0400
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2ED8E19C347
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Sep 2023 18:02:56 -0700 (PDT)
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-76ef80a503fso313208385a.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Sep 2023 18:02:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1694480417; x=1695085217; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=pPRxdQYWFbbSl+jHzMVmAydNP48vWrPe/8h3KIcG/lw=;
-        b=2bgMzYkB5XZKBPZN3R2HxRPiAxUSLns9rJtDG5kR4Hb8AMQxRnVxM/QhC9jPDasAl6
-         gDQi+TEWW2p5iBi/w2HNFCAgVhir6wqaa641EGaibnu98P3DXdKHs63mqnJXY/huF+Ql
-         jylbIUAvxVI6Mc288cWDfoAHslx7Sogu+2asZvcZHlcln/q78cHeK3ryA4NB86/flvAg
-         M1GHn15J93bnFKHFlmLJAtcohYrS0/g/sWz4CdDQPifQARo2ZPMdtwcbxL67jVaHrkjH
-         IRiXYldCJl25O8bVkBfBpxWmZhsfcv+J3Z2SQh+67fn74jF/TuKn4J4jLcDasM+7Owc3
-         MDEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694480417; x=1695085217;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pPRxdQYWFbbSl+jHzMVmAydNP48vWrPe/8h3KIcG/lw=;
-        b=cKGrTHg8xjiHRbYe32dkTgILLLatuK8wL6S48iUPNQ2l5RBpA0qwRk1mhsovTT5RYp
-         uGtXZLn4J3kDdYAMz+kx1gkQf/l+fY5UQ4NJlacSMcCVrhWtrKOfIPp8W7rOCMq3IaIT
-         qhr3bTv67+Nr22EYrYDdRcEPFfD1ewvlUee0EOe6R9aymkMmY2A1/A10qbTR6OnxOcX9
-         22sjNHeY0MG7lD8gTcBYbaJ2tyVjHDEPu/cggM1HhZRrcSFLkmIfgK0hzv9PiA2tSTEm
-         qVOqb4Q0T83bhZeaIqSg9L0AeeSDePEbg1uWART5c4KXTaNsup2tD9O9IItOJpBRO8dz
-         2UDA==
-X-Gm-Message-State: AOJu0YwGUA/s5+pBzYXgD1PPpp7EN7/xD7eBkUtwLm+oXGe9snM2NAIc
-        gtj2L+A+EhMrANkb20ta+coxAZAzgiMKo9CSQg0=
-X-Google-Smtp-Source: AGHT+IFS5zLSL4VBgsFycphCfiFTrK4YLKRPjGCRN2XD6/1iVP8JzkDx3BIypwW0HdBlNiptjkSbug==
-X-Received: by 2002:a17:903:486:b0:1c0:c7ae:a8a2 with SMTP id jj6-20020a170903048600b001c0c7aea8a2mr8212750plb.35.1694478196991;
-        Mon, 11 Sep 2023 17:23:16 -0700 (PDT)
-Received: from dread.disaster.area (pa49-195-66-88.pa.nsw.optusnet.com.au. [49.195.66.88])
-        by smtp.gmail.com with ESMTPSA id jd19-20020a170903261300b001bb0eebd90asm7106688plb.245.2023.09.11.17.23.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Sep 2023 17:23:16 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-        (envelope-from <david@fromorbit.com>)
-        id 1qfrBS-00E01A-0C;
-        Tue, 12 Sep 2023 10:23:14 +1000
-Date:   Tue, 12 Sep 2023 10:23:14 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc:     Theodore Ts'o <tytso@mit.edu>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>, ksummit@lists.linux.dev,
+        Mon, 11 Sep 2023 20:58:08 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B6E1144EB4;
+        Mon, 11 Sep 2023 17:49:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1694479762; x=1726015762;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=oLzf0xFFu11Gps4vsJbzS9rWCswHgzXvG1WtldyxkjU=;
+  b=P6TvxlYMLGuF9M7f123yoNr6B3yQstBodA/ica6TRNKo7TlErUbntqUc
+   kJWNG3FchCYwcqjBLCkEnz7Dbta51IuKRwgIWrxUaxavrekftER3X6cZ9
+   eslFJh52M8f2Sh0ZyG5VszY7y7uzrBOcY/j5E+SoBnRMhMRlmRdBWjmo8
+   JyA44iXezZWFHA+N3eGGIdmw1f9WcTc4p7/l9qjcSY6folRZysCN0aofF
+   OylTnVYBdEFpyph1DxoGXf2xFbtotlyzK8roEhYZ0mxb+Xp4Tp2HzV2gP
+   fJKtQNbn4kr9/Sqkp9XZbW4ECe1G3Y6Rj32URIpLnC0XSPPLhvGEhGVEo
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10830"; a="380945743"
+X-IronPort-AV: E=Sophos;i="6.02,244,1688454000"; 
+   d="scan'208";a="380945743"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2023 17:47:04 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10830"; a="867153834"
+X-IronPort-AV: E=Sophos;i="6.02,244,1688454000"; 
+   d="scan'208";a="867153834"
+Received: from lkp-server01.sh.intel.com (HELO 59b3c6e06877) ([10.239.97.150])
+  by orsmga004.jf.intel.com with ESMTP; 11 Sep 2023 17:47:01 -0700
+Received: from kbuild by 59b3c6e06877 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1qfrYR-0006zu-1p;
+        Tue, 12 Sep 2023 00:46:59 +0000
+Date:   Tue, 12 Sep 2023 08:46:47 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Krister Johansen <kjlx@templeofstupid.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [MAINTAINERS/KERNEL SUMMIT] Trust and maintenance of file systems
-Message-ID: <ZP+vcgAOyfqWPcXT@dread.disaster.area>
-References: <ZO9NK0FchtYjOuIH@infradead.org>
- <ZPe0bSW10Gj7rvAW@dread.disaster.area>
- <ZPe4aqbEuQ7xxJnj@casper.infradead.org>
- <8dd2f626f16b0fc863d6a71561196950da7e893f.camel@HansenPartnership.com>
- <ZPyS4J55gV8DBn8x@casper.infradead.org>
- <a21038464ad0afd5dfb88355e1c244152db9b8da.camel@HansenPartnership.com>
- <20230911031015.GF701295@mit.edu>
- <5dd21470139df5de7f02608f453469023f50d704.camel@HansenPartnership.com>
+Cc:     oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+        German Maglione <gmaglione@redhat.com>,
+        Greg Kurz <groug@kaod.org>, Max Reitz <mreitz@redhat.com>
+Subject: Re: [PATCH 1/2] fuse: revalidate: move lookup into a separate
+ function
+Message-ID: <202309120853.QbAMM1to-lkp@intel.com>
+References: <9a2b0c5b625cd88c561289bf7d4d7dfe305c10ed.1693440240.git.kjlx@templeofstupid.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5dd21470139df5de7f02608f453469023f50d704.camel@HansenPartnership.com>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <9a2b0c5b625cd88c561289bf7d4d7dfe305c10ed.1693440240.git.kjlx@templeofstupid.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 11, 2023 at 03:03:45PM -0400, James Bottomley wrote:
-> On Sun, 2023-09-10 at 23:10 -0400, Theodore Ts'o wrote:
-> > On Sun, Sep 10, 2023 at 03:51:42PM -0400, James Bottomley wrote:
-> [...]
-> > > Perhaps we should also go back to seeing if we can prize some
-> > > resources out of the major moneymakers in the cloud space.  After
-> > > all, a bug that could cause a cloud exploit might not be even
-> > > exploitable on a personal laptop that has no untrusted users.
-> > 
-> > Actually, I'd say this is backwards.  Many of these issues, and I'd
-> > argue all that involve an maliciously corrupted file system, are not
-> > actually an issue in the cloud space, because we *already* assume
-> > that the attacker may have root.  After all, anyone can pay their $5
-> > CPU/hour, and get an Amazon or Google or Azure VM, and then run
-> > arbitrary workloads as root.
-> 
-> Well, that was just one example.  Another way cloud companies could
-> potentially help is their various AI projects: I seem to get daily
-> requests from AI people for me to tell them just how AI could help
-> Linux.  When I suggest bug report triage and classification would be my
-> number one thing, they all back off faster than a mouse crashing a cat
-> convention with claims like "That's too hard a problem" and also that
-> in spite of ChatGPT getting its facts wrong and spewing rubbish for
-> student essays, it wouldn't survive the embarrassment of being
-> ridiculed by kernel developers for misclassifying bug reports.
+Hi Krister,
 
-No fucking way.
+kernel test robot noticed the following build warnings:
 
-Just because you can do something it doesn't make it right or
-ethical.  It is not ethical to experiment on human subjects without
-their consent.  When someone asks the maintainer of a bot to stop
-doing something because it is causing harm to people, then ethics
-dictate that the bot should be *stopped immediately* regardless of
-whatever other benefits it might have.
+[auto build test WARNING on linus/master]
+[also build test WARNING on v6.6-rc1 next-20230911]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-This is one of the major problems with syzbot: we can't get it
-turned off even though it is clearly doing harm to people.  We
-didn't consent to being subject to the constant flood of issues that
-it throws our way, and despite repeated requests for it to be
-changed or stopped to reduce the harm it is doing the owners of the
-bot refuse to change anything. If anything, they double down and
-make things worse for the people they send bug reports to (e.g. by
-adding explicit writes to the block device under mounted mounted
-filesystems).
+url:    https://github.com/intel-lab-lkp/linux/commits/Krister-Johansen/fuse-revalidate-move-lookup-into-a-separate-function/20230912-051352
+base:   linus/master
+patch link:    https://lore.kernel.org/r/9a2b0c5b625cd88c561289bf7d4d7dfe305c10ed.1693440240.git.kjlx%40templeofstupid.com
+patch subject: [PATCH 1/2] fuse: revalidate: move lookup into a separate function
+config: m68k-allyesconfig (https://download.01.org/0day-ci/archive/20230912/202309120853.QbAMM1to-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20230912/202309120853.QbAMM1to-lkp@intel.com/reproduce)
 
-In this context, the bot and it's owners need to be considered rogue
-actors. The owners of the bot just don't seem to care about the harm
-it is doing and largely refuse to do anything to reduce that harm.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202309120853.QbAMM1to-lkp@intel.com/
 
-Suggesting that the solution to the harm a rogue testing bot is
-causing people in the community is that we should to subject those
-same people to *additional AI-based bug reporting experiments
-without their consent* is beyond my comprehension.
+All warnings (new ones prefixed by >>):
 
-> I'm not sure peer pressure works on the AI community, but surely if
-> enough of us asked, they might one day overcome their fear of trying it
-> ...
+   fs/fuse/dir.c: In function 'fuse_dentry_revalidate_lookup':
+>> fs/fuse/dir.c:194:28: warning: variable 'fi' set but not used [-Wunused-but-set-variable]
+     194 |         struct fuse_inode *fi;
+         |                            ^~
 
-Fear isn't an issue here. Anyone with even a moderate concern about
-ethics understands that you do not experiment on people without
-their explicit consent  (*cough* UoM and hypocrite commits *cough*).
-Subjecting mailing lists to experimental AI generated bug reports
-without explicit opt-in consent from the people who receive those
-bug reports is really a total non-starter.
 
-Testing bots aren't going away any time soon, but new bots -
-especially experimental ones - really need to be opt-in. We most
-certainly do not need a repeat of the uncooperative, hostile "we've
-turned it on and you can't opt out" model that syzbot uses...
+vim +/fi +194 fs/fuse/dir.c
 
-Cheers,
+   185	
+   186	static int fuse_dentry_revalidate_lookup(struct fuse_mount *fm,
+   187						 struct dentry *entry,
+   188						 struct inode *inode,
+   189						 struct fuse_entry_out *outarg,
+   190						 bool *lookedup)
+   191	{
+   192		struct dentry *parent;
+   193		struct fuse_forget_link *forget;
+ > 194		struct fuse_inode *fi;
+   195		FUSE_ARGS(args);
+   196		int ret;
+   197	
+   198		forget = fuse_alloc_forget();
+   199		ret = -ENOMEM;
+   200		if (!forget)
+   201			goto out;
+   202	
+   203		parent = dget_parent(entry);
+   204		fuse_lookup_init(fm->fc, &args, get_node_id(d_inode(parent)),
+   205				 &entry->d_name, outarg);
+   206		ret = fuse_simple_request(fm, &args);
+   207		dput(parent);
+   208	
+   209		/* Zero nodeid is same as -ENOENT */
+   210		if (!ret && !outarg->nodeid)
+   211			ret = -ENOENT;
+   212		if (!ret) {
+   213			fi = get_fuse_inode(inode);
+   214			if (outarg->nodeid != get_node_id(inode) ||
+   215			    (bool) IS_AUTOMOUNT(inode) != (bool) (outarg->attr.flags & FUSE_ATTR_SUBMOUNT)) {
+   216				fuse_queue_forget(fm->fc, forget,
+   217						  outarg->nodeid, 1);
+   218				goto invalid;
+   219			}
+   220			*lookedup = true;
+   221		}
+   222		kfree(forget);
+   223		if (ret == -ENOMEM || ret == -EINTR)
+   224			goto out;
+   225		if (ret || fuse_invalid_attr(&outarg->attr) ||
+   226		    fuse_stale_inode(inode, outarg->generation, &outarg->attr)) {
+   227			goto invalid;
+   228		}
+   229	
+   230		ret = 1;
+   231	out:
+   232		return ret;
+   233	
+   234	invalid:
+   235		ret = 0;
+   236		goto out;
+   237	}
+   238	
 
-Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
