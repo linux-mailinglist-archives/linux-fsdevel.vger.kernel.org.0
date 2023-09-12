@@ -2,158 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C617079D617
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Sep 2023 18:20:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D1CD79D66B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Sep 2023 18:36:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236627AbjILQUR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Sep 2023 12:20:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35458 "EHLO
+        id S236927AbjILQgK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Sep 2023 12:36:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44106 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230017AbjILQUQ (ORCPT
+        with ESMTP id S236874AbjILQgJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Sep 2023 12:20:16 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B562310E7;
-        Tue, 12 Sep 2023 09:20:12 -0700 (PDT)
-Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38CFwVEZ009758;
-        Tue, 12 Sep 2023 16:19:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=OU5X+ywlBGi0Cq66yvBzsLeNnGqPKL1F+bDp2X6ASbk=;
- b=NXWb1rycbzdFsLmHjfLavD78DrP0d+b39YbLpyIxFw/dnfJfutei/3TaOw/6cQy3Sqqc
- WukgYle17sYBMtBb9otGBPVeOLCX2WU43zeGHH8BonXTJVj7NxbosA4JowBcGY5lL6py
- 4jNVEuS4y5yR3kFYkaA9My6rc8OECltDWVECg5vjboWf6AR2/6+42yPMcznAH229DP40
- nmrUS2sYkHEIhtPbwcnk/ekwtczKeR5xS+mkoZ5m2pllTo4MiHaI7Cz2j/7ofv8zqqPg
- Ruj8+oxhYtiR9cwziEjdn3774SlMSMyVjjbeIxci8t4pJAgwk+8/2gsukNcklun1v9X8 hg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3t2u3gs29a-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 12 Sep 2023 16:19:32 +0000
-Received: from m0353726.ppops.net (m0353726.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 38CFwiqq009986;
-        Tue, 12 Sep 2023 16:19:31 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3t2u3gs28q-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 12 Sep 2023 16:19:31 +0000
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-        by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 38CFxncY002779;
-        Tue, 12 Sep 2023 16:19:29 GMT
-Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
-        by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3t14hkvchs-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 12 Sep 2023 16:19:29 +0000
-Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
-        by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 38CGJSBZ4522700
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 12 Sep 2023 16:19:28 GMT
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9E84E58056;
-        Tue, 12 Sep 2023 16:19:28 +0000 (GMT)
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DF7265803F;
-        Tue, 12 Sep 2023 16:19:26 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-        by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTPS;
-        Tue, 12 Sep 2023 16:19:26 +0000 (GMT)
-Message-ID: <82486de4-2917-afb6-2ae3-6ea7f1346dc0@linux.ibm.com>
-Date:   Tue, 12 Sep 2023 12:19:25 -0400
+        Tue, 12 Sep 2023 12:36:09 -0400
+Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5F1F10EB
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Sep 2023 09:36:05 -0700 (PDT)
+Received: by mail-pl1-x62b.google.com with SMTP id d9443c01a7336-1c3a2ea2816so175865ad.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Sep 2023 09:36:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1694536565; x=1695141365; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rBrBJw2gZiMOtwReeER2gBrgb6ZIuVFflAABYnAKhrk=;
+        b=RGNjMKh8qtLWWtNHR1wJBKmmO6Da0yuynqUzZvvRMA0Rciin3ZAmTpJwfj5BufiMfY
+         Mkl3XrVasZdL5kGXDHOZxx8poW27Tgsn91AarlLnmHElWThM+0+H7grnZ9YfcxzIUw2f
+         mBTZ11LB2nVsBGP7XGMlH8m5D5H9aw2cxrloTRR5Tz0RL+eghmTwyAVeNc9qWSVgoRB2
+         aYDjky+XJi/yVfBB3IC1Z7Zu+xXN0d9OV1+DRBRzZSOtABUnWvSVZz25Ij4j2Nj+aud8
+         szKbYP/fs9BDtV6ZyY52pWK2InJYDl9GevrU3ubJTRPoYaKdUK3q8xNJOTKFHCNSRqB8
+         Ou2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694536565; x=1695141365;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rBrBJw2gZiMOtwReeER2gBrgb6ZIuVFflAABYnAKhrk=;
+        b=arAF+khn/khqfUbsX1JcLIbLZwLc1Z6H9z3H0yiI4g68+x9Kq9dQ/tCahAuDv3eemf
+         qukMOrwp2Ydvgf8KizFUKPFt1/XvkcUoYwWn2OFoA5GgSBqFR9lTY9SxloAjIQBdZ3kL
+         GJZrvy8VhsnhW1Luy9x363CDYH6xK3Z3FMWWk5+kg8PSheDs5cJz2WGOO2mje1dqMRa+
+         /ieWybmWF9W5NEYsBpmvZb1Zz/2+qzhqbBbRZspuFdS7JiwCGPoHd7iXTwkXKzvSgDtp
+         drcSA68aBm2WKh2qusfce3qpJoEChHs/U3WZIfrqrzFpsz5LP3YNWZUvvjgSwkYWz6bH
+         1YOw==
+X-Gm-Message-State: AOJu0Yw5zD3OVtNIiGpSN6Qe5kQyFXtc/AccKxj/ORAu8c1Uh1XXrdhb
+        YsO3mUE/i6uNQG3ldE8ztuqgTvnkN6BUuMz/lU9gNNQ0/YQkMNnBXfsNsA==
+X-Google-Smtp-Source: AGHT+IH3yw1KQNicyRwhKFqkEhYAfiCu9BnkuuCHiTL6C29NVJIiyzWoabvHTqX9X9C7G33wNG3lJ/jg+qgo0YhIAeM=
+X-Received: by 2002:a17:902:fb05:b0:1bf:208a:22ff with SMTP id
+ le5-20020a170902fb0500b001bf208a22ffmr341670plb.6.1694536565042; Tue, 12 Sep
+ 2023 09:36:05 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v3 25/25] integrity: Switch from rbtree to LSM-managed
- blob for integrity_iint_cache
-Content-Language: en-US
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
-        viro@zeniv.linux.org.uk, brauner@kernel.org,
-        chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de,
-        kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
-        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        dhowells@redhat.com, jarkko@kernel.org,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        casey@schaufler-ca.com
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
-References: <20230904133415.1799503-1-roberto.sassu@huaweicloud.com>
- <20230904134049.1802006-6-roberto.sassu@huaweicloud.com>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-In-Reply-To: <20230904134049.1802006-6-roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: aAyehIvhZvfb09muPbWZQIe5a9y5srC6
-X-Proofpoint-ORIG-GUID: NiIkQ0Xddo7ctSZhQz6cjyAvKBZ1UWmo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-09-12_14,2023-09-05_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=736
- suspectscore=0 priorityscore=1501 lowpriorityscore=0 adultscore=0
- mlxscore=0 spamscore=0 malwarescore=0 impostorscore=0 phishscore=0
- clxscore=1015 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2308100000 definitions=main-2309120134
+References: <00000000000019e05005ef9c1481@google.com> <00000000000088fbf106052bab18@google.com>
+In-Reply-To: <00000000000088fbf106052bab18@google.com>
+From:   Aleksandr Nogikh <nogikh@google.com>
+Date:   Tue, 12 Sep 2023 18:35:53 +0200
+Message-ID: <CANp29Y54FeFU3Wtw9qXM81dha9zLyj_nvqHqDpRE6T9AiL8DWA@mail.gmail.com>
+Subject: Re: [syzbot] [xfs?] KASAN: stack-out-of-bounds Read in xfs_buf_delwri_submit_buffers
+To:     syzbot <syzbot+d2cdeba65d32ed1d2c4d@syzkaller.appspotmail.com>
+Cc:     chandan.babu@oracle.com, davem@davemloft.net, djwong@kernel.org,
+        hdanton@sina.com, jiri@nvidia.com, kuba@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hmm, no, this might have caused the reproducer to stop working, but it
+has nothing to do with the actual issue.
 
-On 9/4/23 09:40, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
->
-> Before the security field of kernel objects could be shared among LSMs with
-> the LSM stacking feature, IMA and EVM had to rely on an alternative storage
-> of inode metadata. The association between inode metadata and inode is
-> maintained through an rbtree.
->
-> With the reservation mechanism offered by the LSM infrastructure, the
-> rbtree is no longer necessary, as each LSM could reserve a space in the
-> security blob for each inode. Thus, request from the 'integrity' LSM a
-> space in the security blob for the pointer of inode metadata
-> (integrity_iint_cache structure).
->
-> Prefer this to allocating the integrity_iint_cache structure directly, as
-> IMA would require it only for a subset of inodes. Always allocating it
-> would cause a waste of memory.
->
-> Introduce two primitives for getting and setting the pointer of
-> integrity_iint_cache in the security blob, respectively
-> integrity_inode_get_iint() and integrity_inode_set_iint(). This would make
-> the code more understandable, as they directly replace rbtree operations.
->
-> Locking is not needed, as access to inode metadata is not shared, it is per
-> inode.
->
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
-> ---
->
-> @@ -145,10 +91,8 @@ static void integrity_inode_free(struct inode *inode)
->   	if (!IS_IMA(inode))
->   		return;
+Please ignore the bisection result.
 
-I think you can remove this check !IS_IMA()  as well since the next 
-function called here integrity_iint_find() already has this check:
+This commit has been popping up quite a number of times already. I'll
+add it to the syzbot's ignore list.
 
-struct integrity_iint_cache *integrity_iint_find(struct inode *inode)
-{
-         if (!IS_IMA(inode))
-                 return NULL;
-
-         return integrity_inode_get_iint(inode);
-}
-
-
->   
-> -	write_lock(&integrity_iint_lock);
-> -	iint = __integrity_iint_find(inode);
-> -	rb_erase(&iint->rb_node, &integrity_iint_tree);
-> -	write_unlock(&integrity_iint_lock);
-> +	iint = integrity_iint_find(inode);         <--------------
-> +	integrity_inode_set_iint(inode, NULL);
->   
->   	iint_free(iint);
->   }
+On Tue, Sep 12, 2023 at 6:09=E2=80=AFPM syzbot
+<syzbot+d2cdeba65d32ed1d2c4d@syzkaller.appspotmail.com> wrote:
+>
+> syzbot suspects this issue was fixed by commit:
+>
+> commit d772781964415c63759572b917e21c4f7ec08d9f
+> Author: Jakub Kicinski <kuba@kernel.org>
+> Date:   Fri Jan 6 06:33:54 2023 +0000
+>
+>     devlink: bump the instance index directly when iterating
+>
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D15554ba468=
+0000
+> start commit:   3ecc37918c80 Merge tag 'media/v6.1-4' of git://git.kernel=
+...
+> git tree:       upstream
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dd58e7fe7f9cf5=
+e24
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3Dd2cdeba65d32ed1=
+d2c4d
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D170a950b880=
+000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D1625948f88000=
+0
+>
+> If the result looks correct, please mark the issue as fixed by replying w=
+ith:
+>
+> #syz fix: devlink: bump the instance index directly when iterating
+>
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisect=
+ion
+>
+> --
+> You received this message because you are subscribed to the Google Groups=
+ "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an=
+ email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgi=
+d/syzkaller-bugs/00000000000088fbf106052bab18%40google.com.
