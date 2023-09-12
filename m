@@ -2,154 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AEA8079C10E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Sep 2023 02:21:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28A9079C17E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Sep 2023 03:14:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229993AbjILAFh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Sep 2023 20:05:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58034 "EHLO
+        id S233394AbjILBOs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Sep 2023 21:14:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57572 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229997AbjILAFg (ORCPT
+        with ESMTP id S233384AbjILBO2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Sep 2023 20:05:36 -0400
-Received: from mail-pg1-x550.google.com (mail-pg1-x550.google.com [IPv6:2607:f8b0:4864:20::550])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A8F715C896
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Sep 2023 17:02:00 -0700 (PDT)
-Received: by mail-pg1-x550.google.com with SMTP id 41be03b00d2f7-57774c725ebso1495445a12.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Sep 2023 17:02:00 -0700 (PDT)
+        Mon, 11 Sep 2023 21:14:28 -0400
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2ED8E19C347
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Sep 2023 18:02:56 -0700 (PDT)
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-76ef80a503fso313208385a.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Sep 2023 18:02:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1694480417; x=1695085217; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=pPRxdQYWFbbSl+jHzMVmAydNP48vWrPe/8h3KIcG/lw=;
+        b=2bgMzYkB5XZKBPZN3R2HxRPiAxUSLns9rJtDG5kR4Hb8AMQxRnVxM/QhC9jPDasAl6
+         gDQi+TEWW2p5iBi/w2HNFCAgVhir6wqaa641EGaibnu98P3DXdKHs63mqnJXY/huF+Ql
+         jylbIUAvxVI6Mc288cWDfoAHslx7Sogu+2asZvcZHlcln/q78cHeK3ryA4NB86/flvAg
+         M1GHn15J93bnFKHFlmLJAtcohYrS0/g/sWz4CdDQPifQARo2ZPMdtwcbxL67jVaHrkjH
+         IRiXYldCJl25O8bVkBfBpxWmZhsfcv+J3Z2SQh+67fn74jF/TuKn4J4jLcDasM+7Owc3
+         MDEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694476785; x=1695081585;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nGkwF0gYaz4cY8e4zOPO10SheJVop81xTC7Gspn6wAQ=;
-        b=VLBE40XbylvgoOc+AYxqdztxxoYLktoDJr4Xx1bic7RRerOdWv+721Ks3u4fAYQrDY
-         CnuiihnXuRbqM9bjpLnMbCHYEwKljjK1P3HBZSoTjxVFSrpPkttN0P088wDTGHGEYlbf
-         0HK9zRWwVI4X4ZE0RCrzl/7Llx0TYObh5iK7fGc1fHoq8OKHanthwtp6Eg3+7ZInXOTG
-         6E2AwEovHPFTQNx+HHZ2VLSP/xe7lygrJLsJQwoueZBHt+TyLAPuNRG0g2lJlHKk5e0J
-         4wVQmboEHFmW+2ExL96n7AHjbtmjQdaKcd2s9Prss89jfBFd8/WBEm0IA3sgEcA0rqKV
-         W6AQ==
-X-Gm-Message-State: AOJu0Yx6iBWT/Vhw5TSLLrwmPakWFbcpMv6tSifuwsOyEplV7KBmJ9zc
-        WX1p+p3ivHFUkIqBpxYExl/hhEGBAyTleKvGIOVa5LTm6L4BKoqSPA==
-X-Google-Smtp-Source: AGHT+IGOHBSTES1Jhg24gmV93v8EzHDuOqQQrx+qi2cRYhfOD1Z+VsaGSxDET7SIecNgCzg4HGTRR3Lfcha3DO9zipDO1K8RElwS
+        d=1e100.net; s=20230601; t=1694480417; x=1695085217;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pPRxdQYWFbbSl+jHzMVmAydNP48vWrPe/8h3KIcG/lw=;
+        b=cKGrTHg8xjiHRbYe32dkTgILLLatuK8wL6S48iUPNQ2l5RBpA0qwRk1mhsovTT5RYp
+         uGtXZLn4J3kDdYAMz+kx1gkQf/l+fY5UQ4NJlacSMcCVrhWtrKOfIPp8W7rOCMq3IaIT
+         qhr3bTv67+Nr22EYrYDdRcEPFfD1ewvlUee0EOe6R9aymkMmY2A1/A10qbTR6OnxOcX9
+         22sjNHeY0MG7lD8gTcBYbaJ2tyVjHDEPu/cggM1HhZRrcSFLkmIfgK0hzv9PiA2tSTEm
+         qVOqb4Q0T83bhZeaIqSg9L0AeeSDePEbg1uWART5c4KXTaNsup2tD9O9IItOJpBRO8dz
+         2UDA==
+X-Gm-Message-State: AOJu0YwGUA/s5+pBzYXgD1PPpp7EN7/xD7eBkUtwLm+oXGe9snM2NAIc
+        gtj2L+A+EhMrANkb20ta+coxAZAzgiMKo9CSQg0=
+X-Google-Smtp-Source: AGHT+IFS5zLSL4VBgsFycphCfiFTrK4YLKRPjGCRN2XD6/1iVP8JzkDx3BIypwW0HdBlNiptjkSbug==
+X-Received: by 2002:a17:903:486:b0:1c0:c7ae:a8a2 with SMTP id jj6-20020a170903048600b001c0c7aea8a2mr8212750plb.35.1694478196991;
+        Mon, 11 Sep 2023 17:23:16 -0700 (PDT)
+Received: from dread.disaster.area (pa49-195-66-88.pa.nsw.optusnet.com.au. [49.195.66.88])
+        by smtp.gmail.com with ESMTPSA id jd19-20020a170903261300b001bb0eebd90asm7106688plb.245.2023.09.11.17.23.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Sep 2023 17:23:16 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+        (envelope-from <david@fromorbit.com>)
+        id 1qfrBS-00E01A-0C;
+        Tue, 12 Sep 2023 10:23:14 +1000
+Date:   Tue, 12 Sep 2023 10:23:14 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc:     Theodore Ts'o <tytso@mit.edu>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>, ksummit@lists.linux.dev,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [MAINTAINERS/KERNEL SUMMIT] Trust and maintenance of file systems
+Message-ID: <ZP+vcgAOyfqWPcXT@dread.disaster.area>
+References: <ZO9NK0FchtYjOuIH@infradead.org>
+ <ZPe0bSW10Gj7rvAW@dread.disaster.area>
+ <ZPe4aqbEuQ7xxJnj@casper.infradead.org>
+ <8dd2f626f16b0fc863d6a71561196950da7e893f.camel@HansenPartnership.com>
+ <ZPyS4J55gV8DBn8x@casper.infradead.org>
+ <a21038464ad0afd5dfb88355e1c244152db9b8da.camel@HansenPartnership.com>
+ <20230911031015.GF701295@mit.edu>
+ <5dd21470139df5de7f02608f453469023f50d704.camel@HansenPartnership.com>
 MIME-Version: 1.0
-X-Received: by 2002:a17:903:22cc:b0:1c3:1ceb:97b6 with SMTP id
- y12-20020a17090322cc00b001c31ceb97b6mr4263397plg.7.1694472364628; Mon, 11 Sep
- 2023 15:46:04 -0700 (PDT)
-Date:   Mon, 11 Sep 2023 15:46:04 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000601fc406051d17bc@google.com>
-Subject: [syzbot] [hfs?] kernel BUG in hfs_btree_open (2)
-From:   syzbot <syzbot+f8aee4b1409f7e8e6e46@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,
-        SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5dd21470139df5de7f02608f453469023f50d704.camel@HansenPartnership.com>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Mon, Sep 11, 2023 at 03:03:45PM -0400, James Bottomley wrote:
+> On Sun, 2023-09-10 at 23:10 -0400, Theodore Ts'o wrote:
+> > On Sun, Sep 10, 2023 at 03:51:42PM -0400, James Bottomley wrote:
+> [...]
+> > > Perhaps we should also go back to seeing if we can prize some
+> > > resources out of the major moneymakers in the cloud space.  After
+> > > all, a bug that could cause a cloud exploit might not be even
+> > > exploitable on a personal laptop that has no untrusted users.
+> > 
+> > Actually, I'd say this is backwards.  Many of these issues, and I'd
+> > argue all that involve an maliciously corrupted file system, are not
+> > actually an issue in the cloud space, because we *already* assume
+> > that the attacker may have root.  After all, anyone can pay their $5
+> > CPU/hour, and get an Amazon or Google or Azure VM, and then run
+> > arbitrary workloads as root.
+> 
+> Well, that was just one example.  Another way cloud companies could
+> potentially help is their various AI projects: I seem to get daily
+> requests from AI people for me to tell them just how AI could help
+> Linux.  When I suggest bug report triage and classification would be my
+> number one thing, they all back off faster than a mouse crashing a cat
+> convention with claims like "That's too hard a problem" and also that
+> in spite of ChatGPT getting its facts wrong and spewing rubbish for
+> student essays, it wouldn't survive the embarrassment of being
+> ridiculed by kernel developers for misclassifying bug reports.
 
-syzbot found the following issue on:
+No fucking way.
 
-HEAD commit:    0bb80ecc33a8 Linux 6.6-rc1
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16abc6c7a80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=df91a3034fe3f122
-dashboard link: https://syzkaller.appspot.com/bug?extid=f8aee4b1409f7e8e6e46
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+Just because you can do something it doesn't make it right or
+ethical.  It is not ethical to experiment on human subjects without
+their consent.  When someone asks the maintainer of a bot to stop
+doing something because it is causing harm to people, then ethics
+dictate that the bot should be *stopped immediately* regardless of
+whatever other benefits it might have.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+This is one of the major problems with syzbot: we can't get it
+turned off even though it is clearly doing harm to people.  We
+didn't consent to being subject to the constant flood of issues that
+it throws our way, and despite repeated requests for it to be
+changed or stopped to reduce the harm it is doing the owners of the
+bot refuse to change anything. If anything, they double down and
+make things worse for the people they send bug reports to (e.g. by
+adding explicit writes to the block device under mounted mounted
+filesystems).
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/1d506cf29d25/disk-0bb80ecc.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ca5b56af4b3e/vmlinux-0bb80ecc.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/aa88aed611c1/bzImage-0bb80ecc.xz
+In this context, the bot and it's owners need to be considered rogue
+actors. The owners of the bot just don't seem to care about the harm
+it is doing and largely refuse to do anything to reduce that harm.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f8aee4b1409f7e8e6e46@syzkaller.appspotmail.com
+Suggesting that the solution to the harm a rogue testing bot is
+causing people in the community is that we should to subject those
+same people to *additional AI-based bug reporting experiments
+without their consent* is beyond my comprehension.
 
-loop2: detected capacity change from 0 to 64
-------------[ cut here ]------------
-kernel BUG at fs/hfs/btree.c:41!
-invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 11852 Comm: syz-executor.2 Not tainted 6.6.0-rc1-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/04/2023
-RIP: 0010:hfs_btree_open+0xf09/0xf20 fs/hfs/btree.c:41
-Code: 7e ff e9 7e fa ff ff 44 89 f1 80 e1 07 80 c1 03 38 c1 0f 8c 9b fa ff ff 4c 89 f7 e8 c1 ca 7e ff e9 8e fa ff ff e8 c7 df 24 ff <0f> 0b e8 c0 df 24 ff 0f 0b e8 b9 df 24 ff 0f 0b 0f 1f 80 00 00 00
-RSP: 0000:ffffc900034cf738 EFLAGS: 00010283
-RAX: ffffffff8268c3c9 RBX: ffff888036585ad0 RCX: 0000000000040000
-RDX: ffffc9000b664000 RSI: 000000000000586c RDI: 000000000000586d
-RBP: 0000000000000000 R08: ffffffff8268b627 R09: 1ffff11006cb0b75
-R10: dffffc0000000000 R11: ffffed1006cb0b76 R12: ffff8880210a2000
-R13: ffff888028f54008 R14: ffff888028f54000 R15: dffffc0000000000
-FS:  00007f73a031a6c0(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f8c2a9ba000 CR3: 0000000023db4000 CR4: 00000000003506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- hfs_mdb_get+0x1443/0x21b0 fs/hfs/mdb.c:199
- hfs_fill_super+0x107d/0x1790 fs/hfs/super.c:406
- mount_bdev+0x237/0x300 fs/super.c:1629
- legacy_get_tree+0xef/0x190 fs/fs_context.c:638
- vfs_get_tree+0x8c/0x280 fs/super.c:1750
- do_new_mount+0x28f/0xae0 fs/namespace.c:3335
- do_mount fs/namespace.c:3675 [inline]
- __do_sys_mount fs/namespace.c:3884 [inline]
- __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3861
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f739f67e1ea
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 09 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f73a0319ee8 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007f73a0319f80 RCX: 00007f739f67e1ea
-RDX: 0000000020000240 RSI: 0000000020000040 RDI: 00007f73a0319f40
-RBP: 0000000020000240 R08: 00007f73a0319f80 R09: 0000000000004012
-R10: 0000000000004012 R11: 0000000000000202 R12: 0000000020000040
-R13: 00007f73a0319f40 R14: 0000000000000285 R15: 0000000020000000
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:hfs_btree_open+0xf09/0xf20 fs/hfs/btree.c:41
-Code: 7e ff e9 7e fa ff ff 44 89 f1 80 e1 07 80 c1 03 38 c1 0f 8c 9b fa ff ff 4c 89 f7 e8 c1 ca 7e ff e9 8e fa ff ff e8 c7 df 24 ff <0f> 0b e8 c0 df 24 ff 0f 0b e8 b9 df 24 ff 0f 0b 0f 1f 80 00 00 00
-RSP: 0000:ffffc900034cf738 EFLAGS: 00010283
-RAX: ffffffff8268c3c9 RBX: ffff888036585ad0 RCX: 0000000000040000
-RDX: ffffc9000b664000 RSI: 000000000000586c RDI: 000000000000586d
-RBP: 0000000000000000 R08: ffffffff8268b627 R09: 1ffff11006cb0b75
-R10: dffffc0000000000 R11: ffffed1006cb0b76 R12: ffff8880210a2000
-R13: ffff888028f54008 R14: ffff888028f54000 R15: dffffc0000000000
-FS:  00007f73a031a6c0(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ff38ded7086 CR3: 0000000023db4000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> I'm not sure peer pressure works on the AI community, but surely if
+> enough of us asked, they might one day overcome their fear of trying it
+> ...
 
+Fear isn't an issue here. Anyone with even a moderate concern about
+ethics understands that you do not experiment on people without
+their explicit consent  (*cough* UoM and hypocrite commits *cough*).
+Subjecting mailing lists to experimental AI generated bug reports
+without explicit opt-in consent from the people who receive those
+bug reports is really a total non-starter.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Testing bots aren't going away any time soon, but new bots -
+especially experimental ones - really need to be opt-in. We most
+certainly do not need a repeat of the uncooperative, hostile "we've
+turned it on and you can't opt out" model that syzbot uses...
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Cheers,
 
-If the bug is already fixed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite bug's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the bug is a duplicate of another bug, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
