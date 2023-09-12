@@ -2,168 +2,244 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F17C79DBAB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Sep 2023 00:10:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FC8A79DC5A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Sep 2023 01:02:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234396AbjILWK6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Sep 2023 18:10:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42584 "EHLO
+        id S229476AbjILXCd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Sep 2023 19:02:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233189AbjILWK5 (ORCPT
+        with ESMTP id S230520AbjILXCb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Sep 2023 18:10:57 -0400
-Received: from mail-oo1-f80.google.com (mail-oo1-f80.google.com [209.85.161.80])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB76110E9
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Sep 2023 15:10:53 -0700 (PDT)
-Received: by mail-oo1-f80.google.com with SMTP id 006d021491bc7-573534fa5efso6078053eaf.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Sep 2023 15:10:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694556653; x=1695161453;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bg4x9Ei5cShEmm+xrzB6bN3O2q48k7uN+pXjT1so+no=;
-        b=P7NDJOKs3DaJWga1iutTCp59L8jt0TI4sr+Ng1oyS/qO6oeLjO1v5bC9L/PYrkoMV5
-         jLbh78sICi9WkmJ4sZfycJRvL13d8DHbGjVjtLz7ycFNMp1OioFlDt+9+JjGYSfd4CA+
-         x6+Vdxw7yRbqSecHgYdywyGhUxwTNwxe/hCYvlqAosjGgXXeu1zokEpp7Bahrb0SwLWG
-         zz4mlZDckIeYIi74Bdf42ODE+8d1cnn8yUImWVqe9BY01Dvfpv9VGj/hzDb0LOOhLyuV
-         uQnZVUUrl2CBS2Bf4KiYDTqWjx382JfJT4W7XxMK1DDcKYQ0aI/ds5igRMPQJq7cTNN8
-         uqpg==
-X-Gm-Message-State: AOJu0YwP7rX5W3HR0RfHIDdUcksllCAXFil+EBUVWrjRwmSOJG3spm5s
-        55+DTYF9kry5+7QlCZRwjY/C1tt2h+cV8AQJSfciWSpMk3tW
-X-Google-Smtp-Source: AGHT+IFg+PVOt0CyCuS8Og9h7oyEP00/P9KCv24WE/6Jna3eu60DuKJl5t6UFxNPuoS7NKeFVj+hjBOqjKQNkHUnAkzNaOZ13aCf
+        Tue, 12 Sep 2023 19:02:31 -0400
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2119.outbound.protection.outlook.com [40.107.237.119])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14D64189;
+        Tue, 12 Sep 2023 16:02:27 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Jy1xyPJs3tzDPOExCLao5jP5LiXT5j6M7pyfUsE5oLQBkoZ+ypu1f2ez7/v6zJM5t0yfZAHXbaHK1uunxDJMuGCTnBZM0QzyIWpO29dGl0W0ewhfiMYP8c+QnMrsORI1+TV+9xj97pNkhkAYi8QmVoW7bcN9S1agh9f5fEykoofeRf2dinIUdDkwuTWRgS7xYBa6aqjxyOBdr2k6TCtxcSBWiMtChwouQas/h04Uj871IcBlTLtZ3Kbe4Sl7ye/Mk6i5sviZSd8S+6Z4G9b89yooG2o0EoCQyX4IEPqsAylUJ3up0eSggYj0rRf9fW1MhzOfhzppf3RVSqiAdMdo9A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tE2Kp3WvxEQ0hgBpUgslgx3b5ISZevv7BfEGAWDD6hQ=;
+ b=clzwtmG1OG3UBZaG5I5uigY0GcwbxU96C8wI1qEP6JqitrDJj2+OTTzRoaY/SZicLFsU7kQJZiVLapZuPtTx49p1XTGomWpZLtw8YtpZih4X1CO81ZNNrnZaf2RdJQG8EV7lY1Rd4TNc6aWeH111HgIbwvdKaqVrfvtsVvpdQAQHi5+2UgPOck94SEvFEbESd+i8WSmzMPeJh3bXLaNUkTeUYonZAKCKAD2Lw1k5r8JAfdfPhJTf0g+k8Z1KgSQZxJlAQJdoRMDGeJLYZSG6bOx//cfYf5W0AIj3F38uKgmFn2g4RoTliFliendE3taP24cuKt4wIi9UgGaNCwysrw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=ucf.edu; dmarc=pass action=none header.from=ucf.edu; dkim=pass
+ header.d=ucf.edu; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucf.onmicrosoft.com;
+ s=selector2-ucf-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tE2Kp3WvxEQ0hgBpUgslgx3b5ISZevv7BfEGAWDD6hQ=;
+ b=fGu9R8p9wBbu8ZkMwLp4swNtwH9i/WNNX5iA2CKmQawk+dYBW/rX0R3eQyf19mLm+Kimo5Y1WeZqOdCrRVWH8HBujtJsoJtUmIiXNQ3c8UAsq0M4iLDUCZS6LaX79Qqj7kMe6jXlL0WoKbKRAq53VVFeuxcJX+RJVQWInUIFi/c=
+Received: from BL0PR11MB3106.namprd11.prod.outlook.com (2603:10b6:208:7a::11)
+ by DS0PR11MB7531.namprd11.prod.outlook.com (2603:10b6:8:14a::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6768.30; Tue, 12 Sep
+ 2023 23:02:25 +0000
+Received: from BL0PR11MB3106.namprd11.prod.outlook.com
+ ([fe80::713d:6260:57c8:d3ce]) by BL0PR11MB3106.namprd11.prod.outlook.com
+ ([fe80::713d:6260:57c8:d3ce%5]) with mapi id 15.20.6768.029; Tue, 12 Sep 2023
+ 23:02:24 +0000
+From:   Sanan Hasanov <Sanan.Hasanov@ucf.edu>
+To:     "willy@infradead.org" <willy@infradead.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "syzkaller@googlegroups.com" <syzkaller@googlegroups.com>,
+        "contact@pgazz.com" <contact@pgazz.com>
+Subject: KASAN: null-ptr-deref Read in filemap_fault
+Thread-Topic: KASAN: null-ptr-deref Read in filemap_fault
+Thread-Index: AQHZ4ct+BhcsU4wXUESm4cg1aigSwQ==
+Date:   Tue, 12 Sep 2023 23:02:23 +0000
+Message-ID: <BL0PR11MB31060BABA61005C5C8CBE092E1EEA@BL0PR11MB3106.namprd11.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=ucf.edu;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BL0PR11MB3106:EE_|DS0PR11MB7531:EE_
+x-ms-office365-filtering-correlation-id: 1a5b1094-3d20-4e6d-2831-08dbb3e4539f
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: wmap95hIFA2NljtLx3X3DshvLBBCmbAwdhRS7kC7RT0gUg6YKFsJt9KXlezyyJIATHnTJxbzM43o4XgUJWUmZ1lNF3oI2U3seV6RKNBcn880mSyJOMFLMcc1LWtkUfkJ04QmyBVGpkcfPSlgcli1jGJxK7F24/+Mc7tifF7OJbglRwdioVaW5YGeIl03HoGC/+DBvGOpCLviZ3zHh9IivYGERS3UzHwW2X0x0M5Ef/4VT4Wq7C5Dl1V2hdiy3vmn1qi1Pj/RGcy/jhYPy76qIKnHkqQ9R/yoxKUgAd/oaCbeK+INq228M2WmsK5LW97eljwZd+J8FaO7c5ayNIs/Y+dsKs0WGjNn3830zWZrrAtyOOGhKUPHbzdnpmQpnG3pecpvHX4ucfhvErqOg+vYeVEMmGghKhDR4fCBVa1/6sSKeOgJuQnHZOaM9KASm1Igh8Nvtlrm9qsgUQmJVk2fWNw9HJNjc9oU+UbCw8OvPgBJL90R4ED/xzphUHnxWKa89WQS4OPnxz7ndWxIr6R5B1xp8uqPEn/sZixHjeSVmoWeRjz6TNbqtQZLQZ6sKvfdYKhPFacITH7Qe0FLve3fINIWPelkMc+oyY6xIOZXA919bjU3tyEM+37NOZBcBLbEZbvn+S8HpUORPJa9hZ2juKTatjUbHDQhLgynuI7Aqoo=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL0PR11MB3106.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(136003)(396003)(39850400004)(346002)(366004)(376002)(1800799009)(451199024)(186009)(122000001)(5930299018)(6506007)(7696005)(71200400001)(33656002)(75432002)(38070700005)(55016003)(38100700002)(478600001)(45954011)(83380400001)(26005)(45080400002)(52536014)(86362001)(2906002)(9686003)(41300700001)(64756008)(966005)(76116006)(8936002)(8676002)(5660300002)(4326008)(110136005)(54906003)(786003)(66946007)(66446008)(316002)(66476007)(66556008);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?sGraPi2hfVDqMOvGoqfZnJ0PZ5KNm/nEB/stW5oKP7CuqH89o2Q54ziHxf?=
+ =?iso-8859-1?Q?rRtF2O0nhhlzQX2CqxSbRGK27mo1r862kxUxKZajBVLtLzvCsN0S2WSbJF?=
+ =?iso-8859-1?Q?oais8QgTbWtc92EmB7hNrrwATSxw/ez1QzJkvi7vUJSevd4TCrDXHmXghV?=
+ =?iso-8859-1?Q?3HW+JMpDYEyHEt6rzEHhUso4TVGrk3kmHbdoBW9Z+hItFKGJIHNrkFz/Gf?=
+ =?iso-8859-1?Q?FRf8+IEsVWoonE9mDw9/OF0TfyWUdIhBSxPo1KSoLCUE9MftNR2QL3IYMH?=
+ =?iso-8859-1?Q?6REg3rr9c3rzdBCOr+9A9aLS3PjKus0w7kemWcPPTvc74Lbl94p7nv9MON?=
+ =?iso-8859-1?Q?mVoK4eEtXvrlz7ekinjSMLsuwY41Wgas6rO0uBGf/vlZROabJ4PQpdPZxm?=
+ =?iso-8859-1?Q?VCGiYE9FpM0jlPhQuxSmn8twvd0wAgdm30lGBqxiGcbE0bph7Lx2z8P6NV?=
+ =?iso-8859-1?Q?1/s+fBV5ggnxj40TUozG23l+XcTuXyawmGw23og33Gw5qosAfCFX6skVPb?=
+ =?iso-8859-1?Q?wK2RMoT7rqibFVyAoNCq5RgKUaGsTWeXZYdE6J4e3ta+QMn+ipvWo1XT73?=
+ =?iso-8859-1?Q?cnTXNFRTI5NdH/tPXKj7ehu7Syu12f8m4AJbst6pKcZeP3jcoTpHtwV43y?=
+ =?iso-8859-1?Q?L3C14g8NedlMxrezcYsQ9mU0kRbqV26/aGq+/LHK/jh5HvjjkGxv4DvS39?=
+ =?iso-8859-1?Q?z38eijuHrBQQwRtbdmpcDmWCW3zNiUdjID/JGljKTjSToixgyTe9qYswMo?=
+ =?iso-8859-1?Q?/aEdlT0MgUpdy4UTfYwbA5XRbl7wSBsJPvry/QNxqi6IiVQFzZVanHL6a6?=
+ =?iso-8859-1?Q?ASOGshHRI1oJ/C7u9b3XqOZ31/kZJgPy4MQl8y8jSUnJLWRWPka15d76B4?=
+ =?iso-8859-1?Q?7NuHew3i0af9PazeIr68bWASH0Y7Eo6YovYRcncei6hE+z6BgMUZjMH/a/?=
+ =?iso-8859-1?Q?CSuHFjubyspO8laUBhLvVlccVwSFFO0WoMerGI4LzxFv+GkuIytnDctIu9?=
+ =?iso-8859-1?Q?ewB8UBDPDjrsVE//PwGnsaVE+OoZX3eU726Pmlhwo5+WXSJdq72CRoQKZT?=
+ =?iso-8859-1?Q?8qh4MPAvUIyP5I9JGOH55m88d6abybfttImviaRD2JlXIJN9qFaQ/kDzEw?=
+ =?iso-8859-1?Q?CvsmjCvihHx+76RnVMtbgMqwQeWAeFy88no9lGfMeWuiq3VMsyFL8jMX8y?=
+ =?iso-8859-1?Q?WAY67D2XEuBefE4mfMayn0nM7m3lYrlLKaXw1J76ztprzKZhmOuibO8589?=
+ =?iso-8859-1?Q?HiG6WyUmite22EwWgeMNQrXXWHTD2Di2xCclBA9E4HeBMNYxigs12K7ZSI?=
+ =?iso-8859-1?Q?gx89ss32si+ALJ+zbGLxJyUAOYd7i+KqV1u/UjR0mXNbZejmDFv6taaMTE?=
+ =?iso-8859-1?Q?2rI/u2bYHFblRsoZDDp4OJtcmtVH+sS1rlgLS5umQfNDMjZhTlNznsV4/H?=
+ =?iso-8859-1?Q?OlTWEZyGJCdtKl0GwnTeWR9O6Zw6POVmv/ozJkIrNqoDf5N/AlMlwh2nvC?=
+ =?iso-8859-1?Q?NuR0r1CUsQDbziLLscMeqaRjmMTrKqk1ZeuejdtQaLLbF4Vj8kYZ1Y/RMN?=
+ =?iso-8859-1?Q?a73IKnDhKlM3rsM5F+ge/U6xGzU4eBhVNvpvvuFHlZzy1sjYzLDhkleb29?=
+ =?iso-8859-1?Q?jzFUP6M0BJIZM=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-Received: by 2002:a05:6870:989d:b0:1c8:bec5:59c4 with SMTP id
- eg29-20020a056870989d00b001c8bec559c4mr234519oab.1.1694556653078; Tue, 12 Sep
- 2023 15:10:53 -0700 (PDT)
-Date:   Tue, 12 Sep 2023 15:10:53 -0700
-In-Reply-To: <0000000000004f34d705ffbc2604@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005bd097060530b758@google.com>
-Subject: Re: [syzbot] [overlayfs?] general protection fault in d_path
-From:   syzbot <syzbot+a67fc5321ffb4b311c98@syzkaller.appspotmail.com>
-To:     amir73il@gmail.com, brauner@kernel.org, jlayton@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-unionfs@vger.kernel.org, miklos@szeredi.hu,
-        syzkaller-bugs@googlegroups.com, zohar@linux.ibm.com
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: ucf.edu
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BL0PR11MB3106.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1a5b1094-3d20-4e6d-2831-08dbb3e4539f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Sep 2023 23:02:23.9701
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: bb932f15-ef38-42ba-91fc-f3c59d5dd1f1
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: eUlQAAh0pnqcFoeb7Lp3+AUsGs1DF772TIzirAchOXmEVMbAP1XSbOPHQWTA5zKVRnaefSWJjyvrjpgVG4cPNQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7531
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has found a reproducer for the following issue on:
-
-HEAD commit:    a747acc0b752 Merge tag 'linux-kselftest-next-6.6-rc2' of g..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=11c82308680000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=df91a3034fe3f122
-dashboard link: https://syzkaller.appspot.com/bug?extid=a67fc5321ffb4b311c98
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1671b694680000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14ec94d8680000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/b28ecb88c714/disk-a747acc0.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/03dd2cd5356f/vmlinux-a747acc0.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/63365d9bf980/bzImage-a747acc0.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a67fc5321ffb4b311c98@syzkaller.appspotmail.com
-
-general protection fault, probably for non-canonical address 0xdffffc0000000009: 0000 [#1] PREEMPT SMP KASAN
-KASAN: null-ptr-deref in range [0x0000000000000048-0x000000000000004f]
-CPU: 0 PID: 5030 Comm: syz-executor173 Not tainted 6.6.0-rc1-syzkaller-00014-ga747acc0b752 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/04/2023
-RIP: 0010:__seqprop_spinlock_sequence include/linux/seqlock.h:275 [inline]
-RIP: 0010:get_fs_root_rcu fs/d_path.c:244 [inline]
-RIP: 0010:d_path+0x2f0/0x6e0 fs/d_path.c:286
-Code: 30 00 74 08 48 89 df e8 be 20 e1 ff 4c 8b 23 4d 8d 6c 24 48 49 81 c4 88 00 00 00 4c 89 eb 48 c1 eb 03 4c 89 ef e8 00 1e 00 00 <42> 0f b6 04 33 84 c0 0f 85 89 00 00 00 45 8b 7d 00 44 89 fe 83 e6
-RSP: 0018:ffffc90003a7eee0 EFLAGS: 00010246
-RAX: 7e73051ae5315e00 RBX: 0000000000000009 RCX: ffff88807da73b80
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc90003a7eff0 R08: ffffffff82068d08 R09: 1ffffffff1d34ccd
-R10: dffffc0000000000 R11: fffffbfff1d34cce R12: 0000000000000088
-R13: 0000000000000048 R14: dffffc0000000000 R15: ffff8880206d8000
-FS:  0000000000000000(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f351862ebb8 CR3: 00000000276a7000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- audit_log_d_path+0xd3/0x310 kernel/audit.c:2138
- dump_common_audit_data security/lsm_audit.c:224 [inline]
- common_lsm_audit+0x7cf/0x1a90 security/lsm_audit.c:458
- smack_log+0x421/0x540 security/smack/smack_access.c:383
- smk_tskacc+0x2ff/0x360 security/smack/smack_access.c:253
- smack_inode_getattr+0x203/0x270 security/smack/smack_lsm.c:1271
- security_inode_getattr+0xd3/0x120 security/security.c:2153
- vfs_getattr+0x2a/0x3a0 fs/stat.c:206
- ovl_getattr+0x1b1/0xf70 fs/overlayfs/inode.c:174
- ima_check_last_writer security/integrity/ima/ima_main.c:171 [inline]
- ima_file_free+0x26e/0x4b0 security/integrity/ima/ima_main.c:203
- __fput+0x36a/0x910 fs/file_table.c:378
- task_work_run+0x24a/0x300 kernel/task_work.c:179
- exit_task_work include/linux/task_work.h:38 [inline]
- do_exit+0x68f/0x2290 kernel/exit.c:874
- do_group_exit+0x206/0x2c0 kernel/exit.c:1024
- get_signal+0x175d/0x1840 kernel/signal.c:2892
- arch_do_signal_or_restart+0x96/0x860 arch/x86/kernel/signal.c:309
- exit_to_user_mode_loop+0x6a/0x100 kernel/entry/common.c:168
- exit_to_user_mode_prepare+0xb1/0x140 kernel/entry/common.c:204
- __syscall_exit_to_user_mode_work kernel/entry/common.c:285 [inline]
- syscall_exit_to_user_mode+0x64/0x280 kernel/entry/common.c:296
- do_syscall_64+0x4d/0xc0 arch/x86/entry/common.c:86
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f35185d8529
-Code: Unable to access opcode bytes at 0x7f35185d84ff.
-RSP: 002b:00007f3518599218 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-RAX: 0000000000000001 RBX: 00007f3518662308 RCX: 00007f35185d8529
-RDX: 00000000000f4240 RSI: 0000000000000081 RDI: 00007f351866230c
-RBP: 00007f3518662300 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f351862f064
-R13: 0031656c69662f2e R14: 6e6f3d7865646e69 R15: 0079616c7265766f
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__seqprop_spinlock_sequence include/linux/seqlock.h:275 [inline]
-RIP: 0010:get_fs_root_rcu fs/d_path.c:244 [inline]
-RIP: 0010:d_path+0x2f0/0x6e0 fs/d_path.c:286
-Code: 30 00 74 08 48 89 df e8 be 20 e1 ff 4c 8b 23 4d 8d 6c 24 48 49 81 c4 88 00 00 00 4c 89 eb 48 c1 eb 03 4c 89 ef e8 00 1e 00 00 <42> 0f b6 04 33 84 c0 0f 85 89 00 00 00 45 8b 7d 00 44 89 fe 83 e6
-RSP: 0018:ffffc90003a7eee0 EFLAGS: 00010246
-RAX: 7e73051ae5315e00 RBX: 0000000000000009 RCX: ffff88807da73b80
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc90003a7eff0 R08: ffffffff82068d08 R09: 1ffffffff1d34ccd
-R10: dffffc0000000000 R11: fffffbfff1d34cce R12: 0000000000000088
-R13: 0000000000000048 R14: dffffc0000000000 R15: ffff8880206d8000
-FS:  0000000000000000(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f351862ebb8 CR3: 000000007e769000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	30 00                	xor    %al,(%rax)
-   2:	74 08                	je     0xc
-   4:	48 89 df             	mov    %rbx,%rdi
-   7:	e8 be 20 e1 ff       	call   0xffe120ca
-   c:	4c 8b 23             	mov    (%rbx),%r12
-   f:	4d 8d 6c 24 48       	lea    0x48(%r12),%r13
-  14:	49 81 c4 88 00 00 00 	add    $0x88,%r12
-  1b:	4c 89 eb             	mov    %r13,%rbx
-  1e:	48 c1 eb 03          	shr    $0x3,%rbx
-  22:	4c 89 ef             	mov    %r13,%rdi
-  25:	e8 00 1e 00 00       	call   0x1e2a
-* 2a:	42 0f b6 04 33       	movzbl (%rbx,%r14,1),%eax <-- trapping instruction
-  2f:	84 c0                	test   %al,%al
-  31:	0f 85 89 00 00 00    	jne    0xc0
-  37:	45 8b 7d 00          	mov    0x0(%r13),%r15d
-  3b:	44 89 fe             	mov    %r15d,%esi
-  3e:	83                   	.byte 0x83
-  3f:	e6                   	.byte 0xe6
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Good day, dear maintainers,=0A=
+=0A=
+We found a bug using a modified kernel configuration file used by syzbot.=
+=0A=
+=0A=
+We enhanced the coverage of the configuration file using our tool, klocaliz=
+er.=0A=
+=0A=
+Kernel Branch: 6.3.0-next-20230426=0A=
+Kernel Config: https://drive.google.com/file/d/1QmELMwhyVxAejCYF8VHxvAsExK6=
+GtR8F/view?usp=3Dsharing=0A=
+Reproducer: https://drive.google.com/file/d/1Qfns0v9ZZO6kge192F5wUzyFRcM0lH=
+YU/view?usp=3Dsharing=0A=
+=0A=
+Thank you!=0A=
+=0A=
+Best regards,=0A=
+Sanan Hasanov=0A=
+=0A=
+BUG: KASAN: null-ptr-deref in filemap_fault+0x538/0x2500=0A=
+Read of size 4 at addr 0000000000000028 by task syz-executor.2/5967=0A=
+=0A=
+CPU: 5 PID: 5967 Comm: syz-executor.2 Not tainted 6.3.0-next-20230426 #1=0A=
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/=
+2014=0A=
+Call Trace:=0A=
+ <TASK>=0A=
+ dump_stack_lvl+0x178/0x260=0A=
+ kasan_report+0xc0/0xf0=0A=
+ kasan_check_range+0x144/0x190=0A=
+ filemap_fault+0x538/0x2500=0A=
+ __do_fault+0x103/0x3d0=0A=
+ do_fault+0x68a/0x11c0=0A=
+ __handle_mm_fault+0x106f/0x2660=0A=
+ handle_mm_fault+0x1ab/0xa90=0A=
+ do_user_addr_fault+0x583/0x12e0=0A=
+ exc_page_fault+0xb6/0x1d0=0A=
+ asm_exc_page_fault+0x26/0x30=0A=
+RIP: 0033:0x7f6be40bc12c=0A=
+Code: Unable to access opcode bytes at 0x7f6be40bc102.=0A=
+RSP: 002b:00007ffc198c1350 EFLAGS: 00010297=0A=
+=0A=
+RAX: 0000000000000000 RBX: 0000000000001601 RCX: 00007f6be40bc11f=0A=
+RDX: 00007ffc198c13d0 RSI: 0000000000000000 RDI: 0000000000000000=0A=
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000001=0A=
+R10: 0000000000000000 R11: 0000000000000000 R12: 00007ffc198c13d0=0A=
+R13: 0000000000000000 R14: 00007ffc198c144c R15: 0000000000000032=0A=
+ </TASK>=0A=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=0A=
+general protection fault, probably for non-canonical address 0xdffffc000000=
+0005: 0000 [#1] PREEMPT SMP KASAN=0A=
+KASAN: null-ptr-deref in range [0x0000000000000028-0x000000000000002f]=0A=
+CPU: 5 PID: 5967 Comm: syz-executor.2 Tainted: G    B              6.3.0-ne=
+xt-20230426 #1=0A=
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/=
+2014=0A=
+RIP: 0010:filemap_fault+0x549/0x2500=0A=
+Code: 00 00 e8 8a be d3 ff 49 8d 5c 24 34 be 04 00 00 00 48 89 df e8 98 08 =
+23 00 48 89 da 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <0f> b6 14 02 48 8=
+9 d8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 7b=0A=
+RSP: 0018:ffffc9000b457b70 EFLAGS: 00010216=0A=
+RAX: dffffc0000000000 RBX: 0000000000000028 RCX: 0000000000000000=0A=
+RDX: 0000000000000005 RSI: ffffffff81d1bdb1 RDI: 0000000000000007=0A=
+RBP: 00000000000000ac R08: 0000000000000007 R09: 0000000000000000=0A=
+R10: 0000000000000000 R11: 74206c656e72656b R12: fffffffffffffff4=0A=
+R13: ffff88810d9b34c0 R14: 0000000000000008 R15: 0000000000000001=0A=
+FS:  0000555556b73980(0000) GS:ffff88811a280000(0000) knlGS:000000000000000=
+0=0A=
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033=0A=
+CR2: 00007f6be40bc102 CR3: 0000000055006000 CR4: 0000000000350ee0=0A=
+Call Trace:=0A=
+ <TASK>=0A=
+ __do_fault+0x103/0x3d0=0A=
+ do_fault+0x68a/0x11c0=0A=
+ __handle_mm_fault+0x106f/0x2660=0A=
+ handle_mm_fault+0x1ab/0xa90=0A=
+ do_user_addr_fault+0x583/0x12e0=0A=
+ exc_page_fault+0xb6/0x1d0=0A=
+ asm_exc_page_fault+0x26/0x30=0A=
+RIP: 0033:0x7f6be40bc12c=0A=
+Code: Unable to access opcode bytes at 0x7f6be40bc102.=0A=
+RSP: 002b:00007ffc198c1350 EFLAGS: 00010297=0A=
+RAX: 0000000000000000 RBX: 0000000000001601 RCX: 00007f6be40bc11f=0A=
+RDX: 00007ffc198c13d0 RSI: 0000000000000000 RDI: 0000000000000000=0A=
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000001=0A=
+R10: 0000000000000000 R11: 0000000000000000 R12: 00007ffc198c13d0=0A=
+R13: 0000000000000000 R14: 00007ffc198c144c R15: 0000000000000032=0A=
+ </TASK>=0A=
+Modules linked in:=0A=
+---[ end trace 0000000000000000 ]---=0A=
+RIP: 0010:filemap_fault+0x549/0x2500=0A=
+Code: 00 00 e8 8a be d3 ff 49 8d 5c 24 34 be 04 00 00 00 48 89 df e8 98 08 =
+23 00 48 89 da 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <0f> b6 14 02 48 8=
+9 d8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 7b=0A=
+RSP: 0018:ffffc9000b457b70 EFLAGS: 00010216=0A=
+RAX: dffffc0000000000 RBX: 0000000000000028 RCX: 0000000000000000=0A=
+RDX: 0000000000000005 RSI: ffffffff81d1bdb1 RDI: 0000000000000007=0A=
+RBP: 00000000000000ac R08: 0000000000000007 R09: 0000000000000000=0A=
+R10: 0000000000000000 R11: 74206c656e72656b R12: fffffffffffffff4=0A=
+R13: ffff88810d9b34c0 R14: 0000000000000008 R15: 0000000000000001=0A=
+FS:  0000555556b73980(0000) GS:ffff88811a280000(0000) knlGS:000000000000000=
+0=0A=
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033=0A=
+CR2: 00007f6be40bc102 CR3: 0000000055006000 CR4: 0000000000350ee0=0A=
+----------------=0A=
+Code disassembly (best guess):=0A=
+   0:   00 00                   add    %al,(%rax)=0A=
+   2:   e8 8a be d3 ff          call   0xffd3be91=0A=
+   7:   49 8d 5c 24 34          lea    0x34(%r12),%rbx=0A=
+   c:   be 04 00 00 00          mov    $0x4,%esi=0A=
+  11:   48 89 df                mov    %rbx,%rdi=0A=
+  14:   e8 98 08 23 00          call   0x2308b1=0A=
+  19:   48 89 da                mov    %rbx,%rdx=0A=
+  1c:   48 b8 00 00 00 00 00    movabs $0xdffffc0000000000,%rax=0A=
+  23:   fc ff df=0A=
+  26:   48 c1 ea 03             shr    $0x3,%rdx=0A=
+* 2a:   0f b6 14 02             movzbl (%rdx,%rax,1),%edx <-- trapping inst=
+ruction=0A=
+  2e:   48 89 d8                mov    %rbx,%rax=0A=
+  31:   83 e0 07                and    $0x7,%eax=0A=
+  34:   83 c0 03                add    $0x3,%eax=0A=
+  37:   38 d0                   cmp    %dl,%al=0A=
+  39:   7c 08                   jl     0x43=0A=
+  3b:   84 d2                   test   %dl,%dl=0A=
+  3d:   0f                      .byte 0xf=0A=
+  3e:   85                      .byte 0x85=0A=
+  3f:   7b                      .byte 0x7b=0A=
