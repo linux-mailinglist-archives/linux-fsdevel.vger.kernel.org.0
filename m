@@ -2,67 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 35FDD79C7D0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Sep 2023 09:13:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73F2D79C802
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Sep 2023 09:19:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231406AbjILHOA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Sep 2023 03:14:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47744 "EHLO
+        id S231508AbjILHT0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Sep 2023 03:19:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50808 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229707AbjILHN6 (ORCPT
+        with ESMTP id S231316AbjILHTY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Sep 2023 03:13:58 -0400
+        Tue, 12 Sep 2023 03:19:24 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id F2276E78
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Sep 2023 00:13:09 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6D6E9E79
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Sep 2023 00:18:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1694502789;
+        s=mimecast20190719; t=1694503114;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=YTSpSyC5EzR4JqjtmXWa4jhow1lkJCD2XnaN08RB0m8=;
-        b=ZV82oyxX6lYliNZKE8gy0UHyXoCc/oB/F3Z0Dby9Xblcz+BRWNa4JhRSOefMlW6KhBVFa8
-        9Ll65ZGUyK1kcLa1u5o8bmYlybc8F20fT9XZJfxaa5cZkxC4yPaLhH1xrvA6Cy+WLzkS58
-        nR7R4XIXc9Be5uxhUxOlAXCj6dkpfK0=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=+OodWnETEUgz5EFst9JGpxDf54xHXqhw04bLaPZH7zA=;
+        b=CfJufZ0+jnXUOpY16coEfCS98QFO6LyZiJN9ZQMEe4HxCEEczHeF8QRji3hYNbeDMVubLi
+        gHqDdWxKeZudQiHsUd87wPqpjxK1HDtphR7kFywyJrwBO45UzoqF2qdoKhL9doH/MrBHQR
+        2veEcmGi/Pw8q2Awo+KXC6QZ231lHVg=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-369-uS15Sp3SMparmRk3FWgFXg-1; Tue, 12 Sep 2023 03:13:07 -0400
-X-MC-Unique: uS15Sp3SMparmRk3FWgFXg-1
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-30932d15a30so3742045f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Sep 2023 00:13:07 -0700 (PDT)
+ us-mta-149-FSxPoegbNoaAYzwQOJkTEQ-1; Tue, 12 Sep 2023 03:18:33 -0400
+X-MC-Unique: FSxPoegbNoaAYzwQOJkTEQ-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-3fef3606d8cso42482815e9.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Sep 2023 00:18:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694502786; x=1695107586;
+        d=1e100.net; s=20230601; t=1694503112; x=1695107912;
         h=content-transfer-encoding:in-reply-to:organization:from:references
          :cc:to:content-language:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=YTSpSyC5EzR4JqjtmXWa4jhow1lkJCD2XnaN08RB0m8=;
-        b=HHQXFsID507msk4qOJpQLGe1+7LxF2QkLZOu7Qk64b+jE9dkLppmTYICgTS4auGF9O
-         BiI+2474W1DvTqaCh3cDTP7Ocrp3KLbS0rBqHi3Y0i8EsojrJfI1/dZQYAg1qVgFJ6Fg
-         ++mzlLVRwPseEqCMVuZ/L7/oL9SMiFFLH1RG2T3Xy0vkMGoMIsLT0r3Esoe6ZJ3Tbqzm
-         USzzvfD71dTmBdWureep/kFzmYqzB3vIQ+DXoyZtGL1TYJ8jGO/3g//UcEA4O94ujcPD
-         gk3ChDDTsJBgr1YJKyd8R6+NMQO93PnL+OuYzseN8xIo8+tWotHNy9imqUdMJZ+3aj2b
-         g4Lg==
-X-Gm-Message-State: AOJu0YxI/Sp4wtmdA5lXISM3d9H+dhqizkqZpb5lyupe0MdcM5fvvk2z
-        tYpKqfOzNDhznP58QsK3jfPP7tKiju71D9FRvTsSzjpBdm0Tj3B4tbGkfSXVlsHf5PXI+Qvf62n
-        GOUwRJCt6CTprmlRAQZTZcLEZIg==
-X-Received: by 2002:adf:ec10:0:b0:31d:1833:4135 with SMTP id x16-20020adfec10000000b0031d18334135mr9258414wrn.28.1694502786650;
-        Tue, 12 Sep 2023 00:13:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHzD/JqAKRst1uRyrpQ1ec8A47CJ05RJvD9vhfbLXgEIWlOOIOrNSivNy+JkLaFrl4za69IRw==
-X-Received: by 2002:adf:ec10:0:b0:31d:1833:4135 with SMTP id x16-20020adfec10000000b0031d18334135mr9258385wrn.28.1694502786274;
-        Tue, 12 Sep 2023 00:13:06 -0700 (PDT)
+        bh=+OodWnETEUgz5EFst9JGpxDf54xHXqhw04bLaPZH7zA=;
+        b=Q8WlWZbdmcrDbD6ENyuOC8/x3Imms9em/95YcbZ7R077jS6PF6aD3sTuxMFWd+z6FY
+         6IBITpdk8OrV0cPc8N4iQcZbrt14ODQfs5SLEatM4s9YTTt4qwIdJqLNNW+lqPjzvoOU
+         jXQ/KPqWLvjlRP8RlPbZ5v9L+AI//UWlrYdJGpTj20f+qhWvx7GwUlxqrmmAdn+caM3q
+         BD5Q2t4G7KpPyGazlCzsJ8yBZPD4vPw//2PF82TtjVKEOb3Rfpzyp3l0arAQcW6IdlOu
+         npmyFjGBN0HBAobWjcPuRVpE+8c5dYJVgeqZItZvBUJ07F6udKfLA/RdIfPPGLKDIY25
+         Uscg==
+X-Gm-Message-State: AOJu0YyekSgxIreRKqCGNqS/HNTu+lO4hhvmUVmdVsxZoyWFzMQGphbk
+        +CPX8YCX8dUEAlxetzcKUFu1tOf3Bo/84PaicC9JurgSNbkhsGwvvAz5iic/HNSyMNPnZLFaxfj
+        OsqlXMTCLjCy2XcEk7LRuzgtw+w==
+X-Received: by 2002:a7b:c853:0:b0:401:db82:3edf with SMTP id c19-20020a7bc853000000b00401db823edfmr9908939wml.39.1694503112134;
+        Tue, 12 Sep 2023 00:18:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFQr59YxQoahIdt2pGpOn3n/3cyfcIn7qrajZoDiICpNrmoOnS/ynh5Tia67CgdCYHJ/KD0yA==
+X-Received: by 2002:a7b:c853:0:b0:401:db82:3edf with SMTP id c19-20020a7bc853000000b00401db823edfmr9908928wml.39.1694503111718;
+        Tue, 12 Sep 2023 00:18:31 -0700 (PDT)
 Received: from ?IPV6:2003:cb:c74f:d600:c705:bc25:17b2:71c9? (p200300cbc74fd600c705bc2517b271c9.dip0.t-ipconnect.de. [2003:cb:c74f:d600:c705:bc25:17b2:71c9])
-        by smtp.gmail.com with ESMTPSA id x18-20020adfdd92000000b0031aeca90e1fsm12117706wrl.70.2023.09.12.00.13.05
+        by smtp.gmail.com with ESMTPSA id y9-20020a7bcd89000000b003fed630f560sm12028942wmj.36.2023.09.12.00.18.30
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Sep 2023 00:13:05 -0700 (PDT)
-Message-ID: <3a37361d-1f3b-c283-3fb0-ab3614e3d38c@redhat.com>
-Date:   Tue, 12 Sep 2023 09:13:04 +0200
+        Tue, 12 Sep 2023 00:18:31 -0700 (PDT)
+Message-ID: <7f4881dc-885a-a8f5-47a5-0dd23886a416@redhat.com>
+Date:   Tue, 12 Sep 2023 09:18:30 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.13.0
-Subject: Re: [PATCH V2 2/2] proc/kcore: Do not try to access unaccepted memory
+Subject: Re: [PATCH V2 1/2] efi/unaccepted: Do not let /proc/vmcore try to
+ access unaccepted memory
 Content-Language: en-US
 To:     Adrian Hunter <adrian.hunter@intel.com>,
         "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
@@ -80,10 +81,10 @@ Cc:     Dave Hansen <dave.hansen@intel.com>,
         linux-coco@lists.linux.dev, linux-efi@vger.kernel.org,
         kexec@lists.infradead.org
 References: <20230911112114.91323-1-adrian.hunter@intel.com>
- <20230911112114.91323-3-adrian.hunter@intel.com>
+ <20230911112114.91323-2-adrian.hunter@intel.com>
 From:   David Hildenbrand <david@redhat.com>
 Organization: Red Hat
-In-Reply-To: <20230911112114.91323-3-adrian.hunter@intel.com>
+In-Reply-To: <20230911112114.91323-2-adrian.hunter@intel.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -91,42 +92,33 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 11.09.23 13:21, Adrian Hunter wrote:
-> Support for unaccepted memory was added recently, refer commit
-> dcdfdd40fa82 ("mm: Add support for unaccepted memory"), whereby a virtual
-> machine may need to accept memory before it can be used.
+> Support for unaccepted memory was added recently, refer commit dcdfdd40fa82
+> ("mm: Add support for unaccepted memory"), whereby a virtual machine may
+> need to accept memory before it can be used.
 > 
-> Do not try to access unaccepted memory because it can cause the guest to
-> fail.
+> Do not let /proc/vmcore try to access unaccepted memory because it can
+> cause the guest to fail.
 > 
-> For /proc/kcore, which is read-only and does not support mmap, this means a
-> read of unaccepted memory will return zeros.
+> For /proc/vmcore, which is read-only, this means a read or mmap of
+> unaccepted memory will return zeros.
 > 
 > Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 > ---
->   fs/proc/kcore.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> 
-> Changes in V2:
-> 
->            Change patch subject and commit message
->            Do not open code pfn_is_unaccepted_memory()
-> 
-> 
-> diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
-> index 23fc24d16b31..6422e569b080 100644
-> --- a/fs/proc/kcore.c
-> +++ b/fs/proc/kcore.c
-> @@ -546,7 +546,8 @@ static ssize_t read_kcore_iter(struct kiocb *iocb, struct iov_iter *iter)
->   			 * and explicitly excluded physical ranges.
->   			 */
->   			if (!page || PageOffline(page) ||
-> -			    is_page_hwpoison(page) || !pfn_is_ram(pfn)) {
-> +			    is_page_hwpoison(page) || !pfn_is_ram(pfn) ||
-> +			    pfn_is_unaccepted_memory(pfn)) {
->   				if (iov_iter_zero(tsz, iter) != tsz) {
->   					ret = -EFAULT;
->   					goto out;
+
+[...]
+
+> +static inline bool pfn_is_unaccepted_memory(unsigned long pfn)
+> +{
+> +	phys_addr_t paddr = pfn << PAGE_SHIFT;
+> +
+> +	return range_contains_unaccepted_memory(paddr, paddr + PAGE_SIZE);
+> +}
+> +
+>   #endif /* _LINUX_MM_H */
+
+As stated, if the relevant table is not already properly populated with 
+information about unaccepted memory by the first kernel, this probably 
+logically belongs into Kirills series.
 
 Reviewed-by: David Hildenbrand <david@redhat.com>
 
