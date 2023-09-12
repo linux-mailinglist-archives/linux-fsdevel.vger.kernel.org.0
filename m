@@ -2,100 +2,176 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DB01A79DAF2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Sep 2023 23:31:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75C7C79DB12
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Sep 2023 23:42:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233949AbjILVbN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Sep 2023 17:31:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34354 "EHLO
+        id S232288AbjILVmo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Sep 2023 17:42:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51092 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230091AbjILVbN (ORCPT
+        with ESMTP id S229754AbjILVmo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Sep 2023 17:31:13 -0400
-Received: from mail-qk1-x736.google.com (mail-qk1-x736.google.com [IPv6:2607:f8b0:4864:20::736])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E10F10CA
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Sep 2023 14:31:09 -0700 (PDT)
-Received: by mail-qk1-x736.google.com with SMTP id af79cd13be357-76f17eab34eso371815285a.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Sep 2023 14:31:09 -0700 (PDT)
+        Tue, 12 Sep 2023 17:42:44 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D900D10CC;
+        Tue, 12 Sep 2023 14:42:39 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id ffacd0b85a97d-31dca134c83so6223100f8f.3;
+        Tue, 12 Sep 2023 14:42:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1694554268; x=1695159068; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Y6d1LGpCg2X8fBo+4dvLu5EIg9yZWWJA/k12TK2X6Dc=;
-        b=gr3O1z4BMe+5vsnewqIK3P33h6VvkXUR+kJ3UzkFgQHp74xVB+k4L6UKdi7qcGa8ty
-         NhV//pflZaZHWoDJnHRvn7XE8AtNmvjyKcNvQn6cRCU6xzzuDUlR4B5rHukI2NK73ATf
-         JH7ERSfQ2dnkKYCuTH2nlBznfQsZrvdAdf1C6re8czokjpDdJKCq3n7vEj1xBr5ujOtr
-         5s+xj4Vm22hixxGfgkjesEf2B1DTr0G346fS70f4nYFqCwpOo4GNPyjLwsrA3emYKV9S
-         7Ryy5ZZCXjsWGPdlqBQ55YeW9vmzSd6e9emnFZza2MamWthRNphchKeuRig2ImkIuQ18
-         ODHA==
+        d=gmail.com; s=20221208; t=1694554958; x=1695159758; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WFaOTmDPotpKYMAcf5yM0TcQqzxe8ODUt6hexnT/A0c=;
+        b=TjQ2ykqctLgzK7UjJcyHABJFHi/TSC7lNcyFlhU5jggpdWfaaFSKCbEpagdbSUq/Rg
+         U7864mKIPqw8W1JZN8DyW42Bc8QYNt+neRFDjbC3ga/nQc4EFYuSzicUDmbj5xayOSKC
+         QGBi2c8+02flsZr6+nvfs7WPj5xEk6KHZ3rv+Qd2mwMzxuvPSiBqbpUwnIy+x20KKy58
+         mI/DkO+R1WF6J/sNEw9oouh7E0Nwm66IAUjm1V1l7ZKNK5hDmwPXHFh338vq5bawRHnT
+         TNTMMCq0jo17B54bbhM1hJYk0qSMo41CStgi9OJYrOMpKVnS6kiYBMbpp7yS66IHYswQ
+         ZgHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694554268; x=1695159068;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y6d1LGpCg2X8fBo+4dvLu5EIg9yZWWJA/k12TK2X6Dc=;
-        b=n9UBIckBsYjqn2hHXq2O3u0+o6nb/GC/XElL9RouoP/nBxg53fp1aLT43kKovzolj/
-         QsGop9UeA13PxQvCOj5REVQxRj6WUACdLt5adkgkxPGaMahu3DNUkBBa9mZqkoorcNJE
-         EGlQHVxYap/ptaFOARMo9zYzBsrTclb05xrCtg8lBAlnsLCtvCsK4urz9wrQBKqB7VVR
-         pOz+fkxK3xMz1eVQQcyIgt7h41vPL8ntku6kQNkjRc3/K9tcOBjKRs6r3kuwkg2Ucv0c
-         OJwlwFdYDdX8YNjoGaaoimwykGalACwx0Yp2lrYyJ8XMFLoXs2AomoJZB9zvNHesY4V0
-         M8kw==
-X-Gm-Message-State: AOJu0YwXylMYXnsE3YiVnKzxtzcUP1jfml8UZJsmT6tV0gr8J9x+EeO2
-        ordto2qWa48kxO3KPdfws7rk6dW1t6eChEtqZg==
-X-Google-Smtp-Source: AGHT+IEJiiEJgMI/MOcUWNcejsvLxlPmyyckx7hw6penxLc8tg9G9Y0/08ch5zdgVXEwkBbyLLroZg==
-X-Received: by 2002:a05:620a:24d4:b0:768:f02:532e with SMTP id m20-20020a05620a24d400b007680f02532emr690055qkn.39.1694554268459;
-        Tue, 12 Sep 2023 14:31:08 -0700 (PDT)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id o13-20020a05620a110d00b00767dba7a4d3sm3463544qkk.109.2023.09.12.14.31.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Sep 2023 14:31:08 -0700 (PDT)
-Date:   Tue, 12 Sep 2023 17:31:07 -0400
-Message-ID: <f48a346737f99d7b82ecaf214ac2b77e.paul@paul-moore.com>
-From:   Paul Moore <paul@paul-moore.com>
-To:     Ondrej Mosnacek <omosnace@redhat.com>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Christian Brauner <brauner@kernel.org>,
-        selinux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Adam Williamson <awilliam@redhat.com>
-Subject: Re: [PATCH] selinux: fix handling of empty opts in  selinux_fs_context_submount()
-References: <20230911142358.883728-1-omosnace@redhat.com>
-In-Reply-To: <20230911142358.883728-1-omosnace@redhat.com>
+        d=1e100.net; s=20230601; t=1694554958; x=1695159758;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WFaOTmDPotpKYMAcf5yM0TcQqzxe8ODUt6hexnT/A0c=;
+        b=Ll455L4hqgYY7/sgDWGry7pHMY6AQUbIsN2E6eP3AhhDCoDhUwtvHYlnpD9KmsOLBw
+         9p4+wCdxnxJUw0ktvAg6meMI9DvKm6Vfn6CKwUmxX7x9MssUEWkLj4krGoXXSZrrqIe6
+         WS3k/Bc8vz6OlBtzQNN/TPwm1rnTyTLnSGlnET8QnO/Bwnpkmm8i8d+ZLDjgxUTCro/3
+         fXpQLqpPQxjIGXsn+1vrooHSKb3sPmxlco8iIDEL7jnGq7ITIte8LKkew7uMKXGFQ6Wo
+         HMi6qp5G/79vl45zovFsX5oq7koi92zm5FvmVAknl6MjcpGZZZjlHHQ4AjFqz0Mnp/rQ
+         Coow==
+X-Gm-Message-State: AOJu0YxwzTVjPKrWD7feuewTClWxsIE10pD83olLQ90/twfU9kEBELqO
+        WZ90UxmqM5IbuEHvJaGz6JpPQkfI56tJJT7Xqag=
+X-Google-Smtp-Source: AGHT+IEhRRG514ufB436LVfvzZzc6rfX+gY/FmR3l3MHxREzX2mGs4J/uEWee+nkCy6tB3h40S+ubYQL2Fe/XibJ46E=
+X-Received: by 2002:adf:ed86:0:b0:31c:887f:82f3 with SMTP id
+ c6-20020adfed86000000b0031c887f82f3mr596126wro.40.1694554957893; Tue, 12 Sep
+ 2023 14:42:37 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230912212906.3975866-1-andrii@kernel.org> <20230912212906.3975866-9-andrii@kernel.org>
+In-Reply-To: <20230912212906.3975866-9-andrii@kernel.org>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Tue, 12 Sep 2023 14:42:26 -0700
+Message-ID: <CAEf4BzZZSQ5m8mqMM=YVQ7kHOKuyxDu4qajWqLnGCX4x+bL=HA@mail.gmail.com>
+Subject: Re: [PATCH v4 bpf-next 08/12] libbpf: add bpf_token_create() API
+To:     Andrii Nakryiko <andrii@kernel.org>
+Cc:     bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keescook@chromium.org,
+        brauner@kernel.org, lennart@poettering.net, kernel-team@meta.com,
+        sargun@sargun.me
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sep 11, 2023 Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> 
-> selinux_set_mnt_opts() relies on the fact that the mount options pointer
-> is always NULL when all options are unset (specifically in its
-> !selinux_initialized() branch. However, the new
-> selinux_fs_context_submount() hook breaks this rule by allocating a new
-> structure even if no options are set. That causes any submount created
-> before a SELinux policy is loaded to be rejected in
-> selinux_set_mnt_opts().
-> 
-> Fix this by making selinux_fs_context_submount() leave fc->security
-> set to NULL when there are no options to be copied from the reference
-> superblock.
-> 
-> Reported-by: Adam Williamson <awilliam@redhat.com>
-> Link: https://bugzilla.redhat.com/show_bug.cgi?id=2236345
-> Fixes: d80a8f1b58c2 ("vfs, security: Fix automount superblock LSM init problem, preventing NFS sb sharing")
-> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-> Reviewed-by: Jeff Layton <jlayton@kernel.org>
+On Tue, Sep 12, 2023 at 2:30=E2=80=AFPM Andrii Nakryiko <andrii@kernel.org>=
+ wrote:
+>
+> Add low-level wrapper API for BPF_TOKEN_CREATE command in bpf() syscall.
+>
+> Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
 > ---
->  security/selinux/hooks.c | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
+>  tools/lib/bpf/bpf.c      | 19 +++++++++++++++++++
+>  tools/lib/bpf/bpf.h      | 29 +++++++++++++++++++++++++++++
+>  tools/lib/bpf/libbpf.map |  1 +
+>  3 files changed, 49 insertions(+)
+>
+> diff --git a/tools/lib/bpf/bpf.c b/tools/lib/bpf/bpf.c
+> index b0f1913763a3..593ff9ea120d 100644
+> --- a/tools/lib/bpf/bpf.c
+> +++ b/tools/lib/bpf/bpf.c
+> @@ -1271,3 +1271,22 @@ int bpf_prog_bind_map(int prog_fd, int map_fd,
+>         ret =3D sys_bpf(BPF_PROG_BIND_MAP, &attr, attr_sz);
+>         return libbpf_err_errno(ret);
+>  }
+> +
+> +int bpf_token_create(int bpffs_path_fd, const char *bpffs_pathname,
+> +                    struct bpf_token_create_opts *opts)
+> +{
+> +       const size_t attr_sz =3D offsetofend(union bpf_attr, token_create=
+);
+> +       union bpf_attr attr;
+> +       int fd;
+> +
+> +       if (!OPTS_VALID(opts, bpf_token_create_opts))
+> +               return libbpf_err(-EINVAL);
+> +
+> +       memset(&attr, 0, attr_sz);
+> +       attr.token_create.bpffs_path_fd =3D bpffs_path_fd;
+> +       attr.token_create.bpffs_pathname =3D ptr_to_u64(bpffs_pathname);
+> +       attr.token_create.flags =3D OPTS_GET(opts, flags, 0);
+> +
+> +       fd =3D sys_bpf_fd(BPF_TOKEN_CREATE, &attr, attr_sz);
+> +       return libbpf_err_errno(fd);
+> +}
+> diff --git a/tools/lib/bpf/bpf.h b/tools/lib/bpf/bpf.h
+> index 74c2887cfd24..16d5c257066c 100644
+> --- a/tools/lib/bpf/bpf.h
+> +++ b/tools/lib/bpf/bpf.h
+> @@ -635,6 +635,35 @@ struct bpf_test_run_opts {
+>  LIBBPF_API int bpf_prog_test_run_opts(int prog_fd,
+>                                       struct bpf_test_run_opts *opts);
+>
+> +struct bpf_token_create_opts {
+> +       size_t sz; /* size of this struct for forward/backward compatibil=
+ity */
+> +       __u32 flags;
+> +       size_t :0;
+> +};
+> +#define bpf_token_create_opts__last_field flags
+> +
+> +/**
+> + * @brief **bpf_token_create()** creates a new instance of BPF token, pi=
+nning
+> + * it at the specified location in BPF FS.
+> + *
+> + * BPF token created and pinned with this API can be subsequently opened=
+ using
+> + * bpf_obj_get() API to obtain FD that can be passed to bpf() syscall fo=
+r
+> + * commands like BPF_PROG_LOAD, BPF_MAP_CREATE, etc.
+> + *
+> + * @param pin_path_fd O_PATH FD (see man 2 openat() for semantics) speci=
+fying,
+> + * in combination with *pin_pathname*, target location in BPF FS at whic=
+h to
+> + * create and pin BPF token.
+> + * @param pin_pathname absolute or relative path specifying, in combinat=
+ion
+> + * with *pin_path_fd*, specifying in combination with *pin_path_fd*, tar=
+get
+> + * location in BPF FS at which to create and pin BPF token.
+> + * @param opts optional BPF token creation options, can be NULL
+> + *
 
-Thanks Ondrej, this looks good.  I'm going to merge this into
-selinux/stable-6.6 and assuming all goes well with the automated
-testing (I can't imagine it would catch anything) I'll send this up
-to Linus later this week.
+this description is obviously outdated (there is no pinning involved
+anymore) and I just realized after sending patches out, I'll fix it
+for next revision
 
-I'm also tagging this for the stable kernels even though this patch
-is only present in v6.6-rc1 because the original patch has a number
-of 'Fixes:' tags which means the stable folks will probably end up
-pulling it into their trees.
 
---
-paul-moore.com
+> + * @return 0, on success; negative error code, otherwise (errno is also =
+set to
+> + * the error code)
+> + */
+> +LIBBPF_API int bpf_token_create(int bpffs_path_fd, const char *bpffs_pat=
+hname,
+> +                               struct bpf_token_create_opts *opts);
+> +
+>  #ifdef __cplusplus
+>  } /* extern "C" */
+>  #endif
+> diff --git a/tools/lib/bpf/libbpf.map b/tools/lib/bpf/libbpf.map
+> index 57712321490f..c45c28a5e14c 100644
+> --- a/tools/lib/bpf/libbpf.map
+> +++ b/tools/lib/bpf/libbpf.map
+> @@ -400,4 +400,5 @@ LIBBPF_1.3.0 {
+>                 bpf_program__attach_netfilter;
+>                 bpf_program__attach_tcx;
+>                 bpf_program__attach_uprobe_multi;
+> +               bpf_token_create;
+>  } LIBBPF_1.2.0;
+> --
+> 2.34.1
+>
+>
