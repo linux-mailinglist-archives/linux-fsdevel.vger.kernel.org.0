@@ -2,105 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 125BC79F06A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Sep 2023 19:32:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD5C479F075
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Sep 2023 19:36:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229923AbjIMRcd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Sep 2023 13:32:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46314 "EHLO
+        id S230327AbjIMRhC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Sep 2023 13:37:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229451AbjIMRcc (ORCPT
+        with ESMTP id S229451AbjIMRhC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Sep 2023 13:32:32 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 135A49E;
-        Wed, 13 Sep 2023 10:32:27 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 80F0B218E3;
-        Wed, 13 Sep 2023 17:32:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1694626346;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=CzZLURoFZ/bpIZJUCzmIphDrAkLvI9seeWq/0zEo2bI=;
-        b=xjaBlRu0i7JGAQSWhgqD4kHKuscodhvfI1HD977oDlPe+IMg6OT6BVxnlGKXexfD8AsBj7
-        lkJGu2xYrR4qHdcByCRDDCsK+nEajUVergaN/Tax3IHwoycFjbb5LrMyjgTaxMGOQdWoSN
-        em4Ce69hNUR4AXOCxJL4Knt9QXZNjWk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1694626346;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=CzZLURoFZ/bpIZJUCzmIphDrAkLvI9seeWq/0zEo2bI=;
-        b=pfprUm/6bc9LKPfH5a1QbTguciRPZSv1Z+inuEYEbITATEmZm5+iVzb/19NpdSy6DrsSBz
-        YjQS1vgkBVfXeXBw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 26DAC13440;
-        Wed, 13 Sep 2023 17:32:26 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id wyqmCCryAWWKPAAAMHmgww
-        (envelope-from <dsterba@suse.cz>); Wed, 13 Sep 2023 17:32:26 +0000
-Date:   Wed, 13 Sep 2023 19:32:24 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-Cc:     Anand Jain <anand.jain@oracle.com>, linux-btrfs@vger.kernel.org,
-        dsterba@suse.cz, clm@fb.com, josef@toxicpanda.com,
-        dsterba@suse.com, linux-fsdevel@vger.kernel.org,
-        kernel@gpiccoli.net, kernel-dev@igalia.com, david@fromorbit.com,
-        kreijack@libero.it, johns@valvesoftware.com,
-        ludovico.denittis@collabora.com, quwenruo.btrfs@gmx.com,
-        wqu@suse.com, vivek@collabora.com
-Subject: Re: [PATCH V3 2/2] btrfs: Introduce the single-dev feature
-Message-ID: <20230913173224.GX20408@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <20230831001544.3379273-1-gpiccoli@igalia.com>
- <20230831001544.3379273-3-gpiccoli@igalia.com>
- <20230911182804.GA20408@twin.jikos.cz>
- <b25f8b8b-8408-e563-e813-18ec58d3b5ca@oracle.com>
- <6da9b6b1-5028-c0e2-f11e-377fabf1432d@igalia.com>
- <4914eb22-6b51-a816-1d5b-a2ceb8bcbf06@oracle.com>
- <e89b4997-5247-556e-9aee-121b4e19938e@igalia.com>
+        Wed, 13 Sep 2023 13:37:02 -0400
+Received: from mail-ua1-x92f.google.com (mail-ua1-x92f.google.com [IPv6:2607:f8b0:4864:20::92f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 046D0A8;
+        Wed, 13 Sep 2023 10:36:58 -0700 (PDT)
+Received: by mail-ua1-x92f.google.com with SMTP id a1e0cc1a2514c-7a505727e7eso59670241.0;
+        Wed, 13 Sep 2023 10:36:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1694626617; x=1695231417; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yUBTHLHMdVrFtqCVTI9npNAUNxOv53pR5xqiTxGy/z4=;
+        b=ltuvVGdONvIKlvwk2W8dWK0O7Bz8lZG3Q0Fo9ie3+DF0onqsskDOI5hFVoqDhDdkSh
+         SA67qvyX0epiZI76QFWKGHXbyvRNft9s3ZNg9OQITwvlORj/rMsEuVIGkap1Jo4Gjau1
+         TOwwVFNwskW3YId4fFrQYJg+w5yMB93eqiVsbyPSwDhYkeGIkR1Dr+GnQoOSnkgpDhuJ
+         rJy+MOXakH8vJ4/OWGTe0Z0q+2qCDwIBleV6uEbUo/3RiVvutIMYn9y+LNvWZUEwu49k
+         BLWfrI3lLRnNHOyn6fSP2FvHpecboq5apMOdB3PPkopIQcBHrWrA3zI88l522THoK4/v
+         LLSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694626617; x=1695231417;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yUBTHLHMdVrFtqCVTI9npNAUNxOv53pR5xqiTxGy/z4=;
+        b=DOcJvirKFSlhlFP8aj8i+kymldOpDUN3yo+10A78n+3uMvQh445IKOL5teV7z5ON5U
+         DuMWZXIUa5wS8h8HpQrBrGRENOAB0BB2jEQROU2RSZTnpzSyWCgtMmiHzNDB6/10Eehu
+         0FNo+GtoZxLJd1oLL/U3YjYXXcoPNsto4MqTZwvqJx8ls/19dEE6XZfck2Ue3k48J6yZ
+         4JwAUAPR0o7XdJyAYWwpBykA9lc5q3bQNnezIB3Gn3AE0opixIP1vQ2h76ayXD7UydK5
+         Rf+xdFsWMOGXuK9PezKPZ+IEeGKRZLWod0vTb5FIhrWZuw36YrTpzf36Kvcl6naNDpMG
+         k1Kw==
+X-Gm-Message-State: AOJu0Yz0oFh8kUgMV+AOJy5weXpzOibxsBPol9UZqc+htyP/9mZ/1wIz
+        LTPBlNQ+iRiut68awOw1tfeBpKvQyqBHxfL0+Ck=
+X-Google-Smtp-Source: AGHT+IHnZ5RMnSyqYQIJ0YQlL3YDIavATqGNsUT6AgecvkVsZb9etm/KfUc34JO5eovfCyjImlWLzbmGQ7ux4RqYSY4=
+X-Received: by 2002:a1f:4b85:0:b0:495:bc26:d110 with SMTP id
+ y127-20020a1f4b85000000b00495bc26d110mr3150824vka.12.1694626616904; Wed, 13
+ Sep 2023 10:36:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e89b4997-5247-556e-9aee-121b4e19938e@igalia.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+References: <20230913-ctime-v1-1-c6bc509cbc27@kernel.org>
+In-Reply-To: <20230913-ctime-v1-1-c6bc509cbc27@kernel.org>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 13 Sep 2023 20:36:45 +0300
+Message-ID: <CAOQ4uxhYRnX0NChCU2tsEi7eUPqbqQDeOwQT4ubWUgtCN0OVfA@mail.gmail.com>
+Subject: Re: [PATCH] overlayfs: set ctime when setting mtime and atime
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 13, 2023 at 10:15:13AM -0300, Guilherme G. Piccoli wrote:
-> On 12/09/2023 21:39, Anand Jain wrote:
-> > [..] 
-> >> Now, sorry for the silly question, but where is misc-next?! I'm looking
-> >> here: https://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git/
-> >>
-> >> I based my work in the branch "for-next", but I can't find misc-next.
-> >> Also, I couldn't find "btrfs: pseudo device-scan for single-device
-> >> filesystems" in the tree...probably some silly confusion from my side,
-> >> any advice is appreciated!
-> > 
-> > 
-> > David maintains the upcoming mainline merges in the branch "misc-next" here:
-> > 
-> >     https://github.com/kdave/btrfs-devel.git
-> > 
-> > Thanks.
-> > 
-> 
-> Thanks a lot Anand!
-> 
-> Checking now, I could also find it in the documentation - my bad, apologies
+On Wed, Sep 13, 2023 at 4:33=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wr=
+ote:
+>
+> Nathan reported that he was seeing the new warning in
+> setattr_copy_mgtime pop when starting podman containers. Overlayfs is
+> trying to set the atime and mtime via notify_change without also
+> setting the ctime.
+>
+> POSIX states that when the atime and mtime are updated via utimes() that
+> we must also update the ctime to the current time. The situation with
+> overlayfs copy-up is analogous, so add ATTR_CTIME to the bitmask.
+> notify_change will fill in the value.
+>
 
-It's documented at https://btrfs.readthedocs.io/en/latest/Source-repositories.html
-but it can be always improved. If the page contents was incomplete from
-you POV please let me know or open an issue at
-github.com/kdave/btrfs-progs .
+IDGI, if ctime always needs to be set along with ATIME / MTIME, why not
+let notify_change() set the bit instead of assert and fix all the callers?
+But maybe I am missing something.
+
+Anyway, I have no objection to the ovl patch.
+It's fine by me if Christian applies it to the vfs.ctime branch with my ACK=
+.
+
+Thanks,
+Amir.
+
+> Reported-by: Nathan Chancellor <nathan@kernel.org>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+> The new WARN_ON_ONCE in setattr_copy_mgtime caught a bug! Fix up
+> overlayfs to ensure that the ctime on the upper inode is also updated
+> when copying up the atime and mtime.
+> ---
+>  fs/overlayfs/copy_up.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
+> index d1761ec5866a..ada3fcc9c6d5 100644
+> --- a/fs/overlayfs/copy_up.c
+> +++ b/fs/overlayfs/copy_up.c
+> @@ -337,7 +337,7 @@ static int ovl_set_timestamps(struct ovl_fs *ofs, str=
+uct dentry *upperdentry,
+>  {
+>         struct iattr attr =3D {
+>                 .ia_valid =3D
+> -                    ATTR_ATIME | ATTR_MTIME | ATTR_ATIME_SET | ATTR_MTIM=
+E_SET,
+> +                    ATTR_ATIME | ATTR_MTIME | ATTR_ATIME_SET | ATTR_MTIM=
+E_SET | ATTR_CTIME,
+>                 .ia_atime =3D stat->atime,
+>                 .ia_mtime =3D stat->mtime,
+>         };
+>
+> ---
+> base-commit: 9cb8e7c86ac793862e7bea7904b3426942bbd7ef
+> change-id: 20230913-ctime-299173760dd9
+>
+> Best regards,
+> --
+> Jeff Layton <jlayton@kernel.org>
+>
