@@ -2,335 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A88279DFE0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Sep 2023 08:18:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0439479E042
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Sep 2023 08:55:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234720AbjIMGSp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Sep 2023 02:18:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41382 "EHLO
+        id S237278AbjIMGzY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Sep 2023 02:55:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230219AbjIMGSo (ORCPT
+        with ESMTP id S231848AbjIMGzX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Sep 2023 02:18:44 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D03601730
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Sep 2023 23:18:40 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id a640c23a62f3a-99c136ee106so799526466b.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Sep 2023 23:18:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694585919; x=1695190719; darn=vger.kernel.org;
-        h=in-reply-to:references:message-id:from:to:cc:subject:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iAf/16hy8GPnKFTGuy3hCSRkInFeqAXMGniiY3Op/qM=;
-        b=ESfB63wS3tl0Z4SkP3zCC6Y8AZK/iXD3kktgh8tjkQmrEY0pogU6R2KQbTu/VlCqWf
-         lAS5iKi/Mbwd2Z2ABkwx5jyGSh03P+mH7x/RI5OBRsWxMX4/uiJhxslQ/xRHwEbQZwq/
-         76jCBHhFTsdM5roOwZ20Mbal8XxPTrH2La7OV2XZkcYmvXm7xDMJNi5+vf9wSOZxxWYp
-         TXGkoJG1cpzLR7echftvYRmnov7QbUnWsiX52qSMKoIGgEGKPRo0c/FSD0AwzT3CDOxe
-         2oFPAHRA/wqfAnsk88D9LHQ943jOkqfjKsqCbRHrieRQPufiXd44F2ZJt947OG8maEwU
-         VBHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694585919; x=1695190719;
-        h=in-reply-to:references:message-id:from:to:cc:subject:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=iAf/16hy8GPnKFTGuy3hCSRkInFeqAXMGniiY3Op/qM=;
-        b=CTQmCoZABw0uvnVdsIMDE0j9i/qX3xLI+9VljuB9T+nab9RgCfa9o+awrHTmpe9/uv
-         DN0CTV7BxXZzHYY7UvH/jFqP6oSPfZZ0/aRkji2y6CiHUIijyOcwOhyH28rS9UnCo6r6
-         0syMy/W6QqahzJwMpqPqm/x6VI+apfFjzmCco8Hmat/MP8uD3Y2hkNTkEPZbGtrAU3x9
-         Jt0SP1YhzQCQeIXY9q0OgUws9jxBnq5O13xhnZWPLu6mdWbhLmTb9TUisDZPalAgB1/x
-         bxtVfe8h73krmMrSceZCdD3DU8W6SyKmqB4+2Zn1JIPSyiofVhvSi+YIs/JtxhDPdFwK
-         N0RA==
-X-Gm-Message-State: AOJu0YyMxecs/gRu7k6TzE19U8h5RY955E3eKLiY3X9CsaEypKn1Izdc
-        p0t2iTaA1pwYHI0YUgpjEo3Nyw==
-X-Google-Smtp-Source: AGHT+IEpQ6UxFd2NYZE8e6Or8dEuAHXIYe1z39yFCE2jq9fpGtTVMioEY8d/I4euaiZn+CEUXnyA4A==
-X-Received: by 2002:a17:906:de:b0:9a2:16e2:353 with SMTP id 30-20020a17090600de00b009a216e20353mr1268546eji.6.1694585919242;
-        Tue, 12 Sep 2023 23:18:39 -0700 (PDT)
-Received: from localhost (i5C74380B.versanet.de. [92.116.56.11])
-        by smtp.gmail.com with ESMTPSA id b9-20020a170906490900b00992f2befcbcsm7828614ejq.180.2023.09.12.23.18.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Sep 2023 23:18:38 -0700 (PDT)
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+        Wed, 13 Sep 2023 02:55:23 -0400
+Received: from hzbj-sdnproxy-1.icoremail.net (hzxs-sdnproxy-1.icoremail.net [223.252.214.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8041E173F;
+        Tue, 12 Sep 2023 23:55:18 -0700 (PDT)
+Received: from wangteng13$nudt.edu.cn ( [116.162.3.180] ) by
+ ajax-webmail-app2 (Coremail) ; Wed, 13 Sep 2023 14:54:07 +0800 (GMT+08:00)
+X-Originating-IP: [116.162.3.180]
+Date:   Wed, 13 Sep 2023 14:54:07 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From:   "Teng Wang" <wangteng13@nudt.edu.cn>
+To:     brauner@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        edumazet@google.com, netdev@vger.kernel.org
+Subject: Bug: rcu detected stall in sys_nanosleep
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2023.1-cmXT5 build
+ 20230419(ff23bf83) Copyright (c) 2002-2023 www.mailtech.cn nudt.edu.cn
+Content-Transfer-Encoding: base64
 Content-Type: text/plain; charset=UTF-8
-Date:   Wed, 13 Sep 2023 08:18:38 +0200
-Subject: Re: [BUG] virtio-fs: Corruption when running binaries from
- virtiofsd-backed fs
-Cc:     "Vivek Goyal" <vgoyal@redhat.com>,
-        "Stefan Hajnoczi" <stefanha@redhat.com>,
-        "Miklos Szeredi" <miklos@szeredi.hu>,
-        =?utf-8?q?Alex_Benn=C3=A9e?= <alex.bennee@linaro.org>,
-        "Manos Pitsidianakis" <manos.pitsidianakis@linaro.org>,
-        "Viresh Kumar" <viresh.kumar@linaro.org>,
-        <linux-kernel@vger.kernel.org>, <qemu-devel@nongnu.org>
-To:     "Erik Schilling" <erik.schilling@linaro.org>,
-        <virtualization@lists.linux-foundation.org>,
-        <linux-fsdevel@vger.kernel.org>, <virtio-fs@redhat.com>
-From:   "Erik Schilling" <erik.schilling@linaro.org>
-Message-Id: <CVHKGP2HRKVG.TEIWT3U6ZVTX@ablu-work>
-X-Mailer: aerc 0.15.2
-References: <CV5Q388ZKSI3.2N5DT3BRV3RIM@fedora>
- <CV7IJY36ZXDZ.250Z3B8VKN4Y5@ablu-work>
-In-Reply-To: <CV7IJY36ZXDZ.250Z3B8VKN4Y5@ablu-work>
+MIME-Version: 1.0
+Message-ID: <13067197.3b9a.18a8d519137.Coremail.wangteng13@nudt.edu.cn>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID: ZhYUCgDHPG2PXAFl1es7AQ--.5743W
+X-CM-SenderInfo: pzdqw35hqjijg6qxv3oohg3hdfq/1tbiAQENBGUAjM8DMgAAse
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VW3Jw
+        CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+        daVFxhVjvjDU=
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri Sep 1, 2023 at 12:37 PM CEST, Erik Schilling wrote:
-> On Wed Aug 30, 2023 at 10:20 AM CEST, Erik Schilling wrote:
-> > Hi all!
-> >
-> > Some days ago I posted to #virtiofs:matrix.org, describing that I am
-> > observing what looks like a corruption when executing programs from a
-> > virtiofs-based filesystem.
-> >
-> > Over the last few days I spent more time drilling into the problem.
-> > This is an attempt at summarizing my findings in order to see what othe=
-r
-> > people think about this.
-> >
-> > When running binaries mounted from virtiofs they may either: fail with =
-a
-> > segfault, fail with badaddr, get stuck or - sometimes - succeed.
-> >
-> > Environment:
-> >   Host: Fedora 38 running 6.4.11-200.fc38.x86_64
-> >   Guest: Yocto-based image: 6.4.9-yocto-standard, aarch64
-> >   virtiofsd: latest main + some debug prints [1]
-> >   QEMU: built from recent git [2]
-> >
-> > virtiofsd invocation:
-> >   RUST_LOG=3D"debug" ./virtiofsd --seccomp=3Dnone --sandbox=3Dnone \
-> >     --socket-path "fs.sock0" --shared-dir $PWD/share-dir/ --cache=3Dnev=
-er
-> >
-> > QEMU invocation:
-> >   ~/projects/qemu/build/qemu-system-aarch64 -kernel Image -machine virt=
- \
-> >     -cpu cortex-a57 \
-> >     -serial mon:stdio \
-> >     -device virtio-net-pci,netdev=3Dnet0 \
-> >     -netdev user,id=3Dnet0,hostfwd=3Dtcp::2223-:22 \
-> >     -display none -m 2048 -smp 4 \
-> >     -object memory-backend-memfd,id=3Dmem,size=3D2048M,share=3Don \
-> >     -numa node,memdev=3Dmem \
-> >     -hda trs-overlay-guest.qcow2 \
-> >     -chardev socket,id=3Dchar0,path=3D"fs.sock0" \
-> >     -device vhost-user-fs-pci,queue-size=3D1024,chardev=3Dchar0,tag=3D/=
-dev/root \
-> >     -append 'root=3D/dev/vda2 ro log_buf_len=3D8M'
-> >
-> > I figured that launching virtiofsd with --cache=3Dalways masks the
-> > problem. Therefore, I set --cache=3Dnever, but I think I observed no
-> > difference compared to the default setting (auto).
-> >
-> > Adding logging to virtiofsd and kernel _feeled_ like it made the proble=
-m
-> > harder to reproduce - leaving me with the impression that some race is
-> > happening on somewhere.
-> >
-> > Trying to rule out that virtiofsd is returning corrupted data, I added
-> > some logging and hashsum calculation hacks to it [1]. The hashes check
-> > out across multiple accesses and the order and kind of queued messages
-> > is exactly the same in both the error case and crash case. fio was also
-> > unable to find any errors with a naive job description [3].
-> >
-> > Next, I tried to capture info on the guest side. This became a bit
-> > tricky since the crashes became pretty rare once I followed a fixed
-> > pattern of starting log capture, running perf and trying to reproduce
-> > the problem. Ultimately, I had the most consistent results with
-> > immediately running a program twice:
-> >
-> >   /mnt/ld-linux-aarch64.so.1 /mnt/ls.coreutils /; \
-> >     /mnt/ld-linux-aarch64.so.1 /mnt/ls.coreutils /
-> >
-> >   (/mnt being the virtiofs mount)
-> >
-> > For collecting logs, I made a hack to the guest kernel in order to dump
-> > the page content after receiving the virtiofs responses [4]. Reproducin=
-g
-> > the problem with this, leaves me with logs that seem to suggest that
-> > virtiofsd is returning identical content, but the guest kernel seems to
-> > receive differing pages:
-> >
-> > good-kernel [5]:
-> >   kernel: virtio_fs_wake_pending_and_unlock: opcode 3 unique 0x312 node=
-id 0x1 in.len 56 out.len 104
-> >   kernel: virtiofs virtio1: virtio_fs_vq_done requests.0
-> >   kernel: virtio_fs_wake_pending_and_unlock: opcode 1 unique 0x314 node=
-id 0x1 in.len 53 out.len 128
-> >   kernel: virtiofs virtio1: virtio_fs_vq_done requests.0
-> >   kernel: virtio_fs_wake_pending_and_unlock: opcode 3 unique 0x316 node=
-id 0x29 in.len 56 out.len 104
-> >   kernel: virtiofs virtio1: virtio_fs_vq_done requests.0
-> >   kernel: virtio_fs_wake_pending_and_unlock: opcode 14 unique 0x318 nod=
-eid 0x29 in.len 48 out.len 16
-> >   kernel: virtiofs virtio1: virtio_fs_vq_done requests.0
-> >   kernel: virtio_fs_wake_pending_and_unlock: opcode 15 unique 0x31a nod=
-eid 0x29 in.len 80 out.len 832
-> >   kernel: virtiofs virtio1: virtio_fs_vq_done requests.0
-> >   kernel: virtio_fs: page: 000000006996d520
-> >   kernel: virtio_fs: to: 00000000de590c14
-> >   kernel: virtio_fs rsp:00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00=
-  ................
-> >   kernel: virtio_fs rsp:00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00=
-  ................
-> >   kernel: virtio_fs rsp:00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00=
-  ................
-> >   kernel: virtio_fs rsp:00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00=
-  ................
-> >   [...]
-> >
-> > bad-kernel [6]:
-> >   kernel: virtio_fs_wake_pending_and_unlock: opcode 3 unique 0x162 node=
-id 0x1 in.len 56 out.len 104
-> >   kernel: virtiofs virtio1: virtio_fs_vq_done requests.0
-> >   kernel: virtio_fs_wake_pending_and_unlock: opcode 1 unique 0x164 node=
-id 0x1 in.len 53 out.len 128
-> >   kernel: virtiofs virtio1: virtio_fs_vq_done requests.0
-> >   kernel: virtio_fs_wake_pending_and_unlock: opcode 3 unique 0x166 node=
-id 0x16 in.len 56 out.len 104
-> >   kernel: virtiofs virtio1: virtio_fs_vq_done requests.0
-> >   kernel: virtio_fs_wake_pending_and_unlock: opcode 14 unique 0x168 nod=
-eid 0x16 in.len 48 out.len 16
-> >   kernel: virtiofs virtio1: virtio_fs_vq_done requests.0
-> >   kernel: virtio_fs_wake_pending_and_unlock: opcode 15 unique 0x16a nod=
-eid 0x16 in.len 80 out.len 832
-> >   kernel: virtiofs virtio1: virtio_fs_vq_done requests.0
-> >   kernel: virtio_fs: page: 000000006ce9a559
-> >   kernel: virtio_fs: to: 000000007ae8b946
-> >   kernel: virtio_fs rsp:00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00=
-  ................
-> >   kernel: virtio_fs rsp:00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00=
-  ................
-> >   kernel: virtio_fs rsp:80 40 de c8 ff ff 00 00 cc 2b 62 ae ff ff 00 00=
-  .@.......+b.....
-> >   kernel: virtio_fs rsp:02 4e de c8 ff ff 00 00 00 00 00 00 00 00 00 00=
-  .N..............
-> >   [...]
-> >
-> > When looking at the corresponding output from virtiofsd, it claims to
-> > have returned identical data:
-> >
-> > good-virtiofsd [7]:
-> >   [DEBUG virtiofsd::server] Received request: opcode=3DRead (15), inode=
-=3D41, unique=3D794, pid=3D481
-> >   [src/server.rs:618] r.read_obj().map_err(Error::DecodeMessage)? =3D R=
-eadIn {
-> >       fh: 31,
-> >       offset: 0,
-> >       size: 832,
-> >       read_flags: 2,
-> >       lock_owner: 6838554705639967244,
-> >       flags: 131072,
-> >       padding: 0,
-> >   }
-> >   [src/file_traits.rs:161] hash =3D 2308490450751364994
-> >   [DEBUG virtiofsd::server] Replying OK, header: OutHeader { len: 848, =
-error: 0, unique: 794 }
-> >
-> > bad-virtiofsd [8]:
-> >   [DEBUG virtiofsd::server] Received request: opcode=3DRead (15), inode=
-=3D22, unique=3D362, pid=3D406
-> >   [src/server.rs:618] r.read_obj().map_err(Error::DecodeMessage)? =3D R=
-eadIn {
-> >       fh: 12,
-> >       offset: 0,
-> >       size: 832,
-> >       read_flags: 2,
-> >       lock_owner: 6181120926258395554,
-> >       flags: 131072,
-> >       padding: 0,
-> >   }
-> >   [src/file_traits.rs:161] hash =3D 2308490450751364994
-> >   [DEBUG virtiofsd::server] Replying OK, header: OutHeader { len: 848, =
-error: 0, unique: 362 }
-> >
-> > The "corruption" only seems to happen in this one page, all other pages
-> > are identical between runs (except that the bad run terminates earlier)=
-.
-> >
-> > What do the experts think here? To me it feels a bit like some kind of
-> > corruption is going on. Or am I misinterpreting things here?
-> >
-> > Which further analysis steps would you suggest?
-> >
-> >
-> > Further notes:
-> >
-> > After collecting the above results, I realized that running the guest
-> > with -smp 1 makes the problems a lot worse. So maybe that is a better
-> > choice when trying to reproduce it.
-> >
-> > Repo with my scripts is available at:
-> > https://git.codelinaro.org/erik_schilling/jira-orko-65-bootstrap-k3s-co=
-nfig/
-> >
-> > The scripts are just quick and dirty implementations and are not
-> > particulary portable.
->
-> Summary of my testing during the last few days:
->
-> Testing with KCSAN revealed a few cases that look like missing READ_ONCE
-> annotations (will send patches separately). But nothing of that was
-> related to the immediate problem. I tested instrument_read() and another
-> round of logging with a delay to virtio_fs_request_complete. It looks
-> like the buffer get corrupted before entering that function. KCSAN
-> or manual sleeps + prints did not show any corruption while in that
-> function.
->
-> KASAN did not report any issues.
->
-> Patching virtiofsd to do an additional copy and going through rust-vmm's
-> .copy_to() function did not change the behaviour.
->
-> I will mostly be off next week, will continue analysis afterwards. Happy
-> to hear about suggestions of other things to try :).
-
-Back from a week of vacation...
-
-Summary of what was discussed on #virtiofs:matrix.org:
-
-The issue only seems to happen in QEMU TCG scenarios (I tested aarch64
-and x86_64 on x86_64, wizzard on Matrix tested arm32).
-
-CCing qemu-devel. Maybe someone has some hints on where to focus the
-debugging efforts?
-
-I am trying to build a complex monster script of tracing the relevant
-addresses in order to figure out whether the guest or host does the
-writes. But I am happy to hear about more clever ideas :).
-
-- Erik
-
->
-> Good weekend,
->
-> - Erik
->
->
-> >
-> > - Erik
-> >
-> > [1] https://gitlab.com/ablu/virtiofsd/-/commit/18fd0c1849e15bc55fbdd6e1=
-f169801b2b03da1f
-> > [2] https://gitlab.com/qemu-project/qemu/-/commit/50e7a40af372ee5931c99=
-ef7390f5d3d6fbf6ec4
-> > [3] https://git.codelinaro.org/erik_schilling/jira-orko-65-bootstrap-k3=
-s-config/-/blob/397a6310dea35973025e3d61f46090bf0c092762/share-dir/write-an=
-d-verify-mmap.fio
-> > [4] https://github.com/Ablu/linux/commit/3880b9f8affb01aeabb0a04fe76ad7=
-701dc0bb95
-> > [5] Line 12923: https://git.codelinaro.org/erik_schilling/jira-orko-65-=
-bootstrap-k3s-config/-/blob/main/logs/2023-08-29%2013%3A42%3A35%2B02%3A00/g=
-ood-drop-bad-1.txt
-> > [6] Line 12923: https://git.codelinaro.org/erik_schilling/jira-orko-65-=
-bootstrap-k3s-config/-/blob/main/logs/2023-08-29%2013%3A42%3A35%2B02%3A00/g=
-ood-bad-1.txt
-> > [7] https://git.codelinaro.org/erik_schilling/jira-orko-65-bootstrap-k3=
-s-config/-/blob/main/logs/2023-08-29%2013%3A42%3A35%2B02%3A00/virtiofsd.txt=
-#L2538-2549
-> > [8] https://git.codelinaro.org/erik_schilling/jira-orko-65-bootstrap-k3=
-s-config/-/blob/main/logs/2023-08-29%2013%3A42%3A35%2B02%3A00/virtiofsd.txt=
-#L1052-1063
-
+RGVhciBBbGwsClRoaXMgYnVnIHdhcyBmb3VuZCBpbiBsaW51eCBLZXJuZWwgdjYuMi4xMAoKU3l6
+a2FsbGVyIGhpdCAnSU5GTzogcmN1IGRldGVjdGVkIHN0YWxsIGluIHN5c19uYW5vc2xlZXAnIGJ1
+Zy4KCnJjdTogSU5GTzogcmN1X3ByZWVtcHQgc2VsZi1kZXRlY3RlZCBzdGFsbCBvbiBDUFUKcmN1
+OiAwLS4uLi46ICg1NjU0IHRpY2tzIHRoaXMgR1ApIGlkbGU9NDQwNC8xLzB4NDAwMDAwMDAwMDAw
+MDAwMCBzb2Z0aXJxPTExMDc1My8xMTA3NTMgZnFzPTUwMzgKKHQ9MjEwMDYgamlmZmllcyBnPTE1
+NTM0MSBxPTY2NSBuY3B1cz0yKQpDUFU6IDAgUElEOiAyNzkxMiBDb21tOiBzeXotZXhlY3V0b3Iu
+MSBOb3QgdGFpbnRlZCA2LjIuMTAgIzEKSGFyZHdhcmUgbmFtZTogUUVNVSBTdGFuZGFyZCBQQyAo
+aTQ0MEZYICsgUElJWCwgMTk5NiksIEJJT1MgVWJ1bnR1LTEuOC4yLTF1YnVudHUxIDA0LzAxLzIw
+MTQKUklQOiAwMDEwOnB1dF9waWRfbnMrMHgyLzB4ZjAKQ29kZTogMDAgNDggOGIgN2IgNDggYmUg
+MDEgMDAgMDAgMDAgZTggZjkgMzYgZjQgZmYgNDggOGQgNzMgZTggNDggOGIgM2QgMmUgMDYgNDIg
+MDIgNWIgZTkgYjggNmEgMTMgMDAgMGYgMWYgODQgMDAgMDAgMDAgMDAgMDAgNDEgNTYgPDQxPiA1
+NSA0MSA1NCA1NSA0OCA4OSBmZCA1MyBlOCBkMCAyYiAwMSAwMCA0OCA4MSBmZCAyMCAwZiBlNSBh
+YSA3NApSU1A6IDAwMTg6ZmZmZjliYWUwMDAwM2VmOCBFRkxBR1M6IDAwMDAwMjQ2ClJBWDogMDAw
+MDAwMDAwMDAwMDAwMCBSQlg6IGZmZmY4YjM4NTc4MGNlMDAgUkNYOiAwMDAwMDAwMDgwMjAwMDFm
+ClJEWDogMDAwMDAwMDAwMDAwMDAwMSBSU0k6IGZmZmZmZmZmYWFiODBiMDkgUkRJOiBmZmZmOGIz
+ODU2NmQ0MTk4ClJCUDogMDAwMDAwMDAwMDAwMDAwMSBSMDg6IDAwMDAwMDAwMDAwMDAwMDAgUjA5
+OiBmZmZmZmZmZmE5NGJhOTI3ClIxMDogMDAwMDAwMDAwMDAwMDAwMCBSMTE6IDAwMDAwMDAwMDAw
+MDAwMDAgUjEyOiBmZmZmOGIzODU2NmQ0MTk4ClIxMzogZmZmZjhiMzhiZGMyYWUzOCBSMTQ6IDAw
+MDAwMDAwMDAwMDAwMGEgUjE1OiAwMDAwMDAwMDAwMDAwMDAwCkZTOiAgMDAwMDAwMDAwMmVmMjk4
+MCgwMDAwKSBHUzpmZmZmOGIzOGJkYzAwMDAwKDAwMDApIGtubEdTOjAwMDAwMDAwMDAwMDAwMDAK
+Q1M6ICAwMDEwIERTOiAwMDAwIEVTOiAwMDAwIENSMDogMDAwMDAwMDA4MDA1MDAzMwpDUjI6IDAw
+MDA3ZmE5NGEyMjBhMDggQ1IzOiAwMDAwMDAwMDE3OTA2MDA1IENSNDogMDAwMDAwMDAwMDM3MDZm
+MApDYWxsIFRyYWNlOgogPElSUT4KIHB1dF9waWQucGFydC40KzB4NWYvMHg5MAogZGVsYXllZF9w
+dXRfcGlkKzB4MWMvMHgzMAogcmN1X2NvcmUrMHgzNTMvMHg4ZjAKIF9fZG9fc29mdGlycSsweGQ5
+LzB4MmNiCiBpcnFfZXhpdF9yY3UrMHg5MS8weGMwCiBzeXN2ZWNfYXBpY190aW1lcl9pbnRlcnJ1
+cHQrMHg4YS8weGIwCiA8L0lSUT4KIDxUQVNLPgogYXNtX3N5c3ZlY19hcGljX3RpbWVyX2ludGVy
+cnVwdCsweDE2LzB4MjAKUklQOiAwMDEwOmZpbmlzaF90YXNrX3N3aXRjaCsweDkwLzB4MjYwCkNv
+ZGU6IDQxIGM3IDQ2IDM0IDAwIDAwIDAwIDAwIDQ4IDhiIDgzIGQ4IDA5IDAwIDAwIDQ4IDg1IGMw
+IDBmIDg1IDdjIDAxIDAwIDAwIDQ4IDg5IGRmIGU4IGVhIGZkIGZmIDAwIGZiIDY1IDQ4IDhiIDA0
+IDI1IDQwIDk5IDAyIDAwIDw4MT4gYTAgMTAgMGEgMDAgMDAgZmYgZmYgZmYgYmYgNGQgODUgZWQg
+NzQgMTggNGMgM2IgYTggYTggMDQgMDAgMDAKUlNQOiAwMDE4OmZmZmY5YmFlMDg5MWJkNzAgRUZM
+QUdTOiAwMDAwMDI4MgpSQVg6IGZmZmY4YjM4NTdlNTgwMDAgUkJYOiBmZmZmOGIzOGJkYzJhMGMw
+IFJDWDogMDAwMDAwMDAwMDAwMDAwMgpSRFg6IDAwMDAwMDAwODAwMDAwMDIgUlNJOiAwMDAwMDAw
+MDAwMDAwMDAwIFJESTogMDAwMDAwMDBmZmZmZmZmZgpSQlA6IGZmZmY5YmFlMDg5MWJkYTggUjA4
+OiBmZmZmOGIzOGJkYzFlNWMwIFIwOTogMDAwMDAwMDAwMDAwOTI3NwpSMTA6IGZmZmY5YmFlMDg5
+MWJiNzggUjExOiAwMDAwMDAwMDAwMjU5NDAwIFIxMjogZmZmZjhiMzg1N2U1ODAwMApSMTM6IDAw
+MDAwMDAwMDAwMDAwMDAgUjE0OiBmZmZmOGIzODU3ZTVhMDAwIFIxNTogMDAwMDAwMDAwMDAwMjAw
+MQogX19zY2hlZHVsZSsweDJlMC8weDc5MAogc2NoZWR1bGUrMHg0Yi8weGEwCiBkb19uYW5vc2xl
+ZXArMHhhNy8weDE4MAogaHJ0aW1lcl9uYW5vc2xlZXArMHhiNC8weDE2MAogX194NjRfc3lzX25h
+bm9zbGVlcCsweGM0LzB4MTEwCiBkb19zeXNjYWxsXzY0KzB4MzcvMHg5MAogZW50cnlfU1lTQ0FM
+TF82NF9hZnRlcl9od2ZyYW1lKzB4NjMvMHhjZApSSVA6IDAwMzM6MHg0NjkzNDAKQ29kZTogZmYg
+NzcgNDcgZjMgYzMgMGYgMWYgNDQgMDAgMDAgNTUgNTMgNDggODkgZjUgNDggODkgZmIgNDggODMg
+ZWMgMTggZTggMGYgMzggMDAgMDAgNDggODkgZWUgODkgYzIgNDggODkgZGYgYjggMjMgMDAgMDAg
+MDAgMGYgMDUgPDQ4PiAzZCAwMCBmMCBmZiBmZiA3NyAyYSA4OSBkNyA4OSA0NCAyNCAwYyBlOCA0
+ZCAzOCAwMCAwMCA4YiA0NCAyNApSU1A6IDAwMmI6MDAwMDdmZmNkN2VhMDJjMCBFRkxBR1M6IDAw
+MDAwMjkzIE9SSUdfUkFYOiAwMDAwMDAwMDAwMDAwMDIzClJBWDogZmZmZmZmZmZmZmZmZmZkYSBS
+Qlg6IDAwMDA3ZmZjZDdlYTAzMDAgUkNYOiAwMDAwMDAwMDAwNDY5MzQwClJEWDogMDAwMDAwMDAw
+MDAwMDAwMCBSU0k6IDAwMDAwMDAwMDAwMDAwMDAgUkRJOiAwMDAwN2ZmY2Q3ZWEwMzAwClJCUDog
+MDAwMDAwMDAwMDAwMDAwMCBSMDg6IDAwMDA3ZjIzZDgxNmI3MDAgUjA5OiAwMDAwMDAwMDAwMDAw
+MDAwClIxMDogMDAwMDAwMDAwMDAwMDAwMCBSMTE6IDAwMDAwMDAwMDAwMDAyOTMgUjEyOiAwMDAw
+MDAwMDAwMDRmNWI2ClIxMzogMDAwMDAwMDAwMDAwMDAwNSBSMTQ6IDAwMDAwMDAwMDExYWMxNGMg
+UjE1OiBmZmZmZmZmZmZmZmZmZmZmCiA8L1RBU0s+CnJjdTogSU5GTzogcmN1X3ByZWVtcHQgZGV0
+ZWN0ZWQgZXhwZWRpdGVkIHN0YWxscyBvbiBDUFVzL3Rhc2tzOiB7IDAtLi4uLiB9IDIxNTExIGpp
+ZmZpZXMgczogMjc0NzMgcm9vdDogMHgxLy4KcmN1OiBibG9ja2luZyByY3Vfbm9kZSBzdHJ1Y3R1
+cmVzIChpbnRlcm5hbCBSQ1UgZGVidWcpOgpTZW5kaW5nIE5NSSBmcm9tIENQVSAxIHRvIENQVXMg
+MDoKTk1JIGJhY2t0cmFjZSBmb3IgY3B1IDAKQ1BVOiAwIFBJRDogMjc5MTIgQ29tbTogc3l6LWV4
+ZWN1dG9yLjEgTm90IHRhaW50ZWQgNi4yLjEwICMxCkhhcmR3YXJlIG5hbWU6IFFFTVUgU3RhbmRh
+cmQgUEMgKGk0NDBGWCArIFBJSVgsIDE5OTYpLCBCSU9TIFVidW50dS0xLjguMi0xdWJ1bnR1MSAw
+NC8wMS8yMDE0ClJJUDogMDAxMDphc21fc3lzdmVjX2FwaWNfdGltZXJfaW50ZXJydXB0KzB4MC8w
+eDIwCkNvZGU6IGU5IDE1IDA2IDAwIDAwIDBmIDFmIDQ0IDAwIDAwIDBmIDAxIGNhIGZjIDZhIGZm
+IGU4IGU1IDA0IDAwIDAwIDQ4IDg5IGM0IDQ4IDg5IGU3IGU4IDZhIDIyIGVjIGZmIGU5IGY1IDA1
+IDAwIDAwIDBmIDFmIDQ0IDAwIDAwIDwwZj4gMDEgY2EgZmMgNmEgZmYgZTggYzUgMDQgMDAgMDAg
+NDggODkgYzQgNDggODkgZTcgZTggZGEgMjAgZWMgZmYKUlNQOiAwMDE4OmZmZmY5YmFlMDAwMDNl
+ZDggRUZMQUdTOiAwMDAwMDA0NgpSQVg6IDAwMDAwMDAwMDAwMDAwMDAgUkJYOiBmZmZmOGIzOGJk
+YzJhZGMwIFJDWDogZmZmZmZmZmZhOTQ5MjZlNQpSRFg6IGZmZmY4YjM4NTdlNTgwMDAgUlNJOiAw
+MDAwMDAwMDAwMDAwMTAwIFJESTogZmZmZjhiMzg1NzU5MDAwMApSQlA6IGZmZmY4YjM4NTc1OTA5
+YjggUjA4OiAwMDAwMDAwMDAwMDAwMDAwIFIwOTogZmZmZmZmZmZhOTRiYTkyNwpSMTA6IDAwMDAw
+MDAwMDAwMDAwMDAgUjExOiAwMDAwMDAwMDAwMDAwMDAwIFIxMjogZmZmZjhiMzg1NzU5MDAwMApS
+MTM6IGZmZmY4YjM4YmRjMmFlMzggUjE0OiAwMDAwMDAwMDAwMDAwMDBhIFIxNTogMDAwMDAwMDAw
+MDAwMDAwMApGUzogIDAwMDAwMDAwMDJlZjI5ODAoMDAwMCkgR1M6ZmZmZjhiMzhiZGMwMDAwMCgw
+MDAwKSBrbmxHUzowMDAwMDAwMDAwMDAwMDAwCkNTOiAgMDAxMCBEUzogMDAwMCBFUzogMDAwMCBD
+UjA6IDAwMDAwMDAwODAwNTAwMzMKQ1IyOiAwMDAwN2ZhOTRhMjIwYTA4IENSMzogMDAwMDAwMDAx
+NzkwNjAwNSBDUjQ6IDAwMDAwMDAwMDAzNzA2ZjAKQ2FsbCBUcmFjZToKIDxJUlE+ClJJUDogMDAx
+MDpyZXRob29rX2ZsdXNoX3Rhc2srMHgxLzB4ODAKQ29kZTogNzUgYjQgZWIgZDAgZTggODAgNTcg
+ZmIgZmYgNDggODkgZGYgNDggYzcgYzYgZjAgM2MgNWUgYTkgZTggOTEgNDUgZjQgZmYgNWIgNWQg
+NDEgNWMgNDEgNWQgZTkgNjYgNTcgZmIgZmYgNjYgMGYgMWYgNDQgMDAgMDAgNTUgPDUzPiA0OCA4
+OSBmZCBlOCA1NiA1NyBmYiBmZiA0OCA4YiA5ZCBkOCAwYSAwMCAwMCA0OCBjNyA4NSBkOCAwYSAw
+MApSU1A6IDAwMTg6ZmZmZjliYWUwMDAwM2YwMCBFRkxBR1M6IDAwMDAwMjQ2CiBkZWxheWVkX3B1
+dF90YXNrX3N0cnVjdCsweDFkLzB4MTEwCiByY3VfY29yZSsweDM1My8weDhmMAogX19kb19zb2Z0
+aXJxKzB4ZDkvMHgyY2IKIGlycV9leGl0X3JjdSsweDkxLzB4YzAKIHN5c3ZlY19hcGljX3RpbWVy
+X2ludGVycnVwdCsweDhhLzB4YjAKIDwvSVJRPgogPFRBU0s+CiBhc21fc3lzdmVjX2FwaWNfdGlt
+ZXJfaW50ZXJydXB0KzB4MTYvMHgyMApSSVA6IDAwMTA6ZmluaXNoX3Rhc2tfc3dpdGNoKzB4OTAv
+MHgyNjAKQ29kZTogNDEgYzcgNDYgMzQgMDAgMDAgMDAgMDAgNDggOGIgODMgZDggMDkgMDAgMDAg
+NDggODUgYzAgMGYgODUgN2MgMDEgMDAgMDAgNDggODkgZGYgZTggZWEgZmQgZmYgMDAgZmIgNjUg
+NDggOGIgMDQgMjUgNDAgOTkgMDIgMDAgPDgxPiBhMCAxMCAwYSAwMCAwMCBmZiBmZiBmZiBiZiA0
+ZCA4NSBlZCA3NCAxOCA0YyAzYiBhOCBhOCAwNCAwMCAwMApSU1A6IDAwMTg6ZmZmZjliYWUwODkx
+YmQ3MCBFRkxBR1M6IDAwMDAwMjgyClJBWDogZmZmZjhiMzg1N2U1ODAwMCBSQlg6IGZmZmY4YjM4
+YmRjMmEwYzAgUkNYOiAwMDAwMDAwMDAwMDAwMDAyClJEWDogMDAwMDAwMDA4MDAwMDAwMiBSU0k6
+IDAwMDAwMDAwMDAwMDAwMDAgUkRJOiAwMDAwMDAwMGZmZmZmZmZmClJCUDogZmZmZjliYWUwODkx
+YmRhOCBSMDg6IGZmZmY4YjM4YmRjMWU1YzAgUjA5OiAwMDAwMDAwMDAwMDA5Mjc3ClIxMDogZmZm
+ZjliYWUwODkxYmI3OCBSMTE6IDAwMDAwMDAwMDAyNTk0MDAgUjEyOiBmZmZmOGIzODU3ZTU4MDAw
+ClIxMzogMDAwMDAwMDAwMDAwMDAwMCBSMTQ6IGZmZmY4YjM4NTdlNWEwMDAgUjE1OiAwMDAwMDAw
+MDAwMDAyMDAxCiBfX3NjaGVkdWxlKzB4MmUwLzB4NzkwCiBzY2hlZHVsZSsweDRiLzB4YTAKIGRv
+X25hbm9zbGVlcCsweGE3LzB4MTgwCiBocnRpbWVyX25hbm9zbGVlcCsweGI0LzB4MTYwCiBfX3g2
+NF9zeXNfbmFub3NsZWVwKzB4YzQvMHgxMTAKIGRvX3N5c2NhbGxfNjQrMHgzNy8weDkwCiBlbnRy
+eV9TWVNDQUxMXzY0X2FmdGVyX2h3ZnJhbWUrMHg2My8weGNkClJJUDogMDAzMzoweDQ2OTM0MApD
+b2RlOiBmZiA3NyA0NyBmMyBjMyAwZiAxZiA0NCAwMCAwMCA1NSA1MyA0OCA4OSBmNSA0OCA4OSBm
+YiA0OCA4MyBlYyAxOCBlOCAwZiAzOCAwMCAwMCA0OCA4OSBlZSA4OSBjMiA0OCA4OSBkZiBiOCAy
+MyAwMCAwMCAwMCAwZiAwNSA8NDg+IDNkIDAwIGYwIGZmIGZmIDc3IDJhIDg5IGQ3IDg5IDQ0IDI0
+IDBjIGU4IDRkIDM4IDAwIDAwIDhiIDQ0IDI0ClJTUDogMDAyYjowMDAwN2ZmY2Q3ZWEwMmMwIEVG
+TEFHUzogMDAwMDAyOTMgT1JJR19SQVg6IDAwMDAwMDAwMDAwMDAwMjMKUkFYOiBmZmZmZmZmZmZm
+ZmZmZmRhIFJCWDogMDAwMDdmZmNkN2VhMDMwMCBSQ1g6IDAwMDAwMDAwMDA0NjkzNDAKUkRYOiAw
+MDAwMDAwMDAwMDAwMDAwIFJTSTogMDAwMDAwMDAwMDAwMDAwMCBSREk6IDAwMDA3ZmZjZDdlYTAz
+MDAKUkJQOiAwMDAwMDAwMDAwMDAwMDAwIFIwODogMDAwMDdmMjNkODE2YjcwMCBSMDk6IDAwMDAw
+MDAwMDAwMDAwMDAKUjEwOiAwMDAwMDAwMDAwMDAwMDAwIFIxMTogMDAwMDAwMDAwMDAwMDI5MyBS
+MTI6IDAwMDAwMDAwMDAwNGY1YjYKUjEzOiAwMDAwMDAwMDAwMDAwMDA1IFIxNDogMDAwMDAwMDAw
+MTFhYzE0YyBSMTU6IGZmZmZmZmZmZmZmZmZmZmYKIDwvVEFTSz4KCgoKCg==
