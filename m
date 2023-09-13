@@ -2,378 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2537D79EFA7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Sep 2023 18:59:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B4C479EFAA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Sep 2023 18:59:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231328AbjIMQ6w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Sep 2023 12:58:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43168 "EHLO
+        id S231297AbjIMQ7s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Sep 2023 12:59:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231364AbjIMQ6W (ORCPT
+        with ESMTP id S231173AbjIMQ7e (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Sep 2023 12:58:22 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id EFC181FD0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Sep 2023 09:57:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1694624250;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=jTW4hj6R6SH2WgBE9Xhmo5Z05cFVRaLxhGn+V3gLo/A=;
-        b=HyYyDGQ5+crGYtT2e4BA+No/lpFhxIcPzQ57idYmn6PZxoZx3CZBjMaC+nl3vTWz4wXxiz
-        4dwxQeN+tVtJvHhBiFplrnh21kWeHat6QoJDIgGQNevcMkrTlwR/NKBznW4RLDyQNM5bus
-        JZCH/y3oowQa5deYcKHGtssGnu07wws=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-583-kw6qakgRMmKfBnOo7mji8A-1; Wed, 13 Sep 2023 12:57:27 -0400
-X-MC-Unique: kw6qakgRMmKfBnOo7mji8A-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 0D8F6855321;
-        Wed, 13 Sep 2023 16:57:26 +0000 (UTC)
-Received: from warthog.procyon.org.com (unknown [10.42.28.216])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C823740C6EA8;
-        Wed, 13 Sep 2023 16:57:23 +0000 (UTC)
-From:   David Howells <dhowells@redhat.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     David Howells <dhowells@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@lst.de>,
-        Christian Brauner <christian@brauner.io>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-mm@kvack.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
-Subject: [PATCH v4 13/13] iov_iter: Create a fake device to allow iov_iter testing/benchmarking
-Date:   Wed, 13 Sep 2023 17:56:48 +0100
-Message-ID: <20230913165648.2570623-14-dhowells@redhat.com>
-In-Reply-To: <20230913165648.2570623-1-dhowells@redhat.com>
-References: <20230913165648.2570623-1-dhowells@redhat.com>
+        Wed, 13 Sep 2023 12:59:34 -0400
+Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5300B3586
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Sep 2023 09:58:59 -0700 (PDT)
+Received: by mail-pf1-x433.google.com with SMTP id d2e1a72fcca58-68fb7074348so3561265b3a.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Sep 2023 09:58:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1694624339; x=1695229139; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=VhP70vpj5PWFB+iYZacvcg8zeDYG8Ksg0ttAfb+9X8o=;
+        b=SdKAVvDbn9LWrufA9SdBaQxcIRabwlEfcIKj6MflobuYrd80Kw2QUGbFgotvTwu6G/
+         /XZNJ8HBVVfytO9ujDIzJaWoqPSM89oqgbAGd26bd1ZRAeCs3vKZPt7gTugup11yAjgw
+         w1cNaTHck1bCovE5Hb6MbO5bKDm4oHtkrefNfr0e5GDXR+1CsyYLLLF4HieoFZkZlB6n
+         wLWNMOIoB8TX+p7XzD4w5+O2r5+Ramq+FCVKCYRB1yw/S7xPvGekAHxSv4kWX0P8d46N
+         fXKtBJOVhJf/1C7OwMeqtsuKfRKgwNTOhLlIvvLRwmDuQgiuueOLj+m5EQiHmKnu0aRy
+         goPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694624339; x=1695229139;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VhP70vpj5PWFB+iYZacvcg8zeDYG8Ksg0ttAfb+9X8o=;
+        b=JURA/gNNLzk8sqC/0ncruUo3LmRG06vF0ofj/bDF4j8uWhH3Dl81m4yCq1zj7V/8/w
+         2EIfR2rA3uJPIEow4BjQ/srmfT2qfZ4t17sJGlybGzGfSIIGngt15pmlXc90zAMabZFX
+         IoZWbEC9CCMPI8iix+o1u6ddAzjB3hglVeZK9u2YeXpeWjD+w3Q2GF/8YkdMzRhOXXUS
+         9u9DhTWkrFdTYVzqLw8eQvB7zHI5/RttqOTr4qb5ED3LPjEvmtxyRZsLeUMSgCO4TGY+
+         yh58DChqjQZSrO5ppESf2LsrMPIdRXQcU9654iATNc5DmPtBh5fv24nv2vv4+CCxYbCT
+         PcQQ==
+X-Gm-Message-State: AOJu0Yw7D0XL3VFIXcWVBtkL6KVM7DLsTn4WaVSmOUGJ6qRe72kJuyZb
+        ccNTcUcr9eAa0dxW/646NqA=
+X-Google-Smtp-Source: AGHT+IEdNGA7PfuA3xFF1w8R7AbLW+d4wMBhhxXFmjkkmb8MK8Uh2by7i6flZmzYEosSJae2BQExGQ==
+X-Received: by 2002:a05:6a20:4327:b0:13f:1622:29de with SMTP id h39-20020a056a20432700b0013f162229demr3210638pzk.7.1694624338645;
+        Wed, 13 Sep 2023 09:58:58 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id n23-20020aa79057000000b0068782960099sm262425pfo.22.2023.09.13.09.58.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Sep 2023 09:58:58 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <3fb55cc7-8c50-2ba1-3e51-483b19a66f91@roeck-us.net>
+Date:   Wed, 13 Sep 2023 09:58:56 -0700
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.0
+Subject: Re: [MAINTAINERS/KERNEL SUMMIT] Trust and maintenance of file systems
+Content-Language: en-US
+To:     Eric Sandeen <sandeen@sandeen.net>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Dave Chinner <david@fromorbit.com>
+Cc:     Christoph Hellwig <hch@infradead.org>, ksummit@lists.linux.dev,
+        linux-fsdevel@vger.kernel.org
+References: <ZO9NK0FchtYjOuIH@infradead.org>
+ <8718a8a3-1e62-0e2b-09d0-7bce3155b045@roeck-us.net>
+ <ZPkDLp0jyteubQhh@dread.disaster.area>
+ <20230906215327.18a45c89@gandalf.local.home>
+ <ZPkz86RRLaYOkmx+@dread.disaster.area>
+ <20230906225139.6ffe953c@gandalf.local.home>
+ <ZPlFwHQhJS+Td6Cz@dread.disaster.area>
+ <20230907071801.1d37a3c5@gandalf.local.home>
+ <b7ca4a4e-a815-a1e8-3579-57ac783a66bf@sandeen.net>
+From:   Guenter Roeck <linux@roeck-us.net>
+In-Reply-To: <b7ca4a4e-a815-a1e8-3579-57ac783a66bf@sandeen.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Create a fake device to allow testing and benchmarking of UBUF and IOVEC
-iterators.  /dev/iov-test is created and can be driven with pwritev() in
-which case it copies everything to a sink page and it can be written with
-preadv() in which case it copies repeatedly from a patterned page.
+On 9/13/23 09:43, Eric Sandeen wrote:
+> On 9/7/23 6:18 AM, Steven Rostedt wrote:
+>> On Thu, 7 Sep 2023 13:38:40 +1000
+>> Dave Chinner <david@fromorbit.com> wrote:
+>>
+>>> Hence, IMO, gutting a filesystem implementation to just support
+>>> read-only behaviour "to prolong it's support life" actually makes
+>>> things worse from a maintenance and testing persepective, not
+>>> better....
+>>
+>>  From your other email about 10 years support, you could first set a fs to
+>> read-only, and then after so long (I'm not sure 10 years is really
+>> necessary), then remove it.
+>>
+>> That is, make it the stage before removal. If no one complains about it
+>> being read-only after several years, then it's highly likely that no one is
+>> using it. If someone does complain, you can tell them to either maintain
+>> it, or start moving all their data to another fs.
+>>
+>> For testing, you could even have an #ifdef that needs to be manually
+>> changed (not a config option) to make it writable.
+> 
+> This still sounds to me like /more/ work for developers and testers that
+> may interact with the almost-dead filesystems, not less...
+> 
+> I agree w/ Dave here that moving almost-dead filesystems to RO-only
+> doesn't help solve the problem.
+> 
+> (and back to syzbot, it doesn't care one bit if $FOO-fs is readonly in
+> the kernel, it can still happily break the fs and the kernel along with it.)
+> 
+> Forcing readonly might make users squawk or speak up on the way to
+> possible deprecation, but then what? I don't think it reduces the
+> maintenance burden in any real way.
+> 
+> Isn't it more typical to mark something as on its way to deprecation in
+> Kconfig and/or a printk?
+> 
 
-The time taken is logged with tracepoints.
+I think that commit eb103a51640e ("reiserfs: Deprecate reiserfs") is a perfect
+and excellent example for how to do this.
 
-This can be driven by something like:
-
-	echo 1 >/sys/kernel/debug/tracing/events/iov_test/enable
-	cmd="r -b 1M -V 256 0 256M"; xfs_io -c "open /dev/iov-test" \
-	    -c "$cmd" -c "$cmd" -c "$cmd" -c "$cmd" \
-	    -c "$cmd" -c "$cmd" -c "$cmd" -c "$cmd" \
-	    -c "$cmd" -c "$cmd" -c "$cmd" -c "$cmd" \
-	    -c "$cmd" -c "$cmd" -c "$cmd" -c "$cmd"
-	cmd="w -b 1M -V 256 0 256M"; xfs_io -c "open /dev/iov-test" \
-	    -c "$cmd" -c "$cmd" -c "$cmd" -c "$cmd" \
-	    -c "$cmd" -c "$cmd" -c "$cmd" -c "$cmd" \
-	    -c "$cmd" -c "$cmd" -c "$cmd" -c "$cmd" \
-	    -c "$cmd" -c "$cmd" -c "$cmd" -c "$cmd"
-
-showing something like:
-
-         ...: iov_test_read: size=10000000 done=10000000 ty=1 nr=256 dur=27653
-         ...: iov_test_write: size=10000000 done=10000000 ty=1 nr=256 dur=31792
-
-in the trace log.
-
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Alexander Viro <viro@zeniv.linux.org.uk>
-cc: Jens Axboe <axboe@kernel.dk>
-cc: Christoph Hellwig <hch@lst.de>
-cc: Christian Brauner <christian@brauner.io>
-cc: Matthew Wilcox <willy@infradead.org>
-cc: Linus Torvalds <torvalds@linux-foundation.org>
-cc: David Laight <David.Laight@ACULAB.COM>
-cc: "David S. Miller" <davem@davemloft.net>
-cc: Eric Dumazet <edumazet@google.com>
-cc: Jakub Kicinski <kuba@kernel.org>
-cc: Paolo Abeni <pabeni@redhat.com>
-cc: linux-block@vger.kernel.org
-cc: linux-fsdevel@vger.kernel.org
-cc: linux-mm@kvack.org
-cc: netdev@vger.kernel.org
----
- lib/Kconfig.debug         |   8 +++
- lib/Makefile              |   1 +
- lib/test_iov_iter.c       | 134 ++++++++++++++++++++++++++++++++++++++
- lib/test_iov_iter_trace.h |  80 +++++++++++++++++++++++
- 4 files changed, 223 insertions(+)
- create mode 100644 lib/test_iov_iter.c
- create mode 100644 lib/test_iov_iter_trace.h
-
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index fa307f93fa2e..cf8392c51344 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -2524,6 +2524,14 @@ config TEST_SYSCTL
- 
- 	  If unsure, say N.
- 
-+config TEST_IOV_ITER
-+	tristate "iov_iter test driver"
-+	help
-+	  This creates a misc device that can be used as a way to test various
-+	  I/O iterator functions through the use of readv/writev and ioctl.
-+
-+	  If unsure, say N.
-+
- config BITFIELD_KUNIT
- 	tristate "KUnit test bitfield functions at runtime" if !KUNIT_ALL_TESTS
- 	depends on KUNIT
-diff --git a/lib/Makefile b/lib/Makefile
-index 740109b6e2c8..f6419544a749 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -65,6 +65,7 @@ CFLAGS_test_bitops.o += -Werror
- obj-$(CONFIG_CPUMASK_KUNIT_TEST) += cpumask_kunit.o
- obj-$(CONFIG_TEST_SYSCTL) += test_sysctl.o
- obj-$(CONFIG_TEST_IOV_ITER) += kunit_iov_iter.o
-+obj-$(CONFIG_TEST_IOV_ITER) += test_iov_iter.o
- obj-$(CONFIG_HASH_KUNIT_TEST) += test_hash.o
- obj-$(CONFIG_TEST_IDA) += test_ida.o
- obj-$(CONFIG_TEST_UBSAN) += test_ubsan.o
-diff --git a/lib/test_iov_iter.c b/lib/test_iov_iter.c
-new file mode 100644
-index 000000000000..afa70647dbde
---- /dev/null
-+++ b/lib/test_iov_iter.c
-@@ -0,0 +1,134 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/* I/O iterator testing device.
-+ *
-+ * Copyright (C) 2023 Red Hat, Inc. All Rights Reserved.
-+ * Written by David Howells (dhowells@redhat.com)
-+ */
-+
-+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-+
-+#include <linux/module.h>
-+#include <linux/uio.h>
-+#include <linux/fs.h>
-+#include <linux/pagemap.h>
-+#include <linux/miscdevice.h>
-+#define CREATE_TRACE_POINTS
-+#include "test_iov_iter_trace.h"
-+
-+MODULE_DESCRIPTION("iov_iter testing");
-+MODULE_AUTHOR("David Howells <dhowells@redhat.com>");
-+MODULE_LICENSE("GPL");
-+
-+static ssize_t iov_test_read_iter(struct kiocb *iocb, struct iov_iter *iter)
-+{
-+	struct folio *folio = iocb->ki_filp->private_data;
-+	unsigned int nr_segs = iter->nr_segs;
-+	size_t size = iov_iter_count(iter), fsize = folio_size(folio);
-+	size_t copied = 0, offset = 0, i;
-+	ktime_t a, b;
-+	u8 *p;
-+
-+	/* Pattern the buffer */
-+	p = kmap_local_folio(folio, 0);
-+	for (i = 0; i < folio_size(folio); i++)
-+		p[i] = i & 0xff;
-+	kunmap_local(p);
-+
-+	a = ktime_get_real();
-+	while (iov_iter_count(iter)) {
-+		size_t done, part = min(iov_iter_count(iter), fsize - offset);
-+
-+		done = copy_folio_to_iter(folio, offset, part, iter);
-+		if (done == 0)
-+			break;
-+		copied += done;
-+		offset = (offset + done) & (fsize - 1);
-+	}
-+
-+	b = ktime_get_real();
-+	trace_iov_test_read(size, copied, iov_iter_type(iter), nr_segs,
-+			    ktime_to_us(ktime_sub(b, a)));
-+	return copied;
-+}
-+
-+static ssize_t iov_test_write_iter(struct kiocb *iocb, struct iov_iter *iter)
-+{
-+	struct folio *folio = iocb->ki_filp->private_data;
-+	unsigned int nr_segs = iter->nr_segs;
-+	size_t size = iov_iter_count(iter), fsize = folio_size(folio);
-+	size_t copied = 0, offset = 0;
-+	ktime_t a = ktime_get_real(), b;
-+
-+	while (iov_iter_count(iter)) {
-+		size_t done, part = min(iov_iter_count(iter), fsize - offset);
-+
-+		done = copy_page_from_iter(folio_page(folio, 0), offset, part, iter);
-+		if (done == 0)
-+			break;
-+		copied += done;
-+		offset = (offset + done) & (fsize - 1);
-+	}
-+
-+	b = ktime_get_real();
-+	trace_iov_test_write(size, copied, iov_iter_type(iter), nr_segs,
-+			     ktime_to_us(ktime_sub(b, a)));
-+	return copied;
-+}
-+
-+static int iov_test_open(struct inode *inode, struct file *file)
-+{
-+	struct folio *folio;
-+
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	folio = folio_alloc(GFP_KERNEL, 0);
-+	if (!folio)
-+		return -ENOMEM;
-+	file->private_data = folio;
-+	return 0;
-+}
-+
-+static int iov_test_release(struct inode *inode, struct file *file)
-+{
-+	struct folio *folio = file->private_data;
-+
-+	folio_put(folio);
-+	return 0;
-+}
-+
-+static const struct file_operations iov_test_fops = {
-+	.owner		= THIS_MODULE,
-+	.open		= iov_test_open,
-+	.release	= iov_test_release,
-+	.read_iter	= iov_test_read_iter,
-+	.write_iter	= iov_test_write_iter,
-+	.splice_read	= copy_splice_read,
-+	.llseek		= noop_llseek,
-+};
-+
-+static struct miscdevice iov_test_dev = {
-+	.minor	= MISC_DYNAMIC_MINOR,
-+	.name	= "iov-test",
-+	.fops	= &iov_test_fops,
-+};
-+
-+static int __init iov_test_init(void)
-+{
-+	int ret;
-+
-+	ret = misc_register(&iov_test_dev);
-+	if (ret < 0)
-+		return ret;
-+	pr_info("Loaded\n");
-+	return 0;
-+}
-+module_init(iov_test_init);
-+
-+static void __exit iov_test_exit(void)
-+{
-+	pr_info("Unloading\n");
-+
-+	misc_deregister(&iov_test_dev);
-+}
-+module_exit(iov_test_exit);
-diff --git a/lib/test_iov_iter_trace.h b/lib/test_iov_iter_trace.h
-new file mode 100644
-index 000000000000..b99cade5d004
---- /dev/null
-+++ b/lib/test_iov_iter_trace.h
-@@ -0,0 +1,80 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* I/O iterator testing device.
-+ *
-+ * Copyright (C) 2023 Red Hat, Inc. All Rights Reserved.
-+ * Written by David Howells (dhowells@redhat.com)
-+ */
-+#undef TRACE_SYSTEM
-+#define TRACE_SYSTEM iov_test
-+
-+#if !defined(_IOV_TEST_TRACE_H) || defined(TRACE_HEADER_MULTI_READ)
-+#define _IOV_TEST_TRACE_H
-+
-+#include <linux/tracepoint.h>
-+
-+TRACE_EVENT(iov_test_read,
-+	    TP_PROTO(size_t size, size_t done, enum iter_type type,
-+		     unsigned int nr_segs, u64 duration),
-+
-+	    TP_ARGS(size, done, type, nr_segs, duration),
-+
-+	    TP_STRUCT__entry(
-+		    __field(size_t,		size)
-+		    __field(size_t,		done)
-+		    __field(enum iter_type,	type)
-+		    __field(unsigned int,	nr_segs)
-+		    __field(u64,		duration)
-+			     ),
-+
-+	    TP_fast_assign(
-+		    __entry->size = size;
-+		    __entry->done = done;
-+		    __entry->type = type;
-+		    __entry->nr_segs = nr_segs;
-+		    __entry->duration = duration;
-+			   ),
-+
-+	    TP_printk("size=%zx done=%zx ty=%u nr=%u dur=%llu",
-+		      __entry->size,
-+		      __entry->done,
-+		      __entry->type,
-+		      __entry->nr_segs,
-+		      __entry->duration)
-+	    );
-+
-+TRACE_EVENT(iov_test_write,
-+	    TP_PROTO(size_t size, size_t done, enum iter_type type,
-+		     unsigned int nr_segs, u64 duration),
-+
-+	    TP_ARGS(size, done, type, nr_segs, duration),
-+
-+	    TP_STRUCT__entry(
-+		    __field(size_t,		size)
-+		    __field(size_t,		done)
-+		    __field(enum iter_type,	type)
-+		    __field(unsigned int,	nr_segs)
-+		    __field(u64,		duration)
-+			     ),
-+
-+	    TP_fast_assign(
-+		    __entry->size = size;
-+		    __entry->done = done;
-+		    __entry->type = type;
-+		    __entry->nr_segs = nr_segs;
-+		    __entry->duration = duration;
-+			   ),
-+
-+	    TP_printk("size=%zx done=%zx ty=%u nr=%u dur=%llu",
-+		      __entry->size,
-+		      __entry->done,
-+		      __entry->type,
-+		      __entry->nr_segs,
-+		      __entry->duration)
-+	    );
-+
-+#endif /* _IOV_TEST_TRACE_H */
-+
-+#undef TRACE_INCLUDE_PATH
-+#define TRACE_INCLUDE_PATH .
-+#define TRACE_INCLUDE_FILE test_iov_iter_trace
-+#include <trace/define_trace.h>
+Guenter
 
