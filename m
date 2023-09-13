@@ -2,116 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 748D979E241
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Sep 2023 10:37:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CBF5079E265
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Sep 2023 10:42:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238724AbjIMIhn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Sep 2023 04:37:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34368 "EHLO
+        id S239039AbjIMImc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Sep 2023 04:42:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236752AbjIMIhm (ORCPT
+        with ESMTP id S239018AbjIMIma (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Sep 2023 04:37:42 -0400
+        Wed, 13 Sep 2023 04:42:30 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 452CFC3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Sep 2023 01:37:38 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 739D6C433C8;
-        Wed, 13 Sep 2023 08:37:36 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D89A1199F;
+        Wed, 13 Sep 2023 01:42:26 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCC5DC433C7;
+        Wed, 13 Sep 2023 08:42:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694594257;
-        bh=bUwES1xfo/p8oEGzbYIZ/Df1mz0G6XgzHsNGrUdhoCs=;
+        s=k20201202; t=1694594546;
+        bh=W+VUSozvNXeGpFMvMp4FfznnkGX7JB/VmlgBW0qQOqk=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QUm5RjXHqajwBFsTyMfZbE/A5/10jqZqmTsGUj9i6arjNRVf49fwKsi5TETI+yOrk
-         JtqtdS28cCDj65BbVvHMbm2BIHicvyyENdfKAbFDLbLAu/cejEuJaLBX/zdzTRx07W
-         n/JSv7T30V2TPRE2HEE9OgwNKI/XRD5H4Vqe7oaI5EBWts2xXwLM3jo6DtvFpsiSUQ
-         zdWFG1p2xQBuQBCAP+Ms9WF9gXTRRuzLl5SbVG5T5AlZN4ru656xQ8roDJobljtCOv
-         u1vUL8C1cuw4SPLDyU4s3z133ARkIBMQ6XW5FLSW9ZfFbr6Y0YQK+t4OdytrJeVCB0
-         wOZ/GKiP4GlCA==
-Date:   Wed, 13 Sep 2023 10:37:33 +0200
+        b=nZlNAPdNm06tIDx0KabaxN+MPiCm8if7HJhr/hlkFyg2hkx37e3IKEFI5qFTcp+3Q
+         hJBy/+sJcEVU/ggVjRTovtV+aIJKzfibN21RQ2rt4XOp27OwmvKjiJ8plTndMV3pMS
+         xXHo/ENipz8NW+ToAjj87pxJrSvqm1dJSZCr3EXHWXUobkr+v6qUf93lRpkVHasQGF
+         OIRXwkpAp5xhQxk9f7q828uwSewVpGbZ4Aksz0WzWGnct7ISPETTR7agV/pIghPMye
+         g6vIMeLOcbDd8+U7dHNz8UdOqRb6h4+ziuWHKU8FroSXFGgtb+/FJbd9vzuOFw1Mc4
+         eqVZg3nAQa1jg==
+Date:   Wed, 13 Sep 2023 10:42:21 +0200
 From:   Christian Brauner <brauner@kernel.org>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+To:     Chunhai Guo <guochunhai@vivo.com>
+Cc:     viro@zeniv.linux.org.uk, chao@kernel.org, jaegeuk@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH] ovl: factor out some common helpers for backing files io
-Message-ID: <20230913-sticken-warnzeichen-099bceebc54d@brauner>
-References: <20230912185408.3343163-1-amir73il@gmail.com>
+Subject: Re: [PATCH] fs-writeback: writeback_sb_inodes: Do not increase
+ 'total_wrote' when nothing is written
+Message-ID: <20230913-spionieren-goldschatz-3d15c1ce2743@brauner>
+References: <20230912142043.283495-1-guochunhai@vivo.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230912185408.3343163-1-amir73il@gmail.com>
+In-Reply-To: <20230912142043.283495-1-guochunhai@vivo.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 12, 2023 at 09:54:08PM +0300, Amir Goldstein wrote:
-> Overlayfs stores its files data in backing files on other filesystems.
+[+Cc Jan]
+
+On Tue, Sep 12, 2023 at 08:20:43AM -0600, Chunhai Guo wrote:
+> I am encountering a deadlock issue as shown below. There is a commit
+> 344150999b7f ("f2fs: fix to avoid potential deadlock") can fix this issue.
+> However, from log analysis, it appears that this is more likely a fake
+> progress issue similar to commit 68f4c6eba70d ("fs-writeback:
+> writeback_sb_inodes: Recalculate 'wrote' according skipped pages"). In each
+> writeback iteration, nothing is written, while writeback_sb_inodes()
+> increases 'total_wrote' each time, causing an infinite loop. This patch
+> fixes this issue by not increasing 'total_wrote' when nothing is written.
 > 
-> Factor out some common helpers to perform io to backing files, that will
-> later be reused by fuse passthrough code.
+>     wb_writeback        fsync (inode-Y)
+> blk_start_plug(&plug)
+> for (;;) {
+>   iter i-1: some reqs with page-X added into plug->mq_list // f2fs node page-X with PG_writeback
+>                         filemap_fdatawrite
+>                           __filemap_fdatawrite_range // write inode-Y with sync_mode WB_SYNC_ALL
+>                            do_writepages
+>                             f2fs_write_data_pages
+>                              __f2fs_write_data_pages // wb_sync_req[DATA]++ for WB_SYNC_ALL
+>                               f2fs_write_cache_pages
+>                                f2fs_write_single_data_page
+>                                 f2fs_do_write_data_page
+>                                  f2fs_outplace_write_data
+>                                   f2fs_update_data_blkaddr
+>                                    f2fs_wait_on_page_writeback
+>                                      wait_on_page_writeback // wait for f2fs node page-X
+>   iter i:
+>     progress = __writeback_inodes_wb(wb, work)
+>     . writeback_sb_inodes
+>     .   __writeback_single_inode // write inode-Y with sync_mode WB_SYNC_NONE
+>     .   . do_writepages
+>     .   .   f2fs_write_data_pages
+>     .   .   .  __f2fs_write_data_pages // skip writepages due to (wb_sync_req[DATA]>0)
+>     .   .   .   wbc->pages_skipped += get_dirty_pages(inode) // wbc->pages_skipped = 1
+>     .   if (!(inode->i_state & I_DIRTY_ALL)) // i_state = I_SYNC | I_SYNC_QUEUED
+>     .    total_wrote++;  // total_wrote = 1
+>     .   requeue_inode // requeue inode-Y to wb->b_dirty queue due to non-zero pages_skipped
+>     if (progress) // progress = 1
+>       continue;
+>   iter i+1:
+>       queue_io
+>       // similar process with iter i, infinite for-loop !
+> }
+> blk_finish_plug(&plug)   // flush plug won't be called
 > 
-> Suggested-by: Miklos Szeredi <miklos@szeredi.hu>
-> Link: https://lore.kernel.org/r/CAJfpeguhmZbjP3JLqtUy0AdWaHOkAPWeP827BBWwRFEAUgnUcQ@mail.gmail.com
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> Signed-off-by: Chunhai Guo <guochunhai@vivo.com>
 > ---
+>  fs/fs-writeback.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> Miklos,
+> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+> index 969ce991b0b0..54cdee906be9 100644
+> --- a/fs/fs-writeback.c
+> +++ b/fs/fs-writeback.c
+> @@ -1820,6 +1820,7 @@ static long writeback_sb_inodes(struct super_block *sb,
+>  		struct inode *inode = wb_inode(wb->b_io.prev);
+>  		struct bdi_writeback *tmp_wb;
+>  		long wrote;
+> +		bool is_dirty_before;
+>  
+>  		if (inode->i_sb != sb) {
+>  			if (work->sb) {
+> @@ -1881,6 +1882,7 @@ static long writeback_sb_inodes(struct super_block *sb,
+>  			continue;
+>  		}
+>  		inode->i_state |= I_SYNC;
+> +		is_dirty_before = inode->i_state & I_DIRTY_ALL;
+>  		wbc_attach_and_unlock_inode(&wbc, inode);
+>  
+>  		write_chunk = writeback_chunk_size(wb, work);
+> @@ -1918,7 +1920,7 @@ static long writeback_sb_inodes(struct super_block *sb,
+>  		 */
+>  		tmp_wb = inode_to_wb_and_lock_list(inode);
+>  		spin_lock(&inode->i_lock);
+> -		if (!(inode->i_state & I_DIRTY_ALL))
+> +		if (!(inode->i_state & I_DIRTY_ALL) && is_dirty_before)
+>  			total_wrote++;
+>  		requeue_inode(inode, tmp_wb, &wbc);
+>  		inode_sync_complete(inode);
+> -- 
+> 2.25.1
 > 
-> This is the re-factoring that you suggested in the FUSE passthrough
-> patches discussion linked above.
-> 
-> This patch is based on the overlayfs prep patch set I just posted [1].
-> 
-> Although overlayfs currently is the only user of these backing file
-> helpers, I am sending this patch to a wider audience in case other
-> filesystem developers want to comment on the abstraction.
-> 
-> We could perhaps later considering moving backing_file_open() helper
-> and related code to backing_file.c.
-> 
-> In any case, if there are no objections, I plan to queue this work
-> for 6.7 via the overlayfs tree.
-> 
-> Thanks,
-> Amir.
-> 
-> [1] https://lore.kernel.org/linux-unionfs/20230912173653.3317828-1-amir73il@gmail.com/
-> 
-> 
->  MAINTAINERS                  |   2 +
->  fs/Kconfig                   |   4 +
->  fs/Makefile                  |   1 +
->  fs/backing_file.c            | 160 +++++++++++++++++++++++++++++++++++
->  fs/overlayfs/Kconfig         |   1 +
->  fs/overlayfs/file.c          | 137 ++----------------------------
->  fs/overlayfs/overlayfs.h     |   2 -
->  fs/overlayfs/super.c         |  11 +--
->  include/linux/backing_file.h |  22 +++++
->  9 files changed, 199 insertions(+), 141 deletions(-)
->  create mode 100644 fs/backing_file.c
->  create mode 100644 include/linux/backing_file.h
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 90f13281d297..4e1d21773e0e 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -16092,7 +16092,9 @@ L:	linux-unionfs@vger.kernel.org
->  S:	Supported
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git
->  F:	Documentation/filesystems/overlayfs.rst
-> +F:	fs/backing_file.c
->  F:	fs/overlayfs/
-> +F:	include/linux/backing_file.h
-
-I'd like to do this slightly differently, please. All vfs infra goes
-through vfs trees but for new infra like this where someone steps up to
-be a maintainer we add a new section (like bpf or networking does):
-
-VFS [BACKING FILE]
-M:      Miklos Szeredi <miklos@szeredi.hu>
-M:      Amir Goldstein <amir73il@gmail.com>
-F:      fs/backing_file.c
-F:      include/linux/backing_file.h
-L:	linux-fsdevel@vger.kernel.org
-S:	Maintained
