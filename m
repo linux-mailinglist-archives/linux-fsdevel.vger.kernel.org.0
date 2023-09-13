@@ -2,232 +2,278 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C87B079EC6B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Sep 2023 17:17:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1268F79ECAA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Sep 2023 17:23:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241654AbjIMPR0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Sep 2023 11:17:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36806 "EHLO
+        id S241405AbjIMPXn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Sep 2023 11:23:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241683AbjIMPRM (ORCPT
+        with ESMTP id S239049AbjIMPXl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Sep 2023 11:17:12 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAFF6C6;
-        Wed, 13 Sep 2023 08:16:53 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 6D5061F461;
-        Wed, 13 Sep 2023 15:16:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1694618212; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=BFK28ZsfwA0eG1jJ0A5JLDN+cBxNTTlKg+5tpbEt3rY=;
-        b=a1DfTFLdh8NhAmkegwqPo8ale2psz7WYh+NMBgUtIv9m/Zc3BrfsT8hN0KYIy6O2iuFEjb
-        xoUjVUgd2jNwvz70ZeBuyJCj2stgv70/rnncNJccGCqeK+OAGWdftLdPFoPr9FBLIT8Vx+
-        beFObFcfca6EWBwPa1+9DUcbxqduQ7Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1694618212;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=BFK28ZsfwA0eG1jJ0A5JLDN+cBxNTTlKg+5tpbEt3rY=;
-        b=XjWQa8kMR7udhZ/0uLHF3Njba+OOboiq3COz0MVR9+BrfsgQr8mbnNu66b7+PC8/QhMziN
-        9ufKqcB5GGTwovDQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 6037813440;
-        Wed, 13 Sep 2023 15:16:52 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id ZMh1F2TSAWVzegAAMHmgww
-        (envelope-from <jack@suse.cz>); Wed, 13 Sep 2023 15:16:52 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id DE3E0A07C2; Wed, 13 Sep 2023 17:16:51 +0200 (CEST)
-Date:   Wed, 13 Sep 2023 17:16:51 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Chunhai Guo <guochunhai@vivo.com>
-Cc:     jack@suse.cz, chao@kernel.org, jaegeuk@kernel.org,
-        brauner@kernel.org, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs-writeback: writeback_sb_inodes: Do not increase
- 'total_wrote' when nothing is written
-Message-ID: <20230913151651.gzmyjvqwan3euhwi@quack3>
-References: <20230913131501.478516-1-guochunhai@vivo.com>
+        Wed, 13 Sep 2023 11:23:41 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3D800E6D
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Sep 2023 08:22:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1694618564;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=fibNFcMGfhpyzyB1Dlmhk6FIYISVfSif6JjtonTL8MA=;
+        b=JOYAFWqAwP37RIR06nLRZaxujQqkxnguiKhfEOH0PvkrQFzqA44JXIb9DLh4FHlUeSmzHd
+        vOK+xpXF9FmYIba16wa/DBk5l4GMdYI2pg9OAzYC2Nnsf//Zwl+F97dPVUk/4pwD3iNJoz
+        jdzAfDToY1CB8dOAsZcxda70MPo7uhI=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-259-MUGNUU-EM9-y3iDQRdsxkw-1; Wed, 13 Sep 2023 11:22:43 -0400
+X-MC-Unique: MUGNUU-EM9-y3iDQRdsxkw-1
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-99388334de6so459314266b.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Sep 2023 08:22:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694618561; x=1695223361;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fibNFcMGfhpyzyB1Dlmhk6FIYISVfSif6JjtonTL8MA=;
+        b=YG5uJWzwTeicjXxgrH/S4irh2E2cjfJE3apeSUXUbtM158ViyH6N5sLfqpFkjQ7IPr
+         kJs56w/qbZzGYrCK8w32dpmna8u1a1T2KZf2jNLfA6U5aqiga2c5vlu522c0GLfIXemX
+         1CsKlH4R2V9EIQ0ZehIwHTP8ZMfmhqaFy+eYPf1vVZJdr/461GZVivfUyc0+YcV7xj6g
+         Iw9HfmgNETGpBE3FGLqFQPjkzIZRLLRhaA+pah3dtjASZh/StNwjWz7Hs3RfhskWpOh2
+         bhugcymc6//a4E43W4avyfF9A78vBhNITTz6Au0XdfiFOsv2ZfHC1vESLSlhvHlVo7zr
+         7SAA==
+X-Gm-Message-State: AOJu0YyJ4iblMQNF39oe8kjDoUaJWDN1WungaQbD0PlsPJjoJpUVmWGt
+        BH5yW2VW3+6YzKvl2dgRZ4VVA1aqbPRiNShqXlWU8HyEkuiYD4L21yDS0gzf4Ar0hAlEvHU06wY
+        kXa9A6XSEzfQjEI2TkhmwyVSpxDWQv/yvv0Zs5VCafuZ68i0Zz1dlhUzouXH0Khb5dV62oC9dUZ
+        orwI/UsvM95g==
+X-Received: by 2002:a17:907:7742:b0:9a5:d657:47ee with SMTP id kx2-20020a170907774200b009a5d65747eemr2413316ejc.58.1694618561578;
+        Wed, 13 Sep 2023 08:22:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHCeVwF2+JcYHZGB2lIjCz1DTX4prKbW5ev4Hq7EfxD4YhEjBelhKvfKIbxLCPEf3bhJHP1ig==
+X-Received: by 2002:a17:907:7742:b0:9a5:d657:47ee with SMTP id kx2-20020a170907774200b009a5d65747eemr2413286ejc.58.1694618561127;
+        Wed, 13 Sep 2023 08:22:41 -0700 (PDT)
+Received: from maszat.piliscsaba.szeredi.hu (79-120-253-96.pool.digikabel.hu. [79.120.253.96])
+        by smtp.gmail.com with ESMTPSA id q18-20020a170906a09200b0099b8234a9fesm8640663ejy.1.2023.09.13.08.22.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Sep 2023 08:22:40 -0700 (PDT)
+From:   Miklos Szeredi <mszeredi@redhat.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-man@vger.kernel.org, linux-security-module@vger.kernel.org,
+        Karel Zak <kzak@redhat.com>, Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>
+Subject: [RFC PATCH 0/3] quering mount attributes
+Date:   Wed, 13 Sep 2023 17:22:33 +0200
+Message-ID: <20230913152238.905247-1-mszeredi@redhat.com>
+X-Mailer: git-send-email 2.41.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230913131501.478516-1-guochunhai@vivo.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 13-09-23 07:15:01, Chunhai Guo wrote:
-> > On Wed 13-09-23 10:42:21, Christian Brauner wrote:
-> > > [+Cc Jan]
-> > 
-> > Thanks!
-> > 
-> > > On Tue, Sep 12, 2023 at 08:20:43AM -0600, Chunhai Guo wrote:
-> > > > I am encountering a deadlock issue as shown below. There is a commit 
-> > > > 344150999b7f ("f2fs: fix to avoid potential deadlock") can fix this
-> > > > issue.
-> > > > However, from log analysis, it appears that this is more likely a 
-> > > > fake progress issue similar to commit 68f4c6eba70d ("fs-writeback:
-> > > > writeback_sb_inodes: Recalculate 'wrote' according skipped pages"). 
-> > > > In each writeback iteration, nothing is written, while 
-> > > > writeback_sb_inodes() increases 'total_wrote' each time, causing an 
-> > > > infinite loop. This patch fixes this issue by not increasing
-> > > > 'total_wrote' when nothing is written.
-> > > >
-> > > >     wb_writeback        fsync (inode-Y)
-> > > > blk_start_plug(&plug)
-> > > > for (;;) {
-> > > >   iter i-1: some reqs with page-X added into plug->mq_list // f2fs node
-> > > >   page-X with PG_writeback
-> > > >                         filemap_fdatawrite
-> > > >                           __filemap_fdatawrite_range // write inode-Y
-> > > >                           with sync_mode WB_SYNC_ALL
-> > > >                            do_writepages
-> > > >                             f2fs_write_data_pages
-> > > >                              __f2fs_write_data_pages //
-> > > >                              wb_sync_req[DATA]++ for WB_SYNC_ALL
-> > > >                               f2fs_write_cache_pages
-> > > >                                f2fs_write_single_data_page
-> > > >                                 f2fs_do_write_data_page
-> > > >                                  f2fs_outplace_write_data
-> > > >                                   f2fs_update_data_blkaddr
-> > > >                                    f2fs_wait_on_page_writeback
-> > > >                                      wait_on_page_writeback // wait for
-> > > >                                      f2fs node page-X
-> > > >   iter i:
-> > > >     progress = __writeback_inodes_wb(wb, work)
-> > > >     . writeback_sb_inodes
-> > > >     .   __writeback_single_inode // write inode-Y with sync_mode
-> > > >     WB_SYNC_NONE
-> > > >     .   . do_writepages
-> > > >     .   .   f2fs_write_data_pages
-> > > >     .   .   .  __f2fs_write_data_pages // skip writepages due to
-> > > >     (wb_sync_req[DATA]>0)
-> > > >     .   .   .   wbc->pages_skipped += get_dirty_pages(inode) //
-> > > >     wbc->pages_skipped = 1
-> > > >     .   if (!(inode->i_state & I_DIRTY_ALL)) // i_state = I_SYNC |
-> > > >     I_SYNC_QUEUED
-> > > >     .    total_wrote++;  // total_wrote = 1
-> > > >     .   requeue_inode // requeue inode-Y to wb->b_dirty queue due to
-> > > >     non-zero pages_skipped
-> > > >     if (progress) // progress = 1
-> > > >       continue;
-> > > >   iter i+1:
-> > > >       queue_io
-> > > >       // similar process with iter i, infinite for-loop !
-> > > > }
-> > > > blk_finish_plug(&plug)   // flush plug won't be called
-> > > >
-> > > > Signed-off-by: Chunhai Guo <guochunhai@vivo.com>
-> > 
-> > Thanks for the patch but did you test this patch fixed your deadlock?
-> > Because the patch seems like a noop to me. Look:
-> 
-> Yes. I have tested this patch and it indeed fixed this deadlock issue, too.
+Implement the mount querying syscalls agreed on at LSF/MM 2023.  This is an
+RFC with just x86_64 syscalls.
 
-OK, thanks for letting me know!
+Excepting notification this should allow full replacement for
+parsing /proc/self/mountinfo.
 
-> > > > diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c index 
-> > > > 969ce991b0b0..54cdee906be9 100644
-> > > > --- a/fs/fs-writeback.c
-> > > > +++ b/fs/fs-writeback.c
-> > > > @@ -1820,6 +1820,7 @@ static long writeback_sb_inodes(struct
-> > > > super_block *sb,
-> > > >             struct inode *inode = wb_inode(wb->b_io.prev);
-> > > >             struct bdi_writeback *tmp_wb;
-> > > >             long wrote;
-> > > > +           bool is_dirty_before;
-> > > >
-> > > >             if (inode->i_sb != sb) {
-> > > >                     if (work->sb) {
-> > > > @@ -1881,6 +1882,7 @@ static long writeback_sb_inodes(struct
-> > > > super_block *sb,
-> > > >                     continue;
-> > > >             }
-> > > >             inode->i_state |= I_SYNC;
-> > > > +           is_dirty_before = inode->i_state & I_DIRTY_ALL;
-> > 
-> > is_dirty_before is going to be set if there's anything dirty - inode, page,
-> > timestamp. So it can be unset only if there are no dirty pages, in which
-> > case there are no pages that can be skipped during page writeback, which
-> > means that requeue_inode() will go and remove inode from b_io/b_dirty lists
-> > and it will not participate in writeback anymore.
-> > 
-> > So I don't see how this patch can be helping anything... Please correct me
-> > if I'm missing anything.
-> >                                                                 Honza
-> 
-> From the dump info, there are only two pages as shown below. One is updated
-> and another is under writeback. Maybe f2fs counts the writeback page as a
-> dirty one, so get_dirty_pages() got one. As you said, maybe this is
-> unreasonable.
-> 
-> Jaegeuk & Chao, what do you think of this?
-> 
-> 
-> crash_32> files -p 0xE5A44678
->  INODE    NRPAGES
-> e5a44678        2
-> 
->   PAGE    PHYSICAL   MAPPING    INDEX CNT FLAGS
-> e8d0e338  641de000  e5a44810         0  5 a095 locked,waiters,uptodate,lru,private,writeback
-> e8ad59a0  54528000  e5a44810         1  2 2036 referenced,uptodate,lru,active,private
+It is not a replacement for /proc/$OTHER_PID/mountinfo, since mount
+namespace and root are taken from the current task.  I guess namespace and
+root could be switched before invoking these syscalls but that sounds a bit
+complicated.  Not sure if this is a problem.
 
-Indeed, incrementing pages_skipped when there's no dirty page is a bit odd.
-That being said we could also harden requeue_inode() - in particular we
-could do there:
+Test utility attached at the end.
+---
 
-	if (wbc->pages_skipped) {
-		/*
-		 * Writeback is not making progress due to locked buffers.
-		 * Skip this inode for now. Although having skipped pages
-		 * is odd for clean inodes, it can happen for some
-		 * filesystems so handle that gracefully.
-		 */
-		if (inode->i_state & I_DIRTY_ALL)
-			redirty_tail_locked(inode, wb);
-		else
-			inode_cgwb_move_to_attached(inode, wb);
+Miklos Szeredi (3):
+  add unique mount ID
+  add statmnt(2) syscall
+  add listmnt(2) syscall
+
+ arch/x86/entry/syscalls/syscall_64.tbl |   2 +
+ fs/internal.h                          |   5 +
+ fs/mount.h                             |   3 +-
+ fs/namespace.c                         | 365 +++++++++++++++++++++++++
+ fs/proc_namespace.c                    |  19 +-
+ fs/stat.c                              |   9 +-
+ fs/statfs.c                            |   1 +
+ include/linux/syscalls.h               |   5 +
+ include/uapi/asm-generic/unistd.h      |   8 +-
+ include/uapi/linux/mount.h             |  36 +++
+ include/uapi/linux/stat.h              |   1 +
+ 11 files changed, 443 insertions(+), 11 deletions(-)
+
+-- 
+2.41.0
+
+=== statmnt.c ===
+#define _GNU_SOURCE
+#include <unistd.h>
+#include <stdio.h>
+#include <fcntl.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <sys/mount.h>
+#include <sys/stat.h>
+#include <err.h>
+
+struct stmt_str {
+	__u32 off;
+	__u32 len;
+};
+
+struct statmnt {
+	__u64 mask;		/* What results were written [uncond] */
+	__u32 sb_dev_major;	/* Device ID */
+	__u32 sb_dev_minor;
+	__u64 sb_magic;		/* ..._SUPER_MAGIC */
+	__u32 sb_flags;		/* MS_{RDONLY,SYNCHRONOUS,DIRSYNC,LAZYTIME} */
+	__u32 __spare1;
+	__u64 mnt_id;		/* Unique ID of mount */
+	__u64 mnt_parent_id;	/* Unique ID of parent (for root == mnt_id) */
+	__u32 mnt_id_old;	/* Reused IDs used in proc/.../mountinfo */
+	__u32 mnt_parent_id_old;
+	__u64 mnt_attr;		/* MOUNT_ATTR_... */
+	__u64 mnt_propagation;	/* MS_{SHARED,SLAVE,PRIVATE,UNBINDABLE} */
+	__u64 mnt_peer_group;	/* ID of shared peer group */
+	__u64 mnt_master;	/* Mount receives propagation from this ID */
+	__u64 propagate_from;	/* Propagation from in current namespace */
+	__u64 __spare[20];
+	struct stmt_str mnt_root;	/* Root of mount relative to root of fs */
+	struct stmt_str mountpoint;	/* Mountpoint relative to root of process */
+	struct stmt_str fs_type;	/* Filesystem type[.subtype] */
+	struct stmt_str sb_opts;	/* Super block string options (nul delimted) */
+};
+
+#define STMT_SB_BASIC		0x00000001U     /* Want/got sb_... */
+#define STMT_MNT_BASIC		0x00000002U	/* Want/got mnt_... */
+#define STMT_PROPAGATE_FROM	0x00000004U	/* Want/got propagate_from */
+#define STMT_MNT_ROOT		0x00000008U	/* Want/got mnt_root  */
+#define STMT_MOUNTPOINT		0x00000010U	/* Want/got mountpoint */
+#define STMT_FS_TYPE		0x00000020U	/* Want/got fs_type */
+#define STMT_SB_OPTS		0x00000040U	/* Want/got sb_opts */
+
+#define __NR_statmnt   454
+#define __NR_listmnt   455
+
+#define STATX_MNT_ID_UNIQUE	0x00004000U	/* Want/got extended stx_mount_id */
+
+int main(int argc, char *argv[])
+{
+	char buf[65536];
+	struct statmnt *st = (void *) buf;
+	char *end;
+	const char *arg = argv[1];
+	long res;
+	int list = 0;
+	unsigned long mnt_id;
+	unsigned int mask = STMT_SB_BASIC | STMT_MNT_BASIC | STMT_PROPAGATE_FROM | STMT_MNT_ROOT | STMT_MOUNTPOINT | STMT_FS_TYPE | STMT_SB_OPTS;
+
+	if (arg && strcmp(arg, "-l") == 0) {
+		list = 1;
+		arg = argv[2];
+	}
+	if (argc != list + 2)
+		errx(1, "usage: %s [-l] (mnt_id|path)", argv[0]);
+
+	mnt_id = strtol(arg, &end, 0);
+	if (!mnt_id || *end != '\0') {
+		struct statx sx;
+
+		res = statx(AT_FDCWD, arg, 0, STATX_MNT_ID_UNIQUE, &sx);
+		if (res == -1)
+			err(1, "%s", arg);
+
+		if (!(sx.stx_mask & (STATX_MNT_ID | STATX_MNT_ID_UNIQUE)))
+			errx(1, "Sorry, no mount ID");
+
+		mnt_id = sx.stx_mnt_id;
 	}
 
-Does this fix your problem as well?
 
-								Honza
-> 
-> Thanks,
-> 
-> > 
-> > 
-> > > >             wbc_attach_and_unlock_inode(&wbc, inode);
-> > > >
-> > > >             write_chunk = writeback_chunk_size(wb, work); @@ -1918,7 
-> > > > +1920,7 @@ static long writeback_sb_inodes(struct super_block *sb,
-> > > >              */
-> > > >             tmp_wb = inode_to_wb_and_lock_list(inode);
-> > > >             spin_lock(&inode->i_lock);
-> > > > -           if (!(inode->i_state & I_DIRTY_ALL))
-> > > > +           if (!(inode->i_state & I_DIRTY_ALL) && is_dirty_before)
-> > > >                     total_wrote++;
-> > > >             requeue_inode(inode, tmp_wb, &wbc);
-> > > >             inode_sync_complete(inode);
-> > > > --
-> > > > 2.25.1
-> > > >
-> > --
-> > Jan Kara <jack@suse.com>
-> > SUSE Labs, CR
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+	if (list) {
+		size_t size = 8192;
+		uint64_t list[size];
+		long i, num;
+
+		res = syscall(__NR_listmnt, mnt_id, list, size, 0);
+		if (res == -1)
+			err(1, "listmnt(%lu)", mnt_id);
+
+		num = res;
+		for (i = 0; i < num; i++) {
+			printf("0x%lx / ", list[i]);
+
+			res = syscall(__NR_statmnt, list[i], STMT_MNT_BASIC | STMT_MOUNTPOINT, &buf, sizeof(buf), 0);
+			if (res == -1) {
+				printf("???\t[%s]\n", strerror(errno));
+			} else {
+				printf("%u\t%s\n", st->mnt_id_old,
+				       (st->mask & STMT_MOUNTPOINT) ? buf + st->mountpoint.off : "???");
+			}
+		}
+
+		return 0;
+	}
+
+	res = syscall(__NR_statmnt, mnt_id, mask, &buf, sizeof(buf), 0);
+	if (res == -1)
+		err(1, "statmnt(%lu)", mnt_id);
+
+	printf("mask: 0x%llx\n", st->mask);
+	if (st->mask & STMT_SB_BASIC) {
+		printf("sb_dev_major: %u\n", st->sb_dev_major);
+		printf("sb_dev_minor: %u\n", st->sb_dev_minor);
+		printf("sb_magic: 0x%llx\n", st->sb_magic);
+		printf("sb_flags: 0x%08x\n", st->sb_flags);
+	}
+	if (st->mask & STMT_MNT_BASIC) {
+		printf("mnt_id: 0x%llx\n", st->mnt_id);
+		printf("mnt_parent_id: 0x%llx\n", st->mnt_parent_id);
+		printf("mnt_id_old: %u\n", st->mnt_id_old);
+		printf("mnt_parent_id_old: %u\n", st->mnt_parent_id_old);
+		printf("mnt_attr: 0x%08llx\n", st->mnt_attr);
+		printf("mnt_propagation: %s%s%s%s\n",
+		       st->mnt_propagation & MS_SHARED ? "shared," : "",
+		       st->mnt_propagation & MS_SLAVE ? "slave," : "",
+		       st->mnt_propagation & MS_UNBINDABLE ? "unbindable," : "",
+		       st->mnt_propagation & MS_PRIVATE ? "private" : "");
+		printf("mnt_peer_group: %llu\n", st->mnt_peer_group);
+		printf("mnt_master: %llu\n", st->mnt_master);
+	}
+	if (st->mask & STMT_PROPAGATE_FROM) {
+		printf("propagate_from: %llu\n", st->propagate_from);
+	}
+	if (st->mask & STMT_MNT_ROOT) {
+		printf("mnt_root: %i/%u <%s>\n", st->mnt_root.off,
+		       st->mnt_root.len, buf + st->mnt_root.off);
+	}
+	if (st->mask & STMT_MOUNTPOINT) {
+		printf("mountpoint: %i/%u <%s>\n", st->mountpoint.off,
+		       st->mountpoint.len, buf + st->mountpoint.off);
+	}
+	if (st->mask & STMT_FS_TYPE) {
+		printf("fs_type: %i/%u <%s>\n", st->fs_type.off,
+		       st->fs_type.len, buf + st->fs_type.off);
+	}
+
+	if (st->mask & STMT_SB_OPTS) {
+		char *p = buf + st->sb_opts.off;
+		char *end = p + st->sb_opts.len;
+
+		printf("sb_opts: %i/%u ", st->sb_opts.off, st->sb_opts.len);
+		for (; p < end; p += strlen(p) + 1)
+			printf("<%s>, ", p);
+		printf("\n");
+	}
+
+	return 0;
+}
+
