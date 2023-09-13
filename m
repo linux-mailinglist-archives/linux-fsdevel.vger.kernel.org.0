@@ -2,136 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 09A6579F146
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Sep 2023 20:42:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AF4879F22A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Sep 2023 21:35:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230419AbjIMSmF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Sep 2023 14:42:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45200 "EHLO
+        id S232406AbjIMTfO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Sep 2023 15:35:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229797AbjIMSmE (ORCPT
+        with ESMTP id S230475AbjIMTfN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Sep 2023 14:42:04 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A5B1A3;
-        Wed, 13 Sep 2023 11:42:00 -0700 (PDT)
+        Wed, 13 Sep 2023 15:35:13 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95DF891;
+        Wed, 13 Sep 2023 12:35:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1694630520; x=1726166520;
+  t=1694633709; x=1726169709;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=efM8CDotFiLZ34XLPxPB/I5B9udJDpiuZFDvc+UHFlw=;
-  b=m4kMbcoFqNEyH6RZXRlbFMZ/DBVo9FktmGZIdzjTurqcQd0IX5Ydf0vY
-   p3lpGSTLYp6vxqfQ48LjVMq8xWJ3tLu3kbMbX3YGOcGuN1AHnQKqdP9xP
-   WsXtYSxJ3U9qdqBlGeHuWBz9JP7VWD0nMESndTDoMyG7tSUZwc74oxJTA
-   5g/JfzJMpxgOPzn2ml+lJXF3OOYKmDi8qwIloW0ZPO446ZcpIDpaB9CIV
-   cPPyZiKobKNtNjiEKmMT8y/gVOpESTa3UIXorW2O19TZtqLTEOM2U30V4
-   h5EEAf74sC9XUBe6VBQGjJ9siuBP8k4XsePrhU+djqDSfVDnvObDhvHYw
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10832"; a="377663154"
-X-IronPort-AV: E=Sophos;i="6.02,143,1688454000"; 
-   d="scan'208";a="377663154"
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2023 11:41:59 -0700
+  bh=BKdDmwR0ImqwcCwZEvaS7Oi5BImbBc0gOTOmvoBXyPg=;
+  b=OPyfkHEYEUeGhdNlbRgM63qM1r/alXclHMPSuc2w9ZwsxKGOrqJ54jXR
+   dpx+Iz5H1TLjw0V+l7U0xCYtGYIW82t79Th1T1DYDb5HJgwirtpoKqRo7
+   ZMDofrcY9PNYXJcllL9pdFkqvxeputxrHME+hyE62y2gF3aI2GLEljBN1
+   CqaIR6e+2Uw9Hb2e6mhD0+NcEskKcGyTdZXGuKLudIq15mn4ARxJHU5m3
+   AQxmP6XKCvSYT207bJIzB5LPa2OarYSHX0ZxtkL/aEWmAOCiUIzM4BlIu
+   DOYXyZn9a7Ha2OirHJTUJOeS2d8qT/PokVPj1PGTsVauOU7S5ZWpXQe4Q
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10832"; a="376102134"
+X-IronPort-AV: E=Sophos;i="6.02,144,1688454000"; 
+   d="scan'208";a="376102134"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2023 12:35:08 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10832"; a="991040388"
-X-IronPort-AV: E=Sophos;i="6.02,143,1688454000"; 
-   d="scan'208";a="991040388"
+X-IronPort-AV: E=McAfee;i="6600,9927,10832"; a="737650919"
+X-IronPort-AV: E=Sophos;i="6.02,144,1688454000"; 
+   d="scan'208";a="737650919"
 Received: from lkp-server02.sh.intel.com (HELO 9ef86b2655e5) ([10.239.97.151])
-  by fmsmga006.fm.intel.com with ESMTP; 13 Sep 2023 11:41:57 -0700
+  by orsmga007.jf.intel.com with ESMTP; 13 Sep 2023 12:34:59 -0700
 Received: from kbuild by 9ef86b2655e5 with local (Exim 4.96)
         (envelope-from <lkp@intel.com>)
-        id 1qgUoF-0000T7-0Y;
-        Wed, 13 Sep 2023 18:41:55 +0000
-Date:   Thu, 14 Sep 2023 02:41:26 +0800
+        id 1qgVdZ-0000Wr-1B;
+        Wed, 13 Sep 2023 19:34:57 +0000
+Date:   Thu, 14 Sep 2023 03:34:13 +0800
 From:   kernel test robot <lkp@intel.com>
-To:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keescook@chromium.org,
-        brauner@kernel.org, lennart@poettering.net, kernel-team@meta.com,
-        sargun@sargun.me
-Subject: Re: [PATCH v4 bpf-next 06/12] bpf: take into account BPF token when
- fetching helper protos
-Message-ID: <202309140202.lwVDn4bK-lkp@intel.com>
-References: <20230912212906.3975866-7-andrii@kernel.org>
+To:     Sourav Panda <souravpanda@google.com>, corbet@lwn.net,
+        gregkh@linuxfoundation.org, rafael@kernel.org,
+        akpm@linux-foundation.org, mike.kravetz@oracle.com,
+        muchun.song@linux.dev, rppt@kernel.org, david@redhat.com,
+        rdunlap@infradead.org, chenlinxuan@uniontech.com,
+        yang.yang29@zte.com.cn, tomas.mudrunka@gmail.com,
+        bhelgaas@google.com, ivan@cloudflare.com,
+        pasha.tatashin@soleen.com, yosryahmed@google.com,
+        hannes@cmpxchg.org, shakeelb@google.com,
+        kirill.shutemov@linux.intel.com, wangkefeng.wang@huawei.com,
+        adobriyan@gmail.com, vbabka@suse.cz, Liam.Howlett@oracle.com,
+        surenb@google.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-mm@kvack.org
+Cc:     oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v1 1/1] mm: report per-page metadata information
+Message-ID: <202309140322.cF62Kywb-lkp@intel.com>
+References: <20230913173000.4016218-2-souravpanda@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230912212906.3975866-7-andrii@kernel.org>
+In-Reply-To: <20230913173000.4016218-2-souravpanda@google.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Andrii,
+Hi Sourav,
 
 kernel test robot noticed the following build errors:
 
-[auto build test ERROR on bpf-next/master]
+[auto build test ERROR on akpm-mm/mm-everything]
+[also build test ERROR on driver-core/driver-core-testing driver-core/driver-core-next driver-core/driver-core-linus linus/master v6.6-rc1 next-20230913]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Andrii-Nakryiko/bpf-add-BPF-token-delegation-mount-options-to-BPF-FS/20230913-053240
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
-patch link:    https://lore.kernel.org/r/20230912212906.3975866-7-andrii%40kernel.org
-patch subject: [PATCH v4 bpf-next 06/12] bpf: take into account BPF token when fetching helper protos
-config: i386-randconfig-r015-20230913 (https://download.01.org/0day-ci/archive/20230914/202309140202.lwVDn4bK-lkp@intel.com/config)
-compiler: clang version 16.0.4 (https://github.com/llvm/llvm-project.git ae42196bc493ffe877a7e3dff8be32035dea4d07)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20230914/202309140202.lwVDn4bK-lkp@intel.com/reproduce)
+url:    https://github.com/intel-lab-lkp/linux/commits/Sourav-Panda/mm-report-per-page-metadata-information/20230914-013201
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20230913173000.4016218-2-souravpanda%40google.com
+patch subject: [PATCH v1 1/1] mm: report per-page metadata information
+config: i386-tinyconfig (https://download.01.org/0day-ci/archive/20230914/202309140322.cF62Kywb-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20230914/202309140322.cF62Kywb-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202309140202.lwVDn4bK-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202309140322.cF62Kywb-lkp@intel.com/
 
 All errors (new ones prefixed by >>):
 
->> net/core/filter.c:11721:7: error: call to undeclared function 'bpf_token_capable'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-           if (!bpf_token_capable(prog->aux->token, CAP_PERFMON))
-                ^
-   1 error generated.
-
-
-vim +/bpf_token_capable +11721 net/core/filter.c
-
- 11687	
- 11688	static const struct bpf_func_proto *
- 11689	bpf_sk_base_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 11690	{
- 11691		const struct bpf_func_proto *func;
- 11692	
- 11693		switch (func_id) {
- 11694		case BPF_FUNC_skc_to_tcp6_sock:
- 11695			func = &bpf_skc_to_tcp6_sock_proto;
- 11696			break;
- 11697		case BPF_FUNC_skc_to_tcp_sock:
- 11698			func = &bpf_skc_to_tcp_sock_proto;
- 11699			break;
- 11700		case BPF_FUNC_skc_to_tcp_timewait_sock:
- 11701			func = &bpf_skc_to_tcp_timewait_sock_proto;
- 11702			break;
- 11703		case BPF_FUNC_skc_to_tcp_request_sock:
- 11704			func = &bpf_skc_to_tcp_request_sock_proto;
- 11705			break;
- 11706		case BPF_FUNC_skc_to_udp6_sock:
- 11707			func = &bpf_skc_to_udp6_sock_proto;
- 11708			break;
- 11709		case BPF_FUNC_skc_to_unix_sock:
- 11710			func = &bpf_skc_to_unix_sock_proto;
- 11711			break;
- 11712		case BPF_FUNC_skc_to_mptcp_sock:
- 11713			func = &bpf_skc_to_mptcp_sock_proto;
- 11714			break;
- 11715		case BPF_FUNC_ktime_get_coarse_ns:
- 11716			return &bpf_ktime_get_coarse_ns_proto;
- 11717		default:
- 11718			return bpf_base_func_proto(func_id, prog);
- 11719		}
- 11720	
- 11721		if (!bpf_token_capable(prog->aux->token, CAP_PERFMON))
- 11722			return NULL;
- 11723	
- 11724		return func;
- 11725	}
- 11726	
+   ld: mm/mm_init.o: in function `free_area_init':
+>> mm_init.c:(.init.text+0x842): undefined reference to `mod_node_early_perpage_metadata'
+   ld: mm/page_alloc.o: in function `setup_per_cpu_pageset':
+>> page_alloc.c:(.init.text+0x60): undefined reference to `writeout_early_perpage_metadata'
 
 -- 
 0-DAY CI Kernel Test Service
