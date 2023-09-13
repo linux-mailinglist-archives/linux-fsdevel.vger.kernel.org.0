@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8341879EFA5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Sep 2023 18:59:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2537D79EFA7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Sep 2023 18:59:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231272AbjIMQ6u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Sep 2023 12:58:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35464 "EHLO
+        id S231328AbjIMQ6w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Sep 2023 12:58:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230053AbjIMQ6T (ORCPT
+        with ESMTP id S231364AbjIMQ6W (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Sep 2023 12:58:19 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B90C21FC8
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Sep 2023 09:57:28 -0700 (PDT)
+        Wed, 13 Sep 2023 12:58:22 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id EFC181FD0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Sep 2023 09:57:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1694624247;
+        s=mimecast20190719; t=1694624250;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=c2st9mzpODW5EfnFYy73QjLkmO48eOaJEcOSoL9qczM=;
-        b=ivlDJN+kz2xwguw81cM+m3r/6gt7aCsyPP7E/FAU60iMctT29YeGclvp5qGLXs9IUsIptz
-        dcUtCKy+ocg1s5H1wDmwB38d8z6VZlriRqEgdTvA4AR1FP4ye6QJSeQC6j/cUQGB8OKust
-        9UubaFqLRNxARlYL00TbfBg3QnyDqI8=
+        bh=jTW4hj6R6SH2WgBE9Xhmo5Z05cFVRaLxhGn+V3gLo/A=;
+        b=HyYyDGQ5+crGYtT2e4BA+No/lpFhxIcPzQ57idYmn6PZxoZx3CZBjMaC+nl3vTWz4wXxiz
+        4dwxQeN+tVtJvHhBiFplrnh21kWeHat6QoJDIgGQNevcMkrTlwR/NKBznW4RLDyQNM5bus
+        JZCH/y3oowQa5deYcKHGtssGnu07wws=
 Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
  [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-628-Z0pMlrrIOVKNFRYw1td4xA-1; Wed, 13 Sep 2023 12:57:23 -0400
-X-MC-Unique: Z0pMlrrIOVKNFRYw1td4xA-1
+ us-mta-583-kw6qakgRMmKfBnOo7mji8A-1; Wed, 13 Sep 2023 12:57:27 -0400
+X-MC-Unique: kw6qakgRMmKfBnOo7mji8A-1
 Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D46F2101FAA0;
-        Wed, 13 Sep 2023 16:57:22 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 0D8F6855321;
+        Wed, 13 Sep 2023 16:57:26 +0000 (UTC)
 Received: from warthog.procyon.org.com (unknown [10.42.28.216])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CAFFF40C6EA8;
-        Wed, 13 Sep 2023 16:57:20 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C823740C6EA8;
+        Wed, 13 Sep 2023 16:57:23 +0000 (UTC)
 From:   David Howells <dhowells@redhat.com>
 To:     Al Viro <viro@zeniv.linux.org.uk>,
         Linus Torvalds <torvalds@linux-foundation.org>
@@ -54,9 +54,9 @@ Cc:     David Howells <dhowells@redhat.com>, Jens Axboe <axboe@kernel.dk>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
         Paolo Abeni <pabeni@redhat.com>
-Subject: [PATCH v4 12/13] iov_iter, net: Move hash_and_copy_to_iter() to net/
-Date:   Wed, 13 Sep 2023 17:56:47 +0100
-Message-ID: <20230913165648.2570623-13-dhowells@redhat.com>
+Subject: [PATCH v4 13/13] iov_iter: Create a fake device to allow iov_iter testing/benchmarking
+Date:   Wed, 13 Sep 2023 17:56:48 +0100
+Message-ID: <20230913165648.2570623-14-dhowells@redhat.com>
 In-Reply-To: <20230913165648.2570623-1-dhowells@redhat.com>
 References: <20230913165648.2570623-1-dhowells@redhat.com>
 MIME-Version: 1.0
@@ -66,7 +66,33 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Move hash_and_copy_to_iter() to be with its only caller in networking code.
+Create a fake device to allow testing and benchmarking of UBUF and IOVEC
+iterators.  /dev/iov-test is created and can be driven with pwritev() in
+which case it copies everything to a sink page and it can be written with
+preadv() in which case it copies repeatedly from a patterned page.
+
+The time taken is logged with tracepoints.
+
+This can be driven by something like:
+
+	echo 1 >/sys/kernel/debug/tracing/events/iov_test/enable
+	cmd="r -b 1M -V 256 0 256M"; xfs_io -c "open /dev/iov-test" \
+	    -c "$cmd" -c "$cmd" -c "$cmd" -c "$cmd" \
+	    -c "$cmd" -c "$cmd" -c "$cmd" -c "$cmd" \
+	    -c "$cmd" -c "$cmd" -c "$cmd" -c "$cmd" \
+	    -c "$cmd" -c "$cmd" -c "$cmd" -c "$cmd"
+	cmd="w -b 1M -V 256 0 256M"; xfs_io -c "open /dev/iov-test" \
+	    -c "$cmd" -c "$cmd" -c "$cmd" -c "$cmd" \
+	    -c "$cmd" -c "$cmd" -c "$cmd" -c "$cmd" \
+	    -c "$cmd" -c "$cmd" -c "$cmd" -c "$cmd" \
+	    -c "$cmd" -c "$cmd" -c "$cmd" -c "$cmd"
+
+showing something like:
+
+         ...: iov_test_read: size=10000000 done=10000000 ty=1 nr=256 dur=27653
+         ...: iov_test_write: size=10000000 done=10000000 ty=1 nr=256 dur=31792
+
+in the trace log.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 cc: Alexander Viro <viro@zeniv.linux.org.uk>
@@ -85,96 +111,269 @@ cc: linux-fsdevel@vger.kernel.org
 cc: linux-mm@kvack.org
 cc: netdev@vger.kernel.org
 ---
- include/linux/uio.h |  3 ---
- lib/iov_iter.c      | 20 --------------------
- net/core/datagram.c | 19 +++++++++++++++++++
- 3 files changed, 19 insertions(+), 23 deletions(-)
+ lib/Kconfig.debug         |   8 +++
+ lib/Makefile              |   1 +
+ lib/test_iov_iter.c       | 134 ++++++++++++++++++++++++++++++++++++++
+ lib/test_iov_iter_trace.h |  80 +++++++++++++++++++++++
+ 4 files changed, 223 insertions(+)
+ create mode 100644 lib/test_iov_iter.c
+ create mode 100644 lib/test_iov_iter_trace.h
 
-diff --git a/include/linux/uio.h b/include/linux/uio.h
-index c335b95626af..6bb00645fe46 100644
---- a/include/linux/uio.h
-+++ b/include/linux/uio.h
-@@ -326,9 +326,6 @@ iov_iter_npages_cap(struct iov_iter *i, int maxpages, size_t max_bytes)
- 	return npages;
- }
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index fa307f93fa2e..cf8392c51344 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -2524,6 +2524,14 @@ config TEST_SYSCTL
  
--size_t hash_and_copy_to_iter(const void *addr, size_t bytes, void *hashp,
--		struct iov_iter *i);
--
- struct iovec *iovec_from_user(const struct iovec __user *uvector,
- 		unsigned long nr_segs, unsigned long fast_segs,
- 		struct iovec *fast_iov, bool compat);
-diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index 5b2d053f057f..77520834ebe4 100644
---- a/lib/iov_iter.c
-+++ b/lib/iov_iter.c
-@@ -1,5 +1,4 @@
- // SPDX-License-Identifier: GPL-2.0-only
--#include <crypto/hash.h>
- #include <linux/export.h>
- #include <linux/bvec.h>
- #include <linux/fault-inject-usercopy.h>
-@@ -1071,25 +1070,6 @@ ssize_t iov_iter_get_pages_alloc2(struct iov_iter *i,
- }
- EXPORT_SYMBOL(iov_iter_get_pages_alloc2);
+ 	  If unsure, say N.
  
--size_t hash_and_copy_to_iter(const void *addr, size_t bytes, void *hashp,
--		struct iov_iter *i)
--{
--#ifdef CONFIG_CRYPTO_HASH
--	struct ahash_request *hash = hashp;
--	struct scatterlist sg;
--	size_t copied;
--
--	copied = copy_to_iter(addr, bytes, i);
--	sg_init_one(&sg, addr, copied);
--	ahash_request_set_crypt(hash, &sg, NULL, copied);
--	crypto_ahash_update(hash);
--	return copied;
--#else
--	return 0;
--#endif
--}
--EXPORT_SYMBOL(hash_and_copy_to_iter);
--
- static int iov_npages(const struct iov_iter *i, int maxpages)
- {
- 	size_t skip = i->iov_offset, size = i->count;
-diff --git a/net/core/datagram.c b/net/core/datagram.c
-index 722311eeee18..103d46fa0eeb 100644
---- a/net/core/datagram.c
-+++ b/net/core/datagram.c
-@@ -61,6 +61,7 @@
- #include <net/tcp_states.h>
- #include <trace/events/skb.h>
- #include <net/busy_poll.h>
-+#include <crypto/hash.h>
- 
- /*
-  *	Is a socket 'connection oriented' ?
-@@ -489,6 +490,24 @@ static int __skb_datagram_iter(const struct sk_buff *skb, int offset,
- 	return 0;
- }
- 
-+static size_t hash_and_copy_to_iter(const void *addr, size_t bytes, void *hashp,
-+				    struct iov_iter *i)
-+{
-+#ifdef CONFIG_CRYPTO_HASH
-+	struct ahash_request *hash = hashp;
-+	struct scatterlist sg;
-+	size_t copied;
++config TEST_IOV_ITER
++	tristate "iov_iter test driver"
++	help
++	  This creates a misc device that can be used as a way to test various
++	  I/O iterator functions through the use of readv/writev and ioctl.
 +
-+	copied = copy_to_iter(addr, bytes, i);
-+	sg_init_one(&sg, addr, copied);
-+	ahash_request_set_crypt(hash, &sg, NULL, copied);
-+	crypto_ahash_update(hash);
++	  If unsure, say N.
++
+ config BITFIELD_KUNIT
+ 	tristate "KUnit test bitfield functions at runtime" if !KUNIT_ALL_TESTS
+ 	depends on KUNIT
+diff --git a/lib/Makefile b/lib/Makefile
+index 740109b6e2c8..f6419544a749 100644
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@ -65,6 +65,7 @@ CFLAGS_test_bitops.o += -Werror
+ obj-$(CONFIG_CPUMASK_KUNIT_TEST) += cpumask_kunit.o
+ obj-$(CONFIG_TEST_SYSCTL) += test_sysctl.o
+ obj-$(CONFIG_TEST_IOV_ITER) += kunit_iov_iter.o
++obj-$(CONFIG_TEST_IOV_ITER) += test_iov_iter.o
+ obj-$(CONFIG_HASH_KUNIT_TEST) += test_hash.o
+ obj-$(CONFIG_TEST_IDA) += test_ida.o
+ obj-$(CONFIG_TEST_UBSAN) += test_ubsan.o
+diff --git a/lib/test_iov_iter.c b/lib/test_iov_iter.c
+new file mode 100644
+index 000000000000..afa70647dbde
+--- /dev/null
++++ b/lib/test_iov_iter.c
+@@ -0,0 +1,134 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/* I/O iterator testing device.
++ *
++ * Copyright (C) 2023 Red Hat, Inc. All Rights Reserved.
++ * Written by David Howells (dhowells@redhat.com)
++ */
++
++#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
++
++#include <linux/module.h>
++#include <linux/uio.h>
++#include <linux/fs.h>
++#include <linux/pagemap.h>
++#include <linux/miscdevice.h>
++#define CREATE_TRACE_POINTS
++#include "test_iov_iter_trace.h"
++
++MODULE_DESCRIPTION("iov_iter testing");
++MODULE_AUTHOR("David Howells <dhowells@redhat.com>");
++MODULE_LICENSE("GPL");
++
++static ssize_t iov_test_read_iter(struct kiocb *iocb, struct iov_iter *iter)
++{
++	struct folio *folio = iocb->ki_filp->private_data;
++	unsigned int nr_segs = iter->nr_segs;
++	size_t size = iov_iter_count(iter), fsize = folio_size(folio);
++	size_t copied = 0, offset = 0, i;
++	ktime_t a, b;
++	u8 *p;
++
++	/* Pattern the buffer */
++	p = kmap_local_folio(folio, 0);
++	for (i = 0; i < folio_size(folio); i++)
++		p[i] = i & 0xff;
++	kunmap_local(p);
++
++	a = ktime_get_real();
++	while (iov_iter_count(iter)) {
++		size_t done, part = min(iov_iter_count(iter), fsize - offset);
++
++		done = copy_folio_to_iter(folio, offset, part, iter);
++		if (done == 0)
++			break;
++		copied += done;
++		offset = (offset + done) & (fsize - 1);
++	}
++
++	b = ktime_get_real();
++	trace_iov_test_read(size, copied, iov_iter_type(iter), nr_segs,
++			    ktime_to_us(ktime_sub(b, a)));
 +	return copied;
-+#else
-+	return 0;
-+#endif
 +}
 +
- /**
-  *	skb_copy_and_hash_datagram_iter - Copy datagram to an iovec iterator
-  *          and update a hash.
++static ssize_t iov_test_write_iter(struct kiocb *iocb, struct iov_iter *iter)
++{
++	struct folio *folio = iocb->ki_filp->private_data;
++	unsigned int nr_segs = iter->nr_segs;
++	size_t size = iov_iter_count(iter), fsize = folio_size(folio);
++	size_t copied = 0, offset = 0;
++	ktime_t a = ktime_get_real(), b;
++
++	while (iov_iter_count(iter)) {
++		size_t done, part = min(iov_iter_count(iter), fsize - offset);
++
++		done = copy_page_from_iter(folio_page(folio, 0), offset, part, iter);
++		if (done == 0)
++			break;
++		copied += done;
++		offset = (offset + done) & (fsize - 1);
++	}
++
++	b = ktime_get_real();
++	trace_iov_test_write(size, copied, iov_iter_type(iter), nr_segs,
++			     ktime_to_us(ktime_sub(b, a)));
++	return copied;
++}
++
++static int iov_test_open(struct inode *inode, struct file *file)
++{
++	struct folio *folio;
++
++	if (!capable(CAP_SYS_ADMIN))
++		return -EPERM;
++
++	folio = folio_alloc(GFP_KERNEL, 0);
++	if (!folio)
++		return -ENOMEM;
++	file->private_data = folio;
++	return 0;
++}
++
++static int iov_test_release(struct inode *inode, struct file *file)
++{
++	struct folio *folio = file->private_data;
++
++	folio_put(folio);
++	return 0;
++}
++
++static const struct file_operations iov_test_fops = {
++	.owner		= THIS_MODULE,
++	.open		= iov_test_open,
++	.release	= iov_test_release,
++	.read_iter	= iov_test_read_iter,
++	.write_iter	= iov_test_write_iter,
++	.splice_read	= copy_splice_read,
++	.llseek		= noop_llseek,
++};
++
++static struct miscdevice iov_test_dev = {
++	.minor	= MISC_DYNAMIC_MINOR,
++	.name	= "iov-test",
++	.fops	= &iov_test_fops,
++};
++
++static int __init iov_test_init(void)
++{
++	int ret;
++
++	ret = misc_register(&iov_test_dev);
++	if (ret < 0)
++		return ret;
++	pr_info("Loaded\n");
++	return 0;
++}
++module_init(iov_test_init);
++
++static void __exit iov_test_exit(void)
++{
++	pr_info("Unloading\n");
++
++	misc_deregister(&iov_test_dev);
++}
++module_exit(iov_test_exit);
+diff --git a/lib/test_iov_iter_trace.h b/lib/test_iov_iter_trace.h
+new file mode 100644
+index 000000000000..b99cade5d004
+--- /dev/null
++++ b/lib/test_iov_iter_trace.h
+@@ -0,0 +1,80 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* I/O iterator testing device.
++ *
++ * Copyright (C) 2023 Red Hat, Inc. All Rights Reserved.
++ * Written by David Howells (dhowells@redhat.com)
++ */
++#undef TRACE_SYSTEM
++#define TRACE_SYSTEM iov_test
++
++#if !defined(_IOV_TEST_TRACE_H) || defined(TRACE_HEADER_MULTI_READ)
++#define _IOV_TEST_TRACE_H
++
++#include <linux/tracepoint.h>
++
++TRACE_EVENT(iov_test_read,
++	    TP_PROTO(size_t size, size_t done, enum iter_type type,
++		     unsigned int nr_segs, u64 duration),
++
++	    TP_ARGS(size, done, type, nr_segs, duration),
++
++	    TP_STRUCT__entry(
++		    __field(size_t,		size)
++		    __field(size_t,		done)
++		    __field(enum iter_type,	type)
++		    __field(unsigned int,	nr_segs)
++		    __field(u64,		duration)
++			     ),
++
++	    TP_fast_assign(
++		    __entry->size = size;
++		    __entry->done = done;
++		    __entry->type = type;
++		    __entry->nr_segs = nr_segs;
++		    __entry->duration = duration;
++			   ),
++
++	    TP_printk("size=%zx done=%zx ty=%u nr=%u dur=%llu",
++		      __entry->size,
++		      __entry->done,
++		      __entry->type,
++		      __entry->nr_segs,
++		      __entry->duration)
++	    );
++
++TRACE_EVENT(iov_test_write,
++	    TP_PROTO(size_t size, size_t done, enum iter_type type,
++		     unsigned int nr_segs, u64 duration),
++
++	    TP_ARGS(size, done, type, nr_segs, duration),
++
++	    TP_STRUCT__entry(
++		    __field(size_t,		size)
++		    __field(size_t,		done)
++		    __field(enum iter_type,	type)
++		    __field(unsigned int,	nr_segs)
++		    __field(u64,		duration)
++			     ),
++
++	    TP_fast_assign(
++		    __entry->size = size;
++		    __entry->done = done;
++		    __entry->type = type;
++		    __entry->nr_segs = nr_segs;
++		    __entry->duration = duration;
++			   ),
++
++	    TP_printk("size=%zx done=%zx ty=%u nr=%u dur=%llu",
++		      __entry->size,
++		      __entry->done,
++		      __entry->type,
++		      __entry->nr_segs,
++		      __entry->duration)
++	    );
++
++#endif /* _IOV_TEST_TRACE_H */
++
++#undef TRACE_INCLUDE_PATH
++#define TRACE_INCLUDE_PATH .
++#define TRACE_INCLUDE_FILE test_iov_iter_trace
++#include <trace/define_trace.h>
 
