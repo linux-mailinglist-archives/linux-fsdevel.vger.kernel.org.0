@@ -2,107 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 95C1C79EFC5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Sep 2023 19:04:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A35A79EFCB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Sep 2023 19:04:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229970AbjIMREV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Sep 2023 13:04:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52516 "EHLO
+        id S230308AbjIMREf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Sep 2023 13:04:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229660AbjIMREU (ORCPT
+        with ESMTP id S229660AbjIMREd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Sep 2023 13:04:20 -0400
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B1E6CE
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Sep 2023 10:04:16 -0700 (PDT)
-Received: by mail-ed1-x532.google.com with SMTP id 4fb4d7f45d1cf-51e28cac164so2563827a12.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Sep 2023 10:04:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1694624655; x=1695229455; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Oxh7tqf52Etrnl44vNn20JbZtKnr/hhWHqieQOu3iEs=;
-        b=Z+KMnUC/fUibh8JgMD0cCrXgzIjsIuCGoVYFRtfB/5KVc3rjmBh+2BONQmDRBz6dn7
-         jQ4dghXPAdRoY93f860dXhj9wtYFgTmh0QxEdfxrGcv8lOS0mYjdE0f9gUUCT2kEsEpZ
-         RAzj42zM3u5IWyVqkptlBfzrmuK4Fb5p1fhJc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694624655; x=1695229455;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Oxh7tqf52Etrnl44vNn20JbZtKnr/hhWHqieQOu3iEs=;
-        b=HQgD8H7Yt7p2tdUOfdBtJRY1/AgouOQ7pyTNT++XTHOxoY8W2QPJJ/z3dQeUbHQJ4t
-         HEoUdCcN8+8tbL/IIw04Zncu/ZTM7zFBXrp7PpNe3qCdH/wzl2WPc5v/9Ir/xoQnAEM7
-         /ck2hxN0+zMFT2DCPfnvi0ytlY2n2SN51DdwmKp4fGi7TPM0g0hwsHcYnlhGfqsvowEO
-         0X735Z2ckUX2cbrE5fiEdXiU5glYzs7TIPrWNcuWOw0fwHuDX+yHs6zib8UjAlIosLoN
-         kty4BOTbN7SSvyg3JuqVXNkSlPDxyXlHjej87wAleBueS8c1YcUxXiK6AmWDGeFsvb4z
-         kY/Q==
-X-Gm-Message-State: AOJu0Yy3BH4eVL0kjdO+e7Nhg2F1z7i5sJVwfxfwkB5R0I6EK7IIGWSl
-        BSaNBlrKCVt6/7xT9VvtFRrgiEK3mebZvipM59vz9ss8
-X-Google-Smtp-Source: AGHT+IFcQrUCYNrXXPIqb4Q3Y3sohY2whQA8miQkxwbmN2y0nhAbo90Vgh7LpySb9PcGjEdWqbiaNA==
-X-Received: by 2002:a17:906:1dd0:b0:9a2:1e14:86b9 with SMTP id v16-20020a1709061dd000b009a21e1486b9mr4346401ejh.0.1694624654881;
-        Wed, 13 Sep 2023 10:04:14 -0700 (PDT)
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com. [209.85.218.41])
-        by smtp.gmail.com with ESMTPSA id w20-20020a1709064a1400b00991faf3810esm8806578eju.146.2023.09.13.10.04.13
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Sep 2023 10:04:13 -0700 (PDT)
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-9a9d6b98845so266017566b.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Sep 2023 10:04:13 -0700 (PDT)
-X-Received: by 2002:a17:907:96a4:b0:9a5:c38d:6b75 with SMTP id
- hd36-20020a17090796a400b009a5c38d6b75mr9352280ejc.15.1694624653071; Wed, 13
- Sep 2023 10:04:13 -0700 (PDT)
+        Wed, 13 Sep 2023 13:04:33 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1906CE;
+        Wed, 13 Sep 2023 10:04:29 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2ECAC433C8;
+        Wed, 13 Sep 2023 17:04:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1694624669;
+        bh=7rv3Solh0betRWknM4KbpX2Yzq/6PuTa+8pHyrMJGLA=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=QVJnA+aBoPDbHvk8YrLqfUO2xt+TBAZSJweq0lY30J46pjlEIWz3WjieCmseON/88
+         ylqNWd3Laqfh+ek+uk2rL22H18Z85BL7UfSb2gVDwUXpEVyORdsFZZcEuOMXkrNchE
+         G/cYB0p2d05fshkD+v+Em9SVX3aKdTCEriBBlgAAVk5WfLZf2nevRk2F1LYhY0EZtk
+         GvD91tOsCEJSP4pnT1hbbFVThhMaOCPNLXIT0xtdBNrW8XZI3VP8+EqiNkKwU1QHTP
+         sQmVfyt/mJcyLPUIsIZF/9Uuepm1Ra4kKz6ie5D1prKqWtU41V+f3jHT4Cf3npsv+M
+         JClNNDAK/RJng==
+Message-ID: <c57b71b5109942d7c66d8466fb26f82211c1a175.camel@kernel.org>
+Subject: Re: [PATCH] overlayfs: set ctime when setting mtime and atime
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 13 Sep 2023 13:04:27 -0400
+In-Reply-To: <20230913-hausbank-wortlaut-b2bb3cee6156@brauner>
+References: <20230913-ctime-v1-1-c6bc509cbc27@kernel.org>
+         <20230913-hausbank-wortlaut-b2bb3cee6156@brauner>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 MIME-Version: 1.0
-References: <ZO9NK0FchtYjOuIH@infradead.org> <8718a8a3-1e62-0e2b-09d0-7bce3155b045@roeck-us.net>
- <ZPkDLp0jyteubQhh@dread.disaster.area> <20230906215327.18a45c89@gandalf.local.home>
- <ZPkz86RRLaYOkmx+@dread.disaster.area> <20230906225139.6ffe953c@gandalf.local.home>
- <ZPlFwHQhJS+Td6Cz@dread.disaster.area> <20230907071801.1d37a3c5@gandalf.local.home>
- <b7ca4a4e-a815-a1e8-3579-57ac783a66bf@sandeen.net>
-In-Reply-To: <b7ca4a4e-a815-a1e8-3579-57ac783a66bf@sandeen.net>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 13 Sep 2023 10:03:55 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wg=xY6id92yS3=B59UfKmTmOgq+NNv+cqCMZ1Yr=FwR9A@mail.gmail.com>
-Message-ID: <CAHk-=wg=xY6id92yS3=B59UfKmTmOgq+NNv+cqCMZ1Yr=FwR9A@mail.gmail.com>
-Subject: Re: [MAINTAINERS/KERNEL SUMMIT] Trust and maintenance of file systems
-To:     Eric Sandeen <sandeen@sandeen.net>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Christoph Hellwig <hch@infradead.org>, ksummit@lists.linux.dev,
-        linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 13 Sept 2023 at 09:52, Eric Sandeen <sandeen@sandeen.net> wrote:
->
-> Isn't it more typical to mark something as on its way to deprecation in
-> Kconfig and/or a printk?
+On Wed, 2023-09-13 at 18:45 +0200, Christian Brauner wrote:
+> On Wed, Sep 13, 2023 at 09:33:12AM -0400, Jeff Layton wrote:
+> > Nathan reported that he was seeing the new warning in
+> > setattr_copy_mgtime pop when starting podman containers. Overlayfs is
+> > trying to set the atime and mtime via notify_change without also
+> > setting the ctime.
+> >=20
+> > POSIX states that when the atime and mtime are updated via utimes() tha=
+t
+> > we must also update the ctime to the current time. The situation with
+> > overlayfs copy-up is analogies, so add ATTR_CTIME to the bitmask.
+> > notify_change will fill in the value.
+> >=20
+> > Reported-by: Nathan Chancellor <nathan@kernel.org>
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+>=20
+> Looks good to me,
+> Acked-by: Christian Brauner <brauner@kernel.org>
+>=20
+> So we can wait for ovl to upstream this fix next and then we'll delay
+> sending the ctime fixes or we'll take this fixup as well. Just let me
+> know what you all prefer.
 
-I haven't actually heard a good reason to really stop supporting
-these. Using some kind of user-space library is ridiculous. It's *way*
-more effort than just keeping them in the kernel. So anybody who says
-"just move them to user space" is just making things up.
-
-The reasons I have heard are:
-
- - security
-
-Yes, don't enable them, and if you enable them, don't auto-mount them
-on hot-pkug devices. Simple. People in this thread have already
-pointed to the user-space support for it happening.
-
- - syzbot issues.
-
-Ignore them for affs & co.
-
- - "they use the buffer cache".
-
-Waah, waah, waah. The buffer cache is *trivial*. If you don't like the
-buffer cache, don't use it. It's that simple.
-
-But not liking the buffer cache and claiming that's a reason to not
-support a filesystem is just complete BS.
-
-              Linus
+No preference here.
+--=20
+Jeff Layton <jlayton@kernel.org>
