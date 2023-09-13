@@ -2,57 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A04AD79E69E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Sep 2023 13:24:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 815E979E6AF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Sep 2023 13:26:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240126AbjIMLY4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Sep 2023 07:24:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40228 "EHLO
+        id S240127AbjIML0f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Sep 2023 07:26:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240065AbjIMLYx (ORCPT
+        with ESMTP id S240112AbjIML0e (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Sep 2023 07:24:53 -0400
-Received: from mail-ua1-x92a.google.com (mail-ua1-x92a.google.com [IPv6:2607:f8b0:4864:20::92a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CC5719B6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Sep 2023 04:24:49 -0700 (PDT)
-Received: by mail-ua1-x92a.google.com with SMTP id a1e0cc1a2514c-7a754db0fbcso2318721241.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Sep 2023 04:24:49 -0700 (PDT)
+        Wed, 13 Sep 2023 07:26:34 -0400
+Received: from mail-vs1-xe2d.google.com (mail-vs1-xe2d.google.com [IPv6:2607:f8b0:4864:20::e2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 044DF19B3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Sep 2023 04:26:30 -0700 (PDT)
+Received: by mail-vs1-xe2d.google.com with SMTP id ada2fe7eead31-450f8f1368cso133612137.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Sep 2023 04:26:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1694604288; x=1695209088; darn=vger.kernel.org;
+        d=gmail.com; s=20221208; t=1694604389; x=1695209189; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5VHxmzp9QWHIArD2/rI8I+K3gfyVh4UD9rKM0tXdhT0=;
-        b=BDCAIiIL4+i5Yq+HWu9KlPnqecW+YFBuk6X7UIAX/D67cwcXoAIaZhSsKawHRE0g+0
-         uxliGhD8tH6Bou61SawZ8tE4mQ3eze1Mb0dwSnHAEs5wmZErpBDh/mT/SfXhr1+Jo13b
-         JKAfYU2OrtJX+ZWJ8E5kZKqOjd+qTqnGce4BJA/QX1ATl6tMXYFqZrZWrWzfmXkp83PP
-         DGx7XPwzwBiLfYO84tIZt7XgqJZRvthVZOLgjC6Tx6EVjKonIGxiDJ1K4sbzKKE0O9Zi
-         6MwsIJ4D94nKt3ozxheRsw80jipqcyQe2f1pr1CkZnqdFvEmUrg95d3gor2Sxt2LvuNG
-         Bdng==
+        bh=dwE40sJjoPcc15DhMGEmaXI0Xw/O6FpsHFKxViIXT/M=;
+        b=gBLtf4px6C2EtGGDqWgBV1CzhcOU4VQWh2b0I/6ntRUPq6Lh6tWb69Oivd8p13tCLK
+         T0AXfFEGyxgMByap/QWuk2fRs/589Vio71vl6XD8RlTfMQiioYTvQ09RQlLZ9Ihkx2e0
+         O2P5fdZuSV+OUrFB8gI22Nkj9Wrl5N/viHgR3fZVzTpkn2Qpe+jTD0uyZtDVTs/Y96Sz
+         G5lqhYAFpzHV8BcAgr/AaKe4Ex8eS5b5AxgXj1g5Ch2v+I+YFCJ+VR7+TrByWmJuV+CQ
+         m5hIOBCAiow63wAFy/9r7WZ2JR7dQKBcC0VTLu1vZ3EvWIHwJs/pTQrjQ2Ot+R/gB/Di
+         HySA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694604288; x=1695209088;
+        d=1e100.net; s=20230601; t=1694604389; x=1695209189;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5VHxmzp9QWHIArD2/rI8I+K3gfyVh4UD9rKM0tXdhT0=;
-        b=CFeDsXfDqLVNYu/HfywtIEMTz/Djp6w/4kLpuOESeJ94PjPOL2LVQ8yi8nm3nUhHzW
-         ntNURikx8hfSaw9culSzy/qm6HPWIEhPps2SMiT+hUMat1vi5aa5LZniEzRraAijgn76
-         /7HKKOv7Hg2mfRKwt8tHGmsLxapEhrxjOb7E955Nz8LI3Nw7xmdjkSbPROpbuEV1t/fH
-         4q6/2Yt3qQ5dIM8SGD81EvMNWsTgQupYaNB6KbJa2gDyU+F9eI72tT8r0WbRlaEdaMbV
-         L4OXj6aKFjlETIzXJP5nJefv+4OjZoJ6IOy+dL2AawMeh4LYOIhwSqsmQYg7sn2qVDaF
-         YmmQ==
-X-Gm-Message-State: AOJu0Yyn9UR9n6hP9EG8PThPCzZpkp6/iCW/H2p72fzzfbNDys9AZSUL
-        UPelcmqEiTih3J5SxD/PotuIRV7gVPaoxkIVnug=
-X-Google-Smtp-Source: AGHT+IHMmZyT6oFf73CZxlr68gX8HglUfbwljBa07Sj4e2zkENBVk8/3DRUYVgthQYXIk4JT1pz7QqKtZ5Dg7Y5G/XI=
-X-Received: by 2002:a67:b342:0:b0:44d:50f0:f43e with SMTP id
- b2-20020a67b342000000b0044d50f0f43emr1835351vsm.30.1694604288169; Wed, 13 Sep
- 2023 04:24:48 -0700 (PDT)
+        bh=dwE40sJjoPcc15DhMGEmaXI0Xw/O6FpsHFKxViIXT/M=;
+        b=D4kOklH5xlwIlP5W1/p63epZgYV/Ws6F53dxWazCUSCmFfUHdTl4tlZO3Nbn5Jz60n
+         4oUjuaC6l1KwOyFgOug0WM0TXrttj4n1Ye2fJXA8ntC4z2eroUscpD2/BtX20mayt6U8
+         zcYswolFwF07S06Nm78yh17Vbho45zI4jqE8TZdPbj/+PWFqT5CbVxkgmf/Y+9WZwefn
+         MB4nxGiGhABLIP+Dv0NIGfC1ZuHVVVSwbqi4QrWVK+gn6PC9WAl/hEVxpbV7XrD6jHJq
+         c4xcoXYyM03Jz6hw0Yjy3hSIhdG7pZFUhrsWQuZ8QmPSLA7oTgyaDvPEVCrHMJUkfUlJ
+         SXdQ==
+X-Gm-Message-State: AOJu0Yxh65DI4oCHMwmKjAhLAMoR4FidDhpP1NJvM9NYUaEcq+lfUmch
+        7ouvOwfXcgEfSQHaI5aoVezSj0nA4AwvM6Uj8zk=
+X-Google-Smtp-Source: AGHT+IHa2M24mSGTgC/2sEXTxp6dy8P2TgX2To2HZbfVt2Sg3Sj49M6zNanAfY8Yjh2sBKNTwxmK7mjf/ZQ3lxb5J74=
+X-Received: by 2002:a05:6102:2c5:b0:450:de69:1a6a with SMTP id
+ h5-20020a05610202c500b00450de691a6amr1561821vsh.8.1694604388956; Wed, 13 Sep
+ 2023 04:26:28 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230912185408.3343163-1-amir73il@gmail.com> <20230913-galaxie-irrfahrt-a815cf10ebdc@brauner>
-In-Reply-To: <20230913-galaxie-irrfahrt-a815cf10ebdc@brauner>
+References: <20230912185408.3343163-1-amir73il@gmail.com> <20230913-sticken-warnzeichen-099bceebc54d@brauner>
+In-Reply-To: <20230913-sticken-warnzeichen-099bceebc54d@brauner>
 From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 13 Sep 2023 14:24:36 +0300
-Message-ID: <CAOQ4uxgta6y7fi_hfrF4fDvHA2RjeA+JTCb-eSaORZOY6XZbVQ@mail.gmail.com>
+Date:   Wed, 13 Sep 2023 14:26:17 +0300
+Message-ID: <CAOQ4uxiDpMkR-45m9X6AinK50oK5fMBsvmQfHW94U40ngJWV=Q@mail.gmail.com>
 Subject: Re: [PATCH] ovl: factor out some common helpers for backing files io
 To:     Christian Brauner <brauner@kernel.org>
 Cc:     Miklos Szeredi <miklos@szeredi.hu>,
@@ -65,7 +65,7 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 13, 2023 at 11:29=E2=80=AFAM Christian Brauner <brauner@kernel.=
+On Wed, Sep 13, 2023 at 11:37=E2=80=AFAM Christian Brauner <brauner@kernel.=
 org> wrote:
 >
 > On Tue, Sep 12, 2023 at 09:54:08PM +0300, Amir Goldstein wrote:
@@ -109,44 +109,46 @@ WwRFEAUgnUcQ@mail.gmail.com
 > >  fs/Kconfig                   |   4 +
 > >  fs/Makefile                  |   1 +
 > >  fs/backing_file.c            | 160 +++++++++++++++++++++++++++++++++++
+> >  fs/overlayfs/Kconfig         |   1 +
+> >  fs/overlayfs/file.c          | 137 ++----------------------------
+> >  fs/overlayfs/overlayfs.h     |   2 -
+> >  fs/overlayfs/super.c         |  11 +--
+> >  include/linux/backing_file.h |  22 +++++
+> >  9 files changed, 199 insertions(+), 141 deletions(-)
+> >  create mode 100644 fs/backing_file.c
+> >  create mode 100644 include/linux/backing_file.h
+> >
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 90f13281d297..4e1d21773e0e 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -16092,7 +16092,9 @@ L:    linux-unionfs@vger.kernel.org
+> >  S:   Supported
+> >  T:   git git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.gi=
+t
+> >  F:   Documentation/filesystems/overlayfs.rst
+> > +F:   fs/backing_file.c
+> >  F:   fs/overlayfs/
+> > +F:   include/linux/backing_file.h
 >
-> I'm sorry but I'm missing mountains of context.
-> How is that related to the backing file stuff exactly?
-> The backing file stuff has this unpleasant
+> I'd like to do this slightly differently, please. All vfs infra goes
+> through vfs trees
+
+OK. it will take a bit more git collaboration for a new
+infra that is not used by any fs yet, but it's fine by me.
+
+> but for new infra like this where someone steps up to
+> be a maintainer we add a new section (like bpf or networking does):
 >
-> file->f_inode =3D=3D real_inode !=3D file->f_path->dentry->d_inode
->
-> that we all agree is something we really don't like. Is FUSE trying to
-> do the same thing and build an read_iter/write_iter abstraction around
-> it? I really really hope that's not the case.
+> VFS [BACKING FILE]
+> M:      Miklos Szeredi <miklos@szeredi.hu>
+> M:      Amir Goldstein <amir73il@gmail.com>
+> F:      fs/backing_file.c
+> F:      include/linux/backing_file.h
+> L:      linux-fsdevel@vger.kernel.org
+> S:      Maintained
 
-That is not the case.
-The commonality between FUSE passthrough and overlayfs is that
-a "virtual" file (i.e. ovl/fuse), which has no backing blockdev of its own
-"forwards" the io requests to a backing file on another filesystem.
-
-The name "backing file" is therefore a pretty accurate description
-for both cases. HOWEVER, FUSE does not need to use the
-backing_file struct to hold an alternative path, so FUSE backing files
-do not have FMODE_BACKING, same as cachefiles uses backing
-files, but does not use the FMODE_BACKING/file_backing struct.
-
-Yes, it's a bit of a naming mess.
-I don't have any good ideas on how to do better naming.
-Ideally, we will get rid of struct backing_file, so we won't need
-to care about the confusing names...
-
->
-> And why are we rushing this to a VFS API? This should be part of the
-> FUSE series that make it necessary to hoist into the VFS not in
-> overlayfs work that prematurely moves this into the VFS.
-
-Fair enough, I will not rush this patch and will post it
-along with the FUSE passthrough patches.
-
-I posted it because I wanted to get early feedback - mission accomplished :=
-)
-In retrospect, I should have labeled it [RFC].
+That sounds good.
 
 Thanks,
 Amir.
