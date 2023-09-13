@@ -2,212 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E3EB579E07C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Sep 2023 09:10:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10B6079E0EF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Sep 2023 09:37:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238480AbjIMHKG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Sep 2023 03:10:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39204 "EHLO
+        id S237422AbjIMHhy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Sep 2023 03:37:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238367AbjIMHKE (ORCPT
+        with ESMTP id S233816AbjIMHhx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Sep 2023 03:10:04 -0400
-Received: from mail-vs1-xe33.google.com (mail-vs1-xe33.google.com [IPv6:2607:f8b0:4864:20::e33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBC65DF;
-        Wed, 13 Sep 2023 00:10:00 -0700 (PDT)
-Received: by mail-vs1-xe33.google.com with SMTP id ada2fe7eead31-450f5be2532so91413137.3;
-        Wed, 13 Sep 2023 00:10:00 -0700 (PDT)
+        Wed, 13 Sep 2023 03:37:53 -0400
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8113C1729;
+        Wed, 13 Sep 2023 00:37:49 -0700 (PDT)
+Received: by mail-pl1-x630.google.com with SMTP id d9443c01a7336-1bf55a81eeaso45603615ad.0;
+        Wed, 13 Sep 2023 00:37:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1694589000; x=1695193800; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6agKsvygWp25lreEOJlRfatFAwEsvANUhQcrOrGHn20=;
-        b=s3sbtuP2QCgn1JvtWsYKS+ZQMLSLX1ndihOGa47BkP0NLdVdBWyoUsDgqQJxb6aqMb
-         mQV9mqhOcmRhvP7vylQJTois0+d46wYuNwGe0+pMEeHgxtZlaGC6wWd8716JNIQT+H9H
-         2ldGXjBSHp+GGRPmM08oZCvOzBNhrmiv6BI15tDW63hOLrh1kUaAll+GGvVGmbZCoqTK
-         DPBjwY3a4kM6MVZzq6xqz2C2U49vIzpFXH0GUvSQxiRHK9IaOcXymsrIMTJvTSThZI+U
-         OSG2NRzNzL2Uv68MOXGcwRRDl8hRSCN0Ae7mLFtSte+Ja135/smghC16whyRVGV/Vtgg
-         Syww==
+        d=gmail.com; s=20221208; t=1694590669; x=1695195469; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jmJN9dyFxG0ZDa5DUc653tNGEVo7z94noVDJ6MnTyRc=;
+        b=R3FoEAXc7B0UfN97a0G1ynfJstGAcrgP4KTjDD6WABCKpDm+y2jx/bIcg+D5iykYNU
+         F1v1Gu/zXMAmrO5gtXbvQNzjHJeZ5+JFKYwweqZFZH0htn0hn28uS6aaBTHD3qAWlepN
+         8ikFG6QVn8x0RmlV3Q8QUoo0U1XqzRIZ0dcc1kdadJiYeCVTy4QTlzGHeRaKH1XlEhY7
+         kf3KNRLNyHlxjS7Dr84SAUvwiDA7n7sfRsMQLABIHeHTiJFAJeQkXD/OCtDpGP9JoFqb
+         n4fzEWJ/XWhA/MyShq9PLqC3jPFeS0Z0tg5faFeHyDP4Ql2nzBYffxgrrdHHA8iN52ap
+         AZKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694589000; x=1695193800;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6agKsvygWp25lreEOJlRfatFAwEsvANUhQcrOrGHn20=;
-        b=LJ/8unQICwhGK5gV8t8+2M7HnAAsXlQWOf8EGsJNSzlgK0GRgLGTkBVWIirZ4ESNic
-         fwig3hhJWPTUKBOEO1jqv6T3HolzmpDJ7p65NKY23hFz+p/0BtUlQE4BNRC4fvbTF3Te
-         jcOAIzYmAhH1oNPFTgf3vhbifRhfMjr1Wd8eyaNqbEc3SRiWGso0wFHsBDULb4k8bRij
-         9QrPKDci1k4rhZBlJ4RlTBH0ODIwxnFDjFn0lVs72/Lsh+SQmwr3yfeFAPYHyBujAzp/
-         3d3nxLfKOdI6rChwL5CXj1oU2XrYwCTi+aaslVMppGXlb1/lm7LiziheF9+iWxmWFp3S
-         3/xQ==
-X-Gm-Message-State: AOJu0YzI9oFL6jzdTz9N9gTvxNPcsYAnrX7cXhxANI6HSGVHwhonCr9N
-        O157uQcRK3aRK6pzsMRGFCeoyUd/6PLiclHujHQ=
-X-Google-Smtp-Source: AGHT+IEm50JAWQf1sRHHPjZDQceCT5ewuXWRds83LyZHROQa8EAyQhrW/W5QgSW0VPvLGI00ErNfuEg0rJPKFb1gxjo=
-X-Received: by 2002:a05:6102:15a9:b0:44e:b571:27af with SMTP id
- g41-20020a05610215a900b0044eb57127afmr1833193vsv.1.1694589000003; Wed, 13 Sep
- 2023 00:10:00 -0700 (PDT)
-MIME-Version: 1.0
-References: <0000000000004f34d705ffbc2604@google.com> <0000000000005bd097060530b758@google.com>
-In-Reply-To: <0000000000005bd097060530b758@google.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 13 Sep 2023 10:09:48 +0300
-Message-ID: <CAOQ4uxjBAG-WA+1VCdYh6O98mU3C31qMyZZFp3iRW6_yYROdWQ@mail.gmail.com>
-Subject: Re: [syzbot] [overlayfs?] general protection fault in d_path
-To:     syzbot <syzbot+a67fc5321ffb4b311c98@syzkaller.appspotmail.com>
-Cc:     brauner@kernel.org, jlayton@kernel.org,
+        d=1e100.net; s=20230601; t=1694590669; x=1695195469;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jmJN9dyFxG0ZDa5DUc653tNGEVo7z94noVDJ6MnTyRc=;
+        b=pabAndoN0J2n6bQ1+iCeK6qYtMnGaGk6tebsIqo8PYiBwLnsZPROe6Qe/87n4k23yN
+         Yo4ypWgE1KTDexcsIitpvmkvsfAOAe9VTYRTsm0iz9xiRSNtzOWscNa5EnjJDTd3xYI8
+         mPYwSNTcuYDXbCi47e07WOiw6tfBwOejIgepVXO3wlyn/mXCkORE3ltSoYiUjeNcKF6l
+         VqLkcwn+gYkiW0yKwzwSS6i3Dmpw0WvAbgO82mSR/Djn+aXRNMnDrjYNcs8+dSTr+LgW
+         jeVTUWV+d2lvgHnPjqfJWTj62xjFq2I9hFIQAijVeI4nx358OVhJMCUu4A6CKIRFQBi2
+         /YqA==
+X-Gm-Message-State: AOJu0Yw+ZWwoSdYjh9qLiapzm6++dhfFFtOM521y6XwkM2J17F0fq9kC
+        PAgpgYt2ZM+VYYqWO1z4vRk=
+X-Google-Smtp-Source: AGHT+IG8v5u1glfIsOlMbXwpIzlNTqHACo4fi2tLfh/TxG/xGwlW2tjOWqfB5SssmaJC5IzWRPLeyg==
+X-Received: by 2002:a17:902:efd3:b0:1bf:148b:58ff with SMTP id ja19-20020a170902efd300b001bf148b58ffmr1696100plb.69.1694590668864;
+        Wed, 13 Sep 2023 00:37:48 -0700 (PDT)
+Received: from debian.me ([103.124.138.83])
+        by smtp.gmail.com with ESMTPSA id a15-20020a170902eccf00b001bf044dc1a6sm9757434plh.39.2023.09.13.00.37.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Sep 2023 00:37:48 -0700 (PDT)
+Received: by debian.me (Postfix, from userid 1000)
+        id 688EF821F321; Wed, 13 Sep 2023 14:37:46 +0700 (WIB)
+Date:   Wed, 13 Sep 2023 14:37:46 +0700
+From:   Bagas Sanjaya <bagasdotme@gmail.com>
+To:     "Teng Wang" <wangteng13@nudt.edu.cn>, brauner@kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-unionfs@vger.kernel.org, miklos@szeredi.hu,
-        syzkaller-bugs@googlegroups.com, zohar@linux.ibm.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        viro@zeniv.linux.org.uk, edumazet@google.com,
+        netdev@vger.kernel.org
+Subject: Re: Bug: rcu detected stall in sys_nanosleep
+Message-ID: <ZQFmyp-cK_ensG_u@debian.me>
+References: <13067197.3b9a.18a8d519137.Coremail.wangteng13@nudt.edu.cn>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="w0Zxr0zYupWMykcF"
+Content-Disposition: inline
+In-Reply-To: <13067197.3b9a.18a8d519137.Coremail.wangteng13@nudt.edu.cn>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 13, 2023 at 1:10=E2=80=AFAM syzbot
-<syzbot+a67fc5321ffb4b311c98@syzkaller.appspotmail.com> wrote:
->
-> syzbot has found a reproducer for the following issue on:
->
-> HEAD commit:    a747acc0b752 Merge tag 'linux-kselftest-next-6.6-rc2' of =
-g..
-> git tree:       upstream
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=3D11c8230868000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Ddf91a3034fe3f=
-122
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3Da67fc5321ffb4b3=
-11c98
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Deb=
-ian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D1671b694680=
-000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D14ec94d868000=
-0
->
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/b28ecb88c714/dis=
-k-a747acc0.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/03dd2cd5356f/vmlinu=
-x-a747acc0.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/63365d9bf980/b=
-zImage-a747acc0.xz
->
-> IMPORTANT: if you fix the issue, please add the following tag to the comm=
-it:
-> Reported-by: syzbot+a67fc5321ffb4b311c98@syzkaller.appspotmail.com
->
-> general protection fault, probably for non-canonical address 0xdffffc0000=
-000009: 0000 [#1] PREEMPT SMP KASAN
-> KASAN: null-ptr-deref in range [0x0000000000000048-0x000000000000004f]
-> CPU: 0 PID: 5030 Comm: syz-executor173 Not tainted 6.6.0-rc1-syzkaller-00=
-014-ga747acc0b752 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
-oogle 08/04/2023
-> RIP: 0010:__seqprop_spinlock_sequence include/linux/seqlock.h:275 [inline=
-]
-> RIP: 0010:get_fs_root_rcu fs/d_path.c:244 [inline]
-> RIP: 0010:d_path+0x2f0/0x6e0 fs/d_path.c:286
-> Code: 30 00 74 08 48 89 df e8 be 20 e1 ff 4c 8b 23 4d 8d 6c 24 48 49 81 c=
-4 88 00 00 00 4c 89 eb 48 c1 eb 03 4c 89 ef e8 00 1e 00 00 <42> 0f b6 04 33=
- 84 c0 0f 85 89 00 00 00 45 8b 7d 00 44 89 fe 83 e6
-> RSP: 0018:ffffc90003a7eee0 EFLAGS: 00010246
-> RAX: 7e73051ae5315e00 RBX: 0000000000000009 RCX: ffff88807da73b80
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: ffffc90003a7eff0 R08: ffffffff82068d08 R09: 1ffffffff1d34ccd
-> R10: dffffc0000000000 R11: fffffbfff1d34cce R12: 0000000000000088
-> R13: 0000000000000048 R14: dffffc0000000000 R15: ffff8880206d8000
-> FS:  0000000000000000(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000=
-000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f351862ebb8 CR3: 00000000276a7000 CR4: 00000000003506f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  audit_log_d_path+0xd3/0x310 kernel/audit.c:2138
->  dump_common_audit_data security/lsm_audit.c:224 [inline]
->  common_lsm_audit+0x7cf/0x1a90 security/lsm_audit.c:458
->  smack_log+0x421/0x540 security/smack/smack_access.c:383
->  smk_tskacc+0x2ff/0x360 security/smack/smack_access.c:253
->  smack_inode_getattr+0x203/0x270 security/smack/smack_lsm.c:1271
->  security_inode_getattr+0xd3/0x120 security/security.c:2153
->  vfs_getattr+0x2a/0x3a0 fs/stat.c:206
->  ovl_getattr+0x1b1/0xf70 fs/overlayfs/inode.c:174
->  ima_check_last_writer security/integrity/ima/ima_main.c:171 [inline]
->  ima_file_free+0x26e/0x4b0 security/integrity/ima/ima_main.c:203
->  __fput+0x36a/0x910 fs/file_table.c:378
->  task_work_run+0x24a/0x300 kernel/task_work.c:179
->  exit_task_work include/linux/task_work.h:38 [inline]
->  do_exit+0x68f/0x2290 kernel/exit.c:874
->  do_group_exit+0x206/0x2c0 kernel/exit.c:1024
->  get_signal+0x175d/0x1840 kernel/signal.c:2892
->  arch_do_signal_or_restart+0x96/0x860 arch/x86/kernel/signal.c:309
->  exit_to_user_mode_loop+0x6a/0x100 kernel/entry/common.c:168
->  exit_to_user_mode_prepare+0xb1/0x140 kernel/entry/common.c:204
->  __syscall_exit_to_user_mode_work kernel/entry/common.c:285 [inline]
->  syscall_exit_to_user_mode+0x64/0x280 kernel/entry/common.c:296
->  do_syscall_64+0x4d/0xc0 arch/x86/entry/common.c:86
->  entry_SYSCALL_64_after_hwframe+0x63/0xcd
-> RIP: 0033:0x7f35185d8529
-> Code: Unable to access opcode bytes at 0x7f35185d84ff.
-> RSP: 002b:00007f3518599218 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-> RAX: 0000000000000001 RBX: 00007f3518662308 RCX: 00007f35185d8529
-> RDX: 00000000000f4240 RSI: 0000000000000081 RDI: 00007f351866230c
-> RBP: 00007f3518662300 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00007f351862f064
-> R13: 0031656c69662f2e R14: 6e6f3d7865646e69 R15: 0079616c7265766f
->  </TASK>
-> Modules linked in:
-> ---[ end trace 0000000000000000 ]---
-> RIP: 0010:__seqprop_spinlock_sequence include/linux/seqlock.h:275 [inline=
-]
-> RIP: 0010:get_fs_root_rcu fs/d_path.c:244 [inline]
-> RIP: 0010:d_path+0x2f0/0x6e0 fs/d_path.c:286
-> Code: 30 00 74 08 48 89 df e8 be 20 e1 ff 4c 8b 23 4d 8d 6c 24 48 49 81 c=
-4 88 00 00 00 4c 89 eb 48 c1 eb 03 4c 89 ef e8 00 1e 00 00 <42> 0f b6 04 33=
- 84 c0 0f 85 89 00 00 00 45 8b 7d 00 44 89 fe 83 e6
-> RSP: 0018:ffffc90003a7eee0 EFLAGS: 00010246
-> RAX: 7e73051ae5315e00 RBX: 0000000000000009 RCX: ffff88807da73b80
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: ffffc90003a7eff0 R08: ffffffff82068d08 R09: 1ffffffff1d34ccd
-> R10: dffffc0000000000 R11: fffffbfff1d34cce R12: 0000000000000088
-> R13: 0000000000000048 R14: dffffc0000000000 R15: ffff8880206d8000
-> FS:  0000000000000000(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000=
-000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f351862ebb8 CR3: 000000007e769000 CR4: 00000000003506f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> ----------------
-> Code disassembly (best guess):
->    0:   30 00                   xor    %al,(%rax)
->    2:   74 08                   je     0xc
->    4:   48 89 df                mov    %rbx,%rdi
->    7:   e8 be 20 e1 ff          call   0xffe120ca
->    c:   4c 8b 23                mov    (%rbx),%r12
->    f:   4d 8d 6c 24 48          lea    0x48(%r12),%r13
->   14:   49 81 c4 88 00 00 00    add    $0x88,%r12
->   1b:   4c 89 eb                mov    %r13,%rbx
->   1e:   48 c1 eb 03             shr    $0x3,%rbx
->   22:   4c 89 ef                mov    %r13,%rdi
->   25:   e8 00 1e 00 00          call   0x1e2a
-> * 2a:   42 0f b6 04 33          movzbl (%rbx,%r14,1),%eax <-- trapping in=
-struction
->   2f:   84 c0                   test   %al,%al
->   31:   0f 85 89 00 00 00       jne    0xc0
->   37:   45 8b 7d 00             mov    0x0(%r13),%r15d
->   3b:   44 89 fe                mov    %r15d,%esi
->   3e:   83                      .byte 0x83
->   3f:   e6                      .byte 0xe6
->
->
-> ---
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
 
-#syz set subsystems: integrity, overlayfs
+--w0Zxr0zYupWMykcF
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-#syz test: https://github.com/amir73il/linux ima-ovl-fix
+On Wed, Sep 13, 2023 at 02:54:07PM +0800, Teng Wang wrote:
+> Dear All,
+> This bug was found in linux Kernel v6.2.10
+>=20
+> Syzkaller hit 'INFO: rcu detected stall in sys_nanosleep' bug.
+
+v6.2.y has been EOLed, please reproduce with current mainline (v6.6-rc1).
+
+Thanks.
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--w0Zxr0zYupWMykcF
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZQFmyQAKCRD2uYlJVVFO
+oxxNAP9UwsejSNGrmCcyQae/pmO3CSLTtZiG0xFJEQJPUFd3YwD/TH1bP+L3ieT6
+TIgoi5A6pzQUqQ8ipI+J5prYDl2xGAw=
+=j/Yh
+-----END PGP SIGNATURE-----
+
+--w0Zxr0zYupWMykcF--
