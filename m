@@ -2,111 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 24B777A04B6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Sep 2023 15:01:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D67F7A054D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Sep 2023 15:16:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235746AbjINNBZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Sep 2023 09:01:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40176 "EHLO
+        id S238922AbjINNQ5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Sep 2023 09:16:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237775AbjINNBY (ORCPT
+        with ESMTP id S238886AbjINNQz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Sep 2023 09:01:24 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 20AA01FD0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Sep 2023 06:00:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1694696430;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=GD4InApqGwPlaqPD1j+cPsIFJ/FaN83LoGbvPs5/BZM=;
-        b=NxA9GJBPQ4HWkp5EUGgeNbEiIfFTFW7R0KN2GAX+ziNrfJeQA4X93vFYExSOEqCv45m5tB
-        GdF+ISNM4Hlej49N++xMMUa+H7NDWCY7z6duz9cpRyZaSbjjNxMwzuK+z2LNI0xBpGfVeE
-        yg6mC2vhohoTiYqzmtcuC2KJIJAGsuk=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-341-p_RzIZndNIeaizKHp5L0tQ-1; Thu, 14 Sep 2023 09:00:29 -0400
-X-MC-Unique: p_RzIZndNIeaizKHp5L0tQ-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-401bdff6bc5so7083445e9.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Sep 2023 06:00:29 -0700 (PDT)
+        Thu, 14 Sep 2023 09:16:55 -0400
+Received: from mail-oa1-x36.google.com (mail-oa1-x36.google.com [IPv6:2001:4860:4864:20::36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFCF71FE9;
+        Thu, 14 Sep 2023 06:16:51 -0700 (PDT)
+Received: by mail-oa1-x36.google.com with SMTP id 586e51a60fabf-1d643db2c98so137446fac.0;
+        Thu, 14 Sep 2023 06:16:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1694697411; x=1695302211; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=f/fIfnv43Rgci7QQDHXQs3jElfPN1XhQroFdJ1qxmS8=;
+        b=qVbP/IADbBqX1sp7mRcdolsR9Y+v94GBTj0Mh3a8emauxAn+QqbdQBSe47jEjQs0cS
+         wS4SfDgLYaRMgPl2PrGrZtUFMeSoxqLAxXdpC4yNNrI0OXIEwnach76sgQS3yMoyexnX
+         8snIveRelfaLfn31P+TiFgFoMUjEJK91gQFyp605xKmt7dkxjFwS+v5YwqyoAYu8imIn
+         4Cag32wWM4W8mZa5yDAbR1QDYAw2BGYfPRm96F02ph8C7D50BrPnVwzh3uvTjrZazlOi
+         SFb+us9K/gAOKt6wtSA0yfrebwDUibWH8HXzUx9d3vlhp2I4aaLS0ofF0NSHJmVeL5G/
+         L4BA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694696425; x=1695301225;
-        h=content-transfer-encoding:in-reply-to:organization:from:references
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GD4InApqGwPlaqPD1j+cPsIFJ/FaN83LoGbvPs5/BZM=;
-        b=sVl0VQbfqiYub6i7JfFMR4lLpwTgpsRNOvU0SGQiucspJXbyBJCfr4DVOcQQtJ1ZHM
-         AspmgO7i9t/BHzVXLaXRpxQX0nmy99sJO8YcPttCzv7+oqn7qeyghpruCi+sSLmhDetF
-         OMkBToLnrFMJA3u0d21je2WfyKMNaUYS3Hsnu1mPfNXjlOstFnGrBx076KvXwGZHnCKN
-         Mht2FUwTOIRsKcUM7qrMaMpRBJHZlzADFjhMk74jsXjOnEZCml1JgrgfJyaLWkIS/6Wv
-         9g2jFYJ2uPPBA78pJptrhvOBfkm8OBihyhS3e8dz9kOgVRTfS8iMD2lw8n9RS/hgALaZ
-         oTjQ==
-X-Gm-Message-State: AOJu0YwGWE0ZQ15EmuNoyGfM3iPhoNutJ865FUZuLRYidmr8H9voklgA
-        +4U/Tokr6hc5zGpAvJmQaLhTFOFbhd3gUYMr5eMXmLzG6PZ4hgRpECfNDpa0vjw1EIJFdkUnL48
-        Do5N7GAHRD1o86Xc0uaQTikcddg==
-X-Received: by 2002:a1c:7c08:0:b0:3fd:2e89:31bd with SMTP id x8-20020a1c7c08000000b003fd2e8931bdmr4909337wmc.14.1694696421060;
-        Thu, 14 Sep 2023 06:00:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEyAuCfFyUyVDVL0z0/uh6CoJRANuY+BSorx+ortm8WCPKSWcX0US0Dzyy1Y66VZIZ/zKjomA==
-X-Received: by 2002:a1c:7c08:0:b0:3fd:2e89:31bd with SMTP id x8-20020a1c7c08000000b003fd2e8931bdmr4909307wmc.14.1694696420636;
-        Thu, 14 Sep 2023 06:00:20 -0700 (PDT)
-Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
-        by smtp.gmail.com with ESMTPSA id g13-20020a7bc4cd000000b003fc02e8ea68sm4810805wmk.13.2023.09.14.06.00.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Sep 2023 06:00:20 -0700 (PDT)
-Message-ID: <5d6a780e-2945-2b24-bca6-3e38565fe157@redhat.com>
-Date:   Thu, 14 Sep 2023 15:00:18 +0200
+        d=1e100.net; s=20230601; t=1694697411; x=1695302211;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=f/fIfnv43Rgci7QQDHXQs3jElfPN1XhQroFdJ1qxmS8=;
+        b=PohO7nMxSqzN6/js3iS0VY7ZgVQNcv4gEWOwyJyF49r1BoZui5zFBYZdZKUU0DH2oN
+         D3pRYDupeUO1828CsGFOTYww+05zOVNXQc2rt6Z71aPVPwookiT3cZUxiQVKXN8pXKBz
+         PEvTighlS5y7NEcgjkU0Y7nA0f+RvPX5IVA+0xEjiMgZ7wVSI3k9W/3xQUW7QotHCEgd
+         ZEpHYM1CopQIT2yJdALwZ+3u6i8EO7xw3Y0Ag7EPVqDOO5tIk8wkCxU6+uLclbo94Jdg
+         8EXHQVP7Q/sSsMH7jM0m4IhqDZBb8lLL0TvVjCW2g7aaRrBAcdv+kZvwIg4kLcJT1/Vh
+         Lbmw==
+X-Gm-Message-State: AOJu0YyO3DLEGbpVMdNWPl3HDcZGg8NS7hkyX7oQBtSRl4A67MM0MWyc
+        ZTzm4SWi9xQBJNPSyMDeniXhYlji6bWP4GmWW1U=
+X-Google-Smtp-Source: AGHT+IHNYwELBDMzcLHxw3+hGVqgtkHcXkz2FpJ3EibiFTijfqtTbg2quw5V21c6G32fdBK+HfDXUgP9r8y+5mdC6Wo=
+X-Received: by 2002:a05:6870:472c:b0:1c8:c2df:a927 with SMTP id
+ b44-20020a056870472c00b001c8c2dfa927mr6519993oaq.53.1694697411059; Thu, 14
+ Sep 2023 06:16:51 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v1 1/1] mm: report per-page metadata information
-Content-Language: en-US
-To:     Sourav Panda <souravpanda@google.com>, corbet@lwn.net,
-        gregkh@linuxfoundation.org, rafael@kernel.org,
-        akpm@linux-foundation.org, mike.kravetz@oracle.com,
-        muchun.song@linux.dev, rppt@kernel.org, rdunlap@infradead.org,
-        chenlinxuan@uniontech.com, yang.yang29@zte.com.cn,
-        tomas.mudrunka@gmail.com, bhelgaas@google.com, ivan@cloudflare.com,
-        pasha.tatashin@soleen.com, yosryahmed@google.com,
-        hannes@cmpxchg.org, shakeelb@google.com,
-        kirill.shutemov@linux.intel.com, wangkefeng.wang@huawei.com,
-        adobriyan@gmail.com, vbabka@suse.cz, Liam.Howlett@Oracle.com,
-        surenb@google.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-mm@kvack.org
-References: <20230913173000.4016218-1-souravpanda@google.com>
- <20230913173000.4016218-2-souravpanda@google.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-In-Reply-To: <20230913173000.4016218-2-souravpanda@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Received: by 2002:ac9:5750:0:b0:4f0:1250:dd51 with HTTP; Thu, 14 Sep 2023
+ 06:16:50 -0700 (PDT)
+In-Reply-To: <ZPiaYjcTMyuM0JL5@casper.infradead.org>
+References: <20230831151414.2714750-1-mjguzik@gmail.com> <ZPiYp+t6JTUscc81@casper.infradead.org>
+ <b0434328-01f9-dc5c-fe25-4a249130a81d@fastmail.fm> <ZPiaYjcTMyuM0JL5@casper.infradead.org>
+From:   Mateusz Guzik <mjguzik@gmail.com>
+Date:   Thu, 14 Sep 2023 15:16:50 +0200
+Message-ID: <CAGudoHGU0=BhHzzGrkzt22J0iC5YCcujY-koL+Eq7Uiga6Lh9g@mail.gmail.com>
+Subject: Re: [RFC PATCH] vfs: add inode lockdep assertions
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Bernd Schubert <bernd.schubert@fastmail.fm>, brauner@kernel.org,
+        viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 13.09.23 19:30, Sourav Panda wrote:
-> Adds a new per-node PageMetadata field to
-> /sys/devices/system/node/nodeN/meminfo
-> and a global PageMetadata field to /proc/meminfo. This information can
-> be used by users to see how much memory is being used by per-page
-> metadata, which can vary depending on build configuration, machine
-> architecture, and system use.
-> 
-> Per-page metadata is the amount of memory that Linux needs in order to
-> manage memory at the page granularity. The majority of such memory is
-> used by "struct page" and "page_ext" data structures.
+On 9/6/23, Matthew Wilcox <willy@infradead.org> wrote:
+> On Wed, Sep 06, 2023 at 05:23:42PM +0200, Bernd Schubert wrote:
+>>
+>>
+>> On 9/6/23 17:20, Matthew Wilcox wrote:
+>> > On Thu, Aug 31, 2023 at 05:14:14PM +0200, Mateusz Guzik wrote:
+>> > > +++ b/include/linux/fs.h
+>> > > @@ -842,6 +842,16 @@ static inline void
+>> > > inode_lock_shared_nested(struct inode *inode, unsigned subcla
+>> > >   	down_read_nested(&inode->i_rwsem, subclass);
+>> > >   }
+>> > > +static inline void inode_assert_locked(struct inode *inode)
+>> > > +{
+>> > > +	lockdep_assert_held(&inode->i_rwsem);
+>> > > +}
+>> > > +
+>> > > +static inline void inode_assert_write_locked(struct inode *inode)
+>> > > +{
+>> > > +	lockdep_assert_held_write(&inode->i_rwsem);
+>> > > +}
+>> >
+>> > This mirrors what we have in mm, but it's only going to trigger on
+>> > builds that have lockdep enabled.  Lockdep is very expensive; it
+>> > easily doubles the time it takes to run xfstests on my laptop, so
+>> > I don't generally enable it.  So what we also have in MM is:
+>> >
+>> > static inline void mmap_assert_write_locked(struct mm_struct *mm)
+>> > {
+>> >          lockdep_assert_held_write(&mm->mmap_lock);
+>> >          VM_BUG_ON_MM(!rwsem_is_locked(&mm->mmap_lock), mm);
+>> > }
+>> >
+>> > Now if you have lockdep enabled, you get the lockdep check which
+>> > gives you all the lovely lockdep information, but if you don't, you
+>> > at least get the cheap check that someone is holding the lock at all.
+>> >
+>> > ie I would make this:
+>> >
+>> > +static inline void inode_assert_write_locked(struct inode *inode)
+>> > +{
+>> > +	lockdep_assert_held_write(&inode->i_rwsem);
+>> > +	WARN_ON_ONCE(!inode_is_locked(inode));
+>> > +}
+>> >
+>> > Maybe the locking people could give us a rwsem_is_write_locked()
+>> > predicate, but until then, this is the best solution we came up with.
+>>
+>>
+>> Which is exactly what I had suggested in the other thread :)
+>
+> Yes, but apparently comments in that thread don't count :eyeroll:
+>
 
-It's probably worth mentioning, that in contrast to most other "memory 
-consumption" statistics, this metadata might not be included "MemTotal"; 
-when the memmap is allocated using the memblock allocator, it's not 
-included, when it's dynamically allocated using the buddy (e.g., memory 
-hotplug), it's included.
+Pretty weird reaction mate, they very much *do* count which is why I'm
+confused why you resent an e-mail with the bogus is_locked check
+(which I explicitly pointed out).
+
+Since you posted a separate patch to add write-locking check to rwsem
+I'm going to wait for that bit to get sorted out (unless it stalls for
+a long time).
+
+fwiw I'm confused what's up with people making kernel changes without
+running lockdep. If it adds too much overhead for use in normal
+development someone(tm) should have fixed that aspect long time ago.
 
 -- 
-Cheers,
-
-David / dhildenb
-
+Mateusz Guzik <mjguzik gmail.com>
