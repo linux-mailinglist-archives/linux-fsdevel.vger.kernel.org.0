@@ -2,269 +2,213 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B76077A0C44
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Sep 2023 20:11:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 868BB7A0C53
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Sep 2023 20:15:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238901AbjINSLv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Sep 2023 14:11:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57438 "EHLO
+        id S240743AbjINSQB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Sep 2023 14:16:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229592AbjINSLs (ORCPT
+        with ESMTP id S239714AbjINSP7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Sep 2023 14:11:48 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 638971BDC;
-        Thu, 14 Sep 2023 11:11:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=ORBqcLA5UYGcOpCfudEExpJWN0m+G42/NaIXhLRFNIk=; b=s7gjWgZw5yP97NiIINyAWtd3AG
-        GHo1vA2AlAzS0Mc0j9pOSWHEGUU46zIIAIFGcOhVOdWBBszSMn15utpeZnUU3oPBKIsf0MYjgb5Rd
-        /gMOXVQA/L9ADMn5aLhzOWXafiojZ20V7+4wvBaw+6C2oSjcuqwDViZ4diIJdXKcnTGSYHMAnd22W
-        yu8AqZISvEm3xMvW0mB1hPHmxXOfTY1eLB0xA0mlxsWaMXkrPeIdjM69HaX3lZ2JfUNY3gra5xMbg
-        KhdIUnuDBb2XF8yGYmxtZcfTEMDrj9XHWlRwC1pbuZzilsScTno/IGcfNe7BhcBjBh+zpQmQO4QSd
-        hTgNOSFA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qgqoH-004PI8-7U; Thu, 14 Sep 2023 18:11:25 +0000
-Date:   Thu, 14 Sep 2023 19:11:25 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Suren Baghdasaryan <surenb@google.com>
-Cc:     akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
-        brauner@kernel.org, shuah@kernel.org, aarcange@redhat.com,
-        lokeshgidra@google.com, peterx@redhat.com, david@redhat.com,
-        hughd@google.com, mhocko@suse.com, axelrasmussen@google.com,
-        rppt@kernel.org, Liam.Howlett@oracle.com, jannh@google.com,
-        zhangpeng362@huawei.com, bgeffon@google.com,
-        kaleshsingh@google.com, ngeoffray@google.com, jdduke@google.com,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        kernel-team@android.com
-Subject: Re: [PATCH 2/3] userfaultfd: UFFDIO_REMAP uABI
-Message-ID: <ZQNMze6SXdIm13CW@casper.infradead.org>
-References: <20230914152620.2743033-1-surenb@google.com>
- <20230914152620.2743033-3-surenb@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230914152620.2743033-3-surenb@google.com>
+        Thu, 14 Sep 2023 14:15:59 -0400
+Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10D161FFB
+        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Sep 2023 11:15:55 -0700 (PDT)
+Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-59bbae05970so18022427b3.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Sep 2023 11:15:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1694715354; x=1695320154; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NotwC0wYPH9Bmm+eHoPAvBDfUZeidJiPlRdc5f2ZPWA=;
+        b=NiAr56sdcK38yNIsL8nbI6rBhlNZ//YUCwu/RMCdQp5Wund7ix5lUJL6iK4liygvl7
+         sFJCULWW61tZh2SDrMO6WhiabWdecOpjZYGSofS2TWfCq0dkqFe9g+sPoh3N7zM87Z2R
+         lqouog4/0l04xMCDwrywPpPNF1KsC7pOw2ccdqI8SiXseN3giwylafA2E/8vjloK2+eB
+         09Uxja4dzy5NCBquLKv4HozpxlTu/MpSLgH6Hna6tPAExkWhMIjiYTlwDf8mvUcgprlt
+         pxgnRuBxlEOEnNnEa5e/ukZKYC7EwKnR/vbP1Lwqy0gHV3utuDx5BqCnlnXA0PQmfaf3
+         bvYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694715354; x=1695320154;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NotwC0wYPH9Bmm+eHoPAvBDfUZeidJiPlRdc5f2ZPWA=;
+        b=WpyiJRuARCX+KbFVR+EclNOwIvquYEaCe6ktZ6KhLOE3+2Tq+Dnb3wQ/SkEhBo78/e
+         f7lQm97uYXakrH1P4f/pejXFZuSBMC1nZceRBhEsgU7zK1+4lDeyJPlJFR4QHWNqzlrH
+         7pbtFHlbY1KKMGjAS4V8FGJjW1I0m6anYqjiBHywVxu7au3gBGX0tQ7OxfMBPNJZgMQc
+         Jl1FSlHUVWEDSQPibIEsJPRs9IAcUTGn1zjLd/Ug4P6+eeUg83jF/LlGiXJR+dZvEWOf
+         640Tcmi98/dWTv28Sti9y2SmfzNjwsaMT7JZLCMByWew42BkIxEqYaxyVaMwCX5fSmxK
+         NXbA==
+X-Gm-Message-State: AOJu0YzqjH2/ii0I282VWSFd/BemzymeIbeY5USS5XeqUVe9CTqUNGeT
+        hYpFzEbzfa9I0zEaCAzi+4+JbIwkSG4=
+X-Google-Smtp-Source: AGHT+IGPJqA/+ZACxXOUgdzWN4hGcwV50i6jcfcPa2GrWEQEeACHClOtxAN3Jr9h2WjxVFoJdPIyBK0jy04=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:690c:3187:b0:59b:e81f:62b3 with SMTP id
+ fd7-20020a05690c318700b0059be81f62b3mr91025ywb.10.1694715354294; Thu, 14 Sep
+ 2023 11:15:54 -0700 (PDT)
+Date:   Thu, 14 Sep 2023 11:15:52 -0700
+In-Reply-To: <diqzttsiu67n.fsf@ackerleytng-ctop.c.googlers.com>
+Mime-Version: 1.0
+References: <ZOO782YGRY0YMuPu@google.com> <diqzttsiu67n.fsf@ackerleytng-ctop.c.googlers.com>
+Message-ID: <ZQNN2AyDJ8dF0/6D@google.com>
+Subject: Re: [RFC PATCH v11 12/29] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
+ guest-specific backing memory
+From:   Sean Christopherson <seanjc@google.com>
+To:     Ackerley Tng <ackerleytng@google.com>
+Cc:     pbonzini@redhat.com, maz@kernel.org, oliver.upton@linux.dev,
+        chenhuacai@kernel.org, mpe@ellerman.id.au, anup@brainfault.org,
+        paul.walmsley@sifive.com, palmer@dabbelt.com,
+        aou@eecs.berkeley.edu, willy@infradead.org,
+        akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, kvm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chao.p.peng@linux.intel.com,
+        tabba@google.com, jarkko@kernel.org, yu.c.zhang@linux.intel.com,
+        vannapurve@google.com, mail@maciej.szmigiero.name, vbabka@suse.cz,
+        david@redhat.com, qperret@google.com, michael.roth@amd.com,
+        wei.w.wang@intel.com, liam.merwick@oracle.com,
+        isaku.yamahata@gmail.com, kirill.shutemov@linux.intel.com
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 14, 2023 at 08:26:12AM -0700, Suren Baghdasaryan wrote:
-> +++ b/include/linux/userfaultfd_k.h
-> @@ -93,6 +93,23 @@ extern int mwriteprotect_range(struct mm_struct *dst_mm,
->  extern long uffd_wp_range(struct vm_area_struct *vma,
->  			  unsigned long start, unsigned long len, bool enable_wp);
->  
-> +/* remap_pages */
-> +extern void double_pt_lock(spinlock_t *ptl1, spinlock_t *ptl2);
-> +extern void double_pt_unlock(spinlock_t *ptl1, spinlock_t *ptl2);
-> +extern ssize_t remap_pages(struct mm_struct *dst_mm,
-> +			   struct mm_struct *src_mm,
-> +			   unsigned long dst_start,
-> +			   unsigned long src_start,
-> +			   unsigned long len, __u64 flags);
-> +extern int remap_pages_huge_pmd(struct mm_struct *dst_mm,
-> +				struct mm_struct *src_mm,
-> +				pmd_t *dst_pmd, pmd_t *src_pmd,
-> +				pmd_t dst_pmdval,
-> +				struct vm_area_struct *dst_vma,
-> +				struct vm_area_struct *src_vma,
-> +				unsigned long dst_addr,
-> +				unsigned long src_addr);
+On Mon, Aug 28, 2023, Ackerley Tng wrote:
+> Sean Christopherson <seanjc@google.com> writes:
+> >> If we track struct kvm with the inode, then I think (a), (b) and (c) can
+> >> be independent of the refcounting method. What do you think?
+> >
+> > No go.  Because again, the inode (physical memory) is coupled to the virtual machine
+> > as a thing, not to a "struct kvm".  Or more concretely, the inode is coupled to an
+> > ASID or an HKID, and there can be multiple "struct kvm" objects associated with a
+> > single ASID.  And at some point in the future, I suspect we'll have multiple KVM
+> > objects per HKID too.
+> >
+> > The current SEV use case is for the migration helper, where two KVM objects share
+> > a single ASID (the "real" VM and the helper).  I suspect TDX will end up with
+> > similar behavior where helper "VMs" can use the HKID of the "real" VM.  For KVM,
+> > that means multiple struct kvm objects being associated with a single HKID.
+> >
+> > To prevent use-after-free, KVM "just" needs to ensure the helper instances can't
+> > outlive the real instance, i.e. can't use the HKID/ASID after the owning virtual
+> > machine has been destroyed.
+> >
+> > To put it differently, "struct kvm" is a KVM software construct that _usually_,
+> > but not always, is associated 1:1 with a virtual machine.
+> >
+> > And FWIW, stashing the pointer without holding a reference would not be a complete
+> > solution, because it couldn't guard against KVM reusing a pointer.  E.g. if a
+> > struct kvm was unbound and then freed, KVM could reuse the same memory for a new
+> > struct kvm, with a different ASID/HKID, and get a false negative on the rebinding
+> > check.
+> 
+> I agree that inode (physical memory) is coupled to the virtual machine
+> as a more generic concept.
+> 
+> I was hoping that in the absence of CC hardware providing a HKID/ASID,
+> the struct kvm pointer could act as a representation of the "virtual
+> machine". You're definitely right that KVM could reuse a pointer and so
+> that idea doesn't stand.
+> 
+> I thought about generating UUIDs to represent "virtual machines" in the
+> absence of CC hardware, and this UUID could be transferred during
+> intra-host migration, but this still doesn't take host userspace out of
+> the TCB. A malicious host VMM could just use the migration ioctl to copy
+> the UUID to a malicious dumper VM, which would then pass checks with a
+> gmem file linked to the malicious dumper VM. This is fine for HKID/ASIDs
+> because the memory is encrypted; with UUIDs there's no memory
+> encryption.
 
-Drop the 'extern' markers from function declarations.
+I don't understand what problem you're trying to solve.  I don't see a need to
+provide a single concrete representation/definition of a "virtual machine".  E.g.
+there's no need for a formal definition to securely perform intrahost migration,
+KVM just needs to ensure that the migration doesn't compromise guest security,
+functionality, etc.
 
-> +int remap_pages_huge_pmd(struct mm_struct *dst_mm,
-> +			 struct mm_struct *src_mm,
-> +			 pmd_t *dst_pmd, pmd_t *src_pmd,
-> +			 pmd_t dst_pmdval,
-> +			 struct vm_area_struct *dst_vma,
-> +			 struct vm_area_struct *src_vma,
-> +			 unsigned long dst_addr,
-> +			 unsigned long src_addr)
-> +{
-> +	pmd_t _dst_pmd, src_pmdval;
-> +	struct page *src_page;
-> +	struct anon_vma *src_anon_vma, *dst_anon_vma;
-> +	spinlock_t *src_ptl, *dst_ptl;
-> +	pgtable_t pgtable;
-> +	struct mmu_notifier_range range;
-> +
-> +	src_pmdval = *src_pmd;
-> +	src_ptl = pmd_lockptr(src_mm, src_pmd);
-> +
-> +	BUG_ON(!pmd_trans_huge(src_pmdval));
-> +	BUG_ON(!pmd_none(dst_pmdval));
-> +	BUG_ON(!spin_is_locked(src_ptl));
-> +	mmap_assert_locked(src_mm);
-> +	mmap_assert_locked(dst_mm);
-> +	BUG_ON(src_addr & ~HPAGE_PMD_MASK);
-> +	BUG_ON(dst_addr & ~HPAGE_PMD_MASK);
-> +
-> +	src_page = pmd_page(src_pmdval);
-> +	BUG_ON(!PageHead(src_page));
-> +	BUG_ON(!PageAnon(src_page));
+That gets a lot more complex if the target KVM instance (module, not "struct kvm")
+is a different KVM, e.g. when migrating to a different host.  Then there needs to
+be a way to attest that the target is trusted and whatnot, but that still doesn't
+require there to be a formal definition of a "virtual machine".
 
-Better to add a src_folio = page_folio(src_page);
-and then folio_test_anon() here.
+> Circling back to the original topic, was associating the file with
+> struct kvm at gmem file creation time meant to constrain the use of the
+> gmem file to one struct kvm, or one virtual machine, or something else?
 
-> +	if (unlikely(page_mapcount(src_page) != 1)) {
+It's meant to keep things as simple as possible (relatively speaking).  A 1:1
+association between a KVM instance and a gmem instance means we don't have to
+worry about the edge cases and oddities I pointed out earlier in this thread.
 
-Brr, this is going to miss PTE mappings of this folio.  I think you
-actually want folio_mapcount() instead, although it'd be more efficient
-to look at folio->_entire_mapcount == 1 and _nr_pages_mapped == 0.
-Not wure what a good name for that predicate would be.
+> Follow up questions:
+> 
+> 1. Since the physical memory's representation is the inode and should be
+>    coupled to the virtual machine (as a concept, not struct kvm), should
+>    the binding/coupling be with the file, or the inode?
 
-> +	get_page(src_page);
+Both.  The @kvm instance is bound to a file, because the file is that @kvm's view
+of the underlying memory, e.g. effectively provides the translation of guest
+addresses to host memory.  The @kvm instance is indirectly bound to the inode
+because the file is bound to the inode.
 
-folio_get()
+> 2. Should struct kvm still be bound to the file/inode at gmem file
+>    creation time, since
 
-> +	/* block all concurrent rmap walks */
-> +	lock_page(src_page);
+Yes.
 
-folio_lock()
+>    + struct kvm isn't a good representation of a "virtual machine"
 
-> +	/*
-> +	 * split_huge_page walks the anon_vma chain without the page
-> +	 * lock. Serialize against it with the anon_vma lock, the page
-> +	 * lock is not enough.
-> +	 */
-> +	src_anon_vma = folio_get_anon_vma(page_folio(src_page));
+I don't see how this is relevant, because as above, I don't see why we need a
+canonical represenation of a virtual machine.
 
-...
+>    + we currently don't have anything that really represents a "virtual
+>      machine" without hardware support
 
-> +	if (!src_anon_vma) {
-> +		unlock_page(src_page);
+HKIDs and ASIDs don't provide a "virtual machine" representation either.  E.g. if
+a TDX guest is live migrated to a different host, it will likely have a different
+HKID, and definitely have a different encryption key, but it's still the same
+virtual machine.
 
-folio_unlock()
+> I'd also like to bring up another userspace use case that Google has:
+> re-use of gmem files for rebooting guests when the KVM instance is
+> destroyed and rebuilt.
+>
+> When rebooting a VM there are some steps relating to gmem that are
+> performance-sensitive:
 
-> +		put_page(src_page);
+If we (Google) really cared about performance, then we shouldn't destroy and recreate
+the VM in the first place.  E.g. the cost of zapping, freeing, re-allocating and
+re-populating SPTEs is far from trivial.  Pulling RESET shouldn't change what
+memory that is assigned to a VM, and reseting stats is downright bizarre IMO.
 
-folio_put()
+In other words, I think Google's approach of destroying the VM to emulate a reboot
+is asinine.  I'm not totally against extending KVM's uAPI to play nice with such
+an approach, but I'm not exactly sympathetic either.
 
-> +	if (unlikely(!pmd_same(*src_pmd, src_pmdval) ||
-> +		     !pmd_same(*dst_pmd, dst_pmdval) ||
-> +		     page_mapcount(src_page) != 1)) {
+> a.      Zeroing pages from the old VM when we close a gmem file/inode
+> b. Deallocating pages from the old VM when we close a gmem file/inode
+> c.   Allocating pages for the new VM from the new gmem file/inode
+> d.      Zeroing pages on page allocation
+> 
+> We want to reuse the gmem file to save re-allocating pages (b. and c.),
+> and one of the two page zeroing allocations (a. or d.).
+> 
+> Binding the gmem file to a struct kvm on creation time means the gmem
+> file can't be reused with another VM on reboot.
 
-similar folio_total_mapcount()
+Not without KVM's assistance, which userspace will need for TDX and SNP VMs no
+matter what, e.g. to ensure the new and old KVM instance get the same HKID/ASID.
+And we've already mapped out the more complex case of intrahost migration, so I
+don't expect this to be at all challenging to implement.
 
-> +		double_pt_unlock(src_ptl, dst_ptl);
-> +		anon_vma_unlock_write(src_anon_vma);
-> +		put_anon_vma(src_anon_vma);
-> +		unlock_page(src_page);
-> +		put_page(src_page);
+> Also, host userspace is forced to close the gmem file to allow the old VM to
+> be freed.
 
-...
+Yes, but that can happen after the "new" VM has instantiated its file/view of
+guest memory.
 
-> +	BUG_ON(!PageHead(src_page));
-> +	BUG_ON(!PageAnon(src_page));
-> +	/* the PT lock is enough to keep the page pinned now */
-> +	put_page(src_page);
-
-...
-
-> +	dst_anon_vma = (void *) dst_vma->anon_vma + PAGE_MAPPING_ANON;
-> +	WRITE_ONCE(src_page->mapping, (struct address_space *) dst_anon_vma);
-> +	WRITE_ONCE(src_page->index, linear_page_index(dst_vma, dst_addr));
-
-Definitely want to use the folio here.
-
-> +	/* unblock rmap walks */
-> +	unlock_page(src_page);
-
-...
-
-> +static int remap_pages_pte(struct mm_struct *dst_mm,
-> +			   struct mm_struct *src_mm,
-> +			   pmd_t *dst_pmd,
-> +			   pmd_t *src_pmd,
-> +			   struct vm_area_struct *dst_vma,
-> +			   struct vm_area_struct *src_vma,
-> +			   unsigned long dst_addr,
-> +			   unsigned long src_addr,
-> +			   __u64 mode)
-> +{
-> +	swp_entry_t entry;
-> +	pte_t orig_src_pte, orig_dst_pte;
-> +	spinlock_t *src_ptl, *dst_ptl;
-> +	pte_t *src_pte = NULL;
-> +	pte_t *dst_pte = NULL;
-> +
-> +	struct folio *src_folio = NULL;
-> +	struct anon_vma *src_anon_vma = NULL;
-> +	struct anon_vma *dst_anon_vma;
-> +	struct mmu_notifier_range range;
-> +	int err = 0;
-> +
-> +retry:
-> +	dst_pte = pte_offset_map_nolock(dst_mm, dst_pmd, dst_addr, &dst_ptl);
-> +
-> +	/* If an huge pmd materialized from under us fail */
-> +	if (unlikely(!dst_pte)) {
-> +		err = -EFAULT;
-> +		goto out;
-> +	}
-> +
-> +	src_pte = pte_offset_map_nolock(src_mm, src_pmd, src_addr, &src_ptl);
-> +
-> +	/*
-> +	 * We held the mmap_lock for reading so MADV_DONTNEED
-> +	 * can zap transparent huge pages under us, or the
-> +	 * transparent huge page fault can establish new
-> +	 * transparent huge pages under us.
-> +	 */
-> +	if (unlikely(!src_pte)) {
-> +		err = -EFAULT;
-> +		goto out;
-> +	}
-> +
-> +	BUG_ON(pmd_none(*dst_pmd));
-> +	BUG_ON(pmd_none(*src_pmd));
-> +	BUG_ON(pmd_trans_huge(*dst_pmd));
-> +	BUG_ON(pmd_trans_huge(*src_pmd));
-> +
-> +	spin_lock(dst_ptl);
-> +	orig_dst_pte = *dst_pte;
-> +	spin_unlock(dst_ptl);
-> +	if (!pte_none(orig_dst_pte)) {
-> +		err = -EEXIST;
-> +		goto out;
-> +	}
-> +
-> +	spin_lock(src_ptl);
-> +	orig_src_pte = *src_pte;
-> +	spin_unlock(src_ptl);
-> +	if (pte_none(orig_src_pte)) {
-> +		if (!(mode & UFFDIO_REMAP_MODE_ALLOW_SRC_HOLES))
-> +			err = -ENOENT;
-> +		else /* nothing to do to remap a hole */
-> +			err = 0;
-> +		goto out;
-> +	}
-> +
-> +	if (pte_present(orig_src_pte)) {
-> +		if (!src_folio) {
-> +			struct folio *folio;
-> +
-> +			/*
-> +			 * Pin the page while holding the lock to be sure the
-> +			 * page isn't freed under us
-> +			 */
-> +			spin_lock(src_ptl);
-> +			if (!pte_same(orig_src_pte, *src_pte)) {
-> +				spin_unlock(src_ptl);
-> +				err = -EAGAIN;
-> +				goto out;
-> +			}
-> +
-> +			folio = vm_normal_folio(src_vma, src_addr, orig_src_pte);
-> +			if (!folio || !folio_test_anon(folio) ||
-> +			    folio_estimated_sharers(folio) != 1) {
-
-I wonder if we also want to fail if folio_test_large()?  While we don't
-have large anon folios today, it seems to me that trying to migrate one
-of them like this is just not going to work.
-
+> For other places where files pin KVM, like the stats fd pinning vCPUs, I
+> guess that matters less since there isn't much of a penalty to close and
+> re-open the stats fd.
