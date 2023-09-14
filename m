@@ -2,59 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 53F5B79F6C9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Sep 2023 03:56:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D640479F6D8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Sep 2023 03:57:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233858AbjINB4X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Sep 2023 21:56:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39206 "EHLO
+        id S234382AbjINB5G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Sep 2023 21:57:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233867AbjINB4C (ORCPT
+        with ESMTP id S233804AbjINB4F (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Sep 2023 21:56:02 -0400
-Received: from mail-pl1-x649.google.com (mail-pl1-x649.google.com [IPv6:2607:f8b0:4864:20::649])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FE0A2114
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Sep 2023 18:55:46 -0700 (PDT)
-Received: by mail-pl1-x649.google.com with SMTP id d9443c01a7336-1c0c3ccd3d6so3996295ad.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Sep 2023 18:55:46 -0700 (PDT)
+        Wed, 13 Sep 2023 21:56:05 -0400
+Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E7E4212E
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Sep 2023 18:55:49 -0700 (PDT)
+Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-59b56dab74bso6570397b3.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Sep 2023 18:55:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1694656545; x=1695261345; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1694656548; x=1695261348; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=oEzTBc+DjRhLKf7NebwS7BLBkXRA7c8m0o570Q7bCVE=;
-        b=meBsNJ4gIzE/1LatXDsoVHHo1VmTlo+RT7hYAPMWzlHx9kFCYvN7YqkQPNRxiur+hA
-         /oF617hSG4dIifPcuNVmG6m6dZfdV5fOnmuFt+tNY5tOQOzzBCzVAzcIk1odt/q2lAtD
-         ddyfRZsWcr3SHw0KbL4kxAYVEX0Czb22OQlswZVZQbgdxcRrLTI4bAujQgpAQfwRcbRL
-         LKkGvms6xBIDXHkoKNNaf8dwaO998nb4Ity+MY4rm9qXVmYFfo/3opZ8hrNMnjapMR3t
-         PMM2vgInS6Yo0JUdOC8J0XBjzS9GaUhPuOFhmLQMR3Kc/ZT1jOl1thiXxfi6+D79UnXt
-         yz5A==
+        bh=BhxGep0GRUEwAUAzFvnYRN6yWfiwAK/IRlQcI8pBhpQ=;
+        b=e7/6zTFxm8G6xsrAvZUmuDMpnu0BLzpds/1OX8d4vOfYN1DtxBqxwcLOZgHTRIQ/5X
+         90pY50iRRJMPwt6alQ5c9vbGFWvGEs4UstLm/cnngn3dD/2KkPueVpTksfVdhYyZhVez
+         rDns+Y18pY5OeaYFp0OOk8gPpHOSWm0uElTUebYOKIfBOO+1VilLrSTtn5MGxGBQ+Xne
+         gpnqCnn2qCV5Tbl84pluofhKAOLLQGhrI12t8rk3OukGL+dOs2DCj3VxBJhKn142tEUC
+         CjTDvqTqQusNrnCMWrRrOGXke/MJ8rN1Bi/ukZCelJvnjzCZV8PrJboUUmOB6cEVmFSC
+         hdFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694656545; x=1695261345;
+        d=1e100.net; s=20230601; t=1694656548; x=1695261348;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=oEzTBc+DjRhLKf7NebwS7BLBkXRA7c8m0o570Q7bCVE=;
-        b=jqHdRhwFe7YBc6tOJaQuXGu3LYYbvsx/aNy1StXZ5LHeDO98rhuYLnarp2RzJD5c8C
-         rScuuLG7zz0fprmOcQOgfVB4PL2qkB9a96wmZCw+zwHfuWMvCSKpcLlYwr8sS7t17R4H
-         n8bMtPevHjUroivJCTFTx1UiDFV16ItWTNXt+tjRM5bSvs5zxqMxu6Jy0jwORcMEWGbm
-         Y9JtkMkAAGtXLRiZiCPr7VcfLnBbp9uNrDsKOObJmdYKSoFFT6ZxI0rl8XOKNg10UZCm
-         TuWWFMmF2UREV7F59V4HaDKrlqjjaRWZpHKzvn/Psa5TDwChXqOrCht5g1dqAr4e4Sc/
-         kSUw==
-X-Gm-Message-State: AOJu0YwhvQSqHKDvR9GgDtnKaSqgjH2ZEmv2qiduliyZHMLNdExv7sal
-        fIjKeWg/VhrufgJgv6TttcPRWQ5JGfk=
-X-Google-Smtp-Source: AGHT+IHntm7+Cf6jIX24jK1AXJaXRvd807TiTvEX0TOOWnFxE7V55dOmRO8z+0ko8RJbayizJ7xaJWYuYwQ=
+        bh=BhxGep0GRUEwAUAzFvnYRN6yWfiwAK/IRlQcI8pBhpQ=;
+        b=HaHCBqa3ZPd2dIfWh7Zt1L4sbtPLPNz4myHb0uCRbi2/sHhwa/J8Bx6DQ6ZercETMI
+         o+OS3VUDPV/DbP75QOh8CHKg3f+kzgUMqBGIQKDwtgki6IZA1+lnCSo33TMfbqk3NlIa
+         OCm6hdosvVBA9Bz6RCrslgKuwxUd0nauFF7GpHiCN2NIR6LerZFWnGY46iSP0lFHRM7p
+         4BIb+8XPG16/ctkqjmBtGzum76gjM29/C239csTgJzUApY4+x+ba118n+cZIx+Ybuh5G
+         6OIcwv9LEMT36yBBCncywYf22+BruQ7sh/Bylp3S79wevok7n8ERE4ad7NdCa+skeh5Y
+         8Krw==
+X-Gm-Message-State: AOJu0YzzAQOTTJx3WuGJ1eJPIy0Hda6Bpj/vGEtShspTJFgSvw8q30j8
+        m68sOaHc5Ri2rqUDh5DtVJRX0HkAznQ=
+X-Google-Smtp-Source: AGHT+IFIu1rjOq9FW+JbDj5fY4BKSa/epsGGWccSSMIHRlmCarPy2ezJLxiJZod49VfvzwgQV9RD5huQPI8=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:902:c701:b0:1bf:4e9d:8fc9 with SMTP id
- p1-20020a170902c70100b001bf4e9d8fc9mr148342plp.11.1694656545655; Wed, 13 Sep
- 2023 18:55:45 -0700 (PDT)
+ (user=seanjc job=sendgmr) by 2002:a25:4207:0:b0:d81:536d:2978 with SMTP id
+ p7-20020a254207000000b00d81536d2978mr74175yba.2.1694656548405; Wed, 13 Sep
+ 2023 18:55:48 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date:   Wed, 13 Sep 2023 18:55:03 -0700
+Date:   Wed, 13 Sep 2023 18:55:04 -0700
 In-Reply-To: <20230914015531.1419405-1-seanjc@google.com>
 Mime-Version: 1.0
 References: <20230914015531.1419405-1-seanjc@google.com>
 X-Mailer: git-send-email 2.42.0.283.g2d96d420d3-goog
-Message-ID: <20230914015531.1419405-6-seanjc@google.com>
-Subject: [RFC PATCH v12 05/33] KVM: Convert KVM_ARCH_WANT_MMU_NOTIFIER to CONFIG_KVM_GENERIC_MMU_NOTIFIER
+Message-ID: <20230914015531.1419405-7-seanjc@google.com>
+Subject: [RFC PATCH v12 06/33] KVM: Introduce KVM_SET_USER_MEMORY_REGION2
 From:   Sean Christopherson <seanjc@google.com>
 To:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
         Oliver Upton <oliver.upton@linux.dev>,
@@ -99,318 +99,193 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Convert KVM_ARCH_WANT_MMU_NOTIFIER into a Kconfig and select it where
-appropriate to effectively maintain existing behavior.  Using a proper
-Kconfig will simplify building more functionality on top of KVM's
-mmu_notifier infrastructure.
+Introduce a "version 2" of KVM_SET_USER_MEMORY_REGION so that additional
+information can be supplied without setting userspace up to fail.  The
+padding in the new kvm_userspace_memory_region2 structure will be used to
+pass a file descriptor in addition to the userspace_addr, i.e. allow
+userspace to point at a file descriptor and map memory into a guest that
+is NOT mapped into host userspace.
 
-Add a forward declaration of kvm_gfn_range to kvm_types.h so that
-including arch/powerpc/include/asm/kvm_ppc.h's with CONFIG_KVM=n doesn't
-generate warnings due to kvm_gfn_range being undeclared.  PPC defines
-hooks for PR vs. HV without guarding them via #ifdeffery, e.g.
+Alternatively, KVM could simply add "struct kvm_userspace_memory_region2"
+without a new ioctl(), but as Paolo pointed out, adding a new ioctl()
+makes detection of bad flags a bit more robust, e.g. if the new fd field
+is guarded only by a flag and not a new ioctl(), then a userspace bug
+(setting a "bad" flag) would generate out-of-bounds access instead of an
+-EINVAL error.
 
-  bool (*unmap_gfn_range)(struct kvm *kvm, struct kvm_gfn_range *range);
-  bool (*age_gfn)(struct kvm *kvm, struct kvm_gfn_range *range);
-  bool (*test_age_gfn)(struct kvm *kvm, struct kvm_gfn_range *range);
-  bool (*set_spte_gfn)(struct kvm *kvm, struct kvm_gfn_range *range);
-
-Alternatively, PPC could forward declare kvm_gfn_range, but there's no
-good reason not to define it in common KVM.
-
+Cc: Jarkko Sakkinen <jarkko@kernel.org>
+Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/arm64/include/asm/kvm_host.h   |  2 --
- arch/arm64/kvm/Kconfig              |  2 +-
- arch/mips/include/asm/kvm_host.h    |  2 --
- arch/mips/kvm/Kconfig               |  2 +-
- arch/powerpc/include/asm/kvm_host.h |  2 --
- arch/powerpc/kvm/Kconfig            |  8 ++++----
- arch/powerpc/kvm/powerpc.c          |  4 +---
- arch/riscv/include/asm/kvm_host.h   |  2 --
- arch/riscv/kvm/Kconfig              |  2 +-
- arch/x86/include/asm/kvm_host.h     |  2 --
- arch/x86/kvm/Kconfig                |  2 +-
- include/linux/kvm_host.h            |  6 +++---
- include/linux/kvm_types.h           |  1 +
- virt/kvm/Kconfig                    |  4 ++++
- virt/kvm/kvm_main.c                 | 10 +++++-----
- 15 files changed, 22 insertions(+), 29 deletions(-)
+ arch/x86/kvm/x86.c       |  2 +-
+ include/linux/kvm_host.h |  4 ++--
+ include/uapi/linux/kvm.h | 13 +++++++++++++
+ virt/kvm/kvm_main.c      | 38 ++++++++++++++++++++++++++++++--------
+ 4 files changed, 46 insertions(+), 11 deletions(-)
 
-diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-index af06ccb7ee34..9e046b64847a 100644
---- a/arch/arm64/include/asm/kvm_host.h
-+++ b/arch/arm64/include/asm/kvm_host.h
-@@ -921,8 +921,6 @@ int __kvm_arm_vcpu_get_events(struct kvm_vcpu *vcpu,
- int __kvm_arm_vcpu_set_events(struct kvm_vcpu *vcpu,
- 			      struct kvm_vcpu_events *events);
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 6c9c81e82e65..8356907079e1 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -12447,7 +12447,7 @@ void __user * __x86_set_memory_region(struct kvm *kvm, int id, gpa_t gpa,
+ 	}
  
--#define KVM_ARCH_WANT_MMU_NOTIFIER
--
- void kvm_arm_halt_guest(struct kvm *kvm);
- void kvm_arm_resume_guest(struct kvm *kvm);
+ 	for (i = 0; i < KVM_ADDRESS_SPACE_NUM; i++) {
+-		struct kvm_userspace_memory_region m;
++		struct kvm_userspace_memory_region2 m;
  
-diff --git a/arch/arm64/kvm/Kconfig b/arch/arm64/kvm/Kconfig
-index 83c1e09be42e..1a777715199f 100644
---- a/arch/arm64/kvm/Kconfig
-+++ b/arch/arm64/kvm/Kconfig
-@@ -22,7 +22,7 @@ menuconfig KVM
- 	bool "Kernel-based Virtual Machine (KVM) support"
- 	depends on HAVE_KVM
- 	select KVM_GENERIC_HARDWARE_ENABLING
--	select MMU_NOTIFIER
-+	select KVM_GENERIC_MMU_NOTIFIER
- 	select PREEMPT_NOTIFIERS
- 	select HAVE_KVM_CPU_RELAX_INTERCEPT
- 	select KVM_MMIO
-diff --git a/arch/mips/include/asm/kvm_host.h b/arch/mips/include/asm/kvm_host.h
-index 54a85f1d4f2c..179f320cc231 100644
---- a/arch/mips/include/asm/kvm_host.h
-+++ b/arch/mips/include/asm/kvm_host.h
-@@ -810,8 +810,6 @@ int kvm_mips_mkclean_gpa_pt(struct kvm *kvm, gfn_t start_gfn, gfn_t end_gfn);
- pgd_t *kvm_pgd_alloc(void);
- void kvm_mmu_free_memory_caches(struct kvm_vcpu *vcpu);
- 
--#define KVM_ARCH_WANT_MMU_NOTIFIER
--
- /* Emulation */
- enum emulation_result update_pc(struct kvm_vcpu *vcpu, u32 cause);
- int kvm_get_badinstr(u32 *opc, struct kvm_vcpu *vcpu, u32 *out);
-diff --git a/arch/mips/kvm/Kconfig b/arch/mips/kvm/Kconfig
-index a8cdba75f98d..c04987d2ed2e 100644
---- a/arch/mips/kvm/Kconfig
-+++ b/arch/mips/kvm/Kconfig
-@@ -25,7 +25,7 @@ config KVM
- 	select HAVE_KVM_EVENTFD
- 	select HAVE_KVM_VCPU_ASYNC_IOCTL
- 	select KVM_MMIO
--	select MMU_NOTIFIER
-+	select KVM_GENERIC_MMU_NOTIFIER
- 	select INTERVAL_TREE
- 	select KVM_GENERIC_HARDWARE_ENABLING
- 	help
-diff --git a/arch/powerpc/include/asm/kvm_host.h b/arch/powerpc/include/asm/kvm_host.h
-index 14ee0dece853..4b5c3f2acf78 100644
---- a/arch/powerpc/include/asm/kvm_host.h
-+++ b/arch/powerpc/include/asm/kvm_host.h
-@@ -62,8 +62,6 @@
- 
- #include <linux/mmu_notifier.h>
- 
--#define KVM_ARCH_WANT_MMU_NOTIFIER
--
- #define HPTEG_CACHE_NUM			(1 << 15)
- #define HPTEG_HASH_BITS_PTE		13
- #define HPTEG_HASH_BITS_PTE_LONG	12
-diff --git a/arch/powerpc/kvm/Kconfig b/arch/powerpc/kvm/Kconfig
-index 902611954200..b33358ee6424 100644
---- a/arch/powerpc/kvm/Kconfig
-+++ b/arch/powerpc/kvm/Kconfig
-@@ -42,7 +42,7 @@ config KVM_BOOK3S_64_HANDLER
- config KVM_BOOK3S_PR_POSSIBLE
- 	bool
- 	select KVM_MMIO
--	select MMU_NOTIFIER
-+	select KVM_GENERIC_MMU_NOTIFIER
- 
- config KVM_BOOK3S_HV_POSSIBLE
- 	bool
-@@ -85,7 +85,7 @@ config KVM_BOOK3S_64_HV
- 	tristate "KVM for POWER7 and later using hypervisor mode in host"
- 	depends on KVM_BOOK3S_64 && PPC_POWERNV
- 	select KVM_BOOK3S_HV_POSSIBLE
--	select MMU_NOTIFIER
-+	select KVM_GENERIC_MMU_NOTIFIER
- 	select CMA
- 	help
- 	  Support running unmodified book3s_64 guest kernels in
-@@ -194,7 +194,7 @@ config KVM_E500V2
- 	depends on !CONTEXT_TRACKING_USER
- 	select KVM
- 	select KVM_MMIO
--	select MMU_NOTIFIER
-+	select KVM_GENERIC_MMU_NOTIFIER
- 	help
- 	  Support running unmodified E500 guest kernels in virtual machines on
- 	  E500v2 host processors.
-@@ -211,7 +211,7 @@ config KVM_E500MC
- 	select KVM
- 	select KVM_MMIO
- 	select KVM_BOOKE_HV
--	select MMU_NOTIFIER
-+	select KVM_GENERIC_MMU_NOTIFIER
- 	help
- 	  Support running unmodified E500MC/E5500/E6500 guest kernels in
- 	  virtual machines on E500MC/E5500/E6500 host processors.
-diff --git a/arch/powerpc/kvm/powerpc.c b/arch/powerpc/kvm/powerpc.c
-index 8d3ec483bc2b..aac75c98a956 100644
---- a/arch/powerpc/kvm/powerpc.c
-+++ b/arch/powerpc/kvm/powerpc.c
-@@ -632,9 +632,7 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
- 		break;
- #endif
- 	case KVM_CAP_SYNC_MMU:
--#if !defined(CONFIG_MMU_NOTIFIER) || !defined(KVM_ARCH_WANT_MMU_NOTIFIER)
--		BUILD_BUG();
--#endif
-+		BUILD_BUG_ON(!IS_ENABLED(CONFIG_KVM_GENERIC_MMU_NOTIFIER));
- 		r = 1;
- 		break;
- #ifdef CONFIG_KVM_BOOK3S_HV_POSSIBLE
-diff --git a/arch/riscv/include/asm/kvm_host.h b/arch/riscv/include/asm/kvm_host.h
-index 1ebf20dfbaa6..66ee9ff483e9 100644
---- a/arch/riscv/include/asm/kvm_host.h
-+++ b/arch/riscv/include/asm/kvm_host.h
-@@ -249,8 +249,6 @@ struct kvm_vcpu_arch {
- static inline void kvm_arch_sync_events(struct kvm *kvm) {}
- static inline void kvm_arch_sched_in(struct kvm_vcpu *vcpu, int cpu) {}
- 
--#define KVM_ARCH_WANT_MMU_NOTIFIER
--
- #define KVM_RISCV_GSTAGE_TLB_MIN_ORDER		12
- 
- void kvm_riscv_local_hfence_gvma_vmid_gpa(unsigned long vmid,
-diff --git a/arch/riscv/kvm/Kconfig b/arch/riscv/kvm/Kconfig
-index dfc237d7875b..ae2e05f050ec 100644
---- a/arch/riscv/kvm/Kconfig
-+++ b/arch/riscv/kvm/Kconfig
-@@ -30,7 +30,7 @@ config KVM
- 	select KVM_GENERIC_HARDWARE_ENABLING
- 	select KVM_MMIO
- 	select KVM_XFER_TO_GUEST_WORK
--	select MMU_NOTIFIER
-+	select KVM_GENERIC_MMU_NOTIFIER
- 	select PREEMPT_NOTIFIERS
- 	help
- 	  Support hosting virtualized guest machines.
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 1a4def36d5bb..3a2b53483524 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -2131,8 +2131,6 @@ enum {
- # define kvm_memslots_for_spte_role(kvm, role) __kvm_memslots(kvm, 0)
- #endif
- 
--#define KVM_ARCH_WANT_MMU_NOTIFIER
--
- int kvm_cpu_has_injectable_intr(struct kvm_vcpu *v);
- int kvm_cpu_has_interrupt(struct kvm_vcpu *vcpu);
- int kvm_cpu_has_extint(struct kvm_vcpu *v);
-diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
-index ed90f148140d..091b74599c22 100644
---- a/arch/x86/kvm/Kconfig
-+++ b/arch/x86/kvm/Kconfig
-@@ -24,7 +24,7 @@ config KVM
- 	depends on HIGH_RES_TIMERS
- 	depends on X86_LOCAL_APIC
- 	select PREEMPT_NOTIFIERS
--	select MMU_NOTIFIER
-+	select KVM_GENERIC_MMU_NOTIFIER
- 	select HAVE_KVM_IRQCHIP
- 	select HAVE_KVM_PFNCACHE
- 	select HAVE_KVM_IRQFD
+ 		m.slot = id | (i << 16);
+ 		m.flags = 0;
 diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index 11d091688346..5faba69403ac 100644
+index 5faba69403ac..4e741ff27af3 100644
 --- a/include/linux/kvm_host.h
 +++ b/include/linux/kvm_host.h
-@@ -253,7 +253,7 @@ bool kvm_setup_async_pf(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
- int kvm_async_pf_wakeup_all(struct kvm_vcpu *vcpu);
- #endif
- 
--#ifdef KVM_ARCH_WANT_MMU_NOTIFIER
-+#ifdef CONFIG_KVM_GENERIC_MMU_NOTIFIER
- union kvm_mmu_notifier_arg {
- 	pte_t pte;
+@@ -1146,9 +1146,9 @@ enum kvm_mr_change {
  };
-@@ -783,7 +783,7 @@ struct kvm {
- 	struct hlist_head irq_ack_notifier_list;
- #endif
  
--#if defined(CONFIG_MMU_NOTIFIER) && defined(KVM_ARCH_WANT_MMU_NOTIFIER)
-+#ifdef CONFIG_KVM_GENERIC_MMU_NOTIFIER
- 	struct mmu_notifier mmu_notifier;
- 	unsigned long mmu_invalidate_seq;
- 	long mmu_invalidate_in_progress;
-@@ -1946,7 +1946,7 @@ extern const struct _kvm_stats_desc kvm_vm_stats_desc[];
- extern const struct kvm_stats_header kvm_vcpu_stats_header;
- extern const struct _kvm_stats_desc kvm_vcpu_stats_desc[];
+ int kvm_set_memory_region(struct kvm *kvm,
+-			  const struct kvm_userspace_memory_region *mem);
++			  const struct kvm_userspace_memory_region2 *mem);
+ int __kvm_set_memory_region(struct kvm *kvm,
+-			    const struct kvm_userspace_memory_region *mem);
++			    const struct kvm_userspace_memory_region2 *mem);
+ void kvm_arch_free_memslot(struct kvm *kvm, struct kvm_memory_slot *slot);
+ void kvm_arch_memslots_updated(struct kvm *kvm, u64 gen);
+ int kvm_arch_prepare_memory_region(struct kvm *kvm,
+diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+index 13065dd96132..bd1abe067f28 100644
+--- a/include/uapi/linux/kvm.h
++++ b/include/uapi/linux/kvm.h
+@@ -95,6 +95,16 @@ struct kvm_userspace_memory_region {
+ 	__u64 userspace_addr; /* start of the userspace allocated memory */
+ };
  
--#if defined(CONFIG_MMU_NOTIFIER) && defined(KVM_ARCH_WANT_MMU_NOTIFIER)
-+#ifdef CONFIG_KVM_GENERIC_MMU_NOTIFIER
- static inline int mmu_invalidate_retry(struct kvm *kvm, unsigned long mmu_seq)
- {
- 	if (unlikely(kvm->mmu_invalidate_in_progress))
-diff --git a/include/linux/kvm_types.h b/include/linux/kvm_types.h
-index 6f4737d5046a..9d1f7835d8c1 100644
---- a/include/linux/kvm_types.h
-+++ b/include/linux/kvm_types.h
-@@ -6,6 +6,7 @@
- struct kvm;
- struct kvm_async_pf;
- struct kvm_device_ops;
-+struct kvm_gfn_range;
- struct kvm_interrupt;
- struct kvm_irq_routing_table;
- struct kvm_memory_slot;
-diff --git a/virt/kvm/Kconfig b/virt/kvm/Kconfig
-index 484d0873061c..ecae2914c97e 100644
---- a/virt/kvm/Kconfig
-+++ b/virt/kvm/Kconfig
-@@ -92,3 +92,7 @@ config HAVE_KVM_PM_NOTIFIER
- 
- config KVM_GENERIC_HARDWARE_ENABLING
-        bool
++/* for KVM_SET_USER_MEMORY_REGION2 */
++struct kvm_userspace_memory_region2 {
++	__u32 slot;
++	__u32 flags;
++	__u64 guest_phys_addr;
++	__u64 memory_size;
++	__u64 userspace_addr;
++	__u64 pad[16];
++};
 +
-+config KVM_GENERIC_MMU_NOTIFIER
-+       select MMU_NOTIFIER
-+       bool
+ /*
+  * The bit 0 ~ bit 15 of kvm_userspace_memory_region::flags are visible for
+  * userspace, other bits are reserved for kvm internal use which are defined
+@@ -1192,6 +1202,7 @@ struct kvm_ppc_resize_hpt {
+ #define KVM_CAP_COUNTER_OFFSET 227
+ #define KVM_CAP_ARM_EAGER_SPLIT_CHUNK_SIZE 228
+ #define KVM_CAP_ARM_SUPPORTED_BLOCK_SIZES 229
++#define KVM_CAP_USER_MEMORY2 230
+ 
+ #ifdef KVM_CAP_IRQ_ROUTING
+ 
+@@ -1473,6 +1484,8 @@ struct kvm_vfio_spapr_tce {
+ 					struct kvm_userspace_memory_region)
+ #define KVM_SET_TSS_ADDR          _IO(KVMIO,   0x47)
+ #define KVM_SET_IDENTITY_MAP_ADDR _IOW(KVMIO,  0x48, __u64)
++#define KVM_SET_USER_MEMORY_REGION2 _IOW(KVMIO, 0x49, \
++					 struct kvm_userspace_memory_region2)
+ 
+ /* enable ucontrol for s390 */
+ struct kvm_s390_ucas_mapping {
 diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 4fad3b01dc1f..8d21757cd5e9 100644
+index 8d21757cd5e9..7c0e38752526 100644
 --- a/virt/kvm/kvm_main.c
 +++ b/virt/kvm/kvm_main.c
-@@ -535,7 +535,7 @@ void kvm_destroy_vcpus(struct kvm *kvm)
- }
- EXPORT_SYMBOL_GPL(kvm_destroy_vcpus);
- 
--#if defined(CONFIG_MMU_NOTIFIER) && defined(KVM_ARCH_WANT_MMU_NOTIFIER)
-+#ifdef CONFIG_KVM_GENERIC_MMU_NOTIFIER
- static inline struct kvm *mmu_notifier_to_kvm(struct mmu_notifier *mn)
- {
- 	return container_of(mn, struct kvm, mmu_notifier);
-@@ -960,14 +960,14 @@ static int kvm_init_mmu_notifier(struct kvm *kvm)
- 	return mmu_notifier_register(&kvm->mmu_notifier, current->mm);
- }
- 
--#else  /* !(CONFIG_MMU_NOTIFIER && KVM_ARCH_WANT_MMU_NOTIFIER) */
-+#else  /* !CONFIG_KVM_GENERIC_MMU_NOTIFIER */
- 
- static int kvm_init_mmu_notifier(struct kvm *kvm)
- {
- 	return 0;
- }
- 
--#endif /* CONFIG_MMU_NOTIFIER && KVM_ARCH_WANT_MMU_NOTIFIER */
-+#endif /* CONFIG_KVM_GENERIC_MMU_NOTIFIER */
- 
- #ifdef CONFIG_HAVE_KVM_PM_NOTIFIER
- static int kvm_pm_notifier_call(struct notifier_block *bl,
-@@ -1287,7 +1287,7 @@ static struct kvm *kvm_create_vm(unsigned long type, const char *fdname)
- out_err_no_debugfs:
- 	kvm_coalesced_mmio_free(kvm);
- out_no_coalesced_mmio:
--#if defined(CONFIG_MMU_NOTIFIER) && defined(KVM_ARCH_WANT_MMU_NOTIFIER)
-+#ifdef CONFIG_KVM_GENERIC_MMU_NOTIFIER
- 	if (kvm->mmu_notifier.ops)
- 		mmu_notifier_unregister(&kvm->mmu_notifier, current->mm);
- #endif
-@@ -1347,7 +1347,7 @@ static void kvm_destroy_vm(struct kvm *kvm)
- 		kvm->buses[i] = NULL;
+@@ -1571,7 +1571,7 @@ static void kvm_replace_memslot(struct kvm *kvm,
  	}
- 	kvm_coalesced_mmio_free(kvm);
--#if defined(CONFIG_MMU_NOTIFIER) && defined(KVM_ARCH_WANT_MMU_NOTIFIER)
-+#ifdef CONFIG_KVM_GENERIC_MMU_NOTIFIER
- 	mmu_notifier_unregister(&kvm->mmu_notifier, kvm->mm);
- 	/*
- 	 * At this point, pending calls to invalidate_range_start()
+ }
+ 
+-static int check_memory_region_flags(const struct kvm_userspace_memory_region *mem)
++static int check_memory_region_flags(const struct kvm_userspace_memory_region2 *mem)
+ {
+ 	u32 valid_flags = KVM_MEM_LOG_DIRTY_PAGES;
+ 
+@@ -1973,7 +1973,7 @@ static bool kvm_check_memslot_overlap(struct kvm_memslots *slots, int id,
+  * Must be called holding kvm->slots_lock for write.
+  */
+ int __kvm_set_memory_region(struct kvm *kvm,
+-			    const struct kvm_userspace_memory_region *mem)
++			    const struct kvm_userspace_memory_region2 *mem)
+ {
+ 	struct kvm_memory_slot *old, *new;
+ 	struct kvm_memslots *slots;
+@@ -2077,7 +2077,7 @@ int __kvm_set_memory_region(struct kvm *kvm,
+ EXPORT_SYMBOL_GPL(__kvm_set_memory_region);
+ 
+ int kvm_set_memory_region(struct kvm *kvm,
+-			  const struct kvm_userspace_memory_region *mem)
++			  const struct kvm_userspace_memory_region2 *mem)
+ {
+ 	int r;
+ 
+@@ -2089,7 +2089,7 @@ int kvm_set_memory_region(struct kvm *kvm,
+ EXPORT_SYMBOL_GPL(kvm_set_memory_region);
+ 
+ static int kvm_vm_ioctl_set_memory_region(struct kvm *kvm,
+-					  struct kvm_userspace_memory_region *mem)
++					  struct kvm_userspace_memory_region2 *mem)
+ {
+ 	if ((u16)mem->slot >= KVM_USER_MEM_SLOTS)
+ 		return -EINVAL;
+@@ -4559,6 +4559,7 @@ static int kvm_vm_ioctl_check_extension_generic(struct kvm *kvm, long arg)
+ {
+ 	switch (arg) {
+ 	case KVM_CAP_USER_MEMORY:
++	case KVM_CAP_USER_MEMORY2:
+ 	case KVM_CAP_DESTROY_MEMORY_REGION_WORKS:
+ 	case KVM_CAP_JOIN_MEMORY_REGIONS_WORKS:
+ 	case KVM_CAP_INTERNAL_ERROR_DATA:
+@@ -4814,6 +4815,14 @@ static int kvm_vm_ioctl_get_stats_fd(struct kvm *kvm)
+ 	return fd;
+ }
+ 
++#define SANITY_CHECK_MEM_REGION_FIELD(field)					\
++do {										\
++	BUILD_BUG_ON(offsetof(struct kvm_userspace_memory_region, field) !=		\
++		     offsetof(struct kvm_userspace_memory_region2, field));	\
++	BUILD_BUG_ON(sizeof_field(struct kvm_userspace_memory_region, field) !=		\
++		     sizeof_field(struct kvm_userspace_memory_region2, field));	\
++} while (0)
++
+ static long kvm_vm_ioctl(struct file *filp,
+ 			   unsigned int ioctl, unsigned long arg)
+ {
+@@ -4836,15 +4845,28 @@ static long kvm_vm_ioctl(struct file *filp,
+ 		r = kvm_vm_ioctl_enable_cap_generic(kvm, &cap);
+ 		break;
+ 	}
++	case KVM_SET_USER_MEMORY_REGION2:
+ 	case KVM_SET_USER_MEMORY_REGION: {
+-		struct kvm_userspace_memory_region kvm_userspace_mem;
++		struct kvm_userspace_memory_region2 mem;
++		unsigned long size;
++
++		if (ioctl == KVM_SET_USER_MEMORY_REGION)
++			size = sizeof(struct kvm_userspace_memory_region);
++		else
++			size = sizeof(struct kvm_userspace_memory_region2);
++
++		/* Ensure the common parts of the two structs are identical. */
++		SANITY_CHECK_MEM_REGION_FIELD(slot);
++		SANITY_CHECK_MEM_REGION_FIELD(flags);
++		SANITY_CHECK_MEM_REGION_FIELD(guest_phys_addr);
++		SANITY_CHECK_MEM_REGION_FIELD(memory_size);
++		SANITY_CHECK_MEM_REGION_FIELD(userspace_addr);
+ 
+ 		r = -EFAULT;
+-		if (copy_from_user(&kvm_userspace_mem, argp,
+-						sizeof(kvm_userspace_mem)))
++		if (copy_from_user(&mem, argp, size))
+ 			goto out;
+ 
+-		r = kvm_vm_ioctl_set_memory_region(kvm, &kvm_userspace_mem);
++		r = kvm_vm_ioctl_set_memory_region(kvm, &mem);
+ 		break;
+ 	}
+ 	case KVM_GET_DIRTY_LOG: {
 -- 
 2.42.0.283.g2d96d420d3-goog
 
