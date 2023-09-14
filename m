@@ -2,41 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 89AAD7A10A5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Sep 2023 00:16:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80C2F7A10AB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Sep 2023 00:16:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229897AbjINWQa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Sep 2023 18:16:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41634 "EHLO
+        id S230084AbjINWQh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Sep 2023 18:16:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229447AbjINWQ2 (ORCPT
+        with ESMTP id S229931AbjINWQb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Sep 2023 18:16:28 -0400
+        Thu, 14 Sep 2023 18:16:31 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D1465270C
-        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Sep 2023 15:15:35 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 694162712
+        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Sep 2023 15:15:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1694729735;
+        s=mimecast20190719; t=1694729739;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=qbzfkB6XDeg+lyjll9b1bWAHm6ZrCh25IkF3gmIpS/A=;
-        b=VIlTBVmfvvJ4WD9odY7VRvXwjMnYv8B+1Xc4P4WEgxL8/7ow9CJrFozeQqOMJ2VQGGM6zs
-        fx7o4MbAjP4q8JBAikNUXUUulW3LfVdf5EXXyAwbf3uTKfXCS3e5SgWBrB5I9FmigK/yLq
-        xUtBgcVBH1h3YoGNnWcJ4uIgef83TOY=
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=71Btu3XYwWZK+FmqHCgDmjFCfU/69a0+IvtQoWaiN/g=;
+        b=bCD8M9kq5MNb3a+QlwWkJbHUpPxF3M9+wJVLZivwQhI47Y8L9Xf43gNC+zXwz5uFz9CQma
+        mOOszjIWaRHPZ82wLLSnI0TpQ7hkWpNxz8XX1u6zXW1ROF4UXyWtyVwJshEfyueALI76uU
+        wWs8NfCBrXA33qYMnT3zZ+5i63MB/XE=
 Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
  [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-593-0e1tLjckMi63woBcMf-5IA-1; Thu, 14 Sep 2023 18:15:31 -0400
-X-MC-Unique: 0e1tLjckMi63woBcMf-5IA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+ us-mta-611-xSilx-EINMK-s9yGWPKnCA-1; Thu, 14 Sep 2023 18:15:34 -0400
+X-MC-Unique: xSilx-EINMK-s9yGWPKnCA-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 80B2E857A9E;
-        Thu, 14 Sep 2023 22:15:30 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 855E3857A9C;
+        Thu, 14 Sep 2023 22:15:33 +0000 (UTC)
 Received: from warthog.procyon.org.com (unknown [10.42.28.216])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 76C5410F1BE7;
-        Thu, 14 Sep 2023 22:15:28 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2331E2026D4B;
+        Thu, 14 Sep 2023 22:15:31 +0000 (UTC)
 From:   David Howells <dhowells@redhat.com>
 To:     Al Viro <viro@zeniv.linux.org.uk>,
         Linus Torvalds <torvalds@linux-foundation.org>
@@ -49,90 +50,95 @@ Cc:     David Howells <dhowells@redhat.com>, Jens Axboe <axboe@kernel.dk>,
         David Gow <davidgow@google.com>, linux-fsdevel@vger.kernel.org,
         linux-block@vger.kernel.org, linux-mm@kvack.org,
         netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 0/9] iov_iter: kunit: Cleanup, abstraction and more tests
-Date:   Thu, 14 Sep 2023 23:15:17 +0100
-Message-ID: <20230914221526.3153402-1-dhowells@redhat.com>
+        kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+        Christian Brauner <brauner@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: [RFC PATCH 1/9] iov_iter: Fix some checkpatch complaints in kunit tests
+Date:   Thu, 14 Sep 2023 23:15:18 +0100
+Message-ID: <20230914221526.3153402-2-dhowells@redhat.com>
+In-Reply-To: <20230914221526.3153402-1-dhowells@redhat.com>
+References: <20230914221526.3153402-1-dhowells@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.3
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Al, Linus,
+Fix some checkpatch complaints in the new iov_iter kunit tests:
 
-These patches make some changes to the kunit tests previously added for
-iov_iter testing, in particular adding support for testing UBUF/IOVEC
-iterators:
+ (1) Some lines had eight spaces instead of a tab at the start.
 
- (1) Clean up a couple of checkpatch style complaints.
+ (2) Checkpatch doesn't like (void*)(unsigned long)0xnnnnnULL, so switch to
+     using POISON_POINTER_DELTA plus an offset instead.
 
- (2) Consolidate some repeated bits of code into helper functions and use
-     the same struct to represent straight offset/address ranges and
-     partial page lists.
+Reported-by: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Christoph Hellwig <hch@lst.de>
+cc: Christian Brauner <brauner@kernel.org>
+cc: Jens Axboe <axboe@kernel.dk>
+cc: Al Viro <viro@zeniv.linux.org.uk>
+cc: David Hildenbrand <david@redhat.com>
+cc: John Hubbard <jhubbard@nvidia.com>
+cc: Brendan Higgins <brendanhiggins@google.com>
+cc: David Gow <davidgow@google.com>
+cc: linux-kselftest@vger.kernel.org
+cc: kunit-dev@googlegroups.com
+cc: linux-mm@kvack.org
+cc: linux-fsdevel@vger.kernel.org
+---
+ lib/kunit_iov_iter.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
- (3) Add a function to set up a userspace VM, attach the VM to the kunit
-     testing thread, create an anonymous file, stuff some pages into the
-     file and map the file into the VM to act as a buffer that can be used
-     with UBUF/IOVEC iterators.
-
-     I map an anonymous file with pages attached rather than using MAP_ANON
-     so that I can check the pages obtained from iov_iter_extract_pages()
-     without worrying about them changing due to swap, migrate, etc..
-
-     [?] Is this the best way to do things?  Mirroring execve, it requires
-     a number of extra core symbols to be exported.  Should this be done in
-     the core code?
-
- (4) Add tests for copying into and out of UBUF and IOVEC iterators.
-
- (5) Add tests for extracting pages from UBUF and IOVEC iterators.
-
- (6) Add tests to benchmark copying 256MiB to UBUF, IOVEC, KVEC, BVEC and
-     XARRAY iterators.
-
-     [!] Note that this requires 256MiB of memory for UBUF and IOVEC; the
-     KVEC, BVEC and XARRAY benchmarking maps a single page multiple times.
-     I might be able to shrink that if I can add the same page multiple
-     times to the anon file's pagecache.  I'm sure this is not recommended,
-     but I might be able to get away with it for this particular
-     application.
-
- (7) Add a test to benchmark copying 256MiB through dynamically allocated
-     256-page bvecs to simulate bio construction.
-
-Example benchmarks output:
-
- iov_kunit_benchmark_ubuf: avg 26899 uS, stddev 142 uS
- iov_kunit_benchmark_iovec: avg 26897 uS, stddev 74 uS
- iov_kunit_benchmark_kvec: avg 2688 uS, stddev 35 uS
- iov_kunit_benchmark_bvec: avg 3139 uS, stddev 21 uS
- iov_kunit_benchmark_bvec_split: avg 3379 uS, stddev 15 uS
- iov_kunit_benchmark_xarray: avg 3582 uS, stddev 13 uS
-
-I've pushed the patches here also:
-
-	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=iov-kunit
-
-David
-
-David Howells (9):
-  iov_iter: Fix some checkpatch complaints in kunit tests
-  iov_iter: Consolidate some of the repeated code into helpers
-  iov_iter: Consolidate the test vector struct in the kunit tests
-  iov_iter: Consolidate bvec pattern checking
-  iov_iter: Create a function to prepare userspace VM for UBUF/IOVEC
-    tests
-  iov_iter: Add copy kunit tests for ITER_UBUF and ITER_IOVEC
-  iov_iter: Add extract kunit tests for ITER_UBUF and ITER_IOVEC
-  iov_iter: Add benchmarking kunit tests
-  iov_iter: Add benchmarking kunit tests for UBUF/IOVEC
-
- fs/anon_inodes.c     |    1 +
- kernel/fork.c        |    2 +
- lib/kunit_iov_iter.c | 1211 +++++++++++++++++++++++++++++++++++-------
- mm/mmap.c            |    1 +
- mm/util.c            |    1 +
- 5 files changed, 1024 insertions(+), 192 deletions(-)
+diff --git a/lib/kunit_iov_iter.c b/lib/kunit_iov_iter.c
+index 859b67c4d697..4a6c0efd33f5 100644
+--- a/lib/kunit_iov_iter.c
++++ b/lib/kunit_iov_iter.c
+@@ -53,7 +53,7 @@ static void *__init iov_kunit_create_buffer(struct kunit *test,
+ 	void *buffer;
+ 
+ 	pages = kunit_kcalloc(test, npages, sizeof(struct page *), GFP_KERNEL);
+-        KUNIT_ASSERT_NOT_ERR_OR_NULL(test, pages);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, pages);
+ 	*ppages = pages;
+ 
+ 	got = alloc_pages_bulk_array(GFP_KERNEL, npages, pages);
+@@ -63,7 +63,7 @@ static void *__init iov_kunit_create_buffer(struct kunit *test,
+ 	}
+ 
+ 	buffer = vmap(pages, npages, VM_MAP | VM_MAP_PUT_PAGES, PAGE_KERNEL);
+-        KUNIT_ASSERT_NOT_ERR_OR_NULL(test, buffer);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, buffer);
+ 
+ 	kunit_add_action_or_reset(test, iov_kunit_unmap, buffer);
+ 	return buffer;
+@@ -548,7 +548,7 @@ static void __init iov_kunit_extract_pages_kvec(struct kunit *test)
+ 		size_t offset0 = LONG_MAX;
+ 
+ 		for (i = 0; i < ARRAY_SIZE(pagelist); i++)
+-			pagelist[i] = (void *)(unsigned long)0xaa55aa55aa55aa55ULL;
++			pagelist[i] = (void *)POISON_POINTER_DELTA + 0x5a;
+ 
+ 		len = iov_iter_extract_pages(&iter, &pages, 100 * 1024,
+ 					     ARRAY_SIZE(pagelist), 0, &offset0);
+@@ -626,7 +626,7 @@ static void __init iov_kunit_extract_pages_bvec(struct kunit *test)
+ 		size_t offset0 = LONG_MAX;
+ 
+ 		for (i = 0; i < ARRAY_SIZE(pagelist); i++)
+-			pagelist[i] = (void *)(unsigned long)0xaa55aa55aa55aa55ULL;
++			pagelist[i] = (void *)POISON_POINTER_DELTA + 0x5a;
+ 
+ 		len = iov_iter_extract_pages(&iter, &pages, 100 * 1024,
+ 					     ARRAY_SIZE(pagelist), 0, &offset0);
+@@ -709,7 +709,7 @@ static void __init iov_kunit_extract_pages_xarray(struct kunit *test)
+ 			size_t offset0 = LONG_MAX;
+ 
+ 			for (i = 0; i < ARRAY_SIZE(pagelist); i++)
+-				pagelist[i] = (void *)(unsigned long)0xaa55aa55aa55aa55ULL;
++				pagelist[i] = (void *)POISON_POINTER_DELTA + 0x5a;
+ 
+ 			len = iov_iter_extract_pages(&iter, &pages, 100 * 1024,
+ 						     ARRAY_SIZE(pagelist), 0, &offset0);
 
