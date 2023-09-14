@@ -2,129 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F4757A0A50
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Sep 2023 18:06:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A6DB97A0AD1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Sep 2023 18:32:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241678AbjINQGw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Sep 2023 12:06:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57922 "EHLO
+        id S235055AbjINQcp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Sep 2023 12:32:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241621AbjINQGq (ORCPT
+        with ESMTP id S231243AbjINQcn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Sep 2023 12:06:46 -0400
-Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B204E1FD2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Sep 2023 09:06:42 -0700 (PDT)
-Received: by mail-io1-xd2b.google.com with SMTP id ca18e2360f4ac-79545e141c7so31081639f.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Sep 2023 09:06:42 -0700 (PDT)
+        Thu, 14 Sep 2023 12:32:43 -0400
+Received: from mail-qv1-xf31.google.com (mail-qv1-xf31.google.com [IPv6:2607:f8b0:4864:20::f31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F7861FD7
+        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Sep 2023 09:32:39 -0700 (PDT)
+Received: by mail-qv1-xf31.google.com with SMTP id 6a1803df08f44-6562330d68dso3580976d6.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Sep 2023 09:32:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1694707602; x=1695312402; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WsLMEgy42yaBiT7+peH789YpkE1cZSDVdqIV9tFkDJs=;
-        b=ZwiKhsSkmTCyf5TvYHer9x9UIqGqff+gaCcfpMlKqeyNEPkf5i4dYn1j452qOWD8eL
-         Ll64+SLu7OMuBztJhHhkwr5KFxloQk28bGcnSoQx15Dk7xyiHmVQmd1Gv+HqtnPTKUAd
-         ztB+9tFxZl8mmsJYKvWBgsU0yKcJuEOKON1kAtrYtWDBvHkwxCHzggoTgr1KP8nsMqNN
-         F94gYqRCBj8KGHcY4q+e9YyRPafQOASTidXDlott5g6saGhp7TNrIWT48XDZJchwjyNT
-         0qfJ0T3i1pQRbxvE6XiGTPiRBXeJizURbdID82jf9JgUK80XEf3QX6V9pR58ii49Rd0A
-         OS+g==
+        d=hefring-com.20230601.gappssmtp.com; s=20230601; t=1694709158; x=1695313958; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iBpYCeeiHkRSP1d/Fs1QslqOdnD/9unLXrEK1uz74Tw=;
+        b=x+Yd94kQKSZq7SABaWGpYOvW1N6EGdOnwF4m7cP5o+RuhkQFc1EOsZuEM7dU+8dk3t
+         uroxGajlrl/9Rutb9mqnhWsJNu3lER21eXbd+Vyq7UwSfy/1znKJ2DSjfFf5YWOdJWHe
+         dCtH6+gio+jjuxGxxnlfPVfSelTsK73kuNvoUdk8qj+zep/yZ+54U0BIw7YE+GvfMGeh
+         MEoacB9uB0AXfrYu9X1lnjugk0VV9LcoZxOv8wP8y8oo7PcV3PiwnQNp80UqEuCnLLnU
+         7+zLzpDkA7hpGkGKieJByvs4OZ7Bd1+k1P84x8MqEqdJMMgV6svjTOKkkmWybC+RHROX
+         2zCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694707602; x=1695312402;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WsLMEgy42yaBiT7+peH789YpkE1cZSDVdqIV9tFkDJs=;
-        b=SHY17tFrtv7u4R36Nf5Nw61IdOA/eYtacFpINGDUgTMSWgKS3GU8BVmPFYs/Ab1y+A
-         GhmJ9YGKLFlMLSUNJNMBDtZ83dcYuVh6i/rc8XcU7iZAtW6Km6knsx2UPLgRI2i6pG2V
-         81Z3Ljx+Ba+gQnSfkHvbx69mfLk8oiI4r/S+GZjrVon+hMX80/x7U5CCTuDrCepgpeAJ
-         MpePl0Msxx4qKO7HhwysbP2Ea+tKGy0HhZCqS93LwR+4B31Yi/gTgCuSLHh1KiUL1xbx
-         r06FTPrMrnwnlJIlKdwkk27Y62fS3A51X4IzCoKq4sd5vMqV3JGYCoFCEZCduw5d2qZT
-         Lx8w==
-X-Gm-Message-State: AOJu0Yw8IQ3aTBJEogD4C22mTNoUQYwijgk1wg06jBI3ujA1KaW6pzjE
-        qBQ7TiVFnwE6erdXFqZp+lydI5CoHVcHAqvUrFxZqA==
-X-Google-Smtp-Source: AGHT+IG5uiQN1/JqfzfqQfLLWnTjs7aRdbIZbEZdBy/k86sXDjNlmcQiA459x+Nf/3/c0H14MFVFDk8eX4l2uRqCEMk=
-X-Received: by 2002:a05:6602:1b09:b0:790:b44f:b9ee with SMTP id
- dk9-20020a0566021b0900b00790b44fb9eemr2328524iob.10.1694707601790; Thu, 14
- Sep 2023 09:06:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1694709158; x=1695313958;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iBpYCeeiHkRSP1d/Fs1QslqOdnD/9unLXrEK1uz74Tw=;
+        b=p1jbdRFEaLh8B5WFapth4NEh48sJTzmGCPjMyKTZ2kwIRkQHxB4MteD/qGBvVsRain
+         jhWS7fUir7OQ4Bw9YpDqABDvTQ5AwEbP4zl72PWGda/EZluiWMHdFmnqEczJVPXiQZQK
+         OF606QRw8XbJOo8UCoPHJO8XDmsPQp6J7ibGRdjnvhdCcNp7+/PKndzJjcFDynJnlMQx
+         hv1ulELeVuAmzLYgjJDoz9beWRco2v0gGk6liAer5K/XwQx+E3+WtJ0lwX1YtjMlTryK
+         J5GnPHu91tW5VffUZ78JLSmJXEC4n8bBZxbAtm8fW30aKwxoCzBbILbofWjIFOaLLPsD
+         HGPQ==
+X-Gm-Message-State: AOJu0YxoynzpYc7AOV5WtqDlubtjppPVBisZrKeXaA1LHU7jtetMREVL
+        MOdFbmJNiBzT+pyCS+x2ll5FZQ==
+X-Google-Smtp-Source: AGHT+IGludCmXbLx+omxZ+Rh8LXM31hPcSOfnELHU56S6MFz8xkk0vPxdTAclYoBzGIE5OhYZCv9eQ==
+X-Received: by 2002:a0c:e6c3:0:b0:64f:67ae:a132 with SMTP id l3-20020a0ce6c3000000b0064f67aea132mr6129634qvn.23.1694709158650;
+        Thu, 14 Sep 2023 09:32:38 -0700 (PDT)
+Received: from localhost.localdomain ([50.212.55.89])
+        by smtp.gmail.com with ESMTPSA id v6-20020a0cdd86000000b0063d38e52c8fsm579122qvk.18.2023.09.14.09.32.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Sep 2023 09:32:38 -0700 (PDT)
+From:   Ben Wolsieffer <ben.wolsieffer@hefring.com>
+To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     Greg Ungerer <gerg@uclinux.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Giulio Benetti <giulio.benetti@benettiengineering.com>,
+        Ben Wolsieffer <Ben.Wolsieffer@hefring.com>,
+        Ben Wolsieffer <ben.wolsieffer@hefring.com>
+Subject: [PATCH] proc: nommu: /proc/<pid>/maps: release mmap read lock
+Date:   Thu, 14 Sep 2023 12:30:20 -0400
+Message-ID: <20230914163019.4050530-2-ben.wolsieffer@hefring.com>
+X-Mailer: git-send-email 2.42.0
 MIME-Version: 1.0
-References: <0000000000007285dd0604a053db@google.com> <cbakbuszcnwtfkdavtif3lwfncelm2ugn6eyd5pd5dmdocxqh5@3op6br7uaxd7>
-In-Reply-To: <cbakbuszcnwtfkdavtif3lwfncelm2ugn6eyd5pd5dmdocxqh5@3op6br7uaxd7>
-From:   Alexander Potapenko <glider@google.com>
-Date:   Thu, 14 Sep 2023 18:06:01 +0200
-Message-ID: <CAG_fn=Umt5Gm1aFa2Tr8LCXboDZvBx9WBw_AvvkN3_7eyXSsRg@mail.gmail.com>
-Subject: Re: [syzbot] [sctp?] [reiserfs?] KMSAN: uninit-value in __schedule (4)
-To:     Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Cc:     syzbot <syzbot+00f1a932d27258b183e7@syzkaller.appspotmail.com>,
-        bp@alien8.de, brauner@kernel.org, dave.hansen@linux.intel.com,
-        hpa@zytor.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sctp@vger.kernel.org,
-        lucien.xin@gmail.com, mingo@redhat.com, netdev@vger.kernel.org,
-        reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 14, 2023 at 5:25=E2=80=AFPM Marcelo Ricardo Leitner
-<marcelo.leitner@gmail.com> wrote:
->
-> On Tue, Sep 05, 2023 at 10:55:01AM -0700, syzbot wrote:
-> > Hello,
-> >
-> > syzbot found the following issue on:
-> >
-> > HEAD commit:    a47fc304d2b6 Add linux-next specific files for 20230831
-> > git tree:       linux-next
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D131da298680=
-000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D6ecd2a74f20=
-953b9
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D00f1a932d2725=
-8b183e7
-> > compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for=
- Debian) 2.40
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D116e5fcba=
-80000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D118e912fa80=
-000
->
-> Not sure why sctp got tagged here. I could not find anything network
-> related on this reproducer or console output.
+From: Ben Wolsieffer <Ben.Wolsieffer@hefring.com>
 
-I am afraid this is the effect of reports from different tools being
-clustered together: https://github.com/google/syzkaller/issues/4168
-The relevant KMSAN report can be viewed on the dashboard:
-https://syzkaller.appspot.com/text?tag=3DCrashReport&x=3D144ba287a80000 -
-that's where sctp was deduced from.
+The no-MMU implementation of /proc/<pid>/map doesn't normally release
+the mmap read lock, because it uses !IS_ERR_OR_NULL(_vml) to determine
+whether to release the lock. Since _vml is NULL when the end of the
+mappings is reached, the lock is not released.
 
-I suspect there's still nothing specific to sctp though: looks like
-schedule_debug() somehow accidentally reads past the end of the task
-stack.
+This code was incorrectly adapted from the MMU implementation, which
+at the time released the lock in m_next() before returning the last entry.
 
->   Marcelo
->
-> --
-> You received this message because you are subscribed to the Google Groups=
- "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an=
- email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgi=
-d/syzkaller-bugs/cbakbuszcnwtfkdavtif3lwfncelm2ugn6eyd5pd5dmdocxqh5%403op6b=
-r7uaxd7.
+The MMU implementation has diverged further from the no-MMU version
+since then, so this patch brings their locking and error handling into
+sync, fixing the bug and hopefully avoiding similar issues in the
+future.
 
+Fixes: 47fecca15c09 ("fs/proc/task_nommu.c: don't use priv->task->mm")
+Signed-off-by: Ben Wolsieffer <ben.wolsieffer@hefring.com>
+---
+ fs/proc/task_nommu.c | 27 +++++++++++++++------------
+ 1 file changed, 15 insertions(+), 12 deletions(-)
 
+diff --git a/fs/proc/task_nommu.c b/fs/proc/task_nommu.c
+index 2c8b62265981..061bd3f82756 100644
+--- a/fs/proc/task_nommu.c
++++ b/fs/proc/task_nommu.c
+@@ -205,11 +205,16 @@ static void *m_start(struct seq_file *m, loff_t *pos)
+ 		return ERR_PTR(-ESRCH);
+ 
+ 	mm = priv->mm;
+-	if (!mm || !mmget_not_zero(mm))
++	if (!mm || !mmget_not_zero(mm)) {
++		put_task_struct(priv->task);
++		priv->task = NULL;
+ 		return NULL;
++	}
+ 
+ 	if (mmap_read_lock_killable(mm)) {
+ 		mmput(mm);
++		put_task_struct(priv->task);
++		priv->task = NULL;
+ 		return ERR_PTR(-EINTR);
+ 	}
+ 
+@@ -218,23 +223,21 @@ static void *m_start(struct seq_file *m, loff_t *pos)
+ 	if (vma)
+ 		return vma;
+ 
+-	mmap_read_unlock(mm);
+-	mmput(mm);
+ 	return NULL;
+ }
+ 
+-static void m_stop(struct seq_file *m, void *_vml)
++static void m_stop(struct seq_file *m, void *v)
+ {
+ 	struct proc_maps_private *priv = m->private;
++	struct mm_struct *mm = priv->mm;
+ 
+-	if (!IS_ERR_OR_NULL(_vml)) {
+-		mmap_read_unlock(priv->mm);
+-		mmput(priv->mm);
+-	}
+-	if (priv->task) {
+-		put_task_struct(priv->task);
+-		priv->task = NULL;
+-	}
++	if (!priv->task)
++		return;
++
++	mmap_read_unlock(mm);
++	mmput(mm);
++	put_task_struct(priv->task);
++	priv->task = NULL;
+ }
+ 
+ static void *m_next(struct seq_file *m, void *_p, loff_t *pos)
+-- 
+2.42.0
 
---=20
-Alexander Potapenko
-Software Engineer
-
-Google Germany GmbH
-Erika-Mann-Stra=C3=9Fe, 33
-80636 M=C3=BCnchen
-
-Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Liana Sebastian
-Registergericht und -nummer: Hamburg, HRB 86891
-Sitz der Gesellschaft: Hamburg
