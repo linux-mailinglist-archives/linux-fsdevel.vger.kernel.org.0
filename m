@@ -2,46 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EA74F7A01A6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Sep 2023 12:27:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5ACBB7A01AF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Sep 2023 12:29:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237086AbjINK1W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Sep 2023 06:27:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37758 "EHLO
+        id S237188AbjINK3Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Sep 2023 06:29:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39272 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230141AbjINK1V (ORCPT
+        with ESMTP id S230141AbjINK3Y (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Sep 2023 06:27:21 -0400
+        Thu, 14 Sep 2023 06:29:24 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD2311BE9;
-        Thu, 14 Sep 2023 03:27:17 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B139DC433C7;
-        Thu, 14 Sep 2023 10:27:16 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A8B61BEB;
+        Thu, 14 Sep 2023 03:29:20 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE54CC433C8;
+        Thu, 14 Sep 2023 10:29:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694687237;
-        bh=yDQqvovGnrf78EMpc8cz+BBi0k2m4AVQSZyr7l9ADW8=;
+        s=k20201202; t=1694687359;
+        bh=z91D5qbFuL12k1cxFR5HlqLWojF/usGUx8PcTX1Nwlw=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=W8iroKkhg69TCpAdNcxe1oKdo6zlrTDglMSICWBpFyn+hx4P99OZLodtxCREF+OuE
-         RmsWOlcLaAJxSidY2Vx2Ai9hGDnD3AEvKpycGqNpyqRSnvK9WqIJyBHggxpyL9UlH6
-         +w7KmRAJlE+wKbRe0tW92UUFOOdzRqorS/m2ZIlLQ/pB3p6Cmzi5GnbAVt8kdl3TDO
-         K675pl4gmKZ1n3jklLYyQERAbtFEBvSdzB+bVACAYFT443vPFQvbsTcP33GtY4ffYY
-         wg8bIgRstAFQ2aK0qDWcrzo1SQLlOfMF27u2ZjN7x97LJc8dcsUznh1MPgob3qWY2q
-         Tr6jSJaZ8JMBg==
-Message-ID: <b107db96b12f4ab5b2edfbaa42bc0032205d24cc.camel@kernel.org>
-Subject: Re: [PATCH] overlayfs: set ctime when setting mtime and atime
+        b=j8cDSiR1AwCFFS/EoQVT3m/7krDtv+Wf5SnH/mUqHhuoVJ5VooX1/KX/4h5Cer3TH
+         yg7DceQc8oqCCX0JC2r5b5QpYHkxjbD51z3y5RvFKfHajqV6ZD1f7GLy7MCpsiyPjz
+         8/jD4w9pEiOA5Na3xuqUyEuc9WAfGR4a4IZualYjaMaYQFcSPClCmnPeqARlwnfoX3
+         lQUPm0+YsTdN6Rl0GrWZP6pN0QpaoRvVRUb+v4fZ0wLcoSzni86X8/BBXKGdyUhvhC
+         HipeFzo787vehWUKgsUogBX6fBMueIf3Os/oatRYVaYjN7OPIBNJRjD1DmTDI5NpV0
+         Sb//XX3Ea5ZLA==
+Message-ID: <fa8ac10aa7c12f344109be815c6e3da480a33137.camel@kernel.org>
+Subject: Re: [PATCHv2 nfsd/master 7/7] dlm: implement EXPORT_OP_ASYNC_LOCK
 From:   Jeff Layton <jlayton@kernel.org>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Thu, 14 Sep 2023 06:27:15 -0400
-In-Reply-To: <CAOQ4uxhYRnX0NChCU2tsEi7eUPqbqQDeOwQT4ubWUgtCN0OVfA@mail.gmail.com>
-References: <20230913-ctime-v1-1-c6bc509cbc27@kernel.org>
-         <CAOQ4uxhYRnX0NChCU2tsEi7eUPqbqQDeOwQT4ubWUgtCN0OVfA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+To:     Alexander Aring <aahringo@redhat.com>, linux-nfs@vger.kernel.org
+Cc:     gfs2@lists.linux.dev, ocfs2-devel@lists.linux.dev,
+        linux-fsdevel@vger.kernel.org, teigland@redhat.com,
+        rpeterso@redhat.com, agruenba@redhat.com,
+        trond.myklebust@hammerspace.com, anna@kernel.org,
+        chuck.lever@oracle.com
+Date:   Thu, 14 Sep 2023 06:29:17 -0400
+In-Reply-To: <20230912215324.3310111-8-aahringo@redhat.com>
+References: <20230912215324.3310111-1-aahringo@redhat.com>
+         <20230912215324.3310111-8-aahringo@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 MIME-Version: 1.0
@@ -49,86 +48,39 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2023-09-13 at 20:36 +0300, Amir Goldstein wrote:
-> On Wed, Sep 13, 2023 at 4:33=E2=80=AFPM Jeff Layton <jlayton@kernel.org> =
-wrote:
-> >=20
-> > Nathan reported that he was seeing the new warning in
-> > setattr_copy_mgtime pop when starting podman containers. Overlayfs is
-> > trying to set the atime and mtime via notify_change without also
-> > setting the ctime.
-> >=20
-> > POSIX states that when the atime and mtime are updated via utimes() tha=
-t
-> > we must also update the ctime to the current time. The situation with
-> > overlayfs copy-up is analogous, so add ATTR_CTIME to the bitmask.
-> > notify_change will fill in the value.
-> >=20
+On Tue, 2023-09-12 at 17:53 -0400, Alexander Aring wrote:
+> This patch is activating the EXPORT_OP_ASYNC_LOCK export flag to
+> signal lockd that both filesystems are able to handle async lock
+> requests. The cluster filesystems gfs2 and ocfs2 will redirect their
+> lock requests to DLMs plock implementation that can handle async lock
+> requests.
 >=20
-> IDGI, if ctime always needs to be set along with ATIME / MTIME, why not
-> let notify_change() set the bit instead of assert and fix all the callers=
-?
-> But maybe I am missing something.
+> Signed-off-by: Alexander Aring <aahringo@redhat.com>
+> ---
+>  fs/gfs2/export.c  | 1 +
+>  fs/ocfs2/export.c | 1 +
+>  2 files changed, 2 insertions(+)
 >=20
+> diff --git a/fs/gfs2/export.c b/fs/gfs2/export.c
+> index cf40895233f5..ef1013eff936 100644
+> --- a/fs/gfs2/export.c
+> +++ b/fs/gfs2/export.c
+> @@ -192,5 +192,6 @@ const struct export_operations gfs2_export_ops =3D {
+>  	.fh_to_parent =3D gfs2_fh_to_parent,
+>  	.get_name =3D gfs2_get_name,
+>  	.get_parent =3D gfs2_get_parent,
+> +	.flags =3D EXPORT_OP_ASYNC_LOCK,
+>  };
+> =20
+> diff --git a/fs/ocfs2/export.c b/fs/ocfs2/export.c
+> index eaa8c80ace3c..b8b6a191b5cb 100644
+> --- a/fs/ocfs2/export.c
+> +++ b/fs/ocfs2/export.c
+> @@ -280,4 +280,5 @@ const struct export_operations ocfs2_export_ops =3D {
+>  	.fh_to_dentry	=3D ocfs2_fh_to_dentry,
+>  	.fh_to_parent	=3D ocfs2_fh_to_parent,
+>  	.get_parent	=3D ocfs2_get_parent,
+> +	.flags		=3D EXPORT_OP_ASYNC_LOCK,
+>  };
 
-Traditionally notify_change has always been given an explicit mask of
-attrs to change by the caller. I'm a little hesitant to start putting
-POSIX policy in there.
-
-Still, that may be the better thing to do over the long haul. I think
-that there are some other bugs in the notify_change callers as well: for
-instance, cachefiles_adjust_size truncates files, but doesn't update the
-timestamps. I'm pretty sure that's wrong.
-
-I think if we want to change how setattr ctime updates work, we'll
-probably need to do it in the context of a larger notify_change
-overhaul.
-
-> Anyway, I have no objection to the ovl patch.
-> It's fine by me if Christian applies it to the vfs.ctime branch with my A=
-CK.
->=20
-
-Many thanks!
-
-> Thanks,
-> Amir.
->=20
-> > Reported-by: Nathan Chancellor <nathan@kernel.org>
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> > The new WARN_ON_ONCE in setattr_copy_mgtime caught a bug! Fix up
-> > overlayfs to ensure that the ctime on the upper inode is also updated
-> > when copying up the atime and mtime.
-> > ---
-> >  fs/overlayfs/copy_up.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >=20
-> > diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
-> > index d1761ec5866a..ada3fcc9c6d5 100644
-> > --- a/fs/overlayfs/copy_up.c
-> > +++ b/fs/overlayfs/copy_up.c
-> > @@ -337,7 +337,7 @@ static int ovl_set_timestamps(struct ovl_fs *ofs, s=
-truct dentry *upperdentry,
-> >  {
-> >         struct iattr attr =3D {
-> >                 .ia_valid =3D
-> > -                    ATTR_ATIME | ATTR_MTIME | ATTR_ATIME_SET | ATTR_MT=
-IME_SET,
-> > +                    ATTR_ATIME | ATTR_MTIME | ATTR_ATIME_SET | ATTR_MT=
-IME_SET | ATTR_CTIME,
-> >                 .ia_atime =3D stat->atime,
-> >                 .ia_mtime =3D stat->mtime,
-> >         };
-> >=20
-> > ---
-> > base-commit: 9cb8e7c86ac793862e7bea7904b3426942bbd7ef
-> > change-id: 20230913-ctime-299173760dd9
-> >=20
-> > Best regards,
-> > --
-> > Jeff Layton <jlayton@kernel.org>
-> >=20
-
---=20
-Jeff Layton <jlayton@kernel.org>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
