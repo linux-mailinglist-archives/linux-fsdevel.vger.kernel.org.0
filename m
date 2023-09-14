@@ -2,108 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F18579FE85
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Sep 2023 10:35:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35A8579FE95
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Sep 2023 10:39:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236387AbjINIfy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Sep 2023 04:35:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56702 "EHLO
+        id S229891AbjINIjw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Sep 2023 04:39:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236334AbjINIfx (ORCPT
+        with ESMTP id S230234AbjINIjw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Sep 2023 04:35:53 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9478EB
-        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Sep 2023 01:35:49 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 77FD12185C;
-        Thu, 14 Sep 2023 08:35:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1694680548; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=68ixjezFjychLSk/ARwxyqHqjw2JZMbFHwrYo9sIkYE=;
-        b=mqgMj9Fb6jEZpycFdkd3m2zmXf/vVbrgMBt30o46G30EHZK3ohocEYjl0kzS0uYY1jvuzf
-        JyCrxuvOTRgqeQv11qYhswgYRv80bs5mmaefyfISZ2OAsVRz+UNnBIDOmPCE9AVJWoDc+9
-        OmaV1g+9jWftqLNenZtadbjuKApOWP8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1694680548;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=68ixjezFjychLSk/ARwxyqHqjw2JZMbFHwrYo9sIkYE=;
-        b=aoxETUzX8zXPnPS3tqwYigHjpnbkoAq/LU88iuV4AomDR1psertmw+f1bc/z8R+sE63e+j
-        4/b80RxnwM8hP0AQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 68DAE13580;
-        Thu, 14 Sep 2023 08:35:48 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 7eKPGeTFAmWYMAAAMHmgww
-        (envelope-from <jack@suse.cz>); Thu, 14 Sep 2023 08:35:48 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id F1A3EA07C2; Thu, 14 Sep 2023 10:35:47 +0200 (CEST)
-Date:   Thu, 14 Sep 2023 10:35:47 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Reuben Hawkins <reubenhwk@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, amir73il@gmail.com,
-        mszeredi@redhat.com, willy@infradead.org, viro@zeniv.linux.org.uk,
-        brauner@kernel.org
-Subject: Re: [PATCH v2] vfs: fix readahead(2) on block devices
-Message-ID: <20230914083547.zppfoovcc7yemjht@quack3>
-References: <20230911114713.25625-1-reubenhwk@gmail.com>
+        Thu, 14 Sep 2023 04:39:52 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CB761BFC;
+        Thu, 14 Sep 2023 01:39:48 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6852C433C8;
+        Thu, 14 Sep 2023 08:39:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1694680787;
+        bh=ErdQXXYaeVBX6KtsxtBdnX85rtohjDZ0IEg5DDNK3C4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=upfKxjOeWkG/U/pT5EOvCVrvnh+AXChGutV9oXszGOOzSfMupYGZ0nDoyB1Fj9HfQ
+         WDQPGToPYrinncUFqwqbEc3AdPViehNG9MZ27oqyH5Bc2GSflGjAedexK7v88KfGtX
+         8crR9YqYvHr4sUME5C17JiONj1ga0s+XUf2ndY03m4uWPHIelvtMU6+nTpz57hMiMD
+         c8DESAHxo3W50Ks2qFCrcJmX5Iqe1tygZmJITaa9e/Zx2z2NLiZYNyOW4iqGXzHXI2
+         AoTBubApbz4CowunHbS1vx+aiukAxbFgiNDYRLDnDhqIpN20Rx11sLk/hBUT7HAKTs
+         XnC24Sr+7ILRA==
+From:   Christian Brauner <brauner@kernel.org>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>
+Subject: Re: [PATCH] overlayfs: set ctime when setting mtime and atime
+Date:   Thu, 14 Sep 2023 10:39:23 +0200
+Message-Id: <20230914-hautarzt-bangen-f9ed9a2a3152@brauner>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230913-ctime-v1-1-c6bc509cbc27@kernel.org>
+References: <20230913-ctime-v1-1-c6bc509cbc27@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230911114713.25625-1-reubenhwk@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1316; i=brauner@kernel.org; h=from:subject:message-id; bh=ErdQXXYaeVBX6KtsxtBdnX85rtohjDZ0IEg5DDNK3C4=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQyHdtSImJc2tKv9cpCOsFHU3273pZbzWu2MjiXNLFJP+xv z1zVUcrCIMbFICumyOLQbhIut5ynYrNRpgbMHFYmkCEMXJwCMJE+U0aGNdNud4avZYxeeuYCY3NH5D pO8YsH51tWf5v2JfuVje+haoa/gq4LYzjmv7r7bY+t9eTsjJyzcQKTepICY1LObl4VGtzIBwA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 11-09-23 06:47:13, Reuben Hawkins wrote:
-> Readahead was factored to call generic_fadvise.  That refactor added an
-> S_ISREG restriction which broke readahead on block devices.
+On Wed, 13 Sep 2023 09:33:12 -0400, Jeff Layton wrote:
+> Nathan reported that he was seeing the new warning in
+> setattr_copy_mgtime pop when starting podman containers. Overlayfs is
+> trying to set the atime and mtime via notify_change without also
+> setting the ctime.
 > 
-> This change removes the S_ISREG restriction to fix block device readahead.
-> The change also means that readahead will return -ESPIPE on FIFO files
-> instead of -EINVAL.
+> POSIX states that when the atime and mtime are updated via utimes() that
+> we must also update the ctime to the current time. The situation with
+> overlayfs copy-up is analogies, so add ATTR_CTIME to the bitmask.
+> notify_change will fill in the value.
 > 
-> Fixes: 3d8f7615319b ("vfs: implement readahead(2) using POSIX_FADV_WILLNEED")
-> Signed-off-by: Reuben Hawkins <reubenhwk@gmail.com>
+> [...]
 
-Nice catch! Feel free to add:
+Applied to the vfs.ctime branch of the vfs/vfs.git tree.
+Patches in the vfs.ctime branch should appear in linux-next soon.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-								Honza
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-> ---
->  mm/readahead.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/mm/readahead.c b/mm/readahead.c
-> index e815c114de21..ef3b23a41973 100644
-> --- a/mm/readahead.c
-> +++ b/mm/readahead.c
-> @@ -734,8 +734,7 @@ ssize_t ksys_readahead(int fd, loff_t offset, size_t count)
->  	 * on this file, then we must return -EINVAL.
->  	 */
->  	ret = -EINVAL;
-> -	if (!f.file->f_mapping || !f.file->f_mapping->a_ops ||
-> -	    !S_ISREG(file_inode(f.file)->i_mode))
-> +	if (!f.file->f_mapping || !f.file->f_mapping->a_ops)
->  		goto out;
->  
->  	ret = vfs_fadvise(f.file, offset, count, POSIX_FADV_WILLNEED);
-> -- 
-> 2.34.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.ctime
+
+[1/1] overlayfs: set ctime when setting mtime and atime
+      https://git.kernel.org/vfs/vfs/c/f8edd3368615
