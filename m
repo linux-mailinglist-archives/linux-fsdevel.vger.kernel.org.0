@@ -2,59 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D640479F6D8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Sep 2023 03:57:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 778CE79F6DA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Sep 2023 03:57:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234382AbjINB5G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Sep 2023 21:57:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39292 "EHLO
+        id S234394AbjINB5H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Sep 2023 21:57:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233804AbjINB4F (ORCPT
+        with ESMTP id S233741AbjINB4K (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Sep 2023 21:56:05 -0400
-Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E7E4212E
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Sep 2023 18:55:49 -0700 (PDT)
-Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-59b56dab74bso6570397b3.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Sep 2023 18:55:49 -0700 (PDT)
+        Wed, 13 Sep 2023 21:56:10 -0400
+Received: from mail-pj1-x104a.google.com (mail-pj1-x104a.google.com [IPv6:2607:f8b0:4864:20::104a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5EF21FD4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Sep 2023 18:55:50 -0700 (PDT)
+Received: by mail-pj1-x104a.google.com with SMTP id 98e67ed59e1d1-273983789adso399596a91.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Sep 2023 18:55:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1694656548; x=1695261348; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1694656550; x=1695261350; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=BhxGep0GRUEwAUAzFvnYRN6yWfiwAK/IRlQcI8pBhpQ=;
-        b=e7/6zTFxm8G6xsrAvZUmuDMpnu0BLzpds/1OX8d4vOfYN1DtxBqxwcLOZgHTRIQ/5X
-         90pY50iRRJMPwt6alQ5c9vbGFWvGEs4UstLm/cnngn3dD/2KkPueVpTksfVdhYyZhVez
-         rDns+Y18pY5OeaYFp0OOk8gPpHOSWm0uElTUebYOKIfBOO+1VilLrSTtn5MGxGBQ+Xne
-         gpnqCnn2qCV5Tbl84pluofhKAOLLQGhrI12t8rk3OukGL+dOs2DCj3VxBJhKn142tEUC
-         CjTDvqTqQusNrnCMWrRrOGXke/MJ8rN1Bi/ukZCelJvnjzCZV8PrJboUUmOB6cEVmFSC
-         hdFw==
+        bh=o3ncWp87Xrx57ugLKytKkEWMncW9euHhZSqjHZ5fZmU=;
+        b=xrpTQCRO188eVYxzxsXhqDjyMVpuiKL83cjmt932352HL+pIlfNJ1nk0b88uIhVN35
+         UA1yQEFw/KF9HYJpLrtTO02A+8GcoTvd/bTjl7s5Sjy3G3znJOF6Lx+19e7v3HIfkcMt
+         QGTfpF+f3VdBzhzpGVhf4kCcySHDohbUK7UoIldLrlMN6gqwFDO+IdrOsLwzMDAC4d0u
+         q4ZS+19Pe+3ITSyYjlwxYOP8MVoG2v1zX/XL2JPP9zUAKKfIsS0IwCkVkICmj+858FGX
+         VeHwMIycfUHw9+D6UMpAk/lnePkT03YmBkI5FUDf6hPDvMFR+DF07nGakSRhLOwgpIk5
+         9Mmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694656548; x=1695261348;
+        d=1e100.net; s=20230601; t=1694656550; x=1695261350;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=BhxGep0GRUEwAUAzFvnYRN6yWfiwAK/IRlQcI8pBhpQ=;
-        b=HaHCBqa3ZPd2dIfWh7Zt1L4sbtPLPNz4myHb0uCRbi2/sHhwa/J8Bx6DQ6ZercETMI
-         o+OS3VUDPV/DbP75QOh8CHKg3f+kzgUMqBGIQKDwtgki6IZA1+lnCSo33TMfbqk3NlIa
-         OCm6hdosvVBA9Bz6RCrslgKuwxUd0nauFF7GpHiCN2NIR6LerZFWnGY46iSP0lFHRM7p
-         4BIb+8XPG16/ctkqjmBtGzum76gjM29/C239csTgJzUApY4+x+ba118n+cZIx+Ybuh5G
-         6OIcwv9LEMT36yBBCncywYf22+BruQ7sh/Bylp3S79wevok7n8ERE4ad7NdCa+skeh5Y
-         8Krw==
-X-Gm-Message-State: AOJu0YzzAQOTTJx3WuGJ1eJPIy0Hda6Bpj/vGEtShspTJFgSvw8q30j8
-        m68sOaHc5Ri2rqUDh5DtVJRX0HkAznQ=
-X-Google-Smtp-Source: AGHT+IFIu1rjOq9FW+JbDj5fY4BKSa/epsGGWccSSMIHRlmCarPy2ezJLxiJZod49VfvzwgQV9RD5huQPI8=
+        bh=o3ncWp87Xrx57ugLKytKkEWMncW9euHhZSqjHZ5fZmU=;
+        b=mTha1YOi5sq6mHC+TqOjVhXdPzYGGTvCW3gO99tzNMHmhOp2Oh+y+A430JrrIMD4kX
+         AnZyG0mnLMJxqSQixQoLzpzAi1xAmCvWDMveLJi6V/QJf67/wc3YyHwZUS/BCgFIIY+z
+         Qh2j1Yj7L2Bp44pZWdVW6svxHPcQN0TBf67o4um0Gu8i5rl4k8yNar9Q32Y7V0OjIcar
+         JCzOyJ9bE8ENACPKVWqjvkomfOkCOLDuYLVXP6VG1rOTshmBIC8q+nTYlT38LZBghstK
+         ReqaBm5XTnxnHO6eN6KcjZYvUfI3ZH4TbzcuhZqi/jqbiqp5MPx/8VcpjWEmlQYvDu+/
+         hblA==
+X-Gm-Message-State: AOJu0Yx/Ldf934Bm4fLpHMCbyrNd3dEFpYA+yGzyhq5wW5/XT/9oifEb
+        REO3LvqPBY81Y3kR37aosMxFvlN6clo=
+X-Google-Smtp-Source: AGHT+IGMCwYjc3KV33cqzPB4diNP6tSuJVwUoEl1ZPejd5zU17fdiva4810hnuR1hhtSq7kLalb8uulnWEI=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a25:4207:0:b0:d81:536d:2978 with SMTP id
- p7-20020a254207000000b00d81536d2978mr74175yba.2.1694656548405; Wed, 13 Sep
- 2023 18:55:48 -0700 (PDT)
+ (user=seanjc job=sendgmr) by 2002:a17:902:6bca:b0:1b8:80c9:a98e with SMTP id
+ m10-20020a1709026bca00b001b880c9a98emr149786plt.13.1694656550053; Wed, 13 Sep
+ 2023 18:55:50 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date:   Wed, 13 Sep 2023 18:55:04 -0700
+Date:   Wed, 13 Sep 2023 18:55:05 -0700
 In-Reply-To: <20230914015531.1419405-1-seanjc@google.com>
 Mime-Version: 1.0
 References: <20230914015531.1419405-1-seanjc@google.com>
 X-Mailer: git-send-email 2.42.0.283.g2d96d420d3-goog
-Message-ID: <20230914015531.1419405-7-seanjc@google.com>
-Subject: [RFC PATCH v12 06/33] KVM: Introduce KVM_SET_USER_MEMORY_REGION2
+Message-ID: <20230914015531.1419405-8-seanjc@google.com>
+Subject: [RFC PATCH v12 07/33] KVM: Add KVM_EXIT_MEMORY_FAULT exit to report
+ faults to userspace
 From:   Sean Christopherson <seanjc@google.com>
 To:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
         Oliver Upton <oliver.upton@linux.dev>,
@@ -99,193 +100,171 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Introduce a "version 2" of KVM_SET_USER_MEMORY_REGION so that additional
-information can be supplied without setting userspace up to fail.  The
-padding in the new kvm_userspace_memory_region2 structure will be used to
-pass a file descriptor in addition to the userspace_addr, i.e. allow
-userspace to point at a file descriptor and map memory into a guest that
-is NOT mapped into host userspace.
+From: Chao Peng <chao.p.peng@linux.intel.com>
 
-Alternatively, KVM could simply add "struct kvm_userspace_memory_region2"
-without a new ioctl(), but as Paolo pointed out, adding a new ioctl()
-makes detection of bad flags a bit more robust, e.g. if the new fd field
-is guarded only by a flag and not a new ioctl(), then a userspace bug
-(setting a "bad" flag) would generate out-of-bounds access instead of an
--EINVAL error.
+Add a new KVM exit type to allow userspace to handle memory faults that
+KVM cannot resolve, but that userspace *may* be able to handle (without
+terminating the guest).
 
-Cc: Jarkko Sakkinen <jarkko@kernel.org>
-Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
+KVM will initially use KVM_EXIT_MEMORY_FAULT to report implicit
+conversions between private and shared memory.  With guest private memory,
+there will be  two kind of memory conversions:
+
+  - explicit conversion: happens when the guest explicitly calls into KVM
+    to map a range (as private or shared)
+
+  - implicit conversion: happens when the guest attempts to access a gfn
+    that is configured in the "wrong" state (private vs. shared)
+
+On x86 (first architecture to support guest private memory), explicit
+conversions will be reported via KVM_EXIT_HYPERCALL+KVM_HC_MAP_GPA_RANGE,
+but reporting KVM_EXIT_HYPERCALL for implicit conversions is undesriable
+as there is (obviously) no hypercall, and there is no guarantee that the
+guest actually intends to convert between private and shared, i.e. what
+KVM thinks is an implicit conversion "request" could actually be the
+result of a guest code bug.
+
+KVM_EXIT_MEMORY_FAULT will be used to report memory faults that appear to
+be implicit conversions.
+
+Place "struct memory_fault" in a second anonymous union so that filling
+memory_fault doesn't clobber state from other yet-to-be-fulfilled exits,
+and to provide additional information if KVM does NOT ultimately exit to
+userspace with KVM_EXIT_MEMORY_FAULT, e.g. if KVM suppresses (or worse,
+loses) the exit, as KVM often suppresses exits for memory failures that
+occur when accessing paravirt data structures.  The initial usage for
+private memory will be all-or-nothing, but other features such as the
+proposed "userfault on missing mappings" support will use
+KVM_EXIT_MEMORY_FAULT for potentially _all_ guest memory accesses, i.e.
+will run afoul of KVM's various quirks.
+
+Use bit 3 for flagging private memory so that KVM can use bits 0-2 for
+capturing RWX behavior if/when userspace needs such information.
+
+Note!  To allow for future possibilities where KVM reports
+KVM_EXIT_MEMORY_FAULT and fills run->memory_fault on _any_ unresolved
+fault, KVM returns "-EFAULT" (-1 with errno == EFAULT from userspace's
+perspective), not '0'!  Due to historical baggage within KVM, exiting to
+userspace with '0' from deep callstacks, e.g. in emulation paths, is
+infeasible as doing so would require a near-complete overhaul of KVM,
+whereas KVM already propagates -errno return codes to userspace even when
+the -errno originated in a low level helper.
+
+Link: https://lore.kernel.org/all/20230908222905.1321305-5-amoorthy@google.com
+Cc: Anish Moorthy <amoorthy@google.com>
+Suggested-by: Sean Christopherson <seanjc@google.com>
+Co-developed-by: Yu Zhang <yu.c.zhang@linux.intel.com>
+Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
+Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
+Co-developed-by: Sean Christopherson <seanjc@google.com>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/x86.c       |  2 +-
- include/linux/kvm_host.h |  4 ++--
- include/uapi/linux/kvm.h | 13 +++++++++++++
- virt/kvm/kvm_main.c      | 38 ++++++++++++++++++++++++++++++--------
- 4 files changed, 46 insertions(+), 11 deletions(-)
+ Documentation/virt/kvm/api.rst | 24 ++++++++++++++++++++++++
+ include/linux/kvm_host.h       | 15 +++++++++++++++
+ include/uapi/linux/kvm.h       | 24 ++++++++++++++++++++++++
+ 3 files changed, 63 insertions(+)
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 6c9c81e82e65..8356907079e1 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -12447,7 +12447,7 @@ void __user * __x86_set_memory_region(struct kvm *kvm, int id, gpa_t gpa,
- 	}
+diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
+index 21a7578142a1..e28a13439a95 100644
+--- a/Documentation/virt/kvm/api.rst
++++ b/Documentation/virt/kvm/api.rst
+@@ -6702,6 +6702,30 @@ array field represents return values. The userspace should update the return
+ values of SBI call before resuming the VCPU. For more details on RISC-V SBI
+ spec refer, https://github.com/riscv/riscv-sbi-doc.
  
- 	for (i = 0; i < KVM_ADDRESS_SPACE_NUM; i++) {
--		struct kvm_userspace_memory_region m;
-+		struct kvm_userspace_memory_region2 m;
++::
++
++		/* KVM_EXIT_MEMORY_FAULT */
++		struct {
++  #define KVM_MEMORY_EXIT_FLAG_PRIVATE	(1ULL << 3)
++			__u64 flags;
++			__u64 gpa;
++			__u64 size;
++		} memory;
++
++KVM_EXIT_MEMORY_FAULT indicates the vCPU has encountered a memory fault that
++could not be resolved by KVM.  The 'gpa' and 'size' (in bytes) describe the
++guest physical address range [gpa, gpa + size) of the fault.  The 'flags' field
++describes properties of the faulting access that are likely pertinent:
++
++ - KVM_MEMORY_EXIT_FLAG_PRIVATE - When set, indicates the memory fault occurred
++   on a private memory access.  When clear, indicates the fault occurred on a
++   shared access.
++
++Note!  KVM_EXIT_MEMORY_FAULT is unique among all KVM exit reasons in that it
++accompanies a return code of '-1', not '0'!  errno will always be set to EFAULT
++or EHWPOISON when KVM exits with KVM_EXIT_MEMORY_FAULT, userspace should assume
++kvm_run.exit_reason is stale/undefined for all other error numbers.
++
+ ::
  
- 		m.slot = id | (i << 16);
- 		m.flags = 0;
+     /* KVM_EXIT_NOTIFY */
 diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index 5faba69403ac..4e741ff27af3 100644
+index 4e741ff27af3..d8c6ce6c8211 100644
 --- a/include/linux/kvm_host.h
 +++ b/include/linux/kvm_host.h
-@@ -1146,9 +1146,9 @@ enum kvm_mr_change {
- };
+@@ -2327,4 +2327,19 @@ static inline void kvm_account_pgtable_pages(void *virt, int nr)
+ /* Max number of entries allowed for each kvm dirty ring */
+ #define  KVM_DIRTY_RING_MAX_ENTRIES  65536
  
- int kvm_set_memory_region(struct kvm *kvm,
--			  const struct kvm_userspace_memory_region *mem);
-+			  const struct kvm_userspace_memory_region2 *mem);
- int __kvm_set_memory_region(struct kvm *kvm,
--			    const struct kvm_userspace_memory_region *mem);
-+			    const struct kvm_userspace_memory_region2 *mem);
- void kvm_arch_free_memslot(struct kvm *kvm, struct kvm_memory_slot *slot);
- void kvm_arch_memslots_updated(struct kvm *kvm, u64 gen);
- int kvm_arch_prepare_memory_region(struct kvm *kvm,
++static inline void kvm_prepare_memory_fault_exit(struct kvm_vcpu *vcpu,
++						 gpa_t gpa, gpa_t size,
++						 bool is_write, bool is_exec,
++						 bool is_private)
++{
++	vcpu->run->exit_reason = KVM_EXIT_MEMORY_FAULT;
++	vcpu->run->memory_fault.gpa = gpa;
++	vcpu->run->memory_fault.size = size;
++
++	/* RWX flags are not (yet) defined or communicated to userspace. */
++	vcpu->run->memory_fault.flags = 0;
++	if (is_private)
++		vcpu->run->memory_fault.flags |= KVM_MEMORY_EXIT_FLAG_PRIVATE;
++}
++
+ #endif
 diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-index 13065dd96132..bd1abe067f28 100644
+index bd1abe067f28..d2d913acf0df 100644
 --- a/include/uapi/linux/kvm.h
 +++ b/include/uapi/linux/kvm.h
-@@ -95,6 +95,16 @@ struct kvm_userspace_memory_region {
- 	__u64 userspace_addr; /* start of the userspace allocated memory */
+@@ -274,6 +274,7 @@ struct kvm_xen_exit {
+ #define KVM_EXIT_RISCV_SBI        35
+ #define KVM_EXIT_RISCV_CSR        36
+ #define KVM_EXIT_NOTIFY           37
++#define KVM_EXIT_MEMORY_FAULT     38
+ 
+ /* For KVM_EXIT_INTERNAL_ERROR */
+ /* Emulate instruction failed. */
+@@ -541,6 +542,29 @@ struct kvm_run {
+ 		struct kvm_sync_regs regs;
+ 		char padding[SYNC_REGS_SIZE_BYTES];
+ 	} s;
++
++	/*
++	 * This second exit union holds structs for exit types which may be
++	 * triggered after KVM has already initiated a different exit, or which
++	 * may be ultimately dropped by KVM.
++	 *
++	 * For example, because of limitations in KVM's uAPI, KVM x86 can
++	 * generate a memory fault exit an MMIO exit is initiated (exit_reason
++	 * and kvm_run.mmio are filled).  And conversely, KVM often disables
++	 * paravirt features if a memory fault occurs when accessing paravirt
++	 * data instead of reporting the error to userspace.
++	 */
++	union {
++		/* KVM_EXIT_MEMORY_FAULT */
++		struct {
++#define KVM_MEMORY_EXIT_FLAG_PRIVATE	(1ULL << 3)
++			__u64 flags;
++			__u64 gpa;
++			__u64 size;
++		} memory_fault;
++		/* Fix the size of the union. */
++		char padding2[256];
++	};
  };
  
-+/* for KVM_SET_USER_MEMORY_REGION2 */
-+struct kvm_userspace_memory_region2 {
-+	__u32 slot;
-+	__u32 flags;
-+	__u64 guest_phys_addr;
-+	__u64 memory_size;
-+	__u64 userspace_addr;
-+	__u64 pad[16];
-+};
-+
- /*
-  * The bit 0 ~ bit 15 of kvm_userspace_memory_region::flags are visible for
-  * userspace, other bits are reserved for kvm internal use which are defined
-@@ -1192,6 +1202,7 @@ struct kvm_ppc_resize_hpt {
- #define KVM_CAP_COUNTER_OFFSET 227
- #define KVM_CAP_ARM_EAGER_SPLIT_CHUNK_SIZE 228
- #define KVM_CAP_ARM_SUPPORTED_BLOCK_SIZES 229
-+#define KVM_CAP_USER_MEMORY2 230
- 
- #ifdef KVM_CAP_IRQ_ROUTING
- 
-@@ -1473,6 +1484,8 @@ struct kvm_vfio_spapr_tce {
- 					struct kvm_userspace_memory_region)
- #define KVM_SET_TSS_ADDR          _IO(KVMIO,   0x47)
- #define KVM_SET_IDENTITY_MAP_ADDR _IOW(KVMIO,  0x48, __u64)
-+#define KVM_SET_USER_MEMORY_REGION2 _IOW(KVMIO, 0x49, \
-+					 struct kvm_userspace_memory_region2)
- 
- /* enable ucontrol for s390 */
- struct kvm_s390_ucas_mapping {
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 8d21757cd5e9..7c0e38752526 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -1571,7 +1571,7 @@ static void kvm_replace_memslot(struct kvm *kvm,
- 	}
- }
- 
--static int check_memory_region_flags(const struct kvm_userspace_memory_region *mem)
-+static int check_memory_region_flags(const struct kvm_userspace_memory_region2 *mem)
- {
- 	u32 valid_flags = KVM_MEM_LOG_DIRTY_PAGES;
- 
-@@ -1973,7 +1973,7 @@ static bool kvm_check_memslot_overlap(struct kvm_memslots *slots, int id,
-  * Must be called holding kvm->slots_lock for write.
-  */
- int __kvm_set_memory_region(struct kvm *kvm,
--			    const struct kvm_userspace_memory_region *mem)
-+			    const struct kvm_userspace_memory_region2 *mem)
- {
- 	struct kvm_memory_slot *old, *new;
- 	struct kvm_memslots *slots;
-@@ -2077,7 +2077,7 @@ int __kvm_set_memory_region(struct kvm *kvm,
- EXPORT_SYMBOL_GPL(__kvm_set_memory_region);
- 
- int kvm_set_memory_region(struct kvm *kvm,
--			  const struct kvm_userspace_memory_region *mem)
-+			  const struct kvm_userspace_memory_region2 *mem)
- {
- 	int r;
- 
-@@ -2089,7 +2089,7 @@ int kvm_set_memory_region(struct kvm *kvm,
- EXPORT_SYMBOL_GPL(kvm_set_memory_region);
- 
- static int kvm_vm_ioctl_set_memory_region(struct kvm *kvm,
--					  struct kvm_userspace_memory_region *mem)
-+					  struct kvm_userspace_memory_region2 *mem)
- {
- 	if ((u16)mem->slot >= KVM_USER_MEM_SLOTS)
- 		return -EINVAL;
-@@ -4559,6 +4559,7 @@ static int kvm_vm_ioctl_check_extension_generic(struct kvm *kvm, long arg)
- {
- 	switch (arg) {
- 	case KVM_CAP_USER_MEMORY:
-+	case KVM_CAP_USER_MEMORY2:
- 	case KVM_CAP_DESTROY_MEMORY_REGION_WORKS:
- 	case KVM_CAP_JOIN_MEMORY_REGIONS_WORKS:
- 	case KVM_CAP_INTERNAL_ERROR_DATA:
-@@ -4814,6 +4815,14 @@ static int kvm_vm_ioctl_get_stats_fd(struct kvm *kvm)
- 	return fd;
- }
- 
-+#define SANITY_CHECK_MEM_REGION_FIELD(field)					\
-+do {										\
-+	BUILD_BUG_ON(offsetof(struct kvm_userspace_memory_region, field) !=		\
-+		     offsetof(struct kvm_userspace_memory_region2, field));	\
-+	BUILD_BUG_ON(sizeof_field(struct kvm_userspace_memory_region, field) !=		\
-+		     sizeof_field(struct kvm_userspace_memory_region2, field));	\
-+} while (0)
-+
- static long kvm_vm_ioctl(struct file *filp,
- 			   unsigned int ioctl, unsigned long arg)
- {
-@@ -4836,15 +4845,28 @@ static long kvm_vm_ioctl(struct file *filp,
- 		r = kvm_vm_ioctl_enable_cap_generic(kvm, &cap);
- 		break;
- 	}
-+	case KVM_SET_USER_MEMORY_REGION2:
- 	case KVM_SET_USER_MEMORY_REGION: {
--		struct kvm_userspace_memory_region kvm_userspace_mem;
-+		struct kvm_userspace_memory_region2 mem;
-+		unsigned long size;
-+
-+		if (ioctl == KVM_SET_USER_MEMORY_REGION)
-+			size = sizeof(struct kvm_userspace_memory_region);
-+		else
-+			size = sizeof(struct kvm_userspace_memory_region2);
-+
-+		/* Ensure the common parts of the two structs are identical. */
-+		SANITY_CHECK_MEM_REGION_FIELD(slot);
-+		SANITY_CHECK_MEM_REGION_FIELD(flags);
-+		SANITY_CHECK_MEM_REGION_FIELD(guest_phys_addr);
-+		SANITY_CHECK_MEM_REGION_FIELD(memory_size);
-+		SANITY_CHECK_MEM_REGION_FIELD(userspace_addr);
- 
- 		r = -EFAULT;
--		if (copy_from_user(&kvm_userspace_mem, argp,
--						sizeof(kvm_userspace_mem)))
-+		if (copy_from_user(&mem, argp, size))
- 			goto out;
- 
--		r = kvm_vm_ioctl_set_memory_region(kvm, &kvm_userspace_mem);
-+		r = kvm_vm_ioctl_set_memory_region(kvm, &mem);
- 		break;
- 	}
- 	case KVM_GET_DIRTY_LOG: {
+ /* for KVM_REGISTER_COALESCED_MMIO / KVM_UNREGISTER_COALESCED_MMIO */
 -- 
 2.42.0.283.g2d96d420d3-goog
 
