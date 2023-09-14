@@ -2,218 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 75CE37A0E82
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Sep 2023 21:50:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40EAE7A0F15
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Sep 2023 22:40:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233122AbjINTuX convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Sep 2023 15:50:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44064 "EHLO
+        id S229709AbjINUkC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Sep 2023 16:40:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229462AbjINTuW (ORCPT
+        with ESMTP id S229487AbjINUkC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Sep 2023 15:50:22 -0400
-Received: from out02.mta.xmission.com (out02.mta.xmission.com [166.70.13.232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 545AD26AB;
-        Thu, 14 Sep 2023 12:50:18 -0700 (PDT)
-Received: from in02.mta.xmission.com ([166.70.13.52]:38982)
-        by out02.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1qgsLn-00GZhg-4r; Thu, 14 Sep 2023 13:50:07 -0600
-Received: from ip68-227-168-167.om.om.cox.net ([68.227.168.167]:33022 helo=email.froward.int.ebiederm.org.xmission.com)
-        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1qgsLl-003z6W-RZ; Thu, 14 Sep 2023 13:50:06 -0600
-From:   "Eric W. Biederman" <ebiederm@xmission.com>
-To:     Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Mark Brown <broonie@kernel.org>, Willy Tarreau <w@1wt.eu>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Sebastian Ott <sebott@redhat.com>,
-        stable@vger.kernel.org
-References: <20230914-bss-alloc-v1-1-78de67d2c6dd@weissschuh.net>
-Date:   Thu, 14 Sep 2023 14:49:44 -0500
-In-Reply-To: <20230914-bss-alloc-v1-1-78de67d2c6dd@weissschuh.net> ("Thomas
-        =?utf-8?Q?Wei=C3=9Fschuh=22's?= message of "Thu, 14 Sep 2023 17:59:21
- +0200")
-Message-ID: <87fs3gwn53.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+        Thu, 14 Sep 2023 16:40:02 -0400
+Received: from mail-yw1-x1136.google.com (mail-yw1-x1136.google.com [IPv6:2607:f8b0:4864:20::1136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D913F2697
+        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Sep 2023 13:39:54 -0700 (PDT)
+Received: by mail-yw1-x1136.google.com with SMTP id 00721157ae682-5924093a9b2so16458007b3.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Sep 2023 13:39:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1694723994; x=1695328794; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NaSIjMfdl0Gv6CgKXRD6SAmPWndDpWS6dyBZZ4689K4=;
+        b=N5vvMHout599KVr+BGn43S8hqeXB+KRKk6fLGZeqH/6Sa/KHg2mV1dqbVR4OAGBegk
+         Ji5qkNbtns/pRRU4ch0nMHYxILVIki++jUhPsRYJEzKDXwQ3uR6+euAmw7kIRxHk34NN
+         t6m3FY6bN7ptMEUgR4bI3pPfJwdUF1GcsxBDRvFIsHARq4ZzeSAaeHrZD4DvmpJG2usa
+         A6+OMkrr3cpHV9CqRMrtKpuRRz5Tz5V/koYSkndU4SRwuaxDvcx4LjBYwxfELnfuT5i3
+         48NTSzk/fqv2BDjyvYRESc8yRbNb4U+EQY62len0BNjVClZ73w1Zao5CdVDH9iS4jADm
+         eMhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694723994; x=1695328794;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NaSIjMfdl0Gv6CgKXRD6SAmPWndDpWS6dyBZZ4689K4=;
+        b=BDKqTHHvQ5wr9fGw3Ggfq2JCDjcHcsT/km26dHSb9OceEA1Ys0VeIWgfkW8YAHkFK4
+         j5vRd2F679LaMWqIc7h2iU81EnOjlMmteVpQlUF3fszN04yqUXoEkrsE7PyfKJKfUP3c
+         Ma4NoUkDUs7l/ZnaM4VQdWMP+HL9D7DoDsktedmFYxk0jVztrgLeyHbXf7MHE7FESc3F
+         7JW6Wfuc8CDEgy30BcCv9kKdVfk3CTnsh9HCTeCFw1zEuIMgTolyhLdJVbxAdliCDQrw
+         VJbwLVnMccsHVVHdZEniVunHjHcqdTdaz2TJQlMs0Cw7LHA69GUwoC1TCefzI0gqeeSB
+         enpw==
+X-Gm-Message-State: AOJu0YwASFtxYra/Ch7sN9mrFnavd5YaD0CtJfZIX0U/n9J58tsovz5b
+        Ue6XMDzz23HE96atlFArOF0BE3YhBPWwCFhZlhKP
+X-Google-Smtp-Source: AGHT+IHq8rrjq9tCJqLC7OfNa2hY3WISMCd4iUOBtPL6TwaHsYbzZZlii/9C2ThIbkYmqI7J/8s3pycN3nmMnaBACaI=
+X-Received: by 2002:a0d:c942:0:b0:577:189b:ad4 with SMTP id
+ l63-20020a0dc942000000b00577189b0ad4mr6892155ywd.48.1694723994051; Thu, 14
+ Sep 2023 13:39:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-XM-SPF: eid=1qgsLl-003z6W-RZ;;;mid=<87fs3gwn53.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.168.167;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX18h1j36igoeR9FeBDXb/u1JtAQea+Mzym8=
-X-SA-Exim-Connect-IP: 68.227.168.167
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
-X-Spam-Level: **
-X-Spam-Status: No, score=2.2 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,LotsOfNums_01,T_TM2_M_HEADER_IN_MSG,XM_B_Unicode,
-        XM_Multi_Part_URI shortcircuit=no autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        *  1.2 LotsOfNums_01 BODY: Lots of long strings of numbers
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        *  0.0 XM_B_Unicode BODY: Testing for specific types of unicode
-        *  1.2 XM_Multi_Part_URI URI: Long-Multi-Part URIs
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: =?ISO-8859-1?Q?**;Thomas Wei=c3=9fschuh <linux@weissschuh.net>?=
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 542 ms - load_scoreonly_sql: 0.03 (0.0%),
-        signal_user_changed: 10 (1.9%), b_tie_ro: 9 (1.6%), parse: 1.00 (0.2%),
-         extract_message_metadata: 17 (3.1%), get_uri_detail_list: 2.7 (0.5%),
-        tests_pri_-2000: 10 (1.8%), tests_pri_-1000: 2.4 (0.5%),
-        tests_pri_-950: 1.17 (0.2%), tests_pri_-900: 1.00 (0.2%),
-        tests_pri_-200: 0.78 (0.1%), tests_pri_-100: 14 (2.7%), tests_pri_-90:
-        66 (12.3%), check_bayes: 65 (11.9%), b_tokenize: 10 (1.9%),
-        b_tok_get_all: 12 (2.2%), b_comp_prob: 4.0 (0.7%), b_tok_touch_all: 35
-        (6.4%), b_finish: 0.94 (0.2%), tests_pri_0: 362 (66.7%),
-        check_dkim_signature: 0.56 (0.1%), check_dkim_adsp: 1.89 (0.3%),
-        poll_dns_idle: 42 (7.8%), tests_pri_10: 1.98 (0.4%), tests_pri_500: 52
-        (9.5%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH RFC] binfmt_elf: fully allocate bss pages
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+References: <20230913152238.905247-1-mszeredi@redhat.com> <20230913152238.905247-3-mszeredi@redhat.com>
+In-Reply-To: <20230913152238.905247-3-mszeredi@redhat.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 14 Sep 2023 16:39:43 -0400
+Message-ID: <CAHC9VhSQb0fYz9FqEu-1jQ1UNsnt-asrKuPt4ufui92GC+=5=Q@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/3] add statmnt(2) syscall
+To:     Miklos Szeredi <mszeredi@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
+        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
+        Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Thomas Weißschuh <linux@weissschuh.net> writes:
-
-> When allocating the pages for bss the start address needs to be rounded
-> down instead of up.
-> Otherwise the start of the bss segment may be unmapped.
+On Wed, Sep 13, 2023 at 11:23=E2=80=AFAM Miklos Szeredi <mszeredi@redhat.co=
+m> wrote:
 >
-> The was reported to happen on Aarch64:
-
-Those program headers you quote look corrupt.
-
-The address 0x41ffe8 is not 0x10000 aligned.
-
-I don't think anything in the elf specification allows that.
-
-The most common way to have bss is for a elf segment to have a larger
-memsize than filesize.  In which case rounding up is the correct way to
-handle things.
-
-We definitely need to verify the appended bss case works, before
-taking this patch, or we will get random application failures
-because parts of the data segment are being zeroed, or the binaries
-won't load because the bss won't be able to map over the initialized data.
-
-
-The note segment living at a conflicting virtual address also looks
-suspicious.   It is probably harmless, as note segments are not
-loaded.
-
-
-Are you by any chance using an experimental linker?
-
-
-In general every segment in an elf executable needs to be aligned to the
-SYSVABI's architecture page size.  I think that is 64k on ARM.  Which it
-looks like the linker tried to implement by setting the alignment to
-0x10000, and then ignored by putting a byte offset beginning to the
-page.
-
-At a minimum someone needs to sort through what the elf specification
-says needs to happen is a weird case like this where the start address
-of a load segment does not match the alignment of the segment.
-
-To see how common this is I looked at a binary known to be working, and
-my /usr/bin/ls binary has one segment that has one of these unaligned
-starts as well.
-
-So it must be defined to work somewhere but I need to see the definition
-to even have a good opinion on the nonsense of saying an unaligned value
-should be aligned.
-
-
-All I know is that we need to limit our support to what memory mapping
-pieces from the elf executable can support.  Which at a minimum requires:
-	virt_addr % ELF_MIN_ALIGN == file_offset % ELF_MIN_ALIGN
-
-
-
-Eric
-
-
-
-
-
-
-
-
-
-
-> Memory allocated by set_brk():
-> Before: start=0x420000 end=0x420000
-> After:  start=0x41f000 end=0x420000
+> Add a way to query attributes of a single mount instead of having to pars=
+e
+> the complete /proc/$PID/mountinfo, which might be huge.
 >
-> The triggering binary looks like this:
+> Lookup the mount by the old (32bit) or new (64bit) mount ID.  If a mount
+> needs to be queried based on path, then statx(2) can be used to first que=
+ry
+> the mount ID belonging to the path.
 >
->     Elf file type is EXEC (Executable file)
->     Entry point 0x400144
->     There are 4 program headers, starting at offset 64
+> Design is based on a suggestion by Linus:
 >
->     Program Headers:
->       Type           Offset             VirtAddr           PhysAddr
->                      FileSiz            MemSiz              Flags  Align
->       LOAD           0x0000000000000000 0x0000000000400000 0x0000000000400000
->                      0x0000000000000178 0x0000000000000178  R E    0x10000
->       LOAD           0x000000000000ffe8 0x000000000041ffe8 0x000000000041ffe8
->                      0x0000000000000000 0x0000000000000008  RW     0x10000
->       NOTE           0x0000000000000120 0x0000000000400120 0x0000000000400120
->                      0x0000000000000024 0x0000000000000024  R      0x4
->       GNU_STACK      0x0000000000000000 0x0000000000000000 0x0000000000000000
->                      0x0000000000000000 0x0000000000000000  RW     0x10
+>   "So I'd suggest something that is very much like "statfsat()", which ge=
+ts
+>    a buffer and a length, and returns an extended "struct statfs" *AND*
+>    just a string description at the end."
 >
->      Section to Segment mapping:
->       Segment Sections...
->        00     .note.gnu.build-id .text .eh_frame
->        01     .bss
->        02     .note.gnu.build-id
->        03
+> The interface closely mimics that of statx.
 >
-> Reported-by: Sebastian Ott <sebott@redhat.com>
-> Closes: https://lore.kernel.org/lkml/5d49767a-fbdc-fbe7-5fb2-d99ece3168cb@redhat.com/
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> Handle ASCII attributes by appending after the end of the structure (as p=
+er
+> above suggestion).  Allow querying multiple string attributes with
+> individual offset/length for each.  String are nul terminated (terminatio=
+n
+> isn't counted in length).
+>
+> Mount options are also delimited with nul characters.  Unlike proc, speci=
+al
+> characters are not quoted.
+>
+> Link: https://lore.kernel.org/all/CAHk-=3Dwh5YifP7hzKSbwJj94+DZ2czjrZsczy=
+6GBimiogZws=3Drg@mail.gmail.com/
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 > ---
->
-> I'm not really familiar with the ELF loading process, so putting this
-> out as RFC.
->
-> A example binary compiled with aarch64-linux-gnu-gcc 13.2.0 is available
-> at https://test.t-8ch.de/binfmt-bss-repro.bin
-> ---
->  fs/binfmt_elf.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-> index 7b3d2d491407..4008a57d388b 100644
-> --- a/fs/binfmt_elf.c
-> +++ b/fs/binfmt_elf.c
-> @@ -112,7 +112,7 @@ static struct linux_binfmt elf_format = {
->  
->  static int set_brk(unsigned long start, unsigned long end, int prot)
->  {
-> -	start = ELF_PAGEALIGN(start);
-> +	start = ELF_PAGESTART(start);
->  	end = ELF_PAGEALIGN(end);
->  	if (end > start) {
->  		/*
->
-> ---
-> base-commit: aed8aee11130a954356200afa3f1b8753e8a9482
-> change-id: 20230914-bss-alloc-f523fa61718c
->
-> Best regards,
+>  arch/x86/entry/syscalls/syscall_64.tbl |   1 +
+>  fs/internal.h                          |   5 +
+>  fs/namespace.c                         | 312 ++++++++++++++++++++++++-
+>  fs/proc_namespace.c                    |  19 +-
+>  fs/statfs.c                            |   1 +
+>  include/linux/syscalls.h               |   3 +
+>  include/uapi/asm-generic/unistd.h      |   5 +-
+>  include/uapi/linux/mount.h             |  36 +++
+>  8 files changed, 373 insertions(+), 9 deletions(-)
+
+...
+
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index de47c5f66e17..088a52043bba 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+
+...
+
+> +static int do_statmnt(struct stmt_state *s)
+> +{
+> +       struct statmnt *sm =3D &s->sm;
+> +       struct mount *m =3D real_mount(s->mnt);
+> +
+> +       if (!capable(CAP_SYS_ADMIN) &&
+> +           !is_path_reachable(m, m->mnt.mnt_root, &s->root))
+> +               return -EPERM;
+
+I realize statmnt() is different from fstatfs(), but from an access
+control perspective they look a lot alike to me which is why I think
+we should probably have a security_sb_statfs() call here.  Same thing
+for the listmnt() syscall in patch 3/3.
+
+> +       stmt_numeric(s, STMT_SB_BASIC, stmt_sb_basic);
+> +       stmt_numeric(s, STMT_MNT_BASIC, stmt_mnt_basic);
+> +       stmt_numeric(s, STMT_PROPAGATE_FROM, stmt_propagate_from);
+> +       stmt_string(s, STMT_MNT_ROOT, stmt_mnt_root, &sm->mnt_root);
+> +       stmt_string(s, STMT_MOUNTPOINT, stmt_mountpoint, &sm->mountpoint)=
+;
+> +       stmt_string(s, STMT_FS_TYPE, stmt_fs_type, &sm->fs_type);
+> +       stmt_string(s, STMT_SB_OPTS, stmt_sb_opts, &sm->sb_opts);
+> +
+> +       if (s->err)
+> +               return s->err;
+> +
+> +       if (copy_to_user(s->buf, sm, min_t(size_t, s->bufsize, sizeof(*sm=
+))))
+> +               return -EFAULT;
+> +
+> +       return 0;
+> +}
+
+--=20
+paul-moore.com
