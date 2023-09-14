@@ -2,307 +2,648 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 97D2979FB8E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Sep 2023 08:04:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A697379FBAF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Sep 2023 08:11:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234814AbjINGEU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Sep 2023 02:04:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54190 "EHLO
+        id S232171AbjINGLa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Sep 2023 02:11:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235165AbjINGET (ORCPT
+        with ESMTP id S232779AbjINGL3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Sep 2023 02:04:19 -0400
-Received: from esa5.hgst.iphmx.com (esa5.hgst.iphmx.com [216.71.153.144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E42DE101;
-        Wed, 13 Sep 2023 23:04:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1694671455; x=1726207455;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=LfTrNGylkqPwfDDfKKOx9MxSxfRYHkzhGjfvmQ0SjbI=;
-  b=KPuelJn9gmYjPCGXQ/YkP58fbTk3vTY3yQh6QqYjzIuueSOFt8BaNkUu
-   GxkRUuLOSd0aepe3A16J7C0Lwc47/65ffN+PsFk9YQLz1epU1vpq62GbV
-   i5NWtT6hi/kXvFOQJNHIdX2APSKbibXgKnclJLNz6MaxI2NM/zHneGioh
-   Hu6yA5+AM7H4RhGlDKqCYfbMjOkO4IUKYWeS4viIfqgUGHu6kwTxlnsoR
-   mhyQZf9WH0ABrdc83Rvsj49HS3vosR/GyiSLa0jPZ1SpQqx19jsZm31Is
-   2/yK75d+X9WV4AGpDvHhclFhrh5I21DmAmJYmSLZwbEcLU2EZlbxBrZW5
-   g==;
-X-CSE-ConnectionGUID: y7SBif8nQ9yQZ5ZF/NkkZQ==
-X-CSE-MsgGUID: LWij3NyGSv26/BN7QCJvNg==
-X-IronPort-AV: E=Sophos;i="6.02,145,1688400000"; 
-   d="scan'208";a="243924743"
-Received: from mail-bn8nam12lp2172.outbound.protection.outlook.com (HELO NAM12-BN8-obe.outbound.protection.outlook.com) ([104.47.55.172])
-  by ob1.hgst.iphmx.com with ESMTP; 14 Sep 2023 14:04:12 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=PU+FsmScFujTr27Gy6hKCj0Ol3bIQhnmkeV5/Nr5VWVpOotchaAjCOSN/srmKViqPcTsle+yyvxHoYHHUVDjsXORCqb0ONO3ua7PsyWw9ztVc08G/kksXdi+f7CZbYTDjrlRs2Vrgm+cSSpbO5fkUHlpWXbQKjydqmai7VFYnsVoLV6gHis/uE7XpMnhIElcv8iqZ8RUfuaG6QfWb4Gm+axO035ZGjGmCOKbD4ytISWu7Do6PePgTRqBRD7GugYFSOqOFTETtMMbGrksbx/lmEkMZVKYTEEI40b36+UX7jc1nk+K8mCF5ZAJ0iVyyupoq4Zc8pc9qRFfb3Q42o35Xw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LfTrNGylkqPwfDDfKKOx9MxSxfRYHkzhGjfvmQ0SjbI=;
- b=bxxFZPPtIL2KMWVrTEYNbQmCRV5ZXET33ubGmEB+XiCOh793WZVqVfg989X215rOJlmwbAqFTcj3cEJ1fhrY5uYIHVfmbFTScb2de5sELlhxpK732sV/H5YFHjA1893sVeC/qp/5BWlnln5uBdENf6Fqe7NeBL/skO6ddLoVynbZNa5czuzk76n+xDK459XNH2IN+5uBALn+2VqXmrggkE8P2Vr0psA7kiiXRABNr+zzU3CxHh98FReTtt4hPBZgYWWjSwqh1A76wsy+cCTgH3vlDl1wiLRnjFHw37/eUdYcBEnnp3SuQxPEFI8dIARZyPODBwUYE8F56AKCdVzSWA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
+        Thu, 14 Sep 2023 02:11:29 -0400
+Received: from mail-vk1-xa2d.google.com (mail-vk1-xa2d.google.com [IPv6:2607:f8b0:4864:20::a2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C285DF;
+        Wed, 13 Sep 2023 23:11:25 -0700 (PDT)
+Received: by mail-vk1-xa2d.google.com with SMTP id 71dfb90a1353d-493639d6173so295663e0c.3;
+        Wed, 13 Sep 2023 23:11:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LfTrNGylkqPwfDDfKKOx9MxSxfRYHkzhGjfvmQ0SjbI=;
- b=hbaBzbbeIcHCyG2Pj9FjESq9OIoTtAu1kpBTUICG2Nsm7/EX95EpQj0+J9cmnBgcIG07TtRfzNK81uPyQ596XPCHbU8NicOAY9S5QD+xb/N1JqXHTvu/nOyH2eCO+Twhq2orrLZGalf/hihgfaLWCMBrigln07fA1aC29Nrwa40=
-Received: from PH0PR04MB7416.namprd04.prod.outlook.com (2603:10b6:510:12::17)
- by PH7PR04MB8707.namprd04.prod.outlook.com (2603:10b6:510:24f::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6813.7; Thu, 14 Sep
- 2023 06:04:10 +0000
-Received: from PH0PR04MB7416.namprd04.prod.outlook.com
- ([fe80::f694:b5b5:8e42:b8f6]) by PH0PR04MB7416.namprd04.prod.outlook.com
- ([fe80::f694:b5b5:8e42:b8f6%4]) with mapi id 15.20.6792.019; Thu, 14 Sep 2023
- 06:04:10 +0000
-From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-To:     David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-CC:     Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-        Christian Brauner <christian@brauner.io>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 01/13] iov_iter: Add a benchmarking kunit test
-Thread-Topic: [PATCH v4 01/13] iov_iter: Add a benchmarking kunit test
-Thread-Index: AQHZ5mN1LcmeOywzMEKoyfsHMT57trAZ1caA
-Date:   Thu, 14 Sep 2023 06:04:10 +0000
-Message-ID: <6139f775-f64c-41cc-b29c-b85e296c26af@wdc.com>
-References: <20230913165648.2570623-1-dhowells@redhat.com>
- <20230913165648.2570623-2-dhowells@redhat.com>
-In-Reply-To: <20230913165648.2570623-2-dhowells@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla Thunderbird
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=wdc.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH0PR04MB7416:EE_|PH7PR04MB8707:EE_
-x-ms-office365-filtering-correlation-id: d763e168-3cd1-4c80-a4f2-08dbb4e869fc
-wdcipoutbound: EOP-TRUE
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: LjYobV5lNJHLf6Ky+gSfm1wzOwmpFkPblrz78qrh7mdt0VFE6UjBOQpXSfH7iA9vrqUV9k8OyKvchQSzPk7jBuDNJmxQlIwBtLO0JX1XAGFEpbg2gna8C0pcOyYj5FrjU8LVdaQkN6vnlt9MMRHHBuPav9nA0kxoI/YtDOqHX385hxNvNSfV/Kk8jDvXrvdNecW/wzQ0SAThc2HCvc9hpvRt+EgQGHqUEgEN6+jC9ty43jL2FoK0dBWAHWVfFX0fXqa4NG3A1ev/hG/VBPN4CjCpIabehj+HfCt03nFgBD5BkBu7lh515D+J+pGdTlKIpwCFYrb4DyfWRDrDj5CycSgTIOIrXz9eeKkClM6rPRnv64UI2Mh2pZaKyWIZgP4ekngLEQ5fdlA+qYv6H0jPNjF/p2fkIHYzofKMqV7QEmx02LJnYhvOtOg5ERy6sBdL8UjgOSyjCZnM/Pi6QWP874jYZVkQveJLD0GWYChxw4RWQebUm8PxuB0feu0g3Zfwe7yEFCejta2nqOK8tATdOYwDNQ/Lv4jJLHhRcQ+r3u8LbVZMxALjbUJ9FL+p0K2C/uLIzjNXvUcZtEHKRXToBpr35Ho83Nq4loVcR4uiVHKdfQ5v1sE1BfOwIgPb+pQ6WlOZ6juUEF0Fo8uBPm+15iGCvmjcsE3JU/cmMSaDqeAOxakf+R/C6rj31umAKCAl
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR04MB7416.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(396003)(366004)(376002)(346002)(136003)(39860400002)(186009)(451199024)(1800799009)(83380400001)(36756003)(2616005)(26005)(41300700001)(110136005)(316002)(66946007)(66446008)(64756008)(76116006)(54906003)(66476007)(66556008)(91956017)(6512007)(31696002)(86362001)(53546011)(6506007)(6486002)(82960400001)(31686004)(38070700005)(122000001)(38100700002)(71200400001)(5660300002)(8676002)(4326008)(8936002)(7416002)(478600001)(2906002)(45980500001)(43740500002);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?SWlsVUNad3dYWG12SDdrMXA0TGtxeFRlS1p4aDRnZk42UG5jbXExd1dESWxl?=
- =?utf-8?B?cWViR3I0U0pRRFpDZWl1SlJGTGJEU1pQRVV2UEVMVFVYTzhDR1dydGYzaWla?=
- =?utf-8?B?NVdSZ0pXZzAzVnU4V1ZrcGdVOEtpTnF1KzBkZ01wbXB1ZytDbkcyNzJ5N3Rj?=
- =?utf-8?B?NTZRa285QVhsdHdWbXNrSUR1UFc5N0pxbTVzNkZMdWEwOEdjbU9KQnIvSEQy?=
- =?utf-8?B?KzYreDdsRkErTXR2QVVEQmhBUDlVR05xSXl4WFFpdFNibTliZXFJNmc2L2tD?=
- =?utf-8?B?bXVhSXg3YXBvNkJZTXdqVEVYZzNZMWxYdWhEL21WNExCZmc3M2JLNWRqNUVR?=
- =?utf-8?B?TFhUT3lCQ2tTMk5GbWxpUkx1SmJocldMenFEampGQjM3cGZMN1ZqR1VKZk5u?=
- =?utf-8?B?bit2ci92SmkxQVRxQXNuZ1l0eU5Pc3J0UTFDWmFMaVVCWUk0ajVtaHYzUENv?=
- =?utf-8?B?Nm9GRnVva1N5WHRROFlQME5wS25lak14Y0VsSG5scWpTTFJqbUV0NllaN3or?=
- =?utf-8?B?TmcrSlQ0bkdhSmVPNkdhT1pYOHFRbGk3YUVrdnpnMFNsZk96WFd1ZXlEM0Rs?=
- =?utf-8?B?ZWgyNmtaM1hXV1lFQXdNQmpNQ2IvcU94YW1YVnNBaEtCRVBSazBWQWVHL3hU?=
- =?utf-8?B?OUNuTUNuNlh6eGRsYWtROEMxRHp1QTVTSnNUTzZDKzhRekU3blowTitJZVFh?=
- =?utf-8?B?Yk1VdW9IdXVEZkZBOGRzbFcvUVRrdFVkcEtKVE0wSEFUSHF6Q09HLzNaUEUy?=
- =?utf-8?B?d3c0WVdTV1F1YnE5NDRMNnFoenBhMEFIRGNOUG5JK3YySURYenVydG1yNFNX?=
- =?utf-8?B?NHllMG81elVLUHFYZHRYK2Z3aU5uc21yTlhNMjB2UTcxcW15YUlodlNobWdF?=
- =?utf-8?B?Vm0valFkNGdxNzZESHFoN21FSC8xdHVHbjJJcVE3QVpZbWZpN3g4VFpjNFVy?=
- =?utf-8?B?c3VndmdXMGNmeExYV3YzNEpiWHhQckZLV28zWU4vZmFmUDJ5RzB3cUhlSUpN?=
- =?utf-8?B?WnpWVmtkelBMbHJsamF4eXNtcUpSL3JZVmp0U0lnR2s1OFp0Z2VSUkRQVEU2?=
- =?utf-8?B?RVpoZjF2dERNUUFieTIrbzlBVWJSd3dkWWJVM25kS0dWV0RjVWNYZkJsM29D?=
- =?utf-8?B?YzJhWFV3aU9KTmt0L0g4b2hVc2RwVDM1VmdaOUg4Tm5ra0N1Uk5yYWRvYU9z?=
- =?utf-8?B?bjNvclpXcWpCdjBIcWx3cFUrcU5VVVUzZm1Yd1F5dmdsa1l0eXFWTVBSU3FG?=
- =?utf-8?B?K0d5dGZuc0V0NzJvWkJENUM2VmdjdXBmZjNTZFJaV2lYK0NFMDA5R2VYYUR3?=
- =?utf-8?B?bVIzSnluRVZTZkFwcG9EWFhGQURZSFQ2enhyTjd3R2pyUXYwZFk1V1lzZmJa?=
- =?utf-8?B?N2FteGtTaURVZ0M0ekZPUXo4SENVb08rZkVjT25Jd28zcGlCbUhQR29xMU9h?=
- =?utf-8?B?SE82WlVvank4dm9hN0VKaDFTZys5Vk5UWGIxNi9tT2lnZlgwMEpMZUR1OWdk?=
- =?utf-8?B?UkxFaXpvT29PSXN4OVVYMk5OKzUyZHkzR2dOU1l3M2h6V0ZSVytSdjNic0N2?=
- =?utf-8?B?b2JaOUI3V290bm4rQkZVWlRXKzJaa01ob2I5NG9JUGRnaWlPL3FQeWw1VGtU?=
- =?utf-8?B?dm1yQnJLWlpwUTVEOU5oWXhndjNEbmlKOU16UnErbzBCekVTRlBKdml5N0VY?=
- =?utf-8?B?UDlkczB1cEtHNXRvR1dnTHptZ3Y3K2VUb05RaXhBNFRoUlRrLytFd2dTaHEx?=
- =?utf-8?B?dkJXNTRpTDRROHJ4SkxPZHQrVzZPMzNoWkJESVRDbTNxSHpmU2xaeko2NG03?=
- =?utf-8?B?WU5tU3lITWRLTzhLQ3EzM3VUWk44S0pqRDFnT3VEcjNUVUxVeE1tUkZmUEZi?=
- =?utf-8?B?RlJ5WHI0dzJ0eDBtVTRPNU9QQ0Z6YmFvQVIzbHRabjNjMjBnUzVLQnRvR1ZV?=
- =?utf-8?B?R0tHLytDYXEvSVJBVnZTVStxZnJLb3kza3huTVEzcEEvekJodkxuUnpHMGxo?=
- =?utf-8?B?WmVDNUppVUpjUlZTeFo0MXRZMmtwTnZDcHR5ckk0TGNFaVYzNHEwYjBRNTFQ?=
- =?utf-8?B?WDJXUWZVNllpc2gvOFlMV2tlNUU4RlM1d2ozM0VobVpsdGlLWi9QQzh0Q2JM?=
- =?utf-8?B?b2xUYkcxL3I4TGdsYWRrNTNuS1E2cHdJMVd4SVhnUlJ4SGxxZFdOc1l1Ymtl?=
- =?utf-8?B?Unc9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <80541952DDB8584B83EBEEEAB992B9EB@namprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=gmail.com; s=20221208; t=1694671884; x=1695276684; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q5UvKEzTwm2kuyoAgceo57yvAJk0Uxn/UduRgxLfOo4=;
+        b=CzaAyYj5+BtemXdR2+C5uEwCHbl/rfU61WN8yplHLiqf8smueLIS4KiABTh9a+KW82
+         fQYFUn1fdN5RbdCezbUwswPjBW8zMfTOG9l5/eSGlSQ8EZDG2JewoTInsk8DPFEJj07a
+         HixdSR5Eob41I1vPD9Pi4Z2y7b/3XHWhzsb/H2thv0d6etuOEhwFYK/qBb8/JdIo2lDh
+         4Grv3N9FEXWPIhngqNUobW3oJWQwZkhr7Nk8iyJHYtjxE5SSf3Aeyw+GaVS+3iXcebj/
+         GKzCKElBHzfE4w1AhdmHqEhpcVcLjDgd68yLO798urycRxrTdxAPfRNIcI5hEqlytYYZ
+         JhLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694671884; x=1695276684;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=q5UvKEzTwm2kuyoAgceo57yvAJk0Uxn/UduRgxLfOo4=;
+        b=ks+VuIGj05Tqj+YjYP9yYUBEChHF5dpONjST3nwm9bJPy7pFaGlVfZQg8X+zwYxbA4
+         TA7RI5eexYsqOWagLjDHQ74p3m/FVfkJC/DzIWQ4d1/4xE0i1m3y8Ju19+KXSgTXUt9D
+         02PEwc0QP4SGXKocDyEPnhm5EjF5oBMsQ8jJXHkxnUAKywdwNhaVmLnaVFNo0jO8tf87
+         F6P2f7EbolXeb9VJDJW1IsVU46soaPPW7OwTL9jb9EY4Adg131oc7XTXi/WGLqCphvsK
+         55n3wVfm1wddTw9OyPFrqwe6xzzWUMRYAuV6rl9P1Vt94JY+u09ro6KtnRNhzPsUgmSH
+         xHqQ==
+X-Gm-Message-State: AOJu0YzWMNgv34ilrbHXYhfwtp05GU/g2gOiqU+WD5IfwGAJGfH0fwpD
+        TVtIxy0f5qAlyobE2XbSm1bLE2LX29Fi5TSNSKc=
+X-Google-Smtp-Source: AGHT+IGjYsOPoUqUMFQgCNhqYoO1gbrm9WGmvVkqm8Dun10L+GUz0oLYjGIfnMvB6OVC5cFSA+VA2eoiRxT0EoX/rMM=
+X-Received: by 2002:a1f:dd82:0:b0:48f:c07e:433a with SMTP id
+ u124-20020a1fdd82000000b0048fc07e433amr4498025vkg.11.1694671884183; Wed, 13
+ Sep 2023 23:11:24 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: =?utf-8?B?ZUc1K0c1Q3hWMk1uSUhvdGhXWWZZV1BoYlhUZEhWWldmT2NFZGc1Zjg4N2hU?=
- =?utf-8?B?cXpIUzhkVk82elpGODJCVi9zVWdXRXZ2VXdQOW9USWc3WlpzZ0hrdW1IQ0pY?=
- =?utf-8?B?cURVemU0emNWajh5UWhVSFgwcGdLbDVvWm4raTU0OWFzYndWdExQWStBVmJ6?=
- =?utf-8?B?c3RPN0NGNVpybzljTTA3eG4vTUZGeGtydStLQk9nWi9VS1JiWW1yNFRHL1dR?=
- =?utf-8?B?T3l1R1ZNQUZxQW9GSmpmUlBwSDRJdXR5VjEzT0xSV1BmQjJxUjBvUXoxY0hH?=
- =?utf-8?B?dkV0U0k3ZE9jVFBiUDA5OG5teExyME1jeVZBZk5JM3M3eGh0VmcyU3kwZEFY?=
- =?utf-8?B?dGlFZlBqNHliYThPZE9qNDVkWGF5Vi9UbWZjQWp5MWRUSHZLVzlkeXNlazBq?=
- =?utf-8?B?R2pHR0phaDd6QkRHNlRKVmE4RGNWaWFpUmNkUStnNzArTFFhTlRzYjRCZFc4?=
- =?utf-8?B?UTVqQndzbldoeEE0TDBLVkphb1pHMGpGcUdQc0xmcXdMZWhTbzJXU2tIWEJn?=
- =?utf-8?B?Sml3Sm1DcVNaUGVOSVFrUTgzT1pkNXVsUEhoTnRXRXhuZHN0MG4yckNQREVi?=
- =?utf-8?B?Zm5PUjZKTW1PR3BwNll4UU82VTJpcjNxQlBwbXVwWm5WNzU0c0d2SW5SZDky?=
- =?utf-8?B?NzVnSGwrU2FSaE9WcGhzOVBzYVFIYjIrR0tXamY0cE1xMjRyRXYwSENtSHhj?=
- =?utf-8?B?TG5oMGFhYUFDcmNzYkpjWUZ0b1lGaWN4MTl0VFVKcnRGN2RRaExsWnBCL2dF?=
- =?utf-8?B?QzUxT05wQm8wcEJZTHo4ZEVhSHNyZjVvYTlMWVZ4c2NVSTQwbFJxdkRPajA3?=
- =?utf-8?B?QzF0WHlsUnFBc1Judk1tRkdhazkrai9SS1hSU2YwdmJuOWZBd0NMTlZabW5M?=
- =?utf-8?B?YkxxaGdUUU52ZHZOTWFYTFBMYXUxNW5lNHphMnU0dkduSUx0elpHMk9vWTcw?=
- =?utf-8?B?Vmg4VWFqWVVPUVFnU3lucWNuL0ViTGlWYW9nYWZJY2JTN2t6K01ZU1JpVkhr?=
- =?utf-8?B?L3h2MFFGMHJxWVIxNkN1VzJDcGpGOFRIL0s1bjFlcVJIejJPbUF3b0xpd25q?=
- =?utf-8?B?V2UxV2hQb0psWVQyZDlhY1lkYW1uQkg5M3d6akE3N0R2clBNOUNoRDlCSjc1?=
- =?utf-8?B?T0JaQzRPQ2pUZnUyOTVTQXhub1J6KzVpaHR2WEk3S3YrUzVmYlZRNzY5eFNr?=
- =?utf-8?B?cmpVUDROVzJjWUhVNkFUVm01NnBFRGF2SXhoeVo0OG00a1JKUWd2TklUQlQ2?=
- =?utf-8?B?QzdOWStSaWFuU1JZSy9RY2twQnphZGdmM0ZaNEpKK3c1VThjK2hoYllWbVJp?=
- =?utf-8?B?L3hiQnhGM01wS2c1MWZOSUtaR3B2dHVxbnZLZGxVVkVQQ3hueTVlb3E3ekFt?=
- =?utf-8?B?dVZYeFpPeVJub2lhU2ExUWZyaEF1Zkw5ZktHTkJ2SVBCSG9hN1JnbC9EeUI1?=
- =?utf-8?B?ck9oRnJ6Q2pXWHFCREJpU3FaLzNpNFFSRkE2Q1F4Q2VTTkhNeWQ3NnhwT09h?=
- =?utf-8?Q?rlfnks=3D?=
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR04MB7416.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d763e168-3cd1-4c80-a4f2-08dbb4e869fc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Sep 2023 06:04:10.6560
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: KvgAQPrBmHSmHEvudcPPUWSldt/6+Ui412Wyo2uU1l1RUD1re30h0P/wlY8Fm3lIxdw9deGlLo6Bgi+Thfbu0ypVuwffmef7QLTFs0fVeZQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR04MB8707
+References: <20230913152238.905247-1-mszeredi@redhat.com> <20230913152238.905247-3-mszeredi@redhat.com>
+In-Reply-To: <20230913152238.905247-3-mszeredi@redhat.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 14 Sep 2023 09:11:13 +0300
+Message-ID: <CAOQ4uxireYvc-+peft9RdYi+UzNSBsgNZN2Je+y_qnS578Cxfg@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/3] add statmnt(2) syscall
+To:     Miklos Szeredi <mszeredi@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
+        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
+        Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-T24gMTMuMDkuMjMgMTg6NTgsIERhdmlkIEhvd2VsbHMgd3JvdGU6DQo+IC0tLQ0KPiAgIGxpYi9r
-dW5pdF9pb3ZfaXRlci5jIHwgMTgxICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKysNCj4gICAxIGZpbGUgY2hhbmdlZCwgMTgxIGluc2VydGlvbnMoKykNCg0KSGkgRGF2
-aWQsDQoNCiMxIHRoaXMgaXMgbWlzc2luZyBhIFNvQg0KIzIgbG9va3MgbGlrZSBhbGwgdGhlIEtV
-TklUX0FTU0VSVF9OT1RfTlVMTCgpIG1hY3JvcyBhcmUgaW5kZW50ZWQgd3JvbmcNCiMzIGEgYml0
-IG1vcmUgb2YgYSBjb21taXQgbWVzc2FnZSB3b3VsZCBiZSBuaWNlDQoNCkJ5dGUsDQoJSm9oYW5u
-ZXMNCg0KDQo+IA0KPiBkaWZmIC0tZ2l0IGEvbGliL2t1bml0X2lvdl9pdGVyLmMgYi9saWIva3Vu
-aXRfaW92X2l0ZXIuYw0KPiBpbmRleCA4NTliNjdjNGQ2OTcuLjQ3OGZlYTk1NmY1OCAxMDA2NDQN
-Cj4gLS0tIGEvbGliL2t1bml0X2lvdl9pdGVyLmMNCj4gKysrIGIvbGliL2t1bml0X2lvdl9pdGVy
-LmMNCj4gQEAgLTc1Niw2ICs3NTYsMTg0IEBAIHN0YXRpYyB2b2lkIF9faW5pdCBpb3Zfa3VuaXRf
-ZXh0cmFjdF9wYWdlc194YXJyYXkoc3RydWN0IGt1bml0ICp0ZXN0KQ0KPiAgIAlLVU5JVF9TVUND
-RUVEKCk7DQo+ICAgfQ0KPiAgIA0KPiArc3RhdGljIHZvaWQgaW92X2t1bml0X2ZyZWVfcGFnZSh2
-b2lkICpkYXRhKQ0KPiArew0KPiArCV9fZnJlZV9wYWdlKGRhdGEpOw0KPiArfQ0KPiArDQo+ICtz
-dGF0aWMgdm9pZCBfX2luaXQgaW92X2t1bml0X2JlbmNobWFya19wcmludF9zdGF0cyhzdHJ1Y3Qg
-a3VuaXQgKnRlc3QsDQo+ICsJCQkJCQkgICB1bnNpZ25lZCBpbnQgKnNhbXBsZXMpDQo+ICt7DQo+
-ICsJdW5zaWduZWQgbG9uZyB0b3RhbCA9IDA7DQo+ICsJaW50IGk7DQo+ICsNCj4gKwlmb3IgKGkg
-PSAwOyBpIDwgMTY7IGkrKykgew0KPiArCQl0b3RhbCArPSBzYW1wbGVzW2ldOw0KPiArCQlrdW5p
-dF9pbmZvKHRlc3QsICJydW4gJXg6ICV1IHVTXG4iLCBpLCBzYW1wbGVzW2ldKTsNCj4gKwl9DQo+
-ICsNCj4gKwlrdW5pdF9pbmZvKHRlc3QsICJhdmcgJWx1IHVTXG4iLCB0b3RhbCAvIDE2KTsNCj4g
-K30NCj4gKw0KPiArLyoNCj4gKyAqIFRpbWUgY29weWluZyAyNTZNaUIgdGhyb3VnaCBhbiBJVEVS
-X0JWRUMuDQo+ICsgKi8NCj4gK3N0YXRpYyB2b2lkIF9faW5pdCBpb3Zfa3VuaXRfYmVuY2htYXJr
-X2J2ZWMoc3RydWN0IGt1bml0ICp0ZXN0KQ0KPiArew0KPiArCXN0cnVjdCBpb3ZfaXRlciBpdGVy
-Ow0KPiArCXN0cnVjdCBiaW9fdmVjICpidmVjOw0KPiArCXN0cnVjdCBwYWdlICpwYWdlLCAqKnBh
-Z2VzOw0KPiArCXVuc2lnbmVkIGludCBzYW1wbGVzWzE2XTsNCj4gKwlrdGltZV90IGEsIGI7DQo+
-ICsJc3NpemVfdCBjb3BpZWQ7DQo+ICsJc2l6ZV90IHNpemUgPSAyNTYgKiAxMDI0ICogMTAyNCwg
-bnBhZ2VzID0gc2l6ZSAvIFBBR0VfU0laRTsNCj4gKwl2b2lkICpzY3JhdGNoOw0KPiArCWludCBp
-Ow0KPiArDQo+ICsJLyogQWxsb2NhdGUgYSBwYWdlIGFuZCB0aWxlIGl0IHJlcGVhdGVkbHkgaW4g
-dGhlIGJ1ZmZlci4gKi8NCj4gKwlwYWdlID0gYWxsb2NfcGFnZShHRlBfS0VSTkVMKTsNCj4gKyAg
-ICAgICAgS1VOSVRfQVNTRVJUX05PVF9OVUxMKHRlc3QsIHBhZ2UpOw0KPiArCWt1bml0X2FkZF9h
-Y3Rpb25fb3JfcmVzZXQodGVzdCwgaW92X2t1bml0X2ZyZWVfcGFnZSwgcGFnZSk7DQo+ICsNCj4g
-KwlidmVjID0ga3VuaXRfa21hbGxvY19hcnJheSh0ZXN0LCBucGFnZXMsIHNpemVvZihidmVjWzBd
-KSwgR0ZQX0tFUk5FTCk7DQo+ICsgICAgICAgIEtVTklUX0FTU0VSVF9OT1RfTlVMTCh0ZXN0LCBi
-dmVjKTsNCj4gKwlmb3IgKGkgPSAwOyBpIDwgbnBhZ2VzOyBpKyspDQo+ICsJCWJ2ZWNfc2V0X3Bh
-Z2UoJmJ2ZWNbaV0sIHBhZ2UsIFBBR0VfU0laRSwgMCk7DQo+ICsNCj4gKwkvKiBDcmVhdGUgYSBz
-aW5nbGUgbGFyZ2UgYnVmZmVyIHRvIGNvcHkgdG8vZnJvbS4gKi8NCj4gKwlwYWdlcyA9IGt1bml0
-X2ttYWxsb2NfYXJyYXkodGVzdCwgbnBhZ2VzLCBzaXplb2YocGFnZXNbMF0pLCBHRlBfS0VSTkVM
-KTsNCj4gKyAgICAgICAgS1VOSVRfQVNTRVJUX05PVF9OVUxMKHRlc3QsIHBhZ2VzKTsNCj4gKwlm
-b3IgKGkgPSAwOyBpIDwgbnBhZ2VzOyBpKyspDQo+ICsJCXBhZ2VzW2ldID0gcGFnZTsNCj4gKw0K
-PiArCXNjcmF0Y2ggPSB2bWFwKHBhZ2VzLCBucGFnZXMsIFZNX01BUCB8IFZNX01BUF9QVVRfUEFH
-RVMsIFBBR0VfS0VSTkVMKTsNCj4gKyAgICAgICAgS1VOSVRfQVNTRVJUX05PVF9OVUxMKHRlc3Qs
-IHNjcmF0Y2gpOw0KPiArCWt1bml0X2FkZF9hY3Rpb25fb3JfcmVzZXQodGVzdCwgaW92X2t1bml0
-X3VubWFwLCBzY3JhdGNoKTsNCj4gKw0KPiArCS8qIFBlcmZvcm0gYW5kIHRpbWUgYSBidW5jaCBv
-ZiBjb3BpZXMuICovDQo+ICsJa3VuaXRfaW5mbyh0ZXN0LCAiQmVuY2htYXJraW5nIGNvcHlfdG9f
-aXRlcigpIG92ZXIgQlZFQzpcbiIpOw0KPiArCWZvciAoaSA9IDA7IGkgPCAxNjsgaSsrKSB7DQo+
-ICsJCWlvdl9pdGVyX2J2ZWMoJml0ZXIsIElURVJfREVTVCwgYnZlYywgbnBhZ2VzLCBzaXplKTsN
-Cj4gKwkJYSA9IGt0aW1lX2dldF9yZWFsKCk7DQo+ICsJCWNvcGllZCA9IGNvcHlfdG9faXRlcihz
-Y3JhdGNoLCBzaXplLCAmaXRlcik7DQo+ICsJCWIgPSBrdGltZV9nZXRfcmVhbCgpOw0KPiArCQlL
-VU5JVF9FWFBFQ1RfRVEodGVzdCwgY29waWVkLCBzaXplKTsNCj4gKwkJc2FtcGxlc1tpXSA9IGt0
-aW1lX3RvX3VzKGt0aW1lX3N1YihiLCBhKSk7DQo+ICsJfQ0KPiArDQo+ICsJaW92X2t1bml0X2Jl
-bmNobWFya19wcmludF9zdGF0cyh0ZXN0LCBzYW1wbGVzKTsNCj4gKwlLVU5JVF9TVUNDRUVEKCk7
-DQo+ICt9DQo+ICsNCj4gKy8qDQo+ICsgKiBUaW1lIGNvcHlpbmcgMjU2TWlCIHRocm91Z2ggYW4g
-SVRFUl9CVkVDIGluIDI1NiBwYWdlIGNodW5rcy4NCj4gKyAqLw0KPiArc3RhdGljIHZvaWQgX19p
-bml0IGlvdl9rdW5pdF9iZW5jaG1hcmtfYnZlY19zcGxpdChzdHJ1Y3Qga3VuaXQgKnRlc3QpDQo+
-ICt7DQo+ICsJc3RydWN0IGlvdl9pdGVyIGl0ZXI7DQo+ICsJc3RydWN0IGJpb192ZWMgKmJ2ZWM7
-DQo+ICsJc3RydWN0IHBhZ2UgKnBhZ2UsICoqcGFnZXM7DQo+ICsJdW5zaWduZWQgaW50IHNhbXBs
-ZXNbMTZdOw0KPiArCWt0aW1lX3QgYSwgYjsNCj4gKwlzc2l6ZV90IGNvcGllZDsNCj4gKwlzaXpl
-X3Qgc2l6ZSwgbnBhZ2VzID0gNjQ7DQo+ICsJdm9pZCAqc2NyYXRjaDsNCj4gKwlpbnQgaSwgajsN
-Cj4gKw0KPiArCS8qIEFsbG9jYXRlIGEgcGFnZSBhbmQgdGlsZSBpdCByZXBlYXRlZGx5IGluIHRo
-ZSBidWZmZXIuICovDQo+ICsJcGFnZSA9IGFsbG9jX3BhZ2UoR0ZQX0tFUk5FTCk7DQo+ICsgICAg
-ICAgIEtVTklUX0FTU0VSVF9OT1RfTlVMTCh0ZXN0LCBwYWdlKTsNCj4gKwlrdW5pdF9hZGRfYWN0
-aW9uX29yX3Jlc2V0KHRlc3QsIGlvdl9rdW5pdF9mcmVlX3BhZ2UsIHBhZ2UpOw0KPiArDQo+ICsJ
-LyogQ3JlYXRlIGEgc2luZ2xlIGxhcmdlIGJ1ZmZlciB0byBjb3B5IHRvL2Zyb20uICovDQo+ICsJ
-cGFnZXMgPSBrdW5pdF9rbWFsbG9jX2FycmF5KHRlc3QsIG5wYWdlcywgc2l6ZW9mKHBhZ2VzWzBd
-KSwgR0ZQX0tFUk5FTCk7DQo+ICsgICAgICAgIEtVTklUX0FTU0VSVF9OT1RfTlVMTCh0ZXN0LCBw
-YWdlcyk7DQo+ICsJZm9yIChpID0gMDsgaSA8IG5wYWdlczsgaSsrKQ0KPiArCQlwYWdlc1tpXSA9
-IHBhZ2U7DQo+ICsNCj4gKwlzY3JhdGNoID0gdm1hcChwYWdlcywgbnBhZ2VzLCBWTV9NQVAgfCBW
-TV9NQVBfUFVUX1BBR0VTLCBQQUdFX0tFUk5FTCk7DQo+ICsgICAgICAgIEtVTklUX0FTU0VSVF9O
-T1RfTlVMTCh0ZXN0LCBzY3JhdGNoKTsNCj4gKwlrdW5pdF9hZGRfYWN0aW9uX29yX3Jlc2V0KHRl
-c3QsIGlvdl9rdW5pdF91bm1hcCwgc2NyYXRjaCk7DQo+ICsNCj4gKwkvKiBQZXJmb3JtIGFuZCB0
-aW1lIGEgYnVuY2ggb2YgY29waWVzLiAqLw0KPiArCWt1bml0X2luZm8odGVzdCwgIkJlbmNobWFy
-a2luZyBjb3B5X3RvX2l0ZXIoKSBvdmVyIEJWRUM6XG4iKTsNCj4gKwlmb3IgKGkgPSAwOyBpIDwg
-MTY7IGkrKykgew0KPiArCQlzaXplID0gMjU2ICogMTAyNCAqIDEwMjQ7DQo+ICsJCWEgPSBrdGlt
-ZV9nZXRfcmVhbCgpOw0KPiArCQlkbyB7DQo+ICsJCQlzaXplX3QgcGFydCA9IG1pbihzaXplLCBu
-cGFnZXMgKiBQQUdFX1NJWkUpOw0KPiArDQo+ICsJCQlidmVjID0ga3VuaXRfa21hbGxvY19hcnJh
-eSh0ZXN0LCBucGFnZXMsIHNpemVvZihidmVjWzBdKSwgR0ZQX0tFUk5FTCk7DQo+ICsJCQlLVU5J
-VF9BU1NFUlRfTk9UX05VTEwodGVzdCwgYnZlYyk7DQo+ICsJCQlmb3IgKGogPSAwOyBqIDwgbnBh
-Z2VzOyBqKyspDQo+ICsJCQkJYnZlY19zZXRfcGFnZSgmYnZlY1tqXSwgcGFnZSwgUEFHRV9TSVpF
-LCAwKTsNCj4gKw0KPiArCQkJaW92X2l0ZXJfYnZlYygmaXRlciwgSVRFUl9ERVNULCBidmVjLCBu
-cGFnZXMsIHBhcnQpOw0KPiArCQkJY29waWVkID0gY29weV90b19pdGVyKHNjcmF0Y2gsIHBhcnQs
-ICZpdGVyKTsNCj4gKwkJCUtVTklUX0VYUEVDVF9FUSh0ZXN0LCBjb3BpZWQsIHBhcnQpOw0KPiAr
-CQkJc2l6ZSAtPSBwYXJ0Ow0KPiArCQl9IHdoaWxlIChzaXplID4gMCk7DQo+ICsJCWIgPSBrdGlt
-ZV9nZXRfcmVhbCgpOw0KPiArCQlzYW1wbGVzW2ldID0ga3RpbWVfdG9fdXMoa3RpbWVfc3ViKGIs
-IGEpKTsNCj4gKwl9DQo+ICsNCj4gKwlpb3Zfa3VuaXRfYmVuY2htYXJrX3ByaW50X3N0YXRzKHRl
-c3QsIHNhbXBsZXMpOw0KPiArCUtVTklUX1NVQ0NFRUQoKTsNCj4gK30NCj4gKw0KPiArLyoNCj4g
-KyAqIFRpbWUgY29weWluZyAyNTZNaUIgdGhyb3VnaCBhbiBJVEVSX1hBUlJBWS4NCj4gKyAqLw0K
-PiArc3RhdGljIHZvaWQgX19pbml0IGlvdl9rdW5pdF9iZW5jaG1hcmtfeGFycmF5KHN0cnVjdCBr
-dW5pdCAqdGVzdCkNCj4gK3sNCj4gKwlzdHJ1Y3QgaW92X2l0ZXIgaXRlcjsNCj4gKwlzdHJ1Y3Qg
-eGFycmF5ICp4YXJyYXk7DQo+ICsJc3RydWN0IHBhZ2UgKnBhZ2UsICoqcGFnZXM7DQo+ICsJdW5z
-aWduZWQgaW50IHNhbXBsZXNbMTZdOw0KPiArCWt0aW1lX3QgYSwgYjsNCj4gKwlzc2l6ZV90IGNv
-cGllZDsNCj4gKwlzaXplX3Qgc2l6ZSA9IDI1NiAqIDEwMjQgKiAxMDI0LCBucGFnZXMgPSBzaXpl
-IC8gUEFHRV9TSVpFOw0KPiArCXZvaWQgKnNjcmF0Y2g7DQo+ICsJaW50IGk7DQo+ICsNCj4gKwkv
-KiBBbGxvY2F0ZSBhIHBhZ2UgYW5kIHRpbGUgaXQgcmVwZWF0ZWRseSBpbiB0aGUgYnVmZmVyLiAq
-Lw0KPiArCXBhZ2UgPSBhbGxvY19wYWdlKEdGUF9LRVJORUwpOw0KPiArICAgICAgICBLVU5JVF9B
-U1NFUlRfTk9UX05VTEwodGVzdCwgcGFnZSk7DQo+ICsJa3VuaXRfYWRkX2FjdGlvbl9vcl9yZXNl
-dCh0ZXN0LCBpb3Zfa3VuaXRfZnJlZV9wYWdlLCBwYWdlKTsNCj4gKw0KPiArCXhhcnJheSA9IGlv
-dl9rdW5pdF9jcmVhdGVfeGFycmF5KHRlc3QpOw0KPiArDQo+ICsJZm9yIChpID0gMDsgaSA8IG5w
-YWdlczsgaSsrKSB7DQo+ICsJCXZvaWQgKnggPSB4YV9zdG9yZSh4YXJyYXksIGksIHBhZ2UsIEdG
-UF9LRVJORUwpOw0KPiArDQo+ICsJCUtVTklUX0FTU0VSVF9GQUxTRSh0ZXN0LCB4YV9pc19lcnIo
-eCkpOw0KPiArCX0NCj4gKw0KPiArCS8qIENyZWF0ZSBhIHNpbmdsZSBsYXJnZSBidWZmZXIgdG8g
-Y29weSB0by9mcm9tLiAqLw0KPiArCXBhZ2VzID0ga3VuaXRfa21hbGxvY19hcnJheSh0ZXN0LCBu
-cGFnZXMsIHNpemVvZihwYWdlc1swXSksIEdGUF9LRVJORUwpOw0KPiArICAgICAgICBLVU5JVF9B
-U1NFUlRfTk9UX05VTEwodGVzdCwgcGFnZXMpOw0KPiArCWZvciAoaSA9IDA7IGkgPCBucGFnZXM7
-IGkrKykNCj4gKwkJcGFnZXNbaV0gPSBwYWdlOw0KPiArDQo+ICsJc2NyYXRjaCA9IHZtYXAocGFn
-ZXMsIG5wYWdlcywgVk1fTUFQIHwgVk1fTUFQX1BVVF9QQUdFUywgUEFHRV9LRVJORUwpOw0KPiAr
-ICAgICAgICBLVU5JVF9BU1NFUlRfTk9UX05VTEwodGVzdCwgc2NyYXRjaCk7DQo+ICsJa3VuaXRf
-YWRkX2FjdGlvbl9vcl9yZXNldCh0ZXN0LCBpb3Zfa3VuaXRfdW5tYXAsIHNjcmF0Y2gpOw0KPiAr
-DQo+ICsJLyogUGVyZm9ybSBhbmQgdGltZSBhIGJ1bmNoIG9mIGNvcGllcy4gKi8NCj4gKwlrdW5p
-dF9pbmZvKHRlc3QsICJCZW5jaG1hcmtpbmcgY29weV90b19pdGVyKCkgb3ZlciBYQVJSQVk6XG4i
-KTsNCj4gKwlmb3IgKGkgPSAwOyBpIDwgMTY7IGkrKykgew0KPiArCQlpb3ZfaXRlcl94YXJyYXko
-Jml0ZXIsIElURVJfREVTVCwgeGFycmF5LCAwLCBzaXplKTsNCj4gKwkJYSA9IGt0aW1lX2dldF9y
-ZWFsKCk7DQo+ICsJCWNvcGllZCA9IGNvcHlfdG9faXRlcihzY3JhdGNoLCBzaXplLCAmaXRlcik7
-DQo+ICsJCWIgPSBrdGltZV9nZXRfcmVhbCgpOw0KPiArCQlLVU5JVF9FWFBFQ1RfRVEodGVzdCwg
-Y29waWVkLCBzaXplKTsNCj4gKwkJc2FtcGxlc1tpXSA9IGt0aW1lX3RvX3VzKGt0aW1lX3N1Yihi
-LCBhKSk7DQo+ICsJfQ0KPiArDQo+ICsJaW92X2t1bml0X2JlbmNobWFya19wcmludF9zdGF0cyh0
-ZXN0LCBzYW1wbGVzKTsNCj4gKwlLVU5JVF9TVUNDRUVEKCk7DQo+ICt9DQo+ICsNCj4gICBzdGF0
-aWMgc3RydWN0IGt1bml0X2Nhc2UgX19yZWZkYXRhIGlvdl9rdW5pdF9jYXNlc1tdID0gew0KPiAg
-IAlLVU5JVF9DQVNFKGlvdl9rdW5pdF9jb3B5X3RvX2t2ZWMpLA0KPiAgIAlLVU5JVF9DQVNFKGlv
-dl9rdW5pdF9jb3B5X2Zyb21fa3ZlYyksDQo+IEBAIC03NjYsNiArOTQ0LDkgQEAgc3RhdGljIHN0
-cnVjdCBrdW5pdF9jYXNlIF9fcmVmZGF0YSBpb3Zfa3VuaXRfY2FzZXNbXSA9IHsNCj4gICAJS1VO
-SVRfQ0FTRShpb3Zfa3VuaXRfZXh0cmFjdF9wYWdlc19rdmVjKSwNCj4gICAJS1VOSVRfQ0FTRShp
-b3Zfa3VuaXRfZXh0cmFjdF9wYWdlc19idmVjKSwNCj4gICAJS1VOSVRfQ0FTRShpb3Zfa3VuaXRf
-ZXh0cmFjdF9wYWdlc194YXJyYXkpLA0KPiArCUtVTklUX0NBU0UoaW92X2t1bml0X2JlbmNobWFy
-a19idmVjKSwNCj4gKwlLVU5JVF9DQVNFKGlvdl9rdW5pdF9iZW5jaG1hcmtfYnZlY19zcGxpdCks
-DQo+ICsJS1VOSVRfQ0FTRShpb3Zfa3VuaXRfYmVuY2htYXJrX3hhcnJheSksDQo+ICAgCXt9DQo+
-ICAgfTsNCj4gICANCj4gDQo+IA0KDQo=
+On Wed, Sep 13, 2023 at 6:22=E2=80=AFPM Miklos Szeredi <mszeredi@redhat.com=
+> wrote:
+>
+> Add a way to query attributes of a single mount instead of having to pars=
+e
+> the complete /proc/$PID/mountinfo, which might be huge.
+>
+> Lookup the mount by the old (32bit) or new (64bit) mount ID.  If a mount
+> needs to be queried based on path, then statx(2) can be used to first que=
+ry
+> the mount ID belonging to the path.
+>
+> Design is based on a suggestion by Linus:
+>
+>   "So I'd suggest something that is very much like "statfsat()", which ge=
+ts
+>    a buffer and a length, and returns an extended "struct statfs" *AND*
+>    just a string description at the end."
+>
+> The interface closely mimics that of statx.
+>
+> Handle ASCII attributes by appending after the end of the structure (as p=
+er
+> above suggestion).  Allow querying multiple string attributes with
+> individual offset/length for each.  String are nul terminated (terminatio=
+n
+> isn't counted in length).
+>
+> Mount options are also delimited with nul characters.  Unlike proc, speci=
+al
+> characters are not quoted.
+>
+> Link: https://lore.kernel.org/all/CAHk-=3Dwh5YifP7hzKSbwJj94+DZ2czjrZsczy=
+6GBimiogZws=3Drg@mail.gmail.com/
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> ---
+>  arch/x86/entry/syscalls/syscall_64.tbl |   1 +
+>  fs/internal.h                          |   5 +
+>  fs/namespace.c                         | 312 ++++++++++++++++++++++++-
+>  fs/proc_namespace.c                    |  19 +-
+>  fs/statfs.c                            |   1 +
+>  include/linux/syscalls.h               |   3 +
+>  include/uapi/asm-generic/unistd.h      |   5 +-
+>  include/uapi/linux/mount.h             |  36 +++
+>  8 files changed, 373 insertions(+), 9 deletions(-)
+>
+> diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/sysc=
+alls/syscall_64.tbl
+> index 1d6eee30eceb..6d807c30cd16 100644
+> --- a/arch/x86/entry/syscalls/syscall_64.tbl
+> +++ b/arch/x86/entry/syscalls/syscall_64.tbl
+> @@ -375,6 +375,7 @@
+>  451    common  cachestat               sys_cachestat
+>  452    common  fchmodat2               sys_fchmodat2
+>  453    64      map_shadow_stack        sys_map_shadow_stack
+> +454    common  statmnt                 sys_statmnt
+>
+>  #
+>  # Due to a historical design error, certain syscalls are numbered differ=
+ently
+> diff --git a/fs/internal.h b/fs/internal.h
+> index d64ae03998cc..8f75271428aa 100644
+> --- a/fs/internal.h
+> +++ b/fs/internal.h
+> @@ -83,6 +83,11 @@ int path_mount(const char *dev_name, struct path *path=
+,
+>                 const char *type_page, unsigned long flags, void *data_pa=
+ge);
+>  int path_umount(struct path *path, int flags);
+>
+> +/*
+> + * proc_namespace.c
+> + */
+> +int show_path(struct seq_file *m, struct dentry *root);
+> +
+>  /*
+>   * fs_struct.c
+>   */
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index de47c5f66e17..088a52043bba 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -69,7 +69,8 @@ static DEFINE_IDA(mnt_id_ida);
+>  static DEFINE_IDA(mnt_group_ida);
+>
+>  /* Don't allow confusion with mount ID allocated wit IDA */
+> -static atomic64_t mnt_id_ctr =3D ATOMIC64_INIT(1ULL << 32);
+> +#define OLD_MNT_ID_MAX UINT_MAX
+> +static atomic64_t mnt_id_ctr =3D ATOMIC64_INIT(OLD_MNT_ID_MAX);
+>
+>  static struct hlist_head *mount_hashtable __read_mostly;
+>  static struct hlist_head *mountpoint_hashtable __read_mostly;
+> @@ -4678,6 +4679,315 @@ SYSCALL_DEFINE5(mount_setattr, int, dfd, const ch=
+ar __user *, path,
+>         return err;
+>  }
+>
+> +static bool mnt_id_match(struct mount *mnt, u64 id)
+> +{
+> +       if (id <=3D OLD_MNT_ID_MAX)
+> +               return id =3D=3D mnt->mnt_id;
+> +       else
+> +               return id =3D=3D mnt->mnt_id_unique;
+> +}
+> +
+> +struct vfsmount *lookup_mnt_in_ns(u64 id, struct mnt_namespace *ns)
+> +{
+> +       struct mount *mnt;
+> +       struct vfsmount *res =3D NULL;
+> +
+> +       lock_ns_list(ns);
+> +       list_for_each_entry(mnt, &ns->list, mnt_list) {
+> +               if (!mnt_is_cursor(mnt) && mnt_id_match(mnt, id)) {
+> +                       res =3D &mnt->mnt;
+> +                       break;
+> +               }
+> +       }
+> +       unlock_ns_list(ns);
+> +       return res;
+> +}
+> +
+> +struct stmt_state {
+> +       void __user *const buf;
+> +       size_t const bufsize;
+> +       struct vfsmount *const mnt;
+> +       u64 const mask;
+> +       struct seq_file seq;
+> +       struct path root;
+> +       struct statmnt sm;
+> +       size_t pos;
+> +       int err;
+> +};
+> +
+> +typedef int (*stmt_func_t)(struct stmt_state *);
+> +
+> +static int stmt_string_seq(struct stmt_state *s, stmt_func_t func)
+> +{
+> +       struct seq_file *seq =3D &s->seq;
+> +       int ret;
+> +
+> +       seq->count =3D 0;
+> +       seq->size =3D min_t(size_t, seq->size, s->bufsize - s->pos);
+> +       seq->buf =3D kvmalloc(seq->size, GFP_KERNEL_ACCOUNT);
+> +       if (!seq->buf)
+> +               return -ENOMEM;
+> +
+> +       ret =3D func(s);
+> +       if (ret)
+> +               return ret;
+> +
+> +       if (seq_has_overflowed(seq)) {
+> +               if (seq->size =3D=3D s->bufsize - s->pos)
+> +                       return -EOVERFLOW;
+> +               seq->size *=3D 2;
+> +               if (seq->size > MAX_RW_COUNT)
+> +                       return -ENOMEM;
+> +               kvfree(seq->buf);
+> +               return 0;
+> +       }
+> +
+> +       /* Done */
+> +       return 1;
+> +}
+> +
+> +static void stmt_string(struct stmt_state *s, u64 mask, stmt_func_t func=
+,
+> +                      stmt_str_t *str)
+> +{
+> +       int ret =3D s->pos >=3D s->bufsize ? -EOVERFLOW : 0;
+> +       struct statmnt *sm =3D &s->sm;
+> +       struct seq_file *seq =3D &s->seq;
+> +
+> +       if (s->err || !(s->mask & mask))
+> +               return;
+> +
+> +       seq->size =3D PAGE_SIZE;
+> +       while (!ret)
+> +               ret =3D stmt_string_seq(s, func);
+> +
+> +       if (ret < 0) {
+> +               s->err =3D ret;
+> +       } else {
+> +               seq->buf[seq->count++] =3D '\0';
+> +               if (copy_to_user(s->buf + s->pos, seq->buf, seq->count)) =
+{
+> +                       s->err =3D -EFAULT;
+> +               } else {
+> +                       str->off =3D s->pos;
+> +                       str->len =3D seq->count - 1;
+> +                       s->pos +=3D seq->count;
+> +               }
+> +       }
+> +       kvfree(seq->buf);
+> +       sm->mask |=3D mask;
+> +}
+> +
+> +static void stmt_numeric(struct stmt_state *s, u64 mask, stmt_func_t fun=
+c)
+> +{
+> +       if (s->err || !(s->mask & mask))
+> +               return;
+> +
+> +       s->err =3D func(s);
+> +       s->sm.mask |=3D mask;
+> +}
+> +
+> +static u64 mnt_to_attr_flags(struct vfsmount *mnt)
+> +{
+> +       unsigned int mnt_flags =3D READ_ONCE(mnt->mnt_flags);
+> +       u64 attr_flags =3D 0;
+> +
+> +       if (mnt_flags & MNT_READONLY)
+> +               attr_flags |=3D MOUNT_ATTR_RDONLY;
+> +       if (mnt_flags & MNT_NOSUID)
+> +               attr_flags |=3D MOUNT_ATTR_NOSUID;
+> +       if (mnt_flags & MNT_NODEV)
+> +               attr_flags |=3D MOUNT_ATTR_NODEV;
+> +       if (mnt_flags & MNT_NOEXEC)
+> +               attr_flags |=3D MOUNT_ATTR_NOEXEC;
+> +       if (mnt_flags & MNT_NODIRATIME)
+> +               attr_flags |=3D MOUNT_ATTR_NODIRATIME;
+> +       if (mnt_flags & MNT_NOSYMFOLLOW)
+> +               attr_flags |=3D MOUNT_ATTR_NOSYMFOLLOW;
+> +
+> +       if (mnt_flags & MNT_NOATIME)
+> +               attr_flags |=3D MOUNT_ATTR_NOATIME;
+> +       else if (mnt_flags & MNT_RELATIME)
+> +               attr_flags |=3D MOUNT_ATTR_RELATIME;
+> +       else
+> +               attr_flags |=3D MOUNT_ATTR_STRICTATIME;
+> +
+> +       if (is_idmapped_mnt(mnt))
+> +               attr_flags |=3D MOUNT_ATTR_IDMAP;
+> +
+> +       return attr_flags;
+> +}
+> +
+> +static u64 mnt_to_propagation_flags(struct mount *m)
+> +{
+> +       u64 propagation =3D 0;
+> +
+> +       if (IS_MNT_SHARED(m))
+> +               propagation |=3D MS_SHARED;
+> +       if (IS_MNT_SLAVE(m))
+> +               propagation |=3D MS_SLAVE;
+> +       if (IS_MNT_UNBINDABLE(m))
+> +               propagation |=3D MS_UNBINDABLE;
+> +       if (!propagation)
+> +               propagation |=3D MS_PRIVATE;
+> +
+> +       return propagation;
+> +}
+> +
+> +static int stmt_sb_basic(struct stmt_state *s)
+> +{
+> +       struct super_block *sb =3D s->mnt->mnt_sb;
+> +
+> +       s->sm.sb_dev_major =3D MAJOR(sb->s_dev);
+> +       s->sm.sb_dev_minor =3D MINOR(sb->s_dev);
+> +       s->sm.sb_magic =3D sb->s_magic;
+> +       s->sm.sb_flags =3D sb->s_flags & (SB_RDONLY|SB_SYNCHRONOUS|SB_DIR=
+SYNC|SB_LAZYTIME);
+> +
+> +       return 0;
+> +}
+> +
+> +static int stmt_mnt_basic(struct stmt_state *s)
+> +{
+> +       struct mount *m =3D real_mount(s->mnt);
+> +
+> +       s->sm.mnt_id =3D m->mnt_id_unique;
+> +       s->sm.mnt_parent_id =3D m->mnt_parent->mnt_id_unique;
+> +       s->sm.mnt_id_old =3D m->mnt_id;
+> +       s->sm.mnt_parent_id_old =3D m->mnt_parent->mnt_id;
+> +       s->sm.mnt_attr =3D mnt_to_attr_flags(&m->mnt);
+> +       s->sm.mnt_propagation =3D mnt_to_propagation_flags(m);
+> +       s->sm.mnt_peer_group =3D IS_MNT_SHARED(m) ? m->mnt_group_id : 0;
+> +       s->sm.mnt_master =3D IS_MNT_SLAVE(m) ? m->mnt_master->mnt_group_i=
+d : 0;
+> +
+> +       return 0;
+> +}
+> +
+> +static int stmt_propagate_from(struct stmt_state *s)
+> +{
+> +       struct mount *m =3D real_mount(s->mnt);
+> +
+> +       if (!IS_MNT_SLAVE(m))
+> +               return 0;
+> +
+> +       s->sm.propagate_from =3D get_dominating_id(m, &current->fs->root)=
+;
+> +
+> +       return 0;
+> +}
+> +
+> +static int stmt_mnt_root(struct stmt_state *s)
+> +{
+> +       struct seq_file *seq =3D &s->seq;
+> +       int err =3D show_path(seq, s->mnt->mnt_root);
+> +
+> +       if (!err && !seq_has_overflowed(seq)) {
+> +               seq->buf[seq->count] =3D '\0';
+> +               seq->count =3D string_unescape_inplace(seq->buf, UNESCAPE=
+_OCTAL);
+> +       }
+> +       return err;
+> +}
+> +
+> +static int stmt_mountpoint(struct stmt_state *s)
+> +{
+> +       struct vfsmount *mnt =3D s->mnt;
+> +       struct path mnt_path =3D { .dentry =3D mnt->mnt_root, .mnt =3D mn=
+t };
+> +       int err =3D seq_path_root(&s->seq, &mnt_path, &s->root, "");
+> +
+> +       return err =3D=3D SEQ_SKIP ? 0 : err;
+> +}
+> +
+> +static int stmt_fs_type(struct stmt_state *s)
+> +{
+> +       struct seq_file *seq =3D &s->seq;
+> +       struct super_block *sb =3D s->mnt->mnt_sb;
+> +
+> +       seq_puts(seq, sb->s_type->name);
+> +       if (sb->s_subtype) {
+> +               seq_putc(seq, '.');
+> +               seq_puts(seq, sb->s_subtype);
+> +       }
+> +       return 0;
+> +}
+> +
+> +static int stmt_sb_opts(struct stmt_state *s)
+> +{
+> +       struct seq_file *seq =3D &s->seq;
+> +       struct super_block *sb =3D s->mnt->mnt_sb;
+> +       char *p, *end, *next, *u =3D seq->buf;
+> +       int err;
+> +
+> +       if (!sb->s_op->show_options)
+> +               return 0;
+> +
+> +       err =3D sb->s_op->show_options(seq, s->mnt->mnt_root);
+> +       if (err || seq_has_overflowed(seq) || !seq->count)
+> +               return err;
+> +
+> +       end =3D seq->buf + seq->count;
+> +       *end =3D '\0';
+> +       for (p =3D seq->buf + 1; p < end; p =3D next + 1) {
+> +               next =3D strchrnul(p, ',');
+> +               *next =3D '\0';
+> +               u +=3D string_unescape(p, u, 0, UNESCAPE_OCTAL) + 1;
+> +       }
+> +       seq->count =3D u - 1 - seq->buf;
+> +       return 0;
+> +}
+> +
+> +static int do_statmnt(struct stmt_state *s)
+> +{
+> +       struct statmnt *sm =3D &s->sm;
+> +       struct mount *m =3D real_mount(s->mnt);
+> +
+> +       if (!capable(CAP_SYS_ADMIN) &&
+> +           !is_path_reachable(m, m->mnt.mnt_root, &s->root))
+> +               return -EPERM;
+> +
+> +       stmt_numeric(s, STMT_SB_BASIC, stmt_sb_basic);
+> +       stmt_numeric(s, STMT_MNT_BASIC, stmt_mnt_basic);
+> +       stmt_numeric(s, STMT_PROPAGATE_FROM, stmt_propagate_from);
+> +       stmt_string(s, STMT_MNT_ROOT, stmt_mnt_root, &sm->mnt_root);
+> +       stmt_string(s, STMT_MOUNTPOINT, stmt_mountpoint, &sm->mountpoint)=
+;
+> +       stmt_string(s, STMT_FS_TYPE, stmt_fs_type, &sm->fs_type);
+> +       stmt_string(s, STMT_SB_OPTS, stmt_sb_opts, &sm->sb_opts);
+> +
+> +       if (s->err)
+> +               return s->err;
+> +
+> +       if (copy_to_user(s->buf, sm, min_t(size_t, s->bufsize, sizeof(*sm=
+))))
+> +               return -EFAULT;
+> +
+> +       return 0;
+
+Similar concern as with listmnt, I think that users would
+want to have a way to get the fixed size statmnt part that fits
+in the buffer, even if the variable length string values do not fit
+and be able to query the required buffer size to get the strings.
+
+The API could be either to explicitly request
+STMT_MNT_ROOT_LEN | STMT_MOUNTPOINT_LEN ...
+without allowing mixing of no-value and value requests,
+or to out-out from any string values using a single flag,
+which is probably more simple for API and implementation.
+
+Thanks,
+Amir.
+
+> +}
+> +
+> +SYSCALL_DEFINE5(statmnt, u64, mnt_id,
+> +               u64, mask, struct statmnt __user *, buf,
+> +               size_t, bufsize, unsigned int, flags)
+> +{
+> +       struct vfsmount *mnt;
+> +       int err;
+> +
+> +       if (flags)
+> +               return -EINVAL;
+> +
+> +       down_read(&namespace_sem);
+> +       mnt =3D lookup_mnt_in_ns(mnt_id, current->nsproxy->mnt_ns);
+> +       err =3D -ENOENT;
+> +       if (mnt) {
+> +               struct stmt_state s =3D {
+> +                       .mask =3D mask,
+> +                       .buf =3D buf,
+> +                       .bufsize =3D bufsize,
+> +                       .mnt =3D mnt,
+> +                       .pos =3D sizeof(*buf),
+> +               };
+> +
+> +               get_fs_root(current->fs, &s.root);
+> +               err =3D do_statmnt(&s);
+> +               path_put(&s.root);
+> +       }
+> +       up_read(&namespace_sem);
+> +
+> +       return err;
+> +}
+> +
+>  static void __init init_mount_tree(void)
+>  {
+>         struct vfsmount *mnt;
+> diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
+> index 250eb5bf7b52..20681d1f6798 100644
+> --- a/fs/proc_namespace.c
+> +++ b/fs/proc_namespace.c
+> @@ -132,6 +132,15 @@ static int show_vfsmnt(struct seq_file *m, struct vf=
+smount *mnt)
+>         return err;
+>  }
+>
+> +int show_path(struct seq_file *m, struct dentry *root)
+> +{
+> +       if (root->d_sb->s_op->show_path)
+> +               return root->d_sb->s_op->show_path(m, root);
+> +
+> +       seq_dentry(m, root, " \t\n\\");
+> +       return 0;
+> +}
+> +
+>  static int show_mountinfo(struct seq_file *m, struct vfsmount *mnt)
+>  {
+>         struct proc_mounts *p =3D m->private;
+> @@ -142,13 +151,9 @@ static int show_mountinfo(struct seq_file *m, struct=
+ vfsmount *mnt)
+>
+>         seq_printf(m, "%i %i %u:%u ", r->mnt_id, r->mnt_parent->mnt_id,
+>                    MAJOR(sb->s_dev), MINOR(sb->s_dev));
+> -       if (sb->s_op->show_path) {
+> -               err =3D sb->s_op->show_path(m, mnt->mnt_root);
+> -               if (err)
+> -                       goto out;
+> -       } else {
+> -               seq_dentry(m, mnt->mnt_root, " \t\n\\");
+> -       }
+> +       err =3D show_path(m, mnt->mnt_root);
+> +       if (err)
+> +               goto out;
+>         seq_putc(m, ' ');
+>
+>         /* mountpoints outside of chroot jail will give SEQ_SKIP on this =
+*/
+> diff --git a/fs/statfs.c b/fs/statfs.c
+> index 96d1c3edf289..cc774c2e2c9a 100644
+> --- a/fs/statfs.c
+> +++ b/fs/statfs.c
+> @@ -9,6 +9,7 @@
+>  #include <linux/security.h>
+>  #include <linux/uaccess.h>
+>  #include <linux/compat.h>
+> +#include <uapi/linux/mount.h>
+>  #include "internal.h"
+>
+>  static int flags_by_mnt(int mnt_flags)
+> diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+> index 22bc6bc147f8..1099bd307fa7 100644
+> --- a/include/linux/syscalls.h
+> +++ b/include/linux/syscalls.h
+> @@ -408,6 +408,9 @@ asmlinkage long sys_statfs64(const char __user *path,=
+ size_t sz,
+>  asmlinkage long sys_fstatfs(unsigned int fd, struct statfs __user *buf);
+>  asmlinkage long sys_fstatfs64(unsigned int fd, size_t sz,
+>                                 struct statfs64 __user *buf);
+> +asmlinkage long sys_statmnt(u64 mnt_id, u64 mask,
+> +                           struct statmnt __user *buf, size_t bufsize,
+> +                           unsigned int flags);
+>  asmlinkage long sys_truncate(const char __user *path, long length);
+>  asmlinkage long sys_ftruncate(unsigned int fd, unsigned long length);
+>  #if BITS_PER_LONG =3D=3D 32
+> diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic=
+/unistd.h
+> index abe087c53b4b..640997231ff6 100644
+> --- a/include/uapi/asm-generic/unistd.h
+> +++ b/include/uapi/asm-generic/unistd.h
+> @@ -823,8 +823,11 @@ __SYSCALL(__NR_cachestat, sys_cachestat)
+>  #define __NR_fchmodat2 452
+>  __SYSCALL(__NR_fchmodat2, sys_fchmodat2)
+>
+> +#define __NR_statmnt   454
+> +__SYSCALL(__NR_statmnt, sys_statmnt)
+> +
+>  #undef __NR_syscalls
+> -#define __NR_syscalls 453
+> +#define __NR_syscalls 455
+>
+>  /*
+>   * 32 bit systems traditionally used different
+> diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
+> index bb242fdcfe6b..4ec7308a9259 100644
+> --- a/include/uapi/linux/mount.h
+> +++ b/include/uapi/linux/mount.h
+> @@ -138,4 +138,40 @@ struct mount_attr {
+>  /* List of all mount_attr versions. */
+>  #define MOUNT_ATTR_SIZE_VER0   32 /* sizeof first published struct */
+>
+> +struct stmt_str {
+> +       __u32 off;
+> +       __u32 len;
+> +};
+> +
+> +struct statmnt {
+> +       __u64 mask;             /* What results were written [uncond] */
+> +       __u32 sb_dev_major;     /* Device ID */
+> +       __u32 sb_dev_minor;
+> +       __u64 sb_magic;         /* ..._SUPER_MAGIC */
+> +       __u32 sb_flags;         /* MS_{RDONLY,SYNCHRONOUS,DIRSYNC,LAZYTIM=
+E} */
+> +       __u32 __spare1;
+> +       __u64 mnt_id;           /* Unique ID of mount */
+> +       __u64 mnt_parent_id;    /* Unique ID of parent (for root =3D=3D m=
+nt_id) */
+> +       __u32 mnt_id_old;       /* Reused IDs used in proc/.../mountinfo =
+*/
+> +       __u32 mnt_parent_id_old;
+> +       __u64 mnt_attr;         /* MOUNT_ATTR_... */
+> +       __u64 mnt_propagation;  /* MS_{SHARED,SLAVE,PRIVATE,UNBINDABLE} *=
+/
+> +       __u64 mnt_peer_group;   /* ID of shared peer group */
+> +       __u64 mnt_master;       /* Mount receives propagation from this I=
+D */
+> +       __u64 propagate_from;   /* Propagation from in current namespace =
+*/
+> +       __u64 __spare[20];
+> +       struct stmt_str mnt_root;       /* Root of mount relative to root=
+ of fs */
+> +       struct stmt_str mountpoint;     /* Mountpoint relative to root of=
+ process */
+> +       struct stmt_str fs_type;        /* Filesystem type[.subtype] */
+> +       struct stmt_str sb_opts;        /* Super block string options (nu=
+l delimted) */
+> +};
+> +
+> +#define STMT_SB_BASIC          0x00000001U     /* Want/got sb_... */
+> +#define STMT_MNT_BASIC         0x00000002U     /* Want/got mnt_... */
+> +#define STMT_PROPAGATE_FROM    0x00000004U     /* Want/got propagate_fro=
+m */
+> +#define STMT_MNT_ROOT          0x00000008U     /* Want/got mnt_root  */
+> +#define STMT_MOUNTPOINT                0x00000010U     /* Want/got mount=
+point */
+> +#define STMT_FS_TYPE           0x00000020U     /* Want/got fs_type */
+> +#define STMT_SB_OPTS           0x00000040U     /* Want/got sb_opts */
+> +
+>  #endif /* _UAPI_LINUX_MOUNT_H */
+> --
+> 2.41.0
+>
