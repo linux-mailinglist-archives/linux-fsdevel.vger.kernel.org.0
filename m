@@ -2,160 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EDCCD7A0722
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Sep 2023 16:20:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9364E7A0856
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Sep 2023 17:00:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239982AbjINOUE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Sep 2023 10:20:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52426 "EHLO
+        id S240693AbjINPAo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Sep 2023 11:00:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239956AbjINOUD (ORCPT
+        with ESMTP id S240659AbjINPAn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Sep 2023 10:20:03 -0400
-Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0A3EE3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Sep 2023 07:19:59 -0700 (PDT)
-Received: by mail-yb1-xb49.google.com with SMTP id 3f1490d57ef6-d81a47e12b5so557175276.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Sep 2023 07:19:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1694701199; x=1695305999; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OinN3M2z4I/Qg8aCda0iI1MRdyz332KlEPPYu5muKwI=;
-        b=xr88NZ3hWTH3lnvGOdBo9NgKqtBG+RfRf+Ma5OOyyYFnq+jFzL65M+V4WoaB9eRMHm
-         971zh2UCBLYdP76uV+Mq30FSgo6lprEyIAHWM6SBOSR9aKHFIc5lP5hALT7lI7DW6hc3
-         2tZv6v0YmnnxQkLA7ALzjmjCaSIA/hUFh0usopy9109tuTlYRCtAakmcXQ/bUatDDHbU
-         h5CBK2/vAkKySfz1KsqCjlBwoLMQf8sHXlk0K2SGK3ckc7R6E0h0vvWF8riWY0TWrINA
-         Zq48Rcr1pRGc9ZQz2lqK1ZZMhdG35Thg67A8WQXciGYHbeYiyMYi5tFD6yK2xNXXqIYv
-         i2IQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694701199; x=1695305999;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OinN3M2z4I/Qg8aCda0iI1MRdyz332KlEPPYu5muKwI=;
-        b=TjSp79qZ8dAupJSHEA9huXkeq2df8VR1Oi2wvGCeNCR5z5shyBVZ1yDTpANXYWzaHp
-         9xX5Nm5utEXD6Vy2JKnLksFQ6ztW80uVQ/Ks6aj8VlK6ekyawMp5YxHLegRaxqvrf+4g
-         yez74xT1bdwd1FjIYkmAaIomIzKzoIAxO4tXubvrDNmp+EWzAvFLc0EzCbendAdHljqo
-         wKtscvWVqU2PYUzdNTqRgm006++jIgsk6kK7GE1fsfoh6MNWPmoQMnpwYkcaZ9NxFfvP
-         VM+A/6duACBelQ7i4cLNoDrKL1nqhGXlm3vqUmJSQo0nlkP8A1H5NVT8rqiQWX4GOA5N
-         hIEQ==
-X-Gm-Message-State: AOJu0YyEN0NdiI/EqoP1EZJYy70o1C/QrLB4nhqVO5WCD360pnxolo9c
-        HTWc8h/dsNamFWyOsArRnlzayID9m3k=
-X-Google-Smtp-Source: AGHT+IEn69IOl2rxglDVCjXW4KTdScyqCw6tLi48MQpyb+nW1MjRKbjq1lfqPgEextp+IedkDxkiKrdOCXU=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a25:e6c4:0:b0:d78:f45:d7bd with SMTP id
- d187-20020a25e6c4000000b00d780f45d7bdmr129688ybh.4.1694701199053; Thu, 14 Sep
- 2023 07:19:59 -0700 (PDT)
-Date:   Thu, 14 Sep 2023 07:19:57 -0700
-In-Reply-To: <54d3e6bf-d374-caa5-0920-bb2fe3b7595c@linux.intel.com>
-Mime-Version: 1.0
-References: <20230914015531.1419405-1-seanjc@google.com> <20230914015531.1419405-3-seanjc@google.com>
- <54d3e6bf-d374-caa5-0920-bb2fe3b7595c@linux.intel.com>
-Message-ID: <ZQMWjbt/SzKvag2K@google.com>
-Subject: Re: [RFC PATCH v12 02/33] KVM: Use gfn instead of hva for mmu_notifier_retry
-From:   Sean Christopherson <seanjc@google.com>
-To:     Binbin Wu <binbin.wu@linux.intel.com>
-Cc:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Oliver Upton <oliver.upton@linux.dev>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Anup Patel <anup@brainfault.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Fuad Tabba <tabba@google.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Anish Moorthy <amoorthy@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        Isaku Yamahata <isaku.yamahata@intel.com>,
-        Xu Yilun <yilun.xu@intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Ackerley Tng <ackerleytng@google.com>,
-        Maciej Szmigiero <mail@maciej.szmigiero.name>,
-        David Hildenbrand <david@redhat.com>,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>,
-        Wang <wei.w.wang@intel.com>,
-        Liam Merwick <liam.merwick@oracle.com>,
-        Isaku Yamahata <isaku.yamahata@gmail.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
+        Thu, 14 Sep 2023 11:00:43 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6058C1FC2;
+        Thu, 14 Sep 2023 08:00:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=/PUYrMbpW5so2WH0/IzeL++7YJb9b4afMmUYKTd+Jog=; b=l/trSs8W5Wg0NkK4LQIWJB2VhJ
+        9+HKX34Cws3o7HmPUQcA5SmAsGs9pRYqAyreiB8cd4r32janHkBqx/9KY5LDUWEXtPaVTszMk51z6
+        V4lLzNXvrdwu2C1ZA8CbPDQMczLSFKGZNzwztSxgvIIV/AMv3QLjQSfXbY9r6HQvmEEGGqw8CT++2
+        QonhERFPgEsagksjbEiOtjnNR0btRu3pBTs84T8aY/7OBFRfthsX/JSfUWMVuBnqUrPt8+X396C8m
+        lPo18e3oSX30h6KaYZCf7G5KH0d+b6xXqIjzEyeQJvpjYH9XibnmiKPyPRrm+2jEGc0Rp+98u7q/N
+        9Tx3A9Hw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1qgnpF-003XOH-E8; Thu, 14 Sep 2023 15:00:13 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     akpm@linux-foundation.org
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Hui Zhu <teawater@antgroup.com>, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org
+Subject: [PATCH v2 0/8] Add and use bdev_getblk()
+Date:   Thu, 14 Sep 2023 16:00:03 +0100
+Message-Id: <20230914150011.843330-1-willy@infradead.org>
+X-Mailer: git-send-email 2.37.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 14, 2023, Binbin Wu wrote:
-> 
-> On 9/14/2023 9:55 AM, Sean Christopherson wrote:
-> > +void kvm_mmu_invalidate_end(struct kvm *kvm)
-> >   {
-> >   	/*
-> >   	 * This sequence increase will notify the kvm page fault that
-> > @@ -833,6 +848,13 @@ void kvm_mmu_invalidate_end(struct kvm *kvm, unsigned long start,
-> >   	 * in conjunction with the smp_rmb in mmu_invalidate_retry().
-> >   	 */
-> >   	kvm->mmu_invalidate_in_progress--;
-> > +
-> > +	/*
-> > +	 * Assert that at least one range must be added between start() and
-> > +	 * end().  Not adding a range isn't fatal, but it is a KVM bug.
-> > +	 */
-> > +	WARN_ON_ONCE(kvm->mmu_invalidate_in_progress &&
-> > +		     kvm->mmu_invalidate_range_start == INVALID_GPA);
-> Should the check happen before the decrease of kvm->mmu_invalidate_in_progress?
-> Otherwise, KVM calls kvm_mmu_invalidate_begin(), then kvm_mmu_invalidate_end()
-> the check will not take effect.
+This patch series fixes a bug reported by Hui Zhu; see proposed
+patches v1 and v2:
+https://lore.kernel.org/linux-fsdevel/20230811035705.3296-1-teawaterz@linux.alibaba.com/
+https://lore.kernel.org/linux-fsdevel/20230811071519.1094-1-teawaterz@linux.alibaba.com/
 
-Indeed.  I'm pretty sure I added this code, not sure what I was thinking.  There's
-no reason to check mmu_invalidate_in_progress, it's not like KVM allows
-mmu_invalidate_in_progress to go negative.  The comment is also a bit funky.  I'll
-post a fixup patch to make it look like this (assuming I'm not forgetting a subtle
-reason for guarding the check with the in-progress flag):
+I decided to go in a rather different direction for this fix, and
+fix a related problem at the same time.  I don't think there's any
+urgency to rush this into Linus' tree, nor have I marked it for stable.
+Reasonable people may disagree.
 
-	/*
-	 * Assert that at least one range was added between start() and end().
-	 * Not adding a range isn't fatal, but it is a KVM bug.
-	 */
-	WARN_ON_ONCE(kvm->mmu_invalidate_range_start == INVALID_GPA);
+For v2, I fixed a bug around the use of __GFP_ACCOUNT, and Jan Kara
+pushed me into making __getblk_gfp() disappear entirely (patches 5-8).
+It's currently churning through xfstests and has got up to generic/048.
 
-Regarding kvm->mmu_invalidate_in_progress, this would be a good opportunity to
-move the BUG_ON() into the common end(), e.g. as is, an end() without a start()
-from something other than the generic mmu_notifier would go unnoticed.  And I
-_think_ we can replace the BUG_ON() with a KVM_BUG_ON() without putting the
-kernel at risk.  E.g.
+Matthew Wilcox (Oracle) (8):
+  buffer: Pass GFP flags to folio_alloc_buffers()
+  buffer: Hoist GFP flags from grow_dev_page() to __getblk_gfp()
+  ext4: Use bdev_getblk() to avoid memory reclaim in readahead path
+  buffer: Use bdev_getblk() to avoid memory reclaim in readahead path
+  buffer: Convert getblk_unmovable() and __getblk() to use bdev_getblk()
+  buffer: Convert sb_getblk() to call __getblk()
+  ext4: Call bdev_getblk() from sb_getblk_gfp()
+  buffer: Remove __getblk_gfp()
 
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index dd948276e5d6..54480655bcce 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -870,6 +870,7 @@ void kvm_mmu_invalidate_end(struct kvm *kvm)
-         * in conjunction with the smp_rmb in mmu_invalidate_retry().
-         */
-        kvm->mmu_invalidate_in_progress--;
-+       KVM_BUG_ON(kvm->mmu_invalidate_in_progress < 0, kvm);
- 
-        /*
-         * Assert that at least one range was added between start() and end().
-@@ -905,8 +906,6 @@ static void kvm_mmu_notifier_invalidate_range_end(struct mmu_notifier *mn,
-         */
-        if (wake)
-                rcuwait_wake_up(&kvm->mn_memslots_update_rcuwait);
--
--       BUG_ON(kvm->mmu_invalidate_in_progress < 0);
- }
- 
- static int kvm_mmu_notifier_clear_flush_young(struct mmu_notifier *mn,
+ fs/buffer.c                 | 79 ++++++++++++++++++++-----------------
+ fs/ext4/super.c             | 13 ++++--
+ include/linux/buffer_head.h | 53 ++++++++++++++-----------
+ 3 files changed, 83 insertions(+), 62 deletions(-)
+
+-- 
+2.40.1
 
