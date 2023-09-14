@@ -2,222 +2,187 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B2A377A10D6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Sep 2023 00:18:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63BE17A118F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Sep 2023 01:19:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229968AbjINWTA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Sep 2023 18:19:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35582 "EHLO
+        id S230194AbjINXTm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Sep 2023 19:19:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229931AbjINWS7 (ORCPT
+        with ESMTP id S229499AbjINXTm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Sep 2023 18:18:59 -0400
-Received: from todd.t-8ch.de (todd.t-8ch.de [IPv6:2a01:4f8:c010:41de::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85DC2270C;
-        Thu, 14 Sep 2023 15:18:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-        s=mail; t=1694729933;
-        bh=ieuN4WSdOASjW7MZ8fQhKTc4SOBYccYW/PVLNRhj/Fg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hauFyTQ4E7g6eXOFjEGMXUugXelOejX8zOEc4aH3EtYsQhWnuxL6f4h5//V5qxFIj
-         k65ZspkDzckwSREnCWmmgkSXq7GFYSn9WUETOX1B3XMTORZ2HtJJ8p0DlDsG04CNVW
-         R0Oi5GNm1GsFogs1IcEixwTvcFrgI5ygGf5y+QFo=
-Date:   Fri, 15 Sep 2023 00:18:52 +0200
-From:   Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Mark Brown <broonie@kernel.org>, Willy Tarreau <w@1wt.eu>,
+        Thu, 14 Sep 2023 19:19:42 -0400
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C04FB270A
+        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Sep 2023 16:19:37 -0700 (PDT)
+Received: by mail-yb1-xb49.google.com with SMTP id 3f1490d57ef6-d7e8bb74b59so1856875276.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Sep 2023 16:19:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1694733577; x=1695338377; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4dPufiPQCtPzWz5WHSfvhHWIcWm8zH/JZg221REQo40=;
+        b=BE71Wxnxf9TXA4uEG1U0seh2vfYltm/8zcCFo5uV0eHujhfmKpQ6viEb+NNBb6Dwhc
+         P8bs3PYzSbe3D4fPu4d+k7pb0gvCNTZ/skyj5fMz59hs2XZDM9Iu8EIT2QGUj8CwD2hF
+         VhP+MTv0bFqBaHPQ1155wjxTqW899a7knVyzkqvEyTb10+GMcMamfhqMH+ycTMc3nHO3
+         6TpxZWCJ3/7kuA/983/tRwmmq72d/RwcxFAXY8BXaGPZVMoy3HoUsXsh/WP+ZEUko9kB
+         uumFQJq+gwCpW4SLi2GtEJ/RodOlKnZ/i0sCV5zSDbqp6z708wVn/Y3sxijCTb3ibSzT
+         MMzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694733577; x=1695338377;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4dPufiPQCtPzWz5WHSfvhHWIcWm8zH/JZg221REQo40=;
+        b=bD1VrTbOIplc4QirQ25sudJwvH8dpws/WmSjJ8yL3Cg+3eMgLDHVPYXOd1lBSM/0l8
+         uOigCZb51wD+WnuMQLXFc7n3urva3hT4OiYDx1wdguC68vLZ09hDzZF/Pl0CKcogi6Ao
+         vfRwtQ5blDiSBj2wYIx4+d7GIBz6El3QmQWeQX0mSqE1u3oXYCOfTaA0uYZ6ws9TbcHQ
+         IJTKz6QnF8PocsY43t8ZP/Sb28NJ8fr2rDRzOP14+VbAQFemXapI8ogXOrbScat/n+HE
+         2ZMms1yIYkggmsYPTP8CV2ihySdghxxcU1PMXdxrUvFtdC5ZUXeV+zIoXFEzPsAWFBdg
+         J5Xw==
+X-Gm-Message-State: AOJu0Yz6DMfTEEFXmM1QQ0uHWg3mL0HLXPxgQ7kEgJcUjtMHxLfmU6RJ
+        RINK4es2pjASfYFCmYSbLkpp5J7jtPIT8WkT0A==
+X-Google-Smtp-Source: AGHT+IGXEzZPfzBJslkSHoMTui4zDBSgnXtUGummxt07D80J/zY1rCAlKy2IgGo0zSECxNr/ULgwmLbLuPQoPz0S1A==
+X-Received: from ackerleytng-ctop.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:13f8])
+ (user=ackerleytng job=sendgmr) by 2002:a25:aa83:0:b0:d77:984e:c770 with SMTP
+ id t3-20020a25aa83000000b00d77984ec770mr158034ybi.5.1694733576882; Thu, 14
+ Sep 2023 16:19:36 -0700 (PDT)
+Date:   Thu, 14 Sep 2023 23:19:34 +0000
+In-Reply-To: <ZQNN2AyDJ8dF0/6D@google.com>
+Mime-Version: 1.0
+References: <ZOO782YGRY0YMuPu@google.com> <diqzttsiu67n.fsf@ackerleytng-ctop.c.googlers.com>
+ <ZQNN2AyDJ8dF0/6D@google.com>
+Message-ID: <diqzv8ccjqbd.fsf@ackerleytng-ctop.c.googlers.com>
+Subject: Re: [RFC PATCH v11 12/29] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
+ guest-specific backing memory
+From:   Ackerley Tng <ackerleytng@google.com>
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     pbonzini@redhat.com, maz@kernel.org, oliver.upton@linux.dev,
+        chenhuacai@kernel.org, mpe@ellerman.id.au, anup@brainfault.org,
+        paul.walmsley@sifive.com, palmer@dabbelt.com,
+        aou@eecs.berkeley.edu, willy@infradead.org,
+        akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, kvm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Sebastian Ott <sebott@redhat.com>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH RFC] binfmt_elf: fully allocate bss pages
-Message-ID: <987fb5f4-416f-482a-9564-b12f7423e19a@t-8ch.de>
-References: <20230914-bss-alloc-v1-1-78de67d2c6dd@weissschuh.net>
- <87fs3gwn53.fsf@email.froward.int.ebiederm.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87fs3gwn53.fsf@email.froward.int.ebiederm.org>
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chao.p.peng@linux.intel.com,
+        tabba@google.com, jarkko@kernel.org, yu.c.zhang@linux.intel.com,
+        vannapurve@google.com, mail@maciej.szmigiero.name, vbabka@suse.cz,
+        david@redhat.com, qperret@google.com, michael.roth@amd.com,
+        wei.w.wang@intel.com, liam.merwick@oracle.com,
+        isaku.yamahata@gmail.com, kirill.shutemov@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2023-09-14 14:49:44-0500, Eric W. Biederman wrote:
-> Thomas Weißschuh <linux@weissschuh.net> writes:
-> 
-> > When allocating the pages for bss the start address needs to be rounded
-> > down instead of up.
-> > Otherwise the start of the bss segment may be unmapped.
-> >
-> > The was reported to happen on Aarch64:
-> 
-> Those program headers you quote look corrupt.
+Sean Christopherson <seanjc@google.com> writes:
 
-To reproduce:
+> On Mon, Aug 28, 2023, Ackerley Tng wrote:
+>> Sean Christopherson <seanjc@google.com> writes:
+>> >> If we track struct kvm with the inode, then I think (a), (b) and (c) can
+>> >> be independent of the refcounting method. What do you think?
+>> >
+>> > No go.  Because again, the inode (physical memory) is coupled to the virtual machine
+>> > as a thing, not to a "struct kvm".  Or more concretely, the inode is coupled to an
+>> > ASID or an HKID, and there can be multiple "struct kvm" objects associated with a
+>> > single ASID.  And at some point in the future, I suspect we'll have multiple KVM
+>> > objects per HKID too.
+>> >
+>> > The current SEV use case is for the migration helper, where two KVM objects share
+>> > a single ASID (the "real" VM and the helper).  I suspect TDX will end up with
+>> > similar behavior where helper "VMs" can use the HKID of the "real" VM.  For KVM,
+>> > that means multiple struct kvm objects being associated with a single HKID.
+>> >
+>> > To prevent use-after-free, KVM "just" needs to ensure the helper instances can't
+>> > outlive the real instance, i.e. can't use the HKID/ASID after the owning virtual
+>> > machine has been destroyed.
+>> >
+>> > To put it differently, "struct kvm" is a KVM software construct that _usually_,
+>> > but not always, is associated 1:1 with a virtual machine.
+>> >
+>> > And FWIW, stashing the pointer without holding a reference would not be a complete
+>> > solution, because it couldn't guard against KVM reusing a pointer.  E.g. if a
+>> > struct kvm was unbound and then freed, KVM could reuse the same memory for a new
+>> > struct kvm, with a different ASID/HKID, and get a false negative on the rebinding
+>> > check.
+>> 
+>> I agree that inode (physical memory) is coupled to the virtual machine
+>> as a more generic concept.
+>> 
+>> I was hoping that in the absence of CC hardware providing a HKID/ASID,
+>> the struct kvm pointer could act as a representation of the "virtual
+>> machine". You're definitely right that KVM could reuse a pointer and so
+>> that idea doesn't stand.
+>> 
+>> I thought about generating UUIDs to represent "virtual machines" in the
+>> absence of CC hardware, and this UUID could be transferred during
+>> intra-host migration, but this still doesn't take host userspace out of
+>> the TCB. A malicious host VMM could just use the migration ioctl to copy
+>> the UUID to a malicious dumper VM, which would then pass checks with a
+>> gmem file linked to the malicious dumper VM. This is fine for HKID/ASIDs
+>> because the memory is encrypted; with UUIDs there's no memory
+>> encryption.
+>
+> I don't understand what problem you're trying to solve.  I don't see a need to
+> provide a single concrete representation/definition of a "virtual machine".  E.g.
+> there's no need for a formal definition to securely perform intrahost migration,
+> KVM just needs to ensure that the migration doesn't compromise guest security,
+> functionality, etc.
+>
+> That gets a lot more complex if the target KVM instance (module, not "struct kvm")
+> is a different KVM, e.g. when migrating to a different host.  Then there needs to
+> be a way to attest that the target is trusted and whatnot, but that still doesn't
+> require there to be a formal definition of a "virtual machine".
+>
+>> Circling back to the original topic, was associating the file with
+>> struct kvm at gmem file creation time meant to constrain the use of the
+>> gmem file to one struct kvm, or one virtual machine, or something else?
+>
+> It's meant to keep things as simple as possible (relatively speaking).  A 1:1
+> association between a KVM instance and a gmem instance means we don't have to
+> worry about the edge cases and oddities I pointed out earlier in this thread.
+>
 
-$ cat test.c
-char foo[1];
+I looked through this thread again and re-read the edge cases and
+oddities that was pointed out earlier (last paragraph at [1]) and I
+think I understand better, and I have just one last clarification.
 
-void __attribute__((weak, noreturn, optimize("Os", "omit-frame-pointer"))) _start(void)
-{
-	__asm__ volatile (
-		"mov x0, 123\n"
-		"mov x8, 93\n"       /* NR_exit == 93 */
-		"svc #0\n"
-	);
-	__builtin_unreachable();
-}
+It was previously mentioned that binding on creation time simplifies the
+lifecycle of memory:
 
-$ aarch64-linux-gnu-gcc -fno-stack-protector -o nolibc-test -nostdlib -static test.c
+"(a) prevent a different VM from *ever* binding to the gmem instance" [1]
 
-Note:
-it works in qemu-user, newer versions need the workaround from
-https://gitlab.com/qemu-project/qemu/-/issues/1854
-The issue in qemu-user seems to be related to the question at hand.
+Does this actually mean
 
-> The address 0x41ffe8 is not 0x10000 aligned.
-> 
-> I don't think anything in the elf specification allows that.
-> 
-> The most common way to have bss is for a elf segment to have a larger
-> memsize than filesize.  In which case rounding up is the correct way to
-> handle things.
-> 
-> We definitely need to verify the appended bss case works, before
-> taking this patch, or we will get random application failures
-> because parts of the data segment are being zeroed, or the binaries
-> won't load because the bss won't be able to map over the initialized data.
+"prevent a different struct kvm from *ever* binding to this gmem file"
 
-My hope in posting this patch was also for the bots to uncover any
-obvious breakage. So far there were no reports.
+?
 
-> The note segment living at a conflicting virtual address also looks
-> suspicious.   It is probably harmless, as note segments are not
-> loaded.
-> 
-> 
-> Are you by any chance using an experimental linker?
+If so, then binding on creation
 
-I'm using GNU ld 2.41 as supplied by my distro.
-(ArchLinux, aarch64-linux-gnu-binutils 2.41-2)
++ Makes the gmem *file* (and just not the bindings xarray) the binding
+  between struct kvm and the file.
++ Simplifies the KVM-userspace contract to "this gmem file can only be
+  used with this struct kvm"
 
-> In general every segment in an elf executable needs to be aligned to the
-> SYSVABI's architecture page size.  I think that is 64k on ARM.  Which it
-> looks like the linker tried to implement by setting the alignment to
-> 0x10000, and then ignored by putting a byte offset beginning to the
-> page.
+Binding on creation doesn't offer any way to block the contents of the
+inode from being used with another "virtual machine" though, since we
+can have more than one gmem file pointing to the same inode, and the
+other gmem file is associated with another struct kvm. (And a strut kvm
+isn't associated 1:1 with a virtual machine [2])
 
-Looking at Figure A-5 of [0] this seems not to be the case.
-It shows p_vaddr=0x8048100 and p_align=0x1000.
-(On x86_64 with PAGE_SIZE=0x1000)
+The point about an inode needing to be coupled to a virtual machine as a
+thing [2] led me to try to find a single concrete representation of a
+"virtual machine".
 
-> At a minimum someone needs to sort through what the elf specification
-> says needs to happen is a weird case like this where the start address
-> of a load segment does not match the alignment of the segment.
+Is locking inode contents to a "virtual machine" outside the scope of
+gmem? If so, then it is fine to bind on creation time, use a VM ioctl
+over a system ioctl, and the method of refcounting in gmem v12 is okay.
 
-I'll take a look.
+[1] https://lore.kernel.org/lkml/ZNKv9ul2I7A4V7IF@google.com/
+[2] https://lore.kernel.org/lkml/ZOO782YGRY0YMuPu@google.com/
 
-> To see how common this is I looked at a binary known to be working, and
-> my /usr/bin/ls binary has one segment that has one of these unaligned
-> starts as well.
-
-Same for my /usr/bin/busybox, also the .data and .bss segment.
-
-> So it must be defined to work somewhere but I need to see the definition
-> to even have a good opinion on the nonsense of saying an unaligned value
-> should be aligned.
-
-Figure 2-1 from [0]:
-
-p_align:
-
-Loadable process segments must have congruent values for p_vaddr and
-p_offset, modulo the page size.This member gives the value to which the
-segments are aligned in memory and in the file. Values 0 and 1 mean that no
-alignment is required. Otherwise, p_align should be a positive, integral power of
-2, and p_addr should equal p_offset, modulo p_align.
-
-0x41ffe8 (p_vaddr)  % 0x1000 = 0xfe8
-0x00ffe8 (p_offset) % 0x1000 = 0xfe8
-
-0x41ffe8 (p_addr)   % 0x10000 = 0xffe8
-0x00ffe8 (p_offset) % 0x10000 = 0xffe8
-
-So this seems to be satisfied.
-
-> All I know is that we need to limit our support to what memory mapping
-> pieces from the elf executable can support.  Which at a minimum requires:
-> 	virt_addr % ELF_MIN_ALIGN == file_offset % ELF_MIN_ALIGN
-
-Aarch64 can also handle 4k pages so this invariant should be satisfied.
-4k pages seems to be the default for the kernel, too.
-
-[0] https://refspecs.linuxfoundation.org/elf/elf.pdf
-
-> > Memory allocated by set_brk():
-> > Before: start=0x420000 end=0x420000
-> > After:  start=0x41f000 end=0x420000
-> >
-> > The triggering binary looks like this:
-> >
-> >     Elf file type is EXEC (Executable file)
-> >     Entry point 0x400144
-> >     There are 4 program headers, starting at offset 64
-> >
-> >     Program Headers:
-> >       Type           Offset             VirtAddr           PhysAddr
-> >                      FileSiz            MemSiz              Flags  Align
-> >       LOAD           0x0000000000000000 0x0000000000400000 0x0000000000400000
-> >                      0x0000000000000178 0x0000000000000178  R E    0x10000
-> >       LOAD           0x000000000000ffe8 0x000000000041ffe8 0x000000000041ffe8
-> >                      0x0000000000000000 0x0000000000000008  RW     0x10000
-> >       NOTE           0x0000000000000120 0x0000000000400120 0x0000000000400120
-> >                      0x0000000000000024 0x0000000000000024  R      0x4
-> >       GNU_STACK      0x0000000000000000 0x0000000000000000 0x0000000000000000
-> >                      0x0000000000000000 0x0000000000000000  RW     0x10
-> >
-> >      Section to Segment mapping:
-> >       Segment Sections...
-> >        00     .note.gnu.build-id .text .eh_frame
-> >        01     .bss
-> >        02     .note.gnu.build-id
-> >        03
-> >
-> > Reported-by: Sebastian Ott <sebott@redhat.com>
-> > Closes: https://lore.kernel.org/lkml/5d49767a-fbdc-fbe7-5fb2-d99ece3168cb@redhat.com/
-> > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> > ---
-> >
-> > I'm not really familiar with the ELF loading process, so putting this
-> > out as RFC.
-> >
-> > A example binary compiled with aarch64-linux-gnu-gcc 13.2.0 is available
-> > at https://test.t-8ch.de/binfmt-bss-repro.bin
-> > ---
-> >  fs/binfmt_elf.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-> > index 7b3d2d491407..4008a57d388b 100644
-> > --- a/fs/binfmt_elf.c
-> > +++ b/fs/binfmt_elf.c
-> > @@ -112,7 +112,7 @@ static struct linux_binfmt elf_format = {
-> >  
-> >  static int set_brk(unsigned long start, unsigned long end, int prot)
-> >  {
-> > -	start = ELF_PAGEALIGN(start);
-> > +	start = ELF_PAGESTART(start);
-> >  	end = ELF_PAGEALIGN(end);
-> >  	if (end > start) {
-> >  		/*
-> >
-> > ---
-> > base-commit: aed8aee11130a954356200afa3f1b8753e8a9482
-> > change-id: 20230914-bss-alloc-f523fa61718c
-> >
-> > Best regards,
+> <snip>
