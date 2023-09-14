@@ -2,132 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B1CB79FDD3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Sep 2023 10:08:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8999179FE02
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Sep 2023 10:14:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236178AbjINIIS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Sep 2023 04:08:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56860 "EHLO
+        id S236325AbjINIOy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Sep 2023 04:14:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235931AbjINIIQ (ORCPT
+        with ESMTP id S235969AbjINIOx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Sep 2023 04:08:16 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7949DF;
-        Thu, 14 Sep 2023 01:08:12 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 84B541F74A;
-        Thu, 14 Sep 2023 08:08:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1694678891; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=E/ecNnDz5zq7YMrO/wGOI+Yrvu8MsC3RqtEZg7CpzAM=;
-        b=iXF2lvqeeTY41pqwpGIemAJn92B8uB5HcwimMF79k17rki4IDOuG1/fmhxDgQ3kC61Bp+x
-        yxyEUd5bebZABOd1QmuX0W2vqETPHVFlnso1SBeRTQ3ApaSYDX1pbLbTa/BKf3mAqIvwUI
-        v+BIRzsZwQeJMjS/Q01Pr60A6dWISbI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1694678891;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=E/ecNnDz5zq7YMrO/wGOI+Yrvu8MsC3RqtEZg7CpzAM=;
-        b=Fv6WEmj+HG5HKo9vjKsLPyeE94ke481HEVXYKrauseWBxcq4Ov02zl13ywJRyZL6ZLfhaG
-        IuFuzeoj2CZPnlCw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 72EB813580;
-        Thu, 14 Sep 2023 08:08:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 1nsCHGu/AmVpIQAAMHmgww
-        (envelope-from <jack@suse.cz>); Thu, 14 Sep 2023 08:08:11 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 0D158A07C2; Thu, 14 Sep 2023 10:08:11 +0200 (CEST)
-Date:   Thu, 14 Sep 2023 10:08:11 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Mirsad Todorovac <mirsad.todorovac@alu.unizg.hr>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
-Subject: Re: [BUG] KCSAN: data-race in xas_clear_mark / xas_find_marked
-Message-ID: <20230914080811.465zw662sus4uznq@quack3>
-References: <06645d2b-a964-1c4c-15cf-42ccc6c6e19b@alu.unizg.hr>
- <ZN9iPYTmV5nSK2jo@casper.infradead.org>
+        Thu, 14 Sep 2023 04:14:53 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F22D0CD8;
+        Thu, 14 Sep 2023 01:14:49 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65E8AC433C7;
+        Thu, 14 Sep 2023 08:14:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1694679289;
+        bh=O/fQUB0thzVERyyDJ+e34tB6NXJCmxw8lXP18CaGKeo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=XXUmuSFI3jaRP/IM3nQ4JnvyjNh2qAOhASwCfGN1IJc6eJjrXLpDuCg/3ZRK0XZIj
+         PFpUjNSLaAuzaHdHX3KqjtWOGoOw1pqq7H1hX2lo3clUMJ3Hq5Q+RZY621FubejTSP
+         Dh2Z62Cf+OwrRofnkyC/mnCGfrVcW82/pgXrN5vRE9sZCwRAPBDRIgbVnSW1AscKx0
+         qnVUR+TBx4/yQhJ4uusXzvx8wg1uyXcrRP8jIXgrEbf3eBb2dChUkeuEIJ3i44gnGV
+         dn/WYBhiU/WVI/fHFm4KWMQ+n7wCAX7LZDacnTqVfOvr354VtPtV1r2ZSb96qVxwNz
+         efUYIl8JOfimg==
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-fscrypt@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-btrfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>
+Subject: [PATCH v2 0/5] fscrypt: add support for data_unit_size < fs_block_size
+Date:   Thu, 14 Sep 2023 01:12:50 -0700
+Message-ID: <20230914081255.193502-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.42.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZN9iPYTmV5nSK2jo@casper.infradead.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 18-08-23 13:21:17, Matthew Wilcox wrote:
-> On Fri, Aug 18, 2023 at 10:01:32AM +0200, Mirsad Todorovac wrote:
-> > [  206.510010] ==================================================================
-> > [  206.510035] BUG: KCSAN: data-race in xas_clear_mark / xas_find_marked
-> > 
-> > [  206.510067] write to 0xffff963df6a90fe0 of 8 bytes by interrupt on cpu 22:
-> > [  206.510081]  xas_clear_mark+0xd5/0x180
-> > [  206.510097]  __xa_clear_mark+0xd1/0x100
-> > [  206.510114]  __folio_end_writeback+0x293/0x5a0
-> > [  206.520722] read to 0xffff963df6a90fe0 of 8 bytes by task 2793 on cpu 6:
-> > [  206.520735]  xas_find_marked+0xe5/0x600
-> > [  206.520750]  filemap_get_folios_tag+0xf9/0x3d0
-> Also, before submitting this kind of report, you should run the
-> trace through scripts/decode_stacktrace.sh to give us line numbers
-> instead of hex offsets, which are useless to anyone who doesn't have
-> your exact kernel build.
-> 
-> > [  206.510010] ==================================================================
-> > [  206.510035] BUG: KCSAN: data-race in xas_clear_mark / xas_find_marked
-> > 
-> > [  206.510067] write to 0xffff963df6a90fe0 of 8 bytes by interrupt on cpu 22:
-> > [  206.510081] xas_clear_mark (./arch/x86/include/asm/bitops.h:178 ./include/asm-generic/bitops/instrumented-non-atomic.h:115 lib/xarray.c:102 lib/xarray.c:914)
-> > [  206.510097] __xa_clear_mark (lib/xarray.c:1923)
-> > [  206.510114] __folio_end_writeback (mm/page-writeback.c:2981)
-> 
-> This path is properly using xa_lock_irqsave() before calling
-> __xa_clear_mark().
-> 
-> > [  206.520722] read to 0xffff963df6a90fe0 of 8 bytes by task 2793 on cpu 6:
-> > [  206.520735] xas_find_marked (./include/linux/xarray.h:1706 lib/xarray.c:1354)
-> > [  206.520750] filemap_get_folios_tag (mm/filemap.c:1975 mm/filemap.c:2273)
-> 
-> This takes the RCU read lock before calling xas_find_marked() as it's
-> supposed to.
-> 
-> What garbage do I have to write to tell KCSAN it's wrong?  The line
-> that's probably triggering it is currently:
-> 
->                         unsigned long data = *addr & (~0UL << offset);
+This patchset adds support for configuring the granularity of file
+contents encryption (a.k.a. the "crypto data unit size") to be less than
+the filesystem block size.  The main use case for this is to support
+inline crypto hardware that only supports a data unit size that is less
+than the FS block size being used.  Another possible use case is to
+support direct I/O on encrypted files without the FS block alignment
+restriction.  Note that decreasing the crypto data unit size decreases
+efficiency, so this feature should only be used when necessary.
 
-I don't think it is actually wrong in this case. You're accessing xarray
-only with RCU protection so it can be changing under your hands. For
-example the code in xas_find_chunk():
+For full details, see patch 5 which adds the actual feature.  Patches
+1-4 are preparatory patches.
 
-                        unsigned long data = *addr & (~0UL << offset);
-                        if (data)
-                                return __ffs(data);
+I've written an xfstest that verifies that when a sub-block data unit
+size is selected, the data on-disk is encrypted correctly with that data
+unit size.  I'll be sending that out separately.  Other testing of this
+patchset with xfstests has gone well, though it turns out a sub-block
+data unit size doesn't really work with IV_INO_LBLK_* yet (see patch 5).
 
-is prone to the compiler refetching 'data' from *addr after checking for
-data != 0 and getting 0 the second time which would trigger undefined
-behavior of __ffs(). So that code should definitely use READ_ONCE() to make
-things safe.
+This patchset will cause some conflicts in the extent-based encryption
+patches that the btrfs folks are working on, as both are touching file
+contents encryption, but logically they are orthogonal features.
 
-BTW, find_next_bit() seems to need a similar treatment and in fact I'm not
-sure why xas_find_chunk() has a special case for XA_CHUNK_SIZE ==
-BITS_PER_LONG because find_next_bit() checks for that and handles that in a
-fast path in the same way.
+This patchset is based on v6.6-rc1.
 
-								Honza
+Changed in v2:
+  - Rebased onto v6.6-rc1 and took into account CephFS's recent addition
+    of support for fscrypt
+  - Narrowed the focus somewhat by dropping the attempted support for
+    IV_INO_LBLK_32 and clearly documenting what is considered out of
+    scope for now
+  - Other cleanups
+
+Eric Biggers (5):
+  fscrypt: make it extra clear that key_prefix is deprecated
+  fscrypt: make the bounce page pool opt-in instead of opt-out
+  fscrypt: use s_maxbytes instead of filesystem lblk_bits
+  fscrypt: replace get_ino_and_lblk_bits with just has_32bit_inodes
+  fscrypt: support crypto data unit size less than filesystem block size
+
+ Documentation/filesystems/fscrypt.rst | 116 ++++++++++++++------
+ fs/ceph/crypto.c                      |   1 +
+ fs/crypto/bio.c                       |  39 ++++---
+ fs/crypto/crypto.c                    | 148 +++++++++++++++-----------
+ fs/crypto/fscrypt_private.h           |  55 ++++++++--
+ fs/crypto/inline_crypt.c              |  25 +++--
+ fs/crypto/keysetup.c                  |   3 +
+ fs/crypto/keysetup_v1.c               |   5 +-
+ fs/crypto/policy.c                    |  75 ++++++++-----
+ fs/ext4/crypto.c                      |  13 +--
+ fs/f2fs/super.c                       |  13 +--
+ fs/ubifs/crypto.c                     |   3 +-
+ include/linux/fscrypt.h               |  71 +++++++-----
+ include/uapi/linux/fscrypt.h          |   3 +-
+ 14 files changed, 364 insertions(+), 206 deletions(-)
+
+
+base-commit: 0bb80ecc33a8fb5a682236443c1e740d5c917d1d
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.42.0
+
