@@ -2,87 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E6E879FD6B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Sep 2023 09:46:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B1CB79FDD3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Sep 2023 10:08:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230444AbjINHqd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Sep 2023 03:46:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48804 "EHLO
+        id S236178AbjINIIS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Sep 2023 04:08:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56860 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229457AbjINHqd (ORCPT
+        with ESMTP id S235931AbjINIIQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Sep 2023 03:46:33 -0400
-Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADE801BF6;
-        Thu, 14 Sep 2023 00:46:28 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.30.67.169])
-        by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4RmTsS72Ldz4f3jM3;
-        Thu, 14 Sep 2023 15:46:20 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.124.27])
-        by APP3 (Coremail) with SMTP id _Ch0CgAngVBPugJlwkKgAQ--.8394S2;
-        Thu, 14 Sep 2023 15:46:24 +0800 (CST)
-From:   Kemeng Shi <shikemeng@huaweicloud.com>
-To:     miklos@szeredi.hu, bernd.schubert@fastmail.fm,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] fuse: remove unneeded lock which protecting update of congestion_threshold
-Date:   Thu, 14 Sep 2023 23:45:53 +0800
-Message-Id: <20230914154553.71939-1-shikemeng@huaweicloud.com>
-X-Mailer: git-send-email 2.30.0
+        Thu, 14 Sep 2023 04:08:16 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7949DF;
+        Thu, 14 Sep 2023 01:08:12 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 84B541F74A;
+        Thu, 14 Sep 2023 08:08:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1694678891; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=E/ecNnDz5zq7YMrO/wGOI+Yrvu8MsC3RqtEZg7CpzAM=;
+        b=iXF2lvqeeTY41pqwpGIemAJn92B8uB5HcwimMF79k17rki4IDOuG1/fmhxDgQ3kC61Bp+x
+        yxyEUd5bebZABOd1QmuX0W2vqETPHVFlnso1SBeRTQ3ApaSYDX1pbLbTa/BKf3mAqIvwUI
+        v+BIRzsZwQeJMjS/Q01Pr60A6dWISbI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1694678891;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=E/ecNnDz5zq7YMrO/wGOI+Yrvu8MsC3RqtEZg7CpzAM=;
+        b=Fv6WEmj+HG5HKo9vjKsLPyeE94ke481HEVXYKrauseWBxcq4Ov02zl13ywJRyZL6ZLfhaG
+        IuFuzeoj2CZPnlCw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 72EB813580;
+        Thu, 14 Sep 2023 08:08:11 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 1nsCHGu/AmVpIQAAMHmgww
+        (envelope-from <jack@suse.cz>); Thu, 14 Sep 2023 08:08:11 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 0D158A07C2; Thu, 14 Sep 2023 10:08:11 +0200 (CEST)
+Date:   Thu, 14 Sep 2023 10:08:11 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Mirsad Todorovac <mirsad.todorovac@alu.unizg.hr>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
+Subject: Re: [BUG] KCSAN: data-race in xas_clear_mark / xas_find_marked
+Message-ID: <20230914080811.465zw662sus4uznq@quack3>
+References: <06645d2b-a964-1c4c-15cf-42ccc6c6e19b@alu.unizg.hr>
+ <ZN9iPYTmV5nSK2jo@casper.infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: _Ch0CgAngVBPugJlwkKgAQ--.8394S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrZw4kJF4UJF1xur43XrW8Zwb_yoWkGrc_WF
-        s8XFn7C3W5trWF9asrZw1Yqryvg34jyF1Yv395JryYvFy5tr4avF9rurn5ury7ZF4jq3s8
-        CrnYgFW3WwsF9jkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUb7AYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20E
-        Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l87I20VAvwVAaII0Ic2I_JFv_Gryl8c
-        AvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWD
-        JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_Gc
-        CE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxI
-        r21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87
-        Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IY
-        c2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s
-        026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF
-        0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0x
-        vE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2
-        jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU0miiDUUUUU==
-X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZN9iPYTmV5nSK2jo@casper.infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Commit 670d21c6e17f6 ("fuse: remove reliance on bdi congestion") change how
-congestion_threshold is used and lock in
-fuse_conn_congestion_threshold_write is not needed anymore.
-1. Access to supe_block is removed along with removing of bdi congestion.
-Then down_read(&fc->killsb) which protecting access to super_block is no
-needed.
-2. Compare num_background and congestion_threshold without holding
-bg_lock. Then there is no need to hold bg_lock to update
-congestion_threshold.
+On Fri 18-08-23 13:21:17, Matthew Wilcox wrote:
+> On Fri, Aug 18, 2023 at 10:01:32AM +0200, Mirsad Todorovac wrote:
+> > [  206.510010] ==================================================================
+> > [  206.510035] BUG: KCSAN: data-race in xas_clear_mark / xas_find_marked
+> > 
+> > [  206.510067] write to 0xffff963df6a90fe0 of 8 bytes by interrupt on cpu 22:
+> > [  206.510081]  xas_clear_mark+0xd5/0x180
+> > [  206.510097]  __xa_clear_mark+0xd1/0x100
+> > [  206.510114]  __folio_end_writeback+0x293/0x5a0
+> > [  206.520722] read to 0xffff963df6a90fe0 of 8 bytes by task 2793 on cpu 6:
+> > [  206.520735]  xas_find_marked+0xe5/0x600
+> > [  206.520750]  filemap_get_folios_tag+0xf9/0x3d0
+> Also, before submitting this kind of report, you should run the
+> trace through scripts/decode_stacktrace.sh to give us line numbers
+> instead of hex offsets, which are useless to anyone who doesn't have
+> your exact kernel build.
+> 
+> > [  206.510010] ==================================================================
+> > [  206.510035] BUG: KCSAN: data-race in xas_clear_mark / xas_find_marked
+> > 
+> > [  206.510067] write to 0xffff963df6a90fe0 of 8 bytes by interrupt on cpu 22:
+> > [  206.510081] xas_clear_mark (./arch/x86/include/asm/bitops.h:178 ./include/asm-generic/bitops/instrumented-non-atomic.h:115 lib/xarray.c:102 lib/xarray.c:914)
+> > [  206.510097] __xa_clear_mark (lib/xarray.c:1923)
+> > [  206.510114] __folio_end_writeback (mm/page-writeback.c:2981)
+> 
+> This path is properly using xa_lock_irqsave() before calling
+> __xa_clear_mark().
+> 
+> > [  206.520722] read to 0xffff963df6a90fe0 of 8 bytes by task 2793 on cpu 6:
+> > [  206.520735] xas_find_marked (./include/linux/xarray.h:1706 lib/xarray.c:1354)
+> > [  206.520750] filemap_get_folios_tag (mm/filemap.c:1975 mm/filemap.c:2273)
+> 
+> This takes the RCU read lock before calling xas_find_marked() as it's
+> supposed to.
+> 
+> What garbage do I have to write to tell KCSAN it's wrong?  The line
+> that's probably triggering it is currently:
+> 
+>                         unsigned long data = *addr & (~0UL << offset);
 
-Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
----
- fs/fuse/control.c | 4 ----
- 1 file changed, 4 deletions(-)
+I don't think it is actually wrong in this case. You're accessing xarray
+only with RCU protection so it can be changing under your hands. For
+example the code in xas_find_chunk():
 
-diff --git a/fs/fuse/control.c b/fs/fuse/control.c
-index 247ef4f76761..c5d7bf80efed 100644
---- a/fs/fuse/control.c
-+++ b/fs/fuse/control.c
-@@ -174,11 +174,7 @@ static ssize_t fuse_conn_congestion_threshold_write(struct file *file,
- 	if (!fc)
- 		goto out;
- 
--	down_read(&fc->killsb);
--	spin_lock(&fc->bg_lock);
- 	fc->congestion_threshold = val;
--	spin_unlock(&fc->bg_lock);
--	up_read(&fc->killsb);
- 	fuse_conn_put(fc);
- out:
- 	return ret;
+                        unsigned long data = *addr & (~0UL << offset);
+                        if (data)
+                                return __ffs(data);
+
+is prone to the compiler refetching 'data' from *addr after checking for
+data != 0 and getting 0 the second time which would trigger undefined
+behavior of __ffs(). So that code should definitely use READ_ONCE() to make
+things safe.
+
+BTW, find_next_bit() seems to need a similar treatment and in fact I'm not
+sure why xas_find_chunk() has a special case for XA_CHUNK_SIZE ==
+BITS_PER_LONG because find_next_bit() checks for that and handles that in a
+fast path in the same way.
+
+								Honza
 -- 
-2.30.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
