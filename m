@@ -2,62 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 191C279F7B4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Sep 2023 04:11:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11FCD79F8A2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Sep 2023 05:07:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233638AbjINCLx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Sep 2023 22:11:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39788 "EHLO
+        id S234230AbjINDHe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Sep 2023 23:07:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234245AbjINCAY (ORCPT
+        with ESMTP id S234231AbjINDH2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Sep 2023 22:00:24 -0400
-Received: from mail-yw1-x1149.google.com (mail-yw1-x1149.google.com [IPv6:2607:f8b0:4864:20::1149])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B42613C23
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Sep 2023 18:56:38 -0700 (PDT)
-Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-594e5e2e608so6338307b3.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Sep 2023 18:56:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1694656598; x=1695261398; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=mhn7+u5bXSh3DxSOzG9/ewBd6nzzrjcseQEqhhMfZJw=;
-        b=pXCQZOdQ0AvIcFrYCCczuYmLySIQ3bWrZwL560rqrT4E5eG7S/5uMl3nJPzs6YW6KP
-         Pf3dDip0nsGBBNXLblA+jzkdJPZ3ax73/C+7NHAaQs/BezWMdx17bOta6jTi4jG7RjxH
-         zvjLBXkFfaPcb8IC+ehkZz/3PYFsY+GdWcO427VEyTUNCObjV/di6jefuko9kq8+BueZ
-         TnzH10zIqqs0djJUI6QkKdfnh+Xo1JrJIaTwVmUqkxE4aELwEKjF92egvtSj71c4OIl6
-         zUJvc9/gWwggZ3Oy5kLa5vzo6U18Tms7FkqeuFrJAKH/s7J/ikIINQukrdXJDpV5UE0I
-         S6gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694656598; x=1695261398;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mhn7+u5bXSh3DxSOzG9/ewBd6nzzrjcseQEqhhMfZJw=;
-        b=AoaiHzXFQW49oJ71abqQbl784eL02XRhZzwCPCrKx9nZvlUWGKIdrhfJES8d7Ix3bD
-         EyvJa5hzAZtZoTPhrpmP3IjYKzZlqFac3fFizdJudJqPXWxBTvuHHSeXrYF98sR61fUQ
-         nctyvOvX5fBgh+gNjqSf5vFaoHJPJGMU9v9ReiZtXq28n/7pncU3x4q/bmZr0vElxdHb
-         HCjMHdGAK+nA2Uv65LDsbkwFogbRJJYPClAPLXspzVKGbn34PO+isf43RL8qBb7OSPI1
-         2f8JUtnIezuXecj4TirJ9nRHSmvB+mHq4OSWlwOkRLFI3FGFDm8aQgYJVnuxF1BPLXEN
-         PgBA==
-X-Gm-Message-State: AOJu0YyLND25LqYBDi7v+hJuuEpablgNbQVkPhpX9tVLHW2Otz9mSP3l
-        Jqro0I9iZYdckhJLWO/O6Z86p85ha6Q=
-X-Google-Smtp-Source: AGHT+IECmRUJsED8Us3qWlJnugvslNzA7dXsGOQfEOYZbUPHi7DQFFf33qpMB4ILXjFkyWuOYhA2SvRB6XQ=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a81:e809:0:b0:59b:ebe0:9fcd with SMTP id
- a9-20020a81e809000000b0059bebe09fcdmr13568ywm.7.1694656597965; Wed, 13 Sep
- 2023 18:56:37 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date:   Wed, 13 Sep 2023 18:55:29 -0700
-In-Reply-To: <20230914015531.1419405-1-seanjc@google.com>
-Mime-Version: 1.0
-References: <20230914015531.1419405-1-seanjc@google.com>
-X-Mailer: git-send-email 2.42.0.283.g2d96d420d3-goog
-Message-ID: <20230914015531.1419405-32-seanjc@google.com>
-Subject: [RFC PATCH v12 31/33] KVM: selftests: Expand set_memory_region_test
- to validate guest_memfd()
-From:   Sean Christopherson <seanjc@google.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
+        Wed, 13 Sep 2023 23:07:28 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB7351BD3;
+        Wed, 13 Sep 2023 20:07:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1694660844; x=1726196844;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=hQLGmdNELjYMZnPnnmaVF9DnSi0UkgWqzZbEZVq1o/k=;
+  b=FI9x9MO5qnIqKzGBysp95vNBROi36Q7/V4jPiHVcgspt8vmNYz8klgfq
+   3CZCTuGPniIWfha733s4sET13N09B2ekEYh+sY4awVSxC94jcck6ZUU0o
+   S9d4kORNFCh6bcMBDei7xLcde4JADeQgnnUsS1e54AGIKaa5vuTDHEt2L
+   3fH2BsYqqbttb3R7bJSv8KXbXXfYf/tQJhhzyhvMCrYlRxmskLtX0y4qo
+   H0sIU19QQE5d6TU2NQQZ6aZzan5ZAO9tvN5SuMqZDk5oEKjKMEXbyuE5u
+   bfYod9APQN2sBs4JcveKa0dTedprBke5YUFwLSIwO4LJ+YFABiOKtdTuL
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10832"; a="382644882"
+X-IronPort-AV: E=Sophos;i="6.02,144,1688454000"; 
+   d="scan'208";a="382644882"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2023 20:07:23 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10832"; a="747565104"
+X-IronPort-AV: E=Sophos;i="6.02,144,1688454000"; 
+   d="scan'208";a="747565104"
+Received: from binbinwu-mobl.ccr.corp.intel.com (HELO [10.238.8.84]) ([10.238.8.84])
+  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2023 20:07:14 -0700
+Message-ID: <54d3e6bf-d374-caa5-0920-bb2fe3b7595c@linux.intel.com>
+Date:   Thu, 14 Sep 2023 11:07:12 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [RFC PATCH v12 02/33] KVM: Use gfn instead of hva for
+ mmu_notifier_retry
+To:     Sean Christopherson <seanjc@google.com>,
+        Chao Peng <chao.p.peng@linux.intel.com>
+Cc:     kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kvmarm@lists.linux.dev, linux-mips@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org,
+        linux-riscv@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Marc Zyngier <maz@kernel.org>,
         Oliver Upton <oliver.upton@linux.dev>,
         Huacai Chen <chenhuacai@kernel.org>,
         Michael Ellerman <mpe@ellerman.id.au>,
@@ -65,19 +62,11 @@ To:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
         Paul Walmsley <paul.walmsley@sifive.com>,
         Palmer Dabbelt <palmer@dabbelt.com>,
         Albert Ou <aou@eecs.berkeley.edu>,
-        Sean Christopherson <seanjc@google.com>,
         "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Paul Moore <paul@paul-moore.com>,
         James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.linux.dev, linux-mips@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org,
-        linux-riscv@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Chao Peng <chao.p.peng@linux.intel.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
         Fuad Tabba <tabba@google.com>,
         Jarkko Sakkinen <jarkko@kernel.org>,
         Anish Moorthy <amoorthy@google.com>,
@@ -95,170 +84,122 @@ Cc:     kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Liam Merwick <liam.merwick@oracle.com>,
         Isaku Yamahata <isaku.yamahata@gmail.com>,
         "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+References: <20230914015531.1419405-1-seanjc@google.com>
+ <20230914015531.1419405-3-seanjc@google.com>
+From:   Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20230914015531.1419405-3-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Chao Peng <chao.p.peng@linux.intel.com>
 
-Expand set_memory_region_test to exercise various positive and negative
-testcases for private memory.
 
- - Non-guest_memfd() file descriptor for private memory
- - guest_memfd() from different VM
- - Overlapping bindings
- - Unaligned bindings
+On 9/14/2023 9:55 AM, Sean Christopherson wrote:
+> From: Chao Peng <chao.p.peng@linux.intel.com>
+>
+> Currently in mmu_notifier invalidate path, hva range is recorded and
+> then checked against by mmu_notifier_retry_hva() in the page fault
+> handling path. However, for the to be introduced private memory, a page
+> fault may not have a hva associated, checking gfn(gpa) makes more sense.
+>
+> For existing hva based shared memory, gfn is expected to also work. The
+> only downside is when aliasing multiple gfns to a single hva, the
+> current algorithm of checking multiple ranges could result in a much
+> larger range being rejected. Such aliasing should be uncommon, so the
+> impact is expected small.
+>
+> Suggested-by: Sean Christopherson <seanjc@google.com>
+> Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
+> Reviewed-by: Fuad Tabba <tabba@google.com>
+> Tested-by: Fuad Tabba <tabba@google.com>
+> [sean: convert vmx_set_apic_access_page_addr() to gfn-based API]
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>   arch/x86/kvm/mmu/mmu.c   | 10 ++++++----
+>   arch/x86/kvm/vmx/vmx.c   | 11 +++++------
+>   include/linux/kvm_host.h | 33 +++++++++++++++++++++------------
+>   virt/kvm/kvm_main.c      | 40 +++++++++++++++++++++++++++++++---------
+>   4 files changed, 63 insertions(+), 31 deletions(-)
+>
+[...]
+>   
+> -void kvm_mmu_invalidate_begin(struct kvm *kvm, unsigned long start,
+> -			      unsigned long end)
+> +void kvm_mmu_invalidate_begin(struct kvm *kvm)
+>   {
+> +	lockdep_assert_held_write(&kvm->mmu_lock);
+>   	/*
+>   	 * The count increase must become visible at unlock time as no
+>   	 * spte can be established without taking the mmu_lock and
+>   	 * count is also read inside the mmu_lock critical section.
+>   	 */
+>   	kvm->mmu_invalidate_in_progress++;
+> +
+> +	if (likely(kvm->mmu_invalidate_in_progress == 1))
+> +		kvm->mmu_invalidate_range_start = INVALID_GPA;
+> +}
+> +
+> +void kvm_mmu_invalidate_range_add(struct kvm *kvm, gfn_t start, gfn_t end)
+> +{
+> +	lockdep_assert_held_write(&kvm->mmu_lock);
+> +
+> +	WARN_ON_ONCE(!kvm->mmu_invalidate_in_progress);
+> +
+>   	if (likely(kvm->mmu_invalidate_in_progress == 1)) {
+>   		kvm->mmu_invalidate_range_start = start;
+>   		kvm->mmu_invalidate_range_end = end;
+> @@ -771,6 +781,12 @@ void kvm_mmu_invalidate_begin(struct kvm *kvm, unsigned long start,
+>   	}
+>   }
+>   
+> +static bool kvm_mmu_unmap_gfn_range(struct kvm *kvm, struct kvm_gfn_range *range)
+> +{
+> +	kvm_mmu_invalidate_range_add(kvm, range->start, range->end);
+> +	return kvm_unmap_gfn_range(kvm, range);
+> +}
+> +
+>   static int kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
+>   					const struct mmu_notifier_range *range)
+>   {
+> @@ -778,7 +794,7 @@ static int kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
+>   	const struct kvm_mmu_notifier_range hva_range = {
+>   		.start		= range->start,
+>   		.end		= range->end,
+> -		.handler	= kvm_unmap_gfn_range,
+> +		.handler	= kvm_mmu_unmap_gfn_range,
+>   		.on_lock	= kvm_mmu_invalidate_begin,
+>   		.on_unlock	= kvm_arch_guest_memory_reclaimed,
+>   		.flush_on_ret	= true,
+> @@ -817,8 +833,7 @@ static int kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
+>   	return 0;
+>   }
+>   
+> -void kvm_mmu_invalidate_end(struct kvm *kvm, unsigned long start,
+> -			    unsigned long end)
+> +void kvm_mmu_invalidate_end(struct kvm *kvm)
+>   {
+>   	/*
+>   	 * This sequence increase will notify the kvm page fault that
+> @@ -833,6 +848,13 @@ void kvm_mmu_invalidate_end(struct kvm *kvm, unsigned long start,
+>   	 * in conjunction with the smp_rmb in mmu_invalidate_retry().
+>   	 */
+>   	kvm->mmu_invalidate_in_progress--;
+> +
+> +	/*
+> +	 * Assert that at least one range must be added between start() and
+> +	 * end().  Not adding a range isn't fatal, but it is a KVM bug.
+> +	 */
+> +	WARN_ON_ONCE(kvm->mmu_invalidate_in_progress &&
+> +		     kvm->mmu_invalidate_range_start == INVALID_GPA);
+Should the check happen before the decrease of 
+kvm->mmu_invalidate_in_progress?
+Otherwise, KVM calls kvm_mmu_invalidate_begin(), then 
+kvm_mmu_invalidate_end()
+the check will not take effect.
 
-Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
-Co-developed-by: Ackerley Tng <ackerleytng@google.com>
-Signed-off-by: Ackerley Tng <ackerleytng@google.com>
-[sean: trim the testcases to remove duplicate coverage]
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- .../selftests/kvm/include/kvm_util_base.h     |  10 ++
- .../selftests/kvm/set_memory_region_test.c    | 100 ++++++++++++++++++
- 2 files changed, 110 insertions(+)
-
-diff --git a/tools/testing/selftests/kvm/include/kvm_util_base.h b/tools/testing/selftests/kvm/include/kvm_util_base.h
-index edc0f380acc0..ac9356108df6 100644
---- a/tools/testing/selftests/kvm/include/kvm_util_base.h
-+++ b/tools/testing/selftests/kvm/include/kvm_util_base.h
-@@ -819,6 +819,16 @@ static inline struct kvm_vm *vm_create_barebones(void)
- 	return ____vm_create(VM_SHAPE_DEFAULT);
- }
- 
-+static inline struct kvm_vm *vm_create_barebones_protected_vm(void)
-+{
-+	const struct vm_shape shape = {
-+		.mode = VM_MODE_DEFAULT,
-+		.type = KVM_X86_SW_PROTECTED_VM,
-+	};
-+
-+	return ____vm_create(shape);
-+}
-+
- static inline struct kvm_vm *vm_create(uint32_t nr_runnable_vcpus)
- {
- 	return __vm_create(VM_SHAPE_DEFAULT, nr_runnable_vcpus, 0);
-diff --git a/tools/testing/selftests/kvm/set_memory_region_test.c b/tools/testing/selftests/kvm/set_memory_region_test.c
-index b32960189f5f..ca83e3307a98 100644
---- a/tools/testing/selftests/kvm/set_memory_region_test.c
-+++ b/tools/testing/selftests/kvm/set_memory_region_test.c
-@@ -385,6 +385,98 @@ static void test_add_max_memory_regions(void)
- 	kvm_vm_free(vm);
- }
- 
-+
-+static void test_invalid_guest_memfd(struct kvm_vm *vm, int memfd,
-+				     size_t offset, const char *msg)
-+{
-+	int r = __vm_set_user_memory_region2(vm, MEM_REGION_SLOT, KVM_MEM_PRIVATE,
-+					     MEM_REGION_GPA, MEM_REGION_SIZE,
-+					     0, memfd, offset);
-+	TEST_ASSERT(r == -1 && errno == EINVAL, "%s", msg);
-+}
-+
-+static void test_add_private_memory_region(void)
-+{
-+	struct kvm_vm *vm, *vm2;
-+	int memfd, i;
-+
-+	pr_info("Testing ADD of KVM_MEM_PRIVATE memory regions\n");
-+
-+	vm = vm_create_barebones_protected_vm();
-+
-+	test_invalid_guest_memfd(vm, vm->kvm_fd, 0, "KVM fd should fail");
-+	test_invalid_guest_memfd(vm, vm->fd, 0, "VM's fd should fail");
-+
-+	memfd = kvm_memfd_alloc(MEM_REGION_SIZE, false);
-+	test_invalid_guest_memfd(vm, memfd, 0, "Regular memfd() should fail");
-+	close(memfd);
-+
-+	vm2 = vm_create_barebones_protected_vm();
-+	memfd = vm_create_guest_memfd(vm2, MEM_REGION_SIZE, 0);
-+	test_invalid_guest_memfd(vm, memfd, 0, "Other VM's guest_memfd() should fail");
-+
-+	vm_set_user_memory_region2(vm2, MEM_REGION_SLOT, KVM_MEM_PRIVATE,
-+				   MEM_REGION_GPA, MEM_REGION_SIZE, 0, memfd, 0);
-+	close(memfd);
-+	kvm_vm_free(vm2);
-+
-+	memfd = vm_create_guest_memfd(vm, MEM_REGION_SIZE, 0);
-+	for (i = 1; i < PAGE_SIZE; i++)
-+		test_invalid_guest_memfd(vm, memfd, i, "Unaligned offset should fail");
-+
-+	vm_set_user_memory_region2(vm, MEM_REGION_SLOT, KVM_MEM_PRIVATE,
-+				   MEM_REGION_GPA, MEM_REGION_SIZE, 0, memfd, 0);
-+	close(memfd);
-+
-+	kvm_vm_free(vm);
-+}
-+
-+static void test_add_overlapping_private_memory_regions(void)
-+{
-+	struct kvm_vm *vm;
-+	int memfd;
-+	int r;
-+
-+	pr_info("Testing ADD of overlapping KVM_MEM_PRIVATE memory regions\n");
-+
-+	vm = vm_create_barebones_protected_vm();
-+
-+	memfd = vm_create_guest_memfd(vm, MEM_REGION_SIZE * 4, 0);
-+
-+	vm_set_user_memory_region2(vm, MEM_REGION_SLOT, KVM_MEM_PRIVATE,
-+				   MEM_REGION_GPA, MEM_REGION_SIZE * 2, 0, memfd, 0);
-+
-+	vm_set_user_memory_region2(vm, MEM_REGION_SLOT + 1, KVM_MEM_PRIVATE,
-+				   MEM_REGION_GPA * 2, MEM_REGION_SIZE * 2,
-+				   0, memfd, MEM_REGION_SIZE * 2);
-+
-+	/*
-+	 * Delete the first memslot, and then attempt to recreate it except
-+	 * with a "bad" offset that results in overlap in the guest_memfd().
-+	 */
-+	vm_set_user_memory_region2(vm, MEM_REGION_SLOT, KVM_MEM_PRIVATE,
-+				   MEM_REGION_GPA, 0, NULL, -1, 0);
-+
-+	/* Overlap the front half of the other slot. */
-+	r = __vm_set_user_memory_region2(vm, MEM_REGION_SLOT, KVM_MEM_PRIVATE,
-+					 MEM_REGION_GPA * 2 - MEM_REGION_SIZE,
-+					 MEM_REGION_SIZE * 2,
-+					 0, memfd, 0);
-+	TEST_ASSERT(r == -1 && errno == EEXIST, "%s",
-+		    "Overlapping guest_memfd() bindings should fail with EEXIST");
-+
-+	/* And now the back half of the other slot. */
-+	r = __vm_set_user_memory_region2(vm, MEM_REGION_SLOT, KVM_MEM_PRIVATE,
-+					 MEM_REGION_GPA * 2 + MEM_REGION_SIZE,
-+					 MEM_REGION_SIZE * 2,
-+					 0, memfd, 0);
-+	TEST_ASSERT(r == -1 && errno == EEXIST, "%s",
-+		    "Overlapping guest_memfd() bindings should fail with EEXIST");
-+
-+	close(memfd);
-+	kvm_vm_free(vm);
-+}
-+
- int main(int argc, char *argv[])
- {
- #ifdef __x86_64__
-@@ -401,6 +493,14 @@ int main(int argc, char *argv[])
- 
- 	test_add_max_memory_regions();
- 
-+	if (kvm_has_cap(KVM_CAP_GUEST_MEMFD) &&
-+	    (kvm_check_cap(KVM_CAP_VM_TYPES) & BIT(KVM_X86_SW_PROTECTED_VM))) {
-+		test_add_private_memory_region();
-+		test_add_overlapping_private_memory_regions();
-+	} else {
-+		pr_info("Skipping tests for KVM_MEM_PRIVATE memory regions\n");
-+	}
-+
- #ifdef __x86_64__
- 	if (argc > 1)
- 		loops = atoi_positive("Number of iterations", argv[1]);
--- 
-2.42.0.283.g2d96d420d3-goog
+>   }
+>   
+>   static void kvm_mmu_notifier_invalidate_range_end(struct mmu_notifier *mn,
 
