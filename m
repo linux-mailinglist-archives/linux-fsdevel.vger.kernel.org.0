@@ -2,117 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C93247A0344
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Sep 2023 14:03:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D47D17A0449
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Sep 2023 14:48:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238300AbjINMD3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Sep 2023 08:03:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36992 "EHLO
+        id S237587AbjINMsq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Sep 2023 08:48:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236843AbjINMD2 (ORCPT
+        with ESMTP id S237188AbjINMsq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Sep 2023 08:03:28 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17B81CF3;
-        Thu, 14 Sep 2023 05:03:24 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id C4E481F459;
-        Thu, 14 Sep 2023 12:03:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1694693002;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=KQWm8KDBapshh21qrRIcErJ2RlDP9zV+9QU6PEoBJ+k=;
-        b=YkBphnvbdZ5CsMA+9kdt4PhrsiHoFqlk9I734mbsD57+8MOhwUm+74oFpWcA9tfikj8UJp
-        5TOF48vX2a6Xe0HujJMYiTWrvTA3qx2rQBDmZ5KqjPLaxGfZcy5081hjESu2nXPPl7rAOV
-        sFBfgMwcE7ATGhUIYiqMBj1pxHJ4kmM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1694693002;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=KQWm8KDBapshh21qrRIcErJ2RlDP9zV+9QU6PEoBJ+k=;
-        b=WbZR8JHwCVvIzJmC94OsPUt6iienPCFBR+Nuzi+FnLp38bUHuc5ah+4zlAjoaXPbdGxN9M
-        zI4DGXzRfqs3KsCQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 68BA8139DB;
-        Thu, 14 Sep 2023 12:03:22 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id rGHrGIr2AmVVIwAAMHmgww
-        (envelope-from <dsterba@suse.cz>); Thu, 14 Sep 2023 12:03:22 +0000
-Date:   Thu, 14 Sep 2023 14:03:20 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Denis Efremov <efremov@linux.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Stefan Haberland <sth@linux.ibm.com>,
-        Jan Hoeppner <hoeppner@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        "Darrick J . Wong" <djwong@kernel.org>, Chris Mason <clm@fb.com>,
-        David Sterba <dsterba@suse.com>, linux-block@vger.kernel.org,
-        nbd@other.debian.org, linux-s390@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: remove get_super
-Message-ID: <20230914120320.GY20408@suse.cz>
-Reply-To: dsterba@suse.cz
-References: <20230811100828.1897174-1-hch@lst.de>
- <20230912174245.GC20408@twin.jikos.cz>
- <20230914084809.arzw34svsvvkwivm@quack3>
+        Thu, 14 Sep 2023 08:48:46 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8E561FD7;
+        Thu, 14 Sep 2023 05:48:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=vjEMrjw2C/jTAB+E0NqGEn/Bqv/9rRmcZIO86x/4wRQ=; b=B0sCLfazPBAGsbEZeWcayfQbh5
+        uT0mKgzbqGikyzNOd3EyNLVgaNP6VulcWnXiG0IpVV8KYAauTyMc1A1MbG2depWPYn9cka8FXGrI7
+        T+ZyjN1s0WHkKas/U48Gzlm2+qBVklO5o3Kl6TUDiHfi1YVCDLHs4WzUOmxecQc2+d56onboyan1J
+        eGCUD0ziAW3lpO2vEHS8BZ2lkwOVwN2YLWT5hVhohCdsloTDVFsDAQlA5mZ3GEJcqJIq2xPg8sepN
+        tPbZX0eKcfLx3DElFYlUWqUNTb6YNkEf0e2XBHvKKoTMG1h8wo29JhMGsWwjOghsu/CR0+QCi4KXB
+        XLUXP8+w==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1qgllH-002y7n-2c; Thu, 14 Sep 2023 12:47:59 +0000
+Date:   Thu, 14 Sep 2023 13:47:59 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Mike Rapoport <rppt@kernel.org>
+Cc:     Sourav Panda <souravpanda@google.com>, corbet@lwn.net,
+        gregkh@linuxfoundation.org, rafael@kernel.org,
+        akpm@linux-foundation.org, mike.kravetz@oracle.com,
+        muchun.song@linux.dev, david@redhat.com, rdunlap@infradead.org,
+        chenlinxuan@uniontech.com, yang.yang29@zte.com.cn,
+        tomas.mudrunka@gmail.com, bhelgaas@google.com, ivan@cloudflare.com,
+        pasha.tatashin@soleen.com, yosryahmed@google.com,
+        hannes@cmpxchg.org, shakeelb@google.com,
+        kirill.shutemov@linux.intel.com, wangkefeng.wang@huawei.com,
+        adobriyan@gmail.com, vbabka@suse.cz, Liam.Howlett@oracle.com,
+        surenb@google.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH v1 1/1] mm: report per-page metadata information
+Message-ID: <ZQMA/63agV42szfc@casper.infradead.org>
+References: <20230913173000.4016218-1-souravpanda@google.com>
+ <20230913173000.4016218-2-souravpanda@google.com>
+ <20230913205125.GA3303@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230914084809.arzw34svsvvkwivm@quack3>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+In-Reply-To: <20230913205125.GA3303@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 14, 2023 at 10:48:09AM +0200, Jan Kara wrote:
-> On Tue 12-09-23 19:42:45, David Sterba wrote:
-> > On Fri, Aug 11, 2023 at 12:08:11PM +0200, Christoph Hellwig wrote:
-> > > Hi all,
-> > > 
-> > > this series against the VFS vfs.super branch finishes off the work to remove
-> > > get_super and move (almost) all upcalls to use the holder ops.
-> > > 
-> > > The first part is the missing btrfs bits so that all file systems use the
-> > > super_block as holder.
-> > > 
-> > > The second part is various block driver cleanups so that we use proper
-> > > interfaces instead of raw calls to __invalidate_device and fsync_bdev.
-> > > 
-> > > The last part than replaces __invalidate_device and fsync_bdev with upcalls
-> > > to the file system through the holder ops, and finally removes get_super.
-> > > 
-> > > It leaves user_get_super and get_active_super around.  The former is not
-> > > used for upcalls in the traditional sense, but for legacy UAPI that for
-> > > some weird reason take a dev_t argument (ustat) or a block device path
-> > > (quotactl).  get_active_super is only used for calling into the file system
-> > > on freeze and should get a similar treatment, but given that Darrick has
-> > > changes to that code queued up already this will be handled in the next
-> > > merge window.
-> > > 
-> > > A git tree is available here:
-> > > 
-> > >     git://git.infradead.org/users/hch/misc.git remove-get_super
-> > 
-> > FYI, I've added patches 2-5 as a topic branch to btrfs for-next.
+On Wed, Sep 13, 2023 at 11:51:25PM +0300, Mike Rapoport wrote:
+> > @@ -387,8 +390,12 @@ static int alloc_vmemmap_page_list(unsigned long start, unsigned long end,
+> >  
+> >  	while (nr_pages--) {
+> >  		page = alloc_pages_node(nid, gfp_mask, 0);
+> > -		if (!page)
+> > +		if (!page) {
+> >  			goto out;
+> > +		} else {
+> > +			__mod_node_page_state(NODE_DATA(page_to_nid(page)),
+> > +					      NR_PAGE_METADATA, 1);
 > 
-> Hum, I don't see them there. Some glitch somewhere?
+> We can update this once for nr_pages outside the loop, cannot we?
 
-There will be a delay before the patches show up in the pushed for-next
-branch, some tests failed (maybe not related to this series) and there
-are other merge conflicts that I need to resolve first.
+Except that nr_pages is being used as the loop counter.
+Probably best to turn this into a normal (i = 0; i < nr_pages; i++)
+loop, and then we can do as you say.  But this isn't a particularly
+interesting high-performance loop.
+
