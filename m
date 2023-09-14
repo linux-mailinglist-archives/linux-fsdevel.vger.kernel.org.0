@@ -2,237 +2,172 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 206897A0922
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Sep 2023 17:26:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9F887A0926
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Sep 2023 17:26:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241002AbjINP0i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Sep 2023 11:26:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38334 "EHLO
+        id S241127AbjINP07 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Sep 2023 11:26:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38064 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240964AbjINP0g (ORCPT
+        with ESMTP id S241088AbjINP0v (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Sep 2023 11:26:36 -0400
-Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 473561FD0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Sep 2023 08:26:32 -0700 (PDT)
-Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-58cbf62bae8so14676267b3.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Sep 2023 08:26:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1694705191; x=1695309991; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Mu1OGPWARKH9oRMfZEcpV5n3maR0zmAnXssCvh8qI9k=;
-        b=SQb9k5tA0qUyySqshNePRlA2p9ujS673L82mvo09YoCVxby0xVIUm5s7+SMYhOtZ9A
-         pK5ysDa0CNM2+droM8gynPxphCozcpPc5IdaWiv7cA+OzlpTWtCGtLnzGgvU731lViZD
-         BngPn/oDOhVXmnlsAZig2adWy1yhmgZFDaxGVk6CAAKqNKWM3cdZ2uHvZTTFXWOzegMJ
-         vMvxyy8fePM9Dh17fjO6ElbOj133csNcqM7y/6OHzGEt4OxXdeGL7sQg4gMzXsMkOMS6
-         FICqishDIl3hRUTyb1Z3+pmYFuRzrv1epRYSeQfJfepZ/QbLljY8Vcoq2J6961CHhrK2
-         E3OA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694705191; x=1695309991;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Mu1OGPWARKH9oRMfZEcpV5n3maR0zmAnXssCvh8qI9k=;
-        b=mkZ6PJEAqAPWm/4SE5Pc6aLPK9UyheTKliE53j2xDRiyX8PHDGbXFQ7SxPVZpTxQXd
-         Bn9ng3hzWSszDtpdhLo2QkMtcF7a+GBfguqlnDaWoaNhPRn2t/yF2YfdgeB80swmd+3W
-         CgdDuWit8X1B7WwgNCgOk+zQg+Gf4LCn20vJVdUuaULKHGwxAFP4oVOrP8HW+kwlX5dc
-         k3MARWpSSLb94uFYm87SEZjBScX3ARCYDrApRRp1/GWpE8xG8LOcPkPZ2KUkU6UJBNxh
-         UOC/Gmf11p3ebgifdC5l53LE7Ik5vIk6nKwORKTPsfmAsAIvi3LkTEk2dsjpLXlH8ZnL
-         1dsA==
-X-Gm-Message-State: AOJu0YxcaaG6xqG8dAjlcKHZhlTRQekk1YxgnVxc6SS70KCLy3f5NE5L
-        gqmNKeIwpGBx/vDSAFZW+mklfXeLOhE=
-X-Google-Smtp-Source: AGHT+IFBVegGxf80f6tK8JTRTL2eDdZPWBJrMSOMFpp88sQURTGOGeLIWNKbAvxE88xxjjHdcadvLmZLUmU=
-X-Received: from surenb-desktop.mtv.corp.google.com ([2620:15c:211:201:405c:ba64:810f:5fee])
- (user=surenb job=sendgmr) by 2002:a81:c94b:0:b0:59b:ba8a:97d0 with SMTP id
- c11-20020a81c94b000000b0059bba8a97d0mr154662ywl.3.1694705191508; Thu, 14 Sep
- 2023 08:26:31 -0700 (PDT)
-Date:   Thu, 14 Sep 2023 08:26:13 -0700
-In-Reply-To: <20230914152620.2743033-1-surenb@google.com>
-Mime-Version: 1.0
-References: <20230914152620.2743033-1-surenb@google.com>
-X-Mailer: git-send-email 2.42.0.283.g2d96d420d3-goog
-Message-ID: <20230914152620.2743033-4-surenb@google.com>
-Subject: [PATCH 3/3] selftests/mm: add UFFDIO_REMAP ioctl test
-From:   Suren Baghdasaryan <surenb@google.com>
-To:     akpm@linux-foundation.org
-Cc:     viro@zeniv.linux.org.uk, brauner@kernel.org, shuah@kernel.org,
-        aarcange@redhat.com, lokeshgidra@google.com, peterx@redhat.com,
-        david@redhat.com, hughd@google.com, mhocko@suse.com,
-        axelrasmussen@google.com, rppt@kernel.org, willy@infradead.org,
-        Liam.Howlett@oracle.com, jannh@google.com, zhangpeng362@huawei.com,
-        bgeffon@google.com, kaleshsingh@google.com, ngeoffray@google.com,
-        jdduke@google.com, surenb@google.com, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, kernel-team@android.com
+        Thu, 14 Sep 2023 11:26:51 -0400
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D775E1FF6;
+        Thu, 14 Sep 2023 08:26:36 -0700 (PDT)
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38EFCRT7013948;
+        Thu, 14 Sep 2023 15:26:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=ZJXJKIlpr0jS8J18KXtuBATK5zZy3b2SUTm0yKdYhAs=;
+ b=C91KgEOoItLiuPAFu2oQIhO+jn5oK7nWYfT/p3rMsHFOxsdmqzAdcTaNtDaDpupgbwhl
+ 1IH8Ht8pRQ7QfFnSBdxsh8aya5oDaJRQa7tCq8gHVfLeI9GHw99v1BjuRHtptRLNffmt
+ gHv3g+LfrpNnKCIAOeRfI/E1yLIjfAMOJkpW8YBO5fB63biXnZiq6IwnUBiSNpBwPKaS
+ H4P8p5UTAfEmzmPdhJ4QCn/CD8mfI0w9Y18aqyylylLpetGBzPZjSXa/gl1i4V3du+gw
+ qB95F/DfO38TW+dieJq+R+qdTeKS3MewEdwd72nKyRWV7gINMQVybFabz6vKtp+OS4xU Ag== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3t44m5gf8v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 14 Sep 2023 15:26:28 +0000
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 38EFLnth019871;
+        Thu, 14 Sep 2023 15:26:27 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3t44m5gf8a-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 14 Sep 2023 15:26:27 +0000
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+        by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 38EDwRIf002755;
+        Thu, 14 Sep 2023 15:26:26 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
+        by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3t14hmbrnh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 14 Sep 2023 15:26:26 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+        by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 38EFQQNK4850324
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 14 Sep 2023 15:26:26 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1A7645805C;
+        Thu, 14 Sep 2023 15:26:26 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9B92758051;
+        Thu, 14 Sep 2023 15:26:25 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.61.110.230])
+        by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+        Thu, 14 Sep 2023 15:26:25 +0000 (GMT)
+Message-ID: <296dae962a2a488bde682d3def074db91686e1c3.camel@linux.ibm.com>
+Subject: Re: [PATCH] ima: fix wrong dereferences of file->f_path
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-integrity@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-unionfs@vger.kernel.org,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>
+Date:   Thu, 14 Sep 2023 11:26:25 -0400
+In-Reply-To: <CAOQ4uxiPREeTmkaxohaqbg_XvngNXdRAssupoo+EdBoDD-FBeg@mail.gmail.com>
+References: <20230913073755.3489676-1-amir73il@gmail.com>
+         <CAOQ4uxiPREeTmkaxohaqbg_XvngNXdRAssupoo+EdBoDD-FBeg@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: _F273nGUIVhoAa0fxuazTm_dhJ_iWbNc
+X-Proofpoint-GUID: u8EVJ6uHBzjAYr7kAIIGSpUH9WHP7j5J
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.601,FMLib:17.11.176.26
+ definitions=2023-09-14_09,2023-09-14_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ mlxlogscore=999 suspectscore=0 bulkscore=0 adultscore=0 malwarescore=0
+ impostorscore=0 clxscore=1011 lowpriorityscore=0 spamscore=0 mlxscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2308100000 definitions=main-2309140130
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a test for new UFFDIO_REMAP ioctl which uses uffd to remaps source
-into destination buffer while checking the contents of both after
-remapping. After the operation the content of the destination buffer
-should match the original source buffer's content while the source
-buffer should be zeroed.
+On Wed, 2023-09-13 at 15:09 +0300, Amir Goldstein wrote:
+> On Wed, Sep 13, 2023 at 10:38 AM Amir Goldstein <amir73il@gmail.com> wrote:
+> >
+> > When storing IMA xattr on an overlayfs inode, the xattr is actually
+> > stored in the inode of the underlying (a.k.a real) filesystem, so there
+> > is an ambiguity whether this IMA xattr describes the integrity of the
+> > overlayfs inode or the real inode.
+> >
+> > For this reason and other reasons, IMA is not supported on overlayfs,
+> > in the sense that integrity checking on the overlayfs inode/file/path
+> > do not work correctly and have undefined behavior and the IMA xattr
+> > always describes the integrity of the real inode.
+> >
+> > When a user operates on an overlayfs file, whose underlying real file
+> > has IMA enabled, IMA should always operate on the real path and not
+> > on the overlayfs path.
+> >
+> > IMA code already uses the helper file_dentry() to get the dentry
+> > of the real file. Dereferencing file->f_path directly means that IMA
+> > will operate on the overlayfs inode, which is wrong.
+> >
+> > Therefore, all dereferences to f_path were converted to use the
+> > file_real_path() helper.
 
-Signed-off-by: Suren Baghdasaryan <surenb@google.com>
----
- tools/testing/selftests/mm/uffd-common.c     | 34 ++++++++++-
- tools/testing/selftests/mm/uffd-common.h     |  1 +
- tools/testing/selftests/mm/uffd-unit-tests.c | 62 ++++++++++++++++++++
- 3 files changed, 95 insertions(+), 2 deletions(-)
+Thanks, Amir.  This sounds right.
 
-diff --git a/tools/testing/selftests/mm/uffd-common.c b/tools/testing/selftests/mm/uffd-common.c
-index 02b89860e193..fb449abc46e2 100644
---- a/tools/testing/selftests/mm/uffd-common.c
-+++ b/tools/testing/selftests/mm/uffd-common.c
-@@ -484,8 +484,14 @@ void uffd_handle_page_fault(struct uffd_msg *msg, struct uffd_args *args)
- 		offset = (char *)(unsigned long)msg->arg.pagefault.address - area_dst;
- 		offset &= ~(page_size-1);
- 
--		if (copy_page(uffd, offset, args->apply_wp))
--			args->missing_faults++;
-+		/* UFFD_REMAP is supported for anon non-shared mappings. */
-+		if (uffd_test_ops == &anon_uffd_test_ops && !map_shared) {
-+			if (remap_page(uffd, offset))
-+				args->missing_faults++;
-+		} else {
-+			if (copy_page(uffd, offset, args->apply_wp))
-+				args->missing_faults++;
-+		}
- 	}
- }
- 
-@@ -620,6 +626,30 @@ int copy_page(int ufd, unsigned long offset, bool wp)
- 	return __copy_page(ufd, offset, false, wp);
- }
- 
-+int remap_page(int ufd, unsigned long offset)
-+{
-+	struct uffdio_remap uffdio_remap;
-+
-+	if (offset >= nr_pages * page_size)
-+		err("unexpected offset %lu\n", offset);
-+	uffdio_remap.dst = (unsigned long) area_dst + offset;
-+	uffdio_remap.src = (unsigned long) area_src + offset;
-+	uffdio_remap.len = page_size;
-+	uffdio_remap.mode = UFFDIO_REMAP_MODE_ALLOW_SRC_HOLES;
-+	uffdio_remap.remap = 0;
-+	if (ioctl(ufd, UFFDIO_REMAP, &uffdio_remap)) {
-+		/* real retval in uffdio_remap.remap */
-+		if (uffdio_remap.remap != -EEXIST)
-+			err("UFFDIO_REMAP error: %"PRId64,
-+			    (int64_t)uffdio_remap.remap);
-+		wake_range(ufd, uffdio_remap.dst, page_size);
-+	} else if (uffdio_remap.remap != page_size) {
-+		err("UFFDIO_REMAP error: %"PRId64, (int64_t)uffdio_remap.remap);
-+	} else
-+		return 1;
-+	return 0;
-+}
-+
- int uffd_open_dev(unsigned int flags)
- {
- 	int fd, uffd;
-diff --git a/tools/testing/selftests/mm/uffd-common.h b/tools/testing/selftests/mm/uffd-common.h
-index 7c4fa964c3b0..2bbb15d1920c 100644
---- a/tools/testing/selftests/mm/uffd-common.h
-+++ b/tools/testing/selftests/mm/uffd-common.h
-@@ -111,6 +111,7 @@ void wp_range(int ufd, __u64 start, __u64 len, bool wp);
- void uffd_handle_page_fault(struct uffd_msg *msg, struct uffd_args *args);
- int __copy_page(int ufd, unsigned long offset, bool retry, bool wp);
- int copy_page(int ufd, unsigned long offset, bool wp);
-+int remap_page(int ufd, unsigned long offset);
- void *uffd_poll_thread(void *arg);
- 
- int uffd_open_dev(unsigned int flags);
-diff --git a/tools/testing/selftests/mm/uffd-unit-tests.c b/tools/testing/selftests/mm/uffd-unit-tests.c
-index 2709a34a39c5..a33819639187 100644
---- a/tools/testing/selftests/mm/uffd-unit-tests.c
-+++ b/tools/testing/selftests/mm/uffd-unit-tests.c
-@@ -824,6 +824,10 @@ static void uffd_events_test_common(bool wp)
- 	char c;
- 	struct uffd_args args = { 0 };
- 
-+	/* Prevent source pages from being mapped more than once */
-+	if (madvise(area_src, nr_pages * page_size, MADV_DONTFORK))
-+		err("madvise(MADV_DONTFORK) failed");
-+
- 	fcntl(uffd, F_SETFL, uffd_flags | O_NONBLOCK);
- 	if (uffd_register(uffd, area_dst, nr_pages * page_size,
- 			  true, wp, false))
-@@ -1062,6 +1066,58 @@ static void uffd_poison_test(uffd_test_args_t *targs)
- 	uffd_test_pass();
- }
- 
-+static void uffd_remap_test(uffd_test_args_t *targs)
-+{
-+	unsigned long nr;
-+	pthread_t uffd_mon;
-+	char c;
-+	unsigned long long count;
-+	struct uffd_args args = { 0 };
-+
-+	if (uffd_register(uffd, area_dst, nr_pages * page_size,
-+			  true, false, false))
-+		err("register failure");
-+
-+	if (pthread_create(&uffd_mon, NULL, uffd_poll_thread, &args))
-+		err("uffd_poll_thread create");
-+
-+	/*
-+	 * Read each of the pages back using the UFFD-registered mapping. We
-+	 * expect that the first time we touch a page, it will result in a missing
-+	 * fault. uffd_poll_thread will resolve the fault by remapping source
-+	 * page to destination.
-+	 */
-+	for (nr = 0; nr < nr_pages; nr++) {
-+		/* Check area_src content */
-+		count = *area_count(area_src, nr);
-+		if (count != count_verify[nr])
-+			err("nr %lu source memory invalid %llu %llu\n",
-+			    nr, count, count_verify[nr]);
-+
-+		/* Faulting into area_dst should remap the page */
-+		count = *area_count(area_dst, nr);
-+		if (count != count_verify[nr])
-+			err("nr %lu memory corruption %llu %llu\n",
-+			    nr, count, count_verify[nr]);
-+
-+		/* Re-check area_src content which should be empty */
-+		count = *area_count(area_src, nr);
-+		if (count != 0)
-+			err("nr %lu remap failed %llu %llu\n",
-+			    nr, count, count_verify[nr]);
-+	}
-+
-+	if (write(pipefd[1], &c, sizeof(c)) != sizeof(c))
-+		err("pipe write");
-+	if (pthread_join(uffd_mon, NULL))
-+		err("join() failed");
-+
-+	if (args.missing_faults != nr_pages || args.minor_faults != 0)
-+		uffd_test_fail("stats check error");
-+	else
-+		uffd_test_pass();
-+}
-+
- /*
-  * Test the returned uffdio_register.ioctls with different register modes.
-  * Note that _UFFDIO_ZEROPAGE is tested separately in the zeropage test.
-@@ -1139,6 +1195,12 @@ uffd_test_case_t uffd_tests[] = {
- 		.mem_targets = MEM_ALL,
- 		.uffd_feature_required = 0,
- 	},
-+	{
-+		.name = "remap",
-+		.uffd_fn = uffd_remap_test,
-+		.mem_targets = MEM_ANON,
-+		.uffd_feature_required = 0,
-+	},
- 	{
- 		.name = "wp-fork",
- 		.uffd_fn = uffd_wp_fork_test,
+> >
+> > Reported-by: syzbot+a67fc5321ffb4b311c98@syzkaller.appspotmail.com
+> > Closes: https://lore.kernel.org/linux-unionfs/0000000000005bd097060530b758@google.com/
+> > Fixes: db1d1e8b9867 ("IMA: use vfs_getattr_nosec to get the i_version")
+> > Cc: Christian Brauner <brauner@kernel.org>
+> > Cc: Jeff Layton <jlayton@kernel.org>
+> > Cc: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > ---
+> >
+> > Mimi,
+> >
+> > Some of the wrong f_path dereferences are much older than the Fixes
+> > commit, but they did not have as big an impact as the wrong f_path
+> > dereference that the Fixes commit introduced.
+> >
+> > For example, commit a408e4a86b36 ("ima: open a new file instance if no
+> > read permissions") worked because reading the content of the overlayfs
+> > file has the same result as reading the content of the real file, but it
+> > is actually the real file integrity that we want to verify.
+> >
+> > Anyway, the real path information, that is now available via the
+> > file_real_path() helper, was not available in IMA integrity check context
+> > at the time that commit a408e4a86b36 was merged.
+> 
+> Only problem is that fix did not resolve the syzbot bug, which
+> seems to do the IMA integrity check on overlayfs file (not sure).
+> 
+> I am pretty sure that this patch fixes "a bug" when IMA is on the filesystem
+> under overlayfs and this is a pretty important use case.
+
+Agreed.
+
+> But I guess there are still issues with IMA over overlayfs and this is not
+> the only one.
+
+Sigh
+
+> Is this really a use case that needs to be supported?
+> Isn't the newly added SB_I_IMA_UNVERIFIABLE_SIGNATUREh flag
+> a hint that IMA on overlayfs is not a good idea at all?
+
+With  SB_I_IMA_UNVERIFIABLE_SIGNATURE enabled for overlayfs, signature
+verification will then fail immediately for all overlayfs files in
+policy.  I don't think that's the right solution.  Verification should
+be limited to when the overlayfs file is the same as the underlying
+backing store, the real inode, not the overlay upper files.
+
 -- 
-2.42.0.283.g2d96d420d3-goog
+Thanks,
+
+Mimi
 
