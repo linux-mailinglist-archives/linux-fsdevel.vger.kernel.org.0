@@ -2,129 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B2C67A1B87
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Sep 2023 11:59:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C32617A1B99
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Sep 2023 12:00:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234065AbjIOJ73 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Sep 2023 05:59:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33148 "EHLO
+        id S234137AbjIOKA4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Sep 2023 06:00:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234028AbjIOJ70 (ORCPT
+        with ESMTP id S234168AbjIOKAx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Sep 2023 05:59:26 -0400
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2132.outbound.protection.outlook.com [40.107.117.132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B1452735;
-        Fri, 15 Sep 2023 02:57:29 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Ejscp8uoqWNOjjlDCWKO/f/vSluMyeIgagXwBl+gX216vVoaAbOq/1M6npRaoJjgxlXr98yUozlLoJ8czovD8SSM0aZgCA9B5v2MZoKHFlHhhCtZQ1KOCgKq5wnSYUO2lYYEwzJAKFvWixDZa0CAjKHM+XhJFaUvk7PQp8u7dD28wexwpxIs7vPv5ArAbAXkkxf+gWo61Ih6eNOyb/IIB+y7A5U4jMmphIRqY41GHpnpOCXtFQxcjF/2tWBmqnIu13FcY5IgGg5QVnRMPf2ey9vSkXSXtv1+BjkDqHM0d3wNFE41eb0JcDSa2qc7VC75F4Br3THKMrMbf7lk/cgUgw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9NtG5w46J+qin33suvuWDWldx40kzXTtiF1HgsDTBb4=;
- b=dal4ytknSKH2hq8xzV0mUxB5uJM58lStRSOkdElz0IEQYmFZtghajl2dxmWeA2N4fnudQsdMdspUlALdrvj6nREQ9T/by6Vl22NvhGU8rMtktEwhoPPdI/VCdg8RHiOQ7/wPvfUsl3mFTjEKaNWxSfETe7pV6azGJuBfjoxnaftwgkVRIvs8NXrpJ0fChE7OzbdiHWFUXZAdSrfFIfMCDRmL8mZoeRrujR+hrBpX04WiwKC2ZTrGWZrE3RalnUJoGaXCbWil2a1CcxAAYTMheA+4lCjnNAz051Kadlr4uN+8hES31QQt9o2/O2ZT3xshIAvwcAafTjWSWNaLYeIbpQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9NtG5w46J+qin33suvuWDWldx40kzXTtiF1HgsDTBb4=;
- b=ABuoqxjgfy7hh4rehTeMAbNvZm82tvnNgN+zzfBeIeELqMGbHwL0wdRKzjQq05KNektuOvw8ww9bvH+3P+MsrxlCaRDhSckZCbP1jO019lGJ+/8HMC+WOlRbDJ7+STuNZaB0j6VTX+yBcYGbtxb3SvpxBPrT2ZGYU1RBc9jyK9Q4VMynz8eXuxtINIIb/wY9f3uS+2r1diY6kyOasKM/iJMfsaxSMcalaxUQ2KWqKTfR+xGkirk6hDqmgV1gYVBs5hQrben4ooo8OXgb2UEPM6BinUxGeROqmVLWR1mvpjcrEmdxyECIpCVJA8IQTAbjYoDHzYViA/qEjtXLN2KLNA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from TY2PR06MB3342.apcprd06.prod.outlook.com (2603:1096:404:fb::23)
- by TYZPR06MB5872.apcprd06.prod.outlook.com (2603:1096:400:334::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6768.30; Fri, 15 Sep
- 2023 09:57:13 +0000
-Received: from TY2PR06MB3342.apcprd06.prod.outlook.com
- ([fe80::60d3:1ef9:d644:3959]) by TY2PR06MB3342.apcprd06.prod.outlook.com
- ([fe80::60d3:1ef9:d644:3959%4]) with mapi id 15.20.6792.021; Fri, 15 Sep 2023
- 09:57:13 +0000
-Message-ID: <315b565c-2f1c-4c51-a645-a5c3a4e1e3cc@vivo.com>
-Date:   Fri, 15 Sep 2023 17:57:09 +0800
-User-Agent: Mozilla Thunderbird
-Subject: =?UTF-8?B?UmU6IOetlOWkjTogW1BBVENIXSBmcy13cml0ZWJhY2s6IHdyaXRlYmFj?=
- =?UTF-8?Q?k=5Fsb=5Finodes=3A_Do_not_increase_=27total=5Fwrote=27_when_nothi?=
- =?UTF-8?Q?ng_is_written?=
-Content-Language: en-US
-To:     Jan Kara <jack@suse.cz>
-Cc:     "chao@kernel.org" <chao@kernel.org>,
-        "jaegeuk@kernel.org" <jaegeuk@kernel.org>,
-        "brauner@kernel.org" <brauner@kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20230913131501.478516-1-guochunhai@vivo.com>
- <20230913151651.gzmyjvqwan3euhwi@quack3>
- <TY2PR06MB3342ED6EB614563BCC4FD23FBEF7A@TY2PR06MB3342.apcprd06.prod.outlook.com>
- <20230914065853.qmvkymchyamx43k5@quack3>
-From:   Chunhai Guo <guochunhai@vivo.com>
-In-Reply-To: <20230914065853.qmvkymchyamx43k5@quack3>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SG2PR02CA0122.apcprd02.prod.outlook.com
- (2603:1096:4:188::10) To TY2PR06MB3342.apcprd06.prod.outlook.com
- (2603:1096:404:fb::23)
+        Fri, 15 Sep 2023 06:00:53 -0400
+Received: from mail-ua1-x92a.google.com (mail-ua1-x92a.google.com [IPv6:2607:f8b0:4864:20::92a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD42D30D5;
+        Fri, 15 Sep 2023 02:57:51 -0700 (PDT)
+Received: by mail-ua1-x92a.google.com with SMTP id a1e0cc1a2514c-7a5170c78e6so740792241.2;
+        Fri, 15 Sep 2023 02:57:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1694771870; x=1695376670; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nWxJ110u032g4pSVAF7G5Jt8t0KKFay+f7qkscsfhZg=;
+        b=G4Ql1XkAHjHhSZJZk0eMZklpXqlGXPlTUMZlnNqwbAcUp8RhBb3tJ93eXQovWLU+qX
+         zlo/PMimNks57D6ruOZMij7YgHAq2Hz9OyKtdiYxQM/S3QaOeboJnbc+OuZMzu8Q2VHS
+         tdjdjS1Gei5BnbXYJeRMXe3vzFz1NUoXbGoLnR8oM0eDGghwx8t4550IL/bFe6/VmB0P
+         wjz9ptQGlUoTUTFdeDHLJceqtV/NY2kNAltoNUE2XQSgXqMhAH2nGWAXm1Wd1PJu8jDX
+         2QCL84FCqYBU5Plh7zYrt7/f8yqhM2HFRr9ghKHTnwRmhGy6i3/AW8TrskdqV2BgmnZH
+         ImSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694771870; x=1695376670;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nWxJ110u032g4pSVAF7G5Jt8t0KKFay+f7qkscsfhZg=;
+        b=wfuOG1L/PVzANLKpMJA2kO2TL+yA8qftGxtEP9mDSFUMpXkLQgUBgcLOkaV5LKxmQC
+         hHqHhhrSA9mm2EIpTgAAp7qf+f3LUOVeI/y0u/U7VVZIyOX0UqoBBopwkpGLC5Sa9K1z
+         FLp57ccfBnjccdvpcDwvQcwBJ7GkF605gJf4hniJtFGEvqvd4ixbfx7LlsfjJ/ap0DPL
+         GLpHWAOhHlITKEGKRxay+sZnE3f6n2OCmfstvHKlX9QQTFcgWj+aVTfRs3Asv+pq+Eth
+         hxZKRTRNzWee82xck7Y028VzZregKZXs9b/Js+rg5LDFGvY9xoJyATjMTS2eGAgvMidy
+         YoDA==
+X-Gm-Message-State: AOJu0YxgmdM0mGa3HHO1gticCeQzFnnibTnFKPqOdqsWZRe88ydCROQG
+        BcLQrpuAda5YnMCBMVfOL0c1ub+GCXcbFvUh2ko=
+X-Google-Smtp-Source: AGHT+IF025UHlK+17kZPslxbqE7SxDonSlhMRJEc1Q7wwpTO7HHa6EazXLt2X2weCNvESp4aWO5MS7Rz4bChTegau80=
+X-Received: by 2002:a1f:e741:0:b0:495:f061:f2c7 with SMTP id
+ e62-20020a1fe741000000b00495f061f2c7mr1154076vkh.3.1694771870190; Fri, 15 Sep
+ 2023 02:57:50 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY2PR06MB3342:EE_|TYZPR06MB5872:EE_
-X-MS-Office365-Filtering-Correlation-Id: f8e6bca4-cd62-437e-6b0c-08dbb5d222aa
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 202SROzeftiiAtOTLNXZZpmD9I4CmX4ua07WPeRGYMxJ9ehi2pkKTGmXDWMtvofBBFfcvUotM56TVv0ySe9ti/Bzfd1DpOd/3adNB7MU61NXgiKgcu0kJVey92HRoUGnEZcV2TGQU1evc0td2pbNtmWpuebiyAsPFtVqva4gOxiwF/gcxh1tN0jf4WW5Xw6xLa5DW6W1n33GCjCF8J+Jx8yezkKRNlS3lC9Oxv0ZZZYl4FV88TkAgDxdA56gBRVomGjw6yo+1BDT/wRqnwzGl7B9Q/N5KA8fI+hrh6VuCyIRcUwk1cZRaOL3P3Y4iyKE3P/RLhdOpQ5hdu2JAN9XJQLmyRz+ymDg44C4ymYMDs6IzlDbSZz4UPJrdluWiU0C5TH6TLCRUC215SkLfViLKMiiMxar8LNEypwu1CBkwDRuwRZG0Wfc08kELgUzvRhb8r3a+0pWx5i5YPJg7Au8n40Mjhhy4OrZ9SWLIUAUXnuV9XXpnxBBHSenACMzcv8lcNlJZJ2X0VALtkxWmF8omqO7tNmuCLEypDOWV1Fpmf1D4FkEcrbOaWme+wPOhsIghNjWuDDxeFCsC7ntduBhJzTgNmDXicr2p16UAsNVHWZ1EOTzLc9WyxJ4YKRDMKV+tvYJPp6h/UbDWnW6iTFqvg==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY2PR06MB3342.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(396003)(366004)(376002)(39850400004)(346002)(136003)(451199024)(1800799009)(186009)(66476007)(66946007)(478600001)(6486002)(54906003)(6506007)(6916009)(6666004)(66556008)(41300700001)(6512007)(316002)(31686004)(8936002)(5660300002)(4326008)(86362001)(36756003)(31696002)(2616005)(26005)(2906002)(38100700002)(224303003)(83380400001)(45980500001)(43740500002);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?R241Y3FLRWtFUmVYU0tHbWYzK3Avc2VzRENObEJrV0c0aHJMbHIyNXJLRkxt?=
- =?utf-8?B?allwd0xYb2ZZbkRIUDI1bkxZN1lTNnJJVTZrYkZUcmtnSjFiejlaTXNjVWFV?=
- =?utf-8?B?RStkZW9RY2s3UFR5bjhjYXA0TlRaZjRJRjY3YkxQSjk0ZTFiY1lSMlE1MzBI?=
- =?utf-8?B?bytnUFB4LytUeGVpM1BGUzJZRDl2emJHK2FoWUFZN2U0VUYxcVBMQkxFenVH?=
- =?utf-8?B?TVpVdGgrNlpXVlM5SmtBczNyeU5kcTNoMkFjYkRwOWJDZzhMRkdNZUJ5dEVt?=
- =?utf-8?B?OWlaUklkWDhoTG01VytQNk5kdXZmbHd6RmlwZUFQelBYU1liU2tKM0s1aEdp?=
- =?utf-8?B?YUNXcmhCd0s2a0RaTXM4aEliWXhBZldQOWIzcXNCZ0xGOGhZeTRkdm1kSG5o?=
- =?utf-8?B?ZlVKVmJHd2hjelExTkRIWkI0L0RFc0s1Y0hqSjdOZnBkYkhrQTVocTBNT2cv?=
- =?utf-8?B?b3dnZ0pVNnFhRWxFTFUyQXE1RHBJRkZ2RGhEdk5CR2JGMXp3SW1iVmt1bTBv?=
- =?utf-8?B?b2NZUW9sNUo3aFhuaTRKV3NSMzhUYkU2dHZMOW0zOGZzQU5UUjY4WGRBNXRw?=
- =?utf-8?B?OEc1MDllOGdLQ2ZYTDArME9KMnBqN0JhTzRFd1FxQnBjZTBOdVJuekw2UTR5?=
- =?utf-8?B?MVBNVHI0U2lCd0tHQi93TDhQRjFieFF2azdaY1lTejR3dFNibnBZOThOazhz?=
- =?utf-8?B?VERiZjVjM2J4YzV1WGExcDJwQnRaU1JzTkdNdVd2dU10RHk3WHFCNWQ0Vk1E?=
- =?utf-8?B?eFd4VmxWbkYzM3JJUGZLWjI3dnlDdWkvdkd4OWQzc0U2YUNhU2dPRUp5Yk94?=
- =?utf-8?B?MkQ2eHBobkJlKy9MYVl4UnBMVmFDOTFraFN2aFlBUTdIUnprV0YweVZxaHh4?=
- =?utf-8?B?WDZvb1Z3eDhVdktOZnJoZldPNUl6aGN4THltS1BsanR1MUJYaThvZnRQOUhE?=
- =?utf-8?B?STZ6aTFoeEFmNDVnODl2RFlzY2Zya3JtNDh4RTJVZThFSTlFSVpvNUUzTUJy?=
- =?utf-8?B?QUtpNitEbVFEWVJFbWlVRHRhQ2ZuSjNIWkhqSHIrNmtOOFZNNGlkZ05xZXZP?=
- =?utf-8?B?KzdVQ2tKbnRoVmEveUMzK1ZkK21wT0piTU9ocVQzQ1lnd2RpY3Q0c2JER3Uv?=
- =?utf-8?B?U1ByUVpqazRVcmNGZmlKQyt5cS9CK3FNWHVaVU9JSWk0QUhXdHJzb08yQ0F1?=
- =?utf-8?B?azg0VUo0a0VZdElLSythMXV5MFErME1yT3BhQ2dLek9RNjZkdEdoZFBwRWhy?=
- =?utf-8?B?L25JcHdPeFE4dCtNNFJRejRjNlJLcXcrRUFVcjh2bTVzdURCU0dmMzE5aG15?=
- =?utf-8?B?YmhueDRmWVRXZTlHVlFlZ1Z4d05yWFQzb1lWK3BIZ2RSS1RzRHJyV0IydHEy?=
- =?utf-8?B?UTJOM25rdzFlZzlEVk0yMjBQNWVnZWlMSmpzMkh3eWdFYk9STy9YZGhFY25i?=
- =?utf-8?B?N3VJZFdzVVFIdDA1OHZvMUpuakw3em5wWHdQVUJWMm9TdGlTNng4Y2ZlTnp3?=
- =?utf-8?B?NFovL041V213OGk4QzN3MUx2TzM1QkoxbDM4R3lPZjNTdndobExnSXZmY2d1?=
- =?utf-8?B?ZHRFNElqbzl4WUM0cCszM3ZadVEyU0MveWttd1ZldjVEbEd6ekkzZHNMVGV2?=
- =?utf-8?B?NVI4TkxDTFVIay9wR0FlSm54MmJ6bnZ2emJGNDB4YjNOU3J4MEVCNGt2VkFP?=
- =?utf-8?B?eWpmaXFCUFNNRzFvL0FyT1VhT05pYWZhNkJ6RUJqNHV4cGQ1SzhoTyt4L3Fm?=
- =?utf-8?B?ZDBPOHFKT00zVnFabG5MTzhKQUMyWk85aW8vdTVuMjVWVGJzMHRlVnZrY2or?=
- =?utf-8?B?WCtTNnB0ZHlyN2FyR1QxMUJ1NlM1bm4zZVNKNEc1aTVIWGJ4SWpZVTV2TlRv?=
- =?utf-8?B?UEwyRUw1VTNNWHJHYWtTbWliR1R5WnN2TDFSMEc4cXNIRmRjejJ5S3l3ZDNq?=
- =?utf-8?B?bWY2aVpEZm5qSVFiNEZWaENPdDZCejRJRkRPamN1ZUluclFkbVluVERmMU52?=
- =?utf-8?B?cjVtNVNrOFNWQkF6dXN5cndmb1V3RkZ3YUpTMi9PL2FSaHlCR3cycWZuOEdX?=
- =?utf-8?B?Z3l0akxqcStUa3IwK1lyMTBkNEZxTGFNeUZ4YjFqb25ZTEdaeUpvQ2dyU0xE?=
- =?utf-8?Q?AaRNpZ5nXKPnd6bL8rnlcucmG?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f8e6bca4-cd62-437e-6b0c-08dbb5d222aa
-X-MS-Exchange-CrossTenant-AuthSource: TY2PR06MB3342.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2023 09:57:13.4863
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: U4OVvhqHtk4Q8q5+qaA+Y1HZtiG9VMJtfQff753QKvEBpYUT+uh0TPwr5XMbCwcYJB6lcIHyIjCDejDGzUn4yQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB5872
+References: <20230913073755.3489676-1-amir73il@gmail.com> <CAOQ4uxg2_d2eFfSy45JCCLE41qCPZtLFytnZ5x5C1uXdCMUA=Q@mail.gmail.com>
+ <4919dcc1066d6952190dc224004e1f6bcba5e9df.camel@linux.ibm.com>
+ <CAOQ4uxiKgYO5Z25DFG=GQj3GeGZ8unSPExM-jn1HL_U8qncrtA@mail.gmail.com> <428533f7393ab4a9f5c243b3a61ff65d27ee80be.camel@linux.ibm.com>
+In-Reply-To: <428533f7393ab4a9f5c243b3a61ff65d27ee80be.camel@linux.ibm.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 15 Sep 2023 12:57:39 +0300
+Message-ID: <CAOQ4uxgAp_jwr-vbNn9eA9PoTrPZHuWb7+phF69c4WKmB8G4oA@mail.gmail.com>
+Subject: Re: Fwd: [PATCH] ima: fix wrong dereferences of file->f_path
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Christian Brauner <brauner@kernel.org>,
+        Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS autolearn=ham
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -132,71 +75,142 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+[adding back fsdevel]
 
+On Fri, Sep 15, 2023 at 7:04=E2=80=AFAM Mimi Zohar <zohar@linux.ibm.com> wr=
+ote:
+>
+> On Fri, 2023-09-15 at 06:21 +0300, Amir Goldstein wrote:
+> > On Thu, Sep 14, 2023 at 11:01=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.co=
+m> wrote:
+> > >
+> > > Hi Amir,  Goldwyn,
+> > >
+> > > FYI,
+> > > 1. ima_file_free() is called to check whether the file is in policy.
+> > > 2. ima_check_last_writer() is called to determine whether or not the
+> > > file hash stored as an xattr needs to be updated.
+> > >
+> > > 3. As ima_update_xattr() is not being called, I assume there is no
+> > > appraise rule. I asked on the thread which policy rules are being use=
+d
+> > > and for the boot command line, but assume that they're specifying
+> > > 'ima_policy=3Dtcb" on the boot command line.
+> >
+> > Yes, here is the kconfig from syzbot report dashboard
+> > https://syzkaller.appspot.com/x/.config?x=3Ddf91a3034fe3f122
+> >
+> > >
+> > > 4. Is commit db1d1e8b9867 ("IMA: use vfs_getattr_nosec to get the
+> > > i_version") the problem?
+> >
+> > IIUC, this commit is responsible for the ovl_getattr() call in the stac=
+k
+> > trace. syzbot did not bisect the bug yet, but now that it has found
+> > a reproducer, it is just a matter of time.
+> > However, all the bug reports in the  dashboard are only from upstream,
+> > so I think that means that this bug was not found on any stable kernels=
+.
+> >
+> > >
+> > > 5. ima_file_free() is being called twice.  We should not be seeing
+> > > ima_get_current_hash_algo() in the trace.
+> > >
+> > > [   66.991195][ T5030]  ovl_getattr+0x1b1/0xf70
+> > > [   66.995635][ T5030]  ? ovl_setattr+0x4e0/0x4e0
+> > > [   67.000229][ T5030]  ? trace_raw_output_contention_end+0xd0/0xd0
+> > > [   67.006387][ T5030]  ? rcu_is_watching+0x15/0xb0
+> > > [   67.011154][ T5030]  ? rcu_is_watching+0x15/0xb0
+> > > [   67.015920][ T5030]  ? trace_contention_end+0x3c/0xf0
+> > > [   67.021122][ T5030]  ? __mutex_lock_common+0x42d/0x2530
+> > > [   67.026506][ T5030]  ? lock_release+0xbf/0x9d0
+> > > [   67.031126][ T5030]  ? read_lock_is_recursive+0x20/0x20
+> > > [   67.036719][ T5030]  ? ima_file_free+0x17c/0x4b0
+> > > [   67.041578][ T5030]  ? __lock_acquire+0x7f70/0x7f70
+> > > [   67.046615][ T5030]  ? locks_remove_file+0x429/0x1040
+> > > [   67.051820][ T5030]  ? mutex_lock_io_nested+0x60/0x60
+> > > [   67.057030][ T5030]  ? _raw_spin_unlock+0x40/0x40
+> > > [   67.061894][ T5030]  ? __asan_memset+0x23/0x40
+> > > [   67.066577][ T5030]  ima_file_free+0x26e/0x4b0
+> > > [   67.071279][ T5030]  ? ima_get_current_hash_algo+0x10/0x10
+> > > [   67.076929][ T5030]  ? __rwlock_init+0x150/0x150
+> > > [   67.081694][ T5030]  ? __lock_acquire+0x7f70/0x7f70
+> > > [   67.086727][ T5030]  __fput+0x36a/0x910
+> > > [   67.090728][ T5030]  task_work_run+0x24a/0x300
+> > >
+> > >
+> > > Were you able to duplicate this locally?
+> > >
+> >
+> > I did not try. Honestly, I don't know how to enable IMA.
+> > Is the only thing that I need to do is set the IMA policy
+> > in the kernel command line?
+> >
+> > Does IMA need to be enabled per fs? per sb?
+> >
+> > If so, I can run the overlay test suite with IMA enabled and
+> > see what happens.
+>
+> Yes, you'll definitely will be able to see the measurement list.
+>
+> [Setting up the system to verify file signatures is a bit more
+> difficult:  files need to be signed, keys need to be loaded.  Finally
+> CentOS and RHEL 9.3 will have file signatures and will publish the IMA
+> code signing key.]
+>
+> Assuming IMA is configured, just add "ima_policy=3Dtcb" to the command
+> line.   This will measure all files executed, mmap'ed, kernel modules,
+> firmware, and all files opened by root.  Normally the builtin policy is
+> replaced with a finer grained one.
+>
+> Below are a few commands, but Ken Goldman is writing documentation -
+> https://ima-doc.readthedocs.io/en/latest/
+>
+> 1. Display the IMA measurement list:
+> # cat /sys/kernel/security/ima/ascii_runtime_measurements
+> # cat /sys/kernel/security/ima/binary_runtime_measurements
+>
+> 2. Display the IMA policy  (or append to the policy)
+> # cat /sys/kernel/security/ima/policy
+>
+> 3. Display number of measurements
+> # cat /sys/kernel/security/ima/runtime_measurements_count
+>
 
-在 2023/9/14 14:58, Jan Kara 写道:
-> On Thu 14-09-23 04:12:31, 郭纯海 wrote:
->>> On Wed 13-09-23 07:15:01, Chunhai Guo wrote:
->>>>  From the dump info, there are only two pages as shown below. One is
->>>> updated and another is under writeback. Maybe f2fs counts the
->>>> writeback page as a dirty one, so get_dirty_pages() got one. As you
->>>> said, maybe this is unreasonable.
->>>>
->>>> Jaegeuk & Chao, what do you think of this?
->>>>
->>>>
->>>> crash_32> files -p 0xE5A44678
->>>>   INODE    NRPAGES
->>>> e5a44678        2
->>>>
->>>>    PAGE    PHYSICAL   MAPPING    INDEX CNT FLAGS
->>>> e8d0e338  641de000  e5a44810         0  5 a095
->>> locked,waiters,uptodate,lru,private,writeback
->>>> e8ad59a0  54528000  e5a44810         1  2 2036
->>> referenced,uptodate,lru,active,private
->>>
->>> Indeed, incrementing pages_skipped when there's no dirty page is a bit odd.
->>> That being said we could also harden requeue_inode() - in particular we could do
->>> there:
->>>
->>>          if (wbc->pages_skipped) {
->>>                  /*
->>>                   * Writeback is not making progress due to locked buffers.
->>>                   * Skip this inode for now. Although having skipped pages
->>>                   * is odd for clean inodes, it can happen for some
->>>                   * filesystems so handle that gracefully.
->>>                   */
->>>                  if (inode->i_state & I_DIRTY_ALL)
->>>                          redirty_tail_locked(inode, wb);
->>>                  else
->>>                          inode_cgwb_move_to_attached(inode, wb);
->>>          }
->>>
->>> Does this fix your problem as well?
->>>
->>>                                                                  Honza
->>
->> Thank you for your reply. Did you forget the 'return' statement? Since I encountered this issue on the 4.19 kernel and there is not inode_cgwb_move_to_attached() yet, I replaced it with inode_io_list_del_locked(). So, below is the test patch I am applying. Please have a check. By the way, the test will take some time. I will provide feedback when it is finished. Thanks.
-> 
-> Yeah, I forgot about the return.
+Nice.
+This seems to work fine and nothing pops up when running
+fstests unionmount tests of overlayfs over xfs.
 
-Hi Jan,
-The test is finished and this patch can fix this issue, too.
+What strikes me as strange is that there are measurements
+of files in xfs and in overlayfs, but no measurements of files in tmpfs.
+I suppose that is because no one can tamper with the storage
+of tmpfs, but following the same logic, nobody can tamper with
+the storage of overlayfs files without tampering with storage of
+underlying fs (e.g. xfs), so measuring overlayfs files should not
+bring any extra security to the system.
+
+Especially, since if files are signed they are signed in the real
+storage (e.g. xfs) and not in overlayfs.
+
+So in theory, we should never ever measure files in the
+"virtual" overlayfs and only measure them in the real fs.
+The only problem is the the IMA hooks when executing,
+mmaping, reading files from overlayfs, don't work on the real fs.
+
+fsnotify also was not working correctly in that respect, because
+fs operations on overlayfs did not always trigger fsnotify events
+on the underlying real fs.
+
+This was fixed in 6.5 by commit bc2473c90fca ("ovl: enable fsnotify
+events on underlying real files") and the file_real_path() infrastructure
+was added to enable this.
+
+This is why I say, that in most likelihood, IMA hook should always use
+file_real_path() and file_dentry() to perform the measurements
+and record the path of the real fs when overlayfs is performing the
+actual read/mmap on the real fs and IMA hooks should ideally
+do nothing at all (as in tmpfs) when the operation is performed
+on the "virtual" overlayfs object.
+
 Thanks,
-> 
->> 	if (wbc->pages_skipped) {
->> 		/*
->> 		 * writeback is not making progress due to locked
->> 		 * buffers. Skip this inode for now.
->> 		 */
->> -		redirty_tail_locked(inode, wb);
->> +		if (inode->i_state & I_DIRTY_ALL)
->> +			redirty_tail_locked(inode, wb);
->> +		else
->> +			inode_io_list_del_locked(inode, wb);
->>   		return;
->>   	}
-> 
-> Looks good. Thanks for testing!
-> 
-> 								Honza
+Amir.
