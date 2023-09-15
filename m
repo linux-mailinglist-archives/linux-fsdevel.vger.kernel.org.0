@@ -2,94 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 17EA37A1E3F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Sep 2023 14:15:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D5DB7A1E63
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Sep 2023 14:17:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234651AbjIOMPQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Sep 2023 08:15:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36022 "EHLO
+        id S234664AbjIOMRm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Sep 2023 08:17:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234647AbjIOMPP (ORCPT
+        with ESMTP id S234018AbjIOMRm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Sep 2023 08:15:15 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C93192113;
-        Fri, 15 Sep 2023 05:15:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=9cnxnW7ESMZ0JG3goy/SixkPNAd8GwuVMtcmWWhCh8M=; b=hh6qr8cfEsfSY8d709qeQzGUkh
-        UqWbKETiUA6IhftO6ApR9FkEpzteHmM+8ekxGG4ssTV4swSkqsb1TXp7TEXFZmosyzLUBBOxCxCrV
-        lUG8Crmn4dfj7jxugqd8oCM8Q/6igBT/i9H9+7IY7mFu9sfs0InzwaJ8D82+W1GJtsjHT1LAMul5E
-        lGrj/xb0Tk2yDdB26P2rvy6GpP88l0V3thIIOSknLo2fVBpglW/ONxUboUlhJ4vZEzqDRpK53DDT/
-        f4aWb4/Nm9XHkK57VOp7Rr4oRjRAmnJWS0/bZp2jyLt65GoP4gBWCbe9R83/9KVSRXryzj9mZRKd3
-        wJ9rqGzA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qh7iq-009cFS-1s; Fri, 15 Sep 2023 12:14:56 +0000
-Date:   Fri, 15 Sep 2023 13:14:55 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Daniel Gomez <da.gomez@samsung.com>
-Cc:     "minchan@kernel.org" <minchan@kernel.org>,
-        "senozhatsky@chromium.org" <senozhatsky@chromium.org>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "djwong@kernel.org" <djwong@kernel.org>,
-        "hughd@google.com" <hughd@google.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "mcgrof@kernel.org" <mcgrof@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "gost.dev@samsung.com" <gost.dev@samsung.com>,
-        Pankaj Raghav <p.raghav@samsung.com>
-Subject: Re: [PATCH 3/6] shmem: account for large order folios
-Message-ID: <ZQRKv6NcfYCr0aWo@casper.infradead.org>
-References: <20230915095042.1320180-1-da.gomez@samsung.com>
- <CGME20230915095128eucas1p2885c3add58d82413d9c1d17832d3d281@eucas1p2.samsung.com>
- <20230915095042.1320180-4-da.gomez@samsung.com>
+        Fri, 15 Sep 2023 08:17:42 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id DC55B30DF
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Sep 2023 05:16:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1694780172;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=YwY60HhWZw2zdeAWEkQbv8cGTe1OUoW+7dI7Ga0rLuU=;
+        b=ZNoKkWan3DQSazDIAAEoKn9B1KNdR0aC9q8hpHQxH44TiePsPstDkVUJwx4CA75tEwbc66
+        HOz04sTpgDGMwPln8O0Y1SRYiBwCao67zyTkL0H9X12YNHhnThxy2MBPjNT2A9C2Fcm7FK
+        jeIznU+iumdmHu+lILYt/lmypOa5mAk=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-477-qLAvrmbgNAO4F4B8Lc6z_g-1; Fri, 15 Sep 2023 08:16:11 -0400
+X-MC-Unique: qLAvrmbgNAO4F4B8Lc6z_g-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 90266811E8F;
+        Fri, 15 Sep 2023 12:16:10 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.23])
+        by smtp.corp.redhat.com (Postfix) with SMTP id E71DB40C6EA8;
+        Fri, 15 Sep 2023 12:16:08 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Fri, 15 Sep 2023 14:15:18 +0200 (CEST)
+Date:   Fri, 15 Sep 2023 14:15:15 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Ben Wolsieffer <ben.wolsieffer@hefring.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Greg Ungerer <gerg@uclinux.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Giulio Benetti <giulio.benetti@benettiengineering.com>
+Subject: Re: [PATCH] proc: nommu: /proc/<pid>/maps: release mmap read lock
+Message-ID: <20230915121514.GA2768@redhat.com>
+References: <20230914163019.4050530-2-ben.wolsieffer@hefring.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230915095042.1320180-4-da.gomez@samsung.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20230914163019.4050530-2-ben.wolsieffer@hefring.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 15, 2023 at 09:51:26AM +0000, Daniel Gomez wrote:
-> @@ -1810,13 +1815,14 @@ static void shmem_set_folio_swapin_error(struct inode *inode, pgoff_t index,
->  		return;
->  
->  	folio_wait_writeback(folio);
-> +	num_swap_pages = folio_nr_pages(folio);
->  	delete_from_swap_cache(folio);
->  	/*
->  	 * Don't treat swapin error folio as alloced. Otherwise inode->i_blocks
->  	 * won't be 0 when inode is released and thus trigger WARN_ON(i_blocks)
->  	 * in shmem_evict_inode().
->  	 */
-> -	shmem_recalc_inode(inode, -1, -1);
-> +	shmem_recalc_inode(inode, num_swap_pages, num_swap_pages);
+On 09/14, Ben Wolsieffer wrote:
+>
+> Fixes: 47fecca15c09 ("fs/proc/task_nommu.c: don't use priv->task->mm")
+> Signed-off-by: Ben Wolsieffer <ben.wolsieffer@hefring.com>
+> ---
+>  fs/proc/task_nommu.c | 27 +++++++++++++++------------
+>  1 file changed, 15 insertions(+), 12 deletions(-)
 
-Shouldn't that be -num_swap_pages?
+Acked-by: Oleg Nesterov <oleg@redhat.com>
 
->  	swap_free(swap);
->  }
->  
-> @@ -1903,7 +1909,7 @@ static int shmem_swapin_folio(struct inode *inode, pgoff_t index,
->  	if (error)
->  		goto failed;
->  
-> -	shmem_recalc_inode(inode, 0, -1);
-> +	shmem_recalc_inode(inode, 0, folio_nr_pages(folio));
->  
->  	if (sgp == SGP_WRITE)
->  		folio_mark_accessed(folio);
 
-Also here.
+-------------------------------------------------------------------------------
+Sorry for the offtopic question. I know NOTHING about nommu and when I tried to
+review this patch I was puzzled by
+
+	/* See m_next(). Zero at the start or after lseek. */
+	if (addr == -1UL)
+		return NULL;
+
+at the start of m_start(). OK, lets look at
+
+	static void *m_next(struct seq_file *m, void *_p, loff_t *pos)
+	{
+		struct vm_area_struct *vma = _p;
+
+		*pos = vma->vm_end;
+		return find_vma(vma->vm_mm, vma->vm_end);
+	}
+
+where does this -1UL come from? Does this mean that on nommu
+
+	last_vma->vm_end == -1UL
+
+or what?
+
+fs/proc/task_mmu.c has the same check at the start, but in this case
+the "See m_next()" comment actually helps.
+
+Just curious, thanks.
+
+Oleg.
+
