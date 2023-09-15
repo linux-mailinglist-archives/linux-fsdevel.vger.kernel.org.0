@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FA4A7A298A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Sep 2023 23:34:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC1677A2972
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Sep 2023 23:33:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237842AbjIOVdd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Sep 2023 17:33:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39998 "EHLO
+        id S237769AbjIOVd2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Sep 2023 17:33:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237762AbjIOVdQ (ORCPT
+        with ESMTP id S237722AbjIOVdM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Sep 2023 17:33:16 -0400
+        Fri, 15 Sep 2023 17:33:12 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D37D5B8;
-        Fri, 15 Sep 2023 14:33:11 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1479B8;
+        Fri, 15 Sep 2023 14:33:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=hsCbEbpQePNsNlaxz4E9IonlUtvi5CZw112iATZuYCc=; b=aZkcYzqyB48MzWjwPzdWMDhnaS
-        36unGgvgZVmx44ucFkaeDQD30sty+H/nNJyNc4PVX0IXLz6eD9/cB7me475sIol2vyN7fYQx1l1Am
-        mSvqthZp/qFLxkk+BeosmOvQUZ8A1E8FGSjBLsIf9RsQC7plzVR1SbO6qZNYLP5CwXOfod9R+IjDE
-        +Rge5ByL8PoOTza2K1k8kHSwNczsNsE42mHkUBxS0CMU3Hk/sFrhiJjzpe40voK+YXIe9YMVPzELz
-        b+Po4D0c5miORXLMmY9pFMtmWJwfnOpvAt3A7dOo8k2lyjC8WDy0QyFTJDCWMuLJCj85gIOPDzRoI
-        SHnevtWQ==;
+        bh=R2D5ERHgA50rjnGDJd3UTlmr28nE94IPRsx6Q30NTNM=; b=IioY1+MgNEocbawTB+OnCHuQPq
+        m334jTZ/rCCDiPzly1hKTAnORYCPXPfXiFu35XxAtsJh70qoLVkXLWWdO79+mD7WR432rlQebZrTL
+        cYwrdeEgZUkSN3sqaVas6b/eMzrthfiXWQnmOA1+sT7ytv5z33SyWfO59607OFtHrFeJ2lZSGVkxH
+        +MEHOarKFO7fXw36ZP5Fi2MZv/HiawQB8OuB1KcPEsdCTHz3XDjrAVwB0n8rNubNFaQx8l88wsHcF
+        lQqTYpYp1EkQybTcS+lydA1PawBqxqbzMb72Itu7Xlcc6pLwY6e97lZ4gggq007lKBQE0yY/f5xQo
+        gyCQ8WmQ==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1qhGQq-00BQnW-1G;
+        id 1qhGQq-00BQnY-1P;
         Fri, 15 Sep 2023 21:32:56 +0000
 From:   Luis Chamberlain <mcgrof@kernel.org>
 To:     hch@infradead.org, djwong@kernel.org, dchinner@redhat.com,
@@ -37,9 +37,9 @@ Cc:     willy@infradead.org, brauner@kernel.org, hare@suse.de,
         linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-block@vger.kernel.org, p.raghav@samsung.com,
         da.gomez@samsung.com, dan.helmick@samsung.com, mcgrof@kernel.org
-Subject: [RFC v2 07/10] nvme: enhance max supported LBA format check
-Date:   Fri, 15 Sep 2023 14:32:51 -0700
-Message-Id: <20230915213254.2724586-8-mcgrof@kernel.org>
+Subject: [RFC v2 08/10] nvme: add awun / nawun sanity check
+Date:   Fri, 15 Sep 2023 14:32:52 -0700
+Message-Id: <20230915213254.2724586-9-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20230915213254.2724586-1-mcgrof@kernel.org>
 References: <20230915213254.2724586-1-mcgrof@kernel.org>
@@ -56,87 +56,90 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Only pure-iomap configurations, systems where CONFIG_BUFFER_HEAD is
-disabled can enable NVMe devices with LBA formats with a blocksize
-larger then the PAGE_SIZE.
+AWUN/NAWUN control the atomicity of command execution in relation to
+other commands. They impose inter-command serialization of writing of
+blocks of data to the NVM and prevent blocks of data ending up on the
+NVM containing partial data from one new command and partial data from
+one or more other new commands.
 
-Systems with buffer-heads enabled cannot currently make use of these
-devices, but this will eventually get fixed. We cap the max supported
-LBA format to 19, 512 KiB as support for 1 MiB LBA format still needs
-some work.
+Parse awun / nawun to verify at least the physical block size
+exposed is not greater than this value.
 
-Also, add a debug module parameter nvme_core.debug_large_lbas to enable
-folks to shoot themselves on their foot though if they want to test
-and expand support beyond what is supported, only to be used on
-pure-iomap configurations.
+The special case of awun / nawun == 0xffff tells us we can ramp
+up to mdts.
 
+Suggested-by: Dan Helmick <dan.helmick@samsung.com>
 Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
 ---
- drivers/nvme/host/core.c | 34 +++++++++++++++++++++++++++++-----
- 1 file changed, 29 insertions(+), 5 deletions(-)
+ drivers/nvme/host/core.c | 21 +++++++++++++++++++++
+ drivers/nvme/host/nvme.h |  1 +
+ 2 files changed, 22 insertions(+)
 
 diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index f3a01b79148c..0365f260c514 100644
+index 0365f260c514..7a3c51ac13bd 100644
 --- a/drivers/nvme/host/core.c
 +++ b/drivers/nvme/host/core.c
-@@ -88,6 +88,10 @@ module_param(apst_secondary_latency_tol_us, ulong, 0644);
- MODULE_PARM_DESC(apst_secondary_latency_tol_us,
- 	"secondary APST latency tolerance in us");
- 
-+static bool debug_large_lbas;
-+module_param(debug_large_lbas, bool, 0644);
-+MODULE_PARM_DESC(debug_large_lbas, "allow LBAs > PAGE_SIZE");
-+
- /*
-  * nvme_wq - hosts nvme related works that are not reset or delete
-  * nvme_reset_wq - hosts nvme reset works
-@@ -1878,6 +1882,29 @@ static void nvme_set_queue_limits(struct nvme_ctrl *ctrl,
- 	blk_queue_write_cache(q, vwc, vwc);
- }
- 
-+/* XXX: shift 20 (1 MiB LBA) crashes on pure-iomap */
-+#define NVME_MAX_SHIFT_SUPPORTED 19
-+
-+static bool nvme_lba_shift_supported(struct nvme_ns *ns)
-+{
-+	if (ns->lba_shift <= PAGE_SHIFT)
-+		return true;
-+
-+	if (IS_ENABLED(CONFIG_BUFFER_HEAD))
-+		return false;
-+
-+	if (ns->lba_shift <= NVME_MAX_SHIFT_SUPPORTED)
-+		return true;
-+
-+	if (debug_large_lbas) {
-+		dev_warn(ns->ctrl->device,
-+			"forcibly allowing LBAS > 1 MiB due to nvme_core.debug_large_lbas -- use at your own risk\n");
-+		return true;
-+	}
-+
-+	return false;
-+}
-+
- static void nvme_update_disk_info(struct gendisk *disk,
- 		struct nvme_ns *ns, struct nvme_id_ns *id)
- {
-@@ -1885,13 +1912,10 @@ static void nvme_update_disk_info(struct gendisk *disk,
+@@ -1911,6 +1911,7 @@ static void nvme_update_disk_info(struct gendisk *disk,
+ 	sector_t capacity = nvme_lba_to_sect(ns, le64_to_cpu(id->nsze));
  	u32 bs = 1U << ns->lba_shift;
  	u32 atomic_bs, phys_bs, io_opt = 0;
++	u32 awun = 0, awun_bs = 0;
  
--	/*
--	 * The block layer can't support LBA sizes larger than the page size
--	 * yet, so catch this early and don't allow block I/O.
--	 */
--	if (ns->lba_shift > PAGE_SHIFT) {
-+	if (!nvme_lba_shift_supported(ns)) {
+ 	if (!nvme_lba_shift_supported(ns)) {
  		capacity = 0;
- 		bs = (1 << 9);
-+		dev_warn(ns->ctrl->device, "I'm sorry dave, I'm afraid I can't do that\n");
+@@ -1931,6 +1932,15 @@ static void nvme_update_disk_info(struct gendisk *disk,
+ 			atomic_bs = (1 + le16_to_cpu(id->nawupf)) * bs;
+ 		else
+ 			atomic_bs = (1 + ns->ctrl->subsys->awupf) * bs;
++		if (id->nsfeat & NVME_NS_FEAT_ATOMICS && id->nawun)
++			awun = (1 + le16_to_cpu(id->nawun));
++		else
++			awun = (1 + ns->ctrl->subsys->awun);
++		/* Indicates MDTS can be used */
++		if (awun == 0xffff)
++			awun_bs = ns->ctrl->max_hw_sectors << SECTOR_SHIFT;
++		else
++			awun_bs = awun * bs;
  	}
  
- 	blk_integrity_unregister(disk);
+ 	if (id->nsfeat & NVME_NS_FEAT_IO_OPT) {
+@@ -1940,6 +1950,16 @@ static void nvme_update_disk_info(struct gendisk *disk,
+ 		io_opt = bs * (1 + le16_to_cpu(id->nows));
+ 	}
+ 
++	if (awun) {
++		phys_bs = min(awun_bs, phys_bs);
++
++		/*
++		 * npwg and nows could be > awun, in such cases users should
++		 * be aware of out of order reads/writes as npwg and nows
++		 * are purely performance optimizations.
++		 */
++	}
++
+ 	blk_queue_logical_block_size(disk->queue, bs);
+ 	/*
+ 	 * Linux filesystems assume writing a single physical block is
+@@ -2785,6 +2805,7 @@ static int nvme_init_subsystem(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
+ 		kfree(subsys);
+ 		return -EINVAL;
+ 	}
++	subsys->awun = le16_to_cpu(id->awun);
+ 	subsys->awupf = le16_to_cpu(id->awupf);
+ 	nvme_mpath_default_iopolicy(subsys);
+ 
+diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
+index f35647c470af..071ec52d83ea 100644
+--- a/drivers/nvme/host/nvme.h
++++ b/drivers/nvme/host/nvme.h
+@@ -410,6 +410,7 @@ struct nvme_subsystem {
+ 	u8			cmic;
+ 	enum nvme_subsys_type	subtype;
+ 	u16			vendor_id;
++	u16			awun;
+ 	u16			awupf;	/* 0's based awupf value. */
+ 	struct ida		ns_ida;
+ #ifdef CONFIG_NVME_MULTIPATH
 -- 
 2.39.2
 
