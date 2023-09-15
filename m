@@ -2,219 +2,201 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 281FE7A1B62
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Sep 2023 11:55:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B2C67A1B87
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Sep 2023 11:59:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234109AbjIOJzI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Sep 2023 05:55:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46082 "EHLO
+        id S234065AbjIOJ73 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Sep 2023 05:59:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234110AbjIOJyl (ORCPT
+        with ESMTP id S234028AbjIOJ70 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Sep 2023 05:54:41 -0400
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5213C3C16
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Sep 2023 02:53:53 -0700 (PDT)
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230915095134euoutp0256ed30e8c7acb5a04c42f652d32c8530~FCbHVdW7p1230712307euoutp02O
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Sep 2023 09:51:34 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230915095134euoutp0256ed30e8c7acb5a04c42f652d32c8530~FCbHVdW7p1230712307euoutp02O
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1694771494;
-        bh=nTKXGiIiML3QQW/w2E+mOtcZhHyvpI4/kPyFKr8+glQ=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References:From;
-        b=KI2kOdoS2yg7Vh86md6sPK4vwrtx1rr8lkcPGelzTYN+V1wDwjhXbTPHfi1ayADmq
-         SnuX6aSN1YRX5kU7TmhzwLcmfDlEAs/J/VhdqKM/lMU1vn2PXUcHsE0QM7qAuv739c
-         MwIfQURAnIrUaVFqn6+icPbpvOOlVSZ/rhM39T1M=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20230915095133eucas1p1fc05405567bd735c07ff213d3dff3c85~FCbG_4jQF2007620076eucas1p1T;
-        Fri, 15 Sep 2023 09:51:33 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 63.AA.42423.52924056; Fri, 15
-        Sep 2023 10:51:33 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20230915095133eucas1p267bade2888b7fcd2e1ea8e13e21c495f~FCbGdpbh00862308623eucas1p2c;
-        Fri, 15 Sep 2023 09:51:33 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20230915095133eusmtrp2540609b9602d103cb0a1998aeeb2d1b1~FCbGc8gqX1712217122eusmtrp2_;
-        Fri, 15 Sep 2023 09:51:33 +0000 (GMT)
-X-AuditID: cbfec7f2-a3bff7000002a5b7-26-65042925ea5e
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 5B.3B.10549.52924056; Fri, 15
-        Sep 2023 10:51:33 +0100 (BST)
-Received: from CAMSVWEXC01.scsc.local (unknown [106.1.227.71]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20230915095133eusmtip145b39d48e2d4c2b2f0f476f141a1971f~FCbGQl2U92594625946eusmtip1i;
-        Fri, 15 Sep 2023 09:51:33 +0000 (GMT)
-Received: from CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) by
-        CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) with Microsoft SMTP
-        Server (TLS) id 15.0.1497.2; Fri, 15 Sep 2023 10:51:32 +0100
-Received: from CAMSVWEXC02.scsc.local ([::1]) by CAMSVWEXC02.scsc.local
-        ([fe80::3c08:6c51:fa0a:6384%13]) with mapi id 15.00.1497.012; Fri, 15 Sep
-        2023 10:51:32 +0100
-From:   Daniel Gomez <da.gomez@samsung.com>
-To:     "minchan@kernel.org" <minchan@kernel.org>,
-        "senozhatsky@chromium.org" <senozhatsky@chromium.org>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "djwong@kernel.org" <djwong@kernel.org>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "hughd@google.com" <hughd@google.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "mcgrof@kernel.org" <mcgrof@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>
-CC:     "gost.dev@samsung.com" <gost.dev@samsung.com>,
-        Pankaj Raghav <p.raghav@samsung.com>,
-        Daniel Gomez <da.gomez@samsung.com>
-Subject: [PATCH 6/6] shmem: add large folios support to the write path
-Thread-Topic: [PATCH 6/6] shmem: add large folios support to the write path
-Thread-Index: AQHZ57o0gOj42/h7V0WVSDdaHJaWqA==
-Date:   Fri, 15 Sep 2023 09:51:31 +0000
-Message-ID: <20230915095042.1320180-7-da.gomez@samsung.com>
-In-Reply-To: <20230915095042.1320180-1-da.gomez@samsung.com>
-Accept-Language: en-US, en-GB
+        Fri, 15 Sep 2023 05:59:26 -0400
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2132.outbound.protection.outlook.com [40.107.117.132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B1452735;
+        Fri, 15 Sep 2023 02:57:29 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Ejscp8uoqWNOjjlDCWKO/f/vSluMyeIgagXwBl+gX216vVoaAbOq/1M6npRaoJjgxlXr98yUozlLoJ8czovD8SSM0aZgCA9B5v2MZoKHFlHhhCtZQ1KOCgKq5wnSYUO2lYYEwzJAKFvWixDZa0CAjKHM+XhJFaUvk7PQp8u7dD28wexwpxIs7vPv5ArAbAXkkxf+gWo61Ih6eNOyb/IIB+y7A5U4jMmphIRqY41GHpnpOCXtFQxcjF/2tWBmqnIu13FcY5IgGg5QVnRMPf2ey9vSkXSXtv1+BjkDqHM0d3wNFE41eb0JcDSa2qc7VC75F4Br3THKMrMbf7lk/cgUgw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9NtG5w46J+qin33suvuWDWldx40kzXTtiF1HgsDTBb4=;
+ b=dal4ytknSKH2hq8xzV0mUxB5uJM58lStRSOkdElz0IEQYmFZtghajl2dxmWeA2N4fnudQsdMdspUlALdrvj6nREQ9T/by6Vl22NvhGU8rMtktEwhoPPdI/VCdg8RHiOQ7/wPvfUsl3mFTjEKaNWxSfETe7pV6azGJuBfjoxnaftwgkVRIvs8NXrpJ0fChE7OzbdiHWFUXZAdSrfFIfMCDRmL8mZoeRrujR+hrBpX04WiwKC2ZTrGWZrE3RalnUJoGaXCbWil2a1CcxAAYTMheA+4lCjnNAz051Kadlr4uN+8hES31QQt9o2/O2ZT3xshIAvwcAafTjWSWNaLYeIbpQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9NtG5w46J+qin33suvuWDWldx40kzXTtiF1HgsDTBb4=;
+ b=ABuoqxjgfy7hh4rehTeMAbNvZm82tvnNgN+zzfBeIeELqMGbHwL0wdRKzjQq05KNektuOvw8ww9bvH+3P+MsrxlCaRDhSckZCbP1jO019lGJ+/8HMC+WOlRbDJ7+STuNZaB0j6VTX+yBcYGbtxb3SvpxBPrT2ZGYU1RBc9jyK9Q4VMynz8eXuxtINIIb/wY9f3uS+2r1diY6kyOasKM/iJMfsaxSMcalaxUQ2KWqKTfR+xGkirk6hDqmgV1gYVBs5hQrben4ooo8OXgb2UEPM6BinUxGeROqmVLWR1mvpjcrEmdxyECIpCVJA8IQTAbjYoDHzYViA/qEjtXLN2KLNA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from TY2PR06MB3342.apcprd06.prod.outlook.com (2603:1096:404:fb::23)
+ by TYZPR06MB5872.apcprd06.prod.outlook.com (2603:1096:400:334::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6768.30; Fri, 15 Sep
+ 2023 09:57:13 +0000
+Received: from TY2PR06MB3342.apcprd06.prod.outlook.com
+ ([fe80::60d3:1ef9:d644:3959]) by TY2PR06MB3342.apcprd06.prod.outlook.com
+ ([fe80::60d3:1ef9:d644:3959%4]) with mapi id 15.20.6792.021; Fri, 15 Sep 2023
+ 09:57:13 +0000
+Message-ID: <315b565c-2f1c-4c51-a645-a5c3a4e1e3cc@vivo.com>
+Date:   Fri, 15 Sep 2023 17:57:09 +0800
+User-Agent: Mozilla Thunderbird
+Subject: =?UTF-8?B?UmU6IOetlOWkjTogW1BBVENIXSBmcy13cml0ZWJhY2s6IHdyaXRlYmFj?=
+ =?UTF-8?Q?k=5Fsb=5Finodes=3A_Do_not_increase_=27total=5Fwrote=27_when_nothi?=
+ =?UTF-8?Q?ng_is_written?=
 Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [106.110.32.103]
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+To:     Jan Kara <jack@suse.cz>
+Cc:     "chao@kernel.org" <chao@kernel.org>,
+        "jaegeuk@kernel.org" <jaegeuk@kernel.org>,
+        "brauner@kernel.org" <brauner@kernel.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20230913131501.478516-1-guochunhai@vivo.com>
+ <20230913151651.gzmyjvqwan3euhwi@quack3>
+ <TY2PR06MB3342ED6EB614563BCC4FD23FBEF7A@TY2PR06MB3342.apcprd06.prod.outlook.com>
+ <20230914065853.qmvkymchyamx43k5@quack3>
+From:   Chunhai Guo <guochunhai@vivo.com>
+In-Reply-To: <20230914065853.qmvkymchyamx43k5@quack3>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SG2PR02CA0122.apcprd02.prod.outlook.com
+ (2603:1096:4:188::10) To TY2PR06MB3342.apcprd06.prod.outlook.com
+ (2603:1096:404:fb::23)
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKKsWRmVeSWpSXmKPExsWy7djP87qqmiypBpfmq1vMWb+GzWL13X42
-        i8tP+Cyefupjsdh7S9tiz96TLBaXd81hs7i35j+rxa4/O9gtbkx4ymix7Ot7dovdGxexWfz+
-        MYfNgddjdsNFFo8Fm0o9Nq/Q8rh8ttRj06pONo9Nnyaxe5yY8ZvF4/MmuQCOKC6blNSczLLU
-        In27BK6M/d1mBbuEKv5se8bWwHiar4uRg0NCwETia5tOFyMXh5DACkaJncsWMkM4Xxgl9t9b
-        xgLhfGaUeNZ6mxWmY94rFYj4ckaJoy1b2eCKfmyeDeWcYZRY8vYn1KyVjBLbZr0EmsXJwSag
-        KbHv5CZ2kISIwGxWicOLOxhBEswCdRJrns0CKmLnEBZwk1ijDxIVEfCWeLFzCRuErSfx/tAb
-        sGoWAVWJz7t+soNcxCtgLbH+VjaIySlgI/H+RzlIBaOArMSjlb/YIWaLS9x6Mp8JxJYQEJRY
-        NHsPM4QtJvFv10M2CFtH4uz1J4wQtoHE1qX7WCBsJYk/HQuhbtSTuDF1ChuErS2xbOFrsDm8
-        QDNPznwCDiwJgSYuicZ7nawQzS4SvXtPQA0Vlnh1fAs7hC0j8X/nfKYJjNqzkNw3C8mOWUh2
-        zEKyYwEjyypG8dTS4tz01GLDvNRyveLE3OLSvHS95PzcTYzAlHb63/FPOxjnvvqod4iRiYPx
-        EKMEB7OSCC+bLVOqEG9KYmVValF+fFFpTmrxIUZpDhYlcV5t25PJQgLpiSWp2ampBalFMFkm
-        Dk6pBqaWRM5Pj4tPdNV4Tzrws1rjd/3C9dXPnLiL7z9YHLMk/25guu/P9V+Lpdj4Z2jzRDL9
-        l1n0MeamnZfEdI3PdaVHPr6/flR/4rROu4AjFyYG3lsqODM4gm3BhvUcbW9kdZkqJP++jO10
-        +TF3ofZvNbvbTXvvJSoXmcvaT9tXu1LT1zBiW03Dzis/1tsU297Ilzn5vvTou6anmTPCN1rK
-        P1Nlets6Y5X0mUNc6/9nzXUwkfJ11t66P5G16WNq9pEzTc95wi/PNT3UxG786OrEkF3qgR8f
-        b/Xfc2ZyZ7XDBLuIVTWL1wp/NF1wlt1HU1nSzTK1sWNiTcP7ne8S7FfxKm+enyh5R97rdfMO
-        xZ+fHLmUWIozEg21mIuKEwGrauQe2AMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrPKsWRmVeSWpSXmKPExsVy+t/xu7qqmiypBlf+cVjMWb+GzWL13X42
-        i8tP+Cyefupjsdh7S9tiz96TLBaXd81hs7i35j+rxa4/O9gtbkx4ymix7Ot7dovdGxexWfz+
-        MYfNgddjdsNFFo8Fm0o9Nq/Q8rh8ttRj06pONo9Nnyaxe5yY8ZvF4/MmuQCOKD2bovzSklSF
-        jPziElulaEMLIz1DSws9IxNLPUNj81grI1MlfTublNSczLLUIn27BL2M/d1mBbuEKv5se8bW
-        wHiar4uRg0NCwERi3iuVLkYuDiGBpYwSRx/fZOti5ASKy0hs/HKVFcIWlvhzrYsNougjo8S3
-        ta9ZQBJCAmcYJfo+VkMkVjJKHGvcBZZgE9CU2HdyEztIQkRgNqvE4cUdjCAJZoE6iTXPZgEV
-        sXMIC7hJrNEHiYoIeEu82LmEDcLWk3h/6A1YNYuAqsTnXT/ZQQ7lFbCWWH8rG8QUAjJnTfcC
-        MTkFbCTe/ygHKWYUkJV4tPIXO8QacYlbT+YzQVwvILFkz3lmCFtU4uXjf1Bf6Uicvf6EEcI2
-        kNi6dB8LhK0k8adjIdS5ehI3pk5hg7C1JZYtfA02h1dAUOLkzCcsExilZyFZNwtJyywkLbOQ
-        tCxgZFnFKJJaWpybnltsqFecmFtcmpeul5yfu4kRmJK2Hfu5eQfjvFcf9Q4xMnEwHmKU4GBW
-        EuFls2VKFeJNSaysSi3Kjy8qzUktPsRoCgygicxSosn5wKSYVxJvaGZgamhiZmlgamlmrCTO
-        61nQkSgkkJ5YkpqdmlqQWgTTx8TBKdXAFGb97Euc/wHZOwe2H2d42C6wT9inRO7LFrv2jz5P
-        F+jw6Pd+rmiR+vWiN6yJcdZj/UWebt99mZZpm3FUc8u9iHs94eG6jMblr2Q0rq9tOuBysvnq
-        HqNDv/XmeUz9sMmm9fl6u4v7WCZt+nauo1l/yR1BpU1qlornQqTCTdjnZiWU1r2rlODnvbzW
-        y/y5mNgqoQcvG6a8O3E48N3Ed//ZoxIdvsRvEP6t4OX9WH7C2uygo9XeTnlK3J69P5QXenPc
-        YjKPy5Hg+z9xZ/CXbD2xu1ucfZzSnzWK+9ucKK07vLfk5Url5KaYKNUCptfdS40XvdXc07yx
-        feHuG8fPJVYcFP399u7Tmcvfdkzx73g/VYmlOCPRUIu5qDgRACdVhs7SAwAA
-X-CMS-MailID: 20230915095133eucas1p267bade2888b7fcd2e1ea8e13e21c495f
-X-Msg-Generator: CA
-X-RootMTR: 20230915095133eucas1p267bade2888b7fcd2e1ea8e13e21c495f
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20230915095133eucas1p267bade2888b7fcd2e1ea8e13e21c495f
-References: <20230915095042.1320180-1-da.gomez@samsung.com>
-        <CGME20230915095133eucas1p267bade2888b7fcd2e1ea8e13e21c495f@eucas1p2.samsung.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_PASS,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TY2PR06MB3342:EE_|TYZPR06MB5872:EE_
+X-MS-Office365-Filtering-Correlation-Id: f8e6bca4-cd62-437e-6b0c-08dbb5d222aa
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 202SROzeftiiAtOTLNXZZpmD9I4CmX4ua07WPeRGYMxJ9ehi2pkKTGmXDWMtvofBBFfcvUotM56TVv0ySe9ti/Bzfd1DpOd/3adNB7MU61NXgiKgcu0kJVey92HRoUGnEZcV2TGQU1evc0td2pbNtmWpuebiyAsPFtVqva4gOxiwF/gcxh1tN0jf4WW5Xw6xLa5DW6W1n33GCjCF8J+Jx8yezkKRNlS3lC9Oxv0ZZZYl4FV88TkAgDxdA56gBRVomGjw6yo+1BDT/wRqnwzGl7B9Q/N5KA8fI+hrh6VuCyIRcUwk1cZRaOL3P3Y4iyKE3P/RLhdOpQ5hdu2JAN9XJQLmyRz+ymDg44C4ymYMDs6IzlDbSZz4UPJrdluWiU0C5TH6TLCRUC215SkLfViLKMiiMxar8LNEypwu1CBkwDRuwRZG0Wfc08kELgUzvRhb8r3a+0pWx5i5YPJg7Au8n40Mjhhy4OrZ9SWLIUAUXnuV9XXpnxBBHSenACMzcv8lcNlJZJ2X0VALtkxWmF8omqO7tNmuCLEypDOWV1Fpmf1D4FkEcrbOaWme+wPOhsIghNjWuDDxeFCsC7ntduBhJzTgNmDXicr2p16UAsNVHWZ1EOTzLc9WyxJ4YKRDMKV+tvYJPp6h/UbDWnW6iTFqvg==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY2PR06MB3342.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(396003)(366004)(376002)(39850400004)(346002)(136003)(451199024)(1800799009)(186009)(66476007)(66946007)(478600001)(6486002)(54906003)(6506007)(6916009)(6666004)(66556008)(41300700001)(6512007)(316002)(31686004)(8936002)(5660300002)(4326008)(86362001)(36756003)(31696002)(2616005)(26005)(2906002)(38100700002)(224303003)(83380400001)(45980500001)(43740500002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?R241Y3FLRWtFUmVYU0tHbWYzK3Avc2VzRENObEJrV0c0aHJMbHIyNXJLRkxt?=
+ =?utf-8?B?allwd0xYb2ZZbkRIUDI1bkxZN1lTNnJJVTZrYkZUcmtnSjFiejlaTXNjVWFV?=
+ =?utf-8?B?RStkZW9RY2s3UFR5bjhjYXA0TlRaZjRJRjY3YkxQSjk0ZTFiY1lSMlE1MzBI?=
+ =?utf-8?B?bytnUFB4LytUeGVpM1BGUzJZRDl2emJHK2FoWUFZN2U0VUYxcVBMQkxFenVH?=
+ =?utf-8?B?TVpVdGgrNlpXVlM5SmtBczNyeU5kcTNoMkFjYkRwOWJDZzhMRkdNZUJ5dEVt?=
+ =?utf-8?B?OWlaUklkWDhoTG01VytQNk5kdXZmbHd6RmlwZUFQelBYU1liU2tKM0s1aEdp?=
+ =?utf-8?B?YUNXcmhCd0s2a0RaTXM4aEliWXhBZldQOWIzcXNCZ0xGOGhZeTRkdm1kSG5o?=
+ =?utf-8?B?ZlVKVmJHd2hjelExTkRIWkI0L0RFc0s1Y0hqSjdOZnBkYkhrQTVocTBNT2cv?=
+ =?utf-8?B?b3dnZ0pVNnFhRWxFTFUyQXE1RHBJRkZ2RGhEdk5CR2JGMXp3SW1iVmt1bTBv?=
+ =?utf-8?B?b2NZUW9sNUo3aFhuaTRKV3NSMzhUYkU2dHZMOW0zOGZzQU5UUjY4WGRBNXRw?=
+ =?utf-8?B?OEc1MDllOGdLQ2ZYTDArME9KMnBqN0JhTzRFd1FxQnBjZTBOdVJuekw2UTR5?=
+ =?utf-8?B?MVBNVHI0U2lCd0tHQi93TDhQRjFieFF2azdaY1lTejR3dFNibnBZOThOazhz?=
+ =?utf-8?B?VERiZjVjM2J4YzV1WGExcDJwQnRaU1JzTkdNdVd2dU10RHk3WHFCNWQ0Vk1E?=
+ =?utf-8?B?eFd4VmxWbkYzM3JJUGZLWjI3dnlDdWkvdkd4OWQzc0U2YUNhU2dPRUp5Yk94?=
+ =?utf-8?B?MkQ2eHBobkJlKy9MYVl4UnBMVmFDOTFraFN2aFlBUTdIUnprV0YweVZxaHh4?=
+ =?utf-8?B?WDZvb1Z3eDhVdktOZnJoZldPNUl6aGN4THltS1BsanR1MUJYaThvZnRQOUhE?=
+ =?utf-8?B?STZ6aTFoeEFmNDVnODl2RFlzY2Zya3JtNDh4RTJVZThFSTlFSVpvNUUzTUJy?=
+ =?utf-8?B?QUtpNitEbVFEWVJFbWlVRHRhQ2ZuSjNIWkhqSHIrNmtOOFZNNGlkZ05xZXZP?=
+ =?utf-8?B?KzdVQ2tKbnRoVmEveUMzK1ZkK21wT0piTU9ocVQzQ1lnd2RpY3Q0c2JER3Uv?=
+ =?utf-8?B?U1ByUVpqazRVcmNGZmlKQyt5cS9CK3FNWHVaVU9JSWk0QUhXdHJzb08yQ0F1?=
+ =?utf-8?B?azg0VUo0a0VZdElLSythMXV5MFErME1yT3BhQ2dLek9RNjZkdEdoZFBwRWhy?=
+ =?utf-8?B?L25JcHdPeFE4dCtNNFJRejRjNlJLcXcrRUFVcjh2bTVzdURCU0dmMzE5aG15?=
+ =?utf-8?B?YmhueDRmWVRXZTlHVlFlZ1Z4d05yWFQzb1lWK3BIZ2RSS1RzRHJyV0IydHEy?=
+ =?utf-8?B?UTJOM25rdzFlZzlEVk0yMjBQNWVnZWlMSmpzMkh3eWdFYk9STy9YZGhFY25i?=
+ =?utf-8?B?N3VJZFdzVVFIdDA1OHZvMUpuakw3em5wWHdQVUJWMm9TdGlTNng4Y2ZlTnp3?=
+ =?utf-8?B?NFovL041V213OGk4QzN3MUx2TzM1QkoxbDM4R3lPZjNTdndobExnSXZmY2d1?=
+ =?utf-8?B?ZHRFNElqbzl4WUM0cCszM3ZadVEyU0MveWttd1ZldjVEbEd6ekkzZHNMVGV2?=
+ =?utf-8?B?NVI4TkxDTFVIay9wR0FlSm54MmJ6bnZ2emJGNDB4YjNOU3J4MEVCNGt2VkFP?=
+ =?utf-8?B?eWpmaXFCUFNNRzFvL0FyT1VhT05pYWZhNkJ6RUJqNHV4cGQ1SzhoTyt4L3Fm?=
+ =?utf-8?B?ZDBPOHFKT00zVnFabG5MTzhKQUMyWk85aW8vdTVuMjVWVGJzMHRlVnZrY2or?=
+ =?utf-8?B?WCtTNnB0ZHlyN2FyR1QxMUJ1NlM1bm4zZVNKNEc1aTVIWGJ4SWpZVTV2TlRv?=
+ =?utf-8?B?UEwyRUw1VTNNWHJHYWtTbWliR1R5WnN2TDFSMEc4cXNIRmRjejJ5S3l3ZDNq?=
+ =?utf-8?B?bWY2aVpEZm5qSVFiNEZWaENPdDZCejRJRkRPamN1ZUluclFkbVluVERmMU52?=
+ =?utf-8?B?cjVtNVNrOFNWQkF6dXN5cndmb1V3RkZ3YUpTMi9PL2FSaHlCR3cycWZuOEdX?=
+ =?utf-8?B?Z3l0akxqcStUa3IwK1lyMTBkNEZxTGFNeUZ4YjFqb25ZTEdaeUpvQ2dyU0xE?=
+ =?utf-8?Q?AaRNpZ5nXKPnd6bL8rnlcucmG?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f8e6bca4-cd62-437e-6b0c-08dbb5d222aa
+X-MS-Exchange-CrossTenant-AuthSource: TY2PR06MB3342.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2023 09:57:13.4863
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: U4OVvhqHtk4Q8q5+qaA+Y1HZtiG9VMJtfQff753QKvEBpYUT+uh0TPwr5XMbCwcYJB6lcIHyIjCDejDGzUn4yQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB5872
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add large folio support for shmem write path matching the same high
-order preference mechanism used for iomap buffered IO path as used in
-__filemap_get_folio().
 
-Use the __folio_get_max_order to get a hint for the order of the folio
-based on file size which takes care of the mapping requirements.
 
-Swap does not support high order folios for now, so make it order 0 in
-case swap is enabled.
+在 2023/9/14 14:58, Jan Kara 写道:
+> On Thu 14-09-23 04:12:31, 郭纯海 wrote:
+>>> On Wed 13-09-23 07:15:01, Chunhai Guo wrote:
+>>>>  From the dump info, there are only two pages as shown below. One is
+>>>> updated and another is under writeback. Maybe f2fs counts the
+>>>> writeback page as a dirty one, so get_dirty_pages() got one. As you
+>>>> said, maybe this is unreasonable.
+>>>>
+>>>> Jaegeuk & Chao, what do you think of this?
+>>>>
+>>>>
+>>>> crash_32> files -p 0xE5A44678
+>>>>   INODE    NRPAGES
+>>>> e5a44678        2
+>>>>
+>>>>    PAGE    PHYSICAL   MAPPING    INDEX CNT FLAGS
+>>>> e8d0e338  641de000  e5a44810         0  5 a095
+>>> locked,waiters,uptodate,lru,private,writeback
+>>>> e8ad59a0  54528000  e5a44810         1  2 2036
+>>> referenced,uptodate,lru,active,private
+>>>
+>>> Indeed, incrementing pages_skipped when there's no dirty page is a bit odd.
+>>> That being said we could also harden requeue_inode() - in particular we could do
+>>> there:
+>>>
+>>>          if (wbc->pages_skipped) {
+>>>                  /*
+>>>                   * Writeback is not making progress due to locked buffers.
+>>>                   * Skip this inode for now. Although having skipped pages
+>>>                   * is odd for clean inodes, it can happen for some
+>>>                   * filesystems so handle that gracefully.
+>>>                   */
+>>>                  if (inode->i_state & I_DIRTY_ALL)
+>>>                          redirty_tail_locked(inode, wb);
+>>>                  else
+>>>                          inode_cgwb_move_to_attached(inode, wb);
+>>>          }
+>>>
+>>> Does this fix your problem as well?
+>>>
+>>>                                                                  Honza
+>>
+>> Thank you for your reply. Did you forget the 'return' statement? Since I encountered this issue on the 4.19 kernel and there is not inode_cgwb_move_to_attached() yet, I replaced it with inode_io_list_del_locked(). So, below is the test patch I am applying. Please have a check. By the way, the test will take some time. I will provide feedback when it is finished. Thanks.
+> 
+> Yeah, I forgot about the return.
 
-Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
----
- mm/shmem.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
-
-diff --git a/mm/shmem.c b/mm/shmem.c
-index adff74751065..26ca555b1669 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -1683,13 +1683,19 @@ static struct folio *shmem_alloc_folio(gfp_t gfp,
- }
-=20
- static struct folio *shmem_alloc_and_acct_folio(gfp_t gfp, struct inode *i=
-node,
--		pgoff_t index, bool huge, unsigned int *order)
-+		pgoff_t index, bool huge, unsigned int *order,
-+		struct shmem_sb_info *sbinfo)
- {
- 	struct shmem_inode_info *info =3D SHMEM_I(inode);
- 	struct folio *folio;
- 	int nr;
- 	int err;
-=20
-+	if (!sbinfo->noswap)
-+		*order =3D 0;
-+	else
-+		*order =3D (*order =3D=3D 1) ? 0 : *order;
-+
- 	if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
- 		huge =3D false;
- 	nr =3D huge ? HPAGE_PMD_NR : 1U << *order;
-@@ -2032,6 +2038,8 @@ static int shmem_get_folio_gfp(struct inode *inode, p=
-goff_t index,
- 		return 0;
- 	}
-=20
-+	order =3D mapping_size_order(inode->i_mapping, index, len);
-+
- 	if (!shmem_is_huge(inode, index, false,
- 			   vma ? vma->vm_mm : NULL, vma ? vma->vm_flags : 0))
- 		goto alloc_nohuge;
-@@ -2039,11 +2047,11 @@ static int shmem_get_folio_gfp(struct inode *inode,=
- pgoff_t index,
- 	huge_gfp =3D vma_thp_gfp_mask(vma);
- 	huge_gfp =3D limit_gfp_mask(huge_gfp, gfp);
- 	folio =3D shmem_alloc_and_acct_folio(huge_gfp, inode, index, true,
--					   &order);
-+					   &order, sbinfo);
- 	if (IS_ERR(folio)) {
- alloc_nohuge:
- 		folio =3D shmem_alloc_and_acct_folio(gfp, inode, index, false,
--						   &order);
-+						   &order, sbinfo);
- 	}
- 	if (IS_ERR(folio)) {
- 		int retry =3D 5;
-@@ -2147,6 +2155,8 @@ static int shmem_get_folio_gfp(struct inode *inode, p=
-goff_t index,
- 	if (folio_test_large(folio)) {
- 		folio_unlock(folio);
- 		folio_put(folio);
-+		if (order > 0)
-+			order--;
- 		goto alloc_nohuge;
- 	}
- unlock:
---=20
-2.39.2
+Hi Jan,
+The test is finished and this patch can fix this issue, too.
+Thanks,
+> 
+>> 	if (wbc->pages_skipped) {
+>> 		/*
+>> 		 * writeback is not making progress due to locked
+>> 		 * buffers. Skip this inode for now.
+>> 		 */
+>> -		redirty_tail_locked(inode, wb);
+>> +		if (inode->i_state & I_DIRTY_ALL)
+>> +			redirty_tail_locked(inode, wb);
+>> +		else
+>> +			inode_io_list_del_locked(inode, wb);
+>>   		return;
+>>   	}
+> 
+> Looks good. Thanks for testing!
+> 
+> 								Honza
