@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 659807A2AB3
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Sep 2023 00:48:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BFFB87A2AA4
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Sep 2023 00:48:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237835AbjIOWoO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Sep 2023 18:44:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57778 "EHLO
+        id S238132AbjIOWoR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Sep 2023 18:44:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238113AbjIOWn4 (ORCPT
+        with ESMTP id S238109AbjIOWn4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 15 Sep 2023 18:43:56 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFD172719;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB4732718;
         Fri, 15 Sep 2023 15:43:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=Cw7RdOPRUkFp9dSTX3luqJaGnpI4xwoQeOJGqBWR3yI=; b=1rmGZrmQs0g1DKXfgxLAklopAe
-        hlHs1CUpNdjbnNFHADeESgt/6Vhl4duyfWJfd4Q4DqZhJEDCXIohWQ+xV5q6vXlqM4C/+hM3D1O3Q
-        SwdqMuin1I8pjQdZVkuDAnCcy1hpH+aqLmYGzojA6vtCKn8l5wDEJqaiv7JyxJ9v+IyG9VHu5GOCP
-        TDZSQsLAhwMkPOsb30jEZw/XSRiqfzp0YsDrTdxh3PI1k2COGy8dywW8yjBv0xwqjlxt/qWVKsKZl
-        y9SMV97NUMeWJP80xqcfTSA7HtOND5LWzvqRQ+ERzBdK/tkTSieB2KIOiiQFxn4gcM02gDuZW4SFx
-        eR5tBK9A==;
+        bh=q5kC8lKXTQQVIY9YNTK1DwlfcMyU3THWqOh+LBupeKg=; b=XIkzA4O9wGqO2WtO8tF1Z+xTn6
+        38fyqpIf4n/IRVBBYSnI4HTtxoGdQ8LSxZIP8/NSOPmdJX/6DryFm1LyL2/rS5Wthw0D9Rc5scxXx
+        LeBfwDOWskLDMOD5Txbwvzoa8w47Q+FzsTwVlhtZIXH8t5goceyGum2sBY4q4juffs5HTbYPQASpT
+        iQMJK8QZZL36GAP7fFFC9PfseuwA7wua+m3Sm1TqVEdTdAbNRv6nBe+cI0DCPcBiEFH5r0zh2G8tV
+        4s4fP5cV+wF3aIWx2BG++FJ3o6PNKFE+Z1nWnlngkygbY4QmNH8SvuZMwjZKYMIc4beAWEP5tblOE
+        kS4wAVZA==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1qhHXM-00BUtO-2p;
+        id 1qhHXM-00BUtR-2z;
         Fri, 15 Sep 2023 22:43:44 +0000
 From:   Luis Chamberlain <mcgrof@kernel.org>
 To:     axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org,
@@ -39,11 +39,10 @@ Cc:     patches@lists.linux.dev, linux-block@vger.kernel.org,
         drbd-dev@lists.linbit.com, linux-kernel@vger.kernel.org,
         willy@infradead.org, hare@suse.de, p.raghav@samsung.com,
         da.gomez@samsung.com, rohan.puri@samsung.com,
-        rpuri.linux@gmail.com, kbusch@kernel.org, mcgrof@kernel.org,
-        Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v3 2/4] iomap: simplify iomap_init() with PAGE_SECTORS
-Date:   Fri, 15 Sep 2023 15:43:41 -0700
-Message-Id: <20230915224343.2740317-3-mcgrof@kernel.org>
+        rpuri.linux@gmail.com, kbusch@kernel.org, mcgrof@kernel.org
+Subject: [PATCH v3 3/4] dm bufio: simplify by using PAGE_SECTORS_SHIFT
+Date:   Fri, 15 Sep 2023 15:43:42 -0700
+Message-Id: <20230915224343.2740317-4-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20230915224343.2740317-1-mcgrof@kernel.org>
 References: <20230915224343.2740317-1-mcgrof@kernel.org>
@@ -60,28 +59,38 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Replace common constants with generic versions. This produces no
-functional changes.
+The PAGE_SHIFT - SECTOR_SHIFT constant be replaced with PAGE_SECTORS_SHIFT
+defined in linux/blt_types.h, which is included by linux/blkdev.h.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+This produces no functional changes.
+
 Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 ---
- fs/iomap/buffered-io.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/dm-bufio.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index ae8673ce08b1..1a16c0e5d190 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -1985,7 +1985,7 @@ EXPORT_SYMBOL_GPL(iomap_writepages);
+diff --git a/drivers/md/dm-bufio.c b/drivers/md/dm-bufio.c
+index 62eb27639c9b..a5b48be93b30 100644
+--- a/drivers/md/dm-bufio.c
++++ b/drivers/md/dm-bufio.c
+@@ -1152,7 +1152,7 @@ static void *alloc_buffer_data(struct dm_bufio_client *c, gfp_t gfp_mask,
+ 	    gfp_mask & __GFP_NORETRY) {
+ 		*data_mode = DATA_MODE_GET_FREE_PAGES;
+ 		return (void *)__get_free_pages(gfp_mask,
+-						c->sectors_per_block_bits - (PAGE_SHIFT - SECTOR_SHIFT));
++						c->sectors_per_block_bits - PAGE_SECTORS_SHIFT);
+ 	}
  
- static int __init iomap_init(void)
- {
--	return bioset_init(&iomap_ioend_bioset, 4 * (PAGE_SIZE / SECTOR_SIZE),
-+	return bioset_init(&iomap_ioend_bioset, 4 * PAGE_SECTORS,
- 			   offsetof(struct iomap_ioend, io_inline_bio),
- 			   BIOSET_NEED_BVECS);
- }
+ 	*data_mode = DATA_MODE_VMALLOC;
+@@ -1173,7 +1173,7 @@ static void free_buffer_data(struct dm_bufio_client *c,
+ 
+ 	case DATA_MODE_GET_FREE_PAGES:
+ 		free_pages((unsigned long)data,
+-			   c->sectors_per_block_bits - (PAGE_SHIFT - SECTOR_SHIFT));
++			   c->sectors_per_block_bits - PAGE_SECTORS_SHIFT);
+ 		break;
+ 
+ 	case DATA_MODE_VMALLOC:
 -- 
 2.39.2
 
