@@ -2,70 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 488EB7A2ABD
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Sep 2023 00:51:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F32DA7A2B03
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Sep 2023 01:35:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237871AbjIOWui (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Sep 2023 18:50:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40162 "EHLO
+        id S235779AbjIOXeh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Sep 2023 19:34:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238170AbjIOWu2 (ORCPT
+        with ESMTP id S235502AbjIOXeR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Sep 2023 18:50:28 -0400
-Received: from mail-yw1-x112d.google.com (mail-yw1-x112d.google.com [IPv6:2607:f8b0:4864:20::112d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE373273A
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Sep 2023 15:48:56 -0700 (PDT)
-Received: by mail-yw1-x112d.google.com with SMTP id 00721157ae682-59bbed7353aso37101657b3.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Sep 2023 15:48:56 -0700 (PDT)
+        Fri, 15 Sep 2023 19:34:17 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1B9C1FFE
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Sep 2023 16:34:10 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-404f881aa48so24075e9.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Sep 2023 16:34:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1694818136; x=1695422936; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kq86mg3eRdpsafcpXL3Gsx54l0Vjtu7ZVdR51WnNflM=;
-        b=WrDpy1p6ueZ1/jU1o2pLHVMTh6H1cQLtnEkt0u1n1urkGTgbSYZHmbDBckyxVqdmdc
-         1ZBaKCFj4z1Ild10mjXgROKqhb0XFSDFByxAtB/J6uBbMag/Qh6x3BajcOVD43ieIj3k
-         JhQsaYGoW0Ehj85ak5SN1dbQzlSTNB9zlJp0sNyq9IstqAG5wRPh9GvXc6h/vjCx2x5J
-         fsdTwodyjV/lIJWMKEryQsdyxXpWIAJz0Q9+tiC7FpTqEwFKF7HZSUgXUGuXcbMzT02o
-         MRkV6x625X5g2CHd+5CBXvkP9IQublkI8fwikJ888yIxmbbQg7Qu+mPdeWIRW+d9C07S
-         P/mQ==
+        d=google.com; s=20230601; t=1694820849; x=1695425649; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nHaVyOZGusvVmk37EQ+8MbC3XUzWT96lfRECaopM4TU=;
+        b=MOfrsHwHP83vXAGfCkklO7XVAFKjeoUMWL/beCAga61ZRpnA++iU7o8hvC23ciArNo
+         923JKF9uv0mQ8+isW5pxHlgJ1MPv/VeBkLy+rlTAHUVPUHmYIG0wkFMY1g7Iz/ClV6EK
+         NtFmm9yoJljcu5caVlhFz75UBSi403YtLZa1J2ip0LBdQoAXtfj3ToGPdf6PcZbG0T7Q
+         9qSLSS0bnY+apySzImuucGbUmkHILkVThKpFPPbyJL36OByfkwLpFI9qgVNCSW13vLia
+         gdAjILvZoFV8IaiUD0v1LqQBMe1KIVkSpHV2Wc8SV0H+SRsFPdOZERudUGxGCLeDrasT
+         pykA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694818136; x=1695422936;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kq86mg3eRdpsafcpXL3Gsx54l0Vjtu7ZVdR51WnNflM=;
-        b=KGiTGu51iCUQhHanWG6wTxL1k4KzedJGzWJCWa3ZuzovTPbKFFR8Xh7NzbMiI+mBRn
-         9IPfDy+xvvWEOGJ+RpfknyEog46b59xnTUUrMdF1oyHn9MaFpuP4EGDsx0Sp+8whzYkg
-         1iDmwSlfYfwLFl+lagx0a886nKvtPPqKkHjqLqA1yKZLOZ38wg4F8G2pKGTkHDqWkMDW
-         QBT36IdFpmWCjzqOoWxycei5EEsN9fr0dNLNzvtkubvUtrTrwtOy+r13qVWowi1Q0p95
-         XanNHaQEJiz5a4rx0hS0lvyCSlLCdVIcueIZszzcrGnMtyCdJmETIW6Tn2b55lbsmR16
-         0JbQ==
-X-Gm-Message-State: AOJu0YxXpuyfMIhhuBii7WhCCeWy4Mc3wWuy6nvrz1QJjha17NtnTzyt
-        sBdS7rTdmz3/f+PML33MDxwTCw==
-X-Google-Smtp-Source: AGHT+IGV8EQmN5iciBjKTh6qnafWh9qWiM4wQiJhWZJkGYYDZqNaPa1xjuzUpW3/8KCcC5Nt80/rUQ==
-X-Received: by 2002:a81:6c4c:0:b0:56d:4d1e:74ab with SMTP id h73-20020a816c4c000000b0056d4d1e74abmr7022615ywc.23.1694818136008;
-        Fri, 15 Sep 2023 15:48:56 -0700 (PDT)
-Received: from ripple.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id z13-20020a81a24d000000b0054f9e7fed7asm1092349ywg.137.2023.09.15.15.48.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Sep 2023 15:48:54 -0700 (PDT)
-Date:   Fri, 15 Sep 2023 15:48:46 -0700 (PDT)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@ripple.attlocal.net
-To:     Matthew Wilcox <willy@infradead.org>
-cc:     Hugh Dickins <hughd@google.com>, Jens Axboe <axboe@kernel.dk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Hannes Reineke <hare@suse.de>,
-        David Hildenbrand <david@redhat.com>,
-        John Hubbard <jhubbard@nvidia.com>, linux-mm@kvack.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] block: Remove special-casing of compound pages
-In-Reply-To: <ZQRoWVntO22VWL8K@casper.infradead.org>
-Message-ID: <1fa6119e-6e5-5e8-21d8-571814f6a99e@google.com>
-References: <20230814144100.596749-1-willy@infradead.org> <94635da5-ce28-a8fb-84e3-7a9f5240fe6a@google.com> <ZQRoWVntO22VWL8K@casper.infradead.org>
+        d=1e100.net; s=20230601; t=1694820849; x=1695425649;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nHaVyOZGusvVmk37EQ+8MbC3XUzWT96lfRECaopM4TU=;
+        b=YcyqVQSlebGgUwg3mIo0EMs01eYCD+P3gBvVSfa2EDcMRBjuKLeKKk+wSv682f3yCy
+         uwapPF6RORCOVAgHXBOjS22qEOJBX4hWde/Kgm+//MrCjhs/iuDOgKsPjxVFgRFIIIn8
+         raaw3U3ep0vs9E/Aqkjy7RPvpklPQrkNapCFdwZGTWPKIuZZKaAJaK9wkhwf6cPK62xU
+         m2hJXKpaddQlEZS7DOLfb6CnicalMclhRdYtUDDLLlUVnWNO9iG0IAc0wlymWV5lj+AO
+         GbLN8vjzmQXSLAkMW2IZ5Z9nVHFBoCBX51aAHvn9Vm3+1TA+AhLweQ9k0I/2DLQ5Gc4y
+         xj6g==
+X-Gm-Message-State: AOJu0YyP2ZRK2eE5i8c3KvGbdHyOhtWRV6UratAAICEVUvDmws8s/B6B
+        FscuUvVPu4Tm4k9G9N/h1NYSHrtCr/EuPXAVmRV3Cg==
+X-Google-Smtp-Source: AGHT+IGL2LH22GPgM/TSvARZol/MSfEHdefO1N8VSbuJFw1LRaOFenZJgOE8If3z0weLq5hWewOSVwfFd2dJwRe2N38=
+X-Received: by 2002:a05:600c:1f18:b0:3f4:fb7:48d4 with SMTP id
+ bd24-20020a05600c1f1800b003f40fb748d4mr31754wmb.3.1694820848966; Fri, 15 Sep
+ 2023 16:34:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20230914152620.2743033-1-surenb@google.com> <20230914152620.2743033-3-surenb@google.com>
+In-Reply-To: <20230914152620.2743033-3-surenb@google.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Sat, 16 Sep 2023 01:33:32 +0200
+Message-ID: <CAG48ez3E1t=equPeL5doT+RPaPZ1BmkFi8zkZRKqhOZHbXVkzg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] userfaultfd: UFFDIO_REMAP uABI
+To:     Suren Baghdasaryan <surenb@google.com>
+Cc:     akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
+        brauner@kernel.org, shuah@kernel.org, aarcange@redhat.com,
+        lokeshgidra@google.com, peterx@redhat.com, david@redhat.com,
+        hughd@google.com, mhocko@suse.com, axelrasmussen@google.com,
+        rppt@kernel.org, willy@infradead.org, Liam.Howlett@oracle.com,
+        zhangpeng362@huawei.com, bgeffon@google.com,
+        kaleshsingh@google.com, ngeoffray@google.com, jdduke@google.com,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
         ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
@@ -77,83 +78,309 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 15 Sep 2023, Matthew Wilcox wrote:
-> On Wed, Aug 16, 2023 at 01:27:17PM -0700, Hugh Dickins wrote:
-> > > This problem predates the folio work; it could for example have been
-> > > triggered by mmaping a THP in tmpfs and using that as the target of an
-> > > O_DIRECT read.
-> > > 
-> > > Fixes: 800d8c63b2e98 ("shmem: add huge pages support")
-> > 
-> > No. It's a good catch, but bug looks specific to the folio work to me.
-> > 
-> > Almost all shmem pages are dirty from birth, even as soon as they are
-> > brought back from swap; so it is not necessary to re-mark them dirty.
-> > 
-> > The exceptions are pages allocated to holes when faulted: so you did
-> > get me worried as to whether khugepaged could collapse a pmd-ful of
-> > those into a THP without marking the result as dirty.
-> > 
-> > But no, in v6.5-rc6 the collapse_file() success path has
-> > 	if (is_shmem)
-> > 		folio_mark_dirty(folio);
-> > and in v5.10 the same appears as
-> > 		if (is_shmem)
-> > 			set_page_dirty(new_page);
-> > 
-> > (IIRC, that or marking pmd dirty was missed from early shmem THP
-> > support, but fairly soon corrected, and backported to stable then.
-> > I have a faint memory of versions which assembled pmd_dirty from
-> > collected pte_dirtys.)
-> > 
-> > And the !is_shmem case is for CONFIG_READ_ONLY_THP_FOR_FS: writing
-> > into those pages, by direct IO or whatever, is already prohibited.
-> > 
-> > It's dem dirty (or not dirty) folios dat's the trouble!
-> 
-> Thanks for the correction!  Could it happen with anon THP?
-> They're not kept dirty from birth ... are they?
+On Thu, Sep 14, 2023 at 5:26=E2=80=AFPM Suren Baghdasaryan <surenb@google.c=
+om> wrote:
+> +/*
+> + * The mmap_lock for reading is held by the caller. Just move the page
+> + * from src_pmd to dst_pmd if possible, and return true if succeeded
+> + * in moving the page.
+> + */
+> +static int remap_pages_pte(struct mm_struct *dst_mm,
+> +                          struct mm_struct *src_mm,
+> +                          pmd_t *dst_pmd,
+> +                          pmd_t *src_pmd,
+> +                          struct vm_area_struct *dst_vma,
+> +                          struct vm_area_struct *src_vma,
+> +                          unsigned long dst_addr,
+> +                          unsigned long src_addr,
+> +                          __u64 mode)
+> +{
+> +       swp_entry_t entry;
+> +       pte_t orig_src_pte, orig_dst_pte;
+> +       spinlock_t *src_ptl, *dst_ptl;
+> +       pte_t *src_pte =3D NULL;
+> +       pte_t *dst_pte =3D NULL;
+> +
+> +       struct folio *src_folio =3D NULL;
+> +       struct anon_vma *src_anon_vma =3D NULL;
+> +       struct anon_vma *dst_anon_vma;
+> +       struct mmu_notifier_range range;
+> +       int err =3D 0;
+> +
+> +retry:
+> +       dst_pte =3D pte_offset_map_nolock(dst_mm, dst_pmd, dst_addr, &dst=
+_ptl);
+> +
+> +       /* If an huge pmd materialized from under us fail */
+> +       if (unlikely(!dst_pte)) {
+> +               err =3D -EFAULT;
+> +               goto out;
+> +       }
+> +
+> +       src_pte =3D pte_offset_map_nolock(src_mm, src_pmd, src_addr, &src=
+_ptl);
+> +
+> +       /*
+> +        * We held the mmap_lock for reading so MADV_DONTNEED
+> +        * can zap transparent huge pages under us, or the
+> +        * transparent huge page fault can establish new
+> +        * transparent huge pages under us.
+> +        */
+> +       if (unlikely(!src_pte)) {
+> +               err =3D -EFAULT;
+> +               goto out;
+> +       }
+> +
+> +       BUG_ON(pmd_none(*dst_pmd));
+> +       BUG_ON(pmd_none(*src_pmd));
+> +       BUG_ON(pmd_trans_huge(*dst_pmd));
+> +       BUG_ON(pmd_trans_huge(*src_pmd));
+> +
+> +       spin_lock(dst_ptl);
+> +       orig_dst_pte =3D *dst_pte;
+> +       spin_unlock(dst_ptl);
+> +       if (!pte_none(orig_dst_pte)) {
+> +               err =3D -EEXIST;
+> +               goto out;
+> +       }
+> +
+> +       spin_lock(src_ptl);
+> +       orig_src_pte =3D *src_pte;
+> +       spin_unlock(src_ptl);
+> +       if (pte_none(orig_src_pte)) {
+> +               if (!(mode & UFFDIO_REMAP_MODE_ALLOW_SRC_HOLES))
+> +                       err =3D -ENOENT;
+> +               else /* nothing to do to remap a hole */
+> +                       err =3D 0;
+> +               goto out;
+> +       }
+> +
+> +       if (pte_present(orig_src_pte)) {
+> +               if (!src_folio) {
+> +                       struct folio *folio;
+> +
+> +                       /*
+> +                        * Pin the page while holding the lock to be sure=
+ the
+> +                        * page isn't freed under us
+> +                        */
+> +                       spin_lock(src_ptl);
+> +                       if (!pte_same(orig_src_pte, *src_pte)) {
+> +                               spin_unlock(src_ptl);
+> +                               err =3D -EAGAIN;
+> +                               goto out;
+> +                       }
+> +
+> +                       folio =3D vm_normal_folio(src_vma, src_addr, orig=
+_src_pte);
+> +                       if (!folio || !folio_test_anon(folio) ||
+> +                           folio_estimated_sharers(folio) !=3D 1) {
+> +                               spin_unlock(src_ptl);
+> +                               err =3D -EBUSY;
+> +                               goto out;
+> +                       }
+> +
+> +                       src_folio =3D folio;
+> +                       folio_get(src_folio);
+> +                       spin_unlock(src_ptl);
+> +
+> +                       /* try to block all concurrent rmap walks */
+> +                       if (!folio_trylock(src_folio)) {
+> +                               pte_unmap(&orig_src_pte);
+> +                               pte_unmap(&orig_dst_pte);
+> +                               src_pte =3D dst_pte =3D NULL;
+> +                               folio_lock(src_folio);
+> +                               goto retry;
+> +                       }
+> +               }
+> +
+> +               if (!src_anon_vma) {
+> +                       /*
+> +                        * folio_referenced walks the anon_vma chain
+> +                        * without the folio lock. Serialize against it w=
+ith
+> +                        * the anon_vma lock, the folio lock is not enoug=
+h.
+> +                        */
+> +                       src_anon_vma =3D folio_get_anon_vma(src_folio);
+> +                       if (!src_anon_vma) {
+> +                               /* page was unmapped from under us */
+> +                               err =3D -EAGAIN;
+> +                               goto out;
+> +                       }
+> +                       if (!anon_vma_trylock_write(src_anon_vma)) {
+> +                               pte_unmap(&orig_src_pte);
+> +                               pte_unmap(&orig_dst_pte);
+> +                               src_pte =3D dst_pte =3D NULL;
+> +                               anon_vma_lock_write(src_anon_vma);
+> +                               goto retry;
+> +                       }
+> +               }
+> +
+> +               mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, src_=
+mm,
+> +                                       src_addr, src_addr + PAGE_SIZE);
+> +               mmu_notifier_invalidate_range_start_nonblock(&range);
 
-Anon pages, THP or other, are not marked dirty from birth, right.
-But nor are they considered for freeing without writeout:
-shrink_folio_list() does add_to_swap() on them without considering
-dirtiness, and add_to_swap() does an unconditional folio_mark_dirty().
-Well, not quite unconditional: it is conditional on allocating swap,
-but shrink_folio_list() just reactivates when swap is not allocated.
+I'm pretty sure you're not allowed to use
+mmu_notifier_invalidate_range_start_nonblock(). Use
+mmu_notifier_invalidate_range_start() at a point where it's fine to
+block; perhaps all the way up in remap_pages() around the whole loop
+or something like that. mmu_notifier_invalidate_range_start_nonblock()
+is special magic sauce for OOM reaping (with deceptively inviting
+naming and no documentation that explains that this is evil hazmat
+code), and if you chase down what various users of MMU notifiers do
+when you just hand them a random notification where
+mmu_notifier_range_blockable() is false, you end up in fun paths like
+in KVM's kvm_mmu_notifier_invalidate_range_start(), which calls
+gfn_to_pfn_cache_invalidate_start(), which does this:
 
-So, I see no opportunity for data loss there.
+    /*
+     * If the OOM reaper is active, then all vCPUs should have
+     * been stopped already, so perform the request without
+     * KVM_REQUEST_WAIT and be sad if any needed to be IPI'd.
+     */
+    if (!may_block)
+       req &=3D ~KVM_REQUEST_WAIT;
 
-When it's read back from swap later on, the folio will be left clean
-while it matches swap: I haven't bothered to recheck the latest details
-of what happens when it's CoWed, or the swap is deleted, those details
-won't matter given the behavior above.  But might there be a direct IO
-problem while that anon folio (large or small) remains clean in swapcache,
-when reclaim's pageout() might be liable to free it without rewriting?
+    called =3D kvm_make_vcpus_request_mask(kvm, req, vcpu_bitmap);
 
-There ought not to be: get_user_pages()/follow_page_pte() have taken
-care of that for many years with the FOLL_TOUCH+FOLL_WRITE
-	if (flags & FOLL_TOUCH) {
-		if ((flags & FOLL_WRITE) &&
-		    !pte_dirty(pte) && !PageDirty(page))
-			set_page_dirty(page);
-and follow_trans_huge_pmd() dirties the pmd when FOLL_TOUCH+FOLL_WRITE.
-I forget why follow_page_pte() prefers to dirty page rather than pte,
-but either approach should be good enough to avoid the data loss.
+    WARN_ON_ONCE(called && !may_block);
 
-However, I don't see equivalent FOLL_TOUCH+FOLL_WRITE code where
-get_user_pages_fast() goes its fast route; nor pin_user_pages_fast()
-used by lib/iov_iter.c; and it looks odd that pin_user_pages_remote()
-and pin_user_pages_unlocked() use FOLL_TOUCH but pin_user_pages() not.
+Which means if you hit this codepath from a place like userfaultfd
+where the process is probably still running (and not being OOM reaped
+in a context where it's guaranteed to have been killed and stopped),
+you could probably get KVM into a situation where it needs to wait for
+vCPUs to acknowledge that they've processed a message before it's safe
+to continue, but it can't wait because we're in nonsleepable context,
+and then it just continues without waiting and presumably the KVM TLB
+gets out of sync or something?
 
-Problem?  Not particularly for anon or for large, but for any?  Or not
-a problem because of final set_page_dirty() or folio_mark_dirty() on
-release - only a problem while that PageCompound check remains?
 
-(Of course filesystems hate behind-the-back dirtying for other reasons,
-that they may lose the data without proper notice: separate discussion
-we'd better not get back into here.)
 
-I've spent much longer trying to answer this than I could afford,
-expect no more from me, back to you and GUP+PIN experts.
-
-Hugh
+> +
+> +               double_pt_lock(dst_ptl, src_ptl);
+> +
+> +               if (!pte_same(*src_pte, orig_src_pte) ||
+> +                   !pte_same(*dst_pte, orig_dst_pte) ||
+> +                   folio_estimated_sharers(src_folio) !=3D 1) {
+> +                       double_pt_unlock(dst_ptl, src_ptl);
+> +                       err =3D -EAGAIN;
+> +                       goto out;
+> +               }
+> +
+> +               BUG_ON(!folio_test_anon(src_folio));
+> +               /* the PT lock is enough to keep the page pinned now */
+> +               folio_put(src_folio);
+> +
+> +               dst_anon_vma =3D (void *) dst_vma->anon_vma + PAGE_MAPPIN=
+G_ANON;
+> +               WRITE_ONCE(src_folio->mapping,
+> +                          (struct address_space *) dst_anon_vma);
+> +               WRITE_ONCE(src_folio->index, linear_page_index(dst_vma,
+> +                                                             dst_addr));
+> +
+> +               if (!pte_same(ptep_clear_flush(src_vma, src_addr, src_pte=
+),
+> +                             orig_src_pte))
+> +                       BUG_ON(1);
+> +
+> +               orig_dst_pte =3D mk_pte(&src_folio->page, dst_vma->vm_pag=
+e_prot);
+> +               orig_dst_pte =3D maybe_mkwrite(pte_mkdirty(orig_dst_pte),
+> +                                            dst_vma);
+> +
+> +               set_pte_at(dst_mm, dst_addr, dst_pte, orig_dst_pte);
+> +
+> +               if (dst_mm !=3D src_mm) {
+> +                       inc_mm_counter(dst_mm, MM_ANONPAGES);
+> +                       dec_mm_counter(src_mm, MM_ANONPAGES);
+> +               }
+> +
+> +               double_pt_unlock(dst_ptl, src_ptl);
+> +
+> +               anon_vma_unlock_write(src_anon_vma);
+> +               mmu_notifier_invalidate_range_end(&range);
+> +               put_anon_vma(src_anon_vma);
+> +               src_anon_vma =3D NULL;
+> +
+> +               /* unblock rmap walks */
+> +               folio_unlock(src_folio);
+> +               src_folio =3D NULL;
+> +
+> +       } else {
+> +               struct swap_info_struct *si;
+> +               int swap_count;
+> +
+> +               entry =3D pte_to_swp_entry(orig_src_pte);
+> +               if (non_swap_entry(entry)) {
+> +                       if (is_migration_entry(entry)) {
+> +                               pte_unmap(&orig_src_pte);
+> +                               pte_unmap(&orig_dst_pte);
+> +                               src_pte =3D dst_pte =3D NULL;
+> +                               migration_entry_wait(src_mm, src_pmd,
+> +                                                    src_addr);
+> +                               err =3D -EAGAIN;
+> +                       } else
+> +                               err =3D -EFAULT;
+> +                       goto out;
+> +               }
+> +
+> +               /*
+> +                * COUNT_CONTINUE to be returned is fine here, no need
+> +                * of follow all swap continuation to check against
+> +                * number 1.
+> +                */
+> +               si =3D get_swap_device(entry);
+> +               if (!si) {
+> +                       err =3D -EBUSY;
+> +                       goto out;
+> +               }
+> +
+> +               swap_count =3D swap_swapcount(si, entry);
+> +               put_swap_device(si);
+> +               if (swap_count !=3D 1) {
+> +                       err =3D -EBUSY;
+> +                       goto out;
+> +               }
+> +
+> +               double_pt_lock(dst_ptl, src_ptl);
+> +
+> +               if (!pte_same(*src_pte, orig_src_pte) ||
+> +                   !pte_same(*dst_pte, orig_dst_pte) ||
+> +                   swp_swapcount(entry) !=3D 1) {
+> +                       double_pt_unlock(dst_ptl, src_ptl);
+> +                       err =3D -EAGAIN;
+> +                       goto out;
+> +               }
+> +
+> +               if (pte_val(ptep_get_and_clear(src_mm, src_addr, src_pte)=
+) !=3D
+> +                   pte_val(orig_src_pte))
+> +                       BUG_ON(1);
+> +               set_pte_at(dst_mm, dst_addr, dst_pte, orig_src_pte);
+> +
+> +               if (dst_mm !=3D src_mm) {
+> +                       inc_mm_counter(dst_mm, MM_ANONPAGES);
+> +                       dec_mm_counter(src_mm, MM_ANONPAGES);
+> +               }
+> +
+> +               double_pt_unlock(dst_ptl, src_ptl);
+> +       }
+> +
+> +out:
+> +       if (src_anon_vma) {
+> +               anon_vma_unlock_write(src_anon_vma);
+> +               put_anon_vma(src_anon_vma);
+> +       }
+> +       if (src_folio) {
+> +               folio_unlock(src_folio);
+> +               folio_put(src_folio);
+> +       }
+> +       if (dst_pte)
+> +               pte_unmap(dst_pte);
+> +       if (src_pte)
+> +               pte_unmap(src_pte);
+> +
+> +       return err;
+> +}
