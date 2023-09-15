@@ -2,82 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 730B37A26DA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Sep 2023 21:02:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF44A7A26DF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Sep 2023 21:04:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236565AbjIOTCZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Sep 2023 15:02:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48008 "EHLO
+        id S232633AbjIOTEC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Sep 2023 15:04:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236967AbjIOTB6 (ORCPT
+        with ESMTP id S237050AbjIOTDn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Sep 2023 15:01:58 -0400
-Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com [209.85.167.200])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 710752D72
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Sep 2023 12:01:30 -0700 (PDT)
-Received: by mail-oi1-f200.google.com with SMTP id 5614622812f47-3aa17bcf306so3752611b6e.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Sep 2023 12:01:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694804489; x=1695409289;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jIsxNI68mB9Kq0lc2JZJzazFfrMrZvjV6QtMhALsulY=;
-        b=Rb4YbLy7LJqDCZJ/eK45l5kXh7IMBYadMr/tCObbEcq0+FEHqTPa1NEoPhLOXHj1TP
-         x86rjYzLZeteaCRZSL8Bcy6c7uQGM4XJlfEmLt4ODKKzpVHL4wopNgfw6ysdrIsC/TI9
-         xZodBQXsc3y8RIAR6L182Mzs9rizm2Z3TSZ2aMd28Uj2XLab7lWfBMwCwCBsVncoP9/g
-         HbsFGAjXceKA8a5TX37+Xc4x0KJ+rFoeYVIVv3w4XtdhRB/mJb78nfNxFp7vGOqxBH9b
-         M/8HPZu/gtxZJ10c8lqXHY+WfMEcPqjFyFUQxliInzhIMqepM93uyKxq/L08mz92lkWD
-         XNxQ==
-X-Gm-Message-State: AOJu0YwRUuPNg6+xFIokL5tDeRlGjt/Y+QWpv6Yy8Z9ViXNoOThoS/mV
-        I4rZxu0+LgEva/r8oiiCUWDbsZjHwxvdPnj3TVYwK6x/sTSc
-X-Google-Smtp-Source: AGHT+IEdW28QExD1CG+iyseqF14sfY7RwaCtlPwhqEcqryljdpqrzAKD69SsLJPnECJiegiA/z1xDUUpJu2RDnGpl364+DDKioM6
+        Fri, 15 Sep 2023 15:03:43 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6504BB2;
+        Fri, 15 Sep 2023 12:03:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=DFFZh6035wvtRcIoOVwiEivYJp4WLElf/LkEGCccAuY=; b=qis9C4C42q4PXv0Y8mijuIrGJ8
+        eL/+ltxOleMFDTZMsHDEkMTfMcmjwlVfRCljoxKsiGDbU44p35poIZc9NCMFng5gLawCnYZk5wvBS
+        M3pSisA0y7eiQ/d7P31tXJHfk87IayXbpxQkHI+y3wpSw60dxRVqQatMUcvlkMgqkyuTdbxwJLKJF
+        aCsFmhb0R8gIavgA5Xqln2EQibbmmtpOQGnx8Thbib2xYjMxaCOSNXVcDNwKPJLYH1RmR3G2O1D1G
+        ZjR0akbrdkJMCX9dfh9GaV5qjFNIRA5OcEbxAYtEY4t7UArbD8wRpLaFu0PMbyVtQWU6mSdCUKK3o
+        hcojstjA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1qhE5y-00BUiD-2B; Fri, 15 Sep 2023 19:03:14 +0000
+Date:   Fri, 15 Sep 2023 20:03:14 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Pankaj Raghav <kernel@pankajraghav.com>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        p.raghav@samsung.com, david@fromorbit.com, da.gomez@samsung.com,
+        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        djwong@kernel.org, linux-mm@kvack.org, chandan.babu@oracle.com,
+        mcgrof@kernel.org, gost.dev@samsung.com
+Subject: Re: [RFC 01/23] fs: Allow fine-grained control of folio sizes
+Message-ID: <ZQSqctT6k7uKQHmF@casper.infradead.org>
+References: <20230915183848.1018717-1-kernel@pankajraghav.com>
+ <20230915183848.1018717-2-kernel@pankajraghav.com>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6808:1589:b0:3ad:aeed:7ed9 with SMTP id
- t9-20020a056808158900b003adaeed7ed9mr1009026oiw.2.1694804489679; Fri, 15 Sep
- 2023 12:01:29 -0700 (PDT)
-Date:   Fri, 15 Sep 2023 12:01:29 -0700
-In-Reply-To: <0000000000005c2d1f05e8945724@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000925bf206056a6b69@google.com>
-Subject: Re: [syzbot] [ntfs3?] BUG: unable to handle kernel NULL pointer
- dereference in __d_instantiate
-From:   syzbot <syzbot+29dc75ed37be943c610e@syzkaller.appspotmail.com>
-To:     adilger@dilger.ca, almaz.alexandrovich@paragon-software.com,
-        edward.lo@ambergroup.io, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-        nathan@kernel.org, ndesaulniers@google.com, ntfs3@lists.linux.dev,
-        syzkaller-bugs@googlegroups.com, trix@redhat.com,
-        viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230915183848.1018717-2-kernel@pankajraghav.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot suspects this issue was fixed by commit:
+On Fri, Sep 15, 2023 at 08:38:26PM +0200, Pankaj Raghav wrote:
+> +static inline void mapping_set_folio_orders(struct address_space *mapping,
+> +					    unsigned int min, unsigned int max)
+> +{
+> +	/*
+> +	 * XXX: max is ignored as only minimum folio order is supported
+> +	 * currently.
+> +	 */
 
-commit 54e45702b648b7c0000e90b3e9b890e367e16ea8
-Author: Edward Lo <edward.lo@ambergroup.io>
-Date:   Thu Sep 22 16:50:23 2022 +0000
+I think we need some sanity checking ...
 
-    fs/ntfs3: Validate resident attribute name
+	if (min == 1)
+		min = 2;
+	if (max < min)
+		max = min;
+	if (max > MAX_PAGECACHE_ORDER)
+		max = MAX_PAGECACHE_ORDER;
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12403c74680000
-start commit:   f9ff5644bcc0 Merge tag 'hsi-for-6.2' of git://git.kernel.o..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c163713cf9186fe7
-dashboard link: https://syzkaller.appspot.com/bug?extid=29dc75ed37be943c610e
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1077def7880000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10175baf880000
-
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: fs/ntfs3: Validate resident attribute name
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> +	mapping->flags = (mapping->flags & ~AS_FOLIO_ORDER_MASK) |
+> +			 (min << AS_FOLIO_ORDER_MIN) |
+> +			 (MAX_PAGECACHE_ORDER << AS_FOLIO_ORDER_MAX);
+> +}
