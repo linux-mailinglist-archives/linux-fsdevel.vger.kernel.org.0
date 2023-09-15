@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FCE67A266B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Sep 2023 20:44:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D1FD7A2650
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Sep 2023 20:43:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236866AbjIOSoK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Sep 2023 14:44:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56326 "EHLO
+        id S236770AbjIOSml (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Sep 2023 14:42:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237078AbjIOSnh (ORCPT
+        with ESMTP id S236981AbjIOSmS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Sep 2023 14:43:37 -0400
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [IPv6:2001:67c:2050:0:465::202])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA948449E;
-        Fri, 15 Sep 2023 11:40:45 -0700 (PDT)
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+        Fri, 15 Sep 2023 14:42:18 -0400
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52A324695;
+        Fri, 15 Sep 2023 11:40:54 -0700 (PDT)
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4RnNJr2x9Tz9sbr;
-        Fri, 15 Sep 2023 20:39:40 +0200 (CEST)
+        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4RnNJt60W1z9sTy;
+        Fri, 15 Sep 2023 20:39:42 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-        s=MBO0001; t=1694803180;
+        s=MBO0001; t=1694803182;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=2MKZNT2C20PsiAht17s5oJnb138+SmsAPSOiRhddgUA=;
-        b=OSDk9FFxIdRoXpbbJK7NtCBBEbBqbJXSbQ07rvOBw++aALFk+mh/xxdarUdNR4FVlQRF17
-        67UxVmkLS2OLxkjk+Ll9RummAEi7HciYPbO9Z2cBpMGtt24csMF9mj/Hk7zipaGkJ6uh32
-        Ct8c4gPXLiSnOw01drlPlIaLlnRBVRgWowE8ZQbP6rTJbkllrV9wlYlk84VeHiSctXNOjP
-        abj4O3zIc0YGlB/1ZOy/IwN/jtsEoCNZu2tkZ/e4qSfNNxLpodXBEK3pvwM6c9CuxXqvzD
-        UdDGI/JtrIJGBBxolWDhZOsfoPzAosRAcphz0UPvnj346nrxjmRCHSmp2JtQ2w==
+        bh=LywLEuPyM84LvnszU9bu3yYyFXSjfbQxmSaZo0Anuqo=;
+        b=sPBj7+lPJjN1O52TPN3bPIvCgfHWewlpa4lD2gPArpjJc42qjZjYB0ivxNzVoPtgWUV2X9
+        baXqoaVEy427TKtHRyh9CuvB1dGk4UoKPWdumhCVK/Zj7hjnyV/9B5lvcIJez7O/RYML7a
+        7BbpTXkSIEysivDSIn8uG2RYC8Ka8TO0B9P19XqbBg8Pj8JfaNqqdtPoeNMsD2lb4sD0eY
+        cFRHPxdkrbiSJb37sUgM291kELuaAdt9gvlmR97ZVvHYeejas3FF4Zlhd05N2OYrwNWsrp
+        2xibhXY+ahHHlr/15+T/ltQEQlsnkfS5en8VhTucFA1GfYp0wjO7bbHAmSHM9Q==
 From:   Pankaj Raghav <kernel@pankajraghav.com>
 To:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Cc:     p.raghav@samsung.com, david@fromorbit.com, da.gomez@samsung.com,
         akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
         willy@infradead.org, djwong@kernel.org, linux-mm@kvack.org,
         chandan.babu@oracle.com, mcgrof@kernel.org, gost.dev@samsung.com
-Subject: [RFC 17/23] readahead: set the minimum ra size in get_(init|next)_ra
-Date:   Fri, 15 Sep 2023 20:38:42 +0200
-Message-Id: <20230915183848.1018717-18-kernel@pankajraghav.com>
+Subject: [RFC 18/23] readahead: align ra start and size to mapping_min_order in ondemand_ra()
+Date:   Fri, 15 Sep 2023 20:38:43 +0200
+Message-Id: <20230915183848.1018717-19-kernel@pankajraghav.com>
 In-Reply-To: <20230915183848.1018717-1-kernel@pankajraghav.com>
 References: <20230915183848.1018717-1-kernel@pankajraghav.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 4RnNJr2x9Tz9sbr
-X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,
-        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
+X-Rspamd-Queue-Id: 4RnNJt60W1z9sTy
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -58,73 +58,94 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Luis Chamberlain <mcgrof@kernel.org>
 
-Make sure the minimum ra size is based on mapping_min_order in
-get_init_ra() and get_next_ra(). If request ra size is greater than
-mapping_min_order of pages, align it to mapping_min_order of pages.
+Align the ra->start and ra->size to mapping_min_order in
+ondemand_readahead(). This will ensure the folios added to the
+page_cache will be aligned to mapping_min_order number of pages.
 
 Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 ---
- mm/readahead.c | 26 ++++++++++++++++++++++++--
- 1 file changed, 24 insertions(+), 2 deletions(-)
+ mm/readahead.c | 29 ++++++++++++++++++++++-------
+ 1 file changed, 22 insertions(+), 7 deletions(-)
 
 diff --git a/mm/readahead.c b/mm/readahead.c
-index fb5ff180c39e..7c2660815a01 100644
+index 7c2660815a01..03fa6f6c8145 100644
 --- a/mm/readahead.c
 +++ b/mm/readahead.c
-@@ -357,9 +357,17 @@ void force_page_cache_ra(struct readahead_control *ractl,
-  * for small size, x 4 for medium, and x 2 for large
-  * for 128k (32 page) max ra
-  * 1-2 page = 16k, 3-4 page 32k, 5-8 page = 64k, > 8 page = 128k initial
-+ *
-+ * For higher order address space requirements we ensure no initial reads
-+ * are ever less than the min number of pages required.
-+ *
-+ * We *always* cap the max io size allowed by the device.
-  */
--static unsigned long get_init_ra_size(unsigned long size, unsigned long max)
-+static unsigned long get_init_ra_size(unsigned long size,
-+				      unsigned int min_order,
-+				      unsigned long max)
- {
+@@ -605,7 +605,11 @@ static void ondemand_readahead(struct readahead_control *ractl,
+ 	unsigned long add_pages;
+ 	pgoff_t index = readahead_index(ractl);
+ 	pgoff_t expected, prev_index;
+-	unsigned int order = folio ? folio_order(folio) : 0;
++	unsigned int min_order = mapping_min_folio_order(ractl->mapping);
 +	unsigned int min_nrpages = 1UL << min_order;
- 	unsigned long newsize = roundup_pow_of_two(size);
- 
- 	if (newsize <= max / 32)
-@@ -369,6 +377,15 @@ static unsigned long get_init_ra_size(unsigned long size, unsigned long max)
- 	else
- 		newsize = max;
- 
-+	if (newsize < min_nrpages) {
-+		if (min_nrpages <= max)
-+			newsize = min_nrpages;
-+		else
-+			newsize = round_up(max, min_nrpages);
-+	}
++	unsigned int order = folio ? folio_order(folio) : min_order;
 +
-+	VM_BUG_ON(newsize & (min_nrpages - 1));
-+
- 	return newsize;
- }
++	VM_BUG_ON(ractl->_index & (min_nrpages - 1));
  
-@@ -377,14 +394,19 @@ static unsigned long get_init_ra_size(unsigned long size, unsigned long max)
-  *  return it as the new window size.
-  */
- static unsigned long get_next_ra_size(struct file_ra_state *ra,
-+				      unsigned int min_order,
- 				      unsigned long max)
- {
--	unsigned long cur = ra->size;
-+	unsigned int min_nrpages = 1UL << min_order;
-+	unsigned long cur = max(ra->size, min_nrpages);
+ 	/*
+ 	 * If the request exceeds the readahead window, allow the read to
+@@ -627,9 +631,13 @@ static void ondemand_readahead(struct readahead_control *ractl,
+ 	expected = round_up(ra->start + ra->size - ra->async_size,
+ 			1UL << order);
+ 	if (index == expected || index == (ra->start + ra->size)) {
+-		ra->start += ra->size;
+-		ra->size = get_next_ra_size(ra, max_pages);
++		ra->start += round_down(ra->size, min_nrpages);
++		ra->size = get_next_ra_size(ra, min_order, max_pages);
+ 		ra->async_size = ra->size;
 +
-+	cur = round_down(cur, min_nrpages);
++		VM_BUG_ON(ra->size & ((1UL << min_order) - 1));
++		VM_BUG_ON(ra->start & ((1UL << min_order) - 1));
++
+ 		goto readit;
+ 	}
  
- 	if (cur < max / 16)
- 		return 4 * cur;
- 	if (cur <= max / 2)
- 		return 2 * cur;
+@@ -647,13 +655,19 @@ static void ondemand_readahead(struct readahead_control *ractl,
+ 				max_pages);
+ 		rcu_read_unlock();
+ 
++		start = round_down(start, min_nrpages);
 +
- 	return max;
++		VM_BUG_ON(start & (min_nrpages - 1));
++		VM_BUG_ON(folio->index & (folio_nr_pages(folio) - 1));
++
+ 		if (!start || start - index > max_pages)
+ 			return;
+ 
+ 		ra->start = start;
+ 		ra->size = start - index;	/* old async_size */
+-		ra->size += req_size;
+-		ra->size = get_next_ra_size(ra, max_pages);
++		VM_BUG_ON(ra->size & (min_nrpages - 1));
++		ra->size += round_up(req_size, min_nrpages);
++		ra->size = get_next_ra_size(ra, min_order, max_pages);
+ 		ra->async_size = ra->size;
+ 		goto readit;
+ 	}
+@@ -690,7 +704,7 @@ static void ondemand_readahead(struct readahead_control *ractl,
+ 
+ initial_readahead:
+ 	ra->start = index;
+-	ra->size = get_init_ra_size(req_size, max_pages);
++	ra->size = get_init_ra_size(req_size, min_order, max_pages);
+ 	ra->async_size = ra->size > req_size ? ra->size - req_size : ra->size;
+ 
+ readit:
+@@ -701,7 +715,7 @@ static void ondemand_readahead(struct readahead_control *ractl,
+ 	 * Take care of maximum IO pages as above.
+ 	 */
+ 	if (index == ra->start && ra->size == ra->async_size) {
+-		add_pages = get_next_ra_size(ra, max_pages);
++		add_pages = get_next_ra_size(ra, min_order, max_pages);
+ 		if (ra->size + add_pages <= max_pages) {
+ 			ra->async_size = add_pages;
+ 			ra->size += add_pages;
+@@ -712,6 +726,7 @@ static void ondemand_readahead(struct readahead_control *ractl,
+ 	}
+ 
+ 	ractl->_index = ra->start;
++	VM_BUG_ON(ractl->_index & (min_nrpages - 1));
+ 	page_cache_ra_order(ractl, ra, order);
  }
  
 -- 
