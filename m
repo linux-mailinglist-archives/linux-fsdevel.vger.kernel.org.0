@@ -2,46 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EB5177A2693
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Sep 2023 20:50:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CCDA7A264B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Sep 2023 20:43:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236537AbjIOSuJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Sep 2023 14:50:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51876 "EHLO
+        id S236871AbjIOSmg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Sep 2023 14:42:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236609AbjIOSti (ORCPT
+        with ESMTP id S237022AbjIOSm1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Sep 2023 14:49:38 -0400
+        Fri, 15 Sep 2023 14:42:27 -0400
 Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B1EF3A8C;
-        Fri, 15 Sep 2023 11:47:53 -0700 (PDT)
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99CB63A84;
+        Fri, 15 Sep 2023 11:40:57 -0700 (PDT)
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4RnNJQ0N8tz9sZ5;
-        Fri, 15 Sep 2023 20:39:18 +0200 (CEST)
+        by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4RnNJS3W0Xz9sbL;
+        Fri, 15 Sep 2023 20:39:20 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-        s=MBO0001; t=1694803158;
+        s=MBO0001; t=1694803160;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=3APo23DtYMF4HiSm9np03AfVKr1TDxQPEqBIBU7EQLQ=;
-        b=Zj3MnwSGDMAwBq1bun9wQMD03apsZ8TkPzzZY0G+xVuRFHlA8jTRS9j0z03rhiuPfuRL6p
-        sz/dnlC30Ddq95aZ8BgLQPzAOrlr7XRSaj2o2j1LWlJXmR+xzOB4D1lfcoHYkXXJNM7T+e
-        o1eXt+BU1FmCmk3Anh7cikxoynzKwfGc8hH7UoHccj4k2DZXzQFOkU0phBCRGBrFG42T8t
-        rlNeZG/822yhWUKUgM45Id9Xd6OxjN5FfHbNRbbHF90yh5ppnDsJruqnEsC/WrQJlyPF8N
-        aYOfhwR5VntP4ab9n0nA+F2XRQXfgH4LmqvrkX9lLSLR7mCEJyhlXYJSK5HJdQ==
+        bh=SzrHPPmJTKjWfDrn3YXBgU9n1TNPo/kiGOZujmxfC3o=;
+        b=zv1eBTD7DSyKB/ZHl4zr3fiwfusUpLKbzkWEafjVoKUx2xfMK7rklsQPPIp19HKeoo3l8c
+        FWeg/koAWMOCS5X6e/FiZsa8S/OteBDH7E1VOVQjIAhxRZxG2855TiW8pZ388XhUkviYq2
+        bUYv3/X5vM3Wi4vWfiFfR93e4/3fPoNylQkICflCDoirfo2ziNslgUpmYPd0h1VRhy/zgi
+        U9QpS/GtWY71h/CXkrwsXNlNbS9TdIZ8rep7TVuhIWNrq3bhlA9o+chV8bjGafiMcWHOQs
+        lIMWb0XukJXAYtVaua7Mngo8ueNlG8zrZT38tUYnIZNdtKRF4sPJFkbVEB/wNA==
 From:   Pankaj Raghav <kernel@pankajraghav.com>
 To:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Cc:     p.raghav@samsung.com, david@fromorbit.com, da.gomez@samsung.com,
         akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
         willy@infradead.org, djwong@kernel.org, linux-mm@kvack.org,
         chandan.babu@oracle.com, mcgrof@kernel.org, gost.dev@samsung.com
-Subject: [RFC 09/23] filemap: use mapping_min_order while allocating folios
-Date:   Fri, 15 Sep 2023 20:38:34 +0200
-Message-Id: <20230915183848.1018717-10-kernel@pankajraghav.com>
+Subject: [RFC 10/23] filemap: align the index to mapping_min_order in filemap_get_pages()
+Date:   Fri, 15 Sep 2023 20:38:35 +0200
+Message-Id: <20230915183848.1018717-11-kernel@pankajraghav.com>
 In-Reply-To: <20230915183848.1018717-1-kernel@pankajraghav.com>
 References: <20230915183848.1018717-1-kernel@pankajraghav.com>
 MIME-Version: 1.0
@@ -55,40 +55,51 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Pankaj Raghav <p.raghav@samsung.com>
+From: Luis Chamberlain <mcgrof@kernel.org>
 
-Allocate al teast mapping_min_order when creating new folio for the
-filemap in filemap_create_folio() and do_read_cache_folio().
+Align the index to the mapping_min_order number of pages in
+filemap_get_pages().
 
-Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 ---
- mm/filemap.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+generic/451 triggers a crash in this path for bs = 16k.
+
+ mm/filemap.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
 diff --git a/mm/filemap.c b/mm/filemap.c
-index 21e1341526ab..e4d46f79e95d 100644
+index e4d46f79e95d..8a4bbddcf575 100644
 --- a/mm/filemap.c
 +++ b/mm/filemap.c
-@@ -2502,7 +2502,8 @@ static int filemap_create_folio(struct file *file,
+@@ -2558,14 +2558,17 @@ static int filemap_get_pages(struct kiocb *iocb, size_t count,
+ {
+ 	struct file *filp = iocb->ki_filp;
+ 	struct address_space *mapping = filp->f_mapping;
++	unsigned int min_order = mapping_min_folio_order(mapping);
++	unsigned int nrpages = 1UL << min_order;
+ 	struct file_ra_state *ra = &filp->f_ra;
+-	pgoff_t index = iocb->ki_pos >> PAGE_SHIFT;
++	pgoff_t index = round_down(iocb->ki_pos >> PAGE_SHIFT, nrpages);
+ 	pgoff_t last_index;
  	struct folio *folio;
- 	int error;
+ 	int err = 0;
  
--	folio = filemap_alloc_folio(mapping_gfp_mask(mapping), 0);
-+	folio = filemap_alloc_folio(mapping_gfp_mask(mapping),
-+				    mapping_min_folio_order(mapping));
- 	if (!folio)
- 		return -ENOMEM;
- 
-@@ -3696,7 +3697,8 @@ static struct folio *do_read_cache_folio(struct address_space *mapping,
- repeat:
- 	folio = filemap_get_folio(mapping, index);
- 	if (IS_ERR(folio)) {
--		folio = filemap_alloc_folio(gfp, 0);
-+		folio = filemap_alloc_folio(gfp,
-+					    mapping_min_folio_order(mapping));
- 		if (!folio)
- 			return ERR_PTR(-ENOMEM);
- 		err = filemap_add_folio(mapping, folio, index, gfp);
+ 	/* "last_index" is the index of the page beyond the end of the read */
+ 	last_index = DIV_ROUND_UP(iocb->ki_pos + count, PAGE_SIZE);
++	last_index = round_up(last_index, nrpages);
+ retry:
+ 	if (fatal_signal_pending(current))
+ 		return -EINTR;
+@@ -2581,8 +2584,7 @@ static int filemap_get_pages(struct kiocb *iocb, size_t count,
+ 	if (!folio_batch_count(fbatch)) {
+ 		if (iocb->ki_flags & (IOCB_NOWAIT | IOCB_WAITQ))
+ 			return -EAGAIN;
+-		err = filemap_create_folio(filp, mapping,
+-				iocb->ki_pos >> PAGE_SHIFT, fbatch);
++		err = filemap_create_folio(filp, mapping, index, fbatch);
+ 		if (err == AOP_TRUNCATED_PAGE)
+ 			goto retry;
+ 		return err;
 -- 
 2.40.1
 
