@@ -2,221 +2,344 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 458B17A125E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Sep 2023 02:34:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B3977A129E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Sep 2023 02:55:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230525AbjIOAeC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Sep 2023 20:34:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52348 "EHLO
+        id S229715AbjIOA4A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Sep 2023 20:56:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230193AbjIOAeA (ORCPT
+        with ESMTP id S231202AbjIOAz7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Sep 2023 20:34:00 -0400
-Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C5CF26A4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Sep 2023 17:33:56 -0700 (PDT)
-Received: by mail-yb1-xb49.google.com with SMTP id 3f1490d57ef6-d77fa2e7771so1884732276.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Sep 2023 17:33:56 -0700 (PDT)
+        Thu, 14 Sep 2023 20:55:59 -0400
+Received: from mail-yw1-x112f.google.com (mail-yw1-x112f.google.com [IPv6:2607:f8b0:4864:20::112f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79FCC2701
+        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Sep 2023 17:55:55 -0700 (PDT)
+Received: by mail-yw1-x112f.google.com with SMTP id 00721157ae682-5925e580e87so17595937b3.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Sep 2023 17:55:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1694738035; x=1695342835; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=J23lG2GsSAJUhRlfXZ8Nll1xYHKwqpwqAHVfDlHiwRQ=;
-        b=EKJdNUoxAcwI4xNMhSQg70ujG6bbjdwcSmBuufl2Bz/yre0DtfLkQd8OIAqBtc9Mmu
-         DFoSpXJ0GuNyyKSxlxW09z8+l3SMPOwTFdPg9AnKuYklIHELthmqE+8mAdOe/5LwpD3F
-         KUT8t+/L03/+nihL9nTOs9k4cJqsQ2cYkexZCzFPiFJB/3FILVN58Y6N3CNlyUsPmmke
-         3ligqj/xU3Ftbay7d7bM1GhFeXt+S1smOi5O7aon/D9Oyrw6jqnoH6xj7WOr2PMn9Ob4
-         RA4LQap02I1S3v/ZaDZwbfMFzbCZ3viO/uou+VKvw7fHswzDLTYQQPLP5oAsQ+EOn3jZ
-         +jmQ==
+        d=paul-moore.com; s=google; t=1694739354; x=1695344154; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c1FlqXUdPjyj6me8kGYUdaY5qmjDeueDC49YLGEFQVY=;
+        b=TV3vn+RcDglfLKJG5YlR1DiSFG1c0+WvfHmrvNzoAgv6vzR258kAkotzjLzYcE4Ly4
+         N0Af8SyscTDVZ61PQz+5qo2np8tCzqkIQtjXsXmTQYbAAULTRxfuVnMIG575hZWoRFG+
+         s7CcgCu0SbW3yeP+5uOLrk1iPUt+NwDHZPWXytEsFbTc4oy/9Od7yzang90LPH9Evc+w
+         OWUzW345+ymB9HexrfD2lrmrNgrpSgtao1vxNBZDq1FAc7X3GcdUzbtGBEAc52ziJTo0
+         gjMF0Tsvv3MQAmH7J1tyCvBRMSRyhXVO9ijLWZysCamsa8kA1dyT16apBjzwFCnYyIEW
+         e77g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694738035; x=1695342835;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=J23lG2GsSAJUhRlfXZ8Nll1xYHKwqpwqAHVfDlHiwRQ=;
-        b=xPDdCYqDzQ6G3Z3ix/2MUQWmsENpsd0dZoTxlBgCJ2lmYJTMiIyitcZu+CYtbZtsPf
-         HkxL/sfrdmf7mWA3W4Z95xnylK3fF3jT0D78cA/FWhZWL+cZir/FSZHc+Wasx7BrzRvL
-         QkMtNV1IAqC5SByVjhhZvHVgpm3e2FODLiDlE8fs9fNb9k8llt0TGGg1eR+STyJKTE3n
-         oDw1Gc+zaaicR5izPHxtaeViuTWFk20WsHCnKMxL3d+hkHgslQ8kbDE10Mp22lIJ6WB5
-         PAFGxxEuCtOJzVdpHsmIgxMJcvSKg364ZFdY0pWYM9/Kp5/FT8mv7pVLP5uuDIhtTTQR
-         bMIQ==
-X-Gm-Message-State: AOJu0YyQD+KkevWG9+xPOqzGhJK2nSmYc1QG8EIjWvWxk85XX51SI2EF
-        Riw2Q+8LUfRpgxXimyACG3PBLGinIhw=
-X-Google-Smtp-Source: AGHT+IHBN6t0jhuW16tvzWJMbA1thelqq1JkZNxaAmcO8xrBGxWQKZuWbB7lmKVGkcmoGzwdDBC0p73x1Zc=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a25:ad5c:0:b0:d7b:9830:c172 with SMTP id
- l28-20020a25ad5c000000b00d7b9830c172mr2934ybe.0.1694738035530; Thu, 14 Sep
- 2023 17:33:55 -0700 (PDT)
-Date:   Thu, 14 Sep 2023 17:33:53 -0700
-In-Reply-To: <diqzv8ccjqbd.fsf@ackerleytng-ctop.c.googlers.com>
-Mime-Version: 1.0
-References: <ZOO782YGRY0YMuPu@google.com> <diqzttsiu67n.fsf@ackerleytng-ctop.c.googlers.com>
- <ZQNN2AyDJ8dF0/6D@google.com> <diqzv8ccjqbd.fsf@ackerleytng-ctop.c.googlers.com>
-Message-ID: <ZQOmcc969s90DwNz@google.com>
-Subject: Re: [RFC PATCH v11 12/29] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
- guest-specific backing memory
-From:   Sean Christopherson <seanjc@google.com>
-To:     Ackerley Tng <ackerleytng@google.com>
-Cc:     pbonzini@redhat.com, maz@kernel.org, oliver.upton@linux.dev,
-        chenhuacai@kernel.org, mpe@ellerman.id.au, anup@brainfault.org,
-        paul.walmsley@sifive.com, palmer@dabbelt.com,
-        aou@eecs.berkeley.edu, willy@infradead.org,
-        akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, kvm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chao.p.peng@linux.intel.com,
-        tabba@google.com, jarkko@kernel.org, yu.c.zhang@linux.intel.com,
-        vannapurve@google.com, mail@maciej.szmigiero.name, vbabka@suse.cz,
-        david@redhat.com, qperret@google.com, michael.roth@amd.com,
-        wei.w.wang@intel.com, liam.merwick@oracle.com,
-        isaku.yamahata@gmail.com, kirill.shutemov@linux.intel.com
-Content-Type: text/plain; charset="us-ascii"
+        d=1e100.net; s=20230601; t=1694739354; x=1695344154;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=c1FlqXUdPjyj6me8kGYUdaY5qmjDeueDC49YLGEFQVY=;
+        b=UpfhtdxA8ZQm/3nDzWq2Oq6UWYI3kMhK7+3mNHRybTATigC4US3G6UJWgC4SmJRFtb
+         i+MjBFiv1IFKr/DlShtqZPCtFp5ioHU8t0XRnvlxwOsmZkPNCQrzOc+wcJzBzxa+fPQi
+         Rn3OROhL3qn71ii67SjeYN6mU70IOMWsjMmsE0rVgKUIpCQ/dvCikQ37gJsjH52DbDzX
+         34WWW2pkdeR8CLVpkOGGFXw68csFX2yk7gc4o0T7KYdL9/H6oNSupe2NA6yyDQsQ2VDd
+         GU2+QWkBcVN3/j3ooLSZbVmTyV1zasmOlqanS5DOd+/y0+UkiLGfBQcttLwJc/rP+g3z
+         v6Ww==
+X-Gm-Message-State: AOJu0Yw0zO5VLIgfj/mHqUgfmu+usLrC6P9VEx86AGdTtPyVKZ9+g1IO
+        ZAPjDhJ4HGe8snm7xKxuye56X4d/QPK6sDpkknRe
+X-Google-Smtp-Source: AGHT+IHTSbiWh8LlDJaKwyJzDpTzWID3S8nIyZTRT2Pt3OfQMXqYzbo2dF6Xlkztbw+zK7O4PM07DWuMBDqKM3nLU/8=
+X-Received: by 2002:a81:6c8f:0:b0:59b:e666:1fb4 with SMTP id
+ h137-20020a816c8f000000b0059be6661fb4mr365826ywc.9.1694739354487; Thu, 14 Sep
+ 2023 17:55:54 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230912212906.3975866-3-andrii@kernel.org> <3808036a0b32a17a7fd9e7d671b5458d.paul@paul-moore.com>
+ <CAEf4BzYiKhG3ZL-GGQ4fHzSu6RKx2fh2JHwcL9_XKzQBvx3Bjg@mail.gmail.com>
+In-Reply-To: <CAEf4BzYiKhG3ZL-GGQ4fHzSu6RKx2fh2JHwcL9_XKzQBvx3Bjg@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 14 Sep 2023 20:55:43 -0400
+Message-ID: <CAHC9VhSOCAb6JQJn96xgwNNMGM0mKXf64ygkj4=Yv0FA8AYR=Q@mail.gmail.com>
+Subject: Re: [PATCH v4 2/12] bpf: introduce BPF token object
+To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keescook@chromium.org,
+        brauner@kernel.org, lennart@poettering.net, kernel-team@meta.com,
+        sargun@sargun.me
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 14, 2023, Ackerley Tng wrote:
-> Sean Christopherson <seanjc@google.com> writes:
-> 
-> > On Mon, Aug 28, 2023, Ackerley Tng wrote:
-> >> Sean Christopherson <seanjc@google.com> writes:
-> >> >> If we track struct kvm with the inode, then I think (a), (b) and (c) can
-> >> >> be independent of the refcounting method. What do you think?
-> >> >
-> >> > No go.  Because again, the inode (physical memory) is coupled to the virtual machine
-> >> > as a thing, not to a "struct kvm".  Or more concretely, the inode is coupled to an
-> >> > ASID or an HKID, and there can be multiple "struct kvm" objects associated with a
-> >> > single ASID.  And at some point in the future, I suspect we'll have multiple KVM
-> >> > objects per HKID too.
-> >> >
-> >> > The current SEV use case is for the migration helper, where two KVM objects share
-> >> > a single ASID (the "real" VM and the helper).  I suspect TDX will end up with
-> >> > similar behavior where helper "VMs" can use the HKID of the "real" VM.  For KVM,
-> >> > that means multiple struct kvm objects being associated with a single HKID.
-> >> >
-> >> > To prevent use-after-free, KVM "just" needs to ensure the helper instances can't
-> >> > outlive the real instance, i.e. can't use the HKID/ASID after the owning virtual
-> >> > machine has been destroyed.
-> >> >
-> >> > To put it differently, "struct kvm" is a KVM software construct that _usually_,
-> >> > but not always, is associated 1:1 with a virtual machine.
-> >> >
-> >> > And FWIW, stashing the pointer without holding a reference would not be a complete
-> >> > solution, because it couldn't guard against KVM reusing a pointer.  E.g. if a
-> >> > struct kvm was unbound and then freed, KVM could reuse the same memory for a new
-> >> > struct kvm, with a different ASID/HKID, and get a false negative on the rebinding
-> >> > check.
-> >> 
-> >> I agree that inode (physical memory) is coupled to the virtual machine
-> >> as a more generic concept.
-> >> 
-> >> I was hoping that in the absence of CC hardware providing a HKID/ASID,
-> >> the struct kvm pointer could act as a representation of the "virtual
-> >> machine". You're definitely right that KVM could reuse a pointer and so
-> >> that idea doesn't stand.
-> >> 
-> >> I thought about generating UUIDs to represent "virtual machines" in the
-> >> absence of CC hardware, and this UUID could be transferred during
-> >> intra-host migration, but this still doesn't take host userspace out of
-> >> the TCB. A malicious host VMM could just use the migration ioctl to copy
-> >> the UUID to a malicious dumper VM, which would then pass checks with a
-> >> gmem file linked to the malicious dumper VM. This is fine for HKID/ASIDs
-> >> because the memory is encrypted; with UUIDs there's no memory
-> >> encryption.
+On Thu, Sep 14, 2023 at 1:31=E2=80=AFPM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
+> On Wed, Sep 13, 2023 at 2:46=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
+wrote:
 > >
-> > I don't understand what problem you're trying to solve.  I don't see a need to
-> > provide a single concrete representation/definition of a "virtual machine".  E.g.
-> > there's no need for a formal definition to securely perform intrahost migration,
-> > KVM just needs to ensure that the migration doesn't compromise guest security,
-> > functionality, etc.
+> > On Sep 12, 2023 Andrii Nakryiko <andrii.nakryiko@gmail.com> wrote:
+> > >
+> > > Add new kind of BPF kernel object, BPF token. BPF token is meant to
+> > > allow delegating privileged BPF functionality, like loading a BPF
+> > > program or creating a BPF map, from privileged process to a *trusted*
+> > > unprivileged process, all while have a good amount of control over wh=
+ich
+> > > privileged operations could be performed using provided BPF token.
+> > >
+> > > This is achieved through mounting BPF FS instance with extra delegati=
+on
+> > > mount options, which determine what operations are delegatable, and a=
+lso
+> > > constraining it to the owning user namespace (as mentioned in the
+> > > previous patch).
+> > >
+> > > BPF token itself is just a derivative from BPF FS and can be created
+> > > through a new bpf() syscall command, BPF_TOKEN_CREAT, which accepts
+> > > a path specification (using the usual fd + string path combo) to a BP=
+F
+> > > FS mount. Currently, BPF token "inherits" delegated command, map type=
+s,
+> > > prog type, and attach type bit sets from BPF FS as is. In the future,
+> > > having an BPF token as a separate object with its own FD, we can allo=
+w
+> > > to further restrict BPF token's allowable set of things either at the=
+ creation
+> > > time or after the fact, allowing the process to guard itself further
+> > > from, e.g., unintentionally trying to load undesired kind of BPF
+> > > programs. But for now we keep things simple and just copy bit sets as=
+ is.
+> > >
+> > > When BPF token is created from BPF FS mount, we take reference to the
+> > > BPF super block's owning user namespace, and then use that namespace =
+for
+> > > checking all the {CAP_BPF, CAP_PERFMON, CAP_NET_ADMIN, CAP_SYS_ADMIN}
+> > > capabilities that are normally only checked against init userns (usin=
+g
+> > > capable()), but now we check them using ns_capable() instead (if BPF
+> > > token is provided). See bpf_token_capable() for details.
+> > >
+> > > Such setup means that BPF token in itself is not sufficient to grant =
+BPF
+> > > functionality. User namespaced process has to *also* have necessary
+> > > combination of capabilities inside that user namespace. So while
+> > > previously CAP_BPF was useless when granted within user namespace, no=
+w
+> > > it gains a meaning and allows container managers and sys admins to ha=
+ve
+> > > a flexible control over which processes can and need to use BPF
+> > > functionality within the user namespace (i.e., container in practice)=
+.
+> > > And BPF FS delegation mount options and derived BPF tokens serve as
+> > > a per-container "flag" to grant overall ability to use bpf() (plus fu=
+rther
+> > > restrict on which parts of bpf() syscalls are treated as namespaced).
+> > >
+> > > The alternative to creating BPF token object was:
+> > >   a) not having any extra object and just pasing BPF FS path to each
+> > >      relevant bpf() command. This seems suboptimal as it's racy (moun=
+t
+> > >      under the same path might change in between checking it and usin=
+g it
+> > >      for bpf() command). And also less flexible if we'd like to furth=
+er
+> > >      restrict ourselves compared to all the delegated functionality
+> > >      allowed on BPF FS.
+> > >   b) use non-bpf() interface, e.g., ioctl(), but otherwise also creat=
+e
+> > >      a dedicated FD that would represent a token-like functionality. =
+This
+> > >      doesn't seem superior to having a proper bpf() command, so
+> > >      BPF_TOKEN_CREATE was chosen.
+> > >
+> > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> > > ---
+> > >  include/linux/bpf.h            |  36 +++++++
+> > >  include/uapi/linux/bpf.h       |  39 +++++++
+> > >  kernel/bpf/Makefile            |   2 +-
+> > >  kernel/bpf/inode.c             |   4 +-
+> > >  kernel/bpf/syscall.c           |  17 +++
+> > >  kernel/bpf/token.c             | 189 +++++++++++++++++++++++++++++++=
+++
+> > >  tools/include/uapi/linux/bpf.h |  39 +++++++
+> > >  7 files changed, 324 insertions(+), 2 deletions(-)
+> > >  create mode 100644 kernel/bpf/token.c
 > >
-> > That gets a lot more complex if the target KVM instance (module, not "struct kvm")
-> > is a different KVM, e.g. when migrating to a different host.  Then there needs to
-> > be a way to attest that the target is trusted and whatnot, but that still doesn't
-> > require there to be a formal definition of a "virtual machine".
+> > ...
 > >
-> >> Circling back to the original topic, was associating the file with
-> >> struct kvm at gmem file creation time meant to constrain the use of the
-> >> gmem file to one struct kvm, or one virtual machine, or something else?
+> > > diff --git a/kernel/bpf/token.c b/kernel/bpf/token.c
+> > > new file mode 100644
+> > > index 000000000000..f6ea3eddbee6
+> > > --- /dev/null
+> > > +++ b/kernel/bpf/token.c
+> > > @@ -0,0 +1,189 @@
+> > > +#include <linux/bpf.h>
+> > > +#include <linux/vmalloc.h>
+> > > +#include <linux/anon_inodes.h>
+> > > +#include <linux/fdtable.h>
+> > > +#include <linux/file.h>
+> > > +#include <linux/fs.h>
+> > > +#include <linux/kernel.h>
+> > > +#include <linux/idr.h>
+> > > +#include <linux/namei.h>
+> > > +#include <linux/user_namespace.h>
+> > > +
+> > > +bool bpf_token_capable(const struct bpf_token *token, int cap)
+> > > +{
+> > > +     /* BPF token allows ns_capable() level of capabilities */
+> > > +     if (token) {
+> > > +             if (ns_capable(token->userns, cap))
+> > > +                     return true;
+> > > +             if (cap !=3D CAP_SYS_ADMIN && ns_capable(token->userns,=
+ CAP_SYS_ADMIN))
+> > > +                     return true;
+> > > +     }
+> > > +     /* otherwise fallback to capable() checks */
+> > > +     return capable(cap) || (cap !=3D CAP_SYS_ADMIN && capable(CAP_S=
+YS_ADMIN));
+> > > +}
 > >
-> > It's meant to keep things as simple as possible (relatively speaking).  A 1:1
-> > association between a KVM instance and a gmem instance means we don't have to
-> > worry about the edge cases and oddities I pointed out earlier in this thread.
+> > While the above looks to be equivalent to the bpf_capable() function it
+> > replaces, for callers checking CAP_BPF and CAP_SYS_ADMIN, I'm looking
+> > quickly at patch 3/12 and this is also being used to replace a
+> > capable(CAP_NET_ADMIN) call which results in a change in behavior.
+> > The current code which performs a capable(CAP_NET_ADMIN) check cannot
+> > be satisfied by CAP_SYS_ADMIN, but this patchset using
+> > bpf_token_capable(token, CAP_NET_ADMIN) can be satisfied by either
+> > CAP_NET_ADMIN or CAP_SYS_ADMIN.
 > >
-> 
-> I looked through this thread again and re-read the edge cases and
-> oddities that was pointed out earlier (last paragraph at [1]) and I
-> think I understand better, and I have just one last clarification.
-> 
-> It was previously mentioned that binding on creation time simplifies the
-> lifecycle of memory:
-> 
-> "(a) prevent a different VM from *ever* binding to the gmem instance" [1]
-> 
-> Does this actually mean
-> 
-> "prevent a different struct kvm from *ever* binding to this gmem file"
-> 
-> ?
+> > It seems that while bpf_token_capable() can be used as a replacement
+> > for bpf_capable(), it is not currently a suitable replacement for a
+> > generic capable() call.  Perhaps this is intentional, but I didn't see
+> > it mentioned in the commit description, or in the comments, and I
+> > wanted to make sure it wasn't an oversight.
+>
+> You are right. It is an intentional attempt to unify all such checks.
+> If you look at bpf_prog_load(), we have this:
+>
+> if (is_net_admin_prog_type(type) && !capable(CAP_NET_ADMIN) &&
+> !capable(CAP_SYS_ADMIN))
+>     return -EPERM;
+>
+> So seeing that, I realized that we did have an intent to always use
+> CAP_SYS_ADMIN as a "fallback" cap, even for CAP_NET_ADMIN when it
+> comes to using network-enabled BPF programs. So I decided that
+> unifying all this makes sense.
+>
+> I'll add a comment mentioning this, I should have been more explicit
+> from the get go.
 
-Yes.
+Thanks for the clarification.  I'm not to worried about checking
+CAP_SYS_ADMIN as a fallback, but I always get a little twitchy when I
+see capability changes in the code without any mention.
 
-> If so, then binding on creation
-> 
-> + Makes the gmem *file* (and just not the bindings xarray) the binding
->   between struct kvm and the file.
+A mention in the commit description is good, and you could also draft
+up a standalone patch that adds the CAP_SYS_ADMIN fallback to the
+current in-tree code.  That would be a good way to really highlight
+the capability changes and deal with any issues that might arise
+(review, odd corner cases?, etc.) prior to the BPF capability
+delegation patcheset we are discussing here.
 
-Yep.
+> > > +#define BPF_TOKEN_INODE_NAME "bpf-token"
+> > > +
+> > > +/* Alloc anon_inode and FD for prepared token.
+> > > + * Returns fd >=3D 0 on success; negative error, otherwise.
+> > > + */
+> > > +int bpf_token_new_fd(struct bpf_token *token)
+> > > +{
+> > > +     return anon_inode_getfd(BPF_TOKEN_INODE_NAME, &bpf_token_fops, =
+token, O_CLOEXEC);
+> > > +}
+> > > +
+> > > +struct bpf_token *bpf_token_get_from_fd(u32 ufd)
+> > > +{
+> > > +     struct fd f =3D fdget(ufd);
+> > > +     struct bpf_token *token;
+> > > +
+> > > +     if (!f.file)
+> > > +             return ERR_PTR(-EBADF);
+> > > +     if (f.file->f_op !=3D &bpf_token_fops) {
+> > > +             fdput(f);
+> > > +             return ERR_PTR(-EINVAL);
+> > > +     }
+> > > +
+> > > +     token =3D f.file->private_data;
+> > > +     bpf_token_inc(token);
+> > > +     fdput(f);
+> > > +
+> > > +     return token;
+> > > +}
+> > > +
+> > > +bool bpf_token_allow_cmd(const struct bpf_token *token, enum bpf_cmd=
+ cmd)
+> > > +{
+> > > +     if (!token)
+> > > +             return false;
+> > > +
+> > > +     return token->allowed_cmds & (1ULL << cmd);
+> > > +}
+> >
+> > I mentioned this a while back, likely in the other threads where this
+> > token-based approach was only being discussed in general terms, but I
+> > think we want to have a LSM hook at the point of initial token
+> > delegation for this and a hook when the token is used.  My initial
+> > thinking is that we should be able to address the former with a hook
+> > in bpf_fill_super() and the latter either in bpf_token_get_from_fd()
+> > or bpf_token_allow_XXX(); bpf_token_get_from_fd() would be simpler,
+> > but it doesn't allow for much in the way of granularity.  Inserting the
+> > LSM hooks in bpf_token_allow_XXX() would also allow the BPF code to fal=
+l
+> > gracefully fallback to the system-wide checks if the LSM denied the
+> > requested access whereas an access denial in bpf_token_get_from_fd()
+> > denial would cause the operation to error out.
+>
+> I think the bpf_fill_super() LSM hook makes sense, but I thought
+> someone mentioned that we already have some generic LSM hook for
+> validating mounts? If we don't, I can certainly add one for BPF FS
+> specifically.
 
-> + Simplifies the KVM-userspace contract to "this gmem file can only be
->   used with this struct kvm"
+We do have security_sb_mount(), but that is a generic mount operation
+access control and not well suited for controlling the mount-based
+capability delegation that you are proposing here.  However, if you or
+someone else has a clever way to make security_sb_mount() work for
+this purpose I would be very happy to review that code.
 
-Yep.
+> As for the bpf_token_allow_xxx(). This feels a bit too specific and
+> narrow-focused. What if we later add yet another dimension for BPF FS
+> and token? Do we need to introduce yet another LSM for each such case?
 
-> Binding on creation doesn't offer any way to block the contents of the
-> inode from being used with another "virtual machine" though, since we
-> can have more than one gmem file pointing to the same inode, and the
-> other gmem file is associated with another struct kvm. (And a strut kvm
-> isn't associated 1:1 with a virtual machine [2])
+[I'm assuming you meant new LSM *hook*]
 
-Yep.
+Possibly.  There are also some other issues which I've been thinking
+about along these lines, specifically the fact that the
+capability/command delegation happens after the existing
+security_bpf() hook is called which makes things rather awkward from a
+LSM perspective: the LSM would first need to allow the process access
+to the desired BPF op using it's current LSM specific security
+attributes (e.g. SELinux security domain, etc.) and then later
+consider the op in the context of the delegated access control rights
+(if the LSM decides to support those hooks).
 
-> The point about an inode needing to be coupled to a virtual machine as a
-> thing [2] led me to try to find a single concrete representation of a
-> "virtual machine".
-> 
-> Is locking inode contents to a "virtual machine" outside the scope of
-> gmem?
+I suspect that if we want to make this practical we would need to
+either move some of the token code up into __sys_bpf() so we could
+have a better interaction with security_bpf(), or we need to consider
+moving the security_bpf() call into the op specific functions.  I'm
+still thinking on this (lots of reviews to get through this week), but
+I'm hoping there is a better way because I'm not sure I like either
+option very much.
 
-Yes, because it's not gmem's responsibility to define "secure" (from a guest
-perspective) or "safe" (from a platform stability and correctness perspective).
+> But also see bpf_prog_load(). There are two checks, allow_prog_type
+> and allow_attach_type, which are really only meaningful in
+> combination. And yet you'd have to have two separate LSM hooks for
+> that.
+>
+> So I feel like the better approach is less mechanistically
+> concentrating on BPF token operations themselves, but rather on more
+> semantically meaningful operations that are token-enabled. E.g.,
+> protect BPF program loading, BPF map creation, BTF loading, etc. And
+> we do have such LSM hooks right now, though they might not be the most
+> convenient. So perhaps the right move is to add new ones that would
+> provide a bit more context (e.g., we can pass in the BPF token that
+> was used for the operation, attributes with which map/prog was
+> created, etc). Low-level token LSMs seem hard to use cohesively in
+> practice, though.
 
-E.g. inserting additional vCPUs into the VM a la the SEV migration helper thing
-is comically insecure without some way to attest the helper code.  Building policy
-into the host kernel/KVM to do that attestation or otherwise determine what code
-is/isn't safe for the guest to run is firmly out-of-scope.  KVM can certainly
-provide the tools and help with enforcement, but the policy needs to be defined
-elsewhere.  Even for something like pKVM, where KVM is in the TCB, KVM still doesn't
-define who/what to trust (though KVM is heavily involved in enforcing security
-stuff).
+Can you elaborate a bit more?  It's hard to judge the comments above
+without some more specifics about hook location, parameters, etc.
 
-And for platform safety, e.g. not allowing two VMs to use the same HKID (ignoring
-helpers for the moment), that's a KVM problem but NOT a gmem problem.  The point
-I raised in link[2] about a gmem inode and thus the HKID/ASID associated with the
-inode being bound to the "virtual machine" still holds true, but (a) it's not a
-1:1 correlation, e.g. a VM could utilize multiple gmem inodes (all with the same
-HKID/ASID), and (b) the safety and functional correctness aspects aren't unique
-to gmem, e.g. even when when gmem isn't in the picture, KVM needs to make sure it
-manages ASIDs correctly.  The only difference with SNP in the picture is that if
-KVM screws up ASID management, bad things happen to the host, not (just) the guest.
-
->  If so, then it is fine to bind on creation time, use a VM ioctl
-> over a system ioctl, and the method of refcounting in gmem v12 is okay.
-> 
-> [1] https://lore.kernel.org/lkml/ZNKv9ul2I7A4V7IF@google.com/
-> [2] https://lore.kernel.org/lkml/ZOO782YGRY0YMuPu@google.com/
-> 
-> > <snip>
+--=20
+paul-moore.com
