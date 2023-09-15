@@ -2,124 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 556637A27DC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Sep 2023 22:15:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 200FA7A28A5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Sep 2023 22:50:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237147AbjIOUPK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Sep 2023 16:15:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41232 "EHLO
+        id S237312AbjIOUu2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Sep 2023 16:50:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37272 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237273AbjIOUOr (ORCPT
+        with ESMTP id S237574AbjIOUuL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Sep 2023 16:14:47 -0400
-Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A01A2D50
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Sep 2023 13:14:16 -0700 (PDT)
-Received: by mail-pl1-x634.google.com with SMTP id d9443c01a7336-1bf5c314a57so21382475ad.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Sep 2023 13:14:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1694808856; x=1695413656; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9t4c7iG7BwJixU6psOPlOQYO3J4oZ/NM5PDqz6Jeo04=;
-        b=go7uig024KFWi6oiPZQJhAtrmKWw+a40kyRgE6l+AYy1c6LPcwO5JnM3tLeNxyeJ+8
-         cLLwmBYPVYf+t8uGQvT1sR1XwJOjD4Xlb8+DWaGn1hvnJ234lZoD+LqCu1/x3lVjz58J
-         GBOP5YnicX8rgr+H8p9LvVMi5okOdkthYVq5Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694808856; x=1695413656;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9t4c7iG7BwJixU6psOPlOQYO3J4oZ/NM5PDqz6Jeo04=;
-        b=pBYYR86A/tWtAvEqEqKL+ap244VtURUznfh/jByjW+ieQwJxMDfIexCYQuSy6wml5/
-         keLSopCleiYXw1ek4YQu7TyTR3GU905jthfPXNGOiPGxnvFapeEIHNAlI6QjkH1nBv1g
-         kylmgp6TW066Ez0upOXcunXlVyMZO/YP0gH5SC6EURBoqLnf+BqKU1l6gvDCdfdNgbfD
-         dmPZZhGuLTIOJ2boHOBUP2d6zBwarQX6MXrdgoXPKWjO8n8Dqi6kF2a7NG5igBvzWpS/
-         pJceLs98dYOj7HwFciVy0ude3Kux8LU/FvPrhM9rzN9bRbGydo0fqyFU62qjUVDQ3pwe
-         ExoQ==
-X-Gm-Message-State: AOJu0YyR/Cwxv7Baw7Weq0r/BWAGWrpfxZ3fHYoxGkezoD65YQ4yqfOY
-        ehjzbhRl5VL90Kc/HQ313vCJNg==
-X-Google-Smtp-Source: AGHT+IGgXyGAghZv7pszt8rqPpCweXXdiMo6SZzmmUtM+9AUGmv0Zkuf+i1pa/kjEbWVyhBGaegRbw==
-X-Received: by 2002:a17:902:8691:b0:1c4:a16:f88f with SMTP id g17-20020a170902869100b001c40a16f88fmr2591006plo.36.1694808855939;
-        Fri, 15 Sep 2023 13:14:15 -0700 (PDT)
-Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id kg14-20020a170903060e00b001c41e1e9ca7sm3059479plb.215.2023.09.15.13.14.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Sep 2023 13:14:15 -0700 (PDT)
-From:   Kees Cook <keescook@chromium.org>
-To:     Benjamin LaHaise <bcrl@kvack.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Fri, 15 Sep 2023 16:50:11 -0400
+Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2325930D1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Sep 2023 13:49:30 -0700 (PDT)
+Received: from eig-obgw-6001a.ext.cloudfilter.net ([10.0.30.140])
+        by cmsmtp with ESMTP
+        id hAJoqOjdHWU1chFknqThCU; Fri, 15 Sep 2023 20:49:30 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with ESMTPS
+        id hFknqDLh41SF3hFknqcwJm; Fri, 15 Sep 2023 20:49:29 +0000
+X-Authority-Analysis: v=2.4 cv=Avr9YcxP c=1 sm=1 tr=0 ts=6504c359
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=WzbPXH4gqzPVN0x6HrNMNA==:17
+ a=OWjo9vPv0XrRhIrVQ50Ab3nP57M=:19 a=dLZJa+xiwSxG16/P+YVxDGlgEgI=:19
+ a=IkcTkHD0fZMA:10 a=zNV7Rl7Rt7sA:10 a=wYkD_t78qR0A:10 a=NEAV23lmAAAA:8
+ a=37rDS-QxAAAA:8 a=drOt6m5kAAAA:8 a=VwQbUJbxAAAA:8 a=cm27Pg_UAAAA:8
+ a=HvF037n1xESchLcPDVoA:9 a=QEXdDO2ut3YA:10 a=k1Nq6YrhK2t884LQW06G:22
+ a=RMMjzBEyIzXRtoq5n5K6:22 a=AjGcO6oz07-iQ99wixmX:22 a=xmb-EsYY8bH0VWELuYED:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=dbvnwKJQfGsgQH7tlRR/jd5p7nHOn0NX5cYdBxx3AwM=; b=KmckCKfhNPNWKTdU/U2RVIyYPB
+        xExI9mPYCjcuCOZhzrKa18b35yBJj1J92lH4mBNy+h5WcLsVj4D0zifQrWGCC5XRBRITAQNc6Pp6V
+        OxJcCmDe1AIsvGONJEJRKHwJYEsfm+Q7OKJRWgh7ZA3XDtl5+SpDKmqg1+SQqWqntt+Ey+1mZQOxA
+        Up7v+NCAQtGjfCGeZGC4YnGvLDKALmSGT8zz6vOFpg8WkJCdLkNwKQoIJLVYGERSbaaWunv2G8adv
+        T1kitsK1Pcc7UoMVPYgCmUHvEo7vfoEU+DuAL7vqOCEINvaYJkTXkVt7hXOEC8m71LtLjZkIKwcTb
+        g42p5LUQ==;
+Received: from 187-162-21-192.static.axtel.net ([187.162.21.192]:56838 helo=[192.168.15.8])
+        by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.96)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1qhFkm-002ek3-0U;
+        Fri, 15 Sep 2023 15:49:28 -0500
+Message-ID: <b81647db-097e-cbf1-e4d6-53a4a96b85ea@embeddedor.com>
+Date:   Fri, 15 Sep 2023 14:50:23 -0600
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH] aio: Annotate struct kioctx_table with __counted_by
+Content-Language: en-US
+To:     Kees Cook <keescook@chromium.org>,
+        Benjamin LaHaise <bcrl@kvack.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>, linux-aio@kvack.org,
         linux-fsdevel@vger.kernel.org,
         Nathan Chancellor <nathan@kernel.org>,
         Nick Desaulniers <ndesaulniers@google.com>,
         Tom Rix <trix@redhat.com>, linux-kernel@vger.kernel.org,
         llvm@lists.linux.dev, linux-hardening@vger.kernel.org
-Subject: [PATCH] aio: Annotate struct kioctx_table with __counted_by
-Date:   Fri, 15 Sep 2023 13:14:14 -0700
-Message-Id: <20230915201413.never.881-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
-MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1127; i=keescook@chromium.org;
- h=from:subject:message-id; bh=1qAoiZuMRAuvDZRUcSDPW5lLo0Ae9xZ4UiTXDEh1mTE=;
- b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBlBLsWaTUS2aPe9DYGUrDZPo05lmzAICnFfTNt4
- TuHABaIVB+JAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZQS7FgAKCRCJcvTf3G3A
- JoNvD/wI9Ez/xecwMst1xwqWO5PzTIz1ZADRxzr2MoMrg+bF+zVBEO3uiWXoI4pY9farlKnMZOW
- F5S+SAgyURn2G3c6PN1WVEuc3Y9424hN2if8MTSVs0Nbk2EYZYm06r4Douy2vRy0YkSAWpssZ4v
- kymW916TdLMSRQ/VlhTwIqb/EogyHshGE7Zu0yDtUhDbfNo/bgJHm1Eb6BVnfWOYPkexC2wepRA
- /2J8yT+u4nZPjAW/UCwuRiP1zLd+xRXCtOQ9gm8mzijyKmqsRVlbzYa5UgI1Qr2byEv0P+KjR+K
- y6G/DhhriaqRy0FKJe0VObtQR56fWtLn/iUbIXW1qHAqKOVt3+/Xx/Qy+k6d9q+FucGZchog81Y
- 2br884EAL0MMUhCaLcwaFg4xWRh29AeG8bLDSSNwC9EIOIo6FlJdiPX8HsYfDRb2OkHYBrsCpUi
- suZXovmTwkZpy/XU8KHgnb7LmtJc2yZDea0oHJJbmJudfvmiUROsu2gT6uXwwCfFTZxacyfSznc
- ASqN8epE+clvMgEB/6HAUJXqXXb33j045MB2iUYymLfTnXHdblZnb/8GXLjn8Vs2KlOKemgOj3C
- lfmwn7j/b71qoQYPbLyXrt6loyYO6Zx7zzMnblLcq56S/LCrSIUYj5v7p70QXU/45+14jBKbzhy
- hj/G1EM dIHavvSg==
-X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20230915201413.never.881-kees@kernel.org>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <20230915201413.never.881-kees@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.162.21.192
+X-Source-L: No
+X-Exim-ID: 1qhFkm-002ek3-0U
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: 187-162-21-192.static.axtel.net ([192.168.15.8]) [187.162.21.192]:56838
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 428
+X-Org:  HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfDnipcMzfoVn/SK6RKr3AWtWg4QYUJFnwZ3nYABF4BFY4RNCyakNutxJWiAgGhjlAINA32ecC/kfNg3jiCmd6vbKq68xiMqkL2xeAshZlSvC2P2jZg16
+ RdXbpZWULO/lJ720lCIn8MAwM6jSfju768SnFgfSGxFvqsF7apO789meUtWZuNL/6r3tmuHgfUlln+l9cq1AR6x6S0Mw2kEpHPO2xDWrYL3ZD4cW3p164uk8
+X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Prepare for the coming implementation by GCC and Clang of the __counted_by
-attribute. Flexible array members annotated with __counted_by can have
-their accesses bounds-checked at run-time checking via CONFIG_UBSAN_BOUNDS
-(for array indexing) and CONFIG_FORTIFY_SOURCE (for strcpy/memcpy-family
-functions).
 
-As found with Coccinelle[1], add __counted_by for struct kioctx_table.
 
-[1] https://github.com/kees/kernel-tools/blob/trunk/coccinelle/examples/counted_by.cocci
+On 9/15/23 14:14, Kees Cook wrote:
+> Prepare for the coming implementation by GCC and Clang of the __counted_by
+> attribute. Flexible array members annotated with __counted_by can have
+> their accesses bounds-checked at run-time checking via CONFIG_UBSAN_BOUNDS
+> (for array indexing) and CONFIG_FORTIFY_SOURCE (for strcpy/memcpy-family
+> functions).
+> 
+> As found with Coccinelle[1], add __counted_by for struct kioctx_table.
+> 
+> [1] https://github.com/kees/kernel-tools/blob/trunk/coccinelle/examples/counted_by.cocci
+> 
+> Cc: Benjamin LaHaise <bcrl@kvack.org>
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: linux-aio@kvack.org
+> Cc: linux-fsdevel@vger.kernel.org
+> Signed-off-by: Kees Cook <keescook@chromium.org>
 
-Cc: Benjamin LaHaise <bcrl@kvack.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: linux-aio@kvack.org
-Cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- fs/aio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 
-diff --git a/fs/aio.c b/fs/aio.c
-index a4c2a6bac72c..f8589caef9c1 100644
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -80,7 +80,7 @@ struct aio_ring {
- struct kioctx_table {
- 	struct rcu_head		rcu;
- 	unsigned		nr;
--	struct kioctx __rcu	*table[];
-+	struct kioctx __rcu	*table[] __counted_by(nr);
- };
- 
- struct kioctx_cpu {
+Thanks
 -- 
-2.34.1
+Gustavo
 
+> ---
+>   fs/aio.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/aio.c b/fs/aio.c
+> index a4c2a6bac72c..f8589caef9c1 100644
+> --- a/fs/aio.c
+> +++ b/fs/aio.c
+> @@ -80,7 +80,7 @@ struct aio_ring {
+>   struct kioctx_table {
+>   	struct rcu_head		rcu;
+>   	unsigned		nr;
+> -	struct kioctx __rcu	*table[];
+> +	struct kioctx __rcu	*table[] __counted_by(nr);
+>   };
+>   
+>   struct kioctx_cpu {
