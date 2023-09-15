@@ -2,178 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 336D57A25B2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Sep 2023 20:29:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F40B7A2610
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Sep 2023 20:38:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236136AbjIOS2m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Sep 2023 14:28:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38858 "EHLO
+        id S236547AbjIOSiT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Sep 2023 14:38:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236495AbjIOS21 (ORCPT
+        with ESMTP id S236544AbjIOShr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Sep 2023 14:28:27 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 166C5271C
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Sep 2023 11:27:18 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id 4fb4d7f45d1cf-52a5c0d949eso2841853a12.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Sep 2023 11:27:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1694802436; x=1695407236; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7TVRLEu9EJ9mGV2bipP8Xm97KGB9uZNTupnuQjSJdsE=;
-        b=sKKT+kRRXdqHAoUZgMTugOxbcrbgqDgkkXjasxrWctWJd77Sw8TlsGuTd98pSRft9A
-         jN/MMQ3oP4/QuTKHBD9/YypfLSNU+2cuvu8u73JxBHsdsSFjo1rojX5WJRXSO1lIrr4X
-         Q/i++DKlLWUNrBbI96a2DUSv9ydwwnivZJKP06X04/cK0r2bQFBArjWiQF6VYJBobiMX
-         PGK/u5s+F2yWQLPEdRhYCODQlNQ8S+qDRhy7Nh2noe1XmCVyac1kWiIlCNg4DMBP7SEd
-         a3S1lxEG5glLqSDYO5PGcLNoSDLKwOIaoa1Db4onOn/2goDJ5rYfzEFwI2eODMv2KWvJ
-         JQEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694802436; x=1695407236;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7TVRLEu9EJ9mGV2bipP8Xm97KGB9uZNTupnuQjSJdsE=;
-        b=fdGZIz0vpF4yXcxvrgLcjRObObUAXyZuhdFGC/bIfIBvx3XBXzgbF6Qy3cChzysASN
-         75njy9v4jLnOJ3i/V/9Q0w5e+H3LE7YkbCUF2iTtaqwsi8SESEumTjguZAkpC991O1Ku
-         bhqK+9cVGQXyM5j1Zq/TPuF9SzaRrm5MptCKr7iaPnBMluIBWcKpspB+90leB4SVB9YD
-         r/YLPBnqzf8kWquQPxv+946NkeiZbHf9al8JhwkjBcd8eTdubyezjiiEfbjW6hrzpci7
-         z0peO0hW6MblXOJW3vzRpG/CSb+ul/h5yiyZWbgtHAa4rDC5JtEMJidlFNTaryMtd8rj
-         DU1w==
-X-Gm-Message-State: AOJu0YzQpnlg1wl5iatQlJWnUOdyfdINxZdLa+ka/ZKroaboDBY3M+U5
-        brLmlkNkXHujELmr+4xZD9LMZPdHGJY2I8Bjx+H4MA==
-X-Google-Smtp-Source: AGHT+IHg0l+d+9eXrE3JQYT1rNSzTJ30WS4x3AxsO8Su5H91K9tA7o+8Ltb2jJoMejIzZEOsQjI7O6t5d3aHWeK0K/E=
-X-Received: by 2002:a17:907:75fb:b0:9a1:f3a6:b906 with SMTP id
- jz27-20020a17090775fb00b009a1f3a6b906mr2140406ejc.36.1694802436299; Fri, 15
- Sep 2023 11:27:16 -0700 (PDT)
+        Fri, 15 Sep 2023 14:37:47 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 736281BD3;
+        Fri, 15 Sep 2023 11:37:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=JjdcCeARBetsZH137aFl33BJ3ii6NFAsip2SWa5M3tY=; b=p17pTr3se0JO/f6M04cDpPtP+5
+        K/0tbeZ6PTE1lD28UmJtDp+MmcL/fkV6rpoqjooMTaFiT6A+wiZNO3LfFsTW0EJg0CtGJ3T2Htj7q
+        2vPlqyDoipOOe5joiIo8yawKYHtz72l/cRIJRH1Y7fKZZaXRjPnL96TuNG3d7I5exwb2fOz2bdJZx
+        hrZHp1wcxwHcn37XwnLC4Q98HIXkwl0RW4mQtwsuzJZ06on3fs6Qb0d6uUwUI1wZ+FxH8pQT4w73L
+        qS3WAWId/CoC7Q2weH7Kr/MQIOEamN7K1gZKEzWnitOC6RJa5VvnCInxTb738HTzJvu/bfYYBYciq
+        GcGIN+Ig==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1qhDgi-00BMIL-Vs; Fri, 15 Sep 2023 18:37:09 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
+        torvalds@linux-foundation.org, Nicholas Piggin <npiggin@gmail.com>
+Subject: [PATCH 00/17] Add folio_end_read
+Date:   Fri, 15 Sep 2023 19:36:50 +0100
+Message-Id: <20230915183707.2707298-1-willy@infradead.org>
+X-Mailer: git-send-email 2.37.1
 MIME-Version: 1.0
-References: <CGME20230915095133eucas1p267bade2888b7fcd2e1ea8e13e21c495f@eucas1p2.samsung.com>
- <20230915095042.1320180-1-da.gomez@samsung.com> <20230915095042.1320180-7-da.gomez@samsung.com>
-In-Reply-To: <20230915095042.1320180-7-da.gomez@samsung.com>
-From:   Yosry Ahmed <yosryahmed@google.com>
-Date:   Fri, 15 Sep 2023 11:26:37 -0700
-Message-ID: <CAJD7tkbU20tyGxtdL-cqJxrjf38ObG_dUttZdLstH3O2sUTKzw@mail.gmail.com>
-Subject: Re: [PATCH 6/6] shmem: add large folios support to the write path
-To:     Daniel Gomez <da.gomez@samsung.com>
-Cc:     "minchan@kernel.org" <minchan@kernel.org>,
-        "senozhatsky@chromium.org" <senozhatsky@chromium.org>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "djwong@kernel.org" <djwong@kernel.org>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "hughd@google.com" <hughd@google.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "mcgrof@kernel.org" <mcgrof@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "gost.dev@samsung.com" <gost.dev@samsung.com>,
-        Pankaj Raghav <p.raghav@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 15, 2023 at 2:51=E2=80=AFAM Daniel Gomez <da.gomez@samsung.com>=
- wrote:
->
-> Add large folio support for shmem write path matching the same high
-> order preference mechanism used for iomap buffered IO path as used in
-> __filemap_get_folio().
->
-> Use the __folio_get_max_order to get a hint for the order of the folio
-> based on file size which takes care of the mapping requirements.
->
-> Swap does not support high order folios for now, so make it order 0 in
-> case swap is enabled.
+The core of this patchset is the new folio_end_read() call which
+filesystems can use when finishing a page cache read instead of separate
+calls to mark the folio uptodate and unlock it.  As an illustration of
+its use, I converted ext4, iomap & mpage; more can be converted.
 
-I didn't take a close look at the series, but I am not sure I
-understand the rationale here. Reclaim will split high order shmem
-folios anyway, right?
+I think that's useful by itself, but the interesting optimisation is
+that we can implement that with a single XOR instruction that sets the
+uptodate bit, clears the lock bit, tests the waiter bit and provides a
+write memory barrier.  That removes one memory barrier and one atomic
+instruction from each page read, which seems worth doing.  That's in
+patch 15.
 
-It seems like we only enable high order folios if the "noswap" mount
-option is used, which is fairly recent. I doubt it is widely used.
+The last two patches could be a separate series, but basically we can do
+the same thing with the writeback flag that we do with the unlock flag;
+clear it and test the waiters bit at the same time.
 
->
-> Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
-> ---
->  mm/shmem.c | 16 +++++++++++++---
->  1 file changed, 13 insertions(+), 3 deletions(-)
->
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index adff74751065..26ca555b1669 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -1683,13 +1683,19 @@ static struct folio *shmem_alloc_folio(gfp_t gfp,
->  }
->
->  static struct folio *shmem_alloc_and_acct_folio(gfp_t gfp, struct inode =
-*inode,
-> -               pgoff_t index, bool huge, unsigned int *order)
-> +               pgoff_t index, bool huge, unsigned int *order,
-> +               struct shmem_sb_info *sbinfo)
->  {
->         struct shmem_inode_info *info =3D SHMEM_I(inode);
->         struct folio *folio;
->         int nr;
->         int err;
->
-> +       if (!sbinfo->noswap)
-> +               *order =3D 0;
-> +       else
-> +               *order =3D (*order =3D=3D 1) ? 0 : *order;
-> +
->         if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
->                 huge =3D false;
->         nr =3D huge ? HPAGE_PMD_NR : 1U << *order;
-> @@ -2032,6 +2038,8 @@ static int shmem_get_folio_gfp(struct inode *inode,=
- pgoff_t index,
->                 return 0;
->         }
->
-> +       order =3D mapping_size_order(inode->i_mapping, index, len);
-> +
->         if (!shmem_is_huge(inode, index, false,
->                            vma ? vma->vm_mm : NULL, vma ? vma->vm_flags :=
- 0))
->                 goto alloc_nohuge;
-> @@ -2039,11 +2047,11 @@ static int shmem_get_folio_gfp(struct inode *inod=
-e, pgoff_t index,
->         huge_gfp =3D vma_thp_gfp_mask(vma);
->         huge_gfp =3D limit_gfp_mask(huge_gfp, gfp);
->         folio =3D shmem_alloc_and_acct_folio(huge_gfp, inode, index, true=
-,
-> -                                          &order);
-> +                                          &order, sbinfo);
->         if (IS_ERR(folio)) {
->  alloc_nohuge:
->                 folio =3D shmem_alloc_and_acct_folio(gfp, inode, index, f=
-alse,
-> -                                                  &order);
-> +                                                  &order, sbinfo);
->         }
->         if (IS_ERR(folio)) {
->                 int retry =3D 5;
-> @@ -2147,6 +2155,8 @@ static int shmem_get_folio_gfp(struct inode *inode,=
- pgoff_t index,
->         if (folio_test_large(folio)) {
->                 folio_unlock(folio);
->                 folio_put(folio);
-> +               if (order > 0)
-> +                       order--;
->                 goto alloc_nohuge;
->         }
->  unlock:
-> --
-> 2.39.2
->
+I don't have any performance numbers; I'm hoping Nick might provide some
+since PPC seems particularly unhappy with write-after-write hazards.
+
+Matthew Wilcox (Oracle) (17):
+  iomap: Hold state_lock over call to ifs_set_range_uptodate()
+  iomap: Protect read_bytes_pending with the state_lock
+  mm: Add folio_end_read()
+  ext4: Use folio_end_read()
+  buffer: Use folio_end_read()
+  iomap: Use folio_end_read()
+  bitops: Add xor_unlock_is_negative_byte()
+  alpha: Implement xor_unlock_is_negative_byte
+  m68k: Implement xor_unlock_is_negative_byte
+  mips: Implement xor_unlock_is_negative_byte
+  powerpc: Implement arch_xor_unlock_is_negative_byte on 32-bit
+  riscv: Implement xor_unlock_is_negative_byte
+  s390: Implement arch_xor_unlock_is_negative_byte
+  mm: Delete checks for xor_unlock_is_negative_byte()
+  mm: Add folio_xor_flags_has_waiters()
+  mm: Make __end_folio_writeback() return void
+  mm: Use folio_xor_flags_has_waiters() in folio_end_writeback()
+
+ arch/alpha/include/asm/bitops.h               | 20 +++++
+ arch/m68k/include/asm/bitops.h                | 13 ++++
+ arch/mips/include/asm/bitops.h                | 25 +++++-
+ arch/mips/lib/bitops.c                        | 14 ++++
+ arch/powerpc/include/asm/bitops.h             | 21 ++---
+ arch/riscv/include/asm/bitops.h               | 12 +++
+ arch/s390/include/asm/bitops.h                | 10 +++
+ arch/x86/include/asm/bitops.h                 | 11 ++-
+ fs/buffer.c                                   | 16 +---
+ fs/ext4/readpage.c                            | 14 +---
+ fs/iomap/buffered-io.c                        | 55 ++++++++-----
+ .../asm-generic/bitops/instrumented-lock.h    | 28 ++++---
+ include/asm-generic/bitops/lock.h             | 20 +----
+ include/linux/page-flags.h                    | 19 +++++
+ include/linux/pagemap.h                       |  1 +
+ kernel/kcsan/kcsan_test.c                     |  9 +--
+ kernel/kcsan/selftest.c                       |  9 +--
+ mm/filemap.c                                  | 77 ++++++++++---------
+ mm/kasan/kasan_test.c                         |  8 +-
+ mm/page-writeback.c                           | 35 ++++-----
+ 20 files changed, 248 insertions(+), 169 deletions(-)
+
+-- 
+2.40.1
+
