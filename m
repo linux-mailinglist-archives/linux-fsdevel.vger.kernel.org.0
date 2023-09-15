@@ -2,46 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FDAE7A2627
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Sep 2023 20:41:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41B777A264D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Sep 2023 20:43:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236691AbjIOSk7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Sep 2023 14:40:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38346 "EHLO
+        id S236621AbjIOSmj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Sep 2023 14:42:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236882AbjIOSkz (ORCPT
+        with ESMTP id S237003AbjIOSmY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Sep 2023 14:40:55 -0400
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B906422A;
-        Fri, 15 Sep 2023 11:39:00 -0700 (PDT)
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+        Fri, 15 Sep 2023 14:42:24 -0400
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 768214680;
+        Fri, 15 Sep 2023 11:39:05 -0700 (PDT)
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4RnNHz3428z9sSS;
-        Fri, 15 Sep 2023 20:38:55 +0200 (CEST)
+        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4RnNJ229ddz9sb6;
+        Fri, 15 Sep 2023 20:38:58 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-        s=MBO0001; t=1694803135;
+        s=MBO0001; t=1694803138;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=pCLutTTx1nXzynufX5Rc0GaxeJJRiIKE41sPKA97GlA=;
-        b=hsUb3KY4XvzrJ/umA8hy7LoJ99BD3KFTp3A7geTDr8UuQPQSYjMxDoznaGguaLUp7+zDIb
-        SpPpJCMfaXeSHycMiA5SkGcdhUnKdR3h+9BxRRTe16EO607wdLjOeBmcoXsuLn52tuqvDv
-        6vmC+15VxzBBalR61EhCSDFSmIsNKNLAGWw8wrAVsAyDjZWOJY6PUd+mtQyjsROOAYhLGS
-        NBJ3482DeuVAANzY1Xw0ipSZdmdT2UWd+jwufpsrPntaDwop5mTrOij6aXocMWbBhTaL3+
-        hzIlOi0fN7bzc6CO2LU+jTDYY2GYSV06QMUd7bZZKQ4eRqAmRVXDL0y/e0ivFQ==
+        bh=brBNMMPFZ5PlP6sQBgu5Kl4G5NsTW4oPgHcishpd4rM=;
+        b=H7FtLCnsLxyZnEESEUmlYWwS3HUNf7y+ztfA2o6k0H9UD8DCi3iwUcQnp3b4jG22OqxQbD
+        QFM0/lErD72ozGWznO0iOZsF/atrGWdf8N0u0R3Hkq8bk4gUT8aW8HcT+jRBFgWwrxd5Uu
+        Vus+AuRm5kbgPF1yfrMOE6cGiK4o8d/jv+ywz+Xqn4cOuOZ1fLpob2vRdUi+oU+M3pmIxD
+        7LGMNt7s1tjXR7rXizanhCgb+FofT9t8HGdpJGNM+Kvt4gFJP8E3aU4RSYvWNgOL3dM2Cw
+        rRU9mtKpZUVYEbkvs1/Q3spYJvwdrLhTQ+XZxP+V81DGW/fDC1ukMiA9Fhc+fQ==
 From:   Pankaj Raghav <kernel@pankajraghav.com>
 To:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Cc:     p.raghav@samsung.com, david@fromorbit.com, da.gomez@samsung.com,
         akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
         willy@infradead.org, djwong@kernel.org, linux-mm@kvack.org,
         chandan.babu@oracle.com, mcgrof@kernel.org, gost.dev@samsung.com
-Subject: [RFC 01/23] fs: Allow fine-grained control of folio sizes
-Date:   Fri, 15 Sep 2023 20:38:26 +0200
-Message-Id: <20230915183848.1018717-2-kernel@pankajraghav.com>
+Subject: [RFC 02/23] pagemap: use mapping_min_order in fgf_set_order()
+Date:   Fri, 15 Sep 2023 20:38:27 +0200
+Message-Id: <20230915183848.1018717-3-kernel@pankajraghav.com>
 In-Reply-To: <20230915183848.1018717-1-kernel@pankajraghav.com>
 References: <20230915183848.1018717-1-kernel@pankajraghav.com>
 MIME-Version: 1.0
@@ -55,142 +55,61 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+From: Pankaj Raghav <p.raghav@samsung.com>
 
-Some filesystems want to be able to limit the maximum size of folios,
-and some want to be able to ensure that folios are at least a certain
-size.  Add mapping_set_folio_orders() to allow this level of control.
-The max folio order parameter is ignored and it is always set to
-MAX_PAGECACHE_ORDER.
+fgf_set_order() encodes optimal order in fgp flags. Set it to at least
+mapping_min_order from the page cache. Default to the old behaviour if
+min_order is not set.
 
-[Pankaj]: added mapping_min_folio_order(), changed MAX_MASK to 0x0003e000
 Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
-[mcgrof: rebase in light of "mm, netfs, fscache: stop read optimisation
-when folio removed from pagecache" which adds AS_RELEASE_ALWAYS]
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- include/linux/pagemap.h | 78 +++++++++++++++++++++++++++++++----------
- 1 file changed, 60 insertions(+), 18 deletions(-)
+ fs/iomap/buffered-io.c  | 2 +-
+ include/linux/pagemap.h | 9 +++++----
+ 2 files changed, 6 insertions(+), 5 deletions(-)
 
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index ae8673ce08b1..d4613fd550c4 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -549,7 +549,7 @@ struct folio *iomap_get_folio(struct iomap_iter *iter, loff_t pos, size_t len)
+ 
+ 	if (iter->flags & IOMAP_NOWAIT)
+ 		fgp |= FGP_NOWAIT;
+-	fgp |= fgf_set_order(len);
++	fgp |= fgf_set_order(iter->inode->i_mapping, len);
+ 
+ 	return __filemap_get_folio(iter->inode->i_mapping, pos >> PAGE_SHIFT,
+ 			fgp, mapping_gfp_mask(iter->inode->i_mapping));
 diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 759b29d9a69a..d2b5308cc59e 100644
+index d2b5308cc59e..5d392366420a 100644
 --- a/include/linux/pagemap.h
 +++ b/include/linux/pagemap.h
-@@ -202,10 +202,16 @@ enum mapping_flags {
- 	AS_EXITING	= 4, 	/* final truncate in progress */
- 	/* writeback related tags are not used */
- 	AS_NO_WRITEBACK_TAGS = 5,
--	AS_LARGE_FOLIO_SUPPORT = 6,
--	AS_RELEASE_ALWAYS,	/* Call ->release_folio(), even if no private data */
-+	AS_RELEASE_ALWAYS = 6,      /* Call ->release_folio(), even if no private data */
-+	AS_FOLIO_ORDER_MIN = 8,
-+	AS_FOLIO_ORDER_MAX = 13,
-+	/* 8-17 are used for FOLIO_ORDER */
- };
+@@ -620,6 +620,7 @@ typedef unsigned int __bitwise fgf_t;
  
-+#define AS_FOLIO_ORDER_MIN_MASK 0x00001f00
-+#define AS_FOLIO_ORDER_MAX_MASK 0x0003e000
-+#define AS_FOLIO_ORDER_MASK (AS_FOLIO_ORDER_MIN_MASK | AS_FOLIO_ORDER_MAX_MASK)
-+
  /**
-  * mapping_set_error - record a writeback error in the address_space
-  * @mapping: the mapping in which an error should be set
-@@ -310,6 +316,46 @@ static inline void mapping_set_gfp_mask(struct address_space *m, gfp_t mask)
- 	m->gfp_mask = mask;
- }
- 
-+/*
-+ * There are some parts of the kernel which assume that PMD entries
-+ * are exactly HPAGE_PMD_ORDER.  Those should be fixed, but until then,
-+ * limit the maximum allocation order to PMD size.  I'm not aware of any
-+ * assumptions about maximum order if THP are disabled, but 8 seems like
-+ * a good order (that's 1MB if you're using 4kB pages)
-+ */
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+#define MAX_PAGECACHE_ORDER	HPAGE_PMD_ORDER
-+#else
-+#define MAX_PAGECACHE_ORDER	8
-+#endif
-+
-+/*
-+ * mapping_set_folio_orders() - Set the range of folio sizes supported.
-+ * @mapping: The file.
-+ * @min: Minimum folio order (between 0-MAX_PAGECACHE_ORDER inclusive).
-+ * @max: Maximum folio order (between 0-MAX_PAGECACHE_ORDER inclusive).
-+ *
-+ * The filesystem should call this function in its inode constructor to
-+ * indicate which sizes of folio the VFS can use to cache the contents
-+ * of the file.  This should only be used if the filesystem needs special
-+ * handling of folio sizes (ie there is something the core cannot know).
-+ * Do not tune it based on, eg, i_size.
-+ *
-+ * Context: This should not be called while the inode is active as it
-+ * is non-atomic.
-+ */
-+static inline void mapping_set_folio_orders(struct address_space *mapping,
-+					    unsigned int min, unsigned int max)
-+{
-+	/*
-+	 * XXX: max is ignored as only minimum folio order is supported
-+	 * currently.
-+	 */
-+	mapping->flags = (mapping->flags & ~AS_FOLIO_ORDER_MASK) |
-+			 (min << AS_FOLIO_ORDER_MIN) |
-+			 (MAX_PAGECACHE_ORDER << AS_FOLIO_ORDER_MAX);
-+}
-+
- /**
-  * mapping_set_large_folios() - Indicate the file supports large folios.
-  * @mapping: The file.
-@@ -323,7 +369,17 @@ static inline void mapping_set_gfp_mask(struct address_space *m, gfp_t mask)
+  * fgf_set_order - Encode a length in the fgf_t flags.
++ * @mapping: address_space struct from the inode
+  * @size: The suggested size of the folio to create.
+  *
+  * The caller of __filemap_get_folio() can use this to suggest a preferred
+@@ -629,13 +630,13 @@ typedef unsigned int __bitwise fgf_t;
+  * due to alignment constraints, memory pressure, or the presence of
+  * other folios at nearby indices.
   */
- static inline void mapping_set_large_folios(struct address_space *mapping)
+-static inline fgf_t fgf_set_order(size_t size)
++static inline fgf_t fgf_set_order(struct address_space *mapping, size_t size)
  {
--	__set_bit(AS_LARGE_FOLIO_SUPPORT, &mapping->flags);
-+	mapping_set_folio_orders(mapping, 0, MAX_PAGECACHE_ORDER);
-+}
-+
-+static inline unsigned int mapping_max_folio_order(struct address_space *mapping)
-+{
-+	return (mapping->flags & AS_FOLIO_ORDER_MAX_MASK) >> AS_FOLIO_ORDER_MAX;
-+}
-+
-+static inline unsigned int mapping_min_folio_order(struct address_space *mapping)
-+{
-+	return (mapping->flags & AS_FOLIO_ORDER_MIN_MASK) >> AS_FOLIO_ORDER_MIN;
+ 	unsigned int shift = ilog2(size);
++	unsigned int min_order = mapping_min_folio_order(mapping);
++	int order = max(min_order, shift - PAGE_SHIFT);
+ 
+-	if (shift <= PAGE_SHIFT)
+-		return 0;
+-	return (__force fgf_t)((shift - PAGE_SHIFT) << 26);
++	return (__force fgf_t)((order) << 26);
  }
  
- /*
-@@ -332,8 +388,7 @@ static inline void mapping_set_large_folios(struct address_space *mapping)
-  */
- static inline bool mapping_large_folio_support(struct address_space *mapping)
- {
--	return IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) &&
--		test_bit(AS_LARGE_FOLIO_SUPPORT, &mapping->flags);
-+	return mapping_max_folio_order(mapping) > 0;
- }
- 
- static inline int filemap_nr_thps(struct address_space *mapping)
-@@ -494,19 +549,6 @@ static inline void *detach_page_private(struct page *page)
- 	return folio_detach_private(page_folio(page));
- }
- 
--/*
-- * There are some parts of the kernel which assume that PMD entries
-- * are exactly HPAGE_PMD_ORDER.  Those should be fixed, but until then,
-- * limit the maximum allocation order to PMD size.  I'm not aware of any
-- * assumptions about maximum order if THP are disabled, but 8 seems like
-- * a good order (that's 1MB if you're using 4kB pages)
-- */
--#ifdef CONFIG_TRANSPARENT_HUGEPAGE
--#define MAX_PAGECACHE_ORDER	HPAGE_PMD_ORDER
--#else
--#define MAX_PAGECACHE_ORDER	8
--#endif
--
- #ifdef CONFIG_NUMA
- struct folio *filemap_alloc_folio(gfp_t gfp, unsigned int order);
- #else
+ void *filemap_get_entry(struct address_space *mapping, pgoff_t index);
 -- 
 2.40.1
 
