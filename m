@@ -2,95 +2,168 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 279ED7A2D5F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Sep 2023 04:16:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 591BF7A2D64
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Sep 2023 04:20:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237962AbjIPCPf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Sep 2023 22:15:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53882 "EHLO
+        id S238384AbjIPCTw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Sep 2023 22:19:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237881AbjIPCPR (ORCPT
+        with ESMTP id S231650AbjIPCTU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Sep 2023 22:15:17 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D7991FD2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Sep 2023 19:15:12 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-9a9cd066db5so357398966b.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Sep 2023 19:15:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1694830510; x=1695435310; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=FbufmgnpA0aesZB//HGaq/RO2Y/ticw2RyjyAED+2xY=;
-        b=NanDQtzLSn56DbN41fh7mYp+Cdf7CmrHSQHG1DhofFoaQ9727yFGL0Qxo6F7P8BvJK
-         5EGwqZn3/fUukro+ACcvUx1MMOAGJaJ9ZUfkS/VaAhLbXvBtUGoEk8MjlD3C+gJ68gUj
-         FvQ0uFfbULzhZ5g/syv9gwlwjNIOxVN5i6GWA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694830510; x=1695435310;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FbufmgnpA0aesZB//HGaq/RO2Y/ticw2RyjyAED+2xY=;
-        b=fGOdwEJy3nxIveTJ9hfVoFo2r2eVqs1gSmWrrizxFlqrJnVTtdTh78ckDLwrbYl6ds
-         of3v25u9j9KE0FHXBZM+LsXUHM4ld+Edt+qfNxJFVdokTEkNHM5UM1H0fpswNNTwR8R5
-         pXYVX7QJeS8SISKM0sW5rXuwCVKcHGv+CqwEWq2rbGoYnVbyKOazNeBLk7mOiisn931i
-         6IEZH1sb+HY0dqGaoMuLnaDPqzigNwR/psBGWk3X/2ilaUQ0E8iwojZ6sEvJM4xbPAmg
-         ntbHkYlriFaGLWOU1BdQbjnccTbkYgRsKf4c08V6x6j1cw7/piUuC6F11B6MjXRwL0cb
-         X+EQ==
-X-Gm-Message-State: AOJu0YxOqB7zEvleuMC2S4yeBrEI7CCBQWiw04ugOMv4DjB1PtULVOVM
-        OVeXUFAse24ho7HkKIvhvMEwgfyhSrRn2rpwz4j3wZMA
-X-Google-Smtp-Source: AGHT+IEPHa4EE8fxDj/LNeGzkKbveUY1pwjXGy/8p5/BCaS09J0L0w4G9Lo7iO5VKLHQ1zETHhBLew==
-X-Received: by 2002:a17:906:c4b:b0:9aa:e07:d421 with SMTP id t11-20020a1709060c4b00b009aa0e07d421mr2787616ejf.43.1694830510589;
-        Fri, 15 Sep 2023 19:15:10 -0700 (PDT)
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com. [209.85.218.44])
-        by smtp.gmail.com with ESMTPSA id kg28-20020a17090776fc00b00992d122af63sm3110366ejc.89.2023.09.15.19.15.09
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Sep 2023 19:15:09 -0700 (PDT)
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-9ada2e6e75fso353999366b.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Sep 2023 19:15:09 -0700 (PDT)
-X-Received: by 2002:a17:906:cc9:b0:977:ecff:3367 with SMTP id
- l9-20020a1709060cc900b00977ecff3367mr2903210ejh.40.1694830509066; Fri, 15 Sep
- 2023 19:15:09 -0700 (PDT)
+        Fri, 15 Sep 2023 22:19:20 -0400
+Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29B531BF2;
+        Fri, 15 Sep 2023 19:19:15 -0700 (PDT)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+        by mailout.west.internal (Postfix) with ESMTP id 78D0132002FB;
+        Fri, 15 Sep 2023 22:19:13 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Fri, 15 Sep 2023 22:19:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
+        :cc:content-transfer-encoding:content-type:content-type:date
+        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to; s=fm1; t=
+        1694830752; x=1694917152; bh=dczvAIbYbztKI9psgMdrTQAOAqQnIvtCypR
+        JKfR2cKQ=; b=CZEdpjTuZlQ0iPdoZFIPXx7Cl1P79HLCyQkGlqXSInAk2td5bk0
+        viG/ZNH1onVP5rV5wuGtovHaEkZyhUvyndY0CbXBUxL0i8gDI4SWBqmWlgUHR/tv
+        dxiNm1KrQoX32cScG1d44ssxTuL11xbCxuC3n8+O1DuzEoqFdqhk4BXE8EktP9Ve
+        xMKb/hXnujcCkqBMKukW3k+CnHF14LsA4teZLsEJyZaHYUnsN1KYdDfSohyI85bu
+        C9JtRU3NiTtwCMTi9uNIR5SObSrEK69cRTa7/4dbwbcjHnuhwnnP3B4QR5nQ5qUU
+        QgVowKpmZsh4Nus1g/yUI+pEJHCudRD7Lnw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:content-type:date:date:feedback-id:feedback-id
+        :from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+        1694830752; x=1694917152; bh=dczvAIbYbztKI9psgMdrTQAOAqQnIvtCypR
+        JKfR2cKQ=; b=a0J0xLTNceVYiEUX4d0ul+CYxgHpq5vjFRiN2wF2X9I6oS5Jxqr
+        FyAm+lkrwbNm0ccm1XxuRagVLJ/MRAsKYpavBg1WP/AiPJWSFtxWTRVPIyY3+WrV
+        ZQYlovfJOPRGDu9WkPUui9shKdUq2+6QLIcqzOQkFaW2WTtIRXPXsZv1XvzXxnEr
+        6h2hM4eXpSKRJ+CtpMaNyY+/IBdWk4ULX5D1yB9QrBDhwjS5/2frV5f5isgFOJkS
+        OoCIjAI/B4QYG+5FqrCELx25dL9L/lvM9zq/Gg1K+fjOOXqsOK/cEQ3I+JtOpIh5
+        x+luKYhtCzMOAeYCh9RI/HRwtcxZ5luGyHA==
+X-ME-Sender: <xms:oBAFZbW-uVubx3qTOXLOjdU8v5vgUvdfO5eiyE0yuddfyIVNHDdmJg>
+    <xme:oBAFZTntPvyxOx-sqE5zM_yPLVEPjXNz0Har04g8qQpN_p1nS8M196J0ExUpGvfDv
+    Z9clFM_Z4Gr>
+X-ME-Received: <xmr:oBAFZXaP2AXcO25rsMbCAW02QZkHypWXmZipruFibu8Rs9nVowC2Dfsa3qKBl_69BpqixDZGD-rlen4PfyyCToUiIlNX-cxjCajZrJeyHhpK7761T5s>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrudejfedgheeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtfeejnecuhfhrohhmpefkrghn
+    ucfmvghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnh
+    epgedvteevvdefiedvueeujeegtedvheelhfehtefhkefgjeeuffeguefgkeduhfejnecu
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprhgrvhgvnh
+    esthhhvghmrgifrdhnvght
+X-ME-Proxy: <xmx:oBAFZWWFxOfIxI1hWXvxK47W7hBn7BZojSODYM7ctjJzgj_vePOMFg>
+    <xmx:oBAFZVlO5Qlg_sNTkMPzdBA8DGn_8uOaXjusILeGgia6pnvAqFdRmQ>
+    <xmx:oBAFZTfu-CPfjI2SSAdr0LiiyIqjkikUcDjgdzP0JILObRVRBB8QPA>
+    <xmx:oBAFZWjJydA6INuWWB_fhoiJEpCWqekY7mGq4164RuAupPbOuPvcXA>
+Feedback-ID: i31e841b0:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 15 Sep 2023 22:19:07 -0400 (EDT)
+Message-ID: <9fd2f8da-17b0-e918-adef-4043678efaa2@themaw.net>
+Date:   Sat, 16 Sep 2023 10:19:02 +0800
 MIME-Version: 1.0
-References: <20230915183707.2707298-1-willy@infradead.org> <20230915183707.2707298-9-willy@infradead.org>
- <CAHk-=wgBUvM7tc70AAvUw+HHOo6Q=jD4FVheFGDCjNaK3OCEGA@mail.gmail.com>
- <ZQT4/gA4vIa/7H6q@casper.infradead.org> <CAHk-=whbj+pVGhJTcQCLhY8KZJNomWOKM=s-GZSpK_G=G4fXEA@mail.gmail.com>
-In-Reply-To: <CAHk-=whbj+pVGhJTcQCLhY8KZJNomWOKM=s-GZSpK_G=G4fXEA@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 15 Sep 2023 19:14:52 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wj+QEzoiUjeUkYqkJe4mcTQCshaAje51PiAuJu+REYxSA@mail.gmail.com>
-Message-ID: <CAHk-=wj+QEzoiUjeUkYqkJe4mcTQCshaAje51PiAuJu+REYxSA@mail.gmail.com>
-Subject: Re: [PATCH 08/17] alpha: Implement xor_unlock_is_negative_byte
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-arch@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-        autolearn=no autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [RFC PATCH 0/3] quering mount attributes
+Content-Language: en-US
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
+        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>
+References: <20230913152238.905247-1-mszeredi@redhat.com>
+ <CAOQ4uxiuc0VNVaF98SE0axE3Mw6wMJJ1t36cmbcM5vwYLqtWSw@mail.gmail.com>
+ <904a8d17-b6df-e294-fcf6-6f95459e1ffa@themaw.net>
+ <CAOQ4uxgHxVqtvb51Z27Sgft-U=oYtXeiv+3HJbara4zdRC-FZg@mail.gmail.com>
+From:   Ian Kent <raven@themaw.net>
+In-Reply-To: <CAOQ4uxgHxVqtvb51Z27Sgft-U=oYtXeiv+3HJbara4zdRC-FZg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_PASS,SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 15 Sept 2023 at 19:01, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On 15/9/23 11:06, Amir Goldstein wrote:
+> On Fri, Sep 15, 2023 at 4:20 AM Ian Kent <raven@themaw.net> wrote:
+>> On 14/9/23 14:47, Amir Goldstein wrote:
+>>> On Wed, Sep 13, 2023 at 6:22 PM Miklos Szeredi <mszeredi@redhat.com> wrote:
+>>>> Implement the mount querying syscalls agreed on at LSF/MM 2023.  This is an
+>>>> RFC with just x86_64 syscalls.
+>>>>
+>>>> Excepting notification this should allow full replacement for
+>>>> parsing /proc/self/mountinfo.
+>>> Since you mentioned notifications, I will add that the plan discussed
+>>> in LFSMM was, once we have an API to query mount stats and children,
+>>> implement fanotify events for:
+>>> mount [mntuid] was un/mounted at [parent mntuid],[dirfid+name]
+>>>
+>>> As with other fanotify events, the self mntuid and dirfid+name
+>>> information can be omitted and without it, multiple un/mount events
+>>> from the same parent mntuid will be merged, allowing userspace
+>>> to listmnt() periodically only mntuid whose child mounts have changed,
+>>> with little risk of event queue overflow.
+>>>
+>>> The possible monitoring scopes would be the entire mount namespace
+>>> of the monitoring program or watching a single mount for change in
+>>> its children mounts. The latter is similar to inotify directory children watch,
+>>> where the watches needs to be set recursively, with all the weight on
+>>> userspace to avoid races.
+>> It's been my belief that the existing notification mechanisms don't
+>> quite fully satisfy the needs of users of these calls (aka. the need
+>> I found when implementing David's original calls into systemd).
+>>
+>> Specifically the ability to process a batch of notifications at once.
+>>
+>> Admittedly the notifications mechanism that David originally implemented
+>> didn't fully implement what I found I needed but it did provide for a
+>> settable queue length and getting a batch of notifications at a time.
+>>
+>> Am I mistaken in my belief?
+>>
+> I am not sure I understand the question.
 >
-> No, I think "mov src,dst" is just a pseudo-op for "or src,src,dst",
-> there's no actual "mov" instruction, iirc.
+> fanotify has an event queue (16K events by default), but it can
+> also use unlimited size.
+> With a limited size queue, event queue overflow generates an
+> overflow event.
+>
+> event listeners can read a batch of events, depending on
+> the size of the buffer that they provide.
 
-Bah. I looked it up. It's actually supposed to be "BIS r31,src,dst".
+So it sounds like I can get a bunch of events at once with fanotify.
 
-Where "BIS" is indeed what most sane people call just "or". I think
-it's "BIt Set", but the assembler will accept the normal "or" mnemonic
-too.
+I'll have to look at the code again ...
 
-There's BIC ("BIt Clear") too. Also known as "and with complement".
 
-I assume it comes from some VAX background. Or maybe it's just a NIH
-thing and alpha wanted to be "special".
+Ian
 
-              Linus
+>
+> when multiple events with same information are queued,
+> for example "something was un/mounted over parent mntuid 100"
+> fanotify will merged those all those events in the queue and the
+> event listeners will get only one such event in the batch.
+>
+>> Don't misunderstand me, it would be great for the existing notification
+>> mechanisms to support these system calls, I just have a specific use case
+>> in mind that I think is important, at least to me.
+>>
+> Please explain the use case and your belief about existing fanotify
+> limitations. I did not understand it.
+>
+> Thanks,
+> Amir.
