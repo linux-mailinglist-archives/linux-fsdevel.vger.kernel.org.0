@@ -2,63 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DD407A2BC1
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Sep 2023 02:19:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6245B7A2BD7
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Sep 2023 02:22:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231572AbjIPASg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Sep 2023 20:18:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44546 "EHLO
+        id S230161AbjIPAVg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Sep 2023 20:21:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37656 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238341AbjIPASS (ORCPT
+        with ESMTP id S238107AbjIPAUv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Sep 2023 20:18:18 -0400
-Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 898E8359E
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Sep 2023 17:12:16 -0700 (PDT)
-Received: by mail-lj1-x231.google.com with SMTP id 38308e7fff4ca-2b962c226ceso42845151fa.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Sep 2023 17:12:16 -0700 (PDT)
+        Fri, 15 Sep 2023 20:20:51 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E58B3C00
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Sep 2023 17:18:51 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id 2adb3069b0e04-502d9ce31cbso4350921e87.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Sep 2023 17:18:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1694823134; x=1695427934; darn=vger.kernel.org;
+        d=linux-foundation.org; s=google; t=1694823371; x=1695428171; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=8c5EEQNtbw0MpT7TQp8klkowES4X88JiAqVKAD/YI88=;
-        b=SAzVGnsSi8BcZpTJaUyPPV8QfS1io9zyJoTpqj/aCUaU/DHdZCtTSJlyO2gONTR6NL
-         QN7/53scWRsHIWD4L+z0R6jDQvMVQMNL889eo3RqKkAEJ0xqj4ijq5Lyd0C5r2dkWerS
-         00YOYT6DSopPN+IQ5PZaPjwqLI6IerIpyeQn4=
+        bh=zporDHrE3+uyIwe+VfbiYR93jfa43r8rLTR9B3l5F9o=;
+        b=FGtUYMjDUo/vxqvnL/p+dNQbjJOsMfDK3U2ckYlvp+9DYiXRDoWIjEBXh6VR3StVHn
+         G4FTwxGQZ5GWYbDk+lk+BbGQ21FXo///kUv29067Gbg334dPOnB7HfYS70gnDDIfTnmO
+         JJ7WKakV/+f4qF+M7EWaRFP+WW16+8Z+GnYEM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694823134; x=1695427934;
+        d=1e100.net; s=20230601; t=1694823371; x=1695428171;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=8c5EEQNtbw0MpT7TQp8klkowES4X88JiAqVKAD/YI88=;
-        b=hQhbq7Tw5pB5FnjJQaz2wTHfeYxfhMb/ntysesUvdlEjVVWoLgkIMRzlVxjZU3a+mT
-         GqL07e+RzTn0vTZBK5gvJHHHOmvEwxSm5xuoX+X4lkVzajqeBfsUm95euUA4vxfgn+ef
-         s91LIaka5mcuYMtufZRRSigWVpOW2l/QzwiMiijIm19AEushgTxhlJ/CLc5ZBER8JIPV
-         Y4QjdPXHUmdJClwsWx70n8M9eafxXjrHiu1FaGelzoD0jKx97BhcTgVxBWzL0yj4yVlS
-         adyKeevY2qG9ZnMZy99xQiyzVGIHJ9mO8SLohAXe+fH4Q7lerN/EneB2RtFfpLK52BGy
-         AhLA==
-X-Gm-Message-State: AOJu0YwIBZn5ApzKyG8RP5LWpCoGrysFBVW2aYvEsZHyllTxdGsRIFNY
-        C4ZDjRAs1isB+XBz+UMvqWYtTde5FubwnJvk0flQpWWR
-X-Google-Smtp-Source: AGHT+IHjE8SmTNuqafYg0bp2VuBqlbqRiotom8qd84rYTF1KV1Jurr8NFBvNNAcEKCf0cI3nQ5LxMg==
-X-Received: by 2002:a2e:8018:0:b0:2bc:baa0:57b8 with SMTP id j24-20020a2e8018000000b002bcbaa057b8mr2541814ljg.15.1694823134566;
-        Fri, 15 Sep 2023 17:12:14 -0700 (PDT)
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com. [209.85.208.54])
-        by smtp.gmail.com with ESMTPSA id um12-20020a170906cf8c00b009a219ecbaf1sm3039765ejb.85.2023.09.15.17.12.13
+        bh=zporDHrE3+uyIwe+VfbiYR93jfa43r8rLTR9B3l5F9o=;
+        b=qiBuN3miGfLiSLghvOHYIDXWL/iBy06wTNg5JUAfUNg2RQ3fpSYQoXwGBlunps6fPj
+         5anTrAMZ741y51H5aPnhCpyz2jwcP1EU83ciWSg6B6oYKPFR853Lvpve34rhPtGVUvym
+         P6wcDR0D7CoEIZYZhFft+dXTY9otRS3Wb+tjotV8iAVCQ+NDmxm9j7K4K5qq9osPiF5r
+         cu/A39NCzO70MBPuR4est33iukvP/ny3pJgbXQChjKFu+AcFOMhVUgkDBHwrA2f5OWVR
+         VUrAfco+eHi6935FyXhuAd6eWZgyVLhjTRFminrBYoXk59YsqyBhlRYXHWHYYhu1kxYJ
+         Ld2A==
+X-Gm-Message-State: AOJu0Yzk4XZkmUuNTHonu3tNbB0ZrU52dCshhvjyZ1IVG/Q6a8MQe6hN
+        8hfOjOCX2MMvN5GpLXluMce2eLPF5/L4ImI2K8d4u7oW
+X-Google-Smtp-Source: AGHT+IE523Z5W6PsfrrWCB/ATy4omE8OlsYVtpdu7ZZXkIu5OH+HvwOD7SpLz1HGvaum9kIng6QZEQ==
+X-Received: by 2002:a05:6512:3da6:b0:500:b2f6:592 with SMTP id k38-20020a0565123da600b00500b2f60592mr2688298lfv.50.1694823371327;
+        Fri, 15 Sep 2023 17:16:11 -0700 (PDT)
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
+        by smtp.gmail.com with ESMTPSA id y21-20020ac255b5000000b00500a297ec4esm802952lfg.102.2023.09.15.17.16.10
         for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Sep 2023 17:12:13 -0700 (PDT)
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-530a6cbbb47so887957a12.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Sep 2023 17:12:13 -0700 (PDT)
-X-Received: by 2002:aa7:d758:0:b0:525:6d6e:ed53 with SMTP id
- a24-20020aa7d758000000b005256d6eed53mr2493234eds.27.1694823132722; Fri, 15
- Sep 2023 17:12:12 -0700 (PDT)
+        Fri, 15 Sep 2023 17:16:10 -0700 (PDT)
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-502d9ce31cbso4350897e87.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Sep 2023 17:16:10 -0700 (PDT)
+X-Received: by 2002:a05:6512:3113:b0:500:bc14:3e06 with SMTP id
+ n19-20020a056512311300b00500bc143e06mr2583654lfb.44.1694823369876; Fri, 15
+ Sep 2023 17:16:09 -0700 (PDT)
 MIME-Version: 1.0
 References: <20230915183707.2707298-1-willy@infradead.org> <20230915183707.2707298-3-willy@infradead.org>
-In-Reply-To: <20230915183707.2707298-3-willy@infradead.org>
+ <CAHk-=wh4=cYh5OC5PiiX_nAQkyViXL21bpmaARduGOLiOOgTyw@mail.gmail.com>
+In-Reply-To: <CAHk-=wh4=cYh5OC5PiiX_nAQkyViXL21bpmaARduGOLiOOgTyw@mail.gmail.com>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 15 Sep 2023 17:11:55 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wh4=cYh5OC5PiiX_nAQkyViXL21bpmaARduGOLiOOgTyw@mail.gmail.com>
-Message-ID: <CAHk-=wh4=cYh5OC5PiiX_nAQkyViXL21bpmaARduGOLiOOgTyw@mail.gmail.com>
+Date:   Fri, 15 Sep 2023 17:15:53 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whqZqTYunL-0tn2-khCU1rcZDrTvY4cdFsx_b_bF=xbGw@mail.gmail.com>
+Message-ID: <CAHk-=whqZqTYunL-0tn2-khCU1rcZDrTvY4cdFsx_b_bF=xbGw@mail.gmail.com>
 Subject: Re: [PATCH 02/17] iomap: Protect read_bytes_pending with the state_lock
 To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
 Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
@@ -74,73 +75,26 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 15 Sept 2023 at 11:37, Matthew Wilcox (Oracle)
-<willy@infradead.org> wrote:
+On Fri, 15 Sept 2023 at 17:11, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> Perform one atomic operation (acquiring the spinlock) instead of
-> two (spinlock & atomic_sub) per read completion.
+[...]
+>         if (unlikely(error))
+>                 folio_set_error(folio);
+>         else if (uptodate)
+>                 folio_mark_uptodate(folio);
+>         if (finished)
+>                 folio_unlock(folio);
+>   }
 
-I think this may be a worthwhile thing to do, but...
-
-> -static void iomap_finish_folio_read(struct folio *folio, size_t offset,
-> +static void iomap_finish_folio_read(struct folio *folio, size_t off,
-
-this function really turns into a mess.
-
-The diff is hard to read, and I'm not talking about the 'offset' ->
-'off' part, but about how now about half of the function has various
-'if (ifs)' tests spread out.
-
-And I think it actually hides what is going on.
-
-If you decide to combine all the "if (ifs)" parts on one side, and
-then simplify the end result, you actually end up with a much
-easier-to-read function.
-
-I think it ends up looking like this:
-
-  static void iomap_finish_folio_read(struct folio *folio, size_t off,
-                  size_t len, int error)
-  {
-        struct iomap_folio_state *ifs = folio->private;
-        bool uptodate = true;
-        bool finished = true;
-
-        if (ifs) {
-                unsigned long flags;
-
-                spin_lock_irqsave(&ifs->state_lock, flags);
-
-                if (!error)
-                        uptodate = ifs_set_range_uptodate(folio, ifs,
-off, len);
-
-                ifs->read_bytes_pending -= len;
-                finished = !ifs->read_bytes_pending;
-                spin_unlock_irqrestore(&ifs->state_lock, flags);
-        }
+Note that this then becomes
 
         if (unlikely(error))
                 folio_set_error(folio);
-        else if (uptodate)
-                folio_mark_uptodate(folio);
         if (finished)
-                folio_unlock(folio);
+                folio_unlock(folio, uptodate && !error);
   }
 
-but that was just a quick hack-work by me (the above does, for
-example, depend on folio_mark_uptodate() not needing the
-ifs->state_lock, so the shared parts then got moved out).
+but that change would happen later, in patch 6/17.
 
-I think the above looks a *lot* more legible than having three
-different versions of "if (ifs)" spread out in the function, and it
-also makes the parts that are actually protected by ifs->state_lock a
-lot more obvious.
-
-But again: I looked at your patch, found it very hard to follow, and
-then decided to quickly do a "what  happens if I apply the patch and
-then try to simplify the result".
-
-I might have made some simplification error. But please give that a look, ok?
-
-              Linus
+             Linus
