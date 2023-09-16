@@ -2,171 +2,291 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C7A97A2E45
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Sep 2023 08:54:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F29E7A2E48
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Sep 2023 08:56:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238798AbjIPGwe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 16 Sep 2023 02:52:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53512 "EHLO
+        id S238801AbjIPG4R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 16 Sep 2023 02:56:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238006AbjIPGwB (ORCPT
+        with ESMTP id S232518AbjIPGz6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 16 Sep 2023 02:52:01 -0400
-Received: from mail-oo1-f77.google.com (mail-oo1-f77.google.com [209.85.161.77])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EE811BC7
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Sep 2023 23:51:55 -0700 (PDT)
-Received: by mail-oo1-f77.google.com with SMTP id 006d021491bc7-57352a27980so4027972eaf.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Sep 2023 23:51:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694847114; x=1695451914;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EJGvlfgw7TNHd0h3ACkY6TxHvXPd27j4aXkbbUSsrkQ=;
-        b=bk+sAUkbIpCCv4Cy6/T7CxDCBTQhlMPTqCDNKsv6qDX8Enn/wTdVi9jPfGR2qv/sUv
-         IBz8u7tnL97NQxiF0laImP6nU8NEEegRF0w3luTGmFuShtiClAYJOa0rC/3GFfddzFQC
-         HhO7NStdjTIhQdgRmG+dKHEhSaocXWXUltFV/jN6jK6cUWx8iSu9UeYWgoiI0fRk7Vu9
-         Vfxg5EReM8wzxsyLr+qOkSg5pk73GJx67fJrcYmDVT8/kN6YujTCZ7P8FJxJnQAsU4pT
-         +BTeCXCa6WQOC1dc0OuBetjuRplIYTvHGC4XZcj8utRNjCh8volHbo9rnOI2KswCoeuQ
-         oHqw==
-X-Gm-Message-State: AOJu0YwfuaA6PkeaI9a2P/dQB25IgtjF0ZzOWMw6xcF+R22a6uc9pcuP
-        rGgnrrg0XaCf0Wx+ViIGg81wgF6/fF+VHVJhHDGKdAs/XHd8
-X-Google-Smtp-Source: AGHT+IEw9yD3FZr20zageWerz5sOz/v4+MPuxems2c8WQJNxUEJVjeGGdd3RUPCsYN3plpJPkewbzVROeMJSAz4SoMZmuuewcCJO
+        Sat, 16 Sep 2023 02:55:58 -0400
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11863B8;
+        Fri, 15 Sep 2023 23:55:52 -0700 (PDT)
+Received: from dggpeml500021.china.huawei.com (unknown [172.30.72.55])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Rnhbv5Ry6zrS6x;
+        Sat, 16 Sep 2023 14:53:47 +0800 (CST)
+Received: from [10.174.177.174] (10.174.177.174) by
+ dggpeml500021.china.huawei.com (7.185.36.21) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.31; Sat, 16 Sep 2023 14:55:48 +0800
+Message-ID: <89d049ed-6bbf-bba7-80d4-06c060e65e5b@huawei.com>
+Date:   Sat, 16 Sep 2023 14:55:47 +0800
 MIME-Version: 1.0
-X-Received: by 2002:a05:6808:2006:b0:3ac:ab4f:ee6 with SMTP id
- q6-20020a056808200600b003acab4f0ee6mr1508692oiw.1.1694847114399; Fri, 15 Sep
- 2023 23:51:54 -0700 (PDT)
-Date:   Fri, 15 Sep 2023 23:51:54 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000033d44706057458b3@google.com>
-Subject: [syzbot] [ext4?] WARNING in setattr_copy
-From:   syzbot <syzbot+450a6d7e0a2db0d8326a@syzkaller.appspotmail.com>
-To:     adilger.kernel@dilger.ca, brauner@kernel.org, jlayton@kernel.org,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        tytso@mit.edu, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-        autolearn=no autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.1.2
+Subject: Re: [czhong@redhat.com: [bug report] WARNING: CPU: 121 PID: 93233 at
+ fs/dcache.c:365 __dentry_kill+0x214/0x278]
+Content-Language: en-US
+To:     Yi Zhang <yi.zhang@redhat.com>, Ming Lei <ming.lei@redhat.com>,
+        <mark.rutland@arm.com>
+CC:     Christian Brauner <brauner@kernel.org>,
+        <linux-fsdevel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        Changhui Zhong <czhong@redhat.com>,
+        yangerkun <yangerkun@huawei.com>,
+        "zhangyi (F)" <yi.zhang@huawei.com>,
+        Baokun Li <libaokun1@huawei.com>, <peterz@infradead.org>,
+        Kees Cook <keescook@chromium.org>,
+        chengzhihao <chengzhihao1@huawei.com>
+References: <ZOWFtqA2om0w5Vmz@fedora>
+ <20230823-kuppe-lassen-bc81a20dd831@brauner>
+ <CAFj5m9KiBDzNHCsTjwUevZh3E3RRda2ypj9+QcRrqEsJnf9rXQ@mail.gmail.com>
+ <CAHj4cs_MqqWYy+pKrNrLqTb=eoSOXcZdjPXy44x-aA1WvdVv0w@mail.gmail.com>
+From:   Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <CAHj4cs_MqqWYy+pKrNrLqTb=eoSOXcZdjPXy44x-aA1WvdVv0w@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.174.177.174]
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpeml500021.china.huawei.com (7.185.36.21)
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On 2023/9/13 16:59, Yi Zhang wrote:
+> The issue still can be reproduced on the latest linux tree[2].
+> To reproduce I need to run about 1000 times blktests block/001, and
+> bisect shows it was introduced with commit[1], as it was not 100%
+> reproduced, not sure if it's the culprit?
+>
+>
+> [1] 9257959a6e5b locking/atomic: scripts: restructure fallback ifdeffery
+Hello, everyone！
 
-syzbot found the following issue on:
-
-HEAD commit:    3c13c772fc23 Add linux-next specific files for 20230912
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=15b02b0c680000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f7149cbda1664bc5
-dashboard link: https://syzkaller.appspot.com/bug?extid=450a6d7e0a2db0d8326a
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=155b32b4680000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12cf6028680000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/eb6fbc71f83a/disk-3c13c772.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/2d671ade67d9/vmlinux-3c13c772.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/b2b7190a3a61/bzImage-3c13c772.xz
-
-The issue was bisected to:
-
-commit d6f106662147d78e9a439608e8deac7d046ca0fa
-Author: Jeff Layton <jlayton@kernel.org>
-Date:   Wed Aug 30 18:28:43 2023 +0000
-
-    fs: have setattr_copy handle multigrain timestamps appropriately
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1419f8d8680000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=1619f8d8680000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1219f8d8680000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+450a6d7e0a2db0d8326a@syzkaller.appspotmail.com
-Fixes: d6f106662147 ("fs: have setattr_copy handle multigrain timestamps appropriately")
-
-overlayfs: fs on './file0' does not support file handles, falling back to index=off,nfs_export=off.
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 5042 at fs/attr.c:298 setattr_copy_mgtime fs/attr.c:298 [inline]
-WARNING: CPU: 0 PID: 5042 at fs/attr.c:298 setattr_copy+0x84c/0x950 fs/attr.c:355
-Modules linked in:
-CPU: 0 PID: 5042 Comm: syz-executor172 Not tainted 6.6.0-rc1-next-20230912-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/04/2023
-RIP: 0010:setattr_copy_mgtime fs/attr.c:298 [inline]
-RIP: 0010:setattr_copy+0x84c/0x950 fs/attr.c:355
-Code: 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 66 83 3c 02 00 0f 85 ff 00 00 00 4c 89 73 68 4c 89 7b 70 e9 9d fd ff ff e8 74 a8 92 ff <0f> 0b e9 91 fd ff ff 4c 89 ff e8 b5 93 e8 ff e9 69 f8 ff ff e8 ab
-RSP: 0018:ffffc900038cf268 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: ffff888076c766b0 RCX: 0000000000000000
-RDX: ffff88807926d940 RSI: ffffffff81f54afc RDI: 0000000000000005
-RBP: ffffc900038cf2a0 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000000000030 R11: ffffffff81ddb7d3 R12: ffffc900038cf420
-R13: 0000000000000030 R14: 0000000000000000 R15: ffff888076c766d8
-FS:  00005555574de380(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020001000 CR3: 000000001fdba000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- ext4_setattr+0x36f/0x2990 fs/ext4/inode.c:5479
- notify_change+0x742/0x11c0 fs/attr.c:539
- ovl_do_notify_change fs/overlayfs/overlayfs.h:188 [inline]
- ovl_set_timestamps.isra.0+0x168/0x1e0 fs/overlayfs/copy_up.c:345
- ovl_set_attr.part.0+0x1c8/0x210 fs/overlayfs/copy_up.c:369
- ovl_set_attr+0x1c9/0x200 fs/overlayfs/copy_up.c:372
- ovl_copy_up_metadata+0x471/0x6c0 fs/overlayfs/copy_up.c:668
- ovl_copy_up_workdir fs/overlayfs/copy_up.c:747 [inline]
- ovl_do_copy_up fs/overlayfs/copy_up.c:905 [inline]
- ovl_copy_up_one+0xb10/0x2f10 fs/overlayfs/copy_up.c:1091
- ovl_copy_up_flags+0x189/0x200 fs/overlayfs/copy_up.c:1146
- ovl_setattr+0x109/0x520 fs/overlayfs/inode.c:45
- notify_change+0x742/0x11c0 fs/attr.c:539
- chown_common+0x596/0x660 fs/open.c:783
- do_fchownat+0x140/0x1f0 fs/open.c:814
- __do_sys_lchown fs/open.c:839 [inline]
- __se_sys_lchown fs/open.c:837 [inline]
- __x64_sys_lchown+0x7e/0xc0 fs/open.c:837
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x38/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f9f835ef429
-Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fffbe3679e8 EFLAGS: 00000246 ORIG_RAX: 000000000000005e
-RAX: ffffffffffffffda RBX: 69662f7375622f2e RCX: 00007f9f835ef429
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000000200002c0
-RBP: 0079616c7265766f R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 00007fffbe367bc8 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
+We have confirmed that the merge-in of this patch caused hlist_bl_lock
+(aka, bit_spin_lock) to fail, which in turn triggered the issue above.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+The process in which VFS issue arise is as follows:
+1.  bl_head >>> first==dentry2 >>> dentry1
+dentry2->next = dentry1
+dentry2->pprev = head
+dentry1->next = NULL
+dentry1->pprev = dentry2
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+2. Concurrent deletion of dentry, hlist_bl_lock lock protection failure
+```
+__hlist_bl_del(dentry2)
+                                __hlist_bl_del(dentry1)
+                                dentry2->next = NULL;
+                                dentry1->next = NULL;
+                                dentry1->pprev = NULL;
+head->first = dentry1
+dentry1->pprev = head
+dentry2->next = NULL;
+dentry2->pprev = NULL;
+```
+3. WARN_ON/BUG_ON is triggered because dentry1 is still on the
+  hlist after being deleted.
 
-If the bug is already fixed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+dentry1->next = NULL
+dentry1->pprev = head
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
 
-If you want to overwrite bug's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+Verify that hlist_bl_lock is not working with the following mod：
+mymod.c
+```
+#include <linux/kallsyms.h>
+#include <linux/module.h>
+#include <linux/moduleloader.h>
+#include <linux/kernel.h>
+#include <linux/jiffies.h>
+#include <linux/sched.h>
+#include <linux/smp.h>
+#include <linux/cpu.h>
+#include <linux/delay.h>
+#include <linux/percpu.h>
+#include <linux/threads.h>
+#include <linux/kthread.h>
+#include <linux/kernel_stat.h>
+#include <linux/version.h>
+#include <linux/slab.h>
+#include <linux/smpboot.h>
+#include <linux/pagemap.h>
+#include <linux/notifier.h>
+#include <linux/syscalls.h>
+#include <linux/namei.h>
 
-If the bug is a duplicate of another bug, reply with:
-#syz dup: exact-subject-of-another-report
+#include <asm/atomic.h>
+#include <asm/bitops.h>
 
-If you want to undo deduplication, reply with:
-#syz undup
+static unsigned long long a = 0, b = 0;
+static struct hlist_bl_head bl_head;
+
+struct task_struct *Thread1;
+struct task_struct *Thread2;
+struct task_struct *Thread3;
+struct task_struct *Thread4;
+struct task_struct *Thread5;
+struct task_struct *Thread6;
+int increase_ab(void *arg);
+
+int increase_ab(void *arg)
+{
+     while (1) {
+         hlist_bl_lock(&bl_head);
+         if (a != b) {
+             pr_err(">>> a = %llu, b = %llu \n", a, b);
+             BUG();
+             return -1;
+         }
+         if (a > (ULLONG_MAX - 4096)) {
+             a = 0;
+             b = 0;
+         }
+         a++;
+         b++;
+         hlist_bl_unlock(&bl_head);
+         schedule();
+     }
+     return 0;
+}
+
+static int mymod_init(void)
+{
+     INIT_HLIST_BL_HEAD(&bl_head);
+
+     Thread1 = kthread_create(increase_ab, NULL, "bl_lock_thread1");
+     wake_up_process(Thread1);
+
+     Thread2 = kthread_create(increase_ab, NULL, "bl_lock_thread2");
+     wake_up_process(Thread2);
+
+     Thread3 = kthread_create(increase_ab, NULL, "bl_lock_thread3");
+     wake_up_process(Thread3);
+
+     Thread4 = kthread_create(increase_ab, NULL, "bl_lock_thread4");
+     wake_up_process(Thread4);
+
+     Thread5 = kthread_create(increase_ab, NULL, "bl_lock_thread5");
+     wake_up_process(Thread5);
+
+     Thread6 = kthread_create(increase_ab, NULL, "bl_lock_thread6");
+     wake_up_process(Thread6);
+
+         return 0;
+}
+
+static void mymod_exit(void)
+{
+     if (Thread1)
+         kthread_stop(Thread1);
+         if (Thread2)
+                 kthread_stop(Thread2);
+         if (Thread3)
+                 kthread_stop(Thread3);
+         if (Thread4)
+                 kthread_stop(Thread4);
+         if (Thread5)
+                 kthread_stop(Thread5);
+         if (Thread6)
+                 kthread_stop(Thread6);
+}
+
+module_init(mymod_init);
+module_exit(mymod_exit);
+
+MODULE_LICENSE("Dual BSD/GPL");
+
+```
+
+
+After 9257959a6e5b ("locking/atomic: scripts: restructure fallback 
+ifdeffery") is
+merged in, we can see the problem when inserting the ko:
+```
+[root@localhost ~]# insmod mymod.ko
+[   37.994787][  T621] >>> a = 725, b = 724
+[   37.995313][  T621] ------------[ cut here ]------------
+[   37.995951][  T621] kernel BUG at fs/mymod/mymod.c:42!
+[r[  oo 3t7@.l996o4c61al]h[o s T6t21] ~ ]#Int ernal error: Oops - BUG: 
+00000000f2000800 [#1] SMP
+[   37.997420][  T621] Modules linked in: mymod(E)
+[   37.997891][  T621] CPU: 9 PID: 621 Comm: bl_lock_thread2 Tainted: 
+G            E      6.4.0-rc2-00034-g9257959a6e5b-dirty #117
+[   37.999038][  T621] Hardware name: linux,dummy-virt (DT)
+[   37.999571][  T621] pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT 
+-SSBS BTYPE=--)
+[   38.000344][  T621] pc : increase_ab+0xcc/0xe70 [mymod]
+[   38.000882][  T621] lr : increase_ab+0xcc/0xe70 [mymod]
+[   38.001416][  T621] sp : ffff800008b4be40
+[   38.001822][  T621] x29: ffff800008b4be40 x28: 0000000000000000 x27: 
+0000000000000000
+[   38.002605][  T621] x26: 0000000000000000 x25: 0000000000000000 x24: 
+0000000000000000
+[   38.003385][  T621] x23: ffffd9930c698190 x22: ffff800008a0ba38 x21: 
+0000000000000001
+[   38.004174][  T621] x20: ffffffffffffefff x19: ffffd9930c69a580 x18: 
+0000000000000000
+[   38.004955][  T621] x17: 0000000000000000 x16: ffffd9933011bd38 x15: 
+ffffffffffffffff
+[   38.005754][  T621] x14: 0000000000000000 x13: 205d313236542020 x12: 
+ffffd99332175b80
+[   38.006538][  T621] x11: 0000000000000003 x10: 0000000000000001 x9 : 
+ffffd9933022a9d8
+[   38.007325][  T621] x8 : 00000000000bffe8 x7 : c0000000ffff7fff x6 : 
+ffffd993320b5b40
+[   38.008124][  T621] x5 : ffff0001f7d1c708 x4 : 0000000000000000 x3 : 
+0000000000000000
+[   38.008912][  T621] x2 : 0000000000000000 x1 : 0000000000000000 x0 : 
+0000000000000015
+[   38.009709][  T621] Call trace:
+[   38.010035][  T621]  increase_ab+0xcc/0xe70 [mymod]
+[   38.010539][  T621]  kthread+0xdc/0xf0
+[   38.010927][  T621]  ret_from_fork+0x10/0x20
+[   38.011370][  T621] Code: 17ffffe0 90000020 91044000 9400000d (d4210000)
+[   38.012067][  T621] ---[ end trace 0000000000000000 ]---
+[   38.012603][  T621] Kernel panic - not syncing: Oops - BUG: Fatal 
+exception
+[   38.013311][  T621] SMP: stopping secondary CPUs
+[   38.013818][  T621] Kernel Offset: 0x599328000000 from 0xffff800008000000
+[   38.014508][  T621] PHYS_OFFSET: 0x40000000
+[   38.014933][  T621] CPU features: 0x000000,0220080c,44016203
+[   38.015510][  T621] Memory Limit: none
+[   38.015950][  T621] ---[ end Kernel panic - not syncing: Oops - BUG: 
+Fatal exception ]---
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
