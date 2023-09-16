@@ -2,168 +2,185 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 591BF7A2D64
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Sep 2023 04:20:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B07697A2E1A
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Sep 2023 08:00:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238384AbjIPCTw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Sep 2023 22:19:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52266 "EHLO
+        id S236463AbjIPF7Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 16 Sep 2023 01:59:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231650AbjIPCTU (ORCPT
+        with ESMTP id S234360AbjIPF7C (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Sep 2023 22:19:20 -0400
-Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29B531BF2;
-        Fri, 15 Sep 2023 19:19:15 -0700 (PDT)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailout.west.internal (Postfix) with ESMTP id 78D0132002FB;
-        Fri, 15 Sep 2023 22:19:13 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Fri, 15 Sep 2023 22:19:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
-        :cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm1; t=
-        1694830752; x=1694917152; bh=dczvAIbYbztKI9psgMdrTQAOAqQnIvtCypR
-        JKfR2cKQ=; b=CZEdpjTuZlQ0iPdoZFIPXx7Cl1P79HLCyQkGlqXSInAk2td5bk0
-        viG/ZNH1onVP5rV5wuGtovHaEkZyhUvyndY0CbXBUxL0i8gDI4SWBqmWlgUHR/tv
-        dxiNm1KrQoX32cScG1d44ssxTuL11xbCxuC3n8+O1DuzEoqFdqhk4BXE8EktP9Ve
-        xMKb/hXnujcCkqBMKukW3k+CnHF14LsA4teZLsEJyZaHYUnsN1KYdDfSohyI85bu
-        C9JtRU3NiTtwCMTi9uNIR5SObSrEK69cRTa7/4dbwbcjHnuhwnnP3B4QR5nQ5qUU
-        QgVowKpmZsh4Nus1g/yUI+pEJHCudRD7Lnw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-        1694830752; x=1694917152; bh=dczvAIbYbztKI9psgMdrTQAOAqQnIvtCypR
-        JKfR2cKQ=; b=a0J0xLTNceVYiEUX4d0ul+CYxgHpq5vjFRiN2wF2X9I6oS5Jxqr
-        FyAm+lkrwbNm0ccm1XxuRagVLJ/MRAsKYpavBg1WP/AiPJWSFtxWTRVPIyY3+WrV
-        ZQYlovfJOPRGDu9WkPUui9shKdUq2+6QLIcqzOQkFaW2WTtIRXPXsZv1XvzXxnEr
-        6h2hM4eXpSKRJ+CtpMaNyY+/IBdWk4ULX5D1yB9QrBDhwjS5/2frV5f5isgFOJkS
-        OoCIjAI/B4QYG+5FqrCELx25dL9L/lvM9zq/Gg1K+fjOOXqsOK/cEQ3I+JtOpIh5
-        x+luKYhtCzMOAeYCh9RI/HRwtcxZ5luGyHA==
-X-ME-Sender: <xms:oBAFZbW-uVubx3qTOXLOjdU8v5vgUvdfO5eiyE0yuddfyIVNHDdmJg>
-    <xme:oBAFZTntPvyxOx-sqE5zM_yPLVEPjXNz0Har04g8qQpN_p1nS8M196J0ExUpGvfDv
-    Z9clFM_Z4Gr>
-X-ME-Received: <xmr:oBAFZXaP2AXcO25rsMbCAW02QZkHypWXmZipruFibu8Rs9nVowC2Dfsa3qKBl_69BpqixDZGD-rlen4PfyyCToUiIlNX-cxjCajZrJeyHhpK7761T5s>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrudejfedgheeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtfeejnecuhfhrohhmpefkrghn
-    ucfmvghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnh
-    epgedvteevvdefiedvueeujeegtedvheelhfehtefhkefgjeeuffeguefgkeduhfejnecu
-    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprhgrvhgvnh
-    esthhhvghmrgifrdhnvght
-X-ME-Proxy: <xmx:oBAFZWWFxOfIxI1hWXvxK47W7hBn7BZojSODYM7ctjJzgj_vePOMFg>
-    <xmx:oBAFZVlO5Qlg_sNTkMPzdBA8DGn_8uOaXjusILeGgia6pnvAqFdRmQ>
-    <xmx:oBAFZTfu-CPfjI2SSAdr0LiiyIqjkikUcDjgdzP0JILObRVRBB8QPA>
-    <xmx:oBAFZWjJydA6INuWWB_fhoiJEpCWqekY7mGq4164RuAupPbOuPvcXA>
-Feedback-ID: i31e841b0:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 15 Sep 2023 22:19:07 -0400 (EDT)
-Message-ID: <9fd2f8da-17b0-e918-adef-4043678efaa2@themaw.net>
-Date:   Sat, 16 Sep 2023 10:19:02 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [RFC PATCH 0/3] quering mount attributes
-Content-Language: en-US
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        Sat, 16 Sep 2023 01:59:02 -0400
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2094.outbound.protection.outlook.com [40.107.255.94])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D19EE1BD3;
+        Fri, 15 Sep 2023 22:58:56 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=RDk0O/YaH7xyvSADWY04a1Kq8EGI/a5uCsp6KhZSYSo4mcQBTC0K3FqoyMmQCOuyzszKHoeaSQK+sVOXWXq6YvUInntUHT79NriY//cdDeFd7evD64LHrUFtTXQanYjWt8HVgx/5fg7d40n/shjSTKTnNIvPo6sGvnc0YRHutLX/PSH9Ike3MnBzhSAy04MMaLIHu9bfe/RZqCM6wICJtPAAVkh2ESlbQJTzAQMgGZZrQOyTrXZebI/BcmhAazTAeNUWQzdzEFUbDH76JyhbOoWfsjKObUixo6RJ1eB8Ual3s5lZaHcubiLCGbH+VyoEwPAVUB07Zmf3OJOKcqQ3dw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4hm+lhYvKGPsgiAdh1aD0tYmNntDmEqvBMPH/tRN53U=;
+ b=HAJ/1kvn5pYDgOKvk/eLTfQYyglZK+qStSAM2VKVa5AlU/uE9ixBKDwIv+6tqTCr1f7NnJaXeC7q57ROqIS5o4Xhgn7t0NdBAw2oTzyMiW56dCr3XlVz7k88cUMdxvLqDUPlM/pGaqTp+4m5OWtgX8QAC6zVK9WFECJCnDlMKbj7Rr/J9nL1h5khB6fZNqoeHgbXCrB78qblTXgFnD8T9EsGUVUuPtiXsFCdNr8yXpYLs2hPSZcmSrGh5nYH/TDFw+YrvC8gXssSyAOX7Xd6jkMhMvQz/QFUk4BQYPmP/5rNLsiSzk4z6dSkjx7Cr1XeI8qVjuLXDgWEtqhte8SGqw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4hm+lhYvKGPsgiAdh1aD0tYmNntDmEqvBMPH/tRN53U=;
+ b=btv3VC6TnuJ3GYAppBIfYTusj/NvRsKBVRckd8FNktlLTqUqV+0ULcLcazUgu68ihEYzULikPliYTb7SnBeqn6hHrYxBL5izl2G1juQbEl3Ku/lyW7Vf+cWynu34XlwVt4Yqj02pH/A+3kCB9vQdP5VPeBFc3Vuo96vBj99aJ0/Kp0YjnnlFxPSzhR2koFMX60JTQuWD6aAjP6Dg/JtTGvQDL0/CoWu4OJuA5ASriUokvwTbsUtft2hfwmA26POfF2hjfQmkcy6SKz6l1psZTebF/GtsrMzdvw/n8zVKwii4ih5vduovw0HS5PNDRZI08SQL84H+zEEUkHAHQ+aMpw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from TY2PR06MB3342.apcprd06.prod.outlook.com (2603:1096:404:fb::23)
+ by TYZPR06MB6308.apcprd06.prod.outlook.com (2603:1096:400:41d::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6792.23; Sat, 16 Sep
+ 2023 05:58:53 +0000
+Received: from TY2PR06MB3342.apcprd06.prod.outlook.com
+ ([fe80::60d3:1ef9:d644:3959]) by TY2PR06MB3342.apcprd06.prod.outlook.com
+ ([fe80::60d3:1ef9:d644:3959%4]) with mapi id 15.20.6792.023; Sat, 16 Sep 2023
+ 05:58:52 +0000
+From:   Chunhai Guo <guochunhai@vivo.com>
+To:     jack@suse.cz
+Cc:     brauner@kernel.org, viro@zeniv.linux.org.uk,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
-        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>
-References: <20230913152238.905247-1-mszeredi@redhat.com>
- <CAOQ4uxiuc0VNVaF98SE0axE3Mw6wMJJ1t36cmbcM5vwYLqtWSw@mail.gmail.com>
- <904a8d17-b6df-e294-fcf6-6f95459e1ffa@themaw.net>
- <CAOQ4uxgHxVqtvb51Z27Sgft-U=oYtXeiv+3HJbara4zdRC-FZg@mail.gmail.com>
-From:   Ian Kent <raven@themaw.net>
-In-Reply-To: <CAOQ4uxgHxVqtvb51Z27Sgft-U=oYtXeiv+3HJbara4zdRC-FZg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        Chunhai Guo <guochunhai@vivo.com>
+Subject: [PATCH] fs-writeback: do not requeue a clean inode having skipped pages
+Date:   Fri, 15 Sep 2023 22:51:31 -0600
+Message-Id: <20230916045131.957929-1-guochunhai@vivo.com>
+X-Mailer: git-send-email 2.25.1
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_PASS,SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain
+X-ClientProxiedBy: SI2P153CA0001.APCP153.PROD.OUTLOOK.COM (2603:1096:4:140::7)
+ To TY2PR06MB3342.apcprd06.prod.outlook.com (2603:1096:404:fb::23)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TY2PR06MB3342:EE_|TYZPR06MB6308:EE_
+X-MS-Office365-Filtering-Correlation-Id: e47af366-76b8-4c1d-602e-08dbb67a0120
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: J9Db6LnaDZ0M4MtzW8SxMRsXalYGwjEdGsQg/MbD3ZHfSUJiMcTSFeY0UA0f9GML1zsQVyGYpxXAoRdj1KFxcrrwNze+m9k/9IshFbopAaWi5SHIrsowFZ2zurSsl+p9wcxDcf9gSzOapCZchUAxRTT+nmFh7jQeoD5vHIy9uccFFyGI0eFqH4ifuhS7kx/oDDN74J5oFqPtHqVSSG5Jma99Oz+esMkWoxB1z/pca3ozPycC3PyxHCAAAtGPodjLBpcH9khcfYJzVApTEJufnRYROcCFF2ug7obwd2ZrsFEHrG831Ve68QGwhEzp3ipFy03BJeFIFK+FpsdQmZ74UALDNrNNfB5aOgw+2d7n2Xm0HaVP2Fl7Iz8VhRsiCNuMA7V6WuHq2/acEmCjsp74IKTRSvtAfj/tBn3icvq9pykBGwfsE7RW45H4bvfg8mRnxnMBCAXXUJBB/bgk3V4I73xazRe4zyLcUaq1hvRyUWkkN4oMpGD55ByFYhvT1UBV3n+jO423yZi2zWKklT3V4zeFlOCxuJ0+uTSPgOtZ53HCInFwvXq/BdvQe3EiBPg58Q9D6fSm8FKwdsfrYhzfsNZytJNOU8deTbDtBIlGPexa55IVoQ/jspDlucF+GOLT
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY2PR06MB3342.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(396003)(136003)(376002)(366004)(346002)(39850400004)(186009)(1800799009)(451199024)(2616005)(1076003)(107886003)(26005)(6486002)(6506007)(52116002)(6512007)(38100700002)(36756003)(38350700002)(86362001)(83380400001)(5660300002)(478600001)(41300700001)(316002)(66556008)(66476007)(8676002)(8936002)(6916009)(4326008)(6666004)(66946007)(2906002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?qDGpopi8JF+iX8k2A8cJbYksi0DF+lcIGt8efgluxczroKjnV104l0c197qs?=
+ =?us-ascii?Q?z0oPJ1j6xXylpwks5VTXmg30DlrNajw5Ygdzga90a1XfIFRnJUxs03u0JEf1?=
+ =?us-ascii?Q?/U6XPbCQ6r2hW+2gZwlEdDSW5fPrChOAIrwwvjLPTj4pcCAG4ZkZ0xoBuNWt?=
+ =?us-ascii?Q?qGp+uWtu6uXW7PhzZM3yWW9yqNm/INIUUY7F7fENtjJHJ5OrWFES/G3OwZGU?=
+ =?us-ascii?Q?ZWlD7nttv3iRPd5OXs5wAuTNSnJZMg//WnnZghyTO9sEdB9dGNOXqNt5+zY8?=
+ =?us-ascii?Q?8geegdjcrA+4IsO9W1WftHuxT9C3tD16NIfRpTxgT4y6jndkzw0iorra/qgJ?=
+ =?us-ascii?Q?ED3KfBx55vkRXtR68dR4uTKkyJhip5UW5ZdwvvJ3XarYdY2KGLJVp9XCO11e?=
+ =?us-ascii?Q?VJnXNPU4SIbNO7RGVt3KVeLjXpdeS3KMSz1FqeB1BVs8lhFnYlTkOwDFEENs?=
+ =?us-ascii?Q?epNT+0Fe1OY9Tu5uZW5AVFBkIAql07RPE254+Sw8P9G6Bk0ROXRaRdttdoQg?=
+ =?us-ascii?Q?miLRjsefBv/M4i1Chw62TS3Iq7wF8T/yqdiA7BC2srFiZgeFfzPBgALw6ViK?=
+ =?us-ascii?Q?Z3795kks+ISaFInL6cJbM2gxrVmEwwa6dovPWDe8S8SMJPCxf980dotbP/od?=
+ =?us-ascii?Q?eYIPlDN9624vDQMtnj9YXUE4Wfc5gt3SaTHd55o7sSg34m9kXS6IMbWrfgP8?=
+ =?us-ascii?Q?Od+6u8jVQ8BKANXDilpJk/hQ3pFOlj4emyuWSgljrPr9OmGtpit1Cg1lY8k+?=
+ =?us-ascii?Q?ReO5QxoHIyJQcsZpgQkiq+weayY2rWI5xkthAxhkPhBQX4B2GdCNxSeaG5Ob?=
+ =?us-ascii?Q?fb/8/bcluNeeDTCDVh+2g9BHsa4JkV9woCA0e50qieT1eh3o7yGFH8rll0mW?=
+ =?us-ascii?Q?HZSEvLjl0sN+dmTRQ04Ysg1yPcnMDmUwmKq787J29ZKQ7DXwgqfQT2xkQwaG?=
+ =?us-ascii?Q?aKyoRYT7/XrxKij9ycLnh+jMVgHT8Ode/+bxD0DkTNDpKzsy6t3jA6A5OnvS?=
+ =?us-ascii?Q?dIEDOg6ATxWaYFep59LsDLJAnN1b6oy8kqY8PFoYMYK7cG0wMROEMcveoyaV?=
+ =?us-ascii?Q?5oLC/Onlsk0/H+PJY7MsMXSClvzWsMUXYuxZu2rby9793bbh7ifrBOvWUw44?=
+ =?us-ascii?Q?F5JcH6lUPDXKUYnSDadVwrcxgoYWWRxMO3we3SjFNyrh7zTuUjs7wiet6fGQ?=
+ =?us-ascii?Q?5qfKusmnl1fX1mphIoKeizZxTGxzv7cSrhLdXb50e1Oa366IHelHKmQRBXqH?=
+ =?us-ascii?Q?EDaeU3NujTyKV5ufwTqPj/6aR6XmdQOQAL/EcQ+dd8COa7Z8i4WTeUhoTv8z?=
+ =?us-ascii?Q?uvC/wJkc12mIN6oYOKlFSQgyP0RcQK9+sqVALzrhKTnK68c2TvGJYApwARbr?=
+ =?us-ascii?Q?gkvlFoMr0xwd3JW9pp3MprPZ8Dgh2M8lObkPw7QZMpeyQXQj9TPv9LU4i3I1?=
+ =?us-ascii?Q?CA/26+DDYVD4jWMp4UbbxbVi1r99k9yegd4CeQLS4wDpJEic9u/WLNDiT9F4?=
+ =?us-ascii?Q?Y6gALjdWqlcI3RGBN621WWg9rqQzOdUbydrb8E2unonLtgjsq7lO59aJKv0g?=
+ =?us-ascii?Q?j9Z8T9I160m2VBnlwz7KqSx8G3IZnCL9Hzgf1pxd?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e47af366-76b8-4c1d-602e-08dbb67a0120
+X-MS-Exchange-CrossTenant-AuthSource: TY2PR06MB3342.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2023 05:58:52.6948
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4n8aSjGY5OZHHIcmWGuAmxPW/FfYqPX8gXcY4l4JizId39cU7XkDPrbY+YoOCbKq8O07/SxDjJm4GR0hsRVmNQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB6308
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 15/9/23 11:06, Amir Goldstein wrote:
-> On Fri, Sep 15, 2023 at 4:20 AM Ian Kent <raven@themaw.net> wrote:
->> On 14/9/23 14:47, Amir Goldstein wrote:
->>> On Wed, Sep 13, 2023 at 6:22 PM Miklos Szeredi <mszeredi@redhat.com> wrote:
->>>> Implement the mount querying syscalls agreed on at LSF/MM 2023.  This is an
->>>> RFC with just x86_64 syscalls.
->>>>
->>>> Excepting notification this should allow full replacement for
->>>> parsing /proc/self/mountinfo.
->>> Since you mentioned notifications, I will add that the plan discussed
->>> in LFSMM was, once we have an API to query mount stats and children,
->>> implement fanotify events for:
->>> mount [mntuid] was un/mounted at [parent mntuid],[dirfid+name]
->>>
->>> As with other fanotify events, the self mntuid and dirfid+name
->>> information can be omitted and without it, multiple un/mount events
->>> from the same parent mntuid will be merged, allowing userspace
->>> to listmnt() periodically only mntuid whose child mounts have changed,
->>> with little risk of event queue overflow.
->>>
->>> The possible monitoring scopes would be the entire mount namespace
->>> of the monitoring program or watching a single mount for change in
->>> its children mounts. The latter is similar to inotify directory children watch,
->>> where the watches needs to be set recursively, with all the weight on
->>> userspace to avoid races.
->> It's been my belief that the existing notification mechanisms don't
->> quite fully satisfy the needs of users of these calls (aka. the need
->> I found when implementing David's original calls into systemd).
->>
->> Specifically the ability to process a batch of notifications at once.
->>
->> Admittedly the notifications mechanism that David originally implemented
->> didn't fully implement what I found I needed but it did provide for a
->> settable queue length and getting a batch of notifications at a time.
->>
->> Am I mistaken in my belief?
->>
-> I am not sure I understand the question.
->
-> fanotify has an event queue (16K events by default), but it can
-> also use unlimited size.
-> With a limited size queue, event queue overflow generates an
-> overflow event.
->
-> event listeners can read a batch of events, depending on
-> the size of the buffer that they provide.
+When writing back an inode and performing an fsync on it concurrently, a
+deadlock issue may arise as shown below. In each writeback iteration, a
+clean inode is requeued to the wb->b_dirty queue due to non-zero
+pages_skipped, without anything actually being written. This causes an
+infinite loop and prevents the plug from being flushed, resulting in a
+deadlock. We now avoid requeuing the clean inode to prevent this issue.
 
-So it sounds like I can get a bunch of events at once with fanotify.
+    wb_writeback        fsync (inode-Y)
+blk_start_plug(&plug)
+for (;;) {
+  iter i-1: some reqs with page-X added into plug->mq_list // f2fs node page-X with PG_writeback
+                        filemap_fdatawrite
+                          __filemap_fdatawrite_range // write inode-Y with sync_mode WB_SYNC_ALL
+                           do_writepages
+                            f2fs_write_data_pages
+                             __f2fs_write_data_pages // wb_sync_req[DATA]++ for WB_SYNC_ALL
+                              f2fs_write_cache_pages
+                               f2fs_write_single_data_page
+                                f2fs_do_write_data_page
+                                 f2fs_outplace_write_data
+                                  f2fs_update_data_blkaddr
+                                   f2fs_wait_on_page_writeback
+                                     wait_on_page_writeback // wait for f2fs node page-X
+  iter i:
+    progress = __writeback_inodes_wb(wb, work)
+    . writeback_sb_inodes
+    .   __writeback_single_inode // write inode-Y with sync_mode WB_SYNC_NONE
+    .   . do_writepages
+    .   .   f2fs_write_data_pages
+    .   .   .  __f2fs_write_data_pages // skip writepages due to (wb_sync_req[DATA]>0)
+    .   .   .   wbc->pages_skipped += get_dirty_pages(inode) // wbc->pages_skipped = 1
+    .   if (!(inode->i_state & I_DIRTY_ALL)) // i_state = I_SYNC | I_SYNC_QUEUED
+    .    total_wrote++;  // total_wrote = 1
+    .   requeue_inode // requeue inode-Y to wb->b_dirty queue due to non-zero pages_skipped
+    if (progress) // progress = 1
+      continue;
+  iter i+1:
+      queue_io
+      // similar process with iter i, infinite for-loop !
+}
+blk_finish_plug(&plug)   // flush plug won't be called
 
-I'll have to look at the code again ...
+Signed-off-by: Chunhai Guo <guochunhai@vivo.com>
+---
+ fs/fs-writeback.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index 969ce991b0b0..c1af01b2c42d 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -1535,10 +1535,15 @@ static void requeue_inode(struct inode *inode, struct bdi_writeback *wb,
+ 
+ 	if (wbc->pages_skipped) {
+ 		/*
+-		 * writeback is not making progress due to locked
+-		 * buffers. Skip this inode for now.
++		 * Writeback is not making progress due to locked buffers.
++		 * Skip this inode for now. Although having skipped pages
++		 * is odd for clean inodes, it can happen for some
++		 * filesystems so handle that gracefully.
+ 		 */
+-		redirty_tail_locked(inode, wb);
++		if (inode->i_state & I_DIRTY_ALL)
++			redirty_tail_locked(inode, wb);
++		else
++			inode_cgwb_move_to_attached(inode, wb);
+ 		return;
+ 	}
+ 
+-- 
+2.25.1
 
-Ian
-
->
-> when multiple events with same information are queued,
-> for example "something was un/mounted over parent mntuid 100"
-> fanotify will merged those all those events in the queue and the
-> event listeners will get only one such event in the batch.
->
->> Don't misunderstand me, it would be great for the existing notification
->> mechanisms to support these system calls, I just have a specific use case
->> in mind that I think is important, at least to me.
->>
-> Please explain the use case and your belief about existing fanotify
-> limitations. I did not understand it.
->
-> Thanks,
-> Amir.
