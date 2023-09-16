@@ -2,65 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6245B7A2BD7
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Sep 2023 02:22:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 262E97A2BFD
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Sep 2023 02:31:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230161AbjIPAVg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Sep 2023 20:21:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37656 "EHLO
+        id S234023AbjIPAak (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Sep 2023 20:30:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54532 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238107AbjIPAUv (ORCPT
+        with ESMTP id S238517AbjIPAaf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Sep 2023 20:20:51 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E58B3C00
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Sep 2023 17:18:51 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id 2adb3069b0e04-502d9ce31cbso4350921e87.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Sep 2023 17:18:50 -0700 (PDT)
+        Fri, 15 Sep 2023 20:30:35 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0AE81BF4
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Sep 2023 17:27:40 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-9a9d6b98845so827196366b.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Sep 2023 17:27:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1694823371; x=1695428171; darn=vger.kernel.org;
+        d=linux-foundation.org; s=google; t=1694824056; x=1695428856; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=zporDHrE3+uyIwe+VfbiYR93jfa43r8rLTR9B3l5F9o=;
-        b=FGtUYMjDUo/vxqvnL/p+dNQbjJOsMfDK3U2ckYlvp+9DYiXRDoWIjEBXh6VR3StVHn
-         G4FTwxGQZ5GWYbDk+lk+BbGQ21FXo///kUv29067Gbg334dPOnB7HfYS70gnDDIfTnmO
-         JJ7WKakV/+f4qF+M7EWaRFP+WW16+8Z+GnYEM=
+        bh=E8Y6H+CGjrqtUwepfVg3ZapOU4tcqDJDh2TjsLFPfcI=;
+        b=TcQG2Kb/Ip8PZWX2Cc3dnN58Lcb4fXG4xyYDtQTu/rKnLSdEkxpVSyDC/bSmfyG4iB
+         ByiFLo9h+G356gxS9zNIYHVdUfDVD3r1NbBN918JCGUk/xkk4Nf0LzCw5g0+PMkU3TvU
+         NVOh5inKCcyUTVoqS7mOSOg/iy2LR2HjB52xY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694823371; x=1695428171;
+        d=1e100.net; s=20230601; t=1694824056; x=1695428856;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=zporDHrE3+uyIwe+VfbiYR93jfa43r8rLTR9B3l5F9o=;
-        b=qiBuN3miGfLiSLghvOHYIDXWL/iBy06wTNg5JUAfUNg2RQ3fpSYQoXwGBlunps6fPj
-         5anTrAMZ741y51H5aPnhCpyz2jwcP1EU83ciWSg6B6oYKPFR853Lvpve34rhPtGVUvym
-         P6wcDR0D7CoEIZYZhFft+dXTY9otRS3Wb+tjotV8iAVCQ+NDmxm9j7K4K5qq9osPiF5r
-         cu/A39NCzO70MBPuR4est33iukvP/ny3pJgbXQChjKFu+AcFOMhVUgkDBHwrA2f5OWVR
-         VUrAfco+eHi6935FyXhuAd6eWZgyVLhjTRFminrBYoXk59YsqyBhlRYXHWHYYhu1kxYJ
-         Ld2A==
-X-Gm-Message-State: AOJu0Yzk4XZkmUuNTHonu3tNbB0ZrU52dCshhvjyZ1IVG/Q6a8MQe6hN
-        8hfOjOCX2MMvN5GpLXluMce2eLPF5/L4ImI2K8d4u7oW
-X-Google-Smtp-Source: AGHT+IE523Z5W6PsfrrWCB/ATy4omE8OlsYVtpdu7ZZXkIu5OH+HvwOD7SpLz1HGvaum9kIng6QZEQ==
-X-Received: by 2002:a05:6512:3da6:b0:500:b2f6:592 with SMTP id k38-20020a0565123da600b00500b2f60592mr2688298lfv.50.1694823371327;
-        Fri, 15 Sep 2023 17:16:11 -0700 (PDT)
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
-        by smtp.gmail.com with ESMTPSA id y21-20020ac255b5000000b00500a297ec4esm802952lfg.102.2023.09.15.17.16.10
+        bh=E8Y6H+CGjrqtUwepfVg3ZapOU4tcqDJDh2TjsLFPfcI=;
+        b=gRijMLhw/tgWeKXpG9nzn7/3+SKEGUpY4MDf4MKKKUYZ41iZNFXrpPqQEN27oLIUDs
+         Zg4wU9Kmt+lriwpnXmHSoDayjf9QVWU53aM6a41AxuKsLwCRTnx0EsVOwJ4wtLf/Kiiu
+         fljTKO2p81v265o29aI6J2hYdGS/Yqyn9EUMGAwWgHyRWDvbe1/d7ACalCMqib2IvW5/
+         9zlrVp6KCk2U2wif//rye5g/3hOZZHXwdaVDpTvUbIO6moTcd+Asi1bZ21dLRpuCP/Yk
+         lhVq2Jv94XsL6QT3MrfYMe4Uf10govQEl/E9Wz9TUoLQoCs336+1mE9rAWID86hTOOuq
+         7lTw==
+X-Gm-Message-State: AOJu0YzSiw1FlQiorTPVcYfub0Su7cX062CDUDAXJGhM0HRrNAESpMV7
+        auZUpG2W9RtdhH6xtRnHHTn9ghk31lpUu8beuD5zd0lA
+X-Google-Smtp-Source: AGHT+IF8bjjzj5azjzRcByVRbeAxiBmUzALZLBzxQYvctAcdQxTJyqW1eihoJQUm2mJPESXFOei02Q==
+X-Received: by 2002:a17:906:314b:b0:9ad:e0fb:6edf with SMTP id e11-20020a170906314b00b009ade0fb6edfmr2613314eje.7.1694824056244;
+        Fri, 15 Sep 2023 17:27:36 -0700 (PDT)
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com. [209.85.208.44])
+        by smtp.gmail.com with ESMTPSA id o26-20020a170906359a00b009875a6d28b0sm3013593ejb.51.2023.09.15.17.27.35
         for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Sep 2023 17:16:10 -0700 (PDT)
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-502d9ce31cbso4350897e87.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Sep 2023 17:16:10 -0700 (PDT)
-X-Received: by 2002:a05:6512:3113:b0:500:bc14:3e06 with SMTP id
- n19-20020a056512311300b00500bc143e06mr2583654lfb.44.1694823369876; Fri, 15
- Sep 2023 17:16:09 -0700 (PDT)
+        Fri, 15 Sep 2023 17:27:35 -0700 (PDT)
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-51e28cac164so8066117a12.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Sep 2023 17:27:35 -0700 (PDT)
+X-Received: by 2002:a17:907:80a:b0:9a9:405b:26d1 with SMTP id
+ wv10-20020a170907080a00b009a9405b26d1mr8271589ejb.5.1694824054952; Fri, 15
+ Sep 2023 17:27:34 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230915183707.2707298-1-willy@infradead.org> <20230915183707.2707298-3-willy@infradead.org>
- <CAHk-=wh4=cYh5OC5PiiX_nAQkyViXL21bpmaARduGOLiOOgTyw@mail.gmail.com>
-In-Reply-To: <CAHk-=wh4=cYh5OC5PiiX_nAQkyViXL21bpmaARduGOLiOOgTyw@mail.gmail.com>
+References: <20230915183707.2707298-1-willy@infradead.org> <20230915183707.2707298-9-willy@infradead.org>
+In-Reply-To: <20230915183707.2707298-9-willy@infradead.org>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 15 Sep 2023 17:15:53 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whqZqTYunL-0tn2-khCU1rcZDrTvY4cdFsx_b_bF=xbGw@mail.gmail.com>
-Message-ID: <CAHk-=whqZqTYunL-0tn2-khCU1rcZDrTvY4cdFsx_b_bF=xbGw@mail.gmail.com>
-Subject: Re: [PATCH 02/17] iomap: Protect read_bytes_pending with the state_lock
+Date:   Fri, 15 Sep 2023 17:27:17 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgBUvM7tc70AAvUw+HHOo6Q=jD4FVheFGDCjNaK3OCEGA@mail.gmail.com>
+Message-ID: <CAHk-=wgBUvM7tc70AAvUw+HHOo6Q=jD4FVheFGDCjNaK3OCEGA@mail.gmail.com>
+Subject: Re: [PATCH 08/17] alpha: Implement xor_unlock_is_negative_byte
 To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
 Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-arch@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>
@@ -75,26 +74,23 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 15 Sept 2023 at 17:11, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On Fri, 15 Sept 2023 at 11:37, Matthew Wilcox (Oracle)
+<willy@infradead.org> wrote:
 >
-[...]
->         if (unlikely(error))
->                 folio_set_error(folio);
->         else if (uptodate)
->                 folio_mark_uptodate(folio);
->         if (finished)
->                 folio_unlock(folio);
->   }
+> +       "1:     ldl_l %0,%4\n"
+> +       "       xor %0,%3,%0\n"
+> +       "       xor %0,%3,%2\n"
+> +       "       stl_c %0,%1\n"
 
-Note that this then becomes
+What an odd thing to do.
 
-        if (unlikely(error))
-                folio_set_error(folio);
-        if (finished)
-                folio_unlock(folio, uptodate && !error);
-  }
+Why don't you just save the old value? That double xor looks all kinds
+of strange, and is a data dependency for no good reason that I can
+see.
 
-but that change would happen later, in patch 6/17.
+Why isn't this "ldl_l + mov %0,%2 + xor + stl_c" instead?
 
-             Linus
+Not that I think alpha matters, but since I was looking through the
+series, this just made me go "Whaa?"
+
+                Linus
