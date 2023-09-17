@@ -2,109 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 67F7D7A35DD
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Sep 2023 16:35:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8ED3B7A3606
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Sep 2023 17:05:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235606AbjIQOdX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 17 Sep 2023 10:33:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55216 "EHLO
+        id S235933AbjIQPFX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 17 Sep 2023 11:05:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235320AbjIQOdK (ORCPT
+        with ESMTP id S236747AbjIQPFM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 17 Sep 2023 10:33:10 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03A6A12F
-        for <linux-fsdevel@vger.kernel.org>; Sun, 17 Sep 2023 07:32:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1694961138;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=fd2SQIw5RGzEP/oFXtTGteoLvZh3GLziCsZTny7nBwk=;
-        b=UL9zv3gpy+BlX2HyDYUL9wuRXaprzZbeQ1zJortdHLEixXHFvp1kqBN4Z3r8s9mrQ0Ifv6
-        yZGb725k32cg6+JMu9XUTYzqOM+xM5jx2qka7q0x2ZbpTwW7msboV5Ujfe+oJmHcOZ8uIn
-        gr7kXKaiN/JVn10+NiFndalrV8h27GI=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-650-qKU-a0t5MoGWeNXeJL4B7g-1; Sun, 17 Sep 2023 10:32:16 -0400
-X-MC-Unique: qKU-a0t5MoGWeNXeJL4B7g-1
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2749377b8d0so1800988a91.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 17 Sep 2023 07:32:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694961135; x=1695565935;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fd2SQIw5RGzEP/oFXtTGteoLvZh3GLziCsZTny7nBwk=;
-        b=YP5Llon2ABIrYxlNRV6Xyg2wJxTxtzPjoNyF9Y7kEwTP+dfPpMU4wEgD5h93TH5OYI
-         Uk5PGqTricP0UnUiV80+OQLNZJqO/rbZcFGp27nnFheh2tpbdSU+Yy9Fz72FPTJ7wbbn
-         R6vJXZfFSFBah2mO/fdwFQy/NnJaG2d2Ty/SEqov8WFRIGFzhkETkzMxDLjNTSNCWAp7
-         5QTpIPGhR4KRaYJ9xBb4SryZQaj6Rgqn1StNfNB4QRulF8IT1f7g7AQyxDlZoXYNFKEP
-         oZypyw8PO9sogvYJFIBdLCJG8gN4og6gcrP1nalorLl32yrKwVdjVCkjPKUKpwOXNSyD
-         pzvg==
-X-Gm-Message-State: AOJu0Yz9+3yoosjItMZgCRHLtL8P5kggDS7WOpEmjR1TklTRmhZ2xYga
-        02uZxSwaL9wXSuIZnHzItEtuLOmTg981yLbeAOhwprrc/pTDcSZpyJC6K8bE3jtiCBSsyEsCIog
-        T9bCc5H/0Bly+zV+dq7Cz3EfBlehdLdzJ+55gmpacjg==
-X-Received: by 2002:a17:90a:31c9:b0:25e:d727:6fb4 with SMTP id j9-20020a17090a31c900b0025ed7276fb4mr4479060pjf.2.1694961135575;
-        Sun, 17 Sep 2023 07:32:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHxaKD5CAfPDp+ptbao2NQtHRlf3cdqB0MlFwsD5D8HxKapmYDbW+OyM4JgBC0g1lRVqg8MaST0ACrIZLk6h88=
-X-Received: by 2002:a17:90a:31c9:b0:25e:d727:6fb4 with SMTP id
- j9-20020a17090a31c900b0025ed7276fb4mr4479048pjf.2.1694961135300; Sun, 17 Sep
- 2023 07:32:15 -0700 (PDT)
+        Sun, 17 Sep 2023 11:05:12 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E7A8185;
+        Sun, 17 Sep 2023 08:05:06 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 43D2BC433C7;
+        Sun, 17 Sep 2023 15:05:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1694963106;
+        bh=j1JVve+qJ7sTdtq49F/gZGwOv9df2c74smS23KOG1Fk=;
+        h=From:Date:Subject:To:Cc:Reply-To:From;
+        b=flCT/y/ba3CsA49saOAKIKSSwz2nt5NzlpYejycBqN0DIhgksLY0yMm81Tiefcj4p
+         F5YdR0AfBMlE4VbrOhr5P3GDQU3ICuuw6lA0zi6KwnXpmWMFdi3A+AlnWGCywG19ai
+         NrdixOKwvsz4TZHRDPlTW5H+WjiNrXBuqkBcgPiWdJ4fG8UL1gCGeE+Exr05nHMunY
+         uQhFYQWwLvGldcfn7Oe7P4nACqYn5w3i3F1TOViXeCMOF3MZC85onffv5Bxeelhd36
+         m7go+oOgS/SUPII7K9vAoU7mL6DX9R800D4TWLBSmsi9MK0rRo2JJCzaSvheadGqFt
+         Ypp9FVtAtAf8g==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.lore.kernel.org (Postfix) with ESMTP id 2A106CD13CF;
+        Sun, 17 Sep 2023 15:05:06 +0000 (UTC)
+From:   Jianguo Bau via B4 Relay <devnull+roidinev.gmail.com@kernel.org>
+Date:   Sun, 17 Sep 2023 23:04:01 +0800
+Subject: [PATCH] mm/writeback: Update filemap_dirty_folio() comment
 MIME-Version: 1.0
-References: <20230913152238.905247-1-mszeredi@redhat.com> <20230913152238.905247-4-mszeredi@redhat.com>
- <20230917005419.397938-1-mattlloydhouse@gmail.com>
-In-Reply-To: <20230917005419.397938-1-mattlloydhouse@gmail.com>
-From:   Miklos Szeredi <mszeredi@redhat.com>
-Date:   Sun, 17 Sep 2023 16:32:04 +0200
-Message-ID: <CAOssrKcECS_CvifP1vMM8YOyMW7dkGXTDTKY2CRr-fPrJk76ZA@mail.gmail.com>
-Subject: Re: [RFC PATCH 3/3] add listmnt(2) syscall
-To:     Matthew House <mattlloydhouse@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
-        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
-        Ian Kent <raven@themaw.net>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Amir Goldstein <amir73il@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20230917-trycontrib1-v1-1-db22630b8839@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAGAVB2UC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI2MDS0Nz3ZKiyuT8vJKizCRD3eQki7Q0CxMDc0uTZCWgjoKi1LTMCrBp0bG
+ 1tQBsnUXdXQAAAA==
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Jianguo Bau <roidinev@gmail.com>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1694963054; l=1010;
+ i=roidinev@gmail.com; s=20230906; h=from:subject:message-id;
+ bh=e7I1qPIXQ/mVKNWlcvVD0erRN97KbQ0kdRdeC2hZk4g=;
+ b=trGc0zHM0wysIWlSONy9j7FLdZmOah1N9MQVJhlsORkyZ2GnQ+Mgw6Lap9SZve9f8nwMvXPJP
+ P5bgnzAkVtXD7zJ5iOftev7XsBu/uEPEdtsdQjHwlVLI1U6JyeYe8uR
+X-Developer-Key: i=roidinev@gmail.com; a=ed25519;
+ pk=Itb2tVLere2RkCXs1smCQpxuXvWY0XesWo353ZMHfxs=
+X-Endpoint-Received: by B4 Relay for roidinev@gmail.com/20230906 with auth_id=82
+X-Original-From: Jianguo Bau <roidinev@gmail.com>
+Reply-To: <roidinev@gmail.com>
+X-Spam-Status: No, score=-0.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FORGED_REPLYTO,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Sep 17, 2023 at 2:54=E2=80=AFAM Matthew House <mattlloydhouse@gmail=
-.com> wrote:
+From: Jianguo Bau <roidinev@gmail.com>
 
-> > +       list_for_each_entry(r, &m->mnt_mounts, mnt_child) {
-> > +               if (!capable(CAP_SYS_ADMIN) &&
-> > +                   !is_path_reachable(r, r->mnt.mnt_root, root))
-> > +                       continue;
->
-> I'm not an expert on the kernel API, but to my eyes, it looks a bit weird
-> to silently include or exclude unreachable mounts from the list based on
-> the result of a capability check. I'd normally expect a more explicit
-> design, where (e.g.) the caller would set a flag to request unreachable
-> mounts, then get an -EPERM back if it didn't have the capability, as
-> opposed to this design, where the meaning of the output ("all mounts" vs.
-> "all reachable mounts") changes implicitly depending on the caller. Is
-> there any precedent for a design like this, where inaccessible results
-> are silently omitted from a returned list?
+Change to use new address space operation dirty_folio
 
-Good point.  That issue was nagging at the back of my mind.  Having an
-explicit flag nicely solves the issue.
+Signed-off-by: Jianguo Bau <roidinev@gmail.com>
+---
+ mm/page-writeback.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Miklos
+diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+index b8d3d7040a50..001adbb4a180 100644
+--- a/mm/page-writeback.c
++++ b/mm/page-writeback.c
+@@ -2679,7 +2679,7 @@ void __folio_mark_dirty(struct folio *folio, struct address_space *mapping,
+  * @folio: Folio to be marked as dirty.
+  *
+  * Filesystems which do not use buffer heads should call this function
+- * from their set_page_dirty address space operation.  It ignores the
++ * from their dirty_folio address space operation.  It ignores the
+  * contents of folio_get_private(), so if the filesystem marks individual
+  * blocks as dirty, the filesystem should handle that itself.
+  *
+
+---
+base-commit: f0b0d403eabbe135d8dbb40ad5e41018947d336c
+change-id: 20230917-trycontrib1-cb8ff840794c
+
+Best regards,
+-- 
+Jianguo Bau <roidinev@gmail.com>
 
