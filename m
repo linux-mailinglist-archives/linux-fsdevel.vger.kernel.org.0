@@ -2,104 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 541697A4D0D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Sep 2023 17:46:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36C817A4D16
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Sep 2023 17:46:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229738AbjIRPqI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Sep 2023 11:46:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37112 "EHLO
+        id S229753AbjIRPqR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Sep 2023 11:46:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229720AbjIRPqH (ORCPT
+        with ESMTP id S229751AbjIRPqO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Sep 2023 11:46:07 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72E732737;
-        Mon, 18 Sep 2023 08:44:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1695051892; x=1726587892;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ykgUdcAyff68JbKMpOfYfrK6kmGZcZxRKCMtU2anr+I=;
-  b=HVTHZ00AThtAOg8Ljc230m/dF8XBoDobEM4sNiBsPcWxLzxoXkjCZD4k
-   2X/KFNI8fQSaLLp6Sq2UFMho9h2dbvIc5mqnI0Yp3iLHnkFUpcoPVamCG
-   J7LtyiETXVC8jtaPHZhQIerFoozGVE7IwWAB2cbUxdFywnwIO/MnN6QpE
-   1OkfsRg5cGWVu38Xi3K6PW15RiGLBiooLb4zGjKX9IEcVB9wG5QK3vsto
-   nRz7cL7rWi4kHQEnFJV7Q+7Gsfl3IdP9O+xyoztlLtY+GGzQOKRfTbeb5
-   t3jT7k92oy1HR78nXPkk8pBuKD2x/VHUeJ7RUO/3AlmTwISShWMFKoyrt
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10837"; a="446113310"
-X-IronPort-AV: E=Sophos;i="6.02,156,1688454000"; 
-   d="scan'208";a="446113310"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2023 06:12:21 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10837"; a="811342022"
-X-IronPort-AV: E=Sophos;i="6.02,156,1688454000"; 
-   d="scan'208";a="811342022"
-Received: from lkp-server02.sh.intel.com (HELO 9ef86b2655e5) ([10.239.97.151])
-  by fmsmga008.fm.intel.com with ESMTP; 18 Sep 2023 06:12:19 -0700
-Received: from kbuild by 9ef86b2655e5 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qiE2z-00067M-0D;
-        Mon, 18 Sep 2023 13:12:17 +0000
-Date:   Mon, 18 Sep 2023 21:11:40 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Hannes Reinecke <hare@suse.de>,
-        Matthew Wilcox <willy@infradead.org>
-Cc:     oe-kbuild-all@lists.linux.dev,
-        Luis Chamberlain <mcgrof@kernel.org>,
+        Mon, 18 Sep 2023 11:46:14 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FE322D40;
+        Mon, 18 Sep 2023 08:44:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=DKGFCFUpAK0noAIxjiDksGMSY4ineXUuIBcj1O7WrJg=; b=fOSMF/uZUGHhxFtL4fe4Si103O
+        q+lYrDl9HQghpxZNev2mRSnMyNz99/MQe/fk0jQWrZPf4BGP7GJTwyk1TKLhH7DYrFfwfCMEAw19Z
+        M/1P1OivkJGczpn1yvhDqbhVslG1onQuH1opW5rTsbIFJczhbnAfcJznDZin0aceLL8K/BF5+haBl
+        InkJdz6bJjA6I8TUFmnhh1bcR/800pejH5Hu95Ctx1eSfTyUzD6povg66jnz3jR/i5OoQ32sNY5nW
+        5VJPq4mvER+EjHTPhywKFiBL4jL7kKeMhqBu3owsvNL36PPRf0Pk/25SEgS0GXo0hP869AS2h/SR7
+        BZNMvYHA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1qiE5g-00BCbj-2d; Mon, 18 Sep 2023 13:15:04 +0000
+Date:   Mon, 18 Sep 2023 14:15:04 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Hannes Reinecke <hare@suse.de>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
         Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
         Pankaj Raghav <p.raghav@samsung.com>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Hannes Reinecke <hare@suse.de>
-Subject: Re: [PATCH 08/18] mm/readahead: allocate folios with mapping order
- preference
-Message-ID: <202309182020.nSchrF93-lkp@intel.com>
-References: <20230918110510.66470-9-hare@suse.de>
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 02/18] fs/mpage: use blocks_per_folio instead of
+ blocks_per_page
+Message-ID: <ZQhNWB8zwD2nBiLJ@casper.infradead.org>
+References: <20230918110510.66470-1-hare@suse.de>
+ <20230918110510.66470-3-hare@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230918110510.66470-9-hare@suse.de>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <20230918110510.66470-3-hare@suse.de>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Hannes,
+On Mon, Sep 18, 2023 at 01:04:54PM +0200, Hannes Reinecke wrote:
+> @@ -161,7 +161,7 @@ static struct bio *do_mpage_readpage(struct mpage_readpage_args *args)
+>  	struct folio *folio = args->folio;
+>  	struct inode *inode = folio->mapping->host;
+>  	const unsigned blkbits = inode->i_blkbits;
+> -	const unsigned blocks_per_page = PAGE_SIZE >> blkbits;
+> +	const unsigned blocks_per_folio = folio_size(folio) >> blkbits;
+>  	const unsigned blocksize = 1 << blkbits;
+>  	struct buffer_head *map_bh = &args->map_bh;
+>  	sector_t block_in_file;
+> @@ -169,7 +169,7 @@ static struct bio *do_mpage_readpage(struct mpage_readpage_args *args)
+>  	sector_t last_block_in_file;
+>  	sector_t blocks[MAX_BUF_PER_PAGE];
+>  	unsigned page_block;
+> -	unsigned first_hole = blocks_per_page;
+> +	unsigned first_hole = blocks_per_folio;
+>  	struct block_device *bdev = NULL;
+>  	int length;
+>  	int fully_mapped = 1;
 
-kernel test robot noticed the following build errors:
+I feel like we need an assertion that blocks_per_folio <=
+MAX_BUF_PER_PAGE.  Otherwise this function runs off the end of the
+'blocks' array.
 
-[auto build test ERROR on axboe-block/for-next]
-[also build test ERROR on akpm-mm/mm-everything linus/master v6.6-rc2 next-20230918]
-[cannot apply to xfs-linux/for-next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Or (and I tried to do this once before getting bogged down), change this
+function to not need the blocks array.  We need (first_block, length),
+because this function will punt to 'confused' if theree is an on-disk
+discontiguity.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Hannes-Reinecke/mm-readahead-rework-loop-in-page_cache_ra_unbounded/20230918-190732
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git for-next
-patch link:    https://lore.kernel.org/r/20230918110510.66470-9-hare%40suse.de
-patch subject: [PATCH 08/18] mm/readahead: allocate folios with mapping order preference
-config: i386-tinyconfig (https://download.01.org/0day-ci/archive/20230918/202309182020.nSchrF93-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20230918/202309182020.nSchrF93-lkp@intel.com/reproduce)
+ie this line needs to change:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202309182020.nSchrF93-lkp@intel.com/
+-		if (page_block && blocks[page_block-1] != map_bh->b_blocknr-1)
++		if (page_block == 0)
++			first_block = map_bh->b_blocknr;
++		else if (first_block + page_block != map_bh->b_blocknr)
+			goto confused;
 
-All errors (new ones prefixed by >>):
+> @@ -474,12 +474,12 @@ static int __mpage_writepage(struct folio *folio, struct writeback_control *wbc,
+>  	struct address_space *mapping = folio->mapping;
+>  	struct inode *inode = mapping->host;
+>  	const unsigned blkbits = inode->i_blkbits;
+> -	const unsigned blocks_per_page = PAGE_SIZE >> blkbits;
+> +	const unsigned blocks_per_folio = folio_size(folio) >> blkbits;
+>  	sector_t last_block;
+>  	sector_t block_in_file;
+>  	sector_t blocks[MAX_BUF_PER_PAGE];
+>  	unsigned page_block;
+> -	unsigned first_unmapped = blocks_per_page;
+> +	unsigned first_unmapped = blocks_per_folio;
+>  	struct block_device *bdev = NULL;
+>  	int boundary = 0;
+>  	sector_t boundary_block = 0;
 
-   ld: mm/readahead.o: in function `readahead_expand':
->> readahead.c:(.text+0x17b): undefined reference to `__divdi3'
+Similarly, this function needss an assert.  Or remove blocks[].
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
