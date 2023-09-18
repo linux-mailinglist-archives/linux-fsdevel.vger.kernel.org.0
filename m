@@ -2,45 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 07C577A4F66
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Sep 2023 18:42:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75BC07A4FE3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Sep 2023 18:56:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229849AbjIRQmE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Sep 2023 12:42:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38100 "EHLO
+        id S231327AbjIRQ4J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Sep 2023 12:56:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229527AbjIRQly (ORCPT
+        with ESMTP id S231234AbjIRQz6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Sep 2023 12:41:54 -0400
+        Mon, 18 Sep 2023 12:55:58 -0400
 Received: from outbound-ip7a.ess.barracuda.com (outbound-ip7a.ess.barracuda.com [209.222.82.174])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EF685B8D
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Sep 2023 09:40:15 -0700 (PDT)
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04lp2044.outbound.protection.outlook.com [104.47.74.44]) by mx-outbound11-163.us-east-2a.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Mon, 18 Sep 2023 16:40:14 +0000
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD105CCD;
+        Mon, 18 Sep 2023 09:44:00 -0700 (PDT)
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2173.outbound.protection.outlook.com [104.47.59.173]) by mx-outbound44-224.us-east-2c.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Mon, 18 Sep 2023 16:43:59 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=UJ48ypbTgXk5yIR8HsMAVCbgShW19N0ngJg1NrsLWHLsKW9UwNIjahvVApRKCMNTUbY2J2M81ZFzmUG74JWOEbp2veDFt8/HPaLswYrAwBW+Oy0wgzmTww2B/eVpJDc9zsgLhsEB8ccacE7Xg1IMXfBRGZNIwopplbq9vH/QZKIMWso+LQ+KTBVQTqzG5e6c+f4OnR2nZ+WUK1KBqwtjTfOqLH3F94M7rYdnapSb2D9iIGR1ZL35zL0tsz5wAmFLdcTZOS+Ooz5ZwSP+M3QMzMnwZVogeGFREJa7GsDsd0nZizbzobb5BcuX3BwieAp5NeXq1tCVlxVZeLosN/r6ww==
+ b=P0UHv2atXxualH+iz/FIIwLJ4TlmFTj9oxuLMhGIjUNj0xYRJt+rCdRmdDH2VHo/OMavZA0VEn4n3EaNtW1FnNrvw8P/fLPFQknJkBGZ0fE+LFflPqOCgw1qUfvLMmlsy5wPzdC99P7uY+v9ZIDdBLpmzmtUvxx4CdOshtdbGaNYozzllKdsF5+Wr/fBqctustoMw7tgvcJeMDid/UrWl58Bi8oy4pIs2BFtde5RMgWPjk97EFRNf49C/gFLA2AUJN3P9RqIGLQqqIvJBnGmKj48GNJDcpw9Sen7zvP6ZBE1RIes3sjNhhp2j333L/UGqdxaNEuPxUFl3vcGDHz+ww==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vEKxj1woarFZs4hVj0u89yjWwOVMVli+PwRDZv79UGI=;
- b=IPcFEYTIr/h6b1WMNBHu3lmdm3jjPhZoKWTVqeOdaqohDOJsftPUmlM53TP4BLGxArCJGLwUjvbl24+zOf6fsEXe6Vtl/xkSxSkqOUWeQvu2o6DtfDB55uAdWSPD9KaiJIq/oS21dJu6oZtQzOe/9CZZt3lsokXg0YWDlcayX9z+4bg+OcaYXsumXQkZh5xxe4BaBuwYljz0ZGxHk3dv69DBX5/QuDwZMdXiwZ9JS5zIUXlQ3gXV6VwkX/gKOya+KmsQQWgRZRPRAXvDQENaPzBMCa7OQfRrGxH47WCgYqpu3865OyVyZvD6CqOAoKu4BiZ4ie1OclC77V5sMXFBmw==
+ bh=YnexB5ObDrCBd2UjCzBCuAxh3eUROHhCyafkaz30oJE=;
+ b=XtDb4NfgweM7qGaVzNEph2Uljm3xs+uZ410HRXR/Y+PD7LOAJBg1pvoMsdN8lNyxkGUvQL9wwKQst7lpvXemFWnW7F2lUpOZHHtiU4Hm2iiwcbf7jIFXa++AOxll6UbSA1nU5pN5YRw39mi623R95Gor8uCyrRkmRp13qhdm14osD4So+yY00bR7swrJHcWpqZgHGIteeJX6qUmtA2C/YqUiaz4XGVvBOnwhX3LcyV90RqA1wAVTyfVWA6llzJXRFK9o0U6WCaKd0PAaw6la+4Ny7SWf5RMWtMGJYLD8GI+4bz9dYahWH+Jj0qdvsVpJQbwWy9LWNWjNeJWJW7b+WA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  50.222.100.11) smtp.rcpttodomain=ddn.com smtp.mailfrom=ddn.com; dmarc=pass
  (p=reject sp=reject pct=100) action=none header.from=ddn.com; dkim=none
  (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ddn.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vEKxj1woarFZs4hVj0u89yjWwOVMVli+PwRDZv79UGI=;
- b=qFyYX2YOPLiM0+vp89ZcloxOyL5gIUuP93t6vkic1qZ+mue5knIGWA46mB3MCLMsMZPHNH2/WXNPmh6gLs0OffK7jr56Ei5e4iOCMwzcE53159Y813fUr1ynXoKIU6gvP9g1Pf1qZAe1lAxp6ILT3FpKWe9qwGYO0csZR0CT5tw=
-Received: from SJ0PR13CA0240.namprd13.prod.outlook.com (2603:10b6:a03:2c1::35)
- by SN7PR19MB6758.namprd19.prod.outlook.com (2603:10b6:806:265::19) with
+ bh=YnexB5ObDrCBd2UjCzBCuAxh3eUROHhCyafkaz30oJE=;
+ b=nwYNNgYpPdS9j6SnrlEp4eGsaEsFaWVvlUhkPtHCx0iESeHpoCuRhE9XthMgOcFFg1z5ByXkuUtW3z6THwRQsf4xushfOPKtqBchaYhIsC/KBTxjCLfjQ42Yq5zBEksrOKvuH2fB2fbBZw1S7oytp9TPQZIkMIefJAdNiAZfJ5c=
+Received: from MW4PR03CA0111.namprd03.prod.outlook.com (2603:10b6:303:b7::26)
+ by DM4PR19MB5835.namprd19.prod.outlook.com (2603:10b6:8:66::17) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6792.27; Mon, 18 Sep
- 2023 15:03:19 +0000
-Received: from MW2NAM04FT012.eop-NAM04.prod.protection.outlook.com
- (2603:10b6:a03:2c1:cafe::67) by SJ0PR13CA0240.outlook.office365.com
- (2603:10b6:a03:2c1::35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6792.27 via Frontend
- Transport; Mon, 18 Sep 2023 15:03:19 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6792.26; Mon, 18 Sep
+ 2023 15:03:20 +0000
+Received: from MW2NAM04FT056.eop-NAM04.prod.protection.outlook.com
+ (2603:10b6:303:b7:cafe::32) by MW4PR03CA0111.outlook.office365.com
+ (2603:10b6:303:b7::26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6792.26 via Frontend
+ Transport; Mon, 18 Sep 2023 15:03:20 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 50.222.100.11)
  smtp.mailfrom=ddn.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=ddn.com;
@@ -48,20 +48,23 @@ Received-SPF: Pass (protection.outlook.com: domain of ddn.com designates
  50.222.100.11 as permitted sender) receiver=protection.outlook.com;
  client-ip=50.222.100.11; helo=uww-mx01.datadirectnet.com; pr=C
 Received: from uww-mx01.datadirectnet.com (50.222.100.11) by
- MW2NAM04FT012.mail.protection.outlook.com (10.13.31.127) with Microsoft SMTP
+ MW2NAM04FT056.mail.protection.outlook.com (10.13.30.138) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6813.15 via Frontend Transport; Mon, 18 Sep 2023 15:03:19 +0000
+ 15.20.6813.16 via Frontend Transport; Mon, 18 Sep 2023 15:03:20 +0000
 Received: from localhost (unknown [10.68.0.8])
-        by uww-mx01.datadirectnet.com (Postfix) with ESMTP id 6A6EA20C6850;
-        Mon, 18 Sep 2023 09:04:24 -0600 (MDT)
+        by uww-mx01.datadirectnet.com (Postfix) with ESMTP id 6500720C684B;
+        Mon, 18 Sep 2023 09:04:25 -0600 (MDT)
 From:   Bernd Schubert <bschubert@ddn.com>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     bernd.schubert@fastmail.fm, miklos@szeredi.hu, dsingh@ddn.com,
         Bernd Schubert <bschubert@ddn.com>,
-        Hao Xu <howeyxu@tencent.com>
-Subject: [PATCH v4 03/10] fuse: prepare support for shared lock for DIO writes
-Date:   Mon, 18 Sep 2023 17:03:06 +0200
-Message-Id: <20230918150313.3845114-4-bschubert@ddn.com>
+        linux-btrfs@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: [PATCH v4 04/10] fs: Add and export file_needs_remove_privs
+Date:   Mon, 18 Sep 2023 17:03:07 +0200
+Message-Id: <20230918150313.3845114-5-bschubert@ddn.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230918150313.3845114-1-bschubert@ddn.com>
 References: <20230918150313.3845114-1-bschubert@ddn.com>
@@ -69,34 +72,50 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW2NAM04FT012:EE_|SN7PR19MB6758:EE_
+X-MS-TrafficTypeDiagnostic: MW2NAM04FT056:EE_|DM4PR19MB5835:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 68c350d4-26a1-4aa4-b91d-08dbb85864e7
+X-MS-Office365-Filtering-Correlation-Id: ecdddd77-28e5-4bfd-4721-08dbb8586586
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: OmO6zeyjSvBrMIpHwe76cnhBAGf5qccRSI4a6ny71EeNt/r77xeOym0xrKZ8kvm1ISQFFUU47nxhn1IDksxWG+/YmbngNlHTLjtqkAPuiPFJIqMjlARj+MWULDogj8+g2tOniZS0EsP8oHS5qFuMU5NE5RG2GCQ7+EPyiIbDbANbmLZsEPGjSTm70LMF1p+Bc+XpXxSbFFk1ju08hd+epG80xs6uhtTuOGgXTWrIh5+8qgJhnXNxm+IHK3TTUKOrdDiad/LDBmVbPX6Mw/qEdjdQmv/rtvL9m9ExQRGm+C2KZy0ibsOZgu7JV5Pakvk0qY34XqC6KFLP4CFy8ymesQc3H+gKqH4EacxhX443ipDDCl9XhTwLGJrEpbSsP+MA6T+5xaExu9iwiOyTzh5YoEI1OY3JvWk7xPZgvYsvIiPsx+y5l/NEKS0SCUT+EF5/z9LoMV296bt/qMNzOnOOTKr4pzH6S42fqAUhQijJ3Gl550hkLZrkUcrhjN08eYIm7eYMk+3BjLKRxu56rlQ64YrPyIdrnQl2twF+gTI8MW2yEms6XhYrM+uMGck1/WgsTdpO6sLkUqqFVyb82GNEct0LOHE11vUVyou/3gDDE3c6cQNCojJvWhwg2qivY6nG37pEqlVWOu9s9sMFC3O4V3db6OqtFu9NbO5tZpHp0FDZvVRE+dmnnZcakGN8uJIeqO/pGLEQvKC8crKvY8T8lgoA1iekDXZhkb7t72ae7mSI6WAZWsT1B7AtHAf+wSF9
-X-Forefront-Antispam-Report: CIP:50.222.100.11;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:uww-mx01.datadirectnet.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(4636009)(346002)(39850400004)(396003)(376002)(136003)(82310400011)(1800799009)(451199024)(186009)(46966006)(36840700001)(356005)(81166007)(82740400003)(36756003)(40480700001)(86362001)(478600001)(70586007)(70206006)(54906003)(6916009)(2906002)(6666004)(8676002)(8936002)(4326008)(5660300002)(41300700001)(316002)(47076005)(36860700001)(336012)(6266002)(2616005)(83380400001)(1076003)(26005)(36900700001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: f3drmnCselvCjcCLjr3v3prn+mGKWfhb2Ek/trhk1mUtvs5dru6dkBGUffNcSnJ+RcpqrWYjb1ynX293FoGal2GI/+ovA/K2wLkt3Dm9aXrQXzhCmmjRK4hNhOowPdgzjS1lv6vKhYKTz10YKNKlNp2top0vpWjH4AmdrFiC8QtzyqQVXx4hAYWDocL0/XYN90ub/PtXPQVyWfD55icZsEEk905DNCfZZaoIMLFTKz9dpkzt4qQPG82GoMKRAaZ5GkocjlO0mTFeCUWGi1kkPNSml2C/ZyDiSjNL1wqxMYa6N2odctPBPI+jMXPusrJfwAFxO3OP2/LxCypy77eqGgSXR/ZfJokcbt/puO+G8fI/9tEi9uEanr7qytNh/gkY344PHHqNJwlYz4IHW/qxc0u3EPS1uq68sZ4rnf+PdlRRUMajwIxm8zcF2fA+sP3l2+3raQAMvBFpbX0X26uOJAkkx3HLt1GGYNgkdCYC+pN3rIMoP3z75Z1fpFQOKrzc1zAf6tb3hZyap8/lLXPkf3SLn4vcWrDzdDhY4h0CxIsP1/ZRRR3OdLa3rDaGBSEaK4+SL/MGzohrmjuw5avh+NNzEZqedKpJ2mZK/m3RDxvsBCXjLz5q8eHQzAs8QILMpgjuMVHeemwncsn9e5i2ol93ObggoBCADzfcWrjeepmETVFT93aZsNKP6/tCSmv0Pn5kHspOx5SHGkatVh2jlbFKwUyxGlTngejpBo2e65YBIhaPDWjjtXksB1a6e/Le
+X-Forefront-Antispam-Report: CIP:50.222.100.11;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:uww-mx01.datadirectnet.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(4636009)(396003)(39850400004)(136003)(376002)(346002)(1800799009)(186009)(82310400011)(451199024)(46966006)(36840700001)(356005)(81166007)(26005)(82740400003)(2616005)(8936002)(1076003)(4326008)(8676002)(83380400001)(36860700001)(2906002)(36756003)(47076005)(336012)(6266002)(40480700001)(5660300002)(86362001)(478600001)(6666004)(6916009)(316002)(54906003)(70586007)(70206006)(41300700001)(36900700001);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 2RCuP3HSRHhbkB8JX07A8aCRDyL6/KG1UJcLCErtiEPRMAY1nxn/nryRqXyzNLW4dFmRvfWthF1psanbkhlpFbSb8DBTsHORrWT1Daiv6HUob1LmptCOc9eW47dvKIjG1pXmYanMxQYxNUVYDB3qKKgtCOvNOv8l1fU8KTYmqK6onoZY/ZLRyZFxb5v792mgEPzBTvNwHKv4wb3mVqsPtL47hEvk6ApIWFncHssOpnPlow7izgp6+Ti39ZDkyG/gpfosdBr4kRvgbwkImpc3aRGPRzyf/pxLy8xNn5kxREM7LsX9eH5bBA4MGVmLnC8gXiX6RaGGMxvTYYlsX2ll9TIdi++rwQwuTpVUONPsAWRNmaWUdGcCeg+3bo6SNQiNNGW+Y8sBCBwvBX1/Jpxt4WsWQ12eI9tA1dU2gvwp+Vlzhaq+Tb3U55jo67qrO38SQnheaDt/gdSUfLtzzDC78j/Ht/udjXLF6eqX1RdErjKU8vZC9xDfHIJsIOimLl0peO7KmRS+VXWvc3xgkMM0Pz5DDydeFNkIeehSAxnCdCBhghI7tP2P2Smh5H3zYboK8b17vc+srKRt38w/gV+o5Ek94QWVJWEla1jJhKwSYReXaEfRv7dkJ8+BhMQ48pW39HIUzXUzDI+AO/oBfGN//ZxU/ivcwYF+BEoVL0zFCahE62oD506beoqmVaHwa9JRxnpyTx0jISkzDHfcTb5jXkBad+D81q37hjm9yJKm6xTu3HeWR4SUcM6HQRpW5pCSx+RKz/4AA83r1pRPXtSFNz/Zm7oY0gUhNXxMapC8cNreqt9Bab3iUu64soyjrF17pIlE2wqUXkrHTinfFDzIZYYG3Ewgq7IDk3P7YhjbQwMDZC/ctxuppLABA/KOALtUWaI4tBc/fleBYGqoZW37rA==
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2023 15:03:19.1816
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: =?us-ascii?Q?/Tu8TLSI8J40LXYcEGKvs79yCr+O5SBiR29url4OMb1/7s1e6dWVbSSNiqbl?=
+ =?us-ascii?Q?n2FMyApJHdOkPlMwYYoCTyGEhyvU1QUF5zktRLwsQz5Wgu8rcXtCEDdc21V7?=
+ =?us-ascii?Q?4NeD1D8xiX03mUorvF8prE8Px1gQXkvDJ1ZrCnP7MKO1/dYOiT+BAANpQ1f2?=
+ =?us-ascii?Q?lEZF2P4XfzlQv+ev8wQWsjjfkBAW21YDQKw1e7bkgVyNBWX4us3YTu9FI7B0?=
+ =?us-ascii?Q?xxfXSRbNumByyMiXiD/IKhHHCpx+iK1KY6XZB2hD1a/xM4Eg4M6CnSzQeRCY?=
+ =?us-ascii?Q?1F62t3aMExfJErtaxdw4+bOPvKJw+JTkRoEDt0l+hUQRxGft3dQvhxPXccGq?=
+ =?us-ascii?Q?zQhIcPRRIQP49VY1avE0ue7B91c6Cz3OOYiAu1riw49v3lKoEHo9A9rEuZOb?=
+ =?us-ascii?Q?0Ga4r+heujjUQlew+wJvmtMKOHP/nDhOuaMn+zn9U2XFFjufTmeh7EKgKpvl?=
+ =?us-ascii?Q?tKeJmJnNQlaVNAKRxC4zgdXSPtnobvm8mCVVCKmE3D4rLAhkvBLNL7Mz/X8M?=
+ =?us-ascii?Q?uYYNJ9EKOfQYWe89T3Hu1ij09jRZzKx608j8ATlF2p7s9hNiPw++61fiQEso?=
+ =?us-ascii?Q?n8v+0RXEFOWscuaO0A299HbpFb5C1wTjRAKaOfm0CC6g/u0554BfBTzKlCyQ?=
+ =?us-ascii?Q?ZdRpqaADG2goadaz1H6sCMl8Ctr/ZOhqL1iTRknCnOtLXZZ/65cX7RUAtBPa?=
+ =?us-ascii?Q?nic6pddx/hl8aU35qNnDRNtrWHNFosAhGWSrTEqchgMMdnvxZeSBNNQdtl/X?=
+ =?us-ascii?Q?Tc72Zmhz9azHTuJtnvNCEOFhrW4+ogNZHfqHAp9gzZCgf8xi9TO9Y1PZac9d?=
+ =?us-ascii?Q?/8FO5zxLqLH4miTYMRIWruZlbE08ouDnCAf/KbPznGi8iqI0hFagGZH/ps7T?=
+ =?us-ascii?Q?A/rB73LUsAD3L8KixdPXhesyfyM1Wx4X2bcK5sMzp5SNelhzfMI44G3w+DK7?=
+ =?us-ascii?Q?p2efPo1ZzgPbX3rXyf7m0PN6xQd7vHs4hDBM5HEJmag=3D?=
+X-OriginatorOrg: ddn.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2023 15:03:20.2207
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 68c350d4-26a1-4aa4-b91d-08dbb85864e7
+X-MS-Exchange-CrossTenant-Network-Message-Id: ecdddd77-28e5-4bfd-4721-08dbb8586586
 X-MS-Exchange-CrossTenant-Id: 753b6e26-6fd3-43e6-8248-3f1735d59bb4
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=753b6e26-6fd3-43e6-8248-3f1735d59bb4;Ip=[50.222.100.11];Helo=[uww-mx01.datadirectnet.com]
-X-MS-Exchange-CrossTenant-AuthSource: MW2NAM04FT012.eop-NAM04.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: MW2NAM04FT056.eop-NAM04.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR19MB6758
-X-OriginatorOrg: ddn.com
-X-BESS-ID: 1695055214-102979-23088-2255-1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR19MB5835
+X-BESS-ID: 1695055438-111488-12353-4715-1
 X-BESS-VER: 2019.1_20230913.1749
-X-BESS-Apparent-Source-IP: 104.47.74.44
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVsaGhuZAVgZQ0Ng81dLEIM3CLM
-        Uy2SzZwiLV1CTFJNHcyCjVzNgoMdVQqTYWALbZZWRBAAAA
+X-BESS-Apparent-Source-IP: 104.47.59.173
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVobm5iZAVgZQ0MI02SwlKTHZzN
+        wk1cDcIiUxxcA0zSwtNdnUONUkzdxMqTYWAGRHAMNBAAAA
 X-BESS-Outbound-Spam-Score: 0.00
 X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.250915 [from 
-        cloudscan10-134.us-east-2a.ess.aws.cudaops.com]
+        cloudscan17-98.us-east-2b.ess.aws.cudaops.com]
         Rule breakdown below
          pts rule name              description
         ---- ---------------------- --------------------------------
@@ -113,103 +132,55 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Take a shared lock in fuse_cache_write_iter. This was already
-done for FOPEN_DIRECT_IO in
+Fuse cannot rely on S_NOSEC as local block device file systems.
+In order to still being able to parallel direct IO writes,
+it is going to use the new and exported function
+file_needs_remove_privs() in an upcoming commit.
 
-commit 153524053bbb ("fuse: allow non-extending parallel direct
-writes on the same file")
-
-but so far missing for plain O_DIRECT. Server side needs
-to set FOPEN_PARALLEL_DIRECT_WRITES in order to signal that
-it supports parallel dio writes.
-
-From style point of view another goto target is introduced,
-although the existing writethrough target would be sufficient.
-This is just done to make the code easier to read.
-
-In this commit the exclusive lock still enforced by an
-'|| 1'. For readability this will be solved in a follow up commit.
-
-Cc: Hao Xu <howeyxu@tencent.com>
 Cc: Miklos Szeredi <miklos@szeredi.hu>
 Cc: Dharmendra Singh <dsingh@ddn.com>
+Cc: linux-btrfs@vger.kernel.org
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>
 Cc: linux-fsdevel@vger.kernel.org
 Signed-off-by: Bernd Schubert <bschubert@ddn.com>
 ---
- fs/fuse/file.c | 33 +++++++++++++++++++++++++++++++--
- 1 file changed, 31 insertions(+), 2 deletions(-)
+ fs/inode.c         | 8 ++++++++
+ include/linux/fs.h | 1 +
+ 2 files changed, 9 insertions(+)
 
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 7606cf376ec3..76922a6a0962 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -1313,6 +1313,10 @@ static bool fuse_dio_wr_exclusive_lock(struct kiocb *iocb, struct iov_iter *from
- 	struct file *file = iocb->ki_filp;
- 	struct fuse_file *ff = file->private_data;
+diff --git a/fs/inode.c b/fs/inode.c
+index 67611a360031..9b05db602e41 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -2013,6 +2013,14 @@ int dentry_needs_remove_privs(struct mnt_idmap *idmap,
+ 	return mask;
+ }
  
-+	/* the shared lock is about direct IO only */
-+	if (!(iocb->ki_flags & IOCB_DIRECT))
-+		return true;
++int file_needs_remove_privs(struct file *file)
++{
++	struct dentry *dentry = file_dentry(file);
 +
- 	/* server side has to advise that it supports parallel dio writes */
- 	if (!(ff->open_flags & FOPEN_PARALLEL_DIRECT_WRITES))
- 		return true;
-@@ -1338,6 +1342,7 @@ static ssize_t fuse_cache_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 	struct inode *inode = mapping->host;
- 	ssize_t err;
- 	struct fuse_conn *fc = get_fuse_conn(inode);
-+	bool excl_lock = fuse_dio_wr_exclusive_lock(iocb, from) || 1;
- 
- 	if (fc->writeback_cache && !(iocb->ki_flags & IOCB_DIRECT)) {
- 		/* Update size (EOF optimization) and mode (SUID clearing) */
-@@ -1356,7 +1361,20 @@ static ssize_t fuse_cache_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 	}
- 
- writethrough:
--	inode_lock(inode);
-+relock:
-+	if (excl_lock)
-+		inode_lock(inode);
-+	else {
-+		inode_lock_shared(inode);
-+		if (fuse_io_past_eof(iocb, from)) {
-+			/* file extending writes will trigger i_size_write,
-+			 *  exclusive lock is needed
-+			 */
-+			inode_unlock_shared(inode);
-+			excl_lock = true;
-+			goto relock;
-+		}
-+	}
- 
- 	err = generic_write_checks(iocb, from);
- 	if (err <= 0)
-@@ -1374,13 +1392,24 @@ static ssize_t fuse_cache_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 		written = generic_file_direct_write(iocb, from);
- 		if (written < 0 || !iov_iter_count(from))
- 			goto out;
++	return dentry_needs_remove_privs(file_mnt_idmap(file), dentry);
++}
++EXPORT_SYMBOL_GPL(file_needs_remove_privs);
 +
-+		if (!excl_lock) {
-+			/* fallback to page IO needs the exclusive lock */
-+			inode_unlock_shared(inode);
-+			excl_lock = true;
-+			goto relock;
-+		}
-+
- 		written = direct_write_fallback(iocb, from, written,
- 				fuse_perform_write(iocb, from));
- 	} else {
- 		written = fuse_perform_write(iocb, from);
- 	}
- out:
--	inode_unlock(inode);
-+	if (excl_lock)
-+		inode_unlock(inode);
-+	else
-+		inode_unlock_shared(inode);
- 	if (written > 0)
- 		written = generic_write_sync(iocb, written);
- 
+ static int __remove_privs(struct mnt_idmap *idmap,
+ 			  struct dentry *dentry, int kill)
+ {
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 562f2623c9c9..f7b45722bb6f 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2721,6 +2721,7 @@ extern struct inode *new_inode_pseudo(struct super_block *sb);
+ extern struct inode *new_inode(struct super_block *sb);
+ extern void free_inode_nonrcu(struct inode *inode);
+ extern int setattr_should_drop_suidgid(struct mnt_idmap *, struct inode *);
++int file_needs_remove_privs(struct file *file);
+ extern int file_remove_privs(struct file *);
+ int setattr_should_drop_sgid(struct mnt_idmap *idmap,
+ 			     const struct inode *inode);
 -- 
 2.39.2
 
