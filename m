@@ -2,55 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D7E9F7A521E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Sep 2023 20:36:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 323437A5221
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Sep 2023 20:36:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229579AbjIRSgO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Sep 2023 14:36:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38794 "EHLO
+        id S229714AbjIRSgf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Sep 2023 14:36:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229485AbjIRSgN (ORCPT
+        with ESMTP id S229704AbjIRSge (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Sep 2023 14:36:13 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 388BC10D;
-        Mon, 18 Sep 2023 11:36:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=83UBXje6sUk9WQn75kJ8b+5PbDOix+4jIDRAqbsZBZI=; b=n4a5FdcOoqT1RgfzLlj/F0VmUC
-        HE5gfUbRZWc7yXpix1tK3ST/7dYyaFvG/1iudJ23+afNDyitWgbo077hJWs39miKja/uUlLW4GbGp
-        TWYGjFv/i86FkNkPXRxpioTGcwWM79JYt19QeXMOUPXvaeNZx4H8YoC8hy2gYsAId5g0slLNiqRD2
-        V0FiOFIaxS04XCiPKKpDWVnaS1kyUT8OTwyJ/swXA7T9wPxKIbowwrfJ0VS9CgErlMhh3ec6nAkCx
-        +Wm2dnsBeHUAcCqSk+2Of1reWaWQvbFnUrHdbn9C7/1emkK7pk2wuOawPk38lPPW48EQEZ3HnfxIM
-        wjDj/1gw==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1qiJ6I-00G5ix-39;
-        Mon, 18 Sep 2023 18:36:03 +0000
-Date:   Mon, 18 Sep 2023 11:36:02 -0700
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Pankaj Raghav <kernel@pankajraghav.com>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, p.raghav@samsung.com,
-        david@fromorbit.com, da.gomez@samsung.com,
-        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        djwong@kernel.org, linux-mm@kvack.org, chandan.babu@oracle.com,
-        gost.dev@samsung.com
-Subject: Re: [RFC 08/23] filemap: align the index to mapping_min_order in
- filemap_get_folios_tag()
-Message-ID: <ZQiYkhDDsWS7PNzZ@bombadil.infradead.org>
-References: <20230915183848.1018717-1-kernel@pankajraghav.com>
- <20230915183848.1018717-9-kernel@pankajraghav.com>
- <ZQS1o38TOOI+AY5H@casper.infradead.org>
+        Mon, 18 Sep 2023 14:36:34 -0400
+Received: from mail-oo1-f71.google.com (mail-oo1-f71.google.com [209.85.161.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A5A3137
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Sep 2023 11:36:28 -0700 (PDT)
+Received: by mail-oo1-f71.google.com with SMTP id 006d021491bc7-5712ca11ee6so6703985eaf.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Sep 2023 11:36:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695062187; x=1695666987;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zL7t4GHuNYKyFje4T0iRFTpqFYTS+UOIKhf9ZmTQit4=;
+        b=w+TEZor1Y4xYact0GvuqD8vmCvp4B8u61+TSvB2Tdl+9Z4soRNketstti8sXoQpMDH
+         YoaEiT4vesTfS+Hbizke2zGf6NWJ8BUtA3iJYjwLV6JKWVN0AP/ZwmaAaG9C1OSpeElP
+         xzdRquQokzJdd7JAD/Tlkjgoy8LgUOEOaSOBwv9OumG68LYt+MlrRkebya530zj4GtsH
+         fPBIKaEj7RC9IkMRMoNtHtrgipkpr1rdQ6NH6DaRXqwF9V2BjIT2Uiuye55vdHxsNEU+
+         Vfxs3m5OlETtyzhyxFfOjz2Wwpc/j68ch1zPbvv9JpRCfY/vm2/8LZx6K+xqrLxYRhp7
+         ghgw==
+X-Gm-Message-State: AOJu0YxVemBJuABt7ggB42Ovc1euZFxz/Mo8Q0MlTsWO2zw22GujsbIU
+        GKj6/rwZ9O/eXkx1Omxp5arfmB5Zw8yQfHbOIKYs23+TS446
+X-Google-Smtp-Source: AGHT+IHKojlF3DrjzfacrM8ON0QKndS3TFyKBRjiZYO1OODXGZpL+wOYt0U6a2mzN7TiYu16z4GdSgQOZJVCPNaBlJoYXEf1UR65
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZQS1o38TOOI+AY5H@casper.infradead.org>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE autolearn=no
+X-Received: by 2002:a4a:4151:0:b0:573:52fc:4901 with SMTP id
+ x78-20020a4a4151000000b0057352fc4901mr3179529ooa.0.1695062187261; Mon, 18 Sep
+ 2023 11:36:27 -0700 (PDT)
+Date:   Mon, 18 Sep 2023 11:36:27 -0700
+In-Reply-To: <d576d53b-bce4-21d3-fddd-0e26e9b44f89@oracle.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008b455e0605a66b2d@google.com>
+Subject: Re: [syzbot] [fs?] [mm?] WARNING in page_copy_sane
+From:   syzbot <syzbot+c225dea486da4d5592bd@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        llvm@lists.linux.dev, mike.kravetz@oracle.com,
+        muchun.song@linux.dev, nathan@kernel.org, ndesaulniers@google.com,
+        sidhartha.kumar@oracle.com, syzkaller-bugs@googlegroups.com,
+        trix@redhat.com, willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,
+        RCVD_IN_MSPIKE_WL,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -58,17 +59,20 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 15, 2023 at 08:50:59PM +0100, Matthew Wilcox wrote:
-> On Fri, Sep 15, 2023 at 08:38:33PM +0200, Pankaj Raghav wrote:
-> > From: Luis Chamberlain <mcgrof@kernel.org>
-> > 
-> > Align the index to the mapping_min_order number of pages while setting
-> > the XA_STATE in filemap_get_folios_tag().
-> 
-> ... because?  It should already search backwards in the page cache,
-> otherwise calling sync_file_range() would skip the start if it landed
-> in a tail page of a folio.
+Hello,
 
-Thanks! Will drop and verify!
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-  Luis
+Reported-and-tested-by: syzbot+c225dea486da4d5592bd@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         7fc7222d Add linux-next specific files for 20230918
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=17fddb62680000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=79253779bcbe3130
+dashboard link: https://syzkaller.appspot.com/bug?extid=c225dea486da4d5592bd
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=137cae54680000
+
+Note: testing is done by a robot and is best-effort only.
