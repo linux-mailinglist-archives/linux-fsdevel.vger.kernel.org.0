@@ -2,45 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D2CE77A47E4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Sep 2023 13:06:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FEDC7A47D8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Sep 2023 13:06:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241250AbjIRLGD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Sep 2023 07:06:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58348 "EHLO
+        id S237827AbjIRLFz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Sep 2023 07:05:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58324 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235528AbjIRLFZ (ORCPT
+        with ESMTP id S234440AbjIRLFZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Mon, 18 Sep 2023 07:05:25 -0400
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFC52FF;
-        Mon, 18 Sep 2023 04:05:18 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CF39100;
+        Mon, 18 Sep 2023 04:05:19 -0700 (PDT)
 Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 7888321AB1;
+        by smtp-out1.suse.de (Postfix) with ESMTP id 7876321AB0;
         Mon, 18 Sep 2023 11:05:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
         t=1695035117; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=zQdnjHkpphpTUZvovpEEYbCyA4aD++DzvNzuV2MwetQ=;
-        b=x6juv+yivgnzd1s2Cvo7yOHmPrQzRukbHDxCP1y1H/pXLOOkZnZSNPwQEi97Y5v7s/2ln8
-        XZyyhroVs6lVY5TuobUIO0zBWsWuQCgGsq/DQXqJitW7DUN4avEjD1N/vqTFXUTBqmhHv5
-        nP3RbTFVLiKCp8E/uw/Dl9VAsKfTKkE=
+        bh=xN6TM7GHFN0mqNZxYxxtWtFr22aM89KuuSlQeaM7rVQ=;
+        b=oivGAnFiHoQC3mzve3gBbJhTW0HH2z9Ykvz/cBJoO8cE3qBvC15vlkaVeR62458BHPICXA
+        0vyEYWgJ8zbFp4wEddXmdAsRZ+UvnqwlGC0WO1+QbwU585t/AlhxOEJKvm32uBRV/2dBfJ
+        XhpsCs3qaXgk0Q/u6wNL0c3Tr2OB9Wo=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
         s=susede2_ed25519; t=1695035117;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=zQdnjHkpphpTUZvovpEEYbCyA4aD++DzvNzuV2MwetQ=;
-        b=RNvEEQaqux8fUEAdfZUqsWWhx/kfpzRGbBVsEB8v0U6oh8r/nvHAHQ/dSF5jtFSCz8w7bE
-        ofp/aLks2o/8V3Dg==
+        bh=xN6TM7GHFN0mqNZxYxxtWtFr22aM89KuuSlQeaM7rVQ=;
+        b=3pQ/CfDScouXELAST2XLDIoiqVihUdtxb1CypSlVKmNS3qXPs2j3hZjPhAVdUe2IzSiW9G
+        11xZze9zvMzyXGBw==
 Received: from adalid.arch.suse.de (adalid.arch.suse.de [10.161.8.13])
-        by relay2.suse.de (Postfix) with ESMTP id 618C52C14F;
+        by relay2.suse.de (Postfix) with ESMTP id 613C22C14B;
         Mon, 18 Sep 2023 11:05:17 +0000 (UTC)
 Received: by adalid.arch.suse.de (Postfix, from userid 16045)
-        id 1AE0351CD149; Mon, 18 Sep 2023 13:05:17 +0200 (CEST)
+        id 233A151CD14B; Mon, 18 Sep 2023 13:05:17 +0200 (CEST)
 From:   Hannes Reinecke <hare@suse.de>
 To:     Matthew Wilcox <willy@infradead.org>
 Cc:     Luis Chamberlain <mcgrof@kernel.org>,
@@ -48,9 +48,9 @@ Cc:     Luis Chamberlain <mcgrof@kernel.org>,
         Pankaj Raghav <p.raghav@samsung.com>,
         linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Hannes Reinecke <hare@suse.de>
-Subject: [PATCH 06/18] fs: Allow fine-grained control of folio sizes
-Date:   Mon, 18 Sep 2023 13:04:58 +0200
-Message-Id: <20230918110510.66470-7-hare@suse.de>
+Subject: [PATCH 07/18] mm/filemap: allocate folios with mapping order preference
+Date:   Mon, 18 Sep 2023 13:04:59 +0200
+Message-Id: <20230918110510.66470-8-hare@suse.de>
 X-Mailer: git-send-email 2.35.3
 In-Reply-To: <20230918110510.66470-1-hare@suse.de>
 References: <20230918110510.66470-1-hare@suse.de>
@@ -65,104 +65,79 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Use mapping_min_folio_order() when calling filemap_alloc_folio()
+to allocate folios with the order specified by the mapping.
 
-Some filesystems want to be able to limit the maximum size of folios,
-and some want to be able to ensure that folios are at least a certain
-size.  Add mapping_set_folio_orders() to allow this level of control
-(although it is not yet honoured).
-
-[Pankaj]: added mapping_min_folio_order()
-
-Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+Signed-off-by: Hannes Reinecke <hare@suse.de>
 ---
- include/linux/pagemap.h | 48 ++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 43 insertions(+), 5 deletions(-)
+ mm/filemap.c | 20 +++++++++++++++++---
+ 1 file changed, 17 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 351c3b7f93a1..129d62a891be 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -202,10 +202,16 @@ enum mapping_flags {
- 	AS_EXITING	= 4, 	/* final truncate in progress */
- 	/* writeback related tags are not used */
- 	AS_NO_WRITEBACK_TAGS = 5,
--	AS_LARGE_FOLIO_SUPPORT = 6,
--	AS_RELEASE_ALWAYS,	/* Call ->release_folio(), even if no private data */
-+	AS_RELEASE_ALWAYS = 6,	/* Call ->release_folio(), even if no private data */
-+	AS_FOLIO_ORDER_MIN = 8,
-+	AS_FOLIO_ORDER_MAX = 13,
-+	/* 8-17 are used for FOLIO_ORDER */
- };
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 582f5317ff71..98c3737644d5 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -507,9 +507,14 @@ static void __filemap_fdatawait_range(struct address_space *mapping,
+ 	pgoff_t end = end_byte >> PAGE_SHIFT;
+ 	struct folio_batch fbatch;
+ 	unsigned nr_folios;
++	unsigned int order = mapping_min_folio_order(mapping);
  
-+#define AS_FOLIO_ORDER_MIN_MASK	0x00001f00
-+#define AS_FOLIO_ORDER_MAX_MASK 0x0002e000
-+#define AS_FOLIO_ORDER_MASK (AS_FOLIO_ORDER_MIN_MASK | AS_FOLIO_ORDER_MAX_MASK)
-+
- /**
-  * mapping_set_error - record a writeback error in the address_space
-  * @mapping: the mapping in which an error should be set
-@@ -310,6 +316,29 @@ static inline void mapping_set_gfp_mask(struct address_space *m, gfp_t mask)
- 	m->gfp_mask = mask;
- }
+ 	folio_batch_init(&fbatch);
  
-+/**
-+ * mapping_set_folio_orders() - Set the range of folio sizes supported.
-+ * @mapping: The file.
-+ * @min: Minimum folio order (between 0-31 inclusive).
-+ * @max: Maximum folio order (between 0-31 inclusive).
-+ *
-+ * The filesystem should call this function in its inode constructor to
-+ * indicate which sizes of folio the VFS can use to cache the contents
-+ * of the file.  This should only be used if the filesystem needs special
-+ * handling of folio sizes (ie there is something the core cannot know).
-+ * Do not tune it based on, eg, i_size.
-+ *
-+ * Context: This should not be called while the inode is active as it
-+ * is non-atomic.
-+ */
-+static inline void mapping_set_folio_orders(struct address_space *mapping,
-+		unsigned int min, unsigned int max)
-+{
-+	mapping->flags = (mapping->flags & ~AS_FOLIO_ORDER_MASK) |
-+			(min << AS_FOLIO_ORDER_MIN) |
-+			(max << AS_FOLIO_ORDER_MAX);
-+}
-+
- /**
-  * mapping_set_large_folios() - Indicate the file supports large folios.
-  * @mapping: The file.
-@@ -323,7 +352,17 @@ static inline void mapping_set_gfp_mask(struct address_space *m, gfp_t mask)
-  */
- static inline void mapping_set_large_folios(struct address_space *mapping)
- {
--	__set_bit(AS_LARGE_FOLIO_SUPPORT, &mapping->flags);
-+	mapping_set_folio_orders(mapping, 0, 31);
-+}
-+
-+static inline unsigned mapping_max_folio_order(struct address_space *mapping)
-+{
-+	return (mapping->flags & AS_FOLIO_ORDER_MAX_MASK) >> AS_FOLIO_ORDER_MAX;
-+}
-+
-+static inline unsigned mapping_min_folio_order(struct address_space *mapping)
-+{
-+	return (mapping->flags & AS_FOLIO_ORDER_MIN_MASK) >> AS_FOLIO_ORDER_MIN;
- }
++	if (order) {
++		index = ALIGN_DOWN(index, 1 << order);
++		end = ALIGN_DOWN(end, 1 << order);
++	}
+ 	while (index <= end) {
+ 		unsigned i;
  
- /*
-@@ -332,8 +371,7 @@ static inline void mapping_set_large_folios(struct address_space *mapping)
-  */
- static inline bool mapping_large_folio_support(struct address_space *mapping)
- {
--	return IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) &&
--		test_bit(AS_LARGE_FOLIO_SUPPORT, &mapping->flags);
-+	return mapping_max_folio_order(mapping) > 0;
- }
+@@ -2482,7 +2487,8 @@ static int filemap_create_folio(struct file *file,
+ 	struct folio *folio;
+ 	int error;
  
- static inline int filemap_nr_thps(struct address_space *mapping)
+-	folio = filemap_alloc_folio(mapping_gfp_mask(mapping), 0);
++	folio = filemap_alloc_folio(mapping_gfp_mask(mapping),
++				    mapping_min_folio_order(mapping));
+ 	if (!folio)
+ 		return -ENOMEM;
+ 
+@@ -2542,9 +2548,16 @@ static int filemap_get_pages(struct kiocb *iocb, size_t count,
+ 	pgoff_t last_index;
+ 	struct folio *folio;
+ 	int err = 0;
++	unsigned int order = mapping_min_folio_order(mapping);
+ 
+ 	/* "last_index" is the index of the page beyond the end of the read */
+ 	last_index = DIV_ROUND_UP(iocb->ki_pos + count, PAGE_SIZE);
++	if (order) {
++		/* Align with folio order */
++		WARN_ON(index % 1 << order);
++		index = ALIGN_DOWN(index, 1 << order);
++		last_index = ALIGN(last_index, 1 << order);
++	}
+ retry:
+ 	if (fatal_signal_pending(current))
+ 		return -EINTR;
+@@ -2561,7 +2574,7 @@ static int filemap_get_pages(struct kiocb *iocb, size_t count,
+ 		if (iocb->ki_flags & (IOCB_NOWAIT | IOCB_WAITQ))
+ 			return -EAGAIN;
+ 		err = filemap_create_folio(filp, mapping,
+-				iocb->ki_pos >> PAGE_SHIFT, fbatch);
++				index, fbatch);
+ 		if (err == AOP_TRUNCATED_PAGE)
+ 			goto retry;
+ 		return err;
+@@ -3676,7 +3689,8 @@ static struct folio *do_read_cache_folio(struct address_space *mapping,
+ repeat:
+ 	folio = filemap_get_folio(mapping, index);
+ 	if (IS_ERR(folio)) {
+-		folio = filemap_alloc_folio(gfp, 0);
++		folio = filemap_alloc_folio(gfp,
++				mapping_min_folio_order(mapping));
+ 		if (!folio)
+ 			return ERR_PTR(-ENOMEM);
+ 		err = filemap_add_folio(mapping, folio, index, gfp);
 -- 
 2.35.3
 
