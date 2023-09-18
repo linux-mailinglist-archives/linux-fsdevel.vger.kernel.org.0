@@ -2,147 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 447617A3ED3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Sep 2023 01:37:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5D3E7A3EE8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Sep 2023 02:05:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232295AbjIQXhL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 17 Sep 2023 19:37:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33648 "EHLO
+        id S232295AbjIRAFE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 17 Sep 2023 20:05:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231518AbjIQXg4 (ORCPT
+        with ESMTP id S231463AbjIRAEm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 17 Sep 2023 19:36:56 -0400
-Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E303910C;
-        Sun, 17 Sep 2023 16:36:49 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 4FFE75C00A8;
-        Sun, 17 Sep 2023 19:36:47 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Sun, 17 Sep 2023 19:36:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
-        :cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm1; t=
-        1694993807; x=1695080207; bh=bsWkcg3PjB3+b+dNWVfXA89yUdcxjWyNUMe
-        d18WGUnc=; b=lrRwu3S+XAYckx49cIDZjNN29bad41IEY462IVLF2LJkJUiYTZa
-        I1vTukzn0B1268av/IvWTc3uda8RDon40kPUaVJV0f/5cNDm/HTnFUM2elDZaFqn
-        lzw+AMENiMlCaT/30PfY+tBzPKajCLjnBopqkzqqP/hmQXgcX0XsAE9GiptlivMM
-        XC4DlY8S6SOhlzSQUvjSZ3+x0zWssmRzrcUcHiCO7GDE7k7FSv1NN3u46L/PvIwg
-        QYnTkTnlsz258WKatUhrsKCw+SLh6rcbwI6CfCP9Us4IcuaQQDAuh4PsvXdA84Ej
-        y86nzGT6d0D/gpL9oAhX6XIgCKaoPNbUMBw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-        1694993807; x=1695080207; bh=bsWkcg3PjB3+b+dNWVfXA89yUdcxjWyNUMe
-        d18WGUnc=; b=Rj/z+rjPwTQfwEpdoaDwvZI6BE5p7/jDNgWtsr8KSEgzZd3qtKV
-        gAw5/R06eipJuYiLq2CT3p2LQ3BDYhBrGvoOgxTzygYNU+LOS3AiIbNG5CbjYRX8
-        jiotAvXKxoSbGTOTozIDvM1UliKeeNDOpHeEGrXTyATnvq2PrzKQq+f3LWtl4WYx
-        cunESBi3ieoMu3Q10D+rLAXvDMiwIr2+HHu1QG+7sIGtd1xLQGcZIrqx6eIcn/TR
-        iwGRm+BQyeqaeg/HpepSXRVw7R8qwS3iLluVPanK+5tZyQoNzsJ1NoHPB3itstn0
-        MDkngzeckr2eQQBRed7Kd+Wa15K99kbcF3g==
-X-ME-Sender: <xms:jo0HZQKSEwIlJ78lHNJn503tJtZjqie55m_jTz9ha2Nvb83doQaZXg>
-    <xme:jo0HZQITURUwbZlT4tr4zPMMmQ6liNpF75wOjOxo5Ru1cPFSHoKF9htrZ9EQM0KDD
-    99nNrS3X7Bz>
-X-ME-Received: <xmr:jo0HZQs80SO4OwUK29iICSlVyFku_jHWekJYmFzecWotPf8mASIVp0k1-7BFXOmbCpFOztAQwrU9rcWZWCL5LIIl2HmjHMQLlwaVbO52ryXjtvyZaxAd>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrudejjedgvdehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtfeejnecuhfhrohhmpefkrghn
-    ucfmvghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnh
-    epgedvteevvdefiedvueeujeegtedvheelhfehtefhkefgjeeuffeguefgkeduhfejnecu
-    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprhgrvhgvnh
-    esthhhvghmrgifrdhnvght
-X-ME-Proxy: <xmx:jo0HZdbeD2UPAPtkx-uXSls9ZH1RlyOZ2E2p1POcZkB1dSKh8ooYKg>
-    <xmx:jo0HZXbpgYfCdRp1HlR3NkBtvoVa2mnrDWxxGXdkBI5ZpnYpbkj7Qw>
-    <xmx:jo0HZZAHv3cDT5vHZEXC0bd01wGy3BvAKRnshQbVziJX3D4n_X9ZnQ>
-    <xmx:j40HZUTFrQUIHEH6ZGQUAMZHXX8_Htm_udoSNllh82UueZjQCwCoyw>
-Feedback-ID: i31e841b0:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 17 Sep 2023 19:36:41 -0400 (EDT)
-Message-ID: <39dc7081-fef3-007b-eee3-273bff549ecf@themaw.net>
-Date:   Mon, 18 Sep 2023 07:36:39 +0800
+        Sun, 17 Sep 2023 20:04:42 -0400
+Received: from mail-oa1-f70.google.com (mail-oa1-f70.google.com [209.85.160.70])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92E4AFE
+        for <linux-fsdevel@vger.kernel.org>; Sun, 17 Sep 2023 17:04:37 -0700 (PDT)
+Received: by mail-oa1-f70.google.com with SMTP id 586e51a60fabf-1d66d948417so4135721fac.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 17 Sep 2023 17:04:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694995474; x=1695600274;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=plqiVhsHQJW/q4sf5YkInYlIVvS0lexxFRBvtsJXFDw=;
+        b=RfEgaTJ5M40hO3W6kSNUNXw04ux6NpzyZCM8WuPfm9z9AdZpyVcrDA7PLaCIpDbNiy
+         4R8TYgF10jtYjTLxOc9lHmQQ6u+x28XgUcZUB0B1X0PJ1E8BTUQvfGhOUKyDnO4nPG0S
+         K7nwCjfoP06cPGsjtb92SLd3aWwB6nLZnUhl2mgOwor4F6SxYEVLHDWw42/XwCh5sX1E
+         dVH6hZHhKn5qXYaQ4fYlJ/1rkT9CjJ1DuMGoe5fvE1O4SyjZSxsTfi6+es/i6BE+jVmL
+         24dvaPwVVul+H50wd6OpGVxzV6FI4FWVmqkkUfyBWaaSuGj2FeQTG0R5/jWvr9ECJ6vl
+         63Gw==
+X-Gm-Message-State: AOJu0YxptsDxH4z17KdFyIVnb/tK7hjSbx7K7kATbAhR4NSgkWWQHub7
+        yop3W1NSkUMWWUoxQyZcLcOz/C0xjS692VtpNcGkVtSjD9h/
+X-Google-Smtp-Source: AGHT+IH/zkGlEDq9VbJg97gGt1EgLfqWnEVJ7h5xnIpv8Ku68gE0DF1eHR9jFI017KdKqlc7/TMCj9QpD4KDhKZQUzCLionLJESV
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [RFC PATCH 2/3] add statmnt(2) syscall
-Content-Language: en-US
-To:     Sargun Dhillon <sargun@sargun.me>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
-        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Amir Goldstein <amir73il@gmail.com>
-References: <20230913152238.905247-1-mszeredi@redhat.com>
- <20230913152238.905247-3-mszeredi@redhat.com>
- <CAMp4zn-r5BV_T9VBPJf8Z-iG6=ziDEpCdmPgHRRXF78UoOjTjQ@mail.gmail.com>
-From:   Ian Kent <raven@themaw.net>
-In-Reply-To: <CAMp4zn-r5BV_T9VBPJf8Z-iG6=ziDEpCdmPgHRRXF78UoOjTjQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_PASS,SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+X-Received: by 2002:a05:6870:b7ad:b0:1d5:95fc:2a7f with SMTP id
+ ed45-20020a056870b7ad00b001d595fc2a7fmr2748642oab.7.1694995474388; Sun, 17
+ Sep 2023 17:04:34 -0700 (PDT)
+Date:   Sun, 17 Sep 2023 17:04:34 -0700
+In-Reply-To: <0000000000004f34d705ffbc2604@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000259bd8060596e33f@google.com>
+Subject: Re: [syzbot] [integrity] [overlayfs] general protection fault in d_path
+From:   syzbot <syzbot+a67fc5321ffb4b311c98@syzkaller.appspotmail.com>
+To:     amir73il@gmail.com, brauner@kernel.org, jlayton@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        miklos@szeredi.hu, stefanb@linux.ibm.com,
+        syzkaller-bugs@googlegroups.com, zohar@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,
+        RCVD_IN_MSPIKE_WL,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+syzbot has bisected this issue to:
 
-On 18/9/23 02:18, Sargun Dhillon wrote:
-> On Wed, Sep 13, 2023 at 9:25 AM Miklos Szeredi <mszeredi@redhat.com> wrote:
->> Add a way to query attributes of a single mount instead of having to parse
->> the complete /proc/$PID/mountinfo, which might be huge.
->>
->> Lookup the mount by the old (32bit) or new (64bit) mount ID.  If a mount
->> needs to be queried based on path, then statx(2) can be used to first query
->> the mount ID belonging to the path.
->>
->> Design is based on a suggestion by Linus:
->>
->>    "So I'd suggest something that is very much like "statfsat()", which gets
->>     a buffer and a length, and returns an extended "struct statfs" *AND*
->>     just a string description at the end."
->>
->> The interface closely mimics that of statx.
->>
->> Handle ASCII attributes by appending after the end of the structure (as per
->> above suggestion).  Allow querying multiple string attributes with
->> individual offset/length for each.  String are nul terminated (termination
->> isn't counted in length).
->>
->> Mount options are also delimited with nul characters.  Unlike proc, special
->> characters are not quoted.
->>
-> Thank you for writing this patch. I wish that this had existed the many times
-> I've written parsers for mounts files in my life.
->
-> What do you think about exposing the locked flags, a la what happens
-> on propagation of mount across user namespaces?
+commit db1d1e8b9867aae5c3e61ad7859abfcc4a6fd6c7
+Author: Jeff Layton <jlayton@kernel.org>
+Date:   Mon Apr 17 16:55:51 2023 +0000
 
-Which flags do you mean?
+    IMA: use vfs_getattr_nosec to get the i_version
 
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=106f7e54680000
+start commit:   a747acc0b752 Merge tag 'linux-kselftest-next-6.6-rc2' of g..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=126f7e54680000
+console output: https://syzkaller.appspot.com/x/log.txt?x=146f7e54680000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=df91a3034fe3f122
+dashboard link: https://syzkaller.appspot.com/bug?extid=a67fc5321ffb4b311c98
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1671b694680000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14ec94d8680000
 
-If you mean shared, slave and I think there's a group id as well, etc. 
-then yes
+Reported-by: syzbot+a67fc5321ffb4b311c98@syzkaller.appspotmail.com
+Fixes: db1d1e8b9867 ("IMA: use vfs_getattr_nosec to get the i_version")
 
-they were available in the original fsinfo() implementation as they were 
-requested.
-
-
-So, yes, it would be good to also include those too.
-
-
-Ian
-
-
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
