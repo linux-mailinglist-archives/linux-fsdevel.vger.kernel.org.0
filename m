@@ -2,35 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8145F7A4EA6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Sep 2023 18:20:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E49E27A4F38
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Sep 2023 18:36:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230152AbjIRQUi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Sep 2023 12:20:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50926 "EHLO
+        id S229994AbjIRQfy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Sep 2023 12:35:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230238AbjIRQU2 (ORCPT
+        with ESMTP id S230081AbjIRQfe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Sep 2023 12:20:28 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B66115FC5;
-        Mon, 18 Sep 2023 09:17:32 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25AEDC433B7;
-        Mon, 18 Sep 2023 13:51:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695045108;
-        bh=jiGrt6majxDR+XMOL+qVbyDBwKKU2Pb4JTzAJ6GQJEE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=RPrbpHUafnMPvp4lSfOS5DEN4hjXnwPwKAXM3Z0zwmTzIP5zeJkn8U9NzB38B5Tex
-         k+2tyA6hrOslXumLkwMjHPpZ+WQGvkjfeS20C0Cb/KbV4p6/Nx3KaY2BBxdDjRA2Oq
-         M/QPer3Z0Zmp1vFxzR5roQfGsteyheBghYUFbMTrWg2o5WdqAXXMmIsWFjhIjiknoz
-         Zs6at91WlL6saoO8M1axs/BCMJYjR9XA+8Vkk7NV2ROdgImshQLMo4QYe5rOkYWkXf
-         uc1BPYi5/reup0U7DOzjaPaXJkuWVmscixL/VAo9Mh+/vbb5SfoahdBXnAiqqYxuQZ
-         b8kgNMNS0Ke2g==
-Date:   Mon, 18 Sep 2023 15:51:42 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        Mon, 18 Sep 2023 12:35:34 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4B4525235
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Sep 2023 09:15:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1695053722;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=n7LnswCOaGW4WDijQcX3CV0DLHpeotxjqcHToesSIKc=;
+        b=A8aKMrz2VTjzweE9ctBg1fM3lIr2gwI2tU33PhBJPPDvyk1YkHL83EqNis3Ep2E3wVntk8
+        hdiCHRoiUfVDSSH2Fa+n7diJZHEAVAJyQoxyo3960kF3ieg6iXtApxtG/Kxx9MLJ5e3rBu
+        oUrzYJ+EFthcjeEObwtJIPZUHvD3eaQ=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-226-BKU2SXNkO9-ZTaqbD7KxrQ-1; Mon, 18 Sep 2023 10:14:14 -0400
+X-MC-Unique: BKU2SXNkO9-ZTaqbD7KxrQ-1
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-274abe07e94so1732054a91.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Sep 2023 07:14:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695046453; x=1695651253;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=n7LnswCOaGW4WDijQcX3CV0DLHpeotxjqcHToesSIKc=;
+        b=oVQk69sw29dDxs5YrU45s+efJ3KqEjq37Xb4GX1Vh/NX042WoLyJykiih1DlA7VpGK
+         vrhhrMKAdLpkpqtABVh/9hB9mu2M907N55x9dCGRm2IxyRoL74uF8obj0VHxWYuDo0iZ
+         RmGN8sR3PUFZAVDBuXSTNWrgrSrQRiuq5VMcrs0tEOCh/mnNpsehi6nEyB95gXuVU7bi
+         /chi25egy1blyp81VmtOxCc3djTpH5ZCj7KxdRXnLG8didCcunCsGCRcdFZUdKOdytdy
+         9BJ7SBad8axf1tSQKu7PBn7+OITh+vV48ofTvA9A/pwQnad8sTurj0t9wDddUnz+ghaw
+         6s+g==
+X-Gm-Message-State: AOJu0YxGmF3enjAo69gtWuLLQHwXqRfsMRBTfbHmCjyTBj3Xe9dRvUAU
+        UlyTniusWLRRlD/QV7kviKEhjNC8cBzti3dv7bwBE8+q36XQV2WbcWI4mSWjSSr6syiRgZ78Mv7
+        Bm8wmJhjB9aSONSZq5RMHn9URHyR6tI5rzzK10CYKEA==
+X-Received: by 2002:a17:90a:5d92:b0:26b:374f:97c2 with SMTP id t18-20020a17090a5d9200b0026b374f97c2mr12211753pji.6.1695046453477;
+        Mon, 18 Sep 2023 07:14:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE7+neZJHpQgC1WYfw1UrSUZAhW6hjsbs2O6fe1ylMjIdtirlIwv14K9Cp0eRu/9VmEWd+vz5/135X2Ocy1Brk=
+X-Received: by 2002:a17:90a:5d92:b0:26b:374f:97c2 with SMTP id
+ t18-20020a17090a5d9200b0026b374f97c2mr12211725pji.6.1695046453181; Mon, 18
+ Sep 2023 07:14:13 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230913152238.905247-1-mszeredi@redhat.com> <20230913152238.905247-3-mszeredi@redhat.com>
+ <20230914-salzig-manifest-f6c3adb1b7b4@brauner> <CAJfpegs-sDk0++FjSZ_RuW5m-z3BTBQdu4T9QPtWwmSZ1_4Yvw@mail.gmail.com>
+ <20230914-lockmittel-verknallen-d1a18d76ba44@brauner> <CAJfpegt-VPZP3ou-TMQFs1Xupj_iWA5ttC2UUFKh3E43EyCOQQ@mail.gmail.com>
+ <20230918-grafik-zutreffen-995b321017ae@brauner>
+In-Reply-To: <20230918-grafik-zutreffen-995b321017ae@brauner>
+From:   Miklos Szeredi <mszeredi@redhat.com>
+Date:   Mon, 18 Sep 2023 16:14:02 +0200
+Message-ID: <CAOssrKfS79=+F0h=XPzJX2E6taxAPmEJEYPi4VBNQjgRR5ujqw@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/3] add statmnt(2) syscall
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-api@vger.kernel.org, linux-man@vger.kernel.org,
@@ -40,138 +74,38 @@ Cc:     Miklos Szeredi <mszeredi@redhat.com>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <christian@brauner.io>,
         Amir Goldstein <amir73il@gmail.com>
-Subject: Re: [RFC PATCH 2/3] add statmnt(2) syscall
-Message-ID: <20230918-grafik-zutreffen-995b321017ae@brauner>
-References: <20230913152238.905247-1-mszeredi@redhat.com>
- <20230913152238.905247-3-mszeredi@redhat.com>
- <20230914-salzig-manifest-f6c3adb1b7b4@brauner>
- <CAJfpegs-sDk0++FjSZ_RuW5m-z3BTBQdu4T9QPtWwmSZ1_4Yvw@mail.gmail.com>
- <20230914-lockmittel-verknallen-d1a18d76ba44@brauner>
- <CAJfpegt-VPZP3ou-TMQFs1Xupj_iWA5ttC2UUFKh3E43EyCOQQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAJfpegt-VPZP3ou-TMQFs1Xupj_iWA5ttC2UUFKh3E43EyCOQQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> Atomicity of getting a snapshot of the current mount tree with all of
-> its attributes was never guaranteed, although reading
-> /proc/self/mountinfo into a sufficiently large buffer would work that
-> way.   However, I don't see why mount trees would require stronger
-> guarantees than dentry trees (for which we have basically none).
+On Mon, Sep 18, 2023 at 3:51=E2=80=AFPM Christian Brauner <brauner@kernel.o=
+rg> wrote:
 
-So atomicity was never put forward as a requirement. In that
-session/recording I explicitly state that we won't guarantee atomicity.
-And systemd agreed with this. So I think we're all on the same page.
+> I really would prefer a properly typed struct and that's what everyone
+> was happy with in the session as well. So I would not like to change the
+> main parameters.
 
-> Even more type clean interface:
-> 
-> struct statmnt *statmnt(u64 mnt_id, u64 mask, void *buf, size_t
-> bufsize, unsigned int flags);
-> 
-> Kernel would return a fully initialized struct with the numeric as
-> well as string fields filled.  That part is trivial for userspace to
-> deal with.
+I completely  agree.  Just would like to understand this point:
 
-I really would prefer a properly typed struct and that's what everyone
-was happy with in the session as well. So I would not like to change the
-main parameters.
+  struct statmnt *statmnt(u64 mntid, u64 mask, unsigned int flags);
 
-> > Plus, the format for how to return arbitrary filesystem mount options
-> > warrants a separate discussion imho as that's not really vfs level
-> > information.
-> 
-> Okay.   Let's take fs options out of this.
+What's not properly typed about this interface?
 
-Thanks.
+I guess the answer is that it's not a syscall interface, which will
+have an added [void *buf, size_t bufsize], while the buffer sizing is
+done by a simple libc wrapper.
 
-> 
-> That leaves:
-> 
->  - fs type and optionally subtype
+Do you think that's a problem?  If so, why?
 
-So since subtype is FUSE specific it might be better to move this to
-filesystem specific options imho.
+Thanks,
+Miklos
 
->  - root of mount within fs
->  - mountpoint path
-> 
-> The type and subtype are naturally limited to sane sizes, those are
-> not an issue.
-
-What's the limit for fstype actually? I don't think there is one.
-There's one by chance but not by design afaict?
-
-Maybe crazy idea:
-That magic number thing that we do in include/uapi/linux/magic.h
-is there a good reason for this or why don't we just add a proper,
-simple enum:
-
-enum {
-        FS_TYPE_ADFS        1
-        FS_TYPE_AFFS        2
-        FS_TYPE_AFS         3
-        FS_TYPE_AUTOFS      4
-	FS_TYPE_EXT2	    5
-	FS_TYPE_EXT3	    6
-	FS_TYPE_EXT4	    7
-	.
-	.
-	.
-	FS_TYPE_MAX
-}
-
-that we start returning from statmount(). We can still return both the
-old and the new fstype? It always felt a bit odd that fs developers to
-just select a magic number.
-
-> 
-> For paths the evolution of the relevant system/library calls was:
-> 
->   char *getwd(char buf[PATH_MAX]);
->   char *getcwd(char *buf, size_t size);
->   char *get_current_dir_name(void);
-> 
-> It started out using a fixed size buffer, then a variable sized
-> buffer, then an automatically allocated buffer by the library, hiding
-> the need to resize on overflow.
-> 
-> The latest style is suitable for the statmnt() call as well, if we
-> worry about pleasantness of the API.
-
-So, can we then do the following struct:
-
-struct statmnt {
-        __u64 mask;             /* What results were written [uncond] */
-        __u32 sb_dev_major;     /* Device ID */
-        __u32 sb_dev_minor;
-        __u64 sb_magic;         /* ..._SUPER_MAGIC */
-        __u32 sb_flags;         /* MS_{RDONLY,SYNCHRONOUS,DIRSYNC,LAZYTIME} */
-        __u32 __spare1;
-        __u64 mnt_id;           /* Unique ID of mount */
-        __u64 mnt_parent_id;    /* Unique ID of parent (for root == mnt_id) */
-        __u32 mnt_id_old;       /* Reused IDs used in proc/.../mountinfo */
-        __u32 mnt_parent_id_old;
-        __u64 mnt_attr;         /* MOUNT_ATTR_... */
-        __u64 mnt_propagation;  /* MS_{SHARED,SLAVE,PRIVATE,UNBINDABLE} */
-        __u64 mnt_peer_group;   /* ID of shared peer group */
-        __u64 mnt_master;       /* Mount receives propagation from this ID */
-        __u64 propagate_from;   /* Propagation from in current namespace */
-	__aligned_u64 mountpoint;
-	__u32 mountpoint_len;
-	__aligned_u64 mountroot;
-	__u32 mountroot_len;
-        __u64 __spare[20];
-};
-
-Userspace knows already how to deal with that because of bpf and other
-structs (e.g., both systemd and LXC have ptr_to_u64() helpers and so
-on). Libmount and glibc can hide this away internally as well.
