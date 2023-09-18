@@ -2,291 +2,185 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 96F3B7A46D1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Sep 2023 12:21:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A481C7A46D6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Sep 2023 12:22:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238696AbjIRKUg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Sep 2023 06:20:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40262 "EHLO
+        id S241035AbjIRKWL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Sep 2023 06:22:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239570AbjIRKUW (ORCPT
+        with ESMTP id S240883AbjIRKVm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Sep 2023 06:20:22 -0400
-Received: from domac.alu.hr (domac.alu.unizg.hr [161.53.235.3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97C87A6;
-        Mon, 18 Sep 2023 03:20:15 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by domac.alu.hr (Postfix) with ESMTP id 909EF60173;
-        Mon, 18 Sep 2023 12:20:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=alu.unizg.hr; s=mail;
-        t=1695032413; bh=rX0YAONv3gMNho1TfQL2tH3WaTVXGD3xa0UwnM3eZM8=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=IYCerkXGn9VvuUfLqb+bqsNsTCs4730YL3URbacI+OOjnkIo3572+aKfymfYaiUFK
-         zK0GssLYCQCVIUtTYbNx3lp1yHOQC1F7Ovmdhwg8kTVzZNBqndkgO4idMS2zpqUGpf
-         zwTNHpO8o61sDSTDT9+ZhvOpBYKIsBscKYU2vCUdy8TujA19NDws82QCToa9l+O/D1
-         RlKsq6JBmelqpV6tMm3jyBRDvNg23wd+F7SAeA2x2pPmFT/VzAeOysWDgzbcDlBfIW
-         Ke5XHybFrNalj8Dl1yalMl1MhFqiNjE5psclJ2sgbGNxuqzBzR1PmR3wkHS5Y6tw/I
-         PfxHVkxxm8dgA==
-X-Virus-Scanned: Debian amavisd-new at domac.alu.hr
-Received: from domac.alu.hr ([127.0.0.1])
-        by localhost (domac.alu.hr [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id yb-GMnSu9hpB; Mon, 18 Sep 2023 12:20:10 +0200 (CEST)
-Received: from [192.168.1.6] (78-1-184-14.adsl.net.t-com.hr [78.1.184.14])
-        by domac.alu.hr (Postfix) with ESMTPSA id 152296015E;
-        Mon, 18 Sep 2023 12:20:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=alu.unizg.hr; s=mail;
-        t=1695032410; bh=rX0YAONv3gMNho1TfQL2tH3WaTVXGD3xa0UwnM3eZM8=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=rHIN9WS6JGlf5P+6CjZTjJN3rHP6j7NQXLLKdVGxPjeD8b5Mz9afk5M2GGjqxK7GL
-         3E/FvCcAxs9IW66JWLEj1W6m1UcFE32jnv4aldUSF2mZ870AMQNTaq+KlXdXLI5pVO
-         X0Jo+bpImmmqzdWmcg/jB2XaVqY8cfVz5w97IkgIgNft4QOP1Am+YPkwc+qRYB4KQm
-         y5giv0ZN23PmUA51DCdRnjr2cgAVmGZa2jyVMrR7CgJCY0/bnOnwT52jkQwNCqQ2/1
-         yePj5P38fj7jrerV2pyZEMB4zIyar6lQtUxPeygR62+HWwVnOxuO1DLCXskcfgB4VN
-         Rd6wdVxPkyV+A==
-Message-ID: <22ca3ad4-42ef-43bc-51d0-78aaf274977b@alu.unizg.hr>
-Date:   Mon, 18 Sep 2023 12:20:09 +0200
+        Mon, 18 Sep 2023 06:21:42 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 045F1AD
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Sep 2023 03:20:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1695032456;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=yU55zmy+tifjpDLUpfSCylMp4XR9haoWnULzlns5xls=;
+        b=MurVU8+4Z8s+Q3xe4MUZviebgLj4z+XkZBjVoHtT+yrFzLukOqY6hRs6ArcAQ0IRplHFr4
+        fT5Gay35I/TtLS0MazWUFefNjgURxVA92RU5mG/LIa8bw3H1JM5Ua7pPStjsBtgJdOjbwG
+        QwR5Irp0aEacpT4XrsQyWxuQoEEIlWM=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-663-p1wsr2W2MTyIe0BKJ3ZKeg-1; Mon, 18 Sep 2023 06:20:55 -0400
+X-MC-Unique: p1wsr2W2MTyIe0BKJ3ZKeg-1
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-27472e97c0bso2661078a91.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Sep 2023 03:20:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695032454; x=1695637254;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yU55zmy+tifjpDLUpfSCylMp4XR9haoWnULzlns5xls=;
+        b=oTvYqP7lk1CCqUoKfX2Ih0FJv7Q5q9IL7XaOGv1glEmn9KLn5h45zuCKl7U9bp0u44
+         WVmfACq6QgmSqYAzdg0d3XKBaVAY2CmfSkft9evG9KHub215OwbQnQHr+wjo6fBSkE2r
+         cMGYJR1MzsmBvpWSUnba0U2avKmtBEEqiy6aaQQSAc1kCjSdr+I5LtS6QV8L8a02TK0G
+         hRShIieh4+1EZ2NthJ2frG+75pIgqJgq6+xuKrqz7Q5+JDmgz62e5FGTuh4cU3X6yT49
+         terJe/vAl6fNtY01EsWUpyKK2TxK2TocNDDBF/nP1Hqna6YxRDBeIifBE4EALWP4KRYu
+         vFzw==
+X-Gm-Message-State: AOJu0YxNgPM+n/pePqmERyyK8xTpfuPtqW+lmggMd+pEkq9u3oR0K76r
+        JLtRfHtTIcxE4WQyoXZVh46CUlgWRfP8tkmR5qcrTDrUqr50wjtp159KA+x1zz6+6niD8TKsY5D
+        +HoH2F41h22iv4nYtVMEznBYymnjRD6ogIYCw18zp1w==
+X-Received: by 2002:a17:90b:23c4:b0:259:466:940f with SMTP id md4-20020a17090b23c400b002590466940fmr5945979pjb.22.1695032454029;
+        Mon, 18 Sep 2023 03:20:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGEtH10NqI0T9ljzjjgrVprcPWZuTNpuV3VTBMkk2Q5qVxQsg5e+/Uzg2XIHnu21aI/ILioVf9Pa2At0kqn5VI=
+X-Received: by 2002:a17:90b:23c4:b0:259:466:940f with SMTP id
+ md4-20020a17090b23c400b002590466940fmr5945960pjb.22.1695032453718; Mon, 18
+ Sep 2023 03:20:53 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v1 1/1] xarray: fix the data-race in xas_find_chunk() by
- using READ_ONCE()
-Content-Language: en-US
-To:     Jan Kara <jack@suse.cz>
-Cc:     Philipp Stanner <pstanner@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>, Chris Mason <clm@fb.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        linux-mm@kvack.org, Yury Norov <yury.norov@gmail.com>
-References: <20230918044739.29782-1-mirsad.todorovac@alu.unizg.hr>
- <20230918094116.2mgquyxhnxcawxfu@quack3>
-From:   Mirsad Todorovac <mirsad.todorovac@alu.unizg.hr>
-In-Reply-To: <20230918094116.2mgquyxhnxcawxfu@quack3>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-3.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,NICE_REPLY_A,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+References: <ZOWFtqA2om0w5Vmz@fedora> <20230823-kuppe-lassen-bc81a20dd831@brauner>
+ <CAFj5m9KiBDzNHCsTjwUevZh3E3RRda2ypj9+QcRrqEsJnf9rXQ@mail.gmail.com>
+ <CAHj4cs_MqqWYy+pKrNrLqTb=eoSOXcZdjPXy44x-aA1WvdVv0w@mail.gmail.com>
+ <89d049ed-6bbf-bba7-80d4-06c060e65e5b@huawei.com> <20230917091031.GA1543@noisy.programming.kicks-ass.net>
+ <9efe2f14-c3d9-e526-d561-b6a0aca6c491@huawei.com>
+In-Reply-To: <9efe2f14-c3d9-e526-d561-b6a0aca6c491@huawei.com>
+From:   Yi Zhang <yi.zhang@redhat.com>
+Date:   Mon, 18 Sep 2023 18:20:41 +0800
+Message-ID: <CAHj4cs-6M+fORJOGOxH3sO5BytBwi4y9hcnS+xQ3wLZO20UXWg@mail.gmail.com>
+Subject: Re: [czhong@redhat.com: [bug report] WARNING: CPU: 121 PID: 93233 at
+ fs/dcache.c:365 __dentry_kill+0x214/0x278]
+To:     Baokun Li <libaokun1@huawei.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ming Lei <ming.lei@redhat.com>, mark.rutland@arm.com,
+        Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+        Changhui Zhong <czhong@redhat.com>,
+        yangerkun <yangerkun@huawei.com>,
+        "zhangyi (F)" <yi.zhang@huawei.com>,
+        Kees Cook <keescook@chromium.org>,
+        chengzhihao <chengzhihao1@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/18/23 11:41, Jan Kara wrote:
-> On Mon 18-09-23 06:47:40, Mirsad Goran Todorovac wrote:
->> KCSAN has discovered the following data-race:
->>
->> [  206.510010] ==================================================================
->> [  206.510035] BUG: KCSAN: data-race in xas_clear_mark / xas_find_marked
->>
->> [  206.510067] write to 0xffff963df6a90fe0 of 8 bytes by interrupt on cpu 22:
->> [  206.510081] xas_clear_mark (./arch/x86/include/asm/bitops.h:178 ./include/asm-generic/bitops/instrumented-non-atomic.h:115 lib/xarray.c:102 lib/xarray.c:914)
->> [  206.510097] __xa_clear_mark (lib/xarray.c:1923)
->> [  206.510114] __folio_end_writeback (mm/page-writeback.c:2981)
->> [  206.510128] folio_end_writeback (mm/filemap.c:1616)
->> [  206.510143] end_page_writeback (mm/folio-compat.c:28)
->> [  206.510155] btrfs_page_clear_writeback (fs/btrfs/subpage.c:646) btrfs
->> [  206.510994] end_bio_extent_writepage (./include/linux/bio.h:84 fs/btrfs/extent_io.c:542) btrfs
->> [  206.511817] __btrfs_bio_end_io (fs/btrfs/bio.c:117 fs/btrfs/bio.c:112) btrfs
->> [  206.512640] btrfs_orig_bbio_end_io (fs/btrfs/bio.c:164) btrfs
->> [  206.513497] btrfs_simple_end_io (fs/btrfs/bio.c:380) btrfs
->> [  206.514350] bio_endio (block/bio.c:1617)
->> [  206.514362] blk_mq_end_request_batch (block/blk-mq.c:837 block/blk-mq.c:1073)
->> [  206.514377] nvme_pci_complete_batch (drivers/nvme/host/pci.c:986) nvme
->> [  206.514437] nvme_irq (drivers/nvme/host/pci.c:1086) nvme
->> [  206.514500] __handle_irq_event_percpu (kernel/irq/handle.c:158)
->> [  206.514517] handle_irq_event (kernel/irq/handle.c:195 kernel/irq/handle.c:210)
->> [  206.514533] handle_edge_irq (kernel/irq/chip.c:836)
->> [  206.514549] __common_interrupt (./include/linux/irqdesc.h:161 arch/x86/kernel/irq.c:238 arch/x86/kernel/irq.c:257)
->> [  206.514563] common_interrupt (arch/x86/kernel/irq.c:247 (discriminator 14))
->> [  206.514583] asm_common_interrupt (./arch/x86/include/asm/idtentry.h:636)
->> [  206.514599] kcsan_setup_watchpoint (kernel/kcsan/core.c:705 (discriminator 1))
->> [  206.514612] __tsan_read8 (kernel/kcsan/core.c:1025)
->> [  206.514626] steal_from_bitmap.part.0 (./include/linux/find.h:186 fs/btrfs/free-space-cache.c:2557 fs/btrfs/free-space-cache.c:2613) btrfs
->> [  206.515491] __btrfs_add_free_space (fs/btrfs/free-space-cache.c:2689 fs/btrfs/free-space-cache.c:2667) btrfs
->> [  206.516361] btrfs_add_free_space_async_trimmed (fs/btrfs/free-space-cache.c:2798) btrfs
->> [  206.517231] add_new_free_space (fs/btrfs/block-group.c:550) btrfs
->> [  206.518095] load_free_space_tree (fs/btrfs/free-space-tree.c:1595 fs/btrfs/free-space-tree.c:1658) btrfs
->> [  206.518953] caching_thread (fs/btrfs/block-group.c:873) btrfs
->> [  206.519800] btrfs_work_helper (fs/btrfs/async-thread.c:314) btrfs
->> [  206.520643] process_one_work (kernel/workqueue.c:2600)
->> [  206.520658] worker_thread (./include/linux/list.h:292 kernel/workqueue.c:2752)
->> [  206.520672] kthread (kernel/kthread.c:389)
->> [  206.520684] ret_from_fork (arch/x86/kernel/process.c:145)
->> [  206.520701] ret_from_fork_asm (arch/x86/entry/entry_64.S:312)
->>
->> [  206.520722] read to 0xffff963df6a90fe0 of 8 bytes by task 2793 on cpu 6:
->> [  206.520735] xas_find_marked (./include/linux/xarray.h:1706 lib/xarray.c:1354)
->> [  206.520750] filemap_get_folios_tag (mm/filemap.c:1975 mm/filemap.c:2273)
->> [  206.520763] __filemap_fdatawait_range (mm/filemap.c:519)
->> [  206.520777] filemap_fdatawait_range (mm/filemap.c:556)
->> [  206.520790] btrfs_wait_ordered_range (fs/btrfs/ordered-data.c:839) btrfs
->> [  206.521641] btrfs_sync_file (fs/btrfs/file.c:1859) btrfs
->> [  206.522495] vfs_fsync_range (fs/sync.c:188)
->> [  206.522509] __x64_sys_fsync (./include/linux/file.h:45 fs/sync.c:213 fs/sync.c:220 fs/sync.c:218 fs/sync.c:218)
->> [  206.522522] do_syscall_64 (arch/x86/entry/common.c:50 arch/x86/entry/common.c:80)
->> [  206.522535] entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:120)
->>
->> [  206.522557] value changed: 0xfffffffffff80000 -> 0xfffffffffff00000
->>
->> [  206.522574] Reported by Kernel Concurrency Sanitizer on:
->> [  206.522585] CPU: 6 PID: 2793 Comm: tracker-extract Tainted: G             L     6.5.0-rc6+ #44
->> [  206.522600] Hardware name: ASRock X670E PG Lightning/X670E PG Lightning, BIOS 1.21 04/26/2023
->> [  206.522608] ==================================================================
-> 
-> Thanks for working on this. I guess the full KCSAN warning isn't that
-> useful in the changelog. Rather I'd spend more time explaining the real
-> problem here ...
-> 
->> As Jan Kara explained, the problem is in the function xas_find_chuck():
->>
->> /* Private */
->> static inline unsigned int xas_find_chunk(struct xa_state *xas, bool advance,
->> 		xa_mark_t mark)
->> {
->> 	unsigned long *addr = xas->xa_node->marks[(__force unsigned)mark];
->> 	unsigned int offset = xas->xa_offset;
->>
->> 	if (advance)
->> 		offset++;
->> 	if (XA_CHUNK_SIZE == BITS_PER_LONG) {
->> 		if (offset < XA_CHUNK_SIZE) {
->> →			unsigned long data = *addr & (~0UL << offset);
->> 			if (data)
->> 				return __ffs(data);
-> 
-> ... which is that xas_find_chunk() is called only under RCU protection and
-> thus the two uses of 'data' in the above code can yield different results.
-> 
->> 		}
->> 		return XA_CHUNK_SIZE;
->> 	}
->>
->> 	return find_next_bit(addr, XA_CHUNK_SIZE, offset);
->> }
->>
->> In particular, the line
->>
->> 			unsigned long data = *addr & (~0UL << offset);
->>
->> contains a data race that is best avoided using READ_ONCE(), which eliminated the KCSAN
->> data-race warning completely.
-> 
-> Yes, this improves the situation for xarray use on 64-bit architectures but
-> doesn't fix cases on 32-bit archs or if CONFIG_BASE_SMALL is set. As I
-> mentioned in my previous reply, I'd rather:
-> 
-> 1) Fix find_next_bit(), find_first_bit() and related functions in
-> lib/find_bit.c to use READ_ONCE() - such as _find_first_bit() etc. It is
-> quite some churn but I don't see how else to make these functions safe when
-> the underlying contents can change.
+On Mon, Sep 18, 2023 at 9:10=E2=80=AFAM Baokun Li <libaokun1@huawei.com> wr=
+ote:
+>
+> On 2023/9/17 17:10, Peter Zijlstra wrote:
+> > On Sat, Sep 16, 2023 at 02:55:47PM +0800, Baokun Li wrote:
+> >> On 2023/9/13 16:59, Yi Zhang wrote:
+> >>> The issue still can be reproduced on the latest linux tree[2].
+> >>> To reproduce I need to run about 1000 times blktests block/001, and
+> >>> bisect shows it was introduced with commit[1], as it was not 100%
+> >>> reproduced, not sure if it's the culprit?
+> >>>
+> >>>
+> >>> [1] 9257959a6e5b locking/atomic: scripts: restructure fallback ifdeff=
+ery
+> >> Hello, everyone=EF=BC=81
+> >>
+> >> We have confirmed that the merge-in of this patch caused hlist_bl_lock
+> >> (aka, bit_spin_lock) to fail, which in turn triggered the issue above.
+> >> [root@localhost ~]# insmod mymod.ko
+> >> [   37.994787][  T621] >>> a =3D 725, b =3D 724
+> >> [   37.995313][  T621] ------------[ cut here ]------------
+> >> [   37.995951][  T621] kernel BUG at fs/mymod/mymod.c:42!
+> >> [r[  oo 3t7@.l996o4c61al]h[o s T6t21] ~ ]#Int ernal error: Oops - BUG:
+> >> 00000000f2000800 [#1] SMP
+> >> [   37.997420][  T621] Modules linked in: mymod(E)
+> >> [   37.997891][  T621] CPU: 9 PID: 621 Comm: bl_lock_thread2 Tainted:
+> >> G            E      6.4.0-rc2-00034-g9257959a6e5b-dirty #117
+> >> [   37.999038][  T621] Hardware name: linux,dummy-virt (DT)
+> >> [   37.999571][  T621] pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT=
+ -SSBS
+> >> BTYPE=3D--)
+> >> [   38.000344][  T621] pc : increase_ab+0xcc/0xe70 [mymod]
+> >> [   38.000882][  T621] lr : increase_ab+0xcc/0xe70 [mymod]
+> >> [   38.001416][  T621] sp : ffff800008b4be40
+> >> [   38.001822][  T621] x29: ffff800008b4be40 x28: 0000000000000000 x27=
+:
+> >> 0000000000000000
+> >> [   38.002605][  T621] x26: 0000000000000000 x25: 0000000000000000 x24=
+:
+> >> 0000000000000000
+> >> [   38.003385][  T621] x23: ffffd9930c698190 x22: ffff800008a0ba38 x21=
+:
+> >> 0000000000000001
+> >> [   38.004174][  T621] x20: ffffffffffffefff x19: ffffd9930c69a580 x18=
+:
+> >> 0000000000000000
+> >> [   38.004955][  T621] x17: 0000000000000000 x16: ffffd9933011bd38 x15=
+:
+> >> ffffffffffffffff
+> >> [   38.005754][  T621] x14: 0000000000000000 x13: 205d313236542020 x12=
+:
+> >> ffffd99332175b80
+> >> [   38.006538][  T621] x11: 0000000000000003 x10: 0000000000000001 x9 =
+:
+> >> ffffd9933022a9d8
+> >> [   38.007325][  T621] x8 : 00000000000bffe8 x7 : c0000000ffff7fff x6 =
+:
+> >> ffffd993320b5b40
+> >> [   38.008124][  T621] x5 : ffff0001f7d1c708 x4 : 0000000000000000 x3 =
+:
+> >> 0000000000000000
+> >> [   38.008912][  T621] x2 : 0000000000000000 x1 : 0000000000000000 x0 =
+:
+> >> 0000000000000015
+> >> [   38.009709][  T621] Call trace:
+> >> [   38.010035][  T621]  increase_ab+0xcc/0xe70 [mymod]
+> >> [   38.010539][  T621]  kthread+0xdc/0xf0
+> >> [   38.010927][  T621]  ret_from_fork+0x10/0x20
+> >> [   38.011370][  T621] Code: 17ffffe0 90000020 91044000 9400000d (d421=
+0000)
+> >> [   38.012067][  T621] ---[ end trace 0000000000000000 ]---
+> > Is this arm64 or something? You seem to have forgotten to mention what
+> > platform you're using.
+> >
+> Sorry for the late reply.
+> We tested both x86 and arm64, and the problem is only encountered under
+> arm64.
 
-Thank you for your review.
+Yeah, my reproduced environment is also aarch64.
 
-I assume you have the big picture, but just a stupid question:
 
-	if (XA_CHUNK_SIZE == BITS_PER_LONG) {
-		if (offset < XA_CHUNK_SIZE) {
-			unsigned long data = READ_ONCE(*addr) & (~0UL << offset);
-			if (data)
-				return __ffs(data);
-		}
-		return XA_CHUNK_SIZE;
-	}
 
-I would hate to argue, but ...
+>
+> --
+> With Best Regards,
+> Baokun Li
+> .
+>
 
-Wouldn't BITS_PER_LONG simply change to 32 on 32-bit architectures?
 
-Is there something I am missing?
+--=20
+Best Regards,
+  Yi Zhang
 
- From include/asm-generic/bitsperlong.h:
-----------------------------------------
-#ifdef CONFIG_64BIT
-#define BITS_PER_LONG 64
-#else
-#define BITS_PER_LONG 32
-#endif /* CONFIG_64BIT */
-
-About the CONFIG_BASE_SMALL I cannot tell:
-----------------------------------------
-#ifndef XA_CHUNK_SHIFT
-#define XA_CHUNK_SHIFT		(CONFIG_BASE_SMALL ? 4 : 6)
-#endif
-#define XA_CHUNK_SIZE		(1UL << XA_CHUNK_SHIFT)
-#define XA_CHUNK_MASK		(XA_CHUNK_SIZE - 1)
-#define XA_MAX_MARKS		3
-#define XA_MARK_LONGS		DIV_ROUND_UP(XA_CHUNK_SIZE, BITS_PER_LONG)
-----------------------------------------
-
-I see why you would want find_next_bit() and find_first_bit() fixed, but I am not that deep
-into those bitops, so I guess I cannot make this in one step ... Probably it would require
-a lot of homework.
-
-_find_*_bit() functions and/or macros cause quite a number of KCSAN BUG warnings:
-
-  95 _find_first_and_bit (lib/find_bit.c:114 (discriminator 10))
-  31 _find_first_zero_bit (lib/find_bit.c:125 (discriminator 10))
-173 _find_next_and_bit (lib/find_bit.c:171 (discriminator 2))
-655 _find_next_bit (lib/find_bit.c:133 (discriminator 2))
-   5 _find_next_zero_bit
-
-... but I am simply not certain what is the right thing to do ATM about those and whether they
-are false positives.
-
-AFAICS, READ_ONCE() here solves the case of 64 and 32 architectures which is
-an incremental step, and it works ... I am just not ready for an universal solution ATM.
-
-> 2) Change xas_find_chunk() to unconditionally use find_next_bit() as the
-> special case XA_CHUNK_SIZE == BITS_PER_LONG seems pointless these days
-> because find_next_bit() is inline and does small_const_nbits(size) check.
-
-I see your point. A generalised solution would of course be better. But from the report about
-data-races in those functions it seems that they need a major rethink. It isn't that obvious
-to me what should be READ_ONCE()-ed in a bit field ...
-
-Those functions are extensively used throughout the kernel and I get the notion it is a job
-for someone with more experience ...
-
-Best regards,
-Mirsad
-
-> 								Honza
-> 
->   
->> Reported-by: Mirsad Goran Todorovac <mirsad.todorovac@alu.unizg.hr>
->> Suggested-by: Jan Kara <jack@suse.cz>
->> Fixes: b803b42823d0d ("xarray: Add XArray iterators")
->> Matthew Wilcox <willy@infradead.org>
->> Cc: Chris Mason <clm@fb.com>
->> Cc: Andrew Morton <akpm@linux-foundation.org>
->> Cc: Josef Bacik <josef@toxicpanda.com>
->> Cc: David Sterba <dsterba@suse.com>
->> Cc: linux-btrfs@vger.kernel.org
->> Cc: linux-fsdevel@vger.kernel.org
->> Cc: linux-mm@kvack.org
->> Signed-off-by: Mirsad Goran Todorovac <mirsad.todorovac@alu.unizg.hr>
->> ---
->> v1: the proposed fix (RFC)
->>
->>   include/linux/xarray.h | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/include/linux/xarray.h b/include/linux/xarray.h
->> index cb571dfcf4b1..1715fd322d62 100644
->> --- a/include/linux/xarray.h
->> +++ b/include/linux/xarray.h
->> @@ -1720,7 +1720,7 @@ static inline unsigned int xas_find_chunk(struct xa_state *xas, bool advance,
->>   		offset++;
->>   	if (XA_CHUNK_SIZE == BITS_PER_LONG) {
->>   		if (offset < XA_CHUNK_SIZE) {
->> -			unsigned long data = *addr & (~0UL << offset);
->> +			unsigned long data = READ_ONCE(*addr) & (~0UL << offset);
->>   			if (data)
->>   				return __ffs(data);
->>   		}
->> -- 
->> 2.34.1
->>
