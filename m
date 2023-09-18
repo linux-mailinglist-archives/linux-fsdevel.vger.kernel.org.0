@@ -2,307 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EF30A7A49C0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Sep 2023 14:33:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CADC7A49D0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Sep 2023 14:36:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241301AbjIRMdW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Sep 2023 08:33:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37594 "EHLO
+        id S240361AbjIRMf6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Sep 2023 08:35:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241358AbjIRMc5 (ORCPT
+        with ESMTP id S241872AbjIRMfz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Sep 2023 08:32:57 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0173F12F
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Sep 2023 05:32:38 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-99c93638322so966461366b.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Sep 2023 05:32:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1695040357; x=1695645157; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0X6QtCgWBlGiAp6h0kF11KB6rl566Y3up0YcWsWItks=;
-        b=Tj2vtYb6TouL5/hGJnJfRgF1fUCrUMB9K0ph236O723alETthSQocRNC6PdHDca5Kb
-         9Ss13k7zOLBqEl6KbNyO6WdJ0svtavKwKgbcXvp5D7zAJvJB3lJ0OfMtATpOV5z36YTJ
-         DDju7F+coo+B30W680ZWth7+8Sc1wu36ghxprFL6Zkh3oqsxCB2GUY5QRY9pF8eI+rx3
-         Bb6Nb+/DigcQ9zH/li6koN2JpH4l/wcT3wPubReXZACWUjNlf/fzOLfAHm1zEVxWrho0
-         u4wFXJi1soAWyKaCgYgYvmsrH+NH7tJTWQJwB5X5lpjVkvLvTeEpRD1C/dSJi4TpCw4m
-         +byA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695040357; x=1695645157;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0X6QtCgWBlGiAp6h0kF11KB6rl566Y3up0YcWsWItks=;
-        b=omSmRZqrbiZAY8hdKx1RTCTRpm2iBpnxkXwYI2cXJ3FTgf4ZS2lyQkAK7yVZ5NB/+P
-         NQ6WFRHjJAiopo2djctYIgKQNTAVTRmaA0Z+jGUTlO1RxlHtmUSyRKi3KDRKY7mcjjwk
-         2s9al4Rh8Hhv9ORBDLTlrMnAZZfvOIjulZlTb6u/QukWzKeSwjOMigMYOB8i2vMXuAh0
-         jKfpu2YW4eDe+s+p/NwqpJXV62Q/brJDGiX/k82vTmhkpMMh5k6kxLBGhaWrRVvwLorU
-         zsyy98/WxUgs+i0lhGJYK1djvRnf/76aKZLnF9L8YWcIIyRsroV4o5g+gof3NDnXJ0R/
-         rRkQ==
-X-Gm-Message-State: AOJu0Yzy/ibg8ut1uUmmtQk9cylqjb8AkkAl9GLMcwjeOWKlRKwem6sp
-        TdRlcWwoKAXuO4BOkyaZCPgiNw==
-X-Google-Smtp-Source: AGHT+IFDdOBnzHdZyGLyZKVR0v/pADMFz5hsIDpwkS0m3PP6fei3DHqPGd6adGZwnzXHrnOt1zV2Fw==
-X-Received: by 2002:a17:906:eec5:b0:9a1:aaae:8207 with SMTP id wu5-20020a170906eec500b009a1aaae8207mr16145626ejb.20.1695040357404;
-        Mon, 18 Sep 2023 05:32:37 -0700 (PDT)
-Received: from heron.intern.cm-ag (p200300dc6f209c00529a4cfffe3dd983.dip0.t-ipconnect.de. [2003:dc:6f20:9c00:529a:4cff:fe3d:d983])
-        by smtp.gmail.com with ESMTPSA id sd5-20020a170906ce2500b00992a8a54f32sm6328834ejb.139.2023.09.18.05.32.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Sep 2023 05:32:35 -0700 (PDT)
-From:   Max Kellermann <max.kellermann@ionos.com>
-To:     jack@suse.cz, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     amir73il@gmail.com, max.kellermann@ionos.com
-Subject: [PATCH 4/4] arch: register inotify_add_watch_at
-Date:   Mon, 18 Sep 2023 14:32:17 +0200
-Message-Id: <20230918123217.932179-4-max.kellermann@ionos.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230918123217.932179-1-max.kellermann@ionos.com>
-References: <20230918123217.932179-1-max.kellermann@ionos.com>
+        Mon, 18 Sep 2023 08:35:55 -0400
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 981DF1B8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Sep 2023 05:35:32 -0700 (PDT)
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230918123530euoutp02059011584d43fa80273f7d1162b45925~F-mHRnNWs1640816408euoutp02M
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Sep 2023 12:35:30 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230918123530euoutp02059011584d43fa80273f7d1162b45925~F-mHRnNWs1640816408euoutp02M
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1695040530;
+        bh=i8zc9iaYygMGUIBqdtuTE0T+kxO2lOWm6HxzXg91t0A=;
+        h=Date:Subject:To:CC:From:In-Reply-To:References:From;
+        b=f8WxOS+sD490Ku8mAk2RRHaG5OUoSM+QIFzy7fI2MX5a8OmyDBWC7bJVDt0pBsEoR
+         YjrA55Bo2A4BTYdceI14iaGzzGFeE68fcIykblzXJxmG2KcWFoh5vQVXs75HjT2zdl
+         yM22O85vKSiTEd+QcdTfMU4I3nP9gWATykbL8nhE=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20230918123530eucas1p1b02dd398e6cc9f91afea96d8d9493af9~F-mG5gCKT1129911299eucas1p1c;
+        Mon, 18 Sep 2023 12:35:30 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 72.9A.42423.21448056; Mon, 18
+        Sep 2023 13:35:30 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20230918123529eucas1p2eff7928119d9f97e7b4e338408db7a16~F-mGbTQOz2707827078eucas1p2W;
+        Mon, 18 Sep 2023 12:35:29 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20230918123529eusmtrp1d6a09092578b08891381f7e1215e6077~F-mGYvN8b1928419284eusmtrp1U;
+        Mon, 18 Sep 2023 12:35:29 +0000 (GMT)
+X-AuditID: cbfec7f2-a51ff7000002a5b7-46-65084412f88e
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 21.76.14344.11448056; Mon, 18
+        Sep 2023 13:35:29 +0100 (BST)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20230918123529eusmtip19fdff081bcf68bf4c4329787c4676c3e~F-mGPMTH81256512565eusmtip16;
+        Mon, 18 Sep 2023 12:35:29 +0000 (GMT)
+Received: from [192.168.8.209] (106.210.248.18) by CAMSVWEXC02.scsc.local
+        (2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+        Mon, 18 Sep 2023 13:35:28 +0100
+Message-ID: <4dbdcc6c-6bd1-faf4-7187-cc048acd2125@samsung.com>
+Date:   Mon, 18 Sep 2023 14:35:27 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+        Thunderbird/102.15.1
+Subject: Re: [RFC 00/23] Enable block size > page size in XFS
+Content-Language: en-US
+To:     Matthew Wilcox <willy@infradead.org>,
+        Pankaj Raghav <kernel@pankajraghav.com>
+CC:     <linux-xfs@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <david@fromorbit.com>, <da.gomez@samsung.com>,
+        <akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>,
+        <djwong@kernel.org>, <linux-mm@kvack.org>,
+        <chandan.babu@oracle.com>, <mcgrof@kernel.org>,
+        <gost.dev@samsung.com>
+From:   Pankaj Raghav <p.raghav@samsung.com>
+In-Reply-To: <ZQSnWUF2M1iNzGWM@casper.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [106.210.248.18]
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+        CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDKsWRmVeSWpSXmKPExsWy7djPc7pCLhypBkuOSFjMWb+GzeLSUTmL
+        LcfuMVpcfsJnceblZxaLPXtPslhc3jWHzeLemv+sFrv+7GC3uDHhKaPF7x9z2By4PU4tkvDY
+        vELLY9OqTjaPTZ8msXucmPGbxePj01ssHmdXOnp83iQXwBHFZZOSmpNZllqkb5fAldE15S5T
+        wUHOihnz5zM2MO5j72Lk5JAQMJF4s2IuI4gtJLCCUWJmv2cXIxeQ/YVRYvmBD2wQzmdGiY/d
+        K+A6uhu3s0AkljNKnN67AqHq5qNmqMwuRom/Z98xdTFycPAK2Ek8eBoK0s0ioCpx8/AsJhCb
+        V0BQ4uTMJywgtqhAtMTMaQvB7hAWsJX4+OkZK4jNLCAucevJfLAxIgLBEq/PmoGMZxZYyiTx
+        4exvFpA4m4CWRGMn2HGcQMf1LO1khmjVlGjd/psdwpaX2P52DjPEA0oSC9vusEHYtRKnttxi
+        ApkpIbCaU+JJ/0qohIvEpm3noGxhiVfHt0B9LyNxenIPC4RdLfH0xm9miOYWRon+nevZQA6S
+        ELCW6DuTA1HjKHF4xXlmiDCfxI23ghD38ElM2jadeQKj6iykkJiF5ONZSF6YheSFBYwsqxjF
+        U0uLc9NTiw3zUsv1ihNzi0vz0vWS83M3MQIT2Ol/xz/tYJz76qPeIUYmDsZDjBIczEoivDMN
+        2VKFeFMSK6tSi/Lji0pzUosPMUpzsCiJ82rbnkwWEkhPLEnNTk0tSC2CyTJxcEo1MJlLLfY8
+        HWCk38EbtU+qT7qkPOfexLVrczh6tkQePjejNmze3CUno67G1//f7jrxv057+NFULzvpyCXJ
+        ZZN1PWQyd/3zF1RZ91RddbeRVYKQyJOZ4gXrJj35EzLJ1TzIV9Hh1sWz59NXOCSZuE+x/lJw
+        XXXGbndu9vzFTF+D/18zDEm28176cvqbL/4HLaZ92zrb62bjAf6KN1827ZQUvDN5Y81nXc/z
+        GgkL8macUr5ntntDqqbqBq9e5QPttaHnsheYtL2+F9F+I/BIqeUWEY6s2Z7MQjtjxCx/V3W9
+        dFbynsvaddYwm2tl8/ElL+bvKvjEXGUw8/yjhiiWdkbHJSmKvJeTnsQW/Vjsy33XR4mlOCPR
+        UIu5qDgRAGFb1UbPAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrIIsWRmVeSWpSXmKPExsVy+t/xu7qCLhypBhN3mljMWb+GzeLSUTmL
+        LcfuMVpcfsJnceblZxaLPXtPslhc3jWHzeLemv+sFrv+7GC3uDHhKaPF7x9z2By4PU4tkvDY
+        vELLY9OqTjaPTZ8msXucmPGbxePj01ssHmdXOnp83iQXwBGlZ1OUX1qSqpCRX1xiqxRtaGGk
+        Z2hpoWdkYqlnaGwea2VkqqRvZ5OSmpNZllqkb5egl9E15S5TwUHOihnz5zM2MO5j72Lk5JAQ
+        MJHobtzO0sXIxSEksJRRYtLql1AJGYmNX66yQtjCEn+udbFBFH1klFh7+i1Uxy5Gie1/bgN1
+        cHDwCthJPHgaCtLAIqAqcfPwLCYQm1dAUOLkzCcsICWiAtESXS+NQcLCArYSHz89A5vPLCAu
+        cevJfCaQEhGBYInXZ81ApjMLLGWS+HD2N9SqPYwSn16tBitiE9CSaOwEu5MT6IGepZ3MEHM0
+        JVq3/2aHsOUltr+dwwxxv5LEwrY7bBB2rcTnv88YJzCKzkJy3SwkZ8xCMmoWklELGFlWMYqk
+        lhbnpucWG+kVJ+YWl+al6yXn525iBMb9tmM/t+xgXPnqo94hRiYOxkOMEhzMSiK8Mw3ZUoV4
+        UxIrq1KL8uOLSnNSiw8xmgKDaCKzlGhyPjDx5JXEG5oZmBqamFkamFqaGSuJ83oWdCQKCaQn
+        lqRmp6YWpBbB9DFxcEo1MC36uuCfcsNOiblvgz/tkLt7peTASu1ZO942fwwp/hT93yjhquHy
+        lvSpBVLFW9y33+xamLWYjz/drSaD9USuF8vXdesuWVTzPrxkN0eNiW/ZNcv2JY5RmzO7yifN
+        CbxSXKgjGOaUtu5//4UuJxNhweaXEqsFfn9Zw3mJ19WyTPDTn+2xEe9yRZczPbVg3bPh8oZ9
+        +97rHFFv+b1r+3UjiZLHDuKZl/xznMUu7pPTylWJWjWz4tOcst5fO+Z6Fl2zkhZlYSlpXpnl
+        /pv91J+Ateb+K34HSWv8fvjhROSdOQ88C8UfzA9LkZ2Vol9z5LbcfJ2SH+/2GC9bf5rJg7VO
+        ONrALkqq80W2z0Gvyl43PiWW4oxEQy3mouJEAELC1IKEAwAA
+X-CMS-MailID: 20230918123529eucas1p2eff7928119d9f97e7b4e338408db7a16
+X-Msg-Generator: CA
+X-RootMTR: 20230915185016eucas1p18b6d44c1b875ef8d87a9575e3ddff8d1
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20230915185016eucas1p18b6d44c1b875ef8d87a9575e3ddff8d1
+References: <20230915183848.1018717-1-kernel@pankajraghav.com>
+        <CGME20230915185016eucas1p18b6d44c1b875ef8d87a9575e3ddff8d1@eucas1p1.samsung.com>
+        <ZQSnWUF2M1iNzGWM@casper.infradead.org>
+X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_PASS,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Using syscall number 454 (only different on Alpha).  This skips 453 on
-most architectures; 453 is used on x86_64 for "map_shadow_stack" and
-my idea is to reserve that number for the remaining architectures,
-where an implementation may be added eventually.
+On 2023-09-15 20:50, Matthew Wilcox wrote:
+> On Fri, Sep 15, 2023 at 08:38:25PM +0200, Pankaj Raghav wrote:
+>> Only XFS was enabled and tested as a part of this series as it has
+>> supported block sizes up to 64k and sector sizes up to 32k for years.
+>> The only thing missing was the page cache magic to enable bs > ps. However any filesystem
+>> that doesn't depend on buffer-heads and support larger block sizes
+>> already should be able to leverage this effort to also support LBS,
+>> bs > ps.
+> 
+> I think you should choose whether you're going to use 'bs > ps' or LBS
+> and stick to it.  They're both pretty inscrutable and using both
+> interchanagbly is worse.
+> 
 
-Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
----
- arch/alpha/kernel/syscalls/syscall.tbl      | 1 +
- arch/arm/tools/syscall.tbl                  | 1 +
- arch/arm64/include/asm/unistd.h             | 2 +-
- arch/arm64/include/asm/unistd32.h           | 2 ++
- arch/ia64/kernel/syscalls/syscall.tbl       | 1 +
- arch/m68k/kernel/syscalls/syscall.tbl       | 1 +
- arch/microblaze/kernel/syscalls/syscall.tbl | 1 +
- arch/mips/kernel/syscalls/syscall_n32.tbl   | 1 +
- arch/mips/kernel/syscalls/syscall_n64.tbl   | 1 +
- arch/mips/kernel/syscalls/syscall_o32.tbl   | 1 +
- arch/parisc/kernel/syscalls/syscall.tbl     | 1 +
- arch/powerpc/kernel/syscalls/syscall.tbl    | 1 +
- arch/s390/kernel/syscalls/syscall.tbl       | 1 +
- arch/sh/kernel/syscalls/syscall.tbl         | 1 +
- arch/sparc/kernel/syscalls/syscall.tbl      | 1 +
- arch/x86/entry/syscalls/syscall_32.tbl      | 1 +
- arch/x86/entry/syscalls/syscall_64.tbl      | 1 +
- arch/xtensa/kernel/syscalls/syscall.tbl     | 1 +
- include/linux/syscalls.h                    | 2 ++
- include/uapi/asm-generic/unistd.h           | 5 ++++-
- 20 files changed, 25 insertions(+), 2 deletions(-)
+Got it! Probably I will stick to Large block size and explain what it means
+at the start of the patchset.
 
-diff --git a/arch/alpha/kernel/syscalls/syscall.tbl b/arch/alpha/kernel/syscalls/syscall.tbl
-index ad37569d0507..3eaf0c8ffe9c 100644
---- a/arch/alpha/kernel/syscalls/syscall.tbl
-+++ b/arch/alpha/kernel/syscalls/syscall.tbl
-@@ -492,3 +492,4 @@
- 560	common	set_mempolicy_home_node		sys_ni_syscall
- 561	common	cachestat			sys_cachestat
- 562	common	fchmodat2			sys_fchmodat2
-+563	common	inotify_add_watch_at		sys_inotify_add_watch_at
-diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
-index c572d6c3dee0..08fc73bf211c 100644
---- a/arch/arm/tools/syscall.tbl
-+++ b/arch/arm/tools/syscall.tbl
-@@ -466,3 +466,4 @@
- 450	common	set_mempolicy_home_node		sys_set_mempolicy_home_node
- 451	common	cachestat			sys_cachestat
- 452	common	fchmodat2			sys_fchmodat2
-+454	common	inotify_add_watch_at		sys_inotify_add_watch_at
-diff --git a/arch/arm64/include/asm/unistd.h b/arch/arm64/include/asm/unistd.h
-index bd77253b62e0..63a8a9c4abc1 100644
---- a/arch/arm64/include/asm/unistd.h
-+++ b/arch/arm64/include/asm/unistd.h
-@@ -39,7 +39,7 @@
- #define __ARM_NR_compat_set_tls		(__ARM_NR_COMPAT_BASE + 5)
- #define __ARM_NR_COMPAT_END		(__ARM_NR_COMPAT_BASE + 0x800)
- 
--#define __NR_compat_syscalls		453
-+#define __NR_compat_syscalls		455
- #endif
- 
- #define __ARCH_WANT_SYS_CLONE
-diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
-index 78b68311ec81..384c121dfbdf 100644
---- a/arch/arm64/include/asm/unistd32.h
-+++ b/arch/arm64/include/asm/unistd32.h
-@@ -911,6 +911,8 @@ __SYSCALL(__NR_set_mempolicy_home_node, sys_set_mempolicy_home_node)
- __SYSCALL(__NR_cachestat, sys_cachestat)
- #define __NR_fchmodat2 452
- __SYSCALL(__NR_fchmodat2, sys_fchmodat2)
-+#define __NR_inotify_add_watch_at 454
-+__SYSCALL(__NR_inotify_add_watch_at, sys_inotify_add_watch_at)
- 
- /*
-  * Please add new compat syscalls above this comment and update
-diff --git a/arch/ia64/kernel/syscalls/syscall.tbl b/arch/ia64/kernel/syscalls/syscall.tbl
-index 83d8609aec03..8312606fdcd7 100644
---- a/arch/ia64/kernel/syscalls/syscall.tbl
-+++ b/arch/ia64/kernel/syscalls/syscall.tbl
-@@ -373,3 +373,4 @@
- 450	common	set_mempolicy_home_node		sys_set_mempolicy_home_node
- 451	common	cachestat			sys_cachestat
- 452	common	fchmodat2			sys_fchmodat2
-+454	common	inotify_add_watch_at		sys_inotify_add_watch_at
-diff --git a/arch/m68k/kernel/syscalls/syscall.tbl b/arch/m68k/kernel/syscalls/syscall.tbl
-index 259ceb125367..51de66ce3e9b 100644
---- a/arch/m68k/kernel/syscalls/syscall.tbl
-+++ b/arch/m68k/kernel/syscalls/syscall.tbl
-@@ -452,3 +452,4 @@
- 450	common	set_mempolicy_home_node		sys_set_mempolicy_home_node
- 451	common	cachestat			sys_cachestat
- 452	common	fchmodat2			sys_fchmodat2
-+454	common	inotify_add_watch_at		sys_inotify_add_watch_at
-diff --git a/arch/microblaze/kernel/syscalls/syscall.tbl b/arch/microblaze/kernel/syscalls/syscall.tbl
-index a3798c2637fd..991a0ae1c4be 100644
---- a/arch/microblaze/kernel/syscalls/syscall.tbl
-+++ b/arch/microblaze/kernel/syscalls/syscall.tbl
-@@ -458,3 +458,4 @@
- 450	common	set_mempolicy_home_node		sys_set_mempolicy_home_node
- 451	common	cachestat			sys_cachestat
- 452	common	fchmodat2			sys_fchmodat2
-+454	common	inotify_add_watch_at		sys_inotify_add_watch_at
-diff --git a/arch/mips/kernel/syscalls/syscall_n32.tbl b/arch/mips/kernel/syscalls/syscall_n32.tbl
-index 152034b8e0a0..98a7c7c45293 100644
---- a/arch/mips/kernel/syscalls/syscall_n32.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_n32.tbl
-@@ -391,3 +391,4 @@
- 450	n32	set_mempolicy_home_node		sys_set_mempolicy_home_node
- 451	n32	cachestat			sys_cachestat
- 452	n32	fchmodat2			sys_fchmodat2
-+454	n32	inotify_add_watch_at		sys_inotify_add_watch_at
-diff --git a/arch/mips/kernel/syscalls/syscall_n64.tbl b/arch/mips/kernel/syscalls/syscall_n64.tbl
-index cb5e757f6621..8751f6de6b96 100644
---- a/arch/mips/kernel/syscalls/syscall_n64.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_n64.tbl
-@@ -367,3 +367,4 @@
- 450	common	set_mempolicy_home_node		sys_set_mempolicy_home_node
- 451	n64	cachestat			sys_cachestat
- 452	n64	fchmodat2			sys_fchmodat2
-+454	n64	inotify_add_watch_at		sys_inotify_add_watch_at
-diff --git a/arch/mips/kernel/syscalls/syscall_o32.tbl b/arch/mips/kernel/syscalls/syscall_o32.tbl
-index 1a646813afdc..a899807b3b64 100644
---- a/arch/mips/kernel/syscalls/syscall_o32.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_o32.tbl
-@@ -440,3 +440,4 @@
- 450	o32	set_mempolicy_home_node		sys_set_mempolicy_home_node
- 451	o32	cachestat			sys_cachestat
- 452	o32	fchmodat2			sys_fchmodat2
-+454	o32	inotify_add_watch_at		sys_inotify_add_watch_at
-diff --git a/arch/parisc/kernel/syscalls/syscall.tbl b/arch/parisc/kernel/syscalls/syscall.tbl
-index e97c175b56f9..325885297d5d 100644
---- a/arch/parisc/kernel/syscalls/syscall.tbl
-+++ b/arch/parisc/kernel/syscalls/syscall.tbl
-@@ -451,3 +451,4 @@
- 450	common	set_mempolicy_home_node		sys_set_mempolicy_home_node
- 451	common	cachestat			sys_cachestat
- 452	common	fchmodat2			sys_fchmodat2
-+454	common	inotify_add_watch_at		sys_inotify_add_watch_at
-diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
-index 20e50586e8a2..132876dc7aa5 100644
---- a/arch/powerpc/kernel/syscalls/syscall.tbl
-+++ b/arch/powerpc/kernel/syscalls/syscall.tbl
-@@ -539,3 +539,4 @@
- 450 	nospu	set_mempolicy_home_node		sys_set_mempolicy_home_node
- 451	common	cachestat			sys_cachestat
- 452	common	fchmodat2			sys_fchmodat2
-+454	common	inotify_add_watch_at		sys_inotify_add_watch_at
-diff --git a/arch/s390/kernel/syscalls/syscall.tbl b/arch/s390/kernel/syscalls/syscall.tbl
-index 0122cc156952..b6d29996190c 100644
---- a/arch/s390/kernel/syscalls/syscall.tbl
-+++ b/arch/s390/kernel/syscalls/syscall.tbl
-@@ -455,3 +455,4 @@
- 450  common	set_mempolicy_home_node	sys_set_mempolicy_home_node	sys_set_mempolicy_home_node
- 451  common	cachestat		sys_cachestat			sys_cachestat
- 452  common	fchmodat2		sys_fchmodat2			sys_fchmodat2
-+454  common	inotify_add_watch_at	sys_inotify_add_watch_at	sys_inotify_add_watch_at
-diff --git a/arch/sh/kernel/syscalls/syscall.tbl b/arch/sh/kernel/syscalls/syscall.tbl
-index e90d585c4d3e..337875016443 100644
---- a/arch/sh/kernel/syscalls/syscall.tbl
-+++ b/arch/sh/kernel/syscalls/syscall.tbl
-@@ -455,3 +455,4 @@
- 450	common	set_mempolicy_home_node		sys_set_mempolicy_home_node
- 451	common	cachestat			sys_cachestat
- 452	common	fchmodat2			sys_fchmodat2
-+454	common	inotify_add_watch_at		sys_inotify_add_watch_at
-diff --git a/arch/sparc/kernel/syscalls/syscall.tbl b/arch/sparc/kernel/syscalls/syscall.tbl
-index 4ed06c71c43f..9634f81be406 100644
---- a/arch/sparc/kernel/syscalls/syscall.tbl
-+++ b/arch/sparc/kernel/syscalls/syscall.tbl
-@@ -498,3 +498,4 @@
- 450	common	set_mempolicy_home_node		sys_set_mempolicy_home_node
- 451	common	cachestat			sys_cachestat
- 452	common	fchmodat2			sys_fchmodat2
-+454	common	inotify_add_watch_at		sys_inotify_add_watch_at
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index 2d0b1bd866ea..de83d6861429 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -457,3 +457,4 @@
- 450	i386	set_mempolicy_home_node		sys_set_mempolicy_home_node
- 451	i386	cachestat		sys_cachestat
- 452	i386	fchmodat2		sys_fchmodat2
-+454	i386	inotify_add_watch_at	sys_inotify_add_watch_at
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index 1d6eee30eceb..fdf0128fffce 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -375,6 +375,7 @@
- 451	common	cachestat		sys_cachestat
- 452	common	fchmodat2		sys_fchmodat2
- 453	64	map_shadow_stack	sys_map_shadow_stack
-+454	common	inotify_add_watch_at	sys_inotify_add_watch_at
- 
- #
- # Due to a historical design error, certain syscalls are numbered differently
-diff --git a/arch/xtensa/kernel/syscalls/syscall.tbl b/arch/xtensa/kernel/syscalls/syscall.tbl
-index fc1a4f3c81d9..43cbdd8f369c 100644
---- a/arch/xtensa/kernel/syscalls/syscall.tbl
-+++ b/arch/xtensa/kernel/syscalls/syscall.tbl
-@@ -423,3 +423,4 @@
- 450	common	set_mempolicy_home_node		sys_set_mempolicy_home_node
- 451	common	cachestat			sys_cachestat
- 452	common	fchmodat2			sys_fchmodat2
-+454	common	inotify_add_watch_at		sys_inotify_add_watch_at
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index 22bc6bc147f8..63349ee93cb3 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -379,6 +379,8 @@ asmlinkage long sys_fcntl64(unsigned int fd,
- asmlinkage long sys_inotify_init1(int flags);
- asmlinkage long sys_inotify_add_watch(int fd, const char __user *path,
- 					u32 mask);
-+asmlinkage long sys_inotify_add_watch_at(int fd, int dfd, const char __user *path,
-+					 u32 mask);
- asmlinkage long sys_inotify_rm_watch(int fd, __s32 wd);
- asmlinkage long sys_ioctl(unsigned int fd, unsigned int cmd,
- 				unsigned long arg);
-diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
-index abe087c53b4b..f84bdb800352 100644
---- a/include/uapi/asm-generic/unistd.h
-+++ b/include/uapi/asm-generic/unistd.h
-@@ -823,8 +823,11 @@ __SYSCALL(__NR_cachestat, sys_cachestat)
- #define __NR_fchmodat2 452
- __SYSCALL(__NR_fchmodat2, sys_fchmodat2)
- 
-+#define __NR_inotify_add_watch_at 454
-+__SYSCALL(__NR_inotify_add_watch_at, sys_inotify_add_watch_at)
-+
- #undef __NR_syscalls
--#define __NR_syscalls 453
-+#define __NR_syscalls 455
- 
- /*
-  * 32 bit systems traditionally used different
--- 
-2.39.2
+> But I think filesystems which use buffer_heads should be fine to support
+> bs > ps.  The problems with the buffer cache are really when you try to
+> support small block sizes and large folio sizes (eg arrays of bhs on
+> the stack).  Supporting bs == folio_size shouldn't be a problem.
+> 
 
+I remember some patches from you trying to avoid the stack limitation while working
+with bh. Thanks for the clarification!
