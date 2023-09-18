@@ -2,45 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D94497A4F91
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Sep 2023 18:46:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCA1B7A4FD8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Sep 2023 18:54:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229954AbjIRQqV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Sep 2023 12:46:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38182 "EHLO
+        id S230470AbjIRQyG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Sep 2023 12:54:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231140AbjIRQqK (ORCPT
+        with ESMTP id S230480AbjIRQyE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Sep 2023 12:46:10 -0400
+        Mon, 18 Sep 2023 12:54:04 -0400
 Received: from outbound-ip7a.ess.barracuda.com (outbound-ip7a.ess.barracuda.com [209.222.82.174])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD4901700
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Sep 2023 09:37:35 -0700 (PDT)
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2103.outbound.protection.outlook.com [104.47.70.103]) by mx-outbound44-224.us-east-2c.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Mon, 18 Sep 2023 16:37:34 +0000
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 436F4128
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Sep 2023 09:53:57 -0700 (PDT)
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11lp2169.outbound.protection.outlook.com [104.47.56.169]) by mx-outbound9-117.us-east-2a.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Mon, 18 Sep 2023 16:53:56 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=gMZRhSK4Ouo2g7Cqd8u+WCgJiBS3N+CqyAAgi87lT1ikqpbHBs8H/jv3Kuw6SLoxsETrRR5sqOrPS4BhgmhXy8LyK99hca4IidtH/1tvMfbaoRtn9UY33WOZywXEqSTowUGVf+6fS6MWw2YySLxWVRX8Nqs5lUmPfpuvtIZ7uCvFE/LeYcNlfrrQGA6E4ubiiLIPDkkOFTeYG9zxem7zIYxurO2zKFgOeaQ+Rz9I2Wx8z6bA2MrDnhp6hVVF9jfQuyZ89oYRMY3aCgRtHjH+mzrz3bsSmEGpbPPi8sCFHkImhVLGX+9HnzXgYrlT8psjSw2A74BnEE2DlEn0gqm3VA==
+ b=EEdyA2O6QEiSuSm43eMtl3UXz9hsiXFwbjzqLLpF+9RHz/fiqT3pDutBHaFcePoBoItmhjU8BAq0jLSTahwDISnr9hSF6BrLqUeHyZabDjdJYWW2BPmkiohwB3x59CCNqfiKntCIz6nuQF1Mevmkoojkh6dWMM8UdTQe1B3tnxnvtNnsNjg7SgvZHIp9+aTeoNxuANtyiFFroRnWHxSn0eoRbU8RnrmW25OXHP6lbbUHEABhCfXH4aZjqL2HllDCCwoiunL3umCAl6/oqCODEZM6J21MNc676zVYk/GzbbfH0sRZWzRrl1kjY/WWaRhfuVd73gNjTIWYp0uWpvpRQw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FCjih8zmLU1iFGL3c+pkvvttp3d7Zz1XoHjg4ZylUkM=;
- b=DlW3bmy54gAXCNLvX2MedRSv7pwaWB/ea3sq08XU49iWSmG7gy+xxlZPfZQGRnosfq3Izw5fThA93YKyXqwjVtoAtZyv5GzGhwnzprL8tOrxROYmrJmp/9vSNzArS9l6Ixl0a73oYJ744at/Kc8KAsEuwUfBtej20hlBG8zOxmPrGU4vHYSPVUPGVYGx8AJdVsITky0wZMvUwRbtogQB7ZA4zd7xhqja/R4mzuh1CsNsJgPi0pNYq1xVPK+nFw1KFjHTrrQkoU/xeSYPQcpFoGWuLN5LGvqGCN7/Jif7D1zU+3JnX+ww7IMWrVGxFnmubMvGJ/nhFvi0Jotw/1Q/nQ==
+ bh=ge6XpbZjGAZ/FC54p/fIVR76iEJ73DSuwsQnMYh8XPQ=;
+ b=iT+wZ0Nvj1sPtcn4ab934rP/aUPvAdwkbEgDR3rfiZcmsG/vNHklh58+l851Fnvch678N1KO9XGFd/rVL+D7AM1gG5wE5GvNSJpSvvjOd/3BodKSnnxQ2ysquPoj1r6OS3Mk+kLdbd1rBFZwmB2Cc7ZybiUF0y45qiBP0QWmH5c0rW0y1l9hbu8JTlWkC87ngSwD3jBIW8WCBDZTF9Jp5mBbl4kl/TpUeEfvriWVqK64Q9Fvz2tBKzzc1uJU1MCKFot3M4og3i+0IxJv9KaixL8yiWNmEeDC0Zp5xxORaRTYa+rUWFbfGd6kbHSdaavs2QLlvCZRlXuNpcjRXg5lBA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  50.222.100.11) smtp.rcpttodomain=ddn.com smtp.mailfrom=ddn.com; dmarc=pass
  (p=reject sp=reject pct=100) action=none header.from=ddn.com; dkim=none
  (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ddn.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FCjih8zmLU1iFGL3c+pkvvttp3d7Zz1XoHjg4ZylUkM=;
- b=PSjEyIjNJ6Hr1YIlfCwjGZSN8V2uZlsCcyxarhP8BBI5GkC5WJdr7ACII1tRWfyIpvU1abBUQB4WO7YsVvLkwMZTV9VymxspTkX1ZrkU+wnFyAYva04xmvv21uYbF+UJwvnWUo9RLKRsovYSYqv3Hg/awMSLe+MMQV6A/PCM1bk=
-Received: from MW4PR04CA0353.namprd04.prod.outlook.com (2603:10b6:303:8a::28)
- by BLAPR19MB4388.namprd19.prod.outlook.com (2603:10b6:208:299::20) with
+ bh=ge6XpbZjGAZ/FC54p/fIVR76iEJ73DSuwsQnMYh8XPQ=;
+ b=O7hZgxpnSlnrpxnR3bcWdcL2+4gEKhIbed6Pcu7WBYTjhoXu3nb0xhOmDIQls2p3urMajiQru/1BLxnX1lWLC658g4xN0ofpUPLQUBI/NXvKUbq77NyupMvSD7y/aYsQ2ELvKpKOcbqgjncr3wi4ud0W/aPp8iEhAeVtkbVbO0k=
+Received: from DS7PR03CA0163.namprd03.prod.outlook.com (2603:10b6:5:3b2::18)
+ by SJ2PR19MB7559.namprd19.prod.outlook.com (2603:10b6:a03:4c7::11) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6792.27; Mon, 18 Sep
- 2023 15:03:22 +0000
-Received: from MW2NAM04FT020.eop-NAM04.prod.protection.outlook.com
- (2603:10b6:303:8a:cafe::9) by MW4PR04CA0353.outlook.office365.com
- (2603:10b6:303:8a::28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6792.23; Mon, 18 Sep
+ 2023 15:03:23 +0000
+Received: from DM6NAM04FT032.eop-NAM04.prod.protection.outlook.com
+ (2603:10b6:5:3b2:cafe::d8) by DS7PR03CA0163.outlook.office365.com
+ (2603:10b6:5:3b2::18) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6792.27 via Frontend
- Transport; Mon, 18 Sep 2023 15:03:22 +0000
+ Transport; Mon, 18 Sep 2023 15:03:23 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 50.222.100.11)
  smtp.mailfrom=ddn.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=ddn.com;
@@ -48,20 +48,20 @@ Received-SPF: Pass (protection.outlook.com: domain of ddn.com designates
  50.222.100.11 as permitted sender) receiver=protection.outlook.com;
  client-ip=50.222.100.11; helo=uww-mx01.datadirectnet.com; pr=C
 Received: from uww-mx01.datadirectnet.com (50.222.100.11) by
- MW2NAM04FT020.mail.protection.outlook.com (10.13.31.120) with Microsoft SMTP
+ DM6NAM04FT032.mail.protection.outlook.com (10.13.159.111) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6813.16 via Frontend Transport; Mon, 18 Sep 2023 15:03:22 +0000
+ 15.20.6813.15 via Frontend Transport; Mon, 18 Sep 2023 15:03:23 +0000
 Received: from localhost (unknown [10.68.0.8])
-        by uww-mx01.datadirectnet.com (Postfix) with ESMTP id 5922120C684B;
-        Mon, 18 Sep 2023 09:04:27 -0600 (MDT)
+        by uww-mx01.datadirectnet.com (Postfix) with ESMTP id 5464520C684C;
+        Mon, 18 Sep 2023 09:04:28 -0600 (MDT)
 From:   Bernd Schubert <bschubert@ddn.com>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     bernd.schubert@fastmail.fm, miklos@szeredi.hu, dsingh@ddn.com,
         Bernd Schubert <bschubert@ddn.com>,
         Hao Xu <howeyxu@tencent.com>
-Subject: [PATCH v4 06/10] fuse: Rename fuse_direct_io
-Date:   Mon, 18 Sep 2023 17:03:09 +0200
-Message-Id: <20230918150313.3845114-7-bschubert@ddn.com>
+Subject: [PATCH v4 07/10] fuse: Remove fuse_direct_write_iter code path / use IOCB_DIRECT
+Date:   Mon, 18 Sep 2023 17:03:10 +0200
+Message-Id: <20230918150313.3845114-8-bschubert@ddn.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230918150313.3845114-1-bschubert@ddn.com>
 References: <20230918150313.3845114-1-bschubert@ddn.com>
@@ -69,40 +69,39 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW2NAM04FT020:EE_|BLAPR19MB4388:EE_
+X-MS-TrafficTypeDiagnostic: DM6NAM04FT032:EE_|SJ2PR19MB7559:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: c12c24ba-6371-4fa1-fdc1-08dbb85866aa
+X-MS-Office365-Filtering-Correlation-Id: cacc6e19-0d79-4291-14f8-08dbb858673d
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: tAXeoIkJnIN8JtHIlwW04yLWiHZqrPgmwNywWg/io91aJgMH/Ox4v3qqPbs/xcH0Sxl17x73XgD3+IG9XY/pyR1fh+ecwY+Y4CBNVl5cUMefxFScNB0cnGN124lOk6jMQ6yCsTaKcnDsigAxnoxeeiGaYhVOyb9mk6V1TU7FtLtgzVpN2QV/c/+0j8xxrSsVDns617ZQSJmwcw/Z7Gb5MkFvMPjYF6nYK/hqSUvMtQ6I5LSzaP4I5w00tf4cR+x8uVtbmKRtM+kWgTes4NbrfghgCVpzLzgRJf5OgyXjCajRrQm5FHiTkFTgZamN/CJZh0ybbnVKC1rGAztH+sc2/cYHoKB9W3MB1BCA3avVz855xbHXUuL4FiDjZP1zUm4GHXzGWwwCF8YR6HXFv2vOZLyf0jYdMBvsf6DVQRDaRQXonlK08VWJcZIR0HBqI7/lcqb9CIuLD70iv0SDFUERCXPgN7kvUFHzdMAn3t1w0eDT4EPPX6g/k7J7POWhNKJjuaT9FdX6G3xIu4fzQgQ90yPjh8tpUTzQ+M1QJeh7rBB4rjW6rjunI6hjNovtblq6vrF9LVNlmO5evk1/w3plaTEFqSqVAXgrHwLqFupBt/bD+sgctDBbdE2ybPYGisgO+5UISfB5FQgWL8UcItjkk0VARam/K5mIXiy7cQSr2ypJCoy2+j4m+ITbFKKrWcPGFt3r027baaA5qEf2DuRntpv9DP/pT+7JxRjvtPZQxWE=
-X-Forefront-Antispam-Report: CIP:50.222.100.11;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:uww-mx01.datadirectnet.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(4636009)(396003)(346002)(39850400004)(376002)(136003)(1800799009)(186009)(82310400011)(451199024)(46966006)(36840700001)(6666004)(478600001)(81166007)(356005)(8936002)(4326008)(82740400003)(8676002)(6266002)(336012)(86362001)(26005)(1076003)(5660300002)(70206006)(70586007)(54906003)(6916009)(47076005)(83380400001)(41300700001)(36860700001)(316002)(2616005)(2906002)(36756003)(40480700001)(36900700001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: UCfpSanZ8I9LmL5GJWEuil+hgvLZqSceEaEHDJ/vHyn6n3ZubronvXsl2P2+1jAQt5Bul/FDGKrZ2ihs4TMRWZXSCtgyJWjw4M93+TbG+Nxzk9aYGSidX9xjsocDbO/TMeJCtsP+GMCGVCtZqZPnHrJtwlcPxdP+KQtzhgZbyBEG9IEj9aQeYwXiZleGy73b9nKDPU3eMbYXH7I5Cgh0/VP+xL4yYgflqgX/n46XCmrsIiSOpKDQmMZ1FuRsk89FTjuZJ7kBeLGD3brEs+Nob7YwP3ylQNRcFskHh7MKIppW2HQ4H0fKbs8s7Vv4xwGCsVUDbf9OGN7mxPB6Aq3nqcV2OqNDCMchuXAPFWbK+xhRISXWo4tShVFB/veHnFOAn6pQxED+f2oNneZpHog4aeeVkkt1/wX5l5oGlfCWaeHdLPaOGosMZIpr4krZLyQX4BXPcgkQY/U/gHX5zbeGriny6oXSx8m6LW7aFuXvi/pPQKJa9BWCMdTcoOsSTmjc2LJxkrUj3lrGnb1m4HuGvbi13lP+w+JsiMORabbVkQdIg5og3STyDwVlXQJHriZskUab4Abjbrb16VzWk5h1VY6sjVhVm3eqVmVyav4ElQqHcPtF79031De48OO7yf5RtupbvMzo11V8zb+OQ9vYKJlleHP3J3Epdi225JtRNtGPORjueUIQdjv2tnVG1ICFkS3nHx5D6UGjyVZepMXjYh3cZnrTQXmjEvASqKBQRiqU3uxNbMcJmmyf4YVT4CEV
+X-Forefront-Antispam-Report: CIP:50.222.100.11;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:uww-mx01.datadirectnet.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(4636009)(376002)(396003)(136003)(346002)(39850400004)(451199024)(82310400011)(1800799009)(186009)(36840700001)(46966006)(54906003)(36756003)(40480700001)(5660300002)(6266002)(2616005)(336012)(1076003)(26005)(2906002)(86362001)(4326008)(8676002)(8936002)(6916009)(41300700001)(47076005)(316002)(356005)(36860700001)(70586007)(70206006)(82740400003)(81166007)(478600001)(6666004)(83380400001)(36900700001);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: OJB8D/sfrNZypE9UV5ldKNduf9MV127WOejzJXbSh0szaI4YGHpcMIH1tkw0AvWEPRSEULvnGQ2ejvjW4ZtLtXRbF8tKGR5tjf9+lSpNKH/GQeyeNar5bMKoF74vJg79nx2eo0lcbLwXyUGN2V0Mrn10kSIv73aZERCwvcMo/tHngAv12xeFUxviy6whzbXFD0GE1/EMVXWI4vH6lqtE8AqIOQqXBqG6M3V2iWFe70F+9FQrPZ8lQ/nIgd5dG/fnWosF8WEvU8fqMgKkUQCZSkrzs78OG2Ji86jI8XW/4yY1gzrH8BsgMFz543QFuUI+M1b5LY0pczKKAjwktNZQw8TSLPckc0kqbjh1zonXg7wwY/R5CnuNn3sV+n17SM1Dv4v3paEGEhTgtVOB61GtmDQEQOXccZyF9nz6QzicusnX5cAPIocyRsvaPPws0SjArk/0VZGmWDyVXRL8c3LY7HStWlTC/jl+cO4kOnaXoLjAuMvAsQ02VGJalXEmvQUz9xXaBuM5ZVwfZIne24JvucphCuIapt1pWQZ6Hzsq9DsD4fz4gEgHGvihTNjEhpSwW27G402BKIFtNwYsTj44gd0jctNy7vLlmClCCKGyUUuLnjaY+G2KEjRj4jed/9cd2ysK02KkheXX4wqd+kdaBnFtYmvA515pB8XKFSd+fYDoTjUSvelKeAnk/kmr0QJtcWol/1FYk3cXHJfJsYneY8jmM9qx/uE/NcDbt77oVbgcGQCH0StIxhWjoHhD6/w8MVc9N07Sg8YALrlToVhGR82f9E9tDKlnGawXBJa0k38DL/1SHNNkY4gOx7YjNQzuVfqLQY5TgOcGlez/k7qRRjVKHzJinslAU+ZGzTsWStY3NN7CbM1Ix7zZIR+nIWJg4c64ys6kXbwtnqscuP4ZhQ==
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2023 15:03:22.1234
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 1tBX42Z4/DGWy16D2uVRo3YrtHzkvOvZPC5xENNNG5BizavdfnPLunefwQfVJT09tcwJhRDvWseSEyhUmZrsJLYBNgV9HIReDsdLS5l+PCaiAFlVni4XZcTdHVdNeI2fIHqcDq+go3/2YelcBZbFkh8X00RGoQVuIU4yI4ynCW1QCAf5tOcSFjipdH52Lxb6043t7GT8AAQIe2C3s3Ei/cdlt8RFcJlsZn6/UQiHjswYMVfu4ZMMYL3FC9m46h9gnrjCu+g2QQx/ouDQPOBLb16HoUGIcT30cyTdZ2TfcivdTu6IsLGCFSmgtTkOxhl9qW6GghvKqtef7kIrQG9u94D1Tw5l1HCI2UFLVnvzHblrGLhmptdhVz7qh6+7A27tVKB2jyvDK7VZmp/MhpXXsk2arQXPLuNVjC/cM9wPbJlQ8sGS0dEmgLQOoq62RWJ6xTio9zeVm78Kn5M8kjUDV3GB+qF0TEM0ZfyOjvaYjnXkEM7kpNqZ5tf99D5N8bHXmKUv2XV7LR2AuQw1nYjhr1jRrvqkCDGh1mU+fqyomeJ/FG0qwlDF5yJBpscblDdEOgmTRvFBts3wlhpQzqT9GPRph0+8ruSwRPVxbbq7yOqIJwd7fC+Ym4XTiDIq6Raitsl6a2vzakvHvZWePd9gJYOCuRAlF/rq2WuDInwPfvwfolzncBozJKWmoEEd8Xf3KEq+QVkFW03MdrM0gYrCX0NUx2NPNL1wK3XdEkvlKAmFrwuTqj8p+LRxN6YIkrWA05bMc7BX9hV6mUxS7IjixPXvOjEdCK8NFAA6khcxHtniz14FKW4e9bg7z6onYLg4inbQ6OSPikYz7/QUd0eWL2yZjqzIPd8Vl0mCIWtjocMNuPOXED3vH0IFp7xiO8z8HkpxtDQfz/VWzlOJtpjlXw==
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2023 15:03:23.0965
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c12c24ba-6371-4fa1-fdc1-08dbb85866aa
+X-MS-Exchange-CrossTenant-Network-Message-Id: cacc6e19-0d79-4291-14f8-08dbb858673d
 X-MS-Exchange-CrossTenant-Id: 753b6e26-6fd3-43e6-8248-3f1735d59bb4
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=753b6e26-6fd3-43e6-8248-3f1735d59bb4;Ip=[50.222.100.11];Helo=[uww-mx01.datadirectnet.com]
-X-MS-Exchange-CrossTenant-AuthSource: MW2NAM04FT020.eop-NAM04.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM04FT032.eop-NAM04.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLAPR19MB4388
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR19MB7559
 X-OriginatorOrg: ddn.com
-X-BESS-ID: 1695055054-111488-12353-3941-1
+X-BESS-ID: 1695056036-102421-25882-781-1
 X-BESS-VER: 2019.1_20230913.1749
-X-BESS-Apparent-Source-IP: 104.47.70.103
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVibmBsZAVgZQ0MjYMinV3CzVND
-        nJwjTZLDXJIDnVOM3cNCXRMik50dhcqTYWAFkQDYhBAAAA
-X-BESS-Outbound-Spam-Score: 0.50
+X-BESS-Apparent-Source-IP: 104.47.56.169
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVibmFuZAVgZQMNXSKNEoKTnNwM
+        DIxNLYwjQxLcXc3MzS0MQwxTLR0MRMqTYWAG47c/hBAAAA
+X-BESS-Outbound-Spam-Score: 0.00
 X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.250915 [from 
-        cloudscan16-7.us-east-2b.ess.aws.cudaops.com]
+        cloudscan23-8.us-east-2b.ess.aws.cudaops.com]
         Rule breakdown below
          pts rule name              description
         ---- ---------------------- --------------------------------
-        0.50 BSF_RULE7568M          META: Custom Rule 7568M 
         0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
-X-BESS-Outbound-Spam-Status: SCORE=0.50 using account:ESS124931 scores of KILL_LEVEL=7.0 tests=BSF_RULE7568M, BSF_BESS_OUTBOUND
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS124931 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
 X-BESS-BRTS-Status: 1
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
@@ -114,7 +113,59 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Just to avoid confusion with fuse_direct_IO.
+fuse_direct_write_iter is basically duplicating what is already
+in fuse_cache_write_iter/generic_file_direct_write. That can be
+avoided by setting IOCB_DIRECT in fuse_file_write_iter, after that
+fuse_cache_write_iter can be used for the FOPEN_DIRECT_IO code path
+and fuse_direct_write_iter can be removed.
+
+Before it was using for FOPEN_DIRECT_IO
+
+1) async (!is_sync_kiocb(iocb)) && IOCB_DIRECT
+
+fuse_file_write_iter
+    fuse_direct_write_iter
+        fuse_direct_IO
+            fuse_send_dio
+
+2) sync (is_sync_kiocb(iocb)) or IOCB_DIRECT not being set
+
+fuse_file_write_iter
+    fuse_direct_write_iter
+        fuse_send_dio
+
+3) FOPEN_DIRECT_IO not set
+
+Same as the consolidates path below
+
+The new consolidated code path is always
+
+fuse_file_write_iter
+    fuse_cache_write_iter
+        generic_file_write_iter
+             __generic_file_write_iter
+                 generic_file_direct_write
+                     mapping->a_ops->direct_IO / fuse_direct_IO
+                         fuse_send_dio
+
+So in general for FOPEN_DIRECT_IO the code path gets longer. Additionally
+fuse_direct_IO does an allocation of struct fuse_io_priv - might be a bit
+slower in micro benchmarks.
+Also, the IOCB_DIRECT information gets lost (as we now set it outselves).
+But then IOCB_DIRECT is directly related to O_DIRECT set in
+struct file::f_flags.
+
+An additional change is for condition 2 above, which might will now do
+async IO on the condition ff->fm->fc->async_dio. Given that async IO for
+FOPEN_DIRECT_IO was especially introduced in commit
+'commit 23c94e1cdcbf ("fuse: Switch to using async direct IO for
+ FOPEN_DIRECT_IO")'
+it should not matter. Especially as fuse_direct_IO is blocking for
+is_sync_kiocb(), at worst it has another slight overhead.
+
+Advantage is the removal of code paths and conditions and it is now also
+possible to remove FOPEN_DIRECT_IO conditions in fuse_send_dio
+(in a later patch).
 
 Cc: Hao Xu <howeyxu@tencent.com>
 Cc: Miklos Szeredi <miklos@szeredi.hu>
@@ -122,127 +173,92 @@ Cc: Dharmendra Singh <dsingh@ddn.com>
 Cc: linux-fsdevel@vger.kernel.org
 Signed-off-by: Bernd Schubert <bschubert@ddn.com>
 ---
- fs/fuse/cuse.c   |  5 ++---
- fs/fuse/dax.c    |  2 +-
- fs/fuse/file.c   | 14 +++++++-------
- fs/fuse/fuse_i.h |  8 ++++----
- 4 files changed, 14 insertions(+), 15 deletions(-)
+ fs/fuse/file.c | 58 +++++++-------------------------------------------
+ 1 file changed, 8 insertions(+), 50 deletions(-)
 
-diff --git a/fs/fuse/cuse.c b/fs/fuse/cuse.c
-index 91e89e68177e..c267ae9dcba6 100644
---- a/fs/fuse/cuse.c
-+++ b/fs/fuse/cuse.c
-@@ -96,7 +96,7 @@ static ssize_t cuse_read_iter(struct kiocb *kiocb, struct iov_iter *to)
- 	struct fuse_io_priv io = FUSE_IO_PRIV_SYNC(kiocb);
- 	loff_t pos = 0;
- 
--	return fuse_direct_io(&io, to, &pos, FUSE_DIO_CUSE);
-+	return fuse_send_dio(&io, to, &pos, FUSE_DIO_CUSE);
- }
- 
- static ssize_t cuse_write_iter(struct kiocb *kiocb, struct iov_iter *from)
-@@ -107,8 +107,7 @@ static ssize_t cuse_write_iter(struct kiocb *kiocb, struct iov_iter *from)
- 	 * No locking or generic_write_checks(), the server is
- 	 * responsible for locking and sanity checks.
- 	 */
--	return fuse_direct_io(&io, from, &pos,
--			      FUSE_DIO_WRITE | FUSE_DIO_CUSE);
-+	return fuse_send_dio(&io, from, &pos, FUSE_DIO_WRITE | FUSE_DIO_CUSE);
- }
- 
- static int cuse_open(struct inode *inode, struct file *file)
-diff --git a/fs/fuse/dax.c b/fs/fuse/dax.c
-index 8e74f278a3f6..423e40ab3e31 100644
---- a/fs/fuse/dax.c
-+++ b/fs/fuse/dax.c
-@@ -731,7 +731,7 @@ static ssize_t fuse_dax_direct_write(struct kiocb *iocb, struct iov_iter *from)
- 	struct fuse_io_priv io = FUSE_IO_PRIV_SYNC(iocb);
- 	ssize_t ret;
- 
--	ret = fuse_direct_io(&io, from, &iocb->ki_pos, FUSE_DIO_WRITE);
-+	ret = fuse_send_dio(&io, from, &iocb->ki_pos, FUSE_DIO_WRITE);
- 
- 	fuse_write_update_attr(inode, iocb->ki_pos, ret);
- 	return ret;
 diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index feafab9b467f..24fa6cab836f 100644
+index 24fa6cab836f..a5285a9e36e3 100644
 --- a/fs/fuse/file.c
 +++ b/fs/fuse/file.c
-@@ -1496,8 +1496,8 @@ static int fuse_get_user_pages(struct fuse_args_pages *ap, struct iov_iter *ii,
- 	return ret < 0 ? ret : 0;
+@@ -1052,6 +1052,10 @@ static void fuse_write_args_fill(struct fuse_io_args *ia, struct fuse_file *ff,
+ 	args->out_args[0].value = &ia->write.out;
  }
  
--ssize_t fuse_direct_io(struct fuse_io_priv *io, struct iov_iter *iter,
--		       loff_t *ppos, int flags)
-+ssize_t fuse_send_dio(struct fuse_io_priv *io, struct iov_iter *iter,
-+		      loff_t *ppos, int flags)
++/**
++ * Note: iocb->ki_flags & IOCB_DIRECT cannot be trusted here,
++ *       it might be set when FOPEN_DIRECT_IO is used.
++ */
+ static unsigned int fuse_write_flags(struct kiocb *iocb)
  {
- 	int write = flags & FUSE_DIO_WRITE;
- 	int cuse = flags & FUSE_DIO_CUSE;
-@@ -1598,7 +1598,7 @@ ssize_t fuse_direct_io(struct fuse_io_priv *io, struct iov_iter *iter,
- 
- 	return res > 0 ? res : err;
+ 	unsigned int flags = iocb->ki_filp->f_flags;
+@@ -1631,52 +1635,6 @@ static ssize_t fuse_direct_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 	return res;
  }
--EXPORT_SYMBOL_GPL(fuse_direct_io);
-+EXPORT_SYMBOL_GPL(fuse_send_dio);
  
- static ssize_t __fuse_direct_read(struct fuse_io_priv *io,
- 				  struct iov_iter *iter,
-@@ -1607,7 +1607,7 @@ static ssize_t __fuse_direct_read(struct fuse_io_priv *io,
- 	ssize_t res;
- 	struct inode *inode = file_inode(io->iocb->ki_filp);
+-static ssize_t fuse_direct_write_iter(struct kiocb *iocb, struct iov_iter *from)
+-{
+-	struct inode *inode = file_inode(iocb->ki_filp);
+-	struct fuse_io_priv io = FUSE_IO_PRIV_SYNC(iocb);
+-	ssize_t res;
+-	bool exclusive_lock = fuse_dio_wr_exclusive_lock(iocb, from, inode);
+-
+-	/*
+-	 * Take exclusive lock if
+-	 * - Parallel direct writes are disabled - a user space decision
+-	 * - Parallel direct writes are enabled and i_size is being extended.
+-	 *   This might not be needed at all, but needs further investigation.
+-	 */
+-	if (exclusive_lock)
+-		inode_lock(inode);
+-	else {
+-		inode_lock_shared(inode);
+-
+-		/* A race with truncate might have come up as the decision for
+-		 * the lock type was done without holding the lock, check again.
+-		 */
+-		if (fuse_io_past_eof(iocb, from)) {
+-			inode_unlock_shared(inode);
+-			inode_lock(inode);
+-			exclusive_lock = true;
+-		}
+-	}
+-
+-	res = generic_write_checks(iocb, from);
+-	if (res > 0) {
+-		if (!is_sync_kiocb(iocb) && iocb->ki_flags & IOCB_DIRECT) {
+-			res = fuse_direct_IO(iocb, from);
+-		} else {
+-			res = fuse_send_dio(&io, from, &iocb->ki_pos,
+-					    FUSE_DIO_WRITE);
+-			fuse_write_update_attr(inode, iocb->ki_pos, res);
+-		}
+-	}
+-	if (exclusive_lock)
+-		inode_unlock(inode);
+-	else
+-		inode_unlock_shared(inode);
+-
+-	return res;
+-}
+-
+ static ssize_t fuse_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ {
+ 	struct file *file = iocb->ki_filp;
+@@ -1707,10 +1665,10 @@ static ssize_t fuse_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 	if (FUSE_IS_DAX(inode))
+ 		return fuse_dax_write_iter(iocb, from);
  
--	res = fuse_direct_io(io, iter, ppos, 0);
-+	res = fuse_send_dio(io, iter, ppos, 0);
+-	if (!(ff->open_flags & FOPEN_DIRECT_IO))
+-		return fuse_cache_write_iter(iocb, from);
+-	else
+-		return fuse_direct_write_iter(iocb, from);
++	if (ff->open_flags & FOPEN_DIRECT_IO)
++		iocb->ki_flags |= IOCB_DIRECT;
++
++	return fuse_cache_write_iter(iocb, from);
+ }
  
- 	fuse_invalidate_atime(inode);
- 
-@@ -1664,8 +1664,8 @@ static ssize_t fuse_direct_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 		if (!is_sync_kiocb(iocb) && iocb->ki_flags & IOCB_DIRECT) {
- 			res = fuse_direct_IO(iocb, from);
- 		} else {
--			res = fuse_direct_io(&io, from, &iocb->ki_pos,
--					     FUSE_DIO_WRITE);
-+			res = fuse_send_dio(&io, from, &iocb->ki_pos,
-+					    FUSE_DIO_WRITE);
- 			fuse_write_update_attr(inode, iocb->ki_pos, res);
- 		}
- 	}
-@@ -3001,7 +3001,7 @@ fuse_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- 	}
- 
- 	if (iov_iter_rw(iter) == WRITE) {
--		ret = fuse_direct_io(io, iter, &pos, FUSE_DIO_WRITE);
-+		ret = fuse_send_dio(io, iter, &pos, FUSE_DIO_WRITE);
- 		fuse_invalidate_attr_mask(inode, FUSE_STATX_MODSIZE);
- 	} else {
- 		ret = __fuse_direct_read(io, iter, &pos);
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index bf0b85d0b95c..05c5cae59bad 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -1247,17 +1247,17 @@ int fuse_do_open(struct fuse_mount *fm, u64 nodeid, struct file *file,
- 		 bool isdir);
- 
- /**
-- * fuse_direct_io() flags
-+ * fuse_send_dio() flags
-  */
- 
- /** If set, it is WRITE; otherwise - READ */
- #define FUSE_DIO_WRITE (1 << 0)
- 
--/** CUSE pass fuse_direct_io() a file which f_mapping->host is not from FUSE */
-+/** CUSE pass fuse_send_dio() a file which f_mapping->host is not from FUSE */
- #define FUSE_DIO_CUSE  (1 << 1)
- 
--ssize_t fuse_direct_io(struct fuse_io_priv *io, struct iov_iter *iter,
--		       loff_t *ppos, int flags);
-+ssize_t fuse_send_dio(struct fuse_io_priv *io, struct iov_iter *iter,
-+		      loff_t *ppos, int flags);
- long fuse_do_ioctl(struct file *file, unsigned int cmd, unsigned long arg,
- 		   unsigned int flags);
- long fuse_ioctl_common(struct file *file, unsigned int cmd,
+ static void fuse_writepage_free(struct fuse_writepage_args *wpa)
 -- 
 2.39.2
 
