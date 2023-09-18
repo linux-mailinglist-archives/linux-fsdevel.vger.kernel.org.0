@@ -2,45 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FEDC7A47D8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Sep 2023 13:06:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F2CB7A47D0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Sep 2023 13:06:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237827AbjIRLFz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Sep 2023 07:05:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58324 "EHLO
+        id S239774AbjIRLFy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Sep 2023 07:05:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234440AbjIRLFZ (ORCPT
+        with ESMTP id S233421AbjIRLFZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Mon, 18 Sep 2023 07:05:25 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CF39100;
-        Mon, 18 Sep 2023 04:05:19 -0700 (PDT)
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA826E6;
+        Mon, 18 Sep 2023 04:05:18 -0700 (PDT)
 Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 7876321AB0;
+        by smtp-out2.suse.de (Postfix) with ESMTP id 7ABFD1FDFE;
         Mon, 18 Sep 2023 11:05:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
         t=1695035117; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=xN6TM7GHFN0mqNZxYxxtWtFr22aM89KuuSlQeaM7rVQ=;
-        b=oivGAnFiHoQC3mzve3gBbJhTW0HH2z9Ykvz/cBJoO8cE3qBvC15vlkaVeR62458BHPICXA
-        0vyEYWgJ8zbFp4wEddXmdAsRZ+UvnqwlGC0WO1+QbwU585t/AlhxOEJKvm32uBRV/2dBfJ
-        XhpsCs3qaXgk0Q/u6wNL0c3Tr2OB9Wo=
+        bh=VXuGAE77Y1ZoaYEDFz/VrOFxHm5srcxFRGpv+gi7iDM=;
+        b=2DC+zaAqoOp1lPfpc9dJf9O6mU4r1FYfud+aEkHHIRWd0XZ7a/XVTgw51KCWiTL/f3PeqZ
+        7Vze48ZDjg2q2nBZWh3WIgKAtKj0e/xAVlQYyzosoDkFRceNdQwhJtpWWe1PMXOZIR2mdB
+        +HBL4GuIjFXm9uzE/NNb1/JT+rce6wQ=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
         s=susede2_ed25519; t=1695035117;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=xN6TM7GHFN0mqNZxYxxtWtFr22aM89KuuSlQeaM7rVQ=;
-        b=3pQ/CfDScouXELAST2XLDIoiqVihUdtxb1CypSlVKmNS3qXPs2j3hZjPhAVdUe2IzSiW9G
-        11xZze9zvMzyXGBw==
+        bh=VXuGAE77Y1ZoaYEDFz/VrOFxHm5srcxFRGpv+gi7iDM=;
+        b=5h2DwkMQgRMJCe5jaWSSz1DP0EspCtrdR+wii+DtlQz7WVCgWToeypod/1SmlGj1yon+6B
+        pdfjpJmW70IwdgBg==
 Received: from adalid.arch.suse.de (adalid.arch.suse.de [10.161.8.13])
-        by relay2.suse.de (Postfix) with ESMTP id 613C22C14B;
+        by relay2.suse.de (Postfix) with ESMTP id 633C12C152;
         Mon, 18 Sep 2023 11:05:17 +0000 (UTC)
 Received: by adalid.arch.suse.de (Postfix, from userid 16045)
-        id 233A151CD14B; Mon, 18 Sep 2023 13:05:17 +0200 (CEST)
+        id 2B63C51CD14D; Mon, 18 Sep 2023 13:05:17 +0200 (CEST)
 From:   Hannes Reinecke <hare@suse.de>
 To:     Matthew Wilcox <willy@infradead.org>
 Cc:     Luis Chamberlain <mcgrof@kernel.org>,
@@ -48,9 +48,9 @@ Cc:     Luis Chamberlain <mcgrof@kernel.org>,
         Pankaj Raghav <p.raghav@samsung.com>,
         linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Hannes Reinecke <hare@suse.de>
-Subject: [PATCH 07/18] mm/filemap: allocate folios with mapping order preference
-Date:   Mon, 18 Sep 2023 13:04:59 +0200
-Message-Id: <20230918110510.66470-8-hare@suse.de>
+Subject: [PATCH 08/18] mm/readahead: allocate folios with mapping order preference
+Date:   Mon, 18 Sep 2023 13:05:00 +0200
+Message-Id: <20230918110510.66470-9-hare@suse.de>
 X-Mailer: git-send-email 2.35.3
 In-Reply-To: <20230918110510.66470-1-hare@suse.de>
 References: <20230918110510.66470-1-hare@suse.de>
@@ -65,79 +65,130 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use mapping_min_folio_order() when calling filemap_alloc_folio()
+Use mapping_get_folio_order() when calling filemap_alloc_folio()
 to allocate folios with the order specified by the mapping.
 
 Signed-off-by: Hannes Reinecke <hare@suse.de>
 ---
- mm/filemap.c | 20 +++++++++++++++++---
- 1 file changed, 17 insertions(+), 3 deletions(-)
+ mm/readahead.c | 35 +++++++++++++++++++++++------------
+ 1 file changed, 23 insertions(+), 12 deletions(-)
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 582f5317ff71..98c3737644d5 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -507,9 +507,14 @@ static void __filemap_fdatawait_range(struct address_space *mapping,
- 	pgoff_t end = end_byte >> PAGE_SHIFT;
- 	struct folio_batch fbatch;
- 	unsigned nr_folios;
-+	unsigned int order = mapping_min_folio_order(mapping);
+diff --git a/mm/readahead.c b/mm/readahead.c
+index 40a5f1f65281..0466a2bdb80a 100644
+--- a/mm/readahead.c
++++ b/mm/readahead.c
+@@ -244,7 +244,8 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
+ 			continue;
+ 		}
  
- 	folio_batch_init(&fbatch);
- 
-+	if (order) {
-+		index = ALIGN_DOWN(index, 1 << order);
-+		end = ALIGN_DOWN(end, 1 << order);
-+	}
- 	while (index <= end) {
- 		unsigned i;
- 
-@@ -2482,7 +2487,8 @@ static int filemap_create_folio(struct file *file,
- 	struct folio *folio;
- 	int error;
- 
--	folio = filemap_alloc_folio(mapping_gfp_mask(mapping), 0);
-+	folio = filemap_alloc_folio(mapping_gfp_mask(mapping),
-+				    mapping_min_folio_order(mapping));
- 	if (!folio)
- 		return -ENOMEM;
- 
-@@ -2542,9 +2548,16 @@ static int filemap_get_pages(struct kiocb *iocb, size_t count,
- 	pgoff_t last_index;
- 	struct folio *folio;
- 	int err = 0;
-+	unsigned int order = mapping_min_folio_order(mapping);
- 
- 	/* "last_index" is the index of the page beyond the end of the read */
- 	last_index = DIV_ROUND_UP(iocb->ki_pos + count, PAGE_SIZE);
-+	if (order) {
-+		/* Align with folio order */
-+		WARN_ON(index % 1 << order);
-+		index = ALIGN_DOWN(index, 1 << order);
-+		last_index = ALIGN(last_index, 1 << order);
-+	}
- retry:
- 	if (fatal_signal_pending(current))
- 		return -EINTR;
-@@ -2561,7 +2574,7 @@ static int filemap_get_pages(struct kiocb *iocb, size_t count,
- 		if (iocb->ki_flags & (IOCB_NOWAIT | IOCB_WAITQ))
- 			return -EAGAIN;
- 		err = filemap_create_folio(filp, mapping,
--				iocb->ki_pos >> PAGE_SHIFT, fbatch);
-+				index, fbatch);
- 		if (err == AOP_TRUNCATED_PAGE)
- 			goto retry;
- 		return err;
-@@ -3676,7 +3689,8 @@ static struct folio *do_read_cache_folio(struct address_space *mapping,
- repeat:
- 	folio = filemap_get_folio(mapping, index);
- 	if (IS_ERR(folio)) {
--		folio = filemap_alloc_folio(gfp, 0);
-+		folio = filemap_alloc_folio(gfp,
+-		folio = filemap_alloc_folio(gfp_mask, 0);
++		folio = filemap_alloc_folio(gfp_mask,
 +				mapping_min_folio_order(mapping));
  		if (!folio)
- 			return ERR_PTR(-ENOMEM);
- 		err = filemap_add_folio(mapping, folio, index, gfp);
+ 			break;
+ 		if (filemap_add_folio(mapping, folio, index + i,
+@@ -311,6 +312,8 @@ void force_page_cache_ra(struct readahead_control *ractl,
+ 	struct file_ra_state *ra = ractl->ra;
+ 	struct backing_dev_info *bdi = inode_to_bdi(mapping->host);
+ 	unsigned long max_pages, index;
++	unsigned int order = mapping_min_folio_order(mapping);
++	unsigned int min_pages = 1 << order;
+ 
+ 	if (unlikely(!mapping->a_ops->read_folio && !mapping->a_ops->readahead))
+ 		return;
+@@ -320,6 +323,10 @@ void force_page_cache_ra(struct readahead_control *ractl,
+ 	 * be up to the optimal hardware IO size
+ 	 */
+ 	index = readahead_index(ractl);
++	if (order) {
++		WARN_ON(index & (min_pages - 1));
++		index = ALIGN_DOWN(index, min_pages);
++	}
+ 	max_pages = max_t(unsigned long, bdi->io_pages, ra->ra_pages);
+ 	nr_to_read = min_t(unsigned long, nr_to_read, max_pages);
+ 	while (nr_to_read) {
+@@ -327,6 +334,8 @@ void force_page_cache_ra(struct readahead_control *ractl,
+ 
+ 		if (this_chunk > nr_to_read)
+ 			this_chunk = nr_to_read;
++		if (this_chunk < min_pages)
++			this_chunk = min_pages;
+ 		ractl->_index = index;
+ 		do_page_cache_ra(ractl, this_chunk, 0);
+ 
+@@ -597,8 +606,8 @@ static void ondemand_readahead(struct readahead_control *ractl,
+ 		pgoff_t start;
+ 
+ 		rcu_read_lock();
+-		start = page_cache_next_miss(ractl->mapping, index + 1,
+-				max_pages);
++		start = page_cache_next_miss(ractl->mapping,
++				index + folio_nr_pages(folio), max_pages);
+ 		rcu_read_unlock();
+ 
+ 		if (!start || start - index > max_pages)
+@@ -782,18 +791,20 @@ void readahead_expand(struct readahead_control *ractl,
+ 	struct file_ra_state *ra = ractl->ra;
+ 	pgoff_t new_index, new_nr_pages;
+ 	gfp_t gfp_mask = readahead_gfp_mask(mapping);
++	unsigned int order = mapping_min_folio_order(mapping);
++	unsigned int min_nr_pages = 1 << order;
+ 
+-	new_index = new_start / PAGE_SIZE;
++	new_index = new_start / (min_nr_pages * PAGE_SIZE);
+ 
+ 	/* Expand the leading edge downwards */
+ 	while (ractl->_index > new_index) {
+-		unsigned long index = ractl->_index - 1;
++		unsigned long index = ractl->_index - min_nr_pages;
+ 		struct folio *folio = xa_load(&mapping->i_pages, index);
+ 
+ 		if (folio && !xa_is_value(folio))
+ 			return; /* Folio apparently present */
+ 
+-		folio = filemap_alloc_folio(gfp_mask, 0);
++		folio = filemap_alloc_folio(gfp_mask, order);
+ 		if (!folio)
+ 			return;
+ 		if (filemap_add_folio(mapping, folio, index, gfp_mask) < 0) {
+@@ -805,12 +816,12 @@ void readahead_expand(struct readahead_control *ractl,
+ 			ractl->_workingset = true;
+ 			psi_memstall_enter(&ractl->_pflags);
+ 		}
+-		ractl->_nr_pages++;
++		ractl->_nr_pages += folio_nr_pages(folio);
+ 		ractl->_index = folio->index;
+ 	}
+ 
+ 	new_len += new_start - readahead_pos(ractl);
+-	new_nr_pages = DIV_ROUND_UP(new_len, PAGE_SIZE);
++	new_nr_pages = DIV_ROUND_UP(new_len, min_nr_pages * PAGE_SIZE);
+ 
+ 	/* Expand the trailing edge upwards */
+ 	while (ractl->_nr_pages < new_nr_pages) {
+@@ -820,7 +831,7 @@ void readahead_expand(struct readahead_control *ractl,
+ 		if (folio && !xa_is_value(folio))
+ 			return; /* Folio apparently present */
+ 
+-		folio = filemap_alloc_folio(gfp_mask, 0);
++		folio = filemap_alloc_folio(gfp_mask, order);
+ 		if (!folio)
+ 			return;
+ 		if (filemap_add_folio(mapping, folio, index, gfp_mask) < 0) {
+@@ -832,10 +843,10 @@ void readahead_expand(struct readahead_control *ractl,
+ 			ractl->_workingset = true;
+ 			psi_memstall_enter(&ractl->_pflags);
+ 		}
+-		ractl->_nr_pages++;
++		ractl->_nr_pages += folio_nr_pages(folio);
+ 		if (ra) {
+-			ra->size++;
+-			ra->async_size++;
++			ra->size += folio_nr_pages(folio);
++			ra->async_size += folio_nr_pages(folio);
+ 		}
+ 	}
+ }
 -- 
 2.35.3
 
