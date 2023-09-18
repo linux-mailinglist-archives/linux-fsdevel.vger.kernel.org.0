@@ -2,92 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6880E7A54B2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Sep 2023 23:01:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 813A07A5548
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Sep 2023 23:59:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230048AbjIRVBX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Sep 2023 17:01:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41770 "EHLO
+        id S229770AbjIRV7e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Sep 2023 17:59:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60760 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229680AbjIRVBW (ORCPT
+        with ESMTP id S229472AbjIRV7e (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Sep 2023 17:01:22 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97DDC8E;
-        Mon, 18 Sep 2023 14:01:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=voBKfQZlSDADh+zlNbJvfxsPTMGaXinYcSirNGGzkd0=; b=M/Arl4i6WiJle77w1QQn6+VleA
-        lBDtkiwEESteehLSXPWBk77myXuQXJh1/FmrBhvOsjSLzm68FwYMBwlmKs4kjJCUOEVn4n+qqbWFq
-        3ZuoYG8c2gUYaONx+gSqtkowVg5VvJxSW3boLib+EATWL4fuEwwUIikznFjAKRD75TX5GgXren73P
-        B6U0xM2J5GdPI791k5IAxSJxzlv2paQP9NqWkaWiOMgo3fFpsf/crHldsmcR8IiDuHIQNgH7qxTZ3
-        5sLGw9wioUFm4eirVNg4lMLRS8vtGQFrgPumy3B947qM4BzJjvYkR6HokkBQ9OSArSFZhgqx2/DcS
-        /z4g2PBw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qiLMi-00DDZe-4o; Mon, 18 Sep 2023 21:01:08 +0000
-Date:   Mon, 18 Sep 2023 22:01:08 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Hannes Reinecke <hare@suse.de>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Pankaj Raghav <p.raghav@samsung.com>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 03/18] block/buffer_head: introduce
- block_{index_to_sector,sector_to_index}
-Message-ID: <ZQi6lAJL2lydVH4A@casper.infradead.org>
-References: <20230918110510.66470-1-hare@suse.de>
- <20230918110510.66470-4-hare@suse.de>
- <ZQh8jXqpHFXQyEDT@casper.infradead.org>
- <4b8014fc-a71b-4e2f-a6a7-a5dc6a120f9e@suse.de>
+        Mon, 18 Sep 2023 17:59:34 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 382C083;
+        Mon, 18 Sep 2023 14:59:28 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id E6FBE2227E;
+        Mon, 18 Sep 2023 21:59:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1695074366;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=kafxTI+BSZmY2bgOabB7wFu0DWToQS6M+EsMUgAF/VQ=;
+        b=j1L3//wjPPjHUQ8+5lFTVJzFVBsjcwdVWkdT3A7QI/CbvYBZzdMptQRA0ByH6bjHB8cnOH
+        9Dtocrb+7gY5hc2NBxFgy3sP4qSOMfVWyoq2gkaEukx3D12x2J2YoT1tv7uHhuNsjoNeRw
+        KdVCcKncQsxXpxoV0QmvqUtHui5qEOY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1695074366;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=kafxTI+BSZmY2bgOabB7wFu0DWToQS6M+EsMUgAF/VQ=;
+        b=MKntjdUGkc4F9wRrqoyOLCdFLP5y0cX8BsybJUSzXP/8UsdeitvsSzgyupSJ1iepfs6Bk6
+        g4lUsuSzal7TgpDg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 82E411358A;
+        Mon, 18 Sep 2023 21:59:26 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id vKafHj7ICGV6CAAAMHmgww
+        (envelope-from <dsterba@suse.cz>); Mon, 18 Sep 2023 21:59:26 +0000
+Date:   Mon, 18 Sep 2023 23:52:50 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+Cc:     linux-btrfs@vger.kernel.org, clm@fb.com, josef@toxicpanda.com,
+        dsterba@suse.com, dsterba@suse.cz, linux-fsdevel@vger.kernel.org,
+        kernel@gpiccoli.net, kernel-dev@igalia.com, anand.jain@oracle.com,
+        david@fromorbit.com, kreijack@libero.it, johns@valvesoftware.com,
+        ludovico.denittis@collabora.com, quwenruo.btrfs@gmx.com,
+        wqu@suse.com, vivek@collabora.com
+Subject: Re: [PATCH v4 2/2] btrfs: Introduce the temp-fsid feature
+Message-ID: <20230918215250.GQ2747@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <20230913224402.3940543-1-gpiccoli@igalia.com>
+ <20230913224402.3940543-3-gpiccoli@igalia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4b8014fc-a71b-4e2f-a6a7-a5dc6a120f9e@suse.de>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+In-Reply-To: <20230913224402.3940543-3-gpiccoli@igalia.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+        SPF_HELO_NONE,SPF_SOFTFAIL autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 18, 2023 at 07:42:51PM +0200, Hannes Reinecke wrote:
-> On 9/18/23 18:36, Matthew Wilcox wrote:
-> > On Mon, Sep 18, 2023 at 01:04:55PM +0200, Hannes Reinecke wrote:
-> > > @@ -449,6 +450,22 @@ __bread(struct block_device *bdev, sector_t block, unsigned size)
-> > >   bool block_dirty_folio(struct address_space *mapping, struct folio *folio);
-> > > +static inline sector_t block_index_to_sector(pgoff_t index, unsigned int blkbits)
-> > > +{
-> > > +	if (PAGE_SHIFT < blkbits)
-> > > +		return (sector_t)index >> (blkbits - PAGE_SHIFT);
-> > > +	else
-> > > +		return (sector_t)index << (PAGE_SHIFT - blkbits);
-> > > +}
-> > 
-> > Is this actually more efficient than ...
-> > 
-> > 	loff_t pos = (loff_t)index * PAGE_SIZE;
-> > 	return pos >> blkbits;
-> > 
-> > It feels like we're going to be doing this a lot, so we should find out
-> > what's actually faster.
-> > 
-> I fear that's my numerical computation background chiming in again.
-> One always tries to worry about numerical stability, and increasing a number
-> always risks of running into an overflow.
-> But yeah, I guess your version is simpler, and we can always lean onto the
-> compiler folks to have the compiler arrive at the same assembler code than
-> my version.
+On Wed, Sep 13, 2023 at 07:36:16PM -0300, Guilherme G. Piccoli wrote:
+> Btrfs doesn't currently support to mount 2 different devices holding the
+> same filesystem - the fsid is exposed as a unique identifier by the
+> driver. This case is supported though in some other common filesystems,
+> like ext4.
+> 
+> Supporting the same-fsid mounts has the advantage of allowing btrfs to
+> be used in A/B partitioned devices, like mobile phones or the Steam Deck
+> for example. Without this support, it's not safe for users to keep the
+> same "image version" in both A and B partitions, a setup that is quite
+> common for development, for example. Also, as a big bonus, it allows fs
+> integrity check based on block devices for RO devices (whereas currently
+> it is required that both have different fsid, breaking the block device
+> hash comparison).
+> 
+> Such same-fsid mounting is hereby added through the usage of the
+> filesystem feature "temp-fsid" - when such feature is used, btrfs
+> generates a random fsid for the filesystem and leverages the long-term
+> present metadata_uuid infrastructure to enable the usage of this
+> secondary "virtual" fsid, effectively requiring few non-invasive
+> changes to the code and no new potential corner cases.
+> 
+> In order to prevent more code complexity and corner cases, the
+> temp-fsid feature is not allowed when the metadata_uuid flag is
+> present on the fs, or if the device is on fsid-change state. Device
+> removal/replace is also disabled for filesystems presenting the feature.
+> 
+> Cc: Anand Jain <anand.jain@oracle.com>
+> Suggested-by: John Schoenick <johns@valvesoftware.com>
+> Suggested-by: Qu Wenruo <wqu@suse.com>
+> Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
+> ---
+> 
+> V4:
+> 
+> - Rebased against the github misc-next branch (of 2023-09-13); notice
+> it already includes the patch: ("btrfs: scan forget for no instance of dev"),
+> that was folded into the original commit;
+> 
+> - Patch ("btrfs: scan but don't register device on single device filesystem")
+> was took into account - now we don't need to mess with the function
+> btrfs_scan_one_device() here, since it already has the "mounting" argument;
+> 
+> - Improved the description of the fsid/metadata_uuid relation in volumes.h
+> comment (thanks Anand!);
+> 
+> - Dropped the '\n' in the btrfs_{err/info} prints (also thanks Anand!);
+> 
+> - Switched the feature name for temp-fsid - seems the "less disliked"
+> name, though personally I'd prefer virtual-fsid; also, that could be
+> easily changed according the maintainers agreement.
 
-I actually don't mind the additional complexity -- if it's faster.
-Yours is a conditional, two subtractions and two shifts (dependent on
-the result of the subtractions).  Mine is two shifts, the second
-dependent on the first.
+Let's stick to temp-fsid for now, I like that it says the fsid is
+temporary, virtual could be potentially stored permanently (like another
+metadata_uuid).
 
-I would say mine is safe because we're talking about a file (or a bdev).
-By definition, the byte offset into one of those fits into an loff_t,
-although maybe not an unsigned long.
-
+I've added the patch to for-next, with some fixups, mostly stylistic.
+I'll add the btrfs-progs part soon so we have the support for testing.
+The feature seems to be complete regarding the original idea, if you
+have any updates please send them separate patches or replies to this
+thread. Thanks.
