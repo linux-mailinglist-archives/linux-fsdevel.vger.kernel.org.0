@@ -2,95 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C2687A4EC2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Sep 2023 18:26:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7942D7A5026
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Sep 2023 19:00:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230139AbjIRQ03 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Sep 2023 12:26:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49260 "EHLO
+        id S231340AbjIRRA2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Sep 2023 13:00:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229518AbjIRP1N (ORCPT
+        with ESMTP id S231290AbjIRRAW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Sep 2023 11:27:13 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60A771985
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Sep 2023 08:24:21 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-404c023ef5eso28662715e9.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Sep 2023 08:24:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1695050544; x=1695655344; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=3lFpWEQNX0RgOS+vwuIIC94hCwP0MrQhLUc3uHKyySs=;
-        b=bZylVWSCryeafaYdrZ8tKUiQmOsxPkiJ9O+i7udz6j+5b55KSX7K1oO3WV+7Mhp9W7
-         w4EKlcCjDkiYcsgwA3Uz67DW2IUdFVAZxgeRdDEvSnufi3LLhUkXL+vtYTD2NsaevJDt
-         QDiWWKlT6g3Y+FAP0mRj3frkD6SWp54V0l/a0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695050544; x=1695655344;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3lFpWEQNX0RgOS+vwuIIC94hCwP0MrQhLUc3uHKyySs=;
-        b=C4+MPxJ38esARrTdzWE2lMM7cUyd3zMa6plAc4/s/s4LNVdBIEo4zEcAIMrF//WW+v
-         vChV83RUzzzeI2KgBC+/4Q7XOqWIJJH763pipB42a3CfWhCWO6+DVLUYSd8TfYbc6h4q
-         b5Oa1I+kCCt15jmVTs7WDob2V9mUkbhW4K9NE9KYi0DUTP3GoLeVPyOZsdIa5t/egIsz
-         iVyO1uH8FVtIjlJh5kOVXRFyi52nkwyGbbBM1ASFopJgaVh+VGW04cxW0dmauJOPNX9m
-         DhcEBVo3NWLZZt0cU/38O0rH3Pxh+8jfWwCmG6n1M/ZTQyzVZGt12O0nctAgld0bXZjz
-         i/uA==
-X-Gm-Message-State: AOJu0YxgOFxHacOsOrpL6RIyQeGwXZQ/SYET/A7j3pm7iI1q23/wIqlB
-        0b8Qw3h7YOHvAecRtRwuEo6op4i3W1d2XBWDPHLwlVkvPWclVfQ0
-X-Google-Smtp-Source: AGHT+IFnzEkphfcA1k56lMmjABKC+h4WWJYwladyvHeyaRQV3hNEF1Dw61zv3yr9gv0EEochrOGS5dXCs2GS30BWGs0=
-X-Received: by 2002:adf:a3c4:0:b0:31f:f664:d87 with SMTP id
- m4-20020adfa3c4000000b0031ff6640d87mr7329776wrb.20.1695048675110; Mon, 18 Sep
- 2023 07:51:15 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230913152238.905247-1-mszeredi@redhat.com> <20230913152238.905247-3-mszeredi@redhat.com>
- <20230914-salzig-manifest-f6c3adb1b7b4@brauner> <CAJfpegs-sDk0++FjSZ_RuW5m-z3BTBQdu4T9QPtWwmSZ1_4Yvw@mail.gmail.com>
- <20230914-lockmittel-verknallen-d1a18d76ba44@brauner> <CAJfpegt-VPZP3ou-TMQFs1Xupj_iWA5ttC2UUFKh3E43EyCOQQ@mail.gmail.com>
- <20230918-grafik-zutreffen-995b321017ae@brauner> <CAOssrKfS79=+F0h=XPzJX2E6taxAPmEJEYPi4VBNQjgRR5ujqw@mail.gmail.com>
- <20230918-hierbei-erhielten-ba5ef74a5b52@brauner> <CAJfpegtaGXoZkMWLnk3PcibAvp7kv-4Yobo=UJj943L6v3ctJQ@mail.gmail.com>
- <20230918-stuhl-spannend-9904d4addc93@brauner>
-In-Reply-To: <20230918-stuhl-spannend-9904d4addc93@brauner>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 18 Sep 2023 16:51:03 +0200
-Message-ID: <CAJfpegvxNhty2xZW+4MM9Gepotii3CD1p0fyvLDQB82hCYzfLQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/3] add statmnt(2) syscall
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        Mon, 18 Sep 2023 13:00:22 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C7A697
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Sep 2023 09:59:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1695056369;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=BXEh9y2WIlpZ1qkBcixGcRigwMo4PIaBdg+Mgb1e5gE=;
+        b=Y40dszS9fYmWS6ZoUbDGnYdtqacDYoHNbPXafzFLA2D3EXUv64LfuEmdV3qzi0rmobJkyk
+        mCuhGHVI4tQNx0qMBQy9EOwuHKaHLW/L4D6zjrOxYU0jWJftWr7JGHEeI0mbQPZVgLGxcN
+        JluyDKDlDU9ytSFwoDJw3+/tfm4fihs=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-147-zuHtKiJ2OkyISODxxrfY9Q-1; Mon, 18 Sep 2023 10:54:50 -0400
+X-MC-Unique: zuHtKiJ2OkyISODxxrfY9Q-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 5DE6C811E8F;
+        Mon, 18 Sep 2023 14:54:49 +0000 (UTC)
+Received: from redhat.com (unknown [10.22.18.43])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id BE70A140273E;
+        Mon, 18 Sep 2023 14:54:48 +0000 (UTC)
+Date:   Mon, 18 Sep 2023 09:54:47 -0500
+From:   Bill O'Donnell <bodonnel@redhat.com>
+To:     James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc:     Dave Chinner <david@fromorbit.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
-        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
-        Ian Kent <raven@themaw.net>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Amir Goldstein <amir73il@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        Eric Sandeen <sandeen@sandeen.net>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Christoph Hellwig <hch@infradead.org>, ksummit@lists.linux.dev,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [MAINTAINERS/KERNEL SUMMIT] Trust and maintenance of file systems
+Message-ID: <ZQhkt4YIPXrdq7Fd@redhat.com>
+References: <ZPkDLp0jyteubQhh@dread.disaster.area>
+ <20230906215327.18a45c89@gandalf.local.home>
+ <ZPkz86RRLaYOkmx+@dread.disaster.area>
+ <20230906225139.6ffe953c@gandalf.local.home>
+ <ZPlFwHQhJS+Td6Cz@dread.disaster.area>
+ <20230907071801.1d37a3c5@gandalf.local.home>
+ <b7ca4a4e-a815-a1e8-3579-57ac783a66bf@sandeen.net>
+ <CAHk-=wg=xY6id92yS3=B59UfKmTmOgq+NNv+cqCMZ1Yr=FwR9A@mail.gmail.com>
+ <ZQTfIu9OWwGnIT4b@dread.disaster.area>
+ <db57da32517e5f33d1d44564097a7cc8468a96c3.camel@HansenPartnership.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <db57da32517e5f33d1d44564097a7cc8468a96c3.camel@HansenPartnership.com>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.7
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 18 Sept 2023 at 16:40, Christian Brauner <brauner@kernel.org> wrote:
+On Sat, Sep 16, 2023 at 05:50:50PM -0400, James Bottomley wrote:
+> On Sat, 2023-09-16 at 08:48 +1000, Dave Chinner wrote:
+> > On Wed, Sep 13, 2023 at 10:03:55AM -0700, Linus Torvalds wrote:
+> [...]
+> > >  - "they use the buffer cache".
+> > > 
+> > > Waah, waah, waah.
+> > 
+> > .... you dismiss those concerns in the same way a 6 year old school
+> > yard bully taunts his suffering victims.
+> > 
+> > Regardless of the merits of the observation you've made, the tone
+> > and content of this response is *completely unacceptable*.  Please
+> > keep to technical arguments, Linus, because this sort of response
+> > has no merit what-so-ever. All it does is shut down the technical
+> > discussion because no-one wants to be the target of this sort of
+> > ugly abuse just for participating in a technical discussion.
+> > 
+> > Given the number of top level maintainers that signed off on the CoC
+> > that are present in this forum, I had an expectation that this is a
+> > forum where bad behaviour is not tolerated at all.  So I've waited a
+> > couple of days to see if anyone in a project leadership position is
+> > going to say something about this comment.....
+> > 
+> > <silence>
+> > 
+> > The deafening silence of tacit acceptance is far more damning than
+> > the high pitched squeal of Linus's childish taunts.
+> 
+> Well, let's face it: it's a pretty low level taunt and it wasn't aimed
+> at you (or indeed anyone on the thread that I could find) and it was
+> backed by technical argument in the next sentence.  We all have a
+> tendency to let off steam about stuff in general not at people in
+> particular as you did here:
+> 
+> https://lore.kernel.org/ksummit/ZP+vcgAOyfqWPcXT@dread.disaster.area/
+> 
+> But I didn't take it as anything more than a rant about AI in general
+> and syzbot in particular and certainly I didn't assume it was aimed at
+> me or anyone else.
+> 
+> If everyone reached for the code of conduct when someone had a non-
+> specific rant using colourful phraseology, we'd be knee deep in
+> complaints, which is why we tend to be more circumspect when it
+> happens.
 
-> What we're talking about here is a nicely typed struct which returns two
-> paths @mnt_root and @mnt_point which can both be represented as u64
-> pointers with length parameters like we do in other binary structs such
-> as bpf and clone3 and a few others. That is a compromise I can live
-> with. I'm really trying to find as much common ground here as we can.
+It's the kind of response that intimidates some into not participating.
+Thanks-
+Bill
 
-So to be clear about your proposal: .mnt_root and .mountpoint are
-initialized by the caller to buffers that the kernel can copy paths
-into?
+> 
+> James
+> 
+> 
 
-If there's an overflow (one of the buffers was too small) the syscall
-returns -EOVERFLOW?
-
-Thanks,
-Miklos
