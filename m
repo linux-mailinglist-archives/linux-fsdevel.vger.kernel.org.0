@@ -2,124 +2,176 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D936D7A4C82
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Sep 2023 17:35:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB0F27A4CA1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Sep 2023 17:37:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229536AbjIRPez (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Sep 2023 11:34:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54984 "EHLO
+        id S229639AbjIRPhm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Sep 2023 11:37:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229703AbjIRPec (ORCPT
+        with ESMTP id S229641AbjIRPhk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Sep 2023 11:34:32 -0400
-Received: from mail-ua1-x92f.google.com (mail-ua1-x92f.google.com [IPv6:2607:f8b0:4864:20::92f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4443BBC;
-        Mon, 18 Sep 2023 08:32:09 -0700 (PDT)
-Received: by mail-ua1-x92f.google.com with SMTP id a1e0cc1a2514c-7a8c41bd59aso523114241.3;
-        Mon, 18 Sep 2023 08:32:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1695050940; x=1695655740; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FFquh9MatLutV/AqH2mDcbYDMbyhx/Btn5qvpYa0SGg=;
-        b=O8QXOTOCinvtS7RuUha3bcTqDNQ9kuTz4oLq2e32AaATfsWb8D+pSD0y+XeacnXTUs
-         KCijXtXawPdRJy/xtiqJr1TWOvd+4CUFEGb72FrzR+6N/7l2CSa+KaAqCRaak6UNVw8L
-         CdbA85Iqg42ik8F4nvLNMpn2e65N48rUIesuPBMJCiqFtEtAXXSB/WVpyCQCgqvUmm1d
-         KIzq166PaKa8NWsrOXgnqTiA+iT/4YYwvOJU0AqQaQ+/9YiQDTA31CVFY/nnktk1HwiN
-         pqPuPAnbbu/WWF7BnX7ZvIFzty6CcwMHERMXKc/B7qeyluaX8ttdrVcmp722DlgF8GOZ
-         diUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695050940; x=1695655740;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FFquh9MatLutV/AqH2mDcbYDMbyhx/Btn5qvpYa0SGg=;
-        b=PWS+YjMjhG22BjH6pikU7543fnx1evaadx/OdHg9ZjI39Qt+oQ18B26EVhFbBJE8K0
-         1o7ZJxBegwy49s62yvhjwXhonU2G9WWzMuKmdV3hVD7mTH8fHYYBPBDeip2kLTzsEKUV
-         odFNsjMPduAVv7Oo7CKJkbDaj6RAdU3FuOV4jDgz9rxJJGHO0z/42YP/MWLF1GXCS07B
-         DsRhCGzHOGLQ4A1c/9ZKQKqtOE9ZtvVWxxaluS+fiI8YFkdSinePEdV6x+mB3NfX6Fgo
-         iH2FgGdzeZaKYEJa2KVWNop2GTZPKFkFD6IdDZvqUfJNgbCP9EVXHgBEWj4W8rtxrHrI
-         Rbiw==
-X-Gm-Message-State: AOJu0Yz6MNiBaChusH9dY18rruRnRWR3K2uyyv1bmuSR6buH9QMiIVz8
-        00qS9DhtwpQYTOFYCxIe0W5+EvPHEmdkht0+bfM=
-X-Google-Smtp-Source: AGHT+IG+14BDkv69gEV/ofqK+tV/43zZr0iMgJxlaMWnsiFY8QZ/k81W0VpdvgqTjqlov5xvNWbSKqBBq7GwKvCySXc=
-X-Received: by 2002:a05:6102:3184:b0:452:741a:b7ec with SMTP id
- c4-20020a056102318400b00452741ab7ecmr1682905vsh.33.1695050940607; Mon, 18 Sep
- 2023 08:29:00 -0700 (PDT)
+        Mon, 18 Sep 2023 11:37:40 -0400
+Received: from domac.alu.hr (domac.alu.unizg.hr [IPv6:2001:b68:2:2800::3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7476E7C;
+        Mon, 18 Sep 2023 08:35:54 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by domac.alu.hr (Postfix) with ESMTP id BEAFE60187;
+        Mon, 18 Sep 2023 17:33:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=alu.unizg.hr; s=mail;
+        t=1695051195; bh=A3WfnsfLKB4VtcRcQCaq2eliYXc65wiKBHGm8p0EGtc=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=pI7Du1o+GRfU4t0jynsD0HQL9wLlySZsoVZ5LD5hJ5LJwYWXy3YWlmGAfGKBvPCk+
+         gyDZ0FatE4cArPL/NbWo4YdVL7PmXGBUe1iF3WIztiA52Hlz1cHtBcPpfoy+4kMJz8
+         uHAwwDoxXASnpIEEv8cx4G4U0yUJShYoY1Thlf78PNvs762XR6OEtzdP97ftrYxV7L
+         BWciltZWTrXN7TrMY+f5ZnN9nLlVMYVaK6rnizZopucbcfPkA88c+jqt7i8M2OiJi4
+         4QZuvqHRxCsSmm5K5um3NqMHv6cN7b12vrGhBc9eYRlCMOtZt4PJt/TtLpP4pMNG9s
+         gq6a6bQv+Th6A==
+X-Virus-Scanned: Debian amavisd-new at domac.alu.hr
+Received: from domac.alu.hr ([127.0.0.1])
+        by localhost (domac.alu.hr [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 53QGMgYFpOhJ; Mon, 18 Sep 2023 17:33:13 +0200 (CEST)
+Received: from [192.168.1.6] (78-1-184-14.adsl.net.t-com.hr [78.1.184.14])
+        by domac.alu.hr (Postfix) with ESMTPSA id EE7DC60186;
+        Mon, 18 Sep 2023 17:33:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=alu.unizg.hr; s=mail;
+        t=1695051193; bh=A3WfnsfLKB4VtcRcQCaq2eliYXc65wiKBHGm8p0EGtc=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=NwJqq4rZHLOUm6Gt/r/mQU71SI2Iahzv9D5++k4VkAzIixMJPO1oswVddCVuvydus
+         UBMJbZaqLBzpnDaEns4yl7EGXICzx/3G2PJ3dm3B03DdqclXZfPia4hPZbzt2087RO
+         pDcmqSqd+6cPkbv8gVt6cBQKSVqt11LAPmmu4nUzqmUMesBWetjhbleZ+G+OxrjA0s
+         /bXJu84Dk6LUmMk3Cm1/Pi/MI3zqY3KwF3UD1bEHutu4H6OCxxAZrf6tCkcLGiLF7n
+         Io+NoVVOEOJnfH7HJiYC4TZAifXpHEWYrJYeFbp9wcMCMZh/lo4nzPta9VqWHBCvyA
+         Hlwcvt4edcwtg==
+Message-ID: <45a59f35-1e86-67a3-26fc-51fd4a4798e0@alu.unizg.hr>
+Date:   Mon, 18 Sep 2023 17:33:08 +0200
 MIME-Version: 1.0
-References: <20230918123217.932179-1-max.kellermann@ionos.com>
- <20230918123217.932179-3-max.kellermann@ionos.com> <20230918124050.hzbgpci42illkcec@quack3>
- <CAKPOu+-Nx_cvBZNox63R1ah76wQp6eH4RLah0O5mDaLo9h60ww@mail.gmail.com> <20230918142319.kvzc3lcpn5n2ty6g@quack3>
-In-Reply-To: <20230918142319.kvzc3lcpn5n2ty6g@quack3>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 18 Sep 2023 18:28:49 +0300
-Message-ID: <CAOQ4uxic7C5skHv4d+Gek_uokRL8sgUegTusiGkwAY4dSSADYQ@mail.gmail.com>
-Subject: Re: [PATCH 3/4] inotify_user: add system call inotify_add_watch_at()
-To:     Jan Kara <jack@suse.cz>
-Cc:     Max Kellermann <max.kellermann@ionos.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v1 1/1] xarray: fix the data-race in xas_find_chunk() by
+ using READ_ONCE()
+To:     Yury Norov <yury.norov@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, Philipp Stanner <pstanner@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>, Chris Mason <clm@fb.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        linux-mm@kvack.org
+References: <20230918044739.29782-1-mirsad.todorovac@alu.unizg.hr>
+ <20230918094116.2mgquyxhnxcawxfu@quack3>
+ <22ca3ad4-42ef-43bc-51d0-78aaf274977b@alu.unizg.hr>
+ <20230918113840.h3mmnuyer44e5bc5@quack3>
+ <fb0f5ba9-7fe3-a951-0587-640e7672efec@alu.unizg.hr>
+ <ZQhlt/EbRf3Y+0jT@yury-ThinkPad>
+Content-Language: en-US
+From:   Mirsad Todorovac <mirsad.todorovac@alu.unizg.hr>
+In-Reply-To: <ZQhlt/EbRf3Y+0jT@yury-ThinkPad>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-3.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,NICE_REPLY_A,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 18, 2023 at 5:23=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Mon 18-09-23 15:57:43, Max Kellermann wrote:
-> > On Mon, Sep 18, 2023 at 2:40=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
-> > > Note that since kernel 5.13 you
-> > > don't need CAP_SYS_ADMIN capability for fanotify functionality that i=
-s
-> > > more-or-less equivalent to what inotify provides.
-> >
-> > Oh, I missed that change - I remember fanotify as being inaccessible
-> > for unprivileged processes, and fanotify being designed for things
-> > like virus scanners. Indeed I should migrate my code to fanotify.
-> >
-> > If fanotify has now become the designated successor of inotify, that
-> > should be hinted in the inotify manpage, and if inotify is effectively
-> > feature-frozen, maybe that should be an extra status in the
-> > MAINTAINERS file?
->
-> The manpage update is a good idea. I'm not sure about the MAINTAINERS
-> status - we do have 'Obsolete' but I'm reluctant to mark inotify as
-> obsolete as it's perfectly fine for existing users, we fully maintain it
-> and support it but we just don't want to extend the API anymore. Amir, wh=
-at
-> are your thoughts on this?
+On 9/18/23 16:59, Yury Norov wrote:
+> On Mon, Sep 18, 2023 at 02:46:02PM +0200, Mirsad Todorovac wrote:
+> 
+> ...
+> 
+>> Ah, I see. This is definitely not good. But I managed to fix and test the find_next_bit()
+>> family, but this seems that simply
+>>
+>> -------------------------------------------
+>>   include/linux/xarray.h | 8 --------
+>>   1 file changed, 8 deletions(-)
+>>
+>> diff --git a/include/linux/xarray.h b/include/linux/xarray.h
+>> index 1715fd322d62..89918b65b00d 100644
+>> --- a/include/linux/xarray.h
+>> +++ b/include/linux/xarray.h
+>> @@ -1718,14 +1718,6 @@ static inline unsigned int xas_find_chunk(struct xa_state *xas, bool advance,
+>>          if (advance)
+>>                  offset++;
+>> -       if (XA_CHUNK_SIZE == BITS_PER_LONG) {
+>> -               if (offset < XA_CHUNK_SIZE) {
+>> -                       unsigned long data = READ_ONCE(*addr) & (~0UL << offset);
+>> -                       if (data)
+>> -                               return __ffs(data);
+>> -               }
+>> -               return XA_CHUNK_SIZE;
+>> -       }
+>>          return find_next_bit(addr, XA_CHUNK_SIZE, offset);
+>>   }
+> 
+> This looks correct. As per my understanding, the removed part is the
+> 1-word bitmap optimization for find_next_bit. If so, it's not needed
+> because find_next_bit() bears this optimization itself.
+> 
+> ...
+> 
+>> --------------------------------------------------------
+>>   lib/find_bit.c | 33 +++++++++++++++++----------------
+>>   1 file changed, 17 insertions(+), 16 deletions(-)
+>>
+>> diff --git a/lib/find_bit.c b/lib/find_bit.c
+>> index 32f99e9a670e..56244e4f744e 100644
+>> --- a/lib/find_bit.c
+>> +++ b/lib/find_bit.c
+>> @@ -18,6 +18,7 @@
+>>   #include <linux/math.h>
+>>   #include <linux/minmax.h>
+>>   #include <linux/swab.h>
+>> +#include <asm/rwonce.h>
+>>   /*
+>>    * Common helper for find_bit() function family
+>> @@ -98,7 +99,7 @@ out:                                                                          \
+>>    */
+>>   unsigned long _find_first_bit(const unsigned long *addr, unsigned long size)
+>>   {
+>> -       return FIND_FIRST_BIT(addr[idx], /* nop */, size);
+>> +       return FIND_FIRST_BIT(READ_ONCE(addr[idx]), /* nop */, size);
+>>   }
+>>   EXPORT_SYMBOL(_find_first_bit);
+>>   #endif
+> 
+> ...
+> 
+> That doesn't look correct. READ_ONCE() implies that there's another
+> thread modifying the bitmap concurrently. This is not the true for
+> vast majority of bitmap API users, and I expect that forcing
+> READ_ONCE() would affect performance for them.
+> 
+> Bitmap functions, with a few rare exceptions like set_bit(), are not
+> thread-safe and require users to perform locking/synchronization where
+> needed.
+> 
+> If you really need READ_ONCE, I think it's better to implement a new
+> flavor of the function(s) separately, like:
+>          find_first_bit_read_once()
+> 
+> Thanks,
+> Yury
 
-I think that the mention of inotify vs. fanotify features in fanotify.7 man=
- page
-is decent - if anyone wants to improve it I won't mind.
-A mention of fanotify as successor in inotify.7 man page is not a bad idea =
--
-patches welcome.
+Hi,
 
-As to MAINTAINERS, I think that 'Maintained' feels right.
-We may consider 'Odd Fixes' for inotify and certainly for 'dnotify',
-but that sounds a bit too harsh for the level of maintenance they get.
+I see the quirk. AFAICS, correct locking would be more expensive than READ_ONCE()
+flavour of functions.
 
-I'd like to point out that IMO, man-page is mainly aimed for the UAPI
-users and MAINTAINERS is mostly aimed at bug reporters and drive-by
-developers who submit small fixes.
+Only one has to inspect every line where they are used and see if there is the need
+for the *_read_once() version.
 
-When developers wish to add a feature/improvement to a subsystem,
-they are advised to send an RFC with their intentions to the subsystem
-maintainers/list to get feedback on their design before starting to impleme=
-nt.
-Otherwise, the feature could be NACKed for several reasons other than
-"we would rather invest in the newer API".
+I suppose people will not be happy because of the duplication of code. :-(
 
-Bottom line - I don't see a strong reason to change anything, but I also do
-not object to improving man page nor to switching to 'Odd Fixes' status.
+It is not a lot of work, I will do a PoC code and see if KCSAN still complains.
+(Which was the basic reason in the first place for all this, because something changed
+data from underneath our fingers ...).
 
-Thanks,
-Amir.
+Best regards,
+Mirsad
+
+
