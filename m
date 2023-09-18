@@ -2,105 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C8197A5201
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Sep 2023 20:25:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21FFF7A5205
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Sep 2023 20:25:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229678AbjIRSZL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Sep 2023 14:25:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36334 "EHLO
+        id S229684AbjIRSZu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Sep 2023 14:25:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56716 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229668AbjIRSZK (ORCPT
+        with ESMTP id S229436AbjIRSZt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Sep 2023 14:25:10 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D2E4112;
-        Mon, 18 Sep 2023 11:25:03 -0700 (PDT)
+        Mon, 18 Sep 2023 14:25:49 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4ECA5F7;
+        Mon, 18 Sep 2023 11:25:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=TC8wfBk+ib87P7TgIQGCMrwtRUP58vsgw9dhZZ19d68=; b=hC17YkoDr54/vXu9pLxNScC1tR
-        58CYaFjKwojnqasqeKRlYiiyhGN4QyLMZXo7pvNF53AngJGnujARir/IibZbgbOBHea1gQYCq/Adb
-        bY5llp7euvOgmQscF8JZZw9iTzNILN3n52VgSdhzDId6M8HxQP0WtxdNDKMDmvtwQXhWX0X9/EnRZ
-        9Z6DFZm9ZT5/K0IK4Ws+5L/W2vrIs5ZY9T68/cVRDQHoxPATR3IoWSXl/ui2SpfPnqwTCmj9haQmR
-        RirTOGJJ0Z7SauWIWNgcAPcK3Hu/mpvfOupj/ssb6jbVGh4m3ZRjt0hZ4omWsTPNe4GOm9Y3x16Ps
-        SNP1t+ig==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qiIvX-00CXHT-W9; Mon, 18 Sep 2023 18:24:56 +0000
-Date:   Mon, 18 Sep 2023 19:24:55 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Daniel Gomez <da.gomez@samsung.com>,
-        "minchan@kernel.org" <minchan@kernel.org>,
-        "senozhatsky@chromium.org" <senozhatsky@chromium.org>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "djwong@kernel.org" <djwong@kernel.org>,
-        "hughd@google.com" <hughd@google.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "gost.dev@samsung.com" <gost.dev@samsung.com>,
-        Pankaj Raghav <p.raghav@samsung.com>
-Subject: Re: [PATCH 1/6] filemap: make the folio order calculation shareable
-Message-ID: <ZQiV96mTMiSXF9yf@casper.infradead.org>
-References: <20230915095042.1320180-1-da.gomez@samsung.com>
- <CGME20230915095124eucas1p1eb0e0ef883f6316cf14c349404a51150@eucas1p1.samsung.com>
- <20230915095042.1320180-2-da.gomez@samsung.com>
- <ZQRet4w5VSbvKvKB@casper.infradead.org>
- <ZQiSPEKRJSkeh3Fe@bombadil.infradead.org>
+        bh=sVG7Tz4mbiL7zFD9pXkZDz/RHS04WKOIQw8iJglOgVs=; b=BRoxodG+HQtU46yX99ln++ZjUI
+        jDo2UFL72u1TGVgslvDMwhexkR9M4DBavYb8bCC3D8/fVCvGz/BdbTdj7miPIWikmQTRRBAag3r9H
+        36LJxM8kvf9dk4YJ1q4vUlaQuz9OUn5BMa5gBVvXxMdt4Dg2dztGqSW8oBwRapHs5ES20kWpghRzK
+        +U9LwiBlR8qYH36T3tQlmYQyThvUwdWs7LPjKVyou0rivoVU4dhe2lgTxGbUlKzzcCRV0+GiSNXvW
+        vj7aG/B5Ti41ZqjIHbQlFJfW+HKQVLKEHT57VPok+JZhZAwdcHHA9+4Y3JLWLd8eX5Vwo4HDW9E6r
+        iYU4wkHg==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1qiIwH-00G4zG-2i;
+        Mon, 18 Sep 2023 18:25:41 +0000
+Date:   Mon, 18 Sep 2023 11:25:41 -0700
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Pankaj Raghav <kernel@pankajraghav.com>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, p.raghav@samsung.com,
+        david@fromorbit.com, da.gomez@samsung.com,
+        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        djwong@kernel.org, linux-mm@kvack.org, chandan.babu@oracle.com,
+        gost.dev@samsung.com
+Subject: Re: [RFC 05/23] filemap: align index to mapping_min_order in
+ filemap_range_has_page()
+Message-ID: <ZQiWJdjFPvVbCj1B@bombadil.infradead.org>
+References: <20230915183848.1018717-1-kernel@pankajraghav.com>
+ <20230915183848.1018717-6-kernel@pankajraghav.com>
+ <ZQS0UGQMbUCYr2t3@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZQiSPEKRJSkeh3Fe@bombadil.infradead.org>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <ZQS0UGQMbUCYr2t3@casper.infradead.org>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 18, 2023 at 11:09:00AM -0700, Luis Chamberlain wrote:
-> On Fri, Sep 15, 2023 at 02:40:07PM +0100, Matthew Wilcox wrote:
-> > On Fri, Sep 15, 2023 at 09:51:23AM +0000, Daniel Gomez wrote:
-> > > To make the code that clamps the folio order in the __filemap_get_folio
-> > > routine reusable to others, move and merge it to the fgf_set_order
-> > > new subroutine (mapping_size_order), so when mapping the size at a
-> > > given index, the order calculated is already valid and ready to be
-> > > used when order is retrieved from fgp_flags with FGF_GET_ORDER.
-> > > 
-> > > Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
-> > > ---
-> > >  fs/iomap/buffered-io.c  |  6 ++++--
-> > >  include/linux/pagemap.h | 42 ++++++++++++++++++++++++++++++++++++-----
-> > >  mm/filemap.c            |  8 --------
-> > >  3 files changed, 41 insertions(+), 15 deletions(-)
+On Fri, Sep 15, 2023 at 08:45:20PM +0100, Matthew Wilcox wrote:
+> On Fri, Sep 15, 2023 at 08:38:30PM +0200, Pankaj Raghav wrote:
+> > From: Luis Chamberlain <mcgrof@kernel.org>
 > > 
-> > That seems like a lot of extra code to add in order to avoid copying
-> > six lines of code and one comment into the shmem code.
-> > 
-> > It's not wrong, but it seems like a bad tradeoff to me.
+> > page cache is mapping min_folio_order aligned. Use mapping min_folio_order
+> > to align the start_byte and end_byte in filemap_range_has_page().
 > 
-> The suggestion to merge came from me, mostly based on later observations
-> that in the future we may want to extend this with a min order to ensure
-> the index is aligned the the order. This check would only be useful for
-> buffred IO for iomap, readahead. It has me wondering if buffer-heads
-> support for large order folios come around would we a similar check
-> there?
-> 
-> So Willy, you would know better if and when a shared piece of code would
-> be best with all these things in mind.
+> What goes wrong if you don't?  Seems to me like it should work.
 
-In my mind, this is fundamentally code which belongs in the page cache
-rather than in individual filesystems.  The fly in the ointment is that
-shmem has forked the page cache in order to do its own slightly
-specialised thing.  I don't see the buffer_head connection; shmem is
-an extremely special case, and we shouldn't mess around with other
-filesystems to avoid changing shmem.
+Will drop from the series after confirming, thanks.
 
-Ideally, we'd reunify (parts of) shmem and the regular page cache, but
-that's a lot of work, probably involving the swap layer changing.
+  Luis
