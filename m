@@ -2,59 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 47D4E7A510D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Sep 2023 19:34:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 049977A5118
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Sep 2023 19:38:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230165AbjIRRe2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Sep 2023 13:34:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54406 "EHLO
+        id S229608AbjIRRie (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Sep 2023 13:38:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229449AbjIRRe1 (ORCPT
+        with ESMTP id S229447AbjIRRid (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Sep 2023 13:34:27 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 936CBFB;
-        Mon, 18 Sep 2023 10:34:21 -0700 (PDT)
+        Mon, 18 Sep 2023 13:38:33 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12AD9DB;
+        Mon, 18 Sep 2023 10:38:28 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 36FB221F4F;
-        Mon, 18 Sep 2023 17:34:20 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id C0A5B2004E;
+        Mon, 18 Sep 2023 17:38:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1695058460; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1695058706; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=STqzbirky7s4xIFxGt0ZFcoAbGbIBdRaWCKAcOYdde8=;
-        b=Cq7FpSXi++zxK8J8P9Ser1h1kXlSk5vWmIXvvDgrl8uHdJXe9fe7D4Sl0ByoItBNJLXbKA
-        vsO7LcTaNdL0RXxL/ovXoqDel9wTYbhAQ+LIAkoSftJm78wOphXEWCSK3fgUVjB/C+iAK/
-        7COpNLML3EbjWnqMpcTc7v3WyosSKcs=
+        bh=DmStrfUuoPZS6/Xa68Kv22qJopA4ragzNopNOcDtSkY=;
+        b=rskQZP0pvuTLU8FBQ+58EDrNcUZq+QntrTy+LcQdbJXe9DPnSZcLDcO6k8n886LDqgfrxX
+        4LTnS5FZsn/pdlXY0jN5tarDFcvGGttHB/RWh0H16cApZX4KjjG4WCS3HNTW7vCkTo9Utt
+        uFcYbiqnVTR6KdTnNCiLuW5x/QO3/zg=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1695058460;
+        s=susede2_ed25519; t=1695058706;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=STqzbirky7s4xIFxGt0ZFcoAbGbIBdRaWCKAcOYdde8=;
-        b=0i8H2c4AjvUuX+0wzaqIF56ox41EHErzOi3Bh5B8KkHme4bEiIPBLDf1sGj3H4pihB10xI
-        lHH2yg6Rk5DIPuAQ==
+        bh=DmStrfUuoPZS6/Xa68Kv22qJopA4ragzNopNOcDtSkY=;
+        b=3iiY4DORI3CT135kT9jH0mu0tQ490EyhAGpfOj10X9A4GXpBcPB5pxmve0Z0bqUN7uZl9u
+        ZFdM12HoU/PY5JAw==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id A99201358A;
-        Mon, 18 Sep 2023 17:34:19 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 526451358A;
+        Mon, 18 Sep 2023 17:38:26 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id hHo0JhuKCGXTGgAAMHmgww
-        (envelope-from <hare@suse.de>); Mon, 18 Sep 2023 17:34:19 +0000
-Message-ID: <1409c8de-f591-42e5-b638-353bb43d39b5@suse.de>
-Date:   Mon, 18 Sep 2023 19:34:18 +0200
+        id hWHeDBKLCGVnHAAAMHmgww
+        (envelope-from <hare@suse.de>); Mon, 18 Sep 2023 17:38:26 +0000
+Message-ID: <6d28c70f-703b-4e4d-a8be-663c5dbf2cc7@suse.de>
+Date:   Mon, 18 Sep 2023 19:38:25 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/18] mm/filemap: allocate folios with mapping order
- preference
+Subject: Re: [PATCH 09/18] fs/buffer: use mapping order in grow_dev_page()
 Content-Language: en-US
 To:     Matthew Wilcox <willy@infradead.org>
 Cc:     Luis Chamberlain <mcgrof@kernel.org>,
@@ -62,9 +61,10 @@ Cc:     Luis Chamberlain <mcgrof@kernel.org>,
         Pankaj Raghav <p.raghav@samsung.com>,
         linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
 References: <20230918110510.66470-1-hare@suse.de>
- <20230918110510.66470-8-hare@suse.de> <ZQhTmF9VkShSequJ@casper.infradead.org>
+ <20230918110510.66470-10-hare@suse.de>
+ <ZQhX6Zt5iqZp4GJ0@casper.infradead.org>
 From:   Hannes Reinecke <hare@suse.de>
-In-Reply-To: <ZQhTmF9VkShSequJ@casper.infradead.org>
+In-Reply-To: <ZQhX6Zt5iqZp4GJ0@casper.infradead.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -76,100 +76,24 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/18/23 15:41, Matthew Wilcox wrote:
-> On Mon, Sep 18, 2023 at 01:04:59PM +0200, Hannes Reinecke wrote:
->> +++ b/mm/filemap.c
->> @@ -507,9 +507,14 @@ static void __filemap_fdatawait_range(struct address_space *mapping,
->>   	pgoff_t end = end_byte >> PAGE_SHIFT;
->>   	struct folio_batch fbatch;
->>   	unsigned nr_folios;
->> +	unsigned int order = mapping_min_folio_order(mapping);
->>   
->>   	folio_batch_init(&fbatch);
->>   
->> +	if (order) {
->> +		index = ALIGN_DOWN(index, 1 << order);
->> +		end = ALIGN_DOWN(end, 1 << order);
->> +	}
->>   	while (index <= end) {
->>   		unsigned i;
->>   
+On 9/18/23 16:00, Matthew Wilcox wrote:
+> On Mon, Sep 18, 2023 at 01:05:01PM +0200, Hannes Reinecke wrote:
+>> Use the correct mapping order in grow_dev_page() to ensure folios
+>> are created with the correct order.
 > 
-> I don't understand why this function needs to change at all.
-> filemap_get_folios_tag() should return any folios which overlap
-> (index, end).  And aligning 'end' _down_ certainly sets off alarm bells
-> for me.  We surely would need to align _up_.  Except i don't think we
-> need to do anything to this function.
+> I see why you did this, but I think it's fragile.  __filemap_get_folio()
+> will happily decrease 'order' if memory allocation fails.  I think
+> __filemap_get_folio() needs to become aware of the minimum folio
+> order for this mapping, and then we don't need this patch.
 > 
-Because 'end' is the _last_ valid index, not the index at which the 
-iteration stops (cf 'index <= end') here. And as the index remains in 4k 
-units we need to align both, index and end, to the nearest folio.
+> Overall, I like bits of this patchset and I like bits of Pankaj's ;-)
 
->> @@ -2482,7 +2487,8 @@ static int filemap_create_folio(struct file *file,
->>   	struct folio *folio;
->>   	int error;
->>   
->> -	folio = filemap_alloc_folio(mapping_gfp_mask(mapping), 0);
->> +	folio = filemap_alloc_folio(mapping_gfp_mask(mapping),
->> +				    mapping_min_folio_order(mapping));
->>   	if (!folio)
->>   		return -ENOMEM;
->>   
-> 
-> Surely we need to align 'index' here?
-> 
-Surely.
+To be expected. It's basically parallel development, me and Pankaj 
+working independently and arriving at different patchsets.
+Will see next week at ALPSS if we can merge them into something sensible.
 
->> @@ -2542,9 +2548,16 @@ static int filemap_get_pages(struct kiocb *iocb, size_t count,
->>   	pgoff_t last_index;
->>   	struct folio *folio;
->>   	int err = 0;
->> +	unsigned int order = mapping_min_folio_order(mapping);
->>   
->>   	/* "last_index" is the index of the page beyond the end of the read */
->>   	last_index = DIV_ROUND_UP(iocb->ki_pos + count, PAGE_SIZE);
->> +	if (order) {
->> +		/* Align with folio order */
->> +		WARN_ON(index % 1 << order);
->> +		index = ALIGN_DOWN(index, 1 << order);
->> +		last_index = ALIGN(last_index, 1 << order);
->> +	}
-> 
-> Not sure I see the point of this.  filemap_get_read_batch() returns any
-> folio which contains 'index'.
-> 
-Does it? Cool. Then of course we don't need to align the index here.
-
->>   retry:
->>   	if (fatal_signal_pending(current))
->>   		return -EINTR;
->> @@ -2561,7 +2574,7 @@ static int filemap_get_pages(struct kiocb *iocb, size_t count,
->>   		if (iocb->ki_flags & (IOCB_NOWAIT | IOCB_WAITQ))
->>   			return -EAGAIN;
->>   		err = filemap_create_folio(filp, mapping,
->> -				iocb->ki_pos >> PAGE_SHIFT, fbatch);
->> +				index, fbatch);
-> 
-> ... ah, you align index here.  I wonder if we wouldn't be better passing
-> iocb->ki_pos to filemap_create_folio() to emphasise that the caller
-> can't assume anything about the alignment/size of the folio.
-> 
-I can check if that makes a difference.
-
->> @@ -3676,7 +3689,8 @@ static struct folio *do_read_cache_folio(struct address_space *mapping,
->>   repeat:
->>   	folio = filemap_get_folio(mapping, index);
->>   	if (IS_ERR(folio)) {
->> -		folio = filemap_alloc_folio(gfp, 0);
->> +		folio = filemap_alloc_folio(gfp,
->> +				mapping_min_folio_order(mapping));
->>   		if (!folio)
->>   			return ERR_PTR(-ENOMEM);
->>   		err = filemap_add_folio(mapping, folio, index, gfp);
-> 
-> This needs to align index.
-
-Why, but of course. Will check.
+And 'grow_dev_page()' was really done by audit, and I'm not sure if my 
+tests even exercised this particular codepath. So yeah, I'm with you.
 
 Cheers,
 
