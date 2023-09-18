@@ -2,99 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A39237A4794
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Sep 2023 12:51:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C995B7A47EA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Sep 2023 13:06:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239231AbjIRKv0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Sep 2023 06:51:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34102 "EHLO
+        id S241270AbjIRLGF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Sep 2023 07:06:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241271AbjIRKvA (ORCPT
+        with ESMTP id S236249AbjIRLF0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Sep 2023 06:51:00 -0400
-Received: from mail-oa1-f80.google.com (mail-oa1-f80.google.com [209.85.160.80])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 207A618B
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Sep 2023 03:50:26 -0700 (PDT)
-Received: by mail-oa1-f80.google.com with SMTP id 586e51a60fabf-1d64a196d4dso5779548fac.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Sep 2023 03:50:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695034225; x=1695639025;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qWbHqbPj0ZGe69thsLWQoc1OgQzLV4Z1cbQpEB4xnZ0=;
-        b=GMfTTrlOkG9o33Ptf4HkjFQVQ1NlR7XC1zuOM+b8xOF3ChzIxt35WLWMyh4XoI94E/
-         A1SGpdZ/abcTPVeTrGvWKWsIo21r6n4OWzNcJxSJrH5pMpEiZwxEJTKPNWN88SGI81L/
-         QqlU1y+mKgKIuoW861XM+1XVkl95ToRNMco3AQgHHWkKasQI3U68h1EdNZgV2XOKlBPF
-         Zqw3RNC3jQIzm9ngp23CXMsj744W25sq/Xfy0iRwb+wTMa+5DMK9vafajepehH3a6+4X
-         dw7jljdOqAPK4W6qUaeTWDJIN24RqvboAn9ADKO83Qxxy/YStXyptPecYrozlkKzd8gP
-         SX7Q==
-X-Gm-Message-State: AOJu0YxRF3Odu5BEtMDdF8K7+znsfoZdpu/er/eUIFR9VJF+BHsFa8IH
-        m+XvJXcPN5ngIhoXXdpiev66GTEaJ8u1ekmq2s0sV6on26Po
-X-Google-Smtp-Source: AGHT+IESpDsEOqV0iQQTS4UDq9Kdy9qvwkJ98bVJSn8YUlMxcfzdjNejwzXBAfDtFWVGegbbq9twKfz+r++Qxw4EFO2K+FUmrlcz
+        Mon, 18 Sep 2023 07:05:26 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DAC8103;
+        Mon, 18 Sep 2023 04:05:19 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 7200121AAF;
+        Mon, 18 Sep 2023 11:05:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1695035117; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=hiZ67VsJwWSd2gCuLZhIzDylPHqXuAjYStRK9uVLrOQ=;
+        b=izEau36HssT4JCnb1DZQxp2OyGMfY+h9BZf1Vox+BgnCC5bj5yWcLascp2R3fH0rN5kuHh
+        URhhoG6uAI5Qvy8XW6S5MKxsOL4g0BZO8/ng/b4PYkpkAd3CTwYSJGPw9VJtMHo842FJTX
+        Hlf9eIZPd8wMtufFd0aDMtOATeecBNw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1695035117;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=hiZ67VsJwWSd2gCuLZhIzDylPHqXuAjYStRK9uVLrOQ=;
+        b=26ix+2FNqJ8kY7wTfkdQQzSI5pgnnVSNKzeOAh9d4kPpPlQ4ehTz63bUIo8lWKyRd6Aq7e
+        bs+h29iqu2fJZkDQ==
+Received: from adalid.arch.suse.de (adalid.arch.suse.de [10.161.8.13])
+        by relay2.suse.de (Postfix) with ESMTP id DA6A22C142;
+        Mon, 18 Sep 2023 11:05:16 +0000 (UTC)
+Received: by adalid.arch.suse.de (Postfix, from userid 16045)
+        id E0C0C51CD13D; Mon, 18 Sep 2023 13:05:16 +0200 (CEST)
+From:   Hannes Reinecke <hare@suse.de>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Pankaj Raghav <p.raghav@samsung.com>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Hannes Reinecke <hare@suse.de>
+Subject: [RFC PATCH 00/18] block: update buffer_head for Large-block I/O
+Date:   Mon, 18 Sep 2023 13:04:52 +0200
+Message-Id: <20230918110510.66470-1-hare@suse.de>
+X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
-X-Received: by 2002:a05:6870:1b16:b0:1d6:bdb2:c7e1 with SMTP id
- hl22-20020a0568701b1600b001d6bdb2c7e1mr1990478oab.11.1695034225512; Mon, 18
- Sep 2023 03:50:25 -0700 (PDT)
-Date:   Mon, 18 Sep 2023 03:50:25 -0700
-In-Reply-To: <20230918-adrenalin-extra-64562065d07b@brauner>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e4d77106059fe890@google.com>
-Subject: Re: [syzbot] [ext4?] WARNING in setattr_copy
-From:   syzbot <syzbot+450a6d7e0a2db0d8326a@syzkaller.appspotmail.com>
-To:     brauner@kernel.org
-Cc:     adilger.kernel@dilger.ca, brauner@kernel.org, jlayton@kernel.org,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        tytso@mit.edu, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> On Fri, Sep 15, 2023 at 11:51:54PM -0700, syzbot wrote:
->> Hello,
->> 
->> syzbot found the following issue on:
->> 
->> HEAD commit:    3c13c772fc23 Add linux-next specific files for 20230912
->> git tree:       linux-next
->> console+strace: https://syzkaller.appspot.com/x/log.txt?x=15b02b0c680000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=f7149cbda1664bc5
->> dashboard link: https://syzkaller.appspot.com/bug?extid=450a6d7e0a2db0d8326a
->> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
->> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=155b32b4680000
->> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12cf6028680000
->> 
->> Downloadable assets:
->> disk image: https://storage.googleapis.com/syzbot-assets/eb6fbc71f83a/disk-3c13c772.raw.xz
->> vmlinux: https://storage.googleapis.com/syzbot-assets/2d671ade67d9/vmlinux-3c13c772.xz
->> kernel image: https://storage.googleapis.com/syzbot-assets/b2b7190a3a61/bzImage-3c13c772.xz
->> 
->> The issue was bisected to:
->> 
->> commit d6f106662147d78e9a439608e8deac7d046ca0fa
->> Author: Jeff Layton <jlayton@kernel.org>
->> Date:   Wed Aug 30 18:28:43 2023 +0000
->> 
->>     fs: have setattr_copy handle multigrain timestamps appropriately
->> 
->> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1419f8d8680000
->> final oops:     https://syzkaller.appspot.com/x/report.txt?x=1619f8d8680000
->> console output: https://syzkaller.appspot.com/x/log.txt?x=1219f8d8680000
->> 
->> IMPORTANT: if you fix the issue, please add the following tag to the commit:
->> Reported-by: syzbot+450a6d7e0a2db0d8326a@syzkaller.appspotmail.com
->> Fixes: d6f106662147 ("fs: have setattr_copy handle multigrain timestamps appropriately")
->
-> #syz unset subsystems: ext4
-> #syz set subsystems: overlayfs
+Hi all,
 
-Command #1:
-The following labels did not exist: subsystems:, ext4
+to make life a little bit more interesting, here is an alternative
+patchset to enable large-block I/O for buffer_head. Based on top of
+current linus master, no special tweaking required.
+And yes, I am _very_ much aware of hch's work to disable buffer_head for iomap.
+
+Key point here is that we can enable large block I/O for buffer heads
+if we always consider the page reference in 'struct buffer_head' to be
+a folio, and always calculcate the size of the page reference with using
+folio_size(). That way we keep the assumptions that each page (or, in our
+context, each folio) has a pointer (or a list of pointers) to a struct
+buffer_head, and each buffer_head has a pointer to exactly one page/folio.
+Then it's just a matter of auditing the page cache to always looks at the
+folio and not the page, and the work's pretty much done.
+
+Famous last words.
+
+Patchset also contains an update to 'brd' to enable large block sizes.
+For testing please do:
+
+# modprobe brd rd_size=524288 rd_blksize=16384 rd_logical_blksize=16384
+# mkfs.xfs -b size=16384
+
+As usual, comments and reviews are welcome.
+
+Hannes Reinecke (16):
+  mm/readahead: rework loop in page_cache_ra_unbounded()
+  fs/mpage: use blocks_per_folio instead of blocks_per_page
+  block/buffer_head: introduce block_{index_to_sector,sector_to_index}
+  fs/buffer.c: use accessor function to translate page index to sectors
+  fs/mpage: use accessor function to translate page index to sectors
+  mm/filemap: allocate folios with mapping order preference
+  mm/readahead: allocate folios with mapping order preference
+  fs/buffer: use mapping order in grow_dev_page()
+  block/bdev: lift restrictions on supported blocksize
+  block/bdev: enable large folio support for large logical block sizes
+  brd: convert to folios
+  brd: abstract page_size conventions
+  brd: use memcpy_{to,from}_folio()
+  brd: make sector size configurable
+  brd: make logical sector size configurable
+  xfs: remove check for block sizes smaller than PAGE_SIZE
+
+Matthew Wilcox (Oracle) (1):
+  fs: Allow fine-grained control of folio sizes
+
+Pankaj Raghav (1):
+  nvme: enable logical block size > PAGE_SIZE
+
+ block/bdev.c                |  15 ++-
+ drivers/block/brd.c         | 256 ++++++++++++++++++++----------------
+ drivers/nvme/host/core.c    |   2 +-
+ fs/buffer.c                 |  20 +--
+ fs/mpage.c                  |  54 ++++----
+ fs/xfs/xfs_super.c          |  12 --
+ include/linux/buffer_head.h |  17 +++
+ include/linux/pagemap.h     |  48 ++++++-
+ mm/filemap.c                |  20 ++-
+ mm/readahead.c              |  52 +++++---
+ 10 files changed, 305 insertions(+), 191 deletions(-)
+
+-- 
+2.35.3
 
