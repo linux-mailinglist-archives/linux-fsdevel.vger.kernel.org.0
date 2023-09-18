@@ -2,40 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E6F107A5617
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Sep 2023 01:12:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 533FC7A5619
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Sep 2023 01:12:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229881AbjIRXMM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Sep 2023 19:12:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52914 "EHLO
+        id S230125AbjIRXMR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Sep 2023 19:12:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229436AbjIRXML (ORCPT
+        with ESMTP id S229436AbjIRXMR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Sep 2023 19:12:11 -0400
+        Mon, 18 Sep 2023 19:12:17 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3785890;
-        Mon, 18 Sep 2023 16:12:06 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2B2CC433C8;
-        Mon, 18 Sep 2023 23:12:05 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE29199;
+        Mon, 18 Sep 2023 16:12:11 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82A4FC433C7;
+        Mon, 18 Sep 2023 23:12:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695078725;
-        bh=DYUrraa5d+0gdnnutT4NvEXRrBNI5SLRUy1a1wNggtg=;
+        s=k20201202; t=1695078731;
+        bh=mESWbYZ+5fFLjoX7bRpHcoHkMIc1+TPSSsaojhOfaps=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=ePRKYxzhCvowevrvmlBEmHxWvDnISsHNsnPKpDU8rpAQI0M3n3hiOkVzoKE7FDWnc
-         rCw6A7Et1KrqtENl5w4A/2UGIKnSOvvFQ5+XLNNO0ZUObPAbaK+ZQNzNhUJwkHt4Gf
-         7it3shF76fiwO4NACW3er/IPueRVd9HMKrD/okbkRCCNmu3/iK2gncNdUxJukiP2fi
-         /wc9nQ2bJhelHfhHzNLai7aehdhu1dDzP8HFAP0up0UtpGgic0l77O+IslF0VdQxZL
-         tJ+IG6R8QXbnwKzpqZsBuNuRm/H/NhYX1g2ITTl4wRTOQwwELPy3a5ymAo1bHO6bQd
-         Spnqx9gX/ycbQ==
-Subject: [PATCH 1/2] iomap: don't skip reading in !uptodate folios when
- unsharing a range
+        b=LpzTwK48vQNQkJFmolVasj/fv9FvzzAn0azjUN4WkUcF8z90g7vp9ckX0JAR/Wj8t
+         89RBrL9yWfNrgvJHaOu9jUPYYIeZHxljoudf7qKB15ys62jT86HMvXxcLH+fCIwHcK
+         TTm6ynV8BFSidB9GeAYqfuF28xSTMk0W5qFtmaTOsn2sR62iCzw52qUX3HrtDW5ukj
+         TYt7Vw4pJJ/P8RS9KjOp4bdicpbZ0CL/X6xrWi5FqE3gS6rnMQ5+/aiJpNxykA3nQo
+         qm7snKSe2swCYBPWd4J8O1HQUIh8S4VHoQ4chdszhTih8q84oxmygGnvxedTA6+U6r
+         R/K+MbXa3sz0Q==
+Subject: [PATCH 2/2] iomap: convert iomap_unshare_iter to use large folios
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     djwong@kernel.org
 Cc:     ritesh.list@gmail.com, willy@infradead.org,
         linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
         ritesh.list@gmail.com, willy@infradead.org
-Date:   Mon, 18 Sep 2023 16:12:05 -0700
-Message-ID: <169507872536.772278.18183365318216726644.stgit@frogsfrogsfrogs>
+Date:   Mon, 18 Sep 2023 16:12:11 -0700
+Message-ID: <169507873100.772278.2320683121600245730.stgit@frogsfrogsfrogs>
 In-Reply-To: <169507871947.772278.5767091361086740046.stgit@frogsfrogsfrogs>
 References: <169507871947.772278.5767091361086740046.stgit@frogsfrogsfrogs>
 User-Agent: StGit/0.19
@@ -53,48 +52,69 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Prior to commit a01b8f225248e, we would always read in the contents of a
-!uptodate folio prior to writing userspace data into the folio,
-allocated a folio state object, etc.  Ritesh introduced an optimization
-that skips all of that if the write would cover the entire folio.
-
-Unfortunately, the optimization misses the unshare case, where we always
-have to read in the folio contents since there isn't a data buffer
-supplied by userspace.  This can result in stale kernel memory exposure
-if userspace issues a FALLOC_FL_UNSHARE_RANGE call on part of a shared
-file that isn't already cached.
-
-This was caught by observing fstests regressions in the "unshare around"
-mechanism that is used for unaligned writes to a reflinked realtime
-volume when the realtime extent size is larger than 1FSB, though I think
-it applies to any shared file.
+Convert iomap_unshare_iter to create large folios if possible, since the
+write and zeroing paths already do that.  I think this got missed in the
+conversion of the write paths that landed in 6.6-rc1.
 
 Cc: ritesh.list@gmail.com, willy@infradead.org
-Fixes: a01b8f225248e ("iomap: Allocate ifs in ->write_begin() early")
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 ---
- fs/iomap/buffered-io.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ fs/iomap/buffered-io.c |   22 +++++++++++++---------
+ 1 file changed, 13 insertions(+), 9 deletions(-)
 
 
 diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index ae8673ce08b1..0350830fc989 100644
+index 0350830fc989..db889bdfd327 100644
 --- a/fs/iomap/buffered-io.c
 +++ b/fs/iomap/buffered-io.c
-@@ -640,11 +640,13 @@ static int __iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
- 	size_t poff, plen;
+@@ -1263,7 +1263,6 @@ static loff_t iomap_unshare_iter(struct iomap_iter *iter)
+ 	const struct iomap *srcmap = iomap_iter_srcmap(iter);
+ 	loff_t pos = iter->pos;
+ 	loff_t length = iomap_length(iter);
+-	long status = 0;
+ 	loff_t written = 0;
  
- 	/*
--	 * If the write completely overlaps the current folio, then
-+	 * If the write or zeroing completely overlaps the current folio, then
- 	 * entire folio will be dirtied so there is no need for
- 	 * per-block state tracking structures to be attached to this folio.
-+	 * For the unshare case, we must read in the ondisk contents because we
-+	 * are not changing pagecache contents.
- 	 */
--	if (pos <= folio_pos(folio) &&
-+	if (!(iter->flags & IOMAP_UNSHARE) && pos <= folio_pos(folio) &&
- 	    pos + len >= folio_pos(folio) + folio_size(folio))
- 		return 0;
+ 	/* don't bother with blocks that are not shared to start with */
+@@ -1274,9 +1273,10 @@ static loff_t iomap_unshare_iter(struct iomap_iter *iter)
+ 		return length;
  
+ 	do {
+-		unsigned long offset = offset_in_page(pos);
+-		unsigned long bytes = min_t(loff_t, PAGE_SIZE - offset, length);
+ 		struct folio *folio;
++		int status;
++		size_t offset;
++		size_t bytes = min_t(u64, SIZE_MAX, length);
+ 
+ 		status = iomap_write_begin(iter, pos, bytes, &folio);
+ 		if (unlikely(status))
+@@ -1284,18 +1284,22 @@ static loff_t iomap_unshare_iter(struct iomap_iter *iter)
+ 		if (iter->iomap.flags & IOMAP_F_STALE)
+ 			break;
+ 
+-		status = iomap_write_end(iter, pos, bytes, bytes, folio);
+-		if (WARN_ON_ONCE(status == 0))
++		offset = offset_in_folio(folio, pos);
++		if (bytes > folio_size(folio) - offset)
++			bytes = folio_size(folio) - offset;
++
++		bytes = iomap_write_end(iter, pos, bytes, bytes, folio);
++		if (WARN_ON_ONCE(bytes == 0))
+ 			return -EIO;
+ 
+ 		cond_resched();
+ 
+-		pos += status;
+-		written += status;
+-		length -= status;
++		pos += bytes;
++		written += bytes;
++		length -= bytes;
+ 
+ 		balance_dirty_pages_ratelimited(iter->inode->i_mapping);
+-	} while (length);
++	} while (length > 0);
+ 
+ 	return written;
+ }
 
