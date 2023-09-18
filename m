@@ -2,80 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0915D7A4CCD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Sep 2023 17:41:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FB2E7A4CB7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Sep 2023 17:39:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229675AbjIRPlN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Sep 2023 11:41:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49744 "EHLO
+        id S229534AbjIRPjf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Sep 2023 11:39:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229456AbjIRPlM (ORCPT
+        with ESMTP id S229451AbjIRPjd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Sep 2023 11:41:12 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93C24CE9;
-        Mon, 18 Sep 2023 08:37:32 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id A4B751FF30;
-        Mon, 18 Sep 2023 14:17:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1695046643; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=4CzilwYZQ4Jc72fuQtoAbSWLiLUf2pcHd4c41aRTXJU=;
-        b=gTXIPXVMhLb/LF0YpGzOEeYsjv3Lr4csi2hL+oimZIQeoP/z/KNsoN4Q+twIQap9MQqtz7
-        1kIpKIRSQ2uelNAqCffvG59ryNJKmtfUNrqeJ2urH7KUse2lSQm/l2hrtCXPyjMqgLp4/n
-        E0x8wazKcKNGeEbqXV6JA8ZvOsR3fGk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1695046643;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=4CzilwYZQ4Jc72fuQtoAbSWLiLUf2pcHd4c41aRTXJU=;
-        b=Uhf3JhdM3e4goIwB0O9dO8JBxhx30tZalcAOWCg446Jw47oyqFKtY/1e0P0ztDVAQFLsL2
-        nra2CSmQGKJNcDAA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 8580B13480;
-        Mon, 18 Sep 2023 14:17:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id c2yRIPNbCGUDMgAAMHmgww
-        (envelope-from <jack@suse.cz>); Mon, 18 Sep 2023 14:17:23 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 9362BA0759; Mon, 18 Sep 2023 16:17:22 +0200 (CEST)
-Date:   Mon, 18 Sep 2023 16:17:22 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Mirsad Todorovac <mirsad.todorovac@alu.unizg.hr>
-Cc:     Jan Kara <jack@suse.cz>, Philipp Stanner <pstanner@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>, Chris Mason <clm@fb.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        linux-mm@kvack.org, Yury Norov <yury.norov@gmail.com>
-Subject: Re: [PATCH v1 1/1] xarray: fix the data-race in xas_find_chunk() by
- using READ_ONCE()
-Message-ID: <20230918141722.gasntomhkkp2fwy2@quack3>
-References: <20230918044739.29782-1-mirsad.todorovac@alu.unizg.hr>
- <20230918094116.2mgquyxhnxcawxfu@quack3>
- <22ca3ad4-42ef-43bc-51d0-78aaf274977b@alu.unizg.hr>
- <20230918113840.h3mmnuyer44e5bc5@quack3>
- <fb0f5ba9-7fe3-a951-0587-640e7672efec@alu.unizg.hr>
- <20230918131815.otjqgu3zhigsst64@quack3>
- <c50b5eb4-afcd-d810-4411-c43e373a5a95@alu.unizg.hr>
+        Mon, 18 Sep 2023 11:39:33 -0400
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40E99198C
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Sep 2023 08:36:06 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id 4fb4d7f45d1cf-52a49a42353so5734531a12.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Sep 2023 08:36:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1695051206; x=1695656006; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=RKiCOByDL96hotvveoALRujHhJ+JRMIfwmxKHnT1o6A=;
+        b=lCCp2rQpHmeDqPHd9PBrU/N2aI4HWfxjWGJSBSTaj3+NXywrMPltCrsZoyHHF4LHRK
+         nKx6K5y4drZRKI0IdHZ9bwdWO9Ni8wiO73QObtct1rdjiANSAHX3P2ziG/IViE+pt4qU
+         u8/TTouck670EAMbWB2yBnteOA3zo1NrhdyOg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695051206; x=1695656006;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RKiCOByDL96hotvveoALRujHhJ+JRMIfwmxKHnT1o6A=;
+        b=IDrTve3PeVDXSKEXujE2t0pT2ObjprEK3PYfFLo4mxObmtvQQiADxbtOEjlbEzYaAt
+         lY5x0+dSlPQgRkePwujavri0KrStK/kWF24XTNeyLxTBxnDXU/kITWXdqytAC218VhcY
+         A0vLHVlPXq1fQqXiWnve6092gBppRvC2EsCrD3gVdUzKV8oFtscTSyTc1qN1k0gapR3H
+         igJpkah+pd/NEDPvdXCNAuftda++vKzRsDGQnyuhCts9+F5VP/TOJZP/rFvHt1MQInl6
+         BGRIOLSr4m6IIcNBohe75ulRyGzoPkOCOExcO9s62oto2hdbC4iO1npaYR5t+ReoQGbn
+         xr1Q==
+X-Gm-Message-State: AOJu0YwQbYVNWXYwijiSIUic+jWbxzCBngK8dXksktJkbaMV7uLIJAgT
+        MU7JGQBE91dY+GdXBW1K29cnEtGJpGepyXUuuN/JPFAOhOlKYbXA
+X-Google-Smtp-Source: AGHT+IFIEvXbEUkU+mxN2F/R/tIeFBRSysj5+zBZP+k60Jl/lHiG5m9DX+A4lurODy2hOWFB3ngj7hncFNBhvH4RRiY=
+X-Received: by 2002:a17:906:3102:b0:99c:e38d:e484 with SMTP id
+ 2-20020a170906310200b0099ce38de484mr8115574ejx.6.1695047562459; Mon, 18 Sep
+ 2023 07:32:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c50b5eb4-afcd-d810-4411-c43e373a5a95@alu.unizg.hr>
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+References: <20230913152238.905247-1-mszeredi@redhat.com> <20230913152238.905247-3-mszeredi@redhat.com>
+ <20230914-salzig-manifest-f6c3adb1b7b4@brauner> <CAJfpegs-sDk0++FjSZ_RuW5m-z3BTBQdu4T9QPtWwmSZ1_4Yvw@mail.gmail.com>
+ <20230914-lockmittel-verknallen-d1a18d76ba44@brauner> <CAJfpegt-VPZP3ou-TMQFs1Xupj_iWA5ttC2UUFKh3E43EyCOQQ@mail.gmail.com>
+ <20230918-grafik-zutreffen-995b321017ae@brauner> <CAOssrKfS79=+F0h=XPzJX2E6taxAPmEJEYPi4VBNQjgRR5ujqw@mail.gmail.com>
+ <20230918-hierbei-erhielten-ba5ef74a5b52@brauner>
+In-Reply-To: <20230918-hierbei-erhielten-ba5ef74a5b52@brauner>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 18 Sep 2023 16:32:30 +0200
+Message-ID: <CAJfpegtaGXoZkMWLnk3PcibAvp7kv-4Yobo=UJj943L6v3ctJQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/3] add statmnt(2) syscall
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
+        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
+        Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_SOFTFAIL autolearn=no autolearn_force=no
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -83,54 +76,20 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 18-09-23 15:34:46, Mirsad Todorovac wrote:
-> On 9/18/23 15:18, Jan Kara wrote:
-> > On Mon 18-09-23 14:46:02, Mirsad Todorovac wrote:
-> > > Hi,
-> > > 
-> > > I tried this patch and the
-> > > 
-> > > > >    95 _find_first_and_bit (lib/find_bit.c:114 (discriminator 10))
-> > > > >    31 _find_first_zero_bit (lib/find_bit.c:125 (discriminator 10))
-> > > > > 173 _find_next_and_bit (lib/find_bit.c:171 (discriminator 2))
-> > > > > 655 _find_next_bit (lib/find_bit.c:133 (discriminator 2))
-> > > > >     5 _find_next_zero_bit
-> > > 
-> > > data-races do not seem to appear any longer.
-> > 
-> > Yup. You've just missed one case in _find_last_bit() and then all the
-> > functions in include/linux/find.h need a similar treatment...
-> 
-> I seem to have this:
-> 
-> -----------------------------------------------------------------------------------
-> #ifndef find_last_bit
-> unsigned long _find_last_bit(const unsigned long *addr, unsigned long size)
-> {
->         if (size) {
->                 unsigned long val = BITMAP_LAST_WORD_MASK(size);
->                 unsigned long idx = (size-1) / BITS_PER_LONG;
-> 
->                 do {
->                         val &= READ_ONCE(addr[idx]);
->                         if (val)
->                                 return idx * BITS_PER_LONG + __fls(val);
-> 
->                         val = ~0ul;
->                 } while (idx--);
->         }
->         return size;
-> }
-> EXPORT_SYMBOL(_find_last_bit);
-> #endif
-> -----------------------------------------------------------------------------------
-> 
-> Is there something I did not notice?
+On Mon, 18 Sept 2023 at 16:25, Christian Brauner <brauner@kernel.org> wrote:
 
-No, this looks correct. I just somehow didn't see this hunk in the diff
-you've posted.
+> The system call should please have a proper struct like you had in your
+> first proposal. This is what I'm concerned about:
+>
+> int statmount(u64 mnt_id,
+>               struct statmnt __user *st,
+>               size_t size,
+>               unsigned int flags)
+>
+> instead of taking an void pointer.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+So you are not concerned about having ascii strings returned by the
+syscall?   I thought that was the main complaint.
+
+Thanks,
+Miklos
