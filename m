@@ -2,162 +2,194 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D8857A401A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Sep 2023 06:42:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F0E17A4026
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Sep 2023 06:49:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236741AbjIREll (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Sep 2023 00:41:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38890 "EHLO
+        id S236741AbjIREsh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Sep 2023 00:48:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239472AbjIRElQ (ORCPT
+        with ESMTP id S239451AbjIREsd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Sep 2023 00:41:16 -0400
-Received: from mail-oo1-f80.google.com (mail-oo1-f80.google.com [209.85.161.80])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BEDDEA
-        for <linux-fsdevel@vger.kernel.org>; Sun, 17 Sep 2023 21:41:09 -0700 (PDT)
-Received: by mail-oo1-f80.google.com with SMTP id 006d021491bc7-573a7a3c405so6042611eaf.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 17 Sep 2023 21:41:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695012068; x=1695616868;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Njj1cFpFl6P5XczNJtRHj5unyeppmn930r6gY5zCeN0=;
-        b=E4ehuWyQvNfyZMO2IX9/ZYN/h9b1qsHJA0hpneqI54xJa9eCk9BkOAZGn8gAaH/Nbm
-         yTFS1nZNH1WeWqwbL/1PzKt3mV2etBNHV72//gYIre/OCrfrDFotzQsLHR8XNocyQMsv
-         UKf1dvZ16A4tW2YRC7vqVBkBLl1d0pdksnvBvaPLVK5KxHdkwoRPdRl4G+mowrRKwBKm
-         0eSlp/K0WJrKB2srCzHjWZPT4o4e04x1Pvmx1VP7iip9rUKJe1uAV8DqVFmDh6u2bMY3
-         VJsULA1VivsktbcpnFEdFbab+JECpgIuP/+1ey1QQfc3nAAehGFvYKRipCfhiFp5lXx/
-         HU/w==
-X-Gm-Message-State: AOJu0Yw6BdtJaxVxijUv0ukb9ewVt7XCmKg3VueeG1MVIb2DpxzaQ2Sj
-        rZpTgTZ3+ruVjf2j95qMAdjzwI+qukqGBuXXQulsPOky/wNo
-X-Google-Smtp-Source: AGHT+IH36LNEUnGMAeMXmlQNVH5WxS7Mii7fn4raTyMmtgevC5fZjJjZojnKRU5aBVH1N1s8pW7OLTunfCts9ukRd1orioKhlr0A
+        Mon, 18 Sep 2023 00:48:33 -0400
+Received: from domac.alu.hr (domac.alu.unizg.hr [IPv6:2001:b68:2:2800::3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CFE6A8;
+        Sun, 17 Sep 2023 21:48:27 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by domac.alu.hr (Postfix) with ESMTP id E7C7A60157;
+        Mon, 18 Sep 2023 06:48:24 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=alu.unizg.hr; s=mail;
+        t=1695012504; bh=znt8nZ/ul1DmeyQFC/6Gimy2V/JLtuGQw9NojRoWjhM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=lFmBraFRMYc4hw1XsxX900Rs2B1CVYGuVkou9bBJKcyxpVuj+ig0w77ChfWmTbbwn
+         HqFSz800YAkGSFocLIKQylDacjy/IVoiEb7IHjhYDwaXXOBqy7LaJ2sqbvSlNfaOxD
+         0wmOV6tvjQo4T+a8sDD7gmewm4MPLad9ExYhTs9m9uZQEwv/WYSEJXy+cYHnqCp/Fb
+         ObmpqZWHOXaLhQKw2UXKL+fApCLJO6Z3f9gdReJ66iq2n0bgmf7Y9EMR6tOhXQxpIz
+         ZDaT3F0hntTkfcDwSBgTF0THlLKDDJb9xYLC6cQSe6yGImErSW6U2t1dNTAzNWvxjj
+         nJiQSkuLU8/QA==
+X-Virus-Scanned: Debian amavisd-new at domac.alu.hr
+Received: from domac.alu.hr ([127.0.0.1])
+        by localhost (domac.alu.hr [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id asJ17R2RSXlG; Mon, 18 Sep 2023 06:48:22 +0200 (CEST)
+Received: from defiant.home (78-1-184-14.adsl.net.t-com.hr [78.1.184.14])
+        by domac.alu.hr (Postfix) with ESMTPSA id 029B760155;
+        Mon, 18 Sep 2023 06:48:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=alu.unizg.hr; s=mail;
+        t=1695012502; bh=znt8nZ/ul1DmeyQFC/6Gimy2V/JLtuGQw9NojRoWjhM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=FZk3FbxDDyQbvmrSCZRMvbwOIiHtsacRA1ZAmdLvn4W0L5VfM8ODMvmuc9Vnn0v42
+         AG+oqQoV+EEwwiQL0idcpbEIfePzUeSNbEiGk3B/f0qHAiFhrp7ekbYDUxJiSS2spF
+         jEVgS0UKyoVr87F3zPIaPC3aPfMcsUtD+ZATid3PPwYdd4MboFRo7KcjNtgx3tzgKp
+         rUtMViry8fwShzWIVjUlvnZjZLFdHqp5FR6omnjP8ORi3nG1JzmZBH661JjY2j0yvR
+         q9gl6JOo8X2KYQRXc3unAnkTtiveRQS9PhoMHY/z9jbCKmTZYybnKjI19pdvkAg9TU
+         B935noV77jB5w==
+From:   Mirsad Goran Todorovac <mirsad.todorovac@alu.unizg.hr>
+To:     Philipp Stanner <pstanner@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Mirsad Goran Todorovac <mirsad.todorovac@alu.unizg.hr>,
+        Jan Kara <jack@suse.cz>, Chris Mason <clm@fb.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: [PATCH v1 1/1] xarray: fix the data-race in xas_find_chunk() by using READ_ONCE()
+Date:   Mon, 18 Sep 2023 06:47:40 +0200
+Message-Id: <20230918044739.29782-1-mirsad.todorovac@alu.unizg.hr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-X-Received: by 2002:a4a:4fd7:0:b0:571:1df7:c13f with SMTP id
- c206-20020a4a4fd7000000b005711df7c13fmr3109792oob.1.1695012068423; Sun, 17
- Sep 2023 21:41:08 -0700 (PDT)
-Date:   Sun, 17 Sep 2023 21:41:08 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003a7ffb06059ac0dd@google.com>
-Subject: [syzbot] [fs?] [mm?] WARNING in page_copy_sane
-From:   syzbot <syzbot+c225dea486da4d5592bd@syzkaller.appspotmail.com>
-To:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        llvm@lists.linux.dev, mike.kravetz@oracle.com,
-        muchun.song@linux.dev, nathan@kernel.org, ndesaulniers@google.com,
-        sidhartha.kumar@oracle.com, syzkaller-bugs@googlegroups.com,
-        trix@redhat.com, willy@infradead.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+KCSAN has discovered the following data-race:
 
-syzbot found the following issue on:
+[  206.510010] ==================================================================
+[  206.510035] BUG: KCSAN: data-race in xas_clear_mark / xas_find_marked
 
-HEAD commit:    98897dc735cf Add linux-next specific files for 20230914
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=1548728c680000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1502c503717ada5c
-dashboard link: https://syzkaller.appspot.com/bug?extid=c225dea486da4d5592bd
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=171fffd8680000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17bbbf1c680000
+[  206.510067] write to 0xffff963df6a90fe0 of 8 bytes by interrupt on cpu 22:
+[  206.510081] xas_clear_mark (./arch/x86/include/asm/bitops.h:178 ./include/asm-generic/bitops/instrumented-non-atomic.h:115 lib/xarray.c:102 lib/xarray.c:914)
+[  206.510097] __xa_clear_mark (lib/xarray.c:1923)
+[  206.510114] __folio_end_writeback (mm/page-writeback.c:2981)
+[  206.510128] folio_end_writeback (mm/filemap.c:1616)
+[  206.510143] end_page_writeback (mm/folio-compat.c:28)
+[  206.510155] btrfs_page_clear_writeback (fs/btrfs/subpage.c:646) btrfs
+[  206.510994] end_bio_extent_writepage (./include/linux/bio.h:84 fs/btrfs/extent_io.c:542) btrfs
+[  206.511817] __btrfs_bio_end_io (fs/btrfs/bio.c:117 fs/btrfs/bio.c:112) btrfs
+[  206.512640] btrfs_orig_bbio_end_io (fs/btrfs/bio.c:164) btrfs
+[  206.513497] btrfs_simple_end_io (fs/btrfs/bio.c:380) btrfs
+[  206.514350] bio_endio (block/bio.c:1617)
+[  206.514362] blk_mq_end_request_batch (block/blk-mq.c:837 block/blk-mq.c:1073)
+[  206.514377] nvme_pci_complete_batch (drivers/nvme/host/pci.c:986) nvme
+[  206.514437] nvme_irq (drivers/nvme/host/pci.c:1086) nvme
+[  206.514500] __handle_irq_event_percpu (kernel/irq/handle.c:158)
+[  206.514517] handle_irq_event (kernel/irq/handle.c:195 kernel/irq/handle.c:210)
+[  206.514533] handle_edge_irq (kernel/irq/chip.c:836)
+[  206.514549] __common_interrupt (./include/linux/irqdesc.h:161 arch/x86/kernel/irq.c:238 arch/x86/kernel/irq.c:257)
+[  206.514563] common_interrupt (arch/x86/kernel/irq.c:247 (discriminator 14))
+[  206.514583] asm_common_interrupt (./arch/x86/include/asm/idtentry.h:636)
+[  206.514599] kcsan_setup_watchpoint (kernel/kcsan/core.c:705 (discriminator 1))
+[  206.514612] __tsan_read8 (kernel/kcsan/core.c:1025)
+[  206.514626] steal_from_bitmap.part.0 (./include/linux/find.h:186 fs/btrfs/free-space-cache.c:2557 fs/btrfs/free-space-cache.c:2613) btrfs
+[  206.515491] __btrfs_add_free_space (fs/btrfs/free-space-cache.c:2689 fs/btrfs/free-space-cache.c:2667) btrfs
+[  206.516361] btrfs_add_free_space_async_trimmed (fs/btrfs/free-space-cache.c:2798) btrfs
+[  206.517231] add_new_free_space (fs/btrfs/block-group.c:550) btrfs
+[  206.518095] load_free_space_tree (fs/btrfs/free-space-tree.c:1595 fs/btrfs/free-space-tree.c:1658) btrfs
+[  206.518953] caching_thread (fs/btrfs/block-group.c:873) btrfs
+[  206.519800] btrfs_work_helper (fs/btrfs/async-thread.c:314) btrfs
+[  206.520643] process_one_work (kernel/workqueue.c:2600)
+[  206.520658] worker_thread (./include/linux/list.h:292 kernel/workqueue.c:2752)
+[  206.520672] kthread (kernel/kthread.c:389)
+[  206.520684] ret_from_fork (arch/x86/kernel/process.c:145)
+[  206.520701] ret_from_fork_asm (arch/x86/entry/entry_64.S:312)
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/00e4c0af5a8a/disk-98897dc7.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/7b54a00eee56/vmlinux-98897dc7.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/100094353b8e/bzImage-98897dc7.xz
+[  206.520722] read to 0xffff963df6a90fe0 of 8 bytes by task 2793 on cpu 6:
+[  206.520735] xas_find_marked (./include/linux/xarray.h:1706 lib/xarray.c:1354)
+[  206.520750] filemap_get_folios_tag (mm/filemap.c:1975 mm/filemap.c:2273)
+[  206.520763] __filemap_fdatawait_range (mm/filemap.c:519)
+[  206.520777] filemap_fdatawait_range (mm/filemap.c:556)
+[  206.520790] btrfs_wait_ordered_range (fs/btrfs/ordered-data.c:839) btrfs
+[  206.521641] btrfs_sync_file (fs/btrfs/file.c:1859) btrfs
+[  206.522495] vfs_fsync_range (fs/sync.c:188)
+[  206.522509] __x64_sys_fsync (./include/linux/file.h:45 fs/sync.c:213 fs/sync.c:220 fs/sync.c:218 fs/sync.c:218)
+[  206.522522] do_syscall_64 (arch/x86/entry/common.c:50 arch/x86/entry/common.c:80)
+[  206.522535] entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:120)
 
-The issue was bisected to:
+[  206.522557] value changed: 0xfffffffffff80000 -> 0xfffffffffff00000
 
-commit 591a2520fbfd6565d9a5c732afa53f62228798e6
-Author: Sidhartha Kumar <sidhartha.kumar@oracle.com>
-Date:   Mon Sep 11 21:53:19 2023 +0000
+[  206.522574] Reported by Kernel Concurrency Sanitizer on:
+[  206.522585] CPU: 6 PID: 2793 Comm: tracker-extract Tainted: G             L     6.5.0-rc6+ #44
+[  206.522600] Hardware name: ASRock X670E PG Lightning/X670E PG Lightning, BIOS 1.21 04/26/2023
+[  206.522608] ==================================================================
 
-    mm/filemap: remove hugetlb special casing in filemap.c
+As Jan Kara explained, the problem is in the function xas_find_chuck():
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15e15464680000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=17e15464680000
-console output: https://syzkaller.appspot.com/x/log.txt?x=13e15464680000
+/* Private */
+static inline unsigned int xas_find_chunk(struct xa_state *xas, bool advance,
+		xa_mark_t mark)
+{
+	unsigned long *addr = xas->xa_node->marks[(__force unsigned)mark];
+	unsigned int offset = xas->xa_offset;
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c225dea486da4d5592bd@syzkaller.appspotmail.com
-Fixes: 591a2520fbfd ("mm/filemap: remove hugetlb special casing in filemap.c")
+	if (advance)
+		offset++;
+	if (XA_CHUNK_SIZE == BITS_PER_LONG) {
+		if (offset < XA_CHUNK_SIZE) {
+→			unsigned long data = *addr & (~0UL << offset);
+			if (data)
+				return __ffs(data);
+		}
+		return XA_CHUNK_SIZE;
+	}
 
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 5040 at lib/iov_iter.c:463 page_copy_sane+0xc2/0x2c0 lib/iov_iter.c:463
-Modules linked in:
-CPU: 1 PID: 5040 Comm: syz-executor204 Not tainted 6.6.0-rc1-next-20230914-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/04/2023
-RIP: 0010:page_copy_sane+0xc2/0x2c0 lib/iov_iter.c:463
-Code: e8 73 db 63 fd 66 90 e8 6c db 63 fd e8 67 db 63 fd 4c 89 ee 48 89 ef e8 6c d6 63 fd 49 39 ed 0f 83 eb 00 00 00 e8 4e db 63 fd <0f> 0b 31 db e8 45 db 63 fd 89 d8 5b 5d 41 5c 41 5d 41 5e 41 5f c3
-RSP: 0018:ffffc90003eefa58 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: ffff88807a01d940 RSI: ffffffff84241482 RDI: 0000000000000006
-RBP: 0000000000200000 R08: 0000000000000006 R09: 0000000000201000
-R10: 0000000000200000 R11: 0000000000000000 R12: 0000000000000009
-R13: 0000000000201000 R14: 0000000000000001 R15: ffffea0001fe0000
-FS:  0000555556937380(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000200001c0 CR3: 000000002911d000 CR4: 00000000003506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- copy_page_to_iter+0x35/0x180 lib/iov_iter.c:472
- hugetlbfs_read_iter+0x3d7/0xa60 fs/hugetlbfs/inode.c:385
- call_read_iter include/linux/fs.h:1980 [inline]
- do_iter_readv_writev+0x2f2/0x3c0 fs/read_write.c:733
- do_iter_read+0x315/0x870 fs/read_write.c:795
- vfs_readv+0x12d/0x1a0 fs/read_write.c:915
- do_preadv fs/read_write.c:1007 [inline]
- __do_sys_preadv fs/read_write.c:1057 [inline]
- __se_sys_preadv fs/read_write.c:1052 [inline]
- __x64_sys_preadv+0x228/0x300 fs/read_write.c:1052
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x38/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f85cc7932e9
-Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffda50bbbd8 EFLAGS: 00000246 ORIG_RAX: 0000000000000127
-RAX: ffffffffffffffda RBX: 00007ffda50bbdb8 RCX: 00007f85cc7932e9
-RDX: 0000000000000002 RSI: 0000000020000180 RDI: 0000000000000003
-RBP: 00007f85cc806610 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 00007ffda50bbda8 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
+	return find_next_bit(addr, XA_CHUNK_SIZE, offset);
+}
 
+In particular, the line
 
+			unsigned long data = *addr & (~0UL << offset);
+
+contains a data race that is best avoided using READ_ONCE(), which eliminated the KCSAN
+data-race warning completely.
+
+Reported-by: Mirsad Goran Todorovac <mirsad.todorovac@alu.unizg.hr>
+Suggested-by: Jan Kara <jack@suse.cz>
+Fixes: b803b42823d0d ("xarray: Add XArray iterators")
+Matthew Wilcox <willy@infradead.org>
+Cc: Chris Mason <clm@fb.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Josef Bacik <josef@toxicpanda.com>
+Cc: David Sterba <dsterba@suse.com>
+Cc: linux-btrfs@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-mm@kvack.org
+Signed-off-by: Mirsad Goran Todorovac <mirsad.todorovac@alu.unizg.hr>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+v1: the proposed fix (RFC)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+ include/linux/xarray.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-If the bug is already fixed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+diff --git a/include/linux/xarray.h b/include/linux/xarray.h
+index cb571dfcf4b1..1715fd322d62 100644
+--- a/include/linux/xarray.h
++++ b/include/linux/xarray.h
+@@ -1720,7 +1720,7 @@ static inline unsigned int xas_find_chunk(struct xa_state *xas, bool advance,
+ 		offset++;
+ 	if (XA_CHUNK_SIZE == BITS_PER_LONG) {
+ 		if (offset < XA_CHUNK_SIZE) {
+-			unsigned long data = *addr & (~0UL << offset);
++			unsigned long data = READ_ONCE(*addr) & (~0UL << offset);
+ 			if (data)
+ 				return __ffs(data);
+ 		}
+-- 
+2.34.1
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite bug's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the bug is a duplicate of another bug, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
