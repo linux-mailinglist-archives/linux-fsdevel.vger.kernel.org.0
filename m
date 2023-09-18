@@ -2,53 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A22147A5321
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Sep 2023 21:32:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DE0F7A532D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Sep 2023 21:39:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229517AbjIRTcQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Sep 2023 15:32:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55238 "EHLO
+        id S229590AbjIRTjr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Sep 2023 15:39:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229379AbjIRTcP (ORCPT
+        with ESMTP id S229477AbjIRTjq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Sep 2023 15:32:15 -0400
+        Mon, 18 Sep 2023 15:39:46 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55F27F7
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Sep 2023 12:32:10 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 864D0C433C7;
-        Mon, 18 Sep 2023 19:32:07 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91731101;
+        Mon, 18 Sep 2023 12:39:41 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A13B6C433C9;
+        Mon, 18 Sep 2023 19:39:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695065530;
-        bh=fgoIlk2owzQ8mKC78potAed7ErOYTJkJDsj1NPK+RKQ=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=Cp/+73do1FjeYXRL775Cfa0+aQWYlIbQFf1HwMph08nVFgbGfVy6uvRxWj6BqNJRZ
-         PSfLLQd9hxCrf4O5d5LZ75n8kqm/9Syb1orHlHFiMmLuKuS+HHB+7UOU7SDvxUBYXI
-         KLiEfAmNoypZjH7BzJ5DdHz1ibFMWAeJyW2WdujnKJpNWYJjcPLcrvXzJKnf2kKEgS
-         0QFlLhZEf601CsUyxZ/RBnn4TcxBLXg20zzgRa9i9YGskgO8p09qJYme8csGdE/2/h
-         hEgfzCyTGI1juL5Q7JhnZH3iGh8c7ZzIWoiqRbHMz6IZBGOpNFlivS1EZoAZY+cLcW
-         qhKbQuBonycDw==
-Date:   Mon, 18 Sep 2023 21:32:05 +0200 (CEST)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-cc:     Jan Kara <jack@suse.cz>, Theodore Ts'o <tytso@mit.edu>,
-        NeilBrown <neilb@suse.de>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Eric Sandeen <sandeen@sandeen.net>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Christoph Hellwig <hch@infradead.org>, ksummit@lists.linux.dev,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [MAINTAINERS/KERNEL SUMMIT] Trust and maintenance of file
- systems
-In-Reply-To: <CAHk-=whB5mjPnsvBZ4vMn7A4pkXT9a5pk4vjasPOsSvU-UNdQg@mail.gmail.com>
-Message-ID: <nycvar.YFH.7.76.2309182127480.14216@cbobk.fhfr.pm>
-References: <ZPlFwHQhJS+Td6Cz@dread.disaster.area> <20230907071801.1d37a3c5@gandalf.local.home> <b7ca4a4e-a815-a1e8-3579-57ac783a66bf@sandeen.net> <CAHk-=wg=xY6id92yS3=B59UfKmTmOgq+NNv+cqCMZ1Yr=FwR9A@mail.gmail.com> <ZQTfIu9OWwGnIT4b@dread.disaster.area>
- <db57da32517e5f33d1d44564097a7cc8468a96c3.camel@HansenPartnership.com> <169491481677.8274.17867378561711132366@noble.neil.brown.name> <CAHk-=wg_p7g=nonWOqgHGVXd+ZwZs8im-G=pNHP6hW60c8=UHw@mail.gmail.com> <20230917185742.GA19642@mit.edu>
- <CAHk-=wjHarh2VHgM57D1Z+yPFxGwGm7ubfLN7aQCRH5Ke3_=Tg@mail.gmail.com> <20230918111402.7mx3wiecqt5axvs5@quack3> <CAHk-=whB5mjPnsvBZ4vMn7A4pkXT9a5pk4vjasPOsSvU-UNdQg@mail.gmail.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        s=k20201202; t=1695065981;
+        bh=hR/nLlP8z29UKnEn3m5fjx9kJXqIXzhgNBoFQGa+RFo=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=IQfVRv7jHDsn4cdMac4PvP2FVTTYv8ZRlbnK3UvnbA+lIGAfWaFw5N2aB/0GoZspF
+         a8z5wOhp5uLxQLqyG7jzj3YiKe342Cz8fpJVv37j4D7YT/vtdSZcv0QtObuGbgAYo5
+         RmRXzzSC71HXN5PkIgqJ50uRIlIGxWjSaaLXPMGSp4Kqj/H96L9JAcWB478G43zFTS
+         aiI/41M9M88gpQjqp45WPPhBCGz0WkuYPr5F/SvwthF9FQWIkUYW7CBIWe24+FAHtw
+         O8noAbCM7XCdhLe30I1q5e6MTV86JXtKOZYGXjgfv+hrZYs5w1EUEvy9ZhyEw8rsa+
+         Ga0LAePE+n/+w==
+Message-ID: <e321d3cfaa5facdc8f167d42d9f3cec9246f40e4.camel@kernel.org>
+Subject: Re: [GIT PULL] timestamp fixes
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 18 Sep 2023 15:39:39 -0400
+In-Reply-To: <CAHk-=wiTNktN1k+D-3uJ-jGOMw8nxf45xSHHf8TzpjKj6HaYqQ@mail.gmail.com>
+References: <20230918-hirte-neuzugang-4c2324e7bae3@brauner>
+         <CAHk-=wiTNktN1k+D-3uJ-jGOMw8nxf45xSHHf8TzpjKj6HaYqQ@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -58,23 +50,52 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 18 Sep 2023, Linus Torvalds wrote:
+On Mon, 2023-09-18 at 11:24 -0700, Linus Torvalds wrote:
+> On Mon, 18 Sept 2023 at 04:54, Christian Brauner <brauner@kernel.org> wro=
+te:
+> >=20
+> > * Only update the atime if "now" is later than the current value. This
+> >   can happen when the atime gets updated with a fine-grained timestamp
+> >   and then later gets updated using a coarse-grained timestamp.
+>=20
+> I pulled this, and then I unpulled it again.
+>=20
+> I think this is fundamentally wrong.
+>=20
+> If somebody has set the time into the future (for whatever reason -
+> maybe the clocks were wrong at some point), afaik accessing a file
+> should reset it, and very much used to do that.
+>=20
+> Am I missing something? Because this really seems *horribly* broken garba=
+ge.
+>=20
+> Any "go from fine-grained back to coarse-grained" situation needs to
+> explicitly test *that* case.
+>=20
+> Not some kind of completely broken "don't update to past value" like this=
+.
+>=20
 
-> But mmap() is *not* important for a filesystem that is used just for 
-> data transport. I bet that FAT is still widely used, for example, and 
-> while exFAT is probably making inroads, I suspect most of us have used a 
-> USB stick with a FAT filesystem on it in the not too distant past. Yet I 
-> doubt we'd have ever even noticed if 'mmap' didn't work on FAT. Because 
-> all you really want for data transport is basic read/write support.
+Fair point.=A0 Now that I've considered it some more, I think that commit
+7df48e7d99a4 (fs: don't update the atime if existing atime is newer than
+"now") is not necessary.
 
-I am afraid this is not reflecting reality.
+What prompted this was a bug report from the kernel test robot that
+showed the atime going backward on a STRICTATIME LTP test, but I think
+the root cause of that was the missing ctime initialization after
+allocation that we fixed in 0a22d3ff61b7 (fs: initialize
+inode->__i_ctime to the epoch).
 
-I am pretty sure that "give me that document on a USB stick, and I'll take 
-a look" leads to using things like libreoffice (or any other editor liked 
-by general public) to open the file directly on the FAT USB stick. And 
-that's pretty much guaranteed to use mmap().
+In general, we always update the atime with a coarse-grained timestamp,
+since atime and ctime updates are never done together during normal read
+and write operations. As you note, things are a little more murky with
+utimes() updates but I think we should be safe to overwrite the atime
+with a coarse-grained timestamp unconditionally.
 
--- 
-Jiri Kosina
-SUSE Labs
+We should be able to just drop that patch from the series. Whether you
+want to pull the rest now or wait for a bit, I'll leave up to you and
+Christian to decide.
 
+Thanks,
+--=20
+Jeff Layton <jlayton@kernel.org>
