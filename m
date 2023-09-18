@@ -2,60 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F0E17A4026
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Sep 2023 06:49:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE6257A4028
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Sep 2023 06:50:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236741AbjIREsh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Sep 2023 00:48:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38136 "EHLO
+        id S239534AbjIREtl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Sep 2023 00:49:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239451AbjIREsd (ORCPT
+        with ESMTP id S239627AbjIREtf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Sep 2023 00:48:33 -0400
+        Mon, 18 Sep 2023 00:49:35 -0400
 Received: from domac.alu.hr (domac.alu.unizg.hr [IPv6:2001:b68:2:2800::3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CFE6A8;
-        Sun, 17 Sep 2023 21:48:27 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D443D12D;
+        Sun, 17 Sep 2023 21:49:21 -0700 (PDT)
 Received: from localhost (localhost [127.0.0.1])
-        by domac.alu.hr (Postfix) with ESMTP id E7C7A60157;
-        Mon, 18 Sep 2023 06:48:24 +0200 (CEST)
+        by domac.alu.hr (Postfix) with ESMTP id 939606015E;
+        Mon, 18 Sep 2023 06:49:20 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=alu.unizg.hr; s=mail;
-        t=1695012504; bh=znt8nZ/ul1DmeyQFC/6Gimy2V/JLtuGQw9NojRoWjhM=;
+        t=1695012560; bh=F/BMLDEayJFvrEb777veIWDYiWEXyubU7F/o8rvVZSY=;
         h=From:To:Cc:Subject:Date:From;
-        b=lFmBraFRMYc4hw1XsxX900Rs2B1CVYGuVkou9bBJKcyxpVuj+ig0w77ChfWmTbbwn
-         HqFSz800YAkGSFocLIKQylDacjy/IVoiEb7IHjhYDwaXXOBqy7LaJ2sqbvSlNfaOxD
-         0wmOV6tvjQo4T+a8sDD7gmewm4MPLad9ExYhTs9m9uZQEwv/WYSEJXy+cYHnqCp/Fb
-         ObmpqZWHOXaLhQKw2UXKL+fApCLJO6Z3f9gdReJ66iq2n0bgmf7Y9EMR6tOhXQxpIz
-         ZDaT3F0hntTkfcDwSBgTF0THlLKDDJb9xYLC6cQSe6yGImErSW6U2t1dNTAzNWvxjj
-         nJiQSkuLU8/QA==
+        b=BAvG8HHE/HngnzOfSv0X/KlenJbgZgM9QkXUAwZH5gNNkQflJokqlAw0fSP7jRoSw
+         rgCjNSiaF1klJ6Eia+0MMti/OU5td+7DRYSK3bZiWOtBdqZY6oLo6kCuBUYMuF8Qsc
+         q1s6Qqlz8F9dYSHbzaRe+MGwUA7LNN16WqhUfRMUKMARGWT4xIjSSov1JFaBC6qO0o
+         GKi566ys9I/yrZSTwFAtSiKfpYu2Syl61GJ1JceXtFCIkAWdIVTq9eqkUpFXndmxPC
+         fcsPaL634cYkXSjoXL2NVuDA+1TnaYbbnG8dNLsf5FDxLygowJ7OpRplpoAbQ0Pj9W
+         NgMAGk8iat9OQ==
 X-Virus-Scanned: Debian amavisd-new at domac.alu.hr
 Received: from domac.alu.hr ([127.0.0.1])
         by localhost (domac.alu.hr [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id asJ17R2RSXlG; Mon, 18 Sep 2023 06:48:22 +0200 (CEST)
+        with ESMTP id SaN-Jvvn3b1b; Mon, 18 Sep 2023 06:49:18 +0200 (CEST)
 Received: from defiant.home (78-1-184-14.adsl.net.t-com.hr [78.1.184.14])
-        by domac.alu.hr (Postfix) with ESMTPSA id 029B760155;
-        Mon, 18 Sep 2023 06:48:20 +0200 (CEST)
+        by domac.alu.hr (Postfix) with ESMTPSA id D268860155;
+        Mon, 18 Sep 2023 06:49:17 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=alu.unizg.hr; s=mail;
-        t=1695012502; bh=znt8nZ/ul1DmeyQFC/6Gimy2V/JLtuGQw9NojRoWjhM=;
+        t=1695012558; bh=F/BMLDEayJFvrEb777veIWDYiWEXyubU7F/o8rvVZSY=;
         h=From:To:Cc:Subject:Date:From;
-        b=FZk3FbxDDyQbvmrSCZRMvbwOIiHtsacRA1ZAmdLvn4W0L5VfM8ODMvmuc9Vnn0v42
-         AG+oqQoV+EEwwiQL0idcpbEIfePzUeSNbEiGk3B/f0qHAiFhrp7ekbYDUxJiSS2spF
-         jEVgS0UKyoVr87F3zPIaPC3aPfMcsUtD+ZATid3PPwYdd4MboFRo7KcjNtgx3tzgKp
-         rUtMViry8fwShzWIVjUlvnZjZLFdHqp5FR6omnjP8ORi3nG1JzmZBH661JjY2j0yvR
-         q9gl6JOo8X2KYQRXc3unAnkTtiveRQS9PhoMHY/z9jbCKmTZYybnKjI19pdvkAg9TU
-         B935noV77jB5w==
+        b=2KlRj1nHXInXy8QCrSD6Gvru6VkMgNubtMI3yoySr0nVvYsho/HqZS+c9J2yGsKYh
+         rOSfG6qbSfKwkAFUzX5EXJXQ2qUph4W8jBZCFsbD0XnpB7TW1V1NbWCSOmVQ5hwb4M
+         lsRxLLrFC3d6sn1dKk0UWoNAR991lWZPWV0b/l2Op4fQ2O/KXg2y1nVjtpY22J2G3v
+         2BvlgObK3iHvzFaAlqqZrkQkKuO+LvRbvqp23KXKJypvUpxvXE69xZ/zT79yWT9e3I
+         dN/BWh+89q6a2xHGch8Ol6EF60ouz9rmlZoZV03YftHJmkTnpNv0R4i2josqtGExQc
+         4EwBfp+TP/VGQ==
 From:   Mirsad Goran Todorovac <mirsad.todorovac@alu.unizg.hr>
-To:     Philipp Stanner <pstanner@redhat.com>,
+To:     Mirsad Goran Todorovac <mirsad.todorovac@alu.unizg.hr>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Mirsad Goran Todorovac <mirsad.todorovac@alu.unizg.hr>,
-        Jan Kara <jack@suse.cz>, Chris Mason <clm@fb.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: [PATCH v1 1/1] xarray: fix the data-race in xas_find_chunk() by using READ_ONCE()
-Date:   Mon, 18 Sep 2023 06:47:40 +0200
-Message-Id: <20230918044739.29782-1-mirsad.todorovac@alu.unizg.hr>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Tejun Heo <htejun@gmail.com>
+Subject: [PATCH v1 1/1] poll: fix the data race in the use of pwq->triggered in poll_schedule_timeout()
+Date:   Mon, 18 Sep 2023 06:48:38 +0200
+Message-Id: <20230918044837.29859-1-mirsad.todorovac@alu.unizg.hr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -69,127 +65,109 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-KCSAN has discovered the following data-race:
+KCSAN had discovered the following data-race:
 
-[  206.510010] ==================================================================
-[  206.510035] BUG: KCSAN: data-race in xas_clear_mark / xas_find_marked
+[  139.315774] ==================================================================
+[  139.315798] BUG: KCSAN: data-race in poll_schedule_timeout.constprop.0 / pollwake
 
-[  206.510067] write to 0xffff963df6a90fe0 of 8 bytes by interrupt on cpu 22:
-[  206.510081] xas_clear_mark (./arch/x86/include/asm/bitops.h:178 ./include/asm-generic/bitops/instrumented-non-atomic.h:115 lib/xarray.c:102 lib/xarray.c:914)
-[  206.510097] __xa_clear_mark (lib/xarray.c:1923)
-[  206.510114] __folio_end_writeback (mm/page-writeback.c:2981)
-[  206.510128] folio_end_writeback (mm/filemap.c:1616)
-[  206.510143] end_page_writeback (mm/folio-compat.c:28)
-[  206.510155] btrfs_page_clear_writeback (fs/btrfs/subpage.c:646) btrfs
-[  206.510994] end_bio_extent_writepage (./include/linux/bio.h:84 fs/btrfs/extent_io.c:542) btrfs
-[  206.511817] __btrfs_bio_end_io (fs/btrfs/bio.c:117 fs/btrfs/bio.c:112) btrfs
-[  206.512640] btrfs_orig_bbio_end_io (fs/btrfs/bio.c:164) btrfs
-[  206.513497] btrfs_simple_end_io (fs/btrfs/bio.c:380) btrfs
-[  206.514350] bio_endio (block/bio.c:1617)
-[  206.514362] blk_mq_end_request_batch (block/blk-mq.c:837 block/blk-mq.c:1073)
-[  206.514377] nvme_pci_complete_batch (drivers/nvme/host/pci.c:986) nvme
-[  206.514437] nvme_irq (drivers/nvme/host/pci.c:1086) nvme
-[  206.514500] __handle_irq_event_percpu (kernel/irq/handle.c:158)
-[  206.514517] handle_irq_event (kernel/irq/handle.c:195 kernel/irq/handle.c:210)
-[  206.514533] handle_edge_irq (kernel/irq/chip.c:836)
-[  206.514549] __common_interrupt (./include/linux/irqdesc.h:161 arch/x86/kernel/irq.c:238 arch/x86/kernel/irq.c:257)
-[  206.514563] common_interrupt (arch/x86/kernel/irq.c:247 (discriminator 14))
-[  206.514583] asm_common_interrupt (./arch/x86/include/asm/idtentry.h:636)
-[  206.514599] kcsan_setup_watchpoint (kernel/kcsan/core.c:705 (discriminator 1))
-[  206.514612] __tsan_read8 (kernel/kcsan/core.c:1025)
-[  206.514626] steal_from_bitmap.part.0 (./include/linux/find.h:186 fs/btrfs/free-space-cache.c:2557 fs/btrfs/free-space-cache.c:2613) btrfs
-[  206.515491] __btrfs_add_free_space (fs/btrfs/free-space-cache.c:2689 fs/btrfs/free-space-cache.c:2667) btrfs
-[  206.516361] btrfs_add_free_space_async_trimmed (fs/btrfs/free-space-cache.c:2798) btrfs
-[  206.517231] add_new_free_space (fs/btrfs/block-group.c:550) btrfs
-[  206.518095] load_free_space_tree (fs/btrfs/free-space-tree.c:1595 fs/btrfs/free-space-tree.c:1658) btrfs
-[  206.518953] caching_thread (fs/btrfs/block-group.c:873) btrfs
-[  206.519800] btrfs_work_helper (fs/btrfs/async-thread.c:314) btrfs
-[  206.520643] process_one_work (kernel/workqueue.c:2600)
-[  206.520658] worker_thread (./include/linux/list.h:292 kernel/workqueue.c:2752)
-[  206.520672] kthread (kernel/kthread.c:389)
-[  206.520684] ret_from_fork (arch/x86/kernel/process.c:145)
-[  206.520701] ret_from_fork_asm (arch/x86/entry/entry_64.S:312)
+[  139.315830] write to 0xffffc90003f3fb60 of 4 bytes by task 1848 on cpu 6:
+[  139.315843]  pollwake+0xc0/0x110
+[  139.315860]  __wake_up_common+0x7a/0x150
+[  139.315877]  __wake_up_common_lock+0x7f/0xd0
+[  139.315893]  __wake_up_sync_key+0x20/0x50
+[  139.315905]  sock_def_readable+0x67/0x160
+[  139.315917]  unix_stream_sendmsg+0x35f/0x990
+[  139.315932]  sock_sendmsg+0x15d/0x170
+[  139.315947]  ____sys_sendmsg+0x3d5/0x500
+[  139.315962]  ___sys_sendmsg+0x9e/0x100
+[  139.315976]  __sys_sendmsg+0x6f/0x100
+[  139.315990]  __x64_sys_sendmsg+0x47/0x60
+[  139.316005]  do_syscall_64+0x5d/0xa0
+[  139.316022]  entry_SYSCALL_64_after_hwframe+0x6e/0xd8
 
-[  206.520722] read to 0xffff963df6a90fe0 of 8 bytes by task 2793 on cpu 6:
-[  206.520735] xas_find_marked (./include/linux/xarray.h:1706 lib/xarray.c:1354)
-[  206.520750] filemap_get_folios_tag (mm/filemap.c:1975 mm/filemap.c:2273)
-[  206.520763] __filemap_fdatawait_range (mm/filemap.c:519)
-[  206.520777] filemap_fdatawait_range (mm/filemap.c:556)
-[  206.520790] btrfs_wait_ordered_range (fs/btrfs/ordered-data.c:839) btrfs
-[  206.521641] btrfs_sync_file (fs/btrfs/file.c:1859) btrfs
-[  206.522495] vfs_fsync_range (fs/sync.c:188)
-[  206.522509] __x64_sys_fsync (./include/linux/file.h:45 fs/sync.c:213 fs/sync.c:220 fs/sync.c:218 fs/sync.c:218)
-[  206.522522] do_syscall_64 (arch/x86/entry/common.c:50 arch/x86/entry/common.c:80)
-[  206.522535] entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:120)
+[  139.316043] read to 0xffffc90003f3fb60 of 4 bytes by task 1877 on cpu 18:
+[  139.316055]  poll_schedule_timeout.constprop.0+0x4e/0xc0
+[  139.316071]  do_sys_poll+0x50d/0x760
+[  139.316081]  __x64_sys_poll+0x5f/0x210
+[  139.316091]  do_syscall_64+0x5d/0xa0
+[  139.316105]  entry_SYSCALL_64_after_hwframe+0x6e/0xd8
 
-[  206.522557] value changed: 0xfffffffffff80000 -> 0xfffffffffff00000
+[  139.316125] value changed: 0x00000000 -> 0x00000001
 
-[  206.522574] Reported by Kernel Concurrency Sanitizer on:
-[  206.522585] CPU: 6 PID: 2793 Comm: tracker-extract Tainted: G             L     6.5.0-rc6+ #44
-[  206.522600] Hardware name: ASRock X670E PG Lightning/X670E PG Lightning, BIOS 1.21 04/26/2023
-[  206.522608] ==================================================================
+[  139.316143] Reported by Kernel Concurrency Sanitizer on:
+[  139.316153] CPU: 18 PID: 1877 Comm: gdbus Tainted: G             L     6.6.0-rc1-kcsan-00269-ge789286468a9-dirty #3
+[  139.316167] Hardware name: ASRock X670E PG Lightning/X670E PG Lightning, BIOS 1.21 04/26/2023
+[  139.316177] ==================================================================
 
-As Jan Kara explained, the problem is in the function xas_find_chuck():
+The data race appears to be here in poll_schedule_timeout():
 
-/* Private */
-static inline unsigned int xas_find_chunk(struct xa_state *xas, bool advance,
-		xa_mark_t mark)
-{
-	unsigned long *addr = xas->xa_node->marks[(__force unsigned)mark];
-	unsigned int offset = xas->xa_offset;
+fs/select.c:
+  237 static int poll_schedule_timeout(struct poll_wqueues *pwq, int state,
+  238                           ktime_t *expires, unsigned long slack)
+  239 {
+  240         int rc = -EINTR;
+  241
+  242         set_current_state(state);
+→ 243         if (!pwq->triggered)
+  244                 rc = schedule_hrtimeout_range(expires, slack, HRTIMER_MODE_ABS);
+  245         __set_current_state(TASK_RUNNING);
+  246
+  247         /*
+  248          * Prepare for the next iteration.
+  249          *
+  250          * The following smp_store_mb() serves two purposes.  First, it's
+  251          * the counterpart rmb of the wmb in pollwake() such that data
+  252          * written before wake up is always visible after wake up.
+  253          * Second, the full barrier guarantees that triggered clearing
+  254          * doesn't pass event check of the next iteration.  Note that
+  255          * this problem doesn't exist for the first iteration as
+  256          * add_wait_queue() has full barrier semantics.
+  257          */
+  258         smp_store_mb(pwq->triggered, 0);
+  259
+  260         return rc;
+  261 }
 
-	if (advance)
-		offset++;
-	if (XA_CHUNK_SIZE == BITS_PER_LONG) {
-		if (offset < XA_CHUNK_SIZE) {
-→			unsigned long data = *addr & (~0UL << offset);
-			if (data)
-				return __ffs(data);
-		}
-		return XA_CHUNK_SIZE;
-	}
+The problem seems to be fixed by using READ_ONCE() around pwq->triggered, which
+silences the KCSAN warning:
 
-	return find_next_bit(addr, XA_CHUNK_SIZE, offset);
-}
+→       if (!READ_ONCE(pwq->triggered))
+                rc = schedule_hrtimeout_range(expires, slack, HRTIMER_MODE_ABS);
 
-In particular, the line
+This is a quick fix that removes the symptom, but probably more isses need to be
+observed around the use of pwq->triggered.
 
-			unsigned long data = *addr & (~0UL << offset);
-
-contains a data race that is best avoided using READ_ONCE(), which eliminated the KCSAN
-data-race warning completely.
+Having the value of pwq->triggered changed under one's fingers obviously has the
+effect of the wrong branch in the "if" statement and wrong schedule_hrtimeout_range()
+invocation.
 
 Reported-by: Mirsad Goran Todorovac <mirsad.todorovac@alu.unizg.hr>
-Suggested-by: Jan Kara <jack@suse.cz>
-Fixes: b803b42823d0d ("xarray: Add XArray iterators")
-Matthew Wilcox <willy@infradead.org>
-Cc: Chris Mason <clm@fb.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Josef Bacik <josef@toxicpanda.com>
-Cc: David Sterba <dsterba@suse.com>
-Cc: linux-btrfs@vger.kernel.org
+Fixes: 5f820f648c92a ("poll: allow f_op->poll to sleep")
+Cc: Tejun Heo <htejun@gmail.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>
 Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-mm@kvack.org
 Signed-off-by: Mirsad Goran Todorovac <mirsad.todorovac@alu.unizg.hr>
 ---
-v1: the proposed fix (RFC)
+v1:
+ the proposed fix (RFC)
 
- include/linux/xarray.h | 2 +-
+ fs/select.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/xarray.h b/include/linux/xarray.h
-index cb571dfcf4b1..1715fd322d62 100644
---- a/include/linux/xarray.h
-+++ b/include/linux/xarray.h
-@@ -1720,7 +1720,7 @@ static inline unsigned int xas_find_chunk(struct xa_state *xas, bool advance,
- 		offset++;
- 	if (XA_CHUNK_SIZE == BITS_PER_LONG) {
- 		if (offset < XA_CHUNK_SIZE) {
--			unsigned long data = *addr & (~0UL << offset);
-+			unsigned long data = READ_ONCE(*addr) & (~0UL << offset);
- 			if (data)
- 				return __ffs(data);
- 		}
+diff --git a/fs/select.c b/fs/select.c
+index 0ee55af1a55c..38e12084daf1 100644
+--- a/fs/select.c
++++ b/fs/select.c
+@@ -240,7 +240,7 @@ static int poll_schedule_timeout(struct poll_wqueues *pwq, int state,
+ 	int rc = -EINTR;
+ 
+ 	set_current_state(state);
+-	if (!pwq->triggered)
++	if (!READ_ONCE(pwq->triggered))
+ 		rc = schedule_hrtimeout_range(expires, slack, HRTIMER_MODE_ABS);
+ 	__set_current_state(TASK_RUNNING);
+ 
 -- 
 2.34.1
 
