@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B466D7A4781
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Sep 2023 12:47:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 048F27A4792
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Sep 2023 12:51:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241204AbjIRKrc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Sep 2023 06:47:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41144 "EHLO
+        id S232898AbjIRKvY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Sep 2023 06:51:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241203AbjIRKrL (ORCPT
+        with ESMTP id S241269AbjIRKu7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Sep 2023 06:47:11 -0400
+        Mon, 18 Sep 2023 06:50:59 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 399B4A3;
-        Mon, 18 Sep 2023 03:47:06 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA231C433C7;
-        Mon, 18 Sep 2023 10:47:03 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE16D188;
+        Mon, 18 Sep 2023 03:50:23 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8666AC433C8;
+        Mon, 18 Sep 2023 10:50:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695034025;
-        bh=sggbjr/EGqmTc3vUAubk13+ex8scPMazs6Ndes0Rb78=;
+        s=k20201202; t=1695034223;
+        bh=xrXFiitV9cg7iNtsA2pDOZav9rtVTmsOfAZLd0oEB9s=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=r2j63s7tRotX3pnRKLd0lemF0MODSuWm9A0dfuf3KknQMhK2SNMkjEpY81IRt+eLC
-         XswLJfSZz3Jr9r3wiVC4NUpuIUP2Af73GjeYDaOzqIv0G3F8Ivr2Mjs9nS1hivsa9L
-         2idMAkMRmF/I9uFs5dhMcomZNIqvgDlNwrgpOrtmTP4QTGv0NMkn0znDXpXqx6MjVf
-         9GI51Dl3kb+R7ER5EDiZCP8sbZWfDcQwWBENtVABNw9/Q6+xE62MNDOnQwAjZ4Dr3/
-         9NMEz1PDmoZKnAY42eYX0yBEmIOtweojhL2U3bcZx8z3MFIa0RRGY3MA6wvg1fwyX5
-         erjFO48/lTHXg==
-Date:   Mon, 18 Sep 2023 12:47:01 +0200
+        b=TZsAy5ZMjVjc0xrbAbhRHXJ1nxSna2ldKcvq+v1lyoaFDxfqgU610q4ghN2XNNLMY
+         hcYmU5z9f+/v2qpSkTVJHuwFBKOd4+uKePjbPFZhZ38prfruBw4Yo5P65IOphxiecm
+         OTsas2wwkvfIk9Atujdyx1JSyaZ12BPVOI8l+hURw9AOa1D0lWLW10Gn+0P3Qt9GH0
+         8OBL5w9iLIUx3r3a3tdehWgaT52QbuPHFkVyIfAKcRCihHINLOCzLq67AYoQdMj+zi
+         BRUUUasfAX5R+zOVUQeE9Yozs/DmmerXrvr2fnTn+bRGhojBF7xIOGMP1+Js6cKoJ0
+         sIWBIg6HzmyAw==
+Date:   Mon, 18 Sep 2023 12:50:13 +0200
 From:   Christian Brauner <brauner@kernel.org>
 To:     syzbot <syzbot+450a6d7e0a2db0d8326a@syzkaller.appspotmail.com>
 Cc:     adilger.kernel@dilger.ca, jlayton@kernel.org,
@@ -35,7 +35,7 @@ Cc:     adilger.kernel@dilger.ca, jlayton@kernel.org,
         linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
         tytso@mit.edu, viro@zeniv.linux.org.uk
 Subject: Re: [syzbot] [ext4?] WARNING in setattr_copy
-Message-ID: <20230918-dorfbewohner-neigung-ab3250854717@brauner>
+Message-ID: <20230918-adrenalin-extra-64562065d07b@brauner>
 References: <00000000000033d44706057458b3@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
@@ -86,4 +86,5 @@ On Fri, Sep 15, 2023 at 11:51:54PM -0700, syzbot wrote:
 > Reported-by: syzbot+450a6d7e0a2db0d8326a@syzkaller.appspotmail.com
 > Fixes: d6f106662147 ("fs: have setattr_copy handle multigrain timestamps appropriately")
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git f8edd33686154b9165457c95e2ed5943e916781e
+#syz unset subsystems: ext4
+#syz set subsystems: overlayfs
