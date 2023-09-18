@@ -2,62 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 985917A4C5B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Sep 2023 17:32:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D936D7A4C82
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Sep 2023 17:35:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229484AbjIRPcI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Sep 2023 11:32:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48584 "EHLO
+        id S229536AbjIRPez (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Sep 2023 11:34:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229637AbjIRPbw (ORCPT
+        with ESMTP id S229703AbjIRPec (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Sep 2023 11:31:52 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 634A62D64;
-        Mon, 18 Sep 2023 08:30:06 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E44CC116A6;
-        Mon, 18 Sep 2023 15:22:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695050546;
-        bh=Jy81jZ+Pg9L8j4zgKk95bii6/t3Wa+sejLO3X5izIQQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AfYUdDD9s5k0zOMqYJk1cs4VUf+bhsU6YSfeQzPC5IWDI1JEtk1KhAX0qCwjbeod+
-         9PSgK+jKcmA+0SWVJGmjc7MLI3jOy4IZZPILqRC4qxbmSqlrTlPTFArUkEmmKA3u4m
-         Ai/6ZdP0QpzZmgN/zra7pQqij+CquNG1+4jPyrunwtd1CEHSWYBuvr8W/OP3kodFoF
-         CZqwJxD+BA9av3Plub+f9noTCXflPGAh/ehP/HTcqlNTpCrkZQ/M2Klgry7PnQUUfj
-         hJ2ZsoPwfhTKLK7hp8CPfkrSpPPuvbQsdR1+knQ1jVg6zYS3hbxhpNHdzyuG5UCey3
-         PAFyK+1S+PQqA==
-Date:   Mon, 18 Sep 2023 17:22:20 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
-        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
-        Ian Kent <raven@themaw.net>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Amir Goldstein <amir73il@gmail.com>
-Subject: Re: [RFC PATCH 2/3] add statmnt(2) syscall
-Message-ID: <20230918-bestialisch-brutkasten-1fb34abdc33c@brauner>
-References: <20230914-salzig-manifest-f6c3adb1b7b4@brauner>
- <CAJfpegs-sDk0++FjSZ_RuW5m-z3BTBQdu4T9QPtWwmSZ1_4Yvw@mail.gmail.com>
- <20230914-lockmittel-verknallen-d1a18d76ba44@brauner>
- <CAJfpegt-VPZP3ou-TMQFs1Xupj_iWA5ttC2UUFKh3E43EyCOQQ@mail.gmail.com>
- <20230918-grafik-zutreffen-995b321017ae@brauner>
- <CAOssrKfS79=+F0h=XPzJX2E6taxAPmEJEYPi4VBNQjgRR5ujqw@mail.gmail.com>
- <20230918-hierbei-erhielten-ba5ef74a5b52@brauner>
- <CAJfpegtaGXoZkMWLnk3PcibAvp7kv-4Yobo=UJj943L6v3ctJQ@mail.gmail.com>
- <20230918-stuhl-spannend-9904d4addc93@brauner>
- <CAJfpegvxNhty2xZW+4MM9Gepotii3CD1p0fyvLDQB82hCYzfLQ@mail.gmail.com>
+        Mon, 18 Sep 2023 11:34:32 -0400
+Received: from mail-ua1-x92f.google.com (mail-ua1-x92f.google.com [IPv6:2607:f8b0:4864:20::92f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4443BBC;
+        Mon, 18 Sep 2023 08:32:09 -0700 (PDT)
+Received: by mail-ua1-x92f.google.com with SMTP id a1e0cc1a2514c-7a8c41bd59aso523114241.3;
+        Mon, 18 Sep 2023 08:32:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1695050940; x=1695655740; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FFquh9MatLutV/AqH2mDcbYDMbyhx/Btn5qvpYa0SGg=;
+        b=O8QXOTOCinvtS7RuUha3bcTqDNQ9kuTz4oLq2e32AaATfsWb8D+pSD0y+XeacnXTUs
+         KCijXtXawPdRJy/xtiqJr1TWOvd+4CUFEGb72FrzR+6N/7l2CSa+KaAqCRaak6UNVw8L
+         CdbA85Iqg42ik8F4nvLNMpn2e65N48rUIesuPBMJCiqFtEtAXXSB/WVpyCQCgqvUmm1d
+         KIzq166PaKa8NWsrOXgnqTiA+iT/4YYwvOJU0AqQaQ+/9YiQDTA31CVFY/nnktk1HwiN
+         pqPuPAnbbu/WWF7BnX7ZvIFzty6CcwMHERMXKc/B7qeyluaX8ttdrVcmp722DlgF8GOZ
+         diUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695050940; x=1695655740;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FFquh9MatLutV/AqH2mDcbYDMbyhx/Btn5qvpYa0SGg=;
+        b=PWS+YjMjhG22BjH6pikU7543fnx1evaadx/OdHg9ZjI39Qt+oQ18B26EVhFbBJE8K0
+         1o7ZJxBegwy49s62yvhjwXhonU2G9WWzMuKmdV3hVD7mTH8fHYYBPBDeip2kLTzsEKUV
+         odFNsjMPduAVv7Oo7CKJkbDaj6RAdU3FuOV4jDgz9rxJJGHO0z/42YP/MWLF1GXCS07B
+         DsRhCGzHOGLQ4A1c/9ZKQKqtOE9ZtvVWxxaluS+fiI8YFkdSinePEdV6x+mB3NfX6Fgo
+         iH2FgGdzeZaKYEJa2KVWNop2GTZPKFkFD6IdDZvqUfJNgbCP9EVXHgBEWj4W8rtxrHrI
+         Rbiw==
+X-Gm-Message-State: AOJu0Yz6MNiBaChusH9dY18rruRnRWR3K2uyyv1bmuSR6buH9QMiIVz8
+        00qS9DhtwpQYTOFYCxIe0W5+EvPHEmdkht0+bfM=
+X-Google-Smtp-Source: AGHT+IG+14BDkv69gEV/ofqK+tV/43zZr0iMgJxlaMWnsiFY8QZ/k81W0VpdvgqTjqlov5xvNWbSKqBBq7GwKvCySXc=
+X-Received: by 2002:a05:6102:3184:b0:452:741a:b7ec with SMTP id
+ c4-20020a056102318400b00452741ab7ecmr1682905vsh.33.1695050940607; Mon, 18 Sep
+ 2023 08:29:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAJfpegvxNhty2xZW+4MM9Gepotii3CD1p0fyvLDQB82hCYzfLQ@mail.gmail.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+References: <20230918123217.932179-1-max.kellermann@ionos.com>
+ <20230918123217.932179-3-max.kellermann@ionos.com> <20230918124050.hzbgpci42illkcec@quack3>
+ <CAKPOu+-Nx_cvBZNox63R1ah76wQp6eH4RLah0O5mDaLo9h60ww@mail.gmail.com> <20230918142319.kvzc3lcpn5n2ty6g@quack3>
+In-Reply-To: <20230918142319.kvzc3lcpn5n2ty6g@quack3>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Mon, 18 Sep 2023 18:28:49 +0300
+Message-ID: <CAOQ4uxic7C5skHv4d+Gek_uokRL8sgUegTusiGkwAY4dSSADYQ@mail.gmail.com>
+Subject: Re: [PATCH 3/4] inotify_user: add system call inotify_add_watch_at()
+To:     Jan Kara <jack@suse.cz>
+Cc:     Max Kellermann <max.kellermann@ionos.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
         RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -66,18 +71,55 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> So to be clear about your proposal: .mnt_root and .mountpoint are
-> initialized by the caller to buffers that the kernel can copy paths
-> into?
+On Mon, Sep 18, 2023 at 5:23=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+>
+> On Mon 18-09-23 15:57:43, Max Kellermann wrote:
+> > On Mon, Sep 18, 2023 at 2:40=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+> > > Note that since kernel 5.13 you
+> > > don't need CAP_SYS_ADMIN capability for fanotify functionality that i=
+s
+> > > more-or-less equivalent to what inotify provides.
+> >
+> > Oh, I missed that change - I remember fanotify as being inaccessible
+> > for unprivileged processes, and fanotify being designed for things
+> > like virus scanners. Indeed I should migrate my code to fanotify.
+> >
+> > If fanotify has now become the designated successor of inotify, that
+> > should be hinted in the inotify manpage, and if inotify is effectively
+> > feature-frozen, maybe that should be an extra status in the
+> > MAINTAINERS file?
+>
+> The manpage update is a good idea. I'm not sure about the MAINTAINERS
+> status - we do have 'Obsolete' but I'm reluctant to mark inotify as
+> obsolete as it's perfectly fine for existing users, we fully maintain it
+> and support it but we just don't want to extend the API anymore. Amir, wh=
+at
+> are your thoughts on this?
 
-Yeah, u64 pointer to a buffer and a size (see e.g., @set_tid and
-@set_tid_size for struct clone_args, @log_buf and @log_size and other
-args in there).
+I think that the mention of inotify vs. fanotify features in fanotify.7 man=
+ page
+is decent - if anyone wants to improve it I won't mind.
+A mention of fanotify as successor in inotify.7 man page is not a bad idea =
+-
+patches welcome.
 
-> 
-> If there's an overflow (one of the buffers was too small) the syscall
-> returns -EOVERFLOW?
+As to MAINTAINERS, I think that 'Maintained' feels right.
+We may consider 'Odd Fixes' for inotify and certainly for 'dnotify',
+but that sounds a bit too harsh for the level of maintenance they get.
 
-Yeah, I mean we have to make some things their problem.
+I'd like to point out that IMO, man-page is mainly aimed for the UAPI
+users and MAINTAINERS is mostly aimed at bug reporters and drive-by
+developers who submit small fixes.
 
-To me that is an acceptable compromise.
+When developers wish to add a feature/improvement to a subsystem,
+they are advised to send an RFC with their intentions to the subsystem
+maintainers/list to get feedback on their design before starting to impleme=
+nt.
+Otherwise, the feature could be NACKed for several reasons other than
+"we would rather invest in the newer API".
+
+Bottom line - I don't see a strong reason to change anything, but I also do
+not object to improving man page nor to switching to 'Odd Fixes' status.
+
+Thanks,
+Amir.
