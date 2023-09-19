@@ -2,68 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A8A97A687F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Sep 2023 18:01:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B97B7A68D7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Sep 2023 18:28:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233236AbjISQBF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Sep 2023 12:01:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53802 "EHLO
+        id S231360AbjISQ2W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Sep 2023 12:28:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231952AbjISQBD (ORCPT
+        with ESMTP id S230147AbjISQ2V (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Sep 2023 12:01:03 -0400
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF2E99C
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Sep 2023 09:00:57 -0700 (PDT)
-Received: by mail-ed1-x532.google.com with SMTP id 4fb4d7f45d1cf-51e28cac164so14833611a12.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Sep 2023 09:00:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1695139256; x=1695744056; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=a0R/NEqhp8mvFMCcaKYM+AhiLyAZfM1uN2ggUzMalzw=;
-        b=FtzaXOi+hA01MIr7cO5FS90YmVBkOJC+dhjrOCsAurhpXemDPx3XRkVlRCGe4b7pJw
-         6U/kdVPpxlqn2gwcJDjZPRQLwI4RmkJMzfx9trA2VCezlmebJXQgsSNLym3ebCfLT25w
-         okscFh+rEzMEo0ehRInD2SRCDHY1pysIb5wIqpPSTmM694YHvvWvenMC4SZ8SGPPaORC
-         217TBfMvGnQDB9E1rMRFEue4SzC693KM4PwYZ9A+IDbhNJlOGNbENZchwwPxPhXvHdwN
-         sGqixBVFn91zfNXBliBvHcE4g9jZoNC891pEred5zqUgAHBN7bQNnE8e1gvtcir6znqi
-         4ssg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695139256; x=1695744056;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=a0R/NEqhp8mvFMCcaKYM+AhiLyAZfM1uN2ggUzMalzw=;
-        b=wvptdWk8AvRUTtKLjlwC1x5jbFtRXp+AzDCOeI2dAorHdPN3shhRG/RuaM4v5wPXNw
-         9pyi1OZjikxstM+2Nrbm1F+nH7RYG3wB/myYAIsdCHGkwk2k5u4XQsCtfucL9rg/DbBl
-         q9OAYrzv7g05XtR+PaJ8jGvx3ZXP18oX1EAvJjQ0Hh97VrcQUidqTLFKzWNwwgbNR7xG
-         lEtMo5ABDNvpmFKxCvenYHrhGUdlQ4pEnL3t9mlnQf/vzZ2Ld9j84qQBHzip6zRZvEJq
-         GSC3tQ+8b6gFItAQfz3ObclLdHJSR7ZaXGNzX+cKCJQ2OYMV/FGEXNycNxN749UAK6Zv
-         wpNA==
-X-Gm-Message-State: AOJu0YyMsF+mNj3nrfb6CX4cMdwP/7C506GsB7l0PSCsXWqCVwCB+m+u
-        H/cpg53qcOuRzhvrwxto16j7clSvN2tkBshEI7Mdgg==
-X-Google-Smtp-Source: AGHT+IGwZwS2c6qiWZ9zWVkmGdcNaP8g1k2FnfUTXQz40ZbXZpXm7Nn5A9VeM/7x9bLj2HVuo2cxxg+CmzsH7772dVQ=
-X-Received: by 2002:a17:906:51d2:b0:9a5:9305:83fb with SMTP id
- v18-20020a17090651d200b009a5930583fbmr128884ejk.34.1695139255976; Tue, 19 Sep
- 2023 09:00:55 -0700 (PDT)
-MIME-Version: 1.0
-References: <CGME20230915095133eucas1p267bade2888b7fcd2e1ea8e13e21c495f@eucas1p2.samsung.com>
- <20230915095042.1320180-1-da.gomez@samsung.com> <20230915095042.1320180-7-da.gomez@samsung.com>
- <CAJD7tkbU20tyGxtdL-cqJxrjf38ObG_dUttZdLstH3O2sUTKzw@mail.gmail.com>
- <20230918075758.vlufrhq22es2dhuu@sarkhan> <CAJD7tkZSST8Kc6duUWt6a9igrsn=ucUPSVPWWGDWEUxBs3b4bg@mail.gmail.com>
- <20230919132633.v2mvuaxp2w76zoed@sarkhan>
-In-Reply-To: <20230919132633.v2mvuaxp2w76zoed@sarkhan>
-From:   Yosry Ahmed <yosryahmed@google.com>
-Date:   Tue, 19 Sep 2023 09:00:16 -0700
-Message-ID: <CAJD7tkaELyZXsUP+c=DKg9k-FeFTTRS+_9diK5fyTNdfDAykmQ@mail.gmail.com>
-Subject: Re: [PATCH 6/6] shmem: add large folios support to the write path
-To:     Daniel Gomez <da.gomez@samsung.com>
-Cc:     "minchan@kernel.org" <minchan@kernel.org>,
+        Tue, 19 Sep 2023 12:28:21 -0400
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FCEAB0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Sep 2023 09:28:13 -0700 (PDT)
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230919162809euoutp02b5d1454472087486ca4c880d100d170b~GWahea5Fs2126121261euoutp02z
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Sep 2023 16:28:09 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230919162809euoutp02b5d1454472087486ca4c880d100d170b~GWahea5Fs2126121261euoutp02z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1695140889;
+        bh=X9Vh3xSdS13+TvaqDkbe6m4bnluDyBDtHOnoCxrZwGo=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References:From;
+        b=Mz4pQBv8pTu2ekGs/PNcrj6YTtsiJgRZGHxJUR6NJ4cXM3rPtyuEyutQx9scsVBzk
+         MHqyIkeyCLdRbNRSFqIS7UJcWJtfr5FcC7G6v4eXq7gj5xyw8b+Ugexd2yF6o1AdEh
+         vUQMOd4RXraUs1tZNHNMu1OwJaU2zb50PSqyvMJY=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20230919162809eucas1p19a3e25971dc7ec568f69d95ab66e5116~GWahODslI0969909699eucas1p1A;
+        Tue, 19 Sep 2023 16:28:09 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 85.2B.11320.91CC9056; Tue, 19
+        Sep 2023 17:28:09 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20230919162808eucas1p2d773186479b84364e8adf1a286a92af0~GWag42J7U1672016720eucas1p2t;
+        Tue, 19 Sep 2023 16:28:08 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20230919162808eusmtrp2c556456594d71a1a2b7bef03884aee32~GWag4PRUk1247812478eusmtrp2s;
+        Tue, 19 Sep 2023 16:28:08 +0000 (GMT)
+X-AuditID: cbfec7f4-97dff70000022c38-4d-6509cc19bd3d
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 79.7A.14344.81CC9056; Tue, 19
+        Sep 2023 17:28:08 +0100 (BST)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20230919162808eusmtip1b2416a662eb13677c901f2a87854b0ca~GWagpvZDz0507805078eusmtip17;
+        Tue, 19 Sep 2023 16:28:08 +0000 (GMT)
+Received: from CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) by
+        CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) with Microsoft SMTP
+        Server (TLS) id 15.0.1497.2; Tue, 19 Sep 2023 17:28:07 +0100
+Received: from CAMSVWEXC02.scsc.local ([::1]) by CAMSVWEXC02.scsc.local
+        ([fe80::3c08:6c51:fa0a:6384%13]) with mapi id 15.00.1497.012; Tue, 19 Sep
+        2023 17:28:07 +0100
+From:   Daniel Gomez <da.gomez@samsung.com>
+To:     Matthew Wilcox <willy@infradead.org>
+CC:     "minchan@kernel.org" <minchan@kernel.org>,
         "senozhatsky@chromium.org" <senozhatsky@chromium.org>,
         "axboe@kernel.dk" <axboe@kernel.dk>,
         "djwong@kernel.org" <djwong@kernel.org>,
-        "willy@infradead.org" <willy@infradead.org>,
         "hughd@google.com" <hughd@google.com>,
         "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
         "mcgrof@kernel.org" <mcgrof@kernel.org>,
@@ -74,110 +71,148 @@ Cc:     "minchan@kernel.org" <minchan@kernel.org>,
         "linux-mm@kvack.org" <linux-mm@kvack.org>,
         "gost.dev@samsung.com" <gost.dev@samsung.com>,
         Pankaj Raghav <p.raghav@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v2 6/6] shmem: add large folios support to the write
+ path
+Thread-Topic: [PATCH v2 6/6] shmem: add large folios support to the write
+        path
+Thread-Index: AQHZ6wEBFE+DTgi9xUu5khR159FX3LAiLYSAgAAYPoA=
+Date:   Tue, 19 Sep 2023 16:28:07 +0000
+Message-ID: <20230919162805.m6hbrmwq4gm4iiv5@sarkhan>
+In-Reply-To: <ZQm3vywitP+UdIHF@casper.infradead.org>
+Accept-Language: en-US, en-GB
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [106.110.32.103]
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <A4B5720378D78244931EB5E1F49DD8DC@scsc.local>
 Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+MIME-Version: 1.0
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrEKsWRmVeSWpSXmKPExsWy7djP87qSZzhTDeY+ZLGYs34Nm8Xqu/1s
+        Fpef8Fk8/dTHYrH3lrbFnr0nWSwu75rDZnFvzX9Wi11/drBb3JjwlNFi2df37Ba7Ny5is/j9
+        Yw6bA6/H7IaLLB4LNpV6bF6h5XH5bKnHplWdbB6bPk1i9zgx4zeLx+dNcgEcUVw2Kak5mWWp
+        Rfp2CVwZE07/Zi14KV7x+uRC5gbG4/xdjJwcEgImEnc+fGbsYuTiEBJYwSjx/fw/NgjnC6PE
+        hIs32CGcz4wSG54tZINpWdm6ACqxnFFi4ukXbHBVO1edZwWpEhI4wyhxvF8SIrGSUeLv1GPs
+        IAk2AU2JfSc3AdkcHCICGhJvthiB1DALHGWVWLJ2EwtIjbCAv8Tyg2/B6kUEAiTa+q8wQdhW
+        Ei0n5zKD2CwCqhJ9s24wg8zhFTCVWNZZAmJyAl238asTSAWjgKzEo5W/wKYwC4hL3Hoynwni
+        AUGJRbP3MEPYYhL/dj2EekxH4uz1J4wQtoHE1qX7WCBsJYk/HQsZIeboSCzY/YkNwraUWLFs
+        BpStLbFs4WuwmbxA80/OfALVO5NL4tIvO5DTJARcJJq+ZECEhSVeHd/CPoFRZxaS62Yh2TAL
+        yYZZSDbMQrJhASPrKkbx1NLi3PTUYqO81HK94sTc4tK8dL3k/NxNjMBkd/rf8S87GJe/+qh3
+        iJGJg/EQowQHs5II70xDtlQh3pTEyqrUovz4otKc1OJDjNIcLErivNq2J5OFBNITS1KzU1ML
+        UotgskwcnFINTG2pn2bKRXx4tVP/5sKDBvc+qz6SFTAufdncpmlpde2YfGHT/Sv+J26qlm4z
+        3cexTvPsv22T9qyRO6HrVh9rEvvvQ0VuFL/Qr2s3fk99Wrp6f3sf5yeziS5Xf9+xemMU5/u5
+        RWBH+l9O+2Me89Rf33a7MDfiVXVJvz/fcef4N1xzD0od21f4R+CVYYuvr5uU+g49fe3Dnpsa
+        IhK/ZTB0nX9r6vB5z747E7JeTVrLFnx737x7hftYFicu99t7miN/+cv1tkevl9zYFPef4az3
+        uTWxq7OzFO+K/V59+m1KlNmSPzbXOGdI3g80kpmjU5VYu03V3fhEydqKq8ZvU57ULTow88Uy
+        uZ+TYh64374u+S9EiaU4I9FQi7moOBEAwXhDjeUDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrNKsWRmVeSWpSXmKPExsVy+t/xu7oSZzhTDTYv0rKYs34Nm8Xqu/1s
+        Fpef8Fk8/dTHYrH3lrbFnr0nWSwu75rDZnFvzX9Wi11/drBb3JjwlNFi2df37Ba7Ny5is/j9
+        Yw6bA6/H7IaLLB4LNpV6bF6h5XH5bKnHplWdbB6bPk1i9zgx4zeLx+dNcgEcUXo2RfmlJakK
+        GfnFJbZK0YYWRnqGlhZ6RiaWeobG5rFWRqZK+nY2Kak5mWWpRfp2CXoZE07/Zi14KV7x+uRC
+        5gbG4/xdjJwcEgImEitbF7B3MXJxCAksZZTY/2cuE0RCRmLjl6usELawxJ9rXWwQRR8ZJU5+
+        O8oE4ZxhlPj/7BYjSJWQwEpGiZXH5EFsNgFNiX0nNwGN5eAQEdCQeLPFCKSeWeAoq8SStZtY
+        QGqEBXwl7k3qAtsgIuAn8fPRTSjbSqLl5FxmEJtFQFWib9YNZpA5vAKmEss6SyBWvWaU6J7o
+        DRLmBPpg41cnkDCjgKzEo5W/2EFsZgFxiVtP5kP9IiCxZM95ZghbVOLl439Qf+lInL3+hBHC
+        NpDYunQfC4StJPGnYyEjxBwdiQW7P7FB2JYSK5bNgLK1JZYtfA02k1dAUOLkzCcsExhlZiFZ
+        PQtJ+ywk7bOQtM9C0r6AkXUVo0hqaXFuem6xkV5xYm5xaV66XnJ+7iZGYCrbduznlh2MK199
+        1DvEyMTBeIhRgoNZSYR3piFbqhBvSmJlVWpRfnxRaU5q8SFGU2DITWSWEk3OBybTvJJ4QzMD
+        U0MTM0sDU0szYyVxXs+CjkQhgfTEktTs1NSC1CKYPiYOTqkGpv49/REhfTdlxG99YdA6pvj6
+        1+quDLfN4jMm3dZY8Gl10oKzO/Rr+h9dyfk0fesCa2dv0703etc+OvPYoO74TbbCCqmtOQWm
+        EVzLphbyP5tV+zsp6/eGrWwn5znPn7Jy4q/JvT5/yzUZWrn/TjQROPaScZI5oxGbxvt+1jlv
+        194QfXssJzRj38uTi+Zn7myLc3k+Y4b0xuLFBUrxHcX18oV/BUPy63n1rhyNi/+qfqxfNeKY
+        HfesGaph04xUpixXtvnfvv+m4KR133ac2rZn2fHPwkHc3f3eeX3lYiIVt/wW7hb97WPDwHHl
+        2Le3PwsLb03O6P5j9Dnu2rRZJfbPFi1rKVllYcv8gUl8YelW/ltKLMUZiYZazEXFiQCeQcBG
+        7gMAAA==
+X-CMS-MailID: 20230919162808eucas1p2d773186479b84364e8adf1a286a92af0
+X-Msg-Generator: CA
+X-RootMTR: 20230919135556eucas1p19920c52d4af0809499eac6bbf4466117
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20230919135556eucas1p19920c52d4af0809499eac6bbf4466117
+References: <20230919135536.2165715-1-da.gomez@samsung.com>
+        <CGME20230919135556eucas1p19920c52d4af0809499eac6bbf4466117@eucas1p1.samsung.com>
+        <20230919135536.2165715-7-da.gomez@samsung.com>
+        <ZQm3vywitP+UdIHF@casper.infradead.org>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
-        autolearn_force=no version=3.4.6
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_PASS,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 19, 2023 at 6:27=E2=80=AFAM Daniel Gomez <da.gomez@samsung.com>=
- wrote:
+On Tue, Sep 19, 2023 at 04:01:19PM +0100, Matthew Wilcox wrote:
+> On Tue, Sep 19, 2023 at 01:55:54PM +0000, Daniel Gomez wrote:
+> > Add large folio support for shmem write path matching the same high
+> > order preference mechanism used for iomap buffered IO path as used in
+> > __filemap_get_folio() with a difference on the max order permitted
+> > (being PMD_ORDER-1) to respect the huge mount option when large folio
+> > is supported.
 >
-> On Mon, Sep 18, 2023 at 11:55:34AM -0700, Yosry Ahmed wrote:
-> > On Mon, Sep 18, 2023 at 1:00=E2=80=AFAM Daniel Gomez <da.gomez@samsung.=
-com> wrote:
-> > >
-> > > On Fri, Sep 15, 2023 at 11:26:37AM -0700, Yosry Ahmed wrote:
-> > > > On Fri, Sep 15, 2023 at 2:51=E2=80=AFAM Daniel Gomez <da.gomez@sams=
-ung.com> wrote:
-> > > > >
-> > > > > Add large folio support for shmem write path matching the same hi=
-gh
-> > > > > order preference mechanism used for iomap buffered IO path as use=
-d in
-> > > > > __filemap_get_folio().
-> > > > >
-> > > > > Use the __folio_get_max_order to get a hint for the order of the =
-folio
-> > > > > based on file size which takes care of the mapping requirements.
-> > > > >
-> > > > > Swap does not support high order folios for now, so make it order=
- 0 in
-> > > > > case swap is enabled.
-> > > >
-> > > > I didn't take a close look at the series, but I am not sure I
-> > > > understand the rationale here. Reclaim will split high order shmem
-> > > > folios anyway, right?
-> > >
-> > > For context, this is part of the enablement of large block sizes (LBS=
-)
-> > > effort [1][2][3], so the assumption here is that the kernel will
-> > > reclaim memory with the same (large) block sizes that were written to
-> > > the device.
-> > >
-> > > I'll add more context in the V2.
-> > >
-> > > [1] https://protect2.fireeye.com/v1/url?k=3Da80aab33-c981be05-a80b207=
-c-000babff9b5d-b656d8860b04562f&q=3D1&e=3D46666acf-d70d-4e8d-8d00-b027808ae=
-400&u=3Dhttps%3A%2F%2Fkernelnewbies.org%2FKernelProjects%2Flarge-block-size
-> > > [2] https://protect2.fireeye.com/v1/url?k=3D3f753ca2-5efe2994-3f74b7e=
-d-000babff9b5d-e678f885471555e3&q=3D1&e=3D46666acf-d70d-4e8d-8d00-b027808ae=
-400&u=3Dhttps%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2Fe%2F2PACX-1vS7sQ=
-fw90S00l2rfOKm83Jlg0px8KxMQE4HHp_DKRGbAGcAV-xu6LITHBEc4xzVh9wLH6WM2lR0cZS8%=
-2Fpubhtml%23
-> > > [3] https://lore.kernel.org/all/ZQfbHloBUpDh+zCg@dread.disaster.area/
-> > > >
-> > > > It seems like we only enable high order folios if the "noswap" moun=
-t
-> > > > option is used, which is fairly recent. I doubt it is widely used.
-> > >
-> > > For now, I skipped the swap path as it currently lacks support for
-> > > high order folios. But I'm currently looking into it as part of the L=
-BS
-> > > effort (please check spreadsheet at [2] for that).
-> >
-> > Thanks for the context, but I am not sure I understand.
-> >
-> > IIUC we are skipping allocating large folios in shmem if swap is
-> > enabled in this patch. Swap does not support swapping out large folios
-> > as a whole (except THPs), but page reclaim will split those large
-> > folios and swap them out as order-0 pages anyway. So I am not sure I
-> > understand why we need to skip allocating large folios if swap is
-> > enabled.
->
-> I lifted noswap condition and retested it again on top of 230918 and
-> there is some regression. So, based on the results I guess the initial
-> requirement may be the way to go. But what do you think?
->
-> Here the logs:
-> * shmem-large-folios-swap: https://gitlab.com/-/snippets/3600360
-> * shmem-baseline-swap : https://gitlab.com/-/snippets/3600362
->
-> -Failures: generic/080 generic/126 generic/193 generic/633 generic/689
-> -Failed 5 of 730 tests
-> \ No newline at end of file
-> +Failures: generic/080 generic/103 generic/126 generic/193 generic/285 ge=
-neric/436 generic/619 generic/633 generic/689
-> +Failed 9 of 730 tests
-> \ No newline at end of file
-> >
+> I'm strongly opposed to "respecting the huge mount option".  We're
+> determining the best order to use for the folios.  Artificially limiting
+> the size because the sysadmin read an article from 2005 that said to
+> use this option is STUPID.
 
-I am not really familiar with these tests so I cannot really tell
-what's going on. I can see "swapfiles are not supported" in the logs
-though, so it seems like we are seeing extra failures by just lifting
-"noswap" even without actually swapping. I am curious if this is just
-hiding a different issue, I would at least try to understand what's
-happening.
+Then, I would still have the conflict on what to do when the order is
+same as huge. I guess huge does not make sense in this new scenario?
+unless we add large folios controls as proposal in linux-MM meeting
+notes [1]. But I'm missing a bit of context so it's not clear to me
+what to do next.
 
-Anyway, I don't have enough context here to be useful. I was just
-making an observation about reclaim splitting shmem folios to swap
-them out as order-0 pages, and asking why this is needed based on
-that. I will leave it up to you and the reviewers to decide if there's
-anything interesting here.
+[1] https://lore.kernel.org/all/4966f496-9f71-460c-b2ab-8661384ce626@arm.co=
+m/T/#u
+
+In that sense, I wanted to have a big picture of what was this new
+strategy implying in terms of folio order when adding to page cache,
+so I added tracing for it (same as in readahead). With bpftrace I
+can see the following (notes added to explain each field) after running
+fsx up to 119M:
+
+@c: 363049108  /* total folio order being traced */
+@order[8]: 2 /* order 8 being used 2 times (add_to_page_cache) */
+@order[5]: 3249587 */ order 5 being used 3249587 times
+(add_to_page_cache) */
+@order[4]: 5972205
+@order[3]: 8890418
+@order[2]: 10380055
+@order[0]: 334556841
+@order_2: /* linear histogram of folio order */
+[0, 1)          334556841 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@=
+@@@@|
+[1, 2)                 0  |                                                =
+    |
+[2, 3)          10380055  |@                                               =
+    |
+[3, 4)           8890418  |@                                               =
+    |
+[4, 5)           5972205  |                                                =
+    |
+[5, 6)           3249587  |                                                =
+    |
+[6, 7)                 0  |                                                =
+    |
+[7, 8)                 0  |                                                =
+    |
+[8, 9)                 2  |                                                =
+    |
+
+I guess that's not te best workload to see this but would tracing be also
+interesting to add to the series?
+>
+> >  	else
+> > -		folio =3D shmem_alloc_folio(gfp, info, index, *order);
+> > +		folio =3D shmem_alloc_folio(gfp, info, index, order);
+>
+> Why did you introduce it as *order, only to change it back to order
+> in this patch?  It feels like you just fixed up patch 6 rather than
+> percolating the changes all the way back to where they should have
+> been done.  This makes the reviewer's life hard.
+>
+
+Sorry about that. I missed it in my changes.=
