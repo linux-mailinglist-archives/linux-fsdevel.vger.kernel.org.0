@@ -2,113 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AC747A6428
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Sep 2023 15:00:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CBD77A6434
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Sep 2023 15:01:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232292AbjISNAP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Sep 2023 09:00:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60242 "EHLO
+        id S232316AbjISNBn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Sep 2023 09:01:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232277AbjISNAN (ORCPT
+        with ESMTP id S232099AbjISNBl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Sep 2023 09:00:13 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD374119
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Sep 2023 06:00:06 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-99c3c8adb27so745891166b.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Sep 2023 06:00:06 -0700 (PDT)
+        Tue, 19 Sep 2023 09:01:41 -0400
+Received: from mail-ot1-x32c.google.com (mail-ot1-x32c.google.com [IPv6:2607:f8b0:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11C85F3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Sep 2023 06:01:35 -0700 (PDT)
+Received: by mail-ot1-x32c.google.com with SMTP id 46e09a7af769-6b9e478e122so3564639a34.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Sep 2023 06:01:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1695128405; x=1695733205; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=mCwVe8KpOpCfcH7OtboVsrBBV5wJbNiJa5LJSES+O00=;
-        b=p+n/Pj6fr8fjEaTIQSufW8KDCkYxN9h54wJ18ZAKBy9HIKLLg5OJ4BRHlknSvJ7blX
-         7O+tW+VEFciYb2CyqXoCxptMv82IocM3L4HfGjwtMNPJwGff+GPfGmEVcAJkMg6Uml5O
-         2JpNMQwo6Mb1qDDuyEeet502BBgcWlF98418o=
+        d=gmail.com; s=20230601; t=1695128494; x=1695733294; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NzdGv4HvX/IAX/T1Yd2B1eAMs+DRTtHs4LlRUm81MdI=;
+        b=kLtGPznt98bsfqfkc6O5ldPGKPZ+nh1qz3RrzusbDGIpZoEiaIj4ShLnNXVAtxOJm2
+         lXbbRw5gl7mNlcgFU7zLJyfwbMJ9A2vraswfwtlA/u7UXw1HWq5hSgiKtmFur48Rl4rC
+         uFjJjt2L0715pks7L5Z0oruuImP5VsfzMHheCtz8kFtGtbLv6djWPzlgJu4mb2rKD0ZP
+         j7GOpKGaeG6xPErP4/2055INnxbESXHYgXNeH7DhKb7Ir0WOt1LUrgvm87I3agfQWtZj
+         6Z8j7CdfTLN+jn08aO2tW5HIJf2Vts9E+Bj8smjAo2Z8l+ssrOc1f/7pZ2/uLZgy+X/G
+         8uig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695128405; x=1695733205;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mCwVe8KpOpCfcH7OtboVsrBBV5wJbNiJa5LJSES+O00=;
-        b=f8hwR8l+ubElwqolodKQjhGoI2rAmLLvfGtT2mouoq2a/mQ0dNyBzIxehZpLhsFrBB
-         3Lp6EoMpWS95DVfn15SXXFHbPL6r642ijmBpcYWcO9aC4Oesv7mQSaNLjZmix3lToZUM
-         5YUvjSxjl9YpO4VZ+95u3d9gCY5D2gtmyMOZJVcMTvIiGJF3SjHaCvubv3BoNxqmIXJf
-         gai5tUO9FaMKQO8J85BrLkq47I8MWLzpYbB3e8C5uoJkSTrOWOHfkG7lem3CJvwMSaim
-         o5lm29ph0oFhZCaqoC3nRVmvVPLGuLAvryNjaO9A8y7Ixwhtqsa9GXiCG/J0LMnOErUj
-         ybUA==
-X-Gm-Message-State: AOJu0YxHNIsbl6L3tTsNSKs/pHDGxprujpI9tyjgHjRCm7ZaG8kRRcnV
-        d0MGmjK1VNv+umU5brvP8yfrr6s7aaxIy89pAn4DsQ==
-X-Google-Smtp-Source: AGHT+IHwoRikybyWt8+rL4a6pcU5rd0ZRZjLkNEDHmNUJ985g1YGHrlb2S1LF8RGk4U05TZ7H0Z04WQ8UuSIlqbUZuQ=
-X-Received: by 2002:a17:906:519b:b0:9ad:e298:a5d with SMTP id
- y27-20020a170906519b00b009ade2980a5dmr10879940ejk.19.1695128405076; Tue, 19
- Sep 2023 06:00:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1695128494; x=1695733294;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NzdGv4HvX/IAX/T1Yd2B1eAMs+DRTtHs4LlRUm81MdI=;
+        b=MNxsS+Lz7R+g86pMv9khi7zZwqcobm+Wwc/grR9fET2kLxabUeKf2XoUcoyIUwqVtD
+         NZUMxJEPWNIYcLP9wAtUVFgqB0RGAZPvsSsMbu0EsGrSa1OUrLxNxVkwzAw+sjYkB7/s
+         Tcnot+ZajLHGhFiqSy4HI46RksvLrDVRY7yAOiE3sXlyj5CYescrH4cF99mNN+ZftrBy
+         bEyv0/ymnESaCd4+QSCAAQtfegmRZ19kPH2jgkXva1879j+pGYxCJY619q9xJ7LSs/mk
+         C/ob+S26TfNvQ1tAq57YfGpaH+krdDQE8TmRtBkpVjaKYsHAW7hMkdUPE7fa1u3dm2I6
+         CRCA==
+X-Gm-Message-State: AOJu0YwlspKnxNNOXP2kJR0v2Kb79ztfXg1+MmgaSzOwUBlZuPG6CRQq
+        j30yZnuX3s/fSTEA6qywOX6/+GDPcpp+Yj8RUnk=
+X-Google-Smtp-Source: AGHT+IGs+bG9Zy4LLT38snYI8cgjYKvj2dnoED83QZzBH09MiYazXQYaRNzajDlOO8ZnKJ8jGfbrE3lX4ws13WMoNS4=
+X-Received: by 2002:a05:6358:1427:b0:143:623f:7dfc with SMTP id
+ m39-20020a056358142700b00143623f7dfcmr447483rwi.26.1695128494124; Tue, 19 Sep
+ 2023 06:01:34 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230918-hierbei-erhielten-ba5ef74a5b52@brauner>
- <CAJfpegtaGXoZkMWLnk3PcibAvp7kv-4Yobo=UJj943L6v3ctJQ@mail.gmail.com>
- <20230918-stuhl-spannend-9904d4addc93@brauner> <CAJfpegvxNhty2xZW+4MM9Gepotii3CD1p0fyvLDQB82hCYzfLQ@mail.gmail.com>
- <20230918-bestialisch-brutkasten-1fb34abdc33c@brauner> <CAJfpegvTiK=RM+0y07h-2vT6Zk2GCu6F98c=_CNx8B1ytFtO-g@mail.gmail.com>
- <20230919003800.93141-1-mattlloydhouse@gmail.com> <CAJfpegs6g8JQDtaHsECA_12ss_8KXOHVRH9gwwPf5WamzxXOWQ@mail.gmail.com>
- <20230919-abfedern-halfen-c12583ff93ac@brauner> <CAJfpegsjE_G4d-W2hCZc0y+PioRgvK5TxT7kFAVgBqX6zN2dKg@mail.gmail.com>
- <20230919-hackordnung-asketisch-331907800aa0@brauner>
-In-Reply-To: <20230919-hackordnung-asketisch-331907800aa0@brauner>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 19 Sep 2023 14:59:53 +0200
-Message-ID: <CAJfpeguv+Z6uys18_QYnHcbs_JpMNicRKGt50Scmp82kAOOFOQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/3] add statmnt(2) syscall
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Matthew House <mattlloydhouse@gmail.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
-        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
-        Ian Kent <raven@themaw.net>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Amir Goldstein <amir73il@gmail.com>
+References: <20230918123217.932179-1-max.kellermann@ionos.com>
+ <20230918123217.932179-3-max.kellermann@ionos.com> <20230918124050.hzbgpci42illkcec@quack3>
+ <CAKPOu+-Nx_cvBZNox63R1ah76wQp6eH4RLah0O5mDaLo9h60ww@mail.gmail.com>
+ <20230918142319.kvzc3lcpn5n2ty6g@quack3> <CAOQ4uxic7C5skHv4d+Gek_uokRL8sgUegTusiGkwAY4dSSADYQ@mail.gmail.com>
+ <CAOQ4uxjzf6NeoCaTrx_X0yZ0nMEWcQC_gq3M-j3jS+CuUTskSA@mail.gmail.com>
+ <CAOQ4uxjkL+QEM+rkSOLahLebwXV66TwyxQhRj9xksnim5F-HFw@mail.gmail.com>
+ <CAKPOu+_s8O=kfS1xq-cYGDcOD48oqukbsSA3tJT60FxC2eNWDw@mail.gmail.com>
+ <20230919100112.nlb2t4nm46wmugc2@quack3> <CAKPOu+-apWRekyqRyYfsFkdx13uocCPKMzYJqmTsVEc6a=9uuA@mail.gmail.com>
+ <CAOQ4uxgG6ync6dSBJiGW98docJGnajALiV+9tuwGiRt8NE8F+w@mail.gmail.com>
+ <CAKPOu+9ds-dbq2-idehU5XR2s3Xz2NL-=fB+skKoN_zCym_OtA@mail.gmail.com>
+ <CAOQ4uxgvh6TG3ZsjzzdD+VhMUss3NLTO8Hk7YWDZs=yZagc+oQ@mail.gmail.com> <CAKPOu+_y-rCsKXJ1A7YGqEXKeWyji1tF6_Nj2WWtrB36MTmpiQ@mail.gmail.com>
+In-Reply-To: <CAKPOu+_y-rCsKXJ1A7YGqEXKeWyji1tF6_Nj2WWtrB36MTmpiQ@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 19 Sep 2023 16:01:22 +0300
+Message-ID: <CAOQ4uxhtfyt8v3LwYLOY9FwA46RYrwcZpZv7J8znn5zW-1N5sA@mail.gmail.com>
+Subject: Re: inotify maintenance status
+To:     Max Kellermann <max.kellermann@ionos.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Ivan Babrou <ivan@cloudflare.com>,
+        Matthew Bobrowski <repnop@google.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 19 Sept 2023 at 14:41, Christian Brauner <brauner@kernel.org> wrote:
+On Tue, Sep 19, 2023 at 3:51=E2=80=AFPM Max Kellermann <max.kellermann@iono=
+s.com> wrote:
 >
-> > >  with __u32 size for mnt_root and mnt_point
-> >
-> > Unnecessary if the strings are nul terminated.
+> On Tue, Sep 19, 2023 at 2:21=E2=80=AFPM Amir Goldstein <amir73il@gmail.co=
+m> wrote:
+> > Regarding inotify improvements, as I wrote, they will each be judged
+> > technically, but the trend is towards phasing it out.
 >
-> All ok by me so far but how does the kernel know the size of the buffer
-> to copy into? Wouldn't it be better to allow userspace to specify that?
-> I'm probably just missing something but I better ask.
+> Then please reconsider merging inotify_add_watch_at(). It is a rather
+> trivial patch set, only exposing a user_path_at() parameter to use
+> space, like many other new system calls did with other old-style
+> system calls. Only the last patch, the one which adds the new system
+> call ot all arch-specific tables, is an ugly one, but that's not a
+> property of the new feature but a general property of how system calls
+> are wired in Linux.
+>
+> My proposed system call adds real value to all those who are currently
+> using inotify, allowing them to use inotify with a modern and safe and
+> race-free syscall interface, eliminating the unsafe fchdir() dance to
+> emulate it in userspace.
+>
+> The inotify interface is widely used and will be for a long time to
+> come, while it is hard to find code which already uses fanotify.
+> GitHub code search finds 438 occurences of fanotify_init() calls, 4.6k
+> inotify_init1() calls and 6.9k inotify_init() calls. Given the added
+> complexity of fanotify and the uselessness of most of fanotify's
+> feature for most software (except for dfd support), it is extremely
+> unlikely that a noticable fraction of those thousands of projects will
+> ever migrate to fanotify. Even if inotify is considered a legacy API,
+> it should be allowed to modernize it; and adding dfd support to system
+> calls is really important.
+>
 
-Because size of the buffer is given as the syscall argument.
+Both Jan and I already gave an answer to this specific patch.
+The answer was no.
 
-  long statmount(u64 mnt_id, u64 mask, struct statmnt __user *buf,
-size_t bufsize, unsigned int flags);
-
-If you are still hung up about this not being properly typed, how about this:
-
-struct statmnt {
-        __u64 mask;             /* What results were written [uncond] */
-        __u32 sb_dev_major;     /* Device ID */
-[...]
-        __u64 fs_type;          /* [str] Filesystem type */
-        __u64 __spare[49];
-        char __string_buf[];
-};
-
-Such variable length structures are used all over the place, this
-isn't some big invention.  The only new thing is that we set pointers
-to within the tail part of the buffer, to make the interface work for
-the multiple strings case.
+We do not add new system calls for doing something that is already
+possible with existing system calls to make the life of a programmer
+easier - this has never been a valid argument for adding a new syscall.
 
 Thanks,
-Miklos
+Amir.
