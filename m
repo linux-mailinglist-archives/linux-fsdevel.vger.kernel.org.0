@@ -2,217 +2,178 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B97B7A68D7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Sep 2023 18:28:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F05E07A68FB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Sep 2023 18:31:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231360AbjISQ2W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Sep 2023 12:28:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55136 "EHLO
+        id S232366AbjISQbm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Sep 2023 12:31:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230147AbjISQ2V (ORCPT
+        with ESMTP id S232041AbjISQbd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Sep 2023 12:28:21 -0400
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FCEAB0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Sep 2023 09:28:13 -0700 (PDT)
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230919162809euoutp02b5d1454472087486ca4c880d100d170b~GWahea5Fs2126121261euoutp02z
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Sep 2023 16:28:09 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230919162809euoutp02b5d1454472087486ca4c880d100d170b~GWahea5Fs2126121261euoutp02z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1695140889;
-        bh=X9Vh3xSdS13+TvaqDkbe6m4bnluDyBDtHOnoCxrZwGo=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References:From;
-        b=Mz4pQBv8pTu2ekGs/PNcrj6YTtsiJgRZGHxJUR6NJ4cXM3rPtyuEyutQx9scsVBzk
-         MHqyIkeyCLdRbNRSFqIS7UJcWJtfr5FcC7G6v4eXq7gj5xyw8b+Ugexd2yF6o1AdEh
-         vUQMOd4RXraUs1tZNHNMu1OwJaU2zb50PSqyvMJY=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20230919162809eucas1p19a3e25971dc7ec568f69d95ab66e5116~GWahODslI0969909699eucas1p1A;
-        Tue, 19 Sep 2023 16:28:09 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 85.2B.11320.91CC9056; Tue, 19
-        Sep 2023 17:28:09 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20230919162808eucas1p2d773186479b84364e8adf1a286a92af0~GWag42J7U1672016720eucas1p2t;
-        Tue, 19 Sep 2023 16:28:08 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20230919162808eusmtrp2c556456594d71a1a2b7bef03884aee32~GWag4PRUk1247812478eusmtrp2s;
-        Tue, 19 Sep 2023 16:28:08 +0000 (GMT)
-X-AuditID: cbfec7f4-97dff70000022c38-4d-6509cc19bd3d
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 79.7A.14344.81CC9056; Tue, 19
-        Sep 2023 17:28:08 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20230919162808eusmtip1b2416a662eb13677c901f2a87854b0ca~GWagpvZDz0507805078eusmtip17;
-        Tue, 19 Sep 2023 16:28:08 +0000 (GMT)
-Received: from CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) by
-        CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) with Microsoft SMTP
-        Server (TLS) id 15.0.1497.2; Tue, 19 Sep 2023 17:28:07 +0100
-Received: from CAMSVWEXC02.scsc.local ([::1]) by CAMSVWEXC02.scsc.local
-        ([fe80::3c08:6c51:fa0a:6384%13]) with mapi id 15.00.1497.012; Tue, 19 Sep
-        2023 17:28:07 +0100
-From:   Daniel Gomez <da.gomez@samsung.com>
-To:     Matthew Wilcox <willy@infradead.org>
-CC:     "minchan@kernel.org" <minchan@kernel.org>,
-        "senozhatsky@chromium.org" <senozhatsky@chromium.org>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "djwong@kernel.org" <djwong@kernel.org>,
-        "hughd@google.com" <hughd@google.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "mcgrof@kernel.org" <mcgrof@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "gost.dev@samsung.com" <gost.dev@samsung.com>,
-        Pankaj Raghav <p.raghav@samsung.com>
-Subject: Re: [PATCH v2 6/6] shmem: add large folios support to the write
- path
-Thread-Topic: [PATCH v2 6/6] shmem: add large folios support to the write
-        path
-Thread-Index: AQHZ6wEBFE+DTgi9xUu5khR159FX3LAiLYSAgAAYPoA=
-Date:   Tue, 19 Sep 2023 16:28:07 +0000
-Message-ID: <20230919162805.m6hbrmwq4gm4iiv5@sarkhan>
-In-Reply-To: <ZQm3vywitP+UdIHF@casper.infradead.org>
-Accept-Language: en-US, en-GB
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [106.110.32.103]
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <A4B5720378D78244931EB5E1F49DD8DC@scsc.local>
+        Tue, 19 Sep 2023 12:31:33 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6EAB1A7;
+        Tue, 19 Sep 2023 09:31:17 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07A27C433CD;
+        Tue, 19 Sep 2023 16:31:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695141076;
+        bh=2YOWI6/JAFOB4t8+Jl1G0UAU2WJNOEKR+ozWrF+wCHw=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=NSgO9mQ/kogScKOyruXs27QKGb28KeH5iN8518jdQIxYZ9Zq8W5Yeb8HJpLNbIZ40
+         EQDdGtIWCMRwCZr+hkVhSKagEDB2fBTdAzDnNexBTyvRGH8+mWpGC7k4O3oOthSODy
+         kLPJh5RYmd+l51ixbejRXP63ZyU1UyglaFGETEGRw2BGftvafb/kUzhWZeRY/B1ibo
+         Wti21rW2JgdQmcow8/EHQlT7uWQR0pPH/ecD4lkrfORAvjqUH6xcDxBDFUTwISNY24
+         GBmtqEOt9wCW1B2y4/2rn4A5SVB2ofaAjm8Z64p+ka1gu4ZTZ9u3KdunqSf9K8+AlP
+         OJGP0iADrktsQ==
+Message-ID: <08b5c6fd3b08b87fa564bb562d89381dd4e05b6a.camel@kernel.org>
+Subject: Re: [PATCH v7 12/13] ext4: switch to multigrain timestamps
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Bruno Haible <bruno@clisp.org>, Jan Kara <jack@suse.cz>,
+        Xi Ruoyao <xry111@linuxfromscratch.org>, bug-gnulib@gnu.org
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Eric Van Hensbergen <ericvh@kernel.org>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Christian Schoenebeck <linux_oss@crudebyte.com>,
+        David Howells <dhowells@redhat.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, Xiubo Li <xiubli@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu,
+        Tyler Hicks <code@tyhicks.com>, Gao Xiang <xiang@kernel.org>,
+        Chao Yu <chao@kernel.org>, Yue Hu <huyue2@coolpad.com>,
+        Jeffle Xu <jefflexu@linux.alibaba.com>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        Jan Kara <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Bo b Peterson <rpeterso@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tejun Heo <tj@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Martin Brandenburg <martin@omnibond.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Steve French <sfrench@samba.org>,
+        Paulo Alcantara <pc@manguebit.com>,
+        Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        Tom Talpey <tom@talpey.com>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Richard Weinberger <richard@nod.at>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Amir Goldstein <l@gmail.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Benjamin Coddington <bcodding@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
+        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-nfs@vger.kernel.org, ntfs3@lists.linux.dev,
+        ocfs2-devel@lists.linux.dev, devel@lists.orangefs.org,
+        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+        linux-mtd@lists.infradead.org, linux-mm@kvack.org,
+        linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org
+Date:   Tue, 19 Sep 2023 12:31:08 -0400
+In-Reply-To: <4511209.uG2h0Jr0uP@nimes>
+References: <20230807-mgctime-v7-0-d1dec143a704@kernel.org>
+         <20230919110457.7fnmzo4nqsi43yqq@quack3>
+         <1f29102c09c60661758c5376018eac43f774c462.camel@kernel.org>
+         <4511209.uG2h0Jr0uP@nimes>
+Content-Type: text/plain; charset="ISO-8859-15"
 Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrEKsWRmVeSWpSXmKPExsWy7djP87qSZzhTDeY+ZLGYs34Nm8Xqu/1s
-        Fpef8Fk8/dTHYrH3lrbFnr0nWSwu75rDZnFvzX9Wi11/drBb3JjwlNFi2df37Ba7Ny5is/j9
-        Yw6bA6/H7IaLLB4LNpV6bF6h5XH5bKnHplWdbB6bPk1i9zgx4zeLx+dNcgEcUVw2Kak5mWWp
-        Rfp2CVwZE07/Zi14KV7x+uRC5gbG4/xdjJwcEgImEnc+fGbsYuTiEBJYwSjx/fw/NgjnC6PE
-        hIs32CGcz4wSG54tZINpWdm6ACqxnFFi4ukXbHBVO1edZwWpEhI4wyhxvF8SIrGSUeLv1GPs
-        IAk2AU2JfSc3AdkcHCICGhJvthiB1DALHGWVWLJ2EwtIjbCAv8Tyg2/B6kUEAiTa+q8wQdhW
-        Ei0n5zKD2CwCqhJ9s24wg8zhFTCVWNZZAmJyAl238asTSAWjgKzEo5W/wKYwC4hL3Hoynwni
-        AUGJRbP3MEPYYhL/dj2EekxH4uz1J4wQtoHE1qX7WCBsJYk/HQsZIeboSCzY/YkNwraUWLFs
-        BpStLbFs4WuwmbxA80/OfALVO5NL4tIvO5DTJARcJJq+ZECEhSVeHd/CPoFRZxaS62Yh2TAL
-        yYZZSDbMQrJhASPrKkbx1NLi3PTUYqO81HK94sTc4tK8dL3k/NxNjMBkd/rf8S87GJe/+qh3
-        iJGJg/EQowQHs5II70xDtlQh3pTEyqrUovz4otKc1OJDjNIcLErivNq2J5OFBNITS1KzU1ML
-        UotgskwcnFINTG2pn2bKRXx4tVP/5sKDBvc+qz6SFTAufdncpmlpde2YfGHT/Sv+J26qlm4z
-        3cexTvPsv22T9qyRO6HrVh9rEvvvQ0VuFL/Qr2s3fk99Wrp6f3sf5yeziS5Xf9+xemMU5/u5
-        RWBH+l9O+2Me89Rf33a7MDfiVXVJvz/fcef4N1xzD0od21f4R+CVYYuvr5uU+g49fe3Dnpsa
-        IhK/ZTB0nX9r6vB5z747E7JeTVrLFnx737x7hftYFicu99t7miN/+cv1tkevl9zYFPef4az3
-        uTWxq7OzFO+K/V59+m1KlNmSPzbXOGdI3g80kpmjU5VYu03V3fhEydqKq8ZvU57ULTow88Uy
-        uZ+TYh64374u+S9EiaU4I9FQi7moOBEAwXhDjeUDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrNKsWRmVeSWpSXmKPExsVy+t/xu7oSZzhTDTYv0rKYs34Nm8Xqu/1s
-        Fpef8Fk8/dTHYrH3lrbFnr0nWSwu75rDZnFvzX9Wi11/drBb3JjwlNFi2df37Ba7Ny5is/j9
-        Yw6bA6/H7IaLLB4LNpV6bF6h5XH5bKnHplWdbB6bPk1i9zgx4zeLx+dNcgEcUXo2RfmlJakK
-        GfnFJbZK0YYWRnqGlhZ6RiaWeobG5rFWRqZK+nY2Kak5mWWpRfp2CXoZE07/Zi14KV7x+uRC
-        5gbG4/xdjJwcEgImEitbF7B3MXJxCAksZZTY/2cuE0RCRmLjl6usELawxJ9rXWwQRR8ZJU5+
-        O8oE4ZxhlPj/7BYjSJWQwEpGiZXH5EFsNgFNiX0nNwGN5eAQEdCQeLPFCKSeWeAoq8SStZtY
-        QGqEBXwl7k3qAtsgIuAn8fPRTSjbSqLl5FxmEJtFQFWib9YNZpA5vAKmEss6SyBWvWaU6J7o
-        DRLmBPpg41cnkDCjgKzEo5W/2EFsZgFxiVtP5kP9IiCxZM95ZghbVOLl439Qf+lInL3+hBHC
-        NpDYunQfC4StJPGnYyEjxBwdiQW7P7FB2JYSK5bNgLK1JZYtfA02k1dAUOLkzCcsExhlZiFZ
-        PQtJ+ywk7bOQtM9C0r6AkXUVo0hqaXFuem6xkV5xYm5xaV66XnJ+7iZGYCrbduznlh2MK199
-        1DvEyMTBeIhRgoNZSYR3piFbqhBvSmJlVWpRfnxRaU5q8SFGU2DITWSWEk3OBybTvJJ4QzMD
-        U0MTM0sDU0szYyVxXs+CjkQhgfTEktTs1NSC1CKYPiYOTqkGpv49/REhfTdlxG99YdA6pvj6
-        1+quDLfN4jMm3dZY8Gl10oKzO/Rr+h9dyfk0fesCa2dv0703etc+OvPYoO74TbbCCqmtOQWm
-        EVzLphbyP5tV+zsp6/eGrWwn5znPn7Jy4q/JvT5/yzUZWrn/TjQROPaScZI5oxGbxvt+1jlv
-        194QfXssJzRj38uTi+Zn7myLc3k+Y4b0xuLFBUrxHcX18oV/BUPy63n1rhyNi/+qfqxfNeKY
-        HfesGaph04xUpixXtvnfvv+m4KR133ac2rZn2fHPwkHc3f3eeX3lYiIVt/wW7hb97WPDwHHl
-        2Le3PwsLb03O6P5j9Dnu2rRZJfbPFi1rKVllYcv8gUl8YelW/ltKLMUZiYZazEXFiQCeQcBG
-        7gMAAA==
-X-CMS-MailID: 20230919162808eucas1p2d773186479b84364e8adf1a286a92af0
-X-Msg-Generator: CA
-X-RootMTR: 20230919135556eucas1p19920c52d4af0809499eac6bbf4466117
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20230919135556eucas1p19920c52d4af0809499eac6bbf4466117
-References: <20230919135536.2165715-1-da.gomez@samsung.com>
-        <CGME20230919135556eucas1p19920c52d4af0809499eac6bbf4466117@eucas1p1.samsung.com>
-        <20230919135536.2165715-7-da.gomez@samsung.com>
-        <ZQm3vywitP+UdIHF@casper.infradead.org>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_PASS,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 19, 2023 at 04:01:19PM +0100, Matthew Wilcox wrote:
-> On Tue, Sep 19, 2023 at 01:55:54PM +0000, Daniel Gomez wrote:
-> > Add large folio support for shmem write path matching the same high
-> > order preference mechanism used for iomap buffered IO path as used in
-> > __filemap_get_folio() with a difference on the max order permitted
-> > (being PMD_ORDER-1) to respect the huge mount option when large folio
-> > is supported.
->
-> I'm strongly opposed to "respecting the huge mount option".  We're
-> determining the best order to use for the folios.  Artificially limiting
-> the size because the sysadmin read an article from 2005 that said to
-> use this option is STUPID.
+On Tue, 2023-09-19 at 16:52 +0200, Bruno Haible wrote:
+> Jeff Layton wrote:
+> > I'm not sure what we can do for this test. The nap() function is making
+> > an assumption that the timestamp granularity will be constant, and that
+> > isn't necessarily the case now.
+>=20
+> This is only of secondary importance, because the scenario by Jan Kara
+> shows a much more fundamental breakage:
+>=20
+> > > The ultimate problem is that a sequence like:
+> > >=20
+> > > write(f1)
+> > > stat(f2)
+> > > write(f2)
+> > > stat(f2)
+> > > write(f1)
+> > > stat(f1)
+> > >=20
+> > > can result in f1 timestamp to be (slightly) lower than the final f2
+> > > timestamp because the second write to f1 didn't bother updating the
+> > > timestamp. That can indeed be a bit confusing to programs if they com=
+pare
+> > > timestamps between two files. Jeff?
+> > >=20
+> >=20
+> > Basically yes.
+>=20
+> f1 was last written to *after* f2 was last written to. If the timestamp o=
+f f1
+> is then lower than the timestamp of f2, timestamps are fundamentally brok=
+en.
+>=20
+> Many things in user-space depend on timestamps, such as build system
+> centered around 'make', but also 'find ... -newer ...'.
+>=20
 
-Then, I would still have the conflict on what to do when the order is
-same as huge. I guess huge does not make sense in this new scenario?
-unless we add large folios controls as proposal in linux-MM meeting
-notes [1]. But I'm missing a bit of context so it's not clear to me
-what to do next.
 
-[1] https://lore.kernel.org/all/4966f496-9f71-460c-b2ab-8661384ce626@arm.co=
-m/T/#u
+What does breakage with make look like in this situation? The "fuzz"
+here is going to be on the order of a jiffy. The typical case for make
+timestamp comparisons is comparing source files vs. a build target. If
+those are being written nearly simultaneously, then that could be an
+issue, but is that a typical behavior? It seems like it would be hard to
+rely on that anyway, esp. given filesystems like NFS that can do lazy
+writeback.
 
-In that sense, I wanted to have a big picture of what was this new
-strategy implying in terms of folio order when adding to page cache,
-so I added tracing for it (same as in readahead). With bpftrace I
-can see the following (notes added to explain each field) after running
-fsx up to 119M:
+One of the operating principles with this series is that timestamps can
+be of varying granularity between different files. Note that Linux
+already violates this assumption when you're working across filesystems
+of different types.
 
-@c: 363049108  /* total folio order being traced */
-@order[8]: 2 /* order 8 being used 2 times (add_to_page_cache) */
-@order[5]: 3249587 */ order 5 being used 3249587 times
-(add_to_page_cache) */
-@order[4]: 5972205
-@order[3]: 8890418
-@order[2]: 10380055
-@order[0]: 334556841
-@order_2: /* linear histogram of folio order */
-[0, 1)          334556841 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@=
-@@@@|
-[1, 2)                 0  |                                                =
-    |
-[2, 3)          10380055  |@                                               =
-    |
-[3, 4)           8890418  |@                                               =
-    |
-[4, 5)           5972205  |                                                =
-    |
-[5, 6)           3249587  |                                                =
-    |
-[6, 7)                 0  |                                                =
-    |
-[7, 8)                 0  |                                                =
-    |
-[8, 9)                 2  |                                                =
-    |
+As to potential fixes if this is a real problem:
 
-I guess that's not te best workload to see this but would tracing be also
-interesting to add to the series?
->
-> >  	else
-> > -		folio =3D shmem_alloc_folio(gfp, info, index, *order);
-> > +		folio =3D shmem_alloc_folio(gfp, info, index, order);
->
-> Why did you introduce it as *order, only to change it back to order
-> in this patch?  It feels like you just fixed up patch 6 rather than
-> percolating the changes all the way back to where they should have
-> been done.  This makes the reviewer's life hard.
->
+I don't really want to put this behind a mount or mkfs option (a'la
+relatime, etc.), but that is one possibility.
 
-Sorry about that. I missed it in my changes.=
+I wonder if it would be feasible to just advance the coarse-grained
+current_time whenever we end up updating a ctime with a fine-grained
+timestamp? It might produce some inode write amplification. Files that
+were written within the same jiffy could see more inode transactions
+logged, but that still might not be _too_ awful.
+
+I'll keep thinking about it for now.
+--=20
+Jeff Layton <jlayton@kernel.org>
