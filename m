@@ -2,153 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F6297A66A6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Sep 2023 16:26:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 514917A66CF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Sep 2023 16:35:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232814AbjISO0r (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Sep 2023 10:26:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46142 "EHLO
+        id S232847AbjISOfz convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Sep 2023 10:35:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232807AbjISO0q (ORCPT
+        with ESMTP id S232845AbjISOfy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Sep 2023 10:26:46 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1D9F83;
-        Tue, 19 Sep 2023 07:26:40 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FE7CC433C7;
-        Tue, 19 Sep 2023 14:26:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695133600;
-        bh=vg3ncpJ1FzlUxd5pdhZEuFzBDH4MjdcTHQqnQDMiayw=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=LR7t8m7XdliJXlsXKFQuYbHtNRKdwMi5eRtBifoujeW7INugVKy5Qp7VCnKlsmwwv
-         8BbhaGgYPvHflia+qZfNEJW9duIFsIrQFDydhinQULW9HNCaHE/kf0o1WzWpo2p5to
-         CXsZvXwcaXCMnVrPlAtWXfmbgB4o/CJNydBBYCVQl3brCDEEcMznIcy/DAERilgphe
-         rkG396QM+dO+x5J9PjJn60OdVP9dbYrPxnqKQjrCVcxVHQyKSTmInGCF9Ii+1++y97
-         CYM44WCWdYxi55/Nt+UB1QsmX9UGqMlFKX+z35AG4ozpIWyw5107vPYU6gNmLeKnJF
-         ImAwUKVmely7w==
-Message-ID: <a955495733e55f4fecad42b252c0360a210988ff.camel@kernel.org>
-Subject: Re: [PATCH] linux/fs.h: fix umask on NFS with CONFIG_FS_POSIX_ACL=n
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Christian Brauner <brauner@kernel.org>,
-        Trond Myklebust <trondmy@gmail.com>,
-        Anna Schumaker <anna@kernel.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        "J . Bruce Fields" <bfields@redhat.com>, Jan Kara <jack@suse.cz>,
-        stable@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Max Kellermann <max.kellermann@ionos.com>
-Date:   Tue, 19 Sep 2023 10:26:38 -0400
-In-Reply-To: <20230919-altbekannt-musisch-35ac924166cf@brauner>
-References: <20230919081837.1096695-1-max.kellermann@ionos.com>
-         <20230919-altbekannt-musisch-35ac924166cf@brauner>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+        Tue, 19 Sep 2023 10:35:54 -0400
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4580BF
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Sep 2023 07:35:48 -0700 (PDT)
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-286-os4Jn-dCOAGz3FBPVajm3w-1; Tue, 19 Sep 2023 15:35:30 +0100
+X-MC-Unique: os4Jn-dCOAGz3FBPVajm3w-1
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Tue, 19 Sep
+ 2023 15:35:25 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Tue, 19 Sep 2023 15:35:25 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Matthew Wilcox' <willy@infradead.org>
+CC:     Greg Ungerer <gregungerer@westnet.com.au>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        Nicholas Piggin <npiggin@gmail.com>
+Subject: RE: [PATCH 09/17] m68k: Implement xor_unlock_is_negative_byte
+Thread-Topic: [PATCH 09/17] m68k: Implement xor_unlock_is_negative_byte
+Thread-Index: AQHZ6Kr+hLdybFnA00ugx5L/MFgM8bAiJxPQgAABTgCAABHZMA==
+Date:   Tue, 19 Sep 2023 14:35:25 +0000
+Message-ID: <cffc2a427ae74f62b07345ec9348e43e@AcuMS.aculab.com>
+References: <20230915183707.2707298-1-willy@infradead.org>
+ <20230915183707.2707298-10-willy@infradead.org>
+ <6e409d5f-a419-07b7-c82c-4e80fe19c6ba@westnet.com.au>
+ <ZQW849TfSCK6u2f8@casper.infradead.org>
+ <e1fb697714ac408e85c4e3dc573cd7d5@AcuMS.aculab.com>
+ <ZQmvhC+pGWNs9R23@casper.infradead.org>
+In-Reply-To: <ZQmvhC+pGWNs9R23@casper.infradead.org>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2023-09-19 at 15:02 +0200, Christian Brauner wrote:
-> On Tue, Sep 19, 2023 at 10:18:36AM +0200, Max Kellermann wrote:
-> > Make IS_POSIXACL() return false if POSIX ACL support is disabled and
-> > ignore SB_POSIXACL/MS_POSIXACL.
-> >=20
-> > Never skip applying the umask in namei.c and never bother to do any
-> > ACL specific checks if the filesystem falsely indicates it has ACLs
-> > enabled when the feature is completely disabled in the kernel.
-> >=20
-> > This fixes a problem where the umask is always ignored in the NFS
-> > client when compiled without CONFIG_FS_POSIX_ACL.  This is a 4 year
-> > old regression caused by commit 013cdf1088d723 which itself was not
-> > completely wrong, but failed to consider all the side effects by
-> > misdesigned VFS code.
-> >=20
-> > Prior to that commit, there were two places where the umask could be
-> > applied, for example when creating a directory:
-> >=20
-> >  1. in the VFS layer in SYSCALL_DEFINE3(mkdirat), but only if
-> >     !IS_POSIXACL()
-> >=20
-> >  2. again (unconditionally) in nfs3_proc_mkdir()
-> >=20
-> > The first one does not apply, because even without
-> > CONFIG_FS_POSIX_ACL, the NFS client sets MS_POSIXACL in
-> > nfs_fill_super().
->=20
-> Jeff, in light of the recent SB_NOUMASK work for nfs4 to always skip
-> applying the umask how would this patch fit into the picture? Would be
-> good to have your review here.
->=20
-> >=20
-> > After that commit, (2.) was replaced by:
-> >=20
-> >  2b. in posix_acl_create(), called by nfs3_proc_mkdir()
-> >=20
-> > There's one branch in posix_acl_create() which applies the umask;
-> > however, without CONFIG_FS_POSIX_ACL, posix_acl_create() is an empty
-> > dummy function which does not apply the umask.
-> >=20
-> > The approach chosen by this patch is to make IS_POSIXACL() always
-> > return false when POSIX ACL support is disabled, so the umask always
-> > gets applied by the VFS layer.  This is consistent with the (regular)
-> > behavior of posix_acl_create(): that function returns early if
-> > IS_POSIXACL() is false, before applying the umask.
-> >=20
-> > Therefore, posix_acl_create() is responsible for applying the umask if
-> > there is ACL support enabled in the file system (SB_POSIXACL), and the
-> > VFS layer is responsible for all other cases (no SB_POSIXACL or no
-> > CONFIG_FS_POSIX_ACL).
-> >=20
-> > Reviewed-by: J. Bruce Fields <bfields@redhat.com>
-> > Reviewed-by: Jan Kara <jack@suse.cz>
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
-> > ---
-> >  include/linux/fs.h | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> >=20
-> > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > index 4aeb3fa11927..c1a4bc5c2e95 100644
-> > --- a/include/linux/fs.h
-> > +++ b/include/linux/fs.h
-> > @@ -2110,7 +2110,12 @@ static inline bool sb_rdonly(const struct super_=
-block *sb) { return sb->s_flags
-> >  #define IS_NOQUOTA(inode)	((inode)->i_flags & S_NOQUOTA)
-> >  #define IS_APPEND(inode)	((inode)->i_flags & S_APPEND)
-> >  #define IS_IMMUTABLE(inode)	((inode)->i_flags & S_IMMUTABLE)
-> > +
-> > +#ifdef CONFIG_FS_POSIX_ACL
-> >  #define IS_POSIXACL(inode)	__IS_FLG(inode, SB_POSIXACL)
-> > +#else
-> > +#define IS_POSIXACL(inode)	0
-> > +#endif
-> > =20
-> >  #define IS_DEADDIR(inode)	((inode)->i_flags & S_DEAD)
-> >  #define IS_NOCMTIME(inode)	((inode)->i_flags & S_NOCMTIME)
-> > --=20
-> > 2.39.2
-> >=20
+From: Matthew Wilcox <willy@infradead.org>
+> Sent: 19 September 2023 15:26
+> 
+> On Tue, Sep 19, 2023 at 01:23:08PM +0000, David Laight wrote:
+> > > Well, that sucks.  What do you suggest for Coldfire?
+> >
+> > Can you just do a 32bit xor ?
+> > Unless you've got smp m68k I'd presume it is ok?
+> > (And assuming you aren't falling off a page.)
+> 
+> Patch welcome.
 
-(cc'ing Trond and Anna)
+My 68020 book seems to be at work and I'm at home.
+(The 286, 386 and cy7c600 (sparc 32) books don't help).
 
-To be clear, Christian is talking about this patch that I sent last
-week:
+But if the code is trying to do *ptr ^= 0x80 and check the
+sign flag then you just need to use eor.l with 0x80000000
+on the same address.
+All the 68k I used would do misaligned accesses.
+Although they can fault mid-instruction on the microcode stack.
+Any smp 68020 had to be certain to resume on the same cpu.
 
-https://lore.kernel.org/linux-fsdevel/20230911-acl-fix-v3-1-b25315333f6c@ke=
-rnel.org/
+	David
 
-At first glance, I don't see a problem with Max's patch.
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
-If anything the patch in the lore link above should keep NFSv4 working
-as expected if we take Max's patch. You might also need to add
-SB_I_NOUMASK for the NFSv3 case, but I'm not certain there.
---=20
-Jeff Layton <jlayton@kernel.org>
