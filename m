@@ -2,60 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 247287A6F9C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Sep 2023 01:41:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06A767A6FAD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Sep 2023 01:51:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233421AbjISXlW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Sep 2023 19:41:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51098 "EHLO
+        id S233527AbjISXvq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Sep 2023 19:51:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42170 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229521AbjISXlV (ORCPT
+        with ESMTP id S230189AbjISXvp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Sep 2023 19:41:21 -0400
-Received: from mail-yw1-x1134.google.com (mail-yw1-x1134.google.com [IPv6:2607:f8b0:4864:20::1134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDA1E9D
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Sep 2023 16:41:13 -0700 (PDT)
-Received: by mail-yw1-x1134.google.com with SMTP id 00721157ae682-59bc956b029so59992067b3.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Sep 2023 16:41:13 -0700 (PDT)
+        Tue, 19 Sep 2023 19:51:45 -0400
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E5169D
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Sep 2023 16:51:37 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id 4fb4d7f45d1cf-53074ee0c2aso3659a12.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Sep 2023 16:51:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1695166873; x=1695771673; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1695167496; x=1695772296; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hFzzEQcg0oCAYp6IDtstgD1417eSwBjinvoSO5GqpVA=;
-        b=xBHjfKxQcEzXJK8JsRFdgqs3bz+HBXGTCWi7/3aezUO3UOPNj0nGdht7CbUoHAPCoz
-         ry3I5ZSa9m/YVZjJ6hhU3PW9VI91oZJIQIOFqeqsm2H50Jt0Sff6CMKwHTItf/bHYN2l
-         JOdeR1FIYUXLpeioCcsQ2GDlWjjyLyTPGgo4oVWDISRYWhSExWEZW/+Iun2kyvbNygO4
-         LlQqceBL3rntU/loPxfAGSP8qzHGbWZFlx1siAuQIH2vv8C5xEzoH7+bjeGVHn0h4Bs4
-         ogTErqm2DeZyUuayguDQEXdUTRlgix8nGQK+efJBEtA4c8FY/24jG0xcY0G3wmcCzBGX
-         nzVQ==
+        bh=f6VMf/OUkQsSYVwJPsdAyGwcMTpYmYXfK2NiFd3HWh4=;
+        b=11ZgRm5wLOTCTF6sjJgvDymfU4vDFWPUoLJkaypTnLETn5D7MFwI8gzhIx98pQ/yg7
+         Nh8gVBhvjnQkR6xojAL9edKNu8Q9IsVtTf+JhkVoVMWOa4XXgYXt/kyFoVSr5yB9ccGi
+         X+xOLZ/n0PJyqNDYG8bHUGpFEMGQCCrIUSZJXYBLaMYKcFsgSxM8iJIDn7JgLpVvCXdU
+         jvFSmsMPTwChhQfHBvLxkR+t4mo9bZpvkCYVHzFlr6ZoNrb5iPLFHnVl34qIW54zW9sa
+         wlGHgEftlJ2wmBL66R6O438SfV0X3ilQwpUQ1su/b7ZyTic1+pm8nzmN2g5Ods4Y6JDO
+         JYvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695166873; x=1695771673;
+        d=1e100.net; s=20230601; t=1695167496; x=1695772296;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hFzzEQcg0oCAYp6IDtstgD1417eSwBjinvoSO5GqpVA=;
-        b=DlB/roxZW2QPuqHhr8TNzM6b7h60qUpNynhKyNlEg2J44PS3noVGt+3pHgsLXw5emt
-         0W6UTHeBMzmUrJpCEO0/CpoRWMkp3VSHSwv5ihIm1mFMxN38KUTpoalNJbulj/yfQgcN
-         zEy6N7lZ+dinM3R6G4k67/GYyfVwC3aH5AY8pQpWsbMNRZLztOpFCe7jAeT59v2u62+O
-         qhZtHSkAMs6iMOb4Thi8valaC+Sns0B7D1vtbpvk4orZYDP20wW5vugyrkRCSkGha3D1
-         42bEf1SY1KIKkXv3xkcmQYxmXt9Iuea0+0Fnrg2vfDYIpEps/ryIOsM60XnQUHXH6VQt
-         CEAA==
-X-Gm-Message-State: AOJu0Yw4sGXSUj/bIJQbH5jCZ9QhAWv+d829nwHuX1TTMX0GoGUHZ2tH
-        kAwDYsWTKcmMkrTJbjJQZ5/uw6HjS3cwsFn501bF9A==
-X-Google-Smtp-Source: AGHT+IErPJBCUDoPSQGtcV8GsniSxrr/tJoGUsFEkuf95yge+XDFTPXoPPMZ5hTqcizQdgvnSlSC9zJMCN7n3QYLmQM=
-X-Received: by 2002:a0d:ce44:0:b0:583:741c:5fe6 with SMTP id
- q65-20020a0dce44000000b00583741c5fe6mr754641ywd.52.1695166872587; Tue, 19 Sep
- 2023 16:41:12 -0700 (PDT)
+        bh=f6VMf/OUkQsSYVwJPsdAyGwcMTpYmYXfK2NiFd3HWh4=;
+        b=RTNGms77d95XwqOnyn23IMj6OFrEI7fO0SoUnYnrEUFv3WztGk+meqD2ohzbhQpCa1
+         uM0AJA5qn79wvm83AFKSCmy9uS8bRG+Dk6nsAQ5yoFgjGV0Ojl/zLbTTXAoYUdBAli3F
+         lV4YjKtwddh7FUMjAumCLd5qjhbBxqZW8GoYQ6L8btUpSUAjhyT34xkcE+DlygTf0wgX
+         9c9a7V3KpXT5yZgDlBMPI5DjYv/sDLMBdFDsfWvz9KYIiCN37Tl0suuwBxIDSHXngbcB
+         TVFkKZzhbm65T5qKzhtn9iM4LXCU1OuYey5RayrhDfQ7FqMSKp7QPwymU56rc90sreAl
+         K5QA==
+X-Gm-Message-State: AOJu0YwxwXQOFF2PK7hlUKYWnlFdIdA/qqOrX0XU/vb6R91jw/wtJl5j
+        iQjw27DKiYMIB5aeDNStWIJ3CSnsXcANA4lq1eBhaQ==
+X-Google-Smtp-Source: AGHT+IEkCvERxvTYDfbrhAwIRpXY6kz99DLqVyOLYFXLV+eHS9DS62mqizZVcoB7cM3wk2N8dUWhx+CUmG5AJDEB40U=
+X-Received: by 2002:a50:d71b:0:b0:52f:3376:8d7 with SMTP id
+ t27-20020a50d71b000000b0052f337608d7mr18998edi.5.1695167495880; Tue, 19 Sep
+ 2023 16:51:35 -0700 (PDT)
 MIME-Version: 1.0
 References: <20230914152620.2743033-1-surenb@google.com> <20230914152620.2743033-3-surenb@google.com>
  <CAG48ez0gN_nC8NrMOeq44QmUDT27EpT0bFuNu1ReVKDBt3zy7Q@mail.gmail.com> <CAJuCfpGdbc70aZPu=cNgemK1EFUyvLfZU8ELSjseZtfpSF+EEg@mail.gmail.com>
 In-Reply-To: <CAJuCfpGdbc70aZPu=cNgemK1EFUyvLfZU8ELSjseZtfpSF+EEg@mail.gmail.com>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Tue, 19 Sep 2023 16:40:59 -0700
-Message-ID: <CAJuCfpHFOLLDC4z9RWMwJdFr3pkPQYH9_XFK4GNrPX9=dO9VpA@mail.gmail.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Wed, 20 Sep 2023 01:50:57 +0200
+Message-ID: <CAG48ez212+UjQMB94vKvyV4YAEgg=jBhdzg_1b4BRe6=SO09fA@mail.gmail.com>
 Subject: Re: [PATCH 2/3] userfaultfd: UFFDIO_REMAP uABI
-To:     Jann Horn <jannh@google.com>
+To:     Suren Baghdasaryan <surenb@google.com>
 Cc:     akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
         brauner@kernel.org, shuah@kernel.org, aarcange@redhat.com,
         lokeshgidra@google.com, peterx@redhat.com, david@redhat.com,
@@ -71,7 +71,7 @@ Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
         ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -79,124 +79,21 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 19, 2023 at 4:08=E2=80=AFPM Suren Baghdasaryan <surenb@google.c=
+On Wed, Sep 20, 2023 at 1:08=E2=80=AFAM Suren Baghdasaryan <surenb@google.c=
 om> wrote:
->
 > On Thu, Sep 14, 2023 at 7:28=E2=80=AFPM Jann Horn <jannh@google.com> wrot=
 e:
-> >
 > > On Thu, Sep 14, 2023 at 5:26=E2=80=AFPM Suren Baghdasaryan <surenb@goog=
 le.com> wrote:
-> > >
 > > > From: Andrea Arcangeli <aarcange@redhat.com>
 > > >
 > > > This implements the uABI of UFFDIO_REMAP.
 > > >
 > > > Notably one mode bitflag is also forwarded (and in turn known) by the
 > > > lowlevel remap_pages method.
-> > >
-> > > Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
-> > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > > ---
-> > >  fs/userfaultfd.c                 |  49 +++
-> > >  include/linux/rmap.h             |   5 +
-> > >  include/linux/userfaultfd_k.h    |  17 +
-> > >  include/uapi/linux/userfaultfd.h |  22 ++
-> > >  mm/huge_memory.c                 | 118 +++++++
-> > >  mm/khugepaged.c                  |   3 +
-> > >  mm/userfaultfd.c                 | 586 +++++++++++++++++++++++++++++=
-++
-> > >  7 files changed, 800 insertions(+)
-> > >
-> > > diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-> > > index 56eaae9dac1a..7bf64e7541c1 100644
-> > > --- a/fs/userfaultfd.c
-> > > +++ b/fs/userfaultfd.c
-> > > @@ -2027,6 +2027,52 @@ static inline unsigned int uffd_ctx_features(_=
-_u64 user_features)
-> > >         return (unsigned int)user_features | UFFD_FEATURE_INITIALIZED=
-;
-> > >  }
-> > >
-> > > +static int userfaultfd_remap(struct userfaultfd_ctx *ctx,
-> > > +                            unsigned long arg)
-> > > +{
-> > > +       __s64 ret;
-> > > +       struct uffdio_remap uffdio_remap;
-> > > +       struct uffdio_remap __user *user_uffdio_remap;
-> > > +       struct userfaultfd_wake_range range;
-> > > +
-> > > +       user_uffdio_remap =3D (struct uffdio_remap __user *) arg;
-> > > +
-> > > +       ret =3D -EFAULT;
-> > > +       if (copy_from_user(&uffdio_remap, user_uffdio_remap,
-> > > +                          /* don't copy "remap" last field */
-> > > +                          sizeof(uffdio_remap)-sizeof(__s64)))
-> > > +               goto out;
-> > > +
-> > > +       ret =3D validate_range(ctx->mm, uffdio_remap.dst, uffdio_rema=
-p.len);
-> > > +       if (ret)
-> > > +               goto out;
-> > > +       ret =3D validate_range(current->mm, uffdio_remap.src, uffdio_=
-remap.len);
-> > > +       if (ret)
-> > > +               goto out;
-> > > +       ret =3D -EINVAL;
-> > > +       if (uffdio_remap.mode & ~(UFFDIO_REMAP_MODE_ALLOW_SRC_HOLES|
-> > > +                                 UFFDIO_REMAP_MODE_DONTWAKE))
-> > > +               goto out;
-> >
->
-> Sorry for the delay with the answers...
->
-> > Do you not need mmget_not_zero(ctx->mm) to make sure the MM can't be
-> > concurrently torn down while remap_pages() is running, similar to what
-> > the other userfaultfd ioctl handlers do?
->
-> Yes, I do need that. Will add.
->
->
-> >
-> > > +       ret =3D remap_pages(ctx->mm, current->mm,
-> > > +                         uffdio_remap.dst, uffdio_remap.src,
-> > > +                         uffdio_remap.len, uffdio_remap.mode);
-> > > +       if (unlikely(put_user(ret, &user_uffdio_remap->remap)))
-> > > +               return -EFAULT;
-> > > +       if (ret < 0)
-> > > +               goto out;
-> > > +       /* len =3D=3D 0 would wake all */
-> > > +       BUG_ON(!ret);
-> > > +       range.len =3D ret;
-> > > +       if (!(uffdio_remap.mode & UFFDIO_REMAP_MODE_DONTWAKE)) {
-> > > +               range.start =3D uffdio_remap.dst;
-> > > +               wake_userfault(ctx, &range);
-> > > +       }
-> > > +       ret =3D range.len =3D=3D uffdio_remap.len ? 0 : -EAGAIN;
-> > > +out:
-> > > +       return ret;
-> > > +}
-> > [...]
+[...]
 > > > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> > > index 064fbd90822b..c7a9880a1f6a 100644
-> > > --- a/mm/huge_memory.c
-> > > +++ b/mm/huge_memory.c
-> > > @@ -1932,6 +1932,124 @@ int change_huge_pmd(struct mmu_gather *tlb, s=
-truct vm_area_struct *vma,
-> > >         return ret;
-> > >  }
-> > >
-> > > +#ifdef CONFIG_USERFAULTFD
-> > > +/*
-> > > + * The PT lock for src_pmd and the mmap_lock for reading are held by
-> > > + * the caller, but it must return after releasing the
-> > > + * page_table_lock. We're guaranteed the src_pmd is a pmd_trans_huge
-> > > + * until the PT lock of the src_pmd is released. Just move the page
-> > > + * from src_pmd to dst_pmd if possible. Return zero if succeeded in
-> > > + * moving the page, -EAGAIN if it needs to be repeated by the caller=
-,
-> > > + * or other errors in case of failure.
-> > > + */
+[...]
 > > > +int remap_pages_huge_pmd(struct mm_struct *dst_mm,
 > > > +                        struct mm_struct *src_mm,
 > > > +                        pmd_t *dst_pmd, pmd_t *src_pmd,
@@ -229,7 +126,26 @@ truct vm_area_struct *vma,
 > before calling remap_pages_huge_pmd. Later on we check if dst_pmd
 > changed from under us (see pmd_same(*dst_pmd, dst_pmdval) check) and
 > retry if that happened.
->
+
+Oh, right, I don't know what I was thinking when I typed that.
+
+But now I wonder about the check directly above that: What does this
+code do for swap PMDs? It looks like that might splat on the
+BUG_ON(!pmd_trans_huge(src_pmdval)). All we've checked on the path to
+here is that the virtual memory area is aligned, that the destination
+PMD is empty, and that pmd_trans_huge_lock() succeeded; but
+pmd_trans_huge_lock() explicitly permits swap PMDs (which is the
+swapped-out version of transhuge PMDs):
+
+static inline spinlock_t *pmd_trans_huge_lock(pmd_t *pmd,
+                struct vm_area_struct *vma)
+{
+        if (is_swap_pmd(*pmd) || pmd_trans_huge(*pmd) || pmd_devmap(*pmd))
+                return __pmd_trans_huge_lock(pmd, vma);
+        else
+                return NULL;
+}
+
 > >
 > > > +       BUG_ON(!spin_is_locked(src_ptl));
 > > > +       mmap_assert_locked(src_mm);
@@ -312,8 +228,10 @@ d),
 > Technically we don't use src_pmdval after this but for the possible
 > future use that would keep things correct. If A/D bits changed from
 > under us we will still copy correct values into dst_pmd.
->
-> >
+
+And when we set up the dst_pmd, we always mark it as dirty and
+accessed... so I guess that's fine.
+
 > > > +       _dst_pmd =3D mk_huge_pmd(src_page, dst_vma->vm_page_prot);
 > > > +       _dst_pmd =3D maybe_pmd_mkwrite(pmd_mkdirty(_dst_pmd), dst_vma=
 );
@@ -336,8 +254,13 @@ d),
 > free the old one. Maybe it's worth having an arch-specific function
 > indicating whether moving a pgtable between MMs is supported? Or do it
 > separately as an optimization. WDYT?
->
-> >
+
+Hm, dunno. I guess you could have architectures opt in with some
+config flag similar to how flags like
+ARCH_WANT_BATCHED_UNMAP_TLB_FLUSH are wired up - define it in
+init/Kconfig, select it in the architectures that support it, and then
+gate the fast version on that with #ifdef?
+
 > > > +       if (dst_mm !=3D src_mm) {
 > > > +               add_mm_counter(dst_mm, MM_ANONPAGES, HPAGE_PMD_NR);
 > > > +               add_mm_counter(src_mm, MM_ANONPAGES, -HPAGE_PMD_NR);
@@ -388,55 +311,15 @@ mm,
 > permissions. The fact that x86 and arm64 have the same protection bits
 > for R/O and COW memory is a "side-effect" IMHO. I'm not sure what
 > comment would be good here but I'm open to suggestions.
->
-> >
-> > > +       /* only allow remapping if both are mlocked or both aren't */
-> > > +       if ((src_vma->vm_flags & VM_LOCKED) ^ (dst_vma->vm_flags & VM=
-_LOCKED))
-> > > +               goto out;
-> > > +
-> > > +       /*
-> > > +        * Be strict and only allow remap_pages if either the src or
-> > > +        * dst range is registered in the userfaultfd to prevent
-> > > +        * userland errors going unnoticed. As far as the VM
-> > > +        * consistency is concerned, it would be perfectly safe to
-> > > +        * remove this check, but there's no useful usage for
-> > > +        * remap_pages ouside of userfaultfd registered ranges. This
-> > > +        * is after all why it is an ioctl belonging to the
-> > > +        * userfaultfd and not a syscall.
-> > > +        *
-> > > +        * Allow both vmas to be registered in the userfaultfd, just
-> > > +        * in case somebody finds a way to make such a case useful.
-> > > +        * Normally only one of the two vmas would be registered in
-> > > +        * the userfaultfd.
-> > > +        */
-> > > +       if (!dst_vma->vm_userfaultfd_ctx.ctx &&
-> > > +           !src_vma->vm_userfaultfd_ctx.ctx)
-> > > +               goto out;
-> > > +
-> > > +       /*
-> > > +        * FIXME: only allow remapping across anonymous vmas,
-> > > +        * tmpfs should be added.
-> > > +        */
-> > > +       if (src_vma->vm_ops || dst_vma->vm_ops)
-> > > +               goto out;
-> >
-> > I don't think it's okay to check for anonymous VMAs by checking
-> > ->vm_ops. There are some weird drivers whose ->mmap helpers don't set
-> > ->vm_ops and instead just shove all the necessary PTEs into the VMA
-> > right on ->mmap, so I think they end up with ->vm_ops=3D=3DNULL. For
-> > example, kcov_mmap() looks that way. I'm not sure how common this is.
-> >
-> > Though, uuuuuh, I guess if that's true, the existing
-> > vma_is_anonymous() is broken, since that also just checks ->vm_ops?
-> > I'm not sure what the consequences of that would be... Either way,
-> > vma_is_anonymous() might be the better way to check for anonymous VMAs
-> > here, and someone should figure out whether vma_is_anonymous() needs
-> > to be fixed.
->
-> Absolutely, vma_is_anonymous() should have been used here. Will fix it.
->
-> >
+
+I'm not sure if you can do a meaningful security check on the
+->vm_page_prot. I also don't think it matters for anonymous VMAs.
+I guess if you want to keep this check but make this behavior more
+consistent, you could put another check in front of this that rejects
+VMAs where vm_flags like VM_READ, VM_WRITE, VM_SHARED or VM_EXEC are
+different?
+
+[...]
 > > > +       /*
 > > > +        * Ensure the dst_vma has a anon_vma or this page
 > > > +        * would get a NULL anon_vma when moved in the
@@ -460,218 +343,5 @@ _LOCKED))
 >
 > Should I add a comment here as a warning if in the future we decide to
 > implement support for file-backed pages?
->
-> >
-> > > +               if (unlikely(!src_pmd)) {
-> > > +                       if (!(mode & UFFDIO_REMAP_MODE_ALLOW_SRC_HOLE=
-S)) {
-> > > +                               err =3D -ENOENT;
-> > > +                               break;
-> > > +                       }
-> > > +                       src_pmd =3D mm_alloc_pmd(src_mm, src_addr);
-> > > +                       if (unlikely(!src_pmd)) {
-> > > +                               err =3D -ENOMEM;
-> > > +                               break;
-> > > +                       }
-> > > +               }
-> > > +               dst_pmd =3D mm_alloc_pmd(dst_mm, dst_addr);
-> > > +               if (unlikely(!dst_pmd)) {
-> > > +                       err =3D -ENOMEM;
-> > > +                       break;
-> > > +               }
-> > > +
-> > > +               dst_pmdval =3D pmdp_get_lockless(dst_pmd);
-> > > +               /*
-> > > +                * If the dst_pmd is mapped as THP don't
-> > > +                * override it and just be strict.
-> > > +                */
-> > > +               if (unlikely(pmd_trans_huge(dst_pmdval))) {
-> > > +                       err =3D -EEXIST;
-> > > +                       break;
-> > > +               }
-> >
-> > This check is racy because the dst_pmd can still change at this point,
-> > from previously pointing to a zeroed PMD to now pointing to a
-> > hugepage, right? And we rely on remap_pages_pte() and
-> > remap_pages_huge_pmd() to recheck for that?
-> > If yes, maybe add a comment noting this and explaining why we want this=
- check.
->
-> Yes, you are right. remap_pages_huge_pmd() does check
-> pmd_same(*dst_pmd, dst_pmdval) after doing double_pt_lock(), so it
-> will retry and exit on this check if dst_pmd got mapped as THP from
-> under us. remap_pages_pte() OTOH simply does
-> BUG_ON(pmd_trans_huge(*dst_pmd)), which is wrong. Instead it should
-> also check if PMD value changed from under us and retry in such a
-> case. I'll fix that and will add a comment here about this racy check
-> and the retry logic.
 
-Actually, remap_pages_pte() also indirectly handles the case when
-dst_pmd changes from under us with this code:
-
-dst_pte =3D pte_offset_map_nolock(dst_mm, dst_pmd, dst_addr, &dst_ptl);
-/* If an huge pmd materialized from under us fail */
-if (unlikely(!dst_pte)) {
-        err =3D -EFAULT;
-        goto out;
-}
-
-so, it would fail if someone concurrently mapped a THP at that
-location. Seems like this race is handled, so the only thing left here
-is to add a comment clarifying this.
-
->
-> >
-> > > +               ptl =3D pmd_trans_huge_lock(src_pmd, src_vma);
-> > > +               if (ptl) {
-> > > +                       /*
-> > > +                        * Check if we can move the pmd without
-> > > +                        * splitting it. First check the address
-> > > +                        * alignment to be the same in src/dst.  Thes=
-e
-> > > +                        * checks don't actually need the PT lock but
-> > > +                        * it's good to do it here to optimize this
-> > > +                        * block away at build time if
-> > > +                        * CONFIG_TRANSPARENT_HUGEPAGE is not set.
-> > > +                        */
-> > > +                       if (thp_aligned =3D=3D -1)
-> > > +                               thp_aligned =3D ((src_addr & ~HPAGE_P=
-MD_MASK) =3D=3D
-> > > +                                              (dst_addr & ~HPAGE_PMD=
-_MASK));
-> > > +                       if (!thp_aligned || (src_addr & ~HPAGE_PMD_MA=
-SK) ||
-> >
-> > This seems overly complicated, the only case when you can move a huge
-> > PMD is if both addresses are hugepage-aligned and you have enough
-> > length for one hugepage:
-> >
-> > (src_addr & ~HPAGE_PMD_MASK) =3D=3D 0 && (dst_addr & ~HPAGE_PMD_MASK) =
-=3D=3D 0
-> > && (src_start + len - src_addr >=3D HPAGE_PMD_SIZE).
->
-> Ack.
->
-> >
-> > > +                           !pmd_none(dst_pmdval) ||
-> > > +                           src_start + len - src_addr < HPAGE_PMD_SI=
-ZE) {
-> > > +                               spin_unlock(ptl);
-> > > +                               /* Fall through */
-> > > +                               split_huge_pmd(src_vma, src_pmd, src_=
-addr);
-> > > +                       } else {
-> > > +                               err =3D remap_pages_huge_pmd(dst_mm,
-> > > +                                                          src_mm,
-> > > +                                                          dst_pmd,
-> > > +                                                          src_pmd,
-> > > +                                                          dst_pmdval=
-,
-> > > +                                                          dst_vma,
-> > > +                                                          src_vma,
-> > > +                                                          dst_addr,
-> > > +                                                          src_addr);
-> > > +                               cond_resched();
-> > > +
-> > > +                               if (!err) {
-> > > +                                       dst_addr +=3D HPAGE_PMD_SIZE;
-> > > +                                       src_addr +=3D HPAGE_PMD_SIZE;
-> > > +                                       moved +=3D HPAGE_PMD_SIZE;
-> > > +                               }
-> > > +
-> > > +                               if ((!err || err =3D=3D -EAGAIN) &&
-> > > +                                   fatal_signal_pending(current))
-> > > +                                       err =3D -EINTR;
-> > > +
-> > > +                               if (err && err !=3D -EAGAIN)
-> > > +                                       break;
-> > > +
-> > > +                               continue;
-> > > +                       }
-> > > +               }
-> > > +
-> > > +               if (pmd_none(*src_pmd)) {
-> > > +                       if (!(mode & UFFDIO_REMAP_MODE_ALLOW_SRC_HOLE=
-S)) {
-> > > +                               err =3D -ENOENT;
-> > > +                               break;
-> > > +                       }
-> > > +                       if (unlikely(__pte_alloc(src_mm, src_pmd))) {
-> > > +                               err =3D -ENOMEM;
-> > > +                               break;
-> > > +                       }
-> > > +               }
-> > > +
-> > > +               if (unlikely(pmd_none(dst_pmdval)) &&
-> > > +                   unlikely(__pte_alloc(dst_mm, dst_pmd))) {
-> >
-> > Maybe just use pte_alloc() here?
->
-> Ack.
->
-> >
-> > > +                       err =3D -ENOMEM;
-> > > +                       break;
-> > > +               }
-> > > +
-> > > +               err =3D remap_pages_pte(dst_mm, src_mm,
-> > > +                                     dst_pmd, src_pmd,
-> > > +                                     dst_vma, src_vma,
-> > > +                                     dst_addr, src_addr,
-> > > +                                     mode);
-> > > +
-> > > +               cond_resched();
-> > > +
-> > > +               if (!err) {
-> > > +                       dst_addr +=3D PAGE_SIZE;
-> > > +                       src_addr +=3D PAGE_SIZE;
-> > > +                       moved +=3D PAGE_SIZE;
-> > > +               }
-> > > +
-> > > +               if ((!err || err =3D=3D -EAGAIN) &&
-> > > +                   fatal_signal_pending(current))
-> > > +                       err =3D -EINTR;
-> > > +
-> > > +               if (err && err !=3D -EAGAIN)
-> > > +                       break;
-> > > +       }
-> > > +
-> > > +out:
-> > > +       mmap_read_unlock(dst_mm);
-> > > +       if (dst_mm !=3D src_mm)
-> > > +               mmap_read_unlock(src_mm);
-> > > +       BUG_ON(moved < 0);
-> > > +       BUG_ON(err > 0);
-> > > +       BUG_ON(!moved && !err);
-> > > +       return moved ? moved : err;
-> > > +}
-> >
-> > Maybe you could try whether this function would look simpler with a
-> > shape roughly like:
-> >
-> > for (src_addr =3D ...; src_addr < ...;) {
-> >   unsigned long step_size;
-> >
-> >   if (hugepage case) {
-> >     if (have to split) {
-> >       split it;
-> >       continue;
-> >     }
-> >     step_size =3D HPAGE_PMD_SIZE;
-> >     ...
-> >   } else {
-> >     ... 4k case ...
-> >     step_size =3D PAGE_SIZE;
-> >   }
-> >   ...
-> >   cond_resched();
-> >   if (!err) {
-> >     dst_addr +=3D step_size;
-> >     src_addr +=3D step_size;
-> >     moved +=3D step_size;
-> >   }
->
-> Yeah, that looks simpler. I'll try that, thanks!
->
-> >   ...
-> > }
+Hm, yeah, I guess that might be a good idea.
