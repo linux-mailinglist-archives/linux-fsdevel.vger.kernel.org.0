@@ -2,198 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 48C757A6943
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Sep 2023 18:58:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32AA37A6977
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Sep 2023 19:16:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230469AbjISQ6G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Sep 2023 12:58:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44166 "EHLO
+        id S231921AbjISRQC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Sep 2023 13:16:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46340 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230203AbjISQ6F (ORCPT
+        with ESMTP id S231968AbjISRQB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Sep 2023 12:58:05 -0400
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [IPv6:2607:fcd0:100:8a00::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B050C6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Sep 2023 09:57:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1695142678;
-        bh=4XN17DBUYw9+xg2L7gGa15NHHbB4soAr8EZrLkJaqg0=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=T0xtxaiFZ8AjIc3VcsvRjmfUs6fiM5eFmD7L3t5y2jLsU8cularoOkQXadoXnRnLz
-         +4g8pmVTjM9TjuBhsm4TI6vtPPQsxGfyRoOpVgdxYVavAj/XJrA5Vm1qGmknfjq4LF
-         u/8Ua9EIh6i+uRTlnhp/vCn6X1WnPXhJq3vARfhc=
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 32E0912867B6;
-        Tue, 19 Sep 2023 12:57:58 -0400 (EDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id irqNu3k6ObXb; Tue, 19 Sep 2023 12:57:58 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1695142677;
-        bh=4XN17DBUYw9+xg2L7gGa15NHHbB4soAr8EZrLkJaqg0=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=Zh5vU5hZ7Pr0hdmpN8exN2IkJ9lJfQf7QflBoPeHf25+Mr7cf5ptF8vjfw96RgIoP
-         0crq1b7G/OLKYjs820S7hFolzJXasYTSLypx75FiWcnRpZjQ71G78NVl/t3GN6bNGR
-         pXLFM6DRiM8oAm5VGXv3149CT9i8ilaucT0vuIKU=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::c14])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (Client did not present a certificate)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 378151281B49;
-        Tue, 19 Sep 2023 12:57:57 -0400 (EDT)
-Message-ID: <4b2f3646fb3da593ec67c47bcfaec3b0a744dc5b.camel@HansenPartnership.com>
-Subject: Re: [MAINTAINERS/KERNEL SUMMIT] Trust and maintenance of file
- systems
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Tue, 19 Sep 2023 13:16:01 -0400
+Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74C9BF0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Sep 2023 10:15:55 -0700 (PDT)
+Received: by mail-lj1-x231.google.com with SMTP id 38308e7fff4ca-2bfb17435e4so96446131fa.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Sep 2023 10:15:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1695143753; x=1695748553; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=f/DYm89xKha5hIifMM4jmGfL4V1kBTUvXfrruUWsBFU=;
+        b=S7v1r3G0WqI5VNAoekGnMqHbZWD09PfgKrIzmO28mh5iiC/tOl9Kvo6HTTl8LkEYE7
+         A0jA76BhKsSPNSpynw+ngteEG2iQeSL7hnSFsGheIRPtGrgIDGgolSDHEszGsIK2eOgG
+         GL2mlxPSXjDX/d8Dd2HGX09bYcJV9cz3Zjkr8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695143753; x=1695748553;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=f/DYm89xKha5hIifMM4jmGfL4V1kBTUvXfrruUWsBFU=;
+        b=RukNmG1a6qOBrTMIv/o743YbXPF5DD9jutppI7r1XupOe87/7udLpw/U4/HPlehalQ
+         +cb87zY6NA/iYcrxeIHpQVKfXwHlWe1AHdBQfHmrS8w/ymNcx5rZf0XAPQ5lUCBXX/v3
+         2y3U8cYam1caKoFCF/aM8MKrULbDks6yW1DeH9GpgEdEJ3euyFRAHKbAGPbhnBmoQNs+
+         1Xwj6sek2t2pPcYz/PqBHP9vNlgtMFy7EBo44hVO6hcPg5lpZQXD9ZTLp1+Rv9QuqrE+
+         wPvnT3Kas6UVVi5Z3nRurOHXnqbZoRoFUmdOKNkDz3gMEqBMqk0a5hDNiSAHdeN5bp8K
+         yAbg==
+X-Gm-Message-State: AOJu0Yw11xkBoRPU/IcW2rcmsJfKapa8lUZbmIPRPU0i3VrKi84HyHhn
+        k2XFAUGsssOru63Ot+aF0ea/10bExhujNZkzyBYiyLAi
+X-Google-Smtp-Source: AGHT+IFbi+8wK7U8ZLg524iZyKVn0Mn1Os8E4m4laG34dgFqWygVCPAB40JpdU9LbZibmKX3GHj0Ew==
+X-Received: by 2002:a2e:9f4f:0:b0:2b9:f27f:e491 with SMTP id v15-20020a2e9f4f000000b002b9f27fe491mr47630ljk.42.1695143753630;
+        Tue, 19 Sep 2023 10:15:53 -0700 (PDT)
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
+        by smtp.gmail.com with ESMTPSA id n25-20020a2e8799000000b002b9fe77d00dsm2712763lji.93.2023.09.19.10.15.52
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 Sep 2023 10:15:52 -0700 (PDT)
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2c0179f9043so33259881fa.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Sep 2023 10:15:52 -0700 (PDT)
+X-Received: by 2002:ac2:4186:0:b0:501:b97a:9f50 with SMTP id
+ z6-20020ac24186000000b00501b97a9f50mr245158lfh.65.1695143751987; Tue, 19 Sep
+ 2023 10:15:51 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230907071801.1d37a3c5@gandalf.local.home> <b7ca4a4e-a815-a1e8-3579-57ac783a66bf@sandeen.net>
+ <CAHk-=wg=xY6id92yS3=B59UfKmTmOgq+NNv+cqCMZ1Yr=FwR9A@mail.gmail.com>
+ <ZQTfIu9OWwGnIT4b@dread.disaster.area> <db57da32517e5f33d1d44564097a7cc8468a96c3.camel@HansenPartnership.com>
+ <169491481677.8274.17867378561711132366@noble.neil.brown.name>
+ <CAHk-=wg_p7g=nonWOqgHGVXd+ZwZs8im-G=pNHP6hW60c8=UHw@mail.gmail.com>
+ <ZQj2SgSKOzfKR0e3@dread.disaster.area> <ZQku4dvmtO56BvCr@casper.infradead.org>
+ <ZQnNiTfXK81ZQGEq@mit.edu> <ZQnQMobKwIbBTL9h@casper.infradead.org>
+In-Reply-To: <ZQnQMobKwIbBTL9h@casper.infradead.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 19 Sep 2023 10:15:34 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgNP7uXWcpGe7Owp-TePruH_S3jH38h=W2-YvbD9Mgz_Q@mail.gmail.com>
+Message-ID: <CAHk-=wgNP7uXWcpGe7Owp-TePruH_S3jH38h=W2-YvbD9Mgz_Q@mail.gmail.com>
+Subject: Re: [MAINTAINERS/KERNEL SUMMIT] Trust and maintenance of file systems
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     "Theodore Ts'o" <tytso@mit.edu>,
+        Dave Chinner <david@fromorbit.com>, NeilBrown <neilb@suse.de>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
         Eric Sandeen <sandeen@sandeen.net>,
         Steven Rostedt <rostedt@goodmis.org>,
         Guenter Roeck <linux@roeck-us.net>,
         Christoph Hellwig <hch@infradead.org>, ksummit@lists.linux.dev,
         linux-fsdevel@vger.kernel.org
-Date:   Tue, 19 Sep 2023 12:57:56 -0400
-In-Reply-To: <ZQkK8kTPhFw8BpVA@dread.disaster.area>
-References: <ZPkDLp0jyteubQhh@dread.disaster.area>
-         <20230906215327.18a45c89@gandalf.local.home>
-         <ZPkz86RRLaYOkmx+@dread.disaster.area>
-         <20230906225139.6ffe953c@gandalf.local.home>
-         <ZPlFwHQhJS+Td6Cz@dread.disaster.area>
-         <20230907071801.1d37a3c5@gandalf.local.home>
-         <b7ca4a4e-a815-a1e8-3579-57ac783a66bf@sandeen.net>
-         <CAHk-=wg=xY6id92yS3=B59UfKmTmOgq+NNv+cqCMZ1Yr=FwR9A@mail.gmail.com>
-         <ZQTfIu9OWwGnIT4b@dread.disaster.area>
-         <db57da32517e5f33d1d44564097a7cc8468a96c3.camel@HansenPartnership.com>
-         <ZQkK8kTPhFw8BpVA@dread.disaster.area>
 Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_PASS,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2023-09-19 at 12:44 +1000, Dave Chinner wrote:
-> On Sat, Sep 16, 2023 at 05:50:50PM -0400, James Bottomley wrote:
-> > On Sat, 2023-09-16 at 08:48 +1000, Dave Chinner wrote:
-> > > On Wed, Sep 13, 2023 at 10:03:55AM -0700, Linus Torvalds wrote:
-> > [...]
-> > > >  - "they use the buffer cache".
-> > > > 
-> > > > Waah, waah, waah.
-> > > 
-> > > .... you dismiss those concerns in the same way a 6 year old
-> > > school yard bully taunts his suffering victims.
-> > > 
-> > > Regardless of the merits of the observation you've made, the tone
-> > > and content of this response is *completely unacceptable*. 
-> > > Please keep to technical arguments, Linus, because this sort of
-> > > response has no merit what-so-ever. All it does is shut down the
-> > > technical discussion because no-one wants to be the target of
-> > > this sort of ugly abuse just for participating in a technical
-> > > discussion.
-> > > 
-> > > Given the number of top level maintainers that signed off on the
-> > > CoC that are present in this forum, I had an expectation that
-> > > this is a forum where bad behaviour is not tolerated at all.  So
-> > > I've waited a couple of days to see if anyone in a project
-> > > leadership position is going to say something about this
-> > > comment.....
-> > > 
-> > > <silence>
-> > > 
-> > > The deafening silence of tacit acceptance is far more damning
-> > > than the high pitched squeal of Linus's childish taunts.
-> > 
-> > Well, let's face it: it's a pretty low level taunt and it wasn't
-> > aimed at you (or indeed anyone on the thread that I could find) and
-> > it was backed by technical argument in the next sentence.  We all
-> > have a tendency to let off steam about stuff in general not at
-> > people in particular as you did here:
-> > 
-> > https://lore.kernel.org/ksummit/ZP+vcgAOyfqWPcXT@dread.disaster.area/
-> 
-> There's a massive difference between someone saying no to a wild
-> proposal with the backing of solid ethical arguments against
-> experimentation on non-consenting human subjects vs someone calling
-> anyone who might disagree with them a bunch of cry-babies.
-> 
-> You do yourself a real disservice by claiming these two comments are
-> in any way equivalent.
+On Tue, 19 Sept 2023 at 09:45, Matthew Wilcox <willy@infradead.org> wrote:
+>
+> What I was trying to say was that if the buffer cache actually supported
+> it, large folios and buffer_heads wouldn't perform horribly together,
+> unless you had a badly fragmented file.
 
-Well, let's see shall we.  The detrimental impact of an email often
-results from the first sentence which is what most people see and react
-to especially on the modern display devices like phones.  Pretty much
-as you reacted to the first sentence from Linus above.  Your first
-sentence in the email I quoted above replying to my idea was:
+I think it would work in theory... I don't see a _practical_ example
+of a filesystem that would use it, but maybe you had something
+specific in mind?
 
-> No fucking way.
+> eg you could allocate a 256kB folio, then ask the filesystem to
+> create buffer_heads for it, and maybe it would come back with a list
+> of four buffer_heads, the first representing the extent from 0-32kB,
+> the second 32kB-164kB, the third 164kB-252kB and the fourth 252kB-256kB.
+> Wherever there were physical discontiguities in the file.
 
-Absent further context that's a textbook stress inducing personal
-attack.  Now, I've been on the receiving end of things like this for a
-long time, so I simply deployed the usual stress reduction techniques,
-read the rest of your email, deleted the knee jerk response and waited
-to see if anyone else had a different opinion.
+That *is* technically something that the buffer cache supports, but I
+don't think it has ever been done.
 
-However, the key point is that your email induced the same stress
-reaction in me that Linus' statement apparently did in you, so
-absolutely I see an equivalence.
+So while it's technically possible, it's never been tested, so it
+would almost certainly show some (potentially serious) issues.
 
-> > But I didn't take it as anything more than a rant about AI in
-> > general and syzbot in particular and certainly I didn't assume it
-> > was aimed at me or anyone else.
-> 
-> I wasn't ranting about AI at all. If you think that was what I was
-> talking about then you have, once again, completely missed the
-> point.
-> 
-> I was talking about the *ethics of our current situation* and how
-> that should dictate the behaviour of community members and bots that
-> they run for the benefit of the community. If a bot is causing harm
-> to the community, then ethics dictates that there is only one
-> reasonable course of action that can be taken...
-> 
-> This has *nothing to do with AI* and everything to do with how the
-> community polices hostile actors in the community. If 3rd party
-> run infrastructure is causing direct harm to developers and they
-> aren't allowed to opt out, then what do we do about it?
+And we obviously don't have the helper functions to create such a list
+of buffer heads (ie all the existing "grow buffers" just take one size
+and create a uniform set of buffers in the page/folio).
 
-My point was basically trying to improve the current situation by
-getting the AI processes producing the reports to make them more useful
-and eliminate a significant portion of the outbound flow, but I get
-that some people are beyond that and would go for amputation rather
-than attempted cure.
-
-> > If everyone reached for the code of conduct when someone had a non-
-> > specific rant using colourful phraseology, we'd be knee deep in
-> > complaints, which is why we tend to be more circumspect when it
-> > happens.
-> 
-> I disagree entirely, and I think this a really bad precedent to try
-> to set. Maybe you see it as "Fred has a colourful way with words",
-> but that doesn't change the fact the person receiving that comment
-> might see the same comment very, very differently.
-
-Which was precisely my point about your email above.  At its most basic
-level the standard you hold yourself to has to be the same or better
-than the standard you hold others to.
-
-James
-
-> I don't think anyone can dispute the fact that top level kernel
-> maintainers are repeat offenders when it comes to being nasty,
-> obnoxious and/or abusive. Just because kernel maintainers have
-> normalised this behaviour between themselves, it does not make it OK
-> to treat anyone else this way.
-> 
-> Maintainers need to be held to a higher standard than the rest of
-> the community - the project leaders need to set the example of how
-> everyone else should behave, work and act - and right now I am _very
-> disappointed_ by where this thread has ended up.
-
-
+                 Linus
