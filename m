@@ -2,162 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 269FC7A6485
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Sep 2023 15:12:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D21147A6495
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Sep 2023 15:15:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231994AbjISNM0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Sep 2023 09:12:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49952 "EHLO
+        id S232020AbjISNP5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Sep 2023 09:15:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229648AbjISNMZ (ORCPT
+        with ESMTP id S229648AbjISNP4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Sep 2023 09:12:25 -0400
-Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0574EF0;
-        Tue, 19 Sep 2023 06:12:19 -0700 (PDT)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id 9C9C45C01BE;
-        Tue, 19 Sep 2023 09:12:16 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Tue, 19 Sep 2023 09:12:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-        cc:content-transfer-encoding:content-type:content-type:date:date
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm2; t=
-        1695129136; x=1695215536; bh=35U7SZxly5E4C5II0R3QwFIGHLkcF+Joifa
-        Lm/DjmW8=; b=SZuY9XIYk8UoYI0cncKefuLo+3a8kidBwLfYvWl/HMWy4sDKpey
-        5lybXHs4E+8uqsMuhnLl53Ms7goP5REEXf7GB3jlkqf8mWqkiDdhMnRELphtCf/E
-        y8VCX4qmyfdn7jynjeh9/E9wZ6/wdiodDiguGzIWupbXsyQg38yPic+DD+VqFzcS
-        bVOEQ8sY54KmuMJKnpl+QKGpYDXvA+vraZf42r9DlljLSav05OO/s9VOzDLsNyxQ
-        wM4TWSwUx5d8CpIIUIlVnP577X9wcPhzGBhu+CYLKS+4BgUeGZDRC5J2WIOsvdOJ
-        B4AWJd0MNH/CRZjR1FMptpEoi8j0x2yefxA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :content-type:date:date:feedback-id:feedback-id:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1695129136; x=
-        1695215536; bh=35U7SZxly5E4C5II0R3QwFIGHLkcF+JoifaLm/DjmW8=; b=h
-        leu/2n2IqBV76jXcXUaryUgHgVvO2eQIsDZmcMckNMClWVc+rhh4Frle33aRBbkW
-        9dOrGPNkT0almLn2hpK3SJljCulNBKP1biwByfGoWT6sRpmiupocQfVLmF5YprFm
-        yybIQaUimxhWJXfxy0nbIw3+6tgDzz8vhYZ20bb9ZPRD2+QoyrqXS9cNDHZF8Xi6
-        4GB0uIe3EppIoBnqWbM/dSNJO3dr4bCKvkIB0RURW+MU71HQXm1dJwl3NVVJsJty
-        UnM3+Bo4FWfrIpENHxqFGLZ6CINqSWMhqltm/2YGCDwn889yn78eCbVSKZJbdCmu
-        mZUojfE0by3yTgcQf20jA==
-X-ME-Sender: <xms:MJ4JZYJQgV4QQTYxak_epWfKOKwKblnygXCXIWHtApxUFofYKu-89Q>
-    <xme:MJ4JZYIvMqc8Yo5MU8KnKfw8eIF3k1gL3EFNpTIT3tsMsLpMwvc7eemNK2kiHm6bH
-    W1RdKnv8JmWBerK>
-X-ME-Received: <xmr:MJ4JZYteRcaRSZsCHc9IgLH42dUhMuomtwp9hkJiWXftE0YQjzAvyjq-Xrwsfm1dP7WAfuz4VEnoV6LlFppNmml3DjVM1MzAGMK8WrmkNP9iN0uAGwac>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrudekuddgfeduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkfffgggfuffvfhfhjggtgfesthekredttdefjeenucfhrhhomhepuegvrhhn
-    ugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilh
-    drfhhmqeenucggtffrrghtthgvrhhnpefgleefffejffeugeeivedvleevffeihfeuleev
-    leeutdefieeftddttdeghfelgeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuve
-    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdr
-    shgthhhusggvrhhtsehfrghsthhmrghilhdrfhhm
-X-ME-Proxy: <xmx:MJ4JZVaPgbV5OEXezqOc7hscMxEQ5BS6nbURXVjIAaWlqp9Qm4cKLA>
-    <xmx:MJ4JZfYPfaLLMswEdVloUctbwQyxQddHRJTp8SkZw0_PRH-kECtdYQ>
-    <xmx:MJ4JZRBsRRe23KF462il6y78m9hO5zllA8TTwzeMLscRaTW6MT0O_g>
-    <xmx:MJ4JZenlYXTfTMg1TTDRiPVMIujiifw4YdtWlwIUbSgOHKKyhdUiGg>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 19 Sep 2023 09:12:15 -0400 (EDT)
-Message-ID: <73e673d6-ecb8-dec9-bdc0-6dde9c4e76cb@fastmail.fm>
-Date:   Tue, 19 Sep 2023 15:12:13 +0200
+        Tue, 19 Sep 2023 09:15:56 -0400
+Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34858F0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Sep 2023 06:15:51 -0700 (PDT)
+Received: by mail-lj1-x22e.google.com with SMTP id 38308e7fff4ca-2bceb02fd2bso90401211fa.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Sep 2023 06:15:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1695129349; x=1695734149; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/YflXYglgF2ghb+juzkAUfuvNFkVuPP1IFeMvX6P+9A=;
+        b=Juzbteth6d6koy19UxP2bY5ZvJCKMa6cxNNBR6PEDuMNxYt1ylxD1daD+NAoXwzJ9l
+         lanz4+yS5XU7RmHk+0iZW897MKg5tkPM0cwpUIy/jtRnvWUUr0JF4ylgyz9tRwtjXoUN
+         sfLNmQ/TPKQMw9E7//pXkeF/Rw/EB3yznkQdUeg3g8OFUNUODkNDQlpUuWj/Ya2mG0wg
+         BL5skGTQk8yoDNku2HiB/px0fh5kZd98V5hFMmSqSJzNZfxBzx7pkhp17qoRHQAN23Dp
+         hiUYmKrlmno7gFkEdd36yAkm1qA+WM6e7Spj3kJb8NdkfjxY1dgQmwBVN2b6F515cvDl
+         ElbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695129349; x=1695734149;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/YflXYglgF2ghb+juzkAUfuvNFkVuPP1IFeMvX6P+9A=;
+        b=gN8OYYtQq9VZ8LDGMiKA8KR5SkOsV7eVXOrhhSQP2NYjihJOvYBSCLwQ93LM/qc5xl
+         oEA4vnlkJC5CscGn4cO9Xc8ACXEa9Bp5Ay03AInwB0bJ7YImWfjmCwJplBlOgIl8IJ6D
+         F/SuM8x4j6LOjwg9kp/hEpX9zaAhZtloNaXvqpQfNG9nYqyB2SQx2L1IvoGxA/g1/Bm6
+         PNx00jQ5xPQFBFa1Pi77RiMttcoqvEpPTIxcr+Ym2zkvFfD+TtA9uUJDj7637BDSCyz5
+         /uNab9RE1KFRjoWXzk5c+9CkVg20YEERFUPl7MQ+iCwGeHcvuZ2EMmv+A5jro4tVHE2Q
+         wlLQ==
+X-Gm-Message-State: AOJu0Yyrmu8GbjXkZivovVCTLtV65dJG89NzYmQ+pmZKCfcYE2m5AZI+
+        qJLlifNt3V7AR3WdYc18FKlLCekiSESFn7lwi8BOXciTYiKDJxaERkg=
+X-Google-Smtp-Source: AGHT+IE0EuipW9qvFPgLGR9UFGOCTZUcbzOmYvUOgGwWrx+zoDKlqdfvJp7pY8jS/j8A6jnf/le1WKTA2bsfi1/QYUI=
+X-Received: by 2002:a05:651c:2106:b0:2c0:a99:68dd with SMTP id
+ a6-20020a05651c210600b002c00a9968ddmr6413574ljq.4.1695129349487; Tue, 19 Sep
+ 2023 06:15:49 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH] fuse: remove unneeded lock which protecting update of
- congestion_threshold
-Content-Language: en-US, de-DE
-To:     Kemeng Shi <shikemeng@huaweicloud.com>, miklos@szeredi.hu,
+References: <20230919081808.1096542-1-max.kellermann@ionos.com> <20230919-verweben-signieren-5c69a314440c@brauner>
+In-Reply-To: <20230919-verweben-signieren-5c69a314440c@brauner>
+From:   Max Kellermann <max.kellermann@ionos.com>
+Date:   Tue, 19 Sep 2023 15:15:38 +0200
+Message-ID: <CAKPOu+-rxm38_sMPv0gasOYvtefd8PJeSWR2Rk_N-mEYDmPqFA@mail.gmail.com>
+Subject: Re: [PATCH] fs/posix_acl: apply umask if superblock disables ACL support
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        "J . Bruce Fields" <bfields@redhat.com>, stable@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230914154553.71939-1-shikemeng@huaweicloud.com>
- <9a5d4c82-1ab3-e96d-98bb-369acc8404d1@fastmail.fm>
- <177d891e-9258-68bb-72aa-4d4126403b7e@huaweicloud.com>
-From:   Bernd Schubert <bernd.schubert@fastmail.fm>
-In-Reply-To: <177d891e-9258-68bb-72aa-4d4126403b7e@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Tue, Sep 19, 2023 at 3:10=E2=80=AFPM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+> Have you verified that commit ac6800e279a2 ("fs: Add missing umask strip
+> in vfs_tmpfile") doesn't already fix this?
 
-
-On 9/19/23 08:11, Kemeng Shi wrote:
-> 
-> 
-> on 9/16/2023 7:06 PM, Bernd Schubert wrote:
->>
->>
->> On 9/14/23 17:45, Kemeng Shi wrote:
->>> Commit 670d21c6e17f6 ("fuse: remove reliance on bdi congestion") change how
->>> congestion_threshold is used and lock in
->>> fuse_conn_congestion_threshold_write is not needed anymore.
->>> 1. Access to supe_block is removed along with removing of bdi congestion.
->>> Then down_read(&fc->killsb) which protecting access to super_block is no
->>> needed.
->>> 2. Compare num_background and congestion_threshold without holding
->>> bg_lock. Then there is no need to hold bg_lock to update
->>> congestion_threshold.
->>>
->>> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
->>> ---
->>>    fs/fuse/control.c | 4 ----
->>>    1 file changed, 4 deletions(-)
->>>
->>> diff --git a/fs/fuse/control.c b/fs/fuse/control.c
->>> index 247ef4f76761..c5d7bf80efed 100644
->>> --- a/fs/fuse/control.c
->>> +++ b/fs/fuse/control.c
->>> @@ -174,11 +174,7 @@ static ssize_t fuse_conn_congestion_threshold_write(struct file *file,
->>>        if (!fc)
->>>            goto out;
->>>    -    down_read(&fc->killsb);
->>> -    spin_lock(&fc->bg_lock);
->>>        fc->congestion_threshold = val;
->>> -    spin_unlock(&fc->bg_lock);
->>> -    up_read(&fc->killsb);
->>>        fuse_conn_put(fc);
->>>    out:
->>>        return ret;
->>
->> Yeah, I don't see readers holding any of these locks.
->> I just wonder if it wouldn't be better to use WRITE_ONCE to ensure a single atomic operation to store the value.
-> Sure, WRITE_ONCE looks better. I wonder if we should use READ_ONCE from reader.
-> Would like to get any advice. Thanks!
-
-I'm not entirely sure either, but I _think_ the compiler is free to 
-store a 32 bit value  with multiple operations (like 2 x 16 bit). In 
-that case a competing reading thread might read garbage...
-Although I don't see this documented here
-https://www.kernel.org/doc/Documentation/memory-barriers.txt
-Though documented there is that the compile is free to optimize out the 
-storage at all, see
-"(*) Similarly, the compiler is within its rights to omit a store entirely"
-
-
-Regarding READ_ONCE, I don't have a strong opinion, if the compiler 
-makes some optimizations and the value would be wrong for a few cycles, 
-would that matter for that variable? Unless the compiler would be really 
-creative and the variable would get never updated... For sure READ_ONCE 
-would be safer, but I don't know if it is needed
-SSee section
-"The compiler is within its rights to omit a load entirely if it know"
-in the document above.
-
-Thanks,
-Bernd
-
-
-
-
+No, I havn't - I submitted this patch already several years ago, but
+it was never merged, and since then, I've been carrying this patch
+around in all kernels I ever used. While doing some other kernel work
+this week, I decided to resubmit it, because I thought it's a security
+vulnerability to ignore the umask. But thanks, it's a good hint, I'll
+check that 2022 commit.
