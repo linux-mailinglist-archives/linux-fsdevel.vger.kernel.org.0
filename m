@@ -2,48 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6873D7A5962
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Sep 2023 07:32:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D7CDE7A5997
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Sep 2023 07:51:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231324AbjISFcP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Sep 2023 01:32:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43676 "EHLO
+        id S231422AbjISFv4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Sep 2023 01:51:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59158 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231128AbjISFcO (ORCPT
+        with ESMTP id S231214AbjISFvz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Sep 2023 01:32:14 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73FAC102;
-        Mon, 18 Sep 2023 22:32:09 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11257C433C8;
-        Tue, 19 Sep 2023 05:32:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695101529;
-        bh=6ETapI40ei8LUIBUtJd9POMEs+mJGY9nr0kwwV+6UAs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EZWgoFnbj5FHaNGPXmUdLdoUyMaU7r7iEAVj4YDfEEaR1JjTiwZNXCPK8b5QlwEah
-         hY0voCIGyjvY3Bnr7sgf8WbmYNYd/iez6M6lSnzZ0g5Gxv075v/4QZduM7QQ8KYAOw
-         QUCRSOw6a3yUECpLhO5B5IRL2EoFPeM3d5n6sqkmWpmwijRLb40aLsNi64h4IL2P4W
-         2Bh6hivEC547o0RsSWSIOmckIavNOA3s1/TsbISJvG7Bu46weZH6P5gF4JnoNEETlW
-         nngCPgG/RzwPm6Sbtuh4Csgz7aP5pGRGu08q3lqKUgpaq5TqTuo+o9UwjcaTJjOoLa
-         mgUHiTGW2LPfA==
-Date:   Mon, 18 Sep 2023 22:32:08 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Ritesh Harjani <ritesh.list@gmail.com>
-Cc:     willy@infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 1/2] iomap: don't skip reading in !uptodate folios when
- unsharing a range
-Message-ID: <20230919053208.GH348018@frogsfrogsfrogs>
-References: <169507872536.772278.18183365318216726644.stgit@frogsfrogsfrogs>
- <87o7hy7nhp.fsf@doe.com>
- <20230919052434.GG348018@frogsfrogsfrogs>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230919052434.GG348018@frogsfrogsfrogs>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        Tue, 19 Sep 2023 01:51:55 -0400
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E95B100;
+        Mon, 18 Sep 2023 22:51:49 -0700 (PDT)
+Received: by mail-pl1-x62a.google.com with SMTP id d9443c01a7336-1c44a25bd0bso20886555ad.0;
+        Mon, 18 Sep 2023 22:51:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1695102708; x=1695707508; darn=vger.kernel.org;
+        h=in-reply-to:subject:to:from:message-id:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QcRXRyK1fCDW06SwtVVU/3oEtJExRi+6ONE5drucKAM=;
+        b=mA6YZIax2/6IhqYBXbqLyU/0yMYYQ9G4/Fc+Jbk5r88niqjXextat2EhvYLN8hZPU8
+         HXg6ki2sjugDY+tSJuJOcWHQT8UJfQqsXdy7hRU/qPgN+C1jBi4OXMTsa99vK5NOgeNg
+         DKzPKcaDHjjRhIYjgM5Whf0BqNyTT5VlLCJfut4WwaTFY7pChvi9jKJQ48fA6R1VIWP+
+         1wbcWXIQe5qcQu3GTlvGcFmDpd01vm3Gy+xLWFvNMwgaaxx9vpHOZ88mj1i/Oe8PwlP+
+         aAYa1rDr5VifC3RboKYB9JAhwJFJ9diH3kDlR3hNeUvFjVA/XOMD585bfPKQLMmCWBl0
+         87RQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695102708; x=1695707508;
+        h=in-reply-to:subject:to:from:message-id:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=QcRXRyK1fCDW06SwtVVU/3oEtJExRi+6ONE5drucKAM=;
+        b=X2XRcuGWTptWliQ2AVQODocNN4+4bQE7sSchrhX7E1bi2X25QPnKfm8w9WnA1yM37f
+         vrCBHl1o7sxlumPRZRJg9ZE6ldZukTEikyV0kXQkq7ZjVNJCLt8jfbMZozgwuc+oab6M
+         AI8W/sRw41I9YYotsTICsoh4IMEqKCCCLSlHmMJqbOQ/Ltzj4IATQBpG9jZDL+OJ2DUr
+         qsAQ4ia2jPTHMeT/84TUSJi/7HC++qQjyyvhelIfCRurZ1lv3ICpmqAbT14XNDhk9aDE
+         2dwfhQE3mZAkaY4wW2xrqXtzS3ZpR6yPqkUWzRACq07tTi4CWqWjisCbz6ufjPfJ3V6C
+         UivA==
+X-Gm-Message-State: AOJu0Yx5kyXnExrmw0bPyDJMTh4rUIno5tp3jdiBpAZ4jk2PzL+IyL6L
+        ilQoJM2VW4qBcNVd2c0GjQTUDC1VuR4=
+X-Google-Smtp-Source: AGHT+IGKXTpHw1PNtYXexI1NOlFzP7qnV1XSzLKtvTgqcbt/cosMDxjTFjMSsmDI2NjxJjKADe9Lmw==
+X-Received: by 2002:a17:902:d504:b0:1bc:2fe1:1821 with SMTP id b4-20020a170902d50400b001bc2fe11821mr2348665plg.17.1695102707803;
+        Mon, 18 Sep 2023 22:51:47 -0700 (PDT)
+Received: from dw-tp ([49.207.223.191])
+        by smtp.gmail.com with ESMTPSA id q20-20020a170902e31400b001bdc664ecd3sm5739767plc.307.2023.09.18.22.51.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Sep 2023 22:51:47 -0700 (PDT)
+Date:   Tue, 19 Sep 2023 11:21:43 +0530
+Message-Id: <87led27lsg.fsf@doe.com>
+From:   Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To:     "Darrick J. Wong" <djwong@kernel.org>, willy@infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 3/2] fstests: test FALLOC_FL_UNSHARE when pagecache is not loaded
+In-Reply-To: <20230918231945.GC348018@frogsfrogsfrogs>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
         RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -52,84 +65,131 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 18, 2023 at 10:24:34PM -0700, Darrick J. Wong wrote:
-> On Tue, Sep 19, 2023 at 10:44:58AM +0530, Ritesh Harjani wrote:
-> > "Darrick J. Wong" <djwong@kernel.org> writes:
-> > 
-> > > From: Darrick J. Wong <djwong@kernel.org>
-> > >
-> > > Prior to commit a01b8f225248e, we would always read in the contents of a
-> > > !uptodate folio prior to writing userspace data into the folio,
-> > > allocated a folio state object, etc.  Ritesh introduced an optimization
-> > > that skips all of that if the write would cover the entire folio.
-> > >
-> > > Unfortunately, the optimization misses the unshare case, where we always
-> > > have to read in the folio contents since there isn't a data buffer
-> > > supplied by userspace.  This can result in stale kernel memory exposure
-> > > if userspace issues a FALLOC_FL_UNSHARE_RANGE call on part of a shared
-> > > file that isn't already cached.
-> > >
-> > > This was caught by observing fstests regressions in the "unshare around"
-> > > mechanism that is used for unaligned writes to a reflinked realtime
-> > > volume when the realtime extent size is larger than 1FSB,
-> > 
-> > I was wondering what is testcase that you are referring here to? 
-> > Can you please tell the testcase no. and the mkfs / mount config options
-> > which I can use to observe the regression please?
-> 
-> https://lore.kernel.org/linux-fsdevel/169507871947.772278.5767091361086740046.stgit@frogsfrogsfrogs/T/#m8081f74f4f1fcb862399aa1544be082aabe56765
-> 
-> (any xfs config with reflink enabled)
+"Darrick J. Wong" <djwong@kernel.org> writes:
 
-*OH* you meant which testcase in the realtime reflink patchset.
+> Add a regression test for funsharing uncached files to ensure that we
+> actually manage the pagecache state correctly.
+>
+> Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+> ---
+>  tests/xfs/1936     |   88 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+>  tests/xfs/1936.out |    4 ++
+>  2 files changed, 92 insertions(+)
+>  create mode 100755 tests/xfs/1936
+>  create mode 100644 tests/xfs/1936.out
 
-This testcase:
-https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfstests-dev.git/commit/tests/xfs/1919?h=djwong-wtf&id=56538e8882ac52e606882cfcab7e46dcb64d2a62
+1936? I am not sure how that works though. 
+./new I guess automatically gives the testcase no. for a new testcase right.
 
-And this tag:
-https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/tag/?h=realtime-reflink-extsize_2023-09-12
-If you rebase this branch against 6.6-rc1.
+>
+> diff --git a/tests/xfs/1936 b/tests/xfs/1936
+> new file mode 100755
+> index 0000000000..bcf9b6b478
+> --- /dev/null
+> +++ b/tests/xfs/1936
+> @@ -0,0 +1,88 @@
+> +#! /bin/bash
+> +# SPDX-License-Identifier: GPL-2.0
+> +# Copyright (c) 2023 Oracle.  All Rights Reserved.
+> +#
+> +# FS QA Test 1936
+> +#
+> +# This is a regression test for the kernel commit noted below.  The stale
+> +# memory exposure can be exploited by creating a file with shared blocks,
+> +# evicting the page cache for that file, and then funshareing at least one
+> +# memory page's worth of data.  iomap will mark the page uptodate and dirty
+> +# without ever reading the ondisk contents.
+> +#
+> +. ./common/preamble
+> +_begin_fstest auto quick unshare clone
+> +
+> +_cleanup()
+> +{
+> +	cd /
+> +	rm -r -f $tmp.* $testdir
+> +}
+> +
+> +# real QA test starts here
+> +
+> +# Import common functions.
+> +. ./common/filter
+> +. ./common/attr
+> +. ./common/reflink
+> +
+> +_fixed_by_git_commit kernel XXXXXXXXXXXXX \
+> +	"iomap: don't skip reading in !uptodate folios when unsharing a range"
+> +
+> +# real QA test starts here
+> +_require_test_reflink
+> +_require_cp_reflink
+> +_require_xfs_io_command "funshare"
+> +
+> +testdir=$TEST_DIR/test-$seq
+> +rm -rf $testdir
+> +mkdir $testdir
+> +
+> +# Create a file that is at least four pages in size and aligned to the
+> +# file allocation unit size so that we don't trigger any unnecessary zeroing.
+> +pagesz=$(_get_page_size)
+> +alloc_unit=$(_get_file_block_size $TEST_DIR)
+> +filesz=$(( ( (4 * pagesz) + alloc_unit - 1) / alloc_unit * alloc_unit))
+> +
+> +echo "Create the original file and a clone"
+> +_pwrite_byte 0x61 0 $filesz $testdir/file2.chk >> $seqres.full
+> +_pwrite_byte 0x61 0 $filesz $testdir/file1 >> $seqres.full
+> +_cp_reflink $testdir/file1 $testdir/file2
+> +_cp_reflink $testdir/file1 $testdir/file3
+> +
+> +_test_cycle_mount
+> +
+> +cat $testdir/file3 > /dev/null
+> +
+> +echo "Funshare at least one pagecache page"
+> +$XFS_IO_PROG -c "funshare 0 $filesz" $testdir/file2
+> +$XFS_IO_PROG -c "funshare 0 $filesz" $testdir/file3
+> +_pwrite_byte 0x61 0 $filesz $testdir/file2.chk >> $seqres.full
 
-Then you need this xfsprogs:
-https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfsprogs-dev.git/tag/?h=realtime-reflink-extsize_2023-09-12
+We don't need to write the bytes again to file2.chk. We already wrote above.
+Otherwise looks right to me. Nice testcase indeed.
 
-and ... MKFS_OPTIONS='-d rtinherit=1, -n parent=1, -r extsize=28k,rtgroups=1'
-along with a SCRATCH_RTDE.
+Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
 
-I'm basically done porting djwong-dev to 6.6 and will likely have an
-initial patchbomb of more online fsck stuff for 6.7 in a few days.
 
---D
-
-> --D
-> 
-> > > though I think it applies to any shared file.
-> > >
-> > > Cc: ritesh.list@gmail.com, willy@infradead.org
-> > > Fixes: a01b8f225248e ("iomap: Allocate ifs in ->write_begin() early")
-> > > Signed-off-by: Darrick J. Wong <djwong@kernel.org>
-> > > ---
-> > >  fs/iomap/buffered-io.c |    6 ++++--
-> > >  1 file changed, 4 insertions(+), 2 deletions(-)
-> > >
-> > >
-> > > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> > > index ae8673ce08b1..0350830fc989 100644
-> > > --- a/fs/iomap/buffered-io.c
-> > > +++ b/fs/iomap/buffered-io.c
-> > > @@ -640,11 +640,13 @@ static int __iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
-> > >  	size_t poff, plen;
-> > >  
-> > >  	/*
-> > > -	 * If the write completely overlaps the current folio, then
-> > > +	 * If the write or zeroing completely overlaps the current folio, then
-> > >  	 * entire folio will be dirtied so there is no need for
-> > >  	 * per-block state tracking structures to be attached to this folio.
-> > > +	 * For the unshare case, we must read in the ondisk contents because we
-> > > +	 * are not changing pagecache contents.
-> > >  	 */
-> > > -	if (pos <= folio_pos(folio) &&
-> > > +	if (!(iter->flags & IOMAP_UNSHARE) && pos <= folio_pos(folio) &&
-> > >  	    pos + len >= folio_pos(folio) + folio_size(folio))
-> > >  		return 0;
-> > >  
+> +
+> +echo "Check contents"
+> +
+> +# file2 wasn't cached when it was unshared, but it should match
+> +if ! cmp -s $testdir/file2.chk $testdir/file2; then
+> +	echo "file2.chk does not match file2"
+> +
+> +	echo "file2.chk contents" >> $seqres.full
+> +	od -tx1 -Ad -c $testdir/file2.chk >> $seqres.full
+> +	echo "file2 contents" >> $seqres.full
+> +	od -tx1 -Ad -c $testdir/file2 >> $seqres.full
+> +	echo "end bad contents" >> $seqres.full
+> +fi
+> +
+> +# file3 was cached when it was unshared, and it should match
+> +if ! cmp -s $testdir/file2.chk $testdir/file3; then
+> +	echo "file2.chk does not match file3"
+> +
+> +	echo "file2.chk contents" >> $seqres.full
+> +	od -tx1 -Ad -c $testdir/file2.chk >> $seqres.full
+> +	echo "file3 contents" >> $seqres.full
+> +	od -tx1 -Ad -c $testdir/file3 >> $seqres.full
+> +	echo "end bad contents" >> $seqres.full
+> +fi
+> +
+> +# success, all done
+> +status=0
+> +exit
+> diff --git a/tests/xfs/1936.out b/tests/xfs/1936.out
+> new file mode 100644
+> index 0000000000..c7c820ced5
+> --- /dev/null
+> +++ b/tests/xfs/1936.out
+> @@ -0,0 +1,4 @@
+> +QA output created by 1936
+> +Create the original file and a clone
+> +Funshare at least one pagecache page
+> +Check contents
