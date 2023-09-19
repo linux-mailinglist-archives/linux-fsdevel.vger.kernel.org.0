@@ -2,393 +2,178 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 507477A58F0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Sep 2023 06:53:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 218677A5912
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Sep 2023 06:56:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231561AbjISEwq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Sep 2023 00:52:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53000 "EHLO
+        id S231496AbjISE44 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Sep 2023 00:56:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43686 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231603AbjISEvy (ORCPT
+        with ESMTP id S231181AbjISE4z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Sep 2023 00:51:54 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43438181;
-        Mon, 18 Sep 2023 21:51:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=dunQUZDS9A3++aenZemM7frH6i7Ee/u7RYRB7yRCOt4=; b=d71ZRUyyLAoDO9bXc8xbMmcFG0
-        OgJyC7LV4aLcaNmQojEWB10bGG/0uQAdu9uvqWvTq1cRlE3H9hAXUBLevDTOfQhxtOLZIFqu9Lv6u
-        ocXiM4q8JYTnJqtB0xHLz+CLF/KIQPbeUPEI3TuQP6XrTFdjw1tqlcKomnORfusactdwQ/mpq9khq
-        iNTQMP/wu6gnMxTKoNvLvhBV8+RqerSwIrVgF+OX6+46kZOD5C11okJY9hegYiQkocmoBN8Zkd5zh
-        eU5Ajukci1akGap+FogP0P0zK1bua5P29G/9GW6ZmB5ZG2Ndh+pX0zu3ieAz8otARaPfUbGrcTJrh
-        McN2RXDA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qiSi5-00FFmm-IN; Tue, 19 Sep 2023 04:51:41 +0000
-From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, gfs2@lists.linux.dev,
-        linux-nilfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
-        ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
-        reiserfs-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        Pankaj Raghav <p.raghav@samsung.com>
-Subject: [PATCH 26/26] buffer: Remove folio_create_empty_buffers()
-Date:   Tue, 19 Sep 2023 05:51:35 +0100
-Message-Id: <20230919045135.3635437-27-willy@infradead.org>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20230919045135.3635437-1-willy@infradead.org>
-References: <20230919045135.3635437-1-willy@infradead.org>
+        Tue, 19 Sep 2023 00:56:55 -0400
+Received: from mail-pg1-x529.google.com (mail-pg1-x529.google.com [IPv6:2607:f8b0:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63709F2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Sep 2023 21:56:49 -0700 (PDT)
+Received: by mail-pg1-x529.google.com with SMTP id 41be03b00d2f7-564b6276941so4377873a12.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Sep 2023 21:56:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1695099409; x=1695704209; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=12kF/HL+Cjs4gwXfgdrPEGdm6VElmUpKnIMvK3/u7mU=;
+        b=XELaK3OX9L97fKmA6bUTG68DOXABHvzDR3eoBOYiRHai+Yfw7Ovq3N9d5fE1arGm5d
+         iZ62N7gC1prMtK7K98HZs5wcCsBld3+5J6eWUlYMLnh7inqSycF8cDzGDeRRTOVD7Rcm
+         2Scw9eGMiZmjTtn45zWJBDq6LZelctn6CzK4fSYaORderL+bQK5+9QMWA2g9csJ2RLgn
+         Av5UUX8SfsjWYTEmXa4c8Ih7j+HKMOWFVexrvtDrMm4RL9oXNjixZPzKvDN1Y7KQ6xDD
+         cYr1qBVDBqsIaxE4SFqEl9MhMRx0ULS0A9/av01lCFsIW2vxNn/lZ5YudesiL7tddUOL
+         GDRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695099409; x=1695704209;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=12kF/HL+Cjs4gwXfgdrPEGdm6VElmUpKnIMvK3/u7mU=;
+        b=SL2gq/IZW7IC1+5GHeXe+jC9hgD7dcH3RaPndhYs1M2DFLRzFYiXZca2HRhSTSRKr3
+         HEmbqt+TIoySSGoHU4HBJEOrgdCA9ftCsOiMj/RpoejnNeT9gnBRM8CUjdh/l652CmLi
+         NiymkHNREc/AWf2up19VCVXv5etU+fAMh/b43pKLcBNMLclxM5QGVjwSePyPjj6PmxOp
+         DgJeDPyM2ubxY5CO6FiVd/t+gE5+ZvYF/jTXHcDpnfhDjQNMFNk7GLJlKuppMv9VAZ3x
+         wD36Ri+oluEMeihMZuXhgpVdjAglTFjPt3WpeZMH5SOsHjahQvlJ2ZG8rDbEBwIzkA9Y
+         wGJw==
+X-Gm-Message-State: AOJu0Yzp7Ie6toT47uw7iD8b3dnP0V3wmTTsDDxF9caIjiYnaG6dNGJK
+        eSuDppuAB9trMrxsGsLHQRHIYcdHK3Y+eazxwKs=
+X-Google-Smtp-Source: AGHT+IH5x45YDY6dLanOwd5ogK7EZTSgjNDuDysGAo7UwF8NC08wzRuA8id7lSkPzjxzdIfKrUfioQ==
+X-Received: by 2002:a05:6a20:1444:b0:12e:5f07:7ede with SMTP id a4-20020a056a20144400b0012e5f077edemr14817960pzi.41.1695099408683;
+        Mon, 18 Sep 2023 21:56:48 -0700 (PDT)
+Received: from dread.disaster.area (pa49-180-20-59.pa.nsw.optusnet.com.au. [49.180.20.59])
+        by smtp.gmail.com with ESMTPSA id r11-20020a62e40b000000b006879493aca0sm7810780pfh.26.2023.09.18.21.56.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Sep 2023 21:56:48 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+        (envelope-from <david@fromorbit.com>)
+        id 1qiSmz-002eLV-0g;
+        Tue, 19 Sep 2023 14:56:45 +1000
+Date:   Tue, 19 Sep 2023 14:56:45 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Jan Kara <jack@suse.cz>, Theodore Ts'o <tytso@mit.edu>,
+        NeilBrown <neilb@suse.de>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Eric Sandeen <sandeen@sandeen.net>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Christoph Hellwig <hch@infradead.org>, ksummit@lists.linux.dev,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [MAINTAINERS/KERNEL SUMMIT] Trust and maintenance of file systems
+Message-ID: <ZQkqDZF9GPbrHDax@dread.disaster.area>
+References: <b7ca4a4e-a815-a1e8-3579-57ac783a66bf@sandeen.net>
+ <CAHk-=wg=xY6id92yS3=B59UfKmTmOgq+NNv+cqCMZ1Yr=FwR9A@mail.gmail.com>
+ <ZQTfIu9OWwGnIT4b@dread.disaster.area>
+ <db57da32517e5f33d1d44564097a7cc8468a96c3.camel@HansenPartnership.com>
+ <169491481677.8274.17867378561711132366@noble.neil.brown.name>
+ <CAHk-=wg_p7g=nonWOqgHGVXd+ZwZs8im-G=pNHP6hW60c8=UHw@mail.gmail.com>
+ <20230917185742.GA19642@mit.edu>
+ <CAHk-=wjHarh2VHgM57D1Z+yPFxGwGm7ubfLN7aQCRH5Ke3_=Tg@mail.gmail.com>
+ <20230918111402.7mx3wiecqt5axvs5@quack3>
+ <CAHk-=whB5mjPnsvBZ4vMn7A4pkXT9a5pk4vjasPOsSvU-UNdQg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=whB5mjPnsvBZ4vMn7A4pkXT9a5pk4vjasPOsSvU-UNdQg@mail.gmail.com>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-With all users converted, remove the old create_empty_buffers() and
-rename folio_create_empty_buffers() to create_empty_buffers().
+On Mon, Sep 18, 2023 at 10:26:24AM -0700, Linus Torvalds wrote:
+> On Mon, 18 Sept 2023 at 04:14, Jan Kara <jack@suse.cz> wrote:
+> >
+> > I agree. On the other hand each filesystem we carry imposes some
+> > maintenance burden (due to tree wide changes that are happening) and the
+> > question I have for some of them is: Do these filesystems actually bring
+> > any value?
+> 
+> I wouldn't be shocked if we could probably remove half of the
+> filesystems I listed, and nobody would even notice.
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- fs/buffer.c                 | 13 +++----------
- fs/ext4/inode.c             |  6 +++---
- fs/ext4/move_extent.c       |  4 ++--
- fs/gfs2/aops.c              |  2 +-
- fs/gfs2/bmap.c              |  2 +-
- fs/gfs2/meta_io.c           |  2 +-
- fs/gfs2/quota.c             |  2 +-
- fs/mpage.c                  |  2 +-
- fs/nilfs2/mdt.c             |  2 +-
- fs/nilfs2/page.c            |  4 ++--
- fs/nilfs2/segment.c         |  2 +-
- fs/ntfs/aops.c              |  4 ++--
- fs/ntfs/file.c              |  2 +-
- fs/ntfs3/file.c             |  2 +-
- fs/ocfs2/aops.c             |  2 +-
- fs/reiserfs/inode.c         |  2 +-
- fs/ufs/util.c               |  2 +-
- include/linux/buffer_head.h |  4 +---
- 18 files changed, 25 insertions(+), 34 deletions(-)
+That's the best argument for removing all these old filesystems from
+the kernel that anyone has made so far.
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 1b9e691714bd..d483903fa9ff 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -1646,7 +1646,7 @@ EXPORT_SYMBOL(block_invalidate_folio);
-  * block_dirty_folio() via private_lock.  try_to_free_buffers
-  * is already excluded via the folio lock.
-  */
--struct buffer_head *folio_create_empty_buffers(struct folio *folio,
-+struct buffer_head *create_empty_buffers(struct folio *folio,
- 		unsigned long blocksize, unsigned long b_state)
- {
- 	struct buffer_head *bh, *head, *tail;
-@@ -1677,13 +1677,6 @@ struct buffer_head *folio_create_empty_buffers(struct folio *folio,
- 
- 	return head;
- }
--EXPORT_SYMBOL(folio_create_empty_buffers);
--
--void create_empty_buffers(struct page *page,
--			unsigned long blocksize, unsigned long b_state)
--{
--	folio_create_empty_buffers(page_folio(page), blocksize, b_state);
--}
- EXPORT_SYMBOL(create_empty_buffers);
- 
- /**
-@@ -1783,7 +1776,7 @@ static struct buffer_head *folio_create_buffers(struct folio *folio,
- 
- 	bh = folio_buffers(folio);
- 	if (!bh)
--		bh = folio_create_empty_buffers(folio,
-+		bh = create_empty_buffers(folio,
- 				1 << READ_ONCE(inode->i_blkbits), b_state);
- 	return bh;
- }
-@@ -2676,7 +2669,7 @@ int block_truncate_page(struct address_space *mapping,
- 
- 	bh = folio_buffers(folio);
- 	if (!bh)
--		bh = folio_create_empty_buffers(folio, blocksize, 0);
-+		bh = create_empty_buffers(folio, blocksize, 0);
- 
- 	/* Find the buffer that contains "offset" */
- 	offset = offset_in_folio(folio, from);
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 8e431ff2fd95..347fc8986e93 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -1021,7 +1021,7 @@ static int ext4_block_write_begin(struct folio *folio, loff_t pos, unsigned len,
- 
- 	head = folio_buffers(folio);
- 	if (!head)
--		head = folio_create_empty_buffers(folio, blocksize, 0);
-+		head = create_empty_buffers(folio, blocksize, 0);
- 	bbits = ilog2(blocksize);
- 	block = (sector_t)folio->index << (PAGE_SHIFT - bbits);
- 
-@@ -1151,7 +1151,7 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
- 	 * starting the handle.
- 	 */
- 	if (!folio_buffers(folio))
--		folio_create_empty_buffers(folio, inode->i_sb->s_blocksize, 0);
-+		create_empty_buffers(folio, inode->i_sb->s_blocksize, 0);
- 
- 	folio_unlock(folio);
- 
-@@ -3642,7 +3642,7 @@ static int __ext4_block_zero_page_range(handle_t *handle,
- 
- 	bh = folio_buffers(folio);
- 	if (!bh)
--		bh = folio_create_empty_buffers(folio, blocksize, 0);
-+		bh = create_empty_buffers(folio, blocksize, 0);
- 
- 	/* Find the buffer that contains "offset" */
- 	pos = blocksize;
-diff --git a/fs/ext4/move_extent.c b/fs/ext4/move_extent.c
-index 7fe448fb948b..3aa57376d9c2 100644
---- a/fs/ext4/move_extent.c
-+++ b/fs/ext4/move_extent.c
-@@ -184,7 +184,7 @@ mext_page_mkuptodate(struct folio *folio, unsigned from, unsigned to)
- 	blocksize = i_blocksize(inode);
- 	head = folio_buffers(folio);
- 	if (!head)
--		head = folio_create_empty_buffers(folio, blocksize, 0);
-+		head = create_empty_buffers(folio, blocksize, 0);
- 
- 	block = (sector_t)folio->index << (PAGE_SHIFT - inode->i_blkbits);
- 	for (bh = head, block_start = 0; bh != head || !block_start;
-@@ -380,7 +380,7 @@ move_extent_per_page(struct file *o_filp, struct inode *donor_inode,
- 	 * but keeping in mind that i_size will not change */
- 	bh = folio_buffers(folio[0]);
- 	if (!bh)
--		bh = folio_create_empty_buffers(folio[0],
-+		bh = create_empty_buffers(folio[0],
- 				1 << orig_inode->i_blkbits, 0);
- 	for (i = 0; i < data_offset_in_page; i++)
- 		bh = bh->b_this_page;
-diff --git a/fs/gfs2/aops.c b/fs/gfs2/aops.c
-index c26d48355cc2..6b060fc9e260 100644
---- a/fs/gfs2/aops.c
-+++ b/fs/gfs2/aops.c
-@@ -130,7 +130,7 @@ static int __gfs2_jdata_write_folio(struct folio *folio,
- 	if (folio_test_checked(folio)) {
- 		folio_clear_checked(folio);
- 		if (!folio_buffers(folio)) {
--			folio_create_empty_buffers(folio,
-+			create_empty_buffers(folio,
- 					inode->i_sb->s_blocksize,
- 					BIT(BH_Dirty)|BIT(BH_Uptodate));
- 		}
-diff --git a/fs/gfs2/bmap.c b/fs/gfs2/bmap.c
-index 247d2c16593c..f1eee3f4704b 100644
---- a/fs/gfs2/bmap.c
-+++ b/fs/gfs2/bmap.c
-@@ -71,7 +71,7 @@ static int gfs2_unstuffer_folio(struct gfs2_inode *ip, struct buffer_head *dibh,
- 		struct buffer_head *bh = folio_buffers(folio);
- 
- 		if (!bh)
--			bh = folio_create_empty_buffers(folio,
-+			bh = create_empty_buffers(folio,
- 				BIT(inode->i_blkbits), BIT(BH_Uptodate));
- 
- 		if (!buffer_mapped(bh))
-diff --git a/fs/gfs2/meta_io.c b/fs/gfs2/meta_io.c
-index b28196015543..681cbf2b4405 100644
---- a/fs/gfs2/meta_io.c
-+++ b/fs/gfs2/meta_io.c
-@@ -134,7 +134,7 @@ struct buffer_head *gfs2_getbuf(struct gfs2_glock *gl, u64 blkno, int create)
- 				mapping_gfp_mask(mapping) | __GFP_NOFAIL);
- 		bh = folio_buffers(folio);
- 		if (!bh)
--			bh = folio_create_empty_buffers(folio,
-+			bh = create_empty_buffers(folio,
- 				sdp->sd_sb.sb_bsize, 0);
- 	} else {
- 		folio = __filemap_get_folio(mapping, index,
-diff --git a/fs/gfs2/quota.c b/fs/gfs2/quota.c
-index 0ee4865ebdca..bf093f195abb 100644
---- a/fs/gfs2/quota.c
-+++ b/fs/gfs2/quota.c
-@@ -750,7 +750,7 @@ static int gfs2_write_buf_to_page(struct gfs2_sbd *sdp, unsigned long index,
- 		return PTR_ERR(folio);
- 	bh = folio_buffers(folio);
- 	if (!bh)
--		bh = folio_create_empty_buffers(folio, bsize, 0);
-+		bh = create_empty_buffers(folio, bsize, 0);
- 
- 	for (;;) {
- 		/* Find the beginning block within the folio */
-diff --git a/fs/mpage.c b/fs/mpage.c
-index 964a6efe594d..ffb064ed9d04 100644
---- a/fs/mpage.c
-+++ b/fs/mpage.c
-@@ -119,7 +119,7 @@ static void map_buffer_to_folio(struct folio *folio, struct buffer_head *bh,
- 			folio_mark_uptodate(folio);
- 			return;
- 		}
--		head = folio_create_empty_buffers(folio, i_blocksize(inode), 0);
-+		head = create_empty_buffers(folio, i_blocksize(inode), 0);
- 	}
- 
- 	page_bh = head;
-diff --git a/fs/nilfs2/mdt.c b/fs/nilfs2/mdt.c
-index 7b754e6494d7..c97c77a39668 100644
---- a/fs/nilfs2/mdt.c
-+++ b/fs/nilfs2/mdt.c
-@@ -568,7 +568,7 @@ int nilfs_mdt_freeze_buffer(struct inode *inode, struct buffer_head *bh)
- 
- 	bh_frozen = folio_buffers(folio);
- 	if (!bh_frozen)
--		bh_frozen = folio_create_empty_buffers(folio, 1 << blkbits, 0);
-+		bh_frozen = create_empty_buffers(folio, 1 << blkbits, 0);
- 
- 	bh_frozen = get_nth_bh(bh_frozen, bh_offset(bh) >> blkbits);
- 
-diff --git a/fs/nilfs2/page.c b/fs/nilfs2/page.c
-index 696215d899bf..06b04758f289 100644
---- a/fs/nilfs2/page.c
-+++ b/fs/nilfs2/page.c
-@@ -34,7 +34,7 @@ static struct buffer_head *__nilfs_get_folio_block(struct folio *folio,
- 	struct buffer_head *bh = folio_buffers(folio);
- 
- 	if (!bh)
--		bh = folio_create_empty_buffers(folio, 1 << blkbits, b_state);
-+		bh = create_empty_buffers(folio, 1 << blkbits, b_state);
- 
- 	first_block = (unsigned long)index << (PAGE_SHIFT - blkbits);
- 	bh = get_nth_bh(bh, block - first_block);
-@@ -204,7 +204,7 @@ static void nilfs_copy_folio(struct folio *dst, struct folio *src,
- 	sbh = folio_buffers(src);
- 	dbh = folio_buffers(dst);
- 	if (!dbh)
--		dbh = folio_create_empty_buffers(dst, sbh->b_size, 0);
-+		dbh = create_empty_buffers(dst, sbh->b_size, 0);
- 
- 	if (copy_dirty)
- 		mask |= BIT(BH_Dirty);
-diff --git a/fs/nilfs2/segment.c b/fs/nilfs2/segment.c
-index 94388fe83cf8..55e31cc903d1 100644
---- a/fs/nilfs2/segment.c
-+++ b/fs/nilfs2/segment.c
-@@ -732,7 +732,7 @@ static size_t nilfs_lookup_dirty_data_buffers(struct inode *inode,
- 		}
- 		head = folio_buffers(folio);
- 		if (!head)
--			head = folio_create_empty_buffers(folio,
-+			head = create_empty_buffers(folio,
- 					i_blocksize(inode), 0);
- 		folio_unlock(folio);
- 
-diff --git a/fs/ntfs/aops.c b/fs/ntfs/aops.c
-index c4426992a2ee..71e31e789b29 100644
---- a/fs/ntfs/aops.c
-+++ b/fs/ntfs/aops.c
-@@ -189,7 +189,7 @@ static int ntfs_read_block(struct folio *folio)
- 
- 	head = folio_buffers(folio);
- 	if (!head)
--		head = folio_create_empty_buffers(folio, blocksize, 0);
-+		head = create_empty_buffers(folio, blocksize, 0);
- 	bh = head;
- 
- 	/*
-@@ -555,7 +555,7 @@ static int ntfs_write_block(struct folio *folio, struct writeback_control *wbc)
- 	head = folio_buffers(folio);
- 	if (!head) {
- 		BUG_ON(!folio_test_uptodate(folio));
--		head = folio_create_empty_buffers(folio, blocksize,
-+		head = create_empty_buffers(folio, blocksize,
- 				(1 << BH_Uptodate) | (1 << BH_Dirty));
- 	}
- 	bh = head;
-diff --git a/fs/ntfs/file.c b/fs/ntfs/file.c
-index 099141d20db6..297c0b9db621 100644
---- a/fs/ntfs/file.c
-+++ b/fs/ntfs/file.c
-@@ -625,7 +625,7 @@ static int ntfs_prepare_pages_for_non_resident_write(struct page **pages,
- 		 * create_empty_buffers() will create uptodate/dirty
- 		 * buffers if the folio is uptodate/dirty.
- 		 */
--		head = folio_create_empty_buffers(folio, blocksize, 0);
-+		head = create_empty_buffers(folio, blocksize, 0);
- 	bh = head;
- 	do {
- 		VCN cdelta;
-diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
-index a003a69091a2..66fd4ac28395 100644
---- a/fs/ntfs3/file.c
-+++ b/fs/ntfs3/file.c
-@@ -203,7 +203,7 @@ static int ntfs_zero_range(struct inode *inode, u64 vbo, u64 vbo_to)
- 
- 		head = folio_buffers(folio);
- 		if (!head)
--			head = folio_create_empty_buffers(folio, blocksize, 0);
-+			head = create_empty_buffers(folio, blocksize, 0);
- 
- 		bh = head;
- 		bh_off = 0;
-diff --git a/fs/ocfs2/aops.c b/fs/ocfs2/aops.c
-index 95d1e70b4401..a6405dd5df09 100644
---- a/fs/ocfs2/aops.c
-+++ b/fs/ocfs2/aops.c
-@@ -601,7 +601,7 @@ int ocfs2_map_page_blocks(struct page *page, u64 *p_blkno,
- 
- 	head = folio_buffers(folio);
- 	if (!head)
--		head = folio_create_empty_buffers(folio, bsize, 0);
-+		head = create_empty_buffers(folio, bsize, 0);
- 
- 	for (bh = head, block_start = 0; bh != head || !block_start;
- 	     bh = bh->b_this_page, block_start += bsize) {
-diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
-index d9737235b8e0..a9075c4843ed 100644
---- a/fs/reiserfs/inode.c
-+++ b/fs/reiserfs/inode.c
-@@ -2539,7 +2539,7 @@ static int reiserfs_write_full_folio(struct folio *folio,
- 	 */
- 	head = folio_buffers(folio);
- 	if (!head)
--		head = folio_create_empty_buffers(folio, s->s_blocksize,
-+		head = create_empty_buffers(folio, s->s_blocksize,
- 				     (1 << BH_Dirty) | (1 << BH_Uptodate));
- 
- 	/*
-diff --git a/fs/ufs/util.c b/fs/ufs/util.c
-index d32de30009a0..13ba34e6d64f 100644
---- a/fs/ufs/util.c
-+++ b/fs/ufs/util.c
-@@ -264,6 +264,6 @@ struct folio *ufs_get_locked_folio(struct address_space *mapping,
- 		}
- 	}
- 	if (!folio_buffers(folio))
--		folio_create_empty_buffers(folio, 1 << inode->i_blkbits, 0);
-+		create_empty_buffers(folio, 1 << inode->i_blkbits, 0);
- 	return folio;
- }
-diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
-index 9fc615ee17fd..37a69e8828c0 100644
---- a/include/linux/buffer_head.h
-+++ b/include/linux/buffer_head.h
-@@ -201,9 +201,7 @@ struct buffer_head *folio_alloc_buffers(struct folio *folio, unsigned long size,
- 					gfp_t gfp);
- struct buffer_head *alloc_page_buffers(struct page *page, unsigned long size,
- 		bool retry);
--void create_empty_buffers(struct page *, unsigned long,
--			unsigned long b_state);
--struct buffer_head *folio_create_empty_buffers(struct folio *folio,
-+struct buffer_head *create_empty_buffers(struct folio *folio,
- 		unsigned long blocksize, unsigned long b_state);
- void end_buffer_read_sync(struct buffer_head *bh, int uptodate);
- void end_buffer_write_sync(struct buffer_head *bh, int uptodate);
+As it is, I'm really failing to see how it can be argued
+successfully that we can remove ia64 support because it has no users
+and is a maintenance burden on kernel developers, but that same
+argument doesn't appear to hold any weight when applied to a
+filesystem.
+
+What makes filesystems so special we can't end-of-life them like
+other kernel code?
+
+[....]
+
+> And that's kind of the other side of the picture: usage matters.
+> Something like affs or minixfs might still have a couple of users, but
+> those uses would basically be people who likely use Linux to interact
+> with some legacy machine they maintain..  So the usage they see would
+> mainly be very simple operations.
+
+Having a "couple of occasional users" really does not justify the
+ongoing overhead of maintaining those filesystems in working order
+as everything else around them in the kernel changes. Removing the
+code from the kernel does not deny users access to their data; they
+just have to use a different method to access it (e.g. an old
+kernel/distro in a vm).
+
+> And that matters for two reasons:
+> 
+>  (a) we probably don't have to worry about bugs - security or
+> otherwise - as much. These are not generally "general-purpose"
+> filesystems. They are used for data transfer etc.
+
+By the same argument they could use an old kernel in a VM and not
+worry about the security implications of all the unfixed bugs that
+might be in that old kernel/distro.
+
+>  (b) if they ever turn painful, we might be able to limit the pain further.
+
+The context that started this whole discussion is that maintenance
+of old filesystems is becoming painful after years of largely
+being able to ignore them.
+
+.....
+
+> Anyway, based on the *current* situation, I don't actually see the
+> buffer cache even _remotely_ painful enough that we'd do even that
+> thing. It's not a small undertaking to get rid of the whole
+> b_this_page stuff and the complexity that comes from the page being
+> reachable through the VM layer (ie writepages etc). So it would be a
+> *lot* more work to rip that code out than it is to just support it.
+
+As I keep saying, the issues are not purely constrained to the
+buffer cache. It's all the VFS interfaces and structures. It's all
+the ops methods that need to be changed. It's all the block layer
+interfaces filesystem use. It's all the page and folio interfaces,
+and how the filesystems (ab)use them. And so on - it all adds up.
+
+If we're not going to be allowed to remove old filesystems, then how
+do we go about avoiding the effort required to keep those old
+filesystems up to date with the infrastructure modifications we need
+to make for the benefit of millions of users that use modern
+filesystems and modern hardware?
+
+Do we just fork all the code and how two versions of things like
+bufferheads until all the maintained filesystems have been migrated
+away from them? Or something else? 
+
+These are the same type of questions Christoph posed in his OP, yet
+this discussion is still not at the point where people have
+recognised that these are the problems we need to discuss and
+solve....
+
+Dave.
 -- 
-2.40.1
-
+Dave Chinner
+david@fromorbit.com
