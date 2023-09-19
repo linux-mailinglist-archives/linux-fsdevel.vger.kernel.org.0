@@ -2,51 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C0217A5C7D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Sep 2023 10:28:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DEEC7A5CC9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Sep 2023 10:42:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231199AbjISI2U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Sep 2023 04:28:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42830 "EHLO
+        id S231529AbjISImT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Sep 2023 04:42:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230488AbjISI2S (ORCPT
+        with ESMTP id S230437AbjISImS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Sep 2023 04:28:18 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96AEA119;
-        Tue, 19 Sep 2023 01:28:11 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC0FBC433CA;
-        Tue, 19 Sep 2023 08:28:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695112091;
-        bh=fbb6AV/oXqZ1hMjMw2L1lQ2VSWjkN/YALz0Lp+Y4L2g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=c/UZOdb3jnEp6uQvK4E3WPE4X/To0zzr5xfTmlTkgZr2+gMrRB4EeMNlH6Vj1hXFb
-         7ZdBEzEJMy4rEWY7DLFjtJDMh+lQFwDwIv8vqO9mSrdXxAdSUG7jgji4Yks87qpkfp
-         R9ZOi4+BeKXQTYuBzWLDNRmK3c/rXKQAJY96YJtjwDVv4GIJkMzL/YCBQDdIhqAfvD
-         uuS6A6buOp+0mnxNcUO/Eer+JWyFQIA6TxAW5SWqsHueWnhYKsMScA/NPOhFUSp0sM
-         OI2BYu0Z9KYfT6avkS+uyj/ZwQW5yNM01qHXVBCkA3JHzwXqYqkMtNU38sQmdQ18Ed
-         atHW4wbH1igpg==
-Date:   Tue, 19 Sep 2023 10:28:07 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] timestamp fixes
-Message-ID: <20230919-kranz-entsagen-064754671396@brauner>
-References: <20230918-hirte-neuzugang-4c2324e7bae3@brauner>
- <CAHk-=wiTNktN1k+D-3uJ-jGOMw8nxf45xSHHf8TzpjKj6HaYqQ@mail.gmail.com>
- <e321d3cfaa5facdc8f167d42d9f3cec9246f40e4.camel@kernel.org>
- <CAHk-=wgxpneOTcf_05rXMMc-djV44HD-Sx6RdM9dnfvL3m10EA@mail.gmail.com>
- <2020b8dfd062afb41cd8b74f1a41e61de0684d3f.camel@kernel.org>
- <CAHk-=whACfXMFPP+dPdsJmuF0F6g+YHfUtOxiESM+wxvZ22-GA@mail.gmail.com>
+        Tue, 19 Sep 2023 04:42:18 -0400
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D23C3102
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Sep 2023 01:41:50 -0700 (PDT)
+Received: by mail-pl1-x62d.google.com with SMTP id d9443c01a7336-1c56bc62351so2115485ad.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Sep 2023 01:41:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1695112910; x=1695717710; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ggAs6Jvrg7jU8HHW9+5HqI0MNBzi15nZzeXnKWoG/oI=;
+        b=Ht39K05h/iJKBbR9NojOtjPLgLEoKNVLEEGSTSl/5jHD2o7xCmVqKi2S6XNts3/SDx
+         cA/gllPQ5ZTkbJTOVjh3zJQpOCo6QL1MvPF4xEmTxieeXTZV5qIRajf0KCwMxzynh9OG
+         pUGFEtlfy3BmEXLveECrBX+LmRgVd/Ki7+Z4AR/uyhLiH6jpY0YwO1F8GnnEFfhjBYj4
+         0JG4d5fxr1ypkpvIw97hjhsHNmgSET8lqEKl7rCyCFtvNcQ1+r/gf00zL4EHjfcr3D3B
+         KxNsak9G/ZnHxV1dlNqGieZYX4fDoVc3W2hyAO6t9iUllOQD5kStdq1aOddgG/x0QupX
+         iXtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695112910; x=1695717710;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ggAs6Jvrg7jU8HHW9+5HqI0MNBzi15nZzeXnKWoG/oI=;
+        b=gaW/0wk6z2YGJSgLsUbjHR7BYwt+mkMkzAiCqU2KppVaQ6JaIwEHDvFTx2b3ybOlfq
+         Ed0KCFRDuZxzm92X+AcIawt3RzFxZ6PxjMN6vnCNkQY2RJRUrp7gmKZhLu+gUzaEqc/c
+         Thrq/MkahPrKX4tPdNdPYe1WCcaSfE8HOfrRooIOmudEj1PPjsFPSEdaJ7eGGIw2ZzkV
+         1hkYOtfJNIZt1ca8mt9WSjPqvkwwCONrS4asKe8ldrT3z1PfWbDRGp1CUABwzo4U6j4L
+         2ed+uOgVJBEgSvK/EF4CBlqihuvgk/fcpWKdq7XPyR6LZjlerl93u+rNBwj93oGg9QND
+         YMnA==
+X-Gm-Message-State: AOJu0YwgqbweVQ09/fAYpiH4D4eRFXr4NAHokBP1HMlKtkHFqXVKL6qr
+        M8+dj98jsulb4nen4GZq7fe36w==
+X-Google-Smtp-Source: AGHT+IFeKBHpGu+FNgHJxwAzj0C8DCtc24wynefQJapGswFQmiRq7dfwK8DJKrHzW2eWDYH9DCRz4Q==
+X-Received: by 2002:a17:90a:1787:b0:26d:412d:9ce8 with SMTP id q7-20020a17090a178700b0026d412d9ce8mr10457879pja.0.1695112910342;
+        Tue, 19 Sep 2023 01:41:50 -0700 (PDT)
+Received: from [10.84.155.178] ([203.208.167.146])
+        by smtp.gmail.com with ESMTPSA id 12-20020a17090a1a0c00b0026b0b4ed7b1sm10909229pjk.15.2023.09.19.01.41.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 Sep 2023 01:41:49 -0700 (PDT)
+Message-ID: <91d5e4e4-89e5-818e-8239-b7558f6349c4@bytedance.com>
+Date:   Tue, 19 Sep 2023 16:41:41 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHk-=whACfXMFPP+dPdsJmuF0F6g+YHfUtOxiESM+wxvZ22-GA@mail.gmail.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.15.1
+Subject: Re: [PATCH] mm: shrinker: some cleanup
+Content-Language: en-US
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     akpm@linux-foundation.org, muchun.song@linux.dev,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, david@fromorbit.com, tkhai@ya.ru,
+        vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org,
+        brauner@kernel.org, paulmck@kernel.org, tytso@mit.edu,
+        steven.price@arm.com, cel@kernel.org, senozhatsky@chromium.org,
+        yujie.liu@intel.com, Muchun Song <songmuchun@bytedance.com>
+References: <20230911094444.68966-2-zhengqi.arch@bytedance.com>
+ <20230919024607.65463-1-zhengqi.arch@bytedance.com>
+ <2023091937-claw-denote-8945@gregkh>
+From:   Qi Zheng <zhengqi.arch@bytedance.com>
+In-Reply-To: <2023091937-claw-denote-8945@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -54,11 +82,29 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> Christian - I'm just going to assume that you'll sort this out and
-> I'll get a new pull request at some point. Holler if you think
-> something else is needed, ok?
+Hi Greg,
 
-I'll take care of it and will send you a new pull request once
-everything's sorted. Thanks for looking!
+On 2023/9/19 16:04, Greg KH wrote:
+> On Tue, Sep 19, 2023 at 10:46:07AM +0800, Qi Zheng wrote:
+>> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+>> Reviewed-by: Muchun Song <songmuchun@bytedance.com>
+>> ---
+>> Hi Andrew, this is a cleanup patch for [PATCH v6 01/45], there will be a
+>> small conflict with [PATCH v6 41/45].
+> 
+> I know I can't take patches without any changelog text, but maybe other
+> maintainers are more lax.
 
-Christian
+This patch will be folded into one patch with [PATCH v6 01/45] and will
+not enter the mainline as a separate patch, so I was too lazy to write
+the commit message.
+
+Anyway, I'll keep your words in mind next time.
+
+Thanks,
+Qi
+
+> 
+> thanks,
+> 
+> greg k-h
