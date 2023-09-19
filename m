@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BE5C27A58C0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Sep 2023 06:52:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DAB357A58CC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Sep 2023 06:52:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231631AbjISEwE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Sep 2023 00:52:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41948 "EHLO
+        id S231654AbjISEwQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Sep 2023 00:52:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42002 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231563AbjISEvt (ORCPT
+        with ESMTP id S231532AbjISEvt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Tue, 19 Sep 2023 00:51:49 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 753C8138;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B17BE10E;
         Mon, 18 Sep 2023 21:51:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=ls5QcLT4iw9HwtdteFtFIYm/lsPpx02xEwWSdEB7w9A=; b=v/s0YAYridL5AWm2wYWPZkGzsB
-        K9clHYJMlcJOaX+NmKb7HW9F2eDrR9hnEfFhe6YOq/YMCptTWYV3mUL+G2wUZGCpLuLp0qpTeuzgI
-        tfpqOXserkhg/kyyX467Dysruzd3eSm3vC0glEAeMMY65rYuin/KFRuS0Lsm8EzJZCmpYoky31QWW
-        yeFE0mR+6iFAOMdA38W8yDlIG1gMZUZEaZpturMo+/2erCJzbJ4Un6ZNsjv4H8NyPK4ef/kgPaHCh
-        mbJX2zDqicJe9xcLmKePQpOVdc2efB17nrycatRVsH+bWRoVmcgvJ+9lCUkxoi7Ky4qPa1vl5H4DH
-        AFTza2Gg==;
+        bh=a6i4bdchPc6HMgDBqig75VvpKzooiKHmiAIw8plYx/A=; b=vjMgplfMtIe6ZcEV1vMku1lxmK
+        PsFTYRHWDXBNjUSROOLSN4Bpb8lsqCFcFKMBvDoRXH7TnevNJDUi34+FPo02N+/uTCvYDeID1YJFu
+        X5X6Nm2kyS966fB/fY8ewnDwKUuifO0nAG70xJAsUBeOiSKo5OdkjxGmzxPKWhxVb3IbQE13DxT3d
+        NlRzmC5f8FnnVxgQE7nPNMtMDvBIUfodl70TNxqc7hPn8VvrRfgWlmx5eOebWxhAuxW2QJX0k4OPx
+        UwvgOVerjuBuo7KfmNdjhzbgNffAT61SUh1ITWJoWUN3F9EcfE4vA8SyYdU99IbkVskJIINWpIvZO
+        661BslgA==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qiSi4-00FFlu-M6; Tue, 19 Sep 2023 04:51:40 +0000
+        id 1qiSi4-00FFm2-QE; Tue, 19 Sep 2023 04:51:40 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
@@ -35,9 +35,9 @@ Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
         reiserfs-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
         Pankaj Raghav <p.raghav@samsung.com>
-Subject: [PATCH 19/26] ntfs3: Convert ntfs_zero_range() to use a folio
-Date:   Tue, 19 Sep 2023 05:51:28 +0100
-Message-Id: <20230919045135.3635437-20-willy@infradead.org>
+Subject: [PATCH 20/26] ocfs2: Convert ocfs2_map_page_blocks to use a folio
+Date:   Tue, 19 Sep 2023 05:51:29 +0100
+Message-Id: <20230919045135.3635437-21-willy@infradead.org>
 X-Mailer: git-send-email 2.37.1
 In-Reply-To: <20230919045135.3635437-1-willy@infradead.org>
 References: <20230919045135.3635437-1-willy@infradead.org>
@@ -52,84 +52,84 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use the folio API throughout, saving six hidden calls to compound_head().
+Convert the page argument to a folio and then use the folio APIs
+throughout.  Replaces three hidden calls to compound_head() with one
+explicit one.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/ntfs3/file.c | 31 ++++++++++++++++---------------
- 1 file changed, 16 insertions(+), 15 deletions(-)
+ fs/ocfs2/aops.c | 19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
 
-diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
-index 962f12ce6c0a..a003a69091a2 100644
---- a/fs/ntfs3/file.c
-+++ b/fs/ntfs3/file.c
-@@ -187,7 +187,7 @@ static int ntfs_zero_range(struct inode *inode, u64 vbo, u64 vbo_to)
- 	struct buffer_head *head, *bh;
- 	u32 bh_next, bh_off, to;
- 	sector_t iblock;
--	struct page *page;
-+	struct folio *folio;
+diff --git a/fs/ocfs2/aops.c b/fs/ocfs2/aops.c
+index 0fdba30740ab..95d1e70b4401 100644
+--- a/fs/ocfs2/aops.c
++++ b/fs/ocfs2/aops.c
+@@ -568,10 +568,10 @@ static void ocfs2_clear_page_regions(struct page *page,
+  * read-in the blocks at the tail of our file. Avoid reading them by
+  * testing i_size against each block offset.
+  */
+-static int ocfs2_should_read_blk(struct inode *inode, struct page *page,
++static int ocfs2_should_read_blk(struct inode *inode, struct folio *folio,
+ 				 unsigned int block_start)
+ {
+-	u64 offset = page_offset(page) + block_start;
++	u64 offset = folio_pos(folio) + block_start;
  
- 	for (; idx < idx_end; idx += 1, from = 0) {
- 		page_off = (loff_t)idx << PAGE_SHIFT;
-@@ -195,16 +195,17 @@ static int ntfs_zero_range(struct inode *inode, u64 vbo, u64 vbo_to)
- 						       PAGE_SIZE;
- 		iblock = page_off >> inode->i_blkbits;
+ 	if (ocfs2_sparse_alloc(OCFS2_SB(inode->i_sb)))
+ 		return 1;
+@@ -593,15 +593,16 @@ int ocfs2_map_page_blocks(struct page *page, u64 *p_blkno,
+ 			  struct inode *inode, unsigned int from,
+ 			  unsigned int to, int new)
+ {
++	struct folio *folio = page_folio(page);
+ 	int ret = 0;
+ 	struct buffer_head *head, *bh, *wait[2], **wait_bh = wait;
+ 	unsigned int block_end, block_start;
+ 	unsigned int bsize = i_blocksize(inode);
  
--		page = find_or_create_page(mapping, idx,
--					   mapping_gfp_constraint(mapping,
--								  ~__GFP_FS));
--		if (!page)
--			return -ENOMEM;
-+		folio = __filemap_get_folio(mapping, idx,
-+				FGP_LOCK | FGP_ACCESSED | FGP_CREAT,
-+				mapping_gfp_constraint(mapping, ~__GFP_FS));
-+		if (IS_ERR(folio))
-+			return PTR_ERR(folio);
+-	if (!page_has_buffers(page))
+-		create_empty_buffers(page, bsize, 0);
++	head = folio_buffers(folio);
++	if (!head)
++		head = folio_create_empty_buffers(folio, bsize, 0);
  
--		if (!page_has_buffers(page))
--			create_empty_buffers(page, blocksize, 0);
-+		head = folio_buffers(folio);
-+		if (!head)
-+			head = folio_create_empty_buffers(folio, blocksize, 0);
- 
--		bh = head = page_buffers(page);
-+		bh = head;
- 		bh_off = 0;
- 		do {
- 			bh_next = bh_off + blocksize;
-@@ -220,14 +221,14 @@ static int ntfs_zero_range(struct inode *inode, u64 vbo, u64 vbo_to)
- 			}
- 
- 			/* Ok, it's mapped. Make sure it's up-to-date. */
+-	head = page_buffers(page);
+ 	for (bh = head, block_start = 0; bh != head || !block_start;
+ 	     bh = bh->b_this_page, block_start += bsize) {
+ 		block_end = block_start + bsize;
+@@ -613,7 +614,7 @@ int ocfs2_map_page_blocks(struct page *page, u64 *p_blkno,
+ 		 * they may belong to unallocated clusters.
+ 		 */
+ 		if (block_start >= to || block_end <= from) {
 -			if (PageUptodate(page))
 +			if (folio_test_uptodate(folio))
  				set_buffer_uptodate(bh);
+ 			continue;
+ 		}
+@@ -630,11 +631,11 @@ int ocfs2_map_page_blocks(struct page *page, u64 *p_blkno,
+ 			clean_bdev_bh_alias(bh);
+ 		}
  
- 			if (!buffer_uptodate(bh)) {
- 				err = bh_read(bh, 0);
- 				if (err < 0) {
--					unlock_page(page);
--					put_page(page);
-+					folio_unlock(folio);
-+					folio_put(folio);
- 					goto out;
- 				}
- 			}
-@@ -237,10 +238,10 @@ static int ntfs_zero_range(struct inode *inode, u64 vbo, u64 vbo_to)
- 		} while (bh_off = bh_next, iblock += 1,
- 			 head != (bh = bh->b_this_page));
+-		if (PageUptodate(page)) {
++		if (folio_test_uptodate(folio)) {
+ 			set_buffer_uptodate(bh);
+ 		} else if (!buffer_uptodate(bh) && !buffer_delay(bh) &&
+ 			   !buffer_new(bh) &&
+-			   ocfs2_should_read_blk(inode, page, block_start) &&
++			   ocfs2_should_read_blk(inode, folio, block_start) &&
+ 			   (block_start < from || block_end > to)) {
+ 			bh_read_nowait(bh, 0);
+ 			*wait_bh++=bh;
+@@ -668,7 +669,7 @@ int ocfs2_map_page_blocks(struct page *page, u64 *p_blkno,
+ 		if (block_start >= to)
+ 			break;
  
--		zero_user_segment(page, from, to);
-+		folio_zero_segment(folio, from, to);
+-		zero_user(page, block_start, bh->b_size);
++		folio_zero_range(folio, block_start, bh->b_size);
+ 		set_buffer_uptodate(bh);
+ 		mark_buffer_dirty(bh);
  
--		unlock_page(page);
--		put_page(page);
-+		folio_unlock(folio);
-+		folio_put(folio);
- 		cond_resched();
- 	}
- out:
 -- 
 2.40.1
 
