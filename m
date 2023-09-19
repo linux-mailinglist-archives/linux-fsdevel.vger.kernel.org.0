@@ -2,231 +2,207 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 83B287A5BF4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Sep 2023 10:07:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E5A67A5C33
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Sep 2023 10:13:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230301AbjISIH1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Sep 2023 04:07:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55796 "EHLO
+        id S230010AbjISINR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Sep 2023 04:13:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229671AbjISIH0 (ORCPT
+        with ESMTP id S230263AbjISINQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Sep 2023 04:07:26 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50DE8FB
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Sep 2023 01:07:20 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id ffacd0b85a97d-3216ba1b01eso108921f8f.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Sep 2023 01:07:20 -0700 (PDT)
+        Tue, 19 Sep 2023 04:13:16 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E3B612C
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Sep 2023 01:13:06 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-52a4737a08fso6517498a12.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Sep 2023 01:13:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1695110838; x=1695715638; darn=vger.kernel.org;
+        d=ionos.com; s=google; t=1695111185; x=1695715985; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=KauzblMbtoKORsMsCBmvlq8Rtah+B4qEiz+EyZ86dq4=;
-        b=aej/MT05aBbrF4vhKurpilvHhgOxK4KLrHLpKyGXRu2Od0zs4a2PyIlWtaTCeWnRe7
-         JfAuqV3t/poDtcpGSQCQOvINRQRgYNrldOEhB2OIhJH5Y7vRXTNUpih5FIyEsVbe54oW
-         LP307ovbi6GBUh40mqueuP+AUwYMQMESaOIuaiz0y0Tu4M/fkUxm/8x8jEPacUvzofx9
-         cwJqDllm1wqZmSiTHvSDrHltxLSZZ/BC+8ejWgloK+UNMoZzl6U3inV+lQb1f8TL9cPH
-         pHOQ8wrefJDnjSo8QbEMiNX6wLfnFb6InIZaBbW1fVYLAMXwGwBWzvXix0G7VzzPM9HB
-         mPzA==
+        bh=VOwLl+YW9hr+Qj82oq/m7sO0HACM7+bf3qhUZRem7Dk=;
+        b=SZ14L/A0IlHoqPLHNBi/qRFW3QHhQzr59dX7wwTWib800Sh1HboWuiNA0iWv0jwbrf
+         wLWg+Vk4e8iHHc6+0LuQcWi+tHfgyJD9gk+J1/BMwDW9oZclOpdaQWYM6CpGFnhYNmSo
+         ILEdGPRsEcjkFCPThxheTgnIXdgjw1k+RVKhXu9QdJW5aBWzva2D2wfF9kaE+evwlJL9
+         D5qb0P/Crj0gEaRLp9L9w8JnYZcGC3vyrafwgAkLX70xuBKWO1EJNvC4SqUf8iqTILLa
+         6edhHjNPlQQb6bnJjEJUB3/004hWoI7/9rY8/fyOdNR8/efZP9mMPmZFqdtDc79obd0o
+         NLeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695110838; x=1695715638;
+        d=1e100.net; s=20230601; t=1695111185; x=1695715985;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=KauzblMbtoKORsMsCBmvlq8Rtah+B4qEiz+EyZ86dq4=;
-        b=lJh0a7TGFK5HHF04RpkRF8nGsd+uHKFYx7JkDb2OpU4R9lyEYUJRIkE/6phH+dR/8F
-         SDAyZ3CXu3N3RPOd8cwql5vBztgRqFQZFZk8REsKrx4Df+5T2CopSfMfiy7vLL1INz5Z
-         tgUOBz7M4AuAhnCQQDT7as0nydaEq67Mh/hBAFM4Nac4Lw45nc/++T3DY6r2w/tvx1mU
-         bAiGygwqoFACNAv8QKwh9mM9rfk0IGDPdIPYkjC91YNfDBcgTCDwj7/bRTgqLtpUNlma
-         VSIBqywE9xuITZQXxVB5lssB3fCylD8No6MXAHlEB2YZQFBhtjt7YaeF5dEy1TGvC3rM
-         62mg==
-X-Gm-Message-State: AOJu0Yz6XnseTvikLV98kFwwQHV7zRQ/zgxofUgy0GAgLMWojF0rxwsp
-        sXBe8aZzvNNkTRvWCDx6eeyApg==
-X-Google-Smtp-Source: AGHT+IE8qi+dsghdzDbTiwa+G9WSy2YkcwrfbpN6ruotbQOOULLulDuGSAZEVLhxEsDuDDNXa2JYcA==
-X-Received: by 2002:a5d:58e1:0:b0:319:79bb:980c with SMTP id f1-20020a5d58e1000000b0031979bb980cmr8726188wrd.64.1695110838407;
-        Tue, 19 Sep 2023 01:07:18 -0700 (PDT)
+        bh=VOwLl+YW9hr+Qj82oq/m7sO0HACM7+bf3qhUZRem7Dk=;
+        b=i8xOScTChhzq69yT3NmAHLZsNRnMjGoOOmcr3hkeNCAPeRNRRSoyTjiGydgLF4DRD8
+         ONzWlPBT7OxgBEB7NeTMFxI5MSQ3pD9A6EmSvdwBdfHd0qthNmbQ4xZXwHYtUmJCGz2O
+         MvyU8t2OIdj4J37rZ86p5O/RpLynDSN/UX+DU7AbNwSGj5VeWenO77OAGxmxuLq02mcN
+         17/JsLOKccESgdXQufEKFaqlagYp4Y/eAPnajhnJR4HBQVFa4LiPr3W8+698MzSFOcT8
+         +Tza5PTWEK5gp4XTXCUn7spGtU/QMyG4W5WjoCiYt4QvR6adbzke3ZNQXoIYOvulInl3
+         cZXw==
+X-Gm-Message-State: AOJu0YxIbWqY7Rf09iRf6JwMnMGUlejKXLTA8kSzZeOSzhE/cvUIMTRW
+        2S2+vLXN6TClcQPg5NvKu7a+GA1mgTiuNDEyvAlyMw==
+X-Google-Smtp-Source: AGHT+IGMjgPDlgwkrQCtpajvXpNWxBxJuYPIneQ3Uy7GncOB/3hmk2GrJEXPGx8v+epOTVA9GyHtPw==
+X-Received: by 2002:a05:6402:74d:b0:525:7234:52b7 with SMTP id p13-20020a056402074d00b00525723452b7mr9282824edy.19.1695111185366;
+        Tue, 19 Sep 2023 01:13:05 -0700 (PDT)
 Received: from heron.intern.cm-ag (p200300dc6f209c00529a4cfffe3dd983.dip0.t-ipconnect.de. [2003:dc:6f20:9c00:529a:4cff:fe3d:d983])
-        by smtp.gmail.com with ESMTPSA id z8-20020a056000110800b0031f3ad17b2csm14772096wrw.52.2023.09.19.01.07.17
+        by smtp.gmail.com with ESMTPSA id m20-20020a056402431400b00532b88fc984sm564466edc.24.2023.09.19.01.13.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Sep 2023 01:07:17 -0700 (PDT)
+        Tue, 19 Sep 2023 01:13:05 -0700 (PDT)
 From:   Max Kellermann <max.kellermann@ionos.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Hugh Dickins <hughd@google.com>
+        Christian Brauner <brauner@kernel.org>
 Cc:     Max Kellermann <max.kellermann@ionos.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: [PATCH] pipe_fs_i.h: add pipe_buf_init()
-Date:   Tue, 19 Sep 2023 10:07:06 +0200
-Message-Id: <20230919080707.1077426-1-max.kellermann@ionos.com>
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] fs/splice: don't block splice_direct_to_actor() after data was read
+Date:   Tue, 19 Sep 2023 10:12:58 +0200
+Message-Id: <20230919081259.1094971-1-max.kellermann@ionos.com>
 X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Adds one central function which shall be used to initialize a newly
-allocated struct pipe_buffer.  This shall make the pipe code more
-robust for the next time the pipe_buffer struct gets modified, to
-avoid leaving new members uninitialized.  Instead, adding new members
-should also add a new pipe_buf_init() parameter, which causes
-compile-time errors in call sites that were not adapted.
+If userspace calls sendfile() with a very large "count" parameter, the
+kernel can block for a very long time until 2 GiB (0x7ffff000 bytes)
+have been read from the hard disk and pushed into the socket buffer.
 
-This commit doesn't refactor fs/fuse/dev.c because this code looks
-obscure to me; it initializes pipe_buffers incrementally through a
-variety of functions, too complicated for me to understand.
+Usually, that is not a problem, because the socket write buffer gets
+filled quickly, and if the socket is non-blocking, the last
+direct_splice_actor() call will return -EAGAIN, causing
+splice_direct_to_actor() to break from the loop, and sendfile() will
+return a partial transfer.
+
+However, if the network happens to be faster than the hard disk, and
+the socket buffer keeps getting drained between two
+generic_file_read_iter() calls, the sendfile() system call can keep
+running for a long time, blocking for disk I/O over and over.
+
+That is undesirable, because it can block the calling process for too
+long.  I discovered a problem where nginx would block for so long that
+it would drop the HTTP connection because the kernel had just
+transferred 2 GiB in one call, and the HTTP socket was not writable
+(EPOLLOUT) for more than 60 seconds, resulting in a timeout:
+
+  sendfile(4, 12, [5518919528] => [5884939344], 1813448856) = 366019816 <3.033067>
+  sendfile(4, 12, [5884939344], 1447429040) = -1 EAGAIN (Resource temporarily unavailable) <0.000037>
+  epoll_wait(9, [{EPOLLOUT, {u32=2181955104, u64=140572166585888}}], 512, 60000) = 1 <0.003355>
+  gettimeofday({tv_sec=1667508799, tv_usec=201201}, NULL) = 0 <0.000024>
+  sendfile(4, 12, [5884939344] => [8032418896], 2147480496) = 2147479552 <10.727970>
+  writev(4, [], 0) = 0 <0.000439>
+  epoll_wait(9, [], 512, 60000) = 0 <60.060430>
+  gettimeofday({tv_sec=1667508869, tv_usec=991046}, NULL) = 0 <0.000078>
+  write(5, "10.40.5.23 - - [03/Nov/2022:21:5"..., 124) = 124 <0.001097>
+  close(12) = 0 <0.000063>
+  close(4)  = 0 <0.000091>
+
+In newer nginx versions (since 1.21.4), this problem was worked around
+by defaulting "sendfile_max_chunk" to 2 MiB:
+
+ https://github.com/nginx/nginx/commit/5636e7f7b4
+
+Instead of asking userspace to provide an artificial upper limit, I'd
+like the kernel to block for disk I/O at most once, and then pass back
+control to userspace.
+
+There is prior art for this kind of behavior in filemap_read():
+
+	/*
+	 * If we've already successfully copied some data, then we
+	 * can no longer safely return -EIOCBQUEUED. Hence mark
+	 * an async read NOWAIT at that point.
+	 */
+	if ((iocb->ki_flags & IOCB_WAITQ) && already_read)
+		iocb->ki_flags |= IOCB_NOWAIT;
+
+This modifies the caller-provided "struct kiocb", which has an effect
+on repeated filemap_read() calls.  This effect however vanishes
+because the "struct kiocb" is not persistent; splice_direct_to_actor()
+doesn't have one, and each generic_file_splice_read() call initializes
+a new one, losing the "IOCB_NOWAIT" flag that was injected by
+filemap_read().
+
+There was no way to make generic_file_splice_read() aware that
+IOCB_NOWAIT was desired because some data had already been transferred
+in a previous call:
+
+- checking whether the input file has O_NONBLOCK doesn't work because
+  this should be fixed even if the input file is not non-blocking
+
+- the SPLICE_F_NONBLOCK flag is not appropriate because it affects
+  only whether pipe operations are non-blocking, not whether
+  file/socket operations are non-blocking
+
+Since there are no other parameters, I suggest adding the
+SPLICE_F_NOWAIT flag, which is similar to SPLICE_F_NONBLOCK, but
+affects the "non-pipe" file descriptor passed to sendfile() or
+splice().  It translates to IOCB_NOWAIT for regular files.  For now, I
+have documented the flag to be kernel-internal with a high bit, like
+io_uring does with SPLICE_F_FD_IN_FIXED, but making this part of the
+system call ABI may be a good idea as well.
 
 Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
 ---
- fs/pipe.c                 |  9 +++------
- fs/splice.c               |  9 ++++-----
- include/linux/pipe_fs_i.h | 20 ++++++++++++++++++++
- kernel/watch_queue.c      |  8 +++-----
- mm/filemap.c              |  8 ++------
- mm/shmem.c                |  9 +++------
- 6 files changed, 35 insertions(+), 28 deletions(-)
+ fs/splice.c            | 14 ++++++++++++++
+ include/linux/splice.h |  6 ++++++
+ 2 files changed, 20 insertions(+)
 
-diff --git a/fs/pipe.c b/fs/pipe.c
-index 6c1a9b1db907..edba8c666c95 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -520,14 +520,11 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 
- 			/* Insert it into the buffer array */
- 			buf = &pipe->bufs[head & mask];
--			buf->page = page;
--			buf->ops = &anon_pipe_buf_ops;
--			buf->offset = 0;
--			buf->len = 0;
-+			pipe_buf_init(buf, page, 0, 0,
-+				      &anon_pipe_buf_ops,
-+				      PIPE_BUF_FLAG_CAN_MERGE);
- 			if (is_packetized(filp))
- 				buf->flags = PIPE_BUF_FLAG_PACKET;
--			else
--				buf->flags = PIPE_BUF_FLAG_CAN_MERGE;
- 			pipe->tmp_page = NULL;
- 
- 			copied = copy_page_from_iter(page, 0, PAGE_SIZE, from);
 diff --git a/fs/splice.c b/fs/splice.c
-index d983d375ff11..277bc4812164 100644
+index d983d375ff11..c192321d5e37 100644
 --- a/fs/splice.c
 +++ b/fs/splice.c
-@@ -215,12 +215,11 @@ ssize_t splice_to_pipe(struct pipe_inode_info *pipe,
- 	while (!pipe_full(head, tail, pipe->max_usage)) {
- 		struct pipe_buffer *buf = &pipe->bufs[head & mask];
+@@ -361,6 +361,8 @@ ssize_t copy_splice_read(struct file *in, loff_t *ppos,
+ 	iov_iter_bvec(&to, ITER_DEST, bv, npages, len);
+ 	init_sync_kiocb(&kiocb, in);
+ 	kiocb.ki_pos = *ppos;
++	if (flags & SPLICE_F_NOWAIT)
++		kiocb.ki_flags |= IOCB_NOWAIT;
+ 	ret = call_read_iter(in, &kiocb, &to);
  
--		buf->page = spd->pages[page_nr];
--		buf->offset = spd->partial[page_nr].offset;
--		buf->len = spd->partial[page_nr].len;
-+		pipe_buf_init(buf, spd->pages[page_nr],
-+			      spd->partial[page_nr].offset,
-+			      spd->partial[page_nr].len,
-+			      spd->ops, 0);
- 		buf->private = spd->partial[page_nr].private;
--		buf->ops = spd->ops;
--		buf->flags = 0;
+ 	if (ret > 0) {
+@@ -1070,6 +1072,18 @@ ssize_t splice_direct_to_actor(struct file *in, struct splice_desc *sd,
+ 		if (unlikely(ret <= 0))
+ 			goto read_failure;
  
- 		head++;
- 		pipe->head = head;
-diff --git a/include/linux/pipe_fs_i.h b/include/linux/pipe_fs_i.h
-index 608a9eb86bff..2ef2bb218641 100644
---- a/include/linux/pipe_fs_i.h
-+++ b/include/linux/pipe_fs_i.h
-@@ -176,6 +176,26 @@ static inline struct pipe_buffer *pipe_head_buf(const struct pipe_inode_info *pi
- 	return pipe_buf(pipe, pipe->head);
- }
++		/*
++		 * After at least one byte was read from the input
++		 * file, don't wait for blocking I/O in the following
++		 * loop iterations; instead of blocking for arbitrary
++		 * amounts of time in the kernel, let userspace decide
++		 * how to proceed.  This avoids excessive latency if
++		 * the output is being consumed faster than the input
++		 * file can fill it (e.g. sendfile() from a slow hard
++		 * disk to a fast network).
++		 */
++		flags |= SPLICE_F_NOWAIT;
++
+ 		read_len = ret;
+ 		sd->total_len = read_len;
  
-+/**
-+ * Initialize a struct pipe_buffer.
+diff --git a/include/linux/splice.h b/include/linux/splice.h
+index 6c461573434d..abdf94759138 100644
+--- a/include/linux/splice.h
++++ b/include/linux/splice.h
+@@ -23,6 +23,12 @@
+ 
+ #define SPLICE_F_ALL (SPLICE_F_MOVE|SPLICE_F_NONBLOCK|SPLICE_F_MORE|SPLICE_F_GIFT)
+ 
++/*
++ * Don't wait for I/O (internal flag for the splice_direct_to_actor()
++ * loop).
 + */
-+static inline void pipe_buf_init(struct pipe_buffer *buf,
-+				 struct page *page,
-+				 unsigned int offset, unsigned int len,
-+				 const struct pipe_buf_operations *ops,
-+				 unsigned int flags)
-+{
-+	buf->page = page;
-+	buf->offset = offset;
-+	buf->len = len;
-+	buf->ops = ops;
-+	buf->flags = flags;
++#define SPLICE_F_NOWAIT	(1U << 30)
 +
-+	/* not initializing the "private" member because it is only
-+	   used by pipe_buf_operations which inject it via struct
-+	   partial_page / struct splice_pipe_desc */
-+}
-+
- /**
-  * pipe_buf_get - get a reference to a pipe_buffer
-  * @pipe:	the pipe that the buffer belongs to
-diff --git a/kernel/watch_queue.c b/kernel/watch_queue.c
-index d0b6b390ee42..187ad7ca38b0 100644
---- a/kernel/watch_queue.c
-+++ b/kernel/watch_queue.c
-@@ -125,12 +125,10 @@ static bool post_one_notification(struct watch_queue *wqueue,
- 	kunmap_atomic(p);
- 
- 	buf = &pipe->bufs[head & mask];
--	buf->page = page;
-+	pipe_buf_init(buf, page, offset, len,
-+		      &watch_queue_pipe_buf_ops,
-+		      PIPE_BUF_FLAG_WHOLE);
- 	buf->private = (unsigned long)wqueue;
--	buf->ops = &watch_queue_pipe_buf_ops;
--	buf->offset = offset;
--	buf->len = len;
--	buf->flags = PIPE_BUF_FLAG_WHOLE;
- 	smp_store_release(&pipe->head, head + 1); /* vs pipe_read() */
- 
- 	if (!test_and_clear_bit(note, wqueue->notes_bitmap)) {
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 582f5317ff71..74532e0cb8d7 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2850,12 +2850,8 @@ size_t splice_folio_into_pipe(struct pipe_inode_info *pipe,
- 		struct pipe_buffer *buf = pipe_head_buf(pipe);
- 		size_t part = min_t(size_t, PAGE_SIZE - offset, size - spliced);
- 
--		*buf = (struct pipe_buffer) {
--			.ops	= &page_cache_pipe_buf_ops,
--			.page	= page,
--			.offset	= offset,
--			.len	= part,
--		};
-+		pipe_buf_init(buf, page, offset, part,
-+			      &page_cache_pipe_buf_ops, 0);
- 		folio_get(folio);
- 		pipe->head++;
- 		page++;
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 02e62fccc80d..75d39653b028 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -2901,12 +2901,9 @@ static size_t splice_zeropage_into_pipe(struct pipe_inode_info *pipe,
- 	if (!pipe_full(pipe->head, pipe->tail, pipe->max_usage)) {
- 		struct pipe_buffer *buf = pipe_head_buf(pipe);
- 
--		*buf = (struct pipe_buffer) {
--			.ops	= &zero_pipe_buf_ops,
--			.page	= ZERO_PAGE(0),
--			.offset	= offset,
--			.len	= size,
--		};
-+		pipe_buf_init(buf, ZERO_PAGE(0),
-+			      offset, size,
-+			      &zero_pipe_buf_ops, 0);
- 		pipe->head++;
- 	}
- 
+ /*
+  * Passed to the actors
+  */
 -- 
 2.39.2
 
