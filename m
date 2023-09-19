@@ -2,74 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CBD77A6434
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Sep 2023 15:01:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 714F77A6438
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Sep 2023 15:01:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232316AbjISNBn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Sep 2023 09:01:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41518 "EHLO
+        id S232328AbjISNBw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Sep 2023 09:01:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54664 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232099AbjISNBl (ORCPT
+        with ESMTP id S232207AbjISNBu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Sep 2023 09:01:41 -0400
-Received: from mail-ot1-x32c.google.com (mail-ot1-x32c.google.com [IPv6:2607:f8b0:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11C85F3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Sep 2023 06:01:35 -0700 (PDT)
-Received: by mail-ot1-x32c.google.com with SMTP id 46e09a7af769-6b9e478e122so3564639a34.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Sep 2023 06:01:35 -0700 (PDT)
+        Tue, 19 Sep 2023 09:01:50 -0400
+Received: from mail-vk1-xa2e.google.com (mail-vk1-xa2e.google.com [IPv6:2607:f8b0:4864:20::a2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6032FF3;
+        Tue, 19 Sep 2023 06:01:45 -0700 (PDT)
+Received: by mail-vk1-xa2e.google.com with SMTP id 71dfb90a1353d-493a661d7b6so4314512e0c.1;
+        Tue, 19 Sep 2023 06:01:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1695128494; x=1695733294; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1695128504; x=1695733304; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NzdGv4HvX/IAX/T1Yd2B1eAMs+DRTtHs4LlRUm81MdI=;
-        b=kLtGPznt98bsfqfkc6O5ldPGKPZ+nh1qz3RrzusbDGIpZoEiaIj4ShLnNXVAtxOJm2
-         lXbbRw5gl7mNlcgFU7zLJyfwbMJ9A2vraswfwtlA/u7UXw1HWq5hSgiKtmFur48Rl4rC
-         uFjJjt2L0715pks7L5Z0oruuImP5VsfzMHheCtz8kFtGtbLv6djWPzlgJu4mb2rKD0ZP
-         j7GOpKGaeG6xPErP4/2055INnxbESXHYgXNeH7DhKb7Ir0WOt1LUrgvm87I3agfQWtZj
-         6Z8j7CdfTLN+jn08aO2tW5HIJf2Vts9E+Bj8smjAo2Z8l+ssrOc1f/7pZ2/uLZgy+X/G
-         8uig==
+        bh=2w/wQ8V2E6A/A9h71MT3wsUIExlrWO06vblA9KgaYVM=;
+        b=JASdwCEnfgAb+ft+LfrupnfREkabkKh+Q1dnk9x5iaDpzTEIn8g+Rj7oPgJzQ8eVPI
+         xg2l6e4Dnao6cNTgfXTivP2PHl0y+4qrBJv9qR5mbmjQtcJDrwc96/mMH6f1p0AkxsIE
+         4JFcBiviHvGRtepNJ9KhkaYdVyKkMOSJrXz1UwwW8iyt7j9onZnZvHZ5iWdsxyXbyoVj
+         /uh6X5OdInRxukWgUCQpBur9qkyAt5HiCjPWKCMj+3O5jtpkPo3ifd8D/1TbTgxHxBGG
+         KXck9S9Pad0T3ogphS3h3xF4elhUJvTuJbqeHhddq4oQ9xWhklKXWV4Be+6uR1UqGkDw
+         bPxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695128494; x=1695733294;
+        d=1e100.net; s=20230601; t=1695128504; x=1695733304;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NzdGv4HvX/IAX/T1Yd2B1eAMs+DRTtHs4LlRUm81MdI=;
-        b=MNxsS+Lz7R+g86pMv9khi7zZwqcobm+Wwc/grR9fET2kLxabUeKf2XoUcoyIUwqVtD
-         NZUMxJEPWNIYcLP9wAtUVFgqB0RGAZPvsSsMbu0EsGrSa1OUrLxNxVkwzAw+sjYkB7/s
-         Tcnot+ZajLHGhFiqSy4HI46RksvLrDVRY7yAOiE3sXlyj5CYescrH4cF99mNN+ZftrBy
-         bEyv0/ymnESaCd4+QSCAAQtfegmRZ19kPH2jgkXva1879j+pGYxCJY619q9xJ7LSs/mk
-         C/ob+S26TfNvQ1tAq57YfGpaH+krdDQE8TmRtBkpVjaKYsHAW7hMkdUPE7fa1u3dm2I6
-         CRCA==
-X-Gm-Message-State: AOJu0YwlspKnxNNOXP2kJR0v2Kb79ztfXg1+MmgaSzOwUBlZuPG6CRQq
-        j30yZnuX3s/fSTEA6qywOX6/+GDPcpp+Yj8RUnk=
-X-Google-Smtp-Source: AGHT+IGs+bG9Zy4LLT38snYI8cgjYKvj2dnoED83QZzBH09MiYazXQYaRNzajDlOO8ZnKJ8jGfbrE3lX4ws13WMoNS4=
-X-Received: by 2002:a05:6358:1427:b0:143:623f:7dfc with SMTP id
- m39-20020a056358142700b00143623f7dfcmr447483rwi.26.1695128494124; Tue, 19 Sep
- 2023 06:01:34 -0700 (PDT)
+        bh=2w/wQ8V2E6A/A9h71MT3wsUIExlrWO06vblA9KgaYVM=;
+        b=MtRlPiicBBBmoQDbCs43hreygZhYpXFPx4eCvFUZ3VljODGSd+tnRu70ntEOaV0nwG
+         3CBkocKZPLBHwLacMSD3j2pQckjz0Dsbxyi9BMk/vbDJbhez3Tbjo9lZtn4I6HwlZlpK
+         ZE9fpNS8RIaS+GA+mfY4Ddri7kjnOznY5SgH2IxYzT+1DU1aC3tbfr0bgmP1RdOKCrKr
+         qrAe2v/j04XmStVyoaFwNd7nPQm6qQ+Tks9dtxJ7T71RQLclIgkq9RNzvDYJhbQV7WD3
+         usyRRDxBZvbaGPpHGD2Pj4wPZjyMbe/kGyxIGIM1xuNR7GPdjtUldYb+zzv+qcRFz8Go
+         Lrwg==
+X-Gm-Message-State: AOJu0YwKjqlqe8fOkMq4e0CAVpFmOXAeQKRVO5ZI2nPAPRh7E0cX/ZgV
+        9BVLcVyzuSHADv0pPYZj99KoxS1oV+K6EFdBiwk=
+X-Google-Smtp-Source: AGHT+IGt+cH+gF//llikjpiYbxgkUAmOFr3hKUulbwUJC348hXuZy75vYMRDDJ/wPMR9xuIT1pMOSxpCoePjUW6q3X0=
+X-Received: by 2002:a05:6122:3657:b0:496:2d54:e6f0 with SMTP id
+ dv23-20020a056122365700b004962d54e6f0mr921811vkb.6.1695128503713; Tue, 19 Sep
+ 2023 06:01:43 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230918123217.932179-1-max.kellermann@ionos.com>
- <20230918123217.932179-3-max.kellermann@ionos.com> <20230918124050.hzbgpci42illkcec@quack3>
- <CAKPOu+-Nx_cvBZNox63R1ah76wQp6eH4RLah0O5mDaLo9h60ww@mail.gmail.com>
- <20230918142319.kvzc3lcpn5n2ty6g@quack3> <CAOQ4uxic7C5skHv4d+Gek_uokRL8sgUegTusiGkwAY4dSSADYQ@mail.gmail.com>
- <CAOQ4uxjzf6NeoCaTrx_X0yZ0nMEWcQC_gq3M-j3jS+CuUTskSA@mail.gmail.com>
- <CAOQ4uxjkL+QEM+rkSOLahLebwXV66TwyxQhRj9xksnim5F-HFw@mail.gmail.com>
- <CAKPOu+_s8O=kfS1xq-cYGDcOD48oqukbsSA3tJT60FxC2eNWDw@mail.gmail.com>
- <20230919100112.nlb2t4nm46wmugc2@quack3> <CAKPOu+-apWRekyqRyYfsFkdx13uocCPKMzYJqmTsVEc6a=9uuA@mail.gmail.com>
- <CAOQ4uxgG6ync6dSBJiGW98docJGnajALiV+9tuwGiRt8NE8F+w@mail.gmail.com>
- <CAKPOu+9ds-dbq2-idehU5XR2s3Xz2NL-=fB+skKoN_zCym_OtA@mail.gmail.com>
- <CAOQ4uxgvh6TG3ZsjzzdD+VhMUss3NLTO8Hk7YWDZs=yZagc+oQ@mail.gmail.com> <CAKPOu+_y-rCsKXJ1A7YGqEXKeWyji1tF6_Nj2WWtrB36MTmpiQ@mail.gmail.com>
-In-Reply-To: <CAKPOu+_y-rCsKXJ1A7YGqEXKeWyji1tF6_Nj2WWtrB36MTmpiQ@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 19 Sep 2023 16:01:22 +0300
-Message-ID: <CAOQ4uxhtfyt8v3LwYLOY9FwA46RYrwcZpZv7J8znn5zW-1N5sA@mail.gmail.com>
-Subject: Re: inotify maintenance status
-To:     Max Kellermann <max.kellermann@ionos.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Ivan Babrou <ivan@cloudflare.com>,
-        Matthew Bobrowski <repnop@google.com>
+References: <20230919045135.3635437-1-willy@infradead.org> <20230919045135.3635437-12-willy@infradead.org>
+In-Reply-To: <20230919045135.3635437-12-willy@infradead.org>
+From:   Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Date:   Tue, 19 Sep 2023 22:01:27 +0900
+Message-ID: <CAKFNMonjfsWBageg6vfWok9vvNEzjhXiqCCb+=cDFuwnTER95A@mail.gmail.com>
+Subject: Re: [PATCH 11/26] nilfs2: Convert nilfs_copy_page() to nilfs_copy_folio()
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, gfs2@lists.linux.dev,
+        linux-nilfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
+        ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
+        reiserfs-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        Pankaj Raghav <p.raghav@samsung.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -82,45 +73,137 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 19, 2023 at 3:51=E2=80=AFPM Max Kellermann <max.kellermann@iono=
-s.com> wrote:
->
-> On Tue, Sep 19, 2023 at 2:21=E2=80=AFPM Amir Goldstein <amir73il@gmail.co=
-m> wrote:
-> > Regarding inotify improvements, as I wrote, they will each be judged
-> > technically, but the trend is towards phasing it out.
->
-> Then please reconsider merging inotify_add_watch_at(). It is a rather
-> trivial patch set, only exposing a user_path_at() parameter to use
-> space, like many other new system calls did with other old-style
-> system calls. Only the last patch, the one which adds the new system
-> call ot all arch-specific tables, is an ugly one, but that's not a
-> property of the new feature but a general property of how system calls
-> are wired in Linux.
->
-> My proposed system call adds real value to all those who are currently
-> using inotify, allowing them to use inotify with a modern and safe and
-> race-free syscall interface, eliminating the unsafe fchdir() dance to
-> emulate it in userspace.
->
-> The inotify interface is widely used and will be for a long time to
-> come, while it is hard to find code which already uses fanotify.
-> GitHub code search finds 438 occurences of fanotify_init() calls, 4.6k
-> inotify_init1() calls and 6.9k inotify_init() calls. Given the added
-> complexity of fanotify and the uselessness of most of fanotify's
-> feature for most software (except for dfd support), it is extremely
-> unlikely that a noticable fraction of those thousands of projects will
-> ever migrate to fanotify. Even if inotify is considered a legacy API,
-> it should be allowed to modernize it; and adding dfd support to system
-> calls is really important.
->
+Hi,
 
-Both Jan and I already gave an answer to this specific patch.
-The answer was no.
+On Tue, Sep 19, 2023 at 1:56=E2=80=AFPM Matthew Wilcox (Oracle) wrote:
+>
+> Both callers already have a folio, so pass it in and use it directly.
+> Removes a lot of hidden calls to compound_head().
+>
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>  fs/nilfs2/page.c | 50 +++++++++++++++++++++++++-----------------------
+>  1 file changed, 26 insertions(+), 24 deletions(-)
+>
+> diff --git a/fs/nilfs2/page.c b/fs/nilfs2/page.c
+> index 1c075bd906c9..696215d899bf 100644
+> --- a/fs/nilfs2/page.c
+> +++ b/fs/nilfs2/page.c
+> @@ -184,30 +184,32 @@ void nilfs_page_bug(struct page *page)
+>  }
+>
+>  /**
+> - * nilfs_copy_page -- copy the page with buffers
+> - * @dst: destination page
+> - * @src: source page
+> - * @copy_dirty: flag whether to copy dirty states on the page's buffer h=
+eads.
+> + * nilfs_copy_folio -- copy the folio with buffers
+> + * @dst: destination folio
+> + * @src: source folio
+> + * @copy_dirty: flag whether to copy dirty states on the folio's buffer =
+heads.
+>   *
+> - * This function is for both data pages and btnode pages.  The dirty fla=
+g
+> - * should be treated by caller.  The page must not be under i/o.
+> - * Both src and dst page must be locked
+> + * This function is for both data folios and btnode folios.  The dirty f=
+lag
+> + * should be treated by caller.  The folio must not be under i/o.
+> + * Both src and dst folio must be locked
+>   */
+> -static void nilfs_copy_page(struct page *dst, struct page *src, int copy=
+_dirty)
+> +static void nilfs_copy_folio(struct folio *dst, struct folio *src,
+> +               bool copy_dirty)
+>  {
+>         struct buffer_head *dbh, *dbufs, *sbh;
+>         unsigned long mask =3D NILFS_BUFFER_INHERENT_BITS;
+>
+> -       BUG_ON(PageWriteback(dst));
+> +       BUG_ON(folio_test_writeback(dst));
+>
+> -       sbh =3D page_buffers(src);
+> -       if (!page_has_buffers(dst))
+> -               create_empty_buffers(dst, sbh->b_size, 0);
+> +       sbh =3D folio_buffers(src);
+> +       dbh =3D folio_buffers(dst);
+> +       if (!dbh)
+> +               dbh =3D folio_create_empty_buffers(dst, sbh->b_size, 0);
+>
+>         if (copy_dirty)
+>                 mask |=3D BIT(BH_Dirty);
+>
+> -       dbh =3D dbufs =3D page_buffers(dst);
+> +       dbufs =3D dbh;
+>         do {
+>                 lock_buffer(sbh);
+>                 lock_buffer(dbh);
+> @@ -218,16 +220,16 @@ static void nilfs_copy_page(struct page *dst, struc=
+t page *src, int copy_dirty)
+>                 dbh =3D dbh->b_this_page;
+>         } while (dbh !=3D dbufs);
+>
+> -       copy_highpage(dst, src);
+> +       folio_copy(dst, src);
+>
+> -       if (PageUptodate(src) && !PageUptodate(dst))
+> -               SetPageUptodate(dst);
+> -       else if (!PageUptodate(src) && PageUptodate(dst))
+> -               ClearPageUptodate(dst);
+> -       if (PageMappedToDisk(src) && !PageMappedToDisk(dst))
+> -               SetPageMappedToDisk(dst);
+> -       else if (!PageMappedToDisk(src) && PageMappedToDisk(dst))
+> -               ClearPageMappedToDisk(dst);
+> +       if (folio_test_uptodate(src) && !folio_test_uptodate(dst))
+> +               folio_mark_uptodate(dst);
+> +       else if (!folio_test_uptodate(src) && folio_test_uptodate(dst))
+> +               folio_clear_uptodate(dst);
+> +       if (folio_test_mappedtodisk(src) && !folio_test_mappedtodisk(dst)=
+)
+> +               folio_set_mappedtodisk(dst);
+> +       else if (!folio_test_mappedtodisk(src) && folio_test_mappedtodisk=
+(dst))
+> +               folio_clear_mappedtodisk(dst);
+>
+>         do {
+>                 unlock_buffer(sbh);
+> @@ -269,7 +271,7 @@ int nilfs_copy_dirty_pages(struct address_space *dmap=
+,
+>                         NILFS_PAGE_BUG(&folio->page,
+>                                        "found empty page in dat page cach=
+e");
+>
+> -               nilfs_copy_page(&dfolio->page, &folio->page, 1);
+> +               nilfs_copy_folio(dfolio, folio, true);
+>                 filemap_dirty_folio(folio_mapping(dfolio), dfolio);
+>
+>                 folio_unlock(dfolio);
+> @@ -314,7 +316,7 @@ void nilfs_copy_back_pages(struct address_space *dmap=
+,
+>                 if (!IS_ERR(dfolio)) {
+>                         /* overwrite existing folio in the destination ca=
+che */
+>                         WARN_ON(folio_test_dirty(dfolio));
+> -                       nilfs_copy_page(&dfolio->page, &folio->page, 0);
+> +                       nilfs_copy_folio(dfolio, folio, false);
+>                         folio_unlock(dfolio);
+>                         folio_put(dfolio);
+>                         /* Do we not need to remove folio from smap here?=
+ */
+> --
+> 2.40.1
 
-We do not add new system calls for doing something that is already
-possible with existing system calls to make the life of a programmer
-easier - this has never been a valid argument for adding a new syscall.
+When I tried to test the patchset against 6.6-rc2, I encountered the
+following error during the build:
+
+ ERROR: modpost: "folio_copy" [fs/nilfs2/nilfs2.ko] undefined!
+
+It looks like "folio_copy" is not exported to modules.
+
+I'll correct this manually for now and proceed with the review and
+testing, but could you please fix this build issue in some way ?
 
 Thanks,
-Amir.
+Ryusuke Konishi
