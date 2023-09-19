@@ -2,142 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EB2CD7A63B8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Sep 2023 14:50:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45CAC7A63C6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Sep 2023 14:51:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232156AbjISMul (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Sep 2023 08:50:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35682 "EHLO
+        id S232095AbjISMvx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Sep 2023 08:51:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232095AbjISMuk (ORCPT
+        with ESMTP id S232120AbjISMvw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Sep 2023 08:50:40 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A4DD99;
-        Tue, 19 Sep 2023 05:50:34 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03154C433C7;
-        Tue, 19 Sep 2023 12:50:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695127834;
-        bh=Z6QQpDkL2SswUlO6H3+msbaSsQLtoo9xMCHAPMmiOuM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Ks30c9KGn0ulpQMYsz6/c9HIcUl6Ku6iehBT/YRiO20dEq7nnfaLrmNs3sG62slvx
-         edyHvvN7gUAcXgRuj7bigO2LnBpS5rjRY8l5dMzqW0yChPGFuiTfrckvcCaOMKksWH
-         rUBTiC70HXweArRfyQc8A6nwyMVigx/9cjbLPnHzNuXU/3Ne4AbE8V13y0AL5deBky
-         g1LB1i1lsP7bttZPmOH/UYLPuS4yLWHj6A8l5kg+a4QY+xHAvZzFjn0fNz36vPHhTI
-         plCwFaOUBT4/J8FGKGmAj8BZHCf8VyGRYkiKBXUHCKTMDdS/GLoAmRnvqAV4jweQR2
-         olouQz4SiPZVA==
-Date:   Tue, 19 Sep 2023 14:50:28 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Andreas Dilger <adilger@dilger.ca>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
-        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
-        Ian Kent <raven@themaw.net>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Amir Goldstein <amir73il@gmail.com>
-Subject: Re: [RFC PATCH 2/3] add statmnt(2) syscall
-Message-ID: <20230919-gewusel-hingabe-714c000cef8f@brauner>
-References: <20230913152238.905247-1-mszeredi@redhat.com>
- <20230913152238.905247-3-mszeredi@redhat.com>
- <20230914-salzig-manifest-f6c3adb1b7b4@brauner>
- <CAJfpegs-sDk0++FjSZ_RuW5m-z3BTBQdu4T9QPtWwmSZ1_4Yvw@mail.gmail.com>
- <20230914-lockmittel-verknallen-d1a18d76ba44@brauner>
- <CAJfpegt-VPZP3ou-TMQFs1Xupj_iWA5ttC2UUFKh3E43EyCOQQ@mail.gmail.com>
- <20230918-grafik-zutreffen-995b321017ae@brauner>
- <59DA5D4F-8242-4BD4-AE1C-FC5A6464E377@dilger.ca>
+        Tue, 19 Sep 2023 08:51:52 -0400
+Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC3B4B8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Sep 2023 05:51:45 -0700 (PDT)
+Received: by mail-lj1-x22f.google.com with SMTP id 38308e7fff4ca-2bceb02fd2bso89870121fa.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Sep 2023 05:51:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1695127904; x=1695732704; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g5qkKlX4pMnY6imW6cG8/fQnG0P2wsOWlbfG+4VEhfI=;
+        b=fdlJEHygFodpa6dc4QT4zs1f8UvtTbZVjVnNVb2JAotA/fzYOdKK0TnutMqa/Fui/N
+         eOAULLX27IcomDC+RNLf+Vb7FkyzlmJd4erNigEacfa3joWwB/qXYkXrkoQMe8mv8WjR
+         mx/bVXi3pPeecVqDi02JqVhBRP9T13qnVxLlKWENrl7AbiLOCXDLk/fCGa04690/96Vd
+         45AIlZI1MSGeIQ3oVxJvJ07gbSft2yjZ8MJhmxp4iq1+MQqZfzAdiUFOVa4ZkN/sMpk9
+         A3SjKMVzbT1/0WB/Zz3h1NcsK2vYxO5s1XahxtG75W9O0NJNNIDYQ639Z8Bap60JpA7y
+         ovug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695127904; x=1695732704;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=g5qkKlX4pMnY6imW6cG8/fQnG0P2wsOWlbfG+4VEhfI=;
+        b=OfjcMEpbf0En8P3UvDoWXQOdDk+lVDS0d7rPawC8m1bf4hTlw8oTxcleuAxrW4f1cc
+         KbO/6O35QStYO88QIOr7mDP1WHN8Xm/AtE6jvlAljUWOQQluIlfFbZV85Py7qzN2Hwzj
+         aOBa0WIdsAZOMC7q2nBiygvFSkp/zDFPo/fwbCQhfxy7m3LRS5ezy0D9EZlhhPaltRh1
+         U4/Z/orfEYJl351IoAO2NHXhR3iAApC8JoEE3vB9T/gGaodsOOBbU0U8zdq4ChO7PbAA
+         8nXQP3lectvaTpH0rUHRErAk9dn7ook4Ccp55FXaV3Y8B6A5F2WUEz/octhRTLGdmDaw
+         f48A==
+X-Gm-Message-State: AOJu0Ywkmm8gCKr5kFyJLF67pXoHiL997om6QxV1+/JPCsXVPQ++LlZt
+        38pfcqxMnaT5/CGXFQzd8I094RBwLaVL6wU+0bvhZ2Jj3I9qJXLwXmUFFg==
+X-Google-Smtp-Source: AGHT+IFllTWqMOkdnE3QzGUVmqtjAdtHerz87UXcKnkDCbKIvs7IXw8Vq+ccJrvjltNnZmA0n+rSbngemFuVzEFAlGk=
+X-Received: by 2002:a2e:950c:0:b0:2bf:ab17:d48b with SMTP id
+ f12-20020a2e950c000000b002bfab17d48bmr9739583ljh.34.1695127904086; Tue, 19
+ Sep 2023 05:51:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <59DA5D4F-8242-4BD4-AE1C-FC5A6464E377@dilger.ca>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20230918123217.932179-1-max.kellermann@ionos.com>
+ <20230918123217.932179-3-max.kellermann@ionos.com> <20230918124050.hzbgpci42illkcec@quack3>
+ <CAKPOu+-Nx_cvBZNox63R1ah76wQp6eH4RLah0O5mDaLo9h60ww@mail.gmail.com>
+ <20230918142319.kvzc3lcpn5n2ty6g@quack3> <CAOQ4uxic7C5skHv4d+Gek_uokRL8sgUegTusiGkwAY4dSSADYQ@mail.gmail.com>
+ <CAOQ4uxjzf6NeoCaTrx_X0yZ0nMEWcQC_gq3M-j3jS+CuUTskSA@mail.gmail.com>
+ <CAOQ4uxjkL+QEM+rkSOLahLebwXV66TwyxQhRj9xksnim5F-HFw@mail.gmail.com>
+ <CAKPOu+_s8O=kfS1xq-cYGDcOD48oqukbsSA3tJT60FxC2eNWDw@mail.gmail.com>
+ <20230919100112.nlb2t4nm46wmugc2@quack3> <CAKPOu+-apWRekyqRyYfsFkdx13uocCPKMzYJqmTsVEc6a=9uuA@mail.gmail.com>
+ <CAOQ4uxgG6ync6dSBJiGW98docJGnajALiV+9tuwGiRt8NE8F+w@mail.gmail.com>
+ <CAKPOu+9ds-dbq2-idehU5XR2s3Xz2NL-=fB+skKoN_zCym_OtA@mail.gmail.com> <CAOQ4uxgvh6TG3ZsjzzdD+VhMUss3NLTO8Hk7YWDZs=yZagc+oQ@mail.gmail.com>
+In-Reply-To: <CAOQ4uxgvh6TG3ZsjzzdD+VhMUss3NLTO8Hk7YWDZs=yZagc+oQ@mail.gmail.com>
+From:   Max Kellermann <max.kellermann@ionos.com>
+Date:   Tue, 19 Sep 2023 14:51:32 +0200
+Message-ID: <CAKPOu+_y-rCsKXJ1A7YGqEXKeWyji1tF6_Nj2WWtrB36MTmpiQ@mail.gmail.com>
+Subject: Re: inotify maintenance status
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Ivan Babrou <ivan@cloudflare.com>,
+        Matthew Bobrowski <repnop@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 18, 2023 at 02:58:00PM -0600, Andreas Dilger wrote:
-> On Sep 18, 2023, at 7:51 AM, Christian Brauner <brauner@kernel.org> wrote:
-> > 
-> > 
-> >> The type and subtype are naturally limited to sane sizes, those are
-> >> not an issue.
-> > 
-> > What's the limit for fstype actually? I don't think there is one.
-> > There's one by chance but not by design afaict?
-> > 
-> > Maybe crazy idea:
-> > That magic number thing that we do in include/uapi/linux/magic.h
-> > is there a good reason for this or why don't we just add a proper,
-> > simple enum:
-> > 
-> > enum {
-> > 	FS_TYPE_ADFS        1
-> > 	FS_TYPE_AFFS        2
-> > 	FS_TYPE_AFS         3
-> > 	FS_TYPE_AUTOFS      4
-> > 	FS_TYPE_EXT2	    5
-> > 	FS_TYPE_EXT3	    6
-> > 	FS_TYPE_EXT4	    7
-> > 	.
-> > 	.
-> > 	.
-> > 	FS_TYPE_MAX
-> > }
-> > 
-> > that we start returning from statmount(). We can still return both the
-> > old and the new fstype? It always felt a bit odd that fs developers to
-> > just select a magic number.
-> 
-> Yes, there is a very good reason that there isn't an enum for filesystem
+On Tue, Sep 19, 2023 at 2:21=E2=80=AFPM Amir Goldstein <amir73il@gmail.com>=
+ wrote:
+> Regarding inotify improvements, as I wrote, they will each be judged
+> technically, but the trend is towards phasing it out.
 
-I think this isn't all that relevant to the patchset so I'm not going to
-spend a lot of time on this discussion but I'm curious.
+Then please reconsider merging inotify_add_watch_at(). It is a rather
+trivial patch set, only exposing a user_path_at() parameter to use
+space, like many other new system calls did with other old-style
+system calls. Only the last patch, the one which adds the new system
+call ot all arch-specific tables, is an ugly one, but that's not a
+property of the new feature but a general property of how system calls
+are wired in Linux.
 
-> type, which is because this API would be broken if it encounters any
-> filesystem that is not listed there.  Often a single filesystem driver in
-> the kernel will have multiple different magic numbers to handle versions,
-> endianness, etc.
+My proposed system call adds real value to all those who are currently
+using inotify, allowing them to use inotify with a modern and safe and
+race-free syscall interface, eliminating the unsafe fchdir() dance to
+emulate it in userspace.
 
-Why isn't this a problem for magically chosen numbers?
+The inotify interface is widely used and will be for a long time to
+come, while it is hard to find code which already uses fanotify.
+GitHub code search finds 438 occurences of fanotify_init() calls, 4.6k
+inotify_init1() calls and 6.9k inotify_init() calls. Given the added
+complexity of fanotify and the uselessness of most of fanotify's
+feature for most software (except for dfd support), it is extremely
+unlikely that a noticable fraction of those thousands of projects will
+ever migrate to fanotify. Even if inotify is considered a legacy API,
+it should be allowed to modernize it; and adding dfd support to system
+calls is really important.
 
-> 
-> Having a 32-bit magic number allows decentralized development with low
-> chance of collision, and using new filesystems without having to patch
-> every kernel for this new API to work with that filesystem.  Also,
-
-We don't care about out of tree filesystems.
-
-> filesystems come and go (though more slowly) over time, and keeping the
-
-Even if we did ever remove a filesystem we'd obviously leave the enum in
-place. Same thig we do for deprecated flags, same thing we'd do for
-magic numbers.
-
-> full list of every filesystem ever developed in the kernel enum would be
-> a headache.
-
-I really don't follow this argument.
-
-> 
-> The field in the statmnt() call would need to be at a fixed-size 32-bit
-> value in any case, so having it return the existing magic will "just work"
-> because userspace tools already know and understand these magic values,
-> while introducing an in-kernel enum would be broken for multiple reasons.
-
-We already do expose the magic number in statmount() but it can't
-differentiate between ext2, ext3, and ext4 for example which is why I
-asked.
-
-Afaict, none of the points you mention are show stoppers and none of
-them are unique to an enum.
+Max
