@@ -2,95 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 740D17A5B62
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Sep 2023 09:40:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CA947A5BD9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Sep 2023 10:02:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231800AbjISHlC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Sep 2023 03:41:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43842 "EHLO
+        id S230300AbjISICl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Sep 2023 04:02:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231810AbjISHlA (ORCPT
+        with ESMTP id S230208AbjISICi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Sep 2023 03:41:00 -0400
-Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 320F7122
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Sep 2023 00:40:54 -0700 (PDT)
-Received: by mail-lj1-x22d.google.com with SMTP id 38308e7fff4ca-2bff776fe0bso40684731fa.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Sep 2023 00:40:54 -0700 (PDT)
+        Tue, 19 Sep 2023 04:02:38 -0400
+Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94E1711F
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Sep 2023 01:02:30 -0700 (PDT)
+Received: by mail-lj1-x229.google.com with SMTP id 38308e7fff4ca-2bffc55af02so34814461fa.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Sep 2023 01:02:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1695109252; x=1695714052; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zIZLmfcwEqQKatRYsYmTe5x1vkObbB5a/MorlWyMkXw=;
-        b=EEa1kexzwJPZWMVHWnEwZf74yHGR0v9QBwYtSi5U865cQSU+6OgAL6BtnRf/bofOfL
-         6EfdogIh6yE3XSL0QmqPKvmBo6M64Nd47TNr8vajvxlmOU7MTP3lmKqSzmE+B0vTjFTE
-         sYx8uss4Rls6KTTFti9zCLwEXbynKgUAMI8kwyBdpnfhA+bU6uFQ7Q2/7NggQsxaHGWy
-         hJ9g09gAxQ0CHWAUlYKVldwTAZj2UNACQnfnbDlBe6pmVl3f55x0fOLJfe3JHIpYRbDG
-         iL3jcFcF/QrhY7iukXFZKvEWArmCYaP+c65gfxgkWWpWotpa54qsWOlODv6AHxxBCPOx
-         FioA==
+        d=szeredi.hu; s=google; t=1695110549; x=1695715349; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=nWwOBXcgP9QHb+ZwLC4z/fad6HDujTXM9X3AXgFefao=;
+        b=F3pgzF80ybykApF9N2exJ0huxmKEj/JwYyG9wZoIC+wUdSJA/bRF6YpfJc/mg/szkA
+         OsImu0uqYiBUmx53o4mPonCr5nLtlyInVMv7EjTlXZBV/OW+jgLtaIHKQWItQCF9ulRs
+         M+qXKlMomeIukmh0UgualD1oUS+FSCc1iTE1A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695109252; x=1695714052;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1695110549; x=1695715349;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=zIZLmfcwEqQKatRYsYmTe5x1vkObbB5a/MorlWyMkXw=;
-        b=sQ/Z0oZdushwuVHTvvd31n8t50z1zB8riMAov1+bzNnKLVAoQoJhUt+wSxGnvTNMpm
-         fAWMcQ9Ldu/FpJWGowrrIbAZ/rDlQk8PAF1aw3R+crtlmRe8+o5CWE1UauHmPj/bFOJu
-         TP+2tebObiZx9PWlG/jv46PjJ2jDvABWwksyFJ5+FgfIcjtmVZ7jYSzoHQQgsxYw40Yk
-         MkmJylZfvhA4q974/JzhkgvP56QLC/uO3naj2NpltA2KrRWXZ00Y+1BemPWbkHTX/nuf
-         crVJ0Iw4ViMZOPVHBo557vV6x5Fu0x28508Ev9yy9vkEYhnutzwTF7mowRgUGzpkghPu
-         SLtw==
-X-Gm-Message-State: AOJu0Ywlno9jTDwqdSTmjACZKKwUYSu1EgmkjqBp26HLNe4oX6RSe45l
-        h2SarpTExK02iGRp2sY9bgWWlg==
-X-Google-Smtp-Source: AGHT+IFESMgia33Unj4qgPgTAu0YapNLJtmXQLw5hb/i0fdDpFD8z/N9ycFzJljSRyh/xRbHoJilbQ==
-X-Received: by 2002:a2e:151a:0:b0:2c0:2e1b:5627 with SMTP id s26-20020a2e151a000000b002c02e1b5627mr458469ljd.35.1695109252437;
-        Tue, 19 Sep 2023 00:40:52 -0700 (PDT)
-Received: from heron.intern.cm-ag (p200300dc6f209c00529a4cfffe3dd983.dip0.t-ipconnect.de. [2003:dc:6f20:9c00:529a:4cff:fe3d:d983])
-        by smtp.gmail.com with ESMTPSA id fy20-20020a170906b7d400b009ada9f7217asm7441851ejb.88.2023.09.19.00.40.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Sep 2023 00:40:52 -0700 (PDT)
-From:   Max Kellermann <max.kellermann@ionos.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>
-Cc:     Max Kellermann <max.kellermann@ionos.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] fs/pipe: remove duplicate "offset" initializer
-Date:   Tue, 19 Sep 2023 09:40:44 +0200
-Message-Id: <20230919074045.1066796-1-max.kellermann@ionos.com>
-X-Mailer: git-send-email 2.39.2
+        bh=nWwOBXcgP9QHb+ZwLC4z/fad6HDujTXM9X3AXgFefao=;
+        b=Kz0zftV6GeWBCzG3D10klh3h0a1wPU/VMGSEcyMTCVUAcSR7ERlV+39uL6JY7o9hjx
+         ZeNGUnLKl35EbaoeEK8izdhvAVRTdGmYUW26Evxg/HAvZtwXgaVHyKBiATHlUkIid/U5
+         2/UkreJnpq+1BZQ6gv8Fr92blri1xawZhlZWzd68jVL8ux3Bi0Lfxt2LaEKtXMKa0Hnx
+         SbHOohqLfM1LVpga2t94IVyuNFWZnkUAOWpdmabwcZNol1xReqLOWbhOCXKVpkCLSLhS
+         J8UPhdwbewqu7Y1Jrzztv5dUdH2zBJ6SsGT9xFn4PP8rmpVWu22sPQPNmRp7phOo6Gw9
+         mZyg==
+X-Gm-Message-State: AOJu0YynBKTMdTA03YUAgNUf2izMkcZE09wUJqwWRRGzCTWkBcmiqo8U
+        iq+cRL/lPHcLkdInevtLWNw6wm6aiI8hxOgXYV+2cg==
+X-Google-Smtp-Source: AGHT+IF39NIDgeU/oOTNvV5zRchTf9jdNdxeIj1xURpUADWsrOYnhsqNCpFqVeqIom7TB0F8lXRC41YrHzXHEQ7vZTE=
+X-Received: by 2002:a2e:9f0a:0:b0:2bc:be3c:9080 with SMTP id
+ u10-20020a2e9f0a000000b002bcbe3c9080mr9595518ljk.27.1695110548691; Tue, 19
+ Sep 2023 01:02:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20230914-salzig-manifest-f6c3adb1b7b4@brauner>
+ <CAJfpegs-sDk0++FjSZ_RuW5m-z3BTBQdu4T9QPtWwmSZ1_4Yvw@mail.gmail.com>
+ <20230914-lockmittel-verknallen-d1a18d76ba44@brauner> <CAJfpegt-VPZP3ou-TMQFs1Xupj_iWA5ttC2UUFKh3E43EyCOQQ@mail.gmail.com>
+ <20230918-grafik-zutreffen-995b321017ae@brauner> <CAOssrKfS79=+F0h=XPzJX2E6taxAPmEJEYPi4VBNQjgRR5ujqw@mail.gmail.com>
+ <20230918-hierbei-erhielten-ba5ef74a5b52@brauner> <CAJfpegtaGXoZkMWLnk3PcibAvp7kv-4Yobo=UJj943L6v3ctJQ@mail.gmail.com>
+ <20230918-stuhl-spannend-9904d4addc93@brauner> <CAJfpegvxNhty2xZW+4MM9Gepotii3CD1p0fyvLDQB82hCYzfLQ@mail.gmail.com>
+ <20230918-bestialisch-brutkasten-1fb34abdc33c@brauner> <CAJfpegvTiK=RM+0y07h-2vT6Zk2GCu6F98c=_CNx8B1ytFtO-g@mail.gmail.com>
+ <20230919003800.93141-1-mattlloydhouse@gmail.com>
+In-Reply-To: <20230919003800.93141-1-mattlloydhouse@gmail.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Tue, 19 Sep 2023 10:02:17 +0200
+Message-ID: <CAJfpegs6g8JQDtaHsECA_12ss_8KXOHVRH9gwwPf5WamzxXOWQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/3] add statmnt(2) syscall
+To:     Matthew House <mattlloydhouse@gmail.com>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
+        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
+        Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This code duplication was introduced by commit a194dfe6e6f6 ("pipe:
-Rearrange sequence in pipe_write() to preallocate slot"), but since
-the pipe's mutex is locked, nobody else can modify the value
-meanwhile.
+On Tue, 19 Sept 2023 at 02:38, Matthew House <mattlloydhouse@gmail.com> wrote:
 
-Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
----
- fs/pipe.c | 1 -
- 1 file changed, 1 deletion(-)
+> One natural solution is to set either of the two lengths to the expected
+> size if the provided buffer are too small. That way, the caller learns both
+> which of the buffers is too small, and how large they need to be. Replacing
+> a provided size with an expected size in this way already has precedent in
+> existing syscalls:
 
-diff --git a/fs/pipe.c b/fs/pipe.c
-index 6c1a9b1db907..139190165a1c 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -537,7 +537,6 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 				break;
- 			}
- 			ret += copied;
--			buf->offset = 0;
- 			buf->len = copied;
- 
- 			if (!iov_iter_count(from))
--- 
-2.39.2
+This is where the thread started.  Knowing the size of the buffer is
+no good, since the needed buffer could change between calls.
 
+We are trying to create a simple interface, no?  My proposal would
+need a helper like this:
+
+struct statmnt *statmount(uint64_t mnt_id, uint64_t mask, unsigned int flags)
+{
+        size_t bufsize = 1 << 15;
+        void *buf;
+        int ret;
+
+        for (;;) {
+                buf = malloc(bufsize <<= 1);
+                if (!buf)
+                        return NULL;
+                ret = syscall(__NR_statmnt, mnt_id, mask, buf, bufsize, flags);
+                if (!ret)
+                        return buf;
+                free(buf);
+                if (errno != EOVERFLOW)
+                        return NULL;
+        }
+}
+
+Christian's would be (ignoring .fs_type for now):
+
+int statmount(uint64_t mnt_id, uint64_t mask, struct statmnt *st,
+unsigned int flags)
+{
+        int ret;
+
+        st->mnt_root_size = 1 << 15;
+        st->mountpoint_size = 1 << 15;
+        for (;;) {
+                st->mnt_root = malloc(st->mnt_root_size <<= 1);
+                st->mountpoint = malloc(st->mountpoint <<= 1);
+                if (!st->mnt_root || !st->mountpoint) {
+                        free(st->mnt_root);
+                        free(st->mountpoint);
+                        return -1;
+                }
+                ret = syscall(__NR_statmnt, mnt_id, mask, st,
+sizeof(*st), flags);
+                if (!ret || errno != EOVERFLOW)
+                        return ret;
+                free(st->mnt_root);
+                free(st->mountpoint);
+        }
+}
+
+It's not hugely more complex, but more complex nonetheless.
+
+Also having the helper allocate buffers inside the struct could easily
+result in leaks since it's not obvious what the caller needs to free,
+while in the first example it is.
+
+Note that I'm not against having the prototype on the kernel interface
+take a typed pointer.  If strings are not needed, both interfaces
+would work in exactly the same way.
+
+Thanks,
+Miklos
