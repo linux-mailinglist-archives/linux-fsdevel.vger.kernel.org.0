@@ -2,124 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E1EAD7A5876
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Sep 2023 06:42:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E0B37A589C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Sep 2023 06:51:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231422AbjISEmf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Sep 2023 00:42:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38690 "EHLO
+        id S231573AbjISEvu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Sep 2023 00:51:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231417AbjISEmf (ORCPT
+        with ESMTP id S231545AbjISEvr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Sep 2023 00:42:35 -0400
-Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D471010E;
-        Mon, 18 Sep 2023 21:42:28 -0700 (PDT)
-Received: by mail-pf1-x434.google.com with SMTP id d2e1a72fcca58-68fb79ef55eso4758230b3a.0;
-        Mon, 18 Sep 2023 21:42:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1695098548; x=1695703348; darn=vger.kernel.org;
-        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Df+9eLjTUVzgEqVA6Q+LlyRbAvg6Ho3M0KjpMi0md/g=;
-        b=NSEMnItVyBe3z+3o0RBqPSy8jsfpoR9FxHiGHSDdPI2p9hmoGk0s93NwWuVis5KT1A
-         IhKFqJ3h+/8ez+fBoU3VD29my32+scpIiSkhmDuObQ3SZaDex37hypt70EVbLkC6f2Im
-         A6PwFy5dKbYmhY7HWLRIKBZlF/SJO7v//7P0AMs80tWmcwSQehsp4O3d6YPMkrRQdcRO
-         4gCMiEndJVW2x6dyFsw+K1dJmRVaiBMGSn6Vg2hb9WLS5LhZLV4CyF1f+mP7JAo9kzPz
-         KSR3Mmzvq7vOmA9qsnrR7Daxf28fxBxJCy0KTcdavPej9jK80OdFLSSiGS2+7mb8D3SG
-         Lwng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695098548; x=1695703348;
-        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Df+9eLjTUVzgEqVA6Q+LlyRbAvg6Ho3M0KjpMi0md/g=;
-        b=gIPRrmiEBtpPExG976aKJx299fotLRoXfOqy+6oPmHz0JDvEzu1ixC4aE6EoqT8SjR
-         5EWbBOQDUx+Af+J78gIG+qe61Yshkp+t30Ov5vMJmweFU4WBqBUQ6vJxYna3P5t1+6QN
-         x68LRM9+0yh6CwgQOj2Av81ld2jseebE10TU7MG0UCoVfP4NNN7w1bqxJxdh+ixIdEn0
-         1pswLlT3TPKuqhM7Wtwlmn1wu5FhBrs5c6LlLYwlTH+FhaZ1MFIw0xWaLcWahPSUlSsY
-         7VNKsqb3U+OuWL9yNXPgTpT/9f/dZwTQEV698WtFPHS0kaecb8taLS+nrYAV/cqwaqbV
-         TkUA==
-X-Gm-Message-State: AOJu0YzbyCLUDGZ2F6jbJq+ug3QufTXdNezwV1y4pTYg4MeWbOh358xO
-        pbo6j/8XwhxhYyiw95tZpDv/IXGWz58=
-X-Google-Smtp-Source: AGHT+IGB37sIyrpD0Udu1Nod//aFhAGcrTcwFgKX8tvPBguV7ClfrjejpnsVpuAAgszoQbjhrabkKg==
-X-Received: by 2002:a05:6a00:2283:b0:68a:5773:6319 with SMTP id f3-20020a056a00228300b0068a57736319mr13214107pfe.11.1695098548286;
-        Mon, 18 Sep 2023 21:42:28 -0700 (PDT)
-Received: from dw-tp ([49.207.223.191])
-        by smtp.gmail.com with ESMTPSA id fe20-20020a056a002f1400b00687dde8ae5dsm7802303pfb.154.2023.09.18.21.42.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Sep 2023 21:42:27 -0700 (PDT)
-Date:   Tue, 19 Sep 2023 10:12:19 +0530
-Message-Id: <87sf7a7p04.fsf@doe.com>
-From:   Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To:     "Darrick J. Wong" <djwong@kernel.org>, djwong@kernel.org
-Cc:     willy@infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, willy@infradead.org
-Subject: Re: [PATCH 1/2] iomap: don't skip reading in !uptodate folios when unsharing a range
-In-Reply-To: <169507872536.772278.18183365318216726644.stgit@frogsfrogsfrogs>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        Tue, 19 Sep 2023 00:51:47 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCAC811F;
+        Mon, 18 Sep 2023 21:51:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=awyfojKMhU8AzVa7YcEsBxlpTOVclzCuTyUo6TQYiIY=; b=Cw5LiD0vn95PKN2IeCDFvMkRoz
+        nIpR3aa2vwbEJhByXcLQUey3cSZoM0mbiK6C+/GUbOFLQ+E3zUMIvi2DG5x6byLlj0amRrNqfwcCn
+        LtMopE0Vn0VS9LVDPKOgfrGBkn29dQ9iOGK93n8Ir7Tt5XPeJl2z3mVUSITyJQ6jfKGH/LDc1qOOC
+        wDjdKBiaRCirlxe/g8scAyXXtJosfVIDgPKczCCQ5grKrjYrChyEcCzmVJhyAF33sTewGexLVVGwO
+        NbHItyH31kAC+tgaegnX0uitTTong1uJkS11wM2b20JpvHaggRs1KVl1ADobtfqliNwoOibJInErH
+        gpxaWVJQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1qiSi2-00FFkF-10; Tue, 19 Sep 2023 04:51:38 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, gfs2@lists.linux.dev,
+        linux-nilfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
+        ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
+        reiserfs-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        Pankaj Raghav <p.raghav@samsung.com>
+Subject: [PATCH 00/26] Finish the create_empty_buffers() transition
+Date:   Tue, 19 Sep 2023 05:51:09 +0100
+Message-Id: <20230919045135.3635437-1-willy@infradead.org>
+X-Mailer: git-send-email 2.37.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-"Darrick J. Wong" <djwong@kernel.org> writes:
+Pankaj recently added folio_create_empty_buffers() as the folio
+equivalent to create_empty_buffers().  This patch set finishes
+the conversion by first converting all remaining filesystems
+to call folio_create_empty_buffers(), then renaming it back
+to create_empty_buffers().  I took the opportunity to make a few
+simplifications like making folio_create_empty_buffers() return the head
+buffer and extracting get_nth_bh() from nilfs2.
 
-> From: Darrick J. Wong <djwong@kernel.org>
->
-> Prior to commit a01b8f225248e, we would always read in the contents of a
-> !uptodate folio prior to writing userspace data into the folio,
-> allocated a folio state object, etc.  Ritesh introduced an optimization
-> that skips all of that if the write would cover the entire folio.
->
-> Unfortunately, the optimization misses the unshare case, where we always
-> have to read in the folio contents since there isn't a data buffer
-> supplied by userspace.  This can result in stale kernel memory exposure
-> if userspace issues a FALLOC_FL_UNSHARE_RANGE call on part of a shared
-> file that isn't already cached.
->
-> This was caught by observing fstests regressions in the "unshare around"
-> mechanism that is used for unaligned writes to a reflinked realtime
-> volume when the realtime extent size is larger than 1FSB, though I think
-> it applies to any shared file.
->
-> Cc: ritesh.list@gmail.com, willy@infradead.org
-> Fixes: a01b8f225248e ("iomap: Allocate ifs in ->write_begin() early")
-> Signed-off-by: Darrick J. Wong <djwong@kernel.org>
-> ---
->  fs/iomap/buffered-io.c |    6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+A few of the patches in this series aren't directly related to
+create_empty_buffers(), but I saw them while I was working on this and
+thought they'd be easy enough to add to this series.  Compile-tested only,
+other than ext4.
 
-Thanks for catching this case. Fix for this looks good to me. 
-I have verified on my setup. w/o this patch it indeed can cause
-corruption in the unshare case, since we don't read the disk contents
-and we might end up writing garbage from the page cache.
+Matthew Wilcox (Oracle) (26):
+  buffer: Make folio_create_empty_buffers() return a buffer_head
+  mpage: Convert map_buffer_to_folio() to folio_create_empty_buffers()
+  ext4: Convert to folio_create_empty_buffers
+  buffer: Add get_nth_bh()
+  gfs2: Convert inode unstuffing to use a folio
+  gfs2: Convert gfs2_getbuf() to folios
+  gfs2; Convert gfs2_getjdatabuf to use a folio
+  gfs2: Convert gfs2_write_buf_to_page() to use a folio
+  nilfs2: Convert nilfs_mdt_freeze_buffer to use a folio
+  nilfs2: Convert nilfs_grab_buffer() to use a folio
+  nilfs2: Convert nilfs_copy_page() to nilfs_copy_folio()
+  nilfs2: Convert nilfs_mdt_forget_block() to use a folio
+  nilfs2: Convert nilfs_mdt_get_frozen_buffer to use a folio
+  nilfs2: Remove nilfs_page_get_nth_block
+  nilfs2: Convert nilfs_lookup_dirty_data_buffers to use
+    folio_create_empty_buffers
+  ntfs: Convert ntfs_read_block() to use a folio
+  ntfs: Convert ntfs_writepage to use a folio
+  ntfs: Convert ntfs_prepare_pages_for_non_resident_write() to folios
+  ntfs3: Convert ntfs_zero_range() to use a folio
+  ocfs2: Convert ocfs2_map_page_blocks to use a folio
+  reiserfs: Convert writepage to use a folio
+  ufs: Add ufs_get_locked_folio and ufs_put_locked_folio
+  ufs: Use ufs_get_locked_folio() in ufs_alloc_lastblock()
+  ufs; Convert ufs_change_blocknr() to use folios
+  ufs: Remove ufs_get_locked_page()
+  buffer: Remove folio_create_empty_buffers()
 
-Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+ fs/buffer.c                 |  29 ++--
+ fs/ext4/inode.c             |  14 +-
+ fs/ext4/move_extent.c       |  11 +-
+ fs/gfs2/aops.c              |   2 +-
+ fs/gfs2/bmap.c              |  48 ++++---
+ fs/gfs2/meta_io.c           |  61 ++++-----
+ fs/gfs2/quota.c             |  37 +++---
+ fs/mpage.c                  |   3 +-
+ fs/nilfs2/mdt.c             |  66 +++++-----
+ fs/nilfs2/page.c            |  76 +++++------
+ fs/nilfs2/page.h            |  11 --
+ fs/nilfs2/segment.c         |   7 +-
+ fs/ntfs/aops.c              | 255 +++++++++++++++++-------------------
+ fs/ntfs/file.c              |  89 ++++++-------
+ fs/ntfs3/file.c             |  31 ++---
+ fs/ocfs2/aops.c             |  19 +--
+ fs/reiserfs/inode.c         |  80 +++++------
+ fs/ufs/balloc.c             |  20 ++-
+ fs/ufs/inode.c              |  25 ++--
+ fs/ufs/util.c               |  34 +++--
+ fs/ufs/util.h               |  10 +-
+ include/linux/buffer_head.h |  28 +++-
+ 22 files changed, 458 insertions(+), 498 deletions(-)
 
+-- 
+2.40.1
 
->
->
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index ae8673ce08b1..0350830fc989 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -640,11 +640,13 @@ static int __iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
->  	size_t poff, plen;
->  
->  	/*
-> -	 * If the write completely overlaps the current folio, then
-> +	 * If the write or zeroing completely overlaps the current folio, then
->  	 * entire folio will be dirtied so there is no need for
->  	 * per-block state tracking structures to be attached to this folio.
-> +	 * For the unshare case, we must read in the ondisk contents because we
-> +	 * are not changing pagecache contents.
->  	 */
-> -	if (pos <= folio_pos(folio) &&
-> +	if (!(iter->flags & IOMAP_UNSHARE) && pos <= folio_pos(folio) &&
->  	    pos + len >= folio_pos(folio) + folio_size(folio))
->  		return 0;
->  
