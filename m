@@ -2,186 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D6A57A5D37
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Sep 2023 11:01:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61D557A5D67
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Sep 2023 11:07:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230477AbjISJBy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Sep 2023 05:01:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59074 "EHLO
+        id S231178AbjISJHx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Sep 2023 05:07:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44608 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229714AbjISJBx (ORCPT
+        with ESMTP id S230477AbjISJHv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Sep 2023 05:01:53 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDF64102;
-        Tue, 19 Sep 2023 02:01:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1695114107; x=1726650107;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=3lbpMHnCnN4tgBMsnlxIOe9ua6EYGffh/u6hevJylxY=;
-  b=QgfyaQEKqkUA78LLt4ACvbxztG+rDwxAXhUlnqRGeP8yg31t5m9a88pJ
-   zYYdyxJuRlC2zkRcqVdJjnSDuiERgzNDAcx3w+/8TPMBYCkhlSaAFi3qk
-   Cy/pP6qj2mlVWorpDwsUjalNl+pIk4FL5zN+bvyQtBDrpJT6GfMd3uPVd
-   QJRRQB+RrpfNG6qZmZ6mMz4VmIHv68939bZUcJ04YeTkBkP29ZRYvEXR+
-   49L59+6dJDUGuQ9dlZXHySMcPjHud85ybqNFVUe3D7CHyeEzhlBw1VQYd
-   SV15XhdDtiwFtBZ2y4wXCxrKG069ehgmb51lSwWtr3x1PMSQPYFdkB9/S
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10837"; a="377201128"
-X-IronPort-AV: E=Sophos;i="6.02,159,1688454000"; 
-   d="scan'208";a="377201128"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2023 02:01:46 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10837"; a="695833326"
-X-IronPort-AV: E=Sophos;i="6.02,159,1688454000"; 
-   d="scan'208";a="695833326"
-Received: from binbinwu-mobl.ccr.corp.intel.com (HELO [10.238.8.84]) ([10.238.8.84])
-  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2023 02:01:36 -0700
-Message-ID: <e397d30c-c6af-e68f-d18e-b4e3739c5389@linux.intel.com>
-Date:   Tue, 19 Sep 2023 17:01:31 +0800
+        Tue, 19 Sep 2023 05:07:51 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA848EC;
+        Tue, 19 Sep 2023 02:07:45 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50CF5C433C8;
+        Tue, 19 Sep 2023 09:07:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695114465;
+        bh=B/Kioz3f57QDGw85DtiGtnUTyVRNwLeq2/Ex7+Ek1iw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jpjM+7H48CgdX5cq5vTfg1JsM1JSl8Hss8/ZKcySHZIHl2GAIoKjqO0BvawtpgLn2
+         Vj4qIXupZpioMYlg80kzFkhZQiFsmuKzuM+yIetGbJ+P97b4qFWt6ou7ddUBwuVKCb
+         5XiwKS1JkF0RTOgGzfAoSyOLhWkTtbguwzivGItlnlgBB0blE2s4Bh0X0roGzSabGJ
+         IvALVx1LdHT1Fo+HeyidZbBDgIZSJ6+2lIRLq3m96q1z6H9xP4ahhy8Jl4Q0YO3gWT
+         EqS6KOsOUPKbovR10LFE58pqjprrLEu1vRx+E6TXobKtMWgGUe8jbUH/6dQhZqzSBS
+         noE/I2NXjNWdQ==
+Date:   Tue, 19 Sep 2023 11:07:39 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Matthew House <mattlloydhouse@gmail.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
+        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
+        Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>
+Subject: Re: [RFC PATCH 2/3] add statmnt(2) syscall
+Message-ID: <20230919-abfedern-halfen-c12583ff93ac@brauner>
+References: <20230918-grafik-zutreffen-995b321017ae@brauner>
+ <CAOssrKfS79=+F0h=XPzJX2E6taxAPmEJEYPi4VBNQjgRR5ujqw@mail.gmail.com>
+ <20230918-hierbei-erhielten-ba5ef74a5b52@brauner>
+ <CAJfpegtaGXoZkMWLnk3PcibAvp7kv-4Yobo=UJj943L6v3ctJQ@mail.gmail.com>
+ <20230918-stuhl-spannend-9904d4addc93@brauner>
+ <CAJfpegvxNhty2xZW+4MM9Gepotii3CD1p0fyvLDQB82hCYzfLQ@mail.gmail.com>
+ <20230918-bestialisch-brutkasten-1fb34abdc33c@brauner>
+ <CAJfpegvTiK=RM+0y07h-2vT6Zk2GCu6F98c=_CNx8B1ytFtO-g@mail.gmail.com>
+ <20230919003800.93141-1-mattlloydhouse@gmail.com>
+ <CAJfpegs6g8JQDtaHsECA_12ss_8KXOHVRH9gwwPf5WamzxXOWQ@mail.gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [RFC PATCH v12 14/33] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
- guest-specific backing memory
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.linux.dev, linux-mips@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org,
-        linux-riscv@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Oliver Upton <oliver.upton@linux.dev>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Anup Patel <anup@brainfault.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Chao Peng <chao.p.peng@linux.intel.com>,
-        Fuad Tabba <tabba@google.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Anish Moorthy <amoorthy@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        Isaku Yamahata <isaku.yamahata@intel.com>,
-        Xu Yilun <yilun.xu@intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Ackerley Tng <ackerleytng@google.com>,
-        Maciej Szmigiero <mail@maciej.szmigiero.name>,
-        David Hildenbrand <david@redhat.com>,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>,
-        Wang <wei.w.wang@intel.com>,
-        Liam Merwick <liam.merwick@oracle.com>,
-        Isaku Yamahata <isaku.yamahata@gmail.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-References: <20230914015531.1419405-1-seanjc@google.com>
- <20230914015531.1419405-15-seanjc@google.com>
-From:   Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20230914015531.1419405-15-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-5.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAJfpegs6g8JQDtaHsECA_12ss_8KXOHVRH9gwwPf5WamzxXOWQ@mail.gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Tue, Sep 19, 2023 at 10:02:17AM +0200, Miklos Szeredi wrote:
+> On Tue, 19 Sept 2023 at 02:38, Matthew House <mattlloydhouse@gmail.com> wrote:
+> 
+> > One natural solution is to set either of the two lengths to the expected
+> > size if the provided buffer are too small. That way, the caller learns both
+> > which of the buffers is too small, and how large they need to be. Replacing
+> > a provided size with an expected size in this way already has precedent in
+> > existing syscalls:
+> 
+> This is where the thread started.  Knowing the size of the buffer is
+> no good, since the needed buffer could change between calls.
 
+The same problem would exist for the single buffer. Realistically, users
+will most often simply use a fixed size PATH_MAX buffer that will cover
+most cases and fallback to allocating a larger buffer in case things go
+awry.
 
-On 9/14/2023 9:55 AM, Sean Christopherson wrote:
-[...]
-> +
-> +static void kvm_gmem_invalidate_begin(struct kvm_gmem *gmem, pgoff_t start,
-> +				      pgoff_t end)
-> +{
-> +	struct kvm_memory_slot *slot;
-> +	struct kvm *kvm = gmem->kvm;
-> +	unsigned long index;
-> +	bool flush = false;
-> +
-> +	KVM_MMU_LOCK(kvm);
-> +
-> +	kvm_mmu_invalidate_begin(kvm);
-> +
-> +	xa_for_each_range(&gmem->bindings, index, slot, start, end - 1) {
-> +		pgoff_t pgoff = slot->gmem.pgoff;
-> +
-> +		struct kvm_gfn_range gfn_range = {
-> +			.start = slot->base_gfn + max(pgoff, start) - pgoff,
-> +			.end = slot->base_gfn + min(pgoff + slot->npages, end) - pgoff,
-> +			.slot = slot,
-> +			.may_block = true,
-> +		};
-> +
-> +		flush |= kvm_mmu_unmap_gfn_range(kvm, &gfn_range);
-> +	}
-> +
-> +	if (flush)
-> +		kvm_flush_remote_tlbs(kvm);
-> +
-> +	KVM_MMU_UNLOCK(kvm);
-> +}
-> +
-> +static void kvm_gmem_invalidate_end(struct kvm_gmem *gmem, pgoff_t start,
-> +				    pgoff_t end)
-> +{
-> +	struct kvm *kvm = gmem->kvm;
-> +
-> +	KVM_MMU_LOCK(kvm);
-> +	if (xa_find(&gmem->bindings, &start, end - 1, XA_PRESENT))
-> +		kvm_mmu_invalidate_end(kvm);
-kvm_mmu_invalidate_begin() is called unconditionally in 
-kvm_gmem_invalidate_begin(),
-but kvm_mmu_invalidate_end() is not here.
-This makes the kvm_gmem_invalidate_{begin, end}() calls asymmetric.
+I don't think we need to make this atomic either. Providing a hint for
+the required buffer size in case this fails is good enough and should be
+a rather rare occurence and is exactly how other variable-sized buffers
+are handled.
 
+> Also having the helper allocate buffers inside the struct could easily
+> result in leaks since it's not obvious what the caller needs to free,
 
-> +	KVM_MMU_UNLOCK(kvm);
-> +}
-> +
-> +static long kvm_gmem_punch_hole(struct inode *inode, loff_t offset, loff_t len)
-> +{
-> +	struct list_head *gmem_list = &inode->i_mapping->private_list;
-> +	pgoff_t start = offset >> PAGE_SHIFT;
-> +	pgoff_t end = (offset + len) >> PAGE_SHIFT;
-> +	struct kvm_gmem *gmem;
-> +
-> +	/*
-> +	 * Bindings must stable across invalidation to ensure the start+end
-> +	 * are balanced.
-> +	 */
-> +	filemap_invalidate_lock(inode->i_mapping);
-> +
-> +	list_for_each_entry(gmem, gmem_list, entry) {
-> +		kvm_gmem_invalidate_begin(gmem, start, end);
-> +		kvm_gmem_invalidate_end(gmem, start, end);
-> +	}
-Why to loop for each gmem in gmem_list here?
+I don't think we need to be overly concerned with how userspace
+implements the wrapper here. Leaks can occur in both scenarios and
+low-level userspace can use automatic cleanup macros (we even support it
+in the kernel since v6.5) to harden against this.
 
-IIUIC, offset is the offset according to the inode, it is only 
-meaningful to the
-inode passed in, i.e, it is only meaningful to the gmem binding with the 
-inode,
-not others.
-
-
-> +
-> +	filemap_invalidate_unlock(inode->i_mapping);
-> +
-> +	return 0;
-> +}
-> +
-[...]
+Really, the main things I care about are 64 bit alignment of the whole
+struct, typed __u64 pointers with __u32 size for mnt_root and mnt_point
+and that we please spell out "mount" and not use "mnt": so statmount
+because the new mount api uses "mount" (move_mount(), mount_setattr(),
+fsmount(), MOUNT_ATTR_*) almost everywhere.
