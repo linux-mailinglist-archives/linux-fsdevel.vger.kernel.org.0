@@ -2,162 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B2E5C7A6758
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Sep 2023 16:55:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B884A7A6760
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Sep 2023 16:56:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232913AbjISOzW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Sep 2023 10:55:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36658 "EHLO
+        id S232972AbjISO4U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Sep 2023 10:56:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232889AbjISOzV (ORCPT
+        with ESMTP id S232939AbjISO4T (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Sep 2023 10:55:21 -0400
-Received: from mail-ua1-x92c.google.com (mail-ua1-x92c.google.com [IPv6:2607:f8b0:4864:20::92c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9241EC
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Sep 2023 07:55:14 -0700 (PDT)
-Received: by mail-ua1-x92c.google.com with SMTP id a1e0cc1a2514c-7a50a1d1246so1961815241.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Sep 2023 07:55:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1695135314; x=1695740114; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=79kaESdDW6K1sjZ/2sOd0sKjCTXjDh4eJwCuy4dJYCg=;
-        b=Yq396UgeRK9tv6SnZNr3rjdriixNxEUjKFhOc4Dilc/9TyklSiB5lncdjPXCNC9FZA
-         epMl4EB8XgHWbq0JV3aLW0HTs9XileIGGIzmfq0G9X9mcUeetvYtdKXBXLwIc11tClNq
-         LoEllw0ueUQLF7Ki2hUMBi/b7DLXzRRkpFwgO/1GN6+TBi5e91P0hXUwr8qiNtcef42u
-         0Jk4X6AMFHwdjVEpvgJoENS0tgr2U8J94lh98mjyjlTPI3g9Zpa7bllDnSr8WB5whuEq
-         1h9XTelyi8EEtVfnKqTnAXuyMdPnKY0JXVghaaDdXsWzW4AGhMsUObVYjIZhFAMZREl0
-         0LRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695135314; x=1695740114;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=79kaESdDW6K1sjZ/2sOd0sKjCTXjDh4eJwCuy4dJYCg=;
-        b=m//F7H9YqdUw4rkKjOUVGCG2K2eF6P4xBvEvHAAZ0CmXbyOx0yUZXcxHJogebV66Fi
-         FFIh+tWK7XdSMDejv+jM7cekaIMj7MDRB9Zq3K+7ulTmqUUTXz8IHim2ILmu9wRidKef
-         Xm8EaXPRflt8Z2Dz9iH4XntAW06tbBzTypimhNV5blQ3d42L1SWXqkJ/BRQVcbBvR0iu
-         iPKOGZS6kf3WQFvhr8qzs8qGVst6fMS8+hopleiIpJuP7g3JFrxmIIbD6h1eq8awxuJc
-         6WkzfOH1TdMhXCwFkFr+7pj/fprPhR3Ru3ixsQ1qWPuxu6M2goK4Fv0UhawHevwTLEba
-         LjDQ==
-X-Gm-Message-State: AOJu0YxbeCyXLVGm9BKXgniBg16fHyZDgUj7EOSy8wiiVAm682J7/Pti
-        su/U+EfKl9W571H/eNwCyYS43c28YNS0D9/l3S/oQL+WXEg=
-X-Google-Smtp-Source: AGHT+IH7JtNyYDlxKqomSdNPu7FLJvbOg7HkDnVcEaQ0vqbJVpFRtvsYtThAGs21y7yp6xH48WNbXW+38gCaJCRkWkU=
-X-Received: by 2002:a1f:d881:0:b0:496:1ad2:9d0f with SMTP id
- p123-20020a1fd881000000b004961ad29d0fmr50563vkg.1.1695135313824; Tue, 19 Sep
- 2023 07:55:13 -0700 (PDT)
+        Tue, 19 Sep 2023 10:56:19 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 835CFBC;
+        Tue, 19 Sep 2023 07:56:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=2GQeIiRUKD4nsrNUykiLVbM9yjvFtlWyxIuMA0styQw=; b=mYXMTEUYvjYarfrIoWNE1eWN5R
+        8WwC95BlE+kx6ltsaGQakYglIP1k6qMTH6MOj88Wov1/go+LalpF9lxPFjXvwvKc589jM3dHlxOZx
+        UVq2shksI+3BvJStlyR0SUnSYBrEclR1IrnZMoHjXxboY49+wFfZsV3HJLDJmtE1cTEUqJOBs6NxO
+        hEGDK4E0yztgTsON2dYq5ZW3NkBrAeiGfaLWNmeRtWzYVcTVAd02a8RnhOiE/gkrLOtajXEnwLGEI
+        C7UZYmCokNtEysQXI6F+1F8/fDohbsnnUCKv0Q+EXMs1sHEmCVAxSGxJwtGDkPY26nXkC1B/vP9FV
+        wf1C1G/A==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1qic8y-000DqW-3x; Tue, 19 Sep 2023 14:56:04 +0000
+Date:   Tue, 19 Sep 2023 15:56:04 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Daniel Gomez <da.gomez@samsung.com>
+Cc:     "minchan@kernel.org" <minchan@kernel.org>,
+        "senozhatsky@chromium.org" <senozhatsky@chromium.org>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "djwong@kernel.org" <djwong@kernel.org>,
+        "hughd@google.com" <hughd@google.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "mcgrof@kernel.org" <mcgrof@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "gost.dev@samsung.com" <gost.dev@samsung.com>,
+        Pankaj Raghav <p.raghav@samsung.com>
+Subject: Re: [PATCH v2 2/6] shmem: return freed pages in shmem_free_swap
+Message-ID: <ZQm2hIj7W1kJ8C7n@casper.infradead.org>
+References: <20230919135536.2165715-1-da.gomez@samsung.com>
+ <CGME20230919135549eucas1p1f67e7879a14a87724a9462fb8dd635bf@eucas1p1.samsung.com>
+ <20230919135536.2165715-3-da.gomez@samsung.com>
 MIME-Version: 1.0
-References: <20230918123217.932179-1-max.kellermann@ionos.com>
- <20230918123217.932179-3-max.kellermann@ionos.com> <20230918124050.hzbgpci42illkcec@quack3>
- <CAKPOu+-Nx_cvBZNox63R1ah76wQp6eH4RLah0O5mDaLo9h60ww@mail.gmail.com>
- <20230918142319.kvzc3lcpn5n2ty6g@quack3> <CAOQ4uxic7C5skHv4d+Gek_uokRL8sgUegTusiGkwAY4dSSADYQ@mail.gmail.com>
- <CAOQ4uxjzf6NeoCaTrx_X0yZ0nMEWcQC_gq3M-j3jS+CuUTskSA@mail.gmail.com> <20230919094820.g5bwharbmy2dq46w@quack3>
-In-Reply-To: <20230919094820.g5bwharbmy2dq46w@quack3>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 19 Sep 2023 17:55:02 +0300
-Message-ID: <CAOQ4uxivnEDxz3OgYJ9nsSVZsWbidjOzvKJEOb0KiWonr1eEPQ@mail.gmail.com>
-Subject: Re: inotify maintenance status
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Max Kellermann <max.kellermann@ionos.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230919135536.2165715-3-da.gomez@samsung.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 19, 2023 at 12:48=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Mon 18-09-23 21:05:11, Amir Goldstein wrote:
-> > [Forked from https://lore.kernel.org/linux-fsdevel/20230918123217.93217=
-9-1-max.kellermann@ionos.com/]
-> ...
-> > BTW, before we can really mark inotify as Obsolete and document that
-> > inotify was superseded by fanotify, there are at least two items on the
-> > TODO list [1]:
->
-> Yeah, as I wrote in the original thread, I don't feel like inotify should
-> be marked as obsolete (at least for some more time) so we are on the same
-> page here I think.
->
-> > 1. UNMOUNT/IGNORED events
-> > 2. Filesystems without fid support
-> >
-> > MOUNT/UNMOUNT fanotify events have already been discussed
-> > and the feature has known users.
-> >
-> > Christian has also mentioned [1] the IN_UNMOUNT use case for
-> > waiting for sb shutdown several times and I will not be surprised
-> > to see systemd starting to use inotify for that use case before too lon=
-g...
->
-> Yup, both FAN_UNMOUNT and FAN_IGNORED should be easy. Unlike inotify, I'd
-> just make these explicit events you can opt into and not something you
-> always get.
->
-> > Regarding the second item on the TODO list, we have had this discussion
-> > before - if we are going to continue the current policy of opting-in to
-> > fanotify (i.e. tmpfs, fuse, overlayfs, kernfs), we will always have odd
-> > filesystems that only support inotify and we will need to keep supporti=
-ng
-> > inotify only for the users that use inotify on those odd filesystems.
-> >
-> > OTOH, if we implement FAN_REPORT_DINO_NAME, we could
-> > have fanotify inode mark support for any filesystem, where the
-> > pinned marked inode ino is the object id.
->
-> Is it a real problem after your work to allow filehandles that are not
-> necessarily usable for NFS export or open_by_handle()? As far as I rememb=
-er
-> fanotify should be now able to handle anything that provides f_fsid in it=
-s
+On Tue, Sep 19, 2023 at 01:55:47PM +0000, Daniel Gomez wrote:
+> +++ b/mm/shmem.c
+> @@ -846,16 +846,18 @@ static void shmem_delete_from_page_cache(struct folio *folio, void *radswap)
+>  /*
+>   * Remove swap entry from page cache, free the swap and its page cache.
+>   */
+> -static int shmem_free_swap(struct address_space *mapping,
+> +static long shmem_free_swap(struct address_space *mapping,
+>  			   pgoff_t index, void *radswap)
+>  {
+>  	void *old;
+>  
+>  	old = xa_cmpxchg_irq(&mapping->i_pages, index, radswap, NULL, 0);
+>  	if (old != radswap)
+> -		return -ENOENT;
+> +		return 0;
+> +
+>  	free_swap_and_cache(radix_to_swp_entry(radswap));
+> -	return 0;
+> +
+> +	return folio_nr_pages((struct folio *)radswap);
+>  }
 
-Not exactly. We still have a requirement for non-empty
-dentry->d_sb->s_export_op in fanotify_test_fid(), to align with
-the same requirement for AT_HANDLE_FID support.
+Oh my goodness.  I have led you astray; my apologies.
 
-> statfs(2) call. And as I'm checking filesystems not setting fsid currentl=
-y are:
->
-> afs, coda, nfs - networking filesystems where inotify and fanotify have
->   dubious value anyway
->
-> configfs, debugfs, devpts, efivarfs, hugetlbfs, openpromfs, proc, pstore,
-> ramfs, sysfs, tracefs - virtual filesystems where fsnotify functionality =
-is
->   quite limited. But some special cases could be useful. Adding fsid supp=
-ort
->   is the same amount of trouble as for kernfs - a few LOC. In fact, we
->   could perhaps add a fstype flag to indicate that this is a filesystem
->   without persistent identification and so uuid should be autogenerated o=
-n
->   mount (likely in alloc_super()) and f_fsid generated from sb->s_uuid.
->   This way we could handle all these filesystems with trivial amount of
->   effort.
+shmem_free_swap() is called when the 'folio' is NOT actually a folio.
+It's an 'exceptional' / 'value' entry.  We can't do this.
 
-This sounds good to me.
-I have a vague memory of suggesting the same and I think
-Christian had objections, but I may be remembering wrong.
+Do we encode the size of the swap entry in the swp_entry_t or do
+we have to get that information from the XArray (which no longer
+knows it after we've stored a NULL there)?
 
-Possibly, the same opt-in fstype flag could allow also trivial
-AT_HANDLE_FID support with the default export_encode_fh()?
-
->
-> freevxfs - the only real filesystem without f_fsid. Trivial to handle one
->   way or the other.
->
-> So I don't think we need new uAPI additions to finish off this TODO item.
-
-Yes, I'd love that.
-I can try to post something if there are no objections.
-
-Thanks,
-Amir.
