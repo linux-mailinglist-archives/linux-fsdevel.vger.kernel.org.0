@@ -2,179 +2,239 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 788847A5774
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Sep 2023 04:44:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97D1E7A5777
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Sep 2023 04:46:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230445AbjISCoN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Sep 2023 22:44:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33098 "EHLO
+        id S231134AbjISCqv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Sep 2023 22:46:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50390 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229661AbjISCoL (ORCPT
+        with ESMTP id S229750AbjISCqu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Sep 2023 22:44:11 -0400
-Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CACED103
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Sep 2023 19:44:05 -0700 (PDT)
-Received: by mail-pl1-x633.google.com with SMTP id d9443c01a7336-1c44a25bd0bso20209415ad.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Sep 2023 19:44:05 -0700 (PDT)
+        Mon, 18 Sep 2023 22:46:50 -0400
+Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B56CA103
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Sep 2023 19:46:44 -0700 (PDT)
+Received: by mail-pl1-x636.google.com with SMTP id d9443c01a7336-1c45c45efeeso1833195ad.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Sep 2023 19:46:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1695091445; x=1695696245; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=DaQ7S4Czgw55gMOMG3g0mH+EVG0KMgeQe9X7+ZUKWE4=;
-        b=NImYVtVgKmzalA4t9RlC5NW7DfjG8aSoEPrc7G6fKix1OPUr1QMKdtHypxXwZOx2aM
-         HLstKETkciGeneLUxymtqlQRCE3eEKB07QEsxcDfUBP3nAwF26YE5nn4vI+H3LxcgKq8
-         dF6T8zQl1fZdQcoPsiRPbwgooqJQa3U88wmF5yZ1X729dOn8AVdrvI+jzGPG0r1B41j0
-         7CSh8CI7jxI33wz4ApO0pFd+GzcmtCxz1+Fo2NgLzgUHvglt7Pb1+i0I+IY7bOfYf5cU
-         t8c7nR4jBcUVdvJyVe35QhoefvcEKgW1xHBPkmhlatm4pZtgttclOICed4iqKbcdtBmu
-         COHA==
+        d=bytedance.com; s=google; t=1695091604; x=1695696404; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CVaCKafr7rXOhFLTAtlQmk5QekExsnPlB/mflEUNsHY=;
+        b=KyMPIhRFlszHdMchGeQtq5dqNsfidbq1/VwDFAmJ//H1NALl3WfMvsc0P70vuQ382r
+         7TQiR79EAKa3i8BvQnJwc3lmfju+jEGDN8MF/LLhkCKW0brtHmEstyU80o2Y/mlv8w4y
+         TNOXqJzqPmQWH+bVLKHO6xC8yLjVh2NR+/cYER6lKdZWscS7vyG4DRSEpWnsbU8DhxWj
+         D+LNCVahCZsfDeBp9gLuY+TpmzGvJyRKC4AMdGiVFaFx3bOUw6JwRS8+IvaT3T0D1Zop
+         A2TtwbrH/pky16PpNYgCBDgr5ru/enCIoEwrWzQ8XL2q0Zf38WIZ2cTSghinuvC24SJw
+         rpNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695091445; x=1695696245;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DaQ7S4Czgw55gMOMG3g0mH+EVG0KMgeQe9X7+ZUKWE4=;
-        b=rIffPV4j041CKsHRFuKSZEs6Ff7HLjfKCZ76tiI4mGd/Nn3yRq7t0pWIK9pFkkIm+Z
-         CMenQA4ggCAjW2t3OvfMUTxJgdUbgOIvLszOaEgGA+yn25dwSR0Y4gTEm1kaXmaCe8Wa
-         U2rUD/GSEkP9Gin+0uBRXybbvzpMGVG2ka/mmos83EpCEU65NVQV7oNJPG/GvmWRq96R
-         go1UUvayrBniZx4mAZOFSO0Sp1VxUtnS9LiYwcG8ZbRf8s/qiApi0BmAuOohruw2yvCq
-         sz7aUgAwxXNEwFzsj1pfNcRdtaOIysf/PK4vN9OleNVyECs/ImY2sLKySDPPefuEFpO9
-         NTyQ==
-X-Gm-Message-State: AOJu0YwCLllfAZddvdQ3Zx7McNcen0YLUzNvIQnS701BSjpN6RFlABQR
-        L2efVR+xX5d7U+NhtGSzce88EA==
-X-Google-Smtp-Source: AGHT+IFaUPTzW+AZNYUCbNAzz4Yh4s2XQ3AtuwCW41UnfrtAgOKAvPJ+/XtCTVFO1ZCTe5HaxkDXVg==
-X-Received: by 2002:a17:902:c109:b0:1c3:e4b8:701f with SMTP id 9-20020a170902c10900b001c3e4b8701fmr1445729pli.19.1695091445193;
-        Mon, 18 Sep 2023 19:44:05 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-20-59.pa.nsw.optusnet.com.au. [49.180.20.59])
-        by smtp.gmail.com with ESMTPSA id x24-20020a170902b41800b001bbdf32f011sm8879326plr.269.2023.09.18.19.44.04
+        d=1e100.net; s=20230601; t=1695091604; x=1695696404;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CVaCKafr7rXOhFLTAtlQmk5QekExsnPlB/mflEUNsHY=;
+        b=dRTk26gY+izhRlEe0YILViDwgLXY3irkkZBAiJzO/09P2RPs2UKB4aoEs6DnA5OmBE
+         kWQpQ/grPlb/oECtebQNoWRdVg+EIzROoywAONwDGHNdSXlz+74oL97FMpCxkdZ41y4U
+         rATHOYBfclcR/DxPVojjio5DwOA6SrCIRDM8vrxJDcHPIfGZAiLrrskPe7KJ4dXz+K69
+         +LSe79J27zPVuq6E1N0rThEFKNWD6NlR737H3qnbDDBjiDPLCpnEnMlSkzKB4mRF0app
+         OIRp/OBESAwlYxd1/TPG9Ik2dKwtNwEUY3yXsgkRgJZKqpfrWgmMa1xVpcf6Gf8fGGHG
+         Gzfg==
+X-Gm-Message-State: AOJu0YyIUzSB+V6iDE2jmPy08oRgU5VVlM8aUoNqY5v2/nuWWliHifN4
+        0kmIXSCELHVPIdZlVKYNwI5rLg==
+X-Google-Smtp-Source: AGHT+IG5mbJOtnUV7RTj73z+udKG4UFeAJTSFAjJzR+Q8pglWJacUFjOvahYn+5uh9/MdY3h+cfFWA==
+X-Received: by 2002:a17:902:e744:b0:1b8:aded:524c with SMTP id p4-20020a170902e74400b001b8aded524cmr12897364plf.1.1695091604093;
+        Mon, 18 Sep 2023 19:46:44 -0700 (PDT)
+Received: from C02DW0BEMD6R.bytedance.net ([203.208.167.146])
+        by smtp.gmail.com with ESMTPSA id m1-20020a170902d18100b001b7f40a8959sm8884198plb.76.2023.09.18.19.46.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Sep 2023 19:44:04 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-        (envelope-from <david@fromorbit.com>)
-        id 1qiQiY-002bkQ-0x;
-        Tue, 19 Sep 2023 12:44:02 +1000
-Date:   Tue, 19 Sep 2023 12:44:02 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Eric Sandeen <sandeen@sandeen.net>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Christoph Hellwig <hch@infradead.org>, ksummit@lists.linux.dev,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [MAINTAINERS/KERNEL SUMMIT] Trust and maintenance of file systems
-Message-ID: <ZQkK8kTPhFw8BpVA@dread.disaster.area>
-References: <ZPkDLp0jyteubQhh@dread.disaster.area>
- <20230906215327.18a45c89@gandalf.local.home>
- <ZPkz86RRLaYOkmx+@dread.disaster.area>
- <20230906225139.6ffe953c@gandalf.local.home>
- <ZPlFwHQhJS+Td6Cz@dread.disaster.area>
- <20230907071801.1d37a3c5@gandalf.local.home>
- <b7ca4a4e-a815-a1e8-3579-57ac783a66bf@sandeen.net>
- <CAHk-=wg=xY6id92yS3=B59UfKmTmOgq+NNv+cqCMZ1Yr=FwR9A@mail.gmail.com>
- <ZQTfIu9OWwGnIT4b@dread.disaster.area>
- <db57da32517e5f33d1d44564097a7cc8468a96c3.camel@HansenPartnership.com>
+        Mon, 18 Sep 2023 19:46:43 -0700 (PDT)
+From:   Qi Zheng <zhengqi.arch@bytedance.com>
+To:     akpm@linux-foundation.org, muchun.song@linux.dev
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, david@fromorbit.com, tkhai@ya.ru,
+        vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org,
+        brauner@kernel.org, paulmck@kernel.org, tytso@mit.edu,
+        steven.price@arm.com, cel@kernel.org, senozhatsky@chromium.org,
+        yujie.liu@intel.com, gregkh@linuxfoundation.org,
+        Qi Zheng <zhengqi.arch@bytedance.com>,
+        Muchun Song <songmuchun@bytedance.com>
+Subject: [PATCH] mm: shrinker: some cleanup
+Date:   Tue, 19 Sep 2023 10:46:07 +0800
+Message-Id: <20230919024607.65463-1-zhengqi.arch@bytedance.com>
+X-Mailer: git-send-email 2.24.3 (Apple Git-128)
+In-Reply-To: <20230911094444.68966-2-zhengqi.arch@bytedance.com>
+References: <20230911094444.68966-2-zhengqi.arch@bytedance.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <db57da32517e5f33d1d44564097a7cc8468a96c3.camel@HansenPartnership.com>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Sep 16, 2023 at 05:50:50PM -0400, James Bottomley wrote:
-> On Sat, 2023-09-16 at 08:48 +1000, Dave Chinner wrote:
-> > On Wed, Sep 13, 2023 at 10:03:55AM -0700, Linus Torvalds wrote:
-> [...]
-> > >  - "they use the buffer cache".
-> > > 
-> > > Waah, waah, waah.
-> > 
-> > .... you dismiss those concerns in the same way a 6 year old school
-> > yard bully taunts his suffering victims.
-> > 
-> > Regardless of the merits of the observation you've made, the tone
-> > and content of this response is *completely unacceptable*.  Please
-> > keep to technical arguments, Linus, because this sort of response
-> > has no merit what-so-ever. All it does is shut down the technical
-> > discussion because no-one wants to be the target of this sort of
-> > ugly abuse just for participating in a technical discussion.
-> > 
-> > Given the number of top level maintainers that signed off on the CoC
-> > that are present in this forum, I had an expectation that this is a
-> > forum where bad behaviour is not tolerated at all.  So I've waited a
-> > couple of days to see if anyone in a project leadership position is
-> > going to say something about this comment.....
-> > 
-> > <silence>
-> > 
-> > The deafening silence of tacit acceptance is far more damning than
-> > the high pitched squeal of Linus's childish taunts.
-> 
-> Well, let's face it: it's a pretty low level taunt and it wasn't aimed
-> at you (or indeed anyone on the thread that I could find) and it was
-> backed by technical argument in the next sentence.  We all have a
-> tendency to let off steam about stuff in general not at people in
-> particular as you did here:
-> 
-> https://lore.kernel.org/ksummit/ZP+vcgAOyfqWPcXT@dread.disaster.area/
+Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+Reviewed-by: Muchun Song <songmuchun@bytedance.com>
+---
+Hi Andrew, this is a cleanup patch for [PATCH v6 01/45], there will be a
+small conflict with [PATCH v6 41/45].
 
-There's a massive difference between someone saying no to a wild
-proposal with the backing of solid ethical arguments against
-experimentation on non-consenting human subjects vs someone calling
-anyone who might disagree with them a bunch of cry-babies.
+ include/linux/shrinker.h | 14 ++++++++------
+ mm/internal.h            | 17 ++++++++++++++---
+ mm/shrinker.c            | 20 ++++++++++++--------
+ mm/shrinker_debug.c      | 16 ----------------
+ 4 files changed, 34 insertions(+), 33 deletions(-)
 
-You do yourself a real disservice by claiming these two comments are
-in any way equivalent.
-
-> But I didn't take it as anything more than a rant about AI in general
-> and syzbot in particular and certainly I didn't assume it was aimed at
-> me or anyone else.
-
-I wasn't ranting about AI at all. If you think that was what I was
-talking about then you have, once again, completely missed the
-point.
-
-I was talking about the *ethics of our current situation* and how
-that should dictate the behaviour of community members and bots that
-they run for the benefit of the community. If a bot is causing harm
-to the community, then ethics dictates that there is only one
-reasonable course of action that can be taken...
-
-This has *nothing to do with AI* and everything to do with how the
-community polices hostile actors in the community. If 3rd party
-run infrastructure is causing direct harm to developers and they
-aren't allowed to opt out, then what do we do about it?
-
-> If everyone reached for the code of conduct when someone had a non-
-> specific rant using colourful phraseology, we'd be knee deep in
-> complaints, which is why we tend to be more circumspect when it
-> happens.
-
-I disagree entirely, and I think this a really bad precedent to try
-to set. Maybe you see it as "Fred has a colourful way with words",
-but that doesn't change the fact the person receiving that comment
-might see the same comment very, very differently.
-
-I don't think anyone can dispute the fact that top level kernel
-maintainers are repeat offenders when it comes to being nasty,
-obnoxious and/or abusive. Just because kernel maintainers have
-normalised this behaviour between themselves, it does not make it OK
-to treat anyone else this way.
-
-Maintainers need to be held to a higher standard than the rest of
-the community - the project leaders need to set the example of how
-everyone else should behave, work and act - and right now I am _very
-disappointed_ by where this thread has ended up.
-
--Dave.
+diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
+index 3f3fd9974ce5..f4a5249f00b2 100644
+--- a/include/linux/shrinker.h
++++ b/include/linux/shrinker.h
+@@ -88,16 +88,18 @@ struct shrinker {
+ };
+ #define DEFAULT_SEEKS 2 /* A good number if you don't know better. */
+ 
+-/* Flags */
+-#define SHRINKER_REGISTERED	(1 << 0)
+-#define SHRINKER_NUMA_AWARE	(1 << 1)
+-#define SHRINKER_MEMCG_AWARE	(1 << 2)
++/* Internal flags */
++#define SHRINKER_REGISTERED	BIT(0)
++#define SHRINKER_ALLOCATED	BIT(1)
++
++/* Flags for users to use */
++#define SHRINKER_NUMA_AWARE	BIT(2)
++#define SHRINKER_MEMCG_AWARE	BIT(3)
+ /*
+  * It just makes sense when the shrinker is also MEMCG_AWARE for now,
+  * non-MEMCG_AWARE shrinker should not have this flag set.
+  */
+-#define SHRINKER_NONSLAB	(1 << 3)
+-#define SHRINKER_ALLOCATED	(1 << 4)
++#define SHRINKER_NONSLAB	BIT(4)
+ 
+ struct shrinker *shrinker_alloc(unsigned int flags, const char *fmt, ...);
+ void shrinker_register(struct shrinker *shrinker);
+diff --git a/mm/internal.h b/mm/internal.h
+index b9a116dce28e..0f418a11c7a8 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -1161,10 +1161,21 @@ unsigned long shrink_slab(gfp_t gfp_mask, int nid, struct mem_cgroup *memcg,
+ 			  int priority);
+ 
+ #ifdef CONFIG_SHRINKER_DEBUG
++static inline int shrinker_debugfs_name_alloc(struct shrinker *shrinker,
++					      const char *fmt, va_list ap)
++{
++	shrinker->name = kvasprintf_const(GFP_KERNEL, fmt, ap);
++
++	return shrinker->name ? 0 : -ENOMEM;
++}
++
++static inline void shrinker_debugfs_name_free(struct shrinker *shrinker)
++{
++	kfree_const(shrinker->name);
++	shrinker->name = NULL;
++}
++
+ extern int shrinker_debugfs_add(struct shrinker *shrinker);
+-extern int shrinker_debugfs_name_alloc(struct shrinker *shrinker,
+-				       const char *fmt, va_list ap);
+-extern void shrinker_debugfs_name_free(struct shrinker *shrinker);
+ extern struct dentry *shrinker_debugfs_detach(struct shrinker *shrinker,
+ 					      int *debugfs_id);
+ extern void shrinker_debugfs_remove(struct dentry *debugfs_entry,
+diff --git a/mm/shrinker.c b/mm/shrinker.c
+index 201211a67827..d1032a4d5684 100644
+--- a/mm/shrinker.c
++++ b/mm/shrinker.c
+@@ -572,18 +572,23 @@ struct shrinker *shrinker_alloc(unsigned int flags, const char *fmt, ...)
+ 
+ 	if (flags & SHRINKER_MEMCG_AWARE) {
+ 		err = prealloc_memcg_shrinker(shrinker);
+-		if (err == -ENOSYS)
++		if (err == -ENOSYS) {
++			/* Memcg is not supported, fallback to non-memcg-aware shrinker. */
+ 			shrinker->flags &= ~SHRINKER_MEMCG_AWARE;
+-		else if (err == 0)
+-			goto done;
+-		else
++			goto non_memcg;
++		}
++
++		if (err)
+ 			goto err_flags;
++
++		return shrinker;
+ 	}
+ 
++non_memcg:
+ 	/*
+ 	 * The nr_deferred is available on per memcg level for memcg aware
+ 	 * shrinkers, so only allocate nr_deferred in the following cases:
+-	 *  - non memcg aware shrinkers
++	 *  - non-memcg-aware shrinkers
+ 	 *  - !CONFIG_MEMCG
+ 	 *  - memcg is disabled by kernel command line
+ 	 */
+@@ -595,7 +600,6 @@ struct shrinker *shrinker_alloc(unsigned int flags, const char *fmt, ...)
+ 	if (!shrinker->nr_deferred)
+ 		goto err_flags;
+ 
+-done:
+ 	return shrinker;
+ 
+ err_flags:
+@@ -634,10 +638,10 @@ void shrinker_free(struct shrinker *shrinker)
+ 		list_del(&shrinker->list);
+ 		debugfs_entry = shrinker_debugfs_detach(shrinker, &debugfs_id);
+ 		shrinker->flags &= ~SHRINKER_REGISTERED;
+-	} else {
+-		shrinker_debugfs_name_free(shrinker);
+ 	}
+ 
++	shrinker_debugfs_name_free(shrinker);
++
+ 	if (shrinker->flags & SHRINKER_MEMCG_AWARE)
+ 		unregister_memcg_shrinker(shrinker);
+ 	up_write(&shrinker_rwsem);
+diff --git a/mm/shrinker_debug.c b/mm/shrinker_debug.c
+index 38452f539f40..24aebe7c24cc 100644
+--- a/mm/shrinker_debug.c
++++ b/mm/shrinker_debug.c
+@@ -193,20 +193,6 @@ int shrinker_debugfs_add(struct shrinker *shrinker)
+ 	return 0;
+ }
+ 
+-int shrinker_debugfs_name_alloc(struct shrinker *shrinker, const char *fmt,
+-				va_list ap)
+-{
+-	shrinker->name = kvasprintf_const(GFP_KERNEL, fmt, ap);
+-
+-	return shrinker->name ? 0 : -ENOMEM;
+-}
+-
+-void shrinker_debugfs_name_free(struct shrinker *shrinker)
+-{
+-	kfree_const(shrinker->name);
+-	shrinker->name = NULL;
+-}
+-
+ int shrinker_debugfs_rename(struct shrinker *shrinker, const char *fmt, ...)
+ {
+ 	struct dentry *entry;
+@@ -255,8 +241,6 @@ struct dentry *shrinker_debugfs_detach(struct shrinker *shrinker,
+ 
+ 	lockdep_assert_held(&shrinker_rwsem);
+ 
+-	shrinker_debugfs_name_free(shrinker);
+-
+ 	*debugfs_id = entry ? shrinker->debugfs_id : -1;
+ 	shrinker->debugfs_entry = NULL;
+ 
 -- 
-Dave Chinner
-david@fromorbit.com
+2.30.2
+
