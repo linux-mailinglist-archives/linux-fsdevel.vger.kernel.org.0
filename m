@@ -2,84 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AC40B7A6784
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Sep 2023 17:01:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84E807A67A6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Sep 2023 17:10:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232997AbjISPBe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Sep 2023 11:01:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58938 "EHLO
+        id S233085AbjISPKd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Sep 2023 11:10:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233004AbjISPBc (ORCPT
+        with ESMTP id S233071AbjISPKb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Sep 2023 11:01:32 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D646EC6;
-        Tue, 19 Sep 2023 08:01:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Rtc3uem8ddiR9Ja2IfzYS5WR/DSCeWUeDjOJFAPqtE8=; b=vV7xzhXLw4nmH7SNWv9DHWcrC/
-        LlKLNp1Ua8UIgPvSuVGmmwt5P/Lpg6rk9yv1OSI+AINScnm40sviBiE+8TIJfpc/RzWk4TWv3bZc1
-        DsXCBCLTMcdQPNdhVrDCPJxszKpFwMDtX2mdHv6m88tvH5SamsV9a4jQ6DVDm8/cpRzKmMSCa9pSV
-        4zSaxFjFziPh+BYX+TWbVN9sn/v35CaUKuYjC4uTSyJ9Y6y/zNqaO6KjVcoGw9qPiIMW23OLVwk7/
-        F0l/OQWHeh8z5zWlNQW5IT6UdISh7oBL11c7j8ZYgTsL/NgXKaTsijZQDKf3CA31dkllARhW3G+Fg
-        Hp06KLzQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qicE3-000GGV-5J; Tue, 19 Sep 2023 15:01:19 +0000
-Date:   Tue, 19 Sep 2023 16:01:19 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Daniel Gomez <da.gomez@samsung.com>
-Cc:     "minchan@kernel.org" <minchan@kernel.org>,
-        "senozhatsky@chromium.org" <senozhatsky@chromium.org>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "djwong@kernel.org" <djwong@kernel.org>,
-        "hughd@google.com" <hughd@google.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "mcgrof@kernel.org" <mcgrof@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "gost.dev@samsung.com" <gost.dev@samsung.com>,
-        Pankaj Raghav <p.raghav@samsung.com>
-Subject: Re: [PATCH v2 6/6] shmem: add large folios support to the write path
-Message-ID: <ZQm3vywitP+UdIHF@casper.infradead.org>
-References: <20230919135536.2165715-1-da.gomez@samsung.com>
- <CGME20230919135556eucas1p19920c52d4af0809499eac6bbf4466117@eucas1p1.samsung.com>
- <20230919135536.2165715-7-da.gomez@samsung.com>
+        Tue, 19 Sep 2023 11:10:31 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D6227C6;
+        Tue, 19 Sep 2023 08:10:24 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8AFF51FB;
+        Tue, 19 Sep 2023 08:11:01 -0700 (PDT)
+Received: from FVFF77S0Q05N.cambridge.arm.com (FVFF77S0Q05N.cambridge.arm.com [10.1.31.185])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4CACC3F59C;
+        Tue, 19 Sep 2023 08:10:22 -0700 (PDT)
+Date:   Tue, 19 Sep 2023 16:10:14 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Baokun Li <libaokun1@huawei.com>
+Cc:     Yi Zhang <yi.zhang@redhat.com>, Ming Lei <ming.lei@redhat.com>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+        Changhui Zhong <czhong@redhat.com>,
+        yangerkun <yangerkun@huawei.com>,
+        "zhangyi (F)" <yi.zhang@huawei.com>, peterz@infradead.org,
+        Kees Cook <keescook@chromium.org>,
+        chengzhihao <chengzhihao1@huawei.com>,
+        Will Deacon <will@kernel.org>
+Subject: Re: [czhong@redhat.com: [bug report] WARNING: CPU: 121 PID: 93233 at
+ fs/dcache.c:365 __dentry_kill+0x214/0x278]
+Message-ID: <ZQmwcagwXBQCTpUY@FVFF77S0Q05N.cambridge.arm.com>
+References: <ZOWFtqA2om0w5Vmz@fedora>
+ <20230823-kuppe-lassen-bc81a20dd831@brauner>
+ <CAFj5m9KiBDzNHCsTjwUevZh3E3RRda2ypj9+QcRrqEsJnf9rXQ@mail.gmail.com>
+ <CAHj4cs_MqqWYy+pKrNrLqTb=eoSOXcZdjPXy44x-aA1WvdVv0w@mail.gmail.com>
+ <89d049ed-6bbf-bba7-80d4-06c060e65e5b@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230919135536.2165715-7-da.gomez@samsung.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <89d049ed-6bbf-bba7-80d4-06c060e65e5b@huawei.com>
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 19, 2023 at 01:55:54PM +0000, Daniel Gomez wrote:
-> Add large folio support for shmem write path matching the same high
-> order preference mechanism used for iomap buffered IO path as used in
-> __filemap_get_folio() with a difference on the max order permitted
-> (being PMD_ORDER-1) to respect the huge mount option when large folio
-> is supported.
+On Sat, Sep 16, 2023 at 02:55:47PM +0800, Baokun Li wrote:
+> On 2023/9/13 16:59, Yi Zhang wrote:
+> > The issue still can be reproduced on the latest linux tree[2].
+> > To reproduce I need to run about 1000 times blktests block/001, and
+> > bisect shows it was introduced with commit[1], as it was not 100%
+> > reproduced, not sure if it's the culprit?
+> > 
+> > 
+> > [1] 9257959a6e5b locking/atomic: scripts: restructure fallback ifdeffery
+> Hello, everyone！
+> 
+> We have confirmed that the merge-in of this patch caused hlist_bl_lock
+> (aka, bit_spin_lock) to fail, which in turn triggered the issue above.
 
-I'm strongly opposed to "respecting the huge mount option".  We're
-determining the best order to use for the folios.  Artificially limiting
-the size because the sysadmin read an article from 2005 that said to
-use this option is STUPID.
+Thanks for this!
 
->  	else
-> -		folio = shmem_alloc_folio(gfp, info, index, *order);
-> +		folio = shmem_alloc_folio(gfp, info, index, order);
+I believe I know what the issue is.
 
-Why did you introduce it as *order, only to change it back to order
-in this patch?  It feels like you just fixed up patch 6 rather than
-percolating the changes all the way back to where they should have
-been done.  This makes the reviewer's life hard.
+I took a look at the generated assembly for hlist_bl_lock() and
+hlist_bl_unlock(), and for the latter I see a plain store rather than a
+store-release as was intended.
 
+I believe that in 9257959a6e5b, I messed up the fallback logic for
+atomic*_set_release():
+
+| static __always_inline void 
+| raw_atomic64_set_release(atomic64_t *v, s64 i)
+| {
+| #if defined(arch_atomic64_set_release)
+|         arch_atomic64_set_release(v, i);
+| #elif defined(arch_atomic64_set)
+|         arch_atomic64_set(v, i);
+| #else
+|         if (__native_word(atomic64_t)) {
+|                 smp_store_release(&(v)->counter, i);
+|         } else {
+|                 __atomic_release_fence();
+|                 raw_atomic64_set(v, i);
+|         }    
+| #endif
+| }
+
+On arm64 we want to use smp_store_release(), and don't provide
+arch_atomic64_set_release(). Unfortunately we *do* provide arch_atomic64_set(),
+and the ifdeffery above will choose that in preference.
+
+Prior to that commit, the ifdeffery would do what we want:
+
+| #ifndef arch_atomic64_set_release
+| static __always_inline void
+| arch_atomic64_set_release(atomic64_t *v, s64 i)
+| {
+|         if (__native_word(atomic64_t)) {
+|                 smp_store_release(&(v)->counter, i);
+|         } else {
+|                 __atomic_release_fence();
+|                 arch_atomic64_set(v, i);
+|         }
+| }
+| #define arch_atomic64_set_release arch_atomic64_set_release
+| #endif
+
+That explains the lock going wrong -- we lose the RELEASE semantic on
+hlist_bl_unlock(), and so loads and stores within the critical section aren't
+guaranteed to be visible to the next hlist_bl_lock(). On x86 this happens to
+work becauase of TSO.
+
+I'm working on fixing that now; I'll try to have a patch shortly.
+
+Thanks,
+Mark.
