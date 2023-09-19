@@ -2,111 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 99AB47A5943
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Sep 2023 07:17:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A20567A5950
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Sep 2023 07:24:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231181AbjISFRs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Sep 2023 01:17:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48130 "EHLO
+        id S231292AbjISFYm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Sep 2023 01:24:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229960AbjISFRr (ORCPT
+        with ESMTP id S231178AbjISFYl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Sep 2023 01:17:47 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CFEDFC
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Sep 2023 22:17:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=JbEsJiZbiePyr03jReWi7ze2b4drn08csPH6tc8v8PE=; b=ZsHi1QrJzYiMSgzP+GrmnFRwFr
-        QaCeJAjNuUVM6hWTJZdA1NSSD0l1BxTQvbhikWZA9EEmEoxGdNqv9XwqdbOO751W+N3WIvAix9abi
-        2M1iS/fo02Kqu7DUpZHkdzhNa3zm/T09KP9hOMPiobcljOs9+TziBV7yUiM/aXPfqTb2SXBR19A0+
-        TC3oAIyMPer8UiiapNFOTmN3m2h4rHbnmUjVdsovwVqGXFF/oFTVmW9BivU2yWse1JOQAZjJZgPZL
-        MMiSNHzTuWQVM6d4m23Otkk8Q1CnFvfXT9MxBVPrNAorGrBE+qQ54zlykccPRNhWEYD8PsI8bNNRH
-        cZWnUQmg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qiT6v-00FLZz-6i; Tue, 19 Sep 2023 05:17:21 +0000
-Date:   Tue, 19 Sep 2023 06:17:21 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        NeilBrown <neilb@suse.de>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Eric Sandeen <sandeen@sandeen.net>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Christoph Hellwig <hch@infradead.org>, ksummit@lists.linux.dev,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [MAINTAINERS/KERNEL SUMMIT] Trust and maintenance of file systems
-Message-ID: <ZQku4dvmtO56BvCr@casper.infradead.org>
-References: <20230906225139.6ffe953c@gandalf.local.home>
- <ZPlFwHQhJS+Td6Cz@dread.disaster.area>
- <20230907071801.1d37a3c5@gandalf.local.home>
- <b7ca4a4e-a815-a1e8-3579-57ac783a66bf@sandeen.net>
- <CAHk-=wg=xY6id92yS3=B59UfKmTmOgq+NNv+cqCMZ1Yr=FwR9A@mail.gmail.com>
- <ZQTfIu9OWwGnIT4b@dread.disaster.area>
- <db57da32517e5f33d1d44564097a7cc8468a96c3.camel@HansenPartnership.com>
- <169491481677.8274.17867378561711132366@noble.neil.brown.name>
- <CAHk-=wg_p7g=nonWOqgHGVXd+ZwZs8im-G=pNHP6hW60c8=UHw@mail.gmail.com>
- <ZQj2SgSKOzfKR0e3@dread.disaster.area>
+        Tue, 19 Sep 2023 01:24:41 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1E6FFC;
+        Mon, 18 Sep 2023 22:24:35 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EE3FC433C7;
+        Tue, 19 Sep 2023 05:24:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695101075;
+        bh=CVx+g8d8hoeM7KDO7RwL3UJHnMXwhd46Mp6LAAYw9rE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kq9RIri+jligTmtIRuodku+XsyyjdzW5Y2E+QJ7d7dJ8OfvLyDY74/+SgjioFFnvi
+         rQ7Q6E2GWh/WyKX5LyecTFZ1LLNbypoEfrHBqXbLdmXUNFyND6dzAhmoqy35rWefQh
+         m1VOwffH3kBDUVHJUK3vpfE535wYFn5UZFtgBYIw8a79PFGPzkxULDOlSBoPiq8pAw
+         IIFCnUX4hBHzckS8fWtz3LNqcJMq0m7dRfRbgq/apX98l8h/0T6LgQYEjsbsGJRyrD
+         +s8viGtnJSl7JhFqMoBS3tyIieloDQA1X9VKxetKT8u9xawHLpFlgxY4YI791WGdmc
+         nF+7IWXNGodSg==
+Date:   Mon, 18 Sep 2023 22:24:34 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Ritesh Harjani <ritesh.list@gmail.com>
+Cc:     willy@infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 1/2] iomap: don't skip reading in !uptodate folios when
+ unsharing a range
+Message-ID: <20230919052434.GG348018@frogsfrogsfrogs>
+References: <169507872536.772278.18183365318216726644.stgit@frogsfrogsfrogs>
+ <87o7hy7nhp.fsf@doe.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZQj2SgSKOzfKR0e3@dread.disaster.area>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <87o7hy7nhp.fsf@doe.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 19, 2023 at 11:15:54AM +1000, Dave Chinner wrote:
-> This was easy to do with iomap based filesystems because they don't
-> carry per-block filesystem structures for every folio cached in page
-> cache - we carry a single object per folio that holds the 2 bits of
-> per-filesystem block state we need for each block the folio maps.
-> Compare that to a bufferhead - it uses 56 bytes of memory per
-> fielsystem block that is cached.
+On Tue, Sep 19, 2023 at 10:44:58AM +0530, Ritesh Harjani wrote:
+> "Darrick J. Wong" <djwong@kernel.org> writes:
+> 
+> > From: Darrick J. Wong <djwong@kernel.org>
+> >
+> > Prior to commit a01b8f225248e, we would always read in the contents of a
+> > !uptodate folio prior to writing userspace data into the folio,
+> > allocated a folio state object, etc.  Ritesh introduced an optimization
+> > that skips all of that if the write would cover the entire folio.
+> >
+> > Unfortunately, the optimization misses the unshare case, where we always
+> > have to read in the folio contents since there isn't a data buffer
+> > supplied by userspace.  This can result in stale kernel memory exposure
+> > if userspace issues a FALLOC_FL_UNSHARE_RANGE call on part of a shared
+> > file that isn't already cached.
+> >
+> > This was caught by observing fstests regressions in the "unshare around"
+> > mechanism that is used for unaligned writes to a reflinked realtime
+> > volume when the realtime extent size is larger than 1FSB,
+> 
+> I was wondering what is testcase that you are referring here to? 
+> Can you please tell the testcase no. and the mkfs / mount config options
+> which I can use to observe the regression please?
 
-56?1  What kind of config do you have?  It's 104 bytes on Debian:
-buffer_head          936   1092    104   39    1 : tunables    0    0    0 : slabdata     28     28      0
+https://lore.kernel.org/linux-fsdevel/169507871947.772278.5767091361086740046.stgit@frogsfrogsfrogs/T/#m8081f74f4f1fcb862399aa1544be082aabe56765
 
-Maybe you were looking at a 32-bit system; most of the elements are
-word-sized (pointers, size_t or long)
+(any xfs config with reflink enabled)
 
-> So we have to consider that maybe it is less work to make high-order
-> folios work with bufferheads. And that's where we start to get into
-> the maintenance problems with old filesysetms using bufferheads -
-> how do we ensure that the changes for high-order folio support in
-> bufferheads does not break the way one of these old filesystems
-> that use bufferheads?
+--D
 
-I don't think we can do it.  Regardless of the question you're proposing
-here, the model where we complete a BIO, then walk every buffer_head
-attached to the folio to determine if we can now mark the folio as being
-(uptodate / not-under-writeback) just doesn't scale when you attach more
-than tens of BHs to the folio.  It's one bit per BH rather than having
-a summary bitmap like iomap has.
-
-I have been thinking about spitting the BH into two pieces, something
-like this:
-
-struct buffer_head_head {
-	spinlock_t b_lock;
-	struct buffer_head *buffers;
-	unsigned long state[];
-};
-
-and remove BH_Uptodate and BH_Dirty in favour of setting bits in state
-like iomap does.
-
-But, as you say, there are a lot of filesystems that would need to be
-audited and probably modified.
-
-Frustratingly, it looks like buffer_heads were intended to be used as
-extents; each one has a b_size of its own.  But there's a ridiculous
-amount of code that assumes that all BHs attached to a folio have the
-same b_size as each other.
+> > though I think it applies to any shared file.
+> >
+> > Cc: ritesh.list@gmail.com, willy@infradead.org
+> > Fixes: a01b8f225248e ("iomap: Allocate ifs in ->write_begin() early")
+> > Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+> > ---
+> >  fs/iomap/buffered-io.c |    6 ++++--
+> >  1 file changed, 4 insertions(+), 2 deletions(-)
+> >
+> >
+> > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> > index ae8673ce08b1..0350830fc989 100644
+> > --- a/fs/iomap/buffered-io.c
+> > +++ b/fs/iomap/buffered-io.c
+> > @@ -640,11 +640,13 @@ static int __iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
+> >  	size_t poff, plen;
+> >  
+> >  	/*
+> > -	 * If the write completely overlaps the current folio, then
+> > +	 * If the write or zeroing completely overlaps the current folio, then
+> >  	 * entire folio will be dirtied so there is no need for
+> >  	 * per-block state tracking structures to be attached to this folio.
+> > +	 * For the unshare case, we must read in the ondisk contents because we
+> > +	 * are not changing pagecache contents.
+> >  	 */
+> > -	if (pos <= folio_pos(folio) &&
+> > +	if (!(iter->flags & IOMAP_UNSHARE) && pos <= folio_pos(folio) &&
+> >  	    pos + len >= folio_pos(folio) + folio_size(folio))
+> >  		return 0;
+> >  
