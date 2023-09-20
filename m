@@ -2,199 +2,201 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D7E67A7209
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Sep 2023 07:27:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 668377A7259
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Sep 2023 07:48:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232876AbjITF1O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Sep 2023 01:27:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52870 "EHLO
+        id S233030AbjITFsb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Sep 2023 01:48:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35194 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232380AbjITF0v (ORCPT
+        with ESMTP id S233125AbjITFsW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Sep 2023 01:26:51 -0400
-Received: from mail-oa1-f79.google.com (mail-oa1-f79.google.com [209.85.160.79])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6815D19C
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Sep 2023 22:25:23 -0700 (PDT)
-Received: by mail-oa1-f79.google.com with SMTP id 586e51a60fabf-1d64a196d4dso8688254fac.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Sep 2023 22:25:23 -0700 (PDT)
+        Wed, 20 Sep 2023 01:48:22 -0400
+Received: from mail-vk1-xa2e.google.com (mail-vk1-xa2e.google.com [IPv6:2607:f8b0:4864:20::a2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE688197;
+        Tue, 19 Sep 2023 22:48:11 -0700 (PDT)
+Received: by mail-vk1-xa2e.google.com with SMTP id 71dfb90a1353d-496a775af2fso1275133e0c.0;
+        Tue, 19 Sep 2023 22:48:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1695188890; x=1695793690; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5e3f4QzEJgcH/wzSbDI/gKJD4hMsGrXqzvw2fLNZQag=;
+        b=UzFd3QYMtehCdgeNkvTn4rIvQVKMFQ/UvVVf4H6QmR8BgFdZfIY9gSoKwLHUqAaLRG
+         3yFf/rq2wcv248xUP0jJ+gpZpugGXXn8nWxU0cdCacDRmYA5E2aLJIAZexhB2aCbmAM0
+         7AO6bjwFjCdQTkrA8ixSn7M7G6bRu6pIlq2d82PhIQK4IV+YpTC7jkVVW6kQwAmA788b
+         jd7NNovi+H233hSX5GiJCc72IQBo5pj0eSB9a1YuiN8XLyR9LOajzV1NTxc82Gm6p98g
+         tG1HfvYCh2FqSrqw+Yw/yC9JHI/Di8evphmuEy0qzkmNnuooVraq8uA87GC5i/xgKCLb
+         LQQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695187522; x=1695792322;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9KXy0AJ1mYB9AziY09pUyMt0lMzZfTdF9nxAspCdED4=;
-        b=ByDwlgeKUmOih+nZ+x8AuTvR4A43J/awmdTjItmVA4pvACnFVTGCZf3pSHkU91LimB
-         imAwbmCAVxv/YPsFa87F++BHVkcABlLBveOVx/xqWSX43x7sixT1pcc8/U0mDMl+bksG
-         Isl/24pUhPOHWGDWsY+Y5kpxndodlD6FCisP+Yrke0SSr3uzB6RcHGzVUtovxEkfGicc
-         zzrgN2P6/Na4qlWqSgE+jkO1KF//ovNeksBI/rOUqILQ7KC5rFzFM7XAw0+ckI+XMO5j
-         heOrA4nw92Zy2pCarviNIXqV861b2Nt7I8g+j51OlHT3bdgxV0nDbEhefN8i4oSw5o9P
-         faGg==
-X-Gm-Message-State: AOJu0Yy4Xi60sKQ7/iZvDrWM1byyT1XJb9YncW5cVAxIzQt4GEqifW6H
-        qlNGlv7cYgGpZz18Va9OVbtTT1hvcGvp4gvDi/g4KFRbo2Yn
-X-Google-Smtp-Source: AGHT+IEzMkNZvhI++UjBWI7bQnFSZAMLfY4s77C5sQQs68tyFvsYAQRLx9e3bpv9lwJYE4enc6Rdqj66fS5zYa/devFaZh1o/5C4
+        d=1e100.net; s=20230601; t=1695188890; x=1695793690;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5e3f4QzEJgcH/wzSbDI/gKJD4hMsGrXqzvw2fLNZQag=;
+        b=Ig2szPowlHCarmLzpqe6edaQwk9VeF+A0tQ/maBMaXFa0RSpAW7YoPAS1p4gJceUuV
+         kSgJCPlWRNMPIFe3ombfAUToeMOoy0u12IE8XjGhKfN1oQLCOj2gDOHDdtcThnbE5BKa
+         KBiXiOA28YWKK74g4xpaHndw5CzINaPojrs/gtFIf/fqBQCOIpzmh4qMbZMuhF+/yJNu
+         8OvqYymJ0sBGaS6ld/PwluRR9XcLS8+lWfDREAliYl4SdJnDoF0CkQzhxeZghmTzIVAM
+         L49IwTWnmfe12MHKjRhwxXvZQNuNF8HiFGUxGnItus4rU53hwrwbquH8llrPhrYQaj9E
+         vwTA==
+X-Gm-Message-State: AOJu0Yxw8D6BjvK8d+KJx3SUiqrIa0ERwiC21WUSq6cy0LAeqmTgc/d+
+        DmkFtn1+75rovgNBQhcu/bZneM3dZb3Wb6rkL0I=
+X-Google-Smtp-Source: AGHT+IGnBGbbDBAQOh7vcWJKVBasqQrkD7T+LnvSe1XPBdxnGh5r46NefmsuEg6nHj7S9VfFtMPWSsD2r5Md+tnpJVE=
+X-Received: by 2002:a1f:de43:0:b0:496:295a:843 with SMTP id
+ v64-20020a1fde43000000b00496295a0843mr1735552vkg.13.1695188890584; Tue, 19
+ Sep 2023 22:48:10 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a05:6870:b7a8:b0:1d5:8fab:adf9 with SMTP id
- ed40-20020a056870b7a800b001d58fabadf9mr597593oab.6.1695187522749; Tue, 19 Sep
- 2023 22:25:22 -0700 (PDT)
-Date:   Tue, 19 Sep 2023 22:25:22 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000001f0b970605c39a7e@google.com>
-Subject: [syzbot] [ext4?] general protection fault in utf8nlookup
-From:   syzbot <syzbot+9cf75dc581fb4307d6dd@syzkaller.appspotmail.com>
-To:     adilger.kernel@dilger.ca, ebiggers@google.com,
-        krisman@collabora.com, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, tytso@mit.edu
+References: <20230919045135.3635437-1-willy@infradead.org> <20230919045135.3635437-12-willy@infradead.org>
+In-Reply-To: <20230919045135.3635437-12-willy@infradead.org>
+From:   Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Date:   Wed, 20 Sep 2023 14:47:53 +0900
+Message-ID: <CAKFNMo=WOCiFU0SDFTczCqRPEk3_sH7bXEHaGEE390+ouAuapA@mail.gmail.com>
+Subject: Re: [PATCH 11/26] nilfs2: Convert nilfs_copy_page() to nilfs_copy_folio()
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, gfs2@lists.linux.dev,
+        linux-nilfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
+        ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
+        reiserfs-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        Pankaj Raghav <p.raghav@samsung.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Tue, Sep 19, 2023 at 1:56=E2=80=AFPM Matthew Wilcox (Oracle) wrote:
+>
+> Both callers already have a folio, so pass it in and use it directly.
+> Removes a lot of hidden calls to compound_head().
+>
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>  fs/nilfs2/page.c | 50 +++++++++++++++++++++++++-----------------------
+>  1 file changed, 26 insertions(+), 24 deletions(-)
+>
+> diff --git a/fs/nilfs2/page.c b/fs/nilfs2/page.c
+> index 1c075bd906c9..696215d899bf 100644
+> --- a/fs/nilfs2/page.c
+> +++ b/fs/nilfs2/page.c
+> @@ -184,30 +184,32 @@ void nilfs_page_bug(struct page *page)
+>  }
+>
+>  /**
+> - * nilfs_copy_page -- copy the page with buffers
+> - * @dst: destination page
+> - * @src: source page
+> - * @copy_dirty: flag whether to copy dirty states on the page's buffer h=
+eads.
+> + * nilfs_copy_folio -- copy the folio with buffers
+> + * @dst: destination folio
+> + * @src: source folio
+> + * @copy_dirty: flag whether to copy dirty states on the folio's buffer =
+heads.
+>   *
+> - * This function is for both data pages and btnode pages.  The dirty fla=
+g
+> - * should be treated by caller.  The page must not be under i/o.
+> - * Both src and dst page must be locked
+> + * This function is for both data folios and btnode folios.  The dirty f=
+lag
+> + * should be treated by caller.  The folio must not be under i/o.
+> + * Both src and dst folio must be locked
+>   */
+> -static void nilfs_copy_page(struct page *dst, struct page *src, int copy=
+_dirty)
+> +static void nilfs_copy_folio(struct folio *dst, struct folio *src,
+> +               bool copy_dirty)
+>  {
+>         struct buffer_head *dbh, *dbufs, *sbh;
+>         unsigned long mask =3D NILFS_BUFFER_INHERENT_BITS;
+>
+> -       BUG_ON(PageWriteback(dst));
+> +       BUG_ON(folio_test_writeback(dst));
+>
+> -       sbh =3D page_buffers(src);
+> -       if (!page_has_buffers(dst))
+> -               create_empty_buffers(dst, sbh->b_size, 0);
+> +       sbh =3D folio_buffers(src);
+> +       dbh =3D folio_buffers(dst);
+> +       if (!dbh)
+> +               dbh =3D folio_create_empty_buffers(dst, sbh->b_size, 0);
+>
+>         if (copy_dirty)
+>                 mask |=3D BIT(BH_Dirty);
+>
+> -       dbh =3D dbufs =3D page_buffers(dst);
+> +       dbufs =3D dbh;
+>         do {
+>                 lock_buffer(sbh);
+>                 lock_buffer(dbh);
+> @@ -218,16 +220,16 @@ static void nilfs_copy_page(struct page *dst, struc=
+t page *src, int copy_dirty)
+>                 dbh =3D dbh->b_this_page;
+>         } while (dbh !=3D dbufs);
+>
+> -       copy_highpage(dst, src);
+> +       folio_copy(dst, src);
+>
+> -       if (PageUptodate(src) && !PageUptodate(dst))
+> -               SetPageUptodate(dst);
+> -       else if (!PageUptodate(src) && PageUptodate(dst))
+> -               ClearPageUptodate(dst);
+> -       if (PageMappedToDisk(src) && !PageMappedToDisk(dst))
+> -               SetPageMappedToDisk(dst);
+> -       else if (!PageMappedToDisk(src) && PageMappedToDisk(dst))
+> -               ClearPageMappedToDisk(dst);
+> +       if (folio_test_uptodate(src) && !folio_test_uptodate(dst))
+> +               folio_mark_uptodate(dst);
+> +       else if (!folio_test_uptodate(src) && folio_test_uptodate(dst))
+> +               folio_clear_uptodate(dst);
+> +       if (folio_test_mappedtodisk(src) && !folio_test_mappedtodisk(dst)=
+)
+> +               folio_set_mappedtodisk(dst);
+> +       else if (!folio_test_mappedtodisk(src) && folio_test_mappedtodisk=
+(dst))
+> +               folio_clear_mappedtodisk(dst);
+>
+>         do {
+>                 unlock_buffer(sbh);
+> @@ -269,7 +271,7 @@ int nilfs_copy_dirty_pages(struct address_space *dmap=
+,
+>                         NILFS_PAGE_BUG(&folio->page,
+>                                        "found empty page in dat page cach=
+e");
+>
+> -               nilfs_copy_page(&dfolio->page, &folio->page, 1);
+> +               nilfs_copy_folio(dfolio, folio, true);
+>                 filemap_dirty_folio(folio_mapping(dfolio), dfolio);
+>
+>                 folio_unlock(dfolio);
+> @@ -314,7 +316,7 @@ void nilfs_copy_back_pages(struct address_space *dmap=
+,
+>                 if (!IS_ERR(dfolio)) {
+>                         /* overwrite existing folio in the destination ca=
+che */
+>                         WARN_ON(folio_test_dirty(dfolio));
+> -                       nilfs_copy_page(&dfolio->page, &folio->page, 0);
+> +                       nilfs_copy_folio(dfolio, folio, false);
+>                         folio_unlock(dfolio);
+>                         folio_put(dfolio);
+>                         /* Do we not need to remove folio from smap here?=
+ */
+> --
+> 2.40.1
+>
 
-syzbot found the following issue on:
+Acked-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
 
-HEAD commit:    e42bebf6db29 Merge tag 'efi-fixes-for-v6.6-1' of git://git..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=179f4a38680000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=df91a3034fe3f122
-dashboard link: https://syzkaller.appspot.com/bug?extid=9cf75dc581fb4307d6dd
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1374a174680000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12b12928680000
+Everything else looks fine if the folio_copy symbol is exported.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/14a6a5d23944/disk-e42bebf6.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/98cc4c220388/vmlinux-e42bebf6.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/6a1d09cf21bf/bzImage-e42bebf6.xz
-mounted in repro #1: https://storage.googleapis.com/syzbot-assets/37e5beb24789/mount_0.gz
-mounted in repro #2: https://storage.googleapis.com/syzbot-assets/f219a9e665e9/mount_8.gz
-
-The issue was bisected to:
-
-commit b81427939590450172716093dafdda8ef52e020f
-Author: Eric Biggers <ebiggers@google.com>
-Date:   Mon Aug 14 18:29:02 2023 +0000
-
-    ext4: remove redundant checks of s_encoding
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10852352680000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=12852352680000
-console output: https://syzkaller.appspot.com/x/log.txt?x=14852352680000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+9cf75dc581fb4307d6dd@syzkaller.appspotmail.com
-Fixes: b81427939590 ("ext4: remove redundant checks of s_encoding")
-
-EXT4-fs error (device loop0): ext4_do_update_inode:5097: inode #2: comm syz-executor379: corrupted inode contents
-EXT4-fs error (device loop0): __ext4_ext_dirty:202: inode #2: comm syz-executor379: mark_inode_dirty error
-general protection fault, probably for non-canonical address 0xdffffc0000000003: 0000 [#1] PREEMPT SMP KASAN
-KASAN: null-ptr-deref in range [0x0000000000000018-0x000000000000001f]
-CPU: 1 PID: 5031 Comm: syz-executor379 Not tainted 6.6.0-rc1-syzkaller-00125-ge42bebf6db29 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/04/2023
-RIP: 0010:utf8nlookup+0x39/0xaa0 fs/unicode/utf8-norm.c:306
-Code: 89 c4 48 89 4c 24 08 48 89 14 24 89 f5 49 89 fd 49 be 00 00 00 00 00 fc ff df e8 22 a5 ea fe 49 8d 5d 18 48 89 d8 48 c1 e8 03 <42> 80 3c 30 00 74 08 48 89 df e8 c8 93 44 ff 48 8b 1b 48 83 c3 30
-RSP: 0018:ffffc90003e0f800 EFLAGS: 00010206
-RAX: 0000000000000003 RBX: 0000000000000018 RCX: ffff88801be79dc0
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: 0000000000000001 R08: 0000000000000005 R09: 0000000000000000
-R10: ffffc90003e0f998 R11: fffff520007c1f36 R12: 0000000000000005
-R13: 0000000000000000 R14: dffffc0000000000 R15: ffff8880792de070
-FS:  0000555556220480(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fa9b1ff3870 CR3: 000000002a7f4000 CR4: 00000000003506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- utf8byte+0x334/0x1350
- utf8_casefold+0x125/0x220 fs/unicode/utf8-core.c:109
- ext4_fname_setup_ci_filename+0x1b0/0x430 fs/ext4/namei.c:1458
- ext4_fname_prepare_lookup+0x2f7/0x4e0 fs/ext4/crypto.c:55
- ext4_lookup_entry fs/ext4/namei.c:1760 [inline]
- ext4_lookup+0x121/0x750 fs/ext4/namei.c:1835
- lookup_one_qstr_excl+0x11b/0x250 fs/namei.c:1608
- filename_create+0x297/0x530 fs/namei.c:3890
- do_mkdirat+0xb7/0x520 fs/namei.c:4135
- __do_sys_mkdir fs/namei.c:4163 [inline]
- __se_sys_mkdir fs/namei.c:4161 [inline]
- __x64_sys_mkdir+0x6e/0x80 fs/namei.c:4161
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f4bdc54d557
-Code: ff ff 77 07 31 c0 c3 0f 1f 40 00 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 b8 53 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fffbf49c838 EFLAGS: 00000286 ORIG_RAX: 0000000000000053
-RAX: ffffffffffffffda RBX: 00000000ffffffff RCX: 00007f4bdc54d557
-RDX: 0000000000000040 RSI: 00000000000001ff RDI: 0000000020000540
-RBP: 00007fffbf49c8d0 R08: 00000000000000fd R09: 0000000000000000
-R10: 0000000000000249 R11: 0000000000000286 R12: 0000000020000540
-R13: 00000000200000c0 R14: 0000000000000000 R15: 0000000000000000
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:utf8nlookup+0x39/0xaa0 fs/unicode/utf8-norm.c:306
-Code: 89 c4 48 89 4c 24 08 48 89 14 24 89 f5 49 89 fd 49 be 00 00 00 00 00 fc ff df e8 22 a5 ea fe 49 8d 5d 18 48 89 d8 48 c1 e8 03 <42> 80 3c 30 00 74 08 48 89 df e8 c8 93 44 ff 48 8b 1b 48 83 c3 30
-RSP: 0018:ffffc90003e0f800 EFLAGS: 00010206
-RAX: 0000000000000003 RBX: 0000000000000018 RCX: ffff88801be79dc0
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: 0000000000000001 R08: 0000000000000005 R09: 0000000000000000
-R10: ffffc90003e0f998 R11: fffff520007c1f36 R12: 0000000000000005
-R13: 0000000000000000 R14: dffffc0000000000 R15: ffff8880792de070
-FS:  0000555556220480(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005650cf4460b8 CR3: 000000002a7f4000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	89 c4                	mov    %eax,%esp
-   2:	48 89 4c 24 08       	mov    %rcx,0x8(%rsp)
-   7:	48 89 14 24          	mov    %rdx,(%rsp)
-   b:	89 f5                	mov    %esi,%ebp
-   d:	49 89 fd             	mov    %rdi,%r13
-  10:	49 be 00 00 00 00 00 	movabs $0xdffffc0000000000,%r14
-  17:	fc ff df
-  1a:	e8 22 a5 ea fe       	call   0xfeeaa541
-  1f:	49 8d 5d 18          	lea    0x18(%r13),%rbx
-  23:	48 89 d8             	mov    %rbx,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	42 80 3c 30 00       	cmpb   $0x0,(%rax,%r14,1) <-- trapping instruction
-  2f:	74 08                	je     0x39
-  31:	48 89 df             	mov    %rbx,%rdi
-  34:	e8 c8 93 44 ff       	call   0xff449401
-  39:	48 8b 1b             	mov    (%rbx),%rbx
-  3c:	48 83 c3 30          	add    $0x30,%rbx
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the bug is already fixed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite bug's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the bug is a duplicate of another bug, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Thanks,
+Ryusuke Konishi
