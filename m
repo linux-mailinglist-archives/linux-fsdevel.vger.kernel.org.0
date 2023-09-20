@@ -2,84 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A24B87A8CF8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Sep 2023 21:37:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4416C7A8DC7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Sep 2023 22:29:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229840AbjITThP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Sep 2023 15:37:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53006 "EHLO
+        id S229579AbjITU3H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Sep 2023 16:29:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229518AbjITThO (ORCPT
+        with ESMTP id S229451AbjITU3H (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Sep 2023 15:37:14 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 921E6A3;
-        Wed, 20 Sep 2023 12:37:08 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E12EDC433C8;
-        Wed, 20 Sep 2023 19:37:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695238628;
-        bh=j+jorpIRAaPJFNymaByLkAEIB8117cyMKfFxgXZxHg0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=kzHGRB9Q2kuEWQekIKGrHPr7rq9bDr3IyHKuXrus3e6FwWDk86aIxcYtCXO4dgEHp
-         bkPMLHdRNyA+iS+7YyeZpl/eyxV1BS6NT48opo88Ef22lGi9H+QH6sNvAm5U7KvlNn
-         fmHNCDgLt5Wve77qO+Ket2cwCQzm9c9gIuwecSgk536B+J4sVyipeE/qM82OU1f9jt
-         wkSCIfzLmngLK7+MLboCQ4vb7MLVnVeH77juYG9Bm9rcLyvm0LTi03e73/P77mB8Xh
-         Jg7WioU7Tx7khon8lhq7Ey390ZFsx3gbJoU6whL43CQMPu1ex8MDgwGdLq88vcISmU
-         vyDJlq03S496A==
-Date:   Wed, 20 Sep 2023 12:37:06 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Edward AD <twuufnxlz@gmail.com>
-Cc:     syzbot+9cf75dc581fb4307d6dd@syzkaller.appspotmail.com,
-        adilger.kernel@dilger.ca, krisman@collabora.com,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        tytso@mit.edu
-Subject: Re: [PATCH] unicode: add s_encoding null ptr check in utf8ncursor
-Message-ID: <20230920193706.GB914@sol.localdomain>
-References: <0000000000001f0b970605c39a7e@google.com>
- <20230920112015.829124-2-twuufnxlz@gmail.com>
+        Wed, 20 Sep 2023 16:29:07 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DABCDAB
+        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Sep 2023 13:29:00 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-405082a8c77so2547635e9.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Sep 2023 13:29:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1695241739; x=1695846539; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:sender:mime-version:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YgsQjPYSA4x9EUAST26pLIMgzwk5/fmUNEDBBVE+P4A=;
+        b=Ue/arN93mwyg8iKLJhbSFF+q+mIhcBN5Rk4lKj708pkihWlD0xI3IJSfskhPu6+xP6
+         VlVzkb95PcBHv5G9CFMCS6cuh+Zn5o9ieWpQUkiRZ+IFh7u0NcVSBFf0txtp+IEZMUfL
+         +n2iwL3jKnZtmx5XxhBGqQr8Gv4+zdi8Jai42sKOMf2Se3/fyGGgm7F5NYtz2sUViRGb
+         p/NdH5VVGWL1gZhZTfBCyTUy/7eem2uQS13827nZwqCzS2MQEKvH3DWU0jloNc89dk6C
+         t6Zie03d6H9qinAeckzaPSLeudx3L77cMtSPoJ3qlW2KhRvXeLEFvT+qxDyWveacRR8+
+         VHug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695241739; x=1695846539;
+        h=to:subject:message-id:date:from:sender:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YgsQjPYSA4x9EUAST26pLIMgzwk5/fmUNEDBBVE+P4A=;
+        b=CZpz5M9PnyZ00iaCqsoGNRxDvJ1nxs+gN177EezfK+a5iKohg9VOAEJ7GE2rYESO2b
+         Em19G1RX6UHc+fP4UwDN+ZQKMPpiUlNFYm0RZ9hacGlYbircGTz3iOJTBpKBMhnwMp9K
+         Hschdhn9prq2HpYG3xK6YXaJAVM5l6+zOnzFQHpM4si5AcO5+NSpJo/3wzgDpa4GnjHk
+         Rfn3N6mSqGjKkaXB9VgIXO9UOvzCQFZSiooPeGiA8fLgpwR7K+wkVG6pp3iMIOGwuPha
+         w8E8JtrLAoScrn2+c8vxex7bFmqALjXtm+pQhPp/WkgjT8wWwj3+JLHJD7ep6iYlXUpz
+         gsIQ==
+X-Gm-Message-State: AOJu0Ywa2g3rguNFWhE9bm55ck9IrzYaLd+o24W0TZ081MxZi0GT3bnN
+        kklfk5FDhE72NNI8eGWgwwfFuX5ZLbE4oSZLGVk=
+X-Google-Smtp-Source: AGHT+IGDfv/YLLELO80/AwOpt2FqIG3pvnqbIIT+ZCfg9BFOvM4bzq1JUiJir9NJ7gpa6NUyZFEhhXHVmlbh71wxQAc=
+X-Received: by 2002:a5d:674b:0:b0:321:56af:5ef9 with SMTP id
+ l11-20020a5d674b000000b0032156af5ef9mr3573600wrw.70.1695241738899; Wed, 20
+ Sep 2023 13:28:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230920112015.829124-2-twuufnxlz@gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Sender: mr.qamarmuhama@gmail.com
+Received: by 2002:a5d:55d0:0:b0:314:417c:5250 with HTTP; Wed, 20 Sep 2023
+ 13:28:58 -0700 (PDT)
+From:   Dr Lisa Williams <lw4666555@gmail.com>
+Date:   Wed, 20 Sep 2023 13:28:58 -0700
+X-Google-Sender-Auth: RaD5QO1dRIIf5603nALuOx_XGfU
+Message-ID: <CAJEdJUj51ULvzHQjTvyqWX6U0qNLV4evzUfbGxfu-kP0FaSjGA@mail.gmail.com>
+Subject: Hi,
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.6 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 20, 2023 at 07:20:16PM +0800, Edward AD wrote:
-> When init struct utf8cursor *u8c in utf8ncursor(), we need check um is
-> valid.
-> 
-> Reported-and-tested-by: syzbot+9cf75dc581fb4307d6dd@syzkaller.appspotmail.com
-> Fixes: b81427939590 ("ext4: remove redundant checks of s_encoding")
-> Signed-off-by: Edward AD <twuufnxlz@gmail.com>
-> ---
->  fs/unicode/utf8-norm.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/fs/unicode/utf8-norm.c b/fs/unicode/utf8-norm.c
-> index 768f8ab448b8..906b639b2f38 100644
-> --- a/fs/unicode/utf8-norm.c
-> +++ b/fs/unicode/utf8-norm.c
-> @@ -422,6 +422,10 @@ int utf8ncursor(struct utf8cursor *u8c, const struct unicode_map *um,
->  {
->  	if (!s)
->  		return -1;
-> +
-> +	if (IS_ERR_OR_NULL(um))
-> +		return -1;
-> +
->  	u8c->um = um;
->  	u8c->n = n;
->  	u8c->s = s;
-> -- 
+Hi,
 
-See https://lore.kernel.org/linux-fsdevel/20230920073659.GC2739@sol.localdomain/
+My name is Dr. Lisa Williams, from the United States, currently living
+in the United Kingdom.
 
-- Eric
+I hope you consider my friend request. I will share some of my photos
+and more details about me when I get your reply.
+
+With love
+Lisa
