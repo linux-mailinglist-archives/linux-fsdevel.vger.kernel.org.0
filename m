@@ -2,135 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 229F57A7D83
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Sep 2023 14:10:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD36E7A7CCC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Sep 2023 14:04:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235285AbjITMKW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Sep 2023 08:10:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57120 "EHLO
+        id S235132AbjITMEO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Sep 2023 08:04:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235650AbjITMKQ (ORCPT
+        with ESMTP id S235105AbjITMEN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Sep 2023 08:10:16 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A5A893;
-        Wed, 20 Sep 2023 05:10:10 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52A46C433C9;
-        Wed, 20 Sep 2023 12:10:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1695211809;
-        bh=qFv613Qiwy9+VVmHC1l8WL+djE5bSoO9LA0huFAHIA4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q2O4+dh5/7R3Jn5oEYrs5ru1YQm1oBd77QPWKRPhwbr7MtXJr0Iz7BVb3kkminnRs
-         vBSXjwPXkUacN52Zj5G9ymNNI6faU5WJ3mRMqJ1inh/poqTL/YZQsPvWR4p3eaBEYb
-         icMD7W7DHKdu4UiNXds5ljWsOkQoC2SD8JndQXtI=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     stable@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        patches@lists.linux.dev, Wen Yang <wenyang.linux@foxmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>,
-        Christian Brauner <brauner@kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Dylan Yudaken <dylany@fb.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 044/273] eventfd: prevent underflow for eventfd semaphores
-Date:   Wed, 20 Sep 2023 13:28:04 +0200
-Message-ID: <20230920112847.780028922@linuxfoundation.org>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20230920112846.440597133@linuxfoundation.org>
-References: <20230920112846.440597133@linuxfoundation.org>
-User-Agent: quilt/0.67
-X-stable: review
-X-Patchwork-Hint: ignore
+        Wed, 20 Sep 2023 08:04:13 -0400
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB7A9B6;
+        Wed, 20 Sep 2023 05:04:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=ArH6Ez/Ai3EV6hOS18A12MH9ewrotbWIDmBOHOMkd98=; b=en4g9sMpfnJNaH4Tla19g5iFs2
+        F3hb47MPAlZKPTc5lSMzdfIJP4M9W6MZXHYEZlvEIbk2ce/kDcYgcCWv5U0y1FVDyZ21nqxPneRGl
+        A0wmFo2II/WDpwe2aU2wPrGwjXcQcFYgSRMBI96zPyoPeQbpxOjL3kDNQhlvX7w4ow8oW/qXaohUA
+        X7S9PL1bxtF1Fd/j/8JJbMgFJj/pgTEN8KFclPcBQ1wEPKD48rQFpGWjvqjqogfwBjgOX6LbCuouk
+        KyJMOj/TlOSqRzVTUJLyYoOJiYPiz4Dc35yBndTDjXsq/E9NKJF3bV9C5e+gugW2UUc8rq+O/hfWp
+        Di4jVEpg==;
+Received: from [187.56.161.251] (helo=[192.168.1.60])
+        by fanzine2.igalia.com with esmtpsa 
+        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+        id 1qivvy-006UyG-DA; Wed, 20 Sep 2023 14:03:58 +0200
+Message-ID: <b71f8c4b-1e70-605c-8903-ab1d16c1ef73@igalia.com>
+Date:   Wed, 20 Sep 2023 09:03:49 -0300
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.0
+Subject: Re: [PATCH v4 2/2] btrfs: Introduce the temp-fsid feature
+Content-Language: en-US
+To:     Anand Jain <anand.jain@oracle.com>, linux-btrfs@vger.kernel.org
+Cc:     clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
+        dsterba@suse.cz, linux-fsdevel@vger.kernel.org,
+        kernel@gpiccoli.net, kernel-dev@igalia.com, david@fromorbit.com,
+        kreijack@libero.it, johns@valvesoftware.com,
+        ludovico.denittis@collabora.com, quwenruo.btrfs@gmx.com,
+        wqu@suse.com, vivek@collabora.com
+References: <20230913224402.3940543-1-gpiccoli@igalia.com>
+ <20230913224402.3940543-3-gpiccoli@igalia.com>
+ <f976c005-29fe-4f7e-e1d2-5262d638761a@oracle.com>
+From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+In-Reply-To: <f976c005-29fe-4f7e-e1d2-5262d638761a@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_SORBS_WEB,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+On 19/09/2023 08:06, Anand Jain wrote:
+> [...]
+>> +	while (dup_fsid) {
+>> +		dup_fsid = false;
+>> +		generate_random_uuid(vfsid);
+>> +
+>> +		list_for_each_entry(fs_devices, &fs_uuids, fs_list) {
+>> +			if (!memcmp(vfsid, fs_devices->fsid, BTRFS_FSID_SIZE) ||
+>> +			    !memcmp(vfsid, fs_devices->metadata_uuid,
+>> +				    BTRFS_FSID_SIZE))
+>> +				dup_fsid = true;
+>> +		}
+> 		
+> 
+> I've noticed this section of the code a few times, but I don't believe
+> I've mentioned it before. We've been using generate_random_guid() and
+> generate_random_uuid() without checking for UUID clashes. Why extra
+> uuid clash check here?
+> 
 
-------------------
+Hi Anand, what would happen if the UUID clashes here? Imagine we have
+another device with the same uuid (incredibly small chance, but...), I
+guess this would break in the subsequent path of fs_devices addition,
+hence I added this check, which is really cheap. We need to generate a
+really unique uuid here as the temp one.
 
-From: Wen Yang <wenyang.linux@foxmail.com>
-
-[ Upstream commit 758b492047816a3158d027e9fca660bc5bcf20bf ]
-
-For eventfd with flag EFD_SEMAPHORE, when its ctx->count is 0, calling
-eventfd_ctx_do_read will cause ctx->count to overflow to ULLONG_MAX.
-
-An underflow can happen with EFD_SEMAPHORE eventfds in at least the
-following three subsystems:
-
-(1) virt/kvm/eventfd.c
-(2) drivers/vfio/virqfd.c
-(3) drivers/virt/acrn/irqfd.c
-
-where (2) and (3) are just modeled after (1). An eventfd must be
-specified for use with the KVM_IRQFD ioctl(). This can also be an
-EFD_SEMAPHORE eventfd. When the eventfd count is zero or has been
-decremented to zero an underflow can be triggered when the irqfd is shut
-down by raising the KVM_IRQFD_FLAG_DEASSIGN flag in the KVM_IRQFD
-ioctl():
-
-        // ctx->count == 0
-        kvm_vm_ioctl()
-        -> kvm_irqfd()
-           -> kvm_irqfd_deassign()
-              -> irqfd_deactivate()
-                 -> irqfd_shutdown()
-                    -> eventfd_ctx_remove_wait_queue(&cnt)
-                       -> eventfd_ctx_do_read(&cnt)
-
-Userspace polling on the eventfd wouldn't notice the underflow because 1
-is always returned as the value from eventfd_read() while ctx->count
-would've underflowed. It's not a huge deal because this should only be
-happening when the irqfd is shutdown but we should still fix it and
-avoid the spurious wakeup.
-
-Fixes: cb289d6244a3 ("eventfd - allow atomic read and waitqueue remove")
-Signed-off-by: Wen Yang <wenyang.linux@foxmail.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Dylan Yudaken <dylany@fb.com>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Message-Id: <tencent_7588DFD1F365950A757310D764517A14B306@qq.com>
-[brauner: rewrite commit message and add explanation how this underflow can happen]
-Signed-off-by: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/eventfd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/eventfd.c b/fs/eventfd.c
-index a96de1f0377bc..66864100b823c 100644
---- a/fs/eventfd.c
-+++ b/fs/eventfd.c
-@@ -178,7 +178,7 @@ void eventfd_ctx_do_read(struct eventfd_ctx *ctx, __u64 *cnt)
- {
- 	lockdep_assert_held(&ctx->wqh.lock);
- 
--	*cnt = (ctx->flags & EFD_SEMAPHORE) ? 1 : ctx->count;
-+	*cnt = ((ctx->flags & EFD_SEMAPHORE) && ctx->count) ? 1 : ctx->count;
- 	ctx->count -= *cnt;
- }
- EXPORT_SYMBOL_GPL(eventfd_ctx_do_read);
--- 
-2.40.1
-
-
-
+Do you see any con in having this check? I'd say we should maybe even
+check in the other places the code is generating a random uuid but not
+checking for duplicity currently...
