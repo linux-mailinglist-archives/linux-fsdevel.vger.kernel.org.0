@@ -2,56 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C9BC27A73CA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Sep 2023 09:16:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB4E57A73E7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Sep 2023 09:22:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233599AbjITHQN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Sep 2023 03:16:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56356 "EHLO
+        id S233704AbjITHWo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Sep 2023 03:22:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57412 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233567AbjITHQM (ORCPT
+        with ESMTP id S233686AbjITHWn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Sep 2023 03:16:12 -0400
+        Wed, 20 Sep 2023 03:22:43 -0400
 Received: from icp-osb-irony-out2.external.iinet.net.au (icp-osb-irony-out2.external.iinet.net.au [203.59.1.155])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1C4A993;
-        Wed, 20 Sep 2023 00:16:03 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B1DB293;
+        Wed, 20 Sep 2023 00:22:35 -0700 (PDT)
 X-SMTP-MATCH: 1
-IronPort-Data: A9a23:XOu7eKvTXW8iBOuehyK7C8uvTufnVHxfMUV32f8akzHdYApBsoF/q
- tZmKVkyQEty1hlBgm0KGI+zxf6LyZfVzubXKHJtqTc3CSgiRfPtXbyxNl33Mz6ZMvrNRUdm6
- 9R2QtTbJajYdFeFzvuWGuan9SMUOZ2gHOKmU7aVYHgpHGeIdQ964f5ds79h6mJXqYXha++9k
- Yuai9HSPlajxwl1Pgo8g05UgEoy1BhakGpwUm0WPZinjneH/5UmJMt3yZWKEpfNatI88thW5
- gr05OrREmvxp3/BA/v5yeyjKhVirrT6ZWBigVIOM0SuqkQZ/HRqis7XOdJEAXq7hQllkPgh4
- +ROkaWPZzt4Ba/jmrowCzpDTgNHaPguFL/veRBTsOSglhycNSKyk7M2ShtsCOX0+M4qUScQs
- 6ZCdnZXNkDra+GemdpXTsFjnMksMc/kMZkSoFl/wCrFC/s6B5vERuPD+Le02R9s2JwRQa6BP
- ZNxhTxHc0nJXgVsOlMtB7kbruSEgGm4ImIBgQfAzUYwyy2JpOBr65DBOcTUdpquTMRanlqwr
- 2nb+23zRBodMbS31juB9mOEh+nBhyr3VYseUrqi+ZZChFyV23xWCxAMU1a/iee2h1T4WN9FL
- UEQvC00osAa8E2tU8m4UQa0rWCJujYCVNdKVe438geAzuzT+QnxLmwFSCNRLdU8v88eWzMnz
- BmKksnvCDgpt6eaIVqB8a2KpDe+IgARLGkfdWoKShYD79D/oYY1yBXVQb5LFra0gdL0Hxn/x
- jmLqG41gLB7sCIQ//jruA6C2Wjy48KRHkgp/grWGGmi60VweeZJerCV1LQS1t4YRK7xc7VLl
- CFV8yRCxIji1a2wqRE=
-IronPort-HdrOrdr: A9a23:EEVSbKwHnZStNrEIjHS/KrPxceskLtp133Aq2lEZdPU1SL3kqy
- nKppkmPHDP6Ar5NEtOpTnCAtjnfZqkz+8X3WBJB8bBYOCEghrNEGgB1/qZ/9SIIUSXnYQw6U
- 4HSdkYNDSaNzlHZKjBjjVQXOxQueWvweSDgaP3yH9pXRtrcchbnnlEIzfeOEkzaA5YCZ8+DZ
- b03Ls3m9MMQwVuUu2LQnEZW+DCotfPko7qJQUBGwMqgTP+/Q+A2frzDhyR3hIVVjVSzPM56G
- DA1wTy+6WktJiAu2Ph/l6W54lTkNvlwN5EGMHJkNEcLnH2hh+vf5kJYcz8gBkl5MuUwBIBlt
- 3UphcpOM5+r0nWYnq+rXLWqmzdOXIVmgTf9WM=
-X-Talos-CUID: =?us-ascii?q?9a23=3Ac1ftf2txNmga8BbjyaJu4dSW6It1WUze6E7vDXP?=
- =?us-ascii?q?pMmRGSuO4EXyLpYFdxp8=3D?=
-X-Talos-MUID: =?us-ascii?q?9a23=3A8R4XtQ+LKed1SuVxQbwxhIeQf9g16pm2K0AJq5o?=
- =?us-ascii?q?tnvuHGSpgfGbC1R3iFw=3D=3D?=
+IronPort-Data: A9a23:xGcDEKncPfZRAAHEGTRw5dLo5gyqJ0RdPkR7XQ2eYbSJt1+Wr1Gzt
+ xIv7RMywkvx1ptBB6l0bb0CeDoHuZblerYTSQZyrzc3J55zgZKtLcyDKUvtND+lIMTGTUZ2h
+ +0TcdCowPocFxcwnT/zdOC7xZVA/fvQHOGkWbScYnkZqTJME0/Ntzoyw4bVvaY12bBVMyvV0
+ fvursvWPkOS2jIcGgr4PIra9XuDFNyr0N8plgRWicJj5TcypFFMZH4rHpxdGlOjKmVi8k9Wc
+ M6YpF2x1juxEx4FVoj/yu6jGqEAaua60QOm0hK6V4D+2UIa/nRaPqsTbJIhhUlrZzqhxstaw
+ t9klbmKRwYVMPPLqNUTDhhTKnQrVUFG0OevzXmXgpXClQufLSuqm7M0VnRe0Y8wp7YxXycUr
+ 6JecmhdBvyAr7veLLaTRfNhidklI8TxMZk3pXx70TfUEbAtRpWFSriiCdpwgGls2ZwXQq2HD
+ yYfQRRJRi/RPyRyAw8SM5Musf+aul7QaTIN/Tp5ooJyuQA/1jdZz7npNMv9e9qEX8xZk0+U4
+ GXc8AzRLhgENdDZ7TOE/XKwrubEgCfyUsQZE7jQ3vprhkCDg28eEhsbUXOlrvSjzE2zQdRSL
+ woT4CVGhawz8lG7C9fmUxCmrXqsoBERQZxTHvc85QXLzbDbiy6dB24ZXntIctcmnNE5SCZs1
+ VKTmd7tQzt1v9W9VXWH6L6QoSiaPSkTMH9HaygZSwcM/9jkpsc0lB2nZtB7EaG6j9vdFjT5w
+ jTMpy8774j/luZWh+DluAqd3Xf2/siPUhY650PcWWfj5x4RiJOZWrFEIGPztZ5oRLt1hHHa1
+ JTYs6ByNNwzMKw=
+IronPort-HdrOrdr: A9a23:5rTZZK3p7qBPZBgNA2Q5cQqjBD0kLtp133Aq2lEZdPUzSL3gqy
+ nOpoV86faQslsssR4b+exoVJPvfZq+z+8R3WByB8bEYOCOggLBR+sM0WKF+UyDJ8SUzI9gPM
+ lbAstDIey1J1w/pcHz5RmjE8xI+qj8zImYwc3bi1trUg1ubbhthj0JdzpzQncbeCB2QZIlEJ
+ Kd48BDoSasPW8Qctm2b0N1I9TrlpnCiZbvYRsNAhg65U2VlDutrLbxDhif2X4lIkty6IZn+X
+ XAmwz97KCkr/z+0AbV0yvJ441Rg8aJ8Ko5OCTP4vJlTgnRtg==
+X-Talos-CUID: =?us-ascii?q?9a23=3AQPBk0mscTlBg1xLtMUWUVoTT6It8aVbXxl7wBnW?=
+ =?us-ascii?q?2CFpnFrqleFHN+ahdxp8=3D?=
+X-Talos-MUID: 9a23:9VkdxAoeOwopQ79+1Uwezx9EHvx5v52TMRgIqpQWltG2CQtfITjI2Q==
 X-IronPort-AV: E=Sophos;i="6.02,161,1688400000"; 
-   d="scan'208";a="464740721"
+   d="scan'208";a="464741731"
 Received: from 58-6-226-208.tpgi.com.au (HELO [192.168.0.22]) ([58.6.226.208])
-  by icp-osb-irony-out2.iinet.net.au with ESMTP; 20 Sep 2023 15:15:57 +0800
-Message-ID: <1b677562-929c-62f7-353d-80af3c30c7c4@westnet.com.au>
-Date:   Wed, 20 Sep 2023 17:15:56 +1000
+  by icp-osb-irony-out2.iinet.net.au with ESMTP; 20 Sep 2023 15:22:33 +0800
+Message-ID: <35a33582-9206-94bb-eca2-a1d9c585f6c1@westnet.com.au>
+Date:   Wed, 20 Sep 2023 17:22:33 +1000
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.15.0
 Subject: Re: [PATCH 09/17] m68k: Implement xor_unlock_is_negative_byte
 Content-Language: en-US
-To:     David Laight <David.Laight@ACULAB.COM>,
-        'Matthew Wilcox' <willy@infradead.org>
+To:     Matthew Wilcox <willy@infradead.org>,
+        David Laight <David.Laight@aculab.com>
 Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
         "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
@@ -65,11 +63,8 @@ References: <20230915183707.2707298-1-willy@infradead.org>
  <ZQmvhC+pGWNs9R23@casper.infradead.org>
  <cffc2a427ae74f62b07345ec9348e43e@AcuMS.aculab.com>
  <ZQm67lGOBBdC2Dl9@casper.infradead.org>
- <c61a58a1f5a34f2b96c6043840635197@AcuMS.aculab.com>
- <ZQnCiZuMbFnwbEUt@casper.infradead.org>
- <bfbf4d9ae5674d5dbe8c509abf5b0f84@AcuMS.aculab.com>
 From:   Greg Ungerer <gregungerer@westnet.com.au>
-In-Reply-To: <bfbf4d9ae5674d5dbe8c509abf5b0f84@AcuMS.aculab.com>
+In-Reply-To: <ZQm67lGOBBdC2Dl9@casper.infradead.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,NICE_REPLY_A,
@@ -83,47 +78,35 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
 
-On 20/9/23 01:57, David Laight wrote:
-> From: Matthew Wilcox
->> Sent: 19 September 2023 16:47
->>
->> On Tue, Sep 19, 2023 at 03:22:25PM +0000, David Laight wrote:
->>>> Anyway, that's not the brief.  We're looking to (eg) clear bit 0
->>>> and test whether bit 7 was set.  So it's the sign bit of the byte,
->>>> not the sign bit of the int.
+On 20/9/23 01:14, Matthew Wilcox wrote:
+> On Tue, Sep 19, 2023 at 02:35:25PM +0000, David Laight wrote:
+>> From: Matthew Wilcox <willy@infradead.org>
+>>> Sent: 19 September 2023 15:26
 >>>
->>> Use the address of the byte as an int and xor with 1u<<24.
->>> The xor will do a rmw on the three bytes following, but I
->>> doubt that matters.
+>>> On Tue, Sep 19, 2023 at 01:23:08PM +0000, David Laight wrote:
+>>>>> Well, that sucks.  What do you suggest for Coldfire?
+>>>>
+>>>> Can you just do a 32bit xor ?
+>>>> Unless you've got smp m68k I'd presume it is ok?
+>>>> (And assuming you aren't falling off a page.)
+>>>
+>>> Patch welcome.
 >>
->> Bet you a shiny penny that Coldfire takes an unaligned access trap ...
+>> My 68020 book seems to be at work and I'm at home.
+>> (The 286, 386 and cy7c600 (sparc 32) books don't help).
+>>
+>> But if the code is trying to do *ptr ^= 0x80 and check the
+>> sign flag then you just need to use eor.l with 0x80000000
+>> on the same address.
 > 
-> and then the 'firmware' silently fixed it up for you a few 1000
-> clocks later...
-> 
->> and besides, this is done on _every_ call to unlock_page().  That might
->> cross not only a cacheline boundary but also a page boundary.  I cannot
->> believe that would be a high-performing solution.  It might be just fine
->> on m68000 but I bet even by the 030 it's lower performing.
-> 
-> I do remember managing to use 'cas2' to add an item to a linked list.
-> But it is so painful so setup it was better just to disable interrupts.
-> For non-smp that is almost certainly ok.
-> (Unless the instructions are slow because of synchronisation.)
-> Otherwise you need to use 'cas' on the aligned word.
-> Assuming coldfire even has cas.
+> I have a 68020 book; what I don't have is a Coldfire manual.
 
-It doesn't. See CONFIG_CPU_HAS_NO_CAS in arch/m68k/Kconfig.cpu for how
-m68k deals with ColdFire and early 68000 parts not having it.
+You can find it here: https://www.nxp.com/docs/en/reference-manual/CFPRM.pdf
 
 Regards
 Greg
 
 
-> 
-> 	David
-> 
-> -
-> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-> Registration No: 1397386 (Wales)
-> 
+> Anyway, that's not the brief.  We're looking to (eg) clear bit 0
+> and test whether bit 7 was set.  So it's the sign bit of the byte,
+> not the sign bit of the int.
