@@ -2,45 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BECB87A8AAF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Sep 2023 19:35:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDA0A7A8AAA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Sep 2023 19:35:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229534AbjITRf2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Sep 2023 13:35:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45450 "EHLO
+        id S229524AbjITRfK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Sep 2023 13:35:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229541AbjITRf0 (ORCPT
+        with ESMTP id S229445AbjITRfJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Sep 2023 13:35:26 -0400
-Received: from outbound-ip201b.ess.barracuda.com (outbound-ip201b.ess.barracuda.com [209.222.82.145])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96462B9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Sep 2023 10:35:14 -0700 (PDT)
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04lp2048.outbound.protection.outlook.com [104.47.73.48]) by mx-outbound16-233.us-east-2b.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Wed, 20 Sep 2023 17:35:01 +0000
+        Wed, 20 Sep 2023 13:35:09 -0400
+Received: from outbound-ip7b.ess.barracuda.com (outbound-ip7b.ess.barracuda.com [209.222.82.189])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEF87BB
+        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Sep 2023 10:35:02 -0700 (PDT)
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2174.outbound.protection.outlook.com [104.47.57.174]) by mx-outbound17-66.us-east-2b.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Wed, 20 Sep 2023 17:34:58 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=TwafHqrbPwqwJlBd/0aWG8D7qF7eMpNsER22zOfoaaMAwSYIUA0g1S4Wcf4lZc2ieyD6qJV6+5n1MGVLJ80e8f25pFdGBG4rvnScfma6owocNZq1xsPGkPwOLSSs+lKdnbaqzaZ+fQJdjufTIQu3aw41LAfmchIawkbErbsnYRvUvff6lSQmT8vd+H/WXlm7ck86m2NtnvGq+WIoOHRhITWf1O7dQEQRz1iJgRVfpXrAqKnNVi8bLby+5dni6xyMYfx5YFfOsUt5Osip+ZrK6QgWMSiF8hWDpBuN2KQmQU0yS5pFFnQ0jMF8iyX/V5rsRqpWuuapJBIKeBcFbDttXQ==
+ b=MGkuY5qLUu5DNfvr1wsNjH9mb0vOYgHnr6QuqrBhyqJFQu0PsSe3NYIeKW1jpB8MUf/VOwVe4o631FhVCumVx/jFtA/9UhAqdQlSO43ws+HVYHPqsoXfheXNy+I2O489atwZEPE/pnWNyXl0OWmyTA1z/vsgC6d9qzuT4+4YtO3foS91izp19ZpSQxmZTaDmAmjfpVKLuubUtqyQ4hADGMxNXTQiY+r/2YgtH7OjCa9mqwwcD6lo7swljaN2th4IeeNwe+wJS94HuyRSY7KlWK1Vv9z0nD/UA2g5qpHesRWxmshoG/qNyrqiYdIRnbeFP+EbgTS0HXkWBPDYOoXYRw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wXR/rdIx0cAylq+12eF8vnP5D9doFD1zmaDrJFvyH7g=;
- b=VTz8g/yCGppFjxtCcqnqT8mwmGD8mpFexeQQgLu7nUNOQw0vmmNwquPxrKfpMRIlyz5Fg4aK/lvsBD1NGDGwc+QU36o9yvB6od8td5QWYprj3XB4fcZYQcP2BTvQanc2FP10JhX9IF/OEL5vGHEF2RqXYS1kOmI7I83r0o1oh1b1puOz4qGfTMDgmOysBPMT7nHN3E6nelxuqmCWtyloZdKW7WF/XBI+id6TBA8z/0Ii8xOYmH3wz52YTW+K2qhnf0KydubWk39dwk6ZK0kqAOcJ4OvjPxfF+YzRM9/p5WOPxMEwUihhQQ3WZnTEJXYoizrGGwCjfmo1W7RQfBMxqw==
+ bh=ZnAv9eSklNgUbvw+BCiAvWERywVGheoB8VOv6vhtePA=;
+ b=PFkaZgxiRz663B6JQOR7gewXzaU0HdJmfxY3iqDpwmCdBJ0C9BxtattdDaZILQ0bz0mfwyJ3K7t36lVryC8CDydxQQzW/FQcJ8QLEqo2wG2sSlTAF8r+wZwk/AQFeGNWH/ueNAKLQetjFWCGHdVgNOS32yJ4r+Fcv9jxqiSFIdqG6dCELQNiUumk95a+nanDF02TLjbdhKO5ooBD1IYXO6cROi2Ywyh/znIGsjJSp9NW12lOde/vP3WlkEaSJl+2guoTps/rkkRhaFej+ucsdpcjrEEy2Vi9PjtPmobCkU2NwUr46qXsp+majs6BRT2qOLUEjxEDXFGQfnrrHtzyDw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  50.222.100.11) smtp.rcpttodomain=ddn.com smtp.mailfrom=ddn.com; dmarc=pass
  (p=reject sp=reject pct=100) action=none header.from=ddn.com; dkim=none
  (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ddn.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wXR/rdIx0cAylq+12eF8vnP5D9doFD1zmaDrJFvyH7g=;
- b=DcCsVmU5Frsws9GAkGm6b4n8t0uL4uJihQwUlFvth0c4aqZxhpC6BB3IhygC0CsvJ/lznSMmKxJWmNGrPTfmgY4tgr1V58m5bgqmL0FkWPAzemDeR+lbIADcxqac+q+5R4TvaX8PyONJyKq+LHCY8Nencf0Z556gMqsxGO6YYM8=
-Received: from BN1PR10CA0002.namprd10.prod.outlook.com (2603:10b6:408:e0::7)
- by DM6PR19MB4091.namprd19.prod.outlook.com (2603:10b6:5:229::24) with
+ bh=ZnAv9eSklNgUbvw+BCiAvWERywVGheoB8VOv6vhtePA=;
+ b=g9aYhnh6giucryiB51PEqb5csYvjvNROHGk1TaTt7SAuD3+iOGNjTQbdfI6hvJK1S6qtFR9GvS1VSSNe5VF6srNKc2hbeuSC891WQeQxdaEKfhytwvHAj/iy3sgPF/DcrAdQmUAQAjw+1nRqJR33uf1hJafMQomJgjtW6X4bqsk=
+Received: from BN0PR04CA0026.namprd04.prod.outlook.com (2603:10b6:408:ee::31)
+ by CY8PR19MB7273.namprd19.prod.outlook.com (2603:10b6:930:99::13) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6792.28; Wed, 20 Sep
- 2023 17:34:54 +0000
-Received: from BN8NAM04FT020.eop-NAM04.prod.protection.outlook.com
- (2603:10b6:408:e0:cafe::2c) by BN1PR10CA0002.outlook.office365.com
- (2603:10b6:408:e0::7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6745.18; Wed, 20 Sep
+ 2023 17:34:55 +0000
+Received: from BN8NAM04FT041.eop-NAM04.prod.protection.outlook.com
+ (2603:10b6:408:ee:cafe::c2) by BN0PR04CA0026.outlook.office365.com
+ (2603:10b6:408:ee::31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6792.29 via Frontend
- Transport; Wed, 20 Sep 2023 17:34:54 +0000
+ Transport; Wed, 20 Sep 2023 17:34:55 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 50.222.100.11)
  smtp.mailfrom=ddn.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=ddn.com;
@@ -48,22 +48,20 @@ Received-SPF: Pass (protection.outlook.com: domain of ddn.com designates
  50.222.100.11 as permitted sender) receiver=protection.outlook.com;
  client-ip=50.222.100.11; helo=uww-mx01.datadirectnet.com; pr=C
 Received: from uww-mx01.datadirectnet.com (50.222.100.11) by
- BN8NAM04FT020.mail.protection.outlook.com (10.13.160.97) with Microsoft SMTP
+ BN8NAM04FT041.mail.protection.outlook.com (10.13.161.111) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6813.16 via Frontend Transport; Wed, 20 Sep 2023 17:34:54 +0000
+ 15.20.6813.16 via Frontend Transport; Wed, 20 Sep 2023 17:34:55 +0000
 Received: from localhost (unknown [10.68.0.8])
-        by uww-mx01.datadirectnet.com (Postfix) with ESMTP id 41E5020C684C;
-        Wed, 20 Sep 2023 11:35:59 -0600 (MDT)
+        by uww-mx01.datadirectnet.com (Postfix) with ESMTP id 3C2BD20C684B;
+        Wed, 20 Sep 2023 11:36:00 -0600 (MDT)
 From:   Bernd Schubert <bschubert@ddn.com>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     bernd.schubert@fastmail.fm, miklos@szeredi.hu, dsingh@ddn.com,
         Bernd Schubert <bschubert@ddn.com>,
-        Horst Birthelmer <hbirthelmer@ddn.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH v9 5/7] fuse: Revalidate positive entries in fuse_atomic_open
-Date:   Wed, 20 Sep 2023 19:34:43 +0200
-Message-Id: <20230920173445.3943581-6-bschubert@ddn.com>
+        Horst Birthelmer <hbirthelmer@ddn.com>
+Subject: [PATCH v9 6/7] fuse: Return D_REVALIDATE_ATOMIC for cached dentries
+Date:   Wed, 20 Sep 2023 19:34:44 +0200
+Message-Id: <20230920173445.3943581-7-bschubert@ddn.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230920173445.3943581-1-bschubert@ddn.com>
 References: <20230920173445.3943581-1-bschubert@ddn.com>
@@ -71,49 +69,34 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN8NAM04FT020:EE_|DM6PR19MB4091:EE_
+X-MS-TrafficTypeDiagnostic: BN8NAM04FT041:EE_|CY8PR19MB7273:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 1bc5f4f5-4091-496d-0aae-08dbb9ffe6d7
+X-MS-Office365-Filtering-Correlation-Id: 2328f052-7e9a-4139-c539-08dbb9ffe760
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: VChQ28SZfP+wn8bcUZlFilUFxxms9ifVECiGIlzrygQn3laMyVDK3zSOMKdr3Db8BoHLbMR9gOIZ1hwqvvaHWNSMvwORFS8eML1dxwhYgnwfc+D3aOorsdP0oZq++NbfewpAnmoia8h+mEH2ASHWUlANJngMXSHsKr1khs4h+KL85bPRDxt7Zo8jI/zuClGb49MySDkCtYPg/gsyR6TUS6mkhZVMB5D1eczgABrz33GoyLQGgwmkBzIoRKKX8UUlrk1a/pKEr9bsi2PEYGMXSU8HL1at/VTsFp+Op+ODIv3IxZXMSp7AYiQuwYlX6+0PbkfC7voQ214+jSplNpv9ncxO9+YALDToWu+cbfvOWfoE61h4/gzkJKd+7X+p+4T+7dNqato8zF7pLR9XMt3j46iaoS9u6aLoizK6kKodAlQsk56obapdcvN57c/80j8WZMz+1v/zGThNCQES0skJ+JeS0UiEduguuG8LCPvRgj1jJ0SumBXOIYCdvYXZqhqlz3N4A7IG+abbiYcQ6+DK8jHI4M/OoihxreKJPGldL8EgBlIJ7xBrPnJ/Db4/TuHs+yThUec9gUPqD2zlnuesVFLaqAti/b5GKFP0NWmgGTT48aUG31/0891GdVzMIsYeOPXPGa6DpWny9w0a2Ke7M/JI1e7VEeVoA0qYtsev3r9msJg3sv4g6CAaj6NY7fzUXeCXj9W5hgXh+CHGgs1ynvOtWRs6S6gsbS9rrr1XCRosVmw5lt1RwGSLQhgpb3qnnmuX1e2Nc8/5q1UaIDOoWWeVFl9a9u9gtidGK/0B/KM=
-X-Forefront-Antispam-Report: CIP:50.222.100.11;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:uww-mx01.datadirectnet.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(4636009)(396003)(376002)(39850400004)(136003)(346002)(186009)(451199024)(1800799009)(82310400011)(36840700001)(46966006)(6666004)(478600001)(356005)(81166007)(36756003)(82740400003)(40480700001)(1076003)(86362001)(36860700001)(8936002)(336012)(2906002)(47076005)(26005)(5660300002)(6266002)(83380400001)(6916009)(4326008)(41300700001)(8676002)(316002)(70206006)(54906003)(70586007)(2616005)(21314003)(36900700001)(309714004);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: h2cSyGauaCe2hkOo1ebvxpqMCJIfqP7Bo+6UMhlLY636x+s8146UmchHLh31AM6okl7GF7pyPSNpa41io6GpSW8dlhmQ42zfw97UhNmrz/jaPHAz4RAyGO6EWdm3UFcdke++282q0vEkL1o7zZLdxLYorAap27Ae5vEHmwXPEkUthQTMa0e6jO86PpRpuQFYbOPhbu7C8zdzEWu3ZXucL6BSr36beBgXgjfV2gzYsZa15ApxI5lmgUzHdsKMvhTtkWbcnhD7wFqFcho+MjvYrMEPBiqUq+74j0ZS/sTYCsTX5KNhw7ugu5RK67H2LrFfCo5U6pjTTnXKpnBBjhKGh+CNh5jI3eq8W5JVUC+rWBbBPk3oZDO/TiIaE5vvsdKrDh8rdmu7nx5S7FBbCn/Qgj/I0dEGqyr0fFN20p0MVBINwMKJGtWi/5TeKLLI9GdxeWmG2bSwQSk3ELxJ4Tb+5fANb6KT4CodjiBKUe7BFHLCV79FEARDoL9j8QM1xbl6PPBMxs5pEgjgTsSDO4hmA54MwF9+RnWkSoj3DvQb7IPJIzP5roBcj2YuZQq/hmzk421L0mPmRB0iKKcRbzGZJnviXxhROok5089fNa731MnpTb+BvMNW1zLei003aOXZ1pYcXlnfPCWEsHi69qJHHiQE1MGApUg64Q+NPGaeGtLM8LjwzsbtnO39WA6CWjI701m41FWn2wO5z/eghG4E5mHGxsDaQdzfs2fUPpiZ93c=
+X-Forefront-Antispam-Report: CIP:50.222.100.11;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:uww-mx01.datadirectnet.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(4636009)(136003)(346002)(396003)(376002)(39850400004)(451199024)(1800799009)(82310400011)(186009)(46966006)(36840700001)(40480700001)(70206006)(41300700001)(70586007)(54906003)(316002)(6916009)(81166007)(82740400003)(478600001)(356005)(36756003)(2906002)(86362001)(5660300002)(4326008)(6666004)(1076003)(336012)(36860700001)(2616005)(6266002)(8936002)(8676002)(83380400001)(47076005)(26005)(36900700001);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: =?us-ascii?Q?W18o46EMT9ydov2OlfEIon4j5zEAdsJ+z/77EUuKkb6nlIYFhk4dyVbHkWsH?=
- =?us-ascii?Q?Y0o21d6Vs/OXmoXGb23KVOYkwAn1+crR3ZPGjNGTCE/BgFKDsbWlr/LVm4NR?=
- =?us-ascii?Q?3SksthELJJsnKnjwnVUUEDFX6qCniKGCTLwjIUEmgPH/mKS6sC/6AfhDG4z4?=
- =?us-ascii?Q?6cr3PgeomSXXMgL5/wLTtwpP1030L8E1VpWJuzavtu5Phu9EAp1FQ/hbESrZ?=
- =?us-ascii?Q?SC+tVJD5n3USxqm35p9x0WL1GIyHxUBq0PH5LjKegVMsCoojxeW97RO98Xdz?=
- =?us-ascii?Q?GuXJC6/vCulDIoOn2CbOsj/yUskOWWlvPtnZje0/CTkRv2099BIZ/Yd15tYa?=
- =?us-ascii?Q?0iYt0mZSdt4lJXOhj4F6gyXJVtuCoOmET+S8SXh/0UY2Dw5TTn5wnOvDCsJN?=
- =?us-ascii?Q?bW5U/nbT3uTCmDTL/wGpKOsdL6eL7JfHnCfLMUTlunltHXdPJiE3tLwK3DK7?=
- =?us-ascii?Q?GvGIhlfeFwcV1ILslAc6heZeUAz3d2KVjGTvYX/phQIiz/Utb1QLuRyS8wAv?=
- =?us-ascii?Q?lCI20S8dgeutQSKEaOjyPneenuH5pDfOsU85iZILIZvzx6t8wRsZG0qkJvd/?=
- =?us-ascii?Q?2AK5epBORIcw+kwBWUHjNaSRt/bAR4o6nkzej/P/BzUvRmyU3X4xevrc+e/2?=
- =?us-ascii?Q?o4IPIgeOh7NrhKngzL6RmEBnJATmX02UIlDkhSMREI+UosXMfsDqCtlX7fZd?=
- =?us-ascii?Q?HxDldSC/bb6kOlwrHLy6kGTsSCWvG6JtrMLR71w3DSvETAjwdx6GpFuMY3AD?=
- =?us-ascii?Q?MOGNRZE/QAaoFyO7aL+/xVnwGz3EH5bWt6/vartOvVx+DC4J2lzumxb25tjd?=
- =?us-ascii?Q?1UQfNnZuHX6qHBd8C6mIJXfgBWZuFmTg/YJesR7CCi18tzGQ4BYgFzahdpz0?=
- =?us-ascii?Q?CKlzWqgyJkzB3aVremiVw0oyLyorUJCgiA4QXA9PV3JfSCfWZXpoCDpVCSBn?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: auN3agotPlK4nKXgO7H/0rdChuU05WnqpPGwd5iA9Mf5KIoHnGGyOoKm/sHuDoIOdIihzoq3DHCIP1W6DwgHUGt8YswSsdjuaqc3oHYeCGJLwaSswXARBQ/S6ifB7UsG/CL6MyH0PKw3+jdVlMzd6sbszJgoORHqqA/BVpTHPaGqzjmdpLB3++JCcyn2hu2kvRxrXJ3CH8KL+vrvu2DZ8hqzQLt+qDEC626k25lZq8uWbLVV5mQkr3gEAmqojvRBZ8SJP8e+Sa6qOR3wBNlp5dCJgrFrrzdV95jyd1ekbNRxfRLTkBhD9+OpkeWre7gwgktd9Ud5jPmSuBcRuZPrZ425b2pkiJl185Nyz9Czkp01Tc6MmGPdjRgdXB7jsjaIfrVFR8cPSJSgbXiIVybygWug+p1VTjU7g2Ez39oFdTo930EZUwuvzonZMSMiqdVKNi7GloR8E5xeQoSMN4jv9MLcjFv1CWqLv43ip5Zl6dBXI1QXyDeZmxBEAj91tpFtL0Ihh+ghrov8JuRYMcDHT9IrbmClRmHc6SsjdmIGTiNwvSQHm+42+3eK3dchVE9ZHuT3Z+Zd75rV/Nqbg/3g1HdjvAn+9mcu5K3soXdcG09fDv7BuB3Xpx8zLFCesjg4HvMfyg+ET7RGg1QlWvCMrY5FDXh+5MXRu/hE04gRsa2CH+/xImXH1c8dAeU6sysjpTWQpa5g75VvKsOOMamHW6xeG0cnuCye3KbMfpNrRp+0dcXtvDJTbUNiiqNLtLNIRw6ZFjfxIOxjacfSjXdk1aMiLV1T2tMphwN/Y2MGqz4604h3IkrKf8tEbVQlme+VnRL2DQngOWEvrvxACOsaioUBlpGxeHQBb43782as+o0=
 X-OriginatorOrg: ddn.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Sep 2023 17:34:54.2146
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Sep 2023 17:34:55.1485
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1bc5f4f5-4091-496d-0aae-08dbb9ffe6d7
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2328f052-7e9a-4139-c539-08dbb9ffe760
 X-MS-Exchange-CrossTenant-Id: 753b6e26-6fd3-43e6-8248-3f1735d59bb4
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=753b6e26-6fd3-43e6-8248-3f1735d59bb4;Ip=[50.222.100.11];Helo=[uww-mx01.datadirectnet.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM04FT020.eop-NAM04.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM04FT041.eop-NAM04.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR19MB4091
-X-BESS-ID: 1695231301-104329-12361-15483-1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR19MB7273
+X-BESS-ID: 1695231298-104418-18341-14534-1
 X-BESS-VER: 2019.1_20230913.1749
-X-BESS-Apparent-Source-IP: 104.47.73.48
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVpYmpmZAVgZQ0CTNwDzZOMXYND
-        HJyNjY0NTQ2MDM1Mw40dzI0MIw2cJYqTYWADlJN7tBAAAA
+X-BESS-Apparent-Source-IP: 104.47.57.174
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVsaWxpZAVgZQ0NTE0MzS3NLQPN
+        nUwtTE1CgtOdk40dwy0TTZyNDAwMRcqTYWAMcHNY1BAAAA
 X-BESS-Outbound-Spam-Score: 0.00
 X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.250962 [from 
-        cloudscan21-118.us-east-2b.ess.aws.cudaops.com]
+        cloudscan13-242.us-east-2a.ess.aws.cudaops.com]
         Rule breakdown below
          pts rule name              description
         ---- ---------------------- --------------------------------
@@ -122,340 +105,130 @@ X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS124931 scores of KILL_L
 X-BESS-BRTS-Status: 1
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Dharmendra Singh <dsingh@ddn.com>
+Cached dentries do not get revalidate, but open would still result in
+open + getattr, instead of one atomic_open call only.
 
-This makes use of the vfs changes and fuse_dentry_revalidate()
-can now skip revalidate, if the fuse implementation has
-atomic_open support, which will has to do the dentry
-revalidation.
+libfuse logs (passthrough_hp):
 
-Skipping revalidate is only possible when we absolutely
-know that the implementation supports atomic_open, so
-another bit had to be added to struct fuse_conn, which
-is set when atomic_open was successful.
+Unpatched:
+----------
+unique: 22, opcode: OPEN (14), nodeid: 140698229673544, insize: 48, pid: 3434
+   unique: 22, success, outsize: 32
+unique: 24, opcode: GETATTR (3), nodeid: 140698229673544, insize: 56, pid: 3434
+   unique: 24, success, outsize: 120
+unique: 26, opcode: FLUSH (25), nodeid: 140698229673544, insize: 64, pid: 3434
+   unique: 26, success, outsize: 16
+unique: 28, opcode: RELEASE (18), nodeid: 140698229673544, insize: 64, pid: 0
+   unique: 28, success, outsize: 16
 
-Once struct fuse_conn has the positive 'has_open_atomic'
-fuse_dentry_revalidate() might set DCACHE_ATOMIC_OPEN.
-vfs use that flag to use atomic_open.
+Patched:
+----------
+unique: 20, opcode: OPEN_ATOMIC (52), nodeid: 1, insize: 63, pid: 3397
+   unique: 20, success, outsize: 160
+unique: 22, opcode: FLUSH (25), nodeid: 140024188243528, insize: 64, pid: 3397
+   unique: 22, success, outsize: 16
+unique: 24, opcode: RELEASE (18), nodeid: 140024188243528, insize: 64, pid: 0
+   unique: 24, success, outsize: 16
 
-If the file was newly created, the previous positive dentry
-is invalidated and a new dentry and inode are allocated
-and linked (d_splice_alias).
-
-If file was not created, we revalidate the inode. If inode is
-stale, current inode is marked as bad. And new inode is allocated
-and linked to new dentry(old dentry invalidated). In case of
-inode attributes differing with fresh attr, we allocate new
-dentry and hook current inode to it and open the file.
-
-For negative dentry, FS just allocate new inode and hook it onto
-passed entry from VFS and open the file.
-
-Co-developed-by: Bernd Schubert <bschubert@ddn.com>
-Signed-off-by: Dharmendra Singh <dsingh@ddn.com>
-Signed-off-by: Horst Birthelmer <hbirthelmer@ddn.com>
 Signed-off-by: Bernd Schubert <bschubert@ddn.com>
 Cc: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
 Cc: Dharmendra Singh <dsingh@ddn.com>
+Cc: Horst Birthelmer <hbirthelmer@ddn.com>
 Cc: linux-fsdevel@vger.kernel.org
 ---
- fs/fuse/dir.c    | 203 ++++++++++++++++++++++++++++++++++++++++-------
- fs/fuse/fuse_i.h |   3 +
- 2 files changed, 176 insertions(+), 30 deletions(-)
+ fs/fuse/dir.c | 49 +++++++++++++++++++++++++++++++++++++------------
+ 1 file changed, 37 insertions(+), 12 deletions(-)
 
 diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 4cb2809a852d..aefd783c7552 100644
+index aefd783c7552..e2c397e6e4bf 100644
 --- a/fs/fuse/dir.c
 +++ b/fs/fuse/dir.c
-@@ -230,6 +230,19 @@ static int fuse_dentry_revalidate(struct dentry *entry, unsigned int flags)
+@@ -193,6 +193,22 @@ static void fuse_lookup_init(struct fuse_conn *fc, struct fuse_args *args,
+ 	args->out_args[0].value = outarg;
+ }
+ 
++/*
++ * If open atomic is supported by FUSE then use this opportunity
++ * to avoid this lookup and combine lookup + open into a single call.
++ */
++static int fuse_dentry_do_atomic_revalidate(struct dentry *entry,
++					     unsigned int flags,
++					     struct fuse_conn *fc)
++{
++	int ret = 0;
++
++	if (flags & LOOKUP_OPEN && fc->has_open_atomic)
++		ret = D_REVALIDATE_ATOMIC;
++
++	return ret;
++}
++
+ /*
+  * Check whether the dentry is still valid
+  *
+@@ -230,19 +246,10 @@ static int fuse_dentry_revalidate(struct dentry *entry, unsigned int flags)
  
  		fm = get_fuse_mount(inode);
  
-+		/* If open atomic is supported by FUSE then use this opportunity
-+		 * to avoid this lookup and combine lookup + open into a single call.
-+		 *
-+		 * Note: Fuse detects open atomic implementation automatically.
-+		 * Therefore first few call would go into open atomic code path
-+		 * , detects that open atomic is implemented or not by setting
-+		 * fc->no_open_atomic. In case open atomic is not implemented,
-+		 * calls fall back to non-atomic open.
-+		 */
-+		if (fm->fc->has_open_atomic && flags & LOOKUP_OPEN) {
-+			ret = D_REVALIDATE_ATOMIC;
-+			goto out;
-+		}
+-		/* If open atomic is supported by FUSE then use this opportunity
+-		 * to avoid this lookup and combine lookup + open into a single call.
+-		 *
+-		 * Note: Fuse detects open atomic implementation automatically.
+-		 * Therefore first few call would go into open atomic code path
+-		 * , detects that open atomic is implemented or not by setting
+-		 * fc->no_open_atomic. In case open atomic is not implemented,
+-		 * calls fall back to non-atomic open.
+-		 */
+-		if (fm->fc->has_open_atomic && flags & LOOKUP_OPEN) {
+-			ret = D_REVALIDATE_ATOMIC;
++		ret = fuse_dentry_do_atomic_revalidate(entry, flags, fm->fc);
++		if (ret)
+ 			goto out;
+-		}
++
  		forget = fuse_alloc_forget();
  		ret = -ENOMEM;
  		if (!forget)
-@@ -280,12 +293,12 @@ static int fuse_dentry_revalidate(struct dentry *entry, unsigned int flags)
+@@ -285,6 +292,16 @@ static int fuse_dentry_revalidate(struct dentry *entry, unsigned int flags)
+ 	} else if (inode) {
+ 		fi = get_fuse_inode(inode);
+ 		if (flags & LOOKUP_RCU) {
++			fm = get_fuse_mount(inode);
++			if (fm->fc->has_open_atomic) {
++				/* Atomic open is preferred, as it does entry
++				 * revalidate and attribute refresh, but
++				 * DCACHE_ATOMIC_OPEN cannot be set in RCU mode
++				 */
++				if (flags & LOOKUP_OPEN)
++					return -ECHILD;
++			}
++
+ 			if (test_bit(FUSE_I_INIT_RDPLUS, &fi->state))
+ 				return -ECHILD;
+ 		} else if (test_and_clear_bit(FUSE_I_INIT_RDPLUS, &fi->state)) {
+@@ -292,6 +309,14 @@ static int fuse_dentry_revalidate(struct dentry *entry, unsigned int flags)
+ 			fuse_advise_use_readdirplus(d_inode(parent));
  			dput(parent);
  		}
++
++		/* revalidate is skipped, but we still want atomic open to
++		 * update attributes during open
++		 */
++		fm = get_fuse_mount(inode);
++		ret = fuse_dentry_do_atomic_revalidate(entry, flags, fm->fc);
++		if (ret)
++			goto out;
  	}
--	ret = 1;
-+	ret = D_REVALIDATE_VALID;
+ 	ret = D_REVALIDATE_VALID;
  out:
- 	return ret;
- 
- invalid:
--	ret = 0;
-+	ret = D_REVALIDATE_INVALID;
- 	goto out;
- }
- 
-@@ -768,12 +781,84 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
- 	return finish_no_open(file, res);
- }
- 
-+/**
-+ * Revalidate inode hooked into dentry against freshly acquired
-+ * attributes. If inode is stale then allocate new dentry and
-+ * hook it onto fresh inode.
-+ */
-+static struct dentry *
-+fuse_atomic_open_revalidate(struct fuse_conn *fc, struct dentry *entry,
-+			    struct inode *inode, int switched,
-+			    struct fuse_entry_out *outentry,
-+			    wait_queue_head_t *wq, int *alloc_inode)
-+{
-+	u64 attr_version;
-+	struct dentry *prev = entry;
-+
-+	if (outentry->nodeid != get_node_id(inode) ||
-+	    (bool) IS_AUTOMOUNT(inode) !=
-+	    (bool) (outentry->attr.flags & FUSE_ATTR_SUBMOUNT)) {
-+		*alloc_inode = 1;
-+	} else if (fuse_stale_inode(inode, outentry->generation,
-+				  &outentry->attr)) {
-+		fuse_make_bad(inode);
-+		*alloc_inode = 1;
-+	}
-+
-+	if (*alloc_inode) {
-+		struct dentry *new = NULL;
-+
-+		if (!switched && !d_in_lookup(entry)) {
-+			d_drop(entry);
-+			new = d_alloc_parallel(entry->d_parent, &entry->d_name,
-+					       wq);
-+			if (IS_ERR(new))
-+				return new;
-+
-+			if (unlikely(!d_in_lookup(new))) {
-+				dput(new);
-+				new = ERR_PTR(-EIO);
-+				return new;
-+			}
-+		}
-+
-+		fuse_invalidate_entry(entry);
-+
-+		entry = new;
-+	} else if (!*alloc_inode) {
-+		attr_version = fuse_get_attr_version(fc);
-+		forget_all_cached_acls(inode);
-+		fuse_change_attributes(inode, &outentry->attr,
-+				       entry_attr_timeout(outentry),
-+				       attr_version);
-+	}
-+
-+	if (prev == entry) {
-+		/* nothing changed, atomic-open on the server side
-+		 * had increased the lookup count - do the same here
-+		 */
-+		struct fuse_inode *fi = get_fuse_inode(inode);
-+
-+		spin_lock(&fi->lock);
-+		fi->nlookup++;
-+		spin_unlock(&fi->lock);
-+	}
-+
-+	return entry;
-+}
-+
-+/**
-+ * Does 'lookup + create + open' or 'lookup + open' atomically.
-+ * @entry might be positive as well, therefore inode is re-validated.
-+ * Positive dentry is invalidated in case inode attributes differ or
-+ * we encountered error.
-+ */
- static int _fuse_atomic_open(struct inode *dir, struct dentry *entry,
- 			     struct file *file, unsigned flags,
- 			     umode_t mode)
- {
- 	int err;
--	struct inode *inode;
-+	struct inode *inode = d_inode(entry);
- 	struct fuse_mount *fm = get_fuse_mount(dir);
- 	struct fuse_conn *fc = fm->fc;
- 	FUSE_ARGS(args);
-@@ -785,10 +870,7 @@ static int _fuse_atomic_open(struct inode *dir, struct dentry *entry,
- 	struct fuse_file *ff;
- 	struct dentry *switched_entry = NULL, *alias = NULL;
- 	DECLARE_WAIT_QUEUE_HEAD_ONSTACK(wq);
--
--	/* Expect a negative dentry */
--	if (unlikely(d_inode(entry)))
--		goto fallback;
-+	int alloc_inode = 0;
- 
- 	/* Userspace expects S_IFREG in create mode */
- 	if ((flags & O_CREAT) && (mode & S_IFMT) != S_IFREG)
-@@ -840,37 +922,56 @@ static int _fuse_atomic_open(struct inode *dir, struct dentry *entry,
- 
- 	err = fuse_simple_request(fm, &args);
- 	free_ext_value(&args);
--	if (err == -ENOSYS) {
--		fc->no_open_atomic = 1;
--		fuse_file_free(ff);
--		kfree(forget);
--		goto fallback;
--	}
- 
- 	if (!err && !outentry.nodeid)
- 		err = -ENOENT;
- 
--	if (err)
--		goto out_free_ff;
-+	if (err) {
-+		if (err == -ENOSYS) {
-+			fc->no_open_atomic = 1;
-+
-+			/* Might come up if userspace tricks us and would
-+			 * return -ENOSYS for OPEN_ATOMIC after it was
-+			 * aready working
-+			 */
-+			if (unlikely(fc->has_open_atomic == 1))
-+				pr_info("fuse server/daemon bug, atomic open "
-+					"got -ENOSYS although it was already "
-+					"succeeding before.");
-+
-+			/* This should better never happen, revalidate
-+			 * is missing for this entry*/
-+			if (d_really_is_positive(entry)) {
-+				WARN_ON(1);
-+				err = -EIO;
-+				goto out_free_ff;
-+			}
-+
-+			fuse_file_free(ff);
-+			kfree(forget);
-+			goto fallback;
-+		} else {
-+			if (d_really_is_positive(entry)) {
-+				if (err != -EINTR && err != -ENOMEM)
-+					fuse_invalidate_entry(entry);
-+			}
-+
-+			goto out_free_ff;
-+		}
-+	}
-+
-+	if (!err && !fc->has_open_atomic) {
-+		/* Only set this flag when atomic open did not return an error,
-+		 * so that we are absolutely sure it is implemented.
-+		 */
-+		fc->has_open_atomic = 1;
-+	}
- 
- 	err = -EIO;
- 	if (invalid_nodeid(outentry.nodeid) || fuse_invalid_attr(&outentry.attr))
- 		goto out_free_ff;
- 
--	ff->fh = outopen.fh;
--	ff->nodeid = outentry.nodeid;
--	ff->open_flags = outopen.open_flags;
--	inode = fuse_iget(dir->i_sb, outentry.nodeid, outentry.generation,
--			  &outentry.attr, entry_attr_timeout(&outentry), 0);
--	if (!inode) {
--		flags &= ~(O_CREAT | O_EXCL | O_TRUNC);
--		fuse_sync_release(NULL, ff, flags);
--		fuse_queue_forget(fm->fc, forget, outentry.nodeid, 1);
--		err = -ENOMEM;
--		goto out_err;
--	}
--
--	/* prevent racing/parallel lookup on a negative hashed */
-+	/* prevent racing/parallel lookup */
- 	if (!(flags & O_CREAT) && !d_in_lookup(entry)) {
- 		d_drop(entry);
- 		switched_entry = d_alloc_parallel(entry->d_parent,
-@@ -884,10 +985,52 @@ static int _fuse_atomic_open(struct inode *dir, struct dentry *entry,
- 			/* fall back */
- 			dput(switched_entry);
- 			switched_entry = NULL;
--			goto free_and_fallback;
-+
-+			if (!inode) {
-+				goto free_and_fallback;
-+			} else {
-+				/* XXX can this happen at all and is there a
-+				 * better way to handle it?
-+				 */
-+				err = -EIO;
-+				goto out_free_ff;
-+			}
-+		}
-+	}
-+
-+	if (inode) {
-+		struct dentry *new;
-+
-+		err = -ESTALE;
-+		new = fuse_atomic_open_revalidate(fm->fc, entry, inode,
-+						  !!switched_entry,
-+						  &outentry, &wq, &alloc_inode);
-+		if (IS_ERR(new)) {
-+			err = PTR_ERR(new);
-+			goto out_free_ff;
- 		}
- 
-+		if (new != entry && new != NULL)
-+			switched_entry = new;
-+	}
-+
-+	if (switched_entry)
- 		entry = switched_entry;
-+
-+	ff->fh = outopen.fh;
-+	ff->nodeid = outentry.nodeid;
-+	ff->open_flags = outopen.open_flags;
-+
-+	if (!inode || alloc_inode) {
-+		inode = fuse_iget(dir->i_sb, outentry.nodeid, outentry.generation,
-+				  &outentry.attr, entry_attr_timeout(&outentry), 0);
-+		if (!inode) {
-+			flags &= ~(O_CREAT | O_EXCL | O_TRUNC);
-+			fuse_sync_release(NULL, ff, flags);
-+			fuse_queue_forget(fm->fc, forget, outentry.nodeid, 1);
-+			err = -ENOMEM;
-+			goto out_err;
-+		}
- 	}
- 
- 	if (d_really_is_negative(entry)) {
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index c838708cfa2b..3987046682b1 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -675,6 +675,9 @@ struct fuse_conn {
- 	/** Is open atomic not implemented by fs? */
- 	unsigned no_open_atomic:1;
- 
-+	/** Is open atomic is proven to be implemented by fs? */
-+	unsigned has_open_atomic:1;
-+
- 	/** Is opendir/releasedir not implemented by fs? */
- 	unsigned no_opendir:1;
- 
 -- 
 2.39.2
 
