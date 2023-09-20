@@ -2,111 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AB4E57A73E7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Sep 2023 09:22:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB9E97A73EC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Sep 2023 09:23:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233704AbjITHWo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Sep 2023 03:22:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57412 "EHLO
+        id S233638AbjITHXo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Sep 2023 03:23:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233686AbjITHWn (ORCPT
+        with ESMTP id S233666AbjITHXn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Sep 2023 03:22:43 -0400
-Received: from icp-osb-irony-out2.external.iinet.net.au (icp-osb-irony-out2.external.iinet.net.au [203.59.1.155])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B1DB293;
-        Wed, 20 Sep 2023 00:22:35 -0700 (PDT)
-X-SMTP-MATCH: 1
-IronPort-Data: A9a23:xGcDEKncPfZRAAHEGTRw5dLo5gyqJ0RdPkR7XQ2eYbSJt1+Wr1Gzt
- xIv7RMywkvx1ptBB6l0bb0CeDoHuZblerYTSQZyrzc3J55zgZKtLcyDKUvtND+lIMTGTUZ2h
- +0TcdCowPocFxcwnT/zdOC7xZVA/fvQHOGkWbScYnkZqTJME0/Ntzoyw4bVvaY12bBVMyvV0
- fvursvWPkOS2jIcGgr4PIra9XuDFNyr0N8plgRWicJj5TcypFFMZH4rHpxdGlOjKmVi8k9Wc
- M6YpF2x1juxEx4FVoj/yu6jGqEAaua60QOm0hK6V4D+2UIa/nRaPqsTbJIhhUlrZzqhxstaw
- t9klbmKRwYVMPPLqNUTDhhTKnQrVUFG0OevzXmXgpXClQufLSuqm7M0VnRe0Y8wp7YxXycUr
- 6JecmhdBvyAr7veLLaTRfNhidklI8TxMZk3pXx70TfUEbAtRpWFSriiCdpwgGls2ZwXQq2HD
- yYfQRRJRi/RPyRyAw8SM5Musf+aul7QaTIN/Tp5ooJyuQA/1jdZz7npNMv9e9qEX8xZk0+U4
- GXc8AzRLhgENdDZ7TOE/XKwrubEgCfyUsQZE7jQ3vprhkCDg28eEhsbUXOlrvSjzE2zQdRSL
- woT4CVGhawz8lG7C9fmUxCmrXqsoBERQZxTHvc85QXLzbDbiy6dB24ZXntIctcmnNE5SCZs1
- VKTmd7tQzt1v9W9VXWH6L6QoSiaPSkTMH9HaygZSwcM/9jkpsc0lB2nZtB7EaG6j9vdFjT5w
- jTMpy8774j/luZWh+DluAqd3Xf2/siPUhY650PcWWfj5x4RiJOZWrFEIGPztZ5oRLt1hHHa1
- JTYs6ByNNwzMKw=
-IronPort-HdrOrdr: A9a23:5rTZZK3p7qBPZBgNA2Q5cQqjBD0kLtp133Aq2lEZdPUzSL3gqy
- nOpoV86faQslsssR4b+exoVJPvfZq+z+8R3WByB8bEYOCOggLBR+sM0WKF+UyDJ8SUzI9gPM
- lbAstDIey1J1w/pcHz5RmjE8xI+qj8zImYwc3bi1trUg1ubbhthj0JdzpzQncbeCB2QZIlEJ
- Kd48BDoSasPW8Qctm2b0N1I9TrlpnCiZbvYRsNAhg65U2VlDutrLbxDhif2X4lIkty6IZn+X
- XAmwz97KCkr/z+0AbV0yvJ441Rg8aJ8Ko5OCTP4vJlTgnRtg==
-X-Talos-CUID: =?us-ascii?q?9a23=3AQPBk0mscTlBg1xLtMUWUVoTT6It8aVbXxl7wBnW?=
- =?us-ascii?q?2CFpnFrqleFHN+ahdxp8=3D?=
-X-Talos-MUID: 9a23:9VkdxAoeOwopQ79+1Uwezx9EHvx5v52TMRgIqpQWltG2CQtfITjI2Q==
-X-IronPort-AV: E=Sophos;i="6.02,161,1688400000"; 
-   d="scan'208";a="464741731"
-Received: from 58-6-226-208.tpgi.com.au (HELO [192.168.0.22]) ([58.6.226.208])
-  by icp-osb-irony-out2.iinet.net.au with ESMTP; 20 Sep 2023 15:22:33 +0800
-Message-ID: <35a33582-9206-94bb-eca2-a1d9c585f6c1@westnet.com.au>
-Date:   Wed, 20 Sep 2023 17:22:33 +1000
+        Wed, 20 Sep 2023 03:23:43 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C82AAD6;
+        Wed, 20 Sep 2023 00:23:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1695194616; x=1726730616;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=NGwWXjawuDox9zM+LjzLWSBL9Dr7nh/G3B8AKXZHwyM=;
+  b=g1gqi/IBSsbfvAVd/Z+yloRQEIy+4/TIXdXqiAEUGfxkv5U+3ew1ESKm
+   lvbe3o5MVuoHcdTX2V05pSXdfAkUu4CLGjHceu3nrKm0fkBNkV6VqNxTF
+   XDPwG9EP8Wewv1ZpogP0KgRb0jAhZAVKRP5jodM01gHnkCOzzAbxK7jFs
+   NcySHiJr0GwtDV1VKopq7HqRB0jLNhooaFWnxZcSSmfpF/ZXtD7RjDKey
+   g2qd//01G/80HIE5lwVBzOUAn7+H/rL4HdUyWwu0fOzW0BnyQ/2+Jdv+M
+   qnf7iEZTkreIaeW7WEAvN9YcoUq0+YSnF7eP1YxXr10a8mIZFWRtJZktL
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10838"; a="411087354"
+X-IronPort-AV: E=Sophos;i="6.02,161,1688454000"; 
+   d="scan'208";a="411087354"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2023 00:23:36 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10838"; a="781592235"
+X-IronPort-AV: E=Sophos;i="6.02,161,1688454000"; 
+   d="scan'208";a="781592235"
+Received: from lkp-server02.sh.intel.com (HELO 9ef86b2655e5) ([10.239.97.151])
+  by orsmga001.jf.intel.com with ESMTP; 20 Sep 2023 00:23:34 -0700
+Received: from kbuild by 9ef86b2655e5 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1qirYa-0008Ra-01;
+        Wed, 20 Sep 2023 07:23:32 +0000
+Date:   Wed, 20 Sep 2023 15:23:17 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Max Kellermann <max.kellermann@ionos.com>, Jan Kara <jack@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>
+Cc:     oe-kbuild-all@lists.linux.dev,
+        Max Kellermann <max.kellermann@ionos.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] inotify: support returning file_handles
+Message-ID: <202309201518.s23Ngrnu-lkp@intel.com>
+References: <20230919202304.1197654-1-max.kellermann@ionos.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
-Subject: Re: [PATCH 09/17] m68k: Implement xor_unlock_is_negative_byte
-Content-Language: en-US
-To:     Matthew Wilcox <willy@infradead.org>,
-        David Laight <David.Laight@aculab.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        Nicholas Piggin <npiggin@gmail.com>
-References: <20230915183707.2707298-1-willy@infradead.org>
- <20230915183707.2707298-10-willy@infradead.org>
- <6e409d5f-a419-07b7-c82c-4e80fe19c6ba@westnet.com.au>
- <ZQW849TfSCK6u2f8@casper.infradead.org>
- <e1fb697714ac408e85c4e3dc573cd7d5@AcuMS.aculab.com>
- <ZQmvhC+pGWNs9R23@casper.infradead.org>
- <cffc2a427ae74f62b07345ec9348e43e@AcuMS.aculab.com>
- <ZQm67lGOBBdC2Dl9@casper.infradead.org>
-From:   Greg Ungerer <gregungerer@westnet.com.au>
-In-Reply-To: <ZQm67lGOBBdC2Dl9@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230919202304.1197654-1-max.kellermann@ionos.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi Max,
 
+kernel test robot noticed the following build errors:
 
-On 20/9/23 01:14, Matthew Wilcox wrote:
-> On Tue, Sep 19, 2023 at 02:35:25PM +0000, David Laight wrote:
->> From: Matthew Wilcox <willy@infradead.org>
->>> Sent: 19 September 2023 15:26
->>>
->>> On Tue, Sep 19, 2023 at 01:23:08PM +0000, David Laight wrote:
->>>>> Well, that sucks.  What do you suggest for Coldfire?
->>>>
->>>> Can you just do a 32bit xor ?
->>>> Unless you've got smp m68k I'd presume it is ok?
->>>> (And assuming you aren't falling off a page.)
->>>
->>> Patch welcome.
->>
->> My 68020 book seems to be at work and I'm at home.
->> (The 286, 386 and cy7c600 (sparc 32) books don't help).
->>
->> But if the code is trying to do *ptr ^= 0x80 and check the
->> sign flag then you just need to use eor.l with 0x80000000
->> on the same address.
-> 
-> I have a 68020 book; what I don't have is a Coldfire manual.
+[auto build test ERROR on jack-fs/fsnotify]
+[also build test ERROR on linus/master v6.6-rc2 next-20230920]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-You can find it here: https://www.nxp.com/docs/en/reference-manual/CFPRM.pdf
+url:    https://github.com/intel-lab-lkp/linux/commits/Max-Kellermann/inotify-support-returning-file_handles/20230920-042458
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fsnotify
+patch link:    https://lore.kernel.org/r/20230919202304.1197654-1-max.kellermann%40ionos.com
+patch subject: [PATCH] inotify: support returning file_handles
+config: powerpc64-randconfig-002-20230920 (https://download.01.org/0day-ci/archive/20230920/202309201518.s23Ngrnu-lkp@intel.com/config)
+compiler: powerpc64-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20230920/202309201518.s23Ngrnu-lkp@intel.com/reproduce)
 
-Regards
-Greg
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202309201518.s23Ngrnu-lkp@intel.com/
 
+All errors (new ones prefixed by >>):
 
-> Anyway, that's not the brief.  We're looking to (eg) clear bit 0
-> and test whether bit 7 was set.  So it's the sign bit of the byte,
-> not the sign bit of the int.
+   powerpc64-linux-ld: warning: discarding dynamic section .glink
+   powerpc64-linux-ld: warning: discarding dynamic section .plt
+   powerpc64-linux-ld: linkage table error against `exportfs_encode_inode_fh'
+   powerpc64-linux-ld: stubs don't match calculated size
+   powerpc64-linux-ld: can not build stubs: bad value
+   powerpc64-linux-ld: fs/notify/inotify/inotify_fsnotify.o: in function `.inotify_handle_inode_event':
+>> inotify_fsnotify.c:(.text+0x2f4): undefined reference to `.exportfs_encode_inode_fh'
+>> powerpc64-linux-ld: inotify_fsnotify.c:(.text+0x560): undefined reference to `.exportfs_encode_inode_fh'
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
