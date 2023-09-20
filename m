@@ -2,77 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ADBF17A7013
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Sep 2023 03:49:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D38A67A7042
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Sep 2023 04:13:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231260AbjITBto (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Sep 2023 21:49:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50564 "EHLO
+        id S231835AbjITCNi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Sep 2023 22:13:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229521AbjITBtn (ORCPT
+        with ESMTP id S229641AbjITCNh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Sep 2023 21:49:43 -0400
-Received: from mail-yw1-x1131.google.com (mail-yw1-x1131.google.com [IPv6:2607:f8b0:4864:20::1131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44037CA
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Sep 2023 18:49:37 -0700 (PDT)
-Received: by mail-yw1-x1131.google.com with SMTP id 00721157ae682-579de633419so60863117b3.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Sep 2023 18:49:37 -0700 (PDT)
+        Tue, 19 Sep 2023 22:13:37 -0400
+Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22175C9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Sep 2023 19:13:30 -0700 (PDT)
+Received: by mail-pl1-x631.google.com with SMTP id d9443c01a7336-1c47309a8ccso2880675ad.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Sep 2023 19:13:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1695174576; x=1695779376; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jxkRGTkRvVSp2bp88ZezNMsIRjbyFTXywGnBC6VmWgI=;
-        b=qWOuJuFaNo9L49Q+NTaCDGpgvNSDkfDWzAWNAU0nga5df8BqlYltnnfOkht8t/hiE0
-         vvGqzAUPfMPhkyhrzZWyvahPE/Ub5EWKlqzbZ+X5iipkv1RvWcyhFo8iVb820fbTUfTn
-         Dzog+fb5gBoPObw+AH1necLkLWE2wLiYgH44a7zW1KxH2aC3Wm2OgTyucZpclUxU05wf
-         eThEcdyW7l5mwo5I7PgGRkdB7D/fakcDf1SylN2hENkxuq/qKUumP1ey+u8j9LqJAidS
-         +odz/kiy1rLlQ/uEShhukQeLmnmXTcA7nMXQjX2B6awKby2Zvn1PQ0xa8Hs4ktM5o1wg
-         L0fg==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1695176009; x=1695780809; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6uXBbE5KgrXZ1PrV2CPAiVdc34yjyfb/zSsxiLq4Gfg=;
+        b=KcgFWtd+jXtA0yqkpqXXjl6SCwWdqAlmvJizHLKXxkJSHD0ZMRRTFOFZTEVC9gpwco
+         owQSdVUACIe1yu1C/P4VRD79jCcw4I0Zz7IQCN0JBMJI4QIGbofO47BJ5SsP2hwjuchy
+         HE1zIGC4OPWmVnX41KR1FGP1NCSs/fTgFW3bmVVDKq1obxAsafW4L0klarEX4zTrAcsE
+         yKizYIEnmYV+YL7sh1GCnimzMO4DqB8IzmEyZQoooqnTklsfG/1GBOmL62lZIvA3CeSH
+         oXpgjMTtaeeeBSR3rs7FNwtBBu728iq6LPVZ4EtrYsykjOyxfD1BP4gW+qVaDTEQ8bNg
+         uZWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695174576; x=1695779376;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jxkRGTkRvVSp2bp88ZezNMsIRjbyFTXywGnBC6VmWgI=;
-        b=mr9GecaWzgOhTzFcUEIcoDPmOW7RBBhdDqATCUnIHBmku3iyHPeuPso+7J0pm2Idmo
-         1T5SD+dNqM+UTirD6et/ADB3yS8igZkMG1volvzEpHXGGs3WMDQ7/713JybjxeJYB7Ng
-         qTBYx/rkOHyKFP5dLiOKKkFJpYr6OLOfR1vYAdh3QYv10xm9XiMFMZdf8vHLeD3Vzx1L
-         ktIHnkIi1myXcLBGOSEegGccOP36x/gi5u77vwXjMZDLCCEf13SyhkEH1KRIyIDNv4EO
-         gpa4mQFJ0F4s4+t+0ZcxbPeCR70ekSXGEoxjezZgg49/hLbx3xHMAI3tu9s/qydhXQOQ
-         7KkQ==
-X-Gm-Message-State: AOJu0YwKUG+mTVM+Leqnh5WmkJ/p8e1q+02uZq/IivA2GpSNejtdW/t5
-        7/svQ2ylG15OakpbdX+holM3Qd59J1cQzXE01J4WTQ==
-X-Google-Smtp-Source: AGHT+IFOC12k/XRaCrElfY5hAf1G8gw+osDZ9GIu00FASYgc7/+hAGMTWF96/d/B+J/5itvC7ZWjZU6piGEojc8QK7A=
-X-Received: by 2002:a0d:d512:0:b0:59b:ee58:67fb with SMTP id
- x18-20020a0dd512000000b0059bee5867fbmr1089864ywd.10.1695174576197; Tue, 19
- Sep 2023 18:49:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1695176009; x=1695780809;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6uXBbE5KgrXZ1PrV2CPAiVdc34yjyfb/zSsxiLq4Gfg=;
+        b=O6TAIh0ltdvC48VvVT1aqqshJP5j/uKOAjQGFO39Pi8G0J52Bo62Oz1lwkibqf1CHZ
+         elcz9lQtaVXFBmQxe7CpNE5sXfBWK6vHxG8NS1i6AoRKuOGJfNcsW8AmayOL4b7Wcwh+
+         JLlHk35brH0+nPR9Vwzh+PUfb/JobkFkw9x44hvhJwUTkWU0dllTU8bgKyJw42qhPBFi
+         Vnt9vq3bCi8Q1QB8DheQPTNmecxvz0Pp3vPA7Bd5i7kG4Ok4wkBX1V8CrlSG8n/qruga
+         JK62Yf2z7SlF670abDpaIlG/08rR/4VXPeR73pz733sz3eMfQLOiKV0VetNz+9OFmJDF
+         z8xA==
+X-Gm-Message-State: AOJu0YwkOCUszZ2G1ktfl/sM2u8MC9OMtB5BL91im1HlkH6xSUniQDzo
+        uJ4FFP0oRM3DVIstZ4strhi1dA==
+X-Google-Smtp-Source: AGHT+IFCr8HadOsZQbrJ4wohDzoccU6NTqszpfjxoJWBXQTUrZ9oQbdMYc2MVuKsvyy2AKtfg3iwGQ==
+X-Received: by 2002:a17:903:2310:b0:1bc:edd:e891 with SMTP id d16-20020a170903231000b001bc0edde891mr5799297plh.1.1695176009443;
+        Tue, 19 Sep 2023 19:13:29 -0700 (PDT)
+Received: from dread.disaster.area (pa49-180-20-59.pa.nsw.optusnet.com.au. [49.180.20.59])
+        by smtp.gmail.com with ESMTPSA id q5-20020a17090311c500b001b9de39905asm10587082plh.59.2023.09.19.19.13.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Sep 2023 19:13:28 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+        (envelope-from <david@fromorbit.com>)
+        id 1qimiU-0032LT-0s;
+        Wed, 20 Sep 2023 12:13:26 +1000
+Date:   Wed, 20 Sep 2023 12:13:26 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Hannes Reinecke <hare@suse.de>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Pankaj Raghav <p.raghav@samsung.com>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 17/18] xfs: remove check for block sizes smaller than
+ PAGE_SIZE
+Message-ID: <ZQpVRnh9QgdoQZso@dread.disaster.area>
+References: <20230918110510.66470-1-hare@suse.de>
+ <20230918110510.66470-18-hare@suse.de>
 MIME-Version: 1.0
-References: <20230914152620.2743033-1-surenb@google.com> <20230914152620.2743033-3-surenb@google.com>
- <CAG48ez0gN_nC8NrMOeq44QmUDT27EpT0bFuNu1ReVKDBt3zy7Q@mail.gmail.com>
- <CAJuCfpGdbc70aZPu=cNgemK1EFUyvLfZU8ELSjseZtfpSF+EEg@mail.gmail.com> <CAG48ez212+UjQMB94vKvyV4YAEgg=jBhdzg_1b4BRe6=SO09fA@mail.gmail.com>
-In-Reply-To: <CAG48ez212+UjQMB94vKvyV4YAEgg=jBhdzg_1b4BRe6=SO09fA@mail.gmail.com>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Tue, 19 Sep 2023 18:49:23 -0700
-Message-ID: <CAJuCfpGEPPmEW6GqCjQXB5g04PA=BwhNgLVooM+DcroQj8RjyA@mail.gmail.com>
-Subject: Re: [PATCH 2/3] userfaultfd: UFFDIO_REMAP uABI
-To:     Jann Horn <jannh@google.com>
-Cc:     akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
-        brauner@kernel.org, shuah@kernel.org, aarcange@redhat.com,
-        lokeshgidra@google.com, peterx@redhat.com, david@redhat.com,
-        hughd@google.com, mhocko@suse.com, axelrasmussen@google.com,
-        rppt@kernel.org, willy@infradead.org, Liam.Howlett@oracle.com,
-        zhangpeng362@huawei.com, bgeffon@google.com,
-        kaleshsingh@google.com, ngeoffray@google.com, jdduke@google.com,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230918110510.66470-18-hare@suse.de>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -80,298 +79,229 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 19, 2023 at 4:51=E2=80=AFPM Jann Horn <jannh@google.com> wrote:
->
-> On Wed, Sep 20, 2023 at 1:08=E2=80=AFAM Suren Baghdasaryan <surenb@google=
-.com> wrote:
-> > On Thu, Sep 14, 2023 at 7:28=E2=80=AFPM Jann Horn <jannh@google.com> wr=
-ote:
-> > > On Thu, Sep 14, 2023 at 5:26=E2=80=AFPM Suren Baghdasaryan <surenb@go=
-ogle.com> wrote:
-> > > > From: Andrea Arcangeli <aarcange@redhat.com>
-> > > >
-> > > > This implements the uABI of UFFDIO_REMAP.
-> > > >
-> > > > Notably one mode bitflag is also forwarded (and in turn known) by t=
-he
-> > > > lowlevel remap_pages method.
-> [...]
-> > > > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> [...]
-> > > > +int remap_pages_huge_pmd(struct mm_struct *dst_mm,
-> > > > +                        struct mm_struct *src_mm,
-> > > > +                        pmd_t *dst_pmd, pmd_t *src_pmd,
-> > > > +                        pmd_t dst_pmdval,
-> > > > +                        struct vm_area_struct *dst_vma,
-> > > > +                        struct vm_area_struct *src_vma,
-> > > > +                        unsigned long dst_addr,
-> > > > +                        unsigned long src_addr)
-> > > > +{
-> > > > +       pmd_t _dst_pmd, src_pmdval;
-> > > > +       struct page *src_page;
-> > > > +       struct anon_vma *src_anon_vma, *dst_anon_vma;
-> > > > +       spinlock_t *src_ptl, *dst_ptl;
-> > > > +       pgtable_t pgtable;
-> > > > +       struct mmu_notifier_range range;
-> > > > +
-> > > > +       src_pmdval =3D *src_pmd;
-> > > > +       src_ptl =3D pmd_lockptr(src_mm, src_pmd);
-> > > > +
-> > > > +       BUG_ON(!pmd_trans_huge(src_pmdval));
-> > > > +       BUG_ON(!pmd_none(dst_pmdval));
-> > >
-> > > Why can we assert that pmd_none(dst_pmdval) is true here? Can we not
-> > > have concurrent faults (or userfaultfd operations) populating that
-> > > PMD?
-> >
-> > IIUC dst_pmdval is a copy of the value from dst_pmd, so that local
-> > copy should not change even if some concurrent operation changes
-> > dst_pmd. We can assert that it's pmd_none because we checked for that
-> > before calling remap_pages_huge_pmd. Later on we check if dst_pmd
-> > changed from under us (see pmd_same(*dst_pmd, dst_pmdval) check) and
-> > retry if that happened.
->
-> Oh, right, I don't know what I was thinking when I typed that.
->
-> But now I wonder about the check directly above that: What does this
-> code do for swap PMDs? It looks like that might splat on the
-> BUG_ON(!pmd_trans_huge(src_pmdval)). All we've checked on the path to
-> here is that the virtual memory area is aligned, that the destination
-> PMD is empty, and that pmd_trans_huge_lock() succeeded; but
-> pmd_trans_huge_lock() explicitly permits swap PMDs (which is the
-> swapped-out version of transhuge PMDs):
->
-> static inline spinlock_t *pmd_trans_huge_lock(pmd_t *pmd,
->                 struct vm_area_struct *vma)
-> {
->         if (is_swap_pmd(*pmd) || pmd_trans_huge(*pmd) || pmd_devmap(*pmd)=
-)
->                 return __pmd_trans_huge_lock(pmd, vma);
->         else
->                 return NULL;
-> }
+On Mon, Sep 18, 2023 at 01:05:09PM +0200, Hannes Reinecke wrote:
+> We now support block sizes larger than PAGE_SIZE, so this
+> check is pointless.
+> 
+> Signed-off-by: Hannes Reinecke <hare@suse.de>
+> ---
+>  fs/xfs/xfs_super.c | 12 ------------
+>  1 file changed, 12 deletions(-)
+> 
+> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+> index 1f77014c6e1a..67dcdd4dcf2d 100644
+> --- a/fs/xfs/xfs_super.c
+> +++ b/fs/xfs/xfs_super.c
+> @@ -1651,18 +1651,6 @@ xfs_fs_fill_super(
+>  		goto out_free_sb;
+>  	}
+>  
+> -	/*
+> -	 * Until this is fixed only page-sized or smaller data blocks work.
+> -	 */
+> -	if (mp->m_sb.sb_blocksize > PAGE_SIZE) {
+> -		xfs_warn(mp,
+> -		"File system with blocksize %d bytes. "
+> -		"Only pagesize (%ld) or less will currently work.",
+> -				mp->m_sb.sb_blocksize, PAGE_SIZE);
+> -		error = -ENOSYS;
+> -		goto out_free_sb;
+> -	}
 
-Yeah... Ok, I think I'm missing a check for  pmd_trans_huge(*src_pmd)
-after we lock it with pmd_trans_huge_lock(src_pmd, src_vma). And we
-can remove the above BUG_ON(). Would that address your concern?
+This really needs to be replaced with an EXPERIMENTAL warning -
+we're not going to support these LBS configurations until we are
+sure it doesn't eat data.
 
->
-> > >
-> > > > +       BUG_ON(!spin_is_locked(src_ptl));
-> > > > +       mmap_assert_locked(src_mm);
-> > > > +       mmap_assert_locked(dst_mm);
-> > > > +       BUG_ON(src_addr & ~HPAGE_PMD_MASK);
-> > > > +       BUG_ON(dst_addr & ~HPAGE_PMD_MASK);
-> > > > +
-> > > > +       src_page =3D pmd_page(src_pmdval);
-> > > > +       BUG_ON(!PageHead(src_page));
-> > > > +       BUG_ON(!PageAnon(src_page));
-> > > > +       if (unlikely(page_mapcount(src_page) !=3D 1)) {
-> > > > +               spin_unlock(src_ptl);
-> > > > +               return -EBUSY;
-> > > > +       }
-> > > > +
-> > > > +       get_page(src_page);
-> > > > +       spin_unlock(src_ptl);
-> > > > +
-> > > > +       mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, src_mm=
-, src_addr,
-> > > > +                               src_addr + HPAGE_PMD_SIZE);
-> > > > +       mmu_notifier_invalidate_range_start(&range);
-> > > > +
-> > > > +       /* block all concurrent rmap walks */
-> > > > +       lock_page(src_page);
-> > > > +
-> > > > +       /*
-> > > > +        * split_huge_page walks the anon_vma chain without the pag=
-e
-> > > > +        * lock. Serialize against it with the anon_vma lock, the p=
-age
-> > > > +        * lock is not enough.
-> > > > +        */
-> > > > +       src_anon_vma =3D folio_get_anon_vma(page_folio(src_page));
-> > > > +       if (!src_anon_vma) {
-> > > > +               unlock_page(src_page);
-> > > > +               put_page(src_page);
-> > > > +               mmu_notifier_invalidate_range_end(&range);
-> > > > +               return -EAGAIN;
-> > > > +       }
-> > > > +       anon_vma_lock_write(src_anon_vma);
-> > > > +
-> > > > +       dst_ptl =3D pmd_lockptr(dst_mm, dst_pmd);
-> > > > +       double_pt_lock(src_ptl, dst_ptl);
-> > > > +       if (unlikely(!pmd_same(*src_pmd, src_pmdval) ||
-> > > > +                    !pmd_same(*dst_pmd, dst_pmdval) ||
-> > > > +                    page_mapcount(src_page) !=3D 1)) {
-> > > > +               double_pt_unlock(src_ptl, dst_ptl);
-> > > > +               anon_vma_unlock_write(src_anon_vma);
-> > > > +               put_anon_vma(src_anon_vma);
-> > > > +               unlock_page(src_page);
-> > > > +               put_page(src_page);
-> > > > +               mmu_notifier_invalidate_range_end(&range);
-> > > > +               return -EAGAIN;
-> > > > +       }
-> > > > +
-> > > > +       BUG_ON(!PageHead(src_page));
-> > > > +       BUG_ON(!PageAnon(src_page));
-> > > > +       /* the PT lock is enough to keep the page pinned now */
-> > > > +       put_page(src_page);
-> > > > +
-> > > > +       dst_anon_vma =3D (void *) dst_vma->anon_vma + PAGE_MAPPING_=
-ANON;
-> > > > +       WRITE_ONCE(src_page->mapping, (struct address_space *) dst_=
-anon_vma);
-> > > > +       WRITE_ONCE(src_page->index, linear_page_index(dst_vma, dst_=
-addr));
-> > > > +
-> > > > +       if (!pmd_same(pmdp_huge_clear_flush(src_vma, src_addr, src_=
-pmd),
-> > > > +                     src_pmdval))
-> > > > +               BUG_ON(1);
-> > >
-> > > I'm not sure we can assert that the PMDs are exactly equal; the CPU
-> > > might have changed the A/D bits under us?
-> >
-> > Yes. I wonder if I can simply remove the BUG_ON here like this:
-> >
-> > src_pmdval =3D pmdp_huge_clear_flush(src_vma, src_addr, src_pmd);
-> >
-> > Technically we don't use src_pmdval after this but for the possible
-> > future use that would keep things correct. If A/D bits changed from
-> > under us we will still copy correct values into dst_pmd.
->
-> And when we set up the dst_pmd, we always mark it as dirty and
-> accessed... so I guess that's fine.
+Anyway, smoke tests....
 
-Ack.
+# mkfs.xfs -f -b size=64k /dev/pmem0
+meta-data=/dev/pmem0             isize=512    agcount=4, agsize=32768 blks
+         =                       sectsz=4096  attr=2, projid32bit=1
+         =                       crc=1        finobt=1, sparse=1, rmapbt=0
+         =                       reflink=1    bigtime=1 inobtcount=1 nrext64=0
+data     =                       bsize=65536  blocks=131072, imaxpct=25
+         =                       sunit=0      swidth=0 blks
+naming   =version 2              bsize=65536  ascii-ci=0, ftype=1
+log      =internal log           bsize=65536  blocks=1024, version=2
+         =                       sectsz=4096  sunit=1 blks, lazy-count=1
+realtime =none                   extsz=65536  blocks=0, rtextents=0
+# mount /dev/pmem0 /mnt/test
 
->
-> > > > +       _dst_pmd =3D mk_huge_pmd(src_page, dst_vma->vm_page_prot);
-> > > > +       _dst_pmd =3D maybe_pmd_mkwrite(pmd_mkdirty(_dst_pmd), dst_v=
-ma);
-> > > > +       set_pmd_at(dst_mm, dst_addr, dst_pmd, _dst_pmd);
-> > > > +
-> > > > +       pgtable =3D pgtable_trans_huge_withdraw(src_mm, src_pmd);
-> > > > +       pgtable_trans_huge_deposit(dst_mm, dst_pmd, pgtable);
-> > >
-> > > Are we allowed to move page tables between mm_structs on all
-> > > architectures? The first example I found that looks a bit dodgy,
-> > > looking through various architectures' pte_alloc_one(), is s390's
-> > > page_table_alloc() which looks like page tables are tied to per-MM
-> > > lists sometimes.
-> > > If that's not allowed, we might have to allocate a new deposit table
-> > > and free the old one or something like that.
-> >
-> > Hmm. Yeah, looks like in the case of !CONFIG_PGSTE the table can be
-> > linked to mm->context.pgtable_list, so can't be moved to another mm. I
-> > guess I'll have to keep a pgtable allocated, ready to be deposited and
-> > free the old one. Maybe it's worth having an arch-specific function
-> > indicating whether moving a pgtable between MMs is supported? Or do it
-> > separately as an optimization. WDYT?
->
-> Hm, dunno. I guess you could have architectures opt in with some
-> config flag similar to how flags like
-> ARCH_WANT_BATCHED_UNMAP_TLB_FLUSH are wired up - define it in
-> init/Kconfig, select it in the architectures that support it, and then
-> gate the fast version on that with #ifdef?
+Message from syslogd@test3 at Sep 20 11:23:32 ...
+ kernel:[   73.521819] XFS: Assertion failed: PAGE_SHIFT >= sbp->sb_blocklog, file: fs/xfs/xfs_mount.c, line: 134
 
-Yeah, that sounds good to me. I can implement an unoptimized common
-path first and then introduce this optimization in the follow-up
-patches.
+Message from syslogd@test3 at Sep 20 11:23:32 ...
+ kernel:[   73.521819] XFS: Assertion failed: PAGE_SHIFT >= sbp->sb_blocklog, file: fs/xfs/xfs_mount.c, line: 134
+Segmentation fault
+#
 
->
-> > > > +       if (dst_mm !=3D src_mm) {
-> > > > +               add_mm_counter(dst_mm, MM_ANONPAGES, HPAGE_PMD_NR);
-> > > > +               add_mm_counter(src_mm, MM_ANONPAGES, -HPAGE_PMD_NR)=
-;
-> > > > +       }
-> > > > +       double_pt_unlock(src_ptl, dst_ptl);
-> > > > +
-> > > > +       anon_vma_unlock_write(src_anon_vma);
-> > > > +       put_anon_vma(src_anon_vma);
-> > > > +
-> > > > +       /* unblock rmap walks */
-> > > > +       unlock_page(src_page);
-> > > > +
-> > > > +       mmu_notifier_invalidate_range_end(&range);
-> > > > +       return 0;
-> > > > +}
-> > > > +#endif /* CONFIG_USERFAULTFD */
-> > > > +
-> > > >  /*
-> > > >   * Returns page table lock pointer if a given pmd maps a thp, NULL=
- otherwise.
-> > > >   *
-> > > [...]
-> > > > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-> > > > index 96d9eae5c7cc..0cca60dfa8f8 100644
-> > > > --- a/mm/userfaultfd.c
-> > > > +++ b/mm/userfaultfd.c
-> > > [...]
-> > > > +ssize_t remap_pages(struct mm_struct *dst_mm, struct mm_struct *sr=
-c_mm,
-> > > > +                   unsigned long dst_start, unsigned long src_star=
-t,
-> > > > +                   unsigned long len, __u64 mode)
-> > > > +{
-> > > [...]
-> > > > +
-> > > > +       if (pgprot_val(src_vma->vm_page_prot) !=3D
-> > > > +           pgprot_val(dst_vma->vm_page_prot))
-> > > > +               goto out;
-> > >
-> > > Does this check intentionally allow moving pages from a
-> > > PROT_READ|PROT_WRITE anonymous private VMA into a PROT_READ anonymous
-> > > private VMA (on architectures like x86 and arm64 where CoW memory has
-> > > the same protection flags as read-only memory), but forbid moving the=
-m
-> > > from a PROT_READ|PROT_EXEC VMA into a PROT_READ VMA? I think this
-> > > check needs at least a comment to explain what's going on here.
-> >
-> > The check is simply to ensure the VMAs have the same access
-> > permissions to prevent page copies that should have different
-> > permissions. The fact that x86 and arm64 have the same protection bits
-> > for R/O and COW memory is a "side-effect" IMHO. I'm not sure what
-> > comment would be good here but I'm open to suggestions.
->
-> I'm not sure if you can do a meaningful security check on the
-> ->vm_page_prot. I also don't think it matters for anonymous VMAs.
-> I guess if you want to keep this check but make this behavior more
-> consistent, you could put another check in front of this that rejects
-> VMAs where vm_flags like VM_READ, VM_WRITE, VM_SHARED or VM_EXEC are
-> different?
+Looks like this hasn't been tested with CONFIG_XFS_DEBUG=y. If
+that's the case, I expect that none of this actually works... :/
 
-Ok, I'll post that in the next version and we can decide if that's enough.
+I've attached a patch at the end of the email that allows XFS
+filesystems to mount with debug enabled.
 
->
-> [...]
-> > > > +       /*
-> > > > +        * Ensure the dst_vma has a anon_vma or this page
-> > > > +        * would get a NULL anon_vma when moved in the
-> > > > +        * dst_vma.
-> > > > +        */
-> > > > +       err =3D -ENOMEM;
-> > > > +       if (unlikely(anon_vma_prepare(dst_vma)))
-> > > > +               goto out;
-> > > > +
-> > > > +       for (src_addr =3D src_start, dst_addr =3D dst_start;
-> > > > +            src_addr < src_start + len;) {
-> > > > +               spinlock_t *ptl;
-> > > > +               pmd_t dst_pmdval;
-> > > > +
-> > > > +               BUG_ON(dst_addr >=3D dst_start + len);
-> > > > +               src_pmd =3D mm_find_pmd(src_mm, src_addr);
-> > >
-> > > (this would blow up pretty badly if we could have transparent huge PU=
-D
-> > > in the region but I think that's limited to file VMAs so it's fine as
-> > > it currently is)
-> >
-> > Should I add a comment here as a warning if in the future we decide to
-> > implement support for file-backed pages?
->
-> Hm, yeah, I guess that might be a good idea.
+Next problem, filesystem created with a 32kB sector size:
 
-Ack.
+# mkfs.xfs -f -b size=64k -s size=32k /dev/pmem0
+meta-data=/dev/pmem0             isize=512    agcount=4, agsize=32768 blks
+         =                       sectsz=32768 attr=2, projid32bit=1
+         =                       crc=1        finobt=1, sparse=1, rmapbt=1
+         =                       reflink=1    bigtime=1 inobtcount=1 nrext64=0
+data     =                       bsize=65536  blocks=131072, imaxpct=25
+         =                       sunit=0      swidth=0 blks
+naming   =version 2              bsize=65536  ascii-ci=0, ftype=1
+log      =internal log           bsize=65536  blocks=2709, version=2
+         =                       sectsz=32768 sunit=1 blks, lazy-count=1
+realtime =none                   extsz=65536  blocks=0, rtextents=0
+#
 
-Thanks for the feedback!
+and then running xfs_db on it to change the UUID:
+
+# xfs_admin -U generate /dev/pmem0
+
+Results in a kernel panic:
+
+[  132.151886] XFS (pmem0): Mounting V5 Filesystem 3d96f860-2aa2-4e50-970c-134508b7954a
+[  132.161673] XFS (pmem0): Ending clean mount
+[  175.824015] XFS (pmem0): Unmounting Filesystem 3d96f860-2aa2-4e50-970c-134508b7954a
+[  185.759251] Kernel panic - not syncing: stack-protector: Kernel stack is corrupted in: do_mpage_readpage+0x7e5/0x7f0
+[  185.766632] CPU: 1 PID: 4383 Comm: xfs_db Not tainted 6.6.0-rc2-dgc+ #1903
+[  185.771882] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+[  185.778827] Call Trace:
+[  185.780706]  <TASK>
+[  185.782318]  dump_stack_lvl+0x37/0x50
+[  185.785069]  dump_stack+0x10/0x20
+[  185.787557]  panic+0x15b/0x300
+[  185.789763]  ? do_mpage_readpage+0x7e5/0x7f0
+[  185.792705]  __stack_chk_fail+0x14/0x20
+[  185.795183]  do_mpage_readpage+0x7e5/0x7f0
+[  185.797826]  ? blkdev_write_begin+0x30/0x30
+[  185.800500]  ? blkdev_readahead+0x15/0x20
+[  185.802894]  ? read_pages+0x5c/0x230
+[  185.805023]  ? page_cache_ra_order+0x2ae/0x310
+[  185.807538]  ? ondemand_readahead+0x1f1/0x3a0
+[  185.809899]  ? page_cache_async_ra+0x26/0x30
+[  185.812175]  ? filemap_get_pages+0x540/0x6d0
+[  185.814327]  ? _copy_to_iter+0x65/0x4c0
+[  185.816283]  ? filemap_read+0xfc/0x3a0
+[  185.818086]  ? __fsnotify_parent+0x107/0x340
+[  185.820142]  ? __might_sleep+0x42/0x70
+[  185.821854]  ? blkdev_read_iter+0x6d/0x150
+[  185.823697]  ? vfs_read+0x1b1/0x300
+[  185.825307]  ? __x64_sys_pread64+0x8f/0xc0
+[  185.827159]  ? irqentry_exit+0x33/0x40
+[  185.828858]  ? do_syscall_64+0x35/0x80
+[  185.830485]  ? entry_SYSCALL_64_after_hwframe+0x63/0xcd
+[  185.832677]  </TASK>
+[  185.834068] Kernel Offset: disabled
+[  185.835510] ---[ end Kernel panic - not syncing: stack-protector: Kernel stack is corrupted in: do_mpage_readpage+0x7e5/0x7f0 ]---
+
+Probably related to the block device having a 32kB block size set on
+the pmem device by xfs_db when it only really has a 4kB sector size....
+
+Anyway, back to just using 64k fsb, 4k sector.  generic/001 ASSERT
+fails immediately with:
+
+[  111.785796] run fstests generic/001 at 2023-09-20 11:50:19
+[  113.346797] XFS: Assertion failed: imap.br_startblock != DELAYSTARTBLOCK, file: fs/xfs/xfs_reflink.c, line: 1392
+[  113.352512] ------------[ cut here ]------------
+[  113.354793] kernel BUG at fs/xfs/xfs_message.c:102!
+[  113.358444] invalid opcode: 0000 [#1] PREEMPT SMP
+[  113.360769] CPU: 8 PID: 7581 Comm: cp Not tainted 6.6.0-rc2-dgc+ #1903
+[  113.364183] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+[  113.369784] RIP: 0010:assfail+0x35/0x40
+[  113.372038] Code: c9 48 c7 c2 00 d8 6c 82 48 89 e5 48 89 f1 48 89 fe 48 c7 c7 d8 d3 60 82 e8 a8 fd ff ff 80 3d d1 36 ec 02 00 75 04 0f 0b 5d c3 <0f> 0b 66 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 55 48 63 f6 49 89
+[  113.384178] RSP: 0018:ffffc9000962bca0 EFLAGS: 00010202
+[  113.387467] RAX: 0000000000000000 RBX: 0000000000000001 RCX: 000000007fffffff
+[  113.392326] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffffff8260d3d8
+[  113.397235] RBP: ffffc9000962bca0 R08: 0000000000000000 R09: 000000000000000a
+[  113.401449] R10: 000000000000000a R11: 0fffffffffffffff R12: 0000000000000000
+[  113.406312] R13: 00000000ffffff8b R14: 0000000000000000 R15: ffff88810de00f00
+[  113.410562] FS:  00007f4f6219b500(0000) GS:ffff8885fec00000(0000) knlGS:0000000000000000
+[  113.415506] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  113.418688] CR2: 0000564951bfcf50 CR3: 00000005cd6b8005 CR4: 0000000000060ee0
+[  113.422825] Call Trace:
+[  113.424302]  <TASK>
+[  113.425566]  ? show_regs+0x61/0x70
+[  113.427444]  ? die+0x37/0x90
+[  113.429175]  ? do_trap+0xec/0x100
+[  113.431016]  ? do_error_trap+0x6c/0x90
+[  113.432951]  ? assfail+0x35/0x40
+[  113.434677]  ? exc_invalid_op+0x52/0x70
+[  113.436755]  ? assfail+0x35/0x40
+[  113.438659]  ? asm_exc_invalid_op+0x1b/0x20
+[  113.440864]  ? assfail+0x35/0x40
+[  113.442671]  xfs_reflink_remap_blocks+0x197/0x350
+[  113.445278]  xfs_file_remap_range+0xf3/0x320
+[  113.447504]  do_clone_file_range+0xfe/0x2b0
+[  113.449689]  vfs_clone_file_range+0x3f/0x150
+[  113.452080]  ioctl_file_clone+0x52/0xa0
+[  113.453600]  do_vfs_ioctl+0x485/0x8d0
+[  113.455054]  ? selinux_file_ioctl+0x96/0x120
+[  113.456637]  ? selinux_file_ioctl+0x96/0x120
+[  113.458213]  __x64_sys_ioctl+0x73/0xd0
+[  113.459598]  do_syscall_64+0x35/0x80
+[  113.460840]  entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+Problems with unexpected extent types in the reflink remap code.
+
+This is due to the reflink operation finding a delalloc extent where
+it should be finding a real extent. this implies the
+xfs_flush_unmap_range() call in xfs_reflink_remap_prep() didn't
+flush the full data range it was supposed to.
+xfs_flush_unmap_range() is supposed to round the range out to:
+
+	rounding = max_t(xfs_off_t, mp->m_sb.sb_blocksize, PAGE_SIZE);
+
+the block size for these cases, so it is LBS aware. So maybe there's
+a problem with filemap_write_and_wait_range() and/or
+truncate_pagecache_range() when dealing with LBS enabled page cache?
+
+So, yeah, debug XFS builds tell us straight away that important stuff
+does not appear to be not working correctly. Debug really needs to
+be enabled, otherwise silent data corruption situations like this
+can go unnoticed by fstests tests...
+
+-Dave
+-- 
+Dave Chinner
+david@fromorbit.com
+
+
+xfs: fix page cache size validation for LBS configuations
+
+From: Dave Chinner <dchinner@redhat.com>
+
+The page cache can index larger filesystem sizes on 32 bit systems
+if large block sizes are enabled. Fix this code to take these
+configurations into account.
+
+Signed-off-by: Dave Chinner <dchinner@redhat.com>
+---
+ fs/xfs/xfs_mount.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/fs/xfs/xfs_mount.c b/fs/xfs/xfs_mount.c
+index 0a0fd19573d8..35dfcbc1e576 100644
+--- a/fs/xfs/xfs_mount.c
++++ b/fs/xfs/xfs_mount.c
+@@ -131,11 +131,15 @@ xfs_sb_validate_fsb_count(
+ 	xfs_sb_t	*sbp,
+ 	uint64_t	nblocks)
+ {
+-	ASSERT(PAGE_SHIFT >= sbp->sb_blocklog);
+-	ASSERT(sbp->sb_blocklog >= BBSHIFT);
++	ASSERT(sbp->sb_blocklog <= XFS_MAX_BLOCKSIZE_LOG);
++	ASSERT(sbp->sb_blocklog >= XFS_MIN_BLOCKSIZE_LOG);
+ 
+ 	/* Limited by ULONG_MAX of page cache index */
+-	if (nblocks >> (PAGE_SHIFT - sbp->sb_blocklog) > ULONG_MAX)
++	if (PAGE_SHIFT >= sbp->sb_blocklog)
++		nblocks >>= (PAGE_SHIFT - sbp->sb_blocklog);
++	else
++		nblocks <<= (sbp->sb_blocklog - PAGE_SHIFT);
++	if (nblocks > ULONG_MAX)
+ 		return -EFBIG;
+ 	return 0;
+ }
