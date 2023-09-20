@@ -2,213 +2,217 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F8C97A82D4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Sep 2023 15:06:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C0A07A834D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Sep 2023 15:26:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236524AbjITNGf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Sep 2023 09:06:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58760 "EHLO
+        id S235142AbjITN0b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Sep 2023 09:26:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236522AbjITNGM (ORCPT
+        with ESMTP id S234573AbjITN02 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Sep 2023 09:06:12 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52F509E
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Sep 2023 06:05:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1695215121;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=WKL59oxitSx6DOUyNJ+1H0DeRSBlY0vVZI1oz1R1zFg=;
-        b=D145kSTw3sldAEnPmqVZgf/m1dURXMWuuJxha2BBAY0C/sCTdMQuqmqROz/DlXcI6qY6ZY
-        UYV9Q1CA91rU8G1zNybYECMcMpOZ4pMgTa3jY1qwQnZQoaaJ4IXQ62CQjPxG8C4eh9KMqM
-        SSatHN9co34dTMDefZkzId80wbBv9lM=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-653-5VCNNxRlNwuawrr7coWaQA-1; Wed, 20 Sep 2023 09:05:18 -0400
-X-MC-Unique: 5VCNNxRlNwuawrr7coWaQA-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D5BEF2999B36;
-        Wed, 20 Sep 2023 13:05:16 +0000 (UTC)
-Received: from warthog.procyon.org.com (unknown [10.42.28.216])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 698FE51E3;
-        Wed, 20 Sep 2023 13:05:14 +0000 (UTC)
-From:   David Howells <dhowells@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
+        Wed, 20 Sep 2023 09:26:28 -0400
+Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50DDCAD;
+        Wed, 20 Sep 2023 06:26:22 -0700 (PDT)
+Received: by mail-yb1-xb32.google.com with SMTP id 3f1490d57ef6-d8168d08bebso6733138276.0;
+        Wed, 20 Sep 2023 06:26:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1695216381; x=1695821181; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cLSemmPCVbpBlbh+m2deXKw5bP0O8nVBE628nBizgpw=;
+        b=RQYqQdAIbUXNvEhfRe/HFWt7N28jaTRuPd17fEMx3dUCartjNCLSDJy3zlRg9vf8F9
+         4Vg93ygpGkhRCnV8uxNY+AX8ZGNEhDGSjzLFPfvUBr8tb+y4WHQK9trD4jTiG241f50x
+         y/ZpsvVNHAVlhCmRdQkLJD2vaAv+9N0AKegvIa3XePuOUqYD7FaJhOpi3fHLXOD/GI28
+         DlhFrTvIpiFtqNBd5qOgKx+8rxa8vvoG6iKthVjXfl92wDKNbZVWFqj5HjxYOlsK6dx7
+         fqiXk9lHrcnSITMYj1kiMcp1addBrKr+MKMF0PcRXJOb9wxcfWpYqd2AyFd10VMItcrj
+         9sIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695216381; x=1695821181;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cLSemmPCVbpBlbh+m2deXKw5bP0O8nVBE628nBizgpw=;
+        b=Nl9yXsz8DlvYoEuM7gjXbMpWWYgsLxZyvLkVH3/XWQLSQGQa0sNIvr8Z4AZan+MV5w
+         q1y2+NW41fBh/Q455bDdC9LnZUzT+SBbxb3gs2YfRj0TQsZxRI9rnf0eWwVB3GSTxke9
+         cUtkgj9GGj2gTeu6HlhVc8DgRuOYJnpfVfz1RWFpKpesUTBvPNfTBCvsET+0Y8nigRYL
+         sUlKCdsbcA9rX3LyXZZealw7Vo5tMFDOcCd5KWu+rM5b0vMpElQb/Xwu9xR49VL4sg7W
+         O8UJ4hM7x4QK/Tcuun1GS06wNu7BwvZ9d4oNaH7RKJqso0FBXbjR8tm1/ftRhHV9RX6Z
+         I9Fw==
+X-Gm-Message-State: AOJu0YwU1seGA6BmXAXdwiu7kkTLpAw4SvcLk931DugktkTaWO7UVksE
+        unjei1UFjk0NVzSmMCsHkjE=
+X-Google-Smtp-Source: AGHT+IE/ekXzgzpQL2FYG5TRav8078a0qwSHcWzbwuzfHEewjceyL2ZgX3yM7AlZ0hCrmKJZWHto5w==
+X-Received: by 2002:a25:d895:0:b0:d77:f89f:fe59 with SMTP id p143-20020a25d895000000b00d77f89ffe59mr2427415ybg.27.1695216381300;
+        Wed, 20 Sep 2023 06:26:21 -0700 (PDT)
+Received: from firmament.. ([89.187.171.240])
+        by smtp.gmail.com with ESMTPSA id t76-20020a25aad2000000b00d80df761a6csm3355421ybi.10.2023.09.20.06.26.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Sep 2023 06:26:20 -0700 (PDT)
+From:   Matthew House <mattlloydhouse@gmail.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
+        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
+        Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <christian@brauner.io>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Matthew Wilcox <willy@infradead.org>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        David Gow <davidgow@google.com>, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-mm@kvack.org,
-        netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Brauner <brauner@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: [RFC PATCH v2 9/9] iov_iter: Add benchmarking kunit tests for UBUF/IOVEC
-Date:   Wed, 20 Sep 2023 14:04:00 +0100
-Message-ID: <20230920130400.203330-10-dhowells@redhat.com>
-In-Reply-To: <20230920130400.203330-1-dhowells@redhat.com>
-References: <20230920130400.203330-1-dhowells@redhat.com>
+        Amir Goldstein <amir73il@gmail.com>
+Subject: Re: [RFC PATCH 2/3] add statmnt(2) syscall
+Date:   Wed, 20 Sep 2023 09:26:03 -0400
+Message-ID: <20230920132606.187860-1-mattlloydhouse@gmail.com>
+In-Reply-To: <CAJfpeguMf7ouiW79iey1i68kYnCcvcpEXLpUNf+CF=aNWxXO2Q@mail.gmail.com>
+References: <20230914-salzig-manifest-f6c3adb1b7b4@brauner> <CAJfpegs-sDk0++FjSZ_RuW5m-z3BTBQdu4T9QPtWwmSZ1_4Yvw@mail.gmail.com> <20230914-lockmittel-verknallen-d1a18d76ba44@brauner> <CAJfpegt-VPZP3ou-TMQFs1Xupj_iWA5ttC2UUFKh3E43EyCOQQ@mail.gmail.com> <20230918-grafik-zutreffen-995b321017ae@brauner> <CAOssrKfS79=+F0h=XPzJX2E6taxAPmEJEYPi4VBNQjgRR5ujqw@mail.gmail.com> <20230918-hierbei-erhielten-ba5ef74a5b52@brauner> <CAJfpegtaGXoZkMWLnk3PcibAvp7kv-4Yobo=UJj943L6v3ctJQ@mail.gmail.com> <20230918-stuhl-spannend-9904d4addc93@brauner> <CAJfpegvxNhty2xZW+4MM9Gepotii3CD1p0fyvLDQB82hCYzfLQ@mail.gmail.com> <20230918-bestialisch-brutkasten-1fb34abdc33c@brauner> <CAJfpegvTiK=RM+0y07h-2vT6Zk2GCu6F98c=_CNx8B1ytFtO-g@mail.gmail.com> <20230919003800.93141-1-mattlloydhouse@gmail.com> <CAJfpegs6g8JQDtaHsECA_12ss_8KXOHVRH9gwwPf5WamzxXOWQ@mail.gmail.com> <20230919212840.144314-1-mattlloydhouse@gmail.com> <CAJfpeguMf7ouiW79iey1i68kYnCcvcpEXLpUNf+CF=aNWxXO2Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
-X-Spam-Status: No, score=1.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,RCVD_IN_SBL_CSS,SPF_HELO_NONE,
-        SPF_NONE autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: *
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add kunit tests to benchmark 256MiB copies to a UBUF iterator and an IOVEC
-iterator.  This attaches a userspace VM with a mapped file in it
-temporarily to the test thread.
+On Wed, Sep 20, 2023 at 5:42 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
+> On Tue, 19 Sept 2023 at 23:28, Matthew House <mattlloydhouse@gmail.com> w=
+rote:
+>
+> > More generally speaking, the biggest reason I dislike the current singl=
+e-
+> > buffer interface is that the output is "all or nothing": either the cal=
+ler
+> > has enough space in the buffer to store every single string, or it's un=
+able
+> > to get any fields at all, just an -EOVERFLOW. There's no room for the
+> > caller to say that it just wants the integer fields and doesn't care ab=
+out
+> > the strings. Thus, to reliably call statmnt() on an arbitrary mount, the
+> > ability to dynamically allocate memory is effectively mandatory. The on=
+ly
+> > real solution to this would be additional statx-like flags to select the
+> > returned strings.
+>
+> It's already there:
+>
+> #define STMT_MNT_ROOT 0x00000008U /* Want/got mnt_root  */
+> #define STMT_MNT_POINT 0x00000010U /* Want/got mnt_point */
+> #define STMT_FS_TYPE 0x00000020U /* Want/got fs_type */
+>
+> For example, it's perfectly fine to do the following, and it's
+> guaranteed not to return EOVERFLOW:
+>=20
+>         struct statmnt st;
+>         unsigned int mask =3D STMT_SB_BASIC | STMT_MNT_BASIC;
+>=20
+>         ret =3D statmount(mnt_id, mask, &st, sizeof(st), flags);
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Andrew Morton <akpm@linux-foundation.org>
-cc: Christoph Hellwig <hch@lst.de>
-cc: Christian Brauner <brauner@kernel.org>
-cc: Jens Axboe <axboe@kernel.dk>
-cc: Al Viro <viro@zeniv.linux.org.uk>
-cc: Matthew Wilcox <willy@infradead.org>
-cc: David Hildenbrand <david@redhat.com>
-cc: John Hubbard <jhubbard@nvidia.com>
-cc: Brendan Higgins <brendanhiggins@google.com>
-cc: David Gow <davidgow@google.com>
-cc: linux-kselftest@vger.kernel.org
-cc: kunit-dev@googlegroups.com
-cc: linux-mm@kvack.org
-cc: linux-fsdevel@vger.kernel.org
----
- lib/kunit_iov_iter.c | 95 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 95 insertions(+)
+Whoops, my apologies; perhaps I should try to learn to read for once. (I
+just saw the undecorated sequence of stmt_numeric() and stmt_string() calls
+and didn't notice the early exits within the functions.) I withdraw that
+particular objection.
 
-diff --git a/lib/kunit_iov_iter.c b/lib/kunit_iov_iter.c
-index 17f85f24b239..4ee939a1c5ec 100644
---- a/lib/kunit_iov_iter.c
-+++ b/lib/kunit_iov_iter.c
-@@ -1324,6 +1324,99 @@ static void *__init iov_kunit_create_source(struct kunit *test, size_t npages)
- 	return scratch;
- }
- 
-+/*
-+ * Time copying 256MiB through an ITER_UBUF.
-+ */
-+static void __init iov_kunit_benchmark_ubuf(struct kunit *test)
-+{
-+	struct iov_iter iter;
-+	unsigned int samples[IOV_KUNIT_NR_SAMPLES];
-+	ktime_t a, b;
-+	ssize_t copied;
-+	size_t size = 256 * 1024 * 1024, npages = size / PAGE_SIZE;
-+	void *scratch;
-+	int i;
-+	u8 __user *buffer;
-+
-+	/* Allocate a huge buffer and populate it with pages. */
-+	buffer = iov_kunit_create_user_buf(test, npages, NULL);
-+
-+	/* Create a single large buffer to copy to/from. */
-+	scratch = iov_kunit_create_source(test, npages);
-+
-+	/* Perform and time a bunch of copies. */
-+	kunit_info(test, "Benchmarking copy_to_iter() over UBUF:\n");
-+	for (i = 0; i < IOV_KUNIT_NR_SAMPLES; i++) {
-+		size_t remain = size;
-+
-+		a = ktime_get_real();
-+		do {
-+			size_t part = min(remain, PAGE_SIZE);
-+
-+			iov_iter_ubuf(&iter, ITER_SOURCE, buffer, part);
-+			copied = copy_from_iter(scratch, part, &iter);
-+			KUNIT_EXPECT_EQ(test, copied, part);
-+			remain -= part;
-+		} while (remain > 0);
-+		b = ktime_get_real();
-+		samples[i] = ktime_to_us(ktime_sub(b, a));
-+	}
-+
-+	iov_kunit_benchmark_print_stats(test, samples);
-+	KUNIT_SUCCEED();
-+}
-+
-+/*
-+ * Time copying 256MiB through an ITER_IOVEC.
-+ */
-+static void __init iov_kunit_benchmark_iovec(struct kunit *test)
-+{
-+	struct iov_iter iter;
-+	struct iovec *iov;
-+	unsigned int samples[IOV_KUNIT_NR_SAMPLES];
-+	ktime_t a, b;
-+	ssize_t copied;
-+	size_t size = 256 * 1024 * 1024, npages = size / PAGE_SIZE, part;
-+	size_t ioc = size / PAGE_SIZE;
-+	void *scratch;
-+	int i;
-+	u8 __user *buffer;
-+
-+	iov = kunit_kmalloc_array(test, ioc, sizeof(*iov), GFP_KERNEL);
-+	KUNIT_ASSERT_NOT_NULL(test, iov);
-+
-+	/* Allocate a huge buffer and populate it with pages. */
-+	buffer = iov_kunit_create_user_buf(test, npages, NULL);
-+
-+	/* Create a single large buffer to copy to/from. */
-+	scratch = iov_kunit_create_source(test, npages);
-+
-+	/* Split the target over a number of iovecs */
-+	copied = 0;
-+	for (i = 0; i < ioc; i++) {
-+		part = size / ioc;
-+		iov[i].iov_base = buffer + copied;
-+		iov[i].iov_len = part;
-+		copied += part;
-+	}
-+	iov[i - 1].iov_len += size - part;
-+
-+	/* Perform and time a bunch of copies. */
-+	kunit_info(test, "Benchmarking copy_to_iter() over IOVEC:\n");
-+	for (i = 0; i < IOV_KUNIT_NR_SAMPLES; i++) {
-+		iov_iter_init(&iter, ITER_SOURCE, iov, npages, size);
-+
-+		a = ktime_get_real();
-+		copied = copy_from_iter(scratch, size, &iter);
-+		b = ktime_get_real();
-+		KUNIT_EXPECT_EQ(test, copied, size);
-+		samples[i] = ktime_to_us(ktime_sub(b, a));
-+	}
-+
-+	iov_kunit_benchmark_print_stats(test, samples);
-+	KUNIT_SUCCEED();
-+}
-+
- /*
-  * Time copying 256MiB through an ITER_KVEC.
-  */
-@@ -1524,6 +1617,8 @@ static struct kunit_case __refdata iov_kunit_cases[] = {
- 	KUNIT_CASE(iov_kunit_extract_pages_kvec),
- 	KUNIT_CASE(iov_kunit_extract_pages_bvec),
- 	KUNIT_CASE(iov_kunit_extract_pages_xarray),
-+	KUNIT_CASE(iov_kunit_benchmark_ubuf),
-+	KUNIT_CASE(iov_kunit_benchmark_iovec),
- 	KUNIT_CASE(iov_kunit_benchmark_kvec),
- 	KUNIT_CASE(iov_kunit_benchmark_bvec),
- 	KUNIT_CASE(iov_kunit_benchmark_bvec_split),
+> > Besides that, if the caller is written in standard C but doesn't want to
+> > use malloc(3) to allocate the buffer, then its helper function must be
+> > written very carefully (with a wrapper struct around the header and dat=
+a)
+> > to satisfy the aliasing rules, which forbid programs from using a struct
+> > statmnt * pointer to read from a declared char[N] array.
+>
+> I think you interpret aliasing rules incorrectly.  The issue with
+> aliasing is if you access the same piece of memory though different
+> types.  Which is not the case here.  In fact with the latest
+> incarnation of the interface[1] there's no need to access the
+> underlying buffer at all:
+>
+>         printf("mnt_root: <%s>\n", st->str + st->mnt_root);
+>
+> So the following is perfectly safe to do (as long as you don't care
+> about buffer overflow):
+>
+>         char buf[10000];
+>         struct statmnt *st =3D (void *) buf;
+>
+>         ret =3D statmount(mnt_id, mask, st, sizeof(buf), flags);
 
+The declared type of a variable *is* one of the different types, as far as
+the aliasing rules are concerned. In C17, section 6.5 ("Expressions"):
+
+> The *effective type* of an object for an access to its stored value is
+> the declared type of the object, if any. [More rules about objects with
+> no declared type, i.e., those created with malloc(3) or realloc(3)...]
+>
+> An object shall have its stored value accessed only by an lvalue
+> expression that has one of the following types:
+>
+> -- a type compatible with the effective type of the object,
+>
+> -- a qualified version of a type compatible with the effective type of
+>    the object,
+>
+> -- a type that is the signed or unsigned type corresponding to the
+>    effective type of the object,
+>
+> -- a type that is the signed or unsigned type corresponding to a
+>    qualified version of the effective type of the object,
+>
+> -- an aggregate or union type that includes one of the aforementioned
+>    types among its members (including, recursively, a member of a
+>    subaggregate or contained union), or
+>
+> -- a character type.
+
+In this case, buf is declared in the program as a char[10000] array, so the
+declared type of each element is char, and the effective type of each
+element is also char. If we want to access, say, st->mnt_id, the lvalue
+expression has type __u64, and it tries to access 8 of the char objects.
+However, the integer type that __u64 expands to doesn't meet any of those
+criteria, so the aliasing rules are violated and the behavior is undefined.
+
+(The statmount() helper could in theory avoid UB by saying the struct
+statmnt object is stored in the buffer as if by memcpy(3), but it would
+still be UB for the caller to access the fields of that pointer directly
+instead of memcpy'ing them back out of the buffer. And practically no one
+does that in the real world.)
+
+It's a common misconception that the aliasing rules as written are about
+accessing the same object through two different pointer types. That
+corollary is indeed what compilers mainly care about, but the C/C++
+standards further say that objects in memory "remember" the types they were
+created with, and they demand that programs respect objects' original types
+when trying to access them (except when accessing their raw representations
+via a pointer of character type).
+
+> If you do care about handling buffer overflows, then dynamic
+> allocation is the only sane way.
+>
+> And before you dive into how this is going to be horrible because the
+> buffer size needs to be doubled an unknown number of times, think a
+> bit:  have you *ever* seen a line in /proc/self/mountinfo longer than
+> say 1000 characters?   So if the buffer starts out at 64k, how often
+> will this doubling happen?   Right: practically never.  Adding
+> complexity to handle this case is nonsense, as I've said many times.
+> And there is definitely nonzero complexity involved (just see the
+> special casing in getxattr and listxattr implementations all over the
+> place).
+>
+> Thanks,
+> Miklos
+
+I've always felt that capacity doubling is a bit wasteful, but it's
+definitely something I can live with, especially if providing size feedback
+is as complex as you suggest. Still, I'm not a big fan of single-buffer
+interfaces in general, with how poorly they tend to interact with C's
+aliasing rules. (Also, those kinds of interfaces also invite alignment
+errors: for instance, your snippet above is missing the necessary union to
+prevent the buffer from being misaligned, which would cause UB when you
+cast it to a struct statmnt *.)
+
+Thank you,
+Matthew House
