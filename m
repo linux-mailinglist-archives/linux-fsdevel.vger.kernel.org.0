@@ -2,144 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 28EA07A8DEA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Sep 2023 22:41:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6AD17A8DFB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Sep 2023 22:46:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229640AbjITUlV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Sep 2023 16:41:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33130 "EHLO
+        id S229658AbjITUqu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Sep 2023 16:46:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229473AbjITUlU (ORCPT
+        with ESMTP id S229473AbjITUqt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Sep 2023 16:41:20 -0400
-Received: from mail-qt1-x82d.google.com (mail-qt1-x82d.google.com [IPv6:2607:f8b0:4864:20::82d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 787E8BB
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Sep 2023 13:41:14 -0700 (PDT)
-Received: by mail-qt1-x82d.google.com with SMTP id d75a77b69052e-41206fd9717so1091791cf.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Sep 2023 13:41:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1695242473; x=1695847273; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gWfoV3C+7YSBwabU1RrTm8uXi7/h5S313DOQ9XVA4fs=;
-        b=ll42s7Zw90tsjWd0E2BU7/7sJ/jiJ+kxuR6GFEOw+jkTvDFcUtLYINP90IDwFI4hGV
-         K+egE2k1NR89tBtiCbQz56anRWdpdVnb3WhCAS+MYPgYFdNEAUUvZdkwmC39fRwhpwvw
-         US8TD28CfIt17GPAIZX/QAfwB5tR56/VKTvtOP3ByJhwPdKhImi6c3AfR0dAEpGbVY7o
-         utZXJAWfqc4nnPAEYdg7FIAlaRvflddvaNzNElUYC9f0aJVODyT9AtcqCBZvNwYnzBAH
-         wnFo6DcKdcXIEW302r60Wqhv1STdkIVnEFj8FadghQLRyYnhvi4VTELZNbEW2W8IMIN9
-         lwFA==
+        Wed, 20 Sep 2023 16:46:49 -0400
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C63FB9;
+        Wed, 20 Sep 2023 13:46:44 -0700 (PDT)
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1c43b4b02c1so1583885ad.3;
+        Wed, 20 Sep 2023 13:46:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695242473; x=1695847273;
+        d=1e100.net; s=20230601; t=1695242803; x=1695847603;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gWfoV3C+7YSBwabU1RrTm8uXi7/h5S313DOQ9XVA4fs=;
-        b=SA0tE9Qw+1XYgACY85f7hVYndRiWgvxSdnJgjnexabdQi5Gmyld/7EHVZCBgjPx6GZ
-         AifBSgK8jDDYMGgF4OZ/wU4yaseayxXieEGEEc4WpZj1tJE6YlCjhbpwtK4z4g8R6e/X
-         esnh9n87ipd5tIU3NIbCsYDpWAkzQYTmLSGwpEVMTNLMAkjdQRzZaFw4TPlCOB3lZG6t
-         3lTlNO3/47oCzoitevs6pOeziwYjnyx6s41gj6Ktnxc5mAo+hexPRRVW6fErbkvZkp3g
-         0M6qpTQ2dyusmhsiS7awsImXzBK4UeX0w6pts4i0FgGQ/VxZzLSQ5AroiKK2Je+FqCgh
-         Hqkg==
-X-Gm-Message-State: AOJu0Yy7YM0vN/Z0mvsDknIC3/e2ktsYOJ+ORpjr5JA8pjc0rRxdq3hO
-        XjswkMjahFz1x20JEmI4qnk4PVKE0J9o+olGNEuK1WJp
-X-Google-Smtp-Source: AGHT+IHCzJajQHoo4ag+MBSCuMbz+nBgjUOKbqVuICXRsb6shtfJZIsUaiffrvD5xvp+3k7IrE2ufA==
-X-Received: by 2002:a05:622a:551:b0:412:1163:1d20 with SMTP id m17-20020a05622a055100b0041211631d20mr4219646qtx.48.1695242473530;
-        Wed, 20 Sep 2023 13:41:13 -0700 (PDT)
-Received: from ?IPV6:2600:1700:2000:b002:104:ea12:bd23:169? ([2600:1700:2000:b002:104:ea12:bd23:169])
-        by smtp.gmail.com with ESMTPSA id c17-20020a05622a025100b004166905aa2asm1690qtx.28.2023.09.20.13.41.12
+        bh=ykhgKtsX2cSkN4uX6LBnSBcD5nrfp6+TARNRJQaJR6c=;
+        b=KjEpjqii7J5F+11Ktejpqmb7mKb4ne0/2TejTMZ7m/dSQvpsVcdq+vnCQ5CVBufidd
+         M2un6GCezYGVACW2Q/dibpQBbIiBqSaib3FkIDoGfbE4Fi9E1qEky3UAYw/HkwfCg2IB
+         5IOxbChJv23D9p2l73NGbF0/JcDpSADag1taCyX7a4C0s6pN7NX0USp65Hsj5GIcik1h
+         eb43ZrJ7cHcmJGVEoIK9wv+0f024I5daJXUH8LvlMQ8cPVfWAwCeCWIyTTBUuD1XutLl
+         pyBvep6fxVSYHjMlGIx7NPHkWpz99YVYgn4oyKhwzVLkvWrgwBORdA25rfDRN+IKRbtk
+         8WGw==
+X-Gm-Message-State: AOJu0YxibkDPLXk3A9GMm8VH+98ZmyEix1W0YZe8TAY18pmkmWeCAgEA
+        LbEb00aavWBKSgCK21USirQ=
+X-Google-Smtp-Source: AGHT+IHguTQYMss6/IXnNgOwpT4FcjQGDCqbCZ3melCWZ4OqXn8ID/L0Al/3KiqNr+xc0NSK5TDqPg==
+X-Received: by 2002:a17:902:7d87:b0:1c4:29dd:2519 with SMTP id a7-20020a1709027d8700b001c429dd2519mr2830020plm.67.1695242803527;
+        Wed, 20 Sep 2023 13:46:43 -0700 (PDT)
+Received: from ?IPV6:2620:15c:211:201:b0c6:e5b6:49ef:e0bd? ([2620:15c:211:201:b0c6:e5b6:49ef:e0bd])
+        by smtp.gmail.com with ESMTPSA id z16-20020a170903019000b001ab2b4105ddsm12240212plg.60.2023.09.20.13.46.42
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Sep 2023 13:41:13 -0700 (PDT)
-Message-ID: <79af9398-167f-440e-a493-390dc4ccbd85@sifive.com>
-Date:   Wed, 20 Sep 2023 15:41:11 -0500
+        Wed, 20 Sep 2023 13:46:42 -0700 (PDT)
+Message-ID: <1522d8ec-6b15-45d5-b6d9-517337e2c8cf@acm.org>
+Date:   Wed, 20 Sep 2023 13:46:41 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/17] nbd: call blk_mark_disk_dead in
- nbd_clear_sock_ioctl
+Subject: Re: [PATCH 00/13] Pass data temperature information to zoned UFS
+ devices
 Content-Language: en-US
-To:     Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, Denis Efremov <efremov@linux.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Stefan Haberland <sth@linux.ibm.com>,
-        Jan Hoeppner <hoeppner@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        "Darrick J . Wong" <djwong@kernel.org>, Chris Mason <clm@fb.com>,
-        David Sterba <dsterba@suse.com>, linux-block@vger.kernel.org,
-        nbd@other.debian.org, linux-s390@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20230811100828.1897174-1-hch@lst.de>
- <20230811100828.1897174-8-hch@lst.de>
-From:   Samuel Holland <samuel.holland@sifive.com>
-In-Reply-To: <20230811100828.1897174-8-hch@lst.de>
-Content-Type: text/plain; charset=UTF-8
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Christoph Hellwig <hch@lst.de>
+References: <20230920191442.3701673-1-bvanassche@acm.org>
+ <ZQtHwsNvS1wYDKfG@casper.infradead.org>
+From:   Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <ZQtHwsNvS1wYDKfG@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2023-08-11 5:08 AM, Christoph Hellwig wrote:
-> nbd_clear_sock_ioctl kills the socket and with that the block
-> device.  Instead of just invalidating file system buffers,
-> mark the device as dead, which will also invalidate the buffers
-> as part of the proper shutdown sequence.  This also includes
-> invalidating partitions if there are any.
+On 9/20/23 12:28, Matthew Wilcox wrote:
+> On Wed, Sep 20, 2023 at 12:14:25PM -0700, Bart Van Assche wrote:
+>> Zoned UFS vendors need the data temperature information. Hence
+>> this patch series that restores write hint information in F2FS and
+>> in the block layer. The SCSI disk (sd) driver is modified such that
+>> it passes write hint information to SCSI devices via the GROUP
+>> NUMBER field.
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  drivers/block/nbd.c | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-> index 8576d696c7a221..42e0159bb258fa 100644
-> --- a/drivers/block/nbd.c
-> +++ b/drivers/block/nbd.c
-> @@ -1434,12 +1434,10 @@ static int nbd_start_device_ioctl(struct nbd_device *nbd)
->  	return ret;
->  }
->  
-> -static void nbd_clear_sock_ioctl(struct nbd_device *nbd,
-> -				 struct block_device *bdev)
-> +static void nbd_clear_sock_ioctl(struct nbd_device *nbd)
->  {
-> +	blk_mark_disk_dead(nbd->disk);
->  	nbd_clear_sock(nbd);
-> -	__invalidate_device(bdev, true);
-> -	nbd_bdev_reset(nbd);
+> "Need" in what sense?  Can you quantify what improvements we might 
+> see from this patchset?
 
-This change breaks nbd-client, which calls the NBD_CLEAR_SOCK ioctl during
-device setup and socket reconnection. After merging this series (bisected to
-511fb5bafed1), all NBD devices are immediately dead on arrival:
+Hi Matthew,
 
-[   14.605849] nbd0: detected capacity change from 0 to 4194304
+This is what Jens wrote about 1.5 years ago in reply to complaints about
+the removal of write hint support making it impossible to pass write 
+hint information to SSD devices: "If at some point there's a
+desire to actually try and upstream this support, then we'll be happy to
+review that patchset."
+(https://lore.kernel.org/linux-block/ef77ef36-df95-8658-ff54-7d8046f5d0e7@kernel.dk/). 
+Hence this patch series.
 
-[   14.606211] Buffer I/O error on dev nbd0, logical block 0, async page read
-[   14.619101] Buffer I/O error on dev nbd0, logical block 0, async page read
+Recently T10 standardized how data temperature information should be 
+passed to SCSI devices. One of the patches in this series translates 
+write hint information into a data temperature for SCSI devices. This 
+can be used by SCSI SSD devices (including UFS devices) to reduce write 
+amplification inside the device because host software should assign the 
+same data temperature to all data that will be garbage collected at once.
 
-[   14.630490]  nbd0: unable to read partition table
+Thanks,
 
-I wonder if disk_force_media_change() is the right thing to call here instead.
-
-Regards,
-Samuel
-
->  	if (test_and_clear_bit(NBD_RT_HAS_CONFIG_REF,
->  			       &nbd->config->runtime_flags))
->  		nbd_config_put(nbd);
-> @@ -1465,7 +1463,7 @@ static int __nbd_ioctl(struct block_device *bdev, struct nbd_device *nbd,
->  	case NBD_DISCONNECT:
->  		return nbd_disconnect(nbd);
->  	case NBD_CLEAR_SOCK:
-> -		nbd_clear_sock_ioctl(nbd, bdev);
-> +		nbd_clear_sock_ioctl(nbd);
->  		return 0;
->  	case NBD_SET_SOCK:
->  		return nbd_add_socket(nbd, arg, false);
-
+Bart.
