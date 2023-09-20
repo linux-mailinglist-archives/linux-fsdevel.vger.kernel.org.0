@@ -2,350 +2,409 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 596897A78F2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Sep 2023 12:17:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC7E87A7926
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Sep 2023 12:27:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234342AbjITKRp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Sep 2023 06:17:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41094 "EHLO
+        id S234234AbjITK1k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Sep 2023 06:27:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234244AbjITKRk (ORCPT
+        with ESMTP id S233785AbjITK1j (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Sep 2023 06:17:40 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0367CB4;
-        Wed, 20 Sep 2023 03:17:34 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id AD3EA1FF06;
-        Wed, 20 Sep 2023 10:17:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1695205052; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=XpHsNizvelec1zcW5xxDBrnNaFeZBOad68HcE9xlPoQ=;
-        b=YVbpxMQaiO5YfasTiKUfZOAiDtooFHNrVzqi/tf4bOPpUAujoNX/JB57Yr2SU203IvJcRQ
-        Kkqoj3OwVNe1Xenl8kmN8w0bois62Jy+6GEIRzHdP6oGJ5i63/iaiDlZ1ha7vL3mjbo2+W
-        dBz0IKO6MPMxIfyTow3SJo4hCy/TfiI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1695205052;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=XpHsNizvelec1zcW5xxDBrnNaFeZBOad68HcE9xlPoQ=;
-        b=O67IcegbK9h8y6im/RLen3XchB6W8nkPyTro7doG3LAWfJ7j6SF/NWcoOQh16p+i7ws/IB
-        InZ6cnU08qb4yEDQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 8B898132C7;
-        Wed, 20 Sep 2023 10:17:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id gboIIrzGCmW2EgAAMHmgww
-        (envelope-from <jack@suse.cz>); Wed, 20 Sep 2023 10:17:32 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id F205EA077D; Wed, 20 Sep 2023 12:17:31 +0200 (CEST)
-Date:   Wed, 20 Sep 2023 12:17:31 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Jeff Layton <jlayton@kernel.org>, Bruno Haible <bruno@clisp.org>,
-        Jan Kara <jack@suse.cz>,
-        Xi Ruoyao <xry111@linuxfromscratch.org>, bug-gnulib@gnu.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Eric Van Hensbergen <ericvh@kernel.org>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Christian Schoenebeck <linux_oss@crudebyte.com>,
-        David Howells <dhowells@redhat.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, Xiubo Li <xiubli@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu,
-        Tyler Hicks <code@tyhicks.com>, Gao Xiang <xiang@kernel.org>,
-        Chao Yu <chao@kernel.org>, Yue Hu <huyue2@coolpad.com>,
-        Jeffle Xu <jefflexu@linux.alibaba.com>,
-        Namjae Jeon <linkinjeon@kernel.org>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        Jan Kara <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Bo b Peterson <rpeterso@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tejun Heo <tj@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Mike Marshall <hubcap@omnibond.com>,
-        Martin Brandenburg <martin@omnibond.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Steve French <sfrench@samba.org>,
-        Paulo Alcantara <pc@manguebit.com>,
-        Ronnie Sahlberg <ronniesahlberg@gmail.com>,
-        Shyam Prasad N <sprasad@microsoft.com>,
-        Tom Talpey <tom@talpey.com>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Richard Weinberger <richard@nod.at>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Amir Goldstein <l@gmail.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Benjamin Coddington <bcodding@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
-        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        linux-nfs@vger.kernel.org, ntfs3@lists.linux.dev,
-        ocfs2-devel@lists.linux.dev, devel@lists.orangefs.org,
-        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-        linux-mtd@lists.infradead.org, linux-mm@kvack.org,
-        linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v7 12/13] ext4: switch to multigrain timestamps
-Message-ID: <20230920101731.ym6pahcvkl57guto@quack3>
-References: <20230807-mgctime-v7-0-d1dec143a704@kernel.org>
- <20230919110457.7fnmzo4nqsi43yqq@quack3>
- <1f29102c09c60661758c5376018eac43f774c462.camel@kernel.org>
- <4511209.uG2h0Jr0uP@nimes>
- <08b5c6fd3b08b87fa564bb562d89381dd4e05b6a.camel@kernel.org>
- <20230920-leerung-krokodil-52ec6cb44707@brauner>
+        Wed, 20 Sep 2023 06:27:39 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E25694;
+        Wed, 20 Sep 2023 03:27:32 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CAA4C433C8;
+        Wed, 20 Sep 2023 10:27:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695205651;
+        bh=AL7XxZWUXlzUV5MacTTl6s8AOlMQDcV2eRErhEj9M1k=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=nSJ9nCUsfilp17okswe9miOtdP03/Glc9WuhcxDoaqjIxMA8g8FlTY0oI4FzfinZ1
+         XSHR1byf0d8DbNrDQ4tDrjFzwbB4eGDcK7Zu7c0V0WnAa8BQ6qtZ5SINNqjtyCAsBE
+         1Z+EJK9WlC/37TWk3wFm7IUBFGa/8OD+T7KcI4bgmsEwea7/zlzgmKO3lHw/HNbS+F
+         IxwxS7eXzrY6A6eSdgKqozJSaMBiBd+vAL5JkDwFpu4phwVrj68/c0PUW5XazPEirn
+         qcXPf+Y4bDk5Ru9tq4tMX2YNRtsnpE6CAdyu2oOBRuVJEiqkL0W6FtkY4yQn1jd/IL
+         0l14sjlKp5XBA==
+Message-ID: <3c3d424b7b87fef8df56b2f80c4d3fef7d36311b.camel@kernel.org>
+Subject: Re: [RFC][PATCH] fanotify: Enable FAN_REPORT_FID on more filesystem
+ types
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        Chuck Lever <chuck.lever@oracle.com>
+Date:   Wed, 20 Sep 2023 06:27:29 -0400
+In-Reply-To: <CAOQ4uxjfP+TrDded+Zps6k6GQM+UsEuW0R2PT_fMEH8ouY_aUg@mail.gmail.com>
+References: <20230411124037.1629654-1-amir73il@gmail.com>
+         <20230412184359.grx7qyujnb63h4oy@quack3>
+         <CAOQ4uxj_OQt+yLVnBH-Cg4mKe4_19L42bcsQx2BSOxR7E46SDQ@mail.gmail.com>
+         <20230417162721.ouzs33oh6mb7vtft@quack3>
+         <CAOQ4uxjfP+TrDded+Zps6k6GQM+UsEuW0R2PT_fMEH8ouY_aUg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230920-leerung-krokodil-52ec6cb44707@brauner>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 20-09-23 10:41:30, Christian Brauner wrote:
-> > > f1 was last written to *after* f2 was last written to. If the timestamp of f1
-> > > is then lower than the timestamp of f2, timestamps are fundamentally broken.
-> > > 
-> > > Many things in user-space depend on timestamps, such as build system
-> > > centered around 'make', but also 'find ... -newer ...'.
-> > > 
-> > 
-> > 
-> > What does breakage with make look like in this situation? The "fuzz"
-> > here is going to be on the order of a jiffy. The typical case for make
-> > timestamp comparisons is comparing source files vs. a build target. If
-> > those are being written nearly simultaneously, then that could be an
-> > issue, but is that a typical behavior? It seems like it would be hard to
-> > rely on that anyway, esp. given filesystems like NFS that can do lazy
-> > writeback.
-> > 
-> > One of the operating principles with this series is that timestamps can
-> > be of varying granularity between different files. Note that Linux
-> > already violates this assumption when you're working across filesystems
-> > of different types.
-> > 
-> > As to potential fixes if this is a real problem:
-> > 
-> > I don't really want to put this behind a mount or mkfs option (a'la
-> > relatime, etc.), but that is one possibility.
-> > 
-> > I wonder if it would be feasible to just advance the coarse-grained
-> > current_time whenever we end up updating a ctime with a fine-grained
-> > timestamp? It might produce some inode write amplification. Files that
-> 
-> Less than ideal imho.
-> 
-> If this risks breaking existing workloads by enabling it unconditionally
-> and there isn't a clear way to detect and handle these situations
-> without risk of regression then we should move this behind a mount
-> option.
-> 
-> So how about the following:
-> 
-> From cb14add421967f6e374eb77c36cc4a0526b10d17 Mon Sep 17 00:00:00 2001
-> From: Christian Brauner <brauner@kernel.org>
-> Date: Wed, 20 Sep 2023 10:00:08 +0200
-> Subject: [PATCH] vfs: move multi-grain timestamps behind a mount option
-> 
-> While we initially thought we can do this unconditionally it turns out
-> that this might break existing workloads that rely on timestamps in very
-> specific ways and we always knew this was a possibility. Move
-> multi-grain timestamps behind a vfs mount option.
-> 
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+On Wed, 2023-09-20 at 11:26 +0300, Amir Goldstein wrote:
+> On Mon, Apr 17, 2023 at 7:27=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+> >=20
+> > On Thu 13-04-23 12:25:41, Amir Goldstein wrote:
+> > > On Wed, Apr 12, 2023 at 9:44=E2=80=AFPM Jan Kara <jack@suse.cz> wrote=
+:
+> > > >=20
+> > > > Hi Amir!
+> > > >=20
+> > > > On Tue 11-04-23 15:40:37, Amir Goldstein wrote:
+> > > > > If kernel supports FAN_REPORT_ANY_FID, use this flag to allow tes=
+ting
+> > > > > also filesystems that do not support fsid or NFS file handles (e.=
+g. fuse).
+> > > > >=20
+> > > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > > > > ---
+> > > > >=20
+> > > > > Jan,
+> > > > >=20
+> > > > > I wanted to run an idea by you.
+> > > > >=20
+> > > > > My motivation is to close functional gaps between fanotify and in=
+otify.
+> > > > >=20
+> > > > > One of the largest gaps right now is that FAN_REPORT_FID is limit=
+ed
+> > > > > to a subset of local filesystems.
+> > > > >=20
+> > > > > The idea is to report fid's that are "good enough" and that there
+> > > > > is no need to require that fid's can be used by open_by_handle_at=
+()
+> > > > > because that is a non-requirement for most use cases, unpriv list=
+ener
+> > > > > in particular.
+> > > >=20
+> > > > OK. I'd note that if you report only inode number, you are prone to=
+ the
+> > > > problem that some inode gets freed (file deleted) and then realloca=
+ted (new
+> > > > file created) and the resulting identifier is the same. It can be
+> > > > problematic for a listener to detect these cases and deal with them=
+.
+> > > > Inotify does not have this problem at least for some cases because =
+'wd'
+> > > > uniquely identifies the marked inode. For other cases (like watchin=
+g dirs)
+> > > > inotify has similar sort of problems. I'm muttering over this becau=
+se in
+> > > > theory filesystems not having i_generation counter on disk could ap=
+proach
+> > > > the problem in a similar way as FAT and then we could just use
+> > > > FILEID_INO64_GEN for the file handle.
+> > >=20
+> > > Yes, of course we could.
+> > > The problem with that is that user space needs to be able to query th=
+e fid
+> > > regardless of fanotify.
+> > >=20
+> > > The fanotify equivalent of wd is the answer to that query.
+> > >=20
+> > > If any fs would export i_generation via statx, then FILEID_INO64_GEN
+> > > would have been my choice.
+> >=20
+> > One problem with making up i_generation (like FAT does it) is that when
+> > inode gets reclaimed and then refetched from the disk FILEID_INO64_GEN =
+will
+> > change because it's going to have different i_generation. For NFS this =
+is
+> > annoying but I suppose it mostly does not happen since client's accesse=
+s
+> > tend to keep the inode in memory. For fanotify it could be more likely =
+to
+> > happen if watching say the whole filesystem and I suppose the watching
+> > application will get confused by this. So I'm not convinced faking
+> > i_generation is a good thing to do. But still I want to brainstorm a bi=
+t
+> > about it :)
+> >=20
+> > > But if we are going to change some other API for that, I would not ch=
+ange
+> > > statx(), I would change name_to_handle_at(...., AT_HANDLE_FID)
+> > >=20
+> > > This AT_ flag would relax this check in name_to_handle_at():
+> > >=20
+> > >         /*
+> > >          * We need to make sure whether the file system
+> > >          * support decoding of the file handle
+> > >          */
+> > >         if (!path->dentry->d_sb->s_export_op ||
+> > >             !path->dentry->d_sb->s_export_op->fh_to_dentry)
+> > >                 return -EOPNOTSUPP;
+> > >=20
+> > > And allow the call to proceed to the default export_encode_fh() imple=
+mentation.
+> > > Alas, the default implementation encodes FILEID_INO32_GEN.
+> > >=20
+> > > I think we can get away with a default implementation for FILEID_INO6=
+4_GEN
+> > > as long as the former (INO32) is used for fs with export ops without =
+->encode_fh
+> > > (e.g. ext*) and the latter (INO64) is used for fs with no export ops.
+> >=20
+> > These default calls seem a bit too subtle to me. I'd rather add explici=
+t
+> > handlers to filesystems that really want FILEID_INO32_GEN encoding and =
+then
+> > have a fallback function for filesystems not having s_export_op at all.
+> >=20
+> > But otherwise the proposal to make name_to_handle_at() work even for
+> > filesystems not exportable through NFS makes sense to me. But I guess w=
+e
+> > need some buy-in from VFS maintainers for this.
+> >=20
+>=20
+> Hi Jan,
+>=20
+> I seem to have dropped the ball on this after implementing AT_HANDLE_FID.
+> It was step one in a larger plan.
+>=20
+> Christian, Jeff,
+>=20
+> Do you have an objection to this plan:
+> 1. Convert all "legacy" FILEID_INO32_GEN fs with non-empty
+>     s_export_op and no explicit ->encode_fh() to use an explicit
+>     generic_encode_ino32_gen_fh()
+> 2. Relax requirement of non-empty s_export_op for AT_HANDLE_FID
+>     to support encoding a (non-NFS) file id on all fs
+> 3. For fs with empty s_export_op, allow fallback of AT_HANDLE_FID
+>     in exportfs_encode_inode_fh() to encode FILEID_INO64_GEN
+>=20
+>=20
 
-Surely this is a safe choice as it moves the responsibility to the sysadmin
-and the cases where finegrained timestamps are required. But I kind of
-wonder how is the sysadmin going to decide whether mgtime is safe for his
-system or not? Because the possible breakage needn't be obvious at the
-first sight... If I were a sysadmin, I'd rather opt for something like
-finegrained timestamps + lazytime (if I needed the finegrained timestamps
-functionality). That should avoid the IO overhead of finegrained timestamps
-as well and I'd know I can have problems with timestamps only after a
-system crash.
+This plan sounds reasonable.
 
-I've just got another idea how we could solve the problem: Couldn't we
-always just report coarsegrained timestamp to userspace and provide access
-to finegrained value only to NFS which should know what it's doing?
+> > > > Also I have noticed your workaround with using st_dev for fsid. As =
+I've
+> > > > checked, there are actually very few filesystems that don't set fsi=
+d these
+> > > > days. So maybe we could just get away with still refusing to report=
+ on
+> > > > filesystems without fsid and possibly fixup filesystems which don't=
+ set
+> > > > fsid yet and are used enough so that users complain?
+> > >=20
+> > > I started going down this path to close the gap with inotify.
+> > > inotify is capable of watching all fs including pseudo fs, so I would
+> > > like to have this feature parity.
+> >=20
+> > Well, but with pseudo filesystems (similarly as with FUSE) the notifica=
+tion
+> > was always unreliable. As in: some cases worked but others did not. I'm=
+ not
+> > sure that is something we should try to replicate :)
+> >=20
+> > So still I'd be interested to know which filesystems we are exactly
+> > interested to support and whether we are not better off to explicitly a=
+dd
+> > fsid support to them like we did for tmpfs.
+> >=20
+>=20
+> Since this email, kernfs derivative fs gained fsid as well.
+> Quoting your audit of remaining fs from another thread:
+>=20
+> > ...As far as I remember
+> > fanotify should be now able to handle anything that provides f_fsid in =
+its
+> > statfs(2) call. And as I'm checking filesystems not setting fsid curren=
+tly are:
+> >=20
+> > afs, coda, nfs - networking filesystems where inotify and fanotify have
+> >   dubious value anyway
+>=20
+> Be that as it may, there may be users that use inotify on network fs
+> and it even makes a lot of sense in controlled environments with
+> single NFS client per NFS export (e.g. home dirs), so I think we will
+> need to support those fs as well.
+>=20
+> Maybe the wise thing to do is to opt-in to monitor those fs after all?
+> Maybe with explicit opt-in to watch a single fs, fanotify group will
+> limit itself to marks on a specific sb and then a null fsid won't matter?
+>=20
 
-								Honza
+Caution here. Most of these filesystems don't have protocol support for
+anything like inotify (the known exception being SMB). You can monitor
+such a network filesystem, but you won't get events for things that
+happen on remote hosts.
 
-> ---
->  fs/fs_context.c     | 18 ++++++++++++++++++
->  fs/inode.c          |  4 ++--
->  fs/proc_namespace.c |  1 +
->  fs/stat.c           |  2 +-
->  include/linux/fs.h  |  4 +++-
->  5 files changed, 25 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/fs_context.c b/fs/fs_context.c
-> index a0ad7a0c4680..dd4dade0bb9e 100644
-> --- a/fs/fs_context.c
-> +++ b/fs/fs_context.c
-> @@ -44,6 +44,7 @@ static const struct constant_table common_set_sb_flag[] = {
->  	{ "mand",	SB_MANDLOCK },
->  	{ "ro",		SB_RDONLY },
->  	{ "sync",	SB_SYNCHRONOUS },
-> +	{ "mgtime",	SB_MGTIME },
->  	{ },
->  };
->  
-> @@ -52,18 +53,32 @@ static const struct constant_table common_clear_sb_flag[] = {
->  	{ "nolazytime",	SB_LAZYTIME },
->  	{ "nomand",	SB_MANDLOCK },
->  	{ "rw",		SB_RDONLY },
-> +	{ "nomgtime",	SB_MGTIME },
->  	{ },
->  };
->  
-> +static inline int check_mgtime(unsigned int token, const struct fs_context *fc)
-> +{
-> +	if (token != SB_MGTIME)
-> +		return 0;
-> +	if (!(fc->fs_type->fs_flags & FS_MGTIME))
-> +		return invalf(fc, "Filesystem doesn't support multi-grain timestamps");
-> +	return 0;
-> +}
-> +
->  /*
->   * Check for a common mount option that manipulates s_flags.
->   */
->  static int vfs_parse_sb_flag(struct fs_context *fc, const char *key)
->  {
->  	unsigned int token;
-> +	int ret;
->  
->  	token = lookup_constant(common_set_sb_flag, key, 0);
->  	if (token) {
-> +		ret = check_mgtime(token, fc);
-> +		if (ret)
-> +			return ret;
->  		fc->sb_flags |= token;
->  		fc->sb_flags_mask |= token;
->  		return 0;
-> @@ -71,6 +86,9 @@ static int vfs_parse_sb_flag(struct fs_context *fc, const char *key)
->  
->  	token = lookup_constant(common_clear_sb_flag, key, 0);
->  	if (token) {
-> +		ret = check_mgtime(token, fc);
-> +		if (ret)
-> +			return ret;
->  		fc->sb_flags &= ~token;
->  		fc->sb_flags_mask |= token;
->  		return 0;
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 54237f4242ff..fd1a2390aaa3 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -2141,7 +2141,7 @@ EXPORT_SYMBOL(current_mgtime);
->  
->  static struct timespec64 current_ctime(struct inode *inode)
->  {
-> -	if (is_mgtime(inode))
-> +	if (IS_MGTIME(inode))
->  		return current_mgtime(inode);
->  	return current_time(inode);
->  }
-> @@ -2588,7 +2588,7 @@ struct timespec64 inode_set_ctime_current(struct inode *inode)
->  		now = current_time(inode);
->  
->  		/* Just copy it into place if it's not multigrain */
-> -		if (!is_mgtime(inode)) {
-> +		if (!IS_MGTIME(inode)) {
->  			inode_set_ctime_to_ts(inode, now);
->  			return now;
->  		}
-> diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
-> index 250eb5bf7b52..08f5bf4d2c6c 100644
-> --- a/fs/proc_namespace.c
-> +++ b/fs/proc_namespace.c
-> @@ -49,6 +49,7 @@ static int show_sb_opts(struct seq_file *m, struct super_block *sb)
->  		{ SB_DIRSYNC, ",dirsync" },
->  		{ SB_MANDLOCK, ",mand" },
->  		{ SB_LAZYTIME, ",lazytime" },
-> +		{ SB_MGTIME, ",mgtime" },
->  		{ 0, NULL }
->  	};
->  	const struct proc_fs_opts *fs_infop;
-> diff --git a/fs/stat.c b/fs/stat.c
-> index 6e60389d6a15..2f18dd5de18b 100644
-> --- a/fs/stat.c
-> +++ b/fs/stat.c
-> @@ -90,7 +90,7 @@ void generic_fillattr(struct mnt_idmap *idmap, u32 request_mask,
->  	stat->size = i_size_read(inode);
->  	stat->atime = inode->i_atime;
->  
-> -	if (is_mgtime(inode)) {
-> +	if (IS_MGTIME(inode)) {
->  		fill_mg_cmtime(stat, request_mask, inode);
->  	} else {
->  		stat->mtime = inode->i_mtime;
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 4aeb3fa11927..03e415fb3a7c 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1114,6 +1114,7 @@ extern int send_sigurg(struct fown_struct *fown);
->  #define SB_NODEV        BIT(2)	/* Disallow access to device special files */
->  #define SB_NOEXEC       BIT(3)	/* Disallow program execution */
->  #define SB_SYNCHRONOUS  BIT(4)	/* Writes are synced at once */
-> +#define SB_MGTIME	BIT(5)	/* Use multi-grain timestamps */
->  #define SB_MANDLOCK     BIT(6)	/* Allow mandatory locks on an FS */
->  #define SB_DIRSYNC      BIT(7)	/* Directory modifications are synchronous */
->  #define SB_NOATIME      BIT(10)	/* Do not update access times. */
-> @@ -2105,6 +2106,7 @@ static inline bool sb_rdonly(const struct super_block *sb) { return sb->s_flags
->  					((inode)->i_flags & (S_SYNC|S_DIRSYNC)))
->  #define IS_MANDLOCK(inode)	__IS_FLG(inode, SB_MANDLOCK)
->  #define IS_NOATIME(inode)	__IS_FLG(inode, SB_RDONLY|SB_NOATIME)
-> +#define IS_MGTIME(inode)	__IS_FLG(inode, SB_MGTIME)
->  #define IS_I_VERSION(inode)	__IS_FLG(inode, SB_I_VERSION)
->  
->  #define IS_NOQUOTA(inode)	((inode)->i_flags & S_NOQUOTA)
-> @@ -2366,7 +2368,7 @@ struct file_system_type {
->   */
->  static inline bool is_mgtime(const struct inode *inode)
->  {
-> -	return inode->i_sb->s_type->fs_flags & FS_MGTIME;
-> +	return inode->i_sb->s_flags & SB_MGTIME;
->  }
->  
->  extern struct dentry *mount_bdev(struct file_system_type *fs_type,
-> -- 
-> 2.34.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+This is confusing for users, and we've always rejected supporting the
+notify interfaces on NFS for this reason.
+
+> >=20
+> > configfs, debugfs, devpts, efivarfs, hugetlbfs, openpromfs, proc, pstor=
+e,
+> > ramfs, sysfs, tracefs - virtual filesystems where fsnotify functionalit=
+y is
+> >   quite limited. But some special cases could be useful. Adding fsid su=
+pport
+> >   is the same amount of trouble as for kernfs - a few LOC. In fact, we
+> >   could perhaps add a fstype flag to indicate that this is a filesystem
+> >   without persistent identification and so uuid should be autogenerated=
+ on
+> >   mount (likely in alloc_super()) and f_fsid generated from sb->s_uuid.
+> >   This way we could handle all these filesystems with trivial amount of
+> >   effort.
+> >=20
+>=20
+> Christian,
+>=20
+> I recall that you may have had reservations on initializing s_uuid
+> and f_fsid in vfs code?
+> Does an opt-in fstype flag address your concerns?
+> Will you be ok with doing the tmpfs/kernfs trick for every fs
+> that opted-in with fstype flag in generic vfs code?
+>=20
+> > freevxfs - the only real filesystem without f_fsid. Trivial to handle o=
+ne
+> >   way or the other.
+> >=20
+>=20
+> Last but not least, btrfs subvolumes.
+> They do have an fsid, but it is different from the sb fsid,
+> so we disallow (even inode) fanotify marks.
+>=20
+> I am not sure how to solve this one,
+> but if we choose to implement the opt-in fanotify flag for
+> "watch single fs", we can make this problem go away, along
+> with the problem of network fs fsid and other odd fs that we
+> do not want to have to deal with.
+>=20
+> On top of everything, it is a fast solution and it doesn't
+> involve vfs and changing any fs at all.
+>=20
+
+FWIW, we have a long standing bug open on dealing with btrfs subvolumes
+with nfsd:
+
+    https://bugzilla.linux-nfs.org/show_bug.cgi?id=3D389
+
+You may want to look over that before you dive in to solutions here.
+
+> > > If we can get away with fallback to s_dev as fsid in vfs_statfs()
+> > > I have no problem with that, but just to point out - functionally
+> > > it is equivalent to do this fallback in userspace library as the
+> > > fanotify_get_fid() LTP helper does.
+> >=20
+> > Yes, userspace can workaround this but I was more thinking about avoidi=
+ng
+> > adding these workarounds into fanotify in kernel *and* to userspace.
+> >=20
+> > > > > I chose a rather generic name for the flag to opt-in for "good en=
+ough"
+> > > > > fid's.  At first, I was going to make those fid's self describing=
+ the
+> > > > > fact that they are not NFS file handles, but in the name of simpl=
+icity
+> > > > > to the API, I decided that this is not needed.
+> > > >=20
+> > > > I'd like to discuss a bit about the meaning of the flag. On the fir=
+st look
+> > > > it is a bit strange to have a flag that says "give me a fh, if you =
+don't
+> > > > have it, give me ino". It would seem cleaner to have "give me fh" k=
+ind of
+> > > > interface (FAN_REPORT_FID) and "give me ino" kind of interface (new
+> > > > FAN_REPORT_* flag). I suspect you've chosen the more complex meanin=
+g
+> > > > because you want to allow a usecase where watches of filesystems wh=
+ich
+> > > > don't support filehandles are mixed with watches of filesystems whi=
+ch do
+> > > > support filehandles in one notification group and getting filehandl=
+es is
+> > > > actually prefered over getting just inode numbers? Do you see real =
+benefit
+> > > > in getting file handles when userspace has to implement fallback fo=
+r
+> > > > getting just inode numbers anyway?
+> > > >=20
+> > >=20
+> > > Yes, there is a benefit, because a real fhandle has no-reuse guarante=
+e.
+> > >=20
+> > > Even if we implement the kernel fallback to FILEID_INO64_GEN, it does
+> > > not serve as a statement from the filesystem that i_generation is use=
+ful
+> > > and in fact, i_generation will often be zero in simple fs and ino wil=
+l be
+> > > reusable.
+> > >=20
+> > > Also, I wanted to have a design where a given fs/object always return=
+s
+> > > the same FID regardless of the init flags.
+> > >=20
+> > > Your question implies that if
+> > > "userspace has to implement fallback for getting just inode numbers",
+> > > then it doesn't matter if we report fhandle or inode, but it is not a=
+ccurate.
+> > >=20
+> > > The fanotify_get_fid() LTP helper always gets a consistent FID for a
+> > > given fs/object. You do not need to feed it the fanotify init flags t=
+o
+> > > provide a consistent answer.
+> > >=20
+> > > For all the reasons above, I think that a "give me ino'' flag is not =
+useful.
+> > > IMO, the flag just needs better marketing.
+> > > This is a "I do not need/intend to open_by_handle flag".
+> > > Suggestions for a better name are welcome.
+> >=20
+> > I see, yes, these reasons make sense.
+> >=20
+> > > For all I care, we do not need to add an opt-in flag at all.
+> > > We could simply start to support fs that were not supported before.
+> > > This sort of API change is very common and acceptable.
+> > >=20
+> > > There is no risk if the user tries to call open_by_handle_at() with t=
+he
+> > > fanotify encoded FID, because in this case the fs is guaranteed to
+> > > return ESTALE, because fs does not support file handles.
+> > >=20
+> > > This is especially true, if we can get away with seamless change
+> > > of behavior for vfs_statfs(), because that seamless change would
+> > > cause FAN_REPORT_FID to start working on fs like fuse that
+> > > support file handles and have zero fsid.
+> >=20
+> > Yeah. Actually I like the idea of a seamless change to start reporting =
+fsid
+> > and also to start reporting "fake" handles. In the past we've already
+> > enabled tmpfs like this...
+> >=20
+>=20
+> I am now leaning towards a combination of:
+> 1. Seamless change of behavior for vfs_statfs() and
+>     name_to_handle_at(..., AT_HANDLE_FID) for the simple cases
+>     using an opt-in fstype flag
+> AND
+> 2. Simple interim fallback for other fs with an opt-in fanotify flag (*)
+>=20
+> Thoughts?
+>=20
+> Thanks,
+> Amir.
+>=20
+> (*) We did some similar opt-in games in overlayfs to support lower
+>      fs with null uuid - in the default configuration, overlayfs allows a
+>      single lower layer with null uuid, but not multi lower layers with
+>      null uuid. When advances features are enabled, even single
+>      lower layer with null uuid is not allowed
+
+--=20
+Jeff Layton <jlayton@kernel.org>
