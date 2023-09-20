@@ -2,101 +2,190 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F5317A744F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Sep 2023 09:37:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D3FF7A74AD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Sep 2023 09:47:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233864AbjITHhm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Sep 2023 03:37:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48526 "EHLO
+        id S234081AbjITHrD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Sep 2023 03:47:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233815AbjITHhS (ORCPT
+        with ESMTP id S234052AbjITHqd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Sep 2023 03:37:18 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24058FB;
-        Wed, 20 Sep 2023 00:37:02 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60753C433C7;
-        Wed, 20 Sep 2023 07:37:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695195421;
-        bh=z1dy31UeAiNB72SwXICT2TJ42xSh8mt5/7TGfDru1x0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Y/66sa17bNa1qC8ThA1zSpgs9biCJH1Ajq5zq+89aqkyyGbjOYvXo/ix8Ipb4iCbJ
-         prWNMZnrLsew+TlFTLIEqYJ0sVZkH3HvclRrEsMYJVRIV4pUKy2Uz0sOWBMOQZE2hj
-         n9SC8mBlrHgeSegE0Ii4Sg9EwFJ1viOeEpJDATKEG7WHw94hPro747FW/4htGtWSO2
-         vXoQKlxD8oaN8exIdqpRKtQWTGUKpKr4c7O2XrYV42TXjlaPA1bzwi3KR2w6OMd9Ck
-         G3YBFcWZxiFlIaJJdOQEavZpDwaPVRVojE1MmeCM/4Q2GkOLHauvubw5qiw/xQhm/h
-         1XyGgUohrjsfw==
-Date:   Wed, 20 Sep 2023 00:36:59 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     syzbot <syzbot+9cf75dc581fb4307d6dd@syzkaller.appspotmail.com>
-Cc:     adilger.kernel@dilger.ca, krisman@collabora.com,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        tytso@mit.edu
-Subject: Re: [syzbot] [ext4?] general protection fault in utf8nlookup
-Message-ID: <20230920073659.GC2739@sol.localdomain>
-References: <0000000000001f0b970605c39a7e@google.com>
+        Wed, 20 Sep 2023 03:46:33 -0400
+Received: from icp-osb-irony-out5.external.iinet.net.au (icp-osb-irony-out5.external.iinet.net.au [203.59.1.221])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9C72DCE4;
+        Wed, 20 Sep 2023 00:45:52 -0700 (PDT)
+X-SMTP-MATCH: 1
+IronPort-Data: A9a23:azQpg6xIW9ObnWEOXuN6t+cnxyrEfRIJ4+MujC+fZmUNrF6WrkU3e
+ hirod39jgY+HhL3funC5f239Uo2Dfalz9J9ShxunZ1UZyoigdLfAtiEJVvHMSqXL8nSJGpq9
+ Mx2huPodajYdVeC4E/3WlTdhSMkj/rQF+CkULes1h1ZHmeIdg9w0XqPpMZk2uaEsfDhayuRt
+ NX7pdHoOVPN81aY5UpNtspvADs21BjDkGtwUm4WPJinj3eH/5UhN6/zEInqR5fOrii4KcbhL
+ wrL5OnREmrxo0x3Uov9+lrxWhVirrX6ZWBihlIKAPL62kAqSiEais4G2PQghUh/u2WkkdZ62
+ tp3kZ2TcVYlA4/nwvkmakwNe81+FfUuFL7vEiHu64rKkR2AKz22mcAG4EMeYN1epKAtWz8Ir
+ 6RIQNwORknra+aez6i2RfRqick5IdPDI44Epndt0XfSCvNgSI2rr6DiuY4BjWlh2JgTdRrYT
+ 9AHVTd9NhXdWkFwNBRNMKM9w8KamVCqJlW0r3rQ/8Lb+VP70w111KnFMdzbYNWGSMxZ2EGCq
+ Qru+2X/HwFfN9GFzzeB2myji/WJni7hXo8WUrqi+ZZChFyV23xWBgYaWEW2pdGnhUOkHdFSM
+ UoZ/mwpt6da3EiqSMTtGhSiq36soBERQZxTHvc85QXLzbDbiy6FAXIaRzpNc/QitckrVXkk0
+ UKPk9r1BDtp9rqPRhq18K+VojyzPwAaKGYDYWkPSg5t3jX4iNxjy0yKFIw9VfTt3pvpAT7xh
+ TuNqW43mt3/kPI26klyxnif6xrEm3QDZlddCtn/No590j5EWQ==
+IronPort-HdrOrdr: A9a23:8cNknKgC5uWXPwRJcEjE0pucnXBQXmsji2hC6mlwRA09TyX4ra
+ 6TdZEguCMc5wxxZJhNo7C90dC7MBThHPxOkOss1MaZLWrbUQKTRekIh+eM/9SHIVybygc379
+ YET0ERMqyJMXFKyez/pCG+G9Mx2tmcmZrY+dv2/jNGSUVHbL5t6gFhBm+gYzJLbTgDKZ0lFI
+ eNouprzgDQAkj/t/7LYEXtidKz3uHjpdbvfBoPBxss7Q+TgHey7qLmH3Gjr2kjegIKyaon+W
+ jBmQn++qjmqeiyzlvV3XLS6ZM+oqqa9vJzQMSQjsAULz/ojBqkIJ55U7nHpzwtpvqzgWxa7e
+ Xxnw==
+X-Talos-CUID: =?us-ascii?q?9a23=3AuWQeS2pTeuaoxyCd2FPf7pvmUfB1X3Pbx2XfGWu?=
+ =?us-ascii?q?5Kl44RIC3YgWNw5oxxg=3D=3D?=
+X-Talos-MUID: 9a23:z4HOwgWseijTGJ7q/CXyuDxwbsZ12viRBgNXqaQF5Oy2KgUlbg==
+X-IronPort-AV: E=Sophos;i="6.02,161,1688400000"; 
+   d="scan'208";a="491969605"
+Received: from 58-6-226-208.tpgi.com.au (HELO [192.168.0.22]) ([58.6.226.208])
+  by icp-osb-irony-out5.iinet.net.au with ESMTP; 20 Sep 2023 15:45:47 +0800
+Message-ID: <5add8ae8-d746-b254-7559-b96aa72d3523@westnet.com.au>
+Date:   Wed, 20 Sep 2023 17:45:47 +1000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0000000000001f0b970605c39a7e@google.com>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.0
+Subject: Re: [PATCH 09/17] m68k: Implement xor_unlock_is_negative_byte
+Content-Language: en-US
+From:   Greg Ungerer <gregungerer@westnet.com.au>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-arch@vger.kernel.org, torvalds@linux-foundation.org,
+        Nicholas Piggin <npiggin@gmail.com>
+References: <20230915183707.2707298-1-willy@infradead.org>
+ <20230915183707.2707298-10-willy@infradead.org>
+ <6e409d5f-a419-07b7-c82c-4e80fe19c6ba@westnet.com.au>
+ <ZQW849TfSCK6u2f8@casper.infradead.org>
+ <cb763591-a697-ab74-171e-fcd7f4e70137@westnet.com.au>
+In-Reply-To: <cb763591-a697-ab74-171e-fcd7f4e70137@westnet.com.au>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 19, 2023 at 10:25:22PM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    e42bebf6db29 Merge tag 'efi-fixes-for-v6.6-1' of git://git..
-> git tree:       upstream
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=179f4a38680000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=df91a3034fe3f122
-> dashboard link: https://syzkaller.appspot.com/bug?extid=9cf75dc581fb4307d6dd
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1374a174680000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12b12928680000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/14a6a5d23944/disk-e42bebf6.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/98cc4c220388/vmlinux-e42bebf6.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/6a1d09cf21bf/bzImage-e42bebf6.xz
-> mounted in repro #1: https://storage.googleapis.com/syzbot-assets/37e5beb24789/mount_0.gz
-> mounted in repro #2: https://storage.googleapis.com/syzbot-assets/f219a9e665e9/mount_8.gz
-> 
-> The issue was bisected to:
-> 
-> commit b81427939590450172716093dafdda8ef52e020f
-> Author: Eric Biggers <ebiggers@google.com>
-> Date:   Mon Aug 14 18:29:02 2023 +0000
-> 
->     ext4: remove redundant checks of s_encoding
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10852352680000
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=12852352680000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=14852352680000
 
-This report is expected for now, since the repro involves writing to the page
-cache of a mounted block device.  For more information see
-https://lore.kernel.org/linux-fsdevel/20230813001202.GE41642@sol.localdomain and
-https://lore.kernel.org/linux-fsdevel/20230814182903.37267-2-ebiggers@kernel.org.
-Also https://lore.kernel.org/linux-fsdevel/20230704122727.17096-1-jack@suse.cz
-which will ultimately be the fix for this class of issue.
+On 19/9/23 00:37, Greg Ungerer wrote:
+> On 17/9/23 00:34, Matthew Wilcox wrote:
+>> On Sat, Sep 16, 2023 at 11:11:32PM +1000, Greg Ungerer wrote:
+>>> On 16/9/23 04:36, Matthew Wilcox (Oracle) wrote:
+>>>> Using EOR to clear the guaranteed-to-be-set lock bit will test the
+>>>> negative flag just like the x86 implementation.  This should be
+>>>> more efficient than the generic implementation in filemap.c.  It
+>>>> would be better if m68k had __GCC_ASM_FLAG_OUTPUTS__.
+>>>>
+>>>> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+>>>> ---
+>>>>    arch/m68k/include/asm/bitops.h | 14 ++++++++++++++
+>>>>    1 file changed, 14 insertions(+)
+>>>>
+>>>> diff --git a/arch/m68k/include/asm/bitops.h b/arch/m68k/include/asm/bitops.h
+>>>> index e984af71df6b..909ebe7cab5d 100644
+>>>> --- a/arch/m68k/include/asm/bitops.h
+>>>> +++ b/arch/m68k/include/asm/bitops.h
+>>>> @@ -319,6 +319,20 @@ arch___test_and_change_bit(unsigned long nr, volatile unsigned long *addr)
+>>>>        return test_and_change_bit(nr, addr);
+>>>>    }
+>>>> +static inline bool xor_unlock_is_negative_byte(unsigned long mask,
+>>>> +        volatile unsigned long *p)
+>>>> +{
+>>>> +    char result;
+>>>> +    char *cp = (char *)p + 3;    /* m68k is big-endian */
+>>>> +
+>>>> +    __asm__ __volatile__ ("eor.b %1, %2; smi %0"
+>>>
+>>> The ColdFire members of the 68k family do not support byte size eor:
+>>>
+>>>    CC      mm/filemap.o
+>>> {standard input}: Assembler messages:
+>>> {standard input}:824: Error: invalid instruction for this architecture; needs 68000 or higher (68000 [68ec000, 68hc000, 68hc001, 68008, 68302, 68306, 68307, 68322, 68356], 68010, 68020 [68k, 68ec020], 68030 [68ec030], 68040 [68ec040], 68060 [68ec060], cpu32 [68330, 68331, 68332, 68333, 68334, 68336, 68340, 68341, 68349, 68360], fidoa [fido]) -- statement `eor.b #1,3(%a0)' ignored
+>>
+>> Well, that sucks.  What do you suggest for Coldfire?
+> 
+> I am not seeing an easy way to not fall back to something like the MIPS
+> implementation for ColdFire. Could obviously assemblerize this to do better
+> than gcc, but if it has to be atomic I think we are stuck with the irq locking.
+> 
+> static inline bool cf_xor_is_negative_byte(unsigned long mask,
+>                  volatile unsigned long *addr)
+> {
+>          unsigned long flags;
+>          unsigned long data;
+> 
+>          local_irq_save(flags)
+>          data = *addr;
+>          *addr = data ^ mask;
+>          local_irq_restore(flags);
+> 
+>          return (data & BIT(7)) != 0;
+> }
 
-Note: the repro that syzkaller generated for this is very strange (even moreso
-than usual for syzkaller repros...) because it replaces its "scratch space" at
-address 0x20000000 with a different mapping, specifically a mapping for a file
-that is mounted as a filesystem via loopback.  That makes "syscalls" have weird
-side effects as a result of the repro writing parameters to the address that is
-supposed to contain its scratch space.  I don't think this should be happening,
-so I've opened https://github.com/google/syzkaller/issues/4216 for it.
+The problem with this C implementation is that need to use loal_irq_save()
+which results in some ugly header dependencies trying top include irqflags.h.
 
-- Eric
+This version at least compiles and run, though we can probably do better still.
+
+
+diff --git a/arch/m68k/include/asm/bitops.h b/arch/m68k/include/asm/bitops.h
+index e984af71df6b..99392c26e784 100644
+--- a/arch/m68k/include/asm/bitops.h
++++ b/arch/m68k/include/asm/bitops.h
+@@ -319,6 +319,48 @@ arch___test_and_change_bit(unsigned long nr, volatile unsigned long *addr)
+         return test_and_change_bit(nr, addr);
+  }
+  
++static inline bool cf_xor_unlock_is_negative_byte(unsigned long mask,
++               volatile unsigned long *addr)
++{
++       unsigned long data;
++
++        asm volatile (
++               "move.w %%sr,%%d1       \n\t"
++               "move.w %%d1,%%d0       \n\t"
++               "ori.l  #0x0700,%%d0    \n\t"
++               "move.w %%d0,%%sr       \n\t"
++
++               "move.l %2@,%0          \n\t"
++               "eor.l  %1,%0           \n\t"
++               "move.l %0,%2@          \n\t"
++
++               "movew  %%d1,%%sr       \n"
++               : "=d" (data)
++               : "di" (mask), "a" (addr)
++               : "cc", "%d0", "%d1", "memory");
++
++       return (data & BIT(7)) != 0;
++}
++
++static inline bool m68k_xor_unlock_is_negative_byte(unsigned long mask,
++               volatile unsigned long *p)
++{
++       char result;
++       char *cp = (char *)p + 3;       /* m68k is big-endian */
++
++       __asm__ __volatile__ ("eor.b %1, %2; smi %0"
++               : "=d" (result)
++               : "di" (mask), "o" (*cp)
++               : "memory");
++       return result;
++}
++
++#if defined(CONFIG_COLDFIRE)
++#define xor_unlock_is_negative_byte(mask, p) cf_xor_unlock_is_negative_byte(mask, p)
++#else
++#define xor_unlock_is_negative_byte(mask, p) m68k_xor_unlock_is_negative_byte(mask, p)
++#endif
++
+  /*
+   *     The true 68020 and more advanced processors support the "bfffo"
+   *     instruction for finding bits. ColdFire and simple 68000 parts
+
+
+Regards
+Greg
