@@ -2,229 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 56C227A7842
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Sep 2023 11:58:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0F4A7A786A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Sep 2023 12:00:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234306AbjITJ6T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Sep 2023 05:58:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55468 "EHLO
+        id S234377AbjITKA1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Sep 2023 06:00:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234114AbjITJ6R (ORCPT
+        with ESMTP id S234368AbjITKAV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Sep 2023 05:58:17 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C775A8F;
-        Wed, 20 Sep 2023 02:58:10 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 3578D1FEA4;
-        Wed, 20 Sep 2023 09:58:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1695203889; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=5cx/4/QTnSQH/xoBZtq0Dbb3QvNNJW5HvvEMLfrjPF8=;
-        b=BYHC4/FQp0jOPuSZahj4EmBcrB6WqWWyb6bVG4tzLJvtQOD6FLAr0dDhpQkR6V1shi0Mhn
-        Wnl16oS1oija7d9fXqGCmLn/ra7ZBIyWecE/f8BKE4QEvWRM8DTlr0qUeJQBIy74OP3jId
-        Xr35EzHqpCVb2+JvJzh1fo4PASSm4UY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1695203889;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=5cx/4/QTnSQH/xoBZtq0Dbb3QvNNJW5HvvEMLfrjPF8=;
-        b=Inurd+QUrEWmA0gt+rtqxZtUQzsEAGSeU+EJGHN4fUZvLVNJlZX/VLCNUyqlPc1A4HF+Lq
-        dsq7y3KAnJwsQfCA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 20C921333E;
-        Wed, 20 Sep 2023 09:58:09 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id XNL3BzHCCmUICAAAMHmgww
-        (envelope-from <jack@suse.cz>); Wed, 20 Sep 2023 09:58:09 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id B20DAA077D; Wed, 20 Sep 2023 11:58:08 +0200 (CEST)
-Date:   Wed, 20 Sep 2023 11:58:08 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Bruno Haible <bruno@clisp.org>, Jan Kara <jack@suse.cz>,
-        Xi Ruoyao <xry111@linuxfromscratch.org>, bug-gnulib@gnu.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Eric Van Hensbergen <ericvh@kernel.org>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Christian Schoenebeck <linux_oss@crudebyte.com>,
-        David Howells <dhowells@redhat.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, Xiubo Li <xiubli@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu,
-        Tyler Hicks <code@tyhicks.com>, Gao Xiang <xiang@kernel.org>,
-        Chao Yu <chao@kernel.org>, Yue Hu <huyue2@coolpad.com>,
-        Jeffle Xu <jefflexu@linux.alibaba.com>,
-        Namjae Jeon <linkinjeon@kernel.org>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        Jan Kara <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Bo b Peterson <rpeterso@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tejun Heo <tj@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Mike Marshall <hubcap@omnibond.com>,
-        Martin Brandenburg <martin@omnibond.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Steve French <sfrench@samba.org>,
-        Paulo Alcantara <pc@manguebit.com>,
-        Ronnie Sahlberg <ronniesahlberg@gmail.com>,
-        Shyam Prasad N <sprasad@microsoft.com>,
-        Tom Talpey <tom@talpey.com>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Richard Weinberger <richard@nod.at>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Amir Goldstein <l@gmail.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Benjamin Coddington <bcodding@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
-        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        linux-nfs@vger.kernel.org, ntfs3@lists.linux.dev,
-        ocfs2-devel@lists.linux.dev, devel@lists.orangefs.org,
-        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-        linux-mtd@lists.infradead.org, linux-mm@kvack.org,
-        linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v7 12/13] ext4: switch to multigrain timestamps
-Message-ID: <20230920095808.x2gurkdgbrqoumir@quack3>
-References: <20230807-mgctime-v7-0-d1dec143a704@kernel.org>
- <20230919110457.7fnmzo4nqsi43yqq@quack3>
- <1f29102c09c60661758c5376018eac43f774c462.camel@kernel.org>
- <4511209.uG2h0Jr0uP@nimes>
- <08b5c6fd3b08b87fa564bb562d89381dd4e05b6a.camel@kernel.org>
+        Wed, 20 Sep 2023 06:00:21 -0400
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A32EFCF
+        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Sep 2023 03:00:14 -0700 (PDT)
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230920100013euoutp02fa54f5b5dff9237922b42f8be095e9dd~GkxGDpvkp1967619676euoutp02m
+        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Sep 2023 10:00:13 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230920100013euoutp02fa54f5b5dff9237922b42f8be095e9dd~GkxGDpvkp1967619676euoutp02m
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1695204013;
+        bh=JtBYsHN8h541EBRzlr1y0mzkDzP9gFTfHIXNRWvnYrs=;
+        h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+        b=a0rXS9PnsBLdcAai9TRqkGdfrEGllNHbHgiYLk7bd3A6pTWFBb8gx+laef0ZRAuGV
+         9dbFEh1ZcT2rUKoh2c8kXxM/FJYs5OBNT1v9UmYQtDDfxaV9tmE7J0lVkL3Y67rf+L
+         idzp0179QVhAN7/4t5jzIBZqyesURL/TSgQ1CM44=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20230920100012eucas1p22ae8579a8303bc7100e92ddc6f39f8de~GkxF012Cx2310123101eucas1p2m;
+        Wed, 20 Sep 2023 10:00:12 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id C3.F8.37758.CA2CA056; Wed, 20
+        Sep 2023 11:00:12 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20230920100012eucas1p1f44530cfdd1ff8ed668bfe0c088d31ce~GkxFeABk71972619726eucas1p1Z;
+        Wed, 20 Sep 2023 10:00:12 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20230920100012eusmtrp28e809b95a24cde10b6f8dbde3fc8ff5b~GkxFdVslq2580425804eusmtrp2A;
+        Wed, 20 Sep 2023 10:00:12 +0000 (GMT)
+X-AuditID: cbfec7f5-7ffff7000002937e-a7-650ac2ac9406
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id E2.16.14344.CA2CA056; Wed, 20
+        Sep 2023 11:00:12 +0100 (BST)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20230920100012eusmtip1237da79744bb0d19877f7844c975d504~GkxFTCBuO2867928679eusmtip1F;
+        Wed, 20 Sep 2023 10:00:12 +0000 (GMT)
+Received: from localhost (106.110.32.140) by CAMSVWEXC02.scsc.local
+        (2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+        Wed, 20 Sep 2023 11:00:11 +0100
+Date:   Wed, 20 Sep 2023 12:00:11 +0200
+From:   Pankaj Raghav <p.raghav@samsung.com>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        <linux-fsdevel@vger.kernel.org>, <gfs2@lists.linux.dev>,
+        <linux-nilfs@vger.kernel.org>,
+        <linux-ntfs-dev@lists.sourceforge.net>, <ntfs3@lists.linux.dev>,
+        <ocfs2-devel@lists.linux.dev>, <reiserfs-devel@vger.kernel.org>,
+        <linux-ext4@vger.kernel.org>, <p.raghav@samsung.com>
+Subject: Re: [PATCH 03/26] ext4: Convert to folio_create_empty_buffers
+Message-ID: <20230920100011.zpzagd35gjpn5gzu@localhost>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <08b5c6fd3b08b87fa564bb562d89381dd4e05b6a.camel@kernel.org>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20230919045135.3635437-4-willy@infradead.org>
+X-Originating-IP: [106.110.32.140]
+X-ClientProxiedBy: CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) To
+        CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHKsWRmVeSWpSXmKPExsWy7djP87prDnGlGnxpMrOYs34Nm8Xu6f9Y
+        LWbOu8NmsWfvSRaLP9NNLNo75jBarHy8lcni0L2rrBazt65gtvj9Yw6bA5fH5hVaHidm/Gbx
+        eLF5JqPH7gWfmTw+b5ILYI3isklJzcksSy3St0vgyljeN5e14BtLxfej7WwNjBNYuhg5OSQE
+        TCT2r9nJ2MXIxSEksIJRovfjN1YI5wujxOa3K9ghnM9AmXev2GBaJrw+zgKRWM4o8XPGLWa4
+        qtmf7jNBOFsYJeYvOsgM0sIioCrxZ+NBoC0cHGwCWhKNnewgYREBY4mJy/ezgdQzCxxnkth7
+        7RcLSI2wgJvEkU3RIDW8AuYSE/r2MkLYghInZz4BO5xZQEdiwe5PbCDlzALSEsv/cYCEOQWs
+        Je7/X8QOcaiSRMPmM1B/1krsbT4A9o2EwH8OiX1fFzNDJFwkbq45AGULS7w6vgWqWUbi/875
+        TBB2tcTTG7+ZIZpbGCX6d64HWywBtK3vTA5EjaPEz3nHWCHCfBI33gpCnMknMWnbdGaIMK9E
+        R5sQRLWaxOp7b1gmMCrPQvLYLCSPzUJ4bAEj8ypG8dTS4tz01GLjvNRyveLE3OLSvHS95Pzc
+        TYzAJHT63/GvOxhXvPqod4iRiYPxEKMEB7OSCG+uGleqEG9KYmVValF+fFFpTmrxIUZpDhYl
+        cV5t25PJQgLpiSWp2ampBalFMFkmDk6pBiaVr+dnrv3p7fnY9b7lx/Lvmpc5TnM/DYmLb5pd
+        YXAy1Kwr2S1bLfLgYc77m//orDHZqPJ/c0/B2dkLqpqm8tvcFdiy97y92J+9m9csPf5hWop5
+        Z2dbNNP89TdaunTSbxw3vXDXymjxi63Mvt4XU8yd9GbfCdsfNDXgnVW9qcl93Y4Hb1nD/rB/
+        TptdYPH9+Ke6UIYrydFf/KzmeB+4FfnGWjmZNcd9mbPZ7GK71i96BhK2J2yMdC7eEBMuVL9p
+        tn/DBM7QHIYlfHnFvYJz9Q9pvL1v3KL6Zsf+sKPqP5mCfKVN2qo2i1VZXZ+wTDvy2xTm5ReM
+        +s+f3JOv8vfjxluHLjy/Wtp+Vp7ZeAXHgl4lluKMREMt5qLiRAAdQQuAsQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrNIsWRmVeSWpSXmKPExsVy+t/xu7prDnGlGixaImsxZ/0aNovd0/+x
+        Wsycd4fNYs/ekywWf6abWLR3zGG0WPl4K5PFoXtXWS1mb13BbPH7xxw2By6PzSu0PE7M+M3i
+        8WLzTEaP3Qs+M3l83iQXwBqlZ1OUX1qSqpCRX1xiqxRtaGGkZ2hpoWdkYqlnaGwea2VkqqRv
+        Z5OSmpNZllqkb5egl7G8by5rwTeWiu9H29kaGCewdDFyckgImEhMeH0cyObiEBJYyijRs+wn
+        G0RCRmLjl6usELawxJ9rXWwQRR8ZJTZs/coM4WxhlOg8fgasikVAVeLPxoOMXYwcHGwCWhKN
+        newgYREBY4mJy/eDNTMLHGeS2HvtFwtIjbCAm8SRTdEgNbwC5hIT+vYygthCAtkSEyd+YoeI
+        C0qcnPkE7FJmAR2JBbs/sYG0MgtISyz/xwES5hSwlrj/fxE7xJ1KEg2bz0A9VivR+eo02wRG
+        4VlIJs1CMmkWwqQFjMyrGEVSS4tz03OLjfSKE3OLS/PS9ZLzczcxAmNx27GfW3Ywrnz1Ue8Q
+        IxMH4yFGCQ5mJRHeXDWuVCHelMTKqtSi/Pii0pzU4kOMpsCAmMgsJZqcD0wGeSXxhmYGpoYm
+        ZpYGppZmxkrivJ4FHYlCAumJJanZqakFqUUwfUwcnFINTNxLFBwOTnjAlHhkVmLX55vlm44W
+        ypzhfMl07dHinery2/lF1NvmbArYVdFjlX4sLzr20Pa1z6SXb0zltLt37oWZ41lRycNOLXo5
+        txl2f1u8TjrgfPoy68+1VuwLXpff57kV+vjMa4O3P+/fffONyf9y2J2+Ssl62/BIt2e8mRZy
+        9Zt52NjfHvJY8nyqel9wbEmjZ97E8inXXkTseikr7ZTP8tTc+5XCq8ln5K9K9zWe2GNxNHuB
+        6c3qhNfzAmfm656euX3ygwOnijb845oe9ULObr+PRoXLLF+b5WeiVwvNfiVSobSu5pnAZjbW
+        FW5SPjMehzwqWR/luc6pjds/ZddZTj1Ltvfc3jvFxfWvXFFiKc5INNRiLipOBAAjH+TKTgMA
+        AA==
+X-CMS-MailID: 20230920100012eucas1p1f44530cfdd1ff8ed668bfe0c088d31ce
+X-Msg-Generator: CA
+X-RootMTR: 20230920100012eucas1p1f44530cfdd1ff8ed668bfe0c088d31ce
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20230920100012eucas1p1f44530cfdd1ff8ed668bfe0c088d31ce
+References: <20230919045135.3635437-1-willy@infradead.org>
+        <20230919045135.3635437-4-willy@infradead.org>
+        <CGME20230920100012eucas1p1f44530cfdd1ff8ed668bfe0c088d31ce@eucas1p1.samsung.com>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 19-09-23 12:31:08, Jeff Layton wrote:
-> On Tue, 2023-09-19 at 16:52 +0200, Bruno Haible wrote:
-> > Jeff Layton wrote:
-> > > I'm not sure what we can do for this test. The nap() function is making
-> > > an assumption that the timestamp granularity will be constant, and that
-> > > isn't necessarily the case now.
-> > 
-> > This is only of secondary importance, because the scenario by Jan Kara
-> > shows a much more fundamental breakage:
-> > 
-> > > > The ultimate problem is that a sequence like:
-> > > > 
-> > > > write(f1)
-> > > > stat(f2)
-> > > > write(f2)
-> > > > stat(f2)
-> > > > write(f1)
-> > > > stat(f1)
-> > > > 
-> > > > can result in f1 timestamp to be (slightly) lower than the final f2
-> > > > timestamp because the second write to f1 didn't bother updating the
-> > > > timestamp. That can indeed be a bit confusing to programs if they compare
-> > > > timestamps between two files. Jeff?
-> > > > 
-> > > 
-> > > Basically yes.
-> > 
-> > f1 was last written to *after* f2 was last written to. If the timestamp of f1
-> > is then lower than the timestamp of f2, timestamps are fundamentally broken.
-> > 
-> > Many things in user-space depend on timestamps, such as build system
-> > centered around 'make', but also 'find ... -newer ...'.
-> > 
+On Tue, Sep 19, 2023 at 05:51:12AM +0100, Matthew Wilcox (Oracle) wrote:
+> Remove an unnecessary folio->page->folio conversion and take advantage
+> of the new return value from folio_create_empty_buffers().
 > 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>  fs/ext4/inode.c       | 14 +++++---------
+>  fs/ext4/move_extent.c | 11 +++++------
+>  2 files changed, 10 insertions(+), 15 deletions(-)
 > 
-> What does breakage with make look like in this situation? The "fuzz"
-> here is going to be on the order of a jiffy. The typical case for make
-> timestamp comparisons is comparing source files vs. a build target. If
-> those are being written nearly simultaneously, then that could be an
-> issue, but is that a typical behavior? It seems like it would be hard to
-> rely on that anyway, esp. given filesystems like NFS that can do lazy
-> writeback.
+I had a similar cleanup that I sent a while ago:
+https://lore.kernel.org/linux-ext4/20230512125243.73696-1-p.raghav@samsung.com/
 
-TL;DR I don't think we can just wave away the change as "the problem has
-always been there".
-
-Firstly, the fact that something is not quite reliable on NFS doesn't mean
-people don't rely on the behavior on local filesystems. NFS has a
-historical reputation of being a bit weird ;). Secondly, I agree that the
-same problems can manifest currently for files on two filesystems with
-different timestamp granularity. But again that is something that is rare -
-widely used filesystems have a granularity of a jiffy and in most cases
-build and source files are on the same filesystem anyway. So yes, in
-principle the problems could happen even before multigrain timestamps but
-having different granularity per inode just made them manifest in much much
-more setups and that matters because setups that were perfectly fine before
-are not anymore.
-
-> One of the operating principles with this series is that timestamps can
-> be of varying granularity between different files. Note that Linux
-> already violates this assumption when you're working across filesystems
-> of different types.
-> 
-> As to potential fixes if this is a real problem:
-
-Regarding whether the problem is real: I wouldn't worry too much about the
-particular test that started this thread. That seems like something very
-special. But the build system issues could be real - as you wrote in your
-motivation for the series - a lot can happen in a jiffy on contemporary
-computers. I can imagine build product having newer timestamp than build
-source because the modification of source managed to squeeze into the same
-jiffy and still use a coarse-grained timestamp. Or some other
-producer-consumer type of setup... Sure usually there would be enough
-stat(2) calls on both sides to force finegrained timestamps on both files
-but if there are not in some corner case, debugging the problem is really
-tough.
-
-> I don't really want to put this behind a mount or mkfs option (a'la
-> relatime, etc.), but that is one possibility.
-> 
-> I wonder if it would be feasible to just advance the coarse-grained
-> current_time whenever we end up updating a ctime with a fine-grained
-> timestamp? It might produce some inode write amplification. Files that
-> were written within the same jiffy could see more inode transactions
-> logged, but that still might not be _too_ awful.
-
-From a first glance I'd guess the performance overhead will be too big for
-a busy filesystem to enable this unconditionally. But I could be wrong...
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Looks good,
+Reviewed-by: Pankaj Raghav <p.raghav@samsung.com>
