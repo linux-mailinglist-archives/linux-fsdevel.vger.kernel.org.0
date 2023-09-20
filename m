@@ -2,101 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B245E7A7676
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Sep 2023 10:57:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BAD5F7A76CD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Sep 2023 11:04:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233866AbjITI5P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Sep 2023 04:57:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46292 "EHLO
+        id S233615AbjITJEZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Sep 2023 05:04:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233797AbjITI5O (ORCPT
+        with ESMTP id S233970AbjITJEM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Sep 2023 04:57:14 -0400
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE416C6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Sep 2023 01:57:08 -0700 (PDT)
-Received: by mail-pl1-x62e.google.com with SMTP id d9443c01a7336-1c469ab6935so109755ad.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Sep 2023 01:57:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1695200228; x=1695805028; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gCaB4LVQz5Zw5EnS/afR9/bgS309JzKYOV6hPcD95GQ=;
-        b=XNx4NC4GYkaqbHmCT5sap16QyjixxSxYHvkAWz6dTf2l1SPcW0OG4w1jONY4dpuUuR
-         4E3CtmbJ0XPU+DXO8tL6HhsyfdJLL7H9mkwz4bnIEB7NO9tjbTxENLzK8FM7u42E6pSO
-         i8Qp/oz+56DdF/JfOYwuxQeMEYmpUU4SV/a45da48005fcqb3zdLzID5Nxxc+h7K07T7
-         OFF/oKoMoTlav2XL9/FWuyz+5AmhyUKfpwjHAT8b+6EHE8S/qzgnfI/PrvTBMOw8+4NY
-         5XcpfOybZSCGQSbkkYNAFLOj3R0W59ALXFxYU37rrvsxaGnfuFJXr+DzSsXsqlaSCxYg
-         bg4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695200228; x=1695805028;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gCaB4LVQz5Zw5EnS/afR9/bgS309JzKYOV6hPcD95GQ=;
-        b=WMi7495ojBe4EotbHXv2IPixYwuzHjNCkVM0NeR05Hi1C/HsPuwLrCGEo/otovB0+V
-         fxwGSZHsFIXpVkqHBHQcpJWv91eah4R2Ep1MzjoHlAtyrzlhM4NxwnNKUjfsFQ6PsKVO
-         +FIyYZsS4z1qHZz8uyoS+Fe5oPShMIelhgmy/BuZB3MOdRP3ZXvv0rVpeAAOU4BYZXCO
-         PXisqeaVnTdRtvHiR6kV8DKZKgst9wICvpef9z5bDNXFG6v0amwU1TU1BCQr/gCyJnFj
-         HswZZ2BpWn223kNfCKaYyvHoEfSoClpefP5wlUPmMVDxbwpRGlVA3YozFOlwYdQE52Zs
-         +wxA==
-X-Gm-Message-State: AOJu0Yz2EVAbnkPO4ckB5j2+N8qPvPL2MO8MhYsGql5TpZqCt4QdMH9S
-        24pfwY7RymptLsHWLV5MqgmE0Op0391pjVvT1V7y7w==
-X-Google-Smtp-Source: AGHT+IG27sQVZz+H2ksdbYnMakCV8uuy/VU9E7xq+vEtRwplNSlDOY8vW8f2mbDcLnt16LsfQVyk9wbzoyZDZ9sWfHk=
-X-Received: by 2002:a17:903:1c7:b0:1c1:d934:26bc with SMTP id
- e7-20020a17090301c700b001c1d93426bcmr169727plh.26.1695200228296; Wed, 20 Sep
- 2023 01:57:08 -0700 (PDT)
+        Wed, 20 Sep 2023 05:04:12 -0400
+Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61DA4CEA
+        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Sep 2023 02:04:05 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id C36655C01E1;
+        Wed, 20 Sep 2023 05:04:04 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute4.internal (MEProxy); Wed, 20 Sep 2023 05:04:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+        cc:cc:content-transfer-encoding:content-type:content-type:date
+        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to; s=fm2; t=
+        1695200644; x=1695287044; bh=7GeQZh1GwezHHhvIU8QZSHCjvdJwmdW6mIY
+        iRuZK4DQ=; b=H9LwJluBbkSv/ixSusNS3l+r5qWy2vXTqKQr2ED7uRqbwMQZxKZ
+        pwFLR5GhrTC9Hb6dXxuo+KD4uhEZN6Xo0xy9hhooFxzNW5b750PJIGrwzDcfF1wC
+        BYAceyYLgpH5a2cfIv00VKu5Pcpf2b4kApScdDvk4s/4s1oPKTixCs6VqEXFa1S2
+        gwyzQp1ljXh/tIStTptR5c+6HJ6DlUlv64lBTkE+V0mXgrQVcGjvAlQpGP+TThIQ
+        aby3Z15vrYbtkJPKcI3x99wYBJJpowLY7oUgN402ft12y2LUNB/M258VoJHsrhWK
+        pdhGDP3cD3CCLsKCNOeiB6g2UMUYT16Rdjg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:content-type:date:date:feedback-id:feedback-id
+        :from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+        1695200644; x=1695287044; bh=7GeQZh1GwezHHhvIU8QZSHCjvdJwmdW6mIY
+        iRuZK4DQ=; b=cf4z08ekHZp46kaEdvlb91BdCVWBjAYTViPj8jea0hFzHM3d6qV
+        zvPqwjUwGZ6s2kiq2A40eTJN0ZeaSNnwWB3KUC7ULG4Udb+9SKMlPiQ/R1+NcUIH
+        1aIp3RPCsRU12l0W25/FkY/LFjiS9FeZH8ujxLTA8ggWIAa2Bs9IBPaK+TQTOB3N
+        MeVSrF9CM8w2XegKZpVKy7LN9ePuzUdQdt+8vClABAHbzH2cFN8cvqoIAjAsohAP
+        rL1zR73zj08M0lOaslqXWYeNEH+lffrAezOA0x3x5ZVmsFAKaCvUPIcuSoYe5B/O
+        fVHlxFjTnnfBNvvgDtNdJIj3BU4qY/0fApw==
+X-ME-Sender: <xms:hLUKZXQV2ADbLU93dza614IxygOcW6d5VCuFuVE-IG1o_43Bl8AoqQ>
+    <xme:hLUKZYx2LSZsgtTm8aVmZTPyMW7FmhKeyF8D0A3ulSgdYuzDFwAztbY8PtKPcjjJm
+    qyM6QrdHdMXUHdt>
+X-ME-Received: <xmr:hLUKZc2ZTcJOV2IouyrE46T02pP6SXaSJMUbUKqHjokXnimRsoLkZMAQnNKNUuIzmPNTUWWY6yweWFLFn0OdxTivjDhtyQ_wU2J5_-V3YQMMOQ4bw3iW>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrudekfedgudduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeeuvghr
+    nhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrih
+    hlrdhfmheqnecuggftrfgrthhtvghrnhepudelfedvudevudevleegleffffekudekgeev
+    lefgkeeluedvheekheehheekhfefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdr
+    fhhm
+X-ME-Proxy: <xmx:hLUKZXAWGEcboowLIBNYJrrJ1Jzq-wYI8EqReqzeRTgH2QadDVoHiA>
+    <xmx:hLUKZQjy7fRgget-tDy7LagsOSCvCAAHuZTIpCHBXZV91vTX4Cz8Zg>
+    <xmx:hLUKZbrZCaH32zkboqZmnCgd5mjd7ccMdJfbiIOKuFZ2tC-djAmt_w>
+    <xmx:hLUKZYdvq5JTH2Z419D4qbvi6eBex-2KioGPhH3S6nx_4bGK4AD-ag>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 20 Sep 2023 05:04:03 -0400 (EDT)
+Message-ID: <075cecdf-e059-4432-b3ae-f67594bfc0c9@fastmail.fm>
+Date:   Wed, 20 Sep 2023 11:04:02 +0200
 MIME-Version: 1.0
-References: <000000000000e534bb0604959011@google.com> <ZPeaH+K75a0nIyBk@dread.disaster.area>
- <CANp29Y4AK9dzmpMj4E9iz3gqTwhG=-_7DfA8knrWYaHy4QxrEg@mail.gmail.com> <20230908082846.GB9560@lst.de>
-In-Reply-To: <20230908082846.GB9560@lst.de>
-From:   Aleksandr Nogikh <nogikh@google.com>
-Date:   Wed, 20 Sep 2023 10:56:56 +0200
-Message-ID: <CANp29Y5yx=F1w2s-jHbz1GVWCbOR_Z-gS488L6ERbWQTAX5dRQ@mail.gmail.com>
-Subject: Re: [syzbot] [xfs?] INFO: task hung in clean_bdev_aliases
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        syzbot <syzbot+1fa947e7f09e136925b8@syzkaller.appspotmail.com>,
-        djwong@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, linux-block@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] fs/fuse: Rename DIRECT_IO_RELAX to
+ DIRECT_IO_ALLOW_MMAP
+To:     Hanna Czenczek <hreitz@redhat.com>,
+        Tyler Fanelli <tfanelli@redhat.com>,
+        linux-fsdevel@vger.kernel.org, Hao Xu <hao.xu@linux.dev>
+Cc:     mszeredi@redhat.com, gmaglione@redhat.com
+References: <20230920024001.493477-1-tfanelli@redhat.com>
+ <20230920024001.493477-2-tfanelli@redhat.com>
+ <f26589d6-32b6-9665-677e-06397d0a1028@redhat.com>
+Content-Language: en-US, de-DE
+From:   Bernd Schubert <bernd.schubert@fastmail.fm>
+In-Reply-To: <f26589d6-32b6-9665-677e-06397d0a1028@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-#syz set subsystems: iomap
 
-On Fri, Sep 8, 2023 at 10:28=E2=80=AFAM Christoph Hellwig <hch@lst.de> wrot=
-e:
->
-> On Wed, Sep 06, 2023 at 07:20:15PM +0200, Aleksandr Nogikh wrote:
-> >
-> > The reason why syzbot marked this report as xfs is that, per
-> > MAINTAINERS, fs/iomap/ points to linux-xfs@vger.kernel.org. I can
-> > adjust the rules syzbot uses so that these are routed to "block".
-> >
-> > But should MAINTAINERS actually also not relate IOMAP FILESYSTEM
-> > LIBRARY with xfs in this case?
->
-> I'd tag it with iomap, as it's a different subsystem just sharing
-> the mailing list.  We also have iommu@lists.linux.dev for both the
-> iommu and dma-mapping subsystems as a similar example.
->
-> But what's also important for issues like this is that often the
-> called library code (in this case iomap) if often not, or only
-> partially at fault.  So capturing the calling context (in this
-> case block) might also be useful.
->
-> And to get out of these meta discussions:  I'll look into the actual
-> issues in a bit, I'll try to find time despite travelling.
->
+
+On 9/20/23 10:31, Hanna Czenczek wrote:
+> On 20.09.23 04:40, Tyler Fanelli wrote:
+>> - *                       allow shared mmap
+>> + * FUSE_DIRECT_IO_ALLOW_MMAP: allow shared mmap in FOPEN_DIRECT_IO mode.
+>>    */
+>>   #define FUSE_ASYNC_READ        (1 << 0)
+>>   #define FUSE_POSIX_LOCKS    (1 << 1)
+>> @@ -449,7 +448,7 @@ struct fuse_file_lock {
+>>   #define FUSE_HAS_INODE_DAX    (1ULL << 33)
+>>   #define FUSE_CREATE_SUPP_GROUP    (1ULL << 34)
+>>   #define FUSE_HAS_EXPIRE_ONLY    (1ULL << 35)
+>> -#define FUSE_DIRECT_IO_RELAX    (1ULL << 36)
+>> +#define FUSE_DIRECT_IO_ALLOW_MMAP (1ULL << 36)
+> 
+> Is it allowed to remove FUSE_DIRECT_IO_RELAX now that it was already 
+> present in a uapi header?
+> 
+> Personally, I don’t mind keeping the name for the flag and just change 
+> the documentation.  Or we might keep the old name as an alias for the 
+> new one.
+
+It is only in linux-6.6-rcX, not in any released version. Which is why 
+Miklos posted that he is going to send these patches as -rc update and 
+not only in 6.7.
+
+Thanks,
+Bernd
