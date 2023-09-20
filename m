@@ -2,190 +2,155 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D3FF7A74AD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Sep 2023 09:47:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3759C7A74B3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Sep 2023 09:47:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234081AbjITHrD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Sep 2023 03:47:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38114 "EHLO
+        id S233962AbjITHr2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Sep 2023 03:47:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40726 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234052AbjITHqd (ORCPT
+        with ESMTP id S234090AbjITHrE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Sep 2023 03:46:33 -0400
-Received: from icp-osb-irony-out5.external.iinet.net.au (icp-osb-irony-out5.external.iinet.net.au [203.59.1.221])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9C72DCE4;
-        Wed, 20 Sep 2023 00:45:52 -0700 (PDT)
-X-SMTP-MATCH: 1
-IronPort-Data: A9a23:azQpg6xIW9ObnWEOXuN6t+cnxyrEfRIJ4+MujC+fZmUNrF6WrkU3e
- hirod39jgY+HhL3funC5f239Uo2Dfalz9J9ShxunZ1UZyoigdLfAtiEJVvHMSqXL8nSJGpq9
- Mx2huPodajYdVeC4E/3WlTdhSMkj/rQF+CkULes1h1ZHmeIdg9w0XqPpMZk2uaEsfDhayuRt
- NX7pdHoOVPN81aY5UpNtspvADs21BjDkGtwUm4WPJinj3eH/5UhN6/zEInqR5fOrii4KcbhL
- wrL5OnREmrxo0x3Uov9+lrxWhVirrX6ZWBihlIKAPL62kAqSiEais4G2PQghUh/u2WkkdZ62
- tp3kZ2TcVYlA4/nwvkmakwNe81+FfUuFL7vEiHu64rKkR2AKz22mcAG4EMeYN1epKAtWz8Ir
- 6RIQNwORknra+aez6i2RfRqick5IdPDI44Epndt0XfSCvNgSI2rr6DiuY4BjWlh2JgTdRrYT
- 9AHVTd9NhXdWkFwNBRNMKM9w8KamVCqJlW0r3rQ/8Lb+VP70w111KnFMdzbYNWGSMxZ2EGCq
- Qru+2X/HwFfN9GFzzeB2myji/WJni7hXo8WUrqi+ZZChFyV23xWBgYaWEW2pdGnhUOkHdFSM
- UoZ/mwpt6da3EiqSMTtGhSiq36soBERQZxTHvc85QXLzbDbiy6FAXIaRzpNc/QitckrVXkk0
- UKPk9r1BDtp9rqPRhq18K+VojyzPwAaKGYDYWkPSg5t3jX4iNxjy0yKFIw9VfTt3pvpAT7xh
- TuNqW43mt3/kPI26klyxnif6xrEm3QDZlddCtn/No590j5EWQ==
-IronPort-HdrOrdr: A9a23:8cNknKgC5uWXPwRJcEjE0pucnXBQXmsji2hC6mlwRA09TyX4ra
- 6TdZEguCMc5wxxZJhNo7C90dC7MBThHPxOkOss1MaZLWrbUQKTRekIh+eM/9SHIVybygc379
- YET0ERMqyJMXFKyez/pCG+G9Mx2tmcmZrY+dv2/jNGSUVHbL5t6gFhBm+gYzJLbTgDKZ0lFI
- eNouprzgDQAkj/t/7LYEXtidKz3uHjpdbvfBoPBxss7Q+TgHey7qLmH3Gjr2kjegIKyaon+W
- jBmQn++qjmqeiyzlvV3XLS6ZM+oqqa9vJzQMSQjsAULz/ojBqkIJ55U7nHpzwtpvqzgWxa7e
- Xxnw==
-X-Talos-CUID: =?us-ascii?q?9a23=3AuWQeS2pTeuaoxyCd2FPf7pvmUfB1X3Pbx2XfGWu?=
- =?us-ascii?q?5Kl44RIC3YgWNw5oxxg=3D=3D?=
-X-Talos-MUID: 9a23:z4HOwgWseijTGJ7q/CXyuDxwbsZ12viRBgNXqaQF5Oy2KgUlbg==
-X-IronPort-AV: E=Sophos;i="6.02,161,1688400000"; 
-   d="scan'208";a="491969605"
-Received: from 58-6-226-208.tpgi.com.au (HELO [192.168.0.22]) ([58.6.226.208])
-  by icp-osb-irony-out5.iinet.net.au with ESMTP; 20 Sep 2023 15:45:47 +0800
-Message-ID: <5add8ae8-d746-b254-7559-b96aa72d3523@westnet.com.au>
-Date:   Wed, 20 Sep 2023 17:45:47 +1000
+        Wed, 20 Sep 2023 03:47:04 -0400
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 706041B7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Sep 2023 00:46:42 -0700 (PDT)
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20230920074639euoutp01232c646a4b448b518cc82c980b8574fe~Gi8ex-SQp1349913499euoutp01s
+        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Sep 2023 07:46:39 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20230920074639euoutp01232c646a4b448b518cc82c980b8574fe~Gi8ex-SQp1349913499euoutp01s
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1695195999;
+        bh=mpadb/9tFj+5PzcSP6XTgQODzpOlX5ctR1kmrU44hZQ=;
+        h=Date:Subject:To:CC:From:In-Reply-To:References:From;
+        b=RqiJiqir9mni6uSwxjTyCnAyWsdN66fOTrl3lQQdEGPJKUJ45r+ASLOrVcv36+UK1
+         0aTPfkQlZE6CZ6N5HikIWQtuv+04NMYz4datyc8HU9DzNSvYtr+77Q/qltcH+TQcK2
+         6HcspKq0gtSmF4a45V7nVv9l8Mml8UUX5krX5mNY=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20230920074639eucas1p2315f875b51eefe3573cc37eed8e420d1~Gi8eV8OOj2272522725eucas1p2x;
+        Wed, 20 Sep 2023 07:46:39 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 23.C8.37758.E53AA056; Wed, 20
+        Sep 2023 08:46:39 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20230920074638eucas1p2f7dfdd629156a591697f8ba3376446e8~Gi8dldIsw1101511015eucas1p2H;
+        Wed, 20 Sep 2023 07:46:38 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20230920074638eusmtrp267241c28aabb2e2e221d362156a13169~Gi8dh4NqC1560015600eusmtrp2C;
+        Wed, 20 Sep 2023 07:46:38 +0000 (GMT)
+X-AuditID: cbfec7f5-01f15a800002937e-11-650aa35e2c32
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id A6.EE.10549.E53AA056; Wed, 20
+        Sep 2023 08:46:38 +0100 (BST)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20230920074637eusmtip1832c020440adb3cb8ad9bab001921d4e~Gi8dT7wug1555115551eusmtip1w;
+        Wed, 20 Sep 2023 07:46:37 +0000 (GMT)
+Received: from [192.168.8.209] (106.210.248.121) by CAMSVWEXC02.scsc.local
+        (2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+        Wed, 20 Sep 2023 08:46:36 +0100
+Message-ID: <fb53a533-e430-eb1b-9e2c-ef424e466db4@samsung.com>
+Date:   Wed, 20 Sep 2023 09:46:35 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
-Subject: Re: [PATCH 09/17] m68k: Implement xor_unlock_is_negative_byte
+        Thunderbird/102.15.1
+Subject: Re: [RFC 02/23] pagemap: use mapping_min_order in fgf_set_order()
 Content-Language: en-US
-From:   Greg Ungerer <gregungerer@westnet.com.au>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-arch@vger.kernel.org, torvalds@linux-foundation.org,
-        Nicholas Piggin <npiggin@gmail.com>
-References: <20230915183707.2707298-1-willy@infradead.org>
- <20230915183707.2707298-10-willy@infradead.org>
- <6e409d5f-a419-07b7-c82c-4e80fe19c6ba@westnet.com.au>
- <ZQW849TfSCK6u2f8@casper.infradead.org>
- <cb763591-a697-ab74-171e-fcd7f4e70137@westnet.com.au>
-In-Reply-To: <cb763591-a697-ab74-171e-fcd7f4e70137@westnet.com.au>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+To:     Matthew Wilcox <willy@infradead.org>,
+        Pankaj Raghav <kernel@pankajraghav.com>
+CC:     <linux-xfs@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <david@fromorbit.com>, <da.gomez@samsung.com>,
+        <akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>,
+        <djwong@kernel.org>, <linux-mm@kvack.org>,
+        <chandan.babu@oracle.com>, <mcgrof@kernel.org>,
+        <gost.dev@samsung.com>
+From:   Pankaj Raghav <p.raghav@samsung.com>
+In-Reply-To: <ZQSokGztDTbXBxBU@casper.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [106.210.248.121]
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+        CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDKsWRmVeSWpSXmKPExsWy7djP87rxi7lSDU6VWsxZv4bN4tJROYst
+        x+4xWlx+wmdx5uVnFos9e0+yWFzeNYfN4t6a/6wWu/7sYLe4MeEpo8XvH3PYHLg9Ti2S8Ni8
+        Qstj06pONo9Nnyaxe5yY8ZvF4+PTWyweZ1c6enzeJBfAEcVlk5Kak1mWWqRvl8CVcWuZVsFH
+        9opj6x+yNDBeZe1i5OSQEDCReHPoC5DNxSEksIJR4vqGOywQzhdGiU1fF7NDOJ8ZJaY2PmKG
+        aWnYchCqajmjxPKbl5nhqp6dfwQ1bDdQ/6vd7CAtvAJ2EsvW/GACsVkEVCWu3FzHBhEXlDg5
+        8wkLiC0qEC0xc9pCRhBbWMBL4s2Ml2DrmAXEJW49mQ/Uy8EhIhAs8fqsGch8ZoGlTBIfzv5m
+        AYmzCWhJNHaCreIEuu7unq9sEK2aEq3bf7ND2PIS29/OgfpAWeLU9u/sEHatxKktt5hAZkoI
+        LOeU+Lt8NRtEwkWiqWMrNJSEJV4d3wLVICPxf+d8Jgi7WuLpjd/MEM0tjBL9O9ezgRwkIWAt
+        0XcmB6LGUWLR82WMEGE+iRtvBSHu4ZOYtG068wRG1VlIITELycezkLwwC8kLCxhZVjGKp5YW
+        56anFhvnpZbrFSfmFpfmpesl5+duYgQmsNP/jn/dwbji1Ue9Q4xMHIyHGCU4mJVEeHPVuFKF
+        eFMSK6tSi/Lji0pzUosPMUpzsCiJ82rbnkwWEkhPLEnNTk0tSC2CyTJxcEo1MJXus/rPu/Bt
+        /P+/TyXl7pX+fHAyhqfPZ/qlEDWxnQ+q5jptvhyy35n/3I7HsTwzhYuXNX0KFHWUudcjYOEQ
+        0yqsyLErZ3r2saUmfvunO1RqLei8xSmbcY+/9GCASLLnSumF50O2L9xsUbZM3PQh499r13cG
+        zXvB+OUM0/vfh1/HfV6a/sX9i/eJ+3f/8Kx/Kq8s4bd0jbL0sgn7Np30fquzr1V+I8uqtF+r
+        H3rKtwXrpK9OsLXn1VdMn1nxbN9CF9cP01xvhd5LKXBtPZv70FNk8bwdZtFehtfW552eJnir
+        6uIl28Ckx/171dZOPHWr3lnvbv2mDdv5na9O6le6uZo9+uab7JAWb7v5wrcEFycqsRRnJBpq
+        MRcVJwIAsTFFx88DAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrIIsWRmVeSWpSXmKPExsVy+t/xu7pxi7lSDf7cZbOYs34Nm8Wlo3IW
+        W47dY7S4/ITP4szLzywWe/aeZLG4vGsOm8W9Nf9ZLXb92cFucWPCU0aL3z/msDlwe5xaJOGx
+        eYWWx6ZVnWwemz5NYvc4MeM3i8fHp7dYPM6udPT4vEkugCNKz6Yov7QkVSEjv7jEVina0MJI
+        z9DSQs/IxFLP0Ng81srIVEnfziYlNSezLLVI3y5BL+PWMq2Cj+wVx9Y/ZGlgvMraxcjJISFg
+        ItGw5SBLFyMXh5DAUkaJRwuPMEMkZCQ2foEpEpb4c62LDaLoI6PEti0/oDp2M0oc2D+VDaSK
+        V8BOYtmaH0wgNouAqsSVm+ug4oISJ2c+AWrg4BAViJboemkMEhYW8JJ4M+Ml2DJmAXGJW0/m
+        M4GUiAgES7w+awYynllgKZPEh7O/WeAWNzy6xQZSxCagJdHYyQ7Sywn0wd09X9kg5mhKtG7/
+        zQ5hy0tsfzsH6hlliVPbv7ND2LUSn/8+Y5zAKDoLyXWzkJwxC8moWUhGLWBkWcUoklpanJue
+        W2yoV5yYW1yal66XnJ+7iREY99uO/dy8g3Heq496hxiZOBgPMUpwMCuJ8OaqcaUK8aYkVlal
+        FuXHF5XmpBYfYjQFBtFEZinR5Hxg4skriTc0MzA1NDGzNDC1NDNWEuf1LOhIFBJITyxJzU5N
+        LUgtgulj4uCUamCy1uEMWfyofLkd3/mAoAvfa/dVvb9eH+YSc+ugsQBLbdntntBttV1zIkoi
+        RSfzfSmf9z4rulF807PExjXCzxOyXi5WcZcV9lVvEt20ddaf4zF6WVen1n2YUZwYu6YoxHqu
+        Qf5179U9nzWcL26aHWyu3b5W4r5ztNSxLE6tS+dZjntv9S8tiD/BYik4Y/bRapsdP3s1JT1n
+        7NwisLzxxoP9FRNZ5EvypuxfmX/GR21ekaLk/cKmxaq6W5YzRi9nE7BaOX1a3m8VazudE+1l
+        ASxpy1a7vti8wrJRo9xPXbg0rewfw6dj810FzL87Tmi8OkPh344DjvcWX/xmVXPC4oj5SSb9
+        dTGLa5l03+na3FFiKc5INNRiLipOBAAZe6NShAMAAA==
+X-CMS-MailID: 20230920074638eucas1p2f7dfdd629156a591697f8ba3376446e8
+X-Msg-Generator: CA
+X-RootMTR: 20230915185527eucas1p1dc822c08a58effe30e3bf487103b22a0
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20230915185527eucas1p1dc822c08a58effe30e3bf487103b22a0
+References: <20230915183848.1018717-1-kernel@pankajraghav.com>
+        <20230915183848.1018717-3-kernel@pankajraghav.com>
+        <CGME20230915185527eucas1p1dc822c08a58effe30e3bf487103b22a0@eucas1p1.samsung.com>
+        <ZQSokGztDTbXBxBU@casper.infradead.org>
+X-Spam-Status: No, score=-8.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_HI,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-On 19/9/23 00:37, Greg Ungerer wrote:
-> On 17/9/23 00:34, Matthew Wilcox wrote:
->> On Sat, Sep 16, 2023 at 11:11:32PM +1000, Greg Ungerer wrote:
->>> On 16/9/23 04:36, Matthew Wilcox (Oracle) wrote:
->>>> Using EOR to clear the guaranteed-to-be-set lock bit will test the
->>>> negative flag just like the x86 implementation.  This should be
->>>> more efficient than the generic implementation in filemap.c.  It
->>>> would be better if m68k had __GCC_ASM_FLAG_OUTPUTS__.
->>>>
->>>> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
->>>> ---
->>>>    arch/m68k/include/asm/bitops.h | 14 ++++++++++++++
->>>>    1 file changed, 14 insertions(+)
->>>>
->>>> diff --git a/arch/m68k/include/asm/bitops.h b/arch/m68k/include/asm/bitops.h
->>>> index e984af71df6b..909ebe7cab5d 100644
->>>> --- a/arch/m68k/include/asm/bitops.h
->>>> +++ b/arch/m68k/include/asm/bitops.h
->>>> @@ -319,6 +319,20 @@ arch___test_and_change_bit(unsigned long nr, volatile unsigned long *addr)
->>>>        return test_and_change_bit(nr, addr);
->>>>    }
->>>> +static inline bool xor_unlock_is_negative_byte(unsigned long mask,
->>>> +        volatile unsigned long *p)
->>>> +{
->>>> +    char result;
->>>> +    char *cp = (char *)p + 3;    /* m68k is big-endian */
->>>> +
->>>> +    __asm__ __volatile__ ("eor.b %1, %2; smi %0"
->>>
->>> The ColdFire members of the 68k family do not support byte size eor:
->>>
->>>    CC      mm/filemap.o
->>> {standard input}: Assembler messages:
->>> {standard input}:824: Error: invalid instruction for this architecture; needs 68000 or higher (68000 [68ec000, 68hc000, 68hc001, 68008, 68302, 68306, 68307, 68322, 68356], 68010, 68020 [68k, 68ec020], 68030 [68ec030], 68040 [68ec040], 68060 [68ec060], cpu32 [68330, 68331, 68332, 68333, 68334, 68336, 68340, 68341, 68349, 68360], fidoa [fido]) -- statement `eor.b #1,3(%a0)' ignored
+On 2023-09-15 20:55, Matthew Wilcox wrote:
+> On Fri, Sep 15, 2023 at 08:38:27PM +0200, Pankaj Raghav wrote:
+>> From: Pankaj Raghav <p.raghav@samsung.com>
 >>
->> Well, that sucks.  What do you suggest for Coldfire?
+>> fgf_set_order() encodes optimal order in fgp flags. Set it to at least
+>> mapping_min_order from the page cache. Default to the old behaviour if
+>> min_order is not set.
 > 
-> I am not seeing an easy way to not fall back to something like the MIPS
-> implementation for ColdFire. Could obviously assemblerize this to do better
-> than gcc, but if it has to be atomic I think we are stuck with the irq locking.
+> Why not simply:
 > 
-> static inline bool cf_xor_is_negative_byte(unsigned long mask,
->                  volatile unsigned long *addr)
-> {
->          unsigned long flags;
->          unsigned long data;
+
+That is a good idea to move this to filemap instead of changing it in iomap. I will do that!
+
+> +++ b/mm/filemap.c
+> @@ -1906,9 +1906,12 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
+>                 folio_wait_stable(folio);
+>  no_page:
+>         if (!folio && (fgp_flags & FGP_CREAT)) {
+> -               unsigned order = FGF_GET_ORDER(fgp_flags);
+> +               unsigned order;
+>                 int err;
 > 
->          local_irq_save(flags)
->          data = *addr;
->          *addr = data ^ mask;
->          local_irq_restore(flags);
+> +               order = min(mapping_min_folio_order(mapping),
+> +                               FGF_GET_ORDER(fgp_flags));
 > 
->          return (data & BIT(7)) != 0;
-> }
 
-The problem with this C implementation is that need to use loal_irq_save()
-which results in some ugly header dependencies trying top include irqflags.h.
-
-This version at least compiles and run, though we can probably do better still.
-
-
-diff --git a/arch/m68k/include/asm/bitops.h b/arch/m68k/include/asm/bitops.h
-index e984af71df6b..99392c26e784 100644
---- a/arch/m68k/include/asm/bitops.h
-+++ b/arch/m68k/include/asm/bitops.h
-@@ -319,6 +319,48 @@ arch___test_and_change_bit(unsigned long nr, volatile unsigned long *addr)
-         return test_and_change_bit(nr, addr);
-  }
-  
-+static inline bool cf_xor_unlock_is_negative_byte(unsigned long mask,
-+               volatile unsigned long *addr)
-+{
-+       unsigned long data;
-+
-+        asm volatile (
-+               "move.w %%sr,%%d1       \n\t"
-+               "move.w %%d1,%%d0       \n\t"
-+               "ori.l  #0x0700,%%d0    \n\t"
-+               "move.w %%d0,%%sr       \n\t"
-+
-+               "move.l %2@,%0          \n\t"
-+               "eor.l  %1,%0           \n\t"
-+               "move.l %0,%2@          \n\t"
-+
-+               "movew  %%d1,%%sr       \n"
-+               : "=d" (data)
-+               : "di" (mask), "a" (addr)
-+               : "cc", "%d0", "%d1", "memory");
-+
-+       return (data & BIT(7)) != 0;
-+}
-+
-+static inline bool m68k_xor_unlock_is_negative_byte(unsigned long mask,
-+               volatile unsigned long *p)
-+{
-+       char result;
-+       char *cp = (char *)p + 3;       /* m68k is big-endian */
-+
-+       __asm__ __volatile__ ("eor.b %1, %2; smi %0"
-+               : "=d" (result)
-+               : "di" (mask), "o" (*cp)
-+               : "memory");
-+       return result;
-+}
-+
-+#if defined(CONFIG_COLDFIRE)
-+#define xor_unlock_is_negative_byte(mask, p) cf_xor_unlock_is_negative_byte(mask, p)
-+#else
-+#define xor_unlock_is_negative_byte(mask, p) m68k_xor_unlock_is_negative_byte(mask, p)
-+#endif
-+
-  /*
-   *     The true 68020 and more advanced processors support the "bfffo"
-   *     instruction for finding bits. ColdFire and simple 68000 parts
-
-
-Regards
-Greg
+I think this needs to max(mapping..., FGF...)
