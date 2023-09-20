@@ -2,113 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EF897A7960
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Sep 2023 12:35:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BE387A79D1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Sep 2023 12:55:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234365AbjITKff (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Sep 2023 06:35:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51648 "EHLO
+        id S234330AbjITKzl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Sep 2023 06:55:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233376AbjITKfc (ORCPT
+        with ESMTP id S233615AbjITKzk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Sep 2023 06:35:32 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFBE3AD;
-        Wed, 20 Sep 2023 03:35:25 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04647C433C7;
-        Wed, 20 Sep 2023 10:35:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695206125;
-        bh=K2lTJnCgosym5o0oHZC21PlpMcbDPAGRzGpQMsH+RNE=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=DQraYbgnbA8u42xIprJlGq919tAZP4oSOdbkdBTrPg4E020AuJU3vm+IxDgIAtub4
-         0ualIwtp20Irlnr5UkTgSXB/6dLY+vOyf0EwAPBcmnJdBqIsbV/q8wd+oKJBDukCmC
-         /GGkmmgnqoNA7fAJABwddnMG0NDO1gl1EM1jlFcVcGauNmnScyO0k32UToSskpKj7Z
-         IDirVhj/0pNpBeARBmUePperJeyjvV4b3EGol9t/AUaUdbdstRRauxjUUZvhy5PZAK
-         37rI5uERCd6DxALjpO+Wq3SS9dt0mP5kZEJ0WiE3vmZJqNiMvhEhUe+Cvf5i6voNam
-         ksh/5ZQ5h3mdg==
-Message-ID: <317d84b1b909b6c6519a2406fcb302ce22dafa41.camel@kernel.org>
-Subject: Re: [PATCH v7 12/13] ext4: switch to multigrain timestamps
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>
-Cc:     Bruno Haible <bruno@clisp.org>,
-        Xi Ruoyao <xry111@linuxfromscratch.org>, bug-gnulib@gnu.org,
+        Wed, 20 Sep 2023 06:55:40 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DCC983;
+        Wed, 20 Sep 2023 03:55:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1695207334; x=1726743334;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=LVfQr+3NYOJBB85Xy9NQj00gO9lfxtO7rH9xEOTjYvQ=;
+  b=eV02gQPSP0kbcSpp/RsZe5aiUatwTGpWzlIdwkkLzjwMbLItKipbSV4d
+   kzA3DDEy9rOGzNaeScGro9PTrcaeitYB08SAKvwbg0L+0dNzZArRLSGzn
+   yPTVQhnX9RWCOFHJY0N0AwPNf4UTwe284zhk3XcmyjasPMQcjZcvHfTNM
+   E9F7uI+Z7vuPk37SdDK/qMIZxI13TSbALjxdq/8SAfstwNmtHq1NYuCvk
+   bYYKuC1ddQBuZYbFk0N6RbNy1wbnFfvq2sJWEBEdEkWpsNYFEgWqiEEwT
+   JEckPT8bj6HY+5S7h1Wos8ohgMkG0ZK1PqZI3IBB/SFXI5APeXWJiLNI4
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10838"; a="365238749"
+X-IronPort-AV: E=Sophos;i="6.02,161,1688454000"; 
+   d="scan'208";a="365238749"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2023 03:55:33 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10838"; a="781647988"
+X-IronPort-AV: E=Sophos;i="6.02,161,1688454000"; 
+   d="scan'208";a="781647988"
+Received: from lkp-server02.sh.intel.com (HELO 9ef86b2655e5) ([10.239.97.151])
+  by orsmga001.jf.intel.com with ESMTP; 20 Sep 2023 03:55:27 -0700
+Received: from kbuild by 9ef86b2655e5 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1qiurd-0008fM-16;
+        Wed, 20 Sep 2023 10:55:25 +0000
+Date:   Wed, 20 Sep 2023 18:54:55 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Nitesh Shetty <nj.shetty@samsung.com>,
+        Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@kernel.org>, dm-devel@redhat.com,
+        Keith Busch <kbusch@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Chaitanya Kulkarni <kch@nvidia.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Eric Van Hensbergen <ericvh@kernel.org>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Christian Schoenebeck <linux_oss@crudebyte.com>,
-        David Howells <dhowells@redhat.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, Xiubo Li <xiubli@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu,
-        Tyler Hicks <code@tyhicks.com>, Gao Xiang <xiang@kernel.org>,
-        Chao Yu <chao@kernel.org>, Yue Hu <huyue2@coolpad.com>,
-        Jeffle Xu <jefflexu@linux.alibaba.com>,
-        Namjae Jeon <linkinjeon@kernel.org>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        Jan Kara <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Bo b Peterson <rpeterso@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tejun Heo <tj@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Mike Marshall <hubcap@omnibond.com>,
-        Martin Brandenburg <martin@omnibond.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Steve French <sfrench@samba.org>,
-        Paulo Alcantara <pc@manguebit.com>,
-        Ronnie Sahlberg <ronniesahlberg@gmail.com>,
-        Shyam Prasad N <sprasad@microsoft.com>,
-        Tom Talpey <tom@talpey.com>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Richard Weinberger <richard@nod.at>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Amir Goldstein <l@gmail.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Benjamin Coddington <bcodding@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
-        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        linux-nfs@vger.kernel.org, ntfs3@lists.linux.dev,
-        ocfs2-devel@lists.linux.dev, devel@lists.orangefs.org,
-        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-        linux-mtd@lists.infradead.org, linux-mm@kvack.org,
-        linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org
-Date:   Wed, 20 Sep 2023 06:35:18 -0400
-In-Reply-To: <20230920101731.ym6pahcvkl57guto@quack3>
-References: <20230807-mgctime-v7-0-d1dec143a704@kernel.org>
-         <20230919110457.7fnmzo4nqsi43yqq@quack3>
-         <1f29102c09c60661758c5376018eac43f774c462.camel@kernel.org>
-         <4511209.uG2h0Jr0uP@nimes>
-         <08b5c6fd3b08b87fa564bb562d89381dd4e05b6a.camel@kernel.org>
-         <20230920-leerung-krokodil-52ec6cb44707@brauner>
-         <20230920101731.ym6pahcvkl57guto@quack3>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+        Christian Brauner <brauner@kernel.org>
+Cc:     oe-kbuild-all@lists.linux.dev, martin.petersen@oracle.com,
+        linux-scsi@vger.kernel.org, nitheshshetty@gmail.com,
+        anuj1072538@gmail.com, gost.dev@samsung.com, mcgrof@kernel.org,
+        Nitesh Shetty <nj.shetty@samsung.com>,
+        Hannes Reinecke <hare@suse.de>,
+        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        Anuj Gupta <anuj20.g@samsung.com>,
+        Vincent Fu <vincent.fu@samsung.com>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v16 12/12] null_blk: add support for copy offload
+Message-ID: <202309201836.c2wRnper-lkp@intel.com>
+References: <20230920080756.11919-13-nj.shetty@samsung.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230920080756.11919-13-nj.shetty@samsung.com>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -116,256 +83,84 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2023-09-20 at 12:17 +0200, Jan Kara wrote:
-> On Wed 20-09-23 10:41:30, Christian Brauner wrote:
-> > > > f1 was last written to *after* f2 was last written to. If the times=
-tamp of f1
-> > > > is then lower than the timestamp of f2, timestamps are fundamentall=
-y broken.
-> > > >=20
-> > > > Many things in user-space depend on timestamps, such as build syste=
-m
-> > > > centered around 'make', but also 'find ... -newer ...'.
-> > > >=20
-> > >=20
-> > >=20
-> > > What does breakage with make look like in this situation? The "fuzz"
-> > > here is going to be on the order of a jiffy. The typical case for mak=
-e
-> > > timestamp comparisons is comparing source files vs. a build target. I=
-f
-> > > those are being written nearly simultaneously, then that could be an
-> > > issue, but is that a typical behavior? It seems like it would be hard=
- to
-> > > rely on that anyway, esp. given filesystems like NFS that can do lazy
-> > > writeback.
-> > >=20
-> > > One of the operating principles with this series is that timestamps c=
-an
-> > > be of varying granularity between different files. Note that Linux
-> > > already violates this assumption when you're working across filesyste=
-ms
-> > > of different types.
-> > >=20
-> > > As to potential fixes if this is a real problem:
-> > >=20
-> > > I don't really want to put this behind a mount or mkfs option (a'la
-> > > relatime, etc.), but that is one possibility.
-> > >=20
-> > > I wonder if it would be feasible to just advance the coarse-grained
-> > > current_time whenever we end up updating a ctime with a fine-grained
-> > > timestamp? It might produce some inode write amplification. Files tha=
-t
-> >=20
-> > Less than ideal imho.
-> >=20
-> > If this risks breaking existing workloads by enabling it unconditionall=
-y
-> > and there isn't a clear way to detect and handle these situations
-> > without risk of regression then we should move this behind a mount
-> > option.
-> >=20
-> > So how about the following:
-> >=20
-> > From cb14add421967f6e374eb77c36cc4a0526b10d17 Mon Sep 17 00:00:00 2001
-> > From: Christian Brauner <brauner@kernel.org>
-> > Date: Wed, 20 Sep 2023 10:00:08 +0200
-> > Subject: [PATCH] vfs: move multi-grain timestamps behind a mount option
-> >=20
-> > While we initially thought we can do this unconditionally it turns out
-> > that this might break existing workloads that rely on timestamps in ver=
-y
-> > specific ways and we always knew this was a possibility. Move
-> > multi-grain timestamps behind a vfs mount option.
-> >=20
-> > Signed-off-by: Christian Brauner <brauner@kernel.org>
->=20
-> Surely this is a safe choice as it moves the responsibility to the sysadm=
-in
-> and the cases where finegrained timestamps are required. But I kind of
-> wonder how is the sysadmin going to decide whether mgtime is safe for his
-> system or not? Because the possible breakage needn't be obvious at the
-> first sight...
->=20
+Hi Nitesh,
 
-That's the main reason I really didn't want to go with a mount option.
-Documenting that may be difficult. While there is some pessimism around
-it, I may still take a stab at just advancing the coarse clock whenever
-we fetch a fine-grained timestamp. It'd be nice to remove this option in
-the future if that turns out to be feasible.
+kernel test robot noticed the following build warnings:
 
-> If I were a sysadmin, I'd rather opt for something like
-> finegrained timestamps + lazytime (if I needed the finegrained timestamps
-> functionality). That should avoid the IO overhead of finegrained timestam=
-ps
-> as well and I'd know I can have problems with timestamps only after a
-> system crash.
+[auto build test WARNING on 7fc7222d9680366edeecc219c21ca96310bdbc10]
 
-> I've just got another idea how we could solve the problem: Couldn't we
-> always just report coarsegrained timestamp to userspace and provide acces=
-s
-> to finegrained value only to NFS which should know what it's doing?
->=20
+url:    https://github.com/intel-lab-lkp/linux/commits/Nitesh-Shetty/block-Introduce-queue-limits-and-sysfs-for-copy-offload-support/20230920-170132
+base:   7fc7222d9680366edeecc219c21ca96310bdbc10
+patch link:    https://lore.kernel.org/r/20230920080756.11919-13-nj.shetty%40samsung.com
+patch subject: [PATCH v16 12/12] null_blk: add support for copy offload
+config: parisc-allyesconfig (https://download.01.org/0day-ci/archive/20230920/202309201836.c2wRnper-lkp@intel.com/config)
+compiler: hppa-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20230920/202309201836.c2wRnper-lkp@intel.com/reproduce)
 
-I think that'd be hard. First of all, where would we store the second
-timestamp? We can't just truncate the fine-grained ones to come up with
-a coarse-grained one. It might also be confusing having nfsd and local
-filesystems present different attributes.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202309201836.c2wRnper-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from include/trace/define_trace.h:102,
+                    from drivers/block/null_blk/trace.h:104,
+                    from drivers/block/null_blk/main.c:15:
+   drivers/block/null_blk/./trace.h: In function 'trace_raw_output_nullb_copy_op':
+>> drivers/block/null_blk/./trace.h:91:27: warning: format '%lu' expects argument of type 'long unsigned int', but argument 7 has type 'size_t' {aka 'unsigned int'} [-Wformat=]
+      91 |                 TP_printk("%s req=%-15s: dst=%llu, src=%llu, len=%lu",
+         |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/trace/trace_events.h:203:34: note: in definition of macro 'DECLARE_EVENT_CLASS'
+     203 |         trace_event_printf(iter, print);                                \
+         |                                  ^~~~~
+   include/trace/trace_events.h:45:30: note: in expansion of macro 'PARAMS'
+      45 |                              PARAMS(print));                   \
+         |                              ^~~~~~
+   drivers/block/null_blk/./trace.h:73:1: note: in expansion of macro 'TRACE_EVENT'
+      73 | TRACE_EVENT(nullb_copy_op,
+         | ^~~~~~~~~~~
+   drivers/block/null_blk/./trace.h:91:17: note: in expansion of macro 'TP_printk'
+      91 |                 TP_printk("%s req=%-15s: dst=%llu, src=%llu, len=%lu",
+         |                 ^~~~~~~~~
+   In file included from include/trace/trace_events.h:237:
+   drivers/block/null_blk/./trace.h:91:68: note: format string is defined here
+      91 |                 TP_printk("%s req=%-15s: dst=%llu, src=%llu, len=%lu",
+         |                                                                  ~~^
+         |                                                                    |
+         |                                                                    long unsigned int
+         |                                                                  %u
 
 
-> > ---
-> >  fs/fs_context.c     | 18 ++++++++++++++++++
-> >  fs/inode.c          |  4 ++--
-> >  fs/proc_namespace.c |  1 +
-> >  fs/stat.c           |  2 +-
-> >  include/linux/fs.h  |  4 +++-
-> >  5 files changed, 25 insertions(+), 4 deletions(-)
-> >=20
-> > diff --git a/fs/fs_context.c b/fs/fs_context.c
-> > index a0ad7a0c4680..dd4dade0bb9e 100644
-> > --- a/fs/fs_context.c
-> > +++ b/fs/fs_context.c
-> > @@ -44,6 +44,7 @@ static const struct constant_table common_set_sb_flag=
-[] =3D {
-> >  	{ "mand",	SB_MANDLOCK },
-> >  	{ "ro",		SB_RDONLY },
-> >  	{ "sync",	SB_SYNCHRONOUS },
-> > +	{ "mgtime",	SB_MGTIME },
-> >  	{ },
-> >  };
-> > =20
-> > @@ -52,18 +53,32 @@ static const struct constant_table common_clear_sb_=
-flag[] =3D {
-> >  	{ "nolazytime",	SB_LAZYTIME },
-> >  	{ "nomand",	SB_MANDLOCK },
-> >  	{ "rw",		SB_RDONLY },
-> > +	{ "nomgtime",	SB_MGTIME },
-> >  	{ },
-> >  };
-> > =20
-> > +static inline int check_mgtime(unsigned int token, const struct fs_con=
-text *fc)
-> > +{
-> > +	if (token !=3D SB_MGTIME)
-> > +		return 0;
-> > +	if (!(fc->fs_type->fs_flags & FS_MGTIME))
-> > +		return invalf(fc, "Filesystem doesn't support multi-grain timestamps=
-");
-> > +	return 0;
-> > +}
-> > +
-> >  /*
-> >   * Check for a common mount option that manipulates s_flags.
-> >   */
-> >  static int vfs_parse_sb_flag(struct fs_context *fc, const char *key)
-> >  {
-> >  	unsigned int token;
-> > +	int ret;
-> > =20
-> >  	token =3D lookup_constant(common_set_sb_flag, key, 0);
-> >  	if (token) {
-> > +		ret =3D check_mgtime(token, fc);
-> > +		if (ret)
-> > +			return ret;
-> >  		fc->sb_flags |=3D token;
-> >  		fc->sb_flags_mask |=3D token;
-> >  		return 0;
-> > @@ -71,6 +86,9 @@ static int vfs_parse_sb_flag(struct fs_context *fc, c=
-onst char *key)
-> > =20
-> >  	token =3D lookup_constant(common_clear_sb_flag, key, 0);
-> >  	if (token) {
-> > +		ret =3D check_mgtime(token, fc);
-> > +		if (ret)
-> > +			return ret;
-> >  		fc->sb_flags &=3D ~token;
-> >  		fc->sb_flags_mask |=3D token;
-> >  		return 0;
-> > diff --git a/fs/inode.c b/fs/inode.c
-> > index 54237f4242ff..fd1a2390aaa3 100644
-> > --- a/fs/inode.c
-> > +++ b/fs/inode.c
-> > @@ -2141,7 +2141,7 @@ EXPORT_SYMBOL(current_mgtime);
-> > =20
-> >  static struct timespec64 current_ctime(struct inode *inode)
-> >  {
-> > -	if (is_mgtime(inode))
-> > +	if (IS_MGTIME(inode))
-> >  		return current_mgtime(inode);
-> >  	return current_time(inode);
-> >  }
-> > @@ -2588,7 +2588,7 @@ struct timespec64 inode_set_ctime_current(struct =
-inode *inode)
-> >  		now =3D current_time(inode);
-> > =20
-> >  		/* Just copy it into place if it's not multigrain */
-> > -		if (!is_mgtime(inode)) {
-> > +		if (!IS_MGTIME(inode)) {
-> >  			inode_set_ctime_to_ts(inode, now);
-> >  			return now;
-> >  		}
-> > diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
-> > index 250eb5bf7b52..08f5bf4d2c6c 100644
-> > --- a/fs/proc_namespace.c
-> > +++ b/fs/proc_namespace.c
-> > @@ -49,6 +49,7 @@ static int show_sb_opts(struct seq_file *m, struct su=
-per_block *sb)
-> >  		{ SB_DIRSYNC, ",dirsync" },
-> >  		{ SB_MANDLOCK, ",mand" },
-> >  		{ SB_LAZYTIME, ",lazytime" },
-> > +		{ SB_MGTIME, ",mgtime" },
-> >  		{ 0, NULL }
-> >  	};
-> >  	const struct proc_fs_opts *fs_infop;
-> > diff --git a/fs/stat.c b/fs/stat.c
-> > index 6e60389d6a15..2f18dd5de18b 100644
-> > --- a/fs/stat.c
-> > +++ b/fs/stat.c
-> > @@ -90,7 +90,7 @@ void generic_fillattr(struct mnt_idmap *idmap, u32 re=
-quest_mask,
-> >  	stat->size =3D i_size_read(inode);
-> >  	stat->atime =3D inode->i_atime;
-> > =20
-> > -	if (is_mgtime(inode)) {
-> > +	if (IS_MGTIME(inode)) {
-> >  		fill_mg_cmtime(stat, request_mask, inode);
-> >  	} else {
-> >  		stat->mtime =3D inode->i_mtime;
-> > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > index 4aeb3fa11927..03e415fb3a7c 100644
-> > --- a/include/linux/fs.h
-> > +++ b/include/linux/fs.h
-> > @@ -1114,6 +1114,7 @@ extern int send_sigurg(struct fown_struct *fown);
-> >  #define SB_NODEV        BIT(2)	/* Disallow access to device special fi=
-les */
-> >  #define SB_NOEXEC       BIT(3)	/* Disallow program execution */
-> >  #define SB_SYNCHRONOUS  BIT(4)	/* Writes are synced at once */
-> > +#define SB_MGTIME	BIT(5)	/* Use multi-grain timestamps */
-> >  #define SB_MANDLOCK     BIT(6)	/* Allow mandatory locks on an FS */
-> >  #define SB_DIRSYNC      BIT(7)	/* Directory modifications are synchron=
-ous */
-> >  #define SB_NOATIME      BIT(10)	/* Do not update access times. */
-> > @@ -2105,6 +2106,7 @@ static inline bool sb_rdonly(const struct super_b=
-lock *sb) { return sb->s_flags
-> >  					((inode)->i_flags & (S_SYNC|S_DIRSYNC)))
-> >  #define IS_MANDLOCK(inode)	__IS_FLG(inode, SB_MANDLOCK)
-> >  #define IS_NOATIME(inode)	__IS_FLG(inode, SB_RDONLY|SB_NOATIME)
-> > +#define IS_MGTIME(inode)	__IS_FLG(inode, SB_MGTIME)
-> >  #define IS_I_VERSION(inode)	__IS_FLG(inode, SB_I_VERSION)
-> > =20
-> >  #define IS_NOQUOTA(inode)	((inode)->i_flags & S_NOQUOTA)
-> > @@ -2366,7 +2368,7 @@ struct file_system_type {
-> >   */
-> >  static inline bool is_mgtime(const struct inode *inode)
-> >  {
-> > -	return inode->i_sb->s_type->fs_flags & FS_MGTIME;
-> > +	return inode->i_sb->s_flags & SB_MGTIME;
-> >  }
-> > =20
-> >  extern struct dentry *mount_bdev(struct file_system_type *fs_type,
-> > --=20
-> > 2.34.1
-> >=20
+vim +91 drivers/block/null_blk/./trace.h
 
---=20
-Jeff Layton <jlayton@kernel.org>
+    72	
+    73	TRACE_EVENT(nullb_copy_op,
+    74			TP_PROTO(struct request *req,
+    75				 sector_t dst, sector_t src, size_t len),
+    76			TP_ARGS(req, dst, src, len),
+    77			TP_STRUCT__entry(
+    78					 __array(char, disk, DISK_NAME_LEN)
+    79					 __field(enum req_op, op)
+    80					 __field(sector_t, dst)
+    81					 __field(sector_t, src)
+    82					 __field(size_t, len)
+    83			),
+    84			TP_fast_assign(
+    85				       __entry->op = req_op(req);
+    86				       __assign_disk_name(__entry->disk, req->q->disk);
+    87				       __entry->dst = dst;
+    88				       __entry->src = src;
+    89				       __entry->len = len;
+    90			),
+  > 91			TP_printk("%s req=%-15s: dst=%llu, src=%llu, len=%lu",
+    92				  __print_disk_name(__entry->disk),
+    93				  blk_op_str(__entry->op),
+    94				  __entry->dst, __entry->src, __entry->len)
+    95	);
+    96	#endif /* _TRACE_NULLB_H */
+    97	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
