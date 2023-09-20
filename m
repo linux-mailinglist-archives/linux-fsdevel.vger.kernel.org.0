@@ -2,28 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4029F7A7F6B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Sep 2023 14:26:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 229F57A7D83
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Sep 2023 14:10:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236024AbjITM1B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Sep 2023 08:27:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37880 "EHLO
+        id S235285AbjITMKW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Sep 2023 08:10:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236032AbjITM06 (ORCPT
+        with ESMTP id S235650AbjITMKQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Sep 2023 08:26:58 -0400
+        Wed, 20 Sep 2023 08:10:16 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90B46F7;
-        Wed, 20 Sep 2023 05:26:40 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B244EC433C8;
-        Wed, 20 Sep 2023 12:26:38 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A5A893;
+        Wed, 20 Sep 2023 05:10:10 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52A46C433C9;
+        Wed, 20 Sep 2023 12:10:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1695212799;
-        bh=7w3wXte0Q5vscTjKLQyyQ9Qi+pOJACkbgZE+Qx2WhvY=;
+        s=korg; t=1695211809;
+        bh=qFv613Qiwy9+VVmHC1l8WL+djE5bSoO9LA0huFAHIA4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UK6KXZgbHlsUasqx1oAsJ5uphGPR+3k75a65VuYxbTVupA34BWG6lnBWADnMU2B5h
-         6uuFEl8mtoQOFaVXwsgIrETfqq4tdAkxrhXxr2dB5rGlGqK1m396UyNaueN6J0K6ed
-         bCj3AcauyiLJ0IS5tu2ucKXGHxU4XlOXHzqjr4ng=
+        b=q2O4+dh5/7R3Jn5oEYrs5ru1YQm1oBd77QPWKRPhwbr7MtXJr0Iz7BVb3kkminnRs
+         vBSXjwPXkUacN52Zj5G9ymNNI6faU5WJ3mRMqJ1inh/poqTL/YZQsPvWR4p3eaBEYb
+         icMD7W7DHKdu4UiNXds5ljWsOkQoC2SD8JndQXtI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -36,12 +36,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Matthew Wilcox <willy@infradead.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 050/367] eventfd: prevent underflow for eventfd semaphores
-Date:   Wed, 20 Sep 2023 13:27:07 +0200
-Message-ID: <20230920112859.785849886@linuxfoundation.org>
+Subject: [PATCH 4.19 044/273] eventfd: prevent underflow for eventfd semaphores
+Date:   Wed, 20 Sep 2023 13:28:04 +0200
+Message-ID: <20230920112847.780028922@linuxfoundation.org>
 X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20230920112858.471730572@linuxfoundation.org>
-References: <20230920112858.471730572@linuxfoundation.org>
+In-Reply-To: <20230920112846.440597133@linuxfoundation.org>
+References: <20230920112846.440597133@linuxfoundation.org>
 User-Agent: quilt/0.67
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -57,7 +57,7 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-5.4-stable review patch.  If anyone has any objections, please let me know.
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
@@ -117,10 +117,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/fs/eventfd.c b/fs/eventfd.c
-index 26b3d821e9168..e144094c831df 100644
+index a96de1f0377bc..66864100b823c 100644
 --- a/fs/eventfd.c
 +++ b/fs/eventfd.c
-@@ -185,7 +185,7 @@ void eventfd_ctx_do_read(struct eventfd_ctx *ctx, __u64 *cnt)
+@@ -178,7 +178,7 @@ void eventfd_ctx_do_read(struct eventfd_ctx *ctx, __u64 *cnt)
  {
  	lockdep_assert_held(&ctx->wqh.lock);
  
