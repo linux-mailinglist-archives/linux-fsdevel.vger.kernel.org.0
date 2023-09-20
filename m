@@ -2,62 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B5937A885F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Sep 2023 17:30:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41D737A88C0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Sep 2023 17:45:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236640AbjITPar (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Sep 2023 11:30:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33672 "EHLO
+        id S236731AbjITPph (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Sep 2023 11:45:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235301AbjITPap (ORCPT
+        with ESMTP id S234533AbjITPpf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Sep 2023 11:30:45 -0400
+        Wed, 20 Sep 2023 11:45:35 -0400
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D5F58F;
-        Wed, 20 Sep 2023 08:30:39 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 224E7A3;
+        Wed, 20 Sep 2023 08:45:29 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 3EDCD21F9F;
-        Wed, 20 Sep 2023 15:30:37 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id BF6E422037;
+        Wed, 20 Sep 2023 15:45:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1695223837; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1695224727; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=Z07gJ0ljk8a9zukVNTeRislBXMh7pJ7EEuF8a+v+/FI=;
-        b=cPiRr5NlB4Iwub7EwKz86boVSJQJZ3WLxzLaU6G09EfO4FmtVOdy7KUFneBvjrGmUR3ITh
-        2SAzepsqhIpBmvq/dM3lwFGS4jeZb1JiYpwLyM/YRSlBcScjreBuxS42wYeBxMo6k0JIzb
-        vOOpZeXkJqjpWBWmAFVZOTXkw8HJ8lk=
+        bh=Gw0GfkzEv5qjhmPaYmrLrmVLcBgiouetaUVK1NJf9SE=;
+        b=gDmHlI6XIITA9cWR7273bMWfTaFm79ZWCKV9DUbgwsMsYlQtttv7ABQywrVa7BRoFxk5Vs
+        fY8Ytovd+JgcWaHYYF/cazBOkeQAnuEbAgfy+zWX2EEn3UHUxNv8SLgNC/S16/CAgBAqvG
+        jDzYA0P8qRNq8WfC9VqpMNAjW8ajDQM=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1695223837;
+        s=susede2_ed25519; t=1695224727;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=Z07gJ0ljk8a9zukVNTeRislBXMh7pJ7EEuF8a+v+/FI=;
-        b=6KZkGGsMv2dh1rvGNnyToBfPP9oSwDD0PDv8XeIzbn7pcxdfbwlBblC3C43EGbanxkRyi5
-        mASfcKX9dgdX2bCw==
+        bh=Gw0GfkzEv5qjhmPaYmrLrmVLcBgiouetaUVK1NJf9SE=;
+        b=486eKcFxONt6Xlrpd7pWWA685BmUhAvAAZoUWjfk3k5wgXtMAG8bbabr8rPv7UJw6UUY7B
+        IV+4KbXuBo0SdmBw==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 29F7813A64;
-        Wed, 20 Sep 2023 15:30:37 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id AA9FC13A64;
+        Wed, 20 Sep 2023 15:45:27 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id Fng8Ch0QC2WORwAAMHmgww
-        (envelope-from <jack@suse.cz>); Wed, 20 Sep 2023 15:30:37 +0000
+        id sEc2KZcTC2VITwAAMHmgww
+        (envelope-from <jack@suse.cz>); Wed, 20 Sep 2023 15:45:27 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 97616A077D; Wed, 20 Sep 2023 17:30:36 +0200 (CEST)
-Date:   Wed, 20 Sep 2023 17:30:36 +0200
+        id 33A59A077D; Wed, 20 Sep 2023 17:45:27 +0200 (CEST)
+Date:   Wed, 20 Sep 2023 17:45:27 +0200
 From:   Jan Kara <jack@suse.cz>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Chuck Lever III <chuck.lever@oracle.com>,
-        Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>,
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>,
         Bruno Haible <bruno@clisp.org>,
-        Xi Ruoyao <xry111@linuxfromscratch.org>,
-        "bug-gnulib@gnu.org" <bug-gnulib@gnu.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
+        Xi Ruoyao <xry111@linuxfromscratch.org>, bug-gnulib@gnu.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         Eric Van Hensbergen <ericvh@kernel.org>,
         Latchesar Ionkov <lucho@ionkov.net>,
         Dominique Martinet <asmadeus@codewreck.org>,
@@ -67,8 +65,7 @@ Cc:     Chuck Lever III <chuck.lever@oracle.com>,
         Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
         David Sterba <dsterba@suse.com>, Xiubo Li <xiubli@redhat.com>,
         Ilya Dryomov <idryomov@gmail.com>,
-        Jan Harkes <jaharkes@cs.cmu.edu>,
-        "coda@cs.cmu.edu" <coda@cs.cmu.edu>,
+        Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu,
         Tyler Hicks <code@tyhicks.com>, Gao Xiang <xiang@kernel.org>,
         Chao Yu <chao@kernel.org>, Yue Hu <huyue2@coolpad.com>,
         Jeffle Xu <jefflexu@linux.alibaba.com>,
@@ -107,45 +104,33 @@ Cc:     Chuck Lever III <chuck.lever@oracle.com>,
         Amir Goldstein <l@gmail.com>,
         "Darrick J. Wong" <djwong@kernel.org>,
         Benjamin Coddington <bcodding@redhat.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "v9fs@lists.linux.dev" <v9fs@lists.linux.dev>,
-        "linux-afs@lists.infradead.org" <linux-afs@lists.infradead.org>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-        "codalist@coda.cs.cmu.edu" <codalist@coda.cs.cmu.edu>,
-        "ecryptfs@vger.kernel.org" <ecryptfs@vger.kernel.org>,
-        "linux-erofs@lists.ozlabs.org" <linux-erofs@lists.ozlabs.org>,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-        "linux-f2fs-devel@lists.sourceforge.net" 
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        "cluster-devel@redhat.com" <cluster-devel@redhat.com>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        "ntfs3@lists.linux.dev" <ntfs3@lists.linux.dev>,
-        "ocfs2-devel@lists.linux.dev" <ocfs2-devel@lists.linux.dev>,
-        "devel@lists.orangefs.org" <devel@lists.orangefs.org>,
-        "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>,
-        "samba-technical@lists.samba.org" <samba-technical@lists.samba.org>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-unionfs@vger.kernel.org" <linux-unionfs@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
+        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-nfs@vger.kernel.org, ntfs3@lists.linux.dev,
+        ocfs2-devel@lists.linux.dev, devel@lists.orangefs.org,
+        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+        linux-mtd@lists.infradead.org, linux-mm@kvack.org,
+        linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org
 Subject: Re: [PATCH v7 12/13] ext4: switch to multigrain timestamps
-Message-ID: <20230920153036.pfg5h4aoed6ua6s3@quack3>
-References: <20230919110457.7fnmzo4nqsi43yqq@quack3>
+Message-ID: <20230920154527.pkwot4nu2nzrnamd@quack3>
+References: <20230807-mgctime-v7-0-d1dec143a704@kernel.org>
+ <20230919110457.7fnmzo4nqsi43yqq@quack3>
  <1f29102c09c60661758c5376018eac43f774c462.camel@kernel.org>
  <4511209.uG2h0Jr0uP@nimes>
  <08b5c6fd3b08b87fa564bb562d89381dd4e05b6a.camel@kernel.org>
  <20230920-leerung-krokodil-52ec6cb44707@brauner>
  <20230920101731.ym6pahcvkl57guto@quack3>
  <317d84b1b909b6c6519a2406fcb302ce22dafa41.camel@kernel.org>
- <20230920-raser-teehaus-029cafd5a6e4@brauner>
- <57C103E1-1AD2-4D86-926C-481BC6BDB191@oracle.com>
- <20230920-keine-eile-c9755b5825db@brauner>
+ <20230920124823.ghl6crb5sh4x2pmt@quack3>
+ <ca82af4d6a72d7f83223c0ddd74fd9f7bcfa96b1.camel@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230920-keine-eile-c9755b5825db@brauner>
+In-Reply-To: <ca82af4d6a72d7f83223c0ddd74fd9f7bcfa96b1.camel@kernel.org>
 X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
         SPF_HELO_NONE,SPF_SOFTFAIL autolearn=no autolearn_force=no
@@ -156,35 +141,97 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 20-09-23 16:53:26, Christian Brauner wrote:
-> > You could put it behind an EXPERIMENTAL Kconfig option so that the
-> > code stays in and can be used by the brave or foolish while it is
-> > still being refined.
+On Wed 20-09-23 10:12:03, Jeff Layton wrote:
+> On Wed, 2023-09-20 at 14:48 +0200, Jan Kara wrote:
+> > On Wed 20-09-23 06:35:18, Jeff Layton wrote:
+> > > On Wed, 2023-09-20 at 12:17 +0200, Jan Kara wrote:
+> > > > If I were a sysadmin, I'd rather opt for something like
+> > > > finegrained timestamps + lazytime (if I needed the finegrained timestamps
+> > > > functionality). That should avoid the IO overhead of finegrained timestamps
+> > > > as well and I'd know I can have problems with timestamps only after a
+> > > > system crash.
+> > > 
+> > > > I've just got another idea how we could solve the problem: Couldn't we
+> > > > always just report coarsegrained timestamp to userspace and provide access
+> > > > to finegrained value only to NFS which should know what it's doing?
+> > > > 
+> > > 
+> > > I think that'd be hard. First of all, where would we store the second
+> > > timestamp? We can't just truncate the fine-grained ones to come up with
+> > > a coarse-grained one. It might also be confusing having nfsd and local
+> > > filesystems present different attributes.
+> > 
+> > So what I had in mind (and I definitely miss all the NFS intricacies so the
+> > idea may be bogus) was that inode->i_ctime would be maintained exactly as
+> > is now. There will be new (kernel internal at least for now) STATX flag
+> > STATX_MULTIGRAIN_TS. fill_mg_cmtime() will return timestamp truncated to
+> > sb->s_time_gran unless STATX_MULTIGRAIN_TS is set. Hence unless you set
+> > STATX_MULTIGRAIN_TS, there is no difference in the returned timestamps
+> > compared to the state before multigrain timestamps were introduced. With
+> > STATX_MULTIGRAIN_TS we return full precision timestamp as stored in the
+> > inode. Then NFS in fh_fill_pre_attrs() and fh_fill_post_attrs() needs to
+> > make sure STATX_MULTIGRAIN_TS is set when calling vfs_getattr() to get
+> > multigrain time.
 > 
-> Given that the discussion has now fully gone back to the drawing board
-> and this is a regression the honest thing to do is to revert the five
-> patches that introduce the infrastructure:
+> > I agree nfsd may now be presenting slightly different timestamps than user
+> > is able to see with stat(2) directly on the filesystem. But is that a
+> > problem? Essentially it is a similar solution as the mgtime mount option
+> > but now sysadmin doesn't have to decide on filesystem mount how to report
+> > timestamps but the stat caller knowingly opts into possibly inconsistent
+> > (among files) but high precision timestamps. And in the particular NFS
+> > usecase where stat is called all the time anyway, timestamps will likely
+> > even be consistent among files.
+> > 
 > 
-> ffb6cf19e063 ("fs: add infrastructure for multigrain timestamps")
-> d48c33972916 ("tmpfs: add support for multigrain timestamps")
-> e44df2664746 ("xfs: switch to multigrain timestamps")
-> 0269b585868e ("ext4: switch to multigrain timestamps")
-> 50e9ceef1d4f ("btrfs: convert to multigrain timestamps")
+> I like this idea...
 > 
-> The conversion to helpers and cleanups are sane and should stay and can
-> be used for any solution that gets built on top of it.
-> 
-> I'd appreciate a look at the branch here:
-> git://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.ctime.revert
-> 
-> survives xfstests.
+> Would we also need to raise sb->s_time_gran to something corresponding
+> to HZ on these filesystems?
 
-Agreed. I think most of ffb6cf19e063 ("fs: add infrastructure for
-multigrain timestamps") will be needed anyway but there's no problem in
-reintroducing it in the new solution. I've checked the branch and the
-reverts look good to me. Feel free to add:
+I was actually confused a bit about how timestamp_truncate() works. The
+jiffie granularity is just direct consequence of current_time() using
+ktime_get_coarse_real_ts64() and not of timestamp_truncate().
+sb->s_time_gran seems to be more about the on-disk format so it doesn't
+seem like a great idea to touch it. So probably we can just truncate
+timestamps in generic_fillattr() to HZ granularity unconditionally.
 
-Acked-by: Jan Kara <jack@suse.cz>
+> If we truncate the timestamps at a granularity corresponding to HZ before
+> presenting them via statx and the like then that should work around the
+> problem with programs that compare timestamps between inodes.
+
+Exactly.
+
+> With NFSv4, when a filesystem doesn't report a STATX_CHANGE_COOKIE, nfsd
+> will fake one up using the ctime. It's fine for that to use a full fine-
+> grained timestamp since we don't expect to be able to compare that value
+> with one of a different inode.
+
+Yes.
+
+> I think we'd want nfsd to present the mtime/ctime values as truncated,
+> just like we would with a local fs. We could hit the same problem of an
+> earlier-looking timestamp with NFS if we try to present the actual fine-
+> grained values to the clients. IOW, I'm convinced that we need to avoid
+> this behavior in most situations.
+
+I wasn't sure if there's a way to do this within NFS - i.e., if the value
+communicated via NFSv3 protocol (I know v4 has a special change cookie
+field for it) that gets used for detecting need to revalidate file contents
+isn't the one presented to client's userspace as ctime. If there's a way to
+do this then great, I'm all for presenting truncated timestamps even for
+NFS.
+
+> If we do this, then we technically don't need the mount option either.
+
+Yes, that was my hope.
+
+> We could still add it though, and have it govern whether fill_mg_cmtime
+> truncates the timestamps before storing them in the kstat.
+
+Well, if we decide these timestamps are useful for userspace as well, I'd
+rather make that a userspace visible STATX flag than a mount option. So
+applications aware of the pitfalls can get high precision timestamps
+without possibly breaking unaware applications.
 
 								Honza
 -- 
