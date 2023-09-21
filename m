@@ -2,102 +2,225 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B9DA7A9E21
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Sep 2023 21:56:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A58857AA310
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Sep 2023 23:46:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230167AbjIUT4h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Sep 2023 15:56:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44996 "EHLO
+        id S232802AbjIUVqf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Sep 2023 17:46:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230151AbjIUT4R (ORCPT
+        with ESMTP id S231373AbjIUVqY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Sep 2023 15:56:17 -0400
-Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94649E0DD
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Sep 2023 12:46:54 -0700 (PDT)
-Received: by mail-lj1-x22c.google.com with SMTP id 38308e7fff4ca-2c00e1d4c08so22944421fa.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Sep 2023 12:46:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1695325612; x=1695930412; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=PBK/gazFsyzXOKB+rBrmhryzG1knngQqKvlNh1yC244=;
-        b=EsADxX/l8bpSbBR0dOwOGRhFA/s32coC4juMuGu8Ot+SRhWVPckVxv5JqDr9TDrCPd
-         nXd+sCZGp9thaoONzvgcToC98HSNv1oBvfAUH+NUpHKDtYu6+TXZWE5aNsqoeWVKI6pB
-         POx0yugFS+EPmoHsXcwLnTmNZYGNgY5WU6nzs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695325612; x=1695930412;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PBK/gazFsyzXOKB+rBrmhryzG1knngQqKvlNh1yC244=;
-        b=Fov9ucmRCMesdp3mzdRbcbDkYC1czn8aT4pFH9QdqZsK+rU/3ZRB47JnqYt6Nuwm3L
-         wgAHKw+VtNKXFIyj0KNYS1bbtRUwSSZ3gFCczV/mpUxMqa8Qs0Awjb9cVyO7/7bvWi29
-         SWSdbqVvx4wJVLnDul0tU1J/j9QO5gPFqZot+rPI0lsCo2235nsht+pdHK3E1Qmc8Z69
-         H0rP2pNjgG3Tk0RLqwTh7yY7L4NoLJmsKAe2Bewwp3QMp9wzE5aASTtm853l8EnOwq0h
-         H/z/tzs3i+Glr/YkJ8o9/mB9sX2A38vUI0cBGt14qT8IBaCbs2CI3qPvEslySwCXJFTR
-         MH2Q==
-X-Gm-Message-State: AOJu0Yy/US3hmV7/3Chzd1it2DwwrPoCBknoATDHqffF0L5ELJXCwcKE
-        alZgVLu609pQSkjLsyPFJm4fC41BBJ84zlouI07dYxob
-X-Google-Smtp-Source: AGHT+IEGpHh1NzX991InEpLtF7pOcdwzuSvr1QWRRwXJNIOyat/lq0w7rNP79EYq2WbCK9D/C52vJQ==
-X-Received: by 2002:a2e:96c5:0:b0:2bf:df8c:4e56 with SMTP id d5-20020a2e96c5000000b002bfdf8c4e56mr6396882ljj.39.1695325612560;
-        Thu, 21 Sep 2023 12:46:52 -0700 (PDT)
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com. [209.85.167.49])
-        by smtp.gmail.com with ESMTPSA id f8-20020a2e6a08000000b002c0055834b3sm505958ljc.4.2023.09.21.12.46.51
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Sep 2023 12:46:51 -0700 (PDT)
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5043120ffbcso1421779e87.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Sep 2023 12:46:51 -0700 (PDT)
-X-Received: by 2002:a05:6512:2013:b0:502:ffdf:b098 with SMTP id
- a19-20020a056512201300b00502ffdfb098mr4997773lfb.6.1695325611372; Thu, 21 Sep
- 2023 12:46:51 -0700 (PDT)
+        Thu, 21 Sep 2023 17:46:24 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4BA05158C;
+        Thu, 21 Sep 2023 10:15:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1695316539; x=1726852539;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=D2Ofh4NhqIgE7X1sOt5XtBxAR4C9rpdFRo7VG5iLwuA=;
+  b=KHvCncRSrBruGvH+50Kzeqz0hI190vMoeAaMPYNqi/DKx6bH/+pwcu+T
+   7ISPlgSAOpVv/9rAQ1AASpc3LdOc2ec90SoxCzTu8LfL7ORZE97YCK38+
+   LPCEZIzg9RI7BB4jSnpCEvfcmED2C1PVm/raU41zajX11Crudp3clWwTe
+   mSeTYJLXS7U3wbJ8czV5XhnqjiUQdYx8EQzWGn2XmPEV2003tRaJVFcYV
+   R/H5YvNaDJvUyOH64W3we1R/l2tY0qolAyk42QfnVun/FuWlzezSY33Ny
+   GIFb6FBEg2K+ZpDplNCdxU//pzcvuXI+qrnPySJkp5Obw0Tek+e7x+YXF
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10839"; a="380337398"
+X-IronPort-AV: E=Sophos;i="6.03,164,1694761200"; 
+   d="scan'208";a="380337398"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2023 22:58:13 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10839"; a="740494287"
+X-IronPort-AV: E=Sophos;i="6.03,164,1694761200"; 
+   d="scan'208";a="740494287"
+Received: from binbinwu-mobl.ccr.corp.intel.com (HELO [10.93.17.222]) ([10.93.17.222])
+  by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2023 22:58:02 -0700
+Message-ID: <f9ca9457-ca64-484c-7306-97a3236210da@linux.intel.com>
+Date:   Thu, 21 Sep 2023 13:58:00 +0800
 MIME-Version: 1.0
-References: <20230921-umgekehrt-buden-a8718451ef7c@brauner>
- <CAHk-=wgoNW9QmEzhJR7C1_vKWKr=8JoD4b7idQDNHOa10P_i4g@mail.gmail.com>
- <0d006954b698cb1cea3a93c1662b5913a0ded3b1.camel@kernel.org> <CAHk-=whAwTJduUZTrsLFnj1creZMfO7eCNERHXZQmzX+qLqZMA@mail.gmail.com>
-In-Reply-To: <CAHk-=whAwTJduUZTrsLFnj1creZMfO7eCNERHXZQmzX+qLqZMA@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 21 Sep 2023 12:46:34 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjDAqOs5TFuxxEOSST-5-LJJkAS5cEMrDu-pgiYsrjyNw@mail.gmail.com>
-Message-ID: <CAHk-=wjDAqOs5TFuxxEOSST-5-LJJkAS5cEMrDu-pgiYsrjyNw@mail.gmail.com>
-Subject: Re: [GIT PULL v2] timestamp fixes
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jan Kara <jack@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [RFC PATCH v12 14/33] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
+ guest-specific backing memory
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kvmarm@lists.linux.dev, linux-mips@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org,
+        linux-riscv@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Anup Patel <anup@brainfault.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        Fuad Tabba <tabba@google.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Anish Moorthy <amoorthy@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Isaku Yamahata <isaku.yamahata@intel.com>,
+        Xu Yilun <yilun.xu@intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Ackerley Tng <ackerleytng@google.com>,
+        Maciej Szmigiero <mail@maciej.szmigiero.name>,
+        David Hildenbrand <david@redhat.com>,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>,
+        Wang <wei.w.wang@intel.com>,
+        Liam Merwick <liam.merwick@oracle.com>,
+        Isaku Yamahata <isaku.yamahata@gmail.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+References: <20230914015531.1419405-1-seanjc@google.com>
+ <20230914015531.1419405-15-seanjc@google.com>
+ <e397d30c-c6af-e68f-d18e-b4e3739c5389@linux.intel.com>
+ <ZQsAiGuw/38jIOV7@google.com>
+From:   Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <ZQsAiGuw/38jIOV7@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-5.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 21 Sept 2023 at 12:28, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+
+
+On 9/20/2023 10:24 PM, Sean Christopherson wrote:
+> On Tue, Sep 19, 2023, Binbin Wu wrote:
+>>
+>> On 9/14/2023 9:55 AM, Sean Christopherson wrote:
+>> [...]
+>>> +
+>>> +static void kvm_gmem_invalidate_begin(struct kvm_gmem *gmem, pgoff_t start,
+>>> +				      pgoff_t end)
+>>> +{
+>>> +	struct kvm_memory_slot *slot;
+>>> +	struct kvm *kvm = gmem->kvm;
+>>> +	unsigned long index;
+>>> +	bool flush = false;
+>>> +
+>>> +	KVM_MMU_LOCK(kvm);
+>>> +
+>>> +	kvm_mmu_invalidate_begin(kvm);
+>>> +
+>>> +	xa_for_each_range(&gmem->bindings, index, slot, start, end - 1) {
+>>> +		pgoff_t pgoff = slot->gmem.pgoff;
+>>> +
+>>> +		struct kvm_gfn_range gfn_range = {
+>>> +			.start = slot->base_gfn + max(pgoff, start) - pgoff,
+>>> +			.end = slot->base_gfn + min(pgoff + slot->npages, end) - pgoff,
+>>> +			.slot = slot,
+>>> +			.may_block = true,
+>>> +		};
+>>> +
+>>> +		flush |= kvm_mmu_unmap_gfn_range(kvm, &gfn_range);
+>>> +	}
+>>> +
+>>> +	if (flush)
+>>> +		kvm_flush_remote_tlbs(kvm);
+>>> +
+>>> +	KVM_MMU_UNLOCK(kvm);
+>>> +}
+>>> +
+>>> +static void kvm_gmem_invalidate_end(struct kvm_gmem *gmem, pgoff_t start,
+>>> +				    pgoff_t end)
+>>> +{
+>>> +	struct kvm *kvm = gmem->kvm;
+>>> +
+>>> +	KVM_MMU_LOCK(kvm);
+>>> +	if (xa_find(&gmem->bindings, &start, end - 1, XA_PRESENT))
+>>> +		kvm_mmu_invalidate_end(kvm);
+>> kvm_mmu_invalidate_begin() is called unconditionally in
+>> kvm_gmem_invalidate_begin(),
+>> but kvm_mmu_invalidate_end() is not here.
+>> This makes the kvm_gmem_invalidate_{begin, end}() calls asymmetric.
+> Another ouch :-(
 >
-> And that's ok when we're talking about times that are kernel running
-> times and we haev a couple of centuries to say "ok, we'll need to make
-> it be a bigger type",
+> And there should be no need to acquire mmu_lock() unconditionally, the inode's
+> mutex protects the bindings, not mmu_lock.
+>
+> I'll get a fix posted today.  I think KVM can also add a sanity check to detect
+> unresolved invalidations, e.g.
+>
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index 7ba1ab1832a9..2a2d18070856 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -1381,8 +1381,13 @@ static void kvm_destroy_vm(struct kvm *kvm)
+>           * No threads can be waiting in kvm_swap_active_memslots() as the
+>           * last reference on KVM has been dropped, but freeing
+>           * memslots would deadlock without this manual intervention.
+> +        *
+> +        * If the count isn't unbalanced, i.e. KVM did NOT unregister between
+> +        * a start() and end(), then there shouldn't be any in-progress
+> +        * invalidations.
+>           */
+>          WARN_ON(rcuwait_active(&kvm->mn_memslots_update_rcuwait));
+> +       WARN_ON(!kvm->mn_active_invalidate_count && kvm->mmu_invalidate_in_progress);
+>          kvm->mn_active_invalidate_count = 0;
+>   #else
+>          kvm_flush_shadow_all(kvm);
+>
+>
+> or an alternative style
+>
+> 	if (kvm->mn_active_invalidate_count)
+> 		kvm->mn_active_invalidate_count = 0;
+> 	else
+> 		WARN_ON(kvm->mmu_invalidate_in_progress)
+>
+>>> +	KVM_MMU_UNLOCK(kvm);
+>>> +}
+>>> +
+>>> +static long kvm_gmem_punch_hole(struct inode *inode, loff_t offset, loff_t len)
+>>> +{
+>>> +	struct list_head *gmem_list = &inode->i_mapping->private_list;
+>>> +	pgoff_t start = offset >> PAGE_SHIFT;
+>>> +	pgoff_t end = (offset + len) >> PAGE_SHIFT;
+>>> +	struct kvm_gmem *gmem;
+>>> +
+>>> +	/*
+>>> +	 * Bindings must stable across invalidation to ensure the start+end
+>>> +	 * are balanced.
+>>> +	 */
+>>> +	filemap_invalidate_lock(inode->i_mapping);
+>>> +
+>>> +	list_for_each_entry(gmem, gmem_list, entry) {
+>>> +		kvm_gmem_invalidate_begin(gmem, start, end);
+>>> +		kvm_gmem_invalidate_end(gmem, start, end);
+>>> +	}
+>> Why to loop for each gmem in gmem_list here?
+>>
+>> IIUIC, offset is the offset according to the inode, it is only meaningful to
+>> the inode passed in, i.e, it is only meaningful to the gmem binding with the
+>> inode, not others.
+> The code is structured to allow for multiple gmem instances per inode.  This isn't
+> actually possible in the initial code base, but it's on the horizon[*].  I included
+> the list-based infrastructure in this initial series to ensure that guest_memfd
+> can actually support multiple files per inode, and to minimize the churn when the
+> "link" support comes along.
+>
+> [*] https://lore.kernel.org/all/cover.1691446946.git.ackerleytng@google.com
+Got it, thanks for the explanation!
 
-Note that the "couple of centuries" here is mostly the machine uptime,
-not necessarily "we'll need to change the time in the year 2292".
 
-Although we do also have "ktime_get_real()" which is encoding the
-whole "nanoseconds since 1970". That *will* break in 2292.
 
-Anyway, regardless, I am *not* suggesting that ktime_t would be useful
-for filesystems, because of this issue.
-
-I *do* suspect that we might consider a "tenth of a microsecond", though.
-
-Resolution-wise, it's pretty much in the "system call time" order of
-magnitude, and if we have Linux filesystems around in the year-31k,
-I'll happily consider it to be a SEP thing at that point ("somebody
-else's problem").
-
-                  Linus
