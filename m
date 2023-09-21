@@ -2,77 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CD4497A9D43
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Sep 2023 21:30:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 838FC7A9E61
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Sep 2023 22:00:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229561AbjIUTaW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Sep 2023 15:30:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48816 "EHLO
+        id S231335AbjIUUA7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Sep 2023 16:00:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231133AbjIUT3t (ORCPT
+        with ESMTP id S231484AbjIUUA1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Sep 2023 15:29:49 -0400
-Received: from mail-yw1-x112e.google.com (mail-yw1-x112e.google.com [IPv6:2607:f8b0:4864:20::112e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CDD4ADF20
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Sep 2023 11:04:44 -0700 (PDT)
-Received: by mail-yw1-x112e.google.com with SMTP id 00721157ae682-59c268676a9so15626737b3.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Sep 2023 11:04:44 -0700 (PDT)
+        Thu, 21 Sep 2023 16:00:27 -0400
+Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35D8AD4814
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Sep 2023 11:25:04 -0700 (PDT)
+Received: by mail-lj1-x22b.google.com with SMTP id 38308e7fff4ca-2b962c226ceso21528561fa.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Sep 2023 11:25:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1695319484; x=1695924284; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AdMCh/+yCsduMbxg3dBOP8pPO/0inss321VX5z7Cslw=;
-        b=4cF7X2KPVdvj/7607ekIQaEkhcmXERPq1+VVvEJRyxyWaezd5rbC9thCnzqB94ztKQ
-         +TfEJjXpFjfWkyJ7KrTjFUq/3rbF6WwXPHNTkgibkgKgzTNtmgz6JLTqCy7o63154Lw3
-         JkijIXtRuB5qgVnzVQDXUkKyg8OcoA9NjUM5tN1WkyYYZ/MTOyy3tiwOJUzqcpq7ffVi
-         mppntYxKiaZkni8p7pmOPe1W7cLQWJ6GIpyVeefZ94o1e7MaT8OitlV73/fewMZGB8gU
-         ec6vw1Nrqc9ThSRrDbZO2GoHt7qiX1QK5AIYPua8zhISucW8WmL7bZS3PgjfWV60lQU2
-         Ip4g==
+        d=linux-foundation.org; s=google; t=1695320702; x=1695925502; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=uDCsdJjp/GQ+Gh7L2otFH827lj9wOoNnRjLWZyU2JH0=;
+        b=JDznRerxh9gF1teTJdIJ/ZTjo8zSlfFHDj744hM3H4DnDggRMjTGUH4HaCm+xar5hc
+         Ef0oPS2BPlLJ1PF7n8Q9qSsff5MRm6KJ8MOYulsDqf84WUGd3N36n3awFnC5W0L6QR7J
+         Uix87punZwIFFUeZ2PHjgpqbpQf1RUiuQJG0s=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695319484; x=1695924284;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AdMCh/+yCsduMbxg3dBOP8pPO/0inss321VX5z7Cslw=;
-        b=wzeOSmEQL2KKMCrEs7taVEIj5YnHZS686MB5w/zL9B0Kc5AvyEvLB82ksae0P2jYwF
-         MaDahjAKwMhJREJStPx9+sIN8QrmoHmIq2wCprxV9MZ7Qii8v3P6QBGJepNSPrG+7kPG
-         n8vdgmjnBBa4Gu2oc4lAEJ1gIwBSOrhLik1FueTwoYCWpcwMHF/h636rNd2Boqr3d12a
-         NKeVZff+HSVgKynViSuNmtobzijNrVqWhOiOnRvtFwDeAl+o6CZJXZ5G7/lQzAhKq1aW
-         64IgxDYJE7589IueuN3r8H37dbqaUHHqNAI+hn1h3akMhvbngUYPa/IlItTxyfQKOATE
-         xcVA==
-X-Gm-Message-State: AOJu0Ywh4kvZt2X4JwCHe06JV6+XEnaO42cdx8FzbcgsyYXadab6Mmz0
-        fs/Xo1roY+nQ4vya3MjXOGM5YT4lBplGi+0mLNIpog==
-X-Google-Smtp-Source: AGHT+IFlXUKdQWPSBHJn1j/MDvMjTmPT/VMWQg4H/xOs81/J/jwuJ8JJXX1pfb+Adw8urZJBbplJpBr1hxqfZ6IXHLI=
-X-Received: by 2002:a25:dbca:0:b0:d5c:ce73:6528 with SMTP id
- g193-20020a25dbca000000b00d5cce736528mr5584392ybf.35.1695319483599; Thu, 21
- Sep 2023 11:04:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1695320702; x=1695925502;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uDCsdJjp/GQ+Gh7L2otFH827lj9wOoNnRjLWZyU2JH0=;
+        b=bjZ8Bs1jPJ/F9Rs7VHU51TzfSbrQihrFA66/Qlui1ZjfFAdjj8mcj2q1c2eeMo+lZc
+         vjMO5qePjv8RxVhaub/UOHkK0VWISVAlzXzkpdYcGKr8HCngSzKMiw3NoIjf7zisuJaH
+         w4o9p0MtJwQsjk1YsHNbZoqJDN4QPchH9vY+36WNqrZmY7QMbILlp68hc4cmmd233NDO
+         op0emuhWVT7qbOztXoR5nhXFxkhGDxE1CPrT1+UAFPL8il+FOHez+Y7zZBwnVPZuMkFb
+         /sDvHRD22F/7CAbagsUmanGLpaAVPAWsQNfZ1bHKmPJ+eS/9M6CSaz+VYtG+Zpehykc0
+         7W9g==
+X-Gm-Message-State: AOJu0YxfV2keeM961WCg2vNd+nYXwPQ7akMXOt2dGEHa/fWut9EE2vAC
+        FxW7R425Bc6Tc1T/iG/FvyZc1r0zq1lICuNLqB7b1zHn
+X-Google-Smtp-Source: AGHT+IG46FqFbZUANNDR3Zxv4gaxsZzOW9UNqRngYRW7iacJfNKk+av5udLY1UGCiNKn5mU7MRfQHw==
+X-Received: by 2002:a2e:3609:0:b0:2c0:240:b574 with SMTP id d9-20020a2e3609000000b002c00240b574mr5503065lja.31.1695320701935;
+        Thu, 21 Sep 2023 11:25:01 -0700 (PDT)
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com. [209.85.208.51])
+        by smtp.gmail.com with ESMTPSA id o26-20020a1709061b1a00b0099bcb44493fsm1438981ejg.147.2023.09.21.11.25.01
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Sep 2023 11:25:01 -0700 (PDT)
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5334d78c5f6so961116a12.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Sep 2023 11:25:01 -0700 (PDT)
+X-Received: by 2002:a05:6402:1a32:b0:525:6c9f:e1a3 with SMTP id
+ be18-20020a0564021a3200b005256c9fe1a3mr5642919edb.20.1695320700919; Thu, 21
+ Sep 2023 11:25:00 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230914152620.2743033-1-surenb@google.com> <20230914152620.2743033-3-surenb@google.com>
- <ZQNMze6SXdIm13CW@casper.infradead.org> <e77b75f9-ab9e-f20b-6484-22f73524c159@redhat.com>
- <f6e350f4-1bf3-ca10-93f8-c11db44ce62b@redhat.com>
-In-Reply-To: <f6e350f4-1bf3-ca10-93f8-c11db44ce62b@redhat.com>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Thu, 21 Sep 2023 18:04:30 +0000
-Message-ID: <CAJuCfpGqt1V5puRMhLkjG6F2T4xtsDY8qy--ZfBPNL9kxPyWtg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] userfaultfd: UFFDIO_REMAP uABI
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org,
-        viro@zeniv.linux.org.uk, brauner@kernel.org, shuah@kernel.org,
-        aarcange@redhat.com, lokeshgidra@google.com, peterx@redhat.com,
-        hughd@google.com, mhocko@suse.com, axelrasmussen@google.com,
-        rppt@kernel.org, Liam.Howlett@oracle.com, jannh@google.com,
-        zhangpeng362@huawei.com, bgeffon@google.com,
-        kaleshsingh@google.com, ngeoffray@google.com, jdduke@google.com,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        kernel-team@android.com
+References: <20230921-umgekehrt-buden-a8718451ef7c@brauner>
+In-Reply-To: <20230921-umgekehrt-buden-a8718451ef7c@brauner>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 21 Sep 2023 11:24:43 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgoNW9QmEzhJR7C1_vKWKr=8JoD4b7idQDNHOa10P_i4g@mail.gmail.com>
+Message-ID: <CAHk-=wgoNW9QmEzhJR7C1_vKWKr=8JoD4b7idQDNHOa10P_i4g@mail.gmail.com>
+Subject: Re: [GIT PULL v2] timestamp fixes
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -80,104 +74,78 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 14, 2023 at 6:45=E2=80=AFPM David Hildenbrand <david@redhat.com=
-> wrote:
+On Thu, 21 Sept 2023 at 04:21, Christian Brauner <brauner@kernel.org> wrote:
 >
-> On 14.09.23 20:43, David Hildenbrand wrote:
-> > On 14.09.23 20:11, Matthew Wilcox wrote:
-> >> On Thu, Sep 14, 2023 at 08:26:12AM -0700, Suren Baghdasaryan wrote:
-> >>> +++ b/include/linux/userfaultfd_k.h
-> >>> @@ -93,6 +93,23 @@ extern int mwriteprotect_range(struct mm_struct *d=
-st_mm,
-> >>>    extern long uffd_wp_range(struct vm_area_struct *vma,
-> >>>                       unsigned long start, unsigned long len, bool en=
-able_wp);
-> >>>
-> >>> +/* remap_pages */
-> >>> +extern void double_pt_lock(spinlock_t *ptl1, spinlock_t *ptl2);
-> >>> +extern void double_pt_unlock(spinlock_t *ptl1, spinlock_t *ptl2);
-> >>> +extern ssize_t remap_pages(struct mm_struct *dst_mm,
-> >>> +                      struct mm_struct *src_mm,
-> >>> +                      unsigned long dst_start,
-> >>> +                      unsigned long src_start,
-> >>> +                      unsigned long len, __u64 flags);
-> >>> +extern int remap_pages_huge_pmd(struct mm_struct *dst_mm,
-> >>> +                           struct mm_struct *src_mm,
-> >>> +                           pmd_t *dst_pmd, pmd_t *src_pmd,
-> >>> +                           pmd_t dst_pmdval,
-> >>> +                           struct vm_area_struct *dst_vma,
-> >>> +                           struct vm_area_struct *src_vma,
-> >>> +                           unsigned long dst_addr,
-> >>> +                           unsigned long src_addr);
-> >>
-> >> Drop the 'extern' markers from function declarations.
-> >>
-> >>> +int remap_pages_huge_pmd(struct mm_struct *dst_mm,
-> >>> +                    struct mm_struct *src_mm,
-> >>> +                    pmd_t *dst_pmd, pmd_t *src_pmd,
-> >>> +                    pmd_t dst_pmdval,
-> >>> +                    struct vm_area_struct *dst_vma,
-> >>> +                    struct vm_area_struct *src_vma,
-> >>> +                    unsigned long dst_addr,
-> >>> +                    unsigned long src_addr)
-> >>> +{
-> >>> +   pmd_t _dst_pmd, src_pmdval;
-> >>> +   struct page *src_page;
-> >>> +   struct anon_vma *src_anon_vma, *dst_anon_vma;
-> >>> +   spinlock_t *src_ptl, *dst_ptl;
-> >>> +   pgtable_t pgtable;
-> >>> +   struct mmu_notifier_range range;
-> >>> +
-> >>> +   src_pmdval =3D *src_pmd;
-> >>> +   src_ptl =3D pmd_lockptr(src_mm, src_pmd);
-> >>> +
-> >>> +   BUG_ON(!pmd_trans_huge(src_pmdval));
-> >>> +   BUG_ON(!pmd_none(dst_pmdval));
-> >>> +   BUG_ON(!spin_is_locked(src_ptl));
-> >>> +   mmap_assert_locked(src_mm);
-> >>> +   mmap_assert_locked(dst_mm);
-> >>> +   BUG_ON(src_addr & ~HPAGE_PMD_MASK);
-> >>> +   BUG_ON(dst_addr & ~HPAGE_PMD_MASK);
-> >>> +
-> >>> +   src_page =3D pmd_page(src_pmdval);
-> >>> +   BUG_ON(!PageHead(src_page));
-> >>> +   BUG_ON(!PageAnon(src_page));
-> >>
-> >> Better to add a src_folio =3D page_folio(src_page);
-> >> and then folio_test_anon() here.
-> >>
-> >>> +   if (unlikely(page_mapcount(src_page) !=3D 1)) {
-> >>
-> >> Brr, this is going to miss PTE mappings of this folio.  I think you
-> >> actually want folio_mapcount() instead, although it'd be more efficien=
-t
-> >> to look at folio->_entire_mapcount =3D=3D 1 and _nr_pages_mapped =3D=
-=3D 0.
-> >> Not wure what a good name for that predicate would be.
-> >
-> > We have
-> >
-> >    * It only works on non shared anonymous pages because those can
-> >    * be relocated without generating non linear anon_vmas in the rmap
-> >    * code.
-> >    *
-> >    * It provides a zero copy mechanism to handle userspace page faults.
-> >    * The source vma pages should have mapcount =3D=3D 1, which can be
-> >    * enforced by using madvise(MADV_DONTFORK) on src vma.
-> >
-> > Use PageAnonExclusive(). As long as KSM is not involved and you don't
-> > use fork(), that flag should be good enough for that use case here.
-> >
-> ... and similarly don't do any of that swapcount stuff and only check if
-> the swap pte is anon exclusive.
+>   git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/v6.6-rc3.vfs.ctime.revert
 
-I'm preparing v2 and this is the only part left for me to address but
-I'm not clear how. David, could you please clarify how I should be
-checking swap pte to be exclusive without swapcount?
+So for some reason pr-tracker-bot doesn't seem to have reacted to this
+pull request, but it's in my tree now.
 
->
-> --
-> Cheers,
->
-> David / dhildenb
->
+I *do* have one reaction to all of this: now that you have made
+"i_ctime" be something that cannot be accessed directly (and renamed
+it to "__i_ctime"), would you mind horribly going all the way, and do
+the same for i_atime and i_mtime too?
+
+The reason I ask is that I *really* despise "struct timespec64" as a type.
+
+I despise it inherently, but I despise it even more when you really
+use it as another type entirely, and are hiding bits in there.
+
+I despise it because "tv_sec" obviously needs to be 64-bit, but then
+"tv_nsec" is this horrible abomination. It's defined as "long", which
+is all kinds of crazy. It's bogus and historical.
+
+And it's wasteful.
+
+Now, in the case of i_ctime, you took advantage of that waste by using
+one (of the potentially 2..34!) unused bits for that
+"fine-granularity" flag.
+
+But even when you do that, there's up to 33 other bits just lying
+around, wasting space in a very central data structure.
+
+So it would actually be much better to explode the 'struct timespec64'
+into explicit 64-bit seconds field, and an explicit 32-bit field with
+two bits reserved. And not even next to each other, because they don't
+pack well in general.
+
+So instead of
+
+        struct timespec64       i_atime;
+        struct timespec64       i_mtime;
+        struct timespec64       __i_ctime;
+
+where that last one needs accessors to access, just make them *all*
+have helper accessors, and make it be
+
+        u64  i_atime_sec;
+        u64  i_mtime_sec;
+        u64  i_ctime_sec;
+        u32  i_atime_nsec;
+        u32  i_mtime_nsec;
+        u32  i_ctime_nsec;
+
+and now that 'struct inode' should shrink by 12 bytes.
+
+Then do this:
+
+  #define inode_time(x) \
+       (struct timespec64) { x##_sec, x##_nsec }
+
+and you can now create a timespec64 by just doing
+
+    inode_time(inode->i_atime)
+
+or something like that (to help create those accessor functions).
+
+Now, I agree that 12 bytes in the disaster that is 'struct inode' is
+likely a drop in the ocean. We have tons of big things in there (ie
+several list_heads, a whole 'struct address_space' etc etc), so it's
+only twelve bytes out of hundreds.
+
+But dammit, that 'timespec64' really is ugly, and now that you're
+hiding bits in it and it's no longer *really* a 'timespec64', I feel
+like it would be better to do it right, and not mis-use a type that
+has other semantics, and has other problems.
+
+              Linus
