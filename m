@@ -2,88 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A3D47A9E00
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Sep 2023 21:53:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B9DA7A9E21
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Sep 2023 21:56:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231135AbjIUTxJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Sep 2023 15:53:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41342 "EHLO
+        id S230167AbjIUT4h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Sep 2023 15:56:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231176AbjIUTw4 (ORCPT
+        with ESMTP id S230151AbjIUT4R (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Sep 2023 15:52:56 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0707A3B191;
-        Thu, 21 Sep 2023 12:46:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=n6Owd0b29R3F+oLZERwwfQvWcqOKx+MYNJ1GGP2+h9U=; b=qaiShqcW//4ZUh/Q19Qnfc5j5v
-        0yqGTwlooSpRgQu9pHhXVLmbYoYnEmLoizakwQV7WHA2S1eUkpsY8ih6mV8FWy9PH4bZQ/fa2N+ol
-        pUZxeNtw8h9nLG6H17ePerko06JIjLHBdziKF1BPjZ1fu+LU95Hb2aMzclZYl4hMFE4+XPTpsd8RC
-        meDsKcYQLnqAPvjGgD9P2OIKOGD0WJWGnOByCmOs3pa/t5lR/dhIrMmFVHzJBhWZ1WVsCo2mERdoV
-        GUckSpfYv0RF2f+0IH0FFoeryAEVipth+IfKKE1f0gjXH1yVxPa43KHdvHwX0jZCvIctnVmbITp6F
-        qjttXlrQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qjPcf-00Dm0V-Ny; Thu, 21 Sep 2023 19:46:01 +0000
-Date:   Thu, 21 Sep 2023 20:46:01 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Bart Van Assche <bvanassche@acm.org>
-Cc:     Niklas Cassel <Niklas.Cassel@wdc.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH 00/13] Pass data temperature information to zoned UFS
- devices
-Message-ID: <ZQydeSIoHHJDQjHW@casper.infradead.org>
-References: <20230920191442.3701673-1-bvanassche@acm.org>
- <ZQtHwsNvS1wYDKfG@casper.infradead.org>
- <1522d8ec-6b15-45d5-b6d9-517337e2c8cf@acm.org>
- <ZQv07Mg7qIXayHlf@x1-carbon>
- <8781636a-57ac-4dbd-8ec6-b49c10c81345@acm.org>
- <ZQyZEqXJymyFWlKV@casper.infradead.org>
- <4cacae64-6a11-41ab-9bec-f8915da00106@acm.org>
+        Thu, 21 Sep 2023 15:56:17 -0400
+Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94649E0DD
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Sep 2023 12:46:54 -0700 (PDT)
+Received: by mail-lj1-x22c.google.com with SMTP id 38308e7fff4ca-2c00e1d4c08so22944421fa.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Sep 2023 12:46:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1695325612; x=1695930412; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=PBK/gazFsyzXOKB+rBrmhryzG1knngQqKvlNh1yC244=;
+        b=EsADxX/l8bpSbBR0dOwOGRhFA/s32coC4juMuGu8Ot+SRhWVPckVxv5JqDr9TDrCPd
+         nXd+sCZGp9thaoONzvgcToC98HSNv1oBvfAUH+NUpHKDtYu6+TXZWE5aNsqoeWVKI6pB
+         POx0yugFS+EPmoHsXcwLnTmNZYGNgY5WU6nzs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695325612; x=1695930412;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PBK/gazFsyzXOKB+rBrmhryzG1knngQqKvlNh1yC244=;
+        b=Fov9ucmRCMesdp3mzdRbcbDkYC1czn8aT4pFH9QdqZsK+rU/3ZRB47JnqYt6Nuwm3L
+         wgAHKw+VtNKXFIyj0KNYS1bbtRUwSSZ3gFCczV/mpUxMqa8Qs0Awjb9cVyO7/7bvWi29
+         SWSdbqVvx4wJVLnDul0tU1J/j9QO5gPFqZot+rPI0lsCo2235nsht+pdHK3E1Qmc8Z69
+         H0rP2pNjgG3Tk0RLqwTh7yY7L4NoLJmsKAe2Bewwp3QMp9wzE5aASTtm853l8EnOwq0h
+         H/z/tzs3i+Glr/YkJ8o9/mB9sX2A38vUI0cBGt14qT8IBaCbs2CI3qPvEslySwCXJFTR
+         MH2Q==
+X-Gm-Message-State: AOJu0Yy/US3hmV7/3Chzd1it2DwwrPoCBknoATDHqffF0L5ELJXCwcKE
+        alZgVLu609pQSkjLsyPFJm4fC41BBJ84zlouI07dYxob
+X-Google-Smtp-Source: AGHT+IEGpHh1NzX991InEpLtF7pOcdwzuSvr1QWRRwXJNIOyat/lq0w7rNP79EYq2WbCK9D/C52vJQ==
+X-Received: by 2002:a2e:96c5:0:b0:2bf:df8c:4e56 with SMTP id d5-20020a2e96c5000000b002bfdf8c4e56mr6396882ljj.39.1695325612560;
+        Thu, 21 Sep 2023 12:46:52 -0700 (PDT)
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com. [209.85.167.49])
+        by smtp.gmail.com with ESMTPSA id f8-20020a2e6a08000000b002c0055834b3sm505958ljc.4.2023.09.21.12.46.51
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Sep 2023 12:46:51 -0700 (PDT)
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5043120ffbcso1421779e87.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Sep 2023 12:46:51 -0700 (PDT)
+X-Received: by 2002:a05:6512:2013:b0:502:ffdf:b098 with SMTP id
+ a19-20020a056512201300b00502ffdfb098mr4997773lfb.6.1695325611372; Thu, 21 Sep
+ 2023 12:46:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4cacae64-6a11-41ab-9bec-f8915da00106@acm.org>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+References: <20230921-umgekehrt-buden-a8718451ef7c@brauner>
+ <CAHk-=wgoNW9QmEzhJR7C1_vKWKr=8JoD4b7idQDNHOa10P_i4g@mail.gmail.com>
+ <0d006954b698cb1cea3a93c1662b5913a0ded3b1.camel@kernel.org> <CAHk-=whAwTJduUZTrsLFnj1creZMfO7eCNERHXZQmzX+qLqZMA@mail.gmail.com>
+In-Reply-To: <CAHk-=whAwTJduUZTrsLFnj1creZMfO7eCNERHXZQmzX+qLqZMA@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 21 Sep 2023 12:46:34 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjDAqOs5TFuxxEOSST-5-LJJkAS5cEMrDu-pgiYsrjyNw@mail.gmail.com>
+Message-ID: <CAHk-=wjDAqOs5TFuxxEOSST-5-LJJkAS5cEMrDu-pgiYsrjyNw@mail.gmail.com>
+Subject: Re: [GIT PULL v2] timestamp fixes
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jan Kara <jack@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 21, 2023 at 12:39:00PM -0700, Bart Van Assche wrote:
-> On 9/21/23 12:27, Matthew Wilcox wrote:
-> > On Thu, Sep 21, 2023 at 07:27:08AM -0700, Bart Van Assche wrote:
-> > > On 9/21/23 00:46, Niklas Cassel wrote:
-> > > > Should NVMe streams be brought back? Yes? No?
-> > > 
-> > > From commit 561593a048d7 ("Merge tag 'for-5.18/write-streams-2022-03-18'
-> > > of git://git.kernel.dk/linux-block"): "This removes the write streams
-> > > support in NVMe. No vendor ever really shipped working support for this,
-> > > and they are not interested in supporting it."
-> > 
-> > It sounds like UFS is at the same stage that NVMe got to -- standard
-> > exists, no vendor has committed to actually shipping it.  Isn't bringing
-> > it back a little premature?
-> 
-> Hi Matthew,
-> 
-> That's a misunderstanding. UFS vendors support interpreting the SCSI GROUP
-> NUMBER as a data temperature since many years, probably since more than ten
-> years. Additionally, for multiple UFS vendors having the data temperature
-> available is important for achieving good performance. This message shows
-> how UFS vendors were using that information before write hint support was
-> removed: https://lore.kernel.org/linux-block/PH0PR08MB7889642784B2E1FC1799A828DB0B9@PH0PR08MB7889.namprd08.prod.outlook.com/
+On Thu, 21 Sept 2023 at 12:28, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> And that's ok when we're talking about times that are kernel running
+> times and we haev a couple of centuries to say "ok, we'll need to make
+> it be a bigger type",
 
-If vendor support already exists, then why did you dodge the question
-asking for quantified data that I asked earlier?  And can we have that
-data now?
+Note that the "couple of centuries" here is mostly the machine uptime,
+not necessarily "we'll need to change the time in the year 2292".
+
+Although we do also have "ktime_get_real()" which is encoding the
+whole "nanoseconds since 1970". That *will* break in 2292.
+
+Anyway, regardless, I am *not* suggesting that ktime_t would be useful
+for filesystems, because of this issue.
+
+I *do* suspect that we might consider a "tenth of a microsecond", though.
+
+Resolution-wise, it's pretty much in the "system call time" order of
+magnitude, and if we have Linux filesystems around in the year-31k,
+I'll happily consider it to be a SEP thing at that point ("somebody
+else's problem").
+
+                  Linus
