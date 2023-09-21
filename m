@@ -2,79 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 23CE97A9941
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Sep 2023 20:12:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A97487A9E87
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Sep 2023 22:03:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229796AbjIUSMh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Sep 2023 14:12:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47888 "EHLO
+        id S231642AbjIUUDG convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Sep 2023 16:03:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52198 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229615AbjIUSMQ (ORCPT
+        with ESMTP id S231570AbjIUUCk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Sep 2023 14:12:16 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FCFA645BE;
-        Thu, 21 Sep 2023 10:32:11 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 1C1591FE17;
-        Thu, 21 Sep 2023 13:14:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1695302058; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=hr4dJrGCAHGoorv5nC8n0VYn5plN0T8DDF/tRgAs9xw=;
-        b=yQ9zS8MLtbBzIv4XI+Fx8UAy9OA58BxnvA0q2n1vhQLjUSsNzM4w4MdLAlqHixUwTRUdoz
-        XubkwoYkWO2vMUvbTapSgZvfIRIZERoGsyfrIx8lbCcnL4Q5xOqDi0chiiy+ZoYKd3EIit
-        dDKtvAuqYXOAhz9Frc0BAj0JX4LPLQU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1695302058;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=hr4dJrGCAHGoorv5nC8n0VYn5plN0T8DDF/tRgAs9xw=;
-        b=956IPJl5aJAhxsQTTbR4rPzctFBiEm6NaXj8nUVK+t2LBvTby0r5Safd7j/+V6jKUnW38T
-        CX4LhyiTf45bK1Bw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id A5F23134B0;
-        Thu, 21 Sep 2023 13:14:17 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id o5KBJ6lBDGVtMQAAMHmgww
-        (envelope-from <tiwai@suse.de>); Thu, 21 Sep 2023 13:14:17 +0000
-Date:   Thu, 21 Sep 2023 15:14:17 +0200
-Message-ID: <87o7hvzn12.wl-tiwai@suse.de>
-From:   Takashi Iwai <tiwai@suse.de>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
+        Thu, 21 Sep 2023 16:02:40 -0400
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 575795A037
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Sep 2023 10:21:02 -0700 (PDT)
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-78-tT6XIwH6NoO3sNNrU8Sykg-1; Thu, 21 Sep 2023 15:05:00 +0100
+X-MC-Unique: tT6XIwH6NoO3sNNrU8Sykg-1
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Thu, 21 Sep
+ 2023 15:05:00 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Thu, 21 Sep 2023 15:05:00 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'David Howells' <dhowells@redhat.com>, Jens Axboe <axboe@kernel.dk>
+CC:     Al Viro <viro@zeniv.linux.org.uk>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Christoph Hellwig <hch@lst.de>,
-        Christian Brauner <christian@brauner.io>,
-        David Laight <David.Laight@ACULAB.COM>,
+        "Christian Brauner" <christian@brauner.io>,
         Matthew Wilcox <willy@infradead.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-mm@kvack.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Oswald Buddenhagen <oswald.buddenhagen@gmx.de>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        alsa-devel@alsa-project.org
-Subject: Re: [PATCH v5 01/11] sound: Fix snd_pcm_readv()/writev() to use iov access functions
-In-Reply-To: <20230920222231.686275-2-dhowells@redhat.com>
+        "Jeff Layton" <jlayton@kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v5 00/11] iov_iter: Convert the iterator macros into
+ inline funcs
+Thread-Topic: [PATCH v5 00/11] iov_iter: Convert the iterator macros into
+ inline funcs
+Thread-Index: AQHZ7BD/kh4zTlIOdEezFNQQd09cYrAlRT1Q
+Date:   Thu, 21 Sep 2023 14:04:59 +0000
+Message-ID: <591a70bf016b4317add2d936696abc0f@AcuMS.aculab.com>
 References: <20230920222231.686275-1-dhowells@redhat.com>
-        <20230920222231.686275-2-dhowells@redhat.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,URIBL_BLOCKED
+In-Reply-To: <20230920222231.686275-1-dhowells@redhat.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
+MIME-Version: 1.0
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -82,55 +68,58 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 21 Sep 2023 00:22:21 +0200,
-David Howells wrote:
+From: David Howells
+> Sent: 20 September 2023 23:22
+...
+>  (8) Move the copy-and-csum code to net/ where it can be in proximity with
+>      the code that uses it.  This eliminates the code if CONFIG_NET=n and
+>      allows for the slim possibility of it being inlined.
 > 
-> Fix snd_pcm_readv()/writev() to use iov access functions rather than poking
-> at the iov_iter internals directly.
+>  (9) Fold memcpy_and_csum() in to its two users.
 > 
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Jaroslav Kysela <perex@perex.cz>
-> cc: Takashi Iwai <tiwai@suse.com>
-> cc: Oswald Buddenhagen <oswald.buddenhagen@gmx.de>
-> cc: Jens Axboe <axboe@kernel.dk>
-> cc: Suren Baghdasaryan <surenb@google.com>
-> cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> cc: alsa-devel@alsa-project.org
+> (10) Move csum_and_copy_from_iter_full() out of line and merge in
+>      csum_and_copy_from_iter() since the former is the only caller of the
+>      latter.
 
-Reviewed-by: Takashi Iwai <tiwai@suse.de>
+I thought that the real idea behind these was to do the checksum
+at the same time as the copy to avoid loading the data into the L1
+data-cache twice - especially for long buffers.
+I wonder how often there are multiple iov[] that actually make
+it better than just check summing the linear buffer?
 
-Would you apply it through your tree, or shall I apply this one via
-sound git tree?
+I had a feeling that check summing of udp data was done during
+copy_to/from_user, but the code can't be the copy-and-csum here
+for that because it is missing support form odd-length buffers.
 
+Intel x86 desktop chips can easily checksum at 8 bytes/clock
+(But probably not with the current code!).
+(I've got ~12 bytes/clock using adox and adcx but that loop
+is entirely horrid and it would need run-time patching.
+Especially since I think some AMD cpu execute them very slowly.)
 
-thanks,
+OTOH 'rep movs[bq]' copy will copy 16 bytes/clock (32 if the
+destination is 32 byte aligned - it pretty much won't be).
 
-Takashi
+So you'd need a csum-and-copy loop that did 16 bytes every
+three clocks to get the same throughput for long buffers.
+In principle splitting the 'adc memory' into two instructions
+is the same number of u-ops - but I'm sure I've tried to do
+that and failed and the extra memory write can happen in
+parallel with everything else.
+So I don't think you'll get 16 bytes in two clocks - but you
+might get it is three.
 
-> ---
->  sound/core/pcm_native.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/sound/core/pcm_native.c b/sound/core/pcm_native.c
-> index bd9ddf412b46..9a69236fa207 100644
-> --- a/sound/core/pcm_native.c
-> +++ b/sound/core/pcm_native.c
-> @@ -3527,7 +3527,7 @@ static ssize_t snd_pcm_readv(struct kiocb *iocb, struct iov_iter *to)
->  	if (runtime->state == SNDRV_PCM_STATE_OPEN ||
->  	    runtime->state == SNDRV_PCM_STATE_DISCONNECTED)
->  		return -EBADFD;
-> -	if (!to->user_backed)
-> +	if (!user_backed_iter(to))
->  		return -EINVAL;
->  	if (to->nr_segs > 1024 || to->nr_segs != runtime->channels)
->  		return -EINVAL;
-> @@ -3567,7 +3567,7 @@ static ssize_t snd_pcm_writev(struct kiocb *iocb, struct iov_iter *from)
->  	if (runtime->state == SNDRV_PCM_STATE_OPEN ||
->  	    runtime->state == SNDRV_PCM_STATE_DISCONNECTED)
->  		return -EBADFD;
-> -	if (!from->user_backed)
-> +	if (!user_backed_iter(from))
->  		return -EINVAL;
->  	if (from->nr_segs > 128 || from->nr_segs != runtime->channels ||
->  	    !frame_aligned(runtime, iov->iov_len))
-> 
+OTOH for a cpu where memcpy is code loop summing the data in
+the copy loop is likely to be a gain.
+
+But I suspect doing the checksum and copy at the same time
+got 'all to complicated' to actually implement fully.
+With most modern ethernet chips checksumming receive pacakets
+does it really get used enough for the additional complexity?
+
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
+
