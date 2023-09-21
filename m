@@ -2,72 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 83EF37AA251
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Sep 2023 23:16:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CBCAB7A9F80
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Sep 2023 22:22:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231966AbjIUVPp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Sep 2023 17:15:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54236 "EHLO
+        id S231739AbjIUUW4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Sep 2023 16:22:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49272 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232924AbjIUVPD (ORCPT
+        with ESMTP id S230290AbjIUUWf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Sep 2023 17:15:03 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0D65AD196;
-        Thu, 21 Sep 2023 11:03:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=IJC++WD0SC98QqOfTgTMoqC7V5g4Fi6TJ28HDArhxHI=; b=g1wOKXuddKHSozH+mqGV7jLWcQ
-        v6y6qb70UgITOIa9uHUC+ALF/c/Ie5E02Jdg2PM+/KPhifEZaox2ZU+qvOo7C82fC7ZOoem2OlTF+
-        a2gTB7oGGBzcKZg1dJrxMHKX4sKcV9XhJ+tTGx4fiBnrC9k6sErNt94pluDhrwkpfi7fMLznf789G
-        RgX9hV0Nr+mNnn5ezqDzpX1SrQI2pa0BoSMTyZvBidgSxtSXfI6bQYi4/3rFWbOax+1Hk0rD39Ccu
-        geqYCvZM6j36HoZXuJC2RUYm2PES0f7LqUPfm28KJ9HufAdlm/Ujrp5bA4N2NL7rYtH04zO785+91
-        h3cD8TNw==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1qjDz0-005MVd-1M;
-        Thu, 21 Sep 2023 07:20:18 +0000
-Date:   Thu, 21 Sep 2023 00:20:18 -0700
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Pankaj Raghav <p.raghav@samsung.com>,
-        Pankaj Raghav <kernel@pankajraghav.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        da.gomez@samsung.com, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, willy@infradead.org,
-        djwong@kernel.org, linux-mm@kvack.org, chandan.babu@oracle.com,
-        gost.dev@samsung.com, riteshh@linux.ibm.com
-Subject: Re: [RFC 00/23] Enable block size > page size in XFS
-Message-ID: <ZQvussaZsqZNSc3d@bombadil.infradead.org>
-References: <20230915183848.1018717-1-kernel@pankajraghav.com>
- <ZQd4IPeVI+o6M38W@dread.disaster.area>
- <ZQewKIfRYcApEYXt@bombadil.infradead.org>
- <CGME20230918050749eucas1p13c219481b4b08c1d58e90ea70ff7b9c8@eucas1p1.samsung.com>
- <ZQfbHloBUpDh+zCg@dread.disaster.area>
- <806df723-78cf-c7eb-66a6-1442c02126b3@samsung.com>
- <ZQuxvAd2lxWppyqO@bombadil.infradead.org>
- <ZQvNVAfZMjE3hgmN@bombadil.infradead.org>
- <ZQvczBjY4vTLJFBp@dread.disaster.area>
- <ZQvuNaYIukAnlEDM@bombadil.infradead.org>
+        Thu, 21 Sep 2023 16:22:35 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3FA4D6068
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Sep 2023 11:26:32 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id ffacd0b85a97d-32157c8e4c7so1296080f8f.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Sep 2023 11:26:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1695320791; x=1695925591; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uXl3XjtNY+qQUGAfKFbAOhIfMu203xufyzo0Jfa0XyY=;
+        b=AQyqw2hmtvETPkConD+HqIROJDoLoeYUUTKSVHkSRChKrZKZqoM0fSc4Tptwg5X2g6
+         hajOmARPPIea4P+eu5IAMb4/1uerV1LomVWMNW9np1zLTXV1DCnF+ejH0x9Nan2exwru
+         wFV0u2q6Xc/5tYZi5RsDGrE+m9K8KH+UH6BS7f5RVgpO4UeyEvLSMZ/3PLAqwdUzvQYI
+         8HImRxLF1GVWsV4vJOyF4CNYTkDS0ex8isFW43OqYM90tWTTTcQM/sY9pNxPN/lUxuXm
+         7yem40xKM7Aq31jfizI7YYQm0mDDGM/BurmvtymsMqKA2ee7stnTe7jSHITD6zD36hJI
+         FZkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695320791; x=1695925591;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uXl3XjtNY+qQUGAfKFbAOhIfMu203xufyzo0Jfa0XyY=;
+        b=PngcV0a+w2iPchygNd7SskyxRCQAHMMZrxECFo2dcDDKDWIeMD7PxC0T3DD9L+L3vn
+         e9HDvaAn0ZsVzZ1EK0hmca9la+7TIAjPa579DNJ4x255tTWlL/CHxyUTx0HO+AwW0Ujp
+         oHNvRNZKI+6gYqWVCu1DCRU4TR3Z/QtNZSd3iN6t0XsBfK1MAZtZI92WS3s/sc1DULnA
+         /w1uaaQFBxrseJUBvZsU358q7yekS/mWkOWZI6/EQ+i1rQfI3/iZwdp8t92V08KSSpQE
+         EoLl3G0e8KSwn3XwtM98vJbu2e/9ixT0dR06uYjXFbnupohMxJrGO5cSY/FUxt3Bj/OD
+         EUEw==
+X-Gm-Message-State: AOJu0Yx79PCZcE1bnAFEA9Q5fVL1oRIAoZ9k+Up7xD8B5f39Acie7tai
+        fhYDvM/ouBAEcmkWXvG4w29U3gp7AkAffPRSCd8=
+X-Google-Smtp-Source: AGHT+IF1pBtqoHJupqJB89JDTv8U2tPiwASllgBiXga49KhWXGoCCYdQLyGMzig5D0GLqGXQxvk2QQ==
+X-Received: by 2002:ac2:44ce:0:b0:503:f:1343 with SMTP id d14-20020ac244ce000000b00503000f1343mr3999054lfm.19.1695283079562;
+        Thu, 21 Sep 2023 00:57:59 -0700 (PDT)
+Received: from heron.intern.cm-ag (p200300dc6f209c00529a4cfffe3dd983.dip0.t-ipconnect.de. [2003:dc:6f20:9c00:529a:4cff:fe3d:d983])
+        by smtp.gmail.com with ESMTPSA id v4-20020a05600c214400b003fef19bb55csm1151252wml.34.2023.09.21.00.57.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Sep 2023 00:57:59 -0700 (PDT)
+From:   Max Kellermann <max.kellermann@ionos.com>
+To:     viro@zeniv.linux.org.uk, brauner@kernel.org, howells@redhat.com
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Max Kellermann <max.kellermann@ionos.com>
+Subject: [PATCH 1/4] pipe: reduce padding in struct pipe_inode_info
+Date:   Thu, 21 Sep 2023 09:57:52 +0200
+Message-Id: <20230921075755.1378787-1-max.kellermann@ionos.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZQvuNaYIukAnlEDM@bombadil.infradead.org>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-0.2 required=5.0 tests=BAYES_00,DATE_IN_PAST_06_12,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED
-        autolearn=no autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 21, 2023 at 12:18:13AM -0700, Luis Chamberlain wrote:
-> When we first started this work we simply thought it was impossible.
+This has no effect on 64 bit because there are 10 32-bit integers
+surrounding the two bools, but on 32 bit architectures, this reduces
+the struct size by 4 bytes by merging the two bools into one word.
 
-*not possible*
+Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+---
+ include/linux/pipe_fs_i.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-  Luis
+diff --git a/include/linux/pipe_fs_i.h b/include/linux/pipe_fs_i.h
+index 608a9eb86bff..598a411d7da2 100644
+--- a/include/linux/pipe_fs_i.h
++++ b/include/linux/pipe_fs_i.h
+@@ -62,9 +62,6 @@ struct pipe_inode_info {
+ 	unsigned int tail;
+ 	unsigned int max_usage;
+ 	unsigned int ring_size;
+-#ifdef CONFIG_WATCH_QUEUE
+-	bool note_loss;
+-#endif
+ 	unsigned int nr_accounted;
+ 	unsigned int readers;
+ 	unsigned int writers;
+@@ -72,6 +69,9 @@ struct pipe_inode_info {
+ 	unsigned int r_counter;
+ 	unsigned int w_counter;
+ 	bool poll_usage;
++#ifdef CONFIG_WATCH_QUEUE
++	bool note_loss;
++#endif
+ 	struct page *tmp_page;
+ 	struct fasync_struct *fasync_readers;
+ 	struct fasync_struct *fasync_writers;
+-- 
+2.39.2
+
