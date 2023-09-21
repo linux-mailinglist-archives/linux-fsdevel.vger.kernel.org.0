@@ -2,142 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BEC577AA2C4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Sep 2023 23:34:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5419B7AA1DA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Sep 2023 23:07:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231463AbjIUVe0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Sep 2023 17:34:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54506 "EHLO
+        id S230047AbjIUVHm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Sep 2023 17:07:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229826AbjIUVeB (ORCPT
+        with ESMTP id S232649AbjIUVHA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Sep 2023 17:34:01 -0400
-Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B8355A023;
-        Thu, 21 Sep 2023 10:20:52 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 8B8D55C018C;
-        Thu, 21 Sep 2023 08:36:03 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Thu, 21 Sep 2023 08:36:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
-        :cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm1; t=
-        1695299763; x=1695386163; bh=rfl8F4CyNg3EmdUb8W4wwAH01ChxlJcbD3i
-        dNI4QWvg=; b=CLqK/AzUzlihIUEIkRgqLCdvU8tzTIpAOMw5hKZhxE01Ge51xg2
-        2jCOE9K9QR6N6ztyc/j1IUTWivE81Sb76k76zGPK+OlFaGSQUK7g459EL0mvtzV9
-        De84R3Aq6eyiIR3obtPlzrgGqgbU9nzaQ1jc+vA3xa5eWQgf6nDwQHYHTiMmZLvY
-        w8r4EXIcolN6vknBc0GGhNtmcSuX1CqVLzUO8BRlr45cMMkw0pJ+huyP6jkOJ/wy
-        KRZC9F/Ck7fi9CB3WSXoGvA7PpldGPUIogFya/mJXYBwEBLzwA5ZVX/9YMyPtZd8
-        2iAIHEVUnynDhjmPR2dp3Q6mO3wRGEUzEZw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-        1695299763; x=1695386163; bh=rfl8F4CyNg3EmdUb8W4wwAH01ChxlJcbD3i
-        dNI4QWvg=; b=lrJvS4taD7NXi0UngiiQWgJPZG/9nl1RR4Zm568zJy4dKiKUdwg
-        GnGIAKZcRi6uy8MwejlGFToZREYG0qfAEBWVD3KXym7s7kQ898i1ERDHd/HJ5KFK
-        VtUKJSiVbmGiq/6m6ImrPpFydTkgw0kA79Dbf/52ewGWKB8BUsHhoUQetI2vEtCo
-        cwsnew5CHFvKKU1ymcYt3DuksV+eWVULeU3/JeUOPTbd1cmLUZgzDJIMardnRtmr
-        HEorNcoQBuArlGPdkZnVlzFZHy4YyD/y1VnBjHvaZNWuJ9GJyYH7tzdsztPguEuz
-        PM7OSYvmub+E4xGiSM5znbNf/w9zN0du3Bg==
-X-ME-Sender: <xms:szgMZerFD3cDdzbMpqdWkeBo_o4GjwGsiaiFw0_ovlYLssYO1oO8xQ>
-    <xme:szgMZcqcNYUMYA75wjJAdJdYr91_9igGKS7weGVGCG_J6QNlD-PAcHeu3HPOjlY6K
-    auquRheKJIO>
-X-ME-Received: <xmr:szgMZTOWSZBOicA-4Z3GL_tie9c2zfn6SSTN6DZK3SJT3ajfmzD7DnV6U_9tAeELpHk8uAEntHcfnb3zHeKa5vxQ9OM-xQ52xByUUrjDVmBfPp0oWtQK>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrudekiedgheefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtfeejnecuhfhrohhmpefkrghn
-    ucfmvghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnh
-    epuefhueeiieejueevkefgiedtteehgfdutdelfffhleeflefhudeuvdefhfeghfehnecu
-    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprhgrvhgvnh
-    esthhhvghmrgifrdhnvght
-X-ME-Proxy: <xmx:szgMZd4xLoISHGLy4q-1FvPtPHzJ76hIxbRdY_rzPx1dUArKGOMgXQ>
-    <xmx:szgMZd5zZKfKY6FcEqR9gfbKnSZ2k5uRGUJKM9DkiXtSK9fWQ0dgZA>
-    <xmx:szgMZdhlbVuvE6wcaIpPCZj_Tje7ahxZ3cAIO0wYbilLkJdhVnWfKg>
-    <xmx:szgMZbRcg-V4gVaPPSxuDkVT8thJyJmeK7USR1ZFRDlv65ldCatUsA>
-Feedback-ID: i31e841b0:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 21 Sep 2023 08:35:59 -0400 (EDT)
-Message-ID: <df932642-4c78-768d-2f6d-aaa9ae960c8f@themaw.net>
-Date:   Thu, 21 Sep 2023 20:35:56 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH 0/8] autofs - convert to to use mount api
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Al Viro <viro@ZenIV.linux.org.uk>,
-        autofs mailing list <autofs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bill O'Donnell <billodo@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        David Howells <dhowells@redhat.com>
-References: <169527971702.27328.16272807830250040704.stgit@donald.themaw.net>
- <20230921-altpapier-knien-1dd29cd78a2f@brauner>
-Content-Language: en-US
-From:   Ian Kent <raven@themaw.net>
-In-Reply-To: <20230921-altpapier-knien-1dd29cd78a2f@brauner>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_PASS,SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+        Thu, 21 Sep 2023 17:07:00 -0400
+Received: from mail-pl1-x64a.google.com (mail-pl1-x64a.google.com [IPv6:2607:f8b0:4864:20::64a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E84879EF9
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Sep 2023 10:24:02 -0700 (PDT)
+Received: by mail-pl1-x64a.google.com with SMTP id d9443c01a7336-1c43cd8b6cbso10170755ad.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Sep 2023 10:24:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1695317042; x=1695921842; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VFujV55InQpfIcmwhWIdcFo9LOSK6bP3ULKilR3pEPA=;
+        b=h3HaYK67hrucOu8e3ODeGRBp39EfXC5u99B6HcDi5UllW5HzjOcu64nvGVpj/gPQSj
+         Cy4irY2m0c4zYax1VvMMX2RcpOGyawGi9CJg3G085GzdGcpSEnIW44KRfCfSPJ4ENI7k
+         cKd76DjtGo7pEl5JAM6AGST+KFo440j0hoBNGDC9BZm+V4V3AN8zDWnl67oVuLEUE0HN
+         l8bPFoFY/n9r4fqfq3uKqeHXFN7oR9oqhoiMibaenga3SLPJE/MdmshE20xRCM/plLv2
+         Kr01myFfAqBie+SgwbghQezsv/PnQvM1UffLUTTQ9eu/Zk6uCFUw7Db4aYmzuiwyVyky
+         Jv1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695317042; x=1695921842;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VFujV55InQpfIcmwhWIdcFo9LOSK6bP3ULKilR3pEPA=;
+        b=A4rsL3u8xLkqleIDo+Izn9TKKKA3pLzlAF4YTlk+MU73CNton6Qjql82eouAiubL9/
+         d2pdDYy4134DCo5j13gOqGvNfianlx3ucfpDGQlpBtglJKPcwvsqVwCT3TABhaXdoN7U
+         gX1qVZk01Q5DDR6YxcLeV3MzkodMVYP7nyCGxmROqz75O49DAhgVOwOpymUlTuRkRw1J
+         +pkGr5HHBggT/UWDnOqPQ4Po/revHfCuaz1SrhDSFoxE9BIOx4Smxgf6RM8RKNalyUJp
+         o5hfZYjhiwzZoEOjCb74U5JvfXQgy4bCunBUA7Huf3PXMjh0fjkbYVgHOKU5mCk4GFcF
+         iCXA==
+X-Gm-Message-State: AOJu0YytFW+R5WF4Hw7vt7TI5khDeLXmXmxgAwJVRQwZNpDlbeVh/7pY
+        zEgzBAMItCHRTFm9K/X+zr8LhCozTwg=
+X-Google-Smtp-Source: AGHT+IGn6bxt0aytyfRrQvdNGXaSXeT8sIcIptWMB2qfEas65NY2TcrLdWuDyigFBOjNZ28AUG3erUeC33s=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:902:ce86:b0:1c3:c127:558 with SMTP id
+ f6-20020a170902ce8600b001c3c1270558mr71199plg.0.1695306271120; Thu, 21 Sep
+ 2023 07:24:31 -0700 (PDT)
+Date:   Thu, 21 Sep 2023 07:24:29 -0700
+In-Reply-To: <ZQus1v3AvEZjuat9@yilunxu-OptiPlex-7050>
+Mime-Version: 1.0
+References: <20230914015531.1419405-1-seanjc@google.com> <20230914015531.1419405-3-seanjc@google.com>
+ <ZQqMBEL61p739dpF@yilunxu-OptiPlex-7050> <ZQr5uXhV6Cnx4DYT@google.com> <ZQus1v3AvEZjuat9@yilunxu-OptiPlex-7050>
+Message-ID: <ZQxSHXIGdWXy+zDU@google.com>
+Subject: Re: [RFC PATCH v12 02/33] KVM: Use gfn instead of hva for mmu_notifier_retry
+From:   Sean Christopherson <seanjc@google.com>
+To:     Xu Yilun <yilun.xu@intel.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Anup Patel <anup@brainfault.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, kvm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        Fuad Tabba <tabba@google.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Anish Moorthy <amoorthy@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Isaku Yamahata <isaku.yamahata@intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Ackerley Tng <ackerleytng@google.com>,
+        Maciej Szmigiero <mail@maciej.szmigiero.name>,
+        David Hildenbrand <david@redhat.com>,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>,
+        Wang <wei.w.wang@intel.com>,
+        Liam Merwick <liam.merwick@oracle.com>,
+        Isaku Yamahata <isaku.yamahata@gmail.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
+X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Thu, Sep 21, 2023, Xu Yilun wrote:
+> When the invalidation acrosses multiple slots, I'm not sure if the
+> contiguous HVA range must correspond to contiguous GFN range. If not,
+> are we producing a larger range than required?
 
-On 21/9/23 17:13, Christian Brauner wrote:
-> On Thu, Sep 21, 2023 at 03:03:26PM +0800, Ian Kent wrote:
->> There was a patch from David Howells to convert autofs to use the mount
->> api but it was never merged.
->>
->> I have taken David's patch and refactored it to make the change easier
->> to review in the hope of having it merged.
->>
->> Signed-off-by: Ian Kent <raven@themaw.net>
->> ---
->>
->> Ian Kent (8):
->>        autofs: refactor autofs_prepare_pipe()
->>        autofs: add autofs_parse_fd()
->>        autofs - refactor super block info init
->>        autofs: reformat 0pt enum declaration
->>        autofs: refactor parse_options()
->>        autofs: validate protocol version
->>        autofs: convert autofs to use the new mount api
->>        autofs: fix protocol sub version setting
->>
-> Yeah sure, but I only see 4 patches on the list? Is my setup broken or
-> did you accidently forget to send some patches?
+Multiple invalidations are all but guaranteed to yield a range that covers addresses
+that aren't actually being invalidated.  This is true today.
 
-Sorry, but no, my email has gone very pair shaped.
+> And when the invalidation acrosses multiple address space, I'm almost
+> sure it is wrong to merge GFN ranges from different address spaces. 
 
+It's not "wrong" in the sense that false positives do not cause functional
+problems, at worst a false positive can unnecessarily stall a vCPU until the
+unrelated invalidations complete.
 
-The above send failed part way through and I haven't been able to send
-
-anything via the command line since. I'm guessing the email app I'm
-
-using to send this will work and the other email accounts I use will
-
-probably work from an app too but the command line is broken for some
-
-unknown reason.
-
-
-Please ignore these, I'll send them when I can get my problem fixed ...
-
-*sigh*!
-
-
-Ian
-
+Multiple concurrent invalidations are not common, and if they do happen, they are
+likely related and will have spacial locality in both host virtual address space
+and guest physical address space.  Given that, we chose for the simple (and fast!)
+approach of maintaining a single all-encompassing range.
