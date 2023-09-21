@@ -2,151 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 078D77A9B59
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Sep 2023 20:58:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2B407A9D7E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Sep 2023 21:38:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230098AbjIUS61 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Sep 2023 14:58:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55752 "EHLO
+        id S229647AbjIUTiO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Sep 2023 15:38:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54458 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230083AbjIUS6K (ORCPT
+        with ESMTP id S230323AbjIUThw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Sep 2023 14:58:10 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D6C9897C3;
-        Thu, 21 Sep 2023 11:51:56 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33E72C433C8;
-        Thu, 21 Sep 2023 18:51:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695322315;
-        bh=MjEQXRnyykk3f+hE0AdC9BNxbWYC3YZL7JXWVjB6uXg=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=rG9rpLr3oZNEKtAptEta2PNN+Dai42WSwt3484Rf3cZR+AG9xUGY0AVamEDuEoyC0
-         6l+w4C7KujAKCkGxsV6dOlibIQJM295WdUc2P3yxKPIX0Xc8ikAJPgHPI9RomtikGY
-         E9G5jp1KEDA1ADB8Uah+YLDf6MQAm2gHIg1XLbPfc2YebzGaThS76pkA4b2N/uWkoy
-         sLAgI5VRoNKS/OmZsPfPR2fsBmW0kjWisCGYFJH3nWMnypvqRvvh3M8TFT5gqjLjFH
-         G2iXdeIMr2GNbZb6q7AISuJI9LCfTihbLoFO2c/F5RcYRluRLvoiguYzucyZIoSbMX
-         Xh9PtHfejeLKg==
-Message-ID: <0d006954b698cb1cea3a93c1662b5913a0ded3b1.camel@kernel.org>
-Subject: Re: [GIT PULL v2] timestamp fixes
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Christian Brauner <brauner@kernel.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jan Kara <jack@suse.cz>
-Date:   Thu, 21 Sep 2023 14:51:53 -0400
-In-Reply-To: <CAHk-=wgoNW9QmEzhJR7C1_vKWKr=8JoD4b7idQDNHOa10P_i4g@mail.gmail.com>
-References: <20230921-umgekehrt-buden-a8718451ef7c@brauner>
-         <CAHk-=wgoNW9QmEzhJR7C1_vKWKr=8JoD4b7idQDNHOa10P_i4g@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
-MIME-Version: 1.0
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        Thu, 21 Sep 2023 15:37:52 -0400
+Received: from mail-yw1-x1149.google.com (mail-yw1-x1149.google.com [IPv6:2607:f8b0:4864:20::1149])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A22F5EBFCB
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Sep 2023 12:10:39 -0700 (PDT)
+Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-59b5a586da6so25426847b3.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Sep 2023 12:10:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1695323438; x=1695928238; darn=vger.kernel.org;
+        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=msCRqftjzvMka6Rl5V/NvDEz768neF2Qswneru1ptF4=;
+        b=ANIsopKH6FB/YfeeiHhknjvBJ5XAITWb1M/gbs+yBeC/ao6mEHXNiCijAVIw3AUBEu
+         /L10qRlBCqsFUCKjuQ13ougwWzehqWocSM7xFbHiwYegbOYJIt/J8GRTSphAAc/IXNxA
+         o/QR0WmMt3Rr9/Z8RTFG6WRUg72slcENJ91CRvg4tLf3p19skDGjdSesRMqooJ1TxrwN
+         kPhHasmtBgG5lahnT+KGJMN8FxVv+FrAn5x5/Kv9qYOj8nLmDk3goWg8x91Iiv6qr5n8
+         fwxGc9VtkPBY6BwtxtcN575WzcMCKX9wO1T2K3HDKmiEMiuIAhwnOqpeTpRRAHJ8OTQF
+         ea5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695323438; x=1695928238;
+        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=msCRqftjzvMka6Rl5V/NvDEz768neF2Qswneru1ptF4=;
+        b=bXmQDhjpcfWAPx4+HH7p/oQAQ3XLmVVa4LF6V6DKJYr7lReDwS4jV6ixn1aetF8B80
+         B/IdSpjxF/C8kNMoUtNGma0zQeVnbm/YHGO7M1QSn4GfCIpzGA8v6glcateRvM3vI4Du
+         tiNNvDAU4Tm+XENBX58jYN889tSoO8DxN9yvCsyuqun86QRHpKdKBCZxXdklZoLuV74h
+         KhFOshSH1kUFN/igNNSr1Z/IAFiPGx5IZHobPceJz2TNOUQZqSfz0V6XW8ylxX7R4+mu
+         iPgR23ZHOPaGYLR71o99+h85G4KlM/vBd0Hel7baU8KuthJsxqg7DQPseAQUlk9gwHGY
+         KzHA==
+X-Gm-Message-State: AOJu0YxJdx865oaBEiZnylPFGiVC7Ip3S3R9QBawSXQ1QbILIL1rW/b9
+        EU3VGVaQ5ntO5Vzr6f2x+dDt8AOo7G8=
+X-Google-Smtp-Source: AGHT+IHW881nAqFnjABVXUT4908B5v4pAo/onJespz4HnG5MCVd8NLEq9DsMcDxqDXD3hJb4Zo/K0u0JOVE=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:690c:70a:b0:58c:e8da:4d1a with SMTP id
+ bs10-20020a05690c070a00b0058ce8da4d1amr8361ywb.2.1695323438500; Thu, 21 Sep
+ 2023 12:10:38 -0700 (PDT)
+Date:   Thu, 21 Sep 2023 12:10:36 -0700
+In-Reply-To: <20230914015531.1419405-15-seanjc@google.com>
+Mime-Version: 1.0
+References: <20230914015531.1419405-1-seanjc@google.com> <20230914015531.1419405-15-seanjc@google.com>
+Message-ID: <ZQyVLEKXbpJ9Wvud@google.com>
+Subject: Re: [RFC PATCH v12 14/33] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
+ guest-specific backing memory
+From:   Sean Christopherson <seanjc@google.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Anup Patel <anup@brainfault.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, kvm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        Fuad Tabba <tabba@google.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Anish Moorthy <amoorthy@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Isaku Yamahata <isaku.yamahata@intel.com>,
+        Xu Yilun <yilun.xu@intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Ackerley Tng <ackerleytng@google.com>,
+        Maciej Szmigiero <mail@maciej.szmigiero.name>,
+        David Hildenbrand <david@redhat.com>,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>,
+        Wang <wei.w.wang@intel.com>,
+        Liam Merwick <liam.merwick@oracle.com>,
+        Isaku Yamahata <isaku.yamahata@gmail.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
+X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2023-09-21 at 11:24 -0700, Linus Torvalds wrote:
-> On Thu, 21 Sept 2023 at 04:21, Christian Brauner <brauner@kernel.org> wro=
-te:
-> >=20
-> >   git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/v6.6-rc=
-3.vfs.ctime.revert
->=20
-> So for some reason pr-tracker-bot doesn't seem to have reacted to this
-> pull request, but it's in my tree now.
->=20
-> I *do* have one reaction to all of this: now that you have made
-> "i_ctime" be something that cannot be accessed directly (and renamed
-> it to "__i_ctime"), would you mind horribly going all the way, and do
-> the same for i_atime and i_mtime too?
->=20
-> The reason I ask is that I *really* despise "struct timespec64" as a type=
-.
->=20
-> I despise it inherently, but I despise it even more when you really
-> use it as another type entirely, and are hiding bits in there.
->=20
-> I despise it because "tv_sec" obviously needs to be 64-bit, but then
-> "tv_nsec" is this horrible abomination. It's defined as "long", which
-> is all kinds of crazy. It's bogus and historical.
->=20
-> And it's wasteful.
->=20
-> Now, in the case of i_ctime, you took advantage of that waste by using
-> one (of the potentially 2..34!) unused bits for that
-> "fine-granularity" flag.
->=20
-> But even when you do that, there's up to 33 other bits just lying
-> around, wasting space in a very central data structure.
->=20
-> So it would actually be much better to explode the 'struct timespec64'
-> into explicit 64-bit seconds field, and an explicit 32-bit field with
-> two bits reserved. And not even next to each other, because they don't
-> pack well in general.
->=20
-> So instead of
->=20
->         struct timespec64       i_atime;
->         struct timespec64       i_mtime;
->         struct timespec64       __i_ctime;
->=20
-> where that last one needs accessors to access, just make them *all*
-> have helper accessors, and make it be
->=20
->         u64  i_atime_sec;
->         u64  i_mtime_sec;
->         u64  i_ctime_sec;
->         u32  i_atime_nsec;
->         u32  i_mtime_nsec;
->         u32  i_ctime_nsec;
->=20
-> and now that 'struct inode' should shrink by 12 bytes.
->=20
+On Wed, Sep 13, 2023, Sean Christopherson wrote:
+>  virt/kvm/guest_mem.c       | 593 +++++++++++++++++++++++++++++++++++++
 
-I like it.
+Getting to the really important stuff...
 
-> Then do this:
->=20
->   #define inode_time(x) \
->        (struct timespec64) { x##_sec, x##_nsec }
->=20
-> and you can now create a timespec64 by just doing
->=20
->     inode_time(inode->i_atime)
->=20
-> or something like that (to help create those accessor functions).
->=20
-> Now, I agree that 12 bytes in the disaster that is 'struct inode' is
-> likely a drop in the ocean. We have tons of big things in there (ie
-> several list_heads, a whole 'struct address_space' etc etc), so it's
-> only twelve bytes out of hundreds.
->=20
-> But dammit, that 'timespec64' really is ugly, and now that you're
-> hiding bits in it and it's no longer *really* a 'timespec64', I feel
-> like it would be better to do it right, and not mis-use a type that
-> has other semantics, and has other problems.
->=20
+Anyone object to naming the new file guest_memfd.c instead of guest_mem.c?  Just
+the file, i.e. still keep the gmem namespace.
 
-
-We have many, many inodes though, and 12 bytes per adds up!
-
-I'm on board with the idea, but...that's likely to be as big a patch
-series as the ctime overhaul was. In fact, it'll touch a lot of the same
-code. I can take a stab at that in the near future though.
-
-Since we're on the subject...another thing that bothers me with all of
-the timestamp handling is that we don't currently try to mitigate "torn
-reads" across the two different words. It seems like you could fetch a
-tv_sec value and then get a tv_nsec value that represents an entirely
-different timestamp if there are stores between them.
-
-Should we be concerned about this? I suppose we could do something with
-a seqlock, though I'd really want to avoid locking on the write side.=20
---=20
-Jeff Layton <jlayton@kernel.org>
+Using guest_memfd.c would make it much more obvious that the file holds more than
+generic "guest memory" APIs, and would provide a stronger conceptual connection
+with memfd.c.
