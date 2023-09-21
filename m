@@ -2,122 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5419B7AA1DA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Sep 2023 23:07:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C9537A9F87
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Sep 2023 22:23:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230047AbjIUVHm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Sep 2023 17:07:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35622 "EHLO
+        id S231796AbjIUUXH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Sep 2023 16:23:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232649AbjIUVHA (ORCPT
+        with ESMTP id S231654AbjIUUWn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Sep 2023 17:07:00 -0400
-Received: from mail-pl1-x64a.google.com (mail-pl1-x64a.google.com [IPv6:2607:f8b0:4864:20::64a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E84879EF9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Sep 2023 10:24:02 -0700 (PDT)
-Received: by mail-pl1-x64a.google.com with SMTP id d9443c01a7336-1c43cd8b6cbso10170755ad.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Sep 2023 10:24:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1695317042; x=1695921842; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VFujV55InQpfIcmwhWIdcFo9LOSK6bP3ULKilR3pEPA=;
-        b=h3HaYK67hrucOu8e3ODeGRBp39EfXC5u99B6HcDi5UllW5HzjOcu64nvGVpj/gPQSj
-         Cy4irY2m0c4zYax1VvMMX2RcpOGyawGi9CJg3G085GzdGcpSEnIW44KRfCfSPJ4ENI7k
-         cKd76DjtGo7pEl5JAM6AGST+KFo440j0hoBNGDC9BZm+V4V3AN8zDWnl67oVuLEUE0HN
-         l8bPFoFY/n9r4fqfq3uKqeHXFN7oR9oqhoiMibaenga3SLPJE/MdmshE20xRCM/plLv2
-         Kr01myFfAqBie+SgwbghQezsv/PnQvM1UffLUTTQ9eu/Zk6uCFUw7Db4aYmzuiwyVyky
-         Jv1Q==
+        Thu, 21 Sep 2023 16:22:43 -0400
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D29674B70A;
+        Thu, 21 Sep 2023 10:24:52 -0700 (PDT)
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3aa14ed0e7eso652882b6e.1;
+        Thu, 21 Sep 2023 10:24:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695317042; x=1695921842;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VFujV55InQpfIcmwhWIdcFo9LOSK6bP3ULKilR3pEPA=;
-        b=A4rsL3u8xLkqleIDo+Izn9TKKKA3pLzlAF4YTlk+MU73CNton6Qjql82eouAiubL9/
-         d2pdDYy4134DCo5j13gOqGvNfianlx3ucfpDGQlpBtglJKPcwvsqVwCT3TABhaXdoN7U
-         gX1qVZk01Q5DDR6YxcLeV3MzkodMVYP7nyCGxmROqz75O49DAhgVOwOpymUlTuRkRw1J
-         +pkGr5HHBggT/UWDnOqPQ4Po/revHfCuaz1SrhDSFoxE9BIOx4Smxgf6RM8RKNalyUJp
-         o5hfZYjhiwzZoEOjCb74U5JvfXQgy4bCunBUA7Huf3PXMjh0fjkbYVgHOKU5mCk4GFcF
-         iCXA==
-X-Gm-Message-State: AOJu0YytFW+R5WF4Hw7vt7TI5khDeLXmXmxgAwJVRQwZNpDlbeVh/7pY
-        zEgzBAMItCHRTFm9K/X+zr8LhCozTwg=
-X-Google-Smtp-Source: AGHT+IGn6bxt0aytyfRrQvdNGXaSXeT8sIcIptWMB2qfEas65NY2TcrLdWuDyigFBOjNZ28AUG3erUeC33s=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:902:ce86:b0:1c3:c127:558 with SMTP id
- f6-20020a170902ce8600b001c3c1270558mr71199plg.0.1695306271120; Thu, 21 Sep
- 2023 07:24:31 -0700 (PDT)
-Date:   Thu, 21 Sep 2023 07:24:29 -0700
-In-Reply-To: <ZQus1v3AvEZjuat9@yilunxu-OptiPlex-7050>
-Mime-Version: 1.0
-References: <20230914015531.1419405-1-seanjc@google.com> <20230914015531.1419405-3-seanjc@google.com>
- <ZQqMBEL61p739dpF@yilunxu-OptiPlex-7050> <ZQr5uXhV6Cnx4DYT@google.com> <ZQus1v3AvEZjuat9@yilunxu-OptiPlex-7050>
-Message-ID: <ZQxSHXIGdWXy+zDU@google.com>
-Subject: Re: [RFC PATCH v12 02/33] KVM: Use gfn instead of hva for mmu_notifier_retry
-From:   Sean Christopherson <seanjc@google.com>
-To:     Xu Yilun <yilun.xu@intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
-        Oliver Upton <oliver.upton@linux.dev>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Anup Patel <anup@brainfault.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, kvm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Chao Peng <chao.p.peng@linux.intel.com>,
-        Fuad Tabba <tabba@google.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Anish Moorthy <amoorthy@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        Isaku Yamahata <isaku.yamahata@intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Ackerley Tng <ackerleytng@google.com>,
-        Maciej Szmigiero <mail@maciej.szmigiero.name>,
-        David Hildenbrand <david@redhat.com>,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>,
-        Wang <wei.w.wang@intel.com>,
-        Liam Merwick <liam.merwick@oracle.com>,
-        Isaku Yamahata <isaku.yamahata@gmail.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
-X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable
-        autolearn_force=no version=3.4.6
+        d=1e100.net; s=20230601; t=1695317091; x=1695921891;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rshe0jW7UhxhoxHzQRdwHHly+hnX6L1+KyeP6WuSdms=;
+        b=Z+IW+nx4wDQcTjHdy9q4ktNMuEQQ7Qr2EFvRMUsGU7VGjjsjwTACQB+QNOLqITHa5w
+         hqspMx5KpRPSDGcgsJ13heS/ch/kJItAJVOfy5HrDzNwyQMmIgSpP/MJpUd+FHEsa1Ut
+         9BFsxjsgk45bIWWeQhP27RNsZbQt7yRVK8nUxi5AMEA+KkrH+65umSKgWpimdRuj+UB+
+         VHA0SsFtQxsOzkaszJVEir8rSGUgqLweuHsc/6rCn28F3gapaOrhxvQLfOK0RzmuS44H
+         8yDb0nkYUToJaLoI2ofxe8Zn0OE2gyduehAlnIoMHKvV9qCUCTGTHp4OlmCXrvJbkxiz
+         4wSg==
+X-Gm-Message-State: AOJu0YzOFewXulSn5NUOBRJGvHPPbhKVEHoSMbSIsrBjExl5cVZzWcZ5
+        bQzDQ4V63QhThDTI120N35YOWDY9Mc8=
+X-Google-Smtp-Source: AGHT+IEckYqWZk5F9LFw20ucVdeJ8Lr3aC+IsVyPzXDqHASE0LSTBOEzKe0qNxhV6kLLw7xkoMLFug==
+X-Received: by 2002:a05:6a20:3c8a:b0:158:143d:e215 with SMTP id b10-20020a056a203c8a00b00158143de215mr12630984pzj.1.1695306430192;
+        Thu, 21 Sep 2023 07:27:10 -0700 (PDT)
+Received: from ?IPV6:2620:15c:211:201:6903:9a1f:51f3:593e? ([2620:15c:211:201:6903:9a1f:51f3:593e])
+        by smtp.gmail.com with ESMTPSA id y7-20020a637d07000000b0054fa8539681sm1362140pgc.34.2023.09.21.07.27.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Sep 2023 07:27:09 -0700 (PDT)
+Message-ID: <8781636a-57ac-4dbd-8ec6-b49c10c81345@acm.org>
+Date:   Thu, 21 Sep 2023 07:27:08 -0700
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/13] Pass data temperature information to zoned UFS
+ devices
+Content-Language: en-US
+To:     Niklas Cassel <Niklas.Cassel@wdc.com>
+Cc:     Matthew Wilcox <willy@infradead.org>, Jens Axboe <axboe@kernel.dk>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Christoph Hellwig <hch@lst.de>
+References: <20230920191442.3701673-1-bvanassche@acm.org>
+ <ZQtHwsNvS1wYDKfG@casper.infradead.org>
+ <1522d8ec-6b15-45d5-b6d9-517337e2c8cf@acm.org> <ZQv07Mg7qIXayHlf@x1-carbon>
+From:   Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <ZQv07Mg7qIXayHlf@x1-carbon>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
+        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 21, 2023, Xu Yilun wrote:
-> When the invalidation acrosses multiple slots, I'm not sure if the
-> contiguous HVA range must correspond to contiguous GFN range. If not,
-> are we producing a larger range than required?
+On 9/21/23 00:46, Niklas Cassel wrote:
+> Considering that this API (F_GET_FILE_RW_HINT / F_SET_FILE_RW_HINT) 
+> was previously only used by NVMe (NVMe streams).
 
-Multiple invalidations are all but guaranteed to yield a range that covers addresses
-that aren't actually being invalidated.  This is true today.
+That doesn't sound correct to me. I think support for this API was added
+in F2FS in November 2017 (commit 4f0a03d34dd4 ("f2fs: apply write hints
+to select the type of segments for buffered write")). That was a few
+months after NVMe stream support was added (June 2017) by commit
+f5d118406247 ("nvme: add support for streams and directives").
 
-> And when the invalidation acrosses multiple address space, I'm almost
-> sure it is wrong to merge GFN ranges from different address spaces. 
+> Should NVMe streams be brought back? Yes? No?
 
-It's not "wrong" in the sense that false positives do not cause functional
-problems, at worst a false positive can unnecessarily stall a vCPU until the
-unrelated invalidations complete.
+ From commit 561593a048d7 ("Merge tag 'for-5.18/write-streams-2022-03-18'
+of git://git.kernel.dk/linux-block"): "This removes the write streams
+support in NVMe. No vendor ever really shipped working support for this,
+and they are not interested in supporting it."
 
-Multiple concurrent invalidations are not common, and if they do happen, they are
-likely related and will have spacial locality in both host virtual address space
-and guest physical address space.  Given that, we chose for the simple (and fast!)
-approach of maintaining a single all-encompassing range.
+I do not want to reopen the discussion about NVMe streams.
+
+Thanks,
+
+Bart.
