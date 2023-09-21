@@ -2,202 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B8DCC7A97BF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Sep 2023 19:27:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74BA67A970D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Sep 2023 19:11:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229883AbjIUR1a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Sep 2023 13:27:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53490 "EHLO
+        id S230136AbjIURLE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Sep 2023 13:11:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58768 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229608AbjIUR1F (ORCPT
+        with ESMTP id S231535AbjIURKd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Sep 2023 13:27:05 -0400
-Received: from wout1-smtp.messagingengine.com (wout1-smtp.messagingengine.com [64.147.123.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34E70CC2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Sep 2023 10:02:34 -0700 (PDT)
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.west.internal (Postfix) with ESMTP id 2725C32009C1;
-        Thu, 21 Sep 2023 04:09:18 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Thu, 21 Sep 2023 04:09:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-        cc:cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm2; t=
-        1695283757; x=1695370157; bh=nA0/jPVwk0exPLmG+4I7iW/AUsZGMC1LZMc
-        vxEBfYI4=; b=gPUtJgVD46tgWLGeIo8wKKlgGlWVsHuFbQEbAiKubz2ykFbZtrV
-        3M2vT8/g3mr9Ol9Avj7891KY0sewWH+RjNe35OZw0lmrvFrFUuGbcOm34VqYn3yJ
-        ZFSzVcOLfWC1CtrddKQ3PVyVJyD5Jd0yV6p3+fv1gW5zpMCbZH2UvLmHOe6qZjXZ
-        /xeRN7XSPcMfTC3h/oR/bprhJm1PYUuANuYZxEqp7Nw2cE4mqRa0NwreX225fIBk
-        T5YHoJd5UNKnp3se2B/bO48M7loRs0y919nmFW+FalgqQ4L34vtGaB8lyos2XcRR
-        K90SXiHJ2lcyY54SUdszjkMHPd7ieKIpgWA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-        1695283757; x=1695370157; bh=nA0/jPVwk0exPLmG+4I7iW/AUsZGMC1LZMc
-        vxEBfYI4=; b=lh9qbkPmTpxdvR3s0cmmpepyJakzNJydH9Oqm1Oh1T+emcFmXEl
-        XvenWxM2l0UWptLj+MsTgz/+/7OCavVDWL8SlTUAomDdTGn4etVoUShBg/mnvnjT
-        GoYYzNsE8dFiyJbRGMwImQNhaCwwNJ/8YeLCayNVrNdVuhzgevoQTbDjTmzGkyQH
-        hCPZD7mMaX6WCTCvCsNvebEhaIH0J/xbceWfyxlOzl7crP+Khi16aev5mDPEPn6W
-        Oj8Tb4/5ujvtTy38Tyj4Mr7N7lm1BDfOj/bOS/ZXv4wqoFgce9QoiKoVmNXMDY+u
-        047M7YCHYIq1I1nXKrqcGHqrj2NLcth8oow==
-X-ME-Sender: <xms:LfoLZYqgUFDlkfqgw_0z2s3TNOZycropObweM9GtzJf4kSWg-E5LTw>
-    <xme:LfoLZepyvpVCOeKA8uQVIyxxUTNwINTcHA_coEhgsWBfxQr5bK_qAGR8UiW2dpK8X
-    aBA3wqHTn9PcHje>
-X-ME-Received: <xmr:LfoLZdOBbbDudnmOO0gclquM-UnitawHCufKCYwCacyaQYOg1kmI7UprO8x8_8cHcxTvkXEK29BUFg1vIpoB-N_U-4eOTjDsvLc6-yCTOkttBp0SeRIv>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrudekiecutefuodetggdotefrodftvfcurf
-    hrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepuegvrhhnugcu
-    ufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdrfh
-    hmqeenucggtffrrghtthgvrhhnpeeutdekieelgeehudekgffhtdduvddugfehleejjeeg
-    leeuffeukeehfeehffevleenucffohhmrghinhepghhithhhuhgsrdgtohhmnecuvehluh
-    hsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgt
-    hhhusggvrhhtsehfrghsthhmrghilhdrfhhm
-X-ME-Proxy: <xmx:LfoLZf5Eq24K--yjzRUCm67ynXejoTjZU_j3rf8DvLUDIyQ-07REHg>
-    <xmx:LfoLZX5YVBmQzbZSi-d_1G6D5EwNC1I9vBGJVyn0vYwkoMGPJfr0bw>
-    <xmx:LfoLZfh9eeka2hPloyBBx406yqoqwPAE8RE0HtoMn_4KhMgAhgNKjQ>
-    <xmx:LfoLZdQF_vcMQE3yCXfGORIuZ-uJjbwcQvILAwT6PjuJVEulE30n5A>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 21 Sep 2023 04:09:16 -0400 (EDT)
-Message-ID: <9a135af5-2acf-42ed-b30e-f79ac7c86e25@fastmail.fm>
-Date:   Thu, 21 Sep 2023 10:09:13 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 4/7] vfs: Optimize atomic_open() on positive dentry
-To:     Amir Goldstein <amir73il@gmail.com>,
-        Bernd Schubert <bschubert@ddn.com>
-Cc:     linux-fsdevel@vger.kernel.org, miklos@szeredi.hu, dsingh@ddn.com,
-        Christian Brauner <brauner@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-References: <20230920173445.3943581-1-bschubert@ddn.com>
- <20230920173445.3943581-5-bschubert@ddn.com>
- <CAOQ4uxjsfjEBo3obU9EPZuwkHXu_aPo+BJgVCOdN7V6bSRGXvA@mail.gmail.com>
-Content-Language: en-US, de-DE
-From:   Bernd Schubert <bernd.schubert@fastmail.fm>
-In-Reply-To: <CAOQ4uxjsfjEBo3obU9EPZuwkHXu_aPo+BJgVCOdN7V6bSRGXvA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        Thu, 21 Sep 2023 13:10:33 -0400
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2071f.outbound.protection.outlook.com [IPv6:2a01:111:f400:feab::71f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D134A5E3;
+        Thu, 21 Sep 2023 10:05:56 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=BVN6q5tiBioZhkz6kUzvbrVC/iDyK6Pcdyu64k4oUws3lm57nwGmAxgnE3oEpFbzT4NJJTYhbxPLF641UcTmiBrsGwaL+tE6z++gT59PI9RO3I4cAEEpjNyWkAsFaeAJrIRHpEMDv9f8Fza3cn+z2OddCspB1pi8zQW2f3SagmbHQIJlSM0pdEx9+L4LfNDz1QI7uyAuIne3Rm7+QKczM9Vik9B394dVmIAeaK3bqNrIOvqMGJRDetMMrCdjIA8S32H2eJqwt/2hjE1GBC96dqadK1g6y37UqmY+8EXHS0ZbK8yn7NGaUwZ/kUVlDOlzVx0n9PB/A47tDQ65C1rZcw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Hie0CU6WHQFYyWZ1gCWFxOHUJnosO1rkhWfrjMFTl18=;
+ b=JeYodLsuSui+q8P4Kc23GCq5LRN5jWYRzXDWDm82PJgX9kbjIMtWCbGoe7ZFHu+pe/LDBdFtggeYKcr7jaNFjfTiJ5gZb+SVX2vjEvtX+7nuvt0VTayCZjZL+ocb//+vm9MKbHb6e9r12hNJBnGVvXDgpYGgAmZOjG+9EELs8aiekrJUor+1MiRI9u5O0+j/dRwn+BFvHHH52aMUdEAbBtTRBZB4lFYowUCZ7ivuzPhe4lPKTzoS85tKL/SqVFc7b4LMu80PqdvFjmIailqPy78M+M+G/lZ5/LzVm3yoSpIy4I3wPV4Jkb/bO4pLZiK7fZNMtGEBewlD0CKZpX2R7Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Hie0CU6WHQFYyWZ1gCWFxOHUJnosO1rkhWfrjMFTl18=;
+ b=G3PZZ7wkgAJlI5lfuKna4lmOyeTnekkzlwmnnY8ssy6KIe7JZnC9HXA7nDoQ72q8VQxV/gmdIRVWf99w0fxACfPAHb596L39ba7ZkmgKj2HqYOGk3J/UtSanHNwst/3CrwdmZRCt1X3ezhyKdR8aPBKif1VfrGoJDmxCddxjhbB2yBM8sDg6OpO3U4fjjJ82aktQnr9awy3gGzUYErSMDJHbkgkDMhxvTHUpT2UorTU/8CEPhGYpFSzCwPfCcBObjjj6mrtgoCx+wOKQr7DCcDUQLHsIL+PJFINXbf1adE1jRCsoYy/LrVlZYFyhCLEIgG7wPo/GrMidMBi8w01Aog==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SG2PR06MB5288.apcprd06.prod.outlook.com (2603:1096:4:1dc::9) by
+ JH0PR06MB6917.apcprd06.prod.outlook.com (2603:1096:990:67::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6813.20; Thu, 21 Sep 2023 08:16:07 +0000
+Received: from SG2PR06MB5288.apcprd06.prod.outlook.com
+ ([fe80::1d4d:f221:b9dd:74d1]) by SG2PR06MB5288.apcprd06.prod.outlook.com
+ ([fe80::1d4d:f221:b9dd:74d1%6]) with mapi id 15.20.6813.018; Thu, 21 Sep 2023
+ 08:16:07 +0000
+From:   Minjie Du <duminjie@vivo.com>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org (open list:PAGE CACHE),
+        linux-mm@kvack.org (open list:MEMORY MANAGEMENT),
+        linux-kernel@vger.kernel.org (open list)
+Cc:     opensource.kernel@vivo.com, Minjie Du <duminjie@vivo.com>
+Subject: [PATCH v1] mm/filemap: increase usage of folio_next_index() helper
+Date:   Thu, 21 Sep 2023 16:15:35 +0800
+Message-Id: <20230921081535.3398-1-duminjie@vivo.com>
+X-Mailer: git-send-email 2.39.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_PASS,SPF_PASS,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
-X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
-        lindbergh.monkeyblade.net
+Content-Type: text/plain
+X-ClientProxiedBy: TYCP286CA0008.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:26c::15) To SG2PR06MB5288.apcprd06.prod.outlook.com
+ (2603:1096:4:1dc::9)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SG2PR06MB5288:EE_|JH0PR06MB6917:EE_
+X-MS-Office365-Filtering-Correlation-Id: 86bea5a8-1e15-4918-f150-08dbba7b015b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: On/jhM4q/0yUIQWOdG5uFL/t7ozgFGDoTO9BWjD/JODtpQg0ugqQrdM7qyRS1F+ONCu7pU+7Mlak4u8Bgrral/WKdVynymse8wXzuJCqBUnKiUglbStaYIg1Cza88UdP4265pRG5fHGjgWBBfM/k8emPowZZZ+VyjL9mz0V1PQ8nqwmyXBTZJTJt53tVM5aqp6sKYADAXX/GJVi4/zvN6EPowNzhoucXAryW2BqChqpcHNmOREBWGI63V+/n8fAcI/IolWQ6xwfXjXN59XManIELfwFqnjfMFO3A/4sY1tOse4fUarIx1vEUPtJS/tyqcUFysv9kPB103/sVrx1S57bmr3LMOZvNJz/raYLOvAPJ476Qdxhwj251c/NuYm6aVtVApUzAESFGgGbqcpsuSdcqVnxaQcbv+s08P+MM00M1o7gZXSxH+0UyHKVF/S8eNJYWjnwkuv0IouVajZQ1pY3bEvOP5dZyjrw38+W6qy4MKmF8Hl0APpzmLcAtG3PCePqBuQnpplCVzKJckrM3oDnIPwZrFp4CGFzAWLuqwv9h6fbwmBepdIP3j5NUnB2oNKu5HQ9YzuQCyb9W5TWZk7adGTxgcXn513lg8bygVRqRjSNuS5/UQnL4s9zq3ORo
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SG2PR06MB5288.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(136003)(396003)(376002)(366004)(346002)(39860400002)(451199024)(186009)(1800799009)(26005)(41300700001)(1076003)(2616005)(36756003)(6666004)(107886003)(8936002)(8676002)(4326008)(52116002)(6512007)(6506007)(6486002)(110136005)(66556008)(66476007)(66946007)(316002)(4744005)(2906002)(478600001)(86362001)(38100700002)(38350700002)(83380400001)(5660300002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?YQG36OS+l+sJxaIq2sL4XhkmnBYwFlEfejgWBLbZQCW3OgFsPST7gh1uCxcC?=
+ =?us-ascii?Q?RxyNvjOG5TxLpntvMLmyw1HI6nXx4+rmkGCrBxBYs5N5jdvzlysIY5uL1z87?=
+ =?us-ascii?Q?CZ2LWHCL3ZTgtgV5s0P8wvOhEsRD7jhcmImHcT7epDBaSm2AgMwpt/7SCUkN?=
+ =?us-ascii?Q?uWV3sFeV11hAKEBb7hbMpZg4S7KK2NSLtNK565c+aB8U1QcJYKu7MtYQExKZ?=
+ =?us-ascii?Q?4VDu0QJ4KXJzlk1dTxFPceT51123Et6QUgknZmNLm/9lvjgnLrai7aB6gTFw?=
+ =?us-ascii?Q?2m7BKEDZ3/OaYPnKYmPpU79HQpZGxLjF75ouQrOO+4cBjcw9hCuLTdmoUdF5?=
+ =?us-ascii?Q?2scyL0k/wkUBU8GKlIn/QZbUXHJOfEQdw861EAnBvLQg/3HNEwl0+BsqY2Y/?=
+ =?us-ascii?Q?SgprzlAmHW5XoWNIfBQZ8beWI+P0QTh7iLEJUE+AEOIQQOKydXdY/SUEmF/5?=
+ =?us-ascii?Q?ydFe666b60gP1Ib0PYsJX3dLOyHp8/Q88/KhJfGl3ztcVHXrcFCl1SOYFE8o?=
+ =?us-ascii?Q?+f5vQ1w/SoLRz/gAkKC10HA+vo6Tv73oih9rFG5QJrOfNQFS+bgJ6vExyO2V?=
+ =?us-ascii?Q?Pnyl119aJiiV6OW5Z/rR2CfGHPjwQF8VlKNtZNB9LYvesLc7o8uwHGTU/dMd?=
+ =?us-ascii?Q?MHZnYmrQfgiB0WkagCedGH0GdG2Z8tAXoLch4EOCLe1pWlmzB0umrnKqa5Mt?=
+ =?us-ascii?Q?QSLsgyHUSrVZCzmNwvmozpv0w7UVEHl7SQngj0JeclhI4cQmXZLKYAN9+O8j?=
+ =?us-ascii?Q?aeckQXYX+o7hmD6hXlCWnb1qOjWuyw0Cc0HTCGn3gB29x0bcHceL0Vj1BumU?=
+ =?us-ascii?Q?aOTV4ivggaKKEzcPZ4LUhRj5UNJ5EWzytp3VIhzU899V8ZwkXsHirr0z/uyd?=
+ =?us-ascii?Q?ZKPAhX+WChuJIxmdjOhy5l4+D2Wa+zTv1ixIiDtZkvAL4xSvySTuBm5eEabc?=
+ =?us-ascii?Q?baj0UlD8o4t+qWxYpXJ/bsiE97PipWudn0QhAyhDu74eqB7qfti++KqkH3oK?=
+ =?us-ascii?Q?EgOv9pic3IVK+d50pzWYBp8EXhJRx+nN01Q5RSqLsN51O5RFKTZdaKrHTCB5?=
+ =?us-ascii?Q?cKnOxPEtwqHjkjJezacsCsJHHgSBXDPABUJ/W3q6x4k9J8ktAToBNjB99nSC?=
+ =?us-ascii?Q?kL5HyP3dO6gm3uUgjlJSE/KDgOw32ljxTHiCfykolmLhUOQb7BMMFTuvJdX2?=
+ =?us-ascii?Q?Uhzu1PMIk2XRUhYFSEGOSIquP4ZZd4gKso3Rgka//sCZIQ3x9hOKyBDGlwYO?=
+ =?us-ascii?Q?k5opYFdiz2a2lBIzlM8Qva5d9GspQHIbRtsPLKziIlJtMR1ofD7TGIdCcukc?=
+ =?us-ascii?Q?tpDX7YQp6cbwMwlKRFgJ2abHQqsSzwDkpiEDbwq00und9LePIGqQN+jWQsWt?=
+ =?us-ascii?Q?crMoZ0ljFxor+eUSAVX2HpIcz6eQBc7OGcxHP/ryO8wr0REz8I/Ji+e7JyKF?=
+ =?us-ascii?Q?tzbgviq3Rgp5UK0RL5AJXNap4G+PfiVsmkg9BEmWW3F0vxajKQaV3heNAsSm?=
+ =?us-ascii?Q?d16/EJF7kiDKGD5dzK2XGbKC9GxHeYawOxncNZuMPDKSTLe0uyJ+3sPROdyC?=
+ =?us-ascii?Q?c7tK5jJQBf7rw7MSN5lSup4LWwnXbp6iVPVyVhjS?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 86bea5a8-1e15-4918-f150-08dbba7b015b
+X-MS-Exchange-CrossTenant-AuthSource: SG2PR06MB5288.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Sep 2023 08:16:07.1695
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: pqw9x7vDjOIELOymA/3QiFXqH7KKn9P7hrM+2OrfGOD50/pccftbdDbuu8DXk+a05oMtLp6odNru6LvyrZEO6w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR06MB6917
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Simplify code pattern of 'folio->index + folio_nr_pages(folio)' by using
+the existing helper folio_next_index() in filemap_map_pages().
 
+Signed-off-by: Minjie Du <duminjie@vivo.com>
+---
+ mm/filemap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 9/21/23 08:16, Amir Goldstein wrote:
-> On Thu, Sep 21, 2023 at 12:48 AM Bernd Schubert <bschubert@ddn.com> wrote:
->>
->> This was suggested by Miklos based on review from the previous
->> patch that introduced atomic open for positive dentries.
->> In open_last_lookups() the dentry was not used anymore when atomic
->> revalidate was available, which required to release the dentry,
->> then code fall through to lookup_open was done, which resulted
->> in another d_lookup and also d_revalidate. All of that can
->> be avoided by the new atomic_revalidate_open() function.
->>
->> Another included change is the introduction of an enum as
->> d_revalidate return code.
->>
->> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
->> Cc: Miklos Szeredi <miklos@szeredi.hu>
->> Cc: Dharmendra Singh <dsingh@ddn.com>
->> Cc: Christian Brauner <brauner@kernel.org>
->> Cc: Al Viro <viro@zeniv.linux.org.uk>
->> Cc: linux-fsdevel@vger.kernel.org
->> ---
->>   fs/namei.c | 45 +++++++++++++++++++++++++++++++++++++++++++--
->>   1 file changed, 43 insertions(+), 2 deletions(-)
->>
->> diff --git a/fs/namei.c b/fs/namei.c
->> index f01b278ac0ef..8ad7a0dfa596 100644
->> --- a/fs/namei.c
->> +++ b/fs/namei.c
->> @@ -3388,6 +3388,44 @@ static struct dentry *atomic_open(struct nameidata *nd, struct dentry *dentry,
->>          return dentry;
->>   }
->>
->> +static struct dentry *atomic_revalidate_open(struct dentry *dentry,
->> +                                            struct nameidata *nd,
->> +                                            struct file *file,
->> +                                            const struct open_flags *op,
->> +                                            bool *got_write)
->> +{
->> +       struct mnt_idmap *idmap;
->> +       struct dentry *dir = nd->path.dentry;
->> +       struct inode *dir_inode = dir->d_inode;
->> +       int open_flag = op->open_flag;
->> +       umode_t mode = op->mode;
->> +
->> +       if (unlikely(IS_DEADDIR(dir_inode)))
->> +               return ERR_PTR(-ENOENT);
->> +
->> +       file->f_mode &= ~FMODE_CREATED;
->> +
->> +       if (unlikely(open_flag & O_CREAT)) {
->> +               WARN_ON(1);
-> 
->        if (WARN_ON_ONCE(open_flag & O_CREAT)) {
-> 
-> is more compact and produces a nicer print
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 4ea4387053e8..f8d0b97f9e94 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -3591,7 +3591,7 @@ vm_fault_t filemap_map_pages(struct vm_fault *vmf,
+ 		addr += (xas.xa_index - last_pgoff) << PAGE_SHIFT;
+ 		vmf->pte += xas.xa_index - last_pgoff;
+ 		last_pgoff = xas.xa_index;
+-		end = folio->index + folio_nr_pages(folio) - 1;
++		end = folio_next_index(folio) - 1;
+ 		nr_pages = min(end, end_pgoff) - xas.xa_index + 1;
+ 
+ 		if (!folio_test_large(folio))
+-- 
+2.39.0
 
-Thanks a lot for your review Amir! Nice, I hadn't noticed that
-these macros actually return a value. Also updated the related
-fuse patch, which had a similar construct.
-
-> 
->> +               return ERR_PTR(-EINVAL);
->> +       }
->> +
->> +       if (open_flag & (O_TRUNC | O_WRONLY | O_RDWR))
->> +               *got_write = !mnt_want_write(nd->path.mnt);
->> +       else
->> +               *got_write = false;
->> +
->> +       if (!got_write)
->> +               open_flag &= ~O_TRUNC;
->> +
->> +       inode_lock_shared(dir->d_inode);
->> +       dentry = atomic_open(nd, dentry, file, open_flag, mode);
->> +       inode_unlock_shared(dir->d_inode);
->> +
->> +       return dentry;
->> +
->> +}
->> +
->>   /*
->>    * Look up and maybe create and open the last component.
->>    *
->> @@ -3541,8 +3579,10 @@ static const char *open_last_lookups(struct nameidata *nd,
->>                  if (IS_ERR(dentry))
->>                          return ERR_CAST(dentry);
->>                  if (dentry && unlikely(atomic_revalidate)) {
->> -                       dput(dentry);
->> -                       dentry = NULL;
->> +                       BUG_ON(nd->flags & LOOKUP_RCU);
-> 
-> The assertion means that someone wrote bad code
-> it does not mean that the kernel internal state is hopelessly corrupted.
-> Please avoid BUG_ON and use WARN_ON_ONCE and if possible
-> (seems to be the case here) also take the graceful error path.
-> It's better to fail an open than to crash the kernel.
-
-Thanks, updated. I had used BUG_ON because there is a similar BUG_ON a
-few lines below. Added another RFC patch to covert that one as well.
-I'm going to wait a few days for possible other reviews and will then send
-out the new version. The updated v10 branch is here
-
-https://github.com/bsbernd/linux/tree/atomic-open-for-6.5-v10
-
-
-Thanks,
-Bernd
