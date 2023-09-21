@@ -2,73 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A57B7A9959
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Sep 2023 20:13:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F3357A9D9D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Sep 2023 21:42:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229935AbjIUSNj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Sep 2023 14:13:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54256 "EHLO
+        id S229993AbjIUTmq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Sep 2023 15:42:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229783AbjIUSMd (ORCPT
+        with ESMTP id S230519AbjIUTmc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Sep 2023 14:12:33 -0400
-Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F009D53650
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Sep 2023 10:31:49 -0700 (PDT)
-Received: by mail-yb1-xb32.google.com with SMTP id 3f1490d57ef6-d8165e3b209so3425080276.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Sep 2023 10:31:49 -0700 (PDT)
+        Thu, 21 Sep 2023 15:42:32 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FDE3C6
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Sep 2023 12:22:25 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id 2adb3069b0e04-503056c8195so2179236e87.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Sep 2023 12:22:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1695317502; x=1695922302; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=ionos.com; s=google; t=1695324143; x=1695928943; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7tLFWbcb1IrLWIYefg9HuOVDdBjkCq6t27dXg5hrJMc=;
-        b=I3n5YZtiK7mWzqyvGKFFFHjiCYJ9grulFq6BYwVEucI3pHJ8a+TSg4nJtxx8XK5Uww
-         OfTHzOBM8b7QxqfI0PlqCBO5L5AWhrLv1j+8pEVd4C9DCI+swdWrt6Y6z5J8jBhv+2cK
-         r8j+YBCfBYUXE0Gs95IGPvvJ+/+YVbNRt0XtsenNav1qzn6F2hpR97IfzmklOg0Cibtn
-         wV2hW+49LJdyM5nHEAfoI7w5HXwhc0I8BZJWv8ML3ajFJl+QE2oZxS88Wjl9jud8jNZC
-         Sewq9TNbdJ/zCdoLSgTlzTQTPyvUPg28ickOcMTZksNcILZcc+upaCBWcjnFaXfhIqDH
-         3CaA==
+        bh=exindjDRedXgd3Z4uqnR6aLnmaUK9oSQ00jryr/8dkk=;
+        b=ctPjk+OJw6+tnp2fWURX4aNmHGoYzrYgmIvLIuZCMqiY0gkrETO7GlnvM6MveKnJb6
+         EXIVYhOscKMSpdPXB8On/TUeDMEzKyaMTExIAw12Gre9yC2YJrztw60/GPtrH/9CQgz6
+         hvkpRw2/seTMHycezVJbRiDWgPY0QzorPub+hSPxEzUT2HRZ+FFs0M4fJsjbev6rLq99
+         1NuYTFk1B3pNVcahJr6UVDwc7thBG25cPf/nZ5xclOj8SoJKFhVudoD1iCvxkU+nmuq2
+         jyCriGjJTGgUXU7N9Yl+bsIG42/GZ+gjNk2qu0jjEY7dSa8lqTIVl8MGlSkhRen4dMJR
+         gfsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695317502; x=1695922302;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1695324143; x=1695928943;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7tLFWbcb1IrLWIYefg9HuOVDdBjkCq6t27dXg5hrJMc=;
-        b=P3Q3yzflOmrvbxY3qo9vZ3cmUMT7PA+YeLxGqxdOpNd+v7NMRjR/v84eU8nThEsx+8
-         aGjnWTeUbfZAQhItMhs4+g/0JN+0Q0D/YynqqZ8Q0fvHpzpfW3knQGbyXgqe0t/bkDBo
-         wuYnigroZKFRMa+EQ+GvlsOIYKa/S2CUL/c3fZltL6cYXjdI8g4bweMiZBnh135zOfSR
-         LtOCdJTII/bGOFCvgVE8A22Yd8MiaBHhfMoEugNR4zmZBSM6GamJVAn8gVtle82PpyxC
-         ItcHc8ts5OPb+UDxoJ/Lp1W7g4bsiW5TW6MI9kCKow7DIB/wbB6M84POmckOTUK4Dyol
-         ezfg==
-X-Gm-Message-State: AOJu0Yxri01wpO3+9QgUsFYDdiIofQ2gz9lr6BQ+ROKiQEOtjcnFsIPO
-        IJ6zy41RY1u7NdHUtW/7WnjiePyvSclJXMxMYomm0UM4jXo=
-X-Google-Smtp-Source: AGHT+IHX/dI/2JinkMoZScr9VzhGhRn3WTVCXI4+LcXkDcLNcFF91JSrjqSIzn/Oj3vS4Wie0igsm5UUt1W8PYEZar0=
-X-Received: by 2002:a05:6102:36c5:b0:452:61fa:1e04 with SMTP id
- z5-20020a05610236c500b0045261fa1e04mr4074837vss.9.1695281613221; Thu, 21 Sep
- 2023 00:33:33 -0700 (PDT)
+        bh=exindjDRedXgd3Z4uqnR6aLnmaUK9oSQ00jryr/8dkk=;
+        b=whudk9ng0bCc9HfCjFPg4H/6Vsvf3SkSRVolHozT55oYvcZZIci5ilrSFsclwYjcTu
+         YI0Th4+m9NNjyx0/XBd8ya1uOu7iLD96iJZkbmCaMKp/+NmPoDweknmvDVFIdDAwkByv
+         szbVHTAwb5HnUYiZSpT5+r3gAUe2aKWqoWMw1I9sHKtjp2U124uRIzECiZ1vbXKFW1lF
+         BTtZCwGJw5ajq8JaklxBjhAyROCruIuCqvDyP/WjhgKbv45Ljwnupik4YNUiqKWHZbYy
+         w85VRQQyneIQCorfrpMq+cB7qopM/CLhTwf4cYjnSgVpLHBi22oLcHxPFBvC6VOQ23CZ
+         MgmA==
+X-Gm-Message-State: AOJu0Ywe0L6VIpTysCn6ZvV3QB1LwS3BaCC8f4qR4Qqa3RC1LGnzQMO0
+        gvVRkRFzLt01Wq1UYaCwgwl2GxsTt1Ha+/NejYk=
+X-Google-Smtp-Source: AGHT+IGgD2cpMGXUp64ky7Z5KuE2s5kxlCzRjSWpVK8NceErhc6QZfb9I2OKWDGSASGhoo1owTOA2w==
+X-Received: by 2002:a05:600c:2109:b0:401:bedd:7d42 with SMTP id u9-20020a05600c210900b00401bedd7d42mr4517741wml.13.1695283081746;
+        Thu, 21 Sep 2023 00:58:01 -0700 (PDT)
+Received: from heron.intern.cm-ag (p200300dc6f209c00529a4cfffe3dd983.dip0.t-ipconnect.de. [2003:dc:6f20:9c00:529a:4cff:fe3d:d983])
+        by smtp.gmail.com with ESMTPSA id v4-20020a05600c214400b003fef19bb55csm1151252wml.34.2023.09.21.00.58.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Sep 2023 00:58:01 -0700 (PDT)
+From:   Max Kellermann <max.kellermann@ionos.com>
+To:     viro@zeniv.linux.org.uk, brauner@kernel.org, howells@redhat.com
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Max Kellermann <max.kellermann@ionos.com>
+Subject: [PATCH 2/4] fs/pipe: move check to pipe_has_watch_queue()
+Date:   Thu, 21 Sep 2023 09:57:53 +0200
+Message-Id: <20230921075755.1378787-2-max.kellermann@ionos.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230921075755.1378787-1-max.kellermann@ionos.com>
+References: <20230921075755.1378787-1-max.kellermann@ionos.com>
 MIME-Version: 1.0
-References: <20230519125705.598234-1-amir73il@gmail.com> <CAOQ4uxibuwUwaLaJNKSifLHBm9G-Tgn67k_TKWKcN1+A4Rw-zg@mail.gmail.com>
- <CAJfpegucD6S=yUTzpQGsR6C3E64ve+bgG_4TGP7Y+0NicqyQ_g@mail.gmail.com>
- <CAOQ4uxjGWHnwd5fcp8VwHk59q=BftAhw0uYbdR-KmJCq3fpnDg@mail.gmail.com>
- <CAJfpegu2+aMaEmUCjem7em0om8ZWr0ENfvihxXMkSsoV-vLKrw@mail.gmail.com>
- <CAOQ4uxgySnycfgqgNkZ83h5U4k-m4GF2bPvqgfFuWzerf2gHRQ@mail.gmail.com>
- <CAOQ4uxi_Kv+KLbDyT3GXbaPHySbyu6fqMaWGvmwqUbXDSQbOPA@mail.gmail.com> <CAJfpegvRBj8tRQnnQ-1doKctqM796xTv+S4C7Z-tcCSpibMAGw@mail.gmail.com>
-In-Reply-To: <CAJfpegvRBj8tRQnnQ-1doKctqM796xTv+S4C7Z-tcCSpibMAGw@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 21 Sep 2023 10:33:21 +0300
-Message-ID: <CAOQ4uxjBA81pU_4H3t24zsC1uFCTx6SaGSWvcC5LOetmWNQ8yA@mail.gmail.com>
-Subject: Re: [PATCH v13 00/10] fuse: Add support for passthrough read/write
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Daniel Rosenberg <drosen@google.com>,
-        Paul Lawrence <paullawrence@google.com>,
-        Alessio Balsini <balsini@android.com>,
-        fuse-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-0.6 required=5.0 tests=BAYES_00,DATE_IN_PAST_06_12,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=no
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -76,130 +72,82 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 20, 2023 at 9:15=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu> =
-wrote:
->
-> On Wed, 20 Sept 2023 at 15:57, Amir Goldstein <amir73il@gmail.com> wrote:
->
-> > Unlike Alession's version, this implementation uses the explicit ioctl
-> > flag FUSE_BACKING_MAP_ID to setup an "inode unbound" backing file
-> > and the explicit open flag FOPEN_PASSTHROUGH_AUTO_CLOSE
-> > to unmap the backing id, when the backing file is assigned to the fuse =
-file.
->
-> That sounds about right.  I'm not sure the flexibility provided by the
-> auto/noauto mode is really needed, but taking this out later in the
-> development process shouldn't be a problem.
->
-> >
-> > FOPEN_PASSTHROUGH (without AUTO_CLOSE) would let the server
-> > manage the backing ids, but that mode is not implemented in the example=
-.
-> >
-> > The seconds passthrough_hp commit:
-> > - Enable passthrough of multiple fuse files to the same backing file
-> >
-> > Maps all the rdonly FUSE files to the same "inode bound" backing
-> > file that is setup on the first rdonly open of an inode.
-> > The implementation uses the ioctl flag FUSE_BACKING_MAP_INODE
-> > and the open flag FOPEN_PASSTHROUGH (AUTO_CLOSE not
-> > supported in this mode).
->
-> I think the natural interface would be to setup the inode mapping in
-> the lookup reply (using the normal backing ID).
->
-> With your current method, what's the good time for establishing the
-> mapping?  After the lookup succeeded, obviously.  But then it might
-> already have raced with open...
->
+This declutters the code by reducing the number of #ifdefs and makes
+the watch_queue checks simpler.  This has no runtime effect; the
+machine code is identical.
 
-I don't understand the concern.
+Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+---
+ fs/pipe.c                 | 12 +++---------
+ include/linux/pipe_fs_i.h | 13 +++++++++++++
+ 2 files changed, 16 insertions(+), 9 deletions(-)
 
-This API leaves the control of when to setup/teardown the
-mapping completely in the hands of the server.
+diff --git a/fs/pipe.c b/fs/pipe.c
+index 6c1a9b1db907..6ecaccb48738 100644
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -437,12 +437,10 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
+ 		goto out;
+ 	}
+ 
+-#ifdef CONFIG_WATCH_QUEUE
+-	if (pipe->watch_queue) {
++	if (pipe_has_watch_queue(pipe)) {
+ 		ret = -EXDEV;
+ 		goto out;
+ 	}
+-#endif
+ 
+ 	/*
+ 	 * If it wasn't empty we try to merge new data into
+@@ -1325,10 +1323,8 @@ static long pipe_set_size(struct pipe_inode_info *pipe, unsigned int arg)
+ 	unsigned int nr_slots, size;
+ 	long ret = 0;
+ 
+-#ifdef CONFIG_WATCH_QUEUE
+-	if (pipe->watch_queue)
++	if (pipe_has_watch_queue(pipe))
+ 		return -EBUSY;
+-#endif
+ 
+ 	size = round_pipe_size(arg);
+ 	nr_slots = size >> PAGE_SHIFT;
+@@ -1380,10 +1376,8 @@ struct pipe_inode_info *get_pipe_info(struct file *file, bool for_splice)
+ 
+ 	if (file->f_op != &pipefifo_fops || !pipe)
+ 		return NULL;
+-#ifdef CONFIG_WATCH_QUEUE
+-	if (for_splice && pipe->watch_queue)
++	if (for_splice && pipe_has_watch_queue(pipe))
+ 		return NULL;
+-#endif
+ 	return pipe;
+ }
+ 
+diff --git a/include/linux/pipe_fs_i.h b/include/linux/pipe_fs_i.h
+index 598a411d7da2..699507c52b72 100644
+--- a/include/linux/pipe_fs_i.h
++++ b/include/linux/pipe_fs_i.h
+@@ -124,6 +124,19 @@ struct pipe_buf_operations {
+ 	bool (*get)(struct pipe_inode_info *, struct pipe_buffer *);
+ };
+ 
++/**
++ * pipe_has_watch_queue - Check whether the pipe is a watch_queue,
++ * i.e. it was created with O_NOTIFICATION_PIPE
++ */
++static inline bool pipe_has_watch_queue(const struct pipe_inode_info *pipe)
++{
++#ifdef CONFIG_WATCH_QUEUE
++	return pipe->watch_queue != NULL;
++#else
++	return false;
++#endif
++}
++
+ /**
+  * pipe_empty - Return true if the pipe is empty
+  * @head: The pipe ring head pointer
+-- 
+2.39.2
 
-Avoiding races in the "inode bound" mode is also the responsibility
-of the server.
-
-Quoting from the kernel commit of FUSE_BACKING_MAP_INODE:
-
-"If an inode bound backing file already exists, the ioctl returns -EEXIST.
- Managing which thread sets up the backing file for concurrent file open
- requests is the responsibility of the server.
-...
- The FUSE server may call FUSE_DEV_IOC_BACKING_CLOSE ioctl to break
- the association between the backing file and the inode.
-
- If there is no inode bound backing file, the ioctl returns -ENOENT.
- Managing which thread detaches the backing file is the responsibility of
- the server."
-
-In my example, the server happens to setup the mapping
-of the backing file to inode
-*before the first open for read on the inode*
-and to teardown the mapping
-*after the last close on the inode* (not even last rdonly file close)
-but this is an arbitrary implementation choice of the server.
-
-This example server has a lock on the server inode object,
-which is already used among other things to safely track the number
-of open fd on that inode (inode.nopen), so it was easy to
-implement the map/unmap in these code points.
-
-> >
-> > The "inode bound" shared backing file is released of inode evict
-> > of course, but the example explicitly unmaps the inode bound
-> > backing file on close of the last open file of an inode.
-> >
-> > Writable files still use the per-open unmap-on-release mode.
->
-> What's the reason for using different modes on different types of opens?
->
-
-The reason is to demonstrate that different FUSE files can use
-different backing file modes and that several FUSE files can share
-the same backing file.
-
-In the "inode bound" mode, the backing file is *shared* among all
-openers of the inode that set backing_id =3D 0 in the open reply.
-
-If I wanted to demo share the same backing file for readers and writers
-I would have needed to re-open the backing file with O_RDWR
-on the first rdonly open.
-
-It was convenient for the purpose of the demo to share the rdonly
-file from the first rdonly open, among all readers. This demo is
-not 100% correct in the sense that if the first open for read
-has O_NOATIME and the other open for read do not, all will
-use the backing file with O_NOATIME, but this is a minor
-implementation detail that the server is fully able to handle.
-
-From your questions, it seems that you either do not like my
-proposal of the special backing_id 0, or maybe you missed it
-because I did not point it out.
-
-The current kernel implementation does NOT refcount the
-backing_id only the fuse_backing object.
-
-The way that auto-close-on-evict is implemented is simply by
-not having a backing_id for the "inode bound" backing files.
-
-The way that auto-close-on-fput is implemented is simply by
-handing over the backing_id from server to kernel on open
-reply, which unmaps the backing_id and atomically transfers the
-ownership of the fuse_backing object to the fuse file.
-
-This is not the most powerful API, but
-1. It is simple
-2. It can be extended later (i.e. by allowing both
-    FUSE_BACKING_MAP_{INODE,ID} or another flag)
-
-Is that clear? Do I need to document it better?
-Do you find this API useful/acceptable?
-
-If not, I can drop the FUSE_BACKING_MAP_INODE mode
-patch and implement the server managed backing ids mode
-in the example (by storing the backing_id in the server inode).
-
-Thanks,
-Amir.
