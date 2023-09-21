@@ -2,101 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 856ED7AA52F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Sep 2023 00:40:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6833A7AA574
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Sep 2023 01:05:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229747AbjIUWkc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Sep 2023 18:40:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55088 "EHLO
+        id S229843AbjIUXFp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Sep 2023 19:05:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232238AbjIUWkZ (ORCPT
+        with ESMTP id S230198AbjIUXFb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Sep 2023 18:40:25 -0400
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8D7B3C22;
-        Thu, 21 Sep 2023 13:11:05 -0700 (PDT)
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1c1ff5b741cso12529355ad.2;
-        Thu, 21 Sep 2023 13:11:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695327065; x=1695931865;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AqLUJredNWFn6UV9EpZQHzPOud7X+d09rY2QfVP8FfM=;
-        b=hB++SQVsehyjfHesltdoKUlix0BRL+fSqltcUJUpDSz0hE4z2v3h17Yn7tT5cr6eA4
-         fuxNjGLSy15TF9h0wRHOCgBrbR3VARg4ovhRmzamN9unix/8twLGHTd9GHnI7N/6WovJ
-         UnqaY+TPIyI6Xcnq5IMeiNQVQP6CDlH9CcGNvMy8sNMClDxphv4nOrJ6Jt2YFavfOJ8Z
-         UJskvTvezFck9oe5WxqPB35kkemR6pAYN/PeiJrRAbZ+O8UbkN8Fl1/RjLvWki88AIXw
-         jhfjlr6uaP3kfYE1KkZamw8j1iHv9cgta24m/z7pOq3HB6cNv2fKt3Tvg5AugJ9Q2ZED
-         Nzow==
-X-Gm-Message-State: AOJu0YxBLOJG1vJoR1s1nW2IErM/uppeLm8s2GLWT0YTmGH7jkAS4yZy
-        kXre58vLoAksw15UZAOLYZc=
-X-Google-Smtp-Source: AGHT+IE4uBXaKeNClIyeQxDM3JodKlX79G3w3w9XgQ/pS0vx9mNOOgruGpeL+ibjNdK7nkmnSAy4Ag==
-X-Received: by 2002:a17:902:82c3:b0:1c3:f745:1cd5 with SMTP id u3-20020a17090282c300b001c3f7451cd5mr6113963plz.34.1695327065034;
-        Thu, 21 Sep 2023 13:11:05 -0700 (PDT)
-Received: from ?IPV6:2620:15c:211:201:6903:9a1f:51f3:593e? ([2620:15c:211:201:6903:9a1f:51f3:593e])
-        by smtp.gmail.com with ESMTPSA id a7-20020a170902ecc700b001b87bedcc6fsm1922245plh.93.2023.09.21.13.11.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Sep 2023 13:11:03 -0700 (PDT)
-Message-ID: <e547d35e-856b-4d0e-a77d-7f37fad3dde5@acm.org>
-Date:   Thu, 21 Sep 2023 13:11:02 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/13] Pass data temperature information to zoned UFS
- devices
-Content-Language: en-US
+        Thu, 21 Sep 2023 19:05:31 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93665561C4;
+        Thu, 21 Sep 2023 13:47:21 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEDE7C433C9;
+        Thu, 21 Sep 2023 20:47:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695329241;
+        bh=RLA8T3fc6qHtdc/his8qpk9mIDEAxM3xk0IjQR4r2PA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rsr/Lctcicc+50Eg3JXu0b8dhmZ2v3WiFXeY2wkmrCnTqXUF4B7nsPi9SuqW7wRul
+         J71+88B/rdDTyO0UzmenIyD+3u0qf56/39z2OoPLy2LZVxpos7P1sw4x+ZsjCPD1lQ
+         Oi9wT74862kw3Owh0dAp1xYUD+4S0G0QULBC/Bc82yvw4uqrhWsK/tI7wWQ7VPjEC8
+         khmD/u7EE/Fzc2tfF3nKmvx7KwOL6FCNMKwTQ4cwikFOFEDe8GintWgWS1PEIGrSOb
+         dnAd2mBBrhDizb7QLZ5SDOooRRhE27lfw506KM3naUySsxMrWD5uZ8F0beX7iHsWlf
+         o2ovLfeWYivnA==
+Date:   Thu, 21 Sep 2023 13:47:19 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
 To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Niklas Cassel <Niklas.Cassel@wdc.com>,
+Cc:     Bart Van Assche <bvanassche@acm.org>,
+        Niklas Cassel <Niklas.Cassel@wdc.com>,
         Jens Axboe <axboe@kernel.dk>,
         "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
         "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
         "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Christoph Hellwig <hch@lst.de>, Bean Huo <huobean@gmail.com>,
-        Bean Huo <beanhuo@iokpp.de>, Avri Altman <avri.altman@wdc.com>,
-        Daejun Park <daejun7.park@samsung.com>,
-        Luca Porzio <lporzio@micron.com>
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH 00/13] Pass data temperature information to zoned UFS
+ devices
+Message-ID: <ZQyr1wR9rM48p65l@google.com>
 References: <20230920191442.3701673-1-bvanassche@acm.org>
  <ZQtHwsNvS1wYDKfG@casper.infradead.org>
- <1522d8ec-6b15-45d5-b6d9-517337e2c8cf@acm.org> <ZQv07Mg7qIXayHlf@x1-carbon>
+ <1522d8ec-6b15-45d5-b6d9-517337e2c8cf@acm.org>
+ <ZQv07Mg7qIXayHlf@x1-carbon>
  <8781636a-57ac-4dbd-8ec6-b49c10c81345@acm.org>
  <ZQyZEqXJymyFWlKV@casper.infradead.org>
  <4cacae64-6a11-41ab-9bec-f8915da00106@acm.org>
  <ZQydeSIoHHJDQjHW@casper.infradead.org>
-From:   Bart Van Assche <bvanassche@acm.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <ZQydeSIoHHJDQjHW@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/21/23 12:46, Matthew Wilcox wrote:
+On 09/21, Matthew Wilcox wrote:
+> On Thu, Sep 21, 2023 at 12:39:00PM -0700, Bart Van Assche wrote:
+> > On 9/21/23 12:27, Matthew Wilcox wrote:
+> > > On Thu, Sep 21, 2023 at 07:27:08AM -0700, Bart Van Assche wrote:
+> > > > On 9/21/23 00:46, Niklas Cassel wrote:
+> > > > > Should NVMe streams be brought back? Yes? No?
+> > > > 
+> > > > From commit 561593a048d7 ("Merge tag 'for-5.18/write-streams-2022-03-18'
+> > > > of git://git.kernel.dk/linux-block"): "This removes the write streams
+> > > > support in NVMe. No vendor ever really shipped working support for this,
+> > > > and they are not interested in supporting it."
+> > > 
+> > > It sounds like UFS is at the same stage that NVMe got to -- standard
+> > > exists, no vendor has committed to actually shipping it.  Isn't bringing
+> > > it back a little premature?
+> > 
+> > Hi Matthew,
+> > 
+> > That's a misunderstanding. UFS vendors support interpreting the SCSI GROUP
+> > NUMBER as a data temperature since many years, probably since more than ten
+> > years. Additionally, for multiple UFS vendors having the data temperature
+> > available is important for achieving good performance. This message shows
+> > how UFS vendors were using that information before write hint support was
+> > removed: https://lore.kernel.org/linux-block/PH0PR08MB7889642784B2E1FC1799A828DB0B9@PH0PR08MB7889.namprd08.prod.outlook.com/
+> 
 > If vendor support already exists, then why did you dodge the question
 > asking for quantified data that I asked earlier?  And can we have that
 > data now?
 
- From Rho, Eunhee, Kanchan Joshi, Seung-Uk Shin, Nitesh Jagadeesh 
-Shetty, Jooyoung Hwang, Sangyeun Cho, Daniel DG Lee, and Jaeheon Jeong. 
-"{FStream}: Managing Flash Streams in the File System." In 16th USENIX 
-Conference on File and Storage Technologies (FAST 18), pp. 257-264. 
-2018: "Experimental results show that FStream enhances the filebench 
-performance by 5%∼35% and reduces WAF (Write Amplification Factor) by 
-7%∼46%. For a NoSQL database benchmark, performance is improved by up to 
-38% and WAF is reduced by up to 81%." Please note that these results are 
-for ext4 instead of F2FS. The benefit for F2FS is probably smaller since 
-F2FS is optimized for NAND flash media.
-
-I have Cc-ed open source contributors from multiple UFS vendors on this 
-email and I hope that they can share performance numbers for F2FS.
-
-Thanks,
-
-Bart.
-
+I'm in doubt this patch-set really requires the quantified data which may be
+mostly confidential to all the companies, also given the revert reason was no
+user, IIUC. OTOH, I'm not sure whether you're famailiar with FTL, but, when
+we consider the entire stack ranging from f2fs to FTL which manages NAND blocks,
+I do see a clear benefit to give the temperature hints for FTL to align therein
+garbage collection unit with one in f2fs, which is the key idea on Zoned UFS
+in mobile world, I believe. Otherwise, it can show non-deterministic longer
+write latencies due to internal GCs, increase WAI feeding to shorter lifetime.
