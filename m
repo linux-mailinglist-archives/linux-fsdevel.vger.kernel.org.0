@@ -2,212 +2,187 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B90F87A9D2D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Sep 2023 21:29:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D72D7A9D00
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Sep 2023 21:27:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230319AbjIUT30 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Sep 2023 15:29:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43592 "EHLO
+        id S230053AbjIUT1x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Sep 2023 15:27:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43688 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229561AbjIUT3H (ORCPT
+        with ESMTP id S229899AbjIUT1a (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Sep 2023 15:29:07 -0400
-Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A1411B6
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Sep 2023 10:03:33 -0700 (PDT)
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.nyi.internal (Postfix) with ESMTP id 9FBE35C0235;
-        Thu, 21 Sep 2023 10:44:38 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Thu, 21 Sep 2023 10:44:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-        cc:cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm2; t=
-        1695307478; x=1695393878; bh=1vll0u7F8CXOoj7SK2YnOrudf58FOj8hbWf
-        SuC7KD3I=; b=oBgarYxTIwD+1PVef5U0tSauTe795y3LFpD/gp//DcVvFOod+AK
-        7GVFeKi8kjsMKHAaTj/tWG/GmmdBUwEtsv5IHwBrB4KiZejxJ/v3RYwmlqrBv7wl
-        Hcm6LW73n5OuJOJY15OZicqJlukk+MyDgsgW9siZ2zFwgttHs39sPICME4fEI9l3
-        JrO+G5NSM9oeWilLZSLLSQtgjOVxff9zfTAfl5BTcfpuI/Jv1nch4rTiB7V6HRVD
-        b4/jZ2mj4vqE0Vw4RaJqqhcsE9UkHn2ZuDjpm5twH9Ys4yLs6qW94STGBXm5Ro/R
-        31b9TIfftMMIf+c8F4w7x5wxsnozzNVeDVg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-        1695307478; x=1695393878; bh=1vll0u7F8CXOoj7SK2YnOrudf58FOj8hbWf
-        SuC7KD3I=; b=jWgE3i9SQNtu56CDpxFUBdcaj9dp7fAh8YzJjzmdK0CMTgNSgtm
-        vVXZUnOZkzn4ZLgmFqe+4GffqB9mGosy75spS24X4dhnXA4E5HbxJbqivgllF0Hg
-        nM0uILpW6M6qjkHchH8RTIvT2LC2U+dHtWc6Yo7MBHp+2qBKGsSn5TiMlv1ejcKi
-        OvbXQPnSzArx7Lpr5FXOP4NGH+amqwJIyd2EnGLJ5deCZGSYm1o0ItkX+1E2ecq+
-        aPXlSnzi9TDPMcSo04KkUkPvcdlKg/13YAFHZ0nzVZMfuqfEL/ux++ds0BLGCORC
-        nytxf21q+5NMCY+SEm01VO9FaW1v4sbfUCA==
-X-ME-Sender: <xms:1VYMZf_VCqbA-Mu1xS5nxfwJeFCCB6nQ5qpoMBV03dcX1VK3tAj05w>
-    <xme:1VYMZbtT6h9_6YmpA7JGC3ndAsxyC7zXiAeK8wyhVuGtLqdvE66m_lL-T52dE-yJf
-    HxgmVx59URRBm8B>
-X-ME-Received: <xmr:1VYMZdAAxG8_t-a6l0y3M-pQssYL7PB7QxT1TwgbeAqYludkBWtejYTh9sj8yNukDAzN7xomdAhW0X-8aFRGiyGck-bHp3fMLK5Eb_szfSnypg3tQRaz>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrudekiedgkedtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeeuvghr
-    nhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrih
-    hlrdhfmheqnecuggftrfgrthhtvghrnhepiefhhfelgeetleeuleehhfffvdegteduleel
-    veffkeekjeehhfdtfedvhfegffetnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpgh
-    hithhhuhgsrdgtohhmnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghi
-    lhhfrhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdrfhhm
-X-ME-Proxy: <xmx:1VYMZbek0hMjTLu45oc9mwltT0AdUCQXkGH1ThFjFI5LfHgm-GPlIg>
-    <xmx:1VYMZUNQpHdhMZc8TyNA-0BanLU8W4ICYmxiu4a3CgofIGZ6MgPF0w>
-    <xmx:1VYMZdn6vCl-osExQhtepn_BXtrYjtrg2tJWcgSvnH1wjZWkKR9TDQ>
-    <xmx:1lYMZbdCTPLDAjLSBs_cDSBaBIp5qirkdu7l70MzgiVM7nDRkYGFZA>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 21 Sep 2023 10:44:36 -0400 (EDT)
-Message-ID: <ebf417f0-68ec-466d-8bc4-a382ad6a9501@fastmail.fm>
-Date:   Thu, 21 Sep 2023 16:44:34 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 0/7] fuse: full atomic open and atomic-open-revalidate
-To:     Amir Goldstein <amir73il@gmail.com>,
-        Bernd Schubert <bschubert@ddn.com>
-Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "miklos@szeredi.hu" <miklos@szeredi.hu>,
-        Dharmendra Singh <dsingh@ddn.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Horst Birthelmer <hbirthelmer@ddn.com>
-References: <20230920173445.3943581-1-bschubert@ddn.com>
- <CAOQ4uxi+jk7rv7mtnpH4RXbZJx6N+cWecqd3UyJJHsW8yw_SXg@mail.gmail.com>
- <b22b8760-fca0-4251-b1a8-5989c26e1657@ddn.com>
- <CAOQ4uxgbSFDfgz1vFnDAaJo-36T6UPnUXZnk_y=bZMi0NqzvKQ@mail.gmail.com>
-Content-Language: en-US, de-DE
-From:   Bernd Schubert <bernd.schubert@fastmail.fm>
-In-Reply-To: <CAOQ4uxgbSFDfgz1vFnDAaJo-36T6UPnUXZnk_y=bZMi0NqzvKQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Thu, 21 Sep 2023 15:27:30 -0400
+Received: from mail-vs1-xe4a.google.com (mail-vs1-xe4a.google.com [IPv6:2607:f8b0:4864:20::e4a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B6E7A7B67
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Sep 2023 11:01:31 -0700 (PDT)
+Received: by mail-vs1-xe4a.google.com with SMTP id ada2fe7eead31-452598c86f8so457325137.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Sep 2023 11:01:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1695319290; x=1695924090; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4hX9qb1Iw7SkuB3FcSZYopfwd6y9xnz247DDm3mrX40=;
+        b=oTC1+IhhS4nGF/u3K0mfUlD3e0n/fh3wQgL23erg3YvD0Z/1XdNehoh6oxdcVKN/EU
+         LD6WRmRBnotZzUT1O82aX58OGsTNqgBc//JxiaVfVLvl2K2YAYj3pm26YptJI8lx8oKW
+         MBQ4LiPqZyy2XMZDXEnV/Hmw7VbwcJsfFGKAM4IlcK80U/Qo9Gr+NhfzG/zqxGjnuRtM
+         zMntfU7JEK7T9undBj2wEEjGPlTqHptAf5vpK5MOV3JGciEjnIkr0zcSVzApYmhld7p6
+         aveOZ8HhfsxCIVGgfY+hFL7/gzo/+brFb3/C1w/MYdO4X4Pdzk0V/gwkYZY7JALmvGa1
+         encg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695319290; x=1695924090;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4hX9qb1Iw7SkuB3FcSZYopfwd6y9xnz247DDm3mrX40=;
+        b=dfOno31THZnWQIX9RU1hWnun4oRGD5OQby74v25A91zvDiherpwwQEouz5yuJtler4
+         km3MXrD5EdX4UaKg/asucX/1gOs4aIeReXe0PmVNPS6lVt0xcvr63U91MByaecnC4rSk
+         RRb6n9Qejv0BoywRoZBWocKTqtzIvzM6Z0mRUVBFa3U67dRJDarN1mStk2C3nu6WLrgn
+         HDcW+/E28pC4UaVCP7qButZ+pis7lVeaI9XHmJPHmsIrGw2ebv2+Q1zKT6Zgb94ig/Bd
+         cqbyy6geubN+kUOTxJ5TrjPVDnOxbQb7kggdULitND61OUuKevtYIPeagEMOASvpBNLj
+         FhJA==
+X-Gm-Message-State: AOJu0Yx2m3JKs6Qnemlx8msScGGsN69lRnJExTPCPWpx0gY54TBloABJ
+        zkuVzwyVDZ8WX9wz2J6eLxo9BKXi0Zs=
+X-Google-Smtp-Source: AGHT+IGMlI3r5pTKtUH2X22CRcKkDXwZa01FQ/zuLj/x6iC6Lpx1DAvznI7oMbumBcX5i3FsE4fH+yzcjSE=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:690c:2906:b0:59e:ee51:52a1 with SMTP id
+ eg6-20020a05690c290600b0059eee5152a1mr76581ywb.10.1695308352199; Thu, 21 Sep
+ 2023 07:59:12 -0700 (PDT)
+Date:   Thu, 21 Sep 2023 07:59:10 -0700
+In-Reply-To: <ZQef3zAEYjZMkn9k@yzhao56-desk.sh.intel.com>
+Mime-Version: 1.0
+References: <20230914015531.1419405-1-seanjc@google.com> <20230914015531.1419405-19-seanjc@google.com>
+ <ZQPuMK6D/7UzDH+D@yzhao56-desk.sh.intel.com> <ZQRpiOd1DNDDJQ3r@google.com> <ZQef3zAEYjZMkn9k@yzhao56-desk.sh.intel.com>
+Message-ID: <ZQxaPsNiFgfXH7aq@google.com>
+Subject: Re: [RFC PATCH v12 18/33] KVM: x86/mmu: Handle page fault for private memory
+From:   Sean Christopherson <seanjc@google.com>
+To:     Yan Zhao <yan.y.zhao@intel.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Anup Patel <anup@brainfault.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, kvm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        Fuad Tabba <tabba@google.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Anish Moorthy <amoorthy@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Isaku Yamahata <isaku.yamahata@intel.com>,
+        Xu Yilun <yilun.xu@intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Ackerley Tng <ackerleytng@google.com>,
+        Maciej Szmigiero <mail@maciej.szmigiero.name>,
+        David Hildenbrand <david@redhat.com>,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>,
+        Wang <wei.w.wang@intel.com>,
+        Liam Merwick <liam.merwick@oracle.com>,
+        Isaku Yamahata <isaku.yamahata@gmail.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
+X-Spam-Status: No, score=-8.0 required=5.0 tests=BAYES_00,DATE_IN_PAST_03_06,
+        DKIMWL_WL_MED,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL
+        autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
+        lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Mon, Sep 18, 2023, Yan Zhao wrote:
+> On Fri, Sep 15, 2023 at 07:26:16AM -0700, Sean Christopherson wrote:
+> > On Fri, Sep 15, 2023, Yan Zhao wrote:
+> > > >  static int __kvm_faultin_pfn(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault)
+> > > >  {
+> > > >  	struct kvm_memory_slot *slot = fault->slot;
+> > > > @@ -4293,6 +4356,14 @@ static int __kvm_faultin_pfn(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault
+> > > >  			return RET_PF_EMULATE;
+> > > >  	}
+> > > >  
+> > > > +	if (fault->is_private != kvm_mem_is_private(vcpu->kvm, fault->gfn)) {
+> > > In patch 21,
+> > > fault->is_private is set as:
+> > > 	".is_private = kvm_mem_is_private(vcpu->kvm, cr2_or_gpa >> PAGE_SHIFT)",
+> > > then, the inequality here means memory attribute has been updated after
+> > > last check.
+> > > So, why an exit to user space for converting is required instead of a mere retry?
+> > > 
+> > > Or, is it because how .is_private is assigned in patch 21 is subjected to change
+> > > in future? 
+> > 
+> > This.  Retrying on SNP or TDX would hang the guest.  I suppose we could special
+> Is this because if the guest access a page in private way (e.g. via
+> private key in TDX), the returned page must be a private page?
 
+Yes, the returned page must be private, because the GHCI (TDX) and GHCB (SNP)
+require that the host allow implicit conversions.  I.e. if the guest accesses
+memory as private (or shared), then the host must map memory as private (or shared).
+Simply resuming the guest will not change the guest access, nor will it change KVM's
+memory attributes.
 
-On 9/21/23 16:24, Amir Goldstein wrote:
-> On Thu, Sep 21, 2023 at 3:00 PM Bernd Schubert <bschubert@ddn.com> wrote:
->>
->> On 9/21/23 11:33, Amir Goldstein wrote:
->>> On Thu, Sep 21, 2023 at 9:31 AM Bernd Schubert <bschubert@ddn.com> wrote:
->>>>
->>>> In FUSE, as of now, uncached lookups are expensive over the wire.
->>>> E.g additional latencies and stressing (meta data) servers from
->>>> thousands of clients. With atomic-open lookup before open
->>>> can be avoided.
->>>>
->>>> Here is the link to performance numbers
->>>> https://lore.kernel.org/linux-fsdevel/20220322121212.5087-1-dharamhans87@gmail.com/
->>>>
->>>> Here is the libfuse pull request
->>>> https://github.com/libfuse/libfuse/pull/813
->>>>
->>>> The patches are passing passthrough_hp xfstests (libfuse part applied),
->>>> although we had to introduce umount retries into xfstests, as recent
->>>> kernels/xfstests fail umount in some tests with
->>>> EBUSY - independent of atomic open. (Although outstanding for v7)
->>>
->>> Hi Bernd!
->>>
->>> I was using xfstests to test passthrough_hp (for FUSE kernel passthrough).
->>> FYI, I have made some improvements to the mount helper
->>> in libfuse [1] to support remount, which helps pass a few tests.
->>
->> Thanks, just asked there to send it separate to upstream.
->>
->>>
->>> So far, I have all the tests in group -g quick.rw pass with the baseline
->>> passthrough_hp (over xfs).
->>>
->>> Do you have a baseline for the entire quick/auto group to share with me?
->>
->> Please find my results attached.
+Ideally (IMO), implicit conversions would be disallowed, but even if implicit
+conversions weren't a thing, retrying would still be wrong as KVM would either
+inject an exception into the guest or exit to userspace to let userspace handle
+the illegal access.
+
+> > case VMs where .is_private is derived from the memory attributes, but the
+> > SW_PROTECTED_VM type is primary a development vehicle at this point.  I'd like to
+> > have it mimic SNP/TDX as much as possible; performance is a secondary concern.
+> Ok. But this mimic is somewhat confusing as it may be problematic in below scenario,
+> though sane guest should ensure no one is accessing a page before doing memory
+> conversion.
 > 
-> Not too bad.
-> 3 more tests can pass with my mount helper fix for remount ;)
 > 
->> I have opened a libfuse issue for generic/477,
->> (open_by_handle_at tests) but I'm not sure if this is passthrough_hp only (it
->> trusts the passed node id, without checking if there is an inode object for it).
->> Possibly fuse.ko passes an invalide node id - this is something for a rainy
->> weekend (or so) to investigate...
+> CPU 0                           CPU 1
+> access GFN A in private way
+> fault->is_private=true
+>                                 convert GFN A to shared
+> 			        set memory attribute of A to shared
 > 
-> Stale file handles after mount cycle are expected.
-> FUSE is not equipped to handle this correctly.
-
-I know and I don't have a problem with that. Issue is that the test triggers a
-heap buffer overflow,  see the ASAN report here
-
-https://github.com/libfuse/libfuse/issues/838
-
-A possible reason might be an invalid node id by open_by_handle_at, or
-lookup/release is not right. As I said, will investigate once I have a free
-minute.
-
+> faultin, mismatch and exit
+> set memory attribute of A
+> to private
 > 
-> NFS clients may even get access to the wrong inode
-> after FUSE restart/reexport, if FUSE is exported with the same
-> NFS fsid.
+>                                 vCPU access GFN A in shared way
+>                                 fault->is_private = true
+>                                 faultin, match and map a private PFN B
 > 
-> See this discussion [3] about how this could be solved hackishly
-> with existing FUSE protocol (for fs that know how to open by ino)
-> and about the LOOKUP_HANDLE protocol command that is
-> needed to solve this in a generic way.
+>                                 vCPU accesses private PFN B in shared way
 
-I will read through it later. I would prefer adding support up to
-MAX_HANDLE_SZ - our file systems typically exceed 64 bit inode sizes.
-Without having it read, I would just expose exportfs methods to userspace
-(which might be the LOOKUP_HANDLE protocol).
+If this is a TDX or SNP VM, then the private vs. shared information comes from
+the guest itself, e.g. this sequence
 
+                                   vCPU access GFN A in shared way
+                                   fault->is_private = true
 
-> 
->>
->>
->>> Can you share the patch that you are using to avoid the EBUSY errors?
->>
->>
->> The simple version to avoid _most_ of EBUSY is this
->>
->>
->> diff --git a/common/rc b/common/rc
->> index 741579af..a40fca3b 100644
->> --- a/common/rc
->> +++ b/common/rc
->> @@ -305,6 +305,7 @@ _scratch_mount_idmapped()
->>
->>    _scratch_unmount()
->>    {
->> +       sync
->>           case "$FSTYP" in
->>           overlay)
->>                   _overlay_scratch_unmount
->>
->>
->>
->> The better version is this
->> https://github.com/kdave/xfstests/commit/33a15af07bb044e2773a83df1c7e0a0df280a4b7
->>
->>>
->>> Note that Chritian has suggested a method to use inotify
->>> IN_UNMOUNT event to wait for sb shutdown in fstests [2].
->>
->> Thanks, I had seen the discussion. Although I (silently) wondered if something
->> like MNT_BLOCk as umount2 flag wouldn't be easier.
->>
-> 
-> You'd better keep wondering silently unless you want to upset Christian ;)
+cannot happen because is_private will be false based on the error code (SNP) or
+the GPA (TDX).
 
-Ouch, Christian is in CC, inotify is fine ;)
+And when hardware doesn't generate page faults based on private vs. shared, i.e.
+for non-TDX/SNP VMs, from a fault handling perspective there is no concept of the
+guest accessing a GFN in a "private way" or a "shared way".  I.e. there are no
+implicit conversions.
 
+For SEV and SEV-ES, the guest can access memory as private vs. shared, but the
+and the host VMM absolutely must be in agreement and synchronized with respect to
+the state of a page, otherwise guest memory will be corrupted.  But that has
+nothing to do with the fault handling, e.g. creating aliases in the guest to access
+a single GFN as shared and private from two CPUs will create incoherent cache
+entries and/or corrupt data without any involvement from KVM.
 
-Thanks,
-Bernd
-
+In other words, the above isn't possible for TDX/SNP, and for all other types,
+the conflict between CPU0 and CPU1 is unequivocally a guest bug.
