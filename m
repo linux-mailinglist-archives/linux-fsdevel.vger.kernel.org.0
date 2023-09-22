@@ -2,39 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E7ED07AB702
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Sep 2023 19:15:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DDF07AB6F9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Sep 2023 19:15:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233027AbjIVRPL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Sep 2023 13:15:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60578 "EHLO
+        id S233059AbjIVRPO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Sep 2023 13:15:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232804AbjIVRPA (ORCPT
+        with ESMTP id S232846AbjIVRPJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Sep 2023 13:15:00 -0400
+        Fri, 22 Sep 2023 13:15:09 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DC17199;
-        Fri, 22 Sep 2023 10:14:54 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48015C433CC;
-        Fri, 22 Sep 2023 17:14:52 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D345F1A4;
+        Fri, 22 Sep 2023 10:14:55 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06A00C433CA;
+        Fri, 22 Sep 2023 17:14:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695402893;
-        bh=fUxZuWZUND6whtfSXS6cbk4dZFYYjP9h1aQMSYrQkf8=;
+        s=k20201202; t=1695402895;
+        bh=v6UdIy3iF2gwyGe6YE1xuhC9UXQ7IzgYePWcUL4vSGA=;
         h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-        b=rBTSD5KCp99SdJZqsG3zOYy+AdArnEo24hL2QnlNNWA+rKd1uSMkLvysYgASAy8nk
-         0bbFIkNgBgvgbU6sAOFtzG8gk4ZsxaREY53V7g3eHNwfXbEq1lkcdapAwrdViQaT/k
-         VybJ+BJ43c6IBag3RVLgPWv06U40KwYdJ8Ioud2e5unfr+FUyD7mIJHHgIwXPqxgVf
-         y+SwAq2s6t5VVWHcNNkUPRjfi7Gapjlq2PvqQpUprYxExjc72PfhZ6Bh9cP7axAQj4
-         HmyUf2kpRcyIMpzHzmKDgWaHMPnzUidPabG+MyH68FApeyLyLjaO3IXolT7e8BpPLH
-         PN3yx8F2/QmyQ==
+        b=nobLkZ57CkeLUrk9Gn+1rf8m7nE+tgakmBWN28qsQYbPxKtomzJEXpnLPmWeiWBHd
+         wYTswOnh2rBSClEgAN8YJ7iddAPu/ln8TdSlY98dSmDWgT8mSyHHGNPrxrqrggf8g2
+         TyvO3JswgOAnMLrprnEmCnW2JpN0OrcRZQR08buWuiphHcIvV/jKELnN2V9cWhnxDO
+         wcpPcNMESNGHDbERV/J3m2WiUZduLG4GMdPJ88PvbJhK+I0XYaJCd0d7MCJLgLMHrN
+         Gp3Wqyuv86lHct+I7JFQvvRUx3x352t720UkdCF/9YzCbE/5kBf5d3N60S6q5WEsdq
+         cWxgL7jwI7d0A==
 From:   Jeff Layton <jlayton@kernel.org>
-Date:   Fri, 22 Sep 2023 13:14:42 -0400
-Subject: [PATCH v8 3/5] fs: have setattr_copy handle multigrain timestamps
- appropriately
+Date:   Fri, 22 Sep 2023 13:14:43 -0400
+Subject: [PATCH v8 4/5] fs: add timestamp_truncate_to_gran helper
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230922-ctime-v8-3-45f0c236ede1@kernel.org>
+Message-Id: <20230922-ctime-v8-4-45f0c236ede1@kernel.org>
 References: <20230922-ctime-v8-0-45f0c236ede1@kernel.org>
 In-Reply-To: <20230922-ctime-v8-0-45f0c236ede1@kernel.org>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -52,20 +51,20 @@ Cc:     Kent Overstreet <kent.overstreet@linux.dev>,
         linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org,
         Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3299; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=fUxZuWZUND6whtfSXS6cbk4dZFYYjP9h1aQMSYrQkf8=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBlDcuGMi53UoH/W19WSq89zn8S9TZbYu1oTRu0z
- xom55+Yu6WJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZQ3LhgAKCRAADmhBGVaC
- FandEACrYrCK4mEHxIf2BJs2N6vjBIybMKu/4Io+i4XF+mOOk6726NojyEhKuk2vcXIZDgoSvko
- 4sKNNH5HJsvVR4C/pSNdKBjr9POUoEZoVvbpAVLy2iu2ejCm9nZwOl2xLwDOHmVWpuGOaEC99N8
- slbJjXsc6mQhW4YtY8aiyIe2vWAUJiApGFxe76Xq4LVXwpvlLE59HrPesc8OTs9DlWw1gGcJgBI
- aGZ5e552ciqXH6M3W0TigkkwuRC/pE4PgFzY4IceN8aQ751zXiaRcePJlCTd8vw48smmMTyIduB
- 7R0BBtYMOIFAIQLtYFAAzTOA1FXJEm9Z0fj5jaoxBcZKF1dn3wxU5v3JpQzPYlIwiW6Ew2/vE2Y
- ItlRJO5Cp9KTKFfB/bQQ/DGUJ1QIk9HjeA3wfhGKAJXOajJuBnt0uoMmUn5DMDSweylV3tiMO83
- xA84OiIS3hYeTXK1raunHowGVvoXZAK7H+ozYd9dMdvcMfJKrPBUy9YYl5z7l/hYT+OAZUvOkNc
- VWGpdW7tpulAckFRkllgmsfnvbNszaNeWX483WFWsz6X6Zfv6zQe+mX8S8T9UE4XqE6ZYjDhYKn
- tE/ezJ+p8Zn6pmB2fWYo7O0PYpLLmzwY9kcFm3H2MawZtSwNtcpY1I8f1CBDtMzSw3qgeoYiOhq
- kKQ6H5ktDrpyWUQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2766; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=v6UdIy3iF2gwyGe6YE1xuhC9UXQ7IzgYePWcUL4vSGA=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBlDcuGcqJPwl78fHiagrBrxmzVPer9aG3oaERZI
+ pqSNpvoC8aJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZQ3LhgAKCRAADmhBGVaC
+ FakdD/9KgrOQOhGZ14ptFQspbpO6fxuNVSJ/rqEaSG7uELQqBbcBcguVCQO1J3wIoEBUiEp4inf
+ gHZLXxlDNDD/4PQh9lxCHPs6stqfiR/OIeZwe36cujXOjv5XrNdGCAznIcOjEM40Px/btRNrYC/
+ XJrmlw9gEU4IeAtZ9AIokdyalPTIGX7ECHLceGsMjNHU4B1zSi380XFB0r3xJsegyqiOXoY5Cta
+ E7r6m8zgxedClqgOOBKcYq5FUjoh+7UfDXTciJ66u5BrlrpT/JjEisrReLys3w8xK8JyKTwHab6
+ +xgn3pkVoT4O1FrXmzbstaOO1YixyuzvOazHEs9WmY/kYehP8yOB5a0wCGcXM3SrLuWNNPIEDQy
+ rxfHvOoPYKWWffYf1LDuaFSMasfjUa0OPm+XY8sulTaBaMw4afqlyyRr8r4skmNpGYnAvntL39O
+ /urlIhaynyYw9Mr2rF+QJ66bl8x+qgmM7l/YtOvFxQ20hCsdol8XU2DfAzgKZBtE0zlTHTVvO1J
+ Q1WAUaPKZTBJMQzhgVElGkua+KRcD9EvagHXdXWiq+iV4P7ZxMF1bEjKrBZAKgzj7Rg+W2Ec1A2
+ yBTVWzmA323AGRYnPvTn4+37r3SNAHo6Fs1q8y+LCauOb8Fga99iYMaleYsMUe95bWIY1u9AGYQ
+ qpHGgQNLqWzi2Cw==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -77,102 +76,86 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The setattr codepath is still using coarse-grained timestamps, even on
-multigrain filesystems. To fix this, we need to fetch the timestamp for
-ctime updates later, at the point where the assignment occurs in
-setattr_copy.
-
-On a multigrain inode, ignore the ia_ctime in the attrs, and always
-update the ctime to the current clock value. Update the atime and mtime
-with the same value (if needed) unless they are being set to other
-specific values, a'la utimes().
-
-Note that we don't want to do this universally however, as some
-filesystems (e.g. most networked fs) want to do an explicit update
-elsewhere before updating the local inode.
+In a future patch, we're going to need to truncate fine-grained
+timestamps down to jiffies granularity. Add a new helper that allows
+truncating down to an arbitrary granularity.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/attr.c | 52 ++++++++++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 46 insertions(+), 6 deletions(-)
+ fs/inode.c         | 38 +++++++++++++++++++++++++++-----------
+ include/linux/fs.h |  1 +
+ 2 files changed, 28 insertions(+), 11 deletions(-)
 
-diff --git a/fs/attr.c b/fs/attr.c
-index a8ae5f6d9b16..8ba330e6a582 100644
---- a/fs/attr.c
-+++ b/fs/attr.c
-@@ -275,6 +275,42 @@ int inode_newsize_ok(const struct inode *inode, loff_t offset)
+diff --git a/fs/inode.c b/fs/inode.c
+index 293f9ba623d1..ae6baa5b17c5 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -2521,6 +2521,29 @@ void inode_nohighmem(struct inode *inode)
  }
- EXPORT_SYMBOL(inode_newsize_ok);
+ EXPORT_SYMBOL(inode_nohighmem);
  
 +/**
-+ * setattr_copy_mgtime - update timestamps for mgtime inodes
-+ * @inode: inode timestamps to be updated
-+ * @attr: attrs for the update
++ * timestamp_truncate_to_gran - Truncate timespec to a granularity
++ * @t: Timespec
++ * @gran: the specified granularity (in ns)
 + *
-+ * With multigrain timestamps, we need to take more care to prevent races
-+ * when updating the ctime. Always update the ctime to the very latest
-+ * using the standard mechanism, and use that to populate the atime and
-+ * mtime appropriately (unless we're setting those to specific values).
++ * Truncate a timespec to the specified granularity. Always rounds down.
++ * gran must not be 0 nor greater than a second (NSEC_PER_SEC, or 10^9 ns).
 + */
-+static void setattr_copy_mgtime(struct inode *inode, const struct iattr *attr)
++struct timespec64 timestamp_truncate_to_gran(struct timespec64 t, unsigned int gran)
 +{
-+	unsigned int ia_valid = attr->ia_valid;
-+	struct timespec64 now;
-+
-+	/*
-+	 * If the ctime isn't being updated then nothing else should be
-+	 * either.
-+	 */
-+	if (!(ia_valid & ATTR_CTIME)) {
-+		WARN_ON_ONCE(ia_valid & (ATTR_ATIME|ATTR_MTIME));
-+		return;
-+	}
-+
-+	now = inode_set_ctime_current(inode);
-+	if (ia_valid & ATTR_ATIME_SET)
-+		inode->i_atime = attr->ia_atime;
-+	else if (ia_valid & ATTR_ATIME)
-+		inode->i_atime = now;
-+
-+	if (ia_valid & ATTR_MTIME_SET)
-+		inode->i_mtime = attr->ia_mtime;
-+	else if (ia_valid & ATTR_MTIME)
-+		inode->i_mtime = now;
++	/* Avoid division in the common cases 1 ns and 1 s. */
++	if (gran == 1)
++		; /* nothing */
++	else if (gran == NSEC_PER_SEC)
++		t.tv_nsec = 0;
++	else if (gran > 1 && gran < NSEC_PER_SEC)
++		t.tv_nsec -= t.tv_nsec % gran;
++	else
++		WARN(1, "invalid file time granularity: %u", gran);
++	return t;
 +}
++EXPORT_SYMBOL(timestamp_truncate_to_gran);
 +
  /**
-  * setattr_copy - copy simple metadata updates into the generic inode
-  * @idmap:	idmap of the mount the inode was found from
-@@ -307,12 +343,6 @@ void setattr_copy(struct mnt_idmap *idmap, struct inode *inode,
+  * timestamp_truncate - Truncate timespec to a granularity
+  * @t: Timespec
+@@ -2536,19 +2559,12 @@ struct timespec64 timestamp_truncate(struct timespec64 t, struct inode *inode)
+ 	unsigned int gran = sb->s_time_gran;
  
- 	i_uid_update(idmap, attr, inode);
- 	i_gid_update(idmap, attr, inode);
--	if (ia_valid & ATTR_ATIME)
--		inode->i_atime = attr->ia_atime;
--	if (ia_valid & ATTR_MTIME)
--		inode->i_mtime = attr->ia_mtime;
--	if (ia_valid & ATTR_CTIME)
--		inode_set_ctime_to_ts(inode, attr->ia_ctime);
- 	if (ia_valid & ATTR_MODE) {
- 		umode_t mode = attr->ia_mode;
- 		if (!in_group_or_capable(idmap, inode,
-@@ -320,6 +350,16 @@ void setattr_copy(struct mnt_idmap *idmap, struct inode *inode,
- 			mode &= ~S_ISGID;
- 		inode->i_mode = mode;
- 	}
-+
-+	if (is_mgtime(inode))
-+		return setattr_copy_mgtime(inode, attr);
-+
-+	if (ia_valid & ATTR_ATIME)
-+		inode->i_atime = attr->ia_atime;
-+	if (ia_valid & ATTR_MTIME)
-+		inode->i_mtime = attr->ia_mtime;
-+	if (ia_valid & ATTR_CTIME)
-+		inode_set_ctime_to_ts(inode, attr->ia_ctime);
+ 	t.tv_sec = clamp(t.tv_sec, sb->s_time_min, sb->s_time_max);
+-	if (unlikely(t.tv_sec == sb->s_time_max || t.tv_sec == sb->s_time_min))
++	if (unlikely(t.tv_sec == sb->s_time_max || t.tv_sec == sb->s_time_min)) {
+ 		t.tv_nsec = 0;
++		return t;
++	}
+ 
+-	/* Avoid division in the common cases 1 ns and 1 s. */
+-	if (gran == 1)
+-		; /* nothing */
+-	else if (gran == NSEC_PER_SEC)
+-		t.tv_nsec = 0;
+-	else if (gran > 1 && gran < NSEC_PER_SEC)
+-		t.tv_nsec -= t.tv_nsec % gran;
+-	else
+-		WARN(1, "invalid file time granularity: %u", gran);
+-	return t;
++	return timestamp_truncate_to_gran(t, gran);
  }
- EXPORT_SYMBOL(setattr_copy);
+ EXPORT_SYMBOL(timestamp_truncate);
  
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 91239a4c1a65..fa696322dae3 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -748,6 +748,7 @@ struct inode {
+ 	void			*i_private; /* fs or device private pointer */
+ } __randomize_layout;
+ 
++struct timespec64 timestamp_truncate_to_gran(struct timespec64 t, unsigned int gran);
+ struct timespec64 timestamp_truncate(struct timespec64 t, struct inode *inode);
+ 
+ static inline unsigned int i_blocksize(const struct inode *node)
 
 -- 
 2.41.0
