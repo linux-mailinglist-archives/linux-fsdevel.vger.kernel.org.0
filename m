@@ -2,182 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 94C2E7AB182
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Sep 2023 13:59:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B6F67AB197
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Sep 2023 14:02:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233709AbjIVL7q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Sep 2023 07:59:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37526 "EHLO
+        id S234004AbjIVMCH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Sep 2023 08:02:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229644AbjIVL7j (ORCPT
+        with ESMTP id S233983AbjIVMCF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Sep 2023 07:59:39 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A24E0FB;
-        Fri, 22 Sep 2023 04:59:33 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 733CFC433C7;
-        Fri, 22 Sep 2023 11:59:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695383973;
-        bh=ORzIDixyYNN/jJb/Sxa5K2h12YMiO0mDofirvWtUYDU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fbA9AsP6p4xsjJaKQy9RAcs3SFDkJUxohUtLbQfIivmE20XLy+RMcYpcwNxR+Y33d
-         mqGSO32J30z4pjw1IUvNWnfU27xq7uksjaYhXUpPOzTrlR8fj/8lcNE5GBZZHyX7FU
-         IlNnm93Nhzzs2RpERpkh0yqFoR/fGKcvMtM1/0MRy3LDIvcf4ikJIq4xpiEiCKEzBE
-         Rk9bUkaKnEhyaCzWgSKEEHX5OHCLPshTO8ueyaJAnF5VLtlDn0euzEvuOvhFaEEdJs
-         9oGHb78rRcxDQa57tYaUDigbJtw8Dqg+8QptH5vNcKT+bSHL8RP+XPGV2McBFYXCDC
-         KbjE0uN4eFWnA==
-Date:   Fri, 22 Sep 2023 13:59:28 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Ian Kent <raven@themaw.net>
-Cc:     Al Viro <viro@ZenIV.linux.org.uk>,
-        autofs mailing list <autofs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bill O'Donnell <billodo@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        David Howells <dhowells@redhat.com>
-Subject: Re: [PATCH 7/8] autofs: convert autofs to use the new mount api
-Message-ID: <20230922-vorbringen-spaghetti-946729122076@brauner>
-References: <20230922041215.13675-1-raven@themaw.net>
- <20230922041215.13675-8-raven@themaw.net>
+        Fri, 22 Sep 2023 08:02:05 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7ABE819A
+        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Sep 2023 05:01:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1695384075;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=T8z1OFlqreKOrvEDFGvg7LWhEbXRLwVnIrf1SNiRPYE=;
+        b=ZDjr48Phi3VnVw/UPaWkJML7JP+sM73uBc0ITn9TXrG40j1pIu8l0/tY1cdVr38sIPdV7b
+        jK+sIaEOGOtYV1nK+RNonQEIKJ+SqooNf/h/QKYOJX7nrVUCVXtdncQExpCC1Q5ZKVsf36
+        HkxrlQkRxRXd/c+LVtLnFVA/Zh+HQTk=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-267-mSZHRhYUPeeDueoxs7x-Ew-1; Fri, 22 Sep 2023 08:01:11 -0400
+X-MC-Unique: mSZHRhYUPeeDueoxs7x-Ew-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 8F4443C100C7;
+        Fri, 22 Sep 2023 12:01:10 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.216])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4A713C15BB8;
+        Fri, 22 Sep 2023 12:01:08 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <591a70bf016b4317add2d936696abc0f@AcuMS.aculab.com>
+References: <591a70bf016b4317add2d936696abc0f@AcuMS.aculab.com> <20230920222231.686275-1-dhowells@redhat.com>
+To:     David Laight <David.Laight@ACULAB.COM>,
+        Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc:     dhowells@redhat.com, "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Christian Brauner <christian@brauner.io>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-mm@kvack.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 00/11] iov_iter: Convert the iterator macros into inline funcs
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230922041215.13675-8-raven@themaw.net>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1173636.1695384067.1@warthog.procyon.org.uk>
+Date:   Fri, 22 Sep 2023 13:01:07 +0100
+Message-ID: <1173637.1695384067@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.8
+X-Spam-Status: No, score=1.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
+        RCVD_IN_SBL_CSS,SPF_HELO_NONE,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.6
+X-Spam-Level: *
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> +	fsparam_fd	("fd",			Opt_fd),
+David Laight <David.Laight@ACULAB.COM> wrote:
 
-> +/*
-> + * Open the fd.  We do it here rather than in get_tree so that it's done in the
-> + * context of the system call that passed the data and not the one that
-> + * triggered the superblock creation, lest the fd gets reassigned.
-> + */
-> +static int autofs_parse_fd(struct fs_context *fc, int fd)
->  {
-> +	struct autofs_sb_info *sbi = fc->s_fs_info;
->  	struct file *pipe;
->  	int ret;
->  
->  	pipe = fget(fd);
->  	if (!pipe) {
-> -		pr_err("could not open pipe file descriptor\n");
-> +		errorf(fc, "could not open pipe file descriptor");
->  		return -EBADF;
->  	}
->  
->  	ret = autofs_check_pipe(pipe);
->  	if (ret < 0) {
-> -		pr_err("Invalid/unusable pipe\n");
-> +		errorf(fc, "Invalid/unusable pipe");
->  		fput(pipe);
->  		return -EBADF;
->  	}
+> >  (8) Move the copy-and-csum code to net/ where it can be in proximity with
+> >      the code that uses it.  This eliminates the code if CONFIG_NET=n and
+> >      allows for the slim possibility of it being inlined.
+> > 
+> >  (9) Fold memcpy_and_csum() in to its two users.
+> > 
+> > (10) Move csum_and_copy_from_iter_full() out of line and merge in
+> >      csum_and_copy_from_iter() since the former is the only caller of the
+> >      latter.
+> 
+> I thought that the real idea behind these was to do the checksum
+> at the same time as the copy to avoid loading the data into the L1
+> data-cache twice - especially for long buffers.
+> I wonder how often there are multiple iov[] that actually make
+> it better than just check summing the linear buffer?
 
-> +static int autofs_parse_param(struct fs_context *fc, struct fs_parameter *param)
->  {
-> +		return autofs_parse_fd(fc, result.int_32);
+It also reduces the overhead for finding the data to checksum in the case the
+packet gets split since we're doing the checksumming as we copy - but with a
+linear buffer, that's negligible.
 
-Mah, so there's a difference between the new and the old mount api that we
-should probably hide on the VFS level for fsparam_fd. Basically, if you're
-coming through the new mount api via fsconfig(FSCONFIG_SET_FD, fd) then the vfs
-will have done param->file = fget(fd) for you already so there's no need to
-call fget() again. We can just take ownership of the reference that the vfs
-took for us.
+> I had a feeling that check summing of udp data was done during
+> copy_to/from_user, but the code can't be the copy-and-csum here
+> for that because it is missing support form odd-length buffers.
 
-But if we're coming in through the old mount api then we need to call fget.
-There's nothing wrong with your code but it doesn't take advantage of the new
-mount api which would be unfortunate. So I folded a small extension into this
-see [1].
+Is there a bug there?
 
-There's an unrelated bug in fs_param_is_fd() that I'm also fixing see [2].
+> Intel x86 desktop chips can easily checksum at 8 bytes/clock
+> (But probably not with the current code!).
+> (I've got ~12 bytes/clock using adox and adcx but that loop
+> is entirely horrid and it would need run-time patching.
+> Especially since I think some AMD cpu execute them very slowly.)
+> 
+> OTOH 'rep movs[bq]' copy will copy 16 bytes/clock (32 if the
+> destination is 32 byte aligned - it pretty much won't be).
+> 
+> So you'd need a csum-and-copy loop that did 16 bytes every
+> three clocks to get the same throughput for long buffers.
+> In principle splitting the 'adc memory' into two instructions
+> is the same number of u-ops - but I'm sure I've tried to do
+> that and failed and the extra memory write can happen in
+> parallel with everything else.
+> So I don't think you'll get 16 bytes in two clocks - but you
+> might get it is three.
+> 
+> OTOH for a cpu where memcpy is code loop summing the data in
+> the copy loop is likely to be a gain.
+> 
+> But I suspect doing the checksum and copy at the same time
+> got 'all to complicated' to actually implement fully.
+> With most modern ethernet chips checksumming receive pacakets
+> does it really get used enough for the additional complexity?
 
-I've tested both changes with the old and new mount api.
+You may be right.  That's more a question for the networking folks than for
+me.  It's entirely possible that the checksumming code is just not used on
+modern systems these days.
 
-[1]:
-diff --git a/fs/autofs/inode.c b/fs/autofs/inode.c
-index 3f2dfed428f9..0477bce7d277 100644
---- a/fs/autofs/inode.c
-+++ b/fs/autofs/inode.c
-@@ -150,13 +150,20 @@ struct autofs_fs_context {
-  * context of the system call that passed the data and not the one that
-  * triggered the superblock creation, lest the fd gets reassigned.
-  */
--static int autofs_parse_fd(struct fs_context *fc, int fd)
-+static int autofs_parse_fd(struct fs_context *fc, struct autofs_sb_info *sbi,
-+                          struct fs_parameter *param,
-+                          struct fs_parse_result *result)
- {
--       struct autofs_sb_info *sbi = fc->s_fs_info;
-        struct file *pipe;
-        int ret;
+Maybe Willem can comment since he's the UDP maintainer?
 
--       pipe = fget(fd);
-+       if (param->type == fs_value_is_file) {
-+               /* came through the new api */
-+               pipe = param->file;
-+               param->file = NULL;
-+       } else {
-+               pipe = fget(result->uint_32);
-+       }
-        if (!pipe) {
-                errorf(fc, "could not open pipe file descriptor");
-                return -EBADF;
-@@ -165,14 +172,15 @@ static int autofs_parse_fd(struct fs_context *fc, int fd)
-        ret = autofs_check_pipe(pipe);
-        if (ret < 0) {
-                errorf(fc, "Invalid/unusable pipe");
--               fput(pipe);
-+               if (param->type != fs_value_is_file)
-+                       fput(pipe);
-                return -EBADF;
-        }
-
-        if (sbi->pipe)
-                fput(sbi->pipe);
-
--       sbi->pipefd = fd;
-+       sbi->pipefd = result->uint_32;
-        sbi->pipe = pipe;
-
-        return 0;
-
-[2]:
-From 2f9171200505c82e744a235c85377e36ed190109 Mon Sep 17 00:00:00 2001
-From: Christian Brauner <brauner@kernel.org>
-Date: Fri, 22 Sep 2023 13:49:05 +0200
-Subject: [PATCH] fsconfig: ensure that dirfd is set to aux
-
-The code in fs_param_is_fd() expects param->dirfd to be set to the fd
-that was used to set param->file to initialize result->uint_32. So make
-sure it's set so users like autofs using FSCONFIG_SET_FD with the new
-mount api can rely on this to be set to the correct value.
-
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- fs/fsopen.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/fs/fsopen.c b/fs/fsopen.c
-index ce03f6521c88..6593ae518115 100644
---- a/fs/fsopen.c
-+++ b/fs/fsopen.c
-@@ -465,6 +465,7 @@ SYSCALL_DEFINE5(fsconfig,
- 		param.file = fget(aux);
- 		if (!param.file)
- 			goto out_key;
-+		param.dirfd = aux;
- 		break;
- 	default:
- 		break;
--- 
-2.34.1
+David
 
