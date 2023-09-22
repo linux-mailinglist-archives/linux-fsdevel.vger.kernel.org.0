@@ -2,187 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D83737AB1D4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Sep 2023 14:05:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1448E7AB1EB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Sep 2023 14:13:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234227AbjIVMF2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Sep 2023 08:05:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59170 "EHLO
+        id S234043AbjIVMNa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Sep 2023 08:13:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234144AbjIVMEk (ORCPT
+        with ESMTP id S233916AbjIVMN3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Sep 2023 08:04:40 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AAAFCE5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Sep 2023 05:03:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1695384192;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=IFANTKBqjctjMhYlR9DlpaXTtUIzXQ6esPI4cVawB1c=;
-        b=aQ4rl//i9WOe74vBZXTxuGxUIyAdgGjPBKEYjn++OB+NQJztM+dRghkORF41+CRe3oHwub
-        p75WOpBCIYP+4Yr2drUWFkT25BlRlJfAGCFEcgepAiCpYzmLT4xkb7sv5ywI9uulF/DZcI
-        n2qSvUpggvDhXK3AOr8kEDXU4BIeB+I=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-453-H4_9D-FgOQa1s3eUdZamVw-1; Fri, 22 Sep 2023 08:03:06 -0400
-X-MC-Unique: H4_9D-FgOQa1s3eUdZamVw-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 3B74285A5BA;
-        Fri, 22 Sep 2023 12:03:05 +0000 (UTC)
-Received: from warthog.procyon.org.com (unknown [10.42.28.216])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 25F1420268D7;
-        Fri, 22 Sep 2023 12:03:03 +0000 (UTC)
-From:   David Howells <dhowells@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Christian Brauner <christian@brauner.io>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-mm@kvack.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
-Subject: [PATCH v6 13/13] iov_iter, net: Move hash_and_copy_to_iter() to net/
-Date:   Fri, 22 Sep 2023 13:02:27 +0100
-Message-ID: <20230922120227.1173720-14-dhowells@redhat.com>
-In-Reply-To: <20230922120227.1173720-1-dhowells@redhat.com>
-References: <20230922120227.1173720-1-dhowells@redhat.com>
+        Fri, 22 Sep 2023 08:13:29 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27E5A92;
+        Fri, 22 Sep 2023 05:13:24 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB5D3C433C8;
+        Fri, 22 Sep 2023 12:13:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695384803;
+        bh=X0ckH1uMhzVew8rdJB1QtaZb/LOJh4Jl5v+9Kf3dRDA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=JBwRrE78uA8RQbQfRMa+35uiC4QjM9urZKGRDdpohYAWUh4OGBf1kSr6p3BeNGGwu
+         pYWJzuuwdcJ3fNVslQKb53ZxdOVHrXTYghrYGrZmuUJrTaJnTAIDNx9IzVkdYroUXJ
+         X13pprrSpkewOp7blgroQunq0lxZOnEKk5lF3PGbo3YmZM5RICQubYlDuek/fbyVhn
+         Ecgi4yNsNpVETf1zpQiFV5w9L7NcvEbYRAA6DplaPLcwda8+Ak2CggEGPQ4fn5Wmz7
+         8t3v3YlAaS143H2SCuz4Ct2XcMocgaB+C6ahxlzjmiTDfErwlMFJNHiWu+G8q6vOHb
+         9YlXuEAD/HazA==
+From:   Christian Brauner <brauner@kernel.org>
+To:     Ian Kent <raven@themaw.net>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        autofs mailing list <autofs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bill O'Donnell <billodo@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        David Howells <dhowells@redhat.com>,
+        Al Viro <viro@ZenIV.linux.org.uk>
+Subject: Re: [PATCH 0/8] autofs - convert to to use mount api
+Date:   Fri, 22 Sep 2023 14:11:04 +0200
+Message-Id: <20230922-fixieren-antworten-dbae8fccfeeb@brauner>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230922041215.13675-1-raven@themaw.net>
+References: <20230922041215.13675-1-raven@themaw.net>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1786; i=brauner@kernel.org; h=from:subject:message-id; bh=X0ckH1uMhzVew8rdJB1QtaZb/LOJh4Jl5v+9Kf3dRDA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTytpin5a/9tb2nI6XRStBr4lSJeRvK6q+JcqrYr566Yx9T 4APDjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIl8n8bwz/BkUkexclAIc8iyRYmCEy MiD9XtVf73uyHF2isvP8l0JiPD4wcfczYnengxR3Vr9YvP91+62zr5dsPnzm2KdYoVzpwcAA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Move hash_and_copy_to_iter() to be with its only caller in networking code.
+On Fri, 22 Sep 2023 12:12:07 +0800, Ian Kent wrote:
+> There was a patch from David Howells to convert autofs to use the mount
+> api but it was never merged.
+> 
+> I have taken David's patch and refactored it to make the change easier
+> to review in the hope of having it merged.
+> 
+> Signed-off-by: Ian Kent <raven@themaw.net>
+> 
+> [...]
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Alexander Viro <viro@zeniv.linux.org.uk>
-cc: Jens Axboe <axboe@kernel.dk>
-cc: Christoph Hellwig <hch@lst.de>
-cc: Christian Brauner <christian@brauner.io>
-cc: Matthew Wilcox <willy@infradead.org>
-cc: Linus Torvalds <torvalds@linux-foundation.org>
-cc: David Laight <David.Laight@ACULAB.COM>
-cc: "David S. Miller" <davem@davemloft.net>
-cc: Eric Dumazet <edumazet@google.com>
-cc: Jakub Kicinski <kuba@kernel.org>
-cc: Paolo Abeni <pabeni@redhat.com>
-cc: linux-block@vger.kernel.org
-cc: linux-fsdevel@vger.kernel.org
-cc: linux-mm@kvack.org
-cc: netdev@vger.kernel.org
----
- include/linux/uio.h |  3 ---
- lib/iov_iter.c      | 20 --------------------
- net/core/datagram.c | 19 +++++++++++++++++++
- 3 files changed, 19 insertions(+), 23 deletions(-)
+Applied to the vfs.autofs branch of the vfs/vfs.git tree.
+Patches in the vfs.autofs branch should appear in linux-next soon.
 
-diff --git a/include/linux/uio.h b/include/linux/uio.h
-index 0a5426c97e02..b6214cbf2a43 100644
---- a/include/linux/uio.h
-+++ b/include/linux/uio.h
-@@ -338,9 +338,6 @@ iov_iter_npages_cap(struct iov_iter *i, int maxpages, size_t max_bytes)
- 	return npages;
- }
- 
--size_t hash_and_copy_to_iter(const void *addr, size_t bytes, void *hashp,
--		struct iov_iter *i);
--
- struct iovec *iovec_from_user(const struct iovec __user *uvector,
- 		unsigned long nr_segs, unsigned long fast_segs,
- 		struct iovec *fast_iov, bool compat);
-diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index fef934a8745d..2547c96d56c7 100644
---- a/lib/iov_iter.c
-+++ b/lib/iov_iter.c
-@@ -1,5 +1,4 @@
- // SPDX-License-Identifier: GPL-2.0-only
--#include <crypto/hash.h>
- #include <linux/export.h>
- #include <linux/bvec.h>
- #include <linux/fault-inject-usercopy.h>
-@@ -1093,25 +1092,6 @@ ssize_t iov_iter_get_pages_alloc2(struct iov_iter *i,
- }
- EXPORT_SYMBOL(iov_iter_get_pages_alloc2);
- 
--size_t hash_and_copy_to_iter(const void *addr, size_t bytes, void *hashp,
--		struct iov_iter *i)
--{
--#ifdef CONFIG_CRYPTO_HASH
--	struct ahash_request *hash = hashp;
--	struct scatterlist sg;
--	size_t copied;
--
--	copied = copy_to_iter(addr, bytes, i);
--	sg_init_one(&sg, addr, copied);
--	ahash_request_set_crypt(hash, &sg, NULL, copied);
--	crypto_ahash_update(hash);
--	return copied;
--#else
--	return 0;
--#endif
--}
--EXPORT_SYMBOL(hash_and_copy_to_iter);
--
- static int iov_npages(const struct iov_iter *i, int maxpages)
- {
- 	size_t skip = i->iov_offset, size = i->count;
-diff --git a/net/core/datagram.c b/net/core/datagram.c
-index 722311eeee18..103d46fa0eeb 100644
---- a/net/core/datagram.c
-+++ b/net/core/datagram.c
-@@ -61,6 +61,7 @@
- #include <net/tcp_states.h>
- #include <trace/events/skb.h>
- #include <net/busy_poll.h>
-+#include <crypto/hash.h>
- 
- /*
-  *	Is a socket 'connection oriented' ?
-@@ -489,6 +490,24 @@ static int __skb_datagram_iter(const struct sk_buff *skb, int offset,
- 	return 0;
- }
- 
-+static size_t hash_and_copy_to_iter(const void *addr, size_t bytes, void *hashp,
-+				    struct iov_iter *i)
-+{
-+#ifdef CONFIG_CRYPTO_HASH
-+	struct ahash_request *hash = hashp;
-+	struct scatterlist sg;
-+	size_t copied;
-+
-+	copied = copy_to_iter(addr, bytes, i);
-+	sg_init_one(&sg, addr, copied);
-+	ahash_request_set_crypt(hash, &sg, NULL, copied);
-+	crypto_ahash_update(hash);
-+	return copied;
-+#else
-+	return 0;
-+#endif
-+}
-+
- /**
-  *	skb_copy_and_hash_datagram_iter - Copy datagram to an iovec iterator
-  *          and update a hash.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.autofs
+
+[1/8] autofs: refactor autofs_prepare_pipe()
+      https://git.kernel.org/vfs/vfs/c/a1388470620f
+[2/8] autofs: add autofs_parse_fd()
+      https://git.kernel.org/vfs/vfs/c/917c4dd6e625
+[3/8] autofs: refactor super block info init
+      https://git.kernel.org/vfs/vfs/c/81a57bf0af7c
+[4/8] autofs: reformat 0pt enum declaration
+      https://git.kernel.org/vfs/vfs/c/34539aa9def8
+[5/8] autofs: refactor parse_options()
+      https://git.kernel.org/vfs/vfs/c/805b2411ca1c
+[6/8] autofs: validate protocol version
+      https://git.kernel.org/vfs/vfs/c/89405b46e168
+[7/8] autofs: convert autofs to use the new mount api
+      https://git.kernel.org/vfs/vfs/c/7bf383b78c56
+[8/8] autofs: fix protocol sub version setting
+      https://git.kernel.org/vfs/vfs/c/10afd722e290
