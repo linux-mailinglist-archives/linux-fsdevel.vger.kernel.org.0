@@ -2,85 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BDAC57AA80E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Sep 2023 07:03:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9C717AA8B4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Sep 2023 08:03:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229590AbjIVFDl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Sep 2023 01:03:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53438 "EHLO
+        id S230059AbjIVGDs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Sep 2023 02:03:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229539AbjIVFDk (ORCPT
+        with ESMTP id S229706AbjIVGDr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Sep 2023 01:03:40 -0400
-Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B237192
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Sep 2023 22:03:29 -0700 (PDT)
-Received: by mail-pl1-x62a.google.com with SMTP id d9443c01a7336-1c4194f769fso14418865ad.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Sep 2023 22:03:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1695359009; x=1695963809; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eKfvtCzoPO1DjRH7hqL/PCP8n2qTK2huPA+M1ou1kWk=;
-        b=FwGewhCC5HKma6r5rqI6P2X3O27I5AexLq1aWMQ5AVZLvIRv0bUVveR7vzOpzOzng2
-         xAB5PM8RBCwMhKBVevp7QEdWj8S1cEy12lZJ4E6X5g1xcbQDt/HOEJg7qumcZUzC4WQc
-         6mn8PemkY+2B5mRpE2mzkpn88OwNkzVR75s+NAaK3dp/NDpB2KtLnuoFl93Y5VNevlIc
-         LDlWRmM+udJv7MvAXVk/J4/1VzAjSKCIayNrIn17yzWTOxU8LIyqT/YgaHzR+CRhScPh
-         29CgLo/nACgxpSFk1RFzuXlErW6HoWrznzs7wVwkkB6pRpEE6G49sPHEOXJ7+hZzJ89q
-         IXcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695359009; x=1695963809;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eKfvtCzoPO1DjRH7hqL/PCP8n2qTK2huPA+M1ou1kWk=;
-        b=T92kaBxJAXR846ExItvahPR5E5uhYCS7bsTifcym9hZ77trZNDes4moF5StlQYSdlP
-         td5GhF37IaRHntNzqo12F3B6vqlos+dIUXXgW2LmxVHdtjCzRM22okzWiO4tiBXy926u
-         IOJWp09VVfMe9wGcYM7KQS4qohQRxH7Nqv97E4m1X7U8RWoywM9Wvwvm9vKUWdsM4sWz
-         HdMzdNr8TPkIfToGYLsenQdyRNCXhy7C/1H8Wt5RNV+ypDp7SxFH/Vhe5yQHPN8wGSYV
-         f0+qdQz4fb7f7xUBcHNGY7+uWmvRvLr/mesASGk2la15EKlyu3v4tMTMxJdcbZkkaQy4
-         vZ9A==
-X-Gm-Message-State: AOJu0YyndXnOk+s/X5eNAPNRYEn2sQwryj+6nkkMPLQA98Czk8sGG+/5
-        wjBDPi2GQTN1+Rh2IRpmpj8pgg==
-X-Google-Smtp-Source: AGHT+IFeu1EA7GyGKW4frzHTSmVZS0RTtP2XJVF07Ex6N8rmUJE7dIUep7oHw3F8G6mpIGwAto30ww==
-X-Received: by 2002:a17:903:2305:b0:1c2:36a:52a5 with SMTP id d5-20020a170903230500b001c2036a52a5mr7889794plh.57.1695359008731;
-        Thu, 21 Sep 2023 22:03:28 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-20-59.pa.nsw.optusnet.com.au. [49.180.20.59])
-        by smtp.gmail.com with ESMTPSA id jk13-20020a170903330d00b001bbd8cf6b57sm2466460plb.230.2023.09.21.22.03.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Sep 2023 22:03:28 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-        (envelope-from <david@fromorbit.com>)
-        id 1qjYK5-003xpJ-0X;
-        Fri, 22 Sep 2023 15:03:25 +1000
-Date:   Fri, 22 Sep 2023 15:03:25 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Pankaj Raghav <p.raghav@samsung.com>,
-        Pankaj Raghav <kernel@pankajraghav.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        da.gomez@samsung.com, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, willy@infradead.org,
-        djwong@kernel.org, linux-mm@kvack.org, chandan.babu@oracle.com,
-        gost.dev@samsung.com, riteshh@linux.ibm.com
-Subject: Re: [RFC 00/23] Enable block size > page size in XFS
-Message-ID: <ZQ0gHRvrbZUjO/rA@dread.disaster.area>
-References: <20230915183848.1018717-1-kernel@pankajraghav.com>
- <ZQd4IPeVI+o6M38W@dread.disaster.area>
- <ZQewKIfRYcApEYXt@bombadil.infradead.org>
- <CGME20230918050749eucas1p13c219481b4b08c1d58e90ea70ff7b9c8@eucas1p1.samsung.com>
- <ZQfbHloBUpDh+zCg@dread.disaster.area>
- <806df723-78cf-c7eb-66a6-1442c02126b3@samsung.com>
- <ZQuxvAd2lxWppyqO@bombadil.infradead.org>
- <ZQvNVAfZMjE3hgmN@bombadil.infradead.org>
- <ZQvczBjY4vTLJFBp@dread.disaster.area>
- <ZQvuNaYIukAnlEDM@bombadil.infradead.org>
+        Fri, 22 Sep 2023 02:03:47 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CBCEFB;
+        Thu, 21 Sep 2023 23:03:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1695362620; x=1726898620;
+  h=message-id:date:mime-version:from:subject:to:cc:
+   references:in-reply-to:content-transfer-encoding;
+  bh=H0XuqgbqUt5ljQRehQN74Kzg/lYi5jLocq1zdrh6djo=;
+  b=nVcmaxWOc+DfTRPv1Afefivlc239w+CNOH+J8xd+EVvwwfb+rUHwc5ad
+   VDsjd1MtHYYWurnJE8xwFZTyWWWJE4WnWFl5yWaj//lSe3351jTBW4+pB
+   fLPmD4fDZBGcY8hdXK23itF3MtKZPVJm3boz0IoRQGza+/2ktjrZ+Uz67
+   M40lZLD+dMwKjqdVaf4+iSZkLpOBGmJj7yaXs0M5fq6xtDdKE+bAKIPVo
+   WAu4kqmaKwWs3sX1krCMoXC5LfxZ4qAdO5xJI59mVEgU5USoIZB46n9ZA
+   kjwMqnDqblWk0zQ8XdT04OLdnXLD46qJzLEXlYLdJLuHtUZ5Aeph0IykU
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10840"; a="383496364"
+X-IronPort-AV: E=Sophos;i="6.03,167,1694761200"; 
+   d="scan'208";a="383496364"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2023 23:03:39 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10840"; a="921035819"
+X-IronPort-AV: E=Sophos;i="6.03,167,1694761200"; 
+   d="scan'208";a="921035819"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.93.11.250]) ([10.93.11.250])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2023 23:03:26 -0700
+Message-ID: <117db856-9aec-e91c-b1d4-db2b90ae563d@intel.com>
+Date:   Fri, 22 Sep 2023 14:03:23 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZQvuNaYIukAnlEDM@bombadil.infradead.org>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Firefox/102.0 Thunderbird/102.15.1
+From:   Xiaoyao Li <xiaoyao.li@intel.com>
+Subject: Re: [RFC PATCH v12 07/33] KVM: Add KVM_EXIT_MEMORY_FAULT exit to
+ report faults to userspace
+To:     Sean Christopherson <seanjc@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Anup Patel <anup@brainfault.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kvmarm@lists.linux.dev, linux-mips@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org,
+        linux-riscv@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        Fuad Tabba <tabba@google.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Anish Moorthy <amoorthy@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Isaku Yamahata <isaku.yamahata@intel.com>,
+        Xu Yilun <yilun.xu@intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Ackerley Tng <ackerleytng@google.com>,
+        Maciej Szmigiero <mail@maciej.szmigiero.name>,
+        David Hildenbrand <david@redhat.com>,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>,
+        Wang <wei.w.wang@intel.com>,
+        Liam Merwick <liam.merwick@oracle.com>,
+        Isaku Yamahata <isaku.yamahata@gmail.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+References: <20230914015531.1419405-1-seanjc@google.com>
+ <20230914015531.1419405-8-seanjc@google.com>
+Content-Language: en-US
+In-Reply-To: <20230914015531.1419405-8-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,HK_RANDOM_ENVFROM,
+        HK_RANDOM_FROM,NICE_REPLY_A,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
+        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -88,135 +103,188 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 21, 2023 at 12:18:13AM -0700, Luis Chamberlain wrote:
-> On Thu, Sep 21, 2023 at 04:03:56PM +1000, Dave Chinner wrote:
-> > On Wed, Sep 20, 2023 at 09:57:56PM -0700, Luis Chamberlain wrote:
-> > > On Wed, Sep 20, 2023 at 08:00:12PM -0700, Luis Chamberlain wrote:
-> > > > https://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux.git/log/?h=large-block-linus
-> > > > 
-> > > > I haven't tested yet the second branch I pushed though but it applied without any changes
-> > > > so it should be good (usual famous last words).
-> > > 
-> > > I have run some preliminary tests on that branch as well above using fsx
-> > > with larger LBA formats running them all on the *same* system at the
-> > > same time. Kernel is happy.
+On 9/14/2023 9:55 AM, Sean Christopherson wrote:
+> From: Chao Peng <chao.p.peng@linux.intel.com>
 > 
-> <-- snip -->
+> Add a new KVM exit type to allow userspace to handle memory faults that
+> KVM cannot resolve, but that userspace *may* be able to handle (without
+> terminating the guest).
 > 
-> > So I just pulled this, built it and run generic/091 as the very
-> > first test on this:
-> > 
-> > # ./run_check.sh --mkfs-opts "-m rmapbt=1 -b size=64k" --run-opts "-s xfs_64k generic/091"
+> KVM will initially use KVM_EXIT_MEMORY_FAULT to report implicit
+> conversions between private and shared memory.  With guest private memory,
+> there will be  two kind of memory conversions:
 > 
-> The cover letter for this patch series acknowledged failures in fstests.
-
-But this is a new update, which you said fixed various issues, and
-you posted this in direct response to the bug report I gave you.
-
-> For kdevops now, we borrow the same last linux-next baseline:
+>    - explicit conversion: happens when the guest explicitly calls into KVM
+>      to map a range (as private or shared)
 > 
-> git grep "generic/091" workflows/fstests/expunges/6.6.0-rc2-large-block-linus-nobdev
-> workflows/fstests/expunges/6.6.0-rc2-large-block-linus-nobdev/xfs/unassigned/xfs_reflink_1024.txt:generic/091 # possible regression
-> workflows/fstests/expunges/6.6.0-rc2-large-block-linus-nobdev/xfs/unassigned/xfs_reflink_16k.txt:generic/091
-> workflows/fstests/expunges/6.6.0-rc2-large-block-linus-nobdev/xfs/unassigned/xfs_reflink_32k.txt:generic/091
-> workflows/fstests/expunges/6.6.0-rc2-large-block-linus-nobdev/xfs/unassigned/xfs_reflink_64k_4ks.txt:generic/091
+>    - implicit conversion: happens when the guest attempts to access a gfn
+>      that is configured in the "wrong" state (private vs. shared)
 > 
-> So well, we already know this fails.
+> On x86 (first architecture to support guest private memory), explicit
+> conversions will be reported via KVM_EXIT_HYPERCALL+KVM_HC_MAP_GPA_RANGE,
 
-*cough*
+side topic.
 
--You- know it already fails.
+Do we expect to integrate TDVMCALL(MAPGPA) of TDX into KVM_HC_MAP_GPA_RANGE?
 
-And you are expecting people who try the code to somehow know
-that you've explicitly ignored this fsx failure, especially after
-all your words to tell us how much fsx testing it has passed?
+> but reporting KVM_EXIT_HYPERCALL for implicit conversions is undesriable
+> as there is (obviously) no hypercall, and there is no guarantee that the
+> guest actually intends to convert between private and shared, i.e. what
+> KVM thinks is an implicit conversion "request" could actually be the
+> result of a guest code bug.
+> 
+> KVM_EXIT_MEMORY_FAULT will be used to report memory faults that appear to
+> be implicit conversions.
+> 
+> Place "struct memory_fault" in a second anonymous union so that filling
+> memory_fault doesn't clobber state from other yet-to-be-fulfilled exits,
+> and to provide additional information if KVM does NOT ultimately exit to
+> userspace with KVM_EXIT_MEMORY_FAULT, e.g. if KVM suppresses (or worse,
+> loses) the exit, as KVM often suppresses exits for memory failures that
+> occur when accessing paravirt data structures.  The initial usage for
+> private memory will be all-or-nothing, but other features such as the
+> proposed "userfault on missing mappings" support will use
+> KVM_EXIT_MEMORY_FAULT for potentially _all_ guest memory accesses, i.e.
+> will run afoul of KVM's various quirks.
 
-And that's kinda my point - you're effusing about how much fsx
-testing this has passed, yet it istill fails after just a handful of
-ops in generic/091. The dissonance could break windows...
+So when exit reason is KVM_EXIT_MEMORY_FAULT, how can we tell which 
+field in the first union is valid?
 
-----
+When exit reason is not KVM_EXIT_MEMORY_FAULT, how can we know the info 
+in the second union run.memory is valid without a run.memory.valid field?
 
-Fundamentally, when it comes to data integrity, it important to
-exercise as much of the operational application space as quickly as
-possible as it is that breadth of variation in operations that
-flushes out more bugs and helps stabilises the code faster.
+> Use bit 3 for flagging private memory so that KVM can use bits 0-2 for
+> capturing RWX behavior if/when userspace needs such information.
+> 
+> Note!  To allow for future possibilities where KVM reports
+> KVM_EXIT_MEMORY_FAULT and fills run->memory_fault on _any_ unresolved
+> fault, KVM returns "-EFAULT" (-1 with errno == EFAULT from userspace's
+> perspective), not '0'!  Due to historical baggage within KVM, exiting to
+> userspace with '0' from deep callstacks, e.g. in emulation paths, is
+> infeasible as doing so would require a near-complete overhaul of KVM,
+> whereas KVM already propagates -errno return codes to userspace even when
+> the -errno originated in a low level helper.
+> 
+> Link: https://lore.kernel.org/all/20230908222905.1321305-5-amoorthy@google.com
+> Cc: Anish Moorthy <amoorthy@google.com>
+> Suggested-by: Sean Christopherson <seanjc@google.com>
+> Co-developed-by: Yu Zhang <yu.c.zhang@linux.intel.com>
+> Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
+> Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
+> Co-developed-by: Sean Christopherson <seanjc@google.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>   Documentation/virt/kvm/api.rst | 24 ++++++++++++++++++++++++
+>   include/linux/kvm_host.h       | 15 +++++++++++++++
+>   include/uapi/linux/kvm.h       | 24 ++++++++++++++++++++++++
+>   3 files changed, 63 insertions(+)
+> 
+> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
+> index 21a7578142a1..e28a13439a95 100644
+> --- a/Documentation/virt/kvm/api.rst
+> +++ b/Documentation/virt/kvm/api.rst
+> @@ -6702,6 +6702,30 @@ array field represents return values. The userspace should update the return
+>   values of SBI call before resuming the VCPU. For more details on RISC-V SBI
+>   spec refer, https://github.com/riscv/riscv-sbi-doc.
+>   
+> +::
+> +
+> +		/* KVM_EXIT_MEMORY_FAULT */
+> +		struct {
+> +  #define KVM_MEMORY_EXIT_FLAG_PRIVATE	(1ULL << 3)
+> +			__u64 flags;
+> +			__u64 gpa;
+> +			__u64 size;
+> +		} memory;
+> +
+> +KVM_EXIT_MEMORY_FAULT indicates the vCPU has encountered a memory fault that
+> +could not be resolved by KVM.  The 'gpa' and 'size' (in bytes) describe the
+> +guest physical address range [gpa, gpa + size) of the fault.  The 'flags' field
+> +describes properties of the faulting access that are likely pertinent:
+> +
+> + - KVM_MEMORY_EXIT_FLAG_PRIVATE - When set, indicates the memory fault occurred
+> +   on a private memory access.  When clear, indicates the fault occurred on a
+> +   shared access.
+> +
+> +Note!  KVM_EXIT_MEMORY_FAULT is unique among all KVM exit reasons in that it
+> +accompanies a return code of '-1', not '0'!  errno will always be set to EFAULT
+> +or EHWPOISON when KVM exits with KVM_EXIT_MEMORY_FAULT, userspace should assume
+> +kvm_run.exit_reason is stale/undefined for all other error numbers.
+> +
 
-Why do you think we talk about the massive test matrix most
-filesytsems have and how long it takes to iterate so much? It's
-because iterating that complex test matrix is how we find all the
-whacky, weird bugs in the code.
+Initially, this section is the copy of struct kvm_run and had comments 
+for each field accordingly. Unfortunately, the consistence has not been 
+well maintained during the new filed being added.
 
-Concentrating on a single test configuration and running it over and
-over again won't find bugs in code it doesn't exercise no matter how
-long it is run for. Running such a setup in an automated environment
-doesn't mean you get better code coverage, it just means you cover
-the same narrow set of corner cases faster and more times. If it
-works once, it should work a million times. Iterating it a billion
-more times doesn't tell us anything additional, either.
+Do we expect to fix it?
 
-Put simply: performing deep, homogenous testing on code that has known
-data corruption bugs outside the narrow scope of the test case is
-not telling us anything useful about the overall state of the code.
-Indeed, turning off failing tests that are critical to validating the
-correct operation of the code you are modifying is bad practice.
+>   ::
+>   
+>       /* KVM_EXIT_NOTIFY */
+> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> index 4e741ff27af3..d8c6ce6c8211 100644
+> --- a/include/linux/kvm_host.h
+> +++ b/include/linux/kvm_host.h
+> @@ -2327,4 +2327,19 @@ static inline void kvm_account_pgtable_pages(void *virt, int nr)
+>   /* Max number of entries allowed for each kvm dirty ring */
+>   #define  KVM_DIRTY_RING_MAX_ENTRIES  65536
+>   
+> +static inline void kvm_prepare_memory_fault_exit(struct kvm_vcpu *vcpu,
+> +						 gpa_t gpa, gpa_t size,
+> +						 bool is_write, bool is_exec,
+> +						 bool is_private)
+> +{
+> +	vcpu->run->exit_reason = KVM_EXIT_MEMORY_FAULT;
+> +	vcpu->run->memory_fault.gpa = gpa;
+> +	vcpu->run->memory_fault.size = size;
+> +
+> +	/* RWX flags are not (yet) defined or communicated to userspace. */
+> +	vcpu->run->memory_fault.flags = 0;
+> +	if (is_private)
+> +		vcpu->run->memory_fault.flags |= KVM_MEMORY_EXIT_FLAG_PRIVATE;
+> +}
+> +
+>   #endif
+> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+> index bd1abe067f28..d2d913acf0df 100644
+> --- a/include/uapi/linux/kvm.h
+> +++ b/include/uapi/linux/kvm.h
+> @@ -274,6 +274,7 @@ struct kvm_xen_exit {
+>   #define KVM_EXIT_RISCV_SBI        35
+>   #define KVM_EXIT_RISCV_CSR        36
+>   #define KVM_EXIT_NOTIFY           37
+> +#define KVM_EXIT_MEMORY_FAULT     38
+>   
+>   /* For KVM_EXIT_INTERNAL_ERROR */
+>   /* Emulate instruction failed. */
+> @@ -541,6 +542,29 @@ struct kvm_run {
+>   		struct kvm_sync_regs regs;
+>   		char padding[SYNC_REGS_SIZE_BYTES];
+>   	} s;
+> +
+> +	/*
+> +	 * This second exit union holds structs for exit types which may be
+> +	 * triggered after KVM has already initiated a different exit, or which
+> +	 * may be ultimately dropped by KVM.
+> +	 *
+> +	 * For example, because of limitations in KVM's uAPI, KVM x86 can
+> +	 * generate a memory fault exit an MMIO exit is initiated (exit_reason
+> +	 * and kvm_run.mmio are filled).  And conversely, KVM often disables
+> +	 * paravirt features if a memory fault occurs when accessing paravirt
+> +	 * data instead of reporting the error to userspace.
+> +	 */
+> +	union {
+> +		/* KVM_EXIT_MEMORY_FAULT */
+> +		struct {
+> +#define KVM_MEMORY_EXIT_FLAG_PRIVATE	(1ULL << 3)
+> +			__u64 flags;
+> +			__u64 gpa;
+> +			__u64 size;
+> +		} memory_fault;
+> +		/* Fix the size of the union. */
+> +		char padding2[256];
+> +	};
+>   };
+>   
+>   /* for KVM_REGISTER_COALESCED_MMIO / KVM_UNREGISTER_COALESCED_MMIO */
 
-For code changes like this, all fsx testing in fstests should pass
-before you post anything for review - even for an RFC. There is no
-point reviewing code that doesn't work properly, nor wasting
-people's time by encouraging them to test it when it's clear to you
-that it's going to fail in various important ways.
-
-Hence I think your testing is focussing on the wrong things and I
-suspect that you've misunderstood the statements of "we'll need
-billions of fsx ops to test this code" that various people have made
-really meant.  You've elevated running billions of fsx ops to your
-primary "it works" gating condition, at the expense of making sure
-all the other parts of the filesystem still work correctly.
-
-The reality is that the returns from fsx diminish as the number of
-ops go up. Once you've run the first hundred million fsx ops for a
-given operations set, the chance that the next 100M ops will find a
-new problem is -greatly- reduced. The vast majority of problems will
-be found in the first 10M ops that are run in any given fsx
-operation, and few bugs are found beyond the 100M mark. Yes, we
-occasionally find one up in the billions, but that's rare and most
-definitely not somethign to focus on when still developing RFC level
-code.
-
-Different fsx configurations change the operation set that is run -
-mixing DIO reads with buffered writes, turning mmap on and off,
-using AIO or io_uring rather than synchronous IO, etc. These all
-exercise different code paths and corner cases and have vastly
-different code interactions, and that is what we need to cover when
-developing new code.
-
-IOWs, we need coverage of the *entire operation space*, not just the
-same narrow set of operations run billions of time.  A wide focus
-requires billions of ops to cover because it requires lots of
-different application configurations to be run. In constrast, there
-are only three fs configurations that matter: bs < PS, bs == PS and
-bs > PS.
-
-For example, 16kB, 32kB and 64kB filesystem configs exercise exactly
-the same code paths in exactly the same way (e.g. both have non-zero
-miniumum folio orders but only differ by what that order is). Hence
-running the same test application configs on these different
-filessytem configurations does actually not improve code coverage of
-the testing at all. Testing all of them only increases the resources
-required to the test a change, it does not improve the quality of
-coverage of the testing being performed at all....
-
-Hence I'd strongly suggest that, for the next posting of these
-cahnge, you focus on making fstests pass without turning off any
-failing tests, and that fsx is run with a wide variety of
-configurations (e.g. modify all the fstests cases to run for a
-configurable number of ops (e.g. via SOAK_DURATION)). We just don't
-care at this point about finding that 1 in 10^15 ops bug because
-it's code in development; what we actually care about is that
--everything- works correctly for the vast majority of use cases....
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
