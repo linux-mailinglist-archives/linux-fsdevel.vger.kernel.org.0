@@ -2,60 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B6DE57AAA38
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Sep 2023 09:27:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64F627AABD8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Sep 2023 10:10:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231255AbjIVH1i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Sep 2023 03:27:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42054 "EHLO
+        id S232062AbjIVIIs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Sep 2023 04:08:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231254AbjIVH1g (ORCPT
+        with ESMTP id S231888AbjIVIIr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Sep 2023 03:27:36 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0283192;
-        Fri, 22 Sep 2023 00:27:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=fTffBsX5ZQ8vPtCXH0LV4fT/b+RfyYh64dbzhekWoNI=; b=mshh8jDMfgVNGvBmiFE6AIEqGr
-        4vbNkAMCy52Tor4002Rv+fFwYNRp6Q17WNzhpkCJv82PADIydl+YLCs0JkH9oJM7bBWbXGKyj01Ct
-        9NXn8tywK6JBQlGclnH7teUEAO36gdE2M5f7/heRL12x3OOGj2TbJLYalVTmZvUJzL2SBHSjpA7/b
-        M5S/mWBZLIjs0fvnqEMRWrUDr/gXANRBWdP+3JfDQhoH8bXM6RggDiPk1xK+jH+Jf1si6dX8ybKTQ
-        KVUfSXQsmikclPXIixb41wVocMwTkk06XC8qe3URN59KVOrfIXNYJnyrLEEQLGbhjGM5PA/bJbxth
-        yt5INcUA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qjaZO-00Gv6p-QT; Fri, 22 Sep 2023 07:27:22 +0000
-Date:   Fri, 22 Sep 2023 08:27:22 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Minjie Du <duminjie@vivo.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        "open list:PAGE CACHE" <linux-fsdevel@vger.kernel.org>,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        opensource.kernel@vivo.com
-Subject: Re: [PATCH v1] mm/filemap: increase usage of folio_next_index()
- helper
-Message-ID: <ZQ1B2vtv5b2K4lwg@casper.infradead.org>
-References: <20230921081535.3398-1-duminjie@vivo.com>
+        Fri, 22 Sep 2023 04:08:47 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF2011A5;
+        Fri, 22 Sep 2023 01:08:41 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F92BC433C7;
+        Fri, 22 Sep 2023 08:08:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695370121;
+        bh=EFZdZuA1bgAXV5AvWlugKRnoAhOxAfKWHVnlSpBHmsk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=UVH7BLlMFJgfpXuwIOQyMJKeDa7uMySj42MzRYs1UY/wWNQ2tuCTY/wOvIpDlq/k/
+         O35vjFv3Yg8edSeTIZQWm4omxME67E3ctvgOJgleY9P2/RG6T3SmHoHJJLFdS3ctLw
+         tr+HovOZyeqp6y/RbkZWtFyISCuaGDTWGchtjioQAqmGIRSFVaTEvqbg75apFUYJEI
+         MUx0sNMMPHgoBDjiaK74rvSf8gZDxPTpkO3CGVuUrCF2l0RfTu6HqfzL2Rtk7xvGnr
+         tXBX2aDMNbxaUNn9fdJwLUEj27V3FxJqxpAMBw5eW10kSI/WMEeTGGifAkd5jq2JTo
+         jRhhF49G7kqfw==
+Date:   Fri, 22 Sep 2023 10:08:36 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Cai Xinchen <caixinchen1@huawei.com>
+Cc:     Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, cgroups@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, dhowells@redhat.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [BUG?] fsconfig restart_syscall failed
+Message-ID: <20230922-drillen-muschel-c9bd03acfe00@brauner>
+References: <84e5fb5f-67c5-6d34-b93b-b307c6c9805c@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230921081535.3398-1-duminjie@vivo.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <84e5fb5f-67c5-6d34-b93b-b307c6c9805c@huawei.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 21, 2023 at 04:15:35PM +0800, Minjie Du wrote:
-> Simplify code pattern of 'folio->index + folio_nr_pages(folio)' by using
-> the existing helper folio_next_index() in filemap_map_pages().
+On Fri, Sep 22, 2023 at 10:18:24AM +0800, Cai Xinchen wrote:
+> Hello:
+>   I am doing some test for kernel 6.4, util-linux version:2.39.1.
+> Have you encountered similar problems? If there is a fix, please
+> let me know.
+> Thank you very much
 > 
-> Signed-off-by: Minjie Du <duminjie@vivo.com>
+> --------------------------------------------------
+> 
+> util-linux version 2.39.1 call mount use fsopen->fsconfig->fsmount->close
+> instead of mount syscall.
+> 
+> And use this shell test:
+> 
+> #!/bin/bash
+> mkdir -p /tmp/cgroup/cgrouptest
+> while true
+> do
+>         mount -t cgroup -o none,name=foo cgroup /tmp/cgroup/cgrouptest
 
-Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+
+> in mount syscall, no function will check fs->phase, and fc is recreate
+> in monnt syscall. However, in fdconfig syscall, fc->phase is not initial as
+> FS_CONTEXT_CREATE_PARAMS, restart_syscall will return -EBUSY. fc is created
+> in fsopen syscall.
+
+Mount api system calls aren't restartable so that doesn't work. cgroup2
+doesn't have this issue, only cgroup1 has. So cgroup1_get_tree() should
+probably be fixed if anyone cares.
