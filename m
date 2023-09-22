@@ -2,39 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D9D67AB701
+	by mail.lfdr.de (Postfix) with ESMTP id E7ED07AB702
 	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Sep 2023 19:15:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232913AbjIVRPJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Sep 2023 13:15:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60556 "EHLO
+        id S233027AbjIVRPL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Sep 2023 13:15:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232713AbjIVRO6 (ORCPT
+        with ESMTP id S232804AbjIVRPA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Sep 2023 13:14:58 -0400
+        Fri, 22 Sep 2023 13:15:00 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62A4B194;
-        Fri, 22 Sep 2023 10:14:52 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89086C433C8;
-        Fri, 22 Sep 2023 17:14:50 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DC17199;
+        Fri, 22 Sep 2023 10:14:54 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48015C433CC;
+        Fri, 22 Sep 2023 17:14:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695402892;
-        bh=NFFb0wVC4vDGCm6mY4DnCN3YW9JLtiM6/cGSNjSGNLw=;
+        s=k20201202; t=1695402893;
+        bh=fUxZuWZUND6whtfSXS6cbk4dZFYYjP9h1aQMSYrQkf8=;
         h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-        b=Ee3OQFc5mhZe1schuj2Ih0PMVeXCVOQ3jJbk6mkpkHqUvFyCYgmLbaFUfPz8T0xVr
-         8XWz8aNjM5x+uJZqbFmG2DFYpUjSiAg3XGbpz9gQhX5Jn+HLjfBfDsSZjtekZtQG48
-         H58DlqfyBf1pyFSWFW5e2H46HPsyysJ7FQuD68Vr07jSfC0nxQxHcNL7d/BxZWpMYz
-         LPGZ8GqY8mTUZwyxCoN8Gs8WeGS/QOHv9X8cQnf0s+lj347LzVxbhty0WZVaNQ1FFG
-         Xlas3vwdlUaQahQYXYT9TYUXACjQLNEkvGath6bu3qIE4pZjNrOzN4l0IHdPNlqQUk
-         +zM1D52EdmIIw==
+        b=rBTSD5KCp99SdJZqsG3zOYy+AdArnEo24hL2QnlNNWA+rKd1uSMkLvysYgASAy8nk
+         0bbFIkNgBgvgbU6sAOFtzG8gk4ZsxaREY53V7g3eHNwfXbEq1lkcdapAwrdViQaT/k
+         VybJ+BJ43c6IBag3RVLgPWv06U40KwYdJ8Ioud2e5unfr+FUyD7mIJHHgIwXPqxgVf
+         y+SwAq2s6t5VVWHcNNkUPRjfi7Gapjlq2PvqQpUprYxExjc72PfhZ6Bh9cP7axAQj4
+         HmyUf2kpRcyIMpzHzmKDgWaHMPnzUidPabG+MyH68FApeyLyLjaO3IXolT7e8BpPLH
+         PN3yx8F2/QmyQ==
 From:   Jeff Layton <jlayton@kernel.org>
-Date:   Fri, 22 Sep 2023 13:14:41 -0400
-Subject: [PATCH v8 2/5] fs: optimize away some fine-grained timestamp
- updates
+Date:   Fri, 22 Sep 2023 13:14:42 -0400
+Subject: [PATCH v8 3/5] fs: have setattr_copy handle multigrain timestamps
+ appropriately
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230922-ctime-v8-2-45f0c236ede1@kernel.org>
+Message-Id: <20230922-ctime-v8-3-45f0c236ede1@kernel.org>
 References: <20230922-ctime-v8-0-45f0c236ede1@kernel.org>
 In-Reply-To: <20230922-ctime-v8-0-45f0c236ede1@kernel.org>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -52,20 +52,20 @@ Cc:     Kent Overstreet <kent.overstreet@linux.dev>,
         linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org,
         Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2334; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=NFFb0wVC4vDGCm6mY4DnCN3YW9JLtiM6/cGSNjSGNLw=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBlDcuGy850TGCImFzlW6PaszASwhbcFpoXM/ofY
- mgISIxoW3mJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZQ3LhgAKCRAADmhBGVaC
- Fbm7D/9b6VZ7YR1N2txLfMMfe4SCyQf5HfHYV7PpyTnWpiDh8onAt/YB/WbCt/TFe+4FhArKbZq
- gN8yNNikbV/qcZkMZuQKOqGAUbVN4+1ofFU8eng0N2edA1OZ+0wjhFA8HGeixTDp2mX9DtteXz5
- 8tP9IA7sN6UjqteyWHs47DoVjwDaGA5Tnt1G96cPa4N0jRcyBzj7SrR/SH7nbYsdAT1UcWYBbbM
- 82CLjSC+lxhh4iWt4yumKI6OIMQZM+h7dbfL5Pcd8fJyf4L5rqrOhlPyam+4LbSDiX7JxKkGL+w
- 5+8lpQBYQcHWhbRM5CL+WZzY1Iz170Rsl5qHA78yxnwE/s56NUTDsWczHQ++XSa+racTYnjlqiF
- VJrZWTVX/ABjhoQ+JLNmHJd/jj3aXzbHAz41voa/acsWryBYQHXIQ1V41+QJxpkinDkB6qUUr/w
- txr0/PHEb3l5lgVrPBzRMZqAFbKKhWwCpOz+Ib0kD1CbcZFd3xrd8tzwB+G34QUASXY42wj8HRv
- cB2hrWaueCN+xHOqWyherjGOJMalNfwRYcAEZuE1JVhIZEv00Bq7Q0lXvXLVmECOh986lTt5Pvn
- 0fU63wLR4lslFnItiJ/YVdyENPY3iZ12IRNN04z42uSy4DAu2SyPdKwVC5QuRh0rR37pGL1bZiR
- LRvQ2MzaluEzK/g==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3299; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=fUxZuWZUND6whtfSXS6cbk4dZFYYjP9h1aQMSYrQkf8=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBlDcuGMi53UoH/W19WSq89zn8S9TZbYu1oTRu0z
+ xom55+Yu6WJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZQ3LhgAKCRAADmhBGVaC
+ FandEACrYrCK4mEHxIf2BJs2N6vjBIybMKu/4Io+i4XF+mOOk6726NojyEhKuk2vcXIZDgoSvko
+ 4sKNNH5HJsvVR4C/pSNdKBjr9POUoEZoVvbpAVLy2iu2ejCm9nZwOl2xLwDOHmVWpuGOaEC99N8
+ slbJjXsc6mQhW4YtY8aiyIe2vWAUJiApGFxe76Xq4LVXwpvlLE59HrPesc8OTs9DlWw1gGcJgBI
+ aGZ5e552ciqXH6M3W0TigkkwuRC/pE4PgFzY4IceN8aQ751zXiaRcePJlCTd8vw48smmMTyIduB
+ 7R0BBtYMOIFAIQLtYFAAzTOA1FXJEm9Z0fj5jaoxBcZKF1dn3wxU5v3JpQzPYlIwiW6Ew2/vE2Y
+ ItlRJO5Cp9KTKFfB/bQQ/DGUJ1QIk9HjeA3wfhGKAJXOajJuBnt0uoMmUn5DMDSweylV3tiMO83
+ xA84OiIS3hYeTXK1raunHowGVvoXZAK7H+ozYd9dMdvcMfJKrPBUy9YYl5z7l/hYT+OAZUvOkNc
+ VWGpdW7tpulAckFRkllgmsfnvbNszaNeWX483WFWsz6X6Zfv6zQe+mX8S8T9UE4XqE6ZYjDhYKn
+ tE/ezJ+p8Zn6pmB2fWYo7O0PYpLLmzwY9kcFm3H2MawZtSwNtcpY1I8f1CBDtMzSw3qgeoYiOhq
+ kKQ6H5ktDrpyWUQ==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -77,77 +77,102 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When updating the ctime and the QUERIED bit is set, we can still use the
-coarse-grained clock if the next coarse time tick has already happened.
-Only use the fine grained clock if the coarse grained one is equal to or
-earlier than the old ctime.
+The setattr codepath is still using coarse-grained timestamps, even on
+multigrain filesystems. To fix this, we need to fetch the timestamp for
+ctime updates later, at the point where the assignment occurs in
+setattr_copy.
+
+On a multigrain inode, ignore the ia_ctime in the attrs, and always
+update the ctime to the current clock value. Update the atime and mtime
+with the same value (if needed) unless they are being set to other
+specific values, a'la utimes().
+
+Note that we don't want to do this universally however, as some
+filesystems (e.g. most networked fs) want to do an explicit update
+elsewhere before updating the local inode.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/inode.c | 33 +++++++++++++++++++++++----------
- 1 file changed, 23 insertions(+), 10 deletions(-)
+ fs/attr.c | 52 ++++++++++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 46 insertions(+), 6 deletions(-)
 
-diff --git a/fs/inode.c b/fs/inode.c
-index f3d68e4b8df7..293f9ba623d1 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -2587,26 +2587,35 @@ EXPORT_SYMBOL(current_time);
-  */
- struct timespec64 inode_set_ctime_current(struct inode *inode)
- {
--	struct timespec64 now;
-+	struct timespec64 now = current_time(inode);
- 	struct timespec64 ctime;
-+	bool queried;
-+	int tscomp;
+diff --git a/fs/attr.c b/fs/attr.c
+index a8ae5f6d9b16..8ba330e6a582 100644
+--- a/fs/attr.c
++++ b/fs/attr.c
+@@ -275,6 +275,42 @@ int inode_newsize_ok(const struct inode *inode, loff_t offset)
+ }
+ EXPORT_SYMBOL(inode_newsize_ok);
  
-+	/* Just copy it into place if it's not multigrain */
-+	if (!is_mgtime(inode)) {
-+		inode_set_ctime_to_ts(inode, now);
-+		return now;
++/**
++ * setattr_copy_mgtime - update timestamps for mgtime inodes
++ * @inode: inode timestamps to be updated
++ * @attr: attrs for the update
++ *
++ * With multigrain timestamps, we need to take more care to prevent races
++ * when updating the ctime. Always update the ctime to the very latest
++ * using the standard mechanism, and use that to populate the atime and
++ * mtime appropriately (unless we're setting those to specific values).
++ */
++static void setattr_copy_mgtime(struct inode *inode, const struct iattr *attr)
++{
++	unsigned int ia_valid = attr->ia_valid;
++	struct timespec64 now;
++
++	/*
++	 * If the ctime isn't being updated then nothing else should be
++	 * either.
++	 */
++	if (!(ia_valid & ATTR_CTIME)) {
++		WARN_ON_ONCE(ia_valid & (ATTR_ATIME|ATTR_MTIME));
++		return;
 +	}
 +
-+	ctime.tv_sec = inode->__i_ctime.tv_sec;
- 	ctime.tv_nsec = READ_ONCE(inode->__i_ctime.tv_nsec);
--	if (!(ctime.tv_nsec & I_CTIME_QUERIED)) {
--		now = current_time(inode);
-+	queried = ctime.tv_nsec & I_CTIME_QUERIED;
-+	ctime.tv_nsec &= ~I_CTIME_QUERIED;
- 
--		/* Just copy it into place if it's not multigrain */
--		if (!is_mgtime(inode)) {
--			inode_set_ctime_to_ts(inode, now);
--			return now;
--		}
-+	tscomp = timespec64_compare(&ctime, &now);
- 
-+	/*
-+	 * We can use a coarse-grained timestamp if no one has queried for it,
-+	 * or coarse time is already later than the existing ctime.
-+	 */
-+	if (!queried || tscomp < 0) {
- 		/*
- 		 * If we've recently updated with a fine-grained timestamp,
- 		 * then the coarse-grained one may still be earlier than the
- 		 * existing ctime. Just keep the existing value if so.
- 		 */
--		ctime.tv_sec = inode->__i_ctime.tv_sec;
--		if (timespec64_compare(&ctime, &now) > 0) {
-+		if (tscomp > 0) {
- 			struct timespec64	limit = now;
- 
- 			/*
-@@ -2620,6 +2629,10 @@ struct timespec64 inode_set_ctime_current(struct inode *inode)
- 				return ctime;
- 		}
- 
-+		/* Put back the queried bit if we stripped it before */
-+		if (queried)
-+			ctime.tv_nsec |= I_CTIME_QUERIED;
++	now = inode_set_ctime_current(inode);
++	if (ia_valid & ATTR_ATIME_SET)
++		inode->i_atime = attr->ia_atime;
++	else if (ia_valid & ATTR_ATIME)
++		inode->i_atime = now;
 +
- 		/*
- 		 * Ctime updates are usually protected by the inode_lock, but
- 		 * we can still race with someone setting the QUERIED flag.
++	if (ia_valid & ATTR_MTIME_SET)
++		inode->i_mtime = attr->ia_mtime;
++	else if (ia_valid & ATTR_MTIME)
++		inode->i_mtime = now;
++}
++
+ /**
+  * setattr_copy - copy simple metadata updates into the generic inode
+  * @idmap:	idmap of the mount the inode was found from
+@@ -307,12 +343,6 @@ void setattr_copy(struct mnt_idmap *idmap, struct inode *inode,
+ 
+ 	i_uid_update(idmap, attr, inode);
+ 	i_gid_update(idmap, attr, inode);
+-	if (ia_valid & ATTR_ATIME)
+-		inode->i_atime = attr->ia_atime;
+-	if (ia_valid & ATTR_MTIME)
+-		inode->i_mtime = attr->ia_mtime;
+-	if (ia_valid & ATTR_CTIME)
+-		inode_set_ctime_to_ts(inode, attr->ia_ctime);
+ 	if (ia_valid & ATTR_MODE) {
+ 		umode_t mode = attr->ia_mode;
+ 		if (!in_group_or_capable(idmap, inode,
+@@ -320,6 +350,16 @@ void setattr_copy(struct mnt_idmap *idmap, struct inode *inode,
+ 			mode &= ~S_ISGID;
+ 		inode->i_mode = mode;
+ 	}
++
++	if (is_mgtime(inode))
++		return setattr_copy_mgtime(inode, attr);
++
++	if (ia_valid & ATTR_ATIME)
++		inode->i_atime = attr->ia_atime;
++	if (ia_valid & ATTR_MTIME)
++		inode->i_mtime = attr->ia_mtime;
++	if (ia_valid & ATTR_CTIME)
++		inode_set_ctime_to_ts(inode, attr->ia_ctime);
+ }
+ EXPORT_SYMBOL(setattr_copy);
+ 
 
 -- 
 2.41.0
