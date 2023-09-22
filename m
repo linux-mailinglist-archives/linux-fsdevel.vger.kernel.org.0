@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0097D7AB1C5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Sep 2023 14:04:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6238A7AB1C9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Sep 2023 14:04:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234061AbjIVMEs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Sep 2023 08:04:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40078 "EHLO
+        id S234078AbjIVMEu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Sep 2023 08:04:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234069AbjIVMEZ (ORCPT
+        with ESMTP id S234079AbjIVMEZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 22 Sep 2023 08:04:25 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25451CC2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Sep 2023 05:02:58 -0700 (PDT)
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA57ACC5
+        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Sep 2023 05:02:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1695384177;
+        s=mimecast20190719; t=1695384178;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=gfSLwCbdFMwywMZPFTO5hx480mND9O9O9B3C6PwfVhs=;
-        b=fpPs5ZuPSurCvPFBBNDKtpeD2QX9IVl3Kda5My/bLJkyaPPf+XorLPwwe6d4L49VtEPkQL
-        9i5fu3pJN+a7dxRdZgaEV+HQHkV44OaOIT/K3e9Ov51CcoYQ+18ZUrF7XJy1Be+SA2D3/f
-        6bwcNCdWqUYiRfDo9sqok+tPIrbp3mM=
+        bh=hYOoT+N3+ZXg5kUOP5JOmaiFuOq7EbJgQKHzR3cvg3M=;
+        b=QlbdtTKSRMEP5wQpKgMDMNzKzcp/YMPv0ZgWrcBak6v5FpWoyslKZJtgGfLyTZtfqtc6hf
+        6ziYPLpqpKcCLlhSCJkorB6U4/S8s5LCPfvojAXf9A2njseq99J/PUn4Vyo/8j4CjJ70He
+        r5IL13zYjOGFGhVDy1qns+Qa/bUKmVo=
 Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
  by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-136-d7Mhfh32MBiW5Kow5NUZRQ-1; Fri, 22 Sep 2023 08:02:53 -0400
-X-MC-Unique: d7Mhfh32MBiW5Kow5NUZRQ-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+ us-mta-619-ZTcYAYuYMcqv6NQGNev8hg-1; Fri, 22 Sep 2023 08:02:55 -0400
+X-MC-Unique: ZTcYAYuYMcqv6NQGNev8hg-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 533BA1C0172F;
-        Fri, 22 Sep 2023 12:02:52 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 9DF423816C89;
+        Fri, 22 Sep 2023 12:02:54 +0000 (UTC)
 Received: from warthog.procyon.org.com (unknown [10.42.28.216])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id ADFF220268D6;
-        Fri, 22 Sep 2023 12:02:50 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EFD0D711282;
+        Fri, 22 Sep 2023 12:02:52 +0000 (UTC)
 From:   David Howells <dhowells@redhat.com>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     David Howells <dhowells@redhat.com>,
@@ -51,18 +51,19 @@ Cc:     David Howells <dhowells@redhat.com>,
         linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
         linux-mm@kvack.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v6 08/13] iov_iter: Don't deal with iter->copy_mc in memcpy_from_iter_mc()
-Date:   Fri, 22 Sep 2023 13:02:22 +0100
-Message-ID: <20230922120227.1173720-9-dhowells@redhat.com>
+Subject: [PATCH v6 09/13] iov_iter: Add a kernel-type iterator-only iteration function
+Date:   Fri, 22 Sep 2023 13:02:23 +0100
+Message-ID: <20230922120227.1173720-10-dhowells@redhat.com>
 In-Reply-To: <20230922120227.1173720-1-dhowells@redhat.com>
 References: <20230922120227.1173720-1-dhowells@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
 X-Spam-Status: No, score=1.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,RCVD_IN_SBL_CSS,SPF_HELO_NONE,
-        SPF_NONE autolearn=no autolearn_force=no version=3.4.6
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
+        RCVD_IN_SBL_CSS,SPF_HELO_NONE,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Level: *
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -70,78 +71,72 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-iter->copy_mc is only used with a bvec iterator and only by
-dump_emit_page() in fs/coredump.c so rather than handle this in
-memcpy_from_iter_mc() where it is checked repeatedly by _copy_from_iter()
-and copy_page_from_iter_atomic(),
----
- lib/iov_iter.c | 39 +++++++++++++++++++++++++++------------
- 1 file changed, 27 insertions(+), 12 deletions(-)
+Add an iteration function that can only iterate over kernel internal-type
+iterators (ie. BVEC, KVEC, XARRAY) and not user-backed iterators (ie. UBUF
+and IOVEC).  This allows for smaller iterators to be built when it is known
+the caller won't have a user-backed iterator.
 
-diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index 65374ee91ecd..943aa3cfd7b3 100644
---- a/lib/iov_iter.c
-+++ b/lib/iov_iter.c
-@@ -253,14 +253,33 @@ size_t _copy_mc_to_iter(const void *addr, size_t bytes, struct iov_iter *i)
- EXPORT_SYMBOL_GPL(_copy_mc_to_iter);
- #endif /* CONFIG_ARCH_HAS_COPY_MC */
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Alexander Viro <viro@zeniv.linux.org.uk>
+cc: Jens Axboe <axboe@kernel.dk>
+cc: Christoph Hellwig <hch@lst.de>
+cc: Christian Brauner <christian@brauner.io>
+cc: Matthew Wilcox <willy@infradead.org>
+cc: Linus Torvalds <torvalds@linux-foundation.org>
+cc: David Laight <David.Laight@ACULAB.COM>
+cc: linux-block@vger.kernel.org
+cc: linux-fsdevel@vger.kernel.org
+cc: linux-mm@kvack.org
+---
+
+Notes:
+    Changes
+    =======
+    ver #6)
+     - Document the priv2 arg of iterate_and_advance_kernel().
+
+ include/linux/iov_iter.h | 32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
+
+diff --git a/include/linux/iov_iter.h b/include/linux/iov_iter.h
+index 270454a6703d..d8733dc22b54 100644
+--- a/include/linux/iov_iter.h
++++ b/include/linux/iov_iter.h
+@@ -271,4 +271,36 @@ size_t iterate_and_advance(struct iov_iter *iter, size_t len, void *priv,
+ 	return iterate_and_advance2(iter, len, priv, NULL, ustep, step);
+ }
  
--static size_t memcpy_from_iter_mc(void *iter_from, size_t progress,
--				  size_t len, void *to, void *priv2)
++/**
++ * iterate_and_advance_kernel - Iterate over a kernel iterator
++ * @iter: The iterator to iterate over.
++ * @len: The amount to iterate over.
++ * @priv: Data for the step functions.
++ * @priv2: More data for the step functions.
++ * @step: Processing function; given kernel addresses.
++ *
++ * Like iterate_and_advance2(), but rejected UBUF and IOVEC iterators and does
++ * not take a user-step function.
++ */
 +static __always_inline
-+size_t memcpy_from_iter_mc(void *iter_from, size_t progress,
-+			   size_t len, void *to, void *priv2)
++size_t iterate_and_advance_kernel(struct iov_iter *iter, size_t len, void *priv,
++				  void *priv2, iov_step_f step)
 +{
-+	return copy_mc_to_kernel(to + progress, iter_from, len);
-+}
-+
-+static size_t __copy_from_iter_mc(void *addr, size_t bytes, struct iov_iter *i)
- {
--	struct iov_iter *iter = priv2;
-+	size_t progress;
- 
--	if (iov_iter_is_copy_mc(iter))
--		return copy_mc_to_kernel(to + progress, iter_from, len);
--	return memcpy_from_iter(iter_from, progress, len, to, priv2);
-+	if (unlikely(i->count < bytes))
-+		bytes = i->count;
-+	if (unlikely(!bytes))
++	if (unlikely(iter->count < len))
++		len = iter->count;
++	if (unlikely(!len))
 +		return 0;
-+	progress = iterate_bvec(i, bytes, addr, NULL, memcpy_from_iter_mc);
-+	i->count -= progress;
-+	return progress;
++
++	if (iov_iter_is_bvec(iter))
++		return iterate_bvec(iter, len, priv, priv2, step);
++	if (iov_iter_is_kvec(iter))
++		return iterate_kvec(iter, len, priv, priv2, step);
++	if (iov_iter_is_xarray(iter))
++		return iterate_xarray(iter, len, priv, priv2, step);
++	if (iov_iter_is_discard(iter))
++		return iterate_discard(iter, len, priv, priv2, step);
++	WARN_ON_ONCE(1);
++	return 0;
 +}
 +
-+static __always_inline
-+size_t __copy_from_iter(void *addr, size_t bytes, struct iov_iter *i)
-+{
-+	if (unlikely(iov_iter_is_copy_mc(i)))
-+		return __copy_from_iter_mc(addr, bytes, i);
-+	return iterate_and_advance(i, bytes, addr,
-+				   copy_from_user_iter, memcpy_from_iter);
- }
- 
- size_t _copy_from_iter(void *addr, size_t bytes, struct iov_iter *i)
-@@ -270,9 +289,7 @@ size_t _copy_from_iter(void *addr, size_t bytes, struct iov_iter *i)
- 
- 	if (user_backed_iter(i))
- 		might_fault();
--	return iterate_and_advance2(i, bytes, addr, i,
--				    copy_from_user_iter,
--				    memcpy_from_iter_mc);
-+	return __copy_from_iter(addr, bytes, i);
- }
- EXPORT_SYMBOL(_copy_from_iter);
- 
-@@ -493,9 +510,7 @@ size_t copy_page_from_iter_atomic(struct page *page, size_t offset,
- 		}
- 
- 		p = kmap_atomic(page) + offset;
--		n = iterate_and_advance2(i, n, p, i,
--					 copy_from_user_iter,
--					 memcpy_from_iter_mc);
-+		__copy_from_iter(p, n, i);
- 		kunmap_atomic(p);
- 		copied += n;
- 		offset += n;
+ #endif /* _LINUX_IOV_ITER_H */
 
