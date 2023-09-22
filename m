@@ -2,103 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 21C8A7AB9A0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Sep 2023 20:51:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BB597ABA28
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Sep 2023 21:38:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233760AbjIVSvy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Sep 2023 14:51:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48234 "EHLO
+        id S229628AbjIVTi0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Sep 2023 15:38:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233742AbjIVSvx (ORCPT
+        with ESMTP id S229495AbjIVTiZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Sep 2023 14:51:53 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83750AC
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Sep 2023 11:51:47 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-99357737980so320638866b.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Sep 2023 11:51:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1695408706; x=1696013506; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ah1VmvWzOnKnkyFlWIeYuTucJzJ+3NRjWIwcRi6c2zI=;
-        b=FaPDT8B5cyjl0XRxvrxoCfBKIU6Tjk8TycxNF/KS17PgcgdnUGUoF2m94Bw3BDqsSh
-         vqkSlbpkjXp/m68rymiB5C2I4FpZvJvZpXMuV8+qGtCsYzhAFeAkU7jVNVjFOaG8jMRS
-         tCyamDSFoilJgPyjciOUL0pZX1lcFBF6IMcpw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695408706; x=1696013506;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ah1VmvWzOnKnkyFlWIeYuTucJzJ+3NRjWIwcRi6c2zI=;
-        b=PNB08AohhieG1eID2DOlvdp/R0ejeEkC6QQl25qAifFG5y17hZzk6012JL1uTdkKLk
-         v/OhFT9pnAXNEn7GjCZaYbyJNZWxQKlJo7nxb0m3tQYMl+d8qL9yqEq4jN4gjUEiCayu
-         QejBGbPWHwRej46vb5Ae9o4EDZyfV4vpvHFMzZFyhp11x94CrGmhCwagBOfXaYF2m6+1
-         5HBOpN1j16L1W1/HhyCZlSLsi2FBlSKp/Tl2LcjCh7T4/LwXQR8k5f8ypaYNavdtXoAj
-         vFjFbUHFRL1Bh65m324tSs0CCrPu46xsMeXuAyOBvWL9avIGRZFnYAlMKHMhPzerB3mI
-         iwoA==
-X-Gm-Message-State: AOJu0YxZN5O9hAq/X062zlYsUILHLsPt8nRPpuYFQbUKw4AszoZvVdNM
-        LFDq77apJliPTNolMNneCVQgOVzKI4jC4GnMSDD3ExJ/
-X-Google-Smtp-Source: AGHT+IErLMATQd9ertTwk7pZzjXUUVfsx9/+JGf0GEXTov+KPT0b97ZTnRd2tkfNCFqx9sQPVOb2nw==
-X-Received: by 2002:a17:906:f116:b0:9ae:68dc:d571 with SMTP id gv22-20020a170906f11600b009ae68dcd571mr189616ejb.46.1695408701223;
-        Fri, 22 Sep 2023 11:51:41 -0700 (PDT)
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com. [209.85.208.41])
-        by smtp.gmail.com with ESMTPSA id h11-20020a170906854b00b009a1e0349c4csm3049902ejy.23.2023.09.22.11.51.40
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Sep 2023 11:51:40 -0700 (PDT)
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5335d9045b4so2005252a12.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Sep 2023 11:51:40 -0700 (PDT)
-X-Received: by 2002:aa7:c98b:0:b0:533:310b:a8aa with SMTP id
- c11-20020aa7c98b000000b00533310ba8aamr309019edt.13.1695408696292; Fri, 22 Sep
- 2023 11:51:36 -0700 (PDT)
+        Fri, 22 Sep 2023 15:38:25 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC934AF;
+        Fri, 22 Sep 2023 12:38:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=TwghE0UWvedzbS9x4AhHOtwKLQCqsKJyy8dRVBG0BLM=; b=J+2aR6VVMtP3vyHszk4csseJuH
+        cHY42l/HKolxgTYY1E1HcC6ojrTdLFolrI31cdR/vAFPJq3sYRWZ8odsSrTte74EyWyjpaq8ro1gY
+        AqnjXNxiPbMV/Z7/4xU17R8I4yXrdHd0w54moXRI+LrEq1SJEVXPDCBOajVnyQyLFdw0ujB0remek
+        l/oGsO8Gke0LF7eHik74oK+w314N7cqkDf9a6hIdyDCzDJWnkqGb9pDflISC2vW8t8jICY4fjfbAf
+        Eh3DKfCJd8PMRQyZqo03OKf+6v6/PUahX0ytz3bluv7VVVKc6qO3HTaH/ZOd8an84LQPNFbQriI5c
+        Tv5T5aMQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1qjlyZ-002Tkn-BO; Fri, 22 Sep 2023 19:38:07 +0000
+Date:   Fri, 22 Sep 2023 20:38:07 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Pankaj Raghav <p.raghav@samsung.com>,
+        Pankaj Raghav <kernel@pankajraghav.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        da.gomez@samsung.com, akpm@linux-foundation.org,
+        linux-kernel@vger.kernel.org, djwong@kernel.org,
+        linux-mm@kvack.org, chandan.babu@oracle.com, gost.dev@samsung.com,
+        riteshh@linux.ibm.com
+Subject: Re: [RFC 00/23] Enable block size > page size in XFS
+Message-ID: <ZQ3tH61w+2Sf7AL2@casper.infradead.org>
+References: <20230915183848.1018717-1-kernel@pankajraghav.com>
+ <ZQd4IPeVI+o6M38W@dread.disaster.area>
+ <ZQewKIfRYcApEYXt@bombadil.infradead.org>
+ <CGME20230918050749eucas1p13c219481b4b08c1d58e90ea70ff7b9c8@eucas1p1.samsung.com>
+ <ZQfbHloBUpDh+zCg@dread.disaster.area>
+ <806df723-78cf-c7eb-66a6-1442c02126b3@samsung.com>
+ <ZQuxvAd2lxWppyqO@bombadil.infradead.org>
+ <ZQvNVAfZMjE3hgmN@bombadil.infradead.org>
+ <ZQvczBjY4vTLJFBp@dread.disaster.area>
 MIME-Version: 1.0
-References: <20230922120227.1173720-1-dhowells@redhat.com> <20230922120227.1173720-10-dhowells@redhat.com>
-In-Reply-To: <20230922120227.1173720-10-dhowells@redhat.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 22 Sep 2023 11:51:19 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whyv0cs056T8TvY1f0nOf+Gsb6oRWetxt+LiFZUD4KQCw@mail.gmail.com>
-Message-ID: <CAHk-=whyv0cs056T8TvY1f0nOf+Gsb6oRWetxt+LiFZUD4KQCw@mail.gmail.com>
-Subject: Re: [PATCH v6 09/13] iov_iter: Add a kernel-type iterator-only
- iteration function
-To:     David Howells <dhowells@redhat.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@lst.de>,
-        Christian Brauner <christian@brauner.io>,
-        David Laight <David.Laight@aculab.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-mm@kvack.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZQvczBjY4vTLJFBp@dread.disaster.area>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 22 Sept 2023 at 05:03, David Howells <dhowells@redhat.com> wrote:
->
-> Add an iteration function that can only iterate over kernel internal-type
-> iterators (ie. BVEC, KVEC, XARRAY) and not user-backed iterators (ie. UBUF
-> and IOVEC).  This allows for smaller iterators to be built when it is known
-> the caller won't have a user-backed iterator.
+lOn Thu, Sep 21, 2023 at 04:03:56PM +1000, Dave Chinner wrote:
+> So there's clearly something wrong here - it's likely that the
+> filesystem IO alignment parameters pulled from the underlying block
+> device (4k physical, 512 byte logical sector sizes) are improperly
+> interpreted.  i.e. for a filesystem with a sector size of 4kB,
+> direct IO with an alignment of 512 bytes should be rejected......
 
-This one is pretty ugly, and has no actual users.
+I wonder if it's something in the truncation code that's splitting folios
+that ought not to be split.  Does this test possibly keep folios in
+cache that maybe get invalidated?
 
-Without even explaining why we'd care about this abomination, NAK.
-
-If we actyually have some static knowledge of "this will only use
-iterators X/Y/Z", then we should probably pass that in as a constant
-bitmask to the thing, instead of this kind of "kernel only" special
-case.
-
-But even then, we'd want to have actual explicit use-cases, not a
-hypothetical "if you have this situation here's this function".
-
-                 Linus
+truncate_inode_partial_folio() is the one i'm most concernd about.
+but i'm also severely jetlagged.
