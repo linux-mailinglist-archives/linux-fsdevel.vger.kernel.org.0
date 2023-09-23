@@ -2,211 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AB577ABF74
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Sep 2023 11:52:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B5427AC06B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Sep 2023 12:23:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231136AbjIWJxB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 23 Sep 2023 05:53:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45888 "EHLO
+        id S231364AbjIWKXE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 23 Sep 2023 06:23:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230488AbjIWJw7 (ORCPT
+        with ESMTP id S231276AbjIWKXD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 23 Sep 2023 05:52:59 -0400
-Received: from mail-oo1-xc2f.google.com (mail-oo1-xc2f.google.com [IPv6:2607:f8b0:4864:20::c2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BB31180
-        for <linux-fsdevel@vger.kernel.org>; Sat, 23 Sep 2023 02:52:52 -0700 (PDT)
-Received: by mail-oo1-xc2f.google.com with SMTP id 006d021491bc7-57ad95c555eso1953283eaf.3
-        for <linux-fsdevel@vger.kernel.org>; Sat, 23 Sep 2023 02:52:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1695462771; x=1696067571; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lMH/+nJD03dgwbKuD8pLeeHCLP78c1dJ+i3+7FWLksw=;
-        b=fZVHnyWM6Gm+2Pthjf66W9oX0xydHY/0/KyPGzE3Ybv8Cb3h9wH+IaYWh8O40f4ad8
-         BFFPx24IyrxX7HfwY2/c930nf7HhOqsTtar/u6+Q7y1J63dOMk2WeISDiaSDskhO2i9a
-         TlRfr4p2xpCxxqbHlQRoV0yJC+i1scmydXQfOA0BRvnmED29y5nuuD7r0XSHnUEJ1oLx
-         z7IyOGX/DNP6AyFteRzKrW0RflRO5Hr3DMZ2BaEj5NkBeIZmAfAa/vANVL/jXyoAEAJ1
-         tMjn4wn82fs88EtaeEsjhPoO97UtdJhOgvh56M0/9lHgFz1jJ+bHOQyc5TpTVrsuMVLG
-         A5vQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695462771; x=1696067571;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lMH/+nJD03dgwbKuD8pLeeHCLP78c1dJ+i3+7FWLksw=;
-        b=XeQUVTC6G82WjYGasLjSW5uONAFYUKu6K9z97QlMwgrlG9M8ymEEpunFGCzImrn/cv
-         bm3i5lu9UYK/Lc1U3tK0r9AB1r7E+0rWLDlxMB9QFqbYgbIUXwGeC3vU5/iSlCLXzjbG
-         LlnlEUqm1T7keLpq+cWP2tmSaj5lhoxedvtjFHBOwjXjikd2AHAu4eQHqmzsDWKK2LU2
-         HaPayQFhJWvSFLeHB39tr2L2do+WK+QeFdW0bqQTEczChdpvW2xb+EHuotYqfDhK4Gjy
-         uxscDS5h+7WHxDmsYDcGWkuRFKUrfNxR53w6ku5EvuuK2SwqVVHBbZgQboq+jdKtOFmC
-         m4kw==
-X-Gm-Message-State: AOJu0YzkKN396TFNio7dhL4375HPKyg0QnzcZfpUGy6GHfxDwPq8Uxj+
-        iwFR26MAs5xuntgrMjvU4JH8C1cNUaovzG+HZ3fUiCVNO2Y=
-X-Google-Smtp-Source: AGHT+IFJ81DYHwOqAXn0c3yPf6zY7wcwrZWW3maN/fBL6HWKjCO9ZiLNLKlwKK0wtN995SOdcz55j8NHlfndvyaPUOw=
-X-Received: by 2002:a05:6808:611:b0:3ae:1031:594 with SMTP id
- y17-20020a056808061100b003ae10310594mr1896384oih.34.1695462771598; Sat, 23
- Sep 2023 02:52:51 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230912185408.3343163-1-amir73il@gmail.com> <20230913-galaxie-irrfahrt-a815cf10ebdc@brauner>
- <CAOQ4uxgta6y7fi_hfrF4fDvHA2RjeA+JTCb-eSaORZOY6XZbVQ@mail.gmail.com> <CAOQ4uxh616M=QdQ+AurOL+G5wJyXeq+auAzu06u=O+LoCE0KpQ@mail.gmail.com>
-In-Reply-To: <CAOQ4uxh616M=QdQ+AurOL+G5wJyXeq+auAzu06u=O+LoCE0KpQ@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Sat, 23 Sep 2023 12:52:40 +0300
-Message-ID: <CAOQ4uxgYkksBL+2Fhp54s7efE4eUVvxU6SkEKRbY1zRXiABiWg@mail.gmail.com>
-Subject: Re: [PATCH] ovl: factor out some common helpers for backing files io
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Jan Kara <jack@suse.cz>
+        Sat, 23 Sep 2023 06:23:03 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 816849E;
+        Sat, 23 Sep 2023 03:22:57 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D74AC433C8;
+        Sat, 23 Sep 2023 10:22:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695464576;
+        bh=3v19yAZ2HhM+OXJVje2cfaZSmXd2NDrwoIrXd/QY1q4=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=F6phXQHDr6CMA3hk3upNihCkyDQ/7Op0BuqKEq3zxriC5oyCn1miExZpRcyqp2Aj4
+         jI8MGE2LeoA3LMM42AuVaKAqF6zBO0xx1EI6iYwu8QGjYBabMCqhEtjOgbNvr0eAtW
+         Qac3FDAZqfvSfvUgcJO0i+dZxgkcy/wD6cDfGle6I1O+VEIXd7VM6+Iv5S94RKksFL
+         Youj5QH5bj7PZOhvLwaoJgAsWzi0ys9ie2eDeZ3QCvHdUw28KC83yBI9MwV2g3aSD2
+         zELaNPivLbtgjPmrXEnPe2K2sumK6yAWXQSlldoDWvrDNlkvgw+ThfjnBlEavtS2o1
+         02g+rVw63PinQ==
+Message-ID: <4b106847d5202aec0e14fdbbe93b070b7ea97477.camel@kernel.org>
+Subject: Re: [PATCH v8 0/5] fs: multigrain timestamps for XFS's change_cookie
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Neil Brown <neilb@suse.de>,
+        Olga Kornievskaia <kolga@netapp.com>,
+        Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
+        Chandan Babu R <chandan.babu@oracle.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Kent Overstreet <kent.overstreet@linux.dev>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org
+Date:   Sat, 23 Sep 2023 06:22:54 -0400
+In-Reply-To: <CAOQ4uxiNfPoPiX0AERywqjaBH30MHQPxaZepnKeyEjJgTv8hYg@mail.gmail.com>
+References: <20230922-ctime-v8-0-45f0c236ede1@kernel.org>
+         <CAOQ4uxiNfPoPiX0AERywqjaBH30MHQPxaZepnKeyEjJgTv8hYg@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+MIME-Version: 1.0
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 21, 2023 at 6:51=E2=80=AFPM Amir Goldstein <amir73il@gmail.com>=
- wrote:
+On Sat, 2023-09-23 at 10:15 +0300, Amir Goldstein wrote:
+> On Fri, Sep 22, 2023 at 8:15=E2=80=AFPM Jeff Layton <jlayton@kernel.org> =
+wrote:
+> >=20
+> > My initial goal was to implement multigrain timestamps on most major
+> > filesystems, so we could present them to userland, and use them for
+> > NFSv3, etc.
+> >=20
+> > With the current implementation however, we can't guarantee that a file
+> > with a coarse grained timestamp modified after one with a fine grained
+> > timestamp will always appear to have a later value. This could confuse
+> > some programs like make, rsync, find, etc. that depend on strict
+> > ordering requirements for timestamps.
+> >=20
+> > The goal of this version is more modest: fix XFS' change attribute.
+> > XFS's change attribute is bumped on atime updates in addition to other
+> > deliberate changes. This makes it unsuitable for export via nfsd.
+> >=20
+> > Jan Kara suggested keeping this functionality internal-only for now and
+> > plumbing the fine grained timestamps through getattr [1]. This set take=
+s
+> > a slightly different approach and has XFS use the fine-grained attr to
+> > fake up STATX_CHANGE_COOKIE in its getattr routine itself.
+> >=20
+> > While we keep fine-grained timestamps in struct inode, when presenting
+> > the timestamps via getattr, we truncate them at a granularity of number
+> > of ns per jiffy,
+>=20
+> That's not good, because user explicitly set granular mtime would be
+> truncated too and booting with different kernels (HZ) would change
+> the observed timestamps of files.
+>=20
+
+That's a very good point.
+
+> > which allows us to smooth over the fuzz that causes
+> > ordering problems.
+> >=20
+>=20
+> The reported ordering problems (i.e. cp -u) is not even limited to the
+> scope of a single fs, right?
+>=20
+
+It isn't. Most of the tools we're concerned with don't generally care
+about filesystem boundaries.
+
+> Thinking out loud - if the QERIED bit was not per inode timestamp
+> but instead in a global fs_multigrain_ts variable, then all the inodes
+> of all the mgtime fs would be using globally ordered timestamps
 >
-> On Wed, Sep 13, 2023 at 2:24=E2=80=AFPM Amir Goldstein <amir73il@gmail.co=
-m> wrote:
-> >
-> > On Wed, Sep 13, 2023 at 11:29=E2=80=AFAM Christian Brauner <brauner@ker=
-nel.org> wrote:
-> > >
-> > > On Tue, Sep 12, 2023 at 09:54:08PM +0300, Amir Goldstein wrote:
-> > > > Overlayfs stores its files data in backing files on other filesyste=
-ms.
-> > > >
-> > > > Factor out some common helpers to perform io to backing files, that=
- will
-> > > > later be reused by fuse passthrough code.
-> > > >
-> > > > Suggested-by: Miklos Szeredi <miklos@szeredi.hu>
-> > > > Link: https://lore.kernel.org/r/CAJfpeguhmZbjP3JLqtUy0AdWaHOkAPWeP8=
-27BBWwRFEAUgnUcQ@mail.gmail.com
-> > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > > > ---
-> > > >
-> > > > Miklos,
-> > > >
-> > > > This is the re-factoring that you suggested in the FUSE passthrough
-> > > > patches discussion linked above.
-> > > >
-> > > > This patch is based on the overlayfs prep patch set I just posted [=
-1].
-> > > >
-> > > > Although overlayfs currently is the only user of these backing file
-> > > > helpers, I am sending this patch to a wider audience in case other
-> > > > filesystem developers want to comment on the abstraction.
-> > > >
-> > > > We could perhaps later considering moving backing_file_open() helpe=
-r
-> > > > and related code to backing_file.c.
-> > > >
-> > > > In any case, if there are no objections, I plan to queue this work
-> > > > for 6.7 via the overlayfs tree.
-> > > >
-> > > > Thanks,
-> > > > Amir.
-> > > >
-> > > > [1] https://lore.kernel.org/linux-unionfs/20230912173653.3317828-1-=
-amir73il@gmail.com/
-> > > >
-> > > >
-> > > >  MAINTAINERS                  |   2 +
-> > > >  fs/Kconfig                   |   4 +
-> > > >  fs/Makefile                  |   1 +
-> > > >  fs/backing_file.c            | 160 +++++++++++++++++++++++++++++++=
-++++
-> > >
-> > > I'm sorry but I'm missing mountains of context.
-> > > How is that related to the backing file stuff exactly?
-> > > The backing file stuff has this unpleasant
-> > >
-> > > file->f_inode =3D=3D real_inode !=3D file->f_path->dentry->d_inode
-> > >
-> > > that we all agree is something we really don't like. Is FUSE trying t=
-o
-> > > do the same thing and build an read_iter/write_iter abstraction aroun=
+> That should eliminate the reported issues with time reorder for
+> fine vs coarse grained timestamps.
+>=20
+> The risk of extra unneeded "change cookie" updates compared to
+> per inode QUERIED bit may exist, but I think it is a rather small overhea=
 d
-> > > it? I really really hope that's not the case.
-> >
-> > That is not the case.
-> > The commonality between FUSE passthrough and overlayfs is that
-> > a "virtual" file (i.e. ovl/fuse), which has no backing blockdev of its =
-own
-> > "forwards" the io requests to a backing file on another filesystem.
-> >
-> > The name "backing file" is therefore a pretty accurate description
-> > for both cases. HOWEVER, FUSE does not need to use the
-> > backing_file struct to hold an alternative path, so FUSE backing files
-> > do not have FMODE_BACKING, same as cachefiles uses backing
-> > files, but does not use the FMODE_BACKING/file_backing struct.
-> >
-> > Yes, it's a bit of a naming mess.
-> > I don't have any good ideas on how to do better naming.
-> > Ideally, we will get rid of struct backing_file, so we won't need
-> > to care about the confusing names...
-> >
->
-> Alas, my explanation about FUSE passthrough backing files
-> turned out to be inaccurate.
->
-> FUSE IO passthrough to backing file is very similar to overlayfs
-> IO "passthrough" to lower/upper backing file.
->
-> Which creates the same problem w.r.t mmap'ing the FUSE file
-> to the underlying backing file inode.
-> That problem in overlayfs caused the inception of the fake path file
-> now embedded in the backing_file object.
-> So yes, FUSE is trying to do the same thing.
->
-> However, the helpers in this patch are not dealing with the fake path
-> aspect of those backing files specifically.
-> They are common code for a "stacked fs" (i.e. s_stack_depth > 0)
-> which delegates IO to files on the underlying fs.
->
+> and maybe worth the tradeoff of having to maintain a real per inode
+> "change cookie" in addition to a "globally ordered mgtime"?
+>=20
+> If this idea is acceptable, you may still be able to salvage the reverted
+> ctime series for 6.7, because the change to use global mgtime should
+> be quite trivial?
+>=20
 
-Funny story: following my clarification of the terminology above
-I was going to rename the common helpers and I wanted to create
-include/linux/fs_stack.h, but what do you know, it already exists.
+This is basically the idea I was going to look at next once I got some
+other stuff settled here: Basically, when we apply a fine-grained
+timestamp to an inode, we'd advance the coarse-grained clock that
+filesystems use to that value.
 
-It was created in 2006 to have common helpers for eCryptfs and
-*Unionfs* (not overlayfs) and indeed, today it has a few helpers
-which only ecryptfs uses.
+It could cause some write amplification: if you are streaming writes to
+a bunch of files at the same time and someone stats one of them, then
+they'd all end up getting an extra inode transaction. That doesn't sound
+_too_ bad on its face, but I probably need to implement it and then run
+some numbers to see.
 
-Not only that, but it appears that the copy_attr_size helper does
-things that ovl does not do - need to look into that and copy_attr_all
-does not deal with uid translations and atomicity (which I just added
-to the respective ovl helper).
-
-So I am going to shake the dust from fs/stack.c and merge those
-diverged helpers for starters and then go on to adding the new
-common helpers for read/write/splice iter and code for handling the
-backing_file (or stacked_file) fake path anomaly.
-
-> I will give it some thought on how we can at least narrow the amount
-> of filesystem code that could be exposed to those fake path files.
-> The read/write/splice iterators do not really need to operate of fake pat=
-h
-> files, so this is something that I can try to avoid.
->
-
-I am not sure but there may be another problem related to mmap and
-the backing_file because ovl_mmap() of writable mapping does not
-keep an elevated mount writer count on the upper fs mount.
-
-The easy solution is perhaps for overlayfs mount to keep the elevated
-mount writer count on the upper fs mount. Not sure if this is really
-something to worry about. I will need to take a closer look.
-
-Thanks,
-Amir.
+--=20
+Jeff Layton <jlayton@kernel.org>
