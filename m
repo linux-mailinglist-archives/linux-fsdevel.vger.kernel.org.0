@@ -2,70 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F3387ABF5A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Sep 2023 11:32:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AB577ABF74
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Sep 2023 11:52:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231474AbjIWJcs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 23 Sep 2023 05:32:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50190 "EHLO
+        id S231136AbjIWJxB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 23 Sep 2023 05:53:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231346AbjIWJcn (ORCPT
+        with ESMTP id S230488AbjIWJw7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 23 Sep 2023 05:32:43 -0400
-Received: from mail-vs1-xe2a.google.com (mail-vs1-xe2a.google.com [IPv6:2607:f8b0:4864:20::e2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BD33CD7;
-        Sat, 23 Sep 2023 02:32:25 -0700 (PDT)
-Received: by mail-vs1-xe2a.google.com with SMTP id ada2fe7eead31-452527dded1so1404978137.0;
-        Sat, 23 Sep 2023 02:32:25 -0700 (PDT)
+        Sat, 23 Sep 2023 05:52:59 -0400
+Received: from mail-oo1-xc2f.google.com (mail-oo1-xc2f.google.com [IPv6:2607:f8b0:4864:20::c2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BB31180
+        for <linux-fsdevel@vger.kernel.org>; Sat, 23 Sep 2023 02:52:52 -0700 (PDT)
+Received: by mail-oo1-xc2f.google.com with SMTP id 006d021491bc7-57ad95c555eso1953283eaf.3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 23 Sep 2023 02:52:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1695461544; x=1696066344; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1695462771; x=1696067571; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vpZsOS03aAKQZkOqSWH4EjIkbO0+M63ypG5RcznWiS8=;
-        b=mDBsrhiQHdn3omVLmLFot59/xqXCTnR6v2AzdDasaVJXoJeuMEL1lVdnvLpAZsr1OM
-         3V67FowEPQMRuEGAXASgOvBPyHgc5EZryI94W/+Aco2FpHlEXE4WcNWK3khZ3hq7Eqqh
-         5Xmc+2xLJgplXrUZzUEFjmLtkVxcpr5D2u0UzvS7J2nr37D3uHjhj5TpRcVpmMBPGoyt
-         Edh924j+Gc98nOksf22eVtq+s0kxeirxRXeo4MCN4uPvAKIY1r/N/cjh2rW6UMA9QUjx
-         VYNO9VxvO771oF1RzjKQ0UqwtqeAP/HJEIUW72yJsZSqlDhzDkldwVuxHdB9vHTJRQ8f
-         wA+g==
+        bh=lMH/+nJD03dgwbKuD8pLeeHCLP78c1dJ+i3+7FWLksw=;
+        b=fZVHnyWM6Gm+2Pthjf66W9oX0xydHY/0/KyPGzE3Ybv8Cb3h9wH+IaYWh8O40f4ad8
+         BFFPx24IyrxX7HfwY2/c930nf7HhOqsTtar/u6+Q7y1J63dOMk2WeISDiaSDskhO2i9a
+         TlRfr4p2xpCxxqbHlQRoV0yJC+i1scmydXQfOA0BRvnmED29y5nuuD7r0XSHnUEJ1oLx
+         z7IyOGX/DNP6AyFteRzKrW0RflRO5Hr3DMZ2BaEj5NkBeIZmAfAa/vANVL/jXyoAEAJ1
+         tMjn4wn82fs88EtaeEsjhPoO97UtdJhOgvh56M0/9lHgFz1jJ+bHOQyc5TpTVrsuMVLG
+         A5vQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695461544; x=1696066344;
+        d=1e100.net; s=20230601; t=1695462771; x=1696067571;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=vpZsOS03aAKQZkOqSWH4EjIkbO0+M63ypG5RcznWiS8=;
-        b=Kyr0dQ9QQ1e6r9VWTkeOHdidrs0MmbBRu3B5Cs7x+ZzP/0p2BcuaCmf3fbqWYqlZ2N
-         oYCjK6Oj8v3SPIn11TDOpfLiKmEfTx2o5+0HN8w2wz9sIIej3R/uFy/leLVzKLqCIv8Q
-         nZmPgive5yJ461kHUDhXO3WUVmk433sLhGWlj+58VV3/z+cFomoFtKEQMXg6PtpO7xNp
-         dgsRtcIX3Y3NfOutwyqroEyI0oQExyDkmT/3kkzB0Hz4GtaruTAoZpJ46It8oAlE0ucJ
-         IJ3RAEhKbbN/YMtczeLa7p4GyhKIN9Ej72PD/fCwYe/bNLhV6BUcvIvvB/zzLPFKUhGv
-         nk5A==
-X-Gm-Message-State: AOJu0YwR10oYGksRgZJhUN6u4vysD7Hk1BfxvU/LJDTx4CkHGGI7Up/k
-        YJEELA2FM17kIYDo3nOGgXrgyAFyggagz8byapG3+qSX
-X-Google-Smtp-Source: AGHT+IGxww4b9/gMghYYi/fbiMD4mWv0T13WkRzxToCctmMyGPqvM1sqjCzhE6SAljHGX8spDxRTUlQRcR304F+tDzc=
-X-Received: by 2002:a67:fc48:0:b0:44d:5053:11ce with SMTP id
- p8-20020a67fc48000000b0044d505311cemr1200255vsq.19.1695461544481; Sat, 23 Sep
- 2023 02:32:24 -0700 (PDT)
+        bh=lMH/+nJD03dgwbKuD8pLeeHCLP78c1dJ+i3+7FWLksw=;
+        b=XeQUVTC6G82WjYGasLjSW5uONAFYUKu6K9z97QlMwgrlG9M8ymEEpunFGCzImrn/cv
+         bm3i5lu9UYK/Lc1U3tK0r9AB1r7E+0rWLDlxMB9QFqbYgbIUXwGeC3vU5/iSlCLXzjbG
+         LlnlEUqm1T7keLpq+cWP2tmSaj5lhoxedvtjFHBOwjXjikd2AHAu4eQHqmzsDWKK2LU2
+         HaPayQFhJWvSFLeHB39tr2L2do+WK+QeFdW0bqQTEczChdpvW2xb+EHuotYqfDhK4Gjy
+         uxscDS5h+7WHxDmsYDcGWkuRFKUrfNxR53w6ku5EvuuK2SwqVVHBbZgQboq+jdKtOFmC
+         m4kw==
+X-Gm-Message-State: AOJu0YzkKN396TFNio7dhL4375HPKyg0QnzcZfpUGy6GHfxDwPq8Uxj+
+        iwFR26MAs5xuntgrMjvU4JH8C1cNUaovzG+HZ3fUiCVNO2Y=
+X-Google-Smtp-Source: AGHT+IFJ81DYHwOqAXn0c3yPf6zY7wcwrZWW3maN/fBL6HWKjCO9ZiLNLKlwKK0wtN995SOdcz55j8NHlfndvyaPUOw=
+X-Received: by 2002:a05:6808:611:b0:3ae:1031:594 with SMTP id
+ y17-20020a056808061100b003ae10310594mr1896384oih.34.1695462771598; Sat, 23
+ Sep 2023 02:52:51 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230913-ctime-v1-1-c6bc509cbc27@kernel.org> <20230914-hautarzt-bangen-f9ed9a2a3152@brauner>
- <d188250d3feb3926843f76ef3ca49e9d5baa97a7.camel@kernel.org>
-In-Reply-To: <d188250d3feb3926843f76ef3ca49e9d5baa97a7.camel@kernel.org>
+References: <20230912185408.3343163-1-amir73il@gmail.com> <20230913-galaxie-irrfahrt-a815cf10ebdc@brauner>
+ <CAOQ4uxgta6y7fi_hfrF4fDvHA2RjeA+JTCb-eSaORZOY6XZbVQ@mail.gmail.com> <CAOQ4uxh616M=QdQ+AurOL+G5wJyXeq+auAzu06u=O+LoCE0KpQ@mail.gmail.com>
+In-Reply-To: <CAOQ4uxh616M=QdQ+AurOL+G5wJyXeq+auAzu06u=O+LoCE0KpQ@mail.gmail.com>
 From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Sat, 23 Sep 2023 12:32:13 +0300
-Message-ID: <CAOQ4uxiKLKjPbOYZvJX7gE_z9bmJGc2XFsvrGiCHCd+i=zrZQw@mail.gmail.com>
-Subject: Re: [PATCH] overlayfs: set ctime when setting mtime and atime
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
+Date:   Sat, 23 Sep 2023 12:52:40 +0300
+Message-ID: <CAOQ4uxgYkksBL+2Fhp54s7efE4eUVvxU6SkEKRbY1zRXiABiWg@mail.gmail.com>
+Subject: Re: [PATCH] ovl: factor out some common helpers for backing files io
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Jan Kara <jack@suse.cz>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -73,57 +72,141 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 22, 2023 at 4:52=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wr=
-ote:
+On Thu, Sep 21, 2023 at 6:51=E2=80=AFPM Amir Goldstein <amir73il@gmail.com>=
+ wrote:
 >
-> On Thu, 2023-09-14 at 10:39 +0200, Christian Brauner wrote:
-> > On Wed, 13 Sep 2023 09:33:12 -0400, Jeff Layton wrote:
-> > > Nathan reported that he was seeing the new warning in
-> > > setattr_copy_mgtime pop when starting podman containers. Overlayfs is
-> > > trying to set the atime and mtime via notify_change without also
-> > > setting the ctime.
+> On Wed, Sep 13, 2023 at 2:24=E2=80=AFPM Amir Goldstein <amir73il@gmail.co=
+m> wrote:
+> >
+> > On Wed, Sep 13, 2023 at 11:29=E2=80=AFAM Christian Brauner <brauner@ker=
+nel.org> wrote:
 > > >
-> > > POSIX states that when the atime and mtime are updated via utimes() t=
-hat
-> > > we must also update the ctime to the current time. The situation with
-> > > overlayfs copy-up is analogies, so add ATTR_CTIME to the bitmask.
-> > > notify_change will fill in the value.
+> > > On Tue, Sep 12, 2023 at 09:54:08PM +0300, Amir Goldstein wrote:
+> > > > Overlayfs stores its files data in backing files on other filesyste=
+ms.
+> > > >
+> > > > Factor out some common helpers to perform io to backing files, that=
+ will
+> > > > later be reused by fuse passthrough code.
+> > > >
+> > > > Suggested-by: Miklos Szeredi <miklos@szeredi.hu>
+> > > > Link: https://lore.kernel.org/r/CAJfpeguhmZbjP3JLqtUy0AdWaHOkAPWeP8=
+27BBWwRFEAUgnUcQ@mail.gmail.com
+> > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > > > ---
+> > > >
+> > > > Miklos,
+> > > >
+> > > > This is the re-factoring that you suggested in the FUSE passthrough
+> > > > patches discussion linked above.
+> > > >
+> > > > This patch is based on the overlayfs prep patch set I just posted [=
+1].
+> > > >
+> > > > Although overlayfs currently is the only user of these backing file
+> > > > helpers, I am sending this patch to a wider audience in case other
+> > > > filesystem developers want to comment on the abstraction.
+> > > >
+> > > > We could perhaps later considering moving backing_file_open() helpe=
+r
+> > > > and related code to backing_file.c.
+> > > >
+> > > > In any case, if there are no objections, I plan to queue this work
+> > > > for 6.7 via the overlayfs tree.
+> > > >
+> > > > Thanks,
+> > > > Amir.
+> > > >
+> > > > [1] https://lore.kernel.org/linux-unionfs/20230912173653.3317828-1-=
+amir73il@gmail.com/
+> > > >
+> > > >
+> > > >  MAINTAINERS                  |   2 +
+> > > >  fs/Kconfig                   |   4 +
+> > > >  fs/Makefile                  |   1 +
+> > > >  fs/backing_file.c            | 160 +++++++++++++++++++++++++++++++=
+++++
 > > >
-> > > [...]
+> > > I'm sorry but I'm missing mountains of context.
+> > > How is that related to the backing file stuff exactly?
+> > > The backing file stuff has this unpleasant
+> > >
+> > > file->f_inode =3D=3D real_inode !=3D file->f_path->dentry->d_inode
+> > >
+> > > that we all agree is something we really don't like. Is FUSE trying t=
+o
+> > > do the same thing and build an read_iter/write_iter abstraction aroun=
+d
+> > > it? I really really hope that's not the case.
 > >
-> > Applied to the vfs.ctime branch of the vfs/vfs.git tree.
-> > Patches in the vfs.ctime branch should appear in linux-next soon.
+> > That is not the case.
+> > The commonality between FUSE passthrough and overlayfs is that
+> > a "virtual" file (i.e. ovl/fuse), which has no backing blockdev of its =
+own
+> > "forwards" the io requests to a backing file on another filesystem.
 > >
-> > Please report any outstanding bugs that were missed during review in a
-> > new review to the original patch series allowing us to drop it.
+> > The name "backing file" is therefore a pretty accurate description
+> > for both cases. HOWEVER, FUSE does not need to use the
+> > backing_file struct to hold an alternative path, so FUSE backing files
+> > do not have FMODE_BACKING, same as cachefiles uses backing
+> > files, but does not use the FMODE_BACKING/file_backing struct.
 > >
-> > It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> > patch has now been applied. If possible patch trailers will be updated.
+> > Yes, it's a bit of a naming mess.
+> > I don't have any good ideas on how to do better naming.
+> > Ideally, we will get rid of struct backing_file, so we won't need
+> > to care about the confusing names...
 > >
-> > Note that commit hashes shown below are subject to change due to rebase=
-,
-> > trailer updates or similar. If in doubt, please check the listed branch=
-.
-> >
-> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> > branch: vfs.ctime
-> >
-> > [1/1] overlayfs: set ctime when setting mtime and atime
-> >       https://git.kernel.org/vfs/vfs/c/f8edd3368615
 >
-> Christian, are you still planning to pick up this patch? I saw that it
-> was dropped from linux-next. Since the mgtime patches have been reverted
-> for now, it may be best for this to go in via the overlayfs tree ?
+> Alas, my explanation about FUSE passthrough backing files
+> turned out to be inaccurate.
+>
+> FUSE IO passthrough to backing file is very similar to overlayfs
+> IO "passthrough" to lower/upper backing file.
+>
+> Which creates the same problem w.r.t mmap'ing the FUSE file
+> to the underlying backing file inode.
+> That problem in overlayfs caused the inception of the fake path file
+> now embedded in the backing_file object.
+> So yes, FUSE is trying to do the same thing.
+>
+> However, the helpers in this patch are not dealing with the fake path
+> aspect of those backing files specifically.
+> They are common code for a "stacked fs" (i.e. s_stack_depth > 0)
+> which delegates IO to files on the underlying fs.
+>
 
-I think this is a long standing overlayfs bug fix, so it should go into 6.6
-and not wait for 6.7 anyway.
-Also need to add CC stable (don't think we need to bother with Fixes).
+Funny story: following my clarification of the terminology above
+I was going to rename the common helpers and I wanted to create
+include/linux/fs_stack.h, but what do you know, it already exists.
 
-I do not have any overlayfs fixes queued ATM.
-Christian, if you have any pening VFS fixes, you may send it along with the=
-m
-or we could just ask Linus to apply this one directly, so that any mgtime
-changes that may still happen for 6.7 will already have this fluke fixed.
+It was created in 2006 to have common helpers for eCryptfs and
+*Unionfs* (not overlayfs) and indeed, today it has a few helpers
+which only ecryptfs uses.
+
+Not only that, but it appears that the copy_attr_size helper does
+things that ovl does not do - need to look into that and copy_attr_all
+does not deal with uid translations and atomicity (which I just added
+to the respective ovl helper).
+
+So I am going to shake the dust from fs/stack.c and merge those
+diverged helpers for starters and then go on to adding the new
+common helpers for read/write/splice iter and code for handling the
+backing_file (or stacked_file) fake path anomaly.
+
+> I will give it some thought on how we can at least narrow the amount
+> of filesystem code that could be exposed to those fake path files.
+> The read/write/splice iterators do not really need to operate of fake pat=
+h
+> files, so this is something that I can try to avoid.
+>
+
+I am not sure but there may be another problem related to mmap and
+the backing_file because ovl_mmap() of writable mapping does not
+keep an elevated mount writer count on the upper fs mount.
+
+The easy solution is perhaps for overlayfs mount to keep the elevated
+mount writer count on the upper fs mount. Not sure if this is really
+something to worry about. I will need to take a closer look.
 
 Thanks,
 Amir.
