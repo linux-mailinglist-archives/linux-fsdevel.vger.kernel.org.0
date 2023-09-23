@@ -2,72 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A4347ABD14
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Sep 2023 03:32:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0B607ABE03
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Sep 2023 07:56:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231232AbjIWBcP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Sep 2023 21:32:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35270 "EHLO
+        id S229832AbjIWF4r (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 23 Sep 2023 01:56:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48818 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231176AbjIWBcK (ORCPT
+        with ESMTP id S229786AbjIWF4q (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Sep 2023 21:32:10 -0400
-Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8DA01AC
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Sep 2023 18:32:00 -0700 (PDT)
-Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-59c2ca3bcf9so47813287b3.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Sep 2023 18:32:00 -0700 (PDT)
+        Sat, 23 Sep 2023 01:56:46 -0400
+Received: from mail-qv1-xf2d.google.com (mail-qv1-xf2d.google.com [IPv6:2607:f8b0:4864:20::f2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AD5E1A5
+        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Sep 2023 22:56:40 -0700 (PDT)
+Received: by mail-qv1-xf2d.google.com with SMTP id 6a1803df08f44-65af18cac71so5948116d6.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Sep 2023 22:56:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1695432720; x=1696037520; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6sBdVMfMRjf51/A4FAmBdDBudgEJD7XIV0S+Rn1ebf8=;
-        b=DHDysvaQOkX+1QeT/kRjvxWEKSghwM022OG9aVVfIA1HUHjcImsI4IF+/RT6YSchjW
-         fQDyr2N2FylsXYPtG1o+DoTbmH36dC2J/hpq09BjZJ/vyAH7BfCAkWaBq66Bi+zo/x/W
-         xkXiqymmKqvkBlPMxJ6FLjQm/JAfDhpUgJUrxucLVjn5skb/7lCJ6qydVcoEMakQTvay
-         rYb+IURzuvPwyTg7c7JJoI+x1HmEbcdIvBldc1G5e773ILAkauXmf0RjlXBmtoHPVEOo
-         wQlBuequYCqx/SI8LLggkRYDcUIGFt/kDu8uZmcO18tRvQ1eU1uUgXjmLcsz0ZSZ6H8Q
-         VT2w==
+        d=gmail.com; s=20230601; t=1695448599; x=1696053399; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FYWvm/4SgJ1DnOwyE8GnR0KsTumSCWlYc7xSynW0xVM=;
+        b=jKVojSRnuVNxUXZ8YxKWFQnFlMvb4kQIO7tRlAhyplhv72r2MAt4jI+uGhu2tVoa2L
+         uT1rJo2dFINsBKoQEFODlFH+0O1BZ04urRZKUJMwzhOL4Od67cAYnTpRABEuDJ1d7V0j
+         cXdI3RiMB1EZP29d0wFg9ti2dlJwObqbMCqdknJxhoytxm40S8bUz+Aibhw5YD0TBmbQ
+         5yj4cyyWgIhryWu4/qyhP5fUaduC8VTr7dEoSch93N9YS6zaUQMsWdxIYYBpe7rv/6kO
+         Gna6L8O8M9HAS5Ite0odJSaG0U1LTN6RkF9k/VsnOtr2LHfKbC0VvcInGH5b/oS2fqDm
+         L/GA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695432720; x=1696037520;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6sBdVMfMRjf51/A4FAmBdDBudgEJD7XIV0S+Rn1ebf8=;
-        b=qz7zde3h5z4boLbl8eGXKOkHdohj5344zPl50rVt8KnTB/EOupWU8RupZYtrWBbddC
-         uRgFAj8t0HHG3bmTjp64en0Z+i0B5TYQAPAEHdtRzqHH9anms2CSnN4IujzfE+EF0sTe
-         IremVwZi/FjBiwcYz3GlPjPqcETrgJxT1Cwd+ouql540yzQryVwbOXP7Av8eH5dh4gna
-         JPC8xUoK5BCnrgjC8W+5JkBBBdr6/My3jT4UKKdxPwtHYkaOT9PK3HC85Y6WBxNdsyQQ
-         1d/sjojoSfjMnfxaIncrUlwcZ1KeruKTYfLLbOYonm0lb9chzMG36hXKSWfmM8fhBF6E
-         wrvQ==
-X-Gm-Message-State: AOJu0YzvSE4jg83iTyHx3/ymEuhz0Y46Yr1K67Qrc0kQOxv3GaCNm+lz
-        aFhgfdM0BYCv34+uhJ8anzW2a+giva4=
-X-Google-Smtp-Source: AGHT+IE2yWzcwua2aqDzlLl0Y+Ymi3r6rJDilflyRWbYZnXXI88FhB4QNhRbeG/BF6XKbV1cknxCSUOXvog=
-X-Received: from surenb-desktop.mtv.corp.google.com ([2620:15c:211:201:3398:6644:ed7f:bec9])
- (user=surenb job=sendgmr) by 2002:a25:d09:0:b0:d7b:9185:e23d with SMTP id
- 9-20020a250d09000000b00d7b9185e23dmr9469ybn.6.1695432719939; Fri, 22 Sep 2023
- 18:31:59 -0700 (PDT)
-Date:   Fri, 22 Sep 2023 18:31:46 -0700
-In-Reply-To: <20230923013148.1390521-1-surenb@google.com>
-Mime-Version: 1.0
-References: <20230923013148.1390521-1-surenb@google.com>
-X-Mailer: git-send-email 2.42.0.515.g380fc7ccd1-goog
-Message-ID: <20230923013148.1390521-4-surenb@google.com>
-Subject: [PATCH v2 3/3] selftests/mm: add UFFDIO_REMAP ioctl test
-From:   Suren Baghdasaryan <surenb@google.com>
-To:     akpm@linux-foundation.org
-Cc:     viro@zeniv.linux.org.uk, brauner@kernel.org, shuah@kernel.org,
-        aarcange@redhat.com, lokeshgidra@google.com, peterx@redhat.com,
-        david@redhat.com, hughd@google.com, mhocko@suse.com,
-        axelrasmussen@google.com, rppt@kernel.org, willy@infradead.org,
-        Liam.Howlett@oracle.com, jannh@google.com, zhangpeng362@huawei.com,
-        bgeffon@google.com, kaleshsingh@google.com, ngeoffray@google.com,
-        jdduke@google.com, surenb@google.com, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, kernel-team@android.com
+        d=1e100.net; s=20230601; t=1695448599; x=1696053399;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FYWvm/4SgJ1DnOwyE8GnR0KsTumSCWlYc7xSynW0xVM=;
+        b=icyci50E/xYhT7CY3CZg7G0Mmq8HjoKvq+3wQxQM8DQEDsPGzaOvrnCFybI6uQ1u0y
+         +h3VYCSmE8s8jR6eMdd/lE5ZrvrDwtDBX9fPO0RMG7+9e8k5GXjvIVu7/bE4UsdkreMN
+         XqkiAsOgjTnNvzlWRFQe+IDEXQJ+vwaGemIAVteAX7PsMu27iDoSsOcoiFpRjurOEhqA
+         ojF1Nc+P6RqABB1EguBGvf3QvlYz3pXCsMVIw4aPS4mpNFrJk8f/GLL1EKzLqjhbXTTc
+         kKsySNE9Unies10Ae4vbJdWMFF80guKyI+p6QNiXs9Knt09HqddYDmt04NjePCte98sV
+         u2bw==
+X-Gm-Message-State: AOJu0Yx3jfGvQoLvmguO9D4ElVVNnM52ZuHlJoqzmXB16dM3fysfAZzw
+        7cKWIofNUzPzI2QsjrDXac/+XVCeThmZ6srqYhI=
+X-Google-Smtp-Source: AGHT+IESwen9eFjqESJ1fXAsIxvoYG12qJbJ3e7iD8TUFnc0sKdccyFfxBxcSZoyX985pCpTNSBBQUk4P+HLUNlq+mw=
+X-Received: by 2002:a0c:b253:0:b0:656:4af7:ab with SMTP id k19-20020a0cb253000000b006564af700abmr1238352qve.7.1695448599177;
+ Fri, 22 Sep 2023 22:56:39 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230909043806.3539-1-reubenhwk@gmail.com> <202309191018.68ec87d7-oliver.sang@intel.com>
+ <CAOQ4uxhc8q=GAuL9OPRVOr=mARDL3TExPY0Zipij1geVKknkkQ@mail.gmail.com>
+ <CAD_8n+TpZF2GoE1HUeBLs0vmpSna0yR9b+hsd-VC1ZurTe41LQ@mail.gmail.com>
+ <ZQ1Z_JHMPE3hrzv5@yuki> <CAD_8n+ShV=HJuk5v-JeYU1f+MAq1nDz9GqVmbfK9NpNThRjzSg@mail.gmail.com>
+In-Reply-To: <CAD_8n+ShV=HJuk5v-JeYU1f+MAq1nDz9GqVmbfK9NpNThRjzSg@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Sat, 23 Sep 2023 08:56:28 +0300
+Message-ID: <CAOQ4uxjnCdAeWe3W4mp=DwgL49Vwp_FVx4S_V33A3-JLtzJb-g@mail.gmail.com>
+Subject: Re: [LTP] [PATCH] vfs: fix readahead(2) on block devices
+To:     Reuben Hawkins <reubenhwk@gmail.com>
+Cc:     Cyril Hrubis <chrubis@suse.cz>, mszeredi@redhat.com,
+        brauner@kernel.org, lkp@intel.com, willy@infradead.org,
+        linux-fsdevel@vger.kernel.org,
+        kernel test robot <oliver.sang@intel.com>,
+        viro@zeniv.linux.org.uk, oe-lkp@lists.linux.dev, ltp@lists.linux.it
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -75,184 +74,58 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a test for new UFFDIO_REMAP ioctl which uses uffd to remaps source
-into destination buffer while checking the contents of both after
-remapping. After the operation the content of the destination buffer
-should match the original source buffer's content while the source
-buffer should be zeroed.
+On Fri, Sep 22, 2023 at 11:29=E2=80=AFPM Reuben Hawkins <reubenhwk@gmail.co=
+m> wrote:
+>
+>
+>
+> On Fri, Sep 22, 2023 at 4:09=E2=80=AFAM Cyril Hrubis <chrubis@suse.cz> wr=
+ote:
+>>
+>> Hi!
+>> > ack.  Will try to test.  My Ubuntu 22.04 system wasn't able to find
+>> > packages called
+>> > for by the test case, so it'll take me a little while to figure out ho=
+w to
+>> > get the
+>> > test case working...
+>>
+>> Huh? The test is a simple C binary you shouldn't need anything more
+>> than:
+>>
+>> $ git clone https://github.com/linux-test-project/ltp.git
+>> $ cd ltp
+>> $ make autotools
+>> $ ./configure
+>>
+>> $ cd testcases/kernel/syscalls/readahead
+>> $ make
+>> $ ./readahead01
+>>
+>> And this is well described in the readme at:
+>>
+>> https://github.com/linux-test-project/ltp/
+>>
+>> And the packages required for the compilation are make, C compiler and
+>> autotools nothing extraordinary.
+>>
+> Awesome.  That was simpler than whatever it was I was trying.  I've
+> reproduced the failed test and will try a few variations on the patch.
 
-Signed-off-by: Suren Baghdasaryan <surenb@google.com>
----
- tools/testing/selftests/mm/uffd-common.c     | 41 ++++++++++++-
- tools/testing/selftests/mm/uffd-common.h     |  1 +
- tools/testing/selftests/mm/uffd-unit-tests.c | 62 ++++++++++++++++++++
- 3 files changed, 102 insertions(+), 2 deletions(-)
+Cool.
 
-diff --git a/tools/testing/selftests/mm/uffd-common.c b/tools/testing/selftests/mm/uffd-common.c
-index 02b89860e193..2a3ffd0ce96e 100644
---- a/tools/testing/selftests/mm/uffd-common.c
-+++ b/tools/testing/selftests/mm/uffd-common.c
-@@ -52,6 +52,13 @@ static int anon_allocate_area(void **alloc_area, bool is_src)
- 		*alloc_area = NULL;
- 		return -errno;
- 	}
-+
-+	/* Prevent source pages from collapsing into THPs */
-+	if (madvise(*alloc_area, nr_pages * page_size, MADV_NOHUGEPAGE)) {
-+		*alloc_area = NULL;
-+		return -errno;
-+	}
-+
- 	return 0;
- }
- 
-@@ -484,8 +491,14 @@ void uffd_handle_page_fault(struct uffd_msg *msg, struct uffd_args *args)
- 		offset = (char *)(unsigned long)msg->arg.pagefault.address - area_dst;
- 		offset &= ~(page_size-1);
- 
--		if (copy_page(uffd, offset, args->apply_wp))
--			args->missing_faults++;
-+		/* UFFD_REMAP is supported for anon non-shared mappings. */
-+		if (uffd_test_ops == &anon_uffd_test_ops && !map_shared) {
-+			if (remap_page(uffd, offset))
-+				args->missing_faults++;
-+		} else {
-+			if (copy_page(uffd, offset, args->apply_wp))
-+				args->missing_faults++;
-+		}
- 	}
- }
- 
-@@ -620,6 +633,30 @@ int copy_page(int ufd, unsigned long offset, bool wp)
- 	return __copy_page(ufd, offset, false, wp);
- }
- 
-+int remap_page(int ufd, unsigned long offset)
-+{
-+	struct uffdio_remap uffdio_remap;
-+
-+	if (offset >= nr_pages * page_size)
-+		err("unexpected offset %lu\n", offset);
-+	uffdio_remap.dst = (unsigned long) area_dst + offset;
-+	uffdio_remap.src = (unsigned long) area_src + offset;
-+	uffdio_remap.len = page_size;
-+	uffdio_remap.mode = UFFDIO_REMAP_MODE_ALLOW_SRC_HOLES;
-+	uffdio_remap.remap = 0;
-+	if (ioctl(ufd, UFFDIO_REMAP, &uffdio_remap)) {
-+		/* real retval in uffdio_remap.remap */
-+		if (uffdio_remap.remap != -EEXIST)
-+			err("UFFDIO_REMAP error: %"PRId64,
-+			    (int64_t)uffdio_remap.remap);
-+		wake_range(ufd, uffdio_remap.dst, page_size);
-+	} else if (uffdio_remap.remap != page_size) {
-+		err("UFFDIO_REMAP error: %"PRId64, (int64_t)uffdio_remap.remap);
-+	} else
-+		return 1;
-+	return 0;
-+}
-+
- int uffd_open_dev(unsigned int flags)
- {
- 	int fd, uffd;
-diff --git a/tools/testing/selftests/mm/uffd-common.h b/tools/testing/selftests/mm/uffd-common.h
-index 7c4fa964c3b0..2bbb15d1920c 100644
---- a/tools/testing/selftests/mm/uffd-common.h
-+++ b/tools/testing/selftests/mm/uffd-common.h
-@@ -111,6 +111,7 @@ void wp_range(int ufd, __u64 start, __u64 len, bool wp);
- void uffd_handle_page_fault(struct uffd_msg *msg, struct uffd_args *args);
- int __copy_page(int ufd, unsigned long offset, bool retry, bool wp);
- int copy_page(int ufd, unsigned long offset, bool wp);
-+int remap_page(int ufd, unsigned long offset);
- void *uffd_poll_thread(void *arg);
- 
- int uffd_open_dev(unsigned int flags);
-diff --git a/tools/testing/selftests/mm/uffd-unit-tests.c b/tools/testing/selftests/mm/uffd-unit-tests.c
-index 2709a34a39c5..a33819639187 100644
---- a/tools/testing/selftests/mm/uffd-unit-tests.c
-+++ b/tools/testing/selftests/mm/uffd-unit-tests.c
-@@ -824,6 +824,10 @@ static void uffd_events_test_common(bool wp)
- 	char c;
- 	struct uffd_args args = { 0 };
- 
-+	/* Prevent source pages from being mapped more than once */
-+	if (madvise(area_src, nr_pages * page_size, MADV_DONTFORK))
-+		err("madvise(MADV_DONTFORK) failed");
-+
- 	fcntl(uffd, F_SETFL, uffd_flags | O_NONBLOCK);
- 	if (uffd_register(uffd, area_dst, nr_pages * page_size,
- 			  true, wp, false))
-@@ -1062,6 +1066,58 @@ static void uffd_poison_test(uffd_test_args_t *targs)
- 	uffd_test_pass();
- }
- 
-+static void uffd_remap_test(uffd_test_args_t *targs)
-+{
-+	unsigned long nr;
-+	pthread_t uffd_mon;
-+	char c;
-+	unsigned long long count;
-+	struct uffd_args args = { 0 };
-+
-+	if (uffd_register(uffd, area_dst, nr_pages * page_size,
-+			  true, false, false))
-+		err("register failure");
-+
-+	if (pthread_create(&uffd_mon, NULL, uffd_poll_thread, &args))
-+		err("uffd_poll_thread create");
-+
-+	/*
-+	 * Read each of the pages back using the UFFD-registered mapping. We
-+	 * expect that the first time we touch a page, it will result in a missing
-+	 * fault. uffd_poll_thread will resolve the fault by remapping source
-+	 * page to destination.
-+	 */
-+	for (nr = 0; nr < nr_pages; nr++) {
-+		/* Check area_src content */
-+		count = *area_count(area_src, nr);
-+		if (count != count_verify[nr])
-+			err("nr %lu source memory invalid %llu %llu\n",
-+			    nr, count, count_verify[nr]);
-+
-+		/* Faulting into area_dst should remap the page */
-+		count = *area_count(area_dst, nr);
-+		if (count != count_verify[nr])
-+			err("nr %lu memory corruption %llu %llu\n",
-+			    nr, count, count_verify[nr]);
-+
-+		/* Re-check area_src content which should be empty */
-+		count = *area_count(area_src, nr);
-+		if (count != 0)
-+			err("nr %lu remap failed %llu %llu\n",
-+			    nr, count, count_verify[nr]);
-+	}
-+
-+	if (write(pipefd[1], &c, sizeof(c)) != sizeof(c))
-+		err("pipe write");
-+	if (pthread_join(uffd_mon, NULL))
-+		err("join() failed");
-+
-+	if (args.missing_faults != nr_pages || args.minor_faults != 0)
-+		uffd_test_fail("stats check error");
-+	else
-+		uffd_test_pass();
-+}
-+
- /*
-  * Test the returned uffdio_register.ioctls with different register modes.
-  * Note that _UFFDIO_ZEROPAGE is tested separately in the zeropage test.
-@@ -1139,6 +1195,12 @@ uffd_test_case_t uffd_tests[] = {
- 		.mem_targets = MEM_ALL,
- 		.uffd_feature_required = 0,
- 	},
-+	{
-+		.name = "remap",
-+		.uffd_fn = uffd_remap_test,
-+		.mem_targets = MEM_ANON,
-+		.uffd_feature_required = 0,
-+	},
- 	{
- 		.name = "wp-fork",
- 		.uffd_fn = uffd_wp_fork_test,
--- 
-2.42.0.515.g380fc7ccd1-goog
+For people that were not following the patch review,
+the goal is not to pass the existing test.
 
+We decided to deliberately try the change of behavior
+from EINVAL to ESPIPE, to align with fadvise behavior,
+so eventually the LTP test should be changed to allow both.
+
+It was the test failure on the socket that alarmed me.
+However, if we will have to special case socket in
+readahead() after all, we may as well also special case
+pipe with it and retain the EINVAL behavior - let's see
+what your findings are and decide.
+
+Thanks,
+Amir.
