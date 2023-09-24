@@ -2,51 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F3D1A7AC78A
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Sep 2023 12:26:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C3B17AC791
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Sep 2023 12:30:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229899AbjIXK1C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 24 Sep 2023 06:27:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50420 "EHLO
+        id S229918AbjIXKar (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 24 Sep 2023 06:30:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229508AbjIXK1B (ORCPT
+        with ESMTP id S229508AbjIXKar (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 24 Sep 2023 06:27:01 -0400
+        Sun, 24 Sep 2023 06:30:47 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8F78E7;
-        Sun, 24 Sep 2023 03:26:55 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4694C433C8;
-        Sun, 24 Sep 2023 10:26:53 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31FE5E7
+        for <linux-fsdevel@vger.kernel.org>; Sun, 24 Sep 2023 03:30:41 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4142CC433C8;
+        Sun, 24 Sep 2023 10:30:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695551215;
-        bh=7cLQg98m6+9eW+6GoIBst+Vv8YYV01tpEGvVQDPRTYw=;
+        s=k20201202; t=1695551440;
+        bh=4b+v0jL8cZPOJtS/KSdvZ2Dmw74ePGjMhmS5Bo2Dw7k=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DOLcmHJ2gPMA313OsvVYvG5W3of3l46X2wWZ0KdIE4Shwn1QyDv/5P8e9CtzzoIgH
-         DktH2T+W9CFC9FKWVRPhEv1jNL8bvxyV3GkoXVNgg/k+t7VadSe+8/wA6xJwdc/MVa
-         pHz55+R561UZc/w5H3sPPCYeSoI+t3anl/Bdln//jM0FoyhL3qrQb8N1fSthtK2rt0
-         +RnffvW95OeLAqRWeWnNIYh+hvb84eEjwwc8rcNULX3+E/hOJ7M1aG27h1l/53ADUI
-         IaT8xh1/gMFL8uAtsQ3r13hEedAAQHpZ3O5R0crwtpqel0pFpdcVYhVKFOASEayD7x
-         2Ovsk2WTipgSw==
-Date:   Sun, 24 Sep 2023 12:26:51 +0200
+        b=YvwodIrvH7IcGWXoRIjZwmKnnRMspG5tGG0lUoYcj2fq+kBkZqBWrtI1o141seFWT
+         oASXn3EyjLIvrwfD5PSpb4R3QwCj4r165mE/7EQb5bBwOJd7zftVtaF4QTYcp+R0zq
+         mVh6ur0SyWJzUDfPSjlgnqIlWTWqXgimEDW+/p0Z03JD6apa4b+64xv5C3Lib4202u
+         zqXe8qfkv7Ip1cZQ48cm5FlJjSUZntiu6xFcO6t7xvpp0tDqvNnrKvKRl27o6kmY3I
+         SIINivz5TwNZqdHkJQp/e4sFPBIhG4BFgT35W0lb9CpgOBrMp4LdwTZMPw2ZaJGHWd
+         Q/xEO667Tgfow==
+Date:   Sun, 24 Sep 2023 12:30:30 +0200
 From:   Christian Brauner <brauner@kernel.org>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jan Kara <jack@suse.cz>, "Darrick J. Wong" <djwong@kernel.org>
-Subject: Re: [GIT PULL v2] timestamp fixes
-Message-ID: <20230924-trial-dennoch-e641f0e0ee1b@brauner>
-References: <20230921-umgekehrt-buden-a8718451ef7c@brauner>
- <CAHk-=wgoNW9QmEzhJR7C1_vKWKr=8JoD4b7idQDNHOa10P_i4g@mail.gmail.com>
- <0d006954b698cb1cea3a93c1662b5913a0ded3b1.camel@kernel.org>
- <CAHk-=whAwTJduUZTrsLFnj1creZMfO7eCNERHXZQmzX+qLqZMA@mail.gmail.com>
- <CAOQ4uxjcyfhfRhgR97wqsJHwzyOYqOYaaZWMWWCGXu5MWtKXfQ@mail.gmail.com>
- <CAHk-=wjGJEgizkXwSWVCnsGnciCKHHsWg+dkw2XAhM+0Tnd0Jw@mail.gmail.com>
- <CAOQ4uxgFb250Na9cJz0Jo-ioPynWCk0vxTDU-6hAKoEVQhgvRg@mail.gmail.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Reuben Hawkins <reubenhwk@gmail.com>, amir73il@gmail.com,
+        chrubis@suse.cz, mszeredi@redhat.com, lkp@intel.com,
+        linux-fsdevel@vger.kernel.org, oliver.sang@intel.com,
+        viro@zeniv.linux.org.uk, oe-lkp@lists.linux.dev,
+        ltp@lists.linux.it, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v3] vfs: fix readahead(2) on block devices
+Message-ID: <20230924-umliegenden-qualifizieren-4d670d00e775@brauner>
+References: <20230924050846.2263-1-reubenhwk@gmail.com>
+ <ZQ/hGr+o61X1mik9@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAOQ4uxgFb250Na9cJz0Jo-ioPynWCk0vxTDU-6hAKoEVQhgvRg@mail.gmail.com>
+In-Reply-To: <ZQ/hGr+o61X1mik9@casper.infradead.org>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
         RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
@@ -57,27 +53,18 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> > Those workloads are broken garbage, and we should *not* use that kind
-> > of sh*t to decide on VFS internals.
-> >
+> This ad-hoc approach to testing syscalls is probably not the best idea.
+> Have the LTP considered a more thorough approach where we have a central
+> iterator that returns a file descriptor of various types (the ones listed
+> above, plus block devices, and regular files), and individual syscall
+> testcases can express whether this syscall should pass/fail for each type
+> of fd?  That would give us one central place to add new fd types, and we
+> wouldn't be relying on syzbot to try fds at random until something fails.
 > 
-> Sorry, I phrased it completely wrong.
+> Or something.  I'm not an expert on the LTP or testing in general; it
+> just feels like we could do better here.
 
-Thanks for clearing this up. I had just formulated my own reply but I'll
-happily delete it. :)
-
-> The workloads don't expect 1ns resolution.
-
-Yes, they don't. In the revert explanation I just used that number to
-illustrate the general ordering problem. The workload that surfaced the
-issue is just plain weird of course but it points to a more general
-ordering problem.
-
-> The workloads just compare timestamps of objects and expect some sane
-> not-before ordering rules.
-
-Yes.
-
-> If user visible timestamps are truncated to 100ns all is good.
-
-Yes.
+I honestly would love to see such tests all go into xfstests. IOW,
+general VFS and fs-specific tests should be in one location. That's why
+I added src/vfs/ under xfstests. Having to run multiple test-suites for
+one subsystem isn't ideal. I mean, I'm doing it but I don't love it...
