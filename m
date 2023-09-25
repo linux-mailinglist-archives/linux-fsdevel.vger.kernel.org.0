@@ -2,79 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BE1477ADD69
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Sep 2023 18:50:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BC327ADD74
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Sep 2023 18:52:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230347AbjIYQur (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Sep 2023 12:50:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47540 "EHLO
+        id S232723AbjIYQwH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Sep 2023 12:52:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229905AbjIYQuq (ORCPT
+        with ESMTP id S229905AbjIYQwG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Sep 2023 12:50:46 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93E5CBE
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Sep 2023 09:50:39 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id 2adb3069b0e04-5043120ffbcso10218264e87.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Sep 2023 09:50:39 -0700 (PDT)
+        Mon, 25 Sep 2023 12:52:06 -0400
+Received: from mail-vs1-xe29.google.com (mail-vs1-xe29.google.com [IPv6:2607:f8b0:4864:20::e29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CBC59F
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Sep 2023 09:51:59 -0700 (PDT)
+Received: by mail-vs1-xe29.google.com with SMTP id ada2fe7eead31-4525dd7f9d0so2479128137.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Sep 2023 09:51:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1695660637; x=1696265437; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=FkfAX/RWqq7mVXYD/yvB+HIjbofX4XxbkSlj+NRMAVM=;
-        b=HTHoiywt6JngFrE3y8v0EtgBcSxzgnrJHTWvNP2fMqrA6OTcLAGHDax0LgiRlsqyh4
-         kWxN0TY6r5NEbXkParsW8qotzJtPXlIBiskcgsca1lyd2y5rmcmmyXnOgIQTd0sqnvg3
-         Hp+VY7mIc23rjLKPss3I7GISFBOtj5Oe9CokA=
+        d=gmail.com; s=20230601; t=1695660718; x=1696265518; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Eh7n/+cLzjpARLvCjBzHgGhMYKtXqlHu85WkcQo8HuA=;
+        b=fhS84E2+BBukOOFQyZyRCGjbzSdK64q2L5xLV7lbQM/b4whB5yavXj9cP10fp4lKwp
+         KRJWIpkgpgQ1xod7DkMSb56lvtGbscnEmIK+7Fhm80QKL/3cEnoMn0n5AYhdJXH6xDUs
+         kKbgCLR2ClRd65v5dZa8BjOb/9xySz+gx01+9W2tN9kr9l+w97jYUtl1BV2vPUHBjS3M
+         T25FuOTJPs6S4yB5LovS+Q1w5D3fJk/qzHlbSIJYm4BeCB1vKkl/IOH4uuQCaDwXoDmV
+         PC4ai6ySo/CLLoKqdjOJNwBCu53uXC3m+Vq22CwCcjmn8K4QF9PgAkX15OPinaTvIQk6
+         D8DA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695660637; x=1696265437;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FkfAX/RWqq7mVXYD/yvB+HIjbofX4XxbkSlj+NRMAVM=;
-        b=QU/fJCk32a+XGwRJE3zEt6mXGTC8kEAfbF7/cx8s76xw3Sre6JbRhXSSkbwKkNPDlr
-         iEwaVsXgMOmGmzvdu+FxOVLysf38J6/TKk8A5dVsOZ6vRtAVXmr0r1kYeIo6UFxKfVl1
-         pEvilYy8mbq+ajaD3eBk1QeM6+9AJ+XycyWx98d1TxKOJwLZ1QlquhR2KD+8RdSrNwQN
-         bxQV26jP0IP359hzyOmbEy9x0S/h0i584E6BGVPb7ivssrOdfRR1nc1U7MgNcRPfoURf
-         4DnyGcfli6Et98BLDnjPvtmacAt95wdbj1n4fGWAIXyF31lMvS3gFQ9ivyuuRkYrCjnn
-         k5Yg==
-X-Gm-Message-State: AOJu0YxBmwWeoE79JVhiXJgo68m/FKNSSseI4sx71ufIx62HVxFwk5HE
-        iQFF9FDS4S07o4lRCWuPw/SqUdzBC50HFbxZzfarYHet
-X-Google-Smtp-Source: AGHT+IHzQ5HsjE28pw8yqqBn7JiH7s2Mbdd5GOjZAgphzb5Yqpwt6K64QT9UKA18riioZaKD0P9fww==
-X-Received: by 2002:a05:6512:318d:b0:4fd:f84f:83c1 with SMTP id i13-20020a056512318d00b004fdf84f83c1mr7142977lfe.64.1695660637574;
-        Mon, 25 Sep 2023 09:50:37 -0700 (PDT)
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com. [209.85.167.44])
-        by smtp.gmail.com with ESMTPSA id v25-20020a197419000000b004fb9c625b4asm1902383lfe.210.2023.09.25.09.50.36
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Sep 2023 09:50:36 -0700 (PDT)
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-50309daf971so11101922e87.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Sep 2023 09:50:36 -0700 (PDT)
-X-Received: by 2002:a05:6512:238f:b0:503:1992:4d63 with SMTP id
- c15-20020a056512238f00b0050319924d63mr7791737lfv.19.1695660636109; Mon, 25
- Sep 2023 09:50:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1695660718; x=1696265518;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Eh7n/+cLzjpARLvCjBzHgGhMYKtXqlHu85WkcQo8HuA=;
+        b=DHZF0UJym8/MVI1hAv6DUqXxoDRTS+ON2BGNejDIjAkPrzCg/Ct6BH6aU9rbSaIuV8
+         QNCUlQWuEdSfHkKsaLZBJ09L5bSVP5L5oBoeTqsTlyLIMGewDF0jn/xaXCajzc8IBt39
+         gamLxutfzyzsQCpxqWIV203tiRykoCv86xjN6BIg0yP25C4uK7GoSyFvNoBOy+PCGHSI
+         /AcW26brAMeUpJK1GqorTxmV827KsayoBqkWtDcHQFNJZMTuOqHOqhsvWXBQS/M3MQcI
+         f8gLsv6xQTQ5PmcqryviBAvaaLPiZC5OMer35dpxaBTXk8uzH3Nv+nacQtwMcaUb/FMf
+         xWbg==
+X-Gm-Message-State: AOJu0YzNS5zErpI1XYgs1L2M31D4qT01ivWtCngQ0M0FXF+ijAOWq9uD
+        aVq0RzyFc3TSkXEK2HWIYE2WUGwil/CC7M3+Ook=
+X-Google-Smtp-Source: AGHT+IEEmKdeOkRNHmFizLT4hteSLXS/hMqmxgDmpUHuLNG/fZUm7J1RrjZ5mr7E3Qxx981iIDFT1lf1k0exV2dnk28=
+X-Received: by 2002:a67:fb18:0:b0:452:78ea:4aec with SMTP id
+ d24-20020a67fb18000000b0045278ea4aecmr3118054vsr.7.1695660718605; Mon, 25 Sep
+ 2023 09:51:58 -0700 (PDT)
 MIME-Version: 1.0
-References: <ZO9NK0FchtYjOuIH@infradead.org> <8718a8a3-1e62-0e2b-09d0-7bce3155b045@roeck-us.net>
- <ZPkDLp0jyteubQhh@dread.disaster.area> <20230906215327.18a45c89@gandalf.local.home>
- <ZPkz86RRLaYOkmx+@dread.disaster.area> <20230906225139.6ffe953c@gandalf.local.home>
- <ZPlFwHQhJS+Td6Cz@dread.disaster.area> <20230907071801.1d37a3c5@gandalf.local.home>
- <b7ca4a4e-a815-a1e8-3579-57ac783a66bf@sandeen.net> <CAHk-=wg=xY6id92yS3=B59UfKmTmOgq+NNv+cqCMZ1Yr=FwR9A@mail.gmail.com>
- <ZRFVH3iJX8scrFvn@infradead.org>
-In-Reply-To: <ZRFVH3iJX8scrFvn@infradead.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 25 Sep 2023 09:50:18 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgD6561fJPoNQXmT1nBcoJ=WQk=batM0BcNFdEJKFa8gA@mail.gmail.com>
-Message-ID: <CAHk-=wgD6561fJPoNQXmT1nBcoJ=WQk=batM0BcNFdEJKFa8gA@mail.gmail.com>
-Subject: Re: [MAINTAINERS/KERNEL SUMMIT] Trust and maintenance of file systems
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Eric Sandeen <sandeen@sandeen.net>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Guenter Roeck <linux@roeck-us.net>, ksummit@lists.linux.dev,
-        linux-fsdevel@vger.kernel.org
+References: <CAOQ4uxjnCdAeWe3W4mp=DwgL49Vwp_FVx4S_V33A3-JLtzJb-g@mail.gmail.com>
+ <ZQ75JynY8Y2DqaHD@casper.infradead.org> <CAOQ4uxjOGqWFdS4rU8u9TuLMLJafqMUsQUD3ToY3L9bOsfGibg@mail.gmail.com>
+ <CAD_8n+SNKww4VwLRsBdOg+aBc7pNzZhmW9TPcj9472_MjGhWyg@mail.gmail.com>
+ <CAOQ4uxjM8YTA9DjT5nYW1RBZReLjtLV6ZS3LNOOrgCRQcR2F9A@mail.gmail.com>
+ <CAOQ4uxjmyfKmOxP0MZQPfu8PL3KjLeC=HwgEACo21MJg-6rD7g@mail.gmail.com>
+ <ZRBHSACF5NdZoQwx@casper.infradead.org> <CAOQ4uxjmoY_Pu_JiY9U1TAa=Tz1Mta3aH=wwn192GOfRuvLJQw@mail.gmail.com>
+ <ZRCwjGSF//WUPohL@casper.infradead.org> <CAD_8n+SBo4EaU4-u+DaEFq3Bgii+vX0JobsqJV-4m+JjY9wq8w@mail.gmail.com>
+ <ZREr3M32aIPfdem7@casper.infradead.org> <CAOQ4uxgUC2KxO2fD-rSgVo3RyrrWbP-UHH+crG57uwXVn_sf2Q@mail.gmail.com>
+ <CAD_8n+QeGwf+CGNW_WnyRNQMu9G2_HJ4RSwJGq-b4CERpaA4uQ@mail.gmail.com>
+In-Reply-To: <CAD_8n+QeGwf+CGNW_WnyRNQMu9G2_HJ4RSwJGq-b4CERpaA4uQ@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Mon, 25 Sep 2023 19:51:47 +0300
+Message-ID: <CAOQ4uxh7+avP=m8DW_u14Ea4Hrk1xhyuT--t2XX868CBquOCaA@mail.gmail.com>
+Subject: Re: [LTP] [PATCH] vfs: fix readahead(2) on block devices
+To:     Reuben Hawkins <reubenhwk@gmail.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        kernel test robot <oliver.sang@intel.com>,
+        brauner@kernel.org, Cyril Hrubis <chrubis@suse.cz>,
+        mszeredi@redhat.com, lkp@intel.com, linux-fsdevel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, oe-lkp@lists.linux.dev,
+        ltp@lists.linux.it, Jan Kara <jack@suse.cz>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=no
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -82,30 +81,132 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 25 Sept 2023 at 02:38, Christoph Hellwig <hch@infradead.org> wrote:
+On Mon, Sep 25, 2023 at 6:36=E2=80=AFPM Reuben Hawkins <reubenhwk@gmail.com=
+> wrote:
 >
-> On Wed, Sep 13, 2023 at 10:03:55AM -0700, Linus Torvalds wrote:
-> >
-> > Yes, don't enable them, and if you enable them, don't auto-mount them
-> > on hot-pkug devices. Simple. People in this thread have already
-> > pointed to the user-space support for it happening.
 >
-> Which honetly doesn't work, as the status will change per kernel
-> version.  If we are serius about it we need proper in-kernel flagging.
+>
+> On Mon, Sep 25, 2023 at 4:43=E2=80=AFAM Amir Goldstein <amir73il@gmail.co=
+m> wrote:
+>>
+>> On Mon, Sep 25, 2023 at 9:42=E2=80=AFAM Matthew Wilcox <willy@infradead.=
+org> wrote:
+>> >
+>> > On Sun, Sep 24, 2023 at 11:35:48PM -0500, Reuben Hawkins wrote:
+>> > > The v2 patch does NOT return ESPIPE on a socket.  It succeeds.
+>> > >
+>> > > readahead01.c:54: TINFO: test_invalid_fd pipe
+>> > > readahead01.c:56: TFAIL: readahead(fd[0], 0, getpagesize()) expected
+>> > > EINVAL: ESPIPE (29)
+>> > > readahead01.c:60: TINFO: test_invalid_fd socket
+>> > > readahead01.c:62: TFAIL: readahead(fd[0], 0, getpagesize()) succeede=
+d
+>> > > <-------here
+>> >
+>> > Thanks!  I am of the view that this is wrong (although probably
+>> > harmless).  I suspect what happens is that we take the
+>> > 'bdi =3D=3D &noop_backing_dev_info' condition in generic_fadvise()
+>> > (since I don't see anywhere in net/ setting f_op->fadvise) and so
+>> > return 0 without doing any work.
+>> >
+>> > The correct solution is probably your v2, combined with:
+>> >
+>> >         inode =3D file_inode(file);
+>> > -       if (S_ISFIFO(inode->i_mode))
+>> > +       if (S_ISFIFO(inode->i_mode) || S_ISSOCK(inode->i_mode))
+>> >                 return -ESPIPE;
+>> >
+>> > in generic_fadvise(), but that then changes the return value from
+>> > posix_fadvise(), as I outlined in my previous email.  And I'm OK with
+>> > that, because I think it's what POSIX intended.  Amir may well disagre=
+e
+>> > ;-)
+>>
+>> I really have no problem with that change to posix_fadvise().
+>> I only meant to say that we are not going to ask Reuben to talk to
+>> the standard committee, but that's obvious ;-)
+>> A patch to man-pages, that I would recommend as a follow up.
+>>
+>> FWIW, I checked and there is currently no test for
+>> posix_fadvise() on socket in LTP AFAIK.
+>> Maybe Cyril will follow your suggestion and this will add test
+>> coverage for socket in posix_fadvise().
+>>
+>> Reuben,
+>>
+>> The actionable item, if all agree with Matthew's proposal, is
+>> not to change the v2 patch to readahead(), but to send a new
+>> patch for generic_fadvise().
+>>
+>> When you send the patch to Christian, you should specify
+>> the dependency - it needs to be applied before the readahead
+>> patch.
+>
+>
+> I'm having a bit of a time coming up with a commit message for this
+> change to fadvise...It just doesn't sound like something I would want
+> to merge...
+>
+> "Change fadvise to return -ESPIPE for sockets.  This is a new failure
+> mode that didn't previously exist.  Applications _may_ have to add new
+> error handling logic to accommodate the new return value.  It needs to
+> be fixed in fadvise so that readahead will also return new/unexpected
+> error codes."
+>
+> It just doesn't feel right.  Nonetheless, here's the test results with
+> the fadvise change + the v2 readahead patch...
+>
+> readahead01.c:54: TINFO: test_invalid_fd pipe
+> readahead01.c:56: TFAIL: readahead(fd[0], 0, getpagesize()) expected EINV=
+AL: ESPIPE (29)
+> readahead01.c:60: TINFO: test_invalid_fd socket
+> readahead01.c:62: TFAIL: readahead(fd[0], 0, getpagesize()) expected EINV=
+AL: ESPIPE (29)
+>
+> It seems to me like I fixed something in readahead that once worked,
+> readahead on block devices, and I'm now exchanging that once working
+> behavior to a new failure to socket, which previously succeeded...even
+> if it didn't do anything.
+>
+> Should I instead just check for S_ISSOCK in readahead so that both pipes
+> and sockets will return EINVAL in readahead, and leave fadvise as is?
+>
 
-That would be good, I agree.
+What you are saying makes sense.
+And if we are being honest, I think that the right thing to do from the
+beginning was to separate the bug fix commit from the UAPI change.
 
-The obvious place to do it would be in /proc/filesystems, which is
-very under-utilized right now. But I assume we have tools that parse
-it and adding fields to it would break.
+The minimal bug fix is S_ISREG || S_ISBLK, which
+mentions the Fixes commit and will be picked for stable kernels.
 
-The alternative might be to add "hints" to the mount options, and just
-have the kernel then react to them.
+Following up with another one or two patches that change
+the behavior of posix_fadvise on socket and readahead on
+socket and pipe.
 
-IOW, the same way we have "mount read-only" - which is not just a
-semantic flag - the kernel also obviously *requires* read-only mediums
-to be mounted that way, we could have some kind of "mount a
-non-trusted medium", and the kernel could say "this filesystem can not
-do that" on a per-filesystem basis.
+The UAPI change is not something that has to go to stable
+and it should be easily revertable independently of the bug fix.
+Doing it otherwise would make our lives much harder if regressions
+turn up from the UAPI change.
 
-                 Linus
+Christian, Matthew,
+
+Do you agree?
+
+>>
+>>
+>> If the readahead patch was not already in the vfs tree, you
+>> would have needed to send a patch series with a cover letter,
+>> where you would leave the Reviewed-by on the unchanged
+>> [2/2] readahead patch.
+>>
+>> Sending a patch series is a good thing to practice, but it is
+>> not strictly needed in this case, so I'll leave it up to you to decide.
+>>
+
+Reuben,
+
+If there is agreement on the above, you may still get your chance
+to send a patch set ;)
+
+Thanks,
+Amir.
