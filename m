@@ -2,73 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 90BF57AD646
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Sep 2023 12:43:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 371857AD6E7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Sep 2023 13:23:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232536AbjIYKnl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Sep 2023 06:43:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51642 "EHLO
+        id S230012AbjIYLXH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Sep 2023 07:23:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46024 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232288AbjIYKnj (ORCPT
+        with ESMTP id S229619AbjIYLXF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Sep 2023 06:43:39 -0400
-Received: from mail-ua1-x932.google.com (mail-ua1-x932.google.com [IPv6:2607:f8b0:4864:20::932])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6ADE2E8
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Sep 2023 03:43:32 -0700 (PDT)
-Received: by mail-ua1-x932.google.com with SMTP id a1e0cc1a2514c-7ab8265b797so1262094241.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Sep 2023 03:43:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1695638611; x=1696243411; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w5a51Iajf1wruN3JYLPZKeAIvbjFdiPifrK7dTJkZKE=;
-        b=BeutJjfAeNd6l+LNExuPb3Din70PJFPU/6BJl3s8YJUn9KZoVKPFbMZPQ2zFbHOals
-         nQEUMshbvtM8/oaA3GMZa5SMJInGxY3CPD4L+eTL5n/5V6VLK1kWA3N4YdmT1/kbKDrJ
-         d+7wmS/p73FakT/tYFlepHViN3LsYzXBxR0BzzRW2/+rBDPKrgo7nY/Qjz2ireaY7d6s
-         XMqFc089/Zyc9gxn2kdArsRO2lQmJb9WWGDKOeQScO+NmQ1v9bm/82ti2aYepFDKfR4N
-         +MvcayQxK9G65DsoXVpBfhU7ZkCf7hK9pXppXUQShfsbCQbgfs+W87z1OVh7Eb8AoCRb
-         GwZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695638611; x=1696243411;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=w5a51Iajf1wruN3JYLPZKeAIvbjFdiPifrK7dTJkZKE=;
-        b=Dk+wkXEVbiji4a25GXUM+urLxGsJAaclm61ISYfnNeJmyB+oSnvOFx5e+gqTx10BKK
-         LTPDhkSpkzB8tG1Drzt/hMcHfND8+D76MhVebvD/cSC9Km8N4PiXLgsS/ehRJwvvi79q
-         d4g3F7s3QVXNHEu06VgN3q6eQgv/xYWTTf7bMU5eUhdRgyXnCAFpfDnzI5HgRruFbK9S
-         8MozB7CY8Pamy0Sf3aikxItOFj2r3IpUpJvRu0BelqTuMm27zolp2Yj+R8NjqT2/wyNe
-         Za3sSPOzKRg85J61C7v4wE4YXTOs1zqkAyHnWcDuDDey9OEbwMLmTxJaPnQD4H+YCx3d
-         6ryw==
-X-Gm-Message-State: AOJu0YxfoC8jf5hpTnbtSD8vu0yGSqa6F1e9dlqPvaRczBF8a1/OQaCB
-        3HZLV3oZ20sf5laK0ZZcCHtwES4bozaFbhJUcSk=
-X-Google-Smtp-Source: AGHT+IHbjFIjy/yjSlLsDJ+AWfe1c6zVExPd8oD5PHnB/6U6D8fnVYgQQbAYIA/xOQ/mRAoxohwc0nAVvAzg8DkVxzk=
-X-Received: by 2002:a05:6102:3c3:b0:44e:a216:59a6 with SMTP id
- n3-20020a05610203c300b0044ea21659a6mr2930152vsq.4.1695638611387; Mon, 25 Sep
- 2023 03:43:31 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230519125705.598234-1-amir73il@gmail.com> <20230519125705.598234-9-amir73il@gmail.com>
- <CAP4dvsdpJFrEJRdUQqT-0bAX3FjSVg75-07Q0qac7XCtL63F8g@mail.gmail.com>
-In-Reply-To: <CAP4dvsdpJFrEJRdUQqT-0bAX3FjSVg75-07Q0qac7XCtL63F8g@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 25 Sep 2023 13:43:20 +0300
-Message-ID: <CAOQ4uxh5EFz-50vBLnfd0_+4uzg6v7Vd_6Wg4yE7uYn3+i3uoQ@mail.gmail.com>
-Subject: Re: [External] [PATCH v13 08/10] fuse: update inode size/mtime after
- passthrough write
-To:     Zhang Tianci <zhangtianci.1997@bytedance.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Daniel Rosenberg <drosen@google.com>,
-        Paul Lawrence <paullawrence@google.com>,
-        Alessio Balsini <balsini@android.com>,
-        fuse-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>,
-        Christian Brauner <brauner@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 25 Sep 2023 07:23:05 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2D1FC6;
+        Mon, 25 Sep 2023 04:22:58 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0FA5C433C8;
+        Mon, 25 Sep 2023 11:22:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695640978;
+        bh=MHMoUXxCYhs9BmNGGcDEbJP+pWNEoaNn0qeePsIe17M=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=lP36I1bnv4AX491FT9KTa9La35GasogBHW+NGwO33yno8eI0bTRA5ARV2fhzi3dI6
+         8KxyTiohjjcx82uGB9zABMEgo6SRdbB1t891FvIlmnW3myAdm+R52fUGQ/jk4ppHSF
+         c69rla/+lM8Y5nYTdqy6ZNBCVf1bnNB7v/ptUenI2eTiyT+MW3/MB9UVMCk+MJaG3g
+         JOJNHzXAQ/jO/bCffN3juJriV8nTz403tPxsqXi2IjoXzDcI42rok0vkit3NzEB/P8
+         uA38bNvtLH73fEkS2+17c7dPo9yH2+dn+C2Obosc3FUxHfH5Zg3BrKlOPAk3RYWcw/
+         BXGxqDMuuAs6g==
+Message-ID: <9ee3b65480b227102c04272d2219f366c65a14f3.camel@kernel.org>
+Subject: Re: [GIT PULL v2] timestamp fixes
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Amir Goldstein <amir73il@gmail.com>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jan Kara <jack@suse.cz>, "Darrick J. Wong" <djwong@kernel.org>
+Date:   Mon, 25 Sep 2023 07:22:56 -0400
+In-Reply-To: <CAHk-=wjGJEgizkXwSWVCnsGnciCKHHsWg+dkw2XAhM+0Tnd0Jw@mail.gmail.com>
+References: <20230921-umgekehrt-buden-a8718451ef7c@brauner>
+         <CAHk-=wgoNW9QmEzhJR7C1_vKWKr=8JoD4b7idQDNHOa10P_i4g@mail.gmail.com>
+         <0d006954b698cb1cea3a93c1662b5913a0ded3b1.camel@kernel.org>
+         <CAHk-=whAwTJduUZTrsLFnj1creZMfO7eCNERHXZQmzX+qLqZMA@mail.gmail.com>
+         <CAOQ4uxjcyfhfRhgR97wqsJHwzyOYqOYaaZWMWWCGXu5MWtKXfQ@mail.gmail.com>
+         <CAHk-=wjGJEgizkXwSWVCnsGnciCKHHsWg+dkw2XAhM+0Tnd0Jw@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-15"
 Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+MIME-Version: 1.0
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,LOTS_OF_MONEY,
+        MONEY_NOHTML,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -76,95 +57,155 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 25, 2023 at 9:41=E2=80=AFAM Zhang Tianci
-<zhangtianci.1997@bytedance.com> wrote:
+On Sat, 2023-09-23 at 10:48 -0700, Linus Torvalds wrote:
+> On Fri, 22 Sept 2023 at 23:36, Amir Goldstein <amir73il@gmail.com> wrote:
+> >=20
+> > Apparently, they are willing to handle the "year 2486" issue ;)
+>=20
+> Well, we could certainly do the same at the VFS layer.
+>=20
+> But I suspect 10ns resolution is entirely overkill, since on a lot of
+> platforms you don't even have timers with that resolution.
+>=20
+> I feel like 100ns is a much more reasonable resolution, and is quite
+> close to a single system call (think "one thousand cycles at 10GHz").
+>=20
+> > But the resolution change is counter to the purpose of multigrain
+> > timestamps - if two syscalls updated the same or two different inodes
+> > within a 100ns tick, apparently, there are some workloads that
+> > care to know about it and fs needs to store this information persistent=
+ly.
+>=20
+> Those workloads are broken garbage, and we should *not* use that kind
+> of sh*t to decide on VFS internals.
+>=20
+> Honestly, if the main reason for the multigrain resolution is
+> something like that, I think we should forget about MG *entirely*.
+> Somebody needs to be told to get their act together.
+>=20
+
+As I noted in the other thread, the primary reason for this was to fix
+XFS's change cookie without having to rev the on-disk format. If we
+could also present fine-grained timestamps to userland and nfsd, then
+that would also fix a lot of cache-coherency problems with NFSv3, and
+may also help some workloads which depend on comparing timestamps
+between files. That'd be a wonderful bonus, but I'm not going to lose
+too much sleep if we can't make that work.
+
+
+> We have *never* guaranteed nanosecond resolution on timestamps, and I
+> think we should put our foot down and say that we never will.
 >
-> On Fri, May 19, 2023 at 8:59=E2=80=AFPM Amir Goldstein <amir73il@gmail.co=
-m> wrote:
-> >
-> > Similar to update size/mtime at the end of fuse_perform_write(),
-> > we need to bump the attr version when we update the inode size.
-> >
-> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > ---
-> >  fs/fuse/passthrough.c | 53 ++++++++++++++++++++++++++++++++++---------
-> >  1 file changed, 42 insertions(+), 11 deletions(-)
-> >
-> > diff --git a/fs/fuse/passthrough.c b/fs/fuse/passthrough.c
-> > index 10b370bcc423..8352d6b91e0e 100644
-> > --- a/fs/fuse/passthrough.c
-> > +++ b/fs/fuse/passthrough.c
-> > @@ -14,15 +14,42 @@ struct fuse_aio_req {
-> >         struct kiocb *iocb_fuse;
-> >  };
-> >
-> > -static void fuse_aio_cleanup_handler(struct fuse_aio_req *aio_req)
-> > +static void fuse_file_start_write(struct file *fuse_file,
-> > +                                 struct file *backing_file,
-> > +                                 loff_t pos, size_t count)
-> > +{
-> > +       struct inode *inode =3D file_inode(fuse_file);
-> > +       struct fuse_inode *fi =3D get_fuse_inode(inode);
-> > +
-> > +       if (inode->i_size < pos + count)
-> > +               set_bit(FUSE_I_SIZE_UNSTABLE, &fi->state);
-> > +
-> > +       file_start_write(backing_file);
-> > +}
-> > +
-> > +static void fuse_file_end_write(struct file *fuse_file,
-> > +                               struct file *backing_file,
-> > +                               loff_t pos, ssize_t res)
-> > +{
-> > +       struct inode *inode =3D file_inode(fuse_file);
-> > +       struct fuse_inode *fi =3D get_fuse_inode(inode);
-> > +
-> > +       file_end_write(backing_file);
-> > +
-> > +       fuse_write_update_attr(inode, pos, res);
+> Partly because we have platforms where that kind of timer resolution
+> just does not exist.
+>=20
+> Partly because it's stupid to expect that kind of resolution anyway.
+>=20
+> And partly because any load that assumes that kind of resolution is
+> already broken.
 >
-> Hi Amir,
-> This function(fuse_file_end_write) will execute in interrupt context, but
-> fuse_write_update_attr() uses fuse_inode->lock, this will cause soft lock=
-up.
->
-> So we may have to change all the fuse_inode->lock usage to fixup this bug=
-, but
-> I think this is one ugly resolution.
->
-> Or why should we do aio_clearup_handler()? What is the difference between
-> fuse_passthrough_write_iter() with ovl_write_iter()?
->
+> End result: we should ABSOLUTELY NOT have as a target to support some
+> insane resolution.
+>=20
+> 100ns resolution for file access times is - and I'll happily go down
+> in history for saying this - enough for anybody.
+>=20
+> If you need finer resolution than that, you'd better do it yourself in
+> user space.
+>=20
+> And no, this is not a "but some day we'll have terahertz CPU's and
+> 100ns is an eternity". Moore's law is dead, we're not going to see
+> terahertz CPUs, and people who say "but quantum" have bought into a
+> technological fairytale.
+>=20
+> 100ns is plenty, and has the advantage of having a very safe range.
+>=20
 
-[CC Jens and Christian]
+The catch here is that we have at least some testcases that do things
+like set specific values in the mtime and atime, and then test that the
+same value is retrievable.
 
-Heh, very good question.
-Does this answer your question:
+Are we OK with breaking those? If we can always say that the stored
+resolution is X and that even values that are explicitly set get
+truncated then the v8 set I sent on Friday may be ok.
 
-https://lore.kernel.org/linux-unionfs/20230912173653.3317828-2-amir73il@gma=
-il.com/
+Of course, that set truncates the values at jiffies granularity (~4ms on
+my box). That's well above 100ns, so it's possible that's too coarse for
+us to handwave this problem away.
 
-I queued this patch to overlayfs for 6.7, because I think overlayfs
-has a bug that can manifest with concurrent aio completions.
 
-For people who just joined, this is a patch review of the
-FUSE passthrough feature, which is expected to share the
-common "kiocb_clone" io passthrough helpers with overlayfs.
+> That said, we don't have to do powers-of-ten. In fact, in many ways,
+> it would probably be a good idea to think of the fractional seconds in
+> powers of two. That tends to make it cheaper to do conversions,
+> without having to do a full 64-bit divide (a constant divide turns
+> into a fancy multiply, but it's still painful on 32-bit
+> architectures).
+>=20
+> So, for example, we could easily make the format be a fixed-point
+> format with "sign bit, 38 bit seconds, 25 bit fractional seconds",
+> which gives us about 30ns resolution, and a range of almost 9000
+> years. Which is nice, in how it covers all of written history and all
+> four-digit years (we'd keep the 1970 base).
+>=20
+> And 30ns resolution really *is* pretty much the limit of a single
+> system call. I could *wish* we had system calls that fast, or CPU's
+> that fast. Not the case right now, and sadly doesn't seem to be the
+> case in the forseeable future - if ever - either. It would be a really
+> good problem to have.
+>=20
+> And the nice thing about that would be that conversion to timespec64
+> would be fairly straightforward:
+>=20
+>    struct timespec64 to_timespec(fstime_t fstime)
+>    {
+>         struct timespec64 res;
+>         unsigned int frac;
+>=20
+>         frac =3D fstime & 0x1ffffffu;
+>         res.tv_sec =3D fstime >> 25;
+>         res.tv_nsec =3D frac * 1000000000ull >> 25;
+>         return res;
+>    }
+>=20
+>    fstime_t to_fstime(struct timespec64 a)
+>    {
+>         fstime_t sec =3D (fstime_t) a.tv_sec << 25;
+>         unsigned frac =3D a.tv_nsec;
+>=20
+>         frac =3D ((unsigned long long) a.tv_nsec << 25) / 1000000000ull;
+>         return sec | frac;
+>    }
+>=20
+> and both of those generate good code (that large divide by a constant
+> in to_fstime() is not great, but the compiler can turn it into a
+> multiply).
+>=20
+> The above could be improved upon (nicer rounding and overflow
+> handling, and a few modifications to generate even nicer code), but
+> it's not horrendous as-is. On x86-64, to_timespec becomes a very
+> reasonable
+>=20
+>         movq    %rdi, %rax
+>         andl    $33554431, %edi
+>         imulq   $1000000000, %rdi, %rdx
+>         sarq    $25, %rax
+>         shrq    $25, %rdx
+>=20
+> and to some degree that's the critical function (that code would show
+> up in 'stat()').
+>=20
+> Of course, I might have screwed up the above conversion functions,
+> they are untested garbage, but they look close enough to being in the
+> right ballpark.
+>=20
+> Anyway, we really need to push back at any crazies who say "I want
+> nanosecond resolution, because I'm special and my mother said so".
+>=20
 
-Jens,
 
-Are there any IOCB flags that overlayfs (or backing_aio) need
-to set or clear, besides IOCB_DIO_CALLER_COMP, that
-would prevent calling completion from interrupt context?
-
-Or is the proper way to deal with this is to defer completion
-to workqueue in the common backing_aio helpers that
-I am re-factoring from overlayfs?
-
-IIUC, that could also help overlayfs support
-IOCB_DIO_CALLER_COMP?
-
-Is my understanding correct?
-
-Thanks,
-Amir.
+Yeah if we we're going to establish a floor granularity for timestamps
+above 1ns, then making it a power-of-two factor would probably be a good
+thing. These calculations are done a _lot_ so we really do want them to
+be efficient.
+--=20
+Jeff Layton <jlayton@kernel.org>
