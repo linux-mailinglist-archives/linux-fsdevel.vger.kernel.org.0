@@ -2,480 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 913BC7ACF01
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Sep 2023 06:06:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BB9B7ACFD0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Sep 2023 08:02:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231612AbjIYEG6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Sep 2023 00:06:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41202 "EHLO
+        id S229568AbjIYGCp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Sep 2023 02:02:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41512 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229907AbjIYEG4 (ORCPT
+        with ESMTP id S230093AbjIYGCn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Sep 2023 00:06:56 -0400
-Received: from mail-oo1-xc2b.google.com (mail-oo1-xc2b.google.com [IPv6:2607:f8b0:4864:20::c2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E7C59F
-        for <linux-fsdevel@vger.kernel.org>; Sun, 24 Sep 2023 21:06:49 -0700 (PDT)
-Received: by mail-oo1-xc2b.google.com with SMTP id 006d021491bc7-57bb3872ff4so1133533eaf.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 24 Sep 2023 21:06:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1695614808; x=1696219608; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KjdsejtXM4FK3cSifJF0aNWIIdL1SGVdo9mbVceJXvw=;
-        b=ZCYDtHZ3mjfNs5eh9ur0GWsB8EMc1DmCJl4PYruK9trPWIXllkhlOXRwuga1BO25aR
-         ghmFX/opVX+VMk7TrqkXjLIsndujNF8CuaqAzgYEp8ZLJd1BGxSqmxibW68F1TWslFK4
-         AIFt5J70mOJW7hHdUFksAVy64gbTgfn/hM0OCznEKQ+LNhHX+wAFkv+cESAeuifBDbRL
-         jo2x0eLkPwrvdw1DrhaWjFCdu4vdvtVyqWR+M9Ml62eYroY/0RY+Qh/uscYOzriJgF39
-         FZMDk6Fozj+jomaMJt9WPE9K78bvSs2v3HHA2hBKUs2TN+0LXqqzbaJhGkUGHzHbHwox
-         iIGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695614808; x=1696219608;
-        h=content-transfer-encoding:in-reply-to:from:references:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=KjdsejtXM4FK3cSifJF0aNWIIdL1SGVdo9mbVceJXvw=;
-        b=RQeHhZHbDaO4oBPxQbJYSaG6I5ekZveACgEvmyl9GcWq+iNik1ByUhG8jp6RGqBGvI
-         xYVUPaBpsVqJzs1VgJ2cJMtiUQ+zLOoBKwSQfYJCg46KIKdIzZUHiJzu9v5N4BlIo2PY
-         NYWsiXBWRjVs4ADBg32MmfjoEdCPlTm9grRVF0qzw4gdNbQAzB6NdjT4Is3djnBHyHui
-         XxL3Q8I4mTP7lrhazOlQ8zZbDdB6nheMJCvPPZf3UbtfJme6OyGc1ZSriKuGoQLuXWQG
-         xouCuK4cmzU6JsZWnjec68I+uL0Z+vnrRvaEuzpDY1QRm8mZq6y6FsnKlAHH22Th+XfB
-         Ao2g==
-X-Gm-Message-State: AOJu0YzN4OYmXIWH4CxivjoiheffPbw84Oe1LOcUMshOe3Au+533jkoy
-        v1gptgHDdtKJURX+/Q0sP/NhyA==
-X-Google-Smtp-Source: AGHT+IFGQitQEvCjR9anQQqFAmYe/oi2wEbcAHWuB0f5/biQOuLuIBx0aULmNGJbJOPe/lJMK7WQoQ==
-X-Received: by 2002:a05:6358:528e:b0:135:a10e:1ed0 with SMTP id g14-20020a056358528e00b00135a10e1ed0mr7895862rwa.23.1695614808330;
-        Sun, 24 Sep 2023 21:06:48 -0700 (PDT)
-Received: from [10.84.144.104] ([203.208.167.146])
-        by smtp.gmail.com with ESMTPSA id b28-20020a63715c000000b00578b40a4903sm4244335pgn.22.2023.09.24.21.06.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 24 Sep 2023 21:06:47 -0700 (PDT)
-Message-ID: <65fbae1b-6253-8a37-2adb-e9c5612ff8e3@bytedance.com>
-Date:   Mon, 25 Sep 2023 12:06:39 +0800
+        Mon, 25 Sep 2023 02:02:43 -0400
+X-Greylist: delayed 1953 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 24 Sep 2023 23:02:36 PDT
+Received: from mx07-001d1705.pphosted.com (mx07-001d1705.pphosted.com [185.132.183.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53B61E8
+        for <linux-fsdevel@vger.kernel.org>; Sun, 24 Sep 2023 23:02:36 -0700 (PDT)
+Received: from pps.filterd (m0209327.ppops.net [127.0.0.1])
+        by mx08-001d1705.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38P54CUj009680;
+        Mon, 25 Sep 2023 05:29:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sony.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type :
+ content-transfer-encoding; s=S1;
+ bh=VwsICy0PpltOTtNKO1i+rZvXSxl78uZaXysnpZ9LNAQ=;
+ b=jzsaMHP9D3uWdnpfkDjPuVXLxkbQDqXbHlqX4XMXJS7jDYx1IuytdfCq/QMyR29UzPob
+ 7Rw8Kglo4u1PS8G4KAXPvvmMdODhVn/DVpa6vV/A+7dYVVUVyN3u9woCcVUL+S3IrXmM
+ UQO1DYYZ8WerfUS7xLE1UiQtcKG/i4HFQTkxRaUfyAImQMKmGMd3xiRPn4H6NtjP5HfA
+ PC2Ef2EY2iyQgKz6Lp5T8oec2eL4rAZAkC/ClAmAibjXkSXIBckA+qnc6L6ejx7wuQiw
+ la1yK6x+XOLQeJ01kZONaUZHRPgxtys08bW4DQyP0AYKDaE1rg4c2WvEP1XXN7KpAdnz XQ== 
+Received: from apc01-psa-obe.outbound.protection.outlook.com (mail-psaapc01lp2047.outbound.protection.outlook.com [104.47.26.47])
+        by mx08-001d1705.pphosted.com (PPS) with ESMTPS id 3t9pw3sfb8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 25 Sep 2023 05:29:51 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=XjJ33Kkcu8jCtLZsEUAZdCS0gM77KwCO1O2ITmV005uxyNqR/jJScvdiQ2GM4OMEGP26o2Dd5r9bH9IbLDye8wMZUpQTISG4UmbmJRmmCiAzBe2CUQASRIIgSxl6bVWdc689nVx+3UljrEkicHiXJl2BRtkzjQmVgznQDVUguEI3r2iDxJq7Z74KA1oydUhg8xga5Qptx4w9a6RxkQ+4qCmXty7PzSPndXfZP1xqYSWWKKMqDsc9Bp9s+OxyeZc5lOfc8/Z+dsqzyS+uodnIcg5LdxCvVCV9KOp2iNjDXjjd2yq1UUlq3FhQaZkjkxd8N5cNGVgM079fIQ2mGTXG4A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VwsICy0PpltOTtNKO1i+rZvXSxl78uZaXysnpZ9LNAQ=;
+ b=FitErS4cx3ABzA4tBY3wf0Rhcdcd7aQDiE5hm8T4177g+W6MDm9RBU8qvwntYXWfWXPH50jTmJ/IIt7ITfV/lgaYIbSPxaP8VxCKbB2c9J0HQhUYQCAJdvs+nJdyaRhv7f5NPGtN9Czm3d1FVxdqv99H4+4lZ+Og8HWd9k/QsrkaKi0IcHpoRTatODBr71JyufK9cebH/WsbXTmcEJr8qNJYqDwF3IRQ1b1GbYpTur3wPzSvjqouzzKSooShSdUrFI9UnNx7V/jRBvHio/O8692e6jakmtit7o1MVg484+KShZPmxtjGCkKX7etbDFHceNFsmbvtRz7tC/jXgCnFHw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=sony.com; dmarc=pass action=none header.from=sony.com;
+ dkim=pass header.d=sony.com; arc=none
+Received: from PUZPR04MB6316.apcprd04.prod.outlook.com (2603:1096:301:fc::7)
+ by TYSPR04MB7081.apcprd04.prod.outlook.com (2603:1096:400:47d::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6813.28; Mon, 25 Sep
+ 2023 05:29:44 +0000
+Received: from PUZPR04MB6316.apcprd04.prod.outlook.com
+ ([fe80::f9d4:e3c8:e9c0:1ad]) by PUZPR04MB6316.apcprd04.prod.outlook.com
+ ([fe80::f9d4:e3c8:e9c0:1ad%6]) with mapi id 15.20.6813.027; Mon, 25 Sep 2023
+ 05:29:44 +0000
+From:   "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
+To:     "linkinjeon@kernel.org" <linkinjeon@kernel.org>,
+        "sj1557.seo@samsung.com" <sj1557.seo@samsung.com>
+CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "Andy.Wu@sony.com" <Andy.Wu@sony.com>,
+        "Wataru.Aoyama@sony.com" <Wataru.Aoyama@sony.com>
+Subject: [PATCH v3 0/2] exfat: get file size from DataLength
+Thread-Topic: [PATCH v3 0/2] exfat: get file size from DataLength
+Thread-Index: AdnvcGEzwPu3dXUbRDKPesA1ujBe2A==
+Date:   Mon, 25 Sep 2023 05:29:44 +0000
+Message-ID: <PUZPR04MB6316C51D022473DD0D54120D81FCA@PUZPR04MB6316.apcprd04.prod.outlook.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PUZPR04MB6316:EE_|TYSPR04MB7081:EE_
+x-ms-office365-filtering-correlation-id: a7f67db5-b593-42fe-fd77-08dbbd886cce
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: dO2yTk1JUp/RuGlLVs8dXbzhGN2FZ7ArTBj74pP3HlDp4IwYYjIi+4rrd6S7p6iu00tVGg606ZOAH9Dyn/6c/M/isqCDWGny3/ckYEFEscEfDpwnlADSXR9D/OGYktiwd4t8fZ4/l2s5+Tv5P9Wzcxr28fPD0skPaJBBuZeyZSpmQ84eV+gdtY9HUZ9s0t9oNkyfKuGL9aOrjICzg/C6ECuF1/Vv5Qa5h3xIcEGgvLNmYZTkOA8E+K4wRWoOEElPTYs2vPXTKDDzFZniWDf8ryDbhfTg/PPr9Uh6mG4ZiCUE0CMLy20Hk1w/8nOrUEeNwuy+pCcCcQiAwn8SXdsVsDb5DzQIxzA6ou5HD3QpQAD7CP7cu+nLH1LvP71PdpRXEW7SC9sfeyK5Y+RGbfJgCYLIYbLMylgRxJBy98lZKzMUuIDRM/GhEnPQLd1U4r/usVJk7Ip5zJeRuvC1dTkza05LodB2fP3Iql3HpYqqyRzO0JHcIw/VS+aTBJoSoWJiMWYo1NYa5vk0lp9yqEHXUc0CxIDax5Slt4sJdHqAQuMOh642VxO3NtBt3FNAllGg3h8gOObpmOJIoweMCFiT56LmBY0VHM4CrCsCyNDOnbIPT2DD8+zgsROLpxHBmIWd
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR04MB6316.apcprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(39860400002)(396003)(136003)(366004)(346002)(376002)(230922051799003)(186009)(451199024)(1800799009)(8936002)(4326008)(5660300002)(8676002)(2906002)(52536014)(316002)(41300700001)(66446008)(64756008)(66556008)(55016003)(66476007)(54906003)(110136005)(66946007)(76116006)(26005)(107886003)(33656002)(9686003)(71200400001)(38100700002)(82960400001)(122000001)(38070700005)(86362001)(478600001)(83380400001)(6506007)(7696005);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?UGg3YnNOVXV2eUJiS25LczVndng0YzRLRTdnVFUrV0x5ekN0N3JxVTBHUWtR?=
+ =?utf-8?B?S1lYK2drTFRpbGloQUVIMnNZSFVNVFg2ajRvUE9sajU3bk1mUzdDYXcxZFoz?=
+ =?utf-8?B?bnhVTEY0RURnNlhmSnA2cG4yRUtBQ0FRa2NrZ3k1c2xzK3N4NXJhZHZQZldy?=
+ =?utf-8?B?YzdoZWFFSm51Yit2TlZ5dDVBaGF0OG1yVjR3bHBsTEowazNIMnhXQnVHL3ZO?=
+ =?utf-8?B?cFg0SVhqVU00R1lVK0ErV3ZYaEE4bk9pakdCUnQ3UEoyZHQ4am1keE1jWTcy?=
+ =?utf-8?B?OUE0bEsvdjB2b2Z2Z1o5M1J0WDd5Kzg5QXNaTnVDMERKTklDZGpvM2FweUhL?=
+ =?utf-8?B?MVRKYVVGYUhrOGkreVc2VDZEODAyRFNEczFGbFluNURMWng0RFpNdW9QeXBF?=
+ =?utf-8?B?dVlyVkQyQXdhVk5QbCtEbFduQ0NjRExiV0EyQS80QnN4QklrQlpJVDB0dnBo?=
+ =?utf-8?B?cFBxaUVKcjRLSWxmUjU5ZXpXbHIxbndTOXZPUlJxK3NqY0JqbHR0OGRLNG5N?=
+ =?utf-8?B?ckJVMjhQUWhZZm04bmVPYVpiK1VFUEJOanZJM0FMYzFOa1VDdzRqeUxhU2h3?=
+ =?utf-8?B?czBPeDlDUFdEbFZvT2N0MjVDNFl2NXZjZUJ2REcrVktMQkZMcGU0d0RNVkJx?=
+ =?utf-8?B?NnZha2RuK1hMUlFMaTh4eTBrWDlWTXpTSlpIa0IvaW5nWVlETERNaUdoN2d6?=
+ =?utf-8?B?SHM4bHcyNW5Hdm5uTUdoMG5qOWE5SkhuR1BuNWdMUHpQd0YweHRCK0dPU3VO?=
+ =?utf-8?B?bFF6eUFocGgrYVdhSFF3azRJbXhpUW5zdVVvWkhDUE5ZY2xUOTBMQ2J4VXNR?=
+ =?utf-8?B?Y052MDVhbVlXVnFJNTR2TG5CZWNlTkdma25zbzNneXFJOHhXY0VhZkpYSE5X?=
+ =?utf-8?B?UHFYSEduRitOLzY4czVHVXhhNFJtMkV3TUhWVGplSFpDWndHRG9FRnpRZncy?=
+ =?utf-8?B?dE4wS2RUa3BadFl2ZjU3bEJHRG9BWDlmUWN0VDdaaC9tSHplSmY4ZGg0ZEo3?=
+ =?utf-8?B?dGtyMlNzcjBhUGpubXVBMjBSaDVuRDdDR2ZsU0Y3T2pjL3dXU2dhaFFjVmxj?=
+ =?utf-8?B?TWFPRGl6alBtYnBFeFM4VU04NnBCdkdxRXVoUnc4OEt0a3hBK2NhY00xT3hQ?=
+ =?utf-8?B?RW1hTENjUTlOdzdCdmFVU2V6R1g2N2FxNXZaQXJHbm10QnJpQ09VZ0FqVHR4?=
+ =?utf-8?B?TFhrRWJxQTRXWHhPN2dlLy9OMnROcGRvbEtDZnJKYTR0TWNRd09qbU9zVmZS?=
+ =?utf-8?B?NFJtL2FCQzJLQ0M2aWFRc3duOE1XeU1xUmZCMVorK1l1OXdnNWhrRHplQ0sy?=
+ =?utf-8?B?Q0ZhbnNqa096WitEVGFFOURNQSs3dHRWOE1XeDJwZTUxL3Jnczg2S3Jrb2hh?=
+ =?utf-8?B?eW5uZmhoOFY0cS9ManUwU21ZVm8wSzFEWTk3TWpOVkhkN09DNEwyeDJTVE10?=
+ =?utf-8?B?a1ROZGQ0cVNsYnNyZ0I3R2FTM0JxTnEzYUI5dmFsalgxWUl6dS95UWVKdmZz?=
+ =?utf-8?B?bXZqN1BQWUdHcG9mV0JDZXh6anNzK1lVdzVUL1YrM0tuN1lvNGUxN2pSb0FI?=
+ =?utf-8?B?dFpIc0RyZEZZYzZWaFJjTEZkVWg2c2pNTGx2T29aSjBiTHNyN0N5YnVZYUdJ?=
+ =?utf-8?B?MUxXSHFlbEtETlkyR3R6dVhwUUdZLzROWnM4NXF1UW5yQUp1anBESWttWkxh?=
+ =?utf-8?B?K3JoTnJlZkdhYk93dU0rTHkyQmwvbzlvbW5NOVIwM2JmTmJBcUNxYUJITGNp?=
+ =?utf-8?B?M1JVbmZaM3RTRjRQdkhFTHl6dzQ3UU5XUzAvZDhoWW9DOWVackNueFZhTXQy?=
+ =?utf-8?B?aExBSlorWmVISklvdWNBbEVwTzZBdUlIM1hLWGs0YjQ5SWVRcVdoU2d6QkFD?=
+ =?utf-8?B?b2U3dURXOVhKTUNJMDA2djgwdEZoZkdDYnhWUlVkeWRMSS9DdTNzS3ZVbVBT?=
+ =?utf-8?B?Y2tRbkwyMmFuZU5FaFFXMWlDVTNMRnRtemFYWVdVRktCT2h5Qm91Q2FOR05R?=
+ =?utf-8?B?MVAzU0tXTlRXUWNkTERNdUhxSXFhM3c3WjFKR1A0OVBNaENOSVQ4UDhsQ2xN?=
+ =?utf-8?B?UDQ2UldQRzk1dFdscjAyZVZUcHRFRGwzZ05taGNFdWpvWDNsMlB1ZVYyU01D?=
+ =?utf-8?Q?nlnQPho2oWTzd9zY7tdv6zWWo?=
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.15.1
-Subject: Re: [PATCH v2 3/6] maple_tree: Add test for mtree_dup()
-To:     "Liam R. Howlett" <Liam.Howlett@Oracle.com>,
-        Peng Zhang <zhangpeng.00@bytedance.com>, corbet@lwn.net,
-        akpm@linux-foundation.org, willy@infradead.org, brauner@kernel.org,
-        surenb@google.com, michael.christie@oracle.com,
-        peterz@infradead.org, mathieu.desnoyers@efficios.com,
-        npiggin@gmail.com, avagin@gmail.com, linux-mm@kvack.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-References: <20230830125654.21257-1-zhangpeng.00@bytedance.com>
- <20230830125654.21257-4-zhangpeng.00@bytedance.com>
- <20230907201353.jv6bojekvamvdzaj@revolver>
-From:   Peng Zhang <zhangpeng.00@bytedance.com>
-In-Reply-To: <20230907201353.jv6bojekvamvdzaj@revolver>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: Jv/Nl4eZF15INO0CJZq+acs2arjSXOAWoB5DkHeDxdEmrDdtAHfLg5wwIoGi+e/5q1XFMqokmhJEaYlzFpAchJP3AW2OI0kvleOuMqYBYnM94eG5OAm3mZ5sSGIkT0PPO3L8K1/AaDWH46QR6sMTeYcualCjhPQCH1UzEis1Ca81vsUTYwoyY0ZgugJzgQE2jfEQVIJMnThoQEVEiPFkuFb0DwePxQRSn2diQT+44N9znv8mY1vFoJ4zp+Chtyayepv/+Z77C3XDF0fIKe92amKoxLKiSXreiXI7YjhyBNAE7J1pkdjeB2/ekxzIEJde1Hn5ffdxGtVWMHiM1rYIbNSiZ/nARELJCNzOacZXPCb3G15Ux/6W8W3ratDgj+vw3iIW552Ldt2zevqd1ZsrTqVVQuDYXlDTcfRAGQSOgZVd6fMoCqlBNkZiXI9QqJUpXA8yU9hRkzDZNKsQkW5udMP8KjuIjD1lgttCJsHdqdonlHSZQ3wG31H0NJ59NJR+T2Qf0RPaYcfyNcWObm2eX0N7nzWIrYEQ1fb85W2XQuxrpfZKLgwc5rtdt07HWFnPaa2mshyKuFmMk1i2yt2cnpsJK/KtkAAFiJMliTtiotgDpX4L08TGWTPEB8T0xf6f0U213mCmUSSdV+K6XpYKeyBIxVAILubVB+I2rCneYH+tzF33eiFuV31LseRW3Yt3sOndMTgcwWcMAviFtFO9CK3IwnDBhlSLeXwEb78GJRlt1gB2N7eqbLZ48LnvbeNHQuduzOozAQUpcGyJ3XNL1x8jbuj3N0xFoGbn5wQNmkYaFOC3x6Ww66mzbklLSnOMSwiPqG/KRQnF2VQrJjnr/w==
+X-OriginatorOrg: sony.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PUZPR04MB6316.apcprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a7f67db5-b593-42fe-fd77-08dbbd886cce
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Sep 2023 05:29:44.1239
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 66c65d8a-9158-4521-a2d8-664963db48e4
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: AxXJOQxXGtbi+1XTmUVwSegEnv5yM7fJtRpO4Y64YB0oaSj/qbcLXv/5fwr/CzUc+N/A34fYxh3xTe9gSDt8ZA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYSPR04MB7081
+X-Proofpoint-GUID: qKdguk7lLDYX1VvpAuu41zKoy1jyX5P4
+X-Proofpoint-ORIG-GUID: qKdguk7lLDYX1VvpAuu41zKoy1jyX5P4
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+X-Sony-Outbound-GUID: qKdguk7lLDYX1VvpAuu41zKoy1jyX5P4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-09-25_03,2023-09-21_01,2023-05-22_02
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-在 2023/9/8 04:13, Liam R. Howlett 写道:
-> * Peng Zhang <zhangpeng.00@bytedance.com> [230830 08:57]:
->> Add test for mtree_dup().
-> 
-> Please add a better description of what tests are included.
-> 
->>
->> Signed-off-by: Peng Zhang <zhangpeng.00@bytedance.com>
->> ---
->>   tools/testing/radix-tree/maple.c | 344 +++++++++++++++++++++++++++++++
->>   1 file changed, 344 insertions(+)
->>
->> diff --git a/tools/testing/radix-tree/maple.c b/tools/testing/radix-tree/maple.c
->> index e5da1cad70ba..38455916331e 100644
->> --- a/tools/testing/radix-tree/maple.c
->> +++ b/tools/testing/radix-tree/maple.c
-> 
-> Why not lib/test_maple_tree.c?
-> 
-> If they are included there then they will be built into the test module.
-> I try to include any tests that I can in the test module, within reason.
-> 
-> 
->> @@ -35857,6 +35857,346 @@ static noinline void __init check_locky(struct maple_tree *mt)
->>   	mt_clear_in_rcu(mt);
->>   }
->>   
->> +/*
->> + * Compare two nodes and return 0 if they are the same, non-zero otherwise.
-> 
-> The slots can be different, right?  That seems worth mentioning here.
-> It's also worth mentioning this is destructive.
-I compared the type information in the slots, but the addresses cannot
-be compared because they are different.
-> 
->> + */
->> +static int __init compare_node(struct maple_enode *enode_a,
->> +			       struct maple_enode *enode_b)
->> +{
->> +	struct maple_node *node_a, *node_b;
->> +	struct maple_node a, b;
->> +	void **slots_a, **slots_b; /* Do not use the rcu tag. */
->> +	enum maple_type type;
->> +	int i;
->> +
->> +	if (((unsigned long)enode_a & MAPLE_NODE_MASK) !=
->> +	    ((unsigned long)enode_b & MAPLE_NODE_MASK)) {
->> +		pr_err("The lower 8 bits of enode are different.\n");
->> +		return -1;
->> +	}
->> +
->> +	type = mte_node_type(enode_a);
->> +	node_a = mte_to_node(enode_a);
->> +	node_b = mte_to_node(enode_b);
->> +	a = *node_a;
->> +	b = *node_b;
->> +
->> +	/* Do not compare addresses. */
->> +	if (ma_is_root(node_a) || ma_is_root(node_b)) {
->> +		a.parent = (struct maple_pnode *)((unsigned long)a.parent &
->> +						  MA_ROOT_PARENT);
->> +		b.parent = (struct maple_pnode *)((unsigned long)b.parent &
->> +						  MA_ROOT_PARENT);
->> +	} else {
->> +		a.parent = (struct maple_pnode *)((unsigned long)a.parent &
->> +						  MAPLE_NODE_MASK);
->> +		b.parent = (struct maple_pnode *)((unsigned long)b.parent &
->> +						  MAPLE_NODE_MASK);
->> +	}
->> +
->> +	if (a.parent != b.parent) {
->> +		pr_err("The lower 8 bits of parents are different. %p %p\n",
->> +			a.parent, b.parent);
->> +		return -1;
->> +	}
->> +
->> +	/*
->> +	 * If it is a leaf node, the slots do not contain the node address, and
->> +	 * no special processing of slots is required.
->> +	 */
->> +	if (ma_is_leaf(type))
->> +		goto cmp;
->> +
->> +	slots_a = ma_slots(&a, type);
->> +	slots_b = ma_slots(&b, type);
->> +
->> +	for (i = 0; i < mt_slots[type]; i++) {
->> +		if (!slots_a[i] && !slots_b[i])
->> +			break;
->> +
->> +		if (!slots_a[i] || !slots_b[i]) {
->> +			pr_err("The number of slots is different.\n");
->> +			return -1;
->> +		}
->> +
->> +		/* Do not compare addresses in slots. */
->> +		((unsigned long *)slots_a)[i] &= MAPLE_NODE_MASK;
->> +		((unsigned long *)slots_b)[i] &= MAPLE_NODE_MASK;
->> +	}
->> +
->> +cmp:
->> +	/*
->> +	 * Compare all contents of two nodes, including parent (except address),
->> +	 * slots (except address), pivots, gaps and metadata.
->> +	 */
->> +	return memcmp(&a, &b, sizeof(struct maple_node));
->> +}
->> +
->> +/*
->> + * Compare two trees and return 0 if they are the same, non-zero otherwise.
->> + */
->> +static int __init compare_tree(struct maple_tree *mt_a, struct maple_tree *mt_b)
->> +{
->> +	MA_STATE(mas_a, mt_a, 0, 0);
->> +	MA_STATE(mas_b, mt_b, 0, 0);
->> +
->> +	if (mt_a->ma_flags != mt_b->ma_flags) {
->> +		pr_err("The flags of the two trees are different.\n");
->> +		return -1;
->> +	}
->> +
->> +	mas_dfs_preorder(&mas_a);
->> +	mas_dfs_preorder(&mas_b);
->> +
->> +	if (mas_is_ptr(&mas_a) || mas_is_ptr(&mas_b)) {
->> +		if (!(mas_is_ptr(&mas_a) && mas_is_ptr(&mas_b))) {
->> +			pr_err("One is MAS_ROOT and the other is not.\n");
->> +			return -1;
->> +		}
->> +		return 0;
->> +	}
->> +
->> +	while (!mas_is_none(&mas_a) || !mas_is_none(&mas_b)) {
->> +
->> +		if (mas_is_none(&mas_a) || mas_is_none(&mas_b)) {
->> +			pr_err("One is MAS_NONE and the other is not.\n");
->> +			return -1;
->> +		}
->> +
->> +		if (mas_a.min != mas_b.min ||
->> +		    mas_a.max != mas_b.max) {
->> +			pr_err("mas->min, mas->max do not match.\n");
->> +			return -1;
->> +		}
->> +
->> +		if (compare_node(mas_a.node, mas_b.node)) {
->> +			pr_err("The contents of nodes %p and %p are different.\n",
->> +			       mas_a.node, mas_b.node);
->> +			mt_dump(mt_a, mt_dump_dec);
->> +			mt_dump(mt_b, mt_dump_dec);
->> +			return -1;
->> +		}
->> +
->> +		mas_dfs_preorder(&mas_a);
->> +		mas_dfs_preorder(&mas_b);
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static __init void mas_subtree_max_range(struct ma_state *mas)
->> +{
->> +	unsigned long limit = mas->max;
->> +	MA_STATE(newmas, mas->tree, 0, 0);
->> +	void *entry;
->> +
->> +	mas_for_each(mas, entry, limit) {
->> +		if (mas->last - mas->index >=
->> +		    newmas.last - newmas.index) {
->> +			newmas = *mas;
->> +		}
->> +	}
->> +
->> +	*mas = newmas;
->> +}
->> +
->> +/*
->> + * build_full_tree() - Build a full tree.
->> + * @mt: The tree to build.
->> + * @flags: Use @flags to build the tree.
->> + * @height: The height of the tree to build.
->> + *
->> + * Build a tree with full leaf nodes and internal nodes. Note that the height
->> + * should not exceed 3, otherwise it will take a long time to build.
->> + * Return: zero if the build is successful, non-zero if it fails.
->> + */
->> +static __init int build_full_tree(struct maple_tree *mt, unsigned int flags,
->> +		int height)
->> +{
->> +	MA_STATE(mas, mt, 0, 0);
->> +	unsigned long step;
->> +	int ret = 0, cnt = 1;
->> +	enum maple_type type;
->> +
->> +	mt_init_flags(mt, flags);
->> +	mtree_insert_range(mt, 0, ULONG_MAX, xa_mk_value(5), GFP_KERNEL);
->> +
->> +	mtree_lock(mt);
->> +
->> +	while (1) {
->> +		mas_set(&mas, 0);
->> +		if (mt_height(mt) < height) {
->> +			mas.max = ULONG_MAX;
->> +			goto store;
->> +		}
->> +
->> +		while (1) {
->> +			mas_dfs_preorder(&mas);
->> +			if (mas_is_none(&mas))
->> +				goto unlock;
->> +
->> +			type = mte_node_type(mas.node);
->> +			if (mas_data_end(&mas) + 1 < mt_slots[type]) {
->> +				mas_set(&mas, mas.min);
->> +				goto store;
->> +			}
->> +		}
->> +store:
->> +		mas_subtree_max_range(&mas);
->> +		step = mas.last - mas.index;
->> +		if (step < 1) {
->> +			ret = -1;
->> +			goto unlock;
->> +		}
->> +
->> +		step /= 2;
->> +		mas.last = mas.index + step;
->> +		mas_store_gfp(&mas, xa_mk_value(5),
->> +				GFP_KERNEL);
->> +		++cnt;
->> +	}
->> +unlock:
->> +	mtree_unlock(mt);
->> +
->> +	MT_BUG_ON(mt, mt_height(mt) != height);
->> +	/* pr_info("height:%u number of elements:%d\n", mt_height(mt), cnt); */
->> +	return ret;
->> +}
->> +
->> +static noinline void __init check_mtree_dup(struct maple_tree *mt)
->> +{
->> +	DEFINE_MTREE(new);
->> +	int i, j, ret, count = 0;
->> +	unsigned int rand_seed = 17, rand;
->> +
->> +	/* store a value at [0, 0] */
->> +	mt_init_flags(&tree, 0);
->> +	mtree_store_range(&tree, 0, 0, xa_mk_value(0), GFP_KERNEL);
->> +	ret = mtree_dup(&tree, &new, GFP_KERNEL);
->> +	MT_BUG_ON(&new, ret);
->> +	mt_validate(&new);
->> +	if (compare_tree(&tree, &new))
->> +		MT_BUG_ON(&new, 1);
->> +
->> +	mtree_destroy(&tree);
->> +	mtree_destroy(&new);
->> +
->> +	/* The two trees have different attributes. */
->> +	mt_init_flags(&tree, 0);
->> +	mt_init_flags(&new, MT_FLAGS_ALLOC_RANGE);
->> +	ret = mtree_dup(&tree, &new, GFP_KERNEL);
->> +	MT_BUG_ON(&new, ret != -EINVAL);
->> +	mtree_destroy(&tree);
->> +	mtree_destroy(&new);
->> +
->> +	/* The new tree is not empty */
->> +	mt_init_flags(&tree, 0);
->> +	mt_init_flags(&new, 0);
->> +	mtree_store(&new, 5, xa_mk_value(5), GFP_KERNEL);
->> +	ret = mtree_dup(&tree, &new, GFP_KERNEL);
->> +	MT_BUG_ON(&new, ret != -EINVAL);
->> +	mtree_destroy(&tree);
->> +	mtree_destroy(&new);
->> +
->> +	/* Test for duplicating full trees. */
->> +	for (i = 1; i <= 3; i++) {
->> +		ret = build_full_tree(&tree, 0, i);
->> +		MT_BUG_ON(&tree, ret);
->> +		mt_init_flags(&new, 0);
->> +
->> +		ret = mtree_dup(&tree, &new, GFP_KERNEL);
->> +		MT_BUG_ON(&new, ret);
->> +		mt_validate(&new);
->> +		if (compare_tree(&tree, &new))
->> +			MT_BUG_ON(&new, 1);
->> +
->> +		mtree_destroy(&tree);
->> +		mtree_destroy(&new);
->> +	}
->> +
->> +	for (i = 1; i <= 3; i++) {
->> +		ret = build_full_tree(&tree, MT_FLAGS_ALLOC_RANGE, i);
->> +		MT_BUG_ON(&tree, ret);
->> +		mt_init_flags(&new, MT_FLAGS_ALLOC_RANGE);
->> +
->> +		ret = mtree_dup(&tree, &new, GFP_KERNEL);
->> +		MT_BUG_ON(&new, ret);
->> +		mt_validate(&new);
->> +		if (compare_tree(&tree, &new))
->> +			MT_BUG_ON(&new, 1);
->> +
->> +		mtree_destroy(&tree);
->> +		mtree_destroy(&new);
->> +	}
->> +
->> +	/* Test for normal duplicating. */
->> +	for (i = 0; i < 1000; i += 3) {
->> +		if (i & 1) {
->> +			mt_init_flags(&tree, 0);
->> +			mt_init_flags(&new, 0);
->> +		} else {
->> +			mt_init_flags(&tree, MT_FLAGS_ALLOC_RANGE);
->> +			mt_init_flags(&new, MT_FLAGS_ALLOC_RANGE);
->> +		}
->> +
->> +		for (j = 0; j < i; j++) {
->> +			mtree_store_range(&tree, j * 10, j * 10 + 5,
->> +					  xa_mk_value(j), GFP_KERNEL);
->> +		}
->> +
->> +		ret = mtree_dup(&tree, &new, GFP_KERNEL);
->> +		MT_BUG_ON(&new, ret);
->> +		mt_validate(&new);
->> +		if (compare_tree(&tree, &new))
->> +			MT_BUG_ON(&new, 1);
->> +
->> +		mtree_destroy(&tree);
->> +		mtree_destroy(&new);
->> +	}
->> +
->> +	/* Test memory allocation failed. */
-> 
-> It might be worth while having specific allocations fail.  At a leaf
-> node, intermediate nodes, first node come to mind.
-Memory allocation is only possible in non-leaf nodes. It is impossible
-to fail in leaf nodes.
-> 
->> +	for (i = 0; i < 1000; i += 3) {
->> +		if (i & 1) {
->> +			mt_init_flags(&tree, 0);
->> +			mt_init_flags(&new, 0);
->> +		} else {
->> +			mt_init_flags(&tree, MT_FLAGS_ALLOC_RANGE);
->> +			mt_init_flags(&new, MT_FLAGS_ALLOC_RANGE);
->> +		}
->> +
->> +		for (j = 0; j < i; j++) {
->> +			mtree_store_range(&tree, j * 10, j * 10 + 5,
->> +					  xa_mk_value(j), GFP_KERNEL);
->> +		}
->> +		/*
->> +		 * The rand() library function is not used, so we can generate
->> +		 * the same random numbers on any platform.
->> +		 */
->> +		rand_seed = rand_seed * 1103515245 + 12345;
->> +		rand = rand_seed / 65536 % 128;
->> +		mt_set_non_kernel(rand);
->> +
->> +		ret = mtree_dup(&tree, &new, GFP_NOWAIT);
->> +		mt_set_non_kernel(0);
->> +		if (ret != 0) {
->> +			MT_BUG_ON(&new, ret != -ENOMEM);
->> +			count++;
->> +			mtree_destroy(&tree);
->> +			continue;
->> +		}
->> +
->> +		mt_validate(&new);
->> +		if (compare_tree(&tree, &new))
->> +			MT_BUG_ON(&new, 1);
->> +
->> +		mtree_destroy(&tree);
->> +		mtree_destroy(&new);
->> +	}
->> +
->> +	/* pr_info("mtree_dup() fail %d times\n", count); */
->> +	BUG_ON(!count);
->> +}
->> +
->>   extern void test_kmem_cache_bulk(void);
->>   
->>   void farmer_tests(void)
->> @@ -35904,6 +36244,10 @@ void farmer_tests(void)
->>   	check_null_expand(&tree);
->>   	mtree_destroy(&tree);
->>   
->> +	mt_init_flags(&tree, 0);
->> +	check_mtree_dup(&tree);
->> +	mtree_destroy(&tree);
->> +
->>   	/* RCU testing */
->>   	mt_init_flags(&tree, 0);
->>   	check_erase_testset(&tree);
->> -- 
->> 2.20.1
->>
+RnJvbSB0aGUgZXhGQVQgc3BlY2lmaWNhdGlvbiwgdGhlIGZpbGUgc2l6ZSBzaG91bGQgZ2V0IGZy
+b20gJ0RhdGFMZW5ndGgnDQpvZiBTdHJlYW0gRXh0ZW5zaW9uIERpcmVjdG9yeSBFbnRyeSwgbm90
+ICdWYWxpZERhdGFMZW5ndGgnLg0KDQpXaXRob3V0IHRoaXMgcGF0Y2ggc2V0LCAnRGF0YUxlbmd0
+aCcgaXMgYWx3YXlzIHNhbWUgd2l0aCAnVmFsaWREYXRhTGVuZ3RoJw0KYW5kIGdldCBmaWxlIHNp
+emUgZnJvbSAnVmFsaWREYXRhTGVuZ3RoJy4gSWYgdGhlIGZpbGUgaXMgY3JlYXRlZCBieSBvdGhl
+cg0KZXhGQVQgaW1wbGVtZW50YXRpb24gYW5kICdEYXRhTGVuZ3RoJyBpcyBkaWZmZXJlbnQgZnJv
+bSAnVmFsaWREYXRhTGVuZ3RoJywNCnRoaXMgZXhGQVQgaW1wbGVtZW50YXRpb24gd2lsbCBub3Qg
+YmUgY29tcGF0aWJsZS4NCg0KQ2hhbmdlcyBmb3IgdjM6DQogIC0gUmViYXNlIHRvIGxpbnV4LTYu
+Ng0KICAtIE1vdmUgdXBkYXRlIC0+dmFsaWRfc2l6ZSBmcm9tIGV4ZmF0X2ZpbGVfd3JpdGVfaXRl
+cigpIHRvIGV4ZmF0X3dyaXRlX2VuZCgpDQogIC0gVXNlIGJsb2NrX3dyaXRlX2JlZ2luKCkgaW5z
+dGVhZCBvZiBleGZhdF93cml0ZV9iZWdpbigpIGluIGV4ZmF0X2ZpbGVfemVyb2VkX3JhbmdlKCkN
+CiAgLSBSZW1vdmUgZXhmYXRfZXhwYW5kX2FuZF96ZXJvKCkNCg0KQ2hhbmdlcyBmb3IgdjI6DQog
+IC0gRml4IHJhY2Ugd2hlbiBjaGVja2luZyBpX3NpemUgb24gZGlyZWN0IGkvbyByZWFkDQoNCll1
+ZXpoYW5nIE1vICgyKToNCiAgZXhmYXQ6IGNoYW5nZSB0byBnZXQgZmlsZSBzaXplIGZyb20gRGF0
+YUxlbmd0aA0KICBleGZhdDogZG8gbm90IHplcm9lZCB0aGUgZXh0ZW5kZWQgcGFydA0KDQogZnMv
+ZXhmYXQvZXhmYXRfZnMuaCB8ICAgNCArDQogZnMvZXhmYXQvZmlsZS5jICAgICB8IDE5OCArKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKystLS0tLQ0KIGZzL2V4ZmF0L2lub2Rl
+LmMgICAgfCAxMDggKysrKysrKysrKysrKysrKysrKystLS0tDQogZnMvZXhmYXQvbmFtZWkuYyAg
+ICB8ICAgNiArKw0KIDQgZmlsZXMgY2hhbmdlZCwgMjgwIGluc2VydGlvbnMoKyksIDM2IGRlbGV0
+aW9ucygtKQ0KDQotLSANCjIuMjUuMQ0K
