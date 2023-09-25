@@ -2,187 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B86F47AD7A1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Sep 2023 14:06:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 476B47AD816
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Sep 2023 14:34:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231415AbjIYMGK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Sep 2023 08:06:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46754 "EHLO
+        id S229821AbjIYMe0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Sep 2023 08:34:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231517AbjIYMFl (ORCPT
+        with ESMTP id S229450AbjIYMe0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Sep 2023 08:05:41 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BC841B1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Sep 2023 05:03:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1695643431;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=IFANTKBqjctjMhYlR9DlpaXTtUIzXQ6esPI4cVawB1c=;
-        b=EKxxOAEdxiDl0y+1I67kSNEvdKN6vYAyS6+BrtUOefq179aV6Kmn9T5qlr2qgApNAD8LQ9
-        lFs/cCtGaQShjbeDgTSy0mjb23ScRcz9RIYvYy93Y6KNL/H2NmQsV0jMivzjdh0mfOJxTS
-        AKqDdfTB1ZnB1QPkmzz+oQe559ohCT0=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-381-Yv4-_50VO1WoEpBUsV8YeQ-1; Mon, 25 Sep 2023 08:03:49 -0400
-X-MC-Unique: Yv4-_50VO1WoEpBUsV8YeQ-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D8A8829AB3FD;
-        Mon, 25 Sep 2023 12:03:48 +0000 (UTC)
-Received: from warthog.procyon.org.com (unknown [10.42.28.216])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CE54A40C2064;
-        Mon, 25 Sep 2023 12:03:46 +0000 (UTC)
-From:   David Howells <dhowells@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     David Howells <dhowells@redhat.com>,
+        Mon, 25 Sep 2023 08:34:26 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A34B2C0;
+        Mon, 25 Sep 2023 05:34:19 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77CF1C433C8;
+        Mon, 25 Sep 2023 12:34:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695645259;
+        bh=J10rv6bwcTutOdorIcDRobiFGuFoRoy6Xp7WZz1xess=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=PKodcEXRYh+o0SNKQyZ8FgXZg9GWdMnNBb5H+KR/sefu8wF/OfnPLqKkM6kKbrF5e
+         PZv8/KIqipItoRw0jjQTZpRaAPb+DdI6aBLCfYBXi0KGLaXLx3NTzLT0sIV7UNkX2u
+         Ami8N9SDcJJdsoaTIam7bpnyZrb28ez1auYVMvOSj0mAjNCLPY85quBxR3ZRe9xUlG
+         HbguRxmRI7pYysI4BWAOxV1uOCsLJjf1Q89UPysZaKfa/UztP4qwgyn0R6ybCm7QCZ
+         MBxP/nY/03OnvzS4VinL5Q5YZu2CPEl39TZwqB9HOqifDYJOhWq0FzpR92vRRogL3f
+         xZhpvqllQ9Udg==
+From:   Christian Brauner <brauner@kernel.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Christian Brauner <brauner@kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Christoph Hellwig <hch@lst.de>,
-        Christian Brauner <christian@brauner.io>,
         David Laight <David.Laight@ACULAB.COM>,
         Matthew Wilcox <willy@infradead.org>,
         Jeff Layton <jlayton@kernel.org>,
         linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
         linux-mm@kvack.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
-Subject: [PATCH v7 12/12] iov_iter, net: Move hash_and_copy_to_iter() to net/
-Date:   Mon, 25 Sep 2023 13:03:09 +0100
-Message-ID: <20230925120309.1731676-13-dhowells@redhat.com>
+        linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH v7 00/12] iov_iter: Convert the iterator macros into inline funcs
+Date:   Mon, 25 Sep 2023 14:34:05 +0200
+Message-Id: <20230925-zugetan-abhaken-8edd66ed06a7@brauner>
+X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230925120309.1731676-1-dhowells@redhat.com>
 References: <20230925120309.1731676-1-dhowells@redhat.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2706; i=brauner@kernel.org; h=from:subject:message-id; bh=J10rv6bwcTutOdorIcDRobiFGuFoRoy6Xp7WZz1xess=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQK1hmHvPzoGPKx7qV/gLKL5G1Xu5nvRaWuGPHOjJ94O+PO 2m+nOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZym53hf/yXFaacTd13BbbPcXgjKf DuyJ0T0RVNa64c/i/7J1xty15Ghnnaub/z18qWMW+/u85tLlPsFZ3v+brXoz93TOfc9v+DBycA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
-X-Spam-Status: No, score=1.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,RCVD_IN_SBL_CSS,SPF_HELO_NONE,
-        SPF_NONE autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: *
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Move hash_and_copy_to_iter() to be with its only caller in networking code.
+On Mon, 25 Sep 2023 13:02:57 +0100, David Howells wrote:
+> Could you take these patches into the block tree or the fs tree?  The
+> patches convert the iov_iter iteration macros to be inline functions.
+> 
+>  (1) Remove last_offset from iov_iter as it was only used by ITER_PIPE.
+> 
+>  (2) Add a __user tag on copy_mc_to_user()'s dst argument on x86 to match
+>      that on powerpc and get rid of a sparse warning.
+> 
+> [...]
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Alexander Viro <viro@zeniv.linux.org.uk>
-cc: Jens Axboe <axboe@kernel.dk>
-cc: Christoph Hellwig <hch@lst.de>
-cc: Christian Brauner <christian@brauner.io>
-cc: Matthew Wilcox <willy@infradead.org>
-cc: Linus Torvalds <torvalds@linux-foundation.org>
-cc: David Laight <David.Laight@ACULAB.COM>
-cc: "David S. Miller" <davem@davemloft.net>
-cc: Eric Dumazet <edumazet@google.com>
-cc: Jakub Kicinski <kuba@kernel.org>
-cc: Paolo Abeni <pabeni@redhat.com>
-cc: linux-block@vger.kernel.org
-cc: linux-fsdevel@vger.kernel.org
-cc: linux-mm@kvack.org
-cc: netdev@vger.kernel.org
+I'm giving you vfs.iov_iter as a stable (no rebases) branch so you can
+put fixes on top. Please let me know if someone else needs to take this.
+
 ---
- include/linux/uio.h |  3 ---
- lib/iov_iter.c      | 20 --------------------
- net/core/datagram.c | 19 +++++++++++++++++++
- 3 files changed, 19 insertions(+), 23 deletions(-)
 
-diff --git a/include/linux/uio.h b/include/linux/uio.h
-index 0a5426c97e02..b6214cbf2a43 100644
---- a/include/linux/uio.h
-+++ b/include/linux/uio.h
-@@ -338,9 +338,6 @@ iov_iter_npages_cap(struct iov_iter *i, int maxpages, size_t max_bytes)
- 	return npages;
- }
- 
--size_t hash_and_copy_to_iter(const void *addr, size_t bytes, void *hashp,
--		struct iov_iter *i);
--
- struct iovec *iovec_from_user(const struct iovec __user *uvector,
- 		unsigned long nr_segs, unsigned long fast_segs,
- 		struct iovec *fast_iov, bool compat);
-diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index fef934a8745d..2547c96d56c7 100644
---- a/lib/iov_iter.c
-+++ b/lib/iov_iter.c
-@@ -1,5 +1,4 @@
- // SPDX-License-Identifier: GPL-2.0-only
--#include <crypto/hash.h>
- #include <linux/export.h>
- #include <linux/bvec.h>
- #include <linux/fault-inject-usercopy.h>
-@@ -1093,25 +1092,6 @@ ssize_t iov_iter_get_pages_alloc2(struct iov_iter *i,
- }
- EXPORT_SYMBOL(iov_iter_get_pages_alloc2);
- 
--size_t hash_and_copy_to_iter(const void *addr, size_t bytes, void *hashp,
--		struct iov_iter *i)
--{
--#ifdef CONFIG_CRYPTO_HASH
--	struct ahash_request *hash = hashp;
--	struct scatterlist sg;
--	size_t copied;
--
--	copied = copy_to_iter(addr, bytes, i);
--	sg_init_one(&sg, addr, copied);
--	ahash_request_set_crypt(hash, &sg, NULL, copied);
--	crypto_ahash_update(hash);
--	return copied;
--#else
--	return 0;
--#endif
--}
--EXPORT_SYMBOL(hash_and_copy_to_iter);
--
- static int iov_npages(const struct iov_iter *i, int maxpages)
- {
- 	size_t skip = i->iov_offset, size = i->count;
-diff --git a/net/core/datagram.c b/net/core/datagram.c
-index 722311eeee18..103d46fa0eeb 100644
---- a/net/core/datagram.c
-+++ b/net/core/datagram.c
-@@ -61,6 +61,7 @@
- #include <net/tcp_states.h>
- #include <trace/events/skb.h>
- #include <net/busy_poll.h>
-+#include <crypto/hash.h>
- 
- /*
-  *	Is a socket 'connection oriented' ?
-@@ -489,6 +490,24 @@ static int __skb_datagram_iter(const struct sk_buff *skb, int offset,
- 	return 0;
- }
- 
-+static size_t hash_and_copy_to_iter(const void *addr, size_t bytes, void *hashp,
-+				    struct iov_iter *i)
-+{
-+#ifdef CONFIG_CRYPTO_HASH
-+	struct ahash_request *hash = hashp;
-+	struct scatterlist sg;
-+	size_t copied;
-+
-+	copied = copy_to_iter(addr, bytes, i);
-+	sg_init_one(&sg, addr, copied);
-+	ahash_request_set_crypt(hash, &sg, NULL, copied);
-+	crypto_ahash_update(hash);
-+	return copied;
-+#else
-+	return 0;
-+#endif
-+}
-+
- /**
-  *	skb_copy_and_hash_datagram_iter - Copy datagram to an iovec iterator
-  *          and update a hash.
+Applied to the vfs.iov_iter branch of the vfs/vfs.git tree.
+Patches in the vfs.iov_iter branch should appear in linux-next soon.
 
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.iov_iter
+
+[01/12] iov_iter: Remove last_offset from iov_iter as it was for ITER_PIPE
+        https://git.kernel.org/vfs/vfs/c/581beb4fe37d
+[02/12] iov_iter, x86: Be consistent about the __user tag on copy_mc_to_user()
+        https://git.kernel.org/vfs/vfs/c/066baf92bed9
+[03/12] sound: Fix snd_pcm_readv()/writev() to use iov access functions
+        https://git.kernel.org/vfs/vfs/c/1fcb71282e73
+[04/12] infiniband: Use user_backed_iter() to see if iterator is UBUF/IOVEC
+        https://git.kernel.org/vfs/vfs/c/7ebc540b3524
+[05/12] iov_iter: Renumber ITER_* constants
+        https://git.kernel.org/vfs/vfs/c/7d9e44a6ad8a
+[06/12] iov_iter: Derive user-backedness from the iterator type
+        https://git.kernel.org/vfs/vfs/c/f1b4cb650b9a
+[07/12] iov_iter: Convert iterate*() to inline funcs
+        https://git.kernel.org/vfs/vfs/c/f1982740f5e7
+[08/12] iov_iter: Don't deal with iter->copy_mc in memcpy_from_iter_mc()
+        https://git.kernel.org/vfs/vfs/c/51edcc92222f
+[09/12] iov_iter, net: Move csum_and_copy_to/from_iter() to net/
+        https://git.kernel.org/vfs/vfs/c/ef6fdd780dd4
+[10/12] iov_iter, net: Fold in csum_and_memcpy()
+        https://git.kernel.org/vfs/vfs/c/0837c6c20a4c
+[11/12] iov_iter, net: Merge csum_and_copy_from_iter{,_full}() together
+        https://git.kernel.org/vfs/vfs/c/921203282d82
+[12/12] iov_iter, net: Move hash_and_copy_to_iter() to net/
+        https://git.kernel.org/vfs/vfs/c/d7a22f309096
