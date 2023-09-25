@@ -2,75 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C1E07ADB22
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Sep 2023 17:14:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AEDA7ADB30
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Sep 2023 17:18:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232715AbjIYPOt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Sep 2023 11:14:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50982 "EHLO
+        id S232719AbjIYPS3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Sep 2023 11:18:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34734 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232760AbjIYPOj (ORCPT
+        with ESMTP id S232723AbjIYPS1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Sep 2023 11:14:39 -0400
-Received: from mail-ua1-x942.google.com (mail-ua1-x942.google.com [IPv6:2607:f8b0:4864:20::942])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB106101
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Sep 2023 08:14:32 -0700 (PDT)
-Received: by mail-ua1-x942.google.com with SMTP id a1e0cc1a2514c-7ab7e87f866so1946026241.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Sep 2023 08:14:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=happybizdata-com.20230601.gappssmtp.com; s=20230601; t=1695654872; x=1696259672; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=BtNfrxgf4X+cTsDMONzKl75qRElkb7tAwQe0Ph+Ar2Q=;
-        b=sYFFVxTO7mmkMpPpxZEPfnlzlM/T/6xEB9VPDAjLiV2jBk0QcpLeNI0VOJxLgsZkCW
-         8eDpVfuMcHKbfJp9JcDrM0GuFAAq0QqsfLO0lwgkjOJ922oaiT2ssTKDH1td1JoGb9sm
-         5h34ZLANxhPTQc5vjCTURf98MemtS6Ed+2XtyNjclNEaaHlSpKfV9WfFBUuXhphiwdqv
-         X3tzwOriQUOGlT7IqG7qxPswJuxlyBt2QdsNE6GKMMqkK1O4rJANdkg8yS7GYvcQfMIY
-         p8m7vgSJf66pqIm2U6bAONWCbSNA/mhO/PgcTOdhiaLNBD4rhnbAhkSH3lPyJuUdUY2m
-         D6nQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695654872; x=1696259672;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BtNfrxgf4X+cTsDMONzKl75qRElkb7tAwQe0Ph+Ar2Q=;
-        b=jbaeFVVhH7ymS5LXbkbjIGCZTWGMAegL44M7w+xANeYj6jXAHYJdoSDwI9UvMlgNEF
-         6bpjqw3aa0mC447xEjT4iV9exJVkAjJ6GzMf35oGuPWGkdhm+SqegCmSRycv8F3gq8nF
-         04yN3amjxJU6ssF6//vLOv4U0s9R6FxvwuhmRd+hCly3Bdp3AND1cal+QIeoFd7GERl+
-         QkiL1FNKQVdh7M1nWE+zChrsItpd0rFMZpIT8WZ6jGzGE4jjfhc/p+fIdX10D6EQdsEy
-         53OJuN6kOWnwpuu9asVsAJ53WNdQOEwj3A8Znh0EefMUWJHWIW0d8knEw3UlXhJQVkOQ
-         epeA==
-X-Gm-Message-State: AOJu0YwBWXILdQPTysowHsvLV8b/UdLufGqoC1dgrcLJtJTSOiNlrIIU
-        EZwu1o7zoVpWB+hiN4jmGcEEMJ0u+F4DmCQqsmTb6w==
-X-Google-Smtp-Source: AGHT+IGXoI5YnmpGzarbNHUN6kc7WhvoSLsKXh0wGe4yMYAk1E/+nnoqiizAAorg1SHUkHOlncRxdvgxo5nvLpAT5tU=
-X-Received: by 2002:a05:6102:34c3:b0:452:8ad4:29d9 with SMTP id
- a3-20020a05610234c300b004528ad429d9mr4212916vst.17.1695654872104; Mon, 25 Sep
- 2023 08:14:32 -0700 (PDT)
+        Mon, 25 Sep 2023 11:18:27 -0400
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCE4B109;
+        Mon, 25 Sep 2023 08:18:20 -0700 (PDT)
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id C6B0C68D05; Mon, 25 Sep 2023 17:18:16 +0200 (CEST)
+Date:   Mon, 25 Sep 2023 17:18:16 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, brauner@kernel.org,
+        syzbot+1fa947e7f09e136925b8@syzkaller.appspotmail.com
+Subject: Re: [PATCH] iomap: add a workaround for racy i_size updates on
+ block devices
+Message-ID: <20230925151816.GA444@lst.de>
+References: <20230925095133.311224-1-hch@lst.de> <20230925150902.GA11456@frogsfrogsfrogs>
 MIME-Version: 1.0
-From:   Sofia Gonzales <sofia@happybizdata.com>
-Date:   Mon, 25 Sep 2023 10:14:15 -0500
-Message-ID: <CAMh3ZMKYnXqAKMHMafqrwYMvNF+vD+Y6GrDNJinYQnAm=e3_Gw@mail.gmail.com>
-Subject: RE: HIMSS Global Health Conference Email List 2023
-To:     Sofia Gonzales <sofia@happybizdata.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230925150902.GA11456@frogsfrogsfrogs>
+User-Agent: Mutt/1.5.17 (2007-11-01)
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Mon, Sep 25, 2023 at 08:09:02AM -0700, Darrick J. Wong wrote:
+> > +			/*
+> > +			 * This can happen if truncating the block device races
+> > +			 * with the check in the caller as i_size updates on
+> > +			 * block devices aren't synchronized by i_rwsem for
+> > +			 * block devices.
+> 
+> Why /are/ bdevs special like this (not holding i_rwsem during a
+> truncate) anyway?  Is it because we require the sysadmin to coordinate
+> device shrink vs. running programs?
 
-Would you be interested in acquiring the Healthcare Information and
-Management Systems Society Email List?
+It's not just truncate, they also don't hold a lock on write.
 
-Number of Contacts: 45,486
-Cost: $1,918
+I think the reason is that there is no such things as the block allocator
+and block truncation that happens for block devices, they historically
+had a fixed size, and at some point we allowed to change that size
+by various crude means that are only slowly becoming more standardized
+and formal.  Real block device size changes are about 100% growing of
+the device, as that is an actually useful feature.  Shrinks OTOH are
+usuall a "cute" hack: block drivers set the size to 0 stop I/O when they
+are shut down.  I've been wanting to replace that with an actual check
+in the bdev fd I/O path for a while, but that would also mean the
+shrinking case would still be around, just exercised a lot less.
 
-Interested? Email me back; I would love to provide more information on the list.
-
-Kind Regards,
-Sofia Gonzales
-Marketing Coordinator
