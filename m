@@ -2,54 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 476B47AD816
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Sep 2023 14:34:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88DE47AD82D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Sep 2023 14:39:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229821AbjIYMe0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Sep 2023 08:34:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40284 "EHLO
+        id S229718AbjIYMj7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Sep 2023 08:39:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38082 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229450AbjIYMe0 (ORCPT
+        with ESMTP id S229450AbjIYMj7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Sep 2023 08:34:26 -0400
+        Mon, 25 Sep 2023 08:39:59 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A34B2C0;
-        Mon, 25 Sep 2023 05:34:19 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77CF1C433C8;
-        Mon, 25 Sep 2023 12:34:16 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D66ADC0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Sep 2023 05:39:52 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1342BC433C8;
+        Mon, 25 Sep 2023 12:39:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695645259;
-        bh=J10rv6bwcTutOdorIcDRobiFGuFoRoy6Xp7WZz1xess=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PKodcEXRYh+o0SNKQyZ8FgXZg9GWdMnNBb5H+KR/sefu8wF/OfnPLqKkM6kKbrF5e
-         PZv8/KIqipItoRw0jjQTZpRaAPb+DdI6aBLCfYBXi0KGLaXLx3NTzLT0sIV7UNkX2u
-         Ami8N9SDcJJdsoaTIam7bpnyZrb28ez1auYVMvOSj0mAjNCLPY85quBxR3ZRe9xUlG
-         HbguRxmRI7pYysI4BWAOxV1uOCsLJjf1Q89UPysZaKfa/UztP4qwgyn0R6ybCm7QCZ
-         MBxP/nY/03OnvzS4VinL5Q5YZu2CPEl39TZwqB9HOqifDYJOhWq0FzpR92vRRogL3f
-         xZhpvqllQ9Udg==
+        s=k20201202; t=1695645592;
+        bh=5aN+37/37gh3gx5jsw17r7C+kMfBRl0h8pMLO3kka40=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=gO201HxAgH3MHkf/tCnnUItOCqaQIkMbyjs99ieSgTaCw2pe7/5fQOGCy0xCiq+je
+         C802H/DRSGF9/a9WDaweb/h0n8xF7T+Ma47mJaB7ecpOvLqsIRfVnMkWjFbvV0VWWS
+         2b2zQd3OwTkHFuiSM3qteCzxegmsvkkTxC14093EB0lUB/i7t6VvbpVevjGr10/wo3
+         bea+yzumrZrDOXnfjnPUthF/r6tOh1FqAm20+XORQRK6rdc5p/NPVL8zl84AcZ1Uex
+         uAAwufY/dZWZJCMsf0W+CWhHevkMHZMtDKAnFZHLtbj0k2XjF/hd8OMEjpu2AfDFUs
+         W744U7SRMnw9g==
+Date:   Mon, 25 Sep 2023 14:39:42 +0200
 From:   Christian Brauner <brauner@kernel.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-mm@kvack.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH v7 00/12] iov_iter: Convert the iterator macros into inline funcs
-Date:   Mon, 25 Sep 2023 14:34:05 +0200
-Message-Id: <20230925-zugetan-abhaken-8edd66ed06a7@brauner>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230925120309.1731676-1-dhowells@redhat.com>
-References: <20230925120309.1731676-1-dhowells@redhat.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Reuben Hawkins <reubenhwk@gmail.com>,
+        kernel test robot <oliver.sang@intel.com>,
+        Cyril Hrubis <chrubis@suse.cz>, mszeredi@redhat.com,
+        lkp@intel.com, linux-fsdevel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, oe-lkp@lists.linux.dev,
+        ltp@lists.linux.it, Jan Kara <jack@suse.cz>
+Subject: Re: [LTP] [PATCH] vfs: fix readahead(2) on block devices
+Message-ID: <20230925-festbesuch-komplett-d8c4ae2e1066@brauner>
+References: <CAOQ4uxjOGqWFdS4rU8u9TuLMLJafqMUsQUD3ToY3L9bOsfGibg@mail.gmail.com>
+ <CAD_8n+SNKww4VwLRsBdOg+aBc7pNzZhmW9TPcj9472_MjGhWyg@mail.gmail.com>
+ <CAOQ4uxjM8YTA9DjT5nYW1RBZReLjtLV6ZS3LNOOrgCRQcR2F9A@mail.gmail.com>
+ <CAOQ4uxjmyfKmOxP0MZQPfu8PL3KjLeC=HwgEACo21MJg-6rD7g@mail.gmail.com>
+ <ZRBHSACF5NdZoQwx@casper.infradead.org>
+ <CAOQ4uxjmoY_Pu_JiY9U1TAa=Tz1Mta3aH=wwn192GOfRuvLJQw@mail.gmail.com>
+ <ZRCwjGSF//WUPohL@casper.infradead.org>
+ <CAD_8n+SBo4EaU4-u+DaEFq3Bgii+vX0JobsqJV-4m+JjY9wq8w@mail.gmail.com>
+ <ZREr3M32aIPfdem7@casper.infradead.org>
+ <CAOQ4uxgUC2KxO2fD-rSgVo3RyrrWbP-UHH+crG57uwXVn_sf2Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2706; i=brauner@kernel.org; h=from:subject:message-id; bh=J10rv6bwcTutOdorIcDRobiFGuFoRoy6Xp7WZz1xess=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQK1hmHvPzoGPKx7qV/gLKL5G1Xu5nvRaWuGPHOjJ94O+PO 2m+nOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZym53hf/yXFaacTd13BbbPcXgjKf DuyJ0T0RVNa64c/i/7J1xty15Ghnnaub/z18qWMW+/u85tLlPsFZ3v+brXoz93TOfc9v+DBycA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxgUC2KxO2fD-rSgVo3RyrrWbP-UHH+crG57uwXVn_sf2Q@mail.gmail.com>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -59,58 +63,67 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 25 Sep 2023 13:02:57 +0100, David Howells wrote:
-> Could you take these patches into the block tree or the fs tree?  The
-> patches convert the iov_iter iteration macros to be inline functions.
+On Mon, Sep 25, 2023 at 12:43:42PM +0300, Amir Goldstein wrote:
+> On Mon, Sep 25, 2023 at 9:42 AM Matthew Wilcox <willy@infradead.org> wrote:
+> >
+> > On Sun, Sep 24, 2023 at 11:35:48PM -0500, Reuben Hawkins wrote:
+> > > The v2 patch does NOT return ESPIPE on a socket.  It succeeds.
+> > >
+> > > readahead01.c:54: TINFO: test_invalid_fd pipe
+> > > readahead01.c:56: TFAIL: readahead(fd[0], 0, getpagesize()) expected
+> > > EINVAL: ESPIPE (29)
+> > > readahead01.c:60: TINFO: test_invalid_fd socket
+> > > readahead01.c:62: TFAIL: readahead(fd[0], 0, getpagesize()) succeeded
+> > > <-------here
+> >
+> > Thanks!  I am of the view that this is wrong (although probably
+> > harmless).  I suspect what happens is that we take the
+> > 'bdi == &noop_backing_dev_info' condition in generic_fadvise()
+> > (since I don't see anywhere in net/ setting f_op->fadvise) and so
+> > return 0 without doing any work.
+> >
+> > The correct solution is probably your v2, combined with:
+> >
+> >         inode = file_inode(file);
+> > -       if (S_ISFIFO(inode->i_mode))
+> > +       if (S_ISFIFO(inode->i_mode) || S_ISSOCK(inode->i_mode))
+> >                 return -ESPIPE;
+> >
+> > in generic_fadvise(), but that then changes the return value from
+> > posix_fadvise(), as I outlined in my previous email.  And I'm OK with
+> > that, because I think it's what POSIX intended.  Amir may well disagree
+> > ;-)
 > 
->  (1) Remove last_offset from iov_iter as it was only used by ITER_PIPE.
+> I really have no problem with that change to posix_fadvise().
+> I only meant to say that we are not going to ask Reuben to talk to
+> the standard committee, but that's obvious ;-)
+> A patch to man-pages, that I would recommend as a follow up.
 > 
->  (2) Add a __user tag on copy_mc_to_user()'s dst argument on x86 to match
->      that on powerpc and get rid of a sparse warning.
+> FWIW, I checked and there is currently no test for
+> posix_fadvise() on socket in LTP AFAIK.
+> Maybe Cyril will follow your suggestion and this will add test
+> coverage for socket in posix_fadvise().
 > 
-> [...]
+> Reuben,
+> 
+> The actionable item, if all agree with Matthew's proposal, is
+> not to change the v2 patch to readahead(), but to send a new
+> patch for generic_fadvise().
+> 
+> When you send the patch to Christian, you should specify
+> the dependency - it needs to be applied before the readahead
+> patch.
+> 
+> If the readahead patch was not already in the vfs tree, you
+> would have needed to send a patch series with a cover letter,
+> where you would leave the Reviewed-by on the unchanged
+> [2/2] readahead patch.
+> 
+> Sending a patch series is a good thing to practice, but it is
+> not strictly needed in this case, so I'll leave it up to you to decide.
 
-I'm giving you vfs.iov_iter as a stable (no rebases) branch so you can
-put fixes on top. Please let me know if someone else needs to take this.
-
----
-
-Applied to the vfs.iov_iter branch of the vfs/vfs.git tree.
-Patches in the vfs.iov_iter branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.iov_iter
-
-[01/12] iov_iter: Remove last_offset from iov_iter as it was for ITER_PIPE
-        https://git.kernel.org/vfs/vfs/c/581beb4fe37d
-[02/12] iov_iter, x86: Be consistent about the __user tag on copy_mc_to_user()
-        https://git.kernel.org/vfs/vfs/c/066baf92bed9
-[03/12] sound: Fix snd_pcm_readv()/writev() to use iov access functions
-        https://git.kernel.org/vfs/vfs/c/1fcb71282e73
-[04/12] infiniband: Use user_backed_iter() to see if iterator is UBUF/IOVEC
-        https://git.kernel.org/vfs/vfs/c/7ebc540b3524
-[05/12] iov_iter: Renumber ITER_* constants
-        https://git.kernel.org/vfs/vfs/c/7d9e44a6ad8a
-[06/12] iov_iter: Derive user-backedness from the iterator type
-        https://git.kernel.org/vfs/vfs/c/f1b4cb650b9a
-[07/12] iov_iter: Convert iterate*() to inline funcs
-        https://git.kernel.org/vfs/vfs/c/f1982740f5e7
-[08/12] iov_iter: Don't deal with iter->copy_mc in memcpy_from_iter_mc()
-        https://git.kernel.org/vfs/vfs/c/51edcc92222f
-[09/12] iov_iter, net: Move csum_and_copy_to/from_iter() to net/
-        https://git.kernel.org/vfs/vfs/c/ef6fdd780dd4
-[10/12] iov_iter, net: Fold in csum_and_memcpy()
-        https://git.kernel.org/vfs/vfs/c/0837c6c20a4c
-[11/12] iov_iter, net: Merge csum_and_copy_from_iter{,_full}() together
-        https://git.kernel.org/vfs/vfs/c/921203282d82
-[12/12] iov_iter, net: Move hash_and_copy_to_iter() to net/
-        https://git.kernel.org/vfs/vfs/c/d7a22f309096
+My level of confusion is rather high at the moment.
+I'll leave the readahead fix in vfs.misc (In fact, I just rebased it on
+top everytime I picked up a patch so as to not invalidate the whole tree
+when it changes.) and then please send the preparatory fix. Don't resend
+the readahead fix if nothing has changed.
