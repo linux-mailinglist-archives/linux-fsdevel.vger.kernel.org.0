@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 99D5D7AD87B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Sep 2023 15:00:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1DF97AD87C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Sep 2023 15:00:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231450AbjIYNAw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S231481AbjIYNAw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Mon, 25 Sep 2023 09:00:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53992 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231530AbjIYNAs (ORCPT
+        with ESMTP id S231559AbjIYNAv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Sep 2023 09:00:48 -0400
+        Mon, 25 Sep 2023 09:00:51 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36A3D10A
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Sep 2023 06:00:40 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1078CC433CB;
-        Mon, 25 Sep 2023 13:00:37 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94BE7111
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Sep 2023 06:00:43 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0E90C433C7;
+        Mon, 25 Sep 2023 13:00:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695646839;
-        bh=v4g7jvCenLxaO3C6aa4EjCZ8NiVLlWBQcGRycZ/8Y5Y=;
+        s=k20201202; t=1695646843;
+        bh=OCO3d4i2KdqO4TOtwL0mRMjJoxh5pd66flX2299oYPw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M0GeRUt5q5eVwB8Nm5qgSv9GIIHLrQ5HFrO784W3yeVqRoAzHkdLaiDKes88k2itt
-         6RfSFjrZULJXTcKeqgz5mir+pvc/quowFFr1BNzCbO5NEq2t5JMFQvfqJhvn0z/kBm
-         8J/j0Mvuvlcj7/iD4QHRJ0rJIHdnDcm6Co35/aiiQ5/GvxH6kuNgx1BrBGRUH3LFot
-         dAybbhUhcYX3gLJHlXTecGJ8QOycTFL/th5IO8TT98MrntNeOxeb0+bl4HC3vVZ9Of
-         sJX5bHkm4+OeSEam/kLUjvVEL1FG9tc9keAg6kLtvo3Tw9qX5VZbCFbF8hRvt4Lq5N
-         S+z046hJ5v4KA==
+        b=GYBf0cqxsro788pRLG4+dCWj9UcTUyHISGdPuDehjYhteDD+pU+J6T343pcoc5jg7
+         oWzxljoImO4sa+Hn1YTysMp+8Zw/vaWejVbXFkfylG3mYm9rRmBEAXKsXF2flDC7M6
+         6zQBii6riknquz7Ds9Pjz8O+giAQOQ/9o92CuvF+TKcdHP+WtFy2hrtNin4pDXYh5J
+         5PVZWAtV8OThv8Z4IpmKoF7LVhCIHV2oEz7Q8nf+Luc/Oa8WhKgBqunliNkKTXugLZ
+         pWDIQY6D3CqmlakmLHINfEerPXkQ1/tqO1Gjxhl4jqsPbYaQBD04zbu+38AQ0AL3SP
+         wpxXV1tPn6WFg==
 From:   cem@kernel.org
 To:     linux-fsdevel@vger.kernel.org
 Cc:     hughd@google.com, brauner@kernel.org, jack@suse.cz
-Subject: [PATCH 1/3] tmpfs: add project ID support
-Date:   Mon, 25 Sep 2023 15:00:26 +0200
-Message-Id: <20230925130028.1244740-2-cem@kernel.org>
+Subject: [PATCH 2/3] tmpfs: Add project quota mount option
+Date:   Mon, 25 Sep 2023 15:00:27 +0200
+Message-Id: <20230925130028.1244740-3-cem@kernel.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230925130028.1244740-1-cem@kernel.org>
 References: <20230925130028.1244740-1-cem@kernel.org>
@@ -49,94 +49,70 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Carlos Maiolino <cem@kernel.org>
 
-Lay down infrastructure to support project quotas.
+Enable tmpfs filesystems to be mounted using project quotas.
 
 Signed-off-by: Carlos Maiolino <cmaiolino@redhat.com>
 ---
- include/linux/shmem_fs.h | 11 ++++++++---
- mm/shmem.c               |  6 ++++++
- mm/shmem_quota.c         | 10 ++++++++++
- 3 files changed, 24 insertions(+), 3 deletions(-)
+ include/linux/shmem_fs.h |  2 +-
+ mm/shmem.c               | 11 ++++++++++-
+ 2 files changed, 11 insertions(+), 2 deletions(-)
 
 diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
-index 6b0c626620f5..e82a64f97917 100644
+index e82a64f97917..c897cb6a70a2 100644
 --- a/include/linux/shmem_fs.h
 +++ b/include/linux/shmem_fs.h
-@@ -15,7 +15,10 @@
+@@ -14,7 +14,7 @@
+ /* inode in-kernel data */
  
  #ifdef CONFIG_TMPFS_QUOTA
- #define SHMEM_MAXQUOTAS 2
--#endif
-+
-+/* Default project ID */
-+#define SHMEM_DEF_PROJID 0
-+#endif /* CONFIG_TMPFS_QUOTA */
+-#define SHMEM_MAXQUOTAS 2
++#define SHMEM_MAXQUOTAS 3
  
- struct shmem_inode_info {
- 	spinlock_t		lock;
-@@ -33,14 +36,16 @@ struct shmem_inode_info {
- 	unsigned int		fsflags;	/* flags for FS_IOC_[SG]ETFLAGS */
- #ifdef CONFIG_TMPFS_QUOTA
- 	struct dquot		*i_dquot[MAXQUOTAS];
-+	kprojid_t		i_projid;
- #endif
- 	struct offset_ctx	dir_offsets;	/* stable entry offsets */
- 	struct inode		vfs_inode;
- };
- 
--#define SHMEM_FL_USER_VISIBLE		FS_FL_USER_VISIBLE
-+#define SHMEM_FL_USER_VISIBLE		(FS_FL_USER_VISIBLE | FS_PROJINHERIT_FL)
- #define SHMEM_FL_USER_MODIFIABLE \
--	(FS_IMMUTABLE_FL | FS_APPEND_FL | FS_NODUMP_FL | FS_NOATIME_FL)
-+	(FS_IMMUTABLE_FL | FS_APPEND_FL | FS_NODUMP_FL | \
-+	 FS_NOATIME_FL | FS_PROJINHERIT_FL)
- #define SHMEM_FL_INHERITED		(FS_NODUMP_FL | FS_NOATIME_FL)
- 
- struct shmem_quota_limits {
+ /* Default project ID */
+ #define SHMEM_DEF_PROJID 0
 diff --git a/mm/shmem.c b/mm/shmem.c
-index 67d93dd37a5e..6ccf60bd1690 100644
+index 6ccf60bd1690..4d2b713bff06 100644
 --- a/mm/shmem.c
 +++ b/mm/shmem.c
-@@ -2539,6 +2539,12 @@ static struct inode *shmem_get_inode(struct mnt_idmap *idmap,
- 	if (IS_ERR(inode))
- 		return inode;
+@@ -3865,6 +3865,7 @@ enum shmem_param {
+ 	Opt_quota,
+ 	Opt_usrquota,
+ 	Opt_grpquota,
++	Opt_prjquota,
+ 	Opt_usrquota_block_hardlimit,
+ 	Opt_usrquota_inode_hardlimit,
+ 	Opt_grpquota_block_hardlimit,
+@@ -3895,6 +3896,7 @@ const struct fs_parameter_spec shmem_fs_parameters[] = {
+ 	fsparam_flag  ("quota",		Opt_quota),
+ 	fsparam_flag  ("usrquota",	Opt_usrquota),
+ 	fsparam_flag  ("grpquota",	Opt_grpquota),
++	fsparam_flag  ("prjquota",	Opt_prjquota),
+ 	fsparam_string("usrquota_block_hardlimit", Opt_usrquota_block_hardlimit),
+ 	fsparam_string("usrquota_inode_hardlimit", Opt_usrquota_inode_hardlimit),
+ 	fsparam_string("grpquota_block_hardlimit", Opt_grpquota_block_hardlimit),
+@@ -4029,6 +4031,12 @@ static int shmem_parse_one(struct fs_context *fc, struct fs_parameter *param)
+ 		ctx->seen |= SHMEM_SEEN_QUOTA;
+ 		ctx->quota_types |= QTYPE_MASK_GRP;
+ 		break;
++	case Opt_prjquota:
++		if (fc->user_ns != &init_user_ns)
++			return invalfc(fc, "Quotas in unprivileged tmpfs mounts are unsupported");
++		ctx->seen |= SHMEM_SEEN_QUOTA;
++		ctx->quota_types |= QTYPE_MASK_PRJ;
++		break;
+ 	case Opt_usrquota_block_hardlimit:
+ 		size = memparse(param->string, &rest);
+ 		if (*rest || !size)
+@@ -4363,7 +4371,8 @@ static int shmem_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	if (ctx->seen & SHMEM_SEEN_QUOTA) {
+ 		sb->dq_op = &shmem_quota_operations;
+ 		sb->s_qcop = &dquot_quotactl_sysfile_ops;
+-		sb->s_quota_types = QTYPE_MASK_USR | QTYPE_MASK_GRP;
++		sb->s_quota_types = QTYPE_MASK_USR | QTYPE_MASK_GRP |
++				    QTYPE_MASK_PRJ;
  
-+	if (dir && sb_has_quota_active(sb, PRJQUOTA))
-+		SHMEM_I(inode)->i_projid = SHMEM_I(dir)->i_projid;
-+	else
-+		SHMEM_I(inode)->i_projid = make_kprojid(&init_user_ns,
-+							SHMEM_DEF_PROJID);
-+
- 	err = dquot_initialize(inode);
- 	if (err)
- 		goto errout;
-diff --git a/mm/shmem_quota.c b/mm/shmem_quota.c
-index 062d1c1097ae..71224caa3e85 100644
---- a/mm/shmem_quota.c
-+++ b/mm/shmem_quota.c
-@@ -325,6 +325,15 @@ static int shmem_dquot_write_info(struct super_block *sb, int type)
- 	return 0;
- }
- 
-+static int shmem_get_projid(struct inode *inode, kprojid_t *projid)
-+{
-+	if (!sb_has_quota_active(inode->i_sb, PRJQUOTA))
-+		return -EOPNOTSUPP;
-+
-+	*projid = SHMEM_I(inode)->i_projid;
-+	return 0;
-+}
-+
- static const struct quota_format_ops shmem_format_ops = {
- 	.check_quota_file	= shmem_check_quota_file,
- 	.read_file_info		= shmem_read_file_info,
-@@ -346,5 +355,6 @@ const struct dquot_operations shmem_quota_operations = {
- 	.write_info		= shmem_dquot_write_info,
- 	.mark_dirty		= shmem_mark_dquot_dirty,
- 	.get_next_id		= shmem_get_next_id,
-+	.get_projid		= shmem_get_projid,
- };
- #endif /* CONFIG_TMPFS_QUOTA */
+ 		/* Copy the default limits from ctx into sbinfo */
+ 		memcpy(&sbinfo->qlimits, &ctx->qlimits,
 -- 
 2.39.2
 
