@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DC17A7ACEE7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Sep 2023 05:59:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 873B27ACEEC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Sep 2023 05:59:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231921AbjIYD7G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 24 Sep 2023 23:59:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34458 "EHLO
+        id S231993AbjIYD7S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 24 Sep 2023 23:59:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47740 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231664AbjIYD6q (ORCPT
+        with ESMTP id S231992AbjIYD7D (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 24 Sep 2023 23:58:46 -0400
-Received: from mail-qk1-x734.google.com (mail-qk1-x734.google.com [IPv6:2607:f8b0:4864:20::734])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FEE9197
-        for <linux-fsdevel@vger.kernel.org>; Sun, 24 Sep 2023 20:58:20 -0700 (PDT)
-Received: by mail-qk1-x734.google.com with SMTP id af79cd13be357-77433e7a876so56922285a.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 24 Sep 2023 20:58:20 -0700 (PDT)
+        Sun, 24 Sep 2023 23:59:03 -0400
+Received: from mail-qk1-x729.google.com (mail-qk1-x729.google.com [IPv6:2607:f8b0:4864:20::729])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12D9B1A6
+        for <linux-fsdevel@vger.kernel.org>; Sun, 24 Sep 2023 20:58:27 -0700 (PDT)
+Received: by mail-qk1-x729.google.com with SMTP id af79cd13be357-7742be66bd3so135378985a.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 24 Sep 2023 20:58:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1695614300; x=1696219100; darn=vger.kernel.org;
+        d=bytedance.com; s=google; t=1695614307; x=1696219107; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hww7oOWxGKb7qmsb0mmM2P/enCFKvkDkB3bMeqs1n3g=;
-        b=RRArD+lq7BAqvn+uNyaKKRU/d7BtdrC2ePuy6kCotmdPQirRoJkgG7oR+E9Y3wf2J/
-         oRPJK3BsKoN6SBn/k45+yWcoqfLgeM9NU906qIli0i5PvUp4pdzWjG7Gv5cSXLoKpGa+
-         UxOYVavUcrag2xB434jAOsZz/js39Xk/6dBWE0SkBylMjMsAYChYR8XbZEdxCG56MXn4
-         1+Ne3+C6M10pZCMmDdK5NMIizrHXkAMICm7EJjfMmTjci4vUVRRic9nasg1MKIin7hK4
-         N/GngCG870M5cItWkLwyuB3yFcowXnr0+evOV3w0Q4sJd9NWfGfqDF0tiuxsnUyGDQdd
-         B0Pw==
+        bh=D4LS/TFttl0uhdXEX5m8lwn2u6CezP5DBiTdl/qFdZ8=;
+        b=RbkY5du3e8f5L6fTOBHDl/rIqGkpPP2l8STPrbSNtDdnszFsq7XS55GmpE6aCoMb4m
+         /PAe0Jbt3rNynoYGefUf2h19aaaZTUJwD/YIna/14Z9XrI7Nnl7sBv8jFqwEUYcHpxZJ
+         7Ffg+9ZR/0bvoJ0/5Pqq1tmQVH2kpkSoO6pAMcTq7v/ih+UDoCbCXwaaTgapd2YWd7o/
+         poPLVdgDxazK6cCWC5Lvwu2hgFJBw7t8K887WboLqR7GHztnXMvodHaOTTy4RgrLKfyc
+         p23QohmyTgDEMuGOrl/OV5CZIEcwLBH26RguVZ378W7KUuMpiPb1XNJMhW3AGFu0DVKf
+         vcAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695614300; x=1696219100;
+        d=1e100.net; s=20230601; t=1695614307; x=1696219107;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hww7oOWxGKb7qmsb0mmM2P/enCFKvkDkB3bMeqs1n3g=;
-        b=tY64/ON2vsN4sksIG8/NzhafGbbocWwMosyUt9UyY5Vab7JSQGTfDYOtGNQ0FMgg/o
-         0Je5L6eDZljsRqhnKMG1+LUYxdxt6xXNV2rUUEEIBBjyPyZHeSRZUTFLegm5bA9tMi3d
-         xwAsFn7YVWQ2GKYTRhRA5/UqRT7TVmL4krfzdnU0vvX1+NPTtWhA2c8oXnoo4xPBP/o/
-         EJP2iCpwPk8eF4KaTX5gx+/lIeHz8BE2/IX3bv4KKC3DJR15cZDvUo4CMnkapMDJr0p/
-         YxCl1f1DCvGBMkDIVNePADFvVWtsb8DiL5gZLtgofldiBYDgIULfNmGSE1NMblH/RRz5
-         Wd0Q==
-X-Gm-Message-State: AOJu0YykBBgNCUId1Tm2wOX1nfSH/D9y8DtK0QZVEsp2vKc8hkLYS4+y
-        li/7W9TvZk6VLDMR9uUnPhqhcw==
-X-Google-Smtp-Source: AGHT+IF83HXgYz6hKs16v3Oy5RBkvjlke2ZYjx8DNaVcWabWxUJCzfLznLiorxxWRtU2DFZTy6RRoQ==
-X-Received: by 2002:a05:620a:1987:b0:774:2c35:3796 with SMTP id bm7-20020a05620a198700b007742c353796mr3484182qkb.34.1695614300078;
-        Sun, 24 Sep 2023 20:58:20 -0700 (PDT)
+        bh=D4LS/TFttl0uhdXEX5m8lwn2u6CezP5DBiTdl/qFdZ8=;
+        b=o2dDFRi961TKfl4YSZjn5M/mSFVp8E/bwtjMpyznPO7fW9fKOSIv74G6WfvOGYVMs1
+         LVPp6zXgwa+BPBpX2HPpETcNLMmcgH2rAhvbwUgag1lyTS0mIyAup+J2eXy2HGB4kATK
+         FXJnvw5BWuL7grRQIJ3qXGVAIKjhs7sT+T2R/gTbnP/GuHOnbJktmlVE77gVyI4md5wP
+         /VmFNVhMQrOGOx1PdJ6X8FlHljqzUw12swpVrTUEx/n6B09wnEZYCo90MnQnFtavY1aZ
+         /cXXeoOOzKHGtK5opbDfTZ/BF6xrsIzlfGWwg8BtJ8tzJKk6IKPsInk7o0P4nnxE5gq1
+         x4nw==
+X-Gm-Message-State: AOJu0YxdiPIKbmQ08iP8Ugz4tnYzw67hDNuiDMjiL7HWCV63LK2r3Sqc
+        puVf7LkFGMcuB0fm5WS+BmcQWg==
+X-Google-Smtp-Source: AGHT+IFyPjYxuSfNgvsS9Z7GkNZ6srfa0PNzA2kN76VBzGnCz9+3nPN5C/SDQMLJt6pMfLPc2iPj9w==
+X-Received: by 2002:a0c:ab82:0:b0:64f:8994:792d with SMTP id j2-20020a0cab82000000b0064f8994792dmr4730466qvb.38.1695614307072;
+        Sun, 24 Sep 2023 20:58:27 -0700 (PDT)
 Received: from GL4FX4PXWL.bytedance.net ([203.208.167.146])
-        by smtp.gmail.com with ESMTPSA id fm1-20020a056a002f8100b00679a4b56e41sm7025387pfb.43.2023.09.24.20.58.13
+        by smtp.gmail.com with ESMTPSA id fm1-20020a056a002f8100b00679a4b56e41sm7025387pfb.43.2023.09.24.20.58.20
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sun, 24 Sep 2023 20:58:19 -0700 (PDT)
+        Sun, 24 Sep 2023 20:58:26 -0700 (PDT)
 From:   Peng Zhang <zhangpeng.00@bytedance.com>
 To:     Liam.Howlett@oracle.com, corbet@lwn.net, akpm@linux-foundation.org,
         willy@infradead.org, brauner@kernel.org, surenb@google.com,
@@ -59,9 +59,9 @@ To:     Liam.Howlett@oracle.com, corbet@lwn.net, akpm@linux-foundation.org,
 Cc:     zhangpeng.00@bytedance.com, maple-tree@lists.infradead.org,
         linux-mm@kvack.org, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v3 5/9] maple_tree: Update the documentation of maple tree
-Date:   Mon, 25 Sep 2023 11:56:13 +0800
-Message-Id: <20230925035617.84767-6-zhangpeng.00@bytedance.com>
+Subject: [PATCH v3 6/9] maple_tree: Skip other tests when BENCH is enabled
+Date:   Mon, 25 Sep 2023 11:56:14 +0800
+Message-Id: <20230925035617.84767-7-zhangpeng.00@bytedance.com>
 X-Mailer: git-send-email 2.37.0 (Apple Git-136)
 In-Reply-To: <20230925035617.84767-1-zhangpeng.00@bytedance.com>
 References: <20230925035617.84767-1-zhangpeng.00@bytedance.com>
@@ -77,35 +77,55 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Introduce the new interface mtree_dup() in the documentation.
+Skip other tests when BENCH is enabled so that performance can be
+measured in user space.
 
 Signed-off-by: Peng Zhang <zhangpeng.00@bytedance.com>
 ---
- Documentation/core-api/maple_tree.rst | 4 ++++
- 1 file changed, 4 insertions(+)
+ lib/test_maple_tree.c            | 8 ++++----
+ tools/testing/radix-tree/maple.c | 2 ++
+ 2 files changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/core-api/maple_tree.rst b/Documentation/core-api/maple_tree.rst
-index 45defcf15da7..3d8a1edf6d04 100644
---- a/Documentation/core-api/maple_tree.rst
-+++ b/Documentation/core-api/maple_tree.rst
-@@ -81,6 +81,9 @@ section.
- Sometimes it is necessary to ensure the next call to store to a maple tree does
- not allocate memory, please see :ref:`maple-tree-advanced-api` for this use case.
+diff --git a/lib/test_maple_tree.c b/lib/test_maple_tree.c
+index 0674aebd4423..0ec0c6a7c0b5 100644
+--- a/lib/test_maple_tree.c
++++ b/lib/test_maple_tree.c
+@@ -3514,10 +3514,6 @@ static int __init maple_tree_seed(void)
  
-+You can use mtree_dup() to duplicate an identical tree. It is a more efficient
-+way than inserting all elements one by one into a new tree.
+ 	pr_info("\nTEST STARTING\n\n");
+ 
+-	mt_init_flags(&tree, MT_FLAGS_ALLOC_RANGE);
+-	check_root_expand(&tree);
+-	mtree_destroy(&tree);
+-
+ #if defined(BENCH_SLOT_STORE)
+ #define BENCH
+ 	mt_init_flags(&tree, MT_FLAGS_ALLOC_RANGE);
+@@ -3575,6 +3571,10 @@ static int __init maple_tree_seed(void)
+ 	goto skip;
+ #endif
+ 
++	mt_init_flags(&tree, MT_FLAGS_ALLOC_RANGE);
++	check_root_expand(&tree);
++	mtree_destroy(&tree);
 +
- Finally, you can remove all entries from a maple tree by calling
- mtree_destroy().  If the maple tree entries are pointers, you may wish to free
- the entries first.
-@@ -112,6 +115,7 @@ Takes ma_lock internally:
-  * mtree_insert()
-  * mtree_insert_range()
-  * mtree_erase()
-+ * mtree_dup()
-  * mtree_destroy()
-  * mt_set_in_rcu()
-  * mt_clear_in_rcu()
+ 	mt_init_flags(&tree, MT_FLAGS_ALLOC_RANGE);
+ 	check_iteration(&tree);
+ 	mtree_destroy(&tree);
+diff --git a/tools/testing/radix-tree/maple.c b/tools/testing/radix-tree/maple.c
+index 12b3390e9591..cb5358674521 100644
+--- a/tools/testing/radix-tree/maple.c
++++ b/tools/testing/radix-tree/maple.c
+@@ -36299,7 +36299,9 @@ void farmer_tests(void)
+ 
+ void maple_tree_tests(void)
+ {
++#if !defined(BENCH)
+ 	farmer_tests();
++#endif
+ 	maple_tree_seed();
+ 	maple_tree_harvest();
+ }
 -- 
 2.20.1
 
