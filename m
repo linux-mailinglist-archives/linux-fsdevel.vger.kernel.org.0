@@ -2,79 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F21F7AD8B1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Sep 2023 15:14:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4AFA7AD8E5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Sep 2023 15:19:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231286AbjIYNOp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Sep 2023 09:14:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54312 "EHLO
+        id S231921AbjIYNTy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Sep 2023 09:19:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231239AbjIYNOl (ORCPT
+        with ESMTP id S231866AbjIYNTu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Sep 2023 09:14:41 -0400
+        Mon, 25 Sep 2023 09:19:50 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AE4983;
-        Mon, 25 Sep 2023 06:14:34 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D99AC433C7;
-        Mon, 25 Sep 2023 13:14:31 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC1FE11C;
+        Mon, 25 Sep 2023 06:19:43 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65261C433C7;
+        Mon, 25 Sep 2023 13:19:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695647674;
-        bh=BQ4g/Wj+xZ88lUHX2e0MEdWfVFrj8gWigGSQws/C+OE=;
+        s=k20201202; t=1695647983;
+        bh=CCnXyAa5V1opIq3w3OiqafqD5crTWv3Njt2VF/kjYrs=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=iq0IBIuacuNvbGcGb9Ti0CcEvr6Sp0QYbEStx/bZp4GhzR5lIwfu7/m0Vtmu1kmtW
-         TTVFo8Hq2EWgLpdbbwDFahZIQ8spoHhbXpPtfedcTP1qWsrmB6YQSKQsGemDxYzHI9
-         aZq7HgQTKnlOiLT4TE0iKWHSjb4DgssAEowLF212RDgO8jhD3U/1OZPjNfVZ2DSgai
-         1N6V2LVFVArDnOL1BAOBsIwZCmrDbdrxYfI7JG1FKjLRFwondlKvRVklhGw48oZ8wN
-         eQVtV8dnYI21hoHd+nOzXhREe/LIyJ2xOdbvdASLEZP6xJQLOE7Ule7iO8JVspq58X
-         W4OZ7tpdr+YwA==
-Date:   Mon, 25 Sep 2023 15:14:29 +0200
+        b=BANIzKPThzrbQAulyOg+n54/jIo/nRI6hwrm+os07aws5fR4ck18YXpvBxAFtbO71
+         uVIGjmtxGATa06ZzC+R2ia6zuEKCZ4ERIGj+ansk2PRVRnLK09vVDiMgJPrxhubJr9
+         hdtgM/JFzYuUY12VO9cpL/gucdVLHIir8mIgLHGRNmSEISAgzMHTMNSLiovFlK8zJ2
+         YOR93/Sw/b2s6xoMvmZBpvXEH7Maxw8r2YPu7Zr3uuN5ycobxkLzJhrF5vf3p9Cv0W
+         RJCYzOJ3LGAe7DNXTsjtyHMCXBgCJ/Fl3hh8shiJA/dNicIFyx4MeKPm9v3WjWx9n8
+         x+/cS8BDY7lnQ==
+Date:   Mon, 25 Sep 2023 15:19:37 +0200
 From:   Christian Brauner <brauner@kernel.org>
-To:     syzbot <syzbot+2751da923b5eb8307b0b@syzkaller.appspotmail.com>
-Cc:     anton@tuxera.com, linkinjeon@kernel.org,
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Miklos Szeredi <mszeredi@redhat.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-ntfs-dev@lists.sourceforge.net, linux@roeck-us.net,
-        phil@philpotter.co.uk, syzkaller-bugs@googlegroups.com,
-        torvalds@linux-foundation.org
-Subject: Re: [syzbot] [ntfs?] KASAN: use-after-free Read in ntfs_test_inode
-Message-ID: <20230925-mitangeklagt-kranz-992ed028ecdf@brauner>
-References: <000000000000b782b505c2847180@google.com>
- <000000000000a27dcc060624b16e@google.com>
+        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
+        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
+        Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>
+Subject: Re: [RFC PATCH 2/3] add statmnt(2) syscall
+Message-ID: <20230925-wahlrecht-zuber-3cdc5a83d345@brauner>
+References: <20230913152238.905247-1-mszeredi@redhat.com>
+ <20230913152238.905247-3-mszeredi@redhat.com>
+ <44631c05-6b8a-42dc-b37e-df6776baa5d4@app.fastmail.com>
+ <20230925-total-debatten-2a1f839fde5a@brauner>
+ <CAJfpegvUCoKebYS=_3eZtCH49nObotuWc=_khFcHshKjRG8h6Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <000000000000a27dcc060624b16e@google.com>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+In-Reply-To: <CAJfpegvUCoKebYS=_3eZtCH49nObotuWc=_khFcHshKjRG8h6Q@mail.gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-        version=3.4.6
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Sep 24, 2023 at 06:15:29PM -0700, syzbot wrote:
-> syzbot has bisected this issue to:
-> 
-> commit 78a06688a4d40d9bb6138e2b9ad3353d7bf0157a
-> Author: Christian Brauner <brauner@kernel.org>
-> Date:   Thu Sep 7 16:03:40 2023 +0000
-> 
->     ntfs3: drop inode references in ntfs_put_super()
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1674a5c1680000
-> start commit:   3aba70aed91f Merge tag 'gpio-fixes-for-v6.6-rc3' of git://..
-> git tree:       upstream
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=1574a5c1680000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1174a5c1680000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=e4ca82a1bedd37e4
-> dashboard link: https://syzkaller.appspot.com/bug?extid=2751da923b5eb8307b0b
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=136b4412680000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11aec0dc680000
-> 
-> Reported-by: syzbot+2751da923b5eb8307b0b@syzkaller.appspotmail.com
-> Fixes: 78a06688a4d4 ("ntfs3: drop inode references in ntfs_put_super()")
-> 
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> How about passing u64 *?
 
-#syz test: https://gitlab.com/brauner/linux.git 493c71926c20309226b6d73f6b661a9813de5f0b
+struct statmnt_req {
+        __u64 mnt_id;
+	__u64 mask;
+};
+
+?
