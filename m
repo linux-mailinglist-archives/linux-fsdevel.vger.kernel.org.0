@@ -2,93 +2,177 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DB027AD4D8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Sep 2023 11:51:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 063BD7AD562
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Sep 2023 12:09:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229674AbjIYJvv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Sep 2023 05:51:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53424 "EHLO
+        id S231239AbjIYKJD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Sep 2023 06:09:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57886 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229579AbjIYJvr (ORCPT
+        with ESMTP id S231367AbjIYKIs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Sep 2023 05:51:47 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4E0DE3;
-        Mon, 25 Sep 2023 02:51:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-        Content-ID:Content-Description:In-Reply-To:References;
-        bh=6TWSZCgmP5RpqZAP6eKztGmF1/PqQHitW8swe9guwZg=; b=pM5US9jQFrvi/zNxF+8t4ssgaM
-        qKZNgpnrgHwmHxic3ZWGdtxFb9E4PkM7yi48JnnRw7RrJJjUDynO0/t7pD5PtpZiyT4i11ygJBi0o
-        kmXc3/7v/6+DC8Xbo8vb4w51awZ6vQa70KEGxr6HtNafBKVywVdsbEKMduJFC3tpDRnFCOTmZti1N
-        eR+eQJUtL3T2CLw2CpfSWL+jYaemWv11sd9ZGg+vTEyRiy45Wgw8gxAsGSXZ7WgoRUafUUv7NR2Jj
-        Yes3QztZ/zC7VY3R7LRoBcDIVGV2267cHEirN8IO0mAYxfxIxIYXgzC5t9bQczdj0PJbVKvBcNBD1
-        3HDpv15w==;
-Received: from [2001:4bb8:180:ac72:5d00:ec60:acf5:548c] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1qkiFf-00DtI5-0C;
-        Mon, 25 Sep 2023 09:51:39 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     djwong@kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        brauner@kernel.org,
-        syzbot+1fa947e7f09e136925b8@syzkaller.appspotmail.com
-Subject: [PATCH] iomap: add a workaround for racy i_size updates on block devices
-Date:   Mon, 25 Sep 2023 11:51:33 +0200
-Message-Id: <20230925095133.311224-1-hch@lst.de>
-X-Mailer: git-send-email 2.39.2
+        Mon, 25 Sep 2023 06:08:48 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B001610D2;
+        Mon, 25 Sep 2023 03:08:30 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6DA1C433C7;
+        Mon, 25 Sep 2023 10:08:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695636510;
+        bh=kxFWm43ha+iaMtKtdh9+7qL4ORfLUkSkxjSaqF2iXTY=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=XRMieSHePX0qiMEQ+iiyuoyWKuHG9sbzQvoCJyJCudiqnD7IygDQr6JeqptkMUmwJ
+         pidxSPVgZQs78KC0SatMWiRydCaSEXuGgBkNmryFSAf9zuSZ9Wi99ESAGz7a5dC+dj
+         u6iYA+jxph+GT/H0GALbdb6IBjsYj/tpGYy46P0O9wT3GXRmA/UbHbjdJe+D7UjAr9
+         yizphXtHsVb/WcwZJI47tLy/wm89V/bkx+CodQmkZa8QemVjirDBZsg7BwmOnATro5
+         urz+iNfVtp3DtWmOUUfr2ND3Nj1TiJkHEHb2oGSNR/mJptjdFnAiFOMJEMj0Z6zaDJ
+         XyjoY5W9VnYxw==
+Message-ID: <fca8b636ba66f9a4c3eccb41af7bd95801799292.camel@kernel.org>
+Subject: Re: [PATCH v8 0/5] fs: multigrain timestamps for XFS's change_cookie
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Neil Brown <neilb@suse.de>,
+        Olga Kornievskaia <kolga@netapp.com>,
+        Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
+        Chandan Babu R <chandan.babu@oracle.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Kent Overstreet <kent.overstreet@linux.dev>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org
+Date:   Mon, 25 Sep 2023 06:08:27 -0400
+In-Reply-To: <CAOQ4uxjfbq=u3PYi_+ZiiAjub92o0-KeNT__ZRKSmRogLtF75Q@mail.gmail.com>
+References: <20230922-ctime-v8-0-45f0c236ede1@kernel.org>
+         <CAOQ4uxiNfPoPiX0AERywqjaBH30MHQPxaZepnKeyEjJgTv8hYg@mail.gmail.com>
+         <4b106847d5202aec0e14fdbbe93b070b7ea97477.camel@kernel.org>
+         <CAOQ4uxjfbq=u3PYi_+ZiiAjub92o0-KeNT__ZRKSmRogLtF75Q@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-A szybot reproducer that does write I/O while truncating the size of a
-block device can end up in clean_bdev_aliases, which tries to clean the
-bdev aliases that it uses.  This is because iomap_to_bh automatically
-sets the BH_New flag when outside of i_size.  For block devices updates
-to i_size are racy and we can hit this case in a tiny race window,
-leading to the eventual clean_bdev_aliases call.  Fix this by erroring
-out of > i_size I/O on block devices.
+On Sat, 2023-09-23 at 17:58 +0300, Amir Goldstein wrote:
+> On Sat, Sep 23, 2023 at 1:22=E2=80=AFPM Jeff Layton <jlayton@kernel.org> =
+wrote:
+> >=20
+> > On Sat, 2023-09-23 at 10:15 +0300, Amir Goldstein wrote:
+> > > On Fri, Sep 22, 2023 at 8:15=E2=80=AFPM Jeff Layton <jlayton@kernel.o=
+rg> wrote:
+> > > >=20
+> > > > My initial goal was to implement multigrain timestamps on most majo=
+r
+> > > > filesystems, so we could present them to userland, and use them for
+> > > > NFSv3, etc.
+> > > >=20
+> > > > With the current implementation however, we can't guarantee that a =
+file
+> > > > with a coarse grained timestamp modified after one with a fine grai=
+ned
+> > > > timestamp will always appear to have a later value. This could conf=
+use
+> > > > some programs like make, rsync, find, etc. that depend on strict
+> > > > ordering requirements for timestamps.
+> > > >=20
+> > > > The goal of this version is more modest: fix XFS' change attribute.
+> > > > XFS's change attribute is bumped on atime updates in addition to ot=
+her
+> > > > deliberate changes. This makes it unsuitable for export via nfsd.
+> > > >=20
+> > > > Jan Kara suggested keeping this functionality internal-only for now=
+ and
+> > > > plumbing the fine grained timestamps through getattr [1]. This set =
+takes
+> > > > a slightly different approach and has XFS use the fine-grained attr=
+ to
+> > > > fake up STATX_CHANGE_COOKIE in its getattr routine itself.
+> > > >=20
+> > > > While we keep fine-grained timestamps in struct inode, when present=
+ing
+> > > > the timestamps via getattr, we truncate them at a granularity of nu=
+mber
+> > > > of ns per jiffy,
+> > >=20
+> > > That's not good, because user explicitly set granular mtime would be
+> > > truncated too and booting with different kernels (HZ) would change
+> > > the observed timestamps of files.
+> > >=20
+> >=20
+> > That's a very good point.
+> >=20
+> > > > which allows us to smooth over the fuzz that causes
+> > > > ordering problems.
+> > > >=20
+> > >=20
+> > > The reported ordering problems (i.e. cp -u) is not even limited to th=
+e
+> > > scope of a single fs, right?
+> > >=20
+> >=20
+> > It isn't. Most of the tools we're concerned with don't generally care
+> > about filesystem boundaries.
+> >=20
+> > > Thinking out loud - if the QERIED bit was not per inode timestamp
+> > > but instead in a global fs_multigrain_ts variable, then all the inode=
+s
+> > > of all the mgtime fs would be using globally ordered timestamps
+> > >=20
+> > > That should eliminate the reported issues with time reorder for
+> > > fine vs coarse grained timestamps.
+> > >=20
+> > > The risk of extra unneeded "change cookie" updates compared to
+> > > per inode QUERIED bit may exist, but I think it is a rather small ove=
+rhead
+> > > and maybe worth the tradeoff of having to maintain a real per inode
+> > > "change cookie" in addition to a "globally ordered mgtime"?
+> > >=20
+> > > If this idea is acceptable, you may still be able to salvage the reve=
+rted
+> > > ctime series for 6.7, because the change to use global mgtime should
+> > > be quite trivial?
+> > >=20
+> >=20
+> > This is basically the idea I was going to look at next once I got some
+> > other stuff settled here: Basically, when we apply a fine-grained
+> > timestamp to an inode, we'd advance the coarse-grained clock that
+> > filesystems use to that value.
+> >=20
+> > It could cause some write amplification: if you are streaming writes to
+> > a bunch of files at the same time and someone stats one of them, then
+> > they'd all end up getting an extra inode transaction. That doesn't soun=
+d
+> > _too_ bad on its face, but I probably need to implement it and then run
+> > some numbers to see.
+> >=20
+>=20
+> Several journal transactions within a single jiffie tick?
+> If ctime/change_cookie of an inode is updated once within the scope
+> of a single running transaction, I don't think it matters how many
+> times it would be updated, but maybe I am missing something.
+>=20
+> The problem is probably going to be that the seqlock of the coarse
+> grained clock is going to be invalidated way too frequently to be
+> "read mostly" in the presence of ls -lR workload, but again, I did
+> not study the implementation, so I may be way off.
+>=20
 
-Reported-by: syzbot+1fa947e7f09e136925b8@syzkaller.appspotmail.com
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Tested-by: syzbot+1fa947e7f09e136925b8@syzkaller.appspotmail.com
----
- fs/buffer.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+That may end up being the case, but I think if we can minimize the
+number of fine-grained updates, then the number of invalidations will be
+minimal too. I haven't rolled an implementation of this yet. This is all
+very much still in the "waving of hands" stage anyway.
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index a6785cd07081cb..12e9a71c693d74 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -2058,8 +2058,17 @@ iomap_to_bh(struct inode *inode, sector_t block, struct buffer_head *bh,
- 		fallthrough;
- 	case IOMAP_MAPPED:
- 		if ((iomap->flags & IOMAP_F_NEW) ||
--		    offset >= i_size_read(inode))
-+		    offset >= i_size_read(inode)) {
-+			/*
-+			 * This can happen if truncating the block device races
-+			 * with the check in the caller as i_size updates on
-+			 * block devices aren't synchronized by i_rwsem for
-+			 * block devices.
-+			 */
-+			if (S_ISBLK(inode->i_mode))
-+				return -EIO;
- 			set_buffer_new(bh);
-+		}
- 		bh->b_blocknr = (iomap->addr + offset - iomap->offset) >>
- 				inode->i_blkbits;
- 		set_buffer_mapped(bh);
--- 
-2.39.2
-
+Once the dust settles from the atime and mtime API rework, I may still
+take a stab at doing this.
+--=20
+Jeff Layton <jlayton@kernel.org>
