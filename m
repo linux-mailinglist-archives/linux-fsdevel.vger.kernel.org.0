@@ -2,115 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FC487ADB67
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Sep 2023 17:28:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28A7E7ADC2B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Sep 2023 17:47:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232821AbjIYP2N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Sep 2023 11:28:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38814 "EHLO
+        id S232874AbjIYPrt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Sep 2023 11:47:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232792AbjIYP2K (ORCPT
+        with ESMTP id S232721AbjIYPrc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Sep 2023 11:28:10 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E43359C
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Sep 2023 08:27:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1695655639;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=wckYes9tuj8TsYij0Z4ld4U0TeFfOFKN2Inn7boKvjk=;
-        b=YGqbf7toUfv06CYz6j+kRJNTtBipewvQjYJrDADTVysWFSkT7eaXed+PfSiepsBFKSzceG
-        cA1TwR3Cd7VtLvS9HOxAhNf+DRB3Ti3p7PMo2lN1GRpjE/T2XtB1t9vDwhVfgfDNGAyWTP
-        EuL52gC1SdKxH3BjhJHfJxQtZ28RX1Q=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-590-3dolQNNoOF6Lv99TLLvuxw-1; Mon, 25 Sep 2023 11:27:15 -0400
-X-MC-Unique: 3dolQNNoOF6Lv99TLLvuxw-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4052d1b19f8so58614935e9.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Sep 2023 08:27:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695655634; x=1696260434;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wckYes9tuj8TsYij0Z4ld4U0TeFfOFKN2Inn7boKvjk=;
-        b=pA8p8jJ4oFWih4kPpq2to+UJlJqBaFTqgnOWXDGoxFLNscMU3R4YcRJM0F3ZfSrxN4
-         w9feKr52gXTPpH+e6V9m2aXEjCeDRIBOJuyN1yihrSOe1UK/otIPPNCrpP6WIsEitFqn
-         VM37JyuNslhzpkivp14JY53UrQ/KFvML9mi/cmM6OKCgzi1lmf5ula6tbw9FpKhQexpA
-         G6Bs/j8uFyUszLCE8uQmc7KbTiRdd1+N5e0r3IdHHHIWO5vSQZanXCdVNK366h8NLNqh
-         AQYXPmXlyS4nJYzE7bp0cGY7jLfLWtDXCQOAsYk+MHa1BLTG72Nfctb2JuyzVndALqVo
-         hglQ==
-X-Gm-Message-State: AOJu0YxO86Zw/7o6AIexH+O7d6ZVKeae5qYKsV4/T4B7MsJ6pcCgjyrI
-        5J6wpuE3OUnDqE20z7J019rtcg7y4slQ93QNHkHFfFoBrLhdAL2IVePACwqfnmpfYn9XW/zzYFJ
-        09vBz3r4XRYxzPGBISFVkt9sAKw==
-X-Received: by 2002:a7b:cbd1:0:b0:405:36e3:e863 with SMTP id n17-20020a7bcbd1000000b0040536e3e863mr6718233wmi.8.1695655634470;
-        Mon, 25 Sep 2023 08:27:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEnUGDIoj3/uAJn5Af95qg7TvdfuoTHpeIxNzT9laP9ft2YNgz4K0T93YKo0VDl+RqviGHKHA==
-X-Received: by 2002:a7b:cbd1:0:b0:405:36e3:e863 with SMTP id n17-20020a7bcbd1000000b0040536e3e863mr6718216wmi.8.1695655634131;
-        Mon, 25 Sep 2023 08:27:14 -0700 (PDT)
-Received: from rh (p200300c93f1ec600a890fb4d684902d4.dip0.t-ipconnect.de. [2003:c9:3f1e:c600:a890:fb4d:6849:2d4])
-        by smtp.gmail.com with ESMTPSA id v21-20020a7bcb55000000b00404719b05b5sm12555738wmj.27.2023.09.25.08.27.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Sep 2023 08:27:13 -0700 (PDT)
-Date:   Mon, 25 Sep 2023 17:27:12 +0200 (CEST)
-From:   Sebastian Ott <sebott@redhat.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-cc:     =?ISO-8859-15?Q?Thomas_Wei=DFschuh?= <linux@weissschuh.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Mark Brown <broonie@kernel.org>, Willy Tarreau <w@1wt.eu>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] binfmt_elf: Support segments with 0 filesz and misaligned
- starts
-In-Reply-To: <87jzsemmsd.fsf_-_@email.froward.int.ebiederm.org>
-Message-ID: <84e974d3-ae0d-9eb5-49b2-3348b7dcd336@redhat.com>
-References: <20230914-bss-alloc-v1-1-78de67d2c6dd@weissschuh.net> <36e93c8e-4384-b269-be78-479ccc7817b1@redhat.com> <87zg1bm5xo.fsf@email.froward.int.ebiederm.org> <37d3392c-cf33-20a6-b5c9-8b3fb8142658@redhat.com>
- <87jzsemmsd.fsf_-_@email.froward.int.ebiederm.org>
+        Mon, 25 Sep 2023 11:47:32 -0400
+Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 131E91A7;
+        Mon, 25 Sep 2023 08:47:21 -0700 (PDT)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailout.nyi.internal (Postfix) with ESMTP id 750045C1F9F;
+        Mon, 25 Sep 2023 11:47:20 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute6.internal (MEProxy); Mon, 25 Sep 2023 11:47:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+        :cc:content-type:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm1; t=1695656840; x=1695743240; bh=+v
+        KhvI/Ayw8ZF2UMd/3KHjztbHQPAFx3voTEU49nlf4=; b=WkfjzfyYFriipTXDab
+        kMvNOuVMtPiVAVxp5nPRHIiz3sc424JdoohsczIhiRYO5u8KboaEnDTSxZCHqqr3
+        1YbKC3t5TdnBCovjgaRL553v4McpdnCsdq6sa34kS/dIYlEPhRyOgDKXKFW1Zxnu
+        WRI5VM41w83BSEFH4JCsDQbCfD5LqeE9ydf4nAbaehkz79Fgh7x3C2KML72OMuuV
+        JIbtidNR6OmswPAoiFlie2nyo5g/U4Wb7ZRYTx2rx/n5ohbFSO3d15X3wD+QpmrJ
+        PWcFqM0I264rUBA4fLGicgMyiRDCCoz7+Mwa1RKvsnqyKArBJ1lFPpe+S/7y8+dv
+        ReOw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; t=1695656840; x=1695743240; bh=+vKhvI/Ayw8ZF
+        2UMd/3KHjztbHQPAFx3voTEU49nlf4=; b=qhW3cYQzCW1SmMCDtbbaOAlLC8MLF
+        uRpPar5Pu7DFJzrZsNsD2GTnINJvmscfADFXTQvL/v9Kf9vv7tp2gmaMkZAq3f/H
+        QojF0lZ2MEjOxto+IGA/EqxAlogl2gaNie22+Ui6nTrd0Lw8PxhIAx1+rqkvv3u/
+        /MhFTeE8CXWcG6zunhRUJGNcCR72d8ru++yvF8gV2KEfBby2Z5LxrLBs1d+0+ttn
+        /xD3X8rx5t6UE8dlPxOaR5M5j8u6D8rIOAG1zFRkJvbInpMzoe1AnphDE4yTrDPL
+        SicNdoK7VPSGkillo4uyg77GuandCkLZaMz9twEh2AUfUu7WOtycfXe4Q==
+X-ME-Sender: <xms:h6sRZd7JelL0FGWIpCurmNpmDBV7yL3sUj2xm2eS2D-hqUMyIAVW3w>
+    <xme:h6sRZa6DQ1QsHVJKCHhqEqzJ23j6G15ltitzFpG9yeL98VoeGsoOvPGlU8p-AYOK0
+    asvEUCoq2bIu1kU2pQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrudelgedgledvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
+    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:h6sRZUe91cjMxwK0fX14VR2KnvHzScL0VG5VvLXnMaYRiVetzrUEZQ>
+    <xmx:h6sRZWLNZt-HSEc3gc8zdbLiRVUi6puW7dMZPnjUipnHI833MWl9Pg>
+    <xmx:h6sRZRJD5wkBjw2mr5X1HQZCfB6GUTYnpji-oNQ6ft6sZpiUIU6LYA>
+    <xmx:iKsRZbBbK3gU_S6YiUCjqDqmuYcB5C_8_NqaxbYi7RFwj4gqQjX64w>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 6F8A9B60089; Mon, 25 Sep 2023 11:47:19 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.9.0-alpha0-957-ga1ccdb4cff-fm-20230919.001-ga1ccdb4c
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="-1463795790-784343621-1695655633=:4500"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Message-Id: <15fb406a-0f12-4708-abe7-91a464fecbc2@app.fastmail.com>
+In-Reply-To: <CAJfpegvAVJUhgKZH2Dqo1s1xyT3nSopUg6J+8pEFYOnFDssH8g@mail.gmail.com>
+References: <20230913152238.905247-1-mszeredi@redhat.com>
+ <20230913152238.905247-3-mszeredi@redhat.com>
+ <44631c05-6b8a-42dc-b37e-df6776baa5d4@app.fastmail.com>
+ <20230925-total-debatten-2a1f839fde5a@brauner>
+ <CAJfpegvUCoKebYS=_3eZtCH49nObotuWc=_khFcHshKjRG8h6Q@mail.gmail.com>
+ <20230925-wahlrecht-zuber-3cdc5a83d345@brauner>
+ <CAJfpegvAVJUhgKZH2Dqo1s1xyT3nSopUg6J+8pEFYOnFDssH8g@mail.gmail.com>
+Date:   Mon, 25 Sep 2023 17:46:59 +0200
+From:   "Arnd Bergmann" <arnd@arndb.de>
+To:     "Miklos Szeredi" <miklos@szeredi.hu>,
+        "Christian Brauner" <brauner@kernel.org>
+Cc:     "Miklos Szeredi" <mszeredi@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        "Karel Zak" <kzak@redhat.com>, "Ian Kent" <raven@themaw.net>,
+        "David Howells" <dhowells@redhat.com>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Alexander Viro" <viro@zeniv.linux.org.uk>,
+        "Christian Brauner" <christian@brauner.io>,
+        "Amir Goldstein" <amir73il@gmail.com>
+Subject: Re: [RFC PATCH 2/3] add statmnt(2) syscall
+Content-Type: text/plain
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
----1463795790-784343621-1695655633=:4500
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8BIT
-
-On Mon, 25 Sep 2023, Eric W. Biederman wrote:
+On Mon, Sep 25, 2023, at 15:20, Miklos Szeredi wrote:
+> On Mon, 25 Sept 2023 at 15:19, Christian Brauner <brauner@kernel.org> wrote:
+>>
+>> > How about passing u64 *?
+>>
+>> struct statmnt_req {
+>>         __u64 mnt_id;
+>>         __u64 mask;
+>> };
+>>
+>> ?
 >
-> Implement a helper elf_load that wraps elf_map and performs all
-> of the necessary work to ensure that when "memsz > filesz"
-> the bytes described by "memsz > filesz" are zeroed.
->
-> Link: https://lkml.kernel.org/r/20230914-bss-alloc-v1-1-78de67d2c6dd@weissschuh.net
-> Reported-by: Sebastian Ott <sebott@redhat.com>
-> Reported-by: Thomas Weißschuh <linux@weissschuh.net>
-> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-> ---
-> fs/binfmt_elf.c | 111 +++++++++++++++++++++---------------------------
-> 1 file changed, 48 insertions(+), 63 deletions(-)
->
-> Can you please test this one?
->
+> I'm fine with that as well.
 
-That one did the trick! The arm box booted successful, ran the binaries
-that were used for the repo of this issue, and ran the nolibc compiled
-binaries from kselftests that initially triggered the loader issues.
+Yes, this looks fine for the compat syscall purpose.
 
-Thanks,
-Sebastian
----1463795790-784343621-1695655633=:4500--
+Not sure if losing visibility of the mnt_id and mask in ptrace
+or seccomp/bpf is a problem though.
 
+    Arnd
