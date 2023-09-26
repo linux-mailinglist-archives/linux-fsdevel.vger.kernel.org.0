@@ -2,80 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 59A8F7AF6FC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Sep 2023 01:56:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 579617AF733
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Sep 2023 02:16:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229765AbjIZX4H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Sep 2023 19:56:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49516 "EHLO
+        id S229761AbjI0AQG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Sep 2023 20:16:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45872 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232568AbjIZXyE (ORCPT
+        with ESMTP id S232008AbjI0AOF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Sep 2023 19:54:04 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A887868B;
-        Tue, 26 Sep 2023 16:14:12 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B4D5C433CB;
-        Tue, 26 Sep 2023 23:14:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695770051;
-        bh=JA7dODnNnvpGsFsGHoncrEhUbP6FKju74UyWTimKiY8=;
-        h=Date:From:To:Cc:Subject:From;
-        b=XsBHY2R/I8RXUW9gBbC9SK8ThTVru8ESw0FKG8hUfczgVIMyAdVHgroKHWoSPFdMW
-         2iayz2dN6Gb/UBAcRCTkfzb/rSfogSR42VrS1FaTtQVzwWRgglcuzvCpYwCKPiBsoK
-         W56Vn6esNqEKggpSH3r3tiBiF6XyvQ1+0jTmQmP/GzljfeQeaD+n1sXy+0LokdH6z1
-         SfVWQoNaAAFYCQwDMnpxnILGDf5InK+lQfadLM/9/+qr2rJ/iOIp7Be8ZF2Y5nr6Zi
-         Dz2AmTxJTUJl07RecoVOyEYpfSLCv5hoOgXBMWakEyJUaSszw/U0zAI7xPGzi8y+V0
-         pbhl6VB0RgxDQ==
-Date:   Tue, 26 Sep 2023 16:14:10 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Dave Chinner <david@fromorbit.com>,
-        Chandan Babu R <chandanbabu@kernel.org>
-Cc:     xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Carlos Maiolino <cmaiolino@redhat.com>,
-        Catherine Hoang <catherine.hoang@oracle.com>
-Subject: [MEGAPATCHSET v27] xfs: online repair, second part of part 1
-Message-ID: <20230926231410.GF11439@frogsfrogsfrogs>
+        Tue, 26 Sep 2023 20:14:05 -0400
+Received: from mail-yb1-xb2f.google.com (mail-yb1-xb2f.google.com [IPv6:2607:f8b0:4864:20::b2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E833158AC
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Sep 2023 14:32:20 -0700 (PDT)
+Received: by mail-yb1-xb2f.google.com with SMTP id 3f1490d57ef6-d81dd7d76e0so11308007276.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Sep 2023 14:32:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1695763939; x=1696368739; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NY9jveINp5V5rlaBbscxlXmPxYesM9ges3+QHzPHTww=;
+        b=JevHIhiYqEti5uTChAjUeDs+BEKCL2g/TRyKpHJ/sKw/h9kJ+4HCHHueL9YgowiXeH
+         y+mmV6LB+UES6nnIE0g9mcDow3/ZHPCPRA5pmeJtKaqszxJpl0NT7ay2th4isuwERWRd
+         6ifB8qXrbjG6XHh86W6nYjbJ42MprekK2a0jDJyRYz6wdUkKZDcVRoJbS8W75zZJ/ol/
+         wjRxHQwuiELIsm0pgootgzP3h4C5nRtHxDOpGShBY4KEdcX1nWkWGPR50zOC0aZH70pv
+         bM2ZAeX1I+fDiPw6Kc3dDttcv550is1BDPyTfxuXeB+7xXzhCZYRvFSfU+WatkBxmaVl
+         Tq7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695763939; x=1696368739;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NY9jveINp5V5rlaBbscxlXmPxYesM9ges3+QHzPHTww=;
+        b=AIQF+QyTUh3CeQhtW958cDOiGoGZstd8fIOdIGwmhXmAu4dikIb4himhHpnKi7O0JD
+         gUaFZR1ED71SPs2shFjGT4ENz38irCPxmmwYtjePjtJ37YzTnK6x2QOG/M812bevIJ5h
+         DviPlUtKon6jPI1rGg4/qvd1jJhjyebckI7pVynPlcHUv5JTVsZUxy3o/Wvg0bO9u/9K
+         39cd/rQKixs3FXHPdv9qI579gaTe9a5efRM6o7xmVUWCBjeE7n7ber2xom7+3GMwzXD5
+         pdGvcTsoHl9321wm4Gje0S224W67gsgGzdGH4wwe2gaypJTb+80BNeZbtRKBsFopnmPX
+         s5eQ==
+X-Gm-Message-State: AOJu0YwxiJCdLYYa4afDEUovjY7A89huFK8SYboUxWZC1LkS7T4wqMtM
+        b5GwAeVRawLRifvJBx8FAIhheIWfDaPnUQGrdNN2
+X-Google-Smtp-Source: AGHT+IFCtQ0lRQAQtAczfLsb2sztHe5JKNKH8brd6I1PKgoiFWprOSxrLQWdFdj8Jz71vraPlw9N0n534XJeETDCyZI=
+X-Received: by 2002:a25:d308:0:b0:d85:e4c4:4778 with SMTP id
+ e8-20020a25d308000000b00d85e4c44778mr183132ybf.0.1695763939574; Tue, 26 Sep
+ 2023 14:32:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20230912212906.3975866-3-andrii@kernel.org> <3808036a0b32a17a7fd9e7d671b5458d.paul@paul-moore.com>
+ <CAEf4BzYiKhG3ZL-GGQ4fHzSu6RKx2fh2JHwcL9_XKzQBvx3Bjg@mail.gmail.com>
+ <CAHC9VhSOCAb6JQJn96xgwNNMGM0mKXf64ygkj4=Yv0FA8AYR=Q@mail.gmail.com>
+ <CAEf4BzZC+9GbCsG56B2Q=woq+RHQS8oMTGJSNiMFKZpOKHhKpg@mail.gmail.com>
+ <CAHC9VhTiqhQcfDr-7mThY1kH-Fwa7NUUU8ZWZvLFVudgtO8RAA@mail.gmail.com> <CAEf4BzZ8RvGwzVfm-EN1qdDiTv3Q2eYxBKOdBgGT96XzcvJCpw@mail.gmail.com>
+In-Reply-To: <CAEf4BzZ8RvGwzVfm-EN1qdDiTv3Q2eYxBKOdBgGT96XzcvJCpw@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 26 Sep 2023 17:32:08 -0400
+Message-ID: <CAHC9VhTLnT6HmkvJBXVCApHG4sCFdgXxJykPQ8oYLaVa8vXWkQ@mail.gmail.com>
+Subject: Re: [PATCH v4 2/12] bpf: introduce BPF token object
+To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keescook@chromium.org,
+        brauner@kernel.org, lennart@poettering.net, kernel-team@meta.com,
+        sargun@sargun.me, selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi everyone,
+On Fri, Sep 22, 2023 at 6:35=E2=80=AFPM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
+> No worries, lots of conferences are happening right now, so I expected
+> people to be unavailable.
 
-I've rebased the online fsck development branches atop 6.6, applied the
-changes requested during the review of v26, and reworked the automatic
-space reaping code to avoid open-coding EFI log item handling.
+Just a quick note to let you know that my network access is still
+limited, but I appreciate the understanding and the detail in your
+reply; I'll get you a proper response next week.
 
-In other words, I'm formally submitting part 1 for inclusion in 6.7.
-
-Just like the last review, I would like people to focus the following:
-
-- Are the major subsystems sufficiently documented that you could figure
-  out what the code does?
-
-- Do you see any problems that are severe enough to cause long term
-  support hassles? (e.g. bad API design, writing weird metadata to disk)
-
-- Can you spot mis-interactions between the subsystems?
-
-- What were my blind spots in devising this feature?
-
-- Are there missing pieces that you'd like to help build?
-
-- Can I just merge all of this?
-
-The one thing that is /not/ in scope for this review are requests for
-more refactoring of existing subsystems.  I'm still running QA round the
-clock.  To spare vger, I'm only sending ~38 patches in this batch.
-
---D
+--=20
+paul-moore.com
