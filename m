@@ -2,400 +2,248 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EE877AE721
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Sep 2023 09:51:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DA2C7AE7FC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Sep 2023 10:27:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232037AbjIZHvU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Sep 2023 03:51:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39308 "EHLO
+        id S233954AbjIZI1q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Sep 2023 04:27:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36034 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229556AbjIZHvT (ORCPT
+        with ESMTP id S232778AbjIZI1o (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Sep 2023 03:51:19 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B73092
-        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Sep 2023 00:50:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1695714629;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=z51xRhqUyQXWCjjVRiDRVuBOf40rCLed/28H3cdbhJo=;
-        b=hikJANnMLEJX5jAVzWLu4l4ydoQRDagUVtu2x2MCiclSqTrNqTiStwbD2HRpHOP9hj0nmT
-        8djz9C2QfiXoB+fhqFrGt8JC6OIiLxGrw7jjrRCNE/1VjSGo0oI/+CXhcdbzNKobhGNONq
-        iIvQACkQgJelw3DhN8ovqXIhAZnsa5s=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-383--IqSCv9EPHqQl8km_rFkJQ-1; Tue, 26 Sep 2023 03:50:28 -0400
-X-MC-Unique: -IqSCv9EPHqQl8km_rFkJQ-1
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-9a9e12a3093so353858166b.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Sep 2023 00:50:28 -0700 (PDT)
+        Tue, 26 Sep 2023 04:27:44 -0400
+Received: from mail-oa1-f78.google.com (mail-oa1-f78.google.com [209.85.160.78])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F208120
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Sep 2023 01:27:38 -0700 (PDT)
+Received: by mail-oa1-f78.google.com with SMTP id 586e51a60fabf-1bf2e81ce17so18307599fac.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Sep 2023 01:27:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695714625; x=1696319425;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=z51xRhqUyQXWCjjVRiDRVuBOf40rCLed/28H3cdbhJo=;
-        b=dE+K8pOBlKYvoq8T4LFHN+XKp8BVZlqvJsJ/6eOBW3EzxTxoJXpClC2d2v0kT5F22r
-         bQYrVDgEcevL7MXPnWOzLgCTnl8naBLNR93u/DGc/sZCtRWm/nPpdRhKJ1MknjCtNscY
-         istEHaAHRQP4wR930GrLPQUnVhHezYFwMqnedkihOfghos2C2BNOAv2gE4XS+kWmBY6I
-         JCRVE5XmJ+Giyjdz9vHK4PBcBSBSdXqI/yjM2T/brfsn/7MZaLonIhwlCzCOCFLD8yat
-         n1CWyHz+iqG/Hc/1IHiitYI4UAFPmXUoQPlSCmJ9z4e7u8gkTDdIQgc3KzWGvxkGidZy
-         17oA==
-X-Gm-Message-State: AOJu0YyUHkJsY24nKZSGkRXqRo6nuw5yMXRkvP2mtlknImYJq5SV1oXJ
-        2X+APxhwl7qqePV8qI+/JmI1Bln3Go+ukYL6QpaXd6puFajfUuVVk3yITYfAPeUmwzMl6xYx5Hy
-        pmrfg9/54PgnV2HepGcAFhE/yOxjlrZbt77G9lFWvqA==
-X-Received: by 2002:a17:907:d94:b0:9a5:b247:3ab with SMTP id go20-20020a1709070d9400b009a5b24703abmr2990461ejc.19.1695714625204;
-        Tue, 26 Sep 2023 00:50:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFN3P2SZ9eOI9CyO/RXhC6HZ9CmqPWZ+cF35mDJB1r17cBrRQERDFjp8fQP/+BLtqQCcny4ow1EmLcxqbPj+Ok=
-X-Received: by 2002:a17:907:d94:b0:9a5:b247:3ab with SMTP id
- go20-20020a1709070d9400b009a5b24703abmr2990436ejc.19.1695714624806; Tue, 26
- Sep 2023 00:50:24 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1695716857; x=1696321657;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=55XKxYhpepqWXUdY7SuK9vUe13bL5ShqPzIX2cS2KNs=;
+        b=SDlNFDf2AQ9X1WbSGgBjoh80zuHWVNjTE1zDk/Ev55dmDA2K1jgG9G2Os0VK4wrz5O
+         6KfDSA5fYS8D0R82ZuWDfGoB4ofgM6MBkcmtUzTxJxoTRMSyEO/4Sd2zAkja7GYT/jHb
+         El+YTceTBDELb+kBkfkg7YUQUGYAMM3p9kYPCd6EsQpg93g6S0Wgn0wAzg8iJGZz7HjT
+         1jo0am8LkLxMZ9QSg+K/SWgjOCwhA0K03h9KyoJFqvDpgs5th1L/KvUf4Ed4b4zcUDs1
+         pSy+1UMfXx712vfIG/taUZ43suw3xA7+k6XEc7fVlGmRySczdahz+PT9Srnh45ak99WY
+         9JkQ==
+X-Gm-Message-State: AOJu0YxmfpKq2WcB8MgD5USi0tlEC10Byl+cnitzJdhAiTOsQ7TmBiNX
+        taz0PeccMK1CXBnO/O4dTmP0uGQtmtmgEjrEdmPquLwKcVrg
+X-Google-Smtp-Source: AGHT+IHn/Dc/iL1JhzuZy+gkTzxi+2Gj1EIRYbTwKpYUVoI17DDiTdctf9ir0JVL7V+W6jSBeYgPBPEFyMn6IybRoiAg8pBmepr1
 MIME-Version: 1.0
-References: <CAJFLiB+J4mKGDOppp=1moMe2aNqeJhM9F2cD4KPTXoM6nzb5RA@mail.gmail.com>
- <ZRFbIJH47RkQuDid@debian.me> <20230925151236.GB11456@frogsfrogsfrogs>
-In-Reply-To: <20230925151236.GB11456@frogsfrogsfrogs>
-From:   Zhenyu Zhang <zhenyzha@redhat.com>
-Date:   Tue, 26 Sep 2023 15:49:47 +0800
-Message-ID: <CAJFLiBKQPOMmUPTAe-jHpPjLEx+X2ZNUKD20qXh4+0Ay+napDw@mail.gmail.com>
-Subject: Re: Endless calls to xas_split_alloc() due to corrupted xarray entry
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Bagas Sanjaya <bagasdotme@gmail.com>,
-        Linux XFS <linux-xfs@vger.kernel.org>,
-        Linux Filesystems Development <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Guowen Shan <gshan@redhat.com>,
-        Shaoqin Huang <shahuang@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Chandan Babu R <chandan.babu@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
+X-Received: by 2002:a05:6870:a88f:b0:1d6:92f5:c1d2 with SMTP id
+ eb15-20020a056870a88f00b001d692f5c1d2mr4416177oab.11.1695716857558; Tue, 26
+ Sep 2023 01:27:37 -0700 (PDT)
+Date:   Tue, 26 Sep 2023 01:27:37 -0700
+In-Reply-To: <0000000000006777d506051db4fd@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ef3b8a06063ed805@google.com>
+Subject: Re: [syzbot] [ntfs3?] KASAN: slab-use-after-free Read in ntfs_write_bh
+From:   syzbot <syzbot+bc79f8d1898960d41073@syzkaller.appspotmail.com>
+To:     almaz.alexandrovich@paragon-software.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        llvm@lists.linux.dev, nathan@kernel.org, ndesaulniers@google.com,
+        ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com,
+        trix@redhat.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
+        RCVD_IN_MSPIKE_WL,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello Darrick,
+syzbot has found a reproducer for the following issue on:
 
-The issue gets fixed in rc3. However, it seems not caused by commit
-6d2779ecaeb56f9 because I can't reproduce the issue with rc3 and
-the commit revert. I'm running 'git bisect' to nail it down. Hopefully,
-I can identify the problematic commit soon.
+HEAD commit:    6465e260f487 Linux 6.6-rc3
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=13d78ffe680000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bb54ecdfa197f132
+dashboard link: https://syzkaller.appspot.com/bug?extid=bc79f8d1898960d41073
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14aa4e32680000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=171787b6680000
 
-On Mon, Sep 25, 2023 at 11:14=E2=80=AFPM Darrick J. Wong <djwong@kernel.org=
-> wrote:
->
-> On Mon, Sep 25, 2023 at 05:04:16PM +0700, Bagas Sanjaya wrote:
-> > On Fri, Sep 22, 2023 at 11:56:43AM +0800, Zhenyu Zhang wrote:
-> > > Hi all,
-> > >
-> > > we don't know how the xarray entry was corrupted. Maybe it's a known
-> > > issue to community.
-> > > Lets see.
-> > >
-> > > Contents
-> > > --------
-> > > 1. Problem Statement
-> > > 2. The call trace
-> > > 3. The captured data by bpftrace
-> > >
-> > >
-> > > 1. Problem Statement
-> > > --------------------
-> > > With 4k guest and 64k host, on aarch64(Ampere's Altra Max CPU) hit Ca=
-ll trace:
-> > >     Steps:
-> > >     1) System setup hugepages on host.
-> > >        # echo 60 > /proc/sys/vm/nr_hugepages
-> > >     2) Mount this hugepage to /mnt/kvm_hugepage.
-> > >        # mount -t hugetlbfs -o pagesize=3D524288K none /mnt/kvm_hugep=
-age
-> >
-> > What block device/disk image you use to format the filesystem?
-> >
-> > >     3) HugePages didn't leak when using non-existent mem-path.
-> > >        # mkdir -p /mnt/tmp
-> > >     4) Boot guest.
-> > >        # /usr/libexec/qemu-kvm \
-> > > ...
-> > >          -m 30720 \
-> > > -object '{"size": 32212254720, "mem-path": "/mnt/tmp", "qom-type":
-> > > "memory-backend-file"}'  \
-> > > -smp 4,maxcpus=3D4,cores=3D2,threads=3D1,clusters=3D1,sockets=3D2  \
-> > >          -blockdev '{"node-name": "file_image1", "driver": "file",
-> > > "auto-read-only": true, "discard": "unmap", "aio": "threads",
-> > > "filename": "/home/kvm_autotest_root/images/back_up_4k.qcow2",
-> > > "cache": {"direct": true, "no-flush": false}}' \
-> > > -blockdev '{"node-name": "drive_image1", "driver": "qcow2",
-> > > "read-only": false, "cache": {"direct": true, "no-flush": false},
-> > > "file": "file_image1"}' \
-> > > -device '{"driver": "scsi-hd", "id": "image1", "drive":
-> > > "drive_image1", "write-cache": "on"}' \
-> > >
-> > >     5) Wait about 1 minute ------> hit Call trace
-> > >
-> > > 2. The call trace
-> > > --------------------
-> > > [   14.982751] block dm-0: the capability attribute has been deprecat=
-ed.
-> > > [   15.690043] PEFILE: Unsigned PE binary
-> > >
-> > >
-> > > [   90.135676] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-> > > [   90.136629] rcu: 3-...0: (3 ticks this GP)
-> > > idle=3De6ec/1/0x4000000000000000 softirq=3D6847/6849 fqs=3D232
-> > > [   90.137293] rcu: (detected by 2, t=3D6012 jiffies, g=3D2085, q=3D2=
-539 ncpus=3D4)
-> > > [   90.137796] Task dump for CPU 3:
-> > > [   90.138037] task:PK-Backend      state:R  running task     stack:0
-> > >    pid:2287  ppid:1      flags:0x00000202
-> > > [   90.138757] Call trace:
-> > > [   90.138940]  __switch_to+0xc8/0x110
-> > > [   90.139203]  0xb54a54f8c5fb0700
-> > >
-> > > [  270.190849] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-> > > [  270.191722] rcu: 3-...0: (3 ticks this GP)
-> > > idle=3De6ec/1/0x4000000000000000 softirq=3D6847/6849 fqs=3D1020
-> > > [  270.192405] rcu: (detected by 1, t=3D24018 jiffies, g=3D2085, q=3D=
-3104 ncpus=3D4)
-> > > [  270.192876] Task dump for CPU 3:
-> > > [  270.193099] task:PK-Backend      state:R  running task     stack:0
-> > >    pid:2287  ppid:1      flags:0x00000202
-> > > [  270.193774] Call trace:
-> > > [  270.193946]  __switch_to+0xc8/0x110
-> > > [  270.194336]  0xb54a54f8c5fb0700
-> > >
-> > > [ 1228.068406] ------------[ cut here ]------------
-> > > [ 1228.073011] WARNING: CPU: 2 PID: 4496 at lib/xarray.c:1010
-> > > xas_split_alloc+0xf8/0x128
-> > > [ 1228.080828] Modules linked in: binfmt_misc vhost_net vhost
-> > > vhost_iotlb tap xt_CHECKSUM xt_MASQUERADE xt_conntrack ipt_REJECT
-> > > nf_reject_ipv4 nft_compat nft_chain_nat nf_nat nf_conntrack
-> > > nf_defrag_ipv6 nf_defrag_ipv4 nf_tables nfnetlink tun bridge stp llc
-> > > qrtr rfkill sunrpc vfat fat acpi_ipmi ipmi_ssif arm_spe_pmu
-> > > ipmi_devintf arm_cmn arm_dmc620_pmu ipmi_msghandler cppc_cpufreq
-> > > arm_dsu_pmu xfs libcrc32c ast drm_shmem_helper drm_kms_helper drm
-> > > crct10dif_ce ghash_ce igb nvme sha2_ce nvme_core sha256_arm64 sha1_ce
-> > > i2c_designware_platform sbsa_gwdt nvme_common i2c_algo_bit
-> > > i2c_designware_core xgene_hwmon dm_mirror dm_region_hash dm_log dm_mo=
-d
-> > > fuse
-> > > [ 1228.137630] CPU: 2 PID: 4496 Comm: qemu-kvm Kdump: loaded Tainted:
-> > > G        W          6.6.0-rc2-zhenyzha+ #5
->
-> Please try 6.6-rc3, which doesn't have broken bit spinlocks (and hence
-> corruption problems in the vfs) on arm64.
->
-> (See commit 6d2779ecaeb56f9 "locking/atomic: scripts: fix fallback
-> ifdeffery")
->
-> --D
->
-> > > [ 1228.147529] Hardware name: GIGABYTE R152-P31-00/MP32-AR1-00, BIOS
-> > > F31h (SCP: 2.10.20220810) 07/27/2022
-> > > [ 1228.156820] pstate: 80400009 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS =
-BTYPE=3D--)
-> > > [ 1228.163767] pc : xas_split_alloc+0xf8/0x128
-> > > [ 1228.167938] lr : __filemap_add_folio+0x33c/0x4e0
-> > > [ 1228.172543] sp : ffff80008dd4f1c0
-> > > [ 1228.175844] x29: ffff80008dd4f1c0 x28: ffffd15825388c40 x27: 00000=
-00000000001
-> > > [ 1228.182967] x26: 0000000000000001 x25: ffffffffffffc005 x24: 00000=
-00000000000
-> > > [ 1228.190089] x23: ffff80008dd4f270 x22: ffffffc202b00000 x21: 00000=
-00000000000
-> > > [ 1228.197211] x20: ffffffc2007f9600 x19: 000000000000000d x18: 00000=
-00000000014
-> > > [ 1228.204334] x17: 00000000b21b8a3f x16: 0000000013a8aa94 x15: ffffd=
-15824625944
-> > > [ 1228.211456] x14: ffffffffffffffff x13: 0000000000000030 x12: 01010=
-10101010101
-> > > [ 1228.218578] x11: 7f7f7f7f7f7f7f7f x10: 000000000000000a x9 : ffffd=
-158252dd3fc
-> > > [ 1228.225701] x8 : ffff80008dd4f1c0 x7 : ffff07ffa0945468 x6 : ffff8=
-0008dd4f1c0
-> > > [ 1228.232823] x5 : 0000000000000018 x4 : 0000000000000000 x3 : 00000=
-00000012c40
-> > > [ 1228.239945] x2 : 000000000000000d x1 : 000000000000000c x0 : 00000=
-00000000000
-> > > [ 1228.247067] Call trace:
-> > > [ 1228.249500]  xas_split_alloc+0xf8/0x128
-> > > [ 1228.253324]  __filemap_add_folio+0x33c/0x4e0
-> > > [ 1228.257582]  filemap_add_folio+0x48/0xd0
-> > > [ 1228.261493]  page_cache_ra_order+0x214/0x310
-> > > [ 1228.265750]  ondemand_readahead+0x1a8/0x320
-> > > [ 1228.269921]  page_cache_async_ra+0x64/0xa8
-> > > [ 1228.274005]  filemap_fault+0x238/0xaa8
-> > > [ 1228.277742]  __xfs_filemap_fault+0x60/0x3c0 [xfs]
-> > > [ 1228.282491]  xfs_filemap_fault+0x54/0x68 [xfs]
-> > > [ 1228.286979]  __do_fault+0x40/0x210
-> > > [ 1228.290368]  do_cow_fault+0xf0/0x300
-> > > [ 1228.293931]  do_pte_missing+0x140/0x238
-> > > [ 1228.297754]  handle_pte_fault+0x100/0x160
-> > > [ 1228.301751]  __handle_mm_fault+0x100/0x310
-> > > [ 1228.305835]  handle_mm_fault+0x6c/0x270
-> > > [ 1228.309659]  faultin_page+0x70/0x128
-> > > [ 1228.313221]  __get_user_pages+0xc8/0x2d8
-> > > [ 1228.317131]  get_user_pages_unlocked+0xc4/0x3b8
-> > > [ 1228.321648]  hva_to_pfn+0xf8/0x468
-> > > [ 1228.325037]  __gfn_to_pfn_memslot+0xa4/0xf8
-> > > [ 1228.329207]  user_mem_abort+0x174/0x7e8
-> > > [ 1228.333031]  kvm_handle_guest_abort+0x2dc/0x450
-> > > [ 1228.337548]  handle_exit+0x70/0x1c8
-> > > [ 1228.341024]  kvm_arch_vcpu_ioctl_run+0x224/0x5b8
-> > > [ 1228.345628]  kvm_vcpu_ioctl+0x28c/0x9d0
-> > > [ 1228.349450]  __arm64_sys_ioctl+0xa8/0xf0
-> > > [ 1228.353360]  invoke_syscall.constprop.0+0x7c/0xd0
-> > > [ 1228.358052]  do_el0_svc+0xb4/0xd0
-> > > [ 1228.361354]  el0_svc+0x50/0x228
-> > > [ 1228.364484]  el0t_64_sync_handler+0x134/0x150
-> > > [ 1228.368827]  el0t_64_sync+0x17c/0x180
-> > > [ 1228.372476] ---[ end trace 0000000000000000 ]---
-> > > [ 1228.377124] ------------[ cut here ]------------
-> > > [ 1228.381728] WARNING: CPU: 2 PID: 4496 at lib/xarray.c:1010
-> > > xas_split_alloc+0xf8/0x128
-> > > [ 1228.389546] Modules linked in: binfmt_misc vhost_net vhost
-> > > vhost_iotlb tap xt_CHECKSUM xt_MASQUERADE xt_conntrack ipt_REJECT
-> > > nf_reject_ipv4 nft_compat nft_chain_nat nf_nat nf_conntrack
-> > > nf_defrag_ipv6 nf_defrag_ipv4 nf_tables nfnetlink tun bridge stp llc
-> > > qrtr rfkill sunrpc vfat fat acpi_ipmi ipmi_ssif arm_spe_pmu
-> > > ipmi_devintf arm_cmn arm_dmc620_pmu ipmi_msghandler cppc_cpufreq
-> > > arm_dsu_pmu xfs libcrc32c ast drm_shmem_helper drm_kms_helper drm
-> > > crct10dif_ce ghash_ce igb nvme sha2_ce nvme_core sha256_arm64 sha1_ce
-> > > i2c_designware_platform sbsa_gwdt nvme_common i2c_algo_bit
-> > > i2c_designware_core xgene_hwmon dm_mirror dm_region_hash dm_log dm_mo=
-d
-> > > fuse
-> > > [ 1228.446348] CPU: 2 PID: 4496 Comm: qemu-kvm Kdump: loaded Tainted:
-> > > G        W          6.6.0-rc2-zhenyzha+ #5
-> > > [ 1228.456248] Hardware name: GIGABYTE R152-P31-00/MP32-AR1-00, BIOS
-> > > F31h (SCP: 2.10.20220810) 07/27/2022
-> > > [ 1228.465538] pstate: 80400009 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS =
-BTYPE=3D--)
-> > > [ 1228.472486] pc : xas_split_alloc+0xf8/0x128
-> > > [ 1228.476656] lr : __filemap_add_folio+0x33c/0x4e0
-> > > [ 1228.481261] sp : ffff80008dd4f1c0
-> > > [ 1228.484563] x29: ffff80008dd4f1c0 x28: ffffd15825388c40 x27: 00000=
-00000000001
-> > > [ 1228.491685] x26: 0000000000000001 x25: ffffffffffffc005 x24: 00000=
-00000000000
-> > > [ 1228.498807] x23: ffff80008dd4f270 x22: ffffffc202b00000 x21: 00000=
-00000000000
-> > > [ 1228.505930] x20: ffffffc2007f9600 x19: 000000000000000d x18: 00000=
-00000000014
-> > > [ 1228.513052] x17: 00000000b21b8a3f x16: 0000000013a8aa94 x15: ffffd=
-15824625944
-> > > [ 1228.520174] x14: ffffffffffffffff x13: 0000000000000030 x12: 01010=
-10101010101
-> > > [ 1228.527297] x11: 7f7f7f7f7f7f7f7f x10: 000000000000000a x9 : ffffd=
-158252dd3fc
-> > > [ 1228.534419] x8 : ffff80008dd4f1c0 x7 : ffff07ffa0945468 x6 : ffff8=
-0008dd4f1c0
-> > > [ 1228.541542] x5 : 0000000000000018 x4 : 0000000000000000 x3 : 00000=
-00000012c40
-> > > [ 1228.548664] x2 : 000000000000000d x1 : 000000000000000c x0 : 00000=
-00000000000
-> > > [ 1228.555786] Call trace:
-> > > [ 1228.558220]  xas_split_alloc+0xf8/0x128
-> > > [ 1228.562043]  __filemap_add_folio+0x33c/0x4e0
-> > > [ 1228.566300]  filemap_add_folio+0x48/0xd0
-> > > [ 1228.570211]  page_cache_ra_order+0x214/0x310
-> > > [ 1228.574469]  ondemand_readahead+0x1a8/0x320
-> > > [ 1228.578639]  page_cache_async_ra+0x64/0xa8
-> > > [ 1228.582724]  filemap_fault+0x238/0xaa8
-> > > [ 1228.586460]  __xfs_filemap_fault+0x60/0x3c0 [xfs]
-> > > [ 1228.591210]  xfs_filemap_fault+0x54/0x68 [xfs]
-> > >
-> > >
-> > >
-> > > 3. The captured data by bpftrace
-> > > (The following part is the crawl analysis of gshan@redhat.com )
-> > > --------------------
-> > > pid:  4475    task: qemu-kvm
-> > > file: /mnt/tmp/qemu_back_mem.mem-machine_mem.OdGYet (deleted)
-> > >
-> > > -------------------- inode --------------------
-> > > i_flags:               0x0
-> > > i_ino:                 67333199
-> > > i_size:                32212254720
-> > >
-> > > ----------------- address_space ----------------
-> > > flags:                 040
-> > > invalidate_lock
-> > >   count:               256
-> > >   owner:               0xffff07fff6e759c1
-> > >     pid: 4496  task: qemu-kvm
-> > >   wait_list.next:      0xffff07ffa20422e0
-> > >   wait_list.prev:      0xffff07ffa20422e0
-> > >
-> > > -------------------- xarray --------------------
-> > > entry[0]:       0xffff080f7eda0002
-> > > shift:          18
-> > > offset:         0
-> > > count:          2
-> > > nr_values:      0
-> > > parent:         0x0
-> > > slots[00]:      0xffff07ffa094546a
-> > > slots[01]:      0xffff07ffa1b09b22
-> > >
-> > > entry[1]:       0xffff07ffa094546a
-> > > shift:          12
-> > > offset:         0
-> > > count:          20
-> > > nr_values:      0
-> > > parent:         0xffff080f7eda0000
-> > > slots[00]:      0xffffffc202880000
-> > > slots[01]:      0x2
-> > >
-> > > entry[2]:       0xffffffc202880000
-> > > shift:          104
-> > > offset:         128
-> > > count:          0
-> > > nr_values:      0
-> > > parent:         0xffffffc20304c888
-> > > slots[00]:      0xffff08009a960000
-> > > slots[01]:      0x2001ffffffff
-> > >
-> > > It seems the last xarray entry ("entry[2]") has been corrupted. "shif=
-t"
-> > > becomes 104 and "offset" becomes 128, which isn't reasonable.
-> > > It's explaining why we run into xas_split_alloc() in __filemap_add_fo=
-lio()
-> > >
-> > >         if (order > folio_order(folio))
-> > >                 xas_split_alloc(&xas, xa_load(xas.xa, xas.xa_index),
-> > >                                 order, gfp);
-> > >
-> > > folio_order(folio) is likely 6 since the readahead window size on the=
- BDI device
-> > > is 4MB.
-> > > However, @order figured from the corrupted xarray entry is much large=
-r than 6.
-> > > log2(0x400000 / 0x10000) =3D log2(64) =3D 6
-> > >
-> > > [root@ampere-mtsnow-altramax-28 ~]# uname -r
-> > > 6.6.0-rc2-zhenyzha+
-> >
-> > What commit/tree?
-> >
-> > > [root@ampere-mtsnow-altramax-28 ~]# cat
-> > > /sys/devices/virtual/bdi/253:0/read_ahead_kb
-> > > 4096
-> > >
-> >
-> > I'm confused...
-> >
-> > --
-> > An old man doll... just what I always wanted! - Clara
->
->
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/3b1a49bae59d/disk-6465e260.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f3226aa54969/vmlinux-6465e260.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/225ee050173e/bzImage-6465e260.xz
+mounted in repro #1: https://storage.googleapis.com/syzbot-assets/c217b59cb3bd/mount_0.gz
+mounted in repro #2: https://storage.googleapis.com/syzbot-assets/11dc567a19b3/mount_2.gz
 
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+bc79f8d1898960d41073@syzkaller.appspotmail.com
+
+ntfs3: loop0: ino=0, attr_set_size
+ntfs3: loop0: Mark volume as dirty due to NTFS errors
+==================================================================
+BUG: KASAN: slab-use-after-free in ntfs_write_bh+0x6b9/0x6e0 fs/ntfs3/fsntfs.c:1401
+Read of size 8 at addr ffff888016aaa000 by task syz-executor201/5400
+
+CPU: 1 PID: 5400 Comm: syz-executor201 Not tainted 6.6.0-rc3-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/04/2023
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xd9/0x1b0 lib/dump_stack.c:106
+ print_address_description mm/kasan/report.c:364 [inline]
+ print_report+0xc4/0x620 mm/kasan/report.c:475
+ kasan_report+0xda/0x110 mm/kasan/report.c:588
+ ntfs_write_bh+0x6b9/0x6e0 fs/ntfs3/fsntfs.c:1401
+ mi_write+0xc0/0x1e0 fs/ntfs3/record.c:346
+ ni_write_inode+0x1025/0x2810 fs/ntfs3/frecord.c:3360
+ write_inode fs/fs-writeback.c:1456 [inline]
+ __writeback_single_inode+0xa81/0xe70 fs/fs-writeback.c:1668
+ writeback_single_inode+0x2af/0x590 fs/fs-writeback.c:1724
+ sync_inode_metadata+0xa5/0xe0 fs/fs-writeback.c:2786
+ ntfs_set_state+0x3f0/0x6e0 fs/ntfs3/fsntfs.c:995
+ attr_set_size+0x139c/0x2ca0 fs/ntfs3/attrib.c:866
+ ntfs_extend_mft+0x29f/0x430 fs/ntfs3/fsntfs.c:527
+ ntfs_look_free_mft+0x777/0xdd0 fs/ntfs3/fsntfs.c:590
+ ni_create_attr_list+0x937/0x1520 fs/ntfs3/frecord.c:876
+ ni_ins_attr_ext+0x23f/0xaf0 fs/ntfs3/frecord.c:974
+ ni_insert_attr+0x310/0x870 fs/ntfs3/frecord.c:1141
+ ni_insert_resident+0xd2/0x3a0 fs/ntfs3/frecord.c:1525
+ ntfs_set_ea+0xf46/0x13d0 fs/ntfs3/xattr.c:437
+ ntfs_save_wsl_perm+0x134/0x3d0 fs/ntfs3/xattr.c:946
+ ntfs3_setattr+0x92e/0xb20 fs/ntfs3/file.c:708
+ notify_change+0x742/0x11c0 fs/attr.c:499
+ chown_common+0x596/0x660 fs/open.c:783
+ do_fchownat+0x140/0x1f0 fs/open.c:814
+ __do_sys_lchown fs/open.c:839 [inline]
+ __se_sys_lchown fs/open.c:837 [inline]
+ __x64_sys_lchown+0x7e/0xc0 fs/open.c:837
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x38/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f0958017a59
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 b1 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f0957fd4218 EFLAGS: 00000246 ORIG_RAX: 000000000000005e
+RAX: ffffffffffffffda RBX: 00007f09580be6a8 RCX: 00007f0958017a59
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000080
+RBP: 00007f09580be6a0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f09580be6ac
+R13: 00007f095808b4ac R14: 0032656c69662f2e R15: 00007f095806c0c0
+ </TASK>
+
+Allocated by task 5038:
+ kasan_save_stack+0x33/0x50 mm/kasan/common.c:45
+ kasan_set_track+0x25/0x30 mm/kasan/common.c:52
+ ____kasan_kmalloc mm/kasan/common.c:374 [inline]
+ __kasan_kmalloc+0xa2/0xb0 mm/kasan/common.c:383
+ kasan_kmalloc include/linux/kasan.h:198 [inline]
+ __do_kmalloc_node mm/slab_common.c:1023 [inline]
+ __kmalloc+0x60/0x100 mm/slab_common.c:1036
+ kmalloc include/linux/slab.h:603 [inline]
+ tomoyo_realpath_from_path+0xb9/0x710 security/tomoyo/realpath.c:251
+ tomoyo_get_realpath security/tomoyo/file.c:151 [inline]
+ tomoyo_check_open_permission+0x2a3/0x3b0 security/tomoyo/file.c:771
+ tomoyo_file_open security/tomoyo/tomoyo.c:332 [inline]
+ tomoyo_file_open+0xa8/0xd0 security/tomoyo/tomoyo.c:327
+ security_file_open+0x6a/0xe0 security/security.c:2836
+ do_dentry_open+0x538/0x1730 fs/open.c:916
+ do_open fs/namei.c:3639 [inline]
+ path_openat+0x19af/0x29c0 fs/namei.c:3796
+ do_filp_open+0x1de/0x430 fs/namei.c:3823
+ do_sys_openat2+0x176/0x1e0 fs/open.c:1422
+ do_sys_open fs/open.c:1437 [inline]
+ __do_sys_openat fs/open.c:1453 [inline]
+ __se_sys_openat fs/open.c:1448 [inline]
+ __x64_sys_openat+0x175/0x210 fs/open.c:1448
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x38/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+Freed by task 5038:
+ kasan_save_stack+0x33/0x50 mm/kasan/common.c:45
+ kasan_set_track+0x25/0x30 mm/kasan/common.c:52
+ kasan_save_free_info+0x2b/0x40 mm/kasan/generic.c:522
+ ____kasan_slab_free mm/kasan/common.c:236 [inline]
+ ____kasan_slab_free+0x15b/0x1b0 mm/kasan/common.c:200
+ kasan_slab_free include/linux/kasan.h:164 [inline]
+ slab_free_hook mm/slub.c:1800 [inline]
+ slab_free_freelist_hook+0x114/0x1e0 mm/slub.c:1826
+ slab_free mm/slub.c:3809 [inline]
+ __kmem_cache_free+0xb8/0x2f0 mm/slub.c:3822
+ tomoyo_realpath_from_path+0x1a6/0x710 security/tomoyo/realpath.c:286
+ tomoyo_get_realpath security/tomoyo/file.c:151 [inline]
+ tomoyo_check_open_permission+0x2a3/0x3b0 security/tomoyo/file.c:771
+ tomoyo_file_open security/tomoyo/tomoyo.c:332 [inline]
+ tomoyo_file_open+0xa8/0xd0 security/tomoyo/tomoyo.c:327
+ security_file_open+0x6a/0xe0 security/security.c:2836
+ do_dentry_open+0x538/0x1730 fs/open.c:916
+ do_open fs/namei.c:3639 [inline]
+ path_openat+0x19af/0x29c0 fs/namei.c:3796
+ do_filp_open+0x1de/0x430 fs/namei.c:3823
+ do_sys_openat2+0x176/0x1e0 fs/open.c:1422
+ do_sys_open fs/open.c:1437 [inline]
+ __do_sys_openat fs/open.c:1453 [inline]
+ __se_sys_openat fs/open.c:1448 [inline]
+ __x64_sys_openat+0x175/0x210 fs/open.c:1448
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x38/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+The buggy address belongs to the object at ffff888016aaa000
+ which belongs to the cache kmalloc-4k of size 4096
+The buggy address is located 0 bytes inside of
+ freed 4096-byte region [ffff888016aaa000, ffff888016aab000)
+
+The buggy address belongs to the physical page:
+page:ffffea00005aaa00 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x16aa8
+head:ffffea00005aaa00 order:3 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0xfff00000000840(slab|head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: 0xffffffff()
+raw: 00fff00000000840 ffff888012c42140 dead000000000100 dead000000000122
+raw: 0000000000000000 0000000000040004 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 1, tgid 1 (swapper/0), ts 3094771911, free_ts 0
+ set_page_owner include/linux/page_owner.h:31 [inline]
+ post_alloc_hook+0x2cf/0x340 mm/page_alloc.c:1536
+ prep_new_page mm/page_alloc.c:1543 [inline]
+ get_page_from_freelist+0xee0/0x2f20 mm/page_alloc.c:3170
+ __alloc_pages+0x1d0/0x4a0 mm/page_alloc.c:4426
+ alloc_page_interleave+0x1e/0x250 mm/mempolicy.c:2131
+ alloc_pages+0x22a/0x270 mm/mempolicy.c:2293
+ alloc_slab_page mm/slub.c:1870 [inline]
+ allocate_slab+0x251/0x380 mm/slub.c:2017
+ new_slab mm/slub.c:2070 [inline]
+ ___slab_alloc+0x8c7/0x1580 mm/slub.c:3223
+ __slab_alloc.constprop.0+0x56/0xa0 mm/slub.c:3322
+ __slab_alloc_node mm/slub.c:3375 [inline]
+ slab_alloc_node mm/slub.c:3468 [inline]
+ __kmem_cache_alloc_node+0x131/0x340 mm/slub.c:3517
+ kmalloc_trace+0x25/0xe0 mm/slab_common.c:1114
+ kmalloc include/linux/slab.h:599 [inline]
+ kzalloc include/linux/slab.h:720 [inline]
+ kobject_uevent_env+0x24c/0x1800 lib/kobject_uevent.c:524
+ kset_register+0x1b6/0x2a0 lib/kobject.c:873
+ class_register+0x1cb/0x330 drivers/base/class.c:205
+ ib_core_init+0xb9/0x300 drivers/infiniband/core/device.c:2780
+ do_one_initcall+0x117/0x630 init/main.c:1232
+ do_initcall_level init/main.c:1294 [inline]
+ do_initcalls init/main.c:1310 [inline]
+ do_basic_setup init/main.c:1329 [inline]
+ kernel_init_freeable+0x5c2/0x900 init/main.c:1547
+page_owner free stack trace missing
+
+Memory state around the buggy address:
+ ffff888016aa9f00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff888016aa9f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff888016aaa000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                   ^
+ ffff888016aaa080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888016aaa100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
