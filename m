@@ -2,199 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EF7957AE413
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Sep 2023 05:27:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 131B27AE500
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Sep 2023 07:25:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232376AbjIZD1n convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Sep 2023 23:27:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37946 "EHLO
+        id S230207AbjIZFZI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Sep 2023 01:25:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38154 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229472AbjIZD1l (ORCPT
+        with ESMTP id S229472AbjIZFZH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Sep 2023 23:27:41 -0400
-Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 388A6B3;
-        Mon, 25 Sep 2023 20:27:34 -0700 (PDT)
-Received: from in02.mta.xmission.com ([166.70.13.52]:60716)
-        by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        Tue, 26 Sep 2023 01:25:07 -0400
+Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9079D7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Sep 2023 22:25:00 -0700 (PDT)
+Received: from in02.mta.xmission.com ([166.70.13.52]:49550)
+        by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <ebiederm@xmission.com>)
-        id 1qkyjR-0025XF-KK; Mon, 25 Sep 2023 21:27:29 -0600
-Received: from ip68-227-168-167.om.om.cox.net ([68.227.168.167]:52928 helo=email.froward.int.ebiederm.org.xmission.com)
+        id 1ql0Z7-009Xsn-Mk; Mon, 25 Sep 2023 23:24:57 -0600
+Received: from ip68-227-168-167.om.om.cox.net ([68.227.168.167]:43120 helo=email.froward.int.ebiederm.org.xmission.com)
         by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <ebiederm@xmission.com>)
-        id 1qkyjQ-00A2kG-Bx; Mon, 25 Sep 2023 21:27:29 -0600
+        id 1ql0Z6-00A9Uw-AL; Mon, 25 Sep 2023 23:24:57 -0600
 From:   "Eric W. Biederman" <ebiederm@xmission.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Sebastian Ott <sebott@redhat.com>,
-        Pedro Falcato <pedro.falcato@gmail.com>,
-        Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Mark Brown <broonie@kernel.org>, Willy Tarreau <w@1wt.eu>,
-        sam@gentoo.org, Rich Felker <dalias@libc.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20230914-bss-alloc-v1-1-78de67d2c6dd@weissschuh.net>
-        <36e93c8e-4384-b269-be78-479ccc7817b1@redhat.com>
-        <87zg1bm5xo.fsf@email.froward.int.ebiederm.org>
-        <37d3392c-cf33-20a6-b5c9-8b3fb8142658@redhat.com>
-        <87jzsemmsd.fsf_-_@email.froward.int.ebiederm.org>
-        <84e974d3-ae0d-9eb5-49b2-3348b7dcd336@redhat.com>
-        <202309251001.C050864@keescook>
-Date:   Mon, 25 Sep 2023 22:27:02 -0500
-In-Reply-To: <202309251001.C050864@keescook> (Kees Cook's message of "Mon, 25
-        Sep 2023 10:06:01 -0700")
-Message-ID: <87v8bxiph5.fsf@email.froward.int.ebiederm.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Kent Overstreet <kent.overstreet@linux.dev>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>, ksummit@lists.linux.dev,
+        linux-fsdevel@vger.kernel.org
+References: <ZO9NK0FchtYjOuIH@infradead.org>
+        <ZPe0bSW10Gj7rvAW@dread.disaster.area>
+        <ZPe4aqbEuQ7xxJnj@casper.infradead.org>
+        <8dd2f626f16b0fc863d6a71561196950da7e893f.camel@HansenPartnership.com>
+        <20230909224230.3hm4rqln33qspmma@moria.home.lan>
+        <ZP5nxdbazqirMKAA@dread.disaster.area>
+Date:   Tue, 26 Sep 2023 00:24:49 -0500
+In-Reply-To: <ZP5nxdbazqirMKAA@dread.disaster.area> (Dave Chinner's message of
+        "Mon, 11 Sep 2023 11:05:09 +1000")
+Message-ID: <87ttrhh5ge.fsf@email.froward.int.ebiederm.org>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-XM-SPF: eid=1qkyjQ-00A2kG-Bx;;;mid=<87v8bxiph5.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.168.167;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX1/wOaQp+8aovEG4tuK61x9uVVX7vY5QjGM=
+Content-Type: text/plain
+X-XM-SPF: eid=1ql0Z6-00A9Uw-AL;;;mid=<87ttrhh5ge.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.168.167;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX18fh6TQ73k3Kzfy2QhL2kefklElR8PGMdY=
 X-SA-Exim-Connect-IP: 68.227.168.167
 X-SA-Exim-Mail-From: ebiederm@xmission.com
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: *;Kees Cook <keescook@chromium.org>
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Dave Chinner <david@fromorbit.com>
 X-Spam-Relay-Country: 
-X-Spam-Timing: total 668 ms - load_scoreonly_sql: 0.05 (0.0%),
-        signal_user_changed: 12 (1.8%), b_tie_ro: 10 (1.6%), parse: 1.41
-        (0.2%), extract_message_metadata: 35 (5.2%), get_uri_detail_list: 4.9
-        (0.7%), tests_pri_-2000: 43 (6.4%), tests_pri_-1000: 2.8 (0.4%),
-        tests_pri_-950: 1.27 (0.2%), tests_pri_-900: 1.04 (0.2%),
-        tests_pri_-200: 0.88 (0.1%), tests_pri_-100: 10 (1.5%), tests_pri_-90:
-        89 (13.4%), check_bayes: 73 (10.9%), b_tokenize: 13 (1.9%),
-        b_tok_get_all: 13 (2.0%), b_comp_prob: 4.1 (0.6%), b_tok_touch_all: 39
-        (5.8%), b_finish: 0.87 (0.1%), tests_pri_0: 437 (65.4%),
-        check_dkim_signature: 0.58 (0.1%), check_dkim_adsp: 7 (1.1%),
-        poll_dns_idle: 15 (2.3%), tests_pri_10: 3.1 (0.5%), tests_pri_500: 29
-        (4.3%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH] binfmt_elf: Support segments with 0 filesz and
- misaligned starts
+X-Spam-Timing: total 798 ms - load_scoreonly_sql: 0.07 (0.0%),
+        signal_user_changed: 13 (1.6%), b_tie_ro: 11 (1.4%), parse: 1.21
+        (0.2%), extract_message_metadata: 19 (2.4%), get_uri_detail_list: 2.3
+        (0.3%), tests_pri_-2000: 13 (1.7%), tests_pri_-1000: 2.6 (0.3%),
+        tests_pri_-950: 1.33 (0.2%), tests_pri_-900: 1.08 (0.1%),
+        tests_pri_-200: 0.88 (0.1%), tests_pri_-100: 4.4 (0.6%),
+        tests_pri_-90: 91 (11.5%), check_bayes: 84 (10.5%), b_tokenize: 7
+        (0.9%), b_tok_get_all: 9 (1.1%), b_comp_prob: 3.0 (0.4%),
+        b_tok_touch_all: 61 (7.7%), b_finish: 1.08 (0.1%), tests_pri_0: 252
+        (31.6%), check_dkim_signature: 0.58 (0.1%), check_dkim_adsp: 3.8
+        (0.5%), poll_dns_idle: 374 (46.8%), tests_pri_10: 3.1 (0.4%),
+        tests_pri_500: 391 (49.0%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [MAINTAINERS/KERNEL SUMMIT] Trust and maintenance of file systems
 X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
 X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Kees Cook <keescook@chromium.org> writes:
+Dave Chinner <david@fromorbit.com> writes:
 
-> On Mon, Sep 25, 2023 at 05:27:12PM +0200, Sebastian Ott wrote:
->> On Mon, 25 Sep 2023, Eric W. Biederman wrote:
->> > 
->> > Implement a helper elf_load that wraps elf_map and performs all
->> > of the necessary work to ensure that when "memsz > filesz"
->> > the bytes described by "memsz > filesz" are zeroed.
->> > 
->> > Link: https://lkml.kernel.org/r/20230914-bss-alloc-v1-1-78de67d2c6dd@weissschuh.net
->> > Reported-by: Sebastian Ott <sebott@redhat.com>
->> > Reported-by: Thomas Weißschuh <linux@weissschuh.net>
->> > Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
->> > ---
->> > fs/binfmt_elf.c | 111 +++++++++++++++++++++---------------------------
->> > 1 file changed, 48 insertions(+), 63 deletions(-)
->> > 
->> > Can you please test this one?
+> On Sat, Sep 09, 2023 at 06:42:30PM -0400, Kent Overstreet wrote:
+>> On Sat, Sep 09, 2023 at 08:50:39AM -0400, James Bottomley wrote:
+>> > So why can't we figure out that easier way? What's wrong with trying to
+>> > figure out if we can do some sort of helper or library set that assists
+>> > supporting and porting older filesystems. If we can do that it will not
+>> > only make the job of an old fs maintainer a lot easier, but it might
+>> > just provide the stepping stones we need to encourage more people climb
+>> > up into the modern VFS world.
+>> 
+>> What if we could run our existing filesystem code in userspace?
 >
-> Eric thanks for doing this refactoring! This does look similar to the
-> earlier attempt:
-> https://lore.kernel.org/lkml/20221106021657.1145519-1-pedro.falcato@gmail.com/
-> and it's a bit easier to review.
+> You mean like lklfuse already enables?
+>
+> https://github.com/lkl/linux
+>
+> Looks like the upstream repo is currently based on 6.1, so there's
+> already a mechanism to use relatively recent kernel filesystem
+> implementations as a FUSE filesystem without needed to support a
+> userspace code base....
 
-I need to context switch away for a while so Kees if you will
-I will let you handle the rest of this one.
+At a practical level I think it might be better to start with
+https://libguestfs.org/.
 
+The libguestfs code already has fuse support and already ships in common
+linux distros.
 
-A couple of thoughts running through my head for anyone whose ambitious
-might include cleaning up binfmt_elf.c
-
-The elf_bss variable in load_elf_binary can be removed.
-
-Work for a follow on patch is using my new elf_load in load_elf_interp
-and possibly in load_elf_library.  (More code size reduction).
-
-An outstanding issue is if the first segment has filesz 0, and has a
-randomized locations.  But that is the same as today.
-
-There is a whole question does it make sense for the elf loader
-to have it's own helper vm_brk_flags in mm/mmap.c or would it
-make more sense for binfmt_elf to do what binfmt_elf_fdpic does and
-have everything to go through vm_mmap.
-
-I think replacing vm_brk_flags with vm_mmap would allow fixing the
-theoretical issue of filesz 0 and randomizing locations.
+If I read the documentation correctly libguestfs already has a mode
+where it runs an existing kernel under qemu to access any filesystem
+the kernel running in qemu supports.
 
 
-
-In this change I replaced an open coded padzero that did not clear
-all of the way to the end of the page, with padzero that does.
-
-I also stopped checking the return of padzero as there is at least
-one known case where testing for failure is the wrong thing to do.
-It looks like binfmt_elf_fdpic may have the proper set of tests
-for when error handling can be safely completed.
-
-I found a couple of commits in the old history
-https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git,
-that look very interesting in understanding this code.
-
-commit 39b56d902bf3 ("[PATCH] binfmt_elf: clearing bss may fail")
-commit c6e2227e4a3e ("[SPARC64]: Missing user access return value checks in fs/binfmt_elf.c and fs/compat.c")
-commit 5bf3be033f50 ("v2.4.10.1 -> v2.4.10.2")
-
-Looking at commit 39b56d902bf3 ("[PATCH] binfmt_elf: clearing bss may fail"):
->  commit 39b56d902bf35241e7cba6cc30b828ed937175ad
->  Author: Pavel Machek <pavel@ucw.cz>
->  Date:   Wed Feb 9 22:40:30 2005 -0800
-> 
->     [PATCH] binfmt_elf: clearing bss may fail
->     
->     So we discover that Borland's Kylix application builder emits weird elf
->     files which describe a non-writeable bss segment.
->     
->     So remove the clear_user() check at the place where we zero out the bss.  I
->     don't _think_ there are any security implications here (plus we've never
->     checked that clear_user() return value, so whoops if it is a problem).
->     
->     Signed-off-by: Pavel Machek <pavel@suse.cz>
->     Signed-off-by: Andrew Morton <akpm@osdl.org>
->     Signed-off-by: Linus Torvalds <torvalds@osdl.org>
-
-It seems pretty clear that binfmt_elf_fdpic with skipping clear_user
-for non-writable segments and otherwise calling clear_user (aka padzero)
-and checking it's return code is the right thing to do.
-
-I just skipped the error checking as that avoids breaking things.
-
-It looks like Borland's Kylix died in 2005 so it might be safe to
-just consider read-only segments with memsz > filesz an error.
+Unless I am misunderstanding something all that needs to happen with
+libguestfs is for someone to do the work to get userspace to mount
+external untrusted filesystems with it (by default), and for
+unprivileged containers to use it to mount filesystems the container
+would like to use.
 
 
-Looking at commit 5bf3be033f50 ("v2.4.10.1 -> v2.4.10.2") the
-binfmt_elf.c bits confirm my guess that the weird structure is because
-before that point binfmt_elf.c assumed there would be only a single
-segment with memsz > filesz.  Which is why the code was structured so
-weirdly.
+Be it libguestfs or lklfuse I think the real challenge is for someone to
+do all of the work so that whatever solution is chosen it is there in
+common situations (aka usb sticks and containers), the filesystems
+developers know it is there, and the security folks know it is there.
 
-Looking a little farther it looks like the binfmt_elf.c was introduced
-in Linux v1.0, with essentially the same structure in load_elf_binary as
-it has now.  Prior to that Linux hard coded support for a.out binaries
-in execve.  So if someone wants to add a Fixes tag it should be
-"Fixes: v1.0"
 
-Which finally explains to me why the code is so odd.  For the most part
-the code has only received maintenance for the last 30 years or so.
-Strictly 29 years, but 30 has a better ring to it.
-
-Anyway those are my rambling thoughts that might help someone.
-For now I will be happy if we can get my elf_load helper tested
-to everyone's satisfaction and merged.
+For the long tail of rare filesystems simply having something that is
+the recommended way of using the filesystem and works without friction
+is the real challenge to get to.
 
 Eric
