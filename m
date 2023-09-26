@@ -2,36 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DA2D17AEEBA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Sep 2023 16:58:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B7397AEF13
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Sep 2023 16:58:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232093AbjIZOOH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Sep 2023 10:14:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48752 "EHLO
+        id S233577AbjIZOUt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Sep 2023 10:20:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229519AbjIZOOG (ORCPT
+        with ESMTP id S232884AbjIZOUs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Sep 2023 10:14:06 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8EF3CE;
-        Tue, 26 Sep 2023 07:13:59 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B459C433C8;
-        Tue, 26 Sep 2023 14:13:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695737639;
-        bh=K//I43pYNKd0hnss16g14ct+ZnACMgfq5k78PInDtpA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jM72ZyHDERi5MoaOIk8F1nPCYuqmGr926Zxyt1R9Ams/B2Dmh61pjKGcF0hvpsq0J
-         JbhWAXvSVBrkGHjwDCwZClOpMIOeYIZuMhmE2rXJ87sIFv0ldHHeOojd9OTihiutVx
-         eB94jEPvPRnErhVdfvgzBhSTD3NR2eCA6ubNEKxuEno4bMTORarrO8M50qZanj2que
-         8MzAk2BTDAJw4PpZNMq9z0YwrPY2mbtWEgDfDpoI/8OIlAHGYG2pJ3pui6Ibdau4qb
-         OnNzbOELCPoRLdC9N+/kBokqQsrp7Spdz6MfHH0+dVHTfwhu3NSjfqZ6qpn4mknJzY
-         4RT8Nifedfbzg==
-Date:   Tue, 26 Sep 2023 16:13:53 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Florian Weimer <fweimer@redhat.com>
+        Tue, 26 Sep 2023 10:20:48 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39346101
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Sep 2023 07:19:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1695737994;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=CLfoTuiOlkq71LtQIM368ZbzJBNnHFUnsO5iHo6yhEM=;
+        b=PPxlBgrtYHGafpRLTGSpS13Na0JUYXtSogG8vhGWbt3L4sEtzeket2P58ap7U7heA/ktJE
+        uusPtdLh9nCUcEICysLvzUvtlmF+TPcSTiCDvecWZpWzDvu5bP1TDCc9FvBvH0WChqolYp
+        EPzz+klXpF6NqeKARc/Ux9MO+OZZhlc=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-96-Za_WVKlVMr-fkse-WyoN-g-1; Tue, 26 Sep 2023 10:19:50 -0400
+X-MC-Unique: Za_WVKlVMr-fkse-WyoN-g-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 906C03C1ACE4;
+        Tue, 26 Sep 2023 14:19:49 +0000 (UTC)
+Received: from oldenburg.str.redhat.com (unknown [10.2.16.53])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A1F78492C37;
+        Tue, 26 Sep 2023 14:19:47 +0000 (UTC)
+From:   Florian Weimer <fweimer@redhat.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
 Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
+        Christian Brauner <brauner@kernel.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-api@vger.kernel.org, linux-man@vger.kernel.org,
@@ -42,42 +51,83 @@ Cc:     Miklos Szeredi <mszeredi@redhat.com>,
         Christian Brauner <christian@brauner.io>,
         Amir Goldstein <amir73il@gmail.com>
 Subject: Re: [RFC PATCH 2/3] add statmnt(2) syscall
-Message-ID: <20230926-flatterhaft-nachverfolgen-4bf7f78cc0ee@brauner>
 References: <20230913152238.905247-1-mszeredi@redhat.com>
- <20230913152238.905247-3-mszeredi@redhat.com>
- <20230914-salzig-manifest-f6c3adb1b7b4@brauner>
- <CAJfpegs-sDk0++FjSZ_RuW5m-z3BTBQdu4T9QPtWwmSZ1_4Yvw@mail.gmail.com>
- <20230914-lockmittel-verknallen-d1a18d76ba44@brauner>
- <CAJfpegt-VPZP3ou-TMQFs1Xupj_iWA5ttC2UUFKh3E43EyCOQQ@mail.gmail.com>
- <20230918-grafik-zutreffen-995b321017ae@brauner>
- <CAOssrKfS79=+F0h=XPzJX2E6taxAPmEJEYPi4VBNQjgRR5ujqw@mail.gmail.com>
- <871qeloxj0.fsf@oldenburg.str.redhat.com>
+        <20230913152238.905247-3-mszeredi@redhat.com>
+        <20230914-salzig-manifest-f6c3adb1b7b4@brauner>
+        <CAJfpegs-sDk0++FjSZ_RuW5m-z3BTBQdu4T9QPtWwmSZ1_4Yvw@mail.gmail.com>
+        <20230914-lockmittel-verknallen-d1a18d76ba44@brauner>
+        <CAJfpegt-VPZP3ou-TMQFs1Xupj_iWA5ttC2UUFKh3E43EyCOQQ@mail.gmail.com>
+        <20230918-grafik-zutreffen-995b321017ae@brauner>
+        <CAOssrKfS79=+F0h=XPzJX2E6taxAPmEJEYPi4VBNQjgRR5ujqw@mail.gmail.com>
+        <871qeloxj0.fsf@oldenburg.str.redhat.com>
+        <CAJfpegupTzdG4=UwguL02c08ZaoX+UK7+=9XQ9D1G4wLMxuqFA@mail.gmail.com>
+Date:   Tue, 26 Sep 2023 16:19:46 +0200
+In-Reply-To: <CAJfpegupTzdG4=UwguL02c08ZaoX+UK7+=9XQ9D1G4wLMxuqFA@mail.gmail.com>
+        (Miklos Szeredi's message of "Tue, 26 Sep 2023 16:06:05 +0200")
+Message-ID: <87wmwdnhj1.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <871qeloxj0.fsf@oldenburg.str.redhat.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.10
+X-Spam-Status: No, score=1.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
+        RCVD_IN_SBL_CSS,SPF_HELO_NONE,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.6
+X-Spam-Level: *
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> I also don't quite understand the dislike of variable-sized records.
-> Don't getdents, inotify, Netlink all use them?  And I think at least for
-> Netlink, more stuff is added all the time?
+* Miklos Szeredi:
 
-Netlink is absolutely atrocious to work with because everything is
-variable sized and figuring out the correct allocation size is a
-complete nightmare even with the "helpful" macros that are provided.
+>> Try-and-resize interfaces can be quite bad for data obtained from the
+>> network.
+>
+> In this particular case it's all local information.
 
-The bigger problem however is the complete untypedness even of the most
-basic things. For example, retrieving the mtu of a network interface
-through netlink is a complete nightmare. getdents, inotify, fanotify,
-open_by_handle_at()'s struct fiel_handle are all fine. But let's
-absolutely not take netlink as a model for anything related to mounts.
+That's good.
 
-And no one is against again variable sized records per se. I think we're
-coming to a good compromise here.
+>>  If the first call provides the minimum buffer size (like
+>> getgroups, but unlike readlink or the glibc *_r interfaces for NSS),
+>> this could at least allow us to avoid allocating too much.  In
+>> userspace, we cannot reduce the size of the heap allocation without
+>> knowing where the pointers are and what they mean.
+>
+> Does it matter if the heap allocation is say 32k instead of 589bytes?
+>  The returned strings are not limited in size, but are quite unlikely
+> to be over PATH_MAX.
+
+It matters if the application needs to keep a copy.
+
+> E.g. getdents apparently uses 32k buffers, which is really a tiny
+> amount of heap these days, but more than enough for the purpose.  Not
+> sure if this is hard coded into libc or if it's the result of some
+> heuristic based on available memory, but I don't see why similar
+> treatment couldn't be applied to the statmount(2) syscall.
+
+getdents gets away with this buffer size because applications can copy
+out all the data from struct dirent if they need long-term storage.
+They have to do that because the usual readdir interface overwrites the
+buffer, potentially at the next readdir call.  This means the buffer
+size does not introduce an amount of memory fragmention that is
+dependent on the directory size.
+
+With an opaque, pointer-carrying struct, copying out the data is not
+possible in a generic fashion.  Only the parts that the application
+knows about can be copied out.  So I think it's desirable to have a
+fairly exact allocation.
+
+>> I also don't quite understand the dislike of variable-sized records.
+>> Don't getdents, inotify, Netlink all use them?  And I think at least for
+>> Netlink, more stuff is added all the time?
+>
+> What do you mean by variable sized records?
+
+Iterating through d_reclen-sized subojects (for getdents).
+
+Thanks,
+Florian
+
