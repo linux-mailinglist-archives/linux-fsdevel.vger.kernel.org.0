@@ -2,55 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 23A367AEC51
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Sep 2023 14:18:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 559697AECBD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Sep 2023 14:26:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234434AbjIZMS5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Sep 2023 08:18:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34024 "EHLO
+        id S231171AbjIZM0Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Sep 2023 08:26:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229827AbjIZMS4 (ORCPT
+        with ESMTP id S229827AbjIZM0X (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Sep 2023 08:18:56 -0400
+        Tue, 26 Sep 2023 08:26:23 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A40D101;
-        Tue, 26 Sep 2023 05:18:50 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D501C433CA;
-        Tue, 26 Sep 2023 12:18:46 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0DA410E;
+        Tue, 26 Sep 2023 05:26:16 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 041DBC433C7;
+        Tue, 26 Sep 2023 12:26:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695730730;
-        bh=IC1gqNbWDlMOhu5zCk2ye21ZT+0MLo6x9JXH8ENjgLk=;
+        s=k20201202; t=1695731176;
+        bh=TffweluRYbRpL5vhqrw+fjUyUMqGnjaG+j0AsmmrgD4=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DPl6/Thkz67mxty4CmevJwef/L3Ky2Sj6LBqfd8/fLVUROP55j7R//zbPfIronkch
-         nf8nH+1Jco1NY8f1K/2vU344RfLbyU8iipkO2nl061xjzal+UCWtz6T257xM+HtcWq
-         cgBHC2J7eQjVCNUZOxUsj+U41VP1X7bXCVQff7+7E2ZEOB9xWCVxyDyMjZ00PlFHL6
-         GzxojVSSnAiAXizE+msM5Qm30M5aaYc9qZ0Cerb3Y+RxgIkyxyaXSd+aV5kOksZL7y
-         J7tfKC5g1bAez5UlRrelhzVbEWRvUvQXs2COEssVz57EIVEglN9wFEvOigsIE3Rn+j
-         1xKsyRXiZbMaQ==
-Date:   Tue, 26 Sep 2023 14:18:39 +0200
+        b=cDTLRJ2okVDacA/KYHaAcsFKP9M5VMmGXe2Zl38P3pQ9UXTLub13itqelvjI9TtWU
+         DY1GhDtMhH5fK+7StAmBE5c2izHl60+i8GygNK5963Ke09xOmQ1rsj1pmlqihouCou
+         SpQ3Am6y+r/nGybo236JwLCiNyTnsC7gZu0Nke+ZWscunvB+EJkU1S15Sp14LCnqK7
+         boumuDst0Pv3D9xj7e6NsSxoaN9AatiZ69HHZSWxb43XWXqSDlamISEUP/h4UO17Ob
+         R+AK/fRUHGs06i1SwQK1bjZWRp8GSuZ6cJ3DQ1ECBVfHfOxKMuDd8XMXyWPWqf2eRk
+         j5bgGOOy5aJow==
+Date:   Tue, 26 Sep 2023 14:26:12 +0200
 From:   Christian Brauner <brauner@kernel.org>
-To:     NeilBrown <neilb@suse.de>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Olga Kornievskaia <kolga@netapp.com>,
-        Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
-        Chandan Babu R <chandan.babu@oracle.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Kent Overstreet <kent.overstreet@linux.dev>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v8 0/5] fs: multigrain timestamps for XFS's change_cookie
-Message-ID: <20230926-boiler-coachen-bafb70e9df18@brauner>
-References: <20230922-ctime-v8-0-45f0c236ede1@kernel.org>
- <20230924-mitfeiern-vorladung-13092c2af585@brauner>
- <169559548777.19404.13247796879745924682@noble.neil.brown.name>
+To:     Max Kellermann <max.kellermann@ionos.com>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] fs/splice: don't block splice_direct_to_actor() after
+ data was read
+Message-ID: <20230926-planlos-decken-09929871d43a@brauner>
+References: <20230925-erstklassig-flausen-48e1bc11be30@brauner>
+ <20230926063609.2451260-1-max.kellermann@ionos.com>
+ <20230926-achtlos-ungeschehen-ee0e5f2c7666@brauner>
+ <CAKPOu+9VYJeZbc6xLJzJY=mtmDm+Of9DEKk0kQwnn0nvVzN_4A@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <169559548777.19404.13247796879745924682@noble.neil.brown.name>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKPOu+9VYJeZbc6xLJzJY=mtmDm+Of9DEKk0kQwnn0nvVzN_4A@mail.gmail.com>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
         RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
@@ -61,23 +55,37 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> > If there's no clear users and workloads depending on this other than for
-> > the sake of NFS then we shouldn't expose this to userspace. We've tried
-
+On Tue, Sep 26, 2023 at 12:41:42PM +0200, Max Kellermann wrote:
+> On Tue, Sep 26, 2023 at 12:21 PM Christian Brauner <brauner@kernel.org> wrote:
+> > Hm, so the thing that is worrysome about this change is that this may
+> > cause regressions afaict as this is a pretty significant change from
+> > current behavior.
 > 
-> Some NFS servers run in userspace, and they would a "clear user" of this
-> functionality.
+> Would you prefer a new flag for explicitly selecting "wait until at
+> least one byte was transferred, but don't wait further"? Because many
 
-See my comment above. We did thist mostly for the sake of NFS as there
-was in itself nothing wrong with timestamps that needed urgent fixing.
+I had thought about it but afaict it'd be rather annoying as one can get
+into that code from copy_file_range() as well so we'd need a new flag
+for that system call as well afaict.
 
-The end result has been that we caused a regression for four other major
-filesystems when they were switched to fine-grained timestamps.
+> applications need this behavior, and some (like nginx) have already
+> worked around the problem by limiting the maximum transaction size,
+> which I consider a bad workaround, because it leads to unnecessary
+> system calls and still doesn't really solve the latency problem.
+> 
+> On the other hand, what exactly would the absence of this flag mean...
+> the old behavior, without my patch, can lead to partial transfers, and
+> the absence of the flag doesn't mean it can't happen; my patch tackles
+> just one corner case, but one that is important for me.
+> 
+> We have been running this patch in production for nearly a year (and
+> will continue to do so until upstream kernels have a proper solution)
+> and never observed a problem, and I consider it safe, but I
+> acknowledge the risk that this may reveal obscure application bugs if
+> applied globally to all Linux kernels, so I understand your worries.
 
-So NFS servers in userspace isn't a sufficient argument to just try
-again with a slightly tweaked solution but without a wholesale fix of
-the actual ordering problem. The bar to merge this will naturally be
-higher the second time around.
+I think hanging for an insane amount of time is indeed a problem and
+tweaking the code in this way might actually be useful but we'd need to
+let this soak for quite a while to see whether this causes any issues.
 
-That's orthogonal to improving the general timestamp infrastructure in
-struct inode ofc.
+@Jens, what do you think? Is this worth it?
