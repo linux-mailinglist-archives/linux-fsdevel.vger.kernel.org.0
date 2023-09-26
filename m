@@ -2,38 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D772E7AE9B9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Sep 2023 11:56:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D30577AE9BD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Sep 2023 11:57:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234161AbjIZJ4s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Sep 2023 05:56:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37946 "EHLO
+        id S233739AbjIZJ5F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Sep 2023 05:57:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234133AbjIZJ4q (ORCPT
+        with ESMTP id S232180AbjIZJ5E (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Sep 2023 05:56:46 -0400
+        Tue, 26 Sep 2023 05:57:04 -0400
 Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E31CBBE;
-        Tue, 26 Sep 2023 02:56:39 -0700 (PDT)
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relayaws-01.paragon-software.com (Postfix) with ESMTPS id BC5B521BC;
-        Tue, 26 Sep 2023 09:50:47 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08CA0FB;
+        Tue, 26 Sep 2023 02:56:57 -0700 (PDT)
+Received: from relayfre-01.paragon-software.com (unknown [172.30.72.12])
+        by relayaws-01.paragon-software.com (Postfix) with ESMTPS id CB48421BC;
+        Tue, 26 Sep 2023 09:51:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1695721847;
-        bh=M2FK5gsLtmNBcSaysRw/Y++y3lLBnCCRyRI6dXE7TkE=;
+        d=paragon-software.com; s=mail; t=1695721865;
+        bh=OjduOup+un8qGaTqAgDN4qohzpVoBogSKK/pi3uPgl8=;
         h=Date:Subject:From:To:CC:References:In-Reply-To;
-        b=XHUt8KfYdRnPQjP75T3mvqKkT0lKFp8HuLuslcCVkw0uxFL6JlAkifzksCkkJ+n6b
-         fGCHjdm03L0Nyu6du7YjamOBFvCO3Xq2r9hGvMnVe3dtDl+oQDaQN6PD6h+sPHeEtO
-         +153iHrxH+T8LNfgdd1PmaaaOziZj5/1Qrq1wvtA=
+        b=HIMyLl9rMNTvWGANMBZ7k7mSFx743msYy8g+KbPRc35kVUui5Qgd+JfssKRCUF0ui
+         twFYLxmtFfDFAjRcjxfXt7yN2F40dZVbX0JZVnAdS7CdKYjqrjG57x/xHjmQyQ4UVE
+         zk0O+hx243YtYUWyghzeculoR16Cnf+FVRwSwCzI=
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 2631B1D45;
+        Tue, 26 Sep 2023 09:56:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paragon-software.com; s=mail; t=1695722216;
+        bh=OjduOup+un8qGaTqAgDN4qohzpVoBogSKK/pi3uPgl8=;
+        h=Date:Subject:From:To:CC:References:In-Reply-To;
+        b=QXyZoO1bXsfpERWazQ/dHI//s8xiRczuXczn4XUZ56rPoO9HfV38ePAekMdcfaUY/
+         OyxcUmV7lg8D7Gw1Pc4+Gy3RKFwS6bD/9xb0nDoIQSlMoF+6JWb0mRW1zu4YHVxG2f
+         x3S2MWJGobvAR2nlXUBUY6T0kBtzEYQMktPSZHeo=
 Received: from [172.16.192.129] (192.168.211.137) by
  vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Tue, 26 Sep 2023 12:56:37 +0300
-Message-ID: <0b667ec4-8223-407b-9303-94b70dfa5101@paragon-software.com>
-Date:   Tue, 26 Sep 2023 12:56:37 +0300
+ 15.1.2375.7; Tue, 26 Sep 2023 12:56:55 +0300
+Message-ID: <4fdb4c65-d6db-4a0c-b2cc-296646c1e1fe@paragon-software.com>
+Date:   Tue, 26 Sep 2023 12:56:55 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: [PATCH 5/8] fs/ntfs3: Add more info into /proc/fs/ntfs3/<dev>/volinfo
+Subject: [PATCH 6/8] fs/ntfs3: Do not allow to change label if volume is
+ read-only
 Content-Language: en-US
 From:   Konstantin Komarovc <almaz.alexandrovich@paragon-software.com>
 To:     <ntfs3@lists.linux.dev>
@@ -57,40 +68,28 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 ---
-  fs/ntfs3/super.c | 14 +++++++++++---
-  1 file changed, 11 insertions(+), 3 deletions(-)
+  fs/ntfs3/super.c | 7 ++++++-
+  1 file changed, 6 insertions(+), 1 deletion(-)
 
 diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
-index f9a214367113..5811da7e9d45 100644
+index 5811da7e9d45..cf0a720523f0 100644
 --- a/fs/ntfs3/super.c
 +++ b/fs/ntfs3/super.c
-@@ -453,15 +453,23 @@ static struct proc_dir_entry *proc_info_root;
-   * ntfs3.1
-   * cluster size
-   * number of clusters
-+ * total number of mft records
-+ * number of used mft records ~= number of files + folders
-+ * real state of ntfs "dirty"/"clean"
-+ * current state of ntfs "dirty"/"clean"
-  */
-  static int ntfs3_volinfo(struct seq_file *m, void *o)
-  {
-      struct super_block *sb = m->private;
-      struct ntfs_sb_info *sbi = sb->s_fs_info;
+@@ -497,7 +497,12 @@ static ssize_t ntfs3_label_write(struct file *file, 
+const char __user *buffer,
+      int err;
+      struct super_block *sb = pde_data(file_inode(file));
+      ssize_t ret = count;
+-    u8 *label = kmalloc(count, GFP_NOFS);
++    u8 *label;
++
++    if (sb_rdonly(sb))
++        return -EROFS;
++
++    label = kmalloc(count, GFP_NOFS);
 
--    seq_printf(m, "ntfs%d.%d\n%u\n%zu\n", sbi->volume.major_ver,
--           sbi->volume.minor_ver, sbi->cluster_size,
--           sbi->used.bitmap.nbits);
-+    seq_printf(m, "ntfs%d.%d\n%u\n%zu\n\%zu\n%zu\n%s\n%s\n",
-+           sbi->volume.major_ver, sbi->volume.minor_ver,
-+           sbi->cluster_size, sbi->used.bitmap.nbits,
-+           sbi->mft.bitmap.nbits,
-+           sbi->mft.bitmap.nbits - wnd_zeroes(&sbi->mft.bitmap),
-+           sbi->volume.real_dirty ? "dirty" : "clean",
-+           (sbi->volume.flags & VOLUME_FLAG_DIRTY) ? "dirty" : "clean");
-
-      return 0;
-  }
+      if (!label)
+          return -ENOMEM;
 -- 
 2.34.1
 
