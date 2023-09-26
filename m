@@ -2,101 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C4D577AED39
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Sep 2023 14:51:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B60CB7AEE25
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Sep 2023 15:54:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234672AbjIZMvp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Sep 2023 08:51:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39544 "EHLO
+        id S234880AbjIZNuB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Sep 2023 09:50:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233739AbjIZMvn (ORCPT
+        with ESMTP id S234876AbjIZNt5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Sep 2023 08:51:43 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1710CC9;
-        Tue, 26 Sep 2023 05:51:37 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36DBBC433C8;
-        Tue, 26 Sep 2023 12:51:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695732696;
-        bh=mtr85RxHM9mZq8qeFMIqIrowCy2BKd7P4jzfy9XBNC4=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=mYhkQYXfdjsr9qRIQELl5UhwK3qgolnEz1lsRq7FQkjh0lUduMuajDmbF69gyjKdX
-         redRCeebcFRGhX5V2bvpa0mERpEP7hBxjBsaGPASp+gJa5TQtHh0LfcQyCUqa5aqR4
-         V0Rc2QK4Fn7+0Bj3lne5NF1WRGVckNv9JpeRcqqD5/RkDe5teYZDcjXjFOwa909TMQ
-         lPS1RK7dVyNSrr1YOUzYsikhvP0cgEqAwouwZ/9IljSpedrwE0EKdJvwvH/8AS08Vy
-         l8t2aQBPcxQAw+CoEiqZ4XXx+VZYgVuBGHDJ0wIF9/Sww9/YuWbz0GQ10O8uBmwzmG
-         0LqPkG895p7MA==
-Message-ID: <9fb2dfe83772ef16a93030cdba6bd575c828d0fb.camel@kernel.org>
-Subject: Re: [PATCH v8 0/5] fs: multigrain timestamps for XFS's change_cookie
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Christian Brauner <brauner@kernel.org>, NeilBrown <neilb@suse.de>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Olga Kornievskaia <kolga@netapp.com>,
-        Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
-        Chandan Babu R <chandan.babu@oracle.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
+        Tue, 26 Sep 2023 09:49:57 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0445F3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Sep 2023 06:49:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1695736143;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=4a0+/j3wqqmi1vR/kPX5Kqapr51Hnx898rdCOogEsLU=;
+        b=N0bnjFWM1qDMkIIzxiUrdGMpQDv5FuI7h+MCzYzdLkUplecs3Cw0aEyfyzpu2LjcrjIOeQ
+        ZfjTGLz1ry3sKY2yj8xtqG6TIRC0XwWJi3l8yGbcrwP7yd6UYXhQWVocYpUMnx/amy5B/g
+        vqBrsz0Ap548cQyDwt+0CQsAzTdXW44=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-75-td5N-bvqNoevhu9VjagDWQ-1; Tue, 26 Sep 2023 09:48:57 -0400
+X-MC-Unique: td5N-bvqNoevhu9VjagDWQ-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A2B45101A529;
+        Tue, 26 Sep 2023 13:48:56 +0000 (UTC)
+Received: from oldenburg.str.redhat.com (unknown [10.2.16.53])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3291A140273D;
+        Tue, 26 Sep 2023 13:48:53 +0000 (UTC)
+From:   Florian Weimer <fweimer@redhat.com>
+To:     Miklos Szeredi <mszeredi@redhat.com>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Kent Overstreet <kent.overstreet@linux.dev>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org
-Date:   Tue, 26 Sep 2023 08:51:32 -0400
-In-Reply-To: <20230926-boiler-coachen-bafb70e9df18@brauner>
-References: <20230922-ctime-v8-0-45f0c236ede1@kernel.org>
-         <20230924-mitfeiern-vorladung-13092c2af585@brauner>
-         <169559548777.19404.13247796879745924682@noble.neil.brown.name>
-         <20230926-boiler-coachen-bafb70e9df18@brauner>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
+        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
+        Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>
+Subject: Re: [RFC PATCH 2/3] add statmnt(2) syscall
+References: <20230913152238.905247-1-mszeredi@redhat.com>
+        <20230913152238.905247-3-mszeredi@redhat.com>
+        <20230914-salzig-manifest-f6c3adb1b7b4@brauner>
+        <CAJfpegs-sDk0++FjSZ_RuW5m-z3BTBQdu4T9QPtWwmSZ1_4Yvw@mail.gmail.com>
+        <20230914-lockmittel-verknallen-d1a18d76ba44@brauner>
+        <CAJfpegt-VPZP3ou-TMQFs1Xupj_iWA5ttC2UUFKh3E43EyCOQQ@mail.gmail.com>
+        <20230918-grafik-zutreffen-995b321017ae@brauner>
+        <CAOssrKfS79=+F0h=XPzJX2E6taxAPmEJEYPi4VBNQjgRR5ujqw@mail.gmail.com>
+Date:   Tue, 26 Sep 2023 15:48:51 +0200
+In-Reply-To: <CAOssrKfS79=+F0h=XPzJX2E6taxAPmEJEYPi4VBNQjgRR5ujqw@mail.gmail.com>
+        (Miklos Szeredi's message of "Mon, 18 Sep 2023 16:14:02 +0200")
+Message-ID: <871qeloxj0.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.7
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2023-09-26 at 14:18 +0200, Christian Brauner wrote:
-> > > If there's no clear users and workloads depending on this other than =
-for
-> > > the sake of NFS then we shouldn't expose this to userspace. We've tri=
-ed
->=20
-> >=20
-> > Some NFS servers run in userspace, and they would a "clear user" of thi=
-s
-> > functionality.
->=20
-> See my comment above. We did thist mostly for the sake of NFS as there
-> was in itself nothing wrong with timestamps that needed urgent fixing.
->=20
-> The end result has been that we caused a regression for four other major
-> filesystems when they were switched to fine-grained timestamps.
->=20
-> So NFS servers in userspace isn't a sufficient argument to just try
-> again with a slightly tweaked solution but without a wholesale fix of
-> the actual ordering problem. The bar to merge this will naturally be
-> higher the second time around.
->=20
-> That's orthogonal to improving the general timestamp infrastructure in
-> struct inode ofc.
+* Miklos Szeredi:
 
-There are multiple proposals in flight here, and they all sort of
-dovetail on one another. I'm not proposing we expose any changes to the
-timestamps to users in any way, unless we can fix the ordering issues,
-and ensure that we can preserve existing behavior re: utimensat().
+> On Mon, Sep 18, 2023 at 3:51=E2=80=AFPM Christian Brauner <brauner@kernel=
+.org> wrote:
+>
+>> I really would prefer a properly typed struct and that's what everyone
+>> was happy with in the session as well. So I would not like to change the
+>> main parameters.
+>
+> I completely  agree.  Just would like to understand this point:
+>
+>   struct statmnt *statmnt(u64 mntid, u64 mask, unsigned int flags);
+>
+> What's not properly typed about this interface?
+>
+> I guess the answer is that it's not a syscall interface, which will
+> have an added [void *buf, size_t bufsize], while the buffer sizing is
+> done by a simple libc wrapper.
+>
+> Do you think that's a problem?  If so, why?
 
-I think it's possible to do that, but I'm going to table that work for
-the moment, and finish up the atime/mtime accessor conversions first.
-That makes experimenting with all of this a lot simpler. I think I can
-also put together a nicer implementation of multigrain timestamps too,
-if we can first convert the current timespec64's in struct inode into a
-single 64-bit word.
---=20
-Jeff Layton <jlayton@kernel.org>
+Try-and-resize interfaces can be quite bad for data obtained from the
+network.  If the first call provides the minimum buffer size (like
+getgroups, but unlike readlink or the glibc *_r interfaces for NSS),
+this could at least allow us to avoid allocating too much.  In
+userspace, we cannot reduce the size of the heap allocation without
+knowing where the pointers are and what they mean.
+
+I also don't quite understand the dislike of variable-sized records.
+Don't getdents, inotify, Netlink all use them?  And I think at least for
+Netlink, more stuff is added all the time?
+
+Thanks,
+Florian
+
