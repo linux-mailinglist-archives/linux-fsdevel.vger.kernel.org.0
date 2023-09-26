@@ -2,70 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CCA017AEB39
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Sep 2023 13:16:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19FB17AEB80
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Sep 2023 13:32:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231384AbjIZLQk convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Sep 2023 07:16:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42596 "EHLO
+        id S232437AbjIZLcG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Sep 2023 07:32:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229556AbjIZLQj (ORCPT
+        with ESMTP id S229726AbjIZLcF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Sep 2023 07:16:39 -0400
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34090E9;
-        Tue, 26 Sep 2023 04:16:32 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.228])
-        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4Rvxgx3Gbvz9xHvZ;
-        Tue, 26 Sep 2023 19:03:57 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwB3z5BmvRJl0dQRAQ--.20692S2;
-        Tue, 26 Sep 2023 12:16:03 +0100 (CET)
-Message-ID: <41711c1e42c1a248a0143b8aa9cefcc1004900a9.camel@huaweicloud.com>
-Subject: Re: [PATCH v3 20/25] security: Introduce key_post_create_or_update
- hook
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     viro@zeniv.linux.org.uk, brauner@kernel.org,
-        chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de,
-        kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
-        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        dhowells@redhat.com, jarkko@kernel.org,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        casey@schaufler-ca.com
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Tue, 26 Sep 2023 13:15:48 +0200
-In-Reply-To: <20230904134049.1802006-1-roberto.sassu@huaweicloud.com>
-References: <20230904133415.1799503-1-roberto.sassu@huaweicloud.com>
-         <20230904134049.1802006-1-roberto.sassu@huaweicloud.com>
+        Tue, 26 Sep 2023 07:32:05 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1975DE5;
+        Tue, 26 Sep 2023 04:31:59 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24FE5C433C8;
+        Tue, 26 Sep 2023 11:31:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695727918;
+        bh=VavTLqfwPyOPHMccoFChylXmFFUo8P7qlBTJ/DhQa2w=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=QV5akLE8cAQWKD8DSqGm3T3eFEgO4cqRzRheD5AXFFAGZjfZohBsvWfJu1z1/3Z/c
+         McIfFKUws9d2IsYbPe2f6eQwitPBCTmUwrW8L+rcqrGDI3l8T0XzHzZtyOCqGWUYl3
+         w9yvUNiNJnXyLQBL+qr9frj8ed4Fo9NlUQgF3sXPq3XAK2Q+XvDxjFA7kWCxz02wCB
+         M6lgQY/XvGaeVFTzeW0DTG+4CUYuOxJvvfSzYX+8mcxjGhE8Se9B9k/Tli5Xoi/Syt
+         4KxlktRKXg6+TLBEF1i51FpePUzCV8uSSX4n0yM25izPFG5e0Dv7apQz2Xy0gfGziV
+         T90RTT72Nl3gg==
+Message-ID: <54e79ca9adfd52a8d39e158bc246173768a0aa0d.camel@kernel.org>
+Subject: Re: [PATCH v8 0/5] fs: multigrain timestamps for XFS's change_cookie
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Neil Brown <neilb@suse.de>,
+        Olga Kornievskaia <kolga@netapp.com>,
+        Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
+        Chandan Babu R <chandan.babu@oracle.com>,
+        "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Kent Overstreet <kent.overstreet@linux.dev>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org
+Date:   Tue, 26 Sep 2023 07:31:55 -0400
+In-Reply-To: <ZRIKj0E8P46kerqa@dread.disaster.area>
+References: <20230922-ctime-v8-0-45f0c236ede1@kernel.org>
+         <CAOQ4uxiNfPoPiX0AERywqjaBH30MHQPxaZepnKeyEjJgTv8hYg@mail.gmail.com>
+         <5e3b8a365160344f1188ff13afb0a26103121f99.camel@kernel.org>
+         <CAOQ4uxjrt6ca4VDvPAL7USr6_SspCv0rkRkMJ4_W2S6vzV738g@mail.gmail.com>
+         <ZRC1pjwKRzLiD6I3@dread.disaster.area>
+         <77d33282068035a3b42ace946b1be57457d2b60b.camel@kernel.org>
+         <ZRIKj0E8P46kerqa@dread.disaster.area>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-User-Agent: Evolution 3.44.4-0ubuntu2 
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 MIME-Version: 1.0
-X-CM-TRANSID: LxC2BwB3z5BmvRJl0dQRAQ--.20692S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxAF4fXFyUCr4DZF48Kw48JFb_yoWrtr4kpa
-        yjk3WrK3yftFyaqrZ3AF12gayFy3y8K347G39xWr1UJFnavw1xur42kr4DurW3XryrGry0
-        qw42vFW3Gr1q9rJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUk0b4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I
-        0E14v26r4j6r4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-        6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-        Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI
-        7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-        Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY
-        6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWxJVW8Jr1lIxAIcV
-        CF04k26cxKx2IYs7xG6Fyj6rWUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv
-        6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUrfOzDUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAMBF1jj5BT2AAAsg
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE autolearn=ham
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -73,135 +67,149 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2023-09-04 at 15:40 +0200, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
-> 
-> In preparation for moving IMA and EVM to the LSM infrastructure, introduce
-> the key_post_create_or_update hook.
-> 
-> It is useful for IMA to measure the key content after creation or update,
-> so that remote verifiers are aware of the operation.
-> 
-> LSMs can benefit from this hook to make their decision on the new or
-> successfully updated key content. The new hook cannot return an error and
-> cannot cause the operation to be reverted.
-> 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
->  include/linux/lsm_hook_defs.h |  3 +++
->  include/linux/security.h      | 11 +++++++++++
->  security/keys/key.c           |  7 ++++++-
+On Tue, 2023-09-26 at 08:32 +1000, Dave Chinner wrote:
+> On Mon, Sep 25, 2023 at 06:14:05AM -0400, Jeff Layton wrote:
+> > On Mon, 2023-09-25 at 08:18 +1000, Dave Chinner wrote:
+> > > On Sat, Sep 23, 2023 at 05:52:36PM +0300, Amir Goldstein wrote:
+> > > > On Sat, Sep 23, 2023 at 1:46=E2=80=AFPM Jeff Layton <jlayton@kernel=
+.org> wrote:
+> > > > >=20
+> > > > > On Sat, 2023-09-23 at 10:15 +0300, Amir Goldstein wrote:
+> > > > > > On Fri, Sep 22, 2023 at 8:15=E2=80=AFPM Jeff Layton <jlayton@ke=
+rnel.org> wrote:
+> > > > > > >=20
+> > > > > > > My initial goal was to implement multigrain timestamps on mos=
+t major
+> > > > > > > filesystems, so we could present them to userland, and use th=
+em for
+> > > > > > > NFSv3, etc.
+> > > > > > >=20
+> > > > > > > With the current implementation however, we can't guarantee t=
+hat a file
+> > > > > > > with a coarse grained timestamp modified after one with a fin=
+e grained
+> > > > > > > timestamp will always appear to have a later value. This coul=
+d confuse
+> > > > > > > some programs like make, rsync, find, etc. that depend on str=
+ict
+> > > > > > > ordering requirements for timestamps.
+> > > > > > >=20
+> > > > > > > The goal of this version is more modest: fix XFS' change attr=
+ibute.
+> > > > > > > XFS's change attribute is bumped on atime updates in addition=
+ to other
+> > > > > > > deliberate changes. This makes it unsuitable for export via n=
+fsd.
+> > > > > > >=20
+> > > > > > > Jan Kara suggested keeping this functionality internal-only f=
+or now and
+> > > > > > > plumbing the fine grained timestamps through getattr [1]. Thi=
+s set takes
+> > > > > > > a slightly different approach and has XFS use the fine-graine=
+d attr to
+> > > > > > > fake up STATX_CHANGE_COOKIE in its getattr routine itself.
+> > > > > > >=20
+> > > > > > > While we keep fine-grained timestamps in struct inode, when p=
+resenting
+> > > > > > > the timestamps via getattr, we truncate them at a granularity=
+ of number
+> > > > > > > of ns per jiffy,
+> > > > > >=20
+> > > > > > That's not good, because user explicitly set granular mtime wou=
+ld be
+> > > > > > truncated too and booting with different kernels (HZ) would cha=
+nge
+> > > > > > the observed timestamps of files.
+> > > > > >=20
+> > > > >=20
+> > > > > Thinking about this some more, I think the first problem is easil=
+y
+> > > > > addressable:
+> > > > >=20
+> > > > > The ctime isn't explicitly settable and with this set, we're alre=
+ady not
+> > > > > truncating the atime. We haven't used any of the extra bits in th=
+e mtime
+> > > > > yet, so we could just carve out a flag in there that says "this m=
+time
+> > > > > was explicitly set and shouldn't be truncated before presentation=
+".
+> > > > >=20
+> > > >=20
+> > > > I thought about this option too.
+> > > > But note that the "mtime was explicitly set" flag needs
+> > > > to be persisted to disk so you cannot store it in the high nsec bit=
+s.
+> > > > At least XFS won't store those bits if you use them - they have to
+> > > > be translated to an XFS inode flag and I don't know if changing
+> > > > XFS on-disk format was on your wish list.
+> > >=20
+> > > Remember: this multi-grain timestamp thing was an idea to solve the
+> > > NFS change attribute problem without requiring *any* filesystem with
+> > > sub-jiffie timestamp capability to change their on-disk format to
+> > > implement a persistent change attribute that matches the new
+> > > requires of the kernel nfsd.
+> > >=20
+> > > If we now need to change the on-disk format to support
+> > > some whacky new timestamp semantic to do this, then people have
+> > > completely lost sight of what problem the multi-grain timestamp idea
+> > > was supposed to address.
+> > >=20
+> >=20
+> > Yep. The main impetus for all of this was to fix XFS's change attribute
+> > without requiring an on-disk format change. If we have to rev the on-
+> > disk format, we're probably better off plumbing in a proper i_version
+> > counter and tossing this idea aside.
+> >=20
+> > That said, I think all we'd need for this scheme is a single flag per
+> > inode (to indicate that the mtime shouldn't be truncated before
+> > presentation). If that's possible to do without fully revving the inode
+> > format, then we could still pursue this. I take it that's probably not
+> > the case though.
+>=20
+> Older kernels that don't know what the flag means, but that should
+> be OK for an inode flag. The bigger issue is that none of the
+> userspace tools (xfs_db, xfs_repair, etc) know about it, so they
+> would have to be taught about it. And then there's testing it, which
+> likely means userspace needs visibility of the flag (e.g. FS_XFLAG
+> for it) and then there's more work....
+>=20
+> It's really not worth it.
+>=20
+>
+> I think that Linus's suggestion of the in-memory inode timestamp
+> always being a 64bit, 100ns granularity value instead of a timespec
+> that gets truncated at sample time has merit as a general solution.
+>=20
 
-Hi David, Jarkko
+Changing how we store timestamps in struct inode is a good idea, and
+reducing the effective granularity to 100ns seems reasonable, but that
+alone won't fix XFS's i_version counter, or the ordering problems that
+we hit with the multigrain series that had to be reverted.
 
-could you please review and ack this patch?
+> We also must not lose sight of the fact that the lazytime mount
+> option makes atime updates on XFS behave exactly as the nfsd/NFS
+> client application wants. That is, XFS will do in-memory atime
+> updates unless the atime update also sets S_VERSION to explicitly
+> bump the i_version counter if required. That leads to another
+> potential nfsd specific solution without requiring filesystems to
+> change on disk formats: the nfsd explicitly asks operations for lazy
+> atime updates...
+>=20
 
-Thanks a lot!
+Not exactly. The problem with XFS's i_version is that it also bumps it
+on atime updates. lazytime reduces the number of atime updates to
+~1/day. To be exactly what nfsd wants, you'd need to make that 0. I
+suppose you can work around it with noatime, but that has problems of
+its own.
 
-Roberto
+> And we must also keep in sight the fact that io_uring wants
+> non-blocking timestamp updates to be possible (for all types of
+> updates). Hence it looks to me like we have more than one use case
+> for per-operation/application specific timestamp update semantics.
+> Perhaps there's a generic solution to this problem (e.g.  operation
+> specific non-blocking, in-memory pure timestamp updates) that does
+> what everyone needs...
 
->  security/security.c           | 19 +++++++++++++++++++
->  4 files changed, 39 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-> index eedc26790a07..7512b4c46aa8 100644
-> --- a/include/linux/lsm_hook_defs.h
-> +++ b/include/linux/lsm_hook_defs.h
-> @@ -399,6 +399,9 @@ LSM_HOOK(void, LSM_RET_VOID, key_free, struct key *key)
->  LSM_HOOK(int, 0, key_permission, key_ref_t key_ref, const struct cred *cred,
->  	 enum key_need_perm need_perm)
->  LSM_HOOK(int, 0, key_getsecurity, struct key *key, char **buffer)
-> +LSM_HOOK(void, LSM_RET_VOID, key_post_create_or_update, struct key *keyring,
-> +	 struct key *key, const void *payload, size_t payload_len,
-> +	 unsigned long flags, bool create)
->  #endif /* CONFIG_KEYS */
->  
->  #ifdef CONFIG_AUDIT
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index e543ae80309b..f50b78481753 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -1959,6 +1959,9 @@ void security_key_free(struct key *key);
->  int security_key_permission(key_ref_t key_ref, const struct cred *cred,
->  			    enum key_need_perm need_perm);
->  int security_key_getsecurity(struct key *key, char **_buffer);
-> +void security_key_post_create_or_update(struct key *keyring, struct key *key,
-> +					const void *payload, size_t payload_len,
-> +					unsigned long flags, bool create);
->  
->  #else
->  
-> @@ -1986,6 +1989,14 @@ static inline int security_key_getsecurity(struct key *key, char **_buffer)
->  	return 0;
->  }
->  
-> +static inline void security_key_post_create_or_update(struct key *keyring,
-> +						      struct key *key,
-> +						      const void *payload,
-> +						      size_t payload_len,
-> +						      unsigned long flags,
-> +						      bool create)
-> +{ }
-> +
->  #endif
->  #endif /* CONFIG_KEYS */
->  
-> diff --git a/security/keys/key.c b/security/keys/key.c
-> index 5c0c7df833f8..0f9c6faf3491 100644
-> --- a/security/keys/key.c
-> +++ b/security/keys/key.c
-> @@ -934,6 +934,8 @@ static key_ref_t __key_create_or_update(key_ref_t keyring_ref,
->  		goto error_link_end;
->  	}
->  
-> +	security_key_post_create_or_update(keyring, key, payload, plen, flags,
-> +					   true);
->  	ima_post_key_create_or_update(keyring, key, payload, plen,
->  				      flags, true);
->  
-> @@ -967,10 +969,13 @@ static key_ref_t __key_create_or_update(key_ref_t keyring_ref,
->  
->  	key_ref = __key_update(key_ref, &prep);
->  
-> -	if (!IS_ERR(key_ref))
-> +	if (!IS_ERR(key_ref)) {
-> +		security_key_post_create_or_update(keyring, key, payload, plen,
-> +						   flags, false);
->  		ima_post_key_create_or_update(keyring, key,
->  					      payload, plen,
->  					      flags, false);
-> +	}
->  
->  	goto error_free_prep;
->  }
-> diff --git a/security/security.c b/security/security.c
-> index 554f4925323d..957e53ba904f 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -5169,6 +5169,25 @@ int security_key_getsecurity(struct key *key, char **buffer)
->  	*buffer = NULL;
->  	return call_int_hook(key_getsecurity, 0, key, buffer);
->  }
-> +
-> +/**
-> + * security_key_post_create_or_update() - Notification of key create or update
-> + * @keyring: keyring to which the key is linked to
-> + * @key: created or updated key
-> + * @payload: data used to instantiate or update the key
-> + * @payload_len: length of payload
-> + * @flags: key flags
-> + * @create: flag indicating whether the key was created or updated
-> + *
-> + * Notify the caller of a key creation or update.
-> + */
-> +void security_key_post_create_or_update(struct key *keyring, struct key *key,
-> +					const void *payload, size_t payload_len,
-> +					unsigned long flags, bool create)
-> +{
-> +	call_void_hook(key_post_create_or_update, keyring, key, payload,
-> +		       payload_len, flags, create);
-> +}
->  #endif	/* CONFIG_KEYS */
->  
->  #ifdef CONFIG_AUDIT
-
+--=20
+Jeff Layton <jlayton@kernel.org>
