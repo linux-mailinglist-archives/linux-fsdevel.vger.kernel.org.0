@@ -2,133 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EF687AEEAE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Sep 2023 16:58:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 914807AEEA8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Sep 2023 16:58:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231265AbjIZOG3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Sep 2023 10:06:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41930 "EHLO
+        id S230178AbjIZOHq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Sep 2023 10:07:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229707AbjIZOG1 (ORCPT
+        with ESMTP id S229958AbjIZOHq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Sep 2023 10:06:27 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 615B7116
-        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Sep 2023 07:06:19 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id a640c23a62f3a-9adca291f99so1087104366b.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Sep 2023 07:06:19 -0700 (PDT)
+        Tue, 26 Sep 2023 10:07:46 -0400
+Received: from mail-ot1-x32f.google.com (mail-ot1-x32f.google.com [IPv6:2607:f8b0:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6995FC;
+        Tue, 26 Sep 2023 07:07:39 -0700 (PDT)
+Received: by mail-ot1-x32f.google.com with SMTP id 46e09a7af769-6c4cbab83aaso4171120a34.1;
+        Tue, 26 Sep 2023 07:07:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1695737178; x=1696341978; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uRwJs6LGdBPmfL+586hFfECrrSIQE+7lECzp/i1r0Oo=;
-        b=RlRbx2NHhjAn/pAuWXI2fytFzd4stg+4X3dZdI+3MrnGaxJlPL5xPXiGP5/kJlsavo
-         W2DEsZ4G/sOjTXKZpFjIqQ82v5TXzzovwoWrIeeexbVRzpxtSX9TKejisI0oF98gQIgV
-         cK/VFBNImURPzGTaMf3rheRCHLetCkbWoZ1nk=
+        d=gmail.com; s=20230601; t=1695737259; x=1696342059; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=+T1kiw5Evo1WrVqxLy5w/b1X7UOVJo+3cJZz1bjJVZI=;
+        b=fNkeYkipkcuEUOrNPEarYHLFUmxBmTK/DlOUgvye6CKKkikj514kJZf1E+clSL74Zg
+         S7wrA9TdsaHVlUJ4ehk8L+krmdPZ0yeS3uARnFp2JYW586cmN1sIdKntCLR/4SmBHA07
+         w5qXXyHUCoi0vAGkzbb/zz5LPtXySJIWnpQwMqvOylPfwjaS9LOUkARiTxqVZbkKhnTI
+         tdrZ462VPGC6xGxLAVP9HQ9y9a/a4PTrEuNU7n/NIsJ1C45I3snU7528uSCtaw7ENE74
+         O3dfa837wdMCmKGuKCWsld8ThLHCJzHK2Y1sCxRqOm+zYbBsjFmjdWUYHVRVKO69eVAp
+         85VA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695737178; x=1696341978;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uRwJs6LGdBPmfL+586hFfECrrSIQE+7lECzp/i1r0Oo=;
-        b=hsDTddwZxFSoitlTRa5ry+vht4AwNGj3/kPk8ojIHbetTwUOGlkt1BNLHOPk9as3uL
-         S1THPQ5MuxwZSxudUlj5rar6Ad1p+YQGSZHA7E0nX4WTfnMulsVMJdn1v6kkc9xXX8rs
-         FlOz819LpNkBVTnSpxIfGuzIJaK1jv8qNy/9Uyux09enOyGykbU/R3iS5YrnxnbrQEje
-         77CIepJ6DiYQt/DejiCePgCXlfej3zWNRVHHYfeK3+VNmAJZLDdE3yBI62dryWuIYXQa
-         //9uft37OluVt8NaVlT3IoJb245hFEbnT1RXLL7o/nI7GqmHy38gdNMkA+isPDIkovb0
-         6IhA==
-X-Gm-Message-State: AOJu0Yw87+iwd+Ae51XbpwHh9e602LwdLk65E0AzZ9RVKfb+eoulP/pG
-        wK+WCow9MVg13zW3VXiGItgux718JpiUcRq4FsSpgA==
-X-Google-Smtp-Source: AGHT+IFHTAM+tJZjIN9/SFusTb0hi5JKPSzFCgkZBc1/u3GnwtJTR2qZZT7WwfV5yYXqBLz5JWXIo3tjVT1zYGqrLgE=
-X-Received: by 2002:a17:906:3299:b0:9ae:6196:a4d0 with SMTP id
- 25-20020a170906329900b009ae6196a4d0mr8739793ejw.17.1695737177221; Tue, 26 Sep
- 2023 07:06:17 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1695737259; x=1696342059;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+T1kiw5Evo1WrVqxLy5w/b1X7UOVJo+3cJZz1bjJVZI=;
+        b=tLxFDzLOL1uCl3FnmWXK/asU3QVeQ0QmbP/iEcBV4yKMsGHS+KJtCV7f1AQJBTeBjF
+         w8MHO1THmr/6UuvHcy4M/Nz4uRxNqfL0GueGGhPnhMo2uFiquznWNzMnFZU0xcxzwh4J
+         VnexchO36UCMyUiPQmCqFkbtXvbbV3Yu5SBadrnIzzyhC5sUpPg8gELsf+u/vH4kreay
+         k6nNhcE/XKoi+NJLdyoklT2PZNbcLJOvNRUJSPl4cMOW8TYBjPfu0gq+fK/f2l+zSt8K
+         KqKvrBY+XsydL1Imxbs1UqLiCJk6+s3jb+zQFusEwj2iEnStJ61JKKL1Di31V6zueBnV
+         HdGg==
+X-Gm-Message-State: AOJu0YzwvWbeOoDrdL9cIZ5/6mLJfdPxr/Als5KnTlYFvjgo5fE6Yfx4
+        R81JGyTHrAyqHKK2YBHlu8WaScplmXLOrFpuRa4/Dlda
+X-Google-Smtp-Source: AGHT+IHHt9Kf6fnGHJIEBsMQbVwQyHMuDvQQtMAG/MjoCSV6gXo4Yab1jaPjZ/bhfHP83e/Eu8c0i6uoQaf07uGx2Kg=
+X-Received: by 2002:a9d:4b12:0:b0:6bd:c7c3:aac2 with SMTP id
+ q18-20020a9d4b12000000b006bdc7c3aac2mr10313264otf.18.1695737259119; Tue, 26
+ Sep 2023 07:07:39 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230913152238.905247-1-mszeredi@redhat.com> <20230913152238.905247-3-mszeredi@redhat.com>
- <20230914-salzig-manifest-f6c3adb1b7b4@brauner> <CAJfpegs-sDk0++FjSZ_RuW5m-z3BTBQdu4T9QPtWwmSZ1_4Yvw@mail.gmail.com>
- <20230914-lockmittel-verknallen-d1a18d76ba44@brauner> <CAJfpegt-VPZP3ou-TMQFs1Xupj_iWA5ttC2UUFKh3E43EyCOQQ@mail.gmail.com>
- <20230918-grafik-zutreffen-995b321017ae@brauner> <CAOssrKfS79=+F0h=XPzJX2E6taxAPmEJEYPi4VBNQjgRR5ujqw@mail.gmail.com>
- <871qeloxj0.fsf@oldenburg.str.redhat.com>
-In-Reply-To: <871qeloxj0.fsf@oldenburg.str.redhat.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 26 Sep 2023 16:06:05 +0200
-Message-ID: <CAJfpegupTzdG4=UwguL02c08ZaoX+UK7+=9XQ9D1G4wLMxuqFA@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/3] add statmnt(2) syscall
-To:     Florian Weimer <fweimer@redhat.com>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
-        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
-        Ian Kent <raven@themaw.net>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Amir Goldstein <amir73il@gmail.com>
+Received: by 2002:ac9:5d4a:0:b0:4f0:1250:dd51 with HTTP; Tue, 26 Sep 2023
+ 07:07:38 -0700 (PDT)
+In-Reply-To: <20230926-anforderungen-obgleich-47e465f0bd47@brauner>
+References: <20230925205545.4135472-1-mjguzik@gmail.com> <20230926-anforderungen-obgleich-47e465f0bd47@brauner>
+From:   Mateusz Guzik <mjguzik@gmail.com>
+Date:   Tue, 26 Sep 2023 16:07:38 +0200
+Message-ID: <CAGudoHG0-BWTVRG8uZk5Gy8xSwpT8JO5Z=VfY3_dFcCaqhLf5Q@mail.gmail.com>
+Subject: Re: [PATCH] vfs: shave work on failed file open
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 26 Sept 2023 at 15:49, Florian Weimer <fweimer@redhat.com> wrote:
+On 9/26/23, Christian Brauner <brauner@kernel.org> wrote:
+>> +void fput_badopen(struct file *file)
+>> +{
+>> +	if (unlikely(file->f_mode & (FMODE_BACKING | FMODE_OPENED))) {
+>> +		fput(file);
+>> +		return;
+>> +	}
+>> +
+>> +	if (WARN_ON(atomic_long_read(&file->f_count) != 1)) {
+>> +		fput(file);
+>> +		return;
+>> +	}
+>> +
+>> +	/* zero out the ref count to appease possible asserts */
+>> +	atomic_long_set(&file->f_count, 0);
 >
-> * Miklos Szeredi:
+> Afaict this could just be:
 >
-> > On Mon, Sep 18, 2023 at 3:51=E2=80=AFPM Christian Brauner <brauner@kern=
-el.org> wrote:
-> >
-> >> I really would prefer a properly typed struct and that's what everyone
-> >> was happy with in the session as well. So I would not like to change t=
-he
-> >> main parameters.
-> >
-> > I completely  agree.  Just would like to understand this point:
-> >
-> >   struct statmnt *statmnt(u64 mntid, u64 mask, unsigned int flags);
-> >
-> > What's not properly typed about this interface?
-> >
-> > I guess the answer is that it's not a syscall interface, which will
-> > have an added [void *buf, size_t bufsize], while the buffer sizing is
-> > done by a simple libc wrapper.
-> >
-> > Do you think that's a problem?  If so, why?
+> if (WARN_ON_ONCE(atomic_long_cmpxchg(&file->f_count, 1, 0) != 1)) {
 >
-> Try-and-resize interfaces can be quite bad for data obtained from the
-> network.
 
-In this particular case it's all local information.
+This would bring back one of the atomics, but I'm not going to die on this hill.
 
->  If the first call provides the minimum buffer size (like
-> getgroups, but unlike readlink or the glibc *_r interfaces for NSS),
-> this could at least allow us to avoid allocating too much.  In
-> userspace, we cannot reduce the size of the heap allocation without
-> knowing where the pointers are and what they mean.
+If you insist on this change I'm going to have tweak some comments and
+bench again.
 
-Does it matter if the heap allocation is say 32k instead of 589bytes?
- The returned strings are not limited in size, but are quite unlikely
-to be over PATH_MAX.
+>> +	file_free_badopen(file);
+>> +}
+>> +EXPORT_SYMBOL(fput_badopen);
+>
+> Should definitely not be exported and only be available to core vfs
+> code. So this should go into fs/internal.h.
+>
 
-E.g. getdents apparently uses 32k buffers, which is really a tiny
-amount of heap these days, but more than enough for the purpose.  Not
-sure if this is hard coded into libc or if it's the result of some
-heuristic based on available memory, but I don't see why similar
-treatment couldn't be applied to the statmount(2) syscall.
+Ok
 
-> I also don't quite understand the dislike of variable-sized records.
-> Don't getdents, inotify, Netlink all use them?  And I think at least for
-> Netlink, more stuff is added all the time?
-
-What do you mean by variable sized records?
-
-Thanks,
-Miklos
+-- 
+Mateusz Guzik <mjguzik gmail.com>
