@@ -2,201 +2,173 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D60A27B098F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Sep 2023 18:03:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EF607B09D5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Sep 2023 18:21:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230248AbjI0QDw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Sep 2023 12:03:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47540 "EHLO
+        id S230144AbjI0QVf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Sep 2023 12:21:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231332AbjI0QDq (ORCPT
+        with ESMTP id S229901AbjI0QVe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Sep 2023 12:03:46 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6996491;
-        Wed, 27 Sep 2023 09:03:45 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-9a64619d8fbso1481336066b.0;
-        Wed, 27 Sep 2023 09:03:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1695830623; x=1696435423; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ji/hBwx8+isn2luTSLK88rkw0mw2KsvkgWhx3gQ5C1A=;
-        b=SuhKstCZCjlKLeIa600rlLEAIBrcuCWl0L8aA9A5Y/R5Vh7l1XAzDgDvQU/xp1MzEc
-         OM4WHogcpapx+OzKot0Rhk6pp1GkpuoqO9VSh0dRm8A6U5qz0CkHqp4au9llthiDOwC2
-         1qI1sI19jYrDOnab6UOVzuKqLisjlDA8T6QNkosRBTxaX1U4C+dvOCOEdbJjXQaR5+4Z
-         eaywyI6DGowJuMTYCLkVI/YSO3La+CQeZeBWPSKgZJ5ie//8ofXkPzLedKC/TzAlLKQw
-         3OmVQ97gG3Msg+FzyfcrXhJpJvOeVuzDWMer971YI2Jdr71/woUSn6x6+PHGgforGfLZ
-         hE9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695830623; x=1696435423;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ji/hBwx8+isn2luTSLK88rkw0mw2KsvkgWhx3gQ5C1A=;
-        b=mybJGfBJNBulSrLOonQwGWTZJ9EmP9rSB/1KvK/rAy9kDyhyP6UCPvQkVW3K1AjJ+v
-         h0RNit61Ed8vsDu91om6h+FzdzukWzceX9vALdJGjdC/0Gyv9f7MUVtfUG7mnsTRj0Tg
-         kPg4zeaO6YvHEZV/ktCdIUj7rE8nWmMzWhHKiSnvLWfqwT40E1Ox5WacLplY2ns6Fvu3
-         m+X1jr4UBfUPq7XbDeClIo7KE+RBG3R2jdIiMuGR2lo1qeX21oRdabjiv0KkPicVutei
-         L1O7viUVRIBmZ1qQ+eWxdPI+4EUQQADHO2hYXQ/a0QdGDOoFh9qA9SJdriEpHZOY4zt8
-         nUTg==
-X-Gm-Message-State: AOJu0Yw+s68l320YPRXBRuGZiPAKso6W3KRMKMAY4p8vL7r9JV987Y38
-        4EivnJnlAonGnRzleypk9iJ+keJn+F81JVLT/fM=
-X-Google-Smtp-Source: AGHT+IG6yWhEHFsOWCaJgQIq+JART08DJ4Xp3AmdWnErHVXMsInwmUfTtgtJjxk6hR3l5zD2i1H8cIc+VQDdy/G+Ck4=
-X-Received: by 2002:a17:906:7494:b0:9ad:ece6:eeb with SMTP id
- e20-20020a170906749400b009adece60eebmr1913065ejl.32.1695830623284; Wed, 27
- Sep 2023 09:03:43 -0700 (PDT)
+        Wed, 27 Sep 2023 12:21:34 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E702DD;
+        Wed, 27 Sep 2023 09:21:31 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF3E3C433C7;
+        Wed, 27 Sep 2023 16:21:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695831690;
+        bh=5fVqTod0fsU3D85/NgpH5eX11yWtVW2s8jme29QI3SA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=K+SdxwDZhx8uxbb5abeHgPolVgmwSiIBL6/AzX/eEpmg7s5Jd1TwEPpueT17Z+y1i
+         r/3aJFhGZoIRaqB+ADboLRaAQZpJm6SMvyfu5jpdUX9fmjLLqHrtdJHSnoHaBHBoNB
+         1Ras0NDOeGzjZ5rjoNJ7hj3RFSgjPFHQeOCu0doiR1ZFlmc7Dtn7+Tg4yFYE5HRxY7
+         FflbgLOEB1zCas3wjtrhbqXfzlZd6DZqKcBXDoRDLeETsNHRLxD2cXgjOH7guvx0ma
+         AufPlRnLwdi+pMqoWiBGk6SGa+Snjtz53w/pXkwTjOc2fDnSaUxFN105snuKm+T14u
+         FBsBAdYo6oMFA==
+Date:   Wed, 27 Sep 2023 18:21:19 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>,
+        Alasdair Kergon <agk@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Anna Schumaker <anna@kernel.org>, Chao Yu <chao@kernel.org>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Dave Kleikamp <shaggy@kernel.org>,
+        David Sterba <dsterba@suse.com>, dm-devel@redhat.com,
+        drbd-dev@lists.linbit.com, Gao Xiang <xiang@kernel.org>,
+        Jack Wang <jinpu.wang@ionos.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        jfs-discussion@lists.sourceforge.net,
+        Joern Engel <joern@lazybastard.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-bcache@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
+        linux-mtd@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-nilfs@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-pm@vger.kernel.org, linux-raid@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-xfs@vger.kernel.org,
+        "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
+        Mike Snitzer <snitzer@kernel.org>,
+        Minchan Kim <minchan@kernel.org>, ocfs2-devel@oss.oracle.com,
+        reiserfs-devel@vger.kernel.org,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Song Liu <song@kernel.org>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        target-devel@vger.kernel.org, Ted Tso <tytso@mit.edu>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        xen-devel@lists.xenproject.org
+Subject: Re: [PATCH v4 0/29] block: Make blkdev_get_by_*() return handle
+Message-ID: <20230927-prahlen-reintreten-93706074e58d@brauner>
+References: <20230818123232.2269-1-jack@suse.cz>
 MIME-Version: 1.0
-References: <20230919214800.3803828-1-andrii@kernel.org> <20230919214800.3803828-4-andrii@kernel.org>
- <20230926-augen-biodiesel-fdb05e859aac@brauner> <CAEf4BzaH64kkccc1P-hqQj6Mccr3Q6x059G=A95d=KfU=yBMJQ@mail.gmail.com>
- <20230927-kaution-ventilator-33a41ee74d63@brauner>
-In-Reply-To: <20230927-kaution-ventilator-33a41ee74d63@brauner>
-From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Wed, 27 Sep 2023 09:03:31 -0700
-Message-ID: <CAEf4BzZ2a7ZR75ka6bjXex=qrf9bQBEyDBN5tPtkfWbErhuOTw@mail.gmail.com>
-Subject: Re: [PATCH v5 bpf-next 03/13] bpf: introduce BPF token object
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-        netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keescook@chromium.org,
-        lennart@poettering.net, kernel-team@meta.com, sargun@sargun.me
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20230818123232.2269-1-jack@suse.cz>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 27, 2023 at 2:52=E2=80=AFAM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> > > > +#define BPF_TOKEN_INODE_NAME "bpf-token"
-> > > > +
-> > > > +/* Alloc anon_inode and FD for prepared token.
-> > > > + * Returns fd >=3D 0 on success; negative error, otherwise.
-> > > > + */
-> > > > +int bpf_token_new_fd(struct bpf_token *token)
-> > > > +{
-> > > > +     return anon_inode_getfd(BPF_TOKEN_INODE_NAME, &bpf_token_fops=
-, token, O_CLOEXEC);
-> > >
-> > > It's unnecessary to use the anonymous inode infrastructure for bpf
-> > > tokens. It adds even more moving parts and makes reasoning about it e=
-ven
-> > > harder. Just keep it all in bpffs. IIRC, something like the following
-> > > (broken, non-compiling draft) should work:
-> > >
-> > > /* bpf_token_file - get an unlinked file living in bpffs */
-> > > struct file *bpf_token_file(...)
-> > > {
-> > >         inode =3D bpf_get_inode(bpffs_mnt->mnt_sb, dir, mode);
-> > >         inode->i_op =3D &bpf_token_iop;
-> > >         inode->i_fop =3D &bpf_token_fops;
-> > >
-> > >         // some other stuff you might want or need
-> > >
-> > >         res =3D alloc_file_pseudo(inode, bpffs_mnt, "bpf-token", O_RD=
-WR, &bpf_token_fops);
-> > > }
-> > >
-> > > Now set your private data that you might need, reserve an fd, install
-> > > the file into the fdtable and return the fd. You should have an unlin=
-ked
-> > > bpffs file that serves as your bpf token.
-> >
-> > Just to make sure I understand. You are saying that instead of having
-> > `struct bpf_token *` and passing that into internal APIs
-> > (bpf_token_capable() and bpf_token_allow_xxx()), I should just pass
-> > around `struct super_block *` representing BPF FS instance? Or `struct
-> > bpf_mount_opts *` maybe? Or 'struct vfsmount *'? (Any preferences
-> > here?). Is that right?
->
-> No, that's not what I meant.
->
-> So, what you're doing right now to create a bpf token file descriptor is:
->
-> return anon_inode_getfd(BPF_TOKEN_INODE_NAME, &bpf_token_fops, token, O_C=
-LOEXEC);
->
-> which is using the anonymous inode infrastructure. That is an entirely
-> different filesystems (glossing over details) that is best leveraged for
-> stuff like kvm fds and other stuff that doesn't need or have its own
-> filesytem implementation.
->
-> But you do have your own filesystem implementation so why abuse another
-> one to create bpf token fds when they can just be created directly from
-> the bpffs instance.
->
-> IOW, everything stays the same apart from the fact that bpf token fds
-> are actually file descriptors referring to a detached bpffs file instead
-> of an anonymous inode file. IOW, bpf tokens are actual bpffs objects
-> tied to a bpffs instance.
+On Wed, 27 Sep 2023 11:34:07 +0200, Jan Kara wrote:
+> Create struct bdev_handle that contains all parameters that need to be
+> passed to blkdev_put() and provide bdev_open_* functions that return
+> this structure instead of plain bdev pointer. This will eventually allow
+> us to pass one more argument to blkdev_put() (renamed to bdev_release())
+> without too much hassle.
+> 
+> 
+> [...]
 
-Ah, ok, this is a much smaller change than what I was about to make.
-I'm glad I asked and thanks for elaborating! I'll use
-alloc_file_pseudo() using bpffs mount in the next revision.
+> to ease review / testing. Christian, can you pull the patches to your tree
+> to get some exposure in linux-next as well? Thanks!
 
->
-> **BROKEN BROKEN BROKEN AND UGLY**
->
-> int bpf_token_create(union bpf_attr *attr)
-> {
->         struct inode *inode;
->         struct path path;
->         struct bpf_mount_opts *mnt_opts;
->         struct bpf_token *token;
->         struct fd fd;
->         int fd, ret;
->         struct file *file;
->
->         fd =3D fdget(attr->token_create.bpffs_path_fd);
->         if (!fd.file)
->                 goto cleanup;
->
->         if (fd.file->f_path->dentry !=3D fd.file->f_path->dentry->d_sb->s=
-_root)
->                 goto cleanup;
->
->         inode =3D bpf_get_inode(fd.file->f_path->mnt->mnt_sb, NULL, 12341=
-23412341234);
->         if (!inode)
->                 goto cleanup;
->
->         fd =3D get_unused_fd_flags(O_RDWR | O_CLOEXEC);
->         if (fd < 0)
->                 goto cleanup;
->
->         clear_nlink(inode); /* make sure it is unlinked */
->
->         file =3D alloc_file_pseudo(inode, fd.file->f_path->mnt, "bpf-toke=
-n", O_RDWR, &&bpf_token_fops);
->         if (IS_ERR(file))
->                 goto cleanup;
->
->         token =3D bpf_token_alloc();
->         if (!token)
->                 goto cleanup;
->
->         /* remember bpffs owning userns for future ns_capable() checks */
->         token->userns =3D get_user_ns(path.dentry->d_sb->s_user_ns);
->
->         mnt_opts =3D path.dentry->d_sb->s_fs_info;
->         token->allowed_cmds =3D mnt_opts->delegate_cmds;
->         token->allowed_maps =3D mnt_opts->delegate_maps;
->         token->allowed_progs =3D mnt_opts->delegate_progs;
->         token->allowed_attachs =3D mnt_opts->delegate_attachs;
->
->         file->private_data =3D token;
->         fd_install(fd, file);
->         return fd;
->
-> cleanup:
->         // cleanup stuff here
->         return -SOME_ERROR;
-> }
+Yep. So I did it slighly differently. I pulled in the btrfs prereqs and
+then applied your series on top of it so we get all the Link: tags right.
+I'm running tests right now. Please double-check.
+
+---
+
+Applied to the vfs.super branch of the vfs/vfs.git tree.
+Patches in the vfs.super branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.super
+
+[01/29] block: Provide bdev_open_* functions
+       https://git.kernel.org/vfs/vfs/c/b7c828aa0b3c
+[02/29] block: Use bdev_open_by_dev() in blkdev_open()
+        https://git.kernel.org/vfs/vfs/c/d4e36f27b45a
+[03/29] block: Use bdev_open_by_dev() in disk_scan_partitions() and blkdev_bszset()
+        https://git.kernel.org/vfs/vfs/c/5f9bd6764c7a
+[04/29] drdb: Convert to use bdev_open_by_path()
+        https://git.kernel.org/vfs/vfs/c/0220ca8e443d
+[05/29] pktcdvd: Convert to bdev_open_by_dev()
+        https://git.kernel.org/vfs/vfs/c/7af10b889789
+[06/29] rnbd-srv: Convert to use bdev_open_by_path()
+        https://git.kernel.org/vfs/vfs/c/3d27892a4be7
+[07/29] xen/blkback: Convert to bdev_open_by_dev()
+        https://git.kernel.org/vfs/vfs/c/26afb0ed10b3
+[08/29] zram: Convert to use bdev_open_by_dev()
+        https://git.kernel.org/vfs/vfs/c/efc8e3f4c6dc
+[09/29] bcache: Convert to bdev_open_by_path()
+        https://git.kernel.org/vfs/vfs/c/dc893f51d24a
+[10/29] dm: Convert to bdev_open_by_dev()
+        https://git.kernel.org/vfs/vfs/c/80c2267c6d07
+[11/29] md: Convert to bdev_open_by_dev()
+        https://git.kernel.org/vfs/vfs/c/15db36126ca6
+[12/29] mtd: block2mtd: Convert to bdev_open_by_dev/path()
+        https://git.kernel.org/vfs/vfs/c/4c27234bf3ce
+[13/29] nvmet: Convert to bdev_open_by_path()
+        https://git.kernel.org/vfs/vfs/c/70cffddcc300
+[14/29] s390/dasd: Convert to bdev_open_by_path()
+        https://git.kernel.org/vfs/vfs/c/5581d03457f8
+[15/29] scsi: target: Convert to bdev_open_by_path()
+        https://git.kernel.org/vfs/vfs/c/43de7d844d47
+[16/29] PM: hibernate: Convert to bdev_open_by_dev()
+        https://git.kernel.org/vfs/vfs/c/105ea4a2fd18
+[17/29] PM: hibernate: Drop unused snapshot_test argument
+        https://git.kernel.org/vfs/vfs/c/b589a66e3688
+[18/29] mm/swap: Convert to use bdev_open_by_dev()
+        https://git.kernel.org/vfs/vfs/c/615af8e29233
+[19/29] fs: Convert to bdev_open_by_dev()
+        https://git.kernel.org/vfs/vfs/c/5173192bcfe6
+[20/29] btrfs: Convert to bdev_open_by_path()
+        https://git.kernel.org/vfs/vfs/c/8cf64782764f
+[21/29] erofs: Convert to use bdev_open_by_path()
+        https://git.kernel.org/vfs/vfs/c/4d41880bf249
+[22/29] ext4: Convert to bdev_open_by_dev()
+        https://git.kernel.org/vfs/vfs/c/f7507612395e
+[23/29] f2fs: Convert to bdev_open_by_dev/path()
+        https://git.kernel.org/vfs/vfs/c/d9ff8e3b6498
+[24/29] jfs: Convert to bdev_open_by_dev()
+        https://git.kernel.org/vfs/vfs/c/459dc6376338
+[25/29] nfs/blocklayout: Convert to use bdev_open_by_dev/path()
+        https://git.kernel.org/vfs/vfs/c/5b1df9a40929
+[26/29] ocfs2: Convert to use bdev_open_by_dev()
+        https://git.kernel.org/vfs/vfs/c/b6b95acbd943
+[27/29] reiserfs: Convert to bdev_open_by_dev/path()
+        https://git.kernel.org/vfs/vfs/c/7e3615ff6119
+[28/29] xfs: Convert to bdev_open_by_path()
+        https://git.kernel.org/vfs/vfs/c/176ccb99e207
+[29/29] block: Remove blkdev_get_by_*() functions
+        https://git.kernel.org/vfs/vfs/c/953863a5a2ff
