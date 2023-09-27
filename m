@@ -2,93 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7ED397AFC1E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Sep 2023 09:33:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64FB77AFC36
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Sep 2023 09:40:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229910AbjI0HdD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Sep 2023 03:33:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50170 "EHLO
+        id S229910AbjI0Hka (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Sep 2023 03:40:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35418 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229648AbjI0HdC (ORCPT
+        with ESMTP id S229960AbjI0Hk3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Sep 2023 03:33:02 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7ADFF11D
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Sep 2023 00:33:00 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-5331059360fso2361334a12.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Sep 2023 00:33:00 -0700 (PDT)
+        Wed, 27 Sep 2023 03:40:29 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5606D1A8
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Sep 2023 00:40:27 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-4060b623e64so25440125e9.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Sep 2023 00:40:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1695799979; x=1696404779; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=linaro.org; s=google; t=1695800426; x=1696405226; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=N6pnQ/nkWf6SlVjQP06zaUKvsstL6MZ5VotIaFF9d2I=;
-        b=uRt/ZFptGMXXYi70mRQrFk8G/hEjGXSLfR2cj4d8jUrNA2tYDlwMTHKC2bpR49wzdC
-         mrHNZWYwsfiaDEwlIuZDRmxtHIlKrhEJ4ZVConR5WXAwT9aAtRhLeibWbUZD3yOy7+kC
-         O8HkrmdJQm2r4oU/uahfC/O+pe9dnMp+CONofJjZunsDW/v8b6yE50NAxgHtVahGrYXU
-         UZ3OVEnXNsEIdS6bsJve2EGmjWGAJYNyxmNcWn0X8i3oAhNj0MwYIwq7DN2Il/aV7gWw
-         9h08d2oIVZbWNZ4IW2GR3KbtfR8JYk/HXzWQ/ZV+NLle5O265a7t9ASuqEpl7wDIkfVn
-         DS1w==
+        bh=Xr/6DFmMOi1WsZ3Vb3f6bHjlDxv1PMn2U1/j6DS9Q5s=;
+        b=sJb/FJlp3hMZs2TcCQFyBdCEKbs72EI+A8aXvree37DQ7/6YW4vC6+sFWAYTiEBO41
+         dT2laXjh1yQPDc6PED19WaYSU1/PBulGEJvGBNOxMTrczl8IWEtepC/z451pr2LA4Z/+
+         bWD3a81E+q/lqZrXJakwbDcNywg/wHYZ/GFlL099gVSg7mxIEHknLXJBgsnaZLRzXyTd
+         /MCJ3/iSBEy8+gycTYIErMbxz6U9Dq9fLc+ErM4yNcv+31a3+PBQzqcoAfCh3+kdaAIx
+         rm0BkxTw3um4RgS1TgxTW8Fc4QilNf43eXa1ILPMrC0JwaxL1Q/Zjd385MUHkulW7xCC
+         Pyyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695799979; x=1696404779;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1695800426; x=1696405226;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=N6pnQ/nkWf6SlVjQP06zaUKvsstL6MZ5VotIaFF9d2I=;
-        b=pVG1B4atF0g5dqa7sAqQykukdHZVDCs31bqzhm7Bq0i30RM1sTYJFSomYutyIpx0Pz
-         oQJqf5ycuUohtX35FJO/DPuhSnPCThPyJS3ryj/oi16IGsB1VzWLxPXhOzjBkPTWjCHG
-         Pqr2SKWhdkiUEq0CWnWcOURkPBfqmKLVpJ5hv3exZiQtxlMpfSTvj6I6pxbRLZdCxvcB
-         2BGqk/68uSq8sT2SHcXtnqfnY+2CZJSUZHNfg8bEt0Jh7tFmX2w1J7OdENBBLloNK7uh
-         MusKO63XG/Lzx8k7ArEX27yl26sb6g1jyjNAb5lR2Z/q2Wc0rS3ejWZJQWStAfgfKb/O
-         ssRQ==
-X-Gm-Message-State: AOJu0Yy2BpwC5rxRNPSU7ySP4dDFcP7Ug/ZUJYO6ctlxhZDUV+CrOHyR
-        dvuVAVqemzRNw2Vv2r1+GhVIjA==
-X-Google-Smtp-Source: AGHT+IGl72HpxcGf5R00MKAx7plEYQqRg+QmVRuv6Lb/FKmepMGYWsDUH1yEvJs+hzYAD7rsBF42tA==
-X-Received: by 2002:a05:6402:4409:b0:523:4069:182c with SMTP id y9-20020a056402440900b005234069182cmr1224456eda.2.1695799978682;
-        Wed, 27 Sep 2023 00:32:58 -0700 (PDT)
-Received: from [172.20.13.88] ([45.147.210.162])
-        by smtp.gmail.com with ESMTPSA id w22-20020a056402071600b0052e1783ab25sm7692376edx.70.2023.09.27.00.32.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Sep 2023 00:32:57 -0700 (PDT)
-Message-ID: <ff95e764-9e61-4204-8024-42f15c34f084@kernel.dk>
-Date:   Wed, 27 Sep 2023 01:32:56 -0600
+        bh=Xr/6DFmMOi1WsZ3Vb3f6bHjlDxv1PMn2U1/j6DS9Q5s=;
+        b=lr7zB/T1qgg7mttoVpXWuFC/srYgEkHelmPMWxFwSAbBgomnjL6v3vhh5ShC9kJZSf
+         Cyqalyvd5gfauEt7SjkylQvJ/Vprt+GEy4DerOF7yTQu8PSW6DPBGl7kQrKZb+vD24oB
+         etoSd4xwZiWOTf3G8iX6Q2/Hwap/WYdsO6VN0tdl3dtu2TNJokYLz6ewXR5Mt1PPj6X7
+         YMxkuAzOZTzTrxiUBZJEG6ogLUA4QaFGYEnD+VHqa60ecafesq1XCyWCA4Luiy2pAjAQ
+         BDv04hjBG+COZ7B02u40JlBL5YZaVnCNbv4hCUQBCWAxaNTwQ2KT+1SCxdQsTQkjPkrW
+         LIUQ==
+X-Gm-Message-State: AOJu0Yx+acwhTEk+Sp6IDiI4h+0mdsagK6tIpVw6m5nnF2RqbE5/lE3a
+        BORE20JADmL5fQDOKEXnG+e9+Q==
+X-Google-Smtp-Source: AGHT+IFYiNfcNyNVQK8HsUFQFEDg2agzZsROcPcXZfVp0tgaozVs8p1RwhsBo+CpcT9SSJqosh0uFQ==
+X-Received: by 2002:a05:600c:84ce:b0:400:5962:6aa9 with SMTP id er14-20020a05600c84ce00b0040059626aa9mr3828430wmb.11.1695800425557;
+        Wed, 27 Sep 2023 00:40:25 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id k12-20020a7bc40c000000b00403038d7652sm16991629wmi.39.2023.09.27.00.40.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Sep 2023 00:40:25 -0700 (PDT)
+Date:   Wed, 27 Sep 2023 10:40:21 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     willy@infradead.org
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: [bug report] buffer: hoist GFP flags from grow_dev_page() to
+ __getblk_gfp()
+Message-ID: <592d088a-12c7-40e6-9726-65433e2e5a2d@moroto.mountain>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] eventfd: move 'eventfd-count' printing out of spinlock
-Content-Language: en-US
-To:     wenyang.linux@foxmail.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>
-Cc:     Christoph Hellwig <hch@lst.de>, Dylan Yudaken <dylany@fb.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Eric Biggers <ebiggers@google.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <tencent_6E80209FC9C7F45EE61E3FB3E7952A226A07@qq.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <tencent_6E80209FC9C7F45EE61E3FB3E7952A226A07@qq.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/26/23 8:05 AM, wenyang.linux@foxmail.com wrote:
-> From: Wen Yang <wenyang.linux@foxmail.com>
-> 
-> It is better to print debug messages outside of the wqh.lock
-> spinlock where possible.
+Hello Matthew Wilcox (Oracle),
 
-Does it really matter for fdinfo? Your commit message is a bit
-light, so I'm having to guess whether this is fixing a real issue
-for you, or if it's just a drive-by observation.
+The patch a3c38500d469: "buffer: hoist GFP flags from grow_dev_page()
+to __getblk_gfp()" from Sep 14, 2023 (linux-next), leads to the
+following Smatch static checker warning:
 
--- 
-Jens Axboe
+	fs/buffer.c:1065 grow_dev_page()
+	warn: NEW missing error code 'ret'
 
+fs/buffer.c
+    1037 static int
+    1038 grow_dev_page(struct block_device *bdev, sector_t block,
+    1039               pgoff_t index, int size, int sizebits, gfp_t gfp)
+    1040 {
+    1041         struct inode *inode = bdev->bd_inode;
+    1042         struct folio *folio;
+    1043         struct buffer_head *bh;
+    1044         sector_t end_block;
+    1045         int ret = 0;
+    1046 
+    1047         folio = __filemap_get_folio(inode->i_mapping, index,
+    1048                         FGP_LOCK | FGP_ACCESSED | FGP_CREAT, gfp);
+    1049         if (IS_ERR(folio))
+    1050                 return PTR_ERR(folio);
+    1051 
+    1052         bh = folio_buffers(folio);
+    1053         if (bh) {
+    1054                 if (bh->b_size == size) {
+    1055                         end_block = folio_init_buffers(folio, bdev,
+    1056                                         (sector_t)index << sizebits, size);
+    1057                         goto done;
+    1058                 }
+    1059                 if (!try_to_free_buffers(folio))
+    1060                         goto failed;
+    1061         }
+    1062 
+    1063         bh = folio_alloc_buffers(folio, size, gfp | __GFP_ACCOUNT);
+    1064         if (!bh)
+--> 1065                 goto failed;
 
+Should this be an error code?  It's kind of complicated because I think
+the other goto failed path deliberately returns zero?
+
+    1066 
+    1067         /*
+    1068          * Link the folio to the buffers and initialise them.  Take the
+    1069          * lock to be atomic wrt __find_get_block(), which does not
+    1070          * run under the folio lock.
+    1071          */
+    1072         spin_lock(&inode->i_mapping->private_lock);
+    1073         link_dev_buffers(folio, bh);
+    1074         end_block = folio_init_buffers(folio, bdev,
+    1075                         (sector_t)index << sizebits, size);
+    1076         spin_unlock(&inode->i_mapping->private_lock);
+    1077 done:
+    1078         ret = (block < end_block) ? 1 : -ENXIO;
+    1079 failed:
+    1080         folio_unlock(folio);
+    1081         folio_put(folio);
+    1082         return ret;
+    1083 }
+
+regards,
+dan carpenter
