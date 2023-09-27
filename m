@@ -2,78 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ECA8C7B0DD8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Sep 2023 23:08:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F05C7B0DF3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Sep 2023 23:18:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229906AbjI0VI7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Sep 2023 17:08:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44412 "EHLO
+        id S229923AbjI0VSy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Sep 2023 17:18:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229691AbjI0VI6 (ORCPT
+        with ESMTP id S229458AbjI0VSx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Sep 2023 17:08:58 -0400
-Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F4E2D6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Sep 2023 14:08:56 -0700 (PDT)
-Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-59c04237bf2so155207057b3.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Sep 2023 14:08:56 -0700 (PDT)
+        Wed, 27 Sep 2023 17:18:53 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACB04D6
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Sep 2023 14:18:51 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-9b0168a9e05so1268548066b.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Sep 2023 14:18:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1695848936; x=1696453736; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LJ3RtqlQfpk8UFjpglCqA8/SAQruGYgZhJ0s9qkYTS0=;
-        b=GwrisqqwaEQKj5TGkuMzGZVnjvCltMLSvfw+oTFL7+cXmC+bVpXUcFai9LB933/4EN
-         k/UxLiheSz1Q5FoHtxaiuNxfAymeYlYlJFEN9AAMWoiHFjptB2FO61ppYOiZdEIPDxrf
-         J6DnrE0TTUOR8yRP/v0XMX2w2+DfhhfWV0FWrVoARLVtJy1s0ZBbYcBcoKN+Ga2hqG6R
-         B6KZJQrwJX6e9lglBaQzq5t2PJkC+P2ePdVkT8RRFND7o0yoDHQTzMtNORlT3mKehI+H
-         ZgeFpQNhmnfIRim0dGoSpD2QOIr0Bki0BrNXrTbTTgodUXywpDfmxJsF7md6Bu1lMcua
-         Lm5A==
+        d=linux-foundation.org; s=google; t=1695849530; x=1696454330; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=G8V+lk3a6Cym1PJ0mfiXsEqz7twyU2MgEXEYS1WTIfQ=;
+        b=T9wMVK3bnjWmJO7M4kwiaAOm2VnWwbW9DXDejoQgfkvRvF/v80XY7LBZu4zJBwYnvA
+         xri9lI7g/PYEk+OtcMavgWDlxkKriXtUDoBKmpIVBhf9EgSVV9RuhHKR6Q4WR1SFiQE2
+         VtCC0PP4JAkGz0/6Q4XTi56sxmxOl7yWSTKCo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695848936; x=1696453736;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LJ3RtqlQfpk8UFjpglCqA8/SAQruGYgZhJ0s9qkYTS0=;
-        b=r9aPrxb9/KcUbxq9W7ai6NNYa/oCrKZ4Vh92fGTRIaxM76/qPmCONPSywb6pIzcc+C
-         O4jeo3PhDBXHNdvG+iyQkJBzGhLXc8xGGjdnmiHaouGPDi/kEzh+SzUBZOZnZl3Wvlsg
-         nQ5v9KHhMFeC7Dh9tEvc3bIaEHNbJB3ELMfohfdkawOdJwmXdgOOYTMfT44nzP9t2xqk
-         TsUYPMsEz5hHdB9WdEBe5+vUjE1BsLLNAdd2Ex1ko/JMFXV+Ec+PWsNlHwTz9noCczJV
-         TDcNnVHjK7mX/00czM8vtVqK7cpvXCwQbCD+rDd75uKJlCTw0pnfx4PGj9Drvz/tdC2M
-         qW6g==
-X-Gm-Message-State: AOJu0YxvOgrtHzHEdT9D1JYtih5+Xv1wCkyJ4wk4JytcuuNtKHPKuJNt
-        zGhfOOzPYQwmMwo1E61kmG53UiKYowPQ6L3C1Hq+mQ==
-X-Google-Smtp-Source: AGHT+IFQ3LjVbNrzo1sOTmszvqWNthQMtO/SQnGtyKq1516K2UvzMCwdQ9Au4tmdWUB4WEOlJTGOpoDcgymQ9ZXPCh0=
-X-Received: by 2002:a81:9252:0:b0:59b:f744:f158 with SMTP id
- j79-20020a819252000000b0059bf744f158mr3415967ywg.15.1695848935547; Wed, 27
- Sep 2023 14:08:55 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1695849530; x=1696454330;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=G8V+lk3a6Cym1PJ0mfiXsEqz7twyU2MgEXEYS1WTIfQ=;
+        b=FwBsf8pQePGO71OQHjXz3lk+UB9Qw5ywqSYUt4O/jATJFjNe6tQrPCfi11u2ADnOVc
+         F4Pv1GjVWxnuHzuC274R0XilNLQpxY7Z4grzqxqzR/QxwovVUTyMU9Abo03J7LY5S8gG
+         Z8E8V513VB79vmZBbLstXzrqsohhxIaLjWb3KxlIZR0uVkueRAGo9DBKQBxBV/m9MRYS
+         sO6TRhRIcSqDr5eXHPP7+26Rp3ruWlJidHBIwx2f/zgwXc7dgemb4Jb4vxbgmCTujea9
+         cMy44x/nf1pF7eek780JzUNuIT0svGE3FC970kfcbtJyuC07H8McfsyBydeWbpyyfHWk
+         M+zw==
+X-Gm-Message-State: AOJu0Yzfu4QlNT3oaYrcumzieDygGB27wwY68OcqH3cFCh3AauzCMSH5
+        4TmELxfcNAOc5BZhWt+RR/yjbgS0Mh5DMLLtAo8/hg==
+X-Google-Smtp-Source: AGHT+IEiZuv+0iKOl4lN9oAr7u9hqsJFMqiW29UK1l4MVee1a7iuDFEIJz1wuWjHHBOS9FLOPWoyfA==
+X-Received: by 2002:a17:906:2b11:b0:9a5:9ddc:607d with SMTP id a17-20020a1709062b1100b009a59ddc607dmr2547422ejg.61.1695849530021;
+        Wed, 27 Sep 2023 14:18:50 -0700 (PDT)
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com. [209.85.208.46])
+        by smtp.gmail.com with ESMTPSA id k3-20020a17090646c300b009ae57888718sm9814354ejs.207.2023.09.27.14.18.49
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Sep 2023 14:18:49 -0700 (PDT)
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-532784c8770so14882489a12.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Sep 2023 14:18:49 -0700 (PDT)
+X-Received: by 2002:a05:6402:1652:b0:533:f1c4:5424 with SMTP id
+ s18-20020a056402165200b00533f1c45424mr2803713edx.35.1695849528832; Wed, 27
+ Sep 2023 14:18:48 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230923013148.1390521-1-surenb@google.com> <20230923013148.1390521-3-surenb@google.com>
- <CAG48ez1N2kryy08eo0dcJ5a9O-3xMT8aOrgrcD+CqBN=cBfdDw@mail.gmail.com>
- <CAJuCfpGb5Amo9Sk0yyruJt9NKaYe9-y+5jmU442NSf3+VT5-dA@mail.gmail.com>
- <CAG48ez2WNOMwPo4OMVUHbS4mirwbqHUY5qUaaZ9DTkXdkzrjiQ@mail.gmail.com> <CAJuCfpGcsBE2XqPJSVo1gdE_O96gzS5=ET=u0uSBSX3Lj56CtA@mail.gmail.com>
-In-Reply-To: <CAJuCfpGcsBE2XqPJSVo1gdE_O96gzS5=ET=u0uSBSX3Lj56CtA@mail.gmail.com>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Wed, 27 Sep 2023 14:08:42 -0700
-Message-ID: <CAJuCfpHY5zhkS0OPxOK-twb6pDJg6OpXZnPquw_9wBmbjFiF9Q@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] userfaultfd: UFFDIO_REMAP uABI
-To:     Jann Horn <jannh@google.com>
-Cc:     akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
-        brauner@kernel.org, shuah@kernel.org, aarcange@redhat.com,
-        lokeshgidra@google.com, peterx@redhat.com, david@redhat.com,
-        hughd@google.com, mhocko@suse.com, axelrasmussen@google.com,
-        rppt@kernel.org, willy@infradead.org, Liam.Howlett@oracle.com,
-        zhangpeng362@huawei.com, bgeffon@google.com,
-        kaleshsingh@google.com, ngeoffray@google.com, jdduke@google.com,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        kernel-team@android.com
+References: <20230926162228.68666-1-mjguzik@gmail.com> <CAHk-=wjUCLfuKks-VGTG9hrFAORb5cuzqyC0gRXptYGGgL=YYg@mail.gmail.com>
+ <CAGudoHGej+gmmv0OOoep2ENkf7hMBib-KL44Fu=Ym46j=r6VEA@mail.gmail.com>
+ <20230927-kosmetik-babypuppen-75bee530b9f0@brauner> <CAHk-=whLadznjNKZPYUjxVzAyCH-rRhb24_KaGegKT9E6A86Kg@mail.gmail.com>
+ <CAGudoHH2mvfjfKt+nOCEOfvOrQ+o1pqX63tN2r_1+bLZ4OqHNA@mail.gmail.com>
+ <CAHk-=wjmgord99A-Gwy3dsiG1YNeXTCbt+z6=3RH_je5PP41Zw@mail.gmail.com>
+ <ZRR1Kc/dvhya7ME4@f> <CAHk-=wibs_xBP2BGG4UHKhiP2B=7KJnx_LL18O0bGK8QkULLHg@mail.gmail.com>
+ <CAGudoHH20JVecjRQEPa3q=k8ax3hqt-LGA3P1S-xFFZYxisL6Q@mail.gmail.com>
+In-Reply-To: <CAGudoHH20JVecjRQEPa3q=k8ax3hqt-LGA3P1S-xFFZYxisL6Q@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 27 Sep 2023 14:18:31 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whLX7-waQ+RX6DBF_ybzpEpneCkBSkBCeHKtmEYWaLOTg@mail.gmail.com>
+Message-ID: <CAHk-=whLX7-waQ+RX6DBF_ybzpEpneCkBSkBCeHKtmEYWaLOTg@mail.gmail.com>
+Subject: Re: [PATCH v2] vfs: shave work on failed file open
+To:     Mateusz Guzik <mjguzik@gmail.com>
+Cc:     Christian Brauner <brauner@kernel.org>, viro@zeniv.linux.org.uk,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -81,240 +80,46 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 27, 2023 at 1:42=E2=80=AFPM Suren Baghdasaryan <surenb@google.c=
-om> wrote:
+On Wed, 27 Sept 2023 at 14:06, Mateusz Guzik <mjguzik@gmail.com> wrote:
 >
-> On Wed, Sep 27, 2023 at 1:04=E2=80=AFPM Jann Horn <jannh@google.com> wrot=
-e:
-> >
-> > On Wed, Sep 27, 2023 at 8:08=E2=80=AFPM Suren Baghdasaryan <surenb@goog=
-le.com> wrote:
-> > > On Wed, Sep 27, 2023 at 5:47=E2=80=AFAM Jann Horn <jannh@google.com> =
-wrote:
-> > > > On Sat, Sep 23, 2023 at 3:31=E2=80=AFAM Suren Baghdasaryan <surenb@=
-google.com> wrote:
-> > > > > From: Andrea Arcangeli <aarcange@redhat.com>
-> > > > >
-> > > > > This implements the uABI of UFFDIO_REMAP.
-> > > > >
-> > > > > Notably one mode bitflag is also forwarded (and in turn known) by=
- the
-> > > > > lowlevel remap_pages method.
-> > > > >
-> > > > > Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
-> > > > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > [...]
-> > > > > +                       /*
-> > > > > +                        * folio_referenced walks the anon_vma ch=
-ain
-> > > > > +                        * without the folio lock. Serialize agai=
-nst it with
-> > > > > +                        * the anon_vma lock, the folio lock is n=
-ot enough.
-> > > > > +                        */
-> > > > > +                       src_anon_vma =3D folio_get_anon_vma(src_f=
-olio);
-> > > > > +                       if (!src_anon_vma) {
-> > > > > +                               /* page was unmapped from under u=
-s */
-> > > > > +                               err =3D -EAGAIN;
-> > > > > +                               goto out;
-> > > > > +                       }
-> > > > > +                       if (!anon_vma_trylock_write(src_anon_vma)=
-) {
-> > > > > +                               pte_unmap(&orig_src_pte);
-> > > > > +                               pte_unmap(&orig_dst_pte);
-> > > > > +                               src_pte =3D dst_pte =3D NULL;
-> > > > > +                               /* now we can block and wait */
-> > > > > +                               anon_vma_lock_write(src_anon_vma)=
-;
-> > > > > +                               goto retry;
-> > > > > +                       }
-> > > > > +               }
-> > > >
-> > > > So at this point we have:
-> > > >
-> > > >  - the current src_pte
-> > > >  - some referenced+locked src_folio that used to be mapped exclusiv=
-ely
-> > > > at src_addr
-> > > >  - (the anon_vma associated with the src_folio)
-> > > >
-> > > > > +               err =3D remap_anon_pte(dst_mm, src_mm,  dst_vma, =
-src_vma,
-> > > > > +                                    dst_addr, src_addr, dst_pte,=
- src_pte,
-> > > > > +                                    orig_dst_pte, orig_src_pte,
-> > > > > +                                    dst_ptl, src_ptl, src_folio)=
-;
-> > > >
-> > > > And then this will, without touching folio mapcounts/refcounts, del=
-ete
-> > > > the current PTE at src_addr, and create a PTE at dst_addr pointing =
-to
-> > > > the old src_folio, leading to incorrect refcounts/mapcounts?
-> > >
-> > > I assume this still points to the missing previous_src_pte check
-> > > discussed in the previous comments. Is that correct or is there yet
-> > > another issue?
-> >
-> > This is still referring to the missing previous_src_pte check.
-> >
-> > > >
-> > > > > +       } else {
-> > > > [...]
-> > > > > +       }
-> > > > > +
-> > > > > +out:
-> > > > > +       if (src_anon_vma) {
-> > > > > +               anon_vma_unlock_write(src_anon_vma);
-> > > > > +               put_anon_vma(src_anon_vma);
-> > > > > +       }
-> > > > > +       if (src_folio) {
-> > > > > +               folio_unlock(src_folio);
-> > > > > +               folio_put(src_folio);
-> > > > > +       }
-> > > > > +       if (dst_pte)
-> > > > > +               pte_unmap(dst_pte);
-> > > > > +       if (src_pte)
-> > > > > +               pte_unmap(src_pte);
-> > > > > +       mmu_notifier_invalidate_range_end(&range);
-> > > > > +
-> > > > > +       return err;
-> > > > > +}
-> > > > [...]
-> > > > > +ssize_t remap_pages(struct mm_struct *dst_mm, struct mm_struct *=
-src_mm,
-> > > > > +                   unsigned long dst_start, unsigned long src_st=
-art,
-> > > > > +                   unsigned long len, __u64 mode)
-> > > > > +{
-> > > > > +       struct vm_area_struct *src_vma, *dst_vma;
-> > > > > +       unsigned long src_addr, dst_addr;
-> > > > > +       pmd_t *src_pmd, *dst_pmd;
-> > > > > +       long err =3D -EINVAL;
-> > > > > +       ssize_t moved =3D 0;
-> > > > > +
-> > > > > +       /*
-> > > > > +        * Sanitize the command parameters:
-> > > > > +        */
-> > > > > +       BUG_ON(src_start & ~PAGE_MASK);
-> > > > > +       BUG_ON(dst_start & ~PAGE_MASK);
-> > > > > +       BUG_ON(len & ~PAGE_MASK);
-> > > > > +
-> > > > > +       /* Does the address range wrap, or is the span zero-sized=
-? */
-> > > > > +       BUG_ON(src_start + len <=3D src_start);
-> > > > > +       BUG_ON(dst_start + len <=3D dst_start);
-> > > > > +
-> > > > > +       /*
-> > > > > +        * Because these are read sempahores there's no risk of l=
-ock
-> > > > > +        * inversion.
-> > > > > +        */
-> > > > > +       mmap_read_lock(dst_mm);
-> > > > > +       if (dst_mm !=3D src_mm)
-> > > > > +               mmap_read_lock(src_mm);
-> > > > > +
-> > > > > +       /*
-> > > > > +        * Make sure the vma is not shared, that the src and dst =
-remap
-> > > > > +        * ranges are both valid and fully within a single existi=
-ng
-> > > > > +        * vma.
-> > > > > +        */
-> > > > > +       src_vma =3D find_vma(src_mm, src_start);
-> > > > > +       if (!src_vma || (src_vma->vm_flags & VM_SHARED))
-> > > > > +               goto out;
-> > > > > +       if (src_start < src_vma->vm_start ||
-> > > > > +           src_start + len > src_vma->vm_end)
-> > > > > +               goto out;
-> > > > > +
-> > > > > +       dst_vma =3D find_vma(dst_mm, dst_start);
-> > > > > +       if (!dst_vma || (dst_vma->vm_flags & VM_SHARED))
-> > > > > +               goto out;
-> > > > > +       if (dst_start < dst_vma->vm_start ||
-> > > > > +           dst_start + len > dst_vma->vm_end)
-> > > > > +               goto out;
-> > > > > +
-> > > > > +       err =3D validate_remap_areas(src_vma, dst_vma);
-> > > > > +       if (err)
-> > > > > +               goto out;
-> > > > > +
-> > > > > +       for (src_addr =3D src_start, dst_addr =3D dst_start;
-> > > > > +            src_addr < src_start + len;) {
-> > > > > +               spinlock_t *ptl;
-> > > > > +               pmd_t dst_pmdval;
-> > > > > +               unsigned long step_size;
-> > > > > +
-> > > > > +               BUG_ON(dst_addr >=3D dst_start + len);
-> > > > > +               /*
-> > > > > +                * Below works because anonymous area would not h=
-ave a
-> > > > > +                * transparent huge PUD. If file-backed support i=
-s added,
-> > > > > +                * that case would need to be handled here.
-> > > > > +                */
-> > > > > +               src_pmd =3D mm_find_pmd(src_mm, src_addr);
-> > > > > +               if (unlikely(!src_pmd)) {
-> > > > > +                       if (!(mode & UFFDIO_REMAP_MODE_ALLOW_SRC_=
-HOLES)) {
-> > > > > +                               err =3D -ENOENT;
-> > > > > +                               break;
-> > > > > +                       }
-> > > > > +                       src_pmd =3D mm_alloc_pmd(src_mm, src_addr=
-);
-> > > > > +                       if (unlikely(!src_pmd)) {
-> > > > > +                               err =3D -ENOMEM;
-> > > > > +                               break;
-> > > > > +                       }
-> > > > > +               }
-> > > > > +               dst_pmd =3D mm_alloc_pmd(dst_mm, dst_addr);
-> > > > > +               if (unlikely(!dst_pmd)) {
-> > > > > +                       err =3D -ENOMEM;
-> > > > > +                       break;
-> > > > > +               }
-> > > > > +
-> > > > > +               dst_pmdval =3D pmdp_get_lockless(dst_pmd);
-> > > > > +               /*
-> > > > > +                * If the dst_pmd is mapped as THP don't override=
- it and just
-> > > > > +                * be strict. If dst_pmd changes into TPH after t=
-his check, the
-> > > > > +                * remap_pages_huge_pmd() will detect the change =
-and retry
-> > > > > +                * while remap_pages_pte() will detect the change=
- and fail.
-> > > > > +                */
-> > > > > +               if (unlikely(pmd_trans_huge(dst_pmdval))) {
-> > > > > +                       err =3D -EEXIST;
-> > > > > +                       break;
-> > > > > +               }
-> > > > > +
-> > > > > +               ptl =3D pmd_trans_huge_lock(src_pmd, src_vma);
-> > > > > +               if (ptl && !pmd_trans_huge(*src_pmd)) {
-> > > > > +                       spin_unlock(ptl);
-> > > > > +                       ptl =3D NULL;
-> > > > > +               }
-> > > >
-> > > > This still looks wrong - we do still have to split_huge_pmd()
-> > > > somewhere so that remap_pages_pte() works.
-> > >
-> > > Hmm, I guess this extra check is not even needed...
-> >
-> > Hm, and instead we'd bail at the pte_offset_map_nolock() in
-> > remap_pages_pte()? I guess that's unusual but works...
->
-> Yes, that's what I was thinking but I agree, that seems fragile. Maybe
-> just bail out early if (ptl && !pmd_trans_huge())?
+> I think you attached the wrong file, it has next to no changes and in
+> particular nothing for fd lookup.
 
-No, actually we can still handle is_swap_pmd() case by splitting it
-and remapping the individual ptes. So, I can bail out only in case of
-pmd_devmap().
+The fd lookup is already safe.
 
+It already does the whole "double-check the file pointer after doing
+the increment" for other reasons - namely the whole "oh, the file
+table can be re-allocated under us" thing.
 
->
-> >
-> > (It would be a thing to look out for if anyone tried to backport this,
-> > since the checks in pte_offset_map_nolock() were only introduced in
-> > 6.5, but idk if anyone's doing that)
+So the fd lookup needs rcu, but it does all the checks to make it all
+work with SLAB_TYPESAFE_BY_RCU.
+
+> You may find it interesting that both NetBSD and FreeBSD have been
+> doing something to that extent for years now in order to provide
+> lockless fd lookup despite not having an equivalent to RCU (what they
+> did have at the time is "type stable" -- objs can get reused but the
+> memory can *never* get freed. utterly gross, but that's old Unix for
+> you).
+
+That kind of "never free'd" thing is indeed gross, but the
+type-stability is useful.
+
+Our SLAB_TYPESAFE_BY_RCU is somewhat widely used, exactly because it's
+much cheaper than an *actual* RCU delayed free.
+
+Of course, it also requires more care, but it so happens that we
+already have that for other reasons for 'struct file'.
+
+> It does work, but I always found it dodgy because it backpedals in a
+> way which is not free of side effects.
+
+Grep around for SLAB_TYPESAFE_BY_RCU and you'll see that we actually
+have it in multiple places, most notably the sighand_struct.
+
+> Note that validating you got the right file bare minimum requires
+> reloading the fd table pointer because you might have been racing
+> against close *and* resize.
+
+Exactly. See __fget_files_rcu().
+
+          Linus
