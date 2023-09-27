@@ -2,287 +2,188 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B7DFA7B0D23
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Sep 2023 22:04:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 377C17B0D38
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Sep 2023 22:19:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229822AbjI0UEv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Sep 2023 16:04:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52168 "EHLO
+        id S229464AbjI0UTE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Sep 2023 16:19:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229664AbjI0UEs (ORCPT
+        with ESMTP id S229437AbjI0UTD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Sep 2023 16:04:48 -0400
-Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9671411F
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Sep 2023 13:04:44 -0700 (PDT)
-Received: by mail-pl1-x62a.google.com with SMTP id d9443c01a7336-1c6052422acso6935ad.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Sep 2023 13:04:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1695845084; x=1696449884; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=M+XWKbIJGAs+2CKK7tWSiWj10aUmSxPjwzc7ZpoiI1E=;
-        b=4wNF6k0ql3NGzj+SCSfd8DA/aMLofLCcpjvNj3duDaEtESiv4nLwLmMYZNUOlspf/S
-         eQNywfBXBxpUZFd+3YCosvvf02fjbevsOvaanDiZQaYZX2YD8UViio8WKWrY3e0je8Nz
-         P217nt13Hm8lY4W7MyMJ2XxO64CpmDJR9U7+SWJhTNU5o1S7HxmbMUxDPhAgTN7gdtgt
-         AUU0FoOza5Kmy6a7B0cUEn8pGstJj81sgThalaOQDDtDkUqzwPB3ZAV0HOJEvJ1Pu0gU
-         SZKBnyXGH5Gd27MR7gRsptaGPUTpEoymoFb4NxFe5gOwalarsGuo/53jGxA+/j3tGpgQ
-         i3rQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695845084; x=1696449884;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=M+XWKbIJGAs+2CKK7tWSiWj10aUmSxPjwzc7ZpoiI1E=;
-        b=vRZtppD2SjVnsacrSz3ESXjUbqgufgHsIXkZ5MBkLGCKP8NZj5j22RDQFQJ8d3wkoY
-         V5Je17SfU4BzOTBFP2BTTATxRVwherpoO2JxYJzU864r96J47w5mXjJUYd754ctDVQex
-         n4wF6X6N3d/ixDXjnkJRi04IHOBVj0GwSDL77gWa/3VYQuAKnFEfC3d252Wez4XnuxVU
-         WQcKgoXZLxzdcIIi/iOl2d5DHvTLIqCAUtLEi9Tvbrp5NFtB0lmt0OzF0ENc/4yXm39f
-         Hr3iRzvymo4keafIzAgENsg4A28VbjeELXWf8MJa/MRpkoy9N+s4Zq7LKwBSL5poENFe
-         Aobw==
-X-Gm-Message-State: AOJu0Yz976Q16TV0yvOxrMQKR4zvISalgsEMp+3OyDBzeGRaQxnR/pSy
-        aENiCt4snnRF5K9mDkSaEYh+U0pcm7qmx0mtRYiFIiDu1EVoFzOHongjrw==
-X-Google-Smtp-Source: AGHT+IGGVIFFSOgyJo8JdJxittG6SViQRjz4xTB/xRvT5NGB27U15736n2XSm+PW86J4HyH8mjwxAkUSePlEAP9pdsg=
-X-Received: by 2002:a17:902:d482:b0:1c3:fe16:9f32 with SMTP id
- c2-20020a170902d48200b001c3fe169f32mr524985plg.15.1695845083776; Wed, 27 Sep
- 2023 13:04:43 -0700 (PDT)
+        Wed, 27 Sep 2023 16:19:03 -0400
+Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09D2E11D;
+        Wed, 27 Sep 2023 13:19:02 -0700 (PDT)
+Received: from in01.mta.xmission.com ([166.70.13.51]:46428)
+        by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1qlazr-005jV1-5R; Wed, 27 Sep 2023 14:18:59 -0600
+Received: from ip68-227-168-167.om.om.cox.net ([68.227.168.167]:42922 helo=email.froward.int.ebiederm.org.xmission.com)
+        by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1qlazp-005ur2-UD; Wed, 27 Sep 2023 14:18:58 -0600
+From:   "Eric W. Biederman" <ebiederm@xmission.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Sebastian Ott <sebott@redhat.com>,
+        Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+        Pedro Falcato <pedro.falcato@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <20230927033634.make.602-kees@kernel.org>
+        <20230927034223.986157-3-keescook@chromium.org>
+Date:   Wed, 27 Sep 2023 15:18:34 -0500
+In-Reply-To: <20230927034223.986157-3-keescook@chromium.org> (Kees Cook's
+        message of "Tue, 26 Sep 2023 20:42:20 -0700")
+Message-ID: <87y1gr8j51.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
 MIME-Version: 1.0
-References: <20230923013148.1390521-1-surenb@google.com> <20230923013148.1390521-3-surenb@google.com>
- <CAG48ez1N2kryy08eo0dcJ5a9O-3xMT8aOrgrcD+CqBN=cBfdDw@mail.gmail.com> <CAJuCfpGb5Amo9Sk0yyruJt9NKaYe9-y+5jmU442NSf3+VT5-dA@mail.gmail.com>
-In-Reply-To: <CAJuCfpGb5Amo9Sk0yyruJt9NKaYe9-y+5jmU442NSf3+VT5-dA@mail.gmail.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Wed, 27 Sep 2023 22:04:06 +0200
-Message-ID: <CAG48ez2WNOMwPo4OMVUHbS4mirwbqHUY5qUaaZ9DTkXdkzrjiQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] userfaultfd: UFFDIO_REMAP uABI
-To:     Suren Baghdasaryan <surenb@google.com>
-Cc:     akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
-        brauner@kernel.org, shuah@kernel.org, aarcange@redhat.com,
-        lokeshgidra@google.com, peterx@redhat.com, david@redhat.com,
-        hughd@google.com, mhocko@suse.com, axelrasmussen@google.com,
-        rppt@kernel.org, willy@infradead.org, Liam.Howlett@oracle.com,
-        zhangpeng362@huawei.com, bgeffon@google.com,
-        kaleshsingh@google.com, ngeoffray@google.com, jdduke@google.com,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain
+X-XM-SPF: eid=1qlazp-005ur2-UD;;;mid=<87y1gr8j51.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.168.167;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX19RBgBS8g27Lxlq2bg39xuBcUJPOTSRDNI=
+X-SA-Exim-Connect-IP: 68.227.168.167
+X-SA-Exim-Mail-From: ebiederm@xmission.com
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-DCC: ; sa06 0; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Kees Cook <keescook@chromium.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 663 ms - load_scoreonly_sql: 0.04 (0.0%),
+        signal_user_changed: 10 (1.5%), b_tie_ro: 9 (1.3%), parse: 1.42 (0.2%),
+         extract_message_metadata: 27 (4.0%), get_uri_detail_list: 4.0 (0.6%),
+        tests_pri_-2000: 28 (4.3%), tests_pri_-1000: 2.5 (0.4%),
+        tests_pri_-950: 1.29 (0.2%), tests_pri_-900: 1.06 (0.2%),
+        tests_pri_-200: 0.88 (0.1%), tests_pri_-100: 19 (2.9%), tests_pri_-90:
+        168 (25.4%), check_bayes: 159 (23.9%), b_tokenize: 10 (1.5%),
+        b_tok_get_all: 9 (1.3%), b_comp_prob: 2.4 (0.4%), b_tok_touch_all: 133
+        (20.1%), b_finish: 1.01 (0.2%), tests_pri_0: 385 (58.0%),
+        check_dkim_signature: 0.61 (0.1%), check_dkim_adsp: 7 (1.1%),
+        poll_dns_idle: 0.73 (0.1%), tests_pri_10: 2.2 (0.3%), tests_pri_500:
+        14 (2.1%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH v3 3/4] binfmt_elf: Provide prot bits as context for
+ padzero() errors
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 27, 2023 at 8:08=E2=80=AFPM Suren Baghdasaryan <surenb@google.c=
-om> wrote:
-> On Wed, Sep 27, 2023 at 5:47=E2=80=AFAM Jann Horn <jannh@google.com> wrot=
-e:
-> > On Sat, Sep 23, 2023 at 3:31=E2=80=AFAM Suren Baghdasaryan <surenb@goog=
-le.com> wrote:
-> > > From: Andrea Arcangeli <aarcange@redhat.com>
-> > >
-> > > This implements the uABI of UFFDIO_REMAP.
-> > >
-> > > Notably one mode bitflag is also forwarded (and in turn known) by the
-> > > lowlevel remap_pages method.
-> > >
-> > > Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
-> > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-[...]
-> > > +                       /*
-> > > +                        * folio_referenced walks the anon_vma chain
-> > > +                        * without the folio lock. Serialize against =
-it with
-> > > +                        * the anon_vma lock, the folio lock is not e=
-nough.
-> > > +                        */
-> > > +                       src_anon_vma =3D folio_get_anon_vma(src_folio=
-);
-> > > +                       if (!src_anon_vma) {
-> > > +                               /* page was unmapped from under us */
-> > > +                               err =3D -EAGAIN;
-> > > +                               goto out;
-> > > +                       }
-> > > +                       if (!anon_vma_trylock_write(src_anon_vma)) {
-> > > +                               pte_unmap(&orig_src_pte);
-> > > +                               pte_unmap(&orig_dst_pte);
-> > > +                               src_pte =3D dst_pte =3D NULL;
-> > > +                               /* now we can block and wait */
-> > > +                               anon_vma_lock_write(src_anon_vma);
-> > > +                               goto retry;
-> > > +                       }
-> > > +               }
-> >
-> > So at this point we have:
-> >
-> >  - the current src_pte
-> >  - some referenced+locked src_folio that used to be mapped exclusively
-> > at src_addr
-> >  - (the anon_vma associated with the src_folio)
-> >
-> > > +               err =3D remap_anon_pte(dst_mm, src_mm,  dst_vma, src_=
-vma,
-> > > +                                    dst_addr, src_addr, dst_pte, src=
-_pte,
-> > > +                                    orig_dst_pte, orig_src_pte,
-> > > +                                    dst_ptl, src_ptl, src_folio);
-> >
-> > And then this will, without touching folio mapcounts/refcounts, delete
-> > the current PTE at src_addr, and create a PTE at dst_addr pointing to
-> > the old src_folio, leading to incorrect refcounts/mapcounts?
+Kees Cook <keescook@chromium.org> writes:
+
+> Errors with padzero() should be caught unless we're expecting a
+> pathological (non-writable) segment. Report -EFAULT only when PROT_WRITE
+> is present.
 >
-> I assume this still points to the missing previous_src_pte check
-> discussed in the previous comments. Is that correct or is there yet
-> another issue?
+> Additionally add some more documentation to padzero(), elf_map(), and
+> elf_load().
 
-This is still referring to the missing previous_src_pte check.
+I wonder if this might be easier to just perform the PROT_WRITE
+test in elf_load, and to completely skip padzero of PROT_WRITE
+is not present. 
 
-> >
-> > > +       } else {
-> > [...]
-> > > +       }
-> > > +
-> > > +out:
-> > > +       if (src_anon_vma) {
-> > > +               anon_vma_unlock_write(src_anon_vma);
-> > > +               put_anon_vma(src_anon_vma);
-> > > +       }
-> > > +       if (src_folio) {
-> > > +               folio_unlock(src_folio);
-> > > +               folio_put(src_folio);
-> > > +       }
-> > > +       if (dst_pte)
-> > > +               pte_unmap(dst_pte);
-> > > +       if (src_pte)
-> > > +               pte_unmap(src_pte);
-> > > +       mmu_notifier_invalidate_range_end(&range);
-> > > +
-> > > +       return err;
-> > > +}
-> > [...]
-> > > +ssize_t remap_pages(struct mm_struct *dst_mm, struct mm_struct *src_=
-mm,
-> > > +                   unsigned long dst_start, unsigned long src_start,
-> > > +                   unsigned long len, __u64 mode)
-> > > +{
-> > > +       struct vm_area_struct *src_vma, *dst_vma;
-> > > +       unsigned long src_addr, dst_addr;
-> > > +       pmd_t *src_pmd, *dst_pmd;
-> > > +       long err =3D -EINVAL;
-> > > +       ssize_t moved =3D 0;
-> > > +
-> > > +       /*
-> > > +        * Sanitize the command parameters:
-> > > +        */
-> > > +       BUG_ON(src_start & ~PAGE_MASK);
-> > > +       BUG_ON(dst_start & ~PAGE_MASK);
-> > > +       BUG_ON(len & ~PAGE_MASK);
-> > > +
-> > > +       /* Does the address range wrap, or is the span zero-sized? */
-> > > +       BUG_ON(src_start + len <=3D src_start);
-> > > +       BUG_ON(dst_start + len <=3D dst_start);
-> > > +
-> > > +       /*
-> > > +        * Because these are read sempahores there's no risk of lock
-> > > +        * inversion.
-> > > +        */
-> > > +       mmap_read_lock(dst_mm);
-> > > +       if (dst_mm !=3D src_mm)
-> > > +               mmap_read_lock(src_mm);
-> > > +
-> > > +       /*
-> > > +        * Make sure the vma is not shared, that the src and dst rema=
-p
-> > > +        * ranges are both valid and fully within a single existing
-> > > +        * vma.
-> > > +        */
-> > > +       src_vma =3D find_vma(src_mm, src_start);
-> > > +       if (!src_vma || (src_vma->vm_flags & VM_SHARED))
-> > > +               goto out;
-> > > +       if (src_start < src_vma->vm_start ||
-> > > +           src_start + len > src_vma->vm_end)
-> > > +               goto out;
-> > > +
-> > > +       dst_vma =3D find_vma(dst_mm, dst_start);
-> > > +       if (!dst_vma || (dst_vma->vm_flags & VM_SHARED))
-> > > +               goto out;
-> > > +       if (dst_start < dst_vma->vm_start ||
-> > > +           dst_start + len > dst_vma->vm_end)
-> > > +               goto out;
-> > > +
-> > > +       err =3D validate_remap_areas(src_vma, dst_vma);
-> > > +       if (err)
-> > > +               goto out;
-> > > +
-> > > +       for (src_addr =3D src_start, dst_addr =3D dst_start;
-> > > +            src_addr < src_start + len;) {
-> > > +               spinlock_t *ptl;
-> > > +               pmd_t dst_pmdval;
-> > > +               unsigned long step_size;
-> > > +
-> > > +               BUG_ON(dst_addr >=3D dst_start + len);
-> > > +               /*
-> > > +                * Below works because anonymous area would not have =
-a
-> > > +                * transparent huge PUD. If file-backed support is ad=
-ded,
-> > > +                * that case would need to be handled here.
-> > > +                */
-> > > +               src_pmd =3D mm_find_pmd(src_mm, src_addr);
-> > > +               if (unlikely(!src_pmd)) {
-> > > +                       if (!(mode & UFFDIO_REMAP_MODE_ALLOW_SRC_HOLE=
-S)) {
-> > > +                               err =3D -ENOENT;
-> > > +                               break;
-> > > +                       }
-> > > +                       src_pmd =3D mm_alloc_pmd(src_mm, src_addr);
-> > > +                       if (unlikely(!src_pmd)) {
-> > > +                               err =3D -ENOMEM;
-> > > +                               break;
-> > > +                       }
-> > > +               }
-> > > +               dst_pmd =3D mm_alloc_pmd(dst_mm, dst_addr);
-> > > +               if (unlikely(!dst_pmd)) {
-> > > +                       err =3D -ENOMEM;
-> > > +                       break;
-> > > +               }
-> > > +
-> > > +               dst_pmdval =3D pmdp_get_lockless(dst_pmd);
-> > > +               /*
-> > > +                * If the dst_pmd is mapped as THP don't override it =
-and just
-> > > +                * be strict. If dst_pmd changes into TPH after this =
-check, the
-> > > +                * remap_pages_huge_pmd() will detect the change and =
-retry
-> > > +                * while remap_pages_pte() will detect the change and=
- fail.
-> > > +                */
-> > > +               if (unlikely(pmd_trans_huge(dst_pmdval))) {
-> > > +                       err =3D -EEXIST;
-> > > +                       break;
-> > > +               }
-> > > +
-> > > +               ptl =3D pmd_trans_huge_lock(src_pmd, src_vma);
-> > > +               if (ptl && !pmd_trans_huge(*src_pmd)) {
-> > > +                       spin_unlock(ptl);
-> > > +                       ptl =3D NULL;
-> > > +               }
-> >
-> > This still looks wrong - we do still have to split_huge_pmd()
-> > somewhere so that remap_pages_pte() works.
+Eric
+
+> Cc: Eric Biederman <ebiederm@xmission.com>
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: linux-mm@kvack.org
+> Suggested-by: Eric Biederman <ebiederm@xmission.com>
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+>  fs/binfmt_elf.c | 33 +++++++++++++++++++++++----------
+>  1 file changed, 23 insertions(+), 10 deletions(-)
 >
-> Hmm, I guess this extra check is not even needed...
-
-Hm, and instead we'd bail at the pte_offset_map_nolock() in
-remap_pages_pte()? I guess that's unusual but works...
-
-(It would be a thing to look out for if anyone tried to backport this,
-since the checks in pte_offset_map_nolock() were only introduced in
-6.5, but idk if anyone's doing that)
+> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+> index 0214d5a949fc..b939cfe3215c 100644
+> --- a/fs/binfmt_elf.c
+> +++ b/fs/binfmt_elf.c
+> @@ -110,19 +110,21 @@ static struct linux_binfmt elf_format = {
+>  
+>  #define BAD_ADDR(x) (unlikely((unsigned long)(x) >= TASK_SIZE))
+>  
+> -/* We need to explicitly zero any fractional pages
+> -   after the data section (i.e. bss).  This would
+> -   contain the junk from the file that should not
+> -   be in memory
+> +/*
+> + * We need to explicitly zero any trailing portion of the page that follows
+> + * p_filesz when it ends before the page ends (e.g. bss), otherwise this
+> + * memory will contain the junk from the file that should not be present.
+>   */
+> -static int padzero(unsigned long elf_bss)
+> +static int padzero(unsigned long address, int prot)
+>  {
+>  	unsigned long nbyte;
+>  
+> -	nbyte = ELF_PAGEOFFSET(elf_bss);
+> +	nbyte = ELF_PAGEOFFSET(address);
+>  	if (nbyte) {
+>  		nbyte = ELF_MIN_ALIGN - nbyte;
+> -		if (clear_user((void __user *) elf_bss, nbyte))
+> +		/* Only report errors when the segment is writable. */
+> +		if (clear_user((void __user *)address, nbyte) &&
+> +		    prot & PROT_WRITE)
+>  			return -EFAULT;
+>  	}
+>  	return 0;
+> @@ -348,6 +350,11 @@ create_elf_tables(struct linux_binprm *bprm, const struct elfhdr *exec,
+>  	return 0;
+>  }
+>  
+> +/*
+> + * Map "eppnt->p_filesz" bytes from "filep" offset "eppnt->p_offset"
+> + * into memory at "addr". (Note that p_filesz is rounded up to the
+> + * next page, so any extra bytes from the file must be wiped.)
+> + */
+>  static unsigned long elf_map(struct file *filep, unsigned long addr,
+>  		const struct elf_phdr *eppnt, int prot, int type,
+>  		unsigned long total_size)
+> @@ -387,6 +394,11 @@ static unsigned long elf_map(struct file *filep, unsigned long addr,
+>  	return(map_addr);
+>  }
+>  
+> +/*
+> + * Map "eppnt->p_filesz" bytes from "filep" offset "eppnt->p_offset"
+> + * into memory at "addr". Memory from "p_filesz" through "p_memsz"
+> + * rounded up to the next page is zeroed.
+> + */
+>  static unsigned long elf_load(struct file *filep, unsigned long addr,
+>  		const struct elf_phdr *eppnt, int prot, int type,
+>  		unsigned long total_size)
+> @@ -405,7 +417,8 @@ static unsigned long elf_load(struct file *filep, unsigned long addr,
+>  				eppnt->p_memsz;
+>  
+>  			/* Zero the end of the last mapped page */
+> -			padzero(zero_start);
+> +			if (padzero(zero_start, prot))
+> +				return -EFAULT;
+>  		}
+>  	} else {
+>  		map_addr = zero_start = ELF_PAGESTART(addr);
+> @@ -712,7 +725,7 @@ static unsigned long load_elf_interp(struct elfhdr *interp_elf_ex,
+>  	 * the file up to the page boundary, and zero it from elf_bss
+>  	 * up to the end of the page.
+>  	 */
+> -	if (padzero(elf_bss)) {
+> +	if (padzero(elf_bss, bss_prot)) {
+>  		error = -EFAULT;
+>  		goto out;
+>  	}
+> @@ -1407,7 +1420,7 @@ static int load_elf_library(struct file *file)
+>  		goto out_free_ph;
+>  
+>  	elf_bss = eppnt->p_vaddr + eppnt->p_filesz;
+> -	if (padzero(elf_bss)) {
+> +	if (padzero(elf_bss, PROT_WRITE)) {
+>  		error = -EFAULT;
+>  		goto out_free_ph;
+>  	}
