@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B8647B053F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Sep 2023 15:21:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76AE97B0540
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Sep 2023 15:21:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231926AbjI0NV4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Sep 2023 09:21:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38004 "EHLO
+        id S231925AbjI0NV6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Sep 2023 09:21:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38016 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231907AbjI0NVu (ORCPT
+        with ESMTP id S231869AbjI0NVw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Sep 2023 09:21:50 -0400
+        Wed, 27 Sep 2023 09:21:52 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D99CB10A
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Sep 2023 06:21:49 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 785CAC433C8;
-        Wed, 27 Sep 2023 13:21:48 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B23111D
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Sep 2023 06:21:51 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00EE5C433CC;
+        Wed, 27 Sep 2023 13:21:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695820909;
-        bh=nA+pNkC2onY4V6wYGRls95uNWFt4sgRwu5dgcJrBK4E=;
+        s=k20201202; t=1695820911;
+        bh=Ab9aMVTQyLsDIBkwuQkryPznzQAdsSK3MSBOrueCy+U=;
         h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-        b=u74mEHwCoBksQvUjW7ZQ9Mc2ROZj0tnNeymv1MEteDYhhlNslW3TrEFqDJtNF/D2L
-         SWMa+pfCPqDKTHXDN9Uk4JojEdcanGTseDKKmFSloqbn+RHECZXJBHAN14rlQzRVyG
-         IbwAAg2xlK4VYyvS5ScS9YSs0nQX7hczPjl7l4heiXwdhLwtcmKNHjtTTKHWrkrHFc
-         1XoHEtkjNBU8XNoEK+et/Pea7OumHqwaYfETGhACprYis+aVkpMUGWhU8e6PmzZdfE
-         jr1yKwA59CsmeiHcXWa5XVy2vWqDI5bQ3srcWIVowYxOcLK76se24/DZ1ETknZWF62
-         CMU6j4T45RUBQ==
+        b=k7vQRcLq/DcjL7CF7yzJFY2xUGadb0qyamYWdZFwVKM70lJJrPrkM/HBRFbbxL3af
+         UxYKehVoL75k14tDYEcTWLT6BZZeT9KUsJBEEtnwtqm0rzJiPxqmrtRy9QMPcTu+dl
+         SX4mN9Fq/gBpoLKus9HFbOFFRTIxBDCYqM7iScuUP4sK6rPiOAUki9Bv3kq+xuRU+5
+         TZEwpq4YlW4ItruDYXEwSyb3Dp0CkbDiRrQrumLVWdvav+peOQRPTBGt4o4RJYI2Us
+         lubasC1fBUkOcpoMlZyZ8Iknv4IG4NkVMatiZKeTuBWg5mHn6IOmS0IXE9j1EriKXV
+         1M/i1RP0VNkaA==
 From:   Christian Brauner <brauner@kernel.org>
-Date:   Wed, 27 Sep 2023 15:21:18 +0200
-Subject: [PATCH 5/7] super: remove bd_fsfreeze_{mutex,sb}
+Date:   Wed, 27 Sep 2023 15:21:19 +0200
+Subject: [PATCH 6/7] fs: remove unused helper
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230927-vfs-super-freeze-v1-5-ecc36d9ab4d9@kernel.org>
+Message-Id: <20230927-vfs-super-freeze-v1-6-ecc36d9ab4d9@kernel.org>
 References: <20230927-vfs-super-freeze-v1-0-ecc36d9ab4d9@kernel.org>
 In-Reply-To: <20230927-vfs-super-freeze-v1-0-ecc36d9ab4d9@kernel.org>
 To:     Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>
@@ -41,11 +41,11 @@ Cc:     linux-fsdevel@vger.kernel.org,
         "Darrick J. Wong" <djwong@kernel.org>,
         Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.13-dev-0438c
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1613; i=brauner@kernel.org;
- h=from:subject:message-id; bh=nA+pNkC2onY4V6wYGRls95uNWFt4sgRwu5dgcJrBK4E=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSK6KS8299W5Xpgxt3qzgs1O5i+3FIQLmL/uGjajBzBgrS1
- VWEzO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACaS5Mfwvypp7yJJvU/vmtvr4nY8a2
- V5Y+WyTmbK+mWpqlXSBaVfHzIybPBjai79I3px5u0s28N+VT6Pcr/HX6mcpd+wLDllaaIIEwA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3152; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=Ab9aMVTQyLsDIBkwuQkryPznzQAdsSK3MSBOrueCy+U=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSK6KRw9PUr6ky4NG322xWSn1v2yXSsKvvQ/nHH5Mv7Y0tv
+ ddZd6yhlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjIya8Mf2Xvn0+99dDsTeUSd2tW9g
+ 87Z0R3nNbeEaAk8s/v7f3VC9IY/nusXv3xVHXzBxmmteKp2R8uyq89zRfxaGn0g0muSRYVDgwA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -57,51 +57,103 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Both bd_fsfreeze_mutex and bd_fsfreeze_sb are now unused and can be
-removed. Also move bd_fsfreeze_count down to not have it weirdly placed
-in the middle of the holder fields.
+The grab_super() helper is now only used by grab_super_dead(). Merge the
+two helpers into one.
 
-Suggested-by: Jan Kara <jack@suse.cz>
-Suggested-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- block/bdev.c              | 1 -
- include/linux/blk_types.h | 7 ++-----
- 2 files changed, 2 insertions(+), 6 deletions(-)
+ fs/super.c | 44 +++++++-------------------------------------
+ 1 file changed, 7 insertions(+), 37 deletions(-)
 
-diff --git a/block/bdev.c b/block/bdev.c
-index 3deccd0ffcf2..084855b669f7 100644
---- a/block/bdev.c
-+++ b/block/bdev.c
-@@ -392,7 +392,6 @@ struct block_device *bdev_alloc(struct gendisk *disk, u8 partno)
- 	mapping_set_gfp_mask(&inode->i_data, GFP_USER);
+diff --git a/fs/super.c b/fs/super.c
+index 181ac8501301..6cdce2b31622 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -517,35 +517,6 @@ void deactivate_super(struct super_block *s)
  
- 	bdev = I_BDEV(inode);
--	mutex_init(&bdev->bd_fsfreeze_mutex);
- 	spin_lock_init(&bdev->bd_size_lock);
- 	mutex_init(&bdev->bd_holder_lock);
- 	bdev->bd_partno = partno;
-diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-index 88e1848b0869..0238236852b7 100644
---- a/include/linux/blk_types.h
-+++ b/include/linux/blk_types.h
-@@ -56,14 +56,11 @@ struct block_device {
- 	void *			bd_holder;
- 	const struct blk_holder_ops *bd_holder_ops;
- 	struct mutex		bd_holder_lock;
--	/* The counter of freeze processes */
--	atomic_t		bd_fsfreeze_count;
- 	int			bd_holders;
- 	struct kobject		*bd_holder_dir;
+ EXPORT_SYMBOL(deactivate_super);
  
--	/* Mutex for freeze */
--	struct mutex		bd_fsfreeze_mutex;
--	struct super_block	*bd_fsfreeze_sb;
-+	/* The counter of freeze processes */
-+	atomic_t		bd_fsfreeze_count;
+-/**
+- *	grab_super - acquire an active reference
+- *	@s: reference we are trying to make active
+- *
+- *	Tries to acquire an active reference.  grab_super() is used when we
+- * 	had just found a superblock in super_blocks or fs_type->fs_supers
+- *	and want to turn it into a full-blown active reference.  grab_super()
+- *	is called with sb_lock held and drops it.  Returns 1 in case of
+- *	success, 0 if we had failed (superblock contents was already dead or
+- *	dying when grab_super() had been called).  Note that this is only
+- *	called for superblocks not in rundown mode (== ones still on ->fs_supers
+- *	of their type), so increment of ->s_count is OK here.
+- */
+-static int grab_super(struct super_block *s) __releases(sb_lock)
+-{
+-	bool born;
+-
+-	s->s_count++;
+-	spin_unlock(&sb_lock);
+-	born = super_lock_excl(s);
+-	if (born && atomic_inc_not_zero(&s->s_active)) {
+-		put_super(s);
+-		return 1;
+-	}
+-	super_unlock_excl(s);
+-	put_super(s);
+-	return 0;
+-}
+-
+ static inline bool wait_dead(struct super_block *sb)
+ {
+ 	unsigned int flags;
+@@ -559,7 +530,7 @@ static inline bool wait_dead(struct super_block *sb)
+ }
  
- 	struct partition_meta_info *bd_meta_info;
- #ifdef CONFIG_FAIL_MAKE_REQUEST
+ /**
+- * grab_super_dead - acquire an active reference to a superblock
++ * grab_super - acquire an active reference to a superblock
+  * @sb: superblock to acquire
+  *
+  * Acquire a temporary reference on a superblock and try to trade it for
+@@ -570,17 +541,16 @@ static inline bool wait_dead(struct super_block *sb)
+  * Return: This returns true if an active reference could be acquired,
+  *         false if not.
+  */
+-static bool grab_super_dead(struct super_block *sb)
++static bool grab_super(struct super_block *sb)
+ {
+-
+ 	sb->s_count++;
+-	if (grab_super(sb)) {
++	spin_unlock(&sb_lock);
++	if (super_lock_excl(sb) && atomic_inc_not_zero(&sb->s_active)) {
+ 		put_super(sb);
+-		lockdep_assert_held(&sb->s_umount);
+ 		return true;
+ 	}
++	super_unlock_excl(sb);
+ 	wait_var_event(&sb->s_flags, wait_dead(sb));
+-	lockdep_assert_not_held(&sb->s_umount);
+ 	put_super(sb);
+ 	return false;
+ }
+@@ -831,7 +801,7 @@ struct super_block *sget_fc(struct fs_context *fc,
+ 			warnfc(fc, "reusing existing filesystem in another namespace not allowed");
+ 		return ERR_PTR(-EBUSY);
+ 	}
+-	if (!grab_super_dead(old))
++	if (!grab_super(old))
+ 		goto retry;
+ 	destroy_unused_super(s);
+ 	return old;
+@@ -875,7 +845,7 @@ struct super_block *sget(struct file_system_type *type,
+ 				destroy_unused_super(s);
+ 				return ERR_PTR(-EBUSY);
+ 			}
+-			if (!grab_super_dead(old))
++			if (!grab_super(old))
+ 				goto retry;
+ 			destroy_unused_super(s);
+ 			return old;
 
 -- 
 2.34.1
