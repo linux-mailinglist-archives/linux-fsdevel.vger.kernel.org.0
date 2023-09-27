@@ -2,303 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C46F7B0D81
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Sep 2023 22:43:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A4D97B0D98
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Sep 2023 22:49:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229816AbjI0UnN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Sep 2023 16:43:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36724 "EHLO
+        id S229691AbjI0Uto (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Sep 2023 16:49:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229639AbjI0UnM (ORCPT
+        with ESMTP id S229460AbjI0Utn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Sep 2023 16:43:12 -0400
-Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 126D5BF
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Sep 2023 13:43:10 -0700 (PDT)
-Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-59f4bc88f9fso117074557b3.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Sep 2023 13:43:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1695847389; x=1696452189; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yjpcdsZmpsqxOy2d6oqu0Zcfs5V1qi2ngVN6expqaEM=;
-        b=xOgWxvPL+KgdHHjS+HMkzfP7yeGEaix+Zill5GmZVNY4FD6ptykQCkbuEmFudJLG9J
-         bbwOobKGphaM3yofwdj+2tTOYXGZe2+TjY2gYeay4no66ek6u/y3QGamu0psn7JGRZNQ
-         K8by8YJgWcMZzlO0ZRz1muBpmoXHbRe0KuWgPHzF7S2yZ3epM5pCvcnOMYzlUgnwQxKU
-         WiAl8t01jqUJKZ4XwMa0jv+408ZbYq7OvMt3OvZdoiXIdST9KlGwBjFxcddgFz3417mw
-         NeEG7G1r7mhkytCd9tZxHb9N9l234hxBVv6F7ylSslnjSHnLCw8P/FCUWTcsE4t0IffT
-         wQAg==
+        Wed, 27 Sep 2023 16:49:43 -0400
+Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F28CD6;
+        Wed, 27 Sep 2023 13:49:42 -0700 (PDT)
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-573912a7b14so6082659eaf.1;
+        Wed, 27 Sep 2023 13:49:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695847389; x=1696452189;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yjpcdsZmpsqxOy2d6oqu0Zcfs5V1qi2ngVN6expqaEM=;
-        b=ZMTgea4UKAXiUxjfs9E5jkxzSlpiJxFEXuqVbqWOhfTpuxbp1yWUB8oDPDG4deoFqm
-         9codrooNrztpUDr5guHaLQge1De1utHApxiFCGVE0JqYPs58QBOcIHoQVOZcHufTG8uQ
-         qd+8gw5RweesrdyfbR2QIhUHlx52TUy37dTjagifk/T6bjI+LS/o66Ka1BRx5YJ0TDi/
-         +ckTK70xp3vo2CQcBoeQkGNFJ8t73DMCzEu+ArNF1DjDsXVseJNn39rTSUI/J4lrESCL
-         gMZyjYn1zgr5curdN4fQ7QNZMjW8wq9z66fPHdPY1MKNDx6lsTCav57ajXmXG5Mjnhn9
-         OcmA==
-X-Gm-Message-State: AOJu0YydF0vU2CKnXcawtwholE//v7l4o66JdxbGizyxrcidwBfywZQI
-        lljrkniufAZHVPJ/LQtue7NwdDQqeFlrxtUh5JrSKA==
-X-Google-Smtp-Source: AGHT+IHbo4Hykuc6zuEaClz11a4Sav0sQWQMdUu53vQbEXMyiJQn85B+L29xbafKZEJC1C9iyT0q5ZDyxPKte7jrxeU=
-X-Received: by 2002:a0d:d60f:0:b0:56d:3b91:7e78 with SMTP id
- y15-20020a0dd60f000000b0056d3b917e78mr3517738ywd.20.1695847388923; Wed, 27
- Sep 2023 13:43:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1695847781; x=1696452581;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UmyEGkXri5KPsLJOTpq3bUt+vQ7L9qwnm2OL7z9no/o=;
+        b=hsbcXMJs3O+bel0C8TtVsigJ/csYrHcwlyNOI/H94wBJHe3ZsVTiYwnnwZOGkj/qSs
+         wVEO15T7wiyNtpwZmw11RqJwDV9jrVbdC12IxtYo/PeLMCmr4AchQI8pYvUDuE4R67PS
+         BYmjtkxS8CamxCG4SLBefQ7rQFYj6FPLvx55WUPctsO4tLkjescBk7h5oiYHz+vkWubM
+         mztTHoq24wz/MkKRvD3xytTzT0O86u2xA0VBOu/zQqd4si3bGKGEW6MbCF1F0zyerN0u
+         nUKgHDbABljPm1D+ZKq4BLLoHNbo/EWISlgGQ4Jb3gsW0E3/gPozFcMWvVu+tpkCZa/R
+         JoHg==
+X-Gm-Message-State: AOJu0YyXhAba4ZfdqYjtW7EK+jwpbKRXO0mBmEVrH6ri5yWZ7VeVo0O4
+        6NrMFkGUfJGaeTtWN8Mnhxw=
+X-Google-Smtp-Source: AGHT+IHCwOWWNCAmANznYdzvBGWpetjIhbyOwNgWCWOWXFVixgBXrieU8G1Svoezl04Px/snxncgLQ==
+X-Received: by 2002:a05:6358:7e84:b0:135:47e8:76e2 with SMTP id o4-20020a0563587e8400b0013547e876e2mr2957543rwn.4.1695847780999;
+        Wed, 27 Sep 2023 13:49:40 -0700 (PDT)
+Received: from ?IPV6:2620:15c:211:201:8f39:a76e:2f15:c958? ([2620:15c:211:201:8f39:a76e:2f15:c958])
+        by smtp.gmail.com with ESMTPSA id v13-20020a63b64d000000b0057783b0f102sm10285198pgt.40.2023.09.27.13.49.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Sep 2023 13:49:40 -0700 (PDT)
+Message-ID: <be30c422-f84a-43b8-b176-3516ff5180cb@acm.org>
+Date:   Wed, 27 Sep 2023 13:49:39 -0700
 MIME-Version: 1.0
-References: <20230923013148.1390521-1-surenb@google.com> <20230923013148.1390521-3-surenb@google.com>
- <CAG48ez1N2kryy08eo0dcJ5a9O-3xMT8aOrgrcD+CqBN=cBfdDw@mail.gmail.com>
- <CAJuCfpGb5Amo9Sk0yyruJt9NKaYe9-y+5jmU442NSf3+VT5-dA@mail.gmail.com> <CAG48ez2WNOMwPo4OMVUHbS4mirwbqHUY5qUaaZ9DTkXdkzrjiQ@mail.gmail.com>
-In-Reply-To: <CAG48ez2WNOMwPo4OMVUHbS4mirwbqHUY5qUaaZ9DTkXdkzrjiQ@mail.gmail.com>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Wed, 27 Sep 2023 13:42:54 -0700
-Message-ID: <CAJuCfpGcsBE2XqPJSVo1gdE_O96gzS5=ET=u0uSBSX3Lj56CtA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] userfaultfd: UFFDIO_REMAP uABI
-To:     Jann Horn <jannh@google.com>
-Cc:     akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
-        brauner@kernel.org, shuah@kernel.org, aarcange@redhat.com,
-        lokeshgidra@google.com, peterx@redhat.com, david@redhat.com,
-        hughd@google.com, mhocko@suse.com, axelrasmussen@google.com,
-        rppt@kernel.org, willy@infradead.org, Liam.Howlett@oracle.com,
-        zhangpeng362@huawei.com, bgeffon@google.com,
-        kaleshsingh@google.com, ngeoffray@google.com, jdduke@google.com,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/13] Pass data temperature information to zoned UFS
+ devices
+Content-Language: en-US
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>
+References: <20230920191442.3701673-1-bvanassche@acm.org>
+ <yq1o7hnzbsy.fsf@ca-mkp.ca.oracle.com>
+From:   Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <yq1o7hnzbsy.fsf@ca-mkp.ca.oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 27, 2023 at 1:04=E2=80=AFPM Jann Horn <jannh@google.com> wrote:
->
-> On Wed, Sep 27, 2023 at 8:08=E2=80=AFPM Suren Baghdasaryan <surenb@google=
-.com> wrote:
-> > On Wed, Sep 27, 2023 at 5:47=E2=80=AFAM Jann Horn <jannh@google.com> wr=
-ote:
-> > > On Sat, Sep 23, 2023 at 3:31=E2=80=AFAM Suren Baghdasaryan <surenb@go=
-ogle.com> wrote:
-> > > > From: Andrea Arcangeli <aarcange@redhat.com>
-> > > >
-> > > > This implements the uABI of UFFDIO_REMAP.
-> > > >
-> > > > Notably one mode bitflag is also forwarded (and in turn known) by t=
-he
-> > > > lowlevel remap_pages method.
-> > > >
-> > > > Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
-> > > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> [...]
-> > > > +                       /*
-> > > > +                        * folio_referenced walks the anon_vma chai=
-n
-> > > > +                        * without the folio lock. Serialize agains=
-t it with
-> > > > +                        * the anon_vma lock, the folio lock is not=
- enough.
-> > > > +                        */
-> > > > +                       src_anon_vma =3D folio_get_anon_vma(src_fol=
-io);
-> > > > +                       if (!src_anon_vma) {
-> > > > +                               /* page was unmapped from under us =
-*/
-> > > > +                               err =3D -EAGAIN;
-> > > > +                               goto out;
-> > > > +                       }
-> > > > +                       if (!anon_vma_trylock_write(src_anon_vma)) =
-{
-> > > > +                               pte_unmap(&orig_src_pte);
-> > > > +                               pte_unmap(&orig_dst_pte);
-> > > > +                               src_pte =3D dst_pte =3D NULL;
-> > > > +                               /* now we can block and wait */
-> > > > +                               anon_vma_lock_write(src_anon_vma);
-> > > > +                               goto retry;
-> > > > +                       }
-> > > > +               }
-> > >
-> > > So at this point we have:
-> > >
-> > >  - the current src_pte
-> > >  - some referenced+locked src_folio that used to be mapped exclusivel=
-y
-> > > at src_addr
-> > >  - (the anon_vma associated with the src_folio)
-> > >
-> > > > +               err =3D remap_anon_pte(dst_mm, src_mm,  dst_vma, sr=
-c_vma,
-> > > > +                                    dst_addr, src_addr, dst_pte, s=
-rc_pte,
-> > > > +                                    orig_dst_pte, orig_src_pte,
-> > > > +                                    dst_ptl, src_ptl, src_folio);
-> > >
-> > > And then this will, without touching folio mapcounts/refcounts, delet=
-e
-> > > the current PTE at src_addr, and create a PTE at dst_addr pointing to
-> > > the old src_folio, leading to incorrect refcounts/mapcounts?
-> >
-> > I assume this still points to the missing previous_src_pte check
-> > discussed in the previous comments. Is that correct or is there yet
-> > another issue?
->
-> This is still referring to the missing previous_src_pte check.
->
-> > >
-> > > > +       } else {
-> > > [...]
-> > > > +       }
-> > > > +
-> > > > +out:
-> > > > +       if (src_anon_vma) {
-> > > > +               anon_vma_unlock_write(src_anon_vma);
-> > > > +               put_anon_vma(src_anon_vma);
-> > > > +       }
-> > > > +       if (src_folio) {
-> > > > +               folio_unlock(src_folio);
-> > > > +               folio_put(src_folio);
-> > > > +       }
-> > > > +       if (dst_pte)
-> > > > +               pte_unmap(dst_pte);
-> > > > +       if (src_pte)
-> > > > +               pte_unmap(src_pte);
-> > > > +       mmu_notifier_invalidate_range_end(&range);
-> > > > +
-> > > > +       return err;
-> > > > +}
-> > > [...]
-> > > > +ssize_t remap_pages(struct mm_struct *dst_mm, struct mm_struct *sr=
-c_mm,
-> > > > +                   unsigned long dst_start, unsigned long src_star=
-t,
-> > > > +                   unsigned long len, __u64 mode)
-> > > > +{
-> > > > +       struct vm_area_struct *src_vma, *dst_vma;
-> > > > +       unsigned long src_addr, dst_addr;
-> > > > +       pmd_t *src_pmd, *dst_pmd;
-> > > > +       long err =3D -EINVAL;
-> > > > +       ssize_t moved =3D 0;
-> > > > +
-> > > > +       /*
-> > > > +        * Sanitize the command parameters:
-> > > > +        */
-> > > > +       BUG_ON(src_start & ~PAGE_MASK);
-> > > > +       BUG_ON(dst_start & ~PAGE_MASK);
-> > > > +       BUG_ON(len & ~PAGE_MASK);
-> > > > +
-> > > > +       /* Does the address range wrap, or is the span zero-sized? =
-*/
-> > > > +       BUG_ON(src_start + len <=3D src_start);
-> > > > +       BUG_ON(dst_start + len <=3D dst_start);
-> > > > +
-> > > > +       /*
-> > > > +        * Because these are read sempahores there's no risk of loc=
-k
-> > > > +        * inversion.
-> > > > +        */
-> > > > +       mmap_read_lock(dst_mm);
-> > > > +       if (dst_mm !=3D src_mm)
-> > > > +               mmap_read_lock(src_mm);
-> > > > +
-> > > > +       /*
-> > > > +        * Make sure the vma is not shared, that the src and dst re=
-map
-> > > > +        * ranges are both valid and fully within a single existing
-> > > > +        * vma.
-> > > > +        */
-> > > > +       src_vma =3D find_vma(src_mm, src_start);
-> > > > +       if (!src_vma || (src_vma->vm_flags & VM_SHARED))
-> > > > +               goto out;
-> > > > +       if (src_start < src_vma->vm_start ||
-> > > > +           src_start + len > src_vma->vm_end)
-> > > > +               goto out;
-> > > > +
-> > > > +       dst_vma =3D find_vma(dst_mm, dst_start);
-> > > > +       if (!dst_vma || (dst_vma->vm_flags & VM_SHARED))
-> > > > +               goto out;
-> > > > +       if (dst_start < dst_vma->vm_start ||
-> > > > +           dst_start + len > dst_vma->vm_end)
-> > > > +               goto out;
-> > > > +
-> > > > +       err =3D validate_remap_areas(src_vma, dst_vma);
-> > > > +       if (err)
-> > > > +               goto out;
-> > > > +
-> > > > +       for (src_addr =3D src_start, dst_addr =3D dst_start;
-> > > > +            src_addr < src_start + len;) {
-> > > > +               spinlock_t *ptl;
-> > > > +               pmd_t dst_pmdval;
-> > > > +               unsigned long step_size;
-> > > > +
-> > > > +               BUG_ON(dst_addr >=3D dst_start + len);
-> > > > +               /*
-> > > > +                * Below works because anonymous area would not hav=
-e a
-> > > > +                * transparent huge PUD. If file-backed support is =
-added,
-> > > > +                * that case would need to be handled here.
-> > > > +                */
-> > > > +               src_pmd =3D mm_find_pmd(src_mm, src_addr);
-> > > > +               if (unlikely(!src_pmd)) {
-> > > > +                       if (!(mode & UFFDIO_REMAP_MODE_ALLOW_SRC_HO=
-LES)) {
-> > > > +                               err =3D -ENOENT;
-> > > > +                               break;
-> > > > +                       }
-> > > > +                       src_pmd =3D mm_alloc_pmd(src_mm, src_addr);
-> > > > +                       if (unlikely(!src_pmd)) {
-> > > > +                               err =3D -ENOMEM;
-> > > > +                               break;
-> > > > +                       }
-> > > > +               }
-> > > > +               dst_pmd =3D mm_alloc_pmd(dst_mm, dst_addr);
-> > > > +               if (unlikely(!dst_pmd)) {
-> > > > +                       err =3D -ENOMEM;
-> > > > +                       break;
-> > > > +               }
-> > > > +
-> > > > +               dst_pmdval =3D pmdp_get_lockless(dst_pmd);
-> > > > +               /*
-> > > > +                * If the dst_pmd is mapped as THP don't override i=
-t and just
-> > > > +                * be strict. If dst_pmd changes into TPH after thi=
-s check, the
-> > > > +                * remap_pages_huge_pmd() will detect the change an=
-d retry
-> > > > +                * while remap_pages_pte() will detect the change a=
-nd fail.
-> > > > +                */
-> > > > +               if (unlikely(pmd_trans_huge(dst_pmdval))) {
-> > > > +                       err =3D -EEXIST;
-> > > > +                       break;
-> > > > +               }
-> > > > +
-> > > > +               ptl =3D pmd_trans_huge_lock(src_pmd, src_vma);
-> > > > +               if (ptl && !pmd_trans_huge(*src_pmd)) {
-> > > > +                       spin_unlock(ptl);
-> > > > +                       ptl =3D NULL;
-> > > > +               }
-> > >
-> > > This still looks wrong - we do still have to split_huge_pmd()
-> > > somewhere so that remap_pages_pte() works.
-> >
-> > Hmm, I guess this extra check is not even needed...
->
-> Hm, and instead we'd bail at the pte_offset_map_nolock() in
-> remap_pages_pte()? I guess that's unusual but works...
+On 9/27/23 12:14, Martin K. Petersen wrote:
+> I don't have any particular problems with your implementation, 
+> although I'm still trying to wrap my head around how to make this 
+> coexist with my I/O hinting series. But I guess there's probably not
+> going to be a big overlap between devices that support both 
+> features.
 
-Yes, that's what I was thinking but I agree, that seems fragile. Maybe
-just bail out early if (ptl && !pmd_trans_huge())?
+Hi Martin,
 
->
-> (It would be a thing to look out for if anyone tried to backport this,
-> since the checks in pte_offset_map_nolock() were only introduced in
-> 6.5, but idk if anyone's doing that)
+This patch series should make it easier to implement I/O hint support
+since some of the code added by this patch series is also needed to
+implement I/O hint support.
+
+> However, it still pains me greatly to see the SBC proposal being 
+> intertwined with the travesty that is streams. Why not define 
+> everything in the IO advice hints group descriptor? I/O hints already
+> use GROUP NUMBER as an index. Why not just define a few permanent
+> hint descriptors? What's the point of the additional level of
+> indirection to tie this new feature into streams? RSCS basically says
+> "ignore the streams-specific bits and bobs and do this other stuff
+> instead". What does the streams infrastructure provide that can't be
+> solved trivially in the IO advise mode page alone?
+
+Hmm ... isn't that exactly what T10 did, define everything in the IO
+advice hints group descriptor by introducing the new ST_ENBLE bit in
+that descriptor?
+
+This patch series relies on the constrained streams mechanism. A
+constrained stream is permanently open. The new ST_ENBLE bit in the IO
+advice hints group descriptor indicates whether or not an IO advice
+hints group represents a permanent stream.
+
+The new ST_ENBLE bit in the IO advice hints group descriptor allows SCSI
+devices to interpret the index of the descriptor as a data lifetime.
+ From the approved T10 proposal:
+
+Table x1 – RELATIVE LIFETIME field
+..............................................
+Code        Relative lifetime
+..............................................
+00h         no relative lifetime is applicable
+01h         shortest relative lifetime
+02h         second shortest relative lifetime
+03h to 3Dh  intermediate relative lifetimes
+3Eh         second longest relative lifetime
+3Fh         longest relative lifetime
+..............................................
+
+> For existing UFS devices which predate RSCS and streams but which 
+> support getting data temperature from GROUP NUMBER, what is the 
+> mechanism for detecting and enabling the feature?
+
+We plan to ask UFS device vendors to modify the UFS device firmware and
+to add support for the VPD and mode pages this patch series relies on.
+My understanding is that this can be done easily in UFS device firmware.
+
+Although it is technically possible to update the firmware of UFS
+devices in smartphones, most smartphones do not support this because
+this is considered risky. Hence, only new smartphones will benefit from
+this patch series.
+
+I do not want to add support in the Linux kernel for how conventional
+UFS devices use the GROUP NUMBER field today. Conventional UFS devices
+interpret the GROUP NUMBER field as a "ContextID". The ContextID
+mechanism has a state, just like the SCSI stream mechanism. UFS contexts
+need to be opened explicitly and are closed upon reset. From the UFS 4.0
+specification: "No ContextID shall be open after power cycle."
+
+Please let me know if you need more information.
+
+Bart.
