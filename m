@@ -2,118 +2,165 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A31E7B0D4F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Sep 2023 22:25:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9ADE47B0D6D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Sep 2023 22:28:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229595AbjI0UZe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Sep 2023 16:25:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49160 "EHLO
+        id S229833AbjI0U2Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Sep 2023 16:28:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229458AbjI0UZd (ORCPT
+        with ESMTP id S229565AbjI0U2P (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Sep 2023 16:25:33 -0400
-Received: from out02.mta.xmission.com (out02.mta.xmission.com [166.70.13.232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6FBF10E;
-        Wed, 27 Sep 2023 13:25:29 -0700 (PDT)
-Received: from in02.mta.xmission.com ([166.70.13.52]:34862)
-        by out02.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1qlb68-004E9A-TM; Wed, 27 Sep 2023 14:25:28 -0600
-Received: from ip68-227-168-167.om.om.cox.net ([68.227.168.167]:55018 helo=email.froward.int.ebiederm.org.xmission.com)
-        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1qlb67-00DYm2-Qk; Wed, 27 Sep 2023 14:25:28 -0600
-From:   "Eric W. Biederman" <ebiederm@xmission.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Sebastian Ott <sebott@redhat.com>,
-        Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Pedro Falcato <pedro.falcato@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-hardening@vger.kernel.org
-References: <20230927033634.make.602-kees@kernel.org>
-Date:   Wed, 27 Sep 2023 15:25:21 -0500
-In-Reply-To: <20230927033634.make.602-kees@kernel.org> (Kees Cook's message of
-        "Tue, 26 Sep 2023 20:42:17 -0700")
-Message-ID: <87il7v8itq.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+        Wed, 27 Sep 2023 16:28:15 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49CC310E
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Sep 2023 13:28:13 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-9adb9fa7200so2654886466b.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Sep 2023 13:28:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1695846491; x=1696451291; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=n5tY2gwDez0Qf3DHOTXDYMh4745U3+Wh/mJcDvesXVQ=;
+        b=QbgzPV21eemJ0abhYY6R5cvLm5+4Z0x7TuZ1NiXd27JtBgI9OQY8qzUTHObhvYrAPH
+         vb+2JxvqhnVPdDI/qGAeBAHlTyOdPdD8kh5ZLodmpEeTGAfFd4CUnWnpaOPCT+LOfEvZ
+         6Dn0dzrgsNH3XLBM0I+4zxd6jBuCxQTLVrRrc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695846491; x=1696451291;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=n5tY2gwDez0Qf3DHOTXDYMh4745U3+Wh/mJcDvesXVQ=;
+        b=l9AXeeTI1Dgzc5/qhCt83cxnWR7oRt1qCvyZ+6nhN3vyOLFTOWdEDYQhPqg81gBFsw
+         S7+g7caQyA/NgDQSd4z5e2Q8JOAP3NEv77c4Hy883DgkVVcLRF+3HTq1zMQx/InVtE/5
+         CultMa6QTqTt4n3pxF2Z3jKuBQ3814w2KOGRArTWdR05sCcANOOQb48dQ4LkCbt2Xfbp
+         hDxbSaRSWusvjJNV3QXGzLos6qx6+B0KW9HKESYbELQpY+Ytv6GWIe7xIX8k7J4l+uln
+         9T8L73i248bKMe0AQjvCPr3HY8WR8ZkaayIzZ2+acDjxrTVB6gF6iceX9tQqdigMKs0/
+         EOBA==
+X-Gm-Message-State: AOJu0YxVpGBDDwwxL4Q17tqYnnUbge9CnuXNnMsR9t9B1B2QHM2udH+M
+        c9PNiGTVgOl50ViS8ZDjhATK9yrstMwVovxObkgsWQ==
+X-Google-Smtp-Source: AGHT+IG712Uvl/7P7RpK0uczZckwiQm0Q51VEn7ktYJN7S3fDs4TCIVt9TecEQaVrnnSe/2Owg0FqQ==
+X-Received: by 2002:a17:906:6a21:b0:9ae:5879:78dd with SMTP id qw33-20020a1709066a2100b009ae587978ddmr10195829ejc.1.1695846491467;
+        Wed, 27 Sep 2023 13:28:11 -0700 (PDT)
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com. [209.85.208.43])
+        by smtp.gmail.com with ESMTPSA id z17-20020a1709067e5100b0099bc80d5575sm9720432ejr.200.2023.09.27.13.28.10
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Sep 2023 13:28:10 -0700 (PDT)
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-530fa34ab80so28687209a12.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Sep 2023 13:28:10 -0700 (PDT)
+X-Received: by 2002:aa7:c549:0:b0:533:dd4d:2941 with SMTP id
+ s9-20020aa7c549000000b00533dd4d2941mr4099814edr.16.1695846490123; Wed, 27 Sep
+ 2023 13:28:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1qlb67-00DYm2-Qk;;;mid=<87il7v8itq.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.168.167;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX18Gql5jFySccJ7lzoWBXWBHedBRO+fGkGw=
-X-SA-Exim-Connect-IP: 68.227.168.167
-X-SA-Exim-Mail-From: ebiederm@xmission.com
+References: <20230926162228.68666-1-mjguzik@gmail.com> <CAHk-=wjUCLfuKks-VGTG9hrFAORb5cuzqyC0gRXptYGGgL=YYg@mail.gmail.com>
+ <CAGudoHGej+gmmv0OOoep2ENkf7hMBib-KL44Fu=Ym46j=r6VEA@mail.gmail.com>
+ <20230927-kosmetik-babypuppen-75bee530b9f0@brauner> <CAHk-=whLadznjNKZPYUjxVzAyCH-rRhb24_KaGegKT9E6A86Kg@mail.gmail.com>
+ <CAGudoHH2mvfjfKt+nOCEOfvOrQ+o1pqX63tN2r_1+bLZ4OqHNA@mail.gmail.com>
+ <CAHk-=wjmgord99A-Gwy3dsiG1YNeXTCbt+z6=3RH_je5PP41Zw@mail.gmail.com> <ZRR1Kc/dvhya7ME4@f>
+In-Reply-To: <ZRR1Kc/dvhya7ME4@f>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 27 Sep 2023 13:27:51 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wibs_xBP2BGG4UHKhiP2B=7KJnx_LL18O0bGK8QkULLHg@mail.gmail.com>
+Message-ID: <CAHk-=wibs_xBP2BGG4UHKhiP2B=7KJnx_LL18O0bGK8QkULLHg@mail.gmail.com>
+Subject: Re: [PATCH v2] vfs: shave work on failed file open
+To:     Mateusz Guzik <mjguzik@gmail.com>
+Cc:     Christian Brauner <brauner@kernel.org>, viro@zeniv.linux.org.uk,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: multipart/mixed; boundary="000000000000a3607f06065d07b1"
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
-X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Kees Cook <keescook@chromium.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 487 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 11 (2.3%), b_tie_ro: 10 (2.0%), parse: 0.90
-        (0.2%), extract_message_metadata: 15 (3.1%), get_uri_detail_list: 1.14
-        (0.2%), tests_pri_-2000: 21 (4.3%), tests_pri_-1000: 2.5 (0.5%),
-        tests_pri_-950: 1.31 (0.3%), tests_pri_-900: 1.07 (0.2%),
-        tests_pri_-200: 0.86 (0.2%), tests_pri_-100: 3.7 (0.8%),
-        tests_pri_-90: 67 (13.8%), check_bayes: 66 (13.5%), b_tokenize: 6
-        (1.3%), b_tok_get_all: 6 (1.3%), b_comp_prob: 1.99 (0.4%),
-        b_tok_touch_all: 47 (9.7%), b_finish: 0.90 (0.2%), tests_pri_0: 200
-        (41.1%), check_dkim_signature: 0.51 (0.1%), check_dkim_adsp: 2.4
-        (0.5%), poll_dns_idle: 148 (30.4%), tests_pri_10: 2.2 (0.4%),
-        tests_pri_500: 157 (32.2%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH v3 0/4] binfmt_elf: Support segments with 0 filesz and
- misaligned starts
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Kees Cook <keescook@chromium.org> writes:
+--000000000000a3607f06065d07b1
+Content-Type: text/plain; charset="UTF-8"
 
-> Hi,
+On Wed, 27 Sept 2023 at 11:32, Mateusz Guzik <mjguzik@gmail.com> wrote:
 >
-> This is the continuation of the work Eric started for handling
-> "p_memsz > p_filesz" in arbitrary segments (rather than just the last,
-> BSS, segment). I've added the suggested changes:
->
->  - drop unused "elf_bss" variable
->  - report padzero() errors when PROT_WRITE is present
->  - refactor load_elf_interp() to use elf_load()
->
-> This passes my quick smoke tests, but I'm still trying to construct some
-> more complete tests...
+> put_cred showed up in file_free_rcu in d76b0d9b2d87 ("CRED: Use creds in
+> file structs"). Commit message does not claim any dependency on this
+> being in an rcu callback already and it looks like it was done this way
+> because this was the ony spot with kmem_cache_free(filp_cachep, f)
 
-Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Yes, that looks about right. So the rcu-freeing is almost an accident.
 
-You might also consider using elf_load in load_elf_library.
+Btw, I think we could get rid of the RCU freeing of 'struct file *' entirely.
 
-The code in load_elf_library only supports files with a single program
-header, and I think is only needed for libc5.
+The way to fix it is
 
-The advantage is that load_elf_library would be using well tested code,
-vm_brk would have no callers, and padzero would only be called by
-elf_load, and load_elf_library would do little more than just call
-load_elf_library.
+ (a) make sure all f_count accesses are atomic ops (the one special
+case is the "0 -> X" initialization, which is ok)
 
-Eric
+ (b) make filp_cachep be SLAB_TYPESAFE_BY_RCU
 
->
-> -Kees
->
-> Eric W. Biederman (1):
->   binfmt_elf: Support segments with 0 filesz and misaligned starts
->
-> Kees Cook (3):
->   binfmt_elf: elf_bss no longer used by load_elf_binary()
->   binfmt_elf: Provide prot bits as context for padzero() errors
->   binfmt_elf: Use elf_load() for interpreter
->
->  fs/binfmt_elf.c | 192 ++++++++++++++++++------------------------------
->  1 file changed, 71 insertions(+), 121 deletions(-)
+because then get_file_rcu() can do the atomic_long_inc_not_zero()
+knowing it's still a 'struct file *' while holding the RCU read lock
+even if it was just free'd.
+
+And __fget_files_rcu() will then re-check that it's the *right*
+'struct file *' and do a fput() on it and re-try if it isn't. End
+result: no need for any RCU freeing.
+
+But the difference is that a *new* 'struct file *' might see a
+temporary atomic increment / decrement of the file pointer because
+another CPU is going through that __fget_files_rcu() dance.
+
+Which is why "0 -> X" is ok to do as a "atomic_long_set()", but
+everything else would need to be done as "atomic_long_inc()" etc.
+
+Which all seems to be the case already, so with the put_cred() not
+needing the RCU delay, I thing we really could do this patch (note:
+independent of other issues, but makes your patch require that
+"atomic_long_cmpxchg()" and the WARN_ON() should probably go away,
+because it can actually happen).
+
+That should help the normal file open/close case a bit, in that it
+doesn't cause that extra RCU work.
+
+Of course, on some loads it might be advantageous to do a delayed
+de-allocation in some other RCU context, so ..
+
+What do you think?
+
+             Linus
+
+PS. And as always: ENTIRELY UNTESTED.
+
+--000000000000a3607f06065d07b1
+Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
+Content-Disposition: attachment; filename="patch.diff"
+Content-Transfer-Encoding: base64
+Content-ID: <f_ln277b020>
+X-Attachment-Id: f_ln277b020
+
+IGZzL2ZpbGVfdGFibGUuYyB8IDE5ICsrKysrKysrKystLS0tLS0tLS0KIDEgZmlsZSBjaGFuZ2Vk
+LCAxMCBpbnNlcnRpb25zKCspLCA5IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2ZzL2ZpbGVf
+dGFibGUuYyBiL2ZzL2ZpbGVfdGFibGUuYwppbmRleCBlZTIxYjNkYTlkMDguLjdiMzhmZjczODVj
+YyAxMDA2NDQKLS0tIGEvZnMvZmlsZV90YWJsZS5jCisrKyBiL2ZzL2ZpbGVfdGFibGUuYwpAQCAt
+NjUsMjEgKzY1LDIxIEBAIHN0YXRpYyB2b2lkIGZpbGVfZnJlZV9yY3Uoc3RydWN0IHJjdV9oZWFk
+ICpoZWFkKQogewogCXN0cnVjdCBmaWxlICpmID0gY29udGFpbmVyX29mKGhlYWQsIHN0cnVjdCBm
+aWxlLCBmX3JjdWhlYWQpOwogCi0JcHV0X2NyZWQoZi0+Zl9jcmVkKTsKLQlpZiAodW5saWtlbHko
+Zi0+Zl9tb2RlICYgRk1PREVfQkFDS0lORykpCi0JCWtmcmVlKGJhY2tpbmdfZmlsZShmKSk7Ci0J
+ZWxzZQotCQlrbWVtX2NhY2hlX2ZyZWUoZmlscF9jYWNoZXAsIGYpOworCWtmcmVlKGJhY2tpbmdf
+ZmlsZShmKSk7CiB9CiAKIHN0YXRpYyBpbmxpbmUgdm9pZCBmaWxlX2ZyZWUoc3RydWN0IGZpbGUg
+KmYpCiB7CiAJc2VjdXJpdHlfZmlsZV9mcmVlKGYpOwotCWlmICh1bmxpa2VseShmLT5mX21vZGUg
+JiBGTU9ERV9CQUNLSU5HKSkKLQkJcGF0aF9wdXQoYmFja2luZ19maWxlX3JlYWxfcGF0aChmKSk7
+CiAJaWYgKGxpa2VseSghKGYtPmZfbW9kZSAmIEZNT0RFX05PQUNDT1VOVCkpKQogCQlwZXJjcHVf
+Y291bnRlcl9kZWMoJm5yX2ZpbGVzKTsKLQljYWxsX3JjdSgmZi0+Zl9yY3VoZWFkLCBmaWxlX2Zy
+ZWVfcmN1KTsKKwlwdXRfY3JlZChmLT5mX2NyZWQpOworCWlmICh1bmxpa2VseShmLT5mX21vZGUg
+JiBGTU9ERV9CQUNLSU5HKSkgeworCQlwYXRoX3B1dChiYWNraW5nX2ZpbGVfcmVhbF9wYXRoKGYp
+KTsKKwkJY2FsbF9yY3UoJmYtPmZfcmN1aGVhZCwgZmlsZV9mcmVlX3JjdSk7CisJfSBlbHNlIHsK
+KwkJa21lbV9jYWNoZV9mcmVlKGZpbHBfY2FjaGVwLCBmKTsKKwl9CiB9CiAKIC8qCkBAIC00NzEs
+NyArNDcxLDggQEAgRVhQT1JUX1NZTUJPTChfX2ZwdXRfc3luYyk7CiB2b2lkIF9faW5pdCBmaWxl
+c19pbml0KHZvaWQpCiB7CiAJZmlscF9jYWNoZXAgPSBrbWVtX2NhY2hlX2NyZWF0ZSgiZmlscCIs
+IHNpemVvZihzdHJ1Y3QgZmlsZSksIDAsCi0JCQlTTEFCX0hXQ0FDSEVfQUxJR04gfCBTTEFCX1BB
+TklDIHwgU0xBQl9BQ0NPVU5ULCBOVUxMKTsKKwkJCVNMQUJfVFlQRVNBRkVfQllfUkNVIHwgU0xB
+Ql9IV0NBQ0hFX0FMSUdOCisJCQl8IFNMQUJfUEFOSUMgfCBTTEFCX0FDQ09VTlQsIE5VTEwpOwog
+CXBlcmNwdV9jb3VudGVyX2luaXQoJm5yX2ZpbGVzLCAwLCBHRlBfS0VSTkVMKTsKIH0KIAo=
+--000000000000a3607f06065d07b1--
