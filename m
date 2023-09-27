@@ -2,70 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 776027B007D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Sep 2023 11:35:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB0667B007E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Sep 2023 11:35:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231246AbjI0JfW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Sep 2023 05:35:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44596 "EHLO
+        id S231247AbjI0JfX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Sep 2023 05:35:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230451AbjI0Je7 (ORCPT
+        with ESMTP id S231157AbjI0JfA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Sep 2023 05:34:59 -0400
+        Wed, 27 Sep 2023 05:35:00 -0400
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31CEF12A;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3915013A;
         Wed, 27 Sep 2023 02:34:49 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 0D48221977;
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 16E7C21978;
         Wed, 27 Sep 2023 09:34:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
         t=1695807285; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=tiK9GOiMzLUeaSX/rkSPBuJ0eSpi7wf4h/8J7c7Pam4=;
-        b=KNBLGTM0pqbZjdV98ejo918JLXFaI77XCKjP+HJL4eFmEpS2pHciVfEpTBSEUoqA+S3xq+
-        gpb9G9Gzesslw3alWZMfyv7pD1sh9ISqG0syUI7V+36KSsqlTFj2NPBF2gANdYW/SUPZKc
-        XOQ90j3MfLuF4+t60W+gVthvrMr3gvc=
+        bh=eshjhmlBZZ+GzNwp19gJ7ErY7Ih5GTuxpMRTs+m+0bs=;
+        b=EWUVkms5/pm2Ml5jbpZ8PZyg98OaUFitQ5RxXq1ZzVlbbqyw5iGue5zipZL3x5PApU/j0e
+        tymimozpkYIQuMmfdcJpSGaAuf6Gf9UuON4kL7vWrvc7BBDm5g/I6jma3HFNGt6D+RmQd0
+        ZUoHLT4s9UMO9sL9Qq2azAktAfRGbNM=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
         s=susede2_ed25519; t=1695807285;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=tiK9GOiMzLUeaSX/rkSPBuJ0eSpi7wf4h/8J7c7Pam4=;
-        b=dSVD8Uv7PHAZ4yYrBMmn8Bb7EHKQxElTnUKTduWoYYkQhaPDpAZ4IgFPqnrSjnLgrF9foa
-        QuNbYNjVtC8gikDA==
+        bh=eshjhmlBZZ+GzNwp19gJ7ErY7Ih5GTuxpMRTs+m+0bs=;
+        b=ss5MNlOjNXLJ919ETlSHkJp1Yp2PPEp1qO36o7DGcIzrpPjnGfs13irxuEi6+C86YwJI4q
+        U06WAnopbiSPRQDQ==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id E565F13ADB;
-        Wed, 27 Sep 2023 09:34:44 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 0798F1338F;
+        Wed, 27 Sep 2023 09:34:45 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id lbr/NzT3E2U6EwAAMHmgww
-        (envelope-from <jack@suse.cz>); Wed, 27 Sep 2023 09:34:44 +0000
+        id xuXGATX3E2U8EwAAMHmgww
+        (envelope-from <jack@suse.cz>); Wed, 27 Sep 2023 09:34:45 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id BAEDEA0802; Wed, 27 Sep 2023 11:34:43 +0200 (CEST)
+        id C1C83A0803; Wed, 27 Sep 2023 11:34:43 +0200 (CEST)
 From:   Jan Kara <jack@suse.cz>
 To:     Christian Brauner <brauner@kernel.org>
 Cc:     <linux-fsdevel@vger.kernel.org>, <linux-block@vger.kernel.org>,
         Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
-        "Darrick J. Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>,
-        Dave Chinner <dchinner@redhat.com>
-Subject: [PATCH 28/29] xfs: Convert to bdev_open_by_path()
-Date:   Wed, 27 Sep 2023 11:34:34 +0200
-Message-Id: <20230927093442.25915-28-jack@suse.cz>
+        Christoph Hellwig <hch@lst.de>
+Subject: [PATCH 29/29] block: Remove blkdev_get_by_*() functions
+Date:   Wed, 27 Sep 2023 11:34:35 +0200
+Message-Id: <20230927093442.25915-29-jack@suse.cz>
 X-Mailer: git-send-email 2.35.3
 In-Reply-To: <20230818123232.2269-1-jack@suse.cz>
 References: <20230818123232.2269-1-jack@suse.cz>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6519; i=jack@suse.cz; h=from:subject; bh=WDaEwTDODmFKMQvrjOP8veQZmRQ3yPNnv3n4KO7nNFY=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBlE/cprC2u/lY9+ZxE4XFun8Ie5x50uzz/O9TCC3KQ R+LEAHiJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCZRP3KQAKCRCcnaoHP2RA2UOGB/ 9f5AdBp9W5BFlrCClDnEihV+eaDq/Ye3KvMC/gIsMvodi/WO2oXsE06GRqt+UWHPhFtklCR18kuXpi HiSXBh952rk2o+mHX4GXfj9y9q462y4iPr1t9aV5D9cu+XMEPtwKzu13fGi05ukksVmm74+m1Fgr0d XMKZU9WaJLmgZJyQNxgWll2gRi9jzAL7lUSbgy62tvq09pAc5zizDNFUJaG6/njp9r2oT4w0pl3cDq 5z3RKvzY5PSjMCo35QkHad11ayq3pcVRIRJU/djzvxSXVdXiQP8rk2WqHhvCq2DQofGLE88BqQ9eZg cgAEfI3Jkb9xVyw+FKvLZmOIp0MptS
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6889; i=jack@suse.cz; h=from:subject; bh=Ikp0JFfjK5lGV1c4NJSrLP6HE8Yq3ISmm+jwTrr9Eoo=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBlE/cqYojfqY37VS0S+9Qe7bf2w8dSlubsDBORTzMw MxR5zRiJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCZRP3KgAKCRCcnaoHP2RA2W2tB/ 4z1O2luo6CRlZwZnpcQ0ddFqPaZCe5klRUn2PXAkyymVb8HUEM+xi8yJoCYMwWARqiDTnM1llQDKHU CdOG+EIfrNHX04Y49v8aZ5jBACh5tybF04FSgUiZQ2UiQ8nVWJIHdAGiEQxBbCBsyZlvRTLGJiSTFi MFgwewQC3Vj/yweM/O+VqauZx5qUtsuhkByD9GAWeA/MfHYHhEvtVFWvqk9TvTAMo3M3X8q6pYJW80 llF5MbSIV/H8Lu/NQ08gZbEJMpb5gIHOkFdWdE6q6u81T1ukE6Pp1Yx0tns2uh8BDT457TT+8gikXg uKPANWF0+KQKASVwUmL+6WrDrx2JoL
 X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -77,212 +75,219 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Convert xfs to use bdev_open_by_path() and pass the handle around.
+blkdev_get_by_*() and blkdev_put() functions are now unused. Remove
+them.
 
-CC: "Darrick J. Wong" <djwong@kernel.org>
-CC: linux-xfs@vger.kernel.org
 Acked-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Dave Chinner <dchinner@redhat.com>
 Reviewed-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Jan Kara <jack@suse.cz>
 ---
- fs/xfs/xfs_buf.c   | 22 ++++++++++------------
- fs/xfs/xfs_buf.h   |  3 ++-
- fs/xfs/xfs_super.c | 42 ++++++++++++++++++++++++------------------
- 3 files changed, 36 insertions(+), 31 deletions(-)
+ block/bdev.c           | 94 ++++++++++++++----------------------------
+ include/linux/blkdev.h |  5 ---
+ 2 files changed, 30 insertions(+), 69 deletions(-)
 
-diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
-index c1ece4a08ff4..003e157241da 100644
---- a/fs/xfs/xfs_buf.c
-+++ b/fs/xfs/xfs_buf.c
-@@ -1945,8 +1945,6 @@ void
- xfs_free_buftarg(
- 	struct xfs_buftarg	*btp)
+diff --git a/block/bdev.c b/block/bdev.c
+index 4628dcb1da8a..ea80958027a8 100644
+--- a/block/bdev.c
++++ b/block/bdev.c
+@@ -729,7 +729,7 @@ void blkdev_put_no_open(struct block_device *bdev)
+ }
+ 	
+ /**
+- * blkdev_get_by_dev - open a block device by device number
++ * bdev_open_by_dev - open a block device by device number
+  * @dev: device number of block device to open
+  * @mode: open mode (BLK_OPEN_*)
+  * @holder: exclusive holder identifier
+@@ -741,32 +741,40 @@ void blkdev_put_no_open(struct block_device *bdev)
+  *
+  * Use this interface ONLY if you really do not have anything better - i.e. when
+  * you are behind a truly sucky interface and all you are given is a device
+- * number.  Everything else should use blkdev_get_by_path().
++ * number.  Everything else should use bdev_open_by_path().
+  *
+  * CONTEXT:
+  * Might sleep.
+  *
+  * RETURNS:
+- * Reference to the block_device on success, ERR_PTR(-errno) on failure.
++ * Handle with a reference to the block_device on success, ERR_PTR(-errno) on
++ * failure.
+  */
+-struct block_device *blkdev_get_by_dev(dev_t dev, blk_mode_t mode, void *holder,
+-		const struct blk_holder_ops *hops)
++struct bdev_handle *bdev_open_by_dev(dev_t dev, blk_mode_t mode, void *holder,
++				     const struct blk_holder_ops *hops)
  {
--	struct block_device	*bdev = btp->bt_bdev;
+-	bool unblock_events = true;
++	struct bdev_handle *handle = kmalloc(sizeof(struct bdev_handle),
++					     GFP_KERNEL);
+ 	struct block_device *bdev;
++	bool unblock_events = true;
+ 	struct gendisk *disk;
+ 	int ret;
+ 
++	if (!handle)
++		return ERR_PTR(-ENOMEM);
++
+ 	ret = devcgroup_check_permission(DEVCG_DEV_BLOCK,
+ 			MAJOR(dev), MINOR(dev),
+ 			((mode & BLK_OPEN_READ) ? DEVCG_ACC_READ : 0) |
+ 			((mode & BLK_OPEN_WRITE) ? DEVCG_ACC_WRITE : 0));
+ 	if (ret)
+-		return ERR_PTR(ret);
++		goto free_handle;
+ 
+ 	bdev = blkdev_get_no_open(dev);
+-	if (!bdev)
+-		return ERR_PTR(-ENXIO);
++	if (!bdev) {
++		ret = -ENXIO;
++		goto free_handle;
++	}
+ 	disk = bdev->bd_disk;
+ 
+ 	if (holder) {
+@@ -815,7 +823,10 @@ struct block_device *blkdev_get_by_dev(dev_t dev, blk_mode_t mode, void *holder,
+ 
+ 	if (unblock_events)
+ 		disk_unblock_events(disk);
+-	return bdev;
++	handle->bdev = bdev;
++	handle->holder = holder;
++	handle->mode = mode;
++	return handle;
+ put_module:
+ 	module_put(disk->fops->owner);
+ abort_claiming:
+@@ -825,34 +836,14 @@ struct block_device *blkdev_get_by_dev(dev_t dev, blk_mode_t mode, void *holder,
+ 	disk_unblock_events(disk);
+ put_blkdev:
+ 	blkdev_put_no_open(bdev);
++free_handle:
++	kfree(handle);
+ 	return ERR_PTR(ret);
+ }
+-EXPORT_SYMBOL(blkdev_get_by_dev);
 -
- 	unregister_shrinker(&btp->bt_shrinker);
- 	ASSERT(percpu_counter_sum(&btp->bt_io_count) == 0);
- 	percpu_counter_destroy(&btp->bt_io_count);
-@@ -1954,8 +1952,8 @@ xfs_free_buftarg(
+-struct bdev_handle *bdev_open_by_dev(dev_t dev, blk_mode_t mode, void *holder,
+-				     const struct blk_holder_ops *hops)
+-{
+-	struct bdev_handle *handle = kmalloc(sizeof(*handle), GFP_KERNEL);
+-	struct block_device *bdev;
+-
+-	if (!handle)
+-		return ERR_PTR(-ENOMEM);
+-	bdev = blkdev_get_by_dev(dev, mode, holder, hops);
+-	if (IS_ERR(bdev)) {
+-		kfree(handle);
+-		return ERR_CAST(bdev);
+-	}
+-	handle->bdev = bdev;
+-	handle->holder = holder;
+-	if (holder)
+-		mode |= BLK_OPEN_EXCL;
+-	handle->mode = mode;
+-	return handle;
+-}
+ EXPORT_SYMBOL(bdev_open_by_dev);
  
- 	fs_put_dax(btp->bt_daxdev, btp->bt_mount);
- 	/* the main block device is closed by kill_block_super */
--	if (bdev != btp->bt_mount->m_super->s_bdev)
--		blkdev_put(bdev, btp->bt_mount->m_super);
-+	if (btp->bt_bdev != btp->bt_mount->m_super->s_bdev)
-+		bdev_release(btp->bt_bdev_handle);
- 
- 	kmem_free(btp);
- }
-@@ -1990,16 +1988,15 @@ xfs_setsize_buftarg(
+ /**
+- * blkdev_get_by_path - open a block device by name
++ * bdev_open_by_path - open a block device by name
+  * @path: path to the block device to open
+  * @mode: open mode (BLK_OPEN_*)
+  * @holder: exclusive holder identifier
+@@ -866,29 +857,9 @@ EXPORT_SYMBOL(bdev_open_by_dev);
+  * Might sleep.
+  *
+  * RETURNS:
+- * Reference to the block_device on success, ERR_PTR(-errno) on failure.
++ * Handle with a reference to the block_device on success, ERR_PTR(-errno) on
++ * failure.
   */
- STATIC int
- xfs_setsize_buftarg_early(
--	xfs_buftarg_t		*btp,
--	struct block_device	*bdev)
-+	xfs_buftarg_t		*btp)
+-struct block_device *blkdev_get_by_path(const char *path, blk_mode_t mode,
+-		void *holder, const struct blk_holder_ops *hops)
+-{
+-	struct block_device *bdev;
+-	dev_t dev;
+-	int error;
+-
+-	error = lookup_bdev(path, &dev);
+-	if (error)
+-		return ERR_PTR(error);
+-
+-	bdev = blkdev_get_by_dev(dev, mode, holder, hops);
+-	if (!IS_ERR(bdev) && (mode & BLK_OPEN_WRITE) && bdev_read_only(bdev)) {
+-		blkdev_put(bdev, holder);
+-		return ERR_PTR(-EACCES);
+-	}
+-
+-	return bdev;
+-}
+-EXPORT_SYMBOL(blkdev_get_by_path);
+-
+ struct bdev_handle *bdev_open_by_path(const char *path, blk_mode_t mode,
+ 		void *holder, const struct blk_holder_ops *hops)
  {
--	return xfs_setsize_buftarg(btp, bdev_logical_block_size(bdev));
-+	return xfs_setsize_buftarg(btp, bdev_logical_block_size(btp->bt_bdev));
+@@ -911,8 +882,9 @@ struct bdev_handle *bdev_open_by_path(const char *path, blk_mode_t mode,
  }
+ EXPORT_SYMBOL(bdev_open_by_path);
  
- struct xfs_buftarg *
- xfs_alloc_buftarg(
- 	struct xfs_mount	*mp,
--	struct block_device	*bdev)
-+	struct bdev_handle	*bdev_handle)
+-void blkdev_put(struct block_device *bdev, void *holder)
++void bdev_release(struct bdev_handle *handle)
  {
- 	xfs_buftarg_t		*btp;
- 	const struct dax_holder_operations *ops = NULL;
-@@ -2010,9 +2007,10 @@ xfs_alloc_buftarg(
- 	btp = kmem_zalloc(sizeof(*btp), KM_NOFS);
- 
- 	btp->bt_mount = mp;
--	btp->bt_dev =  bdev->bd_dev;
--	btp->bt_bdev = bdev;
--	btp->bt_daxdev = fs_dax_get_by_bdev(bdev, &btp->bt_dax_part_off,
-+	btp->bt_bdev_handle = bdev_handle;
-+	btp->bt_dev = bdev_handle->bdev->bd_dev;
-+	btp->bt_bdev = bdev_handle->bdev;
-+	btp->bt_daxdev = fs_dax_get_by_bdev(btp->bt_bdev, &btp->bt_dax_part_off,
- 					    mp, ops);
++	struct block_device *bdev = handle->bdev;
+ 	struct gendisk *disk = bdev->bd_disk;
  
  	/*
-@@ -2022,7 +2020,7 @@ xfs_alloc_buftarg(
- 	ratelimit_state_init(&btp->bt_ioerror_rl, 30 * HZ,
- 			     DEFAULT_RATELIMIT_BURST);
+@@ -926,8 +898,8 @@ void blkdev_put(struct block_device *bdev, void *holder)
+ 		sync_blockdev(bdev);
  
--	if (xfs_setsize_buftarg_early(btp, bdev))
-+	if (xfs_setsize_buftarg_early(btp))
- 		goto error_free;
- 
- 	if (list_lru_init(&btp->bt_lru))
-diff --git a/fs/xfs/xfs_buf.h b/fs/xfs/xfs_buf.h
-index df8f47953bb4..ada9d310b7d3 100644
---- a/fs/xfs/xfs_buf.h
-+++ b/fs/xfs/xfs_buf.h
-@@ -98,6 +98,7 @@ typedef unsigned int xfs_buf_flags_t;
-  */
- typedef struct xfs_buftarg {
- 	dev_t			bt_dev;
-+	struct bdev_handle	*bt_bdev_handle;
- 	struct block_device	*bt_bdev;
- 	struct dax_device	*bt_daxdev;
- 	u64			bt_dax_part_off;
-@@ -364,7 +365,7 @@ xfs_buf_update_cksum(struct xfs_buf *bp, unsigned long cksum_offset)
-  *	Handling of buftargs.
-  */
- struct xfs_buftarg *xfs_alloc_buftarg(struct xfs_mount *mp,
--		struct block_device *bdev);
-+		struct bdev_handle *bdev_handle);
- extern void xfs_free_buftarg(struct xfs_buftarg *);
- extern void xfs_buftarg_wait(struct xfs_buftarg *);
- extern void xfs_buftarg_drain(struct xfs_buftarg *);
-diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-index 819a3568b28f..f0ae07828153 100644
---- a/fs/xfs/xfs_super.c
-+++ b/fs/xfs/xfs_super.c
-@@ -361,14 +361,15 @@ STATIC int
- xfs_blkdev_get(
- 	xfs_mount_t		*mp,
- 	const char		*name,
--	struct block_device	**bdevp)
-+	struct bdev_handle	**handlep)
- {
- 	int			error = 0;
- 
--	*bdevp = blkdev_get_by_path(name, BLK_OPEN_READ | BLK_OPEN_WRITE,
--				    mp->m_super, &fs_holder_ops);
--	if (IS_ERR(*bdevp)) {
--		error = PTR_ERR(*bdevp);
-+	*handlep = bdev_open_by_path(name, BLK_OPEN_READ | BLK_OPEN_WRITE,
-+				     mp->m_super, &fs_holder_ops);
-+	if (IS_ERR(*handlep)) {
-+		error = PTR_ERR(*handlep);
-+		*handlep = NULL;
- 		xfs_warn(mp, "Invalid device [%s], error=%d", name, error);
- 	}
- 
-@@ -433,7 +434,7 @@ xfs_open_devices(
- {
- 	struct super_block	*sb = mp->m_super;
- 	struct block_device	*ddev = sb->s_bdev;
--	struct block_device	*logdev = NULL, *rtdev = NULL;
-+	struct bdev_handle	*logdev_handle = NULL, *rtdev_handle = NULL;
- 	int			error;
+ 	mutex_lock(&disk->open_mutex);
+-	if (holder)
+-		bd_end_claim(bdev, holder);
++	if (handle->holder)
++		bd_end_claim(bdev, handle->holder);
  
  	/*
-@@ -446,17 +447,19 @@ xfs_open_devices(
- 	 * Open real time and log devices - order is important.
- 	 */
- 	if (mp->m_logname) {
--		error = xfs_blkdev_get(mp, mp->m_logname, &logdev);
-+		error = xfs_blkdev_get(mp, mp->m_logname, &logdev_handle);
- 		if (error)
- 			goto out_relock;
- 	}
+ 	 * Trigger event checking and tell drivers to flush MEDIA_CHANGE
+@@ -944,12 +916,6 @@ void blkdev_put(struct block_device *bdev, void *holder)
  
- 	if (mp->m_rtname) {
--		error = xfs_blkdev_get(mp, mp->m_rtname, &rtdev);
-+		error = xfs_blkdev_get(mp, mp->m_rtname, &rtdev_handle);
- 		if (error)
- 			goto out_close_logdev;
- 
--		if (rtdev == ddev || rtdev == logdev) {
-+		if (rtdev_handle->bdev == ddev ||
-+		    (logdev_handle &&
-+		     rtdev_handle->bdev == logdev_handle->bdev)) {
- 			xfs_warn(mp,
- 	"Cannot mount filesystem with identical rtdev and ddev/logdev.");
- 			error = -EINVAL;
-@@ -468,22 +471,25 @@ xfs_open_devices(
- 	 * Setup xfs_mount buffer target pointers
- 	 */
- 	error = -ENOMEM;
--	mp->m_ddev_targp = xfs_alloc_buftarg(mp, ddev);
-+	mp->m_ddev_targp = xfs_alloc_buftarg(mp, sb->s_bdev_handle);
- 	if (!mp->m_ddev_targp)
- 		goto out_close_rtdev;
- 
--	if (rtdev) {
--		mp->m_rtdev_targp = xfs_alloc_buftarg(mp, rtdev);
-+	if (rtdev_handle) {
-+		mp->m_rtdev_targp = xfs_alloc_buftarg(mp, rtdev_handle);
- 		if (!mp->m_rtdev_targp)
- 			goto out_free_ddev_targ;
- 	}
- 
--	if (logdev && logdev != ddev) {
--		mp->m_logdev_targp = xfs_alloc_buftarg(mp, logdev);
-+	if (logdev_handle && logdev_handle->bdev != ddev) {
-+		mp->m_logdev_targp = xfs_alloc_buftarg(mp, logdev_handle);
- 		if (!mp->m_logdev_targp)
- 			goto out_free_rtdev_targ;
- 	} else {
- 		mp->m_logdev_targp = mp->m_ddev_targp;
-+		/* Handle won't be used, drop it */
-+		if (logdev_handle)
-+			bdev_release(logdev_handle);
- 	}
- 
- 	error = 0;
-@@ -497,11 +503,11 @@ xfs_open_devices(
-  out_free_ddev_targ:
- 	xfs_free_buftarg(mp->m_ddev_targp);
-  out_close_rtdev:
--	 if (rtdev)
--		 blkdev_put(rtdev, sb);
-+	 if (rtdev_handle)
-+		bdev_release(rtdev_handle);
-  out_close_logdev:
--	if (logdev && logdev != ddev)
--		blkdev_put(logdev, sb);
-+	if (logdev_handle)
-+		bdev_release(logdev_handle);
- 	goto out_relock;
+ 	module_put(disk->fops->owner);
+ 	blkdev_put_no_open(bdev);
+-}
+-EXPORT_SYMBOL(blkdev_put);
+-
+-void bdev_release(struct bdev_handle *handle)
+-{
+-	blkdev_put(handle->bdev, handle->holder);
+ 	kfree(handle);
  }
+ EXPORT_SYMBOL(bdev_release);
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index 51fa7ffdee83..98406eea5d1b 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -1485,10 +1485,6 @@ struct bdev_handle {
+ 	blk_mode_t mode;
+ };
  
+-struct block_device *blkdev_get_by_dev(dev_t dev, blk_mode_t mode, void *holder,
+-		const struct blk_holder_ops *hops);
+-struct block_device *blkdev_get_by_path(const char *path, blk_mode_t mode,
+-		void *holder, const struct blk_holder_ops *hops);
+ struct bdev_handle *bdev_open_by_dev(dev_t dev, blk_mode_t mode, void *holder,
+ 		const struct blk_holder_ops *hops);
+ struct bdev_handle *bdev_open_by_path(const char *path, blk_mode_t mode,
+@@ -1496,7 +1492,6 @@ struct bdev_handle *bdev_open_by_path(const char *path, blk_mode_t mode,
+ int bd_prepare_to_claim(struct block_device *bdev, void *holder,
+ 		const struct blk_holder_ops *hops);
+ void bd_abort_claiming(struct block_device *bdev, void *holder);
+-void blkdev_put(struct block_device *bdev, void *holder);
+ void bdev_release(struct bdev_handle *handle);
+ 
+ /* just for blk-cgroup, don't use elsewhere */
 -- 
 2.35.3
 
