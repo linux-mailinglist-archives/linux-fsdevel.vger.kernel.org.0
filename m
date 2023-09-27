@@ -2,717 +2,212 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CC1197B049F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Sep 2023 14:47:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C43227B04A5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Sep 2023 14:49:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231718AbjI0Mrz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Sep 2023 08:47:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50652 "EHLO
+        id S231733AbjI0MtB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Sep 2023 08:49:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231534AbjI0Mry (ORCPT
+        with ESMTP id S231691AbjI0MtA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Sep 2023 08:47:54 -0400
-Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79B2812A
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Sep 2023 05:47:51 -0700 (PDT)
-Received: by mail-pl1-x62c.google.com with SMTP id d9443c01a7336-1c60128d3f6so330685ad.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Sep 2023 05:47:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1695818871; x=1696423671; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=c6rlkg9mYQ+0QSJdLDdspiA7328zWaeJwhF3adSKpcM=;
-        b=DT9sZ/L3qi1NJFE17aoFwOfSpr6fGNj9a/+KXafl4UMhTaAVJ2ujLeBn0m5xsxgvGW
-         DU9lffenkjHN2hKTE6y1waOEg58zWDiW1Qxj0tTFfFj19v/iM1XU4H9t9rCcmrNou70K
-         ycnovNtJnqbhctNMZbzZ6EgTnGm8a1iA1lUMbL4ddzMt3IZKJQPSya/DBkcAPjt9yC6B
-         gXGbK4tMZd+7X4BumUfvp8D2snkPXEdB2HyHd6Bz1Cj1KaKoRtaolkPR4ru6qUwLXY2d
-         KypUoa64qP3Q90TkFbiED5KRmIo1nu59xcaMHPd9xoD6tzXFPYPxaOx0TPe3W179/J+6
-         Ktqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695818871; x=1696423671;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=c6rlkg9mYQ+0QSJdLDdspiA7328zWaeJwhF3adSKpcM=;
-        b=pHCIZKAgrpH+6Tiqh4yNHfmf/ruBn0lnszItGoDGIj9WIDJgH+7TbzDfCCNoiiQS2w
-         Y/4JjSNlG3tQs8X4KLM3/SGnuWIXUSB9i14c5hKG7jNHYugAyZRmqaK12RGzy8/ANITa
-         kW16W14TybwkrwWdiIrGc1pt6ElymZEbCpW9CfOKWmwpi+xxGkRQVyXR5kTHy/cfzvqD
-         xfzdGKD2LKL46D1TcG/t38s/VYRsDrGfycbyj98xEiCq9lj5ylGYAKdFPydhoVM9OR9C
-         eJWIGxp0TY+Suk0pP32V3jg8xyS3taubPHeQif2TtzjO/gwHs6xTr7neM6pW0wRtcRkQ
-         +m4w==
-X-Gm-Message-State: AOJu0YxGQCeJdyANwG16kOVbrzNbcYhsIbZvQQmbC12e3eYQdZQbT25J
-        ho7oJvuZ7EjXV8zXkG9yvK1hF3TSNsjoLs32g1dS0g==
-X-Google-Smtp-Source: AGHT+IFFn3y8JSxMkZj1FQVXqJMOhq7Q5algxCMoDSIM2Hwx5Ja6tQHzJqTwmfIaKWlZV4wi/lv9HRTguxCvgYk1nPE=
-X-Received: by 2002:a17:903:5cd:b0:1b8:b564:b528 with SMTP id
- kf13-20020a17090305cd00b001b8b564b528mr425550plb.7.1695818870489; Wed, 27 Sep
- 2023 05:47:50 -0700 (PDT)
+        Wed, 27 Sep 2023 08:49:00 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A224139
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Sep 2023 05:48:58 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9F5CC433C8;
+        Wed, 27 Sep 2023 12:48:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695818938;
+        bh=LWvCeLqmFK6LBl9xEbcppIZf++XdALRq2CSfyltF/KA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=seO5eF+9pVXtuV/5Z8iClqZ2lIcykv+dPB1yyxsIz4fbpL10dFs1lT2+HGceNqLcb
+         XbrdGGByjvX8QixzAuQxvsEWKApaGVwScnz01EYDn9R/DwsJ9Em3mU88vjk8vGysak
+         A/Ac5iCoxqOD3qT3FqzndwNGNGpvVH9h8uEqWao/yn8FUzkoQL2FgkarI0IPpg5n58
+         gYUqVqePq/m+AztFrLIF8RR8BlNDpIXKOolxPqxwznoY+4c8d5YEsAlgkYewv1kP1O
+         BAwxEv+JH9x94n+9uVew/oSctjUSjUdoaoRHhWSlqUeVE4SQlvN2nl2bhzu93hylR5
+         4khWatEUOej5A==
+Date:   Wed, 27 Sep 2023 14:48:50 +0200
+From:   Carlos Maiolino <cem@kernel.org>
+To:     Andreas Dilger <adilger@dilger.ca>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Hugh Dickins <hughd@google.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>
+Subject: Re: [PATCH 3/3] tmpfs: Add project quota interface support for
+ get/set attr
+Message-ID: <20230927124850.ctzuix4vwxw3l5xy@andromeda>
+References: <20230925130028.1244740-1-cem@kernel.org>
+ <20230925130028.1244740-4-cem@kernel.org>
+ <LgGddofE85pV3URnGzKm8XtdfuZBrMd62BOp2v-7s91Lh1lHWNgTpOV7EdmW6lEhXaP4G_99jhpFiX60g3XRtw==@protonmail.internalid>
+ <E5CA9BA7-513A-4D63-B183-B137B727D026@dilger.ca>
 MIME-Version: 1.0
-References: <20230923013148.1390521-1-surenb@google.com> <20230923013148.1390521-3-surenb@google.com>
-In-Reply-To: <20230923013148.1390521-3-surenb@google.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Wed, 27 Sep 2023 14:47:14 +0200
-Message-ID: <CAG48ez1N2kryy08eo0dcJ5a9O-3xMT8aOrgrcD+CqBN=cBfdDw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] userfaultfd: UFFDIO_REMAP uABI
-To:     Suren Baghdasaryan <surenb@google.com>
-Cc:     akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
-        brauner@kernel.org, shuah@kernel.org, aarcange@redhat.com,
-        lokeshgidra@google.com, peterx@redhat.com, david@redhat.com,
-        hughd@google.com, mhocko@suse.com, axelrasmussen@google.com,
-        rppt@kernel.org, willy@infradead.org, Liam.Howlett@oracle.com,
-        zhangpeng362@huawei.com, bgeffon@google.com,
-        kaleshsingh@google.com, ngeoffray@google.com, jdduke@google.com,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <E5CA9BA7-513A-4D63-B183-B137B727D026@dilger.ca>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Sep 23, 2023 at 3:31=E2=80=AFAM Suren Baghdasaryan <surenb@google.c=
-om> wrote:
-> From: Andrea Arcangeli <aarcange@redhat.com>
->
-> This implements the uABI of UFFDIO_REMAP.
->
-> Notably one mode bitflag is also forwarded (and in turn known) by the
-> lowlevel remap_pages method.
->
-> Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
-> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-[...]
-> +int remap_pages_huge_pmd(struct mm_struct *dst_mm, struct mm_struct *src=
-_mm,
-> +                        pmd_t *dst_pmd, pmd_t *src_pmd, pmd_t dst_pmdval=
-,
-> +                        struct vm_area_struct *dst_vma,
-> +                        struct vm_area_struct *src_vma,
-> +                        unsigned long dst_addr, unsigned long src_addr)
-> +{
-> +       pmd_t _dst_pmd, src_pmdval;
-> +       struct page *src_page;
-> +       struct folio *src_folio;
-> +       struct anon_vma *src_anon_vma, *dst_anon_vma;
-> +       spinlock_t *src_ptl, *dst_ptl;
-> +       pgtable_t src_pgtable, dst_pgtable;
-> +       struct mmu_notifier_range range;
-> +       int err =3D 0;
-> +
-> +       src_pmdval =3D *src_pmd;
-> +       src_ptl =3D pmd_lockptr(src_mm, src_pmd);
-> +
-> +       BUG_ON(!spin_is_locked(src_ptl));
-> +       mmap_assert_locked(src_mm);
-> +       mmap_assert_locked(dst_mm);
-> +
-> +       BUG_ON(!pmd_trans_huge(src_pmdval));
-> +       BUG_ON(!pmd_none(dst_pmdval));
-> +       BUG_ON(src_addr & ~HPAGE_PMD_MASK);
-> +       BUG_ON(dst_addr & ~HPAGE_PMD_MASK);
-> +
-> +       src_page =3D pmd_page(src_pmdval);
-> +       if (unlikely(!PageAnonExclusive(src_page))) {
-> +               spin_unlock(src_ptl);
-> +               return -EBUSY;
-> +       }
-> +
-> +       src_folio =3D page_folio(src_page);
-> +       folio_get(src_folio);
-> +       spin_unlock(src_ptl);
-> +
-> +       /* preallocate dst_pgtable if needed */
-> +       if (dst_mm !=3D src_mm) {
-> +               dst_pgtable =3D pte_alloc_one(dst_mm);
-> +               if (unlikely(!dst_pgtable)) {
-> +                       err =3D -ENOMEM;
-> +                       goto put_folio;
-> +               }
-> +       } else {
-> +               dst_pgtable =3D NULL;
-> +       }
-> +
-> +       mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, src_mm, src_=
-addr,
-> +                               src_addr + HPAGE_PMD_SIZE);
-> +       mmu_notifier_invalidate_range_start(&range);
-> +
-> +       /* block all concurrent rmap walks */
-> +       folio_lock(src_folio);
-> +
-> +       /*
-> +        * split_huge_page walks the anon_vma chain without the page
-> +        * lock. Serialize against it with the anon_vma lock, the page
-> +        * lock is not enough.
-> +        */
-> +       src_anon_vma =3D folio_get_anon_vma(src_folio);
-> +       if (!src_anon_vma) {
-> +               err =3D -EAGAIN;
-> +               goto unlock_folio;
-> +       }
-> +       anon_vma_lock_write(src_anon_vma);
-> +
-> +       dst_ptl =3D pmd_lockptr(dst_mm, dst_pmd);
-> +       double_pt_lock(src_ptl, dst_ptl);
-> +       if (unlikely(!pmd_same(*src_pmd, src_pmdval) ||
-> +                    !pmd_same(*dst_pmd, dst_pmdval) ||
-> +                    folio_mapcount(src_folio) !=3D 1)) {
+On Tue, Sep 26, 2023 at 02:28:06PM -0600, Andreas Dilger wrote:
+> I've added Dave to the CC list, since he has a deep understanding
+> of the projid code since it originated from XFS.
+> 
+> On Sep 25, 2023, at 7:00 AM, cem@kernel.org wrote:
+> > 
+> > From: Carlos Maiolino <cem@kernel.org>
+> > 
+> > Not project quota support is in place, enable users to use it.
+> 
+> There is a peculiar behavior of project quotas, that rename across
+> directories with different project IDs and PROJINHERIT set should
+> cause the project ID to be updated (similar to BSD setgid).
+> 
+> For renaming regular files and other non-directories, it is OK to
+> change the projid and update the quota for the old and new IDs
+> to avoid copying all of the data needlessly.  For directories this
+> (unfortunately) means that the kernel should return -EXDEV if the
+> project IDs don't match, and then "mv" will create a new target
+> directory and resume moving the files (which are thankfully still
+> done with a rename() call if possible).
 
-I think this is also supposed to be PageAnonExclusive()?
+Right! I meant to include it on the TODO list of things, but I totally forgot to
+do so, thanks for reminding me!
 
-> +               double_pt_unlock(src_ptl, dst_ptl);
-> +               err =3D -EAGAIN;
-> +               goto put_anon_vma;
-> +       }
-> +
-> +       BUG_ON(!folio_test_head(src_folio));
-> +       BUG_ON(!folio_test_anon(src_folio));
-> +
-> +       dst_anon_vma =3D (void *)dst_vma->anon_vma + PAGE_MAPPING_ANON;
-> +       WRITE_ONCE(src_folio->mapping, (struct address_space *) dst_anon_=
-vma);
-> +       WRITE_ONCE(src_folio->index, linear_page_index(dst_vma, dst_addr)=
-);
-> +
-> +       src_pmdval =3D pmdp_huge_clear_flush(src_vma, src_addr, src_pmd);
-> +       _dst_pmd =3D mk_huge_pmd(&src_folio->page, dst_vma->vm_page_prot)=
-;
-> +       _dst_pmd =3D maybe_pmd_mkwrite(pmd_mkdirty(_dst_pmd), dst_vma);
-> +       set_pmd_at(dst_mm, dst_addr, dst_pmd, _dst_pmd);
-> +
-> +       src_pgtable =3D pgtable_trans_huge_withdraw(src_mm, src_pmd);
-> +       if (dst_pgtable) {
-> +               pgtable_trans_huge_deposit(dst_mm, dst_pmd, dst_pgtable);
-> +               pte_free(src_mm, src_pgtable);
-> +               dst_pgtable =3D NULL;
-> +
-> +               mm_inc_nr_ptes(dst_mm);
-> +               mm_dec_nr_ptes(src_mm);
-> +               add_mm_counter(dst_mm, MM_ANONPAGES, HPAGE_PMD_NR);
-> +               add_mm_counter(src_mm, MM_ANONPAGES, -HPAGE_PMD_NR);
-> +       } else {
-> +               pgtable_trans_huge_deposit(dst_mm, dst_pmd, src_pgtable);
-> +       }
-> +       double_pt_unlock(src_ptl, dst_ptl);
-> +
-> +put_anon_vma:
-> +       anon_vma_unlock_write(src_anon_vma);
-> +       put_anon_vma(src_anon_vma);
-> +unlock_folio:
-> +       /* unblock rmap walks */
-> +       folio_unlock(src_folio);
-> +       mmu_notifier_invalidate_range_end(&range);
-> +       if (dst_pgtable)
-> +               pte_free(dst_mm, dst_pgtable);
-> +put_folio:
-> +       folio_put(src_folio);
-> +
-> +       return err;
-> +}
-> +#endif /* CONFIG_USERFAULTFD */
-[...]
-> +static int remap_anon_pte(struct mm_struct *dst_mm, struct mm_struct *sr=
-c_mm,
-> +                         struct vm_area_struct *dst_vma,
-> +                         struct vm_area_struct *src_vma,
-> +                         unsigned long dst_addr, unsigned long src_addr,
-> +                         pte_t *dst_pte, pte_t *src_pte,
-> +                         pte_t orig_dst_pte, pte_t orig_src_pte,
-> +                         spinlock_t *dst_ptl, spinlock_t *src_ptl,
-> +                         struct folio *src_folio)
-> +{
-> +       struct anon_vma *dst_anon_vma;
-> +
-> +       double_pt_lock(dst_ptl, src_ptl);
-> +
-> +       if (!pte_same(*src_pte, orig_src_pte) ||
-> +           !pte_same(*dst_pte, orig_dst_pte) ||
-> +           folio_test_large(src_folio) ||
-> +           folio_estimated_sharers(src_folio) !=3D 1) {
-> +               double_pt_unlock(dst_ptl, src_ptl);
-> +               return -EAGAIN;
-> +       }
-> +
-> +       BUG_ON(!folio_test_anon(src_folio));
-> +
-> +       dst_anon_vma =3D (void *)dst_vma->anon_vma + PAGE_MAPPING_ANON;
-> +       WRITE_ONCE(src_folio->mapping,
-> +                  (struct address_space *) dst_anon_vma);
-> +       WRITE_ONCE(src_folio->index, linear_page_index(dst_vma,
-> +                                                     dst_addr));
-> +
-> +       orig_src_pte =3D ptep_clear_flush(src_vma, src_addr, src_pte);
-> +       orig_dst_pte =3D mk_pte(&src_folio->page, dst_vma->vm_page_prot);
-> +       orig_dst_pte =3D maybe_mkwrite(pte_mkdirty(orig_dst_pte),
-> +                                    dst_vma);
+> 
+> The reason for this is that just renaming the directory does not
+> atomically update the projid on all of the (possibly millions of)
+> sub-files/sub-dirs, which is required for PROJINHERIT directories.
+> 
+> 
+> Another option for tmpfs to maintain this PROJINHERIT behavior would
+> be to rename the directory and then spawn a background kernel thread
+> to change the projids on the whole tree.  Since tmpfs is an in-memory
+> filesystem there will be a "limited" number of files and subdirs
+> to update, and you don't need to worry about error handling if the
+> system crashes before the projid updates are done.
+> 
+> While not 100% atomic, it is not *less* atomic than having "mv"
+> recursively copy the whole directory tree to the target name when
+> the projid on the source and target don't match.  It is also a
+> *lot* less overhead than doing a million mkdir() + rename() calls.
+> 
+> There would be a risk that the target directory projid could go over
+> quota, but the alternative (that "mv" is half-way between moving the
+> directory tree from the source to the destination before it fails,
+> or fills up the filesystem because it can't hold another full copy
+> of the tree being renamed) is not better.
 
-I think there's still a theoretical issue here that you could fix by
-checking for the AnonExclusive flag, similar to the huge page case.
+I will look into these while I work on a non-rfc version of this series.
+Thanks Andreas.
 
-Consider the following scenario:
+Carlos
 
-1. process P1 does a write fault in a private anonymous VMA, creating
-and mapping a new anonymous page A1
-2. process P1 forks and creates two children P2 and P3. afterwards, A1
-is mapped in P1, P2 and P3 as a COW page, with mapcount 3.
-3. process P1 removes its mapping of A1, dropping its mapcount to 2.
-4. process P2 uses vmsplice() to grab a reference to A1 with get_user_pages=
-()
-5. process P2 removes its mapping of A1, dropping its mapcount to 1.
+> 
+> > 
+> > Signed-off-by: Carlos Maiolino <cmaiolino@redhat.com>
+> > ---
+> > mm/shmem.c | 35 +++++++++++++++++++++++++++++++----
+> > 1 file changed, 31 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/mm/shmem.c b/mm/shmem.c
+> > index 4d2b713bff06..744a39251a31 100644
+> > --- a/mm/shmem.c
+> > +++ b/mm/shmem.c
+> > @@ -3571,6 +3571,23 @@ static int shmem_fileattr_get(struct dentry *dentry, struct fileattr *fa)
+> > 
+> > 	fileattr_fill_flags(fa, info->fsflags & SHMEM_FL_USER_VISIBLE);
+> > 
+> > +	fa->fsx_projid = (u32)from_kprojid(&init_user_ns, info->i_projid);
+> > +	return 0;
+> > +}
+> > +
+> > +static int shmem_set_project(struct inode *inode, __u32 projid)
+> > +{
+> > +	int err = -EOPNOTSUPP;
+> > +	kprojid_t kprojid = make_kprojid(&init_user_ns, (projid_t)projid);
+> > +
+> > +	if (projid_eq(kprojid, SHMEM_I(inode)->i_projid))
+> > +		return 0;
+> > +
+> > +	err = dquot_initialize(inode);
+> > +	if (err)
+> > +		return err;
+> > +
+> > +	SHMEM_I(inode)->i_projid = kprojid;
+> > 	return 0;
+> > }
+> 
+> (defect) this also needs to __dquot_transfer() the quota away from the
+> previous projid, or the accounting will be broken.
+> 
+> 
+> I think one hole in project quotas is the fact that any user can set
+> the projid of their files to any project they want.  Changing the projid/PROJINHERIT is restricted outside of the init namespace by
+> fileattr_set_prepare(), which is good in itself, but I think it makes
+> sense for root/CAP_SYS_RESOURCE to be needed to change projid/PROJINHERIT
+> even in the init namespace. Otherwise project quota is only an estimate
+> of space usage in a directory, if users are not actively subverting it.
+> 
+> > @@ -3579,19 +3596,29 @@ static int shmem_fileattr_set(struct mnt_idmap *idmap,
+> > {
+> > 	struct inode *inode = d_inode(dentry);
+> > 	struct shmem_inode_info *info = SHMEM_I(inode);
+> > +	int err = -EOPNOTSUPP;
+> > +
+> > +	if (fa->fsx_valid &&
+> > +	   ((fa->fsx_xflags & ~FS_XFLAG_COMMON) ||
+> > +	   fa->fsx_extsize != 0 || fa->fsx_cowextsize != 0))
+> > +		goto out;
+> > 
+> > -	if (fileattr_has_fsx(fa))
+> > -		return -EOPNOTSUPP;
+> > 	if (fa->flags & ~SHMEM_FL_USER_MODIFIABLE)
+> > -		return -EOPNOTSUPP;
+> > +		goto out;
+> > 
+> > 	info->fsflags = (info->fsflags & ~SHMEM_FL_USER_MODIFIABLE) |
+> > 		(fa->flags & SHMEM_FL_USER_MODIFIABLE);
+> > 
+> > 	shmem_set_inode_flags(inode, info->fsflags);
+> > +	err = shmem_set_project(inode, fa->fsx_projid);
+> > +		if (err)
+> > +			goto out;
+> > +
+> > 	inode_set_ctime_current(inode);
+> > 	inode_inc_iversion(inode);
+> > -	return 0;
+> > +
+> > +out:
+> > +	return err;
+> > }
+> 
+> 
+> 
+> There were also some patches to add projid support to statx() that didn't
+> quite get merged:
+> 
+> https://patchwork.ozlabs.org/project/linux-ext4/patch/1551449184-7942-3-git-send-email-wshilong1991@gmail.com/
+> https://patchwork.ozlabs.org/project/linux-ext4/patch/1551449184-7942-2-git-send-email-wshilong1991@gmail.com/
+> https://patchwork.ozlabs.org/project/linux-ext4/patch/1551449141-7884-6-git-send-email-wshilong1991@gmail.com/
+> https://patchwork.ozlabs.org/project/linux-ext4/patch/1551449141-7884-7-git-send-email-wshilong1991@gmail.com/
+> https://patchwork.ozlabs.org/project/linux-ext4/patch/1551449141-7884-8-git-send-email-wshilong1991@gmail.com/
+> https://patchwork.ozlabs.org/project/linux-ext4/patch/1551449141-7884-9-git-send-email-wshilong1991@gmail.com/
+> 
+> They were part of a larger series to allow setting projid directly with
+> the fchownat(2), but that got bogged down in how the interface should
+> work, and whether i_projid should be moved to struct inode, but I think
+> the statx() functionality was uncontroversial and could land as-is.
+> 
+> Cheers, Andreas
+> 
+> 
+> 
+> 
 
-If at this point P3 does a write fault on its mapping of A1, it will
-still trigger copy-on-write thanks to the AnonExclusive mechanism; and
-this is necessary to avoid P3 mapping A1 as writable and writing data
-into it that will become visible to P2, if P2 and P3 are in different
-security contexts.
 
-But if P3 instead moves its mapping of A1 to another address with
-remap_anon_pte() which only does a page mapcount check, the
-maybe_mkwrite() will directly make the mapping writable, circumventing
-the AnonExclusive mechanism.
-
-> +       set_pte_at(dst_mm, dst_addr, dst_pte, orig_dst_pte);
-> +
-> +       if (dst_mm !=3D src_mm) {
-> +               inc_mm_counter(dst_mm, MM_ANONPAGES);
-> +               dec_mm_counter(src_mm, MM_ANONPAGES);
-> +       }
-> +
-> +       double_pt_unlock(dst_ptl, src_ptl);
-> +
-> +       return 0;
-> +}
-> +
-> +static int remap_swap_pte(struct mm_struct *dst_mm, struct mm_struct *sr=
-c_mm,
-> +                         unsigned long dst_addr, unsigned long src_addr,
-> +                         pte_t *dst_pte, pte_t *src_pte,
-> +                         pte_t orig_dst_pte, pte_t orig_src_pte,
-> +                         spinlock_t *dst_ptl, spinlock_t *src_ptl)
-> +{
-> +       if (!pte_swp_exclusive(orig_src_pte))
-> +               return -EBUSY;
-> +
-> +       double_pt_lock(dst_ptl, src_ptl);
-> +
-> +       if (!pte_same(*src_pte, orig_src_pte) ||
-> +           !pte_same(*dst_pte, orig_dst_pte)) {
-> +               double_pt_unlock(dst_ptl, src_ptl);
-> +               return -EAGAIN;
-> +       }
-> +
-> +       orig_src_pte =3D ptep_get_and_clear(src_mm, src_addr, src_pte);
-> +       set_pte_at(dst_mm, dst_addr, dst_pte, orig_src_pte);
-> +
-> +       if (dst_mm !=3D src_mm) {
-> +               inc_mm_counter(dst_mm, MM_ANONPAGES);
-> +               dec_mm_counter(src_mm, MM_ANONPAGES);
-
-I think this is the wrong counter. Looking at zap_pte_range(), in the
-"Genuine swap entry" case, we modify the MM_SWAPENTS counter, not
-MM_ANONPAGES.
-
-> +       }
-> +
-> +       double_pt_unlock(dst_ptl, src_ptl);
-> +
-> +       return 0;
-> +}
-> +
-> +/*
-> + * The mmap_lock for reading is held by the caller. Just move the page
-> + * from src_pmd to dst_pmd if possible, and return true if succeeded
-> + * in moving the page.
-> + */
-> +static int remap_pages_pte(struct mm_struct *dst_mm,
-> +                          struct mm_struct *src_mm,
-> +                          pmd_t *dst_pmd,
-> +                          pmd_t *src_pmd,
-> +                          struct vm_area_struct *dst_vma,
-> +                          struct vm_area_struct *src_vma,
-> +                          unsigned long dst_addr,
-> +                          unsigned long src_addr,
-> +                          __u64 mode)
-> +{
-> +       swp_entry_t entry;
-> +       pte_t orig_src_pte, orig_dst_pte;
-> +       spinlock_t *src_ptl, *dst_ptl;
-> +       pte_t *src_pte =3D NULL;
-> +       pte_t *dst_pte =3D NULL;
-> +
-> +       struct folio *src_folio =3D NULL;
-> +       struct anon_vma *src_anon_vma =3D NULL;
-> +       struct mmu_notifier_range range;
-> +       int err =3D 0;
-> +
-> +       mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, src_mm,
-> +                               src_addr, src_addr + PAGE_SIZE);
-> +       mmu_notifier_invalidate_range_start(&range);
-> +retry:
-
-This retry looks a bit dodgy. On this retry label, we restart almost
-the entire operation, including re-reading the source PTE; the only
-variables that carry state forward from the previous retry loop
-iteration are src_folio and src_anon_vma.
-
-> +       dst_pte =3D pte_offset_map_nolock(dst_mm, dst_pmd, dst_addr, &dst=
-_ptl);
-> +
-> +       /* If an huge pmd materialized from under us fail */
-> +       if (unlikely(!dst_pte)) {
-> +               err =3D -EFAULT;
-> +               goto out;
-> +       }
-[...]
-> +       spin_lock(dst_ptl);
-> +       orig_dst_pte =3D *dst_pte;
-> +       spin_unlock(dst_ptl);
-> +       if (!pte_none(orig_dst_pte)) {
-> +               err =3D -EEXIST;
-> +               goto out;
-> +       }
-> +
-> +       spin_lock(src_ptl);
-> +       orig_src_pte =3D *src_pte;
-
-Here we read an entirely new orig_src_pte value. Something like a
-concurrent MADV_DONTNEED+pagefault could have made the PTE point to a
-different page between loop iterations.
-
-> +       spin_unlock(src_ptl);
-
-I think you have to insert something like the following here:
-
-        if (src_folio && (orig_dst_pte !=3D previous_src_pte)) {
-                err =3D -EAGAIN;
-                goto out;
-        }
-        previous_src_pte =3D orig_dst_pte;
-
-Otherwise:
-
-> +       if (pte_none(orig_src_pte)) {
-> +               if (!(mode & UFFDIO_REMAP_MODE_ALLOW_SRC_HOLES))
-> +                       err =3D -ENOENT;
-> +               else /* nothing to do to remap a hole */
-> +                       err =3D 0;
-> +               goto out;
-> +       }
-> +
-> +       if (pte_present(orig_src_pte)) {
-> +               /*
-> +                * Pin and lock both source folio and anon_vma. Since we =
-are in
-> +                * RCU read section, we can't block, so on contention hav=
-e to
-> +                * unmap the ptes, obtain the lock and retry.
-> +                */
-> +               if (!src_folio) {
-
-If we already found a src_folio in the previous iteration (but the
-trylock failed), we keep using the same src_folio without rechecking
-if the current PTE still points to the same folio.
-
-> +                       struct folio *folio;
-> +
-> +                       /*
-> +                        * Pin the page while holding the lock to be sure=
- the
-> +                        * page isn't freed under us
-> +                        */
-> +                       spin_lock(src_ptl);
-> +                       if (!pte_same(orig_src_pte, *src_pte)) {
-> +                               spin_unlock(src_ptl);
-> +                               err =3D -EAGAIN;
-> +                               goto out;
-> +                       }
-> +
-> +                       folio =3D vm_normal_folio(src_vma, src_addr, orig=
-_src_pte);
-> +                       if (!folio || !folio_test_anon(folio) ||
-> +                           folio_test_large(folio) ||
-> +                           folio_estimated_sharers(folio) !=3D 1) {
-> +                               spin_unlock(src_ptl);
-> +                               err =3D -EBUSY;
-> +                               goto out;
-> +                       }
-> +
-> +                       folio_get(folio);
-> +                       src_folio =3D folio;
-> +                       spin_unlock(src_ptl);
-> +
-> +                       /* block all concurrent rmap walks */
-> +                       if (!folio_trylock(src_folio)) {
-> +                               pte_unmap(&orig_src_pte);
-> +                               pte_unmap(&orig_dst_pte);
-> +                               src_pte =3D dst_pte =3D NULL;
-> +                               /* now we can block and wait */
-> +                               folio_lock(src_folio);
-> +                               goto retry;
-> +                       }
-> +               }
-> +
-> +               if (!src_anon_vma) {
-
-(And here, if we already saw a src_anon_vma but the trylock failed,
-we'll keep using that src_anon_vma.)
-
-> +                       /*
-> +                        * folio_referenced walks the anon_vma chain
-> +                        * without the folio lock. Serialize against it w=
-ith
-> +                        * the anon_vma lock, the folio lock is not enoug=
-h.
-> +                        */
-> +                       src_anon_vma =3D folio_get_anon_vma(src_folio);
-> +                       if (!src_anon_vma) {
-> +                               /* page was unmapped from under us */
-> +                               err =3D -EAGAIN;
-> +                               goto out;
-> +                       }
-> +                       if (!anon_vma_trylock_write(src_anon_vma)) {
-> +                               pte_unmap(&orig_src_pte);
-> +                               pte_unmap(&orig_dst_pte);
-> +                               src_pte =3D dst_pte =3D NULL;
-> +                               /* now we can block and wait */
-> +                               anon_vma_lock_write(src_anon_vma);
-> +                               goto retry;
-> +                       }
-> +               }
-
-So at this point we have:
-
- - the current src_pte
- - some referenced+locked src_folio that used to be mapped exclusively
-at src_addr
- - (the anon_vma associated with the src_folio)
-
-> +               err =3D remap_anon_pte(dst_mm, src_mm,  dst_vma, src_vma,
-> +                                    dst_addr, src_addr, dst_pte, src_pte=
-,
-> +                                    orig_dst_pte, orig_src_pte,
-> +                                    dst_ptl, src_ptl, src_folio);
-
-And then this will, without touching folio mapcounts/refcounts, delete
-the current PTE at src_addr, and create a PTE at dst_addr pointing to
-the old src_folio, leading to incorrect refcounts/mapcounts?
-
-> +       } else {
-[...]
-> +       }
-> +
-> +out:
-> +       if (src_anon_vma) {
-> +               anon_vma_unlock_write(src_anon_vma);
-> +               put_anon_vma(src_anon_vma);
-> +       }
-> +       if (src_folio) {
-> +               folio_unlock(src_folio);
-> +               folio_put(src_folio);
-> +       }
-> +       if (dst_pte)
-> +               pte_unmap(dst_pte);
-> +       if (src_pte)
-> +               pte_unmap(src_pte);
-> +       mmu_notifier_invalidate_range_end(&range);
-> +
-> +       return err;
-> +}
-[...]
-> +ssize_t remap_pages(struct mm_struct *dst_mm, struct mm_struct *src_mm,
-> +                   unsigned long dst_start, unsigned long src_start,
-> +                   unsigned long len, __u64 mode)
-> +{
-> +       struct vm_area_struct *src_vma, *dst_vma;
-> +       unsigned long src_addr, dst_addr;
-> +       pmd_t *src_pmd, *dst_pmd;
-> +       long err =3D -EINVAL;
-> +       ssize_t moved =3D 0;
-> +
-> +       /*
-> +        * Sanitize the command parameters:
-> +        */
-> +       BUG_ON(src_start & ~PAGE_MASK);
-> +       BUG_ON(dst_start & ~PAGE_MASK);
-> +       BUG_ON(len & ~PAGE_MASK);
-> +
-> +       /* Does the address range wrap, or is the span zero-sized? */
-> +       BUG_ON(src_start + len <=3D src_start);
-> +       BUG_ON(dst_start + len <=3D dst_start);
-> +
-> +       /*
-> +        * Because these are read sempahores there's no risk of lock
-> +        * inversion.
-> +        */
-> +       mmap_read_lock(dst_mm);
-> +       if (dst_mm !=3D src_mm)
-> +               mmap_read_lock(src_mm);
-> +
-> +       /*
-> +        * Make sure the vma is not shared, that the src and dst remap
-> +        * ranges are both valid and fully within a single existing
-> +        * vma.
-> +        */
-> +       src_vma =3D find_vma(src_mm, src_start);
-> +       if (!src_vma || (src_vma->vm_flags & VM_SHARED))
-> +               goto out;
-> +       if (src_start < src_vma->vm_start ||
-> +           src_start + len > src_vma->vm_end)
-> +               goto out;
-> +
-> +       dst_vma =3D find_vma(dst_mm, dst_start);
-> +       if (!dst_vma || (dst_vma->vm_flags & VM_SHARED))
-> +               goto out;
-> +       if (dst_start < dst_vma->vm_start ||
-> +           dst_start + len > dst_vma->vm_end)
-> +               goto out;
-> +
-> +       err =3D validate_remap_areas(src_vma, dst_vma);
-> +       if (err)
-> +               goto out;
-> +
-> +       for (src_addr =3D src_start, dst_addr =3D dst_start;
-> +            src_addr < src_start + len;) {
-> +               spinlock_t *ptl;
-> +               pmd_t dst_pmdval;
-> +               unsigned long step_size;
-> +
-> +               BUG_ON(dst_addr >=3D dst_start + len);
-> +               /*
-> +                * Below works because anonymous area would not have a
-> +                * transparent huge PUD. If file-backed support is added,
-> +                * that case would need to be handled here.
-> +                */
-> +               src_pmd =3D mm_find_pmd(src_mm, src_addr);
-> +               if (unlikely(!src_pmd)) {
-> +                       if (!(mode & UFFDIO_REMAP_MODE_ALLOW_SRC_HOLES)) =
-{
-> +                               err =3D -ENOENT;
-> +                               break;
-> +                       }
-> +                       src_pmd =3D mm_alloc_pmd(src_mm, src_addr);
-> +                       if (unlikely(!src_pmd)) {
-> +                               err =3D -ENOMEM;
-> +                               break;
-> +                       }
-> +               }
-> +               dst_pmd =3D mm_alloc_pmd(dst_mm, dst_addr);
-> +               if (unlikely(!dst_pmd)) {
-> +                       err =3D -ENOMEM;
-> +                       break;
-> +               }
-> +
-> +               dst_pmdval =3D pmdp_get_lockless(dst_pmd);
-> +               /*
-> +                * If the dst_pmd is mapped as THP don't override it and =
-just
-> +                * be strict. If dst_pmd changes into TPH after this chec=
-k, the
-> +                * remap_pages_huge_pmd() will detect the change and retr=
-y
-> +                * while remap_pages_pte() will detect the change and fai=
-l.
-> +                */
-> +               if (unlikely(pmd_trans_huge(dst_pmdval))) {
-> +                       err =3D -EEXIST;
-> +                       break;
-> +               }
-> +
-> +               ptl =3D pmd_trans_huge_lock(src_pmd, src_vma);
-> +               if (ptl && !pmd_trans_huge(*src_pmd)) {
-> +                       spin_unlock(ptl);
-> +                       ptl =3D NULL;
-> +               }
-
-This still looks wrong - we do still have to split_huge_pmd()
-somewhere so that remap_pages_pte() works.
-
-> +               if (ptl) {
-> +                       /*
-> +                        * Check if we can move the pmd without
-> +                        * splitting it. First check the address
-> +                        * alignment to be the same in src/dst.  These
-> +                        * checks don't actually need the PT lock but
-> +                        * it's good to do it here to optimize this
-> +                        * block away at build time if
-> +                        * CONFIG_TRANSPARENT_HUGEPAGE is not set.
-> +                        */
-> +                       if ((src_addr & ~HPAGE_PMD_MASK) || (dst_addr & ~=
-HPAGE_PMD_MASK) ||
-> +                           src_start + len - src_addr < HPAGE_PMD_SIZE |=
-| !pmd_none(dst_pmdval)) {
-> +                               spin_unlock(ptl);
-> +                               split_huge_pmd(src_vma, src_pmd, src_addr=
-);
-> +                               continue;
-> +                       }
-> +
-> +                       err =3D remap_pages_huge_pmd(dst_mm, src_mm,
-> +                                                  dst_pmd, src_pmd,
-> +                                                  dst_pmdval,
-> +                                                  dst_vma, src_vma,
-> +                                                  dst_addr, src_addr);
-> +                       step_size =3D HPAGE_PMD_SIZE;
-> +               } else {
-> +                       if (pmd_none(*src_pmd)) {
-> +                               if (!(mode & UFFDIO_REMAP_MODE_ALLOW_SRC_=
-HOLES)) {
-> +                                       err =3D -ENOENT;
-> +                                       break;
-> +                               }
-> +                               if (unlikely(__pte_alloc(src_mm, src_pmd)=
-)) {
-> +                                       err =3D -ENOMEM;
-> +                                       break;
-> +                               }
-> +                       }
-> +
-> +                       if (unlikely(pte_alloc(dst_mm, dst_pmd))) {
-> +                               err =3D -ENOMEM;
-> +                               break;
-> +                       }
-> +
-> +                       err =3D remap_pages_pte(dst_mm, src_mm,
-> +                                             dst_pmd, src_pmd,
-> +                                             dst_vma, src_vma,
-> +                                             dst_addr, src_addr,
-> +                                             mode);
-> +                       step_size =3D PAGE_SIZE;
-> +               }
-> +
-> +               cond_resched();
-> +
-> +               if (!err) {
-> +                       dst_addr +=3D step_size;
-> +                       src_addr +=3D step_size;
-> +                       moved +=3D step_size;
-> +               }
-> +
-> +               if ((!err || err =3D=3D -EAGAIN) &&
-> +                   fatal_signal_pending(current))
-> +                       err =3D -EINTR;
-> +
-> +               if (err && err !=3D -EAGAIN)
-> +                       break;
-> +       }
-> +
-> +out:
-> +       mmap_read_unlock(dst_mm);
-> +       if (dst_mm !=3D src_mm)
-> +               mmap_read_unlock(src_mm);
-> +       BUG_ON(moved < 0);
-> +       BUG_ON(err > 0);
-> +       BUG_ON(!moved && !err);
-> +       return moved ? moved : err;
-> +}
-> --
-> 2.42.0.515.g380fc7ccd1-goog
->
