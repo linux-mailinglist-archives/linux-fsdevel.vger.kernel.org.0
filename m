@@ -2,47 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 63DFB7B095E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Sep 2023 17:52:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4634F7B0975
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Sep 2023 17:59:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232883AbjI0Pv4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Sep 2023 11:51:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38754 "EHLO
+        id S232573AbjI0P7J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Sep 2023 11:59:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232894AbjI0Pvi (ORCPT
+        with ESMTP id S231974AbjI0P7I (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Sep 2023 11:51:38 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57E508697;
-        Wed, 27 Sep 2023 08:41:08 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CE25C433C8;
-        Wed, 27 Sep 2023 15:40:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695829247;
-        bh=aF93GdhhV1COeqCylc+ipsiYAn1fVgsAgFGh8I21JAU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FCgPYfQzhrFVwCFlu7Rt3zZKj2PDNs2shFLcEP6uTse0Y6lwizwi+YEtxv4oZfuOf
-         AfhqbfmRM5jIRmVJYdZujZYnHpUURrcOfLG2gF5VnKqCkGH7Ar/pntImx8uX8Uapvs
-         NsnE8mCxzWLGIRDicXOmX5YbUP36/5JwYQCgI42liDONo07WlwcapP04EDfh7S9uHT
-         KhdI5SaaR6ZMqzfIJIOdgm+zRdHDDI8m4iod1+VxQ690AuqNH03GMWrO14jQRCfME5
-         TQW70odaKHpKc/H/goJLUXZ4jm+oTjSaPUq6zisvCQBqWcssi57UmD9pNDQu8b7f2P
-         VkKNzCmBbi68Q==
-Date:   Wed, 27 Sep 2023 08:40:46 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-xfs@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Dave Chinner <dchinner@redhat.com>
-Subject: Re: [PATCH 28/29] xfs: Convert to bdev_open_by_path()
-Message-ID: <20230927154046.GH11414@frogsfrogsfrogs>
-References: <20230818123232.2269-1-jack@suse.cz>
- <20230927093442.25915-28-jack@suse.cz>
+        Wed, 27 Sep 2023 11:59:08 -0400
+Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4F3F9C
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Sep 2023 08:59:06 -0700 (PDT)
+Received: by mail-pf1-x42f.google.com with SMTP id d2e1a72fcca58-692eed30152so5345976b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Sep 2023 08:59:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1695830346; x=1696435146; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=utRl+TWc9PyHN267mk74epV1Ewzm2gClJk4DlVuRtdw=;
+        b=N+7UTSIkrjgen/hcP67BtWxn5uh01JT4Cq8qHUwatVEv3un+8Ldqb7RfvaWLFR1PNe
+         kU6hp75pxseNvSo2+ywtkZxvAgpb7AKtYIsHHxFAqqbyioC5Qh6RkceTyOTbnpb5wZrV
+         fwM/VPBLKkaxT27TUEviJfPkXBJJaY3Sh4Nvg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695830346; x=1696435146;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=utRl+TWc9PyHN267mk74epV1Ewzm2gClJk4DlVuRtdw=;
+        b=epGb1a+CHvJ04W8W6MtbGUpt2TKI7F+A8eiddxMfap07fxlGnwuaJ/BRTpq+3BXvvL
+         NYslZM4Iy+cHnIDELLpW1bGNSNTrZ3HTRxtIAFM0brAz71bxO+Ct0ivJaCP3iPCyNCl9
+         9pLt9eQpGjau98QarWg14SDrfN/f9FE3ahu6vUBg8Po4Jm7gn0h6cKLZzCVlhYLXlK+p
+         6oJ6lOm7VmCtYaLXwQqT/Ka584IeRdUwd0xIwqd+R4J7MnwV4YDIZknJ9Wa/zDT4QSBe
+         iLm6JZHIr3rj9yd6n4t7Wo8JJdQi3TpkXjJGUULxTOlSio2xAQ/6gJW2cuysj+KP6Vtj
+         sa5A==
+X-Gm-Message-State: AOJu0Yw/2wJyWXz0asB7F4RLlU+yvkKPqSU6CcbomO7/lvktOCza05z1
+        aoFP7p94o5zNNc32B00aqvKp+A==
+X-Google-Smtp-Source: AGHT+IGQQKE15BkC2Mvcl+UNkghrr3fsPU7wV1jTnHmm9/hYjYgN74+YUAsP+ZwmLl06l6zxGgj81Q==
+X-Received: by 2002:a05:6a00:21cf:b0:68a:69ba:6791 with SMTP id t15-20020a056a0021cf00b0068a69ba6791mr2592928pfj.8.1695830346245;
+        Wed, 27 Sep 2023 08:59:06 -0700 (PDT)
+Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id x2-20020aa784c2000000b006884844dfcdsm11987898pfn.55.2023.09.27.08.59.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Sep 2023 08:59:05 -0700 (PDT)
+Date:   Wed, 27 Sep 2023 08:59:05 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Greg Ungerer <gerg@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, palmer@rivosinc.com,
+        ebiederm@xmission.com, brauner@kernel.org, viro@zeniv.linux.org.uk
+Subject: Re: [PATCH] binfmt_elf_fdpic: clean up debug warnings
+Message-ID: <202309270858.680FCD9A85@keescook>
+References: <20230927132933.3290734-1-gerg@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230927093442.25915-28-jack@suse.cz>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230927132933.3290734-1-gerg@kernel.org>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
         RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
@@ -53,224 +71,82 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 27, 2023 at 11:34:34AM +0200, Jan Kara wrote:
-> Convert xfs to use bdev_open_by_path() and pass the handle around.
+On Wed, Sep 27, 2023 at 11:29:33PM +1000, Greg Ungerer wrote:
+> The binfmt_elf_fdpic loader has some debug trace that can be enabled at
+> build time. The recent 64-bit additions cause some warnings if that
+> debug is enabled, such as:
 > 
-> CC: "Darrick J. Wong" <djwong@kernel.org>
-> CC: linux-xfs@vger.kernel.org
-> Acked-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Dave Chinner <dchinner@redhat.com>
-> Reviewed-by: Christian Brauner <brauner@kernel.org>
-> Signed-off-by: Jan Kara <jack@suse.cz>
+>     fs/binfmt_elf_fdpic.c: In function ‘elf_fdpic_map_file’:
+>     fs/binfmt_elf_fdpic.c:46:33: warning: format ‘%x’ expects argument of type ‘unsigned int’, but argument 3 has type ‘Elf64_Addr’ {aka ‘long long unsigned int’} [-Wformat=]
+>        46 | #define kdebug(fmt, ...) printk("FDPIC "fmt"\n" ,##__VA_ARGS__ )
+>           |                                 ^~~~~~~~
+>     ./include/linux/printk.h:427:25: note: in definition of macro ‘printk_index_wrap’
+>       427 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
+>           |                         ^~~~
+> 
+> Cast values to the largest possible type (which is equivilent to unsigned
+> long long in this case) and use appropriate format specifiers to match.
 
-Looks like a pretty straightforward conversion, so:
+It seems like these should all just be "unsigned long", yes?
 
-For the block parts,
-Acked-by: Darrick J. Wong <djwong@kernel.org>
+-Kees
 
-For this patch:
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-
---D
-
+> 
+> Fixes: b922bf04d2c1 ("binfmt_elf_fdpic: support 64-bit systems")
+> Signed-off-by: Greg Ungerer <gerg@kernel.org>
 > ---
->  fs/xfs/xfs_buf.c   | 22 ++++++++++------------
->  fs/xfs/xfs_buf.h   |  3 ++-
->  fs/xfs/xfs_super.c | 42 ++++++++++++++++++++++++------------------
->  3 files changed, 36 insertions(+), 31 deletions(-)
+>  fs/binfmt_elf_fdpic.c | 20 ++++++++++++--------
+>  1 file changed, 12 insertions(+), 8 deletions(-)
 > 
-> diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
-> index c1ece4a08ff4..003e157241da 100644
-> --- a/fs/xfs/xfs_buf.c
-> +++ b/fs/xfs/xfs_buf.c
-> @@ -1945,8 +1945,6 @@ void
->  xfs_free_buftarg(
->  	struct xfs_buftarg	*btp)
->  {
-> -	struct block_device	*bdev = btp->bt_bdev;
-> -
->  	unregister_shrinker(&btp->bt_shrinker);
->  	ASSERT(percpu_counter_sum(&btp->bt_io_count) == 0);
->  	percpu_counter_destroy(&btp->bt_io_count);
-> @@ -1954,8 +1952,8 @@ xfs_free_buftarg(
+> diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
+> index 43b2a2851ba3..97c3e8551aac 100644
+> --- a/fs/binfmt_elf_fdpic.c
+> +++ b/fs/binfmt_elf_fdpic.c
+> @@ -900,10 +900,12 @@ static int elf_fdpic_map_file(struct elf_fdpic_params *params,
+>  	kdebug("- DYNAMIC[]: %lx", params->dynamic_addr);
+>  	seg = loadmap->segs;
+>  	for (loop = 0; loop < loadmap->nsegs; loop++, seg++)
+> -		kdebug("- LOAD[%d] : %08x-%08x [va=%x ms=%x]",
+> +		kdebug("- LOAD[%d] : %08llx-%08llx [va=%llx ms=%llx]",
+>  		       loop,
+> -		       seg->addr, seg->addr + seg->p_memsz - 1,
+> -		       seg->p_vaddr, seg->p_memsz);
+> +		       (unsigned long long) seg->addr,
+> +		       (unsigned long long) seg->addr + seg->p_memsz - 1,
+> +		       (unsigned long long) seg->p_vaddr,
+> +		       (unsigned long long) seg->p_memsz);
 >  
->  	fs_put_dax(btp->bt_daxdev, btp->bt_mount);
->  	/* the main block device is closed by kill_block_super */
-> -	if (bdev != btp->bt_mount->m_super->s_bdev)
-> -		blkdev_put(bdev, btp->bt_mount->m_super);
-> +	if (btp->bt_bdev != btp->bt_mount->m_super->s_bdev)
-> +		bdev_release(btp->bt_bdev_handle);
+>  	return 0;
 >  
->  	kmem_free(btp);
->  }
-> @@ -1990,16 +1988,15 @@ xfs_setsize_buftarg(
->   */
->  STATIC int
->  xfs_setsize_buftarg_early(
-> -	xfs_buftarg_t		*btp,
-> -	struct block_device	*bdev)
-> +	xfs_buftarg_t		*btp)
->  {
-> -	return xfs_setsize_buftarg(btp, bdev_logical_block_size(bdev));
-> +	return xfs_setsize_buftarg(btp, bdev_logical_block_size(btp->bt_bdev));
->  }
+> @@ -1082,9 +1084,10 @@ static int elf_fdpic_map_file_by_direct_mmap(struct elf_fdpic_params *params,
+>  		maddr = vm_mmap(file, maddr, phdr->p_memsz + disp, prot, flags,
+>  				phdr->p_offset - disp);
 >  
->  struct xfs_buftarg *
->  xfs_alloc_buftarg(
->  	struct xfs_mount	*mp,
-> -	struct block_device	*bdev)
-> +	struct bdev_handle	*bdev_handle)
->  {
->  	xfs_buftarg_t		*btp;
->  	const struct dax_holder_operations *ops = NULL;
-> @@ -2010,9 +2007,10 @@ xfs_alloc_buftarg(
->  	btp = kmem_zalloc(sizeof(*btp), KM_NOFS);
+> -		kdebug("mmap[%d] <file> sz=%lx pr=%x fl=%x of=%lx --> %08lx",
+> -		       loop, phdr->p_memsz + disp, prot, flags,
+> -		       phdr->p_offset - disp, maddr);
+> +		kdebug("mmap[%d] <file> sz=%llx pr=%x fl=%x of=%llx --> %08lx",
+> +		       loop, (unsigned long long) phdr->p_memsz + disp,
+> +		       prot, flags, (unsigned long long) phdr->p_offset - disp,
+> +		       maddr);
 >  
->  	btp->bt_mount = mp;
-> -	btp->bt_dev =  bdev->bd_dev;
-> -	btp->bt_bdev = bdev;
-> -	btp->bt_daxdev = fs_dax_get_by_bdev(bdev, &btp->bt_dax_part_off,
-> +	btp->bt_bdev_handle = bdev_handle;
-> +	btp->bt_dev = bdev_handle->bdev->bd_dev;
-> +	btp->bt_bdev = bdev_handle->bdev;
-> +	btp->bt_daxdev = fs_dax_get_by_bdev(btp->bt_bdev, &btp->bt_dax_part_off,
->  					    mp, ops);
+>  		if (IS_ERR_VALUE(maddr))
+>  			return (int) maddr;
+> @@ -1146,8 +1149,9 @@ static int elf_fdpic_map_file_by_direct_mmap(struct elf_fdpic_params *params,
 >  
->  	/*
-> @@ -2022,7 +2020,7 @@ xfs_alloc_buftarg(
->  	ratelimit_state_init(&btp->bt_ioerror_rl, 30 * HZ,
->  			     DEFAULT_RATELIMIT_BURST);
->  
-> -	if (xfs_setsize_buftarg_early(btp, bdev))
-> +	if (xfs_setsize_buftarg_early(btp))
->  		goto error_free;
->  
->  	if (list_lru_init(&btp->bt_lru))
-> diff --git a/fs/xfs/xfs_buf.h b/fs/xfs/xfs_buf.h
-> index df8f47953bb4..ada9d310b7d3 100644
-> --- a/fs/xfs/xfs_buf.h
-> +++ b/fs/xfs/xfs_buf.h
-> @@ -98,6 +98,7 @@ typedef unsigned int xfs_buf_flags_t;
->   */
->  typedef struct xfs_buftarg {
->  	dev_t			bt_dev;
-> +	struct bdev_handle	*bt_bdev_handle;
->  	struct block_device	*bt_bdev;
->  	struct dax_device	*bt_daxdev;
->  	u64			bt_dax_part_off;
-> @@ -364,7 +365,7 @@ xfs_buf_update_cksum(struct xfs_buf *bp, unsigned long cksum_offset)
->   *	Handling of buftargs.
->   */
->  struct xfs_buftarg *xfs_alloc_buftarg(struct xfs_mount *mp,
-> -		struct block_device *bdev);
-> +		struct bdev_handle *bdev_handle);
->  extern void xfs_free_buftarg(struct xfs_buftarg *);
->  extern void xfs_buftarg_wait(struct xfs_buftarg *);
->  extern void xfs_buftarg_drain(struct xfs_buftarg *);
-> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-> index 819a3568b28f..f0ae07828153 100644
-> --- a/fs/xfs/xfs_super.c
-> +++ b/fs/xfs/xfs_super.c
-> @@ -361,14 +361,15 @@ STATIC int
->  xfs_blkdev_get(
->  	xfs_mount_t		*mp,
->  	const char		*name,
-> -	struct block_device	**bdevp)
-> +	struct bdev_handle	**handlep)
->  {
->  	int			error = 0;
->  
-> -	*bdevp = blkdev_get_by_path(name, BLK_OPEN_READ | BLK_OPEN_WRITE,
-> -				    mp->m_super, &fs_holder_ops);
-> -	if (IS_ERR(*bdevp)) {
-> -		error = PTR_ERR(*bdevp);
-> +	*handlep = bdev_open_by_path(name, BLK_OPEN_READ | BLK_OPEN_WRITE,
-> +				     mp->m_super, &fs_holder_ops);
-> +	if (IS_ERR(*handlep)) {
-> +		error = PTR_ERR(*handlep);
-> +		*handlep = NULL;
->  		xfs_warn(mp, "Invalid device [%s], error=%d", name, error);
->  	}
->  
-> @@ -433,7 +434,7 @@ xfs_open_devices(
->  {
->  	struct super_block	*sb = mp->m_super;
->  	struct block_device	*ddev = sb->s_bdev;
-> -	struct block_device	*logdev = NULL, *rtdev = NULL;
-> +	struct bdev_handle	*logdev_handle = NULL, *rtdev_handle = NULL;
->  	int			error;
->  
->  	/*
-> @@ -446,17 +447,19 @@ xfs_open_devices(
->  	 * Open real time and log devices - order is important.
->  	 */
->  	if (mp->m_logname) {
-> -		error = xfs_blkdev_get(mp, mp->m_logname, &logdev);
-> +		error = xfs_blkdev_get(mp, mp->m_logname, &logdev_handle);
->  		if (error)
->  			goto out_relock;
->  	}
->  
->  	if (mp->m_rtname) {
-> -		error = xfs_blkdev_get(mp, mp->m_rtname, &rtdev);
-> +		error = xfs_blkdev_get(mp, mp->m_rtname, &rtdev_handle);
->  		if (error)
->  			goto out_close_logdev;
->  
-> -		if (rtdev == ddev || rtdev == logdev) {
-> +		if (rtdev_handle->bdev == ddev ||
-> +		    (logdev_handle &&
-> +		     rtdev_handle->bdev == logdev_handle->bdev)) {
->  			xfs_warn(mp,
->  	"Cannot mount filesystem with identical rtdev and ddev/logdev.");
->  			error = -EINVAL;
-> @@ -468,22 +471,25 @@ xfs_open_devices(
->  	 * Setup xfs_mount buffer target pointers
->  	 */
->  	error = -ENOMEM;
-> -	mp->m_ddev_targp = xfs_alloc_buftarg(mp, ddev);
-> +	mp->m_ddev_targp = xfs_alloc_buftarg(mp, sb->s_bdev_handle);
->  	if (!mp->m_ddev_targp)
->  		goto out_close_rtdev;
->  
-> -	if (rtdev) {
-> -		mp->m_rtdev_targp = xfs_alloc_buftarg(mp, rtdev);
-> +	if (rtdev_handle) {
-> +		mp->m_rtdev_targp = xfs_alloc_buftarg(mp, rtdev_handle);
->  		if (!mp->m_rtdev_targp)
->  			goto out_free_ddev_targ;
->  	}
->  
-> -	if (logdev && logdev != ddev) {
-> -		mp->m_logdev_targp = xfs_alloc_buftarg(mp, logdev);
-> +	if (logdev_handle && logdev_handle->bdev != ddev) {
-> +		mp->m_logdev_targp = xfs_alloc_buftarg(mp, logdev_handle);
->  		if (!mp->m_logdev_targp)
->  			goto out_free_rtdev_targ;
->  	} else {
->  		mp->m_logdev_targp = mp->m_ddev_targp;
-> +		/* Handle won't be used, drop it */
-> +		if (logdev_handle)
-> +			bdev_release(logdev_handle);
->  	}
->  
->  	error = 0;
-> @@ -497,11 +503,11 @@ xfs_open_devices(
->   out_free_ddev_targ:
->  	xfs_free_buftarg(mp->m_ddev_targp);
->   out_close_rtdev:
-> -	 if (rtdev)
-> -		 blkdev_put(rtdev, sb);
-> +	 if (rtdev_handle)
-> +		bdev_release(rtdev_handle);
->   out_close_logdev:
-> -	if (logdev && logdev != ddev)
-> -		blkdev_put(logdev, sb);
-> +	if (logdev_handle)
-> +		bdev_release(logdev_handle);
->  	goto out_relock;
->  }
->  
+>  #else
+>  		if (excess > 0) {
+> -			kdebug("clear[%d] ad=%lx sz=%lx",
+> -			       loop, maddr + phdr->p_filesz, excess);
+> +			kdebug("clear[%d] ad=%llx sz=%lx", loop,
+> +			       (unsigned long long) maddr + phdr->p_filesz,
+> +			       excess);
+>  			if (clear_user((void *) maddr + phdr->p_filesz, excess))
+>  				return -EFAULT;
+>  		}
 > -- 
-> 2.35.3
+> 2.25.1
 > 
+
+-- 
+Kees Cook
