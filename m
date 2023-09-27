@@ -2,331 +2,214 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C8F97B0055
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Sep 2023 11:35:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 268047B0050
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Sep 2023 11:35:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231176AbjI0JfB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Sep 2023 05:35:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32922 "EHLO
+        id S231149AbjI0Je6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Sep 2023 05:34:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230453AbjI0Jes (ORCPT
+        with ESMTP id S230451AbjI0Jes (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 27 Sep 2023 05:34:48 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 601AB12A;
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C19410E;
         Wed, 27 Sep 2023 02:34:45 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 0D33B1FD5F;
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 095572195A;
         Wed, 27 Sep 2023 09:34:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
         t=1695807284; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=YPA+XNFHeejvTZ8TQlArEo5lKBNK60pTBUoVf50pdAQ=;
-        b=hQMbvXzEEdfn2B6Rn2viReUUDtB5WoHcJkyQm7weGF2wO5SqKbDhTVN2P0Bubk2/6fZVwn
-        /MPQTGXvJLwVQZakDEm5XMctbty7UY633M48UcStl1ad7536dt0zZU2/xNVtNHg0tBo1lr
-        0W6ZaADzQSSCCZ/e1+i/ZIpqP4fsESI=
+        bh=rMVbv/3EOmX708hzl7JNIFZnWE61SRiFVAY5Go7q+I0=;
+        b=QM4vQWmirLd161K0b+7vXe7ixtKxbRZNMNaOPpvPsk3sgM4XQcXAqYsBNHw0kw/bxLU3ZE
+        /9NaNKByK2l5IIhpgUxEbztB1V3YQGfEhvJhUPtHb41kaJRGjeuoKgzr5bdlPYYTW1ADsG
+        AV80hfCXRVNtzesbFXFdRAEsQPhMKaM=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
         s=susede2_ed25519; t=1695807284;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=YPA+XNFHeejvTZ8TQlArEo5lKBNK60pTBUoVf50pdAQ=;
-        b=G2Qy9X4nYZzz+xQ7GGKh0a9RE+salzZ9EJeqjYXpnUTqwP6F8IdHrhWNP1V+hZBpo5ZiHA
-        b4n2FeW9QM8FvhAg==
+        bh=rMVbv/3EOmX708hzl7JNIFZnWE61SRiFVAY5Go7q+I0=;
+        b=rWLKZ4mT6Wn3d40XOL2/0GYtgs3EHGsZVG8EIwqkolaeLsB+BJAWMCQuDDJKJoZdfggl5q
+        66j9SRieanv1g3Cg==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id EAF9613A74;
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id EAEF21338F;
         Wed, 27 Sep 2023 09:34:43 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id cb1XOTP3E2UMEwAAMHmgww
+        id qyFVOTP3E2UNEwAAMHmgww
         (envelope-from <jack@suse.cz>); Wed, 27 Sep 2023 09:34:43 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 07006A07D2; Wed, 27 Sep 2023 11:34:43 +0200 (CEST)
+        id 0F400A07D4; Wed, 27 Sep 2023 11:34:43 +0200 (CEST)
 From:   Jan Kara <jack@suse.cz>
 To:     Christian Brauner <brauner@kernel.org>
 Cc:     <linux-fsdevel@vger.kernel.org>, <linux-block@vger.kernel.org>,
         Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jack Wang <jinpu.wang@ionos.com>,
+        "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
         Christoph Hellwig <hch@lst.de>
-Subject: [PATCH 05/29] pktcdvd: Convert to bdev_open_by_dev()
-Date:   Wed, 27 Sep 2023 11:34:11 +0200
-Message-Id: <20230927093442.25915-5-jack@suse.cz>
+Subject: [PATCH 06/29] rnbd-srv: Convert to use bdev_open_by_path()
+Date:   Wed, 27 Sep 2023 11:34:12 +0200
+Message-Id: <20230927093442.25915-6-jack@suse.cz>
 X-Mailer: git-send-email 2.35.3
 In-Reply-To: <20230818123232.2269-1-jack@suse.cz>
 References: <20230818123232.2269-1-jack@suse.cz>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=8885; i=jack@suse.cz; h=from:subject; bh=QJgbjZbViYEqoDpCqCqFmDyoDvczIUIcA/3LAK3MFR4=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBlE/cV18giUz2poZqHvyHGCjywc2aWhtgluxtgN6uO hJszZGmJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCZRP3FQAKCRCcnaoHP2RA2U41B/ 42VJrROzyufD8I+tSIzO4jYR7PubTEgvqlFGcdHEGgUmVEmVQ8Z2aJtpchyUcClMr4Ac5Vytayg9iR r8XE/slRnBKpFzHxZmzCAq/Cy/RLv084SGnSTj+V/nEN05rflYdUxywLcaAyZ1RpFYdHBVKgzkFCsd BZGmq2G7Q7gs3CLlAd47OqpFiYNe0RXDrqudr/qoV34497Fr+TqGh3dySbyg8ViaOjLcmRjzvipM4d MgmAAlfCrVOGI8ACE+WeMykjWBElaQaX0gjTo/6KZUXscXJRNXBvpZk6eXcyGnVMmWwCHINnkl+yJ3 ZUmuYJcohIBuJPF8cyX04SDEUyWwV9
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5308; i=jack@suse.cz; h=from:subject; bh=VZUYTcEsZUwQH8kJGICsZn+S1pMKE1JNKtZ4wYjpZ8s=; b=owGbwMvMwME4Z+4qdvsUh5uMp9WSGFKFv4stupnOeiyca9bhD017Uk+vlBN+w7zkuVN26Nd8xROH O8vXdzIaszAwcjDIiimyrI68qH1tnlHX1lANGZhBrEwgUxi4OAVgIptCORgalObOd1T6cUghzFFE83 fjU52ua/zaullJG9hXVXgtM3PhvZEhr8Rv8OBln2ZUZaG/woXTOQ1MNQ7nlk2TTWN4anB2UqRL/iln FuedWy5cLV7awn+WweLey8X839yknUvdA47t7zF+sjxtUuyU3Pd7FyXmHFy6XcKi8GvbytaF99kNWt oYjZ9depNv5CTl+CZE7vBNHp6pmfO+Jla+zXE78sxP8pyRlnCFi6t220+GXx/PxrzJ0mjdr+uU+Ir7 ooKKzCal1Fvx80P/RE/tEQ9Iq3Ty+Hflck1j1J3cTU0/jqYpZO/n9nRVKv1hfJ2/bs3zo6J5bS171T kk90ouKJ0es/FXQU6jbIyxzHM5AA==
 X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_SOFTFAIL autolearn=ham autolearn_force=no version=3.4.6
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Convert pktcdvd to use bdev_open_by_dev().
+Convert rnbd-srv to use bdev_open_by_path() and pass the handle
+around.
 
+CC: Jack Wang <jinpu.wang@ionos.com>
+CC: "Md. Haris Iqbal" <haris.iqbal@ionos.com>
+Acked-by: "Md. Haris Iqbal" <haris.iqbal@ionos.com>
 Acked-by: Christoph Hellwig <hch@lst.de>
 Acked-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Jan Kara <jack@suse.cz>
 ---
- drivers/block/pktcdvd.c | 76 ++++++++++++++++++++++-------------------
- include/linux/pktcdvd.h |  4 ++-
- 2 files changed, 44 insertions(+), 36 deletions(-)
+ drivers/block/rnbd/rnbd-srv.c | 27 ++++++++++++++-------------
+ drivers/block/rnbd/rnbd-srv.h |  2 +-
+ 2 files changed, 15 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/block/pktcdvd.c b/drivers/block/pktcdvd.c
-index a1428538bda5..d56d972aadb3 100644
---- a/drivers/block/pktcdvd.c
-+++ b/drivers/block/pktcdvd.c
-@@ -340,8 +340,8 @@ static ssize_t device_map_show(const struct class *c, const struct class_attribu
- 		n += sysfs_emit_at(data, n, "%s %u:%u %u:%u\n",
- 			pd->disk->disk_name,
- 			MAJOR(pd->pkt_dev), MINOR(pd->pkt_dev),
--			MAJOR(pd->bdev->bd_dev),
--			MINOR(pd->bdev->bd_dev));
-+			MAJOR(pd->bdev_handle->bdev->bd_dev),
-+			MINOR(pd->bdev_handle->bdev->bd_dev));
- 	}
- 	mutex_unlock(&ctl_mutex);
- 	return n;
-@@ -437,7 +437,8 @@ static int pkt_seq_show(struct seq_file *m, void *p)
- 	char *msg;
- 	int states[PACKET_NUM_STATES];
+diff --git a/drivers/block/rnbd/rnbd-srv.c b/drivers/block/rnbd/rnbd-srv.c
+index c186df0ec641..65de51f3dfd9 100644
+--- a/drivers/block/rnbd/rnbd-srv.c
++++ b/drivers/block/rnbd/rnbd-srv.c
+@@ -145,7 +145,7 @@ static int process_rdma(struct rnbd_srv_session *srv_sess,
+ 	priv->sess_dev = sess_dev;
+ 	priv->id = id;
  
--	seq_printf(m, "Writer %s mapped to %pg:\n", pd->disk->disk_name, pd->bdev);
-+	seq_printf(m, "Writer %s mapped to %pg:\n", pd->disk->disk_name,
-+		   pd->bdev_handle->bdev);
+-	bio = bio_alloc(sess_dev->bdev, 1,
++	bio = bio_alloc(sess_dev->bdev_handle->bdev, 1,
+ 			rnbd_to_bio_flags(le32_to_cpu(msg->rw)), GFP_KERNEL);
+ 	if (bio_add_page(bio, virt_to_page(data), datalen,
+ 			offset_in_page(data)) != datalen) {
+@@ -219,7 +219,7 @@ void rnbd_destroy_sess_dev(struct rnbd_srv_sess_dev *sess_dev, bool keep_id)
+ 	rnbd_put_sess_dev(sess_dev);
+ 	wait_for_completion(&dc); /* wait for inflights to drop to zero */
  
- 	seq_printf(m, "\nSettings:\n");
- 	seq_printf(m, "\tpacket size:\t\t%dkB\n", pd->settings.size / 2);
-@@ -714,7 +715,7 @@ static void pkt_rbtree_insert(struct pktcdvd_device *pd, struct pkt_rb_node *nod
-  */
- static int pkt_generic_packet(struct pktcdvd_device *pd, struct packet_command *cgc)
+-	blkdev_put(sess_dev->bdev, NULL);
++	bdev_release(sess_dev->bdev_handle);
+ 	mutex_lock(&sess_dev->dev->lock);
+ 	list_del(&sess_dev->dev_list);
+ 	if (!sess_dev->readonly)
+@@ -534,7 +534,7 @@ rnbd_srv_get_or_create_srv_dev(struct block_device *bdev,
+ static void rnbd_srv_fill_msg_open_rsp(struct rnbd_msg_open_rsp *rsp,
+ 					struct rnbd_srv_sess_dev *sess_dev)
  {
--	struct request_queue *q = bdev_get_queue(pd->bdev);
-+	struct request_queue *q = bdev_get_queue(pd->bdev_handle->bdev);
- 	struct scsi_cmnd *scmd;
- 	struct request *rq;
- 	int ret = 0;
-@@ -1047,7 +1048,8 @@ static void pkt_gather_data(struct pktcdvd_device *pd, struct packet_data *pkt)
- 			continue;
+-	struct block_device *bdev = sess_dev->bdev;
++	struct block_device *bdev = sess_dev->bdev_handle->bdev;
  
- 		bio = pkt->r_bios[f];
--		bio_init(bio, pd->bdev, bio->bi_inline_vecs, 1, REQ_OP_READ);
-+		bio_init(bio, pd->bdev_handle->bdev, bio->bi_inline_vecs, 1,
-+			 REQ_OP_READ);
- 		bio->bi_iter.bi_sector = pkt->sector + f * (CD_FRAMESIZE >> 9);
- 		bio->bi_end_io = pkt_end_io_read;
- 		bio->bi_private = pkt;
-@@ -1262,8 +1264,8 @@ static void pkt_start_write(struct pktcdvd_device *pd, struct packet_data *pkt)
- 	struct device *ddev = disk_to_dev(pd->disk);
- 	int f;
+ 	rsp->hdr.type = cpu_to_le16(RNBD_MSG_OPEN_RSP);
+ 	rsp->device_id = cpu_to_le32(sess_dev->device_id);
+@@ -559,7 +559,7 @@ static void rnbd_srv_fill_msg_open_rsp(struct rnbd_msg_open_rsp *rsp,
+ static struct rnbd_srv_sess_dev *
+ rnbd_srv_create_set_sess_dev(struct rnbd_srv_session *srv_sess,
+ 			      const struct rnbd_msg_open *open_msg,
+-			      struct block_device *bdev, bool readonly,
++			      struct bdev_handle *handle, bool readonly,
+ 			      struct rnbd_srv_dev *srv_dev)
+ {
+ 	struct rnbd_srv_sess_dev *sdev = rnbd_sess_dev_alloc(srv_sess);
+@@ -571,7 +571,7 @@ rnbd_srv_create_set_sess_dev(struct rnbd_srv_session *srv_sess,
  
--	bio_init(pkt->w_bio, pd->bdev, pkt->w_bio->bi_inline_vecs, pkt->frames,
--		 REQ_OP_WRITE);
-+	bio_init(pkt->w_bio, pd->bdev_handle->bdev, pkt->w_bio->bi_inline_vecs,
-+		 pkt->frames, REQ_OP_WRITE);
- 	pkt->w_bio->bi_iter.bi_sector = pkt->sector;
- 	pkt->w_bio->bi_end_io = pkt_end_io_packet_write;
- 	pkt->w_bio->bi_private = pkt;
-@@ -2160,18 +2162,20 @@ static int pkt_open_dev(struct pktcdvd_device *pd, bool write)
- 	int ret;
- 	long lba;
- 	struct request_queue *q;
+ 	strscpy(sdev->pathname, open_msg->dev_name, sizeof(sdev->pathname));
+ 
+-	sdev->bdev		= bdev;
++	sdev->bdev_handle	= handle;
+ 	sdev->sess		= srv_sess;
+ 	sdev->dev		= srv_dev;
+ 	sdev->readonly		= readonly;
+@@ -676,7 +676,7 @@ static int process_msg_open(struct rnbd_srv_session *srv_sess,
+ 	struct rnbd_srv_dev *srv_dev;
+ 	struct rnbd_srv_sess_dev *srv_sess_dev;
+ 	const struct rnbd_msg_open *open_msg = msg;
 -	struct block_device *bdev;
 +	struct bdev_handle *bdev_handle;
+ 	blk_mode_t open_flags = BLK_OPEN_READ;
+ 	char *full_path;
+ 	struct rnbd_msg_open_rsp *rsp = data;
+@@ -714,15 +714,15 @@ static int process_msg_open(struct rnbd_srv_session *srv_sess,
+ 		goto reject;
+ 	}
  
- 	/*
- 	 * We need to re-open the cdrom device without O_NONBLOCK to be able
- 	 * to read/write from/to it. It is already opened in O_NONBLOCK mode
- 	 * so open should not fail.
- 	 */
--	bdev = blkdev_get_by_dev(pd->bdev->bd_dev, BLK_OPEN_READ, pd, NULL);
+-	bdev = blkdev_get_by_path(full_path, open_flags, NULL, NULL);
 -	if (IS_ERR(bdev)) {
 -		ret = PTR_ERR(bdev);
-+	bdev_handle = bdev_open_by_dev(pd->bdev_handle->bdev->bd_dev,
-+				       BLK_OPEN_READ, pd, NULL);
++	bdev_handle = bdev_open_by_path(full_path, open_flags, NULL, NULL);
 +	if (IS_ERR(bdev_handle)) {
 +		ret = PTR_ERR(bdev_handle);
- 		goto out;
- 	}
-+	pd->open_bdev_handle = bdev_handle;
- 
- 	ret = pkt_get_last_written(pd, &lba);
- 	if (ret) {
-@@ -2180,9 +2184,9 @@ static int pkt_open_dev(struct pktcdvd_device *pd, bool write)
+ 		pr_err("Opening device '%s' on session %s failed, failed to open the block device, err: %d\n",
+ 		       full_path, srv_sess->sessname, ret);
+ 		goto free_path;
  	}
  
- 	set_capacity(pd->disk, lba << 2);
--	set_capacity_and_notify(pd->bdev->bd_disk, lba << 2);
-+	set_capacity_and_notify(pd->bdev_handle->bdev->bd_disk, lba << 2);
- 
--	q = bdev_get_queue(pd->bdev);
-+	q = bdev_get_queue(pd->bdev_handle->bdev);
- 	if (write) {
- 		ret = pkt_open_write(pd);
- 		if (ret)
-@@ -2214,7 +2218,7 @@ static int pkt_open_dev(struct pktcdvd_device *pd, bool write)
- 	return 0;
- 
- out_putdev:
--	blkdev_put(bdev, pd);
-+	bdev_release(bdev_handle);
- out:
- 	return ret;
- }
-@@ -2233,7 +2237,8 @@ static void pkt_release_dev(struct pktcdvd_device *pd, int flush)
- 	pkt_lock_door(pd, 0);
- 
- 	pkt_set_speed(pd, MAX_SPEED, MAX_SPEED);
--	blkdev_put(pd->bdev, pd);
-+	bdev_release(pd->open_bdev_handle);
-+	pd->open_bdev_handle = NULL;
- 
- 	pkt_shrink_pktlist(pd);
- }
-@@ -2321,8 +2326,8 @@ static void pkt_end_io_read_cloned(struct bio *bio)
- 
- static void pkt_make_request_read(struct pktcdvd_device *pd, struct bio *bio)
- {
--	struct bio *cloned_bio =
--		bio_alloc_clone(pd->bdev, bio, GFP_NOIO, &pkt_bio_set);
-+	struct bio *cloned_bio = bio_alloc_clone(pd->bdev_handle->bdev, bio,
-+		GFP_NOIO, &pkt_bio_set);
- 	struct packet_stacked_data *psd = mempool_alloc(&psd_pool, GFP_NOIO);
- 
- 	psd->pd = pd;
-@@ -2492,7 +2497,7 @@ static int pkt_new_dev(struct pktcdvd_device *pd, dev_t dev)
- {
- 	struct device *ddev = disk_to_dev(pd->disk);
- 	int i;
--	struct block_device *bdev;
-+	struct bdev_handle *bdev_handle;
- 	struct scsi_device *sdev;
- 
- 	if (pd->pkt_dev == dev) {
-@@ -2503,8 +2508,9 @@ static int pkt_new_dev(struct pktcdvd_device *pd, dev_t dev)
- 		struct pktcdvd_device *pd2 = pkt_devs[i];
- 		if (!pd2)
- 			continue;
--		if (pd2->bdev->bd_dev == dev) {
--			dev_err(ddev, "%pg already setup\n", pd2->bdev);
-+		if (pd2->bdev_handle->bdev->bd_dev == dev) {
-+			dev_err(ddev, "%pg already setup\n",
-+				pd2->bdev_handle->bdev);
- 			return -EBUSY;
- 		}
- 		if (pd2->pkt_dev == dev) {
-@@ -2513,13 +2519,13 @@ static int pkt_new_dev(struct pktcdvd_device *pd, dev_t dev)
- 		}
+-	srv_dev = rnbd_srv_get_or_create_srv_dev(bdev, srv_sess,
++	srv_dev = rnbd_srv_get_or_create_srv_dev(bdev_handle->bdev, srv_sess,
+ 						  open_msg->access_mode);
+ 	if (IS_ERR(srv_dev)) {
+ 		pr_err("Opening device '%s' on session %s failed, creating srv_dev failed, err: %ld\n",
+@@ -731,7 +731,8 @@ static int process_msg_open(struct rnbd_srv_session *srv_sess,
+ 		goto blkdev_put;
  	}
  
--	bdev = blkdev_get_by_dev(dev, BLK_OPEN_READ | BLK_OPEN_NDELAY, NULL,
--				 NULL);
--	if (IS_ERR(bdev))
--		return PTR_ERR(bdev);
--	sdev = scsi_device_from_queue(bdev->bd_disk->queue);
-+	bdev_handle = bdev_open_by_dev(dev, BLK_OPEN_READ | BLK_OPEN_NDELAY,
-+				       NULL, NULL);
-+	if (IS_ERR(bdev_handle))
-+		return PTR_ERR(bdev_handle);
-+	sdev = scsi_device_from_queue(bdev_handle->bdev->bd_disk->queue);
- 	if (!sdev) {
--		blkdev_put(bdev, NULL);
-+		bdev_release(bdev_handle);
- 		return -EINVAL;
+-	srv_sess_dev = rnbd_srv_create_set_sess_dev(srv_sess, open_msg, bdev,
++	srv_sess_dev = rnbd_srv_create_set_sess_dev(srv_sess, open_msg,
++				bdev_handle,
+ 				open_msg->access_mode == RNBD_ACCESS_RO,
+ 				srv_dev);
+ 	if (IS_ERR(srv_sess_dev)) {
+@@ -747,7 +748,7 @@ static int process_msg_open(struct rnbd_srv_session *srv_sess,
+ 	 */
+ 	mutex_lock(&srv_dev->lock);
+ 	if (!srv_dev->dev_kobj.state_in_sysfs) {
+-		ret = rnbd_srv_create_dev_sysfs(srv_dev, bdev);
++		ret = rnbd_srv_create_dev_sysfs(srv_dev, bdev_handle->bdev);
+ 		if (ret) {
+ 			mutex_unlock(&srv_dev->lock);
+ 			rnbd_srv_err(srv_sess_dev,
+@@ -790,7 +791,7 @@ static int process_msg_open(struct rnbd_srv_session *srv_sess,
  	}
- 	put_device(&sdev->sdev_gendev);
-@@ -2527,8 +2533,8 @@ static int pkt_new_dev(struct pktcdvd_device *pd, dev_t dev)
- 	/* This is safe, since we have a reference from open(). */
- 	__module_get(THIS_MODULE);
- 
--	pd->bdev = bdev;
--	set_blocksize(bdev, CD_FRAMESIZE);
-+	pd->bdev_handle = bdev_handle;
-+	set_blocksize(bdev_handle->bdev, CD_FRAMESIZE);
- 
- 	pkt_init_queue(pd);
- 
-@@ -2540,11 +2546,11 @@ static int pkt_new_dev(struct pktcdvd_device *pd, dev_t dev)
- 	}
- 
- 	proc_create_single_data(pd->disk->disk_name, 0, pkt_proc, pkt_seq_show, pd);
--	dev_notice(ddev, "writer mapped to %pg\n", bdev);
-+	dev_notice(ddev, "writer mapped to %pg\n", bdev_handle->bdev);
- 	return 0;
- 
- out_mem:
+ 	rnbd_put_srv_dev(srv_dev);
+ blkdev_put:
 -	blkdev_put(bdev, NULL);
 +	bdev_release(bdev_handle);
- 	/* This is safe: open() is still holding a reference. */
- 	module_put(THIS_MODULE);
- 	return -ENOMEM;
-@@ -2599,9 +2605,9 @@ static unsigned int pkt_check_events(struct gendisk *disk,
- 
- 	if (!pd)
- 		return 0;
--	if (!pd->bdev)
-+	if (!pd->bdev_handle)
- 		return 0;
--	attached_disk = pd->bdev->bd_disk;
-+	attached_disk = pd->bdev_handle->bdev->bd_disk;
- 	if (!attached_disk || !attached_disk->fops->check_events)
- 		return 0;
- 	return attached_disk->fops->check_events(attached_disk, clearing);
-@@ -2686,7 +2692,7 @@ static int pkt_setup_dev(dev_t dev, dev_t* pkt_dev)
- 		goto out_mem2;
- 
- 	/* inherit events of the host device */
--	disk->events = pd->bdev->bd_disk->events;
-+	disk->events = pd->bdev_handle->bdev->bd_disk->events;
- 
- 	ret = add_disk(disk);
- 	if (ret)
-@@ -2751,7 +2757,7 @@ static int pkt_remove_dev(dev_t pkt_dev)
- 	pkt_debugfs_dev_remove(pd);
- 	pkt_sysfs_dev_remove(pd);
- 
--	blkdev_put(pd->bdev, NULL);
-+	bdev_release(pd->bdev_handle);
- 
- 	remove_proc_entry(pd->disk->disk_name, pkt_proc);
- 	dev_notice(ddev, "writer unmapped\n");
-@@ -2778,7 +2784,7 @@ static void pkt_get_status(struct pkt_ctrl_command *ctrl_cmd)
- 
- 	pd = pkt_find_dev_from_minor(ctrl_cmd->dev_index);
- 	if (pd) {
--		ctrl_cmd->dev = new_encode_dev(pd->bdev->bd_dev);
-+		ctrl_cmd->dev = new_encode_dev(pd->bdev_handle->bdev->bd_dev);
- 		ctrl_cmd->pkt_dev = new_encode_dev(pd->pkt_dev);
- 	} else {
- 		ctrl_cmd->dev = 0;
-diff --git a/include/linux/pktcdvd.h b/include/linux/pktcdvd.h
-index 80cb00db42a4..79594aeb160d 100644
---- a/include/linux/pktcdvd.h
-+++ b/include/linux/pktcdvd.h
-@@ -154,7 +154,9 @@ struct packet_stacked_data
- 
- struct pktcdvd_device
- {
--	struct block_device	*bdev;		/* dev attached */
-+	struct bdev_handle	*bdev_handle;	/* dev attached */
-+	/* handle acquired for bdev during pkt_open_dev() */
-+	struct bdev_handle	*open_bdev_handle;
- 	dev_t			pkt_dev;	/* our dev */
- 	struct packet_settings	settings;
- 	struct packet_stats	stats;
+ free_path:
+ 	kfree(full_path);
+ reject:
+diff --git a/drivers/block/rnbd/rnbd-srv.h b/drivers/block/rnbd/rnbd-srv.h
+index 1027656dedb0..343cc682b617 100644
+--- a/drivers/block/rnbd/rnbd-srv.h
++++ b/drivers/block/rnbd/rnbd-srv.h
+@@ -46,7 +46,7 @@ struct rnbd_srv_dev {
+ struct rnbd_srv_sess_dev {
+ 	/* Entry inside rnbd_srv_dev struct */
+ 	struct list_head		dev_list;
+-	struct block_device		*bdev;
++	struct bdev_handle		*bdev_handle;
+ 	struct rnbd_srv_session		*sess;
+ 	struct rnbd_srv_dev		*dev;
+ 	struct kobject                  kobj;
 -- 
 2.35.3
 
