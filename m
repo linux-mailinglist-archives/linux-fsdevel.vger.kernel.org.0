@@ -2,49 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CB2F97AF946
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Sep 2023 06:24:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FF427AF92E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Sep 2023 06:20:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229691AbjI0EYK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Sep 2023 00:24:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53188 "EHLO
+        id S229791AbjI0EUl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Sep 2023 00:20:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229694AbjI0EXJ (ORCPT
+        with ESMTP id S229616AbjI0ETb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Sep 2023 00:23:09 -0400
-Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CA596E8A
-        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Sep 2023 20:42:27 -0700 (PDT)
-Received: by mail-pl1-x633.google.com with SMTP id d9443c01a7336-1c3d8fb23d9so73314345ad.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Sep 2023 20:42:27 -0700 (PDT)
+        Wed, 27 Sep 2023 00:19:31 -0400
+Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EFE35FF3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Sep 2023 20:42:25 -0700 (PDT)
+Received: by mail-pf1-x435.google.com with SMTP id d2e1a72fcca58-690bf8fdd1aso8066245b3a.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Sep 2023 20:42:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1695786147; x=1696390947; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1695786145; x=1696390945; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oGhwDBPbCWZ00dYqQrvOzcYwuI2lZJAyT/mcJzKB6R4=;
-        b=Gn8gM/3yYje83klxRkXj59yeqOCnHVvIfl5xp35mK1+zd4V5d3CWCJm4tEEz9YTVKL
-         VNhqkn4Tq8YGWWoYhX7OZARQbCrLzrJyZr1NOwyRrjiKeHW62gkqrK3gE+PFxXXJve2N
-         wxm8+6oDs5Uh/VRqIIlMzadsY06M/mBMkxju0=
+        bh=fmhcOt0Phh+K4fShkXGPXzhG2+0EGgvMOT3Anhb5JtI=;
+        b=ZYsp9X2L/K4sq6nHJ/InBMtpPeI6AC7q+P6owshAAH8QJH6wLbLAYABxQO17n6vIwP
+         FjMdtDMz2/Gjw9Jtf6KVV/kwTK/UXRDxjd8c4mLhhOPLs53oDqJGPV/oEuNWV+BSxbph
+         ZABsEBD/b4uQDrO7SOdPnc9aHU6r4MoyJjsYY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695786147; x=1696390947;
+        d=1e100.net; s=20230601; t=1695786145; x=1696390945;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=oGhwDBPbCWZ00dYqQrvOzcYwuI2lZJAyT/mcJzKB6R4=;
-        b=RWJdgwL0EXiLZdOsLI2WgWvCqXMqsbGF62F0cKPG6CYHKru+Pk8c940cWQJtydjgWw
-         /6jX2SVVC+HKy7JdQ9gkJaGhZqWzn+ICHtCpazxk34ctmAUuUj2s3ns/1YOrIUc33q5E
-         swzl/sZwhb9x3HjxW3fnl9R24DByppBEYJAgM52QpAwJzdJBTqmQiaud0/bkNLKO0E9a
-         vB5EK93HbWJPsoT94SotJ/CYhEVNUCC2kh87lT4dftkRLASNlnLJguqd7B1lHUYuWTct
-         GZxlLAgVrjO5tdrUOHG9xqd8t4owbnWEBoYOMq9r/sn+LP4/Sph4hwBVmKNEW17whFZ8
-         ubhA==
-X-Gm-Message-State: AOJu0YwaQXN7zdyL8EqEwBbesCLS7F7QSrae/WBdq2oza1+XnGjS1ISy
-        svAG2PYSe1KGYMh0vBWtopqSjg==
-X-Google-Smtp-Source: AGHT+IEMRh07dxmRBvxAFfE5SwpELfOldF0XUoKYTyABrKV6bOgIMJW1wNCR/iQbnr++EfKTyUevcg==
-X-Received: by 2002:a17:902:e74f:b0:1c6:112f:5d02 with SMTP id p15-20020a170902e74f00b001c6112f5d02mr741873plf.55.1695786147186;
-        Tue, 26 Sep 2023 20:42:27 -0700 (PDT)
+        bh=fmhcOt0Phh+K4fShkXGPXzhG2+0EGgvMOT3Anhb5JtI=;
+        b=JCtjvEM+uFPjqMTUQIHI9FmSkJJSy8zXyU0fTwW0kIIDQvu7AbmQc/dLnEN28Ru+NN
+         eVCHj0IEOM+b/ITLojxMxWUXIVx1SmvJSUvECfFU43Fx/Wa4uaFKgCvWMEeyTf72nv0L
+         tKVfo/emcTj3d6grxRtW+tnd9yQ0iL8KFzolqVddrbWPOPIFDt972ZBQFi4cs8KB62ah
+         FZhWZd6bc9JV2r1yQ61cQy+XnDJIYK29dgOWYKbxx4Fd2IbfgHlHOL40IE/kjp5RkBDb
+         4CbQ679vAwbr0a6PIm1nf9IDlAnq0Sf1HmTvTtwc9pjM6mo+c4vtxv55/ILJtitVBHud
+         mdmA==
+X-Gm-Message-State: AOJu0YypAScjO1i1TEL3jMgQD5hd87chpLAX5HDz/V0hMWMiOp0NS+vG
+        3nJjJMdvvGN705zs1GViiLcqhA==
+X-Google-Smtp-Source: AGHT+IEnkEHkAMyfzsQkaO55Avyrk0ulpfRxCywQvRCp4n7UkR+naKdiK+KW8D+X2wQeWkwJJchcfQ==
+X-Received: by 2002:a05:6a00:cc2:b0:690:ca4e:661b with SMTP id b2-20020a056a000cc200b00690ca4e661bmr1032600pfv.13.1695786144968;
+        Tue, 26 Sep 2023 20:42:24 -0700 (PDT)
 Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id v7-20020a170902b7c700b001c61073b064sm5974160plz.69.2023.09.26.20.42.24
+        by smtp.gmail.com with ESMTPSA id i13-20020aa78b4d000000b00688965c5227sm3826941pfd.120.2023.09.26.20.42.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Tue, 26 Sep 2023 20:42:24 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
@@ -57,41 +57,44 @@ Cc:     Kees Cook <keescook@chromium.org>,
         =?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>,
         Pedro Falcato <pedro.falcato@gmail.com>,
         linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: [PATCH v3 2/4] binfmt_elf: elf_bss no longer used by load_elf_binary()
-Date:   Tue, 26 Sep 2023 20:42:19 -0700
-Message-Id: <20230927034223.986157-2-keescook@chromium.org>
+Subject: [PATCH v3 3/4] binfmt_elf: Provide prot bits as context for padzero() errors
+Date:   Tue, 26 Sep 2023 20:42:20 -0700
+Message-Id: <20230927034223.986157-3-keescook@chromium.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230927033634.make.602-kees@kernel.org>
 References: <20230927033634.make.602-kees@kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1738; i=keescook@chromium.org;
- h=from:subject; bh=G8gKivjP+bPsGdacm75CduzZVarN6sAt0dfrtCVUjtY=;
- b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBlE6Sd2BuLhX7iIAkgIu+LW3P3r4pxnZlwRaDRf
- vA/0AICBj2JAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZROknQAKCRCJcvTf3G3A
- JoZiEACxnnqWBzMIIDewc78beSt5xMPBmGmN6i2luWvAqAMFgVuNI0nDLE57tnMWit7yDj2XgJ1
- 2Z/pa68XIcntr/l4Ox2lUHBpmeW82kMxXbte18Ecfkifetz5bSTNhT4eqz9iInkevtzRWO3uUpq
- i3Sjs/gANX1ErFrzlbJdGorFoQ2WChDbSXKcGCifcF+7ByszsUMc7ciRkTfJ+c69ymHfkIjFnB4
- NABq4TtLUWJgQ4fWWHfAXP7ibJqTV+vue/6haJy4EBtrPblhUpyXmaPHPlLFqfB4NWp67PspCGn
- Xt+4d8whIqgJJO12woWoD2kad16SwfEWwy6rtb5glKxP4P8lwFkwUY2npYvmLb7oLp/JOBGWtT4
- zN8stmcyYoHO5JH1fxDZ/M4IbnvhDjIyT/v4bcz2Sn/t26aRdaLx2dvl1fz3GLavqQm1IhRhQ+f
- XxYEJIe0C5lZ5EdXJrERty9WadxoFIpFZuQtqKSIfGNDtWQIQ1fwZPbObiOfsYvT6LcbQLKMUG1
- /xXJ+v8+u3jW+HTFnzZ+EE7ig4RRSprVCTd5QEzX4RbC8KXboi2yMozBdmUhOTOlkUJSU/uUZ1+
- VZHcMo6rE0t3wu84BkMjvDVBAPXSGtNLDJ9xoujVrtMltIzQDhdxPz2ce74LXQ2WEx1wn991e8y t1zbNpVW5qc63Kw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3658; i=keescook@chromium.org;
+ h=from:subject; bh=wBfTuibkI1ZafUlyw4M9Ln83egyXuZyKwCYBlE+Ln0Q=;
+ b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBlE6SdGv8DDqtwm5Ol0LgrgyjZaP+4ZO6Wq6Zvc
+ ewLHcLJGtKJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZROknQAKCRCJcvTf3G3A
+ JgOCD/9Yn5Qu3vikEH/yBMhn9z8VzLRLFdyRg9vmKyaQg1Y1oUqxhPpmdoBiT9lo4FEZcAz3Pbo
+ slZs7xhhxScfjwwayUC/3eCa2sGC4pDlomjzWuLKZx+rhUKBTXLGk57l/T030w/BTGRk8OApPaS
+ 19sBIkkgXFNfHvlcgw1zzeX4/JPF7yvsr936vFS/ypc4nuzEzdrRoMKxuTMgP+eVrsgNAri296j
+ DeMk8JiLE+PzpbV1vRrhK/nP6G5m/OdH6OVZP3UIOq0+M1GnvJS0F1LVRL9T1aolQyan5mAn1/3
+ Tt2f5wsLeGNsy09fY4++KWw22oYo6YHGAYfwbp93cdnjtqCniroSVvEYPNiPdsd6OXtZm8O2ERQ
+ IhyT1RCKLWjAXpK6Ow8yZYZwS2FmI0TRhU8BgygE3Qh5XkzdsjY0oi+QUkh3s0ktiqKyZxXrW40
+ k6zgbv7iGb6zTzbkqeecY4Tju47/elEUbwqNCxRnPcmd3SfCF0jwKWVwGGxUcBRaWdao36it2H0
+ 09ADuzAuiBrMa1Z24c5C99+xO7kPruaySYYC7DV703FB3q5+qWFThooJ4gzw8qx5HyOZhtzvQhz
+ zyn1WsqYfrF04pj19ZYwP3oimZ2OctqtY4fYgdF0pZadU5BzKZlwRvxwrEMy713xxETHnY6nu8b rYdT6wNKfO8hgTw==
 X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-With the BSS handled generically via the new filesz/memsz mismatch
-handling logic in elf_load(), elf_bss no longer needs to be tracked.
-Drop the variable.
+Errors with padzero() should be caught unless we're expecting a
+pathological (non-writable) segment. Report -EFAULT only when PROT_WRITE
+is present.
+
+Additionally add some more documentation to padzero(), elf_map(), and
+elf_load().
 
 Cc: Eric Biederman <ebiederm@xmission.com>
 Cc: Alexander Viro <viro@zeniv.linux.org.uk>
@@ -101,47 +104,94 @@ Cc: linux-mm@kvack.org
 Suggested-by: Eric Biederman <ebiederm@xmission.com>
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- fs/binfmt_elf.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ fs/binfmt_elf.c | 33 +++++++++++++++++++++++----------
+ 1 file changed, 23 insertions(+), 10 deletions(-)
 
 diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index 2a615f476e44..0214d5a949fc 100644
+index 0214d5a949fc..b939cfe3215c 100644
 --- a/fs/binfmt_elf.c
 +++ b/fs/binfmt_elf.c
-@@ -854,7 +854,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 	unsigned long error;
- 	struct elf_phdr *elf_ppnt, *elf_phdata, *interp_elf_phdata = NULL;
- 	struct elf_phdr *elf_property_phdata = NULL;
--	unsigned long elf_bss, elf_brk;
-+	unsigned long elf_brk;
- 	int retval, i;
- 	unsigned long elf_entry;
- 	unsigned long e_entry;
-@@ -1045,7 +1045,6 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 	if (retval < 0)
- 		goto out_free_dentry;
+@@ -110,19 +110,21 @@ static struct linux_binfmt elf_format = {
  
--	elf_bss = 0;
- 	elf_brk = 0;
+ #define BAD_ADDR(x) (unlikely((unsigned long)(x) >= TASK_SIZE))
  
- 	start_code = ~0UL;
-@@ -1208,8 +1207,6 @@ static int load_elf_binary(struct linux_binprm *bprm)
+-/* We need to explicitly zero any fractional pages
+-   after the data section (i.e. bss).  This would
+-   contain the junk from the file that should not
+-   be in memory
++/*
++ * We need to explicitly zero any trailing portion of the page that follows
++ * p_filesz when it ends before the page ends (e.g. bss), otherwise this
++ * memory will contain the junk from the file that should not be present.
+  */
+-static int padzero(unsigned long elf_bss)
++static int padzero(unsigned long address, int prot)
+ {
+ 	unsigned long nbyte;
  
- 		k = elf_ppnt->p_vaddr + elf_ppnt->p_filesz;
+-	nbyte = ELF_PAGEOFFSET(elf_bss);
++	nbyte = ELF_PAGEOFFSET(address);
+ 	if (nbyte) {
+ 		nbyte = ELF_MIN_ALIGN - nbyte;
+-		if (clear_user((void __user *) elf_bss, nbyte))
++		/* Only report errors when the segment is writable. */
++		if (clear_user((void __user *)address, nbyte) &&
++		    prot & PROT_WRITE)
+ 			return -EFAULT;
+ 	}
+ 	return 0;
+@@ -348,6 +350,11 @@ create_elf_tables(struct linux_binprm *bprm, const struct elfhdr *exec,
+ 	return 0;
+ }
  
--		if (k > elf_bss)
--			elf_bss = k;
- 		if ((elf_ppnt->p_flags & PF_X) && end_code < k)
- 			end_code = k;
- 		if (end_data < k)
-@@ -1221,7 +1218,6 @@ static int load_elf_binary(struct linux_binprm *bprm)
++/*
++ * Map "eppnt->p_filesz" bytes from "filep" offset "eppnt->p_offset"
++ * into memory at "addr". (Note that p_filesz is rounded up to the
++ * next page, so any extra bytes from the file must be wiped.)
++ */
+ static unsigned long elf_map(struct file *filep, unsigned long addr,
+ 		const struct elf_phdr *eppnt, int prot, int type,
+ 		unsigned long total_size)
+@@ -387,6 +394,11 @@ static unsigned long elf_map(struct file *filep, unsigned long addr,
+ 	return(map_addr);
+ }
  
- 	e_entry = elf_ex->e_entry + load_bias;
- 	phdr_addr += load_bias;
--	elf_bss += load_bias;
- 	elf_brk += load_bias;
- 	start_code += load_bias;
- 	end_code += load_bias;
++/*
++ * Map "eppnt->p_filesz" bytes from "filep" offset "eppnt->p_offset"
++ * into memory at "addr". Memory from "p_filesz" through "p_memsz"
++ * rounded up to the next page is zeroed.
++ */
+ static unsigned long elf_load(struct file *filep, unsigned long addr,
+ 		const struct elf_phdr *eppnt, int prot, int type,
+ 		unsigned long total_size)
+@@ -405,7 +417,8 @@ static unsigned long elf_load(struct file *filep, unsigned long addr,
+ 				eppnt->p_memsz;
+ 
+ 			/* Zero the end of the last mapped page */
+-			padzero(zero_start);
++			if (padzero(zero_start, prot))
++				return -EFAULT;
+ 		}
+ 	} else {
+ 		map_addr = zero_start = ELF_PAGESTART(addr);
+@@ -712,7 +725,7 @@ static unsigned long load_elf_interp(struct elfhdr *interp_elf_ex,
+ 	 * the file up to the page boundary, and zero it from elf_bss
+ 	 * up to the end of the page.
+ 	 */
+-	if (padzero(elf_bss)) {
++	if (padzero(elf_bss, bss_prot)) {
+ 		error = -EFAULT;
+ 		goto out;
+ 	}
+@@ -1407,7 +1420,7 @@ static int load_elf_library(struct file *file)
+ 		goto out_free_ph;
+ 
+ 	elf_bss = eppnt->p_vaddr + eppnt->p_filesz;
+-	if (padzero(elf_bss)) {
++	if (padzero(elf_bss, PROT_WRITE)) {
+ 		error = -EFAULT;
+ 		goto out_free_ph;
+ 	}
 -- 
 2.34.1
 
