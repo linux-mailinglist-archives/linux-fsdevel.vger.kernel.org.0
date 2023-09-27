@@ -2,121 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 533F77B0761
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Sep 2023 16:54:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38A187B0791
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Sep 2023 17:02:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232134AbjI0Oyg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Sep 2023 10:54:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38878 "EHLO
+        id S232271AbjI0PCp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Sep 2023 11:02:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232100AbjI0Oyf (ORCPT
+        with ESMTP id S232258AbjI0PCo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Sep 2023 10:54:35 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05032F5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Sep 2023 07:54:35 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CA20C433C8;
-        Wed, 27 Sep 2023 14:54:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695826474;
-        bh=yFBbOHqagygOKI/s3kIoNI5TvlV5zBwMyHGvJnOH8hY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HPE7fS7c24OmpiVmCnDiCG3E7Xz5vd0gva+HPyMayWDk6P/YYNPB0rG43bDvNOLp7
-         sCPLtIlOUTNSP82j0N/0F90YjV5NVm7nqTDvXGxr2lINmYu2ggypX/yxAZyLw4jAcC
-         11UqrEttjr+JyxmCbKqy+wZPUuqkfbRjYaVIVjLmfuAQLoTVBQnyqZ4JUUUrVLmuIB
-         gVykFCpV5BG3Z893AmVlRZYT/935/3rAWStIMgOSd/eJQHGzDwbcPp5XOzhVV8Yqfm
-         zEIQouPqNnd93Jbifm4O9gJTfBEdKCRJOXYLXmnGb/9kRWD4QzofOOwoN7oWkxTzbg
-         OCNjy+3LNaymQ==
-Date:   Wed, 27 Sep 2023 07:54:34 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 4/7] fs: remove get_active_super()
-Message-ID: <20230927145434.GD11414@frogsfrogsfrogs>
-References: <20230927-vfs-super-freeze-v1-0-ecc36d9ab4d9@kernel.org>
- <20230927-vfs-super-freeze-v1-4-ecc36d9ab4d9@kernel.org>
+        Wed, 27 Sep 2023 11:02:44 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E45BAF5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Sep 2023 08:02:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=Y4V9nbeTLh81lw4qhUl7hh0+UOvG/La5zTxJu4bZJSo=; b=svWYaR70p9arM7xttAWR0atlnp
+        y3IAll8db2o/dxSHmNVdSFuSwbjejNI7Ln7O1/EaTO9QAzV7wBJ1bfTjyPNXBm6AQI/kcm8HWIQDS
+        ro1odm+xI/wdZne0HmI+vyWjM+DDXMBSRB19qmOZ2QV2JjLPqFClmE0QfbpH7qo5KZT4RL6ePaGqv
+        k0wZiKjnztzLg2E5iwbAvY10BoWly2pzjXw0KdNhUbsGPwKoHtUJnDcmAA1K1z4dk3PoBAJwtuOoi
+        SDYqpwUlD55rXtwBNOLCLhTi3Q10GEAk0DhgV0/puzz2L2hG8GDnI19UZHzUafmBoRcZ+7M2Be6gr
+        xjFEglhw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1qlW3l-00EWkK-0h; Wed, 27 Sep 2023 15:02:41 +0000
+Date:   Wed, 27 Sep 2023 16:02:40 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: Re: [bug report] buffer: hoist GFP flags from grow_dev_page() to
+ __getblk_gfp()
+Message-ID: <ZRREEIwqiy5DijKB@casper.infradead.org>
+References: <592d088a-12c7-40e6-9726-65433e2e5a2d@moroto.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230927-vfs-super-freeze-v1-4-ecc36d9ab4d9@kernel.org>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <592d088a-12c7-40e6-9726-65433e2e5a2d@moroto.mountain>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 27, 2023 at 03:21:17PM +0200, Christian Brauner wrote:
-> This function is now unused so remove it. One less function that uses
-> the global superblock list.
+On Wed, Sep 27, 2023 at 10:40:21AM +0300, Dan Carpenter wrote:
+> Hello Matthew Wilcox (Oracle),
 > 
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> The patch a3c38500d469: "buffer: hoist GFP flags from grow_dev_page()
+> to __getblk_gfp()" from Sep 14, 2023 (linux-next), leads to the
+> following Smatch static checker warning:
+> 
+> 	fs/buffer.c:1065 grow_dev_page()
+> 	warn: NEW missing error code 'ret'
 
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Andrew, please add this -fix patch to "buffer: hoist GFP flags from
+grow_dev_page() to __getblk_gfp()".  I'll send a further cleanup patch
+to make the return values a bit more meaningful.
 
---D
-
-> ---
->  fs/super.c         | 28 ----------------------------
->  include/linux/fs.h |  1 -
->  2 files changed, 29 deletions(-)
-> 
-> diff --git a/fs/super.c b/fs/super.c
-> index 672f1837fbef..181ac8501301 100644
-> --- a/fs/super.c
-> +++ b/fs/super.c
-> @@ -1016,34 +1016,6 @@ void iterate_supers_type(struct file_system_type *type,
->  
->  EXPORT_SYMBOL(iterate_supers_type);
->  
-> -/**
-> - * get_active_super - get an active reference to the superblock of a device
-> - * @bdev: device to get the superblock for
-> - *
-> - * Scans the superblock list and finds the superblock of the file system
-> - * mounted on the device given.  Returns the superblock with an active
-> - * reference or %NULL if none was found.
-> - */
-> -struct super_block *get_active_super(struct block_device *bdev)
-> -{
-> -	struct super_block *sb;
-> -
-> -	if (!bdev)
-> -		return NULL;
-> -
-> -	spin_lock(&sb_lock);
-> -	list_for_each_entry(sb, &super_blocks, s_list) {
-> -		if (sb->s_bdev == bdev) {
-> -			if (!grab_super(sb))
-> -				return NULL;
-> -			super_unlock_excl(sb);
-> -			return sb;
-> -		}
-> -	}
-> -	spin_unlock(&sb_lock);
-> -	return NULL;
-> -}
-> -
->  struct super_block *user_get_super(dev_t dev, bool excl)
->  {
->  	struct super_block *sb;
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index b528f063e8ff..ad0ddc10d560 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3052,7 +3052,6 @@ extern int vfs_readlink(struct dentry *, char __user *, int);
->  extern struct file_system_type *get_filesystem(struct file_system_type *fs);
->  extern void put_filesystem(struct file_system_type *fs);
->  extern struct file_system_type *get_fs_type(const char *name);
-> -extern struct super_block *get_active_super(struct block_device *bdev);
->  extern void drop_super(struct super_block *sb);
->  extern void drop_super_exclusive(struct super_block *sb);
->  extern void iterate_supers(void (*)(struct super_block *, void *), void *);
-> 
-> -- 
-> 2.34.1
-> 
+diff --git a/fs/buffer.c b/fs/buffer.c
+index 3fe293c9f3ca..b1610202eb5c 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -1060,6 +1060,7 @@ grow_dev_page(struct block_device *bdev, sector_t block,
+ 			goto failed;
+ 	}
+ 
++	ret = -ENOMEM;
+ 	bh = folio_alloc_buffers(folio, size, gfp | __GFP_ACCOUNT);
+ 	if (!bh)
+ 		goto failed;
