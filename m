@@ -2,75 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B76F7AF8CE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Sep 2023 05:46:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FB0E7AF884
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Sep 2023 05:16:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229667AbjI0Dqk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Sep 2023 23:46:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52140 "EHLO
+        id S233000AbjI0DQz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Sep 2023 23:16:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229721AbjI0Doj (ORCPT
+        with ESMTP id S233037AbjI0DOv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Sep 2023 23:44:39 -0400
-Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00B4F93FD
-        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Sep 2023 18:09:22 -0700 (PDT)
-Received: by mail-pf1-x434.google.com with SMTP id d2e1a72fcca58-69101d33315so8241043b3a.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Sep 2023 18:09:22 -0700 (PDT)
+        Tue, 26 Sep 2023 23:14:51 -0400
+Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C62D74ED2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Sep 2023 19:34:52 -0700 (PDT)
+Received: by mail-pf1-x42b.google.com with SMTP id d2e1a72fcca58-690bf8fdd1aso8023137b3a.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Sep 2023 19:34:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1695776962; x=1696381762; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Qw4CxLGzjxCr48y5eivoSw8LK175CYAL2oeFqsOXGuY=;
-        b=sprRkkK19UEhJ4cbX57eeyuwjUDYIJ8AilHF+W27JfhDwllgXy2LEDpr1mlovbCpYf
-         qMgOwkxI5K9dMHV173ZsJaSBg2YVMOBWTD/p/tR/JR0xjN4ZryALAK4wTSq/WccI8ef3
-         tV4som2J6avxMSprl4aSs+i9jsJdLh7tQS/lSs2IUQWxlgzfsnJBk6qTPZjKM2enF7Ox
-         ZLJJGj9cqFrxaZAiMG3X0W1PgtSjWDLMtTyHXYho8NSp2dnOUY+sitHKmls/AlJx+Nex
-         Tsj80k68Ul/iEcwvKREuPn7UThmKRWq2NYl22KGQXBIMPCf1YcUUru6oVr/7pZOUha1t
-         atIQ==
+        d=chromium.org; s=google; t=1695782092; x=1696386892; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=MEoyNhEirsDID+iSINOkm/zSxakfDUSa2NzmIBoMrtU=;
+        b=GMGLItkY20tnShqsQSE1ZhhboeJoA4hi90EFgQw+P5N6+y00MJxEgvvxs8L44DXShX
+         336Qt0yAie1pjEVaU79cnyRBt7skxYSzpxnG/nisuELTEKMCPBJWk5pdOsfs+4/AB0xq
+         5zSFPiqdDv2RHeTYJvUYWap4ai0J42PbGvQno=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695776962; x=1696381762;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Qw4CxLGzjxCr48y5eivoSw8LK175CYAL2oeFqsOXGuY=;
-        b=vwNT2o4La1sLQOZ5NCnkP9Iuw0a/NI4PYwzDiisz7Ld8DLC2y2Wy2MVN7CSmt5z8PJ
-         U99oHifjMZXP1lZeAmeoIIM561cBNEB+G+9/A4px4T/o10NhHHTVQMqCNULWEGfmMD5o
-         aJmOU6Fb5hoKyoJ8WlBmJPFMtvCGbjC1i3L4rbw3up5/IxCgWuA3KWTGIC5R0gYBNiEY
-         W1Ghu1gAF/XFdv0q3pIJsqQ7z+wxKqfMElKgA2zfgzUL+jnaQhI5WpbWHiB33+0l7amK
-         p3QuVgyYHS65ai/TeLD1LvEsSK6Cm9xdD3jS9M8h2wFDYs2nG2dr4NfeKX4Fuxi1JcYm
-         /xow==
-X-Gm-Message-State: AOJu0YwfJlCVD99HIjjtidVDhHmNSEJnSaLmONIgoUfuae6B83on+oni
-        7l/xTwj/UO0W3yLaAFUJezYYew==
-X-Google-Smtp-Source: AGHT+IFjzLAZErhj6aNRrOCOr0H+JPBoEkdVkrJMs6di7mDeUgXTRxM6Wv+Lhh82W2upUAwOqIoahQ==
-X-Received: by 2002:a05:6a00:2d16:b0:690:4362:7011 with SMTP id fa22-20020a056a002d1600b0069043627011mr790618pfb.24.1695776962386;
-        Tue, 26 Sep 2023 18:09:22 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-20-59.pa.nsw.optusnet.com.au. [49.180.20.59])
-        by smtp.gmail.com with ESMTPSA id p14-20020a62ab0e000000b0068e49cb1692sm10551350pff.1.2023.09.26.18.09.21
+        d=1e100.net; s=20230601; t=1695782092; x=1696386892;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MEoyNhEirsDID+iSINOkm/zSxakfDUSa2NzmIBoMrtU=;
+        b=Zn3/1/QStsGjKJi68wkbD8LL+YJJzbvV3aIwC88fiQdqnkaCaxyZbxqci5hzYOQug9
+         zh4aGRRKDWi/eFpgENxeLVuYltqiCDxvTKPT7yoJBn1h5JzFRMUzY3VSUsgQLQqnYYdQ
+         +sjY6GuCS8KLKcf/UjGbW8RepNDdW+xxrTLeKq6NNsYoIvCju8FWENt8hGA8eG90Yr3A
+         sK23yQdJVGBryfOrJ+ReDnGmNAVGILSXqVF0WuITf0qkpnkOwENyhba2g7da6we/gqFf
+         FvEUHYpOsC3ja/1GsKgLgJj2C7ifWqhqwyY2KXfYKzzGNqB0p6azWgEltnWdUv8rNn2a
+         lpRA==
+X-Gm-Message-State: AOJu0YwM+CosASZ5xCzcoOO/L6nFEyFSFBgKcuc+Wgr77YkIMF+O4CUL
+        0EWBQUvFz9Za1VP5w2n22ajXGg==
+X-Google-Smtp-Source: AGHT+IH3mtSkhCwY4l5NpnakMGAz2fqDSfIVRDAs1r22pVm2l9sPYt/EIE/sGjn2HyWVPFLAH2dqvA==
+X-Received: by 2002:a05:6a00:139d:b0:692:780a:de89 with SMTP id t29-20020a056a00139d00b00692780ade89mr882056pfg.33.1695782092187;
+        Tue, 26 Sep 2023 19:34:52 -0700 (PDT)
+Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id z26-20020aa785da000000b006883561b421sm10697260pfn.162.2023.09.26.19.34.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Sep 2023 18:09:21 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-        (envelope-from <david@fromorbit.com>)
-        id 1qlJ3H-0064GN-0q;
-        Wed, 27 Sep 2023 11:09:19 +1000
-Date:   Wed, 27 Sep 2023 11:09:19 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Andreas Dilger <adilger@dilger.ca>
-Cc:     cem@kernel.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Hugh Dickins <hughd@google.com>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH 3/3] tmpfs: Add project quota interface support for
- get/set attr
-Message-ID: <ZROAvzJ/XahcQE14@dread.disaster.area>
-References: <20230925130028.1244740-1-cem@kernel.org>
- <20230925130028.1244740-4-cem@kernel.org>
- <E5CA9BA7-513A-4D63-B183-B137B727D026@dilger.ca>
+        Tue, 26 Sep 2023 19:34:51 -0700 (PDT)
+Date:   Tue, 26 Sep 2023 19:34:50 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Sebastian Ott <sebott@redhat.com>,
+        Pedro Falcato <pedro.falcato@gmail.com>,
+        Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Mark Brown <broonie@kernel.org>, Willy Tarreau <w@1wt.eu>,
+        sam@gentoo.org, Rich Felker <dalias@libc.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] binfmt_elf: Support segments with 0 filesz and
+ misaligned starts
+Message-ID: <202309261929.BE87B8B7@keescook>
+References: <20230914-bss-alloc-v1-1-78de67d2c6dd@weissschuh.net>
+ <36e93c8e-4384-b269-be78-479ccc7817b1@redhat.com>
+ <87zg1bm5xo.fsf@email.froward.int.ebiederm.org>
+ <37d3392c-cf33-20a6-b5c9-8b3fb8142658@redhat.com>
+ <87jzsemmsd.fsf_-_@email.froward.int.ebiederm.org>
+ <84e974d3-ae0d-9eb5-49b2-3348b7dcd336@redhat.com>
+ <202309251001.C050864@keescook>
+ <87v8bxiph5.fsf@email.froward.int.ebiederm.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <E5CA9BA7-513A-4D63-B183-B137B727D026@dilger.ca>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87v8bxiph5.fsf@email.froward.int.ebiederm.org>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -78,66 +85,128 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 26, 2023 at 02:28:06PM -0600, Andreas Dilger wrote:
-> I've added Dave to the CC list, since he has a deep understanding
-> of the projid code since it originated from XFS.
+On Mon, Sep 25, 2023 at 10:27:02PM -0500, Eric W. Biederman wrote:
+> Kees Cook <keescook@chromium.org> writes:
 > 
-> On Sep 25, 2023, at 7:00 AM, cem@kernel.org wrote:
+> > On Mon, Sep 25, 2023 at 05:27:12PM +0200, Sebastian Ott wrote:
+> >> On Mon, 25 Sep 2023, Eric W. Biederman wrote:
+> >> > 
+> >> > Implement a helper elf_load that wraps elf_map and performs all
+> >> > of the necessary work to ensure that when "memsz > filesz"
+> >> > the bytes described by "memsz > filesz" are zeroed.
+> >> > 
+> >> > Link: https://lkml.kernel.org/r/20230914-bss-alloc-v1-1-78de67d2c6dd@weissschuh.net
+> >> > Reported-by: Sebastian Ott <sebott@redhat.com>
+> >> > Reported-by: Thomas Weiﬂschuh <linux@weissschuh.net>
+> >> > Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+> >> > ---
+> >> > fs/binfmt_elf.c | 111 +++++++++++++++++++++---------------------------
+> >> > 1 file changed, 48 insertions(+), 63 deletions(-)
+> >> > 
+> >> > Can you please test this one?
+> >
+> > Eric thanks for doing this refactoring! This does look similar to the
+> > earlier attempt:
+> > https://lore.kernel.org/lkml/20221106021657.1145519-1-pedro.falcato@gmail.com/
+> > and it's a bit easier to review.
+> 
+> I need to context switch away for a while so Kees if you will
+> I will let you handle the rest of this one.
+> 
+> 
+> A couple of thoughts running through my head for anyone whose ambitious
+> might include cleaning up binfmt_elf.c
+> 
+> The elf_bss variable in load_elf_binary can be removed.
+> 
+> Work for a follow on patch is using my new elf_load in load_elf_interp
+> and possibly in load_elf_library.  (More code size reduction).
+> 
+> An outstanding issue is if the first segment has filesz 0, and has a
+> randomized locations.  But that is the same as today.
+> 
+> There is a whole question does it make sense for the elf loader
+> to have it's own helper vm_brk_flags in mm/mmap.c or would it
+> make more sense for binfmt_elf to do what binfmt_elf_fdpic does and
+> have everything to go through vm_mmap.
+> 
+> I think replacing vm_brk_flags with vm_mmap would allow fixing the
+> theoretical issue of filesz 0 and randomizing locations.
+> 
+> 
+> 
+> In this change I replaced an open coded padzero that did not clear
+> all of the way to the end of the page, with padzero that does.
+
+Yeah, the resulting code is way more readable now.
+
+> I also stopped checking the return of padzero as there is at least
+> one known case where testing for failure is the wrong thing to do.
+> It looks like binfmt_elf_fdpic may have the proper set of tests
+> for when error handling can be safely completed.
+> 
+> I found a couple of commits in the old history
+> https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git,
+> that look very interesting in understanding this code.
+> 
+> commit 39b56d902bf3 ("[PATCH] binfmt_elf: clearing bss may fail")
+> commit c6e2227e4a3e ("[SPARC64]: Missing user access return value checks in fs/binfmt_elf.c and fs/compat.c")
+> commit 5bf3be033f50 ("v2.4.10.1 -> v2.4.10.2")
+> 
+> Looking at commit 39b56d902bf3 ("[PATCH] binfmt_elf: clearing bss may fail"):
+> >  commit 39b56d902bf35241e7cba6cc30b828ed937175ad
+> >  Author: Pavel Machek <pavel@ucw.cz>
+> >  Date:   Wed Feb 9 22:40:30 2005 -0800
 > > 
-> > From: Carlos Maiolino <cem@kernel.org>
-> > 
-> > Not project quota support is in place, enable users to use it.
+> >     [PATCH] binfmt_elf: clearing bss may fail
+> >     
+> >     So we discover that Borland's Kylix application builder emits weird elf
+> >     files which describe a non-writeable bss segment.
+> >     
+> >     So remove the clear_user() check at the place where we zero out the bss.  I
+> >     don't _think_ there are any security implications here (plus we've never
+> >     checked that clear_user() return value, so whoops if it is a problem).
+> >     
+> >     Signed-off-by: Pavel Machek <pavel@suse.cz>
+> >     Signed-off-by: Andrew Morton <akpm@osdl.org>
+> >     Signed-off-by: Linus Torvalds <torvalds@osdl.org>
 > 
-> There is a peculiar behavior of project quotas, that rename across
-> directories with different project IDs and PROJINHERIT set should
-> cause the project ID to be updated (similar to BSD setgid).
->
-> For renaming regular files and other non-directories, it is OK to
-> change the projid and update the quota for the old and new IDs
-> to avoid copying all of the data needlessly.  For directories this
-> (unfortunately) means that the kernel should return -EXDEV if the
-> project IDs don't match, and then "mv" will create a new target
-> directory and resume moving the files (which are thankfully still
-> done with a rename() call if possible).
+> It seems pretty clear that binfmt_elf_fdpic with skipping clear_user
+> for non-writable segments and otherwise calling clear_user (aka padzero)
+> and checking it's return code is the right thing to do.
 > 
-> The reason for this is that just renaming the directory does not
-> atomically update the projid on all of the (possibly millions of)
-> sub-files/sub-dirs, which is required for PROJINHERIT directories.
+> I just skipped the error checking as that avoids breaking things.
+> 
+> It looks like Borland's Kylix died in 2005 so it might be safe to
+> just consider read-only segments with memsz > filesz an error.
 
-Yup, PROJINHERIT implies that project quotas are being used to
-implement directory tree quotas, hence everything in the destination
-directory should have the same projid as the parent.  This code in
-xfs_rename() implements that restriction:
+I really feel like having a read-only BSS is a pathological state that
+should be detected early?
 
-        /*
-         * If we are using project inheritance, we only allow renames
-         * into our tree when the project IDs are the same; else the
-         * tree quota mechanism would be circumvented.
-         */
-        if (unlikely((target_dp->i_diflags & XFS_DIFLAG_PROJINHERIT) &&
-                     target_dp->i_projid != src_ip->i_projid)) {
-                error = -EXDEV;
-                goto out_trans_cancel;
-        }
+> Looking at commit 5bf3be033f50 ("v2.4.10.1 -> v2.4.10.2") the
+> binfmt_elf.c bits confirm my guess that the weird structure is because
+> before that point binfmt_elf.c assumed there would be only a single
+> segment with memsz > filesz.  Which is why the code was structured so
+> weirdly.
 
-> Another option for tmpfs to maintain this PROJINHERIT behavior would
-> be to rename the directory and then spawn a background kernel thread
-> to change the projids on the whole tree.  Since tmpfs is an in-memory
-> filesystem there will be a "limited" number of files and subdirs
-> to update, and you don't need to worry about error handling if the
-> system crashes before the projid updates are done.
+Agreed.
 
-Except that can get EDQUOT half way through and now there's nothing
-to report the ENOSPC error to, nor any way that the application can
-interrupt and/or recover the situation. I think that's a
-non-starter.
+> Looking a little farther it looks like the binfmt_elf.c was introduced
+> in Linux v1.0, with essentially the same structure in load_elf_binary as
+> it has now.  Prior to that Linux hard coded support for a.out binaries
+> in execve.  So if someone wants to add a Fixes tag it should be
+> "Fixes: v1.0"
+> 
+> Which finally explains to me why the code is so odd.  For the most part
+> the code has only received maintenance for the last 30 years or so.
+> Strictly 29 years, but 30 has a better ring to it.
+> 
+> Anyway those are my rambling thoughts that might help someone.
+> For now I will be happy if we can get my elf_load helper tested
+> to everyone's satisfaction and merged.
 
-And, quite frankly, it's also massive feature creep as well as
-premature optimisation. We don't need tmpfs project quotas to be
-"smart" like this; we just need the initial support patch set to -do
-the right thing-.
+I'm probably going to pull most of this email into the commit log for
+the v2 patch -- there's good history here worth capturing.
 
--Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+Kees Cook
