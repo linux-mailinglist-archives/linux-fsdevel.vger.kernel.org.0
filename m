@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 13A297B19BD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Sep 2023 13:05:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BAAD77B19BB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Sep 2023 13:05:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232093AbjI1LFj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Sep 2023 07:05:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38464 "EHLO
+        id S232096AbjI1LFm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Sep 2023 07:05:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44512 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232014AbjI1LEn (ORCPT
+        with ESMTP id S232098AbjI1LEp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Sep 2023 07:04:43 -0400
+        Thu, 28 Sep 2023 07:04:45 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D8F21B4;
-        Thu, 28 Sep 2023 04:04:41 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DFD9C433C9;
-        Thu, 28 Sep 2023 11:04:40 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE9081BF;
+        Thu, 28 Sep 2023 04:04:42 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 076DEC433C8;
+        Thu, 28 Sep 2023 11:04:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695899081;
-        bh=+GMC4PjnNkP7Yi4b9udX8bXyU16DKLRsXZYo4cptrO8=;
+        s=k20201202; t=1695899082;
+        bh=HiIKHh5EcW/iS72FPhqe/DHHFDkon2IkVvSanOATOiU=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=ht1vnVyW/c4zmL5Lt42VSykPHnoEj7AdgEUYbSusR7nMwwPloOhdvyU9DLfeH/wWj
-         GBU8OrrwrxxKHRFysO1RJ8Ijd95p6WQ8qW2Rn6gLZt8VhWBpscsIFYXkCZF6gCnNyC
-         XndQPDS6+tlc+g/G8taFL4EXoYYy0sHFFUOMni0CvoiF5rUw4rSpYep627g4pkj1s7
-         aMC3FEuUXL/nd3ZKT9PJIXETA0kmVzmzeOstP5Cp0wKTqYsOlwkZBiG7aJgMiQlWCA
-         cynEX+MtFsns6fmP0I4EaqftzPr3Me5CZLzyB7a72FlBMoihhcEtm5ZM8wmu07qsb+
-         SVuXNU0+JcA0Q==
+        b=m4E24nlcsoUVf3iXi3sNHBBkxoN5T5YrnZm9acWarGGWm0NqFknQHcE37lDrpXATf
+         dVapd/Mu1gNACYrTYBPTtLxfANwQ1c953/lWmA85n8KnOr6mcQk07SiT/nliArch6e
+         YRyJvdz5tWja1IunIUcGDzt7oIiefCDmfljgyunhH6JvjkeCvtsgt7cmGlCcvpov7u
+         BvRPRSmMvsZr9Ih0bKoev3o1OQcgS5vV8nkjlu8BOCZ9j/56bqLKRCfjfmaFm7kXJG
+         3Klbm+EI65J2J16Tg3oOSy0O6a2SI49BWTDnqbsqJXlmzMxbTVCe/SYpOKQvTa1HDC
+         RBzotlpNnbbAA==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 25/87] fs/configfs: convert to new inode {a,m}time accessors
-Date:   Thu, 28 Sep 2023 07:02:34 -0400
-Message-ID: <20230928110413.33032-24-jlayton@kernel.org>
+Subject: [PATCH 26/87] fs/cramfs: convert to new inode {a,m}time accessors
+Date:   Thu, 28 Sep 2023 07:02:35 -0400
+Message-ID: <20230928110413.33032-25-jlayton@kernel.org>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20230928110413.33032-1-jlayton@kernel.org>
 References: <20230928110300.32891-1-jlayton@kernel.org>
@@ -51,42 +51,24 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/configfs/inode.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ fs/cramfs/inode.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/configfs/inode.c b/fs/configfs/inode.c
-index fbdcb3582926..dcc22f593e43 100644
---- a/fs/configfs/inode.c
-+++ b/fs/configfs/inode.c
-@@ -88,7 +88,7 @@ int configfs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
- static inline void set_default_inode_attr(struct inode * inode, umode_t mode)
- {
- 	inode->i_mode = mode;
--	inode->i_atime = inode->i_mtime = inode_set_ctime_current(inode);
-+	simple_inode_init_ts(inode);
- }
+diff --git a/fs/cramfs/inode.c b/fs/cramfs/inode.c
+index 5ee7d7bbb361..9168b2ec9497 100644
+--- a/fs/cramfs/inode.c
++++ b/fs/cramfs/inode.c
+@@ -133,8 +133,8 @@ static struct inode *get_cramfs_inode(struct super_block *sb,
+ 	}
  
- static inline void set_inode_attr(struct inode * inode, struct iattr * iattr)
-@@ -96,8 +96,8 @@ static inline void set_inode_attr(struct inode * inode, struct iattr * iattr)
- 	inode->i_mode = iattr->ia_mode;
- 	inode->i_uid = iattr->ia_uid;
- 	inode->i_gid = iattr->ia_gid;
--	inode->i_atime = iattr->ia_atime;
--	inode->i_mtime = iattr->ia_mtime;
-+	inode_set_atime_to_ts(inode, iattr->ia_atime);
-+	inode_set_mtime_to_ts(inode, iattr->ia_mtime);
- 	inode_set_ctime_to_ts(inode, iattr->ia_ctime);
- }
- 
-@@ -171,7 +171,7 @@ struct inode *configfs_create(struct dentry *dentry, umode_t mode)
- 		return ERR_PTR(-ENOMEM);
- 
- 	p_inode = d_inode(dentry->d_parent);
--	p_inode->i_mtime = inode_set_ctime_current(p_inode);
-+	inode_set_mtime_to_ts(p_inode, inode_set_ctime_current(p_inode));
- 	configfs_set_inode_lock_class(sd, inode);
- 	return inode;
- }
+ 	/* Struct copy intentional */
+-	inode->i_mtime = inode->i_atime = inode_set_ctime_to_ts(inode,
+-								zerotime);
++	inode_set_mtime_to_ts(inode,
++			      inode_set_atime_to_ts(inode, inode_set_ctime_to_ts(inode, zerotime)));
+ 	/* inode->i_nlink is left 1 - arguably wrong for directories,
+ 	   but it's the best we can do without reading the directory
+ 	   contents.  1 yields the right result in GNU find, even
 -- 
 2.41.0
 
