@@ -2,84 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BB23D7B1E32
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Sep 2023 15:26:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 436757B1ED5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Sep 2023 15:45:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231532AbjI1N0C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Sep 2023 09:26:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37060 "EHLO
+        id S232263AbjI1Npj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Sep 2023 09:45:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59826 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230420AbjI1N0C (ORCPT
+        with ESMTP id S231871AbjI1Npi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Sep 2023 09:26:02 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB60319B;
-        Thu, 28 Sep 2023 06:26:00 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B9FDC433C8;
-        Thu, 28 Sep 2023 13:25:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695907560;
-        bh=Hw1kdCJHTUKyVQI8cwPwgA89Zea2YP/j5S8sNYlfyaA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dblYqe+yhoU6HknPuT1Li7tqtIHqkPT31Fqgr9cM035dTtSl+V/SnVA2/hLqrVpL0
-         1A+90K64uvNwVjYEMnbgsKqZvysTvJsMZq95Qqd+f7F9/M5forItau/PMFJBSv3qfe
-         /s51Fc3utpAfHRRTkZ6XQ/3eKy812zBXIRMg3FKmJBF6BvHf9SCxbynp/nnUaUxYXV
-         PS8WG1Yh3AheIdqxO06HfN+24LUrexjlE4J2EnsrgZ2r8ZS3tvsZFfH18tw3pLak3H
-         ed2WmB/sYUtWYJEMozJ5EfQvBUl/NhVMpMoWTUtBixZG1uNcaumlL0hcPsFfxDi1XX
-         OetJ6nyiXiqnA==
-Date:   Thu, 28 Sep 2023 15:25:56 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Mateusz Guzik <mjguzik@gmail.com>, viro@zeniv.linux.org.uk,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2] vfs: shave work on failed file open
-Message-ID: <20230928-kulleraugen-restaurant-dd14e2a9c0b0@brauner>
-References: <20230926162228.68666-1-mjguzik@gmail.com>
- <CAHk-=wjUCLfuKks-VGTG9hrFAORb5cuzqyC0gRXptYGGgL=YYg@mail.gmail.com>
- <CAGudoHGej+gmmv0OOoep2ENkf7hMBib-KL44Fu=Ym46j=r6VEA@mail.gmail.com>
- <20230927-kosmetik-babypuppen-75bee530b9f0@brauner>
- <CAHk-=whLadznjNKZPYUjxVzAyCH-rRhb24_KaGegKT9E6A86Kg@mail.gmail.com>
- <CAGudoHH2mvfjfKt+nOCEOfvOrQ+o1pqX63tN2r_1+bLZ4OqHNA@mail.gmail.com>
- <CAHk-=wjmgord99A-Gwy3dsiG1YNeXTCbt+z6=3RH_je5PP41Zw@mail.gmail.com>
- <ZRR1Kc/dvhya7ME4@f>
- <CAHk-=wibs_xBP2BGG4UHKhiP2B=7KJnx_LL18O0bGK8QkULLHg@mail.gmail.com>
+        Thu, 28 Sep 2023 09:45:38 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7FA2194;
+        Thu, 28 Sep 2023 06:45:36 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id ffacd0b85a97d-3247d69ed2cso2436639f8f.0;
+        Thu, 28 Sep 2023 06:45:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1695908735; x=1696513535; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=s3ivXPHPFKDuDR/2N/73eTsr7zstsBXJOHHUFK4hFGk=;
+        b=Rk7egRWFgzDY49cueU9wBVgP0mkayb5esMI+6EnDunAt34VQzX31GMKIZM0OhZMcE/
+         9V7jAYyR4cTpSLQdGvPuIyLuEd3nSkFtrQwKbfJmHZOoKorApFuprNEpuaTu7180cXWi
+         87374VURU91rl4vshzp0pSirOIsO9ETydxHi/QEbV0Ok6qBtksxidIGQRueHGfWrpahM
+         nNpTDVP6lTMfl8x3g7mEhnVtpoZLatIn804/Mnl0XS6Ror4KpqQ9Bo9oe0Dcm+deYzRy
+         pRwGgrZ7qNmEyN9pXTXqsY0LouAOnky2Kyo36prbNisjjstts3AMi+TOshsNfZQrGFVi
+         McHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695908735; x=1696513535;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=s3ivXPHPFKDuDR/2N/73eTsr7zstsBXJOHHUFK4hFGk=;
+        b=Syl1JMdk+pUYmixFa3tT6FWKiOjil5kAV19AYhZ7AWAHoAZwBr7iCE/bm+ST4DIdtb
+         Peqg/vG1wsHp1N+jsIdqcoezJTqBonlsQjmJeRi4+NGwSi70d83VAlXPIWjMlsciyyAP
+         R9NTcbb6koJS325SibesdQNhbZJ6IL1N8k8U4EgCaFY8PXRNjdCKG8SpoQsJ5N9MrAGF
+         KDEGeUV7ql7e0WILJa+t9KveaG884YZuyybJ+X9mjLbuQb3g2jLA0fTQ5fpxcYV3/L93
+         r2EV93FM7OJ1epBIdPCPN7HyO2v+i8aGj8fGIrtwq2Fky4msbgqtvnsLvZYYqOMdgPGg
+         u59g==
+X-Gm-Message-State: AOJu0YxSEyhhlNbjcrLE0NfDTF0a6M8WxX5w8lUa8mWFA1RMdruiFSbP
+        qF6iXCSKfehoZ17Sy0rPaAk=
+X-Google-Smtp-Source: AGHT+IEgA2VU/otTO2kSxabbhjSlEY4LnLZ0S7VtZGLp64cdLeyg/mgibPFPOe61ybTxNmZdk8Rr1g==
+X-Received: by 2002:a5d:414e:0:b0:320:1d1:71c4 with SMTP id c14-20020a5d414e000000b0032001d171c4mr1205634wrq.23.1695908734828;
+        Thu, 28 Sep 2023 06:45:34 -0700 (PDT)
+Received: from f (cst-prg-67-191.cust.vodafone.cz. [46.135.67.191])
+        by smtp.gmail.com with ESMTPSA id c25-20020adfa319000000b00324853fc8adsm1458270wrb.104.2023.09.28.06.45.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Sep 2023 06:45:33 -0700 (PDT)
+Date:   Thu, 28 Sep 2023 15:45:13 +0200
+From:   Mateusz Guzik <mjguzik@gmail.com>
+To:     =?utf-8?B?THXDrXM=?= Henriques <lhenriques@suse.de>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs: fix possible extra iput() in do_unlinkat()
+Message-ID: <20230928134513.l2y3eknt2hfq3qgx@f>
+References: <20230928131129.14961-1-lhenriques@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wibs_xBP2BGG4UHKhiP2B=7KJnx_LL18O0bGK8QkULLHg@mail.gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230928131129.14961-1-lhenriques@suse.de>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> Which all seems to be the case already, so with the put_cred() not
-> needing the RCU delay, I thing we really could do this patch (note:
+On Thu, Sep 28, 2023 at 02:11:29PM +0100, Luís Henriques wrote:
+> Because inode is being initialised before checking if dentry is negative,
+> and the ihold() is only done if the dentry is *not* negative, the cleanup
+> code may end-up doing an extra iput() on that inode.
+> 
+> Fixes: b18825a7c8e3 ("VFS: Put a small type field into struct dentry::d_flags")
+> Signed-off-by: Luís Henriques <lhenriques@suse.de>
+> ---
+> Hi!
+> 
+> I was going to also remove the 'if (inode)' before the 'iput(inode)',
+> because 'iput()' already checks for NULL anyway.  But since I probably
+> wouldn't have caught this bug if it wasn't for that 'if', I decided to
+> keep it there.  But I can send v2 with that change too if you prefer.
+> 
+> Cheers,
+> --
+> Luís
+> 
+>  fs/namei.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 567ee547492b..156a570d7831 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -4386,11 +4386,9 @@ int do_unlinkat(int dfd, struct filename *name)
+>  	if (!IS_ERR(dentry)) {
+>  
+>  		/* Why not before? Because we want correct error value */
+> -		if (last.name[last.len])
+> +		if (last.name[last.len] || d_is_negative(dentry))
+>  			goto slashes;
+>  		inode = dentry->d_inode;
+> -		if (d_is_negative(dentry))
+> -			goto slashes;
+>  		ihold(inode);
+>  		error = security_path_unlink(&path, dentry);
+>  		if (error)
 
-So I spent a good chunk of time going through this patch.
+I ran into this myself, but I'm pretty sure there is no bug here. The
+code is just incredibly misleading and it became this way from the
+sweeping change introducing d_is_negative. I could not be bothered to
+argue about patching it so I did not do anything. ;)
 
-Before file->f_cred was introduced file->f_{g,u}id would have been
-accessible just under rcu protection. And file->f_cred->f_fs{g,u}id
-replaced that access. So I think the intention was that file->f_cred
-would function the same way, i.e., it would be possible to go from file
-to cred under rcu without requiring a reference.
+AFAICS it is an invariant that d_is_negative passes iff d_inode is NULL.
 
-But basically, file->f_cred is the only field that would give this
-guarantee. Other pointers such as file->f_security
-(security_file_free()) don't and are freed outside of the rcu delay
-already as well.
-
-This patch means that if someone wants to access file->f_cred under rcu
-they now need to call get_file_rcu() first.
-
-Nothing has relied on this rcu-only file->f_cred quirk/feature until now
-so I think it's fine to change it.
-
-Does that make sense?
-
-Please take a look at:
-https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/commit/?h=vfs.misc&id=e3f15ee79197fc8b17d3496b6fa4fa0fc20f5406
-for testing.
+Personally I support the patch, but commit message needs to stop
+claiming a bug.
