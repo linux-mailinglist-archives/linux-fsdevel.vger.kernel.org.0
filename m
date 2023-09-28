@@ -2,88 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E88657B1731
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Sep 2023 11:22:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D8317B15E0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Sep 2023 10:18:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231786AbjI1JWv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Sep 2023 05:22:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56844 "EHLO
+        id S231246AbjI1ISj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Sep 2023 04:18:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56836 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231535AbjI1JWi (ORCPT
+        with ESMTP id S229605AbjI1ISh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Sep 2023 05:22:38 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFD6F1FE9;
-        Thu, 28 Sep 2023 02:22:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description;
-        bh=/LbGuJS6p8ohAFxyUvYH7JE8uergoje10e9hBkx1drM=; b=FiJsRqJBMchqjwD4JGykDKK8Wr
-        TFIgSWtM+AqF2kjFV3aHNcGwx5mUY4vl/nLmcPZvW9n472XQNhpEML524OSjbNZIxLgDTCADZJOKh
-        hdUYnHZvtOY7Cz0AI8UYneHj9mayCZwlOoDSMFRa/C8nClo9DWFaRJ4s1AjjLj+kh3NaGUrhCTfhb
-        BjD3bVXryUf+57o7ckyOzkmOWgzTgvZVh63iiO6aLGbxSEp1PqzpDcrKMCKtsDXQ8xsuvYxCWmC8L
-        iuio9M0LPZYfTF/Ww/WPFVQsN4sxecHeOPimeRCa/RH0YyGpE83SDNRtjY+pnTPc+gEGUUyaIQTGi
-        VznkQPMg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qlnDd-001f5z-Cx; Thu, 28 Sep 2023 09:22:01 +0000
-Date:   Thu, 28 Sep 2023 10:22:01 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, Miklos Szeredi <miklos@szeredi.hu>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        Jiufei Xue <jiufei.xue@linux.alibaba.com>
-Subject: Re: [PATCH] ovl: punt write aio completion to workqueue
-Message-ID: <ZRVFuReyZGbIXOBM@casper.infradead.org>
-References: <20230928064636.487317-1-amir73il@gmail.com>
- <fb6c8786-5308-412e-9d87-dac6fd35aa32@kernel.dk>
- <CAOQ4uxjC6qif-MZqkLUsd0RixD0xVHVuGDT=7HCX0kcY1okv2A@mail.gmail.com>
+        Thu, 28 Sep 2023 04:18:37 -0400
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C056298;
+        Thu, 28 Sep 2023 01:18:35 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.30.67.169])
+        by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Rx5w75hL6z4f3kJw;
+        Thu, 28 Sep 2023 16:18:31 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.124.27])
+        by APP3 (Coremail) with SMTP id _Ch0CgAngVDXNhVlhwUABg--.50964S2;
+        Thu, 28 Sep 2023 16:18:32 +0800 (CST)
+From:   Kemeng Shi <shikemeng@huaweicloud.com>
+To:     viro@zeniv.linux.org.uk, brauner@kernel.org, dhowells@redhat.com
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] Two cleanups to pipe
+Date:   Fri, 29 Sep 2023 00:17:50 +0800
+Message-Id: <20230928161752.142268-1-shikemeng@huaweicloud.com>
+X-Mailer: git-send-email 2.30.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxjC6qif-MZqkLUsd0RixD0xVHVuGDT=7HCX0kcY1okv2A@mail.gmail.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+X-CM-TRANSID: _Ch0CgAngVDXNhVlhwUABg--.50964S2
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+        VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYn7kC6x804xWl14x267AKxVWUJVW8JwAF
+        c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2jI8I6cxK62
+        vIxIIY0VWUZVW8XwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xII
+        jxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjc
+        xK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IY
+        c4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI
+        0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY
+        0x0EwIxGrwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
+        0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1l
+        IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxV
+        AFwI0_Cr0_Gr1UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv67AK
+        xVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
+        xUI-eoUUUUU
+X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=0.0 required=5.0 tests=BAYES_00,DATE_IN_FUTURE_06_12,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 28, 2023 at 12:15:00PM +0300, Amir Goldstein wrote:
-> On Thu, Sep 28, 2023 at 10:08 AM Jens Axboe <axboe@kernel.dk> wrote:
-> > On 9/28/23 12:46 AM, Amir Goldstein wrote:
-> > >               ret = -ENOMEM;
-> > >               aio_req = kmem_cache_zalloc(ovl_aio_request_cachep, GFP_KERNEL);
-> > >               if (!aio_req)
-> >
-> > Unrelated to this patch, but is this safe? You're allocating an aio_req
-> > from within the ->write_iter() handler, yet it's GFP_KERNEL? Seems like
-> > that should at least be GFP_NOFS, no?
-> 
-> I could be wrong, but since overlayfs does not have any page cache
-> of its own, I don't think memory reclaim poses a risk.
+This series tries to remove some unnecessary check in pipe. More details
+can be found in respective patches. Thanks!
 
-Use the scoped APIs, people!  GFP_NOFS needs to die.  If your filesystem
-cannot tolerate being reentered, call memalloc_nofs_save() / restore()
-when it can tolerate being reentered.
+Kemeng Shi (2):
+  pipe: remove pipe_full check with wrong head in pipe_write
+  pipe: avoid repeat check of pipe->readers under pipe_lock
 
-> > That aside, punting to a workqueue is a very heavy handed solution to
-> > the problem. Maybe it's the only one you have, didn't look too closely
-> > at it, but it's definitely not going to increase your performance...
-> 
-> I bet it won't... but I need to worry about correctness.
-> 
-> What I would like to know, and that is something that I tried
-> to ask you in the Link: discussion, but perhaps I wasn't clear -
-> Are there any IOCB flags that the completion caller may set,
-> that will hint the submitter that completion is not from interrupt
-> context and that punting to workqueue is not needed?
+ fs/pipe.c | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
-I'd really like page cache write completions to not be handled in
-the interrupt handler.  Then we could make the i_pages lock not an
-interrupt-disabling lock any more.  I think that'd best be handled in a
-workqueue too, but maybe there's a better solution nowadays.
+-- 
+2.30.0
+
