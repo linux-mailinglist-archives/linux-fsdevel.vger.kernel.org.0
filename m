@@ -2,192 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AC9B97B1F37
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Sep 2023 16:09:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DFF87B1F4A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Sep 2023 16:16:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232508AbjI1OJY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Sep 2023 10:09:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39608 "EHLO
+        id S232521AbjI1OQD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Sep 2023 10:16:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231576AbjI1OJX (ORCPT
+        with ESMTP id S232437AbjI1OQD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Sep 2023 10:09:23 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F5BAF9;
-        Thu, 28 Sep 2023 07:09:22 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E54E0C433C8;
-        Thu, 28 Sep 2023 14:09:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695910161;
-        bh=1OHYrgJpZE5GatH7jXt4ovEw8089Axq7qZtFT+kGgxQ=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=GEE2hqn6D/GeeGUB1nNJiIppgNlMnhn4odSY/su2RN5plTDdf4z2Y6CXd4tBTnvp6
-         LzQJfZya3Mt8QT5KMHwmfFdlwMUY/WYLXGJI5g7XgcEp0c1WzOCJdVRPv7B9a81zEe
-         CV1vdN04Z7PV3O411Xy4gHhSYX3doGJ6ADT/8lFj+MyK/8BFJHyysMgpUsOscNtu6S
-         gMCOzIoCxhy4Vv/bHxZEqbTyGa4Z9NuzAx24r3FoMm4DAVZCrR0BWuW9DZTOIYOm9A
-         U5LW6XxlD84bmldH3jVxsn9v+zry6SUAi1+r7GYMMo1VOfM1H6EF2QJ83Qb1mz0pvP
-         aUQKFE2nLzvCA==
-Message-ID: <c908f4e65777b15e4574f27df97630b3033804a3.camel@kernel.org>
-Subject: Re: [PATCH 51/87] fs/nfsd: convert to new inode {a,m}time accessors
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Chuck Lever <chuck.lever@oracle.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Neil Brown <neilb@suse.de>,
-        Olga Kornievskaia <kolga@netapp.com>,
-        Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
-        linux-nfs@vger.kernel.org
-Date:   Thu, 28 Sep 2023 10:09:19 -0400
-In-Reply-To: <ZRWGBGqYe3rF5CRY@tissot.1015granger.net>
-References: <20230928110300.32891-1-jlayton@kernel.org>
-         <20230928110413.33032-1-jlayton@kernel.org>
-         <20230928110413.33032-50-jlayton@kernel.org>
-         <ZRWGBGqYe3rF5CRY@tissot.1015granger.net>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+        Thu, 28 Sep 2023 10:16:03 -0400
+Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31EC119F
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Sep 2023 07:15:38 -0700 (PDT)
+Received: by mail-pj1-x102a.google.com with SMTP id 98e67ed59e1d1-27730028198so2002041a91.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Sep 2023 07:15:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1695910537; x=1696515337; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5LDfK3iMpYFB0tVun5cTOaYgiftMpgCGCTM6bYHuB7U=;
+        b=ZoPebNtnEaxtl2qK9j+WiXqi/LeBZEEy/OxDG63PZz7MXRKv1clQ+RbazC4JPDvReR
+         rdeIi1Njun5LA6c0Zl5H2tuBEYqUtYU9ZF+h9StWBXcaXIk19IuOuW1uTbsU7tT3Ko7P
+         GAAoEUwDqkfAr9AbRIrJfLVnneiGB5Ns2eOLZ4sJEf5HKJVkHd59UMOx0bDnxt4KTTPG
+         Uc4FvJiRaJyEkRXv/VkzdLFfNTjTE//n8kAkUvMxtbeVgWLUkoqY0BJwBkQBKkKQeU1j
+         dXc0No/A8I0SpOonIfm/c2TZFrErY751kZ8gF10bWSyiuqI8DmKuvc5yvQeeBj6i0hoh
+         oYWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695910537; x=1696515337;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5LDfK3iMpYFB0tVun5cTOaYgiftMpgCGCTM6bYHuB7U=;
+        b=ZBq/cf0ZclcURVSIypx2EuH3fWFuER///PVbAxx5SD8XXQz6BC4PiKYrE9I/cP8MXj
+         BYvbPPfg5ipmdDUjkc9MtTJBO4f7LCuzHvWtiwGtBYNijp7yEC+AAF0KsRxsL0akv4NG
+         tdhVisZS44YU/3iMDZhUVrf0LYRQnoaSM2Dqd2MDqro7g0Ui/SMvvo0MfcknUSBmvKF1
+         p+3sd4LJM+c2kM+axEH668W2UwdbJB1bsAB+uTK8abhktK5kmD/UsEUdHXTx8wW92ydv
+         xrGGh8d+rkQuVu9WiIb/zLB8DJgrn5DMqm7YZE5ms1cYXR3oIcl8Wge9okQi2FTqZrCA
+         JH4A==
+X-Gm-Message-State: AOJu0Yw0KhMqfHc/Sl8853XFRd1fgxgsYGFgZ82IRt1l3b9ennccdZ5S
+        2LRceh7mZ9S+RrTmJk44zADIuA==
+X-Google-Smtp-Source: AGHT+IGaWhl+UpuFcH3vzDc3xyG9j1avZnkGKieINYm0dY8rK8BR+zrso7zpMyn1wxaTwaQ8/J4lkg==
+X-Received: by 2002:a17:90a:6e06:b0:278:f656:ca0e with SMTP id b6-20020a17090a6e0600b00278f656ca0emr1239830pjk.0.1695910537556;
+        Thu, 28 Sep 2023 07:15:37 -0700 (PDT)
+Received: from C02DW0BEMD6R.bytedance.net ([139.177.225.234])
+        by smtp.gmail.com with ESMTPSA id sf9-20020a17090b51c900b002609cadc56esm13222035pjb.11.2023.09.28.07.15.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Sep 2023 07:15:37 -0700 (PDT)
+From:   Qi Zheng <zhengqi.arch@bytedance.com>
+To:     dan.carpenter@linaro.org, akpm@linux-foundation.org
+Cc:     david@fromorbit.com, tkhai@ya.ru, vbabka@suse.cz,
+        roman.gushchin@linux.dev, djwong@kernel.org, brauner@kernel.org,
+        paulmck@kernel.org, tytso@mit.edu, steven.price@arm.com,
+        cel@kernel.org, senozhatsky@chromium.org, yujie.liu@intel.com,
+        gregkh@linuxfoundation.org, muchun.song@linux.dev,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org,
+        Qi Zheng <zhengqi.arch@bytedance.com>
+Subject: [PATCH] fixup: mm: shrinker: add a secondary array for shrinker_info::{map, nr_deferred}
+Date:   Thu, 28 Sep 2023 22:15:17 +0800
+Message-Id: <20230928141517.12164-1-zhengqi.arch@bytedance.com>
+X-Mailer: git-send-email 2.24.3 (Apple Git-128)
+In-Reply-To: <20230911094444.68966-41-zhengqi.arch@bytedance.com>
+References: <20230911094444.68966-41-zhengqi.arch@bytedance.com>
 MIME-Version: 1.0
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2023-09-28 at 09:56 -0400, Chuck Lever wrote:
-> On Thu, Sep 28, 2023 at 07:03:00AM -0400, Jeff Layton wrote:
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >  fs/nfsd/blocklayout.c | 3 ++-
-> >  fs/nfsd/nfs3proc.c    | 4 ++--
-> >  fs/nfsd/nfs4proc.c    | 8 ++++----
-> >  fs/nfsd/nfsctl.c      | 2 +-
-> >  4 files changed, 9 insertions(+), 8 deletions(-)
-> >=20
-> > diff --git a/fs/nfsd/blocklayout.c b/fs/nfsd/blocklayout.c
-> > index 01d7fd108cf3..bdc582777738 100644
-> > --- a/fs/nfsd/blocklayout.c
-> > +++ b/fs/nfsd/blocklayout.c
-> > @@ -119,10 +119,11 @@ nfsd4_block_commit_blocks(struct inode *inode, st=
-ruct nfsd4_layoutcommit *lcp,
-> >  {
-> >  	loff_t new_size =3D lcp->lc_last_wr + 1;
-> >  	struct iattr iattr =3D { .ia_valid =3D 0 };
-> > +	struct timespec64 mtime =3D inode_get_mtime(inode);
->=20
-> Nit: Please use reverse Christmas tree for new variable declarations.
->=20
+Dan Carpenter reported the following bug:
 
-Ok
+```
+The patch b6884b5f15cf: "mm: shrinker: add a secondary array for
+shrinker_info::{map, nr_deferred}" from Sep 11, 2023 (linux-next),
+leads to the following Smatch static checker warning:
 
->=20
-> >  	int error;
-> > =20
-> >  	if (lcp->lc_mtime.tv_nsec =3D=3D UTIME_NOW ||
-> > -	    timespec64_compare(&lcp->lc_mtime, &inode->i_mtime) < 0)
-> > +	    timespec64_compare(&lcp->lc_mtime, &mtime) < 0)
-> >  		lcp->lc_mtime =3D current_time(inode);
-> >  	iattr.ia_valid |=3D ATTR_ATIME | ATTR_CTIME | ATTR_MTIME;
-> >  	iattr.ia_atime =3D iattr.ia_ctime =3D iattr.ia_mtime =3D lcp->lc_mtim=
-e;
-> > diff --git a/fs/nfsd/nfs3proc.c b/fs/nfsd/nfs3proc.c
-> > index 268ef57751c4..b1c90a901d3e 100644
-> > --- a/fs/nfsd/nfs3proc.c
-> > +++ b/fs/nfsd/nfs3proc.c
-> > @@ -294,8 +294,8 @@ nfsd3_create_file(struct svc_rqst *rqstp, struct sv=
-c_fh *fhp,
-> >  			status =3D nfserr_exist;
-> >  			break;
-> >  		case NFS3_CREATE_EXCLUSIVE:
-> > -			if (d_inode(child)->i_mtime.tv_sec =3D=3D v_mtime &&
-> > -			    d_inode(child)->i_atime.tv_sec =3D=3D v_atime &&
-> > +			if (inode_get_mtime(d_inode(child)).tv_sec =3D=3D v_mtime &&
-> > +			    inode_get_atime(d_inode(child)).tv_sec =3D=3D v_atime &&
->=20
-> "inode_get_atime(yada).tv_sec" seems to be a frequently-repeated
-> idiom, at least in this patch. Would it be helpful to have an
-> additional helper that extracted just the seconds field, and one
-> that extracts just the nsec field?
->=20
+	mm/shrinker.c:100 alloc_shrinker_info()
+	warn: inconsistent returns '&shrinker_mutex'.
+```
 
-I don't know that extra helpers will make that any clearer.
+To fix it, unlock the &shrinker_rwsem before the call to
+free_shrinker_info().
 
->=20
-> >  			    d_inode(child)->i_size =3D=3D 0) {
-> >  				break;
-> >  			}
-> > diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
-> > index 4199ede0583c..b17309aac0d5 100644
-> > --- a/fs/nfsd/nfs4proc.c
-> > +++ b/fs/nfsd/nfs4proc.c
-> > @@ -322,8 +322,8 @@ nfsd4_create_file(struct svc_rqst *rqstp, struct sv=
-c_fh *fhp,
-> >  			status =3D nfserr_exist;
-> >  			break;
-> >  		case NFS4_CREATE_EXCLUSIVE:
-> > -			if (d_inode(child)->i_mtime.tv_sec =3D=3D v_mtime &&
-> > -			    d_inode(child)->i_atime.tv_sec =3D=3D v_atime &&
-> > +			if (inode_get_mtime(d_inode(child)).tv_sec =3D=3D v_mtime &&
-> > +			    inode_get_atime(d_inode(child)).tv_sec =3D=3D v_atime &&
-> >  			    d_inode(child)->i_size =3D=3D 0) {
-> >  				open->op_created =3D true;
-> >  				break;		/* subtle */
-> > @@ -331,8 +331,8 @@ nfsd4_create_file(struct svc_rqst *rqstp, struct sv=
-c_fh *fhp,
-> >  			status =3D nfserr_exist;
-> >  			break;
-> >  		case NFS4_CREATE_EXCLUSIVE4_1:
-> > -			if (d_inode(child)->i_mtime.tv_sec =3D=3D v_mtime &&
-> > -			    d_inode(child)->i_atime.tv_sec =3D=3D v_atime &&
-> > +			if (inode_get_mtime(d_inode(child)).tv_sec =3D=3D v_mtime &&
-> > +			    inode_get_atime(d_inode(child)).tv_sec =3D=3D v_atime &&
-> >  			    d_inode(child)->i_size =3D=3D 0) {
-> >  				open->op_created =3D true;
-> >  				goto set_attr;	/* subtle */
-> > diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
-> > index 7ed02fb88a36..846559e4769b 100644
-> > --- a/fs/nfsd/nfsctl.c
-> > +++ b/fs/nfsd/nfsctl.c
-> > @@ -1132,7 +1132,7 @@ static struct inode *nfsd_get_inode(struct super_=
-block *sb, umode_t mode)
-> >  	/* Following advice from simple_fill_super documentation: */
-> >  	inode->i_ino =3D iunique(sb, NFSD_MaxReserved);
-> >  	inode->i_mode =3D mode;
-> > -	inode->i_atime =3D inode->i_mtime =3D inode_set_ctime_current(inode);
-> > +	simple_inode_init_ts(inode);
->=20
-> An observation about the whole series: Should these helpers use the
-> usual naming convention of:
->=20
->   <subsystem>-<subject>-<verb>
->=20
-> So we get:
->=20
->   simple_inode_ts_init(inode);
->=20
->   inode_atime_get(inode)
->=20
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/linux-mm/f960ae49-078c-4c00-9516-da31fc1a17d6@moroto.mountain/
+Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+---
+ mm/shrinker.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-This was already bikeshedded during the ctime series, and the near
-universal preference at the time was to go with inode_set_ctime and
-inode_get_ctime. I'm just following suit with the new accessors.
+diff --git a/mm/shrinker.c b/mm/shrinker.c
+index 893079806553..e9644cda80b5 100644
+--- a/mm/shrinker.c
++++ b/mm/shrinker.c
+@@ -95,6 +95,7 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
+ 	return ret;
+ 
+ err:
++	up_write(&shrinker_rwsem);
+ 	free_shrinker_info(memcg);
+ 	return -ENOMEM;
+ }
+-- 
+2.30.2
 
->=20
-> >  	switch (mode & S_IFMT) {
-> >  	case S_IFDIR:
-> >  		inode->i_fop =3D &simple_dir_operations;
-> > --=20
-> > 2.41.0
-> >=20
->=20
-> Otherwise, for the patch(es) touching nfsd:
->=20
-> Acked-by: Chuck Lever <chuck.lever@oracle.com>
->=20
-
-Thanks!
---=20
-Jeff Layton <jlayton@kernel.org>
