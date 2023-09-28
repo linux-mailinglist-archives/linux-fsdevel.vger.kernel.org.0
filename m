@@ -2,39 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2591A7B19B5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Sep 2023 13:05:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2020A7B19C0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Sep 2023 13:05:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231866AbjI1LFh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Sep 2023 07:05:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38398 "EHLO
+        id S231899AbjI1LFk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Sep 2023 07:05:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231981AbjI1LEl (ORCPT
+        with ESMTP id S231984AbjI1LEl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Thu, 28 Sep 2023 07:04:41 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D442F1A4;
-        Thu, 28 Sep 2023 04:04:37 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FEA5C433C9;
-        Thu, 28 Sep 2023 11:04:37 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 682E81AB;
+        Thu, 28 Sep 2023 04:04:39 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B68B1C433CC;
+        Thu, 28 Sep 2023 11:04:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695899077;
-        bh=ruBVBlbxk43QmbfwYylX+XKh2opy3/NQx5bRlLNo8m8=;
+        s=k20201202; t=1695899079;
+        bh=f+KhDIHOxIa1n1MMHNaiM6YmAE7E9DXw6UiXfKfhTa4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BiewGpLq2Ju9FF4X5MfXOLjuyzPXKBGx+Dp4rMCgVoZr8X5Nhm8d142DHdibiaZP+
-         ua5iyJ+YAOv4lHl/ygQTjt2hzLx/vaRiJF6DZHRTju11SbID1WA31rEZHMATOqdYBO
-         IVhB23S3lFZvugNAb0+RfA1TjpI6tiZcc0GefmMD6LOQBof/r2fi5n5x5pyQjIRzs7
-         S8/dlv8sr4TEBDdj9yuyZAujIM65oX5Sk4W7ybZeYbuAOfSwtjq255CjVmHyo7RO9z
-         5oonsTrCFKd4T51EiDXSUjpOm61C8IUuUVhumDolbhEEA6PV64+EVnAy1rgrDN/AMj
-         igRYnN5RZgMpw==
+        b=YNrUSYYU8jNgpS5scvoKJxnSx6tH8i6Jupyb+gbEF7HUcxycLMAq+G0EZ/up7Eo3g
+         E3GVhL6duynF+8d1epGM2k4duLdAmpn8IBpBaNs0gYNihfNMo4CATW8g/ISkcj75dQ
+         FwZEgEKsPq94vI1sE/pN0XbvDziCcIS9dCVIiqX2tjCWF3691sx10xeoXTxzepiYg/
+         RbnAFGfD7sne+NILTxyRkfIhk8RwCf+vDapaOGQL7P+uUvUw9FZ9mTZZDJrcX6ucww
+         sEmE/DcL0bqbnDsXOKwqOLgtF9lyiDcT/Ntqmm5n3wW5Lb0KeXS2LtkRqE7bG2Uqtk
+         PStQcL3CU7QNg==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     linux-btrfs@vger.kernel.org
-Subject: [PATCH 22/87] fs/btrfs: convert to new inode {a,m}time accessors
-Date:   Thu, 28 Sep 2023 07:02:31 -0400
-Message-ID: <20230928110413.33032-21-jlayton@kernel.org>
+Cc:     ceph-devel@vger.kernel.org
+Subject: [PATCH 23/87] fs/ceph: convert to new inode {a,m}time accessors
+Date:   Thu, 28 Sep 2023 07:02:32 -0400
+Message-ID: <20230928110413.33032-22-jlayton@kernel.org>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20230928110413.33032-1-jlayton@kernel.org>
 References: <20230928110300.32891-1-jlayton@kernel.org>
@@ -52,263 +52,256 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/btrfs/delayed-inode.c | 16 ++++++++--------
- fs/btrfs/file.c          | 18 ++++++++++--------
- fs/btrfs/inode.c         | 39 ++++++++++++++++++++-------------------
- fs/btrfs/reflink.c       |  2 +-
- fs/btrfs/transaction.c   |  3 ++-
- fs/btrfs/tree-log.c      |  8 ++++----
- 6 files changed, 45 insertions(+), 41 deletions(-)
+ fs/ceph/addr.c       | 10 ++++----
+ fs/ceph/caps.c       |  4 +--
+ fs/ceph/file.c       |  2 +-
+ fs/ceph/inode.c      | 60 ++++++++++++++++++++++++--------------------
+ fs/ceph/mds_client.c |  8 ++++--
+ fs/ceph/snap.c       |  4 +--
+ 6 files changed, 49 insertions(+), 39 deletions(-)
 
-diff --git a/fs/btrfs/delayed-inode.c b/fs/btrfs/delayed-inode.c
-index caf0bbd028d1..c578a6fc796c 100644
---- a/fs/btrfs/delayed-inode.c
-+++ b/fs/btrfs/delayed-inode.c
-@@ -1834,14 +1834,14 @@ static void fill_stack_inode_item(struct btrfs_trans_handle *trans,
- 	btrfs_set_stack_inode_block_group(inode_item, 0);
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index f4863078f7fe..936b9e0b351d 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -750,7 +750,7 @@ static int writepage_nounlock(struct page *page, struct writeback_control *wbc)
+ 	dout("writepage %llu~%llu (%llu bytes, %sencrypted)\n",
+ 	     page_off, len, wlen, IS_ENCRYPTED(inode) ? "" : "not ");
  
- 	btrfs_set_stack_timespec_sec(&inode_item->atime,
--				     inode->i_atime.tv_sec);
-+				     inode_get_atime(inode).tv_sec);
- 	btrfs_set_stack_timespec_nsec(&inode_item->atime,
--				      inode->i_atime.tv_nsec);
-+				      inode_get_atime(inode).tv_nsec);
+-	req->r_mtime = inode->i_mtime;
++	req->r_mtime = inode_get_mtime(inode);
+ 	ceph_osdc_start_request(osdc, req);
+ 	err = ceph_osdc_wait_request(osdc, req);
  
- 	btrfs_set_stack_timespec_sec(&inode_item->mtime,
--				     inode->i_mtime.tv_sec);
-+				     inode_get_mtime(inode).tv_sec);
- 	btrfs_set_stack_timespec_nsec(&inode_item->mtime,
--				      inode->i_mtime.tv_nsec);
-+				      inode_get_mtime(inode).tv_nsec);
+@@ -1327,7 +1327,7 @@ static int ceph_writepages_start(struct address_space *mapping,
+ 			pages = NULL;
+ 		}
  
- 	btrfs_set_stack_timespec_sec(&inode_item->ctime,
- 				     inode_get_ctime(inode).tv_sec);
-@@ -1891,11 +1891,11 @@ int btrfs_fill_inode(struct inode *inode, u32 *rdev)
- 	btrfs_inode_split_flags(btrfs_stack_inode_flags(inode_item),
- 				&BTRFS_I(inode)->flags, &BTRFS_I(inode)->ro_flags);
+-		req->r_mtime = inode->i_mtime;
++		req->r_mtime = inode_get_mtime(inode);
+ 		ceph_osdc_start_request(&fsc->client->osdc, req);
+ 		req = NULL;
  
--	inode->i_atime.tv_sec = btrfs_stack_timespec_sec(&inode_item->atime);
--	inode->i_atime.tv_nsec = btrfs_stack_timespec_nsec(&inode_item->atime);
-+	inode_set_atime(inode, btrfs_stack_timespec_sec(&inode_item->atime),
-+			btrfs_stack_timespec_nsec(&inode_item->atime));
+@@ -1875,7 +1875,7 @@ int ceph_uninline_data(struct file *file)
+ 		goto out_unlock;
+ 	}
  
--	inode->i_mtime.tv_sec = btrfs_stack_timespec_sec(&inode_item->mtime);
--	inode->i_mtime.tv_nsec = btrfs_stack_timespec_nsec(&inode_item->mtime);
-+	inode_set_mtime(inode, btrfs_stack_timespec_sec(&inode_item->mtime),
-+			btrfs_stack_timespec_nsec(&inode_item->mtime));
+-	req->r_mtime = inode->i_mtime;
++	req->r_mtime = inode_get_mtime(inode);
+ 	ceph_osdc_start_request(&fsc->client->osdc, req);
+ 	err = ceph_osdc_wait_request(&fsc->client->osdc, req);
+ 	ceph_osdc_put_request(req);
+@@ -1917,7 +1917,7 @@ int ceph_uninline_data(struct file *file)
+ 			goto out_put_req;
+ 	}
  
- 	inode_set_ctime(inode, btrfs_stack_timespec_sec(&inode_item->ctime),
- 			btrfs_stack_timespec_nsec(&inode_item->ctime));
-diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
-index 361535c71c0f..278a4ea651e1 100644
---- a/fs/btrfs/file.c
-+++ b/fs/btrfs/file.c
-@@ -1108,17 +1108,18 @@ void btrfs_check_nocow_unlock(struct btrfs_inode *inode)
+-	req->r_mtime = inode->i_mtime;
++	req->r_mtime = inode_get_mtime(inode);
+ 	ceph_osdc_start_request(&fsc->client->osdc, req);
+ 	err = ceph_osdc_wait_request(&fsc->client->osdc, req);
  
- static void update_time_for_write(struct inode *inode)
- {
--	struct timespec64 now, ctime;
-+	struct timespec64 now, ts;
+@@ -2092,7 +2092,7 @@ static int __ceph_pool_perm_get(struct ceph_inode_info *ci,
+ 				     0, false, true);
+ 	ceph_osdc_start_request(&fsc->client->osdc, rd_req);
  
- 	if (IS_NOCMTIME(inode))
- 		return;
+-	wr_req->r_mtime = ci->netfs.inode.i_mtime;
++	wr_req->r_mtime = inode_get_mtime(&ci->netfs.inode);
+ 	ceph_osdc_start_request(&fsc->client->osdc, wr_req);
  
- 	now = current_time(inode);
--	if (!timespec64_equal(&inode->i_mtime, &now))
--		inode->i_mtime = now;
-+	ts = inode_get_mtime(inode);
-+	if (!timespec64_equal(&ts, &now))
-+		inode_set_mtime_to_ts(inode, now);
+ 	err = ceph_osdc_wait_request(&fsc->client->osdc, rd_req);
+diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+index 14215ec646f7..a104669fcf4c 100644
+--- a/fs/ceph/caps.c
++++ b/fs/ceph/caps.c
+@@ -1421,8 +1421,8 @@ static void __prep_cap(struct cap_msg_args *arg, struct ceph_cap *cap,
+ 		arg->old_xattr_buf = NULL;
+ 	}
  
--	ctime = inode_get_ctime(inode);
--	if (!timespec64_equal(&ctime, &now))
-+	ts = inode_get_ctime(inode);
-+	if (!timespec64_equal(&ts, &now))
- 		inode_set_ctime_to_ts(inode, now);
+-	arg->mtime = inode->i_mtime;
+-	arg->atime = inode->i_atime;
++	arg->mtime = inode_get_mtime(inode);
++	arg->atime = inode_get_atime(inode);
+ 	arg->ctime = inode_get_ctime(inode);
+ 	arg->btime = ci->i_btime;
+ 	arg->change_attr = inode_peek_iversion_raw(inode);
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index b1da02f5dbe3..b96d4e74ae99 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -2489,7 +2489,7 @@ static int ceph_zero_partial_object(struct inode *inode,
+ 		goto out;
+ 	}
  
- 	if (IS_I_VERSION(inode))
-@@ -2473,7 +2474,8 @@ int btrfs_replace_file_extents(struct btrfs_inode *inode,
- 		inode_inc_iversion(&inode->vfs_inode);
+-	req->r_mtime = inode->i_mtime;
++	req->r_mtime = inode_get_mtime(inode);
+ 	ceph_osdc_start_request(&fsc->client->osdc, req);
+ 	ret = ceph_osdc_wait_request(&fsc->client->osdc, req);
+ 	if (ret == -ENOENT)
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index 800ab7920513..6a51db29ed57 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -185,9 +185,9 @@ struct inode *ceph_get_snapdir(struct inode *parent)
+ 	inode->i_mode = parent->i_mode;
+ 	inode->i_uid = parent->i_uid;
+ 	inode->i_gid = parent->i_gid;
+-	inode->i_mtime = parent->i_mtime;
++	inode_set_mtime_to_ts(inode, inode_get_mtime(parent));
+ 	inode_set_ctime_to_ts(inode, inode_get_ctime(parent));
+-	inode->i_atime = parent->i_atime;
++	inode_set_atime_to_ts(inode, inode_get_atime(parent));
+ 	ci->i_rbytes = 0;
+ 	ci->i_btime = ceph_inode(parent)->i_btime;
  
- 		if (!extent_info || extent_info->update_times)
--			inode->vfs_inode.i_mtime = inode_set_ctime_current(&inode->vfs_inode);
-+			inode_set_mtime_to_ts(&inode->vfs_inode,
-+					      inode_set_ctime_current(&inode->vfs_inode));
+@@ -837,28 +837,31 @@ void ceph_fill_file_time(struct inode *inode, int issued,
+ 			/* the MDS did a utimes() */
+ 			dout("mtime %lld.%09ld -> %lld.%09ld "
+ 			     "tw %d -> %d\n",
+-			     inode->i_mtime.tv_sec, inode->i_mtime.tv_nsec,
++			     inode_get_mtime(inode).tv_sec,
++			     inode_get_mtime(inode).tv_nsec,
+ 			     mtime->tv_sec, mtime->tv_nsec,
+ 			     ci->i_time_warp_seq, (int)time_warp_seq);
  
- 		ret = btrfs_update_inode(trans, root, inode);
- 		if (ret)
-@@ -2714,7 +2716,7 @@ static int btrfs_punch_hole(struct file *file, loff_t offset, loff_t len)
+-			inode->i_mtime = *mtime;
+-			inode->i_atime = *atime;
++			inode_set_mtime_to_ts(inode, *mtime);
++			inode_set_atime_to_ts(inode, *atime);
+ 			ci->i_time_warp_seq = time_warp_seq;
+ 		} else if (time_warp_seq == ci->i_time_warp_seq) {
++			struct timespec64	ts;
++
+ 			/* nobody did utimes(); take the max */
+-			if (timespec64_compare(mtime, &inode->i_mtime) > 0) {
++			ts = inode_get_mtime(inode);
++			if (timespec64_compare(mtime, &ts) > 0) {
+ 				dout("mtime %lld.%09ld -> %lld.%09ld inc\n",
+-				     inode->i_mtime.tv_sec,
+-				     inode->i_mtime.tv_nsec,
++				     ts.tv_sec, ts.tv_nsec,
+ 				     mtime->tv_sec, mtime->tv_nsec);
+-				inode->i_mtime = *mtime;
++				inode_set_mtime_to_ts(inode, *mtime);
+ 			}
+-			if (timespec64_compare(atime, &inode->i_atime) > 0) {
++			ts = inode_get_atime(inode);
++			if (timespec64_compare(atime, &ts) > 0) {
+ 				dout("atime %lld.%09ld -> %lld.%09ld inc\n",
+-				     inode->i_atime.tv_sec,
+-				     inode->i_atime.tv_nsec,
++				     ts.tv_sec, ts.tv_nsec,
+ 				     atime->tv_sec, atime->tv_nsec);
+-				inode->i_atime = *atime;
++				inode_set_atime_to_ts(inode, *atime);
+ 			}
+ 		} else if (issued & CEPH_CAP_FILE_EXCL) {
+ 			/* we did a utimes(); ignore mds values */
+@@ -869,8 +872,8 @@ void ceph_fill_file_time(struct inode *inode, int issued,
+ 		/* we have no write|excl caps; whatever the MDS says is true */
+ 		if (ceph_seq_cmp(time_warp_seq, ci->i_time_warp_seq) >= 0) {
+ 			inode_set_ctime_to_ts(inode, *ctime);
+-			inode->i_mtime = *mtime;
+-			inode->i_atime = *atime;
++			inode_set_mtime_to_ts(inode, *mtime);
++			inode_set_atime_to_ts(inode, *atime);
+ 			ci->i_time_warp_seq = time_warp_seq;
+ 		} else {
+ 			warn = 1;
+@@ -2553,20 +2556,22 @@ int __ceph_setattr(struct inode *inode, struct iattr *attr,
+ 	}
  
- 	ASSERT(trans != NULL);
- 	inode_inc_iversion(inode);
--	inode->i_mtime = inode_set_ctime_current(inode);
-+	inode_set_mtime_to_ts(inode, inode_set_ctime_current(inode));
- 	ret = btrfs_update_inode(trans, root, BTRFS_I(inode));
- 	updated_inode = true;
- 	btrfs_end_transaction(trans);
-@@ -2734,7 +2736,7 @@ static int btrfs_punch_hole(struct file *file, loff_t offset, loff_t len)
- 		struct timespec64 now = inode_set_ctime_current(inode);
- 
- 		inode_inc_iversion(inode);
--		inode->i_mtime = now;
-+		inode_set_mtime_to_ts(inode, now);
- 		trans = btrfs_start_transaction(root, 1);
- 		if (IS_ERR(trans)) {
- 			ret = PTR_ERR(trans);
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 7814b9d654ce..e35939e68fc5 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -3754,11 +3754,11 @@ static int btrfs_read_locked_inode(struct inode *inode,
- 	btrfs_inode_set_file_extent_range(BTRFS_I(inode), 0,
- 			round_up(i_size_read(inode), fs_info->sectorsize));
- 
--	inode->i_atime.tv_sec = btrfs_timespec_sec(leaf, &inode_item->atime);
--	inode->i_atime.tv_nsec = btrfs_timespec_nsec(leaf, &inode_item->atime);
-+	inode_set_atime(inode, btrfs_timespec_sec(leaf, &inode_item->atime),
-+			btrfs_timespec_nsec(leaf, &inode_item->atime));
- 
--	inode->i_mtime.tv_sec = btrfs_timespec_sec(leaf, &inode_item->mtime);
--	inode->i_mtime.tv_nsec = btrfs_timespec_nsec(leaf, &inode_item->mtime);
-+	inode_set_mtime(inode, btrfs_timespec_sec(leaf, &inode_item->mtime),
-+			btrfs_timespec_nsec(leaf, &inode_item->mtime));
- 
- 	inode_set_ctime(inode, btrfs_timespec_sec(leaf, &inode_item->ctime),
- 			btrfs_timespec_nsec(leaf, &inode_item->ctime));
-@@ -3922,14 +3922,14 @@ static void fill_inode_item(struct btrfs_trans_handle *trans,
- 	btrfs_set_token_inode_nlink(&token, item, inode->i_nlink);
- 
- 	btrfs_set_token_timespec_sec(&token, &item->atime,
--				     inode->i_atime.tv_sec);
-+				     inode_get_atime(inode).tv_sec);
- 	btrfs_set_token_timespec_nsec(&token, &item->atime,
--				      inode->i_atime.tv_nsec);
-+				      inode_get_atime(inode).tv_nsec);
- 
- 	btrfs_set_token_timespec_sec(&token, &item->mtime,
--				     inode->i_mtime.tv_sec);
-+				     inode_get_mtime(inode).tv_sec);
- 	btrfs_set_token_timespec_nsec(&token, &item->mtime,
--				      inode->i_mtime.tv_nsec);
-+				      inode_get_mtime(inode).tv_nsec);
- 
- 	btrfs_set_token_timespec_sec(&token, &item->ctime,
- 				     inode_get_ctime(inode).tv_sec);
-@@ -4133,7 +4133,7 @@ static int __btrfs_unlink_inode(struct btrfs_trans_handle *trans,
- 	inode_inc_iversion(&inode->vfs_inode);
- 	inode_inc_iversion(&dir->vfs_inode);
- 	inode_set_ctime_current(&inode->vfs_inode);
--	dir->vfs_inode.i_mtime = inode_set_ctime_current(&dir->vfs_inode);
-+	inode_set_mtime_to_ts(&dir->vfs_inode, inode_set_ctime_current(&dir->vfs_inode));
- 	ret = btrfs_update_inode(trans, root, dir);
- out:
- 	return ret;
-@@ -4306,7 +4306,7 @@ static int btrfs_unlink_subvol(struct btrfs_trans_handle *trans,
- 
- 	btrfs_i_size_write(dir, dir->vfs_inode.i_size - fname.disk_name.len * 2);
- 	inode_inc_iversion(&dir->vfs_inode);
--	dir->vfs_inode.i_mtime = inode_set_ctime_current(&dir->vfs_inode);
-+	inode_set_mtime_to_ts(&dir->vfs_inode, inode_set_ctime_current(&dir->vfs_inode));
- 	ret = btrfs_update_inode_fallback(trans, root, dir);
- 	if (ret)
- 		btrfs_abort_transaction(trans, ret);
-@@ -4956,7 +4956,8 @@ static int btrfs_setsize(struct inode *inode, struct iattr *attr)
- 	if (newsize != oldsize) {
- 		inode_inc_iversion(inode);
- 		if (!(mask & (ATTR_CTIME | ATTR_MTIME))) {
--			inode->i_mtime = inode_set_ctime_current(inode);
-+			inode_set_mtime_to_ts(inode,
-+					      inode_set_ctime_current(inode));
+ 	if (ia_valid & ATTR_ATIME) {
++		struct timespec64 atime = inode_get_atime(inode);
++
+ 		dout("setattr %p atime %lld.%ld -> %lld.%ld\n", inode,
+-		     inode->i_atime.tv_sec, inode->i_atime.tv_nsec,
++		     atime.tv_sec, atime.tv_nsec,
+ 		     attr->ia_atime.tv_sec, attr->ia_atime.tv_nsec);
+ 		if (issued & CEPH_CAP_FILE_EXCL) {
+ 			ci->i_time_warp_seq++;
+-			inode->i_atime = attr->ia_atime;
++			inode_set_atime_to_ts(inode, attr->ia_atime);
+ 			dirtied |= CEPH_CAP_FILE_EXCL;
+ 		} else if ((issued & CEPH_CAP_FILE_WR) &&
+-			   timespec64_compare(&inode->i_atime,
+-					    &attr->ia_atime) < 0) {
+-			inode->i_atime = attr->ia_atime;
++			   timespec64_compare(&atime,
++					      &attr->ia_atime) < 0) {
++			inode_set_atime_to_ts(inode, attr->ia_atime);
+ 			dirtied |= CEPH_CAP_FILE_WR;
+ 		} else if ((issued & CEPH_CAP_FILE_SHARED) == 0 ||
+-			   !timespec64_equal(&inode->i_atime, &attr->ia_atime)) {
++			   !timespec64_equal(&atime, &attr->ia_atime)) {
+ 			ceph_encode_timespec64(&req->r_args.setattr.atime,
+ 					       &attr->ia_atime);
+ 			mask |= CEPH_SETATTR_ATIME;
+@@ -2626,20 +2631,21 @@ int __ceph_setattr(struct inode *inode, struct iattr *attr,
  		}
  	}
- 
-@@ -5600,9 +5601,9 @@ static struct inode *new_simple_dir(struct inode *dir,
- 	inode->i_opflags &= ~IOP_XATTR;
- 	inode->i_fop = &simple_dir_operations;
- 	inode->i_mode = S_IFDIR | S_IRUGO | S_IWUSR | S_IXUGO;
--	inode->i_mtime = inode_set_ctime_current(inode);
--	inode->i_atime = dir->i_atime;
--	BTRFS_I(inode)->i_otime = inode->i_mtime;
-+	inode_set_mtime_to_ts(inode, inode_set_ctime_current(inode));
-+	inode_set_atime_to_ts(inode, inode_get_atime(dir));
-+	BTRFS_I(inode)->i_otime = inode_get_mtime(inode);
- 	inode->i_uid = dir->i_uid;
- 	inode->i_gid = dir->i_gid;
- 
-@@ -6277,9 +6278,9 @@ int btrfs_create_new_inode(struct btrfs_trans_handle *trans,
- 		goto discard;
+ 	if (ia_valid & ATTR_MTIME) {
++		struct timespec64 mtime = inode_get_mtime(inode);
++
+ 		dout("setattr %p mtime %lld.%ld -> %lld.%ld\n", inode,
+-		     inode->i_mtime.tv_sec, inode->i_mtime.tv_nsec,
++		     mtime.tv_sec, mtime.tv_nsec,
+ 		     attr->ia_mtime.tv_sec, attr->ia_mtime.tv_nsec);
+ 		if (issued & CEPH_CAP_FILE_EXCL) {
+ 			ci->i_time_warp_seq++;
+-			inode->i_mtime = attr->ia_mtime;
++			inode_set_mtime_to_ts(inode, attr->ia_mtime);
+ 			dirtied |= CEPH_CAP_FILE_EXCL;
+ 		} else if ((issued & CEPH_CAP_FILE_WR) &&
+-			   timespec64_compare(&inode->i_mtime,
+-					    &attr->ia_mtime) < 0) {
+-			inode->i_mtime = attr->ia_mtime;
++			   timespec64_compare(&mtime, &attr->ia_mtime) < 0) {
++			inode_set_mtime_to_ts(inode, attr->ia_mtime);
+ 			dirtied |= CEPH_CAP_FILE_WR;
+ 		} else if ((issued & CEPH_CAP_FILE_SHARED) == 0 ||
+-			   !timespec64_equal(&inode->i_mtime, &attr->ia_mtime)) {
++			   !timespec64_equal(&mtime, &attr->ia_mtime)) {
+ 			ceph_encode_timespec64(&req->r_args.setattr.mtime,
+ 					       &attr->ia_mtime);
+ 			mask |= CEPH_SETATTR_MTIME;
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 615db141b6c4..e4cfa3b02187 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -4353,12 +4353,16 @@ static int reconnect_caps_cb(struct inode *inode, int mds, void *arg)
+ 		rec.v2.flock_len = (__force __le32)
+ 			((ci->i_ceph_flags & CEPH_I_ERROR_FILELOCK) ? 0 : 1);
+ 	} else {
++		struct timespec64 ts;
++
+ 		rec.v1.cap_id = cpu_to_le64(cap->cap_id);
+ 		rec.v1.wanted = cpu_to_le32(__ceph_caps_wanted(ci));
+ 		rec.v1.issued = cpu_to_le32(cap->issued);
+ 		rec.v1.size = cpu_to_le64(i_size_read(inode));
+-		ceph_encode_timespec64(&rec.v1.mtime, &inode->i_mtime);
+-		ceph_encode_timespec64(&rec.v1.atime, &inode->i_atime);
++		ts = inode_get_mtime(inode);
++		ceph_encode_timespec64(&rec.v1.mtime, &ts);
++		ts = inode_get_atime(inode);
++		ceph_encode_timespec64(&rec.v1.atime, &ts);
+ 		rec.v1.snaprealm = cpu_to_le64(ci->i_snap_realm->ino);
+ 		rec.v1.pathbase = cpu_to_le64(pathbase);
  	}
+diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
+index 813f21add992..6732e1ea97d9 100644
+--- a/fs/ceph/snap.c
++++ b/fs/ceph/snap.c
+@@ -658,8 +658,8 @@ int __ceph_finish_cap_snap(struct ceph_inode_info *ci,
  
--	inode->i_mtime = inode_set_ctime_current(inode);
--	inode->i_atime = inode->i_mtime;
--	BTRFS_I(inode)->i_otime = inode->i_mtime;
-+	simple_inode_init_ts(inode);
-+	
-+	BTRFS_I(inode)->i_otime = inode_get_mtime(inode);
- 
- 	/*
- 	 * We're going to fill the inode item now, so at this point the inode
-@@ -6444,8 +6445,8 @@ int btrfs_add_link(struct btrfs_trans_handle *trans,
- 	 * values (the ones it had when the fsync was done).
- 	 */
- 	if (!test_bit(BTRFS_FS_LOG_RECOVERING, &root->fs_info->flags))
--		parent_inode->vfs_inode.i_mtime =
--			inode_set_ctime_current(&parent_inode->vfs_inode);
-+		inode_set_mtime_to_ts(&parent_inode->vfs_inode,
-+				      inode_set_ctime_current(&parent_inode->vfs_inode));
- 
- 	ret = btrfs_update_inode(trans, root, parent_inode);
- 	if (ret)
-diff --git a/fs/btrfs/reflink.c b/fs/btrfs/reflink.c
-index 65d2bd6910f2..13ecb4f85941 100644
---- a/fs/btrfs/reflink.c
-+++ b/fs/btrfs/reflink.c
-@@ -30,7 +30,7 @@ static int clone_finish_inode_update(struct btrfs_trans_handle *trans,
- 
- 	inode_inc_iversion(inode);
- 	if (!no_time_update) {
--		inode->i_mtime = inode_set_ctime_current(inode);
-+		inode_set_mtime_to_ts(inode, inode_set_ctime_current(inode));
- 	}
- 	/*
- 	 * We round up to the block size at eof when determining which
-diff --git a/fs/btrfs/transaction.c b/fs/btrfs/transaction.c
-index c780d3729463..38a2775c5c7b 100644
---- a/fs/btrfs/transaction.c
-+++ b/fs/btrfs/transaction.c
-@@ -1860,7 +1860,8 @@ static noinline int create_pending_snapshot(struct btrfs_trans_handle *trans,
- 
- 	btrfs_i_size_write(BTRFS_I(parent_inode), parent_inode->i_size +
- 						  fname.disk_name.len * 2);
--	parent_inode->i_mtime = inode_set_ctime_current(parent_inode);
-+	inode_set_mtime_to_ts(parent_inode,
-+			      inode_set_ctime_current(parent_inode));
- 	ret = btrfs_update_inode_fallback(trans, parent_root, BTRFS_I(parent_inode));
- 	if (ret) {
- 		btrfs_abort_transaction(trans, ret);
-diff --git a/fs/btrfs/tree-log.c b/fs/btrfs/tree-log.c
-index cbb17b542131..3f33e18f6d3e 100644
---- a/fs/btrfs/tree-log.c
-+++ b/fs/btrfs/tree-log.c
-@@ -4138,14 +4138,14 @@ static void fill_inode_item(struct btrfs_trans_handle *trans,
- 	btrfs_set_token_inode_nlink(&token, item, inode->i_nlink);
- 
- 	btrfs_set_token_timespec_sec(&token, &item->atime,
--				     inode->i_atime.tv_sec);
-+				     inode_get_atime(inode).tv_sec);
- 	btrfs_set_token_timespec_nsec(&token, &item->atime,
--				      inode->i_atime.tv_nsec);
-+				      inode_get_atime(inode).tv_nsec);
- 
- 	btrfs_set_token_timespec_sec(&token, &item->mtime,
--				     inode->i_mtime.tv_sec);
-+				     inode_get_mtime(inode).tv_sec);
- 	btrfs_set_token_timespec_nsec(&token, &item->mtime,
--				      inode->i_mtime.tv_nsec);
-+				      inode_get_mtime(inode).tv_nsec);
- 
- 	btrfs_set_token_timespec_sec(&token, &item->ctime,
- 				     inode_get_ctime(inode).tv_sec);
+ 	BUG_ON(capsnap->writing);
+ 	capsnap->size = i_size_read(inode);
+-	capsnap->mtime = inode->i_mtime;
+-	capsnap->atime = inode->i_atime;
++	capsnap->mtime = inode_get_mtime(inode);
++	capsnap->atime = inode_get_atime(inode);
+ 	capsnap->ctime = inode_get_ctime(inode);
+ 	capsnap->btime = ci->i_btime;
+ 	capsnap->change_attr = inode_peek_iversion_raw(inode);
 -- 
 2.41.0
 
