@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E16127B1A2E
+	by mail.lfdr.de (Postfix) with ESMTP id 9DEC47B1A2D
 	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Sep 2023 13:09:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232229AbjI1LJt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Sep 2023 07:09:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41544 "EHLO
+        id S232395AbjI1LJu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Sep 2023 07:09:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41536 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232443AbjI1LJI (ORCPT
+        with ESMTP id S232444AbjI1LJI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Thu, 28 Sep 2023 07:09:08 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D9522108;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BABC62118;
         Thu, 28 Sep 2023 04:05:29 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13902C433CB;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BFE8C433CC;
         Thu, 28 Sep 2023 11:05:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695899128;
-        bh=Qayin5SASKfJJl/xecNB8alrWi4t9sgg92O3QuynXjQ=;
+        s=k20201202; t=1695899129;
+        bh=3LzY1QRMSw8FwRd1+T82f5waDViGnmvRRNSI+fB1IAk=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=mEWU+BzSQ9FP50WtesqRRI9SFs/ICVSPtdBkd7skCB1gHgi4x53YQ3U+fxOA/962H
-         lAnfKJdLRYTpiKWW8DHgiAx/4TeVZIiO8I/GqgC877LfmzOD+QYT9c5Ix7cWrTHHfo
-         AmhpopEA3HonOtLBvMO4DkEjhhVrmnS/Abt/WZ/DBaxmsdFatC5PNpwbfkQQGExWCa
-         1rCSWrE9K5K5grC3U1AMdHom58JjkUlIkH+MIMjnF5D6JvBa1CCOAoZmjmaIoc9U54
-         Wachy2KwpoUq7Q850yP+F7UzTRZmw08xoLoJ5E3DbYtRRVu8gJKvFlDQPHiIMtZSBS
-         kk15xoSf4yN/g==
+        b=delfDE9loiqO3Ouk1TN+e5suQ+hlcuSQQ0rmXemqSdFicJYQTe0c1wAPsP83gGCgX
+         lyHmBwDIU23TNtN4UJ1euEvBS/9BIf9YyxFejUXFzf7SM0iGjcxJLqr4A/SNij42LA
+         cw6CcqzZXbpFF0GB3obLTFIUSTSMuNHa7JorJCn1B0E2EmsthztYg+BXlqbWwISLwy
+         61G8rIzZmGBDRwf1y+vQFJ4gSbU2pNlH4fVdwiciZFeqaNOL5dfPht27Mnfhek6z/t
+         MuXZLL63iBt9lXK1XF6/jrGjTAqCAljQ2dRNOEJxBRLN22p+22ixExJxxtLq0Cbza2
+         OBjQE7MHfDhkw==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 63/87] fs/qnx6: convert to new inode {a,m}time accessors
-Date:   Thu, 28 Sep 2023 07:03:12 -0400
-Message-ID: <20230928110413.33032-62-jlayton@kernel.org>
+Subject: [PATCH 64/87] fs/ramfs: convert to new inode {a,m}time accessors
+Date:   Thu, 28 Sep 2023 07:03:13 -0400
+Message-ID: <20230928110413.33032-63-jlayton@kernel.org>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20230928110413.33032-1-jlayton@kernel.org>
 References: <20230928110300.32891-1-jlayton@kernel.org>
@@ -51,26 +51,41 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/qnx6/inode.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ fs/ramfs/inode.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/fs/qnx6/inode.c b/fs/qnx6/inode.c
-index 21f90d519f1a..a286c545717f 100644
---- a/fs/qnx6/inode.c
-+++ b/fs/qnx6/inode.c
-@@ -558,10 +558,8 @@ struct inode *qnx6_iget(struct super_block *sb, unsigned ino)
- 	i_uid_write(inode, (uid_t)fs32_to_cpu(sbi, raw_inode->di_uid));
- 	i_gid_write(inode, (gid_t)fs32_to_cpu(sbi, raw_inode->di_gid));
- 	inode->i_size    = fs64_to_cpu(sbi, raw_inode->di_size);
--	inode->i_mtime.tv_sec   = fs32_to_cpu(sbi, raw_inode->di_mtime);
--	inode->i_mtime.tv_nsec = 0;
--	inode->i_atime.tv_sec   = fs32_to_cpu(sbi, raw_inode->di_atime);
--	inode->i_atime.tv_nsec = 0;
-+	inode_set_mtime(inode, fs32_to_cpu(sbi, raw_inode->di_mtime), 0);
-+	inode_set_atime(inode, fs32_to_cpu(sbi, raw_inode->di_atime), 0);
- 	inode_set_ctime(inode, fs32_to_cpu(sbi, raw_inode->di_ctime), 0);
- 
- 	/* calc blocks based on 512 byte blocksize */
+diff --git a/fs/ramfs/inode.c b/fs/ramfs/inode.c
+index 18e8387cab41..4ac05a9e25bc 100644
+--- a/fs/ramfs/inode.c
++++ b/fs/ramfs/inode.c
+@@ -65,7 +65,7 @@ struct inode *ramfs_get_inode(struct super_block *sb,
+ 		inode->i_mapping->a_ops = &ram_aops;
+ 		mapping_set_gfp_mask(inode->i_mapping, GFP_HIGHUSER);
+ 		mapping_set_unevictable(inode->i_mapping);
+-		inode->i_atime = inode->i_mtime = inode_set_ctime_current(inode);
++		simple_inode_init_ts(inode);
+ 		switch (mode & S_IFMT) {
+ 		default:
+ 			init_special_inode(inode, mode, dev);
+@@ -105,7 +105,7 @@ ramfs_mknod(struct mnt_idmap *idmap, struct inode *dir,
+ 		d_instantiate(dentry, inode);
+ 		dget(dentry);	/* Extra count - pin the dentry in core */
+ 		error = 0;
+-		dir->i_mtime = inode_set_ctime_current(dir);
++		inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
+ 	}
+ 	return error;
+ }
+@@ -138,7 +138,8 @@ static int ramfs_symlink(struct mnt_idmap *idmap, struct inode *dir,
+ 		if (!error) {
+ 			d_instantiate(dentry, inode);
+ 			dget(dentry);
+-			dir->i_mtime = inode_set_ctime_current(dir);
++			inode_set_mtime_to_ts(dir,
++					      inode_set_ctime_current(dir));
+ 		} else
+ 			iput(inode);
+ 	}
 -- 
 2.41.0
 
