@@ -2,38 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 22EA37B198A
+	by mail.lfdr.de (Postfix) with ESMTP id 97CE47B198C
 	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Sep 2023 13:04:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232031AbjI1LEq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Sep 2023 07:04:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38468 "EHLO
+        id S232128AbjI1LEs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Sep 2023 07:04:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232013AbjI1LEU (ORCPT
+        with ESMTP id S232019AbjI1LEa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Sep 2023 07:04:20 -0400
+        Thu, 28 Sep 2023 07:04:30 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15D9ACEA;
-        Thu, 28 Sep 2023 04:04:19 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42E05C43391;
-        Thu, 28 Sep 2023 11:04:18 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F575CED;
+        Thu, 28 Sep 2023 04:04:20 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FC8BC433C7;
+        Thu, 28 Sep 2023 11:04:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695899058;
-        bh=IWRS0sv4F2GhgvX85r1nFL1OfwOp4/XyjcH6Y3xdgTE=;
-        h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=b6A+2xaI6pgQN+3dsy2mCOD9PDx411S3Ydu90LNqns7K3ssWCUiNw8xy4j4adpra8
-         qSn0vb75mY/qesopcA++AtWow4hoAv7r4LdYDurC7my3O18PkR0dtESNg4bTHET0Q4
-         3Ahy6fdOdNesktoORpFHDvBl9hkL0DV1HfvCyFNArLgZNSbZBo5ySrlzwIAQbW8Q6O
-         czYwD0UdpJlXyTr9j9AArkgt49zV/RBrtWDJSXGVoxKT0YduDTN9hm+fHLsube0FTH
-         n7WYM8LxzBpT4EcUrzycR4IccopqT4Y70wKaa4bJg9KZ9cxI/TFpE0Hz0HAv5Aaczg
-         L68gy8O03b8/Q==
+        s=k20201202; t=1695899059;
+        bh=F/2vXVnF7RSXFfWEZqx0McB1XYKZ9a+y5sHO9ziDwMc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=nPqwZD4Cy7y9WGVms+U5m6Hk04N6LpWf5Jpospahi+28gDJ/vF4Gd0fN34gydOKPu
+         /q+Ln9ktX9ZRyI8aVL97aQuJJPAkNIeoIRda2z6q7tpjFVHS/C3pGa6G2sNItKsYw9
+         e5JdgqsSnD4gtN5iO6fHdAPtuXSiOyW05wBc+SyaSTkp//stXSjoyzPqQHJmcqh6Px
+         LfYGtJyXrcA5gw0QJviu/XKptE3BYohx4HgXXOEw74sShXA1Zbro+f+vBh095sOLVu
+         /QMe9UOALNRXBMZvO/Qz6PDfTSxOoF5kUEk5VudpxKjloQyX3MepG4cXSUryYYdTgS
+         442JKz+LTgtxQ==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 05/87] drivers/android: convert to new inode {a,m}time accessors
-Date:   Thu, 28 Sep 2023 07:02:14 -0400
-Message-ID: <20230928110413.33032-4-jlayton@kernel.org>
+Cc:     platform-driver-x86@vger.kernel.org
+Subject: [PATCH 06/87] drivers/char: convert to new inode {a,m}time accessors
+Date:   Thu, 28 Sep 2023 07:02:15 -0400
+Message-ID: <20230928110413.33032-5-jlayton@kernel.org>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20230928110413.33032-1-jlayton@kernel.org>
 References: <20230928110300.32891-1-jlayton@kernel.org>
@@ -51,49 +52,22 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- drivers/android/binderfs.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/char/sonypi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/android/binderfs.c b/drivers/android/binderfs.c
-index 81effec17b3d..420dc9cbf774 100644
---- a/drivers/android/binderfs.c
-+++ b/drivers/android/binderfs.c
-@@ -152,7 +152,7 @@ static int binderfs_binder_device_create(struct inode *ref_inode,
- 		goto err;
+diff --git a/drivers/char/sonypi.c b/drivers/char/sonypi.c
+index 9211531689b2..22d249333f53 100644
+--- a/drivers/char/sonypi.c
++++ b/drivers/char/sonypi.c
+@@ -920,7 +920,7 @@ static ssize_t sonypi_misc_read(struct file *file, char __user *buf,
  
- 	inode->i_ino = minor + INODE_OFFSET;
--	inode->i_mtime = inode->i_atime = inode_set_ctime_current(inode);
-+	simple_inode_init_ts(inode);
- 	init_special_inode(inode, S_IFCHR | 0600,
- 			   MKDEV(MAJOR(binderfs_dev), minor));
- 	inode->i_fop = &binder_fops;
-@@ -431,7 +431,7 @@ static int binderfs_binder_ctl_create(struct super_block *sb)
+ 	if (ret > 0) {
+ 		struct inode *inode = file_inode(file);
+-		inode->i_atime = current_time(inode);
++		inode_set_atime_to_ts(inode, current_time(inode));
  	}
  
- 	inode->i_ino = SECOND_INODE;
--	inode->i_mtime = inode->i_atime = inode_set_ctime_current(inode);
-+	simple_inode_init_ts(inode);
- 	init_special_inode(inode, S_IFCHR | 0600,
- 			   MKDEV(MAJOR(binderfs_dev), minor));
- 	inode->i_fop = &binder_ctl_fops;
-@@ -473,7 +473,7 @@ static struct inode *binderfs_make_inode(struct super_block *sb, int mode)
- 	if (ret) {
- 		ret->i_ino = iunique(sb, BINDERFS_MAX_MINOR + INODE_OFFSET);
- 		ret->i_mode = mode;
--		ret->i_atime = ret->i_mtime = inode_set_ctime_current(ret);
-+		simple_inode_init_ts(ret);
- 	}
  	return ret;
- }
-@@ -702,7 +702,7 @@ static int binderfs_fill_super(struct super_block *sb, struct fs_context *fc)
- 	inode->i_ino = FIRST_INODE;
- 	inode->i_fop = &simple_dir_operations;
- 	inode->i_mode = S_IFDIR | 0755;
--	inode->i_mtime = inode->i_atime = inode_set_ctime_current(inode);
-+	simple_inode_init_ts(inode);
- 	inode->i_op = &binderfs_dir_inode_operations;
- 	set_nlink(inode, 2);
- 
 -- 
 2.41.0
 
