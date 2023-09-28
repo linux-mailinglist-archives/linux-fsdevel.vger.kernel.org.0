@@ -2,398 +2,400 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B002A7B1848
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Sep 2023 12:32:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AD597B1986
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Sep 2023 13:04:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231246AbjI1Kcg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Sep 2023 06:32:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57684 "EHLO
+        id S232091AbjI1LEn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Sep 2023 07:04:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59272 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230306AbjI1Kcf (ORCPT
+        with ESMTP id S231963AbjI1LES (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Sep 2023 06:32:35 -0400
-Received: from esa6.hc1455-7.c3s2.iphmx.com (esa6.hc1455-7.c3s2.iphmx.com [68.232.139.139])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 570A012A;
-        Thu, 28 Sep 2023 03:32:32 -0700 (PDT)
-X-IronPort-AV: E=McAfee;i="6600,9927,10846"; a="135415786"
-X-IronPort-AV: E=Sophos;i="6.03,183,1694703600"; 
-   d="scan'208";a="135415786"
-Received: from unknown (HELO oym-r3.gw.nic.fujitsu.com) ([210.162.30.91])
-  by esa6.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2023 19:32:30 +0900
-Received: from oym-m1.gw.nic.fujitsu.com (oym-nat-oym-m1.gw.nic.fujitsu.com [192.168.87.58])
-        by oym-r3.gw.nic.fujitsu.com (Postfix) with ESMTP id ADECBCA1E4;
-        Thu, 28 Sep 2023 19:32:27 +0900 (JST)
-Received: from kws-ab4.gw.nic.fujitsu.com (kws-ab4.gw.nic.fujitsu.com [192.51.206.22])
-        by oym-m1.gw.nic.fujitsu.com (Postfix) with ESMTP id DC457D88BB;
-        Thu, 28 Sep 2023 19:32:26 +0900 (JST)
-Received: from irides.g08.fujitsu.local (unknown [10.167.234.230])
-        by kws-ab4.gw.nic.fujitsu.com (Postfix) with ESMTP id F340F6B83C;
-        Thu, 28 Sep 2023 19:32:25 +0900 (JST)
-From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
-To:     linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
-        linux-xfs@vger.kernel.org, linux-mm@kvack.org
-Cc:     dan.j.williams@intel.com, willy@infradead.org, jack@suse.cz,
-        akpm@linux-foundation.org, djwong@kernel.org, mcgrof@kernel.org,
-        chandanbabu@kernel.org
-Subject: [PATCH v15] mm, pmem, xfs: Introduce MF_MEM_PRE_REMOVE for unbind
-Date:   Thu, 28 Sep 2023 18:32:27 +0800
-Message-ID: <20230928103227.250550-1-ruansy.fnst@fujitsu.com>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20230828065744.1446462-1-ruansy.fnst@fujitsu.com>
-References: <20230828065744.1446462-1-ruansy.fnst@fujitsu.com>
+        Thu, 28 Sep 2023 07:04:18 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 974BCCE0;
+        Thu, 28 Sep 2023 04:04:15 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 810CDC433CC;
+        Thu, 28 Sep 2023 11:04:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695899055;
+        bh=UA17NieiKuJUQtAvlfYpTNXdsMGRKLLOw/Cz8ngzkD4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=V6CAZGurZISIkQMn+b7qANzD5KkJ97vaooKgKjDX0Cks6k8TEzUpepVAKk4oIlWwG
+         +jzZnGzmicw5BtfxrPApbAGLtk/nvnTQ9Jv5ftuLQnDZfLM3d7WMfTSLDLANOnprnD
+         D/mwlEpY82WLyYRan0BMiKRvcSd4JFXXqoXYLCSAZDxaDWLf2nc6sEoEg8+eUfCBAv
+         7JWU5Ug2iCxLmiKovVzNi+U0ye7uC7YDSrGbPNkjbeysP1E8oTSNAnrj2sLl7jo+Sp
+         5PrpsKTxEDXT9eYDzu2B5nmLgbMV6ozOr+FCNbxbj2dfcUC4IxYnKsLUmfp2/y31CZ
+         mKGPuQvOuScJA==
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Eric Biederman <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>, linux-mm@kvack.org
+Subject: [PATCH 02/87] fs: convert core infrastructure to new {a,m}time accessors
+Date:   Thu, 28 Sep 2023 07:02:11 -0400
+Message-ID: <20230928110413.33032-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20230928110300.32891-1-jlayton@kernel.org>
+References: <20230928110300.32891-1-jlayton@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-TM-AS-Product-Ver: IMSS-9.1.0.1417-9.0.0.1002-27902.007
-X-TM-AS-User-Approved-Sender: Yes
-X-TMASE-Version: IMSS-9.1.0.1417-9.0.1002-27902.007
-X-TMASE-Result: 10--22.737700-10.000000
-X-TMASE-MatchedRID: VU71FGpAPyn0kswJHlL1KikMR2LAnMRpMVx/3ZYby7+eEPi9wVyFrvQ9
-        seYAnNMGFXLD8NIP1b200CUVHJtoU4tUtJ9UYBX7fiKzBf4Yf9gYH39vFLryE1hs8uimgHNCjcR
-        qQigdY13DKKXtpTQT/spLIuGeLArNnpdzfoA7wecB6/aPodnUlgmWvXEqQTm5R2z2RqVFhBoRbq
-        eAiDR9yWBha63On1TPJ3TEshnsAz7bKAyc+TgM3CoiRKlBVkYI8bHRUazq99RxGu6rjxUqUF88K
-        FWF27c+zSEy3HVaiC5eb2xJS17QL9HpEovtNFNuEXjPIvKd74AzNsXWBvGVBs9anVQrvNX3OxE7
-        7kNtuQnlkd2q4DAqgeppp2JwmBaVBKvwQYblWIb0hv/rD7WVZH607foZgOWy4Jg2aOOdYIKcQWV
-        MGtd3l37cTriphWHJ1HinZFrgJn7bIYhvv070KFhRyidsElYk8SkdpG2/n9dlSB4Tpn2RE3v3EJ
-        JrdBuxBHGj1qouCqtgOb2hKLw6D2R5WlY/ZLL5rltvlARhKR1XBOoTSveiDwZZ8N3RvTMxo8WMk
-        QWv6iXBcIE78YqRWo6HM5rqDwqtlExlQIQeRG0=
-X-TMASE-SNAP-Result: 1.821001.0001-0-1-22:0,33:0,34:0-0
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
-        SPF_HELO_PASS,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-====
-Changes since v14:
- 1. added/fixed code comments per Dan's comments
-====
+Convert the core filesystem code to use the new atime and mtime accessor
+functions.
 
-Now, if we suddenly remove a PMEM device(by calling unbind) which
-contains FSDAX while programs are still accessing data in this device,
-e.g.:
-```
- $FSSTRESS_PROG -d $SCRATCH_MNT -n 99999 -p 4 &
- # $FSX_PROG -N 1000000 -o 8192 -l 500000 $SCRATCH_MNT/t001 &
- echo "pfn1.1" > /sys/bus/nd/drivers/nd_pmem/unbind
-```
-it could come into an unacceptable state:
-  1. device has gone but mount point still exists, and umount will fail
-       with "target is busy"
-  2. programs will hang and cannot be killed
-  3. may crash with NULL pointer dereference
-
-To fix this, we introduce a MF_MEM_PRE_REMOVE flag to let it know that we
-are going to remove the whole device, and make sure all related processes
-could be notified so that they could end up gracefully.
-
-This patch is inspired by Dan's "mm, dax, pmem: Introduce
-dev_pagemap_failure()"[1].  With the help of dax_holder and
-->notify_failure() mechanism, the pmem driver is able to ask filesystem
-on it to unmap all files in use, and notify processes who are using
-those files.
-
-Call trace:
-trigger unbind
- -> unbind_store()
-  -> ... (skip)
-   -> devres_release_all()
-    -> kill_dax()
-     -> dax_holder_notify_failure(dax_dev, 0, U64_MAX, MF_MEM_PRE_REMOVE)
-      -> xfs_dax_notify_failure()
-      `-> freeze_super()             // freeze (kernel call)
-      `-> do xfs rmap
-      ` -> mf_dax_kill_procs()
-      `  -> collect_procs_fsdax()    // all associated processes
-      `  -> unmap_and_kill()
-      ` -> invalidate_inode_pages2_range() // drop file's cache
-      `-> thaw_super()               // thaw (both kernel & user call)
-
-Introduce MF_MEM_PRE_REMOVE to let filesystem know this is a remove
-event.  Use the exclusive freeze/thaw[2] to lock the filesystem to prevent
-new dax mapping from being created.  Do not shutdown filesystem directly
-if configuration is not supported, or if failure range includes metadata
-area.  Make sure all files and processes(not only the current progress)
-are handled correctly.  Also drop the cache of associated files before
-pmem is removed.
-
-[1]: https://lore.kernel.org/linux-mm/161604050314.1463742.14151665140035795571.stgit@dwillia2-desk3.amr.corp.intel.com/
-[2]: https://lore.kernel.org/linux-xfs/169116275623.3187159.16862410128731457358.stg-ugh@frogsfrogsfrogs/
-
-Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-Acked-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- drivers/dax/super.c         |   3 +-
- fs/xfs/xfs_notify_failure.c | 108 ++++++++++++++++++++++++++++++++++--
- include/linux/mm.h          |   1 +
- mm/memory-failure.c         |  21 +++++--
- 4 files changed, 122 insertions(+), 11 deletions(-)
+ fs/attr.c                |  4 ++--
+ fs/bad_inode.c           |  2 +-
+ fs/binfmt_misc.c         |  2 +-
+ fs/inode.c               | 35 +++++++++++++++++++++--------------
+ fs/libfs.c               | 32 +++++++++++++++++++-------------
+ fs/nsfs.c                |  2 +-
+ fs/pipe.c                |  2 +-
+ fs/stack.c               |  4 ++--
+ fs/stat.c                |  4 ++--
+ include/linux/fs_stack.h |  6 +++---
+ 10 files changed, 53 insertions(+), 40 deletions(-)
 
-diff --git a/drivers/dax/super.c b/drivers/dax/super.c
-index 0da9232ea175..f4b635526345 100644
---- a/drivers/dax/super.c
-+++ b/drivers/dax/super.c
-@@ -326,7 +326,8 @@ void kill_dax(struct dax_device *dax_dev)
- 		return;
+diff --git a/fs/attr.c b/fs/attr.c
+index a8ae5f6d9b16..bdf5deb06ea9 100644
+--- a/fs/attr.c
++++ b/fs/attr.c
+@@ -308,9 +308,9 @@ void setattr_copy(struct mnt_idmap *idmap, struct inode *inode,
+ 	i_uid_update(idmap, attr, inode);
+ 	i_gid_update(idmap, attr, inode);
+ 	if (ia_valid & ATTR_ATIME)
+-		inode->i_atime = attr->ia_atime;
++		inode_set_atime_to_ts(inode, attr->ia_atime);
+ 	if (ia_valid & ATTR_MTIME)
+-		inode->i_mtime = attr->ia_mtime;
++		inode_set_mtime_to_ts(inode, attr->ia_mtime);
+ 	if (ia_valid & ATTR_CTIME)
+ 		inode_set_ctime_to_ts(inode, attr->ia_ctime);
+ 	if (ia_valid & ATTR_MODE) {
+diff --git a/fs/bad_inode.c b/fs/bad_inode.c
+index 83f9566c973b..316d88da2ce1 100644
+--- a/fs/bad_inode.c
++++ b/fs/bad_inode.c
+@@ -208,7 +208,7 @@ void make_bad_inode(struct inode *inode)
+ 	remove_inode_hash(inode);
  
- 	if (dax_dev->holder_data != NULL)
--		dax_holder_notify_failure(dax_dev, 0, U64_MAX, 0);
-+		dax_holder_notify_failure(dax_dev, 0, U64_MAX,
-+				MF_MEM_PRE_REMOVE);
- 
- 	clear_bit(DAXDEV_ALIVE, &dax_dev->flags);
- 	synchronize_srcu(&dax_srcu);
-diff --git a/fs/xfs/xfs_notify_failure.c b/fs/xfs/xfs_notify_failure.c
-index 4a9bbd3fe120..30e9f4e09f76 100644
---- a/fs/xfs/xfs_notify_failure.c
-+++ b/fs/xfs/xfs_notify_failure.c
-@@ -22,6 +22,7 @@
- 
- #include <linux/mm.h>
- #include <linux/dax.h>
-+#include <linux/fs.h>
- 
- struct xfs_failure_info {
- 	xfs_agblock_t		startblock;
-@@ -73,10 +74,16 @@ xfs_dax_failure_fn(
- 	struct xfs_mount		*mp = cur->bc_mp;
- 	struct xfs_inode		*ip;
- 	struct xfs_failure_info		*notify = data;
-+	struct address_space		*mapping;
-+	pgoff_t				pgoff;
-+	unsigned long			pgcnt;
- 	int				error = 0;
- 
- 	if (XFS_RMAP_NON_INODE_OWNER(rec->rm_owner) ||
- 	    (rec->rm_flags & (XFS_RMAP_ATTR_FORK | XFS_RMAP_BMBT_BLOCK))) {
-+		/* Continue the query because this isn't a failure. */
-+		if (notify->mf_flags & MF_MEM_PRE_REMOVE)
-+			return 0;
- 		notify->want_shutdown = true;
- 		return 0;
+ 	inode->i_mode = S_IFREG;
+-	inode->i_atime = inode->i_mtime = inode_set_ctime_current(inode);
++	simple_inode_init_ts(inode);
+ 	inode->i_op = &bad_inode_ops;	
+ 	inode->i_opflags &= ~IOP_XATTR;
+ 	inode->i_fop = &bad_file_ops;	
+diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
+index e0108d17b085..5d2be9b0a0a5 100644
+--- a/fs/binfmt_misc.c
++++ b/fs/binfmt_misc.c
+@@ -547,7 +547,7 @@ static struct inode *bm_get_inode(struct super_block *sb, int mode)
+ 	if (inode) {
+ 		inode->i_ino = get_next_ino();
+ 		inode->i_mode = mode;
+-		inode->i_atime = inode->i_mtime = inode_set_ctime_current(inode);
++		simple_inode_init_ts(inode);
  	}
-@@ -92,14 +99,60 @@ xfs_dax_failure_fn(
- 		return 0;
- 	}
- 
--	error = mf_dax_kill_procs(VFS_I(ip)->i_mapping,
--				  xfs_failure_pgoff(mp, rec, notify),
--				  xfs_failure_pgcnt(mp, rec, notify),
--				  notify->mf_flags);
-+	mapping = VFS_I(ip)->i_mapping;
-+	pgoff = xfs_failure_pgoff(mp, rec, notify);
-+	pgcnt = xfs_failure_pgcnt(mp, rec, notify);
-+
-+	/* Continue the rmap query if the inode isn't a dax file. */
-+	if (dax_mapping(mapping))
-+		error = mf_dax_kill_procs(mapping, pgoff, pgcnt,
-+					  notify->mf_flags);
-+
-+	/* Invalidate the cache in dax pages. */
-+	if (notify->mf_flags & MF_MEM_PRE_REMOVE)
-+		invalidate_inode_pages2_range(mapping, pgoff,
-+					      pgoff + pgcnt - 1);
-+
- 	xfs_irele(ip);
- 	return error;
+ 	return inode;
  }
- 
-+static int
-+xfs_dax_notify_failure_freeze(
-+	struct xfs_mount	*mp)
-+{
-+	struct super_block	*sb = mp->m_super;
-+	int			error;
-+
-+	error = freeze_super(sb, FREEZE_HOLDER_KERNEL);
-+	if (error)
-+		xfs_emerg(mp, "already frozen by kernel, err=%d", error);
-+
-+	return error;
-+}
-+
-+static void
-+xfs_dax_notify_failure_thaw(
-+	struct xfs_mount	*mp,
-+	bool			kernel_frozen)
-+{
-+	struct super_block	*sb = mp->m_super;
-+	int			error;
-+
-+	if (kernel_frozen) {
-+		error = thaw_super(sb, FREEZE_HOLDER_KERNEL);
-+		if (error)
-+			xfs_emerg(mp, "still frozen after notify failure, err=%d",
-+				error);
-+	}
-+
-+	/*
-+	 * Also thaw userspace call anyway because the device is about to be
-+	 * removed immediately.
-+	 */
-+	thaw_super(sb, FREEZE_HOLDER_USERSPACE);
-+}
-+
- static int
- xfs_dax_notify_ddev_failure(
- 	struct xfs_mount	*mp,
-@@ -112,15 +165,29 @@ xfs_dax_notify_ddev_failure(
- 	struct xfs_btree_cur	*cur = NULL;
- 	struct xfs_buf		*agf_bp = NULL;
- 	int			error = 0;
-+	bool			kernel_frozen = false;
- 	xfs_fsblock_t		fsbno = XFS_DADDR_TO_FSB(mp, daddr);
- 	xfs_agnumber_t		agno = XFS_FSB_TO_AGNO(mp, fsbno);
- 	xfs_fsblock_t		end_fsbno = XFS_DADDR_TO_FSB(mp,
- 							     daddr + bblen - 1);
- 	xfs_agnumber_t		end_agno = XFS_FSB_TO_AGNO(mp, end_fsbno);
- 
-+	if (mf_flags & MF_MEM_PRE_REMOVE) {
-+		xfs_info(mp, "Device is about to be removed!");
-+		/*
-+		 * Freeze fs to prevent new mappings from being created.
-+		 * - Keep going on if others already hold the kernel forzen.
-+		 * - Keep going on if other errors too because this device is
-+		 *   starting to fail.
-+		 * - If kernel frozen state is hold successfully here, thaw it
-+		 *   here as well at the end.
-+		 */
-+		kernel_frozen = xfs_dax_notify_failure_freeze(mp) == 0;
-+	}
-+
- 	error = xfs_trans_alloc_empty(mp, &tp);
- 	if (error)
--		return error;
-+		goto out;
- 
- 	for (; agno <= end_agno; agno++) {
- 		struct xfs_rmap_irec	ri_low = { };
-@@ -165,11 +232,26 @@ xfs_dax_notify_ddev_failure(
- 	}
- 
- 	xfs_trans_cancel(tp);
--	if (error || notify.want_shutdown) {
-+
-+	/*
-+	 * Shutdown fs from a force umount in pre-remove case which won't fail,
-+	 * so errors can be ignored.  Otherwise, shutdown the filesystem with
-+	 * CORRUPT flag if error occured or notify.want_shutdown was set during
-+	 * RMAP querying.
-+	 */
-+	if (mf_flags & MF_MEM_PRE_REMOVE)
-+		xfs_force_shutdown(mp, SHUTDOWN_FORCE_UMOUNT);
-+	else if (error || notify.want_shutdown) {
- 		xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_ONDISK);
- 		if (!error)
- 			error = -EFSCORRUPTED;
- 	}
-+
-+out:
-+	/* Thaw the fs if it has been frozen before. */
-+	if (mf_flags & MF_MEM_PRE_REMOVE)
-+		xfs_dax_notify_failure_thaw(mp, kernel_frozen);
-+
- 	return error;
- }
- 
-@@ -197,6 +279,14 @@ xfs_dax_notify_failure(
- 
- 	if (mp->m_logdev_targp && mp->m_logdev_targp->bt_daxdev == dax_dev &&
- 	    mp->m_logdev_targp != mp->m_ddev_targp) {
-+		/*
-+		 * In the pre-remove case the failure notification is attempting
-+		 * to trigger a force unmount.  The expectation is that the
-+		 * device is still present, but its removal is in progress and
-+		 * can not be cancelled, proceed with accessing the log device.
-+		 */
-+		if (mf_flags & MF_MEM_PRE_REMOVE)
-+			return 0;
- 		xfs_err(mp, "ondisk log corrupt, shutting down fs!");
- 		xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_ONDISK);
- 		return -EFSCORRUPTED;
-@@ -210,6 +300,12 @@ xfs_dax_notify_failure(
- 	ddev_start = mp->m_ddev_targp->bt_dax_part_off;
- 	ddev_end = ddev_start + bdev_nr_bytes(mp->m_ddev_targp->bt_bdev) - 1;
- 
-+	/* Notify failure on the whole device. */
-+	if (offset == 0 && len == U64_MAX) {
-+		offset = ddev_start;
-+		len = bdev_nr_bytes(mp->m_ddev_targp->bt_bdev);
-+	}
-+
- 	/* Ignore the range out of filesystem area */
- 	if (offset + len - 1 < ddev_start)
- 		return -ENXIO;
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 2dd73e4f3d8e..a10c75bebd6d 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -3665,6 +3665,7 @@ enum mf_flags {
- 	MF_UNPOISON = 1 << 4,
- 	MF_SW_SIMULATED = 1 << 5,
- 	MF_NO_RETRY = 1 << 6,
-+	MF_MEM_PRE_REMOVE = 1 << 7,
- };
- int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index,
- 		      unsigned long count, int mf_flags);
-diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-index e245191e6b04..955edea9837f 100644
---- a/mm/memory-failure.c
-+++ b/mm/memory-failure.c
-@@ -683,7 +683,7 @@ static void add_to_kill_fsdax(struct task_struct *tsk, struct page *p,
-  */
- static void collect_procs_fsdax(struct page *page,
- 		struct address_space *mapping, pgoff_t pgoff,
--		struct list_head *to_kill)
-+		struct list_head *to_kill, bool pre_remove)
+diff --git a/fs/inode.c b/fs/inode.c
+index 84bc3c76e5cc..0612ad9c0227 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -1837,27 +1837,29 @@ EXPORT_SYMBOL(bmap);
+ static int relatime_need_update(struct vfsmount *mnt, struct inode *inode,
+ 			     struct timespec64 now)
  {
- 	struct vm_area_struct *vma;
- 	struct task_struct *tsk;
-@@ -691,8 +691,15 @@ static void collect_procs_fsdax(struct page *page,
- 	i_mmap_lock_read(mapping);
- 	read_lock(&tasklist_lock);
- 	for_each_process(tsk) {
--		struct task_struct *t = task_early_kill(tsk, true);
-+		struct task_struct *t = tsk;
+-	struct timespec64 ctime;
++	struct timespec64 atime, mtime, ctime;
  
-+		/*
-+		 * Search for all tasks while MF_MEM_PRE_REMOVE is set, because
-+		 * the current may not be the one accessing the fsdax page.
-+		 * Otherwise, search for the current task.
-+		 */
-+		if (!pre_remove)
-+			t = task_early_kill(tsk, true);
- 		if (!t)
- 			continue;
- 		vma_interval_tree_foreach(vma, &mapping->i_mmap, pgoff, pgoff) {
-@@ -1788,6 +1795,7 @@ int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index,
- 	dax_entry_t cookie;
- 	struct page *page;
- 	size_t end = index + count;
-+	bool pre_remove = mf_flags & MF_MEM_PRE_REMOVE;
+ 	if (!(mnt->mnt_flags & MNT_RELATIME))
+ 		return 1;
+ 	/*
+ 	 * Is mtime younger than or equal to atime? If yes, update atime:
+ 	 */
+-	if (timespec64_compare(&inode->i_mtime, &inode->i_atime) >= 0)
++	atime = inode_get_atime(inode);
++	mtime = inode_get_mtime(inode);
++	if (timespec64_compare(&mtime, &atime) >= 0)
+ 		return 1;
+ 	/*
+ 	 * Is ctime younger than or equal to atime? If yes, update atime:
+ 	 */
+ 	ctime = inode_get_ctime(inode);
+-	if (timespec64_compare(&ctime, &inode->i_atime) >= 0)
++	if (timespec64_compare(&ctime, &atime) >= 0)
+ 		return 1;
  
- 	mf_flags |= MF_ACTION_REQUIRED | MF_MUST_KILL;
+ 	/*
+ 	 * Is the previous atime value older than a day? If yes,
+ 	 * update atime:
+ 	 */
+-	if ((long)(now.tv_sec - inode->i_atime.tv_sec) >= 24*60*60)
++	if ((long)(now.tv_sec - atime.tv_sec) >= 24*60*60)
+ 		return 1;
+ 	/*
+ 	 * Good, we can skip the atime update:
+@@ -1888,12 +1890,13 @@ int inode_update_timestamps(struct inode *inode, int flags)
  
-@@ -1799,9 +1807,14 @@ int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index,
- 		if (!page)
- 			goto unlock;
+ 	if (flags & (S_MTIME|S_CTIME|S_VERSION)) {
+ 		struct timespec64 ctime = inode_get_ctime(inode);
++		struct timespec64 mtime = inode_get_mtime(inode);
  
--		SetPageHWPoison(page);
-+		if (!pre_remove)
-+			SetPageHWPoison(page);
+ 		now = inode_set_ctime_current(inode);
+ 		if (!timespec64_equal(&now, &ctime))
+ 			updated |= S_CTIME;
+-		if (!timespec64_equal(&now, &inode->i_mtime)) {
+-			inode->i_mtime = now;
++		if (!timespec64_equal(&now, &mtime)) {
++			inode_set_mtime_to_ts(inode, now);
+ 			updated |= S_MTIME;
+ 		}
+ 		if (IS_I_VERSION(inode) && inode_maybe_inc_iversion(inode, updated))
+@@ -1903,8 +1906,10 @@ int inode_update_timestamps(struct inode *inode, int flags)
+ 	}
  
--		collect_procs_fsdax(page, mapping, index, &to_kill);
-+		/*
-+		 * The pre_remove case is revoking access, the memory is still
-+		 * good and could theoretically be put back into service.
-+		 */
-+		collect_procs_fsdax(page, mapping, index, &to_kill, pre_remove);
- 		unmap_and_kill(&to_kill, page_to_pfn(page), mapping,
- 				index, mf_flags);
- unlock:
+ 	if (flags & S_ATIME) {
+-		if (!timespec64_equal(&now, &inode->i_atime)) {
+-			inode->i_atime = now;
++		struct timespec64 atime = inode_get_atime(inode);
++
++		if (!timespec64_equal(&now, &atime)) {
++			inode_set_atime_to_ts(inode, now);
+ 			updated |= S_ATIME;
+ 		}
+ 	}
+@@ -1963,7 +1968,7 @@ EXPORT_SYMBOL(inode_update_time);
+ bool atime_needs_update(const struct path *path, struct inode *inode)
+ {
+ 	struct vfsmount *mnt = path->mnt;
+-	struct timespec64 now;
++	struct timespec64 now, atime;
+ 
+ 	if (inode->i_flags & S_NOATIME)
+ 		return false;
+@@ -1989,7 +1994,8 @@ bool atime_needs_update(const struct path *path, struct inode *inode)
+ 	if (!relatime_need_update(mnt, inode, now))
+ 		return false;
+ 
+-	if (timespec64_equal(&inode->i_atime, &now))
++	atime = inode_get_atime(inode);
++	if (timespec64_equal(&atime, &now))
+ 		return false;
+ 
+ 	return true;
+@@ -2106,17 +2112,18 @@ static int inode_needs_update_time(struct inode *inode)
+ {
+ 	int sync_it = 0;
+ 	struct timespec64 now = current_time(inode);
+-	struct timespec64 ctime;
++	struct timespec64 ts;
+ 
+ 	/* First try to exhaust all avenues to not sync */
+ 	if (IS_NOCMTIME(inode))
+ 		return 0;
+ 
+-	if (!timespec64_equal(&inode->i_mtime, &now))
++	ts = inode_get_mtime(inode);
++	if (!timespec64_equal(&ts, &now))
+ 		sync_it = S_MTIME;
+ 
+-	ctime = inode_get_ctime(inode);
+-	if (!timespec64_equal(&ctime, &now))
++	ts = inode_get_ctime(inode);
++	if (!timespec64_equal(&ts, &now))
+ 		sync_it |= S_CTIME;
+ 
+ 	if (IS_I_VERSION(inode) && inode_iversion_need_inc(inode))
+diff --git a/fs/libfs.c b/fs/libfs.c
+index f5cdc7f7f5b5..abe2b5a40ba1 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -541,7 +541,8 @@ void simple_recursive_removal(struct dentry *dentry,
+ 				dput(victim);		// unpin it
+ 			}
+ 			if (victim == dentry) {
+-				inode->i_mtime = inode_set_ctime_current(inode);
++				inode_set_mtime_to_ts(inode,
++						      inode_set_ctime_current(inode));
+ 				if (d_is_dir(dentry))
+ 					drop_nlink(inode);
+ 				inode_unlock(inode);
+@@ -582,7 +583,7 @@ static int pseudo_fs_fill_super(struct super_block *s, struct fs_context *fc)
+ 	 */
+ 	root->i_ino = 1;
+ 	root->i_mode = S_IFDIR | S_IRUSR | S_IWUSR;
+-	root->i_atime = root->i_mtime = inode_set_ctime_current(root);
++	simple_inode_init_ts(root);
+ 	s->s_root = d_make_root(root);
+ 	if (!s->s_root)
+ 		return -ENOMEM;
+@@ -638,8 +639,8 @@ int simple_link(struct dentry *old_dentry, struct inode *dir, struct dentry *den
+ {
+ 	struct inode *inode = d_inode(old_dentry);
+ 
+-	dir->i_mtime = inode_set_ctime_to_ts(dir,
+-					     inode_set_ctime_current(inode));
++	inode_set_mtime_to_ts(dir,
++			      inode_set_ctime_to_ts(dir, inode_set_ctime_current(inode)));
+ 	inc_nlink(inode);
+ 	ihold(inode);
+ 	dget(dentry);
+@@ -673,8 +674,8 @@ int simple_unlink(struct inode *dir, struct dentry *dentry)
+ {
+ 	struct inode *inode = d_inode(dentry);
+ 
+-	dir->i_mtime = inode_set_ctime_to_ts(dir,
+-					     inode_set_ctime_current(inode));
++	inode_set_mtime_to_ts(dir,
++			      inode_set_ctime_to_ts(dir, inode_set_ctime_current(inode)));
+ 	drop_nlink(inode);
+ 	dput(dentry);
+ 	return 0;
+@@ -709,9 +710,10 @@ void simple_rename_timestamp(struct inode *old_dir, struct dentry *old_dentry,
+ {
+ 	struct inode *newino = d_inode(new_dentry);
+ 
+-	old_dir->i_mtime = inode_set_ctime_current(old_dir);
++	inode_set_mtime_to_ts(old_dir, inode_set_ctime_current(old_dir));
+ 	if (new_dir != old_dir)
+-		new_dir->i_mtime = inode_set_ctime_current(new_dir);
++		inode_set_mtime_to_ts(new_dir,
++				      inode_set_ctime_current(new_dir));
+ 	inode_set_ctime_current(d_inode(old_dentry));
+ 	if (newino)
+ 		inode_set_ctime_current(newino);
+@@ -926,7 +928,7 @@ int simple_fill_super(struct super_block *s, unsigned long magic,
+ 	 */
+ 	inode->i_ino = 1;
+ 	inode->i_mode = S_IFDIR | 0755;
+-	inode->i_atime = inode->i_mtime = inode_set_ctime_current(inode);
++	simple_inode_init_ts(inode);
+ 	inode->i_op = &simple_dir_inode_operations;
+ 	inode->i_fop = &simple_dir_operations;
+ 	set_nlink(inode, 2);
+@@ -952,7 +954,7 @@ int simple_fill_super(struct super_block *s, unsigned long magic,
+ 			goto out;
+ 		}
+ 		inode->i_mode = S_IFREG | files->mode;
+-		inode->i_atime = inode->i_mtime = inode_set_ctime_current(inode);
++		simple_inode_init_ts(inode);
+ 		inode->i_fop = files->ops;
+ 		inode->i_ino = i;
+ 		d_add(dentry, inode);
+@@ -1520,7 +1522,7 @@ struct inode *alloc_anon_inode(struct super_block *s)
+ 	inode->i_uid = current_fsuid();
+ 	inode->i_gid = current_fsgid();
+ 	inode->i_flags |= S_PRIVATE;
+-	inode->i_atime = inode->i_mtime = inode_set_ctime_current(inode);
++	simple_inode_init_ts(inode);
+ 	return inode;
+ }
+ EXPORT_SYMBOL(alloc_anon_inode);
+@@ -1920,8 +1922,12 @@ EXPORT_SYMBOL_GPL(direct_write_fallback);
+  * When a new inode is created, most filesystems set the timestamps to the
+  * current time. Add a helper to do this.
+  */
+-struct timespec64 simple_inode_init_ts(struct inode *inode);
++struct timespec64 simple_inode_init_ts(struct inode *inode)
+ {
+-	return inode->i_atime = inode->i_mtime = inode_set_ctime_current(inode);
++	struct timespec64 ts = inode_set_ctime_current(inode);
++
++	inode_set_atime_to_ts(inode, ts);
++	inode_set_mtime_to_ts(inode, ts);
++	return ts;
+ }
+ EXPORT_SYMBOL(simple_inode_init_ts);
+diff --git a/fs/nsfs.c b/fs/nsfs.c
+index 647a22433bd8..9a4b228d42fa 100644
+--- a/fs/nsfs.c
++++ b/fs/nsfs.c
+@@ -84,7 +84,7 @@ static int __ns_get_path(struct path *path, struct ns_common *ns)
+ 		return -ENOMEM;
+ 	}
+ 	inode->i_ino = ns->inum;
+-	inode->i_mtime = inode->i_atime = inode_set_ctime_current(inode);
++	simple_inode_init_ts(inode);
+ 	inode->i_flags |= S_IMMUTABLE;
+ 	inode->i_mode = S_IFREG | S_IRUGO;
+ 	inode->i_fop = &ns_file_operations;
+diff --git a/fs/pipe.c b/fs/pipe.c
+index 139190165a1c..b96a5918d064 100644
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -898,7 +898,7 @@ static struct inode * get_pipe_inode(void)
+ 	inode->i_mode = S_IFIFO | S_IRUSR | S_IWUSR;
+ 	inode->i_uid = current_fsuid();
+ 	inode->i_gid = current_fsgid();
+-	inode->i_atime = inode->i_mtime = inode_set_ctime_current(inode);
++	simple_inode_init_ts(inode);
+ 
+ 	return inode;
+ 
+diff --git a/fs/stack.c b/fs/stack.c
+index b5e01bdb5f5f..f18920119944 100644
+--- a/fs/stack.c
++++ b/fs/stack.c
+@@ -66,8 +66,8 @@ void fsstack_copy_attr_all(struct inode *dest, const struct inode *src)
+ 	dest->i_uid = src->i_uid;
+ 	dest->i_gid = src->i_gid;
+ 	dest->i_rdev = src->i_rdev;
+-	dest->i_atime = src->i_atime;
+-	dest->i_mtime = src->i_mtime;
++	inode_set_atime_to_ts(dest, inode_get_atime(src));
++	inode_set_mtime_to_ts(dest, inode_get_mtime(src));
+ 	inode_set_ctime_to_ts(dest, inode_get_ctime(src));
+ 	dest->i_blkbits = src->i_blkbits;
+ 	dest->i_flags = src->i_flags;
+diff --git a/fs/stat.c b/fs/stat.c
+index d43a5cc1bfa4..24bb0209e459 100644
+--- a/fs/stat.c
++++ b/fs/stat.c
+@@ -57,8 +57,8 @@ void generic_fillattr(struct mnt_idmap *idmap, u32 request_mask,
+ 	stat->gid = vfsgid_into_kgid(vfsgid);
+ 	stat->rdev = inode->i_rdev;
+ 	stat->size = i_size_read(inode);
+-	stat->atime = inode->i_atime;
+-	stat->mtime = inode->i_mtime;
++	stat->atime = inode_get_atime(inode);
++	stat->mtime = inode_get_mtime(inode);
+ 	stat->ctime = inode_get_ctime(inode);
+ 	stat->blksize = i_blocksize(inode);
+ 	stat->blocks = inode->i_blocks;
+diff --git a/include/linux/fs_stack.h b/include/linux/fs_stack.h
+index 010d39d0dc1c..2b1f74b24070 100644
+--- a/include/linux/fs_stack.h
++++ b/include/linux/fs_stack.h
+@@ -16,14 +16,14 @@ extern void fsstack_copy_inode_size(struct inode *dst, struct inode *src);
+ static inline void fsstack_copy_attr_atime(struct inode *dest,
+ 					   const struct inode *src)
+ {
+-	dest->i_atime = src->i_atime;
++	inode_set_atime_to_ts(dest, inode_get_atime(src));
+ }
+ 
+ static inline void fsstack_copy_attr_times(struct inode *dest,
+ 					   const struct inode *src)
+ {
+-	dest->i_atime = src->i_atime;
+-	dest->i_mtime = src->i_mtime;
++	inode_set_atime_to_ts(dest, inode_get_atime(src));
++	inode_set_mtime_to_ts(dest, inode_get_mtime(src));
+ 	inode_set_ctime_to_ts(dest, inode_get_ctime(src));
+ }
+ 
 -- 
-2.42.0
+2.41.0
 
