@@ -2,39 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 11AA57B1A1A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Sep 2023 13:09:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E9E87B1A1E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Sep 2023 13:09:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232199AbjI1LJJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Sep 2023 07:09:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34066 "EHLO
+        id S232432AbjI1LJR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Sep 2023 07:09:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232373AbjI1LIA (ORCPT
+        with ESMTP id S232455AbjI1LIT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Sep 2023 07:08:00 -0400
+        Thu, 28 Sep 2023 07:08:19 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 554781BF4;
-        Thu, 28 Sep 2023 04:05:20 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3215AC433CD;
-        Thu, 28 Sep 2023 11:05:20 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DC201FC3;
+        Thu, 28 Sep 2023 04:05:22 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4384FC433C9;
+        Thu, 28 Sep 2023 11:05:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695899120;
-        bh=DJSvCuPLAD4saV0xZe/l++49VBU2Ao4YBQp420d7aJ4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X1p1tnqkywMXIK15zqJ2FgVjNGn7haElYKat55LiJsKAEX44aY9LJroHbA3VzKLGj
-         /Y6rWU8/2CJidpL3EcXTC6Xu8+XrH/os0C2pOlhFNunuxtBiyODoe7HJX3GtJyWhzc
-         ikSi7r3w2rNWPJS/8i6BgDOuAFW7BZ/AsmifvnSK7N1Ju0zyi191rT03uuSHoRuV6x
-         Ug/dMhpw4MIlS9jrAGXCpgZhzqNmGrGaqyuG8uTeiHP1xw2JK5iohcnV73NUzY11xd
-         A2bzjwLLv+A5lAtZRymkX5iLwUrdcnw9wGxHtX4+Iix6HcvBC2Q8qKuiiVE7JG21Q+
-         dh/X0w7/3+u7Q==
+        s=k20201202; t=1695899121;
+        bh=8+8AJF3AhKrl93BeuM8E72hFW1YYn21QPzzOHsiMUnM=;
+        h=From:To:Subject:Date:In-Reply-To:References:From;
+        b=GrTVxkomxmLgo+dtPFi5YzqlMf7W+QIjQYPYS6norJp1U0ZjX1hpXMEMGU3t56qpP
+         4n2vmVnzWD5uLmO8zA+rdMpTOe8NsJkFgaSylhwPXV0oGcPP7RL9gmlKuSNI1SqH/m
+         XhmE5NjBoB07BoGDT63+7N9STzkv4IBTFOAubfzLadNMbHDFjXV1Uw85qBka6ZTrMM
+         bRazIX+ZxtrcyG/kyHKUzXK4/s6DleQ6BpXhmyfZz3zrMhzZGlxw5Bcan74BSIPDrs
+         heUhdGvigKuRAPhVhM1WZzry2WJ88a/bJKG1Z3rYYInU/x4yMgYO1AoS5MkZ++CPxA
+         tO2MzhrilBA0Q==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     linux-karma-devel@lists.sourceforge.net
-Subject: [PATCH 56/87] fs/omfs: convert to new inode {a,m}time accessors
-Date:   Thu, 28 Sep 2023 07:03:05 -0400
-Message-ID: <20230928110413.33032-55-jlayton@kernel.org>
+Subject: [PATCH 57/87] fs/openpromfs: convert to new inode {a,m}time accessors
+Date:   Thu, 28 Sep 2023 07:03:06 -0400
+Message-ID: <20230928110413.33032-56-jlayton@kernel.org>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20230928110413.33032-1-jlayton@kernel.org>
 References: <20230928110300.32891-1-jlayton@kernel.org>
@@ -52,36 +51,31 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/omfs/inode.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ fs/openpromfs/inode.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/omfs/inode.c b/fs/omfs/inode.c
-index 2f8c1882f45c..cdcee7af34d1 100644
---- a/fs/omfs/inode.c
-+++ b/fs/omfs/inode.c
-@@ -51,7 +51,7 @@ struct inode *omfs_new_inode(struct inode *dir, umode_t mode)
- 	inode_init_owner(&nop_mnt_idmap, inode, NULL, mode);
- 	inode->i_mapping->a_ops = &omfs_aops;
+diff --git a/fs/openpromfs/inode.c b/fs/openpromfs/inode.c
+index b2457cb97fa0..c4b65a6d41cc 100644
+--- a/fs/openpromfs/inode.c
++++ b/fs/openpromfs/inode.c
+@@ -237,7 +237,7 @@ static struct dentry *openpromfs_lookup(struct inode *dir, struct dentry *dentry
+ 	if (IS_ERR(inode))
+ 		return ERR_CAST(inode);
+ 	if (inode->i_state & I_NEW) {
+-		inode->i_mtime = inode->i_atime = inode_set_ctime_current(inode);
++		simple_inode_init_ts(inode);
+ 		ent_oi = OP_I(inode);
+ 		ent_oi->type = ent_type;
+ 		ent_oi->u = ent_data;
+@@ -387,7 +387,7 @@ static int openprom_fill_super(struct super_block *s, struct fs_context *fc)
+ 		goto out_no_root;
+ 	}
  
--	inode->i_atime = inode->i_mtime = inode_set_ctime_current(inode);
-+	simple_inode_init_ts(inode);
- 	switch (mode & S_IFMT) {
- 	case S_IFDIR:
- 		inode->i_op = &omfs_dir_inops;
-@@ -230,11 +230,9 @@ struct inode *omfs_iget(struct super_block *sb, ino_t ino)
- 	ctime = be64_to_cpu(oi->i_ctime);
- 	nsecs = do_div(ctime, 1000) * 1000L;
- 
--	inode->i_atime.tv_sec = ctime;
--	inode->i_mtime.tv_sec = ctime;
-+	inode_set_atime(inode, ctime, nsecs);
-+	inode_set_mtime(inode, ctime, nsecs);
- 	inode_set_ctime(inode, ctime, nsecs);
--	inode->i_atime.tv_nsec = nsecs;
--	inode->i_mtime.tv_nsec = nsecs;
- 
- 	inode->i_mapping->a_ops = &omfs_aops;
- 
+-	root_inode->i_mtime = root_inode->i_atime = inode_set_ctime_current(root_inode);
++	simple_inode_init_ts(root_inode);
+ 	root_inode->i_op = &openprom_inode_operations;
+ 	root_inode->i_fop = &openprom_operations;
+ 	root_inode->i_mode = S_IFDIR | S_IRUGO | S_IXUGO;
 -- 
 2.41.0
 
