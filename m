@@ -2,39 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 116617B1A15
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Sep 2023 13:08:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 243A27B1A16
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Sep 2023 13:09:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232500AbjI1LIk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Sep 2023 07:08:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39210 "EHLO
+        id S232403AbjI1LI6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Sep 2023 07:08:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232291AbjI1LHc (ORCPT
+        with ESMTP id S232397AbjI1LHv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Sep 2023 07:07:32 -0400
+        Thu, 28 Sep 2023 07:07:51 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7247819B7;
-        Thu, 28 Sep 2023 04:05:15 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AED99C433CC;
-        Thu, 28 Sep 2023 11:05:14 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D46B11BC8;
+        Thu, 28 Sep 2023 04:05:16 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEE7AC433CD;
+        Thu, 28 Sep 2023 11:05:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695899115;
-        bh=VoXxlVrUqhBQVgwjQRi6qU/ZUnPcdpAUrcKR8cbC/GU=;
+        s=k20201202; t=1695899116;
+        bh=iYzRYo8vFGKRND3wpSgS5AcDoJOSOrjRRyFvrT8djug=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dgEOBlGxUkrY1UdDotHV8qYcq/YOtzMq9YHMhD3agVMSTw/us/cpFfcBz/nth7rUj
-         zRWZpyzdYypQQykYBbsWt8+MAYeYNDi8uVYbnPsPUjrriqGEhVmdhOIafyZryy43DU
-         Nk4UKhCs47HVDHlwS3kpdskGF7+ZZ6yJOQsBrI0Qlho9FP8yzHDpEtlqgWexgrwJ+v
-         r+YxsIRtSnYdXo+1gVKjsYOWS94tba9gmJpMU75DTtIPwLvyUtbSvZZRBPiG2A/C7v
-         ieXtx01U0AQc+Bm7ZklrbMxlL9h25Vzq4rcWNHlYq3wyyTz9QNZXmhRJ69B08FtF1u
-         cI9D2dv7qUwUw==
+        b=hmNdPBmvApwFSgIvMG90dg/rmri7eMVBjXfenRypJWJjw09RAbm8TnO40XHCQKP1S
+         flNbif3rant7lnwVUyWzf0llo8GQjlGI4arrDXpk9Vp1SEiJmoUXg/Tnkq9DfGwD7e
+         vTlOZ3P//QBUTnvEoQBB+1iYVfxJoNq0ivRNOn3GtTZGn3Qlct8FessjdlQCdP90vt
+         C95ARyOmEm0t//Sge7JSw/vtQLTh8o0ydvuxuJ0P6zkIZIBr4BOYDLXwyhfiqJ1KTY
+         xxITkNTU+B8SKGko1OZf3sEkWssadvxtk+7T8Y9nUHhhoR/oilwit5qOU6vmLQfjeY
+         KVySWnKJGfyJw==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     linux-nilfs@vger.kernel.org
-Subject: [PATCH 52/87] fs/nilfs2: convert to new inode {a,m}time accessors
-Date:   Thu, 28 Sep 2023 07:03:01 -0400
-Message-ID: <20230928110413.33032-51-jlayton@kernel.org>
+Cc:     Namjae Jeon <linkinjeon@kernel.org>,
+        linux-ntfs-dev@lists.sourceforge.net
+Subject: [PATCH 53/87] fs/ntfs: convert to new inode {a,m}time accessors
+Date:   Thu, 28 Sep 2023 07:03:02 -0400
+Message-ID: <20230928110413.33032-52-jlayton@kernel.org>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20230928110413.33032-1-jlayton@kernel.org>
 References: <20230928110300.32891-1-jlayton@kernel.org>
@@ -52,92 +53,116 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/nilfs2/dir.c   |  6 +++---
- fs/nilfs2/inode.c | 16 ++++++++--------
- 2 files changed, 11 insertions(+), 11 deletions(-)
+ fs/ntfs/inode.c | 25 +++++++++++++------------
+ fs/ntfs/mft.c   |  2 +-
+ 2 files changed, 14 insertions(+), 13 deletions(-)
 
-diff --git a/fs/nilfs2/dir.c b/fs/nilfs2/dir.c
-index bce734b68f08..de2073c47651 100644
---- a/fs/nilfs2/dir.c
-+++ b/fs/nilfs2/dir.c
-@@ -429,7 +429,7 @@ void nilfs_set_link(struct inode *dir, struct nilfs_dir_entry *de,
- 	nilfs_set_de_type(de, inode);
- 	nilfs_commit_chunk(page, mapping, from, to);
- 	nilfs_put_page(page);
--	dir->i_mtime = inode_set_ctime_current(dir);
-+	inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
- }
+diff --git a/fs/ntfs/inode.c b/fs/ntfs/inode.c
+index 99ac6ea277c4..aba1e22db4e9 100644
+--- a/fs/ntfs/inode.c
++++ b/fs/ntfs/inode.c
+@@ -648,7 +648,7 @@ static int ntfs_read_locked_inode(struct inode *vi)
+ 	 * mtime is the last change of the data within the file. Not changed
+ 	 * when only metadata is changed, e.g. a rename doesn't affect mtime.
+ 	 */
+-	vi->i_mtime = ntfs2utc(si->last_data_change_time);
++	inode_set_mtime_to_ts(vi, ntfs2utc(si->last_data_change_time));
+ 	/*
+ 	 * ctime is the last change of the metadata of the file. This obviously
+ 	 * always changes, when mtime is changed. ctime can be changed on its
+@@ -659,7 +659,7 @@ static int ntfs_read_locked_inode(struct inode *vi)
+ 	 * Last access to the data within the file. Not changed during a rename
+ 	 * for example but changed whenever the file is written to.
+ 	 */
+-	vi->i_atime = ntfs2utc(si->last_access_time);
++	inode_set_atime_to_ts(vi, ntfs2utc(si->last_access_time));
  
- /*
-@@ -519,7 +519,7 @@ int nilfs_add_link(struct dentry *dentry, struct inode *inode)
- 	de->inode = cpu_to_le64(inode->i_ino);
- 	nilfs_set_de_type(de, inode);
- 	nilfs_commit_chunk(page, page->mapping, from, to);
--	dir->i_mtime = inode_set_ctime_current(dir);
-+	inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
- 	nilfs_mark_inode_dirty(dir);
- 	/* OFFSET_CACHE */
- out_put:
-@@ -567,7 +567,7 @@ int nilfs_delete_entry(struct nilfs_dir_entry *dir, struct page *page)
- 		pde->rec_len = nilfs_rec_len_to_disk(to - from);
- 	dir->inode = 0;
- 	nilfs_commit_chunk(page, mapping, from, to);
--	inode->i_mtime = inode_set_ctime_current(inode);
-+	inode_set_mtime_to_ts(inode, inode_set_ctime_current(inode));
- out:
- 	nilfs_put_page(page);
- 	return err;
-diff --git a/fs/nilfs2/inode.c b/fs/nilfs2/inode.c
-index 1a8bd5993476..b59380a8bbc0 100644
---- a/fs/nilfs2/inode.c
-+++ b/fs/nilfs2/inode.c
-@@ -366,7 +366,7 @@ struct inode *nilfs_new_inode(struct inode *dir, umode_t mode)
- 	atomic64_inc(&root->inodes_count);
- 	inode_init_owner(&nop_mnt_idmap, inode, dir, mode);
- 	inode->i_ino = ino;
--	inode->i_mtime = inode->i_atime = inode_set_ctime_current(inode);
-+	simple_inode_init_ts(inode);
+ 	/* Find the attribute list attribute if present. */
+ 	ntfs_attr_reinit_search_ctx(ctx);
+@@ -1217,9 +1217,9 @@ static int ntfs_read_locked_attr_inode(struct inode *base_vi, struct inode *vi)
+ 	vi->i_uid	= base_vi->i_uid;
+ 	vi->i_gid	= base_vi->i_gid;
+ 	set_nlink(vi, base_vi->i_nlink);
+-	vi->i_mtime	= base_vi->i_mtime;
++	inode_set_mtime_to_ts(vi, inode_get_mtime(base_vi));
+ 	inode_set_ctime_to_ts(vi, inode_get_ctime(base_vi));
+-	vi->i_atime	= base_vi->i_atime;
++	inode_set_atime_to_ts(vi, inode_get_atime(base_vi));
+ 	vi->i_generation = ni->seq_no = base_ni->seq_no;
  
- 	if (S_ISREG(mode) || S_ISDIR(mode) || S_ISLNK(mode)) {
- 		err = nilfs_bmap_read(ii->i_bmap, NULL);
-@@ -449,12 +449,12 @@ int nilfs_read_inode_common(struct inode *inode,
- 	i_gid_write(inode, le32_to_cpu(raw_inode->i_gid));
- 	set_nlink(inode, le16_to_cpu(raw_inode->i_links_count));
- 	inode->i_size = le64_to_cpu(raw_inode->i_size);
--	inode->i_atime.tv_sec = le64_to_cpu(raw_inode->i_mtime);
-+	inode_set_atime(inode, le64_to_cpu(raw_inode->i_mtime),
-+			le32_to_cpu(raw_inode->i_mtime_nsec));
- 	inode_set_ctime(inode, le64_to_cpu(raw_inode->i_ctime),
- 			le32_to_cpu(raw_inode->i_ctime_nsec));
--	inode->i_mtime.tv_sec = le64_to_cpu(raw_inode->i_mtime);
--	inode->i_atime.tv_nsec = le32_to_cpu(raw_inode->i_mtime_nsec);
--	inode->i_mtime.tv_nsec = le32_to_cpu(raw_inode->i_mtime_nsec);
-+	inode_set_mtime(inode, le64_to_cpu(raw_inode->i_mtime),
-+			le32_to_cpu(raw_inode->i_mtime_nsec));
- 	if (nilfs_is_metadata_file_inode(inode) && !S_ISREG(inode->i_mode))
- 		return -EIO; /* this inode is for metadata and corrupted */
- 	if (inode->i_nlink == 0)
-@@ -769,9 +769,9 @@ void nilfs_write_inode_common(struct inode *inode,
- 	raw_inode->i_links_count = cpu_to_le16(inode->i_nlink);
- 	raw_inode->i_size = cpu_to_le64(inode->i_size);
- 	raw_inode->i_ctime = cpu_to_le64(inode_get_ctime(inode).tv_sec);
--	raw_inode->i_mtime = cpu_to_le64(inode->i_mtime.tv_sec);
-+	raw_inode->i_mtime = cpu_to_le64(inode_get_mtime(inode).tv_sec);
- 	raw_inode->i_ctime_nsec = cpu_to_le32(inode_get_ctime(inode).tv_nsec);
--	raw_inode->i_mtime_nsec = cpu_to_le32(inode->i_mtime.tv_nsec);
-+	raw_inode->i_mtime_nsec = cpu_to_le32(inode_get_mtime(inode).tv_nsec);
- 	raw_inode->i_blocks = cpu_to_le64(inode->i_blocks);
+ 	/* Set inode type to zero but preserve permissions. */
+@@ -1483,9 +1483,9 @@ static int ntfs_read_locked_index_inode(struct inode *base_vi, struct inode *vi)
+ 	vi->i_uid	= base_vi->i_uid;
+ 	vi->i_gid	= base_vi->i_gid;
+ 	set_nlink(vi, base_vi->i_nlink);
+-	vi->i_mtime	= base_vi->i_mtime;
++	inode_set_mtime_to_ts(vi, inode_get_mtime(base_vi));
+ 	inode_set_ctime_to_ts(vi, inode_get_ctime(base_vi));
+-	vi->i_atime	= base_vi->i_atime;
++	inode_set_atime_to_ts(vi, inode_get_atime(base_vi));
+ 	vi->i_generation = ni->seq_no = base_ni->seq_no;
+ 	/* Set inode type to zero but preserve permissions. */
+ 	vi->i_mode	= base_vi->i_mode & ~S_IFMT;
+@@ -2805,13 +2805,14 @@ int ntfs_truncate(struct inode *vi)
+ 	if (!IS_NOCMTIME(VFS_I(base_ni)) && !IS_RDONLY(VFS_I(base_ni))) {
+ 		struct timespec64 now = current_time(VFS_I(base_ni));
+ 		struct timespec64 ctime = inode_get_ctime(VFS_I(base_ni));
++		struct timespec64 mtime = inode_get_mtime(VFS_I(base_ni));
+ 		int sync_it = 0;
  
- 	raw_inode->i_flags = cpu_to_le32(ii->i_flags);
-@@ -875,7 +875,7 @@ void nilfs_truncate(struct inode *inode)
+-		if (!timespec64_equal(&VFS_I(base_ni)->i_mtime, &now) ||
++		if (!timespec64_equal(&mtime, &now) ||
+ 		    !timespec64_equal(&ctime, &now))
+ 			sync_it = 1;
+ 		inode_set_ctime_to_ts(VFS_I(base_ni), now);
+-		VFS_I(base_ni)->i_mtime = now;
++		inode_set_mtime_to_ts(VFS_I(base_ni), now);
  
- 	nilfs_truncate_bmap(ii, blkoff);
+ 		if (sync_it)
+ 			mark_inode_dirty_sync(VFS_I(base_ni));
+@@ -2925,9 +2926,9 @@ int ntfs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+ 		}
+ 	}
+ 	if (ia_valid & ATTR_ATIME)
+-		vi->i_atime = attr->ia_atime;
++		inode_set_atime_to_ts(vi, attr->ia_atime);
+ 	if (ia_valid & ATTR_MTIME)
+-		vi->i_mtime = attr->ia_mtime;
++		inode_set_mtime_to_ts(vi, attr->ia_mtime);
+ 	if (ia_valid & ATTR_CTIME)
+ 		inode_set_ctime_to_ts(vi, attr->ia_ctime);
+ 	mark_inode_dirty(vi);
+@@ -2996,7 +2997,7 @@ int __ntfs_write_inode(struct inode *vi, int sync)
+ 	si = (STANDARD_INFORMATION*)((u8*)ctx->attr +
+ 			le16_to_cpu(ctx->attr->data.resident.value_offset));
+ 	/* Update the access times if they have changed. */
+-	nt = utc2ntfs(vi->i_mtime);
++	nt = utc2ntfs(inode_get_mtime(vi));
+ 	if (si->last_data_change_time != nt) {
+ 		ntfs_debug("Updating mtime for inode 0x%lx: old = 0x%llx, "
+ 				"new = 0x%llx", vi->i_ino, (long long)
+@@ -3014,7 +3015,7 @@ int __ntfs_write_inode(struct inode *vi, int sync)
+ 		si->last_mft_change_time = nt;
+ 		modified = true;
+ 	}
+-	nt = utc2ntfs(vi->i_atime);
++	nt = utc2ntfs(inode_get_atime(vi));
+ 	if (si->last_access_time != nt) {
+ 		ntfs_debug("Updating atime for inode 0x%lx: old = 0x%llx, "
+ 				"new = 0x%llx", vi->i_ino,
+diff --git a/fs/ntfs/mft.c b/fs/ntfs/mft.c
+index ad1a8f72da22..6fd1dc4b08c8 100644
+--- a/fs/ntfs/mft.c
++++ b/fs/ntfs/mft.c
+@@ -2682,7 +2682,7 @@ ntfs_inode *ntfs_mft_record_alloc(ntfs_volume *vol, const int mode,
+ 			vi->i_mode &= ~S_IWUGO;
  
--	inode->i_mtime = inode_set_ctime_current(inode);
-+	inode_set_mtime_to_ts(inode, inode_set_ctime_current(inode));
- 	if (IS_SYNC(inode))
- 		nilfs_set_transaction_flag(NILFS_TI_SYNC);
- 
+ 		/* Set the inode times to the current time. */
+-		vi->i_atime = vi->i_mtime = inode_set_ctime_current(vi);
++		simple_inode_init_ts(vi);
+ 		/*
+ 		 * Set the file size to 0, the ntfs inode sizes are set to 0 by
+ 		 * the call to ntfs_init_big_inode() below.
 -- 
 2.41.0
 
