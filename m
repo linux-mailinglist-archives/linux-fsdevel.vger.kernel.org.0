@@ -2,38 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 323347B1AB3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Sep 2023 13:21:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A97F7B1B16
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Sep 2023 13:35:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232411AbjI1LVq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Sep 2023 07:21:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48120 "EHLO
+        id S232070AbjI1Lff (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Sep 2023 07:35:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232521AbjI1LV3 (ORCPT
+        with ESMTP id S231960AbjI1Lf3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Sep 2023 07:21:29 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0C275264;
-        Thu, 28 Sep 2023 04:06:58 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF540C4160E;
-        Thu, 28 Sep 2023 11:06:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695899200;
-        bh=KcEb7Ur9VnfCswhdPaiHlW6A+8Un/231FkVSjN0vVmY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LIvJMQV9gV0uW8yl32NSd4yb2599TLMQSz3pZ7A8RvzTMK+/pPweiGT83QuRE6Ap1
-         RJ4tHrEtdELF24JEcAXBlbRxCLgD4fFKMvaVxDYJKFUi3JGR08fTlWqCpRUQLEU1eL
-         PLdctIni/gLihdwFGrq6SVBHRpLIcoURicUh3JGLAt4t51ztAQPhDNYHtf1HHGTOrp
-         XAB3XmZIrDME0ElXf57Dd8FtxB0Uiap7czp3ZlR45ObMUeHSnxd6fREH7G/U4RgfCh
-         xv1/nw1L9/w3ErqEe74BXlZqblyXh/mVR1R03Etd6mg/RnXyu8EBj+lRYoEkTAJg+R
-         yYzEQo7GNicAA==
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Thu, 28 Sep 2023 07:35:29 -0400
+Received: from mail-ua1-x92b.google.com (mail-ua1-x92b.google.com [IPv6:2607:f8b0:4864:20::92b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B975193;
+        Thu, 28 Sep 2023 04:35:25 -0700 (PDT)
+Received: by mail-ua1-x92b.google.com with SMTP id a1e0cc1a2514c-7b07548b085so144419241.2;
+        Thu, 28 Sep 2023 04:35:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1695900924; x=1696505724; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c3oHHfr+yAdtkrxVkV3qE0VFTbMzK/MU2TZf7sFiWp8=;
+        b=LqyY8hs9A9caTY9HkGHjkatHTz13Eyh1e0RfVlzdYNHVcQ4xawfzRsb8SAF8+FiB55
+         Ap4FsCtnlvlJl2J82fGi3G1CD7hAvh/XsAG90oflQxgPUewXcJL7CgKmYy9uIROUc4Dc
+         Owrnxr9tl6aqLt0MPutbKd2IUZiLJPCOO15PEayhb2+CM/NB+2eCzdtqrNe/mgl3f9Ey
+         22kUDmDYRKNx54JbwbI66PZVQD5YMK93hwM1SDVkK+PI4+D1P1ZxmQcwB5qxTkKhQtG2
+         k0/ojp5/IJKLpS6Kabl0zX6Zt4hlo5TXU7FWxrYj3sk25whlDWt1POo7+hQgJdf8SLij
+         Gu9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695900924; x=1696505724;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=c3oHHfr+yAdtkrxVkV3qE0VFTbMzK/MU2TZf7sFiWp8=;
+        b=On/1HBmpXQN+BRZXwOYsHYkrKu0GKxDigH7Z4C1iM7tmqGp9rhjdGB29TX0ashVUYy
+         O8VAnORidFZfRy0VofQJKBhW9MDodkqZC6RG61txKnh9bJN8L+GHTlJpP9omwpx35nOs
+         JWiI7qaBfom7Yo3xy0X2h9ONzW3IA0UPN7VeyU/G2oq+O9M6RbgVdfaOSQjz1h+7vURN
+         3/CKz2gJ0anV+4lQz1julFQhm7YUX83gg1IlHF0qT1gwu+snVTrU413QLSVb6BuvCbFP
+         jJGB79ovDrM5sZ+Kbxq6G6XmjbLPTsNdROk5FcvOszhqzOLvTzS0lbL7WxDqfQL9Yfu+
+         rstw==
+X-Gm-Message-State: AOJu0YxcAZH5wPZYeCE5dZBIC8GPx/+vrojlrSi0Q8Ka9bhDiZ9C+23/
+        trJ/GzfUsGRszgbcUEufquDezaPSVL0fd0F7BVM=
+X-Google-Smtp-Source: AGHT+IHhHz7xARweFavd1XDLqmOlGZR89qjTYiX4UH69lO2YZAJePIkqF9BJYGYmOq/G1/CVWLpaXpMDMsrrAqgyB+o=
+X-Received: by 2002:a67:ec16:0:b0:452:63b7:2f6d with SMTP id
+ d22-20020a67ec16000000b0045263b72f6dmr830755vso.34.1695900924494; Thu, 28 Sep
+ 2023 04:35:24 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230928110554.34758-1-jlayton@kernel.org> <20230928110554.34758-3-jlayton@kernel.org>
+In-Reply-To: <20230928110554.34758-3-jlayton@kernel.org>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 28 Sep 2023 14:35:13 +0300
+Message-ID: <CAOQ4uxjSrgGr+6UOs4ADGYCderpQ7hAaPjNmB1DExAPLQQsHSg@mail.gmail.com>
+Subject: Re: [PATCH 87/87] fs: move i_blocks up a few places in struct inode
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         David Sterba <dsterba@suse.cz>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Theodore Ts'o <tytso@mit.edu>,
+        "Theodore Ts'o" <tytso@mit.edu>,
         Eric Biederman <ebiederm@xmission.com>,
         Kees Cook <keescook@chromium.org>, Jeremy Kerr <jk@ozlabs.org>,
         Arnd Bergmann <arnd@arndb.de>,
@@ -46,7 +72,7 @@ To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Borntraeger <borntraeger@linux.ibm.com>,
         Sven Schnelle <svens@linux.ibm.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
+        =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
         Todd Kjos <tkjos@android.com>,
         Martijn Coenen <maco@android.com>,
         Joel Fernandes <joel@joelfernandes.org>,
@@ -59,7 +85,7 @@ To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Brad Warrum <bwarrum@linux.ibm.com>,
         Ritu Agarwal <rituagar@linux.ibm.com>,
         Hans de Goede <hdegoede@redhat.com>,
-        =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+        =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
         Mark Gross <markgross@kernel.org>,
         Jiri Slaby <jirislaby@kernel.org>,
         Eric Van Hensbergen <ericvh@kernel.org>,
@@ -156,8 +182,8 @@ To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
         Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Eric Paris <eparis@parisplace.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org,
         linux-s390@vger.kernel.org, platform-driver-x86@vger.kernel.org,
         linux-rdma@vger.kernel.org, linux-serial@vger.kernel.org,
@@ -179,52 +205,62 @@ Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         bpf@vger.kernel.org, netdev@vger.kernel.org,
         apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
         selinux@vger.kernel.org
-Subject: [PATCH 87/87] fs: move i_blocks up a few places in struct inode
-Date:   Thu, 28 Sep 2023 07:05:54 -0400
-Message-ID: <20230928110554.34758-3-jlayton@kernel.org>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230928110554.34758-1-jlayton@kernel.org>
-References: <20230928110554.34758-1-jlayton@kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The recent change to use discrete integers instead of struct timespec64
-in struct inode shaved 8 bytes off of it, but it also moves the i_lock
-into the previous cacheline, away from the fields that it protects.
+On Thu, Sep 28, 2023 at 2:06=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wr=
+ote:
+>
+> The recent change to use discrete integers instead of struct timespec64
+> in struct inode shaved 8 bytes off of it, but it also moves the i_lock
+> into the previous cacheline, away from the fields that it protects.
+>
+> Move i_blocks up above the i_lock, which moves the new 4 byte hole to
+> just after the timestamps, without changing the size of the structure.
+>
 
-Move i_blocks up above the i_lock, which moves the new 4 byte hole to
-just after the timestamps, without changing the size of the structure.
+Instead of creating an implicit hole, can you please move i_generation
+to fill the 4 bytes hole.
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- include/linux/fs.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+It makes sense in the same cache line with i_ino and I could
+use the vacant 4 bytes hole above i_fsnotify_mask to expand the
+mask to 64bit (the 32bit event mask space is running out).
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index de902ff2938b..3e0fe0f52e7c 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -677,11 +677,11 @@ struct inode {
- 	u32			i_atime_nsec;
- 	u32			i_mtime_nsec;
- 	u32			i_ctime_nsec;
-+	blkcnt_t		i_blocks;
- 	spinlock_t		i_lock;	/* i_blocks, i_bytes, maybe i_size */
- 	unsigned short          i_bytes;
- 	u8			i_blkbits;
- 	u8			i_write_hint;
--	blkcnt_t		i_blocks;
- 
- #ifdef __NEED_I_SIZE_ORDERED
- 	seqcount_t		i_size_seqcount;
--- 
-2.41.0
+Thanks,
+Amir.
 
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  include/linux/fs.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index de902ff2938b..3e0fe0f52e7c 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -677,11 +677,11 @@ struct inode {
+>         u32                     i_atime_nsec;
+>         u32                     i_mtime_nsec;
+>         u32                     i_ctime_nsec;
+> +       blkcnt_t                i_blocks;
+>         spinlock_t              i_lock; /* i_blocks, i_bytes, maybe i_siz=
+e */
+>         unsigned short          i_bytes;
+>         u8                      i_blkbits;
+>         u8                      i_write_hint;
+> -       blkcnt_t                i_blocks;
+>
+>  #ifdef __NEED_I_SIZE_ORDERED
+>         seqcount_t              i_size_seqcount;
+> --
+> 2.41.0
+>
