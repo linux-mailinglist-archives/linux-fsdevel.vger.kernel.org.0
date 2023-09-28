@@ -2,39 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A58667B19F9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Sep 2023 13:08:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF8C27B19FD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Sep 2023 13:08:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232437AbjI1LH5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Sep 2023 07:07:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56778 "EHLO
+        id S232369AbjI1LIC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Sep 2023 07:08:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232214AbjI1LGJ (ORCPT
+        with ESMTP id S232367AbjI1LGK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Sep 2023 07:06:09 -0400
+        Thu, 28 Sep 2023 07:06:10 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 280C7172C;
-        Thu, 28 Sep 2023 04:05:05 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66E2DC433C7;
-        Thu, 28 Sep 2023 11:05:04 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A32510C6;
+        Thu, 28 Sep 2023 04:05:06 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91F15C433CC;
+        Thu, 28 Sep 2023 11:05:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695899104;
-        bh=WdhKVeDvEbKnuqVE8JioBf7/XuFh9c0DQ7/RiYq45FU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Lk6lU76rtis34gPcawFKYvC3t92lkvckjaFjUIluPI3HFE3OLVD5JnhI3R/rVMN7r
-         F8czyTGJsP3qg3qvVwQLSTHLuSyrC0haq2UAKJra1gJAoQFpr99CN3v3mhZ6xsognJ
-         yozcfjf26Nea0TfCxH8Vc/BNVQHQBJKESwH+U2q01uSM0hBTcrS7QUbw9WTVPm8yuG
-         ex+WxCbn/K5N0oH3t1IZtrwihqdPcZRS3iWr07rRton6NuqSfucu3Sy2htGrrOwNpi
-         x6tTG961YMV7gvUwsQo6MW1Xu0Ba7256DKzhqrfuFgVIH9idX1Q+JtwAwtDVxbGYs3
-         j5W14p/tJlYsg==
+        s=k20201202; t=1695899106;
+        bh=jyTlbEqdJh2wB+IlPAIFORUE7JGCL8t/h9lCWdSm0d0=;
+        h=From:To:Subject:Date:In-Reply-To:References:From;
+        b=UmaYDdyKFky7AbFnDrBvPRtpuLXmR6/0ne5F6HJX53ShWjgLL4j+fcSnoLviuweSE
+         VEnqF+nDQ379HtLpub5tJfg0gKtgCgLAQhhdZYj6yaULpma+dEf/JYuBprQ9tFnNCv
+         R4IvCRSDPNc+IKFNM3I/gZc/UYaTa3esk7Anw/w89i4puGUDMt6yODzUWtAFgnNBI7
+         jtoX4TQrRx2hSBHu1vqKI8s2/d5DINsnaw8wiKwI9ljkkSRHOA1huVeZAx4h1qazc/
+         wrz1nexVR2R4hJYQHQ9T55uq+u/bcjkBuY1ehu8vFuXEX+3SHZmStqr1G4c0GY8lai
+         rhHj9Guqh0uQg==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     linux-mm@kvack.org
-Subject: [PATCH 44/87] fs/hugetlbfs: convert to new inode {a,m}time accessors
-Date:   Thu, 28 Sep 2023 07:02:53 -0400
-Message-ID: <20230928110413.33032-43-jlayton@kernel.org>
+Subject: [PATCH 45/87] fs/isofs: convert to new inode {a,m}time accessors
+Date:   Thu, 28 Sep 2023 07:02:54 -0400
+Message-ID: <20230928110413.33032-44-jlayton@kernel.org>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20230928110413.33032-1-jlayton@kernel.org>
 References: <20230928110300.32891-1-jlayton@kernel.org>
@@ -52,58 +51,64 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/hugetlbfs/inode.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ fs/isofs/inode.c |  4 ++--
+ fs/isofs/rock.c  | 18 ++++++++----------
+ 2 files changed, 10 insertions(+), 12 deletions(-)
 
-diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-index 316c4cebd3f3..da217eaba102 100644
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -980,7 +980,7 @@ static struct inode *hugetlbfs_get_root(struct super_block *sb,
- 		inode->i_mode = S_IFDIR | ctx->mode;
- 		inode->i_uid = ctx->uid;
- 		inode->i_gid = ctx->gid;
--		inode->i_atime = inode->i_mtime = inode_set_ctime_current(inode);
-+		simple_inode_init_ts(inode);
- 		inode->i_op = &hugetlbfs_dir_inode_operations;
- 		inode->i_fop = &simple_dir_operations;
- 		/* directory inodes start off with i_nlink == 2 (for "." entry) */
-@@ -1024,7 +1024,7 @@ static struct inode *hugetlbfs_get_inode(struct super_block *sb,
- 		lockdep_set_class(&inode->i_mapping->i_mmap_rwsem,
- 				&hugetlbfs_i_mmap_rwsem_key);
- 		inode->i_mapping->a_ops = &hugetlbfs_aops;
--		inode->i_atime = inode->i_mtime = inode_set_ctime_current(inode);
-+		simple_inode_init_ts(inode);
- 		inode->i_mapping->private_data = resv_map;
- 		info->seals = F_SEAL_SEAL;
- 		switch (mode & S_IFMT) {
-@@ -1067,7 +1067,7 @@ static int hugetlbfs_mknod(struct mnt_idmap *idmap, struct inode *dir,
- 	inode = hugetlbfs_get_inode(dir->i_sb, dir, mode, dev);
- 	if (!inode)
- 		return -ENOSPC;
--	dir->i_mtime = inode_set_ctime_current(dir);
-+	inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
- 	d_instantiate(dentry, inode);
- 	dget(dentry);/* Extra count - pin the dentry in core */
- 	return 0;
-@@ -1099,7 +1099,7 @@ static int hugetlbfs_tmpfile(struct mnt_idmap *idmap,
- 	inode = hugetlbfs_get_inode(dir->i_sb, dir, mode | S_IFREG, 0);
- 	if (!inode)
- 		return -ENOSPC;
--	dir->i_mtime = inode_set_ctime_current(dir);
-+	inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
- 	d_tmpfile(file, inode);
- 	return finish_open_simple(file, 0);
- }
-@@ -1121,7 +1121,7 @@ static int hugetlbfs_symlink(struct mnt_idmap *idmap,
- 		} else
- 			iput(inode);
+diff --git a/fs/isofs/inode.c b/fs/isofs/inode.c
+index 2ee21286ac8f..3e4d53e26f94 100644
+--- a/fs/isofs/inode.c
++++ b/fs/isofs/inode.c
+@@ -1422,8 +1422,8 @@ static int isofs_read_inode(struct inode *inode, int relocated)
+ 			inode->i_ino, de->flags[-high_sierra]);
  	}
--	dir->i_mtime = inode_set_ctime_current(dir);
-+	inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
+ #endif
+-	inode->i_mtime = inode->i_atime =
+-		inode_set_ctime(inode, iso_date(de->date, high_sierra), 0);
++	inode_set_mtime_to_ts(inode,
++			      inode_set_atime_to_ts(inode, inode_set_ctime(inode, iso_date(de->date, high_sierra), 0)));
  
- 	return error;
- }
+ 	ei->i_first_extent = (isonum_733(de->extent) +
+ 			isonum_711(de->ext_attr_length));
+diff --git a/fs/isofs/rock.c b/fs/isofs/rock.c
+index 348783a70f57..d6c17ad69dee 100644
+--- a/fs/isofs/rock.c
++++ b/fs/isofs/rock.c
+@@ -426,16 +426,14 @@ parse_rock_ridge_inode_internal(struct iso_directory_record *de,
+ 						0);
+ 			}
+ 			if (rr->u.TF.flags & TF_MODIFY) {
+-				inode->i_mtime.tv_sec =
+-				    iso_date(rr->u.TF.times[cnt++].time,
+-					     0);
+-				inode->i_mtime.tv_nsec = 0;
++				inode_set_mtime(inode,
++						iso_date(rr->u.TF.times[cnt++].time, 0),
++						0);
+ 			}
+ 			if (rr->u.TF.flags & TF_ACCESS) {
+-				inode->i_atime.tv_sec =
+-				    iso_date(rr->u.TF.times[cnt++].time,
+-					     0);
+-				inode->i_atime.tv_nsec = 0;
++				inode_set_atime(inode,
++						iso_date(rr->u.TF.times[cnt++].time, 0),
++						0);
+ 			}
+ 			if (rr->u.TF.flags & TF_ATTRIBUTES) {
+ 				inode_set_ctime(inode,
+@@ -531,9 +529,9 @@ parse_rock_ridge_inode_internal(struct iso_directory_record *de,
+ 			inode->i_rdev = reloc->i_rdev;
+ 			inode->i_size = reloc->i_size;
+ 			inode->i_blocks = reloc->i_blocks;
+-			inode->i_atime = reloc->i_atime;
++			inode_set_atime_to_ts(inode, inode_get_atime(reloc));
+ 			inode_set_ctime_to_ts(inode, inode_get_ctime(reloc));
+-			inode->i_mtime = reloc->i_mtime;
++			inode_set_mtime_to_ts(inode, inode_get_mtime(reloc));
+ 			iput(reloc);
+ 			break;
+ #ifdef CONFIG_ZISOFS
 -- 
 2.41.0
 
