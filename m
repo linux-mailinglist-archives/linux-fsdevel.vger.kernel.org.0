@@ -2,82 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B65577B2229
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Sep 2023 18:22:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C32AD7B2231
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Sep 2023 18:24:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230349AbjI1QWI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Sep 2023 12:22:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38600 "EHLO
+        id S231195AbjI1QYW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Sep 2023 12:24:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230081AbjI1QWG (ORCPT
+        with ESMTP id S231304AbjI1QYV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Sep 2023 12:22:06 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D31DB7;
-        Thu, 28 Sep 2023 09:22:05 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E1E0C433C7;
-        Thu, 28 Sep 2023 16:22:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695918124;
-        bh=0MlJccgS93tYhYBmiMCadXQzGmVcPB51jzpzwfRNecY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b4qb0NxyQjwWq/Zfx4eRW2G+km70dYY4EiUPdBvHHIRyw1G4C8gJ5Mtr6qfF5hj9I
-         oYHC3luT7EBfvKJm71UJcB0E/RpjpVYR2qzuYxa2IH5eCstWdU30hh5+ERicQ21/sH
-         LaNcPjIEunprotj8FpYdXoS1EVdsU45LR+nm1B0Y15pA10nCexGyeXCpS6mvXm7/Ew
-         +MS34iuIeWITEhMBwWkAUGDEJ2ss3RQYeBSutgHjCModZ+5EN1Ke2uKRfxBExTOSYy
-         pDNi1Z6cLp9NCNPlpRF4buIBRdvv9GH7IFHsz8LksZyaNoO5toPNKHPhdRx/q7todN
-         Bfqf6lMPkvR8Q==
-From:   Christian Brauner <brauner@kernel.org>
-To:     Luis Henriques <lhenriques@suse.de>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Mateusz Guzik <mjguzik@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>
-Subject: Re: [PATCH v2] fs: simplify misleading code to remove ambiguity regarding ihold()/iput()
-Date:   Thu, 28 Sep 2023 18:21:58 +0200
-Message-Id: <20230928-zecken-werkvertrag-59ae5e5044de@brauner>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230928152341.303-1-lhenriques@suse.de>
-References: <20230928152341.303-1-lhenriques@suse.de>
+        Thu, 28 Sep 2023 12:24:21 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B84BD193
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Sep 2023 09:23:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1695918215;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=X3MbseqfofQuHt4pLHARDa7jXnUI0dOG+j1Sy7M9elo=;
+        b=TMUlpF1ty890qukjEQKkovrhOWeBwtje5hRP12mV5V3p9QoQ2uug2viB0nS7VD1DOm9XxG
+        kcnWKLKj95ZcnAE3AHlC4qThiAB6QnB/ML7j/a0CqAUf90DrZNmjjcjpZEPY7FvfuykSLs
+        Q1M90NU/Hpvu+bEPCSrmfguvyznTsag=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-139-cT42Vp7oM7acwSIJYapi7g-1; Thu, 28 Sep 2023 12:23:33 -0400
+X-MC-Unique: cT42Vp7oM7acwSIJYapi7g-1
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-417c06c459cso34999811cf.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Sep 2023 09:23:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695918213; x=1696523013;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X3MbseqfofQuHt4pLHARDa7jXnUI0dOG+j1Sy7M9elo=;
+        b=WL75gBHNcWYUMw29bVtCxIzotNSSTWWBkEtF2g0EmLECuQqz9zbbT5BlvtIn2JhHCE
+         ZRPxZOYWUlvscfjFmZds0AfZOHq4f9sp/YBU/3s9ckbq1nGC2kVegTy8VEgo6iJR3iy5
+         sqNod5uojrquf8+75DdxVXy9rjCWvRXGgWKl7AHaV4Re9aHRqNioH7frjMoU9sdDNtLF
+         XSUTRHjUQ0a2IXMc8C3NG/ZhkNOwXnpD/hREN/tFoHrFt8QZ5OWOcdxdNrqDAIEjjngO
+         AQIuNMqExjmivuMc4NilwDubenlRH4WV6NFzLu2VOxSQn+rxONsuOMVnNJ1zKtVBlOTP
+         qMjw==
+X-Gm-Message-State: AOJu0YwnrpF7cZkcWAzj1aDqYh5XyB2zV6li5Bg83u6G8HUJh82/qrkO
+        UV0Q5HHGNhMKsapWx1lcvBibMPYAk6waMmGyTaCo2DeFV5shlRPCwsQdINuU2oK9Au9CA4D1kl5
+        ITYIVJn7GyuOH21R0ZiXiwt1KxA==
+X-Received: by 2002:a05:622a:1a0b:b0:411:ff8f:d5aa with SMTP id f11-20020a05622a1a0b00b00411ff8fd5aamr1620282qtb.3.1695918212866;
+        Thu, 28 Sep 2023 09:23:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGhws7KLpQsxWmAY8E3zXcIKtOKrYQ/GpK2ItdQp8TYckvr8XWrXOC2qrQiNhX2yyfLB1f44g==
+X-Received: by 2002:a05:622a:1a0b:b0:411:ff8f:d5aa with SMTP id f11-20020a05622a1a0b00b00411ff8fd5aamr1620257qtb.3.1695918212563;
+        Thu, 28 Sep 2023 09:23:32 -0700 (PDT)
+Received: from x1n (cpe5c7695f3aee0-cm5c7695f3aede.cpe.net.cable.rogers.com. [99.254.144.39])
+        by smtp.gmail.com with ESMTPSA id l11-20020ac84ccb000000b004181441cb2dsm3585433qtv.34.2023.09.28.09.23.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Sep 2023 09:23:32 -0700 (PDT)
+Date:   Thu, 28 Sep 2023 12:23:28 -0400
+From:   Peter Xu <peterx@redhat.com>
+To:     Suren Baghdasaryan <surenb@google.com>
+Cc:     akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
+        brauner@kernel.org, shuah@kernel.org, aarcange@redhat.com,
+        lokeshgidra@google.com, david@redhat.com, hughd@google.com,
+        mhocko@suse.com, axelrasmussen@google.com, rppt@kernel.org,
+        willy@infradead.org, Liam.Howlett@oracle.com, jannh@google.com,
+        zhangpeng362@huawei.com, bgeffon@google.com,
+        kaleshsingh@google.com, ngeoffray@google.com, jdduke@google.com,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        kernel-team@android.com
+Subject: Re: [PATCH v2 1/3] userfaultfd: UFFDIO_REMAP: rmap preparation
+Message-ID: <ZRWogK5s5/giHuGu@x1n>
+References: <20230923013148.1390521-1-surenb@google.com>
+ <20230923013148.1390521-2-surenb@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1250; i=brauner@kernel.org; h=from:subject:message-id; bh=0MlJccgS93tYhYBmiMCadXQzGmVcPB51jzpzwfRNecY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSKrlAsqy0/WLrX+1usVIPYk2fn775wNNT+9u9rpEpB7nbV ++v/d5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzkwXZGhsZN+Xt4Mu1TI+y4pV+69f zJnN79OTWq/YnMT4myT8enGzP8z15m+HPSkdaFAfxXtqj4zeRfcu6qyM0/BdG2ypMKkv8e5wYA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20230923013148.1390521-2-surenb@google.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 28 Sep 2023 16:23:41 +0100, Luís Henriques wrote:
-> Because 'inode' is being initialised before checking if 'dentry' is negative
-> it looks like an extra iput() on 'inode' may happen since the ihold() is
-> done only if the dentry is *not* negative.  In reality this doesn't happen
-> because d_is_negative() is never true if ->d_inode is NULL.  This patch only
-> makes the code easier to understand, as I was initially mislead by it.
+Suren,
+
+Sorry to review so late.
+
+On Fri, Sep 22, 2023 at 06:31:44PM -0700, Suren Baghdasaryan wrote:
+> diff --git a/mm/rmap.c b/mm/rmap.c
+> index ec7f8e6c9e48..c1ebbd23fa61 100644
+> --- a/mm/rmap.c
+> +++ b/mm/rmap.c
+> @@ -542,6 +542,7 @@ struct anon_vma *folio_lock_anon_vma_read(struct folio *folio,
+>  	struct anon_vma *root_anon_vma;
+>  	unsigned long anon_mapping;
+>  
+> +repeat:
+>  	rcu_read_lock();
+>  	anon_mapping = (unsigned long)READ_ONCE(folio->mapping);
+>  	if ((anon_mapping & PAGE_MAPPING_FLAGS) != PAGE_MAPPING_ANON)
+> @@ -586,6 +587,18 @@ struct anon_vma *folio_lock_anon_vma_read(struct folio *folio,
+>  	rcu_read_unlock();
+>  	anon_vma_lock_read(anon_vma);
+>  
+> +	/*
+> +	 * Check if UFFDIO_REMAP changed the anon_vma. This is needed
+> +	 * because we don't assume the folio was locked.
+> +	 */
+> +	if (unlikely((unsigned long) READ_ONCE(folio->mapping) !=
+> +		     anon_mapping)) {
+> +		anon_vma_unlock_read(anon_vma);
+> +		put_anon_vma(anon_vma);
+> +		anon_vma = NULL;
+> +		goto repeat;
+> +	}
+
+We have an open-coded fast path above this:
+
+	if (down_read_trylock(&root_anon_vma->rwsem)) {
+		/*
+		 * If the folio is still mapped, then this anon_vma is still
+		 * its anon_vma, and holding the mutex ensures that it will
+		 * not go away, see anon_vma_free().
+		 */
+		if (!folio_mapped(folio)) {
+			up_read(&root_anon_vma->rwsem);
+			anon_vma = NULL;
+		}
+		goto out;
+	}
+
+Would that also need such check?
+
+> +
+>  	if (atomic_dec_and_test(&anon_vma->refcount)) {
+>  		/*
+>  		 * Oops, we held the last refcount, release the lock
+> -- 
+> 2.42.0.515.g380fc7ccd1-goog
 > 
-> 
-> [...]
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
+-- 
+Peter Xu
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
-
-[1/1] fs: simplify misleading code to remove ambiguity regarding ihold()/iput()
-      https://git.kernel.org/vfs/vfs/c/5c29bcfaa4cf
