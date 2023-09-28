@@ -2,39 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 700A57B19AC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Sep 2023 13:05:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EBBE7B19B0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Sep 2023 13:05:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232279AbjI1LFe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Sep 2023 07:05:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56642 "EHLO
+        id S232282AbjI1LFf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Sep 2023 07:05:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232086AbjI1LEf (ORCPT
+        with ESMTP id S232089AbjI1LEg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Sep 2023 07:04:35 -0400
+        Thu, 28 Sep 2023 07:04:36 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 648C9191;
-        Thu, 28 Sep 2023 04:04:34 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8283AC433D9;
-        Thu, 28 Sep 2023 11:04:33 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F58412A;
+        Thu, 28 Sep 2023 04:04:35 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9624BC433C9;
+        Thu, 28 Sep 2023 11:04:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695899074;
-        bh=Cd5IZGO0KaRk0XXew6oC3te7WDw6FBiIJ+bgLrWp4AE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b2+cr7Wd8m7KOd+0wU+WrRDz+Vwd6hzfolzLZux2pxW9cFO9Nlz2ViMgqkl/Y326b
-         uN0A7XfZ7tXg/zIjeGrKE7UVWAcUhTff7JRUJdoy6+ytvDcgy1uWsu8xUrHbfnJ4D6
-         K1QWJ9Py/9J2YPeDnlc+5FYf3dYu+irbG+3bJn8C6yCFXMjl+yq2Epq4EaTfXc2RiT
-         FDSpJG9M34aNJ+tTP6nxCiANIzwFy8aSaLOmsrKNA97fnE1yfPeiUV8k/Gph1BN3fp
-         +dzkRdJeERifA6LMe2YRjdL/uZOFCIGCiihdanrjBYP9inY0mrzJoho+d9kmFB7VSK
-         szNeKCqRJeeNg==
+        s=k20201202; t=1695899075;
+        bh=FSkoPS2wpHGRikf2wCbjVJa2Td2hPo0FwgxsJtrzOEE=;
+        h=From:To:Subject:Date:In-Reply-To:References:From;
+        b=Us0gigFIQ2FJf81+51xlE+Hw5y2wuAJCaWZ9qjjdfANYud1X1ohoIg+f3NH/qEjWk
+         R0PvjRv7r+HVePgBUPuLELsHHdlQxCO/kE/o33nDcjHld3K3wlkjRvF9/tFXuAYd1Q
+         sbg9IAEGdsc7bWHg5k9ruxBBbYKGPzPzxt2Z7F0UxmZ/vJlWK0LvUFL6uRlfA5Pr7Q
+         dnhf8mn5vzLrPuuYen46rMYzak0NkyADGM4jcOBNCUeE0o6nyTAGRlni/AROnDDCPz
+         ABwjYILEYSJvt7irGkZ1li7y2Py7xxKofBNqs1y0Z6gI7kN0rtNk4mTKIDbA+2CPyz
+         S7LvbGo9noW4A==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     autofs@vger.kernel.org
-Subject: [PATCH 19/87] fs/autofs: convert to new inode {a,m}time accessors
-Date:   Thu, 28 Sep 2023 07:02:28 -0400
-Message-ID: <20230928110413.33032-18-jlayton@kernel.org>
+Subject: [PATCH 20/87] fs/befs: convert to new inode {a,m}time accessors
+Date:   Thu, 28 Sep 2023 07:02:29 -0400
+Message-ID: <20230928110413.33032-19-jlayton@kernel.org>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20230928110413.33032-1-jlayton@kernel.org>
 References: <20230928110300.32891-1-jlayton@kernel.org>
@@ -52,54 +51,30 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/autofs/inode.c | 2 +-
- fs/autofs/root.c  | 6 +++---
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ fs/befs/linuxvfs.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/fs/autofs/inode.c b/fs/autofs/inode.c
-index 2b49662ed237..9d06aa350c31 100644
---- a/fs/autofs/inode.c
-+++ b/fs/autofs/inode.c
-@@ -370,7 +370,7 @@ struct inode *autofs_get_inode(struct super_block *sb, umode_t mode)
- 		inode->i_uid = d_inode(sb->s_root)->i_uid;
- 		inode->i_gid = d_inode(sb->s_root)->i_gid;
- 	}
--	inode->i_atime = inode->i_mtime = inode_set_ctime_current(inode);
-+	simple_inode_init_ts(inode);
- 	inode->i_ino = get_next_ino();
+diff --git a/fs/befs/linuxvfs.c b/fs/befs/linuxvfs.c
+index 9a16a51fbb88..9acdec56f626 100644
+--- a/fs/befs/linuxvfs.c
++++ b/fs/befs/linuxvfs.c
+@@ -360,11 +360,11 @@ static struct inode *befs_iget(struct super_block *sb, unsigned long ino)
+ 	 * for indexing purposes. (PFD, page 54)
+ 	 */
  
- 	if (S_ISDIR(mode)) {
-diff --git a/fs/autofs/root.c b/fs/autofs/root.c
-index 512b9a26c63d..530d18827e35 100644
---- a/fs/autofs/root.c
-+++ b/fs/autofs/root.c
-@@ -600,7 +600,7 @@ static int autofs_dir_symlink(struct mnt_idmap *idmap,
- 	p_ino = autofs_dentry_ino(dentry->d_parent);
- 	p_ino->count++;
+-	inode->i_mtime.tv_sec =
+-	    fs64_to_cpu(sb, raw_inode->last_modified_time) >> 16;
+-	inode->i_mtime.tv_nsec = 0;   /* lower 16 bits are not a time */
+-	inode_set_ctime_to_ts(inode, inode->i_mtime);
+-	inode->i_atime = inode->i_mtime;
++	inode_set_mtime(inode,
++			fs64_to_cpu(sb, raw_inode->last_modified_time) >> 16,
++			0);/* lower 16 bits are not a time */
++	inode_set_ctime_to_ts(inode, inode_get_mtime(inode));
++	inode_set_atime_to_ts(inode, inode_get_mtime(inode));
  
--	dir->i_mtime = inode_set_ctime_current(dir);
-+	inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
- 
- 	return 0;
- }
-@@ -633,7 +633,7 @@ static int autofs_dir_unlink(struct inode *dir, struct dentry *dentry)
- 	d_inode(dentry)->i_size = 0;
- 	clear_nlink(d_inode(dentry));
- 
--	dir->i_mtime = inode_set_ctime_current(dir);
-+	inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
- 
- 	spin_lock(&sbi->lookup_lock);
- 	__autofs_add_expiring(dentry);
-@@ -749,7 +749,7 @@ static int autofs_dir_mkdir(struct mnt_idmap *idmap,
- 	p_ino = autofs_dentry_ino(dentry->d_parent);
- 	p_ino->count++;
- 	inc_nlink(dir);
--	dir->i_mtime = inode_set_ctime_current(dir);
-+	inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
- 
- 	return 0;
- }
+ 	befs_ino->i_inode_num = fsrun_to_cpu(sb, raw_inode->inode_num);
+ 	befs_ino->i_parent = fsrun_to_cpu(sb, raw_inode->parent);
 -- 
 2.41.0
 
