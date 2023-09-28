@@ -2,112 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E4D127B167D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Sep 2023 10:54:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41CDA7B16F4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Sep 2023 11:15:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231451AbjI1IyX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Sep 2023 04:54:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56112 "EHLO
+        id S231524AbjI1JPQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Sep 2023 05:15:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231397AbjI1IyT (ORCPT
+        with ESMTP id S231514AbjI1JPP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Sep 2023 04:54:19 -0400
-Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B06AC0;
-        Thu, 28 Sep 2023 01:54:16 -0700 (PDT)
-Received: by mail-pf1-x42d.google.com with SMTP id d2e1a72fcca58-690d935dbc2so2822306b3a.1;
-        Thu, 28 Sep 2023 01:54:16 -0700 (PDT)
+        Thu, 28 Sep 2023 05:15:15 -0400
+Received: from mail-vs1-xe34.google.com (mail-vs1-xe34.google.com [IPv6:2607:f8b0:4864:20::e34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B37E8E;
+        Thu, 28 Sep 2023 02:15:13 -0700 (PDT)
+Received: by mail-vs1-xe34.google.com with SMTP id ada2fe7eead31-45281e0b1cbso6003342137.0;
+        Thu, 28 Sep 2023 02:15:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1695891256; x=1696496056; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ThPN2Hhgrb+6YderOJSJbgdsI3cmBjzcJEFDZEakKYA=;
-        b=Rb64nivAshbxJ0CuGmfU28MXYClMm5bf0SWEfsMAzKnkQHAaF3QI2m8NSJasjlDQ4T
-         5DSgahZroODaptYh9lbeNppIJWEEa9EtvjHJGD900ftzPWG3AbTOooafRzyYQ0FY8nPU
-         qRjaBxxVmnADP/hnzx8XU7sFg7lmoAcrW1RtyiqQ7BZ2cQHPV+C7tJwyuQhN/TOUBdM0
-         w4osi/OWK45HVsUmoUsfnLg6qXVOahjinxyvuAI5BXXqgLZMitWjJezk12QhlRVbefK+
-         v6JUrXz112LEo8z57qykYtIWmvExGvPfl5mXe/BsdGa/vxUzt6j7+ETtckaIoDpxrypR
-         x10Q==
+        d=gmail.com; s=20230601; t=1695892512; x=1696497312; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+39pk3B+rebODwp7G8pBElmwkG9/MQbcOK2ksYm+pXw=;
+        b=UFbehgpLrDqenf7cwALrPqslATG/QO7K3OVdAPl8Hn68mWVR5tj7aJLQ49ukBvDb1K
+         1DPuukKBqpWj9PHClpVVLPiyxRoXzacNDcFCJ1KOtl3WcXJsYMLUv5QszZoJyreozFwE
+         yCz4MlylsNh2HZzPfqNis3+Yo8C0c9dxeF5qA3+lx37WgOhQjDaD09xwnyxTDAg15aKw
+         /X8+7Mu3HjkzCvYhjo/CoEwa821wV5BlIjCQ3UDX2qa2zeJuyQXg3MsFJmgBJWZJCMUp
+         nHBK10LoqbLav6v1fHP7MEgRaBb3RHvqS+NN5rvG05PvRm2qb/jL3NxxNZFfCoO5Mf3f
+         dFJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695891256; x=1696496056;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ThPN2Hhgrb+6YderOJSJbgdsI3cmBjzcJEFDZEakKYA=;
-        b=a+DZF8+sJnUlYd7lW9e8HIJTbrwMlEQIBKFqHtkyHis7zMWb/4Ql+yCqGDkfEHR82m
-         SW9P6BP1NeXLutCmq83zmUa+QWhLGJAiEmOXDAsxkBFmhDCvszxEnYP/CaSeQkXgDHy+
-         o6lTUtaPBFl2MwHrnDMtcUd2UB+I1FArNvO9IdNaDGvWIxWfuoEj+HG1VeifQew/lLEZ
-         kxjEf/t/tRksCcHGGJEmbp+ltYgD2G436wdqHxNgwLo+mf+sPc7/xkF6j6eJSlVlmNKq
-         0FIb6noIpeOnnJsn98CGrYBXoAupbIUF9bs66webql1YgKuMoY8mXSsli6HfV8soGFPQ
-         MWyA==
-X-Gm-Message-State: AOJu0Yx3FWw4BU5H7WNjmBMpSCfXGkxdoQ1qR6bnuehoerFjjbQg9cTm
-        H4merPSYayPiwIL0f4JDosQ=
-X-Google-Smtp-Source: AGHT+IHs3z5SBvtWECSkXRBoc6GaYZRFqmJjRBDu6RxFc7AMGEUNzHOmN2+FZujA7gml2D4C4olxHA==
-X-Received: by 2002:a05:6a00:2c8d:b0:68e:3eff:e93a with SMTP id ef13-20020a056a002c8d00b0068e3effe93amr562164pfb.2.1695891255701;
-        Thu, 28 Sep 2023 01:54:15 -0700 (PDT)
-Received: from abhinav-IdeaPad-Slim-5-14ABR8.. ([103.75.161.211])
-        by smtp.googlemail.com with ESMTPSA id h11-20020a63574b000000b0056368adf5e2sm12415386pgm.87.2023.09.28.01.54.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Sep 2023 01:54:15 -0700 (PDT)
-From:   Abhinav <singhabhinav9051571833@gmail.com>
-To:     akpm@linux-foundation.org, david@redhat.com, rppt@kernel.org,
-        hughd@google.com, Liam.Howlett@Oracle.com, surenb@google.com,
-        usama.anjum@collabora.com, wangkefeng.wang@huawei.com,
-        ryan.roberts@arm.com, yuanchu@google.com
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        skhan@linuxfoundation.org,
-        Abhinav <singhabhinav9051571833@gmail.com>
-Subject: [PATCH] Fixed Kunit test warning message for 'fs' module
-Date:   Thu, 28 Sep 2023 14:23:11 +0530
-Message-Id: <20230928085311.938163-1-singhabhinav9051571833@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1695892512; x=1696497312;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+39pk3B+rebODwp7G8pBElmwkG9/MQbcOK2ksYm+pXw=;
+        b=k+5LtTq0uhc8Ec2whaesvMbuAUrIBoNBgw9aGSFStBn8/ofZ2ezbHR+lT+SrppZ/fk
+         ODAZpQ3upRmfcZr1a1tawWNT9Rm60H5FDEtMjmi9wef+8iGl/ZdLfMrwh/QG59C+JbfC
+         MjLrfI/tB9+4Oy9jBLiSpzbGMNPBB/SyrMZ+iZ28eO8QSnICgzi+f2DrdAG9Xr5zjf6m
+         yXe2EgW1WIn1DiAQuXR8ZjQztlnRznq6ZXED90Z7+tLTaoI/ce64OEkAwLyfogyjSCZx
+         sJCIPOfSiIYpAb4ydN0xKcCaHk7T2uvDiyYiktlLZVqpGvSG0/mPx3gYZLyhB6zcttqB
+         p5mQ==
+X-Gm-Message-State: AOJu0YzAyD4qGUarnnFwiutEaJGxDFmKzsAYI4Bn1d6f8QAkiX9iqSav
+        l8pfDhKO23WczLt1gKXbkUsDfhMnwGVijiGUNv0=
+X-Google-Smtp-Source: AGHT+IHhDwnt6DOG8gWETWR4dF+oVmg42JZLjROeDabgW93k2n0H2phZbgJEYlFiH9tASiSYNvup8JCcdPIDx9NjiLU=
+X-Received: by 2002:a05:6102:34c8:b0:44e:d6c3:51d6 with SMTP id
+ a8-20020a05610234c800b0044ed6c351d6mr532848vst.14.1695892512057; Thu, 28 Sep
+ 2023 02:15:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+References: <20230928064636.487317-1-amir73il@gmail.com> <fb6c8786-5308-412e-9d87-dac6fd35aa32@kernel.dk>
+In-Reply-To: <fb6c8786-5308-412e-9d87-dac6fd35aa32@kernel.dk>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 28 Sep 2023 12:15:00 +0300
+Message-ID: <CAOQ4uxjC6qif-MZqkLUsd0RixD0xVHVuGDT=7HCX0kcY1okv2A@mail.gmail.com>
+Subject: Re: [PATCH] ovl: punt write aio completion to workqueue
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        Jiufei Xue <jiufei.xue@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-fs/proc/task_mmu : fix warning
+On Thu, Sep 28, 2023 at 10:08=E2=80=AFAM Jens Axboe <axboe@kernel.dk> wrote=
+:
+>
+> On 9/28/23 12:46 AM, Amir Goldstein wrote:
+> > I did not want to add an overlayfs specific workqueue for those
+> > completions, because, as I'd mentioned before, I intend to move this
+> > stacked file io infrastructure to common vfs code.
+> >
+> > I figured it's fine for overlayfs (or any stacked filesystem) to use it=
+s
+> > own s_dio_done_wq for its own private needs.
+> >
+> > Please help me reassure that I got this right.
+>
+> Looks like you're creating it lazily as well, so probably fine to use
+> the same wq rather than setup something new.
+>
+> >               ret =3D -ENOMEM;
+> >               aio_req =3D kmem_cache_zalloc(ovl_aio_request_cachep, GFP=
+_KERNEL);
+> >               if (!aio_req)
+>
+> Unrelated to this patch, but is this safe? You're allocating an aio_req
+> from within the ->write_iter() handler, yet it's GFP_KERNEL? Seems like
+> that should at least be GFP_NOFS, no?
 
-All the caller of the function pagemap_scan_backout_range(...) are inside
-ifdef preprocessor which is checking for the macro
-'CONFIG_TRANSPARENT_HUGEPAGE' is set or not. When it is not set the
-function doesn't have a caller and it generates a warning unused
-function.
+I could be wrong, but since overlayfs does not have any page cache
+of its own, I don't think memory reclaim poses a risk.
 
-Putting the whole function inside the preprocessor fixes this warning.
+>
+> That aside, punting to a workqueue is a very heavy handed solution to
+> the problem. Maybe it's the only one you have, didn't look too closely
+> at it, but it's definitely not going to increase your performance...
+>
 
-Signed-off-by: Abhinav <singhabhinav9051571833@gmail.com>
----
- fs/proc/task_mmu.c | 2 ++
- 1 file changed, 2 insertions(+)
+I bet it won't... but I need to worry about correctness.
 
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index 27da6337d675..88b6b8847cf3 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -2019,6 +2019,7 @@ static bool pagemap_scan_push_range(unsigned long categories,
- 	return true;
- }
- 
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
- static void pagemap_scan_backout_range(struct pagemap_scan_private *p,
- 				       unsigned long addr, unsigned long end)
- {
-@@ -2031,6 +2032,7 @@ static void pagemap_scan_backout_range(struct pagemap_scan_private *p,
- 
- 	p->found_pages -= (end - addr) / PAGE_SIZE;
- }
-+#endif
- 
- static int pagemap_scan_output(unsigned long categories,
- 			       struct pagemap_scan_private *p,
--- 
-2.34.1
+What I would like to know, and that is something that I tried
+to ask you in the Link: discussion, but perhaps I wasn't clear -
+Are there any IOCB flags that the completion caller may set,
+that will hint the submitter that completion is not from interrupt
+context and that punting to workqueue is not needed?
 
+The thing is that overlayfs does not submit io to blockdev -
+It submits io to another underlying filesystem and the underlying
+filesystem (e.g. ext4,xfs) is already likely to punt its write completion
+to a workqueue (i.e. via iomap->end_io).
+
+If I could tell when that is the case, then I could make punting to
+workqueue in overlayfs conditional.
+
+Anyway, I am not aware of any workloads that depend on high
+io performance on overlayfs.
+
+The only thing I have is Jiufei's commit message:
+2406a307ac7d ("ovl: implement async IO routines")
+who complained that overlayfs turned async io to sync io.
+
+Jiufei,
+
+Can you test this patch to see how it affects performance
+in your workloads?
+
+Thanks,
+Amir.
