@@ -2,79 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BEFA7B1CEC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Sep 2023 14:50:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82A2D7B1D21
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Sep 2023 14:56:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232509AbjI1MuM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Sep 2023 08:50:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35902 "EHLO
+        id S232587AbjI1M4P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Sep 2023 08:56:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33500 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231293AbjI1MuL (ORCPT
+        with ESMTP id S231542AbjI1M4O (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Sep 2023 08:50:11 -0400
-X-Greylist: delayed 506 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 28 Sep 2023 05:50:07 PDT
-Received: from mail.alarsen.net (mail.alarsen.net [144.76.18.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1997180;
-        Thu, 28 Sep 2023 05:50:07 -0700 (PDT)
-Received: from oscar.alarsen.net (unknown [IPv6:fd8b:531:bccf:96:5e7e:df38:32c1:aeb5])
-        by joe.alarsen.net (Postfix) with ESMTPS id 44D1918090B;
-        Thu, 28 Sep 2023 14:41:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alarsen.net; s=joe;
-        t=1695904897; bh=7wmGsnWi3L6eimoKMMVKN4B7zijNh0V4YtFFMUwRxGg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I6eMn7N8ng72EQQrIOSUUobTmfVc1W1v933uzlyCaRMEK8SIeKyYH0Gak6Nb9nr31
-         AwGcPkG2zPBRTYSxc0fb1J4wERInn63FvWogR8ycSonFgbEb56Wy4vYHjU+ya+5zgq
-         rnHmAy7DkpU2mPlFsPS0JDui6V2h9AZnoFEi0i+g=
-Received: from oscar.localnet (localhost [IPv6:::1])
-        by oscar.alarsen.net (Postfix) with ESMTPS id 2E6841395;
-        Thu, 28 Sep 2023 14:41:37 +0200 (CEST)
-From:   Anders Larsen <al@alarsen.net>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Thu, 28 Sep 2023 08:56:14 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87471180
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Sep 2023 05:55:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1695905728;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=qI4XghGXIMa5N9aYtul1yzQ/Grglthn81P30tLktnuU=;
+        b=VkW+23p3t+DLbC9yQBrpTX5iCnXkDrZ1VFT3pMNFsoz3G0r60qZwPjLjjemyTgVtCmST3T
+        ElTW05x2aryT4BMswNOvKOybCyUtRxRJrNIuenZjSsqT32+8PnwCmHHzPE+mAFm2pV+4O1
+        obb3VHYHE2cs/4arEbsWkPvlNbZl4sE=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-386-wcMWF3AXNIOnC8CbamjxFA-1; Thu, 28 Sep 2023 08:55:27 -0400
+X-MC-Unique: wcMWF3AXNIOnC8CbamjxFA-1
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-77409676d7dso2171593885a.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Sep 2023 05:55:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695905726; x=1696510526;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qI4XghGXIMa5N9aYtul1yzQ/Grglthn81P30tLktnuU=;
+        b=X5joM9O19myLbL6059Btp22yb8FPMeLhhU6aBUeWL6KsjkiZwPVjrx5lFioo/8oXmB
+         rQKZ03ppMUcxqxcyD9B31MCW6ecNrCj1TAL+ZcqAOLHMyN1DVUu7LtGqG9FZpXQ7wIG+
+         /oWM2JBnSe/0hPth7CVqvi6iWew8zXkvN7Uk0b+oRRbY1eUGIPsnfEtWz/2/5n1oad0c
+         67ETkbZx/8LRbAwnxcG2SWBcmbwt5wdzoNhNpiIpBm9W4mmtR7JXTlBHzqqN13eGEUx1
+         zW5WJqJdS7oRntE9cLi/SWFmsZJ1kPYsiYZeJmDLFuVg1JVMZOkNS66NkQed4G2z6Y4A
+         r9AA==
+X-Gm-Message-State: AOJu0YwGSEAPs6wiZMe3FPNHtsO66ZUqD29bV62dsS+fs/JnX6v3VroS
+        D6LUMbAL9/jrg6LFf0wlVyHVovpNGOq3aukI2k1BJlIsJywe1ZPQvmDm7EsXqgD86lAUP2+m/53
+        eMvclwBw4qr+Pzd5bYaFUnqGOHg==
+X-Received: by 2002:a05:620a:430e:b0:76c:c601:367f with SMTP id u14-20020a05620a430e00b0076cc601367fmr923542qko.36.1695905726463;
+        Thu, 28 Sep 2023 05:55:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFMXwEot4+7yhPCsisxUY3uf2TL6o8grOmBxp49L8okK6ad+7nPn/hioefoDjWOBvMUnPfWlQ==
+X-Received: by 2002:a05:620a:430e:b0:76c:c601:367f with SMTP id u14-20020a05620a430e00b0076cc601367fmr923525qko.36.1695905726184;
+        Thu, 28 Sep 2023 05:55:26 -0700 (PDT)
+Received: from rh (p200300c93f19a200f43f623a676b2d27.dip0.t-ipconnect.de. [2003:c9:3f19:a200:f43f:623a:676b:2d27])
+        by smtp.gmail.com with ESMTPSA id c1-20020ac84e01000000b00403ad6ec2e8sm3676249qtw.26.2023.09.28.05.55.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Sep 2023 05:55:25 -0700 (PDT)
+Date:   Thu, 28 Sep 2023 14:55:22 +0200 (CEST)
+From:   Sebastian Ott <sebott@redhat.com>
+To:     Kees Cook <keescook@chromium.org>
+cc:     Eric Biederman <ebiederm@xmission.com>,
+        =?ISO-8859-15?Q?Thomas_Wei=DFschuh?= <linux@weissschuh.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 62/87] fs/qnx4: convert to new inode {a,m}time accessors
-Date:   Thu, 28 Sep 2023 14:41:37 +0200
-Message-ID: <3384318.5fSG56mABF@oscar>
-In-Reply-To: <20230928110413.33032-61-jlayton@kernel.org>
-References: <20230928110300.32891-1-jlayton@kernel.org> <20230928110413.33032-1-jlayton@kernel.org> <20230928110413.33032-61-jlayton@kernel.org>
+        Pedro Falcato <pedro.falcato@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v3 0/4] binfmt_elf: Support segments with 0 filesz and
+ misaligned starts
+In-Reply-To: <20230927033634.make.602-kees@kernel.org>
+Message-ID: <6208fd50-43cd-85fc-e9a6-f10281a15902@redhat.com>
+References: <20230927033634.make.602-kees@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_PASS,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=US-ASCII; format=flowed
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2023-09-28 13:03 Jeff Layton wrote:
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/qnx4/inode.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/qnx4/inode.c b/fs/qnx4/inode.c
-> index a7171f5532a1..6eb9bb369b57 100644
-> --- a/fs/qnx4/inode.c
-> +++ b/fs/qnx4/inode.c
-> @@ -301,10 +301,8 @@ struct inode *qnx4_iget(struct super_block *sb,
-> unsigned long ino) i_gid_write(inode,
-> (gid_t)le16_to_cpu(raw_inode->di_gid));
->  	set_nlink(inode, le16_to_cpu(raw_inode->di_nlink));
->  	inode->i_size    = le32_to_cpu(raw_inode->di_size);
-> -	inode->i_mtime.tv_sec   = le32_to_cpu(raw_inode->di_mtime);
-> -	inode->i_mtime.tv_nsec = 0;
-> -	inode->i_atime.tv_sec   = le32_to_cpu(raw_inode->di_atime);
-> -	inode->i_atime.tv_nsec = 0;
-> +	inode_set_mtime(inode, le32_to_cpu(raw_inode->di_mtime), 0);
-> +	inode_set_atime(inode, le32_to_cpu(raw_inode->di_atime), 0);
->  	inode_set_ctime(inode, le32_to_cpu(raw_inode->di_ctime), 0);
->  	inode->i_blocks  = le32_to_cpu(raw_inode->di_first_xtnt.xtnt_size);
+On Tue, 26 Sep 2023, Kees Cook wrote:
+> This is the continuation of the work Eric started for handling
+> "p_memsz > p_filesz" in arbitrary segments (rather than just the last,
+> BSS, segment). I've added the suggested changes:
+>
+> - drop unused "elf_bss" variable
+> - report padzero() errors when PROT_WRITE is present
+> - refactor load_elf_interp() to use elf_load()
+>
+> This passes my quick smoke tests, but I'm still trying to construct some
+> more complete tests...
 
-Acked-by: Anders Larsen <al@alarsen.net>
+I've repeated all my tests with this one - no issues found.
 
-
+Thanks,
+Sebastian
 
