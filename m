@@ -2,243 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 59D9E7B256D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Sep 2023 20:41:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 424C47B255A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Sep 2023 20:35:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231524AbjI1SlG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Sep 2023 14:41:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33320 "EHLO
+        id S232123AbjI1SfS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Sep 2023 14:35:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46664 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231451AbjI1SlF (ORCPT
+        with ESMTP id S232113AbjI1SfR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Sep 2023 14:41:05 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8118BF;
-        Thu, 28 Sep 2023 11:41:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1695926463; x=1727462463;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=tfyAzaZSq8tgwhOOpjIAmDGl01NjbJE805eUQRbi27Y=;
-  b=a8MpYIGgUetppWcf5xO5A+kodgzcbIiy2JglcgwD1Rq3PNjhAWY6GXEG
-   OIvtYlPUSUpeR1PXsFdWhkweexKGIFI82cR7YYrbZ13m+vshMwyaSkyk6
-   02ljVkZK0pPw49XHRMedPoq1EQ6TItpTtZLqFYLXmumDcOoV+/awFIg3r
-   uq2XeK34pWguhCAWqcg4bTRvN/fNdj8J9YjkxVSUuGGHXJR3IduTE0Q75
-   fY3EyIaZTzqCxYZ0hcexqXu0l0HmTHau5mJ3E0063as+8lmDDha6Ymb3Z
-   +dD7/tcGkuBw0Hr8W/m+8W+Ri3Gpw1MsdwNwSUuDxIll/1zUIZjsqAKwu
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10847"; a="446296415"
-X-IronPort-AV: E=Sophos;i="6.03,184,1694761200"; 
-   d="scan'208";a="446296415"
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2023 11:34:27 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10847"; a="996659598"
-X-IronPort-AV: E=Sophos;i="6.03,184,1694761200"; 
-   d="scan'208";a="996659598"
-Received: from lkp-server02.sh.intel.com (HELO c3b01524d57c) ([10.239.97.151])
-  by fmsmga006.fm.intel.com with ESMTP; 28 Sep 2023 11:34:21 -0700
-Received: from kbuild by c3b01524d57c with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qlvq6-0001nz-2x;
-        Thu, 28 Sep 2023 18:34:18 +0000
-Date:   Fri, 29 Sep 2023 02:33:50 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Xiaobing Li <xiaobing.li@samsung.com>, mingo@redhat.com,
-        peterz@infradead.org, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        bristot@redhat.com, vschneid@redhat.com, axboe@kernel.dk,
-        asml.silence@gmail.com
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        io-uring@vger.kernel.org, kun.dou@samsung.com,
-        peiwei.li@samsung.com, joshi.k@samsung.com,
-        kundan.kumar@samsung.com, wenwen.chen@samsung.com,
-        ruyi.zhang@samsung.com, Xiaobing Li <xiaobing.li@samsung.com>
-Subject: Re: [PATCH 3/3] IO_URING: Statistics of the true utilization of sq
- threads.
-Message-ID: <202309290242.FeOyvZYI-lkp@intel.com>
-References: <20230928022228.15770-4-xiaobing.li@samsung.com>
+        Thu, 28 Sep 2023 14:35:17 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66DD219F
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Sep 2023 11:34:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1695926065;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=tHgQXBAFMtt2xjDagTnzi+QIWg4ufIaPSkBrUwwCR20=;
+        b=c+frV9aYUCZxINBBhgkusJi0oYAOXq/QDlqCjplcMjAbZarMLm6rahrVWGqcXqo5sdNLyU
+        UUtzw+NIkzajm2kpG1Jue4m8f1uk+zCO6mZLTpPuY/wbE67Z0DJdMTOCeQnmRjUJ1/g1mn
+        lmzTQ5xSBMn/el+6a6K4epwJR8kMp0U=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-590-Kb2ZEMImP7u8W6piv6PH-w-1; Thu, 28 Sep 2023 14:34:24 -0400
+X-MC-Unique: Kb2ZEMImP7u8W6piv6PH-w-1
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-77585a78884so10140585a.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Sep 2023 11:34:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695926063; x=1696530863;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tHgQXBAFMtt2xjDagTnzi+QIWg4ufIaPSkBrUwwCR20=;
+        b=lRkpHJouj1SO85myWItC/JjIhDcDUzUVe8YOQt00J3lWqssGF0tv/+dbi3MLdABN9T
+         5QYblWEBWjyj0YD+y6ADcrLBxBacOv7RaT3SVGtsvB1AHyYEIbDzAkHmiLCNOnXGp6DK
+         2LAgWfdekrGi9ctkghuA9kyCBkCPw/2NMvr9p5e6RO6I+NDK7Uje7zMwzoggCRPZ5smB
+         R/9uJ1t2wjvm0fCO8KMQ8V0Oahtw7+Hqg/cfkw0y3yLh5w7Qh9Cr14uhBHha5Mb40Iy4
+         ZlJ5o0KtAzMo9s9wQVNoMMAnfpwqyYheGXQ2I6SvZ5iWd7Fg/gVFxDhSjx3ynSBk4KeC
+         cD0A==
+X-Gm-Message-State: AOJu0Yy3WtcBrjpIXDXsYazCGIJi5fFholXYeQ0k/jl+IjjkQIchZb14
+        EsQPOT9Mfflu44s6gCXEWOJqaZJ+pEnxLjKXRDifYPGyhSO5F7Bfa96Ibbc5QJcnmnOR+PuOZKW
+        N468o6j2unZenB5P3kpoqRjBHSA==
+X-Received: by 2002:a05:620a:46a4:b0:773:ad1f:3d5b with SMTP id bq36-20020a05620a46a400b00773ad1f3d5bmr2297130qkb.0.1695926063523;
+        Thu, 28 Sep 2023 11:34:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEV57Cs3i99fylAO+fmIhSC7kjkZzQuC8SMTvaoqr4J38m/9B5Rlx8C4OeUA5D72OFiWkiufg==
+X-Received: by 2002:a05:620a:46a4:b0:773:ad1f:3d5b with SMTP id bq36-20020a05620a46a400b00773ad1f3d5bmr2297110qkb.0.1695926063230;
+        Thu, 28 Sep 2023 11:34:23 -0700 (PDT)
+Received: from x1n (cpe5c7695f3aee0-cm5c7695f3aede.cpe.net.cable.rogers.com. [99.254.144.39])
+        by smtp.gmail.com with ESMTPSA id e15-20020a05620a12cf00b007756d233fbdsm1857612qkl.37.2023.09.28.11.34.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Sep 2023 11:34:22 -0700 (PDT)
+Date:   Thu, 28 Sep 2023 14:34:19 -0400
+From:   Peter Xu <peterx@redhat.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Jann Horn <jannh@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
+        brauner@kernel.org, shuah@kernel.org, aarcange@redhat.com,
+        lokeshgidra@google.com, hughd@google.com, mhocko@suse.com,
+        axelrasmussen@google.com, rppt@kernel.org, willy@infradead.org,
+        Liam.Howlett@oracle.com, zhangpeng362@huawei.com,
+        bgeffon@google.com, kaleshsingh@google.com, ngeoffray@google.com,
+        jdduke@google.com, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH v2 2/3] userfaultfd: UFFDIO_REMAP uABI
+Message-ID: <ZRXHK3hbdjfQvCCp@x1n>
+References: <20230923013148.1390521-1-surenb@google.com>
+ <20230923013148.1390521-3-surenb@google.com>
+ <CAG48ez1N2kryy08eo0dcJ5a9O-3xMT8aOrgrcD+CqBN=cBfdDw@mail.gmail.com>
+ <03f95e90-82bd-6ee2-7c0d-d4dc5d3e15ee@redhat.com>
+ <ZRWo1daWBnwNz0/O@x1n>
+ <98b21e78-a90d-8b54-3659-e9b890be094f@redhat.com>
+ <ZRW2CBUDNks9RGQJ@x1n>
+ <85e5390c-660c-ef9e-b415-00ee71bc5cbf@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230928022228.15770-4-xiaobing.li@samsung.com>
+In-Reply-To: <85e5390c-660c-ef9e-b415-00ee71bc5cbf@redhat.com>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Xiaobing,
+On Thu, Sep 28, 2023 at 07:51:18PM +0200, David Hildenbrand wrote:
+> On 28.09.23 19:21, Peter Xu wrote:
+> > On Thu, Sep 28, 2023 at 07:05:40PM +0200, David Hildenbrand wrote:
+> > > As described as reply to v1, without fork() and KSM, the PAE bit should
+> > > stick around. If that's not the case, we should investigate why.
+> > > 
+> > > If we ever support the post-fork case (which the comment above remap_pages()
+> > > excludes) we'll need good motivation why we'd want to make this
+> > > overly-complicated feature even more complicated.
+> > 
+> > The problem is DONTFORK is only a suggestion, but not yet restricted.  If
+> > someone reaches on top of some !PAE page on src it'll never gonna proceed
+> > and keep failing, iiuc.
+> 
+> Yes. It won't work if you fork() and not use DONTFORK on the src VMA. We
+> should document that as a limitation.
+> 
+> For example, you could return an error to the user that can just call
+> UFFDIO_COPY. (or to the UFFDIO_COPY from inside uffd code, but that's
+> probably ugly as well).
 
-kernel test robot noticed the following build errors:
+We could indeed provide some special errno perhaps upon the PAE check, then
+document it explicitly in the man page and suggest resolutions (like
+DONTFORK) when user hit it.
 
-[auto build test ERROR on tip/sched/core]
-[also build test ERROR on linus/master v6.6-rc3 next-20230928]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> > 
+> > do_wp_page() doesn't have that issue of accuracy only because one round of
+> > CoW will just allocate a new page with PAE set guaranteed, which is pretty
+> > much self-heal and unnoticed.
+> 
+> Yes. But it might have to copy, at which point the whole optimization of
+> remap is gone :)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Xiaobing-Li/SCHEDULER-Add-an-interface-for-counting-real-utilization/20230928-103219
-base:   tip/sched/core
-patch link:    https://lore.kernel.org/r/20230928022228.15770-4-xiaobing.li%40samsung.com
-patch subject: [PATCH 3/3] IO_URING: Statistics of the true utilization of sq threads.
-config: arm-mmp2_defconfig (https://download.01.org/0day-ci/archive/20230929/202309290242.FeOyvZYI-lkp@intel.com/config)
-compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project.git 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20230929/202309290242.FeOyvZYI-lkp@intel.com/reproduce)
+Right, but that's fine IMHO because it should still be very corner case,
+definitely not expected to be the majority to start impact the performance
+results.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202309290242.FeOyvZYI-lkp@intel.com/
+> 
+> > 
+> > So it'll be great if we can have similar self-heal way for PAE.  If not, I
+> > think it's still fine we just always fail on !PAE src pages, but then maybe
+> > we should let the user know what's wrong, e.g., the user can just forgot to
+> > apply DONTFORK then forked.  And then the user hits error and don't know
+> > what happened.  Probably at least we should document it well in man pages.
+> > 
+> Yes, exactly.
+> 
+> > Another option can be we keep using folio_mapcount() for pte, and another
+> > helper (perhaps: _nr_pages_mapped==COMPOUND_MAPPED && _entire_mapcount==1)
+> > for thp.  But I know that's not ideal either.
+> 
+> As long as we only set the pte writable if PAE is set, we're good from a CVE
+> perspective. The other part is just simplicity of avoiding all these
+> mapcount+swapcount games where possible.
+> 
+> (one day folio_mapcount() might be faster -- I'm still working on that patch
+> in the bigger picture of handling PTE-mapped THP better)
 
-All errors (new ones prefixed by >>):
+Sure.
 
-   io_uring/sqpoll.c:254:7: error: no member named 'sq_avg' in 'struct sched_entity'
-                   se->sq_avg.last_update_time;
-                   ~~  ^
->> io_uring/sqpoll.c:260:3: error: call to undeclared function '__update_sq_avg_block'; ISO C99 and later do not support implicit function declarations [-Werror,-Wimplicit-function-declaration]
-                   __update_sq_avg_block(now, se);
-                   ^
-   io_uring/sqpoll.c:272:7: error: no member named 'sq_avg' in 'struct sched_entity'
-                   se->sq_avg.last_update_time;
-                   ~~  ^
->> io_uring/sqpoll.c:275:4: error: call to undeclared function '__update_sq_avg'; ISO C99 and later do not support implicit function declarations [-Werror,-Wimplicit-function-declaration]
-                           __update_sq_avg(now, se);
-                           ^
-   4 errors generated.
+For now as long as we're crystal clear on the possibility of inaccuracy of
+PAE, it never hits besides fork() && !DONTFORK, and properly document it,
+then sounds good here.
 
-
-vim +/__update_sq_avg_block +260 io_uring/sqpoll.c
-
-   221	
-   222	static int io_sq_thread(void *data)
-   223	{
-   224		struct io_sq_data *sqd = data;
-   225		struct io_ring_ctx *ctx;
-   226		unsigned long timeout = 0;
-   227		char buf[TASK_COMM_LEN];
-   228		DEFINE_WAIT(wait);
-   229	
-   230		snprintf(buf, sizeof(buf), "iou-sqp-%d", sqd->task_pid);
-   231		set_task_comm(current, buf);
-   232	
-   233		if (sqd->sq_cpu != -1)
-   234			set_cpus_allowed_ptr(current, cpumask_of(sqd->sq_cpu));
-   235		else
-   236			set_cpus_allowed_ptr(current, cpu_online_mask);
-   237	
-   238		mutex_lock(&sqd->lock);
-   239		bool first = true;
-   240		struct timespec64 ts_start, ts_end;
-   241		struct timespec64 ts_delta;
-   242		struct sched_entity *se = &sqd->thread->se;
-   243		while (1) {
-   244			bool cap_entries, sqt_spin = false;
-   245	
-   246			if (io_sqd_events_pending(sqd) || signal_pending(current)) {
-   247				if (io_sqd_handle_event(sqd))
-   248					break;
-   249				timeout = jiffies + sqd->sq_thread_idle;
-   250			}
-   251			ktime_get_boottime_ts64(&ts_start);
-   252			ts_delta = timespec64_sub(ts_start, ts_end);
-   253			unsigned long long now = ts_delta.tv_sec * NSEC_PER_SEC + ts_delta.tv_nsec +
-   254			se->sq_avg.last_update_time;
-   255	
-   256			if (first) {
-   257				now = 0;
-   258				first = false;
-   259			}
- > 260			__update_sq_avg_block(now, se);
-   261			cap_entries = !list_is_singular(&sqd->ctx_list);
-   262			list_for_each_entry(ctx, &sqd->ctx_list, sqd_list) {
-   263				int ret = __io_sq_thread(ctx, cap_entries);
-   264	
-   265				if (!sqt_spin && (ret > 0 || !wq_list_empty(&ctx->iopoll_list)))
-   266					sqt_spin = true;
-   267			}
-   268	
-   269			ktime_get_boottime_ts64(&ts_end);
-   270			ts_delta = timespec64_sub(ts_end, ts_start);
-   271			now = ts_delta.tv_sec * NSEC_PER_SEC + ts_delta.tv_nsec +
-   272			se->sq_avg.last_update_time;
-   273	
-   274			if (sqt_spin)
- > 275				__update_sq_avg(now, se);
-   276			else
-   277				__update_sq_avg_block(now, se);
-   278			if (io_run_task_work())
-   279				sqt_spin = true;
-   280	
-   281			if (sqt_spin || !time_after(jiffies, timeout)) {
-   282				if (sqt_spin)
-   283					timeout = jiffies + sqd->sq_thread_idle;
-   284				if (unlikely(need_resched())) {
-   285					mutex_unlock(&sqd->lock);
-   286					cond_resched();
-   287					mutex_lock(&sqd->lock);
-   288				}
-   289				continue;
-   290			}
-   291	
-   292			prepare_to_wait(&sqd->wait, &wait, TASK_INTERRUPTIBLE);
-   293			if (!io_sqd_events_pending(sqd) && !task_work_pending(current)) {
-   294				bool needs_sched = true;
-   295	
-   296				list_for_each_entry(ctx, &sqd->ctx_list, sqd_list) {
-   297					atomic_or(IORING_SQ_NEED_WAKEUP,
-   298							&ctx->rings->sq_flags);
-   299					if ((ctx->flags & IORING_SETUP_IOPOLL) &&
-   300					    !wq_list_empty(&ctx->iopoll_list)) {
-   301						needs_sched = false;
-   302						break;
-   303					}
-   304	
-   305					/*
-   306					 * Ensure the store of the wakeup flag is not
-   307					 * reordered with the load of the SQ tail
-   308					 */
-   309					smp_mb__after_atomic();
-   310	
-   311					if (io_sqring_entries(ctx)) {
-   312						needs_sched = false;
-   313						break;
-   314					}
-   315				}
-   316	
-   317				if (needs_sched) {
-   318					mutex_unlock(&sqd->lock);
-   319					schedule();
-   320					mutex_lock(&sqd->lock);
-   321				}
-   322				list_for_each_entry(ctx, &sqd->ctx_list, sqd_list)
-   323					atomic_andnot(IORING_SQ_NEED_WAKEUP,
-   324							&ctx->rings->sq_flags);
-   325			}
-   326	
-   327			finish_wait(&sqd->wait, &wait);
-   328			timeout = jiffies + sqd->sq_thread_idle;
-   329		}
-   330	
-   331		io_uring_cancel_generic(true, sqd);
-   332		sqd->thread = NULL;
-   333		list_for_each_entry(ctx, &sqd->ctx_list, sqd_list)
-   334			atomic_or(IORING_SQ_NEED_WAKEUP, &ctx->rings->sq_flags);
-   335		io_run_task_work();
-   336		mutex_unlock(&sqd->lock);
-   337	
-   338		complete(&sqd->exited);
-   339		do_exit(0);
-   340	}
-   341	
+Thanks,
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Peter Xu
+
