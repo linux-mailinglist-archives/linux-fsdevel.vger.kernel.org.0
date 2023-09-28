@@ -2,59 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AB6867B2625
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Sep 2023 21:50:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D1E17B263A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Sep 2023 22:03:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231980AbjI1Tus (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Sep 2023 15:50:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49116 "EHLO
+        id S232079AbjI1UD5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Sep 2023 16:03:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231556AbjI1Tur (ORCPT
+        with ESMTP id S231689AbjI1UD4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Sep 2023 15:50:47 -0400
-Received: from mail-yw1-x112d.google.com (mail-yw1-x112d.google.com [IPv6:2607:f8b0:4864:20::112d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 628C319F
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Sep 2023 12:50:45 -0700 (PDT)
-Received: by mail-yw1-x112d.google.com with SMTP id 00721157ae682-5a21ea6baccso18530367b3.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Sep 2023 12:50:45 -0700 (PDT)
+        Thu, 28 Sep 2023 16:03:56 -0400
+Received: from mail-yw1-x1130.google.com (mail-yw1-x1130.google.com [IPv6:2607:f8b0:4864:20::1130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36C13194
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Sep 2023 13:03:54 -0700 (PDT)
+Received: by mail-yw1-x1130.google.com with SMTP id 00721157ae682-59f7f2b1036so109812757b3.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Sep 2023 13:03:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1695930644; x=1696535444; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1695931433; x=1696536233; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gP4BbdJTdcgYDV7Qx/mEWw5rQtFKtKyVqI/O28O5mPs=;
-        b=qCklHZGThcv0o4pW/DfbuF4e+E+zbDeZaAzVTwed5XuQQr1BNvp8X16nQWZ80TySrl
-         V/djSMyFV2glY2wrBUNkffcxNWtBK46APiVCHGwHMH7KayBXCV42sBIoKs9ozxDbnG72
-         Sp2Jhgyl/iKdt5+WtBUBmdJarcdn8p2XTuO6ItVcOrR3jCX3ElW6n/cwgXN2MXswGEFx
-         8AEASsrbEftrrnrzqB/EKVcxOc8JEE1wMVYqRrvhP3KgjzHtDiIs9k/oWqS+jO99FqNk
-         D/Ak/sMmrh4Qj/QRqO/zvFXOvNmr4nATY5HPl45FVt+/38RUeuGohbAC2L22+bDSBBwo
-         GAWg==
+        bh=xsHLGxGeDn14ekxmLTtpNWlyKujIB9kYU0PV2IMFY58=;
+        b=vf6iMiuE+fHZpEy28IjSRzP/TfvLZVhU7z3LQIjZuNsmbbmlUaJvrTk2vIN14ySUT5
+         gC8skrwWSoEp7oVaMXQbYrxNkpUkwfzkVK9o2OB9Mirr0IuuQ9lXMcVuCv75x2DYlk23
+         MTKQywDHjRdWN6XBA1AHq2NnfLD1mBMeOuAEXWXrPO0W5CyU7RF7bq+Ll2lfOnXVIoC8
+         CuaC7j5RdQ0dZgdqOQIvUZ5Bbu24OZkXWgp5lnZpQ2eg76nhEh3ECrqYtt14n1KlnLqF
+         rRW3Illf8V2VQBVCkllQ/071P50WUnoc9v4KyQbptSe6ai/7S2lvyMkx+YMkGwmlmkAg
+         6MKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695930644; x=1696535444;
+        d=1e100.net; s=20230601; t=1695931433; x=1696536233;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gP4BbdJTdcgYDV7Qx/mEWw5rQtFKtKyVqI/O28O5mPs=;
-        b=bo9OqDMlKmZcUayJvjqtu+eVXQYIuzBxwX7/7fqldolxa/S7uQezYr7OFhMLkuvlaV
-         c9XDSmtyjdECX7htljAjoJ7cxmXmf7R0lsHScDSn/sseMaOsLvRupW+tElVyLL2p4WGf
-         AcScGJ2wPw9mEtUq13buyFG3X4uHj3QDqcb7jL0V6YnD71QYz3evfvDF3hl4DEQYfY5y
-         HlBl3ZATkNPS/CvD04ZeiLaLcBcWp0gbw+lWzmWNZ6uutR8shZGG+gxt/BlonoCAddcZ
-         Svew6qCJO15xIdP0hZENDRGg5RaaNmTNbi0z2fProhQAuFzr05kToKd50USv6hcvUxPv
-         JOrw==
-X-Gm-Message-State: AOJu0YyvJyBn8VxxVsAXFlXXTSreagtswSa5TMqBE/xQbO0Jtz/0SL3y
-        y79i8XgY7VfIcYpigDcIGH7Iz+tgEVAuJuOrKTRKqQ==
-X-Google-Smtp-Source: AGHT+IG3Rb7Z0h/ROaA3hCrSRrRuw/6HH5fqObICNocBlKuL+ih7nn5iO35GIC3JuJEF8FbPK8kIVC0dF9VSiIqv+Jo=
-X-Received: by 2002:a81:848f:0:b0:584:61df:45e8 with SMTP id
- u137-20020a81848f000000b0058461df45e8mr2449845ywf.13.1695930644215; Thu, 28
- Sep 2023 12:50:44 -0700 (PDT)
+        bh=xsHLGxGeDn14ekxmLTtpNWlyKujIB9kYU0PV2IMFY58=;
+        b=lBPKXXmjMCMZt94i64408Lq2b3ZFYYsr0laTPqjH7wJaohPesk5NDUE115W974W4MC
+         Bypyen4byvSLP68bAY7LNEOW4g9psnxmkP2hbgpR78isXcaVdvb/ak34RDSfEojXZd2+
+         Mq97G6vk37akiAwkMZ3q81U29B8e3sA7SRfeBy3kGr1ORn7MLkYcWjfkx18+Qp6B9kKA
+         Ucoe3q//bzA0WjmjC53FOQq0QYyKPlE4r6XQSyL8Kd6NXUvQJWhFhtZPSnTvXYzhDBrX
+         jxVgfX2ykr4LGp4Kv2PwHJ4kIEasUZ6OoKn7aNOpwqGHuVO8Ro0ZYS811HuveMuNGfZp
+         bAig==
+X-Gm-Message-State: AOJu0YwPMMeiN2K+MjjQYL7ZAJrx5z0mdBPJmucc1MGc9j3DildWwshf
+        7awmm6Ga2qEr7u5xtdCVaHEl8wbEGkTiwjqy74/AsA==
+X-Google-Smtp-Source: AGHT+IF643ukEV0mPuP85u4NKNRshxRfoC17PtT7KMQhkXUBySTKl68yBv/jOJAcKvvLEWiANUN/7F/cxIBnZMzGJuo=
+X-Received: by 2002:a81:49c8:0:b0:59f:8026:4260 with SMTP id
+ w191-20020a8149c8000000b0059f80264260mr2399284ywa.24.1695931433221; Thu, 28
+ Sep 2023 13:03:53 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230923013148.1390521-1-surenb@google.com> <20230923013148.1390521-3-surenb@google.com>
- <ZRXJZyPMdVsQNt4h@x1n>
-In-Reply-To: <ZRXJZyPMdVsQNt4h@x1n>
+References: <20230923013148.1390521-1-surenb@google.com> <20230923013148.1390521-2-surenb@google.com>
+ <ZRWogK5s5/giHuGu@x1n>
+In-Reply-To: <ZRWogK5s5/giHuGu@x1n>
 From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Thu, 28 Sep 2023 12:50:33 -0700
-Message-ID: <CAJuCfpFttknDCAOaiR25Nw4_MS=YSpQNqzFPeEh41gtCVgCs0Q@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] userfaultfd: UFFDIO_REMAP uABI
+Date:   Thu, 28 Sep 2023 13:03:42 -0700
+Message-ID: <CAJuCfpEPzJZmrMsD2JkcUjnhhW4sm9i=-1U9n-87YPLWopgm2w@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] userfaultfd: UFFDIO_REMAP: rmap preparation
 To:     Peter Xu <peterx@redhat.com>
 Cc:     akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
         brauner@kernel.org, shuah@kernel.org, aarcange@redhat.com,
@@ -79,63 +79,73 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 28, 2023 at 11:43=E2=80=AFAM Peter Xu <peterx@redhat.com> wrote=
-:
+On Thu, Sep 28, 2023 at 9:23=E2=80=AFAM Peter Xu <peterx@redhat.com> wrote:
 >
-> One more thing..
+> Suren,
 >
-> On Fri, Sep 22, 2023 at 06:31:45PM -0700, Suren Baghdasaryan wrote:
-> > +static int remap_pages_pte(struct mm_struct *dst_mm,
+> Sorry to review so late.
 >
-> [...]
->
-> > +retry:
-> > +     dst_pte =3D pte_offset_map_nolock(dst_mm, dst_pmd, dst_addr, &dst=
-_ptl);
-> > +
-> > +     /* If an huge pmd materialized from under us fail */
-> > +     if (unlikely(!dst_pte)) {
-> > +             err =3D -EFAULT;
-> > +             goto out;
-> > +     }
-> > +
-> > +     src_pte =3D pte_offset_map_nolock(src_mm, src_pmd, src_addr, &src=
-_ptl);
-> > +
+> On Fri, Sep 22, 2023 at 06:31:44PM -0700, Suren Baghdasaryan wrote:
+> > diff --git a/mm/rmap.c b/mm/rmap.c
+> > index ec7f8e6c9e48..c1ebbd23fa61 100644
+> > --- a/mm/rmap.c
+> > +++ b/mm/rmap.c
+> > @@ -542,6 +542,7 @@ struct anon_vma *folio_lock_anon_vma_read(struct fo=
+lio *folio,
+> >       struct anon_vma *root_anon_vma;
+> >       unsigned long anon_mapping;
+> >
+> > +repeat:
+> >       rcu_read_lock();
+> >       anon_mapping =3D (unsigned long)READ_ONCE(folio->mapping);
+> >       if ((anon_mapping & PAGE_MAPPING_FLAGS) !=3D PAGE_MAPPING_ANON)
+> > @@ -586,6 +587,18 @@ struct anon_vma *folio_lock_anon_vma_read(struct f=
+olio *folio,
+> >       rcu_read_unlock();
+> >       anon_vma_lock_read(anon_vma);
+> >
 > > +     /*
-> > +      * We held the mmap_lock for reading so MADV_DONTNEED
-> > +      * can zap transparent huge pages under us, or the
-> > +      * transparent huge page fault can establish new
-> > +      * transparent huge pages under us.
+> > +      * Check if UFFDIO_REMAP changed the anon_vma. This is needed
+> > +      * because we don't assume the folio was locked.
 > > +      */
-> > +     if (unlikely(!src_pte)) {
-> > +             err =3D -EFAULT;
-> > +             goto out;
+> > +     if (unlikely((unsigned long) READ_ONCE(folio->mapping) !=3D
+> > +                  anon_mapping)) {
+> > +             anon_vma_unlock_read(anon_vma);
+> > +             put_anon_vma(anon_vma);
+> > +             anon_vma =3D NULL;
+> > +             goto repeat;
 > > +     }
 >
-> For these two places: I know that thp collapse with mmap read lock hasn't
-> yet spread to anon (so I assume none of above could trigger yet on the
-> failure paths), but shall we constantly return -EAGAIN here just in case =
-we
-> forget that in the future?
+> We have an open-coded fast path above this:
 >
-> For example, for UFFDIO_COPY over shmem which we can already hit similar
-> case, mfill_atomic_install_pte() has:
->
->         ret =3D -EAGAIN;
->         dst_pte =3D pte_offset_map_lock(dst_mm, dst_pmd, dst_addr, &ptl);
->         if (!dst_pte)
+>         if (down_read_trylock(&root_anon_vma->rwsem)) {
+>                 /*
+>                  * If the folio is still mapped, then this anon_vma is st=
+ill
+>                  * its anon_vma, and holding the mutex ensures that it wi=
+ll
+>                  * not go away, see anon_vma_free().
+>                  */
+>                 if (!folio_mapped(folio)) {
+>                         up_read(&root_anon_vma->rwsem);
+>                         anon_vma =3D NULL;
+>                 }
 >                 goto out;
+>         }
 >
-> Thanks,
+> Would that also need such check?
 
-Retrying in this case makes sense to me. Will change.
+Yes, I think they should be handled the same way. Will fix. Thanks!
 
+>
+> > +
+> >       if (atomic_dec_and_test(&anon_vma->refcount)) {
+> >               /*
+> >                * Oops, we held the last refcount, release the lock
+> > --
+> > 2.42.0.515.g380fc7ccd1-goog
+> >
 >
 > --
 > Peter Xu
->
-> --
-> To unsubscribe from this group and stop receiving emails from it, send an=
- email to kernel-team+unsubscribe@android.com.
 >
