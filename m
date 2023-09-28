@@ -2,88 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 40D837B2152
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Sep 2023 17:30:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5860D7B2170
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Sep 2023 17:36:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232049AbjI1Pai (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Sep 2023 11:30:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41184 "EHLO
+        id S231873AbjI1Pgq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Sep 2023 11:36:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38686 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231828AbjI1PaW (ORCPT
+        with ESMTP id S231332AbjI1Pgp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Sep 2023 11:30:22 -0400
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 304411A7
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Sep 2023 08:30:20 -0700 (PDT)
-Received: by mail-pl1-x636.google.com with SMTP id d9443c01a7336-1c6193d6bb4so206065ad.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Sep 2023 08:30:20 -0700 (PDT)
+        Thu, 28 Sep 2023 11:36:45 -0400
+Received: from mail-yw1-x112c.google.com (mail-yw1-x112c.google.com [IPv6:2607:f8b0:4864:20::112c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44198B7
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Sep 2023 08:36:43 -0700 (PDT)
+Received: by mail-yw1-x112c.google.com with SMTP id 00721157ae682-5a229ac185aso7947077b3.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Sep 2023 08:36:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1695915019; x=1696519819; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1695915402; x=1696520202; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gW3bQkxv5ZlVvPDaRZ7GOUnQxOQtKH5unki4YKmOzgQ=;
-        b=pBn+H+ni9EOJ4jKn6TpZfhqkcqfY9Z3xCfaTO2FkB9Rr47Z3RVSxDst6po7Ai6tsZ0
-         OjxwbRaWaDzGUsiEcJzZn+NeDek3XxVqGI3wY7yXK/fwBCyLE0vriydhOpPUUL+3sFCN
-         PheLGrNP2ShN0JP5IMyXM2mL1HB7PpeE8epZJKr0YnmY6ezexGUiuhAw3HyZngrK2tbY
-         oRRsizqyE7PvQvOdqiKojUT0LSaASlXpV3hg6E5QH08Y/9Yp47+HfAkA+vNRPQ4c3N20
-         OMrVGTo8mV145JYxvRBnesRPr2Qzh9pLZZWvLu8djV3+OVOIBM8jXi6i1EApMS/rR5sI
-         GdPg==
+        bh=6e7z54uATHSSGDjwccq5t2JrfgU8sx45IO2zPYWKTu4=;
+        b=y8sNghs5WMsnE7q6gtrMdqawiQAkTO1W5wa6oeNCXaAnuO5coljUYTKHQIIfk2EMz2
+         O25kuKl7THw2USeCRD4TNJVsZHVtZ1giiId7FZ0JqmdU8ZVSd9+kN47fAiKLStgbEb5e
+         usE/N6m4Y0cwIdXKW/u6KHbCvCTczaAfx6pF2X0UF37Pq1+fMjvdpI14KJbH1zDBDIl/
+         juh4k3DFjFMvD9wNeCDGpfw5WWXogmG6cItwx4IfXa2Cfau+P2POuvxTuixFc80Nthod
+         UaUhXr0/TzzolcftVars+LAO0gPugAto8XVIVPAGnG+4SWS5OlQWIBrONT8wGIJMwPGd
+         Q6Ag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695915019; x=1696519819;
+        d=1e100.net; s=20230601; t=1695915402; x=1696520202;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gW3bQkxv5ZlVvPDaRZ7GOUnQxOQtKH5unki4YKmOzgQ=;
-        b=jI3I9OW9m1xRI9V9hdpi2Xj+/BHT4OfitP7cprFTpFrfnb//ooiXIFoGcDNelG049S
-         GDNRT1tKgIgw+7iyhjTbzd1GHwqvgEOS+5FwSW41NRV8F5M1hN4L9opABMSAI5N1Fgxe
-         TTAdB81HVoIr8mcxfc5cAUfth7/3OJiJ+tHPjkQ7f1XixDN/kjM90nRLZTQWr1d9D3EX
-         ELRdSqJNSW57x66ZPAieS0qQ1GlIGs9w2P+FNPv4+UjQxuKZdb9QcnVD8P+KCGuZXOT4
-         H4SSo+yZ3oxRDILGAcvkGtDKuYfHXIT0Cp2GvfxuNYVWpnLF8cDK7Q5R2QtBxU4H2mYx
-         HJ8Q==
-X-Gm-Message-State: AOJu0YycXFTxJd8GrzcsAF4BKC75FYxyCQJIS9Ccox26l5Ow01jROxF5
-        dEC5VyU/DkEBhvQf2fj7wuv1T5fcCJcqGazmJfBTkQ==
-X-Google-Smtp-Source: AGHT+IHHyfIM/7h2yPICm3uZHEnv53ZDC4+2b2+nBKsf/B6JPSxSiNPVillmryDthljWo4bey1UqJpEOBpTCWBBBy5E=
-X-Received: by 2002:a17:902:9a85:b0:1c4:1392:e4b5 with SMTP id
- w5-20020a1709029a8500b001c41392e4b5mr686821plp.21.1695915019275; Thu, 28 Sep
- 2023 08:30:19 -0700 (PDT)
+        bh=6e7z54uATHSSGDjwccq5t2JrfgU8sx45IO2zPYWKTu4=;
+        b=VwLxMj50pyJ2CbfimjjLAkXTdEGV27Rez/gydAp7tzT82RfVnNBP4VvrG+7K3KrgTb
+         Jaqx3lXYHeWHhoz4QtY+OIf4IzWkf5CGy5C30eVu3y5gHS8DZkPQLecpr9QvciMB0SKs
+         oWy1jEsUeERPt8NTf5aminrgTbKNKPgcTPlSHWEMrE+1dDPm/Kkc/BOcHE9Ae25hYpWn
+         LduDddRseDJ1W1m15+ulhc8XKZdMk/p8Eh5TxXXaBH7w7L9B9IkUplEVWVdOf++v+VJb
+         F1mPihVp8QZiZDBkGNj56y58TQlPHWPrdyMcReee5rSrgM0X6S89syx3+y+K5awsxYv3
+         KHGQ==
+X-Gm-Message-State: AOJu0YzkmNNx4CxNDJO5Futz5/IRebu28bj53kdjme70fzszQLr7Y4Lz
+        WgIEg6ob15nMIpPbr6rY/o0pMivkhlPwggwUCvClgA==
+X-Google-Smtp-Source: AGHT+IFjUIiq8zXa/6i3Gd2mLTZVRJSM762ThmYuOrNiwbXezL93NXanoc8htBlyr6ZC4BGKzu/lDhUW4vJYOzuiSDk=
+X-Received: by 2002:a81:4e85:0:b0:569:479f:6d7f with SMTP id
+ c127-20020a814e85000000b00569479f6d7fmr1392570ywb.43.1695915402166; Thu, 28
+ Sep 2023 08:36:42 -0700 (PDT)
 MIME-Version: 1.0
 References: <20230923013148.1390521-1-surenb@google.com> <20230923013148.1390521-3-surenb@google.com>
- <CAG48ez11FdESrYYDLmtZEgZ7osDi-QDYpk+Z0p=qjpCks++7rg@mail.gmail.com> <CAJuCfpG1sjJdEoxtYFk9-r_5kutss_C3breJVFz99efsKKXzqg@mail.gmail.com>
-In-Reply-To: <CAJuCfpG1sjJdEoxtYFk9-r_5kutss_C3breJVFz99efsKKXzqg@mail.gmail.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Thu, 28 Sep 2023 17:29:43 +0200
-Message-ID: <CAG48ez2uMXLigojbF3HD20Q5jL4ZMSZf6GS-5Y7P=jiB7gibpQ@mail.gmail.com>
-Subject: Re: potential new userfaultfd vs khugepaged conflict [was: Re: [PATCH
- v2 2/3] userfaultfd: UFFDIO_REMAP uABI]
-To:     Suren Baghdasaryan <surenb@google.com>
-Cc:     Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, brauner@kernel.org,
-        Shuah Khan <shuah@kernel.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        Peter Xu <peterx@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        Mike Rapoport <rppt@kernel.org>, willy@infradead.org,
-        Liam.Howlett@oracle.com, zhangpeng362@huawei.com,
-        Brian Geffon <bgeffon@google.com>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        Nicolas Geoffray <ngeoffray@google.com>,
-        Jared Duke <jdduke@google.com>, Linux-MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        kernel-team <kernel-team@android.com>
+ <CAG48ez1N2kryy08eo0dcJ5a9O-3xMT8aOrgrcD+CqBN=cBfdDw@mail.gmail.com>
+ <CAJuCfpGb5Amo9Sk0yyruJt9NKaYe9-y+5jmU442NSf3+VT5-dA@mail.gmail.com>
+ <CAG48ez2WNOMwPo4OMVUHbS4mirwbqHUY5qUaaZ9DTkXdkzrjiQ@mail.gmail.com>
+ <CAJuCfpGcsBE2XqPJSVo1gdE_O96gzS5=ET=u0uSBSX3Lj56CtA@mail.gmail.com>
+ <CAJuCfpHY5zhkS0OPxOK-twb6pDJg6OpXZnPquw_9wBmbjFiF9Q@mail.gmail.com> <CAG48ez3w7kbetfhEd7trLhOKJYPw4jSVBeOC+psZZR84d-hJaw@mail.gmail.com>
+In-Reply-To: <CAG48ez3w7kbetfhEd7trLhOKJYPw4jSVBeOC+psZZR84d-hJaw@mail.gmail.com>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Thu, 28 Sep 2023 08:36:31 -0700
+Message-ID: <CAJuCfpHrmgdoJaN0P4FGzRFbu-o+c5+H6-r=5A=xrVd2GU2QyQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] userfaultfd: UFFDIO_REMAP uABI
+To:     Jann Horn <jannh@google.com>
+Cc:     akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
+        brauner@kernel.org, shuah@kernel.org, aarcange@redhat.com,
+        lokeshgidra@google.com, peterx@redhat.com, david@redhat.com,
+        hughd@google.com, mhocko@suse.com, axelrasmussen@google.com,
+        rppt@kernel.org, willy@infradead.org, Liam.Howlett@oracle.com,
+        zhangpeng362@huawei.com, bgeffon@google.com,
+        kaleshsingh@google.com, ngeoffray@google.com, jdduke@google.com,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        kernel-team@android.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -91,130 +83,75 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 27, 2023 at 7:12=E2=80=AFPM Suren Baghdasaryan <surenb@google.c=
-om> wrote:
+On Wed, Sep 27, 2023 at 3:49=E2=80=AFPM Jann Horn <jannh@google.com> wrote:
 >
-> On Wed, Sep 27, 2023 at 3:07=E2=80=AFAM Jann Horn <jannh@google.com> wrot=
-e:
-> >
-> > [moving Hugh into "To:" recipients as FYI for khugepaged interaction]
-> >
-> > On Sat, Sep 23, 2023 at 3:31=E2=80=AFAM Suren Baghdasaryan <surenb@goog=
+> On Wed, Sep 27, 2023 at 11:08=E2=80=AFPM Suren Baghdasaryan <surenb@googl=
+e.com> wrote:
+> > On Wed, Sep 27, 2023 at 1:42=E2=80=AFPM Suren Baghdasaryan <surenb@goog=
 le.com> wrote:
-> > > From: Andrea Arcangeli <aarcange@redhat.com>
 > > >
-> > > This implements the uABI of UFFDIO_REMAP.
+> > > On Wed, Sep 27, 2023 at 1:04=E2=80=AFPM Jann Horn <jannh@google.com> =
+wrote:
+> > > >
+> > > > On Wed, Sep 27, 2023 at 8:08=E2=80=AFPM Suren Baghdasaryan <surenb@=
+google.com> wrote:
+> > > > > On Wed, Sep 27, 2023 at 5:47=E2=80=AFAM Jann Horn <jannh@google.c=
+om> wrote:
+> > > > > > On Sat, Sep 23, 2023 at 3:31=E2=80=AFAM Suren Baghdasaryan <sur=
+enb@google.com> wrote:
+> > > > > > > +               dst_pmdval =3D pmdp_get_lockless(dst_pmd);
+> > > > > > > +               /*
+> > > > > > > +                * If the dst_pmd is mapped as THP don't over=
+ride it and just
+> > > > > > > +                * be strict. If dst_pmd changes into TPH aft=
+er this check, the
+> > > > > > > +                * remap_pages_huge_pmd() will detect the cha=
+nge and retry
+> > > > > > > +                * while remap_pages_pte() will detect the ch=
+ange and fail.
+> > > > > > > +                */
+> > > > > > > +               if (unlikely(pmd_trans_huge(dst_pmdval))) {
+> > > > > > > +                       err =3D -EEXIST;
+> > > > > > > +                       break;
+> > > > > > > +               }
+> > > > > > > +
+> > > > > > > +               ptl =3D pmd_trans_huge_lock(src_pmd, src_vma)=
+;
+> > > > > > > +               if (ptl && !pmd_trans_huge(*src_pmd)) {
+> > > > > > > +                       spin_unlock(ptl);
+> > > > > > > +                       ptl =3D NULL;
+> > > > > > > +               }
+> > > > > >
+> > > > > > This still looks wrong - we do still have to split_huge_pmd()
+> > > > > > somewhere so that remap_pages_pte() works.
+> > > > >
+> > > > > Hmm, I guess this extra check is not even needed...
+> > > >
+> > > > Hm, and instead we'd bail at the pte_offset_map_nolock() in
+> > > > remap_pages_pte()? I guess that's unusual but works...
 > > >
-> > > Notably one mode bitflag is also forwarded (and in turn known) by the
-> > > lowlevel remap_pages method.
-> > >
-> > > Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
-> > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > [...]
-> > > +/*
-> > > + * The mmap_lock for reading is held by the caller. Just move the pa=
-ge
-> > > + * from src_pmd to dst_pmd if possible, and return true if succeeded
-> > > + * in moving the page.
-> > > + */
-> > > +static int remap_pages_pte(struct mm_struct *dst_mm,
-> > > +                          struct mm_struct *src_mm,
-> > > +                          pmd_t *dst_pmd,
-> > > +                          pmd_t *src_pmd,
-> > > +                          struct vm_area_struct *dst_vma,
-> > > +                          struct vm_area_struct *src_vma,
-> > > +                          unsigned long dst_addr,
-> > > +                          unsigned long src_addr,
-> > > +                          __u64 mode)
-> > > +{
-> > > +       swp_entry_t entry;
-> > > +       pte_t orig_src_pte, orig_dst_pte;
-> > > +       spinlock_t *src_ptl, *dst_ptl;
-> > > +       pte_t *src_pte =3D NULL;
-> > > +       pte_t *dst_pte =3D NULL;
-> > > +
-> > > +       struct folio *src_folio =3D NULL;
-> > > +       struct anon_vma *src_anon_vma =3D NULL;
-> > > +       struct mmu_notifier_range range;
-> > > +       int err =3D 0;
-> > > +
-> > > +       mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, src_mm,
-> > > +                               src_addr, src_addr + PAGE_SIZE);
-> > > +       mmu_notifier_invalidate_range_start(&range);
-> > > +retry:
-> > > +       dst_pte =3D pte_offset_map_nolock(dst_mm, dst_pmd, dst_addr, =
-&dst_ptl);
-> > > +
-> > > +       /* If an huge pmd materialized from under us fail */
-> > > +       if (unlikely(!dst_pte)) {
-> > > +               err =3D -EFAULT;
-> > > +               goto out;
-> > > +       }
-> > > +
-> > > +       src_pte =3D pte_offset_map_nolock(src_mm, src_pmd, src_addr, =
-&src_ptl);
-> > > +
-> > > +       /*
-> > > +        * We held the mmap_lock for reading so MADV_DONTNEED
-> > > +        * can zap transparent huge pages under us, or the
-> > > +        * transparent huge page fault can establish new
-> > > +        * transparent huge pages under us.
-> > > +        */
-> > > +       if (unlikely(!src_pte)) {
-> > > +               err =3D -EFAULT;
-> > > +               goto out;
-> > > +       }
-> > > +
-> > > +       BUG_ON(pmd_none(*dst_pmd));
-> > > +       BUG_ON(pmd_none(*src_pmd));
-> > > +       BUG_ON(pmd_trans_huge(*dst_pmd));
-> > > +       BUG_ON(pmd_trans_huge(*src_pmd));
+> > > Yes, that's what I was thinking but I agree, that seems fragile. Mayb=
+e
+> > > just bail out early if (ptl && !pmd_trans_huge())?
 > >
-> > This works for now, but note that Hugh Dickins has recently been
-> > reworking khugepaged such that PTE-based mappings can be collapsed
-> > into transhuge mappings under the mmap lock held in *read mode*;
-> > holders of the mmap lock in read mode can only synchronize against
-> > this by taking the right page table spinlock and rechecking the pmd
-> > value. This is only the case for file-based mappings so far, not for
-> > anonymous private VMAs; and this code only operates on anonymous
-> > private VMAs so far, so it works out.
-> >
-> > But if either Hugh further reworks khugepaged such that anonymous VMAs
-> > can be collapsed under the mmap lock in read mode, or you expand this
-> > code to work on file-backed VMAs, then it will become possible to hit
-> > these BUG_ON() calls. I'm not sure what the plans for khugepaged going
-> > forward are, but the number of edgecases everyone has to keep in mind
-> > would go down if you changed this function to deal gracefully with
-> > page tables disappearing under you.
-> >
-> > In the newest version of mm/pgtable-generic.c, above
-> > __pte_offset_map_lock(), there is a big comment block explaining the
-> > current rules for page table access; in particular, regarding the
-> > helper pte_offset_map_nolock() that you're using:
-> >
-> >  * pte_offset_map_nolock(mm, pmd, addr, ptlp), above, is like pte_offse=
-t_map();
-> >  * but when successful, it also outputs a pointer to the spinlock in pt=
-lp - as
-> >  * pte_offset_map_lock() does, but in this case without locking it.  Th=
-is helps
-> >  * the caller to avoid a later pte_lockptr(mm, *pmd), which might by th=
-at time
-> >  * act on a changed *pmd: pte_offset_map_nolock() provides the correct =
-spinlock
-> >  * pointer for the page table that it returns.  In principle, the calle=
-r should
-> >  * recheck *pmd once the lock is taken; in practice, no callsite needs =
-that -
-> >  * either the mmap_lock for write, or pte_same() check on contents, is =
-enough.
-> >
-> > If this becomes hittable in the future, I think you will need to
-> > recheck *pmd, at least for dst_pte, to avoid copying PTEs into a
-> > detached page table.
+> > No, actually we can still handle is_swap_pmd() case by splitting it
+> > and remapping the individual ptes. So, I can bail out only in case of
+> > pmd_devmap().
 >
-> Thanks for the warning, Jann. It sounds to me it would be better to
-> add this pmd check now even though it's not hittable. Does that sound
-> good to everyone?
+> FWIW I only learned today that "real" swap PMDs don't actually exist -
+> only migration entries, which are encoded as swap PMDs, exist. You can
+> see that when you look through the cases that something like
+> __split_huge_pmd() or zap_pmd_range() actually handles.
 
-Sounds good to me.
+Ah, good point.
+
+>
+> So I think if you wanted to handle all the PMD types properly here
+> without splitting, you could do that without _too_ much extra code.
+> But idk if it's worth it.
+
+Yeah, I guess I can call pmd_migration_entry_wait() and retry by
+returning EAGAIN, similar to how remap_pages_pte() handles PTE
+migration. Looks simple enough.
+
+Thanks for all the pointers! I'll start cooking the next version.
