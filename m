@@ -2,172 +2,243 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 19F697B2384
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Sep 2023 19:16:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF5E87B239D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Sep 2023 19:19:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231524AbjI1RQD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Sep 2023 13:16:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41318 "EHLO
+        id S231890AbjI1RTs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Sep 2023 13:19:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231445AbjI1RQC (ORCPT
+        with ESMTP id S231376AbjI1RTq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Sep 2023 13:16:02 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A4171A8
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Sep 2023 10:15:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1695921318;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=iB4+ZJehBJyV1CWWY+MqwDYHFJ2vxRDvHuETyOblfLU=;
-        b=XnWLuWkBydHiIPJw4ieqIvLC1MYeopHr9yTY0jSOA0J+HgK2+pwePga7TrDusllb0Ky/kK
-        vh0fQjoTcUPecPdF5xLxdp+yN5pZnYQGIS+0EhTgbEm1b4iazzPg0naAm905dCYJ4fAzMp
-        uA3oM3L2UhwGgVt98wVvRIfzTD7N+KA=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-7-TTN7idP9NVOSRmew86l5gg-1; Thu, 28 Sep 2023 13:15:17 -0400
-X-MC-Unique: TTN7idP9NVOSRmew86l5gg-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-32323283257so7003276f8f.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Sep 2023 10:15:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695921316; x=1696526116;
-        h=content-transfer-encoding:in-reply-to:subject:organization:from
-         :references:cc:to:content-language:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iB4+ZJehBJyV1CWWY+MqwDYHFJ2vxRDvHuETyOblfLU=;
-        b=EPcPHK3kVq9XyrutPzU923Q7gbwVJza5YwQEygRb3WeV+n60AIX1B+Ee2+R+dKDe4/
-         I23OWySE3dJPxhD+HkKkNEBuCRsi6mmZZLP7xbTsOzfxGVP30jthSzU9vVnIPhJ32Y2R
-         15NGnk4t1o5yaN4tBAZrpYvjXAxRNemEwQKFQpPE3waVe16prjPlhxeSupvgWzlI70H8
-         Aa5gtHjTo6xEwPxc4fZ2QcE7Xq7sTTIOErooQfA/bFUEa8Xue4cCl5x0XGak4BURmElU
-         yj/NR/K4bgj92rQQ7tNWPYfVXoD6nN6jfQa/hlVItZPC/k7UGQrTtTaynnG5fswgMzxg
-         BVGw==
-X-Gm-Message-State: AOJu0YzJD7RU95iGeBOCYvulv6ojp6admbNuzqOtZ90N2Z7lQH9IadkU
-        g+1B1WucNKxwq02EaMxYlixlhoxkrPreWhl69QAY5k2RV5CYhVqzyVYOp6kLnBscsVBv3lLh7Nz
-        o9sFr2j8shA2VQaOmvNMF2BVEIg==
-X-Received: by 2002:adf:fac9:0:b0:319:785a:fce0 with SMTP id a9-20020adffac9000000b00319785afce0mr1778262wrs.26.1695921315879;
-        Thu, 28 Sep 2023 10:15:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFMHySBXVM8IbvGir7YCqj8UNThTOXlUJ574EKr5MYsPao0vC5cge2y9Ks7isIE+CxQe6gk5w==
-X-Received: by 2002:adf:fac9:0:b0:319:785a:fce0 with SMTP id a9-20020adffac9000000b00319785afce0mr1778223wrs.26.1695921315344;
-        Thu, 28 Sep 2023 10:15:15 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c718:f00:b37d:4253:cd0d:d213? (p200300cbc7180f00b37d4253cd0dd213.dip0.t-ipconnect.de. [2003:cb:c718:f00:b37d:4253:cd0d:d213])
-        by smtp.gmail.com with ESMTPSA id q16-20020adf9dd0000000b0031912c0ffebsm7770278wre.23.2023.09.28.10.15.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Sep 2023 10:15:14 -0700 (PDT)
-Message-ID: <9101f70c-0c0a-845b-4ab7-82edf71c7bac@redhat.com>
-Date:   Thu, 28 Sep 2023 19:15:13 +0200
+        Thu, 28 Sep 2023 13:19:46 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 685B4DD;
+        Thu, 28 Sep 2023 10:19:44 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE2E8C433C8;
+        Thu, 28 Sep 2023 17:19:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695921584;
+        bh=TBXriEELB328eOKqJ6NFSOrKvuSXYJvHz6sohZrQIx0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ryWGGERqf3ypGjqQYm5gVKZvkucKGUk0K4h6YIIWQ/NpKuXJi36HQDWjgdgtJd7wu
+         TP/RvT38TPj/OA2Jk4aeD0DGoa7LAN7jIOlBWE0I1eYn6imAEKifbbeaG59NKi/slD
+         aEVjDaHe+6Tji3j/v0JkIDO2dR6Fo6pHy84G4o5KxjxBslGp0LwydCJH4NJcX4DsY2
+         2+Ki57CRL6p89OjFpqSqXlcve39ZEqPDxD7QZyCHUVk8IqPpmvXHWivOQJXeNPWNjx
+         piSViGDp1oRPgjAY21DvqURTHMn9e50dg1rgKW7SErtrbVvTXl75DArwoAJ6zoDjTa
+         8X72loIt6il5Q==
+Date:   Thu, 28 Sep 2023 10:19:43 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        David Sterba <dsterba@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>, Jeremy Kerr <jk@ozlabs.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+        Todd Kjos <tkjos@android.com>,
+        Martijn Coenen <maco@android.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Carlos Llamas <cmllamas@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Mattia Dongili <malattia@linux.it>,
+        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Leon Romanovsky <leon@kernel.org>,
+        Brad Warrum <bwarrum@linux.ibm.com>,
+        Ritu Agarwal <rituagar@linux.ibm.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+        Mark Gross <markgross@kernel.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Eric Van Hensbergen <ericvh@kernel.org>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Christian Schoenebeck <linux_oss@crudebyte.com>,
+        David Sterba <dsterba@suse.com>,
+        David Howells <dhowells@redhat.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        Ian Kent <raven@themaw.net>,
+        Luis de Bethencourt <luisbg@kernel.org>,
+        Salah Triki <salah.triki@gmail.com>,
+        "Tigran A. Aivazian" <aivazian.tigran@gmail.com>,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        Xiubo Li <xiubli@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu,
+        Joel Becker <jlbec@evilplan.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Nicolas Pitre <nico@fluxnic.net>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Ard Biesheuvel <ardb@kernel.org>, Gao Xiang <xiang@kernel.org>,
+        Chao Yu <chao@kernel.org>, Yue Hu <huyue2@coolpad.com>,
+        Jeffle Xu <jefflexu@linux.alibaba.com>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        Jan Kara <jack@suse.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Christoph Hellwig <hch@infradead.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Muchun Song <muchun.song@linux.dev>, Jan Kara <jack@suse.cz>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Dave Kleikamp <shaggy@kernel.org>, Tejun Heo <tj@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Neil Brown <neilb@suse.de>,
+        Olga Kornievskaia <kolga@netapp.com>,
+        Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
+        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+        Anton Altaparmakov <anton@tuxera.com>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Bob Copeland <me@bobcopeland.com>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Martin Brandenburg <martin@omnibond.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Tony Luck <tony.luck@intel.com>,
+        "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+        Anders Larsen <al@alarsen.net>,
+        Steve French <sfrench@samba.org>,
+        Paulo Alcantara <pc@manguebit.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Phillip Lougher <phillip@squashfs.org.uk>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Evgeniy Dushistov <dushistov@mail.ru>,
+        Chandan Babu R <chandan.babu@oracle.com>,
+        Damien Le Moal <dlemoal@kernel.org>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        Johannes Thumshirn <jth@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        Song Liu <song@kernel.org>,
+        Yonghong Song <yonghong.song@linux.dev>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-usb@vger.kernel.org, v9fs@lists.linux.dev,
+        linux-afs@lists.infradead.org, autofs@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        codalist@coda.cs.cmu.edu, linux-efi@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, gfs2@lists.linux.dev,
+        linux-um@lists.infradead.org, linux-mtd@lists.infradead.org,
+        jfs-discussion@lists.sourceforge.net, linux-nfs@vger.kernel.org,
+        linux-nilfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
+        ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
+        linux-karma-devel@lists.sourceforge.net, devel@lists.orangefs.org,
+        linux-unionfs@vger.kernel.org, linux-hardening@vger.kernel.org,
+        reiserfs-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org,
+        linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        bpf@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
+        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org
+Subject: Re: [PATCH 86/87] fs: switch timespec64 fields in inode to discrete
+ integers
+Message-ID: <20230928171943.GK11439@frogsfrogsfrogs>
+References: <20230928110554.34758-1-jlayton@kernel.org>
+ <20230928110554.34758-2-jlayton@kernel.org>
+ <6020d6e7-b187-4abb-bf38-dc09d8bd0f6d@app.fastmail.com>
+ <af047e4a1c6947c59d4a13d4ae221c784a5386b4.camel@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Content-Language: en-US
-To:     Suren Baghdasaryan <surenb@google.com>
-Cc:     Jann Horn <jannh@google.com>, akpm@linux-foundation.org,
-        viro@zeniv.linux.org.uk, brauner@kernel.org, shuah@kernel.org,
-        aarcange@redhat.com, lokeshgidra@google.com, peterx@redhat.com,
-        hughd@google.com, mhocko@suse.com, axelrasmussen@google.com,
-        rppt@kernel.org, willy@infradead.org, Liam.Howlett@oracle.com,
-        zhangpeng362@huawei.com, bgeffon@google.com,
-        kaleshsingh@google.com, ngeoffray@google.com, jdduke@google.com,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        kernel-team@android.com
-References: <20230923013148.1390521-1-surenb@google.com>
- <20230923013148.1390521-3-surenb@google.com>
- <CAG48ez1N2kryy08eo0dcJ5a9O-3xMT8aOrgrcD+CqBN=cBfdDw@mail.gmail.com>
- <03f95e90-82bd-6ee2-7c0d-d4dc5d3e15ee@redhat.com>
- <CAJuCfpHf6BWaf_k5dBx7mAz49kF5BwBhW_mUxu4E_p2iAy9-iA@mail.gmail.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Subject: Re: [PATCH v2 2/3] userfaultfd: UFFDIO_REMAP uABI
-In-Reply-To: <CAJuCfpHf6BWaf_k5dBx7mAz49kF5BwBhW_mUxu4E_p2iAy9-iA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <af047e4a1c6947c59d4a13d4ae221c784a5386b4.camel@kernel.org>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 27.09.23 20:25, Suren Baghdasaryan wrote:
->>
->> I have some cleanups pending for page_move_anon_rmap(), that moves the
->> SetPageAnonExclusive hunk out. Here we should be using
->> page_move_anon_rmap() [or rather, folio_move_anon_rmap() after my cleanups]
->>
->> I'll send them out soonish.
+On Thu, Sep 28, 2023 at 01:06:03PM -0400, Jeff Layton wrote:
+> On Thu, 2023-09-28 at 11:48 -0400, Arnd Bergmann wrote:
+> > On Thu, Sep 28, 2023, at 07:05, Jeff Layton wrote:
+> > > This shaves 8 bytes off struct inode, according to pahole.
+> > > 
+> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > 
+> > FWIW, this is similar to the approach that Deepa suggested
+> > back in 2016:
+> > 
+> > https://lore.kernel.org/lkml/1452144972-15802-3-git-send-email-deepa.kernel@gmail.com/
+> > 
+> > It was NaKed at the time because of the added complexity,
+> > though it would have been much easier to do it then,
+> > as we had to touch all the timespec references anyway.
+> > 
+> > The approach still seems ok to me, but I'm not sure it's worth
+> > doing it now if we didn't do it then.
+> > 
 > 
-> Should I keep this as is in my next version until you post the
-> cleanups? I can add a TODO comment to convert it to
-> folio_move_anon_rmap() once it's ready.
-
-You should just be able to use page_move_anon_rmap() and whatever gets 
-in first cleans it up :)
-
+> I remember seeing those patches go by. I don't remember that change
+> being NaK'ed, but I wasn't paying close attention at the time 
 > 
->>
->>>> +       WRITE_ONCE(src_folio->index, linear_page_index(dst_vma,
->>>> +                                                     dst_addr)); >> +
->>>> +       orig_src_pte = ptep_clear_flush(src_vma, src_addr, src_pte);
->>>> +       orig_dst_pte = mk_pte(&src_folio->page, dst_vma->vm_page_prot);
->>>> +       orig_dst_pte = maybe_mkwrite(pte_mkdirty(orig_dst_pte),
->>>> +                                    dst_vma);
->>>
->>> I think there's still a theoretical issue here that you could fix by
->>> checking for the AnonExclusive flag, similar to the huge page case.
->>>
->>> Consider the following scenario:
->>>
->>> 1. process P1 does a write fault in a private anonymous VMA, creating
->>> and mapping a new anonymous page A1
->>> 2. process P1 forks and creates two children P2 and P3. afterwards, A1
->>> is mapped in P1, P2 and P3 as a COW page, with mapcount 3.
->>> 3. process P1 removes its mapping of A1, dropping its mapcount to 2.
->>> 4. process P2 uses vmsplice() to grab a reference to A1 with get_user_pages()
->>> 5. process P2 removes its mapping of A1, dropping its mapcount to 1.
->>>
->>> If at this point P3 does a write fault on its mapping of A1, it will
->>> still trigger copy-on-write thanks to the AnonExclusive mechanism; and
->>> this is necessary to avoid P3 mapping A1 as writable and writing data
->>> into it that will become visible to P2, if P2 and P3 are in different
->>> security contexts.
->>>
->>> But if P3 instead moves its mapping of A1 to another address with
->>> remap_anon_pte() which only does a page mapcount check, the
->>> maybe_mkwrite() will directly make the mapping writable, circumventing
->>> the AnonExclusive mechanism.
->>>
->>
->> Yes, can_change_pte_writable() contains the exact logic when we can turn
->> something easily writable even if it wasn't writable before. which
->> includes that PageAnonExclusive is set. (but with uffd-wp or softdirty
->> tracking, there is more to consider)
-> 
-> For uffd_remap can_change_pte_writable() would fail it VM_WRITE is not
-> set, but we want remapping to work for RO memory as well. Are you
+> Looking at it objectively now, I think it's worth it to recover 8 bytes
+> per inode and open a 4 byte hole that Amir can use to grow the
+> i_fsnotify_mask. We might even able to shave off another 12 bytes
+> eventually if we can move to a single 64-bit word per timestamp. 
 
-In a VMA without VM_WRITE you certainly wouldn't want to make PTEs 
-writable :) That's why that function just does a sanity check that it is 
-not called in strange context. So one would only call it if VM_WRITE is set.
+I don't think you can, since btrfs timestamps utilize s64 seconds
+counting in both directions from the Unix epoch.  They also support ns
+resolution:
 
-> saying that a PageAnonExclusive() check alone would not be enough
-> here?
+	struct btrfs_timespec {
+		__le64 sec;
+		__le32 nsec;
+	} __attribute__ ((__packed__));
 
-There are some interesting questions to ask here:
+--D
 
-1) What happens if the old VMA has VM_SOFTDIRTY set but the new one not? 
-You most probably have to mark the PTE softdirty and not make it writable.
-
-2) VM_UFFD_WP requires similar care I assume? Peter might know.
-
--- 
-Cheers,
-
-David / dhildenb
-
+> It is a lot of churn though.
+> -- 
+> Jeff Layton <jlayton@kernel.org>
