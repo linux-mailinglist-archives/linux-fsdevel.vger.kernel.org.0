@@ -2,89 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 557B47B1F21
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Sep 2023 16:01:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D02457B1F2F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Sep 2023 16:05:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232185AbjI1OBl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Sep 2023 10:01:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41118 "EHLO
+        id S232342AbjI1OFP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Sep 2023 10:05:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231986AbjI1OBk (ORCPT
+        with ESMTP id S231576AbjI1OFO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Sep 2023 10:01:40 -0400
-Received: from mail-oa1-f69.google.com (mail-oa1-f69.google.com [209.85.160.69])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6095E136
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Sep 2023 07:01:39 -0700 (PDT)
-Received: by mail-oa1-f69.google.com with SMTP id 586e51a60fabf-1dd96cab3e9so6589796fac.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Sep 2023 07:01:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695909698; x=1696514498;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uBSAPqX6pOKyzlw0NS5MOK7ADON2LjjRvQEy531aNJI=;
-        b=RlT4rjGJynjCw5yrOkUjmihj4m4i84jt5wup1vU0GdoBdGzDaAnyHdp/hsgN40jgsT
-         JPjOWa3z8k/4nYrfJfWrcalvwzNy0ywlVEzc5usm3jQ/pKAt4vvYzHEANBWPfX+ap3U0
-         ImUs9AbSb6sRv4w20ssi8iCdF0rfLnilBPBmFwmdmvYd8SKPXbpPCzMnMVo/gb43yHqQ
-         9pL16VBA5RFcrkfw9jMPovrIP6T+pKB5Dc6jHXHsTDMGAUXQlFmK8D2F73X6FZiinRIA
-         EBRavtxCUP9kS/EUbeHVTnsRmrVYOLvgvH3h0X6zjtX9PmhLzsIjTXnZa2jehKIkdOqQ
-         AN0w==
-X-Gm-Message-State: AOJu0YyMLLTvY88T+2QUyo8ACgmfDjUMoFd2K0L/ApvpCQP2lgidhSgV
-        9n9YFN9rxF9+Erhj4TO2lFwgm9bBxzSDHnBu7qwKiC9bAlVm
-X-Google-Smtp-Source: AGHT+IEpnlpacrkzxBmpR3sRLPZsvXotavmzHv7M0gBiEdcrIjX2VbMt52fU4RtpOvv5R5vHXCvnHcQuJiV4YhsFylFnC5Lf/XqK
+        Thu, 28 Sep 2023 10:05:14 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76C0E136;
+        Thu, 28 Sep 2023 07:05:13 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAF12C433C7;
+        Thu, 28 Sep 2023 14:05:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695909913;
+        bh=6Dg6G5NYkGLr0eWe04c4RUxjLhdkFIrJohD7fivs7+I=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=eecH+hYNl1FzuaL1MIwHBXZB+0Mq+StxV0YlfEPwkHSesdnDkVhUnqueXXgDXND34
+         Vid4AiYpP2OEH2Kou6VCBofuWqZZVaDzjPayS9ZW+QuznbLqxQmqi9fvkKUW0I2TJu
+         htWysiynk9Al4HngkWulPoPWj1cEBduQ0g8fLoya4veWhesMEbRxFMhXwZMkIjIkBc
+         3tNy2OkYlBN5o+gSX97eaGkqBmbYMK9iHqum7M2dmni3Crkf68NWEdhJbRbNpMutS7
+         EVI2GNRrjrFggn2ZxUSpAmaOx2YLoia23tVyjMdH+nZRMM9b7A8zckQ/vpK+9oy4Ny
+         PMPduQjnfhKdA==
+Date:   Thu, 28 Sep 2023 16:05:08 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Jann Horn <jannh@google.com>
+Cc:     Mateusz Guzik <mjguzik@gmail.com>, viro@zeniv.linux.org.uk,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2] vfs: shave work on failed file open
+Message-ID: <20230928-themen-dilettanten-16bf329ab370@brauner>
+References: <20230926162228.68666-1-mjguzik@gmail.com>
+ <CAHk-=wjUCLfuKks-VGTG9hrFAORb5cuzqyC0gRXptYGGgL=YYg@mail.gmail.com>
+ <CAGudoHGej+gmmv0OOoep2ENkf7hMBib-KL44Fu=Ym46j=r6VEA@mail.gmail.com>
+ <20230927-kosmetik-babypuppen-75bee530b9f0@brauner>
+ <CAHk-=whLadznjNKZPYUjxVzAyCH-rRhb24_KaGegKT9E6A86Kg@mail.gmail.com>
+ <CAGudoHH2mvfjfKt+nOCEOfvOrQ+o1pqX63tN2r_1+bLZ4OqHNA@mail.gmail.com>
+ <CAHk-=wjmgord99A-Gwy3dsiG1YNeXTCbt+z6=3RH_je5PP41Zw@mail.gmail.com>
+ <ZRR1Kc/dvhya7ME4@f>
+ <CAHk-=wibs_xBP2BGG4UHKhiP2B=7KJnx_LL18O0bGK8QkULLHg@mail.gmail.com>
+ <20230928-kulleraugen-restaurant-dd14e2a9c0b0@brauner>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6870:76b2:b0:1e1:509:416d with SMTP id
- dx50-20020a05687076b200b001e10509416dmr430351oab.5.1695909698108; Thu, 28 Sep
- 2023 07:01:38 -0700 (PDT)
-Date:   Thu, 28 Sep 2023 07:01:38 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000020844606066bbfea@google.com>
-Subject: [syzbot] Monthly kernfs report (Sep 2023)
-From:   syzbot <syzbot+list47ecd8eee96d4ab70df1@syzkaller.appspotmail.com>
-To:     gregkh@linuxfoundation.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        tj@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS autolearn=no
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20230928-kulleraugen-restaurant-dd14e2a9c0b0@brauner>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello kernfs maintainers/developers,
+> So I spent a good chunk of time going through this patch.
 
-This is a 31-day syzbot report for the kernfs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/kernfs
+The main thing that makes me go "we shouldn't do this" is that KASAN
+isn't able to detect UAF issues as Jann pointed out so I'm getting
+really nervous about this.
 
-During the period, 0 new issues were detected and 0 were fixed.
-In total, 6 issues are still open and 20 have been fixed so far.
-
-Some of the still happening issues:
-
-Ref Crashes Repro Title
-<1> 159     Yes   WARNING in kernfs_remove_by_name_ns (3)
-                  https://syzkaller.appspot.com/bug?extid=93cbdd0ab421adc5275d
-<2> 44      Yes   KASAN: use-after-free Read in kernfs_next_descendant_post (2)
-                  https://syzkaller.appspot.com/bug?extid=6bc35f3913193fe7f0d3
-<3> 34      Yes   KASAN: use-after-free Read in kernfs_add_one
-                  https://syzkaller.appspot.com/bug?extid=ef17b5b364116518fd65
-<4> 13      No    possible deadlock in lookup_slow (3)
-                  https://syzkaller.appspot.com/bug?extid=65459fd3b61877d717a3
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+And Jann also pointed out some potential issues with
+__fget_files_rcu() as well...
