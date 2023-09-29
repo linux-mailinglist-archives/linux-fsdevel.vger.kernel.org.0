@@ -2,73 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D0B17B317F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Sep 2023 13:35:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F260C7B31DA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Sep 2023 13:58:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232997AbjI2LfH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Sep 2023 07:35:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41518 "EHLO
+        id S233155AbjI2L6e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Sep 2023 07:58:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233049AbjI2LfF (ORCPT
+        with ESMTP id S233152AbjI2L6c (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Sep 2023 07:35:05 -0400
-Received: from mail-vs1-xe35.google.com (mail-vs1-xe35.google.com [IPv6:2607:f8b0:4864:20::e35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 820931B9
-        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Sep 2023 04:35:02 -0700 (PDT)
-Received: by mail-vs1-xe35.google.com with SMTP id ada2fe7eead31-452951b27d0so6669571137.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Sep 2023 04:35:02 -0700 (PDT)
+        Fri, 29 Sep 2023 07:58:32 -0400
+Received: from mail-ua1-x933.google.com (mail-ua1-x933.google.com [IPv6:2607:f8b0:4864:20::933])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D42A1B4;
+        Fri, 29 Sep 2023 04:58:30 -0700 (PDT)
+Received: by mail-ua1-x933.google.com with SMTP id a1e0cc1a2514c-7abbe1067d1so4256329241.0;
+        Fri, 29 Sep 2023 04:58:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1695987301; x=1696592101; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1695988709; x=1696593509; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BjJf24AsZP4x+fO4di+uC9yyykaFt3qr2jF70Fg1IiM=;
-        b=UinSlrg/I0lcaTqyPQo8yw/qmeS+g/1uczYsacZ48x8XtEGnAvJs+JtS3PZJYHaH6b
-         j5foXHvJ2QDaEqgzafbPJwL7r8Pl388Akhj7m+dSG5ENnEoQPbHVhszPMIHp6z1UV+gb
-         yIiPEWeDQz1ivMNLnjoLsNVEIWQLFEwqcoUj3xBg8uppDX1OU98ebw8UD8Zkc7f+xBCi
-         lVCsvR3dU4+OP3Ka4GC0wfPirqIeBcMaZBbLg6KhtOjhY5zGX9BoH8507UPSGOe56QUl
-         gmNafLfX8h84xLIxHAR5vX/jyFjXL/9vCvX6na14yEtF2Y8UwLUsHt9uoWhHKn6Y/0Th
-         BqCw==
+        bh=BGtvKe2G8zhEWEUoqeoOHZOQEydFRztgt+R9qFXT7kA=;
+        b=kQCna8pkOnFqOaaHLU/6nHn0BHv7oUal67gqsKNglZZgOGetOCgjkGjByaYfYe0H2e
+         5INFSWfjXJsKcvXMVuCgZBoqax+ImJMu4uAOdlhttumvYGx4Nf4E4OqK20NVHtthA1Oy
+         kyN28uEDyFDJvRhCb3lBISnI1KQkGc/0UZHJcmMjiahA/e+P0k9CGtMbDjJg+i15ccRt
+         8hPS+gaW72NRmW/ef8+jVxz9g3xXe5FmMZpcOLHz2XR2eOCpqpwRbTvfMlEQB3DBwUFs
+         TPe5HlEpJ0f9XWEIaDYe/htK4BkLEIUn3fiq5H+yB7PYVjRvBFKiH3rdsbthBKe8MJCy
+         T75g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695987301; x=1696592101;
+        d=1e100.net; s=20230601; t=1695988709; x=1696593509;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=BjJf24AsZP4x+fO4di+uC9yyykaFt3qr2jF70Fg1IiM=;
-        b=b116Pp9bfDcWV94PaYp6J9Vh/+F8rhT+fblmI7rMbpbZZHbKnKfpuznuMre2C4tXCv
-         wFYWwkS6w+EbHB98Ve1mZMmRSaaipNbdZob71j5CyeM7kNQ+/pGcd7Loy6GyThjfTHlw
-         Vqeo45qUjMOCfE4siMpa9OxP30PnXTAlbWyRloVWuSMbQu9tPk7u9Pem+zOx9EMPDv99
-         JxIZTcRBoxlkMXHp9cgl3JyYLUbbiI93eFXyDU4CI9SGf6osFNGeqJHsdbm38f2UUwiZ
-         ppbiNTpYLGcjdXO9027wXcyOQY4QRxNNm5CCHcev5s6F4e7EdGih6siVpJZL5cjcS72S
-         B26A==
-X-Gm-Message-State: AOJu0YzMAgW+EOQZInpIIYuOyZP1O4oUWQLPsOf4aS4HXPl1fYlVWRjr
-        yX7s0YlNVAJwc4QxWJcU4M8gZxk6gn6E/d72BG0=
-X-Google-Smtp-Source: AGHT+IFp9gnMx0ESISmqJlkPnwf0XLzOHXiU8VLgxWGFzFyRj0NNCD6RNC2GWP+7lRYcmCvjEBRi2uEv418bfKkMMEU=
-X-Received: by 2002:a05:6102:39a:b0:44e:9e04:bfdf with SMTP id
- m26-20020a056102039a00b0044e9e04bfdfmr3725760vsq.10.1695987301434; Fri, 29
- Sep 2023 04:35:01 -0700 (PDT)
+        bh=BGtvKe2G8zhEWEUoqeoOHZOQEydFRztgt+R9qFXT7kA=;
+        b=U0UBNPD7365uU3xFXhvLEArkO14OHzGX4VG4cua0uy+nw5iDalgijboQQSE9wAlS8f
+         w3VncA2vG28JZL4CvVcnlfq7YpLRWvUq6O//H4czBJ9hYxs31PSKbpIqC5tAstlLtfeg
+         LaQ5/AAu6xs6tOM48segsAU4x+9Z0NSUSWObdzCNwZZx4KG4CgcJd9wsk+9hr9aKNGXk
+         XEPGmenEbn3HTAV22Eb/Z4d8OT9ckOMZAYmOmrQklIrsVOSjLTL8KlQyamtE9K+2Q5SD
+         UdqXBpNe9Xs0A8hONLOG7AoRkz7jzXGtN8o0BgDLK63r83JzM8WRC4TZyropQX2ChnHA
+         IVYQ==
+X-Gm-Message-State: AOJu0YyYb9AG398rIufPOXUDgBSjOIBhXKp5pM09W10F7VRrXuQbZ2ec
+        du58QPFIeaBWwz6jLK5210sm3Wx4txuTfk7x8z8=
+X-Google-Smtp-Source: AGHT+IGMMN6s4OUwobMuA4Eoln5lK/Dv0G+T3lg6T4TSgvSyTkPusHq5nf34rqmXYh4plgnMzGUopqnDq7aGYRrUioY=
+X-Received: by 2002:a67:e9ca:0:b0:44d:4dd6:796b with SMTP id
+ q10-20020a67e9ca000000b0044d4dd6796bmr3819884vso.15.1695988709517; Fri, 29
+ Sep 2023 04:58:29 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230920173445.3943581-1-bschubert@ddn.com> <CAOQ4uxi+jk7rv7mtnpH4RXbZJx6N+cWecqd3UyJJHsW8yw_SXg@mail.gmail.com>
- <b22b8760-fca0-4251-b1a8-5989c26e1657@ddn.com> <CAOQ4uxgbSFDfgz1vFnDAaJo-36T6UPnUXZnk_y=bZMi0NqzvKQ@mail.gmail.com>
-In-Reply-To: <CAOQ4uxgbSFDfgz1vFnDAaJo-36T6UPnUXZnk_y=bZMi0NqzvKQ@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 29 Sep 2023 14:34:50 +0300
-Message-ID: <CAOQ4uxjZYknxbBOYsfoJQmRfNmioHom0hHCrm4G1iU0KKrgxrA@mail.gmail.com>
-Subject: Re: [PATCH v9 0/7] fuse: full atomic open and atomic-open-revalidate
-To:     Bernd Schubert <bschubert@ddn.com>
-Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "bernd.schubert@fastmail.fm" <bernd.schubert@fastmail.fm>,
-        "miklos@szeredi.hu" <miklos@szeredi.hu>,
-        Dharmendra Singh <dsingh@ddn.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Christian Brauner <brauner@kernel.org>,
+References: <20230929031716.it.155-kees@kernel.org>
+In-Reply-To: <20230929031716.it.155-kees@kernel.org>
+From:   Pedro Falcato <pedro.falcato@gmail.com>
+Date:   Fri, 29 Sep 2023 12:58:18 +0100
+Message-ID: <CAKbZUD3dxYqb4RSnXFs9ehWymXe15pt8ra232WAD_msJsBF_BQ@mail.gmail.com>
+Subject: Re: [PATCH v4 0/6] binfmt_elf: Support segments with 0 filesz and
+ misaligned starts
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Eric Biederman <ebiederm@xmission.com>,
+        Sebastian Ott <sebott@redhat.com>,
+        =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Horst Birthelmer <hbirthelmer@ddn.com>
+        Christian Brauner <brauner@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-hardening@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-0.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,URIBL_BLACK autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -76,93 +76,152 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 21, 2023 at 5:24=E2=80=AFPM Amir Goldstein <amir73il@gmail.com>=
- wrote:
+On Fri, Sep 29, 2023 at 4:24=E2=80=AFAM Kees Cook <keescook@chromium.org> w=
+rote:
 >
-> On Thu, Sep 21, 2023 at 3:00=E2=80=AFPM Bernd Schubert <bschubert@ddn.com=
-> wrote:
-> >
-> > On 9/21/23 11:33, Amir Goldstein wrote:
-> > > On Thu, Sep 21, 2023 at 9:31=E2=80=AFAM Bernd Schubert <bschubert@ddn=
-.com> wrote:
-> > >>
-> > >> In FUSE, as of now, uncached lookups are expensive over the wire.
-> > >> E.g additional latencies and stressing (meta data) servers from
-> > >> thousands of clients. With atomic-open lookup before open
-> > >> can be avoided.
-> > >>
-> > >> Here is the link to performance numbers
-> > >> https://lore.kernel.org/linux-fsdevel/20220322121212.5087-1-dharamha=
-ns87@gmail.com/
-> > >>
-> > >> Here is the libfuse pull request
-> > >> https://github.com/libfuse/libfuse/pull/813
-> > >>
-> > >> The patches are passing passthrough_hp xfstests (libfuse part applie=
-d),
-> > >> although we had to introduce umount retries into xfstests, as recent
-> > >> kernels/xfstests fail umount in some tests with
-> > >> EBUSY - independent of atomic open. (Although outstanding for v7)
-> > >
-> > > Hi Bernd!
-> > >
-> > > I was using xfstests to test passthrough_hp (for FUSE kernel passthro=
-ugh).
-> > > FYI, I have made some improvements to the mount helper
-> > > in libfuse [1] to support remount, which helps pass a few tests.
-> >
-> > Thanks, just asked there to send it separate to upstream.
-
-Now upstream. Thanks for your help!
-
-> >
-> > >
-> > > So far, I have all the tests in group -g quick.rw pass with the basel=
-ine
-> > > passthrough_hp (over xfs).
-> > >
-> > > Do you have a baseline for the entire quick/auto group to share with =
-me?
-> >
-> > Please find my results attached.
+> Hi,
 >
-> Not too bad.
-> 3 more tests can pass with my mount helper fix for remount ;)
+> This is the continuation of the work Eric started for handling
+> "p_memsz > p_filesz" in arbitrary segments (rather than just the last,
+> BSS, segment). I've added the suggested changes:
 >
+>  - drop unused "elf_bss" variable
+>  - refactor load_elf_interp() to use elf_load()
+>  - refactor load_elf_library() to use elf_load()
+>  - report padzero() errors when PROT_WRITE is present
+>  - drop vm_brk()
+>
+> Thanks!
+>
+> -Kees
+>
+> v4:
+>  - refactor load_elf_library() too
+>  - don't refactor padzero(), just test in the only remaining caller
+>  - drop now-unused vm_brk()
+> v3: https://lore.kernel.org/all/20230927033634.make.602-kees@kernel.org
+> v2: https://lore.kernel.org/lkml/87sf71f123.fsf@email.froward.int.ebieder=
+m.org
+> v1: https://lore.kernel.org/lkml/87jzsemmsd.fsf_-_@email.froward.int.ebie=
+derm.org
+>
+> Eric W. Biederman (1):
+>   binfmt_elf: Support segments with 0 filesz and misaligned starts
+>
+> Kees Cook (5):
+>   binfmt_elf: elf_bss no longer used by load_elf_binary()
+>   binfmt_elf: Use elf_load() for interpreter
+>   binfmt_elf: Use elf_load() for library
+>   binfmt_elf: Only report padzero() errors when PROT_WRITE
+>   mm: Remove unused vm_brk()
+>
+>  fs/binfmt_elf.c    | 214 ++++++++++++++++-----------------------------
+>  include/linux/mm.h |   3 +-
+>  mm/mmap.c          |   6 --
+>  mm/nommu.c         |   5 --
+>  4 files changed, 76 insertions(+), 152 deletions(-)
 
-FYI, here is a wdiff of my -g auto passthough_hp test run compared to yours=
-:
+Sorry for taking so long to take a look at this.
+While I didn't test PPC64 (I don't own PPC64 hardware, and I wasn't
+the original reporter), I did manage to craft a reduced test case of:
 
-[-unpatched-6.5-]{+upatched-6.6-rc3+}
-Failures: generic/003 [-generic/020-] {+generic/099+} generic/184
-generic/192 generic/263 [-generic/294 generic/306-] {+generic/317
-generic/318 generic/319 generic/375+} generic/401 {+generic/423+}
-generic/426 [-generic/427-] generic/434 [-generic/452-]
-{+generic/444+} generic/467 [-generic/468-] generic/477
-[-generic/478-] generic/617 {+generic/532+} generic/631 generic/633
-generic/683 [-generic/688-]
+a.out:
 
-Some of my {+NEW+} failures are because I have POSIX_ACL support enabled
-in Kconfig, so the same tests are [not run] in your results.
-I suspect that several permission related tests that PASS for you and FAIL
-for me may also be because of enabled POSIX_ACL.
-I was also running passthouhg_hp with -odefault_permissions, but AFAIK
-this did not change the fstests results.
+Program Headers:
+ Type           Offset             VirtAddr           PhysAddr
+                FileSiz            MemSiz              Flags  Align
+ PHDR           0x0000000000000040 0x0000000000000040 0x0000000000000040
+                0x00000000000001f8 0x00000000000001f8  R      0x8
+ INTERP         0x0000000000000238 0x0000000000000238 0x0000000000000238
+                0x0000000000000020 0x0000000000000020  R      0x1
+     [Requesting program interpreter: /home/pfalcato/musl/lib/libc.so]
+ LOAD           0x0000000000000000 0x0000000000000000 0x0000000000000000
+                0x0000000000000428 0x0000000000000428  R      0x1000
+ LOAD           0x0000000000001000 0x0000000000001000 0x0000000000001000
+                0x00000000000000cd 0x00000000000000cd  R E    0x1000
+ LOAD           0x0000000000002000 0x0000000000002000 0x0000000000002000
+                0x0000000000000084 0x0000000000000084  R      0x1000
+ LOAD           0x0000000000002e50 0x0000000000003e50 0x0000000000003e50
+                0x00000000000001c8 0x00000000000001c8  RW     0x1000
+ DYNAMIC        0x0000000000002e50 0x0000000000003e50 0x0000000000003e50
+                0x0000000000000180 0x0000000000000180  RW     0x8
+ GNU_STACK      0x0000000000000000 0x0000000000000000 0x0000000000000000
+                0x0000000000000000 0x0000000000000000  RW     0x10
+ GNU_RELRO      0x0000000000002e50 0x0000000000003e50 0x0000000000003e50
+                0x00000000000001b0 0x00000000000001b0  R      0x1
 
-> >
-> >
-> > > Can you share the patch that you are using to avoid the EBUSY errors?
-> >
-> >
-> > The simple version to avoid _most_ of EBUSY is this
-> >
+/home/pfalcato/musl/lib/libc.so:
+Program Headers:
+ Type           Offset             VirtAddr           PhysAddr
+                FileSiz            MemSiz              Flags  Align
+ PHDR           0x0000000000000040 0x0000000000000040 0x0000000000000040
+                0x0000000000000230 0x0000000000000230  R      0x8
+ LOAD           0x0000000000000000 0x0000000000000000 0x0000000000000000
+                0x0000000000049d9c 0x0000000000049d9c  R      0x1000
+ LOAD           0x0000000000049da0 0x000000000004ada0 0x000000000004ada0
+                0x0000000000057d30 0x0000000000057d30  R E    0x1000
+ LOAD           0x00000000000a1ad0 0x00000000000a3ad0 0x00000000000a3ad0
+                0x00000000000005f0 0x00000000000015f0  RW     0x1000
+ LOAD           0x00000000000a20c0 0x00000000000a60c0 0x00000000000a60c0
+                0x0000000000000428 0x0000000000002f80  RW     0x1000
+ DYNAMIC        0x00000000000a1f38 0x00000000000a3f38 0x00000000000a3f38
+                0x0000000000000110 0x0000000000000110  RW     0x8
+ GNU_RELRO      0x00000000000a1ad0 0x00000000000a3ad0 0x00000000000a3ad0
+                0x00000000000005f0 0x0000000000002530  R      0x1
+ GNU_EH_FRAME   0x0000000000049d10 0x0000000000049d10 0x0000000000049d10
+                0x0000000000000024 0x0000000000000024  R      0x4
+ GNU_STACK      0x0000000000000000 0x0000000000000000 0x0000000000000000
+                0x0000000000000000 0x0000000000000000  RW     0x0
+ NOTE           0x0000000000000270 0x0000000000000270 0x0000000000000270
+                0x0000000000000018 0x0000000000000018  R      0x4
 
-You know, I am testing passthrough_hp with kernel 6.6-rc3 and I did
-not encounter any EBUST errors.
+Section to Segment mapping:
+ Segment Sections...
+  00
+  01     .note.gnu.build-id .dynsym .gnu.hash .hash .dynstr .rela.dyn
+.rela.plt .rodata .eh_frame_hdr .eh_frame
+  02     .text .plt
+  03     .data.rel.ro .dynamic .got .toc
+  04     .data .got.plt .bss
+  05     .dynamic
+  06     .data.rel.ro .dynamic .got .toc
+  07     .eh_frame_hdr
+  08
+  09     .note.gnu.build-id
 
-Maybe there is some relevant vfs fix in 6.6-rc3, because you were testing 6=
-.5?
-Or maybe it's because my test VM has only 2 cpus.
 
-Thanks,
-Amir.
+So on that end, you can take my
+
+Tested-by: Pedro Falcato <pedro.falcato@gmail.com>
+
+Although this still doesn't address the other bug I found
+(https://github.com/heatd/elf-bug-questionmark), where segments can
+accidentally overwrite cleared BSS if we end up in a situation where
+e.g we have the following segments:
+
+Program Headers:
+ Type           Offset             VirtAddr           PhysAddr
+                FileSiz            MemSiz              Flags  Align
+ LOAD           0x0000000000001000 0x0000000000400000 0x0000000000400000
+                0x0000000000000045 0x0000000000000045  R E    0x1000
+ LOAD           0x0000000000002000 0x0000000000401000 0x0000000000401000
+                0x000000000000008c 0x000000000000008c  R      0x1000
+ LOAD           0x0000000000000000 0x0000000000402000 0x0000000000402000
+                0x0000000000000000 0x0000000000000801  RW     0x1000
+ LOAD           0x0000000000002801 0x0000000000402801 0x0000000000402801
+                0x0000000000000007 0x0000000000000007  RW     0x1000
+ NOTE           0x0000000000002068 0x0000000000401068 0x0000000000401068
+                0x0000000000000024 0x0000000000000024         0x4
+
+Section to Segment mapping:
+ Segment Sections...
+  00     .text
+  01     .rodata .note.gnu.property .note.gnu.build-id
+  02     .bss
+  03     .data
+  04     .note.gnu.build-id
+
+since the mmap of .data will end up happening over .bss.
+
+--=20
+Pedro
