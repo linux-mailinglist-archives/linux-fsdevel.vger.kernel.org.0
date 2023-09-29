@@ -2,148 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 932A67B3732
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Sep 2023 17:45:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA8637B3752
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Sep 2023 17:53:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233517AbjI2Pps (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Sep 2023 11:45:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34360 "EHLO
+        id S233749AbjI2Pxl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Sep 2023 11:53:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233257AbjI2Ppr (ORCPT
+        with ESMTP id S233638AbjI2Pxk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Sep 2023 11:45:47 -0400
-Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70BFDB4;
-        Fri, 29 Sep 2023 08:45:45 -0700 (PDT)
-Received: from in02.mta.xmission.com ([166.70.13.52]:44246)
-        by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1qmFgW-00G0cZ-8R; Fri, 29 Sep 2023 09:45:44 -0600
-Received: from ip68-227-168-167.om.om.cox.net ([68.227.168.167]:41658 helo=email.froward.int.ebiederm.org.xmission.com)
-        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1qmFgU-00H7NY-Vb; Fri, 29 Sep 2023 09:45:43 -0600
-From:   "Eric W. Biederman" <ebiederm@xmission.com>
-To:     Sebastian Ott <sebott@redhat.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>,
-        Pedro Falcato <pedro.falcato@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-hardening@vger.kernel.org
-References: <20230929031716.it.155-kees@kernel.org>
-        <7ddc633e-c724-ad8d-e7ca-62d6b012b9e9@redhat.com>
-Date:   Fri, 29 Sep 2023 10:45:35 -0500
-In-Reply-To: <7ddc633e-c724-ad8d-e7ca-62d6b012b9e9@redhat.com> (Sebastian
-        Ott's message of "Fri, 29 Sep 2023 13:33:50 +0200 (CEST)")
-Message-ID: <874jjd6l0g.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1qmFgU-00H7NY-Vb;;;mid=<874jjd6l0g.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.168.167;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX19qOgVaSfVR9pj3QS9bIi6xEj+LTb3sHKw=
-X-SA-Exim-Connect-IP: 68.227.168.167
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
-        lindbergh.monkeyblade.net
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
+        Fri, 29 Sep 2023 11:53:40 -0400
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA586139
+        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Sep 2023 08:53:37 -0700 (PDT)
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com [209.85.218.70])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 4459941271
+        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Sep 2023 15:53:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1696002816;
+        bh=Yz63+1IerqgOxssIJi97yKZjGDoqmA2Fx86PcxES4dE=;
+        h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+         Mime-Version:Content-Type;
+        b=mPdxYdrTOAgu0ysh7f1r5ndkT63cXyeyB4PTJd4yOOgma/5zQYpH8OvPZEtHCmCA8
+         LmIxX4rNr9eTqHGoSWQnfgoCI+YRZKBUj6CLNOASI+3d+wOsnTb3JUVzsYiDE1ceN2
+         yMHeyP8pLLTwzVyqvLUh0WOz85WeWjEtCsXrwBT8Aok2qRHVL+TVmbbmCTzHpvmFZE
+         /pJny8DNroXcRSrAiKxFfuFxwU4Yv3qtsvAWCuvR1tDxkMGvIM3Dg0S5lIlK3sYPl2
+         vkEyzCjUiYbqgUnAeQG+jyPBnLYU7g1le4trEDuVEzIFWusKCjOEqYDOHQIf7Bd18W
+         7nWHxhobtybmg==
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-9a9f282713fso1191502866b.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Sep 2023 08:53:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696002816; x=1696607616;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Yz63+1IerqgOxssIJi97yKZjGDoqmA2Fx86PcxES4dE=;
+        b=Bx6Yr3r49LHIqb8RgIqBZjYDJSMhfYqmPwp1+9mFlFJnnNrCMn0ln3jSIyCrI+JvzO
+         dzO6fA35vrMUhh2nGI2Mr9WTcGymduiUhDbmDL6l3sT7nTHnlCaY7NUJ6jQ58EmjXLEt
+         7SErtBJyXcektSgiGMlp/Rw/i1lheXJpLybSH4J8IqDGYp4utUcduOmEbNqzZVBSb3ow
+         Idr7ZQbbbd/+cS73YU5SoqFJEFAsRTTfHDPQmegUZkIP+B+HrYNHqzIV7TdjyzOrvKAJ
+         iFQXFNGqbTzpVxJrZaKCpqSoJ81zVoc9YwTP1KKm8R+yxlI0WxSv2A5z0oi7SUzi6lC+
+         yNDA==
+X-Gm-Message-State: AOJu0YxhiamGliTECTohgPLHTXZB4IN9r/a++rCQTxgIwe9kj4O0XwSU
+        bilkiX4dtDMTZ9D2U/QY1SQoydyI1QCli8UQ/QJDmh5fb/nRIcEDDvqxAttbT408sjLZL0vk5oA
+        HZuNu4yp2Iq+XdVoOdpkCUgC5k9ecKhyj02/aMUXEH1A=
+X-Received: by 2002:a17:906:8a43:b0:9a9:e525:8705 with SMTP id gx3-20020a1709068a4300b009a9e5258705mr3878953ejc.57.1696002815711;
+        Fri, 29 Sep 2023 08:53:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGyKWt/taLIaMrT+2uh0mXOaEz1vmvD+UNATJRDoNil2zUFB36Us0hF4Z65XN4bML7LDbXpAQ==
+X-Received: by 2002:a17:906:8a43:b0:9a9:e525:8705 with SMTP id gx3-20020a1709068a4300b009a9e5258705mr3878930ejc.57.1696002815388;
+        Fri, 29 Sep 2023 08:53:35 -0700 (PDT)
+Received: from amikhalitsyn (dslb-088-066-182-192.088.066.pools.vodafone-ip.de. [88.66.182.192])
+        by smtp.gmail.com with ESMTPSA id fy20-20020a170906b7d400b0099bccb03eadsm12485440ejb.205.2023.09.29.08.53.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Sep 2023 08:53:34 -0700 (PDT)
+Date:   Fri, 29 Sep 2023 17:53:33 +0200
+From:   Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Cai Xinchen <caixinchen1@huawei.com>, Tejun Heo <tj@kernel.org>,
+        Zefan Li <lizefan.x@bytedance.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, cgroups@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, dhowells@redhat.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [BUG?] fsconfig restart_syscall failed
+Message-Id: <20230929175333.31a7e9c608cb3b2425b7dd44@canonical.com>
+In-Reply-To: <20230922-drillen-muschel-c9bd03acfe00@brauner>
+References: <84e5fb5f-67c5-6d34-b93b-b307c6c9805c@huawei.com>
+        <20230922-drillen-muschel-c9bd03acfe00@brauner>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-5.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
         RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
-X-Spam-DCC: XMission; sa04 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: *;Sebastian Ott <sebott@redhat.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 654 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 10 (1.6%), b_tie_ro: 9 (1.4%), parse: 0.98 (0.1%),
-         extract_message_metadata: 15 (2.3%), get_uri_detail_list: 1.62 (0.2%),
-         tests_pri_-2000: 8 (1.2%), tests_pri_-1000: 2.6 (0.4%),
-        tests_pri_-950: 1.18 (0.2%), tests_pri_-900: 0.98 (0.1%),
-        tests_pri_-200: 0.79 (0.1%), tests_pri_-100: 6 (0.9%), tests_pri_-90:
-        306 (46.8%), check_bayes: 286 (43.8%), b_tokenize: 7 (1.1%),
-        b_tok_get_all: 18 (2.8%), b_comp_prob: 2.5 (0.4%), b_tok_touch_all:
-        254 (38.9%), b_finish: 1.18 (0.2%), tests_pri_0: 284 (43.4%),
-        check_dkim_signature: 0.61 (0.1%), check_dkim_adsp: 7 (1.0%),
-        poll_dns_idle: 0.48 (0.1%), tests_pri_10: 4.2 (0.6%), tests_pri_500:
-        11 (1.7%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH v4 0/6] binfmt_elf: Support segments with 0 filesz and
- misaligned starts
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
+        lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Sebastian Ott <sebott@redhat.com> writes:
+On Fri, 22 Sep 2023 10:08:36 +0200
+Christian Brauner <brauner@kernel.org> wrote:
 
-> Hello Kees,
->
-> On Thu, 28 Sep 2023, Kees Cook wrote:
->> This is the continuation of the work Eric started for handling
->> "p_memsz > p_filesz" in arbitrary segments (rather than just the last,
->> BSS, segment). I've added the suggested changes:
->>
->> - drop unused "elf_bss" variable
->> - refactor load_elf_interp() to use elf_load()
->> - refactor load_elf_library() to use elf_load()
->> - report padzero() errors when PROT_WRITE is present
->> - drop vm_brk()
->
-> While I was debugging the initial issue I stumbled over the following
-> - care to take it as part of this series?
->
-> ----->8
-> [PATCH] mm: vm_brk_flags don't bail out while holding lock
->
-> Calling vm_brk_flags() with flags set other than VM_EXEC
-> will exit the function without releasing the mmap_write_lock.
->
-> Just do the sanity check before the lock is acquired. This
-> doesn't fix an actual issue since no caller sets a flag other
-> than VM_EXEC.
+> On Fri, Sep 22, 2023 at 10:18:24AM +0800, Cai Xinchen wrote:
+> > Hello:
+> > =A0 I am doing some test for kernel 6.4, util-linux version:2.39.1.
+> > Have you encountered similar problems? If there is a fix, please
+> > let me know.
+> > Thank you very much
+> >=20
+> > --------------------------------------------------
+> >=20
+> > util-linux version 2.39.1 call mount use fsopen->fsconfig->fsmount->clo=
+se
+> > instead of mount syscall.
+> >=20
+> > And use this shell test:
+> >=20
+> > #!/bin/bash
+> > mkdir -p /tmp/cgroup/cgrouptest
+> > while true
+> > do
+> > =A0=A0=A0=A0=A0=A0=A0 mount -t cgroup -o none,name=3Dfoo cgroup /tmp/cg=
+roup/cgrouptest
+>=20
+>=20
+> > in mount syscall, no function will check fs->phase, and fc is recreate
+> > in monnt syscall. However, in fdconfig syscall, fc->phase is not initia=
+l as
+> > FS_CONTEXT_CREATE_PARAMS, restart_syscall will return -EBUSY. fc is cre=
+ated
+> > in fsopen syscall.
+>=20
+> Mount api system calls aren't restartable so that doesn't work. cgroup2
+> doesn't have this issue, only cgroup1 has. So cgroup1_get_tree() should
+> probably be fixed if anyone cares.
+>=20
 
-That seems like a sensible patch.
+Dear colleagues,
 
-Have you by any chance read this code enough to understand what is
-gained by calling vm_brk_flags rather than vm_mmap without a file?
+I've met the same issue a few years ago and tried to fix it:
+https://lore.kernel.org/all/20200923164637.13032-1-alexander.mikhalitsyn@vi=
+rtuozzo.com/
 
-Unless there is a real advantage it probably makes sense to replace
-the call of vm_brk_flags with vm_mmap(NULL, ...) as binfmt_elf_fdpic
-has already done.
+but didn't come into agreement about this.
 
-That would allow removing vm_brk_flags and sys_brk would be the last
-caller of do_brk_flags.
-
-Eric
-
-
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: linux-mm@kvack.org
-> Signed-off-by: Sebastian Ott <sebott@redhat.com>
-> ---
->   mm/mmap.c | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index b56a7f0c9f85..7ed286662839 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -3143,13 +3143,13 @@ int vm_brk_flags(unsigned long addr, unsigned long request, unsigned long flags)
->   	if (!len)
->   		return 0;
->
-> -	if (mmap_write_lock_killable(mm))
-> -		return -EINTR;
-> -
->   	/* Until we need other flags, refuse anything except VM_EXEC. */
->   	if ((flags & (~VM_EXEC)) != 0)
->   		return -EINVAL;
->
-> +	if (mmap_write_lock_killable(mm))
-> +		return -EINTR;
-> +
->   	ret = check_brk_limits(addr, len);
->   	if (ret)
->   		goto limits_failed;
+Kind regards,
+Alex
