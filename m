@@ -2,97 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6577F7B393D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Sep 2023 19:58:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB3217B3942
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Sep 2023 19:59:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233313AbjI2R6v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Sep 2023 13:58:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54920 "EHLO
+        id S233683AbjI2R7U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Sep 2023 13:59:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233353AbjI2R6u (ORCPT
+        with ESMTP id S233353AbjI2R7T (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Sep 2023 13:58:50 -0400
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A870F1B0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Sep 2023 10:58:48 -0700 (PDT)
-Received: by mail-pj1-x102f.google.com with SMTP id 98e67ed59e1d1-27760c31056so7129181a91.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Sep 2023 10:58:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1696010328; x=1696615128; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2fRXdathML3bYGsncvTXhzykCOBsh2UnNLFrC9MynRo=;
-        b=AmT6e5uuYM5lVl19zpwhB0iia610yHQr2PM3DysBa9bLYQOtpdYNWimqzvwijzgs9b
-         0kN93qDS9pi/hs/i10+TIv9cGpkjpuBccGuYiHpveyS7UzeRdTQRuYw6IgFVjM2+6p4R
-         qCDHdDHuwPNT6YiTlD5IOpJsbCpfpwEGOouSw=
+        Fri, 29 Sep 2023 13:59:19 -0400
+Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA76E1AC;
+        Fri, 29 Sep 2023 10:59:17 -0700 (PDT)
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-1e113555a47so1025267fac.2;
+        Fri, 29 Sep 2023 10:59:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696010328; x=1696615128;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2fRXdathML3bYGsncvTXhzykCOBsh2UnNLFrC9MynRo=;
-        b=rX33uk8xs6QztSKXMVM0pTXeqP6KlW7XNiKOjjynZNvkcmMa/Tw/ZGgPEBA43Jq6SQ
-         tQuG3SIZZQSsDIgvNMZpmYd9zOYqXAIj81ZBpDzkQqtV8Wgi9r42zb/iGMLsOEkQki6C
-         htzYGPPB4yghJ3W5az5PuH4MoiTnDNbNNqGZigyHkVBCKc+l927kR9aBFlpiRbE++WCF
-         lpQsO+BVyoypouFv9pjUajczqCzC8qm03YR9Xu5u3mJJ06iqcYiM13G/sXWxJsD8PrMH
-         0AGpDxsZNup83BRWoBw9X8rXlzQ/gG3JMUzFxx1YPx0bVGLe5k9iDdT5tEPT6w7ONgJU
-         MAjA==
-X-Gm-Message-State: AOJu0YyxgA2R7K5AOEDz2ZlkxP7dG/vXY42UOW6NGa4Q7SSUc2CP9uM/
-        0Jp+M+uMLDSseqQ02X1jHQnjoA==
-X-Google-Smtp-Source: AGHT+IFWxq15KNyr+KAGXrqBfg7EjnMU3yh7JX/yF2ZRfFH9VCutKUHvZvdmN/YOyDHMYHAhrc+UfQ==
-X-Received: by 2002:a17:90b:4c8e:b0:276:a310:2be3 with SMTP id my14-20020a17090b4c8e00b00276a3102be3mr4615896pjb.19.1696010328112;
-        Fri, 29 Sep 2023 10:58:48 -0700 (PDT)
-Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id bj16-20020a17090b089000b00276a58e37c1sm1767242pjb.38.2023.09.29.10.58.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Sep 2023 10:58:47 -0700 (PDT)
-From:   Kees Cook <keescook@chromium.org>
-To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Greg Ungerer <gerg@kernel.org>
-Cc:     Kees Cook <keescook@chromium.org>, palmer@rivosinc.com,
-        ebiederm@xmission.com, brauner@kernel.org, viro@zeniv.linux.org.uk
-Subject: Re: [PATCH] binfmt_elf_fdpic: clean up debug warnings
-Date:   Fri, 29 Sep 2023 10:58:42 -0700
-Message-Id: <169601032029.3005029.10504001720993389780.b4-ty@chromium.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230927132933.3290734-1-gerg@kernel.org>
-References: <20230927132933.3290734-1-gerg@kernel.org>
+        d=1e100.net; s=20230601; t=1696010357; x=1696615157;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fKmSy9nYMevIdhZdG3nCQj5JvLdfTswn5XDlCNJCRqs=;
+        b=eTDIl/GoeNWOsScZcrUFheR/thLjVMUTLjKWbTo+Fx9Fr+c+urm7uWT/N9EUPFbGJ5
+         Mwz3gpAF24pvBtwFpJ+rPS4U1ooJ+gt4EBCUIIHzeQDRxHEAIAjE2gTbLWbkizwKTeJa
+         A75CUCXWhzQeSFc9kxnGUmqoaast7CxUXOpa3R623H7BwFQ1s4r3XulcOys57LDU/HPE
+         R8U8i0B6NldAJGLdcXF0h1Aovima/gzHGACs9UF1GvdOVFm6Pa/8nsSNdRrqhbqQrXEf
+         HPj6Y524RB7hHocogYbUxrmUw9XNjFpLvgiGjyYAtOjP9ud+bJ5iBYHC28XjET/zYuak
+         N2+g==
+X-Gm-Message-State: AOJu0YzhlOe++pUtPMoS/yYg1mvWkR/IDWk43KoBnmFO32+vOmn3Wfqz
+        JeHTipTW0EyzPYPdZKnlXEMpiZc3w797TA==
+X-Google-Smtp-Source: AGHT+IFGOtUOVVnTjR70judkp2CAL1bg7IpOYVhdJtj/g+DmpMMTkZUqHC4hofJt5GNiQMWUQXGnOA==
+X-Received: by 2002:a05:6870:230d:b0:1bb:a912:9339 with SMTP id w13-20020a056870230d00b001bba9129339mr5301433oao.7.1696010356848;
+        Fri, 29 Sep 2023 10:59:16 -0700 (PDT)
+Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net. [73.231.117.72])
+        by smtp.gmail.com with ESMTPSA id x28-20020a63b21c000000b00564b313d526sm15006265pge.54.2023.09.29.10.59.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Sep 2023 10:59:16 -0700 (PDT)
+Message-ID: <2abb1fb8-88c6-401d-b65f-b7001b2203ec@acm.org>
+Date:   Fri, 29 Sep 2023 10:59:14 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 19/21] scsi: sd: Add WRITE_ATOMIC_16 support
+Content-Language: en-US
+To:     John Garry <john.g.garry@oracle.com>, axboe@kernel.dk,
+        kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
+        jejb@linux.ibm.com, martin.petersen@oracle.com, djwong@kernel.org,
+        viro@zeniv.linux.org.uk, brauner@kernel.org,
+        chandan.babu@oracle.com, dchinner@redhat.com
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
+        linux-api@vger.kernel.org
+References: <20230929102726.2985188-1-john.g.garry@oracle.com>
+ <20230929102726.2985188-20-john.g.garry@oracle.com>
+From:   Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20230929102726.2985188-20-john.g.garry@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 27 Sep 2023 23:29:33 +1000, Greg Ungerer wrote:
-> The binfmt_elf_fdpic loader has some debug trace that can be enabled at
-> build time. The recent 64-bit additions cause some warnings if that
-> debug is enabled, such as:
-> 
->     fs/binfmt_elf_fdpic.c: In function ‘elf_fdpic_map_file’:
->     fs/binfmt_elf_fdpic.c:46:33: warning: format ‘%x’ expects argument of type ‘unsigned int’, but argument 3 has type ‘Elf64_Addr’ {aka ‘long long unsigned int’} [-Wformat=]
->        46 | #define kdebug(fmt, ...) printk("FDPIC "fmt"\n" ,##__VA_ARGS__ )
->           |                                 ^~~~~~~~
->     ./include/linux/printk.h:427:25: note: in definition of macro ‘printk_index_wrap’
->       427 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
->           |                         ^~~~
-> 
-> [...]
+On 9/29/23 03:27, John Garry wrote:
+> +static blk_status_t sd_setup_atomic_cmnd(struct scsi_cmnd *cmd,
+> +					sector_t lba, unsigned int nr_blocks,
+> +					unsigned char flags)
+> +{
+> +	cmd->cmd_len  = 16;
+> +	cmd->cmnd[0]  = WRITE_ATOMIC_16;
+> +	cmd->cmnd[1]  = flags;
+> +	put_unaligned_be64(lba, &cmd->cmnd[2]);
+> +	cmd->cmnd[10] = 0;
+> +	cmd->cmnd[11] = 0;
+> +	put_unaligned_be16(nr_blocks, &cmd->cmnd[12]);
+> +	cmd->cmnd[14] = 0;
+> +	cmd->cmnd[15] = 0;
+> +
+> +	return BLK_STS_OK;
+> +}
 
-Applied to for-next/execve, thanks!
+Please store the 'dld' value in the GROUP NUMBER field. See e.g.
+sd_setup_rw16_cmnd().
 
-[1/1] binfmt_elf_fdpic: clean up debug warnings
-      https://git.kernel.org/kees/c/35bcdcf3d50c
+> @@ -1139,6 +1156,7 @@ static blk_status_t sd_setup_read_write_cmnd(struct scsi_cmnd *cmd)
+>   	unsigned int nr_blocks = sectors_to_logical(sdp, blk_rq_sectors(rq));
+>   	unsigned int mask = logical_to_sectors(sdp, 1) - 1;
+>   	bool write = rq_data_dir(rq) == WRITE;
+> +	bool atomic_write = !!(rq->cmd_flags & REQ_ATOMIC) && write;
 
-Take care,
+Please leave out the superfluous "!!".
 
--- 
-Kees Cook
+Thanks,
 
+Bart.
