@@ -2,108 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E12137B3D14
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Sep 2023 01:57:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D11CF7B3D19
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Sep 2023 01:59:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232253AbjI2X5x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Sep 2023 19:57:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49512 "EHLO
+        id S233924AbjI2X7N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Sep 2023 19:59:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229645AbjI2X5x (ORCPT
+        with ESMTP id S233915AbjI2X7M (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Sep 2023 19:57:53 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBF92139
-        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Sep 2023 16:57:49 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-51e28cac164so2627626a12.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Sep 2023 16:57:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1696031868; x=1696636668; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=p6arnneMpUAz4OILpzifu1P4tUCrP8Vk4FTrbxGUOVI=;
-        b=cWkblA4hgsbrGfxjhWGgeDyWlrS/T0c6Yfn0uf8ITG2GVx9uryE2k4DMpUgVLEUfjb
-         ZdF5iri8eDgK+OnNh1or4m6YZym769+B7Ro/IJ20hVJgTXodJZHMF59QYvtdKcLEQhL9
-         BClbsYbvDZkAyISUmuOLtP5NLVnygiY5vDpT4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696031868; x=1696636668;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=p6arnneMpUAz4OILpzifu1P4tUCrP8Vk4FTrbxGUOVI=;
-        b=WwlyofVB8ZNhB19kB8iNtcDr96rSjZWaqqzAOLXDOXonboROCOSWO0rvKQ7VBk8Yux
-         7yrvSa2iYiOB6NrHcVK0htJ7L88Cn9dgVyyzyXEfswzL5izKvAVibV6kkZLDiT+UL6jU
-         Ii2ff/HenNqZG9pzoqneSskGYpd88LzvUVVaoT39qa2VRPSST5OC2ijblkZcGK7yeNMD
-         Fvf0uyuQmcMrJVZDeRozE739fJeHtfBv8JCcH9VNXKKkXVTnlTUMkZSEcmGZ0bEAWMza
-         n9KitITTzrYWTuwN6LLM2uS7U+54lTSaqE/8UrQWNkGn+2mkA1dBOAui56q3IxYL7ned
-         AJAQ==
-X-Gm-Message-State: AOJu0YxoDvDf7x4m/gcqsjVG6vUJBGhycpG3m3jIpX7dpDqZfIs8u0Mk
-        XieMSIZsBz5Z90rTQIeUCY7Z8NBD3WHBuiMu7UhsPDwgkmM=
-X-Google-Smtp-Source: AGHT+IGvj5LcQtcFWZCF2Ef4k7Szb7A+95Kx9Of0X7y6jG6rm4fDmttZ8l/k+rEEyKfWhU6Vc6lN8Q==
-X-Received: by 2002:a05:6402:26c2:b0:533:5d3d:7efe with SMTP id x2-20020a05640226c200b005335d3d7efemr5674070edd.6.1696031868103;
-        Fri, 29 Sep 2023 16:57:48 -0700 (PDT)
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com. [209.85.218.54])
-        by smtp.gmail.com with ESMTPSA id s16-20020a05640217d000b0053420e55616sm7419239edy.75.2023.09.29.16.57.47
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Sep 2023 16:57:47 -0700 (PDT)
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-9ae7383b7ecso271544866b.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Sep 2023 16:57:47 -0700 (PDT)
-X-Received: by 2002:a17:907:6092:b0:9a5:c38d:6b75 with SMTP id
- ht18-20020a170907609200b009a5c38d6b75mr5518234ejc.15.1696031866848; Fri, 29
- Sep 2023 16:57:46 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAGudoHH2mvfjfKt+nOCEOfvOrQ+o1pqX63tN2r_1+bLZ4OqHNA@mail.gmail.com>
- <CAHk-=wjmgord99A-Gwy3dsiG1YNeXTCbt+z6=3RH_je5PP41Zw@mail.gmail.com>
- <ZRR1Kc/dvhya7ME4@f> <CAHk-=wibs_xBP2BGG4UHKhiP2B=7KJnx_LL18O0bGK8QkULLHg@mail.gmail.com>
- <20230928-kulleraugen-restaurant-dd14e2a9c0b0@brauner> <20230928-themen-dilettanten-16bf329ab370@brauner>
- <CAG48ez2d5CW=CDi+fBOU1YqtwHfubN3q6w=1LfD+ss+Q1PWHgQ@mail.gmail.com>
- <CAHk-=wj-5ahmODDWDBVL81wSG-12qPYEw=o-iEo8uzY0HBGGRQ@mail.gmail.com>
- <20230929-kerzen-fachjargon-ca17177e9eeb@brauner> <CAG48ez2cExy+QFHpT01d9yh8jbOLR0V8VsR8_==O_AB2fQ+h4Q@mail.gmail.com>
- <20230929-test-lauf-693fda7ae36b@brauner> <CAGudoHHwvOMFqYoBQAoFwD9mMmtq12=EvEGQWeToYT0AMg9V0A@mail.gmail.com>
- <CAGudoHHuQ2PjmX5HG+E6WMeaaOhSNEhdinCssd75dM0P+3ZG8Q@mail.gmail.com>
-In-Reply-To: <CAGudoHHuQ2PjmX5HG+E6WMeaaOhSNEhdinCssd75dM0P+3ZG8Q@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 29 Sep 2023 16:57:29 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wir8YObRivyUX6cuanNKCJNKvojK0p2Rg_fKyUiHDVs-A@mail.gmail.com>
-Message-ID: <CAHk-=wir8YObRivyUX6cuanNKCJNKvojK0p2Rg_fKyUiHDVs-A@mail.gmail.com>
-Subject: Re: [PATCH v2] vfs: shave work on failed file open
-To:     Mateusz Guzik <mjguzik@gmail.com>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Jann Horn <jannh@google.com>, viro@zeniv.linux.org.uk,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=no
-        autolearn_force=no version=3.4.6
+        Fri, 29 Sep 2023 19:59:12 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C057F9;
+        Fri, 29 Sep 2023 16:59:11 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C93EFC433C8;
+        Fri, 29 Sep 2023 23:59:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1696031950;
+        bh=TYbXjTD4yLDMrr6JJPR3DJllrIYPE/nqoYqCeJb+CMM=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=QJmGFTFFZZ4d3a6jQLV86Q6CCRo7mqi4tobo6wDfJRC0Sm7VdLJi/1gno/kCD3Oow
+         K8PSF6R9TuLnBSEZMx8XOGWXaQPWsOlnZF5+GPv7nBnd3L4ipP9YnDSdFgo8GcPF/s
+         0V9whGQydQCXPGGYuYRzwcnNFTDCvd4MGRI3XDV3a7TLsaEh9RC6O19hraRvhsYxtC
+         Pk2QWkE9q2g2MMlFARgikKD+ExJV2LTQavOCx9qnamiwXVkY+nVwa0YTRVoZ8mpZ4u
+         dmF9pmGoqDB9MJTvODVa0oiENlxLOL7KQ24sUdBt99JsDzA9nZQjpxHZMgXJ5wZeL+
+         v2xf/Rpv/z2oQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id A63A5C395C5;
+        Fri, 29 Sep 2023 23:59:10 +0000 (UTC)
+Subject: Re: [GIT PULL] xfs: bug fixes for 6.6
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <87r0mhf4rs.fsf@debian-BULLSEYE-live-builder-AMD64>
+References: <87r0mhf4rs.fsf@debian-BULLSEYE-live-builder-AMD64>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <87r0mhf4rs.fsf@debian-BULLSEYE-live-builder-AMD64>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-6.6-fixes-2
+X-PR-Tracked-Commit-Id: 59c71548cf1090bf42e0b0d1bc375d83d6efed3a
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 10c0b6ba25a71d14f80586f6a795dbc47f5c6731
+Message-Id: <169603195066.31385.17895430149826350683.pr-tracker-bot@kernel.org>
+Date:   Fri, 29 Sep 2023 23:59:10 +0000
+To:     Chandan Babu R <chandanbabu@kernel.org>
+Cc:     torvalds@linux-foundation.org, dchinner@redhat.com,
+        djwong@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 29 Sept 2023 at 14:39, Mateusz Guzik <mjguzik@gmail.com> wrote:
->
-> So to be clear, obtaining the initial count would require a dedicated
-> accessor.
+The pull request you sent on Fri, 29 Sep 2023 19:09:34 +0530:
 
-Please, no.
+> https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-6.6-fixes-2
 
-Sequence numbers here are fundamentally broken, since getting that
-initial sequence number would involve either (a) making it something
-outside of 'struct file' itself or (b) require the same re-validation
-of the file pointer that the non-sequence number code needed in the
-first place.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/10c0b6ba25a71d14f80586f6a795dbc47f5c6731
 
-We already have the right model in the only place that really matters
-(ie fd lookup). Using that same "validate file pointer after you got
-the ref to it" for the two or three other cases that didn't do it (and
-are simpler: the exec pointer in particular doesn't need the fdt
-re-validation at all).
+Thank you!
 
-The fact that we had some fd lookup that didn't do the full thing that
-a *real* fd lookup did is just bad. Let's fix it, not introduce a
-sequence counter that only adds more complexity.
-
-          Linus
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
