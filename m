@@ -2,102 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CB3217B3942
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Sep 2023 19:59:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AA377B3A2B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Sep 2023 20:43:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233683AbjI2R7U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Sep 2023 13:59:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36228 "EHLO
+        id S233703AbjI2SnZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Sep 2023 14:43:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52646 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233353AbjI2R7T (ORCPT
+        with ESMTP id S233573AbjI2SnY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Sep 2023 13:59:19 -0400
-Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA76E1AC;
-        Fri, 29 Sep 2023 10:59:17 -0700 (PDT)
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-1e113555a47so1025267fac.2;
-        Fri, 29 Sep 2023 10:59:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696010357; x=1696615157;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fKmSy9nYMevIdhZdG3nCQj5JvLdfTswn5XDlCNJCRqs=;
-        b=eTDIl/GoeNWOsScZcrUFheR/thLjVMUTLjKWbTo+Fx9Fr+c+urm7uWT/N9EUPFbGJ5
-         Mwz3gpAF24pvBtwFpJ+rPS4U1ooJ+gt4EBCUIIHzeQDRxHEAIAjE2gTbLWbkizwKTeJa
-         A75CUCXWhzQeSFc9kxnGUmqoaast7CxUXOpa3R623H7BwFQ1s4r3XulcOys57LDU/HPE
-         R8U8i0B6NldAJGLdcXF0h1Aovima/gzHGACs9UF1GvdOVFm6Pa/8nsSNdRrqhbqQrXEf
-         HPj6Y524RB7hHocogYbUxrmUw9XNjFpLvgiGjyYAtOjP9ud+bJ5iBYHC28XjET/zYuak
-         N2+g==
-X-Gm-Message-State: AOJu0YzhlOe++pUtPMoS/yYg1mvWkR/IDWk43KoBnmFO32+vOmn3Wfqz
-        JeHTipTW0EyzPYPdZKnlXEMpiZc3w797TA==
-X-Google-Smtp-Source: AGHT+IFGOtUOVVnTjR70judkp2CAL1bg7IpOYVhdJtj/g+DmpMMTkZUqHC4hofJt5GNiQMWUQXGnOA==
-X-Received: by 2002:a05:6870:230d:b0:1bb:a912:9339 with SMTP id w13-20020a056870230d00b001bba9129339mr5301433oao.7.1696010356848;
-        Fri, 29 Sep 2023 10:59:16 -0700 (PDT)
-Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net. [73.231.117.72])
-        by smtp.gmail.com with ESMTPSA id x28-20020a63b21c000000b00564b313d526sm15006265pge.54.2023.09.29.10.59.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Sep 2023 10:59:16 -0700 (PDT)
-Message-ID: <2abb1fb8-88c6-401d-b65f-b7001b2203ec@acm.org>
-Date:   Fri, 29 Sep 2023 10:59:14 -0700
+        Fri, 29 Sep 2023 14:43:24 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 327E6199;
+        Fri, 29 Sep 2023 11:43:22 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E2C3C433C8;
+        Fri, 29 Sep 2023 18:43:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1696013001;
+        bh=dsAIvonzMBGLzOUuzBkDUFs/z3RCTJBFMlCcN4lg03s=;
+        h=From:Date:Subject:To:Cc:From;
+        b=iy2Fa5Efgr5pPH4MAeONdFF4TfQpVLHXnSpzz5R76+UxzerMvFibEqDjCSqjnCifL
+         hkSxKGmzRTUaw7JLsKdW1NSrvgHA5Q6MDCJ4OJKCWt6pGsb2AG7nWJ9GUWv663GZUI
+         SzCyEZLvXyBUCZnoT3oJHM9NDZ+8MQlkDofdQhYjkY8QAwS7a/VM6/XiODh5RMTUtE
+         lXxfgQKyVL71XC2BgfkZx8mk5B1jMQHJMyLoSo259kU7Za29u7+PnRed/lv7ZJlxHa
+         wwTvkHdJ9zfz4UfFVQgm93nRYKPqWSJY5TtcCOZ2Jn+Bt0v2sTu4M7Q2eNaevKmbeS
+         M1Z4m8o7/pGQg==
+From:   Jeff Layton <jlayton@kernel.org>
+Date:   Fri, 29 Sep 2023 14:43:18 -0400
+Subject: [PATCH] xfs: reinstate the old i_version counter as
+ STATX_CHANGE_COOKIE
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 19/21] scsi: sd: Add WRITE_ATOMIC_16 support
-Content-Language: en-US
-To:     John Garry <john.g.garry@oracle.com>, axboe@kernel.dk,
-        kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
-        jejb@linux.ibm.com, martin.petersen@oracle.com, djwong@kernel.org,
-        viro@zeniv.linux.org.uk, brauner@kernel.org,
-        chandan.babu@oracle.com, dchinner@redhat.com
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
-        linux-api@vger.kernel.org
-References: <20230929102726.2985188-1-john.g.garry@oracle.com>
- <20230929102726.2985188-20-john.g.garry@oracle.com>
-From:   Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20230929102726.2985188-20-john.g.garry@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+Message-Id: <20230929-xfs-iversion-v1-1-38587d7b5a52@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAMUaF2UC/x2MQQqAIBAAvyJ7bkGNQPtKdBBbay8WCiKIf886D
+ sxMg0yJKcMqGiQqnPmOA9QkwF8unoR8DAYt9SyttlhDRi6UPhGNssFpr8xiFYzkSRS4/rtt7/0
+ FJgnIFV4AAAA=
+To:     Chandan Babu R <chandan.babu@oracle.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Chuck Lever <chuck.lever@oracle.com>
+Cc:     linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1452; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=dsAIvonzMBGLzOUuzBkDUFs/z3RCTJBFMlCcN4lg03s=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBlFxrIJqTwOBqvHLTbxU9WHv82mlhAnijBN26hv
+ xEApTHGyYOJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZRcayAAKCRAADmhBGVaC
+ FacDEACGYMZPWxXBQVmP5FluUddVXFbuLOvAXRerZfeMiOW3lubp4T9LRZEgMcHQTvkkGl7fIJu
+ F8x9p41Gq+C9GdcSVCwC/EoA5vnxY6o6S4fhNFwSJfGdiMwDkgziyQHuo7s5U/jz9xplAWbUMMs
+ CUBJxidfzuJRcPnPjy5QVQGly20SC2/qokGrBnUvZoMQSaj34ElcQlj+fS1hAYMgw0+3RYEZVsn
+ Ih4aYguNISs/enGzJvz8ANjW4+Vn0uN9YR+z9kApnLo1MdbJXC7LCpc6RYQ10GjZKOErmNJx43g
+ V2g1kQvYn0xTNBPXXkbQBo3Qz5HgMCp0Y4pXMIEtuIiy/qMA/yyJgV6RtTcRUGf+4pX9Jxj9tDi
+ W9jZ/lofYb4ho6xnk6QXLsscpic3UFvLS4e9Tl9Oqp37GRsh/iv+daDfxP2Ft12FZKz6OsdkEPQ
+ dKLYRQsNaQvKJLgw/dNMoOqXXHKK5udKm/Yfx3s7HVW3krQmhqZ4gXatgnzS1sIW+3rfjUR8e6a
+ AqK4giVYHXTW90tJM1Wdr9xqaX2khY8lb1zoUb5s4W/1hSycKgtpY4X5gDQEnCHFV507/RQ6pti
+ w8RKl9QVy6c7aEFmLHkDu9FFVd+X6A/dXcCEbm+wstOPEtUZsFGfsK9TkABK48+4ynzjUFOm8QS
+ AH/+l+iQW3TOJ1w==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/29/23 03:27, John Garry wrote:
-> +static blk_status_t sd_setup_atomic_cmnd(struct scsi_cmnd *cmd,
-> +					sector_t lba, unsigned int nr_blocks,
-> +					unsigned char flags)
-> +{
-> +	cmd->cmd_len  = 16;
-> +	cmd->cmnd[0]  = WRITE_ATOMIC_16;
-> +	cmd->cmnd[1]  = flags;
-> +	put_unaligned_be64(lba, &cmd->cmnd[2]);
-> +	cmd->cmnd[10] = 0;
-> +	cmd->cmnd[11] = 0;
-> +	put_unaligned_be16(nr_blocks, &cmd->cmnd[12]);
-> +	cmd->cmnd[14] = 0;
-> +	cmd->cmnd[15] = 0;
-> +
-> +	return BLK_STS_OK;
-> +}
+The handling of STATX_CHANGE_COOKIE was moved into generic_fillattr in
+commit 0d72b92883c6 (fs: pass the request_mask to generic_fillattr), but
+we didn't account for the fact that xfs doesn't call generic_fillattr at
+all.
 
-Please store the 'dld' value in the GROUP NUMBER field. See e.g.
-sd_setup_rw16_cmnd().
+Make XFS report its i_version as the STATX_CHANGE_COOKIE.
 
-> @@ -1139,6 +1156,7 @@ static blk_status_t sd_setup_read_write_cmnd(struct scsi_cmnd *cmd)
->   	unsigned int nr_blocks = sectors_to_logical(sdp, blk_rq_sectors(rq));
->   	unsigned int mask = logical_to_sectors(sdp, 1) - 1;
->   	bool write = rq_data_dir(rq) == WRITE;
-> +	bool atomic_write = !!(rq->cmd_flags & REQ_ATOMIC) && write;
+Fixes: 0d72b92883c6 (fs: pass the request_mask to generic_fillattr)
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+I had hoped to fix this in a better way with the multigrain patches, but
+it's taking longer than expected (if it even pans out at this point).
 
-Please leave out the superfluous "!!".
+Until then, make sure we use XFS's i_version as the STATX_CHANGE_COOKIE,
+even if it's bumped due to atime updates. Too many invalidations is
+preferable to not enough.
+---
+ fs/xfs/xfs_iops.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Thanks,
+diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+index 1c1e6171209d..2b3b05c28e9e 100644
+--- a/fs/xfs/xfs_iops.c
++++ b/fs/xfs/xfs_iops.c
+@@ -584,6 +584,11 @@ xfs_vn_getattr(
+ 		}
+ 	}
+ 
++	if ((request_mask & STATX_CHANGE_COOKIE) && IS_I_VERSION(inode)) {
++		stat->change_cookie = inode_query_iversion(inode);
++		stat->result_mask |= STATX_CHANGE_COOKIE;
++	}
++
+ 	/*
+ 	 * Note: If you add another clause to set an attribute flag, please
+ 	 * update attributes_mask below.
 
-Bart.
+---
+base-commit: df964ce9ef9fea10cf131bf6bad8658fde7956f6
+change-id: 20230929-xfs-iversion-819fa2c18591
+
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
+
