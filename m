@@ -2,611 +2,203 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4367B7B3ADC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Sep 2023 21:58:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 722F27B3ADE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Sep 2023 21:58:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233442AbjI2T6I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Sep 2023 15:58:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38112 "EHLO
+        id S233208AbjI2T6V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Sep 2023 15:58:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55060 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233260AbjI2T6H (ORCPT
+        with ESMTP id S233260AbjI2T6S (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Sep 2023 15:58:07 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CDB51B2;
-        Fri, 29 Sep 2023 12:58:04 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63B0FC433C7;
-        Fri, 29 Sep 2023 19:58:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696017483;
-        bh=ZJq0041KdZfiOMXk+jzPIbTE3bU3L32O/t+4yOeEQRM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=u3wCDFqt7Jk1yAoGX2OmrDbxVZluZvnmaeeu+atZl6FhQ7UupNGFBwEDHRV50rjuu
-         6xHsHKJ5dFfnWAnM4DTZmOb31WOryCdoTMdDyaFF/1QL18nWp2ntvf6eF2gHq5iwOk
-         VOqgFC3pEt1cAL0sh7HkDu091hpVUkIp2vf1vWx8+93oz8OBJ8EnOSDosRZvPjNIDt
-         G6Ku7AEgXQYW6TnVMk5c9bG51uYpEJ5i5evDgUJK9zftOK1nQezfnjQSQ5l71uw7as
-         GS4LCpMhBOaQR+9siKvFRxLEPoxW4WYOcKbstsnQE+lzxOhKkVl86BVO0uE4x/y3wW
-         g2YKhnBO1A5wQ==
-Date:   Fri, 29 Sep 2023 21:57:58 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Jann Horn <jannh@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Mateusz Guzik <mjguzik@gmail.com>, viro@zeniv.linux.org.uk,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2] vfs: shave work on failed file open
-Message-ID: <20230929-test-lauf-693fda7ae36b@brauner>
-References: <CAGudoHH2mvfjfKt+nOCEOfvOrQ+o1pqX63tN2r_1+bLZ4OqHNA@mail.gmail.com>
- <CAHk-=wjmgord99A-Gwy3dsiG1YNeXTCbt+z6=3RH_je5PP41Zw@mail.gmail.com>
- <ZRR1Kc/dvhya7ME4@f>
- <CAHk-=wibs_xBP2BGG4UHKhiP2B=7KJnx_LL18O0bGK8QkULLHg@mail.gmail.com>
- <20230928-kulleraugen-restaurant-dd14e2a9c0b0@brauner>
- <20230928-themen-dilettanten-16bf329ab370@brauner>
- <CAG48ez2d5CW=CDi+fBOU1YqtwHfubN3q6w=1LfD+ss+Q1PWHgQ@mail.gmail.com>
- <CAHk-=wj-5ahmODDWDBVL81wSG-12qPYEw=o-iEo8uzY0HBGGRQ@mail.gmail.com>
- <20230929-kerzen-fachjargon-ca17177e9eeb@brauner>
- <CAG48ez2cExy+QFHpT01d9yh8jbOLR0V8VsR8_==O_AB2fQ+h4Q@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="b3zz657ciemz5u3k"
+        Fri, 29 Sep 2023 15:58:18 -0400
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42909CC6;
+        Fri, 29 Sep 2023 12:58:12 -0700 (PDT)
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38TIJklT007854;
+        Fri, 29 Sep 2023 19:58:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : content-type :
+ content-transfer-encoding : in-reply-to : mime-version; s=corp-2023-03-30;
+ bh=DcOBsuyC6eJzGgTxS/Ba1UO3Qtd8gK01kYA7zEBO4g0=;
+ b=fCTRlbcdDoai7BVsNYNVxnRqxLB4MwnIh3hB0M0H030Yo6FdbfaykuBua2QCFfiOHYvd
+ S72BKgRVo0aesHp2/Ga2YhMmPoi3V0bCdf4gu0QhsQwB++1tu3ye7HrwVXbWQQnGEoXd
+ ObBQ0EB6cUtdBE4aPK4X7OzE7wbqt/+DxuSMDozOhzhSHCLMSzJUp1ZH0mDLaZa4e5F7
+ uHljn8fKDF8YwqGj0U2XEu5SPiMbKSKEYJgEfbyudkPn7VAX6gcoXOD48GENuujPt/ib
+ pVDg3YQSzoR/BNzBUHOOac2DwiJQvWFYJ5zMOUlK3loE+Zu2IKmPkAl7/7sRJ+RJJJcN LQ== 
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3t9pm2fmbn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 29 Sep 2023 19:58:05 +0000
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 38TI2jta015817;
+        Fri, 29 Sep 2023 19:58:04 GMT
+Received: from nam02-sn1-obe.outbound.protection.outlook.com (mail-sn1nam02lp2041.outbound.protection.outlook.com [104.47.57.41])
+        by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3t9pfhtwqy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 29 Sep 2023 19:58:04 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=J7goZuEQn+najtvM9ck7TXS5M+jvZw8K6+d3aDocIoz1t9ON12xviTCoy/mO4LPQbrWS7KQEv1BiwUDlja7gLPGxPntcLcRazpF8rssN2JkeYe6ueXW7PVJqtaSQ9Ir3WgOOOWPL6OtJbF9HjxDa9kHQhCvYEPxNqBlOegdPqdYZxMGIyVd9nJY3jUDz7BCAqM4qhPsjpwE0ck3MUzOPZxgiobqDyQoTUK2Hv7L8Fk/fmYhveG14gKlDUBp2p+HjdPZ9w5KIZXlPA38vdL/8ltgKLC+3U96Pw56jpN/9tdWsa0YA7ZcBxcLzsMB085VrZNnXyZdppSmjLuZt8m2vZQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DcOBsuyC6eJzGgTxS/Ba1UO3Qtd8gK01kYA7zEBO4g0=;
+ b=N7JY9+yyXp0CiMq2q/C3bn7+dkc7y28bd/eMVlTZSqAgHLN7UBY7xXYTJXe2/aQYTfdifAEfGSs6wb+/CWVJPC28wEaPwU9AN/pgUQCjshJ1akXeuj/x1lqIZoJ1IctiyAdqfTJ5qAZgiZFaqBrOURhrLbXuQCIuzemsnHX8xQ/GiM2/4Yk2E04hU8mM5yQwatywzhzVBXynitqAXTVpcQ1BJYyQ9KFigTYgCIW+oARDHDWWlsX8PllRHlv2T9TD2w/dXIctlatfV8cxiPmv0r5siObVte8mQOgdSA5qzkxXLQhYgMdE+YT9XgMYSKal3eBq8WxvgWCb5i9YteZuUg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DcOBsuyC6eJzGgTxS/Ba1UO3Qtd8gK01kYA7zEBO4g0=;
+ b=d7FFTtZQiAaJXMcno0YBnYssy8ie1yTZlg4zOMRCKUv+1FV/xl/m4Y+4jh22fMChF09gxdSHOX9JiwkvvlZ8u6VRVAqAHL0LVK0ZYOcY+Kh5nvOFVjRigNUPfRAOOvukX+yRyNeyza+bijWtcgKhTNAqXHTtKzAC52vW9bfih2c=
+Received: from SN6PR10MB3022.namprd10.prod.outlook.com (2603:10b6:805:d8::25)
+ by CY5PR10MB5939.namprd10.prod.outlook.com (2603:10b6:930:e::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6813.20; Fri, 29 Sep
+ 2023 19:58:01 +0000
+Received: from SN6PR10MB3022.namprd10.prod.outlook.com
+ ([fe80::8979:3e3f:c3e0:8dfa]) by SN6PR10MB3022.namprd10.prod.outlook.com
+ ([fe80::8979:3e3f:c3e0:8dfa%4]) with mapi id 15.20.6813.027; Fri, 29 Sep 2023
+ 19:58:01 +0000
+Date:   Fri, 29 Sep 2023 15:57:59 -0400
+From:   "Liam R. Howlett" <Liam.Howlett@Oracle.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] radix tree test suite: Fix a memory initialization issue
+Message-ID: <20230929195759.p7pgb6qtofdks2yy@revolver>
+References: <b1f490b450b14dd754a45f91bb1abd622ce8d4f7.1695935486.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG48ez2cExy+QFHpT01d9yh8jbOLR0V8VsR8_==O_AB2fQ+h4Q@mail.gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <b1f490b450b14dd754a45f91bb1abd622ce8d4f7.1695935486.git.christophe.jaillet@wanadoo.fr>
+User-Agent: NeoMutt/20220429
+X-ClientProxiedBy: YT4PR01CA0279.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:109::17) To SN6PR10MB3022.namprd10.prod.outlook.com
+ (2603:10b6:805:d8::25)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN6PR10MB3022:EE_|CY5PR10MB5939:EE_
+X-MS-Office365-Filtering-Correlation-Id: a472f57b-1a28-4d52-4234-08dbc12662d7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: lMTyYNsvVxsgDAk5QPzbv5UzUk3iGitAFl5VTf+zHCo3vL5vFvTtuMDNdOfatt74mSBx8dzMVYGInMOUVv1jAclaltARlvUyB8eFuqn5pFTzIopGqQsloZU2ApaOy5+sz/2zvs39MUtfVoB0ZMxta7BHJx6vOOIAbpNmd9aNtwcspxAqpzuEL1ZsaPgzmDRVhTrRnCRwAgbtOq21E/UYKharXrBmXd7CWT43smeid0habB1bMcyrj/+Vx0lJ0ZgXRWV/8JpMyxYm/JxnAiP4a7NiaNgOUn2fZBaQgSpv3m4gtkvEFiqT435Jf+TGUGpXOzjz/kzkoQhcBHgqtKcU7fRKvfF9j0vNaJAXtFHklFTKd5YI/OLBeV3rYTU774PTGWKjukeNSmKDidhgjimFzEOigM/EEkWjTm15BkY+dxuDUsUztFoXN31TzILriwL0mgsfg2xoTr+hLREjCJOzCgyPZP7tVsqk1VmkN1QF/JlVUiqa3VcYRK+E/wOfHEEIeP2Ln2nEBjh2REvkM4xf6gxac2nC0vr7oM8TAjDFx6aeihELGzfHhFPoEThjA1O/
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN6PR10MB3022.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7916004)(39860400002)(366004)(346002)(396003)(136003)(376002)(230922051799003)(186009)(64100799003)(451199024)(1800799009)(8936002)(5660300002)(4326008)(8676002)(41300700001)(66476007)(66556008)(54906003)(316002)(6916009)(38100700002)(33716001)(83380400001)(2906002)(26005)(478600001)(6506007)(1076003)(6486002)(66946007)(6512007)(9686003)(86362001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?zuISsLlZEykwLhGH/KKA/1hQh6Wn6r47mdTUmYpN819Z+wHi/2yyB2jy0bjV?=
+ =?us-ascii?Q?PQwWD2oJZL5iYcJp+4NtE5vhZlcGrZkOLw4sEv6QjwYoM9UkOXkTxZFLDu1a?=
+ =?us-ascii?Q?n8r9CFdDMafmpOVBQWBTSwcJhhu2JWT1vjpOX19TPFV7j8yQ9L+/uYoZQ2NH?=
+ =?us-ascii?Q?MQadff1ZoxvupzwW+sPTa7gvHrbQJhFId6gqxtz1qeNyRaA9YWWeV1i7a20b?=
+ =?us-ascii?Q?MMCdlhdDEO2SdQtm93/afT/V5rK3LKoxCRZgKC7utpx5EVO2clMLfztlpMrN?=
+ =?us-ascii?Q?OfhBg6z4uhYnKwltwzrByW9+GlmPrVwPrWRChdB4ygp2A/tJ1zABznHYf0hm?=
+ =?us-ascii?Q?cRy0ZnL4ki2EJx4qskDuLdTwp2edUxPD2emvyr0URH0Ymzd6jxS+Uyh6yOMy?=
+ =?us-ascii?Q?mdnvQDV/rEju04db3MFyBaJqtHWX9cSiLi0ZhstvPVQtikIWwRd8AxoXmhuB?=
+ =?us-ascii?Q?Eb2J+CpoiEEx6oilReFwJqQQl0sILRcvMd8M/dTw4b4nTTCaCYjC4rEJfh/1?=
+ =?us-ascii?Q?xI+AjaXl2n+HwMHZCte2KgP/mxySMULU0XvXqyVqoHmvvtltzGGMJMy6SGIE?=
+ =?us-ascii?Q?E041cFYlPsyxaHDnh4dtXjJ6uXh/jR1CyuS0jD0cQnxXvNp2gnrmR9gCTJuU?=
+ =?us-ascii?Q?nd1Lu/gGs7jmGeBjs4k/BhBiME2uGnwaBSBY8Ve/sxs2n7ilttaFMT4KLaQg?=
+ =?us-ascii?Q?wsmlHWCGCHCTCrnDtlFoFWIROjNU5/3MTGlh9arVpBP4qxmjo9dbzcRR0fzi?=
+ =?us-ascii?Q?sefbgJQyYHrIXYzDaVEo6D0mXoE51SoJiEUmQUxUmhc33YBycu3jB4aqkGYJ?=
+ =?us-ascii?Q?0CjrR/csqNZg4I56J/gX31t8tCVPJtSlKLiy/iu3oV5bRoCCV9LYt7uHfhaM?=
+ =?us-ascii?Q?dK+dTVzRGmzIOkdeqJNQcehPOpEoLsVYYs2wWuxK8cfXqoeSsNYlOkoXsosl?=
+ =?us-ascii?Q?U0TSgcUPzk0zlEtcMexFuiO2yJoHU7qhIWysfwude+W1aNvmCtotkwpIvarw?=
+ =?us-ascii?Q?Zbs1jQnKnogXYJEToe9OZokgX5f2eBWDauXQZtWuGaK6iUxJ31cv0C6VyZMs?=
+ =?us-ascii?Q?heKN5Mnzhrj11J46Rrm0GkP6PHJyyY8WibDQVnCJxe12tDIP1uNsoOqZQrcz?=
+ =?us-ascii?Q?X8/0N49UrDm11RqIAYL7tOy53CwKTUUrDbZbIQ14JSNvgGBpG4cjISvymnIQ?=
+ =?us-ascii?Q?23uCaIfjW34R0vD2YingQbXXzs1rhCs6NG9VkfJVl3S/EC+qbsPhUljJGEsW?=
+ =?us-ascii?Q?RgnrQRcHAtpY0Ip2ewo3oW70w+ccAeU3pPS0j2uf3GugCwW+/zIgQ5G9CeEv?=
+ =?us-ascii?Q?+CKQtC8hjNonu2Nq1jFoX7Q5HH2rrtxfUwjAAuf0nAGIRjNYgZGFfjYnu6ch?=
+ =?us-ascii?Q?v/Dn31hlUuSFdV2X4VIttKUZ1kGuXPHnO46y7xdh3IgV398pdcLcOXwCetE0?=
+ =?us-ascii?Q?X7oHJBJQ6nHjeDarjpUiUkfm3Tstkhh4viSsFzuI+KBZE7DdTK7C+yKUcbjg?=
+ =?us-ascii?Q?XQ098VjDwOl1mzlWW+PJyEfk93lCRCwglGfcYV5Sbo6m7Qfna3P+kzgKIfzt?=
+ =?us-ascii?Q?R0Q4kEajL8ICBRszaLLaxqAF6KaSTBUwpghbB9RKFSOoZIEZK5ohaVCvfg1i?=
+ =?us-ascii?Q?gQ=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: zefEp+0U2QdZPjnzkBNyyRrbm2TMUHDkTs59AOvszXKJK41k5W6k1O4LI2V9qJdIka0rdWCZMlR2uW0mU52b0CkRvivIhsARZOw7rGhlNEoKoccF34b2+7IU0d0vmnun/inPyFY4LL4ufmmT6IVlddPaJ2HanBelBqbIB47YGRLQzA7Fe5LfOopSr8AJyfkxJXiqWabzaldfw/PiK2HuC+9iQ0Fqeoqxg8QlND/2MgWSP6WXfBSCBiV7cqowfFVSPgCKdAc+TS+eglLBamFgPz3uLSxXZr4vU10ddB0yWjyIGsvrzReMPDW2rdTsgCxdVUExJRNWZC2gGkw5KmuPCdQBldwTrwlmmZ1Q8dE62fHdKcVVTUxd0Ai9304vyViienRd0L8PkG2rDOPEXLeBPHUWcd3xFJ0+8xW9065Z/iMxwMjmCIOsqr6Is6v5It2JFWKQRHPh9MBaSR/PSYt8OS+L3XO6sZXneHgVzAyuyetdybTNyMCc0lErE40x48WDZCaE7lRkD2YCeyyN/Z7D5SxtWydNC/hHFab2Pe/dJ1koI2m05nhPfK3KPyR8B03jN+5UHVrfaGkTb6d0pTHY7ZUQ47qZbcmm9H8vDJdYXy6yXaAABntR/AH248adZJ1eODqHGzaF/oLFMDOaWNmeNUYR76oAY1jWA+WF2Ku/v052AbdWCHF4uBlRhreWAAaypuLueHl80cr/CXH4XveZcQ+BuQEnw4y3yMY7BjTVZ+HFUJiSEaewYS0A0/1ERNvt2rhzDnI55E79vJYKFXaPNsV+GmhpXYEYb9rZVqAZuxyFO5XR0xos/uWMkP/lGzBtYNpcoeKG93pNm4WGKwzQ7ON494033uyYMMwgegO05b46YDs/kMOWRP/8UNc/TDFn
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a472f57b-1a28-4d52-4234-08dbc12662d7
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR10MB3022.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2023 19:58:01.6999
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /C33yh1s7a9yY0au6FKyT3/vaX2WRtrggnkqX92ZlcOqNPWylafo9Gj5xDJ7Es8erhIq1vKHajt7panOq0oGAQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR10MB5939
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-09-29_18,2023-09-28_03,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 spamscore=0 mlxscore=0
+ malwarescore=0 suspectscore=0 bulkscore=0 mlxlogscore=772 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2309180000
+ definitions=main-2309290171
+X-Proofpoint-ORIG-GUID: WSeJ2q5x93b6d20dRxYEeh2xylhBEoT7
+X-Proofpoint-GUID: WSeJ2q5x93b6d20dRxYEeh2xylhBEoT7
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
---b3zz657ciemz5u3k
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-
-On Fri, Sep 29, 2023 at 03:31:29PM +0200, Jann Horn wrote:
-> On Fri, Sep 29, 2023 at 11:20 AM Christian Brauner <brauner@kernel.org> wrote:
-> > > But yes, that protection would be broken by SLAB_TYPESAFE_BY_RCU,
-> > > since then the "f_count is zero" is no longer a final thing.
-> >
-> > I've tried coming up with a patch that is simple enough so the pattern
-> > is easy to follow and then converting all places to rely on a pattern
-> > that combine lookup_fd_rcu() or similar with get_file_rcu(). The obvious
-> > thing is that we'll force a few places to now always acquire a reference
-> > when they don't really need one right now and that already may cause
-> > performance issues.
-> 
-> (Those places are probably used way less often than the hot
-> open/fget/close paths though.)
-> 
-> > We also can't fully get rid of plain get_file_rcu() uses itself because
-> > of users such as mm->exe_file. They don't go from one of the rcu fdtable
-> > lookup helpers to the struct file obviously. They rcu replace the file
-> > pointer in their struct ofc so we could change get_file_rcu() to take a
-> > struct file __rcu **f and then comparing that the passed in pointer
-> > hasn't changed before we managed to do atomic_long_inc_not_zero(). Which
-> > afaict should work for such cases.
-> >
-> > But overall we would introduce a fairly big and at the same time subtle
-> > semantic change. The idea is pretty neat and it was fun to do but I'm
-> > just not convinced we should do it given how ubiquitous struct file is
-> > used and now to make the semanics even more special by allowing
-> > refcounts.
-> >
-> > I've kept your original release_empty_file() proposal in vfs.misc which
-> > I think is a really nice change.
-> >
-> > Let me know if you all passionately disagree. ;)
-
-So I'm appending the patch I had played with and a fix from Jann on top.
-@Linus, if you have an opinion, let me know what you think.
-
-Also available here:
-https://gitlab.com/brauner/linux/-/commits/vfs.file.rcu
-
-Might be interesting if this could be perfed to see if there is any real
-gain for workloads with massive numbers of fds.
-
---b3zz657ciemz5u3k
-Content-Type: text/x-diff; charset=utf-8
-Content-Disposition: attachment;
-	filename="0001-PROBABLY-BROKEN-AS-ABSOLUTE-FSCK-AND-QUICKLY-DRAFTED.patch"
-
-From ad101054772181fa044f7891c4575c0a0b6205fd Mon Sep 17 00:00:00 2001
-From: Christian Brauner <brauner@kernel.org>
-Date: Fri, 29 Sep 2023 08:45:59 +0200
-Subject: [PATCH 1/2] [PROBABLY BROKEN AS ABSOLUTE FSCK AND QUICKLY DRAFTED]
- file: convert to SLAB_TYPESAFE_BY_RCU
-
-In recent discussions around some performance improvements in the file
-handling area we discussed switching the file cache to rely on
-SLAB_TYPESAFE_BY_RCU which allows us to get rid of call_rcu() based
-freeing for files completely. This is a pretty sensitive change overall
-but it might actually be worth doing.
-
-The main downside is the subtlety. The other one is that we should
-really wait for Jann's patch to land that enables KASAN to handle
-SLAB_TYPESAFE_BY_RCU UAFs. Currently it doesn't but a patch for this
-exists.
-
-With SLAB_TYPESAFE_BY_RCU objects may be freed and reused multiple times
-which requires a few changes. In __fget_files_rcu() the check for f_mode
-needs to move down to after we've acquired a reference on the object.
-
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Christian Brauner <brauner@kernel.org>
-
-[PROBABLY BROKEN AS ABSOLUTE FSCK AND QUICKLY DRAFTED] file: convert to SLAB_TYPESAFE_BY_RCU
-
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- Documentation/filesystems/files.rst          |  7 +++
- arch/powerpc/platforms/cell/spufs/coredump.c |  7 ++-
- drivers/gpu/drm/i915/gem/i915_gem_mman.c     |  2 +-
- fs/file.c                                    | 60 +++++++++++++++-----
- fs/file_table.c                              | 36 ++++++------
- fs/gfs2/glock.c                              |  7 ++-
- fs/notify/dnotify/dnotify.c                  |  4 +-
- fs/proc/fd.c                                 |  7 ++-
- include/linux/fdtable.h                      | 15 +++--
- include/linux/fs.h                           |  3 +-
- kernel/bpf/task_iter.c                       |  2 -
- kernel/fork.c                                |  4 +-
- kernel/kcmp.c                                |  2 +
- 13 files changed, 105 insertions(+), 51 deletions(-)
-
-diff --git a/Documentation/filesystems/files.rst b/Documentation/filesystems/files.rst
-index bcf84459917f..9e77f46a7389 100644
---- a/Documentation/filesystems/files.rst
-+++ b/Documentation/filesystems/files.rst
-@@ -126,3 +126,10 @@ the fdtable structure -
-    Since locate_fd() can drop ->file_lock (and reacquire ->file_lock),
-    the fdtable pointer (fdt) must be loaded after locate_fd().
- 
-+On newer kernels rcu based file lookup has been switched to rely on
-+SLAB_TYPESAFE_BY_RCU. This means it isn't sufficient anymore to just acquire a
-+reference to the file in question under rcu using atomic_long_inc_not_zero()
-+since the file might have already been recycled and someone else might have
-+bumped the reference. In other words, the caller might see reference
-+count bumps from newer users. For this is reason it is necessary to verify that
-+the pointer is the same before and after the reference count increment.
-diff --git a/arch/powerpc/platforms/cell/spufs/coredump.c b/arch/powerpc/platforms/cell/spufs/coredump.c
-index 1a587618015c..6fe84037bccd 100644
---- a/arch/powerpc/platforms/cell/spufs/coredump.c
-+++ b/arch/powerpc/platforms/cell/spufs/coredump.c
-@@ -75,9 +75,12 @@ static struct spu_context *coredump_next_context(int *fd)
- 
- 	rcu_read_lock();
- 	file = lookup_fd_rcu(*fd);
--	ctx = SPUFS_I(file_inode(file))->i_ctx;
--	get_spu_context(ctx);
- 	rcu_read_unlock();
-+	if (file) {
-+		ctx = SPUFS_I(file_inode(file))->i_ctx;
-+		get_spu_context(ctx);
-+		fput(file);
-+	}
- 
- 	return ctx;
- }
-diff --git a/drivers/gpu/drm/i915/gem/i915_gem_mman.c b/drivers/gpu/drm/i915/gem/i915_gem_mman.c
-index aa4d842d4c5a..b2f00f54218f 100644
---- a/drivers/gpu/drm/i915/gem/i915_gem_mman.c
-+++ b/drivers/gpu/drm/i915/gem/i915_gem_mman.c
-@@ -917,7 +917,7 @@ static struct file *mmap_singleton(struct drm_i915_private *i915)
- 
- 	rcu_read_lock();
- 	file = READ_ONCE(i915->gem.mmap_singleton);
--	if (file && !get_file_rcu(file))
-+	if (!get_file_rcu(&file))
- 		file = NULL;
- 	rcu_read_unlock();
- 	if (file)
-diff --git a/fs/file.c b/fs/file.c
-index 3e4a4dfa38fc..e983cf3b9e01 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -853,8 +853,39 @@ void do_close_on_exec(struct files_struct *files)
- 	spin_unlock(&files->file_lock);
- }
- 
--static inline struct file *__fget_files_rcu(struct files_struct *files,
--	unsigned int fd, fmode_t mask)
-+struct file *get_file_rcu(struct file __rcu **f)
-+{
-+	for (;;) {
-+		struct file __rcu *file;
-+
-+		file = rcu_dereference_raw(*f);
-+		if (!file)
-+			return NULL;
-+
-+		if (unlikely(!atomic_long_inc_not_zero(&file->f_count)))
-+			continue;
-+
-+		/*
-+		 * atomic_long_inc_not_zero() serves as a full memory
-+		 * barrier when we acquired a reference.
-+		 *
-+		 * This is paired with the write barrier from assigning
-+		 * to the __rcu protected file pointer so that if that
-+		 * pointer still matches the current file, we know we
-+		 * have successfully acquire a reference to it.
-+		 *
-+		 * If the pointers don't match the file has been
-+		 * reallocated by SLAB_TYPESAFE_BY_RCU. So verify that
-+		 * we're holding the right reference.
-+		 */
-+		if (file == rcu_access_pointer(*f))
-+			return rcu_pointer_handoff(file);
-+
-+		fput(file);
-+	}
-+}
-+
-+struct file *__fget_files_rcu(struct files_struct *files, unsigned int fd, fmode_t mask)
- {
- 	for (;;) {
- 		struct file *file;
-@@ -865,12 +896,6 @@ static inline struct file *__fget_files_rcu(struct files_struct *files,
- 			return NULL;
- 
- 		fdentry = fdt->fd + array_index_nospec(fd, fdt->max_fds);
--		file = rcu_dereference_raw(*fdentry);
--		if (unlikely(!file))
--			return NULL;
--
--		if (unlikely(file->f_mode & mask))
--			return NULL;
- 
- 		/*
- 		 * Ok, we have a file pointer. However, because we do
-@@ -882,8 +907,9 @@ static inline struct file *__fget_files_rcu(struct files_struct *files,
- 		 *  (a) the file ref already went down to zero,
- 		 *      and get_file_rcu() fails. Just try again:
- 		 */
--		if (unlikely(!get_file_rcu(file)))
--			continue;
-+		file = get_file_rcu(fdentry);
-+		if (unlikely(!file))
-+			return NULL;
- 
- 		/*
- 		 *  (b) the file table entry has changed under us.
-@@ -893,12 +919,16 @@ static inline struct file *__fget_files_rcu(struct files_struct *files,
- 		 *
- 		 * If so, we need to put our ref and try again.
- 		 */
--		if (unlikely(rcu_dereference_raw(files->fdt) != fdt) ||
--		    unlikely(rcu_dereference_raw(*fdentry) != file)) {
-+		if (unlikely(rcu_dereference_raw(files->fdt) != fdt)) {
- 			fput(file);
- 			continue;
- 		}
- 
-+		if (unlikely(file->f_mode & mask)) {
-+			fput(file);
-+			return NULL;
-+		}
-+
- 		/*
- 		 * Ok, we have a ref to the file, and checked that it
- 		 * still exists.
-@@ -1272,12 +1302,16 @@ SYSCALL_DEFINE2(dup2, unsigned int, oldfd, unsigned int, newfd)
- {
- 	if (unlikely(newfd == oldfd)) { /* corner case */
- 		struct files_struct *files = current->files;
-+		struct file *f;
- 		int retval = oldfd;
- 
- 		rcu_read_lock();
--		if (!files_lookup_fd_rcu(files, oldfd))
-+		f = files_lookup_fd_rcu(files, oldfd);
-+		if (!f)
- 			retval = -EBADF;
- 		rcu_read_unlock();
-+		if (f)
-+			fput(f);
- 		return retval;
- 	}
- 	return ksys_dup3(oldfd, newfd, 0);
-diff --git a/fs/file_table.c b/fs/file_table.c
-index e68e97d4f00a..844c97d21b33 100644
---- a/fs/file_table.c
-+++ b/fs/file_table.c
-@@ -65,33 +65,34 @@ static void file_free_rcu(struct rcu_head *head)
- {
- 	struct file *f = container_of(head, struct file, f_rcuhead);
- 
--	put_cred(f->f_cred);
--	if (unlikely(f->f_mode & FMODE_BACKING))
--		kfree(backing_file(f));
--	else
--		kmem_cache_free(filp_cachep, f);
-+	kfree(backing_file(f));
- }
- 
- static inline void file_free(struct file *f)
- {
- 	security_file_free(f);
--	if (unlikely(f->f_mode & FMODE_BACKING))
--		path_put(backing_file_real_path(f));
- 	if (likely(!(f->f_mode & FMODE_NOACCOUNT)))
- 		percpu_counter_dec(&nr_files);
--	call_rcu(&f->f_rcuhead, file_free_rcu);
-+	put_cred(f->f_cred);
-+	if (unlikely(f->f_mode & FMODE_BACKING)) {
-+		path_put(backing_file_real_path(f));
-+		call_rcu(&f->f_rcuhead, file_free_rcu);
-+	} else {
-+		kmem_cache_free(filp_cachep, f);
-+	}
- }
- 
- void release_empty_file(struct file *f)
- {
- 	WARN_ON_ONCE(f->f_mode & (FMODE_BACKING | FMODE_OPENED));
--	/* Uhm, we better find out who grabs references to an unopened file. */
--	WARN_ON_ONCE(atomic_long_cmpxchg(&f->f_count, 1, 0) != 1);
--	security_file_free(f);
--	put_cred(f->f_cred);
--	if (likely(!(f->f_mode & FMODE_NOACCOUNT)))
--		percpu_counter_dec(&nr_files);
--	kmem_cache_free(filp_cachep, f);
-+	if (atomic_long_dec_and_test(&f->f_count)) {
-+		security_file_free(f);
-+		put_cred(f->f_cred);
-+		if (likely(!(f->f_mode & FMODE_NOACCOUNT)))
-+			percpu_counter_dec(&nr_files);
-+		kmem_cache_free(filp_cachep, f);
-+		return;
-+	}
- }
- 
- /*
-@@ -176,7 +177,6 @@ static int init_file(struct file *f, int flags, const struct cred *cred)
- 		return error;
- 	}
- 
--	atomic_long_set(&f->f_count, 1);
- 	rwlock_init(&f->f_owner.lock);
- 	spin_lock_init(&f->f_lock);
- 	mutex_init(&f->f_pos_lock);
-@@ -184,6 +184,7 @@ static int init_file(struct file *f, int flags, const struct cred *cred)
- 	f->f_mode = OPEN_FMODE(flags);
- 	/* f->f_version: 0 */
- 
-+	atomic_long_set(&f->f_count, 1);
- 	return 0;
- }
- 
-@@ -483,7 +484,8 @@ EXPORT_SYMBOL(__fput_sync);
- void __init files_init(void)
- {
- 	filp_cachep = kmem_cache_create("filp", sizeof(struct file), 0,
--			SLAB_HWCACHE_ALIGN | SLAB_PANIC | SLAB_ACCOUNT, NULL);
-+				SLAB_TYPESAFE_BY_RCU | SLAB_HWCACHE_ALIGN |
-+				SLAB_PANIC | SLAB_ACCOUNT, NULL);
- 	percpu_counter_init(&nr_files, 0, GFP_KERNEL);
- }
- 
-diff --git a/fs/gfs2/glock.c b/fs/gfs2/glock.c
-index 9cbf8d98489a..ced04c49e37c 100644
---- a/fs/gfs2/glock.c
-+++ b/fs/gfs2/glock.c
-@@ -2723,10 +2723,11 @@ static struct file *gfs2_glockfd_next_file(struct gfs2_glockfd_iter *i)
- 			break;
- 		}
- 		inode = file_inode(i->file);
--		if (inode->i_sb != i->sb)
-+		if (inode->i_sb != i->sb) {
-+			fput(i->file);
- 			continue;
--		if (get_file_rcu(i->file))
--			break;
-+		}
-+		break;
- 	}
- 	rcu_read_unlock();
- 	return i->file;
-diff --git a/fs/notify/dnotify/dnotify.c b/fs/notify/dnotify/dnotify.c
-index ebdcc25df0f7..987db4c8bbff 100644
---- a/fs/notify/dnotify/dnotify.c
-+++ b/fs/notify/dnotify/dnotify.c
-@@ -265,7 +265,7 @@ int fcntl_dirnotify(int fd, struct file *filp, unsigned int arg)
- 	struct dnotify_struct *dn;
- 	struct inode *inode;
- 	fl_owner_t id = current->files;
--	struct file *f;
-+	struct file *f = NULL;
- 	int destroy = 0, error = 0;
- 	__u32 mask;
- 
-@@ -392,6 +392,8 @@ int fcntl_dirnotify(int fd, struct file *filp, unsigned int arg)
- 		fsnotify_put_mark(new_fsn_mark);
- 	if (dn)
- 		kmem_cache_free(dnotify_struct_cache, dn);
-+	if (f)
-+		fput(f);
- 	return error;
- }
- 
-diff --git a/fs/proc/fd.c b/fs/proc/fd.c
-index 6276b3938842..47a717142efa 100644
---- a/fs/proc/fd.c
-+++ b/fs/proc/fd.c
-@@ -114,9 +114,11 @@ static bool tid_fd_mode(struct task_struct *task, unsigned fd, fmode_t *mode)
- 
- 	rcu_read_lock();
- 	file = task_lookup_fd_rcu(task, fd);
--	if (file)
--		*mode = file->f_mode;
- 	rcu_read_unlock();
-+	if (file) {
-+		*mode = file->f_mode;
-+		fput(file);
-+	}
- 	return !!file;
- }
- 
-@@ -265,6 +267,7 @@ static int proc_readfd_common(struct file *file, struct dir_context *ctx,
- 			break;
- 		data.mode = f->f_mode;
- 		rcu_read_unlock();
-+		fput(f);
- 		data.fd = fd;
- 
- 		len = snprintf(name, sizeof(name), "%u", fd);
-diff --git a/include/linux/fdtable.h b/include/linux/fdtable.h
-index e066816f3519..6d088f069228 100644
---- a/include/linux/fdtable.h
-+++ b/include/linux/fdtable.h
-@@ -77,6 +77,8 @@ struct dentry;
- #define files_fdtable(files) \
- 	rcu_dereference_check_fdtable((files), (files)->fdt)
- 
-+struct file *__fget_files_rcu(struct files_struct *files, unsigned int fd, fmode_t mask);
-+
- /*
-  * The caller must ensure that fd table isn't shared or hold rcu or file lock
-  */
-@@ -98,16 +100,17 @@ static inline struct file *files_lookup_fd_locked(struct files_struct *files, un
- 	return files_lookup_fd_raw(files, fd);
- }
- 
--static inline struct file *files_lookup_fd_rcu(struct files_struct *files, unsigned int fd)
-+static inline struct file *lookup_fd_rcu(unsigned int fd)
- {
--	RCU_LOCKDEP_WARN(!rcu_read_lock_held(),
--			   "suspicious rcu_dereference_check() usage");
--	return files_lookup_fd_raw(files, fd);
-+	return __fget_files_rcu(current->files, fd, 0);
-+
- }
- 
--static inline struct file *lookup_fd_rcu(unsigned int fd)
-+static inline struct file *files_lookup_fd_rcu(struct files_struct *files, unsigned int fd)
- {
--	return files_lookup_fd_rcu(current->files, fd);
-+	RCU_LOCKDEP_WARN(!rcu_read_lock_held(),
-+			   "suspicious rcu_dereference_check() usage");
-+	return lookup_fd_rcu(fd);
- }
- 
- struct file *task_lookup_fd_rcu(struct task_struct *task, unsigned int fd);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 58dea591a341..f9a601629517 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1042,7 +1042,8 @@ static inline struct file *get_file(struct file *f)
- 	atomic_long_inc(&f->f_count);
- 	return f;
- }
--#define get_file_rcu(x) atomic_long_inc_not_zero(&(x)->f_count)
-+struct file *get_file_rcu(struct file __rcu **f);
-+
- #define file_count(x)	atomic_long_read(&(x)->f_count)
- 
- #define	MAX_NON_LFS	((1UL<<31) - 1)
-diff --git a/kernel/bpf/task_iter.c b/kernel/bpf/task_iter.c
-index c4ab9d6cdbe9..ee1d5c0ccf5a 100644
---- a/kernel/bpf/task_iter.c
-+++ b/kernel/bpf/task_iter.c
-@@ -310,8 +310,6 @@ task_file_seq_get_next(struct bpf_iter_seq_task_file_info *info)
- 		struct file *f;
- 		f = task_lookup_next_fd_rcu(curr_task, &curr_fd);
- 		if (!f)
--			break;
--		if (!get_file_rcu(f))
- 			continue;
- 
- 		/* set info->fd */
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 3b6d20dfb9a8..640123767726 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1492,9 +1492,7 @@ struct file *get_mm_exe_file(struct mm_struct *mm)
- 	struct file *exe_file;
- 
- 	rcu_read_lock();
--	exe_file = rcu_dereference(mm->exe_file);
--	if (exe_file && !get_file_rcu(exe_file))
--		exe_file = NULL;
-+	exe_file = get_file_rcu(&mm->exe_file);
- 	rcu_read_unlock();
- 	return exe_file;
- }
-diff --git a/kernel/kcmp.c b/kernel/kcmp.c
-index 5353edfad8e1..e0dfa82606cb 100644
---- a/kernel/kcmp.c
-+++ b/kernel/kcmp.c
-@@ -66,6 +66,8 @@ get_file_raw_ptr(struct task_struct *task, unsigned int idx)
- 	rcu_read_lock();
- 	file = task_lookup_fd_rcu(task, idx);
- 	rcu_read_unlock();
-+	if (file)
-+		fput(file);
- 
- 	return file;
- }
--- 
-2.34.1
+* Christophe JAILLET <christophe.jaillet@wanadoo.fr> [230928 17:11]:
+> If __GFP_ZERO is used, the whole allocated memory should be cleared, not
+> the first part of it only.
+>=20
+> Fixes: cc86e0c2f306 ("radix tree test suite: add support for slab bulk AP=
+Is")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  tools/testing/radix-tree/linux.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/tools/testing/radix-tree/linux.c b/tools/testing/radix-tree/=
+linux.c
+> index d587a558997f..8ab162c48629 100644
+> --- a/tools/testing/radix-tree/linux.c
+> +++ b/tools/testing/radix-tree/linux.c
+> @@ -172,7 +172,7 @@ int kmem_cache_alloc_bulk(struct kmem_cache *cachep, =
+gfp_t gfp, size_t size,
+>  			if (cachep->ctor)
+>  				cachep->ctor(p[i]);
+>  			else if (gfp & __GFP_ZERO)
+> -				memset(p[i], 0, cachep->size);
+> +				memset(p[i], 0, cachep->size * size);
+>  		}
+>  	}
 
 
---b3zz657ciemz5u3k
-Content-Type: text/x-diff; charset=utf-8
-Content-Disposition: attachment;
-	filename="0002-file-ensure-ordering-between-memory-reallocation-and.patch"
+This doesn't look right.  In fact, I think you have taken a bug and
+extended it to clear the bugs over-allocation worth of memory.
 
-From 479d59bdfb5a157a218f8cafb04d1556e175fc80 Mon Sep 17 00:00:00 2001
-From: Christian Brauner <brauner@kernel.org>
-Date: Fri, 29 Sep 2023 21:49:39 +0200
-Subject: [PATCH 2/2] file: ensure ordering between memory reallocation and
- pointer check
+The bulk allocator allocates to the array (here it's p) of a given size
+(size).  Each kmem_cache has a size pre-set, that is, each allocation
+from that cache is of size cachep->size.
 
-by ensuring that all subsequent loads have a dependency on the second
-load from *f.
+What you are doing is zeroing each pointer for the entire size of the
+allocation for the entire range, and not just one elements worth. This
+isn't crashing because we are allocating too much memory to begin with.
 
-Reported-by: Jann Horn <jannh@google.com>
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- fs/file.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+Note that this zeroing is in a for loop:
+	for (i =3D 0; i < size; i++) {
+		...
+	}
 
-diff --git a/fs/file.c b/fs/file.c
-index e983cf3b9e01..8d3c10dfb98a 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -857,6 +857,8 @@ struct file *get_file_rcu(struct file __rcu **f)
- {
- 	for (;;) {
- 		struct file __rcu *file;
-+		struct file __rcu *file_reloaded;
-+		struct file __rcu *file_reloaded_cmp;
- 
- 		file = rcu_dereference_raw(*f);
- 		if (!file)
-@@ -877,9 +879,15 @@ struct file *get_file_rcu(struct file __rcu **f)
- 		 * If the pointers don't match the file has been
- 		 * reallocated by SLAB_TYPESAFE_BY_RCU. So verify that
- 		 * we're holding the right reference.
-+		 *
-+		 * Ensure that all accesses have a dependency on the
-+		 * load from rcu_dereference_raw().
- 		 */
--		if (file == rcu_access_pointer(*f))
--			return rcu_pointer_handoff(file);
-+		file_reloaded = rcu_dereference_raw(*f);
-+		file_reloaded_cmp = file_reloaded;
-+		OPTIMIZER_HIDE_VAR(file_reloaded_cmp);
-+		if (file == file_reloaded_cmp)
-+			return file_reloaded;
- 
- 		fput(file);
- 	}
--- 
-2.34.1
+So, really the bug is that we are over-allocating and not that we aren't
+zeroing the entire thing.
 
+If you drop size from these arguments and use LSAN to check that things
+are not overrun, then you will see that we can reduce the allocation by
+a lot and still run correctly.
 
---b3zz657ciemz5u3k--
+Thanks,
+Liam
