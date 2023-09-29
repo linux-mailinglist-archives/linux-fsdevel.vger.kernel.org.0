@@ -2,73 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AE3077B32F7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Sep 2023 14:59:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 011587B337D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Sep 2023 15:24:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232954AbjI2M7h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Sep 2023 08:59:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57036 "EHLO
+        id S233156AbjI2NYN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Sep 2023 09:24:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232732AbjI2M7g (ORCPT
+        with ESMTP id S232786AbjI2NYN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Sep 2023 08:59:36 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58BBAB7;
-        Fri, 29 Sep 2023 05:59:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=TmHeRReypOC1/PTNYdEeOv0TmfOCqlGndNJrCadbeNo=; b=q5zVxBi33+Nmp9sMvNQxIi5Dum
-        dThXVAqNoC3JwqJ59jU8OZ0hV/jd6QMLq2riYYbdMzzXvmiJIGDeejnFdIyPOqik2nndUT8FLSXJB
-        /9PJEjlgqyxWOQ2vAaneH0kH00AXJ4tKkh5Z/uRANmE74ZU0ji1y7Flw3c8HQ/AQAEK6tjMKiEoIu
-        Dbtl+jfgoG+YDzkPkRLhApIwz+OzLPW/zV4oAuSc8C8oX6VDcEAcXwi3ZDFH/POsa4Fbu1dNn3zJ4
-        PCHwhz+bxClpQ4CevUPXhH4MHw3nx1KXUB7hvVas5h+7Af0zSCAIZ7IvmLrdVOXeS31P1qA+l0M+F
-        HNiCTCag==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qmD5e-008rPk-G8; Fri, 29 Sep 2023 12:59:30 +0000
-Date:   Fri, 29 Sep 2023 13:59:30 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Mateusz Guzik <mjguzik@gmail.com>
-Cc:     brauner@kernel.org, viro@zeniv.linux.org.uk,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        torvalds@linux-foundation.org
-Subject: Re: [PATCH v3] vfs: avoid delegating to task_work when cleaning up
- failed open
-Message-ID: <ZRbKMmRm8i+/E88f@casper.infradead.org>
-References: <20230928102516.186008-1-mjguzik@gmail.com>
+        Fri, 29 Sep 2023 09:24:13 -0400
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EB051AA;
+        Fri, 29 Sep 2023 06:24:10 -0700 (PDT)
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+        by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        id 1qmDTV-0004ck-1g; Fri, 29 Sep 2023 15:24:09 +0200
+Message-ID: <44fa4252-df03-41ae-928e-c13c69de12c4@leemhuis.info>
+Date:   Fri, 29 Sep 2023 15:24:08 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230928102516.186008-1-mjguzik@gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla Thunderbird
+Subject: Re: [czhong@redhat.com: [bug report] WARNING: CPU: 121 PID: 93233 at
+ fs/dcache.c:365 __dentry_kill+0x214/0x278]
+Content-Language: en-US, de-DE
+To:     Linux Regressions <regressions@lists.linux.dev>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org
+References: <ZOWFtqA2om0w5Vmz@fedora>
+ <20230823-kuppe-lassen-bc81a20dd831@brauner>
+ <CAFj5m9KiBDzNHCsTjwUevZh3E3RRda2ypj9+QcRrqEsJnf9rXQ@mail.gmail.com>
+ <CAHj4cs_MqqWYy+pKrNrLqTb=eoSOXcZdjPXy44x-aA1WvdVv0w@mail.gmail.com>
+ <ZQZJtHHPZwCeQH9v@debian.me>
+From:   "Linux regression tracking #update (Thorsten Leemhuis)" 
+        <regressions@leemhuis.info>
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+In-Reply-To: <ZQZJtHHPZwCeQH9v@debian.me>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1695993850;6528bc8d;
+X-HE-SMSGID: 1qmDTV-0004ck-1g
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 28, 2023 at 12:25:16PM +0200, Mateusz Guzik wrote:
-> Below is my rebased patch + rewritten commit message with updated bench
-> results. I decided to stick to fput_badopen name because with your patch
-> it legitimately has to unref. Naming that "release_empty_file" or
-> whatever would be rather misleading imho.
+On 17.09.23 02:35, Bagas Sanjaya wrote:
+> On Wed, Sep 13, 2023 at 04:59:31PM +0800, Yi Zhang wrote:
+>> The issue still can be reproduced on the latest linux tree[2].
+>> To reproduce I need to run about 1000 times blktests block/001, and
+>> bisect shows it was introduced with commit[1], as it was not 100%
+>> reproduced, not sure if it's the culprit?
+> 
+> Anyway, thanks for bisecting this regression. I'm adding it to regzbot:
+> 
+> #regzbot ^introduced: 9257959a6e5b4f
+> #regzbot title: restructuring atomic locking conditionals causes vfs dentry lock protection failure
 
-Do we still need fput_badopen()?  Couldn't we just make this part of
-regular fput() at this point?  ie:
+#regzbot fix: 6d2779ecaeb56f
+#regzbot ignore-activity
 
-+++ b/fs/file_table.c
-@@ -435,6 +435,10 @@ void fput(struct file *file)
-        if (atomic_long_dec_and_test(&file->f_count)) {
-                struct task_struct *task = current;
- 
-+               if (!(file->f_mode & FMODE_OPENED)) {
-+                       file_free(file);
-+                       return;
-+               }
-                if (likely(!in_interrupt() && !(task->flags & PF_KTHREAD))) {
-                        init_task_work(&file->f_rcuhead, ____fput);
-                        if (!task_work_add(task, &file->f_rcuhead, TWA_RESUME))
+Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+--
+Everything you wanna know about Linux kernel regression tracking:
+https://linux-regtracking.leemhuis.info/about/#tldr
+That page also explains what to do if mails like this annoy you.
 
