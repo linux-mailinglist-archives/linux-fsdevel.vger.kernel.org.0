@@ -2,140 +2,167 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 480CA7B317C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Sep 2023 13:34:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D0B17B317F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Sep 2023 13:35:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233000AbjI2Leu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Sep 2023 07:34:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51126 "EHLO
+        id S232997AbjI2LfH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Sep 2023 07:35:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231774AbjI2Les (ORCPT
+        with ESMTP id S233049AbjI2LfF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Sep 2023 07:34:48 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81CB91AC
-        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Sep 2023 04:33:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1695987238;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=41757PcJTfcJdCCJnzrk+mJV9SfHrDKMX8xcqYqo8lQ=;
-        b=MX8VnDjfwmn4X6gHFJp/9ygDiz/1IyXPj3D1wvY23TMQGnXaPEVMZndIBUrZ/3CD2N3GIh
-        BG/0TPY55k9+cBIjLzyvb+tFxcgUA5A9MjEtebegPIcBBgfTaDenQDJF2m0vOZ6JGJgEq+
-        aaRFaZOrOzDxo/h2MwMbuL7GstqSfiY=
-Received: from mail-oa1-f70.google.com (mail-oa1-f70.google.com
- [209.85.160.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-30-ESuMWTToNL-cBLlmhcSORg-1; Fri, 29 Sep 2023 07:33:55 -0400
-X-MC-Unique: ESuMWTToNL-cBLlmhcSORg-1
-Received: by mail-oa1-f70.google.com with SMTP id 586e51a60fabf-1dd053fb4f0so22854528fac.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Sep 2023 04:33:55 -0700 (PDT)
+        Fri, 29 Sep 2023 07:35:05 -0400
+Received: from mail-vs1-xe35.google.com (mail-vs1-xe35.google.com [IPv6:2607:f8b0:4864:20::e35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 820931B9
+        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Sep 2023 04:35:02 -0700 (PDT)
+Received: by mail-vs1-xe35.google.com with SMTP id ada2fe7eead31-452951b27d0so6669571137.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Sep 2023 04:35:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1695987301; x=1696592101; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BjJf24AsZP4x+fO4di+uC9yyykaFt3qr2jF70Fg1IiM=;
+        b=UinSlrg/I0lcaTqyPQo8yw/qmeS+g/1uczYsacZ48x8XtEGnAvJs+JtS3PZJYHaH6b
+         j5foXHvJ2QDaEqgzafbPJwL7r8Pl388Akhj7m+dSG5ENnEoQPbHVhszPMIHp6z1UV+gb
+         yIiPEWeDQz1ivMNLnjoLsNVEIWQLFEwqcoUj3xBg8uppDX1OU98ebw8UD8Zkc7f+xBCi
+         lVCsvR3dU4+OP3Ka4GC0wfPirqIeBcMaZBbLg6KhtOjhY5zGX9BoH8507UPSGOe56QUl
+         gmNafLfX8h84xLIxHAR5vX/jyFjXL/9vCvX6na14yEtF2Y8UwLUsHt9uoWhHKn6Y/0Th
+         BqCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695987234; x=1696592034;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=41757PcJTfcJdCCJnzrk+mJV9SfHrDKMX8xcqYqo8lQ=;
-        b=EdXd0Ibw2GX0MqKDbxzS4TjE4bgz37YEFiItnzNRxT3QTJihN32ATxbXN5GBBukrCl
-         QdbLe5YeVLQF2Y2NeT0WriL9s/Rqd+rSr9VF0L/SqncKz6SdoVavoXLhL2lY1RJiiYgh
-         vrpVKbcl3yZtASBqiQrZF9gD2bJL6NRJ5O/6lCn5HmR3BSNTGQjBko+Tg8SttVxCNu9F
-         mW7mifL1TmHrU5PknppE4USWW3yGmna53Za7CpBEWbAybJoIrag03gEBKZWwWA8Y/3Se
-         N9OyQ+HJLYDUbH9Oy8ew2fxP7Co3BI8fr1rKnpHkESgy145686rLCocZq/7QAya3Ga1L
-         hm8Q==
-X-Gm-Message-State: AOJu0YxCqneCop/nxWiw1ITOkGbgn2tfG9vUlM7L7eo5VrMwISHwOZ9x
-        nCoPub3b6nkviHkeW2RiddkJ9UpDqGwviDtXJMqojWE2xbWg6sGdgCrGUzTK68axwOKQM2X55Zg
-        BypBtwZaJAfuVNOMQKFS6paI0gQ==
-X-Received: by 2002:a05:6870:390c:b0:1d5:8fb8:98ef with SMTP id b12-20020a056870390c00b001d58fb898efmr4239893oap.31.1695987234746;
-        Fri, 29 Sep 2023 04:33:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGy01C0dVSSXf6tbU8suZwYSLTAwJpM9IkDfrRHB2EAqrXb4oZMZ4C9QwPCRWN7o+nu7em3qg==
-X-Received: by 2002:a05:6870:390c:b0:1d5:8fb8:98ef with SMTP id b12-20020a056870390c00b001d58fb898efmr4239876oap.31.1695987234411;
-        Fri, 29 Sep 2023 04:33:54 -0700 (PDT)
-Received: from rh (p200300c93f19a200f43f623a676b2d27.dip0.t-ipconnect.de. [2003:c9:3f19:a200:f43f:623a:676b:2d27])
-        by smtp.gmail.com with ESMTPSA id s8-20020a0cdc08000000b0065afa998364sm1149936qvk.95.2023.09.29.04.33.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Sep 2023 04:33:54 -0700 (PDT)
-Date:   Fri, 29 Sep 2023 13:33:50 +0200 (CEST)
-From:   Sebastian Ott <sebott@redhat.com>
-To:     Kees Cook <keescook@chromium.org>
-cc:     Eric Biederman <ebiederm@xmission.com>,
-        =?ISO-8859-15?Q?Thomas_Wei=DFschuh?= <linux@weissschuh.net>,
-        Pedro Falcato <pedro.falcato@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v4 0/6] binfmt_elf: Support segments with 0 filesz and
- misaligned starts
-In-Reply-To: <20230929031716.it.155-kees@kernel.org>
-Message-ID: <7ddc633e-c724-ad8d-e7ca-62d6b012b9e9@redhat.com>
-References: <20230929031716.it.155-kees@kernel.org>
+        d=1e100.net; s=20230601; t=1695987301; x=1696592101;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BjJf24AsZP4x+fO4di+uC9yyykaFt3qr2jF70Fg1IiM=;
+        b=b116Pp9bfDcWV94PaYp6J9Vh/+F8rhT+fblmI7rMbpbZZHbKnKfpuznuMre2C4tXCv
+         wFYWwkS6w+EbHB98Ve1mZMmRSaaipNbdZob71j5CyeM7kNQ+/pGcd7Loy6GyThjfTHlw
+         Vqeo45qUjMOCfE4siMpa9OxP30PnXTAlbWyRloVWuSMbQu9tPk7u9Pem+zOx9EMPDv99
+         JxIZTcRBoxlkMXHp9cgl3JyYLUbbiI93eFXyDU4CI9SGf6osFNGeqJHsdbm38f2UUwiZ
+         ppbiNTpYLGcjdXO9027wXcyOQY4QRxNNm5CCHcev5s6F4e7EdGih6siVpJZL5cjcS72S
+         B26A==
+X-Gm-Message-State: AOJu0YzMAgW+EOQZInpIIYuOyZP1O4oUWQLPsOf4aS4HXPl1fYlVWRjr
+        yX7s0YlNVAJwc4QxWJcU4M8gZxk6gn6E/d72BG0=
+X-Google-Smtp-Source: AGHT+IFp9gnMx0ESISmqJlkPnwf0XLzOHXiU8VLgxWGFzFyRj0NNCD6RNC2GWP+7lRYcmCvjEBRi2uEv418bfKkMMEU=
+X-Received: by 2002:a05:6102:39a:b0:44e:9e04:bfdf with SMTP id
+ m26-20020a056102039a00b0044e9e04bfdfmr3725760vsq.10.1695987301434; Fri, 29
+ Sep 2023 04:35:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+References: <20230920173445.3943581-1-bschubert@ddn.com> <CAOQ4uxi+jk7rv7mtnpH4RXbZJx6N+cWecqd3UyJJHsW8yw_SXg@mail.gmail.com>
+ <b22b8760-fca0-4251-b1a8-5989c26e1657@ddn.com> <CAOQ4uxgbSFDfgz1vFnDAaJo-36T6UPnUXZnk_y=bZMi0NqzvKQ@mail.gmail.com>
+In-Reply-To: <CAOQ4uxgbSFDfgz1vFnDAaJo-36T6UPnUXZnk_y=bZMi0NqzvKQ@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 29 Sep 2023 14:34:50 +0300
+Message-ID: <CAOQ4uxjZYknxbBOYsfoJQmRfNmioHom0hHCrm4G1iU0KKrgxrA@mail.gmail.com>
+Subject: Re: [PATCH v9 0/7] fuse: full atomic open and atomic-open-revalidate
+To:     Bernd Schubert <bschubert@ddn.com>
+Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "bernd.schubert@fastmail.fm" <bernd.schubert@fastmail.fm>,
+        "miklos@szeredi.hu" <miklos@szeredi.hu>,
+        Dharmendra Singh <dsingh@ddn.com>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Horst Birthelmer <hbirthelmer@ddn.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello Kees,
-
-On Thu, 28 Sep 2023, Kees Cook wrote:
-> This is the continuation of the work Eric started for handling
-> "p_memsz > p_filesz" in arbitrary segments (rather than just the last,
-> BSS, segment). I've added the suggested changes:
+On Thu, Sep 21, 2023 at 5:24=E2=80=AFPM Amir Goldstein <amir73il@gmail.com>=
+ wrote:
 >
-> - drop unused "elf_bss" variable
-> - refactor load_elf_interp() to use elf_load()
-> - refactor load_elf_library() to use elf_load()
-> - report padzero() errors when PROT_WRITE is present
-> - drop vm_brk()
+> On Thu, Sep 21, 2023 at 3:00=E2=80=AFPM Bernd Schubert <bschubert@ddn.com=
+> wrote:
+> >
+> > On 9/21/23 11:33, Amir Goldstein wrote:
+> > > On Thu, Sep 21, 2023 at 9:31=E2=80=AFAM Bernd Schubert <bschubert@ddn=
+.com> wrote:
+> > >>
+> > >> In FUSE, as of now, uncached lookups are expensive over the wire.
+> > >> E.g additional latencies and stressing (meta data) servers from
+> > >> thousands of clients. With atomic-open lookup before open
+> > >> can be avoided.
+> > >>
+> > >> Here is the link to performance numbers
+> > >> https://lore.kernel.org/linux-fsdevel/20220322121212.5087-1-dharamha=
+ns87@gmail.com/
+> > >>
+> > >> Here is the libfuse pull request
+> > >> https://github.com/libfuse/libfuse/pull/813
+> > >>
+> > >> The patches are passing passthrough_hp xfstests (libfuse part applie=
+d),
+> > >> although we had to introduce umount retries into xfstests, as recent
+> > >> kernels/xfstests fail umount in some tests with
+> > >> EBUSY - independent of atomic open. (Although outstanding for v7)
+> > >
+> > > Hi Bernd!
+> > >
+> > > I was using xfstests to test passthrough_hp (for FUSE kernel passthro=
+ugh).
+> > > FYI, I have made some improvements to the mount helper
+> > > in libfuse [1] to support remount, which helps pass a few tests.
+> >
+> > Thanks, just asked there to send it separate to upstream.
 
-While I was debugging the initial issue I stumbled over the following
-- care to take it as part of this series?
+Now upstream. Thanks for your help!
 
------>8
-[PATCH] mm: vm_brk_flags don't bail out while holding lock
+> >
+> > >
+> > > So far, I have all the tests in group -g quick.rw pass with the basel=
+ine
+> > > passthrough_hp (over xfs).
+> > >
+> > > Do you have a baseline for the entire quick/auto group to share with =
+me?
+> >
+> > Please find my results attached.
+>
+> Not too bad.
+> 3 more tests can pass with my mount helper fix for remount ;)
+>
 
-Calling vm_brk_flags() with flags set other than VM_EXEC
-will exit the function without releasing the mmap_write_lock.
+FYI, here is a wdiff of my -g auto passthough_hp test run compared to yours=
+:
 
-Just do the sanity check before the lock is acquired. This
-doesn't fix an actual issue since no caller sets a flag other
-than VM_EXEC.
+[-unpatched-6.5-]{+upatched-6.6-rc3+}
+Failures: generic/003 [-generic/020-] {+generic/099+} generic/184
+generic/192 generic/263 [-generic/294 generic/306-] {+generic/317
+generic/318 generic/319 generic/375+} generic/401 {+generic/423+}
+generic/426 [-generic/427-] generic/434 [-generic/452-]
+{+generic/444+} generic/467 [-generic/468-] generic/477
+[-generic/478-] generic/617 {+generic/532+} generic/631 generic/633
+generic/683 [-generic/688-]
 
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org
-Signed-off-by: Sebastian Ott <sebott@redhat.com>
----
-  mm/mmap.c | 6 +++---
-  1 file changed, 3 insertions(+), 3 deletions(-)
+Some of my {+NEW+} failures are because I have POSIX_ACL support enabled
+in Kconfig, so the same tests are [not run] in your results.
+I suspect that several permission related tests that PASS for you and FAIL
+for me may also be because of enabled POSIX_ACL.
+I was also running passthouhg_hp with -odefault_permissions, but AFAIK
+this did not change the fstests results.
 
-diff --git a/mm/mmap.c b/mm/mmap.c
-index b56a7f0c9f85..7ed286662839 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -3143,13 +3143,13 @@ int vm_brk_flags(unsigned long addr, unsigned long request, unsigned long flags)
-  	if (!len)
-  		return 0;
+> >
+> >
+> > > Can you share the patch that you are using to avoid the EBUSY errors?
+> >
+> >
+> > The simple version to avoid _most_ of EBUSY is this
+> >
 
--	if (mmap_write_lock_killable(mm))
--		return -EINTR;
--
-  	/* Until we need other flags, refuse anything except VM_EXEC. */
-  	if ((flags & (~VM_EXEC)) != 0)
-  		return -EINVAL;
+You know, I am testing passthrough_hp with kernel 6.6-rc3 and I did
+not encounter any EBUST errors.
 
-+	if (mmap_write_lock_killable(mm))
-+		return -EINTR;
-+
-  	ret = check_brk_limits(addr, len);
-  	if (ret)
-  		goto limits_failed;
--- 
-2.41.0
+Maybe there is some relevant vfs fix in 6.6-rc3, because you were testing 6=
+.5?
+Or maybe it's because my test VM has only 2 cpus.
 
+Thanks,
+Amir.
