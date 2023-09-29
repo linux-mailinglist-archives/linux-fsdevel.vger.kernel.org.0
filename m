@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D0C1C7B2F38
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Sep 2023 11:33:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7209B7B2F74
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Sep 2023 11:45:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232997AbjI2Jdi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Sep 2023 05:33:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32962 "EHLO
+        id S232990AbjI2JpW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Sep 2023 05:45:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54440 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232932AbjI2Jdf (ORCPT
+        with ESMTP id S232833AbjI2JpU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Sep 2023 05:33:35 -0400
+        Fri, 29 Sep 2023 05:45:20 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39543195;
-        Fri, 29 Sep 2023 02:33:32 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D9F8C433C8;
-        Fri, 29 Sep 2023 09:32:52 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 589C4195;
+        Fri, 29 Sep 2023 02:45:18 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CB9BC433C8;
+        Fri, 29 Sep 2023 09:44:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695980011;
-        bh=5rEQjJQmUmhQcZE/S/zbC0z+O4aP1HcivNZvR+uMTdw=;
+        s=k20201202; t=1695980717;
+        bh=oQTvAmCkCsoaLNjfsaMUmlY4D/qoWr90XSuheIQAYtc=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=j3Z7MPGXgH3qxJhUlGKswKaevoMz5lRlYfLKv517rB572Uft036HOzVnh6y+Fta2y
-         IoP7pRk6lJWa27fv+jFujIlmXsGfS+YQww12NsbvPCYDl6f8XCPE+CtURkcHaeicsG
-         yrkS/+0BXoBXAhDuBIWkGS4iWyGcgZc4uj5K1I6XTsFJQGfVSUCd06bbdxYUiSeitY
-         kWvaORdHP4IXSdIX2Ck5PihMbYV+j7YqPan4YQc6tbETcfSrUPTc518VDuKuEt3jeG
-         gYpsCzcJzJ2TfBOID0I9Ah10OPTMXVGJPcaLChcuIuOHlJVeXlo8F4Hi+JnhGg6W4h
-         6HAwcZKgDftHQ==
-Date:   Fri, 29 Sep 2023 11:32:49 +0200
+        b=WlV6Iok6t6x6wqtPDr2u2AsUWg4hMLM7cqaWPUDEeTpPDmS0JTVgMZlUl0HPmoBuT
+         /MtXZyL5oovwNZMVTtYCnXU5O+6UqBVLwaqKXfjDA7Gi3QJjfoFg0kuMJ76nbuwBFl
+         FM+QH0bvVjfmuBVMp9s5CgN9psq1cDgIpp1TcndUbm+j24otqfdnexR7nd6Jf+tuT9
+         QFRyk1BHauhj4nL9X9E976w/vvMYaEWzc8Ucm1v15cgYx/ItXrPfVSX9rwflr20Upl
+         1p24LfpWvr++mxmy87xjKVxbcTxjBWdURGxp63tvXsg372LYC0Zasv3SIGFC2AHpa8
+         8VA1Ctle4jMgQ==
+Date:   Fri, 29 Sep 2023 11:44:15 +0200
 From:   Christian Brauner <brauner@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Jeff Layton <jlayton@kernel.org>,
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         David Sterba <dsterba@suse.cz>,
         Amir Goldstein <amir73il@gmail.com>,
         Theodore Ts'o <tytso@mit.edu>,
-        Eric Biederman <ebiederm@xmission.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
         Kees Cook <keescook@chromium.org>, Jeremy Kerr <jk@ozlabs.org>,
-        Arnd Bergmann <arnd@arndb.de>,
         Michael Ellerman <mpe@ellerman.id.au>,
         Nicholas Piggin <npiggin@gmail.com>,
         Christophe Leroy <christophe.leroy@csgroup.eu>,
@@ -81,7 +81,7 @@ Cc:     Jeff Layton <jlayton@kernel.org>,
         Joel Becker <jlbec@evilplan.org>,
         Christoph Hellwig <hch@lst.de>,
         Nicolas Pitre <nico@fluxnic.net>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
         Ard Biesheuvel <ardb@kernel.org>, Gao Xiang <xiang@kernel.org>,
         Chao Yu <chao@kernel.org>, Yue Hu <huyue2@coolpad.com>,
         Jeffle Xu <jefflexu@linux.alibaba.com>,
@@ -148,7 +148,7 @@ Cc:     Jeff Layton <jlayton@kernel.org>,
         Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
         Hugh Dickins <hughd@google.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
+        "David S . Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
         Paolo Abeni <pabeni@redhat.com>,
@@ -177,18 +177,20 @@ Cc:     Jeff Layton <jlayton@kernel.org>,
         reiserfs-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
         samba-technical@lists.samba.org,
         linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        bpf@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
         apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
         selinux@vger.kernel.org
-Subject: Re: [PATCH 87/87] fs: move i_blocks up a few places in struct inode
-Message-ID: <20230929-keimt-umspannen-bfd12d2c2033@brauner>
+Subject: Re: [PATCH 86/87] fs: switch timespec64 fields in inode to discrete
+ integers
+Message-ID: <20230929-yuppie-unzweifelhaft-434bf13bc964@brauner>
 References: <20230928110554.34758-1-jlayton@kernel.org>
- <20230928110554.34758-3-jlayton@kernel.org>
- <CAHk-=wij_42Q9WHY898r-gugmT5c-1JJKRh3C+nTUd1hc1aeqQ@mail.gmail.com>
+ <20230928110554.34758-2-jlayton@kernel.org>
+ <6020d6e7-b187-4abb-bf38-dc09d8bd0f6d@app.fastmail.com>
+ <af047e4a1c6947c59d4a13d4ae221c784a5386b4.camel@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wij_42Q9WHY898r-gugmT5c-1JJKRh3C+nTUd1hc1aeqQ@mail.gmail.com>
+In-Reply-To: <af047e4a1c6947c59d4a13d4ae221c784a5386b4.camel@kernel.org>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -198,29 +200,24 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 28, 2023 at 10:41:34AM -0700, Linus Torvalds wrote:
-> On Thu, 28 Sept 2023 at 04:06, Jeff Layton <jlayton@kernel.org> wrote:
-> >
-> > Move i_blocks up above the i_lock, which moves the new 4 byte hole to
-> > just after the timestamps, without changing the size of the structure.
-> 
-> I'm sure others have mentioned this, but 'struct inode' is marked with
-> __randomize_layout, so the actual layout may end up being very
-> different.
-> 
-> I'm personally not convinced the whole structure randomization is
-> worth it - it's easy enough to figure out for any distro kernel since
-> the seed has to be the same across machines for modules to work, so
-> even if the seed isn't "public", any layout is bound to be fairly
-> easily discoverable.
-> 
-> So the whole randomization only really works for private kernel
-> builds, and it adds this kind of pain where "optimizing" the structure
-> layout is kind of pointless depending on various options.
-> 
-> I certainly *hope* no distro enables that pointless thing, but it's a worry.
+> It is a lot of churn though.
 
-They don't last we checked. Just last cycle we moved stuff in struct
-file around to optimize things and we explicitly said we don't give a
-damn about struct randomization. Anyone who enables this will bleed
-performance pretty badly, I would reckon.
+I think that i_{a,c,m}time shouldn't be accessed directly by
+filesystems same as no filesystem should really access i_{g,u}id which
+we also provide i_{g,u}id_{read,write}() accessors for. The mode is
+another example where really most often should use helpers because of all
+the set*id stripping that we need to do (and the bugs that we had
+because of this...).
+
+The interdependency between ctime and mtime is enough to hide this in
+accessors. The other big advantage is simply grepability. So really I
+would like to see this change even without the type switch.
+
+In other words, there's no need to lump the two changes together. Do the
+conversion part and we can argue about the switch to discrete integers
+separately.
+
+The other adavantage is that we have a cycle to see any possible
+regression from the conversion.
+
+Thoughts anyone?
