@@ -2,142 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E98CB7B30C4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Sep 2023 12:43:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 480CA7B317C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Sep 2023 13:34:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233075AbjI2Knl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Sep 2023 06:43:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43212 "EHLO
+        id S233000AbjI2Leu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Sep 2023 07:34:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232964AbjI2Knj (ORCPT
+        with ESMTP id S231774AbjI2Les (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Sep 2023 06:43:39 -0400
-Received: from mail-oo1-f80.google.com (mail-oo1-f80.google.com [209.85.161.80])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F159D1AC
-        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Sep 2023 03:43:37 -0700 (PDT)
-Received: by mail-oo1-f80.google.com with SMTP id 006d021491bc7-57b66da7116so21451771eaf.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Sep 2023 03:43:37 -0700 (PDT)
+        Fri, 29 Sep 2023 07:34:48 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81CB91AC
+        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Sep 2023 04:33:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1695987238;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=41757PcJTfcJdCCJnzrk+mJV9SfHrDKMX8xcqYqo8lQ=;
+        b=MX8VnDjfwmn4X6gHFJp/9ygDiz/1IyXPj3D1wvY23TMQGnXaPEVMZndIBUrZ/3CD2N3GIh
+        BG/0TPY55k9+cBIjLzyvb+tFxcgUA5A9MjEtebegPIcBBgfTaDenQDJF2m0vOZ6JGJgEq+
+        aaRFaZOrOzDxo/h2MwMbuL7GstqSfiY=
+Received: from mail-oa1-f70.google.com (mail-oa1-f70.google.com
+ [209.85.160.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-30-ESuMWTToNL-cBLlmhcSORg-1; Fri, 29 Sep 2023 07:33:55 -0400
+X-MC-Unique: ESuMWTToNL-cBLlmhcSORg-1
+Received: by mail-oa1-f70.google.com with SMTP id 586e51a60fabf-1dd053fb4f0so22854528fac.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Sep 2023 04:33:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695984217; x=1696589017;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=k0ftxZRR5u+Fvflo+SQNZa7Ogy6FSoMC45kKGa40Oj0=;
-        b=WruNW1Mnr72sEonLZwg0/HQpT6EFew613wBnyzb3bV1LdIQ8CjPj3He/+9Wj4PjpzL
-         Fusb2E5pfo6BzRksZ8qwuWlGCyVFP5k5dJzFlasRliyzIRAfy2uNKXo3NxMID68A7Gjn
-         o5RM0rFEt6Sk8TibnDHJjJXkoOFhkBKqd+u76pY1uqlur0/He3U4OTGwE6v6S1BoFVhl
-         KD3FKGCAoEzVkRMjBmYkIYSAgtOwEPqtFs5LZ0l+d/+9ZgaGWjyRrNk7vgWeoCdcT9/h
-         79wJ3RRCsJn5w+o/vdkw8LT1Bg8BihepQTHyRsNPXMxCkuprsA5HGwlPtA6fsi5MvTgZ
-         L95A==
-X-Gm-Message-State: AOJu0YwrgTdnOU7RDuesAIKR2rqiWM1VhfgFIA1ho68f+EXUdq2GBTVB
-        WQBHtw2ssy7FqIVofXAdpEfTwhfkVrAh0RRwilIuZWcfZO+w
-X-Google-Smtp-Source: AGHT+IH4SU/YcrZppsDmDzIoAB+uZ0KZRE8blWJFXuH26oF5tBSz3yDBf4aQ0vtzx+us5clXTRW+zOJRamP298VftAUO7CE3c4Cv
+        d=1e100.net; s=20230601; t=1695987234; x=1696592034;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=41757PcJTfcJdCCJnzrk+mJV9SfHrDKMX8xcqYqo8lQ=;
+        b=EdXd0Ibw2GX0MqKDbxzS4TjE4bgz37YEFiItnzNRxT3QTJihN32ATxbXN5GBBukrCl
+         QdbLe5YeVLQF2Y2NeT0WriL9s/Rqd+rSr9VF0L/SqncKz6SdoVavoXLhL2lY1RJiiYgh
+         vrpVKbcl3yZtASBqiQrZF9gD2bJL6NRJ5O/6lCn5HmR3BSNTGQjBko+Tg8SttVxCNu9F
+         mW7mifL1TmHrU5PknppE4USWW3yGmna53Za7CpBEWbAybJoIrag03gEBKZWwWA8Y/3Se
+         N9OyQ+HJLYDUbH9Oy8ew2fxP7Co3BI8fr1rKnpHkESgy145686rLCocZq/7QAya3Ga1L
+         hm8Q==
+X-Gm-Message-State: AOJu0YxCqneCop/nxWiw1ITOkGbgn2tfG9vUlM7L7eo5VrMwISHwOZ9x
+        nCoPub3b6nkviHkeW2RiddkJ9UpDqGwviDtXJMqojWE2xbWg6sGdgCrGUzTK68axwOKQM2X55Zg
+        BypBtwZaJAfuVNOMQKFS6paI0gQ==
+X-Received: by 2002:a05:6870:390c:b0:1d5:8fb8:98ef with SMTP id b12-20020a056870390c00b001d58fb898efmr4239893oap.31.1695987234746;
+        Fri, 29 Sep 2023 04:33:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGy01C0dVSSXf6tbU8suZwYSLTAwJpM9IkDfrRHB2EAqrXb4oZMZ4C9QwPCRWN7o+nu7em3qg==
+X-Received: by 2002:a05:6870:390c:b0:1d5:8fb8:98ef with SMTP id b12-20020a056870390c00b001d58fb898efmr4239876oap.31.1695987234411;
+        Fri, 29 Sep 2023 04:33:54 -0700 (PDT)
+Received: from rh (p200300c93f19a200f43f623a676b2d27.dip0.t-ipconnect.de. [2003:c9:3f19:a200:f43f:623a:676b:2d27])
+        by smtp.gmail.com with ESMTPSA id s8-20020a0cdc08000000b0065afa998364sm1149936qvk.95.2023.09.29.04.33.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Sep 2023 04:33:54 -0700 (PDT)
+Date:   Fri, 29 Sep 2023 13:33:50 +0200 (CEST)
+From:   Sebastian Ott <sebott@redhat.com>
+To:     Kees Cook <keescook@chromium.org>
+cc:     Eric Biederman <ebiederm@xmission.com>,
+        =?ISO-8859-15?Q?Thomas_Wei=DFschuh?= <linux@weissschuh.net>,
+        Pedro Falcato <pedro.falcato@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v4 0/6] binfmt_elf: Support segments with 0 filesz and
+ misaligned starts
+In-Reply-To: <20230929031716.it.155-kees@kernel.org>
+Message-ID: <7ddc633e-c724-ad8d-e7ca-62d6b012b9e9@redhat.com>
+References: <20230929031716.it.155-kees@kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a4a:2c0f:0:b0:57b:7849:1a4d with SMTP id
- o15-20020a4a2c0f000000b0057b78491a4dmr1191984ooo.0.1695984217191; Fri, 29 Sep
- 2023 03:43:37 -0700 (PDT)
-Date:   Fri, 29 Sep 2023 03:43:37 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000cf826706067d18fd@google.com>
-Subject: [syzbot] [btrfs?] WARNING in btrfs_release_global_block_rsv
-From:   syzbot <syzbot+10e8dae9863cb83db623@syzkaller.appspotmail.com>
-To:     clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=US-ASCII; format=flowed
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+Hello Kees,
 
-syzbot found the following issue on:
+On Thu, 28 Sep 2023, Kees Cook wrote:
+> This is the continuation of the work Eric started for handling
+> "p_memsz > p_filesz" in arbitrary segments (rather than just the last,
+> BSS, segment). I've added the suggested changes:
+>
+> - drop unused "elf_bss" variable
+> - refactor load_elf_interp() to use elf_load()
+> - refactor load_elf_library() to use elf_load()
+> - report padzero() errors when PROT_WRITE is present
+> - drop vm_brk()
 
-HEAD commit:    8a511e7efc5a Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=133af832680000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d594086f139d167
-dashboard link: https://syzkaller.appspot.com/bug?extid=10e8dae9863cb83db623
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+While I was debugging the initial issue I stumbled over the following
+- care to take it as part of this series?
 
-Unfortunately, I don't have any reproducer for this issue yet.
+----->8
+[PATCH] mm: vm_brk_flags don't bail out while holding lock
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/943dcd094ce2/disk-8a511e7e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/8647d59633ee/vmlinux-8a511e7e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/9c6b0fed6523/bzImage-8a511e7e.xz
+Calling vm_brk_flags() with flags set other than VM_EXEC
+will exit the function without releasing the mmap_write_lock.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+10e8dae9863cb83db623@syzkaller.appspotmail.com
+Just do the sanity check before the lock is acquired. This
+doesn't fix an actual issue since no caller sets a flag other
+than VM_EXEC.
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 5077 at fs/btrfs/block-rsv.c:451 btrfs_release_global_block_rsv+0x279/0x2e0 fs/btrfs/block-rsv.c:451
-Modules linked in:
-CPU: 0 PID: 5077 Comm: syz-executor.0 Not tainted 6.6.0-rc2-syzkaller-00414-g8a511e7efc5a #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/04/2023
-RIP: 0010:btrfs_release_global_block_rsv+0x279/0x2e0 fs/btrfs/block-rsv.c:451
-Code: ff e8 bb ff ef fd 0f 0b e9 c9 fe ff ff e8 af ff ef fd 0f 0b e9 fe fe ff ff e8 a3 ff ef fd 0f 0b e9 33 ff ff ff e8 97 ff ef fd <0f> 0b e9 68 ff ff ff e8 8b ff ef fd 0f 0b 5b 5d e9 82 ff ef fd e8
-RSP: 0018:ffffc90003c7fb78 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: ffff88807a310000 RCX: 0000000000000000
-RDX: ffff888026559dc0 RSI: ffffffff8397c729 RDI: 0000000000000007
-RBP: 000000000000e000 R08: 0000000000000007 R09: 0000000000000000
-R10: 000000000000e000 R11: 0000000000000001 R12: dffffc0000000000
-R13: 0000000000000001 R14: ffff888067b4a160 R15: ffff888067b4a000
-FS:  000055555730c480(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005557ad94b4e8 CR3: 000000003865f000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- btrfs_free_block_groups+0xbb6/0x13d0 fs/btrfs/block-group.c:4380
- close_ctree+0x8c4/0xdd0 fs/btrfs/disk-io.c:4413
- generic_shutdown_super+0x161/0x3c0 fs/super.c:693
- kill_anon_super+0x3a/0x60 fs/super.c:1292
- btrfs_kill_super+0x3b/0x50 fs/btrfs/super.c:2144
- deactivate_locked_super+0x9a/0x170 fs/super.c:481
- deactivate_super+0xde/0x100 fs/super.c:514
- cleanup_mnt+0x222/0x3d0 fs/namespace.c:1254
- task_work_run+0x14d/0x240 kernel/task_work.c:180
- resume_user_mode_work include/linux/resume_user_mode.h:49 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:171 [inline]
- exit_to_user_mode_prepare+0x215/0x240 kernel/entry/common.c:204
- __syscall_exit_to_user_mode_work kernel/entry/common.c:285 [inline]
- syscall_exit_to_user_mode+0x1d/0x60 kernel/entry/common.c:296
- do_syscall_64+0x44/0xb0 arch/x86/entry/common.c:86
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7faf3687de17
-Code: b0 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 b0 ff ff ff f7 d8 64 89 02 b8
-RSP: 002b:00007ffe2bf9fec8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007faf3687de17
-RDX: 0000000000000000 RSI: 000000000000000a RDI: 00007ffe2bf9ff80
-RBP: 00007ffe2bf9ff80 R08: 0000000000000000 R09: 0000000000000000
-R10: 00000000ffffffff R11: 0000000000000246 R12: 00007ffe2bfa1040
-R13: 00007faf368c73b9 R14: 00000000001a2e26 R15: 0000000000000018
- </TASK>
-
-
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org
+Signed-off-by: Sebastian Ott <sebott@redhat.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+  mm/mmap.c | 6 +++---
+  1 file changed, 3 insertions(+), 3 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/mm/mmap.c b/mm/mmap.c
+index b56a7f0c9f85..7ed286662839 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -3143,13 +3143,13 @@ int vm_brk_flags(unsigned long addr, unsigned long request, unsigned long flags)
+  	if (!len)
+  		return 0;
 
-If the bug is already fixed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+-	if (mmap_write_lock_killable(mm))
+-		return -EINTR;
+-
+  	/* Until we need other flags, refuse anything except VM_EXEC. */
+  	if ((flags & (~VM_EXEC)) != 0)
+  		return -EINVAL;
 
-If you want to overwrite bug's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
++	if (mmap_write_lock_killable(mm))
++		return -EINTR;
++
+  	ret = check_brk_limits(addr, len);
+  	if (ret)
+  		goto limits_failed;
+-- 
+2.41.0
 
-If the bug is a duplicate of another bug, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
