@@ -2,258 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E4547B2A6B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Sep 2023 05:07:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3CB87B2A75
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Sep 2023 05:24:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232464AbjI2DGs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Sep 2023 23:06:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35638 "EHLO
+        id S232518AbjI2DYm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Sep 2023 23:24:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229912AbjI2DGr (ORCPT
+        with ESMTP id S232178AbjI2DYl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Sep 2023 23:06:47 -0400
-Received: from mail-oo1-f79.google.com (mail-oo1-f79.google.com [209.85.161.79])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 892941A1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Sep 2023 20:06:43 -0700 (PDT)
-Received: by mail-oo1-f79.google.com with SMTP id 006d021491bc7-57be2b97298so13378502eaf.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Sep 2023 20:06:43 -0700 (PDT)
+        Thu, 28 Sep 2023 23:24:41 -0400
+Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9ABE61A1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Sep 2023 20:24:37 -0700 (PDT)
+Received: by mail-pl1-x636.google.com with SMTP id d9443c01a7336-1c4194f769fso102694035ad.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Sep 2023 20:24:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1695957877; x=1696562677; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DZpy/gLfnuMsQ3zYwfMZFr7l/UudGqfvJfNYCKkC6BA=;
+        b=OjoTLLKT2BLmAAwOCFmylxZWmrd8SbraEqzMVMu3orKXWJYB8mjAuosRLOmD+TC7Bz
+         gTfm+1xA0YRedGX5bo4NUJdIq4ndJ82qIhixDAUh/u86sYdd057zDna4w4uR8QNZAQy7
+         G4xgnn+D3W9igApDT5au+08XUNb1n1kMzAES0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695956803; x=1696561603;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gCOLI3FOr/N5A6msbawAvHTzkH+M8y888m9G1F9Jre4=;
-        b=iRAsTdMoPSzlK9KaDH86nPh3m+pJ1E+ojirQGJfNg2BCy2lKswQfiMdtglmMkkGWAB
-         iuiNaDziXsVD3oNciFLJzS4lec+VuGdpT13RbVTCpgW0OULnB5xYDeMdXMt69vp8dMdK
-         YO01jRrmUt35AiAb/jKzTp0bXc5y9PIlIV6Iy1teKXV4CYa3nAY0wpzChBWjQOM9yhtE
-         Ca8vvhaydjUQG9fq8LxebulLwn3nfjxtwFh7WJJieAzghJjn5vU7SXgLZvt49ASc5EJy
-         uLLTzyNSVd+QYl5kbqolIdWmENFYzwSkM2kkdFTz0Hfj/kXOxHnNpoc6/GLHi0f4dpya
-         BZ5w==
-X-Gm-Message-State: AOJu0YxVS+hTARX4NBXZvwt6B+5NskdT5pqx6GfpwrWuPYdav3n6hmAW
-        BKkVR3uwXCJo+ter1BUexi3/1RtcerpaXoMbXmZJE2mifgGd
-X-Google-Smtp-Source: AGHT+IFhUKrSES8ox2QzEcAgtamC5RFDZjA7uGU0rFdwkxWMOGINz/SsdShIrkdHFekex71/NM8Jui0kDl5sxhqo5KCAHTDNBEdu
+        d=1e100.net; s=20230601; t=1695957877; x=1696562677;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DZpy/gLfnuMsQ3zYwfMZFr7l/UudGqfvJfNYCKkC6BA=;
+        b=e6lOZbiiTrNxVJ0u7PmBtpKhoMZw1JKg/981jvc9fb+ttQbcFi2+U1DdY9BMgM983s
+         MN4joWJvQqRUIDOZvN7P4+dDtkwsIHVUf1PRxK0zmQ5JqqSPYW2fueRUKOAmFuBP6Spy
+         aZsxEGib9tnMAFB6Ox6A1FLeAWkA1CAyH0v6Eo+lEqMpXxIFJRflQkPjcoebROFGQ0rr
+         VURPWHtitvV+OZmXMrIF6FLkEdVn/X5KcTt1zG90Lzf7okGOPytFX30viP1osXl6zBGz
+         um8HzprcqJLYbcMNLDTou5sI6YZn9NaOB8wVQhoxrCBFSYseJL7lEHOzkxxaUy7oYv33
+         bG/Q==
+X-Gm-Message-State: AOJu0Ywyffzx72p0gKzF06KxVdyqBq12ImKVJrffzMBXGPpfvJAfY9Q/
+        l5etykPx+ZSy2CAPMz5+2nCAjw==
+X-Google-Smtp-Source: AGHT+IG9cnWbn0hVG+1LR+a11ImsezJeyyFe0SBw+gyrL4qhOuJ5PkqXrWcVlge8k9fcAkF9UBo6zA==
+X-Received: by 2002:a17:903:1cf:b0:1b8:94e9:e7b0 with SMTP id e15-20020a17090301cf00b001b894e9e7b0mr3606862plh.9.1695957877031;
+        Thu, 28 Sep 2023 20:24:37 -0700 (PDT)
+Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id iw12-20020a170903044c00b001bf574dd1fesm6250537plb.141.2023.09.28.20.24.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Sep 2023 20:24:36 -0700 (PDT)
+From:   Kees Cook <keescook@chromium.org>
+To:     Eric Biederman <ebiederm@xmission.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Sebastian Ott <sebott@redhat.com>,
+        =?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+        Pedro Falcato <pedro.falcato@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-hardening@vger.kernel.org
+Subject: [PATCH v4 0/6] binfmt_elf: Support segments with 0 filesz and misaligned starts
+Date:   Thu, 28 Sep 2023 20:24:28 -0700
+Message-Id: <20230929031716.it.155-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-X-Received: by 2002:a05:6808:1807:b0:3ac:ab4f:f05 with SMTP id
- bh7-20020a056808180700b003acab4f0f05mr1363894oib.5.1695956802870; Thu, 28 Sep
- 2023 20:06:42 -0700 (PDT)
-Date:   Thu, 28 Sep 2023 20:06:42 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ca2df5060676b6d8@google.com>
-Subject: [syzbot] [overlayfs?] possible deadlock in ovl_copy_up_start (2)
-From:   syzbot <syzbot+e8628856801e9809216f@syzkaller.appspotmail.com>
-To:     amir73il@gmail.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS autolearn=no
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1382; i=keescook@chromium.org;
+ h=from:subject:message-id; bh=uV4AJsRv4n/gB4mSOC9KIOnGOAI8uNiU0zUGBP7t1x8=;
+ b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBlFkNxLv+WtDGXS3EGA7QG2806nd9yzM662vbJz
+ Z/QF9lP7jqJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZRZDcQAKCRCJcvTf3G3A
+ Jl1KD/4w77J7PmG0TdHjUB7lH4ZlBX43xi8xD755lb9vhHxLRTtI3hqQ+JvyAc97r4JGaph3Jk3
+ +kKf02DqkcBcEm0W7oeO0JKZtqIfM8XEHkHQ9/pE8mKfalwC5DCFnIJbNcsdxr9SSwhz0POUO3E
+ QaUEJZjccKFkHTwDKLd3XRvNdDZ3jll5HxQfWEKXvyjNCHVTG5jgC+GQB8d+RSZPwp1CGvEWqN5
+ 4GDF1tB2l1DHa4lX6yI8qPhawqRzZuJFTO3SSse+E2IPkgfkt6VfJ8cWyqDd6AMALfIOl3hIq7E
+ u0hVjNyK8WcQSmSzMHbrAHi1hVxdRRZzfKJw49k9mbc3zUKx2iTEbJRitqjEQOXaE9xDtpENZ8z
+ ACRF8mJ3ewqtPtv5N3XhiB9SiOUGIBaWR5qCcgL989zLDhLf7IdBgj6pCpz+35BH+8Jx3ioPlse
+ tvWvLx1KjocOYMQWqde+FJQsJokrG/P2gt8jKDPp96b16uQlble+qU64f0zUbbTRQXjRaGP9JE6
+ lUxI28L4rZ/qPL2gFq6pMGTT2offlDs6i1y5OBptudXqWdphur4s1n/ctL4RlT89tTT81h/qPgm
+ T2AB0n5jBX6DQm4Ji0DI78f0/MRN0aAbjeLYg7EiWO86oDL4JmXSqgzGwkWXgxhXTqngX8Gnzoc
+ dw/DwpD vMJ3XKAQ==
+X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+Hi,
 
-syzbot found the following issue on:
+This is the continuation of the work Eric started for handling
+"p_memsz > p_filesz" in arbitrary segments (rather than just the last,
+BSS, segment). I've added the suggested changes:
 
-HEAD commit:    940fcc189c51 Add linux-next specific files for 20230921
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=12dea70e680000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1f140ae6e669ac24
-dashboard link: https://syzkaller.appspot.com/bug?extid=e8628856801e9809216f
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+ - drop unused "elf_bss" variable
+ - refactor load_elf_interp() to use elf_load()
+ - refactor load_elf_library() to use elf_load()
+ - report padzero() errors when PROT_WRITE is present
+ - drop vm_brk()
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Thanks!
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/b8921b235c24/disk-940fcc18.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c80a9f6bcdd4/vmlinux-940fcc18.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/ed10a4df6950/bzImage-940fcc18.xz
+-Kees
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e8628856801e9809216f@syzkaller.appspotmail.com
+v4:
+ - refactor load_elf_library() too
+ - don't refactor padzero(), just test in the only remaining caller
+ - drop now-unused vm_brk()
+v3: https://lore.kernel.org/all/20230927033634.make.602-kees@kernel.org
+v2: https://lore.kernel.org/lkml/87sf71f123.fsf@email.froward.int.ebiederm.org
+v1: https://lore.kernel.org/lkml/87jzsemmsd.fsf_-_@email.froward.int.ebiederm.org
 
-======================================================
-WARNING: possible circular locking dependency detected
-6.6.0-rc2-next-20230921-syzkaller #0 Not tainted
-------------------------------------------------------
-syz-executor.3/15498 is trying to acquire lock:
-ffff88808e717968 (&ovl_i_lock_key[depth]#2){+.+.}-{3:3}, at: ovl_inode_lock_interruptible fs/overlayfs/overlayfs.h:630 [inline]
-ffff88808e717968 (&ovl_i_lock_key[depth]#2){+.+.}-{3:3}, at: ovl_copy_up_start+0x4d/0x290 fs/overlayfs/util.c:692
+Eric W. Biederman (1):
+  binfmt_elf: Support segments with 0 filesz and misaligned starts
 
-but task is already holding lock:
-ffff88801d8b13e0 (&iint->mutex){+.+.}-{3:3}, at: process_measurement+0x893/0x1cc0 security/integrity/ima/ima_main.c:266
+Kees Cook (5):
+  binfmt_elf: elf_bss no longer used by load_elf_binary()
+  binfmt_elf: Use elf_load() for interpreter
+  binfmt_elf: Use elf_load() for library
+  binfmt_elf: Only report padzero() errors when PROT_WRITE
+  mm: Remove unused vm_brk()
 
-which lock already depends on the new lock.
+ fs/binfmt_elf.c    | 214 ++++++++++++++++-----------------------------
+ include/linux/mm.h |   3 +-
+ mm/mmap.c          |   6 --
+ mm/nommu.c         |   5 --
+ 4 files changed, 76 insertions(+), 152 deletions(-)
 
+-- 
+2.34.1
 
-the existing dependency chain (in reverse order) is:
-
--> #2 (&iint->mutex){+.+.}-{3:3}:
-       __mutex_lock_common kernel/locking/mutex.c:603 [inline]
-       __mutex_lock+0x181/0x1340 kernel/locking/mutex.c:747
-       process_measurement+0x893/0x1cc0 security/integrity/ima/ima_main.c:266
-       ima_file_check+0xc2/0x110 security/integrity/ima/ima_main.c:543
-       do_open fs/namei.c:3622 [inline]
-       path_openat+0x17a1/0x29c0 fs/namei.c:3777
-       do_filp_open+0x1de/0x430 fs/namei.c:3804
-       do_sys_openat2+0x176/0x1e0 fs/open.c:1422
-       do_sys_open fs/open.c:1437 [inline]
-       __do_sys_open fs/open.c:1445 [inline]
-       __se_sys_open fs/open.c:1441 [inline]
-       __x64_sys_open+0x154/0x1e0 fs/open.c:1441
-       do_syscall_x64 arch/x86/entry/common.c:51 [inline]
-       do_syscall_64+0x38/0xb0 arch/x86/entry/common.c:81
-       entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
--> #1 (sb_writers#4){.+.+}-{0:0}:
-       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
-       __sb_start_write include/linux/fs.h:1572 [inline]
-       sb_start_write include/linux/fs.h:1647 [inline]
-       ovl_start_write+0xfe/0x2d0 fs/overlayfs/util.c:31
-       ovl_copy_up_tmpfile fs/overlayfs/copy_up.c:830 [inline]
-       ovl_do_copy_up fs/overlayfs/copy_up.c:945 [inline]
-       ovl_copy_up_one+0x16a5/0x3250 fs/overlayfs/copy_up.c:1137
-       ovl_copy_up_flags+0x189/0x200 fs/overlayfs/copy_up.c:1192
-       ovl_xattr_set+0x387/0x4e0 fs/overlayfs/xattrs.c:56
-       __vfs_setxattr+0x173/0x1d0 fs/xattr.c:201
-       __vfs_setxattr_noperm+0x127/0x5e0 fs/xattr.c:235
-       __vfs_setxattr_locked+0x17e/0x250 fs/xattr.c:296
-       vfs_setxattr+0x146/0x350 fs/xattr.c:322
-       do_setxattr+0x142/0x170 fs/xattr.c:630
-       setxattr+0x159/0x170 fs/xattr.c:653
-       path_setxattr+0x1a3/0x1d0 fs/xattr.c:672
-       __do_sys_setxattr fs/xattr.c:688 [inline]
-       __se_sys_setxattr fs/xattr.c:684 [inline]
-       __x64_sys_setxattr+0xc4/0x160 fs/xattr.c:684
-       do_syscall_x64 arch/x86/entry/common.c:51 [inline]
-       do_syscall_64+0x38/0xb0 arch/x86/entry/common.c:81
-       entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
--> #0 (&ovl_i_lock_key[depth]#2){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3134 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
-       validate_chain kernel/locking/lockdep.c:3868 [inline]
-       __lock_acquire+0x2e3d/0x5de0 kernel/locking/lockdep.c:5136
-       lock_acquire kernel/locking/lockdep.c:5753 [inline]
-       lock_acquire+0x1ae/0x510 kernel/locking/lockdep.c:5718
-       __mutex_lock_common kernel/locking/mutex.c:603 [inline]
-       __mutex_lock+0x181/0x1340 kernel/locking/mutex.c:747
-       ovl_inode_lock_interruptible fs/overlayfs/overlayfs.h:630 [inline]
-       ovl_copy_up_start+0x4d/0x290 fs/overlayfs/util.c:692
-       ovl_copy_up_one+0x598/0x3250 fs/overlayfs/copy_up.c:1130
-       ovl_copy_up_flags+0x189/0x200 fs/overlayfs/copy_up.c:1192
-       ovl_maybe_copy_up+0x124/0x160 fs/overlayfs/copy_up.c:1222
-       ovl_open+0x16f/0x330 fs/overlayfs/file.c:166
-       do_dentry_open+0x88b/0x1730 fs/open.c:929
-       vfs_open fs/open.c:1063 [inline]
-       dentry_open+0x13f/0x1d0 fs/open.c:1079
-       ima_calc_file_hash+0x2c4/0x4a0 security/integrity/ima/ima_crypto.c:558
-       ima_collect_measurement+0x5e2/0x6f0 security/integrity/ima/ima_api.c:289
-       process_measurement+0xc87/0x1cc0 security/integrity/ima/ima_main.c:345
-       ima_file_check+0xc2/0x110 security/integrity/ima/ima_main.c:543
-       do_open fs/namei.c:3622 [inline]
-       path_openat+0x17a1/0x29c0 fs/namei.c:3777
-       do_filp_open+0x1de/0x430 fs/namei.c:3804
-       do_sys_openat2+0x176/0x1e0 fs/open.c:1422
-       do_sys_open fs/open.c:1437 [inline]
-       __do_sys_openat fs/open.c:1453 [inline]
-       __se_sys_openat fs/open.c:1448 [inline]
-       __x64_sys_openat+0x175/0x210 fs/open.c:1448
-       do_syscall_x64 arch/x86/entry/common.c:51 [inline]
-       do_syscall_64+0x38/0xb0 arch/x86/entry/common.c:81
-       entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
-other info that might help us debug this:
-
-Chain exists of:
-  &ovl_i_lock_key[depth]#2 --> sb_writers#4 --> &iint->mutex
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&iint->mutex);
-                               lock(sb_writers#4);
-                               lock(&iint->mutex);
-  lock(&ovl_i_lock_key[depth]#2);
-
- *** DEADLOCK ***
-
-1 lock held by syz-executor.3/15498:
- #0: ffff88801d8b13e0 (&iint->mutex){+.+.}-{3:3}, at: process_measurement+0x893/0x1cc0 security/integrity/ima/ima_main.c:266
-
-stack backtrace:
-CPU: 0 PID: 15498 Comm: syz-executor.3 Not tainted 6.6.0-rc2-next-20230921-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/04/2023
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xd9/0x1b0 lib/dump_stack.c:106
- check_noncircular+0x311/0x3f0 kernel/locking/lockdep.c:2187
- check_prev_add kernel/locking/lockdep.c:3134 [inline]
- check_prevs_add kernel/locking/lockdep.c:3253 [inline]
- validate_chain kernel/locking/lockdep.c:3868 [inline]
- __lock_acquire+0x2e3d/0x5de0 kernel/locking/lockdep.c:5136
- lock_acquire kernel/locking/lockdep.c:5753 [inline]
- lock_acquire+0x1ae/0x510 kernel/locking/lockdep.c:5718
- __mutex_lock_common kernel/locking/mutex.c:603 [inline]
- __mutex_lock+0x181/0x1340 kernel/locking/mutex.c:747
- ovl_inode_lock_interruptible fs/overlayfs/overlayfs.h:630 [inline]
- ovl_copy_up_start+0x4d/0x290 fs/overlayfs/util.c:692
- ovl_copy_up_one+0x598/0x3250 fs/overlayfs/copy_up.c:1130
- ovl_copy_up_flags+0x189/0x200 fs/overlayfs/copy_up.c:1192
- ovl_maybe_copy_up+0x124/0x160 fs/overlayfs/copy_up.c:1222
- ovl_open+0x16f/0x330 fs/overlayfs/file.c:166
- do_dentry_open+0x88b/0x1730 fs/open.c:929
- vfs_open fs/open.c:1063 [inline]
- dentry_open+0x13f/0x1d0 fs/open.c:1079
- ima_calc_file_hash+0x2c4/0x4a0 security/integrity/ima/ima_crypto.c:558
- ima_collect_measurement+0x5e2/0x6f0 security/integrity/ima/ima_api.c:289
- process_measurement+0xc87/0x1cc0 security/integrity/ima/ima_main.c:345
- ima_file_check+0xc2/0x110 security/integrity/ima/ima_main.c:543
- do_open fs/namei.c:3622 [inline]
- path_openat+0x17a1/0x29c0 fs/namei.c:3777
- do_filp_open+0x1de/0x430 fs/namei.c:3804
- do_sys_openat2+0x176/0x1e0 fs/open.c:1422
- do_sys_open fs/open.c:1437 [inline]
- __do_sys_openat fs/open.c:1453 [inline]
- __se_sys_openat fs/open.c:1448 [inline]
- __x64_sys_openat+0x175/0x210 fs/open.c:1448
- do_syscall_x64 arch/x86/entry/common.c:51 [inline]
- do_syscall_64+0x38/0xb0 arch/x86/entry/common.c:81
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f30bf67cae9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f30c03990c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 00007f30bf79c050 RCX: 00007f30bf67cae9
-RDX: 0000000000008443 RSI: 0000000020004280 RDI: ffffffffffffff9c
-RBP: 00007f30bf6c847a R08: 0000000000000000 R09: 0000000000000000
-R10: 00000000000000cc R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000006e R14: 00007f30bf79c050 R15: 00007ffce77ebe68
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the bug is already fixed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite bug's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the bug is a duplicate of another bug, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
