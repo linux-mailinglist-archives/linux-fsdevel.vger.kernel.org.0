@@ -2,67 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 60D227B3E27
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Sep 2023 07:01:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D7F37B3E2E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Sep 2023 07:02:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234109AbjI3FBz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 30 Sep 2023 01:01:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38942 "EHLO
+        id S234114AbjI3FCV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 30 Sep 2023 01:02:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234103AbjI3FBp (ORCPT
+        with ESMTP id S234126AbjI3FBr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 30 Sep 2023 01:01:45 -0400
-Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0BB9171D;
-        Fri, 29 Sep 2023 22:01:25 -0700 (PDT)
-Received: by mail-pg1-x534.google.com with SMTP id 41be03b00d2f7-577e62e2adfso10221040a12.2;
-        Fri, 29 Sep 2023 22:01:25 -0700 (PDT)
+        Sat, 30 Sep 2023 01:01:47 -0400
+Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F5F61981;
+        Fri, 29 Sep 2023 22:01:29 -0700 (PDT)
+Received: by mail-pg1-x531.google.com with SMTP id 41be03b00d2f7-53fa455cd94so10168441a12.2;
+        Fri, 29 Sep 2023 22:01:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696050085; x=1696654885; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1696050087; x=1696654887; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XF2XqSbh4bo4XlOeQPlKNJjJGH1v1k5zwfAqr3Sp+Eg=;
-        b=Uqg4XSc8LOXnjixz7zU3bwd86/0oR3nfdfPp7D1FuNFzHUUgS9qLlrWBclpd0ukjD6
-         yfXo7mlJKWZvuySlQyhXif7oLX9TVekbMd+P3Zt6Ls7lejpK7MNIte4D6e64ukeFz+Om
-         wVrDxIOmYshBZAo6UvsRoUkJr7am0oNt3c+GBgwmVA5IOWBZP60wforu41Mo4Ly90lI4
-         e04H/PBO3TT48CWBzLNTXPfHlHfX7pGet6Jpula/Hg5LzZxykQdrcWtmxVa1CinC7B9E
-         tQjqHsQcZXOeX9wjm3cajHjZ8uv9OHbbHYBZbXatylxh2qZthSyIidm8eUo+5rn24OFX
-         QZKw==
+        bh=xs6PHcuMqp3EC+KxYSNZ8/WH8PkZyTmto6O1b+gZZPE=;
+        b=WGoZ93sLPHX8oeOwmjBE/faiAhK3db/DhACNLKBkyeabwg/YHXqmQqrLg7VijkplBO
+         h7JbmMBGTt4uq/wAgNpYTHXcIE+EBBIz4YUIDjS0mGgzCRs5mRqB+cddKcs6kOmy4kyi
+         KcWyf4PbO6r7yJzcNRkeCeOEMMjJbKraSbCg9BObA3vGjSVjdPoL4qEnMfvAw1b+6Wfb
+         4pKs+a3Dj88IJ2/b4McJDHWujJjCkeaU9ZkEFXJY27Qd3BPI9MFMZitb0Xanl0pZF2n2
+         Na5Z8TjSDLR9qoQ4TOSg6Vj6o2AsWB3P4ivAvDyER7wom0Nav/PdsgE8NFENZ3QQn9l8
+         3ryA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696050085; x=1696654885;
+        d=1e100.net; s=20230601; t=1696050087; x=1696654887;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=XF2XqSbh4bo4XlOeQPlKNJjJGH1v1k5zwfAqr3Sp+Eg=;
-        b=FQAWd07JQuTQXi3Be6MHh7s1//+E5UIwWZ8EwXWEMH1aTyTbO5Vg8ezNxZbliEZ7If
-         LKYp4p7HbmWcNkM53zHDfULvsun3EkAuXjlynADsnB2CRzD8mgmNuh07hOjR04+3IxvJ
-         27iwhc/moPsAFPGed0DoUnZyFWEpBTQ3ncTog1CRXwVmSovfzXN9Z1vf58USazmBk79e
-         WEzSOkhDxkNMJWToeLrRrWxaedkIXjJ43tpo+cT3yLN1ddybrsdKqbmXGoESLxdL/rtT
-         TDQiQ7snt0F4lTUc6FgGbedmazZk/B9ZHArNK9I8X++HCQ0Gqe4ZWRVE/TiXOkOKclOS
-         XVjg==
-X-Gm-Message-State: AOJu0YwO+lIdFP/zdATKnMNiswyp7+UA0cXUjJHF/W9+EP/zZIh9lJAq
-        POMlBzkDEUiEGOc4+cvRNrE=
-X-Google-Smtp-Source: AGHT+IE7V3xhs1zZFq/CXLdO1Vk52Mu1MAiCsLfb6oVrmfuzI+coZi/OnssV2s1Maqaixu9A56W4oA==
-X-Received: by 2002:a05:6a20:3c87:b0:15e:bcd:57f5 with SMTP id b7-20020a056a203c8700b0015e0bcd57f5mr6763988pzj.3.1696050084677;
-        Fri, 29 Sep 2023 22:01:24 -0700 (PDT)
+        bh=xs6PHcuMqp3EC+KxYSNZ8/WH8PkZyTmto6O1b+gZZPE=;
+        b=LYB63Uzyzaf4t8wRk0c7hGO8qqs6tO3QpxWw+Zc7fgZS0IyDrxk2f+/wh6HHYpi5Cd
+         YJxjJr7V3Qh3dnWAmGxlcyPC62IovgytWuxp6jiaPrfNMtB5Kqny/wwQxh2Rry2ews6f
+         1dgYVjA+Yci3E5M3Bjoz119mKsFFvPuM3dnJpWrylpr10J8veNqAMQp5Z8xMWaOtZ/Fp
+         boJsypCec7GIZAzrwmCqjNQDrddsuJkVSGFod5TgzhQ3eZOjtkpO4nnZj9CG1eQ8+qvY
+         gLyfqbYJGKGBPRlboNPu0Ie2UJrS+UtkdPV04gScLbWqyAzZWl6S/C2Z7h/fNW7HdHMO
+         3kqA==
+X-Gm-Message-State: AOJu0YyMbp05vB6d5pWn8jMEqh6CudRrKtUr1tXtNiowqFn8HYd1YDQP
+        t1caTrKshYB+w1NjQxgBC/0=
+X-Google-Smtp-Source: AGHT+IF2ffj2CqhPFD3YrjokUH17pXIdrnqNQhiaAIcE818tuDF2gSNmYuJmOfBgBwWGbBTiSEob2A==
+X-Received: by 2002:a17:902:ce8b:b0:1c0:d5b1:2de8 with SMTP id f11-20020a170902ce8b00b001c0d5b12de8mr6916994plg.9.1696050087440;
+        Fri, 29 Sep 2023 22:01:27 -0700 (PDT)
 Received: from wedsonaf-dev.home.lan ([189.124.190.154])
-        by smtp.googlemail.com with ESMTPSA id y10-20020a17090322ca00b001c322a41188sm392136plg.117.2023.09.29.22.01.21
+        by smtp.googlemail.com with ESMTPSA id y10-20020a17090322ca00b001c322a41188sm392136plg.117.2023.09.29.22.01.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Sep 2023 22:01:24 -0700 (PDT)
+        Fri, 29 Sep 2023 22:01:27 -0700 (PDT)
 From:   Wedson Almeida Filho <wedsonaf@gmail.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
         linux-fsdevel@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
         Wedson Almeida Filho <walmeida@microsoft.com>,
-        Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
-        Yue Hu <huyue2@coolpad.com>,
-        Jeffle Xu <jefflexu@linux.alibaba.com>,
-        linux-erofs@lists.ozlabs.org
-Subject: [PATCH 08/29] erofs: move erofs_xattr_handlers and xattr_handler_map to .rodata
-Date:   Sat, 30 Sep 2023 02:00:12 -0300
-Message-Id: <20230930050033.41174-9-wedsonaf@gmail.com>
+        Jan Kara <jack@suse.com>, linux-ext4@vger.kernel.org
+Subject: [PATCH 09/29] ext2: move ext2_xattr_handlers and ext2_xattr_handler_map to .rodata
+Date:   Sat, 30 Sep 2023 02:00:13 -0300
+Message-Id: <20230930050033.41174-10-wedsonaf@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230930050033.41174-1-wedsonaf@gmail.com>
 References: <20230930050033.41174-1-wedsonaf@gmail.com>
@@ -81,54 +78,51 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 From: Wedson Almeida Filho <walmeida@microsoft.com>
 
 This makes it harder for accidental or malicious changes to
-erofs_xattr_handlers or xattr_handler_map at runtime.
+ext2_xattr_handlers or ext2_xattr_handler_map at runtime.
 
-Cc: Gao Xiang <xiang@kernel.org>
-Cc: Chao Yu <chao@kernel.org>
-Cc: Yue Hu <huyue2@coolpad.com>
-Cc: Jeffle Xu <jefflexu@linux.alibaba.com>
-Cc: linux-erofs@lists.ozlabs.org
+Cc: Jan Kara <jack@suse.com>
+Cc: linux-ext4@vger.kernel.org
 Signed-off-by: Wedson Almeida Filho <walmeida@microsoft.com>
 ---
- fs/erofs/xattr.c | 2 +-
- fs/erofs/xattr.h | 4 ++--
+ fs/ext2/xattr.c | 4 ++--
+ fs/ext2/xattr.h | 2 +-
  2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/fs/erofs/xattr.c b/fs/erofs/xattr.c
-index 40178b6e0688..a6dd68ea5df2 100644
---- a/fs/erofs/xattr.c
-+++ b/fs/erofs/xattr.c
-@@ -166,7 +166,7 @@ const struct xattr_handler __maybe_unused erofs_xattr_security_handler = {
- };
+diff --git a/fs/ext2/xattr.c b/fs/ext2/xattr.c
+index 8906ba479aaf..cfbe376da612 100644
+--- a/fs/ext2/xattr.c
++++ b/fs/ext2/xattr.c
+@@ -98,7 +98,7 @@ static struct buffer_head *ext2_xattr_cache_find(struct inode *,
+ static void ext2_xattr_rehash(struct ext2_xattr_header *,
+ 			      struct ext2_xattr_entry *);
+ 
+-static const struct xattr_handler *ext2_xattr_handler_map[] = {
++static const struct xattr_handler * const ext2_xattr_handler_map[] = {
+ 	[EXT2_XATTR_INDEX_USER]		     = &ext2_xattr_user_handler,
+ #ifdef CONFIG_EXT2_FS_POSIX_ACL
+ 	[EXT2_XATTR_INDEX_POSIX_ACL_ACCESS]  = &nop_posix_acl_access,
+@@ -110,7 +110,7 @@ static const struct xattr_handler *ext2_xattr_handler_map[] = {
  #endif
+ };
  
--const struct xattr_handler *erofs_xattr_handlers[] = {
-+const struct xattr_handler * const erofs_xattr_handlers[] = {
- 	&erofs_xattr_user_handler,
- 	&erofs_xattr_trusted_handler,
- #ifdef CONFIG_EROFS_FS_SECURITY
-diff --git a/fs/erofs/xattr.h b/fs/erofs/xattr.h
-index f16283cb8c93..b246cd0e135e 100644
---- a/fs/erofs/xattr.h
-+++ b/fs/erofs/xattr.h
-@@ -23,7 +23,7 @@ static inline const char *erofs_xattr_prefix(unsigned int idx,
- {
- 	const struct xattr_handler *handler = NULL;
+-const struct xattr_handler *ext2_xattr_handlers[] = {
++const struct xattr_handler * const ext2_xattr_handlers[] = {
+ 	&ext2_xattr_user_handler,
+ 	&ext2_xattr_trusted_handler,
+ #ifdef CONFIG_EXT2_FS_SECURITY
+diff --git a/fs/ext2/xattr.h b/fs/ext2/xattr.h
+index 7925f596e8e2..6a4966949047 100644
+--- a/fs/ext2/xattr.h
++++ b/fs/ext2/xattr.h
+@@ -72,7 +72,7 @@ extern void ext2_xattr_delete_inode(struct inode *);
+ extern struct mb_cache *ext2_xattr_create_cache(void);
+ extern void ext2_xattr_destroy_cache(struct mb_cache *cache);
  
--	static const struct xattr_handler *xattr_handler_map[] = {
-+	static const struct xattr_handler * const xattr_handler_map[] = {
- 		[EROFS_XATTR_INDEX_USER] = &erofs_xattr_user_handler,
- #ifdef CONFIG_EROFS_FS_POSIX_ACL
- 		[EROFS_XATTR_INDEX_POSIX_ACL_ACCESS] = &nop_posix_acl_access,
-@@ -44,7 +44,7 @@ static inline const char *erofs_xattr_prefix(unsigned int idx,
- 	return xattr_prefix(handler);
- }
+-extern const struct xattr_handler *ext2_xattr_handlers[];
++extern const struct xattr_handler * const ext2_xattr_handlers[];
  
--extern const struct xattr_handler *erofs_xattr_handlers[];
-+extern const struct xattr_handler * const erofs_xattr_handlers[];
+ # else  /* CONFIG_EXT2_FS_XATTR */
  
- int erofs_xattr_prefixes_init(struct super_block *sb);
- void erofs_xattr_prefixes_cleanup(struct super_block *sb);
 -- 
 2.34.1
 
