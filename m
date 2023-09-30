@@ -2,63 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 27DC97B3E16
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Sep 2023 07:01:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 647437B3E19
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Sep 2023 07:01:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230516AbjI3FA5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 30 Sep 2023 01:00:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51556 "EHLO
+        id S233870AbjI3FBG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 30 Sep 2023 01:01:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229488AbjI3FA5 (ORCPT
+        with ESMTP id S233053AbjI3FA7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 30 Sep 2023 01:00:57 -0400
-Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AB21B9;
-        Fri, 29 Sep 2023 22:00:55 -0700 (PDT)
-Received: by mail-pg1-x535.google.com with SMTP id 41be03b00d2f7-5859b1c92a0so1386497a12.2;
-        Fri, 29 Sep 2023 22:00:55 -0700 (PDT)
+        Sat, 30 Sep 2023 01:00:59 -0400
+Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BA4EB9;
+        Fri, 29 Sep 2023 22:00:57 -0700 (PDT)
+Received: by mail-pl1-x629.google.com with SMTP id d9443c01a7336-1c3cbfa40d6so133398475ad.1;
+        Fri, 29 Sep 2023 22:00:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696050055; x=1696654855; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gMv4JB25eIKmXmuOUK/GNC/1oaLVZUgAaz4JD4n4uhE=;
-        b=Kft86MASrOJ8TXsgsreVvDHLifX8thNK6ZcWZaFQJEUubjXdZcIXx2zCu5q4sYtLOt
-         QRsIh1R4LHvHCKBu/27nu7wu/Q49Gm6Hjxi6KFh9d7/PmtbGiMNWnSA2CkvK2KoTlwQG
-         s2/mr7kKQH0E0WDkvhm1F4cD/rNPnHNHewNuOj2J9yxWRNxgpPwxWQNxbIw0Wrj2U56U
-         /u5HqG+Ga6m7HrkJCqXjHn1b1/cdQyQEX1gjW5uQiX8EVVPPbSyA9UIKATH30rUZ1/XK
-         ZRuyhjE+Fas4xzcbVXNcLW/6AKPA23bF8vXr3WnaqGlH2FjG91s1wJF1uoupkzYmJ1Bo
-         AaEw==
+        d=gmail.com; s=20230601; t=1696050057; x=1696654857; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=P+kwTjR+CWDbHNLH7Vi6T+1DkOngNTu95bmWBQQSjqM=;
+        b=S7sYrmck40xgfqrsFLnX3leo2dQykimaZ9ibzIv7/8SJX/CovuEHpyX47jhZeLSztM
+         rUWNYvhA+gQP3j3f+/Q/A9TTcwyyNpswjpMiUjb8WYssZA+2nbL+ulQ9dxR/yikDQH6e
+         beZNU9JYKZ/hZ4TLPY0HT40BRC1k3jWs+Z1Kn+7pTLKPxs8w1A2gCNRa8vUe4wqNfGrc
+         isvIJNOAxUahbuw1bm4bpEJNOp7VGbGKBNNTsGIfNnzrWCCwSldeLYKujUu2GqVr51Ag
+         548GRaKLYo9dqzhWyI9nOIjCrhHVKOJFhxEsTspNJeq/FDM47n8XXdKj5PDgpQ52750s
+         UzyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696050055; x=1696654855;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gMv4JB25eIKmXmuOUK/GNC/1oaLVZUgAaz4JD4n4uhE=;
-        b=BPVEMZuJVLNw+D623m3M/Xhqgp9A4yVldq7HDVzFLOEz1jhUo4ZLvwXePSjKM2MdRC
-         E2TAFhLuLqOOagnpHM44ljicJtapz6Wm5n0r+F6wbozZeIUvxwKrrB4AQnIxaICgw3VW
-         /1vqeumCqsIAHGgY6KgoYO0pLS5vtIGqkEeTEH6UAZrbXera9ib8hEe93yjxl6h3KThV
-         Qx9SFKnstaD+bOzzh6A9wMeHOmsEGHij8jRL2VCUQOcuJDnfn0AKIHr3tXGgGM3UMYbm
-         2Q0iDO/xRHREJdZkWrxk2yR0Ibwgmr5kGaghRviEJ52ceE42WV1vC/0suEjIo/CmcQzz
-         Fc4w==
-X-Gm-Message-State: AOJu0YwehaIQbrB5LdPK/aYDg8tMjCZhHsnG3R2DWEtaow4aic49SLdk
-        y0byZZH3WBNrQjxHc9oe+Dw=
-X-Google-Smtp-Source: AGHT+IHEyw4lfkxUjp25/av55WX2JNQOlp3J+w5pJyYGH7FskZJbrM1NAXXH9nMa42u1tsDTLAb/FA==
-X-Received: by 2002:a05:6a20:729c:b0:15e:bb88:b76e with SMTP id o28-20020a056a20729c00b0015ebb88b76emr6804458pzk.14.1696050054633;
-        Fri, 29 Sep 2023 22:00:54 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1696050057; x=1696654857;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=P+kwTjR+CWDbHNLH7Vi6T+1DkOngNTu95bmWBQQSjqM=;
+        b=adjT2LI56iZkFtzP7pZpKDJw0tenQBFYC3OrGpfrxF29hMU0Qk2nzA22ZFI0x3HNaj
+         bQsKcaBWDN5lhlgSMEhuveEueoSUK2fehAzq7Vj6zKnupbf/rKtIlK5NxNkI+INPo74J
+         bKSowyMsuwjechH/nnUNjZcCylbM49s1Zzu2I4SRhYAXAn2AAg/DLUNOKdSa95KP99iL
+         FNRvRpYDfrqozfUH+vgOHQi/QuUBwbKzA5sdiHCMPReBF1YUKIk5yYyOdaRTe3ynm5Xu
+         NkCILWJndt4IBevOD83f9TIyM9czFpkkaUY165bnCdzqRPgE4QM+rK2OQD1wMoo2Dxtz
+         3R3w==
+X-Gm-Message-State: AOJu0YySZcacFIj6LIFh88h3gJElFj39vMSPszuqe+8N3DfsW8ckpHgi
+        12vYq0+7sUkwhAaDM/K2uVs=
+X-Google-Smtp-Source: AGHT+IE3clBoNe1+iQ3IlslzBntHeKBbfAzduqxSVh1lFbVUKfB6ydY61EaO5FHqjtkOJGliaqwK3g==
+X-Received: by 2002:a17:903:2445:b0:1c4:fae:bf4a with SMTP id l5-20020a170903244500b001c40faebf4amr6676418pls.16.1696050056932;
+        Fri, 29 Sep 2023 22:00:56 -0700 (PDT)
 Received: from wedsonaf-dev.home.lan ([189.124.190.154])
-        by smtp.googlemail.com with ESMTPSA id y10-20020a17090322ca00b001c322a41188sm392136plg.117.2023.09.29.22.00.52
+        by smtp.googlemail.com with ESMTPSA id y10-20020a17090322ca00b001c322a41188sm392136plg.117.2023.09.29.22.00.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Sep 2023 22:00:54 -0700 (PDT)
+        Fri, 29 Sep 2023 22:00:56 -0700 (PDT)
 From:   Wedson Almeida Filho <wedsonaf@gmail.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
         linux-fsdevel@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
         Wedson Almeida Filho <walmeida@microsoft.com>
-Subject: [PATCH 00/29] const xattr tables
-Date:   Sat, 30 Sep 2023 02:00:04 -0300
-Message-Id: <20230930050033.41174-1-wedsonaf@gmail.com>
+Subject: [PATCH 01/29] xattr: make the xattr array itself const
+Date:   Sat, 30 Sep 2023 02:00:05 -0300
+Message-Id: <20230930050033.41174-2-wedsonaf@gmail.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230930050033.41174-1-wedsonaf@gmail.com>
+References: <20230930050033.41174-1-wedsonaf@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -73,111 +76,61 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Wedson Almeida Filho <walmeida@microsoft.com>
 
-The 's_xattr' field of 'struct super_block' currently requires a mutable
-table of 'struct xattr_handler' entries (although each handler itself is
-const). However, no code in vfs actually modifies the tables.
+As it is currently declared, the xattr_handler structs are const but the
+array containing their pointers is not. This patch makes it so that fs
+modules can place them in .rodata, which makes it harder for
+accidental/malicious modifications at runtime.
 
-So this series changes the type of 's_xattr' to allow const tables, and
-modifies existing file system to move their tables to .rodata. This is
-desirable because these tables contain entries with function pointers in
-them; moving them to .rodata makes it considerably less likely to be
-modified accidentally or maliciously at runtime.
+Signed-off-by: Wedson Almeida Filho <walmeida@microsoft.com>
+---
+ fs/xattr.c         | 6 +++---
+ include/linux/fs.h | 2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-I found this while writing Rust abstractions for vfs.
-
-Wedson Almeida Filho (29):
-  xattr: make the xattr array itself const
-  ext4: move ext4_xattr_handlers to .rodata
-  9p: move xattr-related structs to .rodata
-  afs: move afs_xattr_handlers to .rodata
-  btrfs: move btrfs_xattr_handlers to .rodata
-  ceph: move ceph_xattr_handlers to .rodata
-  ecryptfs: move ecryptfs_xattr_handlers to .rodata
-  erofs: move erofs_xattr_handlers and xattr_handler_map to .rodata
-  ext2: move ext2_xattr_handlers and ext2_xattr_handler_map to .rodata
-  f2fs: move f2fs_xattr_handlers and f2fs_xattr_handler_map to .rodata
-  fuse: move fuse_xattr_handlers to .rodata
-  gfs2: move gfs2_xattr_handlers_max to .rodata
-  hfs: move hfs_xattr_handlers to .rodata
-  hfsplus: move hfsplus_xattr_handlers to .rodata
-  jffs2: move jffs2_xattr_handlers to .rodata
-  jfs: move jfs_xattr_handlers to .rodata
-  kernfs: move kernfs_xattr_handlers to .rodata
-  nfs: move nfs4_xattr_handlers to .rodata
-  ntfs3: move ntfs_xattr_handlers to .rodata
-  ocfs2: move ocfs2_xattr_handlers and ocfs2_xattr_handler_map to
-    .rodata
-  orangefs: move orangefs_xattr_handlers to .rodata
-  reiserfs: move reiserfs_xattr_handlers to .rodata
-  smb: move cifs_xattr_handlers to .rodata
-  squashfs: move squashfs_xattr_handlers to .rodata
-  ubifs: move ubifs_xattr_handlers to .rodata
-  xfs: move xfs_xattr_handlers to .rodata
-  overlayfs: move xattr tables to .rodata
-  shmem: move shmem_xattr_handlers to .rodata
-  net: move sockfs_xattr_handlers to .rodata
-
- fs/9p/xattr.c                 | 8 ++++----
- fs/9p/xattr.h                 | 2 +-
- fs/afs/internal.h             | 2 +-
- fs/afs/xattr.c                | 2 +-
- fs/btrfs/xattr.c              | 2 +-
- fs/btrfs/xattr.h              | 2 +-
- fs/ceph/super.h               | 2 +-
- fs/ceph/xattr.c               | 2 +-
- fs/ecryptfs/ecryptfs_kernel.h | 2 +-
- fs/ecryptfs/inode.c           | 2 +-
- fs/erofs/xattr.c              | 2 +-
- fs/erofs/xattr.h              | 4 ++--
- fs/ext2/xattr.c               | 4 ++--
- fs/ext2/xattr.h               | 2 +-
- fs/ext4/xattr.c               | 2 +-
- fs/ext4/xattr.h               | 2 +-
- fs/f2fs/xattr.c               | 4 ++--
- fs/f2fs/xattr.h               | 2 +-
- fs/fuse/fuse_i.h              | 2 +-
- fs/fuse/xattr.c               | 2 +-
- fs/gfs2/super.h               | 4 ++--
- fs/gfs2/xattr.c               | 4 ++--
- fs/hfs/attr.c                 | 2 +-
- fs/hfs/hfs_fs.h               | 2 +-
- fs/hfsplus/xattr.c            | 2 +-
- fs/hfsplus/xattr.h            | 2 +-
- fs/jffs2/xattr.c              | 2 +-
- fs/jffs2/xattr.h              | 2 +-
- fs/jfs/jfs_xattr.h            | 2 +-
- fs/jfs/xattr.c                | 2 +-
- fs/kernfs/inode.c             | 2 +-
- fs/kernfs/kernfs-internal.h   | 2 +-
- fs/nfs/nfs.h                  | 2 +-
- fs/nfs/nfs4_fs.h              | 2 +-
- fs/nfs/nfs4proc.c             | 2 +-
- fs/ntfs3/ntfs_fs.h            | 2 +-
- fs/ntfs3/xattr.c              | 2 +-
- fs/ocfs2/xattr.c              | 4 ++--
- fs/ocfs2/xattr.h              | 2 +-
- fs/orangefs/orangefs-kernel.h | 2 +-
- fs/orangefs/xattr.c           | 2 +-
- fs/overlayfs/super.c          | 4 ++--
- fs/reiserfs/reiserfs.h        | 2 +-
- fs/reiserfs/xattr.c           | 2 +-
- fs/smb/client/cifsfs.h        | 2 +-
- fs/smb/client/xattr.c         | 2 +-
- fs/squashfs/squashfs.h        | 2 +-
- fs/squashfs/xattr.c           | 2 +-
- fs/ubifs/ubifs.h              | 2 +-
- fs/ubifs/xattr.c              | 2 +-
- fs/xattr.c                    | 6 +++---
- fs/xfs/xfs_xattr.c            | 2 +-
- fs/xfs/xfs_xattr.h            | 2 +-
- include/linux/fs.h            | 2 +-
- include/linux/pseudo_fs.h     | 2 +-
- mm/shmem.c                    | 2 +-
- net/socket.c                  | 2 +-
- 57 files changed, 69 insertions(+), 69 deletions(-)
-
-
-base-commit: 2dde18cd1d8fac735875f2e4987f11817cc0bc2c
+diff --git a/fs/xattr.c b/fs/xattr.c
+index e7bbb7f57557..1905f8ede13d 100644
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -56,7 +56,7 @@ strcmp_prefix(const char *a, const char *a_prefix)
+ static const struct xattr_handler *
+ xattr_resolve_name(struct inode *inode, const char **name)
+ {
+-	const struct xattr_handler **handlers = inode->i_sb->s_xattr;
++	const struct xattr_handler * const *handlers = inode->i_sb->s_xattr;
+ 	const struct xattr_handler *handler;
+ 
+ 	if (!(inode->i_opflags & IOP_XATTR)) {
+@@ -162,7 +162,7 @@ xattr_permission(struct mnt_idmap *idmap, struct inode *inode,
+ int
+ xattr_supports_user_prefix(struct inode *inode)
+ {
+-	const struct xattr_handler **handlers = inode->i_sb->s_xattr;
++	const struct xattr_handler * const *handlers = inode->i_sb->s_xattr;
+ 	const struct xattr_handler *handler;
+ 
+ 	if (!(inode->i_opflags & IOP_XATTR)) {
+@@ -999,7 +999,7 @@ int xattr_list_one(char **buffer, ssize_t *remaining_size, const char *name)
+ ssize_t
+ generic_listxattr(struct dentry *dentry, char *buffer, size_t buffer_size)
+ {
+-	const struct xattr_handler *handler, **handlers = dentry->d_sb->s_xattr;
++	const struct xattr_handler *handler, * const *handlers = dentry->d_sb->s_xattr;
+ 	ssize_t remaining_size = buffer_size;
+ 	int err = 0;
+ 
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 562f2623c9c9..4d8003f48216 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1172,7 +1172,7 @@ struct super_block {
+ #ifdef CONFIG_SECURITY
+ 	void                    *s_security;
+ #endif
+-	const struct xattr_handler **s_xattr;
++	const struct xattr_handler * const *s_xattr;
+ #ifdef CONFIG_FS_ENCRYPTION
+ 	const struct fscrypt_operations	*s_cop;
+ 	struct fscrypt_keyring	*s_master_keys; /* master crypto keys in use */
 -- 
 2.34.1
 
