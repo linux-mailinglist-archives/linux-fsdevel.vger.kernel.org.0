@@ -2,65 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E51DC7B3E42
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Sep 2023 07:03:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9C557B3E44
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Sep 2023 07:03:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234090AbjI3FDT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 30 Sep 2023 01:03:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50814 "EHLO
+        id S234191AbjI3FDb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 30 Sep 2023 01:03:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44964 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234184AbjI3FCo (ORCPT
+        with ESMTP id S234172AbjI3FC5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 30 Sep 2023 01:02:44 -0400
-Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C9CE10FD;
-        Fri, 29 Sep 2023 22:01:59 -0700 (PDT)
-Received: by mail-pf1-x42a.google.com with SMTP id d2e1a72fcca58-690bd8f89baso12039926b3a.2;
-        Fri, 29 Sep 2023 22:01:59 -0700 (PDT)
+        Sat, 30 Sep 2023 01:02:57 -0400
+Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1014F1716;
+        Fri, 29 Sep 2023 22:02:01 -0700 (PDT)
+Received: by mail-pg1-x534.google.com with SMTP id 41be03b00d2f7-578b4981526so9577018a12.0;
+        Fri, 29 Sep 2023 22:02:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696050118; x=1696654918; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1696050121; x=1696654921; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hkmcdMm12QbRMkcwPXJsldRA3LZpvW1XQ5QQ1oyLq3Q=;
-        b=RxY+KqYdSUGCZ63RUITbenHyMOEDNmO3pSOrLr1XxtI7FrWkxzte5exlMEtYRal3Ys
-         5BS4lf7O/WyeUdEk8CmX3TwS5eduZswvnOCcw9zlhjOWABca+VX/GEK3p62qZuIM46al
-         wqG2PFikr1A/0Fp3kC11uqG1Unza/Bu3jDbmt90cRaJF/0oZEbp46yGzRJgd8DgZ7yHV
-         q5VCItp+QRVRfEnxI5gQJnn7IprZWNU1iDy+v5m+zzuTjc87R6KUxOtnR1/JG5kXVhUw
-         iKVRCmv4H2RVetzmOy0DAmOLZwaV381IaKfuSPH1AUB4Xz1UCU4m2Zvj4xZaqulLyUn6
-         r2Cg==
+        bh=Wc3/lDJ0Y70q5wqO7T6IeDRSePuhtOmjFGCpqJDnCH4=;
+        b=Kmjejcs6cA9AmCbLWbwjDyo5/oq/p4ugr8dzIFKsz7B3OqCJCDkkuqvAGr5nKDo9se
+         yXxv2j5A5Lf9K0MRJanMitul1TQSlh4rmJ/y1FQlWORMFU1iICjYW/aTsW1ey+mYNHIG
+         4ceorT8CgJVOQSzlJrvyuWGYCN5keizFS+o/RghJLHuTtIAMWBAJzNvEh/L85kH+aXZM
+         Eyq1Q4+4i1fklgTkRVxGGcO6MakyUlzPHlESo5RnMHiooaLYH4z/fcdHCfzo2wQdzrK8
+         jcH6Q6vDN3jz89vHhALqKW2tozaUdP4jWDPRKdYyhOe/qwEvg8hzEG7RkISbwCAjq514
+         t5OQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696050118; x=1696654918;
+        d=1e100.net; s=20230601; t=1696050121; x=1696654921;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hkmcdMm12QbRMkcwPXJsldRA3LZpvW1XQ5QQ1oyLq3Q=;
-        b=r/WowLRJx3/2qFwFWhHQ5V04KAzIuiuj/M3zywVNtil/OlDUS7jaKPvJ2wjAMsWcW4
-         W/ciccC++0+eHBV7pFZpHk33WPf9/euxX29lQL5J9U0UYPfrCs7PJURLtSH1cDUHvOnB
-         WDj/brPdvkzPoXPEkia/Mk77B38ohjwIw/h3Ogq/XTw7I5YWBM1OQJy2/Zs9pvaLp9I9
-         ZyHiGgpVFuiuMHvyvK/USRb3togU1dlPRVJe6AIroaLZyEMsCsuH8SEDfc537FQ4DVhZ
-         4Aj8LToqNGGY2zRSyvIacLRsfOTS6P+S9qCeXt480cKGPghKOvnSzMl5CamqambMVZK2
-         XUYQ==
-X-Gm-Message-State: AOJu0Yzxg5ZebeBDSLHKhLOV8hhpLUeJGrHBTHBZlbZ0Ak1bl7tsnfpE
-        pWik/x3whY/mpsEM3F9obgQ=
-X-Google-Smtp-Source: AGHT+IFImlr28SMYKxU0nbWofyYiwpfcz2Z7YacvsYNMXPTB8Qo8TCN72xecAmOwWNdopWih7rr/6w==
-X-Received: by 2002:a05:6a20:734a:b0:14d:4ab5:5e34 with SMTP id v10-20020a056a20734a00b0014d4ab55e34mr6205874pzc.51.1696050118456;
-        Fri, 29 Sep 2023 22:01:58 -0700 (PDT)
+        bh=Wc3/lDJ0Y70q5wqO7T6IeDRSePuhtOmjFGCpqJDnCH4=;
+        b=iRaY03i69y0xYuDvru75+uGODn+wVhQeBmxxxXc5YAfYINqywnHlBTH+G8DhGi1+2P
+         ioWyLte3vW+AQEHhbfl0ztBozxrk/CuEKJj7g1T2uJKJqhA9QF+PY3/VJb1xPe5xAtGJ
+         8kDbKZfHVMEtHpv+g/AA4tTt2CHPwtENLuwRJhhKPKL7m3erlouPFwkiR4Gob2ItAadn
+         em1P7v+wLgWHdlNnyHpzIYaz3brVPx+WnsuV7nGf3RMP7mSH5N0Sumn+sJHaAVm3KGjW
+         i6cNEzBAR7FwthfyVxH5aFZtcngMrGV2An0HrjUrydYtM/jd5tRWUl2GRndH/NeKKpFE
+         ulfw==
+X-Gm-Message-State: AOJu0YwhKxySJNNrGz0y11QzVWLoO3tNeUh5c1YT3EOmDGWxVCDhpG9k
+        fa04bmVo5FtHuR3zrHmp8Lc=
+X-Google-Smtp-Source: AGHT+IGwjxf7szTTsQLyPMtmx6D961AfPmaEk+HWKxuN9bQbxtvcTWtZao4yWyr/O0xKDGBTdR7a8g==
+X-Received: by 2002:a05:6a20:1451:b0:15d:e68d:a855 with SMTP id a17-20020a056a20145100b0015de68da855mr6635638pzi.29.1696050121350;
+        Fri, 29 Sep 2023 22:02:01 -0700 (PDT)
 Received: from wedsonaf-dev.home.lan ([189.124.190.154])
-        by smtp.googlemail.com with ESMTPSA id y10-20020a17090322ca00b001c322a41188sm392136plg.117.2023.09.29.22.01.55
+        by smtp.googlemail.com with ESMTPSA id y10-20020a17090322ca00b001c322a41188sm392136plg.117.2023.09.29.22.01.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Sep 2023 22:01:58 -0700 (PDT)
+        Fri, 29 Sep 2023 22:02:01 -0700 (PDT)
 From:   Wedson Almeida Filho <wedsonaf@gmail.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
         linux-fsdevel@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
         Wedson Almeida Filho <walmeida@microsoft.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>, linux-nfs@vger.kernel.org
-Subject: [PATCH 18/29] nfs: move nfs4_xattr_handlers to .rodata
-Date:   Sat, 30 Sep 2023 02:00:22 -0300
-Message-Id: <20230930050033.41174-19-wedsonaf@gmail.com>
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        ntfs3@lists.linux.dev
+Subject: [PATCH 19/29] ntfs3: move ntfs_xattr_handlers to .rodata
+Date:   Sat, 30 Sep 2023 02:00:23 -0300
+Message-Id: <20230930050033.41174-20-wedsonaf@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230930050033.41174-1-wedsonaf@gmail.com>
 References: <20230930050033.41174-1-wedsonaf@gmail.com>
@@ -79,57 +79,42 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 From: Wedson Almeida Filho <walmeida@microsoft.com>
 
 This makes it harder for accidental or malicious changes to
-nfs4_xattr_handlers at runtime.
+ntfs_xattr_handlers at runtime.
 
-Cc: Trond Myklebust <trond.myklebust@hammerspace.com>
-Cc: Anna Schumaker <anna@kernel.org>
-Cc: linux-nfs@vger.kernel.org
+Cc: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Cc: ntfs3@lists.linux.dev
 Signed-off-by: Wedson Almeida Filho <walmeida@microsoft.com>
 ---
- fs/nfs/nfs.h      | 2 +-
- fs/nfs/nfs4_fs.h  | 2 +-
- fs/nfs/nfs4proc.c | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ fs/ntfs3/ntfs_fs.h | 2 +-
+ fs/ntfs3/xattr.c   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/nfs/nfs.h b/fs/nfs/nfs.h
-index 5ba00610aede..0d3ce0460e35 100644
---- a/fs/nfs/nfs.h
-+++ b/fs/nfs/nfs.h
-@@ -18,7 +18,7 @@ struct nfs_subversion {
- 	const struct rpc_version *rpc_vers;	/* NFS version information */
- 	const struct nfs_rpc_ops *rpc_ops;	/* NFS operations */
- 	const struct super_operations *sops;	/* NFS Super operations */
--	const struct xattr_handler **xattr;	/* NFS xattr handlers */
-+	const struct xattr_handler * const *xattr;	/* NFS xattr handlers */
- 	struct list_head list;		/* List of NFS versions */
+diff --git a/fs/ntfs3/ntfs_fs.h b/fs/ntfs3/ntfs_fs.h
+index 629403ede6e5..41c1538f8e51 100644
+--- a/fs/ntfs3/ntfs_fs.h
++++ b/fs/ntfs3/ntfs_fs.h
+@@ -872,7 +872,7 @@ int ntfs_init_acl(struct mnt_idmap *idmap, struct inode *inode,
+ 
+ int ntfs_acl_chmod(struct mnt_idmap *idmap, struct dentry *dentry);
+ ssize_t ntfs_listxattr(struct dentry *dentry, char *buffer, size_t size);
+-extern const struct xattr_handler *ntfs_xattr_handlers[];
++extern const struct xattr_handler * const ntfs_xattr_handlers[];
+ 
+ int ntfs_save_wsl_perm(struct inode *inode, __le16 *ea_size);
+ void ntfs_get_wsl_perm(struct inode *inode);
+diff --git a/fs/ntfs3/xattr.c b/fs/ntfs3/xattr.c
+index 023f314e8950..a67ff036a251 100644
+--- a/fs/ntfs3/xattr.c
++++ b/fs/ntfs3/xattr.c
+@@ -1016,7 +1016,7 @@ static const struct xattr_handler ntfs_other_xattr_handler = {
+ 	.list	= ntfs_xattr_user_list,
  };
  
-diff --git a/fs/nfs/nfs4_fs.h b/fs/nfs/nfs4_fs.h
-index 4c9f8bd866ab..28499a0da4c3 100644
---- a/fs/nfs/nfs4_fs.h
-+++ b/fs/nfs/nfs4_fs.h
-@@ -315,7 +315,7 @@ extern struct rpc_clnt *nfs4_proc_lookup_mountpoint(struct inode *,
- 						    struct nfs_fh *,
- 						    struct nfs_fattr *);
- extern int nfs4_proc_secinfo(struct inode *, const struct qstr *, struct nfs4_secinfo_flavors *);
--extern const struct xattr_handler *nfs4_xattr_handlers[];
-+extern const struct xattr_handler * const nfs4_xattr_handlers[];
- extern int nfs4_set_rw_stateid(nfs4_stateid *stateid,
- 		const struct nfs_open_context *ctx,
- 		const struct nfs_lock_context *l_ctx,
-diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
-index 832fa226b8f2..4557a14a596c 100644
---- a/fs/nfs/nfs4proc.c
-+++ b/fs/nfs/nfs4proc.c
-@@ -10740,7 +10740,7 @@ static const struct xattr_handler nfs4_xattr_nfs4_user_handler = {
+-const struct xattr_handler *ntfs_xattr_handlers[] = {
++const struct xattr_handler * const ntfs_xattr_handlers[] = {
+ 	&ntfs_other_xattr_handler,
+ 	NULL,
  };
- #endif
- 
--const struct xattr_handler *nfs4_xattr_handlers[] = {
-+const struct xattr_handler * const nfs4_xattr_handlers[] = {
- 	&nfs4_xattr_nfs4_acl_handler,
- #if defined(CONFIG_NFS_V4_1)
- 	&nfs4_xattr_nfs4_dacl_handler,
 -- 
 2.34.1
 
