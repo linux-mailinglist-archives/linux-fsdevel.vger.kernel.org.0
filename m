@@ -2,79 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B93D27B3DAD
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Sep 2023 04:42:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A5277B3DB0
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Sep 2023 04:45:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233885AbjI3Cmf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Sep 2023 22:42:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56414 "EHLO
+        id S232105AbjI3Cpw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Sep 2023 22:45:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47390 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230474AbjI3Cme (ORCPT
+        with ESMTP id S229483AbjI3Cpw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Sep 2023 22:42:34 -0400
-Received: from mail-oi1-f198.google.com (mail-oi1-f198.google.com [209.85.167.198])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A10D61B2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Sep 2023 19:42:31 -0700 (PDT)
-Received: by mail-oi1-f198.google.com with SMTP id 5614622812f47-3af5a2a0c8fso9442799b6e.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Sep 2023 19:42:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696041751; x=1696646551;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z4maoRvrljkflRYnHXhzRQpivRGA7ZdeJoiXO51Iskc=;
-        b=Esu3pOh42l3mKLLdCDxydRSLAWlj/FxU1OVJZKTodXM7MRl6wNj/2bnwAP/FrHabIf
-         QCW2Sr+mAcag85H7+Z63CPSzaQdMoVok2Bz78HlMUyge/w9k5vJPNGC3T+PE60znaJOD
-         UWgkfDxnhyXuFDvBL+hOr5/530v1vwm9HeoPZTC6RDfhnBYb79oz1uWfPd71ctXRFQ1g
-         sQdYvelluXNXVRkzEqaqWxOVBCWSjMaZi4DLIWvTZMynEgO6LoZO0M4L56tS0qTjEK+m
-         UbXMEjYOhp0BzZC+c0EpNbuQelHfFUR36Q9PkX1Siy8fGxnqfOUB1ferUomV+D/IoEw+
-         2KIQ==
-X-Gm-Message-State: AOJu0YweIzEaXd2G8acOXq3iFe771utNGPNHqZG000qmOpBmsimO5WeH
-        D6qmSQxJGyzOPsS+SqXFK3iX4mc8Q6aK0jhWlYnsJCH0H47F
-X-Google-Smtp-Source: AGHT+IF4LOEf8UnC0bUMlXsWXtdrWrJuwcTECRkOJxtPiY8VffpH6W8eLeF9FeZFZVR+o79oABrtMjg0oD2csieJZ5mk3ZsumjzV
+        Fri, 29 Sep 2023 22:45:52 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF1701B6;
+        Fri, 29 Sep 2023 19:45:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+        Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+        bh=sutjUDhTdDiAZXC/zVaX0ZtYjfFd9yMSNdgYvXTeOug=; b=v0RAgpBm5ZT2ZxQnZfMcFEHZ/d
+        BiXDSjXPSB1g39XP6qRT1ye7gQL37dsA4SBC8Dc6b1rTtzCkKsBHVkD1JiitYqxRZexcSyrSe8rNi
+        OfxiYfx6siWmgpv0frJEbLtj7OTgheaPCzObybCqPJQAqMuSsy6eJIt01w2wyhDg8kaDgIT+MqmI/
+        +MmbYg+Bavpl1ZirM+m8I/jz1HPXm+xziggYgPOPZM4fmuhGkZMwZ8krSppXo9GaSRLQmvpdIkglf
+        DoWWxyZUgQJ3YkEli1ePUDj0XxEyvOYMtoTLPvyGMiIyq3nyZqfycFnayCd1o3bdOBOazjrEEPnYy
+        leSEulCw==;
+Received: from [50.53.46.231] (helo=[192.168.254.15])
+        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+        id 1qmPz8-008ppw-1G;
+        Sat, 30 Sep 2023 02:45:38 +0000
+Message-ID: <ca559807-8456-4ff7-9edd-003480437a93@infradead.org>
+Date:   Fri, 29 Sep 2023 19:45:37 -0700
 MIME-Version: 1.0
-X-Received: by 2002:a05:6808:1909:b0:3ae:1ae1:df4b with SMTP id
- bf9-20020a056808190900b003ae1ae1df4bmr2980892oib.8.1696041750988; Fri, 29 Sep
- 2023 19:42:30 -0700 (PDT)
-Date:   Fri, 29 Sep 2023 19:42:30 -0700
-In-Reply-To: <000000000000cbb5f505faa4d920@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000178f6f06068a7e9a@google.com>
-Subject: Re: [syzbot] [f2fs?] possible deadlock in f2fs_release_file
-From:   syzbot <syzbot+e5b81eaab292e00e7d98@syzkaller.appspotmail.com>
-To:     chao@kernel.org, hdanton@sina.com, jaegeuk@kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.1 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Fixed Kunit test warning message for 'fs' module
+Content-Language: en-US
+To:     Abhinav <singhabhinav9051571833@gmail.com>,
+        akpm@linux-foundation.org, david@redhat.com, rppt@kernel.org,
+        hughd@google.com, Liam.Howlett@Oracle.com, surenb@google.com,
+        usama.anjum@collabora.com, wangkefeng.wang@huawei.com,
+        ryan.roberts@arm.com, yuanchu@google.com
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        skhan@linuxfoundation.org
+References: <20230928085311.938163-1-singhabhinav9051571833@gmail.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20230928085311.938163-1-singhabhinav9051571833@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot suspects this issue was fixed by commit:
+Hi,
 
-commit 5079e1c0c879311668b77075de3e701869804adf
-Author: Chao Yu <chao@kernel.org>
-Date:   Fri Jun 2 08:36:05 2023 +0000
+On 9/28/23 01:53, Abhinav wrote:
+> fs/proc/task_mmu : fix warning
+> 
+> All the caller of the function pagemap_scan_backout_range(...) are inside
+> ifdef preprocessor which is checking for the macro
+> 'CONFIG_TRANSPARENT_HUGEPAGE' is set or not. When it is not set the
+> function doesn't have a caller and it generates a warning unused
+> function.
+> 
+> Putting the whole function inside the preprocessor fixes this warning.
+> 
+> Signed-off-by: Abhinav <singhabhinav9051571833@gmail.com>
 
-    f2fs: avoid dead loop in f2fs_issue_checkpoint()
+We have this patch:
+  https://lore.kernel.org/all/20230927060257.2975412-1-arnd@kernel.org/
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15f18a92680000
-start commit:   b6dad5178cea Merge tag 'nios2_fix_v6.4' of git://git.kerne..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ac246111fb601aec
-dashboard link: https://syzkaller.appspot.com/bug?extid=e5b81eaab292e00e7d98
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13c50e17280000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15a9558b280000
+which is already merged.
 
-If the result looks correct, please mark the issue as fixed by replying with:
+Thanks.
 
-#syz fix: f2fs: avoid dead loop in f2fs_issue_checkpoint()
+> ---
+>  fs/proc/task_mmu.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> index 27da6337d675..88b6b8847cf3 100644
+> --- a/fs/proc/task_mmu.c
+> +++ b/fs/proc/task_mmu.c
+> @@ -2019,6 +2019,7 @@ static bool pagemap_scan_push_range(unsigned long categories,
+>  	return true;
+>  }
+>  
+> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>  static void pagemap_scan_backout_range(struct pagemap_scan_private *p,
+>  				       unsigned long addr, unsigned long end)
+>  {
+> @@ -2031,6 +2032,7 @@ static void pagemap_scan_backout_range(struct pagemap_scan_private *p,
+>  
+>  	p->found_pages -= (end - addr) / PAGE_SIZE;
+>  }
+> +#endif
+>  
+>  static int pagemap_scan_output(unsigned long categories,
+>  			       struct pagemap_scan_private *p,
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+-- 
+~Randy
