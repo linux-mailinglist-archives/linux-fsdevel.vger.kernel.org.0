@@ -2,78 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E35B77B3DDF
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Sep 2023 05:42:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27DC97B3E16
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Sep 2023 07:01:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233956AbjI3Dmw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Sep 2023 23:42:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55570 "EHLO
+        id S230516AbjI3FA5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 30 Sep 2023 01:00:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229649AbjI3Dmv (ORCPT
+        with ESMTP id S229488AbjI3FA5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Sep 2023 23:42:51 -0400
-Received: from mail-yw1-x1129.google.com (mail-yw1-x1129.google.com [IPv6:2607:f8b0:4864:20::1129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63B758F
-        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Sep 2023 20:42:49 -0700 (PDT)
-Received: by mail-yw1-x1129.google.com with SMTP id 00721157ae682-5a2536adaf3so5446197b3.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Sep 2023 20:42:49 -0700 (PDT)
+        Sat, 30 Sep 2023 01:00:57 -0400
+Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AB21B9;
+        Fri, 29 Sep 2023 22:00:55 -0700 (PDT)
+Received: by mail-pg1-x535.google.com with SMTP id 41be03b00d2f7-5859b1c92a0so1386497a12.2;
+        Fri, 29 Sep 2023 22:00:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1696045368; x=1696650168; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2x6fH+w1PdDZvpTev5khLvy5t3y2+BALqf/PDla7s+s=;
-        b=KDXuLjk9D3qhT2wExeqdG8th+lOtxMeAclFPpxw8Eplb+nuCJ1qj2C+wlM8Vnp4Q+s
-         5vh+3t3SxmP41GhssWSZpCjIG40O0JH2t0ACsKhF2hQtVNpf9OguwKMtxFLTPjtGtKg5
-         AzymlDy38Gz4I5ApfOtFiQ6H3YNVRJ5vTceGXaGciuWzPgPBSqpe6dsg2Z/dv+cGF46G
-         p1ElRPE1/+n0bb9P/Rs7Zkhw+34L6Vk2Bkr9iS7SaaosTcBNG6OJfpA0stcivAeo1PW1
-         hzA7calsNJNQeTy37dthP2VWY4Sbd/3s9FH/l/x6a+5gkb03En7M3eQV5KYcjduXk/5R
-         ackw==
+        d=gmail.com; s=20230601; t=1696050055; x=1696654855; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gMv4JB25eIKmXmuOUK/GNC/1oaLVZUgAaz4JD4n4uhE=;
+        b=Kft86MASrOJ8TXsgsreVvDHLifX8thNK6ZcWZaFQJEUubjXdZcIXx2zCu5q4sYtLOt
+         QRsIh1R4LHvHCKBu/27nu7wu/Q49Gm6Hjxi6KFh9d7/PmtbGiMNWnSA2CkvK2KoTlwQG
+         s2/mr7kKQH0E0WDkvhm1F4cD/rNPnHNHewNuOj2J9yxWRNxgpPwxWQNxbIw0Wrj2U56U
+         /u5HqG+Ga6m7HrkJCqXjHn1b1/cdQyQEX1gjW5uQiX8EVVPPbSyA9UIKATH30rUZ1/XK
+         ZRuyhjE+Fas4xzcbVXNcLW/6AKPA23bF8vXr3WnaqGlH2FjG91s1wJF1uoupkzYmJ1Bo
+         AaEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696045368; x=1696650168;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2x6fH+w1PdDZvpTev5khLvy5t3y2+BALqf/PDla7s+s=;
-        b=AYMQk8jyI21NjPgGtwGgTqbj0dPoS83pSjJNbYmVZ2zL6TCXUFbcLPzG4ubDNNs81c
-         OhRvy1mzIJ5mxpBHZ/+bdGPOxeT8uG+dbHyiejIC1DRlHJl36Uu8xaGuWFrmfwoalIDb
-         862LR7cGeLjA4Kg3TekYMedgPIrJMdULsR/SHvqS8WcC08rUxbXSzKwOMmxi1aKNtYkD
-         zkNJ6zd45SuskVAtUt+wv57JfdlawYOg2OVJG5wE2ZtkmbNR8GF4nbYjUhQDIrjgtY4o
-         eVzz5xjfX/WhSUtHG9zgZEfZ+qqVwT6Sh2HrGY16s8jG3Kg2oiJiwwUq+U8ceDhQChW2
-         t/VQ==
-X-Gm-Message-State: AOJu0YyffJojI5TvAen8hpokmaJHwpQA4m4rBrQZ7r++hll7Iv5bJfZV
-        U61H698I+195shYAjum2VP0EPg==
-X-Google-Smtp-Source: AGHT+IHb14+lcWYvYpZ5abpN3vaue9DpNWsOHa4WiXVhBeSyALADDXCj4J3VWtqEBUCWVKYnyTLA1A==
-X-Received: by 2002:a81:a24e:0:b0:59b:5170:a0f3 with SMTP id z14-20020a81a24e000000b0059b5170a0f3mr5957990ywg.36.1696045368515;
-        Fri, 29 Sep 2023 20:42:48 -0700 (PDT)
-Received: from ripple.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id f184-20020a0dc3c1000000b0059ae483b89dsm5983309ywd.50.2023.09.29.20.42.46
+        d=1e100.net; s=20230601; t=1696050055; x=1696654855;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gMv4JB25eIKmXmuOUK/GNC/1oaLVZUgAaz4JD4n4uhE=;
+        b=BPVEMZuJVLNw+D623m3M/Xhqgp9A4yVldq7HDVzFLOEz1jhUo4ZLvwXePSjKM2MdRC
+         E2TAFhLuLqOOagnpHM44ljicJtapz6Wm5n0r+F6wbozZeIUvxwKrrB4AQnIxaICgw3VW
+         /1vqeumCqsIAHGgY6KgoYO0pLS5vtIGqkEeTEH6UAZrbXera9ib8hEe93yjxl6h3KThV
+         Qx9SFKnstaD+bOzzh6A9wMeHOmsEGHij8jRL2VCUQOcuJDnfn0AKIHr3tXGgGM3UMYbm
+         2Q0iDO/xRHREJdZkWrxk2yR0Ibwgmr5kGaghRviEJ52ceE42WV1vC/0suEjIo/CmcQzz
+         Fc4w==
+X-Gm-Message-State: AOJu0YwehaIQbrB5LdPK/aYDg8tMjCZhHsnG3R2DWEtaow4aic49SLdk
+        y0byZZH3WBNrQjxHc9oe+Dw=
+X-Google-Smtp-Source: AGHT+IHEyw4lfkxUjp25/av55WX2JNQOlp3J+w5pJyYGH7FskZJbrM1NAXXH9nMa42u1tsDTLAb/FA==
+X-Received: by 2002:a05:6a20:729c:b0:15e:bb88:b76e with SMTP id o28-20020a056a20729c00b0015ebb88b76emr6804458pzk.14.1696050054633;
+        Fri, 29 Sep 2023 22:00:54 -0700 (PDT)
+Received: from wedsonaf-dev.home.lan ([189.124.190.154])
+        by smtp.googlemail.com with ESMTPSA id y10-20020a17090322ca00b001c322a41188sm392136plg.117.2023.09.29.22.00.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Sep 2023 20:42:47 -0700 (PDT)
-Date:   Fri, 29 Sep 2023 20:42:45 -0700 (PDT)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@ripple.attlocal.net
-To:     Andrew Morton <akpm@linux-foundation.org>
-cc:     Tim Chen <tim.c.chen@intel.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
+        Fri, 29 Sep 2023 22:00:54 -0700 (PDT)
+From:   Wedson Almeida Filho <wedsonaf@gmail.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
-        Carlos Maiolino <cem@kernel.org>,
-        Chuck Lever <chuck.lever@oracle.com>, Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: [PATCH 8/8] shmem,percpu_counter: add _limited_add(fbc, limit,
- amount)
-In-Reply-To: <c7441dc6-f3bb-dd60-c670-9f5cbd9f266@google.com>
-Message-ID: <bb817848-2d19-bcc8-39ca-ea179af0f0b4@google.com>
-References: <c7441dc6-f3bb-dd60-c670-9f5cbd9f266@google.com>
+        linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Wedson Almeida Filho <walmeida@microsoft.com>
+Subject: [PATCH 00/29] const xattr tables
+Date:   Sat, 30 Sep 2023 02:00:04 -0300
+Message-Id: <20230930050033.41174-1-wedsonaf@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -81,181 +71,113 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Percpu counter's compare and add are separate functions: without locking
-around them (which would defeat their purpose), it has been possible to
-overflow the intended limit.  Imagine all the other CPUs fallocating
-tmpfs huge pages to the limit, in between this CPU's compare and its add.
+From: Wedson Almeida Filho <walmeida@microsoft.com>
 
-I have not seen reports of that happening; but tmpfs's recent addition
-of dquot_alloc_block_nodirty() in between the compare and the add makes
-it even more likely, and I'd be uncomfortable to leave it unfixed.
+The 's_xattr' field of 'struct super_block' currently requires a mutable
+table of 'struct xattr_handler' entries (although each handler itself is
+const). However, no code in vfs actually modifies the tables.
 
-Introduce percpu_counter_limited_add(fbc, limit, amount) to prevent it.
+So this series changes the type of 's_xattr' to allow const tables, and
+modifies existing file system to move their tables to .rodata. This is
+desirable because these tables contain entries with function pointers in
+them; moving them to .rodata makes it considerably less likely to be
+modified accidentally or maliciously at runtime.
 
-I believe this implementation is correct, and slightly more efficient
-than the combination of compare and add (taking the lock once rather
-than twice when nearing full - the last 128MiB of a tmpfs volume on a
-machine with 128 CPUs and 4KiB pages); but it does beg for a better
-design - when nearing full, there is no new batching, but the costly
-percpu counter sum across CPUs still has to be done, while locked.
+I found this while writing Rust abstractions for vfs.
 
-Follow __percpu_counter_sum()'s example, including cpu_dying_mask as
-well as cpu_online_mask: but shouldn't __percpu_counter_compare() and
-__percpu_counter_limited_add() then be adding a num_dying_cpus() to
-num_online_cpus(), when they calculate the maximum which could be held
-across CPUs?  But the times when it matters would be vanishingly rare.
+Wedson Almeida Filho (29):
+  xattr: make the xattr array itself const
+  ext4: move ext4_xattr_handlers to .rodata
+  9p: move xattr-related structs to .rodata
+  afs: move afs_xattr_handlers to .rodata
+  btrfs: move btrfs_xattr_handlers to .rodata
+  ceph: move ceph_xattr_handlers to .rodata
+  ecryptfs: move ecryptfs_xattr_handlers to .rodata
+  erofs: move erofs_xattr_handlers and xattr_handler_map to .rodata
+  ext2: move ext2_xattr_handlers and ext2_xattr_handler_map to .rodata
+  f2fs: move f2fs_xattr_handlers and f2fs_xattr_handler_map to .rodata
+  fuse: move fuse_xattr_handlers to .rodata
+  gfs2: move gfs2_xattr_handlers_max to .rodata
+  hfs: move hfs_xattr_handlers to .rodata
+  hfsplus: move hfsplus_xattr_handlers to .rodata
+  jffs2: move jffs2_xattr_handlers to .rodata
+  jfs: move jfs_xattr_handlers to .rodata
+  kernfs: move kernfs_xattr_handlers to .rodata
+  nfs: move nfs4_xattr_handlers to .rodata
+  ntfs3: move ntfs_xattr_handlers to .rodata
+  ocfs2: move ocfs2_xattr_handlers and ocfs2_xattr_handler_map to
+    .rodata
+  orangefs: move orangefs_xattr_handlers to .rodata
+  reiserfs: move reiserfs_xattr_handlers to .rodata
+  smb: move cifs_xattr_handlers to .rodata
+  squashfs: move squashfs_xattr_handlers to .rodata
+  ubifs: move ubifs_xattr_handlers to .rodata
+  xfs: move xfs_xattr_handlers to .rodata
+  overlayfs: move xattr tables to .rodata
+  shmem: move shmem_xattr_handlers to .rodata
+  net: move sockfs_xattr_handlers to .rodata
 
-Signed-off-by: Hugh Dickins <hughd@google.com>
-Cc: Tim Chen <tim.c.chen@intel.com>
-Cc: Dave Chinner <dchinner@redhat.com>
-Cc: Darrick J. Wong <djwong@kernel.org>
----
-Tim, Dave, Darrick: I didn't want to waste your time on patches 1-7,
-which are just internal to shmem, and do not affect this patch (which
-applies to v6.6-rc and linux-next as is): but want to run this by you.
+ fs/9p/xattr.c                 | 8 ++++----
+ fs/9p/xattr.h                 | 2 +-
+ fs/afs/internal.h             | 2 +-
+ fs/afs/xattr.c                | 2 +-
+ fs/btrfs/xattr.c              | 2 +-
+ fs/btrfs/xattr.h              | 2 +-
+ fs/ceph/super.h               | 2 +-
+ fs/ceph/xattr.c               | 2 +-
+ fs/ecryptfs/ecryptfs_kernel.h | 2 +-
+ fs/ecryptfs/inode.c           | 2 +-
+ fs/erofs/xattr.c              | 2 +-
+ fs/erofs/xattr.h              | 4 ++--
+ fs/ext2/xattr.c               | 4 ++--
+ fs/ext2/xattr.h               | 2 +-
+ fs/ext4/xattr.c               | 2 +-
+ fs/ext4/xattr.h               | 2 +-
+ fs/f2fs/xattr.c               | 4 ++--
+ fs/f2fs/xattr.h               | 2 +-
+ fs/fuse/fuse_i.h              | 2 +-
+ fs/fuse/xattr.c               | 2 +-
+ fs/gfs2/super.h               | 4 ++--
+ fs/gfs2/xattr.c               | 4 ++--
+ fs/hfs/attr.c                 | 2 +-
+ fs/hfs/hfs_fs.h               | 2 +-
+ fs/hfsplus/xattr.c            | 2 +-
+ fs/hfsplus/xattr.h            | 2 +-
+ fs/jffs2/xattr.c              | 2 +-
+ fs/jffs2/xattr.h              | 2 +-
+ fs/jfs/jfs_xattr.h            | 2 +-
+ fs/jfs/xattr.c                | 2 +-
+ fs/kernfs/inode.c             | 2 +-
+ fs/kernfs/kernfs-internal.h   | 2 +-
+ fs/nfs/nfs.h                  | 2 +-
+ fs/nfs/nfs4_fs.h              | 2 +-
+ fs/nfs/nfs4proc.c             | 2 +-
+ fs/ntfs3/ntfs_fs.h            | 2 +-
+ fs/ntfs3/xattr.c              | 2 +-
+ fs/ocfs2/xattr.c              | 4 ++--
+ fs/ocfs2/xattr.h              | 2 +-
+ fs/orangefs/orangefs-kernel.h | 2 +-
+ fs/orangefs/xattr.c           | 2 +-
+ fs/overlayfs/super.c          | 4 ++--
+ fs/reiserfs/reiserfs.h        | 2 +-
+ fs/reiserfs/xattr.c           | 2 +-
+ fs/smb/client/cifsfs.h        | 2 +-
+ fs/smb/client/xattr.c         | 2 +-
+ fs/squashfs/squashfs.h        | 2 +-
+ fs/squashfs/xattr.c           | 2 +-
+ fs/ubifs/ubifs.h              | 2 +-
+ fs/ubifs/xattr.c              | 2 +-
+ fs/xattr.c                    | 6 +++---
+ fs/xfs/xfs_xattr.c            | 2 +-
+ fs/xfs/xfs_xattr.h            | 2 +-
+ include/linux/fs.h            | 2 +-
+ include/linux/pseudo_fs.h     | 2 +-
+ mm/shmem.c                    | 2 +-
+ net/socket.c                  | 2 +-
+ 57 files changed, 69 insertions(+), 69 deletions(-)
 
- include/linux/percpu_counter.h | 23 +++++++++++++++
- lib/percpu_counter.c           | 53 ++++++++++++++++++++++++++++++++++
- mm/shmem.c                     | 10 +++----
- 3 files changed, 81 insertions(+), 5 deletions(-)
 
-diff --git a/include/linux/percpu_counter.h b/include/linux/percpu_counter.h
-index d01351b1526f..8cb7c071bd5c 100644
---- a/include/linux/percpu_counter.h
-+++ b/include/linux/percpu_counter.h
-@@ -57,6 +57,8 @@ void percpu_counter_add_batch(struct percpu_counter *fbc, s64 amount,
- 			      s32 batch);
- s64 __percpu_counter_sum(struct percpu_counter *fbc);
- int __percpu_counter_compare(struct percpu_counter *fbc, s64 rhs, s32 batch);
-+bool __percpu_counter_limited_add(struct percpu_counter *fbc, s64 limit,
-+				  s64 amount, s32 batch);
- void percpu_counter_sync(struct percpu_counter *fbc);
- 
- static inline int percpu_counter_compare(struct percpu_counter *fbc, s64 rhs)
-@@ -69,6 +71,13 @@ static inline void percpu_counter_add(struct percpu_counter *fbc, s64 amount)
- 	percpu_counter_add_batch(fbc, amount, percpu_counter_batch);
- }
- 
-+static inline bool
-+percpu_counter_limited_add(struct percpu_counter *fbc, s64 limit, s64 amount)
-+{
-+	return __percpu_counter_limited_add(fbc, limit, amount,
-+					    percpu_counter_batch);
-+}
-+
- /*
-  * With percpu_counter_add_local() and percpu_counter_sub_local(), counts
-  * are accumulated in local per cpu counter and not in fbc->count until
-@@ -185,6 +194,20 @@ percpu_counter_add(struct percpu_counter *fbc, s64 amount)
- 	local_irq_restore(flags);
- }
- 
-+static inline bool
-+percpu_counter_limited_add(struct percpu_counter *fbc, s64 limit, s64 amount)
-+{
-+	unsigned long flags;
-+	s64 count;
-+
-+	local_irq_save(flags);
-+	count = fbc->count + amount;
-+	if (count <= limit)
-+		fbc->count = count;
-+	local_irq_restore(flags);
-+	return count <= limit;
-+}
-+
- /* non-SMP percpu_counter_add_local is the same with percpu_counter_add */
- static inline void
- percpu_counter_add_local(struct percpu_counter *fbc, s64 amount)
-diff --git a/lib/percpu_counter.c b/lib/percpu_counter.c
-index 9073430dc865..58a3392f471b 100644
---- a/lib/percpu_counter.c
-+++ b/lib/percpu_counter.c
-@@ -278,6 +278,59 @@ int __percpu_counter_compare(struct percpu_counter *fbc, s64 rhs, s32 batch)
- }
- EXPORT_SYMBOL(__percpu_counter_compare);
- 
-+/*
-+ * Compare counter, and add amount if the total is within limit.
-+ * Return true if amount was added, false if it would exceed limit.
-+ */
-+bool __percpu_counter_limited_add(struct percpu_counter *fbc,
-+				  s64 limit, s64 amount, s32 batch)
-+{
-+	s64 count;
-+	s64 unknown;
-+	unsigned long flags;
-+	bool good;
-+
-+	if (amount > limit)
-+		return false;
-+
-+	local_irq_save(flags);
-+	unknown = batch * num_online_cpus();
-+	count = __this_cpu_read(*fbc->counters);
-+
-+	/* Skip taking the lock when safe */
-+	if (abs(count + amount) <= batch &&
-+	    fbc->count + unknown <= limit) {
-+		this_cpu_add(*fbc->counters, amount);
-+		local_irq_restore(flags);
-+		return true;
-+	}
-+
-+	raw_spin_lock(&fbc->lock);
-+	count = fbc->count + amount;
-+
-+	/* Skip percpu_counter_sum() when safe */
-+	if (count + unknown > limit) {
-+		s32 *pcount;
-+		int cpu;
-+
-+		for_each_cpu_or(cpu, cpu_online_mask, cpu_dying_mask) {
-+			pcount = per_cpu_ptr(fbc->counters, cpu);
-+			count += *pcount;
-+		}
-+	}
-+
-+	good = count <= limit;
-+	if (good) {
-+		count = __this_cpu_read(*fbc->counters);
-+		fbc->count += count + amount;
-+		__this_cpu_sub(*fbc->counters, count);
-+	}
-+
-+	raw_spin_unlock(&fbc->lock);
-+	local_irq_restore(flags);
-+	return good;
-+}
-+
- static int __init percpu_counter_startup(void)
- {
- 	int ret;
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 4f4ab26bc58a..7cb72c747954 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -217,15 +217,15 @@ static int shmem_inode_acct_blocks(struct inode *inode, long pages)
- 
- 	might_sleep();	/* when quotas */
- 	if (sbinfo->max_blocks) {
--		if (percpu_counter_compare(&sbinfo->used_blocks,
--					   sbinfo->max_blocks - pages) > 0)
-+		if (!percpu_counter_limited_add(&sbinfo->used_blocks,
-+						sbinfo->max_blocks, pages))
- 			goto unacct;
- 
- 		err = dquot_alloc_block_nodirty(inode, pages);
--		if (err)
-+		if (err) {
-+			percpu_counter_sub(&sbinfo->used_blocks, pages);
- 			goto unacct;
--
--		percpu_counter_add(&sbinfo->used_blocks, pages);
-+		}
- 	} else {
- 		err = dquot_alloc_block_nodirty(inode, pages);
- 		if (err)
+base-commit: 2dde18cd1d8fac735875f2e4987f11817cc0bc2c
 -- 
-2.35.3
+2.34.1
 
