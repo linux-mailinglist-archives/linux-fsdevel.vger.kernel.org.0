@@ -2,66 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FA2F7B3E58
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Sep 2023 07:04:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B37647B3E5A
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Sep 2023 07:04:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234083AbjI3FEU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 30 Sep 2023 01:04:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38880 "EHLO
+        id S234278AbjI3FEd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 30 Sep 2023 01:04:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45034 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234245AbjI3FDm (ORCPT
+        with ESMTP id S234008AbjI3FDx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 30 Sep 2023 01:03:42 -0400
-Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C55401BE;
-        Fri, 29 Sep 2023 22:02:28 -0700 (PDT)
-Received: by mail-pg1-x533.google.com with SMTP id 41be03b00d2f7-577e62e2adfso10221548a12.2;
-        Fri, 29 Sep 2023 22:02:28 -0700 (PDT)
+        Sat, 30 Sep 2023 01:03:53 -0400
+Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 088B71FD0;
+        Fri, 29 Sep 2023 22:02:33 -0700 (PDT)
+Received: by mail-pg1-x52b.google.com with SMTP id 41be03b00d2f7-5789ffc8ae0so10231870a12.0;
+        Fri, 29 Sep 2023 22:02:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696050148; x=1696654948; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1696050152; x=1696654952; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9UNIhEufzQwgDPjs0KxNTWIPnnrU94TNvqQfHawN6Ek=;
-        b=hjvt9rgdArJTKxAh3KZYRzCVF76mT/jhVvgVRswetn92DMW/ceiIkYAiA920AC3LBS
-         48wonSkESEV0MClwYBzrAPVRNvFZvBu7lOkQgHTWkF6UT5xuj9MGKLmVxx5NMo53TaJW
-         5mRxP02XwYgUYf2TAAmhDswS3V0hSmCQuEBOy0OPPAYVEJh6K5dVTC5CVeOtKwT25wvc
-         lLsLs7XhBhNUCaH+WbDgqVxMjPPE5plxHojF9WFj7rsp3BdF1A3YkYhpQ1DTFcojQZ8y
-         xuhd2ACHnzaxKLRpr9/+/RbYq818aDYlOYBtSx0C84m29GhNre64V3o0m7XU8HOA0DLp
-         TCjA==
+        bh=iNgBYnm3H81CL2AuZdWmOPe+pdl1B3VjJnIrmYnD2KM=;
+        b=ZjSIypxRE2W8y2ExF38WwCcprBmHUjWY845bSU6xuICaiZKMN6fjwxqIvxGX+EnUn0
+         tZM884r2KmCnahZZszQpwvsLMIwFrgRIFnLK2ccBIQ7NgWCMZpX6Th6aR+on0aikpcnC
+         1nLBLPcbVzhH9c3yB73EX9PBYyefZCATsExTqW7lYD0OsiJDs3alDykVg4KOA2MgTFcM
+         NS6E9JRYsUPGuotNtVRxZKLuvRpEuqduNsL5mN/VApu0xI7p5ONZNGO3ADZIq6ne5bfH
+         +EDIZv1RhNJoNWEPnu0hLDeeQb/593bcsHSTj4ZYlOHcI4+R11nQXUnML+tWG6YpEQaI
+         Qb8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696050148; x=1696654948;
+        d=1e100.net; s=20230601; t=1696050152; x=1696654952;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9UNIhEufzQwgDPjs0KxNTWIPnnrU94TNvqQfHawN6Ek=;
-        b=M+smeOnQmx542mX/j7E1W+jpguBI7b2vZ6v6kAllnm14L0Y6IHzlYd0LsdOFlE+VoP
-         znf2Vzl3UWMueJYVmetCMIfvd+yK2bIWT4OblCoiod4n1mwsp/TiHPBULLjcU9C1KxGr
-         IQyq6gAOCaMuim88rpWlwkmRXChN1DPz1U58Y4DBfnrAO3DKTu65c9MEmkjG2BoAJL20
-         85hJDEGXvzIem542DofSMEGwWXUSLfPR2vrK82CFqEElMMcGfzW7HjSHmn/JygqoqV9j
-         62IgC+ezB9r1OzbR+OrVN9LnPBCwyDC+Lqf7pAhRJEj8RDxqUU5Y6kY6Ri+UX0dhzc3c
-         jK/g==
-X-Gm-Message-State: AOJu0YyUdQQH0RTIdVTe0VfkyWTVPaHp+j09t/gKfmVEI8lgw/sXnFBt
-        DaHHgLZ6R6bwJgJtusx8n/k=
-X-Google-Smtp-Source: AGHT+IGK8lZjKBjcRi0tEG6QuG+fRqfGeAdmvOQZdnvrwhwoxWP+occWiKHweWnohT8za84P1Nc9SA==
-X-Received: by 2002:a17:902:e881:b0:1c4:4c10:6ae3 with SMTP id w1-20020a170902e88100b001c44c106ae3mr6845902plg.23.1696050148169;
-        Fri, 29 Sep 2023 22:02:28 -0700 (PDT)
+        bh=iNgBYnm3H81CL2AuZdWmOPe+pdl1B3VjJnIrmYnD2KM=;
+        b=ImxdMpqKQGop5/ARYaP/UCrqNFbFhaj7D8enNvtYz0OrVX4CFf80hmkW6ypWlufqDG
+         SBUfBlOvRiH+mf0BFgOWPfSXcboXo+bKX5o4WFkxK/rRBYIhN0jmVAWH1/PluGeh2OeA
+         uzIj5dIpqrNiwxMwiAXFC/A1NYkp2+KM+sMGit+bA29/Fq6ceiMOysbULPTGmUY79x1M
+         oZzuVzcCYMQqP5NesC/yQvI0/aSKPu5j6crD/0gVNuzRP0wDziFhTJ6Z/mQ7uWn9VHIN
+         Z8mTCMK94TM6yoKQcLzueWwFMoqnF1GkFzeuZwAavWXnoIerDsXZjwC7wrmI8ZqAqtxX
+         Dwmg==
+X-Gm-Message-State: AOJu0Yzc+w2Fd8rD2SJsCkWdg3EnS9d019zrfNctLBmlsePXkHzXhfQg
+        9ltcfR7zs8s7rjC3xob/V8AQHwfxHV00Cw==
+X-Google-Smtp-Source: AGHT+IEkoX3osHqW7MF0FxSEMREB1QMsEglPWjtX2Q1cWoIBeEDqUcOfOMx9W6EaOObSdAy+ByR2RA==
+X-Received: by 2002:a17:902:e80d:b0:1c5:efd1:82b6 with SMTP id u13-20020a170902e80d00b001c5efd182b6mr6762435plg.30.1696050152408;
+        Fri, 29 Sep 2023 22:02:32 -0700 (PDT)
 Received: from wedsonaf-dev.home.lan ([189.124.190.154])
-        by smtp.googlemail.com with ESMTPSA id y10-20020a17090322ca00b001c322a41188sm392136plg.117.2023.09.29.22.02.24
+        by smtp.googlemail.com with ESMTPSA id y10-20020a17090322ca00b001c322a41188sm392136plg.117.2023.09.29.22.02.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Sep 2023 22:02:27 -0700 (PDT)
+        Fri, 29 Sep 2023 22:02:32 -0700 (PDT)
 From:   Wedson Almeida Filho <wedsonaf@gmail.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
         linux-fsdevel@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
         Wedson Almeida Filho <walmeida@microsoft.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Amir Goldstein <amir73il@gmail.com>,
-        linux-unionfs@vger.kernel.org
-Subject: [PATCH 27/29] overlayfs: move xattr tables to .rodata
-Date:   Sat, 30 Sep 2023 02:00:31 -0300
-Message-Id: <20230930050033.41174-28-wedsonaf@gmail.com>
+        Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
+Subject: [PATCH 28/29] shmem: move shmem_xattr_handlers to .rodata
+Date:   Sat, 30 Sep 2023 02:00:32 -0300
+Message-Id: <20230930050033.41174-29-wedsonaf@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230930050033.41174-1-wedsonaf@gmail.com>
 References: <20230930050033.41174-1-wedsonaf@gmail.com>
@@ -80,35 +79,28 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 From: Wedson Almeida Filho <walmeida@microsoft.com>
 
 This makes it harder for accidental or malicious changes to
-ovl_trusted_xattr_handlers or ovl_user_xattr_handlers at runtime.
+shmem_xattr_handlers at runtime.
 
-Cc: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Amir Goldstein <amir73il@gmail.com>
-Cc: linux-unionfs@vger.kernel.org
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org
 Signed-off-by: Wedson Almeida Filho <walmeida@microsoft.com>
 ---
- fs/overlayfs/super.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ mm/shmem.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-index cc8977498c48..fe7af47be621 100644
---- a/fs/overlayfs/super.c
-+++ b/fs/overlayfs/super.c
-@@ -477,13 +477,13 @@ static const struct xattr_handler ovl_other_xattr_handler = {
- 	.set = ovl_other_xattr_set,
+diff --git a/mm/shmem.c b/mm/shmem.c
+index d963c747dabc..683c84d667c1 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -3487,7 +3487,7 @@ static const struct xattr_handler shmem_trusted_xattr_handler = {
+ 	.set = shmem_xattr_handler_set,
  };
  
--static const struct xattr_handler *ovl_trusted_xattr_handlers[] = {
-+static const struct xattr_handler * const ovl_trusted_xattr_handlers[] = {
- 	&ovl_own_trusted_xattr_handler,
- 	&ovl_other_xattr_handler,
- 	NULL
- };
- 
--static const struct xattr_handler *ovl_user_xattr_handlers[] = {
-+static const struct xattr_handler * const ovl_user_xattr_handlers[] = {
- 	&ovl_own_user_xattr_handler,
- 	&ovl_other_xattr_handler,
+-static const struct xattr_handler *shmem_xattr_handlers[] = {
++static const struct xattr_handler * const shmem_xattr_handlers[] = {
+ 	&shmem_security_xattr_handler,
+ 	&shmem_trusted_xattr_handler,
  	NULL
 -- 
 2.34.1
