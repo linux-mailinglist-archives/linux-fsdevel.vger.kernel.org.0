@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C88957B3DCF
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Sep 2023 05:28:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1689B7B3DD3
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Sep 2023 05:30:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233961AbjI3D26 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Sep 2023 23:28:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53236 "EHLO
+        id S233967AbjI3DaO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Sep 2023 23:30:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229764AbjI3D24 (ORCPT
+        with ESMTP id S233962AbjI3DaM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Sep 2023 23:28:56 -0400
-Received: from mail-yw1-x1134.google.com (mail-yw1-x1134.google.com [IPv6:2607:f8b0:4864:20::1134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 855479E
-        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Sep 2023 20:28:54 -0700 (PDT)
-Received: by mail-yw1-x1134.google.com with SMTP id 00721157ae682-5a21ea6baccso33064787b3.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Sep 2023 20:28:54 -0700 (PDT)
+        Fri, 29 Sep 2023 23:30:12 -0400
+Received: from mail-qt1-x832.google.com (mail-qt1-x832.google.com [IPv6:2607:f8b0:4864:20::832])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3A65DB
+        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Sep 2023 20:30:07 -0700 (PDT)
+Received: by mail-qt1-x832.google.com with SMTP id d75a77b69052e-4197bb0a0d9so8708731cf.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Sep 2023 20:30:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1696044533; x=1696649333; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1696044606; x=1696649406; darn=vger.kernel.org;
         h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/Dj6Oo+B5y8AHftgdToua+FX2M1F3oxEvkpI+qfcb0o=;
-        b=GvSSQ1baWvjZh5vOwQnlQSM5W/zRa0BtOGJRuTis/L9FKEsrQg4cKAkHQWxMFrIU4f
-         pVB3LaWpXGlzwnjdkwrieNRUWQap2aTaY3h8ZI4WSY0UFCPfuQ/uqfqiehNZniRpDQfv
-         FEcoNjRljQ+F9iBJjoLDG+GAQuHI4TdVMzgpeLR9C6WybSQaMnmncyyk9KBN6/CVrQk9
-         iNAASiWuIGpxksF6ESrr3UazMXmftSNEqnTM3YlqNIiXCNOHdUuizexVuUzJ62YuWK5z
-         XxFS1s9R/RqaNblxkSX7/+OxWUjzB3y0/zzIu1sl/0zDelEuc+h2SrqOVTDSykbzwaj9
-         zx7Q==
+        bh=F5lBL1dIqosEB13vnHNJcMu3nNFm9z6wAJ0sm8x1c/Y=;
+        b=4pNbCMPfFspO8G7/MhfmAy9r3B7X4+80ptLvUHsca9nvtZ/21NwNQBRB56wAMz2ooj
+         RqqXeRlj9niyjk3mAs9Opz6wBVJCZDAZYEETLb/cH9tf2+216tYEvoDTQJUJ7Te/Tlbr
+         wGqr0cncxmDRR/XJvTR8OD8huvDrKCx85uhQrloiOY2QFq05wXVy5owIldkh0Nz+icO2
+         GSlnjlIN3e1R/1tsuF55J+yUFRx8YiVS6HAU8Zd5jZC9IwXvUkHKsTh7U7AIip6GbE46
+         8lE5dtajfRT1q1e+DO11VmRnVzTKYHp09w/O1+o94fsUa1VH4ZeoKgzygxpcriXftomr
+         HVTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696044533; x=1696649333;
+        d=1e100.net; s=20230601; t=1696044606; x=1696649406;
         h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/Dj6Oo+B5y8AHftgdToua+FX2M1F3oxEvkpI+qfcb0o=;
-        b=e1cBBBHjGIHDcLW78MjugTGLlZaYDPOk61Hhbt1blYYDyRlKa4Ilr9oaefa9ynE/Nz
-         loEiVnancTqt2JoKr1ZXqYgCWK2rHul60/oCMXjOODzAcOMo31C2A/KwD62zFw3K3Xre
-         OysWFNQUe/xTvpDL5zhMXwQFJTpG1blgwYSaGrzYXWR2PtA28PCwoo0+kxA5/ie2vX3K
-         jE2Q7XuDfUQkGv8fBSOwbtGprWPWqAldfTI8yKZPk9nKfe0/nMt+jM69+dp1ZIABsqaS
-         SBUF7O/8mPeOJSo8bRWKVPMyj+u6vhzvPIDDePPYCa/2oOWbQDaTJkLoulx3BEVottRt
-         uqkg==
-X-Gm-Message-State: AOJu0YxCciTjk1u5IUz/Ugber7h3UToQpRSYtybs+Dc92YsVMtCNkI4d
-        Lr7NSeTCJn9JE1jbe9NhM+Scvg==
-X-Google-Smtp-Source: AGHT+IHPj4w9oZpttkU3FSY37D6TH9BiRNUeI9NUbTwdclt9Ncz+8LjmVJX7PwjhqGcgK9q2b2JpVA==
-X-Received: by 2002:a0d:df45:0:b0:595:9770:6914 with SMTP id i66-20020a0ddf45000000b0059597706914mr6356530ywe.35.1696044533585;
-        Fri, 29 Sep 2023 20:28:53 -0700 (PDT)
+        bh=F5lBL1dIqosEB13vnHNJcMu3nNFm9z6wAJ0sm8x1c/Y=;
+        b=rcAm2zCqnd3h6pYJE8AJlTkKZTC2t0Otzmb6DcxGepm2u4ADgRevgsOExMY776cOug
+         ubqn6/EIJ5Q0NXhvi8v9Efnno/54SZuEutVsvEsEfeHlwURVYGFUVHX6lIKhcFiuj9Di
+         VPf7MQf/e+moydp/MCeBwocb1jnXYcIo4u/F1HXdx67Nm10ks7ObIv6Nsmh/9RAwvDAa
+         hHA2HrThKvpU0Pv3mXmzIObZZh06Axg/p4mXScgJ7XDMb6fQBQ2uJLHIQnLEfIQMaa4M
+         +82JYco22peXPpeYp8izblRUdE7hwMi1mv3+N4Tt2DqB8QVgUJ0m7BkMzzuWoMGIjuhX
+         eU/A==
+X-Gm-Message-State: AOJu0Yx13CYuxqB5L9cWI12rHvWS7PqdWb8tG9SZjFVv/YkWCjnKAssc
+        7NpmKmkOaRCRGS1ZywYJHTZLFA==
+X-Google-Smtp-Source: AGHT+IGP2fxP6CWffX9Qi9wXG2I3wbOa1qZMTS36GprFKCZ9FBnqMrcBGIljlzMe7rrEDbitBUPjPw==
+X-Received: by 2002:a05:622a:5cb:b0:412:c2a:eaef with SMTP id d11-20020a05622a05cb00b004120c2aeaefmr6834494qtb.11.1696044606428;
+        Fri, 29 Sep 2023 20:30:06 -0700 (PDT)
 Received: from ripple.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id s185-20020a8182c2000000b00597e912e67esm6008532ywf.131.2023.09.29.20.28.51
+        by smtp.gmail.com with ESMTPSA id r74-20020a0de84d000000b0059bc980b1eesm5981929ywe.6.2023.09.29.20.30.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Sep 2023 20:28:52 -0700 (PDT)
-Date:   Fri, 29 Sep 2023 20:28:50 -0700 (PDT)
+        Fri, 29 Sep 2023 20:30:05 -0700 (PDT)
+Date:   Fri, 29 Sep 2023 20:30:03 -0700 (PDT)
 From:   Hugh Dickins <hughd@google.com>
 X-X-Sender: hugh@ripple.attlocal.net
 To:     Andrew Morton <akpm@linux-foundation.org>
@@ -60,17 +60,17 @@ cc:     Christian Brauner <brauner@kernel.org>,
         Axel Rasmussen <axelrasmussen@google.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org
-Subject: [PATCH 4/8] shmem: trivial tidyups, removing extra blank lines,
- etc
+Subject: [PATCH 5/8] shmem: shmem_acct_blocks() and
+ shmem_inode_acct_blocks()
 In-Reply-To: <c7441dc6-f3bb-dd60-c670-9f5cbd9f266@google.com>
-Message-ID: <b3983d28-5d3f-8649-36af-b819285d7a9e@google.com>
+Message-ID: <9124094-e4ab-8be7-ef80-9a87bdc2e4fc@google.com>
 References: <c7441dc6-f3bb-dd60-c670-9f5cbd9f266@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
         ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -78,229 +78,76 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Mostly removing a few superfluous blank lines, joining short arglines,
-imposing some 80-column observance, correcting a couple of comments.
-None of it more interesting than deleting a repeated INIT_LIST_HEAD().
+By historical accident, shmem_acct_block() and shmem_inode_acct_block()
+were never pluralized when the pages argument was added, despite their
+complements being shmem_unacct_blocks() and shmem_inode_unacct_blocks()
+all along.  It has been an irritation: fix their naming at last.
 
 Signed-off-by: Hugh Dickins <hughd@google.com>
 ---
- mm/shmem.c | 56 ++++++++++++++++++++----------------------------------
- 1 file changed, 21 insertions(+), 35 deletions(-)
+ mm/shmem.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
 diff --git a/mm/shmem.c b/mm/shmem.c
-index 5501a5bc8d8c..caee8ba841f7 100644
+index caee8ba841f7..63ba6037b23a 100644
 --- a/mm/shmem.c
 +++ b/mm/shmem.c
-@@ -756,7 +756,7 @@ static unsigned long shmem_unused_huge_shrink(struct shmem_sb_info *sbinfo,
- #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
- 
+@@ -189,10 +189,10 @@ static inline int shmem_reacct_size(unsigned long flags,
  /*
-- * Like filemap_add_folio, but error if expected item has gone.
-+ * Somewhat like filemap_add_folio, but error if expected item has gone.
+  * ... whereas tmpfs objects are accounted incrementally as
+  * pages are allocated, in order to allow large sparse files.
+- * shmem_get_folio reports shmem_acct_block failure as -ENOSPC not -ENOMEM,
++ * shmem_get_folio reports shmem_acct_blocks failure as -ENOSPC not -ENOMEM,
+  * so that a failure on a sparse tmpfs mapping will give SIGBUS not OOM.
   */
- static int shmem_add_to_page_cache(struct folio *folio,
- 				   struct address_space *mapping,
-@@ -825,7 +825,7 @@ static int shmem_add_to_page_cache(struct folio *folio,
+-static inline int shmem_acct_block(unsigned long flags, long pages)
++static inline int shmem_acct_blocks(unsigned long flags, long pages)
+ {
+ 	if (!(flags & VM_NORESERVE))
+ 		return 0;
+@@ -207,13 +207,13 @@ static inline void shmem_unacct_blocks(unsigned long flags, long pages)
+ 		vm_unacct_memory(pages * VM_ACCT(PAGE_SIZE));
  }
  
- /*
-- * Like delete_from_page_cache, but substitutes swap for @folio.
-+ * Somewhat like filemap_remove_folio, but substitutes swap for @folio.
-  */
- static void shmem_delete_from_page_cache(struct folio *folio, void *radswap)
- {
-@@ -887,7 +887,6 @@ unsigned long shmem_partial_swap_usage(struct address_space *mapping,
- 			cond_resched_rcu();
- 		}
- 	}
--
- 	rcu_read_unlock();
- 
- 	return swapped << PAGE_SHIFT;
-@@ -1213,7 +1212,6 @@ static int shmem_setattr(struct mnt_idmap *idmap,
- 	if (i_uid_needs_update(idmap, attr, inode) ||
- 	    i_gid_needs_update(idmap, attr, inode)) {
- 		error = dquot_transfer(idmap, inode, attr);
--
- 		if (error)
- 			return error;
- 	}
-@@ -2456,7 +2454,6 @@ static struct inode *__shmem_get_inode(struct mnt_idmap *idmap,
- 	if (err)
- 		return ERR_PTR(err);
- 
--
- 	inode = new_inode(sb);
- 	if (!inode) {
- 		shmem_free_inode(sb, 0);
-@@ -2481,11 +2478,10 @@ static struct inode *__shmem_get_inode(struct mnt_idmap *idmap,
- 		shmem_set_inode_flags(inode, info->fsflags);
- 	INIT_LIST_HEAD(&info->shrinklist);
- 	INIT_LIST_HEAD(&info->swaplist);
--	INIT_LIST_HEAD(&info->swaplist);
--	if (sbinfo->noswap)
--		mapping_set_unevictable(inode->i_mapping);
- 	simple_xattrs_init(&info->xattrs);
- 	cache_no_acl(inode);
-+	if (sbinfo->noswap)
-+		mapping_set_unevictable(inode->i_mapping);
- 	mapping_set_large_folios(inode->i_mapping);
- 
- 	switch (mode & S_IFMT) {
-@@ -2697,7 +2693,6 @@ shmem_write_begin(struct file *file, struct address_space *mapping,
- 	}
- 
- 	ret = shmem_get_folio(inode, index, &folio, SGP_WRITE);
--
- 	if (ret)
- 		return ret;
- 
-@@ -3229,8 +3224,7 @@ shmem_mknod(struct mnt_idmap *idmap, struct inode *dir,
- 	error = simple_acl_create(dir, inode);
- 	if (error)
- 		goto out_iput;
--	error = security_inode_init_security(inode, dir,
--					     &dentry->d_name,
-+	error = security_inode_init_security(inode, dir, &dentry->d_name,
- 					     shmem_initxattrs, NULL);
- 	if (error && error != -EOPNOTSUPP)
- 		goto out_iput;
-@@ -3259,14 +3253,11 @@ shmem_tmpfile(struct mnt_idmap *idmap, struct inode *dir,
- 	int error;
- 
- 	inode = shmem_get_inode(idmap, dir->i_sb, dir, mode, 0, VM_NORESERVE);
--
- 	if (IS_ERR(inode)) {
- 		error = PTR_ERR(inode);
- 		goto err_out;
- 	}
--
--	error = security_inode_init_security(inode, dir,
--					     NULL,
-+	error = security_inode_init_security(inode, dir, NULL,
- 					     shmem_initxattrs, NULL);
- 	if (error && error != -EOPNOTSUPP)
- 		goto out_iput;
-@@ -3303,7 +3294,8 @@ static int shmem_create(struct mnt_idmap *idmap, struct inode *dir,
- /*
-  * Link a file..
-  */
--static int shmem_link(struct dentry *old_dentry, struct inode *dir, struct dentry *dentry)
-+static int shmem_link(struct dentry *old_dentry, struct inode *dir,
-+		      struct dentry *dentry)
- {
- 	struct inode *inode = d_inode(old_dentry);
- 	int ret = 0;
-@@ -3334,7 +3326,7 @@ static int shmem_link(struct dentry *old_dentry, struct inode *dir, struct dentr
- 	inode_inc_iversion(dir);
- 	inc_nlink(inode);
- 	ihold(inode);	/* New dentry reference */
--	dget(dentry);		/* Extra pinning count for the created dentry */
-+	dget(dentry);	/* Extra pinning count for the created dentry */
- 	d_instantiate(dentry, inode);
- out:
- 	return ret;
-@@ -3354,7 +3346,7 @@ static int shmem_unlink(struct inode *dir, struct dentry *dentry)
- 					     inode_set_ctime_current(inode));
- 	inode_inc_iversion(dir);
- 	drop_nlink(inode);
--	dput(dentry);	/* Undo the count from "create" - this does all the work */
-+	dput(dentry);	/* Undo the count from "create" - does all the work */
- 	return 0;
- }
- 
-@@ -3464,7 +3456,6 @@ static int shmem_symlink(struct mnt_idmap *idmap, struct inode *dir,
- 
- 	inode = shmem_get_inode(idmap, dir->i_sb, dir, S_IFLNK | 0777, 0,
- 				VM_NORESERVE);
--
- 	if (IS_ERR(inode))
- 		return PTR_ERR(inode);
- 
-@@ -3518,8 +3509,7 @@ static void shmem_put_link(void *arg)
- 	folio_put(arg);
- }
- 
--static const char *shmem_get_link(struct dentry *dentry,
--				  struct inode *inode,
-+static const char *shmem_get_link(struct dentry *dentry, struct inode *inode,
- 				  struct delayed_call *done)
- {
- 	struct folio *folio = NULL;
-@@ -3593,8 +3583,7 @@ static int shmem_fileattr_set(struct mnt_idmap *idmap,
-  * Callback for security_inode_init_security() for acquiring xattrs.
-  */
- static int shmem_initxattrs(struct inode *inode,
--			    const struct xattr *xattr_array,
--			    void *fs_info)
-+			    const struct xattr *xattr_array, void *fs_info)
+-static int shmem_inode_acct_block(struct inode *inode, long pages)
++static int shmem_inode_acct_blocks(struct inode *inode, long pages)
  {
  	struct shmem_inode_info *info = SHMEM_I(inode);
  	struct shmem_sb_info *sbinfo = SHMEM_SB(inode->i_sb);
-@@ -3778,7 +3767,6 @@ static struct dentry *shmem_find_alias(struct inode *inode)
- 	return alias ?: d_find_any_alias(inode);
- }
+ 	int err = -ENOSPC;
  
--
- static struct dentry *shmem_fh_to_dentry(struct super_block *sb,
- 		struct fid *fid, int fh_len, int fh_type)
+-	if (shmem_acct_block(info->flags, pages))
++	if (shmem_acct_blocks(info->flags, pages))
+ 		return err;
+ 
+ 	might_sleep();	/* when quotas */
+@@ -447,7 +447,7 @@ bool shmem_charge(struct inode *inode, long pages)
  {
-@@ -4362,8 +4350,8 @@ static int shmem_fill_super(struct super_block *sb, struct fs_context *fc)
- 	}
- #endif /* CONFIG_TMPFS_QUOTA */
+ 	struct address_space *mapping = inode->i_mapping;
  
--	inode = shmem_get_inode(&nop_mnt_idmap, sb, NULL, S_IFDIR | sbinfo->mode, 0,
--				VM_NORESERVE);
-+	inode = shmem_get_inode(&nop_mnt_idmap, sb, NULL,
-+				S_IFDIR | sbinfo->mode, 0, VM_NORESERVE);
- 	if (IS_ERR(inode)) {
- 		error = PTR_ERR(inode);
+-	if (shmem_inode_acct_block(inode, pages))
++	if (shmem_inode_acct_blocks(inode, pages))
+ 		return false;
+ 
+ 	/* nrpages adjustment first, then shmem_recalc_inode() when balanced */
+@@ -1671,7 +1671,7 @@ static struct folio *shmem_alloc_and_acct_folio(gfp_t gfp, struct inode *inode,
+ 		huge = false;
+ 	nr = huge ? HPAGE_PMD_NR : 1;
+ 
+-	err = shmem_inode_acct_block(inode, nr);
++	err = shmem_inode_acct_blocks(inode, nr);
+ 	if (err)
  		goto failed;
-@@ -4666,11 +4654,9 @@ static ssize_t shmem_enabled_show(struct kobject *kobj,
  
- 	for (i = 0; i < ARRAY_SIZE(values); i++) {
- 		len += sysfs_emit_at(buf, len,
--				     shmem_huge == values[i] ? "%s[%s]" : "%s%s",
--				     i ? " " : "",
--				     shmem_format_huge(values[i]));
-+				shmem_huge == values[i] ? "%s[%s]" : "%s%s",
-+				i ? " " : "", shmem_format_huge(values[i]));
- 	}
--
- 	len += sysfs_emit_at(buf, len, "\n");
+@@ -2572,7 +2572,7 @@ int shmem_mfill_atomic_pte(pmd_t *dst_pmd,
+ 	int ret;
+ 	pgoff_t max_off;
  
- 	return len;
-@@ -4767,8 +4753,9 @@ EXPORT_SYMBOL_GPL(shmem_truncate_range);
- #define shmem_acct_size(flags, size)		0
- #define shmem_unacct_size(flags, size)		do {} while (0)
- 
--static inline struct inode *shmem_get_inode(struct mnt_idmap *idmap, struct super_block *sb, struct inode *dir,
--					    umode_t mode, dev_t dev, unsigned long flags)
-+static inline struct inode *shmem_get_inode(struct mnt_idmap *idmap,
-+				struct super_block *sb, struct inode *dir,
-+				umode_t mode, dev_t dev, unsigned long flags)
- {
- 	struct inode *inode = ramfs_get_inode(sb, dir, mode, dev);
- 	return inode ? inode : ERR_PTR(-ENOSPC);
-@@ -4778,8 +4765,8 @@ static inline struct inode *shmem_get_inode(struct mnt_idmap *idmap, struct supe
- 
- /* common code */
- 
--static struct file *__shmem_file_setup(struct vfsmount *mnt, const char *name, loff_t size,
--				       unsigned long flags, unsigned int i_flags)
-+static struct file *__shmem_file_setup(struct vfsmount *mnt, const char *name,
-+			loff_t size, unsigned long flags, unsigned int i_flags)
- {
- 	struct inode *inode;
- 	struct file *res;
-@@ -4798,7 +4785,6 @@ static struct file *__shmem_file_setup(struct vfsmount *mnt, const char *name, l
- 
- 	inode = shmem_get_inode(&nop_mnt_idmap, mnt->mnt_sb, NULL,
- 				S_IFREG | S_IRWXUGO, 0, flags);
--
- 	if (IS_ERR(inode)) {
- 		shmem_unacct_size(flags, size);
- 		return ERR_CAST(inode);
+-	if (shmem_inode_acct_block(inode, 1)) {
++	if (shmem_inode_acct_blocks(inode, 1)) {
+ 		/*
+ 		 * We may have got a page, returned -ENOENT triggering a retry,
+ 		 * and now we find ourselves with -ENOMEM. Release the page, to
 -- 
 2.35.3
 
