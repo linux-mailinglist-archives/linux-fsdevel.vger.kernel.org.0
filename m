@@ -2,45 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3086B7B429C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Sep 2023 19:21:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDA7F7B42A3
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Sep 2023 19:23:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234618AbjI3RVc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 30 Sep 2023 13:21:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50172 "EHLO
+        id S234642AbjI3RXJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 30 Sep 2023 13:23:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232221AbjI3RVc (ORCPT
+        with ESMTP id S234650AbjI3RXH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 30 Sep 2023 13:21:32 -0400
+        Sat, 30 Sep 2023 13:23:07 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70D6CDD;
-        Sat, 30 Sep 2023 10:21:30 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3042C433C8;
-        Sat, 30 Sep 2023 17:21:29 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B801FA;
+        Sat, 30 Sep 2023 10:23:06 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8AECC433C7;
+        Sat, 30 Sep 2023 17:23:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696094490;
-        bh=040kTFk3t5OYkySQC/I2pYHwVrPb1tnb/Ke5P3nUgKE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=otdWHsNy2exebBZRGLMkXODLlok7j/UEA158rfvlirMNSwCFMnStDchWNM/g+3fbg
-         tz1AH420Az/WCN46hEXGLR3YYJkBilfuznkB4Ti1uEgbQQf1AfXhNRuroJIOk2rFkB
-         feUZl8n9N8fNcqlogbgKFxRG0T9oUEgCG3z0McrHbkzE0rGIHeQrCU0odh/gyOgMtp
-         oniEJPB1SIQzBe2Dx5ItxtrVngRmJFIw4YYP/ianULrFTFpgaJ5/QX9fIimX6c4RLO
-         ZrUbC+nMGBpJEBBMmFR7FrS6rKxUdPhITYIyKMYBTbVkxAS+iAQSaaFGf78XnRiy2P
-         SrtrFetdfzqRA==
-Date:   Sat, 30 Sep 2023 10:21:29 -0700
+        s=k20201202; t=1696094585;
+        bh=YlNSRETzZewgQmIzaK8O1JfDxjoccXt4+6tSmiu/+ys=;
+        h=Date:From:To:Cc:Subject:From;
+        b=WCUvhw2mOr/yxGbRvCorUaUYgo+dLGu4JKsnIhkziwEgMT9ZTmKg+CGz+ONRguUQG
+         NjMctE6y3VsIfTW+O+U2ZgTZ4s+ZU1G9VHTUXK4ZXyLA56k/9N/3zWi42Z6j/jWhsK
+         uypGIhDtw1be7v35J/kif8KSXtt9MhKEVef/VynsGcGMhV9j7npU2H7SsUh0p0vMz8
+         pxt3f/wYgU1nw/RQg4o0O8Cjq5eH4CotUd7MvnNfwqbWvmQhKUE0tYdEiDi7y0TLfp
+         9U4B8MAhsNYjTs/OkeQG+mDqhP8ahqqozIt24k2Evx2YOwlcG3PhPeu22nqYNz7xtP
+         73CZwLwRtdEHg==
+Date:   Sat, 30 Sep 2023 10:23:05 -0700
 From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
+To:     djwong@kernel.org, torvalds@linux-foundation.org
 Cc:     bodonnel@redhat.com, geert+renesas@glider.be, hch@lst.de,
         linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
         syzbot+1fa947e7f09e136925b8@syzkaller.appspotmail.com
-Subject: Re: [GIT PULL] iomap: bug fixes for 6.6-rc4
-Message-ID: <20230930172129.GA21298@frogsfrogsfrogs>
-References: <169608776189.1016505.15445601632237284088.stg-ugh@frogsfrogsfrogs>
- <CAHk-=wjHA1d1kGhnzfXw7BsLuR93CPizeFzN0sNJruWsqvqzTQ@mail.gmail.com>
+Subject: [GIT PULL v2] iomap: bug fixes for 6.6-rc4
+Message-ID: <169609450381.1111146.9387085958711753844.stg-ugh@frogsfrogsfrogs>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wjHA1d1kGhnzfXw7BsLuR93CPizeFzN0sNJruWsqvqzTQ@mail.gmail.com>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
         RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
@@ -51,18 +48,46 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Sep 30, 2023 at 09:52:41AM -0700, Linus Torvalds wrote:
-> On Sat, 30 Sept 2023 at 08:31, Darrick J. Wong <djwong@kernel.org> wrote:
-> >
-> > https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git iomap-6.6-fixes-4
-> 
-> No such tag - and not even a branch with a matching commit.
+Hi Linus,
 
-Doh, wrong repo.  I'm kinda surprised that git request-pull didn't
-complain about that.  Will send a new one.
+Please pull this branch with changes for iomap for 6.6-rc4.
+
+As usual, I did a test-merge with the main upstream branch as of a few
+minutes ago, and didn't see any conflicts.  Please let me know if you
+encounter any more problems.
+
+This time with the /correct/ git repo. :(
 
 --D
 
-> Forgot to push out?
-> 
->                  Linus
+The following changes since commit a5f31a5028d1e88e97c3b6cdc3e3bf2da085e232:
+
+iomap: convert iomap_unshare_iter to use large folios (2023-09-19 09:05:35 -0700)
+
+are available in the Git repository at:
+
+https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/iomap-6.6-fixes-4
+
+for you to fetch changes up to 684f7e6d28e8087502fc8efdb6c9fe82400479dd:
+
+iomap: Spelling s/preceeding/preceding/g (2023-09-28 09:26:58 -0700)
+
+----------------------------------------------------------------
+Bug fixes for 6.6-rc4:
+
+* Handle a race between writing and shrinking block devices by
+returning EIO.
+* Fix a typo in a comment.
+
+Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+
+----------------------------------------------------------------
+Christoph Hellwig (1):
+iomap: add a workaround for racy i_size updates on block devices
+
+Geert Uytterhoeven (1):
+iomap: Spelling s/preceeding/preceding/g
+
+fs/buffer.c            | 11 ++++++++++-
+fs/iomap/buffered-io.c |  2 +-
+2 files changed, 11 insertions(+), 2 deletions(-)
