@@ -2,106 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A5277B3DB0
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Sep 2023 04:45:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8481A7B3DC5
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Sep 2023 05:23:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232105AbjI3Cpw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Sep 2023 22:45:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47390 "EHLO
+        id S233931AbjI3DX2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Sep 2023 23:23:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229483AbjI3Cpw (ORCPT
+        with ESMTP id S230474AbjI3DX0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Sep 2023 22:45:52 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF1701B6;
-        Fri, 29 Sep 2023 19:45:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-        Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-        bh=sutjUDhTdDiAZXC/zVaX0ZtYjfFd9yMSNdgYvXTeOug=; b=v0RAgpBm5ZT2ZxQnZfMcFEHZ/d
-        BiXDSjXPSB1g39XP6qRT1ye7gQL37dsA4SBC8Dc6b1rTtzCkKsBHVkD1JiitYqxRZexcSyrSe8rNi
-        OfxiYfx6siWmgpv0frJEbLtj7OTgheaPCzObybCqPJQAqMuSsy6eJIt01w2wyhDg8kaDgIT+MqmI/
-        +MmbYg+Bavpl1ZirM+m8I/jz1HPXm+xziggYgPOPZM4fmuhGkZMwZ8krSppXo9GaSRLQmvpdIkglf
-        DoWWxyZUgQJ3YkEli1ePUDj0XxEyvOYMtoTLPvyGMiIyq3nyZqfycFnayCd1o3bdOBOazjrEEPnYy
-        leSEulCw==;
-Received: from [50.53.46.231] (helo=[192.168.254.15])
-        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1qmPz8-008ppw-1G;
-        Sat, 30 Sep 2023 02:45:38 +0000
-Message-ID: <ca559807-8456-4ff7-9edd-003480437a93@infradead.org>
-Date:   Fri, 29 Sep 2023 19:45:37 -0700
+        Fri, 29 Sep 2023 23:23:26 -0400
+Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89972193
+        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Sep 2023 20:23:22 -0700 (PDT)
+Received: by mail-yb1-xb36.google.com with SMTP id 3f1490d57ef6-d7f0a60a159so16412031276.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Sep 2023 20:23:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1696044201; x=1696649001; darn=vger.kernel.org;
+        h=mime-version:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=u464Sxm0ujPzUaibJwHmo6uSfWYXgo9KUxPB7fJkQzM=;
+        b=jIk25V+kFNOpNETB/dnVoXERdd096a32LnQZAFFilT2BHNc7vKqXZ9WvLZusO/jhAp
+         lUGU4s9l8zpD9reONW7Hh0JWletqMKXMNqUsKcrGRhzCszJCXTLyuCFO/eiXMk8oACT5
+         QgmZPGiiRGV94UiGOsPSvyY2ZxqvnfAbWMnwJ0l4EyODHAfXR46rqPHqyS6DxychQuaH
+         sys3cNea25492qlbh38gwQzDPVtwZWFjo84n1lYzMNF9mKpJu0HOGezexRRKcSwkHA1m
+         MkNOFNwOFW77koSZM92aLSgivDE7C7SlYq1tn6FvGtf/iTsk20GB8xcoPms4X/XYbOe2
+         pvsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696044201; x=1696649001;
+        h=mime-version:message-id:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=u464Sxm0ujPzUaibJwHmo6uSfWYXgo9KUxPB7fJkQzM=;
+        b=KnrFiODQ2eFT16vNs+owuoV2Xg/1Wl8yVxR6GSiVhELJGhKPRLZyNhWFjDBENLjuM6
+         hqOdedh9c3M52utXmOW5u2wZmIZJiHQ3PuNkgYQF/L+Nw4uSyuHpWEoVLY2k5pBK6LJ2
+         RBUNPCcPHbl5OXwFDujGjFkx60HMjMIoD/rdUZyyLinwVIui4l9tgoewa3gcqDq2EdKL
+         CnDxXPHwu+ykEHdI1hvh9yeVI8HbSbUPjBUAJ/RkXqfTlzMAq+VX4jRE/Df8BuBnzcpL
+         zvP5x0izeNbAsr37MyDsUuEw3RpjACMkYEs1zk97foDxz+5ZOnqxXSc7m6LCmbjXWEAK
+         P0kg==
+X-Gm-Message-State: AOJu0YxTsdRtT7ppxmr77ZJe3n9x249rqp+Zv4UYaLtv/1auFVcKC6GC
+        8Z5QYpcN33S+E3KuCi+bSqjZOg==
+X-Google-Smtp-Source: AGHT+IHdyJ6lGHBlGP9IqvKprbLeVqba/douBbEisvvniP4hzfe3psIPtxTRADPUKu7cyiP+Qngk6Q==
+X-Received: by 2002:a25:2601:0:b0:d71:8729:23b8 with SMTP id m1-20020a252601000000b00d71872923b8mr5578703ybm.13.1696044201598;
+        Fri, 29 Sep 2023 20:23:21 -0700 (PDT)
+Received: from ripple.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id e195-20020a2550cc000000b00d8679407796sm4282793ybb.48.2023.09.29.20.23.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Sep 2023 20:23:19 -0700 (PDT)
+Date:   Fri, 29 Sep 2023 20:23:11 -0700 (PDT)
+From:   Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@ripple.attlocal.net
+To:     Andrew Morton <akpm@linux-foundation.org>
+cc:     Christian Brauner <brauner@kernel.org>,
+        Carlos Maiolino <cem@kernel.org>,
+        Chuck Lever <chuck.lever@oracle.com>, Jan Kara <jack@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: [PATCH 0/8] shmem,tmpfs: general maintenance
+Message-ID: <c7441dc6-f3bb-dd60-c670-9f5cbd9f266@google.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Fixed Kunit test warning message for 'fs' module
-Content-Language: en-US
-To:     Abhinav <singhabhinav9051571833@gmail.com>,
-        akpm@linux-foundation.org, david@redhat.com, rppt@kernel.org,
-        hughd@google.com, Liam.Howlett@Oracle.com, surenb@google.com,
-        usama.anjum@collabora.com, wangkefeng.wang@huawei.com,
-        ryan.roberts@arm.com, yuanchu@google.com
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        skhan@linuxfoundation.org
-References: <20230928085311.938163-1-singhabhinav9051571833@gmail.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20230928085311.938163-1-singhabhinav9051571833@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+And here is a series of patches based on v6.6-rc3: mostly just cosmetic
+mods in mm/shmem.c, but the last two enforcing the "size=" limit better.
+8/8 goes into percpu counter territory, and could stand alone: I'll add
+some more Cc's on that one.
 
-On 9/28/23 01:53, Abhinav wrote:
-> fs/proc/task_mmu : fix warning
-> 
-> All the caller of the function pagemap_scan_backout_range(...) are inside
-> ifdef preprocessor which is checking for the macro
-> 'CONFIG_TRANSPARENT_HUGEPAGE' is set or not. When it is not set the
-> function doesn't have a caller and it generates a warning unused
-> function.
-> 
-> Putting the whole function inside the preprocessor fixes this warning.
-> 
-> Signed-off-by: Abhinav <singhabhinav9051571833@gmail.com>
+Applies to any v6.6-rc so far, and to next-20230929 and to
+mm-everything-2023-09-29-23-51: hah, there's now an 09-30-01-16,
+I haven't tried it yet, but this should be good on that too.
 
-We have this patch:
-  https://lore.kernel.org/all/20230927060257.2975412-1-arnd@kernel.org/
+1/8 shmem: shrink shmem_inode_info: dir_offsets in a union
+2/8 shmem: remove vma arg from shmem_get_folio_gfp()
+3/8 shmem: factor shmem_falloc_wait() out of shmem_fault()
+4/8 shmem: trivial tidyups, removing extra blank lines, etc
+5/8 shmem: shmem_acct_blocks() and shmem_inode_acct_blocks()
+6/8 shmem: move memcg charge out of shmem_add_to_page_cache()
+7/8 shmem: _add_to_page_cache() before shmem_inode_acct_blocks()
+8/8 shmem,percpu_counter: add _limited_add(fbc, limit, amount)
 
-which is already merged.
+ include/linux/percpu_counter.h |  23 ++
+ include/linux/shmem_fs.h       |  16 +-
+ lib/percpu_counter.c           |  53 ++++
+ mm/shmem.c                     | 500 +++++++++++++++++------------------
+ 4 files changed, 333 insertions(+), 259 deletions(-)
 
-Thanks.
-
-> ---
->  fs/proc/task_mmu.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> index 27da6337d675..88b6b8847cf3 100644
-> --- a/fs/proc/task_mmu.c
-> +++ b/fs/proc/task_mmu.c
-> @@ -2019,6 +2019,7 @@ static bool pagemap_scan_push_range(unsigned long categories,
->  	return true;
->  }
->  
-> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
->  static void pagemap_scan_backout_range(struct pagemap_scan_private *p,
->  				       unsigned long addr, unsigned long end)
->  {
-> @@ -2031,6 +2032,7 @@ static void pagemap_scan_backout_range(struct pagemap_scan_private *p,
->  
->  	p->found_pages -= (end - addr) / PAGE_SIZE;
->  }
-> +#endif
->  
->  static int pagemap_scan_output(unsigned long categories,
->  			       struct pagemap_scan_private *p,
-
--- 
-~Randy
+Hugh
