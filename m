@@ -2,68 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F8907B3E18
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Sep 2023 07:01:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 988677B3E1E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Sep 2023 07:01:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234002AbjI3FBI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 30 Sep 2023 01:01:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38792 "EHLO
+        id S234010AbjI3FBP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 30 Sep 2023 01:01:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38850 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233994AbjI3FBG (ORCPT
+        with ESMTP id S234009AbjI3FBL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 30 Sep 2023 01:01:06 -0400
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 057361AE;
-        Fri, 29 Sep 2023 22:01:05 -0700 (PDT)
-Received: by mail-pl1-x62e.google.com with SMTP id d9443c01a7336-1c60f1a2652so10351695ad.0;
-        Fri, 29 Sep 2023 22:01:05 -0700 (PDT)
+        Sat, 30 Sep 2023 01:01:11 -0400
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 157A81B7;
+        Fri, 29 Sep 2023 22:01:09 -0700 (PDT)
+Received: by mail-pl1-x630.google.com with SMTP id d9443c01a7336-1c5ff5f858dso87310675ad.2;
+        Fri, 29 Sep 2023 22:01:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696050064; x=1696654864; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1696050068; x=1696654868; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZcuxStbjNijxSJq8zEaQg95VP+4PBlgl17JsgSzTRFE=;
-        b=WCZJ1JdysZkIZlPqNO3x9kE5YTnAV8X2ft3sbU6A5sIdyIZ55bEe/m3IB4pJPNgGnG
-         4QMjrazQ4otQQLZg74QKzKdOVl68rmAWYihEhSER9kKOgvRY6aapjx4HpDh7aujaHYoz
-         jWI+njEs8+vqver587Le2gTP8sjsdlF5Q5XawTHuIuNI2WSExlQMGcto6tyLGHw4sUW4
-         mxsrRLVz6TJ4Vl05B5pHYKFBmwkJgS6CTmiV+35iHB6XQ/AUTVD0AxrX7tlHE2/GCHCa
-         3WoQUCTgpd7uJhe6QGFqmJQchFMnB4swNHG75prfcTQRj+jIg0cjsxVOLqbJk4NcFMIz
-         eMiQ==
+        bh=/GtFO6vuSssICdkJfKNyb2r68AOrzMFP2HioLeCz7V4=;
+        b=CF9F6ZMXs4tS7I5BphwJiO7DM3J4c0nlEf6bVj85qGyOGo9VJtGLLMlWWJHWukH7sz
+         wuyHd5dGgSPMmu2W/oMJR1TGBnzSXDFm7CLkjk0PeaqNrn2J9+Ca1CDurOR/ue5ZRLq2
+         XJa8cBVB4wekSCyqp/JprH12ZLE8vM+JsSzzjwyjDodv9U5qd0hOOyb1TTB78V76wUr8
+         cX5hXZP9iGZ6ONRiyzpcK/sRKZpKsiDcsvtKhjEL0ha4z9CWGhlVDnkRtbmuV4pnC0DD
+         wj8fqO0KZn+KbSlb3chO2T2uOGMSraivDa+PeKs0KnXzDPfZEVstyCGik95RTTXZ9rBF
+         4qVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696050064; x=1696654864;
+        d=1e100.net; s=20230601; t=1696050068; x=1696654868;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ZcuxStbjNijxSJq8zEaQg95VP+4PBlgl17JsgSzTRFE=;
-        b=eDi1E2em9gkvffdv+J/hUInGCf/3m/15ic0PRYswDu6QZsJRiQdHd32RK/fRfdlE9C
-         w828p5SXm5UJNs3QykdDFAXJijQ9w2TiYQmZiTuLa2MPHZS6TuVeb+jX70qImgFp2zEM
-         R1KfTyz/owNiFahHiROLoMvlbY1wqYJPqve+DSmmCr7E1rXUoV5MzHHkPIUt9Pwqx0sm
-         lzgZXBBK13QAf4iIt1Kkj8Ecnn7wSxqrBaONG+BIQo44bunn0tMmBFZEYphf0o2cc6jb
-         c6bUd56jWh+Mzd/BMRugSARqaESMSCugZSZ9jEQDKXZ0wDRK+IVbIG6qV0LiTIioGsZE
-         iGJQ==
-X-Gm-Message-State: AOJu0YwArFK7ieI3f6oyZ6iDvQRRC1sEQICi+tGiL2MmRHLS389Z2mU3
-        T17GrGxxR313d7SF3euxag8=
-X-Google-Smtp-Source: AGHT+IHR/Z9vw2im73BCKMlfvXTH3LjrdswnqX7m/Xw1oMRvr5GOQ5Mq0e1yLd4AUBV/4jWIj0TlGA==
-X-Received: by 2002:a17:903:184:b0:1bc:5e36:9ab4 with SMTP id z4-20020a170903018400b001bc5e369ab4mr9385815plg.21.1696050064402;
-        Fri, 29 Sep 2023 22:01:04 -0700 (PDT)
+        bh=/GtFO6vuSssICdkJfKNyb2r68AOrzMFP2HioLeCz7V4=;
+        b=GovwltfyFu6y5UOUQH5R9O1rlwg0ByXpl086SgyoBuwZwKcfR2ToeJzQLA7k2oPidZ
+         TpIYKyNU2ZQiXbZaQZ+p5lPahpksMiwv9LIS9bRzghCvRPlNADvivTLb3u15jwNLj6LV
+         66IZxOwK1A06eE5AGeTkdGXwLKy6VaAB16ine9MMf0phl8iXis2mX6RekLbkOgwNQ4D8
+         HwNaVmSfpmZWWxdCuJ//3z0frxzmq7yXgo2hNHpRORO2/Lp/qqewqmP/sOLb/C4PIyno
+         SyufpvKX2SRqQQvgL7joIQ5b2S0mxuusK07hnGZuNBIGL6lmWDpYE1iL1BcglrB1Q61s
+         kOew==
+X-Gm-Message-State: AOJu0YwYyrl+LRQXEpjm2A0MetBpHkznn9nmBFanqhgQLKwwsCYy4VDP
+        oczE1pCHmBOUfyAJ3aoNz6k=
+X-Google-Smtp-Source: AGHT+IFxqffIY89PQUswFKtn5NoGKsgIMAvFv6a9S5IWp52RXMEP6bAOtDEOepkpnybcFK70HBAR3w==
+X-Received: by 2002:a17:902:f54b:b0:1c3:86cf:8cc0 with SMTP id h11-20020a170902f54b00b001c386cf8cc0mr6608621plf.10.1696050068454;
+        Fri, 29 Sep 2023 22:01:08 -0700 (PDT)
 Received: from wedsonaf-dev.home.lan ([189.124.190.154])
-        by smtp.googlemail.com with ESMTPSA id y10-20020a17090322ca00b001c322a41188sm392136plg.117.2023.09.29.22.01.00
+        by smtp.googlemail.com with ESMTPSA id y10-20020a17090322ca00b001c322a41188sm392136plg.117.2023.09.29.22.01.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Sep 2023 22:01:04 -0700 (PDT)
+        Fri, 29 Sep 2023 22:01:08 -0700 (PDT)
 From:   Wedson Almeida Filho <wedsonaf@gmail.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
         linux-fsdevel@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
         Wedson Almeida Filho <walmeida@microsoft.com>,
-        Eric Van Hensbergen <ericvh@kernel.org>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Christian Schoenebeck <linux_oss@crudebyte.com>,
-        v9fs@lists.linux.dev
-Subject: [PATCH 03/29] 9p: move xattr-related structs to .rodata
-Date:   Sat, 30 Sep 2023 02:00:07 -0300
-Message-Id: <20230930050033.41174-4-wedsonaf@gmail.com>
+        David Howells <dhowells@redhat.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        linux-afs@lists.infradead.org
+Subject: [PATCH 04/29] afs: move afs_xattr_handlers to .rodata
+Date:   Sat, 30 Sep 2023 02:00:08 -0300
+Message-Id: <20230930050033.41174-5-wedsonaf@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230930050033.41174-1-wedsonaf@gmail.com>
 References: <20230930050033.41174-1-wedsonaf@gmail.com>
@@ -82,69 +80,43 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 From: Wedson Almeida Filho <walmeida@microsoft.com>
 
 This makes it harder for accidental or malicious changes to
-v9fs_xattr_user_handler, v9fs_xattr_trusted_handler,
-v9fs_xattr_security_handler, or v9fs_xattr_handlers at runtime.
+afs_xattr_handlers at runtime.
 
-Cc: Eric Van Hensbergen <ericvh@kernel.org>
-Cc: Latchesar Ionkov <lucho@ionkov.net>
-Cc: Dominique Martinet <asmadeus@codewreck.org>
-Cc: Christian Schoenebeck <linux_oss@crudebyte.com>
-Cc: v9fs@lists.linux.dev
+Cc: David Howells <dhowells@redhat.com>
+Cc: Marc Dionne <marc.dionne@auristor.com>
+Cc: linux-afs@lists.infradead.org
 Signed-off-by: Wedson Almeida Filho <walmeida@microsoft.com>
 ---
- fs/9p/xattr.c | 8 ++++----
- fs/9p/xattr.h | 2 +-
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ fs/afs/internal.h | 2 +-
+ fs/afs/xattr.c    | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/9p/xattr.c b/fs/9p/xattr.c
-index e00cf8109b3f..053d1cef6e13 100644
---- a/fs/9p/xattr.c
-+++ b/fs/9p/xattr.c
-@@ -162,27 +162,27 @@ static int v9fs_xattr_handler_set(const struct xattr_handler *handler,
- 	return v9fs_xattr_set(dentry, full_name, value, size, flags);
- }
+diff --git a/fs/afs/internal.h b/fs/afs/internal.h
+index 9d3d64921106..a01d1f71ae8c 100644
+--- a/fs/afs/internal.h
++++ b/fs/afs/internal.h
+@@ -1539,7 +1539,7 @@ int afs_launder_folio(struct folio *);
+ /*
+  * xattr.c
+  */
+-extern const struct xattr_handler *afs_xattr_handlers[];
++extern const struct xattr_handler * const afs_xattr_handlers[];
  
--static struct xattr_handler v9fs_xattr_user_handler = {
-+static const struct xattr_handler v9fs_xattr_user_handler = {
- 	.prefix	= XATTR_USER_PREFIX,
- 	.get	= v9fs_xattr_handler_get,
- 	.set	= v9fs_xattr_handler_set,
+ /*
+  * yfsclient.c
+diff --git a/fs/afs/xattr.c b/fs/afs/xattr.c
+index 9048d8ccc715..64b2c0224f62 100644
+--- a/fs/afs/xattr.c
++++ b/fs/afs/xattr.c
+@@ -353,7 +353,7 @@ static const struct xattr_handler afs_xattr_afs_volume_handler = {
+ 	.get	= afs_xattr_get_volume,
  };
  
--static struct xattr_handler v9fs_xattr_trusted_handler = {
-+static const struct xattr_handler v9fs_xattr_trusted_handler = {
- 	.prefix	= XATTR_TRUSTED_PREFIX,
- 	.get	= v9fs_xattr_handler_get,
- 	.set	= v9fs_xattr_handler_set,
- };
- 
- #ifdef CONFIG_9P_FS_SECURITY
--static struct xattr_handler v9fs_xattr_security_handler = {
-+static const struct xattr_handler v9fs_xattr_security_handler = {
- 	.prefix	= XATTR_SECURITY_PREFIX,
- 	.get	= v9fs_xattr_handler_get,
- 	.set	= v9fs_xattr_handler_set,
- };
- #endif
- 
--const struct xattr_handler *v9fs_xattr_handlers[] = {
-+const struct xattr_handler * const v9fs_xattr_handlers[] = {
- 	&v9fs_xattr_user_handler,
- 	&v9fs_xattr_trusted_handler,
- #ifdef CONFIG_9P_FS_SECURITY
-diff --git a/fs/9p/xattr.h b/fs/9p/xattr.h
-index b5636e544c8a..3ad5a802352a 100644
---- a/fs/9p/xattr.h
-+++ b/fs/9p/xattr.h
-@@ -10,7 +10,7 @@
- #include <net/9p/9p.h>
- #include <net/9p/client.h>
- 
--extern const struct xattr_handler *v9fs_xattr_handlers[];
-+extern const struct xattr_handler * const v9fs_xattr_handlers[];
- 
- ssize_t v9fs_fid_xattr_get(struct p9_fid *fid, const char *name,
- 			   void *buffer, size_t buffer_size);
+-const struct xattr_handler *afs_xattr_handlers[] = {
++const struct xattr_handler * const afs_xattr_handlers[] = {
+ 	&afs_xattr_afs_acl_handler,
+ 	&afs_xattr_afs_cell_handler,
+ 	&afs_xattr_afs_fid_handler,
 -- 
 2.34.1
 
