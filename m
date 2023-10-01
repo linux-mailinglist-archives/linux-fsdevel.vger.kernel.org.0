@@ -2,80 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 163297B44C6
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Oct 2023 02:03:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6FC47B44E5
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Oct 2023 03:44:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234209AbjJAADj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 30 Sep 2023 20:03:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56232 "EHLO
+        id S234213AbjJABoT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 30 Sep 2023 21:44:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35066 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234191AbjJAADi (ORCPT
+        with ESMTP id S231989AbjJABoT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 30 Sep 2023 20:03:38 -0400
-Received: from mail-ot1-f72.google.com (mail-ot1-f72.google.com [209.85.210.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF5C0DD
-        for <linux-fsdevel@vger.kernel.org>; Sat, 30 Sep 2023 17:03:33 -0700 (PDT)
-Received: by mail-ot1-f72.google.com with SMTP id 46e09a7af769-6c6373a4aa7so3452108a34.3
-        for <linux-fsdevel@vger.kernel.org>; Sat, 30 Sep 2023 17:03:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696118613; x=1696723413;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=w7RyblSS0tqaFb3Y91Y88UCjMBkJmAdJj2b4I9Ezm1U=;
-        b=SmuvdrLg8XE39R+m1fxLGWXQsjBqi7o2VaQe/6SF11f5UDGG766xpJKH+4pVJ1CCRO
-         9mNPe+Ik1OPV142xr95pOPbcEMLzI8ZIvsb66Z5sZyMM4j1YW9LyWksl6uVImTbLldRJ
-         +kk5FxeZ/96Y3uzsE94OMmjzDtrldBFiuVWrjgrOCNTqT+rC2302hS62QnPxyKO8auJU
-         8Kwn55nlxqSfjqcx/zyFBjoxqFWtJnPTghPoKbQDNq9az5PgWHrXT02VqD3d4RQ0+TCT
-         7plHUuxuvs50ANQZQT6bjogeA5li70Jp2jPtWfWSUPCFz2gLpDpxSfaB8FRx1Y0TfHTc
-         U1vA==
-X-Gm-Message-State: AOJu0YyH+TpWySzwp3MJ5jBt9yB5NWUMCCUukgoPrDlkE2X5qZ6lrPvS
-        VGBCJQDFhyCgpZgqQq+7yWfTu8+f5zspBtGzpwYToS6RKwCT
-X-Google-Smtp-Source: AGHT+IFj/3ix5064W+YXk0/tjitl6ix4wB9gxsdZRwQLoHNQPwV2bbll2Lr00GU38AGrPoM78qWOD/El8ZBU/5ClBn3Tks8tTVQf
+        Sat, 30 Sep 2023 21:44:19 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C45FCD3;
+        Sat, 30 Sep 2023 18:44:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1696124656; x=1727660656;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=rufpvWuPso4MC3Gr1PDC2UlAGt/OUfuMBlXcYFtgG94=;
+  b=WJSnLtJNF3HZBoxwJUxKjHcg/+oP7H3QmtiyeDz0cnA4iv0Pzt37GZEK
+   r20aOZehGW+jw6nKm37R4SroKb2m+HIwtqcaAJNoS/iUo6rG027h/n+NU
+   HRObmaQb325qCzkUfJm5QdLrYNj5Ld54hqn3LCzsc7B9t1sb/bRUkfqEp
+   iW4DnySI+t5IbzLBv8I0Tj2yw5n3b0rQud+M80HClF7y3AXcNQPd+GXa8
+   qqBRXcednC6kyrqpIL43aHkIglR07iN0GdvOXtvyFAMfrJeTTkiIHt4TH
+   7KsIP20ea4xhVI/AOVbYYmmwVqx+AX0FLuqJS3gXfNVUmG7DfZkJNSOGD
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10849"; a="362749427"
+X-IronPort-AV: E=Sophos;i="6.03,191,1694761200"; 
+   d="scan'208";a="362749427"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2023 18:44:16 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10849"; a="726926433"
+X-IronPort-AV: E=Sophos;i="6.03,191,1694761200"; 
+   d="scan'208";a="726926433"
+Received: from lkp-server02.sh.intel.com (HELO c3b01524d57c) ([10.239.97.151])
+  by orsmga006.jf.intel.com with ESMTP; 30 Sep 2023 18:44:12 -0700
+Received: from kbuild by c3b01524d57c with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1qmlVA-0004eZ-2u;
+        Sun, 01 Oct 2023 01:44:09 +0000
+Date:   Sun, 1 Oct 2023 09:43:41 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>,
+        linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
+        linux-xfs@vger.kernel.org, linux-mm@kvack.org
+Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+        dan.j.williams@intel.com, willy@infradead.org, jack@suse.cz,
+        akpm@linux-foundation.org, djwong@kernel.org, mcgrof@kernel.org,
+        chandanbabu@kernel.org
+Subject: Re: [PATCH v15] mm, pmem, xfs: Introduce MF_MEM_PRE_REMOVE for unbind
+Message-ID: <202310010955.feI4HCwZ-lkp@intel.com>
+References: <20230928103227.250550-1-ruansy.fnst@fujitsu.com>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6870:a886:b0:1d1:3ff8:9f80 with SMTP id
- eb6-20020a056870a88600b001d13ff89f80mr3336962oab.8.1696118613280; Sat, 30 Sep
- 2023 17:03:33 -0700 (PDT)
-Date:   Sat, 30 Sep 2023 17:03:33 -0700
-In-Reply-To: <000000000000672c810601db3e84@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000710b5c06069c6302@google.com>
-Subject: Re: [syzbot] [btrfs?] kernel BUG in btrfs_cancel_balance
-From:   syzbot <syzbot+d6443e1f040e8d616e7b@syzkaller.appspotmail.com>
-To:     clm@fb.com, code@siddh.me, dsterba@suse.com, josef@toxicpanda.com,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        xiaoshoukui@gmail.com, xiaoshoukui@ruijie.com.cn
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=2.4 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,RCVD_IN_SORBS_WEB,SORTED_RECIPS,SPF_HELO_NONE,
-        SPF_PASS autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: **
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230928103227.250550-1-ruansy.fnst@fujitsu.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot suspects this issue was fixed by commit:
+Hi Shiyang,
 
-commit 29eefa6d0d07e185f7bfe9576f91e6dba98189c2
-Author: xiaoshoukui <xiaoshoukui@gmail.com>
-Date:   Tue Aug 15 06:55:59 2023 +0000
+kernel test robot noticed the following build errors:
 
-    btrfs: fix BUG_ON condition in btrfs_cancel_balance
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=170f5bae680000
-start commit:   5d0c230f1de8 Linux 6.5-rc4
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1e3d5175079af5a4
-dashboard link: https://syzkaller.appspot.com/bug?extid=d6443e1f040e8d616e7b
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1167e711a80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16a90161a80000
 
-If the result looks correct, please mark the issue as fixed by replying with:
+url:    https://github.com/intel-lab-lkp/linux/commits/UPDATE-20230928-183310/Shiyang-Ruan/xfs-fix-the-calculation-for-end-and-length/20230629-161913
+base:   the 2th patch of https://lore.kernel.org/r/20230629081651.253626-3-ruansy.fnst%40fujitsu.com
+patch link:    https://lore.kernel.org/r/20230928103227.250550-1-ruansy.fnst%40fujitsu.com
+patch subject: [PATCH v15] mm, pmem, xfs: Introduce MF_MEM_PRE_REMOVE for unbind
+config: x86_64-rhel-8.3-rust (https://download.01.org/0day-ci/archive/20231001/202310010955.feI4HCwZ-lkp@intel.com/config)
+compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project.git 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231001/202310010955.feI4HCwZ-lkp@intel.com/reproduce)
 
-#syz fix: btrfs: fix BUG_ON condition in btrfs_cancel_balance
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202310010955.feI4HCwZ-lkp@intel.com/
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+All errors (new ones prefixed by >>):
+
+>> fs/xfs/xfs_notify_failure.c:127:27: error: use of undeclared identifier 'FREEZE_HOLDER_KERNEL'
+           error = freeze_super(sb, FREEZE_HOLDER_KERNEL);
+                                    ^
+   fs/xfs/xfs_notify_failure.c:143:26: error: use of undeclared identifier 'FREEZE_HOLDER_KERNEL'
+                   error = thaw_super(sb, FREEZE_HOLDER_KERNEL);
+                                          ^
+>> fs/xfs/xfs_notify_failure.c:153:17: error: use of undeclared identifier 'FREEZE_HOLDER_USERSPACE'
+           thaw_super(sb, FREEZE_HOLDER_USERSPACE);
+                          ^
+   3 errors generated.
+
+
+vim +/FREEZE_HOLDER_KERNEL +127 fs/xfs/xfs_notify_failure.c
+
+   119	
+   120	static int
+   121	xfs_dax_notify_failure_freeze(
+   122		struct xfs_mount	*mp)
+   123	{
+   124		struct super_block	*sb = mp->m_super;
+   125		int			error;
+   126	
+ > 127		error = freeze_super(sb, FREEZE_HOLDER_KERNEL);
+   128		if (error)
+   129			xfs_emerg(mp, "already frozen by kernel, err=%d", error);
+   130	
+   131		return error;
+   132	}
+   133	
+   134	static void
+   135	xfs_dax_notify_failure_thaw(
+   136		struct xfs_mount	*mp,
+   137		bool			kernel_frozen)
+   138	{
+   139		struct super_block	*sb = mp->m_super;
+   140		int			error;
+   141	
+   142		if (kernel_frozen) {
+   143			error = thaw_super(sb, FREEZE_HOLDER_KERNEL);
+   144			if (error)
+   145				xfs_emerg(mp, "still frozen after notify failure, err=%d",
+   146					error);
+   147		}
+   148	
+   149		/*
+   150		 * Also thaw userspace call anyway because the device is about to be
+   151		 * removed immediately.
+   152		 */
+ > 153		thaw_super(sb, FREEZE_HOLDER_USERSPACE);
+   154	}
+   155	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
