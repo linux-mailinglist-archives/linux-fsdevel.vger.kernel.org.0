@@ -2,52 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 82E8B7B47CC
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Oct 2023 16:07:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 742807B4832
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Oct 2023 16:52:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235069AbjJAOHy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 1 Oct 2023 10:07:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45198 "EHLO
+        id S235128AbjJAOwG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 1 Oct 2023 10:52:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231216AbjJAOHx (ORCPT
+        with ESMTP id S230173AbjJAOwF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 1 Oct 2023 10:07:53 -0400
-Received: from mail-oa1-f77.google.com (mail-oa1-f77.google.com [209.85.160.77])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EDBB99
-        for <linux-fsdevel@vger.kernel.org>; Sun,  1 Oct 2023 07:07:50 -0700 (PDT)
-Received: by mail-oa1-f77.google.com with SMTP id 586e51a60fabf-1e12f68563cso3325946fac.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 01 Oct 2023 07:07:50 -0700 (PDT)
+        Sun, 1 Oct 2023 10:52:05 -0400
+Received: from mail-vs1-xe36.google.com (mail-vs1-xe36.google.com [IPv6:2607:f8b0:4864:20::e36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07673D8;
+        Sun,  1 Oct 2023 07:52:03 -0700 (PDT)
+Received: by mail-vs1-xe36.google.com with SMTP id ada2fe7eead31-452863742f3so7471945137.1;
+        Sun, 01 Oct 2023 07:52:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1696171922; x=1696776722; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oiVJrZTOoMF15rNCLrRoY/wfDOcC5GrLWKtrwYlzTwU=;
+        b=AIA3yhIOO4AVU0yc5QpEeOOdfoh6Jb64y7ijorefISaSIoj18Mn/Ju9pGgyQGPqtYB
+         RJYQOWfHwZqNxwTS4MV0bTBMpvD7m8KHRBy4uZY+5JCbx8d+JR0iwkaoVcSEvR8z4EkP
+         ycRNQDVM1lRbsM/F9baxn0Eeqqz46jjz+PM4vmPCbwMtei4jbhgxPKS3pXr98tJ3UMFs
+         nH0PszZ5YgTt4rXEaywa1B2Eon2astiymRGp7uxo8jpRZdY3uzkPh9iGyuOX4myHSZzn
+         Iij/C9+ARa3o/jFAXoyfBgvIArSUxSxMuZqQtVLXEEoiNO77u6KJNn3I1iXGeobXfJjA
+         wnrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696169269; x=1696774069;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eX0vtL5fOhmVLH0Nu1LjGmdg5gsapNaCgl3QZSj8jEY=;
-        b=OzsVc4Opa27z58+zjM/YBnPICsSUKYrcAzE1s5fXpsbgtiuA55kGoRtTNCAK17IKH+
-         BS394zgTRiMi5BcFKPsTUCFHAXXiUiuSofgeCUhTNrLgLA8/eTM3YyXQUUrBVbfD8yek
-         xn7M4uKHU8cCLp2WSl2zccayAbzO3YHrCEVMSnZHaZSDWfy/YC+VSz2bdyT78qNx1lzG
-         GZIf3rvtDn0t9zWJgRIGfHRbadeJJXVukK7UR/DTyw1ciDuOEXSLJDYd2g2a2QcxHDtt
-         rUxZ6/n3VNWepXxmSlH15xMdie6b2X1+lC5/WmtQCXatiMrfa4B0Wd8U621GQQtpxea7
-         qWJg==
-X-Gm-Message-State: AOJu0YyoOMdcy+MNrNrlRhbFQP77TeaLpEEZiKcW9/rdeHh4EvNntEzO
-        rVoDeEjdLaIG3iCW6bcKk8CrB4mTM8isLj2qWM79UnK1WOZm
-X-Google-Smtp-Source: AGHT+IHrjbC0o7FwFIb3BoFeuuKZMrHSMktNNZSSu7NoPcrQYSp2SVpEjUoCWY7cH8nvQL8iF/LX8U25w8wvZmxXr+X77RcBsn3p
+        d=1e100.net; s=20230601; t=1696171922; x=1696776722;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oiVJrZTOoMF15rNCLrRoY/wfDOcC5GrLWKtrwYlzTwU=;
+        b=hEiqOElJ85PW2bNukadmohemj/yrqIreYWKgZJ8g5JYsCQ0reurL4BbURFteFGXdNW
+         +/HjL/6ABGyxGjOb5NhPrqQGPiDba4TBbZsc/22eca73qNjN2d6ASo6A55zPQooL/fZ6
+         YMYh7amG3cF4e/1E3jEDukLsAZRbuMSuTc3vgTXemWSM3nSVuYGGxboyxq2i1197Yk3s
+         iyF/p17HiAtXdFsh6NCxagsCf6P86e47Cvs5zbXnQ9Vl+RcuAd3sZb25K8bHs/LutMlK
+         fieuKwq37kbr7Vk1GtzXGa2J+f7gqN9S1T52LnLcsDZLzZOoycjLYhLDVWzPusQ1noc/
+         bTrA==
+X-Gm-Message-State: AOJu0Yw4wMnyit9bOijdCl2X8LBfnUEHWARO71epMieJzwZiXzJwzr1v
+        SsaGV9Il1YNYNu+p2hDPei5h7pUHx+5P56SBydY=
+X-Google-Smtp-Source: AGHT+IHast/f6VkWZbGt+sIkPHyQ30rw82NF4d+PC0OSDFWExgL/kJNz3jLyMzekmfvF0SktdqlHfO5eRiPmbl4xtPE=
+X-Received: by 2002:a67:db8a:0:b0:452:6320:60da with SMTP id
+ f10-20020a67db8a000000b00452632060damr7372576vsk.22.1696171921867; Sun, 01
+ Oct 2023 07:52:01 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a05:6870:988a:b0:1dd:11b8:9ce2 with SMTP id
- eg10-20020a056870988a00b001dd11b89ce2mr3744918oab.5.1696169269394; Sun, 01
- Oct 2023 07:07:49 -0700 (PDT)
-Date:   Sun, 01 Oct 2023 07:07:49 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c801280606a82e95@google.com>
-Subject: [syzbot] [jfs?] INFO: trying to register non-static key in txEnd
-From:   syzbot <syzbot+ca4b16c6465dca321d40@syzkaller.appspotmail.com>
-To:     jfs-discussion@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        shaggy@kernel.org, syzkaller-bugs@googlegroups.com
+References: <000000000000259bd8060596e33f@google.com> <bed99e92-cb7c-868d-94f3-ddf53e2b262a@linux.ibm.com>
+ <8a65f5eb-2b59-9903-c6b8-84971f8765ae@linux.ibm.com> <ab7df5e93b5493de5fa379ccab48859fe953d7ae.camel@kernel.org>
+ <b16550ac-f589-c5d7-e139-d585e8771cfd@linux.ibm.com> <00dbd1e7-dfc8-86bc-536f-264a929ebb35@linux.ibm.com>
+ <94b4686a-fee8-c545-2692-b25285b9a152@schaufler-ca.com> <d59d40426c388789c195d94e7e72048ef45fec5e.camel@kernel.org>
+ <7caa3aa06cc2d7f8d075306b92b259dab3e9bc21.camel@linux.ibm.com>
+ <20230921-gedanken-salzwasser-40d25b921162@brauner> <28997978-0b41-9bf3-8f62-ce422425f672@linux.ibm.com>
+ <CAOQ4uxie6xT5mmCcCwYtnEvra37eSeFftXfxaTULfdJnk1VcXQ@mail.gmail.com> <99294acf-7275-8f4d-a129-d5df208b7b2a@linux.ibm.com>
+In-Reply-To: <99294acf-7275-8f4d-a129-d5df208b7b2a@linux.ibm.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Sun, 1 Oct 2023 17:51:50 +0300
+Message-ID: <CAOQ4uxioQbE8_j3bnkwJS24GjHHB1inK18dOJimwNGPrdQLaOQ@mail.gmail.com>
+Subject: Re: [syzbot] [integrity] [overlayfs] general protection fault in d_path
+To:     Stefan Berger <stefanb@linux.ibm.com>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        syzbot <syzbot+a67fc5321ffb4b311c98@syzkaller.appspotmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS autolearn=no
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -55,177 +81,247 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Fri, Sep 29, 2023 at 3:39=E2=80=AFPM Stefan Berger <stefanb@linux.ibm.co=
+m> wrote:
+>
+>
+> On 9/29/23 00:25, Amir Goldstein wrote:
+> > On Fri, Sep 29, 2023 at 3:02=E2=80=AFAM Stefan Berger <stefanb@linux.ib=
+m.com> wrote:
+> >>
+> >> On 9/21/23 07:48, Christian Brauner wrote:
+> >>> Imho, this is all very wild but I'm not judging.
+> >>>
+> >>> Two solutions imho:
+> >>> (1) teach stacking filesystems like overlayfs and ecryptfs to use
+> >>>       vfs_getattr_nosec() in their ->getattr() implementation when th=
+ey
+> >>>       are themselves called via vfs_getattr_nosec(). This will fix th=
+is by
+> >>>       not triggering another LSM hook.
+> >>
+> >> You can avoid all this churn.
+> >> Just use the existing query_flags arg.
+> >> Nothing outside the AT_STATX_SYNC_TYPE query_flags is
+> >> passed into filesystems from userspace.
+> >>
+> >> Mast out AT_STATX_SYNC_TYPE in vfs_getattr()
+> >> And allow kernel internal request_flags in vfs_getattr_nosec()
+> Hm, I thought that vfs_getattr_nosec needs to pass AT_GETATTR_NOSEC into
+> ->getattr().
+> >>
+> >> The AT_ flag namespace is already a challenge, but mixing user
+> >> flags and kernel-only flags in vfs interfaces has been done before.
+> >>
+> >> ...
+>
+>
+> That's what I wanted to avoid since now all filesystems' getattr() may
+> have the AT_GETATTR_NOSEC mixed into the query_flags.
+>
+> Anyway, here's what I currently have:
+>
+> diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
+> index 992d9c7e64ae..f7b5b1843dcc 100644
+> --- a/fs/ecryptfs/inode.c
+> +++ b/fs/ecryptfs/inode.c
+> @@ -998,16 +998,28 @@ static int ecryptfs_getattr_link(struct mnt_idmap
+> *idmap,
+>          return rc;
+>   }
+>
+> +static int ecryptfs_do_getattr(bool nosec, const struct path *path,
+> +                              struct kstat *stat, u32 request_mask,
+> +                              unsigned int flags)
+> +{
+> +       if (nosec)
+> +               return vfs_getattr_nosec(path, stat, request_mask, flags)=
+;
+> +       return vfs_getattr(path, stat, request_mask, flags);
+> +}
+> +
+>   static int ecryptfs_getattr(struct mnt_idmap *idmap,
+>                              const struct path *path, struct kstat *stat,
+>                              u32 request_mask, unsigned int flags)
+>   {
+>          struct dentry *dentry =3D path->dentry;
+>          struct kstat lower_stat;
+> +       bool nosec =3D flags & AT_GETATTR_NOSEC;
+>          int rc;
+>
+> -       rc =3D vfs_getattr(ecryptfs_dentry_to_lower_path(dentry), &lower_=
+stat,
+> -                        request_mask, flags);
+> +       flags &=3D ~AT_INTERNAL_MASK;
+> +
+> +       rc =3D ecryptfs_do_getattr(nosec,
+> ecryptfs_dentry_to_lower_path(dentry),
+> +                                &lower_stat, request_mask, flags);
+>          if (!rc) {
+>                  fsstack_copy_attr_all(d_inode(dentry),
+> ecryptfs_inode_to_lower(d_inode(dentry)));
+> diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
+> index 83ef66644c21..ec4ceb5b4ebf 100644
+> --- a/fs/overlayfs/inode.c
+> +++ b/fs/overlayfs/inode.c
+> @@ -166,12 +166,15 @@ int ovl_getattr(struct mnt_idmap *idmap, const
+> struct path *path,
+>          int fsid =3D 0;
+>          int err;
+>          bool metacopy_blocks =3D false;
+> +       bool nosec =3D flags & AT_GETATTR_NOSEC;
+> +
+> +       flags &=3D ~AT_INTERNAL_MASK;
 
-syzbot found the following issue on:
+I don't understand why you need the nosec helper arg.
+What's wrong with:
 
-HEAD commit:    3b517966c561 Merge tag 'dma-mapping-6.6-2023-09-30' of git..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=10f60d01680000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=12da82ece7bf46f9
-dashboard link: https://syzkaller.appspot.com/bug?extid=ca4b16c6465dca321d40
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=173cdcd6680000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13451e92680000
+static int ovl_do_getattr(const struct path *path,
+                              struct kstat *stat, u32 request_mask,
+                              unsigned int flags)
+{
+       if (flags & AT_GETATTR_NOSEC)
+               return vfs_getattr_nosec(path, stat, request_mask, flags);
+       return vfs_getattr(path, stat, request_mask, flags);
+}
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/5b735d3535d1/disk-3b517966.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/b97a846fc755/vmlinux-3b517966.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/b9cdff2a07c0/bzImage-3b517966.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/fcc011d82db8/mount_0.gz
+likewise for ecryptfs.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ca4b16c6465dca321d40@syzkaller.appspotmail.com
+>
+>          metacopy_blocks =3D ovl_is_metacopy_dentry(dentry);
+>
+>          type =3D ovl_path_real(dentry, &realpath);
+>          old_cred =3D ovl_override_creds(dentry->d_sb);
+> -       err =3D vfs_getattr(&realpath, stat, request_mask, flags);
+> +       err =3D ovl_do_getattr(nosec, &realpath, stat, request_mask, flag=
+s);
+>          if (err)
+>                  goto out;
+>
+> @@ -196,8 +199,8 @@ int ovl_getattr(struct mnt_idmap *idmap, const
+> struct path *path,
+>                                          (!is_dir ? STATX_NLINK : 0);
+>
+>                          ovl_path_lower(dentry, &realpath);
+> -                       err =3D vfs_getattr(&realpath, &lowerstat,
+> -                                         lowermask, flags);
+> +                       err =3D ovl_do_getattr(nosec, &realpath, &lowerst=
+at,
+> +                                            lowermask, flags);
+>                          if (err)
+>                                  goto out;
+>
+> @@ -249,8 +252,9 @@ int ovl_getattr(struct mnt_idmap *idmap, const
+> struct path *path,
+>
+>                          ovl_path_lowerdata(dentry, &realpath);
+>                          if (realpath.dentry) {
+> -                               err =3D vfs_getattr(&realpath, &lowerdata=
+stat,
+> -                                                 lowermask, flags);
+> +                               err =3D ovl_do_getattr(nosec, &realpath,
+> + &lowerdatastat, lowermask,
+> +                                                    flags);
+>                                  if (err)
+>                                          goto out;
+>                          } else {
+> diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+> index 9817b2dcb132..cbee3ff3bab7 100644
+> --- a/fs/overlayfs/overlayfs.h
+> +++ b/fs/overlayfs/overlayfs.h
+> @@ -397,6 +397,15 @@ static inline bool ovl_open_flags_need_copy_up(int
+> flags)
+>          return ((OPEN_FMODE(flags) & FMODE_WRITE) || (flags & O_TRUNC));
+>   }
+>
+> +static inline int ovl_do_getattr(bool nosec, const struct path *path,
+> +                                struct kstat *stat, u32 request_mask,
+> +                                unsigned int flags)
+> +{
+> +       if (nosec)
+> +               return vfs_getattr_nosec(path, stat, request_mask, flags)=
+;
+> +       return vfs_getattr(path, stat, request_mask, flags);
+> +}
+> +
+>   /* util.c */
+>   int ovl_want_write(struct dentry *dentry);
+>   void ovl_drop_write(struct dentry *dentry);
+> diff --git a/fs/stat.c b/fs/stat.c
+> index d43a5cc1bfa4..3250e427e1aa 100644
+> --- a/fs/stat.c
+> +++ b/fs/stat.c
+> @@ -133,7 +133,8 @@ int vfs_getattr_nosec(const struct path *path,
+> struct kstat *stat,
+>          idmap =3D mnt_idmap(path->mnt);)
+>          if (inode->i_op->getattr)
+>                  return inode->i_op->getattr(idmap, path, stat,
+> -                                           request_mask, query_flags);
+> +                                           request_mask,
+> +                                           query_flags | AT_GETATTR_NOSE=
+C);
+>
 
-WARNING: The mand mount option has been deprecated and
-         and is ignored by this kernel. Remove the mand
-         option from the mount to silence this warning.
-=======================================================
-ERROR: (device loop0): txBegin: read-only filesystem
-ERROR: (device loop0): remounting filesystem as read-only
-INFO: trying to register non-static key.
-The code is fine but needs lockdep annotation, or maybe
-you didn't initialize this object before use?
-turning off the locking correctness validator.
-CPU: 1 PID: 5036 Comm: syz-executor418 Not tainted 6.6.0-rc3-syzkaller-00165-g3b517966c561 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/06/2023
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x1e7/0x2d0 lib/dump_stack.c:106
- assign_lock_key+0x234/0x270 kernel/locking/lockdep.c:976
- register_lock_class+0x28e/0x990 kernel/locking/lockdep.c:1289
- __lock_acquire+0x190/0x7f70 kernel/locking/lockdep.c:5013
- lock_acquire+0x1e3/0x520 kernel/locking/lockdep.c:5753
- __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
- _raw_spin_lock_irqsave+0xd5/0x120 kernel/locking/spinlock.c:162
- __wake_up_common_lock kernel/sched/wait.c:137 [inline]
- __wake_up+0x101/0x1d0 kernel/sched/wait.c:160
- txEnd+0x8c/0x560 fs/jfs/jfs_txnmgr.c:504
- __jfs_xattr_set+0x132/0x180 fs/jfs/xattr.c:920
- __vfs_setxattr+0x460/0x4a0 fs/xattr.c:201
- __vfs_setxattr_noperm+0x12e/0x5e0 fs/xattr.c:235
- vfs_setxattr+0x221/0x420 fs/xattr.c:322
- do_setxattr fs/xattr.c:630 [inline]
- setxattr+0x25d/0x2f0 fs/xattr.c:653
- path_setxattr+0x1c0/0x2a0 fs/xattr.c:672
- __do_sys_setxattr fs/xattr.c:688 [inline]
- __se_sys_setxattr fs/xattr.c:684 [inline]
- __x64_sys_setxattr+0xbb/0xd0 fs/xattr.c:684
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f8b974129c9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 61 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffe91f079a8 EFLAGS: 00000246 ORIG_RAX: 00000000000000bc
-RAX: ffffffffffffffda RBX: 0030656c69662f2e RCX: 00007f8b974129c9
-RDX: 0000000000000000 RSI: 00000000200001c0 RDI: 0000000020000180
-RBP: 00007f8b9745b04b R08: 0000000000000002 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 00007ffe91f07b88 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
-general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-CPU: 1 PID: 5036 Comm: syz-executor418 Not tainted 6.6.0-rc3-syzkaller-00165-g3b517966c561 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/06/2023
-RIP: 0010:__wake_up_common+0x23d/0x4e0
-Code: 00 49 83 c4 40 4d 39 e7 0f 84 f1 01 00 00 45 31 f6 eb 09 4d 39 e7 0f 84 e3 01 00 00 4c 89 fb 49 8d 6f e8 4c 89 f8 48 c1 e8 03 <80> 3c 10 00 74 12 48 89 df e8 85 46 7e 00 48 ba 00 00 00 00 00 fc
-RSP: 0018:ffffc90003a3f778 EFLAGS: 00010046
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: dffffc0000000000 RSI: 0000000000000003 RDI: ffffc90002631030
-RBP: ffffffffffffffe8 R08: 0000000000000000 R09: ffffc90003a3f820
-R10: dffffc0000000000 R11: fffff52000747ed8 R12: ffffc90002631070
-R13: 1ffff92000747f04 R14: 0000000000000000 R15: 0000000000000000
-FS:  0000555556b00380(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055f9c7d4fff0 CR3: 000000007e73b000 CR4: 00000000003506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- __wake_up_common_lock kernel/sched/wait.c:138 [inline]
- __wake_up+0x11e/0x1d0 kernel/sched/wait.c:160
- txEnd+0x8c/0x560 fs/jfs/jfs_txnmgr.c:504
- __jfs_xattr_set+0x132/0x180 fs/jfs/xattr.c:920
- __vfs_setxattr+0x460/0x4a0 fs/xattr.c:201
- __vfs_setxattr_noperm+0x12e/0x5e0 fs/xattr.c:235
- vfs_setxattr+0x221/0x420 fs/xattr.c:322
- do_setxattr fs/xattr.c:630 [inline]
- setxattr+0x25d/0x2f0 fs/xattr.c:653
- path_setxattr+0x1c0/0x2a0 fs/xattr.c:672
- __do_sys_setxattr fs/xattr.c:688 [inline]
- __se_sys_setxattr fs/xattr.c:684 [inline]
- __x64_sys_setxattr+0xbb/0xd0 fs/xattr.c:684
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f8b974129c9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 61 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffe91f079a8 EFLAGS: 00000246 ORIG_RAX: 00000000000000bc
-RAX: ffffffffffffffda RBX: 0030656c69662f2e RCX: 00007f8b974129c9
-RDX: 0000000000000000 RSI: 00000000200001c0 RDI: 0000000020000180
-RBP: 00007f8b9745b04b R08: 0000000000000002 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 00007ffe91f07b88 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__wake_up_common+0x23d/0x4e0
-Code: 00 49 83 c4 40 4d 39 e7 0f 84 f1 01 00 00 45 31 f6 eb 09 4d 39 e7 0f 84 e3 01 00 00 4c 89 fb 49 8d 6f e8 4c 89 f8 48 c1 e8 03 <80> 3c 10 00 74 12 48 89 df e8 85 46 7e 00 48 ba 00 00 00 00 00 fc
-RSP: 0018:ffffc90003a3f778 EFLAGS: 00010046
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: dffffc0000000000 RSI: 0000000000000003 RDI: ffffc90002631030
-RBP: ffffffffffffffe8 R08: 0000000000000000 R09: ffffc90003a3f820
-R10: dffffc0000000000 R11: fffff52000747ed8 R12: ffffc90002631070
-R13: 1ffff92000747f04 R14: 0000000000000000 R15: 0000000000000000
-FS:  0000555556b00380(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055f9c7d4fff0 CR3: 000000007e73b000 CR4: 00000000003506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess), 1 bytes skipped:
-   0:	49 83 c4 40          	add    $0x40,%r12
-   4:	4d 39 e7             	cmp    %r12,%r15
-   7:	0f 84 f1 01 00 00    	je     0x1fe
-   d:	45 31 f6             	xor    %r14d,%r14d
-  10:	eb 09                	jmp    0x1b
-  12:	4d 39 e7             	cmp    %r12,%r15
-  15:	0f 84 e3 01 00 00    	je     0x1fe
-  1b:	4c 89 fb             	mov    %r15,%rbx
-  1e:	49 8d 6f e8          	lea    -0x18(%r15),%rbp
-  22:	4c 89 f8             	mov    %r15,%rax
-  25:	48 c1 e8 03          	shr    $0x3,%rax
-* 29:	80 3c 10 00          	cmpb   $0x0,(%rax,%rdx,1) <-- trapping instruction
-  2d:	74 12                	je     0x41
-  2f:	48 89 df             	mov    %rbx,%rdi
-  32:	e8 85 46 7e 00       	call   0x7e46bc
-  37:	48                   	rex.W
-  38:	ba 00 00 00 00       	mov    $0x0,%edx
-  3d:	00 fc                	add    %bh,%ah
+You also need in vfs_getattr():
 
+if (WARN_ON_ONCE(query_flags & AT_GETATTR_NOSEC)
+    return -EPERM;
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+>          generic_fillattr(idmap, request_mask, inode, stat);
+>          return 0;
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index b528f063e8ff..9069d6a301f0 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -2027,6 +2027,12 @@ struct super_operations {
+>          void (*shutdown)(struct super_block *sb);
+>   };
+>
+> +/*
+> + * Internal query flags. See fcntl.h AT_xxx flags for the rest.
+> + */
+> +#define AT_GETATTR_NOSEC               0x80000000
+> +#define AT_INTERNAL_MASK               0x80000000
+> +
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Yeh, the problem is that people adding flags to fcntl.h
+won't be seeing this comment and we don't want to put those
+"expose" those flags in uapi header either.
 
-If the bug is already fixed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+One possible compromise is to put them in fcntl.h under
+#ifdef __KERNEL__
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Very controversial, yes, I know.
+The whole concept of mixing functional flags (i.e. AT_STATX_*)
+with lookup AT_* flags is controversial to begin with, not to
+mention flag overload for different syscalls (i.e. AT_EACCESS/
+AT_REMOVEDIR/AT_HANDLE_FID).
 
-If you want to overwrite bug's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+But since we have accepted this necessary evil, I think that at least
+we could explicitly partition the AT_ flags namespace and declare:
 
-If the bug is a duplicate of another bug, reply with:
-#syz dup: exact-subject-of-another-report
+#ifdef __KERNEL__
+AT_LOOKUP_FLAGS_MASK ...
+AT_MOUNT_FLAGS_MASK         AT_RECURSIVE
+AT_SYSCALL_PRIVATE_MASK   AT_EACCESS
+AT_SYNC_TYPE_MASK               AT_STATX_SYNC_TYPE
+AT_KERNEL_INTERNAL_MASK  0x80000000
+#endif
 
-If you want to undo deduplication, reply with:
-#syz undup
+Sfefan,
+
+I feel that I have to stress the point that this is only *my* opinion and
+I accept that others (like some vfs co-maintains..) may passionately
+disagree to further pollute the AT_ flags namespace.
+
+The advantage of the AT_KERNEL_INTERNAL_MASK is that it is
+in no way exposed to users via ABI, so if we decide to undo this
+decision anytime in the future and reclaim the internal AT_ flags,
+we could do that.
+
+IMO, this is a decent compromise compared to the very noisy
+patch that adds another flags argument to ->getattr() just to fix
+this IMA/overlayfs corner case.
+
+Thanks,
+Amir.
