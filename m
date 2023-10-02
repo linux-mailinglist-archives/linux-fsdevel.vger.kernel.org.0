@@ -2,124 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 777907B55F6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Oct 2023 17:02:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D1B07B5674
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Oct 2023 17:38:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237850AbjJBOrh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Oct 2023 10:47:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59032 "EHLO
+        id S238047AbjJBPSr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Oct 2023 11:18:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237627AbjJBOrf (ORCPT
+        with ESMTP id S238037AbjJBPSr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Oct 2023 10:47:35 -0400
-Received: from mail-ua1-x931.google.com (mail-ua1-x931.google.com [IPv6:2607:f8b0:4864:20::931])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C161394
-        for <linux-fsdevel@vger.kernel.org>; Mon,  2 Oct 2023 07:47:32 -0700 (PDT)
-Received: by mail-ua1-x931.google.com with SMTP id a1e0cc1a2514c-7ab5150a7b5so2207592241.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Oct 2023 07:47:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696258052; x=1696862852; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kus6Ylnx/Z8FfR7MRXzFPZZu3r0Yj55RMyjgjMumJ9E=;
-        b=MVt+Zv1fk0SFplsMjYRGdRVFi3etatkyeTlVY6nj/VuTTk/sEWqukx+AS+d+N/TQqd
-         hrux8dvafC4ED28Z/o2y7fFIoZC1+VK2RIc/ywKH5/ltn8XLOPH2vw99kpqghB4ehIWx
-         T0qpoE6ipokoZeBnCbEN4sfnFtbbINFhw0+0M5mDeKVcScINMeKnz2HEGw6CMzbHDDl3
-         bsrlgz2FJDt6jUpaLqmTAWUNt89z+GZHdIwhKz0QowhLpHo1tbJmfJQZeYhzTOiVRrMC
-         qtUdI2S7k2pO4esLnSC4VMwx+Pox/fqgare7yNzSZ5SmzMYtPvxc3RJ6weW0TbcFAfxj
-         njqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696258052; x=1696862852;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kus6Ylnx/Z8FfR7MRXzFPZZu3r0Yj55RMyjgjMumJ9E=;
-        b=QTjIp3mpMpk9V25ZTDUOKrX8DslVUkJiHwJBox5HKMUaoqN0vfLew/GcJq3RRGQBdn
-         LxojnDM7r1cgektqzgv5o0aqicD1GeuHS4VddhNRx0E+3W7V6V0HTQwgqrji2+0Z4yZ1
-         jcUH2OclvPq6BL/gJc37P4drMUaoaHRR1Jm5QTUbT/b+ptykNVbpWyn9i5PEvU9BKq7N
-         F4i30BqwPmODthrl1PSP/dpvHiXEuGeCYJ12xZATCVW2Z4RDHBYaBtyRpDbw4cPRv5W9
-         STA4TnEB0M1cxQ+JQAJzAu3fMGGRYyrygobNt9T2U0/qbwW4muQYJZM7ysDNNUpTJmz1
-         rJwQ==
-X-Gm-Message-State: AOJu0YxUNoq0jHNor3xR8UqdKRY1tKZDKpkM9l4E7MEYuwpMEA537VTD
-        6NrDqnEMNt2aMbwky5yDigLSoDXlDRxfi8BEbNY=
-X-Google-Smtp-Source: AGHT+IEq2xEH2YMdVgijpmZkvKC8W7zXJD6weEGy0FA6Pu0nSFl/8leuqxra8mwW+oKawlm5PbMngnVnityddAGrsF8=
-X-Received: by 2002:a05:6102:4a86:b0:452:7341:a098 with SMTP id
- hz6-20020a0561024a8600b004527341a098mr5019481vsb.0.1696258051700; Mon, 02 Oct
- 2023 07:47:31 -0700 (PDT)
+        Mon, 2 Oct 2023 11:18:47 -0400
+X-Greylist: delayed 363 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 02 Oct 2023 08:18:43 PDT
+Received: from out203-205-221-240.mail.qq.com (out203-205-221-240.mail.qq.com [203.205.221.240])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C560E9;
+        Mon,  2 Oct 2023 08:18:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+        s=s201512; t=1696259919;
+        bh=5P8PgMCydyEfKGMY3Q2kV+H74KvDoo+0m+vuI47K+j8=;
+        h=Date:From:Subject:To:Cc:References:In-Reply-To;
+        b=EldUxfrFUUN5VS7TBe/5U8B4O3q5F6CL6YyC5iZuqDL8V2FVGJ7z3dEQWLJzrsHkr
+         YEnuKbx4MSiIxFE86181eKvRxl/eveNn1vKt8qCkLk7wP1GNaY4h3MQyhrUmtfF5n4
+         mN7hesmDDduXrA1D8P6e7WOyei6CSwDhU7DZlLp0=
+Received: from [IPV6:240e:430:cc3:362a:ac65:29f0:b0a3:8952] ([240e:430:cc3:362a:ac65:29f0:b0a3:8952])
+        by newxmesmtplogicsvrszc2-0.qq.com (NewEsmtp) with SMTP
+        id 30E80C8B; Mon, 02 Oct 2023 23:12:14 +0800
+X-QQ-mid: xmsmtpt1696259534t3plu1m45
+Message-ID: <tencent_BC7A3D486E923DFD8C99DFCFEA79B82A8205@qq.com>
+X-QQ-XMAILINFO: OQhZ3T0tjf0ayTPDmx2MouI4u9hhZsqYnpcVlTJqmYQHeFqoHp4qY37pcf5nCC
+         GdkNLrZiB+jnZUBJr/GwN5OigeRvs0MDBaEzsa05cH80xqG2PubHSqXYHjYP1Gc5mvhhvA29vgs2
+         PA7Hk5gFuAJyX/yh7DuSc2xoTfw1q8dXH6DUcaUATGKNJaAzwtjjdA48z1/5tENwhg4cNnS+1SQB
+         23v4XVk76H9tTKrhhAtvewq0wKno+VZf3ww1t84JjNHO93j0ZzmKTYaeeWNUtfEVsVD0KIL4YyH4
+         YRMR8cyC+CjR3dneQtzv+YXdY701MnhpAMEYSREzwoUL/qgW8MGM7CpnUbOPB5wpSnsBOeQs1wwT
+         VaaFDK7BhOMc+e3NB7lQmL0jR608SLKtBqZ89AuioTYYSxG5j2McmuEkC5gwFWKGrfRZnumm2wtR
+         Xq2J0sR2Lly/T4X7BlzI8Jw7R6kHHLciASUEz/uI44D8mamQyBkQ53gNvksgLRpxwoIppzypeZ8s
+         xFLVqqGVBKK5hmyFNVpNYKlsayyvX/KBLGOEsBpaY1eEf/KXmNJFX2UqXd5o1b8lpI3h+5y52SCD
+         y1kKhHXhxpMAJsGFt9YXsxLdqCawMnDUTNdpqknjloIR/f0WcITjCCq9U4/8k7qIpsSiuwzgOUQB
+         Q7AwcXiY/X1RZWo/0zIaR3KQY/7hQptp8e7SNtWxm5EpCdkvH3gtiXxS5FAg4LJnlaosdRWiZkIj
+         Lb9hhqY+ok7Dm2MTW/fMBGeWCQVZT05kuCpAO17QPxMLM9Ct30T1JiD7267uASgS159hduCk7cPj
+         MqIygNm3cr7raNbUEgmMlGxE8FUok2bSMudmiiGq5rlbS5kcSyPNrSR9E+V4FW/+HV+Q/N0u5UNk
+         L8DUQWIkrmkeCLCEVfhMvUv3s3ZUvfXefn3D6hFs336IyhLkvSjLvVBUBMpLI3OYZPychWtmimEq
+         ji1oqk9YiYdU7K08snw9WPKIfbPFseKMf8avZhg+z6SaWHEN+yztBGHShpMsRu
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+X-OQ-MSGID: <2537b70b-4c54-1cea-0b24-d0d7c07b5eef@foxmail.com>
+Date:   Mon, 2 Oct 2023 23:12:13 +0800
 MIME-Version: 1.0
-References: <20231002022815.GQ800259@ZenIV> <20231002022846.GA3389589@ZenIV>
- <20231002023613.GN3389589@ZenIV> <20231002023643.GO3389589@ZenIV>
- <CAOQ4uxjLuk9XF8Yhy8Ym2Zt_iquKojY9-Yyxz9w8kV0CTooEmw@mail.gmail.com> <CAOQ4uxgedDFLmjjkWQEnqXD+n-O+1hJ9SbPpizk93YJ0HFp0vw@mail.gmail.com>
-In-Reply-To: <CAOQ4uxgedDFLmjjkWQEnqXD+n-O+1hJ9SbPpizk93YJ0HFp0vw@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 2 Oct 2023 17:47:20 +0300
-Message-ID: <CAOQ4uxh1KLg5e4J77jrR4dgvfMyMKz9NrqnLveAHy=Kk-9VzJQ@mail.gmail.com>
-Subject: Re: [PATCH 14/15] ovl_dentry_revalidate_common(): fetch inode once
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Christian Brauner <brauner@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Namjae Jeon <linkinjeon@kernel.org>,
-        David Sterba <dsterba@suse.com>,
-        David Howells <dhowells@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Steve French <sfrench@samba.org>,
-        Luis Chamberlain <mcgrof@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+From:   Wen Yang <wenyang.linux@foxmail.com>
+Subject: Re: [PATCH] eventfd: move 'eventfd-count' printing out of spinlock
+To:     Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>
+Cc:     Christoph Hellwig <hch@lst.de>, Dylan Yudaken <dylany@fb.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Eric Biggers <ebiggers@google.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <tencent_6E80209FC9C7F45EE61E3FB3E7952A226A07@qq.com>
+ <ff95e764-9e61-4204-8024-42f15c34f084@kernel.dk>
+Content-Language: en-US
+In-Reply-To: <ff95e764-9e61-4204-8024-42f15c34f084@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_MUA_MOZILLA,
+        FREEMAIL_FROM,HELO_DYNAMIC_IPADDR,NICE_REPLY_A,RCVD_IN_DNSWL_BLOCKED,
+        RDNS_DYNAMIC,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 2, 2023 at 8:56=E2=80=AFAM Amir Goldstein <amir73il@gmail.com> =
-wrote:
->
-> On Mon, Oct 2, 2023 at 8:47=E2=80=AFAM Amir Goldstein <amir73il@gmail.com=
-> wrote:
-> >
-> > On Mon, Oct 2, 2023 at 5:36=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk=
-> wrote:
-> > >
-> > > d_inode_rcu() is right - we might be in rcu pathwalk;
-> > > however, OVL_E() hides plain d_inode() on the same dentry...
-> > >
-> > > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> >
-> > Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> >
-> > However, ovl_lowerstack(oe) does not appear to be stable in RCU walk...
-> >
->
-> Ah, you fixed that in another patch.
-> If you are going to be sending this to Linus, please add
-> Fixes: a6ff2bc0be17 ("ovl: use OVL_E() and OVL_E_FLAGS() accessors")
->
-> I was going to send some fixes this week anyway, so I can
-> pick those through the overlayfs tree if you like.
->
 
-Al,
+On 2023/9/27 15:32, Jens Axboe wrote:
+> On 9/26/23 8:05 AM,wenyang.linux@foxmail.com  wrote:
+>> From: Wen Yang<wenyang.linux@foxmail.com>
+>>
+>> It is better to print debug messages outside of the wqh.lock
+>> spinlock where possible.
+> Does it really matter for fdinfo? Your commit message is a bit
+> light, so I'm having to guess whether this is fixing a real issue
+> for you, or if it's just a drive-by observation.
+>
+Thanks for your comments.
+There is a business running on our machine that frequently calls 
+eventfd_write().
+We will resend the V2 and provide a detailed explanation.
 
-From all your series, the two ovl fixes are for rather new regressions (v6.=
-5)
-so I queued your two regression fixes (13,14) and my own version of patch 1=
-5
-to go into linux-next via overlayfs tree [1] and I will send them to Linus =
-later
-this week, so they can make their way to 6.5.y.
+--
 
-Thanks,
-Amir.
+Best wishes,
+Wen
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/overlayfs/vfs.git/log/?=
-h=3Dovl-fixes
+
