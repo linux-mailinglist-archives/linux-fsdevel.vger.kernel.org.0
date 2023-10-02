@@ -2,116 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C73A7B51D2
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Oct 2023 13:55:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7406B7B51DD
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Oct 2023 13:58:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236762AbjJBLzi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Oct 2023 07:55:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49652 "EHLO
+        id S236826AbjJBL6C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Oct 2023 07:58:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236866AbjJBLze (ORCPT
+        with ESMTP id S236818AbjJBL6C (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Oct 2023 07:55:34 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1092127
-        for <linux-fsdevel@vger.kernel.org>; Mon,  2 Oct 2023 04:55:26 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-50573e85ee0so2770528e87.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Oct 2023 04:55:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696247724; x=1696852524; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ttkA4jzwZY1WFt0tSKaN9VCRLgXvuReAZmOLs490YzA=;
-        b=OzSZdZwWyUetaBv7dUE/xlPu0OrLfrUu9rEoXh9naOY+Da5KpgS2+DdayBGZQwsuyk
-         alSmtVl2A+DizAzJ1ww5D7gjjdXLtRJHfvxN8wl0VkbyvRIzGMwAg2ZrVIQXp1kKG4hj
-         dnJAKSbxFhLkWmPiofCBoDCTRdxd6hymeq0lQzAN9lWeF3215KQZ2qPMwkOJQ9eBy9LE
-         iiVeiQII8yPX5mQ1HS+NWFzqzO3vZHWLxH2b1c4Y2yMvKawAk7rnB/h7/Qe9SmlmG/mJ
-         y6ZDBSnjWJzXSrNLWyPSF1l616I2NTT8B4UvGtZDp6CekOsfGJ0mGPrUdVzd5WlsCwH+
-         l/EQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696247724; x=1696852524;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ttkA4jzwZY1WFt0tSKaN9VCRLgXvuReAZmOLs490YzA=;
-        b=VkzMUUEGryUIpv6Y0ataTW/OFhrslyfeEo8oqEYC34yKlpVuBjBKsepf7QiuLdxIFJ
-         2v56Riv3KMSFl9Tlsgg4ZXM21ouj1wuesPzU3llzVDRUQiMFT4KagA0uFT4UaHGQN/d3
-         Xc3yqWwk4AAm7BqJq5ock06HfqZvhLUAokMimAGK/qHiXEFGGXHijDLp18Dk3wwySONR
-         bLK+4KnI2C+v+DjvzcyYxvASstuqlFz5UgSyBh8VmOsJvB0QqDYaIPkGZnY0ZBL2oQeF
-         jQyLBPACviHFi2f2ePs34rAWAwhvUoeQUDlwxJhSJBBgMj84OC94OsL0H6ER34h7igzP
-         ocOA==
-X-Gm-Message-State: AOJu0YwJSoOItxy6mbQCAcBcbzBJBpho7NKIOo89AUSfOWMo9mSkNE/u
-        XAldqVQTJhDtlhvyEfxRHQ60CCVCeK8=
-X-Google-Smtp-Source: AGHT+IFsFZjo9w1X1ske1bJOGVEjt6bo0cBKrWRdaWT0GjdDQ7/K2Db45GVChh0/mVUo9kESgz34QA==
-X-Received: by 2002:ac2:4dac:0:b0:503:eac:747 with SMTP id h12-20020ac24dac000000b005030eac0747mr8542525lfe.47.1696247723470;
-        Mon, 02 Oct 2023 04:55:23 -0700 (PDT)
-Received: from amir-ThinkPad-T480.ctera.local (bzq-166-168-31-246.red.bezeqint.net. [31.168.166.246])
-        by smtp.gmail.com with ESMTPSA id b7-20020a056512024700b005057a5587f0sm957680lfo.52.2023.10.02.04.55.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Oct 2023 04:55:23 -0700 (PDT)
-From:   Amir Goldstein <amir73il@gmail.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-fsdevel@vger.kernel.org, Gil Lev <contact@levgil.com>
-Subject: [PATCH] ovl: fix file reference leak when submitting aio
-Date:   Mon,  2 Oct 2023 14:55:17 +0300
-Message-Id: <20231002115517.880433-1-amir73il@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Mon, 2 Oct 2023 07:58:02 -0400
+Received: from esa8.hc1455-7.c3s2.iphmx.com (esa8.hc1455-7.c3s2.iphmx.com [139.138.61.253])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EF7AEC;
+        Mon,  2 Oct 2023 04:57:58 -0700 (PDT)
+X-IronPort-AV: E=McAfee;i="6600,9927,10850"; a="122471633"
+X-IronPort-AV: E=Sophos;i="6.03,194,1694703600"; 
+   d="scan'208";a="122471633"
+Received: from unknown (HELO oym-r2.gw.nic.fujitsu.com) ([210.162.30.90])
+  by esa8.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2023 20:57:55 +0900
+Received: from oym-m1.gw.nic.fujitsu.com (oym-nat-oym-m1.gw.nic.fujitsu.com [192.168.87.58])
+        by oym-r2.gw.nic.fujitsu.com (Postfix) with ESMTP id 9CC12D424E;
+        Mon,  2 Oct 2023 20:57:53 +0900 (JST)
+Received: from kws-ab4.gw.nic.fujitsu.com (kws-ab4.gw.nic.fujitsu.com [192.51.206.22])
+        by oym-m1.gw.nic.fujitsu.com (Postfix) with ESMTP id C4BC1D88A1;
+        Mon,  2 Oct 2023 20:57:52 +0900 (JST)
+Received: from edo.cn.fujitsu.com (edo.cn.fujitsu.com [10.167.33.5])
+        by kws-ab4.gw.nic.fujitsu.com (Postfix) with ESMTP id 6AC45E36B8;
+        Mon,  2 Oct 2023 20:57:52 +0900 (JST)
+Received: from [10.193.128.127] (unknown [10.193.128.127])
+        by edo.cn.fujitsu.com (Postfix) with ESMTP id 0499B1A0006;
+        Mon,  2 Oct 2023 19:57:50 +0800 (CST)
+Message-ID: <83d057e5-ef5f-4b27-95c8-d7bf4902fa55@fujitsu.com>
+Date:   Mon, 2 Oct 2023 19:57:50 +0800
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15] mm, pmem, xfs: Introduce MF_MEM_PRE_REMOVE for unbind
+To:     kernel test robot <lkp@intel.com>
+Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+        dan.j.williams@intel.com, willy@infradead.org, jack@suse.cz,
+        akpm@linux-foundation.org, djwong@kernel.org, mcgrof@kernel.org,
+        chandanbabu@kernel.org, linux-fsdevel@vger.kernel.org,
+        nvdimm@lists.linux.dev, linux-xfs@vger.kernel.org,
+        linux-mm@kvack.org
+References: <20230928103227.250550-1-ruansy.fnst@fujitsu.com>
+ <202310010955.feI4HCwZ-lkp@intel.com>
+From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
+In-Reply-To: <202310010955.feI4HCwZ-lkp@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+X-TM-AS-GCONF: 00
+X-TM-AS-Product-Ver: IMSS-9.1.0.1417-9.0.0.1002-27910.006
+X-TM-AS-User-Approved-Sender: Yes
+X-TMASE-Version: IMSS-9.1.0.1417-9.0.1002-27910.006
+X-TMASE-Result: 10--24.331000-10.000000
+X-TMASE-MatchedRID: RsPxVIkBekyPvrMjLFD6eKzGfgakLdjaSIfLQ6k7huHHr4PSWTXSLMWl
+        hj9iHeVpndDwnQ2pwPpOg1kzy/iWtmrs+r6+nS7O46cXaPycFZuR1LeQ+VpnJZskuXz9Gadkbyq
+        cWT4FZRfg7nVyl/GdEkusQE+B0D7cVGsQtO2yiZ48+i/lP6Xo8coioCrSMgeKTmg3Ze6YIL1/o7
+        4UQlCmAM8oZdJyMU3z59JoNf8FRHif9F+VqQj2HI61Z+HJnvsOmSLeIgEDej+u9yzHHu0ZiRVx7
+        xedu5l6XICzc9HFHLudqC2fLtk9xL9ZdlL8eona0CzDI0K7cAwCwwGD+AF1Ue52OdZcC6tPvECL
+        uM+h4RB+3BndfXUhXQ==
+X-TMASE-SNAP-Result: 1.821001.0001-0-1-22:0,33:0,34:0-0
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_PASS,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Commit 724768a39374 ("ovl: fix incorrect fdput() on aio completion")
-took a refcount on real file before submitting aio, but forgot to
-avoid clearing FDPUT_FPUT from real.flags stack variable.
-This can result in a file reference leak.
-
-Fixes: 724768a39374 ("ovl: fix incorrect fdput() on aio completion")
-Reported-by: Gil Lev <contact@levgil.com>
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
----
-
-Miklos,
-
-This is a fix for an unfortunate braino merged to 6.6-rc2.
-I will queue it up for 6.6-rc5.
-
-Gil has caught this bug in post mortem review.
-Thanks for reporting the bug!
-
-Amir.
 
 
- fs/overlayfs/file.c | 2 --
- 1 file changed, 2 deletions(-)
+在 2023/10/1 9:43, kernel test robot 写道:
+> Hi Shiyang,
+> 
+> kernel test robot noticed the following build errors:
+> 
+> 
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/UPDATE-20230928-183310/Shiyang-Ruan/xfs-fix-the-calculation-for-end-and-length/20230629-161913
+> base:   the 2th patch of https://lore.kernel.org/r/20230629081651.253626-3-ruansy.fnst%40fujitsu.com
+> patch link:    https://lore.kernel.org/r/20230928103227.250550-1-ruansy.fnst%40fujitsu.com
+> patch subject: [PATCH v15] mm, pmem, xfs: Introduce MF_MEM_PRE_REMOVE for unbind
+> config: x86_64-rhel-8.3-rust (https://download.01.org/0day-ci/archive/20231001/202310010955.feI4HCwZ-lkp@intel.com/config)
+> compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project.git 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231001/202310010955.feI4HCwZ-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202310010955.feI4HCwZ-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>):
+> 
+>>> fs/xfs/xfs_notify_failure.c:127:27: error: use of undeclared identifier 'FREEZE_HOLDER_KERNEL'
+>             error = freeze_super(sb, FREEZE_HOLDER_KERNEL);
+>                                      ^
+>     fs/xfs/xfs_notify_failure.c:143:26: error: use of undeclared identifier 'FREEZE_HOLDER_KERNEL'
+>                     error = thaw_super(sb, FREEZE_HOLDER_KERNEL);
+>                                            ^
+>>> fs/xfs/xfs_notify_failure.c:153:17: error: use of undeclared identifier 'FREEZE_HOLDER_USERSPACE'
+>             thaw_super(sb, FREEZE_HOLDER_USERSPACE);
+>                            ^
+>     3 errors generated.
+> 
 
-diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-index 693971d20280..8be4dc050d1e 100644
---- a/fs/overlayfs/file.c
-+++ b/fs/overlayfs/file.c
-@@ -341,7 +341,6 @@ static ssize_t ovl_read_iter(struct kiocb *iocb, struct iov_iter *iter)
- 		if (!aio_req)
- 			goto out;
- 
--		real.flags = 0;
- 		aio_req->orig_iocb = iocb;
- 		kiocb_clone(&aio_req->iocb, iocb, get_file(real.file));
- 		aio_req->iocb.ki_complete = ovl_aio_rw_complete;
-@@ -413,7 +412,6 @@ static ssize_t ovl_write_iter(struct kiocb *iocb, struct iov_iter *iter)
- 		if (!aio_req)
- 			goto out;
- 
--		real.flags = 0;
- 		aio_req->orig_iocb = iocb;
- 		kiocb_clone(&aio_req->iocb, iocb, get_file(real.file));
- 		aio_req->iocb.ki_flags = ifl;
--- 
-2.34.1
+The two enums has been introduced since 880b9577855e ("fs: distinguish 
+between user initiated freeze and kernel initiated freeze"), v6.6-rc1. 
+I also compiled my patches based on v6.6-rc1 with your config file, it 
+passed with no error.
 
+So, which kernel version were you testing?
+
+
+--
+Thanks,
+Ruan.
+
+> 
+> vim +/FREEZE_HOLDER_KERNEL +127 fs/xfs/xfs_notify_failure.c
+> 
+>     119	
+>     120	static int
+>     121	xfs_dax_notify_failure_freeze(
+>     122		struct xfs_mount	*mp)
+>     123	{
+>     124		struct super_block	*sb = mp->m_super;
+>     125		int			error;
+>     126	
+>   > 127		error = freeze_super(sb, FREEZE_HOLDER_KERNEL);
+>     128		if (error)
+>     129			xfs_emerg(mp, "already frozen by kernel, err=%d", error);
+>     130	
+>     131		return error;
+>     132	}
+>     133	
+>     134	static void
+>     135	xfs_dax_notify_failure_thaw(
+>     136		struct xfs_mount	*mp,
+>     137		bool			kernel_frozen)
+>     138	{
+>     139		struct super_block	*sb = mp->m_super;
+>     140		int			error;
+>     141	
+>     142		if (kernel_frozen) {
+>     143			error = thaw_super(sb, FREEZE_HOLDER_KERNEL);
+>     144			if (error)
+>     145				xfs_emerg(mp, "still frozen after notify failure, err=%d",
+>     146					error);
+>     147		}
+>     148	
+>     149		/*
+>     150		 * Also thaw userspace call anyway because the device is about to be
+>     151		 * removed immediately.
+>     152		 */
+>   > 153		thaw_super(sb, FREEZE_HOLDER_USERSPACE);
+>     154	}
+>     155	
+> 
