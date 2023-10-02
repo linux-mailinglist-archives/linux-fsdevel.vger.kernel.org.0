@@ -2,33 +2,33 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E1D47B4AD5
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Oct 2023 04:35:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F22567B4AD6
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Oct 2023 04:36:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235399AbjJBCfu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 1 Oct 2023 22:35:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49510 "EHLO
+        id S235394AbjJBCgS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 1 Oct 2023 22:36:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234639AbjJBCft (ORCPT
+        with ESMTP id S234639AbjJBCgS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 1 Oct 2023 22:35:49 -0400
+        Sun, 1 Oct 2023 22:36:18 -0400
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52B4AA7
-        for <linux-fsdevel@vger.kernel.org>; Sun,  1 Oct 2023 19:35:47 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC853CE
+        for <linux-fsdevel@vger.kernel.org>; Sun,  1 Oct 2023 19:36:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
         MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=EewcqI+Ox5ekxQxUglqzLiq/FvSzeoK/B4dyiwaADCs=; b=PsJIJ3ivSQByKwOMBtumcyoupc
-        g6mhCPrAp7S+NeEjzIY8xVp+ob2NWWEduzl/83qwOCOtb4XTOfCIi4ZxNV4CZPVHj0YX0IkANY2yR
-        17P+NL3LCfTaMci4RdXH6s0IkQN69NgyLODWAgzJvtB8gxtBMIm91MgsTwcN/oE604HZPrcWP/c82
-        2sopADg6YhH+tRPSAg4tmzr8VQpTMcsG/4solf5Ljpc26+vqLLNze57rkwAEsutLPpWD4z0Z5BrAb
-        UozVoxLlycd3hybAEnzOyCgd0m9bCccNQMNLTyNIxelcJPuD4+Vqx1DP73P/go/u93eqmfiLoDZRG
-        g1ScOkbg==;
+        bh=CnyoubvrTYwdXJkYsciRIhEb5IygrGOOq4H2i/Xv+rA=; b=UFn+Awi3DErcvTV1wvHcTbtrs3
+        OTSnsxC8r017Vs9422JIn+t29GCysTBk7pVoshBKjPHrpWiGHWTUpFmG+iZJUjU9hdn8iFI1sUIp6
+        8qWowzh1SfnpGESp0635gIzkVZQnRJeh2hCTJGUI2vne9xs4KixHBe2N1So9sbkdRq/N/5pXMxiD+
+        fSTiEjc+grMT+oiXsc4AcEtSb4FPcMLkUmnQJTBOdFC3cKHkuXEmpYVgm4sYK3GzwXHNjCoyQABU5
+        FQE6IolsW1eTWhy7LAURKaKV/V4BQpZC38bjFl7DqwFMbOy1ve8/hXI0oU42Y2p0fS6zacO/HD90f
+        LQU1GPdA==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1qn8mf-00EDyN-1d;
-        Mon, 02 Oct 2023 02:35:45 +0000
-Date:   Mon, 2 Oct 2023 03:35:45 +0100
+        id 1qn8n7-00EDz8-14;
+        Mon, 02 Oct 2023 02:36:13 +0000
+Date:   Mon, 2 Oct 2023 03:36:13 +0100
 From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Christian Brauner <brauner@kernel.org>,
@@ -43,9 +43,8 @@ Cc:     Christian Brauner <brauner@kernel.org>,
         Bob Peterson <rpeterso@redhat.com>,
         Steve French <sfrench@samba.org>,
         Luis Chamberlain <mcgrof@kernel.org>
-Subject: [PATCH 12/15] afs: fix __afs_break_callback() / afs_drop_open_mmap()
- race
-Message-ID: <20231002023545.GM3389589@ZenIV>
+Subject: [PATCH 13/15] overlayfs: move freeing ovl_entry past rcu delay
+Message-ID: <20231002023613.GN3389589@ZenIV>
 References: <20231002022815.GQ800259@ZenIV>
  <20231002022846.GA3389589@ZenIV>
 MIME-Version: 1.0
@@ -62,49 +61,35 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In __afs_break_callback() we might check ->cb_nr_mmap and if it's non-zero
-do queue_work(&vnode->cb_work).  In afs_drop_open_mmap() we decrement
-->cb_nr_mmap and do flush_work(&vnode->cb_work) if it reaches zero.
+... into ->free_inode(), that is.
 
-The trouble is, there's nothing to prevent __afs_break_callback() from
-seeing ->cb_nr_mmap before the decrement and do queue_work() after both
-the decrement and flush_work().  If that happens, we might be in trouble -
-vnode might get freed before the queued work runs.
-
-__afs_break_callback() is always done under ->cb_lock, so let's make
-sure that ->cb_nr_mmap can change from non-zero to zero while holding
-->cb_lock (the spinlock component of it - it's a seqlock and we don't
-need to mess with the counter).
-
+Fixes: 0af950f57fef "ovl: move ovl_entry into ovl_inode"
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/afs/file.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ fs/overlayfs/super.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/afs/file.c b/fs/afs/file.c
-index d37dd201752b..0012ea300eb5 100644
---- a/fs/afs/file.c
-+++ b/fs/afs/file.c
-@@ -529,13 +529,17 @@ static void afs_add_open_mmap(struct afs_vnode *vnode)
+diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+index def266b5e2a3..f09184b865ec 100644
+--- a/fs/overlayfs/super.c
++++ b/fs/overlayfs/super.c
+@@ -167,6 +167,7 @@ static void ovl_free_inode(struct inode *inode)
+ 	struct ovl_inode *oi = OVL_I(inode);
  
- static void afs_drop_open_mmap(struct afs_vnode *vnode)
- {
--	if (!atomic_dec_and_test(&vnode->cb_nr_mmap))
-+	if (atomic_add_unless(&vnode->cb_nr_mmap, -1, 1))
- 		return;
+ 	kfree(oi->redirect);
++	kfree(oi->oe);
+ 	mutex_destroy(&oi->lock);
+ 	kmem_cache_free(ovl_inode_cachep, oi);
+ }
+@@ -176,7 +177,7 @@ static void ovl_destroy_inode(struct inode *inode)
+ 	struct ovl_inode *oi = OVL_I(inode);
  
- 	down_write(&vnode->volume->cell->fs_open_mmaps_lock);
- 
--	if (atomic_read(&vnode->cb_nr_mmap) == 0)
-+	read_seqlock_excl(&vnode->cb_lock);
-+	// the only place where ->cb_nr_mmap may hit 0
-+	// see __afs_break_callback() for the other side...
-+	if (atomic_dec_and_test(&vnode->cb_nr_mmap))
- 		list_del_init(&vnode->cb_mmap_link);
-+	read_sequnlock_excl(&vnode->cb_lock);
- 
- 	up_write(&vnode->volume->cell->fs_open_mmaps_lock);
- 	flush_work(&vnode->cb_work);
+ 	dput(oi->__upperdentry);
+-	ovl_free_entry(oi->oe);
++	ovl_stack_put(ovl_lowerstack(oi->oe), ovl_numlower(oi->oe));
+ 	if (S_ISDIR(inode->i_mode))
+ 		ovl_dir_cache_free(inode);
+ 	else
 -- 
 2.39.2
 
