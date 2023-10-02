@@ -2,58 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B3AD7B4B3B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Oct 2023 07:52:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 741557B4B44
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Oct 2023 07:57:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235441AbjJBFwL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Oct 2023 01:52:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41674 "EHLO
+        id S235449AbjJBF5N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Oct 2023 01:57:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229529AbjJBFwK (ORCPT
+        with ESMTP id S229669AbjJBF5L (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Oct 2023 01:52:10 -0400
-Received: from mail-vs1-xe30.google.com (mail-vs1-xe30.google.com [IPv6:2607:f8b0:4864:20::e30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCBECAC
-        for <linux-fsdevel@vger.kernel.org>; Sun,  1 Oct 2023 22:52:07 -0700 (PDT)
-Received: by mail-vs1-xe30.google.com with SMTP id ada2fe7eead31-45281e0b1cbso7634447137.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 01 Oct 2023 22:52:07 -0700 (PDT)
+        Mon, 2 Oct 2023 01:57:11 -0400
+Received: from mail-vs1-xe36.google.com (mail-vs1-xe36.google.com [IPv6:2607:f8b0:4864:20::e36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8F5C9B
+        for <linux-fsdevel@vger.kernel.org>; Sun,  1 Oct 2023 22:57:07 -0700 (PDT)
+Received: by mail-vs1-xe36.google.com with SMTP id ada2fe7eead31-452863742f3so7668213137.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 01 Oct 2023 22:57:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696225927; x=1696830727; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1696226227; x=1696831027; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=FPF2JrzMLrpjSNOh/QwQNQRdDUu3VGGsdP7xdlHzhxE=;
-        b=RIvWz38HGUPZUfta3iFyCdQNDK1vuaZntk56WBDJIQbMo7zztW1oCt7+hyy69tBAug
-         4M0oMQlChevLWKcJufg7dYGd5l0LyV4nBftM3I7ro9cMMfrM7zHDEamkMqoZNgP9gUAQ
-         4eY1d10mrydRNOf0/itlrBIhU/OLrLHxXEaoPHaybmk7yORNOYJ3UEn2GH3UmEmKfjzw
-         qP8ZAnoAKrbJ2GdPpZipRoc1LZvJh8ykZdplnHETZM3eCUHG53veS4ZHpMZdiw70CPtG
-         E7VyFjgX0e00k+4Sc33nh+kWrG0PnP9ZD0VGxVWafpjRBcmanP8E5txXlam7cIsr+Qy2
-         ce7g==
+        bh=gien0z0Vm5xJbW0wKMIHzxeXkG2/DaaDfFcv7+QMF9E=;
+        b=NFGzT6zBQTe53aqRuaECyZ+Y2RMxPpCrYJhwx0EwVhVpGXSGCGk6LXCDRwMdr/JhPO
+         MSk/TELxxq3TaNeSAui95cisnnPLpA20IzLjnYFF6hur4jGwMXYc6XXhIMQMEbNnTAMn
+         tdjFi5eaIRh2rCFciizjXw/v255eLqA0TEjg/z9x7siGM9kz28ijgR3e+T+y9jb8ExPP
+         Q4vNg2t2qiBCThytOPAnIUuxn11Y+msYHb57bGhBhrck1I6WDFUnG8c4YkSSRX2TNxZL
+         0tfDgujY/ycEKvadqaWidtt9AzcWbcw5E41MVJBjhkq9EN1wQEfAD1/R0sB4hg2erEgB
+         FwLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696225927; x=1696830727;
+        d=1e100.net; s=20230601; t=1696226227; x=1696831027;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=FPF2JrzMLrpjSNOh/QwQNQRdDUu3VGGsdP7xdlHzhxE=;
-        b=ai3B9x3URDrL2vwX7A8fwyU11x7cmHkEujaCNoiedbEyNgngLlQeyjVqcx7uBgqO4/
-         2bXwn50dUzgbiSShqB3gP74EkvvuKrOzr6V24btzvwmNzbYFe0L31KKslQIqyI3R43Uy
-         6QoHONg0j6clBsGLSfVDjN3K0NQuAetd0QBtHDay0s0BV9klCfADf4rDrFYLGHOh7oL9
-         AGptEjp6/NXHjFh0A6SwybIFG7AXZ8obZ9hhHSKY1Fr/CBA054/cbm6OqW6xSFupiWnY
-         VLrNTwvnfCYl/fVjaJkUXmmdT2Rkde1lblUadxpiyOEWO48w9diWFUuiEmJgx1ittqiu
-         tdfg==
-X-Gm-Message-State: AOJu0Ywp+GWacXTyEzdcBropAd3VrAbqiDdvr4DFvsBOjaHCr4nDaBDZ
-        z4FXp/MoftIdI9E1fI9u8d/zN+ns88ea2wO+PCo=
-X-Google-Smtp-Source: AGHT+IHula8tWu/42ZMU6QADTU6S2k1XNDtwa1m4CRidbp6MYLDuTiJQiM7HrV7vONUcqJLy6iiglouIYp71qRGNan4=
-X-Received: by 2002:a67:fc19:0:b0:452:b574:3c9e with SMTP id
- o25-20020a67fc19000000b00452b5743c9emr9177541vsq.6.1696225926695; Sun, 01 Oct
- 2023 22:52:06 -0700 (PDT)
+        bh=gien0z0Vm5xJbW0wKMIHzxeXkG2/DaaDfFcv7+QMF9E=;
+        b=X+diEk+nNlrxyhOA8Ahc9x1a9R324TetYI+tyJ/9UcHK91/Mbk6pIRR65WkpBTtrgP
+         kcbG7v+hRvDDWVtbrpwpsP+av0kLcPhZ/QCVckKlDiUIkYXTtAzhW5nULCh+2j72hCFK
+         HUMabmgcBSjRbVLhk7Dpw81HsGgC1ar1mcVZlMH/tSN5jSuIYAJeJA0zjzeTHLLZqdYj
+         sOA07CcJDL4KcsqmnnDND3IQKYojZC6bH/m1+j4fqr8bsAZ9Hsiq6sdDkERTzleFE2Vl
+         X81aQeUHDvBM0EwvgZtPrewrDZwoTkNsoVN4TlQ0MNcXMCEGrScimHbVnfdKzr0lnXno
+         pzNw==
+X-Gm-Message-State: AOJu0Yzl8SaDLSd69OwbJa/oRDRd/atngZnn2cgLpJvDhgZyF/kDfhY9
+        mo88n6avqvr1iw5ODeJyxUhUwHKbpnGe1sy7m4o=
+X-Google-Smtp-Source: AGHT+IEYPYpToe/d5j3hT8X/IEUHaipd1BN6qDU+gZAXNdjaZ7zKLT1PgUqgo5yRJrv6Tazh7+0mrBn4tpy6LLMTdZA=
+X-Received: by 2002:a67:bb1a:0:b0:44d:476b:3bbd with SMTP id
+ m26-20020a67bb1a000000b0044d476b3bbdmr9966154vsn.0.1696226226737; Sun, 01 Oct
+ 2023 22:57:06 -0700 (PDT)
 MIME-Version: 1.0
-References: <20231002022815.GQ800259@ZenIV> <20231002022846.GA3389589@ZenIV> <20231002023613.GN3389589@ZenIV>
-In-Reply-To: <20231002023613.GN3389589@ZenIV>
+References: <20231002022815.GQ800259@ZenIV> <20231002022846.GA3389589@ZenIV>
+ <20231002023613.GN3389589@ZenIV> <20231002023643.GO3389589@ZenIV> <CAOQ4uxjLuk9XF8Yhy8Ym2Zt_iquKojY9-Yyxz9w8kV0CTooEmw@mail.gmail.com>
+In-Reply-To: <CAOQ4uxjLuk9XF8Yhy8Ym2Zt_iquKojY9-Yyxz9w8kV0CTooEmw@mail.gmail.com>
 From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 2 Oct 2023 08:51:55 +0300
-Message-ID: <CAOQ4uxhrKG-xB05Y-SMyYps3boraG40CzNCP+KhkKzBA5vtbCg@mail.gmail.com>
-Subject: Re: [PATCH 13/15] overlayfs: move freeing ovl_entry past rcu delay
+Date:   Mon, 2 Oct 2023 08:56:55 +0300
+Message-ID: <CAOQ4uxgedDFLmjjkWQEnqXD+n-O+1hJ9SbPpizk93YJ0HFp0vw@mail.gmail.com>
+Subject: Re: [PATCH 14/15] ovl_dentry_revalidate_common(): fetch inode once
 To:     Al Viro <viro@zeniv.linux.org.uk>
 Cc:     linux-fsdevel@vger.kernel.org,
         Christian Brauner <brauner@kernel.org>,
@@ -79,41 +80,62 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 2, 2023 at 5:36=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> wr=
-ote:
+On Mon, Oct 2, 2023 at 8:47=E2=80=AFAM Amir Goldstein <amir73il@gmail.com> =
+wrote:
 >
-> ... into ->free_inode(), that is.
+> On Mon, Oct 2, 2023 at 5:36=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> =
+wrote:
+> >
+> > d_inode_rcu() is right - we might be in rcu pathwalk;
+> > however, OVL_E() hides plain d_inode() on the same dentry...
+> >
+> > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 >
-> Fixes: 0af950f57fef "ovl: move ovl_entry into ovl_inode"
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+>
+> However, ovl_lowerstack(oe) does not appear to be stable in RCU walk...
+>
 
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+Ah, you fixed that in another patch.
+If you are going to be sending this to Linus, please add
+Fixes: a6ff2bc0be17 ("ovl: use OVL_E() and OVL_E_FLAGS() accessors")
 
-> ---
->  fs/overlayfs/super.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> index def266b5e2a3..f09184b865ec 100644
-> --- a/fs/overlayfs/super.c
-> +++ b/fs/overlayfs/super.c
-> @@ -167,6 +167,7 @@ static void ovl_free_inode(struct inode *inode)
->         struct ovl_inode *oi =3D OVL_I(inode);
->
->         kfree(oi->redirect);
-> +       kfree(oi->oe);
->         mutex_destroy(&oi->lock);
->         kmem_cache_free(ovl_inode_cachep, oi);
->  }
-> @@ -176,7 +177,7 @@ static void ovl_destroy_inode(struct inode *inode)
->         struct ovl_inode *oi =3D OVL_I(inode);
->
->         dput(oi->__upperdentry);
-> -       ovl_free_entry(oi->oe);
-> +       ovl_stack_put(ovl_lowerstack(oi->oe), ovl_numlower(oi->oe));
->         if (S_ISDIR(inode->i_mode))
->                 ovl_dir_cache_free(inode);
->         else
-> --
-> 2.39.2
->
+I was going to send some fixes this week anyway, so I can
+pick those through the overlayfs tree if you like.
+
+Thanks,
+Amir.
+
+> > ---
+> >  fs/overlayfs/super.c | 6 ++++--
+> >  1 file changed, 4 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+> > index f09184b865ec..905d3aaf4e55 100644
+> > --- a/fs/overlayfs/super.c
+> > +++ b/fs/overlayfs/super.c
+> > @@ -104,8 +104,8 @@ static int ovl_revalidate_real(struct dentry *d, un=
+signed int flags, bool weak)
+> >  static int ovl_dentry_revalidate_common(struct dentry *dentry,
+> >                                         unsigned int flags, bool weak)
+> >  {
+> > -       struct ovl_entry *oe =3D OVL_E(dentry);
+> > -       struct ovl_path *lowerstack =3D ovl_lowerstack(oe);
+> > +       struct ovl_entry *oe;
+> > +       struct ovl_path *lowerstack;
+> >         struct inode *inode =3D d_inode_rcu(dentry);
+> >         struct dentry *upper;
+> >         unsigned int i;
+> > @@ -115,6 +115,8 @@ static int ovl_dentry_revalidate_common(struct dent=
+ry *dentry,
+> >         if (!inode)
+> >                 return -ECHILD;
+> >
+> > +       oe =3D OVL_I_E(inode);
+> > +       lowerstack =3D ovl_lowerstack(oe);
+> >         upper =3D ovl_i_dentry_upper(inode);
+> >         if (upper)
+> >                 ret =3D ovl_revalidate_real(upper, flags, weak);
+> > --
+> > 2.39.2
+> >
