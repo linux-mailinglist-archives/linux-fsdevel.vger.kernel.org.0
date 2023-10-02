@@ -2,144 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D4D17B5B95
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Oct 2023 21:51:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72E057B5BC6
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Oct 2023 22:07:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238927AbjJBTtm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Oct 2023 15:49:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39010 "EHLO
+        id S234871AbjJBUHX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Oct 2023 16:07:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51814 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229750AbjJBTtl (ORCPT
+        with ESMTP id S235047AbjJBUHW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Oct 2023 15:49:41 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E85EB3;
-        Mon,  2 Oct 2023 12:49:38 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54401C433C8;
-        Mon,  2 Oct 2023 19:49:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696276178;
-        bh=LSyryQpZ8HNgK9TYVlNlqsE7lc5WMeTA4wsbmFm3L9s=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=kKXwOWMamRR/cwKFQzaeuZxYaQcA9pAOs++Wwik8ym5z22A7p3jNfV2rtHHzHNGC8
-         0lheJnqFSM7L6ZYmOforDPwwL/34IFYGrLkgotPsqeADaR3LXrKS8hbZ/2FUWkkJNw
-         LPB+4mw1S7AfYmbFrEOJSjjElJ1mJhnH1mh9IY7IFLod4E9pim8Rsyo+JVFASECtPU
-         7BJQzLgZfLui0jLmBNFFeGBb8GdQjLybPYSQZzcK78Be1ldmSWDG2t/IIul/GB9ivp
-         PcFV0VmXEr1/HmvuFQ9ZAmkhFvUg2DUTdbV6RN72AGy3lVH9mUOZ3mPBUhvBoTKNPk
-         Q6T67HS2ww7dA==
-Date:   Mon, 2 Oct 2023 20:49:29 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Szabolcs Nagy <Szabolcs.Nagy@arm.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Marc Zyngier <maz@kernel.org>,
-        Oliver Upton <oliver.upton@linux.dev>,
-        James Morse <james.morse@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        Shuah Khan <shuah@kernel.org>,
-        "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-        Deepak Gupta <debug@rivosinc.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        "H.J. Lu" <hjl.tools@gmail.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v4 03/36] arm64/gcs: Document the ABI for Guarded Control
- Stacks
-Message-ID: <38edb5c3-367e-4ab7-8cb7-aa1a5c0e330c@sirena.org.uk>
-References: <20230807-arm64-gcs-v4-3-68cfa37f9069@kernel.org>
- <ZNOhjrYleGBR6Pbs@arm.com>
- <f4cec4b3-c386-4873-aa1d-90528e062f2a@sirena.org.uk>
- <ZN+qki9EaZ6f9XNi@arm.com>
- <aaea542c-929c-4c9b-8caa-ca67e0eb9c1e@sirena.org.uk>
- <ZOTnL1SDJWZjHPUW@arm.com>
- <43ec219d-bf20-47b8-a5f8-32bc3b64d487@sirena.org.uk>
- <ZOXa98SqwYPwxzNP@arm.com>
- <ZOYFazB1gYjzDRdA@arm.com>
- <ZRWw7aa3C0LlMPTH@arm.com>
+        Mon, 2 Oct 2023 16:07:22 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94A0FD3;
+        Mon,  2 Oct 2023 13:07:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description;
+        bh=VaRXBAX+SL8oR5DAJJ33YWK0kg9y3S/tFMs5ErCwV4M=; b=tyTvddQZwjPU4NCyNbqmtBxwTI
+        Kq6g9Qapzu1V2T/1LVfoTymMZ1bb2QONrTl41ltGkcWgO8C3OxMrZO0vUUbterkaPjXQqj5zl5UWY
+        Od/q+nFr5sp3hmR7Q+02+fFUHyfa/unLm/Waq6/NDA+nKY6gA77n1Y4CV6C8E7B9yjTT2MSAhqsX/
+        mE0L1qEHeU9Z8HDcrn4+IgWdTLUacxy76ZOg8LoMQ6Fu1YDKq8FKQmrhzovQYa4Y7jTfB5MNGW7kU
+        vcWu8FBBE/rEktzzt2TIToDZle387TUfE+hHWx0duFsDle3jHlyRiQtp+i2PYtGwvYw5Fx/EDytKW
+        owGUyJog==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1qnPCA-00AvU4-SH; Mon, 02 Oct 2023 20:07:10 +0000
+Date:   Mon, 2 Oct 2023 21:07:10 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Greg Ungerer <gregungerer@westnet.com.au>
+Cc:     David Laight <David.Laight@aculab.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        Nicholas Piggin <npiggin@gmail.com>
+Subject: Re: [PATCH 09/17] m68k: Implement xor_unlock_is_negative_byte
+Message-ID: <ZRsi7smLotWDwoNP@casper.infradead.org>
+References: <20230915183707.2707298-1-willy@infradead.org>
+ <20230915183707.2707298-10-willy@infradead.org>
+ <6e409d5f-a419-07b7-c82c-4e80fe19c6ba@westnet.com.au>
+ <ZQW849TfSCK6u2f8@casper.infradead.org>
+ <e1fb697714ac408e85c4e3dc573cd7d5@AcuMS.aculab.com>
+ <ZQmvhC+pGWNs9R23@casper.infradead.org>
+ <cffc2a427ae74f62b07345ec9348e43e@AcuMS.aculab.com>
+ <ZQm67lGOBBdC2Dl9@casper.infradead.org>
+ <35a33582-9206-94bb-eca2-a1d9c585f6c1@westnet.com.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="gCNrmYlrm9/empAg"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZRWw7aa3C0LlMPTH@arm.com>
-X-Cookie: Postage will be paid by addressee.
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <35a33582-9206-94bb-eca2-a1d9c585f6c1@westnet.com.au>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, Sep 20, 2023 at 05:22:33PM +1000, Greg Ungerer wrote:
+> On 20/9/23 01:14, Matthew Wilcox wrote:
+> > I have a 68020 book; what I don't have is a Coldfire manual.
+> 
+> You can find it here: https://www.nxp.com/docs/en/reference-manual/CFPRM.pdf
 
---gCNrmYlrm9/empAg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thanks, Greg.  This is almost good:
 
-On Thu, Sep 28, 2023 at 05:59:25PM +0100, Szabolcs Nagy wrote:
-> The 08/23/2023 14:11, Catalin Marinas wrote:
+static inline bool xor_unlock_is_negative_byte(unsigned long mask,
+                volatile unsigned long *p)
+{
+#ifdef CONFIG_COLDFIRE
+        __asm__ __volatile__ ("eorl %1, %0"
+                : "+m" (*p)
+                : "d" (mask)
+                : "memory");
+        return *p & (1 << 7);
+#else
+        char result;
+        char *cp = (char *)p + 3;       /* m68k is big-endian */
 
-> > > and there is user code doing raw clone threads (such threads are
-> > > technically not allowed to call into libc) it's not immediately
-> > > clear to me if having gcs in those threads is better or worse.
+        __asm__ __volatile__ ("eor.b %1, %2; smi %0"
+                : "=d" (result)
+                : "di" (mask), "o" (*cp)
+                : "memory");
+        return result;
+#endif
+}
 
-> i think raw clone / clone3 users may be relevant so we need a
-> solution such that they don't fail when gcs args are missing.
+folio_end_read() does about as well as can be expected:
 
-Are we sure about that?  Old binaries shouldn't be affected since they
-won't turn GCS so we're just talking about new binaries here - are there
-really so many of them that we won't be able to get them all converted
-over to clone3() and GCS in the timescales we're talking about for GCS
-deployment?  I obviously don't particularly mind having the default size
-logic but if we allow clone() then that's keeping the existing behaviour
-and layering allocation via clone3() on top of it which Catalin didn't
-want.  Catalin?
+00000708 <folio_end_read>:
+     708:       206f 0004       moveal %sp@(4),%a0
+     70c:       7009            moveq #9,%d0
+     70e:       4a2f 000b       tstb %sp@(11)
+     712:       6602            bnes 716 <folio_end_read+0xe>
+     714:       7001            moveq #1,%d0
+     716:       b190            eorl %d0,%a0@
+     718:       2010            movel %a0@,%d0
+     71a:       4a00            tstb %d0
+     71c:       6a0c            bpls 72a <folio_end_read+0x22>
+     71e:       42af 0008       clrl %sp@(8)
+     722:       2f48 0004       movel %a0,%sp@(4)
+     726:       6000 fcfe       braw 426 <folio_wake_bit>
+     72a:       4e75            rts
 
-> userspace allocated gcs works for me, but maybe the alternative
-> with size only is more consistent (thread gcs is kernel mapped
-> with fallback size logic if gcs size is missing):
+However, it seems that folio_unlock() could shave off an instruction:
 
-If we have size only then the handling of GCS and normal stack in struct
-clone_args would be inconsistent.  Given that it seems better to have
-the field present, we can allow it to be NULL and do the allocation with
-the specified size but it should be there.
+00000918 <folio_unlock>:
+     918:       206f 0004       moveal %sp@(4),%a0
+     91c:       7001            moveq #1,%d0
+     91e:       b190            eorl %d0,%a0@
+     920:       2010            movel %a0@,%d0
+     922:       4a00            tstb %d0
+     924:       6a0a            bpls 930 <folio_unlock+0x18>
+     926:       42a7            clrl %sp@-
+     928:       2f08            movel %a0,%sp@-
+     92a:       4eba fafa       jsr %pc@(426 <folio_wake_bit>)
+     92e:       508f            addql #8,%sp
+     930:       4e75            rts
 
-> > An alternative would be for the clone3() to provide an address _hint_
-> > and size for GCS and it would still be the kernel doing the mmap (and
-> > munmap on clearing). But at least the user has some control over the
-> > placement of the GCS and its size (and maybe providing the address has
-> > MAP_FIXED semantics).
+We could use eori instead of eorl, at least according to table 3-9 on
+page 3-8:
 
-> the main thread gcs is still special: the size is provided
-> via prctl (if at all).
+EOR Dy,<ea>x L Source ^ Destination → Destination ISA_A
+EORI #<data>,Dx L Immediate Data ^ Destination → Destination ISA_A
 
-Either that or we have it do a map_shadow_stack() but that's an extra
-syscall during startup.
-
---gCNrmYlrm9/empAg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmUbHsgACgkQJNaLcl1U
-h9Dyngf9Hy8AfP5kC/6h6EPVo7EVDeJ1A4cbGRBtR61F+kO0Gknu6S0AxnHkfkgt
-cODaJDIw85fav0lGTTx8Rlr/77kzihHWSNLwnyAaR1gPYzRgqM/XBdwf9M6mnT7I
-907nXSNYnfB1pE+8Be1LmcXX8hbHhr6l3K+FT5vZQTcpEAGrxAv7xLNEZ7xMkqV0
-PPa+7hjf+9MpBcZQbqjK+KpoCWdTAZkTcnqpKQApUqiAbs5aeKuDfqulxl4eQ7IF
-4y3g5jbZpwsCSjlxNnQaT+K8cof3zDuHUV6Hf4rpNA4XfwybEbSPNYD8zZ8TYzbj
-1IGtDcFokNQ4Y0FbRpYBRx621claGQ==
-=f6SF
------END PGP SIGNATURE-----
-
---gCNrmYlrm9/empAg--
+but gas is unhappy with everything I've tried to use eori.  I'm building
+with stmark2_defconfig, which I assume should work.
