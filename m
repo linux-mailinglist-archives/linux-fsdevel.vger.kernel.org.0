@@ -2,43 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 094547B5153
+	by mail.lfdr.de (Postfix) with ESMTP id 5E8447B5154
 	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Oct 2023 13:29:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236717AbjJBL32 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Oct 2023 07:29:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53886 "EHLO
+        id S236751AbjJBL33 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Oct 2023 07:29:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236703AbjJBL3W (ORCPT
+        with ESMTP id S236702AbjJBL3W (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Mon, 2 Oct 2023 07:29:22 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C641ED3;
-        Mon,  2 Oct 2023 04:29:18 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 3B2E0C116A4;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BE7FD7;
+        Mon,  2 Oct 2023 04:29:19 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 5371DC116D2;
         Mon,  2 Oct 2023 11:29:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1696246157;
-        bh=YhBddSwaCSPLAaFDo+/JwRMeEqAWhYOpGz8YevBnfPM=;
+        bh=8Y0OZ+ek4AhIcf8Sjp8fQ2M9HKsNYRF/q4Q31JpOT5o=;
         h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-        b=hf74GqEVFqfLw3F5qGhBq5bov1q9UAhguToYQBzzAfqBqUchaXwMR1gpYQdfrW3dE
-         5yobqKdV3/QEpN+MYXpTviIQtYKJ0d3uszOmWShXB+fFDqsJUp9gzN3vFcFkgXvr8m
-         Ttkn4TR8BEtdkCUyXqhUDOkT6VLJ90zF+a9+NCe2UCX+5KIfulK9VgRNl0kfo99jr0
-         IaaP0NOKoE4Uu962+cebD9tfbWwM25JFWQwpT92VVxUTqAGQgGOgB80UNisFMiXT/s
-         k92HVlQ10FGDag+YRRISFExlBwrHOFjX8viGcG8L28c34wj8b6EMek2lXl26k6Fs5t
-         9uXWPCz+3Yxuw==
+        b=HoYlpryWcQZV4xEoh38551sI60gfNK4cNGdEKgXPz9x08VsBC5G/69LBFbXuToEgn
+         BfBDfABhYQMaA/7y4/yMOLRE2yxXFJEEmhWmuOXt9SqvBUrhF02pxsFB+Oy95KS3Uo
+         lMq4M9cbbqTcQLk8Mt0GHY0NkCOn4Jd8OvFimK3fza9rF9VZ+2Ar+cUV7TeEgsIf0n
+         AfN3Z6+zr6tOgqL9qirOQi2pRK98RKq8bt6HNDMvcyBkOvRb/QX5w6hRjj7JYKtuUg
+         tRfO2u8Hi/A7XL6lw6dB721W2W3IWPxGFfSchln4SLcXKRGbevSUs6wqi75teA8l65
+         WpR4VjGman2fA==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.lore.kernel.org (Postfix) with ESMTP id 1B624E784AC;
+        by smtp.lore.kernel.org (Postfix) with ESMTP id 3A93FE7849A;
         Mon,  2 Oct 2023 11:29:17 +0000 (UTC)
 From:   Joel Granados via B4 Relay 
         <devnull+j.granados.samsung.com@kernel.org>
-Date:   Mon, 02 Oct 2023 13:30:41 +0200
-Subject: [PATCH v3 6/7] powerpc: Remove now superfluous sentinel element
- from ctl_table arrays
+Date:   Mon, 02 Oct 2023 13:30:42 +0200
+Subject: [PATCH v3 7/7] c-sky: Remove now superfluous sentinel element from
+ ctl_talbe array
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20231002-jag-sysctl_remove_empty_elem_arch-v3-6-606da2840a7a@samsung.com>
+Message-Id: <20231002-jag-sysctl_remove_empty_elem_arch-v3-7-606da2840a7a@samsung.com>
 References: <20231002-jag-sysctl_remove_empty_elem_arch-v3-0-606da2840a7a@samsung.com>
 In-Reply-To: <20231002-jag-sysctl_remove_empty_elem_arch-v3-0-606da2840a7a@samsung.com>
 To:     Luis Chamberlain <mcgrof@kernel.org>, willy@infradead.org,
@@ -72,18 +72,18 @@ Cc:     linux-fsdevel@vger.kernel.org, linux-s390@vger.kernel.org,
         linux-ia64@vger.kernel.org, linux-csky@vger.kernel.org,
         Joel Granados <j.granados@samsung.com>
 X-Mailer: b4 0.13-dev-86aa5
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1565;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1079;
  i=j.granados@samsung.com; h=from:subject:message-id;
- bh=KuV8vOJx81rEwsc5jJ+bbCdW5iZFLCnNJ5xlBjey6xs=;
- b=owEB7QES/pANAwAKAbqXzVK3lkFPAcsmYgBlGqoUNBAj237epiMRWZjBh+ubamCISZESZIKcM
- v4wF3DSn2OJAbMEAAEKAB0WIQSuRwlXJeYxJc7LJ5C6l81St5ZBTwUCZRqqFAAKCRC6l81St5ZB
- T/E4C/sH83tQjgttVLdKVarCnL42oaqUSOJFHysd1DsiW9k53qQQnsAXlsVqmHce59si1viwYD1
- sH8kJoCQVu5ZL6u9tnTirs/zK4lZGplOB1GmJ9G2GrDQ7BixLBRmvacBDYUehYBA7tw3zGUd7FE
- 0us2Q0Ofke+qX+Aq9JR+UVjqxUoqi03EaBLXuFErDsGsAmhooB6D4ZI0rVHGdk22B9ACXaGfasi
- NvOx99FDQTiP3JolHAsOZjSYq4Oy/YDI5UDS0ERDATzQqvFlImM4MgIualdQl5wQHhfPnBjJJhR
- dnwS5MzD0E++5583ev51gUpQKRjAalnsN6549TOd2IdupjmILcpEaqD/tyIjjqcawm8ZLXpCGbX
- 6Y9Qv8eSDL/Odbt+5yhXaeyHFpDsMB4SR9yDDiFgefg0A4DkcGiVGGn2Qm7iKkEY3A1fcz9QUZN
- YU/lcI5cnxARaCSGzjd+XwLHFHFyTjzB9ZJErDjBhYnwzz/H7M0JxdT3nEQwaAGkTTnZI=
+ bh=aVH730u6MpA8SyXSwY+KroDm6RkQOYcUB41QGWJqNpM=;
+ b=owEB7QES/pANAwAKAbqXzVK3lkFPAcsmYgBlGqoU5tuFWjnPIMvFbKyN6zHH0cwg/pUFRD/vM
+ SfkGU2MIlyJAbMEAAEKAB0WIQSuRwlXJeYxJc7LJ5C6l81St5ZBTwUCZRqqFAAKCRC6l81St5ZB
+ TyUKC/0c39WVZtnSe4HAi+KjUVd8v38cq95t+0bYTAm0t4UjG8Lsp3T5G80IFPYLmapvMnK4uVe
+ Lyeg6+WlLJagatcnmBtfVxhCU0ewAPcEqiwiP6qZx3c8PLEexEriY2mthOka69yhwr3nKHEnyV8
+ Bqp7zzu/E1zwrNE1+/cSzV96Y/lZ/qWZCRPRHR7SuOeWwWTDbyhgveJ+cmUr4q6nwLVv9D8Vj6M
+ B7kOycGh+RMxgVTKEAlnSPVgKcwgHE24nlo5RUyuu77WXCMlCIrZdyyNDZrrQykuiXWNxLKiMrj
+ XLAE5oYgpIZ9uRGWS1dzT2edeQ+COFGaR51Q/tvQualP2kfj7A2dQzLIAF8fmcWYwWVMj1RN44o
+ jz1VmKwvgpAAwhyJL1nlRqp0Dx+iccYp2zBAhv5X8ptE4axnZuJSjdUGQVapPNd/0eA4u87Ubaa
+ zmvv90vSv16KKgBYe+ABuMSkfh7iM8iC7eDe4BQqUi7MyRotUfD+EMFwsoiIIw56IZ6Jg=
 X-Developer-Key: i=j.granados@samsung.com; a=openpgp;
  fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
 X-Endpoint-Received: by B4 Relay for j.granados@samsung.com/default with auth_id=70
@@ -107,40 +107,28 @@ will reduce the overall build time size of the kernel and run time
 memory bloat by ~64 bytes per sentinel (further information Link :
 https://lore.kernel.org/all/ZO5Yx5JFogGi%2FcBo@bombadil.infradead.org/)
 
-Remove sentinel from powersave_nap_ctl_table and nmi_wd_lpm_factor_ctl_table.
-This removal is safe because register_sysctl implicitly uses ARRAY_SIZE()
-in addition to checking for the sentinel.
+Remove sentinel from alignment_tbl ctl_table array. This removal is safe
+because register_sysctl_init implicitly uses ARRAY_SIZE() in addition to
+checking for the sentinel.
 
+Acked-by: Guo Ren <guoren@kernel.org>
 Signed-off-by: Joel Granados <j.granados@samsung.com>
 ---
- arch/powerpc/kernel/idle.c                | 1 -
- arch/powerpc/platforms/pseries/mobility.c | 1 -
- 2 files changed, 2 deletions(-)
+ arch/csky/abiv1/alignment.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/powerpc/kernel/idle.c b/arch/powerpc/kernel/idle.c
-index b1c0418b25c8..30b56c67fa61 100644
---- a/arch/powerpc/kernel/idle.c
-+++ b/arch/powerpc/kernel/idle.c
-@@ -105,7 +105,6 @@ static struct ctl_table powersave_nap_ctl_table[] = {
- 		.mode		= 0644,
- 		.proc_handler	= proc_dointvec,
+diff --git a/arch/csky/abiv1/alignment.c b/arch/csky/abiv1/alignment.c
+index b60259daed1b..e5b8b4b2109a 100644
+--- a/arch/csky/abiv1/alignment.c
++++ b/arch/csky/abiv1/alignment.c
+@@ -329,7 +329,6 @@ static struct ctl_table alignment_tbl[5] = {
+ 		.mode = 0666,
+ 		.proc_handler = &proc_dointvec
  	},
 -	{}
  };
  
- static int __init
-diff --git a/arch/powerpc/platforms/pseries/mobility.c b/arch/powerpc/platforms/pseries/mobility.c
-index 0161226d8fec..1798f0f14d58 100644
---- a/arch/powerpc/platforms/pseries/mobility.c
-+++ b/arch/powerpc/platforms/pseries/mobility.c
-@@ -61,7 +61,6 @@ static struct ctl_table nmi_wd_lpm_factor_ctl_table[] = {
- 		.mode		= 0644,
- 		.proc_handler	= proc_douintvec_minmax,
- 	},
--	{}
- };
- 
- static int __init register_nmi_wd_lpm_factor_sysctl(void)
+ static int __init csky_alignment_init(void)
 
 -- 
 2.30.2
