@@ -2,33 +2,33 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 982B67B4AD1
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Oct 2023 04:33:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1302D7B4AD2
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Oct 2023 04:34:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235394AbjJBCdu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 1 Oct 2023 22:33:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56362 "EHLO
+        id S235396AbjJBCeV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 1 Oct 2023 22:34:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234639AbjJBCdt (ORCPT
+        with ESMTP id S234639AbjJBCeV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 1 Oct 2023 22:33:49 -0400
+        Sun, 1 Oct 2023 22:34:21 -0400
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0412D99
-        for <linux-fsdevel@vger.kernel.org>; Sun,  1 Oct 2023 19:33:47 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E8F4C9
+        for <linux-fsdevel@vger.kernel.org>; Sun,  1 Oct 2023 19:34:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
         MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=YGUB7+0S4VDddH1q/fCsHmff00CJWUlUMj8uNvOPmg8=; b=j+xIKKQS+DutobP0VSDrLYpLb/
-        lPErEBNxJRabPpGsxXnL01HWjqE/PQmYeJc6K/4uBcSaPMJMRlaXWh2OEuM9ATk8hSZklA7m/8A9T
-        DEM9D9CfnbnFfhIsxa4F997pcCW6orrw7V3rjFSTPxD1+FLOaburFBfBg0FfBHqzZ5lbPVQL05DEv
-        6wheMCcBY7+tmXhDoEqtZ1SB5MWxYfOdTK1mNpYx2vk5yTicsui01p5Y5p2KzDT4R5z/zPR0Nm0Po
-        5iYa8ayMnPlyYDmvmswfm/aw9KEsgXR0ctj17g/sWZWvCX3/cY3onnAZ7V0SazqeWJedko8+NhjZn
-        o+dMMW0A==;
+        bh=Ei3uI6cTnZl/1dVU+F9NiIsmbxC2qsdW7ypmVtPBOB0=; b=bj5e4xKMx0OGtympFCMd0zBsKH
+        09xGajJhIoLMgja0HmmP/BGX+QDowTqBe6TSeLXYb3/S4HBIu5MyXHP/Iobi11nPnagizE9PyCinc
+        1ufsduIYV13JnhQRp5Qt6e/Sm9cT+M1W2I4uJ0nv0axFvhqBbCji/qSQF3FeL+RV2gnvVSjCBDwKl
+        bMecnGL0Fycm+qzu+QMKWR/Q7kg1XFKIZGwtMQB6uavYJNcxUx2EXCoaZ+HJ12i5JV064xlAC/w9B
+        dzJNisikbWM5vo7Tvxz1HgAY05pjpF8thc7zX2RSKfCKOtR/9lYiaeoq1k10Zveb/BhJAKjZKInPN
+        NoyAk/IQ==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1qn8ki-00EDvT-2E;
-        Mon, 02 Oct 2023 02:33:44 +0000
-Date:   Mon, 2 Oct 2023 03:33:44 +0100
+        id 1qn8lE-00EDw2-31;
+        Mon, 02 Oct 2023 02:34:17 +0000
+Date:   Mon, 2 Oct 2023 03:34:16 +0100
 From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Christian Brauner <brauner@kernel.org>,
@@ -43,8 +43,9 @@ Cc:     Christian Brauner <brauner@kernel.org>,
         Bob Peterson <rpeterso@redhat.com>,
         Steve French <sfrench@samba.org>,
         Luis Chamberlain <mcgrof@kernel.org>
-Subject: [PATCH 08/15] gfs2: fix an oops in gfs2_permission()
-Message-ID: <20231002023344.GI3389589@ZenIV>
+Subject: [PATCH 09/15] nfs: make nfs_set_verifier() safe for use in RCU
+ pathwalk
+Message-ID: <20231002023416.GJ3389589@ZenIV>
 References: <20231002022815.GQ800259@ZenIV>
  <20231002022846.GA3389589@ZenIV>
 MIME-Version: 1.0
@@ -61,54 +62,44 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-in RCU mode we might race with gfs2_evict_inode(), which zeroes
-->i_gl.  Freeing of the object it points to is RCU-delayed, so
-if we manage to fetch the pointer before it's been replaced with
-NULL, we are fine.  Check if we'd fetched NULL and treat that
-as "bail out and tell the caller to get out of RCU mode".
+nfs_set_verifier() relies upon dentry being pinned; if that's
+the case, grabbing ->d_lock stabilizes ->d_parent and guarantees
+that ->d_parent points to a positive dentry.  For something
+we'd run into in RCU mode that is *not* true - dentry might've
+been through dentry_kill() just as we grabbed ->d_lock, with
+its parent going through the same just as we get to into
+nfs_set_verifier_locked().  It might get to detaching inode
+(and zeroing ->d_inode) before nfs_set_verifier_locked() gets
+to fetching that; we get an oops as the result.
+
+That can happen in nfs{,4} ->d_revalidate(); we check that
+parent is positive, but that's done before we get to
+nfs_set_verifier() and it's possible for memory pressure
+to pick our dentry as eviction candidate by that time.
+If that happens, back-to-back attempts to kill dentry and
+its parent are quite normal.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/gfs2/inode.c | 6 ++++--
- fs/gfs2/super.c | 2 +-
- 2 files changed, 5 insertions(+), 3 deletions(-)
+ fs/nfs/dir.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/gfs2/inode.c b/fs/gfs2/inode.c
-index 0eac04507904..e2432c327599 100644
---- a/fs/gfs2/inode.c
-+++ b/fs/gfs2/inode.c
-@@ -1868,14 +1868,16 @@ int gfs2_permission(struct mnt_idmap *idmap, struct inode *inode,
+diff --git a/fs/nfs/dir.c b/fs/nfs/dir.c
+index e6a51fd94fea..8ffc1f78ba51 100644
+--- a/fs/nfs/dir.c
++++ b/fs/nfs/dir.c
+@@ -1431,9 +1431,9 @@ static bool nfs_verifier_is_delegated(struct dentry *dentry)
+ static void nfs_set_verifier_locked(struct dentry *dentry, unsigned long verf)
  {
- 	struct gfs2_inode *ip;
- 	struct gfs2_holder i_gh;
-+	struct gfs2_glock *gl;
- 	int error;
+ 	struct inode *inode = d_inode(dentry);
+-	struct inode *dir = d_inode(dentry->d_parent);
++	struct inode *dir = d_inode_rcu(dentry->d_parent);
  
- 	gfs2_holder_mark_uninitialized(&i_gh);
- 	ip = GFS2_I(inode);
--	if (gfs2_glock_is_locked_by_me(ip->i_gl) == NULL) {
-+	gl = rcu_dereference(ip->i_gl);
-+	if (!gl || gfs2_glock_is_locked_by_me(gl) == NULL) {
- 		if (mask & MAY_NOT_BLOCK)
- 			return -ECHILD;
--		error = gfs2_glock_nq_init(ip->i_gl, LM_ST_SHARED, LM_FLAG_ANY, &i_gh);
-+		error = gfs2_glock_nq_init(gl, LM_ST_SHARED, LM_FLAG_ANY, &i_gh);
- 		if (error)
- 			return error;
- 	}
-diff --git a/fs/gfs2/super.c b/fs/gfs2/super.c
-index 02d93da21b2b..0dd5641990b9 100644
---- a/fs/gfs2/super.c
-+++ b/fs/gfs2/super.c
-@@ -1550,7 +1550,7 @@ static void gfs2_evict_inode(struct inode *inode)
- 		wait_on_bit_io(&ip->i_flags, GIF_GLOP_PENDING, TASK_UNINTERRUPTIBLE);
- 		gfs2_glock_add_to_lru(ip->i_gl);
- 		gfs2_glock_put_eventually(ip->i_gl);
--		ip->i_gl = NULL;
-+		rcu_assign_pointer(ip->i_gl, NULL);
- 	}
- }
- 
+-	if (!nfs_verify_change_attribute(dir, verf))
++	if (!dir || !nfs_verify_change_attribute(dir, verf))
+ 		return;
+ 	if (inode && NFS_PROTO(inode)->have_delegation(inode, FMODE_READ))
+ 		nfs_set_verifier_delegated(&verf);
 -- 
 2.39.2
 
