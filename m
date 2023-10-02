@@ -2,95 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 964B17B584B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Oct 2023 18:57:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B05F87B5824
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Oct 2023 18:56:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231628AbjJBQjS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Oct 2023 12:39:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36162 "EHLO
+        id S238255AbjJBQpa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Oct 2023 12:45:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231132AbjJBQjQ (ORCPT
+        with ESMTP id S237844AbjJBQp3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Oct 2023 12:39:16 -0400
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6149AB3;
-        Mon,  2 Oct 2023 09:39:14 -0700 (PDT)
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1c5cd27b1acso148806335ad.2;
-        Mon, 02 Oct 2023 09:39:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696264751; x=1696869551;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Epc3kHekMbk3DpyR613WlFgpCZN6T8om28Nb8xn4ctM=;
-        b=hgx9i3iXgDE/dUyZN/t8cfuiy0THEROgV3h/vLEV+hj/MzxIU2dpdkuRb18v3hg7AM
-         hAjAC/vYR22WMY7xpEgpmdVf2tP8y5kCA3asJLcPIi3BLgURHJvOIJIenPF8ADDtSIkV
-         UhgxXdNYiTFsk+UnhjYAUJ8ALSaj6X1qDSyCaWeYRNZN6DbDbENYHokN+8HUVE6D/fkf
-         YW5wz0iwYMJ4WHrY21Cbb6x5PaBUT61/20WxgSn6vk8ukXOQ5oBdGVU2jcFp+hWEDkxE
-         iT1aC9hdr/LPdcUUor+NMoHLkjo+GGuCJgIPOXL6Ms0JUWYIitex2YnlikfjdsjKXu6G
-         bMqA==
-X-Gm-Message-State: AOJu0YzETYx6wuBRma/JcXX9rhzNRkyuloVh8tB3+djr8GZrjyRr74i4
-        akQCaTNl+bUq83xdHL/Qxgs=
-X-Google-Smtp-Source: AGHT+IHB7bfjcRTKOYZhsbBGxygH0ZM3vak6LlonbVA5Gw3MYbtT8JKoz0CPRb1bjtZ5gI4feDJEFQ==
-X-Received: by 2002:a17:902:d508:b0:1c6:1733:fb3f with SMTP id b8-20020a170902d50800b001c61733fb3fmr13983893plg.49.1696264751217;
-        Mon, 02 Oct 2023 09:39:11 -0700 (PDT)
-Received: from ?IPV6:2620:15c:211:201:6ad7:f663:5f97:db57? ([2620:15c:211:201:6ad7:f663:5f97:db57])
-        by smtp.gmail.com with ESMTPSA id y3-20020a170902ed4300b001bdd68b3f4bsm14079194plb.295.2023.10.02.09.39.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Oct 2023 09:39:10 -0700 (PDT)
-Message-ID: <56a4089e-d8f2-48d9-9bfd-3fd687c44834@acm.org>
-Date:   Mon, 2 Oct 2023 09:39:08 -0700
+        Mon, 2 Oct 2023 12:45:29 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BD49B8
+        for <linux-fsdevel@vger.kernel.org>; Mon,  2 Oct 2023 09:45:26 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 0957C1F37C;
+        Mon,  2 Oct 2023 16:45:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1696265125; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=AyIXVndR2XydeBnMmQFEJcureGSH+1eX0HoskQG9iFs=;
+        b=zgb9gpsnODW2Nx4TzTgi/yPvfCodbRDT8IWhDk9M1NnFYhvpJCjqV4t1PN5rzC6H6g6nDV
+        wNH5gp7CR/Db58OkxkPMB8lmaTHk4Vp/CdcJ2iVihB/ZLBU+n8ZhYUvTSej+JN5Ar8zzJf
+        897dV9n38h4S67eC4hfYoQrbNro+2e0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1696265125;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=AyIXVndR2XydeBnMmQFEJcureGSH+1eX0HoskQG9iFs=;
+        b=7l78nyUVsoZxblaxZ1j1Eg9PG8+LwfYh1J7Yu7PXWw7f+Mek7aAm9Fy3j+6aZGDcF2ijbD
+        SpUVIk4O3qYHYeBA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id DCA2813434;
+        Mon,  2 Oct 2023 16:45:24 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id BVzXNaTzGmXzKgAAMHmgww
+        (envelope-from <jack@suse.cz>); Mon, 02 Oct 2023 16:45:24 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 6D6B2A07C9; Mon,  2 Oct 2023 18:45:24 +0200 (CEST)
+Date:   Mon, 2 Oct 2023 18:45:24 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 7/7] porting: document block device freeze and thaw
+ changes
+Message-ID: <20231002164524.lh6ljbdxdqln33jk@quack3>
+References: <20230927-vfs-super-freeze-v1-0-ecc36d9ab4d9@kernel.org>
+ <20230927-vfs-super-freeze-v1-7-ecc36d9ab4d9@kernel.org>
+ <20230927151911.GG11414@frogsfrogsfrogs>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 03/13] fs: Restore kiocb.ki_hint
-Content-Language: en-US
-To:     Avri Altman <Avri.Altman@wdc.com>, Jens Axboe <axboe@kernel.dk>
-Cc:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Dave Chinner <dchinner@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Benjamin LaHaise <bcrl@kvack.org>,
-        David Howells <dhowells@redhat.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-References: <20230920191442.3701673-1-bvanassche@acm.org>
- <20230920191442.3701673-4-bvanassche@acm.org>
- <DM6PR04MB657516145B6C3E71FEDB0C6CFCC5A@DM6PR04MB6575.namprd04.prod.outlook.com>
-From:   Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <DM6PR04MB657516145B6C3E71FEDB0C6CFCC5A@DM6PR04MB6575.namprd04.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230927151911.GG11414@frogsfrogsfrogs>
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_SOFTFAIL autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/2/23 03:45, Avri Altman wrote:
->> diff --git a/io_uring/rw.c b/io_uring/rw.c
->> index c8c822fa7980..c41ae6654116 100644
->> --- a/io_uring/rw.c
->> +++ b/io_uring/rw.c
->> @@ -677,6 +677,7 @@ static int io_rw_init_file(struct io_kiocb *req,
->> fmode_t mode)
->>                  req->flags |= io_file_get_flags(file);
->>
->>          kiocb->ki_flags = file->f_iocb_flags;
->> +       kiocb->ki_hint = file_inode(file)->i_write_hint;
->
-> Originally ki_hint_validate() was used here as well?
+On Wed 27-09-23 08:19:11, Darrick J. Wong wrote:
+> On Wed, Sep 27, 2023 at 03:21:20PM +0200, Christian Brauner wrote:
+> > Signed-off-by: Christian Brauner <brauner@kernel.org>
+> > ---
+> >  Documentation/filesystems/porting.rst | 25 +++++++++++++++++++++++++
+> >  1 file changed, 25 insertions(+)
+> > 
+> > diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesystems/porting.rst
+> > index 4d05b9862451..fef97a2e6729 100644
+> > --- a/Documentation/filesystems/porting.rst
+> > +++ b/Documentation/filesystems/porting.rst
+> > @@ -1045,3 +1045,28 @@ filesystem type is now moved to a later point when the devices are closed:
+> >  As this is a VFS level change it has no practical consequences for filesystems
+> >  other than that all of them must use one of the provided kill_litter_super(),
+> >  kill_anon_super(), or kill_block_super() helpers.
+> > +
+> > +---
+> > +
+> > +**mandatory**
+> > +
+> > +Block device freezing and thawing have been moved to holder operations. As we
+> > +can now go straight from block devcie to superblock the get_active_super()
+> 
+> s/devcie/device/
+> 
+> > +and bd_fsfreeze_sb members in struct block_device are gone.
+> > +
+> > +The bd_fsfreeze_mutex is gone as well since we can rely on the bd_holder_lock
+> > +to protect against concurrent freeze and thaw.
+> > +
+> > +Before this change, get_active_super() would only be able to find the
+> > +superblock of the main block device, i.e., the one stored in sb->s_bdev. Block
+> > +device freezing now works for any block device owned by a given superblock, not
+> > +just the main block device.
+> 
+> You might want to document this new fs_holder_ops scheme:
+> 
+> "Filesystems opening a block device must pass the super_block object
+> and fs_holder_ops as the @holder and @hops parameters."
+> 
+> Though TBH I see a surprising amount of fs code that doesn't do this, so
+> perhaps it's not so mandatory?
 
-Thanks for having reported this. I will restore the ki_hint_validate()
-call in the io_uring code.
+This is actually a good point. For the main device, fs/super.c takes care
+of this (perhaps except for btrfs). So this patch set should not regress
+anything. But for other devices such as the journal device or similar,
+passing proper holder and holder_ops from the filesystem is necessary.
 
-Bart.
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
