@@ -2,151 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BBA07B4D42
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Oct 2023 10:25:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 640AE7B4D5E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Oct 2023 10:41:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235832AbjJBIZo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Oct 2023 04:25:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57256 "EHLO
+        id S235849AbjJBIlj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Oct 2023 04:41:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229981AbjJBIZn (ORCPT
+        with ESMTP id S229981AbjJBIli (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Oct 2023 04:25:43 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9308C6;
-        Mon,  2 Oct 2023 01:25:40 -0700 (PDT)
+        Mon, 2 Oct 2023 04:41:38 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E50F79F
+        for <linux-fsdevel@vger.kernel.org>; Mon,  2 Oct 2023 01:41:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1696235140; x=1727771140;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=LjUA0WnZOwfBZbOsPWOE8rX33xk0uzpE44wPBaNDwPc=;
-  b=n2cUg4hc3KB3pgqa/MSXJL/Bc6rC5qwHF7mRWyK/6w+HgEc+pwd0dIU9
-   /VZFQjBuGgf2OSrWjLzyY4duz4s2+dM6GMbLeoNR9skiXOvfSRRXOtQLR
-   DLQhX4gTEz/S67Ltp60HJKeP5DTMfQDqBoYuMl+c5S04wAfULGlwzhCcT
-   /WLK8KGOjRxkJXJtSxOFXn5aufagqVJRe+EhtVbphxZIbR5rgeXcxOryb
-   DjiJfgQZniC7+GGuBo4hhO4NaqDbbxaVYh1GvKkl7qW93NiugQjnydWdW
-   LIjM+FGvIICMPIgJUKZ8CMHVRDdyHgG85ASElkoIFJi+QlrsZ/O4Kz+oL
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10850"; a="468881032"
+  t=1696236095; x=1727772095;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=89/zuk+nlrFfcmsyZpmlpjQk7HYvmNQ3kHl5W7neP3s=;
+  b=FPzZfPEHEjk9TZzmY+TgVtpXzqbcXBFFb/i5KRR+K32DRgAfqk1suqI5
+   mMjv3INcDcAwgYwIxlz9Cw5UPAyo83CASokKScxZ5+LUF166l+Y4oXzGM
+   VxCjo3jkl66ymHuV+D2aBM02E5rsNqr+6Wgn5AIaDHrwlNiXtvLBofaw8
+   Fb03HOy83pA+8y0FVOFSaHfzUDrfrCHcyE/f+CuO2s453xPP0GGBPBEyX
+   gv6v/nbCvHl5b83NbKTFEoBkxNhLilxCyFw2QNitspQL0Pf0bDJyRaAgI
+   1CFq+2FM7y7IvOKFc9R5JVMRiZtSCteJSNg8bA8KIJe6x8wkCblb+Jlba
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10850"; a="446758816"
 X-IronPort-AV: E=Sophos;i="6.03,193,1694761200"; 
-   d="scan'208";a="468881032"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2023 01:25:40 -0700
+   d="scan'208";a="446758816"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2023 01:41:35 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10850"; a="874286167"
+X-IronPort-AV: E=McAfee;i="6600,9927,10850"; a="727199956"
 X-IronPort-AV: E=Sophos;i="6.03,193,1694761200"; 
-   d="scan'208";a="874286167"
-Received: from joe-255.igk.intel.com (HELO localhost) ([10.91.220.57])
-  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2023 01:25:37 -0700
-From:   Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-        Waiman Long <longman@redhat.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>
-Subject: [PATCH] XArray: Make xa_lock_init macro 
-Date:   Mon,  2 Oct 2023 10:25:35 +0200
-Message-Id: <20231002082535.1516405-1-stanislaw.gruszka@linux.intel.com>
-X-Mailer: git-send-email 2.25.1
+   d="scan'208";a="727199956"
+Received: from lkp-server02.sh.intel.com (HELO c3b01524d57c) ([10.239.97.151])
+  by orsmga006.jf.intel.com with ESMTP; 02 Oct 2023 01:41:32 -0700
+Received: from kbuild by c3b01524d57c with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1qnEUd-0005tN-0e;
+        Mon, 02 Oct 2023 08:41:31 +0000
+Date:   Mon, 2 Oct 2023 16:41:01 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     cem@kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+        hughd@google.com, brauner@kernel.org, jack@suse.cz
+Subject: Re: [PATCH 3/3] tmpfs: Add project quota interface support for
+ get/set attr
+Message-ID: <202310021602.dvZVjyMh-lkp@intel.com>
+References: <20230925130028.1244740-4-cem@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230925130028.1244740-4-cem@kernel.org>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Make xa_init_flags() macro to avoid false positive lockdep splats.
+Hi,
 
-When spin_lock_init() is used inside initialization function (like
-in xa_init_flags()) which can be called many times, lockdep assign
-the same key to different locks.
+kernel test robot noticed the following build errors:
 
-For example this splat is seen with intel_vpu driver which uses
-two xarrays and has two separate xa_init_flags() calls:
+[auto build test ERROR on akpm-mm/mm-everything]
+[also build test ERROR on linus/master v6.6-rc4 next-20230929]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-[ 1139.148679] WARNING: inconsistent lock state
-[ 1139.152941] 6.6.0-hardening.1+ #2 Tainted: G           OE
-[ 1139.158758] --------------------------------
-[ 1139.163024] inconsistent {HARDIRQ-ON-W} -> {IN-HARDIRQ-W} usage.
-[ 1139.169018] kworker/10:1/109 [HC1[1]:SC0[0]:HE0:SE1] takes:
-[ 1139.174576] ffff888137237150 (&xa->xa_lock#18){?.+.}-{2:2}, at: ivpu_mmu_user_context_mark_invalid+0x1c/0x80 [intel_vpu]
-[ 1139.185438] {HARDIRQ-ON-W} state was registered at:
-[ 1139.190305]   lock_acquire+0x1a3/0x4a0
-[ 1139.194055]   _raw_spin_lock+0x2c/0x40
-[ 1139.197800]   ivpu_submit_ioctl+0xf0b/0x3520 [intel_vpu]
-[ 1139.203114]   drm_ioctl_kernel+0x201/0x3f0 [drm]
-[ 1139.207791]   drm_ioctl+0x47d/0xa20 [drm]
-[ 1139.211846]   __x64_sys_ioctl+0x12e/0x1a0
-[ 1139.215849]   do_syscall_64+0x59/0x90
-[ 1139.219509]   entry_SYSCALL_64_after_hwframe+0x6e/0xd8
-[ 1139.224636] irq event stamp: 45500
-[ 1139.228037] hardirqs last  enabled at (45499): [<ffffffff92ef0314>] _raw_spin_unlock_irq+0x24/0x50
-[ 1139.236961] hardirqs last disabled at (45500): [<ffffffff92eadf8f>] common_interrupt+0xf/0x90
-[ 1139.245457] softirqs last  enabled at (44956): [<ffffffff92ef3430>] __do_softirq+0x4c0/0x712
-[ 1139.253862] softirqs last disabled at (44461): [<ffffffff907df310>] irq_exit_rcu+0xa0/0xd0
-[ 1139.262098]
-               other info that might help us debug this:
-[ 1139.268604]  Possible unsafe locking scenario:
+url:    https://github.com/intel-lab-lkp/linux/commits/cem-kernel-org/tmpfs-add-project-ID-support/20230925-210238
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20230925130028.1244740-4-cem%40kernel.org
+patch subject: [PATCH 3/3] tmpfs: Add project quota interface support for get/set attr
+config: arm-sp7021_defconfig (https://download.01.org/0day-ci/archive/20231002/202310021602.dvZVjyMh-lkp@intel.com/config)
+compiler: clang version 17.0.0 (https://github.com/llvm/llvm-project.git 4a5ac14ee968ff0ad5d2cc1ffa0299048db4c88a)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231002/202310021602.dvZVjyMh-lkp@intel.com/reproduce)
 
-[ 1139.274505]        CPU0
-[ 1139.276955]        ----
-[ 1139.279403]   lock(&xa->xa_lock#18);
-[ 1139.282978]   <Interrupt>
-[ 1139.285601]     lock(&xa->xa_lock#18);
-[ 1139.289345]
-                *** DEADLOCK ***
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202310021602.dvZVjyMh-lkp@intel.com/
 
-Lockdep falsely identified xa_lock from two different xarrays as the same
-lock and report deadlock. More detailed description of the problem
-is provided in commit c21f11d182c2 ("drm: fix drmm_mutex_init()")
+All errors (new ones prefixed by >>):
 
-Signed-off-by: Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>
----
- include/linux/xarray.h | 17 +++++++----------
- 1 file changed, 7 insertions(+), 10 deletions(-)
+>> mm/shmem.c:3574:58: error: no member named 'i_projid' in 'struct shmem_inode_info'
+    3574 |         fa->fsx_projid = (u32)from_kprojid(&init_user_ns, info->i_projid);
+         |                                                           ~~~~  ^
+   mm/shmem.c:3583:41: error: no member named 'i_projid' in 'struct shmem_inode_info'
+    3583 |         if (projid_eq(kprojid, SHMEM_I(inode)->i_projid))
+         |                                ~~~~~~~~~~~~~~  ^
+   mm/shmem.c:3590:18: error: no member named 'i_projid' in 'struct shmem_inode_info'
+    3590 |         SHMEM_I(inode)->i_projid = kprojid;
+         |         ~~~~~~~~~~~~~~  ^
+   3 errors generated.
 
-diff --git a/include/linux/xarray.h b/include/linux/xarray.h
-index cb571dfcf4b1..409d9d739ee9 100644
---- a/include/linux/xarray.h
-+++ b/include/linux/xarray.h
-@@ -375,12 +375,12 @@ void xa_destroy(struct xarray *);
-  *
-  * Context: Any context.
-  */
--static inline void xa_init_flags(struct xarray *xa, gfp_t flags)
--{
--	spin_lock_init(&xa->xa_lock);
--	xa->xa_flags = flags;
--	xa->xa_head = NULL;
--}
-+#define xa_init_flags(_xa, _flags)	\
-+do {					\
-+	spin_lock_init(&(_xa)->xa_lock);\
-+	(_xa)->xa_flags = (_flags);	\
-+	(_xa)->xa_head = NULL;		\
-+} while (0)
- 
- /**
-  * xa_init() - Initialise an empty XArray.
-@@ -390,10 +390,7 @@ static inline void xa_init_flags(struct xarray *xa, gfp_t flags)
-  *
-  * Context: Any context.
-  */
--static inline void xa_init(struct xarray *xa)
--{
--	xa_init_flags(xa, 0);
--}
-+#define xa_init(xa) xa_init_flags(xa, 0)
- 
- /**
-  * xa_empty() - Determine if an array has any present entries.
+
+vim +3574 mm/shmem.c
+
+  3567	
+  3568	static int shmem_fileattr_get(struct dentry *dentry, struct fileattr *fa)
+  3569	{
+  3570		struct shmem_inode_info *info = SHMEM_I(d_inode(dentry));
+  3571	
+  3572		fileattr_fill_flags(fa, info->fsflags & SHMEM_FL_USER_VISIBLE);
+  3573	
+> 3574		fa->fsx_projid = (u32)from_kprojid(&init_user_ns, info->i_projid);
+  3575		return 0;
+  3576	}
+  3577	
+
 -- 
-2.25.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
