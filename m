@@ -2,160 +2,233 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7406B7B51DD
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Oct 2023 13:58:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 884767B5213
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Oct 2023 14:04:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236826AbjJBL6C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Oct 2023 07:58:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44000 "EHLO
+        id S236870AbjJBME1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Oct 2023 08:04:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236818AbjJBL6C (ORCPT
+        with ESMTP id S236710AbjJBME0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Oct 2023 07:58:02 -0400
-Received: from esa8.hc1455-7.c3s2.iphmx.com (esa8.hc1455-7.c3s2.iphmx.com [139.138.61.253])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EF7AEC;
-        Mon,  2 Oct 2023 04:57:58 -0700 (PDT)
-X-IronPort-AV: E=McAfee;i="6600,9927,10850"; a="122471633"
-X-IronPort-AV: E=Sophos;i="6.03,194,1694703600"; 
-   d="scan'208";a="122471633"
-Received: from unknown (HELO oym-r2.gw.nic.fujitsu.com) ([210.162.30.90])
-  by esa8.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2023 20:57:55 +0900
-Received: from oym-m1.gw.nic.fujitsu.com (oym-nat-oym-m1.gw.nic.fujitsu.com [192.168.87.58])
-        by oym-r2.gw.nic.fujitsu.com (Postfix) with ESMTP id 9CC12D424E;
-        Mon,  2 Oct 2023 20:57:53 +0900 (JST)
-Received: from kws-ab4.gw.nic.fujitsu.com (kws-ab4.gw.nic.fujitsu.com [192.51.206.22])
-        by oym-m1.gw.nic.fujitsu.com (Postfix) with ESMTP id C4BC1D88A1;
-        Mon,  2 Oct 2023 20:57:52 +0900 (JST)
-Received: from edo.cn.fujitsu.com (edo.cn.fujitsu.com [10.167.33.5])
-        by kws-ab4.gw.nic.fujitsu.com (Postfix) with ESMTP id 6AC45E36B8;
-        Mon,  2 Oct 2023 20:57:52 +0900 (JST)
-Received: from [10.193.128.127] (unknown [10.193.128.127])
-        by edo.cn.fujitsu.com (Postfix) with ESMTP id 0499B1A0006;
-        Mon,  2 Oct 2023 19:57:50 +0800 (CST)
-Message-ID: <83d057e5-ef5f-4b27-95c8-d7bf4902fa55@fujitsu.com>
-Date:   Mon, 2 Oct 2023 19:57:50 +0800
+        Mon, 2 Oct 2023 08:04:26 -0400
+Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9011BD7;
+        Mon,  2 Oct 2023 05:04:22 -0700 (PDT)
+Received: by mail-lj1-x231.google.com with SMTP id 38308e7fff4ca-2bffa8578feso262154441fa.2;
+        Mon, 02 Oct 2023 05:04:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1696248261; x=1696853061; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IGACCsg3UM6EsxzbZiA0PNBwClTCH2lKbZ4vIrPYp88=;
+        b=jsQFfozjoKrdLnNo+X4itPRvuTaNI/Ox56+aMbqjkUeC0ziQTVcy/6xP6IRMfdVhTY
+         ICIDF+bvAoXBpyYxZtfOFGzMhUOYQ0BXA/oJVXmsVIeE3NeIAQYU/HVWj57yfclWskm4
+         amU6i12RkcuvxQFOe7bJak6wIg2SDcz5L+WJ1NmdSRzfQcH4a0paqChKRtsD6xFzTeA7
+         7WZwLaGdYZENqd9Qb6AdnxY/uf/ZF1fDtcrcXjEgheGqwJ0URNjnOimYvhSV8b8wss+E
+         5stGMRpev5lGahzlOlKG5ONZTIyrG+rU7+ZNjBvY5y7cJInkFqOLmET4XI5X16kz14+X
+         UTUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696248261; x=1696853061;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IGACCsg3UM6EsxzbZiA0PNBwClTCH2lKbZ4vIrPYp88=;
+        b=dFr0BbXo3rnZiAI++cmGDQSFp0uRm8mFY35fPkod7/RVNO0fTvnOEFGuXZpmB0FOLV
+         nvybmXkey65HZpCP8VJpr2bhcULSwPDEmMIp4fNPNTKIg/+u09SIHlr3nufiOIfQtU9s
+         U02f2LuavYmWBtiEOG7VuIT8yez6sclKcoMmH0yHKMIqddWkgsr+IxkStYkQEiEZLyBO
+         X93y0NcC+G4XsmgN9XecE5ItytiFM8dIzXUCSI5Lw0mg1zay629zEdTvFFRDcajc5GGh
+         EBqEiaka1t97+8pCKCBErXYWyS+6cfvH0Sdy0U8exp/8nCKWif7v2YhPALmhphVU5GPC
+         sjWw==
+X-Gm-Message-State: AOJu0YyKIt5vw3Og5v2jPOca3RD0nVLWpzveqDarGXmbjoODEXHHwVC3
+        I2ZLWsQYxkcfgi9NB2aj6F1n/WluMGI=
+X-Google-Smtp-Source: AGHT+IF4GKbJCjbjprr5a4ktq1UCOHZx0uqtEAkkHmlFgrt2Qo0YBObwWc+00rsEFUmLsCShow18SA==
+X-Received: by 2002:a2e:9e01:0:b0:2bb:9847:d96e with SMTP id e1-20020a2e9e01000000b002bb9847d96emr9221930ljk.9.1696248260433;
+        Mon, 02 Oct 2023 05:04:20 -0700 (PDT)
+Received: from amir-ThinkPad-T480.ctera.local (bzq-166-168-31-246.red.bezeqint.net. [31.168.166.246])
+        by smtp.gmail.com with ESMTPSA id m7-20020a2e9107000000b002b9b9fd0f92sm5084037ljg.105.2023.10.02.05.04.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Oct 2023 05:04:20 -0700 (PDT)
+From:   Amir Goldstein <amir73il@gmail.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH] overlayfs: make use of ->layers safe in rcu pathwalk
+Date:   Mon,  2 Oct 2023 15:04:13 +0300
+Message-Id: <20231002120413.880734-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15] mm, pmem, xfs: Introduce MF_MEM_PRE_REMOVE for unbind
-To:     kernel test robot <lkp@intel.com>
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        dan.j.williams@intel.com, willy@infradead.org, jack@suse.cz,
-        akpm@linux-foundation.org, djwong@kernel.org, mcgrof@kernel.org,
-        chandanbabu@kernel.org, linux-fsdevel@vger.kernel.org,
-        nvdimm@lists.linux.dev, linux-xfs@vger.kernel.org,
-        linux-mm@kvack.org
-References: <20230928103227.250550-1-ruansy.fnst@fujitsu.com>
- <202310010955.feI4HCwZ-lkp@intel.com>
-From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
-In-Reply-To: <202310010955.feI4HCwZ-lkp@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-TM-AS-Product-Ver: IMSS-9.1.0.1417-9.0.0.1002-27910.006
-X-TM-AS-User-Approved-Sender: Yes
-X-TMASE-Version: IMSS-9.1.0.1417-9.0.1002-27910.006
-X-TMASE-Result: 10--24.331000-10.000000
-X-TMASE-MatchedRID: RsPxVIkBekyPvrMjLFD6eKzGfgakLdjaSIfLQ6k7huHHr4PSWTXSLMWl
-        hj9iHeVpndDwnQ2pwPpOg1kzy/iWtmrs+r6+nS7O46cXaPycFZuR1LeQ+VpnJZskuXz9Gadkbyq
-        cWT4FZRfg7nVyl/GdEkusQE+B0D7cVGsQtO2yiZ48+i/lP6Xo8coioCrSMgeKTmg3Ze6YIL1/o7
-        4UQlCmAM8oZdJyMU3z59JoNf8FRHif9F+VqQj2HI61Z+HJnvsOmSLeIgEDej+u9yzHHu0ZiRVx7
-        xedu5l6XICzc9HFHLudqC2fLtk9xL9ZdlL8eona0CzDI0K7cAwCwwGD+AF1Ue52OdZcC6tPvECL
-        uM+h4RB+3BndfXUhXQ==
-X-TMASE-SNAP-Result: 1.821001.0001-0-1-22:0,33:0,34:0-0
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_PASS,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+ovl_permission() accesses ->layers[...].mnt; we can't have ->layers
+freed without an RCU delay on fs shutdown.
 
+Fortunately, kern_unmount_array() that is used to drop those mounts
+does include an RCU delay, so freeing is delayed; unfortunately, the
+array passed to kern_unmount_array() is formed by mangling ->layers
+contents and that happens without any delays.
 
-在 2023/10/1 9:43, kernel test robot 写道:
-> Hi Shiyang,
-> 
-> kernel test robot noticed the following build errors:
-> 
-> 
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/UPDATE-20230928-183310/Shiyang-Ruan/xfs-fix-the-calculation-for-end-and-length/20230629-161913
-> base:   the 2th patch of https://lore.kernel.org/r/20230629081651.253626-3-ruansy.fnst%40fujitsu.com
-> patch link:    https://lore.kernel.org/r/20230928103227.250550-1-ruansy.fnst%40fujitsu.com
-> patch subject: [PATCH v15] mm, pmem, xfs: Introduce MF_MEM_PRE_REMOVE for unbind
-> config: x86_64-rhel-8.3-rust (https://download.01.org/0day-ci/archive/20231001/202310010955.feI4HCwZ-lkp@intel.com/config)
-> compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project.git 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231001/202310010955.feI4HCwZ-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202310010955.feI4HCwZ-lkp@intel.com/
-> 
-> All errors (new ones prefixed by >>):
-> 
->>> fs/xfs/xfs_notify_failure.c:127:27: error: use of undeclared identifier 'FREEZE_HOLDER_KERNEL'
->             error = freeze_super(sb, FREEZE_HOLDER_KERNEL);
->                                      ^
->     fs/xfs/xfs_notify_failure.c:143:26: error: use of undeclared identifier 'FREEZE_HOLDER_KERNEL'
->                     error = thaw_super(sb, FREEZE_HOLDER_KERNEL);
->                                            ^
->>> fs/xfs/xfs_notify_failure.c:153:17: error: use of undeclared identifier 'FREEZE_HOLDER_USERSPACE'
->             thaw_super(sb, FREEZE_HOLDER_USERSPACE);
->                            ^
->     3 errors generated.
-> 
+The ->layers[...].name string entries are used to store the strings to
+display in "lowerdir=..." by ovl_show_options().  Those entries are not
+accessed in RCU walk.
 
-The two enums has been introduced since 880b9577855e ("fs: distinguish 
-between user initiated freeze and kernel initiated freeze"), v6.6-rc1. 
-I also compiled my patches based on v6.6-rc1 with your config file, it 
-passed with no error.
+Move the name strings into a separate array ofs->config.lowerdirs and
+reuse the ofs->config.lowerdirs array as the temporary mount array to
+pass to kern_unmount_array().
 
-So, which kernel version were you testing?
+Reported-by: Al Viro <viro@zeniv.linux.org.uk>
+Link: https://lore.kernel.org/r/20231002023711.GP3389589@ZenIV/
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+---
 
+Miklos,
 
---
+Please review my proposal to fix the RCU walk race pointed out by Al.
+I have already tested it with xfstests and I will queue it in ovl-fixes
+to get more exposure in linux-next.
+
 Thanks,
-Ruan.
+Amir.
 
-> 
-> vim +/FREEZE_HOLDER_KERNEL +127 fs/xfs/xfs_notify_failure.c
-> 
->     119	
->     120	static int
->     121	xfs_dax_notify_failure_freeze(
->     122		struct xfs_mount	*mp)
->     123	{
->     124		struct super_block	*sb = mp->m_super;
->     125		int			error;
->     126	
->   > 127		error = freeze_super(sb, FREEZE_HOLDER_KERNEL);
->     128		if (error)
->     129			xfs_emerg(mp, "already frozen by kernel, err=%d", error);
->     130	
->     131		return error;
->     132	}
->     133	
->     134	static void
->     135	xfs_dax_notify_failure_thaw(
->     136		struct xfs_mount	*mp,
->     137		bool			kernel_frozen)
->     138	{
->     139		struct super_block	*sb = mp->m_super;
->     140		int			error;
->     141	
->     142		if (kernel_frozen) {
->     143			error = thaw_super(sb, FREEZE_HOLDER_KERNEL);
->     144			if (error)
->     145				xfs_emerg(mp, "still frozen after notify failure, err=%d",
->     146					error);
->     147		}
->     148	
->     149		/*
->     150		 * Also thaw userspace call anyway because the device is about to be
->     151		 * removed immediately.
->     152		 */
->   > 153		thaw_super(sb, FREEZE_HOLDER_USERSPACE);
->     154	}
->     155	
-> 
+ fs/overlayfs/ovl_entry.h | 10 +---------
+ fs/overlayfs/params.c    | 17 +++++++++--------
+ fs/overlayfs/super.c     | 18 +++++++++++-------
+ 3 files changed, 21 insertions(+), 24 deletions(-)
+
+diff --git a/fs/overlayfs/ovl_entry.h b/fs/overlayfs/ovl_entry.h
+index e9539f98e86a..d82d2a043da2 100644
+--- a/fs/overlayfs/ovl_entry.h
++++ b/fs/overlayfs/ovl_entry.h
+@@ -8,6 +8,7 @@
+ struct ovl_config {
+ 	char *upperdir;
+ 	char *workdir;
++	char **lowerdirs;
+ 	bool default_permissions;
+ 	int redirect_mode;
+ 	int verity_mode;
+@@ -39,17 +40,8 @@ struct ovl_layer {
+ 	int idx;
+ 	/* One fsid per unique underlying sb (upper fsid == 0) */
+ 	int fsid;
+-	char *name;
+ };
+ 
+-/*
+- * ovl_free_fs() relies on @mnt being the first member when unmounting
+- * the private mounts created for each layer. Let's check both the
+- * offset and type.
+- */
+-static_assert(offsetof(struct ovl_layer, mnt) == 0);
+-static_assert(__same_type(typeof_member(struct ovl_layer, mnt), struct vfsmount *));
+-
+ struct ovl_path {
+ 	const struct ovl_layer *layer;
+ 	struct dentry *dentry;
+diff --git a/fs/overlayfs/params.c b/fs/overlayfs/params.c
+index b9355bb6d75a..95b751507ac8 100644
+--- a/fs/overlayfs/params.c
++++ b/fs/overlayfs/params.c
+@@ -752,12 +752,12 @@ void ovl_free_fs(struct ovl_fs *ofs)
+ 	if (ofs->upperdir_locked)
+ 		ovl_inuse_unlock(ovl_upper_mnt(ofs)->mnt_root);
+ 
+-	/* Hack!  Reuse ofs->layers as a vfsmount array before freeing it */
+-	mounts = (struct vfsmount **) ofs->layers;
++	/* Reuse ofs->config.lowerdirs as a vfsmount array before freeing it */
++	mounts = (struct vfsmount **) ofs->config.lowerdirs;
+ 	for (i = 0; i < ofs->numlayer; i++) {
+ 		iput(ofs->layers[i].trap);
++		kfree(ofs->config.lowerdirs[i]);
+ 		mounts[i] = ofs->layers[i].mnt;
+-		kfree(ofs->layers[i].name);
+ 	}
+ 	kern_unmount_array(mounts, ofs->numlayer);
+ 	kfree(ofs->layers);
+@@ -765,6 +765,7 @@ void ovl_free_fs(struct ovl_fs *ofs)
+ 		free_anon_bdev(ofs->fs[i].pseudo_dev);
+ 	kfree(ofs->fs);
+ 
++	kfree(ofs->config.lowerdirs);
+ 	kfree(ofs->config.upperdir);
+ 	kfree(ofs->config.workdir);
+ 	if (ofs->creator_cred)
+@@ -949,16 +950,16 @@ int ovl_show_options(struct seq_file *m, struct dentry *dentry)
+ 	struct super_block *sb = dentry->d_sb;
+ 	struct ovl_fs *ofs = OVL_FS(sb);
+ 	size_t nr, nr_merged_lower = ofs->numlayer - ofs->numdatalayer;
+-	const struct ovl_layer *data_layers = &ofs->layers[nr_merged_lower];
++	char **lowerdatadirs = &ofs->config.lowerdirs[nr_merged_lower];
+ 
+-	/* ofs->layers[0] is the upper layer */
+-	seq_printf(m, ",lowerdir=%s", ofs->layers[1].name);
++	/* lowerdirs[] starts from offset 1 */
++	seq_printf(m, ",lowerdir=%s", ofs->config.lowerdirs[1]);
+ 	/* dump regular lower layers */
+ 	for (nr = 2; nr < nr_merged_lower; nr++)
+-		seq_printf(m, ":%s", ofs->layers[nr].name);
++		seq_printf(m, ":%s", ofs->config.lowerdirs[nr]);
+ 	/* dump data lower layers */
+ 	for (nr = 0; nr < ofs->numdatalayer; nr++)
+-		seq_printf(m, "::%s", data_layers[nr].name);
++		seq_printf(m, "::%s", lowerdatadirs[nr]);
+ 	if (ofs->config.upperdir) {
+ 		seq_show_option(m, "upperdir", ofs->config.upperdir);
+ 		seq_show_option(m, "workdir", ofs->config.workdir);
+diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+index 905d3aaf4e55..3fa2416264a4 100644
+--- a/fs/overlayfs/super.c
++++ b/fs/overlayfs/super.c
+@@ -572,11 +572,6 @@ static int ovl_get_upper(struct super_block *sb, struct ovl_fs *ofs,
+ 	upper_layer->idx = 0;
+ 	upper_layer->fsid = 0;
+ 
+-	err = -ENOMEM;
+-	upper_layer->name = kstrdup(ofs->config.upperdir, GFP_KERNEL);
+-	if (!upper_layer->name)
+-		goto out;
+-
+ 	/*
+ 	 * Inherit SB_NOSEC flag from upperdir.
+ 	 *
+@@ -1125,7 +1120,8 @@ static int ovl_get_layers(struct super_block *sb, struct ovl_fs *ofs,
+ 		layers[ofs->numlayer].idx = ofs->numlayer;
+ 		layers[ofs->numlayer].fsid = fsid;
+ 		layers[ofs->numlayer].fs = &ofs->fs[fsid];
+-		layers[ofs->numlayer].name = l->name;
++		/* Store for printing lowerdir=... in ovl_show_options() */
++		ofs->config.lowerdirs[ofs->numlayer] = l->name;
+ 		l->name = NULL;
+ 		ofs->numlayer++;
+ 		ofs->fs[fsid].is_lower = true;
+@@ -1370,8 +1366,16 @@ int ovl_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	if (!layers)
+ 		goto out_err;
+ 
++	ofs->config.lowerdirs = kcalloc(ctx->nr + 1, sizeof(char *), GFP_KERNEL);
++	if (!ofs->config.lowerdirs) {
++		kfree(layers);
++		goto out_err;
++	}
+ 	ofs->layers = layers;
+-	/* Layer 0 is reserved for upper even if there's no upper */
++	/*
++	 * Layer 0 is reserved for upper even if there's no upper.
++	 * For consistency, config.lowerdirs[0] is NULL.
++	 */
+ 	ofs->numlayer = 1;
+ 
+ 	sb->s_stack_depth = 0;
+-- 
+2.34.1
+
