@@ -2,94 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ADB257B4D04
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Oct 2023 10:00:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BBA07B4D42
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Oct 2023 10:25:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235814AbjJBIA6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Oct 2023 04:00:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37766 "EHLO
+        id S235832AbjJBIZo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Oct 2023 04:25:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235802AbjJBIA6 (ORCPT
+        with ESMTP id S229981AbjJBIZn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Oct 2023 04:00:58 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59B33BD
-        for <linux-fsdevel@vger.kernel.org>; Mon,  2 Oct 2023 01:00:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1696233608;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=2hMwBDQxPqEr2KGnCZRjOsa4DbxGMCcRw1+qHGhTgF8=;
-        b=dlkSa/MBKxMnCmVhC4xqTA85+AtEDORgMq5Z8lSyuaCZEaqeDXNDmbsVe33SdTvE7ohOEs
-        fDP2eG/2kdW7mWUujW39ujQqfr1nQSZXW0wt7PjZjjIUGdTOZRjbwHl7pBjSl9iVzt18+B
-        8lOO1BDF3YLZ5cKeBw6vblOVsWwD0l0=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-55-tGhoYZ7zNyu4nIH4EvSz3A-1; Mon, 02 Oct 2023 04:00:06 -0400
-X-MC-Unique: tGhoYZ7zNyu4nIH4EvSz3A-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-405535740d2so120332395e9.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Oct 2023 01:00:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696233605; x=1696838405;
-        h=content-transfer-encoding:in-reply-to:subject:organization:from
-         :references:cc:to:content-language:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2hMwBDQxPqEr2KGnCZRjOsa4DbxGMCcRw1+qHGhTgF8=;
-        b=PggHR+fxYnrl6S6hTqbIjhp59RdaU+WUXWQ6BjQIBKv5FUjGxtkWZW8/ipKFkb6L+c
-         iXxUAYKVACmBqZvykA2x0J+U9sd1K1Sg2uxwVBEgR5L8rMUVrgyPoY3Q3VQuuZafCoJx
-         ekoMK4HmklZaNvB5yv6eGSmMNwIpEdW7gpQ0NJj2/RkTaBCpOo6rRB5prbgXxPJ4v+Kr
-         Q8JCx1oDyq2BnV5UlkO0UAZvGzuauh08Ri/awaV53cl4uSZztmi7WUtfZXmEWfp+sBd4
-         HgscJgUnQbyJB3iVNR7ulHqBPApnQwoxbwuo/llfWGEjVaARIEgE+2YLY822BVch+Yhy
-         17+Q==
-X-Gm-Message-State: AOJu0YwUS6rSo0YGJvDoYWo2ERMEtsAi2XrINRqVK0Xh2JByTb7WGDbn
-        J2YsZ/1Mox80LiJaVIEhnpf4cbS4p+lH7DCa0A3qJAjDpK6h9QziKgcZDECZqMZrgIodL+C2oxy
-        VYYMDiwVQZMat/zAHGNLElu60Vw==
-X-Received: by 2002:a05:600c:ac1:b0:402:f501:447c with SMTP id c1-20020a05600c0ac100b00402f501447cmr9457531wmr.0.1696233605520;
-        Mon, 02 Oct 2023 01:00:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFLXTkL+9EEt3zHQk5ZsLeQprJDYGJsst31lbLdGGFpUez2Jqfmw0gPneDp6ON/b1DJjaaQzg==
-X-Received: by 2002:a05:600c:ac1:b0:402:f501:447c with SMTP id c1-20020a05600c0ac100b00402f501447cmr9457493wmr.0.1696233604995;
-        Mon, 02 Oct 2023 01:00:04 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c735:f200:cb49:cb8f:88fc:9446? (p200300cbc735f200cb49cb8f88fc9446.dip0.t-ipconnect.de. [2003:cb:c735:f200:cb49:cb8f:88fc:9446])
-        by smtp.gmail.com with ESMTPSA id 3-20020a05600c020300b004063cced50bsm6701171wmi.23.2023.10.02.01.00.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Oct 2023 01:00:04 -0700 (PDT)
-Message-ID: <fc27ce41-bc97-91a7-deb6-67538689021c@redhat.com>
-Date:   Mon, 2 Oct 2023 10:00:03 +0200
+        Mon, 2 Oct 2023 04:25:43 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9308C6;
+        Mon,  2 Oct 2023 01:25:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1696235140; x=1727771140;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=LjUA0WnZOwfBZbOsPWOE8rX33xk0uzpE44wPBaNDwPc=;
+  b=n2cUg4hc3KB3pgqa/MSXJL/Bc6rC5qwHF7mRWyK/6w+HgEc+pwd0dIU9
+   /VZFQjBuGgf2OSrWjLzyY4duz4s2+dM6GMbLeoNR9skiXOvfSRRXOtQLR
+   DLQhX4gTEz/S67Ltp60HJKeP5DTMfQDqBoYuMl+c5S04wAfULGlwzhCcT
+   /WLK8KGOjRxkJXJtSxOFXn5aufagqVJRe+EhtVbphxZIbR5rgeXcxOryb
+   DjiJfgQZniC7+GGuBo4hhO4NaqDbbxaVYh1GvKkl7qW93NiugQjnydWdW
+   LIjM+FGvIICMPIgJUKZ8CMHVRDdyHgG85ASElkoIFJi+QlrsZ/O4Kz+oL
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10850"; a="468881032"
+X-IronPort-AV: E=Sophos;i="6.03,193,1694761200"; 
+   d="scan'208";a="468881032"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2023 01:25:40 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10850"; a="874286167"
+X-IronPort-AV: E=Sophos;i="6.03,193,1694761200"; 
+   d="scan'208";a="874286167"
+Received: from joe-255.igk.intel.com (HELO localhost) ([10.91.220.57])
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2023 01:25:37 -0700
+From:   Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+        Waiman Long <longman@redhat.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>
+Subject: [PATCH] XArray: Make xa_lock_init macro 
+Date:   Mon,  2 Oct 2023 10:25:35 +0200
+Message-Id: <20231002082535.1516405-1-stanislaw.gruszka@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Content-Language: en-US
-To:     Peter Xu <peterx@redhat.com>
-Cc:     Jann Horn <jannh@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
-        brauner@kernel.org, shuah@kernel.org, aarcange@redhat.com,
-        lokeshgidra@google.com, hughd@google.com, mhocko@suse.com,
-        axelrasmussen@google.com, rppt@kernel.org, willy@infradead.org,
-        Liam.Howlett@oracle.com, zhangpeng362@huawei.com,
-        bgeffon@google.com, kaleshsingh@google.com, ngeoffray@google.com,
-        jdduke@google.com, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, kernel-team@android.com
-References: <20230923013148.1390521-1-surenb@google.com>
- <20230923013148.1390521-3-surenb@google.com>
- <CAG48ez1N2kryy08eo0dcJ5a9O-3xMT8aOrgrcD+CqBN=cBfdDw@mail.gmail.com>
- <03f95e90-82bd-6ee2-7c0d-d4dc5d3e15ee@redhat.com> <ZRWo1daWBnwNz0/O@x1n>
- <98b21e78-a90d-8b54-3659-e9b890be094f@redhat.com> <ZRW2CBUDNks9RGQJ@x1n>
- <85e5390c-660c-ef9e-b415-00ee71bc5cbf@redhat.com> <ZRXHK3hbdjfQvCCp@x1n>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Subject: Re: [PATCH v2 2/3] userfaultfd: UFFDIO_REMAP uABI
-In-Reply-To: <ZRXHK3hbdjfQvCCp@x1n>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-5.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
         SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -97,52 +62,91 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 28.09.23 20:34, Peter Xu wrote:
-> On Thu, Sep 28, 2023 at 07:51:18PM +0200, David Hildenbrand wrote:
->> On 28.09.23 19:21, Peter Xu wrote:
->>> On Thu, Sep 28, 2023 at 07:05:40PM +0200, David Hildenbrand wrote:
->>>> As described as reply to v1, without fork() and KSM, the PAE bit should
->>>> stick around. If that's not the case, we should investigate why.
->>>>
->>>> If we ever support the post-fork case (which the comment above remap_pages()
->>>> excludes) we'll need good motivation why we'd want to make this
->>>> overly-complicated feature even more complicated.
->>>
->>> The problem is DONTFORK is only a suggestion, but not yet restricted.  If
->>> someone reaches on top of some !PAE page on src it'll never gonna proceed
->>> and keep failing, iiuc.
->>
->> Yes. It won't work if you fork() and not use DONTFORK on the src VMA. We
->> should document that as a limitation.
->>
->> For example, you could return an error to the user that can just call
->> UFFDIO_COPY. (or to the UFFDIO_COPY from inside uffd code, but that's
->> probably ugly as well).
-> 
-> We could indeed provide some special errno perhaps upon the PAE check, then
-> document it explicitly in the man page and suggest resolutions (like
-> DONTFORK) when user hit it.
-> 
+Make xa_init_flags() macro to avoid false positive lockdep splats.
 
-Maybe it might be reasonable to consider an operation that moves the 
-page, even if it might do an internal copy. UFFDIO_MOVE might be a 
-better name for something like that.
+When spin_lock_init() is used inside initialization function (like
+in xa_init_flags()) which can be called many times, lockdep assign
+the same key to different locks.
 
-In case we cannot simply remap the page, the fallback sequence (from the 
-cover letter) would be triggered.
+For example this splat is seen with intel_vpu driver which uses
+two xarrays and has two separate xa_init_flags() calls:
 
-1) UFFDIO_COPY
-2) MADV_DONTNEED
+[ 1139.148679] WARNING: inconsistent lock state
+[ 1139.152941] 6.6.0-hardening.1+ #2 Tainted: G           OE
+[ 1139.158758] --------------------------------
+[ 1139.163024] inconsistent {HARDIRQ-ON-W} -> {IN-HARDIRQ-W} usage.
+[ 1139.169018] kworker/10:1/109 [HC1[1]:SC0[0]:HE0:SE1] takes:
+[ 1139.174576] ffff888137237150 (&xa->xa_lock#18){?.+.}-{2:2}, at: ivpu_mmu_user_context_mark_invalid+0x1c/0x80 [intel_vpu]
+[ 1139.185438] {HARDIRQ-ON-W} state was registered at:
+[ 1139.190305]   lock_acquire+0x1a3/0x4a0
+[ 1139.194055]   _raw_spin_lock+0x2c/0x40
+[ 1139.197800]   ivpu_submit_ioctl+0xf0b/0x3520 [intel_vpu]
+[ 1139.203114]   drm_ioctl_kernel+0x201/0x3f0 [drm]
+[ 1139.207791]   drm_ioctl+0x47d/0xa20 [drm]
+[ 1139.211846]   __x64_sys_ioctl+0x12e/0x1a0
+[ 1139.215849]   do_syscall_64+0x59/0x90
+[ 1139.219509]   entry_SYSCALL_64_after_hwframe+0x6e/0xd8
+[ 1139.224636] irq event stamp: 45500
+[ 1139.228037] hardirqs last  enabled at (45499): [<ffffffff92ef0314>] _raw_spin_unlock_irq+0x24/0x50
+[ 1139.236961] hardirqs last disabled at (45500): [<ffffffff92eadf8f>] common_interrupt+0xf/0x90
+[ 1139.245457] softirqs last  enabled at (44956): [<ffffffff92ef3430>] __do_softirq+0x4c0/0x712
+[ 1139.253862] softirqs last disabled at (44461): [<ffffffff907df310>] irq_exit_rcu+0xa0/0xd0
+[ 1139.262098]
+               other info that might help us debug this:
+[ 1139.268604]  Possible unsafe locking scenario:
 
-So we would just handle the operation internally without a fallback.
+[ 1139.274505]        CPU0
+[ 1139.276955]        ----
+[ 1139.279403]   lock(&xa->xa_lock#18);
+[ 1139.282978]   <Interrupt>
+[ 1139.285601]     lock(&xa->xa_lock#18);
+[ 1139.289345]
+                *** DEADLOCK ***
 
-The recommendation to the user to make the overall operation as fast as 
-possible would be to not use KSM, to avoid fork(), or to use 
-MADV_DONTFORK when fork() must be used.
+Lockdep falsely identified xa_lock from two different xarrays as the same
+lock and report deadlock. More detailed description of the problem
+is provided in commit c21f11d182c2 ("drm: fix drmm_mutex_init()")
 
+Signed-off-by: Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>
+---
+ include/linux/xarray.h | 17 +++++++----------
+ 1 file changed, 7 insertions(+), 10 deletions(-)
 
+diff --git a/include/linux/xarray.h b/include/linux/xarray.h
+index cb571dfcf4b1..409d9d739ee9 100644
+--- a/include/linux/xarray.h
++++ b/include/linux/xarray.h
+@@ -375,12 +375,12 @@ void xa_destroy(struct xarray *);
+  *
+  * Context: Any context.
+  */
+-static inline void xa_init_flags(struct xarray *xa, gfp_t flags)
+-{
+-	spin_lock_init(&xa->xa_lock);
+-	xa->xa_flags = flags;
+-	xa->xa_head = NULL;
+-}
++#define xa_init_flags(_xa, _flags)	\
++do {					\
++	spin_lock_init(&(_xa)->xa_lock);\
++	(_xa)->xa_flags = (_flags);	\
++	(_xa)->xa_head = NULL;		\
++} while (0)
+ 
+ /**
+  * xa_init() - Initialise an empty XArray.
+@@ -390,10 +390,7 @@ static inline void xa_init_flags(struct xarray *xa, gfp_t flags)
+  *
+  * Context: Any context.
+  */
+-static inline void xa_init(struct xarray *xa)
+-{
+-	xa_init_flags(xa, 0);
+-}
++#define xa_init(xa) xa_init_flags(xa, 0)
+ 
+ /**
+  * xa_empty() - Determine if an array has any present entries.
 -- 
-Cheers,
-
-David / dhildenb
+2.25.1
 
