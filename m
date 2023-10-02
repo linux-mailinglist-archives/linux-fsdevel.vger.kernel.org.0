@@ -2,100 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 347987B4F40
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Oct 2023 11:42:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E93F27B4F7C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Oct 2023 11:49:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236201AbjJBJmr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Oct 2023 05:42:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40562 "EHLO
+        id S236273AbjJBJth (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Oct 2023 05:49:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236187AbjJBJmq (ORCPT
+        with ESMTP id S236261AbjJBJtg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Oct 2023 05:42:46 -0400
-Received: from mail-oi1-f198.google.com (mail-oi1-f198.google.com [209.85.167.198])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4518E1
-        for <linux-fsdevel@vger.kernel.org>; Mon,  2 Oct 2023 02:42:42 -0700 (PDT)
-Received: by mail-oi1-f198.google.com with SMTP id 5614622812f47-3ae2a37595dso33153761b6e.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Oct 2023 02:42:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696239762; x=1696844562;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=b9lzjmnDECsVuxR0eNzta65jB9ijAT2ximrGaddwS2I=;
-        b=eH2j+8i3JeujxAUCTbZ159YXYdy6yEE7Z/TEjq711qR23QlCl4XFDyem+h6FDTZhcN
-         xOqkd0PvDoCOmwZc0u0+NLYAGKDJKidbHFs3AoTHSFqRnOZIDBgmaWQK7kSobGwSsGg0
-         aVfe0Tp1cM8e+fjFYo9245f7eo0qNwi5HzbaXAUu39+AxOwUQwLm8wiMVE/SOKiBxWJ1
-         dU4y3Y31P6G1tu+arQMushpGR78Klp/hCgoxW24I/+jwJydBzUTKNcqRdrV5eWCDpf6k
-         sjjtjGbIkOYhZ8frQ0OCais01TE+AAgrME6ptzWsOlEpjXNqg7gcvva6vDCbrmkYdIVs
-         CuHQ==
-X-Gm-Message-State: AOJu0YxfCZjNQO/aiD9W3HvDmogyqZA7EB7kaVPu35uLEFYeqOmJiDYE
-        6JNNtZnvI2vJvT1FMtEcedmRAXgspQ7JkEMKeXZ6ZGzyNgpB
-X-Google-Smtp-Source: AGHT+IHDr8g0fYd77L3NAUGwkycaSCjD7T8S/tveWn1eMYSuIRy7T9dAT8Jci+Uwc4bBLNt82onHkPUcYlqGph4IDmIORLQbhKJi
-MIME-Version: 1.0
-X-Received: by 2002:a05:6808:1a19:b0:3ae:532c:e93a with SMTP id
- bk25-20020a0568081a1900b003ae532ce93amr5192770oib.11.1696239762001; Mon, 02
- Oct 2023 02:42:42 -0700 (PDT)
-Date:   Mon, 02 Oct 2023 02:42:41 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000077d7230606b89884@google.com>
-Subject: [syzbot] Monthly ntfs3 report (Sep 2023)
-From:   syzbot <syzbot+list76acd067f542279b62d7@syzkaller.appspotmail.com>
-To:     almaz.alexandrovich@paragon-software.com,
+        Mon, 2 Oct 2023 05:49:36 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAB2183;
+        Mon,  2 Oct 2023 02:49:33 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 72D232185C;
+        Mon,  2 Oct 2023 09:49:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1696240172; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=j+NdBRB608UMGwx19cp+azxH113d9HD7eQvWbnS3E3c=;
+        b=E+VgZxU2q7CeNul975RN62i/o1qDZ41PCZ1yfpJ/5EpmyZ2G8JL3Jn7cukYgFh2niPOfWc
+        SyETRyyDPubwOSlZT1g8pQ9/vahrFzS+iL6blQ33WfjlQMvm98l8e2Juw/3AINPSSM8jtj
+        ayW3HiPv0UwgPQLGj+ef8g7/mj5okiE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1696240172;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=j+NdBRB608UMGwx19cp+azxH113d9HD7eQvWbnS3E3c=;
+        b=iRcq7NUyaP5be6nrcnYMoyljbjqkeyYLsaQZ4eSy3U1GaWLLWqRA9usXG8xjAdPx+QUsyb
+        9DNRCd1OwrwuHgAw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 6381613434;
+        Mon,  2 Oct 2023 09:49:32 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id LFFDGCySGmUkTwAAMHmgww
+        (envelope-from <jack@suse.cz>); Mon, 02 Oct 2023 09:49:32 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id EEDC5A07C9; Mon,  2 Oct 2023 11:49:31 +0200 (CEST)
+Date:   Mon, 2 Oct 2023 11:49:31 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Wedson Almeida Filho <wedsonaf@gmail.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        Wedson Almeida Filho <walmeida@microsoft.com>,
+        Jan Kara <jack@suse.com>, linux-ext4@vger.kernel.org
+Subject: Re: [PATCH 09/29] ext2: move ext2_xattr_handlers and
+ ext2_xattr_handler_map to .rodata
+Message-ID: <20231002094931.yalzcksclq77qjvx@quack3>
+References: <20230930050033.41174-1-wedsonaf@gmail.com>
+ <20230930050033.41174-10-wedsonaf@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230930050033.41174-10-wedsonaf@gmail.com>
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_SOFTFAIL autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello ntfs3 maintainers/developers,
+On Sat 30-09-23 02:00:13, Wedson Almeida Filho wrote:
+> From: Wedson Almeida Filho <walmeida@microsoft.com>
+> 
+> This makes it harder for accidental or malicious changes to
+> ext2_xattr_handlers or ext2_xattr_handler_map at runtime.
+> 
+> Cc: Jan Kara <jack@suse.com>
+> Cc: linux-ext4@vger.kernel.org
+> Signed-off-by: Wedson Almeida Filho <walmeida@microsoft.com>
 
-This is a 31-day syzbot report for the ntfs3 subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/ntfs3
+Looks good to me. Feel free to add:
 
-During the period, 4 new issues were detected and 1 were fixed.
-In total, 56 issues are still open and 28 have been fixed so far.
+Acked-by: Jan Kara <jack@suse.cz>
 
-Some of the still happening issues:
+								Honza
 
-Ref  Crashes Repro Title
-<1>  11288   Yes   VFS: Busy inodes after unmount (use-after-free)
-                   https://syzkaller.appspot.com/bug?extid=0af00f6a2cba2058b5db
-<2>  3606    Yes   KASAN: slab-out-of-bounds Read in ntfs_iget5
-                   https://syzkaller.appspot.com/bug?extid=b4084c18420f9fad0b4f
-<3>  1931    Yes   possible deadlock in ni_fiemap
-                   https://syzkaller.appspot.com/bug?extid=c300ab283ba3bc072439
-<4>  1662    Yes   KASAN: out-of-bounds Write in end_buffer_read_sync
-                   https://syzkaller.appspot.com/bug?extid=3f7f291a3d327486073c
-<5>  1311    Yes   possible deadlock in ntfs_set_state
-                   https://syzkaller.appspot.com/bug?extid=f91c29a5d5a01ada051a
-<6>  1277    Yes   possible deadlock in attr_data_get_block
-                   https://syzkaller.appspot.com/bug?extid=36bb70085ef6edc2ebb9
-<7>  790     No    possible deadlock in ntfs_mark_rec_free
-                   https://syzkaller.appspot.com/bug?extid=f83f0dbef763c426e3cf
-<8>  591     Yes   possible deadlock in mi_read
-                   https://syzkaller.appspot.com/bug?extid=bc7ca0ae4591cb2550f9
-<9>  514     Yes   possible deadlock in filemap_fault
-                   https://syzkaller.appspot.com/bug?extid=7736960b837908f3a81d
-<10> 457     Yes   possible deadlock in ntfs_fiemap
-                   https://syzkaller.appspot.com/bug?extid=96cee7d33ca3f87eee86
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+> ---
+>  fs/ext2/xattr.c | 4 ++--
+>  fs/ext2/xattr.h | 2 +-
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/ext2/xattr.c b/fs/ext2/xattr.c
+> index 8906ba479aaf..cfbe376da612 100644
+> --- a/fs/ext2/xattr.c
+> +++ b/fs/ext2/xattr.c
+> @@ -98,7 +98,7 @@ static struct buffer_head *ext2_xattr_cache_find(struct inode *,
+>  static void ext2_xattr_rehash(struct ext2_xattr_header *,
+>  			      struct ext2_xattr_entry *);
+>  
+> -static const struct xattr_handler *ext2_xattr_handler_map[] = {
+> +static const struct xattr_handler * const ext2_xattr_handler_map[] = {
+>  	[EXT2_XATTR_INDEX_USER]		     = &ext2_xattr_user_handler,
+>  #ifdef CONFIG_EXT2_FS_POSIX_ACL
+>  	[EXT2_XATTR_INDEX_POSIX_ACL_ACCESS]  = &nop_posix_acl_access,
+> @@ -110,7 +110,7 @@ static const struct xattr_handler *ext2_xattr_handler_map[] = {
+>  #endif
+>  };
+>  
+> -const struct xattr_handler *ext2_xattr_handlers[] = {
+> +const struct xattr_handler * const ext2_xattr_handlers[] = {
+>  	&ext2_xattr_user_handler,
+>  	&ext2_xattr_trusted_handler,
+>  #ifdef CONFIG_EXT2_FS_SECURITY
+> diff --git a/fs/ext2/xattr.h b/fs/ext2/xattr.h
+> index 7925f596e8e2..6a4966949047 100644
+> --- a/fs/ext2/xattr.h
+> +++ b/fs/ext2/xattr.h
+> @@ -72,7 +72,7 @@ extern void ext2_xattr_delete_inode(struct inode *);
+>  extern struct mb_cache *ext2_xattr_create_cache(void);
+>  extern void ext2_xattr_destroy_cache(struct mb_cache *cache);
+>  
+> -extern const struct xattr_handler *ext2_xattr_handlers[];
+> +extern const struct xattr_handler * const ext2_xattr_handlers[];
+>  
+>  # else  /* CONFIG_EXT2_FS_XATTR */
+>  
+> -- 
+> 2.34.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
