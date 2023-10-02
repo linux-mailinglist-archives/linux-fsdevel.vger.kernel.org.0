@@ -2,81 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 528417B5760
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Oct 2023 18:13:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 006D57B5739
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Oct 2023 18:12:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238336AbjJBP4A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Oct 2023 11:56:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52606 "EHLO
+        id S238436AbjJBQKs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Oct 2023 12:10:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238303AbjJBPzz (ORCPT
+        with ESMTP id S238433AbjJBQKq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Oct 2023 11:55:55 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE6DFFA
-        for <linux-fsdevel@vger.kernel.org>; Mon,  2 Oct 2023 08:55:48 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-4054f790190so159525105e9.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Oct 2023 08:55:48 -0700 (PDT)
+        Mon, 2 Oct 2023 12:10:46 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88DEA93
+        for <linux-fsdevel@vger.kernel.org>; Mon,  2 Oct 2023 09:10:43 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-9b1ebc80d0aso2026251166b.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Oct 2023 09:10:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1696262147; x=1696866947; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EE6kgS5NryeWM2eNYlqUNOE7bxNuh8Nz6QyL7U8srO0=;
-        b=Y/A08K4rOTR+BD603+oKzq7iRMgXVNysGNpUPpUZ9BBTMGHCHOYDUBeTXqcsPieb1U
-         gYUNif5kQKO7ZjwS9Nun9P7nP9AU+NYi6P6JAkivjsRVhAMhB2O+0L6hTo5ZH82t3YMS
-         7ZzGTFcnMWL2aYl4ynwIIBESrQOEOZhPyowjz0wlNvqW+yZJvt5SJg8dSZGqw2mFP2B3
-         oveLYGvvV9aeZEcRjm2nYdhBt6dxKrIyvu8TAaA5vRPYmNSx5xkndLZeG0ccBASUy4+9
-         KeU4I/iZl+5hdh0uSIgWV6XW1B1I6uoh90uwm62nuyp+xtydQT/V6UHnYgYJ9Xqlr3zd
-         20ow==
+        d=linux-foundation.org; s=google; t=1696263041; x=1696867841; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=VEuoUxyWlcCEasHkHQHUWQrWTNQBD3qFkGsi/wvaW7o=;
+        b=TWyTai3YQGSf7e6uEVcDvvdf5L/7YwF7YvMIsS/fJN4BPZK+w6DxxsIEoshO5kAm3x
+         qdUlBD+qwTzri/oTcoPpT06gr2s4vXGfF2PY0V+KiIsojRRYovRqIGdjyowxJsNPcrmr
+         v3LhLPnTOEt12uJ7JvfZWD5UUzZMjthz5PVhA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696262147; x=1696866947;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EE6kgS5NryeWM2eNYlqUNOE7bxNuh8Nz6QyL7U8srO0=;
-        b=Z2UAUHkd4XQo0bT77/swmrpyFq11uLxkx2Yx3nF9+xAqAyzyQkRFlBgEkwJjwqr0vn
-         i/lKHBeoO1IhMlfCzrVH6vvWV6ZE1V7b6TVp0aEkNpTCzpcwv2u0H9mJoi3fw29ri0Ps
-         YVvRceWyKaQu0t6E8Rcn1sm1kbMyaoK8mPCqxKY/JPg1fPn3CPNB+djcuxZOuVfZTwuP
-         E1CL8cNTXscawlazPl5KhOmuAYGne/RdV0uEg2Ci6hGyqkmcFU/arHUQu6GaWyGzNfWS
-         0R7l60e0OuATXpBLj1mRj4RUegeWMhlpUSN3xzXdvr0U0T0jND0i3sjmuFwT7FMLa8wQ
-         S3eg==
-X-Gm-Message-State: AOJu0YxxVImbg2qV5PpVKgfeTQRG6Cv5j4laT1XXgUSjjZrjmPFLu8TA
-        Fp1VBBgsudQqYAcLplsvEUjyDD44F7f0uxeYJKe2RA==
-X-Google-Smtp-Source: AGHT+IEFiHW93RRhSDCuf+q2eF19Rn8mISAafthoGCjUC4BHJ+ls1MS4+3DZHpu9OZqLfupwwY4gh+J9TIS9DnIhBRI=
-X-Received: by 2002:a5d:610a:0:b0:314:1f1e:3a85 with SMTP id
- v10-20020a5d610a000000b003141f1e3a85mr9647998wrt.61.1696262146901; Mon, 02
- Oct 2023 08:55:46 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1696263041; x=1696867841;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VEuoUxyWlcCEasHkHQHUWQrWTNQBD3qFkGsi/wvaW7o=;
+        b=Z6AeuTEJ+osnYv29aeQU9OyujHnIeQYw7wa4UnguKPLWM8XbX372HSxEd3jybHiH/k
+         WHrnf9ZBTTRlt8g3McUvskWex3LwNZ5EpUPqtQpim4bNAupQT4t6jSoSacCB1qTTw6aW
+         f5HcKUU6078O0wNg0epBpXIIYCitnGZ4xhfWbFV4M/cvhRtIfUosAyfRRDQx/ZFyZBo0
+         9rcqt4HevJHKsxZ8NGrsiN3RECmN5ACUeW8cg6RLLrdf+oK/jVxiABcJmIpJeLgSkxoR
+         ftSTs8WTowYPlahW6Xp79NicfRJMIA9bWbi2DG3XGu56UmMn7Ys+jB6U2blgBHCh0bQT
+         +e/A==
+X-Gm-Message-State: AOJu0YzwLPgxMbQP7Sf1zRBMmLWbHm3t7Q8z/zG75N4lBRlPn8EhDM7N
+        e2ISXAF/BNvQ4Sk8FRm824Yp/k/+V2hVWnZoauMZKU/D
+X-Google-Smtp-Source: AGHT+IEYWln/1UUnW02QSwHPN2UNAAYov3zPBYScGEx/eoA0n2MOtvmeOAkl6JvF8PSyna9+6WQ0gA==
+X-Received: by 2002:a17:906:31d6:b0:9aa:209f:20c3 with SMTP id f22-20020a17090631d600b009aa209f20c3mr9606652ejf.68.1696263041761;
+        Mon, 02 Oct 2023 09:10:41 -0700 (PDT)
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com. [209.85.208.43])
+        by smtp.gmail.com with ESMTPSA id sa21-20020a170906edb500b009add084a00csm17143138ejb.36.2023.10.02.09.10.40
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Oct 2023 09:10:40 -0700 (PDT)
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5344d996bedso15443583a12.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Oct 2023 09:10:40 -0700 (PDT)
+X-Received: by 2002:aa7:da99:0:b0:534:8872:d2cc with SMTP id
+ q25-20020aa7da99000000b005348872d2ccmr9684918eds.41.1696263040161; Mon, 02
+ Oct 2023 09:10:40 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230923013148.1390521-1-surenb@google.com> <20230923013148.1390521-3-surenb@google.com>
- <CAG48ez1N2kryy08eo0dcJ5a9O-3xMT8aOrgrcD+CqBN=cBfdDw@mail.gmail.com>
- <03f95e90-82bd-6ee2-7c0d-d4dc5d3e15ee@redhat.com> <ZRWo1daWBnwNz0/O@x1n>
- <98b21e78-a90d-8b54-3659-e9b890be094f@redhat.com> <ZRW2CBUDNks9RGQJ@x1n>
- <85e5390c-660c-ef9e-b415-00ee71bc5cbf@redhat.com> <ZRXHK3hbdjfQvCCp@x1n>
- <fc27ce41-bc97-91a7-deb6-67538689021c@redhat.com> <ZRrf8NligMzwqx97@x1n> <CA+EESO5VtrfXv-kvDsotPLXcpMgOK5t5c+tbXZ7KWRU2O_0PBQ@mail.gmail.com>
-In-Reply-To: <CA+EESO5VtrfXv-kvDsotPLXcpMgOK5t5c+tbXZ7KWRU2O_0PBQ@mail.gmail.com>
-From:   Lokesh Gidra <lokeshgidra@google.com>
-Date:   Mon, 2 Oct 2023 16:55:35 +0100
-Message-ID: <CA+EESO4W2jmBSpyHkkqZV0LHnA_OyWQcvwSkfPcWmWCsAF5UWw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] userfaultfd: UFFDIO_REMAP uABI
-To:     Peter Xu <peterx@redhat.com>
-Cc:     David Hildenbrand <david@redhat.com>, Jann Horn <jannh@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
-        brauner@kernel.org, shuah@kernel.org, aarcange@redhat.com,
-        hughd@google.com, mhocko@suse.com, axelrasmussen@google.com,
-        rppt@kernel.org, willy@infradead.org, Liam.Howlett@oracle.com,
-        zhangpeng362@huawei.com, bgeffon@google.com,
-        kaleshsingh@google.com, ngeoffray@google.com, jdduke@google.com,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        kernel-team@android.com
+References: <20231002022815.GQ800259@ZenIV> <20231002022846.GA3389589@ZenIV> <20231002023015.GC3389589@ZenIV>
+In-Reply-To: <20231002023015.GC3389589@ZenIV>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 2 Oct 2023 09:10:22 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjDRb4OyO9ARykQWuC7GJmj1N0uKH-CghXgjW5ypdnQ4g@mail.gmail.com>
+Message-ID: <CAHk-=wjDRb4OyO9ARykQWuC7GJmj1N0uKH-CghXgjW5ypdnQ4g@mail.gmail.com>
+Subject: Re: [PATCH 02/15] exfat: move freeing sbi, upcase table and dropping
+ nls into rcu-delayed helper
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Christian Brauner <brauner@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        David Sterba <dsterba@suse.com>,
+        David Howells <dhowells@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Steve French <sfrench@samba.org>,
+        Luis Chamberlain <mcgrof@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -84,51 +85,26 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 2, 2023 at 4:46=E2=80=AFPM Lokesh Gidra <lokeshgidra@google.com=
-> wrote:
+On Sun, 1 Oct 2023 at 19:30, Al Viro <viro@zeniv.linux.org.uk> wrote:
 >
-> On Mon, Oct 2, 2023 at 4:21=E2=80=AFPM Peter Xu <peterx@redhat.com> wrote=
-:
-> >
-> > On Mon, Oct 02, 2023 at 10:00:03AM +0200, David Hildenbrand wrote:
-> > > In case we cannot simply remap the page, the fallback sequence (from =
-the
-> > > cover letter) would be triggered.
-> > >
-> > > 1) UFFDIO_COPY
-> > > 2) MADV_DONTNEED
-> > >
-> > > So we would just handle the operation internally without a fallback.
-> >
-> > Note that I think there will be a slight difference on whole remap
-> > atomicity, on what happens if the page is modified after UFFDIO_COPY bu=
-t
-> > before DONTNEED.
-> >
-> > UFFDIO_REMAP guarantees full atomicity when moving the page, IOW, threa=
-ds
-> > can be updating the pages when ioctl(UFFDIO_REMAP), data won't get lost
-> > during movement, and it will generate a missing event after moved, with
-> > latest data showing up on dest.
-> >
-> > I'm not sure that means such a fallback is a problem, Suren may know
-> > better with the use case.
+> That stuff can be accessed by ->d_hash()/->d_compare(); as it is, we have
+> a hard-to-hit UAF if rcu pathwalk manages to get into ->d_hash() on a filesystem
+> that is in process of getting shut down.
 >
-> Although there is no problem in using fallback with our use case but
-> as a user of userfaultfd, I'd suggest leaving it to the developer.
-> Failing with appropriate errno makes more sense. If handled in the
-> kernel, then the user may assume at the end of the operation that the
-> src vma is completely unmapped. And if not correctness issues, it
-> could lead to memory leaks.
+> Besides, having nls and upcase table cleanup moved from ->put_super() towards
+> the place where sbi is freed makes for simpler failure exits.
 
-I meant that in addition to the possibility of correctness issues due
-to lack of atomicity, it could also lead to memory leaks, as the user
-may assume that src vma is empty post-operation. IMHO, it's better to
-fail with errno so that the user would fix the code with necessary
-changes (like using DONTFORK, if forking).
-> >
-> > Thanks,
-> >
-> > --
-> > Peter Xu
-> >
+I don't disagree with moving the freeing,  but the RCU-delay makes me go "hmm".
+
+Is there some reason why we can't try to do this in generic code? The
+umount code already does RCU delays for other things, I get the
+feeling that we should have a RCu delay between "put_super" and
+"kkill_sb".
+
+Could we move the ->kill_sb() call into destroy_super_work(), which is
+already RCU-delayed, for example?
+
+It feels wrong to have the filesystems have to deal with the vfs layer
+doing RCU-lookups.
+
+             Linus
