@@ -2,95 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F7097B4CD6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Oct 2023 09:50:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E83A97B4CF2
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Oct 2023 09:57:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235787AbjJBHue (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Oct 2023 03:50:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58666 "EHLO
+        id S235797AbjJBH5j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Oct 2023 03:57:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230019AbjJBHud (ORCPT
+        with ESMTP id S229712AbjJBH5h (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Oct 2023 03:50:33 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D08CFC4
-        for <linux-fsdevel@vger.kernel.org>; Mon,  2 Oct 2023 00:49:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1696232983;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
+        Mon, 2 Oct 2023 03:57:37 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E755BC;
+        Mon,  2 Oct 2023 00:57:34 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id AB8121F459;
+        Mon,  2 Oct 2023 07:57:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1696233452; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=R3pNKxFBUrDFcUW5mxBwAPe/18s1s98AEQ79l0wt2AA=;
-        b=Qm9tqKZYABYPRb7sor+tDQnl6L/WGtTQSAzPudhaNhph4w8/WYZ+IFnU2VpsdXnreye4oF
-        pCJcAafjCtfUjiwklDp/EFuDg9arhxBC2k29qzqU/ueuOfKb0JiHc9NcUuwvJct5Wspr9D
-        q66yzEX3PVybY3+1o6rC7327pUlciG8=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-629-RXA6G4BUPS-ONG-Q6SYtAQ-1; Mon, 02 Oct 2023 03:49:42 -0400
-X-MC-Unique: RXA6G4BUPS-ONG-Q6SYtAQ-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-32480c0ad52so3614655f8f.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Oct 2023 00:49:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696232981; x=1696837781;
-        h=content-transfer-encoding:in-reply-to:organization:from:references
-         :cc:to:content-language:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=R3pNKxFBUrDFcUW5mxBwAPe/18s1s98AEQ79l0wt2AA=;
-        b=u74i+1Bx75AJrGWFeQZ21mYkXx08/g2cOHLzFC8GKYT5gV4PIuhwUg8NuXQjOpOrvF
-         tZOp7FzQu6KfuvS3+ngqLuqkKfRccF+Q6uldX6Um4Hsk1+SBRp41Jbjeb3gShnAyv7OY
-         PKmN7GuaHV+5aeXLWIXDz+rlysFKN3Bq8sWE9bac91TADL2haQu4/qqQA2rNwyC3Vp8S
-         f2umxXF6eOPDAqwUYEs5S8b5Ar4DxIDpwKQgWpma+c9/6FT/4cd2bAbSytBHneuBhPdq
-         YTpowkpOTs1bfI1CGhul0xYb8/8yJ752qyXJElFtb0560KerqSIzAs1Ao+qPQGzVAMML
-         6ODA==
-X-Gm-Message-State: AOJu0YwpPBBPKVTswdxjZZNflxIZ7Wu6GEqIRkaKfx97TV82/EF9vxg/
-        KGnU/3elCNrDcK6aMVotWheK2eG+2ZyOCjBLXpU8nerDODHy8h2KDz0EAi/XxU6N1m3kdTv641q
-        ObkUsSykf17hQsC/DzLQ2mrEIuw==
-X-Received: by 2002:adf:cd0a:0:b0:31f:f982:5395 with SMTP id w10-20020adfcd0a000000b0031ff9825395mr10301912wrm.35.1696232981320;
-        Mon, 02 Oct 2023 00:49:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFLBiLwKVSTk/G8HcTeWj03aHPuB2YTlSJwfNO0ffMI/phA6rHC95xmGQ2ps9Gau1Kj+UL4rw==
-X-Received: by 2002:adf:cd0a:0:b0:31f:f982:5395 with SMTP id w10-20020adfcd0a000000b0031ff9825395mr10301886wrm.35.1696232980873;
-        Mon, 02 Oct 2023 00:49:40 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c735:f200:cb49:cb8f:88fc:9446? (p200300cbc735f200cb49cb8f88fc9446.dip0.t-ipconnect.de. [2003:cb:c735:f200:cb49:cb8f:88fc:9446])
-        by smtp.gmail.com with ESMTPSA id s5-20020adf9785000000b003232380ffd7sm19386758wrb.102.2023.10.02.00.49.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Oct 2023 00:49:40 -0700 (PDT)
-Message-ID: <56c63536-3947-49b3-d271-6092e50474ec@redhat.com>
-Date:   Mon, 2 Oct 2023 09:49:38 +0200
+        bh=HRtvvsbDRmaIGA2qlEwuFNnN4SG9to1RwhMyTnDS1Ek=;
+        b=AelUG9FSlQyUcQTA9I9qRJmPzMA6mvk2OLx4Qv2PacqmgU2FkeI54uQfwuwk8GDISDrHf1
+        K6okkr5Yua+jK8r2TTOukY7745vay4e4z1caiTsHAigkH18O5VWdMY9s+0PKMe8/Ta1ITc
+        H4lySULw9TgNQsjwAFd513U/tj8Iifc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1696233452;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=HRtvvsbDRmaIGA2qlEwuFNnN4SG9to1RwhMyTnDS1Ek=;
+        b=4yX5F6ZD5YaXQ1SgLuHClpbWfxc1xKg7esoSW59wSh/oO7HSeTROmd590v4TgEevJu81R5
+        RAceDQWhH8NjA0AQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 83FA513434;
+        Mon,  2 Oct 2023 07:57:32 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id JLsgIOx3GmUuEgAAMHmgww
+        (envelope-from <jack@suse.cz>); Mon, 02 Oct 2023 07:57:32 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 27D44A07C9; Mon,  2 Oct 2023 09:57:32 +0200 (CEST)
+Date:   Mon, 2 Oct 2023 09:57:32 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, Christoph Hellwig <hch@infradead.org>,
+        Alasdair Kergon <agk@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Anna Schumaker <anna@kernel.org>, Chao Yu <chao@kernel.org>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Dave Kleikamp <shaggy@kernel.org>,
+        David Sterba <dsterba@suse.com>, dm-devel@redhat.com,
+        drbd-dev@lists.linbit.com, Gao Xiang <xiang@kernel.org>,
+        Jack Wang <jinpu.wang@ionos.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        jfs-discussion@lists.sourceforge.net,
+        Joern Engel <joern@lazybastard.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-bcache@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
+        linux-mtd@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-nilfs@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-pm@vger.kernel.org, linux-raid@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-xfs@vger.kernel.org,
+        "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
+        Mike Snitzer <snitzer@kernel.org>,
+        Minchan Kim <minchan@kernel.org>, ocfs2-devel@oss.oracle.com,
+        reiserfs-devel@vger.kernel.org,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Song Liu <song@kernel.org>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        target-devel@vger.kernel.org, Ted Tso <tytso@mit.edu>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        xen-devel@lists.xenproject.org
+Subject: Re: [PATCH v4 0/29] block: Make blkdev_get_by_*() return handle
+Message-ID: <20231002075732.4c5oslpabrmw3niz@quack3>
+References: <20230818123232.2269-1-jack@suse.cz>
+ <20230927-prahlen-reintreten-93706074e58d@brauner>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v2 2/3] userfaultfd: UFFDIO_REMAP uABI
-Content-Language: en-US
-To:     Peter Xu <peterx@redhat.com>
-Cc:     Suren Baghdasaryan <surenb@google.com>,
-        Jann Horn <jannh@google.com>, akpm@linux-foundation.org,
-        viro@zeniv.linux.org.uk, brauner@kernel.org, shuah@kernel.org,
-        aarcange@redhat.com, lokeshgidra@google.com, hughd@google.com,
-        mhocko@suse.com, axelrasmussen@google.com, rppt@kernel.org,
-        willy@infradead.org, Liam.Howlett@oracle.com,
-        zhangpeng362@huawei.com, bgeffon@google.com,
-        kaleshsingh@google.com, ngeoffray@google.com, jdduke@google.com,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        kernel-team@android.com
-References: <20230923013148.1390521-1-surenb@google.com>
- <20230923013148.1390521-3-surenb@google.com>
- <CAG48ez1N2kryy08eo0dcJ5a9O-3xMT8aOrgrcD+CqBN=cBfdDw@mail.gmail.com>
- <03f95e90-82bd-6ee2-7c0d-d4dc5d3e15ee@redhat.com>
- <CAJuCfpHf6BWaf_k5dBx7mAz49kF5BwBhW_mUxu4E_p2iAy9-iA@mail.gmail.com>
- <9101f70c-0c0a-845b-4ab7-82edf71c7bac@redhat.com> <ZRXNVGI73SfX1lu4@x1n>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-In-Reply-To: <ZRXNVGI73SfX1lu4@x1n>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-5.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230927-prahlen-reintreten-93706074e58d@brauner>
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_SOFTFAIL autolearn=no autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -98,69 +104,105 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 28.09.23 21:00, Peter Xu wrote:
-> On Thu, Sep 28, 2023 at 07:15:13PM +0200, David Hildenbrand wrote:
->> There are some interesting questions to ask here:
->>
->> 1) What happens if the old VMA has VM_SOFTDIRTY set but the new one not? You
->> most probably have to mark the PTE softdirty and not make it writable.
+On Wed 27-09-23 18:21:19, Christian Brauner wrote:
+> On Wed, 27 Sep 2023 11:34:07 +0200, Jan Kara wrote:
+> > Create struct bdev_handle that contains all parameters that need to be
+> > passed to blkdev_put() and provide bdev_open_* functions that return
+> > this structure instead of plain bdev pointer. This will eventually allow
+> > us to pass one more argument to blkdev_put() (renamed to bdev_release())
+> > without too much hassle.
+> > 
+> > 
+> > [...]
 > 
-> I don't know whether anyone would care about soft-dirty used with uffd
-> remap, but if to think about it..
+> > to ease review / testing. Christian, can you pull the patches to your tree
+> > to get some exposure in linux-next as well? Thanks!
 > 
-> Logically if the dst vma has !SOFTDIRTY (means, soft-dirty tracking
-> enabled), then IIUC the right thing to do is to assume this page is
-> modified, hence mark softdirty and perhaps proceed with other checks (where
-> write bit can be set if all check pass)?
+> Yep. So I did it slighly differently. I pulled in the btrfs prereqs and
+> then applied your series on top of it so we get all the Link: tags right.
+> I'm running tests right now. Please double-check.
 
-I think so, yes.
+Thanks for picking patches up! I've checked the branch and it looks good to
+me. 
 
-> 
-> Because from a soft-dirty monitor POV on dst_vma I see this REMAP the same
-> as writting data onto the missing page and got a page fault
-> (e.g. UFFDIO_COPY); we just avoided the allocation and copy.
-> 
-> The src vma seems also fine in this regard: soft-dirty should ignore holes
-> always anyway (e.g. DONTNEED on a page should report !soft-dirty later even
-> if tracking).
-
-Sounds good to me.
+								Honza
 
 > 
->>
->> 2) VM_UFFD_WP requires similar care I assume? Peter might know.
+> ---
 > 
-> UFFD_WP shouldn't be affected, iiuc.
+> Applied to the vfs.super branch of the vfs/vfs.git tree.
+> Patches in the vfs.super branch should appear in linux-next soon.
 > 
-> Let's first discuss dst vma side.
+> Please report any outstanding bugs that were missed during review in a
+> new review to the original patch series allowing us to drop it.
 > 
-> WP_UNPOPULATED made it slightly complicated but not so much.  The core
-> should be that REMAP only installs pages if it's exactly pte_none():
+> It's encouraged to provide Acked-bys and Reviewed-bys even though the
+> patch has now been applied. If possible patch trailers will be updated.
 > 
-> +       if (!pte_none(orig_dst_pte)) {
-> +               err = -EEXIST;
-> +               goto out;
-> +       }
+> Note that commit hashes shown below are subject to change due to rebase,
+> trailer updates or similar. If in doubt, please check the listed branch.
 > 
-> Then it already covers things like pte markers, and any marker currently
-> will fail the REMAP ioctl already.  May not be always wanted, but no risk
-> of losing wp notifications.  If that'll be a valid use case we can work it
-> out.
-
-Agreed.
-
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+> branch: vfs.super
 > 
-> On src vma, REMAP ioctl should behave the same as DONTNEED.  Now we drop
-> the src pte along with the uffd-wp bit even if set, which is the correct
-> behavior from that regard.
-> 
-> Again, I don't know whether anyone cares on any of those, though..
-
-If it's easy to handle, we should just handle it or instead spell it out 
-why we believe we can break other features. Seems to be very easy to handle.
-
+> [01/29] block: Provide bdev_open_* functions
+>        https://git.kernel.org/vfs/vfs/c/b7c828aa0b3c
+> [02/29] block: Use bdev_open_by_dev() in blkdev_open()
+>         https://git.kernel.org/vfs/vfs/c/d4e36f27b45a
+> [03/29] block: Use bdev_open_by_dev() in disk_scan_partitions() and blkdev_bszset()
+>         https://git.kernel.org/vfs/vfs/c/5f9bd6764c7a
+> [04/29] drdb: Convert to use bdev_open_by_path()
+>         https://git.kernel.org/vfs/vfs/c/0220ca8e443d
+> [05/29] pktcdvd: Convert to bdev_open_by_dev()
+>         https://git.kernel.org/vfs/vfs/c/7af10b889789
+> [06/29] rnbd-srv: Convert to use bdev_open_by_path()
+>         https://git.kernel.org/vfs/vfs/c/3d27892a4be7
+> [07/29] xen/blkback: Convert to bdev_open_by_dev()
+>         https://git.kernel.org/vfs/vfs/c/26afb0ed10b3
+> [08/29] zram: Convert to use bdev_open_by_dev()
+>         https://git.kernel.org/vfs/vfs/c/efc8e3f4c6dc
+> [09/29] bcache: Convert to bdev_open_by_path()
+>         https://git.kernel.org/vfs/vfs/c/dc893f51d24a
+> [10/29] dm: Convert to bdev_open_by_dev()
+>         https://git.kernel.org/vfs/vfs/c/80c2267c6d07
+> [11/29] md: Convert to bdev_open_by_dev()
+>         https://git.kernel.org/vfs/vfs/c/15db36126ca6
+> [12/29] mtd: block2mtd: Convert to bdev_open_by_dev/path()
+>         https://git.kernel.org/vfs/vfs/c/4c27234bf3ce
+> [13/29] nvmet: Convert to bdev_open_by_path()
+>         https://git.kernel.org/vfs/vfs/c/70cffddcc300
+> [14/29] s390/dasd: Convert to bdev_open_by_path()
+>         https://git.kernel.org/vfs/vfs/c/5581d03457f8
+> [15/29] scsi: target: Convert to bdev_open_by_path()
+>         https://git.kernel.org/vfs/vfs/c/43de7d844d47
+> [16/29] PM: hibernate: Convert to bdev_open_by_dev()
+>         https://git.kernel.org/vfs/vfs/c/105ea4a2fd18
+> [17/29] PM: hibernate: Drop unused snapshot_test argument
+>         https://git.kernel.org/vfs/vfs/c/b589a66e3688
+> [18/29] mm/swap: Convert to use bdev_open_by_dev()
+>         https://git.kernel.org/vfs/vfs/c/615af8e29233
+> [19/29] fs: Convert to bdev_open_by_dev()
+>         https://git.kernel.org/vfs/vfs/c/5173192bcfe6
+> [20/29] btrfs: Convert to bdev_open_by_path()
+>         https://git.kernel.org/vfs/vfs/c/8cf64782764f
+> [21/29] erofs: Convert to use bdev_open_by_path()
+>         https://git.kernel.org/vfs/vfs/c/4d41880bf249
+> [22/29] ext4: Convert to bdev_open_by_dev()
+>         https://git.kernel.org/vfs/vfs/c/f7507612395e
+> [23/29] f2fs: Convert to bdev_open_by_dev/path()
+>         https://git.kernel.org/vfs/vfs/c/d9ff8e3b6498
+> [24/29] jfs: Convert to bdev_open_by_dev()
+>         https://git.kernel.org/vfs/vfs/c/459dc6376338
+> [25/29] nfs/blocklayout: Convert to use bdev_open_by_dev/path()
+>         https://git.kernel.org/vfs/vfs/c/5b1df9a40929
+> [26/29] ocfs2: Convert to use bdev_open_by_dev()
+>         https://git.kernel.org/vfs/vfs/c/b6b95acbd943
+> [27/29] reiserfs: Convert to bdev_open_by_dev/path()
+>         https://git.kernel.org/vfs/vfs/c/7e3615ff6119
+> [28/29] xfs: Convert to bdev_open_by_path()
+>         https://git.kernel.org/vfs/vfs/c/176ccb99e207
+> [29/29] block: Remove blkdev_get_by_*() functions
+>         https://git.kernel.org/vfs/vfs/c/953863a5a2ff
 -- 
-Cheers,
-
-David / dhildenb
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
