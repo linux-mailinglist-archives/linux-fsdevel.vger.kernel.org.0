@@ -2,146 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 803D17B5949
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Oct 2023 19:42:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B7867B5967
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Oct 2023 19:43:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229486AbjJBRg7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Oct 2023 13:36:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48184 "EHLO
+        id S235799AbjJBRm7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Oct 2023 13:42:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229584AbjJBRg6 (ORCPT
+        with ESMTP id S232711AbjJBRm6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Oct 2023 13:36:58 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EC6993
-        for <linux-fsdevel@vger.kernel.org>; Mon,  2 Oct 2023 10:36:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1696268166;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=AWvha6fRF1SNOXs+/+D3XvvHHwIpB0ZKCqYjNNw4DJ0=;
-        b=Xc/jgPDTBZdyGsQtGv7S5Ke/z1+DF920kyAKvSK+DMuRXUx4T0CX1qJQCJm7Nvl+JrHvJh
-        UFgwgJ5O/6ObLlqSFuWK2DGA8vhe3R/wsmJgJFDiFuNpvRsDadCfzQT+VxQAHSiGKFQieX
-        6ewLxxA5Pta3f0rcfRXMBr29KdssZug=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-361-qN0tQGHsP5ajIpds79Km3A-1; Mon, 02 Oct 2023 13:36:04 -0400
-X-MC-Unique: qN0tQGHsP5ajIpds79Km3A-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-32320b3ee93so30088f8f.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Oct 2023 10:36:04 -0700 (PDT)
+        Mon, 2 Oct 2023 13:42:58 -0400
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4062290;
+        Mon,  2 Oct 2023 10:42:56 -0700 (PDT)
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1c760b34d25so444455ad.3;
+        Mon, 02 Oct 2023 10:42:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696268163; x=1696872963;
-        h=content-transfer-encoding:in-reply-to:organization:references:cc:to
-         :from:content-language:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AWvha6fRF1SNOXs+/+D3XvvHHwIpB0ZKCqYjNNw4DJ0=;
-        b=mjYLkOCJJcEErtjO0Wc46XD+t5J+Y3GiuuGXnQxRElQaUz0Q6qy/NhTOzHBnp0Zib1
-         bnATnYg4Ug6MiHj4DE9ZY65TZUyvtLBP7EecgPUejAvsennRcMtK+Q4zY+BTgKp3ULIf
-         QInafBFuzeg4K8g/AiXLpkr3Hmj3ULJsWkf1W1mPVWst51uw0hhrNLVAJVVipMtKUgaW
-         C84emmlkNfIpf8ZTLaoX0KM152Si8Mtxo8xUeXmzvrlip4szqn1j+TSJKgXpzQtOQk7n
-         21U4aXQbos3SEDJLR+xgNdJzFoaAxrDEiHYap/GzfSHIMJN12CXA+CS+jsfYqm5+Jbnn
-         u06w==
-X-Gm-Message-State: AOJu0YzhXNwVw47eWkAUx1p1nA5PTzJF1s02W8UmFB/Et5ayGT4LnmYl
-        M4RFKJtoYOHuNqaxzgna3yOmRlXW2HCgIxqBtpp+Bjb6zKcbc98Z0Ek+mloWCtJjgjKRuNc3ZLk
-        wRdSFkhWU7rx5J0hORtys3yBUug==
-X-Received: by 2002:adf:f051:0:b0:319:85e2:6972 with SMTP id t17-20020adff051000000b0031985e26972mr10691559wro.42.1696268163572;
-        Mon, 02 Oct 2023 10:36:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGuvx/KeHzqrds9UsnjoUzmDcg51LBJ7y3jmgAeA81+WENxMHL6lgJz18K85ppvucakyeJY0g==
-X-Received: by 2002:adf:f051:0:b0:319:85e2:6972 with SMTP id t17-20020adff051000000b0031985e26972mr10691531wro.42.1696268163093;
-        Mon, 02 Oct 2023 10:36:03 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c735:f200:cb49:cb8f:88fc:9446? (p200300cbc735f200cb49cb8f88fc9446.dip0.t-ipconnect.de. [2003:cb:c735:f200:cb49:cb8f:88fc:9446])
-        by smtp.gmail.com with ESMTPSA id y7-20020adfd087000000b00317f70240afsm28206600wrh.27.2023.10.02.10.36.01
+        d=1e100.net; s=20230601; t=1696268576; x=1696873376;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uzfoNyI7EtAoSUXJSkLswvCWk9zxuBz7mX5SZWqHLNk=;
+        b=bN3P0Mvn366ZZvlest09e4DPb2iJMhAv30aQacK2KmfSONzb4uZbnrSJ9rl9p65+Fe
+         FT5lNKVP9Reuy5DgULAqJ6rRlWfMbiLZvV+lO4Ue5wXh6sy+WsjQx2P0pxQtKbWvsYw+
+         KkcybewKnGtyZ4EuWaS299IXD26S0iBxepRzxYD6tp68GpnSvo/t0yeSArLy5iwY6OKZ
+         lg1+GpHdhFFLQYwAoT4tvjFYCsvcHqS5jkUj4hcMU3R5VUt5/Ga3cgsGQqXGbQc9XW6A
+         1qGyhf6Ti8MgnVcBQereDBovzhDX5KytL0jtqBoPhPAwg5+nZS3hnIjBUbG0poZk16KM
+         sm9w==
+X-Gm-Message-State: AOJu0YzR6ZbSBZIK5zddYKVuN5xxGFIvAxsKccXupuLfz29paGeg8RGa
+        P4YFGwqUF4OHGW/ODYhOiOE=
+X-Google-Smtp-Source: AGHT+IEPQSNHWLKb6e5RVZ4Bu2+fMqMDXD5b9ZwPXm+S7oNcAusoPb4P+LN1k8uh46Fuo0SUOqvb7Q==
+X-Received: by 2002:a17:902:6806:b0:1c3:64f9:45ad with SMTP id h6-20020a170902680600b001c364f945admr9650084plk.48.1696268575546;
+        Mon, 02 Oct 2023 10:42:55 -0700 (PDT)
+Received: from ?IPV6:2620:15c:211:201:6ad7:f663:5f97:db57? ([2620:15c:211:201:6ad7:f663:5f97:db57])
+        by smtp.gmail.com with ESMTPSA id b12-20020a170903228c00b001bdd7579b5dsm22227499plh.240.2023.10.02.10.42.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Oct 2023 10:36:02 -0700 (PDT)
-Message-ID: <47daf31f-e242-43e3-289c-8015eb516c6d@redhat.com>
-Date:   Mon, 2 Oct 2023 19:36:01 +0200
+        Mon, 02 Oct 2023 10:42:55 -0700 (PDT)
+Message-ID: <1b89c38e-55dc-484a-9bf3-b9d69d960ebe@acm.org>
+Date:   Mon, 2 Oct 2023 10:42:53 -0700
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v2 2/3] userfaultfd: UFFDIO_REMAP uABI
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 07/13] sd: Translate data lifetime information
 Content-Language: en-US
-From:   David Hildenbrand <david@redhat.com>
-To:     Peter Xu <peterx@redhat.com>
-Cc:     Jann Horn <jannh@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
-        brauner@kernel.org, shuah@kernel.org, aarcange@redhat.com,
-        lokeshgidra@google.com, hughd@google.com, mhocko@suse.com,
-        axelrasmussen@google.com, rppt@kernel.org, willy@infradead.org,
-        Liam.Howlett@oracle.com, zhangpeng362@huawei.com,
-        bgeffon@google.com, kaleshsingh@google.com, ngeoffray@google.com,
-        jdduke@google.com, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, kernel-team@android.com
-References: <20230923013148.1390521-1-surenb@google.com>
- <20230923013148.1390521-3-surenb@google.com>
- <CAG48ez1N2kryy08eo0dcJ5a9O-3xMT8aOrgrcD+CqBN=cBfdDw@mail.gmail.com>
- <03f95e90-82bd-6ee2-7c0d-d4dc5d3e15ee@redhat.com> <ZRWo1daWBnwNz0/O@x1n>
- <98b21e78-a90d-8b54-3659-e9b890be094f@redhat.com> <ZRW2CBUDNks9RGQJ@x1n>
- <85e5390c-660c-ef9e-b415-00ee71bc5cbf@redhat.com> <ZRXHK3hbdjfQvCCp@x1n>
- <fc27ce41-bc97-91a7-deb6-67538689021c@redhat.com> <ZRrf8NligMzwqx97@x1n>
- <d613c21e-c76c-f40a-23ec-b9bb3feb5b85@redhat.com>
-Organization: Red Hat
-In-Reply-To: <d613c21e-c76c-f40a-23ec-b9bb3feb5b85@redhat.com>
+To:     Avri Altman <Avri.Altman@wdc.com>, Jens Axboe <axboe@kernel.dk>
+Cc:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Damien Le Moal <dlemoal@kernel.org>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>
+References: <20230920191442.3701673-1-bvanassche@acm.org>
+ <20230920191442.3701673-8-bvanassche@acm.org>
+ <DM6PR04MB6575B74B6F5526C9860A56F1FCC5A@DM6PR04MB6575.namprd04.prod.outlook.com>
+From:   Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <DM6PR04MB6575B74B6F5526C9860A56F1FCC5A@DM6PR04MB6575.namprd04.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 02.10.23 19:33, David Hildenbrand wrote:
-> On 02.10.23 17:21, Peter Xu wrote:
->> On Mon, Oct 02, 2023 at 10:00:03AM +0200, David Hildenbrand wrote:
->>> In case we cannot simply remap the page, the fallback sequence (from the
->>> cover letter) would be triggered.
->>>
->>> 1) UFFDIO_COPY
->>> 2) MADV_DONTNEED
->>>
->>> So we would just handle the operation internally without a fallback.
->>
->> Note that I think there will be a slight difference on whole remap
->> atomicity, on what happens if the page is modified after UFFDIO_COPY but
->> before DONTNEED.
-> 
-> If the page is writable (implies PAE), we can always move it. If it is
-> R/O, it cannot change before we get a page fault and grab the PT lock
-> (well, and page lock).
-> 
-> So I think something atomic can be implemented without too much issues.
-> 
->>
->> UFFDIO_REMAP guarantees full atomicity when moving the page, IOW, threads
->> can be updating the pages when ioctl(UFFDIO_REMAP), data won't get lost
->> during movement, and it will generate a missing event after moved, with
->> latest data showing up on dest.
-> 
-> If the page has to be copied, grab a reference and unmap it, then copy
-> it and map it into the new process. Should be doable and handle all
-> kinds of situations just fine.
-> 
-> Just throwing out ideas to get a less low-level interface.
-> 
-> [if one really wants to get notified when one cannot move without a
-> copy, one could have a flag for such power users to control the behavior]
-> 
+On 10/2/23 06:11, Avri Altman wrote:
+>> sd_setup_read_write_cmnd(struct scsi_cmnd *cmd)
+>>                  ret = sd_setup_rw16_cmnd(cmd, write, lba, nr_blocks,
+>>                                           protect | fua, dld);
+>>          } else if ((nr_blocks > 0xff) || (lba > 0x1fffff) ||
+>> -                  sdp->use_10_for_rw || protect) {
+>> +                  sdp->use_10_for_rw || protect ||
+>> +                  rq->write_hint != WRITE_LIFE_NOT_SET) {
+>
+> Is this a typo?
 
-[of course, if someone would have a GUP-pin on such a page, the page 
-exchange would be observable. Just have to documented the UFFDIO_MOVE 
-semantics properly]
+I don't see a typo? Am I perhaps overlooking something?
 
--- 
-Cheers,
+>> +static void sd_read_io_hints(struct scsi_disk *sdkp, unsigned char *buffer)
+>> +{
+>> +       struct scsi_device *sdp = sdkp->device;
+>> +       const struct scsi_io_group_descriptor *desc, *start, *end;
+>> +       struct scsi_sense_hdr sshdr;
+>> +       struct scsi_mode_data data;
+>> +       int res;
+>> +
+>> +       res = scsi_mode_sense(sdp, /*dbd=*/0x8, /*modepage=*/0x0a,
+>> +                             /*subpage=*/0x05, buffer, SD_BUF_SIZE,
+>> +                             SD_TIMEOUT, sdkp->max_retries, &data, &sshdr);
+>> +       if (res < 0)
+>> +               return;
+>> +       start = (void *)buffer + data.header_length + 16;
+>> +       end = (void *)buffer + ((data.header_length + data.length)
+>> +                               & ~(sizeof(*end) - 1));
+>> +       /*
+>> +        * From "SBC-5 Constrained Streams with Data Lifetimes": Device severs
+>> +        * should assign the lowest numbered stream identifiers to permanent
+>> +        * streams.
+>> +        */
+>> +       for (desc = start; desc < end; desc++)
+>> +               if (!desc->st_enble)
+>> +                       break;
+> I don't see how you can conclude that the stream is permanent,
+> without reading the perm bit from the stream status descriptor.
 
-David / dhildenb
+I will add code that retrieves the stream status and that checks the 
+PERM bit.
+
+>> diff --git a/drivers/scsi/sd.h b/drivers/scsi/sd.h
+>> index 84685168b6e0..1863de5ebae4 100644
+>> --- a/drivers/scsi/sd.h
+>> +++ b/drivers/scsi/sd.h
+>> @@ -125,6 +125,7 @@ struct scsi_disk {
+>>          unsigned int    physical_block_size;
+>>          unsigned int    max_medium_access_timeouts;
+>>          unsigned int    medium_access_timed_out;
+>> +       u16             permanent_stream_count; /* maximum number of streams
+>> */
+>
+> This comment is a bit misleading:
+> The Block Limits Extension VPD page has a "maximum number of streams" field.
+> Maybe avoid the unnecessary confusion?
+
+I will change that comment or leave it out.
+
+Thanks,
+
+Bart.
 
