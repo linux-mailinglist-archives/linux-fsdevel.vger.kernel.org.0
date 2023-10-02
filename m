@@ -2,33 +2,33 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2412B7B4AD7
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Oct 2023 04:36:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5484B7B4AD8
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Oct 2023 04:37:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235407AbjJBCgr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 1 Oct 2023 22:36:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34784 "EHLO
+        id S229990AbjJBChQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 1 Oct 2023 22:37:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235396AbjJBCgq (ORCPT
+        with ESMTP id S229935AbjJBChP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 1 Oct 2023 22:36:46 -0400
+        Sun, 1 Oct 2023 22:37:15 -0400
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2BC8CE
-        for <linux-fsdevel@vger.kernel.org>; Sun,  1 Oct 2023 19:36:44 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33FC9C9
+        for <linux-fsdevel@vger.kernel.org>; Sun,  1 Oct 2023 19:37:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
         MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=tQHM/Q4vObkj4H32QkFiMX0KySqsWMREApB37lCIJpA=; b=FQnc6Zz3dlnAoyrquyC5PuLuX+
-        5NXocrhxwGVwILV+olrLFTJdymOr0E+VFz0CMYRWErXlQ02frj0qLGAZX53+as8+dDo7jL2UNeJyB
-        LZTExosGQfw7PvQ6zz1HCxk/6AH1l3nqvICEm98zZJubPTAyIPokHq1mjIW05SrJ9dCcgPF0zyGWL
-        4Tz5Uy4RGstO8PAONqtCFLyK7xnPaF2cPBRsrBEdQBZjfyBTf79PMfRifmiEIRaOisareDN+bTr4x
-        Hq740z6LDj5TNLhjCP0grhysORN9o9q9Qhxi0nPV9ITaBhiDdPVH3RFNnK73Y6Rx0n6KAM8VWGSpF
-        ZJQ+SCag==;
+        bh=+qRw2nig3APcRxOSe394947Vm6w5yWReQ0ggdVYj3xA=; b=uA44cOVCuiHmIhoWPPIJwrAgeG
+        VehtUOPWTC+Vkbqt8BJinaG7VnvGv3D1BgZEheAHUrkw+AMgpWaFuAHm599AILmROC+Z7n2vLJNVg
+        Xam224y9QIdlkC8SXeAFYB2GDyo6ESKxxHxZWvXvRRqerf9HmfbJkrx6CdU1AmRn85cdj7I5++y3e
+        jyTuQbTUV3ccliXLckGtGBmTZMxjLl94B3+kiF1wvKpsPzceWCKvMJHT82Y9uWhUQTBMHAqg6igde
+        Zb56D7MbOdYf//sHcrvft2djsXCPpKmXOiP0ZmX8k9bpdkiPumQGlAJTwqx8FpGNjYRONz1wMEXN2
+        A2bt5A5Q==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1qn8nb-00EDzg-0P;
-        Mon, 02 Oct 2023 02:36:43 +0000
-Date:   Mon, 2 Oct 2023 03:36:43 +0100
+        id 1qn8o3-00EE0M-0r;
+        Mon, 02 Oct 2023 02:37:11 +0000
+Date:   Mon, 2 Oct 2023 03:37:11 +0100
 From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Christian Brauner <brauner@kernel.org>,
@@ -43,15 +43,16 @@ Cc:     Christian Brauner <brauner@kernel.org>,
         Bob Peterson <rpeterso@redhat.com>,
         Steve French <sfrench@samba.org>,
         Luis Chamberlain <mcgrof@kernel.org>
-Subject: [PATCH 14/15] ovl_dentry_revalidate_common(): fetch inode once
-Message-ID: <20231002023643.GO3389589@ZenIV>
+Subject: [PATCH 15/15] overlayfs: make use of ->layers safe in rcu pathwalk
+Message-ID: <20231002023711.GP3389589@ZenIV>
 References: <20231002022815.GQ800259@ZenIV>
  <20231002022846.GA3389589@ZenIV>
  <20231002023613.GN3389589@ZenIV>
+ <20231002023643.GO3389589@ZenIV>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231002023613.GN3389589@ZenIV>
+In-Reply-To: <20231002023643.GO3389589@ZenIV>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE
@@ -62,38 +63,84 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-d_inode_rcu() is right - we might be in rcu pathwalk;
-however, OVL_E() hides plain d_inode() on the same dentry...
+ovl_permission() accesses ->layers[...].mnt; we can't have ->layers
+freed without an RCU delay on fs shutdown.  Fortunately, kern_unmount_array()
+used to drop those mounts does include an RCU delay, so freeing is
+delayed; unfortunately, the array passed to kern_unmount_array() is
+formed by mangling ->layers contents and that happens without any
+delays.
+
+Use a separate array instead; local if we have a few layers,
+kmalloc'ed if there's a lot of them.  If allocation fails,
+fall back to kern_unmount() for individual mounts; it's
+not a fast path by any stretch of imagination.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/overlayfs/super.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ fs/overlayfs/ovl_entry.h |  1 -
+ fs/overlayfs/params.c    | 26 ++++++++++++++++++++------
+ 2 files changed, 20 insertions(+), 7 deletions(-)
 
-diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-index f09184b865ec..905d3aaf4e55 100644
---- a/fs/overlayfs/super.c
-+++ b/fs/overlayfs/super.c
-@@ -104,8 +104,8 @@ static int ovl_revalidate_real(struct dentry *d, unsigned int flags, bool weak)
- static int ovl_dentry_revalidate_common(struct dentry *dentry,
- 					unsigned int flags, bool weak)
- {
--	struct ovl_entry *oe = OVL_E(dentry);
--	struct ovl_path *lowerstack = ovl_lowerstack(oe);
-+	struct ovl_entry *oe;
-+	struct ovl_path *lowerstack;
- 	struct inode *inode = d_inode_rcu(dentry);
- 	struct dentry *upper;
- 	unsigned int i;
-@@ -115,6 +115,8 @@ static int ovl_dentry_revalidate_common(struct dentry *dentry,
- 	if (!inode)
- 		return -ECHILD;
+diff --git a/fs/overlayfs/ovl_entry.h b/fs/overlayfs/ovl_entry.h
+index e9539f98e86a..618b63bb7987 100644
+--- a/fs/overlayfs/ovl_entry.h
++++ b/fs/overlayfs/ovl_entry.h
+@@ -30,7 +30,6 @@ struct ovl_sb {
+ };
  
-+	oe = OVL_I_E(inode);
-+	lowerstack = ovl_lowerstack(oe);
- 	upper = ovl_i_dentry_upper(inode);
- 	if (upper)
- 		ret = ovl_revalidate_real(upper, flags, weak);
+ struct ovl_layer {
+-	/* ovl_free_fs() relies on @mnt being the first member! */
+ 	struct vfsmount *mnt;
+ 	/* Trap in ovl inode cache */
+ 	struct inode *trap;
+diff --git a/fs/overlayfs/params.c b/fs/overlayfs/params.c
+index b9355bb6d75a..ab594fd407b4 100644
+--- a/fs/overlayfs/params.c
++++ b/fs/overlayfs/params.c
+@@ -738,8 +738,15 @@ int ovl_init_fs_context(struct fs_context *fc)
+ void ovl_free_fs(struct ovl_fs *ofs)
+ {
+ 	struct vfsmount **mounts;
++	struct vfsmount *m[16];
++	unsigned n = ofs->numlayer;
+ 	unsigned i;
+ 
++	if (n > 16)
++		mounts = kmalloc_array(n, sizeof(struct mount *), GFP_KERNEL);
++	else
++		mounts = m;
++
+ 	iput(ofs->workbasedir_trap);
+ 	iput(ofs->indexdir_trap);
+ 	iput(ofs->workdir_trap);
+@@ -752,14 +759,21 @@ void ovl_free_fs(struct ovl_fs *ofs)
+ 	if (ofs->upperdir_locked)
+ 		ovl_inuse_unlock(ovl_upper_mnt(ofs)->mnt_root);
+ 
+-	/* Hack!  Reuse ofs->layers as a vfsmount array before freeing it */
+-	mounts = (struct vfsmount **) ofs->layers;
+-	for (i = 0; i < ofs->numlayer; i++) {
++	for (i = 0; i < n; i++) {
+ 		iput(ofs->layers[i].trap);
+-		mounts[i] = ofs->layers[i].mnt;
+-		kfree(ofs->layers[i].name);
++		if (unlikely(!mounts))
++			kern_unmount(ofs->layers[i].mnt);
++		else
++			mounts[i] = ofs->layers[i].mnt;
+ 	}
+-	kern_unmount_array(mounts, ofs->numlayer);
++	if (mounts) {
++		kern_unmount_array(mounts, n);
++		if (mounts != m)
++			kfree(mounts);
++	}
++	// by this point we had an RCU delay from kern_unmount{_array,}()
++	for (i = 0; i < n; i++)
++		kfree(ofs->layers[i].name);
+ 	kfree(ofs->layers);
+ 	for (i = 0; i < ofs->numfs; i++)
+ 		free_anon_bdev(ofs->fs[i].pseudo_dev);
 -- 
 2.39.2
 
