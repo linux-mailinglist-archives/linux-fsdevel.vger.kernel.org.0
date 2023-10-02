@@ -2,141 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A9B07B5133
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Oct 2023 13:29:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 245D87B5158
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Oct 2023 13:29:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236686AbjJBL3I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Oct 2023 07:29:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47560 "EHLO
+        id S236749AbjJBL3a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Oct 2023 07:29:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236626AbjJBL3H (ORCPT
+        with ESMTP id S236694AbjJBL3U (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Oct 2023 07:29:07 -0400
-Received: from esa4.hgst.iphmx.com (esa4.hgst.iphmx.com [216.71.154.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7DCE93;
-        Mon,  2 Oct 2023 04:29:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1696246144; x=1727782144;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=8pxtuVgasoi4ShtwLlsck4blhLIMbF51rak1W9aOrwQ=;
-  b=nPPCuSmbiCu4cNhmRSAVPs2HZ+yPyvBIgtRXHlVGsuoFgLou3PgB3UXD
-   FXKQF+91C+C6KtoXK8SaP1GiCLQSIsZGAQZIPpBqbWE8e1TL2hKXNtlAp
-   c1O+eQJ6TZPH7Akbekd05pnnDQR2GVUyIBuIYCVmdUeAXeY13N0mOpOFx
-   OSOnF4eZxkpnSSe8Ilbp7AF4aNAKtEJX3UYfAmDd1Ff075mkA/GORZQ7y
-   4k3t0RF4mhALejVudwM0X7iCVHZ+FLRF0BhqAeIBkB7YQRHb2mnuB5AXw
-   a8hu1a2wHeYYMuMdZSnFdu4zKcVgz/q+YCWAaCeYTXHJPjR52iBHygB+3
-   A==;
-X-CSE-ConnectionGUID: br9oliHlSOWmVi0WmQ67mw==
-X-CSE-MsgGUID: LYJFwKtWQS+6LgRZend27w==
-X-IronPort-AV: E=Sophos;i="6.03,194,1694707200"; 
-   d="scan'208";a="243639104"
-Received: from mail-mw2nam10lp2108.outbound.protection.outlook.com (HELO NAM10-MW2-obe.outbound.protection.outlook.com) ([104.47.55.108])
-  by ob1.hgst.iphmx.com with ESMTP; 02 Oct 2023 19:29:03 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=gtL+605M2VETpIK+Erq1xJhviW7dWAXxhhB/Cnjq+uVVGA6sEvu6LVf+4jCU+zwcGnTXjMEz0I6YtLwmvm9mz/sBGLWJV81TEDInIkaT1rtGbHMG66EETfgCQYggSs303gy6/nUkfOXKVakBGYPPvQvKm8oz3wHhluf6uL2lcut1pqH06iTzoeojKcPpnGezSUggHpqThQHmAenVLqHET1sUUe+380IbvgCgKwIQowKM7SEcxq6rKjbE+yelxUzAMq281/ikC0yBX9z4XmVWG6dF2u4tVuTAE+jg9b4m0iMzlc1gBMl9apZFtbw5GMgfDE3D6ZWNuGQFekU8mC575w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8pxtuVgasoi4ShtwLlsck4blhLIMbF51rak1W9aOrwQ=;
- b=eP8pTGk6ISTIfCSwUC/6KrRV1SKAd/n1kltiSlGh0gdTMr7t0TspADTYFVXgj7d9wMkdEnND07wDrtwMSWHCLBEnmCVzpijJusaknJo78dgnjTxUj4J3Cr3tGOY3xP3nTW5DE0UGXZQGDkvsy4G/i+QdQnhB196hgq6YfHxiitJsIpIt6TFWiBFxyR4O2Em7435zucXfPN8NtnDvJ1o3EbbupcQ3eWrl8i2T3GhsKQS1+YjbgAT7wGLg5L2yIAb9UznwIlcbnXV+OIcZ6edXYpXzrL5GKnkqP2EptOZKan8mYHpTXTMUk/a8J6BhCCuRC2V3SBjNqpLzYdBUU5tKeA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8pxtuVgasoi4ShtwLlsck4blhLIMbF51rak1W9aOrwQ=;
- b=JzI5TnBC9qQxuovwNbFI1ZJdrGu3XWhixLR0z77mD5LAMz8yddeLzDYlgaMg2EQEDSyBUxstiKn0YNDzpj+K80fL0ZUQUao9eZJdWg0x1prhWyPKUxDHyEu6GSJ4k92Of5thQTIxSaRfR+TG4lPbW8c3rLdyKDUX1m1bDHXfEvA=
-Received: from DM6PR04MB6575.namprd04.prod.outlook.com (2603:10b6:5:1b7::7) by
- PH0PR04MB8575.namprd04.prod.outlook.com (2603:10b6:510:291::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6838.18; Mon, 2 Oct
- 2023 11:29:02 +0000
-Received: from DM6PR04MB6575.namprd04.prod.outlook.com
- ([fe80::8e15:c9a8:1531:8fbe]) by DM6PR04MB6575.namprd04.prod.outlook.com
- ([fe80::8e15:c9a8:1531:8fbe%3]) with mapi id 15.20.6838.016; Mon, 2 Oct 2023
- 11:29:02 +0000
-From:   Avri Altman <Avri.Altman@wdc.com>
-To:     Bart Van Assche <bvanassche@acm.org>, Jens Axboe <axboe@kernel.dk>
-CC:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>
-Subject: RE: [PATCH 05/13] scsi: core: Query the Block Limits Extension VPD
- page
-Thread-Topic: [PATCH 05/13] scsi: core: Query the Block Limits Extension VPD
- page
-Thread-Index: AQHZ6/b0dEwAhH+vakayX0RhATS+m7A2bzDQ
-Date:   Mon, 2 Oct 2023 11:29:02 +0000
-Message-ID: <DM6PR04MB6575C23E6499F15F060B49FCFCC5A@DM6PR04MB6575.namprd04.prod.outlook.com>
-References: <20230920191442.3701673-1-bvanassche@acm.org>
- <20230920191442.3701673-6-bvanassche@acm.org>
-In-Reply-To: <20230920191442.3701673-6-bvanassche@acm.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=wdc.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM6PR04MB6575:EE_|PH0PR04MB8575:EE_
-x-ms-office365-filtering-correlation-id: 0ff4920e-4feb-4e8f-43c4-08dbc33ac73a
-wdcipoutbound: EOP-TRUE
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: gW85Qejl8G+kKDdinf9g/EgYfamla1YNZkqs5KT1whP9OBSGjwET79KCk19T+ErMWLNJ+KLjOwoY4JU2Lc6C2DQpjcwJtJRV6FkFRyLPaYs1lRmkXEtQ7vkJYFWoPE8tI+Z9Fro1DKvea9a+q6Lflim6c5zIn4UmZ68xVwWieHYy1hI9hcSvJTREdLnWOplzAR1Di4Y8BGOca+T/xuEbRvnm/ntmyssN/0zlEOgBFNbEtJoaxba5vzNfdCMh8iily8AX67LLK42gHdQoAggqEb6RRDh0t9EKmaOL0VRofVA2nVhRu4tiL4PEFMN25zlAeURnmQq+OJ8YkX7RQwKw3ddX9up28aZMjaculXXgY6EUfS2MQ0uJjUGXxzliIL/ERWypG8XJ2GdJYG6T/CXqxnmBDXUOdkprwJUJtiOdP+QtCNmgknI6JET7d2CcRWq0Q2XHDSq2YrzSOoSARjjS5Fwsurk+QLlULp+ppMOE4+6AMz+X07RYeuf9a+JLvDvrx63McmsZvhaAJAqHMtsCTl1eZUPVSBkb3aD2ZaRvPtohHH4AGfMiAHIPLCNzFZKESn0J6HhAfsKjlPzlGtvPWqvz/EK9+EBLAhrOC5972G8=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR04MB6575.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(136003)(346002)(396003)(376002)(366004)(39860400002)(230922051799003)(451199024)(1800799009)(186009)(64100799003)(5660300002)(4326008)(8936002)(41300700001)(316002)(8676002)(54906003)(110136005)(64756008)(4744005)(66476007)(66556008)(66446008)(66946007)(52536014)(76116006)(2906002)(478600001)(7696005)(55016003)(6506007)(9686003)(26005)(33656002)(38100700002)(71200400001)(38070700005)(82960400001)(83380400001)(122000001)(86362001);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?mU72axRDdP2EWi+39SSjGr36pnovZ8ljrk3eiKDe964JHXzLpWk2dnac+XRG?=
- =?us-ascii?Q?8kNc+owHwe7DoNdwU7efQBZ5qXVYPWrPHl+pVM+HETKp8z50X4QW2I7M52SJ?=
- =?us-ascii?Q?ItNYX2NPaDhHsL9nRRnoWKuZMgAhnlH9j0caigZogwqsRkZFqsbRzD7IRSFS?=
- =?us-ascii?Q?l15DU7DjaXBcZfz+Manexls/4LBNMkA7rAdXxWqKrjdWrziCG3NXEM3tYwIb?=
- =?us-ascii?Q?sjKXq/RXGaSy1eSJFdDjl3FZaS+9P4/m7lZbRkUJIN7gVoSy1j4H0V7k0Mlk?=
- =?us-ascii?Q?wm3qlL+wrpImNC2rHis7V9u9QewpaKfNY+3ZRfQzWr886NSzzETcNPptiWcK?=
- =?us-ascii?Q?NmAfUA2CQOVOoBSIT61LIKzHw0rtb/50osoUJQHLR8GQuytFaSr5LcXQc2UR?=
- =?us-ascii?Q?l7p1J2ILWUafC0QY+vLO2QqSrL43yypGB2NB61+G/cC9gGhjzshq8k9Ne9PF?=
- =?us-ascii?Q?Bv25kHrlYKUzV4NTalhFV3p4H6keXz+4/+xODbLrhncxPRErICqphPjQB610?=
- =?us-ascii?Q?9vk+NoKS1dSVZtbc/w0n2SkNJ+DM3WYKUfHJCMnc6Os6Es9eQBDvla6aEsSX?=
- =?us-ascii?Q?IIYZpMSG28QgJgEX0K/1r3M0KpHunZjuCtMxC+GjZKWr9cYUwEiBH7O+yEgn?=
- =?us-ascii?Q?L8Pmz3Y1XNzDI+OO3VK/wyjCKzn5a+WXP9IMADwSwQTriphga4Z1Jcn3K4y8?=
- =?us-ascii?Q?xNhAzzLRfO/b+cn16ZfC/+t/Z1FCyCpAp/E2n2x1CggO4npo4+7ezsUg15eB?=
- =?us-ascii?Q?uG+f2Aw1ernzJ1btWY0rfDpCx44mwPJwCpB+MMWLEf48MvgDgWhZ7LuuTti+?=
- =?us-ascii?Q?lLLCa7jzzORT2R0TGnwWBPMsrwT73mVp8xSvENTzf8loizc9NOspdB2n7hVw?=
- =?us-ascii?Q?HQiH77SP3mvjRmssYZBqssGos2Y/JEtlVqqCS1yllrLJe697TJI9ZbjCFOlV?=
- =?us-ascii?Q?FuArSEeY0thHlHhzWf9y7kmmTny7fyv/5wqD1VKxL/H3YDQNE2+53+nT9XUZ?=
- =?us-ascii?Q?VBNm93FT+8qtorbbPq1btvUK66hveUspXTH1LLXqIS6SOYAj4Fr/295W3ORh?=
- =?us-ascii?Q?/dsskfRz+Cc+lZ28l1Fnnnh83bbCKIqPd7/LeCdXS9FSQcmESjmDLuuxaX/J?=
- =?us-ascii?Q?tG2pMoQf+t5CN6858vv4Kug2IVuhl45RrKFyDUKkT7Sxh9fn6Oas9paB8WcY?=
- =?us-ascii?Q?i6U3dxBu9OLYGgTD3kkS+g1+B/j9g7culYAHYPG8PJ1s+2tgpMpPAV0/N/Vq?=
- =?us-ascii?Q?3TbfzRFioNpMpFiGGyGgaiCYdKOzzFa1QNH5bl5dK6p7NAS5b6nAW5hYvUrJ?=
- =?us-ascii?Q?pCuvKb5ACKqfgky3FIua0RvDRNlH+leOXZhJ3Tsy+WBkfvLn+7zOXsgb9QE6?=
- =?us-ascii?Q?hMRXHl9zpA+4vQCdOAQ1PkjhqV+QqC0DKhlNNwvK3n4Ixes50nbzIG1/+FGc?=
- =?us-ascii?Q?wC/mZkkbj+toeWo7TGJ6fFbH2dniubZ2leQntNA4Xd54X+Rq7LDi6p4HqemS?=
- =?us-ascii?Q?w46IzcCS6vvOvmLU/MwL4pOl2Zgllq6jdP121NyixTu0KD4FyrgVeKtB+JYe?=
- =?us-ascii?Q?2p9G2mkxYO254eYXRUvHnLRruLrqEIoTwdqRbsYH?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 2 Oct 2023 07:29:20 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DD25BF;
+        Mon,  2 Oct 2023 04:29:17 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id AE660C433C8;
+        Mon,  2 Oct 2023 11:29:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1696246156;
+        bh=MwyhsMB+QNewgFpXxkXQmsvWEhsqf6iwRapvTWMJ570=;
+        h=From:Subject:Date:To:Cc:Reply-To:From;
+        b=Fn0CgrJ+v6cL9vTYhKPg6OgOQaWRJTgXBVaO3ScxrD4gg9wt/Z2mshZ1VhMdPcdcf
+         mIIM2omKRuIMrqv6YA+hQwx9xrKq1qs06T8QOmwfVO7AtrxYd5rh1r+kUPzwcyu797
+         18h2bcpjlToTVnAwdi9CPaHalg4EJ7Zim/e0s2FhMSYoM8hyOCI5Phm402xOhfu8Ur
+         LiKg5xJ0xnNxxaRejYqvlII9lnTi1FkpRgqdrWXDnBQ+HjwEbDqnGv59Y5t7b4Rn9N
+         JYXDpn53dtNWvO8DQecGI4swx2VXECfeiVdNJVDHuvWH/N+eg+R3bBaUJcDaSVaueh
+         ImgixOauByldQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.lore.kernel.org (Postfix) with ESMTP id 87905E784A4;
+        Mon,  2 Oct 2023 11:29:16 +0000 (UTC)
+From:   Joel Granados via B4 Relay 
+        <devnull+j.granados.samsung.com@kernel.org>
+Subject: [PATCH v3 0/7] sysctl: Remove sentinel elements from arch
+Date:   Mon, 02 Oct 2023 13:30:35 +0200
+Message-Id: <20231002-jag-sysctl_remove_empty_elem_arch-v3-0-606da2840a7a@samsung.com>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 5Y3EQMxU46vEeozguggc7rD9gpLKW63/ly887fb0Tyl5wI9hPwfgoGX/384p/ribEPYaDKCx8AF0TUufsPwFQf40N+RXXLRsTK8McDy7nJhDmEYRFdSCzncij78ZDeCt9QYP51m6gW6kMf4UvcsedakafDQF428+URKv8Gpe3CVQ3ZndXSS1fo8ko/tg8D54nNT4+6oC7rOV7IkxbI+d9tx1kzdNI9AJMyouHdF3B1oh7YFRTgMCzA2LFnav9I/78BCcV0XTC8u79/pEvs7hutOgU+SjnEqZlbLUEjppq+x1o47Z9s46Ns2SmN+F7O/DEq0davmTOlY1vk4nGOTYSQS46ELMVELa/b5XK6a2LDpUhrtfIQkUI2Bv8m2Eeik+8jwAJNVhnykKAxpjfvjvn4DhaEX/EbyZme2B+87B0wjwWvCSpqtDdHUVkkpGYvSq6JV/6ZW1kWIczISm73Qadq2b7KtTsp0JUtxgwIL1atZhfdn3g9ABSpWrdB7v33ft/zWbXoEV/OIn6+ULK0bUiseYsKbi5j9X4/HRPCD8/txNLpg3S9QueKFlCbr843g/CP6k5O+mGa0qda6AC+tP+7lfth4jgccjGFxwKHpcG+aIStYqO+TmStBPF/1dsgDELTEzca8GykQObhFx/NMvPvqmpvzOUeBR0Kbz5FLJAPsBCxEUEu+tcv7abgMjFPdj5EcqFraNGSOjmDcUigsk1XepitV6ejdHYU/02Lf7AeqjF8wCzjttz3USpZt61lDsY/3crQnQUnsQWmUMvHSWGX6VVgkL71QHp62FgXnsGHCro6dFHBBHlIWE/Pc7tI7tBDX/jhsuhuWWUq51aVukUapD6e5MkRLMmVijXm68/koAGU7DigtU0LGsKRIfe0f2UZAsmSGEnZWRxMK2TCGrEgUazSZy2vge8Fh+r+GxbeA=
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR04MB6575.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0ff4920e-4feb-4e8f-43c4-08dbc33ac73a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Oct 2023 11:29:02.0528
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: bsqbmd3QWpEdTIDEbH+u1CYy9NEtY588KJ2pozvc0uslIVMO8Wx+B/s+OU8pyRuDJgstfDCFs8aOXffsme/dAA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR04MB8575
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_PASS,SPF_NONE autolearn=ham
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANupGmUC/43NTQqDMBhF0a1Ixk3Jn6IddR+lSEy+aooxkthQE
+ ffeKBTamcP7BuctKIA3ENAlW5CHaIJxQwp+ypDq5NACNjo1YoRxUhGBn7LFYQ5q6msP1kWowY7
+ TXEMPtpZedbikuiGygEIpgZIzeniY9/5xu6fuTJicn/fLSLf1qxcH9EgxwbziuRZlLpgor0Ha8
+ Bras3IWbX5kPyblR0yWTE0bTblkVSPh31zX9QMW1VNUKAEAAA==
+To:     Luis Chamberlain <mcgrof@kernel.org>, willy@infradead.org,
+        josh@joshtriplett.org, Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Guo Ren <guoren@kernel.org>, Alexey Gladkov <legion@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-riscv@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+        linux-ia64@vger.kernel.org, linux-csky@vger.kernel.org,
+        Joel Granados <j.granados@samsung.com>,
+        Ingo Molnar <mingo@kernel.org>
+X-Mailer: b4 0.13-dev-86aa5
+X-Developer-Signature: v=1; a=openpgp-sha256; l=8873;
+ i=j.granados@samsung.com; h=from:subject:message-id;
+ bh=bFEwXJHSyEjknj78wsv5L0XySyNp2PtCwbExaC/FgYY=;
+ b=owEB7QES/pANAwAKAbqXzVK3lkFPAcsmYgBlGqoLQ35+jUnZ6z+8gZX5PwAZtUXTOEx37QraM
+ ujNn6iLkMiJAbMEAAEKAB0WIQSuRwlXJeYxJc7LJ5C6l81St5ZBTwUCZRqqCwAKCRC6l81St5ZB
+ T1FvDACVNjHEgYn4OZuLp1c8J/TThjhwopS8QssuaG02RFPIRIQT1jSbBB8fS19UE1HSN9ftd3t
+ zyK50zaT64OnZ3z7KGOlYzf862rTrTKBhgsigkqo2MwRNtsKo8FmcFt1l3VUBmyCAvzkaXFutO0
+ 7YK9z3VHvhG+s1psn3fhfi/m+Ud2igKh098gorN0aEMS2gERkrjE9f7cfAEZGnon0AHzTr/eENQ
+ zsLuIXcKnpn9m6hASKLM8HUpY1weDlkNtdtHKAx/psotohXYZ7klmCSeNvex7TTFclD5l04WAX0
+ 4BvXD3SHUq/qAN/7L9G8Us0U0F6Xnyb/lFvyMzKVy5I5PpfaWAqM0aY7GQeIfaGE7BMvWDNdzYl
+ SiGCnlTKscvsvRzHmbjflQ+QvzB5q3uPBdNt/gxSAPUymg9jSR4yoD4VZnPar8DJNYQlP9BaZAV
+ xxsHG9UOpISyAkBS3R8rS/7Kwoy9JBGLh7VPGH2U9VpQD+2ehouHfr7iX02bMFf7j3LRM=
+X-Developer-Key: i=j.granados@samsung.com; a=openpgp;
+ fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
+X-Endpoint-Received: by B4 Relay for j.granados@samsung.com/default with auth_id=70
+X-Original-From: Joel Granados <j.granados@samsung.com>
+Reply-To: <j.granados@samsung.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -144,12 +101,198 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> Parse the Reduced Stream Control Supported (RSCS) bit from the block limi=
-ts
-> extension VPD page. The RSCS bit is defined in T10 document
-> "SBC-5 Constrained Streams with Data Lifetimes"
-> (https://www.t10.org/cgi-bin/ac.pl?t=3Dd&f=3D23-024r3.pdf).
->=20
-> Cc: Martin K. Petersen <martin.petersen@oracle.com>
-> Signed-off-by: Bart Van Assche <bvanassche@acm.org>
-Reviewed-by: Avri Altman <avri.altman@wdc.com>
+From: Joel Granados <j.granados@samsung.com>
+
+What?
+These commits remove the sentinel element (last empty element) from the
+sysctl arrays of all the files under the "arch/" directory that use a
+sysctl array for registration. The merging of the preparation patches
+(in https://lore.kernel.org/all/ZO5Yx5JFogGi%2FcBo@bombadil.infradead.org/)
+to mainline allows us to just remove sentinel elements without changing
+behavior. This is now safe because the sysctl registration code
+(register_sysctl() and friends) use the array size in addition to
+checking for a sentinel ([1] for more info).
+
+These commits are part of a bigger set (bigger patchset here
+https://github.com/Joelgranados/linux/tree/tag/sysctl_remove_empty_elem_V4)
+that remove the ctl_table sentinel. The idea is to make the review
+process easier by chunking the 52 commits into manageable pieces. By
+sending out one chunk at a time, they can be reviewed separately without
+noise from parallel sets. After the "arch/" commits in this set are
+reviewed, I will continue with drivers/*, fs/*, kernel/*, net/* and
+miscellaneous. The final set will remove the unneeded check for
+->procname == NULL.
+
+Why?
+By removing the sysctl sentinel elements we avoid kernel bloat as
+ctl_table arrays get moved out of kernel/sysctl.c into their own
+respective subsystems. This move was started long ago to avoid merge
+conflicts; the sentinel removal bit came after Mathew Wilcox suggested
+it to avoid bloating the kernel by one element as arrays moved out. This
+patchset will reduce the overall build time size of the kernel and run
+time memory bloat by about ~64 bytes per declared ctl_table array. I
+have consolidated some links that shed light on the history of this
+effort [2].
+
+V2:
+* Added clarification both in the commit messages and the coverletter as
+  to why this patch is safe to apply.
+* Added {Acked,Reviewed,Tested}-by from list
+* Link to v1: https://lore.kernel.org/r/20230906-jag-sysctl_remove_empty_elem_arch-v1-0-3935d4854248@samsung.com
+
+V3:
+* Removed the ia64 patch to avoid conflicts with the ia64 removal
+* Rebased onto v6.6-rc4
+* Kept/added the trailing comma for the ctl_table arrays. This was a comment
+  that we received "drivers/*" patch set.
+* Link to v2: https://lore.kernel.org/r/20230913-jag-sysctl_remove_empty_elem_arch-v2-0-d1bd13a29bae@samsung.com
+
+Testing:
+* Ran sysctl selftests (./tools/testing/selftests/sysctl/sysctl.sh)
+* Ran this through 0-day with no errors or warnings
+
+Size saving after removing all sentinels:
+  A consequence of eventually removing all the sentinels (64 bytes per
+  sentinel) is the bytes we save. These are *not* numbers that we will
+  get after this patch set; these are the numbers that we will get after
+  removing all the sentinels. I included them here because they are
+  relevant and to get an idea of just how much memory we are talking
+  about.
+    * bloat-o-meter:
+        - The "yesall" configuration results save 9158 bytes (bloat-o-meter output here
+          https://lore.kernel.org/all/20230621091000.424843-1-j.granados@samsung.com/)
+        - The "tiny" config + CONFIG_SYSCTL save 1215 bytes (bloat-o-meter output here
+          https://lore.kernel.org/all/20230809105006.1198165-1-j.granados@samsung.com/)
+    * memory usage:
+        we save some bytes in main memory as well. In my testing kernel
+        I measured a difference of 7296 bytes. I include the way to
+        measure in [3]
+
+Size saving after this patchset:
+  Here I give the values that I measured for the architecture that I'm
+  running (x86_64). This can give an approximation of how many bytes are
+  saved for each arch. I won't publish for all the archs because I don't
+  have access to all of them.
+    * bloat-o-meter
+        - The "yesall" config saves 192 bytes (bloat-o-meter output [4])
+        - The "tiny" config saves 64 bytes (bloat-o-meter output [5])
+    * memory usage:
+        In this case there were no bytes saved. To measure it comment the
+        printk in `new_dir` and uncomment the if conditional in `new_links`
+        [3].
+
+Comments/feedback greatly appreciated
+
+Best
+Joel
+
+[1]
+https://lore.kernel.org/all/20230809105006.1198165-1-j.granados@samsung.com/
+
+[2]
+Links Related to the ctl_table sentinel removal:
+* Good summary from Luis sent with the "pull request" for the
+  preparation patches.
+  https://lore.kernel.org/all/ZO5Yx5JFogGi%2FcBo@bombadil.infradead.org/
+* Another very good summary from Luis.
+  https://lore.kernel.org/all/ZMFizKFkVxUFtSqa@bombadil.infradead.org/
+* This is a patch set that replaces register_sysctl_table with register_sysctl
+  https://lore.kernel.org/all/20230302204612.782387-1-mcgrof@kernel.org/
+* Patch set to deprecate register_sysctl_paths()
+  https://lore.kernel.org/all/20230302202826.776286-1-mcgrof@kernel.org/
+* Here there is an explicit expectation for the removal of the sentinel element.
+  https://lore.kernel.org/all/20230321130908.6972-1-frank.li@vivo.com
+* The "ARRAY_SIZE" approach was mentioned (proposed?) in this thread
+  https://lore.kernel.org/all/20220220060626.15885-1-tangmeng@uniontech.com
+
+[3]
+To measure the in memory savings apply this on top of this patchset.
+
+"
+diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+index c88854df0b62..e0073a627bac 100644
+--- a/fs/proc/proc_sysctl.c
++++ b/fs/proc/proc_sysctl.c
+@@ -976,6 +976,8 @@ static struct ctl_dir *new_dir(struct ctl_table_set *set,
+        table[0].procname = new_name;
+        table[0].mode = S_IFDIR|S_IRUGO|S_IXUGO;
+        init_header(&new->header, set->dir.header.root, set, node, table, 1);
++       // Counts additional sentinel used for each new dir.
++       printk("%ld sysctl saved mem kzalloc \n", sizeof(struct ctl_table));
+
+        return new;
+ }
+@@ -1199,6 +1201,9 @@ static struct ctl_table_header *new_links(struct ctl_dir *dir, struct ctl_table_
+                link_name += len;
+                link++;
+        }
++       // Counts additional sentinel used for each new registration
++       //if ((head->ctl_table + head->ctl_table_size)->procname)
++               printk("%ld sysctl saved mem kzalloc \n", sizeof(struct ctl_table));
+        init_header(links, dir->header.root, dir->header.set, node, link_table,
+                    head->ctl_table_size);
+        links->nreg = nr_entries;
+"
+and then run the following bash script in the kernel:
+
+accum=0
+for n in $(dmesg | grep kzalloc | awk '{print $3}') ; do
+    echo $n
+    accum=$(calc "$accum + $n")
+done
+echo $accum
+
+[4]
+add/remove: 0/0 grow/shrink: 0/3 up/down: 0/-192 (-192)
+Function                                     old     new   delta
+sld_sysctls                                  128      64     -64
+itmt_kern_table                              128      64     -64
+abi_table2                                   128      64     -64
+Total: Before=429173594, After=429173402, chg -0.00%
+
+[5]
+add/remove: 0/0 grow/shrink: 1/0 up/down: 64/0 (64)
+Function                                     old     new   delta
+sld_sysctls                                   64     128     +64
+Total: Before=1886119, After=1886183, chg +0.00%
+
+Signed-off-by: Joel Granados <j.granados@samsung.com>
+
+---
+
+---
+Joel Granados (7):
+      S390: Remove now superfluous sentinel elem from ctl_table arrays
+      arm: Remove now superfluous sentinel elem from ctl_table arrays
+      arch/x86: Remove now superfluous sentinel elem from ctl_table arrays
+      x86/vdso: Remove now superfluous sentinel element from ctl_table array
+      riscv: Remove now superfluous sentinel element from ctl_table array
+      powerpc: Remove now superfluous sentinel element from ctl_table arrays
+      c-sky: Remove now superfluous sentinel element from ctl_talbe array
+
+ arch/arm/kernel/isa.c                     | 4 ++--
+ arch/arm64/kernel/armv8_deprecated.c      | 8 +++-----
+ arch/arm64/kernel/fpsimd.c                | 2 --
+ arch/arm64/kernel/process.c               | 1 -
+ arch/csky/abiv1/alignment.c               | 1 -
+ arch/powerpc/kernel/idle.c                | 1 -
+ arch/powerpc/platforms/pseries/mobility.c | 1 -
+ arch/riscv/kernel/vector.c                | 1 -
+ arch/s390/appldata/appldata_base.c        | 4 +---
+ arch/s390/kernel/debug.c                  | 1 -
+ arch/s390/kernel/topology.c               | 1 -
+ arch/s390/mm/cmm.c                        | 1 -
+ arch/s390/mm/pgalloc.c                    | 1 -
+ arch/x86/entry/vdso/vdso32-setup.c        | 1 -
+ arch/x86/kernel/cpu/intel.c               | 1 -
+ arch/x86/kernel/itmt.c                    | 1 -
+ drivers/perf/arm_pmuv3.c                  | 1 -
+ 17 files changed, 6 insertions(+), 25 deletions(-)
+---
+base-commit: 8a749fd1a8720d4619c91c8b6e7528c0a355c0aa
+change-id: 20230904-jag-sysctl_remove_empty_elem_arch-81db0a6e6cc4
+
+Best regards,
+-- 
+Joel Granados <j.granados@samsung.com>
+
