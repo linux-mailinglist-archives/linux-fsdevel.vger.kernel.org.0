@@ -2,110 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CAC2C7B7340
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Oct 2023 23:21:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2DA27B7395
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Oct 2023 23:58:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241178AbjJCVVt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Oct 2023 17:21:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33004 "EHLO
+        id S232437AbjJCV6D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Oct 2023 17:58:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232084AbjJCVVs (ORCPT
+        with ESMTP id S232161AbjJCV6C (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Oct 2023 17:21:48 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28FBCC4
-        for <linux-fsdevel@vger.kernel.org>; Tue,  3 Oct 2023 14:21:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1696368062;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=c+XSL7VlvFYRrMrr8EONFGdSlHsYIN60PHKmifU4UPQ=;
-        b=ESLkzcfl5hpZnmmYq063IKoeUg9Wq+Y0jbkMoZon3zO+nIm1xW2aHz8Hl11DdWeuOxFSlu
-        5r+fdfeznOG5ZnrCB5gYL5DETQ0zQTmnaTA+XOeRDqOzoa2Z98asjuFWd9q/IXroOuCGzM
-        O1JRl11lj17/3Uv0T0hn+26+m02SpnI=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-407-5lP8NwvxMVeiVw-bS5Y3yQ-1; Tue, 03 Oct 2023 17:21:00 -0400
-X-MC-Unique: 5lP8NwvxMVeiVw-bS5Y3yQ-1
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-774292de453so31176485a.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Oct 2023 14:21:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696368059; x=1696972859;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=c+XSL7VlvFYRrMrr8EONFGdSlHsYIN60PHKmifU4UPQ=;
-        b=PyuPfls1NO4niCPVfOfbO0uGUvBZ3MpGEEKhepXg5Eul/UzF9vJRqFTcDOjIDXHKol
-         A/SUzZ3rW9/ZWkOa9kI8ZBX4Keu8S+Nm5k/OxsxAR6mnQ16oSKY++iG+pfueNrqT9jQZ
-         gkyGJR7LOhcgIFKHvkCtC8zYeJ55tIEd7RgA8K7Q1psKrmhyP/z3nups8E4/icFgbqwn
-         iSDWXHkbrH5qEt5tUWcb5t6SpSVDViQuLQLdgXbTZ0AUqY2PsiDUusU/crq7uH/ZTXTQ
-         kZuHHcnb7M3W8kRsddVVxZD7MuswRai0Dl5YLtAldk8Byz7ASI4z1Jbnimu3W9uyBJG+
-         LY2A==
-X-Gm-Message-State: AOJu0YzzCAb2konqfkapsqrUAEFqRpCgx/6zlHn+ktFHujN6ynJVs5tl
-        Jd+SzH9P2sV6rU0XzXeVZJHFVe7gazegodFb5AGL1Ni9ph3NsQZ7PsVqqvtNtXALpMNOZ8oykve
-        s391e2rgb1Hr5xt5AbqvaxJLRkg==
-X-Received: by 2002:a05:6214:d44:b0:668:def9:f762 with SMTP id 4-20020a0562140d4400b00668def9f762mr571446qvr.1.1696368059562;
-        Tue, 03 Oct 2023 14:20:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF0KMm0dgldH1KekAKurLb2lRbKa+t2ucH0FmqnvjvHEyA2nUXYNWWQVKF6NmeiS8vZXluBgw==
-X-Received: by 2002:a05:6214:d44:b0:668:def9:f762 with SMTP id 4-20020a0562140d4400b00668def9f762mr571429qvr.1.1696368059264;
-        Tue, 03 Oct 2023 14:20:59 -0700 (PDT)
-Received: from x1n (cpe5c7695f3aee0-cm5c7695f3aede.cpe.net.cable.rogers.com. [99.254.144.39])
-        by smtp.gmail.com with ESMTPSA id u6-20020a0cb406000000b00641899958efsm799188qve.130.2023.10.03.14.20.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Oct 2023 14:20:58 -0700 (PDT)
-Date:   Tue, 3 Oct 2023 17:20:30 -0400
-From:   Peter Xu <peterx@redhat.com>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Suren Baghdasaryan <surenb@google.com>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        Jann Horn <jannh@google.com>, akpm@linux-foundation.org,
-        viro@zeniv.linux.org.uk, brauner@kernel.org, shuah@kernel.org,
-        aarcange@redhat.com, hughd@google.com, mhocko@suse.com,
-        axelrasmussen@google.com, rppt@kernel.org, willy@infradead.org,
-        Liam.Howlett@oracle.com, zhangpeng362@huawei.com,
-        bgeffon@google.com, kaleshsingh@google.com, ngeoffray@google.com,
-        jdduke@google.com, linux-mm@kvack.org,
+        Tue, 3 Oct 2023 17:58:02 -0400
+Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0787A1;
+        Tue,  3 Oct 2023 14:57:58 -0700 (PDT)
+Received: by nautica.notk.org (Postfix, from userid 108)
+        id 65953C01F; Tue,  3 Oct 2023 23:57:54 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1696370274; bh=VaMPR9vTSeNuv9UUlAuWQrxY0o/yWBumBbUme/UtQSY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=r2VlZnQFgPYscwuU/pQZTOyXezD4821oSbFctUhbb4g4ohKxF6x7ztA1Bkw0qHEzJ
+         hdwkfxcPRIBK79hdyHdQeM0EQpTQWX8N/3djGQOoopGQaQ8ObreLFwPRmTRJED9bH5
+         afcgP1jOjMHPOiE6PlvenYftH6sVhxXuxsSoQH5vrgGfDZYmycc8hGyisVP9MWRC6S
+         XPTOKHIeMMkEW41a70rMjnV5qRXu+sIioFx6phdhBm0IbHApdeqpdHZlkKwFlsjcqq
+         nnYmf8rllBtVv8/UWQp448KZxyePogqqMzr+ne0vXDoHvOE/29J6LtobARGuP8ZHbg
+         zW9zPt3hzuSwA==
+X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
+        lindbergh.monkeyblade.net
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Received: from gaia (localhost [127.0.0.1])
+        by nautica.notk.org (Postfix) with ESMTPS id D62F3C009;
+        Tue,  3 Oct 2023 23:57:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1696370272; bh=VaMPR9vTSeNuv9UUlAuWQrxY0o/yWBumBbUme/UtQSY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ntNDqYJUj3LKdZOSYPLAxo7SwyvXz+PePGLQ45IvwZhnt2wpkxYD4aiLjXr4Igvub
+         boDbsOqDr7GeBojwmuO5WOyHVvWQ0i7pgeuw0nJp5JUdW4cTAlCzueDvcVwWcDpJ94
+         Se6Ra3D1jmd0iTqEe4SkYQivZEkJ/7Qs2fM0zLWh2pMPRkXUWiwk6FizZqZOWZzS27
+         2xnUy8qhRwbY0CEA8fn0jyB5qRruc0zZ6luV6Zoj9Up48R5Rqh/fb2id46ZzxzBF+3
+         MLqrrpJzmcS3HANBbUzuylNH1ywKCw0WJy+sq+lGUo5MxaJCzGn6yMCyI7G6d2irxN
+         grsR4aEmfW+OQ==
+Received: from localhost (gaia [local])
+        by gaia (OpenSMTPD) with ESMTPA id 3fe28c50;
+        Tue, 3 Oct 2023 21:57:46 +0000 (UTC)
+Date:   Wed, 4 Oct 2023 06:57:31 +0900
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Wedson Almeida Filho <wedsonaf@gmail.com>
+Cc:     Eric Van Hensbergen <ericvh@kernel.org>,
+        Christian Schoenebeck <linux_oss@crudebyte.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH v2 2/3] userfaultfd: UFFDIO_REMAP uABI
-Message-ID: <ZRyFnurIgVFVD8hd@x1n>
-References: <ZRXHK3hbdjfQvCCp@x1n>
- <fc27ce41-bc97-91a7-deb6-67538689021c@redhat.com>
- <ZRrf8NligMzwqx97@x1n>
- <CA+EESO5VtrfXv-kvDsotPLXcpMgOK5t5c+tbXZ7KWRU2O_0PBQ@mail.gmail.com>
- <CA+EESO4W2jmBSpyHkkqZV0LHnA_OyWQcvwSkfPcWmWCsAF5UWw@mail.gmail.com>
- <9434ef94-15e8-889c-0c31-3e875060a2f7@redhat.com>
- <CA+EESO4GuDXZ6newN-oF43WOxrfsZ9Ejq8RJNF2wOYq571zmDA@mail.gmail.com>
- <CAJuCfpE_h7Bj41sBiADswkUfVCoLXANuQmctdYUEgYjn6fHSCw@mail.gmail.com>
- <ZRx31TKFDGRatoC8@x1n>
- <c837fc02-3dbd-ba88-dacb-cf150272a4c4@redhat.com>
+        Wedson Almeida Filho <walmeida@microsoft.com>,
+        Latchesar Ionkov <lucho@ionkov.net>, v9fs@lists.linux.dev
+Subject: Re: [PATCH 03/29] 9p: move xattr-related structs to .rodata
+Message-ID: <ZRyOSzUKFNOXaSZf@codewreck.org>
+References: <20230930050033.41174-1-wedsonaf@gmail.com>
+ <20230930050033.41174-4-wedsonaf@gmail.com>
+ <41368837.HejemxxR3G@silver>
+ <ZRfkVWyuNaapaOOO@codewreck.org>
+ <CANeycqptxu1qWAHLc76krDmfgesANPX+FLEV51qhtXam6Ky9nQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <c837fc02-3dbd-ba88-dacb-cf150272a4c4@redhat.com>
-X-Spam-Status: No, score=-0.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
-        RCVD_IN_SORBS_WEB,SPF_HELO_NONE,SPF_NONE autolearn=no
-        autolearn_force=no version=3.4.6
-X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
-        lindbergh.monkeyblade.net
+In-Reply-To: <CANeycqptxu1qWAHLc76krDmfgesANPX+FLEV51qhtXam6Ky9nQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 03, 2023 at 11:08:07PM +0200, David Hildenbrand wrote:
-> Sorry I have to ask: has this ever been discussed on the list? I don't see
-> any pointers. If not, then probably the number of people that know about the
-> history can be counted with my two hands and that shouldn't be the basis for
-> making decisions.
+Wedson Almeida Filho wrote on Tue, Oct 03, 2023 at 10:55:44AM -0300:
+> > Looks good to me on principle as well (and it should blow up immediately
+> > on testing in the unlikely case there's a problem...)
+> >
+> > Eric, I don't think you have anything planned for this round?
+> > There's another data race patch laying around that we didn't submit for
+> > 6.6, shall I take these two for now?
+> >
+> > (Assuming this patch series is meant to be taken up by individual fs
+> > maintainers independantly, it's never really clear with such large
+> > swatches of patchs and we weren't in Cc of a cover letter if there was
+> > any... In the future it'd help if either there's a clear cover letter
+> > everyone is in Cc at (some would say keep everyone in cc of all
+> > patches!), or just send these in a loop so they don't appear to be part
+> > of a series and each maintainer deals with it as they see fit)
+> 
+> There is a cover letter
+> (https://lore.kernel.org/all/20230930050033.41174-1-wedsonaf@gmail.com/),
+> apologies for not CCing you there. I was trying to avoid spamming
+> maintainers with unrelated changes.
+> 
+> We need changes in fs/xattr.c (which are in the first patch of the
+> series) to avoid warnings, so unfortunately this can't be taken
+> individually. My thought was that individual fs maintainers would
+> review/ack the patches and this would be taken through the fs tree.
 
-For example:
+Please include all related maintainers in cover letter and any "common"
+patch: I'd have complained about the warning if I had taken the time to
+try it out :)
 
-https://lore.kernel.org/all/1425575884-2574-21-git-send-email-aarcange@redhat.com/
+(b4 made it easy to download a whole thread, but it was't obvious this
+was required -- I honestly prefer receiving the whole thread than too
+little patch but I know some maintainers are split on this... At least I
+think we'll all agree cover letter and required dependencies are useful
+though -- I now see David Sterba told you something similar, but only
+after having written that so leaving it in)
+
+By the way the shmem patch failed to apply to 6.6-rc4 and will need
+rebasing.
+
+With all that said, I've taken a few minutes to check it didn't blow up,
+so:
+Acked-by: Dominique Martinet <asmadeus@codewreck.org>
 
 -- 
-Peter Xu
-
+Dominique Martinet | Asmadeus
