@@ -2,90 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D30667B7214
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Oct 2023 21:52:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90AE07B7217
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Oct 2023 21:53:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241047AbjJCTwb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Oct 2023 15:52:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42978 "EHLO
+        id S240938AbjJCTxY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Oct 2023 15:53:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241039AbjJCTwa (ORCPT
+        with ESMTP id S231945AbjJCTxX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Oct 2023 15:52:30 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9DBE93;
-        Tue,  3 Oct 2023 12:52:27 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id ffacd0b85a97d-327b7e08456so1368704f8f.2;
-        Tue, 03 Oct 2023 12:52:27 -0700 (PDT)
+        Tue, 3 Oct 2023 15:53:23 -0400
+Received: from mail-yb1-xb2f.google.com (mail-yb1-xb2f.google.com [IPv6:2607:f8b0:4864:20::b2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2AA193
+        for <linux-fsdevel@vger.kernel.org>; Tue,  3 Oct 2023 12:53:19 -0700 (PDT)
+Received: by mail-yb1-xb2f.google.com with SMTP id 3f1490d57ef6-d8673a90f56so1431414276.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Oct 2023 12:53:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696362746; x=1696967546; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uGvbcU4evdPhE8iD+CAmE+ISh81ZLVdJetADKqCwGtI=;
-        b=PbytnJl5mtAyvS14O54oCwDtqsSFIllnGzOamC9GsDxySE1ECpLUGNcwslgnHpOQqU
-         Em3yyIQUYPjoLyoKFF5RP22ufcPcZmm/yiHbRLJ8KdYqrTRVcRMgTNNmdYCZyS1VQPPT
-         1yOhqCxelDXsXWTN6yuCDKG9rOj/EKk43WNtCfJphyjcvgUU7IgMl5lQbn6sIqQ8/KuB
-         zwUVflkhms1AC1EZxuztcfB5tZD/5xz3ygZkvcF5UmPoCb+3jR0RgXBMfeV1sQQODM9g
-         0N1HsOqSHzR2lpFI/tzm24ENhg1acKGBa2pfzqbep9S7Gc4Kp326a979COMpU9IF16zc
-         agJQ==
+        d=paul-moore.com; s=google; t=1696362799; x=1696967599; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=obo4De/sb/6Zy5gCkdvqVVEu8bO8itwyRVmAwvT9wCU=;
+        b=TSvtyr84qG2UWU/dLgktGyntsNsjamLM8XfbEKKi0xaViyXNKNjmtcMQrnzWLhLL4Q
+         P8KAsR487RJnjRFH422aqXXMMjGglwHN+ha1fIc3qZFh+InvO/N/z9RMDblEP31qEcpc
+         5bxRwz7/pDU6KQMJfHLQVf10FHeiS9eEJk7VzE+jjzIL/a1vzdYPDX4LU+P9C4ZPZe0Q
+         85HY8YbzQSmmspRlplY/GDFZABNSfsh9h96cJzhRXdeiMh1Wkb53A+gPWcxbBDjru8B9
+         eFYLMuGaUGw3ABVW2U3cuycvmIfDlMLX+9nKSk2KHeWFCs5OixjyfEghAfPtJbbOj0D6
+         RZkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696362746; x=1696967546;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uGvbcU4evdPhE8iD+CAmE+ISh81ZLVdJetADKqCwGtI=;
-        b=UoKEcN6je4SaRXxa+Z9q1xOHWXMTZtcNqJqfAvVhlegJUkXFB75NZsAB23v8Eymb9n
-         KAmBHLOpE1DLoxmUR1S2HnmAifIgpu27XBAb58MqICwJeilhp2MbH9HGX0goPeiQ9BoG
-         4sFgL+XAbyoBh7UhwJPIkdMnVTMshQEJqaAU8p9W3YdNWPhfzS2EsYPi1TGjAUDSSX3h
-         hT23teqitZnsCaAT1CjIm69kqRfma6fw19DKwgctV9wIymGUpKUD9F+PG7Q7u64ntXRk
-         uRGSKvC/ZKl0PLYA7M0AEcgKkz3c4f3BYeBAZXx52Odu/CQgZqDQzAm5ybIYPk9c2fBm
-         0Z5g==
-X-Gm-Message-State: AOJu0Yzg9NL2mzvSIvdUP8IYh55aya3rrve9PqaL+Of8tsM/C+ItEP5c
-        FKXXd09Kf+04e+wqPiy7ziQ=
-X-Google-Smtp-Source: AGHT+IFc5DKAVdvvnMKAbV3yTqkpBKWzgGin1SS+L3YArAnuoHR5ECozV6H8lJD+nMwjfYyf0gJ4DA==
-X-Received: by 2002:adf:ed52:0:b0:31f:fa1a:83fb with SMTP id u18-20020adfed52000000b0031ffa1a83fbmr243934wro.7.1696362746060;
-        Tue, 03 Oct 2023 12:52:26 -0700 (PDT)
-Received: from ?IPV6:2003:c5:8703:581b:e3c:8ca8:1005:8d8e? (p200300c58703581b0e3c8ca810058d8e.dip0.t-ipconnect.de. [2003:c5:8703:581b:e3c:8ca8:1005:8d8e])
-        by smtp.gmail.com with ESMTPSA id k13-20020a5d628d000000b0031f34a395e7sm2267975wru.45.2023.10.03.12.52.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Oct 2023 12:52:25 -0700 (PDT)
-Message-ID: <0c4b2871-2240-d2ab-1d69-4180910c8f1d@gmail.com>
-Date:   Tue, 3 Oct 2023 21:52:24 +0200
+        d=1e100.net; s=20230601; t=1696362799; x=1696967599;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=obo4De/sb/6Zy5gCkdvqVVEu8bO8itwyRVmAwvT9wCU=;
+        b=J3CGyjvkU5J0t78ytnShAWsO0Zs7yd4IBHPXkUD6CJseQ6sH3FILA/aUhTmPhGfGEq
+         vvT4UBmhfyespBMkYSV7ViVvLrJsnIuuES3Il8S4wNG2nnnLpP3/UrlV9/sFCVw5NZRP
+         /dWk0OwvfGYuQsacrO5XUYUAOEVLvNCTY42xhrWcL648/MKewT94YdFXnIzsFA+YgCTE
+         Pvn0vlrsVVfPUwGUXQ2rFdkahz85iw8Yt8zTV4JuLuj9wpvku4FRt0kRPtQpBza41sq4
+         OcnKuzqzYR91sXHsiCWTzToiY+aHTnw6xGwEIlyVQz59HdXXpwEdJswuDKI6vb7Pd6Uf
+         O+Aw==
+X-Gm-Message-State: AOJu0Yz3/m2Qqj2VYj3T5kcrlOx8TYWtEqhCjtV4nAYysQ0uhi2B/Q2M
+        vyII5XGGCKcouGWs5ybApzyzlnwWRcV8SfuDZRGF
+X-Google-Smtp-Source: AGHT+IGRWbBVpwyn2Gy/b1A1hMErs5fxoRn8w73xjBh7Wo/Ch2afVLnnkAKf9fTwTwkxjia0xxUsD5psv8fz2pWG8cM=
+X-Received: by 2002:a25:2e4a:0:b0:d90:b45d:6e6a with SMTP id
+ b10-20020a252e4a000000b00d90b45d6e6amr226292ybn.2.1696362799131; Tue, 03 Oct
+ 2023 12:53:19 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH 04/13] block: Restore write hint support
-Content-Language: en-US
-To:     Bart Van Assche <bvanassche@acm.org>, Jens Axboe <axboe@kernel.dk>
-Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+References: <20230928110300.32891-1-jlayton@kernel.org> <20230928110413.33032-1-jlayton@kernel.org>
+ <20230928110413.33032-82-jlayton@kernel.org>
+In-Reply-To: <20230928110413.33032-82-jlayton@kernel.org>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 3 Oct 2023 15:53:08 -0400
+Message-ID: <CAHC9VhTphmv=s2QFwdnwFKd77UKhHNf5oEaLPJJU0Z0EO9HoUA@mail.gmail.com>
+Subject: Re: [PATCH 83/87] security/selinux: convert to new inode {a,m}time accessors
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        "Darrick J. Wong" <djwong@kernel.org>
-References: <20230920191442.3701673-1-bvanassche@acm.org>
- <20230920191442.3701673-5-bvanassche@acm.org>
-From:   Bean Huo <huobean@gmail.com>
-In-Reply-To: <20230920191442.3701673-5-bvanassche@acm.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 20.09.23 9:14 PM, Bart Van Assche wrote:
-> Cc: Christoph Hellwig<hch@lst.de>
-> Signed-off-by: Bart Van Assche<bvanassche@acm.org>
+On Thu, Sep 28, 2023 at 7:23=E2=80=AFAM Jeff Layton <jlayton@kernel.org> wr=
+ote:
+>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  security/selinux/selinuxfs.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Bean Huo <beanhuo@micron.com>
+Acked-by: Paul Moore <paul@paul-moore.com>
 
+> diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
+> index 6fa640263216..6c596ae7fef9 100644
+> --- a/security/selinux/selinuxfs.c
+> +++ b/security/selinux/selinuxfs.c
+> @@ -1198,7 +1198,7 @@ static struct inode *sel_make_inode(struct super_bl=
+ock *sb, umode_t mode)
+>
+>         if (ret) {
+>                 ret->i_mode =3D mode;
+> -               ret->i_atime =3D ret->i_mtime =3D inode_set_ctime_current=
+(ret);
+> +               simple_inode_init_ts(ret);
+>         }
+>         return ret;
+>  }
+> --
+> 2.41.0
 
+--=20
+paul-moore.com
