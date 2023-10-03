@@ -2,161 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BBD347B67C4
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Oct 2023 13:23:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27BA37B6860
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Oct 2023 13:55:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231947AbjJCLXY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Oct 2023 07:23:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55990 "EHLO
+        id S232048AbjJCLzy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Oct 2023 07:55:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42158 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231337AbjJCLXY (ORCPT
+        with ESMTP id S231912AbjJCLzx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Oct 2023 07:23:24 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83A758E
-        for <linux-fsdevel@vger.kernel.org>; Tue,  3 Oct 2023 04:23:21 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 3DDFE2185E;
-        Tue,  3 Oct 2023 11:23:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1696332200; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=5qf6k43VVT3zUH4o91+3575R2UTBLl4WdAo8oz1MIFQ=;
-        b=IZyzqKs28CmiJuOb1nRXmZpS081Ubt0KVzEZ5lww9xDZw3dXpUde0O2Dekv4Vmb1NAAVso
-        Fmhu656BEXLDOWHXFkMPz/KDI0vXmvbZ5OusxkHOnX4/q89xoQkWcuRLYPcrDDuhhXOrn1
-        cuJs+6xoIv0mRnyBtHaS7yPb9egOP64=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1696332200;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=5qf6k43VVT3zUH4o91+3575R2UTBLl4WdAo8oz1MIFQ=;
-        b=6OBIccJ+s7wANkoULf4Ehqdmq2vVvmW9ljdmF9lJZrW9E9V+hTP4rYe3iWHl1f/tznbmhz
-        PiCYEWuAmclAe7DA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 2F63F139F9;
-        Tue,  3 Oct 2023 11:23:20 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id UGF0C6j5G2WcfAAAMHmgww
-        (envelope-from <jack@suse.cz>); Tue, 03 Oct 2023 11:23:20 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id A4BB8A07CB; Tue,  3 Oct 2023 13:23:19 +0200 (CEST)
-Date:   Tue, 3 Oct 2023 13:23:19 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     cem@kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, hughd@google.com,
-        brauner@kernel.org, jack@suse.cz
-Subject: Re: [PATCH 1/3] tmpfs: add project ID support
-Message-ID: <20231003112319.2776q54vy3g33nvy@quack3>
-References: <20230925130028.1244740-1-cem@kernel.org>
- <20230925130028.1244740-2-cem@kernel.org>
+        Tue, 3 Oct 2023 07:55:53 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03473B3;
+        Tue,  3 Oct 2023 04:55:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=mVhl1EFgEQiL6EvwBF97O1BN6Zsdh23wRYztd++wDpo=; b=FAOEdJEJtL1N+WoMeHhe0ZZYvB
+        imQpIOVlWl3blIVpoSIu1D9592Igo9ybneWq74SWuuVT9XXts4nNwuugYkUETTyjOfab9MX87R3/w
+        A8DJYR7Bef91gFCVcpMp1FL4pBPfGwCmd1HpZkouoMfGkUBLl8v6Etu5MExhi88xFp0WTuCvlvgfG
+        1bO8irH+YlwvMVWzb8rJqppU6SoJhTykljTWDo2QPch7sxrUewe+gVXRSLlriejG2A7Kd2Ll6g2fY
+        p184wXM+xxX1xQoBtPBwV0FGzrIyQZtd6YVi+fhOJtlzkK+67i9GwPJmURND3KSQgXR5Nn+/OZVv5
+        PMUCwczQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1qne0A-00ErG1-8h; Tue, 03 Oct 2023 11:55:46 +0000
+Date:   Tue, 3 Oct 2023 12:55:46 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Jan Kara <jack@suse.com>, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        "Fabio M . De Francesco" <fmdefrancesco@gmail.com>
+Subject: Re: [PATCH 01/10] highmem: Add folio_release_kmap()
+Message-ID: <ZRwBQkMtDShY4X8L@casper.infradead.org>
+References: <20230921200746.3303942-1-willy@infradead.org>
+ <20231003104128.75bh4y4wmwsjvfwl@quack3>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230925130028.1244740-2-cem@kernel.org>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20231003104128.75bh4y4wmwsjvfwl@quack3>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 25-09-23 15:00:26, cem@kernel.org wrote:
-> From: Carlos Maiolino <cem@kernel.org>
+On Tue, Oct 03, 2023 at 12:41:28PM +0200, Jan Kara wrote:
+> On Thu 21-09-23 21:07:38, Matthew Wilcox (Oracle) wrote:
+> > This is the folio equivalent of unmap_and_put_page(), which remains as
+> > a wrapper for it.
+> > 
+> > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 > 
-> Lay down infrastructure to support project quotas.
-> 
-> Signed-off-by: Carlos Maiolino <cmaiolino@redhat.com>
-> ---
->  include/linux/shmem_fs.h | 11 ++++++++---
->  mm/shmem.c               |  6 ++++++
->  mm/shmem_quota.c         | 10 ++++++++++
->  3 files changed, 24 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
-> index 6b0c626620f5..e82a64f97917 100644
-> --- a/include/linux/shmem_fs.h
-> +++ b/include/linux/shmem_fs.h
-> @@ -15,7 +15,10 @@
->  
->  #ifdef CONFIG_TMPFS_QUOTA
->  #define SHMEM_MAXQUOTAS 2
-> -#endif
-> +
-> +/* Default project ID */
-> +#define SHMEM_DEF_PROJID 0
-> +#endif /* CONFIG_TMPFS_QUOTA */
->  
->  struct shmem_inode_info {
->  	spinlock_t		lock;
-> @@ -33,14 +36,16 @@ struct shmem_inode_info {
->  	unsigned int		fsflags;	/* flags for FS_IOC_[SG]ETFLAGS */
->  #ifdef CONFIG_TMPFS_QUOTA
->  	struct dquot		*i_dquot[MAXQUOTAS];
-> +	kprojid_t		i_projid;
->  #endif
+> I'm missing a patch 10/10 in this series (and a coverletter would be nice
+> as well)... What's there ;)?
 
-I'm not sure it is great to bind project ID support with CONFIG_TMPFS_QUOTA
-and in particular with sb_has_quota_active(sb, PRJQUOTA). It seems as a bit
-unnatural restriction that could confuse administrators.
-
->  	struct offset_ctx	dir_offsets;	/* stable entry offsets */
->  	struct inode		vfs_inode;
->  };
->  
-> -#define SHMEM_FL_USER_VISIBLE		FS_FL_USER_VISIBLE
-> +#define SHMEM_FL_USER_VISIBLE		(FS_FL_USER_VISIBLE | FS_PROJINHERIT_FL)
->  #define SHMEM_FL_USER_MODIFIABLE \
-> -	(FS_IMMUTABLE_FL | FS_APPEND_FL | FS_NODUMP_FL | FS_NOATIME_FL)
-> +	(FS_IMMUTABLE_FL | FS_APPEND_FL | FS_NODUMP_FL | \
-> +	 FS_NOATIME_FL | FS_PROJINHERIT_FL)
->  #define SHMEM_FL_INHERITED		(FS_NODUMP_FL | FS_NOATIME_FL)
->  
->  struct shmem_quota_limits {
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index 67d93dd37a5e..6ccf60bd1690 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -2539,6 +2539,12 @@ static struct inode *shmem_get_inode(struct mnt_idmap *idmap,
->  	if (IS_ERR(inode))
->  		return inode;
->  
-> +	if (dir && sb_has_quota_active(sb, PRJQUOTA))
-> +		SHMEM_I(inode)->i_projid = SHMEM_I(dir)->i_projid;
-> +	else
-> +		SHMEM_I(inode)->i_projid = make_kprojid(&init_user_ns,
-> +							SHMEM_DEF_PROJID);
-> +
->  	err = dquot_initialize(inode);
->  	if (err)
->  		goto errout;
-> diff --git a/mm/shmem_quota.c b/mm/shmem_quota.c
-> index 062d1c1097ae..71224caa3e85 100644
-> --- a/mm/shmem_quota.c
-> +++ b/mm/shmem_quota.c
-> @@ -325,6 +325,15 @@ static int shmem_dquot_write_info(struct super_block *sb, int type)
->  	return 0;
->  }
->  
-> +static int shmem_get_projid(struct inode *inode, kprojid_t *projid)
-> +{
-> +	if (!sb_has_quota_active(inode->i_sb, PRJQUOTA))
-> +		return -EOPNOTSUPP;
-
-This is not needed as quota code ever calls ->get_projid only when project
-quotas are enabled...
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Email sucks!  https://www.infradead.org/~willy/linux/ext2-dir-20230921/
