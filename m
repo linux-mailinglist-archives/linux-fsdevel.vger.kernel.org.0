@@ -2,55 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 043E17B6AB3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Oct 2023 15:38:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E0CC7B6ADB
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Oct 2023 15:48:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232434AbjJCNiQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Oct 2023 09:38:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55036 "EHLO
+        id S236917AbjJCNs2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Oct 2023 09:48:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232165AbjJCNiP (ORCPT
+        with ESMTP id S232260AbjJCNs2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Oct 2023 09:38:15 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3659FAD;
-        Tue,  3 Oct 2023 06:38:12 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16DE4C433C8;
-        Tue,  3 Oct 2023 13:38:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696340291;
-        bh=NlZyxNkQIumtF9Q9n/tAacWuxbXBIywHbpZoKHCSE+s=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tpp9bM6C4l9kDVx1k4oyStFZWxRMSksjZl716JrVk9Sq+++BVo6NUtXVeR7NfW8V+
-         UPobtpwYLj1jZBx4hfamN3KfK5SW4eYwnBZA+VIeKmptvM6mUnGkvje3wrCePSAG/O
-         Lsf4wXDhLfqbO4GYvHSasBSPU782q28FIsY2mAvHcb8scEw2lrO/mN06gPJL0710Gi
-         Xbc8l4rYEkbjAQoyJKtkIP+GvDiUslFaFI1H1+mVwr+e0SC3X4bEHg8wpxTWV75Q3J
-         BrfzBwF24u+MXKQ/kIB69XZpgnG7fyFJ3udmNhf8ZOnIXyj6WrYhtFlWf1zaBzdRTw
-         qo5W5OLpkHHfg==
-Date:   Tue, 3 Oct 2023 15:38:06 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-unionfs@vger.kernel.org, miklos@szeredi.hu,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        syzbot+a67fc5321ffb4b311c98@syzkaller.appspotmail.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Tyler Hicks <code@tyhicks.com>,
-        Mimi Zohar <zohar@linux.ibm.com>
-Subject: Re: [PATCH] fs: Pass AT_GETATTR_NOSEC flag to getattr interface
- function
-Message-ID: <20231003-bespielbar-tarnt-c61162656db5@brauner>
-References: <20231002125733.1251467-1-stefanb@linux.vnet.ibm.com>
- <CAOQ4uxiuQxTDqn4F62ueGf_9f4KC4p7xqRZdwPvL8rEYrCOWbg@mail.gmail.com>
+        Tue, 3 Oct 2023 09:48:28 -0400
+Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A4CDAF;
+        Tue,  3 Oct 2023 06:48:25 -0700 (PDT)
+Received: by mail-yb1-xb29.google.com with SMTP id 3f1490d57ef6-d865854ef96so971475276.2;
+        Tue, 03 Oct 2023 06:48:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1696340904; x=1696945704; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FTL7t9w9ALMJLgtOyBmqJM7HLzstsLdcFcnthxBVdFE=;
+        b=bAn4CxUMUbprdEghgaA5GBeV1+ZB2iIKMnzCAQk7bVsMwX81jpFS2oz7AiFWk7G2ny
+         GDS5LQZHlep0e5zUNOSfTyjpZpAfMV7G+Zl7SFmTu+dVkuFT3IQMKvfeA0wPZmFBwH5/
+         IpMwxucq5janyNIcCeCp8JZ2sbJBk555X/ie8Mr3uhVYyF1P0veIOzjRQsh0Wc/9cZaF
+         eIuUa7mh9EamzQs1jYWMIzDJ6ngq1dSnbVZg2SCVUzEwyrv3u7x7FgymUyaQnCfVSCwm
+         pruO22s1DZ4gZODfw27LLHuBHmcmyU2FZhm6seXjzm4YFZNm1Yy76I4L6oumaqxWGcRW
+         OdNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696340904; x=1696945704;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FTL7t9w9ALMJLgtOyBmqJM7HLzstsLdcFcnthxBVdFE=;
+        b=SBjwnzv8g8AN2OBP5EeQ/E4pEhG9qRxfpuwA4H+oyMVwr85gGlhVCniDQNhon4FM3o
+         +B5rRXIqsw9GJWji5wRxcFd0+0PIO4t/1wSnq4CEnJ5T+IGpBP1dYRQ6UBVi4Qr7pIcR
+         RgnhOqYgg5mE9GroYgwPTFLEo294MHLhtx65ckWdcrIvPcnH7MaUqHs99/5mk1Rul6kI
+         AY+JSSpcW5TLyIcp6oeDBoaKrj+fiKRcMZgPgiawYs5EOAVpVN9NUOeMtWHv/YIZgTUT
+         1sZX2040+OAIF4Y+hxZP8U/Uz4cFjJh3bfv1wvNwnoRpcZPx1Dnep6S7OYFjRpwxwI5W
+         jxnQ==
+X-Gm-Message-State: AOJu0YysWh+ZnGqNJbUeNvpgBUw1AgzGGS1Ijn4zgCu290GzNtWkiJet
+        jLl6I9WsOgdQb5ea6kddR+oicO1L/dKbEJroA0U=
+X-Google-Smtp-Source: AGHT+IH4ma5RxQp4wl/uNIM1+Hq/uOfBTpO86gPXHq6xU0DsT1rEl0VRIRrNH1HflEn5hqN/SG5ufMing2WZBeL9Eqc=
+X-Received: by 2002:a5b:a:0:b0:d85:af36:4b6f with SMTP id a10-20020a5b000a000000b00d85af364b6fmr12897775ybp.21.1696340904293;
+ Tue, 03 Oct 2023 06:48:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxiuQxTDqn4F62ueGf_9f4KC4p7xqRZdwPvL8rEYrCOWbg@mail.gmail.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+References: <20230930050033.41174-1-wedsonaf@gmail.com> <20230930050033.41174-6-wedsonaf@gmail.com>
+ <20231002112858.GK13697@twin.jikos.cz> <20231002113752.GL13697@twin.jikos.cz>
+In-Reply-To: <20231002113752.GL13697@twin.jikos.cz>
+From:   Wedson Almeida Filho <wedsonaf@gmail.com>
+Date:   Tue, 3 Oct 2023 10:48:14 -0300
+Message-ID: <CANeycqpE1R=6f_9GZKTx+D4LBdkc496wcXrHOTHAKcdkssMi9Q@mail.gmail.com>
+Subject: Re: [PATCH 05/29] btrfs: move btrfs_xattr_handlers to .rodata
+To:     dsterba@suse.cz
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Wedson Almeida Filho <walmeida@microsoft.com>,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -58,44 +73,45 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 02, 2023 at 04:22:25PM +0300, Amir Goldstein wrote:
-> On Mon, Oct 2, 2023 at 3:57 PM Stefan Berger <stefanb@linux.vnet.ibm.com> wrote:
+On Mon, 2 Oct 2023 at 08:44, David Sterba <dsterba@suse.cz> wrote:
+>
+> On Mon, Oct 02, 2023 at 01:28:58PM +0200, David Sterba wrote:
+> > On Sat, Sep 30, 2023 at 02:00:09AM -0300, Wedson Almeida Filho wrote:
+> > > From: Wedson Almeida Filho <walmeida@microsoft.com>
+> > >
+> > > This makes it harder for accidental or malicious changes to
+> > > btrfs_xattr_handlers at runtime.
+> > >
+> > > Cc: Chris Mason <clm@fb.com>
+> > > Cc: Josef Bacik <josef@toxicpanda.com>
+> > > Cc: David Sterba <dsterba@suse.com>
+> > > Cc: linux-btrfs@vger.kernel.org
+> > > Signed-off-by: Wedson Almeida Filho <walmeida@microsoft.com>
 > >
-> > From: Stefan Berger <stefanb@linux.ibm.com>
-> >
-> > When vfs_getattr_nosec() calls a filesystem's getattr interface function
-> > then the 'nosec' should propagate into this function so that
-> > vfs_getattr_nosec() can again be called from the filesystem's gettattr
-> > rather than vfs_getattr(). The latter would add unnecessary security
-> > checks that the initial vfs_getattr_nosec() call wanted to avoid.
-> > Therefore, introduce the getattr flag GETATTR_NOSEC and allow to pass
-> > with the new getattr_flags parameter to the getattr interface function.
-> > In overlayfs and ecryptfs use this flag to determine which one of the
-> > two functions to call.
-> >
-> > In a recent code change introduced to IMA vfs_getattr_nosec() ended up
-> > calling vfs_getattr() in overlayfs, which in turn called
-> > security_inode_getattr() on an exiting process that did not have
-> > current->fs set anymore, which then caused a kernel NULL pointer
-> > dereference. With this change the call to security_inode_getattr() can
-> > be avoided, thus avoiding the NULL pointer dereference.
-> >
-> > Reported-by: syzbot+a67fc5321ffb4b311c98@syzkaller.appspotmail.com
-> > Fixes: db1d1e8b9867 ("IMA: use vfs_getattr_nosec to get the i_version")
-> > Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> > Cc: linux-fsdevel@vger.kernel.org
-> > Cc: Miklos Szeredi <miklos@szeredi.hu>
-> > Cc: Amir Goldstein <amir73il@gmail.com>
-> > Cc: Tyler Hicks <code@tyhicks.com>
-> > Cc: Mimi Zohar <zohar@linux.ibm.com>
-> > Suggested-by: Christian Brauner <brauner@kernel.org>
-> > Co-developed-by: Amir Goldstein <amir73il@gmail.com>
-> > Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> > ---
-> 
-> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> 
-> Now let's see what vfs maintainers think about this...
+> > With slightly updated changelog added to misc-next, thanks.
+>
+> Removed again. I did not notice first that this is part of a larger
+> series, please also CC the [PATCH 0/N] patch.
 
-Seems fine overall. We kind of need to propagate the knowledge through
-the layers. But I don't like that we need something like it...
+Sorry for the confusion, I will CC you there too.
+
+> There's a warning:
+>
+> fs/btrfs/super.c: In function =E2=80=98btrfs_fill_super=E2=80=99:
+> fs/btrfs/super.c:1107:21: warning: assignment discards =E2=80=98const=E2=
+=80=99 qualifier from pointer target type [-Wdiscarded-qualifiers]
+>  1107 |         sb->s_xattr =3D btrfs_xattr_handlers;
+>       |                     ^
+>
+> but the patch changing the type is present in the series.
+>
+> Please update the changelog of btrfs patch with:
+>
+>     Add const specifier also to the pointed array members of
+>     btrfs_xattr_handlers.  This moves the whole structure to the .rodata
+>     section which makes it harder for accidental or malicious changes to
+>     btrfs_xattr_handlers at runtime.
+
+Will do. Thanks!
+
+> or use it for others patches too.
