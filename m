@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FEFF7B6A3A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Oct 2023 15:19:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AF3B7B6A49
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Oct 2023 15:20:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236497AbjJCNTE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Oct 2023 09:19:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34994 "EHLO
+        id S235862AbjJCNUw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Oct 2023 09:20:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60216 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235929AbjJCNTC (ORCPT
+        with ESMTP id S237434AbjJCNUs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Oct 2023 09:19:02 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F804E3;
-        Tue,  3 Oct 2023 06:18:55 -0700 (PDT)
+        Tue, 3 Oct 2023 09:20:48 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C626FCE5;
+        Tue,  3 Oct 2023 06:20:23 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 29A0C2189B;
-        Tue,  3 Oct 2023 13:18:54 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 72B761F45B;
+        Tue,  3 Oct 2023 13:20:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1696339134; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1696339222; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=LqjOkdf8wEGORSfxlGDuLFjsaB2EonO8sU3/o8407WE=;
-        b=0L1N84/g4JW4Pz4EHuBiDWpCHedzO4xCWFk93E412HzHjVHMG2caaqbBmKjd54UvzEKNW3
-        XzqOvxVn5fmUsDC+LZAx5acFvUUAydhayTqik7QMcHtRVwZOMHjUEka2gvCaYJEOG4zliA
-        CCcjwTM5k6bjfVExditBMu97suSKm1E=
+        bh=xl5gigzuD0h4X4xgTTFSoyDOAJ3zte6LU/Pt2TNQDWg=;
+        b=LX7yAnk1oFogEakJ4UHCjeq0tRQkgtClQkAz2L218mA4W5MaFHK5++w73biAtN7mLUZLQh
+        H1G5Y8oJuNw+5BiS5tbhhHMLlntTaxDJFDcF0bjuDxeQQ6+XufPpBK6qi9Ei/uKKPGoJKa
+        c4hhc3YhvPPAQ1B8qlIoIoVldkZcA7Q=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1696339134;
+        s=susede2_ed25519; t=1696339222;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=LqjOkdf8wEGORSfxlGDuLFjsaB2EonO8sU3/o8407WE=;
-        b=SBF+rWXcUn9e/501dNskOYmABTAkWJTPRFeceh/Zvkr8VgH4m0t+8/qME8tZhGLLf9Ho6y
-        mRFWnMNlgk0DB+BQ==
+        bh=xl5gigzuD0h4X4xgTTFSoyDOAJ3zte6LU/Pt2TNQDWg=;
+        b=AMJn+HCPklbH3ujzNdvTB6dcLMkRthFI+c3eRtyAOoRXDNzqOrANM7D0QYVcUCtDmAGzAk
+        sBOIgKQk37IlsoDQ==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 1BF73132D4;
-        Tue,  3 Oct 2023 13:18:54 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 627A5132D4;
+        Tue,  3 Oct 2023 13:20:22 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id CIjIBr4UHGXpMwAAMHmgww
-        (envelope-from <jack@suse.cz>); Tue, 03 Oct 2023 13:18:54 +0000
+        id 65EJGBYVHGXMNAAAMHmgww
+        (envelope-from <jack@suse.cz>); Tue, 03 Oct 2023 13:20:22 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id A9412A07CC; Tue,  3 Oct 2023 15:18:53 +0200 (CEST)
-Date:   Tue, 3 Oct 2023 15:18:53 +0200
+        id E8C1CA07CC; Tue,  3 Oct 2023 15:20:21 +0200 (CEST)
+Date:   Tue, 3 Oct 2023 15:20:21 +0200
 From:   Jan Kara <jack@suse.cz>
 To:     Hugh Dickins <hughd@google.com>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
@@ -61,209 +61,255 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Axel Rasmussen <axelrasmussen@google.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org
-Subject: Re: [PATCH 3/8] shmem: factor shmem_falloc_wait() out of
- shmem_fault()
-Message-ID: <20231003131853.ramdlfw5s6ne4iqx@quack3>
+Subject: Re: [PATCH 4/8] shmem: trivial tidyups, removing extra blank lines,
+ etc
+Message-ID: <20231003132021.3l3xe2wjtatwoell@quack3>
 References: <c7441dc6-f3bb-dd60-c670-9f5cbd9f266@google.com>
- <6fe379a4-6176-9225-9263-fe60d2633c0@google.com>
+ <b3983d28-5d3f-8649-36af-b819285d7a9e@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6fe379a4-6176-9225-9263-fe60d2633c0@google.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+In-Reply-To: <b3983d28-5d3f-8649-36af-b819285d7a9e@google.com>
+X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        SPF_SOFTFAIL autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 29-09-23 20:27:53, Hugh Dickins wrote:
-> That Trinity livelock shmem_falloc avoidance block is unlikely, and a
-> distraction from the proper business of shmem_fault(): separate it out.
-> (This used to help compilers save stack on the fault path too, but both
-> gcc and clang nowadays seem to make better choices anyway.)
+On Fri 29-09-23 20:28:50, Hugh Dickins wrote:
+> Mostly removing a few superfluous blank lines, joining short arglines,
+> imposing some 80-column observance, correcting a couple of comments.
+> None of it more interesting than deleting a repeated INIT_LIST_HEAD().
 > 
 > Signed-off-by: Hugh Dickins <hughd@google.com>
 
-Looks good. Feel free to add:
+Autumn cleaning ;). Feel free to add:
 
 Reviewed-by: Jan Kara <jack@suse.cz>
-
-Looking at the code I'm just wondering whether the livelock with
-shmem_undo_range() couldn't be more easy to avoid by making
-shmem_undo_range() always advance the index by 1 after evicting a page and
-thus guaranteeing a forward progress... Because the forward progress within
-find_get_entries() is guaranteed these days, it should be enough.
 
 								Honza
 
 > ---
->  mm/shmem.c | 126 +++++++++++++++++++++++++++++------------------------
->  1 file changed, 69 insertions(+), 57 deletions(-)
+>  mm/shmem.c | 56 ++++++++++++++++++++----------------------------------
+>  1 file changed, 21 insertions(+), 35 deletions(-)
 > 
 > diff --git a/mm/shmem.c b/mm/shmem.c
-> index 824eb55671d2..5501a5bc8d8c 100644
+> index 5501a5bc8d8c..caee8ba841f7 100644
 > --- a/mm/shmem.c
 > +++ b/mm/shmem.c
-> @@ -2148,87 +2148,99 @@ int shmem_get_folio(struct inode *inode, pgoff_t index, struct folio **foliop,
->   * entry unconditionally - even if something else had already woken the
->   * target.
+> @@ -756,7 +756,7 @@ static unsigned long shmem_unused_huge_shrink(struct shmem_sb_info *sbinfo,
+>  #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+>  
+>  /*
+> - * Like filemap_add_folio, but error if expected item has gone.
+> + * Somewhat like filemap_add_folio, but error if expected item has gone.
 >   */
-> -static int synchronous_wake_function(wait_queue_entry_t *wait, unsigned mode, int sync, void *key)
-> +static int synchronous_wake_function(wait_queue_entry_t *wait,
-> +			unsigned int mode, int sync, void *key)
->  {
->  	int ret = default_wake_function(wait, mode, sync, key);
->  	list_del_init(&wait->entry);
->  	return ret;
+>  static int shmem_add_to_page_cache(struct folio *folio,
+>  				   struct address_space *mapping,
+> @@ -825,7 +825,7 @@ static int shmem_add_to_page_cache(struct folio *folio,
 >  }
 >  
-> +/*
-> + * Trinity finds that probing a hole which tmpfs is punching can
-> + * prevent the hole-punch from ever completing: which in turn
-> + * locks writers out with its hold on i_rwsem.  So refrain from
-> + * faulting pages into the hole while it's being punched.  Although
-> + * shmem_undo_range() does remove the additions, it may be unable to
-> + * keep up, as each new page needs its own unmap_mapping_range() call,
-> + * and the i_mmap tree grows ever slower to scan if new vmas are added.
-> + *
-> + * It does not matter if we sometimes reach this check just before the
-> + * hole-punch begins, so that one fault then races with the punch:
-> + * we just need to make racing faults a rare case.
-> + *
-> + * The implementation below would be much simpler if we just used a
-> + * standard mutex or completion: but we cannot take i_rwsem in fault,
-> + * and bloating every shmem inode for this unlikely case would be sad.
-> + */
-> +static vm_fault_t shmem_falloc_wait(struct vm_fault *vmf, struct inode *inode)
-> +{
-> +	struct shmem_falloc *shmem_falloc;
-> +	struct file *fpin = NULL;
-> +	vm_fault_t ret = 0;
-> +
-> +	spin_lock(&inode->i_lock);
-> +	shmem_falloc = inode->i_private;
-> +	if (shmem_falloc &&
-> +	    shmem_falloc->waitq &&
-> +	    vmf->pgoff >= shmem_falloc->start &&
-> +	    vmf->pgoff < shmem_falloc->next) {
-> +		wait_queue_head_t *shmem_falloc_waitq;
-> +		DEFINE_WAIT_FUNC(shmem_fault_wait, synchronous_wake_function);
-> +
-> +		ret = VM_FAULT_NOPAGE;
-> +		fpin = maybe_unlock_mmap_for_io(vmf, NULL);
-> +		shmem_falloc_waitq = shmem_falloc->waitq;
-> +		prepare_to_wait(shmem_falloc_waitq, &shmem_fault_wait,
-> +				TASK_UNINTERRUPTIBLE);
-> +		spin_unlock(&inode->i_lock);
-> +		schedule();
-> +
-> +		/*
-> +		 * shmem_falloc_waitq points into the shmem_fallocate()
-> +		 * stack of the hole-punching task: shmem_falloc_waitq
-> +		 * is usually invalid by the time we reach here, but
-> +		 * finish_wait() does not dereference it in that case;
-> +		 * though i_lock needed lest racing with wake_up_all().
-> +		 */
-> +		spin_lock(&inode->i_lock);
-> +		finish_wait(shmem_falloc_waitq, &shmem_fault_wait);
-> +	}
-> +	spin_unlock(&inode->i_lock);
-> +	if (fpin) {
-> +		fput(fpin);
-> +		ret = VM_FAULT_RETRY;
-> +	}
-> +	return ret;
-> +}
-> +
->  static vm_fault_t shmem_fault(struct vm_fault *vmf)
+>  /*
+> - * Like delete_from_page_cache, but substitutes swap for @folio.
+> + * Somewhat like filemap_remove_folio, but substitutes swap for @folio.
+>   */
+>  static void shmem_delete_from_page_cache(struct folio *folio, void *radswap)
 >  {
-> -	struct vm_area_struct *vma = vmf->vma;
-> -	struct inode *inode = file_inode(vma->vm_file);
-> +	struct inode *inode = file_inode(vmf->vma->vm_file);
->  	gfp_t gfp = mapping_gfp_mask(inode->i_mapping);
->  	struct folio *folio = NULL;
-> +	vm_fault_t ret = 0;
->  	int err;
-> -	vm_fault_t ret = VM_FAULT_LOCKED;
+> @@ -887,7 +887,6 @@ unsigned long shmem_partial_swap_usage(struct address_space *mapping,
+>  			cond_resched_rcu();
+>  		}
+>  	}
+> -
+>  	rcu_read_unlock();
 >  
->  	/*
->  	 * Trinity finds that probing a hole which tmpfs is punching can
-> -	 * prevent the hole-punch from ever completing: which in turn
-> -	 * locks writers out with its hold on i_rwsem.  So refrain from
-> -	 * faulting pages into the hole while it's being punched.  Although
-> -	 * shmem_undo_range() does remove the additions, it may be unable to
-> -	 * keep up, as each new page needs its own unmap_mapping_range() call,
-> -	 * and the i_mmap tree grows ever slower to scan if new vmas are added.
-> -	 *
-> -	 * It does not matter if we sometimes reach this check just before the
-> -	 * hole-punch begins, so that one fault then races with the punch:
-> -	 * we just need to make racing faults a rare case.
-> -	 *
-> -	 * The implementation below would be much simpler if we just used a
-> -	 * standard mutex or completion: but we cannot take i_rwsem in fault,
-> -	 * and bloating every shmem inode for this unlikely case would be sad.
-> +	 * prevent the hole-punch from ever completing: noted in i_private.
->  	 */
->  	if (unlikely(inode->i_private)) {
-> -		struct shmem_falloc *shmem_falloc;
+>  	return swapped << PAGE_SHIFT;
+> @@ -1213,7 +1212,6 @@ static int shmem_setattr(struct mnt_idmap *idmap,
+>  	if (i_uid_needs_update(idmap, attr, inode) ||
+>  	    i_gid_needs_update(idmap, attr, inode)) {
+>  		error = dquot_transfer(idmap, inode, attr);
 > -
-> -		spin_lock(&inode->i_lock);
-> -		shmem_falloc = inode->i_private;
-> -		if (shmem_falloc &&
-> -		    shmem_falloc->waitq &&
-> -		    vmf->pgoff >= shmem_falloc->start &&
-> -		    vmf->pgoff < shmem_falloc->next) {
-> -			struct file *fpin;
-> -			wait_queue_head_t *shmem_falloc_waitq;
-> -			DEFINE_WAIT_FUNC(shmem_fault_wait, synchronous_wake_function);
+>  		if (error)
+>  			return error;
+>  	}
+> @@ -2456,7 +2454,6 @@ static struct inode *__shmem_get_inode(struct mnt_idmap *idmap,
+>  	if (err)
+>  		return ERR_PTR(err);
+>  
 > -
-> -			ret = VM_FAULT_NOPAGE;
-> -			fpin = maybe_unlock_mmap_for_io(vmf, NULL);
-> -			if (fpin)
-> -				ret = VM_FAULT_RETRY;
-> -
-> -			shmem_falloc_waitq = shmem_falloc->waitq;
-> -			prepare_to_wait(shmem_falloc_waitq, &shmem_fault_wait,
-> -					TASK_UNINTERRUPTIBLE);
-> -			spin_unlock(&inode->i_lock);
-> -			schedule();
-> -
-> -			/*
-> -			 * shmem_falloc_waitq points into the shmem_fallocate()
-> -			 * stack of the hole-punching task: shmem_falloc_waitq
-> -			 * is usually invalid by the time we reach here, but
-> -			 * finish_wait() does not dereference it in that case;
-> -			 * though i_lock needed lest racing with wake_up_all().
-> -			 */
-> -			spin_lock(&inode->i_lock);
-> -			finish_wait(shmem_falloc_waitq, &shmem_fault_wait);
-> -			spin_unlock(&inode->i_lock);
-> -
-> -			if (fpin)
-> -				fput(fpin);
-> +		ret = shmem_falloc_wait(vmf, inode);
-> +		if (ret)
->  			return ret;
-> -		}
-> -		spin_unlock(&inode->i_lock);
+>  	inode = new_inode(sb);
+>  	if (!inode) {
+>  		shmem_free_inode(sb, 0);
+> @@ -2481,11 +2478,10 @@ static struct inode *__shmem_get_inode(struct mnt_idmap *idmap,
+>  		shmem_set_inode_flags(inode, info->fsflags);
+>  	INIT_LIST_HEAD(&info->shrinklist);
+>  	INIT_LIST_HEAD(&info->swaplist);
+> -	INIT_LIST_HEAD(&info->swaplist);
+> -	if (sbinfo->noswap)
+> -		mapping_set_unevictable(inode->i_mapping);
+>  	simple_xattrs_init(&info->xattrs);
+>  	cache_no_acl(inode);
+> +	if (sbinfo->noswap)
+> +		mapping_set_unevictable(inode->i_mapping);
+>  	mapping_set_large_folios(inode->i_mapping);
+>  
+>  	switch (mode & S_IFMT) {
+> @@ -2697,7 +2693,6 @@ shmem_write_begin(struct file *file, struct address_space *mapping,
 >  	}
 >  
-> +	WARN_ON_ONCE(vmf->page != NULL);
->  	err = shmem_get_folio_gfp(inode, vmf->pgoff, &folio, SGP_CACHE,
->  				  gfp, vmf, &ret);
->  	if (err)
->  		return vmf_error(err);
-> -	if (folio)
-> +	if (folio) {
->  		vmf->page = folio_file_page(folio, vmf->pgoff);
-> +		ret |= VM_FAULT_LOCKED;
-> +	}
+>  	ret = shmem_get_folio(inode, index, &folio, SGP_WRITE);
+> -
+>  	if (ret)
+>  		return ret;
+>  
+> @@ -3229,8 +3224,7 @@ shmem_mknod(struct mnt_idmap *idmap, struct inode *dir,
+>  	error = simple_acl_create(dir, inode);
+>  	if (error)
+>  		goto out_iput;
+> -	error = security_inode_init_security(inode, dir,
+> -					     &dentry->d_name,
+> +	error = security_inode_init_security(inode, dir, &dentry->d_name,
+>  					     shmem_initxattrs, NULL);
+>  	if (error && error != -EOPNOTSUPP)
+>  		goto out_iput;
+> @@ -3259,14 +3253,11 @@ shmem_tmpfile(struct mnt_idmap *idmap, struct inode *dir,
+>  	int error;
+>  
+>  	inode = shmem_get_inode(idmap, dir->i_sb, dir, mode, 0, VM_NORESERVE);
+> -
+>  	if (IS_ERR(inode)) {
+>  		error = PTR_ERR(inode);
+>  		goto err_out;
+>  	}
+> -
+> -	error = security_inode_init_security(inode, dir,
+> -					     NULL,
+> +	error = security_inode_init_security(inode, dir, NULL,
+>  					     shmem_initxattrs, NULL);
+>  	if (error && error != -EOPNOTSUPP)
+>  		goto out_iput;
+> @@ -3303,7 +3294,8 @@ static int shmem_create(struct mnt_idmap *idmap, struct inode *dir,
+>  /*
+>   * Link a file..
+>   */
+> -static int shmem_link(struct dentry *old_dentry, struct inode *dir, struct dentry *dentry)
+> +static int shmem_link(struct dentry *old_dentry, struct inode *dir,
+> +		      struct dentry *dentry)
+>  {
+>  	struct inode *inode = d_inode(old_dentry);
+>  	int ret = 0;
+> @@ -3334,7 +3326,7 @@ static int shmem_link(struct dentry *old_dentry, struct inode *dir, struct dentr
+>  	inode_inc_iversion(dir);
+>  	inc_nlink(inode);
+>  	ihold(inode);	/* New dentry reference */
+> -	dget(dentry);		/* Extra pinning count for the created dentry */
+> +	dget(dentry);	/* Extra pinning count for the created dentry */
+>  	d_instantiate(dentry, inode);
+>  out:
 >  	return ret;
+> @@ -3354,7 +3346,7 @@ static int shmem_unlink(struct inode *dir, struct dentry *dentry)
+>  					     inode_set_ctime_current(inode));
+>  	inode_inc_iversion(dir);
+>  	drop_nlink(inode);
+> -	dput(dentry);	/* Undo the count from "create" - this does all the work */
+> +	dput(dentry);	/* Undo the count from "create" - does all the work */
+>  	return 0;
 >  }
 >  
+> @@ -3464,7 +3456,6 @@ static int shmem_symlink(struct mnt_idmap *idmap, struct inode *dir,
+>  
+>  	inode = shmem_get_inode(idmap, dir->i_sb, dir, S_IFLNK | 0777, 0,
+>  				VM_NORESERVE);
+> -
+>  	if (IS_ERR(inode))
+>  		return PTR_ERR(inode);
+>  
+> @@ -3518,8 +3509,7 @@ static void shmem_put_link(void *arg)
+>  	folio_put(arg);
+>  }
+>  
+> -static const char *shmem_get_link(struct dentry *dentry,
+> -				  struct inode *inode,
+> +static const char *shmem_get_link(struct dentry *dentry, struct inode *inode,
+>  				  struct delayed_call *done)
+>  {
+>  	struct folio *folio = NULL;
+> @@ -3593,8 +3583,7 @@ static int shmem_fileattr_set(struct mnt_idmap *idmap,
+>   * Callback for security_inode_init_security() for acquiring xattrs.
+>   */
+>  static int shmem_initxattrs(struct inode *inode,
+> -			    const struct xattr *xattr_array,
+> -			    void *fs_info)
+> +			    const struct xattr *xattr_array, void *fs_info)
+>  {
+>  	struct shmem_inode_info *info = SHMEM_I(inode);
+>  	struct shmem_sb_info *sbinfo = SHMEM_SB(inode->i_sb);
+> @@ -3778,7 +3767,6 @@ static struct dentry *shmem_find_alias(struct inode *inode)
+>  	return alias ?: d_find_any_alias(inode);
+>  }
+>  
+> -
+>  static struct dentry *shmem_fh_to_dentry(struct super_block *sb,
+>  		struct fid *fid, int fh_len, int fh_type)
+>  {
+> @@ -4362,8 +4350,8 @@ static int shmem_fill_super(struct super_block *sb, struct fs_context *fc)
+>  	}
+>  #endif /* CONFIG_TMPFS_QUOTA */
+>  
+> -	inode = shmem_get_inode(&nop_mnt_idmap, sb, NULL, S_IFDIR | sbinfo->mode, 0,
+> -				VM_NORESERVE);
+> +	inode = shmem_get_inode(&nop_mnt_idmap, sb, NULL,
+> +				S_IFDIR | sbinfo->mode, 0, VM_NORESERVE);
+>  	if (IS_ERR(inode)) {
+>  		error = PTR_ERR(inode);
+>  		goto failed;
+> @@ -4666,11 +4654,9 @@ static ssize_t shmem_enabled_show(struct kobject *kobj,
+>  
+>  	for (i = 0; i < ARRAY_SIZE(values); i++) {
+>  		len += sysfs_emit_at(buf, len,
+> -				     shmem_huge == values[i] ? "%s[%s]" : "%s%s",
+> -				     i ? " " : "",
+> -				     shmem_format_huge(values[i]));
+> +				shmem_huge == values[i] ? "%s[%s]" : "%s%s",
+> +				i ? " " : "", shmem_format_huge(values[i]));
+>  	}
+> -
+>  	len += sysfs_emit_at(buf, len, "\n");
+>  
+>  	return len;
+> @@ -4767,8 +4753,9 @@ EXPORT_SYMBOL_GPL(shmem_truncate_range);
+>  #define shmem_acct_size(flags, size)		0
+>  #define shmem_unacct_size(flags, size)		do {} while (0)
+>  
+> -static inline struct inode *shmem_get_inode(struct mnt_idmap *idmap, struct super_block *sb, struct inode *dir,
+> -					    umode_t mode, dev_t dev, unsigned long flags)
+> +static inline struct inode *shmem_get_inode(struct mnt_idmap *idmap,
+> +				struct super_block *sb, struct inode *dir,
+> +				umode_t mode, dev_t dev, unsigned long flags)
+>  {
+>  	struct inode *inode = ramfs_get_inode(sb, dir, mode, dev);
+>  	return inode ? inode : ERR_PTR(-ENOSPC);
+> @@ -4778,8 +4765,8 @@ static inline struct inode *shmem_get_inode(struct mnt_idmap *idmap, struct supe
+>  
+>  /* common code */
+>  
+> -static struct file *__shmem_file_setup(struct vfsmount *mnt, const char *name, loff_t size,
+> -				       unsigned long flags, unsigned int i_flags)
+> +static struct file *__shmem_file_setup(struct vfsmount *mnt, const char *name,
+> +			loff_t size, unsigned long flags, unsigned int i_flags)
+>  {
+>  	struct inode *inode;
+>  	struct file *res;
+> @@ -4798,7 +4785,6 @@ static struct file *__shmem_file_setup(struct vfsmount *mnt, const char *name, l
+>  
+>  	inode = shmem_get_inode(&nop_mnt_idmap, mnt->mnt_sb, NULL,
+>  				S_IFREG | S_IRWXUGO, 0, flags);
+> -
+>  	if (IS_ERR(inode)) {
+>  		shmem_unacct_size(flags, size);
+>  		return ERR_CAST(inode);
 > -- 
 > 2.35.3
 > 
