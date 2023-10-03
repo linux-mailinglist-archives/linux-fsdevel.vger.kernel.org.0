@@ -2,68 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D8BF37B5EDC
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Oct 2023 03:57:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6278E7B5F2F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Oct 2023 04:57:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229872AbjJCB5P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Oct 2023 21:57:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45886 "EHLO
+        id S230096AbjJCC5I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Oct 2023 22:57:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48200 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229848AbjJCB5O (ORCPT
+        with ESMTP id S229464AbjJCC5H (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Oct 2023 21:57:14 -0400
-Received: from mail-oa1-x33.google.com (mail-oa1-x33.google.com [IPv6:2001:4860:4864:20::33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE023C6
-        for <linux-fsdevel@vger.kernel.org>; Mon,  2 Oct 2023 18:57:10 -0700 (PDT)
-Received: by mail-oa1-x33.google.com with SMTP id 586e51a60fabf-1dd22266f51so82063fac.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Oct 2023 18:57:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696298230; x=1696903030; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=O00OPeBX0OAQavpWTikv1KaJprJXcYLW3QJEgWJmVgY=;
-        b=Yeon7PPa3YqWhJYff3tPoqbmqVq0MDrI1PQxipC5xcL/g3XTjVsPThhBSDPS5O6Djo
-         6EVoB6fdLNbZaUdUV2VM3L0tMwIrWwCpnj6K2VwPxFOCg9lVzPDngCCyWwZTKaib+LWK
-         6P3anLtQc+MVRbQbt5cSKWMHvVXoBslpbs+q0BA5XK55M89sVBySSp6waa91OjZQjDzJ
-         F87sBn2w3/SVJjuF/l4D5WGpKwtHIjQbYD4BysR37hKVw1v8wYZc/EOTFJTz9PPfimUn
-         oObo8tghYljEPlBSS4TLJe2ggNHDWVeyT3oPDjs5anoGHolY2Ml1866Wpo/1YC6Ojs7Q
-         UJ9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696298230; x=1696903030;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=O00OPeBX0OAQavpWTikv1KaJprJXcYLW3QJEgWJmVgY=;
-        b=wkLB4eUZwuC6CDHNTpB2DVXDVDC2/VBU1Vm9sMuuZYihp1TgdwN44qd/jTcCklifbk
-         d01Ndvhtca34wRd/l6z5s5nQW6vhnOX+9q97eOurqpJaVZusktVSvh4fbAH0AddT/K++
-         xvdl4fJoTvXHxC7i42a1ArzLcjdA0ywYekyX9XxKNg31NJcEnm07IRX6Hj0hhOdXCP+E
-         sNKtDLgvjEiImRo1h+GZ+KW08Mi19bZAnHi/KGdwanmab0nunDklT6dWqb3JuffXKkWr
-         1F1jxWdJwe1wqoY9kLTCpq7QXf0BoIl0l1Lv9VLoYUvkvDwKdFXxKJmMFOTzJJG7Hbco
-         Zc9Q==
-X-Gm-Message-State: AOJu0YxSSkoQXb0Eg6NvZcbd3VObuRtFuZ+CpTwISn8z0qfTHpBwBZ9N
-        8K/fswAzP+n16vMugGB/gRa9wDFaiXcAxQ==
-X-Google-Smtp-Source: AGHT+IGMJhd67lE+Kn9AwqiETrIu/sIPojytQz9RjEUQ8PA8jl9s9zZ3r6SHYmG4F1v3iGBhsR75mg==
-X-Received: by 2002:a05:6870:9707:b0:1d5:f814:56a3 with SMTP id n7-20020a056870970700b001d5f81456a3mr15700234oaq.2.1696298229848;
-        Mon, 02 Oct 2023 18:57:09 -0700 (PDT)
-Received: from node202.. ([209.16.91.231])
-        by smtp.gmail.com with ESMTPSA id f22-20020a9d7b56000000b006b9443ce478sm22803oto.27.2023.10.02.18.57.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Oct 2023 18:57:09 -0700 (PDT)
-From:   Reuben Hawkins <reubenhwk@gmail.com>
-To:     amir73il@gmail.com
-Cc:     willy@infradead.org, chrubis@suse.cz, mszeredi@redhat.com,
-        brauner@kernel.org, lkp@intel.com, linux-fsdevel@vger.kernel.org,
-        oliver.sang@intel.com, viro@zeniv.linux.org.uk,
-        oe-lkp@lists.linux.dev, ltp@lists.linux.it,
-        Reuben Hawkins <reubenhwk@gmail.com>
-Subject: [PATCH v4] vfs: fix readahead(2) on block devices
-Date:   Mon,  2 Oct 2023 20:57:04 -0500
-Message-Id: <20231003015704.2415-1-reubenhwk@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Mon, 2 Oct 2023 22:57:07 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 835AAA1;
+        Mon,  2 Oct 2023 19:57:04 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A19CC433C7;
+        Tue,  3 Oct 2023 02:57:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1696301824;
+        bh=VaFWFM5fxDWGkb8H1vk6Bq8dR22TjRNx4fMlMFNeYbA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Fcq3zcCoO8Cw3fSu03I/MN7v4SZVVerKmQLt2XdPAdd7oRhQuf/3qGM718GYYKXHr
+         XYLU3kV10AQEcShXicFobffOpIo33qy2nJhifxPjZROX1vPVEEt0c8Pz3JkK/8jbIT
+         6LVV4LblD5xEPcQDCvNh7+FXEWbywSAq5R7Arlb9QueR6vapcefnZ2kHNvdW/OyJP/
+         9eY+eZ0+4caJ2Nx2QB6+hdzRq61ZL115VvKrna6IYqrqH1D680fWp8IxG+bAtUNo7O
+         ZG4OuNPJzfpH1L6gTDg2BwvvXSB5MDg3XIwWbOQa7fnSrhQeGW/0/YK4SrYySgvCkB
+         zS58IZ7Vc1rzw==
+Date:   Mon, 2 Oct 2023 19:57:03 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     John Garry <john.g.garry@oracle.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Eric Biggers <ebiggers@kernel.org>, axboe@kernel.dk,
+        kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
+        jejb@linux.ibm.com, martin.petersen@oracle.com,
+        viro@zeniv.linux.org.uk, brauner@kernel.org,
+        chandan.babu@oracle.com, dchinner@redhat.com,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
+        linux-api@vger.kernel.org,
+        Prasad Singamsetty <prasad.singamsetty@oracle.com>
+Subject: Re: [PATCH 03/21] fs/bdev: Add atomic write support info to statx
+Message-ID: <20231003025703.GD21298@frogsfrogsfrogs>
+References: <20230929102726.2985188-1-john.g.garry@oracle.com>
+ <20230929102726.2985188-4-john.g.garry@oracle.com>
+ <20230929224922.GB11839@google.com>
+ <b9c266d2-d5d6-4294-9a95-764641e295b4@acm.org>
+ <d3a8b9b0-b24c-a002-e77d-56380ee785a5@oracle.com>
+ <ZRtztUQvaWV8FgXW@dread.disaster.area>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+In-Reply-To: <ZRtztUQvaWV8FgXW@dread.disaster.area>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
         RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -72,33 +65,52 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Readahead was factored to call generic_fadvise.  That refactor added an
-S_ISREG restriction which broke readahead on block devices.
+On Tue, Oct 03, 2023 at 12:51:49PM +1100, Dave Chinner wrote:
+> On Mon, Oct 02, 2023 at 10:51:36AM +0100, John Garry wrote:
+> > On 01/10/2023 14:23, Bart Van Assche wrote:
+> > > On 9/29/23 15:49, Eric Biggers wrote:
+> > > > On Fri, Sep 29, 2023 at 10:27:08AM +0000, John Garry wrote:
+> > > > > diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
+> > > > > index 7cab2c65d3d7..c99d7cac2aa6 100644
+> > > > > --- a/include/uapi/linux/stat.h
+> > > > > +++ b/include/uapi/linux/stat.h
+> > > > > @@ -127,7 +127,10 @@ struct statx {
+> > > > >       __u32    stx_dio_mem_align;    /* Memory buffer alignment
+> > > > > for direct I/O */
+> > > > >       __u32    stx_dio_offset_align;    /* File offset alignment
+> > > > > for direct I/O */
+> > > > >       /* 0xa0 */
+> > > > > -    __u64    __spare3[12];    /* Spare space for future expansion */
+> > > > > +    __u32    stx_atomic_write_unit_max;
+> > > > > +    __u32    stx_atomic_write_unit_min;
+> > > > 
+> > > > Maybe min first and then max?  That seems a bit more natural, and a
+> > > > lot of the
+> > > > code you've written handle them in that order.
+> > 
+> > ok, I think it's fine to reorder
+> > 
+> > > > 
+> > > > > +#define STATX_ATTR_WRITE_ATOMIC        0x00400000 /* File
+> > > > > supports atomic write operations */
+> > > > 
+> > > > How would this differ from stx_atomic_write_unit_min != 0?
+> > 
+> > Yeah, I suppose that we can just not set this for the case of
+> > stx_atomic_write_unit_min == 0.
+> 
+> Please use the STATX_ATTR_WRITE_ATOMIC flag to indicate that the
+> filesystem, file and underlying device support atomic writes when
+> the values are non-zero. The whole point of the attribute mask is
+> that the caller can check the mask for supported functionality
+> without having to read every field in the statx structure to
+> determine if the functionality it wants is present.
 
-In addition to S_ISREG, this change checks S_ISBLK to fix block device
-readahead.  There is no change in behavior with any file type besides block
-devices in this change.
+^^ Seconding what Dave said.
 
-Fixes: 3d8f7615319b ("vfs: implement readahead(2) using POSIX_FADV_WILLNEED")
-Signed-off-by: Reuben Hawkins <reubenhwk@gmail.com>
----
- mm/readahead.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+--D
 
-diff --git a/mm/readahead.c b/mm/readahead.c
-index e815c114de21..6925e6959fd3 100644
---- a/mm/readahead.c
-+++ b/mm/readahead.c
-@@ -735,7 +735,8 @@ ssize_t ksys_readahead(int fd, loff_t offset, size_t count)
- 	 */
- 	ret = -EINVAL;
- 	if (!f.file->f_mapping || !f.file->f_mapping->a_ops ||
--	    !S_ISREG(file_inode(f.file)->i_mode))
-+	    (!S_ISREG(file_inode(f.file)->i_mode) &&
-+	    !S_ISBLK(file_inode(f.file)->i_mode)))
- 		goto out;
- 
- 	ret = vfs_fadvise(f.file, offset, count, POSIX_FADV_WILLNEED);
--- 
-2.34.1
-
+> -Dave.
+> -- 
+> Dave Chinner
+> david@fromorbit.com
