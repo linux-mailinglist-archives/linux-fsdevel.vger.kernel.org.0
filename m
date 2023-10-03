@@ -2,151 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 463F67B6ED3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Oct 2023 18:45:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D56D57B6ED8
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Oct 2023 18:45:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231438AbjJCQpN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Oct 2023 12:45:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46076 "EHLO
+        id S240441AbjJCQpg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Oct 2023 12:45:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231255AbjJCQpM (ORCPT
+        with ESMTP id S232066AbjJCQpf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Oct 2023 12:45:12 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C0209E;
-        Tue,  3 Oct 2023 09:45:08 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F408C433C8;
-        Tue,  3 Oct 2023 16:45:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696351508;
-        bh=dop7RZSVr+4/mLN3z5UedbVXHAn1xpij/cdcv21p87g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TLl6iFVWym0CSjXj60zbILQQLypWm1S8Pz/F/KicfpRKTEQUhJ/5j0JFSl+mwvOkZ
-         JuTCHpTVZl009+pJEfQfQ0MHzUy66KTaNixEjnk6d0W0PFDQ5rXISq/jGw0cjRjDob
-         WmLVbHiFlhHuREzrk4F/+bWZvxydDTDLAEwxCPvV9XiC/TK8ooguUQJwztWDvJdcoG
-         p9M7YlpPyVkEMUZVmge8W3Gu7p6Fsvom2NHY+glzXoqQOpeZbxx+hrifTn3BtjSBEt
-         USvlMVsLwyUrWbr8yk4wY7eA6a1cmwF5bKKPrqFycP3YsRzPr/AuCD9mxxkJIY/zSG
-         gd0jZeD8DG3kg==
-Date:   Tue, 3 Oct 2023 09:45:05 -0700
-From:   Nathan Chancellor <nathan@kernel.org>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Mateusz Guzik <mjguzik@gmail.com>,
-        Jann Horn <jannh@google.com>, viro@zeniv.linux.org.uk,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        llvm@lists.linux.dev, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v2] vfs: shave work on failed file open
-Message-ID: <20231003164505.GA624737@dev-arch.thelio-3990X>
-References: <20230928-themen-dilettanten-16bf329ab370@brauner>
- <CAG48ez2d5CW=CDi+fBOU1YqtwHfubN3q6w=1LfD+ss+Q1PWHgQ@mail.gmail.com>
- <CAHk-=wj-5ahmODDWDBVL81wSG-12qPYEw=o-iEo8uzY0HBGGRQ@mail.gmail.com>
- <20230929-kerzen-fachjargon-ca17177e9eeb@brauner>
- <CAG48ez2cExy+QFHpT01d9yh8jbOLR0V8VsR8_==O_AB2fQ+h4Q@mail.gmail.com>
- <20230929-test-lauf-693fda7ae36b@brauner>
- <CAGudoHHwvOMFqYoBQAoFwD9mMmtq12=EvEGQWeToYT0AMg9V0A@mail.gmail.com>
- <CAGudoHHuQ2PjmX5HG+E6WMeaaOhSNEhdinCssd75dM0P+3ZG8Q@mail.gmail.com>
- <CAHk-=wir8YObRivyUX6cuanNKCJNKvojK0p2Rg_fKyUiHDVs-A@mail.gmail.com>
- <20230930-glitzer-errungenschaft-b86880c177c4@brauner>
+        Tue, 3 Oct 2023 12:45:35 -0400
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49827AC;
+        Tue,  3 Oct 2023 09:45:32 -0700 (PDT)
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2774f6943b1so846464a91.0;
+        Tue, 03 Oct 2023 09:45:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696351532; x=1696956332;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FXhSrsitouTtG4jnIpF6WlTXUJWU1AdtRoPHLHegjNE=;
+        b=a+dYzxhGi6fjYnt4lG8eX5xqljr9JMXZ19YT8gocz3oLqjdjQ2sHe/Xv37FIVar891
+         exQrAW832r44VYRUsQjG1AMi0fmDnQx+byRNwe8/I8FOILjowEp6crsMO8RVKuc7s+Je
+         aWkUDp9AbZHhCCcJhPsG7yuk9UkWsjJIzASWw79hGwOJSmsihY+cVXfZzBYoiBjmM/Ml
+         d4r1Oqh1Z6xo4P9jm5Jt0oeW3t43DMmiBtb26ZRfVpXs8e3/ka8gctHLP/SxRRwYbu8V
+         EqwsyYbOwXJQfe24rXal4h4ryqvg6LWI8fkauHBWwAyPrqy5chnhFZkW7Sbcztfha/+K
+         KIRQ==
+X-Gm-Message-State: AOJu0Yz68YL6vC0tgX0ecrTPfuDk9I0Snl28UQwjZDUcaM+JU7yJ19C0
+        pxOrFYHrimB1Ekz09gNvWvo=
+X-Google-Smtp-Source: AGHT+IEwC8qVv1+tkY+wONdL32+rPKEpsbXoCH+j3Wnz44caGKeaCpNY+K3ZBdFDu5Ezk2vd0L3+eQ==
+X-Received: by 2002:a17:90a:5d18:b0:26b:4a9e:3c7e with SMTP id s24-20020a17090a5d1800b0026b4a9e3c7emr14066923pji.4.1696351531639;
+        Tue, 03 Oct 2023 09:45:31 -0700 (PDT)
+Received: from ?IPV6:2620:15c:211:201:fc96:5ba7:a6f5:b187? ([2620:15c:211:201:fc96:5ba7:a6f5:b187])
+        by smtp.gmail.com with ESMTPSA id e59-20020a17090a6fc100b0026b70d2a8a2sm1719463pjk.29.2023.10.03.09.45.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Oct 2023 09:45:30 -0700 (PDT)
+Message-ID: <8e2f4aeb-e00e-453a-9658-b1c4ae352084@acm.org>
+Date:   Tue, 3 Oct 2023 09:45:28 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230930-glitzer-errungenschaft-b86880c177c4@brauner>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 10/21] block: Add fops atomic write support
+Content-Language: en-US
+To:     John Garry <john.g.garry@oracle.com>, axboe@kernel.dk,
+        kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
+        jejb@linux.ibm.com, martin.petersen@oracle.com, djwong@kernel.org,
+        viro@zeniv.linux.org.uk, brauner@kernel.org,
+        chandan.babu@oracle.com, dchinner@redhat.com
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
+        linux-api@vger.kernel.org
+References: <20230929102726.2985188-1-john.g.garry@oracle.com>
+ <20230929102726.2985188-11-john.g.garry@oracle.com>
+ <17ee1669-5830-4ead-888d-a6a4624b638a@acm.org>
+ <5d26fa3b-ec34-bc39-ecfe-4616a04977ca@oracle.com>
+ <b7a6f380-c6fa-45e0-b727-ba804c6684e4@acm.org>
+ <1adeff8e-e2fe-7dc3-283e-4979f9bd6adc@oracle.com>
+From:   Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <1adeff8e-e2fe-7dc3-283e-4979f9bd6adc@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Christian,
+On 10/3/23 01:37, John Garry wrote:
+> I don't think that is_power_of_2(write length) is specific to XFS.
 
-> >From d266eee9d9d917f07774e2c2bab0115d2119a311 Mon Sep 17 00:00:00 2001
-> From: Christian Brauner <brauner@kernel.org>
-> Date: Fri, 29 Sep 2023 08:45:59 +0200
-> Subject: [PATCH] file: convert to SLAB_TYPESAFE_BY_RCU
-> 
-> In recent discussions around some performance improvements in the file
-> handling area we discussed switching the file cache to rely on
-> SLAB_TYPESAFE_BY_RCU which allows us to get rid of call_rcu() based
-> freeing for files completely. This is a pretty sensitive change overall
-> but it might actually be worth doing.
-> 
-> The main downside is the subtlety. The other one is that we should
-> really wait for Jann's patch to land that enables KASAN to handle
-> SLAB_TYPESAFE_BY_RCU UAFs. Currently it doesn't but a patch for this
-> exists.
-> 
-> With SLAB_TYPESAFE_BY_RCU objects may be freed and reused multiple times
-> which requires a few changes. So it isn't sufficient anymore to just
-> acquire a reference to the file in question under rcu using
-> atomic_long_inc_not_zero() since the file might have already been
-> recycled and someone else might have bumped the reference.
-> 
-> In other words, callers might see reference count bumps from newer
-> users. For this is reason it is necessary to verify that the pointer is
-> the same before and after the reference count increment. This pattern
-> can be seen in get_file_rcu() and __files_get_rcu().
-> 
-> In addition, it isn't possible to access or check fields in struct file
-> without first aqcuiring a reference on it. Not doing that was always
-> very dodgy and it was only usable for non-pointer data in struct file.
-> With SLAB_TYPESAFE_BY_RCU it is necessary that callers first acquire a
-> reference under rcu or they must hold the files_lock of the fdtable.
-> Failing to do either one of this is a bug.
-> 
-> Thanks to Jann for pointing out that we need to ensure memory ordering
-> between reallocations and pointer check by ensuring that all subsequent
-> loads have a dependency on the second load in get_file_rcu() and
-> providing a fixup that was folded into this patch.
-> 
-> Cc: Jann Horn <jannh@google.com>
-> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> ---
+I think this is specific to XFS. Can you show me the F2FS code that 
+restricts the length of an atomic write to a power of two? I haven't 
+found it. The only power-of-two check that I found in F2FS is the 
+following (maybe I overlooked something):
 
-<snip>
+$ git grep -nH is_power fs/f2fs
+fs/f2fs/super.c:3914:	if (!is_power_of_2(zone_sectors)) {
 
-> --- a/arch/powerpc/platforms/cell/spufs/coredump.c
-> +++ b/arch/powerpc/platforms/cell/spufs/coredump.c
-> @@ -74,10 +74,13 @@ static struct spu_context *coredump_next_context(int *fd)
->  	*fd = n - 1;
->  
->  	rcu_read_lock();
-> -	file = lookup_fd_rcu(*fd);
-> -	ctx = SPUFS_I(file_inode(file))->i_ctx;
-> -	get_spu_context(ctx);
-> +	file = lookup_fdget_rcu(*fd);
->  	rcu_read_unlock();
-> +	if (file) {
-> +		ctx = SPUFS_I(file_inode(file))->i_ctx;
-> +		get_spu_context(ctx);
-> +		fput(file);
-> +	}
->  
->  	return ctx;
->  }
+Thanks,
 
-This hunk now causes a clang warning (or error, since arch/powerpc builds
-with -Werror by default) in next-20231003.
-
-  $ make -skj"$(nproc)" ARCH=powerpc LLVM=1 ppc64_guest_defconfig arch/powerpc/platforms/cell/spufs/coredump.o
-  ...
-  arch/powerpc/platforms/cell/spufs/coredump.c:79:6: error: variable 'ctx' is used uninitialized whenever 'if' condition is false [-Werror,-Wsometimes-uninitialized]
-     79 |         if (file) {
-        |             ^~~~
-  arch/powerpc/platforms/cell/spufs/coredump.c:85:9: note: uninitialized use occurs here
-     85 |         return ctx;
-        |                ^~~
-  arch/powerpc/platforms/cell/spufs/coredump.c:79:2: note: remove the 'if' if its condition is always true
-     79 |         if (file) {
-        |         ^~~~~~~~~
-  arch/powerpc/platforms/cell/spufs/coredump.c:69:25: note: initialize the variable 'ctx' to silence this warning
-     69 |         struct spu_context *ctx;
-        |                                ^
-        |                                 = NULL
-  1 error generated.
-
-Cheers,
-Nathan
+Bart.
