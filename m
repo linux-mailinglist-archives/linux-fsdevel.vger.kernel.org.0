@@ -2,91 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A4157B673C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Oct 2023 13:08:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBD347B67C4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Oct 2023 13:23:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231783AbjJCLIq convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>); Tue, 3 Oct 2023 07:08:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60458 "EHLO
+        id S231947AbjJCLXY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Oct 2023 07:23:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230341AbjJCLIp (ORCPT
+        with ESMTP id S231337AbjJCLXY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Oct 2023 07:08:45 -0400
-X-Greylist: delayed 61 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 03 Oct 2023 04:08:42 PDT
-Received: from esa2.hc5620-63.iphmx.com (esa2.hc5620-63.iphmx.com [68.232.149.158])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A7E0DA7;
-        Tue,  3 Oct 2023 04:08:42 -0700 (PDT)
-X-CSE-ConnectionGUID: jLnj3MYBQYClfLk4CnQZ7g==
-X-CSE-MsgGUID: hoCopQJcRqiHMvncI9nkxg==
-Message-Id: <bc8e20$lfq6@esa2.hc5620-63.iphmx.com>
-X-IronPort-RemoteIP: 185.225.73.120
-X-IronPort-MID: 704326
-X-IronPort-Reputation: -5.6
-X-IronPort-Listener: MailFlow
-X-IronPort-SenderGroup: RELAY_O365
-X-IronPort-MailFlowPolicy: $RELAYED
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from unknown (HELO [185.225.73.120]) ([185.225.73.120])
-  by esa2.hc5620-63.iphmx.com with ESMTP; 03 Oct 2023 07:07:37 -0400
-Content-Type: text/plain; charset="iso-8859-1"
+        Tue, 3 Oct 2023 07:23:24 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83A758E
+        for <linux-fsdevel@vger.kernel.org>; Tue,  3 Oct 2023 04:23:21 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 3DDFE2185E;
+        Tue,  3 Oct 2023 11:23:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1696332200; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=5qf6k43VVT3zUH4o91+3575R2UTBLl4WdAo8oz1MIFQ=;
+        b=IZyzqKs28CmiJuOb1nRXmZpS081Ubt0KVzEZ5lww9xDZw3dXpUde0O2Dekv4Vmb1NAAVso
+        Fmhu656BEXLDOWHXFkMPz/KDI0vXmvbZ5OusxkHOnX4/q89xoQkWcuRLYPcrDDuhhXOrn1
+        cuJs+6xoIv0mRnyBtHaS7yPb9egOP64=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1696332200;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=5qf6k43VVT3zUH4o91+3575R2UTBLl4WdAo8oz1MIFQ=;
+        b=6OBIccJ+s7wANkoULf4Ehqdmq2vVvmW9ljdmF9lJZrW9E9V+hTP4rYe3iWHl1f/tznbmhz
+        PiCYEWuAmclAe7DA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 2F63F139F9;
+        Tue,  3 Oct 2023 11:23:20 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id UGF0C6j5G2WcfAAAMHmgww
+        (envelope-from <jack@suse.cz>); Tue, 03 Oct 2023 11:23:20 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id A4BB8A07CB; Tue,  3 Oct 2023 13:23:19 +0200 (CEST)
+Date:   Tue, 3 Oct 2023 13:23:19 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     cem@kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, hughd@google.com,
+        brauner@kernel.org, jack@suse.cz
+Subject: Re: [PATCH 1/3] tmpfs: add project ID support
+Message-ID: <20231003112319.2776q54vy3g33nvy@quack3>
+References: <20230925130028.1244740-1-cem@kernel.org>
+ <20230925130028.1244740-2-cem@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: RE INVESTMENT OFFER
-To:     Recipients <test@mail2world.com>
-From:   "Mr. mohd" <test@mail2world.com>
-Date:   Tue, 03 Oct 2023 04:07:32 -0700
-Reply-To: abdulqaderaref115@gmail.com
-X-Spam-Status: Yes, score=5.6 required=5.0 tests=BAYES_50,FREEMAIL_FROM,
-        FREEMAIL_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT,HK_NAME_FM_MR_MRS,
-        MSGID_FROM_MTA_HEADER,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_SBL,SPF_FAIL,
-        SPF_HELO_PASS,SPOOFED_FREEMAIL,SPOOFED_FREEM_REPTO,SUBJ_ALL_CAPS,
-        TO_EQ_FM_DOM_SPF_FAIL,TO_EQ_FM_SPF_FAIL autolearn=no
-        autolearn_force=no version=3.4.6
-X-Spam-Report: *  0.0 RCVD_IN_DNSWL_BLOCKED RBL: ADMINISTRATOR NOTICE: The query to
-        *      DNSWL was blocked.  See
-        *      http://wiki.apache.org/spamassassin/DnsBlocklists#dnsbl-block
-        *      for more information.
-        *      [68.232.149.158 listed in list.dnswl.org]
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5034]
-        *  0.1 RCVD_IN_SBL RBL: Received via a relay in Spamhaus SBL
-        *      [185.225.73.120 listed in zen.spamhaus.org]
-        *  0.0 SPF_FAIL SPF: sender does not match SPF record (fail)
-        *      [SPF failed: Please see http://www.openspf.org/Why?s=mfrom;id=test%40mail2world.com;ip=68.232.149.158;r=lindbergh.monkeyblade.net]
-        *  0.2 FREEMAIL_REPLYTO_END_DIGIT Reply-To freemail username ends in
-        *      digit
-        *      [abdulqaderaref115[at]gmail.com]
-        *  0.5 SUBJ_ALL_CAPS Subject is all capitals
-        * -0.0 SPF_HELO_PASS SPF: HELO matches SPF record
-        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
-        *      provider
-        *      [test[at]mail2world.com]
-        *  0.0 MSGID_FROM_MTA_HEADER Message-Id was added by a relay
-        *  1.5 HK_NAME_FM_MR_MRS No description available.
-        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
-        *      different freemails
-        *  0.0 TO_EQ_FM_SPF_FAIL To == From and external SPF failed
-        *  0.0 TO_EQ_FM_DOM_SPF_FAIL To domain == From domain and external SPF
-        *       failed
-        *  0.4 SPOOFED_FREEMAIL No description available.
-        *  1.0 SPOOFED_FREEM_REPTO Forged freemail sender with freemail
-        *      reply-to
-X-Spam-Level: *****
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230925130028.1244740-2-cem@kernel.org>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Mon 25-09-23 15:00:26, cem@kernel.org wrote:
+> From: Carlos Maiolino <cem@kernel.org>
+> 
+> Lay down infrastructure to support project quotas.
+> 
+> Signed-off-by: Carlos Maiolino <cmaiolino@redhat.com>
+> ---
+>  include/linux/shmem_fs.h | 11 ++++++++---
+>  mm/shmem.c               |  6 ++++++
+>  mm/shmem_quota.c         | 10 ++++++++++
+>  3 files changed, 24 insertions(+), 3 deletions(-)
+> 
+> diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
+> index 6b0c626620f5..e82a64f97917 100644
+> --- a/include/linux/shmem_fs.h
+> +++ b/include/linux/shmem_fs.h
+> @@ -15,7 +15,10 @@
+>  
+>  #ifdef CONFIG_TMPFS_QUOTA
+>  #define SHMEM_MAXQUOTAS 2
+> -#endif
+> +
+> +/* Default project ID */
+> +#define SHMEM_DEF_PROJID 0
+> +#endif /* CONFIG_TMPFS_QUOTA */
+>  
+>  struct shmem_inode_info {
+>  	spinlock_t		lock;
+> @@ -33,14 +36,16 @@ struct shmem_inode_info {
+>  	unsigned int		fsflags;	/* flags for FS_IOC_[SG]ETFLAGS */
+>  #ifdef CONFIG_TMPFS_QUOTA
+>  	struct dquot		*i_dquot[MAXQUOTAS];
+> +	kprojid_t		i_projid;
+>  #endif
 
-Dear
-My name is Mohamed Abdul I have the capacity to inject a considerable
-amount of capital in any viable project 
-1,cell phone number what-sap
-2,full name
+I'm not sure it is great to bind project ID support with CONFIG_TMPFS_QUOTA
+and in particular with sb_has_quota_active(sb, PRJQUOTA). It seems as a bit
+unnatural restriction that could confuse administrators.
 
+>  	struct offset_ctx	dir_offsets;	/* stable entry offsets */
+>  	struct inode		vfs_inode;
+>  };
+>  
+> -#define SHMEM_FL_USER_VISIBLE		FS_FL_USER_VISIBLE
+> +#define SHMEM_FL_USER_VISIBLE		(FS_FL_USER_VISIBLE | FS_PROJINHERIT_FL)
+>  #define SHMEM_FL_USER_MODIFIABLE \
+> -	(FS_IMMUTABLE_FL | FS_APPEND_FL | FS_NODUMP_FL | FS_NOATIME_FL)
+> +	(FS_IMMUTABLE_FL | FS_APPEND_FL | FS_NODUMP_FL | \
+> +	 FS_NOATIME_FL | FS_PROJINHERIT_FL)
+>  #define SHMEM_FL_INHERITED		(FS_NODUMP_FL | FS_NOATIME_FL)
+>  
+>  struct shmem_quota_limits {
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index 67d93dd37a5e..6ccf60bd1690 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -2539,6 +2539,12 @@ static struct inode *shmem_get_inode(struct mnt_idmap *idmap,
+>  	if (IS_ERR(inode))
+>  		return inode;
+>  
+> +	if (dir && sb_has_quota_active(sb, PRJQUOTA))
+> +		SHMEM_I(inode)->i_projid = SHMEM_I(dir)->i_projid;
+> +	else
+> +		SHMEM_I(inode)->i_projid = make_kprojid(&init_user_ns,
+> +							SHMEM_DEF_PROJID);
+> +
+>  	err = dquot_initialize(inode);
+>  	if (err)
+>  		goto errout;
+> diff --git a/mm/shmem_quota.c b/mm/shmem_quota.c
+> index 062d1c1097ae..71224caa3e85 100644
+> --- a/mm/shmem_quota.c
+> +++ b/mm/shmem_quota.c
+> @@ -325,6 +325,15 @@ static int shmem_dquot_write_info(struct super_block *sb, int type)
+>  	return 0;
+>  }
+>  
+> +static int shmem_get_projid(struct inode *inode, kprojid_t *projid)
+> +{
+> +	if (!sb_has_quota_active(inode->i_sb, PRJQUOTA))
+> +		return -EOPNOTSUPP;
 
-yours truly
-Mohamed Abdul Ahmed
+This is not needed as quota code ever calls ->get_projid only when project
+quotas are enabled...
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
