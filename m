@@ -2,128 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D1F4F7B6B6F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Oct 2023 16:27:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFEC47B6B99
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Oct 2023 16:30:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239639AbjJCO1I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Oct 2023 10:27:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44422 "EHLO
+        id S240073AbjJCOar (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Oct 2023 10:30:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232389AbjJCO1H (ORCPT
+        with ESMTP id S234771AbjJCOaq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Oct 2023 10:27:07 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 792D9AC;
-        Tue,  3 Oct 2023 07:27:01 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30CB2C433C8;
-        Tue,  3 Oct 2023 14:26:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696343221;
-        bh=fHO6Z58J7VfsEj58RJs1tu4Owi0xG1v6AW4/0YSyTUo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DyIy3Yv+W/CyQ0YMjTSv84e9IfSa4C42rHX7FzcqawTdjAVka4EOVLyvr/YyCMX1c
-         odzbNo2zKoZUztGOLt6XRaIkN5f142zGU5/3Ggqxro2C84FL1rDyPp08VMU5MG10Fx
-         GkVgHQiKhmdfUPqW8Um1FIq2jMkuy7aFDL37p0oeMYLirBJy8+c15bCa7v9005CwDV
-         vPhuRQkLPUo2NOslC7Y6Q284DYNNncBJJCf3kX/xZtMGoRk47+N+eWY0fhGL7bQ5B/
-         uA6az4zEwL7+A16vgdwSsSWiVMenTAeoIyWauQa5q7N2DqlCCR3GYZo1lQ533slcrI
-         1isHnZlKYDz/Q==
-Date:   Tue, 3 Oct 2023 15:26:51 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Szabolcs Nagy <Szabolcs.Nagy@arm.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Marc Zyngier <maz@kernel.org>,
-        Oliver Upton <oliver.upton@linux.dev>,
-        James Morse <james.morse@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        Shuah Khan <shuah@kernel.org>,
-        "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-        Deepak Gupta <debug@rivosinc.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        "H.J. Lu" <hjl.tools@gmail.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v4 03/36] arm64/gcs: Document the ABI for Guarded Control
- Stacks
-Message-ID: <a7d2fd66-c06b-4033-bca2-4b14afc4904f@sirena.org.uk>
-References: <f4cec4b3-c386-4873-aa1d-90528e062f2a@sirena.org.uk>
- <ZN+qki9EaZ6f9XNi@arm.com>
- <aaea542c-929c-4c9b-8caa-ca67e0eb9c1e@sirena.org.uk>
- <ZOTnL1SDJWZjHPUW@arm.com>
- <43ec219d-bf20-47b8-a5f8-32bc3b64d487@sirena.org.uk>
- <ZOXa98SqwYPwxzNP@arm.com>
- <ZOYFazB1gYjzDRdA@arm.com>
- <ZRWw7aa3C0LlMPTH@arm.com>
- <38edb5c3-367e-4ab7-8cb7-aa1a5c0e330c@sirena.org.uk>
- <ZRvUxLgMse8QYlGS@arm.com>
+        Tue, 3 Oct 2023 10:30:46 -0400
+Received: from mail-oo1-xc35.google.com (mail-oo1-xc35.google.com [IPv6:2607:f8b0:4864:20::c35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BDA0B8;
+        Tue,  3 Oct 2023 07:30:43 -0700 (PDT)
+Received: by mail-oo1-xc35.google.com with SMTP id 006d021491bc7-57b9193b1aeso2216056eaf.0;
+        Tue, 03 Oct 2023 07:30:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1696343442; x=1696948242; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZstzgmbCrRGGMKdRCSRnIclBiZWzyYp4laelZbLL3yw=;
+        b=Ph/T9/4yYUXKOJVumOuHLwic5jQOO4mgokwvs6bENkgEMQPTVwpnvJCYb6t308pTa2
+         EMVs+S+ppfTi2dc8YukIpWQgXlZfZTn6fh/RjYolmqKexSZ2wrBIcBnc23oVVptFQFfp
+         u4PBsGVFpvrFlwFQWErzVQ8d3QbWIiqjogX/R1fdGBLfoLgudN7MmWpwYe6L2km/S/I7
+         Xr+Mqf/46SA1UZCHXImwXYQ5n+I3tkdB0O/LuO0ZB28bRPX+9+5fc07GdgLg9GeXpmkM
+         o8N7nskYFXEGjwNDwt56et5k0onh7xeHijGqXQU/LMZba1PbodkwN/OJzo26q/7dju3V
+         ArWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696343442; x=1696948242;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZstzgmbCrRGGMKdRCSRnIclBiZWzyYp4laelZbLL3yw=;
+        b=E/eJgvepXtYUiP8XHs+p2q72p8s6FzQa8D1fmV7MDNdSQFxxDojsI+3keWZR+rlHOl
+         Pc2zbQO4WuZqMepMtI2n0jprB1WYouc4TkgfLJ9LumjzF2CjxOPiKDFIJE8oDdpqlng0
+         hl5JRpn0dFyTyq2KajjUmecJZO57wqphL5lemjxtq2vBRf0UN9kqApaOosB5h2UtXRTs
+         rsLcuG+mHHf34bRODE+KAc2zcMPVLJUhnY9Kw7RJBUDZmWB31MdLyaJvnXJH1yDKEslA
+         8Te2thZT5431oajz3Q4mTujg8GTyNrthOX5vqJ9LoECC2wHYhSW0tYpzm5H6WplDB2Xf
+         byWQ==
+X-Gm-Message-State: AOJu0YwKvenBQGSYrE3PPy7RBJJf3HlMuDs1Mp2iyGXCujrreKULKvRZ
+        W/M/Bt+oWvp4CcnYl/M3aY2nP3sYDGS78f316cA=
+X-Google-Smtp-Source: AGHT+IGevci/5HJowvgG2jQWYPBEjrm3GBqGe2+WKPqkm8/eoWfupkx7ZuH4Uq1Sh1zAE91zKHa+9sENOnJ9wfnMrIU=
+X-Received: by 2002:a05:6870:91d2:b0:1c8:c9ca:7092 with SMTP id
+ c18-20020a05687091d200b001c8c9ca7092mr1476751oaf.11.1696343442442; Tue, 03
+ Oct 2023 07:30:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="CnsHSUBemytPXFhS"
-Content-Disposition: inline
-In-Reply-To: <ZRvUxLgMse8QYlGS@arm.com>
-X-Cookie: Oh Dad!  We're ALL Devo!
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+References: <20230930050033.41174-1-wedsonaf@gmail.com> <20230930050033.41174-7-wedsonaf@gmail.com>
+In-Reply-To: <20230930050033.41174-7-wedsonaf@gmail.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Tue, 3 Oct 2023 16:30:29 +0200
+Message-ID: <CAOi1vP_ew49EJZwasWQ3rhOs_ZUhnSVCWOSwVemV3f5yPdva5A@mail.gmail.com>
+Subject: Re: [PATCH 06/29] ceph: move ceph_xattr_handlers to .rodata
+To:     Wedson Almeida Filho <wedsonaf@gmail.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Wedson Almeida Filho <walmeida@microsoft.com>,
+        Xiubo Li <xiubli@redhat.com>, Jeff Layton <jlayton@kernel.org>,
+        ceph-devel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Sat, Sep 30, 2023 at 7:01=E2=80=AFAM Wedson Almeida Filho <wedsonaf@gmai=
+l.com> wrote:
+>
+> From: Wedson Almeida Filho <walmeida@microsoft.com>
+>
+> This makes it harder for accidental or malicious changes to
+> ceph_xattr_handlers at runtime.
+>
+> Cc: Xiubo Li <xiubli@redhat.com>
+> Cc: Ilya Dryomov <idryomov@gmail.com>
+> Cc: Jeff Layton <jlayton@kernel.org>
+> Cc: ceph-devel@vger.kernel.org
+> Signed-off-by: Wedson Almeida Filho <walmeida@microsoft.com>
+> ---
+>  fs/ceph/super.h | 2 +-
+>  fs/ceph/xattr.c | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> index 3bfddf34d488..b40be1a0f778 100644
+> --- a/fs/ceph/super.h
+> +++ b/fs/ceph/super.h
+> @@ -1089,7 +1089,7 @@ ssize_t __ceph_getxattr(struct inode *, const char =
+*, void *, size_t);
+>  extern ssize_t ceph_listxattr(struct dentry *, char *, size_t);
+>  extern struct ceph_buffer *__ceph_build_xattrs_blob(struct ceph_inode_in=
+fo *ci);
+>  extern void __ceph_destroy_xattrs(struct ceph_inode_info *ci);
+> -extern const struct xattr_handler *ceph_xattr_handlers[];
+> +extern const struct xattr_handler * const ceph_xattr_handlers[];
+>
+>  struct ceph_acl_sec_ctx {
+>  #ifdef CONFIG_CEPH_FS_POSIX_ACL
+> diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
+> index 806183959c47..0350d7465bbb 100644
+> --- a/fs/ceph/xattr.c
+> +++ b/fs/ceph/xattr.c
+> @@ -1416,7 +1416,7 @@ void ceph_release_acl_sec_ctx(struct ceph_acl_sec_c=
+tx *as_ctx)
+>   * List of handlers for synthetic system.* attributes. Other
+>   * attributes are handled directly.
+>   */
+> -const struct xattr_handler *ceph_xattr_handlers[] =3D {
+> +const struct xattr_handler * const ceph_xattr_handlers[] =3D {
+>         &ceph_other_xattr_handler,
+>         NULL,
+>  };
+> --
+> 2.34.1
+>
 
---CnsHSUBemytPXFhS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Acked-by: Ilya Dryomov <idryomov@gmail.com>
 
-On Tue, Oct 03, 2023 at 09:45:56AM +0100, Szabolcs Nagy wrote:
+Thanks,
 
-> clone3 seems to have features that are only available in clone3 and
-> not exposed (reasonably) in libc apis so ppl will use clone3 directly
-> and those will be hard to fix for gcs (you have to convince upstream
-> to add future arm64 arch specific changes that they cannot test).
-
-Ah, I hadn't realised that there were things that weren't available via
-libc - that does change the calculation a bit here.  I would hope that
-anything we do for clone3() would work just as well for x86 so the test
-side should be a bit easier there than if it were a future arm64 thing,
-though obviously it wouldn't be mandatory on x86 in the way that Catalin
-wanted it for arm64.
-
-> where this analysis might be wrong is that raw clone3 is more likely
-> used as fork/vfork without a new stack and thus no gcs issue.
-
-> even if we have time to fix code, we don't want too many ifdef hacks
-> just for gcs so it matters how many projects are affected.
-
-My impression was that raw usage of the APIs was a specialist enough
-thing that this was viable, ICBW though - I might not have been
-searching well enough (clone is an annoying term to search for!).
-
---CnsHSUBemytPXFhS
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmUcJKoACgkQJNaLcl1U
-h9D1+wf9E8KLlwo7oauOMfMCaEHN33slVADlMHmi/XAO6e+v3qV+f+jIWgnm7QVZ
-NXQYwsmD9BjcMdlgDmlglFSC1Ui3L1auA8BtZNc0XaYT49uDudcAO4sxApsu0Ei4
-YG1WN+8MyabX/ktfHNf2XyosySVjLipmkrlWSJaI89BnELx681xWUf+Ew7KDX6on
-I62ZOCIMFM9V0kfe8cIbwGsSRXm53lb29tDkOSKWRWQaNw8faH2YiSbmWG4kSF8u
-+dSRg051fgrBUj1dttRgE3oVlKaOAKF5+XtNe27dNeFpxXMMs6pZTjdZd0Us4QjE
-ETLB2y5WLQvi5XfxRiQqlJopkuzikA==
-=/LLg
------END PGP SIGNATURE-----
-
---CnsHSUBemytPXFhS--
+                Ilya
