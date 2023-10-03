@@ -2,70 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CFEC47B6B99
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Oct 2023 16:30:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69E4B7B6C03
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Oct 2023 16:46:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240073AbjJCOar (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Oct 2023 10:30:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54098 "EHLO
+        id S232414AbjJCOqj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Oct 2023 10:46:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42254 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234771AbjJCOaq (ORCPT
+        with ESMTP id S240119AbjJCOqi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Oct 2023 10:30:46 -0400
-Received: from mail-oo1-xc35.google.com (mail-oo1-xc35.google.com [IPv6:2607:f8b0:4864:20::c35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BDA0B8;
-        Tue,  3 Oct 2023 07:30:43 -0700 (PDT)
-Received: by mail-oo1-xc35.google.com with SMTP id 006d021491bc7-57b9193b1aeso2216056eaf.0;
-        Tue, 03 Oct 2023 07:30:43 -0700 (PDT)
+        Tue, 3 Oct 2023 10:46:38 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B459B0
+        for <linux-fsdevel@vger.kernel.org>; Tue,  3 Oct 2023 07:46:35 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id 2adb3069b0e04-50444e756deso1291804e87.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Oct 2023 07:46:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696343442; x=1696948242; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZstzgmbCrRGGMKdRCSRnIclBiZWzyYp4laelZbLL3yw=;
-        b=Ph/T9/4yYUXKOJVumOuHLwic5jQOO4mgokwvs6bENkgEMQPTVwpnvJCYb6t308pTa2
-         EMVs+S+ppfTi2dc8YukIpWQgXlZfZTn6fh/RjYolmqKexSZ2wrBIcBnc23oVVptFQFfp
-         u4PBsGVFpvrFlwFQWErzVQ8d3QbWIiqjogX/R1fdGBLfoLgudN7MmWpwYe6L2km/S/I7
-         Xr+Mqf/46SA1UZCHXImwXYQ5n+I3tkdB0O/LuO0ZB28bRPX+9+5fc07GdgLg9GeXpmkM
-         o8N7nskYFXEGjwNDwt56et5k0onh7xeHijGqXQU/LMZba1PbodkwN/OJzo26q/7dju3V
-         ArWA==
+        d=gmail.com; s=20230601; t=1696344394; x=1696949194; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=0M0A0m7NwR/DVfuhY9o5ZbLIefyMsuc6SdkSxdRQM4k=;
+        b=X1qt2p10MYTTjuWP0ECD6FIpWo548LQBGnOGDDn8YfpsSlWR5X4BDhWlU5a5MFZhxg
+         ct+atzZ3Rrn2ICPfXvLW31QqAH58InXq+4fQfKiqjNg1wBUjPMJOcpi/LN2H07rWq+5x
+         +i/KA6qD5runw7/n2NS2LrTc2VuRwj9I+FN4/bc755vmLJyugfBhKgbC722jNsa/NTfr
+         u5mR8iFl7f0ZX8XX8y7az82pifVDwHJC8vZgbgUvdKXlmCcIM78dN0UzZuaKd4+9J47K
+         /1NwATGnaPqbQBfbWYy/59Y7xqWhccoFjUwMTRgGrcnxFRc/NIh9hiORYpWbeUhJW2+Y
+         B3/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696343442; x=1696948242;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZstzgmbCrRGGMKdRCSRnIclBiZWzyYp4laelZbLL3yw=;
-        b=E/eJgvepXtYUiP8XHs+p2q72p8s6FzQa8D1fmV7MDNdSQFxxDojsI+3keWZR+rlHOl
-         Pc2zbQO4WuZqMepMtI2n0jprB1WYouc4TkgfLJ9LumjzF2CjxOPiKDFIJE8oDdpqlng0
-         hl5JRpn0dFyTyq2KajjUmecJZO57wqphL5lemjxtq2vBRf0UN9kqApaOosB5h2UtXRTs
-         rsLcuG+mHHf34bRODE+KAc2zcMPVLJUhnY9Kw7RJBUDZmWB31MdLyaJvnXJH1yDKEslA
-         8Te2thZT5431oajz3Q4mTujg8GTyNrthOX5vqJ9LoECC2wHYhSW0tYpzm5H6WplDB2Xf
-         byWQ==
-X-Gm-Message-State: AOJu0YwKvenBQGSYrE3PPy7RBJJf3HlMuDs1Mp2iyGXCujrreKULKvRZ
-        W/M/Bt+oWvp4CcnYl/M3aY2nP3sYDGS78f316cA=
-X-Google-Smtp-Source: AGHT+IGevci/5HJowvgG2jQWYPBEjrm3GBqGe2+WKPqkm8/eoWfupkx7ZuH4Uq1Sh1zAE91zKHa+9sENOnJ9wfnMrIU=
-X-Received: by 2002:a05:6870:91d2:b0:1c8:c9ca:7092 with SMTP id
- c18-20020a05687091d200b001c8c9ca7092mr1476751oaf.11.1696343442442; Tue, 03
- Oct 2023 07:30:42 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1696344394; x=1696949194;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0M0A0m7NwR/DVfuhY9o5ZbLIefyMsuc6SdkSxdRQM4k=;
+        b=wbbzBDWKED3/vCWcQlIcb+TE7shEiBayOSYN3wOnApWDwqycn8wff2qAGZzhwKLZnn
+         4G6zloGEapU9JCXCRGoT1KkQEyVdFAEjKoN7DRIitxSmrSE2ZN/OhZc6Z9i0blhC2Mms
+         u5lxe39Hh67SgV8p8zsu1aNRAYf+K3C/lxDvnsa8DMB90UL5GK98VC3D2p2zjR1TaQT4
+         4sSOuA5s9xISwJpVYlm6zpBCmgX3TWGBJjlFGT+0fZqfEhQI1xkZo1RtnMvAtZmBGc8v
+         OlvckFcyeR9i6Q8C9MZoNByaq2uIKrim2O0/Yb4RxD/VNcfmG9sbHo+EJEl3mQksv7Au
+         8iqA==
+X-Gm-Message-State: AOJu0YxUxsXTeYT63ea5+n7hEXhKYpyiBeUP2ZoUOohVGP3QCXkTdh6a
+        QxMfEdj5z9vfebRz4y01SPkLjE/eKOQ5ZQVHM9+Tj/vGN8Y=
+X-Google-Smtp-Source: AGHT+IE+pCDk0XQzZmpCKFPCauZS1xzHKL4xySOZEJ2FkKdzTaLJbe+3V/mpqj3vU7ydVNCSCB9Q5xIYkaX7oLToohE=
+X-Received: by 2002:a19:f818:0:b0:503:778:9ad2 with SMTP id
+ a24-20020a19f818000000b0050307789ad2mr11480619lff.19.1696344393397; Tue, 03
+ Oct 2023 07:46:33 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230930050033.41174-1-wedsonaf@gmail.com> <20230930050033.41174-7-wedsonaf@gmail.com>
-In-Reply-To: <20230930050033.41174-7-wedsonaf@gmail.com>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Tue, 3 Oct 2023 16:30:29 +0200
-Message-ID: <CAOi1vP_ew49EJZwasWQ3rhOs_ZUhnSVCWOSwVemV3f5yPdva5A@mail.gmail.com>
-Subject: Re: [PATCH 06/29] ceph: move ceph_xattr_handlers to .rodata
-To:     Wedson Almeida Filho <wedsonaf@gmail.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+References: <20231002022815.GQ800259@ZenIV> <20231002022846.GA3389589@ZenIV>
+ <20231002023344.GI3389589@ZenIV> <7f422261-92ef-32df-6640-dab9d68e1023@redhat.com>
+ <20231002125946.GW800259@ZenIV> <20231002141610.GX800259@ZenIV>
+In-Reply-To: <20231002141610.GX800259@ZenIV>
+From:   =?UTF-8?Q?Andreas_Gr=C3=BCnbacher?= <andreas.gruenbacher@gmail.com>
+Date:   Tue, 3 Oct 2023 16:46:21 +0200
+Message-ID: <CAHpGcMJPzPhe5KvxB5Tu+DPTHeMjEBG-utdLTna53Hbu7NntZw@mail.gmail.com>
+Subject: Re: [PATCH 08/15] gfs2: fix an oops in gfs2_permission()
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Bob Peterson <rpeterso@redhat.com>, linux-fsdevel@vger.kernel.org,
         Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Wedson Almeida Filho <walmeida@microsoft.com>,
-        Xiubo Li <xiubli@redhat.com>, Jeff Layton <jlayton@kernel.org>,
-        ceph-devel@vger.kernel.org
+        Christoph Hellwig <hch@lst.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        David Sterba <dsterba@suse.com>,
+        David Howells <dhowells@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Steve French <sfrench@samba.org>,
+        Luis Chamberlain <mcgrof@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -73,59 +79,43 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Sep 30, 2023 at 7:01=E2=80=AFAM Wedson Almeida Filho <wedsonaf@gmai=
-l.com> wrote:
+Am Mo., 2. Okt. 2023 um 19:09 Uhr schrieb Al Viro <viro@zeniv.linux.org.uk>:
+> On Mon, Oct 02, 2023 at 01:59:46PM +0100, Al Viro wrote:
+> > On Mon, Oct 02, 2023 at 06:46:03AM -0500, Bob Peterson wrote:
+> > > > diff --git a/fs/gfs2/inode.c b/fs/gfs2/inode.c
+> > > > index 0eac04507904..e2432c327599 100644
+> > > > --- a/fs/gfs2/inode.c
+> > > > +++ b/fs/gfs2/inode.c
+> > > > @@ -1868,14 +1868,16 @@ int gfs2_permission(struct mnt_idmap *idmap, struct inode *inode,
+> > > >   {
+> > > >           struct gfs2_inode *ip;
+> > > >           struct gfs2_holder i_gh;
+> > > > + struct gfs2_glock *gl;
+> > > >           int error;
+> > > >           gfs2_holder_mark_uninitialized(&i_gh);
+> > > >           ip = GFS2_I(inode);
+> > > > - if (gfs2_glock_is_locked_by_me(ip->i_gl) == NULL) {
+> > > > + gl = rcu_dereference(ip->i_gl);
+> > > > + if (!gl || gfs2_glock_is_locked_by_me(gl) == NULL) {
+> > >
+> > > This looks wrong. It should be if (gl && ... otherwise the
+> > > gfs2_glock_nq_init will dereference the null pointer.
+> >
+> > We shouldn't observe NULL ->i_gl unless we are in RCU mode,
+> > which means we'll bail out without reaching gfs2_glock_nq_init()...
 >
-> From: Wedson Almeida Filho <walmeida@microsoft.com>
->
-> This makes it harder for accidental or malicious changes to
-> ceph_xattr_handlers at runtime.
->
-> Cc: Xiubo Li <xiubli@redhat.com>
-> Cc: Ilya Dryomov <idryomov@gmail.com>
-> Cc: Jeff Layton <jlayton@kernel.org>
-> Cc: ceph-devel@vger.kernel.org
-> Signed-off-by: Wedson Almeida Filho <walmeida@microsoft.com>
-> ---
->  fs/ceph/super.h | 2 +-
->  fs/ceph/xattr.c | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> index 3bfddf34d488..b40be1a0f778 100644
-> --- a/fs/ceph/super.h
-> +++ b/fs/ceph/super.h
-> @@ -1089,7 +1089,7 @@ ssize_t __ceph_getxattr(struct inode *, const char =
-*, void *, size_t);
->  extern ssize_t ceph_listxattr(struct dentry *, char *, size_t);
->  extern struct ceph_buffer *__ceph_build_xattrs_blob(struct ceph_inode_in=
-fo *ci);
->  extern void __ceph_destroy_xattrs(struct ceph_inode_info *ci);
-> -extern const struct xattr_handler *ceph_xattr_handlers[];
-> +extern const struct xattr_handler * const ceph_xattr_handlers[];
->
->  struct ceph_acl_sec_ctx {
->  #ifdef CONFIG_CEPH_FS_POSIX_ACL
-> diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-> index 806183959c47..0350d7465bbb 100644
-> --- a/fs/ceph/xattr.c
-> +++ b/fs/ceph/xattr.c
-> @@ -1416,7 +1416,7 @@ void ceph_release_acl_sec_ctx(struct ceph_acl_sec_c=
-tx *as_ctx)
->   * List of handlers for synthetic system.* attributes. Other
->   * attributes are handled directly.
->   */
-> -const struct xattr_handler *ceph_xattr_handlers[] =3D {
-> +const struct xattr_handler * const ceph_xattr_handlers[] =3D {
->         &ceph_other_xattr_handler,
->         NULL,
->  };
-> --
-> 2.34.1
->
+> Something like
+>         if (unlikely(!gl)) {
+>                 /* inode is getting torn down, must be RCU mode */
+>                 WARN_ON_ONCE(!(mask & MAY_NOT_BLOCK));
+>                 return -ECHILD;
+>         }
+> might be less confusing way to express that...
 
-Acked-by: Ilya Dryomov <idryomov@gmail.com>
+Looking good, thanks. I'll queue it up.
+
+Could you please send such fixes to the filesystem-specific list in
+the future (scripts/get_maintainer.pl)?
 
 Thanks,
-
-                Ilya
+Andreas
