@@ -2,123 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 190CC7B7415
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Oct 2023 00:26:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FDE07B7456
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Oct 2023 00:54:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229954AbjJCW0g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Oct 2023 18:26:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36050 "EHLO
+        id S231933AbjJCWy7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Oct 2023 18:54:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229512AbjJCW0f (ORCPT
+        with ESMTP id S230237AbjJCWy6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Oct 2023 18:26:35 -0400
-Received: from mail-yw1-x112c.google.com (mail-yw1-x112c.google.com [IPv6:2607:f8b0:4864:20::112c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C8EFAB
-        for <linux-fsdevel@vger.kernel.org>; Tue,  3 Oct 2023 15:26:31 -0700 (PDT)
-Received: by mail-yw1-x112c.google.com with SMTP id 00721157ae682-5a22eaafd72so18232287b3.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Oct 2023 15:26:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1696371990; x=1696976790; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e/ezmrX03/lx2b3wgyBKph28UWpTDQ/b9recBcS7DQI=;
-        b=G+b5779MpqRobRsSke/A28Ctz1M3VA5W813AVH7yhZ3ERrCZcJrImS8b5m8ed5/Fkt
-         lTRZu93ok7yX9Z+Ns8Am5goBW3QSI+j466+IUH2zg1fT0cYU9YAhPSU2qPG0rniR+tgU
-         XhUK1ZQmqMUBAcZNQIKeCG0HFQkX96ncSKQ4AsH7VYJZpzlWZfCR4UoCzV9Ax8xQIbd8
-         Bh9HvI49GGhtulwh45EvYr++sEWH/uBmaLvgx938ggrpTPcXofshppYs4fjzX1So9LwQ
-         +wmf97Ji2886zoNqv/nFoLAaBJd+MgQumy41hx4QuS/dglr7PXYz/JefHahoGUugsD0z
-         Z6rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696371990; x=1696976790;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=e/ezmrX03/lx2b3wgyBKph28UWpTDQ/b9recBcS7DQI=;
-        b=LpcZGuuoeV2NzL72vUNsffbCaZ/EF183h0IXX2Kn86ivAimxPprQNhZimtYvAclU1t
-         iV76w4zejNKyh/dcFAwmGbBrIUuOq1KNCpE10p8Cp52avm2RCMphOauCxQnoEWvUuwLX
-         yOqNdM/TXa6dZYviRCso10BeBaKn3hC9z3/h7dtrkPHopqM9lmAija2FyzqPRx97gY0t
-         O/J0iNo1B2UbGx8UGn8X2kRaupIYeAgN/88w1uz6FctE4Er41Dv24uuKPGVk3p82rYx8
-         RiVSQgRtNbFpyPW8VHzBEFKSkPZM/fujxTY83gLXIjg5ja9Euo9jZ5MHRv87azStNlAT
-         xN9g==
-X-Gm-Message-State: AOJu0Yw1SLYHQsjFWgo+/DUKGVhegxbzCwxY+pmBwD/d28veyEL5wsso
-        oXtjYTVeyO4gdTm53LbPeK3GOAtEIrR4yDdpwtkrww==
-X-Google-Smtp-Source: AGHT+IF0xmlVD08wVXp1gfdjZoxUeDjnszKhqUw2F/pnugOO1Cxpl/juxTDOh8Z6Eaai/DseLkxNvD3iKRk8HMP31oI=
-X-Received: by 2002:a0d:cbd7:0:b0:59b:fb30:9862 with SMTP id
- n206-20020a0dcbd7000000b0059bfb309862mr1004133ywd.3.1696371990056; Tue, 03
- Oct 2023 15:26:30 -0700 (PDT)
+        Tue, 3 Oct 2023 18:54:58 -0400
+Received: from wout1-smtp.messagingengine.com (wout1-smtp.messagingengine.com [64.147.123.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E80EDB4;
+        Tue,  3 Oct 2023 15:54:55 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.west.internal (Postfix) with ESMTP id 185A63200B49;
+        Tue,  3 Oct 2023 18:54:53 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Tue, 03 Oct 2023 18:54:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+        cc:cc:content-transfer-encoding:content-type:content-type:date
+        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to; s=fm2; t=
+        1696373692; x=1696460092; bh=2jVHXmEhNGnLoThDwRPTaiXQ4VgtqdFS0mA
+        cLW+bbUo=; b=IFhkv836Ujjzz4C2Te8jaNK4yy5yagWg1P/KMPmBtP+4n2IQXBa
+        BmL3DpoJYO2BiYOvgijAusiv/52+c83Q921gn4qrPC/03dVyvKOUUqIu4Azidibo
+        sRA3I06mXeBlA1GANIpHRvDl94FVtkQOjEEwL43OlqysU43s3v8k9godLZQhXk6d
+        mwx6s7htmDB8P3+tienqK8LriGaCCTllrpfJ3GojqbnJGCLRNsWjSj7EVJ3gYEFN
+        m/Td9YaTngsxXGj4+tLli/NArQ09DPboAH7C7oMSB1NLnma1u/OYB7qHtlhaVtDW
+        K/a1Ec2RmdC+NPWnZDjncviLe3SpooAnrig==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:content-type:date:date:feedback-id:feedback-id
+        :from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+        1696373692; x=1696460092; bh=2jVHXmEhNGnLoThDwRPTaiXQ4VgtqdFS0mA
+        cLW+bbUo=; b=egPLEMD8Ni268aQlNmn/ScE2MzX3hNgSvoVz75KIExlNmuMPNxw
+        g60ujvzGsPgMQSmY7K5b3KPbors8ma0tP29W0gdl1/wLrsN3NZfje2IItjQlyTZV
+        +oIG0Syv7SNFl2yomimmjRnw2bkqH+r+NoBda8F7y/c25t4N2IvkYJR6PGrNs1AR
+        sT12oLzNTRXj3SMhZj6RbWDdGFo9EGO7CpEkrpFI9YNO8jVp1sSpHvCniAmZIuGS
+        ymIPtBsL8rx/HVvdG33J7X4tYNUc2Xk4GqfmWOqbX9ekpBlicQLZG9T8b6gSuEXj
+        RCELFVTHbzZglTF93G6wfihWJ1biZPxqL2A==
+X-ME-Sender: <xms:vJscZUSv2fYXzRGw20oUnwcZ3Q4T0imITWJuVM_Aqr2pViCqkKb1yg>
+    <xme:vJscZRzUzIAIWHGvi2mM9mPj0F0zw_Y8Lf9qNc79IyvWqS-84A0k_pWP1xRjsxS19
+    XQMYnlKWRl_kTWz>
+X-ME-Received: <xmr:vJscZR3Q96bH2QPgsQU1g7-P0Onbw9TLZ4CquMq9fsm2hXE1fcjAiWIjSiEZHbSjTeXUqhy6WBwpZ9nW3mBe5x0lHesb0g1qja6JHwm2umo0Mkj5Rd60>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrfeekgdduhecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomhepuegvrhhn
+    ugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilh
+    drfhhmqeenucggtffrrghtthgvrhhnpeffjeevfeefjefghfefhfeiueffffetledtgffh
+    hfdttdefueevledvleetfeevtdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuve
+    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdr
+    shgthhhusggvrhhtsehfrghsthhmrghilhdrfhhm
+X-ME-Proxy: <xmx:vJscZYAWHQLGn3S0qDd8h39sj5HpVNq5cvNmdZZPu5uwOLy9DXrkFw>
+    <xmx:vJscZdhY3QLrNT9VtLzU57kWMW0-96_yPQDtP-AbZOxp-F4ve6-CQw>
+    <xmx:vJscZUqAF84SyIre1hTcxXKwUtjp69QbAYfkreL8jpbTyp1OU01Qeg>
+    <xmx:vJscZYVt4fZ9Ysdx_vOh_23eASNJgdxCdfugvdpM27I-jN27FTWauQ>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 3 Oct 2023 18:54:51 -0400 (EDT)
+Message-ID: <18552fc7-184c-4bc7-9154-c885fae06d31@fastmail.fm>
+Date:   Wed, 4 Oct 2023 00:54:49 +0200
 MIME-Version: 1.0
-References: <ZRXHK3hbdjfQvCCp@x1n> <fc27ce41-bc97-91a7-deb6-67538689021c@redhat.com>
- <ZRrf8NligMzwqx97@x1n> <CA+EESO5VtrfXv-kvDsotPLXcpMgOK5t5c+tbXZ7KWRU2O_0PBQ@mail.gmail.com>
- <CA+EESO4W2jmBSpyHkkqZV0LHnA_OyWQcvwSkfPcWmWCsAF5UWw@mail.gmail.com>
- <9434ef94-15e8-889c-0c31-3e875060a2f7@redhat.com> <CA+EESO4GuDXZ6newN-oF43WOxrfsZ9Ejq8RJNF2wOYq571zmDA@mail.gmail.com>
- <CAJuCfpE_h7Bj41sBiADswkUfVCoLXANuQmctdYUEgYjn6fHSCw@mail.gmail.com>
- <ZRx31TKFDGRatoC8@x1n> <c837fc02-3dbd-ba88-dacb-cf150272a4c4@redhat.com> <ZRyFnurIgVFVD8hd@x1n>
-In-Reply-To: <ZRyFnurIgVFVD8hd@x1n>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Tue, 3 Oct 2023 15:26:16 -0700
-Message-ID: <CAJuCfpFggFpPxJjx9uGe05x0fTNONgoUf=QzkpCHLx43Tbryjg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] userfaultfd: UFFDIO_REMAP uABI
-To:     Peter Xu <peterx@redhat.com>
-Cc:     David Hildenbrand <david@redhat.com>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        Jann Horn <jannh@google.com>, akpm@linux-foundation.org,
-        viro@zeniv.linux.org.uk, brauner@kernel.org, shuah@kernel.org,
-        aarcange@redhat.com, hughd@google.com, mhocko@suse.com,
-        axelrasmussen@google.com, rppt@kernel.org, willy@infradead.org,
-        Liam.Howlett@oracle.com, zhangpeng362@huawei.com,
-        bgeffon@google.com, kaleshsingh@google.com, ngeoffray@google.com,
-        jdduke@google.com, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla Thunderbird
+Subject: Re: [resend PATCH v2 0/2] virtiofs submounts that are still in use
+ forgotten by shrinker
+To:     Krister Johansen <kjlx@templeofstupid.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        linux-kernel@vger.kernel.org,
+        German Maglione <gmaglione@redhat.com>,
+        Greg Kurz <groug@kaod.org>, Max Reitz <mreitz@redhat.com>
+References: <cover.1696043833.git.kjlx@templeofstupid.com>
+ <97163cdf-ab2c-4fb8-abf2-738a4680c47f@fastmail.fm>
+ <20231003164823.GA1995@templeofstupid.com>
+Content-Language: en-US, de-DE
+From:   Bernd Schubert <bernd.schubert@fastmail.fm>
+In-Reply-To: <20231003164823.GA1995@templeofstupid.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_PASS,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 3, 2023 at 2:21=E2=80=AFPM Peter Xu <peterx@redhat.com> wrote:
->
-> On Tue, Oct 03, 2023 at 11:08:07PM +0200, David Hildenbrand wrote:
-> > Sorry I have to ask: has this ever been discussed on the list? I don't =
-see
-> > any pointers. If not, then probably the number of people that know abou=
-t the
-> > history can be counted with my two hands and that shouldn't be the basi=
-s for
-> > making decisions.
->
-> For example:
->
-> https://lore.kernel.org/all/1425575884-2574-21-git-send-email-aarcange@re=
-dhat.com/
 
-There was another submission in 2019:
-https://lore.kernel.org/all/cover.1547251023.git.blake.caldwell@colorado.ed=
-u/
 
-Though both times it did not generate much discussion. I don't have a
-strong preference though MOVE sounds more generic to me TBH (it
-specifies the operation rather than REMAP which hints on how that
-operation is carried out). But again, I'm fine either way.
-As for UFFDIO_MOVE_ZERO_COPY_ONLY vs UFFDIO_MOVE_MODE_ALLOW_COPY, I
-find it weird that the default (the most efficient/desired) mode of
-operation needs a flag. I would prefer to have no flag initially and
-add UFFDIO_MOVE_MODE_ALLOW_COPY or whatever name is more appropriate
-when/if we ever need it. Makes sense?
+On 10/3/23 18:48, Krister Johansen wrote:
+> On Tue, Oct 03, 2023 at 12:18:42AM +0200, Bernd Schubert wrote:
+>>
+>>
+>> On 10/2/23 17:24, Krister Johansen wrote:
+>>> Hi,
+>>> I recently ran into a situation where a virtiofs client began
+>>> encountering EBADF after the client / guest system had an OOM.  After
+>>> reproducing the issue and debugging, the problem is caused by a
+>>> virtiofsd submount having the nodeid of its root dentry fogotten.  This
+>>> occurs because it borrows the reference for this dentry from the parent
+>>> that is passed into the function.
+>>
+>>
+>> Sorry, I didn't forget you, just didn't manage to review the 2nd version
+>> yet. Will definitely do this week.
+> 
+> Thanks; I appreciate the feedback you've provided so far.
+> 
+>> Please also note that there will be merge conflicts with atomic open patches
+>> from Dharmendra/me. Although probably not too difficult to resolve.
+> 
+> Sure. I'm happy to reparent, resolve those conflicts, re-test, and send
+> another revision when we're ready.  I suspect there are going to be
+> additional changes requested on the v2.  With that in mind, I'll hold
+> off for the moment unless it is going to cause headaches for you.
 
->
-> --
-> Peter Xu
->
-> --
-> To unsubscribe from this group and stop receiving emails from it, send an=
- email to kernel-team+unsubscribe@android.com.
->
+I certainly also didn't mean that you should check for merge conflicts, 
+it was more an annotation that it might come up - depending on the merge 
+order. Please don't stop to do improvements, resolving merge conflicts 
+shouldn't be difficult.
+I'm going to add you to the atomic open patch series to keep you 
+updated, if you don't mind.
+
+
+> 
+> For the atomic-open-revalidate changes: should I be working from what's
+> on the list?  This is the most recent patchset I see:
+> 
+> https://lore.kernel.org/linux-fsdevel/20230920173445.3943581-1-bschubert@ddn.com/
+> 
+> I found a 6.5 relative tree of yours on GitHub by following the libfuse
+> pull request, but nothing that seemed in sync with fuse/for-next.
+
+I don't think there are conflicts with fuse-next right now, but I can 
+check.
+
+
+Thanks,
+Bernd
