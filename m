@@ -2,67 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CDF857B6F11
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Oct 2023 18:56:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04F537B6F22
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Oct 2023 18:58:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240734AbjJCQ4M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Oct 2023 12:56:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59354 "EHLO
+        id S240541AbjJCQ6g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Oct 2023 12:58:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240538AbjJCQ4C (ORCPT
+        with ESMTP id S240447AbjJCQ6g (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Oct 2023 12:56:02 -0400
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 461431B9;
-        Tue,  3 Oct 2023 09:55:44 -0700 (PDT)
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1c60cec8041so8245445ad.3;
-        Tue, 03 Oct 2023 09:55:44 -0700 (PDT)
+        Tue, 3 Oct 2023 12:58:36 -0400
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0010EAF;
+        Tue,  3 Oct 2023 09:58:31 -0700 (PDT)
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-279150bad13so846456a91.3;
+        Tue, 03 Oct 2023 09:58:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696352143; x=1696956943;
+        d=1e100.net; s=20230601; t=1696352311; x=1696957111;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/OTDR5NyHbb5QfDMSXNmt2Tc0LOejPzxDMttSZkL2/8=;
-        b=WnnfO7+aeMjMYVsL9+tl0f+FVNbYr0lkeWaff6duPro/NnGxvZwDDnKZc7OEZD6V49
-         Esd1l8CbORy4KX1EvAevdXtx6zvZhdjsYuIkFt2ilApQcXo9EFCfzw6mFBzAm/3ibSxU
-         ywF+XIfY/xSI7uLR9a+pZDqHHGVgDTpzPqpU/wBYthqYTIV361qvSgLtd1EWrW/6ZwXi
-         bojGkE1AzEqXysDm7OPEaKwBL5QQNl51GT2mCuESv3mfagNY7RPeJNFl6F8Oss83vtlx
-         OOSFpDADfnzM6jhQpaY/87v18Erw4a2ya5+CRPV9Uc2HC+U1qpQH7ACcIa4Hp2WbS1PD
-         JWKg==
-X-Gm-Message-State: AOJu0YzqCwHu2g44Yphp90kHix7zGTeOqT46KYvGkEHcEXv/OMCiNFNa
-        pmeYbJeTW1eLuXu0ZZM8pnI=
-X-Google-Smtp-Source: AGHT+IHkImNltSCEcrQL09yiA54GtSP4oWfRcumNXnmrqYOlKYAw0cgN14lN/1BxGiHV1bJDHfZauw==
-X-Received: by 2002:a17:902:a415:b0:1c7:443d:7412 with SMTP id p21-20020a170902a41500b001c7443d7412mr174904plq.26.1696352143218;
-        Tue, 03 Oct 2023 09:55:43 -0700 (PDT)
+        bh=ph4ZyrbtQrh7wyzDZ9eyeUo8WfNuy38zu7LMXqicMgg=;
+        b=g5MPi96d9Fhn/MZJuI3TeeXuwwBzvcaiF3z4jsroC5q10Kudb78d91oTgi/d/IbsEp
+         V/hFFIxcWEh9R1eRUJEPrkm9/dxLC/lmX8ciLQbLH7TpasyOkIpGtogLRw7JrqKVE5zh
+         G4za5TBCssIfjr7zGVQucYRhqKtCdfRBSg57Jo0yi7jVjKc0oRtRWcydJI4UegaqOk4K
+         vHNBy0xNrjIOOh0pXQpt4Ghoy2hpPrI1Kp8Cay5cpdZ0SIKz7/Adx9Gu4F9bnImawKQT
+         mYqX4vyVskcc5YWvoxOW5L/sbN6EdLv68wYJYkYkHa4sZgZfLQ5u3fg/nRcGbPNM0/nl
+         n82A==
+X-Gm-Message-State: AOJu0YzlFCnvDbbjsegtBm82BGApiOa1wEXMpaz3HfV0Q0RK0Ca0zMSb
+        EkTxac0/RDk94YdvKtE3PGU=
+X-Google-Smtp-Source: AGHT+IGQBlXYDBY7Pq4Ub5S8toLsTFGmr7CtYVutmPFo9OW0ks0zwF/l0SLYp82viXZAK3r8SsjQpA==
+X-Received: by 2002:a17:90b:1186:b0:279:2dac:80b3 with SMTP id gk6-20020a17090b118600b002792dac80b3mr11928768pjb.44.1696352311335;
+        Tue, 03 Oct 2023 09:58:31 -0700 (PDT)
 Received: from ?IPV6:2620:15c:211:201:fc96:5ba7:a6f5:b187? ([2620:15c:211:201:fc96:5ba7:a6f5:b187])
-        by smtp.gmail.com with ESMTPSA id j4-20020a170902c3c400b001c5de42c185sm1801070plj.253.2023.10.03.09.55.41
+        by smtp.gmail.com with ESMTPSA id g6-20020a17090a300600b0027768125e24sm8260191pjb.39.2023.10.03.09.58.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Oct 2023 09:55:42 -0700 (PDT)
-Message-ID: <db6a950b-1308-4ca1-9f75-6275118bdcf5@acm.org>
-Date:   Tue, 3 Oct 2023 09:55:40 -0700
+        Tue, 03 Oct 2023 09:58:30 -0700 (PDT)
+Message-ID: <c3130686-3e28-4ff0-af0d-560b0f4e7227@acm.org>
+Date:   Tue, 3 Oct 2023 09:58:29 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/21] block: Add fops atomic write support
+Subject: Re: [PATCH 07/13] sd: Translate data lifetime information
 Content-Language: en-US
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     John Garry <john.g.garry@oracle.com>, axboe@kernel.dk,
-        kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
-        jejb@linux.ibm.com, djwong@kernel.org, viro@zeniv.linux.org.uk,
-        brauner@kernel.org, chandan.babu@oracle.com, dchinner@redhat.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
-        linux-api@vger.kernel.org
-References: <20230929102726.2985188-1-john.g.garry@oracle.com>
- <20230929102726.2985188-11-john.g.garry@oracle.com>
- <17ee1669-5830-4ead-888d-a6a4624b638a@acm.org>
- <5d26fa3b-ec34-bc39-ecfe-4616a04977ca@oracle.com>
- <b7a6f380-c6fa-45e0-b727-ba804c6684e4@acm.org>
- <yq1lecktuoo.fsf@ca-mkp.ca.oracle.com>
+To:     Avri Altman <Avri.Altman@wdc.com>, Jens Axboe <axboe@kernel.dk>
+Cc:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Damien Le Moal <dlemoal@kernel.org>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>
+References: <20230920191442.3701673-1-bvanassche@acm.org>
+ <20230920191442.3701673-8-bvanassche@acm.org>
+ <DM6PR04MB6575B74B6F5526C9860A56F1FCC5A@DM6PR04MB6575.namprd04.prod.outlook.com>
+ <1b89c38e-55dc-484a-9bf3-b9d69d960ebe@acm.org>
+ <DM6PR04MB657537626F4D0BFB869E82D1FCC4A@DM6PR04MB6575.namprd04.prod.outlook.com>
 From:   Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <yq1lecktuoo.fsf@ca-mkp.ca.oracle.com>
+In-Reply-To: <DM6PR04MB657537626F4D0BFB869E82D1FCC4A@DM6PR04MB6575.namprd04.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
         FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
         RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
@@ -73,47 +71,27 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/2/23 17:48, Martin K. Petersen wrote:
-> 
-> Bart,
-> 
->> Are there any SCSI devices that we care about that report an ATOMIC
->> TRANSFER LENGTH GRANULARITY that is larger than a single logical
->> block?
-> 
-> Yes.
-> 
-> Note that code path used inside a storage device to guarantee atomicity
-> of an entire I/O may be substantially different from the code path which
-> only offers an incremental guarantee at a single logical or physical
-> block level (to the extent that those guarantees are offered at all but
-> that's a different kettle of fish).
-> 
->> I'm wondering whether we really have to support such devices.
-> 
-> Yes.
+On 10/2/23 22:48, Avri Altman wrote:
+>> On 10/2/23 06:11, Avri Altman wrote:
+>>>> sd_setup_read_write_cmnd(struct scsi_cmnd *cmd)
+>>>>                   ret = sd_setup_rw16_cmnd(cmd, write, lba, nr_blocks,
+>>>>                                            protect | fua, dld);
+>>>>           } else if ((nr_blocks > 0xff) || (lba > 0x1fffff) ||
+>>>> -                  sdp->use_10_for_rw || protect) {
+>>>> +                  sdp->use_10_for_rw || protect ||
+>>>> +                  rq->write_hint != WRITE_LIFE_NOT_SET) {
+>>>
+>>> Is this a typo?
+>>
+>> I don't see a typo? Am I perhaps overlooking something?
+ >
+> Forcing READ(6) into READ(10) because that req carries a write-hint,
+> Deserves an extra line in the commit log IMO.
 
-Hi Martin,
-
-I'm still wondering whether we really should support storage devices
-that report an ATOMIC TRANSFER LENGTH GRANULARITY that is larger than
-the logical block size. Is my understanding correct that the NVMe
-specification makes it mandatory to support single logical block atomic
-writes since the smallest value that can be reported as the AWUN 
-parameter is one logical block because this parameter is a 0's based
-value? Is my understanding correct that SCSI devices that report an 
-ATOMIC TRANSFER LENGTH GRANULARITY that is larger than the logical block
-size are not able to support the NVMe protocol?
-
- From the NVMe specification section about the identify controller 
-response: "Atomic Write Unit Normal (AWUN): This field indicates the 
-size of the write operation guaranteed to be written atomically to the 
-NVM across all namespaces with any supported namespace format during 
-normal operation. This field is specified in logical blocks and is a 0’s 
-based value."
+Right, I should explain that the READ(6) command does not support write 
+hints and hence that READ(10) is selected if a write hint is present.
 
 Thanks,
 
 Bart.
-
 
