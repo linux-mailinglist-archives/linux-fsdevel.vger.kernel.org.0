@@ -2,135 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C09C97B5FEE
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Oct 2023 06:34:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A61B7B6022
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Oct 2023 06:56:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239065AbjJCEe1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Oct 2023 00:34:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44670 "EHLO
+        id S239075AbjJCE4h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Oct 2023 00:56:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42654 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230191AbjJCEeZ (ORCPT
+        with ESMTP id S229704AbjJCE4h (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Oct 2023 00:34:25 -0400
-Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DCCFC4
-        for <linux-fsdevel@vger.kernel.org>; Mon,  2 Oct 2023 21:34:22 -0700 (PDT)
-Received: by mail-pl1-x630.google.com with SMTP id d9443c01a7336-1c737d61a00so3635195ad.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Oct 2023 21:34:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1696307661; x=1696912461; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+xysvb7UXDgrvMeyvIHjhvvDF8mxwwGkkX/MDtZn8IY=;
-        b=S7JEE00gjWybiT6QwjW+ygdGd47CBX16/jJy0jro/5PqFdnq6nxZQp1X3w9zE9SQD5
-         SvPAf2SmmGtGlI/8pPrhTlGceMP69/8Ipa9VwKamFnN+dNtYANjHLLX4C7wOGVaKLGtJ
-         II3OhLEB0onFNn5CEk7Hi7UbTBY08+s/0kbhGX0EqmmemGgvMf8rplt9kC7vhfr7xgGx
-         Q7eH8mGXuMO8fp4mnpCirnehS2L1VVRtIkB9TmmTYO99EoPFPKkte1s9oRRuFEJaiVbW
-         LROhmnTM5kOeTZ1qhdhmKU72BLoytXKjgDCOuTZaUyrjaopILyMza4zScys6tNwv5ybJ
-         2+jA==
+        Tue, 3 Oct 2023 00:56:37 -0400
+Received: from mail-oi1-f197.google.com (mail-oi1-f197.google.com [209.85.167.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13528DD
+        for <linux-fsdevel@vger.kernel.org>; Mon,  2 Oct 2023 21:56:34 -0700 (PDT)
+Received: by mail-oi1-f197.google.com with SMTP id 5614622812f47-3ae4cefe17dso808244b6e.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Oct 2023 21:56:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696307661; x=1696912461;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+xysvb7UXDgrvMeyvIHjhvvDF8mxwwGkkX/MDtZn8IY=;
-        b=WnDAxOBnGMLsWyWHdq5cJKffhz7dxSikrIfzkNtoSkf65aVTV6zdszGReo9reiUO8D
-         AAsGgHGd2rhvXyEjOiCbpc5iiOiXUyFOi2xA87UedBYoHIyuTX3kZd6BEABhdDAlgP52
-         KUyHgGSpcRiX5HCtn3lv88N3XAFl50EF5VKdCRF3+Mf3o/EJmnl0cf7SlTRUfhn5h4Yr
-         4VPUZa9E9SqVzxNolJ6XO7+bveAC7iKu5sEfO24+t6oUZczJoEzT0bDycNNDpmuhRIuJ
-         /AcViboMoV0iZjocmhIuC/o4u/azqJixMVOaFf93AVyEbi0sZEjfwt7WQMHEg6DWfa+Q
-         OVdA==
-X-Gm-Message-State: AOJu0Yy/hmLeOsL9i1Yypx0dz9ZD2L6y5fjedjQqzgDqiirk40ksaB7q
-        JVp1WetPjawNv1NpNgvcX/geyA==
-X-Google-Smtp-Source: AGHT+IEM0jhYe8OIyJVgIN1aZyptyxQiXDtplBZuTljT0XzOVBrzHoD7FYZACjKGOsHLvoVZ/wOOew==
-X-Received: by 2002:a17:902:9b8e:b0:1c6:845:27c5 with SMTP id y14-20020a1709029b8e00b001c6084527c5mr13417148plp.61.1696307661424;
-        Mon, 02 Oct 2023 21:34:21 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-20-59.pa.nsw.optusnet.com.au. [49.180.20.59])
-        by smtp.gmail.com with ESMTPSA id ji17-20020a170903325100b001c444106bcasm341059plb.46.2023.10.02.21.34.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Oct 2023 21:34:20 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-        (envelope-from <david@fromorbit.com>)
-        id 1qnX6w-008l4e-0d;
-        Tue, 03 Oct 2023 15:34:18 +1100
-Date:   Tue, 3 Oct 2023 15:34:18 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     John Garry <john.g.garry@oracle.com>, axboe@kernel.dk,
-        kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
-        jejb@linux.ibm.com, martin.petersen@oracle.com,
-        viro@zeniv.linux.org.uk, brauner@kernel.org,
-        chandan.babu@oracle.com, dchinner@redhat.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
-        linux-api@vger.kernel.org
-Subject: Re: [PATCH 11/21] fs: xfs: Don't use low-space allocator for
- alignment > 1
-Message-ID: <ZRuZymVoFI7EUjbS@dread.disaster.area>
-References: <20230929102726.2985188-1-john.g.garry@oracle.com>
- <20230929102726.2985188-12-john.g.garry@oracle.com>
- <ZRtrap9v9xJrf6nq@dread.disaster.area>
- <20231003030010.GE21298@frogsfrogsfrogs>
+        d=1e100.net; s=20230601; t=1696308993; x=1696913793;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XfrUWOBmU6zzAiZBESX6DIbmzW9eMSUX6mzf04Ler6k=;
+        b=rSJeQjzL4cpXkjEMBj76svmpvJCH8wtobdCv4GjpvMnpdyCjKyNov0cx6QlGCoRQ0b
+         h5jvmWMgW5V22ERk6nXeg1+KKwRcJPmp+22IH2VbUrFMUqVrkkJo9CCa36f/azqBqGOl
+         qSLYnNVGgxJx5D130PaNSDqE/8a+fnPFj9nDl14mer/sq+bH5NCn2w57NJ6YR1YOT6MY
+         PxfGHrPQeGAwhvTF+e9pb1OAsitxWtlmJInExoiNxjpIG/xqFEBI5hhomLiEIF3nRkqm
+         Ev2jMGex2P3tbrZd6JVUqjEy/EfyRTSGhrrtPh1nsjSIiYs7VZr8JDy3x8Ngkw7lYNeD
+         +P+Q==
+X-Gm-Message-State: AOJu0Yw8rInLr0a+OXXrE6jATAPHtwSu3WcSKHf3BTSQkjfS84LVXAJz
+        OugYPjj3/kTTnJVPDLHZCwSUjyHjpMwoR4KdB1qVxkGaT4sh
+X-Google-Smtp-Source: AGHT+IEbktwgravybWHUhcjDg2HPO0fZM9+laAEhvFerNy1UOSXTCbPCj1YqCLbR/KpGxOSSpO2R8d6JaZU/dh4DnHuTyvkCO+Z9
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231003030010.GE21298@frogsfrogsfrogs>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+X-Received: by 2002:a05:6808:2219:b0:3ac:ab4f:ef3 with SMTP id
+ bd25-20020a056808221900b003acab4f0ef3mr7223567oib.6.1696308993424; Mon, 02
+ Oct 2023 21:56:33 -0700 (PDT)
+Date:   Mon, 02 Oct 2023 21:56:33 -0700
+In-Reply-To: <00000000000056dad80606c447e0@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000fb84850606c8b688@google.com>
+Subject: Re: [syzbot] [overlayfs?] general protection fault in ovl_encode_real_fh
+From:   syzbot <syzbot+2208f82282740c1c8915@syzkaller.appspotmail.com>
+To:     amir73il@gmail.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 02, 2023 at 08:00:10PM -0700, Darrick J. Wong wrote:
-> On Tue, Oct 03, 2023 at 12:16:26PM +1100, Dave Chinner wrote:
-> > On Fri, Sep 29, 2023 at 10:27:16AM +0000, John Garry wrote:
-> > > The low-space allocator doesn't honour the alignment requirement, so don't
-> > > attempt to even use it (when we have an alignment requirement).
-> > > 
-> > > Signed-off-by: John Garry <john.g.garry@oracle.com>
-> > > ---
-> > >  fs/xfs/libxfs/xfs_bmap.c | 4 ++++
-> > >  1 file changed, 4 insertions(+)
-> > > 
-> > > diff --git a/fs/xfs/libxfs/xfs_bmap.c b/fs/xfs/libxfs/xfs_bmap.c
-> > > index 30c931b38853..328134c22104 100644
-> > > --- a/fs/xfs/libxfs/xfs_bmap.c
-> > > +++ b/fs/xfs/libxfs/xfs_bmap.c
-> > > @@ -3569,6 +3569,10 @@ xfs_bmap_btalloc_low_space(
-> > >  {
-> > >  	int			error;
-> > >  
-> > > +	/* The allocator doesn't honour args->alignment */
-> > > +	if (args->alignment > 1)
-> > > +		return 0;
-> > > +
-> > 
-> > How does this happen?
-> > 
-> > The earlier failing aligned allocations will clear alignment before
-> > we get here....
-> 
-> I was thinking the predicate should be xfs_inode_force_align(ip) to save
-> me/us from thinking about all the other weird ways args->alignment could
-> end up 1.
-> 
-> 	/* forced-alignment means we don't use low mode */
-> 	if (xfs_inode_force_align(ip))
-> 		return -ENOSPC;
+syzbot has bisected this issue to:
 
-See the email I just wrote about not needing per-inode on-disk state
-or even extent size hints for doing allocation for atomic IO. Atomic
-write unit alignment is a device parameter (similar to stripe unit)
-that applies to context specific allocation requests - it's not an
-inode property as such....
+commit 16aac5ad1fa94894b798dd522c5c3a6a0628d7f0
+Author: Amir Goldstein <amir73il@gmail.com>
+Date:   Sun Apr 23 16:02:04 2023 +0000
 
-Cheers,
+    ovl: support encoding non-decodable file handles
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11972062680000
+start commit:   8a749fd1a872 Linux 6.6-rc4
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=13972062680000
+console output: https://syzkaller.appspot.com/x/log.txt?x=15972062680000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=57da1ac039c4c78a
+dashboard link: https://syzkaller.appspot.com/bug?extid=2208f82282740c1c8915
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14877eb2680000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13b701f6680000
+
+Reported-by: syzbot+2208f82282740c1c8915@syzkaller.appspotmail.com
+Fixes: 16aac5ad1fa9 ("ovl: support encoding non-decodable file handles")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
