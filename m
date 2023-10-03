@@ -2,410 +2,313 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 59F787B5F6C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Oct 2023 05:38:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1FE37B5FD5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Oct 2023 06:24:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230103AbjJCDi4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Oct 2023 23:38:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50792 "EHLO
+        id S230128AbjJCEYc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Oct 2023 00:24:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40596 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229738AbjJCDiz (ORCPT
+        with ESMTP id S230041AbjJCEYb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Oct 2023 23:38:55 -0400
-Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F093BF
-        for <linux-fsdevel@vger.kernel.org>; Mon,  2 Oct 2023 20:38:49 -0700 (PDT)
-Received: by mail-pg1-x531.google.com with SMTP id 41be03b00d2f7-53fa455cd94so254160a12.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Oct 2023 20:38:49 -0700 (PDT)
+        Tue, 3 Oct 2023 00:24:31 -0400
+Received: from mail-oo1-xc2c.google.com (mail-oo1-xc2c.google.com [IPv6:2607:f8b0:4864:20::c2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5200DA4
+        for <linux-fsdevel@vger.kernel.org>; Mon,  2 Oct 2023 21:24:28 -0700 (PDT)
+Received: by mail-oo1-xc2c.google.com with SMTP id 006d021491bc7-57de6e502fcso269889eaf.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Oct 2023 21:24:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1696304328; x=1696909128; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=X8/+wJV819lXGEfhGKndHNo+ce73WLnUIxruRbRerE0=;
-        b=RmGN8wwdLVVJWyxWaCQ+xy+ad1w0desDkc6Z4EoenPOlfsOTTEpiZ7OAL8abo4tUqm
-         eFspZUOOPobDZQ9syGkeGlnMl9ymJyi3AcDx8BP5awRh4YxIrTsxfyR32DXYPopyQBCA
-         3m3lZfpyydAH5oBmPA33kIFuWmh3ooZ/kWbyc=
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1696307067; x=1696911867; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tRj24ayrhAkntLHqRcMnTUmDF9ooyeDw7/Fu4VWKcjU=;
+        b=tvoonKFXb7FoOfcAkeQ3FTmGqcUtyQUM19R/UF/tgEfrvpvggco/c11JArL7+O/Q2b
+         lHJY6lWfd1HUR6mDDT2JmbqXv/vRyrM/r21gzZOH5AwMCXT0eHQsBLRXBtz17gq5J42a
+         fOOY4Q83RomolysrvHwqaYKtqk6dE0WNJsjZmdUOJwhQbUSMbsP1qC7w85TqU7vMzwiP
+         KfnuX5x8lFxsmmK/xEbZmHIYL0yRhLQmOyU3H0+gIgBbfBYsfVCppPIQHYSiawgZJKhn
+         eHNKXRaprlgpHbEW8p00K57S82zT9t05RzOiLF0Wq2q8SlX12VMef38FgfHxErytpY0H
+         RGqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696304328; x=1696909128;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=X8/+wJV819lXGEfhGKndHNo+ce73WLnUIxruRbRerE0=;
-        b=ZnTgsStuv5ZuJuNLy/5vGGyif9lqtEM4Evgt6DpyUhjvcqayb95It5znOtM3fBZR+n
-         IvXFFz1fzGSPARdwWjb9DDWav/xFne5u8reemjt1UUUEld6DdjbmKJ3RtHp8eYeIHviw
-         a8IxDzkzjS4vQDK6uUE7kUgL29HufDSYKiW4chRm73iLId7aBycWaNFtKZGL8vPT1XtR
-         yfZWFwrW08/UpFZfBaMM1j9LM42hsZDutOh2T4c/b7SwZuHpb7k1TkpPvTLYJaz+CnSq
-         6O+l5EH1rh4FfKoba7dBCMjSNTpgjBzM4gd87xHBCfQX//tE/Eq6H8nGHhQY2uIL60pc
-         9jjg==
-X-Gm-Message-State: AOJu0YxdO0JI0fIvp/kV2g6Ptnk69wsx44XlV93NazprogXOaLQKQ4LU
-        tL069MCd8gqT/afwEQFzq0Kv
-X-Google-Smtp-Source: AGHT+IEQYvROSAQ8bdhmCQ0NWrUlWXKfRi3HGH4oT7aCx3AXEzwezqzVwqYPFK8KgJtcmJrNRWi3Kw==
-X-Received: by 2002:a05:6a21:7905:b0:14e:3ba7:2933 with SMTP id bg5-20020a056a21790500b0014e3ba72933mr12711859pzc.54.1696304328535;
-        Mon, 02 Oct 2023 20:38:48 -0700 (PDT)
-Received: from smtpclient.apple ([2401:fa00:8f:201:8510:bc28:be1d:f3ba])
-        by smtp.gmail.com with ESMTPSA id h4-20020a170902eec400b001c755810f89sm245349plb.181.2023.10.02.20.38.46
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 02 Oct 2023 20:38:48 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3731.700.6\))
-Subject: Re: [PATCH v9 2/7] fuse: introduce atomic open
-From:   Yuan Yao <yuanyaogoog@chromium.org>
-In-Reply-To: <20230920173445.3943581-3-bschubert@ddn.com>
-Date:   Tue, 3 Oct 2023 12:38:35 +0900
-Cc:     linux-fsdevel@vger.kernel.org, bernd.schubert@fastmail.fm,
-        miklos@szeredi.hu, dsingh@ddn.com,
-        Horst Birthelmer <hbirthelmer@ddn.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, takayas@chromium.org,
-        keiichiw@chromium.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <4DBD1761-E13F-4033-8CFF-75CDC1EFCA21@chromium.org>
-References: <20230920173445.3943581-1-bschubert@ddn.com>
- <20230920173445.3943581-3-bschubert@ddn.com>
-To:     Bernd Schubert <bschubert@ddn.com>
-X-Mailer: Apple Mail (2.3731.700.6)
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        d=1e100.net; s=20230601; t=1696307067; x=1696911867;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tRj24ayrhAkntLHqRcMnTUmDF9ooyeDw7/Fu4VWKcjU=;
+        b=wCxhEoTNWu6sSJawc8jxcbDt69SomrQkzJwbfkrqdfoasmjZL55XQiqgFeI8w/CfBt
+         vBfbiKFLdoO02d9+4PkunMF5GfTenU79c5LwbGrLqUOM6k2qbqIOqDfh7wdQYfHP5Ukm
+         oGVuY5mcZpam+wLvLOaXJhXinjKat3r7diigaTktlRYqZVWRLTPTCZY7AVDPpmBu460L
+         NJ+GWObuuVGWHA1Zf60b1RBi57g3v1BaHvkz7E9ds77V/myYx5tZMHhFGL5IldFRF4Zc
+         V2zh9a2JmIFFT+00ciBNdWCx6NOqGD1sSXvbOOsr4f5qZheFamm8PKaQooUwF+Ht3brL
+         jI5g==
+X-Gm-Message-State: AOJu0YznqNZjlMyBzsUA1nEn3tSFa6+iLiqDfk7hbSkwu9KF1XI7bNl5
+        YBRmn2crLh9VyAD4zi4Q+CpK/A==
+X-Google-Smtp-Source: AGHT+IF9/GeW581UAr9N/tYBG4MpUKg3lZZswuTJjzX9kHgNxMQY4rk20R8BKOaIH9/L9F4V8Y44rA==
+X-Received: by 2002:a05:6358:7204:b0:133:4ce:4e8c with SMTP id h4-20020a056358720400b0013304ce4e8cmr17340586rwa.29.1696307067412;
+        Mon, 02 Oct 2023 21:24:27 -0700 (PDT)
+Received: from dread.disaster.area (pa49-180-20-59.pa.nsw.optusnet.com.au. [49.180.20.59])
+        by smtp.gmail.com with ESMTPSA id r25-20020aa78b99000000b006933f657db3sm320573pfd.21.2023.10.02.21.24.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Oct 2023 21:24:26 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+        (envelope-from <david@fromorbit.com>)
+        id 1qnWxL-008kjp-29;
+        Tue, 03 Oct 2023 15:24:23 +1100
+Date:   Tue, 3 Oct 2023 15:24:23 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     John Garry <john.g.garry@oracle.com>
+Cc:     axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
+        jejb@linux.ibm.com, martin.petersen@oracle.com, djwong@kernel.org,
+        viro@zeniv.linux.org.uk, brauner@kernel.org,
+        chandan.babu@oracle.com, dchinner@redhat.com,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
+        linux-api@vger.kernel.org
+Subject: Re: [PATCH 16/21] fs: iomap: Atomic write support
+Message-ID: <ZRuXd/iG1kyeFQDh@dread.disaster.area>
+References: <20230929102726.2985188-1-john.g.garry@oracle.com>
+ <20230929102726.2985188-17-john.g.garry@oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230929102726.2985188-17-john.g.garry@oracle.com>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Sorry for confusing, I=E2=80=99m resending the mail as the previous mail =
-had a formatting issue(not plain text) and was not sent to =
-linux-fsdevel.
+On Fri, Sep 29, 2023 at 10:27:21AM +0000, John Garry wrote:
+> Add flag IOMAP_ATOMIC_WRITE to indicate to the FS that an atomic write
+> bio is being created and all the rules there need to be followed.
+> 
+> It is the task of the FS iomap iter callbacks to ensure that the mapping
+> created adheres to those rules, like size is power-of-2, is at a
+> naturally-aligned offset, etc.
 
-Hi, I=E2=80=99m Yuan, particularly interested in this patch set, and =
-I've noticed some ambiguity regarding the behavior of atomic_open for =
-symbolic links.
+The mapping being returned by the filesystem can span a much greater
+range than the actual IO needs - the iomap itself is not guaranteed
+to be aligned to anything in particular, but the IO location within
+that map can still conform to atomic IO constraints. See how
+iomap_sector() calculates the actual LBA address of the IO from
+the iomap and the current file position the IO is being done at.
 
-I think this part may cause a problem if we atomic_open a symbolic =
-link.The previous behavior for fuse_create_open() will only do lookup =
-but not open the symbolic link. But, with the full atomic open kernel =
-patch. My understanding is that when the kernel performs an atomic_open =
-operation on a symbolic link, the dentry returned from the FUSE server =
-contains the inode pointing to the opened symbolic link. However, after =
-atomic_open() is called, the may_open() function in namei.c checks the =
-node's i_mode and identifies it as a symbolic link, resulting in an =
-ELOOP error.
+hence I think saying "the filesysetm should make sure all IO
+alignment adheres to atomic IO rules is probably wrong. The iomap
+layer doesn't care what the filesystem does, all it cares about is
+whether the IO can be done given the extent map that was returned to
+it.
 
-My concernn is: what is the expected behavior for opening a symbolic =
-link, both on the kernel side and the server side? Is it possible for =
-the fuse server to return the dentry containing the inode of the link =
-destination instead of the inode of the symbolic link itself?
+Indeed, iomap_dio_bio_iter() is doing all these alignment checks for
+normal DIO reads and writes which must be logical block sized
+aligned. i.e. this check:
 
-> On Sep 21, 2023, at 2:34, Bernd Schubert <bschubert@ddn.com> wrote:
->=20
-> From: Dharmendra Singh <dsingh@ddn.com>
->=20
-> This adds full atomic open support, to avoid lookup before =
-open/create.
-> If the implementation (fuse server/daemon) does not support atomic =
-open
-> it falls back to non-atomic open.
->=20
-> Co-developed-by: Bernd Schubert <bschubert@ddn.com>
-> Signed-off-by: Dharmendra Singh <dsingh@ddn.com>
-> Signed-off-by: Horst Birthelmer <hbirthelmer@ddn.com>
-> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
-> Cc: Miklos Szeredi <miklos@szeredi.hu>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Cc: Dharmendra Singh <dsingh@ddn.com>
-> Cc: linux-fsdevel@vger.kernel.org
+        if ((pos | length) & (bdev_logical_block_size(iomap->bdev) - 1) ||
+            !bdev_iter_is_aligned(iomap->bdev, dio->submit.iter))
+                return -EINVAL;
+
+Hence I think that atomic IO units, which are similarly defined by
+the bdev, should be checked at the iomap layer, too. e.g, by
+following up with:
+
+	if ((dio->iocb->ki_flags & IOCB_ATOMIC) &&
+	    ((pos | length) & (bdev_atomic_unit_min(iomap->bdev) - 1) ||
+	     !bdev_iter_is_atomic_aligned(iomap->bdev, dio->submit.iter))
+		return -EINVAL;
+
+At this point, filesystems don't really need to know anything about
+atomic IO - if they've allocated a large contiguous extent (e.g. via
+fallocate()), then RWF_ATOMIC will just work for the cases where the
+block device supports it...
+
+This then means that stuff like XFS extent size hints only need to
+check when the hint is set that it is aligned to the underlying
+device atomic IO constraints. Then when it sees the IOMAP_ATOMIC
+modifier, it can fail allocation if it can't get extent size hint
+aligned allocation.
+
+IOWs, I'm starting to think this doesn't need any change to the
+on-disk format for XFS - it can be driven entirely through two
+dynamic mechanisms:
+
+1. (IOMAP_WRITE | IOMAP_ATOMIC) requests from the direct IO layer
+which causes mapping/allocation to fail if it can't allocate (or
+map) atomic IO compatible extents for the IO.
+
+2. FALLOC_FL_ATOMIC preallocation flag modifier to tell fallocate()
+to force alignment of all preallocated extents to atomic IO
+constraints.
+
+This doesn't require extent size hints at all. The filesystem can
+query the bdev at mount time, store the min/max atomic write sizes,
+and then use them for all requests that have _ATOMIC modifiers set
+on them.
+
+With iomap doing the same "get the atomic constraints from the bdev"
+style lookups for per-IO file offset and size checking, I don't
+think we actually need extent size hints or an on-disk flag to force
+extent size hint alignment.
+
+That doesn't mean extent size hints can't be used - it just means
+that extent size hints have to be constrained to being aligned to
+atomic IOs (e.g. extent size hint must be an integer multiple of the
+max atomic IO size). This then acts as a modifier for _ATOMIC
+context allocations, much like it is a modifier for normal
+allocations now.
+
+> In iomap_dio_bio_iter(), ensure that for a non-dsync iocb that the mapping
+> is not dirty nor unmapped.
+>
+> A write should only produce a single bio, so error when it doesn't.
+
+I comment on both these things below.
+
+> 
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
 > ---
-> fs/fuse/dir.c             | 214 +++++++++++++++++++++++++++++++++++++-
-> fs/fuse/fuse_i.h          |   3 +
-> include/uapi/linux/fuse.h |   3 +
-> 3 files changed, 219 insertions(+), 1 deletion(-)
->=20
-> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-> index 542086140781..4cb2809a852d 100644
-> --- a/fs/fuse/dir.c
-> +++ b/fs/fuse/dir.c
-> @@ -722,7 +722,7 @@ static int _fuse_create_open(struct inode *dir, =
-struct dentry *entry,
->=20
-> static int fuse_mknod(struct mnt_idmap *, struct inode *, struct =
-dentry *,
->      umode_t, dev_t);
-> -static int fuse_atomic_open(struct inode *dir, struct dentry *entry,
-> +static int fuse_create_open(struct inode *dir, struct dentry *entry,
->    struct file *file, unsigned flags,
->    umode_t mode)
-> {
-> @@ -768,6 +768,218 @@ static int fuse_atomic_open(struct inode *dir, =
-struct dentry *entry,
-> return finish_no_open(file, res);
-> }
->=20
-> +static int _fuse_atomic_open(struct inode *dir, struct dentry *entry,
-> +     struct file *file, unsigned flags,
-> +     umode_t mode)
-> +{
-> + int err;
-> + struct inode *inode;
-> + struct fuse_mount *fm =3D get_fuse_mount(dir);
-> + struct fuse_conn *fc =3D fm->fc;
-> + FUSE_ARGS(args);
-> + struct fuse_forget_link *forget;
-> + struct fuse_create_in inarg;
-> + struct fuse_open_out outopen;
-> + struct fuse_entry_out outentry;
-> + struct fuse_inode *fi;
-> + struct fuse_file *ff;
-> + struct dentry *switched_entry =3D NULL, *alias =3D NULL;
-> + DECLARE_WAIT_QUEUE_HEAD_ONSTACK(wq);
-> +
-> + /* Expect a negative dentry */
-> + if (unlikely(d_inode(entry)))
-> + goto fallback;
-> +
-> + /* Userspace expects S_IFREG in create mode */
-> + if ((flags & O_CREAT) && (mode & S_IFMT) !=3D S_IFREG)
-> + goto fallback;
-> +
-> + forget =3D fuse_alloc_forget();
-> + err =3D -ENOMEM;
-> + if (!forget)
-> + goto out_err;
-> +
-> + err =3D -ENOMEM;
-> + ff =3D fuse_file_alloc(fm);
-> + if (!ff)
-> + goto out_put_forget_req;
-> +
-> + if (!fc->dont_mask)
-> + mode &=3D ~current_umask();
-> +
-> + flags &=3D ~O_NOCTTY;
-> + memset(&inarg, 0, sizeof(inarg));
-> + memset(&outentry, 0, sizeof(outentry));
-> + inarg.flags =3D flags;
-> + inarg.mode =3D mode;
-> + inarg.umask =3D current_umask();
-> +
-> + if (fc->handle_killpriv_v2 && (flags & O_TRUNC) &&
-> +    !(flags & O_EXCL) && !capable(CAP_FSETID)) {
-> + inarg.open_flags |=3D FUSE_OPEN_KILL_SUIDGID;
-> + }
-> +
-> + args.opcode =3D FUSE_OPEN_ATOMIC;
-> + args.nodeid =3D get_node_id(dir);
-> + args.in_numargs =3D 2;
-> + args.in_args[0].size =3D sizeof(inarg);
-> + args.in_args[0].value =3D &inarg;
-> + args.in_args[1].size =3D entry->d_name.len + 1;
-> + args.in_args[1].value =3D entry->d_name.name;
-> + args.out_numargs =3D 2;
-> + args.out_args[0].size =3D sizeof(outentry);
-> + args.out_args[0].value =3D &outentry;
-> + args.out_args[1].size =3D sizeof(outopen);
-> + args.out_args[1].value =3D &outopen;
-> +
-> + if (flags & O_CREAT) {
-> + err =3D get_create_ext(&args, dir, entry, mode);
-> + if (err)
-> + goto out_free_ff;
-> + }
-> +
-> + err =3D fuse_simple_request(fm, &args);
-> + free_ext_value(&args);
-> + if (err =3D=3D -ENOSYS) {
-> + fc->no_open_atomic =3D 1;
-> + fuse_file_free(ff);
-> + kfree(forget);
-> + goto fallback;
-> + }
-> +
-> + if (!err && !outentry.nodeid)
-> + err =3D -ENOENT;
-> +
-> + if (err)
-> + goto out_free_ff;
-> +
-> + err =3D -EIO;
-> + if (invalid_nodeid(outentry.nodeid) || =
-fuse_invalid_attr(&outentry.attr))
-> + goto out_free_ff;
-> +
-> + ff->fh =3D outopen.fh;
-> + ff->nodeid =3D outentry.nodeid;
-> + ff->open_flags =3D outopen.open_flags;
-> + inode =3D fuse_iget(dir->i_sb, outentry.nodeid, outentry.generation,
-> +  &outentry.attr, entry_attr_timeout(&outentry), 0);
-> + if (!inode) {
-> + flags &=3D ~(O_CREAT | O_EXCL | O_TRUNC);
-> + fuse_sync_release(NULL, ff, flags);
-> + fuse_queue_forget(fm->fc, forget, outentry.nodeid, 1);
-> + err =3D -ENOMEM;
-> + goto out_err;
-> + }
-> +
-> + /* prevent racing/parallel lookup on a negative hashed */
-> + if (!(flags & O_CREAT) && !d_in_lookup(entry)) {
-> + d_drop(entry);
-> + switched_entry =3D d_alloc_parallel(entry->d_parent,
-> +   &entry->d_name, &wq);
-> + if (IS_ERR(switched_entry)) {
-> + err =3D PTR_ERR(switched_entry);
-> + goto out_free_ff;
-> + }
-> +
-> + if (unlikely(!d_in_lookup(switched_entry))) {
-> + /* fall back */
-> + dput(switched_entry);
-> + switched_entry =3D NULL;
-> + goto free_and_fallback;
-> + }
-> +
-> + entry =3D switched_entry;
-> + }
-> +
-> + if (d_really_is_negative(entry)) {
-> + d_drop(entry);
-> + alias =3D d_exact_alias(entry, inode);
-> + if (!alias) {
-> + alias =3D d_splice_alias(inode, entry);
-> + if (IS_ERR(alias)) {
-> + /*
-> + * Close the file in user space, but do not unlink it,
-> + * if it was created - with network file systems other
-> + * clients might have already accessed it.
-> + */
-> + fi =3D get_fuse_inode(inode);
-> + fuse_sync_release(fi, ff, flags);
-> + fuse_queue_forget(fm->fc, forget, outentry.nodeid, 1);
-> + err =3D PTR_ERR(alias);
-> + goto out_err;
-> + }
-> + }
-> +
-> + if (alias)
-> + entry =3D alias;
-> + }
-> +
-> + fuse_change_entry_timeout(entry, &outentry);
-> +
-> + /*  File was indeed created */
-> + if (outopen.open_flags & FOPEN_FILE_CREATED) {
-> + if (!(flags & O_CREAT)) {
-> + pr_debug("Server side bug, FOPEN_FILE_CREATED set "
-> + "without O_CREAT, ignoring.");
-> + } else {
-> + /* This should be always set when the file is created */
-> + fuse_dir_changed(dir);
-> + file->f_mode |=3D FMODE_CREATED;
-> + }
-> + }
-> +
-> + if (S_ISDIR(mode))
-> + ff->open_flags &=3D ~FOPEN_DIRECT_IO;
-> + err =3D finish_open(file, entry, generic_file_open);
-> + if (err) {
-> + fi =3D get_fuse_inode(inode);
-> + fuse_sync_release(fi, ff, flags);
-> + } else {
-> + file->private_data =3D ff;
-> + fuse_finish_open(inode, file);
-> + }
-> +
-> + kfree(forget);
-> +
-> + if (switched_entry) {
-> + d_lookup_done(switched_entry);
-> + dput(switched_entry);
-> + }
-> +
-> + dput(alias);
-> +
-> + return err;
-> +
-> +out_free_ff:
-> + fuse_file_free(ff);
-> +out_put_forget_req:
-> + kfree(forget);
-> +out_err:
-> + if (switched_entry) {
-> + d_lookup_done(switched_entry);
-> + dput(switched_entry);
-> + }
-> +
-> + return err;
-> +
-> +free_and_fallback:
-> + fuse_file_free(ff);
-> + kfree(forget);
-> +fallback:
-> + return fuse_create_open(dir, entry, file, flags, mode);
-> +}
-> +
-> +static int fuse_atomic_open(struct inode *dir, struct dentry *entry,
-> +    struct file *file, unsigned int flags,
-> +    umode_t mode)
-> +{
-> + struct fuse_conn *fc =3D get_fuse_conn(dir);
-> +
-> + if (fc->no_open_atomic)
-> + return fuse_create_open(dir, entry, file, flags, mode);
-> + else
-> + return _fuse_atomic_open(dir, entry, file, flags, mode);
-> +}
-> +
-> /*
->  * Code shared between mknod, mkdir, symlink and link
->  */
-> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> index 9b7fc7d3c7f1..c838708cfa2b 100644
-> --- a/fs/fuse/fuse_i.h
-> +++ b/fs/fuse/fuse_i.h
-> @@ -672,6 +672,9 @@ struct fuse_conn {
-> /** Is open/release not implemented by fs? */
-> unsigned no_open:1;
->=20
-> + /** Is open atomic not implemented by fs? */
-> + unsigned no_open_atomic:1;
-> +
-> /** Is opendir/releasedir not implemented by fs? */
-> unsigned no_opendir:1;
->=20
-> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-> index b3fcab13fcd3..33fefee42697 100644
-> --- a/include/uapi/linux/fuse.h
-> +++ b/include/uapi/linux/fuse.h
-> @@ -315,6 +315,7 @@ struct fuse_file_lock {
->  * FOPEN_STREAM: the file is stream-like (no file position at all)
->  * FOPEN_NOFLUSH: don't flush data cache on close (unless =
-FUSE_WRITEBACK_CACHE)
->  * FOPEN_PARALLEL_DIRECT_WRITES: Allow concurrent direct writes on the =
-same inode
-> + * FOPEN_FILE_CREATED: the file was indeed created
->  */
-> #define FOPEN_DIRECT_IO (1 << 0)
-> #define FOPEN_KEEP_CACHE (1 << 1)
-> @@ -323,6 +324,7 @@ struct fuse_file_lock {
-> #define FOPEN_STREAM (1 << 4)
-> #define FOPEN_NOFLUSH (1 << 5)
-> #define FOPEN_PARALLEL_DIRECT_WRITES (1 << 6)
-> +#define FOPEN_FILE_CREATED (1 << 7)
->=20
-> /**
->  * INIT request/reply flags
-> @@ -575,6 +577,7 @@ enum fuse_opcode {
-> FUSE_REMOVEMAPPING =3D 49,
-> FUSE_SYNCFS =3D 50,
-> FUSE_TMPFILE =3D 51,
-> + FUSE_OPEN_ATOMIC =3D 52,
->=20
-> /* CUSE specific operations */
-> CUSE_INIT =3D 4096,
-> --=20
-> 2.39.2
->=20
->=20
+>  fs/iomap/direct-io.c  | 26 ++++++++++++++++++++++++--
+>  fs/iomap/trace.h      |  3 ++-
+>  include/linux/iomap.h |  1 +
+>  3 files changed, 27 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index bcd3f8cf5ea4..6ef25e26f1a1 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -275,10 +275,11 @@ static inline blk_opf_t iomap_dio_bio_opflags(struct iomap_dio *dio,
+>  static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+>  		struct iomap_dio *dio)
+>  {
+> +	bool atomic_write = iter->flags & IOMAP_ATOMIC_WRITE;
+>  	const struct iomap *iomap = &iter->iomap;
+>  	struct inode *inode = iter->inode;
+>  	unsigned int fs_block_size = i_blocksize(inode), pad;
+> -	loff_t length = iomap_length(iter);
+> +	const loff_t length = iomap_length(iter);
+>  	loff_t pos = iter->pos;
+>  	blk_opf_t bio_opf;
+>  	struct bio *bio;
+> @@ -292,6 +293,13 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+>  	    !bdev_iter_is_aligned(iomap->bdev, dio->submit.iter))
+>  		return -EINVAL;
+>  
+> +	if (atomic_write && !iocb_is_dsync(dio->iocb)) {
+> +		if (iomap->flags & IOMAP_F_DIRTY)
+> +			return -EIO;
+> +		if (iomap->type != IOMAP_MAPPED)
+> +			return -EIO;
+> +	}
 
+How do we get here without space having been allocated for the
+write?
+
+Perhaps what this is trying to do is make RWF_ATOMIC only be valid
+into written space? I mean, this will fail with preallocated space
+(IOMAP_UNWRITTEN) even though we still have exactly the RWF_ATOMIC
+all-or-nothing behaviour guaranteed after a crash because of journal
+recovery behaviour. i.e. if the unwritten conversion gets written to
+the journal, the data will be there. If it isn't written to the
+journal, then the space remains unwritten and there's no data across
+that entire range....
+
+So I'm not really sure that either of these checks are valid or why
+they are actually needed....
+
+> +
+>  	if (iomap->type == IOMAP_UNWRITTEN) {
+>  		dio->flags |= IOMAP_DIO_UNWRITTEN;
+>  		need_zeroout = true;
+> @@ -381,6 +389,9 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+>  					  GFP_KERNEL);
+>  		bio->bi_iter.bi_sector = iomap_sector(iomap, pos);
+>  		bio->bi_ioprio = dio->iocb->ki_ioprio;
+> +		if (atomic_write)
+> +			bio->bi_opf |= REQ_ATOMIC;
+> +
+>  		bio->bi_private = dio;
+>  		bio->bi_end_io = iomap_dio_bio_end_io;
+>  
+> @@ -397,6 +408,12 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+>  		}
+>  
+>  		n = bio->bi_iter.bi_size;
+> +		if (atomic_write && n != length) {
+> +			/* This bio should have covered the complete length */
+> +			ret = -EINVAL;
+> +			bio_put(bio);
+> +			goto out;
+
+Why? The actual bio can be any length that meets the aligned
+criteria between min and max, yes? So it's valid to split a
+RWF_ATOMIC write request up into multiple min unit sized bios, is it
+not? I mean, that's the whole point of the min/max unit setup, isn't
+it? That the max sized write only guarantees that it will tear at
+min unit boundaries, not within those min unit boundaries? If
+I've understood this correctly, then why does this "single bio for
+large atomic write" constraint need to exist?
+
+
+> +		}
+>  		if (dio->flags & IOMAP_DIO_WRITE) {
+>  			task_io_account_write(n);
+>  		} else {
+> @@ -554,6 +571,8 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  	struct blk_plug plug;
+>  	struct iomap_dio *dio;
+>  	loff_t ret = 0;
+> +	bool is_read = iov_iter_rw(iter) == READ;
+> +	bool atomic_write = (iocb->ki_flags & IOCB_ATOMIC) && !is_read;
+
+This does not need to be done here, because....
+
+>  
+>  	trace_iomap_dio_rw_begin(iocb, iter, dio_flags, done_before);
+>  
+> @@ -579,7 +598,7 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  	if (iocb->ki_flags & IOCB_NOWAIT)
+>  		iomi.flags |= IOMAP_NOWAIT;
+>  
+> -	if (iov_iter_rw(iter) == READ) {
+> +	if (is_read) {
+>  		/* reads can always complete inline */
+>  		dio->flags |= IOMAP_DIO_INLINE_COMP;
+>  
+> @@ -605,6 +624,9 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  		if (iocb->ki_flags & IOCB_DIO_CALLER_COMP)
+>  			dio->flags |= IOMAP_DIO_CALLER_COMP;
+>  
+> +		if (atomic_write)
+> +			iomi.flags |= IOMAP_ATOMIC_WRITE;
+
+.... it is only checked once in the write path, so
+
+		if (iocb->ki_flags & IOCB_ATOMIC)
+			iomi.flags |= IOMAP_ATOMIC;
+
+> +
+>  		if (dio_flags & IOMAP_DIO_OVERWRITE_ONLY) {
+>  			ret = -EAGAIN;
+>  			if (iomi.pos >= dio->i_size ||
+> diff --git a/fs/iomap/trace.h b/fs/iomap/trace.h
+> index c16fd55f5595..f9932733c180 100644
+> --- a/fs/iomap/trace.h
+> +++ b/fs/iomap/trace.h
+> @@ -98,7 +98,8 @@ DEFINE_RANGE_EVENT(iomap_dio_rw_queued);
+>  	{ IOMAP_REPORT,		"REPORT" }, \
+>  	{ IOMAP_FAULT,		"FAULT" }, \
+>  	{ IOMAP_DIRECT,		"DIRECT" }, \
+> -	{ IOMAP_NOWAIT,		"NOWAIT" }
+> +	{ IOMAP_NOWAIT,		"NOWAIT" }, \
+> +	{ IOMAP_ATOMIC_WRITE,	"ATOMIC" }
+
+We already have an IOMAP_WRITE flag, so IOMAP_ATOMIC is the modifier
+for the write IO behaviour (like NOWAIT), not a replacement write
+flag.
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
