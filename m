@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 262E67B69D2
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Oct 2023 15:06:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F2FE7B69D7
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Oct 2023 15:07:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232479AbjJCNGl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Oct 2023 09:06:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60630 "EHLO
+        id S232526AbjJCNHg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Oct 2023 09:07:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232455AbjJCNGk (ORCPT
+        with ESMTP id S232578AbjJCNHf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Oct 2023 09:06:40 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24ECAC4;
-        Tue,  3 Oct 2023 06:06:37 -0700 (PDT)
+        Tue, 3 Oct 2023 09:07:35 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF66893;
+        Tue,  3 Oct 2023 06:07:31 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id C0E9A1F45B;
-        Tue,  3 Oct 2023 13:06:35 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id A76911F45B;
+        Tue,  3 Oct 2023 13:07:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1696338395; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1696338450; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=hBW6aALkPO3CT6TaCsu8tN/6UcJj9gFut487AL5616w=;
-        b=QcRQPssugIvbxgWLAS2VGtKXSx5CY+ZdaiiMLY/XHjeNBNDY9OvYCcKBYgNN59N2Ca9Ujt
-        v9DWcdQk/XBqS9rfr/U1yUBwv7XK0fJXdts9d4QEXRdZPW4OIqFv1d/7TioCl6X+rIlGnE
-        /8kAOQVAL1yabk1Ph3hrWl1Knj/wMvc=
+        bh=FrpETq8twusJ5sdH9d+XrhUFsRvR1gF/4TiRFUUmkNo=;
+        b=tOXjeMZGVlb97/Zga+TON5k8gXv2c7gmG4KxASLu0sE/TvavPKgmvnkSVcpY5tCwIgqIMJ
+        JdgDc1Hx1IuePwvXuFIRv9VJMtfufVzx6B8B1RPpjjOF8rfyiHvgKAYr3VGQLitpsCbAl3
+        fiVAJ0Oh6Dnx/oe7HtEjBFRLL1WG5JI=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1696338395;
+        s=susede2_ed25519; t=1696338450;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=hBW6aALkPO3CT6TaCsu8tN/6UcJj9gFut487AL5616w=;
-        b=LlKeH0O8KpUR1zRBRWw/IGDhqnN8yAglhJMlsJSXEM9+ntps/cNngnCnQkSIL9gIP8APUw
-        MHCgdFAKRgkXWnAw==
+        bh=FrpETq8twusJ5sdH9d+XrhUFsRvR1gF/4TiRFUUmkNo=;
+        b=Tc5HhKdZU8QKXE3JUQyWi4uE30im3D3QubNCSrnQjD7NHbDOKkdpTAkHv1shINBQYVdCIF
+        jz/GIVFtdYoFfJBw==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id B0EBD132D4;
-        Tue,  3 Oct 2023 13:06:35 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 9A6D4132D4;
+        Tue,  3 Oct 2023 13:07:30 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id HSUnK9sRHGUvLgAAMHmgww
-        (envelope-from <jack@suse.cz>); Tue, 03 Oct 2023 13:06:35 +0000
+        id 0Aa4JRISHGWVLgAAMHmgww
+        (envelope-from <jack@suse.cz>); Tue, 03 Oct 2023 13:07:30 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 3C9D0A07CC; Tue,  3 Oct 2023 15:06:35 +0200 (CEST)
-Date:   Tue, 3 Oct 2023 15:06:35 +0200
+        id 48209A07CC; Tue,  3 Oct 2023 15:07:30 +0200 (CEST)
+Date:   Tue, 3 Oct 2023 15:07:30 +0200
 From:   Jan Kara <jack@suse.cz>
 To:     Hugh Dickins <hughd@google.com>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
@@ -61,76 +61,86 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Axel Rasmussen <axelrasmussen@google.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org
-Subject: Re: [PATCH 1/8] shmem: shrink shmem_inode_info: dir_offsets in a
- union
-Message-ID: <20231003130635.hn2ljuorlf7rdodx@quack3>
+Subject: Re: [PATCH 2/8] shmem: remove vma arg from shmem_get_folio_gfp()
+Message-ID: <20231003130730.hiag5s6ubditcazg@quack3>
 References: <c7441dc6-f3bb-dd60-c670-9f5cbd9f266@google.com>
- <86ebb4b-c571-b9e8-27f5-cb82ec50357e@google.com>
+ <d9ce6f65-a2ed-48f4-4299-fdb0544875c5@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <86ebb4b-c571-b9e8-27f5-cb82ec50357e@google.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <d9ce6f65-a2ed-48f4-4299-fdb0544875c5@google.com>
+X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_SOFTFAIL autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 29-09-23 20:25:38, Hugh Dickins wrote:
-> Shave 32 bytes off (the 64-bit) shmem_inode_info.  There was a 4-byte
-> pahole after stop_eviction, better filled by fsflags.  And the 24-byte
-> dir_offsets can only be used by directories, whereas shrinklist and
-> swaplist only by shmem_mapping() inodes (regular files or long symlinks):
-> so put those into a union.  No change in mm/shmem.c is required for this.
+On Fri 29-09-23 20:26:53, Hugh Dickins wrote:
+> The vma is already there in vmf->vma, so no need for a separate arg.
 > 
 > Signed-off-by: Hugh Dickins <hughd@google.com>
 
-Looks good to me. Feel free to add:
+Sure. Feel free to add:
 
 Reviewed-by: Jan Kara <jack@suse.cz>
 
 								Honza
 
-
 > ---
->  include/linux/shmem_fs.h | 16 ++++++++++------
->  1 file changed, 10 insertions(+), 6 deletions(-)
+>  mm/shmem.c | 13 ++++++-------
+>  1 file changed, 6 insertions(+), 7 deletions(-)
 > 
-> diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
-> index 6b0c626620f5..2caa6b86106a 100644
-> --- a/include/linux/shmem_fs.h
-> +++ b/include/linux/shmem_fs.h
-> @@ -23,18 +23,22 @@ struct shmem_inode_info {
->  	unsigned long		flags;
->  	unsigned long		alloced;	/* data pages alloced to file */
->  	unsigned long		swapped;	/* subtotal assigned to swap */
-> -	pgoff_t			fallocend;	/* highest fallocate endindex */
-> -	struct list_head        shrinklist;     /* shrinkable hpage inodes */
-> -	struct list_head	swaplist;	/* chain of maybes on swap */
-> +	union {
-> +	    struct offset_ctx	dir_offsets;	/* stable directory offsets */
-> +	    struct {
-> +		struct list_head shrinklist;	/* shrinkable hpage inodes */
-> +		struct list_head swaplist;	/* chain of maybes on swap */
-> +	    };
-> +	};
-> +	struct timespec64	i_crtime;	/* file creation time */
->  	struct shared_policy	policy;		/* NUMA memory alloc policy */
->  	struct simple_xattrs	xattrs;		/* list of xattrs */
-> +	pgoff_t			fallocend;	/* highest fallocate endindex */
-> +	unsigned int		fsflags;	/* for FS_IOC_[SG]ETFLAGS */
->  	atomic_t		stop_eviction;	/* hold when working on inode */
-> -	struct timespec64	i_crtime;	/* file creation time */
-> -	unsigned int		fsflags;	/* flags for FS_IOC_[SG]ETFLAGS */
->  #ifdef CONFIG_TMPFS_QUOTA
->  	struct dquot		*i_dquot[MAXQUOTAS];
->  #endif
-> -	struct offset_ctx	dir_offsets;	/* stable entry offsets */
->  	struct inode		vfs_inode;
->  };
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index 69595d341882..824eb55671d2 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -1921,14 +1921,13 @@ static int shmem_swapin_folio(struct inode *inode, pgoff_t index,
+>   * vm. If we swap it in we mark it dirty since we also free the swap
+>   * entry since a page cannot live in both the swap and page cache.
+>   *
+> - * vma, vmf, and fault_type are only supplied by shmem_fault:
+> - * otherwise they are NULL.
+> + * vmf and fault_type are only supplied by shmem_fault: otherwise they are NULL.
+>   */
+>  static int shmem_get_folio_gfp(struct inode *inode, pgoff_t index,
+>  		struct folio **foliop, enum sgp_type sgp, gfp_t gfp,
+> -		struct vm_area_struct *vma, struct vm_fault *vmf,
+> -		vm_fault_t *fault_type)
+> +		struct vm_fault *vmf, vm_fault_t *fault_type)
+>  {
+> +	struct vm_area_struct *vma = vmf ? vmf->vma : NULL;
+>  	struct address_space *mapping = inode->i_mapping;
+>  	struct shmem_inode_info *info = SHMEM_I(inode);
+>  	struct shmem_sb_info *sbinfo;
+> @@ -2141,7 +2140,7 @@ int shmem_get_folio(struct inode *inode, pgoff_t index, struct folio **foliop,
+>  		enum sgp_type sgp)
+>  {
+>  	return shmem_get_folio_gfp(inode, index, foliop, sgp,
+> -			mapping_gfp_mask(inode->i_mapping), NULL, NULL, NULL);
+> +			mapping_gfp_mask(inode->i_mapping), NULL, NULL);
+>  }
+>  
+>  /*
+> @@ -2225,7 +2224,7 @@ static vm_fault_t shmem_fault(struct vm_fault *vmf)
+>  	}
+>  
+>  	err = shmem_get_folio_gfp(inode, vmf->pgoff, &folio, SGP_CACHE,
+> -				  gfp, vma, vmf, &ret);
+> +				  gfp, vmf, &ret);
+>  	if (err)
+>  		return vmf_error(err);
+>  	if (folio)
+> @@ -4897,7 +4896,7 @@ struct folio *shmem_read_folio_gfp(struct address_space *mapping,
+>  
+>  	BUG_ON(!shmem_mapping(mapping));
+>  	error = shmem_get_folio_gfp(inode, index, &folio, SGP_CACHE,
+> -				  gfp, NULL, NULL, NULL);
+> +				    gfp, NULL, NULL);
+>  	if (error)
+>  		return ERR_PTR(error);
 >  
 > -- 
 > 2.35.3
