@@ -2,88 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D56D57B6ED8
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Oct 2023 18:45:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA2BA7B6EDF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Oct 2023 18:46:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240441AbjJCQpg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Oct 2023 12:45:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41262 "EHLO
+        id S230478AbjJCQql (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Oct 2023 12:46:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232066AbjJCQpf (ORCPT
+        with ESMTP id S230212AbjJCQqk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Oct 2023 12:45:35 -0400
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49827AC;
-        Tue,  3 Oct 2023 09:45:32 -0700 (PDT)
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2774f6943b1so846464a91.0;
-        Tue, 03 Oct 2023 09:45:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696351532; x=1696956332;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FXhSrsitouTtG4jnIpF6WlTXUJWU1AdtRoPHLHegjNE=;
-        b=a+dYzxhGi6fjYnt4lG8eX5xqljr9JMXZ19YT8gocz3oLqjdjQ2sHe/Xv37FIVar891
-         exQrAW832r44VYRUsQjG1AMi0fmDnQx+byRNwe8/I8FOILjowEp6crsMO8RVKuc7s+Je
-         aWkUDp9AbZHhCCcJhPsG7yuk9UkWsjJIzASWw79hGwOJSmsihY+cVXfZzBYoiBjmM/Ml
-         d4r1Oqh1Z6xo4P9jm5Jt0oeW3t43DMmiBtb26ZRfVpXs8e3/ka8gctHLP/SxRRwYbu8V
-         EqwsyYbOwXJQfe24rXal4h4ryqvg6LWI8fkauHBWwAyPrqy5chnhFZkW7Sbcztfha/+K
-         KIRQ==
-X-Gm-Message-State: AOJu0Yz68YL6vC0tgX0ecrTPfuDk9I0Snl28UQwjZDUcaM+JU7yJ19C0
-        pxOrFYHrimB1Ekz09gNvWvo=
-X-Google-Smtp-Source: AGHT+IEwC8qVv1+tkY+wONdL32+rPKEpsbXoCH+j3Wnz44caGKeaCpNY+K3ZBdFDu5Ezk2vd0L3+eQ==
-X-Received: by 2002:a17:90a:5d18:b0:26b:4a9e:3c7e with SMTP id s24-20020a17090a5d1800b0026b4a9e3c7emr14066923pji.4.1696351531639;
-        Tue, 03 Oct 2023 09:45:31 -0700 (PDT)
-Received: from ?IPV6:2620:15c:211:201:fc96:5ba7:a6f5:b187? ([2620:15c:211:201:fc96:5ba7:a6f5:b187])
-        by smtp.gmail.com with ESMTPSA id e59-20020a17090a6fc100b0026b70d2a8a2sm1719463pjk.29.2023.10.03.09.45.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Oct 2023 09:45:30 -0700 (PDT)
-Message-ID: <8e2f4aeb-e00e-453a-9658-b1c4ae352084@acm.org>
-Date:   Tue, 3 Oct 2023 09:45:28 -0700
+        Tue, 3 Oct 2023 12:46:40 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E083A1;
+        Tue,  3 Oct 2023 09:46:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1696351598; x=1727887598;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=WABA3N82zUWgofliPDkDARwavt+9zpHw4Esz4HwHYMg=;
+  b=K/k8FxnbsqxEE5vVU/QJiIVBa4inmLKGwUThVbXSIZ7wv+LJuDrwlTWa
+   GVlZ41AKWh0lX6za4KSJgSP70S/hEwwuB7c7XIRcVOTBx/Be1qhAHmuh6
+   m8AU5HdKjFnofMSPVkn9Y9/3dddqrohDagPgilIb6gP119NR6af6Q2zDw
+   lWbbFi19RljT721XRq8274vBeBG0LI1mXt/TrH3eegxqs5A11FQ0l9DGZ
+   D+tEQNhuan4eruqMjebNDUIpsNH8Jk+sigWspumhXZR7yNWCnmPQ5L1Dd
+   kh00SzcC2p6cyn7kU8lM8ESIXDKljYndy9a5nkQeA7cuy1b9PaEV8rJEv
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10852"; a="380198863"
+X-IronPort-AV: E=Sophos;i="6.03,197,1694761200"; 
+   d="scan'208";a="380198863"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2023 09:46:37 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10852"; a="841423206"
+X-IronPort-AV: E=Sophos;i="6.03,197,1694761200"; 
+   d="scan'208";a="841423206"
+Received: from ddiaz-mobl4.amr.corp.intel.com (HELO [10.209.57.36]) ([10.209.57.36])
+  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2023 09:46:37 -0700
+Message-ID: <875f8a6f-c2b3-92f4-f067-b969a9fc1112@intel.com>
+Date:   Tue, 3 Oct 2023 09:46:36 -0700
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/21] block: Add fops atomic write support
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v1 20/20] selftests: mm: make protection_keys test work on
+ arm64
 Content-Language: en-US
-To:     John Garry <john.g.garry@oracle.com>, axboe@kernel.dk,
-        kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
-        jejb@linux.ibm.com, martin.petersen@oracle.com, djwong@kernel.org,
-        viro@zeniv.linux.org.uk, brauner@kernel.org,
-        chandan.babu@oracle.com, dchinner@redhat.com
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
-        linux-api@vger.kernel.org
-References: <20230929102726.2985188-1-john.g.garry@oracle.com>
- <20230929102726.2985188-11-john.g.garry@oracle.com>
- <17ee1669-5830-4ead-888d-a6a4624b638a@acm.org>
- <5d26fa3b-ec34-bc39-ecfe-4616a04977ca@oracle.com>
- <b7a6f380-c6fa-45e0-b727-ba804c6684e4@acm.org>
- <1adeff8e-e2fe-7dc3-283e-4979f9bd6adc@oracle.com>
-From:   Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <1adeff8e-e2fe-7dc3-283e-4979f9bd6adc@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     Joey Gouly <joey.gouly@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     nd@arm.com, akpm@linux-foundation.org, aneesh.kumar@linux.ibm.com,
+        catalin.marinas@arm.com, dave.hansen@linux.intel.com,
+        maz@kernel.org, oliver.upton@linux.dev, shuah@kernel.org,
+        will@kernel.org, kvmarm@lists.linux.dev,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kselftest@vger.kernel.org
+References: <20230927140123.5283-1-joey.gouly@arm.com>
+ <20230927140123.5283-21-joey.gouly@arm.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+In-Reply-To: <20230927140123.5283-21-joey.gouly@arm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-5.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/3/23 01:37, John Garry wrote:
-> I don't think that is_power_of_2(write length) is specific to XFS.
+On 9/27/23 07:01, Joey Gouly wrote:
+> The encoding of the pkey register differs on arm64, than on x86/ppc. On those
+> platforms, a bit in the register is used to disable permissions, for arm64, a
+> bit enabled in the register indicates that the permission is allowed.
+> 
+> This drops two asserts of the form:
+> 	 assert(read_pkey_reg() <= orig_pkey_reg);
+> Because on arm64 this doesn't hold, due to the encoding.
+> 
+> The pkey must be reset to both access allow and write allow in the signal
+> handler. pkey_access_allow() works currently for PowerPC as the
+> PKEY_DISABLE_ACCESS and PKEY_DISABLE_WRITE have overlapping bits set.
+> 
+> Access to the uc_mcontext is abstracted, as arm64 has a different structure.
 
-I think this is specific to XFS. Can you show me the F2FS code that 
-restricts the length of an atomic write to a power of two? I haven't 
-found it. The only power-of-two check that I found in F2FS is the 
-following (maybe I overlooked something):
+This all looks sane enough.  Welcome to the pkey party! :)
 
-$ git grep -nH is_power fs/f2fs
-fs/f2fs/super.c:3914:	if (!is_power_of_2(zone_sectors)) {
-
-Thanks,
-
-Bart.
+Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
