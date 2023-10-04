@@ -2,38 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 14B297B8BB2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Oct 2023 20:56:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 154B37B8BFF
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Oct 2023 20:56:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244772AbjJDSzl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Oct 2023 14:55:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44806 "EHLO
+        id S244806AbjJDSzu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Oct 2023 14:55:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45602 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244899AbjJDSzO (ORCPT
+        with ESMTP id S244640AbjJDSzQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Oct 2023 14:55:14 -0400
+        Wed, 4 Oct 2023 14:55:16 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A247C1AC;
-        Wed,  4 Oct 2023 11:54:40 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6951C433C7;
-        Wed,  4 Oct 2023 18:54:39 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2A401707;
+        Wed,  4 Oct 2023 11:54:41 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DD64C433C9;
+        Wed,  4 Oct 2023 18:54:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696445680;
-        bh=k4ZUpa6J1BuoVYWAGoQizbF/tb9dzfYDbjoaj3H865A=;
-        h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=QF+ZtPgJltvkZ4wRlkydlrJjExkxPnb8w2VS8k2wz7RTDqIUo3j0UfEKsNWAjMFjw
-         thFbyy6TvHMMJGOu02xNjKYxXFg+DXpGKuCTVou4Zr1OKeiwwEHg40N4Jp+/37ohon
-         gRy7sFEP/UmyWoxws7W3m9gVQxYPpIf9f9R360tW1jLjR0RoCHmHke3E6RadBIUsWJ
-         ogb8CCIR1Nvyb/EwlTwyTxN4a4EzP+CsC/m59vk8Bq3Kk4svptI/RhrQpNJ0sTqJ28
-         pq70nbhxdWY9OFp667eFyJVYtxtZWcYyayR82+gwo7IjUPZ0NNC4o8msKiMzozNwFb
-         Bc41YRa6vHtPw==
+        s=k20201202; t=1696445681;
+        bh=UrgOTQfdAQfTXCIGdLyLVXk74Vsq/u0kOo6JBPecsbc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=dz5y9z/dURP8JbmbdbIuLCJ1v0wYxlOO0MPn4plc3dTP73t0/oOQu9uVGwDYNh1AT
+         Jd4gsxxCsNelkWLVnGN4nSUt01/7rzUNbMkj7D04XgyWdbS1yBQRw60zmLLnnEcMfd
+         YnRNDegv7aCYHeuDpofZ0Ks9poOFTowlpfh9KsMjfDUfGEGlOVr5QoKXIWz+58lj02
+         M21V+QG5rZVPLr11HhGLtlB/0ZBMu4bLCYQAjRllUZxORlr84CXREivqpCnBNNYHY5
+         qFMBahH44QvvY+RjbZdHCAAfHJH9fMmlC27vbHcylr3KXJROQBRLniTb4/tb0LYm/A
+         3DVrghFIYEfcA==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 46/89] isofs: convert to new timestamp accessors
-Date:   Wed,  4 Oct 2023 14:52:31 -0400
-Message-ID: <20231004185347.80880-44-jlayton@kernel.org>
+Cc:     linux-mtd@lists.infradead.org
+Subject: [PATCH v2 47/89] jffs2: convert to new timestamp accessors
+Date:   Wed,  4 Oct 2023 14:52:32 -0400
+Message-ID: <20231004185347.80880-45-jlayton@kernel.org>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20231004185347.80880-1-jlayton@kernel.org>
 References: <20231004185221.80802-1-jlayton@kernel.org>
@@ -53,64 +54,203 @@ Convert to using the new inode timestamp accessor functions.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/isofs/inode.c |  4 ++--
- fs/isofs/rock.c  | 18 ++++++++----------
- 2 files changed, 10 insertions(+), 12 deletions(-)
+ fs/jffs2/dir.c      | 35 ++++++++++++++++++++---------------
+ fs/jffs2/file.c     |  4 ++--
+ fs/jffs2/fs.c       | 20 ++++++++++----------
+ fs/jffs2/os-linux.h |  4 ++--
+ 4 files changed, 34 insertions(+), 29 deletions(-)
 
-diff --git a/fs/isofs/inode.c b/fs/isofs/inode.c
-index 2ee21286ac8f..3e4d53e26f94 100644
---- a/fs/isofs/inode.c
-+++ b/fs/isofs/inode.c
-@@ -1422,8 +1422,8 @@ static int isofs_read_inode(struct inode *inode, int relocated)
- 			inode->i_ino, de->flags[-high_sierra]);
- 	}
- #endif
--	inode->i_mtime = inode->i_atime =
--		inode_set_ctime(inode, iso_date(de->date, high_sierra), 0);
-+	inode_set_mtime_to_ts(inode,
-+			      inode_set_atime_to_ts(inode, inode_set_ctime(inode, iso_date(de->date, high_sierra), 0)));
+diff --git a/fs/jffs2/dir.c b/fs/jffs2/dir.c
+index 091ab0eaabbe..2b2938970da3 100644
+--- a/fs/jffs2/dir.c
++++ b/fs/jffs2/dir.c
+@@ -204,8 +204,8 @@ static int jffs2_create(struct mnt_idmap *idmap, struct inode *dir_i,
+ 	if (ret)
+ 		goto fail;
  
- 	ei->i_first_extent = (isonum_733(de->extent) +
- 			isonum_711(de->ext_attr_length));
-diff --git a/fs/isofs/rock.c b/fs/isofs/rock.c
-index 348783a70f57..d6c17ad69dee 100644
---- a/fs/isofs/rock.c
-+++ b/fs/isofs/rock.c
-@@ -426,16 +426,14 @@ parse_rock_ridge_inode_internal(struct iso_directory_record *de,
- 						0);
- 			}
- 			if (rr->u.TF.flags & TF_MODIFY) {
--				inode->i_mtime.tv_sec =
--				    iso_date(rr->u.TF.times[cnt++].time,
--					     0);
--				inode->i_mtime.tv_nsec = 0;
-+				inode_set_mtime(inode,
-+						iso_date(rr->u.TF.times[cnt++].time, 0),
-+						0);
- 			}
- 			if (rr->u.TF.flags & TF_ACCESS) {
--				inode->i_atime.tv_sec =
--				    iso_date(rr->u.TF.times[cnt++].time,
--					     0);
--				inode->i_atime.tv_nsec = 0;
-+				inode_set_atime(inode,
-+						iso_date(rr->u.TF.times[cnt++].time, 0),
-+						0);
- 			}
- 			if (rr->u.TF.flags & TF_ATTRIBUTES) {
- 				inode_set_ctime(inode,
-@@ -531,9 +529,9 @@ parse_rock_ridge_inode_internal(struct iso_directory_record *de,
- 			inode->i_rdev = reloc->i_rdev;
- 			inode->i_size = reloc->i_size;
- 			inode->i_blocks = reloc->i_blocks;
--			inode->i_atime = reloc->i_atime;
-+			inode_set_atime_to_ts(inode, inode_get_atime(reloc));
- 			inode_set_ctime_to_ts(inode, inode_get_ctime(reloc));
--			inode->i_mtime = reloc->i_mtime;
-+			inode_set_mtime_to_ts(inode, inode_get_mtime(reloc));
- 			iput(reloc);
- 			break;
- #ifdef CONFIG_ZISOFS
+-	dir_i->i_mtime = inode_set_ctime_to_ts(dir_i,
+-					       ITIME(je32_to_cpu(ri->ctime)));
++	inode_set_mtime_to_ts(dir_i,
++			      inode_set_ctime_to_ts(dir_i, ITIME(je32_to_cpu(ri->ctime))));
+ 
+ 	jffs2_free_raw_inode(ri);
+ 
+@@ -238,7 +238,8 @@ static int jffs2_unlink(struct inode *dir_i, struct dentry *dentry)
+ 	if (dead_f->inocache)
+ 		set_nlink(d_inode(dentry), dead_f->inocache->pino_nlink);
+ 	if (!ret)
+-		dir_i->i_mtime = inode_set_ctime_to_ts(dir_i, ITIME(now));
++		inode_set_mtime_to_ts(dir_i,
++				      inode_set_ctime_to_ts(dir_i, ITIME(now)));
+ 	return ret;
+ }
+ /***********************************************************************/
+@@ -272,7 +273,8 @@ static int jffs2_link (struct dentry *old_dentry, struct inode *dir_i, struct de
+ 		set_nlink(d_inode(old_dentry), ++f->inocache->pino_nlink);
+ 		mutex_unlock(&f->sem);
+ 		d_instantiate(dentry, d_inode(old_dentry));
+-		dir_i->i_mtime = inode_set_ctime_to_ts(dir_i, ITIME(now));
++		inode_set_mtime_to_ts(dir_i,
++				      inode_set_ctime_to_ts(dir_i, ITIME(now)));
+ 		ihold(d_inode(old_dentry));
+ 	}
+ 	return ret;
+@@ -423,8 +425,8 @@ static int jffs2_symlink (struct mnt_idmap *idmap, struct inode *dir_i,
+ 		goto fail;
+ 	}
+ 
+-	dir_i->i_mtime = inode_set_ctime_to_ts(dir_i,
+-					       ITIME(je32_to_cpu(rd->mctime)));
++	inode_set_mtime_to_ts(dir_i,
++			      inode_set_ctime_to_ts(dir_i, ITIME(je32_to_cpu(rd->mctime))));
+ 
+ 	jffs2_free_raw_dirent(rd);
+ 
+@@ -568,8 +570,8 @@ static int jffs2_mkdir (struct mnt_idmap *idmap, struct inode *dir_i,
+ 		goto fail;
+ 	}
+ 
+-	dir_i->i_mtime = inode_set_ctime_to_ts(dir_i,
+-					       ITIME(je32_to_cpu(rd->mctime)));
++	inode_set_mtime_to_ts(dir_i,
++			      inode_set_ctime_to_ts(dir_i, ITIME(je32_to_cpu(rd->mctime))));
+ 	inc_nlink(dir_i);
+ 
+ 	jffs2_free_raw_dirent(rd);
+@@ -610,7 +612,8 @@ static int jffs2_rmdir (struct inode *dir_i, struct dentry *dentry)
+ 	ret = jffs2_do_unlink(c, dir_f, dentry->d_name.name,
+ 			      dentry->d_name.len, f, now);
+ 	if (!ret) {
+-		dir_i->i_mtime = inode_set_ctime_to_ts(dir_i, ITIME(now));
++		inode_set_mtime_to_ts(dir_i,
++				      inode_set_ctime_to_ts(dir_i, ITIME(now)));
+ 		clear_nlink(d_inode(dentry));
+ 		drop_nlink(dir_i);
+ 	}
+@@ -746,8 +749,8 @@ static int jffs2_mknod (struct mnt_idmap *idmap, struct inode *dir_i,
+ 		goto fail;
+ 	}
+ 
+-	dir_i->i_mtime = inode_set_ctime_to_ts(dir_i,
+-					       ITIME(je32_to_cpu(rd->mctime)));
++	inode_set_mtime_to_ts(dir_i,
++			      inode_set_ctime_to_ts(dir_i, ITIME(je32_to_cpu(rd->mctime))));
+ 
+ 	jffs2_free_raw_dirent(rd);
+ 
+@@ -868,16 +871,18 @@ static int jffs2_rename (struct mnt_idmap *idmap,
+ 		 * caller won't do it on its own since we are returning an error.
+ 		 */
+ 		d_invalidate(new_dentry);
+-		new_dir_i->i_mtime = inode_set_ctime_to_ts(new_dir_i,
+-							   ITIME(now));
++		inode_set_mtime_to_ts(new_dir_i,
++				      inode_set_ctime_to_ts(new_dir_i, ITIME(now)));
+ 		return ret;
+ 	}
+ 
+ 	if (d_is_dir(old_dentry))
+ 		drop_nlink(old_dir_i);
+ 
+-	old_dir_i->i_mtime = inode_set_ctime_to_ts(old_dir_i, ITIME(now));
+-	new_dir_i->i_mtime = inode_set_ctime_to_ts(new_dir_i, ITIME(now));
++	inode_set_mtime_to_ts(old_dir_i,
++			      inode_set_ctime_to_ts(old_dir_i, ITIME(now)));
++	inode_set_mtime_to_ts(new_dir_i,
++			      inode_set_ctime_to_ts(new_dir_i, ITIME(now)));
+ 
+ 	return 0;
+ }
+diff --git a/fs/jffs2/file.c b/fs/jffs2/file.c
+index 11c66793960e..62ea76da7fdf 100644
+--- a/fs/jffs2/file.c
++++ b/fs/jffs2/file.c
+@@ -317,8 +317,8 @@ static int jffs2_write_end(struct file *filp, struct address_space *mapping,
+ 			inode->i_size = pos + writtenlen;
+ 			inode->i_blocks = (inode->i_size + 511) >> 9;
+ 
+-			inode->i_mtime = inode_set_ctime_to_ts(inode,
+-							       ITIME(je32_to_cpu(ri->ctime)));
++			inode_set_mtime_to_ts(inode,
++					      inode_set_ctime_to_ts(inode, ITIME(je32_to_cpu(ri->ctime))));
+ 		}
+ 	}
+ 
+diff --git a/fs/jffs2/fs.c b/fs/jffs2/fs.c
+index 0403efab4089..d175cccb7c55 100644
+--- a/fs/jffs2/fs.c
++++ b/fs/jffs2/fs.c
+@@ -113,8 +113,8 @@ int jffs2_do_setattr (struct inode *inode, struct iattr *iattr)
+ 
+ 
+ 	ri->isize = cpu_to_je32((ivalid & ATTR_SIZE)?iattr->ia_size:inode->i_size);
+-	ri->atime = cpu_to_je32(I_SEC((ivalid & ATTR_ATIME)?iattr->ia_atime:inode->i_atime));
+-	ri->mtime = cpu_to_je32(I_SEC((ivalid & ATTR_MTIME)?iattr->ia_mtime:inode->i_mtime));
++	ri->atime = cpu_to_je32(I_SEC((ivalid & ATTR_ATIME)?iattr->ia_atime:inode_get_atime(inode)));
++	ri->mtime = cpu_to_je32(I_SEC((ivalid & ATTR_MTIME)?iattr->ia_mtime:inode_get_mtime(inode)));
+ 	ri->ctime = cpu_to_je32(I_SEC((ivalid & ATTR_CTIME)?iattr->ia_ctime:inode_get_ctime(inode)));
+ 
+ 	ri->offset = cpu_to_je32(0);
+@@ -147,9 +147,9 @@ int jffs2_do_setattr (struct inode *inode, struct iattr *iattr)
+ 		return PTR_ERR(new_metadata);
+ 	}
+ 	/* It worked. Update the inode */
+-	inode->i_atime = ITIME(je32_to_cpu(ri->atime));
++	inode_set_atime_to_ts(inode, ITIME(je32_to_cpu(ri->atime)));
+ 	inode_set_ctime_to_ts(inode, ITIME(je32_to_cpu(ri->ctime)));
+-	inode->i_mtime = ITIME(je32_to_cpu(ri->mtime));
++	inode_set_mtime_to_ts(inode, ITIME(je32_to_cpu(ri->mtime)));
+ 	inode->i_mode = jemode_to_cpu(ri->mode);
+ 	i_uid_write(inode, je16_to_cpu(ri->uid));
+ 	i_gid_write(inode, je16_to_cpu(ri->gid));
+@@ -282,8 +282,8 @@ struct inode *jffs2_iget(struct super_block *sb, unsigned long ino)
+ 	i_uid_write(inode, je16_to_cpu(latest_node.uid));
+ 	i_gid_write(inode, je16_to_cpu(latest_node.gid));
+ 	inode->i_size = je32_to_cpu(latest_node.isize);
+-	inode->i_atime = ITIME(je32_to_cpu(latest_node.atime));
+-	inode->i_mtime = ITIME(je32_to_cpu(latest_node.mtime));
++	inode_set_atime_to_ts(inode, ITIME(je32_to_cpu(latest_node.atime)));
++	inode_set_mtime_to_ts(inode, ITIME(je32_to_cpu(latest_node.mtime)));
+ 	inode_set_ctime_to_ts(inode, ITIME(je32_to_cpu(latest_node.ctime)));
+ 
+ 	set_nlink(inode, f->inocache->pino_nlink);
+@@ -386,8 +386,8 @@ void jffs2_dirty_inode(struct inode *inode, int flags)
+ 	iattr.ia_mode = inode->i_mode;
+ 	iattr.ia_uid = inode->i_uid;
+ 	iattr.ia_gid = inode->i_gid;
+-	iattr.ia_atime = inode->i_atime;
+-	iattr.ia_mtime = inode->i_mtime;
++	iattr.ia_atime = inode_get_atime(inode);
++	iattr.ia_mtime = inode_get_mtime(inode);
+ 	iattr.ia_ctime = inode_get_ctime(inode);
+ 
+ 	jffs2_do_setattr(inode, &iattr);
+@@ -475,8 +475,8 @@ struct inode *jffs2_new_inode (struct inode *dir_i, umode_t mode, struct jffs2_r
+ 	inode->i_mode = jemode_to_cpu(ri->mode);
+ 	i_gid_write(inode, je16_to_cpu(ri->gid));
+ 	i_uid_write(inode, je16_to_cpu(ri->uid));
+-	inode->i_atime = inode->i_mtime = inode_set_ctime_current(inode);
+-	ri->atime = ri->mtime = ri->ctime = cpu_to_je32(I_SEC(inode->i_mtime));
++	simple_inode_init_ts(inode);
++	ri->atime = ri->mtime = ri->ctime = cpu_to_je32(I_SEC(inode_get_mtime(inode)));
+ 
+ 	inode->i_blocks = 0;
+ 	inode->i_size = 0;
+diff --git a/fs/jffs2/os-linux.h b/fs/jffs2/os-linux.h
+index 50727a1ff931..86ab014a349c 100644
+--- a/fs/jffs2/os-linux.h
++++ b/fs/jffs2/os-linux.h
+@@ -36,8 +36,8 @@ struct kvec;
+ #define JFFS2_NOW() JFFS2_CLAMP_TIME(ktime_get_real_seconds())
+ #define I_SEC(tv) JFFS2_CLAMP_TIME((tv).tv_sec)
+ #define JFFS2_F_I_CTIME(f) I_SEC(inode_get_ctime(OFNI_EDONI_2SFFJ(f)))
+-#define JFFS2_F_I_MTIME(f) I_SEC(OFNI_EDONI_2SFFJ(f)->i_mtime)
+-#define JFFS2_F_I_ATIME(f) I_SEC(OFNI_EDONI_2SFFJ(f)->i_atime)
++#define JFFS2_F_I_MTIME(f) I_SEC(inode_get_mtime(OFNI_EDONI_2SFFJ(f)))
++#define JFFS2_F_I_ATIME(f) I_SEC(inode_get_atime(OFNI_EDONI_2SFFJ(f)))
+ #define sleep_on_spinunlock(wq, s)				\
+ 	do {							\
+ 		DECLARE_WAITQUEUE(__wait, current);		\
 -- 
 2.41.0
 
