@@ -2,61 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 64A9C7B7F9A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Oct 2023 14:46:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4D867B7F98
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Oct 2023 14:46:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242486AbjJDMqg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S242499AbjJDMqg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Wed, 4 Oct 2023 08:46:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35894 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242492AbjJDMqf (ORCPT
+        with ESMTP id S242394AbjJDMqf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 4 Oct 2023 08:46:35 -0400
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AA1AA9
-        for <linux-fsdevel@vger.kernel.org>; Wed,  4 Oct 2023 05:46:31 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E595C9
+        for <linux-fsdevel@vger.kernel.org>; Wed,  4 Oct 2023 05:46:32 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 472BE1F74D;
+        by smtp-out2.suse.de (Postfix) with ESMTPS id C32D31F855;
         Wed,  4 Oct 2023 12:46:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
         t=1696423590; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=VeItCfmREetMZWOyX+YlTVpWpRrFsfEO9h9NMi+hFF4=;
-        b=NjygP4OoL0voA6n/laTXMpQgECPb+aGqkdWHZoxcFzzc/u0oWpperwPsHd1LAUSc6PkNVh
-        6kD8ppsSz+vYxbMr5oTc0AWj0G+cIZ52sfYWKgGBsA2u9PqFSFswuroWw56kZXI7dQT4OI
-        TaJJ2M5ttQUDL3yH1OXxpzGOpmzP3J8=
+        bh=OUoVyxQDPI04NNDmHhtQVcaincSOaQHC43/Y+1GZ/uQ=;
+        b=q+fA0bpyoiDMgg9i3CJ3rwpMwxClR9dIiTSozDPym2lvQDzfmdZyaAK48DoLihanXG4+1/
+        R7OZ6kf68gDVY2FXJrSjZG5UyBZqDCRkZt92g5u7Dp4Pd3hDFUAJp4Uj9s8Q/f/ix1wrSi
+        R8Vmds5NYYbLM4SlmzKMSQfhdaY2jy8=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
         s=susede2_ed25519; t=1696423590;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=VeItCfmREetMZWOyX+YlTVpWpRrFsfEO9h9NMi+hFF4=;
-        b=RUvomOcmVyLNb54amrb/byVARm9JdWj7NtSqY/lRUYoKIqa6p8etlnDwFVLnx10QIvI4t4
-        nXkEpGm+0jy5ohDg==
+        bh=OUoVyxQDPI04NNDmHhtQVcaincSOaQHC43/Y+1GZ/uQ=;
+        b=HO7kkoFSU5Jhhc493Sg2u9zSHCBpRgjdqZ5bfqsGy0n1BEchfSEx1V1LNwL29a7k4Ph7Dq
+        MoGpxm9xlfntKyAA==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 328D413A2E;
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id AD23813A2E;
         Wed,  4 Oct 2023 12:46:30 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id vdzuCqZeHWXdPAAAMHmgww
+        id f2zvKKZeHWXfPAAAMHmgww
         (envelope-from <chrubis@suse.cz>); Wed, 04 Oct 2023 12:46:30 +0000
 From:   Cyril Hrubis <chrubis@suse.cz>
 To:     ltp@lists.linux.it
 Cc:     Matthew Wilcox <willy@infradead.org>, amir73il@gmail.com,
         mszeredi@redhat.com, brauner@kernel.org, viro@zeniv.linux.org.uk,
         Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 2/3] syscalls/readahead01: Make use of tst_fd_iterate()
-Date:   Wed,  4 Oct 2023 14:47:11 +0200
-Message-ID: <20231004124712.3833-3-chrubis@suse.cz>
+Subject: [PATCH 3/3] syscalls: accept: Add tst_fd_iterate() test
+Date:   Wed,  4 Oct 2023 14:47:12 +0200
+Message-ID: <20231004124712.3833-4-chrubis@suse.cz>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20231004124712.3833-1-chrubis@suse.cz>
 References: <20231004124712.3833-1-chrubis@suse.cz>
@@ -72,83 +72,127 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-TODO: readahead() on /proc/self/maps seems to succeed is that to be
-      expected?
-
 Signed-off-by: Cyril Hrubis <chrubis@suse.cz>
 ---
- .../kernel/syscalls/readahead/readahead01.c   | 46 ++++++++-----------
- 1 file changed, 20 insertions(+), 26 deletions(-)
+ runtest/syscalls                            |  1 +
+ testcases/kernel/syscalls/accept/.gitignore |  1 +
+ testcases/kernel/syscalls/accept/accept01.c |  8 ----
+ testcases/kernel/syscalls/accept/accept03.c | 46 +++++++++++++++++++++
+ 4 files changed, 48 insertions(+), 8 deletions(-)
+ create mode 100644 testcases/kernel/syscalls/accept/accept03.c
 
-diff --git a/testcases/kernel/syscalls/readahead/readahead01.c b/testcases/kernel/syscalls/readahead/readahead01.c
-index bdef7945d..28134d416 100644
---- a/testcases/kernel/syscalls/readahead/readahead01.c
-+++ b/testcases/kernel/syscalls/readahead/readahead01.c
-@@ -29,44 +29,38 @@
- #if defined(__NR_readahead)
+diff --git a/runtest/syscalls b/runtest/syscalls
+index 8652e0bd3..25b53a724 100644
+--- a/runtest/syscalls
++++ b/runtest/syscalls
+@@ -3,6 +3,7 @@ abort01 abort01
  
- static void test_bad_fd(void)
--{
--	char tempname[PATH_MAX] = "readahead01_XXXXXX";
--	int fd;
+ accept01 accept01
+ accept02 accept02
++accept03 accept03
+ 
+ accept4_01 accept4_01
+ 
+diff --git a/testcases/kernel/syscalls/accept/.gitignore b/testcases/kernel/syscalls/accept/.gitignore
+index 5b1462699..f81d4bec9 100644
+--- a/testcases/kernel/syscalls/accept/.gitignore
++++ b/testcases/kernel/syscalls/accept/.gitignore
+@@ -1,2 +1,3 @@
+ /accept01
+ /accept02
++/accept03
+diff --git a/testcases/kernel/syscalls/accept/accept01.c b/testcases/kernel/syscalls/accept/accept01.c
+index 85af0f8af..e5db1dfec 100644
+--- a/testcases/kernel/syscalls/accept/accept01.c
++++ b/testcases/kernel/syscalls/accept/accept01.c
+@@ -26,7 +26,6 @@
+ struct sockaddr_in sin0, sin1, fsin1;
+ 
+ int invalid_socketfd = 400; /* anything that is not an open file */
+-int devnull_fd;
+ int socket_fd;
+ int udp_fd;
+ 
+@@ -45,10 +44,6 @@ static struct test_case {
+ 		(struct sockaddr *)&fsin1, sizeof(fsin1), EBADF,
+ 		"bad file descriptor"
+ 	},
+-	{
+-		PF_INET, SOCK_STREAM, 0, &devnull_fd, (struct sockaddr *)&fsin1,
+-		sizeof(fsin1), ENOTSOCK, "fd is not socket"
+-	},
+ 	{
+ 		PF_INET, SOCK_STREAM, 0, &socket_fd, (struct sockaddr *)3,
+ 		sizeof(fsin1), EINVAL, "invalid socket buffer"
+@@ -73,8 +68,6 @@ static void test_setup(void)
+ 	sin0.sin_port = 0;
+ 	sin0.sin_addr.s_addr = INADDR_ANY;
+ 
+-	devnull_fd = SAFE_OPEN("/dev/null", O_WRONLY);
 -
--	tst_res(TINFO, "%s -1", __func__);
--	TST_EXP_FAIL(readahead(-1, 0, getpagesize()), EBADF);
--
--	tst_res(TINFO, "%s O_WRONLY", __func__);
--	fd = mkstemp(tempname);
--	if (fd == -1)
--		tst_res(TFAIL | TERRNO, "mkstemp failed");
--	SAFE_CLOSE(fd);
--	fd = SAFE_OPEN(tempname, O_WRONLY);
--	TST_EXP_FAIL(readahead(fd, 0, getpagesize()), EBADF);
--	SAFE_CLOSE(fd);
--	unlink(tempname);
--}
--
--static void test_invalid_fd(void)
+ 	socket_fd = SAFE_SOCKET(PF_INET, SOCK_STREAM, 0);
+ 	SAFE_BIND(socket_fd, (struct sockaddr *)&sin0, sizeof(sin0));
+ 
+@@ -88,7 +81,6 @@ static void test_setup(void)
+ 
+ static void test_cleanup(void)
  {
- 	int fd[2];
- 
--	tst_res(TINFO, "%s pipe", __func__);
-+	TST_EXP_FAIL(readahead(-1, 0, getpagesize()), EBADF,
-+	             "readahead() with fd = -1");
+-	SAFE_CLOSE(devnull_fd);
+ 	SAFE_CLOSE(socket_fd);
+ 	SAFE_CLOSE(udp_fd);
+ }
+diff --git a/testcases/kernel/syscalls/accept/accept03.c b/testcases/kernel/syscalls/accept/accept03.c
+new file mode 100644
+index 000000000..6bced33b6
+--- /dev/null
++++ b/testcases/kernel/syscalls/accept/accept03.c
+@@ -0,0 +1,46 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
 +
- 	SAFE_PIPE(fd);
--	TST_EXP_FAIL(readahead(fd[0], 0, getpagesize()), EINVAL);
- 	SAFE_CLOSE(fd[0]);
- 	SAFE_CLOSE(fd[1]);
- 
--	tst_res(TINFO, "%s socket", __func__);
--	fd[0] = SAFE_SOCKET(AF_INET, SOCK_STREAM, 0);
--	TST_EXP_FAIL(readahead(fd[0], 0, getpagesize()), EINVAL);
--	SAFE_CLOSE(fd[0]);
-+	TST_EXP_FAIL(readahead(fd[0], 0, getpagesize()), EBADF,
-+	             "readahead() with invalid fd");
-+}
++/*
++ * Copyright (C) 2023 Cyril Hrubis <chrubis@suse.cz>
++ */
 +
-+static void test_invalid_fd(struct tst_fd *fd)
++/*\
++ * [Description]
++ *
++ * Verify that accept() returns ENOTSOCK for non-socket file descriptors.
++ */
++
++#include <sys/socket.h>
++#include <netinet/in.h>
++
++#include "tst_test.h"
++
++void check_accept(struct tst_fd *fd)
 +{
++	struct sockaddr_in addr = {
++		.sin_family = AF_INET,
++		.sin_port = 0,
++		.sin_addr = {.s_addr = INADDR_ANY},
++	};
++	socklen_t size = sizeof(addr);
++
 +	switch (fd->type) {
-+	case TST_FD_FILE:
-+	case TST_FD_PIPE_OUT:
++	case TST_FD_UNIX_SOCK:
++	case TST_FD_INET_SOCK:
 +		return;
 +	default:
 +		break;
 +	}
 +
-+	TST_EXP_FAIL(readahead(fd->fd, 0, getpagesize()), EINVAL,
-+		     "readahead() on %s", tst_fd_desc(fd));
- }
- 
- static void test_readahead(void)
- {
- 	test_bad_fd();
--	test_invalid_fd();
-+	tst_fd_iterate(test_invalid_fd);
- }
- 
- static void setup(void)
++	TST_EXP_FAIL2(accept(fd->fd, (void*)&addr, &size),
++		ENOTSOCK, "accept() on %s", tst_fd_desc(fd));
++}
++
++static void verify_accept(void)
++{
++	tst_fd_iterate(check_accept);
++}
++
++static struct tst_test test = {
++	.test_all = verify_accept,
++};
 -- 
 2.41.0
 
