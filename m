@@ -2,40 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E4D117B85E3
+	by mail.lfdr.de (Postfix) with ESMTP id 754657B85E2
 	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Oct 2023 18:54:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243568AbjJDQy3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Oct 2023 12:54:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60858 "EHLO
+        id S243638AbjJDQy2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Oct 2023 12:54:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243590AbjJDQyL (ORCPT
+        with ESMTP id S243591AbjJDQyL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 4 Oct 2023 12:54:11 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A19D124;
-        Wed,  4 Oct 2023 09:53:43 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06B76180;
+        Wed,  4 Oct 2023 09:53:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=OIlQfxJf3xAAiVPkn5SRGC4SYIlWa7s9rUyJZz1UNfs=; b=UqleOktTdw71dOuqvUTkD/lTJC
-        /1rNyzDWQux+76a/MyNZ7b97z52LjXlT+ak8UrubShO37NVtXE7k3Ph8/mT57SkTDQpAHSUKSTuu+
-        lZqaCxa7E81SY6oE4eEl1ohjTq6wwoE+ETJHlDi14DrN4NtXUJL1S8AYaArG2RntaEi1z1S66ufX+
-        Mla38SKlbyTzqxALsm+yu60psa1+hSMwo8NDSoRKlVfcWn5ElJqp3R/QObk1kXt0Yh7Ug4IhOY1zT
-        cVDoxMJkxwI2p0Mf4fu1N1VjR7bmROWaxwNBJO4NFBFdxiVWxWWp4jYgraRylFw9dv/tKj+OrBI/9
-        BBp2jzDA==;
+        bh=GcBru3fPdpYKCu6uB4MY5f4K8PaG3ucCqPSqDGXRe9s=; b=RPsCKy9Rm26TskJl3Eur107F7S
+        57OHLJxeUuwkSmlr5qVXZQNjmq1fs6H47cGDYcmjzJxyEwDsj8u0jKLys/oRopqDf28XCm639dRkF
+        9yBzlYSdR7vgpEP7jHoxcf6LR3/zR9PCM+Ttcw7pDWHC2Fb1C3BcOcK5DulZT8hp7ezhCo/yCky9S
+        pkxMgSich07C8uTk28HlWqZ3lcIgGVe23a/iYvjX/OrOn/BuvAeYNMag8CYx0+Xxssf72G8/uGqXV
+        AY5Kndoit3mw7LA3XgJfj3g5Ben6dO64o9z+tqXsl9Vk8Z6UXSNiqQBLfYajlHYtcokZxJlu28Tdu
+        owaSdX3Q==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qo57f-004SF7-LD; Wed, 04 Oct 2023 16:53:19 +0000
+        id 1qo57f-004SFA-Pp; Wed, 04 Oct 2023 16:53:19 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         linux-arch@vger.kernel.org, torvalds@linux-foundation.org,
         npiggin@gmail.com
-Subject: [PATCH v2 07/17] bitops: Add xor_unlock_is_negative_byte()
-Date:   Wed,  4 Oct 2023 17:53:07 +0100
-Message-Id: <20231004165317.1061855-8-willy@infradead.org>
+Subject: [PATCH v2 08/17] alpha: Implement xor_unlock_is_negative_byte
+Date:   Wed,  4 Oct 2023 17:53:08 +0100
+Message-Id: <20231004165317.1061855-9-willy@infradead.org>
 X-Mailer: git-send-email 2.37.1
 In-Reply-To: <20231004165317.1061855-1-willy@infradead.org>
 References: <20231004165317.1061855-1-willy@infradead.org>
@@ -50,253 +50,46 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Replace clear_bit_and_unlock_is_negative_byte() with
-xor_unlock_is_negative_byte().  We have a few places that like to lock
-a folio, set a flag and unlock it again.  Allow for the possibility of
-combining the latter two operations for efficiency.  We are guaranteed
-that the caller holds the lock, so it is safe to unlock it with the xor.
-The caller must guarantee that nobody else will set the flag without
-holding the lock; it is not safe to do this with the PG_dirty flag,
-for example.
+Inspired by the alpha clear_bit() and arch_atomic_add_return(), this
+will surely be more efficient than the generic one defined in filemap.c.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- arch/powerpc/include/asm/bitops.h             | 17 ++++--------
- arch/x86/include/asm/bitops.h                 | 11 ++++----
- .../asm-generic/bitops/instrumented-lock.h    | 27 ++++++++++---------
- include/asm-generic/bitops/lock.h             | 21 ++++-----------
- kernel/kcsan/kcsan_test.c                     |  8 +++---
- kernel/kcsan/selftest.c                       |  8 +++---
- mm/filemap.c                                  |  5 ++++
- mm/kasan/kasan_test.c                         |  7 ++---
- 8 files changed, 47 insertions(+), 57 deletions(-)
+ arch/alpha/include/asm/bitops.h | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-diff --git a/arch/powerpc/include/asm/bitops.h b/arch/powerpc/include/asm/bitops.h
-index 7e0f0322912b..40cc3ded60cb 100644
---- a/arch/powerpc/include/asm/bitops.h
-+++ b/arch/powerpc/include/asm/bitops.h
-@@ -234,32 +234,25 @@ static inline int arch_test_and_change_bit(unsigned long nr,
- }
+diff --git a/arch/alpha/include/asm/bitops.h b/arch/alpha/include/asm/bitops.h
+index bafb1c1f0fdc..b50ad6b83e85 100644
+--- a/arch/alpha/include/asm/bitops.h
++++ b/arch/alpha/include/asm/bitops.h
+@@ -286,6 +286,27 @@ arch___test_and_change_bit(unsigned long nr, volatile unsigned long *addr)
+ #define arch_test_bit generic_test_bit
+ #define arch_test_bit_acquire generic_test_bit_acquire
  
- #ifdef CONFIG_PPC64
--static inline unsigned long
--clear_bit_unlock_return_word(int nr, volatile unsigned long *addr)
-+static inline bool arch_xor_unlock_is_negative_byte(unsigned long mask,
-+		volatile unsigned long *p)
- {
- 	unsigned long old, t;
--	unsigned long *p = (unsigned long *)addr + BIT_WORD(nr);
--	unsigned long mask = BIT_MASK(nr);
- 
- 	__asm__ __volatile__ (
- 	PPC_RELEASE_BARRIER
- "1:"	PPC_LLARX "%0,0,%3,0\n"
--	"andc %1,%0,%2\n"
-+	"xor %1,%0,%2\n"
- 	PPC_STLCX "%1,0,%3\n"
- 	"bne- 1b\n"
- 	: "=&r" (old), "=&r" (t)
- 	: "r" (mask), "r" (p)
- 	: "cc", "memory");
- 
--	return old;
-+	return (old & BIT_MASK(7)) != 0;
- }
- 
--/*
-- * This is a special function for mm/filemap.c
-- * Bit 7 corresponds to PG_waiters.
-- */
--#define arch_clear_bit_unlock_is_negative_byte(nr, addr)		\
--	(clear_bit_unlock_return_word(nr, addr) & BIT_MASK(7))
-+#define arch_xor_unlock_is_negative_byte arch_xor_unlock_is_negative_byte
- 
- #endif /* CONFIG_PPC64 */
- 
-diff --git a/arch/x86/include/asm/bitops.h b/arch/x86/include/asm/bitops.h
-index 2edf68475fec..f03c0a50ec3a 100644
---- a/arch/x86/include/asm/bitops.h
-+++ b/arch/x86/include/asm/bitops.h
-@@ -94,18 +94,17 @@ arch___clear_bit(unsigned long nr, volatile unsigned long *addr)
- 	asm volatile(__ASM_SIZE(btr) " %1,%0" : : ADDR, "Ir" (nr) : "memory");
- }
- 
--static __always_inline bool
--arch_clear_bit_unlock_is_negative_byte(long nr, volatile unsigned long *addr)
-+static __always_inline bool arch_xor_unlock_is_negative_byte(unsigned long mask,
-+		volatile unsigned long *addr)
- {
- 	bool negative;
--	asm volatile(LOCK_PREFIX "andb %2,%1"
-+	asm volatile(LOCK_PREFIX "xorb %2,%1"
- 		CC_SET(s)
- 		: CC_OUT(s) (negative), WBYTE_ADDR(addr)
--		: "ir" ((char) ~(1 << nr)) : "memory");
-+		: "iq" ((char)mask) : "memory");
- 	return negative;
- }
--#define arch_clear_bit_unlock_is_negative_byte                                 \
--	arch_clear_bit_unlock_is_negative_byte
-+#define arch_xor_unlock_is_negative_byte arch_xor_unlock_is_negative_byte
- 
- static __always_inline void
- arch___clear_bit_unlock(long nr, volatile unsigned long *addr)
-diff --git a/include/asm-generic/bitops/instrumented-lock.h b/include/asm-generic/bitops/instrumented-lock.h
-index eb64bd4f11f3..e8ea3aeda9a9 100644
---- a/include/asm-generic/bitops/instrumented-lock.h
-+++ b/include/asm-generic/bitops/instrumented-lock.h
-@@ -58,27 +58,30 @@ static inline bool test_and_set_bit_lock(long nr, volatile unsigned long *addr)
- 	return arch_test_and_set_bit_lock(nr, addr);
- }
- 
--#if defined(arch_clear_bit_unlock_is_negative_byte)
-+#if defined(arch_xor_unlock_is_negative_byte)
- /**
-- * clear_bit_unlock_is_negative_byte - Clear a bit in memory and test if bottom
-- *                                     byte is negative, for unlock.
-- * @nr: the bit to clear
-- * @addr: the address to start counting from
-+ * xor_unlock_is_negative_byte - XOR a single byte in memory and test if
-+ * it is negative, for unlock.
-+ * @mask: Change the bits which are set in this mask.
-+ * @addr: The address of the word containing the byte to change.
-  *
-+ * Changes some of bits 0-6 in the word pointed to by @addr.
-  * This operation is atomic and provides release barrier semantics.
-+ * Used to optimise some folio operations which are commonly paired
-+ * with an unlock or end of writeback.  Bit 7 is used as PG_waiters to
-+ * indicate whether anybody is waiting for the unlock.
-  *
-- * This is a bit of a one-trick-pony for the filemap code, which clears
-- * PG_locked and tests PG_waiters,
-+ * Return: Whether the top bit of the byte is set.
-  */
--static inline bool
--clear_bit_unlock_is_negative_byte(long nr, volatile unsigned long *addr)
 +static inline bool xor_unlock_is_negative_byte(unsigned long mask,
-+		volatile unsigned long *addr)
- {
- 	kcsan_release();
--	instrument_atomic_write(addr + BIT_WORD(nr), sizeof(long));
--	return arch_clear_bit_unlock_is_negative_byte(nr, addr);
-+	instrument_atomic_write(addr, sizeof(long));
-+	return arch_xor_unlock_is_negative_byte(mask, addr);
- }
- /* Let everybody know we have it. */
--#define clear_bit_unlock_is_negative_byte clear_bit_unlock_is_negative_byte
-+#define xor_unlock_is_negative_byte xor_unlock_is_negative_byte
- #endif
- 
- #endif /* _ASM_GENERIC_BITOPS_INSTRUMENTED_LOCK_H */
-diff --git a/include/asm-generic/bitops/lock.h b/include/asm-generic/bitops/lock.h
-index 40913516e654..6a638e89d130 100644
---- a/include/asm-generic/bitops/lock.h
-+++ b/include/asm-generic/bitops/lock.h
-@@ -66,27 +66,16 @@ arch___clear_bit_unlock(unsigned int nr, volatile unsigned long *p)
- 	raw_atomic_long_set_release((atomic_long_t *)p, old);
- }
- 
--/**
-- * arch_clear_bit_unlock_is_negative_byte - Clear a bit in memory and test if bottom
-- *                                          byte is negative, for unlock.
-- * @nr: the bit to clear
-- * @addr: the address to start counting from
-- *
-- * This is a bit of a one-trick-pony for the filemap code, which clears
-- * PG_locked and tests PG_waiters,
-- */
--#ifndef arch_clear_bit_unlock_is_negative_byte
--static inline bool arch_clear_bit_unlock_is_negative_byte(unsigned int nr,
--							  volatile unsigned long *p)
-+#ifndef arch_xor_unlock_is_negative_byte
-+static inline bool arch_xor_unlock_is_negative_byte(unsigned long mask,
 +		volatile unsigned long *p)
- {
- 	long old;
--	unsigned long mask = BIT_MASK(nr);
- 
--	p += BIT_WORD(nr);
--	old = raw_atomic_long_fetch_andnot_release(mask, (atomic_long_t *)p);
-+	old = raw_atomic_long_fetch_xor_release(mask, (atomic_long_t *)p);
- 	return !!(old & BIT(7));
- }
--#define arch_clear_bit_unlock_is_negative_byte arch_clear_bit_unlock_is_negative_byte
-+#define arch_xor_unlock_is_negative_byte arch_xor_unlock_is_negative_byte
- #endif
- 
- #include <asm-generic/bitops/instrumented-lock.h>
-diff --git a/kernel/kcsan/kcsan_test.c b/kernel/kcsan/kcsan_test.c
-index 0ddbdab5903d..1333d23ac4ef 100644
---- a/kernel/kcsan/kcsan_test.c
-+++ b/kernel/kcsan/kcsan_test.c
-@@ -700,10 +700,10 @@ static void test_barrier_nothreads(struct kunit *test)
- 	KCSAN_EXPECT_RW_BARRIER(mutex_lock(&test_mutex), false);
- 	KCSAN_EXPECT_RW_BARRIER(mutex_unlock(&test_mutex), true);
- 
--#ifdef clear_bit_unlock_is_negative_byte
--	KCSAN_EXPECT_READ_BARRIER(clear_bit_unlock_is_negative_byte(0, &test_var), true);
--	KCSAN_EXPECT_WRITE_BARRIER(clear_bit_unlock_is_negative_byte(0, &test_var), true);
--	KCSAN_EXPECT_RW_BARRIER(clear_bit_unlock_is_negative_byte(0, &test_var), true);
-+#ifdef xor_unlock_is_negative_byte
-+	KCSAN_EXPECT_READ_BARRIER(xor_unlock_is_negative_byte(1, &test_var), true);
-+	KCSAN_EXPECT_WRITE_BARRIER(xor_unlock_is_negative_byte(1, &test_var), true);
-+	KCSAN_EXPECT_RW_BARRIER(xor_unlock_is_negative_byte(1, &test_var), true);
- #endif
- 	kcsan_nestable_atomic_end();
- }
-diff --git a/kernel/kcsan/selftest.c b/kernel/kcsan/selftest.c
-index 8679322450f2..619be7417420 100644
---- a/kernel/kcsan/selftest.c
-+++ b/kernel/kcsan/selftest.c
-@@ -228,10 +228,10 @@ static bool __init test_barrier(void)
- 	spin_lock(&test_spinlock);
- 	KCSAN_CHECK_RW_BARRIER(spin_unlock(&test_spinlock));
- 
--#ifdef clear_bit_unlock_is_negative_byte
--	KCSAN_CHECK_RW_BARRIER(clear_bit_unlock_is_negative_byte(0, &test_var));
--	KCSAN_CHECK_READ_BARRIER(clear_bit_unlock_is_negative_byte(0, &test_var));
--	KCSAN_CHECK_WRITE_BARRIER(clear_bit_unlock_is_negative_byte(0, &test_var));
-+#ifdef xor_unlock_is_negative_byte
-+	KCSAN_CHECK_RW_BARRIER(xor_unlock_is_negative_byte(1, &test_var));
-+	KCSAN_CHECK_READ_BARRIER(xor_unlock_is_negative_byte(1, &test_var));
-+	KCSAN_CHECK_WRITE_BARRIER(xor_unlock_is_negative_byte(1, &test_var));
- #endif
- 	kcsan_nestable_atomic_end();
- 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index ea317cdf9532..7da465616317 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -1484,6 +1484,11 @@ void folio_add_wait_queue(struct folio *folio, wait_queue_entry_t *waiter)
- }
- EXPORT_SYMBOL_GPL(folio_add_wait_queue);
- 
-+#ifdef xor_unlock_is_negative_byte
-+#define clear_bit_unlock_is_negative_byte(nr, p)	\
-+	xor_unlock_is_negative_byte(1 << nr, p)
-+#endif
++{
++	unsigned long temp, old;
 +
- #ifndef clear_bit_unlock_is_negative_byte
- 
++	__asm__ __volatile__(
++	"1:	ldl_l %0,%4\n"
++	"	mov %0,%2\n"
++	"	xor %0,%3,%0\n"
++	"	stl_c %0,%1\n"
++	"	beq %0,2f\n"
++	".subsection 2\n"
++	"2:	br 1b\n"
++	".previous"
++	:"=&r" (temp), "=m" (*p), "=&r" (old)
++	:"Ir" (mask), "m" (*p));
++
++	return (old & BIT(7)) != 0;
++}
++#define xor_unlock_is_negative_byte xor_unlock_is_negative_byte
++
  /*
-diff --git a/mm/kasan/kasan_test.c b/mm/kasan/kasan_test.c
-index b61cc6a42541..c1de091dfc92 100644
---- a/mm/kasan/kasan_test.c
-+++ b/mm/kasan/kasan_test.c
-@@ -1098,9 +1098,10 @@ static void kasan_bitops_test_and_modify(struct kunit *test, int nr, void *addr)
- 	KUNIT_EXPECT_KASAN_FAIL(test, __test_and_change_bit(nr, addr));
- 	KUNIT_EXPECT_KASAN_FAIL(test, kasan_int_result = test_bit(nr, addr));
- 
--#if defined(clear_bit_unlock_is_negative_byte)
--	KUNIT_EXPECT_KASAN_FAIL(test, kasan_int_result =
--				clear_bit_unlock_is_negative_byte(nr, addr));
-+#if defined(xor_unlock_is_negative_byte)
-+	if (nr < 7)
-+		KUNIT_EXPECT_KASAN_FAIL(test, kasan_int_result =
-+				xor_unlock_is_negative_byte(1 << nr, addr));
- #endif
- }
- 
+  * ffz = Find First Zero in word. Undefined if no zero exists,
+  * so code should check against ~0UL first..
 -- 
 2.40.1
 
