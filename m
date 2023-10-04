@@ -2,40 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 754657B85E2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Oct 2023 18:54:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9698E7B85C0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Oct 2023 18:53:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243638AbjJDQy2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Oct 2023 12:54:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35336 "EHLO
+        id S243483AbjJDQx0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Oct 2023 12:53:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243591AbjJDQyL (ORCPT
+        with ESMTP id S233446AbjJDQxZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Oct 2023 12:54:11 -0400
+        Wed, 4 Oct 2023 12:53:25 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06B76180;
-        Wed,  4 Oct 2023 09:53:46 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5ED3AA7;
+        Wed,  4 Oct 2023 09:53:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=GcBru3fPdpYKCu6uB4MY5f4K8PaG3ucCqPSqDGXRe9s=; b=RPsCKy9Rm26TskJl3Eur107F7S
-        57OHLJxeUuwkSmlr5qVXZQNjmq1fs6H47cGDYcmjzJxyEwDsj8u0jKLys/oRopqDf28XCm639dRkF
-        9yBzlYSdR7vgpEP7jHoxcf6LR3/zR9PCM+Ttcw7pDWHC2Fb1C3BcOcK5DulZT8hp7ezhCo/yCky9S
-        pkxMgSich07C8uTk28HlWqZ3lcIgGVe23a/iYvjX/OrOn/BuvAeYNMag8CYx0+Xxssf72G8/uGqXV
-        AY5Kndoit3mw7LA3XgJfj3g5Ben6dO64o9z+tqXsl9Vk8Z6UXSNiqQBLfYajlHYtcokZxJlu28Tdu
-        owaSdX3Q==;
+        bh=bfs2p6og8MVmu/PmsnwWj8Grt12H9inYLMhPvOjgtD4=; b=NWC6d6ZFQxlxn/oWJ2tJnU0gwB
+        ZelMR2zlgkLzaavxoF29vyK9rUKk3wZoVjQYF4K0JVoHtYF3lYdM3bogFOO8lFAEDNgqsWBU/VXZr
+        YHo3HmIrljWo2RkuVx1+vSIVD0DPaQJalBikdceY0434SmUBzRY1jyCXk/mJwjly9XRiLKBwBwU0m
+        2HpWLNh91z6H8q4wUtSN7qp3N6J7evJn15lOl5L3vi8PtH4ySsZtI3e7CYoaeQaMTanTOJmyLMy2C
+        6wLxIkOasNlqbdxCUl5F6HQe+SYdShEeFYIl91MG5vji2Y56KV2H2hSVVyLjqcZCmQMVLsqOrDh6m
+        rKkojOcg==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qo57f-004SFA-Pp; Wed, 04 Oct 2023 16:53:19 +0000
+        id 1qo57f-004SFN-Sx; Wed, 04 Oct 2023 16:53:19 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         linux-arch@vger.kernel.org, torvalds@linux-foundation.org,
         npiggin@gmail.com
-Subject: [PATCH v2 08/17] alpha: Implement xor_unlock_is_negative_byte
-Date:   Wed,  4 Oct 2023 17:53:08 +0100
-Message-Id: <20231004165317.1061855-9-willy@infradead.org>
+Subject: [PATCH v2 09/17] m68k: Implement xor_unlock_is_negative_byte
+Date:   Wed,  4 Oct 2023 17:53:09 +0100
+Message-Id: <20231004165317.1061855-10-willy@infradead.org>
 X-Mailer: git-send-email 2.37.1
 In-Reply-To: <20231004165317.1061855-1-willy@infradead.org>
 References: <20231004165317.1061855-1-willy@infradead.org>
@@ -50,46 +50,53 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Inspired by the alpha clear_bit() and arch_atomic_add_return(), this
-will surely be more efficient than the generic one defined in filemap.c.
+Using EOR to clear the guaranteed-to-be-set lock bit will test the
+negative flag just like the x86 implementation.  This should be
+more efficient than the generic implementation in filemap.c.  It
+would be better if m68k had __GCC_ASM_FLAG_OUTPUTS__.
+
+Coldfire doesn't have a byte-sized EOR, so we test bit 7 after the
+EOR, which is a second memory access, but it's slightly better than
+the current C code.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- arch/alpha/include/asm/bitops.h | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ arch/m68k/include/asm/bitops.h | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/arch/alpha/include/asm/bitops.h b/arch/alpha/include/asm/bitops.h
-index bafb1c1f0fdc..b50ad6b83e85 100644
---- a/arch/alpha/include/asm/bitops.h
-+++ b/arch/alpha/include/asm/bitops.h
-@@ -286,6 +286,27 @@ arch___test_and_change_bit(unsigned long nr, volatile unsigned long *addr)
- #define arch_test_bit generic_test_bit
- #define arch_test_bit_acquire generic_test_bit_acquire
+diff --git a/arch/m68k/include/asm/bitops.h b/arch/m68k/include/asm/bitops.h
+index e984af71df6b..80ee36095905 100644
+--- a/arch/m68k/include/asm/bitops.h
++++ b/arch/m68k/include/asm/bitops.h
+@@ -319,6 +319,28 @@ arch___test_and_change_bit(unsigned long nr, volatile unsigned long *addr)
+ 	return test_and_change_bit(nr, addr);
+ }
  
 +static inline bool xor_unlock_is_negative_byte(unsigned long mask,
 +		volatile unsigned long *p)
 +{
-+	unsigned long temp, old;
++#ifdef CONFIG_COLDFIRE
++	__asm__ __volatile__ ("eorl %1, %0"
++		: "+m" (*p)
++		: "d" (mask)
++		: "memory");
++	return *p & (1 << 7);
++#else
++	char result;
++	char *cp = (char *)p + 3;	/* m68k is big-endian */
 +
-+	__asm__ __volatile__(
-+	"1:	ldl_l %0,%4\n"
-+	"	mov %0,%2\n"
-+	"	xor %0,%3,%0\n"
-+	"	stl_c %0,%1\n"
-+	"	beq %0,2f\n"
-+	".subsection 2\n"
-+	"2:	br 1b\n"
-+	".previous"
-+	:"=&r" (temp), "=m" (*p), "=&r" (old)
-+	:"Ir" (mask), "m" (*p));
-+
-+	return (old & BIT(7)) != 0;
++	__asm__ __volatile__ ("eor.b %1, %2; smi %0"
++		: "=d" (result)
++		: "di" (mask), "o" (*cp)
++		: "memory");
++	return result;
++#endif
 +}
 +#define xor_unlock_is_negative_byte xor_unlock_is_negative_byte
 +
  /*
-  * ffz = Find First Zero in word. Undefined if no zero exists,
-  * so code should check against ~0UL first..
+  *	The true 68020 and more advanced processors support the "bfffo"
+  *	instruction for finding bits. ColdFire and simple 68000 parts
 -- 
 2.40.1
 
