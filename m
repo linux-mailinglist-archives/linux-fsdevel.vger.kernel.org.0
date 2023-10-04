@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CF95B7B8BD1
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Oct 2023 20:56:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D045C7B8BC7
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Oct 2023 20:56:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245018AbjJDSzy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Oct 2023 14:55:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44908 "EHLO
+        id S245006AbjJDSzw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Oct 2023 14:55:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47002 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244845AbjJDSyy (ORCPT
+        with ESMTP id S244854AbjJDSyz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Oct 2023 14:54:54 -0400
+        Wed, 4 Oct 2023 14:54:55 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3996F10EC;
-        Wed,  4 Oct 2023 11:54:30 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 550FFC433CA;
-        Wed,  4 Oct 2023 18:54:29 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2770B10F2;
+        Wed,  4 Oct 2023 11:54:31 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D425C433C8;
+        Wed,  4 Oct 2023 18:54:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696445669;
-        bh=F1w46M8uNPh8dz51qRijLO0+0UFVX+P0B4bmFxVHd34=;
+        s=k20201202; t=1696445670;
+        bh=laqdLQX++bYwL/9FLlbUOBix7eTg/7aYzaxDd38931k=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=sQNNxDf3hAYMEpihh9arqCjkOyLgNsRjzSacYhqh9DV5Ll2zT5dPNrBqiatsTTgLN
-         6C2q+UexIKOqn+Oe3toL6RNtw69QewLLzivk2wk64y8k5EI0NwZ63PoE6TNmLYQ9UP
-         WTeKEyKKYiyrv+UgPj8n1PE7fjfrNuRo6lNGcTcbtzPnG/0CD1Igs0dQwCzUOhpo73
-         NCRX5ycxcPVWFhU77cwpcBMyTGKaIj+WVxAAvJUZeArWVBTlZh9rNEAH+dK0wAI2MF
-         e066QfpvLl3VVfa4mZdScCxhtRz5LjZBk0QLkPUPJC5KyvY9shgBP4Mu6m/d1YNS/E
-         h4BvqcBVuYegQ==
+        b=o05mbaN0ZygPTpYgW1P7ybdN5amDbA8QO3l3HrUscPXYdmWLBn0vBmB7C+rxkJPfY
+         l73lr5JqnGt3J+lErTPnyABVq8htzrJpZDnPLKka6x2+RMt3zUvOH4Qw5VLOw2mYbS
+         P8fV+eyPGoih4Ny6rC14zoUL/BnS5VVu1KqOV6PCWKNry8qYM2wacI4Eq+n1Xp6Ex1
+         8TTANAUcQLXlQqzF4Hei1CbQUXJU1t64S4cQN3U24O/bCzlJga/KCdKd9woJW3KCBK
+         M/9yAtx+dQAOYPplLYZV6zdVB2cuC/UuTlg0D4zWORyr4hhIZiz9mntiHIwEoAMwLQ
+         g4/KQramMs3Lw==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 37/89] fat: convert to new timestamp accessors
-Date:   Wed,  4 Oct 2023 14:52:22 -0400
-Message-ID: <20231004185347.80880-35-jlayton@kernel.org>
+Subject: [PATCH v2 38/89] freevxfs: convert to new timestamp accessors
+Date:   Wed,  4 Oct 2023 14:52:23 -0400
+Message-ID: <20231004185347.80880-36-jlayton@kernel.org>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20231004185347.80880-1-jlayton@kernel.org>
 References: <20231004185221.80802-1-jlayton@kernel.org>
@@ -53,104 +53,27 @@ Convert to using the new inode timestamp accessor functions.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/fat/inode.c | 25 +++++++++++++++++--------
- fs/fat/misc.c  |  6 +++---
- 2 files changed, 20 insertions(+), 11 deletions(-)
+ fs/freevxfs/vxfs_inode.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/fs/fat/inode.c b/fs/fat/inode.c
-index cdd39b6020f3..aa87f323fd44 100644
---- a/fs/fat/inode.c
-+++ b/fs/fat/inode.c
-@@ -512,6 +512,7 @@ static int fat_validate_dir(struct inode *dir)
- int fat_fill_inode(struct inode *inode, struct msdos_dir_entry *de)
- {
- 	struct msdos_sb_info *sbi = MSDOS_SB(inode->i_sb);
-+	struct timespec64 mtime;
- 	int error;
+diff --git a/fs/freevxfs/vxfs_inode.c b/fs/freevxfs/vxfs_inode.c
+index ac5d43b164b5..20600e9ea202 100644
+--- a/fs/freevxfs/vxfs_inode.c
++++ b/fs/freevxfs/vxfs_inode.c
+@@ -109,11 +109,9 @@ static inline void dip2vip_cpy(struct vxfs_sb_info *sbi,
+ 	set_nlink(inode, vip->vii_nlink);
+ 	inode->i_size = vip->vii_size;
  
- 	MSDOS_I(inode)->i_pos = 0;
-@@ -561,14 +562,18 @@ int fat_fill_inode(struct inode *inode, struct msdos_dir_entry *de)
- 	inode->i_blocks = ((inode->i_size + (sbi->cluster_size - 1))
- 			   & ~((loff_t)sbi->cluster_size - 1)) >> 9;
+-	inode->i_atime.tv_sec = vip->vii_atime;
++	inode_set_atime(inode, vip->vii_atime, 0);
+ 	inode_set_ctime(inode, vip->vii_ctime, 0);
+-	inode->i_mtime.tv_sec = vip->vii_mtime;
+-	inode->i_atime.tv_nsec = 0;
+-	inode->i_mtime.tv_nsec = 0;
++	inode_set_mtime(inode, vip->vii_mtime, 0);
  
--	fat_time_fat2unix(sbi, &inode->i_mtime, de->time, de->date, 0);
--	inode_set_ctime_to_ts(inode, inode->i_mtime);
-+	fat_time_fat2unix(sbi, &mtime, de->time, de->date, 0);
-+	inode_set_mtime_to_ts(inode, mtime);
-+	inode_set_ctime_to_ts(inode, mtime);
- 	if (sbi->options.isvfat) {
--		fat_time_fat2unix(sbi, &inode->i_atime, 0, de->adate, 0);
-+		struct timespec64 atime;
-+
-+		fat_time_fat2unix(sbi, &atime, 0, de->adate, 0);
-+		inode_set_atime_to_ts(inode, atime);
- 		fat_time_fat2unix(sbi, &MSDOS_I(inode)->i_crtime, de->ctime,
- 				  de->cdate, de->ctime_cs);
- 	} else
--		inode->i_atime = fat_truncate_atime(sbi, &inode->i_mtime);
-+		inode_set_atime_to_ts(inode, fat_truncate_atime(sbi, &mtime));
- 
- 	return 0;
- }
-@@ -849,6 +854,7 @@ static int __fat_write_inode(struct inode *inode, int wait)
- 	struct msdos_sb_info *sbi = MSDOS_SB(sb);
- 	struct buffer_head *bh;
- 	struct msdos_dir_entry *raw_entry;
-+	struct timespec64 mtime;
- 	loff_t i_pos;
- 	sector_t blocknr;
- 	int err, offset;
-@@ -882,12 +888,14 @@ static int __fat_write_inode(struct inode *inode, int wait)
- 		raw_entry->size = cpu_to_le32(inode->i_size);
- 	raw_entry->attr = fat_make_attrs(inode);
- 	fat_set_start(raw_entry, MSDOS_I(inode)->i_logstart);
--	fat_time_unix2fat(sbi, &inode->i_mtime, &raw_entry->time,
-+	fat_time_unix2fat(sbi, &mtime, &raw_entry->time,
- 			  &raw_entry->date, NULL);
-+	inode_set_mtime_to_ts(inode, mtime);
- 	if (sbi->options.isvfat) {
-+		struct timespec64 ts = inode_get_atime(inode);
- 		__le16 atime;
--		fat_time_unix2fat(sbi, &inode->i_atime, &atime,
--				  &raw_entry->adate, NULL);
-+
-+		fat_time_unix2fat(sbi, &ts, &atime, &raw_entry->adate, NULL);
- 		fat_time_unix2fat(sbi, &MSDOS_I(inode)->i_crtime, &raw_entry->ctime,
- 				  &raw_entry->cdate, &raw_entry->ctime_cs);
- 	}
-@@ -1407,7 +1415,8 @@ static int fat_read_root(struct inode *inode)
- 	MSDOS_I(inode)->mmu_private = inode->i_size;
- 
- 	fat_save_attrs(inode, ATTR_DIR);
--	inode->i_mtime = inode->i_atime = inode_set_ctime(inode, 0, 0);
-+	inode_set_mtime_to_ts(inode,
-+			      inode_set_atime_to_ts(inode, inode_set_ctime(inode, 0, 0)));
- 	set_nlink(inode, fat_subdirs(inode)+2);
- 
- 	return 0;
-diff --git a/fs/fat/misc.c b/fs/fat/misc.c
-index f2304a1054aa..c7a2d27120ba 100644
---- a/fs/fat/misc.c
-+++ b/fs/fat/misc.c
-@@ -325,15 +325,15 @@ int fat_truncate_time(struct inode *inode, struct timespec64 *now, int flags)
- 	}
- 
- 	if (flags & S_ATIME)
--		inode->i_atime = fat_truncate_atime(sbi, now);
-+		inode_set_atime_to_ts(inode, fat_truncate_atime(sbi, now));
- 	/*
- 	 * ctime and mtime share the same on-disk field, and should be
- 	 * identical in memory. all mtime updates will be applied to ctime,
- 	 * but ctime updates are ignored.
- 	 */
- 	if (flags & S_MTIME)
--		inode->i_mtime = inode_set_ctime_to_ts(inode,
--						       fat_truncate_mtime(sbi, now));
-+		inode_set_mtime_to_ts(inode,
-+				      inode_set_ctime_to_ts(inode, fat_truncate_mtime(sbi, now)));
- 
- 	return 0;
- }
+ 	inode->i_blocks = vip->vii_blocks;
+ 	inode->i_generation = vip->vii_gen;
 -- 
 2.41.0
 
