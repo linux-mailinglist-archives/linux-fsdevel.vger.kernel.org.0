@@ -2,39 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B854B7B8C8C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Oct 2023 21:20:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E63C7B8C81
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Oct 2023 21:20:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245052AbjJDS6D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Oct 2023 14:58:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47048 "EHLO
+        id S245095AbjJDS6a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Oct 2023 14:58:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244777AbjJDS4K (ORCPT
+        with ESMTP id S245094AbjJDS43 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Oct 2023 14:56:10 -0400
+        Wed, 4 Oct 2023 14:56:29 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09B7A173F;
-        Wed,  4 Oct 2023 11:54:57 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3223C433D9;
-        Wed,  4 Oct 2023 18:54:56 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6AF31988;
+        Wed,  4 Oct 2023 11:54:58 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09775C4166B;
+        Wed,  4 Oct 2023 18:54:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696445697;
-        bh=aWVRym5iRRtjlVkeeXRoMTht51r0uneC7a5peLTKRN8=;
+        s=k20201202; t=1696445698;
+        bh=YMmryZmmNEItRm2e+RTUeAshmJNZg8hKfFS2ryfvqkI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Kr03zbFGfkyv3NkbBQY3NOqQO4CTjEp4ImLQLOcslYbOFWZ+cWW0pFuudiQ8Pzoev
-         l8mGR+l9M/90x6K2vQ5WQSSStr0IyHqJ94FJsepamie8W16xp3uK2xKoyIcczth3YY
-         wAknJW6TInICa3B6GGpsYN+Z/HXsXhN56LxeXcsRl9QJpgFjvCHF5q6jlOSak/G3Wr
-         XV+bWp3re3czgQZe1/Vo2GSzULNKE06clOQaWbWURqeY61JnEtpn2ADJ+LgbFSdI3b
-         QpYbAl3AeU8PdcUIQS7AZ1BnTfqgtoT7fCxgmmm5imwL2IMs4Kd473XOL+cngm33jX
-         1IEaN/WOWNyeQ==
+        b=hWYms5tBg7anp0uW84zt4o+EXEhIMFJDachX7wmqUsqsl24Yxew0DEMfDQSf22Sue
+         9YSh7c632k6ZCA3mQqeCsf6O8gNH2s/rskd6dpZRUB8kCGUW223XotwbsA4YKtUzj4
+         dJhwGAZi58NRfYKQWpqFUBccPn3Shz8urlrISuovGklJA62gHCWkcT6knYlVPJhNUy
+         1EcET826gGXKwkG0pTwZqse/ssgLNpzBakDb6em5V8mpF7nlDu8/WVZO0IKT2SZjYh
+         b5kL47oWXd1dDNWv/jeQSOp9j7v6jMjRB9kSQTwc0WSUdq6/KwLcYxcUYEJf/oglBw
+         kVEWbnnZVaj2A==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Martin Brandenburg <martin@omnibond.com>, devel@lists.orangefs.org
-Subject: [PATCH v2 59/89] orangefs: convert to new timestamp accessors
-Date:   Wed,  4 Oct 2023 14:52:44 -0400
-Message-ID: <20231004185347.80880-57-jlayton@kernel.org>
+Cc:     linux-unionfs@vger.kernel.org
+Subject: [PATCH v2 60/89] overlayfs: convert to new timestamp accessors
+Date:   Wed,  4 Oct 2023 14:52:45 -0400
+Message-ID: <20231004185347.80880-58-jlayton@kernel.org>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20231004185347.80880-1-jlayton@kernel.org>
 References: <20231004185221.80802-1-jlayton@kernel.org>
@@ -54,52 +54,67 @@ Convert to using the new inode timestamp accessor functions.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/orangefs/orangefs-utils.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ fs/overlayfs/file.c  | 9 ++++++---
+ fs/overlayfs/inode.c | 3 ++-
+ fs/overlayfs/util.c  | 4 ++--
+ 3 files changed, 10 insertions(+), 6 deletions(-)
 
-diff --git a/fs/orangefs/orangefs-utils.c b/fs/orangefs/orangefs-utils.c
-index 0a9fcfdf552f..0fdceb00ca07 100644
---- a/fs/orangefs/orangefs-utils.c
-+++ b/fs/orangefs/orangefs-utils.c
-@@ -155,14 +155,14 @@ static inline void copy_attributes_from_inode(struct inode *inode,
- 	if (orangefs_inode->attr_valid & ATTR_ATIME) {
- 		attrs->mask |= ORANGEFS_ATTR_SYS_ATIME;
- 		if (orangefs_inode->attr_valid & ATTR_ATIME_SET) {
--			attrs->atime = (time64_t)inode->i_atime.tv_sec;
-+			attrs->atime = (time64_t) inode_get_atime_sec(inode);
- 			attrs->mask |= ORANGEFS_ATTR_SYS_ATIME_SET;
- 		}
- 	}
- 	if (orangefs_inode->attr_valid & ATTR_MTIME) {
- 		attrs->mask |= ORANGEFS_ATTR_SYS_MTIME;
- 		if (orangefs_inode->attr_valid & ATTR_MTIME_SET) {
--			attrs->mtime = (time64_t)inode->i_mtime.tv_sec;
-+			attrs->mtime = (time64_t) inode_get_mtime_sec(inode);
- 			attrs->mask |= ORANGEFS_ATTR_SYS_MTIME_SET;
- 		}
- 	}
-@@ -357,15 +357,15 @@ int orangefs_inode_getattr(struct inode *inode, int flags)
- 	    downcall.resp.getattr.attributes.owner);
- 	inode->i_gid = make_kgid(&init_user_ns, new_op->
- 	    downcall.resp.getattr.attributes.group);
--	inode->i_atime.tv_sec = (time64_t)new_op->
--	    downcall.resp.getattr.attributes.atime;
--	inode->i_mtime.tv_sec = (time64_t)new_op->
--	    downcall.resp.getattr.attributes.mtime;
-+	inode_set_atime(inode,
-+			(time64_t)new_op->downcall.resp.getattr.attributes.atime,
-+			0);
-+	inode_set_mtime(inode,
-+			(time64_t)new_op->downcall.resp.getattr.attributes.mtime,
-+			0);
- 	inode_set_ctime(inode,
- 			(time64_t)new_op->downcall.resp.getattr.attributes.ctime,
- 			0);
--	inode->i_atime.tv_nsec = 0;
--	inode->i_mtime.tv_nsec = 0;
+diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+index acdd79dd4bfa..131621daeb13 100644
+--- a/fs/overlayfs/file.c
++++ b/fs/overlayfs/file.c
+@@ -250,6 +250,7 @@ static void ovl_file_accessed(struct file *file)
+ {
+ 	struct inode *inode, *upperinode;
+ 	struct timespec64 ctime, uctime;
++	struct timespec64 mtime, umtime;
  
- 	/* special case: mark the root inode as sticky */
- 	inode->i_mode = type | (is_root_handle(inode) ? S_ISVTX : 0) |
+ 	if (file->f_flags & O_NOATIME)
+ 		return;
+@@ -262,9 +263,11 @@ static void ovl_file_accessed(struct file *file)
+ 
+ 	ctime = inode_get_ctime(inode);
+ 	uctime = inode_get_ctime(upperinode);
+-	if ((!timespec64_equal(&inode->i_mtime, &upperinode->i_mtime) ||
+-	     !timespec64_equal(&ctime, &uctime))) {
+-		inode->i_mtime = upperinode->i_mtime;
++	mtime = inode_get_mtime(inode);
++	umtime = inode_get_mtime(upperinode);
++	if ((!timespec64_equal(&mtime, &umtime)) ||
++	     !timespec64_equal(&ctime, &uctime)) {
++		inode_set_mtime_to_ts(inode, inode_get_mtime(upperinode));
+ 		inode_set_ctime_to_ts(inode, uctime);
+ 	}
+ 
+diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
+index 8adc27e5e451..345b8f161ca4 100644
+--- a/fs/overlayfs/inode.c
++++ b/fs/overlayfs/inode.c
+@@ -579,7 +579,8 @@ int ovl_update_time(struct inode *inode, int flags)
+ 
+ 		if (upperpath.dentry) {
+ 			touch_atime(&upperpath);
+-			inode->i_atime = d_inode(upperpath.dentry)->i_atime;
++			inode_set_atime_to_ts(inode,
++					      inode_get_atime(d_inode(upperpath.dentry)));
+ 		}
+ 	}
+ 	return 0;
+diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
+index a44eec80dc82..73ac47b49218 100644
+--- a/fs/overlayfs/util.c
++++ b/fs/overlayfs/util.c
+@@ -1509,8 +1509,8 @@ void ovl_copyattr(struct inode *inode)
+ 	inode->i_uid = vfsuid_into_kuid(vfsuid);
+ 	inode->i_gid = vfsgid_into_kgid(vfsgid);
+ 	inode->i_mode = realinode->i_mode;
+-	inode->i_atime = realinode->i_atime;
+-	inode->i_mtime = realinode->i_mtime;
++	inode_set_atime_to_ts(inode, inode_get_atime(realinode));
++	inode_set_mtime_to_ts(inode, inode_get_mtime(realinode));
+ 	inode_set_ctime_to_ts(inode, inode_get_ctime(realinode));
+ 	i_size_write(inode, i_size_read(realinode));
+ 	spin_unlock(&inode->i_lock);
 -- 
 2.41.0
 
