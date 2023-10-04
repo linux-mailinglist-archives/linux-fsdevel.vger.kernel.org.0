@@ -2,39 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AA38A7B8BBE
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Oct 2023 20:56:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02C147B8BDA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Oct 2023 20:56:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244701AbjJDSy4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Oct 2023 14:54:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44850 "EHLO
+        id S244865AbjJDSy5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Oct 2023 14:54:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244590AbjJDSyi (ORCPT
+        with ESMTP id S244610AbjJDSyj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Oct 2023 14:54:38 -0400
+        Wed, 4 Oct 2023 14:54:39 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBDCC116;
-        Wed,  4 Oct 2023 11:54:07 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02E93C433CB;
-        Wed,  4 Oct 2023 18:54:06 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0ACD7194;
+        Wed,  4 Oct 2023 11:54:09 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 152C2C433C7;
+        Wed,  4 Oct 2023 18:54:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696445647;
-        bh=KQeY8erJHarU6ZVyZ8B2z5f4xlYqdNPN1UGFBoaYrPM=;
+        s=k20201202; t=1696445648;
+        bh=VZeO+KnP0i1FeqM9/WQ8dV1qUSykp6CVzxV5q5AtMB0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Xhj1Ad6izXuGGHYPS9yHSI5iMoKyd+GjFWNN0VYIdRE+nIurlEgOxXt7C6oqYXTOr
-         NApc2qN3QL87evLjHwSUiWgWzS9Pz6iQ9HpQ6kfprWPl6s5d2NmK7kfGuEbBeJYhWl
-         cQa+te9hcBI2DyO535CWvycQ6g+ARcMRf927vKxnJzml3uh75U0yJ4IQcSS9ZVTh17
-         dwVzOHIa/fisFCCPLEFpCT3DxsL3CQkT9eoQ+etmF/f1Z+v2fWqqFCQOqHeuW4DZfl
-         piFw5Ab48zYajfRl5wbam7R/sx/TsVnyvSOst37uWix1OvcvfqLklNnbip8izGbOMc
-         OjFKjMxwh7j1A==
+        b=rVuNjVHqLVXKtCF8V9QISykbfPweeRDvwbMinu2ovVQpxwapBwWpIIFVteeAe+3a6
+         cYfLkTUg0JDy4TYKZyztkUThmAzhVVE/+eMuArnkQtfSaPubU1d17ue6S/4hdWSpva
+         DALvVd4hOeNdSE+ilgZhxCatPXs9Vmlxqvzu1ljONuqNaaJOvHTYnYhNlR8e6itx6e
+         oAYI+b0dDP20O3wjsR+/Wa6WYgRHxsTLNcincm1a9xHHTBmQJJIzM0tI2isko7M3ji
+         ouZ3iEV+i4GGc4QLw3fCVFbpbo/YQXSPdLvkvBolQXN+RRPTthOjkiiDvs5Um3oKdz
+         Y7D2D1TqKrsCg==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     autofs@vger.kernel.org
-Subject: [PATCH v2 19/89] autofs: convert to new timestamp accessors
-Date:   Wed,  4 Oct 2023 14:52:04 -0400
-Message-ID: <20231004185347.80880-17-jlayton@kernel.org>
+Cc:     Brian Foster <bfoster@redhat.com>, linux-bcachefs@vger.kernel.org
+Subject: [PATCH v2 20/89] bcachefs: convert to new timestamp accessors
+Date:   Wed,  4 Oct 2023 14:52:05 -0400
+Message-ID: <20231004185347.80880-18-jlayton@kernel.org>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20231004185347.80880-1-jlayton@kernel.org>
 References: <20231004185221.80802-1-jlayton@kernel.org>
@@ -54,54 +54,47 @@ Convert to using the new inode timestamp accessor functions.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/autofs/inode.c | 2 +-
- fs/autofs/root.c  | 6 +++---
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ fs/bcachefs/fs.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/fs/autofs/inode.c b/fs/autofs/inode.c
-index 6d2e01c9057d..77b1b90b5d11 100644
---- a/fs/autofs/inode.c
-+++ b/fs/autofs/inode.c
-@@ -457,7 +457,7 @@ struct inode *autofs_get_inode(struct super_block *sb, umode_t mode)
- 		inode->i_uid = d_inode(sb->s_root)->i_uid;
- 		inode->i_gid = d_inode(sb->s_root)->i_gid;
- 	}
--	inode->i_atime = inode->i_mtime = inode_set_ctime_current(inode);
-+	simple_inode_init_ts(inode);
- 	inode->i_ino = get_next_ino();
+diff --git a/fs/bcachefs/fs.c b/fs/bcachefs/fs.c
+index 09137a20449b..1fbaad27d07b 100644
+--- a/fs/bcachefs/fs.c
++++ b/fs/bcachefs/fs.c
+@@ -66,9 +66,9 @@ void bch2_inode_update_after_write(struct btree_trans *trans,
+ 	inode->v.i_mode	= bi->bi_mode;
  
- 	if (S_ISDIR(mode)) {
-diff --git a/fs/autofs/root.c b/fs/autofs/root.c
-index 512b9a26c63d..530d18827e35 100644
---- a/fs/autofs/root.c
-+++ b/fs/autofs/root.c
-@@ -600,7 +600,7 @@ static int autofs_dir_symlink(struct mnt_idmap *idmap,
- 	p_ino = autofs_dentry_ino(dentry->d_parent);
- 	p_ino->count++;
+ 	if (fields & ATTR_ATIME)
+-		inode->v.i_atime = bch2_time_to_timespec(c, bi->bi_atime);
++		inode_set_atime_to_ts(&inode->v, bch2_time_to_timespec(c, bi->bi_atime));
+ 	if (fields & ATTR_MTIME)
+-		inode->v.i_mtime = bch2_time_to_timespec(c, bi->bi_mtime);
++		inode_set_mtime_to_ts(&inode->v, bch2_time_to_timespec(c, bi->bi_mtime));
+ 	if (fields & ATTR_CTIME)
+ 		inode_set_ctime_to_ts(&inode->v, bch2_time_to_timespec(c, bi->bi_ctime));
  
--	dir->i_mtime = inode_set_ctime_current(dir);
-+	inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
+@@ -753,8 +753,8 @@ static int bch2_getattr(struct mnt_idmap *idmap,
+ 	stat->gid	= inode->v.i_gid;
+ 	stat->rdev	= inode->v.i_rdev;
+ 	stat->size	= i_size_read(&inode->v);
+-	stat->atime	= inode->v.i_atime;
+-	stat->mtime	= inode->v.i_mtime;
++	stat->atime	= inode_get_atime(&inode->v);
++	stat->mtime	= inode_get_mtime(&inode->v);
+ 	stat->ctime	= inode_get_ctime(&inode->v);
+ 	stat->blksize	= block_bytes(c);
+ 	stat->blocks	= inode->v.i_blocks;
+@@ -1418,8 +1418,8 @@ static int inode_update_times_fn(struct btree_trans *trans,
+ {
+ 	struct bch_fs *c = inode->v.i_sb->s_fs_info;
  
- 	return 0;
- }
-@@ -633,7 +633,7 @@ static int autofs_dir_unlink(struct inode *dir, struct dentry *dentry)
- 	d_inode(dentry)->i_size = 0;
- 	clear_nlink(d_inode(dentry));
- 
--	dir->i_mtime = inode_set_ctime_current(dir);
-+	inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
- 
- 	spin_lock(&sbi->lookup_lock);
- 	__autofs_add_expiring(dentry);
-@@ -749,7 +749,7 @@ static int autofs_dir_mkdir(struct mnt_idmap *idmap,
- 	p_ino = autofs_dentry_ino(dentry->d_parent);
- 	p_ino->count++;
- 	inc_nlink(dir);
--	dir->i_mtime = inode_set_ctime_current(dir);
-+	inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
+-	bi->bi_atime	= timespec_to_bch2_time(c, inode->v.i_atime);
+-	bi->bi_mtime	= timespec_to_bch2_time(c, inode->v.i_mtime);
++	bi->bi_atime	= timespec_to_bch2_time(c, inode_get_atime(&inode->v));
++	bi->bi_mtime	= timespec_to_bch2_time(c, inode_get_mtime(&inode->v));
+ 	bi->bi_ctime	= timespec_to_bch2_time(c, inode_get_ctime(&inode->v));
  
  	return 0;
- }
 -- 
 2.41.0
 
