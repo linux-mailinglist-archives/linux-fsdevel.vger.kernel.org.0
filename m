@@ -2,39 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C21E87B8C10
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Oct 2023 20:56:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6921B7B8BB3
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Oct 2023 20:56:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244631AbjJDSzU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Oct 2023 14:55:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44810 "EHLO
+        id S244795AbjJDSzQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Oct 2023 14:55:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244739AbjJDSyp (ORCPT
+        with ESMTP id S244791AbjJDSyp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 4 Oct 2023 14:54:45 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95F581BF1;
-        Wed,  4 Oct 2023 11:54:20 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1C9FC433C9;
-        Wed,  4 Oct 2023 18:54:19 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A59A1BF5;
+        Wed,  4 Oct 2023 11:54:21 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF999C433C7;
+        Wed,  4 Oct 2023 18:54:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696445660;
-        bh=YEqq5TbDW6Icj/FoFvAK1JpXcDhyI6Wo7wQqM+3TX2I=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Bd8rjo0AWU8SX0B55IRMQTx0py0nMGADHJYF2r+l4nDxPRDpG5g0f8XP3zHEyuoab
-         n/eE5y6XuC1klvpu1n3fY/4V1G3AY0UQOMxq7omLXgA83THjM/UYPYRGjGR4mHGjDt
-         uaSp1Yj8pc0m5k1CT5f6QGqvqVbxGVDWemc1h6999KeoJHsR1DFO4DynyNTXdH6tb6
-         PTTqYbZjgILcdVZf38aontmXCApzH12RxMdrrrIwy7e2ASWltaS4woF2s/zN2CgmD0
-         /MxfjScR6BaDGVLUvX0iDdZGZ6xcLgYPC8WDszhsu7gGKDYZ2xP238NVZrI4efHpGg
-         4Veq+mfxnz/Kg==
+        s=k20201202; t=1696445661;
+        bh=z2funOQvTD+nsh/eRCv4vA0TR68VHS1VOH+S/Cqeqoo=;
+        h=From:To:Subject:Date:In-Reply-To:References:From;
+        b=Yu7Jho/i94Dh+tD5G4TSUQIuySzOdLsquKYmzvv5YyW7+E8OHen8ClaA9MQbcvlBO
+         a31Z32wcRiISih/yBaZwI2ivIrlnJw8WhjY/1mtskyHHwZKO/D2kDg0VIKQUip5pNd
+         7IIXf6mHQ2JUpFO4inlk1ocOJ++28zE6iA655JBWe0cAVuteD5oV9PETvU1cB/Jlny
+         tJ0gF0YsvIM4/vBSjiT17H1ZgBVf1momTCDiXeZjfDzXabqgtG8QKYWH7Zvyq2pnOT
+         Ncamd/sJwLZn+QArTKOLijTPMYE8RI0TO3EFBvJRxZpzOdG0dMIjnQ7KiZn7/P7xpo
+         C/Dwpkhj4KTrA==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     linux-efi@vger.kernel.org
-Subject: [PATCH v2 30/89] efivarfs: convert to new timestamp accessors
-Date:   Wed,  4 Oct 2023 14:52:15 -0400
-Message-ID: <20231004185347.80880-28-jlayton@kernel.org>
+Subject: [PATCH v2 31/89] efs: convert to new timestamp accessors
+Date:   Wed,  4 Oct 2023 14:52:16 -0400
+Message-ID: <20231004185347.80880-29-jlayton@kernel.org>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20231004185347.80880-1-jlayton@kernel.org>
 References: <20231004185221.80802-1-jlayton@kernel.org>
@@ -54,36 +53,26 @@ Convert to using the new inode timestamp accessor functions.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/efivarfs/file.c  | 2 +-
- fs/efivarfs/inode.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ fs/efs/inode.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/fs/efivarfs/file.c b/fs/efivarfs/file.c
-index 59b52718a3a2..7e9961639802 100644
---- a/fs/efivarfs/file.c
-+++ b/fs/efivarfs/file.c
-@@ -51,7 +51,7 @@ static ssize_t efivarfs_file_write(struct file *file,
- 	} else {
- 		inode_lock(inode);
- 		i_size_write(inode, datasize + sizeof(attributes));
--		inode->i_mtime = inode_set_ctime_current(inode);
-+		inode_set_mtime_to_ts(inode, inode_set_ctime_current(inode));
- 		inode_unlock(inode);
- 	}
+diff --git a/fs/efs/inode.c b/fs/efs/inode.c
+index 3789d22ba501..7844ab24b813 100644
+--- a/fs/efs/inode.c
++++ b/fs/efs/inode.c
+@@ -103,10 +103,9 @@ struct inode *efs_iget(struct super_block *super, unsigned long ino)
+ 	i_uid_write(inode, (uid_t)be16_to_cpu(efs_inode->di_uid));
+ 	i_gid_write(inode, (gid_t)be16_to_cpu(efs_inode->di_gid));
+ 	inode->i_size  = be32_to_cpu(efs_inode->di_size);
+-	inode->i_atime.tv_sec = be32_to_cpu(efs_inode->di_atime);
+-	inode->i_mtime.tv_sec = be32_to_cpu(efs_inode->di_mtime);
++	inode_set_atime(inode, be32_to_cpu(efs_inode->di_atime), 0);
++	inode_set_mtime(inode, be32_to_cpu(efs_inode->di_mtime), 0);
+ 	inode_set_ctime(inode, be32_to_cpu(efs_inode->di_ctime), 0);
+-	inode->i_atime.tv_nsec = inode->i_mtime.tv_nsec = 0;
  
-diff --git a/fs/efivarfs/inode.c b/fs/efivarfs/inode.c
-index db9231f0e77b..76dd3c7295d9 100644
---- a/fs/efivarfs/inode.c
-+++ b/fs/efivarfs/inode.c
-@@ -25,7 +25,7 @@ struct inode *efivarfs_get_inode(struct super_block *sb,
- 	if (inode) {
- 		inode->i_ino = get_next_ino();
- 		inode->i_mode = mode;
--		inode->i_atime = inode->i_mtime = inode_set_ctime_current(inode);
-+		simple_inode_init_ts(inode);
- 		inode->i_flags = is_removable ? 0 : S_IMMUTABLE;
- 		switch (mode & S_IFMT) {
- 		case S_IFREG:
+ 	/* this is the number of blocks in the file */
+ 	if (inode->i_size == 0) {
 -- 
 2.41.0
 
