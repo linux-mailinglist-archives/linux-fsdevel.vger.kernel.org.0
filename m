@@ -2,39 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C001A7B8BB5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Oct 2023 20:56:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E9017B8BF6
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Oct 2023 20:56:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244552AbjJDSyq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Oct 2023 14:54:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46990 "EHLO
+        id S244850AbjJDSyz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Oct 2023 14:54:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244555AbjJDSyd (ORCPT
+        with ESMTP id S244670AbjJDSyd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 4 Oct 2023 14:54:33 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C17931B9;
-        Wed,  4 Oct 2023 11:53:58 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1834BC433C8;
-        Wed,  4 Oct 2023 18:53:58 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1A261BC6;
+        Wed,  4 Oct 2023 11:53:59 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29917C433CD;
+        Wed,  4 Oct 2023 18:53:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696445638;
-        bh=hZN4D2LR8rX2IepRw2s44AxIsoHnPwI3Eb9y8mHRkJM=;
+        s=k20201202; t=1696445639;
+        bh=hJ13L6+0t085ntXpxQD42WXHyl1kwHHYbjDB4aBhDeI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JK4zl64wCK8ykXQg8vk5HEV4//9DGnJiz4Zp1YPsTgutEakWwDZZjpgtjlglhi+0i
-         aGd8qlG4Zlck0WAKGtWNAb75q6Rx4QHd2gQie0CJhKt75QakBFc4o134l4iHIAIdtX
-         m2MIvlxVBWL05psdjdNXW4oCKSHk/e6YPyqLsI1aJYlpf7RsXVPOonE+r07QEn6kyK
-         mTgI12qEMGsIjp9yXe11amt060B8Uho9nntQcpkoym7wE1Z/+9IxdhRCXVLQ4dba8r
-         hP0zbvBAeolWi2tpnL8AKRhRRdYjyeSeuz1moemQ0fRhFZZxXlaXtZ11xuZe3fAWJ/
-         F8dCeU0U/iHyg==
+        b=aWNMv/15ARZhZhz2JIW4IT6BxNZIhAACW1IpWm0oA5a0Ku7/GgtXJemfhpVudk59l
+         5TX1yy/V28obFUalsAn2irlBZqK4IX+8M05sQiNWwaPmDE+RV7rjbYMGz3XTXZEW6g
+         2rXQ/vgtA8cpZ4DgnSomxppCGHmNkZTfBnm/zpfy/0fghx4/xx4hPtJ3msfs437il7
+         0N1S6+RtCDL5wMmnG4xbxq9Iyh4li4JUCRW2J8lbo4g1AKcXpSb3i7IuxlNGXFrhKo
+         GargV9EdMqWGJ1gNyFpiopMdi/ljmC3utqxNumBMbn1wk7Tftp4WaISQiWgenC2xG1
+         c4yMnckWz8Fjw==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     linux-serial@vger.kernel.org
-Subject: [PATCH v2 11/89] tty: convert to new timestamp accessors
-Date:   Wed,  4 Oct 2023 14:51:56 -0400
-Message-ID: <20231004185347.80880-9-jlayton@kernel.org>
+Cc:     linux-usb@vger.kernel.org
+Subject: [PATCH v2 12/89] function: convert to new timestamp accessors
+Date:   Wed,  4 Oct 2023 14:51:57 -0400
+Message-ID: <20231004185347.80880-10-jlayton@kernel.org>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20231004185347.80880-1-jlayton@kernel.org>
 References: <20231004185221.80802-1-jlayton@kernel.org>
@@ -54,37 +54,24 @@ Convert to using the new inode timestamp accessor functions.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- drivers/tty/tty_io.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/usb/gadget/function/f_fs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
-index 8a94e5a43c6d..d13d2f2e76c7 100644
---- a/drivers/tty/tty_io.c
-+++ b/drivers/tty/tty_io.c
-@@ -818,7 +818,7 @@ static void tty_update_time(struct tty_struct *tty, bool mtime)
- 	spin_lock(&tty->files_lock);
- 	list_for_each_entry(priv, &tty->tty_files, list) {
- 		struct inode *inode = file_inode(priv->file);
--		struct timespec64 *time = mtime ? &inode->i_mtime : &inode->i_atime;
-+		struct timespec64 time = mtime ? inode_get_mtime(inode) : inode_get_atime(inode);
- 
- 		/*
- 		 * We only care if the two values differ in anything other than the
-@@ -826,8 +826,12 @@ static void tty_update_time(struct tty_struct *tty, bool mtime)
- 		 * the time of the tty device, otherwise it could be construded as a
- 		 * security leak to let userspace know the exact timing of the tty.
- 		 */
--		if ((sec ^ time->tv_sec) & ~7)
--			time->tv_sec = sec;
-+		if ((sec ^ time.tv_sec) & ~7) {
-+			if (mtime)
-+				inode_set_mtime(inode, sec, 0);
-+			else
-+				inode_set_atime(inode, sec, 0);
-+		}
- 	}
- 	spin_unlock(&tty->files_lock);
- }
+diff --git a/drivers/usb/gadget/function/f_fs.c b/drivers/usb/gadget/function/f_fs.c
+index af400d083777..efe3e3b85769 100644
+--- a/drivers/usb/gadget/function/f_fs.c
++++ b/drivers/usb/gadget/function/f_fs.c
+@@ -1383,8 +1383,8 @@ ffs_sb_make_inode(struct super_block *sb, void *data,
+ 		inode->i_mode    = perms->mode;
+ 		inode->i_uid     = perms->uid;
+ 		inode->i_gid     = perms->gid;
+-		inode->i_atime   = ts;
+-		inode->i_mtime   = ts;
++		inode_set_atime_to_ts(inode, ts);
++		inode_set_mtime_to_ts(inode, ts);
+ 		inode->i_private = data;
+ 		if (fops)
+ 			inode->i_fop = fops;
 -- 
 2.41.0
 
