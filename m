@@ -2,40 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B9E57B85DB
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Oct 2023 18:54:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5907F7B85DD
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Oct 2023 18:54:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243611AbjJDQyL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Oct 2023 12:54:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56770 "EHLO
+        id S243508AbjJDQyM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Oct 2023 12:54:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243551AbjJDQxh (ORCPT
+        with ESMTP id S243562AbjJDQxl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Oct 2023 12:53:37 -0400
+        Wed, 4 Oct 2023 12:53:41 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B646DD;
-        Wed,  4 Oct 2023 09:53:34 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C5EFF9;
+        Wed,  4 Oct 2023 09:53:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=KV8LjVnp8SrGIYzPBzTmbRSPvfzlFJYoh9EV/UdX1VU=; b=XKrwcSOWaQs6f+lvNnjqWsQNeA
-        tgWGSVcwUcSUK+ppxTN6wCxuM6QU4zpdWpMiV6KVrIp0r98Vydm6CI9x3+M231XCLbvBHeUsTq1Ls
-        +eZkvGGQwfurJSHA3nMDjyfvsg3VWB1w7Wx3V3DziFeKyn/pTJoHxUMnw/Y0g1ZbGCod0NlutrX1u
-        figIDtFZopRavwvsxs9+1eC5eeKlB+YwkNGYdG+6yHXeWhuaeNGxlKiTUBIQrV/JCqNxwxPBkUPJ4
-        ygOewt9UVPVSMnaPp9qvSI+NvRcESnTW6dPLxrxNb6Il9rZ36q3vUjsCZiCcnR1NwTo+eprsm+LCY
-        ab+q/3Xg==;
+        bh=D/8R0cQXGxymytv8qeJZP60gdDV9xdbcF13gSUAJ8s0=; b=P9PqackIT0b7fZvk2PUiwq2eEL
+        ogL4pXi4p90LlQsy6dqVmscrou91ZCSdQPbrsXf44oAxDyO/BxwBm5Z2vIwKUlQlUDpjFbnFPG9fM
+        BrJ63AckCUHqeJPCN9sjwAn+cG1XEsPXgyCNIWA2qvjPyp6VYgJA83cYUMVSJesCNkv4zWzv7yoTQ
+        gP2Z1xQ6jEcNIyFm3dsMavIcKirjm580itF3FOEGmJRHUDqy4pF9sGf2LiGyEorzm8grd31hr/VVK
+        KTTbbG5C8guCMxuwevbECmyH8mc5IYYAvCK+Lb8Nkenf0880jROkyzHaXctQk/+6ULTCzBapwqBs3
+        erU9zo2g==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qo57f-004SEt-6o; Wed, 04 Oct 2023 16:53:19 +0000
+        id 1qo57f-004SEv-92; Wed, 04 Oct 2023 16:53:19 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         linux-arch@vger.kernel.org, torvalds@linux-foundation.org,
         npiggin@gmail.com
-Subject: [PATCH v2 01/17] iomap: Hold state_lock over call to ifs_set_range_uptodate()
-Date:   Wed,  4 Oct 2023 17:53:01 +0100
-Message-Id: <20231004165317.1061855-2-willy@infradead.org>
+Subject: [PATCH v2 02/17] iomap: Protect read_bytes_pending with the state_lock
+Date:   Wed,  4 Oct 2023 17:53:02 +0100
+Message-Id: <20231004165317.1061855-3-willy@infradead.org>
 X-Mailer: git-send-email 2.37.1
 In-Reply-To: <20231004165317.1061855-1-willy@infradead.org>
 References: <20231004165317.1061855-1-willy@infradead.org>
@@ -50,60 +50,90 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is really preparation for the next patch, but it lets us call
-folio_mark_uptodate() in just one place instead of two.
+Perform one atomic operation (acquiring the spinlock) instead of
+two (spinlock & atomic_sub) per read completion.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/iomap/buffered-io.c | 20 +++++++++++---------
- 1 file changed, 11 insertions(+), 9 deletions(-)
+ fs/iomap/buffered-io.c | 37 +++++++++++++++++++++++++------------
+ 1 file changed, 25 insertions(+), 12 deletions(-)
 
 diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 5db54ca29a35..6e780ca64ce3 100644
+index 6e780ca64ce3..4a996c5327ef 100644
 --- a/fs/iomap/buffered-io.c
 +++ b/fs/iomap/buffered-io.c
-@@ -57,30 +57,32 @@ static inline bool ifs_block_is_uptodate(struct iomap_folio_state *ifs,
- 	return test_bit(block, ifs->state);
+@@ -29,9 +29,9 @@ typedef int (*iomap_punch_t)(struct inode *inode, loff_t offset, loff_t length);
+  * and I/O completions.
+  */
+ struct iomap_folio_state {
+-	atomic_t		read_bytes_pending;
+-	atomic_t		write_bytes_pending;
+ 	spinlock_t		state_lock;
++	unsigned int		read_bytes_pending;
++	atomic_t		write_bytes_pending;
+ 
+ 	/*
+ 	 * Each block has two bits in this bitmap:
+@@ -183,7 +183,7 @@ static void ifs_free(struct folio *folio)
+ 
+ 	if (!ifs)
+ 		return;
+-	WARN_ON_ONCE(atomic_read(&ifs->read_bytes_pending));
++	WARN_ON_ONCE(ifs->read_bytes_pending != 0);
+ 	WARN_ON_ONCE(atomic_read(&ifs->write_bytes_pending));
+ 	WARN_ON_ONCE(ifs_is_fully_uptodate(folio, ifs) !=
+ 			folio_test_uptodate(folio));
+@@ -250,19 +250,29 @@ static void iomap_adjust_read_range(struct inode *inode, struct folio *folio,
+ 	*lenp = plen;
  }
  
--static void ifs_set_range_uptodate(struct folio *folio,
-+static bool ifs_set_range_uptodate(struct folio *folio,
- 		struct iomap_folio_state *ifs, size_t off, size_t len)
- {
- 	struct inode *inode = folio->mapping->host;
- 	unsigned int first_blk = off >> inode->i_blkbits;
- 	unsigned int last_blk = (off + len - 1) >> inode->i_blkbits;
- 	unsigned int nr_blks = last_blk - first_blk + 1;
--	unsigned long flags;
- 
--	spin_lock_irqsave(&ifs->state_lock, flags);
- 	bitmap_set(ifs->state, first_blk, nr_blks);
--	if (ifs_is_fully_uptodate(folio, ifs))
--		folio_mark_uptodate(folio);
--	spin_unlock_irqrestore(&ifs->state_lock, flags);
-+	return ifs_is_fully_uptodate(folio, ifs);
- }
- 
- static void iomap_set_range_uptodate(struct folio *folio, size_t off,
- 		size_t len)
+-static void iomap_finish_folio_read(struct folio *folio, size_t offset,
++static void iomap_finish_folio_read(struct folio *folio, size_t off,
+ 		size_t len, int error)
  {
  	struct iomap_folio_state *ifs = folio->private;
-+	unsigned long flags;
-+	bool uptodate = true;
++	bool uptodate = !error;
++	bool finished = true;
  
--	if (ifs)
--		ifs_set_range_uptodate(folio, ifs, off, len);
--	else
+-	if (unlikely(error)) {
+-		folio_clear_uptodate(folio);
+-		folio_set_error(folio);
+-	} else {
+-		iomap_set_range_uptodate(folio, offset, len);
 +	if (ifs) {
-+		spin_lock_irqsave(&ifs->state_lock, flags);
-+		uptodate = ifs_set_range_uptodate(folio, ifs, off, len);
-+		spin_unlock_irqrestore(&ifs->state_lock, flags);
-+	}
++		unsigned long flags;
 +
++		spin_lock_irqsave(&ifs->state_lock, flags);
++		if (!error)
++			uptodate = ifs_set_range_uptodate(folio, ifs, off, len);
++		ifs->read_bytes_pending -= len;
++		finished = !ifs->read_bytes_pending;
++		spin_unlock_irqrestore(&ifs->state_lock, flags);
+ 	}
+ 
+-	if (!ifs || atomic_sub_and_test(len, &ifs->read_bytes_pending))
++	if (error)
++		folio_set_error(folio);
 +	if (uptodate)
- 		folio_mark_uptodate(folio);
++		folio_mark_uptodate(folio);
++	if (finished)
+ 		folio_unlock(folio);
  }
  
+@@ -360,8 +370,11 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
+ 	}
+ 
+ 	ctx->cur_folio_in_bio = true;
+-	if (ifs)
+-		atomic_add(plen, &ifs->read_bytes_pending);
++	if (ifs) {
++		spin_lock_irq(&ifs->state_lock);
++		ifs->read_bytes_pending += plen;
++		spin_unlock_irq(&ifs->state_lock);
++	}
+ 
+ 	sector = iomap_sector(iomap, pos);
+ 	if (!ctx->bio ||
 -- 
 2.40.1
 
