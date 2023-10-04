@@ -2,39 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DA3487B8C7C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Oct 2023 21:20:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85EEC7B8C9B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Oct 2023 21:20:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244898AbjJDS5n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Oct 2023 14:57:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44810 "EHLO
+        id S233599AbjJDS5l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Oct 2023 14:57:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44836 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244988AbjJDSzh (ORCPT
+        with ESMTP id S244989AbjJDSzh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 4 Oct 2023 14:55:37 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A43A310C0;
-        Wed,  4 Oct 2023 11:54:55 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A370AC433CB;
-        Wed,  4 Oct 2023 18:54:54 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE2F61734;
+        Wed,  4 Oct 2023 11:54:56 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1D6EC433C8;
+        Wed,  4 Oct 2023 18:54:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696445695;
-        bh=2GDYXuoPELo6aY4xsJQ5Xkq6BT2slz1YjAzuDRonK7U=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iSutjIkTw5Hg9r5T40U/3rI9n7UCPNKjw944PqszHvRshw2UhWhp/frAinofO6kwh
-         aFedrArjmAAgJaa3BA0OffPFtHFX3093FMslVqXeptbUsis24716lHHBafC7ynkaB2
-         5F+FiSAgdAK7Ger1Kaa799u80Ramx+RfqMQP/v8vweUJLB4hlomh6yfLBvr0elPCBo
-         sneCPuxSCq+tVlNSW+gN5yF8ULXpD1ldTmIEirzoqExsyobkDIo5jXE0q5KyStBtFU
-         zX6X7Uvuif0YWr0Pwr2dJKe5OO3LUDj179M1mhOttEwySp4S1Awag15gKll/jFtkov
-         KncqKNCf9i/6g==
+        s=k20201202; t=1696445696;
+        bh=k6pPAtQL5fkGNB33LVt/CarhmNwpVtS+fZSlhEaLNnI=;
+        h=From:To:Subject:Date:In-Reply-To:References:From;
+        b=Or0rayYFM3JfUWgcxwJF2tWv16MkHMWmzg4cGup+y3szkq7GAWd6+/luIrW5uLu86
+         NnLVBI4bUXu3UZgPJXegtDCZW/TW2GUD9BD5P8SSNcHzshtk03hgMMgCkYFamHdYgR
+         +vv+wOl6vo8WtAw+0kxdsg7xjN9KXu7HWGVCdGvUkIguYJhhD1w0milJmfyDbPJAje
+         6vqEL0DJBTEHkcN9+IZ29W6cKyGt05kPwC69a2+KmEPjGwcW1hS6PrxczA8N930FqY
+         N1vs6d7bETfjgngbzrPGVKfs/2e1mjWD2acA9rajZBSmOT9s5se25aNHGDJA3lq2cn
+         bcmNf1cG0euaw==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     linux-karma-devel@lists.sourceforge.net
-Subject: [PATCH v2 57/89] omfs: convert to new timestamp accessors
-Date:   Wed,  4 Oct 2023 14:52:42 -0400
-Message-ID: <20231004185347.80880-55-jlayton@kernel.org>
+Subject: [PATCH v2 58/89] openpromfs: convert to new timestamp accessors
+Date:   Wed,  4 Oct 2023 14:52:43 -0400
+Message-ID: <20231004185347.80880-56-jlayton@kernel.org>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20231004185347.80880-1-jlayton@kernel.org>
 References: <20231004185221.80802-1-jlayton@kernel.org>
@@ -54,47 +53,31 @@ Convert to using the new inode timestamp accessor functions.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/omfs/inode.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+ fs/openpromfs/inode.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/omfs/inode.c b/fs/omfs/inode.c
-index 2f8c1882f45c..d6cd81163030 100644
---- a/fs/omfs/inode.c
-+++ b/fs/omfs/inode.c
-@@ -51,7 +51,7 @@ struct inode *omfs_new_inode(struct inode *dir, umode_t mode)
- 	inode_init_owner(&nop_mnt_idmap, inode, NULL, mode);
- 	inode->i_mapping->a_ops = &omfs_aops;
+diff --git a/fs/openpromfs/inode.c b/fs/openpromfs/inode.c
+index b2457cb97fa0..c4b65a6d41cc 100644
+--- a/fs/openpromfs/inode.c
++++ b/fs/openpromfs/inode.c
+@@ -237,7 +237,7 @@ static struct dentry *openpromfs_lookup(struct inode *dir, struct dentry *dentry
+ 	if (IS_ERR(inode))
+ 		return ERR_CAST(inode);
+ 	if (inode->i_state & I_NEW) {
+-		inode->i_mtime = inode->i_atime = inode_set_ctime_current(inode);
++		simple_inode_init_ts(inode);
+ 		ent_oi = OP_I(inode);
+ 		ent_oi->type = ent_type;
+ 		ent_oi->u = ent_data;
+@@ -387,7 +387,7 @@ static int openprom_fill_super(struct super_block *s, struct fs_context *fc)
+ 		goto out_no_root;
+ 	}
  
--	inode->i_atime = inode->i_mtime = inode_set_ctime_current(inode);
-+	simple_inode_init_ts(inode);
- 	switch (mode & S_IFMT) {
- 	case S_IFDIR:
- 		inode->i_op = &omfs_dir_inops;
-@@ -134,8 +134,8 @@ static int __omfs_write_inode(struct inode *inode, int wait)
- 	oi->i_head.h_magic = OMFS_IMAGIC;
- 	oi->i_size = cpu_to_be64(inode->i_size);
- 
--	ctime = inode_get_ctime(inode).tv_sec * 1000LL +
--		((inode_get_ctime(inode).tv_nsec + 999)/1000);
-+	ctime = inode_get_ctime_sec(inode) * 1000LL +
-+		((inode_get_ctime_nsec(inode) + 999)/1000);
- 	oi->i_ctime = cpu_to_be64(ctime);
- 
- 	omfs_update_checksums(oi);
-@@ -230,11 +230,9 @@ struct inode *omfs_iget(struct super_block *sb, ino_t ino)
- 	ctime = be64_to_cpu(oi->i_ctime);
- 	nsecs = do_div(ctime, 1000) * 1000L;
- 
--	inode->i_atime.tv_sec = ctime;
--	inode->i_mtime.tv_sec = ctime;
-+	inode_set_atime(inode, ctime, nsecs);
-+	inode_set_mtime(inode, ctime, nsecs);
- 	inode_set_ctime(inode, ctime, nsecs);
--	inode->i_atime.tv_nsec = nsecs;
--	inode->i_mtime.tv_nsec = nsecs;
- 
- 	inode->i_mapping->a_ops = &omfs_aops;
- 
+-	root_inode->i_mtime = root_inode->i_atime = inode_set_ctime_current(root_inode);
++	simple_inode_init_ts(root_inode);
+ 	root_inode->i_op = &openprom_inode_operations;
+ 	root_inode->i_fop = &openprom_operations;
+ 	root_inode->i_mode = S_IFDIR | S_IRUGO | S_IXUGO;
 -- 
 2.41.0
 
