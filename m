@@ -2,197 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B4D867B7F98
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Oct 2023 14:46:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D4617B806A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Oct 2023 15:13:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242499AbjJDMqg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Oct 2023 08:46:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35924 "EHLO
+        id S242606AbjJDNN7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Oct 2023 09:13:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54318 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242394AbjJDMqf (ORCPT
+        with ESMTP id S242599AbjJDNN6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Oct 2023 08:46:35 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E595C9
-        for <linux-fsdevel@vger.kernel.org>; Wed,  4 Oct 2023 05:46:32 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id C32D31F855;
-        Wed,  4 Oct 2023 12:46:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1696423590; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=OUoVyxQDPI04NNDmHhtQVcaincSOaQHC43/Y+1GZ/uQ=;
-        b=q+fA0bpyoiDMgg9i3CJ3rwpMwxClR9dIiTSozDPym2lvQDzfmdZyaAK48DoLihanXG4+1/
-        R7OZ6kf68gDVY2FXJrSjZG5UyBZqDCRkZt92g5u7Dp4Pd3hDFUAJp4Uj9s8Q/f/ix1wrSi
-        R8Vmds5NYYbLM4SlmzKMSQfhdaY2jy8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1696423590;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=OUoVyxQDPI04NNDmHhtQVcaincSOaQHC43/Y+1GZ/uQ=;
-        b=HO7kkoFSU5Jhhc493Sg2u9zSHCBpRgjdqZ5bfqsGy0n1BEchfSEx1V1LNwL29a7k4Ph7Dq
-        MoGpxm9xlfntKyAA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id AD23813A2E;
-        Wed,  4 Oct 2023 12:46:30 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id f2zvKKZeHWXfPAAAMHmgww
-        (envelope-from <chrubis@suse.cz>); Wed, 04 Oct 2023 12:46:30 +0000
-From:   Cyril Hrubis <chrubis@suse.cz>
-To:     ltp@lists.linux.it
-Cc:     Matthew Wilcox <willy@infradead.org>, amir73il@gmail.com,
-        mszeredi@redhat.com, brauner@kernel.org, viro@zeniv.linux.org.uk,
-        Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 3/3] syscalls: accept: Add tst_fd_iterate() test
-Date:   Wed,  4 Oct 2023 14:47:12 +0200
-Message-ID: <20231004124712.3833-4-chrubis@suse.cz>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20231004124712.3833-1-chrubis@suse.cz>
-References: <20231004124712.3833-1-chrubis@suse.cz>
+        Wed, 4 Oct 2023 09:13:58 -0400
+Received: from mail-oa1-f70.google.com (mail-oa1-f70.google.com [209.85.160.70])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6B49D9
+        for <linux-fsdevel@vger.kernel.org>; Wed,  4 Oct 2023 06:13:54 -0700 (PDT)
+Received: by mail-oa1-f70.google.com with SMTP id 586e51a60fabf-1d6fdbe39c8so2717767fac.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Oct 2023 06:13:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696425234; x=1697030034;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WnT9mm81EGurra3sbmIkgyRkR1mbNMjC0mH42Ehxctc=;
+        b=FVtVyDiuG1yu5Xgw+eXl58Sb5ypzPeJz7HGp4jWSJ/O1FHy50LrDdpcMCeKSDTeBVT
+         sTivSpGU1SXoj4HiOtCDAwn4QmU6XZwpwiwTPEfaNx8SXPTUj7JdfFgiOmVu0de+AZlC
+         1Qrb1R2tKVHFWjgEsHYERdGA07sdCn4+4kwGUVv751BeJQqrRPR3Vd1W2Ti6lzWmpc12
+         YdTIp0VWwiT+QiJ2s24B6pdW287ImzMN1s0DfBrF1+eLcMqeaV9u2k65Zv6PzfIn2kUH
+         3XrCaJiZcQ+LQh0t2p0sdP4aZEjdKdu1gpxAlPtMHRIq4Qy9Z7/n+1zItb3LKSM87F6X
+         6tyA==
+X-Gm-Message-State: AOJu0YyWHfa7b6nL42/WMB4WXOCQ156UuMOH0jF6OVU/l3T1wXE14UyX
+        oleFe34qCopLhofXHLFjaDAewlBmjQtkC4qsGp85seim0MMg
+X-Google-Smtp-Source: AGHT+IGUAofh+8r+Oh0/Def6ijScSV5T+rXKZ1byN0sspuCtt3jKMjaAac5Opyu0n9CfSLMyLrKcuanu0px3GQjZ5OBYLrh7g3u7
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+X-Received: by 2002:a05:6870:3a18:b0:1dd:39ce:e252 with SMTP id
+ du24-20020a0568703a1800b001dd39cee252mr1011367oab.0.1696425234278; Wed, 04
+ Oct 2023 06:13:54 -0700 (PDT)
+Date:   Wed, 04 Oct 2023 06:13:54 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000007a31ca0606e3c7b4@google.com>
+Subject: [syzbot] Monthly ntfs report (Oct 2023)
+From:   syzbot <syzbot+list840e3c8e5a11b542fa0b@syzkaller.appspotmail.com>
+To:     anton@tuxera.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
+        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Signed-off-by: Cyril Hrubis <chrubis@suse.cz>
+Hello ntfs maintainers/developers,
+
+This is a 31-day syzbot report for the ntfs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/ntfs
+
+During the period, 1 new issues were detected and 1 were fixed.
+In total, 24 issues are still open and 8 have been fixed so far.
+
+Some of the still happening issues:
+
+Ref  Crashes Repro Title
+<1>  4008    Yes   possible deadlock in ntfs_read_folio
+                   https://syzkaller.appspot.com/bug?extid=8ef76b0b1f86c382ad37
+<2>  3219    Yes   kernel BUG at fs/ntfs/aops.c:LINE!
+                   https://syzkaller.appspot.com/bug?extid=6a5a7672f663cce8b156
+<3>  1420    Yes   kernel BUG in __ntfs_grab_cache_pages
+                   https://syzkaller.appspot.com/bug?extid=01b3ade7c86f7dd584d7
+<4>  638     Yes   possible deadlock in map_mft_record
+                   https://syzkaller.appspot.com/bug?extid=cb1fdea540b46f0ce394
+<5>  396     Yes   KASAN: slab-out-of-bounds Read in ntfs_readdir
+                   https://syzkaller.appspot.com/bug?extid=d36761079ac1b585a6df
+<6>  232     No    possible deadlock in __ntfs_clear_inode
+                   https://syzkaller.appspot.com/bug?extid=5ebb8d0e9b8c47867596
+<7>  37      Yes   kernel BUG in ntfs_iget
+                   https://syzkaller.appspot.com/bug?extid=d62e6bd2a2d05103d105
+<8>  36      Yes   kernel BUG in ntfs_lookup_inode_by_name
+                   https://syzkaller.appspot.com/bug?extid=d532380eef771ac0034b
+<9>  15      Yes   KASAN: use-after-free Read in ntfs_attr_find (2)
+                   https://syzkaller.appspot.com/bug?extid=ef50f8eb00b54feb7ba2
+<10> 13      Yes   KASAN: use-after-free Read in ntfs_lookup_inode_by_name
+                   https://syzkaller.appspot.com/bug?extid=3625b78845a725e80f61
+
 ---
- runtest/syscalls                            |  1 +
- testcases/kernel/syscalls/accept/.gitignore |  1 +
- testcases/kernel/syscalls/accept/accept01.c |  8 ----
- testcases/kernel/syscalls/accept/accept03.c | 46 +++++++++++++++++++++
- 4 files changed, 48 insertions(+), 8 deletions(-)
- create mode 100644 testcases/kernel/syscalls/accept/accept03.c
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/runtest/syscalls b/runtest/syscalls
-index 8652e0bd3..25b53a724 100644
---- a/runtest/syscalls
-+++ b/runtest/syscalls
-@@ -3,6 +3,7 @@ abort01 abort01
- 
- accept01 accept01
- accept02 accept02
-+accept03 accept03
- 
- accept4_01 accept4_01
- 
-diff --git a/testcases/kernel/syscalls/accept/.gitignore b/testcases/kernel/syscalls/accept/.gitignore
-index 5b1462699..f81d4bec9 100644
---- a/testcases/kernel/syscalls/accept/.gitignore
-+++ b/testcases/kernel/syscalls/accept/.gitignore
-@@ -1,2 +1,3 @@
- /accept01
- /accept02
-+/accept03
-diff --git a/testcases/kernel/syscalls/accept/accept01.c b/testcases/kernel/syscalls/accept/accept01.c
-index 85af0f8af..e5db1dfec 100644
---- a/testcases/kernel/syscalls/accept/accept01.c
-+++ b/testcases/kernel/syscalls/accept/accept01.c
-@@ -26,7 +26,6 @@
- struct sockaddr_in sin0, sin1, fsin1;
- 
- int invalid_socketfd = 400; /* anything that is not an open file */
--int devnull_fd;
- int socket_fd;
- int udp_fd;
- 
-@@ -45,10 +44,6 @@ static struct test_case {
- 		(struct sockaddr *)&fsin1, sizeof(fsin1), EBADF,
- 		"bad file descriptor"
- 	},
--	{
--		PF_INET, SOCK_STREAM, 0, &devnull_fd, (struct sockaddr *)&fsin1,
--		sizeof(fsin1), ENOTSOCK, "fd is not socket"
--	},
- 	{
- 		PF_INET, SOCK_STREAM, 0, &socket_fd, (struct sockaddr *)3,
- 		sizeof(fsin1), EINVAL, "invalid socket buffer"
-@@ -73,8 +68,6 @@ static void test_setup(void)
- 	sin0.sin_port = 0;
- 	sin0.sin_addr.s_addr = INADDR_ANY;
- 
--	devnull_fd = SAFE_OPEN("/dev/null", O_WRONLY);
--
- 	socket_fd = SAFE_SOCKET(PF_INET, SOCK_STREAM, 0);
- 	SAFE_BIND(socket_fd, (struct sockaddr *)&sin0, sizeof(sin0));
- 
-@@ -88,7 +81,6 @@ static void test_setup(void)
- 
- static void test_cleanup(void)
- {
--	SAFE_CLOSE(devnull_fd);
- 	SAFE_CLOSE(socket_fd);
- 	SAFE_CLOSE(udp_fd);
- }
-diff --git a/testcases/kernel/syscalls/accept/accept03.c b/testcases/kernel/syscalls/accept/accept03.c
-new file mode 100644
-index 000000000..6bced33b6
---- /dev/null
-+++ b/testcases/kernel/syscalls/accept/accept03.c
-@@ -0,0 +1,46 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+
-+/*
-+ * Copyright (C) 2023 Cyril Hrubis <chrubis@suse.cz>
-+ */
-+
-+/*\
-+ * [Description]
-+ *
-+ * Verify that accept() returns ENOTSOCK for non-socket file descriptors.
-+ */
-+
-+#include <sys/socket.h>
-+#include <netinet/in.h>
-+
-+#include "tst_test.h"
-+
-+void check_accept(struct tst_fd *fd)
-+{
-+	struct sockaddr_in addr = {
-+		.sin_family = AF_INET,
-+		.sin_port = 0,
-+		.sin_addr = {.s_addr = INADDR_ANY},
-+	};
-+	socklen_t size = sizeof(addr);
-+
-+	switch (fd->type) {
-+	case TST_FD_UNIX_SOCK:
-+	case TST_FD_INET_SOCK:
-+		return;
-+	default:
-+		break;
-+	}
-+
-+	TST_EXP_FAIL2(accept(fd->fd, (void*)&addr, &size),
-+		ENOTSOCK, "accept() on %s", tst_fd_desc(fd));
-+}
-+
-+static void verify_accept(void)
-+{
-+	tst_fd_iterate(check_accept);
-+}
-+
-+static struct tst_test test = {
-+	.test_all = verify_accept,
-+};
--- 
-2.41.0
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
