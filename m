@@ -2,52 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 234017B78C0
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Oct 2023 09:30:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D1077B793E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Oct 2023 09:58:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241531AbjJDHaz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Oct 2023 03:30:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40336 "EHLO
+        id S241586AbjJDH6t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Oct 2023 03:58:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39182 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241518AbjJDHay (ORCPT
+        with ESMTP id S232790AbjJDH6s (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Oct 2023 03:30:54 -0400
-Received: from mail-ot1-f70.google.com (mail-ot1-f70.google.com [209.85.210.70])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF496AB
-        for <linux-fsdevel@vger.kernel.org>; Wed,  4 Oct 2023 00:30:49 -0700 (PDT)
-Received: by mail-ot1-f70.google.com with SMTP id 46e09a7af769-6c64aad7a8eso718634a34.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Oct 2023 00:30:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696404649; x=1697009449;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5QaEuhNUG2u0gjcE5rRLCa9ZuWdzsZH122JJe8SJznI=;
-        b=uqc594qsl8SWCxeIDQX2H96r98cXyceVBKfYlT1eV9tT6JrOIe+AY2lKE+v+54rNfh
-         b8QdaeK8tJqaVOpRSUlWSsItwqR9NxcdYzAwdO1kB2Ps1SYg3wJ3IX9cQ8Z0pdzZSjAY
-         aHAIa45+OiV9ZzK40WQ8vJjYZsGmdzH2cXXiYW7VZSR2p9fdchcY1RGeXIRU9FtafiNU
-         oc0jMalOzFIF7r/4MxbpBDSY93iidTzs0encM4cmak5ZzPA5G/YBMBeNjHFZ2e4tO+PV
-         NatoSOUPAxwKk/ej+kF5iOmIsVHXFXAjEf+aHuktL2K/lL56pX4kOKJH37xgL2Dr+o8L
-         qV1A==
-X-Gm-Message-State: AOJu0YyBcNojtF5JLY/A45LkWIDtMgGGEIgvQzuskKm4s4iesMXADahg
-        nOGqR2NsYYo6xRmL8k106/BRWyzd7NnxfLroCiz2GAddCTWo
-X-Google-Smtp-Source: AGHT+IHXtCmEy6T+yEflnajIuE0+uj7DiV5VNTPbvc60HO7N2Oomc3w9gTo1e8HdhI1DLL2cDH00OrA0fz9gdr00dDBVv4cPS98n
+        Wed, 4 Oct 2023 03:58:48 -0400
+X-Greylist: delayed 464 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 04 Oct 2023 00:58:45 PDT
+Received: from mail.citycodes.pl (mail.citycodes.pl [158.255.215.195])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1D53A1
+        for <linux-fsdevel@vger.kernel.org>; Wed,  4 Oct 2023 00:58:45 -0700 (PDT)
+Received: by mail.citycodes.pl (Postfix, from userid 1001)
+        id 4ABD11F58B; Wed,  4 Oct 2023 09:50:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=citycodes.pl; s=mail;
+        t=1696405860; bh=mMhfBvhM53FtUQl1P3lyeSY5aDBQYiR8qQBy6YFQHi0=;
+        h=Date:From:To:Subject:From;
+        b=MP1yWMbqJvHzU9DPOMoHzYAIT8cTXDcBbLRcNRBcO/RB7xnP6h0MrjGaP3uqluIS5
+         C74K3oBnd9ZEFmbr5oOh6nFWNUrzQpecQ68dDikHImYmKbu5L2z7qZfSOrSmvtgsOB
+         FBzc7rvDgXbhXgJRQ9ZQuRbgvYhidvZwuOxXCQLhsOEBqftVFKKsHatOUebbLt1ino
+         lVFB8jmXxlE1SxXykJ+WEQP0VRs9claA3tcNaH77jU/OnROFQT6tG81qVYKfkmWkmd
+         uZlee6dEyPYTxp4z4OBepf22jsoc7xro6sC3P2atORMqieyewI+dKZhWR36y2HHHOS
+         4I8eA6wCdqw0w==
+Received: by mail.citycodes.pl for <linux-fsdevel@vger.kernel.org>; Wed,  4 Oct 2023 07:50:33 GMT
+Message-ID: <20231004084500-0.1.7v.j1p7.0.94k9lbllim@citycodes.pl>
+Date:   Wed,  4 Oct 2023 07:50:33 GMT
+From:   "Kamil Lasek" <kamil.lasek@citycodes.pl>
+To:     <linux-fsdevel@vger.kernel.org>
+Subject: =?UTF-8?Q?Rozszerzenie_Programu_M=C3=B3j_Pr=C4=85d_5.0?=
+X-Mailer: mail.citycodes.pl
 MIME-Version: 1.0
-X-Received: by 2002:a05:6830:1407:b0:6b7:528c:d8bf with SMTP id
- v7-20020a056830140700b006b7528cd8bfmr1594231otp.0.1696404649180; Wed, 04 Oct
- 2023 00:30:49 -0700 (PDT)
-Date:   Wed, 04 Oct 2023 00:30:49 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000082839e0606defcaf@google.com>
-Subject: [syzbot] Monthly overlayfs report (Oct 2023)
-From:   syzbot <syzbot+list66be8346f4383d3fe5a9@syzkaller.appspotmail.com>
-To:     amir73il@gmail.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -55,34 +47,19 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello overlayfs maintainers/developers,
+Szanowni Pa=C5=84stwo!
 
-This is a 31-day syzbot report for the overlayfs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/overlayfs
+W ramach nowej edycji programu M=C3=B3j Pr=C4=85d mog=C4=85 otrzyma=C4=87=
+ Pa=C5=84stwo dofinansowanie na zakup i monta=C5=BC fotowoltaiki i/lub ma=
+gazynu energii. Maksymalna kwota dofinansowania wynosi 58 tys. z=C5=82.=20
 
-During the period, 4 new issues were detected and 0 were fixed.
-In total, 9 issues are still open and 18 have been fixed so far.
+Jako firma wyspecjalizowana w tym zakresie zajmiemy si=C4=99 Pa=C5=84stwa=
+ wnioskiem o dofinansowanie oraz instalacj=C4=85 i serwisem dopasowanych =
+do Pa=C5=84stwa budynku paneli s=C5=82onecznych.
 
-Some of the still happening issues:
+B=C4=99d=C4=99 wdzi=C4=99czny za informacj=C4=99 czy s=C4=85 Pa=C5=84stwo=
+ zainteresowani.
 
-Ref Crashes Repro Title
-<1> 836     Yes   possible deadlock in mnt_want_write (2)
-                  https://syzkaller.appspot.com/bug?extid=b42fe626038981fb7bfa
-<2> 27      Yes   BUG: unable to handle kernel paging request in take_dentry_name_snapshot
-                  https://syzkaller.appspot.com/bug?extid=90392eaed540afcc8fc3
-<3> 1       No    possible deadlock in ovl_copy_up_start (2)
-                  https://syzkaller.appspot.com/bug?extid=e8628856801e9809216f
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+Pozdrawiam,
+Kamil Lasek
