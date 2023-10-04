@@ -2,40 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BAE67B85C2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Oct 2023 18:53:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D4937B85CB
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Oct 2023 18:53:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243492AbjJDQxc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Oct 2023 12:53:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54904 "EHLO
+        id S243491AbjJDQxf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Oct 2023 12:53:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243487AbjJDQx0 (ORCPT
+        with ESMTP id S243486AbjJDQxb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Oct 2023 12:53:26 -0400
+        Wed, 4 Oct 2023 12:53:31 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADD17DC;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B490BE4;
         Wed,  4 Oct 2023 09:53:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=aiOK8Ht5TYsSZN2/F06YkBbUJBHTCETngx448aYGRJo=; b=VOk2evtNHuqg7ndh/VFc13jshQ
-        7Aq6JXqhdYoVvDjQrEneZ41ZwtOlizK9UoWsy42xy8NW3bUCNb3FM1Lnu/ipD7yoFi3JwlBWmBL9x
-        QzfQgpXzrCBdr//gmxpCSLCzvgrpfK096UuAuYhHfitjA2uMljoQgeqWetGTlvfEYKoWf6dBMtmqN
-        FNDJJdV9A88mGDAmIf14M2txfGBLtO4K6EU7at4YJB+4ni1EBNFCm+6C2/joXW2lKFFXN3w7Sbn/L
-        1o6SwpwpoUxRpJUIeguhYRCDOyQgh9vvfjUqn/3PeR8zhwrl4RRlWzioFMBcJWIp8FWcO/PedaqLM
-        NGcjEprg==;
+        bh=NoYAPE+UO7xNrTZ3UFo3zibiwdFupzttBoXxylMj4Qw=; b=m5I9BXtxa7U3y+DGVFJFvAMKxg
+        hBD+0YDc+5glcTSqGwZdiU6CHF8GGs8Fwr1IB1Q2wLElzB2gxr6IE3VibFZ3rtjCAnHgyMSEkvmjU
+        COtxOWuztoH0qghXux20Z9rq0nyzLVraO5yLavoMMcks/CORStaKbNRgugrAJSXdkEYWPPt4JRFyR
+        ghB03Xdi8DyFDINsJpQsA0Bku5Pz6tB5JxfpIW8ML04CpMn1Q2Dtbi+zN2rpVwnpXrGBU4/x9CWYK
+        8hBRdb6Pu+yl6r3m/UR7Sw1fVNiY+4PzLfApV1j+H0pPF0Rmvec00gSHlMcMfNnmhTfeRbn7642xQ
+        NaBY1K5A==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qo57g-004SFl-Cg; Wed, 04 Oct 2023 16:53:20 +0000
+        id 1qo57g-004SFr-Gi; Wed, 04 Oct 2023 16:53:20 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         linux-arch@vger.kernel.org, torvalds@linux-foundation.org,
         npiggin@gmail.com
-Subject: [PATCH v2 12/17] riscv: Implement xor_unlock_is_negative_byte
-Date:   Wed,  4 Oct 2023 17:53:12 +0100
-Message-Id: <20231004165317.1061855-13-willy@infradead.org>
+Subject: [PATCH v2 13/17] s390: Implement arch_xor_unlock_is_negative_byte
+Date:   Wed,  4 Oct 2023 17:53:13 +0100
+Message-Id: <20231004165317.1061855-14-willy@infradead.org>
 X-Mailer: git-send-email 2.37.1
 In-Reply-To: <20231004165317.1061855-1-willy@infradead.org>
 References: <20231004165317.1061855-1-willy@infradead.org>
@@ -50,38 +50,35 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Inspired by the riscv clear_bit_unlock(), this will surely be
+Inspired by the s390 arch_test_and_clear_bit(), this will surely be
 more efficient than the generic one defined in filemap.c.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- arch/riscv/include/asm/bitops.h | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ arch/s390/include/asm/bitops.h | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/arch/riscv/include/asm/bitops.h b/arch/riscv/include/asm/bitops.h
-index 3540b690944b..15e3044298a2 100644
---- a/arch/riscv/include/asm/bitops.h
-+++ b/arch/riscv/include/asm/bitops.h
-@@ -191,6 +191,19 @@ static inline void __clear_bit_unlock(
- 	clear_bit_unlock(nr, addr);
+diff --git a/arch/s390/include/asm/bitops.h b/arch/s390/include/asm/bitops.h
+index 2de74fcd0578..c467dffa8c12 100644
+--- a/arch/s390/include/asm/bitops.h
++++ b/arch/s390/include/asm/bitops.h
+@@ -201,6 +201,16 @@ static inline void arch___clear_bit_unlock(unsigned long nr,
+ 	arch___clear_bit(nr, ptr);
  }
  
-+static inline bool xor_unlock_is_negative_byte(unsigned long mask,
-+		volatile unsigned long *addr)
++static inline bool arch_xor_unlock_is_negative_byte(unsigned long mask,
++		volatile unsigned long *ptr)
 +{
-+	unsigned long res;
-+	__asm__ __volatile__ (
-+		__AMO(xor) ".rl %0, %2, %1"
-+		: "=r" (res), "+A" (*addr)
-+		: "r" (__NOP(mask))
-+		: "memory");
-+	return (res & BIT(7)) != 0;
-+}
-+#define xor_unlock_is_negative_byte xor_unlock_is_negative_byte
++	unsigned long old;
 +
- #undef __test_and_op_bit
- #undef __op_bit
- #undef __NOP
++	old = __atomic64_xor_barrier(mask, (long *)ptr);
++	return old & BIT(7);
++}
++#define arch_xor_unlock_is_negative_byte arch_xor_unlock_is_negative_byte
++
+ #include <asm-generic/bitops/instrumented-atomic.h>
+ #include <asm-generic/bitops/instrumented-non-atomic.h>
+ #include <asm-generic/bitops/instrumented-lock.h>
 -- 
 2.40.1
 
