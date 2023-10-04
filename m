@@ -2,346 +2,309 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CEB37B762D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Oct 2023 03:16:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D4037B7636
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Oct 2023 03:20:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239265AbjJDBQe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Oct 2023 21:16:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58260 "EHLO
+        id S239641AbjJDBU4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Oct 2023 21:20:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232316AbjJDBQd (ORCPT
+        with ESMTP id S239384AbjJDBUz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Oct 2023 21:16:33 -0400
-Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 443E1B4
-        for <linux-fsdevel@vger.kernel.org>; Tue,  3 Oct 2023 18:16:28 -0700 (PDT)
-Received: by mail-pj1-x1031.google.com with SMTP id 98e67ed59e1d1-277550774e5so1050847a91.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Oct 2023 18:16:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1696382188; x=1696986988; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=27OUlXqVAY5pph8VgkHut5jt4z0+Lj/b+tomTvgAza4=;
-        b=QthoRRAX1baBx3h8rgX8Bw+0FWLigoJo7DUnxOe8B8MEIyrb06X5OX699/5nX02v3l
-         WS4jjFjnGXObRCM4vjeoiySxa7JNxnN0Cz9O/PRrI4U8CPpHbNkryhS/Dxr5+pYrm973
-         wA8j++f6kbITTUKETCGkYfbdu1ECHLJkTD/akDftkuLh6Gd4jRVnnbofGTK3vgP9q+vF
-         /TPXXWnvwVcT/g9H8LI7JdEUKncDZQUc80d1NU6ZHu+1FHNh0iosVf5btk+Nt77RGF96
-         qUUSrOrCmlAj1RsmykVACkKEGdByybTBtBPBTVQIhCcROLX6FWAXHkTBX79sqI/Th+S9
-         wpOA==
+        Tue, 3 Oct 2023 21:20:55 -0400
+Received: from mail-oo1-f79.google.com (mail-oo1-f79.google.com [209.85.161.79])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74D57B0
+        for <linux-fsdevel@vger.kernel.org>; Tue,  3 Oct 2023 18:20:50 -0700 (PDT)
+Received: by mail-oo1-f79.google.com with SMTP id 006d021491bc7-57b7aefb23aso1822631eaf.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Oct 2023 18:20:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696382188; x=1696986988;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=27OUlXqVAY5pph8VgkHut5jt4z0+Lj/b+tomTvgAza4=;
-        b=HQ7UHnl/qfSInTXLqT4WD0gEUc1q7iXpt3B7dH6KK9tRzZo7ZaZQP2puM7q6i3Sm5H
-         fIoQaUfVYXD8YblZa7dgFGAsreY0Ax3ZtCE9c3lPWQSjP+gv7GemJx+sT2ZQNn0xudlm
-         msgPl2L//zc19aNQE62u19P6D/UTYB5KagWEnf95mfeH+938yjCfturYTy0YUN3wrwlj
-         migjSB20djipdkIipLvNHJSIlXIdKV3VzMvOKXBDI3JdChtVoCgkgjGRsGSetgVBCNvA
-         60Yjp/kMz9oHCv+5OM4enw1ZLxlfN1XnbQ2p83WgJNWhR1018vYC5S5mG2a5D+DGNXBZ
-         D9Fw==
-X-Gm-Message-State: AOJu0Yxclpn+6XWX4+wWqlzMoTFtqo9u+k63wVEmtTQ+2tyJm4ICaUYT
-        wN0tVasivc6rO8K53OvfJyBo4g==
-X-Google-Smtp-Source: AGHT+IGAZMmhmKfxlRSU/a8+EGUxGlR0SLNCds5QUJ8ZXzl8PknPnruiTA+IGWcxcfozw3Ji0pNl7Q==
-X-Received: by 2002:a17:90b:4ad2:b0:269:2682:11fb with SMTP id mh18-20020a17090b4ad200b00269268211fbmr964608pjb.8.1696382187364;
-        Tue, 03 Oct 2023 18:16:27 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-20-59.pa.nsw.optusnet.com.au. [49.180.20.59])
-        by smtp.gmail.com with ESMTPSA id x18-20020a17090aa39200b002609cadc56esm228044pjp.11.2023.10.03.18.16.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Oct 2023 18:16:26 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-        (envelope-from <david@fromorbit.com>)
-        id 1qnqUx-0098Sr-2u;
-        Wed, 04 Oct 2023 12:16:23 +1100
-Date:   Wed, 4 Oct 2023 12:16:23 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     John Garry <john.g.garry@oracle.com>, axboe@kernel.dk,
-        kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
-        jejb@linux.ibm.com, martin.petersen@oracle.com,
-        viro@zeniv.linux.org.uk, brauner@kernel.org,
-        chandan.babu@oracle.com, dchinner@redhat.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
-        linux-api@vger.kernel.org
-Subject: Re: [PATCH 16/21] fs: iomap: Atomic write support
-Message-ID: <ZRy850C0sceCsf1k@dread.disaster.area>
-References: <20230929102726.2985188-1-john.g.garry@oracle.com>
- <20230929102726.2985188-17-john.g.garry@oracle.com>
- <ZRuXd/iG1kyeFQDh@dread.disaster.area>
- <20231003164749.GH21298@frogsfrogsfrogs>
+        d=1e100.net; s=20230601; t=1696382450; x=1696987250;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0Z7Wm/Qlb7bXo3BfpGcBcHWS4b/ykjWkuu5nwBzEuuM=;
+        b=TIxxDIIWzs/l5DxClh8D2WBk1XsvkhIf/FGhAOLChTr+qrzvox3OKQaHJEM2xBo5RB
+         WrovR3HztkOEjD1eYk2756AIsoioLS2m5b3Cf8WtzxdEuCJevu9220JWswoEAQYhnKnC
+         7vp1BKrE6y8F9dZV9GWgNr74VTNPY5m4kH+W8rWCB9+cJ9X7rRr2DA69+6kAA0XisVy4
+         L/Fg402ZofzQeC/m20wZBM7hX59OdFe1O0Th5q44JZs1gLrw+W9EBGIzYHGBJK0cr5XG
+         REYVubj0lmjrN7+w2JEKpIqGced27X0bx0AYCaxJU1a6vq/KPuPItkLk8k0wwQgpOMRl
+         AMow==
+X-Gm-Message-State: AOJu0Yx9FthKBuDll7uqKP5w66Isf5IP+wAVA1btyzVUu9B3vkZWEzib
+        YMP0EDhD1sleo9iP1tRIFaq+fb8h0BIyYcsVKJvsmYg0bGAE
+X-Google-Smtp-Source: AGHT+IFZD4kFhP+psborcucj6J2PKY0Sc5plWg0iUXqapgr1ygQLWshGIb266vhqMV1uKFBY5p7S6TpV5aBvakGzUJzweRAvCnQo
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231003164749.GH21298@frogsfrogsfrogs>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+X-Received: by 2002:a05:6870:e502:b0:1e1:15ca:2aa1 with SMTP id
+ y2-20020a056870e50200b001e115ca2aa1mr457003oag.11.1696382449661; Tue, 03 Oct
+ 2023 18:20:49 -0700 (PDT)
+Date:   Tue, 03 Oct 2023 18:20:49 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000050bbd30606d9d1eb@google.com>
+Subject: [syzbot] [btrfs?] INFO: task hung in btrfs_page_mkwrite
+From:   syzbot <syzbot+bdcacd75b712b0147ca7@syzkaller.appspotmail.com>
+To:     clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
+        RCVD_IN_MSPIKE_WL,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 03, 2023 at 09:47:49AM -0700, Darrick J. Wong wrote:
-> On Tue, Oct 03, 2023 at 03:24:23PM +1100, Dave Chinner wrote:
-> > On Fri, Sep 29, 2023 at 10:27:21AM +0000, John Garry wrote:
-> > > Add flag IOMAP_ATOMIC_WRITE to indicate to the FS that an atomic write
-> > > bio is being created and all the rules there need to be followed.
-> > > 
-> > > It is the task of the FS iomap iter callbacks to ensure that the mapping
-> > > created adheres to those rules, like size is power-of-2, is at a
-> > > naturally-aligned offset, etc.
-> > 
-> > The mapping being returned by the filesystem can span a much greater
-> > range than the actual IO needs - the iomap itself is not guaranteed
-> > to be aligned to anything in particular, but the IO location within
-> > that map can still conform to atomic IO constraints. See how
-> > iomap_sector() calculates the actual LBA address of the IO from
-> > the iomap and the current file position the IO is being done at.
-> > 
-> > hence I think saying "the filesysetm should make sure all IO
-> > alignment adheres to atomic IO rules is probably wrong. The iomap
-> > layer doesn't care what the filesystem does, all it cares about is
-> > whether the IO can be done given the extent map that was returned to
-> > it.
-> > 
-> > Indeed, iomap_dio_bio_iter() is doing all these alignment checks for
-> > normal DIO reads and writes which must be logical block sized
-> > aligned. i.e. this check:
-> > 
-> >         if ((pos | length) & (bdev_logical_block_size(iomap->bdev) - 1) ||
-> >             !bdev_iter_is_aligned(iomap->bdev, dio->submit.iter))
-> >                 return -EINVAL;
-> > 
-> > Hence I think that atomic IO units, which are similarly defined by
-> > the bdev, should be checked at the iomap layer, too. e.g, by
-> > following up with:
-> > 
-> > 	if ((dio->iocb->ki_flags & IOCB_ATOMIC) &&
-> > 	    ((pos | length) & (bdev_atomic_unit_min(iomap->bdev) - 1) ||
-> > 	     !bdev_iter_is_atomic_aligned(iomap->bdev, dio->submit.iter))
-> > 		return -EINVAL;
-> > 
-> > At this point, filesystems don't really need to know anything about
-> > atomic IO - if they've allocated a large contiguous extent (e.g. via
-> > fallocate()), then RWF_ATOMIC will just work for the cases where the
-> > block device supports it...
-> > 
-> > This then means that stuff like XFS extent size hints only need to
-> > check when the hint is set that it is aligned to the underlying
-> > device atomic IO constraints. Then when it sees the IOMAP_ATOMIC
-> > modifier, it can fail allocation if it can't get extent size hint
-> > aligned allocation.
-> > 
-> > IOWs, I'm starting to think this doesn't need any change to the
-> > on-disk format for XFS - it can be driven entirely through two
-> > dynamic mechanisms:
-> > 
-> > 1. (IOMAP_WRITE | IOMAP_ATOMIC) requests from the direct IO layer
-> > which causes mapping/allocation to fail if it can't allocate (or
-> > map) atomic IO compatible extents for the IO.
-> > 
-> > 2. FALLOC_FL_ATOMIC preallocation flag modifier to tell fallocate()
-> > to force alignment of all preallocated extents to atomic IO
-> > constraints.
-> 
-> Ugh, let's not relitigate problems that you (Dave) and I have already
-> solved.
-> 
-> Back in 2018, our internal proto-users of pmem asked for aligned
-> allocations so they could use PMD mappings to reduce TLB pressure.  At
-> the time, you and I talked on IRC about whether that should be done via
-> fallocate flag or setting extszinherit+sunit at mkfs time.  We decided
-> against adding fallocate flags because linux-api bikeshed hell.
+Hello,
 
-Ok, but I don't see how I'm supposed to correlate a discussion from
-5 years ago on a different topic with this one. I can only comment
-on what I see in front of me. And what is in front of me is
-something that doesn't need on-disk changes to implement....
+syzbot found the following issue on:
 
-> Ever since, we've been shipping UEK with a mkfs.xmem scripts that
-> automates computing the mkfs.xfs geometry CLI options.  It works,
-> mostly, except for the unaligned allocations that one gets when the free
-> space gets fragmented.  The xfsprogs side of the forcealign patchset
-> moves most of the mkfs.xmem cli option setting logic into mkfs itself,
-> and the kernel side shuts off the lowspace allocator to fix the
-> fragmentation problem.
-> 
-> I'd rather fix the remaining quirks and not reinvent solved solutions,
-> as popular as that is in programming circles.
-> 
-> Why is mandatory allocation alignment for atomic writes different?
-> Forcealign solves the problem for NVME/SCSI AWU and pmem PMD in the same
-> way with the same control knobs for sysadmins.  I don't want to have
-> totally separate playbooks for accomplishing nearly the same things.
+HEAD commit:    e81a2dabc3f3 Merge tag 'kbuild-fixes-v6.6-2' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16751e92680000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=12da82ece7bf46f9
+dashboard link: https://syzkaller.appspot.com/bug?extid=bdcacd75b712b0147ca7
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-Which is fair enough, but that's not the context under which this
-has been presented.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Can we please get the forced-align stuff separated from atomic write
-support - the atomic write requirements completely overwhelms small
-amount of change needed to support physical file offset
-alignment....
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/b9e2f8a9b7db/disk-e81a2dab.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b4bc70c999ec/vmlinux-e81a2dab.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/541a5ce45216/bzImage-e81a2dab.xz
 
-> I don't like encoding hardware details in the fallocate uapi either.
-> That implies adding FALLOC_FL_HUGEPAGE for pmem, and possibly
-> FALLOC_FL_{SUNIT,SWIDTH} for users with RAIDs.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+bdcacd75b712b0147ca7@syzkaller.appspotmail.com
 
-No, that's reading way too much into it. FALLOC_FL_ATOMIC would mean
-"ensure preallocation is valid for RWF_ATOMIC based IO contrainsts",
-nothing more, nothing less. This isn't -hardware specific-, it's
-simply a flag to tell the filesystem to align file offsets to
-physical storage constraints so the allocated space works works
-appropriately for a specific IO API.
+INFO: task syz-executor.0:18661 blocked for more than 143 seconds.
+      Not tainted 6.6.0-rc3-syzkaller-00252-ge81a2dabc3f3 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor.0  state:D stack:24808 pid:18661 ppid:18152  flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5382 [inline]
+ __schedule+0x196c/0x4af0 kernel/sched/core.c:6695
+ schedule+0xc3/0x180 kernel/sched/core.c:6771
+ io_schedule+0x8c/0x100 kernel/sched/core.c:9026
+ folio_wait_bit_common+0x881/0x12a0 mm/filemap.c:1301
+ btrfs_page_mkwrite+0x4a4/0xd10 fs/btrfs/inode.c:8133
+ do_page_mkwrite+0x197/0x470 mm/memory.c:2931
+ wp_page_shared mm/memory.c:3291 [inline]
+ do_wp_page+0xf87/0x4190 mm/memory.c:3376
+ handle_pte_fault mm/memory.c:4994 [inline]
+ __handle_mm_fault mm/memory.c:5119 [inline]
+ handle_mm_fault+0x1b45/0x62b0 mm/memory.c:5284
+ do_user_addr_fault arch/x86/mm/fault.c:1413 [inline]
+ handle_page_fault arch/x86/mm/fault.c:1505 [inline]
+ exc_page_fault+0x2ac/0x860 arch/x86/mm/fault.c:1561
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:570
+RIP: 0033:0x7f95b6c5db98
+RSP: 002b:00007ffd69f5d688 EFLAGS: 00010202
+RAX: 0000000020000000 RBX: 00007ffd69f5d798 RCX: 00617363762f7665
+RDX: 000000000000000a RSI: 7363762f7665642f RDI: 0000000020000000
+RBP: 0000000000000032 R08: 00007f95b6c00000 R09: 00007ffd69fbd0b0
+R10: 00007ffd69fbd080 R11: 0000000000069702 R12: 00007f95b6825730
+R13: fffffffffffffffe R14: 00007f95b6800000 R15: 00007f95b6825738
+ </TASK>
+INFO: task syz-executor.0:18703 blocked for more than 143 seconds.
+      Not tainted 6.6.0-rc3-syzkaller-00252-ge81a2dabc3f3 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor.0  state:D stack:23688 pid:18703 ppid:18152  flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5382 [inline]
+ __schedule+0x196c/0x4af0 kernel/sched/core.c:6695
+ schedule+0xc3/0x180 kernel/sched/core.c:6771
+ wait_on_state fs/btrfs/extent-io-tree.c:719 [inline]
+ wait_extent_bit+0x50c/0x670 fs/btrfs/extent-io-tree.c:763
+ lock_extent+0x1c0/0x270 fs/btrfs/extent-io-tree.c:1755
+ btrfs_page_mkwrite+0x5bd/0xd10 fs/btrfs/inode.c:8143
+ do_page_mkwrite+0x197/0x470 mm/memory.c:2931
+ wp_page_shared mm/memory.c:3291 [inline]
+ do_wp_page+0xf87/0x4190 mm/memory.c:3376
+ handle_pte_fault mm/memory.c:4994 [inline]
+ __handle_mm_fault mm/memory.c:5119 [inline]
+ handle_mm_fault+0x1b45/0x62b0 mm/memory.c:5284
+ do_user_addr_fault arch/x86/mm/fault.c:1413 [inline]
+ handle_page_fault arch/x86/mm/fault.c:1505 [inline]
+ exc_page_fault+0x2ac/0x860 arch/x86/mm/fault.c:1561
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:570
+RIP: 0010:rep_movs_alternative+0x33/0x70 arch/x86/lib/copy_user_64.S:58
+Code: 40 83 f9 08 73 21 85 c9 74 0f 8a 06 88 07 48 ff c7 48 ff c6 48 ff c9 75 f1 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 8b 06 <48> 89 07 48 83 c6 08 48 83 c7 08 83 e9 08 74 df 83 f9 08 73 e8 eb
+RSP: 0018:ffffc9000da57550 EFLAGS: 00050206
+RAX: 0000000000000000 RBX: 0000000020000298 RCX: 0000000000000038
+RDX: 0000000000000000 RSI: ffffc9000da57600 RDI: 0000000020000260
+RBP: ffffc9000da576b0 R08: ffffc9000da57637 R09: 1ffff92001b4aec6
+R10: dffffc0000000000 R11: fffff52001b4aec7 R12: 0000000000000038
+R13: ffffc9000da57600 R14: 0000000020000260 R15: ffffc9000da57600
+ copy_user_generic arch/x86/include/asm/uaccess_64.h:112 [inline]
+ raw_copy_to_user arch/x86/include/asm/uaccess_64.h:133 [inline]
+ _copy_to_user+0x86/0xa0 lib/usercopy.c:41
+ copy_to_user include/linux/uaccess.h:191 [inline]
+ fiemap_fill_next_extent+0x235/0x410 fs/ioctl.c:145
+ emit_last_fiemap_cache fs/btrfs/extent_io.c:2506 [inline]
+ extent_fiemap+0x1b9c/0x1fe0 fs/btrfs/extent_io.c:3033
+ btrfs_fiemap+0x178/0x1e0 fs/btrfs/inode.c:7815
+ ioctl_fiemap fs/ioctl.c:220 [inline]
+ do_vfs_ioctl+0x19ea/0x2b40 fs/ioctl.c:811
+ __do_sys_ioctl fs/ioctl.c:869 [inline]
+ __se_sys_ioctl+0x81/0x170 fs/ioctl.c:857
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f95b6c7cae9
+RSP: 002b:00007f95ae3dd0c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f95b6d9c050 RCX: 00007f95b6c7cae9
+RDX: 0000000020000240 RSI: 00000000c020660b RDI: 0000000000000004
+RBP: 00007f95b6cc847a R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000000b R14: 00007f95b6d9c050 R15: 00007ffd69f5d5a8
+ </TASK>
+INFO: task syz-executor.0:18705 blocked for more than 144 seconds.
+      Not tainted 6.6.0-rc3-syzkaller-00252-ge81a2dabc3f3 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor.0  state:D stack:26472 pid:18705 ppid:18152  flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5382 [inline]
+ __schedule+0x196c/0x4af0 kernel/sched/core.c:6695
+ schedule+0xc3/0x180 kernel/sched/core.c:6771
+ schedule_preempt_disabled+0x13/0x20 kernel/sched/core.c:6830
+ rwsem_down_write_slowpath+0xee6/0x13a0 kernel/locking/rwsem.c:1178
+ __down_write_common+0x1aa/0x200 kernel/locking/rwsem.c:1306
+ inode_lock include/linux/fs.h:802 [inline]
+ btrfs_inode_lock+0x4d/0xd0 fs/btrfs/inode.c:377
+ btrfs_buffered_write+0x230/0x1380 fs/btrfs/file.c:1200
+ btrfs_do_write_iter+0x2bb/0x1190 fs/btrfs/file.c:1683
+ do_iter_write+0x84f/0xde0 fs/read_write.c:860
+ iter_file_splice_write+0x86d/0x1010 fs/splice.c:736
+ do_splice_from fs/splice.c:933 [inline]
+ direct_splice_actor+0xea/0x1c0 fs/splice.c:1142
+ splice_direct_to_actor+0x376/0x9e0 fs/splice.c:1088
+ do_splice_direct+0x2ac/0x3f0 fs/splice.c:1194
+ do_sendfile+0x623/0x1070 fs/read_write.c:1254
+ __do_sys_sendfile64 fs/read_write.c:1322 [inline]
+ __se_sys_sendfile64+0x17c/0x1e0 fs/read_write.c:1308
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f95b6c7cae9
+RSP: 002b:00007f95ae3bc0c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
+RAX: ffffffffffffffda RBX: 00007f95b6d9c120 RCX: 00007f95b6c7cae9
+RDX: 0000000000000000 RSI: 0000000000000005 RDI: 0000000000000004
+RBP: 00007f95b6cc847a R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000002 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000000b R14: 00007f95b6d9c120 R15: 00007ffd69f5d5a8
+ </TASK>
 
-IOWs, it is little different from the FALLOC_FL_NOHIDE_STALE flag
-for modifying fallocate() behaviour...
+Showing all locks held in the system:
+1 lock held by khungtaskd/29:
+ #0: ffffffff8d32c420 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:303 [inline]
+ #0: ffffffff8d32c420 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:749 [inline]
+ #0: ffffffff8d32c420 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6613
+2 locks held by getty/4789:
+ #0: ffff88814add90a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
+ #1: ffffc90002f062f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6b1/0x1dc0 drivers/tty/n_tty.c:2206
+3 locks held by syz-executor.5/5079:
+ #0: ffff88814be82410 (sb_writers#4){.+.+}-{0:0}, at: mnt_want_write+0x3f/0x90 fs/namespace.c:403
+ #1: ffff888078b8d400 (&type->i_mutex_dir_key#3/1){+.+.}-{3:3}, at: inode_lock_nested include/linux/fs.h:837 [inline]
+ #1: ffff888078b8d400 (&type->i_mutex_dir_key#3/1){+.+.}-{3:3}, at: do_unlinkat+0x26a/0x950 fs/namei.c:4383
+ #2: ffff888043a1c000 (&sb->s_type->i_mutex_key#7){++++}-{3:3}, at: inode_lock include/linux/fs.h:802 [inline]
+ #2: ffff888043a1c000 (&sb->s_type->i_mutex_key#7){++++}-{3:3}, at: vfs_unlink+0xe4/0x5f0 fs/namei.c:4321
+3 locks held by syz-executor.0/18661:
+ #0: ffff88807dba3aa0 (&mm->mmap_lock){++++}-{3:3}, at: mmap_read_trylock include/linux/mmap_lock.h:165 [inline]
+ #0: ffff88807dba3aa0 (&mm->mmap_lock){++++}-{3:3}, at: get_mmap_lock_carefully mm/memory.c:5311 [inline]
+ #0: ffff88807dba3aa0 (&mm->mmap_lock){++++}-{3:3}, at: lock_mm_and_find_vma+0x32/0x2d0 mm/memory.c:5371
+ #1: ffff888035ad2508 (sb_pagefaults#4){.+.+}-{0:0}, at: do_page_mkwrite+0x197/0x470 mm/memory.c:2931
+ #2: ffff888076f02008 (&ei->i_mmap_lock){++++}-{3:3}, at: btrfs_page_mkwrite+0x49c/0xd10 fs/btrfs/inode.c:8132
+4 locks held by syz-executor.0/18703:
+ #0: ffff888076f02180 (&sb->s_type->i_mutex_key#24){++++}-{3:3}, at: inode_lock_shared include/linux/fs.h:812 [inline]
+ #0: ffff888076f02180 (&sb->s_type->i_mutex_key#24){++++}-{3:3}, at: btrfs_inode_lock+0x60/0xd0 fs/btrfs/inode.c:369
+ #1: ffff88807dba3aa0 (&mm->mmap_lock){++++}-{3:3}, at: mmap_read_trylock include/linux/mmap_lock.h:165 [inline]
+ #1: ffff88807dba3aa0 (&mm->mmap_lock){++++}-{3:3}, at: get_mmap_lock_carefully mm/memory.c:5311 [inline]
+ #1: ffff88807dba3aa0 (&mm->mmap_lock){++++}-{3:3}, at: lock_mm_and_find_vma+0x32/0x2d0 mm/memory.c:5371
+ #2: ffff888035ad2508 (sb_pagefaults#4){.+.+}-{0:0}, at: do_page_mkwrite+0x197/0x470 mm/memory.c:2931
+ #3: ffff888076f02008 (&ei->i_mmap_lock){++++}-{3:3}, at: btrfs_page_mkwrite+0x49c/0xd10 fs/btrfs/inode.c:8132
+2 locks held by syz-executor.0/18705:
+ #0: ffff888035ad2410 (sb_writers#16){.+.+}-{0:0}, at: do_sendfile+0x600/0x1070 fs/read_write.c:1253
+ #1: ffff888076f02180 (&sb->s_type->i_mutex_key#24){++++}-{3:3}, at: inode_lock include/linux/fs.h:802 [inline]
+ #1: ffff888076f02180 (&sb->s_type->i_mutex_key#24){++++}-{3:3}, at: btrfs_inode_lock+0x4d/0xd0 fs/btrfs/inode.c:377
+2 locks held by syz-executor.0/18746:
+ #0: ffff88814be82410 (sb_writers#4){.+.+}-{0:0}, at: mnt_want_write+0x3f/0x90 fs/namespace.c:403
+ #1: ffff888076cc0e00 (&type->i_mutex_dir_key#3/1){+.+.}-{3:3}, at: inode_lock_nested include/linux/fs.h:837 [inline]
+ #1: ffff888076cc0e00 (&type->i_mutex_dir_key#3/1){+.+.}-{3:3}, at: do_unlinkat+0x26a/0x950 fs/namei.c:4383
 
-> > This doesn't require extent size hints at all. The filesystem can
-> > query the bdev at mount time, store the min/max atomic write sizes,
-> > and then use them for all requests that have _ATOMIC modifiers set
-> > on them.
-> > 
-> > With iomap doing the same "get the atomic constraints from the bdev"
-> > style lookups for per-IO file offset and size checking, I don't
-> > think we actually need extent size hints or an on-disk flag to force
-> > extent size hint alignment.
-> > 
-> > That doesn't mean extent size hints can't be used - it just means
-> > that extent size hints have to be constrained to being aligned to
-> > atomic IOs (e.g. extent size hint must be an integer multiple of the
-> > max atomic IO size). This then acts as a modifier for _ATOMIC
-> > context allocations, much like it is a modifier for normal
-> > allocations now.
-> 
-> (One behavior change that comes with FORCEALIGN is that without it,
-> extent size hints affect only the alignment of the file range mappings.
-> With FORCEALIGN, the space allocation itself *and* the mapping are
-> aligned.)
-> 
-> The one big downside of FORCEALIGN is that the extent size hint can
-> become misaligned with the AWU (or pagetable) geometry if the fs is
-> moved to a different computing environment.  I prefer not to couple the
-> interface to the hardware because that leaves open the possibility for
-> users to discover more use cases.
+=============================================
 
-Sure, but this isn't really a "forced" alignment. This is a feature
-that is providing "file offset is physically aligned to an
-underlying hardware address space" instead of doing the normal thing
-of abstracting file data away from the physical layout of the
-storage.
+NMI backtrace for cpu 0
+CPU: 0 PID: 29 Comm: khungtaskd Not tainted 6.6.0-rc3-syzkaller-00252-ge81a2dabc3f3 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/06/2023
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x1e7/0x2d0 lib/dump_stack.c:106
+ nmi_cpu_backtrace+0x498/0x4d0 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x198/0x310 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:222 [inline]
+ watchdog+0xfa9/0xff0 kernel/hung_task.c:379
+ kthread+0x2d3/0x370 kernel/kthread.c:388
+ ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x11/0x20 arch/x86/entry/entry_64.S:304
+ </TASK>
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 PID: 4567 Comm: kworker/u4:21 Not tainted 6.6.0-rc3-syzkaller-00252-ge81a2dabc3f3 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/06/2023
+Workqueue: bat_events batadv_nc_worker
+RIP: 0010:lockdep_hardirqs_on_prepare+0x1e0/0x7a0
+Code: 4c 89 7c 24 18 48 8b 44 24 10 4c 8b b0 b8 0a 00 00 48 8d b8 a0 0a 00 00 48 89 f8 48 c1 e8 03 80 3c 10 00 74 05 e8 b0 d1 7b 00 <48> 8b 5c 24 10 4c 89 b3 a0 0a 00 00 48 c7 c7 80 b1 0a 8b e8 28 d0
+RSP: 0018:ffffc90003aef980 EFLAGS: 00000046
+RAX: 1ffff110080988c4 RBX: 1ffff9200075df38 RCX: ffffffff91ef3303
+RDX: dffffc0000000000 RSI: ffffffff8b599c80 RDI: ffff8880404c4620
+RBP: ffffc90003aefa28 R08: ffffffff8e9a7e2f R09: 1ffffffff1d34fc5
+R10: dffffc0000000000 R11: fffffbfff1d34fc6 R12: dffffc0000000000
+R13: 1ffff9200075df50 R14: 08cd28cef2c003d5 R15: 1ffff9200075df34
+FS:  0000000000000000(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000028 CR3: 000000007e679000 CR4: 00000000003506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <NMI>
+ </NMI>
+ <TASK>
+ trace_hardirqs_on+0x28/0x40 kernel/trace/trace_preemptirq.c:61
+ __local_bh_enable_ip+0x168/0x1f0 kernel/softirq.c:386
+ spin_unlock_bh include/linux/spinlock.h:396 [inline]
+ batadv_nc_purge_paths+0x309/0x3a0 net/batman-adv/network-coding.c:471
+ batadv_nc_worker+0x365/0x610 net/batman-adv/network-coding.c:722
+ process_one_work kernel/workqueue.c:2630 [inline]
+ process_scheduled_works+0x90f/0x1400 kernel/workqueue.c:2703
+ worker_thread+0xa5f/0xff0 kernel/workqueue.c:2784
+ kthread+0x2d3/0x370 kernel/kthread.c:388
+ ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x11/0x20 arch/x86/entry/entry_64.S:304
+ </TASK>
 
-If we can have user APIs that say "file data should be physically
-aligned to storage" then we don't need on-disk flags to implement
-this. Extent size hints could still be used to indicate the required
-alignment, but we could also pull it straight from the hardware if
-those aren't set. AFAICT only fallocate() and pwritev2() need these
-flags for IO, but we could add a fadvise() command to set it on a
-struct file, if mmap()/madvise is told to use hugepages we can use
-PMD alignment rather than storage hardware alignment, etc.
 
-IOWs actually having APIs that simply say "use physical offset
-alignment" without actually saying exactly which hardware alignment
-they want allows the filesystem to dynamically select the optimal
-alignment for the given application use case rather than requiring
-the admin to set up specific configuration at mkfs time....
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-> > > 
-> > > Signed-off-by: John Garry <john.g.garry@oracle.com>
-> > > ---
-> > >  fs/iomap/direct-io.c  | 26 ++++++++++++++++++++++++--
-> > >  fs/iomap/trace.h      |  3 ++-
-> > >  include/linux/iomap.h |  1 +
-> > >  3 files changed, 27 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> > > index bcd3f8cf5ea4..6ef25e26f1a1 100644
-> > > --- a/fs/iomap/direct-io.c
-> > > +++ b/fs/iomap/direct-io.c
-> > > @@ -275,10 +275,11 @@ static inline blk_opf_t iomap_dio_bio_opflags(struct iomap_dio *dio,
-> > >  static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
-> > >  		struct iomap_dio *dio)
-> > >  {
-> > > +	bool atomic_write = iter->flags & IOMAP_ATOMIC_WRITE;
-> > >  	const struct iomap *iomap = &iter->iomap;
-> > >  	struct inode *inode = iter->inode;
-> > >  	unsigned int fs_block_size = i_blocksize(inode), pad;
-> > > -	loff_t length = iomap_length(iter);
-> > > +	const loff_t length = iomap_length(iter);
-> > >  	loff_t pos = iter->pos;
-> > >  	blk_opf_t bio_opf;
-> > >  	struct bio *bio;
-> > > @@ -292,6 +293,13 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
-> > >  	    !bdev_iter_is_aligned(iomap->bdev, dio->submit.iter))
-> > >  		return -EINVAL;
-> > >  
-> > > +	if (atomic_write && !iocb_is_dsync(dio->iocb)) {
-> > > +		if (iomap->flags & IOMAP_F_DIRTY)
-> > > +			return -EIO;
-> > > +		if (iomap->type != IOMAP_MAPPED)
-> > > +			return -EIO;
-> > > +	}
-> > 
-> > How do we get here without space having been allocated for the
-> > write?
-> > 
-> > Perhaps what this is trying to do is make RWF_ATOMIC only be valid
-> > into written space? I mean, this will fail with preallocated space
-> > (IOMAP_UNWRITTEN) even though we still have exactly the RWF_ATOMIC
-> > all-or-nothing behaviour guaranteed after a crash because of journal
-> > recovery behaviour. i.e. if the unwritten conversion gets written to
-> > the journal, the data will be there. If it isn't written to the
-> > journal, then the space remains unwritten and there's no data across
-> > that entire range....
-> > 
-> > So I'm not really sure that either of these checks are valid or why
-> > they are actually needed....
-> 
-> This requires O_DSYNC (or RWF_DSYNC) for atomic writes to unwritten or
-> COW space.
+If you want to overwrite bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-COW, maybe - I haven't thought that far through it. 
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
 
-However, for unwritten extents we just don't need O_DSYNC to
-guarantee all or nothing writes. The application still has to use
-fdatasync() to determine if the IO succeeded, but the actual IO and
-unwritten conversion transaction ordering guarantee the
-"all-or-nothing" behaviour of a RWF_ATOMIC write that is not using
-O_DSYNC.
-
-i.e.  It just doesn't matter when the conversion transaction hits
-the journal. If it doesn't hit the journal before the crash, the
-write never happened. If it does hit the journal, then the cache
-flush before the journal write ensures all the data from the
-RWF_ATOMIC write is present on disk before the unwritten conversion
-hits the journal.
-
-> We want failures in forcing the log transactions for the
-> endio processing to be reported to the pwrite caller as EIO, right?
-
-A failure to force the log will result in a filesystem shutdown. It
-doesn't matter if that happens during IO completion or sometime
-before or during the fdatasync() call the application would still
-need to use to guarantee data integrity.
-
-RWF_ATOMIC implies FUA semantics, right? i.e. if the RWF_ATOMIC
-write is a pure overwrite, there are no journal or cache flushes
-needed to complete the write. If so, batching up all the metadata
-updates between data integrity checkpoints can still make
-performance much better.  If the filesystem flushes the journal
-itself, it's no different from an application crash recovery
-perspective to using RWF_DSYNC|RWF_ATOMIC and failing in the middle
-of a multi-IO update....
-
-Hence I just don't see why RWF_ATOMIC requires O_DSYNC semantics at
-all; all RWF_ATOMIC provides is larger "non-tearing" IO granularity
-and this doesn't change filesystem data integrity semantics at all.
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+If you want to undo deduplication, reply with:
+#syz undup
