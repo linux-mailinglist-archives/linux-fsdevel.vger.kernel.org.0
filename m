@@ -2,177 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F5707B8175
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Oct 2023 15:55:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 08F917B817F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Oct 2023 15:58:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232786AbjJDNz2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Oct 2023 09:55:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58094 "EHLO
+        id S242705AbjJDN6Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Oct 2023 09:58:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242604AbjJDNz1 (ORCPT
+        with ESMTP id S233375AbjJDN6Y (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Oct 2023 09:55:27 -0400
-Received: from mail-vs1-xe34.google.com (mail-vs1-xe34.google.com [IPv6:2607:f8b0:4864:20::e34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D1ABCC
-        for <linux-fsdevel@vger.kernel.org>; Wed,  4 Oct 2023 06:55:23 -0700 (PDT)
-Received: by mail-vs1-xe34.google.com with SMTP id ada2fe7eead31-45274236ef6so1094667137.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Oct 2023 06:55:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696427722; x=1697032522; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CnxMde0EiLiD5RMrr/cF2VRBsKVJXuXDWUwSWiGEZS0=;
-        b=GrmO1qlAabXhPl/ARyuR/JG+lAfTECm0GfmZEWvZ8aVmptfdiK+rledSQAFf0aGjXN
-         +n8l3AoPjG1h+6VQDi9aswGGREp1/bVcFcseknkF98+AabewpKigG2y6/DMJOplWTA1o
-         mIaZJsg5HyYgG+HMRxuMyzJxusIi4qnREYIDbt7+Cj0jcBCX5shpawepnJ6OrOEi/8ii
-         XHrX5ZbrGr/EsfxkL11yobQleeXxCGod5eRyufqC2VKqYRciTiwzFUdFhQJ2ZcQ4sGqV
-         T2TG3JAIo1TKhBT8D68Mif5twNh41oL68c4zqJsjHCpdNLH88ZSd8ffu3PZ2yxP82ZJa
-         Sa/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696427722; x=1697032522;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CnxMde0EiLiD5RMrr/cF2VRBsKVJXuXDWUwSWiGEZS0=;
-        b=tT0Hw1DjhJEtTdIUQcSGZwbx8KDHk28l45O/yZEmRXUteBpIFn4jOiEwOG735cyZbG
-         qFoWC1aWbgJ4emmDu9fepqUHrhLxKPXA+NvU4ZfObNX2VYMQFkv9zYLbD7zWflgOnzNT
-         1aTF4MM7+B8ZGeWa7+FoGtAjfNVqvi1MPJy5T5oVzV2hQckxqQEvvjNg7A1WXUdZZq1u
-         GipsjkKgmjvplHFOdWHKXjny2mExw5gyTRvsF6v+gwPu1nQ6XbR6//0rNeJbC/ozHgly
-         mgqQWGfg4eWh5Q0T12LXLc3zKAiW1tabar7ebZT0gnJ6IzCRwdyKbpHCl0gNYC6ZQR+0
-         h+Ug==
-X-Gm-Message-State: AOJu0YyaeOw/DNW5jIMokUWzeFMHbHcFyjBrO2l4DW3n7pZMiqKJS/lB
-        wRmzAjMaF7th8EWiYC1USlM6xaPpwneX8eEnU1E=
-X-Google-Smtp-Source: AGHT+IG3yXBpD7ZPYx/nzv2oVaR4xk6rIJBJ8YCR08y7FHi5d/vF4Q2E2k+igkKa8WWd8YMJrpeVTqYkcsTRv5kS1zg=
-X-Received: by 2002:a67:fdd0:0:b0:454:2d1e:6ced with SMTP id
- l16-20020a67fdd0000000b004542d1e6cedmr2234023vsq.27.1696427722565; Wed, 04
- Oct 2023 06:55:22 -0700 (PDT)
+        Wed, 4 Oct 2023 09:58:24 -0400
+Received: from bird.elm.relay.mailchannels.net (bird.elm.relay.mailchannels.net [23.83.212.17])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A19AEA1
+        for <linux-fsdevel@vger.kernel.org>; Wed,  4 Oct 2023 06:58:20 -0700 (PDT)
+X-Sender-Id: dreamhost|x-authsender|kjlx@templeofstupid.com
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+        by relay.mailchannels.net (Postfix) with ESMTP id EBECF761D6E
+        for <linux-fsdevel@vger.kernel.org>; Wed,  4 Oct 2023 13:58:19 +0000 (UTC)
+Received: from pdx1-sub0-mail-a237.dreamhost.com (unknown [127.0.0.6])
+        (Authenticated sender: dreamhost)
+        by relay.mailchannels.net (Postfix) with ESMTPA id BB43E7615FA
+        for <linux-fsdevel@vger.kernel.org>; Wed,  4 Oct 2023 13:58:18 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1696427898; a=rsa-sha256;
+        cv=none;
+        b=b47w0uikzKD5aXNEAoF1erdxGTzPbkGJgB2+PpwZ99CccHK/9+Gx6GZ31DkjBK1qmt6eLq
+        YJnk7mN9qgz2xaGFLs8nwusJ9kjV8+fsTKHWYXjGPfNKyrcVkrclnRgnXfV17SGt2pPT8+
+        4gebbs+p2wftTqPj3gwtSnTCRFjTEyDGWXy/fPSfnOGlHVNvIQ7Iy9y1H6AQPEareD8nOO
+        qEF9q1XUrCaQ/2sRChxve+S7xEqqOf15jljZY0NmIDki6HapXP8QTi/GYY0UuuvKpFm7Et
+        3L8OdSMxpp0wiif50viDYT6xRgrSHlBDwNF8/qJnlfn4IBiUpMDL9Bs73rLhvw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+        s=arc-2022; t=1696427898;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references:dkim-signature;
+        bh=kADOC6162V5NCcVVMP9gX8MPZmEiYTw9JdB0/cprF7Y=;
+        b=RSISFzoQ5bLYA/xdH9kUUGYMzPT3j4D92p0Wj0rhl3rTGgbZzcOmnF1mVHd6SWDpwqEZdB
+        E83ZFOhkHIczoxNuUF+41JUOMpMyobShl3mbBsCUh9mAPBOWcrhQpm+tpeyJklY24591fR
+        Z6gCPeYOHvpsvpn0Iuaz/dvJ8/1KcQ3T3ToakLPGgATPoEe6q0ytv+yNCtGYL5qQ5U6qVO
+        rWH7Wcbn/xjbapE4FO3qcDnP/Fcf5fUYgNUxHcAhV2ba8iqZH4NhtFTEM/G8ClUOSVj5up
+        W6E4FS5JaehQ6IYTnTTCvEtGJaRbsQFr8EGvhNNYhYhT1RbsBFD8xsaMR7TmPA==
+ARC-Authentication-Results: i=1;
+        rspamd-7c449d4847-l6jz7;
+        auth=pass smtp.auth=dreamhost smtp.mailfrom=kjlx@templeofstupid.com
+X-Sender-Id: dreamhost|x-authsender|kjlx@templeofstupid.com
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|kjlx@templeofstupid.com
+X-MailChannels-Auth-Id: dreamhost
+X-Army-Battle: 08040f361998cecc_1696427899772_2181876005
+X-MC-Loop-Signature: 1696427899772:3185551450
+X-MC-Ingress-Time: 1696427899772
+Received: from pdx1-sub0-mail-a237.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+        by 100.99.159.71 (trex/6.9.1);
+        Wed, 04 Oct 2023 13:58:19 +0000
+Received: from kmjvbox (c-73-231-176-24.hsd1.ca.comcast.net [73.231.176.24])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: kjlx@templeofstupid.com)
+        by pdx1-sub0-mail-a237.dreamhost.com (Postfix) with ESMTPSA id 4S0x9Q3H6Hz4B
+        for <linux-fsdevel@vger.kernel.org>; Wed,  4 Oct 2023 06:58:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=templeofstupid.com;
+        s=dreamhost; t=1696427898;
+        bh=kADOC6162V5NCcVVMP9gX8MPZmEiYTw9JdB0/cprF7Y=;
+        h=Date:From:To:Cc:Subject:Content-Type;
+        b=S4fhHYhp4gEL1RaIuHV620uZhsqzqrdJ3GIwlu1drzYjj3/Gk11iIEAxgaXaA3b9f
+         G9NYQrPshq+55QGsCTzfTIq+tNy1xiy/ack0oQmG4W67wXxrB5+43ucl3kWLYR41ls
+         hajJToc9PfyqC51ALG966BHGInqgfy3II0J8l9Wu3K2aY1OxPSUWW8vqcCnMEvAoFi
+         GLxvgyAU3USAjr1Wtv+96wlGCbsjqVqd914kOdKToLji30kqT9ZnNTwHFDudc5VL/F
+         HDRgKYtzcjkUVDWajFR9Ry6qXeHE9MB1tiAnNKcED6XYqn2xFNm/svNzScw13npuss
+         DSo/uUFVDbWXQ==
+Received: from johansen (uid 1000)
+        (envelope-from kjlx@templeofstupid.com)
+        id e0100
+        by kmjvbox (DragonFly Mail Agent v0.12);
+        Wed, 04 Oct 2023 06:58:14 -0700
+Date:   Wed, 4 Oct 2023 06:58:14 -0700
+From:   Krister Johansen <kjlx@templeofstupid.com>
+To:     Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        linux-kernel@vger.kernel.org,
+        German Maglione <gmaglione@redhat.com>,
+        Greg Kurz <groug@kaod.org>, Max Reitz <mreitz@redhat.com>
+Subject: Re: [resend PATCH v2 0/2] virtiofs submounts that are still in use
+ forgotten by shrinker
+Message-ID: <20231004135814.GA2051@templeofstupid.com>
+References: <cover.1696043833.git.kjlx@templeofstupid.com>
+ <97163cdf-ab2c-4fb8-abf2-738a4680c47f@fastmail.fm>
+ <20231003164823.GA1995@templeofstupid.com>
+ <18552fc7-184c-4bc7-9154-c885fae06d31@fastmail.fm>
 MIME-Version: 1.0
-References: <20231004124712.3833-1-chrubis@suse.cz> <20231004124712.3833-3-chrubis@suse.cz>
-In-Reply-To: <20231004124712.3833-3-chrubis@suse.cz>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 4 Oct 2023 16:55:11 +0300
-Message-ID: <CAOQ4uxg8Z1sQJ35fdXnct3BJoCaahHoQ9ek3rmPs3Ly8cVCz=A@mail.gmail.com>
-Subject: Re: [PATCH 2/3] syscalls/readahead01: Make use of tst_fd_iterate()
-To:     Cyril Hrubis <chrubis@suse.cz>
-Cc:     ltp@lists.linux.it, Matthew Wilcox <willy@infradead.org>,
-        mszeredi@redhat.com, brauner@kernel.org, viro@zeniv.linux.org.uk,
-        Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-        Reuben Hawkins <reubenhwk@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <18552fc7-184c-4bc7-9154-c885fae06d31@fastmail.fm>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
+        UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 4, 2023 at 3:46=E2=80=AFPM Cyril Hrubis <chrubis@suse.cz> wrote=
-:
->
+On Wed, Oct 04, 2023 at 12:54:49AM +0200, Bernd Schubert wrote:
+> 
+> 
+> On 10/3/23 18:48, Krister Johansen wrote:
+> > On Tue, Oct 03, 2023 at 12:18:42AM +0200, Bernd Schubert wrote:
+> > > 
+> > > 
+> > > On 10/2/23 17:24, Krister Johansen wrote:
+> > > > Hi,
+> > > > I recently ran into a situation where a virtiofs client began
+> > > > encountering EBADF after the client / guest system had an OOM.  After
+> > > > reproducing the issue and debugging, the problem is caused by a
+> > > > virtiofsd submount having the nodeid of its root dentry fogotten.  This
+> > > > occurs because it borrows the reference for this dentry from the parent
+> > > > that is passed into the function.
+> > > 
+> > > Please also note that there will be merge conflicts with atomic open patches
+> > > from Dharmendra/me. Although probably not too difficult to resolve.
+> > 
+> > Sure. I'm happy to reparent, resolve those conflicts, re-test, and send
+> > another revision when we're ready.  I suspect there are going to be
+> > additional changes requested on the v2.  With that in mind, I'll hold
+> > off for the moment unless it is going to cause headaches for you.
+> 
+> I certainly also didn't mean that you should check for merge conflicts, it
+> was more an annotation that it might come up - depending on the merge order.
+> Please don't stop to do improvements, resolving merge conflicts shouldn't be
+> difficult.
+> I'm going to add you to the atomic open patch series to keep you updated, if
+> you don't mind.
 
-Hi Cyril,
+Thanks, no objections from me.  I'm willing to help with any conflict
+resolution or retesting tasks, if anything turns out to be non-trivial.
+My goal is to get these patches to the state where they're acceptable.
+I'm happy to make additional changes, or work against a different
+branch.
 
-Thanks for following up on this!
 
-> TODO: readahead() on /proc/self/maps seems to succeed is that to be
->       expected?
-
-Not sure.
-How does llseek() work on the same fd?
-Matthew suggested that we align the behavior of both readahead(2)
-and posix_fadvise(2) to that of llseek(2)
-
->
-> Signed-off-by: Cyril Hrubis <chrubis@suse.cz>
-> ---
->  .../kernel/syscalls/readahead/readahead01.c   | 46 ++++++++-----------
->  1 file changed, 20 insertions(+), 26 deletions(-)
->
-> diff --git a/testcases/kernel/syscalls/readahead/readahead01.c b/testcase=
-s/kernel/syscalls/readahead/readahead01.c
-> index bdef7945d..28134d416 100644
-> --- a/testcases/kernel/syscalls/readahead/readahead01.c
-> +++ b/testcases/kernel/syscalls/readahead/readahead01.c
-> @@ -29,44 +29,38 @@
->  #if defined(__NR_readahead)
->
->  static void test_bad_fd(void)
-> -{
-> -       char tempname[PATH_MAX] =3D "readahead01_XXXXXX";
-> -       int fd;
-> -
-> -       tst_res(TINFO, "%s -1", __func__);
-> -       TST_EXP_FAIL(readahead(-1, 0, getpagesize()), EBADF);
-> -
-> -       tst_res(TINFO, "%s O_WRONLY", __func__);
-> -       fd =3D mkstemp(tempname);
-> -       if (fd =3D=3D -1)
-> -               tst_res(TFAIL | TERRNO, "mkstemp failed");
-> -       SAFE_CLOSE(fd);
-> -       fd =3D SAFE_OPEN(tempname, O_WRONLY);
-> -       TST_EXP_FAIL(readahead(fd, 0, getpagesize()), EBADF);
-> -       SAFE_CLOSE(fd);
-> -       unlink(tempname);
-> -}
-> -
-> -static void test_invalid_fd(void)
->  {
->         int fd[2];
->
-> -       tst_res(TINFO, "%s pipe", __func__);
-> +       TST_EXP_FAIL(readahead(-1, 0, getpagesize()), EBADF,
-> +                    "readahead() with fd =3D -1");
-> +
-
-Any reason not to include a bad and a closed fd in the iterator?
-
->         SAFE_PIPE(fd);
-> -       TST_EXP_FAIL(readahead(fd[0], 0, getpagesize()), EINVAL);
->         SAFE_CLOSE(fd[0]);
->         SAFE_CLOSE(fd[1]);
->
-> -       tst_res(TINFO, "%s socket", __func__);
-> -       fd[0] =3D SAFE_SOCKET(AF_INET, SOCK_STREAM, 0);
-> -       TST_EXP_FAIL(readahead(fd[0], 0, getpagesize()), EINVAL);
-> -       SAFE_CLOSE(fd[0]);
-> +       TST_EXP_FAIL(readahead(fd[0], 0, getpagesize()), EBADF,
-> +                    "readahead() with invalid fd");
-> +}
-> +
-> +static void test_invalid_fd(struct tst_fd *fd)
-> +{
-> +       switch (fd->type) {
-> +       case TST_FD_FILE:
-> +       case TST_FD_PIPE_OUT:
-> +               return;
-> +       default:
-> +               break;
-> +       }
-> +
-> +       TST_EXP_FAIL(readahead(fd->fd, 0, getpagesize()), EINVAL,
-> +                    "readahead() on %s", tst_fd_desc(fd));
-
-Thinking forward and we would like to change this error code to ESPIPE
-is there already a helper to expect one of a few error codes?
-
-Thanks,
-Amir.
-
->  }
->
->  static void test_readahead(void)
->  {
->         test_bad_fd();
-> -       test_invalid_fd();
-> +       tst_fd_iterate(test_invalid_fd);
->  }
->
->  static void setup(void)
-> --
-> 2.41.0
->
+-K
