@@ -2,123 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 618157B83A2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Oct 2023 17:32:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB5337B859E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Oct 2023 18:45:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233541AbjJDPci (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Oct 2023 11:32:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39578 "EHLO
+        id S243487AbjJDQpn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Oct 2023 12:45:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233530AbjJDPch (ORCPT
+        with ESMTP id S233355AbjJDQpl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Oct 2023 11:32:37 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA0CDDC;
-        Wed,  4 Oct 2023 08:32:33 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 331071F88D;
-        Wed,  4 Oct 2023 15:32:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1696433552; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=E7rPN2B6EKTGm9PeH9o/j7eO/9ZZxPutpFnqoFCKJ3c=;
-        b=PWNpNgIS0ejpZaWNfc0RvB2fG2vV8czGrqfLFnVTWcWRavWyJ4QgAKcXC6NTyqjpPPXLIR
-        ctspLD8VBoyOKiAiK+atQY00RcObsQ/ufJFWQxDaExXcReriBuPYwsegsPUtk0sKuldjvw
-        NaontetfPZBnTsqhYoaH2uSIFUYt+XI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1696433552;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=E7rPN2B6EKTGm9PeH9o/j7eO/9ZZxPutpFnqoFCKJ3c=;
-        b=/a/QgrmLqwF9uzFD93sACvd/cUymLm7NK62R1MpzNFNbQH5uu3qguAu7sOD1484Ey2FveJ
-        RH6ttpyXbHMa7yDw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 2219813A2E;
-        Wed,  4 Oct 2023 15:32:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id jbpJCJCFHWUhIAAAMHmgww
-        (envelope-from <jack@suse.cz>); Wed, 04 Oct 2023 15:32:32 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id AA6E8A07CC; Wed,  4 Oct 2023 17:32:31 +0200 (CEST)
-Date:   Wed, 4 Oct 2023 17:32:31 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Hugh Dickins <hughd@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Tim Chen <tim.c.chen@intel.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Carlos Maiolino <cem@kernel.org>,
-        Chuck Lever <chuck.lever@oracle.com>, Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH 8/8] shmem,percpu_counter: add _limited_add(fbc, limit,
- amount)
-Message-ID: <20231004153231.gj5ds6r2tdjwjdwd@quack3>
-References: <c7441dc6-f3bb-dd60-c670-9f5cbd9f266@google.com>
- <bb817848-2d19-bcc8-39ca-ea179af0f0b4@google.com>
+        Wed, 4 Oct 2023 12:45:41 -0400
+Received: from mail-oi1-f198.google.com (mail-oi1-f198.google.com [209.85.167.198])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 864D195
+        for <linux-fsdevel@vger.kernel.org>; Wed,  4 Oct 2023 09:45:38 -0700 (PDT)
+Received: by mail-oi1-f198.google.com with SMTP id 5614622812f47-3ae4cefdee5so162079b6e.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Oct 2023 09:45:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696437938; x=1697042738;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PxK2RXD2bOgzxh1BIYIHwF4FqtGpBF80iTPbZHI2mEs=;
+        b=gEqhHCUG++KYGwETLvRXA1P3dYbt2CcbibtcLyL3L9kUXTO8xDMEizS6QmPSqHbaOB
+         XDL+5WJGggGrTmDgtnnAIvUo8c1eKzAFUocuNYnv6sd1aoqoeU1AMXk4x4jIAWopWnum
+         K/DSYnSEfwG4WmRwXJtcy7VQadlT0UDf1SZd1M/3WDP+8rO/QkdvrPiYRn6zArlZnKkb
+         z5IFndKFXpj4TNRzgDQBxEKCOWKNBs+iJHG9P1MRZW0AA6iP8Sptr4phBUKLjtnODZCg
+         mKDev+zSd/L7INw53izw6m+P5+mbVKfUXGHEja0gaxptH4hPHKKO9maAfWAj8gnaetI2
+         1yXA==
+X-Gm-Message-State: AOJu0YxDXHLdG9QY3zV68K2mfZyAKcsoB5q+RfvRqVrasQJK/1y5gdih
+        MnLDBPnCOSkRMWy1eVuKpRbxVifH4gBbbmyE9miFenLaDOnC
+X-Google-Smtp-Source: AGHT+IH9LBqUAa3Czu2Ikd6so6wJCoEmqsI3B4Xy7BXDcw+NDdCsxu/Ij5v71RF5EfonX4kuJiuXe/Pq4wMLTbsrWqQGUZ97gxGX
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bb817848-2d19-bcc8-39ca-ea179af0f0b4@google.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+X-Received: by 2002:a05:6808:f8e:b0:3ae:17ed:fdc9 with SMTP id
+ o14-20020a0568080f8e00b003ae17edfdc9mr1421317oiw.9.1696437937945; Wed, 04 Oct
+ 2023 09:45:37 -0700 (PDT)
+Date:   Wed, 04 Oct 2023 09:45:37 -0700
+In-Reply-To: <00000000000067d24205c4d0e599@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000accfd30606e6bcd0@google.com>
+Subject: Re: [syzbot] [integrity] [overlayfs] possible deadlock in
+ mnt_want_write (2)
+From:   syzbot <syzbot+b42fe626038981fb7bfa@syzkaller.appspotmail.com>
+To:     amir73il@gmail.com, hdanton@sina.com,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-unionfs@vger.kernel.org, miklos@szeredi.hu,
+        mszeredi@redhat.com, syzbot@syzkalhler.appspotmail.com,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+        zohar@linux.ibm.com, zohar@us.ibm.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.4 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 29-09-23 20:42:45, Hugh Dickins wrote:
-> Percpu counter's compare and add are separate functions: without locking
-> around them (which would defeat their purpose), it has been possible to
-> overflow the intended limit.  Imagine all the other CPUs fallocating
-> tmpfs huge pages to the limit, in between this CPU's compare and its add.
-> 
-> I have not seen reports of that happening; but tmpfs's recent addition
-> of dquot_alloc_block_nodirty() in between the compare and the add makes
-> it even more likely, and I'd be uncomfortable to leave it unfixed.
-> 
-> Introduce percpu_counter_limited_add(fbc, limit, amount) to prevent it.
-> 
-> I believe this implementation is correct, and slightly more efficient
-> than the combination of compare and add (taking the lock once rather
-> than twice when nearing full - the last 128MiB of a tmpfs volume on a
-> machine with 128 CPUs and 4KiB pages); but it does beg for a better
-> design - when nearing full, there is no new batching, but the costly
-> percpu counter sum across CPUs still has to be done, while locked.
-> 
-> Follow __percpu_counter_sum()'s example, including cpu_dying_mask as
-> well as cpu_online_mask: but shouldn't __percpu_counter_compare() and
-> __percpu_counter_limited_add() then be adding a num_dying_cpus() to
-> num_online_cpus(), when they calculate the maximum which could be held
-> across CPUs?  But the times when it matters would be vanishingly rare.
-> 
-> Signed-off-by: Hugh Dickins <hughd@google.com>
-> Cc: Tim Chen <tim.c.chen@intel.com>
-> Cc: Dave Chinner <dchinner@redhat.com>
-> Cc: Darrick J. Wong <djwong@kernel.org>
+syzbot has bisected this issue to:
 
-Looks good to me. Feel free to add:
+commit 708fa01597fa002599756bf56a96d0de1677375c
+Author: Miklos Szeredi <mszeredi@redhat.com>
+Date:   Mon Apr 12 10:00:37 2021 +0000
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+    ovl: allow upperdir inside lowerdir
 
-								Honza
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17ad11b2680000
+start commit:   3aba70aed91f Merge tag 'gpio-fixes-for-v6.6-rc3' of git://..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=146d11b2680000
+console output: https://syzkaller.appspot.com/x/log.txt?x=106d11b2680000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e4ca82a1bedd37e4
+dashboard link: https://syzkaller.appspot.com/bug?extid=b42fe626038981fb7bfa
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1304fba6680000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13cec0dc680000
 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Reported-by: syzbot+b42fe626038981fb7bfa@syzkaller.appspotmail.com
+Fixes: 708fa01597fa ("ovl: allow upperdir inside lowerdir")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
