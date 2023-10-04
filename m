@@ -2,100 +2,177 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EBA8A7B8069
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Oct 2023 15:13:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F5707B8175
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Oct 2023 15:55:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242594AbjJDNN6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Oct 2023 09:13:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54310 "EHLO
+        id S232786AbjJDNz2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Oct 2023 09:55:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242598AbjJDNN6 (ORCPT
+        with ESMTP id S242604AbjJDNz1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Oct 2023 09:13:58 -0400
-Received: from mail-oi1-f198.google.com (mail-oi1-f198.google.com [209.85.167.198])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 964F7C9
-        for <linux-fsdevel@vger.kernel.org>; Wed,  4 Oct 2023 06:13:54 -0700 (PDT)
-Received: by mail-oi1-f198.google.com with SMTP id 5614622812f47-3ae12e140f7so1031647b6e.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Oct 2023 06:13:54 -0700 (PDT)
+        Wed, 4 Oct 2023 09:55:27 -0400
+Received: from mail-vs1-xe34.google.com (mail-vs1-xe34.google.com [IPv6:2607:f8b0:4864:20::e34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D1ABCC
+        for <linux-fsdevel@vger.kernel.org>; Wed,  4 Oct 2023 06:55:23 -0700 (PDT)
+Received: by mail-vs1-xe34.google.com with SMTP id ada2fe7eead31-45274236ef6so1094667137.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Oct 2023 06:55:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1696427722; x=1697032522; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CnxMde0EiLiD5RMrr/cF2VRBsKVJXuXDWUwSWiGEZS0=;
+        b=GrmO1qlAabXhPl/ARyuR/JG+lAfTECm0GfmZEWvZ8aVmptfdiK+rledSQAFf0aGjXN
+         +n8l3AoPjG1h+6VQDi9aswGGREp1/bVcFcseknkF98+AabewpKigG2y6/DMJOplWTA1o
+         mIaZJsg5HyYgG+HMRxuMyzJxusIi4qnREYIDbt7+Cj0jcBCX5shpawepnJ6OrOEi/8ii
+         XHrX5ZbrGr/EsfxkL11yobQleeXxCGod5eRyufqC2VKqYRciTiwzFUdFhQJ2ZcQ4sGqV
+         T2TG3JAIo1TKhBT8D68Mif5twNh41oL68c4zqJsjHCpdNLH88ZSd8ffu3PZ2yxP82ZJa
+         Sa/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696425234; x=1697030034;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DrcW4OMT1QMOjaQ9UXk5pKoLRn9s24eN4xvLuRY+D14=;
-        b=pmYY0ARNWDbzHsJjTEQFTgn1IXiG8aa+pCDOl45gnwbWK5a1KrA3cT4RuB/Ub4cTOg
-         GoxpJ+U3no4QNxIivbH3GzDai6f0V0z8y4hiqjpcQCJVqrydX90dlbsBMcK6fF6Xc1qe
-         9exXpZ4sKb/8+/aNu30/m6WZtk/Hyi+M3pK02pmP0iaZyZELMCDngpcNM0+HPKPj5bB0
-         Ie2ZqANfA8BCDOjKFUbXNY3prPPDRC9h1+GtlxdKRNnQPEzIKTssacDZD/wVDplKf2Hu
-         khyC3GMHkymXgQPPMjFrlaJxQxkY/VhTBbFQ5maPZHC6LQVAY16ZkMkQ3XhPFTV9559m
-         zMfg==
-X-Gm-Message-State: AOJu0Yw6SMuJLMW5lJdzyjWlcRo2FVcDqpbH1zwDlXiXnDODgfttAGQF
-        +04Vw65y51z+D+oYvrSp8q+LbH0H8xwidCXluNXIxSbDRwADufU=
-X-Google-Smtp-Source: AGHT+IHfDRUg7LqJhb2wepdOvTrAtQ+X55IqtXgukamAoigNDNBji4oayVC5qOh3f/D4cqZ9GElXomYojFteURQoI/PzFNA0sUfH
+        d=1e100.net; s=20230601; t=1696427722; x=1697032522;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CnxMde0EiLiD5RMrr/cF2VRBsKVJXuXDWUwSWiGEZS0=;
+        b=tT0Hw1DjhJEtTdIUQcSGZwbx8KDHk28l45O/yZEmRXUteBpIFn4jOiEwOG735cyZbG
+         qFoWC1aWbgJ4emmDu9fepqUHrhLxKPXA+NvU4ZfObNX2VYMQFkv9zYLbD7zWflgOnzNT
+         1aTF4MM7+B8ZGeWa7+FoGtAjfNVqvi1MPJy5T5oVzV2hQckxqQEvvjNg7A1WXUdZZq1u
+         GipsjkKgmjvplHFOdWHKXjny2mExw5gyTRvsF6v+gwPu1nQ6XbR6//0rNeJbC/ozHgly
+         mgqQWGfg4eWh5Q0T12LXLc3zKAiW1tabar7ebZT0gnJ6IzCRwdyKbpHCl0gNYC6ZQR+0
+         h+Ug==
+X-Gm-Message-State: AOJu0YyaeOw/DNW5jIMokUWzeFMHbHcFyjBrO2l4DW3n7pZMiqKJS/lB
+        wRmzAjMaF7th8EWiYC1USlM6xaPpwneX8eEnU1E=
+X-Google-Smtp-Source: AGHT+IG3yXBpD7ZPYx/nzv2oVaR4xk6rIJBJ8YCR08y7FHi5d/vF4Q2E2k+igkKa8WWd8YMJrpeVTqYkcsTRv5kS1zg=
+X-Received: by 2002:a67:fdd0:0:b0:454:2d1e:6ced with SMTP id
+ l16-20020a67fdd0000000b004542d1e6cedmr2234023vsq.27.1696427722565; Wed, 04
+ Oct 2023 06:55:22 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a05:6808:159e:b0:3a8:45f0:b83a with SMTP id
- t30-20020a056808159e00b003a845f0b83amr1015537oiw.5.1696425234065; Wed, 04 Oct
- 2023 06:13:54 -0700 (PDT)
-Date:   Wed, 04 Oct 2023 06:13:54 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000076edef0606e3c739@google.com>
-Subject: [syzbot] Monthly hfs report (Oct 2023)
-From:   syzbot <syzbot+listd1c4248b878628705b59@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
+References: <20231004124712.3833-1-chrubis@suse.cz> <20231004124712.3833-3-chrubis@suse.cz>
+In-Reply-To: <20231004124712.3833-3-chrubis@suse.cz>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 4 Oct 2023 16:55:11 +0300
+Message-ID: <CAOQ4uxg8Z1sQJ35fdXnct3BJoCaahHoQ9ek3rmPs3Ly8cVCz=A@mail.gmail.com>
+Subject: Re: [PATCH 2/3] syscalls/readahead01: Make use of tst_fd_iterate()
+To:     Cyril Hrubis <chrubis@suse.cz>
+Cc:     ltp@lists.linux.it, Matthew Wilcox <willy@infradead.org>,
+        mszeredi@redhat.com, brauner@kernel.org, viro@zeniv.linux.org.uk,
+        Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+        Reuben Hawkins <reubenhwk@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello hfs maintainers/developers,
+On Wed, Oct 4, 2023 at 3:46=E2=80=AFPM Cyril Hrubis <chrubis@suse.cz> wrote=
+:
+>
 
-This is a 31-day syzbot report for the hfs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/hfs
+Hi Cyril,
 
-During the period, 4 new issues were detected and 0 were fixed.
-In total, 44 issues are still open and 12 have been fixed so far.
+Thanks for following up on this!
 
-Some of the still happening issues:
+> TODO: readahead() on /proc/self/maps seems to succeed is that to be
+>       expected?
 
-Ref  Crashes Repro Title
-<1>  5228    Yes   possible deadlock in hfsplus_file_truncate
-                   https://syzkaller.appspot.com/bug?extid=6030b3b1b9bf70e538c4
-<2>  5043    Yes   possible deadlock in hfsplus_file_extend
-                   https://syzkaller.appspot.com/bug?extid=325b61d3c9a17729454b
-<3>  4160    Yes   possible deadlock in hfsplus_get_block
-                   https://syzkaller.appspot.com/bug?extid=b7ef7c0c8d8098686ae2
-<4>  2205    Yes   KMSAN: uninit-value in hfs_revalidate_dentry
-                   https://syzkaller.appspot.com/bug?extid=3ae6be33a50b5aae4dab
-<5>  1178    Yes   kernel BUG in __hfsplus_setxattr
-                   https://syzkaller.appspot.com/bug?extid=1107451c16b9eb9d29e6
-<6>  831     Yes   KASAN: slab-out-of-bounds Read in hfsplus_uni2asc
-                   https://syzkaller.appspot.com/bug?extid=076d963e115823c4b9be
-<7>  660     Yes   KMSAN: uninit-value in hfsplus_delete_cat
-                   https://syzkaller.appspot.com/bug?extid=fdedff847a0e5e84c39f
-<8>  637     Yes   kernel BUG in hfs_write_inode
-                   https://syzkaller.appspot.com/bug?extid=97e301b4b82ae803d21b
-<9>  458     Yes   general protection fault in hfs_find_init
-                   https://syzkaller.appspot.com/bug?extid=7ca256d0da4af073b2e2
-<10> 438     Yes   WARNING in hfs_bnode_create
-                   https://syzkaller.appspot.com/bug?extid=a19ca73b21fe8bc69101
+Not sure.
+How does llseek() work on the same fd?
+Matthew suggested that we align the behavior of both readahead(2)
+and posix_fadvise(2) to that of llseek(2)
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> Signed-off-by: Cyril Hrubis <chrubis@suse.cz>
+> ---
+>  .../kernel/syscalls/readahead/readahead01.c   | 46 ++++++++-----------
+>  1 file changed, 20 insertions(+), 26 deletions(-)
+>
+> diff --git a/testcases/kernel/syscalls/readahead/readahead01.c b/testcase=
+s/kernel/syscalls/readahead/readahead01.c
+> index bdef7945d..28134d416 100644
+> --- a/testcases/kernel/syscalls/readahead/readahead01.c
+> +++ b/testcases/kernel/syscalls/readahead/readahead01.c
+> @@ -29,44 +29,38 @@
+>  #if defined(__NR_readahead)
+>
+>  static void test_bad_fd(void)
+> -{
+> -       char tempname[PATH_MAX] =3D "readahead01_XXXXXX";
+> -       int fd;
+> -
+> -       tst_res(TINFO, "%s -1", __func__);
+> -       TST_EXP_FAIL(readahead(-1, 0, getpagesize()), EBADF);
+> -
+> -       tst_res(TINFO, "%s O_WRONLY", __func__);
+> -       fd =3D mkstemp(tempname);
+> -       if (fd =3D=3D -1)
+> -               tst_res(TFAIL | TERRNO, "mkstemp failed");
+> -       SAFE_CLOSE(fd);
+> -       fd =3D SAFE_OPEN(tempname, O_WRONLY);
+> -       TST_EXP_FAIL(readahead(fd, 0, getpagesize()), EBADF);
+> -       SAFE_CLOSE(fd);
+> -       unlink(tempname);
+> -}
+> -
+> -static void test_invalid_fd(void)
+>  {
+>         int fd[2];
+>
+> -       tst_res(TINFO, "%s pipe", __func__);
+> +       TST_EXP_FAIL(readahead(-1, 0, getpagesize()), EBADF,
+> +                    "readahead() with fd =3D -1");
+> +
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+Any reason not to include a bad and a closed fd in the iterator?
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
+>         SAFE_PIPE(fd);
+> -       TST_EXP_FAIL(readahead(fd[0], 0, getpagesize()), EINVAL);
+>         SAFE_CLOSE(fd[0]);
+>         SAFE_CLOSE(fd[1]);
+>
+> -       tst_res(TINFO, "%s socket", __func__);
+> -       fd[0] =3D SAFE_SOCKET(AF_INET, SOCK_STREAM, 0);
+> -       TST_EXP_FAIL(readahead(fd[0], 0, getpagesize()), EINVAL);
+> -       SAFE_CLOSE(fd[0]);
+> +       TST_EXP_FAIL(readahead(fd[0], 0, getpagesize()), EBADF,
+> +                    "readahead() with invalid fd");
+> +}
+> +
+> +static void test_invalid_fd(struct tst_fd *fd)
+> +{
+> +       switch (fd->type) {
+> +       case TST_FD_FILE:
+> +       case TST_FD_PIPE_OUT:
+> +               return;
+> +       default:
+> +               break;
+> +       }
+> +
+> +       TST_EXP_FAIL(readahead(fd->fd, 0, getpagesize()), EINVAL,
+> +                    "readahead() on %s", tst_fd_desc(fd));
 
-You may send multiple commands in a single email message.
+Thinking forward and we would like to change this error code to ESPIPE
+is there already a helper to expect one of a few error codes?
+
+Thanks,
+Amir.
+
+>  }
+>
+>  static void test_readahead(void)
+>  {
+>         test_bad_fd();
+> -       test_invalid_fd();
+> +       tst_fd_iterate(test_invalid_fd);
+>  }
+>
+>  static void setup(void)
+> --
+> 2.41.0
+>
