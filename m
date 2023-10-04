@@ -2,39 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BFD017B8BB8
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Oct 2023 20:56:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 129397B8C01
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Oct 2023 20:56:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244594AbjJDSyt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Oct 2023 14:54:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45652 "EHLO
+        id S244627AbjJDSyw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Oct 2023 14:54:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244632AbjJDSyg (ORCPT
+        with ESMTP id S244640AbjJDSyh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Oct 2023 14:54:36 -0400
+        Wed, 4 Oct 2023 14:54:37 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E354DC;
-        Wed,  4 Oct 2023 11:54:02 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58CB9C433CC;
-        Wed,  4 Oct 2023 18:54:01 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45047E4;
+        Wed,  4 Oct 2023 11:54:03 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EB14C433CA;
+        Wed,  4 Oct 2023 18:54:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696445641;
-        bh=aL1npQRaDyxdHQaKUM6htVz4FWw9EZM92Fgw5A+XXLA=;
+        s=k20201202; t=1696445643;
+        bh=YXOAZwpmSmMbKCHyuLupLOi4EQCnsa9Gey6/PpLo2dY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lMzzUiYmge9Kq/nics+ARjGwK5zm37X+AARlUtLSvvB84nkLMgyhLoFLrqdZS2FI5
-         TTKxgfHNAYt0gynJx2ek5ZMptrQWACq6lcQNDaZ0D93HlWy8gFwf7HL4TFJXvRkub5
-         T33ZENW1Fad0h1irMmnfTzYogqAcFbkOaFqdd2nBqn2JJbEPzZBAZb2XzWbjpTzLtr
-         6bcWEGpEeCu1RgsLF6AQ+SF1N3Jw5vUZme8hDoEMXlyMcChB+jbsqcKLjh2xCaTc06
-         f+jDTaaiRn2qThPmXfI3fzj1clZ9RjHOpyZrHJ3cuTNiBuTQFZieRqlSzDqFTOVa7F
-         pDLFPWpXKyLGQ==
+        b=Ax0NZpCPmEOTSvooJuFbBm6D20fN0zJ158OnQZkprETjvEUl1Hw6+yjzvJT9e3RW8
+         U8Wg65vvaKaxCILA9fZr7kuXCoFu808QagaXkz7BuAHFmocY591c3YS7XOiJodSn0E
+         hzkfEqsy5rBdQHzfW0w9estzT0k9m5iRiS7tsdbILj0uW2lYJP9MHS8mZiEvVumpvG
+         1gsm0sOm143apja90GRCkN8vqjGpQjdL9F5az303UP81l1HOYKjxGoyzidL+1sq3Sd
+         HayDfuvWBNU6EDjt6DZZatnmdKsARPTHF1nH+Shcu7okfrx14htd6bt+qe2pEhSp+j
+         XeA0w8C+A9GXQ==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     linux-usb@vger.kernel.org
-Subject: [PATCH v2 14/89] usb: convert to new timestamp accessors
-Date:   Wed,  4 Oct 2023 14:51:59 -0400
-Message-ID: <20231004185347.80880-12-jlayton@kernel.org>
+Cc:     Christian Schoenebeck <linux_oss@crudebyte.com>,
+        v9fs@lists.linux.dev
+Subject: [PATCH v2 15/89] 9p: convert to new timestamp accessors
+Date:   Wed,  4 Oct 2023 14:52:00 -0400
+Message-ID: <20231004185347.80880-13-jlayton@kernel.org>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20231004185347.80880-1-jlayton@kernel.org>
 References: <20231004185221.80802-1-jlayton@kernel.org>
@@ -54,99 +55,70 @@ Convert to using the new inode timestamp accessor functions.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- drivers/usb/core/devio.c | 26 +++++++++++++++++---------
- 1 file changed, 17 insertions(+), 9 deletions(-)
+ fs/9p/vfs_inode.c      |  6 +++---
+ fs/9p/vfs_inode_dotl.c | 16 ++++++++--------
+ 2 files changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/usb/core/devio.c b/drivers/usb/core/devio.c
-index 4f68f6ef3cc1..3beb6a862e80 100644
---- a/drivers/usb/core/devio.c
-+++ b/drivers/usb/core/devio.c
-@@ -2642,21 +2642,24 @@ static long usbdev_do_ioctl(struct file *file, unsigned int cmd,
- 		snoop(&dev->dev, "%s: CONTROL\n", __func__);
- 		ret = proc_control(ps, p);
- 		if (ret >= 0)
--			inode->i_mtime = inode_set_ctime_current(inode);
-+			inode_set_mtime_to_ts(inode,
-+					      inode_set_ctime_current(inode));
- 		break;
+diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
+index 0d28ecf668d0..b845ee18a80b 100644
+--- a/fs/9p/vfs_inode.c
++++ b/fs/9p/vfs_inode.c
+@@ -260,7 +260,7 @@ int v9fs_init_inode(struct v9fs_session_info *v9ses,
+ 	inode_init_owner(&nop_mnt_idmap, inode, NULL, mode);
+ 	inode->i_blocks = 0;
+ 	inode->i_rdev = rdev;
+-	inode->i_atime = inode->i_mtime = inode_set_ctime_current(inode);
++	simple_inode_init_ts(inode);
+ 	inode->i_mapping->a_ops = &v9fs_addr_operations;
+ 	inode->i_private = NULL;
  
- 	case USBDEVFS_BULK:
- 		snoop(&dev->dev, "%s: BULK\n", __func__);
- 		ret = proc_bulk(ps, p);
- 		if (ret >= 0)
--			inode->i_mtime = inode_set_ctime_current(inode);
-+			inode_set_mtime_to_ts(inode,
-+					      inode_set_ctime_current(inode));
- 		break;
+@@ -1150,8 +1150,8 @@ v9fs_stat2inode(struct p9_wstat *stat, struct inode *inode,
  
- 	case USBDEVFS_RESETEP:
- 		snoop(&dev->dev, "%s: RESETEP\n", __func__);
- 		ret = proc_resetep(ps, p);
- 		if (ret >= 0)
--			inode->i_mtime = inode_set_ctime_current(inode);
-+			inode_set_mtime_to_ts(inode,
-+					      inode_set_ctime_current(inode));
- 		break;
+ 	set_nlink(inode, 1);
  
- 	case USBDEVFS_RESET:
-@@ -2668,7 +2671,8 @@ static long usbdev_do_ioctl(struct file *file, unsigned int cmd,
- 		snoop(&dev->dev, "%s: CLEAR_HALT\n", __func__);
- 		ret = proc_clearhalt(ps, p);
- 		if (ret >= 0)
--			inode->i_mtime = inode_set_ctime_current(inode);
-+			inode_set_mtime_to_ts(inode,
-+					      inode_set_ctime_current(inode));
- 		break;
+-	inode->i_atime.tv_sec = stat->atime;
+-	inode->i_mtime.tv_sec = stat->mtime;
++	inode_set_atime(inode, stat->atime, 0);
++	inode_set_mtime(inode, stat->mtime, 0);
+ 	inode_set_ctime(inode, stat->mtime, 0);
  
- 	case USBDEVFS_GETDRIVER:
-@@ -2695,7 +2699,8 @@ static long usbdev_do_ioctl(struct file *file, unsigned int cmd,
- 		snoop(&dev->dev, "%s: SUBMITURB\n", __func__);
- 		ret = proc_submiturb(ps, p);
- 		if (ret >= 0)
--			inode->i_mtime = inode_set_ctime_current(inode);
-+			inode_set_mtime_to_ts(inode,
-+					      inode_set_ctime_current(inode));
- 		break;
+ 	inode->i_uid = v9ses->dfltuid;
+diff --git a/fs/9p/vfs_inode_dotl.c b/fs/9p/vfs_inode_dotl.c
+index 1312f68965ac..c7319af2f471 100644
+--- a/fs/9p/vfs_inode_dotl.c
++++ b/fs/9p/vfs_inode_dotl.c
+@@ -641,10 +641,10 @@ v9fs_stat2inode_dotl(struct p9_stat_dotl *stat, struct inode *inode,
+ 	struct v9fs_inode *v9inode = V9FS_I(inode);
  
- #ifdef CONFIG_COMPAT
-@@ -2703,14 +2708,16 @@ static long usbdev_do_ioctl(struct file *file, unsigned int cmd,
- 		snoop(&dev->dev, "%s: CONTROL32\n", __func__);
- 		ret = proc_control_compat(ps, p);
- 		if (ret >= 0)
--			inode->i_mtime = inode_set_ctime_current(inode);
-+			inode_set_mtime_to_ts(inode,
-+					      inode_set_ctime_current(inode));
- 		break;
- 
- 	case USBDEVFS_BULK32:
- 		snoop(&dev->dev, "%s: BULK32\n", __func__);
- 		ret = proc_bulk_compat(ps, p);
- 		if (ret >= 0)
--			inode->i_mtime = inode_set_ctime_current(inode);
-+			inode_set_mtime_to_ts(inode,
-+					      inode_set_ctime_current(inode));
- 		break;
- 
- 	case USBDEVFS_DISCSIGNAL32:
-@@ -2722,7 +2729,8 @@ static long usbdev_do_ioctl(struct file *file, unsigned int cmd,
- 		snoop(&dev->dev, "%s: SUBMITURB32\n", __func__);
- 		ret = proc_submiturb_compat(ps, p);
- 		if (ret >= 0)
--			inode->i_mtime = inode_set_ctime_current(inode);
-+			inode_set_mtime_to_ts(inode,
-+					      inode_set_ctime_current(inode));
- 		break;
- 
- 	case USBDEVFS_IOCTL32:
-@@ -2804,7 +2812,7 @@ static long usbdev_do_ioctl(struct file *file, unsigned int cmd,
-  done:
- 	usb_unlock_device(dev);
- 	if (ret >= 0)
--		inode->i_atime = current_time(inode);
-+		inode_set_atime_to_ts(inode, current_time(inode));
- 	return ret;
- }
- 
+ 	if ((stat->st_result_mask & P9_STATS_BASIC) == P9_STATS_BASIC) {
+-		inode->i_atime.tv_sec = stat->st_atime_sec;
+-		inode->i_atime.tv_nsec = stat->st_atime_nsec;
+-		inode->i_mtime.tv_sec = stat->st_mtime_sec;
+-		inode->i_mtime.tv_nsec = stat->st_mtime_nsec;
++		inode_set_atime(inode, stat->st_atime_sec,
++				stat->st_atime_nsec);
++		inode_set_mtime(inode, stat->st_mtime_sec,
++				stat->st_mtime_nsec);
+ 		inode_set_ctime(inode, stat->st_ctime_sec,
+ 				stat->st_ctime_nsec);
+ 		inode->i_uid = stat->st_uid;
+@@ -660,12 +660,12 @@ v9fs_stat2inode_dotl(struct p9_stat_dotl *stat, struct inode *inode,
+ 		inode->i_blocks = stat->st_blocks;
+ 	} else {
+ 		if (stat->st_result_mask & P9_STATS_ATIME) {
+-			inode->i_atime.tv_sec = stat->st_atime_sec;
+-			inode->i_atime.tv_nsec = stat->st_atime_nsec;
++			inode_set_atime(inode, stat->st_atime_sec,
++					stat->st_atime_nsec);
+ 		}
+ 		if (stat->st_result_mask & P9_STATS_MTIME) {
+-			inode->i_mtime.tv_sec = stat->st_mtime_sec;
+-			inode->i_mtime.tv_nsec = stat->st_mtime_nsec;
++			inode_set_mtime(inode, stat->st_mtime_sec,
++					stat->st_mtime_nsec);
+ 		}
+ 		if (stat->st_result_mask & P9_STATS_CTIME) {
+ 			inode_set_ctime(inode, stat->st_ctime_sec,
 -- 
 2.41.0
 
