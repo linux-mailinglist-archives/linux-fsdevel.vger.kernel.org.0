@@ -2,39 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CD2C7B8BCB
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Oct 2023 20:56:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A50F07B8BD6
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Oct 2023 20:56:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244880AbjJDSzF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Oct 2023 14:55:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47002 "EHLO
+        id S244673AbjJDSyy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Oct 2023 14:54:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44938 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244720AbjJDSyb (ORCPT
+        with ESMTP id S244722AbjJDSyb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 4 Oct 2023 14:54:31 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3278C19BA;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEB7F19BF;
         Wed,  4 Oct 2023 11:53:54 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFD2AC433CA;
-        Wed,  4 Oct 2023 18:53:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8165C433CD;
+        Wed,  4 Oct 2023 18:53:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696445633;
-        bh=ypj7rmODurA3z/UzEOTAbR4NZeN+HrhD93EAgqGeHr8=;
+        s=k20201202; t=1696445634;
+        bh=OjZRsVOhL4N5a68/cSqDR7Hd40kPAU0k6mob5huCQzM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dWftD498o2QH9qj3mfNM61PvQPNOOCFsL6yLDsryUp3K8244fiVHlVbOF/xkvFm9g
-         b9uWjpnYCNxtS3X5PjqDGFnyintMnbA89RUvnMe7/l8hgNxa6lrDc9nijkGxLEEwv0
-         +dBp0TdN2kt9evt6TrV+4tJyhBr0AvQbWdkREVCxZCLI0zkTxQKbOQoZeivSDjsLBa
-         ljJK5bJCciHhvU4U+1JvRqlfCBZmWflhbPHvxXY0NploZBhHVC21mSCcPhKguuPdsB
-         zmU4gyTR1Xk6U8h7kS6vq+DFfieAQtr8xJBx6+UySBTOtqT2z4nss7PFeQk2uS0Avl
-         o6YHz/j62ybdA==
+        b=iDoGTPkzLTFKZF8o1zfAcpwFb/FP2eM4KayhXfGi5bZJ4aSlAByMBCv9bO3VjAJlf
+         oRMBMYMieY7ATM/k9oYCRgsW6qaTBMh9/efAuFZmcPed+iV0t9zyxjRCKDi61nJx+x
+         bLcE8B1TFNkvKtLc8ULX/epWt2tLFMB9T9k1uSiEKOG+tkiLYxfQYrBmMD62wjaot3
+         f0xQ1Ly1ezhNVE6B/h2veLzjfNCBIwNCrAUwgqrbbUtV78u8LYk654MS2cX5njkdKq
+         mG61M3GDiD6bsmdkkVo7f0bk5q8v0id5DA5E5dsVkoI7ObiAgZoCa4I0NiR37Jpsr4
+         snR3sjNF9vt6Q==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     platform-driver-x86@vger.kernel.org
-Subject: [PATCH v2 06/89] char: convert to new timestamp accessors
-Date:   Wed,  4 Oct 2023 14:51:51 -0400
-Message-ID: <20231004185347.80880-4-jlayton@kernel.org>
+Cc:     linux-rdma@vger.kernel.org
+Subject: [PATCH v2 07/89] qib: convert to new timestamp accessors
+Date:   Wed,  4 Oct 2023 14:51:52 -0400
+Message-ID: <20231004185347.80880-5-jlayton@kernel.org>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20231004185347.80880-1-jlayton@kernel.org>
 References: <20231004185221.80802-1-jlayton@kernel.org>
@@ -54,22 +54,24 @@ Convert to using the new inode timestamp accessor functions.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- drivers/char/sonypi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/hw/qib/qib_fs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/char/sonypi.c b/drivers/char/sonypi.c
-index 9211531689b2..22d249333f53 100644
---- a/drivers/char/sonypi.c
-+++ b/drivers/char/sonypi.c
-@@ -920,7 +920,7 @@ static ssize_t sonypi_misc_read(struct file *file, char __user *buf,
- 
- 	if (ret > 0) {
- 		struct inode *inode = file_inode(file);
--		inode->i_atime = current_time(inode);
-+		inode_set_atime_to_ts(inode, current_time(inode));
- 	}
- 
- 	return ret;
+diff --git a/drivers/infiniband/hw/qib/qib_fs.c b/drivers/infiniband/hw/qib/qib_fs.c
+index ed7d4b02f45a..455e966eeff3 100644
+--- a/drivers/infiniband/hw/qib/qib_fs.c
++++ b/drivers/infiniband/hw/qib/qib_fs.c
+@@ -64,8 +64,8 @@ static int qibfs_mknod(struct inode *dir, struct dentry *dentry,
+ 	inode->i_uid = GLOBAL_ROOT_UID;
+ 	inode->i_gid = GLOBAL_ROOT_GID;
+ 	inode->i_blocks = 0;
+-	inode->i_atime = inode_set_ctime_current(inode);
+-	inode->i_mtime = inode->i_atime;
++	simple_inode_init_ts(inode);
++	
+ 	inode->i_private = data;
+ 	if (S_ISDIR(mode)) {
+ 		inode->i_op = &simple_dir_inode_operations;
 -- 
 2.41.0
 
