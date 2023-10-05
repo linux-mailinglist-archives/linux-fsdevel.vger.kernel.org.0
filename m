@@ -2,228 +2,353 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 29BB17BA126
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Oct 2023 16:53:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B8377B9E60
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Oct 2023 16:06:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236972AbjJEOsL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Oct 2023 10:48:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55388 "EHLO
+        id S231423AbjJEOFw convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>); Thu, 5 Oct 2023 10:05:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236617AbjJEOpp (ORCPT
+        with ESMTP id S231765AbjJEOEH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Oct 2023 10:45:45 -0400
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 141A49014;
-        Thu,  5 Oct 2023 07:27:44 -0700 (PDT)
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 395081cl014828;
-        Thu, 5 Oct 2023 08:23:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : date :
- subject : to : cc : references : from : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=corp-2023-03-30;
- bh=cXk+VwhjT8EiT6vclE0B1YeihBudxjnADQ5iEjP33BA=;
- b=Mee5bkkOJngPCATLhtxfqcyefCvTinbXiljUImwW7Gv86hh9JD7RWM0ari95aVsrjWLH
- HPNwxTcDQcpPznDq8BQqmC40e9oHEf5/vDkr9HPI5jjQgqVLsP2zj5oXHP9nHOH87bcM
- N8GJ0SFRma3oyg3ZWNwkJng2fusLfFM2HayyQ3k3NuvTCtBYYNdeWII+SE2U72LDZDAE
- 1KbzQDQzAeZvbE5G3K76eNZk/GY44j15trwhIcP6MDBG3ZUbg0KRIbDqeNHsntSNPy3I
- M4qc+L195fOkU3oExWW4uCZmRMYMnaLLSiIft0sjjO9zF4uyAkHI2SCqJOnwJ/jWATX5 PQ== 
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3tec7vgv1j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 05 Oct 2023 08:23:06 +0000
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-        by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 3956678M005811;
-        Thu, 5 Oct 2023 08:23:05 GMT
-Received: from nam04-bn8-obe.outbound.protection.outlook.com (mail-bn8nam04lp2047.outbound.protection.outlook.com [104.47.74.47])
-        by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3tea48t8dh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 05 Oct 2023 08:23:05 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=EG2GfRy/Qcyb7rC/VJt6QGwFCimu9HZ8eT/r5RDYeVa2fDjrkvjvWbvgSMakvwDAgXH+/xIQTCfotF2zdoM/Q0x4Ei5oeYqKL3fFFvcaNUvAF4OHY+gW1oKMPrB2GK9PvryOkzDOc8n+80QyxWp5ihyf4nDqVIAyadsMqq/hUPn8JbfCWNGNRRFnJSBp2xUjyw3vc7Hoa83YJRcNHmK2R2115oW4VF3FPWGhUYmCPhn81/pVfDF1nwuK/n6y6fdCG4T3x+zabX2C94bKkDzSp6x45tMcMu8sAk1nH58+4Nl4PxfKNPD2gMDZQGWzICKNqAfViBUxHbxfaYpldii03w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cXk+VwhjT8EiT6vclE0B1YeihBudxjnADQ5iEjP33BA=;
- b=m254olncUJW2qn/mTZIHJr4rrDF8rDCnAzLgCHl6g2SYgNZd+NofWkjYgGwCTis3+JwY5jyvdJfZN95QoL42ey0ieT1kgaSfrbmQYrTTFhCYSBHl0Sq4LlN+QW+iTP+umCI6jsrWLxE5OyoUG7lVZFAK86hfVqp+OAb4Z/KOxX2fmuw8hoChLQndX8uvkoDZTGAldmkm/9f/+fnhUyQMEFFuERagK3Rml0Ty8cM1O54lwufhdzg8p/qzkjZlzWTArXgOOjLMBldfrl5xI3S0nAhJWEQ4bBDuRt2VbOURMXlb6VenBN6PtWtSdhUOZwSi1JPyz12DBJ6jKPrZ15ci3g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cXk+VwhjT8EiT6vclE0B1YeihBudxjnADQ5iEjP33BA=;
- b=oUjq8vQOKajHovYcO0bRRDHPKxBlhfExumfUVp2A7tM5BFrrEICP1x3cjj1y22WahcY4DYTlJ5w1+iEsJgpXAWxb/OlQlkp29SymlIyCSaZTA4OEWDAygTHder8caDgukMVrMHe/a+eiw7V0O6FTl1N/cq6n7Q2bn84EDCEFWrc=
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
- by SJ0PR10MB6374.namprd10.prod.outlook.com (2603:10b6:a03:47f::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6838.37; Thu, 5 Oct
- 2023 08:23:02 +0000
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::ebfd:c49c:6b8:6fce]) by DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::ebfd:c49c:6b8:6fce%7]) with mapi id 15.20.6838.033; Thu, 5 Oct 2023
- 08:23:02 +0000
-Message-ID: <f1033cd2-82da-7ea5-7e12-94a2f3793a2d@oracle.com>
-Date:   Thu, 5 Oct 2023 09:22:55 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH 01/21] block: Add atomic write operations to request_queue
- limits
-To:     Bart Van Assche <bvanassche@acm.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
-        jejb@linux.ibm.com, djwong@kernel.org, viro@zeniv.linux.org.uk,
-        brauner@kernel.org, chandan.babu@oracle.com, dchinner@redhat.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
-        linux-api@vger.kernel.org,
-        Himanshu Madhani <himanshu.madhani@oracle.com>
-References: <20230929102726.2985188-1-john.g.garry@oracle.com>
- <20230929102726.2985188-2-john.g.garry@oracle.com>
- <7f031c7a-1830-4331-86f9-4d5fbca94b8a@acm.org>
- <yq1bkdfrt8l.fsf@ca-mkp.ca.oracle.com>
- <45bc1c01-09c7-4c54-b305-f349d0d0e19b@acm.org>
-Content-Language: en-US
-From:   John Garry <john.g.garry@oracle.com>
-Organization: Oracle Corporation
-In-Reply-To: <45bc1c01-09c7-4c54-b305-f349d0d0e19b@acm.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AM0PR10CA0052.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:150::32) To DM6PR10MB4313.namprd10.prod.outlook.com
- (2603:10b6:5:212::20)
+        Thu, 5 Oct 2023 10:04:07 -0400
+Received: from mail-oa1-x47.google.com (mail-oa1-x47.google.com [IPv6:2001:4860:4864:20::47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B86F1F753
+        for <linux-fsdevel@vger.kernel.org>; Thu,  5 Oct 2023 02:59:35 -0700 (PDT)
+Received: by mail-oa1-x47.google.com with SMTP id 586e51a60fabf-187959a901eso990812fac.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Oct 2023 02:59:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696499970; x=1697104770;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OUidpdIlBCHQOAT8hc6EhjF1qs8gR/l4JBM25yUma+A=;
+        b=vj9WdK3/X7r6YJI49XAAMuViieuip5YL3kEYmBwEgDX/9d9Ngf4B2baC4b8d2IWBT+
+         yi1cOYKI97bLLME8/ZydcSWjzkAON1ShYoGAxzz13MI69Fn+5bhRtxDU25AG5Yir/5sN
+         T0mi1wZ8A56dCC2lK23F5DzjjW71yUqaDjyOHRcwL1FpwUy3YYb49xybrnE2Bde2sYF/
+         rDnQMTYrnZLkJSI7nD4JD+P3WTwo/imz6j1wzxPA+PbuH657CTiy9UsweL7t+WC+wge8
+         BpJ6sqkuf69WI/AWLjtgCx8VyAQdWx9AyTQQlJM039IkDCZDzaiO0SEUgnlLW+rzlVno
+         zDKQ==
+X-Gm-Message-State: AOJu0Yy3UsVExOynkKjP11/7y+n4uEAoZRABOw4VMTZ3Pe13LiSLJvDf
+        mTrBUYqNkV9CjnAQPIt7+fTNV/lDnaCrBZAEZNkRegKHeZj5
+X-Google-Smtp-Source: AGHT+IGTroKHuY0zHyu8X3nMiXGnuNGMZmtK2noF4INH/S1nULtywBtdw/og0+CfDsZSKQKdbwVROfu9WlV6VLhh8y0mIMLSXBh3
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|SJ0PR10MB6374:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1f917478-ddae-47ee-984a-08dbc57c4a18
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: QHuJ+288gpOVazAVmLhq9OOpqUqpiL+7W4gJf631DYU+B6esO/HCijKI15A4eJonp3k6DRLlcZM2bq20LavjqNvV+uqVrph2v6Pf7baY1Wzrr4NUPylYsyxpHbqjbObRYYKzfQ2UyJKfpUfjP4SPnCD+Gkdzx8FQZOC43EDVUGHoTXJSzAqxxVCzRMxasGnp37b9/Bt48waZ8yCfx4OAUx+JzPpHn8MjSIoqaN09FZnF4ap9r07r+Wg6cHW0lwMKstTZnOY7Hd0/hnWgx7YkwyWWxcGIoJcHbNfm7dmD740Lc7aIaq+GefYmrEMpg5DQx6WXNpyebpnlzT9/c95D1sLwoBP37NQXFhNsog7Oz4ps51YRhpgZb14zC1KhqsRHOJ6CG8zjjsYOTKmmD2v6W0jKoMwh3kxHRLaoXWS9ce50Z5Gcg+7ISmd8QoHXQXuRB18tRJkGwfOnAiE9KgSpRdC688uWI1Fk/yowOB+ZNZKrLtdq+fPLMCtPioRX27GitQpX38IftA4Qm0csC1Vql5cTsKyKXCD+ljeeZBHuAsR07efMrHT8t/ZsAGtwhTNYY4m/Z00mHoP5Bz0CV7EdF6nC/qFMJETDFd5RbqDM2rpPEJORYy9ItJh7eiylMI2NDnrsT4lNTaVByFLAX9PSpA==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366004)(39860400002)(396003)(376002)(346002)(136003)(230922051799003)(64100799003)(186009)(451199024)(1800799009)(66556008)(66946007)(66476007)(6636002)(316002)(41300700001)(107886003)(53546011)(6512007)(26005)(36916002)(36756003)(6666004)(6506007)(478600001)(6486002)(38100700002)(86362001)(31696002)(83380400001)(110136005)(2616005)(31686004)(7416002)(2906002)(4326008)(8936002)(8676002)(5660300002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?d3hIRXVGR21ScUVsZDUvcERiQmk4akVXZ1JPdFhiYXN3MEh4WkNwZzlkeWtz?=
- =?utf-8?B?d0NwZDhJWldwOVBDSFgzRFRaUk5VNVcyRHJPL2ppQWQzMFpqYitMWmZJVHhz?=
- =?utf-8?B?V2xZSjQwS1hkUlB6NGQ1cGQ1Sk9jZUl2UW0yV1ZOQk5xakNnM2pNcGVOM2hW?=
- =?utf-8?B?MHFuZW1JWDBkNndic29qWmU5QTZoUWRHb0tabnI1RUZWb1RETTNtWDhsa3Yr?=
- =?utf-8?B?VWp5dzlRQkRPMDB5eEVHU2NjNjkvQ1g3dGdTOU1GRk9xenNJUmlWdzFmQlc0?=
- =?utf-8?B?SCtQTHBkUW0yTTBuMDFONWtMV1lYeStvaUh3MWFSR2JVOXlybExEM0JiNFRT?=
- =?utf-8?B?N2NndndkUjR2V0VXZTV6V1pkWnVBWi9oREdpVEpUQW1lN0tVdEkySHRWSHVZ?=
- =?utf-8?B?T2lJWndPRGRzZWJ5ZTV4aEthNi8rdEJxNWdUaXRjUkRINmVQcktkOWdQZkJ1?=
- =?utf-8?B?YkQ4dXphSWFjZ2d3SHFYaTBxL2dmTUYvUzNJRU9JVEg1cGRIMlk2elhJZnVh?=
- =?utf-8?B?RkFqdVJiRWF2WHlZNDY4U0NTa0grS0k2L0o1dHJhSzlaUWhpZzdPdnBycXJI?=
- =?utf-8?B?UmljYVB3cytHbnkyUmZyc1BXZlVRVzVoUnM4NXBCM1FHcXBrNVpuWmVLbTNO?=
- =?utf-8?B?TDAxZ0MvSmdRRTdVaUx2eDV3NW83SW94YVdZYjAvVmVleGYzMGNac0ZIUm5s?=
- =?utf-8?B?N21XQndyZWM4MVcxWHpUYjVIZ2NmV2NKZ0x4cW9tVHE5T3VybmpYTU9Ycyti?=
- =?utf-8?B?RndhMFVNMzhEbWlPaDMzaXNwcS9NOExaRCs4Y0poeDMyV0hXT21UU0V3UEdh?=
- =?utf-8?B?ME9kZVFJdThDMW1ZRGRySVAvemdVbHloWHpPVkZLWi9tQVU4S1ZCdW1JUDlu?=
- =?utf-8?B?NzkyMXREVlozN3h2QitnZkpHYXZEcFN4V1g0Nit6eFM5bE9ZT2pZa3FUcHlo?=
- =?utf-8?B?KzNjSVBZc01INHhVVlhqMitINEJ0a2I0MCt6WGdLbUlhUnZCVjFwNE1wZW9r?=
- =?utf-8?B?QS9oWWdYdm0xNWZnZGMyUnNtLzNISi9TVVY5eUZ3MDZaZU1PYXliRkpRb0c4?=
- =?utf-8?B?N0JwajAvSTlGUVZvVFFVWTB3QVpQVno3VVYrUCtPQlp0ZHFaeXJzQjNIaTZO?=
- =?utf-8?B?TjVDMktWeE9HRWJWNEhzdEdzbzhmRDNzL3BEb0tOanNPVDhGd3RxVjFjdlVw?=
- =?utf-8?B?NEZ5ZVlNeXVKWVVWT2RSQmY4OU9jNExEYVM0amNnSzFGd2FGb2hFWCtTR0FJ?=
- =?utf-8?B?eGt3UEd6K1BteUpHdGU0S0xvbFMwSE9zTmNlQzBOeEN3Z0o1L0U2ak1WUkI5?=
- =?utf-8?B?VVZXRFRtemZmS1ljd2xIYjN5azUzQUljRnVEM1ZpVkZ2bysxWHBaaDBXRHJP?=
- =?utf-8?B?WjhnSHdNUmMyNHB0YU9kblVKZUNpczdDTm4zaEUxS1VtTHVWQS9wRnhRand4?=
- =?utf-8?B?dGphWU5Qd2Zvek1ubGhPQ3FKbjJUTDJZdkFGVlRmNkt5cmkxeEcveTlBVDJ3?=
- =?utf-8?B?ZHllWDlJc1JiNDlXT1BmYzZYWWg5RytDbXFBZzFocFN0bHdnMVNCWUh5S2Rj?=
- =?utf-8?B?WEpsaW0rbUJaWlR5YkY2RFV5Q0hqNk1MYXNqTDNHZlk1UGVTUk44SFltT09r?=
- =?utf-8?B?VUdqemRoSkRoSHFVcW5zZjVnblUvSExUNUpuS3FucEptNUJTaDNyMEJwaTFM?=
- =?utf-8?B?NVZOWjRsVW9DbWhhRVNpZzgxWFpBUm9oSXBvbE1aNS9qaGt0NTd2Wk9FV0RB?=
- =?utf-8?B?UGRnT282ckg5ODVFTzhVRzhnQm1qQnd2bk4wR2hJS1FUbmVEaVVVTE4xdjAw?=
- =?utf-8?B?UUxJQnRPMkZCc2ZGSWtNL0lFTFhEbzdMM0RhVXAxcEMxQjRQbjdDL3E3VVd3?=
- =?utf-8?B?enZnTWY3cUFsZWRFcjQwZDNHYlhuVVc1WHlobmtWTlBLRkRPbXE4NC91STYy?=
- =?utf-8?B?VUhXZk1tZ3lKNnc5SVBsV0RPdWQ4RzNxc2Z2OFFxSHFoVWlScjVhQVREUTRT?=
- =?utf-8?B?b1dON3RVZHVyV1NKYWtVQW5qWnFnT0pyMVpWV005R1lLNnpBMHhzUjA4ZXNq?=
- =?utf-8?B?OG56TlJtbWlUTVREMzJ2dFhBeHBmMEtOaWhkd0tESGhmSnhBN3JmbXBnVVJN?=
- =?utf-8?Q?iAW81TfbV8AGhu0/qw2dVeeY8?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: =?utf-8?B?U0N0bmw2d2ZUOWN6NUwvNHdMb0JtVG16NHFPMnRESS9sUmw5d0hHVzdEcXFX?=
- =?utf-8?B?V2k0VVNPTVRFWVlJYnh5TDhvaVRvODBQOXJwSU43SHdQRVFQUkR3OHMvOHRS?=
- =?utf-8?B?eDRKcEM5R0c1L0VKZnd3eXVIUk1LODBWK2pwUWE0Tnl3bWpuZnlaaDFJR1JL?=
- =?utf-8?B?L1lHOTNON21nQmZ1N3NueFo5ZzZUODErUStwUGEyTys5VFlpb3BkU2RCNXlh?=
- =?utf-8?B?ZnBjUTcxY1B2T0ZCQmZQc2puY2ROUGxuenhjbmtkaUxSUWlhMmZlZEVqSUo5?=
- =?utf-8?B?dlBiZDF1UFFiZ1pnRUl1UERUQTZTNVlmRWh5TDRvL29kTHVOQW9ZSFY1aTRG?=
- =?utf-8?B?NjhtY3lMd2dhY3RFV2tqdzc3cDZxTzRhRWx1OExzb3l0K1BTQW5ndmR0TXRu?=
- =?utf-8?B?Ui9HVkNUNVJ4eDY1aFVsTkNrOXM5UEk1bDgxQ0RLbmpaN2ZUZDJtMzUzays4?=
- =?utf-8?B?bGViTWIxM0x0VEErVkduK1hDQzlQVlB3bVN5aUdjL29zaFpHZmZyeS9VUDB5?=
- =?utf-8?B?YjJDMFcwczllOVdPaGQ3ZzZTcHY5aGEwdlBReFk4Q2hzZE50K25LR0w3emcy?=
- =?utf-8?B?ZmY4NGJBdU1NMnlvS2ZZWE1GRmFnVHlwNHZ5TGdhL3BIQlBRQ0FONnRwVlow?=
- =?utf-8?B?ZlNUSVI2YlBJZkRuVHlOeWNZeGtyRjY1UkNiU0N6alN5U0Zqa1JwTzlaRUZU?=
- =?utf-8?B?REZIOTRLWjZCcEtPVlV2a3FaQjJjcG8vUDM5UnFXZ3E5a2ViNzBNSUFqR1Jp?=
- =?utf-8?B?NkhteDhtenUvczRYSTBUU2lqZ00vWkRDR1JaMmUzSmhWZlE2R2hPbk84bTBX?=
- =?utf-8?B?RjRoeUNKN1NwZ1VPSUNCdm9tZGVJQllreEl5SU9wV3ZwMmxEL2Y4K3MvejhO?=
- =?utf-8?B?WUxLZVZJMEtIMCsxZ0JDYS9vQ2Y0dEJaaVRVS0hpdXczUnVDRllhRlliTmto?=
- =?utf-8?B?cW9jdjhoSXRiRTUrTCs5SVFSQ0FWR0lTMXJFak0wRXkzTnRHVnFZZWtyZWlN?=
- =?utf-8?B?YkJ6U1NVc2h4bEkxMUh1Rk9FWnZqNlpMcDZWSTk0NGZFZUNvcHA3U1Y2Z1Q1?=
- =?utf-8?B?RVg1WGpNOUZTbm1aNzN1a0QzemJJaGZXTGFJSkRPK0NrUmNpSFdBK1ZHdXNO?=
- =?utf-8?B?enNEbXRSM3lUUHdFTVRjTllpS3RnQVJsWW5mL25FekFjT0wrbXBEUTZhS0VG?=
- =?utf-8?B?WmNUcnRPRi9sNXdjSkRZUUhSWG5IdHVYRWs1ZnM4U1NCYVVsWmpsSUtKd3NI?=
- =?utf-8?B?R2NHK0h6d0IvQnFwdFhBODNkaEhWaXJvZ05ESWx6UGhLRjg3c1czKzN0TXFz?=
- =?utf-8?B?aWYyMVFFT1k0VWFwaUlWWjg3eG92cmluLytCbjd2aHBQbHJOZFZvRG9zOWNW?=
- =?utf-8?B?SWZFa3FEN0pkN3JUMDlOZmhsanMrTEhJQ0hiYStFZjMvanNCSEtCMHZGdmlz?=
- =?utf-8?B?WXFGaGpGN1RteTdLWnJZTEllazlDSitVbHZId3piZXNKdmxaZDRiOURlUUJC?=
- =?utf-8?Q?TqSu1Q=3D?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1f917478-ddae-47ee-984a-08dbc57c4a18
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Oct 2023 08:23:02.0355
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: t0Oei4ac1f8TgOostuOtbz5hzdUjr0mlMYCbAsWrBqnlEz+zJeClMjDPmml9DFk8cGdTQk6RuBrDvi2UbMPYFA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB6374
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-10-05_05,2023-10-02_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxscore=0 bulkscore=0
- adultscore=0 mlxlogscore=999 phishscore=0 spamscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2309180000
- definitions=main-2310050063
-X-Proofpoint-ORIG-GUID: spK9u3dXW_sN1Cn_WIM8VtyMibWKc8YB
-X-Proofpoint-GUID: spK9u3dXW_sN1Cn_WIM8VtyMibWKc8YB
-X-Spam-Status: No, score=-7.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a05:6870:b796:b0:1d5:8e96:7d85 with SMTP id
+ ed22-20020a056870b79600b001d58e967d85mr1845337oab.1.1696499969849; Thu, 05
+ Oct 2023 02:59:29 -0700 (PDT)
+Date:   Thu, 05 Oct 2023 02:59:29 -0700
+In-Reply-To: <CAOQ4uxhbNyDzf0_fFh1Yy5Kz2Coz=gTrfOtsmteE0=ncibBnpw@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001081fc0606f52ed9@google.com>
+Subject: Re: [syzbot] [integrity] [overlayfs] possible deadlock in
+ mnt_want_write (2)
+From:   syzbot <syzbot+b42fe626038981fb7bfa@syzkaller.appspotmail.com>
+To:     amir73il@gmail.com, hdanton@sina.com,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-unionfs@vger.kernel.org, miklos@szeredi.hu,
+        mszeredi@redhat.com, syzbot@syzkalhler.appspotmail.com,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+        zohar@linux.ibm.com, zohar@us.ibm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,SORTED_RECIPS,
+        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 04/10/2023 22:00, Bart Van Assche wrote:
->>
->> We only care about *PF. The *N variants were cut from the same cloth as
->> TRIM and UNMAP.
-> 
-> Hi Martin,
-> 
-> Has the following approach been considered? RWF_ATOMIC only guarantees 
-> atomicity. Persistence is not guaranteed without fsync() / fdatasync().
+Hello,
 
-This is the approach taken. Please consult the proposed man pages, where 
-we say that persistence is not guaranteed without 
-O_SYNC/O_DSYNC/fsync()/fdatasync()
+syzbot tried to test the proposed patch but the build/boot failed:
 
-The only thing which RWF_ATOMIC guarantees is that the write will not be 
-torn.
+.11
+[   11.711476][    T1] Bluetooth: BNEP (Ethernet Emulation) ver 1.3
+[   11.717652][    T1] Bluetooth: BNEP filters: protocol multicast
+[   11.723764][    T1] Bluetooth: BNEP socket layer initialized
+[   11.729798][    T1] Bluetooth: CMTP (CAPI Emulation) ver 1.0
+[   11.735800][    T1] Bluetooth: CMTP socket layer initialized
+[   11.741657][    T1] Bluetooth: HIDP (Human Interface Emulation) ver 1.2
+[   11.748518][    T1] Bluetooth: HIDP socket layer initialized
+[   11.758808][    T1] NET: Registered PF_RXRPC protocol family
+[   11.764714][    T1] Key type rxrpc registered
+[   11.769426][    T1] Key type rxrpc_s registered
+[   11.774975][    T1] NET: Registered PF_KCM protocol family
+[   11.781399][    T1] lec:lane_module_init: lec.c: initialized
+[   11.787210][    T1] mpoa:atm_mpoa_init: mpc.c: initialized
+[   11.793325][    T1] l2tp_core: L2TP core driver, V2.0
+[   11.798593][    T1] l2tp_ppp: PPPoL2TP kernel driver, V2.0
+[   11.804282][    T1] l2tp_ip: L2TP IP encapsulation support (L2TPv3)
+[   11.810911][    T1] l2tp_netlink: L2TP netlink interface
+[   11.816532][    T1] l2tp_eth: L2TP ethernet pseudowire support (L2TPv3)
+[   11.823862][    T1] l2tp_ip6: L2TP IP encapsulation support for IPv6 (L2TPv3)
+[   11.831528][    T1] NET: Registered PF_PHONET protocol family
+[   11.837777][    T1] 8021q: 802.1Q VLAN Support v1.8
+[   11.855888][    T1] DCCP: Activated CCID 2 (TCP-like)
+[   11.861493][    T1] DCCP: Activated CCID 3 (TCP-Friendly Rate Control)
+[   11.868489][    T1] DCCP is deprecated and scheduled to be removed in 2025, please contact the netdev mailing list
+[   11.879600][    T1] sctp: Hash tables configured (bind 32/56)
+[   11.886970][    T1] NET: Registered PF_RDS protocol family
+[   11.893414][    T1] Registered RDS/infiniband transport
+[   11.900057][    T1] Registered RDS/tcp transport
+[   11.904815][    T1] tipc: Activated (version 2.0.0)
+[   11.910959][    T1] NET: Registered PF_TIPC protocol family
+[   11.917541][    T1] tipc: Started in single node mode
+[   11.923606][    T1] NET: Registered PF_SMC protocol family
+[   11.929592][    T1] 9pnet: Installing 9P2000 support
+[   11.935356][    T1] NET: Registered PF_CAIF protocol family
+[   11.948223][    T1] NET: Registered PF_IEEE802154 protocol family
+[   11.954672][    T1] Key type dns_resolver registered
+[   11.959869][    T1] Key type ceph registered
+[   11.964886][    T1] libceph: loaded (mon/osd proto 15/24)
+[   11.971970][    T1] batman_adv: B.A.T.M.A.N. advanced 2023.3 (compatibility version 15) loaded
+[   11.981263][    T1] openvswitch: Open vSwitch switching datapath
+[   11.991164][    T1] NET: Registered PF_VSOCK protocol family
+[   11.997270][    T1] mpls_gso: MPLS GSO support
+[   12.019850][    T1] IPI shorthand broadcast: enabled
+[   12.025183][    T1] AVX2 version of gcm_enc/dec engaged.
+[   12.031096][    T1] AES CTR mode by8 optimization enabled
+[   13.986311][    T1] sched_clock: Marking stable (13940030159, 37368238)->(13987518566, -10120169)
+[   14.000622][    T1] registered taskstats version 1
+[   14.020069][    T1] Loading compiled-in X.509 certificates
+[   14.031543][    T1] Loaded X.509 cert 'Build time autogenerated kernel key: 2d553f2396bceba4be328de3fad0b481a51ca3cf'
+[   14.045807][    T1] zswap: loaded using pool lzo/zbud
+[   14.257081][    T1] debug_vm_pgtable: [debug_vm_pgtable         ]: Validating architecture page table helpers
+[   16.606589][    T1] Key type .fscrypt registered
+[   16.611425][    T1] Key type fscrypt-provisioning registered
+[   16.624007][    T1] kAFS: Red Hat AFS client v0.1 registering.
+[   16.646715][    T1] Btrfs loaded, assert=on, ref-verify=on, zoned=yes, fsverity=yes
+[   16.656542][    T1] Key type big_key registered
+[   16.664108][    T1] Key type encrypted registered
+[   16.669211][    T1] ima: No TPM chip found, activating TPM-bypass!
+[   16.675572][    T1] Loading compiled-in module X.509 certificates
+[   16.684589][    T1] Loaded X.509 cert 'Build time autogenerated kernel key: 2d553f2396bceba4be328de3fad0b481a51ca3cf'
+[   16.695647][    T1] ima: Allocated hash algorithm: sha256
+[   16.701654][    T1] ima: No architecture policies found
+[   16.707848][    T1] evm: Initialising EVM extended attributes:
+[   16.714189][    T1] evm: security.selinux (disabled)
+[   16.719369][    T1] evm: security.SMACK64
+[   16.723503][    T1] evm: security.SMACK64EXEC
+[   16.728365][    T1] evm: security.SMACK64TRANSMUTE
+[   16.733278][    T1] evm: security.SMACK64MMAP
+[   16.737801][    T1] evm: security.apparmor (disabled)
+[   16.742978][    T1] evm: security.ima
+[   16.746763][    T1] evm: security.capability
+[   16.751272][    T1] evm: HMAC attrs: 0x1
+[   16.757582][    T1] PM:   Magic number: 11:141:828
+[   16.762692][    T1] video4linux v4l-touch6: hash matches
+[   16.768621][    T1] tty ptyt8: hash matches
+[   16.772947][    T1] tty ptyqb: hash matches
+[   16.779976][    T1] printk: console [netcon0] enabled
+[   16.785201][    T1] netconsole: network logging started
+[   16.791177][    T1] gtp: GTP module loaded (pdp ctx size 104 bytes)
+[   16.799026][    T1] rdma_rxe: loaded
+[   16.803522][    T1] cfg80211: Loading compiled-in X.509 certificates for regulatory database
+[   16.814312][    T1] Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
+[   16.821808][    T1] clk: Disabling unused clocks
+[   16.822972][ T2520] platform regulatory.0: Direct firmware load for regulatory.db failed with error -2
+[   16.826718][    T1] ALSA device list:
+[   16.836181][ T2520] platform regulatory.0: Falling back to sysfs fallback for: regulatory.db
+[   16.849196][    T1]   #0: Dummy 1
+[   16.852687][    T1]   #1: Loopback 1
+[   16.856406][    T1]   #2: Virtual MIDI Card 1
+[   16.864429][    T1] md: Waiting for all devices to be available before autodetect
+[   16.872287][    T1] md: If you don't use raid, use raid=noautodetect
+[   16.878935][    T1] md: Autodetecting RAID arrays.
+[   16.883975][    T1] md: autorun ...
+[   16.887676][    T1] md: ... autorun DONE.
+[   16.961157][    T1] EXT4-fs (sda1): mounted filesystem 5941fea2-f5fa-4b4e-b5ef-9af118b27b95 ro with ordered data mode. Quota mode: none.
+[   16.973957][    T1] VFS: Mounted root (ext4 filesystem) readonly on device 8:1.
+[   17.007193][    T1] devtmpfs: mounted
+[   17.026225][    T1] Freeing unused kernel image (initmem) memory: 2884K
+[   17.033318][    T1] Write protecting the kernel read-only data: 196608k
+[   17.044849][    T1] Freeing unused kernel image (rodata/data gap) memory: 1780K
+[   17.152701][    T1] x86/mm: Checked W+X mappings: passed, no W+X pages found.
+[   17.165765][    T1] Failed to set sysctl parameter 'max_rcu_stall_to_panic=1': parameter not found
+[   17.175611][    T1] Run /sbin/init as init process
+[   17.221897][    T1] ------------[ cut here ]------------
+[   17.227549][    T1] WARNING: CPU: 1 PID: 1 at security/integrity/iint.c:85 integrity_inode_get+0x499/0x580
+[   17.237529][    T1] Modules linked in:
+[   17.241431][    T1] CPU: 1 PID: 1 Comm: swapper/0 Not tainted 6.6.0-rc4-syzkaller-00001-g79be50b1a644 #0
+[   17.251093][    T1] Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/06/2023
+[   17.261192][    T1] RIP: 0010:integrity_inode_get+0x499/0x580
+[   17.267086][    T1] Code: eb 11 e8 ba 30 8c fd 48 c7 c7 60 e4 92 8d e8 be 1e d6 06 4c 89 e0 48 83 c4 18 5b 41 5c 41 5d 41 5e 41 5f 5d c3 e8 97 30 8c fd <0f> 0b 31 db e9 b0 fd ff ff 44 89 e9 80 e1 07 80 c1 03 38 c1 0f 8c
+[   17.287095][    T1] RSP: 0000:ffffc900000678f0 EFLAGS: 00010293
+[   17.293214][    T1] RAX: ffffffff8401db19 RBX: 00000000ffffffff RCX: ffff888015e58000
+[   17.301239][    T1] RDX: 0000000000000000 RSI: 00000000ffffffff RDI: 0000000000000001
+[   17.309277][    T1] RBP: ffff88801db8aad8 R08: ffffffff8401d8c4 R09: 0000000000000000
+[   17.317271][    T1] R10: ffff88802871d088 R11: ffffed10050e3a13 R12: ffff88802871d000
+[   17.325268][    T1] R13: ffff88802871d0d0 R14: dffffc0000000000 R15: ffff88801db8aab0
+[   17.333277][    T1] FS:  0000000000000000(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
+[   17.342239][    T1] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   17.348852][    T1] CR2: 0000000000000000 CR3: 000000000d130000 CR4: 00000000003506e0
+[   17.356912][    T1] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[   17.364907][    T1] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[   17.372924][    T1] Call Trace:
+[   17.376200][    T1]  <TASK>
+[   17.379331][    T1]  ? __warn+0x162/0x4a0
+[   17.383486][    T1]  ? integrity_inode_get+0x499/0x580
+[   17.388813][    T1]  ? report_bug+0x2b3/0x500
+[   17.393312][    T1]  ? integrity_inode_get+0x499/0x580
+[   17.398712][    T1]  ? handle_bug+0x3d/0x70
+[   17.403043][    T1]  ? exc_invalid_op+0x1a/0x50
+[   17.407747][    T1]  ? asm_exc_invalid_op+0x1a/0x20
+[   17.412768][    T1]  ? integrity_inode_get+0x244/0x580
+[   17.418159][    T1]  ? integrity_inode_get+0x499/0x580
+[   17.423885][    T1]  ? integrity_inode_get+0x499/0x580
+[   17.429210][    T1]  process_measurement+0x44d/0x1cf0
+[   17.434430][    T1]  ? ima_file_mmap+0x2b0/0x2b0
+[   17.439238][    T1]  ? lockdep_hardirqs_on_prepare+0x43c/0x7a0
+[   17.445312][    T1]  ? print_irqtrace_events+0x220/0x220
+[   17.450839][    T1]  ? smack_current_getsecid_subj+0x22/0xf0
+[   17.456665][    T1]  ima_bprm_check+0x128/0x2b0
+[   17.461376][    T1]  ? ima_file_mprotect+0x630/0x630
+[   17.466596][    T1]  ? tomoyo_bprm_check_security+0x157/0x170
+[   17.472718][    T1]  ? bpf_lsm_bprm_check_security+0x9/0x10
+[   17.478532][    T1]  bprm_execve+0x8c7/0x17c0
+[   17.483078][    T1]  ? alloc_bprm+0x900/0x900
+[   17.487748][    T1]  ? copy_string_kernel+0x1c9/0x1f0
+[   17.492960][    T1]  kernel_execve+0x8ea/0xa10
+[   17.497605][    T1]  ? rest_init+0x300/0x300
+[   17.502038][    T1]  kernel_init+0xde/0x2a0
+[   17.506364][    T1]  ret_from_fork+0x48/0x80
+[   17.510808][    T1]  ? rest_init+0x300/0x300
+[   17.515229][    T1]  ret_from_fork_asm+0x11/0x20
+[   17.520045][    T1]  </TASK>
+[   17.523071][    T1] Kernel panic - not syncing: kernel: panic_on_warn set ...
+[   17.530373][    T1] CPU: 1 PID: 1 Comm: swapper/0 Not tainted 6.6.0-rc4-syzkaller-00001-g79be50b1a644 #0
+[   17.540081][    T1] Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/06/2023
+[   17.550128][    T1] Call Trace:
+[   17.553400][    T1]  <TASK>
+[   17.556320][    T1]  dump_stack_lvl+0x1e7/0x2d0
+[   17.561004][    T1]  ? nf_tcp_handle_invalid+0x650/0x650
+[   17.566476][    T1]  ? panic+0x770/0x770
+[   17.570546][    T1]  ? vscnprintf+0x5d/0x80
+[   17.574964][    T1]  panic+0x30f/0x770
+[   17.578877][    T1]  ? __warn+0x171/0x4a0
+[   17.583027][    T1]  ? __memcpy_flushcache+0x2b0/0x2b0
+[   17.588307][    T1]  ? ret_from_fork_asm+0x11/0x20
+[   17.593262][    T1]  __warn+0x314/0x4a0
+[   17.597275][    T1]  ? integrity_inode_get+0x499/0x580
+[   17.602597][    T1]  report_bug+0x2b3/0x500
+[   17.606935][    T1]  ? integrity_inode_get+0x499/0x580
+[   17.612218][    T1]  handle_bug+0x3d/0x70
+[   17.616365][    T1]  exc_invalid_op+0x1a/0x50
+[   17.620862][    T1]  asm_exc_invalid_op+0x1a/0x20
+[   17.625711][    T1] RIP: 0010:integrity_inode_get+0x499/0x580
+[   17.631598][    T1] Code: eb 11 e8 ba 30 8c fd 48 c7 c7 60 e4 92 8d e8 be 1e d6 06 4c 89 e0 48 83 c4 18 5b 41 5c 41 5d 41 5e 41 5f 5d c3 e8 97 30 8c fd <0f> 0b 31 db e9 b0 fd ff ff 44 89 e9 80 e1 07 80 c1 03 38 c1 0f 8c
+[   17.651202][    T1] RSP: 0000:ffffc900000678f0 EFLAGS: 00010293
+[   17.657365][    T1] RAX: ffffffff8401db19 RBX: 00000000ffffffff RCX: ffff888015e58000
+[   17.665448][    T1] RDX: 0000000000000000 RSI: 00000000ffffffff RDI: 0000000000000001
+[   17.673405][    T1] RBP: ffff88801db8aad8 R08: ffffffff8401d8c4 R09: 0000000000000000
+[   17.681392][    T1] R10: ffff88802871d088 R11: ffffed10050e3a13 R12: ffff88802871d000
+[   17.689449][    T1] R13: ffff88802871d0d0 R14: dffffc0000000000 R15: ffff88801db8aab0
+[   17.697440][    T1]  ? integrity_inode_get+0x244/0x580
+[   17.702744][    T1]  ? integrity_inode_get+0x499/0x580
+[   17.708088][    T1]  process_measurement+0x44d/0x1cf0
+[   17.713299][    T1]  ? ima_file_mmap+0x2b0/0x2b0
+[   17.718152][    T1]  ? lockdep_hardirqs_on_prepare+0x43c/0x7a0
+[   17.724212][    T1]  ? print_irqtrace_events+0x220/0x220
+[   17.729771][    T1]  ? smack_current_getsecid_subj+0x22/0xf0
+[   17.735568][    T1]  ima_bprm_check+0x128/0x2b0
+[   17.740240][    T1]  ? ima_file_mprotect+0x630/0x630
+[   17.745342][    T1]  ? tomoyo_bprm_check_security+0x157/0x170
+[   17.751221][    T1]  ? bpf_lsm_bprm_check_security+0x9/0x10
+[   17.756946][    T1]  bprm_execve+0x8c7/0x17c0
+[   17.761458][    T1]  ? alloc_bprm+0x900/0x900
+[   17.765952][    T1]  ? copy_string_kernel+0x1c9/0x1f0
+[   17.771134][    T1]  kernel_execve+0x8ea/0xa10
+[   17.775738][    T1]  ? rest_init+0x300/0x300
+[   17.780153][    T1]  kernel_init+0xde/0x2a0
+[   17.784472][    T1]  ret_from_fork+0x48/0x80
+[   17.788876][    T1]  ? rest_init+0x300/0x300
+[   17.793276][    T1]  ret_from_fork_asm+0x11/0x20
+[   17.798036][    T1]  </TASK>
+[   17.801282][    T1] Kernel Offset: disabled
+[   17.805673][    T1] Rebooting in 86400 seconds..
 
-If you see 2.1.4.2.2 Non-volatile requirements in the NVMe spec, it 
-implies that the FUA bit or a flush command is required for persistence.
 
-In 4.29.2 Atomic write operations that do not complete in SBC-4, we are 
-told that atomic writes may pend in the device volatile cache and no 
-atomic write data will be written if a power failure causes loss of data 
-from the write.
+syzkaller build log:
+go env (err=<nil>)
+GO111MODULE="auto"
+GOARCH="amd64"
+GOBIN=""
+GOCACHE="/syzkaller/.cache/go-build"
+GOENV="/syzkaller/.config/go/env"
+GOEXE=""
+GOEXPERIMENT=""
+GOFLAGS=""
+GOHOSTARCH="amd64"
+GOHOSTOS="linux"
+GOINSECURE=""
+GOMODCACHE="/syzkaller/jobs-2/linux/gopath/pkg/mod"
+GONOPROXY=""
+GONOSUMDB=""
+GOOS="linux"
+GOPATH="/syzkaller/jobs-2/linux/gopath"
+GOPRIVATE=""
+GOPROXY="https://proxy.golang.org,direct"
+GOROOT="/usr/local/go"
+GOSUMDB="sum.golang.org"
+GOTMPDIR=""
+GOTOOLDIR="/usr/local/go/pkg/tool/linux_amd64"
+GOVCS=""
+GOVERSION="go1.20.1"
+GCCGO="gccgo"
+GOAMD64="v1"
+AR="ar"
+CC="gcc"
+CXX="g++"
+CGO_ENABLED="1"
+GOMOD="/syzkaller/jobs-2/linux/gopath/src/github.com/google/syzkaller/go.mod"
+GOWORK=""
+CGO_CFLAGS="-O2 -g"
+CGO_CPPFLAGS=""
+CGO_CXXFLAGS="-O2 -g"
+CGO_FFLAGS="-O2 -g"
+CGO_LDFLAGS="-O2 -g"
+PKG_CONFIG="pkg-config"
+GOGCCFLAGS="-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=0 -fdebug-prefix-map=/tmp/go-build3394607480=/tmp/go-build -gno-record-gcc-switches"
 
-> 
-> I think this would be more friendly towards battery-powered devices
-> (smartphones). On these devices it can be safe to skip fsync() / 
-> fdatasync() if the battery level is high enough.
+git status (err=<nil>)
+HEAD detached at 0b6a67ac4
+nothing to commit, working tree clean
 
-Thanks,
-John
+
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:32: run command via tools/syz-env for best compatibility, see:
+Makefile:33: https://github.com/google/syzkaller/blob/master/docs/contributing.md#using-syz-env
+go list -f '{{.Stale}}' ./sys/syz-sysgen | grep -q false || go install ./sys/syz-sysgen
+make .descriptions
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+bin/syz-sysgen
+touch .descriptions
+GOOS=linux GOARCH=amd64 go build "-ldflags=-s -w -X github.com/google/syzkaller/prog.GitRevision=0b6a67ac4b0dc26f43030c5edd01c9175f13b784 -X 'github.com/google/syzkaller/prog.gitRevisionDate=20230913-073137'" "-tags=syz_target syz_os_linux syz_arch_amd64 " -o ./bin/linux_amd64/syz-fuzzer github.com/google/syzkaller/syz-fuzzer
+GOOS=linux GOARCH=amd64 go build "-ldflags=-s -w -X github.com/google/syzkaller/prog.GitRevision=0b6a67ac4b0dc26f43030c5edd01c9175f13b784 -X 'github.com/google/syzkaller/prog.gitRevisionDate=20230913-073137'" "-tags=syz_target syz_os_linux syz_arch_amd64 " -o ./bin/linux_amd64/syz-execprog github.com/google/syzkaller/tools/syz-execprog
+GOOS=linux GOARCH=amd64 go build "-ldflags=-s -w -X github.com/google/syzkaller/prog.GitRevision=0b6a67ac4b0dc26f43030c5edd01c9175f13b784 -X 'github.com/google/syzkaller/prog.gitRevisionDate=20230913-073137'" "-tags=syz_target syz_os_linux syz_arch_amd64 " -o ./bin/linux_amd64/syz-stress github.com/google/syzkaller/tools/syz-stress
+mkdir -p ./bin/linux_amd64
+gcc -o ./bin/linux_amd64/syz-executor executor/executor.cc \
+	-m64 -O2 -pthread -Wall -Werror -Wparentheses -Wunused-const-variable -Wframe-larger-than=16384 -Wno-stringop-overflow -Wno-array-bounds -Wno-format-overflow -Wno-unused-but-set-variable -Wno-unused-command-line-argument -static-pie -fpermissive -w -DGOOS_linux=1 -DGOARCH_amd64=1 \
+	-DHOSTGOOS_linux=1 -DGIT_REVISION=\"0b6a67ac4b0dc26f43030c5edd01c9175f13b784\"
+
+
+Error text is too large and was truncated, full error text is at:
+https://syzkaller.appspot.com/x/error.txt?x=137bc1b2680000
+
+
+Tested on:
+
+commit:         79be50b1 ima: annotate iint mutex to avoid lockdep fal..
+git tree:       https://github.com/amir73il/linux ima-ovl-fix
+kernel config:  https://syzkaller.appspot.com/x/.config?x=57da1ac039c4c78a
+dashboard link: https://syzkaller.appspot.com/bug?extid=b42fe626038981fb7bfa
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Note: no patches were applied.
