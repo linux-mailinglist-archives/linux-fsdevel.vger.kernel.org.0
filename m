@@ -2,191 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E4E57B9EDD
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Oct 2023 16:15:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6860C7BA33F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Oct 2023 17:52:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231371AbjJEOOn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Oct 2023 10:14:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58328 "EHLO
+        id S235576AbjJEPwz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Oct 2023 11:52:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231479AbjJEOMb (ORCPT
+        with ESMTP id S235610AbjJEPvL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Oct 2023 10:12:31 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0F3624864;
-        Thu,  5 Oct 2023 04:16:05 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id ffacd0b85a97d-32157c8e4c7so861319f8f.1;
-        Thu, 05 Oct 2023 04:16:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696504564; x=1697109364; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xeKrgt2PObn5BYrkIQTlAAhvL5PwerUzmeVsDKTDmUE=;
-        b=Afha9qOj3U8Zm5nXxX+vwj19AxICf4QIeVoVnip40nN40+dXhH4YPbvnFokM6hrKB8
-         0snq3lJd7TPE9I1qRbPoOaNCc4ee8BZfK98WbCCqn/GYxUdfvMPARK+OivDIB14TGMQC
-         NdzATWnTrX8g1aLO+xE/sLZN9esmYTI7g2W020qRTovO8L8u3K1kZ5AXPuAv58+4q7Vd
-         i9oTtgwJWhed/Ydxo50b0oXHbUPr2oHqhtZ3GA3pPuNxKQkiUXNmgCZNgWB5nNcKiPvc
-         v4FvJWO02614bFcT8cybewbu25O1KY62cAhOAUwXc1MGNUp1zAABqJN4xu5cEJs4ySIA
-         08Mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696504564; x=1697109364;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xeKrgt2PObn5BYrkIQTlAAhvL5PwerUzmeVsDKTDmUE=;
-        b=BFZuEbokeghqEQZ7pgu7gg434sf9+QNf5JSmM4Mox5gcgZHxYycr6QQOTU/ygBQRcy
-         Z1lG5VXnz1WgOe+VJIXTZnFF4Zlokgis9WwMG7qF7BHoDKwevX5S7wxYhKzRjZ6oXO+U
-         u2VFtJDeA/6d9ojU+1gavfvAS2nrYaGnH98DFALxfQs7yTikfgcv+v1FU5b5YBB5vnAE
-         GjwKh8R2iofVrVxkffSqgi/t5mpfXEFVSqnVWe4NnRi8Vj+P0BSyFqZ/KYbPBMW+MkzW
-         whI8JxhSvn1ji4COupfohAtU2yZPnezXI6UutyaFKUTvLAu7JD6q4eUEgs+CcyHHU4mt
-         8x2Q==
-X-Gm-Message-State: AOJu0YyEzoVk5Tm13jXKyBOxAT7sgDTVeuQZzPCmnKi93sSwJTTon96o
-        6SL9UQtEg6uL+g0CsErVLcY=
-X-Google-Smtp-Source: AGHT+IFMA1coSmCYvnBs92G91Z67oy5exgUrf/EGcvBwscocCGaLzGjLCqJ6aspz3E4Rn2zHMXBJGQ==
-X-Received: by 2002:adf:edce:0:b0:317:58e4:e941 with SMTP id v14-20020adfedce000000b0031758e4e941mr4679699wro.33.1696504563834;
-        Thu, 05 Oct 2023 04:16:03 -0700 (PDT)
-Received: from amir-ThinkPad-T480.lan ([5.29.249.86])
-        by smtp.gmail.com with ESMTPSA id k15-20020a5d628f000000b003143c9beeaesm1545169wru.44.2023.10.05.04.16.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Oct 2023 04:16:03 -0700 (PDT)
-From:   Amir Goldstein <amir73il@gmail.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Christian Brauner <brauner@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-integrity@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        syzbot+b42fe626038981fb7bfa@syzkaller.appspotmail.com
-Subject: [PATCH] ima: annotate iint mutex to avoid lockdep false positive warnings
-Date:   Thu,  5 Oct 2023 14:15:58 +0300
-Message-Id: <20231005111558.1263671-1-amir73il@gmail.com>
-X-Mailer: git-send-email 2.34.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        Thu, 5 Oct 2023 11:51:11 -0400
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E150A6732
+        for <linux-fsdevel@vger.kernel.org>; Thu,  5 Oct 2023 07:08:15 -0700 (PDT)
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20231005114232epoutp03a36533a7cf81b6232e53c602ab6988f3~LM1tpSYXg2827628276epoutp039
+        for <linux-fsdevel@vger.kernel.org>; Thu,  5 Oct 2023 11:42:32 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20231005114232epoutp03a36533a7cf81b6232e53c602ab6988f3~LM1tpSYXg2827628276epoutp039
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1696506152;
+        bh=RaqlpIsybY7isNdJPZ+dlNkbk//ngeJwiwfFIdHnM4M=;
+        h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
+        b=mnq89GfuFTRMXkwxq48ruvqOjdrYzcIqgI2SdDejt2VarLSFZgPX639StZ5Z7CeF/
+         nkPc+LFnx5LEFqtl8TYNmmZBgT+oKoIk6XNZldhK51R7ddD9QxeEGpTEn4Dbp44B9i
+         DyDKF34yzZrz4gpxfk6qZuuxKRdEjhoIIa2FwftQ=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
+        20231005114231epcas2p1a952d840706a3e01b24bfe4c76f46c5b~LM1tBgJqb0941909419epcas2p1F;
+        Thu,  5 Oct 2023 11:42:31 +0000 (GMT)
+Received: from epsmgec2p1.samsung.com (unknown [182.195.36.88]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4S1V6H2cVQz4x9Pv; Thu,  5 Oct
+        2023 11:42:31 +0000 (GMT)
+X-AuditID: b6c32a43-6f7ff70000002187-97-651ea127e9fc
+Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
+        epsmgec2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        51.97.08583.721AE156; Thu,  5 Oct 2023 20:42:31 +0900 (KST)
+Mime-Version: 1.0
+Subject: RE: [PATCH 01/13] fs/f2fs: Restore the whint_mode mount option
+Reply-To: daejun7.park@samsung.com
+Sender: Daejun Park <daejun7.park@samsung.com>
+From:   Daejun Park <daejun7.park@samsung.com>
+To:     Bart Van Assche <bvanassche@acm.org>, Jens Axboe <axboe@kernel.dk>
+CC:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Daejun Park <daejun7.park@samsung.com>,
+        Seokhwan Kim <sukka.kim@samsung.com>,
+        Yonggil Song <yonggil.song@samsung.com>,
+        Jorn Lee <lunar.lee@samsung.com>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <20230920191442.3701673-2-bvanassche@acm.org>
+X-CPGS-Detection: blocking_info_exchange
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20231005114130epcms2p6dce038397dbb42edad7d8089a17f4bf0@epcms2p6>
+Date:   Thu, 05 Oct 2023 20:41:30 +0900
+X-CMS-MailID: 20231005114130epcms2p6dce038397dbb42edad7d8089a17f4bf0
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+X-CPGSPASS: Y
+X-CPGSPASS: Y
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOJsWRmVeSWpSXmKPExsWy7bCmua76QrlUgz/LeC1W3+1ns5j24Sez
+        xempZ5ksnhxoZ7R4eUjTYtWDcIuVq48CRdbPYrbYe0vbYs/ekywW3dd3sFmcXPGCxWL58X9M
+        Fqs65jJaTD1/hMmB3+PyFW+Py2dLPTat6mTz2H2zgc1jcd9kVo+PT2+xePRtWcXo8XmTXABH
+        VLZNRmpiSmqRQmpecn5KZl66rZJ3cLxzvKmZgaGuoaWFuZJCXmJuqq2Si0+ArltmDtDhSgpl
+        iTmlQKGAxOJiJX07m6L80pJUhYz84hJbpdSClJwC8wK94sTc4tK8dL281BIrQwMDI1OgwoTs
+        jL4Hp1gLdjBVrJ5/mrGBsYOpi5GDQ0LAROLeHKsuRi4OIYEdjBIH/zcyg8R5BQQl/u4Q7mLk
+        5BAWcJeYMes3O4gtJKAksf7iLHaIuJ7ErYdrGEFsNgEdiekn7oPFRQTcJBqu7mIDmcksMJVF
+        YsrdLWwgCQkBXokZ7U9ZIGxpie3Lt4I1cwpYSfTf7YSKa0j8WNbLDGGLStxc/ZYdxn5/bD4j
+        hC0i0XrvLFSNoMSDn7uh4pISt+dugqrPl/h/ZTmUXSOx7cA8KFtf4lrHRrBdvAK+EguO7ASL
+        swioSkx8doAVosZF4t/7H2A3MwvIS2x/OwccJswCmhLrd+lDgk1Z4sgtFogKPomOw3/ZYT5s
+        2PgbK3vHvCdMELaaxLqf65kmMCrPQgT0LCS7ZiHsWsDIvIpRLLWgODc9NdmowBAetcn5uZsY
+        wSlYy3kH45X5//QOMTJxMB5ilOBgVhLhTW+QSRXiTUmsrEotyo8vKs1JLT7EaAr05URmKdHk
+        fGAWyCuJNzSxNDAxMzM0NzI1MFcS573XOjdFSCA9sSQ1OzW1ILUIpo+Jg1OqgSkswVBmVXbA
+        V6l1C6N2r/c8GbApg1fat85M/kvbhgyWqs4YdzH9OwVKjMdPceUpL1iyJ0xpS76h3z1vEbug
+        xcnK1jObA6XV6rLDX35M04jtL1lSn5GdPyv9nujU5aX34riseQvbzbVjSjOn/RTfuGH75ueT
+        lG7s2qAscGa9hOWDwvfPxBfvLtr2S8Q9YMm3fVUuIkEH62dP0byTrPH57Ybn+q8YOwRFxeq5
+        bdQCfvvJ/9sRPePveU2xiXPb705aGXRNckF/Y9neQl4Bharw2z5Hy09vOVc066i4secng+qj
+        SlK8NsUXGg8F1l1WKn3tlmA6Y6tuSNDbRVeFzSzUP4d7lWsvblG8n2on+eqoEktxRqKhFnNR
+        cSIAXgy9j0oEAAA=
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20230920191557epcas2p34a114957acf221c0d8f60acbb3107c77
+References: <20230920191442.3701673-2-bvanassche@acm.org>
+        <20230920191442.3701673-1-bvanassche@acm.org>
+        <CGME20230920191557epcas2p34a114957acf221c0d8f60acbb3107c77@epcms2p6>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_PASS,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-It is not clear that IMA should be nested at all, but as long is it
-measures files both on overlayfs and on underlying fs, we need to
-annotate the iint mutex to avoid lockdep false positives related to
-IMA + overlayfs, same as overlayfs annotates the inode mutex.
 
-Reported-and-tested-by: syzbot+b42fe626038981fb7bfa@syzkaller.appspotmail.com
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
----
+> Restore support for the whint_mode mount option by reverting commit
+> 930e2607638d ("f2fs: remove obsolete whint_mode").
+> 
+> Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+> Cc: Chao Yu <chao@kernel.org>
+> Signed-off-by: Bart Van Assche <bvanassche@acm.org>
 
-Mimi,
-
-Syzbot finally found a reliable reproducer, so it tested this lockdep
-annotation fix and this proves that the warning was a false positive.
-
-Hopefully, this will fix all the different variants of lockdep warnings
-that syzbot reported over time.
-
-Thanks,
-Amir.
-
- security/integrity/iint.c | 48 ++++++++++++++++++++++++++++++---------
- 1 file changed, 37 insertions(+), 11 deletions(-)
-
-diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-index a462df827de2..27ea19fb1f54 100644
---- a/security/integrity/iint.c
-+++ b/security/integrity/iint.c
-@@ -66,9 +66,32 @@ struct integrity_iint_cache *integrity_iint_find(struct inode *inode)
- 	return iint;
- }
- 
--static void iint_free(struct integrity_iint_cache *iint)
-+#define IMA_MAX_NESTING (FILESYSTEM_MAX_STACK_DEPTH+1)
-+
-+/*
-+ * It is not clear that IMA should be nested at all, but as long is it measures
-+ * files both on overlayfs and on underlying fs, we need to annotate the iint
-+ * mutex to avoid lockdep false positives related to IMA + overlayfs.
-+ * See ovl_lockdep_annotate_inode_mutex_key() for more details.
-+ */
-+static inline void iint_lockdep_annotate(struct integrity_iint_cache *iint,
-+					 struct inode *inode)
-+{
-+#ifdef CONFIG_LOCKDEP
-+	static struct lock_class_key iint_mutex_key[IMA_MAX_NESTING];
-+
-+	int depth = inode->i_sb->s_stack_depth;
-+
-+	if (WARN_ON_ONCE(depth < 0 || depth >= IMA_MAX_NESTING))
-+		depth = 0;
-+
-+	lockdep_set_class(&iint->mutex, &iint_mutex_key[depth]);
-+#endif
-+}
-+
-+static void iint_init_always(struct integrity_iint_cache *iint,
-+			     struct inode *inode)
- {
--	kfree(iint->ima_hash);
- 	iint->ima_hash = NULL;
- 	iint->version = 0;
- 	iint->flags = 0UL;
-@@ -80,6 +103,14 @@ static void iint_free(struct integrity_iint_cache *iint)
- 	iint->ima_creds_status = INTEGRITY_UNKNOWN;
- 	iint->evm_status = INTEGRITY_UNKNOWN;
- 	iint->measured_pcrs = 0;
-+	mutex_init(&iint->mutex);
-+	iint_lockdep_annotate(iint, inode);
-+}
-+
-+static void iint_free(struct integrity_iint_cache *iint)
-+{
-+	kfree(iint->ima_hash);
-+	mutex_destroy(&iint->mutex);
- 	kmem_cache_free(iint_cache, iint);
- }
- 
-@@ -104,6 +135,8 @@ struct integrity_iint_cache *integrity_inode_get(struct inode *inode)
- 	if (!iint)
- 		return NULL;
- 
-+	iint_init_always(iint, inode);
-+
- 	write_lock(&integrity_iint_lock);
- 
- 	p = &integrity_iint_tree.rb_node;
-@@ -153,25 +186,18 @@ void integrity_inode_free(struct inode *inode)
- 	iint_free(iint);
- }
- 
--static void init_once(void *foo)
-+static void iint_init_once(void *foo)
- {
- 	struct integrity_iint_cache *iint = (struct integrity_iint_cache *) foo;
- 
- 	memset(iint, 0, sizeof(*iint));
--	iint->ima_file_status = INTEGRITY_UNKNOWN;
--	iint->ima_mmap_status = INTEGRITY_UNKNOWN;
--	iint->ima_bprm_status = INTEGRITY_UNKNOWN;
--	iint->ima_read_status = INTEGRITY_UNKNOWN;
--	iint->ima_creds_status = INTEGRITY_UNKNOWN;
--	iint->evm_status = INTEGRITY_UNKNOWN;
--	mutex_init(&iint->mutex);
- }
- 
- static int __init integrity_iintcache_init(void)
- {
- 	iint_cache =
- 	    kmem_cache_create("iint_cache", sizeof(struct integrity_iint_cache),
--			      0, SLAB_PANIC, init_once);
-+			      0, SLAB_PANIC, iint_init_once);
- 	return 0;
- }
- DEFINE_LSM(integrity) = {
--- 
-2.34.1
-
+Reviewed-by: Daejun Park <daejun7.park@samsung.com>
