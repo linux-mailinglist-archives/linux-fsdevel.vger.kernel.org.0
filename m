@@ -2,65 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A8C977B9E62
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Oct 2023 16:06:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F13717BA31B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Oct 2023 17:51:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231702AbjJEOFy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Oct 2023 10:05:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42798 "EHLO
+        id S234988AbjJEPvz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Oct 2023 11:51:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47726 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231844AbjJEOEM (ORCPT
+        with ESMTP id S234221AbjJEPvC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Oct 2023 10:04:12 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83ACD2755A;
-        Thu,  5 Oct 2023 06:17:23 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id ffacd0b85a97d-325e9cd483eso958992f8f.2;
-        Thu, 05 Oct 2023 06:17:23 -0700 (PDT)
+        Thu, 5 Oct 2023 11:51:02 -0400
+Received: from mail-ua1-x92f.google.com (mail-ua1-x92f.google.com [IPv6:2607:f8b0:4864:20::92f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7EC527561;
+        Thu,  5 Oct 2023 06:22:32 -0700 (PDT)
+Received: by mail-ua1-x92f.google.com with SMTP id a1e0cc1a2514c-7abe4fa15ceso641635241.1;
+        Thu, 05 Oct 2023 06:22:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696511842; x=1697116642; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WXlipJ5qHf8e9WzUIEs4uK8a+42CDw8ODZV/LpXLiL4=;
-        b=IF0b2SjaMzzCsgWmVj3AtXcx2CMEUysJkfnEGYEfOJ+tKcJXkmveIeTvgdDIRSGKUJ
-         0CiGMGwgNCD96lkQSKf7b8bO2Us2VxnxjXiw7DtPCbRTrsgaiCax4zj7Q0kO5XHZFmhF
-         JVPyivfwS4APQDYQADCif43xa9o8Xzj/BN0oG7ZKGBL8Zq0yoj92T55Y4cBizoP0kHIU
-         NK4t0SP/o1Cx2iI3WOlrLJzSMtUefStGZUwMFImQvRKyXzox/wRrVOVNw9CKW60yTMAr
-         xzLyzxg+dOoY7pEUujO//wtZcK/ViQfSm7V3mnxvG15GxrdNimRsz3m3NI2ce9jNvsmy
-         8jcw==
+        d=gmail.com; s=20230601; t=1696512152; x=1697116952; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UgIhftH4G92rOIHpCooz7/tVkwHfE/wjVpyKVopiGpI=;
+        b=ntcgJJ1UNSxJGXx6LBJ/OsMYY2jFeoJxeNiZeTCdNgTCd2qapsg3UTRAob6ViImc8i
+         L57KWropAC/BWrXzX0istrLxOPSZKQV+Plog0HGevXapNYQ3nZXayP3Xo49YWd8UAYes
+         OLYR5SZUIwa26OmbVuGo/zqH25egNSI72zCnpP6vIV5t9yVoEsSSk6PdQROTm33zCtXP
+         LnwYUqMYpl7IHLjkSG+t78LsLHihoAvHjYJLslxhTFkkMUzvryfziX9PMAWCE+UG79Pw
+         m6TP715KmeTAiRqrSopjBkuMonXFGGcSgVL1ceCSF33jzZu1POXAya8S8O+GwBc+UH7i
+         qvHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696511842; x=1697116642;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WXlipJ5qHf8e9WzUIEs4uK8a+42CDw8ODZV/LpXLiL4=;
-        b=V49zuU2fAqwFHawcTrlml9mKIm/y+3xjxy+3F+kFENks2LrorfR2g77EkOLPKqxcYS
-         E/NaCgPbZ0ts8uGc2obe3Yqvc3p7OeXfjV/mrYmNobPKfiHXo31wf4uNwaCpi11pTkU/
-         2TrXL0SoEtSnpk2EbskEbV3wjM8+Y+ZFuWGFlAAGVDRfuJv+VI+/itUvhXpXdIc/Xovo
-         GVKM6BmgKkutZwyne2LLQF3poeOVNMhoYGSLJC9ttNAxvA5v1DmZyUS+CoG+lQ4sX+TQ
-         dGzDH9Z/jzD/H/UoVezvJjqBjpj0Dh2tqS8Fbl7sbaj4LjDdNakg11gT6UmYSKjx5lUu
-         b/LA==
-X-Gm-Message-State: AOJu0YwbArR5SoPpy2EVnO/eJK13hKPKavsNccRtKcsm8nuEXrserar3
-        jI3vVtFhiObZ6G0IkzKqSibVjraDvjo=
-X-Google-Smtp-Source: AGHT+IEUVLYwY4LlX80eXxxgob1v9hgV4vJIQsGoUZs0H1UUoMKsIwxyGfugC8SCaot2oWvzkKyceQ==
-X-Received: by 2002:a5d:4a05:0:b0:31f:a277:4cde with SMTP id m5-20020a5d4a05000000b0031fa2774cdemr5183667wrq.43.1696511841724;
-        Thu, 05 Oct 2023 06:17:21 -0700 (PDT)
-Received: from amir-ThinkPad-T480.lan ([5.29.249.86])
-        by smtp.gmail.com with ESMTPSA id c3-20020adfed83000000b003250aec5e97sm1799762wro.4.2023.10.05.06.17.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Oct 2023 06:17:21 -0700 (PDT)
-From:   Amir Goldstein <amir73il@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-unionfs@vger.kernel.org
-Subject: [GIT PULL] overlayfs fixes for 6.6-rc5
-Date:   Thu,  5 Oct 2023 16:17:17 +0300
-Message-Id: <20231005131717.1311531-1-amir73il@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1696512152; x=1697116952;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UgIhftH4G92rOIHpCooz7/tVkwHfE/wjVpyKVopiGpI=;
+        b=pyHY07xj79IwqF2iZzUEIEAjGz39SF/dIDjF41p2MK5IRZqns3JdqhZSyG8/XkqNlc
+         ik8zsWHjJx/ptnqefXbSYppTy1O+H95eLhncPPRXOixvKNHyqmdsbD8PDRG2zdW+ye5q
+         j4KfywSReHNjjmx6qQI2FEqFNuxEqc/7GbVjjcNPwc4KKBIIGnMXdthJfPHicg0SDgv8
+         gOw+R9vd9khpRY4g21yxHuc2hX4XjRJ71l/LF/L1Uqh7VF79hIbdKMTprSuaJAZRJ4pq
+         YriGSVCZKFrxn4WCAeqEcqpvsVMN5RN4aHSrawSxXqVthGggVKiHkCTSw9XqVsx+EbxG
+         6DyQ==
+X-Gm-Message-State: AOJu0Yx5pMlQQLuZgWDjhMD8qZjC5w3kCxZTK4DGsOSGC9QVvrcoWXnA
+        3jj+4evGWbrPun1T+AyI+6Y2CpiGtIJD6Yl9a0Q=
+X-Google-Smtp-Source: AGHT+IEAaoXvXyAHbtej0tnlxnEefZxsl35/d3/bkcRzxXHlDTbd63Hu1Wx/seqMYJSPAmspgFgWwlCBgqV9VufIEb4=
+X-Received: by 2002:a05:6122:1817:b0:496:80b6:2fd1 with SMTP id
+ ay23-20020a056122181700b0049680b62fd1mr807887vkb.5.1696512151811; Thu, 05 Oct
+ 2023 06:22:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CAOQ4uxhbNyDzf0_fFh1Yy5Kz2Coz=gTrfOtsmteE0=ncibBnpw@mail.gmail.com>
+ <0000000000001081fc0606f52ed9@google.com> <CAOQ4uxjw_XztGxrhR9LWtz_SszdURkM+Add2q8A9BAt0z901kA@mail.gmail.com>
+ <25f6950a67be079e32ad5b4139b1e89e367a91ba.camel@linux.ibm.com>
+In-Reply-To: <25f6950a67be079e32ad5b4139b1e89e367a91ba.camel@linux.ibm.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 5 Oct 2023 16:22:20 +0300
+Message-ID: <CAOQ4uxgfJ4owqzh99t65MyT5A99BbwkLQ-sHumCUWyqSw-Rd5g@mail.gmail.com>
+Subject: Re: [syzbot] [integrity] [overlayfs] possible deadlock in
+ mnt_want_write (2)
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     syzbot <syzbot+b42fe626038981fb7bfa@syzkaller.appspotmail.com>,
+        hdanton@sina.com, linux-fsdevel@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-unionfs@vger.kernel.org,
+        miklos@szeredi.hu, mszeredi@redhat.com,
+        syzbot@syzkalhler.appspotmail.com, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
         RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
@@ -71,66 +77,40 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+On Thu, Oct 5, 2023 at 4:14=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.com> wro=
+te:
+>
+> On Thu, 2023-10-05 at 13:26 +0300, Amir Goldstein wrote:
+> > On Thu, Oct 5, 2023 at 12:59=E2=80=AFPM syzbot
+> > <syzbot+b42fe626038981fb7bfa@syzkaller.appspotmail.com> wrote:
+> > >
+> > > Hello,
+> > >
+> > > syzbot tried to test the proposed patch but the build/boot failed:
+> >
+> > My mistake. Please try again:
+> >
+> > #syz test: https://github.com/amir73il/linux ima-ovl-fix
+>
+> Thanks, Amir.   "mutext_init(&iint->mutex); moved, but the status
+> initialization lines 161-166 were dropped.   They're needed by IMA-
+> appraisal for signature verification.
+>
+>         iint->ima_file_status =3D INTEGRITY_UNKNOWN;
+>         iint->ima_mmap_status =3D INTEGRITY_UNKNOWN;
+>         iint->ima_bprm_status =3D INTEGRITY_UNKNOWN;
+>         iint->ima_read_status =3D INTEGRITY_UNKNOWN;
+>         iint->ima_creds_status =3D INTEGRITY_UNKNOWN;
+>         iint->evm_status =3D INTEGRITY_UNKNOWN;
+>
 
-Please pull overlayfs fixes for 6.6-rc5.
+They are dropped from iint_init_once()
+They are not needed there because there are now set
+in every iint allocation in iint_init_always()
+instead of being set in iint_free()
 
-This branch has been sitting in linux-next for a couple of days and
-it has gone through the usual overlayfs test routines.
-
-The branch merges cleanly with master branch of the moment.
+This is the standard practice for slab objects.
+See inode_init_once()/inode_init_always().
 
 Thanks,
 Amir.
-
-----------------------------------------------------------------
-The following changes since commit 8a749fd1a8720d4619c91c8b6e7528c0a355c0aa:
-
-  Linux 6.6-rc4 (2023-10-01 14:15:13 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/overlayfs/vfs.git ovl-fixes-6.6-rc5
-
-for you to fetch changes up to c7242a45cb8cad5b6cd840fd4661315b45b1e841:
-
-  ovl: fix NULL pointer defer when encoding non-decodable lower fid (2023-10-03 09:24:11 +0300)
-
-----------------------------------------------------------------
-overlayfs fixes for 6.6-rc5:
-
-- Fix for file reference leak regression from v6.6-rc2
-
-- Fix for NULL pointer deref regression from v6.6-rc1
-
-- Fixes for RCU-walk race regressions from v6.5:
-
-   Two of the fixes were taken from Al's RCU pathwalk race fixes series
-   with his concent [1].
-
-   Note that unlike most of Al's series, these two patches are not about
-   racing with ->kill_sb() and they are also very recent regressions from
-   v6.5, so I think it's worth getting them into v6.5.y.
-
-   There is also a fix for an RCU pathwalk race with ->kill_sb(), which
-   may have been solved in vfs generic code as you suggested, but it also
-   rids overlayfs from a nasty hack, so I think it's worth anyway.
-
-[1] https://lore.kernel.org/linux-fsdevel/20231003204749.GA800259@ZenIV/
-
-----------------------------------------------------------------
-Al Viro (2):
-      ovl: move freeing ovl_entry past rcu delay
-      ovl: fetch inode once in ovl_dentry_revalidate_common()
-
-Amir Goldstein (3):
-      ovl: fix file reference leak when submitting aio
-      ovl: make use of ->layers safe in rcu pathwalk
-      ovl: fix NULL pointer defer when encoding non-decodable lower fid
-
- fs/overlayfs/export.c    |  2 +-
- fs/overlayfs/file.c      |  2 --
- fs/overlayfs/ovl_entry.h | 10 +---------
- fs/overlayfs/params.c    | 17 +++++++++--------
- fs/overlayfs/super.c     | 27 +++++++++++++++++----------
- 5 files changed, 28 insertions(+), 30 deletions(-)
