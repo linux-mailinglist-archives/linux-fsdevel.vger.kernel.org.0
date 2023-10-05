@@ -2,123 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EF16E7BA191
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Oct 2023 16:53:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB4547BA53C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Oct 2023 18:15:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233419AbjJEOpb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Oct 2023 10:45:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45014 "EHLO
+        id S240026AbjJEQPV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Oct 2023 12:15:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237013AbjJEOnS (ORCPT
+        with ESMTP id S241112AbjJEQNk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Oct 2023 10:43:18 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BA8C919DA;
-        Thu,  5 Oct 2023 07:19:54 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68249C43397;
-        Thu,  5 Oct 2023 14:19:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696515594;
-        bh=ioyqBCfpdobqYs4clL9FnA6RQauvcrnCtnIY+oIl3ck=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GIsqUURLhZOqQrT8yqDukkzp/1YgQY1ROgEwjUz57ZEPdfgKZjPe426e4Fvn9zz7V
-         5W2kN9i08ucNfL5N+zAMlaSyp35xM/kwIaIbVQL6N/mlLN7VZ4IGjV/aT+Wwn0aTdG
-         ThFUH4f6FgDmOrP/QtlK0dKAxs3L1IeEdUVP8pg8tbdFOGa+aAAHvdkLNE/nULGPtR
-         fNeN/434onptlavHdk5MRITgZEDtzW8ndfWhgGhqrybKCp5PRj2ouvdOD/kVIpQNYX
-         t6XUrQ61pLOADBtGOxtpZXguSf4mEm4rZYxkKAxyrAbLF4J01ZbUavemlx5xZqX5VV
-         LvMj+j5h0/0UQ==
-Date:   Thu, 5 Oct 2023 15:19:48 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Joey Gouly <joey.gouly@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, nd@arm.com,
-        akpm@linux-foundation.org, aneesh.kumar@linux.ibm.com,
-        catalin.marinas@arm.com, dave.hansen@linux.intel.com,
-        maz@kernel.org, oliver.upton@linux.dev, shuah@kernel.org,
-        will@kernel.org, kvmarm@lists.linux.dev,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v1 07/20] arm64: enable the Permission Overlay Extension
- for EL0
-Message-ID: <e857348d-2726-45cb-b088-0f6368b44514@sirena.org.uk>
-References: <20230927140123.5283-1-joey.gouly@arm.com>
- <20230927140123.5283-8-joey.gouly@arm.com>
+        Thu, 5 Oct 2023 12:13:40 -0400
+Received: from mail-ua1-x935.google.com (mail-ua1-x935.google.com [IPv6:2607:f8b0:4864:20::935])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32CADAD17;
+        Thu,  5 Oct 2023 02:36:16 -0700 (PDT)
+Received: by mail-ua1-x935.google.com with SMTP id a1e0cc1a2514c-7b07c3eaf9bso291393241.3;
+        Thu, 05 Oct 2023 02:36:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1696498575; x=1697103375; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=miaHJCTsklS6Zbf74LdxRTHsnukEGfuauknHlldmnMc=;
+        b=N4af9kbi6Y+6dW9LsItj5fS5+DyE6zDpoaXlRE63hcUqzTAjlFVy++6BlgMNLc7eoc
+         9aEa02NdBFigDUFax26K4zjqVc1R9QevHORZNCEceZgUNfBD1PoKFZXlmUsuKvcLJB2z
+         Wzq25anMl7eXz6LpGSIH0XC1N/yUmNm0EjsFMP+KHLm7UWHZRh9zSI0p3N9zEQZ5T2pR
+         jH1t6eglUTla2oo0U+yFQhjcilqGxdoULd5rEZUjwZ4FX+CfYcsYszoomCu0204u545P
+         Qb/9Kwa9NQ6OpKIeEhQ8uk5o6pzGL3Q4OAVhpR88DQEJOju8mPcHgkmd00fDwrjBGC1S
+         gpEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696498575; x=1697103375;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=miaHJCTsklS6Zbf74LdxRTHsnukEGfuauknHlldmnMc=;
+        b=QFvdY/FyxkbAHDFTe1d61HEPBpvKjezRu16VHZ1FP1fyDKMAWt83XyBW9xdUAkDVMj
+         ucMPRNA+c3b6g2G37Yd6WOGa0fnzrs80dP1WOPrxzb+dZ7x7zPDDWSa6yIx9joVLJ/QK
+         i4g00/bNMTce7wD4UbcH068mTjj+CppEbfVleN9x3P+H+zshm9b2EOLRSDvOZhrVvbKF
+         xMNcM3ZBckOF8jrS6J4qMLGqjOA298urN61hUZ5d98tb7i2iHI6Vrqb6xbh7pIw3R5q7
+         KiNcTC7MCaYHwdwGx4HQZ0OOsTYld6EKj/F/nd4CtRIlq/nofxCN7OUVGiCNTj5krigO
+         Yerw==
+X-Gm-Message-State: AOJu0YyLqGrprqjZuIxtUDycFcIjMJ0drgO0UZTB6ivbyzVEi4eo+C3i
+        IgxweggwkHEHPOg5r2ppndtAk2CBYx7YCtTLmSw=
+X-Google-Smtp-Source: AGHT+IHEmB4hPkLYLPKiUKYdFA8EWWzm/1bKRsSKow5Ph7YiXuo2ENvDu/sgoJxWbdjYFoZ5NkuSiVgyiunS+gZFpDQ=
+X-Received: by 2002:a67:f4c9:0:b0:44d:3aba:b03d with SMTP id
+ s9-20020a67f4c9000000b0044d3abab03dmr4641256vsn.17.1696498575187; Thu, 05 Oct
+ 2023 02:36:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="8+AeTyjR3Dtj+J8t"
-Content-Disposition: inline
-In-Reply-To: <20230927140123.5283-8-joey.gouly@arm.com>
-X-Cookie: Avoid contact with eyes.
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+References: <00000000000067d24205c4d0e599@google.com> <000000000000accfd30606e6bcd0@google.com>
+In-Reply-To: <000000000000accfd30606e6bcd0@google.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 5 Oct 2023 12:36:04 +0300
+Message-ID: <CAOQ4uxhbNyDzf0_fFh1Yy5Kz2Coz=gTrfOtsmteE0=ncibBnpw@mail.gmail.com>
+Subject: Re: [syzbot] [integrity] [overlayfs] possible deadlock in
+ mnt_want_write (2)
+To:     syzbot <syzbot+b42fe626038981fb7bfa@syzkaller.appspotmail.com>
+Cc:     hdanton@sina.com, linux-fsdevel@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-unionfs@vger.kernel.org,
+        miklos@szeredi.hu, mszeredi@redhat.com,
+        syzbot@syzkalhler.appspotmail.com, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk, zohar@linux.ibm.com, zohar@us.ibm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=0.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_BLOCKED,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,
+        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, Oct 4, 2023 at 7:45=E2=80=AFPM syzbot
+<syzbot+b42fe626038981fb7bfa@syzkaller.appspotmail.com> wrote:
+>
+> syzbot has bisected this issue to:
+>
+> commit 708fa01597fa002599756bf56a96d0de1677375c
+> Author: Miklos Szeredi <mszeredi@redhat.com>
+> Date:   Mon Apr 12 10:00:37 2021 +0000
+>
+>     ovl: allow upperdir inside lowerdir
+>
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D17ad11b268=
+0000
+> start commit:   3aba70aed91f Merge tag 'gpio-fixes-for-v6.6-rc3' of git:/=
+/..
+> git tree:       upstream
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D146d11b268=
+0000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D106d11b268000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3De4ca82a1bedd3=
+7e4
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3Db42fe626038981f=
+b7bfa
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D1304fba6680=
+000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D13cec0dc68000=
+0
+>
+> Reported-by: syzbot+b42fe626038981fb7bfa@syzkaller.appspotmail.com
+> Fixes: 708fa01597fa ("ovl: allow upperdir inside lowerdir")
+>
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisect=
+ion
 
---8+AeTyjR3Dtj+J8t
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Sep 27, 2023 at 03:01:10PM +0100, Joey Gouly wrote:
-
-> --- a/arch/arm64/kernel/cpufeature.c
-> +++ b/arch/arm64/kernel/cpufeature.c
-> @@ -400,6 +400,7 @@ static const struct arm64_ftr_bits ftr_id_aa64mmfr2[]=
- =3D {
->  };
-> =20
->  static const struct arm64_ftr_bits ftr_id_aa64mmfr3[] =3D {
-> +	ARM64_FTR_BITS(FTR_VISIBLE, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64MMFR3=
-_EL1_S1POE_SHIFT, 4, 0),
->  	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64MMFR3_=
-EL1_S1PIE_SHIFT, 4, 0),
->  	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64MMFR3_=
-EL1_TCRX_SHIFT, 4, 0),
->  	ARM64_FTR_END,
-> @@ -2220,6 +2221,12 @@ static void cpu_enable_mops(const struct arm64_cpu=
-_capabilities *__unused)
->  	sysreg_clear_set(sctlr_el1, 0, SCTLR_EL1_MSCEn);
->  }
-> =20
-> +static void cpu_enable_poe(const struct arm64_cpu_capabilities *__unused)
-> +{
-> +	sysreg_clear_set(REG_TCR2_EL1, 0, TCR2_EL1x_E0POE);
-> +	sysreg_clear_set(CPACR_EL1, 0, CPACR_ELx_E0POE);
-> +}
-> +
->  /* Internal helper functions to match cpu capability type */
->  static bool
->  cpucap_late_cpu_optional(const struct arm64_cpu_capabilities *cap)
-> @@ -2724,6 +2731,7 @@ static const struct arm64_cpu_capabilities arm64_fe=
-atures[] =3D {
->  		.capability =3D ARM64_HAS_S1POE,
->  		.type =3D ARM64_CPUCAP_BOOT_CPU_FEATURE,
->  		.matches =3D has_cpuid_feature,
-> +		.cpu_enable =3D cpu_enable_poe,
->  		ARM64_CPUID_FIELDS(ID_AA64MMFR3_EL1, S1POE, IMP)
->  	},
->  	{},
-> diff --git a/arch/arm64/kernel/cpuinfo.c b/arch/arm64/kernel/cpuinfo.c
-
-I'd also expect to see an update to arm64_elf_hwcaps[]?
-
---8+AeTyjR3Dtj+J8t
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmUexgMACgkQJNaLcl1U
-h9DdPQf+MoPCKizqQ2zaY8Y1D5V8WlIwkYZFtGS3u88oO01OvQ1NPnw0FIt5QylA
-Av4l9yfYPeZEMD7/ccIalJdq7OZxyZe6w2AZi9vmY/FQvckPiy8my6ylpWo/E5Sb
-zy9JRySG9T492QO1sMtK7SQFtqB8fVStFx1epxfYkC6Qk2HvvY8vtRgugfbjr07d
-JaAUguuI3036XzLPLPtCjN7pVts/CJzbRWss8plygg6ayJ9Unum/Fledih0ST4FK
-tZlXrfrYID19A0I1VckKNazmKaJBUXn4flaOOkUn0dmTxS67krjSK1sVxMyW7cUG
-N7vWOPNUlOm8odz/vH7c+5G0YiihgA==
-=Uz9V
------END PGP SIGNATURE-----
-
---8+AeTyjR3Dtj+J8t--
+#syz test: https://github.com/amir73il/linux ima-ovl-fix
