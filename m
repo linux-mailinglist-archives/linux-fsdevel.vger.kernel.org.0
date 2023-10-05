@@ -2,128 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 157CE7BA7BF
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Oct 2023 19:18:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A847C7BA7C6
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Oct 2023 19:19:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229705AbjJERRd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Oct 2023 13:17:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34950 "EHLO
+        id S230249AbjJERSh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Oct 2023 13:18:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231578AbjJERQP (ORCPT
+        with ESMTP id S230466AbjJERRt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Oct 2023 13:16:15 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EEED3C3D
-        for <linux-fsdevel@vger.kernel.org>; Thu,  5 Oct 2023 10:08:49 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F182C433C9;
-        Thu,  5 Oct 2023 17:08:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696525728;
-        bh=d84NB+X9d1rQy0bV3Ua2t/Ly3L81BRm2XA79SxQnRm4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=oLfI+Vg6N0ZabxzIaHNr0bmREQ4i4wTFAhW9jeAULdqDsesFAnI3lDiePXBt8f8zT
-         TcGPSXk7EzkcvVjlvZ/qogATmqBvK33TanBltFt9uLqz+3PDpRSQi0S8Gaue8YyDft
-         aNt80M5S/wIlsuD3/pZ4nmWcT26h+ET09rr084HAcDDAvY5mw4RaXkjsC5UiJUj2Dr
-         7XQZOERwj9smPRiPg7/Vo1u3HMx8xGjp2hKCafeidjFtf0Hv2L1QzwNx7YUEhX/K6+
-         EE5/kqixYYMb9MMXzSpnpPeyiwG5BaExknT9VYtqnzINizTzqDmmK+3fYj+Hk6vx1A
-         596VhdJRinBhg==
-From:   Christian Brauner <brauner@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH] backing file: free directly
-Date:   Thu,  5 Oct 2023 19:08:35 +0200
-Message-Id: <20231005-sakralbau-wappnen-f5c31755ed70@brauner>
-X-Mailer: git-send-email 2.34.1
+        Thu, 5 Oct 2023 13:17:49 -0400
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86D8F271F;
+        Thu,  5 Oct 2023 10:10:48 -0700 (PDT)
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-694f3444f94so1023701b3a.2;
+        Thu, 05 Oct 2023 10:10:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696525848; x=1697130648;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Mau3Ytqwy7TZu9wwYpopAHbH4XlNKRL4d1UxE9xBpfw=;
+        b=an0tRdeZR8L82BbTIXPQpuym7qXuraJsgB6jec+r9avljTJrywnf5bxAvKZvN+RaFL
+         1IOxRUHqDNqO0HjCx8a4Cn++qr6f8C47fM+zlrpwQOwxDXF7LKKrlLmYLBLruad+e/4w
+         yChHYbMonF+VPwbrN8Fv7OzbrOyrdKowNaG5ln++F0oPOg9UHpD6YMyt5v2N+DPFyLCx
+         ToR0Fo7Of7qWsS8yxefsnzvb7UWu/QF/KCAywDdJ6t+PbUE5qIil+SyKPbpF4rLLXop7
+         ye/Cp4TBjuTt/V45gJb5nC4VcYuA2olgH2xnew0UphcDHDla+vzsqyLddhGPRo/QZ75n
+         9tBg==
+X-Gm-Message-State: AOJu0YzA3AHjB+UzjywzPsjodr4qGObGPpdsdruSfWx05rf+rt4gxe+g
+        fGX9KWE9PC4KgtOK8CNnEvA=
+X-Google-Smtp-Source: AGHT+IGnVdp8oICK4V8pUUfksO9nmUjiTQt7WLAzT5URUjUrgm7Kl0ihNxBLzaBBJ2yggv4nt+XNYg==
+X-Received: by 2002:a05:6a00:1410:b0:68b:eb3d:8030 with SMTP id l16-20020a056a00141000b0068beb3d8030mr6024179pfu.1.1696525847811;
+        Thu, 05 Oct 2023 10:10:47 -0700 (PDT)
+Received: from ?IPV6:2620:15c:211:201:ca3e:70ef:bad:2f? ([2620:15c:211:201:ca3e:70ef:bad:2f])
+        by smtp.gmail.com with ESMTPSA id t16-20020a63b250000000b00565eb4fa8d1sm1641495pgo.16.2023.10.05.10.10.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Oct 2023 10:10:47 -0700 (PDT)
+Message-ID: <a2077ddf-9a8f-4101-aeb9-605d6dee3c6e@acm.org>
+Date:   Thu, 5 Oct 2023 10:10:45 -0700
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2689; i=brauner@kernel.org; h=from:subject:message-id; bh=qoHdWBXAvI5VzDtDyvPn/dobJ1x4vLcXnav3nRkf6q0=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTKvTXsqUx5v0ZGVfcgv/72LuvbpVvO2WewXvjv9G1Lo5Rm 381/HaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABPh/s7wP7d/6wLjOcpc0/9JB+jcet 882VR5wZOPSz5MPzhvz7yLRxsZGQ6uyc9Yk/s4O/vH9UVuD/asXbWvUYetvtdYIpidr2RGOjsA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 10/21] block: Add fops atomic write support
+Content-Language: en-US
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     John Garry <john.g.garry@oracle.com>, axboe@kernel.dk,
+        kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
+        jejb@linux.ibm.com, djwong@kernel.org, viro@zeniv.linux.org.uk,
+        brauner@kernel.org, chandan.babu@oracle.com, dchinner@redhat.com,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
+        linux-api@vger.kernel.org
+References: <20230929102726.2985188-1-john.g.garry@oracle.com>
+ <20230929102726.2985188-11-john.g.garry@oracle.com>
+ <17ee1669-5830-4ead-888d-a6a4624b638a@acm.org>
+ <5d26fa3b-ec34-bc39-ecfe-4616a04977ca@oracle.com>
+ <b7a6f380-c6fa-45e0-b727-ba804c6684e4@acm.org>
+ <yq1lecktuoo.fsf@ca-mkp.ca.oracle.com>
+ <db6a950b-1308-4ca1-9f75-6275118bdcf5@acm.org>
+ <yq1h6n7rume.fsf@ca-mkp.ca.oracle.com>
+ <34c08488-a288-45f9-a28f-a514a408541d@acm.org>
+ <yq1ttr6qoqp.fsf@ca-mkp.ca.oracle.com>
+From:   Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <yq1ttr6qoqp.fsf@ca-mkp.ca.oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Backing files as used by overlayfs are never installed into file
-descriptor tables and are explicitly documented as such. They aren't
-subject to rcu access conditions like regular files are.
+On 10/4/23 11:17, Martin K. Petersen wrote:
+> 
+> Hi Bart!
+> 
+>> In other words, also for the above example it is guaranteed that 
+>> writes of a single logical block (512 bytes) are atomic, no matter
+>> what value is reported as the ATOMIC TRANSFER LENGTH GRANULARITY.
+> 
+> There is no formal guarantee that a disk drive sector 
+> read-modify-write operation results in a readable sector after a 
+> power failure. We have definitely seen blocks being mangled in the 
+> field.
 
-Their lifetime is bound to the lifetime of the overlayfs file, i.e.,
-they're stashed in ovl_file->private_data and go away otherwise. If
-they're set as vma->vm_file - which is their main purpose - then they're
-subject to regular refcount rules and vma->vm_file can't be installed
-into an fdtable after having been set. All in all I don't see any need
-for rcu delay here. So free it directly.
+Aren't block devices expected to use a capacitor that provides enough
+power to handle power failures cleanly?
 
-This all hinges on such hybrid beasts to never actually be installed
-into fdtables which - as mentioned before - is not allowed. So add an
-explicit WARN_ON_ONCE() so we catch any case where someone is suddenly
-trying to install one of those things into a file descriptor table so we
-can have nice long chat with them.
+How about blacklisting block devices that mangle blocks if a power
+failure occurs? I think such block devices are not compatible with
+journaling filesystems nor with log-structured filesystems.
 
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
-Hey Linus,
+Thanks,
 
-I've put the following change on top of the rcu change. We really don't
-need any rcu delayed freeing for backing files unless I'm missing
-something. They should never ever appear in fdtables. So fd_install()
-should yell if anyone tries to do that. I'm still off this week but
-this bothered me.
-
-Christian
----
- fs/file.c       | 3 +++
- fs/file_table.c | 9 +--------
- 2 files changed, 4 insertions(+), 8 deletions(-)
-
-diff --git a/fs/file.c b/fs/file.c
-index 666514381159..2f6965848907 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -604,6 +604,9 @@ void fd_install(unsigned int fd, struct file *file)
- 	struct files_struct *files = current->files;
- 	struct fdtable *fdt;
- 
-+	if (WARN_ON_ONCE(unlikely(file->f_mode & FMODE_BACKING)))
-+		return;
-+
- 	rcu_read_lock_sched();
- 
- 	if (unlikely(files->resize_in_progress)) {
-diff --git a/fs/file_table.c b/fs/file_table.c
-index a79a80031343..08fd1dd6d863 100644
---- a/fs/file_table.c
-+++ b/fs/file_table.c
-@@ -61,13 +61,6 @@ struct path *backing_file_real_path(struct file *f)
- }
- EXPORT_SYMBOL_GPL(backing_file_real_path);
- 
--static void file_free_rcu(struct rcu_head *head)
--{
--	struct file *f = container_of(head, struct file, f_rcuhead);
--
--	kfree(backing_file(f));
--}
--
- static inline void file_free(struct file *f)
- {
- 	security_file_free(f);
-@@ -76,7 +69,7 @@ static inline void file_free(struct file *f)
- 	put_cred(f->f_cred);
- 	if (unlikely(f->f_mode & FMODE_BACKING)) {
- 		path_put(backing_file_real_path(f));
--		call_rcu(&f->f_rcuhead, file_free_rcu);
-+		kfree(backing_file(f));
- 	} else {
- 		kmem_cache_free(filp_cachep, f);
- 	}
--- 
-2.34.1
+Bart.
 
