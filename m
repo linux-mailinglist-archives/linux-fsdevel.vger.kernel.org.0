@@ -2,402 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D08ED7BAA40
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Oct 2023 21:36:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F03827BAA52
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Oct 2023 21:41:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230376AbjJETgY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Oct 2023 15:36:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34746 "EHLO
+        id S230081AbjJETli (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Oct 2023 15:41:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229573AbjJETgY (ORCPT
+        with ESMTP id S229601AbjJETlh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Oct 2023 15:36:24 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE3F6DB;
-        Thu,  5 Oct 2023 12:36:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1696534579; x=1728070579;
-  h=date:from:to:cc:subject:message-id;
-  bh=O7t8WCFgng//NcKf5qtV6wBZy0Py6B/isH81y3b1+j8=;
-  b=W9LMPOSaosNY/RGHckvjLckUR0bDZfBrhGsQJUwCmduuavsEucbhX34c
-   SeymF+jOd2qy/m2JmeCt12uolBccso85pCk/fALioRgNuTAaFZQMH+YOT
-   FFhSJPLcys7n7iBFQRjIxRMPN9xzXuHfFjt5z7GnawATuThzC61vO1Wa6
-   WtbkQ/VPuFpMvpXXi55C/NltwxaOCnJpsEmZSxhEJoRjkIjInVDho/+Of
-   49bJvwAjrSw8r6BG1xe31d4cZRVEKMJwpaHxKkydJlSohH9/Ha17ChSI7
-   5fJOn3Qw/BN+HihQ+ebIXHAbQiaHPSt3xDyeThXg31wJgsihNVtoaTzO+
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10854"; a="2201542"
-X-IronPort-AV: E=Sophos;i="6.03,203,1694761200"; 
-   d="scan'208";a="2201542"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2023 12:36:18 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10854"; a="895571961"
-X-IronPort-AV: E=Sophos;i="6.03,203,1694761200"; 
-   d="scan'208";a="895571961"
-Received: from lkp-server02.sh.intel.com (HELO c3b01524d57c) ([10.239.97.151])
-  by fmsmga001.fm.intel.com with ESMTP; 05 Oct 2023 12:34:44 -0700
-Received: from kbuild by c3b01524d57c with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qoU8q-000LpK-0U;
-        Thu, 05 Oct 2023 19:36:12 +0000
-Date:   Fri, 06 Oct 2023 03:35:24 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Linux Memory Management List <linux-mm@kvack.org>,
-        amd-gfx@lists.freedesktop.org, bpf@vger.kernel.org,
-        gfs2@lists.linux.dev, intel-gfx@lists.freedesktop.org,
-        kunit-dev@googlegroups.com, kvm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-hardening@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, ntfs3@lists.linux.dev
-Subject: [linux-next:master] BUILD REGRESSION
- 7d730f1bf6f39ece2d9f3ae682f12e5b593d534d
-Message-ID: <202310060305.T8zECtq5-lkp@intel.com>
-User-Agent: s-nail v14.9.24
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,
-        SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+        Thu, 5 Oct 2023 15:41:37 -0400
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63E8ECE;
+        Thu,  5 Oct 2023 12:41:36 -0700 (PDT)
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1c88b467ef8so4866195ad.0;
+        Thu, 05 Oct 2023 12:41:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696534896; x=1697139696;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8PNVxsJWMiXLmTm8xBAOWRN8wkjHwA+8htAHskM1reQ=;
+        b=VAortn4XPNJZt1SsLlZJdzHzSVQMg4GrCJ3IOhc1zJAQhBsYDoNbKfdfa2oqm38toc
+         /0TL5oHCgPMKaJTFFRqp+4IB8B+XCDbI0TOIlaldwHq30UF/ehuJd1zvZRAIlz3LKiye
+         sjN+juGWf9Cy8GrJQai7/nL0s7+1D41RD6OgsOInKFz1XTosstcrl9gF1yXF7Ugvo2i5
+         rlbRquPc0oPGlh2Ppma7s1Sn00Hk/k8rozpslg5eEimWV81zrz8Xjfo3rErRwgy+VEJi
+         +8z+E0fFNjtbl9ghfTbgKoJXnTK36pf/omdGtQwsCDb/93b8jDR0+rT1us/XMt85QqLG
+         wy5Q==
+X-Gm-Message-State: AOJu0YyDiTqhwAaBEDGMBicHnd/lNcRuDcW3X7uoHv4iHnLgpmEI8nzV
+        RdP8zAyAHG4Y0tK9e9ZdDbU=
+X-Google-Smtp-Source: AGHT+IHYz2XdRKL3PBxgEAHlFeFWptqRewEQT3gWgB/hHliMo32MW2iVB1fnzBG+5n+CZQqJ4ZUcTQ==
+X-Received: by 2002:a17:902:e54a:b0:1c6:2d13:5b74 with SMTP id n10-20020a170902e54a00b001c62d135b74mr7264965plf.55.1696534895572;
+        Thu, 05 Oct 2023 12:41:35 -0700 (PDT)
+Received: from bvanassche-linux.mtv.corp.google.com ([2620:15c:211:201:ca3e:70ef:bad:2f])
+        by smtp.gmail.com with ESMTPSA id u4-20020a170902e5c400b001a9b29b6759sm2129596plf.183.2023.10.05.12.41.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Oct 2023 12:41:34 -0700 (PDT)
+From:   Bart Van Assche <bvanassche@acm.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Niklas Cassel <Niklas.Cassel@wdc.com>,
+        Avri Altman <Avri.Altman@wdc.com>,
+        Bean Huo <huobean@gmail.com>,
+        Daejun Park <daejun7.park@samsung.com>,
+        Bart Van Assche <bvanassche@acm.org>
+Subject: [PATCH v2 00/15] Pass data temperature information to UFS devices
+Date:   Thu,  5 Oct 2023 12:40:46 -0700
+Message-ID: <20231005194129.1882245-1-bvanassche@acm.org>
+X-Mailer: git-send-email 2.42.0.609.gbb76f46606-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
-branch HEAD: 7d730f1bf6f39ece2d9f3ae682f12e5b593d534d  Add linux-next specific files for 20231005
+Hi Jens,
 
-Error/Warning reports:
+UFS vendors need the data lifetime information to achieve good performance.
+Without this information there is significantly higher write amplification due
+to garbage collection. Hence this patch series that add support in F2FS and
+also in the block layer for data lifetime information. The SCSI disk (sd)
+driver is modified such that it passes write hint information to SCSI devices
+via the GROUP NUMBER field.
 
-https://lore.kernel.org/oe-kbuild-all/202309122047.cRi9yJrq-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202309192314.VBsjiIm5-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202309212121.cul1pTRa-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202309212339.hxhBu2F1-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202309221945.uwcQ56zg-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202310041744.d34gIv9V-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202310042215.w9PG3Rqs-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202310051547.40nm4Sif-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202310052201.AnVbpgPr-lkp@intel.com
+Please consider this patch series for the next merge window.
 
-Error/Warning: (recently discovered and may have been fixed)
+Thanks,
 
-Documentation/gpu/amdgpu/thermal:43: ./drivers/gpu/drm/amd/pm/amdgpu_pm.c:988: WARNING: Unexpected indentation.
-arch/x86/include/asm/string_32.h:150:25: warning: '__builtin_memcpy' writing 3 bytes into a region of size 0 overflows the destination [-Wstringop-overflow=]
-drivers/cpufreq/sti-cpufreq.c:215:50: warning: '%d' directive output may be truncated writing between 1 and 10 bytes into a region of size 2 [-Wformat-truncation=]
-drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c:274: warning: Function parameter or member 'gart_placement' not described in 'amdgpu_gmc_gart_location'
-fs/bcachefs/bcachefs_format.h:215:25: warning: 'p' offset 3 in 'struct bkey' isn't aligned to 4 [-Wpacked-not-aligned]
-fs/bcachefs/bcachefs_format.h:217:25: warning: 'version' offset 27 in 'struct bkey' isn't aligned to 4 [-Wpacked-not-aligned]
-fs/gfs2/inode.c:1876:14: sparse:    struct gfs2_glock *
-fs/gfs2/inode.c:1876:14: sparse:    struct gfs2_glock [noderef] __rcu *
-fs/gfs2/super.c:1543:17: sparse:    struct gfs2_glock *
-fs/gfs2/super.c:1543:17: sparse:    struct gfs2_glock [noderef] __rcu *
-include/linux/fortify-string.h:57:33: warning: writing 8 bytes into a region of size 0 [-Wstringop-overflow=]
-kernel/bpf/helpers.c:1906:19: warning: no previous declaration for 'bpf_percpu_obj_new_impl' [-Wmissing-declarations]
-kernel/bpf/helpers.c:1942:18: warning: no previous declaration for 'bpf_percpu_obj_drop_impl' [-Wmissing-declarations]
-kernel/bpf/helpers.c:2477:18: warning: no previous declaration for 'bpf_throw' [-Wmissing-declarations]
+Bart.
 
-Unverified Error/Warning (likely false positive, please contact us if interested):
+Changes compared to v1:
+- Use six bits from the ioprio field for data lifetime information. The
+  bio->bi_write_hint / req->write_hint / iocb->ki_hint members that were
+  introduced in v1 have been removed again.
+- The F_GET_FILE_RW_HINT and F_SET_FILE_RW_HINT fcntls have been removed.
+- In the SCSI disk (sd) driver, query the stream status and check the PERM bit.
+- The GET STREAM STATUS command has been implemented in the scsi_debug driver.
 
-Documentation/devicetree/bindings/mfd/qcom-pm8xxx.yaml:
-arch/x86/kvm/x86.c:8891 x86_emulate_instruction() warn: missing error code? 'r'
-drivers/gpu/drm/amd/amdgpu/amdgpu_mca.c:209 amdgpu_mca_smu_get_mca_entry() warn: variable dereferenced before check 'mca_funcs' (see line 200)
-drivers/gpu/drm/i915/display/intel_psr.c:3185 i915_psr_sink_status_show() error: uninitialized symbol 'error_status'.
-drivers/gpu/drm/i915/display/intel_tc.c:327 mtl_tc_port_get_max_lane_count() error: uninitialized symbol 'pin_mask'.
-fs/exfat/namei.c:393 exfat_find_empty_entry() error: uninitialized symbol 'last_clu'.
-fs/ntfs3/bitmap.c:663 wnd_init() warn: Please consider using kvcalloc instead of kvmalloc_array
-fs/ntfs3/super.c:466:23: sparse: sparse: unknown escape sequence: '\%'
-lib/kunit/executor_test.c:39 parse_filter_test() error: double free of 'filter.suite_glob'
-lib/kunit/executor_test.c:40 parse_filter_test() error: double free of 'filter.test_glob'
-scripts/mod/modpost.c:1437:14: warning: passing 'typeof (rela->r_offset) *' (aka 'const unsigned long *') to parameter of type 'void *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
-scripts/mod/modpost.c:1440:11: warning: passing 'typeof (rela->r_addend) *' (aka 'const long *') to parameter of type 'void *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
-scripts/mod/modpost.c:1472:14: warning: passing 'typeof (rel->r_offset) *' (aka 'const unsigned long *') to parameter of type 'void *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
-{standard input}:1127: Error: unknown .loc sub-directive `is_stm'
+Bart Van Assche (15):
+  block: Make bio_set_ioprio() modify fewer bio->bi_ioprio bits
+  blk-ioprio: Modify fewer bio->bi_ioprio bits
+  block: Support data lifetime in the I/O priority bitfield
+  fs: Restore write hint support
+  fs/f2fs: Restore the whint_mode mount option
+  scsi: core: Query the Block Limits Extension VPD page
+  scsi_proto: Add structures and constants related to I/O groups and
+    streams
+  sd: Translate data lifetime information
+  scsi_debug: Reduce code duplication
+  scsi_debug: Support the block limits extension VPD page
+  scsi_debug: Rework page code error handling
+  scsi_debug: Rework subpage code error handling
+  scsi_debug: Implement the IO Advice Hints Grouping mode page
+  scsi_debug: Implement GET STREAM STATUS
+  scsi_debug: Maintain write statistics per group number
 
-Error/Warning ids grouped by kconfigs:
+ Documentation/filesystems/f2fs.rst |  70 ++++++++
+ block/blk-ioprio.c                 |   9 +-
+ block/blk-mq.c                     |   3 +-
+ drivers/scsi/scsi.c                |   2 +
+ drivers/scsi/scsi_debug.c          | 247 +++++++++++++++++++++--------
+ drivers/scsi/scsi_sysfs.c          |  10 ++
+ drivers/scsi/sd.c                  | 112 ++++++++++++-
+ drivers/scsi/sd.h                  |   3 +
+ fs/f2fs/data.c                     |   3 +
+ fs/f2fs/f2fs.h                     |   9 ++
+ fs/f2fs/segment.c                  |  95 +++++++++++
+ fs/f2fs/super.c                    |  32 +++-
+ fs/iomap/buffered-io.c             |   3 +
+ fs/mpage.c                         |   2 +
+ include/linux/fs-lifetime.h        |  20 +++
+ include/linux/ioprio.h             |  10 ++
+ include/scsi/scsi_device.h         |   1 +
+ include/scsi/scsi_proto.h          |  75 +++++++++
+ include/uapi/linux/ioprio.h        |   8 +-
+ 19 files changed, 639 insertions(+), 75 deletions(-)
+ create mode 100644 include/linux/fs-lifetime.h
 
-gcc_recent_errors
-|-- arc-allmodconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
-|   |-- fs-bcachefs-bcachefs_format.h:warning:p-offset-in-struct-bkey-isn-t-aligned-to
-|   `-- fs-bcachefs-bcachefs_format.h:warning:version-offset-in-struct-bkey-isn-t-aligned-to
-|-- arc-allyesconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
-|   |-- fs-bcachefs-bcachefs_format.h:warning:p-offset-in-struct-bkey-isn-t-aligned-to
-|   `-- fs-bcachefs-bcachefs_format.h:warning:version-offset-in-struct-bkey-isn-t-aligned-to
-|-- arm-allmodconfig
-|   `-- drivers-cpufreq-sti-cpufreq.c:warning:d-directive-output-may-be-truncated-writing-between-and-bytes-into-a-region-of-size
-|-- arm-allyesconfig
-|   `-- drivers-cpufreq-sti-cpufreq.c:warning:d-directive-output-may-be-truncated-writing-between-and-bytes-into-a-region-of-size
-|-- arm64-allmodconfig
-|   `-- include-linux-fortify-string.h:warning:writing-bytes-into-a-region-of-size
-|-- arm64-allyesconfig
-|   `-- include-linux-fortify-string.h:warning:writing-bytes-into-a-region-of-size
-|-- i386-buildonly-randconfig-004-20231005
-|   `-- arch-x86-include-asm-string_32.h:warning:__builtin_memcpy-writing-bytes-into-a-region-of-size-overflows-the-destination
-|-- i386-randconfig-003-20231005
-|   |-- kernel-bpf-helpers.c:warning:no-previous-declaration-for-bpf_percpu_obj_drop_impl
-|   |-- kernel-bpf-helpers.c:warning:no-previous-declaration-for-bpf_percpu_obj_new_impl
-|   `-- kernel-bpf-helpers.c:warning:no-previous-declaration-for-bpf_throw
-|-- i386-randconfig-005-20231005
-|   |-- kernel-bpf-helpers.c:warning:no-previous-declaration-for-bpf_percpu_obj_drop_impl
-|   |-- kernel-bpf-helpers.c:warning:no-previous-declaration-for-bpf_percpu_obj_new_impl
-|   `-- kernel-bpf-helpers.c:warning:no-previous-declaration-for-bpf_throw
-|-- i386-randconfig-061-20231005
-|   |-- fs-file.c:sparse:sparse:incorrect-type-in-argument-(different-address-spaces)-expected-struct-atomic_t-usertype-v-got-struct-atomic_t-noderef-__rcu
-|   |-- fs-file.c:sparse:sparse:incorrect-type-in-argument-(different-address-spaces)-expected-struct-file-got-struct-file-noderef-__rcu-file
-|   |-- fs-file.c:sparse:sparse:incorrect-type-in-assignment-(different-address-spaces)-expected-struct-file-noderef-__rcu-file-got-struct-file
-|   |-- fs-file.c:sparse:sparse:incorrect-type-in-assignment-(different-address-spaces)-expected-struct-file-noderef-__rcu-file_reloaded-got-struct-file
-|   |-- fs-file.c:sparse:sparse:incorrect-type-in-return-expression-(different-address-spaces)-expected-struct-file-got-struct-file-noderef-__rcu-file_reloaded
-|   |-- fs-gfs2-inode.c:sparse:sparse:incompatible-types-in-comparison-expression-(different-address-spaces):
-|   |-- fs-gfs2-inode.c:sparse:struct-gfs2_glock
-|   |-- fs-gfs2-inode.c:sparse:struct-gfs2_glock-noderef-__rcu
-|   |-- fs-gfs2-super.c:sparse:sparse:incompatible-types-in-comparison-expression-(different-address-spaces):
-|   |-- fs-gfs2-super.c:sparse:struct-gfs2_glock
-|   |-- fs-gfs2-super.c:sparse:struct-gfs2_glock-noderef-__rcu
-|   `-- fs-ntfs3-super.c:sparse:sparse:unknown-escape-sequence:
-|-- i386-randconfig-062-20231005
-|   |-- fs-file.c:sparse:sparse:incorrect-type-in-argument-(different-address-spaces)-expected-struct-atomic_t-usertype-v-got-struct-atomic_t-noderef-__rcu
-|   |-- fs-file.c:sparse:sparse:incorrect-type-in-argument-(different-address-spaces)-expected-struct-file-got-struct-file-noderef-__rcu-file
-|   |-- fs-file.c:sparse:sparse:incorrect-type-in-assignment-(different-address-spaces)-expected-struct-file-noderef-__rcu-file-got-struct-file
-|   |-- fs-file.c:sparse:sparse:incorrect-type-in-assignment-(different-address-spaces)-expected-struct-file-noderef-__rcu-file_reloaded-got-struct-file
-|   |-- fs-file.c:sparse:sparse:incorrect-type-in-return-expression-(different-address-spaces)-expected-struct-file-got-struct-file-noderef-__rcu-file_reloaded
-|   |-- fs-gfs2-inode.c:sparse:sparse:incompatible-types-in-comparison-expression-(different-address-spaces):
-|   |-- fs-gfs2-inode.c:sparse:struct-gfs2_glock
-|   |-- fs-gfs2-inode.c:sparse:struct-gfs2_glock-noderef-__rcu
-|   |-- fs-gfs2-super.c:sparse:sparse:incompatible-types-in-comparison-expression-(different-address-spaces):
-|   |-- fs-gfs2-super.c:sparse:struct-gfs2_glock
-|   |-- fs-gfs2-super.c:sparse:struct-gfs2_glock-noderef-__rcu
-|   `-- fs-ntfs3-super.c:sparse:sparse:unknown-escape-sequence:
-|-- i386-randconfig-063-20231005
-|   |-- fs-file.c:sparse:sparse:incorrect-type-in-argument-(different-address-spaces)-expected-struct-atomic_t-usertype-v-got-struct-atomic_t-noderef-__rcu
-|   |-- fs-file.c:sparse:sparse:incorrect-type-in-argument-(different-address-spaces)-expected-struct-file-got-struct-file-noderef-__rcu-file
-|   |-- fs-file.c:sparse:sparse:incorrect-type-in-assignment-(different-address-spaces)-expected-struct-file-noderef-__rcu-file-got-struct-file
-|   |-- fs-file.c:sparse:sparse:incorrect-type-in-assignment-(different-address-spaces)-expected-struct-file-noderef-__rcu-file_reloaded-got-struct-file
-|   |-- fs-file.c:sparse:sparse:incorrect-type-in-return-expression-(different-address-spaces)-expected-struct-file-got-struct-file-noderef-__rcu-file_reloaded
-|   |-- fs-gfs2-inode.c:sparse:sparse:incompatible-types-in-comparison-expression-(different-address-spaces):
-|   |-- fs-gfs2-inode.c:sparse:struct-gfs2_glock
-|   |-- fs-gfs2-inode.c:sparse:struct-gfs2_glock-noderef-__rcu
-|   |-- fs-gfs2-super.c:sparse:sparse:incompatible-types-in-comparison-expression-(different-address-spaces):
-|   |-- fs-gfs2-super.c:sparse:struct-gfs2_glock
-|   |-- fs-gfs2-super.c:sparse:struct-gfs2_glock-noderef-__rcu
-|   `-- fs-ntfs3-super.c:sparse:sparse:unknown-escape-sequence:
-|-- i386-randconfig-s002-20211104
-|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
-|-- loongarch-randconfig-001-20231005
-|   `-- Documentation-devicetree-bindings-mfd-qcom-pm8xxx.yaml:
-|-- m68k-allmodconfig
-|   |-- fs-bcachefs-bcachefs_format.h:warning:p-offset-in-struct-bkey-isn-t-aligned-to
-|   `-- fs-bcachefs-bcachefs_format.h:warning:version-offset-in-struct-bkey-isn-t-aligned-to
-|-- m68k-allyesconfig
-|   |-- fs-bcachefs-bcachefs_format.h:warning:p-offset-in-struct-bkey-isn-t-aligned-to
-|   `-- fs-bcachefs-bcachefs_format.h:warning:version-offset-in-struct-bkey-isn-t-aligned-to
-|-- microblaze-allmodconfig
-|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
-|-- microblaze-allyesconfig
-|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
-|-- mips-allmodconfig
-|   |-- fs-bcachefs-bcachefs_format.h:warning:p-offset-in-struct-bkey-isn-t-aligned-to
-|   `-- fs-bcachefs-bcachefs_format.h:warning:version-offset-in-struct-bkey-isn-t-aligned-to
-|-- mips-allyesconfig
-|   |-- fs-bcachefs-bcachefs_format.h:warning:p-offset-in-struct-bkey-isn-t-aligned-to
-|   `-- fs-bcachefs-bcachefs_format.h:warning:version-offset-in-struct-bkey-isn-t-aligned-to
-|-- openrisc-allyesconfig
-|   |-- fs-bcachefs-bcachefs_format.h:warning:p-offset-in-struct-bkey-isn-t-aligned-to
-|   `-- fs-bcachefs-bcachefs_format.h:warning:version-offset-in-struct-bkey-isn-t-aligned-to
-|-- parisc-allmodconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
-|   |-- fs-bcachefs-bcachefs_format.h:warning:p-offset-in-struct-bkey-isn-t-aligned-to
-|   `-- fs-bcachefs-bcachefs_format.h:warning:version-offset-in-struct-bkey-isn-t-aligned-to
-|-- parisc-allyesconfig
-|   |-- fs-bcachefs-bcachefs_format.h:warning:p-offset-in-struct-bkey-isn-t-aligned-to
-|   `-- fs-bcachefs-bcachefs_format.h:warning:version-offset-in-struct-bkey-isn-t-aligned-to
-|-- powerpc-allmodconfig
-|   |-- fs-bcachefs-bcachefs_format.h:warning:p-offset-in-struct-bkey-isn-t-aligned-to
-|   |-- fs-bcachefs-bcachefs_format.h:warning:version-offset-in-struct-bkey-isn-t-aligned-to
-|   `-- include-linux-fortify-string.h:warning:writing-bytes-into-a-region-of-size
-|-- powerpc-allyesconfig
-|   |-- fs-bcachefs-bcachefs_format.h:warning:p-offset-in-struct-bkey-isn-t-aligned-to
-|   |-- fs-bcachefs-bcachefs_format.h:warning:version-offset-in-struct-bkey-isn-t-aligned-to
-|   `-- include-linux-fortify-string.h:warning:writing-bytes-into-a-region-of-size
-|-- s390-allmodconfig
-|   |-- fs-bcachefs-bcachefs_format.h:warning:p-offset-in-struct-bkey-isn-t-aligned-to
-|   |-- fs-bcachefs-bcachefs_format.h:warning:version-offset-in-struct-bkey-isn-t-aligned-to
-|   `-- include-linux-fortify-string.h:warning:writing-bytes-into-a-region-of-size
-|-- s390-allyesconfig
-|   |-- fs-bcachefs-bcachefs_format.h:warning:p-offset-in-struct-bkey-isn-t-aligned-to
-|   |-- fs-bcachefs-bcachefs_format.h:warning:version-offset-in-struct-bkey-isn-t-aligned-to
-|   `-- include-linux-fortify-string.h:warning:writing-bytes-into-a-region-of-size
-|-- sh-randconfig-r015-20230501
-|   `-- standard-input:Error:unknown-.loc-sub-directive-is_stm
-|-- sparc-allmodconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
-|   |-- fs-bcachefs-bcachefs_format.h:warning:p-offset-in-struct-bkey-isn-t-aligned-to
-|   `-- fs-bcachefs-bcachefs_format.h:warning:version-offset-in-struct-bkey-isn-t-aligned-to
-|-- sparc-allyesconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
-|   |-- fs-bcachefs-bcachefs_format.h:warning:p-offset-in-struct-bkey-isn-t-aligned-to
-|   `-- fs-bcachefs-bcachefs_format.h:warning:version-offset-in-struct-bkey-isn-t-aligned-to
-|-- sparc64-allmodconfig
-|   |-- fs-bcachefs-bcachefs_format.h:warning:p-offset-in-struct-bkey-isn-t-aligned-to
-|   `-- fs-bcachefs-bcachefs_format.h:warning:version-offset-in-struct-bkey-isn-t-aligned-to
-|-- sparc64-allyesconfig
-|   |-- fs-bcachefs-bcachefs_format.h:warning:p-offset-in-struct-bkey-isn-t-aligned-to
-|   `-- fs-bcachefs-bcachefs_format.h:warning:version-offset-in-struct-bkey-isn-t-aligned-to
-|-- x86_64-allnoconfig
-|   `-- Documentation-gpu-amdgpu-thermal:.-drivers-gpu-drm-amd-pm-amdgpu_pm.c:WARNING:Unexpected-indentation.
-|-- x86_64-allyesconfig
-|   `-- include-linux-fortify-string.h:warning:writing-bytes-into-a-region-of-size
-|-- x86_64-randconfig-103-20231005
-|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
-`-- x86_64-randconfig-161-20231005
-    |-- arch-x86-kvm-x86.c-x86_emulate_instruction()-warn:missing-error-code-r
-    |-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
-    |-- drivers-gpu-drm-amd-amdgpu-amdgpu_mca.c-amdgpu_mca_smu_get_mca_entry()-warn:variable-dereferenced-before-check-mca_funcs-(see-line-)
-    |-- drivers-gpu-drm-i915-display-intel_dsb.c-_intel_dsb_commit()-warn:always-true-condition-(dewake_scanline-)-(-u32max-)
-    |-- drivers-gpu-drm-i915-display-intel_psr.c-i915_psr_sink_status_show()-error:uninitialized-symbol-error_status-.
-    |-- drivers-gpu-drm-i915-display-intel_tc.c-mtl_tc_port_get_max_lane_count()-error:uninitialized-symbol-pin_mask-.
-    |-- fs-exfat-namei.c-exfat_find_empty_entry()-error:uninitialized-symbol-last_clu-.
-    |-- fs-ntfs3-bitmap.c-wnd_init()-warn:Please-consider-using-kvcalloc-instead-of-kvmalloc_array
-    |-- kernel-bpf-helpers.c:warning:no-previous-declaration-for-bpf_percpu_obj_drop_impl
-    |-- kernel-bpf-helpers.c:warning:no-previous-declaration-for-bpf_percpu_obj_new_impl
-    |-- kernel-bpf-helpers.c:warning:no-previous-declaration-for-bpf_throw
-    |-- lib-kunit-executor_test.c-parse_filter_test()-error:double-free-of-filter.suite_glob
-    `-- lib-kunit-executor_test.c-parse_filter_test()-error:double-free-of-filter.test_glob
-clang_recent_errors
-`-- s390-alldefconfig
-    |-- scripts-mod-modpost.c:warning:passing-typeof-(rel-r_offset)-(aka-const-unsigned-long-)-to-parameter-of-type-void-discards-qualifiers
-    |-- scripts-mod-modpost.c:warning:passing-typeof-(rela-r_addend)-(aka-const-long-)-to-parameter-of-type-void-discards-qualifiers
-    `-- scripts-mod-modpost.c:warning:passing-typeof-(rela-r_offset)-(aka-const-unsigned-long-)-to-parameter-of-type-void-discards-qualifiers
-
-elapsed time: 875m
-
-configs tested: 120
-configs skipped: 2
-
-tested configs:
-alpha                             allnoconfig   gcc  
-alpha                            allyesconfig   gcc  
-alpha                               defconfig   gcc  
-arc                              allmodconfig   gcc  
-arc                               allnoconfig   gcc  
-arc                              allyesconfig   gcc  
-arc                          axs101_defconfig   gcc  
-arc                                 defconfig   gcc  
-arc                 nsimosci_hs_smp_defconfig   gcc  
-arc                   randconfig-001-20231005   gcc  
-arm                              allmodconfig   gcc  
-arm                               allnoconfig   gcc  
-arm                              allyesconfig   gcc  
-arm                                 defconfig   gcc  
-arm                         orion5x_defconfig   clang
-arm                          pxa168_defconfig   clang
-arm                   randconfig-001-20231005   gcc  
-arm                         vf610m4_defconfig   gcc  
-arm64                            allmodconfig   gcc  
-arm64                             allnoconfig   gcc  
-arm64                            allyesconfig   gcc  
-arm64                               defconfig   gcc  
-csky                             allmodconfig   gcc  
-csky                              allnoconfig   gcc  
-csky                             allyesconfig   gcc  
-csky                                defconfig   gcc  
-i386                             allmodconfig   gcc  
-i386                              allnoconfig   gcc  
-i386                             allyesconfig   gcc  
-i386         buildonly-randconfig-001-20231005   gcc  
-i386         buildonly-randconfig-002-20231005   gcc  
-i386         buildonly-randconfig-003-20231005   gcc  
-i386         buildonly-randconfig-004-20231005   gcc  
-i386         buildonly-randconfig-005-20231005   gcc  
-i386         buildonly-randconfig-006-20231005   gcc  
-i386                              debian-10.3   gcc  
-i386                                defconfig   gcc  
-i386                  randconfig-001-20231005   gcc  
-i386                  randconfig-002-20231005   gcc  
-i386                  randconfig-003-20231005   gcc  
-i386                  randconfig-004-20231005   gcc  
-i386                  randconfig-005-20231005   gcc  
-i386                  randconfig-006-20231005   gcc  
-loongarch                        allmodconfig   gcc  
-loongarch                         allnoconfig   gcc  
-loongarch                        allyesconfig   gcc  
-loongarch                           defconfig   gcc  
-loongarch             randconfig-001-20231005   gcc  
-m68k                             allmodconfig   gcc  
-m68k                              allnoconfig   gcc  
-m68k                             allyesconfig   gcc  
-m68k                                defconfig   gcc  
-microblaze                       allmodconfig   gcc  
-microblaze                        allnoconfig   gcc  
-microblaze                       allyesconfig   gcc  
-microblaze                          defconfig   gcc  
-mips                             allmodconfig   gcc  
-mips                              allnoconfig   gcc  
-mips                             allyesconfig   gcc  
-mips                           ip28_defconfig   clang
-nios2                            allmodconfig   gcc  
-nios2                             allnoconfig   gcc  
-nios2                            allyesconfig   gcc  
-nios2                               defconfig   gcc  
-openrisc                         allmodconfig   gcc  
-openrisc                          allnoconfig   gcc  
-openrisc                         allyesconfig   gcc  
-openrisc                            defconfig   gcc  
-parisc                           allmodconfig   gcc  
-parisc                            allnoconfig   gcc  
-parisc                           allyesconfig   gcc  
-parisc                              defconfig   gcc  
-parisc64                            defconfig   gcc  
-powerpc                          allmodconfig   gcc  
-powerpc                           allnoconfig   gcc  
-powerpc                          allyesconfig   gcc  
-powerpc                      bamboo_defconfig   gcc  
-powerpc                      ep88xc_defconfig   gcc  
-powerpc                     mpc512x_defconfig   clang
-powerpc                  storcenter_defconfig   gcc  
-riscv                            allmodconfig   gcc  
-riscv                             allnoconfig   gcc  
-riscv                            allyesconfig   gcc  
-riscv                               defconfig   gcc  
-riscv                          rv32_defconfig   gcc  
-s390                             alldefconfig   clang
-s390                             allmodconfig   gcc  
-s390                              allnoconfig   gcc  
-s390                             allyesconfig   gcc  
-s390                                defconfig   gcc  
-sh                               allmodconfig   gcc  
-sh                                allnoconfig   gcc  
-sh                               allyesconfig   gcc  
-sh                                  defconfig   gcc  
-sh                          sdk7780_defconfig   gcc  
-sparc                            allmodconfig   gcc  
-sparc                             allnoconfig   gcc  
-sparc                            allyesconfig   gcc  
-sparc                               defconfig   gcc  
-sparc                       sparc32_defconfig   gcc  
-sparc64                          allmodconfig   gcc  
-sparc64                          allyesconfig   gcc  
-sparc64                             defconfig   gcc  
-um                               allmodconfig   clang
-um                                allnoconfig   clang
-um                               allyesconfig   clang
-um                                  defconfig   gcc  
-um                             i386_defconfig   gcc  
-um                           x86_64_defconfig   gcc  
-x86_64                            allnoconfig   gcc  
-x86_64                           allyesconfig   gcc  
-x86_64                              defconfig   gcc  
-x86_64                randconfig-001-20231005   gcc  
-x86_64                randconfig-002-20231005   gcc  
-x86_64                randconfig-003-20231005   gcc  
-x86_64                randconfig-004-20231005   gcc  
-x86_64                randconfig-005-20231005   gcc  
-x86_64                randconfig-006-20231005   gcc  
-x86_64                          rhel-8.3-rust   clang
-x86_64                               rhel-8.3   gcc  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
