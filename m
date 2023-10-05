@@ -2,60 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A74E97BAED7
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Oct 2023 00:36:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6FCA7BAF16
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Oct 2023 01:09:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229722AbjJEWgb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Oct 2023 18:36:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60464 "EHLO
+        id S229457AbjJEXIO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Oct 2023 19:08:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39728 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230137AbjJEWga (ORCPT
+        with ESMTP id S229584AbjJEXFw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Oct 2023 18:36:30 -0400
-Received: from mail-pg1-x529.google.com (mail-pg1-x529.google.com [IPv6:2607:f8b0:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 324E0E7
-        for <linux-fsdevel@vger.kernel.org>; Thu,  5 Oct 2023 15:36:28 -0700 (PDT)
-Received: by mail-pg1-x529.google.com with SMTP id 41be03b00d2f7-578e33b6fb7so1055645a12.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Oct 2023 15:36:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1696545387; x=1697150187; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=b2tQ3RBiSUcSSCDIGm1AqxO9GDksjubSbZBBLyz+/c8=;
-        b=REhiCFVhABsJ2q1jPxHObTX6y84Tz2iTSR6iSkdrBM8Hsi+tc+MX6HtHS+ktP+h56f
-         CvWqHZsqOaXtYLJ1QqEDS2JjQrJ7seEe4+D9rYAvbq5mcoBtjcnc1i/Q3k+IWcDgbAMh
-         92TFvO2l/kNKi566QIqjeD+fdcKq7MHxuhbrstbYcm+q/Qq7ifN955l5YyUQkDv+QUlk
-         N8A/gM1KmbpnupgOVyklj9vtP5OqW9RSxFLf3uN06GXn4aWhf6OVjziy55LbjINGimYD
-         TSInO6f0KTTlV8D6BMo9rgT2MOUGrFtGNxTTfGQCKEVh0q0oum7k5oADeCJWQEos65bH
-         ySwQ==
+        Thu, 5 Oct 2023 19:05:52 -0400
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F060C18D;
+        Thu,  5 Oct 2023 15:58:42 -0700 (PDT)
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1c5c91bece9so12667845ad.3;
+        Thu, 05 Oct 2023 15:58:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696545387; x=1697150187;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b2tQ3RBiSUcSSCDIGm1AqxO9GDksjubSbZBBLyz+/c8=;
-        b=mivSUhc9p4AQbMf34cbRcX6nwbDF385AwBSFMJdEFXYM/x/RGTydFAmOxDqAqWSrx7
-         7pN3qGXKXyK2FUA+wfpfscqmxCt67Dt/ou5sWmCh/ULcy3iXE1YavhYxw84pDIHxUowd
-         C1WxIv9FYo+UjBXzanf8HnMyY/VBQDlsHYOF7FvGUv2Sh/XxFziTYiuo8ugup3b6/ECs
-         HPWFDX/6ySDDCIe77+J+hGCesXXgoebY+BLWIegYcZnGYRz3lvYzTUCOS8t7ABhavBeB
-         GM7IL/211Zcq8Jw6385peg/WmPHTq7UNu7lGQNrs5J7+C4qkORKBxWLAnuMK8ynkvgNY
-         UQ3w==
-X-Gm-Message-State: AOJu0Yy/F4MjwUt9tjgAIis7htg94xhjZTMC23lTrXAaGSN2kNNitQY2
-        tieCqdsALsOojmo0PY/DL2MclQ==
-X-Google-Smtp-Source: AGHT+IHkj05WtFRnB1/6TCdC5uNJ+qJuxlAMKS08tzhEQ93tj2n+6Zd7zWsUmCjHAtuzu3cQRcYWSg==
-X-Received: by 2002:a17:90a:2cc4:b0:271:7cd6:165d with SMTP id n62-20020a17090a2cc400b002717cd6165dmr6401433pjd.26.1696545387428;
-        Thu, 05 Oct 2023 15:36:27 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-20-59.pa.nsw.optusnet.com.au. [49.180.20.59])
-        by smtp.gmail.com with ESMTPSA id 30-20020a17090a005e00b002776350b50dsm4406336pjb.29.2023.10.05.15.36.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Oct 2023 15:36:26 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-        (envelope-from <david@fromorbit.com>)
-        id 1qoWxD-009xqX-3D;
-        Fri, 06 Oct 2023 09:36:24 +1100
-Date:   Fri, 6 Oct 2023 09:36:23 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Bart Van Assche <bvanassche@acm.org>
+        d=1e100.net; s=20230601; t=1696546722; x=1697151522;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ltrto+rjiXQu6CZ+tQzK6opfBYwCjT8QDYR8jfh7uis=;
+        b=O7DASNSznlTd5ejToG7zZxT0IN65h5T8Uh1E7nOD4KR3FSTFiKp5uU0Klez9Eofr9S
+         RUwEZRW+TnRzEJBgkjn52VWF4fl1wydVjaYeJtI5wZq8CLoY4/CwtmN2r5niieEJ7FVK
+         Oa48bzGPTGd9Ir8SPA21xlelOjhxI1pu0NkrEiWXcdNm9Ad5CNjTx0qFzQ1XQITVFL4O
+         +gvlsu5qz8Zln17rfS9W7BdUol9y20ikB2sMNlqa75ZHYXInhp9t6+xUa5uD+HhF+d/5
+         UlVTcsTutcDLmNFcm9eh731zopuJ+c9I90dcdCvUNTZ9zdIdtRWnbRE7o41jgsK8h0nb
+         fbiw==
+X-Gm-Message-State: AOJu0Yzi0rLi9lue2JnwHKT1HEOiqXI/mvVVO6es2brMnUzeCewWBJJ1
+        feaVLmWZO3DMDF20j/hzyo8=
+X-Google-Smtp-Source: AGHT+IG0/9Wn5G/tnzM5vE5E/JIG1ER4pe53NdB/BX3Y8VlltjOu9i9A0D7Ui0Qfz98C4QopBOrp7w==
+X-Received: by 2002:a17:902:6ac4:b0:1c6:d34:5279 with SMTP id i4-20020a1709026ac400b001c60d345279mr6265144plt.13.1696546722102;
+        Thu, 05 Oct 2023 15:58:42 -0700 (PDT)
+Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net. [73.231.117.72])
+        by smtp.gmail.com with ESMTPSA id 6-20020a170902c24600b001b89a6164desm2316513plg.118.2023.10.05.15.58.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Oct 2023 15:58:41 -0700 (PDT)
+Message-ID: <d976868a-d32c-43d1-b5da-ebbc4c8de468@acm.org>
+Date:   Thu, 5 Oct 2023 15:58:38 -0700
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 10/21] block: Add fops atomic write support
+Content-Language: en-US
+To:     Dave Chinner <david@fromorbit.com>
 Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
         John Garry <john.g.garry@oracle.com>, axboe@kernel.dk,
         kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
@@ -65,8 +54,6 @@ Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
         linux-nvme@lists.infradead.org, linux-xfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
         linux-api@vger.kernel.org
-Subject: Re: [PATCH 10/21] block: Add fops atomic write support
-Message-ID: <ZR86Z1OcO52a4BtH@dread.disaster.area>
 References: <20230929102726.2985188-11-john.g.garry@oracle.com>
  <17ee1669-5830-4ead-888d-a6a4624b638a@acm.org>
  <5d26fa3b-ec34-bc39-ecfe-4616a04977ca@oracle.com>
@@ -77,82 +64,49 @@ References: <20230929102726.2985188-11-john.g.garry@oracle.com>
  <34c08488-a288-45f9-a28f-a514a408541d@acm.org>
  <yq1ttr6qoqp.fsf@ca-mkp.ca.oracle.com>
  <a2077ddf-9a8f-4101-aeb9-605d6dee3c6e@acm.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a2077ddf-9a8f-4101-aeb9-605d6dee3c6e@acm.org>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+ <ZR86Z1OcO52a4BtH@dread.disaster.area>
+From:   Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <ZR86Z1OcO52a4BtH@dread.disaster.area>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 05, 2023 at 10:10:45AM -0700, Bart Van Assche wrote:
-> On 10/4/23 11:17, Martin K. Petersen wrote:
-> > 
-> > Hi Bart!
-> > 
-> > > In other words, also for the above example it is guaranteed that
-> > > writes of a single logical block (512 bytes) are atomic, no matter
-> > > what value is reported as the ATOMIC TRANSFER LENGTH GRANULARITY.
-> > 
-> > There is no formal guarantee that a disk drive sector read-modify-write
-> > operation results in a readable sector after a power failure. We have
-> > definitely seen blocks being mangled in the field.
+On 10/5/23 15:36, Dave Chinner wrote:
+> $ lspci |grep -i nvme
+> 03:00.0 Non-Volatile memory controller: Samsung Electronics Co Ltd NVMe SSD Controller SM981/PM981/PM983
+> 06:00.0 Non-Volatile memory controller: Samsung Electronics Co Ltd NVMe SSD Controller SM981/PM981/PM983
+> $ cat /sys/block/nvme*n1/queue/write_cache
+> write back
+> write back
+> $
 > 
-> Aren't block devices expected to use a capacitor that provides enough
-> power to handle power failures cleanly?
+> That they have volatile writeback caches....
 
-Nope.
+It seems like what I wrote has been misunderstood completely. With
+"handling a power failure cleanly" I meant that power cycling a block device
+does not result in read errors nor in reading data that has never been written.
+Although it is hard to find information about this topic, here is what I found
+online:
+* About certain SSDs with power loss protection:
+   https://us.transcend-info.com/embedded/technology/power-loss-protection-plp
+* About another class of SSDs with power loss protection:
+   https://www.kingston.com/en/blog/servers-and-data-centers/ssd-power-loss-protection
+* About yet another class of SSDs with power loss protection:
+   https://phisonblog.com/avoiding-ssd-data-loss-with-phisons-power-loss-protection-2/
 
-Any block device that says it operates in writeback cache mode (i.e.
-almost every single consumer SATA and NVMe drive ever made) has a
-volatile write back cache and so does not provide any power fail
-data integrity guarantees. Simple to check, my less-than-1-yr-old
-workstation tells me:
+So far I haven't found any information about hard disks and power failure
+handling. What I found is that most current hard disks protect data with ECC.
+The ECC mechanism should provide good protection against reading data that
+has never been written. If a power failure occurs while a hard disk is writing
+a physical block, can this result in a read error after power is restored? If
+so, is this behavior allowed by storage standards?
 
-$ lspci |grep -i nvme
-03:00.0 Non-Volatile memory controller: Samsung Electronics Co Ltd NVMe SSD Controller SM981/PM981/PM983
-06:00.0 Non-Volatile memory controller: Samsung Electronics Co Ltd NVMe SSD Controller SM981/PM981/PM983
-$ cat /sys/block/nvme*n1/queue/write_cache
-write back
-write back
-$
-
-That they have volatile writeback caches....
-
-> How about blacklisting block devices that mangle blocks if a power
-> failure occurs? I think such block devices are not compatible with
-> journaling filesystems nor with log-structured filesystems.
-
-Statements like this from people working on storage hardware really
-worry me. It demonstrates a lack of understanding of how filesystems
-actually work, not to mention the fact that this architectural
-problem (i.e. handling volatile device write caches correctly) was
-solved in the Linux IO stack a couple of decades ago. This isn't
-even 'state of the art' knowledge - this is foundational knowlege
-that everyone working on storage should know.
-
-The tl;dr summary is that filesystems will issue a cache flush
-request (REQ_PREFLUSH) and/or write-through to stable storage
-semantics (REQ_FUA) for any data, metadata or journal IO that has
-data integrity and/or ordering requirements associated with it. The
-block layer will then do the most optimal correct thing with that
-request (e.g. ignore them for IO being directed at WC disabled
-devices), but it guarantees the flush/fua semantics for those IOs
-will be provided by all layers in the stack right down to the
-persistent storage media itself. Hence all the filesystem has to do
-is get it's IO and cache flush ordering correct, and everything
-just works regardless of the underlying storage capabilities.
-
-And, yes, any storage device with volatile caches that doesn't
-implement cache flushes correctly is considered broken and will get
-black listed....
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Bart.
