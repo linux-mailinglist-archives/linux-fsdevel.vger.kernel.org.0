@@ -2,55 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B7A917BA010
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Oct 2023 16:33:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A98DD7B9F26
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Oct 2023 16:19:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234566AbjJEOcy convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>); Thu, 5 Oct 2023 10:32:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40312 "EHLO
+        id S233686AbjJEOS2 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>); Thu, 5 Oct 2023 10:18:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234668AbjJEOba (ORCPT
+        with ESMTP id S244339AbjJENxC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Oct 2023 10:31:30 -0400
-Received: from mail-yw1-x1136.google.com (mail-yw1-x1136.google.com [IPv6:2607:f8b0:4864:20::1136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 526B586A2;
-        Thu,  5 Oct 2023 01:11:47 -0700 (PDT)
-Received: by mail-yw1-x1136.google.com with SMTP id 00721157ae682-59f4f80d084so6936157b3.1;
-        Thu, 05 Oct 2023 01:11:47 -0700 (PDT)
+        Thu, 5 Oct 2023 09:53:02 -0400
+Received: from mail-yw1-x112c.google.com (mail-yw1-x112c.google.com [IPv6:2607:f8b0:4864:20::112c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C19886A8;
+        Thu,  5 Oct 2023 01:12:54 -0700 (PDT)
+Received: by mail-yw1-x112c.google.com with SMTP id 00721157ae682-579de633419so7444727b3.3;
+        Thu, 05 Oct 2023 01:12:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696493506; x=1697098306;
+        d=1e100.net; s=20230601; t=1696493571; x=1697098371;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Ey3mu0cYa/bhtbEBQ1BIB9STmNOx3N6SafWjGpaN/7o=;
-        b=ZOyjygg3GUumYg9yDyOz6SZZuyYwFZ9A98Nnvlgmh9+X365JiXTlmMxMHe40aLBFQH
-         d4EwSoQB++invakhlD/oTKTQOmk53v4b8yk267AZnSgNhK4GF+xqmr8GWHN8/SyZ1kMI
-         pYWJCqkpKJhZkaaclrMzJEgb4AeaENTK7B9nsWeyi4NIeLRmWqpruEK1m38RZRuHeTKZ
-         yF4mON9Tl5Grt/mF101iGe1gcov6oaGcCnT1Hu9RKUaeqntHvv6On+0cXlp29v592BYq
-         nZ2szla2DhPeqm2azwRRlLaQswPN+ahYZ2c6ayorWUgQwof87N8iSuSfNSQa2ZZPmj5S
-         E8UQ==
-X-Gm-Message-State: AOJu0YyLKfuQLS9UTlvV7kBM/4JHClZuFCuU6U3+7fN2X9HKPggRqYKu
-        bs7Z7CJT3m4qlhiX/jCoqSZBzGYUm8UNGg==
-X-Google-Smtp-Source: AGHT+IErovl4GsmqwzdyaD91ebnxhzBvD4rddXJGCptI3O5ZVpa17U84HpI9S7jORC1taC7Fh+aigg==
-X-Received: by 2002:a81:928e:0:b0:59f:519e:3e7c with SMTP id j136-20020a81928e000000b0059f519e3e7cmr5542216ywg.24.1696493505932;
-        Thu, 05 Oct 2023 01:11:45 -0700 (PDT)
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com. [209.85.128.174])
-        by smtp.gmail.com with ESMTPSA id n1-20020a0dcb01000000b0059293c8d70csm343716ywd.132.2023.10.05.01.11.45
+        bh=M4BxR8WaEars+PKA9cftvTpz4ekcZ4zNs/xIqkYQhA0=;
+        b=qqG6JP8oNhq2epEH2PKLA5kvLVJf5DSyvOh7Mf2ldaI3hTcO8eHPJxuO++nZd8Smr/
+         OfCmzFGgxwetdexnTXKiVUutshDJZc0iJEt4pIUxpkX0iuTtSl9E1JqAHxFZTGtFxF8U
+         OrpW3YQRgcb3OOYVp2qLeOeZ+KDUZfoLBQl4GNbHus978BTPq6NFEolPGv+NQMJSIkHs
+         dPnO7XjKeAorQgVVCtyiPf9ieBjtAAWgH9eIdmQAA/B59Pjgl3aSDqtmbxTsfCeo4xeV
+         W4+P29jGXNnEUlmfXQnfvrcDv9AzWt65OgAuEypQ/OdRvgmahFL7VQpeUI+9w49Mvjo3
+         cEzw==
+X-Gm-Message-State: AOJu0YzRZ+tEzjLENtn5OEXa832PHYNZbiwvpz59pFnXGbOI5dIYn2nv
+        jBD7X3Vz+4SXVmwWWpjBAU4AHHTdImyBWA==
+X-Google-Smtp-Source: AGHT+IFqfQSmPCLL9q3dJmqXGvGKh0yiuBHHWU0dWxGcB4CF5ZCwuI4wvJ8/HTqlEVW+3KyEKyx+7A==
+X-Received: by 2002:a0d:cccc:0:b0:592:97c3:18d2 with SMTP id o195-20020a0dcccc000000b0059297c318d2mr4954447ywd.15.1696493571546;
+        Thu, 05 Oct 2023 01:12:51 -0700 (PDT)
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com. [209.85.128.181])
+        by smtp.gmail.com with ESMTPSA id b126-20020a0dc084000000b0059935151fa1sm340844ywd.126.2023.10.05.01.12.51
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Oct 2023 01:11:45 -0700 (PDT)
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-59f4bc88f9fso6878497b3.2;
-        Thu, 05 Oct 2023 01:11:45 -0700 (PDT)
-X-Received: by 2002:a81:8246:0:b0:58d:f1fe:5954 with SMTP id
- s67-20020a818246000000b0058df1fe5954mr4952101ywf.32.1696493505212; Thu, 05
- Oct 2023 01:11:45 -0700 (PDT)
+        Thu, 05 Oct 2023 01:12:51 -0700 (PDT)
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-5a50756542cso7722917b3.0;
+        Thu, 05 Oct 2023 01:12:51 -0700 (PDT)
+X-Received: by 2002:a81:6d46:0:b0:59b:d7d9:266a with SMTP id
+ i67-20020a816d46000000b0059bd7d9266amr4247083ywc.5.1696493571014; Thu, 05 Oct
+ 2023 01:12:51 -0700 (PDT)
 MIME-Version: 1.0
-References: <20231004165317.1061855-1-willy@infradead.org> <20231004165317.1061855-10-willy@infradead.org>
-In-Reply-To: <20231004165317.1061855-10-willy@infradead.org>
+References: <20231004165317.1061855-1-willy@infradead.org> <20231004165317.1061855-15-willy@infradead.org>
+In-Reply-To: <20231004165317.1061855-15-willy@infradead.org>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 5 Oct 2023 10:11:34 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUv-iALRvpBacsKOAo3P1Rgpf5g=taWqdt=5t-1Xjg9Rw@mail.gmail.com>
-Message-ID: <CAMuHMdUv-iALRvpBacsKOAo3P1Rgpf5g=taWqdt=5t-1Xjg9Rw@mail.gmail.com>
-Subject: Re: [PATCH v2 09/17] m68k: Implement xor_unlock_is_negative_byte
+Date:   Thu, 5 Oct 2023 10:12:39 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVP+wZBMr0vzeKqaiW1yxi-RT5qpRRzF9R3fphmWi-2JQ@mail.gmail.com>
+Message-ID: <CAMuHMdVP+wZBMr0vzeKqaiW1yxi-RT5qpRRzF9R3fphmWi-2JQ@mail.gmail.com>
+Subject: Re: [PATCH v2 14/17] mm: Delete checks for xor_unlock_is_negative_byte()
 To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
 Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
@@ -69,16 +69,13 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Wed, Oct 4, 2023 at 6:53 PM Matthew Wilcox (Oracle)
 <willy@infradead.org> wrote:
-> Using EOR to clear the guaranteed-to-be-set lock bit will test the
-> negative flag just like the x86 implementation.  This should be
-> more efficient than the generic implementation in filemap.c.  It
-> would be better if m68k had __GCC_ASM_FLAG_OUTPUTS__.
->
-> Coldfire doesn't have a byte-sized EOR, so we test bit 7 after the
-> EOR, which is a second memory access, but it's slightly better than
-> the current C code.
+> Architectures which don't define their own use the one in
+> asm-generic/bitops/lock.h.  Get rid of all the ifdefs around "maybe we
+> don't have it".
 >
 > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+
+>  arch/m68k/include/asm/bitops.h                |  1 -
 
 Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
