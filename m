@@ -2,129 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DEF587BA275
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Oct 2023 17:37:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 860867BA093
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Oct 2023 16:41:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233792AbjJEPhy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Oct 2023 11:37:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50612 "EHLO
+        id S235882AbjJEOiV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Oct 2023 10:38:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232670AbjJEPhd (ORCPT
+        with ESMTP id S235373AbjJEOfu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Oct 2023 11:37:33 -0400
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42AA0346F3
-        for <linux-fsdevel@vger.kernel.org>; Thu,  5 Oct 2023 07:53:29 -0700 (PDT)
-Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20231005114715epoutp016559b4b10ba5ed1b3941abbf54fa8c5e~LM51RHG-x1110311103epoutp01G
-        for <linux-fsdevel@vger.kernel.org>; Thu,  5 Oct 2023 11:47:15 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20231005114715epoutp016559b4b10ba5ed1b3941abbf54fa8c5e~LM51RHG-x1110311103epoutp01G
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1696506435;
-        bh=Ur+4Je3z8bThcQehVDWdTpaEHCUcUOWQbzV4q7wIiCc=;
-        h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
-        b=iKuYPA76nLE3s1kYHBv12H9KsYEg3qc/Y6U+dBMqeqOjaBj+f8YsB6MZ/kiMAjOCD
-         Lj3sNgJpF4PuwUajl6HbnmXIIIPkdbOkdvZ08WBg2dnr4mu4t1jqGJFpJTApLo5na5
-         IhFJzHAc+85S9UBK+DOsLthEDwjKvpsFQPj6U9cc=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
-        20231005114714epcas2p4275fa98619da66da774a9e4da888acab~LM50qdik-2498724987epcas2p4E;
-        Thu,  5 Oct 2023 11:47:14 +0000 (GMT)
-Received: from epsmgec2p1.samsung.com (unknown [182.195.36.70]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4S1VCk2wKgz4x9Pv; Thu,  5 Oct
-        2023 11:47:14 +0000 (GMT)
-X-AuditID: b6c32a43-96bfd70000002187-f1-651ea242eab2
-Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
-        epsmgec2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        C2.58.08583.242AE156; Thu,  5 Oct 2023 20:47:14 +0900 (KST)
-Mime-Version: 1.0
-Subject: RE: [PATCH 04/13] block: Restore write hint support
-Reply-To: daejun7.park@samsung.com
-Sender: Daejun Park <daejun7.park@samsung.com>
-From:   Daejun Park <daejun7.park@samsung.com>
-To:     Bart Van Assche <bvanassche@acm.org>, Jens Axboe <axboe@kernel.dk>
-CC:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Daejun Park <daejun7.park@samsung.com>,
-        Seokhwan Kim <sukka.kim@samsung.com>,
-        Yonggil Song <yonggil.song@samsung.com>,
-        Jorn Lee <lunar.lee@samsung.com>
-X-Priority: 3
-X-Content-Kind-Code: NORMAL
-In-Reply-To: <20230920191442.3701673-5-bvanassche@acm.org>
-X-CPGS-Detection: blocking_info_exchange
-X-Drm-Type: N,general
-X-Msg-Generator: Mail
-X-Msg-Type: PERSONAL
-X-Reply-Demand: N
-Message-ID: <20231005114612epcms2p14efed0ed36c055344eec4b1f961ddf60@epcms2p1>
-Date:   Thu, 05 Oct 2023 20:46:12 +0900
-X-CMS-MailID: 20231005114612epcms2p14efed0ed36c055344eec4b1f961ddf60
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-X-CPGSPASS: Y
-X-CPGSPASS: Y
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrAJsWRmVeSWpSXmKPExsWy7bCmha7TIrlUg30nRCxW3+1ns3h9+BOj
-        xbQPP5ktTk89y2Tx8pCmxaoH4RaXn/BZrFx9lMniyfpZzBZ7b2lb7Nl7ksWi+/oONouTK16w
-        WCw//o/JYlXHXEaL83+Ps1pMPX+EyUHQ4/IVb4/LZ0s9Nq3qZPPYfbOBzePj01ssHn1bVjF6
-        fN4k57HpyVumAI6obJuM1MSU1CKF1Lzk/JTMvHRbJe/geOd4UzMDQ11DSwtzJYW8xNxUWyUX
-        nwBdt8wcoA+UFMoSc0qBQgGJxcVK+nY2RfmlJakKGfnFJbZKqQUpOQXmBXrFibnFpXnpenmp
-        JVaGBgZGpkCFCdkZ/esfsxa8ZKt4tXoZawPjWdYuRk4OCQETiV17lgDZXBxCAjsYJTqXdrB0
-        MXJw8AoISvzdIQxSIyxgI7Hl2VY2EFtIQEli/cVZ7BBxPYlbD9cwgthsAjoS00/cB4uLCLhJ
-        NFzdxQYyk1ngHYvEq7+7oZbxSsxof8oCYUtLbF++FayZU8BKYunFnewQcQ2JH8t6mSFsUYmb
-        q9+yw9jvj81nhLBFJFrvnYWqEZR48HM3VFxS4vbcTVD1+RL/ryyHsmskth2YB2XrS1zr2Ah2
-        A6+Ar8S/N29ZQf5lEVCVeDiVG6LERaJ35XKw8cwC8hLb385hBilhFtCUWL9LH8SUEFCWOHKL
-        BaKCT6Lj8F92mAcbNv7Gyt4x7wkThK0mse7neqYJjMqzEOE8C8muWQi7FjAyr2IUSy0ozk1P
-        TTYqMIRHbXJ+7iZGcFLWct7BeGX+P71DjEwcjIcYJTiYlUR40xtkUoV4UxIrq1KL8uOLSnNS
-        iw8xmgI9OZFZSjQ5H5gX8kriDU0sDUzMzAzNjUwNzJXEee+1zk0REkhPLEnNTk0tSC2C6WPi
-        4JRqYKr0Zr8rJ7pKNbPXyHhvbq2KS/Fzj/cv64SFevRFC6uWRybfXLvMwSejn5PvW21WCc8E
-        tzwj99pAFrM9h+N7db5Nbr1x4N0O9sJV3fFLniY9sq1js9pSr5gksilFconGq6ctr9bEaxbb
-        bsuqZdvy8N1Btj+XZQ/13cj3WtpTeSz8bXBTqfWKG6seHD970O33/jc3FnruWCpZtPj059q5
-        DPv2T78iu+XOzYBT5hItp97L+WX7hEz/airg3Pl8trC4tYvv8s0pwTuetG1617bwnor98UXO
-        QVOL/ye7RX3V1hdp3yee/y0iqeKXtaRyyj/Gg5P1XI1On6u98kqwLVLbhX3W1pn7uZe+LWBq
-        MT/xWomlOCPRUIu5qDgRAPbgHYxTBAAA
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20230920191556epcas2p39b150e6715248b625588a50b333e82e2
-References: <20230920191442.3701673-5-bvanassche@acm.org>
-        <20230920191442.3701673-1-bvanassche@acm.org>
-        <CGME20230920191556epcas2p39b150e6715248b625588a50b333e82e2@epcms2p1>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_PASS,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-        autolearn_force=no version=3.4.6
+        Thu, 5 Oct 2023 10:35:50 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 562633790D;
+        Thu,  5 Oct 2023 06:58:54 -0700 (PDT)
+Received: from pps.filterd (m0353728.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 395D7At8014585;
+        Thu, 5 Oct 2023 13:14:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=3ex7mhh2wNwC1ElK8hxF+83j+vTpDKL0Hxu33BudBd8=;
+ b=MWciXcw9Mk5LbHWdbl1mR3kLIsj5/hHig5wyk5zJzaPcyw7X+i2ZrMCzDiHl0OFoxORW
+ N/HA45jFni71aaWEKoDfa+ky44f4UPOq4vNLWOI3h2oeiU25jQXx7Eh+YlbTWqUoJB6x
+ U3zKDhjTeuTcJDHReE/xu+H6u3RvZwvWygyUlAyyMDMNVj2Q4PZgDSi26zihSsPXtBGq
+ PzJu1rK3PXs6OnNI03sHPROY8c0fFbYSV8ThON3eYtdBGbwWxwpwVG7ricpuJTre3UaT
+ F5aGZsK2AvIS91P5kBlHERUSb9+G0sYAlHuKNYujuC+RII8rw2/UfLgiIRuDpOe4ji5S NQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3thwrdrbbe-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 05 Oct 2023 13:14:06 +0000
+Received: from m0353728.ppops.net (m0353728.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 395D785C014528;
+        Thu, 5 Oct 2023 13:10:57 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3thwrdr93w-62
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 05 Oct 2023 13:10:57 +0000
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+        by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 395ACNA9010931;
+        Thu, 5 Oct 2023 11:47:08 GMT
+Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
+        by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3tf0q2angr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 05 Oct 2023 11:47:08 +0000
+Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
+        by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 395Bl7mJ262752
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 5 Oct 2023 11:47:07 GMT
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2BE9B5805A;
+        Thu,  5 Oct 2023 11:47:07 +0000 (GMT)
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6BC8358052;
+        Thu,  5 Oct 2023 11:47:06 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.61.90.188])
+        by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
+        Thu,  5 Oct 2023 11:47:06 +0000 (GMT)
+Message-ID: <25f6950a67be079e32ad5b4139b1e89e367a91ba.camel@linux.ibm.com>
+Subject: Re: [syzbot] [integrity] [overlayfs] possible deadlock in
+ mnt_want_write (2)
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Amir Goldstein <amir73il@gmail.com>,
+        syzbot <syzbot+b42fe626038981fb7bfa@syzkaller.appspotmail.com>
+Cc:     hdanton@sina.com, linux-fsdevel@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-unionfs@vger.kernel.org,
+        miklos@szeredi.hu, mszeredi@redhat.com,
+        syzbot@syzkalhler.appspotmail.com, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Date:   Thu, 05 Oct 2023 07:47:06 -0400
+In-Reply-To: <CAOQ4uxjw_XztGxrhR9LWtz_SszdURkM+Add2q8A9BAt0z901kA@mail.gmail.com>
+References: <CAOQ4uxhbNyDzf0_fFh1Yy5Kz2Coz=gTrfOtsmteE0=ncibBnpw@mail.gmail.com>
+         <0000000000001081fc0606f52ed9@google.com>
+         <CAOQ4uxjw_XztGxrhR9LWtz_SszdURkM+Add2q8A9BAt0z901kA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: mBwZEAiNtaVL6b8uRu3IAIxO_elfKi-K
+X-Proofpoint-ORIG-GUID: Moy2T3K-Oh6VNFoTbGhz-ZhtPfbNOcl5
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-10-05_08,2023-10-05_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ priorityscore=1501 mlxscore=0 lowpriorityscore=0 bulkscore=0
+ mlxlogscore=711 adultscore=0 clxscore=1011 spamscore=0 phishscore=0
+ suspectscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2309180000 definitions=main-2310050103
+X-Spam-Status: No, score=0.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-> This patch partially reverts commit c75e707fe1aa ("block: remove the
-> per-bio/request write hint"). The following aspects of that commit have
-> been reverted:
-> - Pass the struct kiocb write hint information to struct bio.
-> - Pass the struct bio write hint information to struct request.
-> - Do not merge requests with different write hints.
-> - Passing write hint information from the VFS layer to the block layer.
-> - In F2FS, initialization of bio.bi_write_hint.
+On Thu, 2023-10-05 at 13:26 +0300, Amir Goldstein wrote:
+> On Thu, Oct 5, 2023 at 12:59 PM syzbot
+> <syzbot+b42fe626038981fb7bfa@syzkaller.appspotmail.com> wrote:
+> >
+> > Hello,
+> >
+> > syzbot tried to test the proposed patch but the build/boot failed:
 > 
-> The following aspects of that commit have been dropped:
-> - Debugfs support for retrieving and modifying write hints.
-> - md-raid, BTRFS, ext4, gfs2 and zonefs write hint support.
-> - The write_hints[] array in struct request_queue.
+> My mistake. Please try again:
 > 
-> Cc: Christoph Hellwig <hch@lst.de>
-> Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+> #syz test: https://github.com/amir73il/linux ima-ovl-fix
 
-Reviewed-by: Daejun Park <daejun7.park@samsung.com>
+Thanks, Amir.   "mutext_init(&iint->mutex); moved, but the status
+initialization lines 161-166 were dropped.   They're needed by IMA-
+appraisal for signature verification.
+
+        iint->ima_file_status = INTEGRITY_UNKNOWN;
+	iint->ima_mmap_status = INTEGRITY_UNKNOWN;
+	iint->ima_bprm_status = INTEGRITY_UNKNOWN;
+	iint->ima_read_status = INTEGRITY_UNKNOWN;
+	iint->ima_creds_status = INTEGRITY_UNKNOWN;
+	iint->evm_status = INTEGRITY_UNKNOWN;
+
