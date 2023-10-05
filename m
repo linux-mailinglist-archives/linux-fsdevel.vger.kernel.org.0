@@ -2,130 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 989F07BA033
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Oct 2023 16:36:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 338EE7BA071
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Oct 2023 16:41:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235952AbjJEOgS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Oct 2023 10:36:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45776 "EHLO
+        id S236581AbjJEOgn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Oct 2023 10:36:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235967AbjJEOed (ORCPT
+        with ESMTP id S236118AbjJEOej (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Oct 2023 10:34:33 -0400
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD60B26A9
-        for <linux-fsdevel@vger.kernel.org>; Thu,  5 Oct 2023 06:50:48 -0700 (PDT)
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20231005133232euoutp015f198886bf7f21d4ab6d1505f2e2fd11~LOVwtlsGC0672006720euoutp01y
-        for <linux-fsdevel@vger.kernel.org>; Thu,  5 Oct 2023 13:32:32 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20231005133232euoutp015f198886bf7f21d4ab6d1505f2e2fd11~LOVwtlsGC0672006720euoutp01y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1696512752;
-        bh=8oh84wv4BpHh5bEuSWpNHH1TzfuQNXxhFhUs9JhPYcc=;
-        h=Date:Subject:To:CC:From:In-Reply-To:References:From;
-        b=nJ+q1MaOlno70kH1ngY/IHPLmefWq0+3qe7nC7PVQpQ0AlJ0pG9oMD/H6O2XCZDlO
-         VC/eSFbNkZw7FZln9y2SR7j+mdRyo+ZO/cRMiFU54i0rveY+u2Qlxokc41UyPFokdE
-         +oyOpIA8R2SvsuB8R2jQCk+Btab20GKpjFLL+Amw=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20231005133232eucas1p194459d5c2154b380ca2aa5767b65390f~LOVwPvDiZ3103131031eucas1p1H;
-        Thu,  5 Oct 2023 13:32:32 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 10.77.37758.0FABE156; Thu,  5
-        Oct 2023 14:32:32 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20231005133231eucas1p2df60b494ece43160cfe55304468308fe~LOVva1K6J2036920369eucas1p2w;
-        Thu,  5 Oct 2023 13:32:31 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20231005133231eusmtrp21abe9236253ea4b8693fff68e2310973~LOVvYgaza1834818348eusmtrp2T;
-        Thu,  5 Oct 2023 13:32:31 +0000 (GMT)
-X-AuditID: cbfec7f5-815ff7000002937e-b1-651ebaf0393a
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id ED.6C.25043.FEABE156; Thu,  5
-        Oct 2023 14:32:31 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20231005133231eusmtip196d343ea8c1e6b872d69f4abd5ac4f36~LOVvME8bj0869408694eusmtip1-;
-        Thu,  5 Oct 2023 13:32:31 +0000 (GMT)
-Received: from [106.110.32.65] (106.110.32.65) by CAMSVWEXC02.scsc.local
-        (2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-        Thu, 5 Oct 2023 14:32:29 +0100
-Message-ID: <83f58662-d737-44b0-9899-c0519a75968a@samsung.com>
-Date:   Thu, 5 Oct 2023 15:32:29 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 21/21] nvme: Support atomic writes
-To:     John Garry <john.g.garry@oracle.com>,
-        Alan Adamson <alan.adamson@oracle.com>
-CC:     <axboe@kernel.dk>, <kbusch@kernel.org>, <hch@lst.de>,
-        <sagi@grimberg.me>, <jejb@linux.ibm.com>,
-        <martin.petersen@oracle.com>, <djwong@kernel.org>,
-        <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
-        <chandan.babu@oracle.com>, <dchinner@redhat.com>,
-        <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-nvme@lists.infradead.org>, <linux-xfs@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <tytso@mit.edu>,
-        <jbongio@google.com>, <linux-api@vger.kernel.org>
-Content-Language: en-US
-From:   Pankaj Raghav <p.raghav@samsung.com>
-In-Reply-To: <b6ed0e26-e3d4-40c1-b95d-11c5b3b71077@oracle.com>
+        Thu, 5 Oct 2023 10:34:39 -0400
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26D16527A;
+        Thu,  5 Oct 2023 06:52:38 -0700 (PDT)
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 395DQhjE031548;
+        Thu, 5 Oct 2023 13:41:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=R/QTM1fzVv6cm+wswFVzDr/m9+FgX0LQuY8/jeKmhko=;
+ b=cuCVAU6kZBORw4kNzQM8QhKATzaQYQx9sq9VyXtyAcbUjSJlu2csv9UKwRsMdWToW/kZ
+ 0C0RhlLfSx4clzeAM9kri0/U0zoNlTG8RblVDlrVkUr8EElTobyZsMXrLACmhgSCyeNj
+ mwc7IV+kj/e+X5u63Eo6l2E8JPclAG8R1FP1Mai2lrKjyos0n24UwIr+NGmFo5l/dmCQ
+ dGyPtibDLCjR17Zb0bp+IBJPg1LpSIU+tL/CMmv8D5xPmvorNRdNYuKpBMJSXVYh1+lJ
+ yx7r7YcPGH6+f/EQTT0ey3+nrJjVS9Dgplu6YZos1rGIOPl3jrrD8md/aNUQm4O8WJSh nw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3thq9k02u9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 05 Oct 2023 13:41:49 +0000
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 395DR6nD000477;
+        Thu, 5 Oct 2023 13:36:47 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3thq9jywwj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 05 Oct 2023 13:36:47 +0000
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+        by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 395BKrDl017644;
+        Thu, 5 Oct 2023 13:35:43 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
+        by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3tey0nuqkf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 05 Oct 2023 13:35:43 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+        by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 395DZgnd64356738
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 5 Oct 2023 13:35:42 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F204A58051;
+        Thu,  5 Oct 2023 13:35:41 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4CBCF5805C;
+        Thu,  5 Oct 2023 13:35:41 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.61.90.188])
+        by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+        Thu,  5 Oct 2023 13:35:41 +0000 (GMT)
+Message-ID: <97be76d94fdacf369a324b6122d5f5bc19a3838c.camel@linux.ibm.com>
+Subject: Re: [syzbot] [integrity] [overlayfs] possible deadlock in
+ mnt_want_write (2)
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     hdanton@sina.com, linux-fsdevel@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-unionfs@vger.kernel.org,
+        miklos@szeredi.hu, mszeredi@redhat.com,
+        syzbot@syzkalhler.appspotmail.com, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Date:   Thu, 05 Oct 2023 09:35:40 -0400
+In-Reply-To: <CAOQ4uxgfJ4owqzh99t65MyT5A99BbwkLQ-sHumCUWyqSw-Rd5g@mail.gmail.com>
+References: <CAOQ4uxhbNyDzf0_fFh1Yy5Kz2Coz=gTrfOtsmteE0=ncibBnpw@mail.gmail.com>
+         <0000000000001081fc0606f52ed9@google.com>
+         <CAOQ4uxjw_XztGxrhR9LWtz_SszdURkM+Add2q8A9BAt0z901kA@mail.gmail.com>
+         <25f6950a67be079e32ad5b4139b1e89e367a91ba.camel@linux.ibm.com>
+         <CAOQ4uxgfJ4owqzh99t65MyT5A99BbwkLQ-sHumCUWyqSw-Rd5g@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: SRYz0AUECWsolMMPvJe_2XVNQ0vgpjPQ
+X-Proofpoint-ORIG-GUID: 2cgjxh7a4g6A1IxuXODZIVABZC_A6upp
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [106.110.32.65]
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-        CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sf1CTZRy/533fvXs3A1+mtCdArFVyIhBl0sOlRNHu3j+0I7vy0utysSe2
-        4oduTEPrGBAimICQKUNjh/JDd5UMgYGQ+OqkqYQXamMckd34wy1uIsQyGcV4seO/z/P5cd/v
-        53sPQ8oK6QhGm5OHdTmqLAUtpTquPvw5/n53NE60/0SjnsprBLKMVtLIe/kBQL/Yo9GA56QY
-        DblD0RmLnUCOiz4aNTg7CHTzHxtA1fwdgNr8B2nU61qHenodFBrqPkGj+qZxMeqetYlRc/8c
-        gb73+ihU8tVDMRoM9ItSwzmz1cAN/tZKcUMDBs56tozmqhr6ANd2uoC7MGykuaIbdpKbHHdR
-        nO/H2zQ3ZY3mrO4JIv2J7dKNapyl3YN1L6TslGouBbyiXb9KP2v1OAgjsEjKgYSB7Muw3H9H
-        VA6kjIxtAbC400MEBRk7DWDTud2CMAVgzck/yccJq8VLC0IzgLOeRup/l5+3EsLDBuD1djcI
-        RkLYFHg1cHQhTrHPweKuGZHAh0FHrZsK4nB2NRxzHRcH8Qo2CV65cGvBv5LdCmvOuBd4kr1H
-        wlKeEbAcutz188MYhmZjYWGZOAgl86N6u7HgWAtLOh8tJlfD4va6xQLPwOphn0jAX8Br510L
-        K0O2Qgp564hYEN6EU8MTtIBXQE//+UU+Cv7bVU8IeD8cdz4ihfCXAFZ2/UAHl4Dsq7DiRpbg
-        eR2aav1AoEOhcyJM2CcUVnccI6vA86YlhzAtKWZaUsG0pIIZUGeBHBv02ZlYvz4H703Qq7L1
-        hpzMhIzcbCuY/6XX5/r/soEWz2QCDwgG8AAypGJlSKYxCstC1Kr8fViX+6HOkIX1PIhkKIU8
-        ZN0mR4aMzVTl4U8x3oV1j1WCkUQYiZa4d8i/k6j0tFayae19W/yD1tqo98em4/w3T6z5ZE2q
-        MsWiy3ewjVsqlkW83QhQH3cIa2faVv1ewr8XpbAftZmXV9cVXHzy1MHlYZ79p+neHX35AUZ9
-        O3lsJK6S3KGZfuvWRy1Fo5qi8H1bjTHMkfZTypiJjVuUxoFVT2vvlTaNKg9tKxtPDX/qm9d6
-        NN8VOF95dio+9uNIz7s4dkTmOxz6RyApr2HAu6mzK3AgpTHtpZJzR2YOJypEyzSFG+7uBFcK
-        vi41FycPmg/MXs5NljsTN2/ftmH9bnV+evKkNJARWZWmvYS+HZKr2vfMSujUD/bCN9R8dF1M
-        81xNwuawu59XKRWUXqN6MZbU6VX/AfQjJ8UUBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBKsWRmVeSWpSXmKPExsVy+t/xu7rvd8mlGnR28Vjs6T/FZLH6bj+b
-        xevDnxgtLh2Vszj7ai67xeUnfBYrVx9lsji5/z2bxaIb25gsLvzawWgx6dA1RovN3zvYLPbe
-        0rbYs/cki8XlXXPYLOYve8pusevPDnaL5cf/MVmse/2exaK15ye7xfm/x1kdRD0WbCr1OH9v
-        I4vH5bOlHptWdbJ5TFh0gNFj85J6j903G9g8ms4cZfb4+PQWi8f7fVfZPD5vkvPY9OQtUwBP
-        lJ5NUX5pSapCRn5xia1StKGFkZ6hpYWekYmlnqGxeayVkamSvp1NSmpOZllqkb5dgl7Gwb+v
-        WQuuc1VsfHWSqYFxNWcXIyeHhICJxKbVr9m6GLk4hASWMkq0fp3KBpGQkdj45SorhC0s8eda
-        F1TRR0aJNX0PWCGcHYwSXadeglXxCthJHPs7lRnEZhFQkWje+Q0qLihxcuYTFhBbVEBe4v6t
-        GewgtrCAmcSR3VfA6kUEgiQmr3zCDjKUWeA5s8Tzebeg1q1ikng1sQusg1lAXOLWk/lMXYwc
-        HGwCWhKNnewgJifQ4r27UiEqNCVat/+GqpaXaN46mxniA0WJSTffQ31TK/H57zPGCYyis5Cc
-        NwvJgllIRs1CMmoBI8sqRpHU0uLc9NxiI73ixNzi0rx0veT83E2MwCS07djPLTsYV776qHeI
-        kYmD8RCjBAezkghveoNMqhBvSmJlVWpRfnxRaU5q8SFGU2AYTWSWEk3OB6bBvJJ4QzMDU0MT
-        M0sDU0szYyVxXs+CjkQhgfTEktTs1NSC1CKYPiYOTqkGps6DxgtCt7+WaL/EPcXtYMdF4e75
-        eTVSTh8y1vL36vExZU6vei0QJWzuar/L1Szj8rLL7TO0L5wpr9iuskLIf3+flNhHz7+25frP
-        1q5/9Pa8Vlrbz4imWzq8CRV+FiU2a213qCcLXquK62J/wMJ3zN9x1b1jD4wFJ31UfMqcVdi9
-        wI/5u6LOijbdXfc4e4xDI4vUuL4/OmPyY5f8v+XzGGbMbqk2k/9qsjjmluRub27f6JrEhxIf
-        K/ewVVTdFVx5TLt9ycJGIaOdCyef117/ty77dJaxXaDnkwcWT9f5KUvyfX0bNZu7+47ChIbj
-        Nhed1rcFvTqzU/zJ8iaNBwc0HKXvfPiUrhfs/nipQ+JpJZbijERDLeai4kQAWQAI6MsDAAA=
-X-CMS-MailID: 20231005133231eucas1p2df60b494ece43160cfe55304468308fe
-X-Msg-Generator: CA
-X-RootMTR: 20231004113943eucas1p23a51ce5ef06c36459f826101bb7b85fc
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20231004113943eucas1p23a51ce5ef06c36459f826101bb7b85fc
-References: <20230929102726.2985188-1-john.g.garry@oracle.com>
-        <20230929102726.2985188-22-john.g.garry@oracle.com>
-        <CGME20231004113943eucas1p23a51ce5ef06c36459f826101bb7b85fc@eucas1p2.samsung.com>
-        <20231004113941.zx3jlgnt23vs453r@localhost>
-        <b6ed0e26-e3d4-40c1-b95d-11c5b3b71077@oracle.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_PASS,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-10-05_08,2023-10-05_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
+ spamscore=0 impostorscore=0 malwarescore=0 bulkscore=0 adultscore=0
+ lowpriorityscore=0 phishscore=0 mlxlogscore=642 priorityscore=1501
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2309180000 definitions=main-2310050107
+X-Spam-Status: No, score=0.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -133,36 +102,40 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
->>> +                blk_queue_atomic_write_max_bytes(disk->queue, atomic_bs);
->>> +                blk_queue_atomic_write_unit_min_sectors(disk->queue, 1);
->>> +                blk_queue_atomic_write_unit_max_sectors(disk->queue,
->>> +                                    atomic_bs / bs);
->> blk_queue_atomic_write_unit_[min| max]_sectors expects sectors (512 bytes unit)
->> as input but no conversion is done here from device logical block size
->> to SECTORs.
+On Thu, 2023-10-05 at 16:22 +0300, Amir Goldstein wrote:
+> On Thu, Oct 5, 2023 at 4:14 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> >
+> > On Thu, 2023-10-05 at 13:26 +0300, Amir Goldstein wrote:
+> > > On Thu, Oct 5, 2023 at 12:59 PM syzbot
+> > > <syzbot+b42fe626038981fb7bfa@syzkaller.appspotmail.com> wrote:
+> > > >
+> > > > Hello,
+> > > >
+> > > > syzbot tried to test the proposed patch but the build/boot failed:
+> > >
+> > > My mistake. Please try again:
+> > >
+> > > #syz test: https://github.com/amir73il/linux ima-ovl-fix
+> >
+> > Thanks, Amir.   "mutext_init(&iint->mutex); moved, but the status
+> > initialization lines 161-166 were dropped.   They're needed by IMA-
+> > appraisal for signature verification.
+> >
+> >         iint->ima_file_status = INTEGRITY_UNKNOWN;
+> >         iint->ima_mmap_status = INTEGRITY_UNKNOWN;
+> >         iint->ima_bprm_status = INTEGRITY_UNKNOWN;
+> >         iint->ima_read_status = INTEGRITY_UNKNOWN;
+> >         iint->ima_creds_status = INTEGRITY_UNKNOWN;
+> >         iint->evm_status = INTEGRITY_UNKNOWN;
+> >
 > 
-> Yeah, you are right. I think that we can just use:
-> 
-> blk_queue_atomic_write_unit_max_sectors(disk->queue,
-> atomic_bs >> SECTOR_SHIFT);
-> 
+> They are dropped from iint_init_once()
+> They are not needed there because there are now set
+> in every iint allocation in iint_init_always()
+> instead of being set in iint_free()
 
-Makes sense.
-I still don't grok the difference between max_bytes and unit_max_sectors here.
-(Maybe NVMe spec does not differentiate it?)
+I was only looking at the patch and noticed the removal.  Thanks, this
+looks good.
 
-I assume min_sectors should be as follows instead of setting it to 1 (512 bytes)?
+Mimi
 
-blk_queue_atomic_write_unit_min_sectors(disk->queue, bs >> SECTORS_SHIFT);
-
-
-> Thanks,
-> John
-> 
->>> +                blk_queue_atomic_write_boundary_bytes(disk->queue, boundary);
->>> +            } else {
->>> +                dev_err(ns->ctrl->device, "Unsupported atomic boundary=0x%x\n",
->>> +                    boundary);
->>> +            }
->>>
-> 
