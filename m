@@ -2,253 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 519F27BAA83
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Oct 2023 21:43:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 210E17BAAA5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Oct 2023 21:48:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231576AbjJETm6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Oct 2023 15:42:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43430 "EHLO
+        id S230443AbjJETsB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Oct 2023 15:48:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231878AbjJETmd (ORCPT
+        with ESMTP id S229437AbjJETsA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Oct 2023 15:42:33 -0400
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AED0139;
-        Thu,  5 Oct 2023 12:42:23 -0700 (PDT)
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1c737d61a00so10875405ad.3;
-        Thu, 05 Oct 2023 12:42:23 -0700 (PDT)
+        Thu, 5 Oct 2023 15:48:00 -0400
+Received: from mail-ot1-f78.google.com (mail-ot1-f78.google.com [209.85.210.78])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D198DDE
+        for <linux-fsdevel@vger.kernel.org>; Thu,  5 Oct 2023 12:47:58 -0700 (PDT)
+Received: by mail-ot1-f78.google.com with SMTP id 46e09a7af769-6c6370774e8so1849883a34.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Oct 2023 12:47:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696534943; x=1697139743;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UCPfzQ6gGXtCtFoEWf6GEkmetjqJd0PL6BZnUtAtOy0=;
-        b=FeMk68a6KoD30wY19O/zAApag5WrqMwjJ7Bm+/TMsPwP0WqAUK4qS/P9V69odzIjes
-         Q3/CdHuyBRbXn1XvoGgFKHDxpTtREl27dU7yZxzJs4PPWajfGdW2UGDSubSX8pOw7xj5
-         k6ITqtr4zxoFDMP1a83qfAXCCoNANOtz7+0iRi0QdRuviBYu3rvYmvf4x1pMSPGOgvnD
-         7oh2q3aNR56rQySn7r5a3UCyCvdMejJc+gyzlY04cJ/wYHGYposX5ZmlDLITCS/vX+cr
-         RZpOTHu32E2nwHU70+MBnLvcX3KP7jVe8X0/Xf//DBx0oheUIMNf3qPP9t3GKdD9JXCj
-         I0EQ==
-X-Gm-Message-State: AOJu0YwsVV/PzNLZGqW7ZXJD/gRNBW9nRIKxxUCL7tmn4i3KseacbIFJ
-        153pLu++0XYPlIAyeFKh9XQ=
-X-Google-Smtp-Source: AGHT+IGnAAVwyGAaDxIWJX2fbZmIBdZ8vM1z6YvMtCghUlQQQ0C75V8akECk/hgM4hd3NVeIi51Jag==
-X-Received: by 2002:a17:903:230a:b0:1c7:7e00:8075 with SMTP id d10-20020a170903230a00b001c77e008075mr7809758plh.66.1696534942662;
-        Thu, 05 Oct 2023 12:42:22 -0700 (PDT)
-Received: from bvanassche-linux.mtv.corp.google.com ([2620:15c:211:201:ca3e:70ef:bad:2f])
-        by smtp.gmail.com with ESMTPSA id u4-20020a170902e5c400b001a9b29b6759sm2129596plf.183.2023.10.05.12.42.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Oct 2023 12:42:22 -0700 (PDT)
-From:   Bart Van Assche <bvanassche@acm.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Niklas Cassel <Niklas.Cassel@wdc.com>,
-        Avri Altman <Avri.Altman@wdc.com>,
-        Bean Huo <huobean@gmail.com>,
-        Daejun Park <daejun7.park@samsung.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Douglas Gilbert <dgilbert@interlog.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>
-Subject: [PATCH v2 15/15] scsi_debug: Maintain write statistics per group number
-Date:   Thu,  5 Oct 2023 12:41:01 -0700
-Message-ID: <20231005194129.1882245-16-bvanassche@acm.org>
-X-Mailer: git-send-email 2.42.0.609.gbb76f46606-goog
-In-Reply-To: <20231005194129.1882245-1-bvanassche@acm.org>
-References: <20231005194129.1882245-1-bvanassche@acm.org>
+        d=1e100.net; s=20230601; t=1696535278; x=1697140078;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+rJYWdpX39fnELsnaA+2kd6nQscj6bBDfjIPgrB9Ju0=;
+        b=wlCcJ1deMt6Bw6bTBLMBei8pmJ6DjqT3Geoh55ZPHZuziud9phGy5Eu8CA7rzZqw9n
+         +/GtVhr9RwfHvi2vjC+vT8lQbEUK4eMYCjbtlPN+ffnLQ3IAFyfO+U7hffhiEFIekQie
+         Ag/Pbs/2E4s4kBnoJakXuhN2xgIV5AWitKo27w7bhzcqIBFfJ0q2o/teGu9kvQ3fU9TT
+         U0roj8CuBXMeaB4XUQqSt4WyfLd7DZQKGBksrpqXIncbE+D3Or+eB+/cAaSEvqBUS20O
+         0Gi82i/CIKkfq5to1As7Dg8BJW/hvgwZZBtjNQmmtHmXT+J3gAemBofZHete+kWQTNdj
+         ZU7A==
+X-Gm-Message-State: AOJu0YyuV4TEgOg6hxbVQ7u3cN+2qLEXWXl7uIrzss6gvBNchA7XoeSW
+        ZcaF2aUr+wK49AIONPWZKuJMgXp1uVhdDWTn3qwrUtau68rl
+X-Google-Smtp-Source: AGHT+IFUijQ5HWSsoSG3N0LC7VwaXmm+icbh/NGey9Tl9HOTXcuEWtAJ9WROrzOwSqClh5RBXfvO6mNgx1M4GTSql85R+ljbkhRO
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+X-Received: by 2002:a9d:7dcf:0:b0:6c4:7e6c:cb4e with SMTP id
+ k15-20020a9d7dcf000000b006c47e6ccb4emr1782895otn.5.1696535278207; Thu, 05 Oct
+ 2023 12:47:58 -0700 (PDT)
+Date:   Thu, 05 Oct 2023 12:47:58 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009b49ce0606fd665a@google.com>
+Subject: [syzbot] [ntfs3?] WARNING in attr_data_get_block (3)
+From:   syzbot <syzbot+a9850b21d99643eadbb8@syzkaller.appspotmail.com>
+To:     almaz.alexandrovich@paragon-software.com,
+        clang-built-linux@googlegroups.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, nathan@kernel.org,
+        ndesaulniers@google.com, ntfs3@lists.linux.dev,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=2.2 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_BL_SPAMCOP_NET,
         RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+        autolearn_force=no version=3.4.6
+X-Spam-Level: **
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Track per GROUP NUMBER how many write commands have been processed. Make
-this information available in sysfs. Reset these statistics if any data
-is written into the sysfs attribute.
+Hello,
 
-Note: SCSI devices should only interpret the information in the GROUP
-NUMBER field as a stream identifier if the ST_ENBLE bit has been set to
-one. This patch follows a simpler approach: count the number of writes
-per GROUP NUMBER whether or not the group number represents a stream
-identifier.
+syzbot found the following issue on:
 
-Cc: Martin K. Petersen <martin.petersen@oracle.com>
-Cc: Douglas Gilbert <dgilbert@interlog.com>
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+HEAD commit:    e402b08634b3 Merge tag 'soc-fixes-6.6' of git://git.kernel..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=111e0d01680000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=12da82ece7bf46f9
+dashboard link: https://syzkaller.appspot.com/bug?extid=a9850b21d99643eadbb8
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12b684e6680000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10ede4d6680000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/41cd2d7ae4a2/disk-e402b086.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/06c5c0caa862/vmlinux-e402b086.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/483b777ed71c/bzImage-e402b086.xz
+mounted in repro #1: https://storage.googleapis.com/syzbot-assets/f17ff5020b6d/mount_0.gz
+mounted in repro #2: https://storage.googleapis.com/syzbot-assets/6aff89451d15/mount_2.gz
+
+The issue was bisected to:
+
+commit 6e5be40d32fb1907285277c02e74493ed43d77fe
+Author: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Date:   Fri Aug 13 14:21:30 2021 +0000
+
+    fs/ntfs3: Add NTFS3 in fs/Kconfig and fs/Makefile
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15f20a7c680000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=17f20a7c680000
+console output: https://syzkaller.appspot.com/x/log.txt?x=13f20a7c680000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+a9850b21d99643eadbb8@syzkaller.appspotmail.com
+Fixes: 6e5be40d32fb ("fs/ntfs3: Add NTFS3 in fs/Kconfig and fs/Makefile")
+
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 5033 at fs/ntfs3/attrib.c:1059 attr_data_get_block+0x1926/0x2da0
+Modules linked in:
+CPU: 1 PID: 5033 Comm: syz-executor106 Not tainted 6.6.0-rc3-syzkaller-00214-ge402b08634b3 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/06/2023
+RIP: 0010:attr_data_get_block+0x1926/0x2da0 fs/ntfs3/attrib.c:1059
+Code: 80 e1 07 80 c1 03 38 c1 0f 8c 48 ff ff ff 48 8d bc 24 e0 01 00 00 e8 19 74 18 ff 48 8b 54 24 58 e9 31 ff ff ff e8 ba 01 be fe <0f> 0b bb ea ff ff ff e9 11 fa ff ff e8 a9 01 be fe e9 0f f9 ff ff
+RSP: 0018:ffffc9000406f6a0 EFLAGS: 00010293
+RAX: ffffffff82d008b6 RBX: 00000000ffffffff RCX: ffff888025380000
+RDX: 0000000000000000 RSI: 00000000ffffffff RDI: 00000000ffffffff
+RBP: ffffc9000406f908 R08: ffffffff82d0038f R09: 1ffffffff20df689
+R10: dffffc0000000000 R11: fffffbfff20df68a R12: 1ffff9200080def4
+R13: 000000000000001c R14: ffff888076620140 R15: dffffc0000000000
+FS:  00007f36f9b9c6c0(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f36f9b9cd58 CR3: 0000000026956000 CR4: 00000000003506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ ntfs_fallocate+0xc6d/0x1100 fs/ntfs3/file.c:610
+ vfs_fallocate+0x551/0x6b0 fs/open.c:324
+ do_vfs_ioctl+0x22da/0x2b40 fs/ioctl.c:850
+ __do_sys_ioctl fs/ioctl.c:869 [inline]
+ __se_sys_ioctl+0x81/0x170 fs/ioctl.c:857
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f37091ff5a9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f36f9b9c218 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 000000000000003f RCX: 00007f37091ff5a9
+RDX: 0000000020000780 RSI: 0000000040305828 RDI: 0000000000000004
+RBP: 00007f37092aa6d8 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f37092aa6d0
+R13: 00007f3709277a14 R14: 726665646f747561 R15: 61635f6563617073
+ </TASK>
+
+
 ---
- drivers/scsi/scsi_debug.c | 51 ++++++++++++++++++++++++++++++++++++---
- 1 file changed, 47 insertions(+), 4 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
-index 801448570960..c2102c0046ad 100644
---- a/drivers/scsi/scsi_debug.c
-+++ b/drivers/scsi/scsi_debug.c
-@@ -846,6 +846,8 @@ static int sdeb_zbc_nr_conv = DEF_ZBC_NR_CONV_ZONES;
- static int submit_queues = DEF_SUBMIT_QUEUES;  /* > 1 for multi-queue (mq) */
- static int poll_queues; /* iouring iopoll interface.*/
- 
-+static atomic_long_t writes_by_group_number[64];
-+
- static char sdebug_proc_name[] = MY_NAME;
- static const char *my_name = MY_NAME;
- 
-@@ -3040,7 +3042,8 @@ static inline struct sdeb_store_info *devip2sip(struct sdebug_dev_info *devip,
- 
- /* Returns number of bytes copied or -1 if error. */
- static int do_device_access(struct sdeb_store_info *sip, struct scsi_cmnd *scp,
--			    u32 sg_skip, u64 lba, u32 num, bool do_write)
-+			    u32 sg_skip, u64 lba, u32 num, bool do_write,
-+			    u8 group_number)
- {
- 	int ret;
- 	u64 block, rest = 0;
-@@ -3059,6 +3062,10 @@ static int do_device_access(struct sdeb_store_info *sip, struct scsi_cmnd *scp,
- 		return 0;
- 	if (scp->sc_data_direction != dir)
- 		return -1;
-+
-+	if (do_write && group_number < ARRAY_SIZE(writes_by_group_number))
-+		atomic_long_inc(&writes_by_group_number[group_number]);
-+
- 	fsp = sip->storep;
- 
- 	block = do_div(lba, sdebug_store_sectors);
-@@ -3432,7 +3439,7 @@ static int resp_read_dt0(struct scsi_cmnd *scp, struct sdebug_dev_info *devip)
- 		}
- 	}
- 
--	ret = do_device_access(sip, scp, 0, lba, num, false);
-+	ret = do_device_access(sip, scp, 0, lba, num, false, 0);
- 	sdeb_read_unlock(sip);
- 	if (unlikely(ret == -1))
- 		return DID_ERROR << 16;
-@@ -3617,6 +3624,7 @@ static int resp_write_dt0(struct scsi_cmnd *scp, struct sdebug_dev_info *devip)
- {
- 	bool check_prot;
- 	u32 num;
-+	u8 group = 0;
- 	u32 ei_lba;
- 	int ret;
- 	u64 lba;
-@@ -3628,11 +3636,13 @@ static int resp_write_dt0(struct scsi_cmnd *scp, struct sdebug_dev_info *devip)
- 		ei_lba = 0;
- 		lba = get_unaligned_be64(cmd + 2);
- 		num = get_unaligned_be32(cmd + 10);
-+		group = cmd[14] & 0x3f;
- 		check_prot = true;
- 		break;
- 	case WRITE_10:
- 		ei_lba = 0;
- 		lba = get_unaligned_be32(cmd + 2);
-+		group = cmd[6] & 0x3f;
- 		num = get_unaligned_be16(cmd + 7);
- 		check_prot = true;
- 		break;
-@@ -3647,15 +3657,18 @@ static int resp_write_dt0(struct scsi_cmnd *scp, struct sdebug_dev_info *devip)
- 		ei_lba = 0;
- 		lba = get_unaligned_be32(cmd + 2);
- 		num = get_unaligned_be32(cmd + 6);
-+		group = cmd[6] & 0x3f;
- 		check_prot = true;
- 		break;
- 	case 0x53:	/* XDWRITEREAD(10) */
- 		ei_lba = 0;
- 		lba = get_unaligned_be32(cmd + 2);
-+		group = cmd[6] & 0x1f;
- 		num = get_unaligned_be16(cmd + 7);
- 		check_prot = false;
- 		break;
- 	default:	/* assume WRITE(32) */
-+		group = cmd[6] & 0x3f;
- 		lba = get_unaligned_be64(cmd + 12);
- 		ei_lba = get_unaligned_be32(cmd + 20);
- 		num = get_unaligned_be32(cmd + 28);
-@@ -3710,7 +3723,7 @@ static int resp_write_dt0(struct scsi_cmnd *scp, struct sdebug_dev_info *devip)
- 		}
- 	}
- 
--	ret = do_device_access(sip, scp, 0, lba, num, true);
-+	ret = do_device_access(sip, scp, 0, lba, num, true, group);
- 	if (unlikely(scsi_debug_lbp()))
- 		map_region(sip, lba, num);
- 	/* If ZBC zone then bump its write pointer */
-@@ -3762,12 +3775,14 @@ static int resp_write_scat(struct scsi_cmnd *scp,
- 	u32 lb_size = sdebug_sector_size;
- 	u32 ei_lba;
- 	u64 lba;
-+	u8 group;
- 	int ret, res;
- 	bool is_16;
- 	static const u32 lrd_size = 32; /* + parameter list header size */
- 
- 	if (cmd[0] == VARIABLE_LENGTH_CMD) {
- 		is_16 = false;
-+		group = cmd[6] & 0x3f;
- 		wrprotect = (cmd[10] >> 5) & 0x7;
- 		lbdof = get_unaligned_be16(cmd + 12);
- 		num_lrd = get_unaligned_be16(cmd + 16);
-@@ -3778,6 +3793,7 @@ static int resp_write_scat(struct scsi_cmnd *scp,
- 		lbdof = get_unaligned_be16(cmd + 4);
- 		num_lrd = get_unaligned_be16(cmd + 8);
- 		bt_len = get_unaligned_be32(cmd + 10);
-+		group = cmd[14] & 0x3f;
- 		if (unlikely(have_dif_prot)) {
- 			if (sdebug_dif == T10_PI_TYPE2_PROTECTION &&
- 			    wrprotect) {
-@@ -3866,7 +3882,8 @@ static int resp_write_scat(struct scsi_cmnd *scp,
- 			}
- 		}
- 
--		ret = do_device_access(sip, scp, sg_off, lba, num, true);
-+		ret = do_device_access(sip, scp, sg_off, lba, num, true,
-+				       group);
- 		/* If ZBC zone then bump its write pointer */
- 		if (sdebug_dev_is_zoned(devip))
- 			zbc_inc_wp(devip, lba, num);
-@@ -6828,6 +6845,31 @@ static ssize_t tur_ms_to_ready_show(struct device_driver *ddp, char *buf)
- }
- static DRIVER_ATTR_RO(tur_ms_to_ready);
- 
-+static ssize_t group_number_stats_show(struct device_driver *ddp, char *buf)
-+{
-+	char *p = buf, *end = buf + PAGE_SIZE;
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(writes_by_group_number); i++)
-+		p += scnprintf(p, end - p, "%d %ld\n", i,
-+			       atomic_long_read(&writes_by_group_number[i]));
-+
-+	return p - buf;
-+}
-+
-+static ssize_t group_number_stats_store(struct device_driver *ddp,
-+					const char *buf,
-+				  size_t count)
-+{
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(writes_by_group_number); i++)
-+		atomic_long_set(&writes_by_group_number[i], 0);
-+
-+	return 0;
-+}
-+static DRIVER_ATTR_RW(group_number_stats);
-+
- /* Note: The following array creates attribute files in the
-    /sys/bus/pseudo/drivers/scsi_debug directory. The advantage of these
-    files (over those found in the /sys/module/scsi_debug/parameters
-@@ -6874,6 +6916,7 @@ static struct attribute *sdebug_drv_attrs[] = {
- 	&driver_attr_cdb_len.attr,
- 	&driver_attr_tur_ms_to_ready.attr,
- 	&driver_attr_zbc.attr,
-+	&driver_attr_group_number_stats.attr,
- 	NULL,
- };
- ATTRIBUTE_GROUPS(sdebug_drv);
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
