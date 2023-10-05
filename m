@@ -2,121 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A1617BA2DB
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Oct 2023 17:48:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94C3C7BA0E7
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Oct 2023 16:53:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231459AbjJEPsq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Oct 2023 11:48:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36564 "EHLO
+        id S238867AbjJEOnx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Oct 2023 10:43:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233862AbjJEPsE (ORCPT
+        with ESMTP id S239146AbjJEOlv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Oct 2023 11:48:04 -0400
-Received: from mail-vs1-xe2b.google.com (mail-vs1-xe2b.google.com [IPv6:2607:f8b0:4864:20::e2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C3E749E0;
-        Wed,  4 Oct 2023 22:09:11 -0700 (PDT)
-Received: by mail-vs1-xe2b.google.com with SMTP id ada2fe7eead31-4526d872941so301257137.1;
-        Wed, 04 Oct 2023 22:09:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696482550; x=1697087350; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YXtjeW9JdbsAOiLNM143QmEMkW6sJ8krIsKqBhO1k2A=;
-        b=PzLvWkjjabIF9ofjpZO+ShzuGPsvzk60jFD2cwuIkh8JRpShJFXIRUD3cjXuvaUvE2
-         aHETRpqhiqROo9FuKx5j9ktm4+GaFYIN4xL/izUGLp2d1w4zJrqZ1jQEfqpIhjykcinQ
-         oD+Cv02i/tim1dDZPBuFC6g2INQe7ae8+vY9w1/Kvv/QbFEfht+WuDmEMSSQbxFNGruy
-         y5OFlo6NsgqoBM5JL45IU9E0vgHbcAdEFUn6CK8s6uSaYx6+2aKEl2ZvxSdQokhaowqf
-         wkFXOW3SAm8yTOPcubQ/uD99lKmUPQbj+tX6ZdVxaUChx9UpigjYvIdGL3m3pMUqanjV
-         ruGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696482550; x=1697087350;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YXtjeW9JdbsAOiLNM143QmEMkW6sJ8krIsKqBhO1k2A=;
-        b=G73tjMOGSi+MSa0URag05LZIvqXYAo9VKMRqpgn1laR1m8Udr51+csOQ4b1rNuC5S4
-         Y12E6IwhrIiQR4x4V45NyZaUWEEFo5VOmOuv83MLlLr7Kx8hvyHb7GMMIydIdQ1MY82V
-         XvkJBCErNuSgicSdfcHkjTYFzA0cmJ8kzkX8e2rOTkKvXiPYguR4LHAEi+wk9OaQtmhh
-         NdD6Z9QM0UKDu+JZ+JiA7Sz8J/2RCr1THrIDSAJh7cKETk4EVF1S6zmZFXrSHo7hMnRU
-         mMR9Sb6G1Q0w/+ZFFUSMo2e1yxoGVc3yfl6SCJheI1nRUNTZYqGTSoOKNbQWnlIYnsjw
-         ZoRw==
-X-Gm-Message-State: AOJu0Yw82GrGBH6ROWMalzo6y0Sa4zq+ZwnnSmGAs35Wnca1NOmQCDNb
-        eT9u+qK52K2aBk3VP3nKu92xWNb2DjCNypZIHvw=
-X-Google-Smtp-Source: AGHT+IGwgYXJ62dNQlWEcT3vnSbRBGwbK+d6IBa0dPOpYJYEtDFz1+H9jTI8mC7Xi5XdJPcWxpnnjRSxUHP7L7Z0TNA=
-X-Received: by 2002:a67:f64e:0:b0:452:60c5:20b with SMTP id
- u14-20020a67f64e000000b0045260c5020bmr4338723vso.15.1696482550170; Wed, 04
- Oct 2023 22:09:10 -0700 (PDT)
+        Thu, 5 Oct 2023 10:41:51 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA31587236;
+        Thu,  5 Oct 2023 07:17:36 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6763CC43395;
+        Thu,  5 Oct 2023 05:59:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1696485568;
+        bh=cCSCNZZslM+gfgDhLOiPNVMp1LbblmbMJUQl9x8MlBc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=k97I2ThurWMNxl9tkFgNSEFVWw/8wjVdJOAUHDEFD+aqJCrtqKzzqniW2vCn6jYrP
+         THg1m/QDlNN46G+FI0EYV1PbWPr+NdgyP5LtRyolbE3WvGfwubSjKVEIaO76wQkKVh
+         dOzQTTXEyHezP7ndyccnw+QDOdDn4SOlvGkeZeCIsG8BizEJaRwRIJfA7mfGAiTqw6
+         b1zstobsa+XZz/i76RXfOV7zcXMDrT1e5BAC+UCKZyoGu1czf3lOi6fomKmhf2Wxot
+         W8m+mkNC9yef8FEa6YwBNp/r5vrqLMNq6LoNmYWdhyAnY1LgKs5KtMsBblevpIDrdU
+         bid6C4c44bR6w==
+User-agent: mu4e 1.8.10; emacs 27.1
+From:   Chandan Babu R <chandanbabu@kernel.org>
+To:     chandanbabu@kernel.org
+Cc:     dchinner@redhat.com, djwong@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: [ANNOUNCE] xfs-linux: for-next updated to 4e69f490d211
+Date:   Thu, 05 Oct 2023 11:27:35 +0530
+Message-ID: <87h6n5624j.fsf@debian-BULLSEYE-live-builder-AMD64>
 MIME-Version: 1.0
-References: <20231004185530.82088-1-jlayton@kernel.org> <20231004185530.82088-3-jlayton@kernel.org>
-In-Reply-To: <20231004185530.82088-3-jlayton@kernel.org>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 5 Oct 2023 08:08:59 +0300
-Message-ID: <CAOQ4uxgtyaBTM1bOSSGmsk+F4ZwsK+-N5ZZ3wAt_nv_E6G3C7Q@mail.gmail.com>
-Subject: Re: [PATCH v2 89/89] fs: move i_generation into new hole created
- after timestamp conversion
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 4, 2023 at 9:56=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wro=
-te:
->
-> The recent change to use discrete integers instead of struct timespec64
-> shaved 8 bytes off of struct inode, but it also moves the i_lock
-> into the previous cacheline, away from the fields that it protects.
->
-> Move i_generation above the i_lock, which moves the new 4 byte hole to
-> just after the i_fsnotify_mask in my setup.
+Hi folks,
 
-Might be good to mention that this hole has a purpose...
+The for-next branch of the xfs-linux repository at:
 
->
-> Suggested-by: Amir Goldstein <amir73il@gmail.com>
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  include/linux/fs.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 485b5e21c8e5..686c9f33e725 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -677,6 +677,7 @@ struct inode {
->         u32                     i_atime_nsec;
->         u32                     i_mtime_nsec;
->         u32                     i_ctime_nsec;
-> +       u32                     i_generation;
->         spinlock_t              i_lock; /* i_blocks, i_bytes, maybe i_siz=
-e */
->         unsigned short          i_bytes;
->         u8                      i_blkbits;
-> @@ -733,7 +734,6 @@ struct inode {
->                 unsigned                i_dir_seq;
->         };
->
-> -       __u32                   i_generation;
->
->  #ifdef CONFIG_FSNOTIFY
->         __u32                   i_fsnotify_mask; /* all events this inode=
- cares about */
+	https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
 
-If you post another version, please leave a comment here
+has just been updated.
 
-+         /* 32bit hole reserved for expanding i_fsnotify_mask to 64bit */
+Patches often get missed, so please check if your outstanding patches
+were in this update. If they have not been in this update, please
+resubmit them to linux-xfs@vger.kernel.org so they can be picked up in
+the next update.
 
-Thanks,
-Amir.
+The new head of the for-next branch is commit:
+
+4e69f490d211 Merge tag 'xfs-fstrim-busy-tag' of git://git.kernel.org/pub/scm/linux/kernel/git/dgc/linux-xfs into xfs-6.6-fixesC
+
+4 new commits:
+
+Chandan Babu R (1):
+      [4e69f490d211] Merge tag 'xfs-fstrim-busy-tag' of git://git.kernel.org/pub/scm/linux/kernel/git/dgc/linux-xfs into xfs-6.6-fixesC
+
+Dave Chinner (3):
+      [428c4435b063] xfs: move log discard work to xfs_discard.c
+      [89cfa899608f] xfs: reduce AGF hold times during fstrim operations
+      [e78a40b85171] xfs: abort fstrim if kernel is suspending
+
+Code Diffstat:
+
+ fs/xfs/xfs_discard.c     | 266 ++++++++++++++++++++++++++++++++++++++++++-----
+ fs/xfs/xfs_discard.h     |   6 +-
+ fs/xfs/xfs_extent_busy.c |  34 ++++--
+ fs/xfs/xfs_extent_busy.h |  24 ++++-
+ fs/xfs/xfs_log_cil.c     |  93 +++--------------
+ fs/xfs/xfs_log_priv.h    |   5 +-
+ 6 files changed, 311 insertions(+), 117 deletions(-)
