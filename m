@@ -2,129 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DE9197BBE0B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Oct 2023 19:52:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0159C7BBE6C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Oct 2023 20:07:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233103AbjJFRwt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Oct 2023 13:52:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33376 "EHLO
+        id S233343AbjJFSHu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Oct 2023 14:07:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43664 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232927AbjJFRws (ORCPT
+        with ESMTP id S233299AbjJFSHj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Oct 2023 13:52:48 -0400
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0343FB6;
-        Fri,  6 Oct 2023 10:52:45 -0700 (PDT)
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1c752caeaa6so19049565ad.1;
-        Fri, 06 Oct 2023 10:52:45 -0700 (PDT)
+        Fri, 6 Oct 2023 14:07:39 -0400
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A27FD44;
+        Fri,  6 Oct 2023 11:07:06 -0700 (PDT)
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-690ba63891dso2052999b3a.2;
+        Fri, 06 Oct 2023 11:07:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696614765; x=1697219565;
+        d=1e100.net; s=20230601; t=1696615625; x=1697220425;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BnL6IcDEF/I+SFfFl9VQ/bBGtLZVeE0oEvuHjO2kHpI=;
-        b=AoPtlGZMx0z5olEMW9ujTHkr/9PQzqgPrwA/0vpMmgACxEGdQhZdVOkJt9JfqPpQbn
-         VVKvBbIm/PIGlPmzNzYwx+siT1EPtqK3OBos+OWyHTS3rMFFKj8uxa4ftrVRBR9p+Yix
-         22D1uxE2NpHo7Vs8MHJqxntsaDO0hrvAylcJoI4YXHhZKHwkDbFSOEf/qEWPRazQZRtS
-         O/xcrH0tLhkzU5a2NtkTGHpX25BnM6QMP4nvZLtizh23xd7yVHAZsQmKm2HmoSf5zSp2
-         0d04liI0G43zppEBMgtlK5g4UvGQ1gcdL8Gkie6XyXGkynxTGZJlRDU1I9FYpVNhPxsT
-         PJBg==
-X-Gm-Message-State: AOJu0YwtMWLr+2u51rpooQuPXk5ZsvdfR19KrD/tLZYdXb3JHle+P+EQ
-        5Xl8TngqD8C5d7c0y9aScTY=
-X-Google-Smtp-Source: AGHT+IFEfu6krZRMMNdIjI9SRnksIybRzXbtBBjNfKK1W53oKfdtvx2+WeKkXpi7mnUPNlqRrPCVhw==
-X-Received: by 2002:a17:90b:4a12:b0:274:6503:26d with SMTP id kk18-20020a17090b4a1200b002746503026dmr8363179pjb.33.1696614765149;
-        Fri, 06 Oct 2023 10:52:45 -0700 (PDT)
+        bh=o9EMLKlcv/CZV0HfxzZTVE5do7+8meEwi+9ls+XR7Lo=;
+        b=L2KuJkJ1SGmnw4QkIbn5t3y+QKLz6RCXs+G7WEgHzMUP3x5vtq8ZwiqQqv5Ox9RLFW
+         rCueiD5hfDOBtKAmnodJbV2+RZXGGeS0DSfl+R5q3LxQE3RRjQ/CyQOQ/wyPx/A7cZio
+         RQrYRLB9ZkrbP1NvYz9l4/Enmd4Bxmsp1R3gDk1cqo3E7l6YjSSdsHuQj5pfBHKcdJLq
+         YyfUxeIM7tcUWwRRKfWN+FqJf3FDb5bogSGIql+EWVutB6hJqTlR2MRnXmmX5Xc81G4k
+         9ggmMUYAGGH4S5bRj3W1bmnBZ1PGH4P22jnuZdPjloeqqW7hSIdwgS6um10DER+l3SUs
+         GBdQ==
+X-Gm-Message-State: AOJu0Yyk+weymleOlTrVF8WO8zGlnDFIk9vTKle/KL9+WPRFKKWrVf3J
+        gggMEqu4XtkN6xsWiMqAT78=
+X-Google-Smtp-Source: AGHT+IEGzYVEUHi2QtaGXQzuP3HcQzAp1I/zk7dd7MyuyWhwrNemy0qnpGxr5tbyV25v/RioTKneEg==
+X-Received: by 2002:a05:6a21:3397:b0:15d:c86d:27a6 with SMTP id yy23-20020a056a21339700b0015dc86d27a6mr9750234pzb.55.1696615624770;
+        Fri, 06 Oct 2023 11:07:04 -0700 (PDT)
 Received: from ?IPV6:2620:15c:211:201:ebdb:ae30:148c:2f33? ([2620:15c:211:201:ebdb:ae30:148c:2f33])
-        by smtp.gmail.com with ESMTPSA id v5-20020a17090a0c8500b00256b67208b1sm6168825pja.56.2023.10.06.10.52.41
+        by smtp.gmail.com with ESMTPSA id d26-20020a63991a000000b0057a868900a9sm3586763pge.67.2023.10.06.11.07.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Oct 2023 10:52:43 -0700 (PDT)
-Message-ID: <a7a24914-4940-4a23-b439-bc8f0ad99212@acm.org>
-Date:   Fri, 6 Oct 2023 10:52:40 -0700
+        Fri, 06 Oct 2023 11:07:03 -0700 (PDT)
+Message-ID: <46c17c1b-29be-41a3-b799-79163851f972@acm.org>
+Date:   Fri, 6 Oct 2023 11:07:02 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 18/21] scsi: sd: Support reading atomic properties from
- block limits VPD
+Subject: Re: [PATCH v2 03/15] block: Support data lifetime in the I/O priority
+ bitfield
 Content-Language: en-US
-To:     John Garry <john.g.garry@oracle.com>, axboe@kernel.dk,
-        kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
-        jejb@linux.ibm.com, martin.petersen@oracle.com, djwong@kernel.org,
-        viro@zeniv.linux.org.uk, brauner@kernel.org,
-        chandan.babu@oracle.com, dchinner@redhat.com
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
-        linux-api@vger.kernel.org
-References: <20230929102726.2985188-1-john.g.garry@oracle.com>
- <20230929102726.2985188-19-john.g.garry@oracle.com>
- <2e5af8a4-f2e1-4c2e-bd0b-14cc9894b48e@acm.org>
- <53bfe07e-e125-7a69-4f89-481c10e0959e@oracle.com>
+To:     Damien Le Moal <dlemoal@kernel.org>, Jens Axboe <axboe@kernel.dk>
+Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Niklas Cassel <Niklas.Cassel@wdc.com>,
+        Avri Altman <Avri.Altman@wdc.com>,
+        Bean Huo <huobean@gmail.com>,
+        Daejun Park <daejun7.park@samsung.com>,
+        Hannes Reinecke <hare@suse.de>,
+        Niklas Cassel <Niklas.Cassel@wdc.com>
+References: <20231005194129.1882245-1-bvanassche@acm.org>
+ <20231005194129.1882245-4-bvanassche@acm.org>
+ <8aec03bb-4cef-9423-0ce4-c10d060afce4@kernel.org>
 From:   Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <53bfe07e-e125-7a69-4f89-481c10e0959e@oracle.com>
+In-Reply-To: <8aec03bb-4cef-9423-0ce4-c10d060afce4@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
         FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/2/23 04:27, John Garry wrote:
-> On 29/09/2023 18:54, Bart Van Assche wrote:
->> On 9/29/23 03:27, John Garry wrote:
->>> +static void sd_config_atomic(struct scsi_disk *sdkp)
->>> +{
->>> +    unsigned int logical_block_size = sdkp->device->sector_size;
->>> +    struct request_queue *q = sdkp->disk->queue;
->>> +
->>> +    if (sdkp->max_atomic) {
->>
->> Please use the "return early" style here to keep the indentation
->> level in this function low.
+On 10/6/23 01:19, Damien Le Moal wrote:
+> Your change seem to assume that it makes sense to be able to combine CDL with
+> lifetime hints. But does it really ? CDL is of dubious value for solid state
+> media and as far as I know, UFS world has not expressed interest. Conversely,
+> data lifetime hints do not make much sense for spin rust media where CDL is
+> important. So I would say that the combination of CDL and lifetime hints is of
+> dubious value.
 > 
-> ok, fine.
+> Given this, why not simply define the 64 possible lifetime values as plain hint
+> values (8 to 71, following 1 to 7 for CDL) ?
 > 
->>
->>> +        unsigned int max_atomic = max_t(unsigned int,
->>> +            rounddown_pow_of_two(sdkp->max_atomic),
->>> +            rounddown_pow_of_two(sdkp->max_atomic_with_boundary));
->>> +        unsigned int unit_min = sdkp->atomic_granularity ?
->>> +            rounddown_pow_of_two(sdkp->atomic_granularity) :
->>> +            physical_block_size_sectors;
->>> +        unsigned int unit_max = max_atomic;
->>> +
->>> +        if (sdkp->max_atomic_boundary)
->>> +            unit_max = min_t(unsigned int, unit_max,
->>> +                rounddown_pow_of_two(sdkp->max_atomic_boundary));
->>
->> Why does "rounddown_pow_of_two()" occur in the above code?
-> 
-> I assume that you are talking about all the code above to calculate 
-> atomic write values for the device.
-> 
-> The reason is that atomic write unit min and max are always a power-of-2 
-> - see rules described earlier - as so that we why we rounddown to a 
-> power-of-2.
+> The other question here if you really want to keep the bit separation approach
+> is: do we really need up to 64 different lifetime hints ? While the scsi
+> standard allows that much, does this many different lifetime make sense in
+> practice ? Can we ever think of a usecase that needs more than say 8 different
+> liftimes (3 bits) ? If you limit the number of possible lifetime hints to 8,
+> then we can keep 4 bits unused in the hint field for future features.
 
- From SBC-5: "The ATOMIC ALIGNMENT field indicates the required alignment
-of the starting LBA in an atomic write command. If the ATOMIC ALIGNMENT
-field is set to 0000_0000h, then there is no alignment requirement for
-atomic write commands.
+Hi Damien,
 
-The ATOMIC TRANSFER LENGTH GRANULARITY field indicates the minimum
-transfer length for an atomic write command. Atomic write operations are
-required to have a transfer length that is a multiple of the atomic
-transfer length granularity. An ATOMIC TRANSFER LENGTH GRANULARITY field
-set to 0000_0000h indicates that there is no atomic transfer length
-granularity requirement."
-
-I think the above means that it is wrong to round down the ATOMIC
-TRANSFER LENGTH GRANULARITY or the ATOMIC BOUNDARY values.
+Not supporting CDL for solid state media and supporting eight different
+lifetime values sounds good to me. Is this perhaps what you had in mind?
 
 Thanks,
 
 Bart.
+
+--- a/include/uapi/linux/ioprio.h
++++ b/include/uapi/linux/ioprio.h
+@@ -100,6 +100,14 @@ enum {
+         IOPRIO_HINT_DEV_DURATION_LIMIT_5 = 5,
+         IOPRIO_HINT_DEV_DURATION_LIMIT_6 = 6,
+         IOPRIO_HINT_DEV_DURATION_LIMIT_7 = 7,
++       IOPRIO_HINT_DATA_LIFE_TIME_0 = 8,
++       IOPRIO_HINT_DATA_LIFE_TIME_1 = 9,
++       IOPRIO_HINT_DATA_LIFE_TIME_2 = 10,
++       IOPRIO_HINT_DATA_LIFE_TIME_3 = 11,
++       IOPRIO_HINT_DATA_LIFE_TIME_4 = 12,
++       IOPRIO_HINT_DATA_LIFE_TIME_5 = 13,
++       IOPRIO_HINT_DATA_LIFE_TIME_6 = 14,
++       IOPRIO_HINT_DATA_LIFE_TIME_7 = 15,
+  };
+
 
