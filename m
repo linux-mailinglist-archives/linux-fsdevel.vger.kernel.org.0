@@ -2,18 +2,18 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 99A407BBF22
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Oct 2023 20:54:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10BA07BBF26
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Oct 2023 20:54:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233304AbjJFSyE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Oct 2023 14:54:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59106 "EHLO
+        id S233294AbjJFSyG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Oct 2023 14:54:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43542 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233294AbjJFSyB (ORCPT
+        with ESMTP id S233299AbjJFSyB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 6 Oct 2023 14:54:01 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25C63F0
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D2D8ED
         for <linux-fsdevel@vger.kernel.org>; Fri,  6 Oct 2023 11:52:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
         s=mimecast20190719; t=1696618351;
@@ -21,49 +21,49 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=c3gomcdSnORKGqO6JgH9QQWRoXUfHA8TCEcldyiCDCg=;
-        b=WqUgK7TkCaQzYrzDmluX7ATicDSuEynULxcDYNvpnyYPV0QxcmlE3Jyo2xeWY+KIiGyDN2
-        7aD/WKTOOhoGkMEYfatYuvbpf0Ezgg0P8uEuKc8o8YMSzFTkB3QsyG9V3Elm6MU0kFs1tM
-        Q4gJ7fSXVNqE6I/MzcoXEL7670YJirg=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=VJUiSpfPMzcl28TFVJjzzuncoLSne12d470beZMPYcY=;
+        b=L2xD6Llp1BgCE7yCAwxa982v2i4U3HVlUC/VslEZDf90wSKtD9k4ZfmfYIIsxqv2k6YYod
+        j7cyvt1daXbEzyD8oqciTkp+mv36cnFR3/OoNe+vUr2Wj7o2q9Qo4Slllh6LIWGGRY7x9b
+        mey4+A0HEVjWLla6MvpXyF+TN66bQes=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-91-tRFm138HM9ipk8scB3GpgA-1; Fri, 06 Oct 2023 14:52:29 -0400
-X-MC-Unique: tRFm138HM9ipk8scB3GpgA-1
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-9b98bbf130cso207022766b.2
+ us-mta-59-3GEBDfSLOWmP0kGuvhYDMg-1; Fri, 06 Oct 2023 14:52:29 -0400
+X-MC-Unique: 3GEBDfSLOWmP0kGuvhYDMg-1
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-9a1cf3e6c04so207826166b.3
         for <linux-fsdevel@vger.kernel.org>; Fri, 06 Oct 2023 11:52:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1696618348; x=1697223148;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=c3gomcdSnORKGqO6JgH9QQWRoXUfHA8TCEcldyiCDCg=;
-        b=RX6zc/ph8Td7P6X79hlzZSCjzTV+FKhmv+x16i9fsv03Y/WRgffYurXxzRnPdLmLj6
-         M3kdCx+Q3lefbO30FtNbSikjW9HPQ3nTIMIEY+zp/C6qD7qHEJ5EEIeCGENx/yBb7e4p
-         PtQxAKYQacRLAy3nNdlwkaI4pw0J8v3hZ8Z14W4TGo5gG8HhnI62nKB5n9vuuyuyJVyG
-         aKQpG7sXJ63orsWJenKen9cMfegdL9JjxbSKsihHcBJgPKr5SWI+mCtaEz7jgeKDGtHl
-         rDakNCO5cEnm25Rsgnpv7UHCtXsmDew6/3gGTtgUItIEjwtPlHC/ZM3nHNQPEIrkQX2V
-         QLAg==
-X-Gm-Message-State: AOJu0YxbTQR1tiKEsJoGVhatTEbZZ5W+N3j8/nYJiRk2Vesf8EzWaQ9B
-        HCJf0ldCr6wQfUzXGdongwYfuTxCENMsb/yB0XYDwezEUwBoxgL+j72Utp5hmdO7M3WJaws9ERO
-        LLQRD0ZfB6i1kUdvvsD4y2EoGXSDBctbQ
-X-Received: by 2002:a17:906:7389:b0:9a5:b878:7336 with SMTP id f9-20020a170906738900b009a5b8787336mr9458675ejl.7.1696618348068;
+        bh=VJUiSpfPMzcl28TFVJjzzuncoLSne12d470beZMPYcY=;
+        b=Gq4cfRytOlqY9hQ2NJIX2Jjr+q9TGwBTK1tGB1aOgSoyRp7RjV4hF1gUFOTS4Dxd6t
+         dgIL8H4KCDY8K9ygHGVfVxcRHQY/wQjTReI7EWJm7NVooTmU7b4xed1LJokzUlJ503Ab
+         Cw0bjYgFs8FeYMwEvCqPPLp8es4SvxVVRmyPRmQZn+zgtELl/cy6GT0FFCS/baw6etNM
+         C4Q63HuSSUCUzjPrUms8fVXSIwtyO7uv93QpBiJdiZIVOMrPVCwb6Aj2McHO6sRZwdYZ
+         tOUsLq1Y8WLAgvdgJ93JbCvyLxmmmBddxSS8XpW5MoZSCsvC1GLNpVWUVJVDwwJ7Um8S
+         0FqQ==
+X-Gm-Message-State: AOJu0YzNniOtqTtxFfuvxiiP+T8qDDhuKRQwEtXPPlynpWGpt/UDJBEU
+        c0ErzTdzpKZKyGmme6wrWsGO6f7Q3YdY1o8klIkSJ4myVV/pQ84tbzvLSAJBbTsuwszAVMRs6w8
+        ba2Sa3xqNMDVghHJwZJwYxGFp
+X-Received: by 2002:a17:907:7891:b0:9b9:325f:9be9 with SMTP id ku17-20020a170907789100b009b9325f9be9mr6905137ejc.73.1696618348754;
         Fri, 06 Oct 2023 11:52:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGlxgiiFCo6W/cxOloQkzFkz3BO5pAnKo80UorlqgbxkwRXthGuHA2XjbRabXXVlN6GGVvRXg==
-X-Received: by 2002:a17:906:7389:b0:9a5:b878:7336 with SMTP id f9-20020a170906738900b009a5b8787336mr9458662ejl.7.1696618347793;
-        Fri, 06 Oct 2023 11:52:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG6693S4s/pd1mNyLR7i5gSJ+yywVELtJcWxdgdXWVai6POFCFoxzt5ozN8gK51meBnXnTb8A==
+X-Received: by 2002:a17:907:7891:b0:9b9:325f:9be9 with SMTP id ku17-20020a170907789100b009b9325f9be9mr6905129ejc.73.1696618348563;
+        Fri, 06 Oct 2023 11:52:28 -0700 (PDT)
 Received: from localhost.localdomain ([109.183.6.197])
-        by smtp.gmail.com with ESMTPSA id os5-20020a170906af6500b009b947f81c4asm3304741ejb.155.2023.10.06.11.52.26
+        by smtp.gmail.com with ESMTPSA id os5-20020a170906af6500b009b947f81c4asm3304741ejb.155.2023.10.06.11.52.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Oct 2023 11:52:27 -0700 (PDT)
+        Fri, 06 Oct 2023 11:52:28 -0700 (PDT)
 From:   Andrey Albershteyn <aalbersh@redhat.com>
 To:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         fsverity@lists.linux.dev
 Cc:     djwong@kernel.org, ebiggers@kernel.org, david@fromorbit.com,
         dchinner@redhat.com, Andrey Albershteyn <aalbersh@redhat.com>
-Subject: [PATCH v3 10/28] fsverity: operate with Merkle tree blocks instead of pages
-Date:   Fri,  6 Oct 2023 20:49:04 +0200
-Message-Id: <20231006184922.252188-11-aalbersh@redhat.com>
+Subject: [PATCH v3 11/28] iomap: pass readpage operation to read path
+Date:   Fri,  6 Oct 2023 20:49:05 +0200
+Message-Id: <20231006184922.252188-12-aalbersh@redhat.com>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20231006184922.252188-1-aalbersh@redhat.com>
 References: <20231006184922.252188-1-aalbersh@redhat.com>
@@ -79,429 +79,208 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-fsverity expects filesystem to provide PAGEs with Merkle tree
-blocks in it. Then, when fsverity is done with processing the
-blocks, reference to PAGE is freed. This doesn't fit well with the
-way XFS manages its memory.
+Preparation for allowing filesystems to provide bio_set and
+->submit_io() for read path. This will allow fs to do an additional
+processing of ioend on ioend completion.
 
-This patch moves page reference management out of fsverity to
-filesystem. This way fsverity expects a kaddr to the Merkle tree
-block and filesystem can handle all caching and reference counting.
-
-As btrfs, ext4 and f2fs return page with Merkle tree blocks this
-patch also adds fsverity_read_merkle_tree_block() which wraps
-addressing blocks in the page (not to implement it in every fs).
+Make iomap_read_end_io() exportable, so, it can be called back from
+filesystem callout after verification is done.
 
 Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
 ---
- fs/verity/open.c          |  15 ++---
- fs/verity/read_metadata.c |  41 +++++++-------
- fs/verity/verify.c        |  58 ++++++++-----------
- include/linux/fsverity.h  | 115 +++++++++++++++++++++++++++++++++-----
- 4 files changed, 150 insertions(+), 79 deletions(-)
+ fs/erofs/data.c        |  4 ++--
+ fs/gfs2/aops.c         |  4 ++--
+ fs/iomap/buffered-io.c | 13 ++++++++++---
+ fs/xfs/xfs_aops.c      |  4 ++--
+ fs/zonefs/file.c       |  4 ++--
+ include/linux/iomap.h  | 21 +++++++++++++++++++--
+ 6 files changed, 37 insertions(+), 13 deletions(-)
 
-diff --git a/fs/verity/open.c b/fs/verity/open.c
-index dfb9fe6aaae9..8665d8b40081 100644
---- a/fs/verity/open.c
-+++ b/fs/verity/open.c
-@@ -126,19 +126,16 @@ int fsverity_init_merkle_tree_params(struct merkle_tree_params *params,
- 	}
- 
- 	/*
--	 * With block_size != PAGE_SIZE, an in-memory bitmap will need to be
--	 * allocated to track the "verified" status of hash blocks.  Don't allow
--	 * this bitmap to get too large.  For now, limit it to 1 MiB, which
--	 * limits the file size to about 4.4 TB with SHA-256 and 4K blocks.
-+	 * An in-memory bitmap will need to be allocated to track the "verified"
-+	 * status of hash blocks.  Don't allow this bitmap to get too large.
-+	 * For now, limit it to 1 MiB, which limits the file size to
-+	 * about 4.4 TB with SHA-256 and 4K blocks.
- 	 *
- 	 * Together with the fact that the data, and thus also the Merkle tree,
- 	 * cannot have more than ULONG_MAX pages, this implies that hash block
--	 * indices can always fit in an 'unsigned long'.  But to be safe, we
--	 * explicitly check for that too.  Note, this is only for hash block
--	 * indices; data block indices might not fit in an 'unsigned long'.
-+	 * indices can always fit in an 'unsigned long'.
- 	 */
--	if ((params->block_size != PAGE_SIZE && offset > 1 << 23) ||
--	    offset > ULONG_MAX) {
-+	if (offset > (1 << 23)) {
- 		fsverity_err(inode, "Too many blocks in Merkle tree");
- 		err = -EFBIG;
- 		goto out_err;
-diff --git a/fs/verity/read_metadata.c b/fs/verity/read_metadata.c
-index 197624cab43e..182bddf5dec5 100644
---- a/fs/verity/read_metadata.c
-+++ b/fs/verity/read_metadata.c
-@@ -16,9 +16,9 @@ static int fsverity_read_merkle_tree(struct inode *inode,
- 				     const struct fsverity_info *vi,
- 				     void __user *buf, u64 offset, int length)
+diff --git a/fs/erofs/data.c b/fs/erofs/data.c
+index 0c2c99c58b5e..3f5482d6cedb 100644
+--- a/fs/erofs/data.c
++++ b/fs/erofs/data.c
+@@ -357,12 +357,12 @@ int erofs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+  */
+ static int erofs_read_folio(struct file *file, struct folio *folio)
  {
--	const struct fsverity_operations *vops = inode->i_sb->s_vop;
- 	u64 end_offset;
--	unsigned int offs_in_page;
-+	unsigned int offs_in_block;
-+	unsigned int block_size = vi->tree_params.block_size;
- 	pgoff_t index, last_index;
- 	int retval = 0;
- 	int err = 0;
-@@ -26,8 +26,8 @@ static int fsverity_read_merkle_tree(struct inode *inode,
- 	end_offset = min(offset + length, vi->tree_params.tree_size);
- 	if (offset >= end_offset)
- 		return 0;
--	offs_in_page = offset_in_page(offset);
--	last_index = (end_offset - 1) >> PAGE_SHIFT;
-+	offs_in_block = offset % block_size;
-+	last_index = (end_offset - 1) >> vi->tree_params.log_blocksize;
- 
- 	/*
- 	 * Iterate through each Merkle tree page in the requested range and copy
-@@ -35,34 +35,31 @@ static int fsverity_read_merkle_tree(struct inode *inode,
- 	 * size isn't important here, as we are returning a byte stream; i.e.,
- 	 * we can just work with pages even if the tree block size != PAGE_SIZE.
- 	 */
--	for (index = offset >> PAGE_SHIFT; index <= last_index; index++) {
-+	for (index = offset >> vi->tree_params.log_blocksize;
-+			index <= last_index; index++) {
- 		unsigned long num_ra_pages =
- 			min_t(unsigned long, last_index - index + 1,
- 			      inode->i_sb->s_bdi->io_pages);
- 		unsigned int bytes_to_copy = min_t(u64, end_offset - offset,
--						   PAGE_SIZE - offs_in_page);
--		struct page *page;
--		const void *virt;
-+						   block_size - offs_in_block);
-+		struct fsverity_block block;
- 
--		page = vops->read_merkle_tree_page(inode, index, num_ra_pages,
--						   vi->tree_params.log_blocksize);
--		if (IS_ERR(page)) {
--			err = PTR_ERR(page);
--			fsverity_err(inode,
--				     "Error %d reading Merkle tree page %lu",
--				     err, index);
-+		block.len = block_size;
-+		if (fsverity_read_merkle_tree_block(inode,
-+					index << vi->tree_params.log_blocksize,
-+					&block, num_ra_pages)) {
-+			fsverity_drop_block(inode, &block);
-+			err = -EFAULT;
- 			break;
- 		}
- 
--		virt = kmap_local_page(page);
--		if (copy_to_user(buf, virt + offs_in_page, bytes_to_copy)) {
--			kunmap_local(virt);
--			fsverity_drop_page(inode, page);
-+		if (copy_to_user(buf, block.kaddr + offs_in_block, bytes_to_copy)) {
-+			fsverity_drop_block(inode, &block);
- 			err = -EFAULT;
- 			break;
- 		}
--		kunmap_local(virt);
--		fsverity_drop_page(inode, page);
-+		fsverity_drop_block(inode, &block);
-+		block.kaddr = NULL;
- 
- 		retval += bytes_to_copy;
- 		buf += bytes_to_copy;
-@@ -73,7 +70,7 @@ static int fsverity_read_merkle_tree(struct inode *inode,
- 			break;
- 		}
- 		cond_resched();
--		offs_in_page = 0;
-+		offs_in_block = 0;
- 	}
- 	return retval ? retval : err;
+-	return iomap_read_folio(folio, &erofs_iomap_ops);
++	return iomap_read_folio(folio, &erofs_iomap_ops, NULL);
  }
-diff --git a/fs/verity/verify.c b/fs/verity/verify.c
-index f556336ebd8d..dfe01f121843 100644
---- a/fs/verity/verify.c
-+++ b/fs/verity/verify.c
-@@ -44,15 +44,15 @@ verify_data_block(struct inode *inode, struct fsverity_info *vi,
- 	const struct merkle_tree_params *params = &vi->tree_params;
- 	const unsigned int hsize = params->digest_size;
- 	int level;
-+	int err;
-+	int num_ra_pages;
- 	u8 _want_hash[FS_VERITY_MAX_DIGEST_SIZE];
- 	const u8 *want_hash;
- 	u8 real_hash[FS_VERITY_MAX_DIGEST_SIZE];
- 	/* The hash blocks that are traversed, indexed by level */
- 	struct {
--		/* Page containing the hash block */
--		struct page *page;
--		/* Mapped address of the hash block (will be within @page) */
--		const void *addr;
-+		/* Block containing the hash block */
-+		struct fsverity_block block;
- 		/* Index of the hash block in the tree overall */
- 		unsigned long index;
- 		/* Byte offset of the wanted hash relative to @addr */
-@@ -93,10 +93,8 @@ verify_data_block(struct inode *inode, struct fsverity_info *vi,
- 		unsigned long next_hidx;
- 		unsigned long hblock_idx;
- 		pgoff_t hpage_idx;
--		unsigned int hblock_offset_in_page;
- 		unsigned int hoffset;
--		struct page *hpage;
--		const void *haddr;
-+		struct fsverity_block *block = &hblocks[level].block;
  
- 		/*
- 		 * The index of the block in the current level; also the index
-@@ -110,34 +108,28 @@ verify_data_block(struct inode *inode, struct fsverity_info *vi,
- 		/* Index of the hash page in the tree overall */
- 		hpage_idx = hblock_idx >> params->log_blocks_per_page;
- 
--		/* Byte offset of the hash block within the page */
--		hblock_offset_in_page =
--			(hblock_idx << params->log_blocksize) & ~PAGE_MASK;
--
- 		/* Byte offset of the hash within the block */
- 		hoffset = (hidx << params->log_digestsize) &
- 			  (params->block_size - 1);
- 
--		hpage = inode->i_sb->s_vop->read_merkle_tree_page(inode,
--				hpage_idx, level == 0 ? min(max_ra_pages,
--					params->tree_pages - hpage_idx) : 0,
--				params->log_blocksize);
--		if (IS_ERR(hpage)) {
-+		block->len = params->block_size;
-+		num_ra_pages = level == 0 ?
-+			min(max_ra_pages, params->tree_pages - hpage_idx) : 0;
-+		err = fsverity_read_merkle_tree_block(
-+			inode, hblock_idx << params->log_blocksize, block,
-+			num_ra_pages);
-+		if (err) {
- 			fsverity_err(inode,
--				     "Error %ld reading Merkle tree page %lu",
--				     PTR_ERR(hpage), hpage_idx);
-+				     "Error %d reading Merkle tree block %lu",
-+				     err, hblock_idx);
- 			goto error;
- 		}
--		haddr = kmap_local_page(hpage) + hblock_offset_in_page;
--		if (is_hash_block_verified(vi, hblock_idx, PageChecked(hpage))) {
--			memcpy(_want_hash, haddr + hoffset, hsize);
-+		if (is_hash_block_verified(vi, hblock_idx, block->cached)) {
-+			memcpy(_want_hash, block->kaddr + hoffset, hsize);
- 			want_hash = _want_hash;
--			kunmap_local(haddr);
--			fsverity_drop_page(inode, hpage);
-+			fsverity_drop_block(inode, block);
- 			goto descend;
- 		}
--		hblocks[level].page = hpage;
--		hblocks[level].addr = haddr;
- 		hblocks[level].index = hblock_idx;
- 		hblocks[level].hoffset = hoffset;
- 		hidx = next_hidx;
-@@ -147,8 +139,8 @@ verify_data_block(struct inode *inode, struct fsverity_info *vi,
- descend:
- 	/* Descend the tree verifying hash blocks. */
- 	for (; level > 0; level--) {
--		struct page *hpage = hblocks[level - 1].page;
--		const void *haddr = hblocks[level - 1].addr;
-+		struct fsverity_block *block = &hblocks[level - 1].block;
-+		const void *haddr = block->kaddr;
- 		unsigned long hblock_idx = hblocks[level - 1].index;
- 		unsigned int hoffset = hblocks[level - 1].hoffset;
- 
-@@ -161,14 +153,11 @@ verify_data_block(struct inode *inode, struct fsverity_info *vi,
- 		 * idempotent, as the same hash block might be verified by
- 		 * multiple threads concurrently.
- 		 */
--		if (vi->hash_block_verified)
--			set_bit(hblock_idx, vi->hash_block_verified);
--		else
--			SetPageChecked(hpage);
-+		set_bit(hblock_idx, vi->hash_block_verified);
-+		block->verified = true;
- 		memcpy(_want_hash, haddr + hoffset, hsize);
- 		want_hash = _want_hash;
--		kunmap_local(haddr);
--		fsverity_drop_page(inode, hpage);
-+		fsverity_drop_block(inode, block);
- 	}
- 
- 	/* Finally, verify the data block. */
-@@ -186,8 +175,7 @@ verify_data_block(struct inode *inode, struct fsverity_info *vi,
- 		     params->hash_alg->name, hsize, real_hash);
- error:
- 	for (; level > 0; level--) {
--		kunmap_local(hblocks[level - 1].addr);
--		fsverity_drop_page(inode, hblocks[level - 1].page);
-+		fsverity_drop_block(inode, &hblocks[level - 1].block);
- 	}
- 	return false;
+ static void erofs_readahead(struct readahead_control *rac)
+ {
+-	return iomap_readahead(rac, &erofs_iomap_ops);
++	return iomap_readahead(rac, &erofs_iomap_ops, NULL);
  }
-diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
-index cac012d4c86a..ce37a430bc97 100644
---- a/include/linux/fsverity.h
-+++ b/include/linux/fsverity.h
-@@ -26,6 +26,24 @@
- /* Arbitrary limit to bound the kmalloc() size.  Can be changed. */
- #define FS_VERITY_MAX_DESCRIPTOR_SIZE	16384
  
-+/**
-+ * struct fsverity_block - Merkle Tree block
-+ * @kaddr: virtual address of the block's data
-+ * @len: length of the data
-+ * @cached: true if block was already in cache, false otherwise
-+ * @verified: true if block is verified against Merkle tree
-+ * @context: filesystem private context
-+ *
-+ * Merkle Tree blocks passed and requested from filesystem
-+ */
-+struct fsverity_block {
-+	void *kaddr;
-+	unsigned int len;
-+	bool cached;
-+	bool verified;
-+	void *context;
-+};
-+
- /* Verity operations for filesystems */
- struct fsverity_operations {
+ static sector_t erofs_bmap(struct address_space *mapping, sector_t block)
+diff --git a/fs/gfs2/aops.c b/fs/gfs2/aops.c
+index c26d48355cc2..9c09ff75e586 100644
+--- a/fs/gfs2/aops.c
++++ b/fs/gfs2/aops.c
+@@ -456,7 +456,7 @@ static int gfs2_read_folio(struct file *file, struct folio *folio)
  
-@@ -107,6 +125,24 @@ struct fsverity_operations {
- 					      pgoff_t index,
- 					      unsigned long num_ra_pages,
- 					      u8 log_blocksize);
-+	/**
-+	 * Read a Merkle tree block of the given inode.
-+	 * @inode: the inode
-+	 * @index: 0-based index of the block within the Merkle tree
-+	 * @num_ra_pages: The number of pages with blocks that should be
-+	 *		  prefetched starting at @index if the page at @index
-+	 *		  isn't already cached.  Implementations may ignore this
-+	 *		  argument; it's only a performance optimization.
-+	 *
-+	 * This can be called at any time on an open verity file.  It may be
-+	 * called by multiple processes concurrently.
-+	 *
-+	 * Return: 0 on success, -errno on failure
-+	 */
-+	int (*read_merkle_tree_block)(struct inode *inode,
-+				      unsigned int index,
-+				      struct fsverity_block *block,
-+				      unsigned long num_ra_pages);
- 
- 	/**
- 	 * Write a Merkle tree block to the given inode.
-@@ -125,14 +161,14 @@ struct fsverity_operations {
- 				       u64 pos, unsigned int size);
- 
- 	/**
--	 * Release the reference to a Merkle tree page
-+	 * Release the reference to a Merkle tree block
- 	 *
--	 * @page: the page to release
-+	 * @page: the block to release
- 	 *
--	 * This is called when fs-verity is done with a page obtained with
--	 * ->read_merkle_tree_page().
-+	 * This is called when fs-verity is done with a block obtained with
-+	 * ->read_merkle_tree_block().
- 	 */
--	void (*drop_page)(struct page *page);
-+	void (*drop_block)(struct fsverity_block *block);
- };
- 
- #ifdef CONFIG_FS_VERITY
-@@ -188,22 +224,66 @@ void fsverity_verify_bio(struct bio *bio);
- void fsverity_enqueue_verify_work(struct work_struct *work);
+ 	if (!gfs2_is_jdata(ip) ||
+ 	    (i_blocksize(inode) == PAGE_SIZE && !folio_buffers(folio))) {
+-		error = iomap_read_folio(folio, &gfs2_iomap_ops);
++		error = iomap_read_folio(folio, &gfs2_iomap_ops, NULL);
+ 	} else if (gfs2_is_stuffed(ip)) {
+ 		error = stuffed_readpage(ip, &folio->page);
+ 		folio_unlock(folio);
+@@ -534,7 +534,7 @@ static void gfs2_readahead(struct readahead_control *rac)
+ 	else if (gfs2_is_jdata(ip))
+ 		mpage_readahead(rac, gfs2_block_map);
+ 	else
+-		iomap_readahead(rac, &gfs2_iomap_ops);
++		iomap_readahead(rac, &gfs2_iomap_ops, NULL);
+ }
  
  /**
-- * fsverity_drop_page() - drop page obtained with ->read_merkle_tree_page()
-+ * fsverity_drop_block() - drop block obtained with ->read_merkle_tree_block()
-  * @inode: inode in use for verification or metadata reading
-- * @page: page to be dropped
-+ * @block: block to be dropped
-  *
-- * Generic put_page() method. Calls out back to filesystem if ->drop_page() is
-- * set, otherwise just drops the reference to a page.
-+ * Generic put_page() method. Calls out back to filesystem if ->drop_block() is
-+ * set, otherwise do nothing.
-  *
-  */
--static inline void fsverity_drop_page(struct inode *inode, struct page *page)
-+static inline void fsverity_drop_block(struct inode *inode,
-+		struct fsverity_block *block)
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 644479ccefbd..ca78c7f62527 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -264,7 +264,7 @@ static void iomap_finish_folio_read(struct folio *folio, size_t offset,
+ 		folio_unlock(folio);
+ }
+ 
+-static void iomap_read_end_io(struct bio *bio)
++void iomap_read_end_io(struct bio *bio)
  {
--	if (inode->i_sb->s_vop->drop_page)
--		inode->i_sb->s_vop->drop_page(page);
--	else
-+	if (inode->i_sb->s_vop->drop_block)
-+		inode->i_sb->s_vop->drop_block(block);
-+	else {
-+		struct page *page = (struct page *)block->context;
-+
-+		if (block->verified)
-+			SetPageChecked(page);
-+
- 		put_page(page);
-+	}
+ 	int error = blk_status_to_errno(bio->bi_status);
+ 	struct folio_iter fi;
+@@ -273,12 +273,14 @@ static void iomap_read_end_io(struct bio *bio)
+ 		iomap_finish_folio_read(fi.folio, fi.offset, fi.length, error);
+ 	bio_put(bio);
+ }
++EXPORT_SYMBOL_GPL(iomap_read_end_io);
+ 
+ struct iomap_readpage_ctx {
+ 	struct folio		*cur_folio;
+ 	bool			cur_folio_in_bio;
+ 	struct bio		*bio;
+ 	struct readahead_control *rac;
++	const struct iomap_readpage_ops *ops;
+ };
+ 
+ /**
+@@ -402,7 +404,8 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
+ 	return pos - orig_pos + plen;
  }
  
-+/**
-+ * fsverity_read_block_from_page() - layer between fs using read page
-+ * and read block
-+ * @inode: inode in use for verification or metadata reading
-+ * @index: index of the block in the tree (offset into the tree)
-+ * @block: block to be read
-+ * @num_ra_pages: number of pages to readahead, may be ignored
-+ *
-+ * Depending on fs implementation use read_merkle_tree_block or
-+ * read_merkle_tree_page.
-+ */
-+static inline int fsverity_read_merkle_tree_block(struct inode *inode,
-+					unsigned int index,
-+					struct fsverity_block *block,
-+					unsigned long num_ra_pages)
-+{
-+	struct page *page;
-+
-+	if (inode->i_sb->s_vop->read_merkle_tree_block)
-+		return inode->i_sb->s_vop->read_merkle_tree_block(
-+			inode, index, block, num_ra_pages);
-+
-+	page = inode->i_sb->s_vop->read_merkle_tree_page(
-+			inode, index >> PAGE_SHIFT, num_ra_pages,
-+			block->len);
-+
-+	block->kaddr = page_address(page) + (index % PAGE_SIZE);
-+	block->cached = PageChecked(page);
-+	block->context = page;
-+
-+	if (IS_ERR(page))
-+		return PTR_ERR(page);
-+	else
-+		return 0;
-+}
-+
-+
+-int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops)
++int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops,
++		const struct iomap_readpage_ops *readpage_ops)
+ {
+ 	struct iomap_iter iter = {
+ 		.inode		= folio->mapping->host,
+@@ -411,6 +414,7 @@ int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops)
+ 	};
+ 	struct iomap_readpage_ctx ctx = {
+ 		.cur_folio	= folio,
++		.ops		= readpage_ops,
+ 	};
+ 	int ret;
  
- #else /* !CONFIG_FS_VERITY */
+@@ -468,6 +472,7 @@ static loff_t iomap_readahead_iter(const struct iomap_iter *iter,
+  * iomap_readahead - Attempt to read pages from a file.
+  * @rac: Describes the pages to be read.
+  * @ops: The operations vector for the filesystem.
++ * @readpage_ops: Filesystem supplied folio processiong operation
+  *
+  * This function is for filesystems to call to implement their readahead
+  * address_space operation.
+@@ -479,7 +484,8 @@ static loff_t iomap_readahead_iter(const struct iomap_iter *iter,
+  * function is called with memalloc_nofs set, so allocations will not cause
+  * the filesystem to be reentered.
+  */
+-void iomap_readahead(struct readahead_control *rac, const struct iomap_ops *ops)
++void iomap_readahead(struct readahead_control *rac, const struct iomap_ops *ops,
++		const struct iomap_readpage_ops *readpage_ops)
+ {
+ 	struct iomap_iter iter = {
+ 		.inode	= rac->mapping->host,
+@@ -488,6 +494,7 @@ void iomap_readahead(struct readahead_control *rac, const struct iomap_ops *ops)
+ 	};
+ 	struct iomap_readpage_ctx ctx = {
+ 		.rac	= rac,
++		.ops	= readpage_ops,
+ 	};
  
-@@ -287,6 +367,15 @@ static inline void fsverity_drop_page(struct inode *inode, struct page *page)
- 	WARN_ON_ONCE(1);
+ 	trace_iomap_readahead(rac->mapping->host, readahead_count(rac));
+diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+index 465d7630bb21..b413a2dbcc18 100644
+--- a/fs/xfs/xfs_aops.c
++++ b/fs/xfs/xfs_aops.c
+@@ -553,14 +553,14 @@ xfs_vm_read_folio(
+ 	struct file		*unused,
+ 	struct folio		*folio)
+ {
+-	return iomap_read_folio(folio, &xfs_read_iomap_ops);
++	return iomap_read_folio(folio, &xfs_read_iomap_ops, NULL);
  }
  
-+static inline int fsverity_read_merkle_tree_block(struct inode *inode,
-+					unsigned int index,
-+					struct fsverity_block *block,
-+					unsigned long num_ra_pages)
-+{
-+	WARN_ON_ONCE(1);
-+	return -EOPNOTSUPP;
-+}
-+
- #endif	/* !CONFIG_FS_VERITY */
+ STATIC void
+ xfs_vm_readahead(
+ 	struct readahead_control	*rac)
+ {
+-	iomap_readahead(rac, &xfs_read_iomap_ops);
++	iomap_readahead(rac, &xfs_read_iomap_ops, NULL);
+ }
  
- static inline bool fsverity_verify_folio(struct folio *folio)
+ static int
+diff --git a/fs/zonefs/file.c b/fs/zonefs/file.c
+index b2c9b35df8f7..29428c012150 100644
+--- a/fs/zonefs/file.c
++++ b/fs/zonefs/file.c
+@@ -112,12 +112,12 @@ static const struct iomap_ops zonefs_write_iomap_ops = {
+ 
+ static int zonefs_read_folio(struct file *unused, struct folio *folio)
+ {
+-	return iomap_read_folio(folio, &zonefs_read_iomap_ops);
++	return iomap_read_folio(folio, &zonefs_read_iomap_ops, NULL);
+ }
+ 
+ static void zonefs_readahead(struct readahead_control *rac)
+ {
+-	iomap_readahead(rac, &zonefs_read_iomap_ops);
++	iomap_readahead(rac, &zonefs_read_iomap_ops, NULL);
+ }
+ 
+ /*
+diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+index 96dd0acbba44..3565c449f3c9 100644
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@ -262,8 +262,25 @@ int iomap_file_buffered_write_punch_delalloc(struct inode *inode,
+ 		struct iomap *iomap, loff_t pos, loff_t length, ssize_t written,
+ 		int (*punch)(struct inode *inode, loff_t pos, loff_t length));
+ 
+-int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops);
+-void iomap_readahead(struct readahead_control *, const struct iomap_ops *ops);
++struct iomap_readpage_ops {
++	/*
++	 * Filesystems wishing to attach private information to a direct io bio
++	 * must provide a ->submit_io method that attaches the additional
++	 * information to the bio and changes the ->bi_end_io callback to a
++	 * custom function.  This function should, at a minimum, perform any
++	 * relevant post-processing of the bio and end with a call to
++	 * iomap_read_end_io.
++	 */
++	void (*submit_io)(const struct iomap_iter *iter, struct bio *bio,
++			loff_t file_offset);
++	struct bio_set *bio_set;
++};
++
++void iomap_read_end_io(struct bio *bio);
++int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops,
++		const struct iomap_readpage_ops *readpage_ops);
++void iomap_readahead(struct readahead_control *, const struct iomap_ops *ops,
++		const struct iomap_readpage_ops *readpage_ops);
+ bool iomap_is_partially_uptodate(struct folio *, size_t from, size_t count);
+ struct folio *iomap_get_folio(struct iomap_iter *iter, loff_t pos, size_t len);
+ bool iomap_release_folio(struct folio *folio, gfp_t gfp_flags);
 -- 
 2.40.1
 
