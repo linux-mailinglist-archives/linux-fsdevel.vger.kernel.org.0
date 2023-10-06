@@ -2,111 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C6FCA7BAF16
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Oct 2023 01:09:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6AA77BAF72
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Oct 2023 02:04:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229457AbjJEXIO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Oct 2023 19:08:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39728 "EHLO
+        id S229531AbjJFAE0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Oct 2023 20:04:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229584AbjJEXFw (ORCPT
+        with ESMTP id S229455AbjJFAEZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Oct 2023 19:05:52 -0400
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F060C18D;
-        Thu,  5 Oct 2023 15:58:42 -0700 (PDT)
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1c5c91bece9so12667845ad.3;
-        Thu, 05 Oct 2023 15:58:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696546722; x=1697151522;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ltrto+rjiXQu6CZ+tQzK6opfBYwCjT8QDYR8jfh7uis=;
-        b=O7DASNSznlTd5ejToG7zZxT0IN65h5T8Uh1E7nOD4KR3FSTFiKp5uU0Klez9Eofr9S
-         RUwEZRW+TnRzEJBgkjn52VWF4fl1wydVjaYeJtI5wZq8CLoY4/CwtmN2r5niieEJ7FVK
-         Oa48bzGPTGd9Ir8SPA21xlelOjhxI1pu0NkrEiWXcdNm9Ad5CNjTx0qFzQ1XQITVFL4O
-         +gvlsu5qz8Zln17rfS9W7BdUol9y20ikB2sMNlqa75ZHYXInhp9t6+xUa5uD+HhF+d/5
-         UlVTcsTutcDLmNFcm9eh731zopuJ+c9I90dcdCvUNTZ9zdIdtRWnbRE7o41jgsK8h0nb
-         fbiw==
-X-Gm-Message-State: AOJu0Yzi0rLi9lue2JnwHKT1HEOiqXI/mvVVO6es2brMnUzeCewWBJJ1
-        feaVLmWZO3DMDF20j/hzyo8=
-X-Google-Smtp-Source: AGHT+IG0/9Wn5G/tnzM5vE5E/JIG1ER4pe53NdB/BX3Y8VlltjOu9i9A0D7Ui0Qfz98C4QopBOrp7w==
-X-Received: by 2002:a17:902:6ac4:b0:1c6:d34:5279 with SMTP id i4-20020a1709026ac400b001c60d345279mr6265144plt.13.1696546722102;
-        Thu, 05 Oct 2023 15:58:42 -0700 (PDT)
-Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net. [73.231.117.72])
-        by smtp.gmail.com with ESMTPSA id 6-20020a170902c24600b001b89a6164desm2316513plg.118.2023.10.05.15.58.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Oct 2023 15:58:41 -0700 (PDT)
-Message-ID: <d976868a-d32c-43d1-b5da-ebbc4c8de468@acm.org>
-Date:   Thu, 5 Oct 2023 15:58:38 -0700
+        Thu, 5 Oct 2023 20:04:25 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C0399F;
+        Thu,  5 Oct 2023 17:04:24 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4C00C433C7;
+        Fri,  6 Oct 2023 00:04:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1696550663;
+        bh=jNRpRQ7anZvbWj7vKpq9mEWAlqO+Yk+hyZvPIkYO+ag=;
+        h=Date:From:To:Cc:Subject:From;
+        b=j5y8PkDvEXUIbnEAbGwNvHAX0jLjFIDRl/jwTRgZ4MU12y6+VK5PJRQF96SVIrHN9
+         HncHGIjkkH0+XksCFNusFryrm/gmUtJ6aouvTRR7jKpHVA5vS79N57HmmARXDLnibp
+         2DsKuMLeKdHgktl9gLkq3BotMGITcuwoxwA8GMZJ9u6VG14mVrmhiBho/QbUAlGbdu
+         O8tZPWALmL2nNTqPUoVkD0v5FhL3NgMJDMRSJynkeAQbOpcaXGtcEw0adyasCiySs6
+         zgat0rpuFIsjXlMq4h3ezz7UN8V1FmuietEYek0JOUWyYajHjtXm4fiwmcsSy5WsNS
+         e+MYJjRWpSK+w==
+Date:   Fri, 6 Oct 2023 01:04:19 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Test failure from "file: convert to SLAB_TYPESAFE_BY_RCU"
+Message-ID: <00e5cc23-a888-46ce-8789-fc182a2131b0@sirena.org.uk>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/21] block: Add fops atomic write support
-Content-Language: en-US
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
-        John Garry <john.g.garry@oracle.com>, axboe@kernel.dk,
-        kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
-        jejb@linux.ibm.com, djwong@kernel.org, viro@zeniv.linux.org.uk,
-        brauner@kernel.org, chandan.babu@oracle.com, dchinner@redhat.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
-        linux-api@vger.kernel.org
-References: <20230929102726.2985188-11-john.g.garry@oracle.com>
- <17ee1669-5830-4ead-888d-a6a4624b638a@acm.org>
- <5d26fa3b-ec34-bc39-ecfe-4616a04977ca@oracle.com>
- <b7a6f380-c6fa-45e0-b727-ba804c6684e4@acm.org>
- <yq1lecktuoo.fsf@ca-mkp.ca.oracle.com>
- <db6a950b-1308-4ca1-9f75-6275118bdcf5@acm.org>
- <yq1h6n7rume.fsf@ca-mkp.ca.oracle.com>
- <34c08488-a288-45f9-a28f-a514a408541d@acm.org>
- <yq1ttr6qoqp.fsf@ca-mkp.ca.oracle.com>
- <a2077ddf-9a8f-4101-aeb9-605d6dee3c6e@acm.org>
- <ZR86Z1OcO52a4BtH@dread.disaster.area>
-From:   Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <ZR86Z1OcO52a4BtH@dread.disaster.area>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-        autolearn_force=no version=3.4.6
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="f4w7RcmGnW7dyD3d"
+Content-Disposition: inline
+X-Cookie: Avoid contact with eyes.
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/5/23 15:36, Dave Chinner wrote:
-> $ lspci |grep -i nvme
-> 03:00.0 Non-Volatile memory controller: Samsung Electronics Co Ltd NVMe SSD Controller SM981/PM981/PM983
-> 06:00.0 Non-Volatile memory controller: Samsung Electronics Co Ltd NVMe SSD Controller SM981/PM981/PM983
-> $ cat /sys/block/nvme*n1/queue/write_cache
-> write back
-> write back
-> $
-> 
-> That they have volatile writeback caches....
 
-It seems like what I wrote has been misunderstood completely. With
-"handling a power failure cleanly" I meant that power cycling a block device
-does not result in read errors nor in reading data that has never been written.
-Although it is hard to find information about this topic, here is what I found
-online:
-* About certain SSDs with power loss protection:
-   https://us.transcend-info.com/embedded/technology/power-loss-protection-plp
-* About another class of SSDs with power loss protection:
-   https://www.kingston.com/en/blog/servers-and-data-centers/ssd-power-loss-protection
-* About yet another class of SSDs with power loss protection:
-   https://phisonblog.com/avoiding-ssd-data-loss-with-phisons-power-loss-protection-2/
+--f4w7RcmGnW7dyD3d
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-So far I haven't found any information about hard disks and power failure
-handling. What I found is that most current hard disks protect data with ECC.
-The ECC mechanism should provide good protection against reading data that
-has never been written. If a power failure occurs while a hard disk is writing
-a physical block, can this result in a read error after power is restored? If
-so, is this behavior allowed by storage standards?
+For the past few days (I was away last week...) the fd-003-kthread.c
+test from the proc kselftests has been failing on arm64, this is an
+nfsroot system if that makes any odds.  The test output itself is:
 
-Bart.
+  # selftests: proc: fd-003-kthread
+  # fd-003-kthread: fd-003-kthread.c:113: test_readdir: Assertion `!de' failed.
+  # Aborted
+  not ok 3 selftests: proc: fd-003-kthread # exit=134
+
+I ran a bisect which pointed at the commit
+
+   d089d9d056c048303aedd40a7f3f26593ebd040c file: convert to SLAB_TYPESAFE_BY_RCU
+
+(I can't seem to find that on lore.) I've not done any further analysis
+of what the commit is doing or anything, though it does look like the
+bisect ran fairly smoothly and it looks at least plausibly related to
+the issue and reverting the commit on top of -next causes the test to
+start passing again.
+
+The bisect log is below and a full log from a failing test job can be
+seen here:
+
+   https://lava.sirena.org.uk/scheduler/job/154334
+
+Thanks,
+Mark
+
+git bisect start
+# bad: [7d730f1bf6f39ece2d9f3ae682f12e5b593d534d] Add linux-next specific files for 20231005
+git bisect bad 7d730f1bf6f39ece2d9f3ae682f12e5b593d534d
+# good: [4d6ee1bd3e3820b523d43349cbcae230fdfcb613] Merge branch 'for-linux-next-fixes' of git://anongit.freedesktop.org/drm/drm-misc
+git bisect good 4d6ee1bd3e3820b523d43349cbcae230fdfcb613
+# bad: [d6dfa62947bd47317de464c3ca55a6eaafe2e5af] Merge branch 'master' of git://linuxtv.org/media_tree.git
+git bisect bad d6dfa62947bd47317de464c3ca55a6eaafe2e5af
+# good: [73773d2fdd7172955a4476e8956c34aa49959219] bcachefs: Data update path no longer leaves cached replicas
+git bisect good 73773d2fdd7172955a4476e8956c34aa49959219
+# good: [87825243dfb1a14a0d8d3ae60754c34dfc084802] Merge branch 'loongarch-next' of git://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.git
+git bisect good 87825243dfb1a14a0d8d3ae60754c34dfc084802
+# good: [3855d73729a7ab4c3a6694a6efdf0816c8ad9dd1] Merge branch 'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git
+git bisect good 3855d73729a7ab4c3a6694a6efdf0816c8ad9dd1
+# bad: [298370bcbb0e5a2fae6c8efd35e2b7bf4c918f54] Merge branch 'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git
+git bisect bad 298370bcbb0e5a2fae6c8efd35e2b7bf4c918f54
+# good: [927cf8c9dd2a58846b541d106149c5e94fd0556f] Merge branch 'nfsd-next' of git://git.kernel.org/pub/scm/linux/kernel/git/cel/linux
+git bisect good 927cf8c9dd2a58846b541d106149c5e94fd0556f
+# bad: [530d23ed060f9c9ddf3b03398367aba9a9577b82] Merge branch 'vfs.super' into vfs.all
+git bisect bad 530d23ed060f9c9ddf3b03398367aba9a9577b82
+# bad: [7291b00e6f694af2b42d223145acb77b2bf1f62c] Merge branch 'vfs.iov_iter' into vfs.all
+git bisect bad 7291b00e6f694af2b42d223145acb77b2bf1f62c
+# bad: [459218d4c663f094951d71bbf293fd14dbb688e1] Merge branch 'vfs.mount.write' into vfs.all
+git bisect bad 459218d4c663f094951d71bbf293fd14dbb688e1
+# good: [cbe52963050bac0f2bfe2c24e09f50ffdc41132b] watch_queue: Annotate struct watch_filter with __counted_by
+git bisect good cbe52963050bac0f2bfe2c24e09f50ffdc41132b
+# bad: [450f431b47219235870f57a3f72fa8fec0a0ba43] vfs: fix readahead(2) on block devices
+git bisect bad 450f431b47219235870f57a3f72fa8fec0a0ba43
+# good: [1cf2d167e7f661b687feb0bd15278b859fe1513c] vfs: shave work on failed file open
+git bisect good 1cf2d167e7f661b687feb0bd15278b859fe1513c
+# bad: [d089d9d056c048303aedd40a7f3f26593ebd040c] file: convert to SLAB_TYPESAFE_BY_RCU
+git bisect bad d089d9d056c048303aedd40a7f3f26593ebd040c
+# first bad commit: [d089d9d056c048303aedd40a7f3f26593ebd040c] file: convert to SLAB_TYPESAFE_BY_RCU
+
+--f4w7RcmGnW7dyD3d
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmUfTwIACgkQJNaLcl1U
+h9Balwf+KctNxpWpdLJd4w+5+82DrGudqyRx/6+Vito3vGyvjsqnLUB5nVxbjql2
+EZlLDT2tjS+Ap1B4U9UvxHuUAiNwwhxLu2Sx+vYhHhMZoeOaqmzIr/F20qdRQMs/
+VI/Fvc69iS/epSIDda+t5cesEDK0K9frqWNgXb27PXv4uKmSeNdWznyHzS38F0kJ
+EElBSjSqIiBHHvT3jdhrlvJG/16JKthi+uSEXCdaUSwebYAT9F1MC80kEzFKb72w
+W5/dwIdxE+3jd4AzPObiSdtcfnAKgWXtH3884/B3vQ4YkNpMnhNNrtD22Xahvn6K
+wQcZlbQWofFtzB642ExENu7HkVcq7A==
+=VOXX
+-----END PGP SIGNATURE-----
+
+--f4w7RcmGnW7dyD3d--
