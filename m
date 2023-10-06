@@ -2,59 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 299DC7BB13A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Oct 2023 07:35:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32F877BB142
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Oct 2023 07:42:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230136AbjJFFfp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Oct 2023 01:35:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37324 "EHLO
+        id S230131AbjJFFmX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Oct 2023 01:42:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229876AbjJFFfo (ORCPT
+        with ESMTP id S230061AbjJFFmW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Oct 2023 01:35:44 -0400
-Received: from mail-yw1-x112f.google.com (mail-yw1-x112f.google.com [IPv6:2607:f8b0:4864:20::112f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FBAACA
-        for <linux-fsdevel@vger.kernel.org>; Thu,  5 Oct 2023 22:35:43 -0700 (PDT)
-Received: by mail-yw1-x112f.google.com with SMTP id 00721157ae682-5a4e29928c3so21012287b3.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Oct 2023 22:35:43 -0700 (PDT)
+        Fri, 6 Oct 2023 01:42:22 -0400
+Received: from mail-yw1-x112b.google.com (mail-yw1-x112b.google.com [IPv6:2607:f8b0:4864:20::112b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30360B6
+        for <linux-fsdevel@vger.kernel.org>; Thu,  5 Oct 2023 22:42:21 -0700 (PDT)
+Received: by mail-yw1-x112b.google.com with SMTP id 00721157ae682-5a2379a8b69so20658277b3.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Oct 2023 22:42:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1696570542; x=1697175342; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1696570940; x=1697175740; darn=vger.kernel.org;
         h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PaezefeDp7zAJYrklW0Fkd4Zlqg9EojUKIwPXxGjmPs=;
-        b=Bd+HFgcmlhXCuItTdkHdjd3UhzPw0xXAk4UyrN7VC1eyvtvg5dHpWkUQCktE+neGgd
-         rpk6qYm/rIyjTs1feGkOL+hYZV5/qzmcRq3epkmObJ6xnU2jJi4vwWsoY7sTh25V9RPH
-         XCKNS999Z5sC5pY+IIfKQRAQGAV0zVPXNiDBMwxbPq6lRvhA+dvGfGPsrQUvGSdpA7hu
-         s6vQZ1CA3kZN0czt/mYwq4VX7bL0iNtoXzFFZe4lAQm9cx7JUUmMNCgo9kjO65kcUQeJ
-         moaSfxsLTC8H8LE1P82oJ/Sih4tUWpDu7cbMhhsfj5VGREixvUnCxS/+bM6tj64McYXU
-         MzeQ==
+        bh=iMNU/NcReGRTQoFhUIKFEhWrRToHaZS/r6S0IyfUYQA=;
+        b=SA+o1acD+FtLsYNEUhzawIOUUFxuMD4SCozuTCTQtEIf8xsGjfnehkKT3gPXtqEXyM
+         iZompe2XYlOamDl5cMHVTLMroUFR1xlXUvBNnasTZV1/UAO33aCIpNhN1hHqJKdr9JJ/
+         Dl8DF13lYIPkB7uTTmhWBcsQ0y8Pv07xSlorbFnXkzApo1q1huULdlZYF/Ykuo4N40fo
+         /7KjrlIqLTXIQaCR+NmSpqgIR4QP2QcD0TIYEhWm1O1ILY0nxnuf0IdTeFgJ5WJGQj9v
+         Px2hWNqHqcc/sGZ4aiUVGS1l7Y5YdijhE9831ZyqvJ66+jXw8PtmmOWk9bQak3QdhBQ/
+         WmLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696570542; x=1697175342;
+        d=1e100.net; s=20230601; t=1696570940; x=1697175740;
         h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PaezefeDp7zAJYrklW0Fkd4Zlqg9EojUKIwPXxGjmPs=;
-        b=h+ftpdaxDGNDrn5ptPqiqRpRjmR5/8febCGGhZucUVa/UL9w2xDNgkPUWErgLn9Efk
-         o8/sSZQUAZZ1NYmDlPjVikVKJHHfsLxzOlk3+M5SMxws/Nhn8vq46Gwi2V6igi5qopUS
-         wVQqp3YH1TcYhqiaBWPdZlDZ5zevglbHsCDn4QPxUPcaWpiT3OWAeHN+GEqjlyWwBoqx
-         EnXdwgEfDOVkpKZM+tKZPpHofWnFOIRV/WQGZ3YIZYASNjA4Sa7dGNYW3blYEHUFn3AR
-         FK1X2SqA1Zas+KXjNgBkd3u9zfciLbmyrLIHi2F1Tw9c7TrMWhLD+zNISJ66CpJX7Qv1
-         GZKg==
-X-Gm-Message-State: AOJu0YyI4PUMzTrFFE/DuMgYhOxqxfJaKXsIaOC6GiEgeTjDa/gNZtIQ
-        dB8jUKK8BIRWEzcJqW49hoenxg==
-X-Google-Smtp-Source: AGHT+IEpTrnr9XdsKNbpo6pfTBAH5V4ZhM8V1KQHtZFnBvpqLiwm1YQa3LOzuYzsLeu+aZuIuTGmrg==
-X-Received: by 2002:a81:a18a:0:b0:595:320d:c9e2 with SMTP id y132-20020a81a18a000000b00595320dc9e2mr8370979ywg.24.1696570542515;
-        Thu, 05 Oct 2023 22:35:42 -0700 (PDT)
+        bh=iMNU/NcReGRTQoFhUIKFEhWrRToHaZS/r6S0IyfUYQA=;
+        b=bZJbVQ0ouHRm9/JaNwUQ1FyJYP6tzyuP0kZ5u1jDT5EuT3cSXqUcPMEE41eAnoAR+b
+         0HNnTms3cuJZabP29SLouno35q/jKpIqYNy3K7LQfB7vWuAqlhTRa3gZ40duxuZp4te/
+         VYx9Us8GZmXF/DT76rrHU6rNJpx8f3jFjWVm+Q3tZQko6ypAhifn9IUTlbMVrOu8QLB3
+         xbZWvJ6XaDZJcASz7VsHw23FIyOd9LsdCMXDjFCWJcNVACUUlSu3Ars2Gg9rCKv6HOjA
+         qm7IZas6zDAdQStoxPNSa512voXk8M9JFwk9yoUVYWWkFdnIqElwUs7t6n9CP+cWRZNX
+         WaZA==
+X-Gm-Message-State: AOJu0Yz+Wvjl+K7SE3kdnYulPMFwUX5qtVzdOYcyQNzCF10iLNFx97qT
+        gSsxRmo1FESZZqvF2ExZPW5RiQ==
+X-Google-Smtp-Source: AGHT+IGEuUVUDHmEfgU2ZUeoXgbdvGNBLmcG/5Ng06kfo9sfd8SOCeQ0ooBNx3Jipoe0YW6Lkbx0lA==
+X-Received: by 2002:a81:4810:0:b0:5a1:d0fe:e44b with SMTP id v16-20020a814810000000b005a1d0fee44bmr7584991ywa.11.1696570940293;
+        Thu, 05 Oct 2023 22:42:20 -0700 (PDT)
 Received: from ripple.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id l197-20020a0de2ce000000b005a4dde66853sm1059846ywe.0.2023.10.05.22.35.40
+        by smtp.gmail.com with ESMTPSA id w1-20020a81a201000000b005837633d9cbsm1033602ywg.64.2023.10.05.22.42.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Oct 2023 22:35:41 -0700 (PDT)
-Date:   Thu, 5 Oct 2023 22:35:33 -0700 (PDT)
+        Thu, 05 Oct 2023 22:42:19 -0700 (PDT)
+Date:   Thu, 5 Oct 2023 22:42:17 -0700 (PDT)
 From:   Hugh Dickins <hughd@google.com>
 X-X-Sender: hugh@ripple.attlocal.net
-To:     Dave Chinner <david@fromorbit.com>
+To:     "Chen, Tim C" <tim.c.chen@intel.com>
 cc:     Hugh Dickins <hughd@google.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Tim Chen <tim.c.chen@intel.com>,
         Dave Chinner <dchinner@redhat.com>,
         "Darrick J. Wong" <djwong@kernel.org>,
         Christian Brauner <brauner@kernel.org>,
@@ -63,19 +62,20 @@ cc:     Hugh Dickins <hughd@google.com>,
         Matthew Wilcox <willy@infradead.org>,
         Johannes Weiner <hannes@cmpxchg.org>,
         Axel Rasmussen <axelrasmussen@google.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH 8/8] shmem,percpu_counter: add _limited_add(fbc, limit,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>
+Subject: RE: [PATCH 8/8] shmem,percpu_counter: add _limited_add(fbc, limit,
  amount)
-In-Reply-To: <ZR3wzVJ019gH0DvS@dread.disaster.area>
-Message-ID: <2451f678-38b3-46c7-82fe-8eaf4d50a3a6@google.com>
-References: <c7441dc6-f3bb-dd60-c670-9f5cbd9f266@google.com> <bb817848-2d19-bcc8-39ca-ea179af0f0b4@google.com> <ZR3wzVJ019gH0DvS@dread.disaster.area>
+In-Reply-To: <DM6PR11MB4107F132CC1203486A91A4DEDCCAA@DM6PR11MB4107.namprd11.prod.outlook.com>
+Message-ID: <17877ef1-8aac-378b-94-af5afa2793ae@google.com>
+References: <c7441dc6-f3bb-dd60-c670-9f5cbd9f266@google.com> <bb817848-2d19-bcc8-39ca-ea179af0f0b4@google.com> <DM6PR11MB4107F132CC1203486A91A4DEDCCAA@DM6PR11MB4107.namprd11.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -83,104 +83,52 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 5 Oct 2023, Dave Chinner wrote:
-> On Fri, Sep 29, 2023 at 08:42:45PM -0700, Hugh Dickins wrote:
-> > Percpu counter's compare and add are separate functions: without locking
-> > around them (which would defeat their purpose), it has been possible to
-> > overflow the intended limit.  Imagine all the other CPUs fallocating
-> > tmpfs huge pages to the limit, in between this CPU's compare and its add.
-> > 
-> > I have not seen reports of that happening; but tmpfs's recent addition
-> > of dquot_alloc_block_nodirty() in between the compare and the add makes
-> > it even more likely, and I'd be uncomfortable to leave it unfixed.
-> > 
-> > Introduce percpu_counter_limited_add(fbc, limit, amount) to prevent it.
-> > 
-> > I believe this implementation is correct, and slightly more efficient
-> > than the combination of compare and add (taking the lock once rather
-> > than twice when nearing full - the last 128MiB of a tmpfs volume on a
-> > machine with 128 CPUs and 4KiB pages); but it does beg for a better
-> > design - when nearing full, there is no new batching, but the costly
-> > percpu counter sum across CPUs still has to be done, while locked.
-> > 
-> > Follow __percpu_counter_sum()'s example, including cpu_dying_mask as
-> > well as cpu_online_mask: but shouldn't __percpu_counter_compare() and
-> > __percpu_counter_limited_add() then be adding a num_dying_cpus() to
-> > num_online_cpus(), when they calculate the maximum which could be held
-> > across CPUs?  But the times when it matters would be vanishingly rare.
-> > 
-> > Signed-off-by: Hugh Dickins <hughd@google.com>
-> > Cc: Tim Chen <tim.c.chen@intel.com>
-> > Cc: Dave Chinner <dchinner@redhat.com>
-> > Cc: Darrick J. Wong <djwong@kernel.org>
-> > ---
-> > Tim, Dave, Darrick: I didn't want to waste your time on patches 1-7,
-> > which are just internal to shmem, and do not affect this patch (which
-> > applies to v6.6-rc and linux-next as is): but want to run this by you.
+On Thu, 5 Oct 2023, Chen, Tim C wrote:
+
+> >--- a/lib/percpu_counter.c
+> >+++ b/lib/percpu_counter.c
+> >@@ -278,6 +278,59 @@ int __percpu_counter_compare(struct
+> >percpu_counter *fbc, s64 rhs, s32 batch)  }
+> >EXPORT_SYMBOL(__percpu_counter_compare);
+> >
+> >+/*
+> >+ * Compare counter, and add amount if the total is within limit.
+> >+ * Return true if amount was added, false if it would exceed limit.
+> >+ */
+> >+bool __percpu_counter_limited_add(struct percpu_counter *fbc,
+> >+				  s64 limit, s64 amount, s32 batch) {
+> >+	s64 count;
+> >+	s64 unknown;
+> >+	unsigned long flags;
+> >+	bool good;
+> >+
+> >+	if (amount > limit)
+> >+		return false;
+> >+
+> >+	local_irq_save(flags);
+> >+	unknown = batch * num_online_cpus();
+> >+	count = __this_cpu_read(*fbc->counters);
+> >+
+> >+	/* Skip taking the lock when safe */
+> >+	if (abs(count + amount) <= batch &&
+> >+	    fbc->count + unknown <= limit) {
+> >+		this_cpu_add(*fbc->counters, amount);
+> >+		local_irq_restore(flags);
+> >+		return true;
+> >+	}
+> >+
+> >+	raw_spin_lock(&fbc->lock);
+> >+	count = fbc->count + amount;
+> >+
 > 
-> Hmmmm. IIUC, this only works for addition that approaches the limit
-> from below?
-
-That's certainly how I was thinking about it, and what I need for tmpfs.
-Precisely what its limitations (haha) are, I'll have to take care to
-spell out.
-
-(IIRC - it's a while since I wrote it - it can be used for subtraction,
-but goes the very slow way when it could go the fast way - uncompared
-percpu_counter_sub() much better for that.  You might be proposing that
-a tweak could adjust it to going the fast way when coming down from the
-"limit", but going the slow way as it approaches 0 - that would be neat,
-but I've not yet looked into whether it's feasily done.)
-
+> Perhaps we can fast path the case where for sure
+> we will exceed limit? 
 > 
-> So if we are approaching the limit from above (i.e. add of a
-> negative amount, limit is zero) then this code doesn't work the same
-> as the open-coded compare+add operation would?
+> if (fbc->count + amount - unknown > limit)
+> 	return false;
 
-To it and to me, a limit of 0 means nothing positive can be added
-(and it immediately returns false for that case); and adding anything
-negative would be an error since the positive would not have been allowed.
+Thanks, that sounds reasonable: I'll try to add something like that -
+but haven't thought about it carefully enough yet (too easy for me
+to overlook some negative case which messes everything up).
 
-Would a negative limit have any use?
-
-It's definitely not allowing all the possibilities that you could arrange
-with a separate compare and add; whether it's ruling out some useful
-possibilities to which it can easily be generalized, I'm not sure.
-
-Well worth a look - but it'll be easier for me to break it than get
-it right, so I might just stick to adding some comments.
-
-I might find that actually I prefer your way round: getting slower
-as approaching 0, without any need for specifying a limit??  That the
-tmpfs case pushed it in this direction, when it's better reversed?  Or
-that might be an embarrassing delusion which I'll regret having mentioned.
-
-> 
-> Hence I think this looks like a "add if result is less than"
-> operation, which is distinct from then "add if result is greater
-> than" operation that we use this same pattern for in XFS and ext4.
-> Perhaps a better name is in order?
-
-The name still seems good to me, but a comment above it on its
-assumptions/limitations well worth adding.
-
-I didn't find a percpu_counter_compare() in ext4, and haven't got
-far yet with understanding the XFS ones: tomorrow...
-
-> 
-> I'm also not a great fan of having two
-> similar-but-not-quite-the-same implementations for the two
-> comparisons, but unless we decide to convert the XFs slow path to
-> this it doesn't matter that much at the moment....
-> 
-> Implementation seems OK at a quick glance, though.
-
-Thanks!
-
-> 
-> Cheers,
-> 
-> Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
+Hugh
