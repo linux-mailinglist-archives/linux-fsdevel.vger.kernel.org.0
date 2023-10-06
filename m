@@ -2,135 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EF4D37BB6E1
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Oct 2023 13:44:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5B657BB752
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Oct 2023 14:08:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232114AbjJFLow (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Oct 2023 07:44:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52866 "EHLO
+        id S232192AbjJFMIK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Oct 2023 08:08:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231887AbjJFLov (ORCPT
+        with ESMTP id S232154AbjJFMIJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Oct 2023 07:44:51 -0400
-Received: from mail-qv1-xf2c.google.com (mail-qv1-xf2c.google.com [IPv6:2607:f8b0:4864:20::f2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99AC1CE;
-        Fri,  6 Oct 2023 04:44:50 -0700 (PDT)
-Received: by mail-qv1-xf2c.google.com with SMTP id 6a1803df08f44-65b0e623189so10041076d6.1;
-        Fri, 06 Oct 2023 04:44:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696592689; x=1697197489; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZM+JEXPoWkqE2R2OZqnBYJfbJJGioqTQDA2fARdnsWI=;
-        b=F7BpiSVf2F/x2fwRipqpz0Th059a8mX5wASI3qWhlG1NAZjnY/YFoftm3vrZQdXy4X
-         78fdwPcMJ/Jvls85aPUMT0LVMB/Qx20twYzaOfzAr5yz8pY5PlwgJed5KPy6WLMVic0h
-         aLLqXRQnS1GmZfZ63bRFFY894P7GXcxd+edrurwd6xyZZ4T0ybn9CGqzYftouc24roMK
-         qQ0tD/CYDdruznRN+6JwegvDVITdnqjXJ3I4gkMCC3b433wgiMRVB193FsUgXIIqa6T5
-         BLQOQXYzwxsbo/tXezj9UZXoQNsPLe6hIDwhKS2kytOI9A+54c4nuFqlpnHm5dlA4RAG
-         ylow==
+        Fri, 6 Oct 2023 08:08:09 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72AF5C6
+        for <linux-fsdevel@vger.kernel.org>; Fri,  6 Oct 2023 05:07:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1696594041;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=mo9zpx89HxvD+wCjQVsipj/wDUSBSLOEMGb8AiuZqs8=;
+        b=dHo2kEQj5ChQwvRToogBeePTDu4Lk8D2MDieQu2bvmDEKm4GWDrWOD7vi7kH+JL3QlOdWP
+        rgipB9A4rqVNN4sSXtwoiK7iW1nN3nv77xo+TCuJW1DbnvdANYkSVLKv9hql2El/U5WOBe
+        L9J/XlBj77GHTkuzGIspWtuLjIafQQc=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-654-AFPkd4oqPKWRRAlOl10Jfg-1; Fri, 06 Oct 2023 08:07:20 -0400
+X-MC-Unique: AFPkd4oqPKWRRAlOl10Jfg-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-32661ca30d9so1355802f8f.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Oct 2023 05:07:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696592690; x=1697197490;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZM+JEXPoWkqE2R2OZqnBYJfbJJGioqTQDA2fARdnsWI=;
-        b=RGDrjEb15zBWB5uYU6ac25EbSEf1t4LKYAkgsh/UMNDkJiN+egaRSa1l3kYtPAAo4t
-         ppGdIkpwGJV1s7L6lWEhxKTyvHS9kvTJOR3jM5WNsguG+SKWA09OeFDfPVvWkYbOLjqp
-         muezzkrcnhbJfgPygYwBO8I6UuIVwOB3E4XGHOUgG/aQHdTmx4xitPawhYJ5OJeqVl2L
-         5R31Us+NgpsW65az9thv3HNAFbe33KWEE8M1LN7KnVsdPbuWLsQ2JBO/l+/Rhc+VfZTL
-         bHaHN+0pMZCqMZ9CUbC2iItC5nQXBabAGFMVs2+tdzHYv6x/8T9s5ke37qdIcYCSz00U
-         WtPw==
-X-Gm-Message-State: AOJu0YxnKjr7mlv1EIuHEMYw1uClS653nJutBKo9vZp390Ypqn4UI3IN
-        kyeodw0Oos9uUYCIzYGi6/1Z9x4sJs7BkJATPm3ee5A9
-X-Google-Smtp-Source: AGHT+IHVLFeVcOso79B+AyG6TlZQfq3OF2axjCboJd9gZ3N2/TlbvkrJJ9EFkyHfFiFvnF3ZBj+hl0iH+2OYB3iQySU=
-X-Received: by 2002:a0c:c409:0:b0:64f:3699:90cd with SMTP id
- r9-20020a0cc409000000b0064f369990cdmr8286281qvi.42.1696592689654; Fri, 06 Oct
- 2023 04:44:49 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1696594039; x=1697198839;
+        h=content-transfer-encoding:in-reply-to:organization:from:references
+         :cc:to:content-language:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mo9zpx89HxvD+wCjQVsipj/wDUSBSLOEMGb8AiuZqs8=;
+        b=aRLyIUr4Ql3vml4qJ/BNH0C8Iw8kpmOz9ONyT07ZNHcTHy4AgItvtwJr/4sihsoJCR
+         3HlskbV7eLfrgDj5/dRaGRRAneCeqAKr51ZRI9dhBWG5ZC35rRMxnsplb0XaGb6Igqof
+         bw2b/nnhpEYpvzF1eznH/JIa+AsGeh4UVTPUmS3YCKlN8kt2SKK+xVIaa2LrbAjsmBLG
+         yO6ZFRR8eEMBEd8dwt3CEdsKEjC7aqAKnHh7EafILXFr7s6Tet14HFO7Hw5KK2om7quZ
+         QZ3U/Bn3bDYljRsvEwfdsPlXtJniWO/IpQya6FXrMC7xOzcZ+q/kukd8nEulO50Y2tJw
+         b0zQ==
+X-Gm-Message-State: AOJu0Yzg+0mxXVJ3rOjbbdx7gb0gmikcqL//BjbZpN5w+Y5bJAbEO5I6
+        PzgSbck+HlAujvWyZ2fUDBpp6eG/joyHMBZZ4OWQ0PvFpJ4i2vjJgHnio1JMpc3K0usVRgSM9R0
+        ZuHZ0IERGZvcpHABYCKmrOHWVOw==
+X-Received: by 2002:a5d:60d1:0:b0:321:7052:6406 with SMTP id x17-20020a5d60d1000000b0032170526406mr7192673wrt.12.1696594038580;
+        Fri, 06 Oct 2023 05:07:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFpduvGP/C6QnolRK8aHspaHKLXehNdqORMvSI32y4q5yebiSCRs3O9GH2N+lutkWDhTkxXzA==
+X-Received: by 2002:a5d:60d1:0:b0:321:7052:6406 with SMTP id x17-20020a5d60d1000000b0032170526406mr7192641wrt.12.1696594038066;
+        Fri, 06 Oct 2023 05:07:18 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c715:ee00:4e24:cf8e:3de0:8819? (p200300cbc715ee004e24cf8e3de08819.dip0.t-ipconnect.de. [2003:cb:c715:ee00:4e24:cf8e:3de0:8819])
+        by smtp.gmail.com with ESMTPSA id j14-20020adff54e000000b003233a31a467sm1516389wrp.34.2023.10.06.05.07.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Oct 2023 05:07:17 -0700 (PDT)
+Message-ID: <e673d8d6-bfa8-be30-d1c1-fe09b5f811e3@redhat.com>
+Date:   Fri, 6 Oct 2023 14:07:16 +0200
 MIME-Version: 1.0
-References: <20230928130147.564503-1-mszeredi@redhat.com> <20230928130147.564503-2-mszeredi@redhat.com>
- <CAJfpeguTQvA6cq-3JCEZx6wP+nvZX8E6_77pNRJUU2_S7cyAiA@mail.gmail.com>
-In-Reply-To: <CAJfpeguTQvA6cq-3JCEZx6wP+nvZX8E6_77pNRJUU2_S7cyAiA@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 6 Oct 2023 14:44:38 +0300
-Message-ID: <CAOQ4uxgoA5eQCqXp0H7S+CtVM77OD4caQr59yHymtZUTwBCqLw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] add unique mount ID
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
-        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
-        Ian Kent <raven@themaw.net>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Matthew House <mattlloydhouse@gmail.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>, Paul Moore <paul@paul-moore.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [RFC PATCH 0/2] Introduce a way to expose the interpreted file
+ with binfmt_misc
+Content-Language: en-US
+To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     linux-mm@kvack.org, kernel-dev@igalia.com, kernel@gpiccoli.net,
+        keescook@chromium.org, ebiederm@xmission.com, oleg@redhat.com,
+        yzaikin@google.com, mcgrof@kernel.org, akpm@linux-foundation.org,
+        brauner@kernel.org, viro@zeniv.linux.org.uk, willy@infradead.org,
+        dave@stgolabs.net, sonicadvance1@gmail.com, joshua@froggi.es
+References: <20230907204256.3700336-1-gpiccoli@igalia.com>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+In-Reply-To: <20230907204256.3700336-1-gpiccoli@igalia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 5, 2023 at 6:52=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu> w=
-rote:
->
-> On Thu, 28 Sept 2023 at 15:03, Miklos Szeredi <mszeredi@redhat.com> wrote=
-:
-> >
-> > If a mount is released then its mnt_id can immediately be reused.  This=
- is
-> > bad news for user interfaces that want to uniquely identify a mount.
-> >
-> > Implementing a unique mount ID is trivial (use a 64bit counter).
-> > Unfortunately userspace assumes 32bit size and would overflow after the
-> > counter reaches 2^32.
-> >
-> > Introduce a new 64bit ID alongside the old one.  Initialize the counter=
- to
-> > 2^32, this guarantees that the old and new IDs are never mixed up.
->
-> It occurred to me that it might make sense to make this counter
-> per-namespace.  That would allow more separation between namespaces,
-> like preventing the observation of mount creations in other
-> namespaces.
->
+On 07.09.23 22:24, Guilherme G. Piccoli wrote:
+> Currently the kernel provides a symlink to the executable binary, in the
+> form of procfs file exe_file (/proc/self/exe_file for example). But what
+> happens in interpreted scenarios (like binfmt_misc) is that such link
+> always points to the *interpreter*. For cases of Linux binary emulators,
+> like FEX [0] for example, it's then necessary to somehow mask that and
+> emulate the true binary path.
 
-Preventing the observation of mount creations in other mount namespaces
-is independent of whether a global mntid namespace is used.
+I'm absolutely no expert on that, but I'm wondering if, instead of 
+modifying exe_file and adding an interpreter file, you'd want to leave 
+exe_file alone and instead provide an easier way to obtain the 
+interpreted file.
 
-> Does a global number make any sense?
->
+Can you maybe describe why modifying exe_file is desired (about which 
+consumers are we worrying? ) and what exactly FEX does to handle that 
+(how does it mask that?).
 
-I think global mntid namepsace makes notifications API a lot easier.
-A process (e.g. systemd) may set marks to watch new mounts on
-different mount namespaces.
+So a bit more background on the challenges without this change would be 
+appreciated.
 
-If mntid could collide in different mount namepsaces, we will either
-need to describe the mount namespace in the event or worse,
-map child mount namespace mntid to parent mount namespace
-like with uids.
+-- 
+Cheers,
 
-If we use a global mntid namespace, multi mount namespace
-watching becomes much much easier.
+David / dhildenb
 
-Regarding the possible scopes for watching added/removed mounts
-we could support:
-- watch parent mount for children mounts (akin to inotify directory watch)
-- watch all mounts of a filesystem
-- watch all mounts in mount namespace
-- watch on entire system
-
-Not sure which of the above we will end up implementing, but the
-first two can use existing fanotify mount/sb marks.
-
-Thanks,
-Amir.
