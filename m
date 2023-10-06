@@ -2,58 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B6EA67BB2AD
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Oct 2023 09:51:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 272657BB2EA
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Oct 2023 10:20:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230352AbjJFHvu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Oct 2023 03:51:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40018 "EHLO
+        id S230492AbjJFIT7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Oct 2023 04:19:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230437AbjJFHvo (ORCPT
+        with ESMTP id S230445AbjJFIT6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Oct 2023 03:51:44 -0400
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D14A1F1;
-        Fri,  6 Oct 2023 00:51:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=iuK03HmNqgCaa8FhOu7IDj+wgutL2t54fgRlwMCc6iw=; b=kNuCrFaW39RlsEpKJf9vOpPzHH
-        zG02syRAUaeEW3/ocBPYR5/3Azpku/r4b9FBl+74anGSuXuNQ6AoLh4GMMZ2fvw0yun0XQvMwNe7J
-        abBUjM8Y8SqAsG+/wp5xZx3VomD6AWyfmfoiNHZNpUfUQdlaSpGcfiNvlK+K4GPR08q2XbxsgV88u
-        xH6OLHi34c0g7LmuTmvQ1I5TAL9rvKbJzaQgQ5nJt7d/m7ePqokcqfk8y9L7WP4gHwh/S9hz2oTBP
-        jYjqDD7KgSnBw7BftXI1jZcwGXIrPqG3xbCAU4RXwDi6x8LWigcrWPqO/Dt5MmW3Ui4OsfYMfCRas
-        OXgWUSuA==;
-Received: from cpe90-146-105-192.liwest.at ([90.146.105.192] helo=[192.168.178.99])
-        by fanzine2.igalia.com with esmtpsa 
-        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-        id 1qofcU-00CTMq-7L; Fri, 06 Oct 2023 09:51:34 +0200
-Message-ID: <31021a6a-4238-5fb0-45a9-2ea95d6b73e7@igalia.com>
-Date:   Fri, 6 Oct 2023 09:51:32 +0200
+        Fri, 6 Oct 2023 04:19:58 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1A2CE4;
+        Fri,  6 Oct 2023 01:19:56 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4011BC433C9;
+        Fri,  6 Oct 2023 08:19:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1696580396;
+        bh=el4EO5rlsyDaQMavd+QMNqRtr1dlRDpo9KlRFmmRZJ4=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=qZd6LzWSz6uOiByQX5NS4YzdEpk7FxTzMejOLJnTY0ubev7ptvi/TCvxDcJA3UhlT
+         Uamu8zpwnRCUN0jAxLT5LK6aHlv8mCFfGblWaXTQl7i4oY6AxhZizrHhpilBgS54Gw
+         q42yIBTmH0ySUYgpYAuipBAOCo4S3/GBUKJx+gmjqpmR99y54+rTH+e6MAjmFh3feG
+         isnnLZsUx7EzMHlhbTBmzSrG+1zPg8Vc7TkkBUIALsim+PReK8JgwLsyaTRlCbFy6N
+         jOMEkO0uguJiaH61MekaXITkdx3B61SbkxY3o2a5zYgFXPR4mv7S5RzuEcmW7h7zEj
+         R0Cq0R6K11Fnw==
+Message-ID: <8aec03bb-4cef-9423-0ce4-c10d060afce4@kernel.org>
+Date:   Fri, 6 Oct 2023 17:19:52 +0900
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
-Subject: Re: [RFC PATCH 0/2] Introduce a way to expose the interpreted file
- with binfmt_misc
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v2 03/15] block: Support data lifetime in the I/O priority
+ bitfield
 Content-Language: en-US
-To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     linux-mm@kvack.org, kernel-dev@igalia.com, kernel@gpiccoli.net,
-        keescook@chromium.org, ebiederm@xmission.com, oleg@redhat.com,
-        yzaikin@google.com, mcgrof@kernel.org, akpm@linux-foundation.org,
-        brauner@kernel.org, viro@zeniv.linux.org.uk, willy@infradead.org,
-        david@redhat.com, dave@stgolabs.net, sonicadvance1@gmail.com,
-        joshua@froggi.es
-References: <20230907204256.3700336-1-gpiccoli@igalia.com>
-From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-In-Reply-To: <20230907204256.3700336-1-gpiccoli@igalia.com>
+To:     Bart Van Assche <bvanassche@acm.org>, Jens Axboe <axboe@kernel.dk>
+Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Niklas Cassel <Niklas.Cassel@wdc.com>,
+        Avri Altman <Avri.Altman@wdc.com>,
+        Bean Huo <huobean@gmail.com>,
+        Daejun Park <daejun7.park@samsung.com>,
+        Hannes Reinecke <hare@suse.de>
+References: <20231005194129.1882245-1-bvanassche@acm.org>
+ <20231005194129.1882245-4-bvanassche@acm.org>
+From:   Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <20231005194129.1882245-4-bvanassche@acm.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-6.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-8.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -61,56 +62,80 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 07/09/2023 22:24, Guilherme G. Piccoli wrote:
-> Currently the kernel provides a symlink to the executable binary, in the
-> form of procfs file exe_file (/proc/self/exe_file for example). But what
-> happens in interpreted scenarios (like binfmt_misc) is that such link
-> always points to the *interpreter*. For cases of Linux binary emulators,
-> like FEX [0] for example, it's then necessary to somehow mask that and
-> emulate the true binary path.
+On 10/6/23 04:40, Bart Van Assche wrote:
+> The NVMe and SCSI standards define 64 different data lifetimes. Support
+> storing this information in the I/O priority bitfield.
 > 
-> We hereby propose a way to expose such interpreted binary as exe_file if
-> the flag 'I' is selected on binfmt_misc. When that flag is set, the file
-> /proc/self/exe_file points to the *interpreted* file, be it ELF or not.
-> In order to allow users to distinguish if such flag is used or not without
-> checking the binfmt_misc filesystem, we propose also the /proc/self/interpreter
-> file, which always points to the *interpreter* in scenarios where
-> interpretation is set, like binfmt_misc. This file is empty / points to
-> nothing in the case of regular ELF execution, though we could consider
-> implementing a way to point to the LD preloader if that makes sense...
+> The current allocation of the 16 bits in the I/O priority bitfield is as
+> follows:
+> * 15..13: I/O priority class
+> * 12..6: unused
+> * 5..3: I/O hint (CDL)
+> * 2..0: I/O priority level
 > 
-> This was sent as RFC because of course it's a very core change, affecting
-> multiple areas and there are design choices (and questions) in each patch
-> so we could discuss and check the best way to implement the solution as
-> well as the corner cases handling. This is a very useful feature for
-> emulators and such, like FEX and Wine, which usually need to circumvent
-> this kernel limitation in order to expose the true emulated file name
-> (more examples at [1][2][3]).
+> This patch changes this into the following:
+> * 15..13: I/O priority class
+> * 12: unused
+> * 11..6: data lifetime
+> * 5..3: I/O hint (CDL)
+> * 2..0: I/O priority level
 > 
-> This patchset is based on the currently v6.6-rc1 candidate (Linus tree
-> from yesterday) and was tested under QEMU as well as using FEX.
-> Thanks in advance for comments, any feedback is greatly appreciated!
-> Cheers,
+> Cc: Damien Le Moal <dlemoal@kernel.org>
+> Cc: Niklas Cassel <niklas.cassel@wdc.com>
+> Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+> ---
+>  include/uapi/linux/ioprio.h | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
 > 
-> Guilherme
-> 
-> 
-> [0] https://github.com/FEX-Emu/FEX
-> 
-> [1] Using an environment variable trick to override exe_file:
-> https://gitlab.freedesktop.org/mesa/mesa/-/blob/main/src/util/u_process.c#L209 
-> 
-> [2] https://github.com/baldurk/renderdoc/pull/2694
-> 
-> [3] FEX handling of the exe_file parsing:
-> https://github.com/FEX-Emu/FEX/blob/main/Source/Tools/FEXLoader/LinuxSyscalls/FileManagement.cpp#L499
-> 
-> 
+> diff --git a/include/uapi/linux/ioprio.h b/include/uapi/linux/ioprio.h
+> index bee2bdb0eedb..efe9bc450872 100644
+> --- a/include/uapi/linux/ioprio.h
+> +++ b/include/uapi/linux/ioprio.h
+> @@ -71,7 +71,7 @@ enum {
+>   * class and level.
+>   */
+>  #define IOPRIO_HINT_SHIFT		IOPRIO_LEVEL_NR_BITS
+> -#define IOPRIO_HINT_NR_BITS		10
+> +#define IOPRIO_HINT_NR_BITS		3
+>  #define IOPRIO_NR_HINTS			(1 << IOPRIO_HINT_NR_BITS)
+>  #define IOPRIO_HINT_MASK		(IOPRIO_NR_HINTS - 1)
+>  #define IOPRIO_PRIO_HINT(ioprio)	\
+> @@ -102,6 +102,12 @@ enum {
+>  	IOPRIO_HINT_DEV_DURATION_LIMIT_7 = 7,
+>  };
+>  
+> +#define IOPRIO_LIFETIME_SHIFT		(IOPRIO_HINT_SHIFT + IOPRIO_HINT_NR_BITS)
+> +#define IOPRIO_LIFETIME_NR_BITS		6
+> +#define IOPRIO_LIFETIME_MASK		((1u << IOPRIO_LIFETIME_NR_BITS) - 1)
+> +#define IOPRIO_PRIO_LIFETIME(ioprio)					\
+> +	((ioprio >> IOPRIO_LIFETIME_SHIFT) & IOPRIO_LIFETIME_MASK)
+> +
+>  #define IOPRIO_BAD_VALUE(val, max) ((val) < 0 || (val) >= (max))
 
-Hi folks, gentle monthly ping.
-Any opinions / suggestions on that?
+I am really not a fan of this. This essentially limits prio hints to CDL, while
+the initial intent was to define the hints as something generic that depend on
+the device features. With your change, we will not be able to support new
+features in the future.
 
-Thanks in advance,
+Your change seem to assume that it makes sense to be able to combine CDL with
+lifetime hints. But does it really ? CDL is of dubious value for solid state
+media and as far as I know, UFS world has not expressed interest. Conversely,
+data lifetime hints do not make much sense for spin rust media where CDL is
+important. So I would say that the combination of CDL and lifetime hints is of
+dubious value.
+
+Given this, why not simply define the 64 possible lifetime values as plain hint
+values (8 to 71, following 1 to 7 for CDL) ?
+
+The other question here if you really want to keep the bit separation approach
+is: do we really need up to 64 different lifetime hints ? While the scsi
+standard allows that much, does this many different lifetime make sense in
+practice ? Can we ever think of a usecase that needs more than say 8 different
+liftimes (3 bits) ? If you limit the number of possible lifetime hints to 8,
+then we can keep 4 bits unused in the hint field for future features.
 
 
-Guilherme
+-- 
+Damien Le Moal
+Western Digital Research
+
