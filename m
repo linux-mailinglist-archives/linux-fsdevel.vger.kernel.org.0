@@ -2,64 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 739C67BBA8D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Oct 2023 16:41:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F48F7BBB1F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Oct 2023 17:02:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232659AbjJFOlx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Oct 2023 10:41:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35646 "EHLO
+        id S232705AbjJFPCT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Oct 2023 11:02:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232615AbjJFOli (ORCPT
+        with ESMTP id S232696AbjJFPCS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Oct 2023 10:41:38 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DCD9DB;
-        Fri,  6 Oct 2023 07:41:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Kz0MyaGCfhSoACpQk6IQSVxzrVBlg/0Wg5XzExLzRJA=; b=vyVGILvYDUxK77TznDGevX+p6+
-        QeB3UyVYGG8z6uY8GfJUrVbceGW071wpmajsdgoky80NKhEJyy9wbt2HGIVvYK+V34X/xcZ7M88tO
-        uv0A8F97qeYjl3j1wXTJ37tgEpP6bzpv0QeCjQfyLHCVQSrkDrYuixC9k1VwkKgD7O/aDn8K4oHEu
-        aLBRPykgQkjRXYvNQg7Rvb3sYtTZ9ATM5boFOzN5hvaDmbVb9FPzFNpEbzgW0gFqTRukUUuq3MIFW
-        1g2dA6Ns4ySooj/qULREI+uxM4kG5aT9g3OTf2WvqX1Z3WFRAc8Vexl7STBLjJ85GDuxLMFsKshej
-        LScv7kIQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qom1A-00FrAt-MO; Fri, 06 Oct 2023 14:41:28 +0000
-Date:   Fri, 6 Oct 2023 15:41:28 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Pankaj Raghav <kernel@pankajraghav.com>
-Cc:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, gost.dev@samsung.com,
-        linux-kernel@vger.kernel.org, Pankaj Raghav <p.raghav@samsung.com>
-Subject: Re: [PATCH] filemap: call filemap_get_folios_tag() from
- filemap_get_folios()
-Message-ID: <ZSAcmFaZC9d4VJNF@casper.infradead.org>
-References: <20231006110120.136809-1-kernel@pankajraghav.com>
+        Fri, 6 Oct 2023 11:02:18 -0400
+Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2FCBCE
+        for <linux-fsdevel@vger.kernel.org>; Fri,  6 Oct 2023 08:02:16 -0700 (PDT)
+Received: by mail-yb1-xb2e.google.com with SMTP id 3f1490d57ef6-d89ba259964so2442030276.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Oct 2023 08:02:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1696604536; x=1697209336; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LAT19evpcikftTKsU+k+vIv081WV5YPaM49e24ewPPI=;
+        b=euK6kc768tr+he+eKo5UAymKdHh8Lq8xj5L/TPiDTjoGOdyW7OC61VlJSU1gkifw1t
+         ITSaUZTKqTckBriiLgNvAx1PaUzKPldvKm4s7OELrbKi+DWJL0zWe+1UoZF128OLTbnm
+         O7WX0biYzQ+fe09Cpa+q21n64QPAx2NjW08woUv/M8P00CghqXzJ4niaGk2GsZjSIifh
+         C3TqHEjYYekD4yLOorCEyQK/fmJKRcvLuB74Zx2njYH6hch5+rhQfBn/oA1hcYxwtkDY
+         RHU8n62DCTbv0nElgL6rwcCm8sGB9Q7RrhF5BYwPSF+81W41SSZC5l4Bvj4Iodnlb64p
+         iwlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696604536; x=1697209336;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LAT19evpcikftTKsU+k+vIv081WV5YPaM49e24ewPPI=;
+        b=qNXIZGB4aRbbMLspo+1HpAzB8bAUApV4pm7diF2bW65IVspw/V7npCfVbewdXDU2Bi
+         2dOixUN0R4X3Vp0/plPpDo/fzdVHQSfwIGobHfCEFtcd9dOd1fRPH6zHhYDuiLcqBM4+
+         fG/rWKxTlR8/FQGnkpu2EHcUZyOyFO9sg5EtsIsg7OsikJ8DGIU9D17UTNRXRp5a3L1l
+         j9ccRg9Xk09j0xY8fdz2A2/3VYs5S5KroCGKK0z6wKw/AxC/LipWO1DQHhwS8cBO6IjK
+         AvL6lFAerCRrsrxjb7rxI78hgS/kitTrHj9gGM1LrY4dmPyCijxGxsw3lykfqRLLtR8F
+         XaOg==
+X-Gm-Message-State: AOJu0YwlrM7T/nhsynL4A0CwpSlLCq6bnZd5p9MA+Bc+XbmB0PsKi+Cj
+        ROHYWWJPXcmnfCZaDHZzEt3MebP88UMj7qJpNtpVSg==
+X-Google-Smtp-Source: AGHT+IFc16xhVp7RXBOoHUgUXh2Eel8sH+b1CWij1+SWJckP+B2dpSf1BmXp+gx4YH2/SUifs++/hwpbDGqVTk5PnbI=
+X-Received: by 2002:a5b:807:0:b0:d81:6e88:7cb3 with SMTP id
+ x7-20020a5b0807000000b00d816e887cb3mr7404835ybp.47.1696604534279; Fri, 06 Oct
+ 2023 08:02:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231006110120.136809-1-kernel@pankajraghav.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+References: <ZRXHK3hbdjfQvCCp@x1n> <fc27ce41-bc97-91a7-deb6-67538689021c@redhat.com>
+ <ZRrf8NligMzwqx97@x1n> <CA+EESO5VtrfXv-kvDsotPLXcpMgOK5t5c+tbXZ7KWRU2O_0PBQ@mail.gmail.com>
+ <CA+EESO4W2jmBSpyHkkqZV0LHnA_OyWQcvwSkfPcWmWCsAF5UWw@mail.gmail.com>
+ <9434ef94-15e8-889c-0c31-3e875060a2f7@redhat.com> <CA+EESO4GuDXZ6newN-oF43WOxrfsZ9Ejq8RJNF2wOYq571zmDA@mail.gmail.com>
+ <CAJuCfpE_h7Bj41sBiADswkUfVCoLXANuQmctdYUEgYjn6fHSCw@mail.gmail.com>
+ <ZRx31TKFDGRatoC8@x1n> <c837fc02-3dbd-ba88-dacb-cf150272a4c4@redhat.com>
+ <ZRyFnurIgVFVD8hd@x1n> <CAJuCfpFggFpPxJjx9uGe05x0fTNONgoUf=QzkpCHLx43Tbryjg@mail.gmail.com>
+ <CA+EESO5UPJrWpUKLg6m=1EmG6P9oXW6ADRkbRKjijVxj641qFQ@mail.gmail.com> <df0ccf08-1bbb-418c-0b3b-57c7288a9871@redhat.com>
+In-Reply-To: <df0ccf08-1bbb-418c-0b3b-57c7288a9871@redhat.com>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Fri, 6 Oct 2023 08:02:00 -0700
+Message-ID: <CAJuCfpHGLUYKHik_qCc2Uwnn6Yk6oMn+HA1t2i1995b1NREFYw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] userfaultfd: UFFDIO_REMAP uABI
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Lokesh Gidra <lokeshgidra@google.com>,
+        Peter Xu <peterx@redhat.com>, Jann Horn <jannh@google.com>,
+        akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
+        brauner@kernel.org, shuah@kernel.org, aarcange@redhat.com,
+        hughd@google.com, mhocko@suse.com, axelrasmussen@google.com,
+        rppt@kernel.org, willy@infradead.org, Liam.Howlett@oracle.com,
+        zhangpeng362@huawei.com, bgeffon@google.com,
+        kaleshsingh@google.com, ngeoffray@google.com, jdduke@google.com,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 06, 2023 at 01:01:20PM +0200, Pankaj Raghav wrote:
-> From: Pankaj Raghav <p.raghav@samsung.com>
-> 
-> filemap_get_folios() is filemap_get_folios_tag() with XA_PRESENT as the
-> tag that is being matched. Return filemap_get_folios_tag() with
-> XA_PRESENT as the tag instead of duplicating the code in
-> filemap_get_folios().
+On Fri, Oct 6, 2023 at 5:30=E2=80=AFAM David Hildenbrand <david@redhat.com>=
+ wrote:
+>
+> On 04.10.23 01:39, Lokesh Gidra wrote:
+> > On Tue, Oct 3, 2023 at 11:26=E2=80=AFPM Suren Baghdasaryan <surenb@goog=
+le.com> wrote:
+> >>
+> >> On Tue, Oct 3, 2023 at 2:21=E2=80=AFPM Peter Xu <peterx@redhat.com> wr=
+ote:
+> >>>
+> >>> On Tue, Oct 03, 2023 at 11:08:07PM +0200, David Hildenbrand wrote:
+> >>>> Sorry I have to ask: has this ever been discussed on the list? I don=
+'t see
+> >>>> any pointers. If not, then probably the number of people that know a=
+bout the
+> >>>> history can be counted with my two hands and that shouldn't be the b=
+asis for
+> >>>> making decisions.
+> >>>
+> >>> For example:
+> >>>
+> >>> https://lore.kernel.org/all/1425575884-2574-21-git-send-email-aarcang=
+e@redhat.com/
+>
+> Sorry, I had to process a family NMI the last couple of days.
+>
+> >>
+> >> There was another submission in 2019:
+> >> https://lore.kernel.org/all/cover.1547251023.git.blake.caldwell@colora=
+do.edu/
+>
+> It would be good to link them in the cover letter and shortly explain
+> why that wasn't merged back then (if there was any reason).
 
-Yes, I think this makes sense.  I was consciously trying to make them
-as similar to each other as possible.  I hadn't realised I'd succeeded
-to such an extent.
+Will do. I could not find the reason but will check again.
 
-Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+>
+> >>
+> >> Though both times it did not generate much discussion. I don't have a
+> >> strong preference though MOVE sounds more generic to me TBH (it
+> >> specifies the operation rather than REMAP which hints on how that
+> >> operation is carried out). But again, I'm fine either way.
+> >
+> > That's a good point. IMHO, if in future we want to have the fallback
+> > implemented, then MOVE would be a more appropriate name than REMAP.
+> >
+> >> As for UFFDIO_MOVE_ZERO_COPY_ONLY vs UFFDIO_MOVE_MODE_ALLOW_COPY, I
+> >> find it weird that the default (the most efficient/desired) mode of
+> >> operation needs a flag. I would prefer to have no flag initially and
+> >> add UFFDIO_MOVE_MODE_ALLOW_COPY or whatever name is more appropriate
+> >> when/if we ever need it. Makes sense?
+> >
+> > Agreed!
+>
+> I agree. One could have UFFDIO_MOVE that is best-effort and documented
+> like that, and a to-be-named future extension that always works but
+> might be more expensive.
+>
+>
+> Ideally we'd have an interface that does not expose and/or rely on such
+> low-level information and simply always works, but getting that would
+> mean that we'd have to implement the fallback immediately ... so I guess
+> we'll have to expose a best-effort interface first.
+
+Sounds good. I'll try to post the next version early next week. Thanks
+for the input folks!
+
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
