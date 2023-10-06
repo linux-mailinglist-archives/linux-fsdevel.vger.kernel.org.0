@@ -2,140 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C275D7BB7A3
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Oct 2023 14:30:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 671BA7BB7AA
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Oct 2023 14:31:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232007AbjJFMac (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Oct 2023 08:30:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47438 "EHLO
+        id S231933AbjJFMbS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Oct 2023 08:31:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35138 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232051AbjJFMa3 (ORCPT
+        with ESMTP id S232078AbjJFMbN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Oct 2023 08:30:29 -0400
-Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97C75126;
-        Fri,  6 Oct 2023 05:30:16 -0700 (PDT)
-Received: from in02.mta.xmission.com ([166.70.13.52]:37482)
-        by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1qojy7-00AOeg-9W; Fri, 06 Oct 2023 06:30:11 -0600
-Received: from ip68-227-168-167.om.om.cox.net ([68.227.168.167]:49692 helo=email.froward.int.ebiederm.org.xmission.com)
-        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1qojy5-001oHA-T0; Fri, 06 Oct 2023 06:30:10 -0600
-From:   "Eric W. Biederman" <ebiederm@xmission.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Marc Zyngier <maz@kernel.org>,
-        Oliver Upton <oliver.upton@linux.dev>,
-        James Morse <james.morse@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Shuah Khan <shuah@kernel.org>,
-        "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-        Deepak Gupta <debug@rivosinc.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        "H.J. Lu" <hjl.tools@gmail.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-riscv@lists.infradead.org
-References: <aaea542c-929c-4c9b-8caa-ca67e0eb9c1e@sirena.org.uk>
-        <ZOTnL1SDJWZjHPUW@arm.com>
-        <43ec219d-bf20-47b8-a5f8-32bc3b64d487@sirena.org.uk>
-        <ZOXa98SqwYPwxzNP@arm.com> <ZOYFazB1gYjzDRdA@arm.com>
-        <ZRWw7aa3C0LlMPTH@arm.com>
-        <38edb5c3-367e-4ab7-8cb7-aa1a5c0e330c@sirena.org.uk>
-        <ZRvUxLgMse8QYlGS@arm.com>
-        <a7d2fd66-c06b-4033-bca2-4b14afc4904f@sirena.org.uk>
-        <ZR7w/mr0xZbpIPc5@arm.com>
-        <638a7be5-6662-471d-a3ce-0de0ac768e99@sirena.org.uk>
-Date:   Fri, 06 Oct 2023 07:29:45 -0500
-In-Reply-To: <638a7be5-6662-471d-a3ce-0de0ac768e99@sirena.org.uk> (Mark
-        Brown's message of "Fri, 6 Oct 2023 13:17:01 +0100")
-Message-ID: <87y1ggylvq.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+        Fri, 6 Oct 2023 08:31:13 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83C91C6
+        for <linux-fsdevel@vger.kernel.org>; Fri,  6 Oct 2023 05:30:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1696595420;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=8It8tkqkVjlZ4hD1o0BfKil40eztbarnBcDIj9TIgRw=;
+        b=aHrC798g0yRd/nuMmKZ49+WqYV0ptS8UgxeBYY9svlOxSIHxitR+poOSEHf7bZO3ZUNQkZ
+        L+4MhWTNfqsbY545uFkzNZMYO67aEuhPEdhsqcs6GDAwLqbFoQbKRS07SmUxlYqmPptzSS
+        edyMV3/lw7dB1qS59ma5L+j4YBTNgkg=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-194-ZIMBmaHtN4eTPYWF4FvIhA-1; Fri, 06 Oct 2023 08:30:09 -0400
+X-MC-Unique: ZIMBmaHtN4eTPYWF4FvIhA-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-327cd5c7406so1352417f8f.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Oct 2023 05:30:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696595408; x=1697200208;
+        h=content-transfer-encoding:in-reply-to:subject:organization:from
+         :references:cc:to:content-language:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8It8tkqkVjlZ4hD1o0BfKil40eztbarnBcDIj9TIgRw=;
+        b=ly1UIyNRwrybwaxBnM45wqZGzxGILwAQWurF0g/nGHyoF85SDRY7k67hQypbaB7Cwv
+         Kf4vl82hsDvXiSkAWPJybFDemkWI21m52/wej/WvULIGQEWqShcb6B5rlBkO5jiJfyw2
+         XCUl+IWVA+TJZ0qgUXONg3ugi7HRoAxVUhcYchQ8Jlx5T5PR8IwChBnfGzjix2F9Nhkp
+         dslBoYckHqgmYQVnAuHIWAoYKcj665spfDvf5hHdHMWiBV8BA2pzgfmYlzLUlYFMysJ/
+         DZ8wcPue4qlczshClQIVd5QVIrSoNIvxvMJKFKMlfhmAVsw30P8k4hCskOc0XnrgGPNE
+         S1ZQ==
+X-Gm-Message-State: AOJu0YxNfgugAE9x3aXaD+foWMCYbKTwvAwrZ0oKa31t03aBZmE4MkDX
+        QRkkpeb9BIygXRubrxOlF26lLLZtgDrx3o4yl0FuWcqjSIDHpF6t29ek7t5IkwR2o1Em8Cz00G/
+        8/6QKc6HbAvmJpTeSn9M6/UYKYg==
+X-Received: by 2002:a5d:654e:0:b0:31d:db92:31ae with SMTP id z14-20020a5d654e000000b0031ddb9231aemr7724607wrv.44.1696595408360;
+        Fri, 06 Oct 2023 05:30:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHPeDl/jbLTAu2J7xcFjLubeMat581zk8oYiD1AECauqAehKlE4r1vrKnp4LPajXvYKo35KQw==
+X-Received: by 2002:a5d:654e:0:b0:31d:db92:31ae with SMTP id z14-20020a5d654e000000b0031ddb9231aemr7724581wrv.44.1696595407844;
+        Fri, 06 Oct 2023 05:30:07 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c715:ee00:4e24:cf8e:3de0:8819? (p200300cbc715ee004e24cf8e3de08819.dip0.t-ipconnect.de. [2003:cb:c715:ee00:4e24:cf8e:3de0:8819])
+        by smtp.gmail.com with ESMTPSA id g7-20020a056000118700b003143c9beeaesm1559784wrx.44.2023.10.06.05.30.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Oct 2023 05:30:07 -0700 (PDT)
+Message-ID: <df0ccf08-1bbb-418c-0b3b-57c7288a9871@redhat.com>
+Date:   Fri, 6 Oct 2023 14:30:06 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1qojy5-001oHA-T0;;;mid=<87y1ggylvq.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.168.167;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX1+LvOjycHAoB6LT49HjM3IrRBVDb8ivK8I=
-X-SA-Exim-Connect-IP: 68.227.168.167
-X-SA-Exim-Mail-From: ebiederm@xmission.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Content-Language: en-US
+To:     Lokesh Gidra <lokeshgidra@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Cc:     Peter Xu <peterx@redhat.com>, Jann Horn <jannh@google.com>,
+        akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
+        brauner@kernel.org, shuah@kernel.org, aarcange@redhat.com,
+        hughd@google.com, mhocko@suse.com, axelrasmussen@google.com,
+        rppt@kernel.org, willy@infradead.org, Liam.Howlett@oracle.com,
+        zhangpeng362@huawei.com, bgeffon@google.com,
+        kaleshsingh@google.com, ngeoffray@google.com, jdduke@google.com,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        kernel-team@android.com
+References: <ZRXHK3hbdjfQvCCp@x1n>
+ <fc27ce41-bc97-91a7-deb6-67538689021c@redhat.com> <ZRrf8NligMzwqx97@x1n>
+ <CA+EESO5VtrfXv-kvDsotPLXcpMgOK5t5c+tbXZ7KWRU2O_0PBQ@mail.gmail.com>
+ <CA+EESO4W2jmBSpyHkkqZV0LHnA_OyWQcvwSkfPcWmWCsAF5UWw@mail.gmail.com>
+ <9434ef94-15e8-889c-0c31-3e875060a2f7@redhat.com>
+ <CA+EESO4GuDXZ6newN-oF43WOxrfsZ9Ejq8RJNF2wOYq571zmDA@mail.gmail.com>
+ <CAJuCfpE_h7Bj41sBiADswkUfVCoLXANuQmctdYUEgYjn6fHSCw@mail.gmail.com>
+ <ZRx31TKFDGRatoC8@x1n> <c837fc02-3dbd-ba88-dacb-cf150272a4c4@redhat.com>
+ <ZRyFnurIgVFVD8hd@x1n>
+ <CAJuCfpFggFpPxJjx9uGe05x0fTNONgoUf=QzkpCHLx43Tbryjg@mail.gmail.com>
+ <CA+EESO5UPJrWpUKLg6m=1EmG6P9oXW6ADRkbRKjijVxj641qFQ@mail.gmail.com>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+Subject: Re: [PATCH v2 2/3] userfaultfd: UFFDIO_REMAP uABI
+In-Reply-To: <CA+EESO5UPJrWpUKLg6m=1EmG6P9oXW6ADRkbRKjijVxj641qFQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
-X-Spam-DCC: XMission; sa05 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Mark Brown <broonie@kernel.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 551 ms - load_scoreonly_sql: 0.05 (0.0%),
-        signal_user_changed: 9 (1.6%), b_tie_ro: 8 (1.4%), parse: 1.11 (0.2%),
-        extract_message_metadata: 3.3 (0.6%), get_uri_detail_list: 1.27 (0.2%),
-         tests_pri_-2000: 3.5 (0.6%), tests_pri_-1000: 4.8 (0.9%),
-        tests_pri_-950: 1.21 (0.2%), tests_pri_-900: 1.03 (0.2%),
-        tests_pri_-200: 0.80 (0.1%), tests_pri_-100: 3.3 (0.6%),
-        tests_pri_-90: 226 (41.0%), check_bayes: 222 (40.3%), b_tokenize: 10
-        (1.8%), b_tok_get_all: 123 (22.2%), b_comp_prob: 3.0 (0.5%),
-        b_tok_touch_all: 82 (14.9%), b_finish: 1.17 (0.2%), tests_pri_0: 271
-        (49.3%), check_dkim_signature: 0.68 (0.1%), check_dkim_adsp: 3.1
-        (0.6%), poll_dns_idle: 0.87 (0.2%), tests_pri_10: 4.3 (0.8%),
-        tests_pri_500: 13 (2.4%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH v4 03/36] arm64/gcs: Document the ABI for Guarded
- Control Stacks
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Mark Brown <broonie@kernel.org> writes:
+On 04.10.23 01:39, Lokesh Gidra wrote:
+> On Tue, Oct 3, 2023 at 11:26 PM Suren Baghdasaryan <surenb@google.com> wrote:
+>>
+>> On Tue, Oct 3, 2023 at 2:21 PM Peter Xu <peterx@redhat.com> wrote:
+>>>
+>>> On Tue, Oct 03, 2023 at 11:08:07PM +0200, David Hildenbrand wrote:
+>>>> Sorry I have to ask: has this ever been discussed on the list? I don't see
+>>>> any pointers. If not, then probably the number of people that know about the
+>>>> history can be counted with my two hands and that shouldn't be the basis for
+>>>> making decisions.
+>>>
+>>> For example:
+>>>
+>>> https://lore.kernel.org/all/1425575884-2574-21-git-send-email-aarcange@redhat.com/
 
-> On Thu, Oct 05, 2023 at 06:23:10PM +0100, Catalin Marinas wrote:
->
->> It's not just the default size that I dislike (I think the x86
->> RLIMIT_STACK or clone3() stack_size is probably good enough) but the
->> kernel allocating the shadow stack and inserting it into the user
->> address space. The actual thread stack is managed by the user but the
->> shadow stack is not (and we don't do this very often). Anyway, I don't
->> have a better solution for direct uses of clone() or clone3(), other
->> than running those threads with the shadow stack disabled. Not sure
->> that's desirable.
->
-> Running threads with the shadow stack disabled if they don't explicitly
-> request it feels like it's asking for trouble - as well as the escape
-> route from the protection it'd provide I'd expect there to be trouble
-> for things that do stack pivots, potentially random issues if there's a
-> mix of ways threads are started.  It's going to be a tradeoff whatever
-> we do.
+Sorry, I had to process a family NMI the last couple of days.
 
-Something I haven't seen in the discussion is that one of the ways I
-have seen a non-libc clone used is to implement a fork with flags.
-That is a new mm is created, and effectively a new process.  Which
-makes the characterization different.
+>>
+>> There was another submission in 2019:
+>> https://lore.kernel.org/all/cover.1547251023.git.blake.caldwell@colorado.edu/
 
-In general creating a thread with clone and bypassing libc is
-incompatible with pthreads, and the caller gets to keep both pieces.
+It would be good to link them in the cover letter and shortly explain 
+why that wasn't merged back then (if there was any reason).
 
-As long as there is enough information code can detect that
-shadow stacks are in use, and the code is able to create their own
-I don't see why it shouldn't be the callers responsibility.
+>>
+>> Though both times it did not generate much discussion. I don't have a
+>> strong preference though MOVE sounds more generic to me TBH (it
+>> specifies the operation rather than REMAP which hints on how that
+>> operation is carried out). But again, I'm fine either way.
+> 
+> That's a good point. IMHO, if in future we want to have the fallback
+> implemented, then MOVE would be a more appropriate name than REMAP.
+> 
+>> As for UFFDIO_MOVE_ZERO_COPY_ONLY vs UFFDIO_MOVE_MODE_ALLOW_COPY, I
+>> find it weird that the default (the most efficient/desired) mode of
+>> operation needs a flag. I would prefer to have no flag initially and
+>> add UFFDIO_MOVE_MODE_ALLOW_COPY or whatever name is more appropriate
+>> when/if we ever need it. Makes sense?
+> 
+> Agreed!
 
-On the other hand I don't see the maintainer of clone Christian Brauner
-or the libc folks especially Florian cc'd on this thread.  So I really
-don't think you have the right folks in on this conversation.
+I agree. One could have UFFDIO_MOVE that is best-effort and documented 
+like that, and a to-be-named future extension that always works but 
+might be more expensive.
 
-Eric
-k
+
+Ideally we'd have an interface that does not expose and/or rely on such 
+low-level information and simply always works, but getting that would 
+mean that we'd have to implement the fallback immediately ... so I guess 
+we'll have to expose a best-effort interface first.
+
+-- 
+Cheers,
+
+David / dhildenb
+
