@@ -2,160 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F48F7BBB1F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Oct 2023 17:02:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCE9D7BBD3E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Oct 2023 18:52:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232705AbjJFPCT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Oct 2023 11:02:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44522 "EHLO
+        id S232476AbjJFQwd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Oct 2023 12:52:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232696AbjJFPCS (ORCPT
+        with ESMTP id S230223AbjJFQwc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Oct 2023 11:02:18 -0400
-Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2FCBCE
-        for <linux-fsdevel@vger.kernel.org>; Fri,  6 Oct 2023 08:02:16 -0700 (PDT)
-Received: by mail-yb1-xb2e.google.com with SMTP id 3f1490d57ef6-d89ba259964so2442030276.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Oct 2023 08:02:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1696604536; x=1697209336; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LAT19evpcikftTKsU+k+vIv081WV5YPaM49e24ewPPI=;
-        b=euK6kc768tr+he+eKo5UAymKdHh8Lq8xj5L/TPiDTjoGOdyW7OC61VlJSU1gkifw1t
-         ITSaUZTKqTckBriiLgNvAx1PaUzKPldvKm4s7OELrbKi+DWJL0zWe+1UoZF128OLTbnm
-         O7WX0biYzQ+fe09Cpa+q21n64QPAx2NjW08woUv/M8P00CghqXzJ4niaGk2GsZjSIifh
-         C3TqHEjYYekD4yLOorCEyQK/fmJKRcvLuB74Zx2njYH6hch5+rhQfBn/oA1hcYxwtkDY
-         RHU8n62DCTbv0nElgL6rwcCm8sGB9Q7RrhF5BYwPSF+81W41SSZC5l4Bvj4Iodnlb64p
-         iwlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696604536; x=1697209336;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LAT19evpcikftTKsU+k+vIv081WV5YPaM49e24ewPPI=;
-        b=qNXIZGB4aRbbMLspo+1HpAzB8bAUApV4pm7diF2bW65IVspw/V7npCfVbewdXDU2Bi
-         2dOixUN0R4X3Vp0/plPpDo/fzdVHQSfwIGobHfCEFtcd9dOd1fRPH6zHhYDuiLcqBM4+
-         fG/rWKxTlR8/FQGnkpu2EHcUZyOyFO9sg5EtsIsg7OsikJ8DGIU9D17UTNRXRp5a3L1l
-         j9ccRg9Xk09j0xY8fdz2A2/3VYs5S5KroCGKK0z6wKw/AxC/LipWO1DQHhwS8cBO6IjK
-         AvL6lFAerCRrsrxjb7rxI78hgS/kitTrHj9gGM1LrY4dmPyCijxGxsw3lykfqRLLtR8F
-         XaOg==
-X-Gm-Message-State: AOJu0YwlrM7T/nhsynL4A0CwpSlLCq6bnZd5p9MA+Bc+XbmB0PsKi+Cj
-        ROHYWWJPXcmnfCZaDHZzEt3MebP88UMj7qJpNtpVSg==
-X-Google-Smtp-Source: AGHT+IFc16xhVp7RXBOoHUgUXh2Eel8sH+b1CWij1+SWJckP+B2dpSf1BmXp+gx4YH2/SUifs++/hwpbDGqVTk5PnbI=
-X-Received: by 2002:a5b:807:0:b0:d81:6e88:7cb3 with SMTP id
- x7-20020a5b0807000000b00d816e887cb3mr7404835ybp.47.1696604534279; Fri, 06 Oct
- 2023 08:02:14 -0700 (PDT)
+        Fri, 6 Oct 2023 12:52:32 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6EBEAD;
+        Fri,  6 Oct 2023 09:52:30 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DAEEC433C8;
+        Fri,  6 Oct 2023 16:52:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1696611150;
+        bh=1/agTdIoDPH5KB+pV6NQO44zrxCRyNQUeJI7drOS5Ig=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=qMn2CbkwKErRdOowM3Ocy1kddkjyVCyEK2ZursCABQCNB/0S9dT0SBu/6poU8xsW7
+         HbKDn6iHiU+SpC2c5wZuD/92KeKcwxzUZQMoPL2E+kClr3tludjzbnlLerO5t/IjZv
+         RrgqoxXjyOVgcB0+a7dg8Idgc6YA6JLpNnDV+9CHYnxkLi2aoX1wkGyhRVxEULU4bh
+         aFWIrg5CJxZfIMYhJ9hXHxWD7iSfON50Z/PvPKTOU6RajLcLTF3d4FR8fxZ1invZhc
+         a58yV2tXI2a4LDntzqX0YDKdJ9jy16hYNjrtZ5tbcHBpczp9+Qngx9REKBDzAO9HGg
+         HkEsAUNNfiiSw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+        id 18A1BCE0976; Fri,  6 Oct 2023 09:52:30 -0700 (PDT)
+Date:   Fri, 6 Oct 2023 09:52:30 -0700
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Arnd Bergmann <arnd@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH bootconfig 2/3] fs/proc: Add boot loader arguments as
+ comment to /proc/bootconfig
+Message-ID: <55067c09-9ec6-452a-a6db-30b8a8d08485@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <6ea609a4-12e3-4266-8816-b9fca1f1f21c@paulmck-laptop>
+ <20231005171747.541123-2-paulmck@kernel.org>
+ <20231006175948.14df07948d8c6a4a46473c13@kernel.org>
 MIME-Version: 1.0
-References: <ZRXHK3hbdjfQvCCp@x1n> <fc27ce41-bc97-91a7-deb6-67538689021c@redhat.com>
- <ZRrf8NligMzwqx97@x1n> <CA+EESO5VtrfXv-kvDsotPLXcpMgOK5t5c+tbXZ7KWRU2O_0PBQ@mail.gmail.com>
- <CA+EESO4W2jmBSpyHkkqZV0LHnA_OyWQcvwSkfPcWmWCsAF5UWw@mail.gmail.com>
- <9434ef94-15e8-889c-0c31-3e875060a2f7@redhat.com> <CA+EESO4GuDXZ6newN-oF43WOxrfsZ9Ejq8RJNF2wOYq571zmDA@mail.gmail.com>
- <CAJuCfpE_h7Bj41sBiADswkUfVCoLXANuQmctdYUEgYjn6fHSCw@mail.gmail.com>
- <ZRx31TKFDGRatoC8@x1n> <c837fc02-3dbd-ba88-dacb-cf150272a4c4@redhat.com>
- <ZRyFnurIgVFVD8hd@x1n> <CAJuCfpFggFpPxJjx9uGe05x0fTNONgoUf=QzkpCHLx43Tbryjg@mail.gmail.com>
- <CA+EESO5UPJrWpUKLg6m=1EmG6P9oXW6ADRkbRKjijVxj641qFQ@mail.gmail.com> <df0ccf08-1bbb-418c-0b3b-57c7288a9871@redhat.com>
-In-Reply-To: <df0ccf08-1bbb-418c-0b3b-57c7288a9871@redhat.com>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Fri, 6 Oct 2023 08:02:00 -0700
-Message-ID: <CAJuCfpHGLUYKHik_qCc2Uwnn6Yk6oMn+HA1t2i1995b1NREFYw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] userfaultfd: UFFDIO_REMAP uABI
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Lokesh Gidra <lokeshgidra@google.com>,
-        Peter Xu <peterx@redhat.com>, Jann Horn <jannh@google.com>,
-        akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
-        brauner@kernel.org, shuah@kernel.org, aarcange@redhat.com,
-        hughd@google.com, mhocko@suse.com, axelrasmussen@google.com,
-        rppt@kernel.org, willy@infradead.org, Liam.Howlett@oracle.com,
-        zhangpeng362@huawei.com, bgeffon@google.com,
-        kaleshsingh@google.com, ngeoffray@google.com, jdduke@google.com,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231006175948.14df07948d8c6a4a46473c13@kernel.org>
+X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 6, 2023 at 5:30=E2=80=AFAM David Hildenbrand <david@redhat.com>=
- wrote:
->
-> On 04.10.23 01:39, Lokesh Gidra wrote:
-> > On Tue, Oct 3, 2023 at 11:26=E2=80=AFPM Suren Baghdasaryan <surenb@goog=
-le.com> wrote:
-> >>
-> >> On Tue, Oct 3, 2023 at 2:21=E2=80=AFPM Peter Xu <peterx@redhat.com> wr=
-ote:
-> >>>
-> >>> On Tue, Oct 03, 2023 at 11:08:07PM +0200, David Hildenbrand wrote:
-> >>>> Sorry I have to ask: has this ever been discussed on the list? I don=
-'t see
-> >>>> any pointers. If not, then probably the number of people that know a=
-bout the
-> >>>> history can be counted with my two hands and that shouldn't be the b=
-asis for
-> >>>> making decisions.
-> >>>
-> >>> For example:
-> >>>
-> >>> https://lore.kernel.org/all/1425575884-2574-21-git-send-email-aarcang=
-e@redhat.com/
->
-> Sorry, I had to process a family NMI the last couple of days.
->
-> >>
-> >> There was another submission in 2019:
-> >> https://lore.kernel.org/all/cover.1547251023.git.blake.caldwell@colora=
-do.edu/
->
-> It would be good to link them in the cover letter and shortly explain
-> why that wasn't merged back then (if there was any reason).
+On Fri, Oct 06, 2023 at 05:59:48PM +0900, Masami Hiramatsu wrote:
+> On Thu,  5 Oct 2023 10:17:46 -0700
+> "Paul E. McKenney" <paulmck@kernel.org> wrote:
+> 
+> > In kernels built with CONFIG_BOOT_CONFIG_FORCE=y, /proc/cmdline will
+> > show all kernel boot parameters, both those supplied by the boot loader
+> > and those embedded in the kernel image.  This works well for those who
+> > just want to see all of the kernel boot parameters, but is not helpful to
+> > those who need to see only those parameters supplied by the boot loader.
+> > This is especially important when these parameters are presented to the
+> > boot loader by automation that might gather them from diverse sources.
+> > It is also useful when booting the next kernel via kexec(), in which
+> > case it is necessary to supply only those kernel command-line arguments
+> > from the boot loader, and most definitely not those that were embedded
+> > into the current kernel.
+> > 
+> > Therefore, add comments to /proc/bootconfig of the form:
+> > 
+> > 	# Parameters from bootloader:
+> > 	# root=UUID=ac0f0548-a69d-43ca-a06b-7db01bcbd5ad ro quiet ...
+> > 
+> > The second added line shows only those kernel boot parameters supplied
+> > by the boot loader.
+> 
+> Thanks for update it.
+> 
+> This looks good to me.
+> 
+> Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> 
+> Thank you!
 
-Will do. I could not find the reason but will check again.
+And thank you!  I take this as meaning that I should push these three
+commits for the upcoming v6.7 merge window.  Please let me know if I
+should be doing something else.
 
->
-> >>
-> >> Though both times it did not generate much discussion. I don't have a
-> >> strong preference though MOVE sounds more generic to me TBH (it
-> >> specifies the operation rather than REMAP which hints on how that
-> >> operation is carried out). But again, I'm fine either way.
-> >
-> > That's a good point. IMHO, if in future we want to have the fallback
-> > implemented, then MOVE would be a more appropriate name than REMAP.
-> >
-> >> As for UFFDIO_MOVE_ZERO_COPY_ONLY vs UFFDIO_MOVE_MODE_ALLOW_COPY, I
-> >> find it weird that the default (the most efficient/desired) mode of
-> >> operation needs a flag. I would prefer to have no flag initially and
-> >> add UFFDIO_MOVE_MODE_ALLOW_COPY or whatever name is more appropriate
-> >> when/if we ever need it. Makes sense?
-> >
-> > Agreed!
->
-> I agree. One could have UFFDIO_MOVE that is best-effort and documented
-> like that, and a to-be-named future extension that always works but
-> might be more expensive.
->
->
-> Ideally we'd have an interface that does not expose and/or rely on such
-> low-level information and simply always works, but getting that would
-> mean that we'd have to implement the fallback immediately ... so I guess
-> we'll have to expose a best-effort interface first.
+							Thanx, Paul
 
-Sounds good. I'll try to post the next version early next week. Thanks
-for the input folks!
-
->
-> --
-> Cheers,
->
-> David / dhildenb
->
+> > Link: https://lore.kernel.org/all/CAHk-=wjpVAW3iRq_bfKnVfs0ZtASh_aT67bQBG11b4W6niYVUw@mail.gmail.com/
+> > Link: https://lore.kernel.org/all/20230731233130.424913-1-paulmck@kernel.org/
+> > Co-developed-by: Masami Hiramatsu <mhiramat@kernel.org>
+> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> > Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> > Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Cc: Arnd Bergmann <arnd@kernel.org>
+> > Cc: Nick Desaulniers <ndesaulniers@google.com>
+> > Cc: Alexey Dobriyan <adobriyan@gmail.com>
+> > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > Cc: Kees Cook <keescook@chromium.org>
+> > Cc: <linux-trace-kernel@vger.kernel.org>
+> > Cc: <linux-fsdevel@vger.kernel.org>
+> > ---
+> >  fs/proc/bootconfig.c | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> > 
+> > diff --git a/fs/proc/bootconfig.c b/fs/proc/bootconfig.c
+> > index 2e244ada1f97..902b326e1e56 100644
+> > --- a/fs/proc/bootconfig.c
+> > +++ b/fs/proc/bootconfig.c
+> > @@ -62,6 +62,12 @@ static int __init copy_xbc_key_value_list(char *dst, size_t size)
+> >  				break;
+> >  			dst += ret;
+> >  		}
+> > +		if (ret >= 0 && boot_command_line[0]) {
+> > +			ret = snprintf(dst, rest(dst, end), "# Parameters from bootloader:\n# %s\n",
+> > +				       boot_command_line);
+> > +			if (ret > 0)
+> > +				dst += ret;
+> > +		}
+> >  	}
+> >  out:
+> >  	kfree(key);
+> > -- 
+> > 2.40.1
+> > 
+> 
+> 
+> -- 
+> Masami Hiramatsu (Google) <mhiramat@kernel.org>
