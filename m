@@ -2,131 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C6AA77BAF72
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Oct 2023 02:04:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02BC37BAF92
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Oct 2023 02:27:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229531AbjJFAE0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Oct 2023 20:04:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55190 "EHLO
+        id S229550AbjJFA1Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Oct 2023 20:27:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229455AbjJFAEZ (ORCPT
+        with ESMTP id S229455AbjJFA1W (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Oct 2023 20:04:25 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C0399F;
-        Thu,  5 Oct 2023 17:04:24 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4C00C433C7;
-        Fri,  6 Oct 2023 00:04:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696550663;
-        bh=jNRpRQ7anZvbWj7vKpq9mEWAlqO+Yk+hyZvPIkYO+ag=;
-        h=Date:From:To:Cc:Subject:From;
-        b=j5y8PkDvEXUIbnEAbGwNvHAX0jLjFIDRl/jwTRgZ4MU12y6+VK5PJRQF96SVIrHN9
-         HncHGIjkkH0+XksCFNusFryrm/gmUtJ6aouvTRR7jKpHVA5vS79N57HmmARXDLnibp
-         2DsKuMLeKdHgktl9gLkq3BotMGITcuwoxwA8GMZJ9u6VG14mVrmhiBho/QbUAlGbdu
-         O8tZPWALmL2nNTqPUoVkD0v5FhL3NgMJDMRSJynkeAQbOpcaXGtcEw0adyasCiySs6
-         zgat0rpuFIsjXlMq4h3ezz7UN8V1FmuietEYek0JOUWyYajHjtXm4fiwmcsSy5WsNS
-         e+MYJjRWpSK+w==
-Date:   Fri, 6 Oct 2023 01:04:19 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Test failure from "file: convert to SLAB_TYPESAFE_BY_RCU"
-Message-ID: <00e5cc23-a888-46ce-8789-fc182a2131b0@sirena.org.uk>
+        Thu, 5 Oct 2023 20:27:22 -0400
+Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 238CFD6;
+        Thu,  5 Oct 2023 17:27:18 -0700 (PDT)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id D6DBD5C022E;
+        Thu,  5 Oct 2023 20:27:14 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Thu, 05 Oct 2023 20:27:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
+        :cc:content-transfer-encoding:content-type:content-type:date
+        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to; s=fm1; t=
+        1696552034; x=1696638434; bh=T0KKGiY1Q8zqQlnDql/yrnMneNPlqDlkRnN
+        aCenas50=; b=NsjPxZnjfyHwzZfOHHXiexldWr+qApfmB0/vePs04hlPTprXeLP
+        muo00EbDjfVB1reJo4Gi4OS1KB2yKHJLXypX7FP9f8SiFiuTTmSrdGnGbT4K689r
+        z66w+t1ZqKIb1NIjSbKd+C3UTVrNSLtPth5mcA3FYufCXiws+vpJmy2O516DHjyJ
+        ihdQSZ38omannW+GHVLJOeh9SQ6MZquPLile5x3UrWcDg4Q2JEJiJD9zcQTBoNRr
+        6x/a/6VF9DRNQK9BxCUhL2jfUfE394R7CcxAHV7hxrIaVlniEjAEaUKbHFTqMYQa
+        fqyo8jR86/CgH3mfBPaM3dcgHcKEAjlyiog==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:content-type:date:date:feedback-id:feedback-id
+        :from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+        1696552034; x=1696638434; bh=T0KKGiY1Q8zqQlnDql/yrnMneNPlqDlkRnN
+        aCenas50=; b=X888C7YOEFoEUmRM8CxSfxcrCdN9fA9Y5Wy6nLVEg9ywh69eNaa
+        6W3pVRhpXRkpqInMSTExphzKk98r8O/8dVuEsTt+gm6V9pxt9eSkQ0j65XTkkWJ0
+        MNvfAOLtcJrmVR4FChTj/BXwfRhGsHO0CZN6T1pxihIcqNsUqpLgodWcxVVSjxe/
+        J7WaYl4kaoT0sRg5jCO/jRjX+EIu36obx3yapz54vniMmrIyIrQVRmJgS2iIcYTP
+        sEUVz7bYc3OLvHqkLUkELZaiyWx+0oNyWsIpVwsggmP9Jww+pZlAhtsozkL3qGOp
+        +1/5oNgpXRGev7OaRgAzJ4sTXuSzyXpcK/Q==
+X-ME-Sender: <xms:YVQfZfmuJNp-n-wtUgJgsFbSLdiR22bouAjj_2tgWzTIrIUUBX2gCQ>
+    <xme:YVQfZS1SVFoihWiBusOuFwPtyP31D50Ca_GbiWm7abTAAL_2bs4isr20RLkFfjAcL
+    BxjfhFtL5fb>
+X-ME-Received: <xmr:YVQfZVrDl_aaip9HvCknlI6jRPyGFHmp4XIR2As3mc0fM0hq9NcHh2YOfCQYeFPLTHjC0FB7jevxc-zpl4gQfd14McbIogeQGtJNcrdmu93JGq2r-eLXH8Xs>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrgeehgdefhecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefkffggfgfuvfevfhfhjggtgfesthejredttdefjeenucfhrhhomhepkfgrnhcu
+    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpe
+    euhfeuieeijeeuveekgfeitdethefguddtleffhfelfeelhfduuedvfefhgefhheenucev
+    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehrrghvvghnse
+    hthhgvmhgrfidrnhgvth
+X-ME-Proxy: <xmx:YlQfZXl1_L8TMWe7RLDu62ZvUSa2BREvMrbrCCOrXMfOn5Qm8b3OIw>
+    <xmx:YlQfZd1-2AUNUqJXnkVrBopvHNDc9gw-i0J_3MpQWHS7GRNgMX9LPw>
+    <xmx:YlQfZWsuyxmLje11F-KKbJnHXS9c6kPzsNYDWePd3DSoN72GFSt7dw>
+    <xmx:YlQfZXMBhWMqKgsB-pnkEyij8sgxlC3Mdp0aHMAxo11bXMPdJ4_mbQ>
+Feedback-ID: i31e841b0:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 5 Oct 2023 20:27:07 -0400 (EDT)
+Message-ID: <7fe3c01f-c225-394c-fac5-cabfc70f3606@themaw.net>
+Date:   Fri, 6 Oct 2023 08:27:03 +0800
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="f4w7RcmGnW7dyD3d"
-Content-Disposition: inline
-X-Cookie: Avoid contact with eyes.
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v3 4/4] add listmount(2) syscall
+Content-Language: en-US
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
+        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Matthew House <mattlloydhouse@gmail.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>
+References: <20230928130147.564503-1-mszeredi@redhat.com>
+ <20230928130147.564503-5-mszeredi@redhat.com>
+ <CAHC9VhQD9r+Qf5Vz1XmxUdJJJO7HNTKdo8Ux=n+xkxr=JGFMrw@mail.gmail.com>
+ <CAJfpegsPbDgaz46x4Rr9ZgCpF9rohVHsvuWtQ5LNAdiYU_D4Ww@mail.gmail.com>
+ <a25f2736-1837-f4ca-b401-85db24f46452@themaw.net>
+ <CAJfpegv78njkWdaShTskKXoGOpKAndvYYJwq7CLibiu+xmLCvg@mail.gmail.com>
+From:   Ian Kent <raven@themaw.net>
+In-Reply-To: <CAJfpegv78njkWdaShTskKXoGOpKAndvYYJwq7CLibiu+xmLCvg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-6.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_PASS,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 5/10/23 23:47, Miklos Szeredi wrote:
+> On Thu, 5 Oct 2023 at 06:23, Ian Kent <raven@themaw.net> wrote:
+>
+>> The proc interfaces essentially use <mount namespace>->list to provide
+>>
+>> the mounts that can be seen so it's filtered by mount namespace of the
+>>
+>> task that's doing the open().
+>>
+>>
+>> See fs/namespace.c:mnt_list_next() and just below the m_start(), m_next(),
+> /proc/$PID/mountinfo will list the mount namespace of $PID.  Whether
+> current task has permission to do so is decided at open time.
+>
+> listmount() will list the children of the given mount ID.  The mount
+> ID is looked up in the task's mount namespace, so this cannot be used
+> to list mounts of other namespaces.  It's a more limited interface.
 
---f4w7RcmGnW7dyD3d
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Yep. But isn't the ability to see these based on task privilege?
 
-For the past few days (I was away last week...) the fd-003-kthread.c
-test from the proc kselftests has been failing on arm64, this is an
-nfsroot system if that makes any odds.  The test output itself is:
 
-  # selftests: proc: fd-003-kthread
-  # fd-003-kthread: fd-003-kthread.c:113: test_readdir: Assertion `!de' failed.
-  # Aborted
-  not ok 3 selftests: proc: fd-003-kthread # exit=134
+Is the proc style restriction actually what we need here (or some variation
 
-I ran a bisect which pointed at the commit
+of that implementation)?
 
-   d089d9d056c048303aedd40a7f3f26593ebd040c file: convert to SLAB_TYPESAFE_BY_RCU
 
-(I can't seem to find that on lore.) I've not done any further analysis
-of what the commit is doing or anything, though it does look like the
-bisect ran fairly smoothly and it looks at least plausibly related to
-the issue and reverting the commit on top of -next causes the test to
-start passing again.
+An privileged task typically has the init namespace as its mount namespace
 
-The bisect log is below and a full log from a failing test job can be
-seen here:
+and mounts should propagate from there so it should be able to see all 
+mounts.
 
-   https://lava.sirena.org.uk/scheduler/job/154334
 
-Thanks,
-Mark
+If the file handle has been opened in a task that is using some other mount
 
-git bisect start
-# bad: [7d730f1bf6f39ece2d9f3ae682f12e5b593d534d] Add linux-next specific files for 20231005
-git bisect bad 7d730f1bf6f39ece2d9f3ae682f12e5b593d534d
-# good: [4d6ee1bd3e3820b523d43349cbcae230fdfcb613] Merge branch 'for-linux-next-fixes' of git://anongit.freedesktop.org/drm/drm-misc
-git bisect good 4d6ee1bd3e3820b523d43349cbcae230fdfcb613
-# bad: [d6dfa62947bd47317de464c3ca55a6eaafe2e5af] Merge branch 'master' of git://linuxtv.org/media_tree.git
-git bisect bad d6dfa62947bd47317de464c3ca55a6eaafe2e5af
-# good: [73773d2fdd7172955a4476e8956c34aa49959219] bcachefs: Data update path no longer leaves cached replicas
-git bisect good 73773d2fdd7172955a4476e8956c34aa49959219
-# good: [87825243dfb1a14a0d8d3ae60754c34dfc084802] Merge branch 'loongarch-next' of git://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.git
-git bisect good 87825243dfb1a14a0d8d3ae60754c34dfc084802
-# good: [3855d73729a7ab4c3a6694a6efdf0816c8ad9dd1] Merge branch 'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git
-git bisect good 3855d73729a7ab4c3a6694a6efdf0816c8ad9dd1
-# bad: [298370bcbb0e5a2fae6c8efd35e2b7bf4c918f54] Merge branch 'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git
-git bisect bad 298370bcbb0e5a2fae6c8efd35e2b7bf4c918f54
-# good: [927cf8c9dd2a58846b541d106149c5e94fd0556f] Merge branch 'nfsd-next' of git://git.kernel.org/pub/scm/linux/kernel/git/cel/linux
-git bisect good 927cf8c9dd2a58846b541d106149c5e94fd0556f
-# bad: [530d23ed060f9c9ddf3b03398367aba9a9577b82] Merge branch 'vfs.super' into vfs.all
-git bisect bad 530d23ed060f9c9ddf3b03398367aba9a9577b82
-# bad: [7291b00e6f694af2b42d223145acb77b2bf1f62c] Merge branch 'vfs.iov_iter' into vfs.all
-git bisect bad 7291b00e6f694af2b42d223145acb77b2bf1f62c
-# bad: [459218d4c663f094951d71bbf293fd14dbb688e1] Merge branch 'vfs.mount.write' into vfs.all
-git bisect bad 459218d4c663f094951d71bbf293fd14dbb688e1
-# good: [cbe52963050bac0f2bfe2c24e09f50ffdc41132b] watch_queue: Annotate struct watch_filter with __counted_by
-git bisect good cbe52963050bac0f2bfe2c24e09f50ffdc41132b
-# bad: [450f431b47219235870f57a3f72fa8fec0a0ba43] vfs: fix readahead(2) on block devices
-git bisect bad 450f431b47219235870f57a3f72fa8fec0a0ba43
-# good: [1cf2d167e7f661b687feb0bd15278b859fe1513c] vfs: shave work on failed file open
-git bisect good 1cf2d167e7f661b687feb0bd15278b859fe1513c
-# bad: [d089d9d056c048303aedd40a7f3f26593ebd040c] file: convert to SLAB_TYPESAFE_BY_RCU
-git bisect bad d089d9d056c048303aedd40a7f3f26593ebd040c
-# first bad commit: [d089d9d056c048303aedd40a7f3f26593ebd040c] file: convert to SLAB_TYPESAFE_BY_RCU
+namespace then presumably that's what the program author wants the task 
+to see.
 
---f4w7RcmGnW7dyD3d
-Content-Type: application/pgp-signature; name="signature.asc"
+So I'm not sure I see a problem obeying the namespace of a given task.
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmUfTwIACgkQJNaLcl1U
-h9Balwf+KctNxpWpdLJd4w+5+82DrGudqyRx/6+Vito3vGyvjsqnLUB5nVxbjql2
-EZlLDT2tjS+Ap1B4U9UvxHuUAiNwwhxLu2Sx+vYhHhMZoeOaqmzIr/F20qdRQMs/
-VI/Fvc69iS/epSIDda+t5cesEDK0K9frqWNgXb27PXv4uKmSeNdWznyHzS38F0kJ
-EElBSjSqIiBHHvT3jdhrlvJG/16JKthi+uSEXCdaUSwebYAT9F1MC80kEzFKb72w
-W5/dwIdxE+3jd4AzPObiSdtcfnAKgWXtH3884/B3vQ4YkNpMnhNNrtD22Xahvn6K
-wQcZlbQWofFtzB642ExENu7HkVcq7A==
-=VOXX
------END PGP SIGNATURE-----
+Ian
 
---f4w7RcmGnW7dyD3d--
+>
+> I sort of understand the reasoning behind calling into a security hook
+> on entry to statmount() and listmount().  And BTW I also think that if
+> statmount() and listmount() is limited in this way, then the same
+> limitation should be applied to the proc interfaces.  But that needs
+> to be done real carefully because it might cause regressions.  OTOH if
+> it's only done on the new interfaces, then what is the point, since
+> the old interfaces will be available indefinitely?
+>
+> Also I cannot see the point in hiding some mount ID's from the list.
+> It seems to me that the list is just an array of numbers that in
+> itself doesn't carry any information.
+>
+> Thanks,
+> Miklos
