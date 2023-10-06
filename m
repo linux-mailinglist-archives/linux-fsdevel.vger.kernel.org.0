@@ -2,146 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DAB8A7BB093
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Oct 2023 05:48:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A23E97BB0E6
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Oct 2023 06:32:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229900AbjJFDsP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Oct 2023 23:48:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49678 "EHLO
+        id S230093AbjJFEcL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Oct 2023 00:32:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37832 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229838AbjJFDsN (ORCPT
+        with ESMTP id S230105AbjJFEbp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Oct 2023 23:48:13 -0400
-Received: from mail-yw1-x1131.google.com (mail-yw1-x1131.google.com [IPv6:2607:f8b0:4864:20::1131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC478DE
-        for <linux-fsdevel@vger.kernel.org>; Thu,  5 Oct 2023 20:48:11 -0700 (PDT)
-Received: by mail-yw1-x1131.google.com with SMTP id 00721157ae682-59bebd5bdadso20382367b3.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Oct 2023 20:48:11 -0700 (PDT)
+        Fri, 6 Oct 2023 00:31:45 -0400
+Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6ADAC11B
+        for <linux-fsdevel@vger.kernel.org>; Thu,  5 Oct 2023 21:31:09 -0700 (PDT)
+Received: by mail-pf1-x436.google.com with SMTP id d2e1a72fcca58-694f3444f94so1448804b3a.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Oct 2023 21:31:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1696564091; x=1697168891; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8BzpawJSlmNG1RzfXiwjSDiv93YoIZJw/vsqhpYIp/Q=;
-        b=f/OGuaCU0SoRSGcpMPW2fHUjM6DB4d7woZmS/34qt0pWhC60F/wcBp4C4cgYbZRkvC
-         oabv8CMt/UnM1Ujvi+j1PcagsrXvhcynEXrLnGb1rAo7MXvQvCERZQo1NjpRnITOqkzv
-         XbyzkEBit8q86/06hkiCzCx1ghuAFE1Df9R4pXWqbxYxZQ2Z2pMjA+YHDDs0Sp7uA71X
-         Qqie+Gt0E2yscQDPAsKcIqa4ep81fcNuVQsPOmxH8ZhG+smO7cgWKmEt51lrlUld5CUa
-         eLxQgdI6wQbnvq7PFdXch/JmunzjIlozqWmfV1GrYecJnZMvJT5uzGL/Z4+5EDWmmeR3
-         XlCA==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1696566669; x=1697171469; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ix+sRq4XQRGJaHRfH6WXpO9zrY7MmqagNFx/9Jnm3Cw=;
+        b=1PXrH8VZnOblzuDC7aK/UG4BmUJT3RX2BSU2ovDIkmCEzmSbK9W2unlSLAt7RVfROA
+         uk+A/E6ugLaxfW9A2XIFg3J2HEDzr8n6c2Aa17kn39z2vmedi082//EAkpShgfYAUSJl
+         CydbxSDIB30+eGO0Da0ibs7g3KHtjrVZ8dQlY6dePodntI+1kNfJzL8U+iwhniC76fiX
+         nwLztdRyyquTTwympjC0U8E4NJzkL/eB4XgzU43c6iiM3jtyBdZbOtRnfFmSAALGh7Sl
+         aHvsMcP1x2wCPpxJ2lCLWZJ+qCTipRNUe8kEQnftAMToDeSR9VUp2Pqq89J2n5vMqJCC
+         fDuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696564091; x=1697168891;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8BzpawJSlmNG1RzfXiwjSDiv93YoIZJw/vsqhpYIp/Q=;
-        b=D5yu+chE1+sNyBJU1Kr+R0PwMqZWofDzLUj8lPmjzfqbR8hdTZDvGw2q80zMRJ1KdU
-         qVlaYAUnEHyDKgzrWXBuYmNmhbkXvNsB6O9nIyPa8yoxf5xGv3UI0eD6qEWJKxtBMY3s
-         FVvD6QqorQUSm8rLdjp1DOAqqOfCy8la7MjNy9y9d5qcXdfNCddTEkaMHvwIVXNJqTTk
-         gRWqL655pYCeJM2dj5w4YmZ4JjBkbq22Tub3AbB547l1RbGruIRVENbsH1H1HxuRxgVp
-         T3hMNDXsqBLWy+IEdUEiRMNemeZhMfiJKyBcHGX7187FVuA5H9xG43HBhWo/NdhNThXK
-         7eWw==
-X-Gm-Message-State: AOJu0YzG5p1E4bR1hmLutVLxq7c0CN7g+Ib4uKJZFuOR9UjNJGq/4l4Y
-        g5FuRMwpMC614wQEFOS9G56qpSM9KI+BgRDsqyGnkw==
-X-Google-Smtp-Source: AGHT+IFKYo13giuoU4JAbm3Yxs/mA1pEeUedUhqlOL/xzX3G8nGF4rXRIqpPGjn+oxsWrsZlrRyivg==
-X-Received: by 2002:a0d:d54f:0:b0:5a1:f0f8:4280 with SMTP id x76-20020a0dd54f000000b005a1f0f84280mr7981311ywd.22.1696564090019;
-        Thu, 05 Oct 2023 20:48:10 -0700 (PDT)
-Received: from ripple.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id v143-20020a814895000000b0059be3d854b1sm978159ywa.109.2023.10.05.20.48.07
+        d=1e100.net; s=20230601; t=1696566669; x=1697171469;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ix+sRq4XQRGJaHRfH6WXpO9zrY7MmqagNFx/9Jnm3Cw=;
+        b=JEYFPikTYw72AoymVb7cV3u4QJ0GiSCmb0Kf8oW/fjgOAdhl+JHRPLzw+ez1UG08rf
+         gjjPvVZMBac+z92u+5hI3QyrHiG42p+0Malxdk2PWnxcQQlFBiRiPI+X1V1maxcye6I+
+         UZQpUjyIXAsIATaNeT46dEHXQSkRy6dEjB3cHPrSsfS1Bw3aegbUgXSNGhqKmwUB94Ud
+         BtnJlHkX/Th+33qGoTrh2AGANo15KemOlF1XxDf+lOn5+Z4xwiiVYUlBPzO5ijArsZDZ
+         KzU2TbKhGgATpflFsWovwq1ZE1G3PPisUFsGv9GfwZ/7w+O0jIlZbreaHCIODCnj/+9J
+         DIxw==
+X-Gm-Message-State: AOJu0YyDVebCrHUla+23aPzL79yDw7INjJZGxg25lcxZPd2g7Cbb/WvU
+        zEvq/ZqYkKskAuYlkwM9B9YT6g==
+X-Google-Smtp-Source: AGHT+IHgkUMxgn1iEBVFJVYZt/afT8PIq1pP/h8RwAD8SFXjlpezcSfR4j9zUmA+wytXxYHwxrQQQg==
+X-Received: by 2002:a05:6a20:1447:b0:14e:3daf:fdb9 with SMTP id a7-20020a056a20144700b0014e3daffdb9mr8351717pzi.22.1696566668815;
+        Thu, 05 Oct 2023 21:31:08 -0700 (PDT)
+Received: from dread.disaster.area (pa49-180-20-59.pa.nsw.optusnet.com.au. [49.180.20.59])
+        by smtp.gmail.com with ESMTPSA id v9-20020a62a509000000b0069029a3196dsm427960pfm.184.2023.10.05.21.31.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Oct 2023 20:48:08 -0700 (PDT)
-Date:   Thu, 5 Oct 2023 20:48:00 -0700 (PDT)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@ripple.attlocal.net
-To:     Jan Kara <jack@suse.cz>
-cc:     Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Carlos Maiolino <cem@kernel.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        Vlastmil Babka <vbabka@suse.cz>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 3/8] shmem: factor shmem_falloc_wait() out of
- shmem_fault()
-In-Reply-To: <20231003131853.ramdlfw5s6ne4iqx@quack3>
-Message-ID: <b2947c43-b7c6-5e50-ae55-81757efc1adb@google.com>
-References: <c7441dc6-f3bb-dd60-c670-9f5cbd9f266@google.com> <6fe379a4-6176-9225-9263-fe60d2633c0@google.com> <20231003131853.ramdlfw5s6ne4iqx@quack3>
+        Thu, 05 Oct 2023 21:31:08 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+        (envelope-from <david@fromorbit.com>)
+        id 1qocUT-00A4Ul-1m;
+        Fri, 06 Oct 2023 15:31:05 +1100
+Date:   Fri, 6 Oct 2023 15:31:05 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Bart Van Assche <bvanassche@acm.org>
+Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
+        John Garry <john.g.garry@oracle.com>, axboe@kernel.dk,
+        kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
+        jejb@linux.ibm.com, djwong@kernel.org, viro@zeniv.linux.org.uk,
+        brauner@kernel.org, chandan.babu@oracle.com, dchinner@redhat.com,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
+        linux-api@vger.kernel.org
+Subject: Re: [PATCH 10/21] block: Add fops atomic write support
+Message-ID: <ZR+NiYIuKzEilkW3@dread.disaster.area>
+References: <5d26fa3b-ec34-bc39-ecfe-4616a04977ca@oracle.com>
+ <b7a6f380-c6fa-45e0-b727-ba804c6684e4@acm.org>
+ <yq1lecktuoo.fsf@ca-mkp.ca.oracle.com>
+ <db6a950b-1308-4ca1-9f75-6275118bdcf5@acm.org>
+ <yq1h6n7rume.fsf@ca-mkp.ca.oracle.com>
+ <34c08488-a288-45f9-a28f-a514a408541d@acm.org>
+ <yq1ttr6qoqp.fsf@ca-mkp.ca.oracle.com>
+ <a2077ddf-9a8f-4101-aeb9-605d6dee3c6e@acm.org>
+ <ZR86Z1OcO52a4BtH@dread.disaster.area>
+ <d976868a-d32c-43d1-b5da-ebbc4c8de468@acm.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d976868a-d32c-43d1-b5da-ebbc4c8de468@acm.org>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 3 Oct 2023, Jan Kara wrote:
-> On Fri 29-09-23 20:27:53, Hugh Dickins wrote:
-> > That Trinity livelock shmem_falloc avoidance block is unlikely, and a
-> > distraction from the proper business of shmem_fault(): separate it out.
-> > (This used to help compilers save stack on the fault path too, but both
-> > gcc and clang nowadays seem to make better choices anyway.)
+On Thu, Oct 05, 2023 at 03:58:38PM -0700, Bart Van Assche wrote:
+> On 10/5/23 15:36, Dave Chinner wrote:
+> > $ lspci |grep -i nvme
+> > 03:00.0 Non-Volatile memory controller: Samsung Electronics Co Ltd NVMe SSD Controller SM981/PM981/PM983
+> > 06:00.0 Non-Volatile memory controller: Samsung Electronics Co Ltd NVMe SSD Controller SM981/PM981/PM983
+> > $ cat /sys/block/nvme*n1/queue/write_cache
+> > write back
+> > write back
+> > $
 > > 
-> > Signed-off-by: Hugh Dickins <hughd@google.com>
+> > That they have volatile writeback caches....
 > 
-> Looks good. Feel free to add:
-> 
-> Reviewed-by: Jan Kara <jack@suse.cz>
+> It seems like what I wrote has been misunderstood completely. With
+> "handling a power failure cleanly" I meant that power cycling a block device
+> does not result in read errors nor in reading data that has never been written.
 
-Thanks a lot for all these reviews, Jan.  (And I particularly enjoyed
-your "Autumn cleaning" remark: sweeping up the leaves, I've been glad
-to have "Autumn Almanac" running through my head since reading that.)
+Then I don't see what your concern is. 
 
-> 
-> Looking at the code I'm just wondering whether the livelock with
-> shmem_undo_range() couldn't be more easy to avoid by making
-> shmem_undo_range() always advance the index by 1 after evicting a page and
-> thus guaranteeing a forward progress... Because the forward progress within
-> find_get_entries() is guaranteed these days, it should be enough.
+Single sector writes are guaranteed atomic and have been for as long
+as I've worked in this game. OTOH, multi-sector writes are not
+guaranteed to be atomic - they can get torn on sector boundaries,
+but the individual sectors within that write are guaranteed to be
+all-or-nothing. 
 
-I'm not sure that I understand your "advance the index by 1" comment.
-Since the "/* If all gone or hole-punch or unfalloc, we're done */"
-change went in, I believe shmem_undo_range() does make guaranteed
-forward progress; but its forward progress is not enough.
+Any hardware device that does not guarantee single sector write
+atomicity (i.e. tears in the middle of a sector) is, by definition,
+broken. And we all know that broken hardware means nothing in the
+storage stack works as it should, so I just don't see what point you
+are trying to make...
 
-I would love to delete all that shmem_falloc_wait() strangeness;
-and your comment excited me to look, hey, can we just delete all that
-stuff now, instead of shifting it aside?  That would be much nicer.
+> Although it is hard to find information about this topic, here is what I found
+> online:
+> * About certain SSDs with power loss protection:
+>   https://us.transcend-info.com/embedded/technology/power-loss-protection-plp
+> * About another class of SSDs with power loss protection:
+>   https://www.kingston.com/en/blog/servers-and-data-centers/ssd-power-loss-protection
+> * About yet another class of SSDs with power loss protection:
+>   https://phisonblog.com/avoiding-ssd-data-loss-with-phisons-power-loss-protection-2/
 
-And if I'd replied to you yesterday, I'd have been saying yes we can.
-But that's because I hadn't got far enough through re-reading the
-various July 2014 3.16-rc mail threads.  I had been excited to find
-myself posting a revert of the patch; before reaching Sasha's later
-livelock which ended up with "belt and braces" retaining the
-shmem_falloc wait while adding the "If all gone or hole-punch" mod.
+Yup, devices that behave as if they have non-volatile write caches.
+Such devices have been around for more than 30 years, they operate
+the same as devices without caches at all.
 
-https://marc.info/?l=linux-kernel&m=140487864819409&w=2
-though that thread did not resolve, and morphed into lockdep moans.
+> So far I haven't found any information about hard disks and power failure
+> handling. What I found is that most current hard disks protect data with ECC.
+> The ECC mechanism should provide good protection against reading data that
+> has never been written.  If a power failure occurs while a hard disk is writing
+> a physical block, can this result in a read error after power is restored? If
+> so, is this behavior allowed by storage standards?
 
-So I've reverted to my usual position: that it's conceivable that
-something has changed meanwhile, to make that Trinity livelock no
-longer an issue (in particular, i_mmap_mutex changed to i_mmap_rwsem,
-and much later unmap_mapping_range() changed to only take it for read:
-but though that change gives hope, I suspect it would turn out to be
-ineffectual against the livelock); but that would have to be proved.
+If a power fail results in read errors from the storage media being
+reported to the OS instead of the data that was present in the
+sector before the power failure, then the device is broken. If there
+is no data in the region being read because it has never been
+written, then it should return zeros (no data) rather than stale
+data or a media read error.
 
-If there's someone who can re-demonstrate Sasha's Trinity livelock
-on 3.16-with-shmem-falloc-wait-disabled, or re-demonstrate it on any
-later release-with-shmem-falloc-wait-disabled, but demonstrate that
-the livelock does not occur on 6.6-rc-with-shmem-falloc-wait-disabled
-(or that plus some simple adjustment of hacker's choosing): that would
-be great news, and we could delete all this - though probably not
-without bisecting to satisfy ourselves on what was the crucial change.
-
-But I never got around to running up Trinity to work on it originally,
-nor in the years since, nor do I expect to soon.  (Vlastimil had a
-good simple technique for demonstrating a part of the problem, but
-fixing that part turned out not fix the whole issue with Trinity.)
-
-Hugh
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
