@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BF33F7BC62D
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Oct 2023 10:44:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 656DA7BC631
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Oct 2023 10:45:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234189AbjJGIo4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 7 Oct 2023 04:44:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54970 "EHLO
+        id S234179AbjJGIo5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 7 Oct 2023 04:44:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234173AbjJGIop (ORCPT
+        with ESMTP id S234177AbjJGIoz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 7 Oct 2023 04:44:45 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B3669C;
-        Sat,  7 Oct 2023 01:44:43 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-4066692ad35so26179825e9.1;
-        Sat, 07 Oct 2023 01:44:43 -0700 (PDT)
+        Sat, 7 Oct 2023 04:44:55 -0400
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E65A6CA;
+        Sat,  7 Oct 2023 01:44:44 -0700 (PDT)
+Received: by mail-wr1-x42c.google.com with SMTP id ffacd0b85a97d-3231dff4343so1762928f8f.0;
+        Sat, 07 Oct 2023 01:44:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696668282; x=1697273082; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1696668283; x=1697273083; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mmZS4tIDK1uSC4ejzxwsJgCokndmYIfM6rMk/k5lfY0=;
-        b=T3OZsPzNHUC3+YG7ls+nJJKbNtfogfRCc+pmaZ/qI7l8CpiOGxREqRa56FAU/NTS7x
-         htDSTmfoGwYd6KSjTFGWWfTRrrpqWH+sssT206iYOmdSLOWe1QysRsjE3SjQXJenLV+w
-         6e49/VG+S7yPHdU87ddJAEyNjF2s//q9SiTbHaEr1ucodXMJJ/tkWl4Vpj0q/QMrGrdy
-         tktGKWu9KJUaRCw8kFlPyhjE/byTrnkbfVgdBRabkPooBaL1/cTMAhnKDCWo5BH5DVTp
-         q+EEZly6qJA45uUijDsIxq0wR5TnJwIWxBZP/QYPczMwO/zMk5Nu7v7qhtaiXUB966ix
-         6mBw==
+        bh=dh64KTLq811QxyIR1Rlgppwwt1J8bEjNPZST/gnUEfU=;
+        b=VUFr0JWlmP5DGQ7Yl1Q9zLgOoS7nx85NVR5JXgJU42PbFab2fLAYp3x/CAxaN2KHGZ
+         Wrr5Lbn+tY/4J1y9IRHTwRtaATufFKUXsNs8xXNl16UWoxWYML96fcp9/CRKNMPRPsz1
+         ncUp34Bknlb04yuq8Ys47IZnMrH8qLtvhOQDtUXKUWBG3j51YowG3X043RYb5y4gDR73
+         mGR7dGjtJJoso+v8AXrrPHpdAmi7fqo9FEXiL/NV4AL4VJ0vo/zGQehyQBY4WNRCpwnl
+         Ps5uezHK4J98nx3ipiERIS8wcKF/IxylmpD6WT3tzyEcO44dgZkjVbnezQ36XZIzyIIX
+         gEuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696668282; x=1697273082;
+        d=1e100.net; s=20230601; t=1696668283; x=1697273083;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=mmZS4tIDK1uSC4ejzxwsJgCokndmYIfM6rMk/k5lfY0=;
-        b=oM5CZ02ouQr4ivr26JrEzdNQgQPLBdS7b1cFzHGVDMngOu9g6yhmiwwiPllwq0DRFl
-         WqcnL9z1BPLiIuGK3TeMq0MpjV7VvpfvgUY11CGZNSApNevghJsiTVzBLA0SUdaCQYhb
-         IhhinQyvOxifyGsUgRbapghreG3pWye+rf+9r+F17NZ8Dpn7SwlQQhanpR02xV0H55fk
-         hXzJ9wtdlAOu2JaPs/L5C3+33W8rM1cAVtiEuFNHyya0XdkvX4dfw8/sI/NBW+78e808
-         p9hIAmU9iyKUqnTdypUCX4giszFzDfGYppPyYFA9iFM/wt1QyL85ZZPpYHOYRskodUV/
-         y2NA==
-X-Gm-Message-State: AOJu0YyvYdaJa57ckzLccFVUMniC883pIWT7/Hbo3KzZCPVkhGhAfP4D
-        S+exfDva03KhHrsHl2en1B0=
-X-Google-Smtp-Source: AGHT+IEq1wkZg+BW6VTKGCNzALIdtQTG0W3UxcAEsB20AtdnFiqUjAck93S565u/FqyoRjpIdorkfQ==
-X-Received: by 2002:adf:e883:0:b0:317:7062:32d2 with SMTP id d3-20020adfe883000000b00317706232d2mr8318929wrm.54.1696668281495;
-        Sat, 07 Oct 2023 01:44:41 -0700 (PDT)
+        bh=dh64KTLq811QxyIR1Rlgppwwt1J8bEjNPZST/gnUEfU=;
+        b=Nasgr07K3PDA3y5wWXj+1UmDNC+ocC7zl+q9dk2vOiWMer87KuazAR+L95PQrLJL6l
+         JLVXRPmF+lVMF9zIDkY/pNjhYFjnaeYf/0JEpqH+x0h5Ih1ZUz1Hgi8MNW2jXo+FbtQA
+         /gs64Dqtw7Ct6jcVCCc43feqh+uNgIylpzI2ckVhDlyGXajQMeD//MbofgR2hS5UEeO1
+         BjOWT16deQnJ262dLz46GrRDOsK+j8+dgi2/SlOBREVbJyBW0CmgjriCX9FJ+uezyI5/
+         cSfgIKKvqPxRIDHpj6G8a2WTMoU5f5RbvLodC7PKTme8K8B6zzFyGUlaewm29LZaL5pa
+         d0aA==
+X-Gm-Message-State: AOJu0Yxw8hesZJueW5hodiAOJYmYtddG0lddXa1H9x2Lcr8EY0GTluHI
+        VcYK7FKGE9knz+gk4Prn6Bk=
+X-Google-Smtp-Source: AGHT+IHT/e0dm68Vul7ENxp5BKPFXpt6nxCtq+TXetgIqL33dKDXE0ja0ZbpxIFJU63oiiWIwCMJ5Q==
+X-Received: by 2002:adf:f9c8:0:b0:31f:d8be:a313 with SMTP id w8-20020adff9c8000000b0031fd8bea313mr7063228wrr.5.1696668283196;
+        Sat, 07 Oct 2023 01:44:43 -0700 (PDT)
 Received: from amir-ThinkPad-T480.lan ([5.29.249.86])
-        by smtp.gmail.com with ESMTPSA id a12-20020adff7cc000000b0031423a8f4f7sm3677850wrq.56.2023.10.07.01.44.40
+        by smtp.gmail.com with ESMTPSA id a12-20020adff7cc000000b0031423a8f4f7sm3677850wrq.56.2023.10.07.01.44.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Oct 2023 01:44:41 -0700 (PDT)
+        Sat, 07 Oct 2023 01:44:42 -0700 (PDT)
 From:   Amir Goldstein <amir73il@gmail.com>
 To:     Christian Brauner <brauner@kernel.org>
 Cc:     Al Viro <viro@zeniv.linux.org.uk>,
@@ -61,9 +61,9 @@ Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         linux-security-module@vger.kernel.org,
         linux-integrity@vger.kernel.org, linux-unionfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 2/3] fs: create helper file_user_path() for user displayed mapped file path
-Date:   Sat,  7 Oct 2023 11:44:32 +0300
-Message-Id: <20231007084433.1417887-3-amir73il@gmail.com>
+Subject: [PATCH v2 3/3] fs: store real path instead of fake path in backing file f_path
+Date:   Sat,  7 Oct 2023 11:44:33 +0300
+Message-Id: <20231007084433.1417887-4-amir73il@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20231007084433.1417887-1-amir73il@gmail.com>
 References: <20231007084433.1417887-1-amir73il@gmail.com>
@@ -79,141 +79,232 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Overlayfs uses backing files with "fake" overlayfs f_path and "real"
-underlying f_inode, in order to use underlying inode aops for mapped
-files and to display the overlayfs path in /proc/<pid>/maps.
+A backing file struct stores two path's, one "real" path that is referring
+to f_inode and one "fake" path, which should be displayed to users in
+/proc/<pid>/maps.
 
-In preparation for storing the overlayfs "fake" path instead of the
-underlying "real" path in struct backing_file, define a noop helper
-file_user_path() that returns f_path for now.
+There is a lot more potential code that needs to know the "real" path, then
+code that needs to know the "fake" path.
 
-Use the new helper in procfs and kernel logs whenever a path of a
-mapped file is displayed to users.
+Instead of code having to request the "real" path with file_real_path(),
+store the "real" path in f_path and require code that needs to know the
+"fake" path request it with file_user_path().
+Replace the file_real_path() helper with a simple const accessor f_path().
 
+After this change, file_dentry() is not expected to observe any files
+with overlayfs f_path and real f_inode, so the call to ->d_real() should
+not be needed.  Leave the ->d_real() call for now and add an assertion
+in ovl_d_real() to catch if we made wrong assumptions.
+
+Suggested-by: Miklos Szeredi <miklos@szeredi.hu>
+Link: https://lore.kernel.org/r/CAJfpegtt48eXhhjDFA1ojcHPNKj3Go6joryCPtEFAKpocyBsnw@mail.gmail.com/
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- arch/arc/kernel/troubleshoot.c |  3 ++-
- fs/proc/base.c                 |  2 +-
- fs/proc/nommu.c                |  2 +-
- fs/proc/task_mmu.c             |  4 ++--
- fs/proc/task_nommu.c           |  2 +-
- include/linux/fs.h             | 14 ++++++++++++++
- kernel/trace/trace_output.c    |  2 +-
- 7 files changed, 22 insertions(+), 7 deletions(-)
+ fs/file_table.c          | 12 ++++++------
+ fs/internal.h            |  6 +++---
+ fs/open.c                | 27 +++++++++++++--------------
+ fs/overlayfs/super.c     | 11 ++++++++++-
+ include/linux/fs.h       | 19 +++++--------------
+ include/linux/fsnotify.h |  3 +--
+ 6 files changed, 38 insertions(+), 40 deletions(-)
 
-diff --git a/arch/arc/kernel/troubleshoot.c b/arch/arc/kernel/troubleshoot.c
-index d5b3ed2c58f5..097887e4a9b7 100644
---- a/arch/arc/kernel/troubleshoot.c
-+++ b/arch/arc/kernel/troubleshoot.c
-@@ -93,7 +93,8 @@ static void show_faulting_vma(unsigned long address)
- 		char *nm = "?";
+diff --git a/fs/file_table.c b/fs/file_table.c
+index 08fd1dd6d863..fa92743ba6a9 100644
+--- a/fs/file_table.c
++++ b/fs/file_table.c
+@@ -44,10 +44,10 @@ static struct kmem_cache *filp_cachep __read_mostly;
  
- 		if (vma->vm_file) {
--			nm = file_path(vma->vm_file, buf, ARC_PATH_MAX-1);
-+			nm = d_path(file_user_path(vma->vm_file), buf,
-+				    ARC_PATH_MAX-1);
- 			if (IS_ERR(nm))
- 				nm = "?";
- 		}
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index ffd54617c354..20695c928ee6 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -2218,7 +2218,7 @@ static int map_files_get_link(struct dentry *dentry, struct path *path)
- 	rc = -ENOENT;
- 	vma = find_exact_vma(mm, vm_start, vm_end);
- 	if (vma && vma->vm_file) {
--		*path = vma->vm_file->f_path;
-+		*path = *file_user_path(vma->vm_file);
- 		path_get(path);
- 		rc = 0;
+ static struct percpu_counter nr_files __cacheline_aligned_in_smp;
+ 
+-/* Container for backing file with optional real path */
++/* Container for backing file with optional user path */
+ struct backing_file {
+ 	struct file file;
+-	struct path real_path;
++	struct path user_path;
+ };
+ 
+ static inline struct backing_file *backing_file(struct file *f)
+@@ -55,11 +55,11 @@ static inline struct backing_file *backing_file(struct file *f)
+ 	return container_of(f, struct backing_file, file);
+ }
+ 
+-struct path *backing_file_real_path(struct file *f)
++struct path *backing_file_user_path(struct file *f)
+ {
+-	return &backing_file(f)->real_path;
++	return &backing_file(f)->user_path;
+ }
+-EXPORT_SYMBOL_GPL(backing_file_real_path);
++EXPORT_SYMBOL_GPL(backing_file_user_path);
+ 
+ static inline void file_free(struct file *f)
+ {
+@@ -68,7 +68,7 @@ static inline void file_free(struct file *f)
+ 		percpu_counter_dec(&nr_files);
+ 	put_cred(f->f_cred);
+ 	if (unlikely(f->f_mode & FMODE_BACKING)) {
+-		path_put(backing_file_real_path(f));
++		path_put(backing_file_user_path(f));
+ 		kfree(backing_file(f));
+ 	} else {
+ 		kmem_cache_free(filp_cachep, f);
+diff --git a/fs/internal.h b/fs/internal.h
+index 846d5133dd9c..652a1703668e 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -101,10 +101,10 @@ static inline void file_put_write_access(struct file *file)
+ 	put_write_access(file->f_inode);
+ 	mnt_put_write_access(file->f_path.mnt);
+ 	if (unlikely(file->f_mode & FMODE_BACKING)) {
+-		struct path *real_path = backing_file_real_path(file);
++		struct path *user_path = backing_file_user_path(file);
+ 
+-		if (real_path->mnt)
+-			mnt_put_write_access(real_path->mnt);
++		if (user_path->mnt)
++			mnt_put_write_access(user_path->mnt);
  	}
-diff --git a/fs/proc/nommu.c b/fs/proc/nommu.c
-index 4d3493579458..c6e7ebc63756 100644
---- a/fs/proc/nommu.c
-+++ b/fs/proc/nommu.c
-@@ -58,7 +58,7 @@ static int nommu_region_show(struct seq_file *m, struct vm_region *region)
+ }
  
- 	if (file) {
- 		seq_pad(m, ' ');
--		seq_file_path(m, file, "");
-+		seq_path(m, file_user_path(file), "");
+diff --git a/fs/open.c b/fs/open.c
+index 2f3e28512663..1bfedc314e49 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -881,10 +881,10 @@ static inline int file_get_write_access(struct file *f)
+ 	if (unlikely(error))
+ 		goto cleanup_inode;
+ 	if (unlikely(f->f_mode & FMODE_BACKING)) {
+-		struct path *real_path = backing_file_real_path(f);
++		struct path *user_path = backing_file_user_path(f);
+ 
+-		if (real_path->mnt)
+-			error = mnt_get_write_access(real_path->mnt);
++		if (user_path->mnt)
++			error = mnt_get_write_access(user_path->mnt);
+ 		if (unlikely(error))
+ 			goto cleanup_mnt;
  	}
+@@ -1185,20 +1185,19 @@ EXPORT_SYMBOL_GPL(kernel_file_open);
  
- 	seq_putc(m, '\n');
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index 3dd5be96691b..1593940ca01e 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -296,7 +296,7 @@ show_map_vma(struct seq_file *m, struct vm_area_struct *vma)
- 		if (anon_name)
- 			seq_printf(m, "[anon_shmem:%s]", anon_name->name);
- 		else
--			seq_file_path(m, file, "\n");
-+			seq_path(m, file_user_path(file), "\n");
- 		goto done;
- 	}
+ /**
+  * backing_file_open - open a backing file for kernel internal use
+- * @path:	path of the file to open
++ * @user_path:	path that the user reuqested to open
+  * @flags:	open flags
+  * @real_path:	path of the backing file
+  * @cred:	credentials for open
+  *
+  * Open a backing file for a stackable filesystem (e.g., overlayfs).
+- * @path may be on the stackable filesystem and backing inode on the
+- * underlying filesystem. In this case, we want to be able to return
+- * the @real_path of the backing inode. This is done by embedding the
+- * returned file into a container structure that also stores the path of
+- * the backing inode on the underlying filesystem, which can be
+- * retrieved using backing_file_real_path().
++ * @user_path may be on the stackable filesystem and @real_path on the
++ * underlying filesystem.  In this case, we want to be able to return the
++ * @user_path of the stackable filesystem. This is done by embedding the
++ * returned file into a container structure that also stores the stacked
++ * file's path, which can be retrieved using backing_file_user_path().
+  */
+-struct file *backing_file_open(const struct path *path, int flags,
++struct file *backing_file_open(const struct path *user_path, int flags,
+ 			       const struct path *real_path,
+ 			       const struct cred *cred)
+ {
+@@ -1209,9 +1208,9 @@ struct file *backing_file_open(const struct path *path, int flags,
+ 	if (IS_ERR(f))
+ 		return f;
  
-@@ -1967,7 +1967,7 @@ static int show_numa_map(struct seq_file *m, void *v)
+-	f->f_path = *path;
+-	path_get(real_path);
+-	*backing_file_real_path(f) = *real_path;
++	path_get(user_path);
++	*backing_file_user_path(f) = *user_path;
++	f->f_path = *real_path;
+ 	error = do_dentry_open(f, d_inode(real_path->dentry), NULL);
+ 	if (error) {
+ 		fput(f);
+diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+index 3fa2416264a4..0245db1a3e29 100644
+--- a/fs/overlayfs/super.c
++++ b/fs/overlayfs/super.c
+@@ -34,9 +34,18 @@ static struct dentry *ovl_d_real(struct dentry *dentry,
+ 	struct dentry *real = NULL, *lower;
+ 	int err;
  
- 	if (file) {
- 		seq_puts(m, " file=");
--		seq_file_path(m, file, "\n\t= ");
-+		seq_path(m, file_user_path(file), "\n\t= ");
- 	} else if (vma_is_initial_heap(vma)) {
- 		seq_puts(m, " heap");
- 	} else if (vma_is_initial_stack(vma)) {
-diff --git a/fs/proc/task_nommu.c b/fs/proc/task_nommu.c
-index 7cebd397cc26..bce674533000 100644
---- a/fs/proc/task_nommu.c
-+++ b/fs/proc/task_nommu.c
-@@ -157,7 +157,7 @@ static int nommu_vma_show(struct seq_file *m, struct vm_area_struct *vma)
+-	/* It's an overlay file */
++	/*
++	 * vfs is only expected to call d_real() with NULL from d_real_inode()
++	 * and with overlay inode from file_dentry() on an overlay file.
++	 *
++	 * TODO: remove @inode argument from d_real() API, remove code in this
++	 * function that deals with non-NULL @inode and remove d_real() call
++	 * from file_dentry().
++	 */
+ 	if (inode && d_inode(dentry) == inode)
+ 		return dentry;
++	else
++		WARN_ON_ONCE(inode);
  
- 	if (file) {
- 		seq_pad(m, ' ');
--		seq_file_path(m, file, "");
-+		seq_path(m, file_user_path(file), "");
- 	} else if (mm && vma_is_initial_stack(vma)) {
- 		seq_pad(m, ' ');
- 		seq_puts(m, "[stack]");
+ 	if (!d_is_reg(dentry)) {
+ 		if (!inode || inode == d_inode(dentry))
 diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 7f7e7d2efbeb..a8e4e1cac48e 100644
+index a8e4e1cac48e..75073a9d0fab 100644
 --- a/include/linux/fs.h
 +++ b/include/linux/fs.h
-@@ -2472,6 +2472,20 @@ static inline const struct path *file_real_path(struct file *f)
+@@ -2451,24 +2451,13 @@ struct file *dentry_open(const struct path *path, int flags,
+ 			 const struct cred *creds);
+ struct file *dentry_create(const struct path *path, int flags, umode_t mode,
+ 			   const struct cred *cred);
+-struct file *backing_file_open(const struct path *path, int flags,
++struct file *backing_file_open(const struct path *user_path, int flags,
+ 			       const struct path *real_path,
+ 			       const struct cred *cred);
+-struct path *backing_file_real_path(struct file *f);
++struct path *backing_file_user_path(struct file *f);
+ 
+-/*
+- * file_real_path - get the path corresponding to f_inode
+- *
+- * When opening a backing file for a stackable filesystem (e.g.,
+- * overlayfs) f_path may be on the stackable filesystem and f_inode on
+- * the underlying filesystem.  When the path associated with f_inode is
+- * needed, this helper should be used instead of accessing f_path
+- * directly.
+-*/
+-static inline const struct path *file_real_path(struct file *f)
++static inline const struct path *f_path(struct file *f)
+ {
+-	if (unlikely(f->f_mode & FMODE_BACKING))
+-		return backing_file_real_path(f);
  	return &f->f_path;
  }
  
-+/*
-+ * file_user_path - get the path to display for memory mapped file
-+ *
-+ * When mmapping a file on a stackable filesystem (e.g., overlayfs), the file
-+ * stored in ->vm_file is a backing file whose f_inode is on the underlying
-+ * filesystem.  When the mapped file path is displayed to user (e.g. via
-+ * /proc/<pid>/maps), this helper should be used to get the path to display
-+ * to the user, which is the path of the fd that user has requested to map.
-+ */
-+static inline const struct path *file_user_path(struct file *f)
-+{
-+	return &f->f_path;
-+}
-+
- static inline struct file *file_clone_open(struct file *file)
+@@ -2483,6 +2472,8 @@ static inline const struct path *file_real_path(struct file *f)
+  */
+ static inline const struct path *file_user_path(struct file *f)
  {
- 	return dentry_open(&file->f_path, file->f_flags, file->f_cred);
-diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
-index db575094c498..d8b302d01083 100644
---- a/kernel/trace/trace_output.c
-+++ b/kernel/trace/trace_output.c
-@@ -404,7 +404,7 @@ static int seq_print_user_ip(struct trace_seq *s, struct mm_struct *mm,
- 			vmstart = vma->vm_start;
- 		}
- 		if (file) {
--			ret = trace_seq_path(s, &file->f_path);
-+			ret = trace_seq_path(s, file_user_path(file));
- 			if (ret)
- 				trace_seq_printf(s, "[+0x%lx]",
- 						 ip - vmstart);
++	if (unlikely(f->f_mode & FMODE_BACKING))
++		return backing_file_user_path(f);
+ 	return &f->f_path;
+ }
+ 
+diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
+index ed48e4f1e755..001307e12a49 100644
+--- a/include/linux/fsnotify.h
++++ b/include/linux/fsnotify.h
+@@ -96,8 +96,7 @@ static inline int fsnotify_file(struct file *file, __u32 mask)
+ 	if (file->f_mode & FMODE_NONOTIFY)
+ 		return 0;
+ 
+-	/* Overlayfs internal files have fake f_path */
+-	path = file_real_path(file);
++	path = f_path(file);
+ 	return fsnotify_parent(path->dentry, mask, path, FSNOTIFY_EVENT_PATH);
+ }
+ 
 -- 
 2.34.1
 
