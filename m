@@ -2,189 +2,267 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7327A7BC316
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Oct 2023 01:49:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63E777BC360
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Oct 2023 02:41:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233864AbjJFXtc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Oct 2023 19:49:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49888 "EHLO
+        id S233914AbjJGAlY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Oct 2023 20:41:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231381AbjJFXtb (ORCPT
+        with ESMTP id S233696AbjJGAlX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Oct 2023 19:49:31 -0400
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 686DEBD;
-        Fri,  6 Oct 2023 16:49:28 -0700 (PDT)
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 396LO2tJ028862;
-        Fri, 6 Oct 2023 23:49:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : message-id : references : date : in-reply-to : content-type :
- mime-version; s=corp-2023-03-30;
- bh=f/7V4GPOscG4FZ74AixysPK9SejqoXIFuTFl0Y/uaCQ=;
- b=Vc5/AYRlhseeTrW/mCpuXKMtPsWhxUtuEP4rYvbQbDwDSTwbV4ItZhAefxtT1Mc+6+EJ
- Bf/hb2FPC6aeNgOyB6H6qhLPZkFswpvkn+n2vAsc3y6BuHyNoUs1CsCdUMVeCRbN9CW7
- k6CUnQx+WkpU72v9vO1EF5hD3rA+yaNIJ6emLTY8mLVE/ivQdWemlNWqmqdo6HbK08Rq
- TV6BXdI9SDcJKEjpIQTDEjDJ3qmZdvVw9bxDIwjvCzzMfZ8qT7jTtbLdpNfPXIhfuML5
- AvFtRs3F03gf/MpDLA4JkdFET6MyTnNjVEHvchTSvDEhZKz6dyW59dFBf4kWHPKUz3uO Og== 
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3tea3emwuj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 06 Oct 2023 23:49:05 +0000
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 396M6P9G002843;
-        Fri, 6 Oct 2023 23:48:58 GMT
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2173.outbound.protection.outlook.com [104.47.55.173])
-        by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3tea4b929g-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 06 Oct 2023 23:48:57 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=j5j3ttEQY24NxtIENJGMY6YcW8+GNTCdtB+2wWMEZNj3VcMMSgyPNhzGrQ585jvhrRyJ5Iqva3BNb5/RpNGi4BxJ7pIgtvC48NA6ajLXHdV3pOEvFL9RjCTbJ6UG1b/v5wUiimTKnYps75Tjr/ZRl2jsjWQIckOAVmXdXwoX7WVviHjLgrbwRxiv5emeobLdIdpa71m6lboDcFkuaiPgj8kRq0FYAla9o66HXapuE2ycxa/w5zwpoO25ZzHQCuxH+X0FM4ObC0VclH8wsuu78CrHaUUKSiQ5gHyVb5rtJPMNhsR/7rqtUzsgGwLlqyUQqRapywxXgsHS6X3oxkJNkA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=f/7V4GPOscG4FZ74AixysPK9SejqoXIFuTFl0Y/uaCQ=;
- b=SXWMhiTY8cvHDw0ywIoJCe5AusQ3yz7Latiiq97nhJDZ9Cq4jHyYfBiV5eTcfdLO7VmYjgG0Jj0HgsKcQbbd9eYK9k9vyqDiNpOtjw5c34ls867++6dVlw5kC3X7Kggt2O7ZALgfKNZ7fbiqSt2HFR1/WsMz8shVzVKDPO8yCFmzN3YtsDYImmQaxnEiP5qTtSY9Y4ImpvTL3+VutnfEz1O8fS6MnmEiuuzPtvozik5EFyPDdNtKDBf8C2/43E7BoS/HDfwSOSh22cmeSHfL+ziRcUI03h6yZaO8x+64w/eH0dBNhhGj924wAzC3yPisw5wYv6itEouTblwv/MjiDw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=f/7V4GPOscG4FZ74AixysPK9SejqoXIFuTFl0Y/uaCQ=;
- b=PwU24EU8ht1IZ56/gbR+tN7vFDir5x26c3YXo+twTkuVTYZq75ngZuPyoO8BvGSYd5IwOLhok05QwE1Hz53ks1FC8YwDbizFrJMOI72ozj8m6Ld4ubX/4Gl2GsXYtBI8kWcfT9+r/OAr9YieBKJmD7OKdmK4YYd6Yd6jUMh9IeY=
-Received: from PH0PR10MB4759.namprd10.prod.outlook.com (2603:10b6:510:3d::12)
- by SA2PR10MB4682.namprd10.prod.outlook.com (2603:10b6:806:110::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6813.32; Fri, 6 Oct
- 2023 23:48:55 +0000
-Received: from PH0PR10MB4759.namprd10.prod.outlook.com
- ([fe80::1ae3:44f0:f5b:2383]) by PH0PR10MB4759.namprd10.prod.outlook.com
- ([fe80::1ae3:44f0:f5b:2383%4]) with mapi id 15.20.6838.033; Fri, 6 Oct 2023
- 23:48:55 +0000
-To:     Bart Van Assche <bvanassche@acm.org>
-Cc:     John Garry <john.g.garry@oracle.com>, axboe@kernel.dk,
-        kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
-        jejb@linux.ibm.com, martin.petersen@oracle.com, djwong@kernel.org,
-        viro@zeniv.linux.org.uk, brauner@kernel.org,
-        chandan.babu@oracle.com, dchinner@redhat.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
-        linux-api@vger.kernel.org
-Subject: Re: [PATCH 18/21] scsi: sd: Support reading atomic properties from
- block limits VPD
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <yq11qe7qptg.fsf@ca-mkp.ca.oracle.com>
-References: <20230929102726.2985188-1-john.g.garry@oracle.com>
-        <20230929102726.2985188-19-john.g.garry@oracle.com>
-        <2e5af8a4-f2e1-4c2e-bd0b-14cc9894b48e@acm.org>
-        <53bfe07e-e125-7a69-4f89-481c10e0959e@oracle.com>
-        <a7a24914-4940-4a23-b439-bc8f0ad99212@acm.org>
-Date:   Fri, 06 Oct 2023 19:48:53 -0400
-In-Reply-To: <a7a24914-4940-4a23-b439-bc8f0ad99212@acm.org> (Bart Van Assche's
-        message of "Fri, 6 Oct 2023 10:52:40 -0700")
-Content-Type: text/plain
-X-ClientProxiedBy: BYAPR06CA0060.namprd06.prod.outlook.com
- (2603:10b6:a03:14b::37) To PH0PR10MB4759.namprd10.prod.outlook.com
- (2603:10b6:510:3d::12)
+        Fri, 6 Oct 2023 20:41:23 -0400
+Received: from snail.cherry.relay.mailchannels.net (snail.cherry.relay.mailchannels.net [23.83.223.170])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01B46BD
+        for <linux-fsdevel@vger.kernel.org>; Fri,  6 Oct 2023 17:41:17 -0700 (PDT)
+X-Sender-Id: dreamhost|x-authsender|kjlx@templeofstupid.com
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+        by relay.mailchannels.net (Postfix) with ESMTP id 975287A1501
+        for <linux-fsdevel@vger.kernel.org>; Sat,  7 Oct 2023 00:41:17 +0000 (UTC)
+Received: from pdx1-sub0-mail-a302.dreamhost.com (unknown [127.0.0.6])
+        (Authenticated sender: dreamhost)
+        by relay.mailchannels.net (Postfix) with ESMTPA id 2915E7A057C
+        for <linux-fsdevel@vger.kernel.org>; Sat,  7 Oct 2023 00:41:17 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1696639277; a=rsa-sha256;
+        cv=none;
+        b=QFu9+C7YMP+mDHfJKd7T7zSR9E9xhi4U8+y22GoyGEOom6Nbin+P+R/7iTNx7mMWx/4Lme
+        6Lztx8b4WIf0nquWu2UIZW8b78u46uu1cYj6U2vWPnXO+mS0i72/BvEUsflaHahhOHV7pE
+        DGx6N+Zw3C4Jj81n3arg33Nc1/tWFikWJCF0Lwd4o5BOTwHKLE/4Hn8F8VSL5GJLGMuVQR
+        1AYWPI2IK3K8wGQGygvdBOlGWDCniTjHSkka6wjUCCpL2jY0M8MEKn+EnYxJdnwNYpkLpc
+        Xm4XLy+xwGyn4CZuctLr/FfBNPSQ+GG/HOTqrgoEuOiDS2pdx/CP0CbDb0VFOg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+        s=arc-2022; t=1696639277;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references:dkim-signature;
+        bh=Rbh0OSGYEgujE+6OSCU+K35bSIRfKFKRGVhPA2zHgwk=;
+        b=EFRBFeljO2tj7Of4bHAkWEQEwCMZnTH3BbjrF6x70BZoYJ5AiB1CAJUzR3RqxA5J/f8f6z
+        OIZGoUWgbnkDzaPt/6pK/2MYFDugtNRV9nGPFDoo4rcJi4/Mf50gjkT5HWb62+5ZOW2qb2
+        DFQC0iEKwQC6wbUzMONuw+xAM0kFJ9LALBr0gmjFCMieAg/3VB5cmbuR9eScMA8vSUWyg7
+        9i7JP9N3ljaMNuP2ddzJWzd/UuUTrG53sudUQic3vY1iTV2OUV2jHvcdKEJArIYk0j+zmk
+        jvekA73DcOlWDXz4lPLg73rlF3Rwdnhi47Sbknmk0/tIvnNBkytiKpwxcEJDHg==
+ARC-Authentication-Results: i=1;
+        rspamd-7c449d4847-hgpf8;
+        auth=pass smtp.auth=dreamhost smtp.mailfrom=kjlx@templeofstupid.com
+X-Sender-Id: dreamhost|x-authsender|kjlx@templeofstupid.com
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|kjlx@templeofstupid.com
+X-MailChannels-Auth-Id: dreamhost
+X-Little-Desert: 0f0c3d894f89c38a_1696639277408_1907729113
+X-MC-Loop-Signature: 1696639277408:2393010906
+X-MC-Ingress-Time: 1696639277408
+Received: from pdx1-sub0-mail-a302.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+        by 100.99.108.167 (trex/6.9.1);
+        Sat, 07 Oct 2023 00:41:17 +0000
+Received: from kmjvbox (c-73-231-176-24.hsd1.ca.comcast.net [73.231.176.24])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: kjlx@templeofstupid.com)
+        by pdx1-sub0-mail-a302.dreamhost.com (Postfix) with ESMTPSA id 4S2RLN5bzSzNV
+        for <linux-fsdevel@vger.kernel.org>; Fri,  6 Oct 2023 17:41:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=templeofstupid.com;
+        s=dreamhost; t=1696639276;
+        bh=Rbh0OSGYEgujE+6OSCU+K35bSIRfKFKRGVhPA2zHgwk=;
+        h=Date:From:To:Cc:Subject:Content-Type;
+        b=WxDz0Ud/So2jBqCalRu3pHPwElFoqUrsa2sl1V4cPIyX0fITseuVkh6k8aJv26dtg
+         WlnXYuVTFcxTLnROQf0nSUl4XBzRBp25BTA7vik+oFO+XnnlG82TE+fQMPubRCIn1Q
+         HK9bfNfnJTpWcIfGRyXeqo2yJtgiuSMzuvTuGqcXs6caUyFqiw1BKUbeENAi5S6hQX
+         qMV+QO5QHOjEcYK2rxE6txoRxz5VLEQLGiXf2flOV9xvosJVxlSvQRsJmZmUDB9CEo
+         p+OU6mFmrwKWIERfQ+OFzQ++N0tEHBmEw2mEQ9KkNHwPj/xbIlDH8AW12mArB1Ld0d
+         YKmnaPSfKQqdQ==
+Received: from johansen (uid 1000)
+        (envelope-from kjlx@templeofstupid.com)
+        id e01ea
+        by kmjvbox (DragonFly Mail Agent v0.12);
+        Fri, 06 Oct 2023 17:41:07 -0700
+Date:   Fri, 6 Oct 2023 17:41:07 -0700
+From:   Krister Johansen <kjlx@templeofstupid.com>
+To:     Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        linux-kernel@vger.kernel.org,
+        German Maglione <gmaglione@redhat.com>,
+        Greg Kurz <groug@kaod.org>, Max Reitz <mreitz@redhat.com>
+Subject: Re: [resend PATCH v2 2/2] fuse: ensure that submounts lookup their
+ parent
+Message-ID: <20231007004107.GA1967@templeofstupid.com>
+References: <cover.1696043833.git.kjlx@templeofstupid.com>
+ <45778432fba32dce1fb1f5fd13272c89c95c3f52.1696043833.git.kjlx@templeofstupid.com>
+ <3187f942-dcf0-4b2f-a106-0eb5d5a33949@fastmail.fm>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR10MB4759:EE_|SA2PR10MB4682:EE_
-X-MS-Office365-Filtering-Correlation-Id: c8bc7e5e-c600-4d7d-1494-08dbc6c6cd55
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: tSjhlboLOt/RURTBKShc4HwCdiY9xMmItYTlJ2fjAE0M+4VpKRXYb17gxoItdUFsnbxS4y0Z8zl5gA4Z+wXPkwAPd5XqHXQrs2veQSxafKqCqasktUQdapExDa5kLxSAoojQ0r5RAn6ClaSIEIC48MXOEHuJIAX5MNO8PBKwmBWJ5ycfRtfpkj8H7kbCVV2NzrnITqIeBZ1SeXEmPRJ3HGeFyLpevRvTdKH1UQcJXsOhj0+KXO3pQkAIAMmA+bKits6iDhtG9Qea+yqpxFYyhc2+NfIlrS0nyz+hReqCJMTyM2CSRFinq04S7Obx7m7idtwd3FJWha4pLa2LrZB3vnO4yFnDNpECKFkNhYW1eGsYEvnE2iOkmu5hOQsAxB5D1bV8+ArNcqnOXWYxNBvIujaLaKMtZvEWUhRg1DGKs14q5QGJJ5QeIZx2Bj5kMa5FjNX7zzbyB3uphw4MUVa8wsL+jPQWVXolHHACq2fBwbZa7nuo/h7vF/8o+xdPrFiuzvguFpuIA0Pp7lNNThJv/UioXiI1L8SmpXDdfeMUGrSijRb23ERtO+CntD7j6nqs
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB4759.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366004)(376002)(396003)(346002)(136003)(39860400002)(230922051799003)(186009)(451199024)(64100799003)(1800799009)(26005)(478600001)(6506007)(36916002)(6486002)(38100700002)(86362001)(558084003)(7416002)(6512007)(2906002)(66476007)(66946007)(316002)(4326008)(8936002)(8676002)(41300700001)(5660300002)(6916009)(66556008);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?DBvNMJ2aiX03/sjESb5R84TGEdSXCXjkrXgnV45bKC6fj0y988HgJaIWuEUR?=
- =?us-ascii?Q?CBnW1dJLVLJBxCagZSA3Pdz/h6aVE522cHvCMAEogVKvxRoch5DEYFvXsF9G?=
- =?us-ascii?Q?+H6QrOl8IVZok4I3028/U1KdkKILETUhtMXhNadAbLa8CZQjU+COyhHdn1en?=
- =?us-ascii?Q?drnw7J1XcurMosK4w7CE/IGGIIOE1W1i9/zugwpA+6dnsSnHi2CF1fyJjiSr?=
- =?us-ascii?Q?ywxyfiK7SLNBHa7C/yVhqeCgPtdx5u1LeeOpsGEo1UUgWc0HrkrlmJS63bwM?=
- =?us-ascii?Q?IyHViqQOwtD8c9HHKpjz4T0i6Oa6NA2iE9sCU0Pd2PzkPIenlPjgu8xcBrBE?=
- =?us-ascii?Q?sob8mxPsc546+hJ1vGCgeDdYaouML8G+yYQyeokBmYBkP8L1S/C9at7Uy4TB?=
- =?us-ascii?Q?80S9to8rsa/oiceekDa4KSXbgMct+YEuj7tdxpW80N8dhSUhqE84tAbIduPa?=
- =?us-ascii?Q?u6aYwZbw/nkO82TJE7SK/vIzqDe5t7Y6HTTI6DwwgkJGh+nR0u9UrlQCyxxj?=
- =?us-ascii?Q?KrhH82r3A6LuE/jqfhiIqDoy2b5GLVl+2qZ8zhbjzUqNFnSqmmDK4Tx/w2bO?=
- =?us-ascii?Q?IFh1oJgalePeNsYA5aEWJ0GOH6lQnU1aU3YtCOlVWsON298DM01i0OqVeSa4?=
- =?us-ascii?Q?Gw5cy+0qEc240pZoflXojqktJWCP2XrZOdUGhcniHxCxfxMbb5HgmqsUZOwl?=
- =?us-ascii?Q?FPiMDmFWWKl3tT7diLKBXeLPdA6Q+A/4OHEOi4dqzyYCyUK/vXxTsIilMuGr?=
- =?us-ascii?Q?g0oOZgyHrekqnSylRRdIejBSWl4tZJS1xgqyNjnLBz3+3z55yigbhtc4Foql?=
- =?us-ascii?Q?zv92sldrVurAD8gfT1Wn02luubFBh1Y6HM/Ea7FWFAB1evbWN5LeUF+jhJZ5?=
- =?us-ascii?Q?kImOg7BuqIaImda9oWXxEatZPacaKdYmCADmemZkr2zclIGoM28V/rnUCuN6?=
- =?us-ascii?Q?4yplo67iLDHoMwifE1qVowM0CR+ejSqQ0LQoKfoxhafmEd8n78K+GDhDUZr+?=
- =?us-ascii?Q?i5uxIbhjvQwIy6tQYMVnA/7HS9W/d+cHibhfJNuyfAMnyFvYYdJ8ee4LsC12?=
- =?us-ascii?Q?QLMBVdTHdutm/SMUZbWfsP7GWeRMnI5+IDNZRP0LJ4tHremvXbsg5Tj6zpAD?=
- =?us-ascii?Q?YxnwXXkIhaMuB/OFhUU50skB2BfXlRRsgEbWmlFCbP5w//w4ZuaHRveH3HlY?=
- =?us-ascii?Q?1BRAfzuXjUvwFh3fXEu4ihC8UTznjxr+q3ltSZS/TkBZznZAEb/xqkJwVLPq?=
- =?us-ascii?Q?xcKhxT9F9IrSrh7FQVqR6DCfSq5GtI5a52WtU77Cdwu46A9Qov3Colyx9LaB?=
- =?us-ascii?Q?67vHy73k5CTNXe5Uip2Dcu4DwxAg4WfRmufx9mG8fgXfOnaZjlCcLwcqSBUd?=
- =?us-ascii?Q?1MsCyvdoKv0J3GYta3RyNhvqSS4asXAeAXR4/lSzAjiDI52ufUpy/Ei0qqx9?=
- =?us-ascii?Q?X3wqmJKAfiRSNMlScwBOaJN6kUy4mD0DCzC9qj0f6+ikmCDWUci3Cb5k5xQ9?=
- =?us-ascii?Q?EAQXHyz22b5l+OlEevsuBWkUX/7+cuoGHD3wevFniwcWRMZiuO2UfaLIYjuo?=
- =?us-ascii?Q?dABZH6WZoLT5vSyt+3ineizeWZQuipu9G0nFwYE0sCzSperlmIl1I4OGxFqR?=
- =?us-ascii?Q?eA=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: =?us-ascii?Q?eB+nI1oKxA3Ufy5B2I6IpCzK6XAOXIg09Mrdy6V/UJ9TaACpRFgnerNpnUg1?=
- =?us-ascii?Q?XOytO4cbc9LJhL0BULMSMtNrGxr2JCsE0armDKasedfKLTrCUZSaeBYnf9+c?=
- =?us-ascii?Q?ct4zs+pTKGzuezdcOds/vHI6N4peJfW1l0RDZSvklcc3kC7Pk5M8XOnVTK6Y?=
- =?us-ascii?Q?rra27F59/xLT0XDRKZ3TL/pdumA3ziFsfFyiszLn8e9JUYPZkItQNmF3y7fV?=
- =?us-ascii?Q?r2HouD/obLMemppQkU5yS9ibfbx4qcnoTzGH+O4QWI5vvkdyfsxyZyrhW0J8?=
- =?us-ascii?Q?e1uXDbgJxHpmweAA3WempaYGDA5/M9X6rMnBxzlgkLPeaZ28knNvt7SqadhS?=
- =?us-ascii?Q?HXD7Ni6T53WF4DuhNAjcflF7B5dRQWqJNpLrOMXdYhVKfYLP9WAZMr/SnDfm?=
- =?us-ascii?Q?sqCirY5lQafBUJh/JkT+QBLHTilH8jJENlnimzGmsHDqebsZllhfM2PO3PA0?=
- =?us-ascii?Q?lf77affbgGoHW7AMb6/9bignw012BixtrH7CniLfJ411gZfbDxk8PHMs6Zhd?=
- =?us-ascii?Q?RD6eCNWfRHuGxUF+L+J34B7NB+2PtXImKbtt+nNYdDbG0xoi0r+f9WPw7Ee/?=
- =?us-ascii?Q?fdN+1QVs4YzarMqcz6WTGq8ja3gqkZ+ZqTeg+AonbIiGsO8GZ/NR79PcOy98?=
- =?us-ascii?Q?M58GBVK61kth67ksEIXtMdOjCr8DiRoeHf0SuQ9PD9cpLWowtjy+hHGGJ80K?=
- =?us-ascii?Q?7dN164ARZkki2TrI/PNp+W29dqYTza6oE2W3BNdnD5249eJ7Dkf54Usw2zaM?=
- =?us-ascii?Q?JaBXlcZRLmc//IwwYgh7i07K6a3UFytYozUGals33di/Y8ZTY0wxS/lejxeB?=
- =?us-ascii?Q?eadPDX4cbmusnfUO5vUzG0KcxBthXDidQ2Vs60miLaRD6njrmeDpukT4FVFh?=
- =?us-ascii?Q?HnNlnHqTbsnZpKviANIJsF+x/uN626IyTx6vazsomCq/HLJ0l0/7QjKewEeY?=
- =?us-ascii?Q?QIRTTlHlDcG9L8eld+i9D2ojov5FHqwpqGjKmoA4rEAk0/JZ0l01YDct+frL?=
- =?us-ascii?Q?wU5DNUUAigxeLTdk1FAvXypiPbfHmOZghB92RMyRRr8fpUDk1KRsev3AdM0U?=
- =?us-ascii?Q?+b3oE8Hdh3Vq/zPJu0AwUeiYcFc/1Bga9c9dEeTRl8UyxkPq/L8=3D?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c8bc7e5e-c600-4d7d-1494-08dbc6c6cd55
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB4759.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Oct 2023 23:48:55.5158
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5gvSxVdnuJwZtVXceZxgz4teFwaCwq5GwgmMU+CFk+fHEUUwJjwcbalkvoaMSx2fHP2ti3XWKbyGJMQk2GyDx5IZuttnBeOsZRaHksIeXts=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR10MB4682
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-10-06_15,2023-10-06_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=752 mlxscore=0
- spamscore=0 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2309180000
- definitions=main-2310060184
-X-Proofpoint-ORIG-GUID: 7NqGmHuYDhNusafGdRtd62H4fiSjOoyJ
-X-Proofpoint-GUID: 7NqGmHuYDhNusafGdRtd62H4fiSjOoyJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3187f942-dcf0-4b2f-a106-0eb5d5a33949@fastmail.fm>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
+        UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Fri, Oct 06, 2023 at 07:13:06PM +0200, Bernd Schubert wrote:
+> 
+> 
+> On 10/2/23 17:24, Krister Johansen wrote:
+> > The submount code uses the parent nodeid passed into the function in
+> > order to create the root dentry for the new submount.  This nodeid does
+> > not get its remote reference count incremented by a lookup option.
+> > 
+> > If the parent inode is evicted from its superblock, due to memory
+> > pressure for example, it can result in a forget opertation being sent to
+> > the server.  Should this nodeid be forgotten while it is still in use in
+> > a submount, users of the submount get an error from the server on any
+> > subsequent access.  In the author's case, this was an EBADF on all
+> > subsequent operations that needed to reference the root.
+> > 
+> > Debugging the problem revealed that the dentry shrinker triggered a forget
+> > after killing the dentry with the last reference, despite the root
+> > dentry in another superblock still using the nodeid.
+> > 
+> > As a result, a container that was also using this submount failed to
+> > access its filesystem because it had borrowed the reference instead of
+> > taking its own when setting up its superblock for the submount.
+> > 
+> > This commit fixes the problem by having the new submount trigger a
+> > lookup for the parent as part of creating a new root dentry for the
+> > virtiofsd submount superblock.  This allows each superblock to have its
+> > inodes removed by the shrinker when unreferenced, while keeping the
+> > nodeid reference count accurate and active with the server.
+> > 
+> > Signed-off-by: Krister Johansen <kjlx@templeofstupid.com>
+> > ---
+> >   fs/fuse/dir.c    | 10 +++++-----
+> >   fs/fuse/fuse_i.h |  6 ++++++
+> >   fs/fuse/inode.c  | 43 +++++++++++++++++++++++++++++++++++++------
+> >   3 files changed, 48 insertions(+), 11 deletions(-)
+> > 
+> > diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+> > index 5e01946d7531..333730c74619 100644
+> > --- a/fs/fuse/dir.c
+> > +++ b/fs/fuse/dir.c
+> > @@ -183,11 +183,11 @@ static void fuse_lookup_init(struct fuse_conn *fc, struct fuse_args *args,
+> >   	args->out_args[0].value = outarg;
+> >   }
+> > -static int fuse_dentry_revalidate_lookup(struct fuse_mount *fm,
+> > -					 struct dentry *entry,
+> > -					 struct inode *inode,
+> > -					 struct fuse_entry_out *outarg,
+> > -					 bool *lookedup)
+> > +int fuse_dentry_revalidate_lookup(struct fuse_mount *fm,
+> > +				  struct dentry *entry,
+> > +				  struct inode *inode,
+> > +				  struct fuse_entry_out *outarg,
+> > +				  bool *lookedup)
+> >   {
+> >   	struct dentry *parent;
+> >   	struct fuse_forget_link *forget;
+> > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> > index 405252bb51f2..a66fcf50a4cc 100644
+> > --- a/fs/fuse/fuse_i.h
+> > +++ b/fs/fuse/fuse_i.h
+> > @@ -1325,6 +1325,12 @@ void fuse_dax_dontcache(struct inode *inode, unsigned int flags);
+> >   bool fuse_dax_check_alignment(struct fuse_conn *fc, unsigned int map_alignment);
+> >   void fuse_dax_cancel_work(struct fuse_conn *fc);
+> > +/* dir.c */
+> > +int fuse_dentry_revalidate_lookup(struct fuse_mount *fm, struct dentry *entry,
+> > +				  struct inode *inode,
+> > +				  struct fuse_entry_out *outarg,
+> > +				  bool *lookedup);
+> > +
+> >   /* ioctl.c */
+> >   long fuse_file_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
+> >   long fuse_file_compat_ioctl(struct file *file, unsigned int cmd,
+> > diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> > index 444418e240c8..79a31cb55512 100644
+> > --- a/fs/fuse/inode.c
+> > +++ b/fs/fuse/inode.c
+> > @@ -1464,7 +1464,13 @@ static int fuse_fill_super_submount(struct super_block *sb,
+> >   	struct fuse_mount *fm = get_fuse_mount_super(sb);
+> >   	struct super_block *parent_sb = parent_fi->inode.i_sb;
+> >   	struct fuse_attr root_attr;
+> > +	struct fuse_inode *fi;
+> >   	struct inode *root;
+> > +	struct inode *parent;
+> > +	struct dentry *pdent;
+> > +	struct fuse_entry_out outarg;
+> > +	bool lookedup = false;
+> > +	int ret;
+> >   	fuse_sb_defaults(sb);
+> >   	fm->sb = sb;
+> > @@ -1480,14 +1486,39 @@ static int fuse_fill_super_submount(struct super_block *sb,
+> >   	if (parent_sb->s_subtype && !sb->s_subtype)
+> >   		return -ENOMEM;
+> > -	fuse_fill_attr_from_inode(&root_attr, parent_fi);
+> > -	root = fuse_iget(sb, parent_fi->nodeid, 0, &root_attr, 0, 0);
+> >   	/*
+> > -	 * This inode is just a duplicate, so it is not looked up and
+> > -	 * its nlookup should not be incremented.  fuse_iget() does
+> > -	 * that, though, so undo it here.
+> > +	 * It is necessary to lookup the parent_if->nodeid in case the dentry
+> > +	 * that triggered the automount of the submount is later evicted.
+> > +	 * If this dentry is evicted without the lookup count getting increased
+> > +	 * on the submount root, then the server can subsequently forget this
+> > +	 * nodeid which leads to errors when trying to access the root of the
+> > +	 * submount.
+> >   	 */
+> > -	get_fuse_inode(root)->nlookup--;
+> > +	parent = &parent_fi->inode;
+> > +	pdent = d_find_alias(parent);
+> > +	if (!pdent)
+> > +		return -EINVAL;
+> > +
+> > +	ret = fuse_dentry_revalidate_lookup(fm, pdent, parent, &outarg,
+> > +	    &lookedup);
+> > +	dput(pdent);
+> > +	/*
+> > +	 * The new root owns this nlookup on success, and it is incremented by
+> > +	 * fuse_iget().  In the case the lookup succeeded but revalidate fails,
+> > +	 * ensure that the lookup count is tracked by the parent.
+> > +	 */
+> > +	if (ret <= 0) {
+> > +		if (lookedup) {
+> > +			fi = get_fuse_inode(parent);
+> > +			spin_lock(&fi->lock);
+> > +			fi->nlookup++;
+> > +			spin_unlock(&fi->lock);
+> > +		}
+> 
+> I might be wrong, but doesn't that mean that
+> "get_fuse_inode(root)->nlookup--" needs to be called?
 
-Bart,
+In the case where ret > 0, the nlookup on get_fuse_inode(root) is set to
+1 by fuse_iget().  That ensures that the root is forgotten when later
+unmounted.  The code that handles the forget uses the count of nlookup
+to tell the server-side how many references to forget.  (That's in
+fuse_evict_inode()). 
 
-> I think the above means that it is wrong to round down the ATOMIC
-> TRANSFER LENGTH GRANULARITY or the ATOMIC BOUNDARY values.
+However, if the fuse_dentry_revalidate_lookup() call performs a valid
+lookup but returns an error, this function will return before it fills
+out s_root in the superblock or calls fuse_iget().  If the superblock
+doesn't have a s_root set, then the code in generic_kill_super() won't
+dput() the root dentry and trigger the forget.
 
-It was a deliberate design choice to facilitate supporting MAM. John
-will look into relaxing the constraints.
+The intention of this code was to handle the case where the lookup had
+succeeded, but the code determined it was still necessary to return an
+error.  In that situation, the reference taken by the lookup has to be
+accounted somewhere, and the parent seemed like a plausible candidate.
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+However, after writing up this response, I can see that there's still a
+problem here if d_make_root(root) returns NULL, because we'll also lose
+track of the nlookup in that case.
+
+If you agree that charging this to the parent on error makes sense, I'll
+re-work the error handling here so that the right thing happens when
+either fuse_dentry_revalidate_lookup() or d_make_root() encounter an
+error.
+
+Thanks for the feedback.
+
+-K
