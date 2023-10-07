@@ -2,53 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D4697BC9DB
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Oct 2023 22:51:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C2D37BC9DD
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Oct 2023 22:51:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344164AbjJGUvL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 7 Oct 2023 16:51:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44664 "EHLO
+        id S1344177AbjJGUvT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 7 Oct 2023 16:51:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44678 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344151AbjJGUvL (ORCPT
+        with ESMTP id S1344151AbjJGUvN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 7 Oct 2023 16:51:11 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8DDB93;
-        Sat,  7 Oct 2023 13:51:09 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id ffacd0b85a97d-3226cc3e324so3189205f8f.3;
-        Sat, 07 Oct 2023 13:51:09 -0700 (PDT)
+        Sat, 7 Oct 2023 16:51:13 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7761095;
+        Sat,  7 Oct 2023 13:51:11 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id ffacd0b85a97d-3248aa5cf4eso3225180f8f.1;
+        Sat, 07 Oct 2023 13:51:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696711868; x=1697316668; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iSZI04FWJw/xnla7C54t9PaSWTWuiAAC0wOD66SHSbo=;
-        b=iAA7+t9YKwkEB5L/UEEEw8ulSLl07k1fRvtVLRFS1rAFYJqLtr1TYsmD+tBNMa266R
-         Pxx8ia/pTkdaKkvD9I6Xof8xMMw6Yfn2JZY1pvLkbFdhxAaLjZHy2vygHDa96KCX27fW
-         +BTR3R4832rnkXlWmEF4S4Qn83t6CYMnK4x1yp3C0dUnOBJIGCAlKrL+oO0a1MIbFMwN
-         4da/ToKR+nWxEFLOWkD6L5E4Ig7tQ0eoiJF+1vQ7P+6aFMVn5+if5Fle6hixkNfhgjhT
-         uaxXIuXciG9+Cc2FwQF9++sYxGycBTwAe0ZxKdBiW3nFdGQ1J1ljnIQxL0TZ80LggiQE
-         nNeg==
+        d=gmail.com; s=20230601; t=1696711870; x=1697316670; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3Eqt+lFhGqyhgA/GIcCG4Sd1WLEsHw06nfkpMalVsW4=;
+        b=Ru+OOEp90ZxWbfQzr2tymGylhyaTuLX2Eu0LjuozDBlltxaJqqvME9fPpc7GmyWXIi
+         nFSXmB3DnPT/ZAjVg9pYowUpeR3FPny4d+MvP5z5OIRtUPfb3ymIInbNhvtMziT4c9iG
+         xqDz7LGy+G/zsROsLfur+ukqskhSW83xPPbdC4bYnVYO+MIhB+67RO7CTggMmRAjVFRJ
+         /IubIvMIuh/un2lP28NBpQnVAuHeN05slSna+7GJLjQT9qXJa6fzXVw+iniY2W5ri8bD
+         EzuLvYlH08S/STbXb1VWcxsWlFXBAKcn/03JnsxgTzea46TDRezVTTU2EIlFl6gX8k5R
+         dWZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696711868; x=1697316668;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iSZI04FWJw/xnla7C54t9PaSWTWuiAAC0wOD66SHSbo=;
-        b=bx9n5ITJOiiBWQ1kaBQXCN6SrcP0nd/K4zC0sr7bBGLhJTGZaq9EG4LtmkPk57Qzc3
-         qZgUjumLU6nXfk2wXKlS+VMSFdACYQkRI6ByxShBjq10HiIySXNU0FQY62xljy/4BqSK
-         p1R9zkuTJiZuaaCmEbeQ6ND31ica4jHpN18/1DJ28Vlzh2jkFT9WvAdZB6If35v5SnIw
-         12nuCatZMcWvT5/18vL+umscHxffIHCRKuwUbZKhxomqMlerTy3HkESFusK8XhAeJwaU
-         UkLzFrbdCOEaTMDCNyycchoLeqDz+qBoSc8eYZ403UybuIRQjjcVTuZQggVmyVmo+DeU
-         5j5w==
-X-Gm-Message-State: AOJu0Yy7fUHSZ8S3lNXESBuW3BuhgXCO+P1LXRCGY1hUnfR2wHNILiJ9
-        RJmO//ozQ/0qbS/3JWkaXOVMVcXHGJc=
-X-Google-Smtp-Source: AGHT+IGK0lDCEFA1hjFIW4LoHD2dcefcZKMoSA33EZr0Wxrn11nHo2JrireSCmV9YVJAnWlKMXQ1Ug==
-X-Received: by 2002:a5d:494f:0:b0:31a:d266:3d62 with SMTP id r15-20020a5d494f000000b0031ad2663d62mr10817205wrs.54.1696711868048;
-        Sat, 07 Oct 2023 13:51:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1696711870; x=1697316670;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3Eqt+lFhGqyhgA/GIcCG4Sd1WLEsHw06nfkpMalVsW4=;
+        b=rylqF+l5ao+etdiSPKBMd6oEIKzWGXmDwK6UZ+7vcg4Dz8xt8XvL6eh/Ju0ICPGSgz
+         vHO7Oyre/ArhcH2qglvDmhZw7/C2NTRJueBzxadzghbPnNChRWZiSnTGAkHa3Ygg7vp1
+         FYPYCcgy4tN9r39o79HAp7vgfYHoj3yU53oUW5b4LsvXOhWlg3IvK555mVD/ZB3EMSsg
+         7i+tj6pd5DvxjO1VA8ZcQGFJMn0E1eP+5EIyH59BsQULYkdNs89BKlHU70EprtogcSzy
+         YlX0OFPZKyV8sIr9FijiTYnsJBvRAixVIKCRh0u02uoV3z2OX/zwz7indx/OS4Klnf6G
+         kcLQ==
+X-Gm-Message-State: AOJu0YwJvIerH44n6Q2S/TPUyRHDpiiwzbAimg0ewzH/gbw5gje5GgeZ
+        8eiVwcPzW9oXqWLvGD/1ogg=
+X-Google-Smtp-Source: AGHT+IGDGw56aAVS4Ps+h8icv4jAQgm4Hk3HtBxKyknFOFfb//OHVHdrVHz4nilvcQwrSS5yFdaaXw==
+X-Received: by 2002:a5d:4c8a:0:b0:313:ecd3:7167 with SMTP id z10-20020a5d4c8a000000b00313ecd37167mr9918903wrs.42.1696711869667;
+        Sat, 07 Oct 2023 13:51:09 -0700 (PDT)
 Received: from lucifer.home ([2a00:23c5:dc8c:8701:1663:9a35:5a7b:1d76])
-        by smtp.googlemail.com with ESMTPSA id g7-20020adfe407000000b003232d122dbfsm5120550wrm.66.2023.10.07.13.51.06
+        by smtp.googlemail.com with ESMTPSA id g7-20020adfe407000000b003232d122dbfsm5120550wrm.66.2023.10.07.13.51.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Oct 2023 13:51:07 -0700 (PDT)
+        Sat, 07 Oct 2023 13:51:08 -0700 (PDT)
 From:   Lorenzo Stoakes <lstoakes@gmail.com>
 To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>
@@ -61,10 +62,12 @@ Cc:     Mike Kravetz <mike.kravetz@oracle.com>,
         Andy Lutomirski <luto@kernel.org>, Jan Kara <jack@suse.cz>,
         linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org,
         Lorenzo Stoakes <lstoakes@gmail.com>
-Subject: [PATCH v3 0/3] permit write-sealed memfd read-only shared mappings
-Date:   Sat,  7 Oct 2023 21:50:58 +0100
-Message-ID: <cover.1696709413.git.lstoakes@gmail.com>
+Subject: [PATCH v3 1/3] mm: drop the assumption that VM_SHARED always implies writable
+Date:   Sat,  7 Oct 2023 21:50:59 +0100
+Message-ID: <e1bcbcba7ffbe421bbd262029a3a59178b52e3c5.1696709413.git.lstoakes@gmail.com>
 X-Mailer: git-send-email 2.42.0
+In-Reply-To: <cover.1696709413.git.lstoakes@gmail.com>
+References: <cover.1696709413.git.lstoakes@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -77,76 +80,169 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The man page for fcntl() describing memfd file seals states the following
-about F_SEAL_WRITE:-
+There is a general assumption that VMAs with the VM_SHARED flag set are
+writable. If the VM_MAYWRITE flag is not set, then this is simply not the
+case.
 
-    Furthermore, trying to create new shared, writable memory-mappings via
-    mmap(2) will also fail with EPERM.
+Update those checks which affect the struct address_space->i_mmap_writable
+field to explicitly test for this by introducing [vma_]is_shared_maywrite()
+helper functions.
 
-With emphasis on 'writable'. In turns out in fact that currently the kernel
-simply disallows all new shared memory mappings for a memfd with
-F_SEAL_WRITE applied, rendering this documentation inaccurate.
+This remains entirely conservative, as the lack of VM_MAYWRITE guarantees
+that the VMA cannot be written to.
 
-This matters because users are therefore unable to obtain a shared mapping
-to a memfd after write sealing altogether, which limits their
-usefulness. This was reported in the discussion thread [1] originating from
-a bug report [2].
+Suggested-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
+---
+ include/linux/fs.h |  4 ++--
+ include/linux/mm.h | 11 +++++++++++
+ kernel/fork.c      |  2 +-
+ mm/filemap.c       |  2 +-
+ mm/madvise.c       |  2 +-
+ mm/mmap.c          | 12 ++++++------
+ 6 files changed, 22 insertions(+), 11 deletions(-)
 
-This is a product of both using the struct address_space->i_mmap_writable
-atomic counter to determine whether writing may be permitted, and the
-kernel adjusting this counter when any VM_SHARED mapping is performed and
-more generally implicitly assuming VM_SHARED implies writable.
-
-It seems sensible that we should only update this mapping if VM_MAYWRITE is
-specified, i.e. whether it is possible that this mapping could at any point
-be written to.
-
-If we do so then all we need to do to permit write seals to function as
-documented is to clear VM_MAYWRITE when mapping read-only. It turns out
-this functionality already exists for F_SEAL_FUTURE_WRITE - we can
-therefore simply adapt this logic to do the same for F_SEAL_WRITE.
-
-We then hit a chicken and egg situation in mmap_region() where the check
-for VM_MAYWRITE occurs before we are able to clear this flag. To work
-around this, separate the check and its enforcement across call_mmap() -
-allowing for this function to clear VM_MAYWRITE.
-
-Thanks to Andy Lutomirski for the suggestion!
-
-[1]:https://lore.kernel.org/all/20230324133646.16101dfa666f253c4715d965@linux-foundation.org/
-[2]:https://bugzilla.kernel.org/show_bug.cgi?id=217238
-
-v3:
-- Don't defer the writable check until after call_mmap() in case this
-  breaks f_ops->mmap() callbacks which assume this has been done
-  first. Instead, separate the check and enforcement of it across the call,
-  allowing for it to change vma->vm_flags in the meanwhile.
-- Improve/correct commit messages and comments throughout.
-
-v2:
-- Removed RFC tag.
-- Correct incorrect goto pointed out by Jan.
-- Reworded cover letter as suggested by Jan.
-https://lore.kernel.org/all/cover.1682890156.git.lstoakes@gmail.com/
-
-v1:
-https://lore.kernel.org/all/cover.1680560277.git.lstoakes@gmail.com/
-
-Lorenzo Stoakes (3):
-  mm: drop the assumption that VM_SHARED always implies writable
-  mm: update memfd seal write check to include F_SEAL_WRITE
-  mm: perform the mapping_map_writable() check after call_mmap()
-
- fs/hugetlbfs/inode.c |  2 +-
- include/linux/fs.h   |  4 ++--
- include/linux/mm.h   | 26 +++++++++++++++++++-------
- kernel/fork.c        |  2 +-
- mm/filemap.c         |  2 +-
- mm/madvise.c         |  2 +-
- mm/mmap.c            | 28 ++++++++++++++++++----------
- mm/shmem.c           |  2 +-
- 8 files changed, 44 insertions(+), 24 deletions(-)
-
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 92a9c6157de1..e9c03fb00d5c 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -454,7 +454,7 @@ extern const struct address_space_operations empty_aops;
+  *   It is also used to block modification of page cache contents through
+  *   memory mappings.
+  * @gfp_mask: Memory allocation flags to use for allocating pages.
+- * @i_mmap_writable: Number of VM_SHARED mappings.
++ * @i_mmap_writable: Number of VM_SHARED, VM_MAYWRITE mappings.
+  * @nr_thps: Number of THPs in the pagecache (non-shmem only).
+  * @i_mmap: Tree of private and shared mappings.
+  * @i_mmap_rwsem: Protects @i_mmap and @i_mmap_writable.
+@@ -557,7 +557,7 @@ static inline int mapping_mapped(struct address_space *mapping)
+ 
+ /*
+  * Might pages of this file have been modified in userspace?
+- * Note that i_mmap_writable counts all VM_SHARED vmas: do_mmap
++ * Note that i_mmap_writable counts all VM_SHARED, VM_MAYWRITE vmas: do_mmap
+  * marks vma as VM_SHARED if it is shared, and the file was opened for
+  * writing i.e. vma may be mprotected writable even if now readonly.
+  *
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index a7b667786cde..c9e9628addc4 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -937,6 +937,17 @@ static inline bool vma_is_accessible(struct vm_area_struct *vma)
+ 	return vma->vm_flags & VM_ACCESS_FLAGS;
+ }
+ 
++static inline bool is_shared_maywrite(vm_flags_t vm_flags)
++{
++	return (vm_flags & (VM_SHARED | VM_MAYWRITE)) ==
++		(VM_SHARED | VM_MAYWRITE);
++}
++
++static inline bool vma_is_shared_maywrite(struct vm_area_struct *vma)
++{
++	return is_shared_maywrite(vma->vm_flags);
++}
++
+ static inline
+ struct vm_area_struct *vma_find(struct vma_iterator *vmi, unsigned long max)
+ {
+diff --git a/kernel/fork.c b/kernel/fork.c
+index e45a4457ba83..1e6c656e0857 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -733,7 +733,7 @@ static __latent_entropy int dup_mmap(struct mm_struct *mm,
+ 
+ 			get_file(file);
+ 			i_mmap_lock_write(mapping);
+-			if (tmp->vm_flags & VM_SHARED)
++			if (vma_is_shared_maywrite(tmp))
+ 				mapping_allow_writable(mapping);
+ 			flush_dcache_mmap_lock(mapping);
+ 			/* insert tmp into the share list, just after mpnt */
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 48cd16c54e86..ad559f94e125 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -3637,7 +3637,7 @@ int generic_file_mmap(struct file *file, struct vm_area_struct *vma)
+  */
+ int generic_file_readonly_mmap(struct file *file, struct vm_area_struct *vma)
+ {
+-	if ((vma->vm_flags & VM_SHARED) && (vma->vm_flags & VM_MAYWRITE))
++	if (vma_is_shared_maywrite(vma))
+ 		return -EINVAL;
+ 	return generic_file_mmap(file, vma);
+ }
+diff --git a/mm/madvise.c b/mm/madvise.c
+index a4a20de50494..5c74fb645de8 100644
+--- a/mm/madvise.c
++++ b/mm/madvise.c
+@@ -999,7 +999,7 @@ static long madvise_remove(struct vm_area_struct *vma,
+ 			return -EINVAL;
+ 	}
+ 
+-	if ((vma->vm_flags & (VM_SHARED|VM_WRITE)) != (VM_SHARED|VM_WRITE))
++	if (!vma_is_shared_maywrite(vma))
+ 		return -EACCES;
+ 
+ 	offset = (loff_t)(start - vma->vm_start)
+diff --git a/mm/mmap.c b/mm/mmap.c
+index 673429ee8a9e..6f6856b3267a 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -107,7 +107,7 @@ void vma_set_page_prot(struct vm_area_struct *vma)
+ static void __remove_shared_vm_struct(struct vm_area_struct *vma,
+ 		struct file *file, struct address_space *mapping)
+ {
+-	if (vma->vm_flags & VM_SHARED)
++	if (vma_is_shared_maywrite(vma))
+ 		mapping_unmap_writable(mapping);
+ 
+ 	flush_dcache_mmap_lock(mapping);
+@@ -384,7 +384,7 @@ static unsigned long count_vma_pages_range(struct mm_struct *mm,
+ static void __vma_link_file(struct vm_area_struct *vma,
+ 			    struct address_space *mapping)
+ {
+-	if (vma->vm_flags & VM_SHARED)
++	if (vma_is_shared_maywrite(vma))
+ 		mapping_allow_writable(mapping);
+ 
+ 	flush_dcache_mmap_lock(mapping);
+@@ -2767,7 +2767,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+ 	vma->vm_pgoff = pgoff;
+ 
+ 	if (file) {
+-		if (vm_flags & VM_SHARED) {
++		if (is_shared_maywrite(vm_flags)) {
+ 			error = mapping_map_writable(file->f_mapping);
+ 			if (error)
+ 				goto free_vma;
+@@ -2842,7 +2842,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+ 	mm->map_count++;
+ 	if (vma->vm_file) {
+ 		i_mmap_lock_write(vma->vm_file->f_mapping);
+-		if (vma->vm_flags & VM_SHARED)
++		if (vma_is_shared_maywrite(vma))
+ 			mapping_allow_writable(vma->vm_file->f_mapping);
+ 
+ 		flush_dcache_mmap_lock(vma->vm_file->f_mapping);
+@@ -2859,7 +2859,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+ 
+ 	/* Once vma denies write, undo our temporary denial count */
+ unmap_writable:
+-	if (file && vm_flags & VM_SHARED)
++	if (file && is_shared_maywrite(vm_flags))
+ 		mapping_unmap_writable(file->f_mapping);
+ 	file = vma->vm_file;
+ 	ksm_add_vma(vma);
+@@ -2907,7 +2907,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+ 		unmap_region(mm, &vmi.mas, vma, prev, next, vma->vm_start,
+ 			     vma->vm_end, vma->vm_end, true);
+ 	}
+-	if (file && (vm_flags & VM_SHARED))
++	if (file && is_shared_maywrite(vm_flags))
+ 		mapping_unmap_writable(file->f_mapping);
+ free_vma:
+ 	vm_area_free(vma);
 -- 
 2.42.0
 
