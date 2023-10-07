@@ -2,51 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 072FA7BC3BD
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Oct 2023 03:29:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 326E67BC3C0
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Oct 2023 03:29:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234092AbjJGB3H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Oct 2023 21:29:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45830 "EHLO
+        id S234083AbjJGB3E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Oct 2023 21:29:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45834 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234066AbjJGB2k (ORCPT
+        with ESMTP id S234050AbjJGB2l (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Oct 2023 21:28:40 -0400
-Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 791E5102
-        for <linux-fsdevel@vger.kernel.org>; Fri,  6 Oct 2023 18:28:34 -0700 (PDT)
-Received: by mail-pf1-x42c.google.com with SMTP id d2e1a72fcca58-6969b391791so2194300b3a.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Oct 2023 18:28:34 -0700 (PDT)
+        Fri, 6 Oct 2023 21:28:41 -0400
+Received: from mail-ot1-x333.google.com (mail-ot1-x333.google.com [IPv6:2607:f8b0:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74DE4111
+        for <linux-fsdevel@vger.kernel.org>; Fri,  6 Oct 2023 18:28:36 -0700 (PDT)
+Received: by mail-ot1-x333.google.com with SMTP id 46e09a7af769-6c7bbfb7a73so1790782a34.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Oct 2023 18:28:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1696642113; x=1697246913; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1696642115; x=1697246915; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=FqB1hDPxuIIbyhAWdDDt1cqx20h+edShJFHuWVHb1Qc=;
-        b=aWgOmSUHwsmMvbEaaTkokkzio5kkq8dXlNqM0Nt2qbGhYfAhtQ3WJb4BaiBliM9EmC
-         EQN730lOOGn22sCAAAfEMlGWtZDQMIfZSR5jNUUY6tFGGYtqoTEOoCqUU0ScxrcWTx/n
-         4iWRGReDP3MdEdZrnMy5VeiOo5WzN8kmm2dD4=
+        bh=rVF8rK/kC1UjwzLMGR23sx6dhVRDno9128uSIr9eCP0=;
+        b=P0+yXjgCOTUKvlSLPHb+2kHOtP+XtZ11kXrFLvwoGtJ66JfgQBSp0acWdl8BISfCSp
+         FThOk1VdUlynLlHNHkjSEdN+Bhc6FenoYpFSE41mWxw0YNMUYrLSYcHZAW7sANBRnnbi
+         3+mJkHXzd4QQqnItdnay2svjjS4LX9gzP7nT8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696642113; x=1697246913;
+        d=1e100.net; s=20230601; t=1696642115; x=1697246915;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=FqB1hDPxuIIbyhAWdDDt1cqx20h+edShJFHuWVHb1Qc=;
-        b=ehJOv7KoEZ3NXboAta0iA3sA7mUFrRbfT9gBAYy/c47Z7bIS2li9rzFKVZUlROW8RV
-         ILjBr6m2UfXICZna3Fv6slDDbLpOx+fKetofo3PQVzLbBmD/RmthN14t14jEsyV55ghc
-         1noAYKBMO9mPM6yUDsfA0R4Equ2fWQYtqOXFeeh7pyDhJvcvHYgxBugo13qA54uVechS
-         1YTxcgMAcHdCM7mXT/Fx4Qi+HqmX98ig03mkjWd4IbdThGl6t1PKck+FYCVegvw3wQOk
-         mpB3XR/4pxobEroWQowuBV3oZ4OaG3duhO48nAZ/o116yeQcSJNAT0Fge8slE5OpPC0n
-         SChw==
-X-Gm-Message-State: AOJu0YyWPLgoGu1N+KSR0Tpe0F9PK2Tkm5hOb/+27DczRHTf8H4bUOuz
-        7hbQ1y3CLutdu3A7YJuFbe/owA==
-X-Google-Smtp-Source: AGHT+IHHJGcgIIrRozWFHSOllQB1G3Zxvy1WNHERSyRa8lFXhWz964OB7xksDw6POMFHhHNZ1hgVGg==
-X-Received: by 2002:a05:6a00:3a1f:b0:690:d620:7804 with SMTP id fj31-20020a056a003a1f00b00690d6207804mr10717726pfb.13.1696642113085;
-        Fri, 06 Oct 2023 18:28:33 -0700 (PDT)
+        bh=rVF8rK/kC1UjwzLMGR23sx6dhVRDno9128uSIr9eCP0=;
+        b=Pl0RnvaVOxm2bgFG16vur0Ml4EuKgppu/73QOq0vw164dutTN4e/nZ91c0fteuAKZf
+         AD1W2yoRsOYA3eewXiNlqtMhsrV6Q/SHFdQcyzqHSYEeTeteDnpRewHo31AcP3DRIypX
+         lWM6gBZkgFxeGmyNGW4qUb376SOcZ8BTsguc4pn8VMp0ulY3cjtY612RfjS8ZGKar+YJ
+         bpC4tjs1xE+Z/0+QDEmWmBTq0u1djJmNxnT37tOPcofoVQP5lhArypXqPzQBhx58VbM+
+         +qv6PHyvqliV9tXaLqZl9GNFBW07i/4HSGmOg56egal3e/uVdsQq6SreNz3cvAyGWTyf
+         aV/g==
+X-Gm-Message-State: AOJu0YxTLLcAhQOBGBI9IpbgHLwtFbIQmdTaKZ4eAEW/iLPsiYuZ/pIj
+        XAutLLcW6yHxIDvzBT1aNsjaMA==
+X-Google-Smtp-Source: AGHT+IH2NlEgTF700gNIZ6cKPt2q6/f6H70TDkXk3G6q0Gl7oflk7/S43yTcoNGZnNyMpgrw6cyE+g==
+X-Received: by 2002:a05:6830:1bf2:b0:6bb:1036:46de with SMTP id k18-20020a0568301bf200b006bb103646demr10472104otb.30.1696642115522;
+        Fri, 06 Oct 2023 18:28:35 -0700 (PDT)
 Received: from localhost ([2620:15c:9d:2:138c:8976:eb4a:a91c])
-        by smtp.gmail.com with UTF8SMTPSA id 20-20020aa79114000000b006969e8dac24sm2118332pfh.68.2023.10.06.18.28.31
+        by smtp.gmail.com with UTF8SMTPSA id w25-20020a639359000000b00553dcfc2179sm4002014pgm.52.2023.10.06.18.28.34
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Oct 2023 18:28:32 -0700 (PDT)
+        Fri, 06 Oct 2023 18:28:35 -0700 (PDT)
 From:   Sarthak Kukreti <sarthakkukreti@chromium.org>
 To:     dm-devel@redhat.com, linux-block@vger.kernel.org,
         linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -61,9 +61,9 @@ Cc:     Jens Axboe <axboe@kernel.dk>, Alasdair Kergon <agk@redhat.com>,
         "Darrick J. Wong" <djwong@kernel.org>,
         Dave Chinner <david@fromorbit.com>,
         Sarthak Kukreti <sarthakkukreti@chromium.org>
-Subject: [PATCH v8 4/5] dm: Add block provisioning support
-Date:   Fri,  6 Oct 2023 18:28:16 -0700
-Message-ID: <20231007012817.3052558-5-sarthakkukreti@chromium.org>
+Subject: [PATCH v8 5/5] block: Pass unshare intent via REQ_OP_PROVISION
+Date:   Fri,  6 Oct 2023 18:28:17 -0700
+Message-ID: <20231007012817.3052558-6-sarthakkukreti@chromium.org>
 X-Mailer: git-send-email 2.42.0.609.gbb76f46606-goog
 In-Reply-To: <20231007012817.3052558-1-sarthakkukreti@chromium.org>
 References: <20231007012817.3052558-1-sarthakkukreti@chromium.org>
@@ -79,162 +79,167 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add block provisioning support for device-mapper targets.
-dm-crypt and dm-linear will, by default, passthrough REQ_OP_PROVISION
-requests to the underlying device, if supported.
+Allow REQ_OP_PROVISION to pass in an extra REQ_UNSHARE bit to
+annotate unshare requests to underlying layers. Layers that support
+FALLOC_FL_UNSHARE will be able to use this as an indicator of which
+fallocate() mode to use.
 
+Suggested-by: Darrick J. Wong <djwong@kernel.org>
 Signed-off-by: Sarthak Kukreti <sarthakkukreti@chromium.org>
-Signed-off-by: Mike Snitzer <snitzer@kernel.org>
 ---
- drivers/md/dm-crypt.c         |  4 +++-
- drivers/md/dm-linear.c        |  1 +
- drivers/md/dm-table.c         | 23 +++++++++++++++++++++++
- drivers/md/dm.c               |  7 +++++++
- include/linux/device-mapper.h | 17 +++++++++++++++++
- 5 files changed, 51 insertions(+), 1 deletion(-)
+ block/blk-lib.c           |  6 +++++-
+ block/fops.c              |  6 ++++--
+ drivers/block/loop.c      | 35 +++++++++++++++++++++++++++++------
+ include/linux/blk_types.h |  3 +++
+ include/linux/blkdev.h    |  3 ++-
+ 5 files changed, 43 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
-index f2662c21a6df..8f94d98e241b 100644
---- a/drivers/md/dm-crypt.c
-+++ b/drivers/md/dm-crypt.c
-@@ -3362,6 +3362,8 @@ static int crypt_ctr(struct dm_target *ti, unsigned int argc, char **argv)
- 		cc->tag_pool_max_sectors <<= cc->sector_shift;
- 	}
+diff --git a/block/blk-lib.c b/block/blk-lib.c
+index b1f720e198cd..d6cf572605f5 100644
+--- a/block/blk-lib.c
++++ b/block/blk-lib.c
+@@ -350,6 +350,7 @@ EXPORT_SYMBOL(blkdev_issue_secure_erase);
+  * @sector:	start sector
+  * @nr_sects:	number of sectors to provision
+  * @gfp_mask:	memory allocation flags (for bio_alloc)
++ * @flags:	controls detailed behavior
+  *
+  * Description:
+  *  Issues a provision request to the block device for the range of sectors.
+@@ -357,7 +358,7 @@ EXPORT_SYMBOL(blkdev_issue_secure_erase);
+  *  underlying storage pool to allocate space for this block range.
+  */
+ int blkdev_issue_provision(struct block_device *bdev, sector_t sector,
+-		sector_t nr_sects, gfp_t gfp)
++		sector_t nr_sects, gfp_t gfp, unsigned flags)
+ {
+ 	sector_t bs_mask = (bdev_logical_block_size(bdev) >> 9) - 1;
+ 	unsigned int max_sectors = bdev_max_provision_sectors(bdev);
+@@ -380,6 +381,9 @@ int blkdev_issue_provision(struct block_device *bdev, sector_t sector,
+ 		bio->bi_iter.bi_sector = sector;
+ 		bio->bi_iter.bi_size = req_sects << SECTOR_SHIFT;
  
-+	ti->num_provision_bios = 1;
++		if (flags & BLKDEV_PROVISION_UNSHARE_RANGE)
++			bio->bi_opf |= REQ_UNSHARE;
 +
- 	ret = -ENOMEM;
- 	cc->io_queue = alloc_workqueue("kcryptd_io/%s", WQ_MEM_RECLAIM, 1, devname);
- 	if (!cc->io_queue) {
-@@ -3416,7 +3418,7 @@ static int crypt_map(struct dm_target *ti, struct bio *bio)
- 	 * - for REQ_OP_DISCARD caller must use flush if IO ordering matters
- 	 */
- 	if (unlikely(bio->bi_opf & REQ_PREFLUSH ||
--	    bio_op(bio) == REQ_OP_DISCARD)) {
-+	    bio_op(bio) == REQ_OP_DISCARD || bio_op(bio) == REQ_OP_PROVISION)) {
- 		bio_set_dev(bio, cc->dev->bdev);
- 		if (bio_sectors(bio))
- 			bio->bi_iter.bi_sector = cc->start +
-diff --git a/drivers/md/dm-linear.c b/drivers/md/dm-linear.c
-index f4448d520ee9..74ee27ca551a 100644
---- a/drivers/md/dm-linear.c
-+++ b/drivers/md/dm-linear.c
-@@ -62,6 +62,7 @@ static int linear_ctr(struct dm_target *ti, unsigned int argc, char **argv)
- 	ti->num_discard_bios = 1;
- 	ti->num_secure_erase_bios = 1;
- 	ti->num_write_zeroes_bios = 1;
-+	ti->num_provision_bios = 1;
- 	ti->private = lc;
+ 		sector += req_sects;
+ 		nr_sects -= req_sects;
+ 		if (!nr_sects) {
+diff --git a/block/fops.c b/block/fops.c
+index 99b24bd9d461..dd442b6f0486 100644
+--- a/block/fops.c
++++ b/block/fops.c
+@@ -782,8 +782,10 @@ static long blkdev_fallocate(struct file *file, int mode, loff_t start,
+ 	case FALLOC_FL_UNSHARE_RANGE:
+ 	case FALLOC_FL_KEEP_SIZE:
+ 	case FALLOC_FL_UNSHARE_RANGE | FALLOC_FL_KEEP_SIZE:
+-		error = blkdev_issue_provision(bdev, start >> SECTOR_SHIFT,
+-					       len >> SECTOR_SHIFT, GFP_KERNEL);
++		error = blkdev_issue_provision(
++				bdev, start >> SECTOR_SHIFT, len >> SECTOR_SHIFT, GFP_KERNEL,
++				(mode & FALLOC_FL_UNSHARE_RANGE) ?
++					BLKDEV_PROVISION_UNSHARE_RANGE : 0);
+ 		break;
+ 	case FALLOC_FL_ZERO_RANGE:
+ 	case FALLOC_FL_ZERO_RANGE | FALLOC_FL_KEEP_SIZE:
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index abb4dddbd4fd..f30479deb615 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -306,6 +306,30 @@ static int lo_read_simple(struct loop_device *lo, struct request *rq,
  	return 0;
- 
-diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
-index 37b48f63ae6a..1839317d047e 100644
---- a/drivers/md/dm-table.c
-+++ b/drivers/md/dm-table.c
-@@ -1856,6 +1856,26 @@ static bool dm_table_supports_write_zeroes(struct dm_table *t)
- 	return true;
  }
  
-+static int device_provision_capable(struct dm_target *ti, struct dm_dev *dev,
-+				    sector_t start, sector_t len, void *data)
++static bool validate_fallocate_mode(struct loop_device *lo, int mode)
 +{
-+	return bdev_max_provision_sectors(dev->bdev);
-+}
++	bool ret = true;
 +
-+static bool dm_table_supports_provision(struct dm_table *t)
-+{
-+	for (unsigned int i = 0; i < t->num_targets; i++) {
-+		struct dm_target *ti = dm_table_get_target(t, i);
++	switch (mode) {
++	case FALLOC_FL_PUNCH_HOLE:
++	case FALLOC_FL_ZERO_RANGE:
++		if (!bdev_max_discard_sectors(lo->lo_device))
++			ret = false;
++		break;
++	case 0:
++	case FALLOC_FL_UNSHARE_RANGE:
++		if (!bdev_max_provision_sectors(lo->lo_device))
++			ret = false;
++		break;
 +
-+		if (ti->provision_supported ||
-+		    (ti->type->iterate_devices &&
-+		    ti->type->iterate_devices(ti, device_provision_capable, NULL)))
-+			return true;
++	default:
++		ret = false;
 +	}
 +
-+	return false;
++	return ret;
 +}
 +
- static int device_not_nowait_capable(struct dm_target *ti, struct dm_dev *dev,
- 				     sector_t start, sector_t len, void *data)
++
+ static int lo_fallocate(struct loop_device *lo, struct request *rq, loff_t pos,
+ 			int mode)
  {
-@@ -1989,6 +2009,9 @@ int dm_table_set_restrictions(struct dm_table *t, struct request_queue *q,
- 	if (!dm_table_supports_write_zeroes(t))
- 		q->limits.max_write_zeroes_sectors = 0;
+@@ -316,11 +340,7 @@ static int lo_fallocate(struct loop_device *lo, struct request *rq, loff_t pos,
+ 	struct file *file = lo->lo_backing_file;
+ 	int ret;
  
-+	if (!dm_table_supports_provision(t))
-+		q->limits.max_provision_sectors = 0;
-+
- 	dm_table_verify_integrity(t);
+-	if (mode & (FALLOC_FL_PUNCH_HOLE | FALLOC_FL_ZERO_RANGE) &&
+-	    !bdev_max_discard_sectors(lo->lo_device))
+-		return -EOPNOTSUPP;
+-
+-	if (mode == 0 && !bdev_max_provision_sectors(lo->lo_device))
++	if (!validate_fallocate_mode(lo, mode))
+ 		return -EOPNOTSUPP;
  
- 	/*
-diff --git a/drivers/md/dm.c b/drivers/md/dm.c
-index 64a1f306c96c..0e6cf1a5a414 100644
---- a/drivers/md/dm.c
-+++ b/drivers/md/dm.c
-@@ -1598,6 +1598,7 @@ static bool is_abnormal_io(struct bio *bio)
- 		case REQ_OP_DISCARD:
- 		case REQ_OP_SECURE_ERASE:
- 		case REQ_OP_WRITE_ZEROES:
-+		case REQ_OP_PROVISION:
- 			return true;
- 		default:
- 			break;
-@@ -1634,6 +1635,12 @@ static blk_status_t __process_abnormal_io(struct clone_info *ci,
- 		if (ti->max_write_zeroes_granularity)
- 			max_granularity = max_sectors;
- 		break;
-+	case REQ_OP_PROVISION:
-+		num_bios = ti->num_provision_bios;
-+		max_sectors = limits->max_provision_sectors;
-+		if (ti->max_provision_granularity)
-+			max_granularity = max_sectors;
-+		break;
- 	default:
- 		break;
- 	}
-diff --git a/include/linux/device-mapper.h b/include/linux/device-mapper.h
-index 69d0435c7ebb..41fd4e456d1f 100644
---- a/include/linux/device-mapper.h
-+++ b/include/linux/device-mapper.h
-@@ -332,6 +332,12 @@ struct dm_target {
+ 	mode |= FALLOC_FL_KEEP_SIZE;
+@@ -493,7 +513,10 @@ static int do_req_filebacked(struct loop_device *lo, struct request *rq)
+ 	case REQ_OP_DISCARD:
+ 		return lo_fallocate(lo, rq, pos, FALLOC_FL_PUNCH_HOLE);
+ 	case REQ_OP_PROVISION:
+-		return lo_fallocate(lo, rq, pos, 0);
++		return lo_fallocate(lo, rq, pos,
++				    (rq->cmd_flags & REQ_UNSHARE) ?
++					    FALLOC_FL_UNSHARE_RANGE :
++					    0);
+ 	case REQ_OP_WRITE:
+ 		if (cmd->use_aio)
+ 			return lo_rw_aio(lo, cmd, pos, ITER_SOURCE);
+diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+index e55828ddfafe..f16187ae4c4a 100644
+--- a/include/linux/blk_types.h
++++ b/include/linux/blk_types.h
+@@ -430,6 +430,8 @@ enum req_flag_bits {
  	 */
- 	unsigned int num_write_zeroes_bios;
+ 	/* for REQ_OP_WRITE_ZEROES: */
+ 	__REQ_NOUNMAP,		/* do not free blocks when zeroing */
++	/* for REQ_OP_PROVISION: */
++	__REQ_UNSHARE,		/* unshare blocks */
  
-+	/*
-+	 * The number of PROVISION bios that will be submitted to the target.
-+	 * The bio number can be accessed with dm_bio_get_target_bio_nr.
-+	 */
-+	unsigned int num_provision_bios;
-+
- 	/*
- 	 * The minimum number of extra bytes allocated in each io for the
- 	 * target to use.
-@@ -356,6 +362,11 @@ struct dm_target {
- 	 */
- 	bool discards_supported:1;
+ 	__REQ_NR_BITS,		/* stops here */
+ };
+@@ -458,6 +460,7 @@ enum req_flag_bits {
+ #define REQ_FS_PRIVATE	(__force blk_opf_t)(1ULL << __REQ_FS_PRIVATE)
  
-+	/* Set if this target needs to receive provision requests regardless of
-+	 * whether or not its underlying devices have support.
-+	 */
-+	bool provision_supported:1;
-+
- 	/*
- 	 * Set if this target requires that discards be split on
- 	 * 'max_discard_sectors' boundaries.
-@@ -374,6 +385,12 @@ struct dm_target {
- 	 */
- 	bool max_write_zeroes_granularity:1;
+ #define REQ_NOUNMAP	(__force blk_opf_t)(1ULL << __REQ_NOUNMAP)
++#define REQ_UNSHARE	(__force blk_opf_t)(1ULL << __REQ_UNSHARE)
  
-+	/*
-+	 * Set if this target requires that provisions be split on
-+	 * 'max_provision_sectors' boundaries.
-+	 */
-+	bool max_provision_granularity:1;
-+
- 	/*
- 	 * Set if we need to limit the number of in-flight bios when swapping.
- 	 */
+ #define REQ_FAILFAST_MASK \
+ 	(REQ_FAILFAST_DEV | REQ_FAILFAST_TRANSPORT | REQ_FAILFAST_DRIVER)
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index dcae5538f99a..0f88ccbde12f 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -1042,10 +1042,11 @@ int blkdev_issue_secure_erase(struct block_device *bdev, sector_t sector,
+ 		sector_t nr_sects, gfp_t gfp);
+ 
+ extern int blkdev_issue_provision(struct block_device *bdev, sector_t sector,
+-		sector_t nr_sects, gfp_t gfp_mask);
++		sector_t nr_sects, gfp_t gfp_mask, unsigned int flags);
+ 
+ #define BLKDEV_ZERO_NOUNMAP	(1 << 0)  /* do not free blocks */
+ #define BLKDEV_ZERO_NOFALLBACK	(1 << 1)  /* don't write explicit zeroes */
++#define BLKDEV_PROVISION_UNSHARE_RANGE	(1 << 2)  /* unshare range on provision */
+ 
+ extern int __blkdev_issue_zeroout(struct block_device *bdev, sector_t sector,
+ 		sector_t nr_sects, gfp_t gfp_mask, struct bio **biop,
 -- 
 2.42.0.609.gbb76f46606-goog
 
