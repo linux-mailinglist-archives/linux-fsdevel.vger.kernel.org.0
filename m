@@ -2,183 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 071AC7BC39C
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Oct 2023 03:21:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE96E7BC3A1
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Oct 2023 03:26:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234025AbjJGBVq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Oct 2023 21:21:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37420 "EHLO
+        id S234025AbjJGB0U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Oct 2023 21:26:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234006AbjJGBVo (ORCPT
+        with ESMTP id S234005AbjJGB0U (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Oct 2023 21:21:44 -0400
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C24C9B6;
-        Fri,  6 Oct 2023 18:21:43 -0700 (PDT)
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 396LOv1K027285;
-        Sat, 7 Oct 2023 01:21:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : message-id : references : date : in-reply-to : content-type :
- mime-version; s=corp-2023-03-30;
- bh=rIK8PNthw7jR8VfP37/YuoEu1vfIO3oTGBCGhd8uCMc=;
- b=RrIjdUoTiIAbg24w+fDQRi71HxNRBUMOc1yzHg9/8mU7jO7nSRJCv27CU0bGjOzIx36d
- MDHj5jneNVUIoNt+kJ2l8xyQhj8sP3rDkxg4wzd+s9tZBaXG5hz8B7iuBHnChVBxC8FI
- 63QFuhDQZPZQVJ2WofjYPJx9aW/zMhWWfqnIPmSSFQVH3aS/CzMi7vo5WDpdCgCwvIWg
- kXi+uywmS7g3pLrCygH4BwjDvqGkDJ+20NE4s4mCKyylfZNGKeYiK1jw5LCch6HtxvUs
- D1OfXgzynCnwWQPAXcCthzv/hDgbCiPZo+CccKlMASPrbRL7GynH4SpnIy+ELALRSznB Xw== 
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3tec7vmuxw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 07 Oct 2023 01:21:10 +0000
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 396M6WxK002848;
-        Sat, 7 Oct 2023 01:21:09 GMT
-Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2174.outbound.protection.outlook.com [104.47.59.174])
-        by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3tea4bb5h3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 07 Oct 2023 01:21:09 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=a4UW1DoNF0pUmsfEcAm5UWN65hB43RF4UtoEQROhT8q/BREvDBqc7eB/tlnw1WAkYA6LDEJJRjWpH1CQdu60ICdgvz8aOXgMfhDtBxKbZ8wt2xFEwC0wVFEw1gPMwysJA403V5wGkXjWXtgmqnnnCbgXnS3+MUhkRPYAOWE+EJjmt7oeHZTakpwI0u00nEJe8qbDwqAjYKvH9JTsQTi1k4oXmpCGBdqHVSRGKyEpzG6U1Il8Z7yM6HYnwXLVuCObg7GckfiHiqvRlC4nINfIGzsQE4iWMfNiLdIsGycLO094u1EDABVPnMVYcWvFeRYoNsH+bkDtO7bp0xKADpiJNA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rIK8PNthw7jR8VfP37/YuoEu1vfIO3oTGBCGhd8uCMc=;
- b=UWrU0exc83aqmd9s4VDU/ER4A93YumWu1IhRNmN+piZcCH0Ah19KAwkGFoMHXGRDrfZWa2w371Y8dPtG2w3sESDq+SmBxN0+ZhdDbz1RtO9k/jW+87jTRAv+w7JaVOm4y9GOMctmUGt+/aZuOzfAY8a48Euvwq/7UGN/N+KxQhpvzT5Xl50tt4mO1aepwRQuRXTdgxHRURpkbyeexb6GbJoSHQPzSUAVkdDgOiLcsNSXmDbUUQz+mQ23u9ZSWHT+R9wDHL2hyoneDFwfSY9BL7ZAVerwMsZk3gXD/BSj//kmmc/uZryV1OmE3hMNsBXS4LVYiWR7pTDL/JYVGHiaJA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rIK8PNthw7jR8VfP37/YuoEu1vfIO3oTGBCGhd8uCMc=;
- b=VAJExmUWQpzVHhZX3pF48REFQwEfEzPTYMuzJ2FLcnYb3b2vJND0YFKrX1KImNl0SsPRt3/ggjpq4W5K3AoosidBrFa58uqE9hVOdEbkyWFcVLQOHaCmkm5XmsGV5Q/RvmqEyNLXrO2oXGdf/t2oJJiNy6rTQ0KuOT/AP8Jg+Xc=
-Received: from PH0PR10MB4759.namprd10.prod.outlook.com (2603:10b6:510:3d::12)
- by CO1PR10MB4723.namprd10.prod.outlook.com (2603:10b6:303:9c::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6838.26; Sat, 7 Oct
- 2023 01:21:05 +0000
-Received: from PH0PR10MB4759.namprd10.prod.outlook.com
- ([fe80::1ae3:44f0:f5b:2383]) by PH0PR10MB4759.namprd10.prod.outlook.com
- ([fe80::1ae3:44f0:f5b:2383%4]) with mapi id 15.20.6838.033; Sat, 7 Oct 2023
- 01:21:05 +0000
-To:     Bart Van Assche <bvanassche@acm.org>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        John Garry <john.g.garry@oracle.com>, axboe@kernel.dk,
-        kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
-        jejb@linux.ibm.com, djwong@kernel.org, viro@zeniv.linux.org.uk,
-        brauner@kernel.org, chandan.babu@oracle.com, dchinner@redhat.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
-        linux-api@vger.kernel.org
-Subject: Re: [PATCH 10/21] block: Add fops atomic write support
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <yq1v8bjpaz5.fsf@ca-mkp.ca.oracle.com>
-References: <5d26fa3b-ec34-bc39-ecfe-4616a04977ca@oracle.com>
-        <b7a6f380-c6fa-45e0-b727-ba804c6684e4@acm.org>
-        <yq1lecktuoo.fsf@ca-mkp.ca.oracle.com>
-        <db6a950b-1308-4ca1-9f75-6275118bdcf5@acm.org>
-        <yq1h6n7rume.fsf@ca-mkp.ca.oracle.com>
-        <34c08488-a288-45f9-a28f-a514a408541d@acm.org>
-        <yq1ttr6qoqp.fsf@ca-mkp.ca.oracle.com>
-        <a2077ddf-9a8f-4101-aeb9-605d6dee3c6e@acm.org>
-        <ZR86Z1OcO52a4BtH@dread.disaster.area>
-        <d976868a-d32c-43d1-b5da-ebbc4c8de468@acm.org>
-        <ZR+NiYIuKzEilkW3@dread.disaster.area>
-        <2bb2a4d0-4f1f-45f1-9196-f5d0d8ee1878@acm.org>
-Date:   Fri, 06 Oct 2023 21:21:01 -0400
-In-Reply-To: <2bb2a4d0-4f1f-45f1-9196-f5d0d8ee1878@acm.org> (Bart Van Assche's
-        message of "Fri, 6 Oct 2023 10:22:08 -0700")
-Content-Type: text/plain
-X-ClientProxiedBy: BY3PR05CA0028.namprd05.prod.outlook.com
- (2603:10b6:a03:254::33) To PH0PR10MB4759.namprd10.prod.outlook.com
- (2603:10b6:510:3d::12)
+        Fri, 6 Oct 2023 21:26:20 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4017BF
+        for <linux-fsdevel@vger.kernel.org>; Fri,  6 Oct 2023 18:25:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1696641933;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=lZr0lwJuo58MungWEu7BcqdVHBirMeagcssZqizoiGE=;
+        b=LgDzR6B5bFTyOyCoVR37j6nxG6JsIZXPAbL2rTy7BXPjulzBvX8eSrcvypiDVqlArkVdd8
+        cJ9+Q+qGf7A7rt9qYXV+3ax8TTsjLj3fGzxtL4BZCZhXVDxm+7yy7gINMNQ+NCX2px7jXW
+        T5FQuOq40NRb2WWG6UlSnf1P736YHs4=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-617-quOvqbDuN3uduRRxP_QFbw-1; Fri, 06 Oct 2023 21:25:30 -0400
+X-MC-Unique: quOvqbDuN3uduRRxP_QFbw-1
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-1c62aa0a29fso26129535ad.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Oct 2023 18:25:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696641929; x=1697246729;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lZr0lwJuo58MungWEu7BcqdVHBirMeagcssZqizoiGE=;
+        b=Pta6Fy36jaTwgtaW/UwEO/5+dgG1lLTsa5ApVYNSErmD4paK7ek4c8e5q5Xxaj0u9s
+         XattYwhTeroeYPeqgN4hww2COvMnD3jgjLIT79ZxHD/ZioOgSS0FONRQlXj6w8Vgx/LE
+         qJshqxIuVCnamMCP6rgFYqvJ7fFss88gKvcw4pA7RbwdmDT1E7N7B+K2musV6FWRmgEZ
+         xBpF7WgTAirBYW8jqWx+lK0+cnH0ImNsG5v8yV5m14Dyr7bXgUTSS5ebclg35pvwPT8e
+         sRk4/Jlo5pkQuR8FgpoJGYBcOYb3oi1xvH7v4Qur5A/+l/23klx22f+Sfrp9PXiDMvQg
+         x1uw==
+X-Gm-Message-State: AOJu0YwNVR6pd1+R+Ht6pnjUQu7281hhq7WgNFHyfgUQvN9B8wkHvRXd
+        OgE/RK+xlDN068/jEiP3XKPVaraXnyGtNUgRk3CAovpBuKnnbL7jzV0tM9ewEr12up1g4phr4u2
+        pV5Zy7R4GORia5At5K0I0IidK2g==
+X-Received: by 2002:a17:902:864c:b0:1bd:da96:dc70 with SMTP id y12-20020a170902864c00b001bdda96dc70mr9461225plt.49.1696641929425;
+        Fri, 06 Oct 2023 18:25:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFkv8dhvPRaPRg8UkKZnrSCsZFSPjShFfI5/Uk4PEaVA/DjDDE9pvSe2IfTK55qEBRMGpfFuA==
+X-Received: by 2002:a17:902:864c:b0:1bd:da96:dc70 with SMTP id y12-20020a170902864c00b001bdda96dc70mr9461212plt.49.1696641929063;
+        Fri, 06 Oct 2023 18:25:29 -0700 (PDT)
+Received: from [10.72.112.33] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id b1-20020a170902ed0100b001c735421215sm4566095pld.216.2023.10.06.18.25.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Oct 2023 18:25:28 -0700 (PDT)
+Message-ID: <6b6fb023-4f3f-f806-c7be-345e1bd7a6d7@redhat.com>
+Date:   Sat, 7 Oct 2023 09:25:24 +0800
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR10MB4759:EE_|CO1PR10MB4723:EE_
-X-MS-Office365-Filtering-Correlation-Id: be72003f-dd07-4637-16f4-08dbc6d3ad15
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: vZafzDzlPaH3JtINiokgetvNu4064tpGO/utw7w8CYlANt5H5BJTqLJ3SUFSNCw2gmdngKnEaSFeyZ9uDENZ7phejCrb5Sl69Rpd420RkfsOpAhTIqHPwREieRjxnffwhln4vzXeks0P8DYUGl65nsCnVaek+kiYjxG6sAl8A7udVp3P6ow/nDF4j6As+FMrkcyV17znLl6Aq7Se5ZK8d1s+XHJALb5bnGd3/gDKcnE9LLLBS5b1uiv7M+hNwBPnHsHrxZffKSojKSRN6lTe25BVAMUDoQcRSjiDbQtrQHsgKugclYDi8epEgEhDNEfm4/4o7pIJd/1pbcR/JtLa4Ur2Vzmta+ic8r5JSOFqgPYmvirehmLtrNi7HV9nC0FCQRbAPu58LVEoQc5f4RfNNH+mhUtG43WypCsRKOe0OhW0yAHq4o5URpkXpKDPFPSCE19Fk5EdnDcYYv2i+e/9y7tOsgS8+as/BtNizLNq1lH7kbh651a3LjRU1mMCcsD9Tpw2PoWFwINkSjT9ThDCMadrHdui6hLGacX/ztExRBB/LrrXjLk6tcoMS7peU481
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB4759.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376002)(396003)(136003)(39860400002)(346002)(366004)(230922051799003)(451199024)(1800799009)(186009)(64100799003)(6512007)(6506007)(6486002)(478600001)(36916002)(83380400001)(5660300002)(6666004)(38100700002)(86362001)(6916009)(2906002)(4326008)(26005)(54906003)(8936002)(41300700001)(8676002)(66556008)(66946007)(316002)(7416002)(66476007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Lr1Fzinal5iFPnKt0k8/VGcG7fdIHJcuzrw/VIT41AMu9cSPFSp984OYPJwt?=
- =?us-ascii?Q?1AIRyQlekBfMarznW+JCBZ6MOsEQlxkBzauhx/r9An0pSmr/arW9Lf5PEfOB?=
- =?us-ascii?Q?Ghkma/+hfTzKJJYtYvws+ClQtOc/CjTsEN9HtXBZxngVjfi26/NYI62YuOkd?=
- =?us-ascii?Q?1lJW/maj6hgysnuGNVlhos6yYsbbE0yxPf0284S7yADG655o1WsyTgZIsQtw?=
- =?us-ascii?Q?XBeIGBHBGEYigCCZlnp8Jr7njT3EKI9EovYsm8dsrZDKjzFz5Uu/62nCFZRx?=
- =?us-ascii?Q?hdRSJaBCHZCE1QMM6LRnxGIXJr4WYWgvM4Bl12VeejJJTjft2ETTzSefeFii?=
- =?us-ascii?Q?k0ATJxlmo8iKemfcyzzgDqs/lxjrWiJVMH7aGepMnlizNhJP2fUjA63lHgjS?=
- =?us-ascii?Q?77hIX3TmtHGP1X6JMVSbkaKyxkggrU27exnBfwACCl42oaeQTO8MKE5Ur/55?=
- =?us-ascii?Q?dpUiS5gZJirUhJnNAHTSwo1kLtw/L31+2IP53FtKthYs1F13F5MBKfPO1T2o?=
- =?us-ascii?Q?fjxdy3GhRkFe2xZI9Hvn+Wbjpl5lOAQnJ5VsHM0l/pZfwcXr10MDDHA7VBWH?=
- =?us-ascii?Q?o1fU25ptJUkMcJFgS2oTOdZoco124YS26wWRO+wYlm/lSXqIuQHursh+YLXc?=
- =?us-ascii?Q?cZ4j8W3ZBjATV9yc7RHFtTn8/ZO5QcZCW1YrO+acDhkQv2vUGs0FgnAc5Pqb?=
- =?us-ascii?Q?yCj2yz4hbsnfeYwAXhrf9Rio46FIR0sdkabCEpHpnWqCeloxvB1pNnBIDQ82?=
- =?us-ascii?Q?6Fqrg73AjZayR2eSXf5DUqwNNjLxAf/kNLf1TteL8/PnzF+4SWKcFcb8Ps8Q?=
- =?us-ascii?Q?gjnp9KAWDMlqDjDjll4boHOhtrDLXh0WQoy9SoMrswvqrPoHuePGVpQZLy8H?=
- =?us-ascii?Q?IwXA8s90bCq4382RZRMOY6xQep+XmoHqcaiV3xMnbpr+JfdYXLlMCAXcSZjU?=
- =?us-ascii?Q?n5GIzFaREpIe1flB5oGQfCtehW5xZN72M2schix7e5xKs+pKmL5tzKYqr2QR?=
- =?us-ascii?Q?PWgWwlIPMRuxxhXa6DHTIAXpowjgi9tACpc29taIYWs1mpK4wxn8wpkwmHkt?=
- =?us-ascii?Q?QQvlVPaNhPvsWUbsbgbIsxdImIYgg62FdeiTIRrh93Gh/lLcuSQRmjkiqpXl?=
- =?us-ascii?Q?TA5z/uyPxzl/6DwtrpDtn3mxLlrUL3yg0OZbzbmqUssUyz+u9KXMhY+eu3up?=
- =?us-ascii?Q?k/1bpccZSE/xWcn1GQkhfAfPr7vD/qKMBKnWinzT3mfdJPFfKOqC/QY32d0a?=
- =?us-ascii?Q?EM0gyYwSx6Ga14N6vant5Gye4AAZbSQCKu7zhTzzTiu51KfFBGV6N+rLbcv+?=
- =?us-ascii?Q?jEVpFzcmAmqTdUT8Xtg1st9zpCudJCWo0vPvovkgLI5nI7iq9f9sXIfvwMxU?=
- =?us-ascii?Q?GGnKV2JKHylhb4jAe8RXBThqRlyu+IcYp8JDdW5/Ru4e3BmJ4cIRF/6hH6L8?=
- =?us-ascii?Q?aJkARqw1iEXWXLVTXv709hMo8EsNHFOYBdsEHDygt+GLoicjdoC8AN9F4m+6?=
- =?us-ascii?Q?qDB/ARoEBmLeGYuzU1TbS9+FYpGupLt6MSzhO3jEay4w5PCl9O99WYKHMW3Q?=
- =?us-ascii?Q?Y+IA3tTk8WpiFMgRKg90/GsoRSYg0f7/XDZ2X5IoEge8jrGSP/mJGL+m4ulM?=
- =?us-ascii?Q?uA=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: =?us-ascii?Q?+OBehmAcD3hA0p6MrHUCW3AZ2LCo5Tp3fgtvINqyEbtwMfpxVS+gsof1xqnh?=
- =?us-ascii?Q?Nq89ipDlg6IG5kCzxi58hLSlTv8ICrZee120oFIug6ADLNCiLaOwX+lzqGyI?=
- =?us-ascii?Q?wuZi2dp6KS2LCp02NZ1/jMFtoxSoE+DS8vooQHxOB1qoORCMjyt3W2v7IfhT?=
- =?us-ascii?Q?aoPuDkaZrSLcpgabudBGLCztZpsa+/hQQQegTpkeZ8n3/bcBhZnU+lHX0FbR?=
- =?us-ascii?Q?mhLYzEqrgJi1xAlb51qPCIzSAQi78ItudLePpw6Gxdmn5AvPRFt9562N8Vg/?=
- =?us-ascii?Q?gcVUi6eShZAoaoglU5XayBG5z1Gl/CCbc5InXryvhvumvOgP1tor9vXa35ZQ?=
- =?us-ascii?Q?g7BV4LlzCpsTDUtaOm7olw2n3cswJlVSSsNJXL2qXQN+SesTm0l6vDx67+ER?=
- =?us-ascii?Q?uP85KwGSt7mF9648FxuL+f8JrQK6jB/23Xh3d/phM9Q/ZN/Ux2/G6c/MLorw?=
- =?us-ascii?Q?nT4Ck28exiAyCk7TXWDzk7js6odG0oVxwc94tRtpxqKBe5Kq+sIRFGm0ZXi1?=
- =?us-ascii?Q?FmdveVWQhoGr0OHB/GMIqW8w1/+TZQJCAJnaSP5ryyYZ4fRZCf2sosHuKF5u?=
- =?us-ascii?Q?HPAglldVpgvrbcE/MVSxbeuUOnmbP08y8fPFk5CTrI2ADN0Q79mT142vVMGr?=
- =?us-ascii?Q?qvZQRDKQADOndznIrO/hQNRyUAn+khK+D3g3AjBu+BdY+c1whKu9Ivztapqw?=
- =?us-ascii?Q?a+joY5x3yuhTMUo3BPirYbOfuatx4m5M5aNGqywHX9+Oj0QzwtunziPknQQ2?=
- =?us-ascii?Q?aGbeJSN9v4QZhCGqwSBbfREuB3D3bSYK5UTVJI3T8JWik7XAqH6nZc8eY33G?=
- =?us-ascii?Q?9kGLXLe0d7fwMKKFBV4C2i3zoC8t4yvhOKa5v0Zvlr6NdzV023ahREf90LSJ?=
- =?us-ascii?Q?OoC+hqISdKwgWjD3ijQXO06zRIBwdZ2Qv9/hVfAH+/J87rijz6yxqHAirJy3?=
- =?us-ascii?Q?fjyrJUmSgHA0EXTMxh4VrS8JznAKI444671SvIpcKwNsXhJkBtv1VileTsBP?=
- =?us-ascii?Q?0IvFHgpn3PcWcHFPyyTm4E/CkHhPDgvcIQ+x3AuaTEjJjch06BNHASOxHjPM?=
- =?us-ascii?Q?8tToa8RTY2TlCEIoYqafhZZYMBHChZoEPoA/t1pmIPcNGunY4UfMGORTNaWm?=
- =?us-ascii?Q?pZR6/n2sQ2R78VVQ3cKawm3SIiPD0A+y3g=3D=3D?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: be72003f-dd07-4637-16f4-08dbc6d3ad15
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB4759.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2023 01:21:04.8857
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: J03RGdSiODHXBtst2jGEjYyyniq3+PMuvUmsW+uH3AoSoyzvk77OzwutfFd0a+1XRBRMGF951KGXxijG4fYGrmpQj1Ze8ewoCOoqOCgXNbE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR10MB4723
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-10-06_15,2023-10-06_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=999 mlxscore=0
- spamscore=0 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2309180000
- definitions=main-2310070009
-X-Proofpoint-ORIG-GUID: xfE5TN4amzWvVkkR4AN_Bgag1VWsvMg-
-X-Proofpoint-GUID: xfE5TN4amzWvVkkR4AN_Bgag1VWsvMg-
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v2 24/89] ceph: convert to new timestamp accessors
+Content-Language: en-US
+To:     Jeff Layton <jlayton@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     ceph-devel@vger.kernel.org
+References: <20231004185221.80802-1-jlayton@kernel.org>
+ <20231004185347.80880-1-jlayton@kernel.org>
+ <20231004185347.80880-22-jlayton@kernel.org>
+From:   Xiubo Li <xiubli@redhat.com>
+In-Reply-To: <20231004185347.80880-22-jlayton@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -186,45 +87,276 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
-Bart,
+On 10/5/23 02:52, Jeff Layton wrote:
+> Convert to using the new inode timestamp accessor functions.
+>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>   fs/ceph/addr.c       | 10 +++----
+>   fs/ceph/caps.c       |  4 +--
+>   fs/ceph/file.c       |  2 +-
+>   fs/ceph/inode.c      | 64 ++++++++++++++++++++++++--------------------
+>   fs/ceph/mds_client.c |  8 ++++--
+>   fs/ceph/snap.c       |  4 +--
+>   6 files changed, 51 insertions(+), 41 deletions(-)
+>
+> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+> index f4863078f7fe..936b9e0b351d 100644
+> --- a/fs/ceph/addr.c
+> +++ b/fs/ceph/addr.c
+> @@ -750,7 +750,7 @@ static int writepage_nounlock(struct page *page, struct writeback_control *wbc)
+>   	dout("writepage %llu~%llu (%llu bytes, %sencrypted)\n",
+>   	     page_off, len, wlen, IS_ENCRYPTED(inode) ? "" : "not ");
+>   
+> -	req->r_mtime = inode->i_mtime;
+> +	req->r_mtime = inode_get_mtime(inode);
+>   	ceph_osdc_start_request(osdc, req);
+>   	err = ceph_osdc_wait_request(osdc, req);
+>   
+> @@ -1327,7 +1327,7 @@ static int ceph_writepages_start(struct address_space *mapping,
+>   			pages = NULL;
+>   		}
+>   
+> -		req->r_mtime = inode->i_mtime;
+> +		req->r_mtime = inode_get_mtime(inode);
+>   		ceph_osdc_start_request(&fsc->client->osdc, req);
+>   		req = NULL;
+>   
+> @@ -1875,7 +1875,7 @@ int ceph_uninline_data(struct file *file)
+>   		goto out_unlock;
+>   	}
+>   
+> -	req->r_mtime = inode->i_mtime;
+> +	req->r_mtime = inode_get_mtime(inode);
+>   	ceph_osdc_start_request(&fsc->client->osdc, req);
+>   	err = ceph_osdc_wait_request(&fsc->client->osdc, req);
+>   	ceph_osdc_put_request(req);
+> @@ -1917,7 +1917,7 @@ int ceph_uninline_data(struct file *file)
+>   			goto out_put_req;
+>   	}
+>   
+> -	req->r_mtime = inode->i_mtime;
+> +	req->r_mtime = inode_get_mtime(inode);
+>   	ceph_osdc_start_request(&fsc->client->osdc, req);
+>   	err = ceph_osdc_wait_request(&fsc->client->osdc, req);
+>   
+> @@ -2092,7 +2092,7 @@ static int __ceph_pool_perm_get(struct ceph_inode_info *ci,
+>   				     0, false, true);
+>   	ceph_osdc_start_request(&fsc->client->osdc, rd_req);
+>   
+> -	wr_req->r_mtime = ci->netfs.inode.i_mtime;
+> +	wr_req->r_mtime = inode_get_mtime(&ci->netfs.inode);
+>   	ceph_osdc_start_request(&fsc->client->osdc, wr_req);
+>   
+>   	err = ceph_osdc_wait_request(&fsc->client->osdc, rd_req);
+> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> index 14215ec646f7..a104669fcf4c 100644
+> --- a/fs/ceph/caps.c
+> +++ b/fs/ceph/caps.c
+> @@ -1421,8 +1421,8 @@ static void __prep_cap(struct cap_msg_args *arg, struct ceph_cap *cap,
+>   		arg->old_xattr_buf = NULL;
+>   	}
+>   
+> -	arg->mtime = inode->i_mtime;
+> -	arg->atime = inode->i_atime;
+> +	arg->mtime = inode_get_mtime(inode);
+> +	arg->atime = inode_get_atime(inode);
+>   	arg->ctime = inode_get_ctime(inode);
+>   	arg->btime = ci->i_btime;
+>   	arg->change_attr = inode_peek_iversion_raw(inode);
+> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> index b1da02f5dbe3..b96d4e74ae99 100644
+> --- a/fs/ceph/file.c
+> +++ b/fs/ceph/file.c
+> @@ -2489,7 +2489,7 @@ static int ceph_zero_partial_object(struct inode *inode,
+>   		goto out;
+>   	}
+>   
+> -	req->r_mtime = inode->i_mtime;
+> +	req->r_mtime = inode_get_mtime(inode);
+>   	ceph_osdc_start_request(&fsc->client->osdc, req);
+>   	ret = ceph_osdc_wait_request(&fsc->client->osdc, req);
+>   	if (ret == -ENOENT)
+> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+> index 800ab7920513..e846752b9a1f 100644
+> --- a/fs/ceph/inode.c
+> +++ b/fs/ceph/inode.c
+> @@ -185,9 +185,9 @@ struct inode *ceph_get_snapdir(struct inode *parent)
+>   	inode->i_mode = parent->i_mode;
+>   	inode->i_uid = parent->i_uid;
+>   	inode->i_gid = parent->i_gid;
+> -	inode->i_mtime = parent->i_mtime;
+> +	inode_set_mtime_to_ts(inode, inode_get_mtime(parent));
+>   	inode_set_ctime_to_ts(inode, inode_get_ctime(parent));
+> -	inode->i_atime = parent->i_atime;
+> +	inode_set_atime_to_ts(inode, inode_get_atime(parent));
+>   	ci->i_rbytes = 0;
+>   	ci->i_btime = ceph_inode(parent)->i_btime;
+>   
+> @@ -837,28 +837,31 @@ void ceph_fill_file_time(struct inode *inode, int issued,
+>   			/* the MDS did a utimes() */
+>   			dout("mtime %lld.%09ld -> %lld.%09ld "
+>   			     "tw %d -> %d\n",
+> -			     inode->i_mtime.tv_sec, inode->i_mtime.tv_nsec,
+> +			     inode_get_mtime_sec(inode),
+> +			     inode_get_mtime_nsec(inode),
+>   			     mtime->tv_sec, mtime->tv_nsec,
+>   			     ci->i_time_warp_seq, (int)time_warp_seq);
+>   
+> -			inode->i_mtime = *mtime;
+> -			inode->i_atime = *atime;
+> +			inode_set_mtime_to_ts(inode, *mtime);
+> +			inode_set_atime_to_ts(inode, *atime);
+>   			ci->i_time_warp_seq = time_warp_seq;
+>   		} else if (time_warp_seq == ci->i_time_warp_seq) {
+> +			struct timespec64	ts;
+> +
+>   			/* nobody did utimes(); take the max */
+> -			if (timespec64_compare(mtime, &inode->i_mtime) > 0) {
+> +			ts = inode_get_mtime(inode);
+> +			if (timespec64_compare(mtime, &ts) > 0) {
+>   				dout("mtime %lld.%09ld -> %lld.%09ld inc\n",
+> -				     inode->i_mtime.tv_sec,
+> -				     inode->i_mtime.tv_nsec,
+> +				     ts.tv_sec, ts.tv_nsec,
+>   				     mtime->tv_sec, mtime->tv_nsec);
+> -				inode->i_mtime = *mtime;
+> +				inode_set_mtime_to_ts(inode, *mtime);
+>   			}
+> -			if (timespec64_compare(atime, &inode->i_atime) > 0) {
+> +			ts = inode_get_atime(inode);
+> +			if (timespec64_compare(atime, &ts) > 0) {
+>   				dout("atime %lld.%09ld -> %lld.%09ld inc\n",
+> -				     inode->i_atime.tv_sec,
+> -				     inode->i_atime.tv_nsec,
+> +				     ts.tv_sec, ts.tv_nsec,
+>   				     atime->tv_sec, atime->tv_nsec);
+> -				inode->i_atime = *atime;
+> +				inode_set_atime_to_ts(inode, *atime);
+>   			}
+>   		} else if (issued & CEPH_CAP_FILE_EXCL) {
+>   			/* we did a utimes(); ignore mds values */
+> @@ -869,8 +872,8 @@ void ceph_fill_file_time(struct inode *inode, int issued,
+>   		/* we have no write|excl caps; whatever the MDS says is true */
+>   		if (ceph_seq_cmp(time_warp_seq, ci->i_time_warp_seq) >= 0) {
+>   			inode_set_ctime_to_ts(inode, *ctime);
+> -			inode->i_mtime = *mtime;
+> -			inode->i_atime = *atime;
+> +			inode_set_mtime_to_ts(inode, *mtime);
+> +			inode_set_atime_to_ts(inode, *atime);
+>   			ci->i_time_warp_seq = time_warp_seq;
+>   		} else {
+>   			warn = 1;
+> @@ -2553,20 +2556,22 @@ int __ceph_setattr(struct inode *inode, struct iattr *attr,
+>   	}
+>   
+>   	if (ia_valid & ATTR_ATIME) {
+> +		struct timespec64 atime = inode_get_atime(inode);
+> +
+>   		dout("setattr %p atime %lld.%ld -> %lld.%ld\n", inode,
+> -		     inode->i_atime.tv_sec, inode->i_atime.tv_nsec,
+> +		     atime.tv_sec, atime.tv_nsec,
+>   		     attr->ia_atime.tv_sec, attr->ia_atime.tv_nsec);
+>   		if (issued & CEPH_CAP_FILE_EXCL) {
+>   			ci->i_time_warp_seq++;
+> -			inode->i_atime = attr->ia_atime;
+> +			inode_set_atime_to_ts(inode, attr->ia_atime);
+>   			dirtied |= CEPH_CAP_FILE_EXCL;
+>   		} else if ((issued & CEPH_CAP_FILE_WR) &&
+> -			   timespec64_compare(&inode->i_atime,
+> -					    &attr->ia_atime) < 0) {
+> -			inode->i_atime = attr->ia_atime;
+> +			   timespec64_compare(&atime,
+> +					      &attr->ia_atime) < 0) {
+> +			inode_set_atime_to_ts(inode, attr->ia_atime);
+>   			dirtied |= CEPH_CAP_FILE_WR;
+>   		} else if ((issued & CEPH_CAP_FILE_SHARED) == 0 ||
+> -			   !timespec64_equal(&inode->i_atime, &attr->ia_atime)) {
+> +			   !timespec64_equal(&atime, &attr->ia_atime)) {
+>   			ceph_encode_timespec64(&req->r_args.setattr.atime,
+>   					       &attr->ia_atime);
+>   			mask |= CEPH_SETATTR_ATIME;
+> @@ -2626,20 +2631,21 @@ int __ceph_setattr(struct inode *inode, struct iattr *attr,
+>   		}
+>   	}
+>   	if (ia_valid & ATTR_MTIME) {
+> +		struct timespec64 mtime = inode_get_mtime(inode);
+> +
+>   		dout("setattr %p mtime %lld.%ld -> %lld.%ld\n", inode,
+> -		     inode->i_mtime.tv_sec, inode->i_mtime.tv_nsec,
+> +		     mtime.tv_sec, mtime.tv_nsec,
+>   		     attr->ia_mtime.tv_sec, attr->ia_mtime.tv_nsec);
+>   		if (issued & CEPH_CAP_FILE_EXCL) {
+>   			ci->i_time_warp_seq++;
+> -			inode->i_mtime = attr->ia_mtime;
+> +			inode_set_mtime_to_ts(inode, attr->ia_mtime);
+>   			dirtied |= CEPH_CAP_FILE_EXCL;
+>   		} else if ((issued & CEPH_CAP_FILE_WR) &&
+> -			   timespec64_compare(&inode->i_mtime,
+> -					    &attr->ia_mtime) < 0) {
+> -			inode->i_mtime = attr->ia_mtime;
+> +			   timespec64_compare(&mtime, &attr->ia_mtime) < 0) {
+> +			inode_set_mtime_to_ts(inode, attr->ia_mtime);
+>   			dirtied |= CEPH_CAP_FILE_WR;
+>   		} else if ((issued & CEPH_CAP_FILE_SHARED) == 0 ||
+> -			   !timespec64_equal(&inode->i_mtime, &attr->ia_mtime)) {
+> +			   !timespec64_equal(&mtime, &attr->ia_mtime)) {
+>   			ceph_encode_timespec64(&req->r_args.setattr.mtime,
+>   					       &attr->ia_mtime);
+>   			mask |= CEPH_SETATTR_MTIME;
+> @@ -2653,8 +2659,8 @@ int __ceph_setattr(struct inode *inode, struct iattr *attr,
+>   		bool only = (ia_valid & (ATTR_SIZE|ATTR_MTIME|ATTR_ATIME|
+>   					 ATTR_MODE|ATTR_UID|ATTR_GID)) == 0;
+>   		dout("setattr %p ctime %lld.%ld -> %lld.%ld (%s)\n", inode,
+> -		     inode_get_ctime(inode).tv_sec,
+> -		     inode_get_ctime(inode).tv_nsec,
+> +		     inode_get_ctime_sec(inode),
+> +		     inode_get_ctime_nsec(inode),
+>   		     attr->ia_ctime.tv_sec, attr->ia_ctime.tv_nsec,
+>   		     only ? "ctime only" : "ignored");
+>   		if (only) {
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index 615db141b6c4..e4cfa3b02187 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -4353,12 +4353,16 @@ static int reconnect_caps_cb(struct inode *inode, int mds, void *arg)
+>   		rec.v2.flock_len = (__force __le32)
+>   			((ci->i_ceph_flags & CEPH_I_ERROR_FILELOCK) ? 0 : 1);
+>   	} else {
+> +		struct timespec64 ts;
+> +
+>   		rec.v1.cap_id = cpu_to_le64(cap->cap_id);
+>   		rec.v1.wanted = cpu_to_le32(__ceph_caps_wanted(ci));
+>   		rec.v1.issued = cpu_to_le32(cap->issued);
+>   		rec.v1.size = cpu_to_le64(i_size_read(inode));
+> -		ceph_encode_timespec64(&rec.v1.mtime, &inode->i_mtime);
+> -		ceph_encode_timespec64(&rec.v1.atime, &inode->i_atime);
+> +		ts = inode_get_mtime(inode);
+> +		ceph_encode_timespec64(&rec.v1.mtime, &ts);
+> +		ts = inode_get_atime(inode);
+> +		ceph_encode_timespec64(&rec.v1.atime, &ts);
+>   		rec.v1.snaprealm = cpu_to_le64(ci->i_snap_realm->ino);
+>   		rec.v1.pathbase = cpu_to_le64(pathbase);
+>   	}
+> diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
+> index 813f21add992..6732e1ea97d9 100644
+> --- a/fs/ceph/snap.c
+> +++ b/fs/ceph/snap.c
+> @@ -658,8 +658,8 @@ int __ceph_finish_cap_snap(struct ceph_inode_info *ci,
+>   
+>   	BUG_ON(capsnap->writing);
+>   	capsnap->size = i_size_read(inode);
+> -	capsnap->mtime = inode->i_mtime;
+> -	capsnap->atime = inode->i_atime;
+> +	capsnap->mtime = inode_get_mtime(inode);
+> +	capsnap->atime = inode_get_atime(inode);
+>   	capsnap->ctime = inode_get_ctime(inode);
+>   	capsnap->btime = ci->i_btime;
+>   	capsnap->change_attr = inode_peek_iversion_raw(inode);
 
-> The above implies that this parameter will always be equal to the
-> logical block size.
+LGTM.
 
-It does not. Being able to write each individual block in an I/O without
-tearing does not imply that a device can write two blocks as a single
-atomic operation.
+Thanks Jeff.
 
-> Writes to a single physical block happen atomically. If there are
-> multiple logical blocks per physical block, the block device must
-> serialize read/modify/write cycles internally.
+- Xiubo
 
-This is what SBC has to say:
-
-"If any write command that is not an atomic write command, does not
-complete successfully (e.g., the command completed with CHECK CONDITION
-status, or the command was being processed at the time of a power loss
-or an incorrect demount of a removable medium), then any data in the
-logical blocks referenced by the LBAs specified by that command is
-indeterminate."
-
-SBC defines "atomic write command" like this:
-
-"An atomic write command performs one or more atomic write operations.
- The following write commands are atomic write commands:
-
- a) WRITE ATOMIC (16) (see 5.48); and
- b) WRITE ATOMIC (32) (see 5.49)."
-
-You will note that none of the regular WRITE commands appear in that
-list.
-
-Now, in practice we obviously rely heavily on the fact that most devices
-are implemented in a sane fashion which doesn't mess up individual
-logical blocks on power fail. But the spec does not guarantee this; it
-is device implementation dependent. And again, we have seen both hard
-disk drives and SSDs that cause collateral damage to an entire physical
-block when power is lost at the wrong time.
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
