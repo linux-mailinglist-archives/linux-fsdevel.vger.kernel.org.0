@@ -2,70 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FEFF7BD00F
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Oct 2023 22:23:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3EF27BD03A
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Oct 2023 23:21:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344650AbjJHUXc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 8 Oct 2023 16:23:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37304 "EHLO
+        id S229985AbjJHVVi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 8 Oct 2023 17:21:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56872 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344600AbjJHUX3 (ORCPT
+        with ESMTP id S229635AbjJHVVh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 8 Oct 2023 16:23:29 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B40D4BA;
-        Sun,  8 Oct 2023 13:23:27 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id ffacd0b85a97d-313e742a787so2252059f8f.1;
-        Sun, 08 Oct 2023 13:23:27 -0700 (PDT)
+        Sun, 8 Oct 2023 17:21:37 -0400
+Received: from mail-ot1-x32f.google.com (mail-ot1-x32f.google.com [IPv6:2607:f8b0:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5771AC;
+        Sun,  8 Oct 2023 14:21:35 -0700 (PDT)
+Received: by mail-ot1-x32f.google.com with SMTP id 46e09a7af769-6c63117a659so2205272a34.0;
+        Sun, 08 Oct 2023 14:21:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696796606; x=1697401406; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VCWwJGD+i6SLQnaAJLGE5OXPFaOejL4paLAiGQJbd2k=;
-        b=JXydqT+4775nGmmfh0XcabAYNa1Fv1ov5so2IJYRqRAAp0mnnMeFxLldC1mTnv8bUR
-         /pL8wutVkmOOcAAql0K1rUyzlyLFbxJC2B5MleTdUqHmHFq72K1zHzQTpg8RiCKzGZdp
-         iWWJEFQmEb0fQskDzjSDiMq0W2L751YAt6QFcSXGgs5ZlwDNAMKcpGL9ujMN6dYlb9EQ
-         jSCdk2hWmUcCaYkQPpEtEbWGjx0RJuvsKwwSeQMRHq8X3LDX+8Ogbx7mJlhj3fqm1wKQ
-         bF9cJtE5wfpBMyZe+BYj1hZeKdaNOznVeFgSDuVqBnBGFuScRNMRoIc4PhoTTRpAneFb
-         9ZVw==
+        d=gmail.com; s=20230601; t=1696800095; x=1697404895; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=7tFkgfW4cZbNG3g5YvrO+dBVaVKzGdwwIuQTmQTY0jc=;
+        b=J2T6ECoZ2NQ6jQK317KDWj5GB1bRHagjHXju3Uj80aoxQ08+3krVPYJzsZFRDdKhgH
+         brYhhqc2WkItqIha8tre4HCmBJo1LxFGvXpv8Ge9A5AkQ4gnbah8TbLX7MFMH0Nd/0fg
+         0ucF7qCpbqZrQw3F/Z1pxfNaGnjWDFDeDzYfrgcFgVG9w5/ZvS9EAssP9hDYiEr3aSmD
+         b6Cb8Bv3uMTULzBBXoowJyrlftVRdvQDWvGIajZ00xTjdoOyKPRayTKZ/njjW1UjIVIn
+         XaL9M9xZxz12Mx8cexXc5XpeRm05Fbf8aEQgnpJbGH2DcDEec8EvxhDyTUkQ5ENlLPDw
+         gOZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696796606; x=1697401406;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VCWwJGD+i6SLQnaAJLGE5OXPFaOejL4paLAiGQJbd2k=;
-        b=e65AX4jpDe1aUXi6uqh8k6qyc7AMEvcJNYjcYltW6ikgVULeby/PYFhoawG289S39D
-         U8dEKCvw9FM+na/aROOvPz462GWNg1l/UAxpjaSA4PASexq2PPjwUp3wcuc1RNlhDueJ
-         ahzWWh/2zKAMrphaaVxlu0/RMEdMoYCT26vR1NtdiUgjNweMMSJ0Ui57KmT2/oclziS5
-         sGCc3s+L1txfx/TLeoubYdp4gMieXO2CS7My8K3hDs0GV54fnrs0u2lf9u6d3V559sKn
-         3vLvEb9upbFDo0nxeGhPWwe7Gb3zeW2uVdhwIFREvklu8TtoxV6Rgo29dMVqx5/oB/5q
-         e63Q==
-X-Gm-Message-State: AOJu0Ywxq2hax+YvaGiDML3z2wlz1QlU86C+KHhm3T1fTpsdup/M1mhk
-        fsBnLJwKQjpVo9EIVJfRP2JMNjZMR9w=
-X-Google-Smtp-Source: AGHT+IFCA87467gu7z5IDWce4HL8A128HwTPWTaB+9+eEVOi6NwgXaeueapZGaEywr2dFnR51gtXgg==
-X-Received: by 2002:a05:6000:1112:b0:317:6734:c2ae with SMTP id z18-20020a056000111200b003176734c2aemr7884139wrw.11.1696796606069;
-        Sun, 08 Oct 2023 13:23:26 -0700 (PDT)
-Received: from lucifer.home ([2a00:23c5:dc8c:8701:1663:9a35:5a7b:1d76])
-        by smtp.googlemail.com with ESMTPSA id c5-20020a05600c0ac500b0040586360a36sm11474879wmr.17.2023.10.08.13.23.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Oct 2023 13:23:25 -0700 (PDT)
-From:   Lorenzo Stoakes <lstoakes@gmail.com>
-To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>
-Cc:     "=Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        linux-fsdevel@vger.kernel.org, Lorenzo Stoakes <lstoakes@gmail.com>
-Subject: [PATCH 4/4] mm: abstract VMA extension and merge into vma_merge_extend() helper
-Date:   Sun,  8 Oct 2023 21:23:16 +0100
-Message-ID: <1ed3d1ba0069104e1685298aa2baf980c38a85ff.1696795837.git.lstoakes@gmail.com>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <cover.1696795837.git.lstoakes@gmail.com>
-References: <cover.1696795837.git.lstoakes@gmail.com>
+        d=1e100.net; s=20230601; t=1696800095; x=1697404895;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7tFkgfW4cZbNG3g5YvrO+dBVaVKzGdwwIuQTmQTY0jc=;
+        b=GHFJCMhnhaveJrU479uVF93+QnRC8BAbHmPNwhdgrMVp1U9DTl1gX6OoQDR8PTWmkU
+         V6RPNbCg3Ybb0hzaFlLHoaK6xVN/V7USZMEH87n0fXIcoKAm7n3POxJ4vPClmjgthynn
+         47AegXE+duNJf62P+Hv0k5ouLmUJvkWO+3dccLhiXpEDR/n533zppl3zHsgZPwSF3o9p
+         dGgyR9baANU1nYau4X08GemM0c201Xy2pAIy78j3QHpVSUfNBqEX7GGb4sLobRWppbsB
+         cwHLpjK1W3LI6Blzb31JLzp7Ks7Sz9kZ2mMnP6+qEbQNDhfDgnNXOxWh8g29P8nx/hIr
+         4NrQ==
+X-Gm-Message-State: AOJu0YwhYshEUex9WpuZfY4KCGV3HCIbyAdceqWiemrJhAAFwOYHuJtv
+        2tnTtqhEiBsrfXArlHPLwSQioW2mxOl4QJzkl44=
+X-Google-Smtp-Source: AGHT+IG2X00Izsq8yJBHpE/SbCtPB2p4GnsaqwRMKU+ZKdCHKskj69ge6judSTj8+aIg/9Lz64Olraz14Kpd2Ju2OVY=
+X-Received: by 2002:a9d:6d0d:0:b0:6c4:6aef:cd58 with SMTP id
+ o13-20020a9d6d0d000000b006c46aefcd58mr12438764otp.8.1696800095162; Sun, 08
+ Oct 2023 14:21:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: by 2002:ac9:5786:0:b0:4f0:1250:dd51 with HTTP; Sun, 8 Oct 2023
+ 14:21:34 -0700 (PDT)
+In-Reply-To: <ZSMZkuJGgHyyqDWP@casper.infradead.org>
+References: <20231007203543.1377452-1-willy@infradead.org> <20231007203543.1377452-6-willy@infradead.org>
+ <CAGudoHEg7oWG8CuyivWRsWLZZtw51oY0=PjLPRzFZDDZf=kzGg@mail.gmail.com> <ZSMZkuJGgHyyqDWP@casper.infradead.org>
+From:   Mateusz Guzik <mjguzik@gmail.com>
+Date:   Sun, 8 Oct 2023 23:21:34 +0200
+Message-ID: <CAGudoHGVa2qjkOB25whVquRtgUN7sJtEuqUGDoVe_18RdYwSTw@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] fs: Add inode_assert_locked() and inode_assert_locked_excl()
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+        Waiman Long <longman@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Chandan Babu R <chandan.babu@oracle.com>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Christian Brauner <brauner@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
         RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
@@ -76,147 +76,41 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-mremap uses vma_merge() in the case where a VMA needs to be extended. This
-can be significantly simplified and abstracted.
+On 10/8/23, Matthew Wilcox <willy@infradead.org> wrote:
+> On Sun, Oct 08, 2023 at 10:26:40PM +0200, Mateusz Guzik wrote:
+>> On 10/7/23, Matthew Wilcox (Oracle) <willy@infradead.org> wrote:
+>> > +static inline void inode_assert_locked_excl(const struct inode *inode)
+>> > +{
+>> > +	rwsem_assert_held_write(&inode->i_rwsem);
+>> > +}
+>> > +
+>> >  static inline void inode_lock_nested(struct inode *inode, unsigned
+>> > subclass)
+>> >  {
+>> >  	down_write_nested(&inode->i_rwsem, subclass);
+>>
+>> Why "excl" instead of "write"? Apart from looking weird, it is
+>> inconsistent with "prior art" in the file: i_mmap_assert_write_locked.
+>
+> Yes, but that pairs with i_mmap_lock_write() / i_mmap_lock_read().
+>
+> The problem is that we have inode_lock() / inode_lock_shared()
+> inode_assert_locked_read/write doesn't make sense with them.  But
+> inode_assert_locked() doesn't make sense as the assertion for
+> inode_lock() because you'd expect it to assert whether the inode lock
+> is held at all.  So I went with inode_assert_locked_excl().
+>
+> I wouldn't mind if we converted all the inode_lock()/shared to
+> inode_lock_read() / inode_lock_write(), and then added
+> inode_assert_read_locked() / inode_assert_write_locked().  That's
+> a bit of a bigger job than I want to take on today.
+>
 
-This makes it far easier to understand what the actual function is doing,
-avoids future mistakes in use of the confusing vma_merge() function and
-importantly allows us to make future changes to how vma_merge() is
-implemented by knowing explicitly which merge cases each invocation uses.
+I agree it is rather messy and I'm not going to spend time arguing as
+it is not my call anyway.
 
-Note that in the mremap() extend case, we perform this merge only when
-old_len == vma->vm_end - addr. The extension_start, i.e. the start of the
-extended portion of the VMA is equal to addr + old_len, i.e. vma->vm_end.
+Speaking of that, I just noticed the vfs folk are not CC'ed, which I'm
+rectifying with this e-mail.
 
-With this refactoring, vma_merge() is no longer required anywhere except
-mm/mmap.c, so mark it static.
-
-Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
----
- mm/internal.h |  8 +++-----
- mm/mmap.c     | 32 +++++++++++++++++++++++++-------
- mm/mremap.c   | 30 +++++++++++++-----------------
- 3 files changed, 41 insertions(+), 29 deletions(-)
-
-diff --git a/mm/internal.h b/mm/internal.h
-index ddaeb9f2d9d7..6fa722b07a94 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -1014,11 +1014,9 @@ struct page *follow_trans_huge_pmd(struct vm_area_struct *vma,
- /*
-  * mm/mmap.c
-  */
--struct vm_area_struct *vma_merge(struct vma_iterator *vmi,
--	struct mm_struct *, struct vm_area_struct *prev, unsigned long addr,
--	unsigned long end, unsigned long vm_flags, struct anon_vma *,
--	struct file *, pgoff_t, struct mempolicy *, struct vm_userfaultfd_ctx,
--	struct anon_vma_name *);
-+struct vm_area_struct *vma_merge_extend(struct vma_iterator *vmi,
-+					struct vm_area_struct *vma,
-+					unsigned long delta);
- 
- enum {
- 	/* mark page accessed */
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 51be864b876b..5d2f2e8d7307 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -860,13 +860,13 @@ can_vma_merge_after(struct vm_area_struct *vma, unsigned long vm_flags,
-  * **** is not represented - it will be merged and the vma containing the
-  *      area is returned, or the function will return NULL
-  */
--struct vm_area_struct *vma_merge(struct vma_iterator *vmi, struct mm_struct *mm,
--			struct vm_area_struct *prev, unsigned long addr,
--			unsigned long end, unsigned long vm_flags,
--			struct anon_vma *anon_vma, struct file *file,
--			pgoff_t pgoff, struct mempolicy *policy,
--			struct vm_userfaultfd_ctx vm_userfaultfd_ctx,
--			struct anon_vma_name *anon_name)
-+static struct vm_area_struct
-+*vma_merge(struct vma_iterator *vmi, struct mm_struct *mm,
-+	   struct vm_area_struct *prev, unsigned long addr, unsigned long end,
-+	   unsigned long vm_flags, struct anon_vma *anon_vma, struct file *file,
-+	   pgoff_t pgoff, struct mempolicy *policy,
-+	   struct vm_userfaultfd_ctx vm_userfaultfd_ctx,
-+	   struct anon_vma_name *anon_name)
- {
- 	struct vm_area_struct *curr, *next, *res;
- 	struct vm_area_struct *vma, *adjust, *remove, *remove2;
-@@ -2546,6 +2546,24 @@ static struct vm_area_struct *vma_merge_new_vma(struct vma_iterator *vmi,
- 			 vma->vm_userfaultfd_ctx, anon_vma_name(vma));
- }
- 
-+/*
-+ * Expand vma by delta bytes, potentially merging with an immediately adjacent
-+ * VMA with identical properties.
-+ */
-+struct vm_area_struct *vma_merge_extend(struct vma_iterator *vmi,
-+					struct vm_area_struct *vma,
-+					unsigned long delta)
-+{
-+	pgoff_t pgoff = vma->vm_pgoff +
-+		((vma->vm_end - vma->vm_start) >> PAGE_SHIFT);
-+
-+	/* vma is specified as prev, so case 1 or 2 will apply. */
-+	return vma_merge(vmi, vma->vm_mm, vma, vma->vm_end, vma->vm_end + delta,
-+			 vma->vm_flags, vma->anon_vma, vma->vm_file, pgoff,
-+			 vma_policy(vma), vma->vm_userfaultfd_ctx,
-+			 anon_vma_name(vma));
-+}
-+
- /*
-  * do_vmi_align_munmap() - munmap the aligned region from @start to @end.
-  * @vmi: The vma iterator
-diff --git a/mm/mremap.c b/mm/mremap.c
-index ce8a23ef325a..38d98465f3d8 100644
---- a/mm/mremap.c
-+++ b/mm/mremap.c
-@@ -1096,14 +1096,12 @@ SYSCALL_DEFINE5(mremap, unsigned long, addr, unsigned long, old_len,
- 	/* old_len exactly to the end of the area..
- 	 */
- 	if (old_len == vma->vm_end - addr) {
-+		unsigned long delta = new_len - old_len;
-+
- 		/* can we just expand the current mapping? */
--		if (vma_expandable(vma, new_len - old_len)) {
--			long pages = (new_len - old_len) >> PAGE_SHIFT;
--			unsigned long extension_start = addr + old_len;
--			unsigned long extension_end = addr + new_len;
--			pgoff_t extension_pgoff = vma->vm_pgoff +
--				((extension_start - vma->vm_start) >> PAGE_SHIFT);
--			VMA_ITERATOR(vmi, mm, extension_start);
-+		if (vma_expandable(vma, delta)) {
-+			long pages = delta >> PAGE_SHIFT;
-+			VMA_ITERATOR(vmi, mm, vma->vm_end);
- 			long charged = 0;
- 
- 			if (vma->vm_flags & VM_ACCOUNT) {
-@@ -1115,17 +1113,15 @@ SYSCALL_DEFINE5(mremap, unsigned long, addr, unsigned long, old_len,
- 			}
- 
- 			/*
--			 * Function vma_merge() is called on the extension we
--			 * are adding to the already existing vma, vma_merge()
--			 * will merge this extension with the already existing
--			 * vma (expand operation itself) and possibly also with
--			 * the next vma if it becomes adjacent to the expanded
--			 * vma and  otherwise compatible.
-+			 * Function vma_merge_extend() is called on the
-+			 * extension we are adding to the already existing vma,
-+			 * vma_merge_extend() will merge this extension with the
-+			 * already existing vma (expand operation itself) and
-+			 * possibly also with the next vma if it becomes
-+			 * adjacent to the expanded vma and otherwise
-+			 * compatible.
- 			 */
--			vma = vma_merge(&vmi, mm, vma, extension_start,
--				extension_end, vma->vm_flags, vma->anon_vma,
--				vma->vm_file, extension_pgoff, vma_policy(vma),
--				vma->vm_userfaultfd_ctx, anon_vma_name(vma));
-+			vma = vma_merge_extend(&vmi, vma, delta);
- 			if (!vma) {
- 				vm_unacct_memory(charged);
- 				ret = -ENOMEM;
 -- 
-2.42.0
-
+Mateusz Guzik <mjguzik gmail.com>
