@@ -2,39 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8873A7BDADF
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Oct 2023 14:12:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E8B37BDAE3
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Oct 2023 14:12:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376281AbjJIMMZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Oct 2023 08:12:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41138 "EHLO
+        id S1346607AbjJIMMa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Oct 2023 08:12:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32832 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346611AbjJIMLo (ORCPT
+        with ESMTP id S1376302AbjJIMLq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Oct 2023 08:11:44 -0400
+        Mon, 9 Oct 2023 08:11:46 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D533C1A7;
-        Mon,  9 Oct 2023 05:11:32 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5217BC43140;
-        Mon,  9 Oct 2023 12:11:26 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A7BD1A5;
+        Mon,  9 Oct 2023 05:11:39 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8334C433C7;
+        Mon,  9 Oct 2023 12:11:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696853492;
-        bh=sadX6jRs7DdBAThhpdGK2D3phr2V3dLQCMXle4b8GlY=;
+        s=k20201202; t=1696853499;
+        bh=BppDdcqjtJzUfuzafP5lgvHCeya4NknqM0BAXJ7ap7w=;
         h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-        b=ATlHVM6AZeAPwZROhTDwJAXvT1SullAlI71Vn91fpb40hH0HMjTlCj8nJbcQ3Ud3N
-         vAhVspCDOeDsjgUAUBTNGwGZTHyokcbBzVVVErlZF4gaRCHvA8132tfS0cYpyz7zso
-         71qgrkpCNYoX1KdrSBTd0nrMqNW0UrLUB3WheJ1j3Kxtod1a3ousFlJ406c1t6piU1
-         g2ElyABWAZHRc+nRTRI776ggjev9EOJbu2ipxrPSF075+9nWfWD952VGnmTcu1crg0
-         Z7YMy8L5LgmZwKM9Yix342mpSS9lneIbrD2Co0e1PKXQCoXswDTriYD68tGfTJY1IF
-         3nsQDM/pqU+/g==
+        b=nRXCf3IP04mxomb59+FPqFvNeFFferKhb4+ll7uI89/W4+e78a9mJLKf6QHmmidyZ
+         7z/5VLjrJo6vvICYH6T3MNNBcCIhgo75AlS8oAhFsH1H5oXIAIVbO2GHLOc9Eql7EU
+         RuYStvvqFpSYuwqfKGoTedCsXt9rmPTpIcWvtooljyquoQ64vzqW8B5Xu4Y9r5G/UA
+         plNxb2NEue4mStms8VLWFaRhrYwe97jxi1zX0PuJQe0xXV6B9IJkAYchVqYB3jLDBd
+         FnewL1JOM+NuyhQP2NYJZGT/0b8pkoa2zX+S21Dg32uCsDkp8n2wdKXEvkGQVMCCsg
+         L0ZVIbqvSMc2Q==
 From:   Mark Brown <broonie@kernel.org>
-Date:   Mon, 09 Oct 2023 13:08:42 +0100
-Subject: [PATCH v6 08/38] arm64/gcs: Add manual encodings of GCS
- instructions
+Date:   Mon, 09 Oct 2023 13:08:43 +0100
+Subject: [PATCH v6 09/38] arm64/gcs: Provide copy_to_user_gcs()
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20231009-arm64-gcs-v6-8-78e55deaa4dd@kernel.org>
+Message-Id: <20231009-arm64-gcs-v6-9-78e55deaa4dd@kernel.org>
 References: <20231009-arm64-gcs-v6-0-78e55deaa4dd@kernel.org>
 In-Reply-To: <20231009-arm64-gcs-v6-0-78e55deaa4dd@kernel.org>
 To:     Catalin Marinas <catalin.marinas@arm.com>,
@@ -65,15 +64,15 @@ Cc:     "H.J. Lu" <hjl.tools@gmail.com>,
         linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-riscv@lists.infradead.org, Mark Brown <broonie@kernel.org>
 X-Mailer: b4 0.13-dev-0438c
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2577; i=broonie@kernel.org;
- h=from:subject:message-id; bh=sadX6jRs7DdBAThhpdGK2D3phr2V3dLQCMXle4b8GlY=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBlI+2X6KvSDevFmNU73sRXi3dVSic6kb7utwq77DtU
- O9AtxbeJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZSPtlwAKCRAk1otyXVSH0PJzB/
- 9bjtfdH/kreNste9Rhszz++5TtrXwaf+/u3cMsmbyDsfIECxfrMIwsOBr1iJ61TV0lhBla3gTWKzee
- B7mmzi+ozphCNHbM0MDRz0F62SQzuaeuxTGQWp7rTUbtm2aMqwK3vOlXDbfkp7E1yyMaHz3Z5xh6Tw
- h8d1vRGZv5sXyZyDBBI2aiEO6lThtTrLozvtuWQ1vgfWue+wjzrq1aMDgiN8IeAW1HmSGSYmliogM6
- 532osJm9A/FjGeWX/7VE6UK1Q45iesDwGfzySGm0oNzW9Uex8YR3/NTmPzJ2zulrHA/KnIamunKmUR
- uhxZ729qwQ62A064U8mJ4OD4jGhU9v
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1292; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=BppDdcqjtJzUfuzafP5lgvHCeya4NknqM0BAXJ7ap7w=;
+ b=owGbwMvMwMWocq27KDak/QLjabUkhlTltzOS1pv1T2Ztq80/z91/JcylNk5K+4vYp581J1n+ysaV
+ t9R1MhqzMDByMciKKbKsfZaxKj1cYuv8R/NfwQxiZQKZwsDFKQAT+fyd/Z/uYTmT+1qcLE1xGh8jeb
+ hqPLTWviyYlseUlDmfQ9vbuD8gk/Pf1ojqStkZFcHrH2p1lUdbGqcYKC/RsBUN/M64lfmh38OyE3Mr
+ EnLz5fQW7Y7fWZa76o6UzRE1HqMlE3ftmxPv+HShlMf7ujvscjo+f28EMz+qyLjo+lnMmW2Hf1PxRM
+ 1+kw0JjCIbH2lJrN7LpCDYU5O4YsoaGfaQgBU9P7w5r9Y+L89lv7X2k92ETtOEVLf234Esp8UNwgUf
+ rpjy6tV++VelIc4+03NYfzsKCYXMmBfmO8H18gE5O3X/jzK6UZsO373dcnPZ0Uczlshf5j62av3F96
+ xcV1zy1ynv3fr5hcWvMqn2UsGLAA==
 X-Developer-Key: i=broonie@kernel.org; a=openpgp;
  fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -86,107 +85,47 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Define C callable functions for GCS instructions used by the kernel. In
-order to avoid ambitious toolchain requirements for GCS support these are
-manually encoded, this means we have fixed register numbers which will be
-a bit limiting for the compiler but none of these should be used in
-sufficiently fast paths for this to be a problem.
-
-Note that GCSSTTR is used to store to EL0.
+In order for EL1 to write to an EL0 GCS it must use the GCSSTTR instruction
+rather than a normal STTR. Provide a copy_to_user_gcs() which does this.
+Since it is not possible to store anything other than a 64 bit value the
+interface is presented in terms of 64 bit values, using unsigned long
+rather than u64 due to sparse.
 
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm64/include/asm/gcs.h     | 51 ++++++++++++++++++++++++++++++++++++++++
- arch/arm64/include/asm/uaccess.h | 22 +++++++++++++++++
- 2 files changed, 73 insertions(+)
+ arch/arm64/include/asm/uaccess.h | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/arch/arm64/include/asm/gcs.h b/arch/arm64/include/asm/gcs.h
-new file mode 100644
-index 000000000000..7c5e95218db6
---- /dev/null
-+++ b/arch/arm64/include/asm/gcs.h
-@@ -0,0 +1,51 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (C) 2023 ARM Ltd.
-+ */
-+#ifndef __ASM_GCS_H
-+#define __ASM_GCS_H
-+
-+#include <asm/types.h>
-+#include <asm/uaccess.h>
-+
-+static inline void gcsb_dsync(void)
-+{
-+	asm volatile(".inst 0xd503227f" : : : "memory");
-+}
-+
-+static inline void gcsstr(u64 *addr, u64 val)
-+{
-+	register u64 *_addr __asm__ ("x0") = addr;
-+	register long _val __asm__ ("x1") = val;
-+
-+	/* GCSSTTR x1, x0 */
-+	asm volatile(
-+		".inst 0xd91f1c01\n"
-+		:
-+		: "rZ" (_val), "r" (_addr)
-+		: "memory");
-+}
-+
-+static inline void gcsss1(u64 Xt)
-+{
-+	asm volatile (
-+		"sys #3, C7, C7, #2, %0\n"
-+		:
-+		: "rZ" (Xt)
-+		: "memory");
-+}
-+
-+static inline u64 gcsss2(void)
-+{
-+	u64 Xt;
-+
-+	asm volatile(
-+		"SYSL %0, #3, C7, C7, #3\n"
-+		: "=r" (Xt)
-+		:
-+		: "memory");
-+
-+	return Xt;
-+}
-+
-+#endif
 diff --git a/arch/arm64/include/asm/uaccess.h b/arch/arm64/include/asm/uaccess.h
-index 14be5000c5a0..22e10e79f56a 100644
+index 22e10e79f56a..24aa804e95a7 100644
 --- a/arch/arm64/include/asm/uaccess.h
 +++ b/arch/arm64/include/asm/uaccess.h
-@@ -425,4 +425,26 @@ static inline size_t probe_subpage_writeable(const char __user *uaddr,
+@@ -445,6 +445,26 @@ static inline int gcssttr(unsigned long __user *addr, unsigned long val)
+ 	return err;
+ }
  
- #endif /* CONFIG_ARCH_HAS_SUBPAGE_FAULTS */
- 
-+#ifdef CONFIG_ARM64_GCS
-+
-+static inline int gcssttr(unsigned long __user *addr, unsigned long val)
++static inline int copy_to_user_gcs(unsigned long __user *addr,
++				   unsigned long *val,
++				   int count)
 +{
-+	register unsigned long __user *_addr __asm__ ("x0") = addr;
-+	register unsigned long _val __asm__ ("x1") = val;
-+	int err = 0;
++	int ret = -EFAULT;
++	int i;
 +
-+	/* GCSSTTR x1, x0 */
-+	asm volatile(
-+		"1: .inst 0xd91f1c01\n"
-+		"2: \n"
-+		_ASM_EXTABLE_UACCESS_ERR(1b, 2b, %w0)
-+		: "+r" (err)
-+		: "rZ" (_val), "r" (_addr)
-+		: "memory");
++	if (access_ok((char __user *)addr, count * sizeof(u64))) {
++		uaccess_ttbr0_enable();
++		for (i = 0; i < count; i++) {
++			ret = gcssttr(addr++, *val++);
++			if (ret != 0)
++				break;
++		}
++		uaccess_ttbr0_disable();
++	}
 +
-+	return err;
++	return ret;
 +}
 +
-+#endif /* CONFIG_ARM64_GCS */
-+
+ #endif /* CONFIG_ARM64_GCS */
+ 
  #endif /* __ASM_UACCESS_H */
 
 -- 
