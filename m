@@ -2,111 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ECD2E7BD77C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Oct 2023 11:46:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 657827BD7B6
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Oct 2023 11:54:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345833AbjJIJqq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Oct 2023 05:46:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52886 "EHLO
+        id S1345863AbjJIJyA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Oct 2023 05:54:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345608AbjJIJqp (ORCPT
+        with ESMTP id S1346010AbjJIJx6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Oct 2023 05:46:45 -0400
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF7548F;
-        Mon,  9 Oct 2023 02:46:42 -0700 (PDT)
-Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
-        by mx0a-0064b401.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3997oubK021800;
-        Mon, 9 Oct 2023 02:46:03 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
-         h=from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding:content-type; s=
-        PPS06212021; bh=gbKq1gtSDc+O2vuPRtkIcpNC6/iJ+SOTe8Xsyqj7Jms=; b=
-        ljCMD14xhKF/hicNBrq1JAJ9hrqpWq/3njuUvQCEc+uG9Mn7AZh8gcsE6d8ehU8Q
-        UrOQpUvrHPZoJCsaY9LiDBF2xdRBbVe7Gojix8KoLue3YlDYKbxb4fpIMagdP75I
-        1xAQ89mVDsTRHu5pz4I8L8hFX40SnS7fI++cvwFDVN7U1L7WeTPE9sDyeAWQP/x1
-        c2DEYNQ+GgPIJn4QOTe7A2Z9VYQEEXnqqTNe9RDPCh6Jwp36QHnnz+/nyHNSnJfK
-        8WFk8/GTkgyC6rDGNBfkk6EBt7LgcqRjU/9Qf9JS2o4Tfq2NWVFS3udteo6zAoui
-        5Nlf0cNhI4i2fiEBHv0zhA==
-Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
-        by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 3tk2m0he20-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Mon, 09 Oct 2023 02:46:02 -0700 (PDT)
-Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.32; Mon, 9 Oct 2023 02:46:01 -0700
-Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
- 15.1.2507.32 via Frontend Transport; Mon, 9 Oct 2023 02:45:58 -0700
-From:   Lizhi Xu <lizhi.xu@windriver.com>
-To:     <syzbot+23bc20037854bb335d59@syzkaller.appspotmail.com>
-CC:     <axboe@kernel.dk>, <brauner@kernel.org>,
-        <dave.kleikamp@oracle.com>, <hare@suse.de>, <hch@lst.de>,
-        <jack@suse.cz>, <jfs-discussion@lists.sourceforge.net>,
-        <johannes.thumshirn@wdc.com>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <shaggy@kernel.org>,
-        <syzkaller-bugs@googlegroups.com>
-Subject: [PATCH] jfs: fix log->bdev_handle null ptr deref in lbmStartIO
-Date:   Mon, 9 Oct 2023 17:45:57 +0800
-Message-ID: <20231009094557.1398920-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <0000000000005239cf060727d3f6@google.com>
-References: <0000000000005239cf060727d3f6@google.com>
+        Mon, 9 Oct 2023 05:53:58 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2A5B94
+        for <linux-fsdevel@vger.kernel.org>; Mon,  9 Oct 2023 02:53:54 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-99bdeae1d0aso789646666b.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Oct 2023 02:53:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1696845233; x=1697450033; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=4T7SYiMmv73e/6ApSex0rmCrWvfOhJoVCXxcz+wzbuc=;
+        b=LbypXGSJuMOdTrznGNDHx6X+E7YEJdZR26t1jaHPV0Y+diLy8aqcUVVEg3HuW/B8TD
+         Kfq1k1/o1GkB9VOhJAwYUkfvbPz/qn6cWfwE6chCTSYL5d4wixMKsUoy6XrXFj/IUQ1D
+         a3q84J64bC96REGU3nh5nBmBewhmAONanIF/o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696845233; x=1697450033;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4T7SYiMmv73e/6ApSex0rmCrWvfOhJoVCXxcz+wzbuc=;
+        b=KAJvsapYkrp82PZJVMq+IpD0VCa/3VwfOpSq4QLAOLyJ1d59TNv9mAGfztnceqrTUL
+         NMx3y8/G5QgQcfr9884wdV9OaDyyKze/nIvgDom7Il1XoPB59P8QyaiiHDbI+HH45pEE
+         gkSBpEUhHWj/vEiF9xM5eLpDTdSwUSdA5hj+QQ2QLaIPHcfw6th1B2nvHN05Yi+babJ5
+         aFidB9sexaTm8Ms+mmFat/ceY3nf997WBmioWKaen9Wuuveg07nw7tkmf1VUL/y4UQPv
+         SO7MUqwnt+rnPSfDOC43zVt6TZFrdtvw4k1m71v7sM9PkVJNNZPrK2XOUDR6c+SMnw5n
+         lEIQ==
+X-Gm-Message-State: AOJu0YxLSgIEDzvgxwl4/mEUYxAeHWQ/R1K7J3ilT4nxrGSxX9UyqOET
+        CKd4G/WhzUsd/qc6pUV1gT2EAmo9fRizOgNCrCvm/w==
+X-Google-Smtp-Source: AGHT+IEgbSJiw0YRjct9A5M3oGPxrc3SeoYEiRYma6nvL+Ft3EmwrAayn12DJZbSu3u6DQb7E+y/HFiNukzI0BPBIjY=
+X-Received: by 2002:a17:906:ce:b0:9a6:426f:7dfd with SMTP id
+ 14-20020a17090600ce00b009a6426f7dfdmr11590275eji.66.1696845233260; Mon, 09
+ Oct 2023 02:53:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: tFDM0zeFcUxp2M-7km3gquoA9XDeWls_
-X-Proofpoint-ORIG-GUID: tFDM0zeFcUxp2M-7km3gquoA9XDeWls_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-10-09_08,2023-10-06_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
- adultscore=0 suspectscore=0 phishscore=0 clxscore=1011 lowpriorityscore=0
- bulkscore=0 mlxlogscore=716 impostorscore=0 priorityscore=1501
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2309180000 definitions=main-2310090080
-X-Spam-Status: No, score=0.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        RCVD_IN_MSPIKE_H2,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no
-        autolearn_force=no version=3.4.6
+References: <20231005203030.223489-1-vgoyal@redhat.com>
+In-Reply-To: <20231005203030.223489-1-vgoyal@redhat.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 9 Oct 2023 11:53:42 +0200
+Message-ID: <CAJfpegspVnkXAa5xfvjEQ9r5__vXpcgR4qubdG8=p=aiS2goRg@mail.gmail.com>
+Subject: Re: [PATCH] virtiofs: Export filesystem tags through sysfs
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
+        stefanha@redhat.com, mzxreary@0pointer.de, gmaglione@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When sbi->flag is JFS_NOINTEGRITY in lmLogOpen(), log->bdev_handle can't
-be inited, so it value will be NULL.
-Therefore, add the "log ->no_integrity=1" judgment in lbmStartIO() to avoid such
-problems.
+On Thu, 5 Oct 2023 at 22:30, Vivek Goyal <vgoyal@redhat.com> wrote:
+>
+> virtiofs filesystem is mounted using a "tag" which is exported by the
+> virtiofs device. virtiofs driver knows about all the available tags but
+> these are not exported to user space.
+>
+> People have asked these tags to be exported to user space. Most recently
+> Lennart Poettering has asked for it as he wants to scan the tags and mount
+> virtiofs automatically in certain cases.
+>
+> https://gitlab.com/virtio-fs/virtiofsd/-/issues/128
+>
+> This patch exports tags through sysfs. One tag is associated with each
+> virtiofs device. A new "tag" file appears under virtiofs device dir.
+> Actual filesystem tag can be obtained by reading this "tag" file.
+>
+> For example, if a virtiofs device exports tag "myfs", a new file "tag"
+> will show up here.
+>
+> /sys/bus/virtio/devices/virtio<N>/tag
+>
+> # cat /sys/bus/virtio/devices/virtio<N>/tag
+> myfs
+>
+> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
 
-Reported-and-tested-by: syzbot+23bc20037854bb335d59@syzkaller.appspotmail.com
-Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
----
- fs/jfs/jfs_logmgr.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Hi Vivek,
 
-diff --git a/fs/jfs/jfs_logmgr.c b/fs/jfs/jfs_logmgr.c
-index c911d838b8ec..c41a76164f84 100644
---- a/fs/jfs/jfs_logmgr.c
-+++ b/fs/jfs/jfs_logmgr.c
-@@ -2110,10 +2110,14 @@ static void lbmStartIO(struct lbuf * bp)
- {
- 	struct bio *bio;
- 	struct jfs_log *log = bp->l_log;
-+	struct block_device *bdev = NULL;
- 
- 	jfs_info("lbmStartIO");
- 
--	bio = bio_alloc(log->bdev_handle->bdev, 1, REQ_OP_WRITE | REQ_SYNC,
-+	if (!log->no_integrity) 
-+		bdev = log->bdev_handle->bdev;	
-+
-+	bio = bio_alloc(bdev, 1, REQ_OP_WRITE | REQ_SYNC,
- 			GFP_NOFS);
- 	bio->bi_iter.bi_sector = bp->l_blkno << (log->l2bsize - 9);
- 	__bio_add_page(bio, bp->l_page, LOGPSIZE, bp->l_offset);
--- 
-2.25.1
+This needs something under Documentation/.
 
+While the interface looks good to me, I think we need an ack on that
+from the virtio maintainer.
+
+Thanks,
+Miklos
