@@ -2,85 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 71AB27BD1DB
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Oct 2023 04:05:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC93E7BD1DF
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Oct 2023 04:06:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344949AbjJICFg convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>); Sun, 8 Oct 2023 22:05:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46664 "EHLO
+        id S1344847AbjJICGd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 8 Oct 2023 22:06:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56138 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232937AbjJICFe (ORCPT
+        with ESMTP id S232250AbjJICGc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 8 Oct 2023 22:05:34 -0400
-Received: from mail-oi1-f197.google.com (mail-oi1-f197.google.com [209.85.167.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56F89AC
-        for <linux-fsdevel@vger.kernel.org>; Sun,  8 Oct 2023 19:05:33 -0700 (PDT)
-Received: by mail-oi1-f197.google.com with SMTP id 5614622812f47-3ae5a4f9954so6947597b6e.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 08 Oct 2023 19:05:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696817132; x=1697421932;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Cb8BJFOfJt/1KSmkcKeu7s/bXsY2CA0V26Ucc8VKgjw=;
-        b=tOJ+34G6Ap7BldlpRivTLhZMyspgWpor8x+J3dlHEhDBFORythxwYyewBYxu44V9QV
-         aboLN3R15i6Gx4EeAEu1p/v6+PM/0y10y6AXl0BqT7HDW5k9ZJDlynHkJck0WnNxunEc
-         rL1r+riAJ07IzdFLTp9ASvyTQovyOrpxN2uSFxlUa4uXOh3A8sL7vq9xGtYVZq1a2Y29
-         NY/y/Sma+X0z8TAT67elovCRe3wA1ak+QXc1O8npMtTxTB3+jW9lFNpRdPWC/Zg2tkcb
-         ZIdzxwsalJ72SoQrqKxd0ZW0lskT+q+GEjbQeaMFw/mWhoFXffmiDtcYVcj3vPPhFeq7
-         RFNA==
-X-Gm-Message-State: AOJu0YwSol1/IWNDrwwS5HZ4jOsi7UwzMWw8egdIeYGwC8YKgdVzpuru
-        2VQnSnSLgGN0LItCM3ASDZ/JC0/sUu+4BW6ih67ml+9ultZa
-X-Google-Smtp-Source: AGHT+IELFqFN7QoMVYfsIY7r0QeAGPzrcev1WXJ9FLIcjCL1sovTwvIQxukZvcnCCdk9WKGEwgiUlAPYacJT+fS5YBjM7tUk1k16
-MIME-Version: 1.0
-X-Received: by 2002:a05:6871:3208:b0:1d5:a24a:c33 with SMTP id
- mo8-20020a056871320800b001d5a24a0c33mr5413341oac.8.1696817132668; Sun, 08 Oct
- 2023 19:05:32 -0700 (PDT)
-Date:   Sun, 08 Oct 2023 19:05:32 -0700
-In-Reply-To: <0000000000001825ce06047bf2a6@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000071133306073f06ca@google.com>
-Subject: Re: [syzbot] [reiserfs?] possible deadlock in super_lock
-From:   syzbot <syzbot+062317ea1d0a6d5e29e7@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, brauner@kernel.org, chao@kernel.org,
-        daniel.vetter@ffwll.ch, hdanton@sina.com, jack@suse.cz,
-        jaegeuk@kernel.org, jinpu.wang@ionos.com,
-        linux-f2fs-devel@lists.sourceforge.net,
+        Sun, 8 Oct 2023 22:06:32 -0400
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3941A4;
+        Sun,  8 Oct 2023 19:06:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=H5J+pmpFJHpxWCN2Cnr5r60MCY9gzXDOvF8T3SwV1Go=; b=hyYaB/z01CgwAt7Psmq4R1on5s
+        iTtr+FrM7Qrk7IatWIFutWDQLxBhJQtboPbJry/v0FwDGehndXK29cnxQfJBYo08awDUw2vYjWOkk
+        qSObyb3r9mn99hHK+jdvdpODlffmEPp/7Wb/jtrc0r/QIVqG+O5bqcOxfVIl1ckKrxIrbn5u8ppXq
+        p7Rjz5kEGq0TwCGhwLOzjv2nfULNuir08PMEURmWARjA1Lx4jyXatACshNZMYdAe+hmmv2xeYlZwY
+        DoOu7Lh18lAw+B0/5jcPGDnBjdrrjX/NtyS/OciWoPsRiyEAn2fvmtX5B2Yr8k4M64C9z8p+AFf6P
+        uQgvLVkg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1qpff5-00H42P-1B;
+        Mon, 09 Oct 2023 02:06:23 +0000
+Date:   Mon, 9 Oct 2023 03:06:23 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Luis Henriques <lhenriques@suse.de>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mairacanal@riseup.net, mcanal@igalia.com,
-        reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        terrelln@fb.com, willy@infradead.org, yukuai3@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-        version=3.4.6
+        io-uring@vger.kernel.org
+Subject: Re: [RFC PATCH] fs: add AT_EMPTY_PATH support to unlinkat()
+Message-ID: <20231009020623.GB800259@ZenIV>
+References: <20230929140456.23767-1-lhenriques@suse.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230929140456.23767-1-lhenriques@suse.de>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has bisected this issue to:
+On Fri, Sep 29, 2023 at 03:04:56PM +0100, Luis Henriques wrote:
 
-commit 7908632f2927b65f7486ae6b67c24071666ba43f
-Author: Maíra Canal <mcanal@igalia.com>
-Date:   Thu Sep 14 10:19:02 2023 +0000
+> -int do_unlinkat(int dfd, struct filename *name)
+> +int do_unlinkat(int dfd, struct filename *name, int flags)
+>  {
+>  	int error;
+> -	struct dentry *dentry;
+> +	struct dentry *dentry, *parent;
+>  	struct path path;
+>  	struct qstr last;
+>  	int type;
+>  	struct inode *inode = NULL;
+>  	struct inode *delegated_inode = NULL;
+>  	unsigned int lookup_flags = 0;
+> -retry:
+> -	error = filename_parentat(dfd, name, lookup_flags, &path, &last, &type);
+> -	if (error)
+> -		goto exit1;
+> +	bool empty_path = (flags & AT_EMPTY_PATH);
+>  
+> -	error = -EISDIR;
+> -	if (type != LAST_NORM)
+> -		goto exit2;
+> +retry:
+> +	if (empty_path) {
+> +		error = filename_lookup(dfd, name, 0, &path, NULL);
+> +		if (error)
+> +			goto exit1;
+> +		parent = path.dentry->d_parent;
+> +		dentry = path.dentry;
+> +	} else {
+> +		error = filename_parentat(dfd, name, lookup_flags, &path, &last, &type);
+> +		if (error)
+> +			goto exit1;
+> +		error = -EISDIR;
+> +		if (type != LAST_NORM)
+> +			goto exit2;
+> +		parent = path.dentry;
+> +	}
+>  
+>  	error = mnt_want_write(path.mnt);
+>  	if (error)
+>  		goto exit2;
+>  retry_deleg:
+> -	inode_lock_nested(path.dentry->d_inode, I_MUTEX_PARENT);
+> -	dentry = lookup_one_qstr_excl(&last, path.dentry, lookup_flags);
+> +	inode_lock_nested(parent->d_inode, I_MUTEX_PARENT);
+> +	if (!empty_path)
+> +		dentry = lookup_one_qstr_excl(&last, parent, lookup_flags);
 
-    Revert "drm/vkms: Fix race-condition between the hrtimer and the atomic commit"
+For starters, your 'parent' might have been freed under you, just as you'd
+been trying to lock its inode.  Or it could have become negative just as you'd
+been fetching its ->d_inode, while we are at it.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17fc0565680000
-start commit:   2cf0f7156238 Merge tag 'nfs-for-6.6-2' of git://git.linux-..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=14020565680000
-console output: https://syzkaller.appspot.com/x/log.txt?x=10020565680000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=710dc49bece494df
-dashboard link: https://syzkaller.appspot.com/bug?extid=062317ea1d0a6d5e29e7
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=107e9518680000
+Races aside, you are changing permissions required for removing files.  For
+unlink() you need to be able to get to the parent directory; if it's e.g.
+outside of your namespace, you can't do anything to it.  If file had been
+opened there by somebody who could reach it and passed to you (via SCM_RIGHTS,
+for example) you currently can't remove the sucker.  With this change that
+is no longer true.
 
-Reported-by: syzbot+062317ea1d0a6d5e29e7@syzkaller.appspotmail.com
-Fixes: 7908632f2927 ("Revert "drm/vkms: Fix race-condition between the hrtimer and the atomic commit"")
+The same goes for the situation when file is bound into your namespace (or
+chroot jail, for that matter).  path.dentry might very well be equal to
+root of path.mnt; path.dentry->d_parent might be in part of tree that is
+no longer visible *anywhere*.  rmdir() should not be able to do anything
+with it...
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+IMO it's fundamentally broken; not just implementation, but the concept
+itself.
+
+NAKed-by: Al Viro <viro@zeniv.linux.org.uk>
