@@ -2,105 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A767D7BEA27
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Oct 2023 20:53:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0FCB7BEACF
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Oct 2023 21:45:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378233AbjJISxV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Oct 2023 14:53:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46186 "EHLO
+        id S234565AbjJITp2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Oct 2023 15:45:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378237AbjJISxT (ORCPT
+        with ESMTP id S234568AbjJITp0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Oct 2023 14:53:19 -0400
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AFE6B4;
-        Mon,  9 Oct 2023 11:53:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=B+aCRv+cYfcjMprkaIjsVznZpDwZanWLGMURzn+VRao=; b=M+xQB3qSAS3zQPFeJiJlUv0jLd
-        MAGDkccQTEr3MLwGXKgDPSdN+CHP0fP6ljdlspEf0Scw8HnE77un3TLK8zTvLO1rCCFS7qM8+V8zm
-        DcDSC8pjNYvcgw88r8zE03y/QbWK7z3EjzM+dvOgay3df+Bz5Wu4m6BOZQD6xE9OrI4cTKCld9xUU
-        bKC3B1YeRijMtciU+WPauzMQfTkeX5WG1/7zuAbu3fnU8IB93EJyq33u5RCzAAE4rMFYrlvEKoMH7
-        P7EgWTNC+Jkc3oG4Qt7lpLEvxQnpvF4ya6GgynzNmiFdUMA+nkRkYvIfrk78QtDd582Q8UJopOrTJ
-        anU0spQg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1qpvNL-00HHRV-2f;
-        Mon, 09 Oct 2023 18:53:08 +0000
-Date:   Mon, 9 Oct 2023 19:53:07 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] fs: store real path instead of fake path in
- backing file f_path
-Message-ID: <20231009185307.GI800259@ZenIV>
-References: <20231007084433.1417887-1-amir73il@gmail.com>
- <20231007084433.1417887-4-amir73il@gmail.com>
- <20231009074809.GH800259@ZenIV>
- <CAOQ4uxhSEDF8G8_7Zr+OnMq7miNen6O=AXQV1-xAs7ABvXs0Mg@mail.gmail.com>
+        Mon, 9 Oct 2023 15:45:26 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 204FF94
+        for <linux-fsdevel@vger.kernel.org>; Mon,  9 Oct 2023 12:45:22 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-9adca291f99so836923066b.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Oct 2023 12:45:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1696880720; x=1697485520; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=i9IoVUFnZqWRaCM70mDq121GEnQ6kFXLINjENnMWdgE=;
+        b=ee5uvAT80fSxSRtYDeyvxEuQ7zXOl8wdW0kO70gd08D47hzkRd+3mbkEUekmJUq06D
+         8q777oRQSHZ6op/ZWJCsNQZHdOoWUoWw7duI1oSVMIVq6M0NdKQzZqs6MGy5XSqr2EmX
+         BbA+2lv6IrYcf5dVP2Pc+icl6wM6wxHnu4EFI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696880720; x=1697485520;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=i9IoVUFnZqWRaCM70mDq121GEnQ6kFXLINjENnMWdgE=;
+        b=nUZeBp/QagtQex9Y/UCS1+EPrmfxqsg9AT//IPHSX9TjfTW0F92qcCDxRZ+5wOWMhS
+         171cmmS1xzbeY8YFugWl1FUJYr7gWcd7evAUyL001drvPLFegw+UAqRiNMmBrySgg9UF
+         VK/TCnaMJVekQv2wMmtt+V6txiQ0tbpqpf+A34EnsL7NjbiuEoZEIy5p8yc1bQsnMYyd
+         RdVsL0p5340zWYd8Qfz7T4kuIOE+Qk8he8EnJNYvPXWOLCisELzqTmJUnGS3KEE8+K1T
+         wGMVgJpHEndjgKt21AR2uQVdo5Yg3HL1658bojG+R/AFivq30T8deYoIiiKkdvGCpjNX
+         jM+w==
+X-Gm-Message-State: AOJu0Yy/chf9ofdQ64OTr3GzXWVFrq2wTnaHj6gruq0a835odn83nz6J
+        1zW8pS0QcnB8eIKfDX6KPCyTI5nPETNCmzKaQsl6UA==
+X-Google-Smtp-Source: AGHT+IE9/+jcV6HV7HriuNXF+o7ki9IxeNc8WkeAHgY0RIJH0VhVY2+4Rx5D1jMrroc6t+20is5KxtXPiyekxAgUTkw=
+X-Received: by 2002:a17:906:1db2:b0:9ba:2b14:44fb with SMTP id
+ u18-20020a1709061db200b009ba2b1444fbmr2323048ejh.47.1696880720133; Mon, 09
+ Oct 2023 12:45:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxhSEDF8G8_7Zr+OnMq7miNen6O=AXQV1-xAs7ABvXs0Mg@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+References: <cover.1696043833.git.kjlx@templeofstupid.com> <45778432fba32dce1fb1f5fd13272c89c95c3f52.1696043833.git.kjlx@templeofstupid.com>
+In-Reply-To: <45778432fba32dce1fb1f5fd13272c89c95c3f52.1696043833.git.kjlx@templeofstupid.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 9 Oct 2023 21:45:08 +0200
+Message-ID: <CAJfpegtOdqeK34CYvBTuVwOzcyZG8hnusiYO05JdbATOxfVMOg@mail.gmail.com>
+Subject: Re: [resend PATCH v2 2/2] fuse: ensure that submounts lookup their parent
+To:     Krister Johansen <kjlx@templeofstupid.com>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        linux-kernel@vger.kernel.org,
+        German Maglione <gmaglione@redhat.com>,
+        Greg Kurz <groug@kaod.org>, Max Reitz <mreitz@redhat.com>,
+        Bernd Schubert <bernd.schubert@fastmail.fm>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 09, 2023 at 11:25:38AM +0300, Amir Goldstein wrote:
+On Mon, 2 Oct 2023 at 17:24, Krister Johansen <kjlx@templeofstupid.com> wrote:
+>
+> The submount code uses the parent nodeid passed into the function in
+> order to create the root dentry for the new submount.  This nodeid does
+> not get its remote reference count incremented by a lookup option.
+>
+> If the parent inode is evicted from its superblock, due to memory
+> pressure for example, it can result in a forget opertation being sent to
+> the server.  Should this nodeid be forgotten while it is still in use in
+> a submount, users of the submount get an error from the server on any
+> subsequent access.  In the author's case, this was an EBADF on all
+> subsequent operations that needed to reference the root.
+>
+> Debugging the problem revealed that the dentry shrinker triggered a forget
+> after killing the dentry with the last reference, despite the root
+> dentry in another superblock still using the nodeid.
 
-> It's not important. I don't mind dropping it.
-> 
-> If you dislike that name f_path(), I guess you are not a fan of
-> d_inode() either...
+There's some context missing here.  There are two dentries: a mount
+point in the parent mount and the root of the submount.
 
-In case of d_inode() there's an opposition between d_inode() and
-d_inode_rcu(), and that bears useful information.  In case of
-f_path()...
+The server indicates that the looked up inode is a submount using
+FUSE_ATTR_SUBMOUNT.  Then AFAICS the following happens:
 
-> FYI, I wanted to do a file_path() accessor to be consistent with
-> file_inode() and file_dentry(), alas file_path() is used for something
-> completely different.
-> 
-> I find it confusing that {file,dentry,d}_path() do not return a path
-> but a path string, but whatever.
+ 1) the mountpoint dentry is created with nlookup = 1.  The
+S_AUTOMOUNT flag is set on the mountpoint inode.
 
-*blink*
+ 2) the lookup code sees S_AUTOMOUNT and triggers the submount
+operation, which sets up the new super_block and the root dentry with
+the user supplied nodeid and with nlookup = 0 (because it wasn't
+actually looked up).
 
-How would one possibly produce struct path (i.e. mount/dentry pair)
-out of dentry?
+How the automount gets torn down is another story.  You say that the
+mount point gets evicted due to memory pressure.  But it can't get
+evicted while the submount is attached.  So the submount must first
+get detached, and then the mount point can be reclaimed.   The
+question is:  how does the submount gets detached.  Do you have an
+idea?
 
-Anyway, I admit that struct path hadn't been a great name to start with;
-it's basically "location in namespace", and it clashes with the use of
-the same word for "string interpreted to get a location in namespace".
-
-Originally it's been just in the pathname resolution internals; TBH,
-I don't remember I had specific plans regarding converting such
-pairs (a plenty of those in the tree at the time) back then.
-<checks the historical tree>
-<checks old mail archives>
-
-Probably hopeless to reconstruct the details, I'm afraid - everything
-else aside, the timestamps in that patch are in the first half of
-the day on Apr 29 2002; (hopefully) tested and sent out at about
-6pm.  Followed by sitting down for birthday celebration, of all things,
-so the details of rationale for name choice would probably be hard
-to recover on the next morning, nevermind 21 years later ;-)
-
-Bringing it out of fs/namei.c (into include/linux/namei.h) had happened
-in late 2006 (by Jeff Sipek) and after that it was too late to change
-the name; I'm still not sure what name would be good for that, TBH...
+Thanks,
+Miklos
