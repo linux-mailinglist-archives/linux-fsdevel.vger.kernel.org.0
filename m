@@ -2,113 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 07B167BEDF9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Oct 2023 00:02:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E05587BEE8E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Oct 2023 00:54:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378748AbjJIWC6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Oct 2023 18:02:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60872 "EHLO
+        id S1378945AbjJIWyA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Oct 2023 18:54:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378321AbjJIWC5 (ORCPT
+        with ESMTP id S1378964AbjJIWx4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Oct 2023 18:02:57 -0400
-Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8916F9E
-        for <linux-fsdevel@vger.kernel.org>; Mon,  9 Oct 2023 15:02:56 -0700 (PDT)
-Received: by mail-pf1-x42a.google.com with SMTP id d2e1a72fcca58-690ce3c55f1so3692686b3a.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Oct 2023 15:02:56 -0700 (PDT)
+        Mon, 9 Oct 2023 18:53:56 -0400
+Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA9289D
+        for <linux-fsdevel@vger.kernel.org>; Mon,  9 Oct 2023 15:53:52 -0700 (PDT)
+Received: by mail-yb1-xb2e.google.com with SMTP id 3f1490d57ef6-d9a50ac5eabso332273276.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Oct 2023 15:53:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1696888976; x=1697493776; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FbRz1UHmb7XUmCqoAt2aiODWlREyMNkavGrCa5bn36A=;
-        b=MZMZEj7zdsBoJQlEqyQ7v1u73ywMatHnYxtzMTLOIChOW5Fj5hbsue8BCDnwZxtqcQ
-         Kg+DivpcL9YfAptxhH8yBJ1QRQvqUx0k4LOax7iqK/dELisMRFbtBkUqtrtY47lZ+ofy
-         DGm8KhkoYBL5jytjoP/T80KHYkA5DyDw0wbhfOBiZ74IUgR7mwfVq35XMRjYwhfdJeTb
-         O0MlsmOH5kEpAoBcmicazdkPWXfIlXgrE+3XEi02pKf0KPAfCQ7//DufBBPsRP1ceV4x
-         h9xi5Hslq6LovCeR5XflppE5Ctm7zCmejNMN3aBsgvGKiAd9KCHi9Q0hwBn+IFLL63fB
-         Rr7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696888976; x=1697493776;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=paul-moore.com; s=google; t=1696892031; x=1697496831; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=FbRz1UHmb7XUmCqoAt2aiODWlREyMNkavGrCa5bn36A=;
-        b=fiP+9q3qG6tuaudA3fIrD8DOsbhxlRMdqNs3cst/4XMWC5d/6Z1Qzk4/ClVMkzU0Fa
-         A0ZrxyOT8ZeZ4Fi0WA/R7RenVAVrktW/JKLDjdYggI9IKZssJN+zjyheSoUFVu+9bLsm
-         1wmL3k5SFTBsbkpPqjWPqGMqzAHvtPgNJhrA3vxPmzldl952zmycdKPDFyjUa5wmxIkJ
-         SePnoGdn2DUnck6vxfIHmS+pZP0akNh4rg4GT8LtcSgtJ8GWKeuHe6zDtUNaFEcnmDj7
-         /CC5QpwSMAv6M/vUwg8RmPDn5Duzuyi5QCI5GWwFOTxgLWcd5SRUTlUG7EHzq4+5VIZW
-         I98g==
-X-Gm-Message-State: AOJu0YzjiFy5DGLO0HGBHb57v1qh5V9Vu0acnh0IoeXVd3i7losqa9nt
-        t2xMaSS1STvegngSuJIJ6XOY0Q==
-X-Google-Smtp-Source: AGHT+IEpkt3G98AV4FGoCDMDB+5clUh7WiyyCdUTYHTZBvPKYhyU/1ce58WV9ik5NuXYhsQyrBkPyg==
-X-Received: by 2002:a05:6a20:734b:b0:166:6582:a7d5 with SMTP id v11-20020a056a20734b00b001666582a7d5mr16692295pzc.3.1696888976074;
-        Mon, 09 Oct 2023 15:02:56 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-20-59.pa.nsw.optusnet.com.au. [49.180.20.59])
-        by smtp.gmail.com with ESMTPSA id h21-20020a62b415000000b00682868714fdsm7023146pfn.95.2023.10.09.15.02.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Oct 2023 15:02:55 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-        (envelope-from <david@fromorbit.com>)
-        id 1qpyKz-00BhaC-06;
-        Tue, 10 Oct 2023 09:02:53 +1100
-Date:   Tue, 10 Oct 2023 09:02:53 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Jeremy Bongio <jbongio@google.com>
-Cc:     John Garry <john.g.garry@oracle.com>, axboe@kernel.dk,
-        kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
-        jejb@linux.ibm.com, martin.petersen@oracle.com, djwong@kernel.org,
-        viro@zeniv.linux.org.uk, brauner@kernel.org,
-        chandan.babu@oracle.com, dchinner@redhat.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, tytso@mit.edu,
-        linux-api@vger.kernel.org,
-        Prasad Singamsetty <prasad.singamsetty@oracle.com>
-Subject: Re: [PATCH 04/21] fs: Add RWF_ATOMIC and IOCB_ATOMIC flags for
- atomic write support
-Message-ID: <ZSR4jeSKlppLWjQy@dread.disaster.area>
-References: <20230929102726.2985188-1-john.g.garry@oracle.com>
- <20230929102726.2985188-5-john.g.garry@oracle.com>
- <CAOvQCn6zeHGiyfC_PH_Edop-JsMh1gUD8WL84R9oPanxOaxrsA@mail.gmail.com>
+        bh=nAItUfujL+mWM9AjntNyz6dEI1LC27fi7NkwloZDHY0=;
+        b=P3AP2K7x2UukO6qS5KFMowt6zx012uVQtz0+IFTGvEOQgZ6bQ/XIPVskKIcWeUEkIs
+         zagAWqFNIsj0sVamXPwgYmGGy04N7Rb0/gMMWN39Pl5EgnHcm/vE+MLGxVKeXj3ZpBSt
+         wCE07Qhr3+9rHrwAcVU4JCPICnh7LynR9du4y0AOR0kCOVLOKeBAfv0w2etD8FKgnrE2
+         IF80gHWcZ5G8zaLCZngezMcxB/nCRR7S4NNnEy4Jdre84F/tElyPuyPqHm0B82oFN8vd
+         TgvoqMMKHyyH2GikKGlnvWCErOhMNnQ5YEsIdqCvhGnwtxsRs2VG+61uMLj++iF4nl4u
+         M/3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696892031; x=1697496831;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nAItUfujL+mWM9AjntNyz6dEI1LC27fi7NkwloZDHY0=;
+        b=BZV5u7pZe6k/eJTfCk3lhqabFECcSkufT6oT8P1NncuN2T45uUT3SWDnT531WqmIjd
+         rhL3QTApUA/MFt8D8uVaMmS4z+g5XzNiU5ACBOk9VXYLMQDPerMrcNpVRJx36dyIzZpP
+         w1CWwYavTLFIfsrOBA6V5+tiApyu70ww28sPWmylSRHbXybYyAJYiP9oTe7+GGNNttWo
+         DOpUXSVogYZGVXHTsKhQtJbiWxeR0P34muPQMMfWY8E9wOdkdmet5B41YliNpWPjWQ7R
+         X/Gl5FTubO1sh6WBNLXowVCzHs47IW++dvgd9sigjez6g6eerViuAEkDFYR7LnDB2+2j
+         ZzBQ==
+X-Gm-Message-State: AOJu0YzEb+Fg593Nw07+2Qo+IlczaPqg8dg80St1lqaXe64O4Mxx0Xgn
+        R00InIiftr+4VLYgORSUxO8dodzT8iYaVBHVDws7
+X-Google-Smtp-Source: AGHT+IEPiXf9wuTcoTK3FORZIR49aCFr3p9oLJrFSqR5cezvxqmIqJ9VXVN+Ozcg5dWNg6hXIiJg/XsmuoYE2AW0rNM=
+X-Received: by 2002:a5b:151:0:b0:d81:8da3:348e with SMTP id
+ c17-20020a5b0151000000b00d818da3348emr14341516ybp.41.1696892031418; Mon, 09
+ Oct 2023 15:53:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOvQCn6zeHGiyfC_PH_Edop-JsMh1gUD8WL84R9oPanxOaxrsA@mail.gmail.com>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20230919214800.3803828-1-andrii@kernel.org> <20230919214800.3803828-4-andrii@kernel.org>
+ <20230926-augen-biodiesel-fdb05e859aac@brauner> <CAEf4BzaH64kkccc1P-hqQj6Mccr3Q6x059G=A95d=KfU=yBMJQ@mail.gmail.com>
+ <20230927-kaution-ventilator-33a41ee74d63@brauner> <CAEf4BzZ2a7ZR75ka6bjXex=qrf9bQBEyDBN5tPtkfWbErhuOTw@mail.gmail.com>
+In-Reply-To: <CAEf4BzZ2a7ZR75ka6bjXex=qrf9bQBEyDBN5tPtkfWbErhuOTw@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 9 Oct 2023 18:53:40 -0400
+Message-ID: <CAHC9VhTTzOCo8PL_wV=TwXHDjr7BymESMq8G1WQvsXnrw627uw@mail.gmail.com>
+Subject: Re: [PATCH v5 bpf-next 03/13] bpf: introduce BPF token object
+To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+        netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keescook@chromium.org,
+        lennart@poettering.net, kernel-team@meta.com, sargun@sargun.me
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 06, 2023 at 11:15:11AM -0700, Jeremy Bongio wrote:
-> What is the advantage of using write flags instead of using an atomic
-> open flag (O_ATOMIC)? With an open flag, write, writev, pwritev would
-> all be supported for atomic writes. And this would potentially require
-> less application changes to take advantage of atomic writes.
+On Wed, Sep 27, 2023 at 12:03=E2=80=AFPM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
+> On Wed, Sep 27, 2023 at 2:52=E2=80=AFAM Christian Brauner <brauner@kernel=
+.org> wrote:
 
-Atomic writes are not a property of the file or even the inode
-itself, they are an attribute of the specific IO being issued by
-the application.
+...
 
-Most applications that want atomic writes are using it as a
-performance optimisation. They are likely already using DIO with
-either AIO, pwritev2 or io_uring and so are already using the
-interfaces that support per-IO attributes. Not every IO to every
-file needs to be atomic, so a per-IO attribute makes a lot of sense
-for these applications.
+> > IOW, everything stays the same apart from the fact that bpf token fds
+> > are actually file descriptors referring to a detached bpffs file instea=
+d
+> > of an anonymous inode file. IOW, bpf tokens are actual bpffs objects
+> > tied to a bpffs instance.
+>
+> Ah, ok, this is a much smaller change than what I was about to make.
+> I'm glad I asked and thanks for elaborating! I'll use
+> alloc_file_pseudo() using bpffs mount in the next revision.
 
-Add to that that implementing atomic IO semantics in the generic IO
-paths (e.g. for buffered writes) is much more difficult. It's
-not an unsolvable problem (especially now with high-order folio
-support in the page cache), it's just way outside the scope of this
-patchset.
+Just a FYI, I'm still looking at v6 now, but moving from an anon_inode
+to a bpffs inode may mean we need to drop a LSM hook in
+bpf_token_create() to help mark the inode as a BPF token.  Not a big
+deal either way, and I think it makes sense to use a bpffs inode as
+opposed to an anonymous inode, just wanted to let you know.
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+--=20
+paul-moore.com
