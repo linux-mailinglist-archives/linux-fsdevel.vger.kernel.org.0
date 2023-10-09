@@ -2,54 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EE4E7BE37B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Oct 2023 16:49:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCA637BE453
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Oct 2023 17:15:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344542AbjJIOti (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Oct 2023 10:49:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45312 "EHLO
+        id S1376628AbjJIPPN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Oct 2023 11:15:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36778 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234545AbjJIOth (ORCPT
+        with ESMTP id S1377784AbjJIPOi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Oct 2023 10:49:37 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E10A4A3;
-        Mon,  9 Oct 2023 07:49:36 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2C75C433C8;
-        Mon,  9 Oct 2023 14:49:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696862976;
-        bh=MSivuo8AKmLVLL5BhIEYGzpxs7sNu4scT3T+p4zcemc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=arSRzQASZCM61uyG5UNNz0oX5n+yrneIH1O4kajySq+txAE5n7374cLDr4YU+donp
-         Pu2A0W/6GYgakZhpZKz6uc5tqfI6zE9SoMUMnrSsgZ8gwMAXucX1WrEwrr2sCn51Vg
-         eMk1tejZZ8PEQAwGGeS5o7tdvc2mVBAHg8K0hvDRbk/IAgp+dAh7H8W/dpUxCUhISi
-         +Yf3emEUX/VnwzprwkSWlgnuxPSF6OMtnxqVgQYuTM0/C2qD7hagnM5gILiL6TSLAp
-         mzluUf9RJm79G+L4Fr066DkxQmlv3LZHAz78TA4RsUXQ2z61JbcnpjVg2RsAIpvVHC
-         9MHKddnlx8oqQ==
-Date:   Mon, 9 Oct 2023 15:49:29 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Joey Gouly <joey.gouly@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, nd@arm.com,
-        akpm@linux-foundation.org, aneesh.kumar@linux.ibm.com,
-        catalin.marinas@arm.com, dave.hansen@linux.intel.com,
-        maz@kernel.org, oliver.upton@linux.dev, shuah@kernel.org,
-        will@kernel.org, kvmarm@lists.linux.dev,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v1 15/20] arm64: add POE signal support
-Message-ID: <9fd11f36-3987-4f45-94be-7cf89a05ad04@sirena.org.uk>
-References: <20230927140123.5283-1-joey.gouly@arm.com>
- <20230927140123.5283-16-joey.gouly@arm.com>
- <a6e6c8a3-15b1-48e3-84fa-810ce575c09a@sirena.org.uk>
+        Mon, 9 Oct 2023 11:14:38 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFD41D44;
+        Mon,  9 Oct 2023 08:14:29 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 9B7CD1F381;
+        Mon,  9 Oct 2023 15:14:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1696864468; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=CLQol6nlWPwTWlJ62M8BQmpCS583VclEcykOVZNn9HE=;
+        b=qEUirXlluiMX2wLDqE9aFtf+614pyDW5IBKwHK+QCUvxoir0KHuf7DSyrjgVLPoc+ZF6hv
+        fisVaDh/fVtdrkHwnkI/D9hrKnAwaoGVW9H8zmV9S13mmx2V+d3nCc3nrORQgEWW3YzH9c
+        zeGrdplae++gBP+S6ohv3Cu3sb2kPW4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1696864468;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=CLQol6nlWPwTWlJ62M8BQmpCS583VclEcykOVZNn9HE=;
+        b=sdhFgP8Y1aXrvoJ1Yr2wSi2wpOYI85IfxP55MFg4JIdSnIgiNL0zSdWK1qglFFj+5bbOhl
+        zpapeBn+SHHfSHDg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 26A9D13905;
+        Mon,  9 Oct 2023 15:14:28 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id TWrOBtQYJGX/KAAAMHmgww
+        (envelope-from <lhenriques@suse.de>); Mon, 09 Oct 2023 15:14:28 +0000
+Received: from localhost (brahms.olymp [local])
+        by brahms.olymp (OpenSMTPD) with ESMTPA id b29327c4;
+        Mon, 9 Oct 2023 15:14:27 +0000 (UTC)
+From:   Luis Henriques <lhenriques@suse.de>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        io-uring@vger.kernel.org
+Subject: Re: [RFC PATCH] fs: add AT_EMPTY_PATH support to unlinkat()
+In-Reply-To: <20231009020623.GB800259@ZenIV> (Al Viro's message of "Mon, 9 Oct
+        2023 03:06:23 +0100")
+References: <20230929140456.23767-1-lhenriques@suse.de>
+        <20231009020623.GB800259@ZenIV>
+Date:   Mon, 09 Oct 2023 16:14:27 +0100
+Message-ID: <87lecbrfos.fsf@suse.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="nmKS1l7Zjsd4RYgP"
-Content-Disposition: inline
-In-Reply-To: <a6e6c8a3-15b1-48e3-84fa-810ce575c09a@sirena.org.uk>
-X-Cookie: What is the sound of one hand clapping?
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -57,37 +78,91 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Al Viro <viro@zeniv.linux.org.uk> writes:
 
---nmKS1l7Zjsd4RYgP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> On Fri, Sep 29, 2023 at 03:04:56PM +0100, Luis Henriques wrote:
+>
+>> -int do_unlinkat(int dfd, struct filename *name)
+>> +int do_unlinkat(int dfd, struct filename *name, int flags)
+>>  {
+>>  	int error;
+>> -	struct dentry *dentry;
+>> +	struct dentry *dentry, *parent;
+>>  	struct path path;
+>>  	struct qstr last;
+>>  	int type;
+>>  	struct inode *inode =3D NULL;
+>>  	struct inode *delegated_inode =3D NULL;
+>>  	unsigned int lookup_flags =3D 0;
+>> -retry:
+>> -	error =3D filename_parentat(dfd, name, lookup_flags, &path, &last, &ty=
+pe);
+>> -	if (error)
+>> -		goto exit1;
+>> +	bool empty_path =3D (flags & AT_EMPTY_PATH);
+>>=20=20
+>> -	error =3D -EISDIR;
+>> -	if (type !=3D LAST_NORM)
+>> -		goto exit2;
+>> +retry:
+>> +	if (empty_path) {
+>> +		error =3D filename_lookup(dfd, name, 0, &path, NULL);
+>> +		if (error)
+>> +			goto exit1;
+>> +		parent =3D path.dentry->d_parent;
+>> +		dentry =3D path.dentry;
+>> +	} else {
+>> +		error =3D filename_parentat(dfd, name, lookup_flags, &path, &last, &t=
+ype);
+>> +		if (error)
+>> +			goto exit1;
+>> +		error =3D -EISDIR;
+>> +		if (type !=3D LAST_NORM)
+>> +			goto exit2;
+>> +		parent =3D path.dentry;
+>> +	}
+>>=20=20
+>>  	error =3D mnt_want_write(path.mnt);
+>>  	if (error)
+>>  		goto exit2;
+>>  retry_deleg:
+>> -	inode_lock_nested(path.dentry->d_inode, I_MUTEX_PARENT);
+>> -	dentry =3D lookup_one_qstr_excl(&last, path.dentry, lookup_flags);
+>> +	inode_lock_nested(parent->d_inode, I_MUTEX_PARENT);
+>> +	if (!empty_path)
+>> +		dentry =3D lookup_one_qstr_excl(&last, parent, lookup_flags);
+>
+> For starters, your 'parent' might have been freed under you, just as you'd
+> been trying to lock its inode.  Or it could have become negative just as =
+you'd
+> been fetching its ->d_inode, while we are at it.
+>
+> Races aside, you are changing permissions required for removing files.  F=
+or
+> unlink() you need to be able to get to the parent directory; if it's e.g.
+> outside of your namespace, you can't do anything to it.  If file had been
+> opened there by somebody who could reach it and passed to you (via SCM_RI=
+GHTS,
+> for example) you currently can't remove the sucker.  With this change that
+> is no longer true.
+>
+> The same goes for the situation when file is bound into your namespace (or
+> chroot jail, for that matter).  path.dentry might very well be equal to
+> root of path.mnt; path.dentry->d_parent might be in part of tree that is
+> no longer visible *anywhere*.  rmdir() should not be able to do anything
+> with it...
+>
+> IMO it's fundamentally broken; not just implementation, but the concept
+> itself.
+>
+> NAKed-by: Al Viro <viro@zeniv.linux.org.uk>
 
-On Thu, Oct 05, 2023 at 03:34:29PM +0100, Mark Brown wrote:
-> On Wed, Sep 27, 2023 at 03:01:18PM +0100, Joey Gouly wrote:
-> > Add PKEY support to signals, by saving and restoring POR_EL0 from the stackframe.
+Thank you for your review, which made me glad I sent out the patch early
+as an RFC.  I (think I) understand the issues you pointed out and,
+although some of them could be fixed (the races), I guess there's no point
+pursuing this any further, since you consider the concept itself to be
+broken.  Again, thank you for your time.
 
-> It'd be nice to have at least a basic test that validates that we
-> generate a POE signal frame when expected, though that should be a very
-> minor thing which is unlikely to ever actually spot anything.
-
-Actually, now I think about it we at least need an update to the frame
-parser in userspace so it knows about the new frame.  Without that it'll
-warn whenver it parses the signal context on any system that has POE
-enabled.
-
---nmKS1l7Zjsd4RYgP
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmUkEvgACgkQJNaLcl1U
-h9AVigf9GW/Sur/45PGTLZb/7jQO+xOnDx1zRfo2IrXNG3IyiCvy6MJbw4Wv1Me+
-ggms5XnKqT0GLbnGF/OKAODHgjJj4hF3aSGtBk7/bockrXXG3xiUamZrQrGUjsmN
-d+Q/1QqnNT3uw+VDK19MmpcSpEChFwiEkjqXll4dGoPzedG0OaGcnOG1P/qZeMre
-lsNGs5TaxU6CCmmXeFblLiNusTDroowNsgBI52wN5Y2c56fxOljdzTvgqdiMfHoC
-d25fd46QkLNVA7YZBsDz3ILcv09PJ7FBeiLO5K2deQN9QbNgvGPgW0mkhrcRNAgZ
-MTyYe0dvsQn3/Bj85noS1xH4idZ7OQ==
-=e4nN
------END PGP SIGNATURE-----
-
---nmKS1l7Zjsd4RYgP--
+Cheers,
+--=20
+Lu=C3=ADs
