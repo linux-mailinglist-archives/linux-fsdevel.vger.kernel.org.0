@@ -2,60 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 657827BD7B6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Oct 2023 11:54:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B3B17BD827
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Oct 2023 12:08:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345863AbjJIJyA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Oct 2023 05:54:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33840 "EHLO
+        id S1346010AbjJIKIa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Oct 2023 06:08:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41964 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346010AbjJIJx6 (ORCPT
+        with ESMTP id S1346048AbjJIKI2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Oct 2023 05:53:58 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2A5B94
-        for <linux-fsdevel@vger.kernel.org>; Mon,  9 Oct 2023 02:53:54 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-99bdeae1d0aso789646666b.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Oct 2023 02:53:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1696845233; x=1697450033; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=4T7SYiMmv73e/6ApSex0rmCrWvfOhJoVCXxcz+wzbuc=;
-        b=LbypXGSJuMOdTrznGNDHx6X+E7YEJdZR26t1jaHPV0Y+diLy8aqcUVVEg3HuW/B8TD
-         Kfq1k1/o1GkB9VOhJAwYUkfvbPz/qn6cWfwE6chCTSYL5d4wixMKsUoy6XrXFj/IUQ1D
-         a3q84J64bC96REGU3nh5nBmBewhmAONanIF/o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696845233; x=1697450033;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4T7SYiMmv73e/6ApSex0rmCrWvfOhJoVCXxcz+wzbuc=;
-        b=KAJvsapYkrp82PZJVMq+IpD0VCa/3VwfOpSq4QLAOLyJ1d59TNv9mAGfztnceqrTUL
-         NMx3y8/G5QgQcfr9884wdV9OaDyyKze/nIvgDom7Il1XoPB59P8QyaiiHDbI+HH45pEE
-         gkSBpEUhHWj/vEiF9xM5eLpDTdSwUSdA5hj+QQ2QLaIPHcfw6th1B2nvHN05Yi+babJ5
-         aFidB9sexaTm8Ms+mmFat/ceY3nf997WBmioWKaen9Wuuveg07nw7tkmf1VUL/y4UQPv
-         SO7MUqwnt+rnPSfDOC43zVt6TZFrdtvw4k1m71v7sM9PkVJNNZPrK2XOUDR6c+SMnw5n
-         lEIQ==
-X-Gm-Message-State: AOJu0YxLSgIEDzvgxwl4/mEUYxAeHWQ/R1K7J3ilT4nxrGSxX9UyqOET
-        CKd4G/WhzUsd/qc6pUV1gT2EAmo9fRizOgNCrCvm/w==
-X-Google-Smtp-Source: AGHT+IEgbSJiw0YRjct9A5M3oGPxrc3SeoYEiRYma6nvL+Ft3EmwrAayn12DJZbSu3u6DQb7E+y/HFiNukzI0BPBIjY=
-X-Received: by 2002:a17:906:ce:b0:9a6:426f:7dfd with SMTP id
- 14-20020a17090600ce00b009a6426f7dfdmr11590275eji.66.1696845233260; Mon, 09
- Oct 2023 02:53:53 -0700 (PDT)
+        Mon, 9 Oct 2023 06:08:28 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EE9297;
+        Mon,  9 Oct 2023 03:08:27 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 18EE421847;
+        Mon,  9 Oct 2023 10:08:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1696846106; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=KI8iGmDacbjyfpujQS0BFEqs/bpz2R47Nq98pWnN1Kg=;
+        b=kLdsgi8ijKHDs7ueTrlwHESoADuAyKkXPOBTNwBbQdKHrIzCOAZY6lro9s2/pv6+f5QqQg
+        +xBHbSs2QyDGx3z+s4/R9INchqMqHlLs0myYWnOwJzZ4GQ1LJSCIELKjXaaRbMcaRpHkku
+        1fc1gKrlUleAhXjt3lZ6s/3uq6EyNT8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1696846106;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=KI8iGmDacbjyfpujQS0BFEqs/bpz2R47Nq98pWnN1Kg=;
+        b=Ezey8VTIiHbqUPl9cBkACsMHidTrypgIsvLLrLo1GXWsO+A+pyht3ciFWhBNDIN4wEAUnN
+        OQ3sn7AuaxPnIyDg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 072C313905;
+        Mon,  9 Oct 2023 10:08:26 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 5aG1ARrRI2XpdQAAMHmgww
+        (envelope-from <jack@suse.cz>); Mon, 09 Oct 2023 10:08:26 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 94439A04B2; Mon,  9 Oct 2023 12:08:25 +0200 (CEST)
+Date:   Mon, 9 Oct 2023 12:08:25 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Lizhi Xu <lizhi.xu@windriver.com>
+Cc:     syzbot+23bc20037854bb335d59@syzkaller.appspotmail.com,
+        axboe@kernel.dk, brauner@kernel.org, dave.kleikamp@oracle.com,
+        hare@suse.de, hch@lst.de, jack@suse.cz,
+        jfs-discussion@lists.sourceforge.net, johannes.thumshirn@wdc.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shaggy@kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] jfs: fix log->bdev_handle null ptr deref in lbmStartIO
+Message-ID: <20231009100825.dkkaylsrj4db3ekp@quack3>
+References: <0000000000005239cf060727d3f6@google.com>
+ <20231009094557.1398920-1-lizhi.xu@windriver.com>
 MIME-Version: 1.0
-References: <20231005203030.223489-1-vgoyal@redhat.com>
-In-Reply-To: <20231005203030.223489-1-vgoyal@redhat.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 9 Oct 2023 11:53:42 +0200
-Message-ID: <CAJfpegspVnkXAa5xfvjEQ9r5__vXpcgR4qubdG8=p=aiS2goRg@mail.gmail.com>
-Subject: Re: [PATCH] virtiofs: Export filesystem tags through sysfs
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
-        stefanha@redhat.com, mzxreary@0pointer.de, gmaglione@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231009094557.1398920-1-lizhi.xu@windriver.com>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -63,38 +75,52 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 5 Oct 2023 at 22:30, Vivek Goyal <vgoyal@redhat.com> wrote:
->
-> virtiofs filesystem is mounted using a "tag" which is exported by the
-> virtiofs device. virtiofs driver knows about all the available tags but
-> these are not exported to user space.
->
-> People have asked these tags to be exported to user space. Most recently
-> Lennart Poettering has asked for it as he wants to scan the tags and mount
-> virtiofs automatically in certain cases.
->
-> https://gitlab.com/virtio-fs/virtiofsd/-/issues/128
->
-> This patch exports tags through sysfs. One tag is associated with each
-> virtiofs device. A new "tag" file appears under virtiofs device dir.
-> Actual filesystem tag can be obtained by reading this "tag" file.
->
-> For example, if a virtiofs device exports tag "myfs", a new file "tag"
-> will show up here.
->
-> /sys/bus/virtio/devices/virtio<N>/tag
->
-> # cat /sys/bus/virtio/devices/virtio<N>/tag
-> myfs
->
-> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+On Mon 09-10-23 17:45:57, Lizhi Xu wrote:
+> When sbi->flag is JFS_NOINTEGRITY in lmLogOpen(), log->bdev_handle can't
+> be inited, so it value will be NULL.
+> Therefore, add the "log ->no_integrity=1" judgment in lbmStartIO() to avoid such
+> problems.
+> 
+> Reported-and-tested-by: syzbot+23bc20037854bb335d59@syzkaller.appspotmail.com
+> Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
 
-Hi Vivek,
+Ah, good catch. Who would think someone creates bios for NULL bdev only to
+release them shortly afterwards ;). Anyway the fix looks good. Feel free to
+add:
 
-This needs something under Documentation/.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-While the interface looks good to me, I think we need an ack on that
-from the virtio maintainer.
+Christian, please pick up this fixup into your tree. Thanks!
 
-Thanks,
-Miklos
+								Honza
+
+> ---
+>  fs/jfs/jfs_logmgr.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/jfs/jfs_logmgr.c b/fs/jfs/jfs_logmgr.c
+> index c911d838b8ec..c41a76164f84 100644
+> --- a/fs/jfs/jfs_logmgr.c
+> +++ b/fs/jfs/jfs_logmgr.c
+> @@ -2110,10 +2110,14 @@ static void lbmStartIO(struct lbuf * bp)
+>  {
+>  	struct bio *bio;
+>  	struct jfs_log *log = bp->l_log;
+> +	struct block_device *bdev = NULL;
+>  
+>  	jfs_info("lbmStartIO");
+>  
+> -	bio = bio_alloc(log->bdev_handle->bdev, 1, REQ_OP_WRITE | REQ_SYNC,
+> +	if (!log->no_integrity) 
+> +		bdev = log->bdev_handle->bdev;	
+> +
+> +	bio = bio_alloc(bdev, 1, REQ_OP_WRITE | REQ_SYNC,
+>  			GFP_NOFS);
+>  	bio->bi_iter.bi_sector = bp->l_blkno << (log->l2bsize - 9);
+>  	__bio_add_page(bio, bp->l_page, LOGPSIZE, bp->l_offset);
+> -- 
+> 2.25.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
