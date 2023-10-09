@@ -2,38 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E8B37BDAE3
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Oct 2023 14:12:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F10A7BDAE9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Oct 2023 14:12:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346607AbjJIMMa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Oct 2023 08:12:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32832 "EHLO
+        id S1346562AbjJIMMt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Oct 2023 08:12:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1376302AbjJIMLq (ORCPT
+        with ESMTP id S1346479AbjJIMMG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Oct 2023 08:11:46 -0400
+        Mon, 9 Oct 2023 08:12:06 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A7BD1A5;
-        Mon,  9 Oct 2023 05:11:39 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8334C433C7;
-        Mon,  9 Oct 2023 12:11:32 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 255F210B;
+        Mon,  9 Oct 2023 05:11:46 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9380BC433C8;
+        Mon,  9 Oct 2023 12:11:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696853499;
-        bh=BppDdcqjtJzUfuzafP5lgvHCeya4NknqM0BAXJ7ap7w=;
+        s=k20201202; t=1696853505;
+        bh=XR/JPTU4enAJ4pcvH8p8vc1g83S1au3eNbsnIb4ywnQ=;
         h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-        b=nRXCf3IP04mxomb59+FPqFvNeFFferKhb4+ll7uI89/W4+e78a9mJLKf6QHmmidyZ
-         7z/5VLjrJo6vvICYH6T3MNNBcCIhgo75AlS8oAhFsH1H5oXIAIVbO2GHLOc9Eql7EU
-         RuYStvvqFpSYuwqfKGoTedCsXt9rmPTpIcWvtooljyquoQ64vzqW8B5Xu4Y9r5G/UA
-         plNxb2NEue4mStms8VLWFaRhrYwe97jxi1zX0PuJQe0xXV6B9IJkAYchVqYB3jLDBd
-         FnewL1JOM+NuyhQP2NYJZGT/0b8pkoa2zX+S21Dg32uCsDkp8n2wdKXEvkGQVMCCsg
-         L0ZVIbqvSMc2Q==
+        b=rP9e/pVEU1XRIjj2Q9uCE+vVJQiSYLoJDDmvoN3Y+fxV4PDyb0Vs8fWv5dE22EdGz
+         B0vb94hqvciW/TEsRbokha5ZqcprcqYd4Usrcmcr+y93H4dv3DKJAP5z76Exn3fa8W
+         QPI2YjyCvmt6N7kiuo4tZXT3emLIL5NPZKALokimQSPX+EFbD6N5Q642tmTnWEAJKJ
+         7VgVCJPy4ZM09WcaxWoJv7Zi7JTkaps2cE7IhSdwgsbyuLYN5uaWHbaRut0htOs6RP
+         au6TpCRBbjfRQmVcgQG5R8QCGK7+4xIbwmdWHVFFsdzFe+q++lxMpBhENWv+eDo/c+
+         wD58DJP+NWIbg==
 From:   Mark Brown <broonie@kernel.org>
-Date:   Mon, 09 Oct 2023 13:08:43 +0100
-Subject: [PATCH v6 09/38] arm64/gcs: Provide copy_to_user_gcs()
+Date:   Mon, 09 Oct 2023 13:08:44 +0100
+Subject: [PATCH v6 10/38] arm64/cpufeature: Runtime detection of Guarded
+ Control Stack (GCS)
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20231009-arm64-gcs-v6-9-78e55deaa4dd@kernel.org>
+Message-Id: <20231009-arm64-gcs-v6-10-78e55deaa4dd@kernel.org>
 References: <20231009-arm64-gcs-v6-0-78e55deaa4dd@kernel.org>
 In-Reply-To: <20231009-arm64-gcs-v6-0-78e55deaa4dd@kernel.org>
 To:     Catalin Marinas <catalin.marinas@arm.com>,
@@ -64,15 +65,15 @@ Cc:     "H.J. Lu" <hjl.tools@gmail.com>,
         linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-riscv@lists.infradead.org, Mark Brown <broonie@kernel.org>
 X-Mailer: b4 0.13-dev-0438c
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1292; i=broonie@kernel.org;
- h=from:subject:message-id; bh=BppDdcqjtJzUfuzafP5lgvHCeya4NknqM0BAXJ7ap7w=;
- b=owGbwMvMwMWocq27KDak/QLjabUkhlTltzOS1pv1T2Ztq80/z91/JcylNk5K+4vYp581J1n+ysaV
- t9R1MhqzMDByMciKKbKsfZaxKj1cYuv8R/NfwQxiZQKZwsDFKQAT+fyd/Z/uYTmT+1qcLE1xGh8jeb
- hqPLTWviyYlseUlDmfQ9vbuD8gk/Pf1ojqStkZFcHrH2p1lUdbGqcYKC/RsBUN/M64lfmh38OyE3Mr
- EnLz5fQW7Y7fWZa76o6UzRE1HqMlE3ftmxPv+HShlMf7ujvscjo+f28EMz+qyLjo+lnMmW2Hf1PxRM
- 1+kw0JjCIbH2lJrN7LpCDYU5O4YsoaGfaQgBU9P7w5r9Y+L89lv7X2k92ETtOEVLf234Esp8UNwgUf
- rpjy6tV++VelIc4+03NYfzsKCYXMmBfmO8H18gE5O3X/jzK6UZsO373dcnPZ0Uczlshf5j62av3F96
- xcV1zy1ynv3fr5hcWvMqn2UsGLAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2903; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=XR/JPTU4enAJ4pcvH8p8vc1g83S1au3eNbsnIb4ywnQ=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBlI+2ZAGHqvxhmUj+PJXN+2VsAYfmovxTrEoIYjBrX
+ 2bzDiHWJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZSPtmQAKCRAk1otyXVSH0LouB/
+ 4jMbLZC7D6Zl9Jb2+lm+LeAvBZcAupYd70rbx+3xkuxxpcymaCTO3zxHXISjX1SuQqDXdZ2Qr7PfGU
+ AD2rdudrC2wAVWtVlIuvD1s8iyD5b5nIqoiQrsYKu1s6UByhZnLIrwDq8BXPLFUNVBkwd0pMBv4DVJ
+ OSnLTLI6pOfw2BRvIdml05y4Axyxu65IveS3S9NiO7r8GE9M/+Yjsv2UB9TfMCca2oJdKaITbH+0ht
+ xPC1Vr58uRUI6DwnycYpnuE4Hl+w2AI0CrMHY3eiChkjo0rYQHBWfhw4qqpUKruKnfZ739/1FkLGqb
+ XWMGY3i9fPM/PuQFxByz8YwPzG371T
 X-Developer-Key: i=broonie@kernel.org; a=openpgp;
  fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -85,48 +86,86 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In order for EL1 to write to an EL0 GCS it must use the GCSSTTR instruction
-rather than a normal STTR. Provide a copy_to_user_gcs() which does this.
-Since it is not possible to store anything other than a 64 bit value the
-interface is presented in terms of 64 bit values, using unsigned long
-rather than u64 due to sparse.
+Add a cpufeature for GCS, allowing other code to conditionally support it
+at runtime.
 
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm64/include/asm/uaccess.h | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ arch/arm64/include/asm/cpufeature.h |  6 ++++++
+ arch/arm64/kernel/cpufeature.c      | 16 ++++++++++++++++
+ arch/arm64/tools/cpucaps            |  1 +
+ 3 files changed, 23 insertions(+)
 
-diff --git a/arch/arm64/include/asm/uaccess.h b/arch/arm64/include/asm/uaccess.h
-index 22e10e79f56a..24aa804e95a7 100644
---- a/arch/arm64/include/asm/uaccess.h
-+++ b/arch/arm64/include/asm/uaccess.h
-@@ -445,6 +445,26 @@ static inline int gcssttr(unsigned long __user *addr, unsigned long val)
- 	return err;
+diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
+index 5bba39376055..4a5eea41f8ed 100644
+--- a/arch/arm64/include/asm/cpufeature.h
++++ b/arch/arm64/include/asm/cpufeature.h
+@@ -831,6 +831,12 @@ static inline bool system_supports_tlb_range(void)
+ 		cpus_have_const_cap(ARM64_HAS_TLB_RANGE);
  }
  
-+static inline int copy_to_user_gcs(unsigned long __user *addr,
-+				   unsigned long *val,
-+				   int count)
++static inline bool system_supports_gcs(void)
 +{
-+	int ret = -EFAULT;
-+	int i;
-+
-+	if (access_ok((char __user *)addr, count * sizeof(u64))) {
-+		uaccess_ttbr0_enable();
-+		for (i = 0; i < count; i++) {
-+			ret = gcssttr(addr++, *val++);
-+			if (ret != 0)
-+				break;
-+		}
-+		uaccess_ttbr0_disable();
-+	}
-+
-+	return ret;
++	return IS_ENABLED(CONFIG_ARM64_GCS) &&
++		cpus_have_const_cap(ARM64_HAS_GCS);
 +}
 +
- #endif /* CONFIG_ARM64_GCS */
+ int do_emulate_mrs(struct pt_regs *regs, u32 sys_reg, u32 rt);
+ bool try_emulate_mrs(struct pt_regs *regs, u32 isn);
  
- #endif /* __ASM_UACCESS_H */
+diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+index 444a73c2e638..e247dce1759c 100644
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -255,6 +255,8 @@ static const struct arm64_ftr_bits ftr_id_aa64pfr0[] = {
+ };
+ 
+ static const struct arm64_ftr_bits ftr_id_aa64pfr1[] = {
++	ARM64_FTR_BITS(FTR_VISIBLE_IF_IS_ENABLED(CONFIG_ARM64_GCS),
++		       FTR_STRICT, FTR_LOWER_SAFE, ID_AA64PFR1_EL1_GCS_SHIFT, 4, 0),
+ 	ARM64_FTR_BITS(FTR_VISIBLE_IF_IS_ENABLED(CONFIG_ARM64_SME),
+ 		       FTR_STRICT, FTR_LOWER_SAFE, ID_AA64PFR1_EL1_SME_SHIFT, 4, 0),
+ 	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64PFR1_EL1_MPAM_frac_SHIFT, 4, 0),
+@@ -2220,6 +2222,12 @@ static void cpu_enable_mops(const struct arm64_cpu_capabilities *__unused)
+ 	sysreg_clear_set(sctlr_el1, 0, SCTLR_EL1_MSCEn);
+ }
+ 
++static void cpu_enable_gcs(const struct arm64_cpu_capabilities *__unused)
++{
++	/* GCS is not currently used at EL1 */
++	write_sysreg_s(0, SYS_GCSCR_EL1);
++}
++
+ /* Internal helper functions to match cpu capability type */
+ static bool
+ cpucap_late_cpu_optional(const struct arm64_cpu_capabilities *cap)
+@@ -2719,6 +2727,14 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+ 		.matches = has_cpuid_feature,
+ 		ARM64_CPUID_FIELDS(ID_AA64MMFR2_EL1, EVT, IMP)
+ 	},
++	{
++		.desc = "Guarded Control Stack (GCS)",
++		.capability = ARM64_HAS_GCS,
++		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
++		.cpu_enable = cpu_enable_gcs,
++		.matches = has_cpuid_feature,
++		ARM64_CPUID_FIELDS(ID_AA64PFR1_EL1, GCS, IMP)
++	},
+ 	{},
+ };
+ 
+diff --git a/arch/arm64/tools/cpucaps b/arch/arm64/tools/cpucaps
+index c3f06fdef609..9b470b311f29 100644
+--- a/arch/arm64/tools/cpucaps
++++ b/arch/arm64/tools/cpucaps
+@@ -27,6 +27,7 @@ HAS_ECV_CNTPOFF
+ HAS_EPAN
+ HAS_EVT
+ HAS_FGT
++HAS_GCS
+ HAS_GENERIC_AUTH
+ HAS_GENERIC_AUTH_ARCH_QARMA3
+ HAS_GENERIC_AUTH_ARCH_QARMA5
 
 -- 
 2.30.2
