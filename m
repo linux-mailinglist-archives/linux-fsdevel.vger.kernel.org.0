@@ -2,77 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AF2567BE8C3
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Oct 2023 19:57:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FEF87BE91D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Oct 2023 20:19:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376891AbjJIR5J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Oct 2023 13:57:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44816 "EHLO
+        id S1377532AbjJISTf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Oct 2023 14:19:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377093AbjJIR5G (ORCPT
+        with ESMTP id S234538AbjJISTe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Oct 2023 13:57:06 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B59991
-        for <linux-fsdevel@vger.kernel.org>; Mon,  9 Oct 2023 10:57:04 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id ffacd0b85a97d-32167a4adaaso4393915f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Oct 2023 10:57:04 -0700 (PDT)
+        Mon, 9 Oct 2023 14:19:34 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0331A3;
+        Mon,  9 Oct 2023 11:19:31 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-4066692ad35so44998375e9.1;
+        Mon, 09 Oct 2023 11:19:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1696874222; x=1697479022; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HR7i0+7/SsYbq7Xpu0I3F4tMxRg2aNZclcuGtCASF8c=;
-        b=fdkxdtEWlW7QEapch5rwJK4HMlZLcFum4UxXs3ovDgjGO+5U9sWPjy092+w4PoQKfq
-         WSaMqkAsx2fwSP4nUU3LrHefqxIsCrCUrDcpEyjO3fAgeAeHPfs5PBt1fg2idxI5BbCZ
-         RBnn37wS9+0HG2M7chsB4XG1kr2AdEiZF8UG27tE+2cOYGEuZnQfmqo9+zlkpTe1MgoF
-         wKOXUoQXTiuMUhxTDi5eAlnhWKCmXmkz4kUBjA1J7zwqpGUmHCQLMzNc6nCrhgMGertS
-         MkRDTvkXvTtxRl7oy9LCVHsxFxI4Uz91jfLr7sIJOHz+DipiQowQLvwYDjXWoRlXOBfp
-         Tgqg==
+        d=gmail.com; s=20230601; t=1696875570; x=1697480370; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=++ijn284zfH6P1kONLuhHN+YYK1WM6GxC/tHCJj4268=;
+        b=maHEKC8tZEnXWONy6MirLMJqrfRnWCP9EoVHLrZjZbB9jq3wikk1R7jyV6mse0eeDP
+         UNbHUp2k4aDw1UYo2WL4LQXhrJphFNzjyRqGgXr6AW3j4ufwxbVgX5T0VdEpDgAlPb9X
+         q4hKDN3METCtCkVG8uK93HHp/mLqtdL1y/QgWpGTN5LTPxIpm4JVnmgTMexM6MLHifUb
+         xBOINyJdzJ04qRysgK+f0pgyS7AKgg1CvOl8GPazA4v2UZ3XK1G/KPe7hMKMcvd4JH9v
+         R+3avMt9SXG1Q+SGF0ihz9s6vtTobzkIqNuVsT7zc6zgH0VxV9Kx+Sj67Mwe21zOblqm
+         CkEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696874222; x=1697479022;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HR7i0+7/SsYbq7Xpu0I3F4tMxRg2aNZclcuGtCASF8c=;
-        b=Y/ZRyhsXXC9KgNyCQ++1fFnBZBUnKkcOgSAoO/L08fRnXcjP7ZApwCXuuS5zX3Pc9J
-         4oPFepqC5KsG2U9NP6odP1nd4iFBUgA53vqPYV59plTXLQkNqp07zzZ/Jkqhz9PThGSV
-         98mLAAA8jhjWky0F2JsWuWpLfOqsuq08kufaj7UGzfLRYU+dG3TVXPtuOJYpoljYOTuv
-         FCWXfhuAVhSopGglvMMIbF3Uy5qAeKJu/CTUKzs+lcxS42p0TyUUd8HYmEkIza5Qslbg
-         uATITcWT4Zd+5ZvW6+XwWuVDzy88VloJyUyu3Xqn2w43IPgMENDnU/zpTmvarW6SK9Wj
-         xYRg==
-X-Gm-Message-State: AOJu0Yz2SdRXA5MET/b/z8NTrAK1mSp26RWZ9AzNcIzxHjvxj0ZY0OKh
-        5OZ6otJJKfxyoLb6qmYcTMukjdmQQGOBjY3ADhfEOQ==
-X-Google-Smtp-Source: AGHT+IFdugjmpCG+0rz5vOSpRJwP3Q+EaYZkFCxXfXiHgTVi3kGGdp/ap2cjhuKlC0Nv/dcgveGTyVI98G4zOxrgfMg=
-X-Received: by 2002:a05:6000:1046:b0:31f:f9fe:e739 with SMTP id
- c6-20020a056000104600b0031ff9fee739mr14684966wrx.59.1696874222386; Mon, 09
- Oct 2023 10:57:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1696875570; x=1697480370;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=++ijn284zfH6P1kONLuhHN+YYK1WM6GxC/tHCJj4268=;
+        b=gM71h41nqwCb80C/6eydTFYCL3ggho3rM6qs7pZATrmAcKS/YSxB/kgaDX7m3054bP
+         fCEDF956iEZj28mYjSRaf32g5lbr2z+TGwzmkL8P2TbW2YMHLKjKSNHfxkGSjPKyTQVg
+         /cbD3QFWRy4DlxIb8UqvTZTxqyLA4bmoMRoLaU+Io1u6C4GLYrZCXaaabVwWBlMhjBjz
+         sEcwdKgcOR4WSXc1IvQBfLfOlYSXA4Jp70MKXWfJ0cQArFfAXBT0bWG4kAePJAVm8Piv
+         ABGVnT2OsRh5L55B150OfMTPmOakWkmCkWoqp6i3mmNfxyqjLkMAFArYcxgKIYn9doOA
+         St0A==
+X-Gm-Message-State: AOJu0Yy+BC158xa3jlJ68qQIhvhQTxjtBLM8Fz2M9zyJFA3xVujyWbii
+        okMN0iJ7MNpx5sub03Ae8v0=
+X-Google-Smtp-Source: AGHT+IHSRLck2Pb7IQLpIWXEUMb/xfnErOkkK568VmsUtVQM+T+bQElHaXCDuYfJcfc70QcgkvHKHQ==
+X-Received: by 2002:a7b:c40f:0:b0:403:bb04:2908 with SMTP id k15-20020a7bc40f000000b00403bb042908mr14196717wmi.23.1696875569774;
+        Mon, 09 Oct 2023 11:19:29 -0700 (PDT)
+Received: from localhost ([2a00:23c5:dc8c:8701:1663:9a35:5a7b:1d76])
+        by smtp.gmail.com with ESMTPSA id z3-20020adfec83000000b0032327b70ef6sm10400770wrn.70.2023.10.09.11.19.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Oct 2023 11:19:28 -0700 (PDT)
+Date:   Mon, 9 Oct 2023 19:19:27 +0100
+From:   Lorenzo Stoakes <lstoakes@gmail.com>
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        "=Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/4] mm: abstract the vma_merge()/split_vma() pattern for
+ mprotect() et al.
+Message-ID: <5f5274b8-f2fe-4e4a-850b-2a383778c4d3@lucifer.local>
+References: <cover.1696795837.git.lstoakes@gmail.com>
+ <e5b228493b81d00fe3d82bd464976348df353733.1696795837.git.lstoakes@gmail.com>
+ <6feb6f37-dfb9-0fe1-1303-2744ad2758d9@suse.cz>
 MIME-Version: 1.0
-References: <20231009064230.2952396-1-surenb@google.com> <20231009064230.2952396-3-surenb@google.com>
- <214b78ed-3842-5ba1-fa9c-9fa719fca129@redhat.com> <CAJuCfpHzSm+z9b6uxyYFeqr5b5=6LehE9O0g192DZdJnZqmQEw@mail.gmail.com>
- <478697aa-f55c-375a-6888-3abb343c6d9d@redhat.com> <CA+EESO5nvzka0KzFGzdGgiCWPLg7XD-8jA9=NTUOKFy-56orUg@mail.gmail.com>
-In-Reply-To: <CA+EESO5nvzka0KzFGzdGgiCWPLg7XD-8jA9=NTUOKFy-56orUg@mail.gmail.com>
-From:   Lokesh Gidra <lokeshgidra@google.com>
-Date:   Mon, 9 Oct 2023 10:56:50 -0700
-Message-ID: <CA+EESO47LqwMwGgkHQdx1cBdcn_+FWqda8OPcBU-skk9yML_qA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] userfaultfd: UFFDIO_MOVE uABI
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org,
-        viro@zeniv.linux.org.uk, brauner@kernel.org, shuah@kernel.org,
-        aarcange@redhat.com, peterx@redhat.com, hughd@google.com,
-        mhocko@suse.com, axelrasmussen@google.com, rppt@kernel.org,
-        willy@infradead.org, Liam.Howlett@oracle.com, jannh@google.com,
-        zhangpeng362@huawei.com, bgeffon@google.com,
-        kaleshsingh@google.com, ngeoffray@google.com, jdduke@google.com,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6feb6f37-dfb9-0fe1-1303-2744ad2758d9@suse.cz>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -80,210 +78,177 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 9, 2023 at 9:29=E2=80=AFAM Lokesh Gidra <lokeshgidra@google.com=
-> wrote:
+On Mon, Oct 09, 2023 at 05:22:33PM +0200, Vlastimil Babka wrote:
+> On 10/8/23 22:23, Lorenzo Stoakes wrote:
+> > mprotect() and other functions which change VMA parameters over a range
+> > each employ a pattern of:-
+> >
+> > 1. Attempt to merge the range with adjacent VMAs.
+> > 2. If this fails, and the range spans a subset of the VMA, split it
+> > accordingly.
+> >
+> > This is open-coded and duplicated in each case. Also in each case most of
+> > the parameters passed to vma_merge() remain the same.
+> >
+> > Create a new static function, vma_modify(), which abstracts this operation,
+> > accepting only those parameters which can be changed.
+> >
+> > To avoid the mess of invoking each function call with unnecessary
+> > parameters, create wrapper functions for each of the modify operations,
+> > parameterised only by what is required to perform the action.
 >
-> On Mon, Oct 9, 2023 at 5:24=E2=80=AFPM David Hildenbrand <david@redhat.co=
-m> wrote:
-> >
-> > On 09.10.23 18:21, Suren Baghdasaryan wrote:
-> > > On Mon, Oct 9, 2023 at 7:38=E2=80=AFAM David Hildenbrand <david@redha=
-t.com> wrote:
-> > >>
-> > >> On 09.10.23 08:42, Suren Baghdasaryan wrote:
-> > >>> From: Andrea Arcangeli <aarcange@redhat.com>
-> > >>>
-> > >>> Implement the uABI of UFFDIO_MOVE ioctl.
-> > >>> UFFDIO_COPY performs ~20% better than UFFDIO_MOVE when the applicat=
-ion
-> > >>> needs pages to be allocated [1]. However, with UFFDIO_MOVE, if page=
-s are
-> > >>> available (in userspace) for recycling, as is usually the case in h=
-eap
-> > >>> compaction algorithms, then we can avoid the page allocation and me=
-mcpy
-> > >>> (done by UFFDIO_COPY). Also, since the pages are recycled in the
-> > >>> userspace, we avoid the need to release (via madvise) the pages bac=
-k to
-> > >>> the kernel [2].
-> > >>> We see over 40% reduction (on a Google pixel 6 device) in the compa=
-cting
-> > >>> thread=E2=80=99s completion time by using UFFDIO_MOVE vs. UFFDIO_CO=
-PY. This was
-> > >>> measured using a benchmark that emulates a heap compaction implemen=
-tation
-> > >>> using userfaultfd (to allow concurrent accesses by application thre=
-ads).
-> > >>> More details of the usecase are explained in [2].
-> > >>> Furthermore, UFFDIO_MOVE enables moving swapped-out pages without
-> > >>> touching them within the same vma. Today, it can only be done by mr=
-emap,
-> > >>> however it forces splitting the vma.
-> > >>>
-> > >>> [1] https://lore.kernel.org/all/1425575884-2574-1-git-send-email-aa=
-rcange@redhat.com/
-> > >>> [2] https://lore.kernel.org/linux-mm/CA+EESO4uO84SSnBhArH4HvLNhaUQ5=
-nZKNKXqxRCyjniNVjp0Aw@mail.gmail.com/
-> > >>>
-> > >>> Update for the ioctl_userfaultfd(2)  manpage:
-> > >>>
-> > >>>      UFFDIO_MOVE
-> > >>>          (Since Linux xxx)  Move a continuous memory chunk into the
-> > >>>          userfault registered range and optionally wake up the bloc=
-ked
-> > >>>          thread. The source and destination addresses and the numbe=
-r of
-> > >>>          bytes to move are specified by the src, dst, and len field=
-s of
-> > >>>          the uffdio_move structure pointed to by argp:
-> > >>>
-> > >>>              struct uffdio_move {
-> > >>>                  __u64 dst;    /* Destination of move */
-> > >>>                  __u64 src;    /* Source of move */
-> > >>>                  __u64 len;    /* Number of bytes to move */
-> > >>>                  __u64 mode;   /* Flags controlling behavior of mov=
-e */
-> > >>>                  __s64 move;   /* Number of bytes moved, or negated=
- error */
-> > >>>              };
-> > >>>
-> > >>>          The following value may be bitwise ORed in mode to change =
-the
-> > >>>          behavior of the UFFDIO_MOVE operation:
-> > >>>
-> > >>>          UFFDIO_MOVE_MODE_DONTWAKE
-> > >>>                 Do not wake up the thread that waits for page-fault
-> > >>>                 resolution
-> > >>>
-> > >>>          UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES
-> > >>>                 Allow holes in the source virtual range that is bei=
-ng moved.
-> > >>>                 When not specified, the holes will result in ENOENT=
- error.
-> > >>>                 When specified, the holes will be accounted as succ=
-essfully
-> > >>>                 moved memory. This is mostly useful to move hugepag=
-e aligned
-> > >>>                 virtual regions without knowing if there are transp=
-arent
-> > >>>                 hugepages in the regions or not, but preventing the=
- risk of
-> > >>>                 having to split the hugepage during the operation.
-> > >>>
-> > >>>          The move field is used by the kernel to return the number =
-of
-> > >>>          bytes that was actually moved, or an error (a negated errn=
-o-
-> > >>>          style value).  If the value returned in move doesn't match=
- the
-> > >>>          value that was specified in len, the operation fails with =
-the
-> > >>>          error EAGAIN.  The move field is output-only; it is not re=
-ad by
-> > >>>          the UFFDIO_MOVE operation.
-> > >>>
-> > >>>          The operation may fail for various reasons. Usually, remap=
-ping of
-> > >>>          pages that are not exclusive to the given process fail; on=
-ce KSM
-> > >>>          might deduplicate pages or fork() COW-shares pages during =
-fork()
-> > >>>          with child processes, they are no longer exclusive. Furthe=
-r, the
-> > >>>          kernel might only perform lightweight checks for detecting=
- whether
-> > >>>          the pages are exclusive, and return -EBUSY in case that ch=
-eck fails.
-> > >>>          To make the operation more likely to succeed, KSM should b=
-e
-> > >>>          disabled, fork() should be avoided or MADV_DONTFORK should=
- be
-> > >>>          configured for the source VMA before fork().
-> > >>>
-> > >>>          This ioctl(2) operation returns 0 on success.  In this cas=
-e, the
-> > >>>          entire area was moved.  On error, -1 is returned and errno=
- is
-> > >>>          set to indicate the error.  Possible errors include:
-> > >>>
-> > >>>          EAGAIN The number of bytes moved (i.e., the value returned=
- in
-> > >>>                 the move field) does not equal the value that was
-> > >>>                 specified in the len field.
-> > >>>
-> > >>>          EINVAL Either dst or len was not a multiple of the system =
-page
-> > >>>                 size, or the range specified by src and len or dst =
-and len
-> > >>>                 was invalid.
-> > >>>
-> > >>>          EINVAL An invalid bit was specified in the mode field.
-> > >>>
-> > >>>          ENOENT
-> > >>>                 The source virtual memory range has unmapped holes =
-and
-> > >>>                 UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES is not set.
-> > >>>
-> > >>>          EEXIST
-> > >>>                 The destination virtual memory range is fully or pa=
-rtially
-> > >>>                 mapped.
-> > >>>
-> > >>>          EBUSY
-> > >>>                 The pages in the source virtual memory range are no=
-t
-> > >>>                 exclusive to the process. The kernel might only per=
-form
-> > >>>                 lightweight checks for detecting whether the pages =
-are
-> > >>>                 exclusive. To make the operation more likely to suc=
-ceed,
-> > >>>                 KSM should be disabled, fork() should be avoided or
-> > >>>                 MADV_DONTFORK should be configured for the source v=
-irtual
-> > >>>                 memory area before fork().
-> > >>>
-> > >>>          ENOMEM Allocating memory needed for the operation failed.
-> > >>>
-> > >>>          ESRCH
-> > >>>                 The faulting process has exited at the time of a
-> > >>>                 UFFDIO_MOVE operation.
-> > >>>
-> > >>
-> > >> A general comment simply because I realized that just now: does anyt=
-hing
-> > >> speak against limiting the operations now to a single MM?
-> > >>
-> > >> The use cases I heard so far don't need it. If ever required, we cou=
-ld
-> > >> consider extending it.
-> > >>
-> > >> Let's reduce complexity and KIS unless really required.
-> > >
-> > > Let me check if there are use cases that require moves between MMs.
-> > > Andrea seems to have put considerable effort to make it work between
-> > > MMs and it would be a pity to lose that. I can send a follow-up patch
-> > > to recover that functionality and even if it does not get merged, it
-> > > can be used in the future as a reference. But first let me check if w=
-e
-> > > can drop it.
->
-> For the compaction use case that we have it's fine to limit it to
-> single MM. However, for general use I think Peter will have a better
-> idea.
-> >
-> > Yes, that sounds reasonable. Unless the big important use cases require=
-s
-> > moving pages between processes, let's leave that as future work for now=
-.
-> >
-> > --
-> > Cheers,
-> >
-> > David / dhildenb
-> >
+> Nice!
 
-While going through mremap's move_page_tables code, which is pretty
-similar to what we do here, I noticed that cache is flushed as well,
-whereas we are not doing that here. Is that OK? I'm not a MM expert by
-any means, so it's a question rather than a comment :)
+Thanks :)
+
+>
+> > Note that the userfaultfd_release() case works even though it does not
+> > split VMAs - since start is set to vma->vm_start and end is set to
+> > vma->vm_end, the split logic does not trigger.
+> >
+> > In addition, since we calculate pgoff to be equal to vma->vm_pgoff + (start
+> > - vma->vm_start) >> PAGE_SHIFT, and start - vma->vm_start will be 0 in this
+> > instance, this invocation will remain unchanged.
+> >
+> > Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
+> > ---
+> >  fs/userfaultfd.c   | 53 +++++++++-----------------
+> >  include/linux/mm.h | 23 ++++++++++++
+> >  mm/madvise.c       | 25 ++++---------
+> >  mm/mempolicy.c     | 20 ++--------
+> >  mm/mlock.c         | 24 ++++--------
+> >  mm/mmap.c          | 93 ++++++++++++++++++++++++++++++++++++++++++++++
+> >  mm/mprotect.c      | 27 ++++----------
+> >  7 files changed, 157 insertions(+), 108 deletions(-)
+> >
+> > diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+> > index a7c6ef764e63..9e5232d23927 100644
+> > --- a/fs/userfaultfd.c
+> > +++ b/fs/userfaultfd.c
+> > @@ -927,11 +927,10 @@ static int userfaultfd_release(struct inode *inode, struct file *file)
+> >  			continue;
+> >  		}
+> >  		new_flags = vma->vm_flags & ~__VM_UFFD_FLAGS;
+> > -		prev = vma_merge(&vmi, mm, prev, vma->vm_start, vma->vm_end,
+> > -				 new_flags, vma->anon_vma,
+> > -				 vma->vm_file, vma->vm_pgoff,
+> > -				 vma_policy(vma),
+> > -				 NULL_VM_UFFD_CTX, anon_vma_name(vma));
+> > +		prev = vma_modify_uffd(&vmi, prev, vma, vma->vm_start,
+> > +				       vma->vm_end, new_flags,
+> > +				       NULL_VM_UFFD_CTX);
+> > +
+> >  		if (prev) {
+> >  			vma = prev;
+> >  		} else {
+> > @@ -1331,7 +1330,6 @@ static int userfaultfd_register(struct userfaultfd_ctx *ctx,
+> >  	unsigned long start, end, vma_end;
+> >  	struct vma_iterator vmi;
+> >  	bool wp_async = userfaultfd_wp_async_ctx(ctx);
+> > -	pgoff_t pgoff;
+> >
+> >  	user_uffdio_register = (struct uffdio_register __user *) arg;
+> >
+> > @@ -1484,26 +1482,18 @@ static int userfaultfd_register(struct userfaultfd_ctx *ctx,
+> >  		vma_end = min(end, vma->vm_end);
+> >
+> >  		new_flags = (vma->vm_flags & ~__VM_UFFD_FLAGS) | vm_flags;
+> > -		pgoff = vma->vm_pgoff + ((start - vma->vm_start) >> PAGE_SHIFT);
+> > -		prev = vma_merge(&vmi, mm, prev, start, vma_end, new_flags,
+> > -				 vma->anon_vma, vma->vm_file, pgoff,
+> > -				 vma_policy(vma),
+> > -				 ((struct vm_userfaultfd_ctx){ ctx }),
+> > -				 anon_vma_name(vma));
+> > +		prev = vma_modify_uffd(&vmi, prev, vma, start, vma_end,
+> > +				       new_flags,
+> > +				       ((struct vm_userfaultfd_ctx){ ctx }));
+> >  		if (prev) {
+>
+> This will hit also for IS_ERR(prev), no?
+>
+> >  			/* vma_merge() invalidated the mas */
+> >  			vma = prev;
+> >  			goto next;
+> >  		}
+> > -		if (vma->vm_start < start) {
+> > -			ret = split_vma(&vmi, vma, start, 1);
+> > -			if (ret)
+> > -				break;
+> > -		}
+> > -		if (vma->vm_end > end) {
+> > -			ret = split_vma(&vmi, vma, end, 0);
+> > -			if (ret)
+> > -				break;
+> > +
+> > +		if (IS_ERR(prev)) {
+>
+> So here's too late to test for it. AFAICS the other usages are like this as
+> well.
+
+Oh dear :) yes you're right, I will rework this in v2 for all cases.
+
+>
+> > diff --git a/include/linux/mm.h b/include/linux/mm.h
+> > index a7b667786cde..c069813f215f 100644
+> > --- a/include/linux/mm.h
+> > +++ b/include/linux/mm.h
+> > @@ -3253,6 +3253,29 @@ extern struct vm_area_struct *copy_vma(struct vm_area_struct **,
+> >  	unsigned long addr, unsigned long len, pgoff_t pgoff,
+> >  	bool *need_rmap_locks);
+> >  extern void exit_mmap(struct mm_struct *);
+> > +struct vm_area_struct *vma_modify_flags(struct vma_iterator *vmi,
+> > +					struct vm_area_struct *prev,
+> > +					struct vm_area_struct *vma,
+> > +					unsigned long start, unsigned long end,
+> > +					unsigned long new_flags);
+> > +struct vm_area_struct *vma_modify_flags_name(struct vma_iterator *vmi,
+> > +					     struct vm_area_struct *prev,
+> > +					     struct vm_area_struct *vma,
+> > +					     unsigned long start,
+> > +					     unsigned long end,
+> > +					     unsigned long new_flags,
+> > +					     struct anon_vma_name *new_name);
+> > +struct vm_area_struct *vma_modify_policy(struct vma_iterator *vmi,
+> > +					 struct vm_area_struct *prev,
+> > +					 struct vm_area_struct *vma,
+> > +					 unsigned long start, unsigned long end,
+> > +					 struct mempolicy *new_pol);
+> > +struct vm_area_struct *vma_modify_uffd(struct vma_iterator *vmi,
+> > +				       struct vm_area_struct *prev,
+> > +				       struct vm_area_struct *vma,
+> > +				       unsigned long start, unsigned long end,
+> > +				       unsigned long new_flags,
+> > +				       struct vm_userfaultfd_ctx new_ctx);
+>
+> Could these be instead static inline wrappers, and vma_modify exported
+> instead of static?
+
+I started by trying this but sadly the vma_policy() helper needs the
+mempolicy header and trying to important that into mm.h produces a horror
+show of things breaking.
+
+As discussed via IRC, will look to see whether we can sensibly move this
+define into mm_types.h and then we can shift these.
+
+>
+> Maybe we could also move this to mm/internal.h? Which would mean
+> fs/userfaultfd.c would have to start including it, but as it's already so
+> much rooted in mm, it shouldn't be wrong?
+
+I'm not a fan of trying to have fs/userfaultfd.c to important
+mm/internal.h, seems like a bridge too far there. I think it's a bit odd
+that the fs bit invokes mm bits but the mm bit doesn't, but this might be
+an artifact of how uffd is implemented.
+
+I do in principle like the idea, as we can then seriously shift what I
+consider to be impl details (mergey/splitty) to being as internal as we can
+make it, but I think perhaps it's something we can address later if it
+makes sense to move some uffd bits around.
+
+>
+> >
+> >  static inline int check_data_rlimit(unsigned long rlim,
+> >  				    unsigned long new,
+> > diff --git a/mm/madvise.c b/mm/madvise.c
+> > index a4a20de50494..73024693d5c8 100644
+>
