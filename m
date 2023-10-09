@@ -2,91 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 118167BD6ED
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Oct 2023 11:26:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 338047BD6E1
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Oct 2023 11:25:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345825AbjJIJ0b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Oct 2023 05:26:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41824 "EHLO
+        id S1346025AbjJIJZF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Oct 2023 05:25:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345818AbjJIJ0M (ORCPT
+        with ESMTP id S1346021AbjJIJYy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Oct 2023 05:26:12 -0400
-Received: from mail-oa1-f71.google.com (mail-oa1-f71.google.com [209.85.160.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11B802688
-        for <linux-fsdevel@vger.kernel.org>; Mon,  9 Oct 2023 02:23:54 -0700 (PDT)
-Received: by mail-oa1-f71.google.com with SMTP id 586e51a60fabf-1dce4259823so5826803fac.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Oct 2023 02:23:54 -0700 (PDT)
+        Mon, 9 Oct 2023 05:24:54 -0400
+Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com [209.85.167.200])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65CE4268D
+        for <linux-fsdevel@vger.kernel.org>; Mon,  9 Oct 2023 02:23:55 -0700 (PDT)
+Received: by mail-oi1-f200.google.com with SMTP id 5614622812f47-3ae5ac8de14so7336333b6e.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Oct 2023 02:23:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1696843433; x=1697448233;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=65WZ9YFi5sn+6ZO5ERm1lg5G6uHSE9SWOH1rDCIdyGM=;
-        b=X+qAuKYm7HGRsFhkysvGNhl1CA2tdNNehuOXMjXBeP7VmJJZBjWp0W5TFETiQSJrp8
-         erkysZ6z12rzmxMJb90TcOL4WvM7DuEb3FAQaodXh5V4IWSD7kFe5QaXsZR49YoD2bVv
-         nQpuA+7OhzCiqNKOJhYZWt3A3KTnKt+JDgLugAUUtcBY/T87Rq0oxgs14mlMvsRY2Fhe
-         yAXkGDSai+knwWiJKkRNg+TSry2ktwHvhpk0BusUH/Brwz6muuHO55KJqjomvsvLjALf
-         EeNLcs8xQpNxcA7dfi1kH3UIhT7sRIGwp7nRsOYktqCRpzxMsj7Lsv+gKYmpz01nY9qw
-         qpeg==
-X-Gm-Message-State: AOJu0YxlHycy6LjImxX0ZyF1ZyiMCdCjG1lgdlEHdi1H24d0ymG79gLf
-        x2yZ3XMLSVvphbbQ06Jr7TifNgzes7rEdul/iXTMTxqc5c5y
-X-Google-Smtp-Source: AGHT+IEo7V/AZ60BTZSRjftitTfIZGEo/othg1DNf/jnetxePrPeGLDsA/DxXHk0f5kAfjT9wev6fUz/dWFo2sLhafwDuEEpIQ6H
+        bh=rsJfRRjt0ND01m5SD+usCvK3ZPQOJjHEKF2or+H2giY=;
+        b=V6qOkUZV36S/X2VXjB868kVRdxEo/oFYSnSCConWGcQUOaZUeKxGkIRxoXpSsAzUQt
+         +rKtpnZPamoUraeKu8m1+GtfuJK+JE9lTPhwVk/HkW7SJOosQTOlg3hoelv2f4RcB3RO
+         NDSb/PufE+1EWxSIKbxGOzKlGT8+RMorMtO035QOzn6ipmtlofbZz8EbJ1PC2fR4L8hQ
+         u9FMRAPogQH/2JFHLZHMho4EjHadl3wNAjQ5vNOt/fTJUWJZLTYO5quX1QI6KQbYXt7A
+         zAeMFMmXSs/tuLE477CmjczXCqGVMcwVR2JQuJEISIG2uYGoyzrWRCAnhw7T88RgHcjj
+         gceg==
+X-Gm-Message-State: AOJu0Yy62UFAEy2Xlcp+OcOfC8VhfGGncRdrnm72KvNqx+22ogBzMWMY
+        ID7gRohfzKejO1oyXKQx2am0ddvFWXBkxvVQI1FMJ3MWst4d
+X-Google-Smtp-Source: AGHT+IGddNs4ux6BDAmes8Wc/ThYi3QXpk4dHJvCI4FkAF9F8ZRmu+z1I7QuPxuetNK/xVS40TWBDIBQDdNVyPgnug1QSei7reiQ
 MIME-Version: 1.0
-X-Received: by 2002:a05:6870:c79a:b0:1dc:27f6:7a10 with SMTP id
- dy26-20020a056870c79a00b001dc27f67a10mr6163237oab.10.1696843432914; Mon, 09
- Oct 2023 02:23:52 -0700 (PDT)
-Date:   Mon, 09 Oct 2023 02:23:52 -0700
+X-Received: by 2002:a05:6808:1448:b0:3ae:2024:838b with SMTP id
+ x8-20020a056808144800b003ae2024838bmr7612418oiv.1.1696843433172; Mon, 09 Oct
+ 2023 02:23:53 -0700 (PDT)
+Date:   Mon, 09 Oct 2023 02:23:53 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000ef4d706074526cd@google.com>
-Subject: [syzbot] Monthly ext4 report (Oct 2023)
-From:   syzbot <syzbot+list12247b4500c0d653da52@syzkaller.appspotmail.com>
-To:     adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Message-ID: <00000000000012e2c8060745266c@google.com>
+Subject: [syzbot] Monthly udf report (Oct 2023)
+From:   syzbot <syzbot+listb2e5cd4d61843d9a2bfc@syzkaller.appspotmail.com>
+To:     jack@suse.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS autolearn=no
-        autolearn_force=no version=3.4.6
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello ext4 maintainers/developers,
+Hello udf maintainers/developers,
 
-This is a 31-day syzbot report for the ext4 subsystem.
+This is a 31-day syzbot report for the udf subsystem.
 All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/ext4
+https://syzkaller.appspot.com/upstream/s/udf
 
-During the period, 3 new issues were detected and 0 were fixed.
-In total, 38 issues are still open and 116 have been fixed so far.
+During the period, 0 new issues were detected and 0 were fixed.
+In total, 15 issues are still open and 18 have been fixed so far.
 
 Some of the still happening issues:
 
-Ref  Crashes Repro Title
-<1>  4113    Yes   WARNING: locking bug in ext4_move_extents
-                   https://syzkaller.appspot.com/bug?extid=7f4a6f7f7051474e40ad
-<2>  326     Yes   WARNING: locking bug in __ext4_ioctl
-                   https://syzkaller.appspot.com/bug?extid=a537ff48a9cb940d314c
-<3>  145     Yes   WARNING: locking bug in ext4_ioctl
-                   https://syzkaller.appspot.com/bug?extid=a3c8e9ac9f9d77240afd
-<4>  145     No    possible deadlock in evict (3)
-                   https://syzkaller.appspot.com/bug?extid=dd426ae4af71f1e74729
-<5>  83      Yes   INFO: task hung in sync_inodes_sb (5)
-                   https://syzkaller.appspot.com/bug?extid=30476ec1b6dc84471133
-<6>  46      No    KASAN: slab-use-after-free Read in check_igot_inode
-                   https://syzkaller.appspot.com/bug?extid=741810aea4ac24243b2f
-<7>  12      Yes   possible deadlock in ext4_xattr_inode_iget (2)
-                   https://syzkaller.appspot.com/bug?extid=352d78bd60c8e9d6ecdc
-<8>  10      Yes   INFO: task hung in find_inode_fast (2)
-                   https://syzkaller.appspot.com/bug?extid=adfd362e7719c02b3015
-<9>  9       Yes   kernel BUG in ext4_enable_quotas
-                   https://syzkaller.appspot.com/bug?extid=693985588d7a5e439483
-<10> 7       Yes   KASAN: slab-use-after-free Read in ext4_convert_inline_data_nolock
-                   https://syzkaller.appspot.com/bug?extid=db6caad9ebd2c8022b41
+Ref Crashes Repro Title
+<1> 1533    Yes   WARNING in udf_truncate_extents
+                  https://syzkaller.appspot.com/bug?extid=43fc5ba6dcb33e3261ca
+<2> 93      Yes   KASAN: use-after-free Write in udf_close_lvid
+                  https://syzkaller.appspot.com/bug?extid=60864ed35b1073540d57
+<3> 24      No    WARNING in udf_new_block
+                  https://syzkaller.appspot.com/bug?extid=cc717c6c5fee9ed6e41d
+<4> 19      Yes   KASAN: use-after-free Read in udf_finalize_lvid
+                  https://syzkaller.appspot.com/bug?extid=46073c22edd7f242c028
+<5> 16      Yes   KASAN: use-after-free Read in udf_sync_fs
+                  https://syzkaller.appspot.com/bug?extid=82df44ede2faca24c729
+<6> 14      Yes   WARNING in invalidate_bh_lru
+                  https://syzkaller.appspot.com/bug?extid=9743a41f74f00e50fc77
+<7> 9       Yes   WARNING in udf_setsize (2)
+                  https://syzkaller.appspot.com/bug?extid=db6df8c0f578bc11e50e
+<8> 5       Yes   KASAN: slab-out-of-bounds Write in udf_adinicb_writepage
+                  https://syzkaller.appspot.com/bug?extid=a3db10baf0c0ee459854
 
 ---
 This report is generated by a bot. It may contain errors.
