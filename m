@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C0997C0358
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Oct 2023 20:23:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 309417C035B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Oct 2023 20:24:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343554AbjJJSXf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Oct 2023 14:23:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34506 "EHLO
+        id S234160AbjJJSYJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Oct 2023 14:24:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232771AbjJJSXZ (ORCPT
+        with ESMTP id S234252AbjJJSXe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Oct 2023 14:23:25 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D3E8B4;
-        Tue, 10 Oct 2023 11:23:23 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-406619b53caso55636875e9.1;
-        Tue, 10 Oct 2023 11:23:23 -0700 (PDT)
+        Tue, 10 Oct 2023 14:23:34 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A366ED3;
+        Tue, 10 Oct 2023 11:23:26 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-40666aa674fso56556985e9.0;
+        Tue, 10 Oct 2023 11:23:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696962202; x=1697567002; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1696962205; x=1697567005; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xYZtGWQnk+qTSD3PTRtexwtcvMKng8mprQW/gWAvlII=;
-        b=Do005hS3MBtjlRP/eePtZYM2fbI8oEUW8eCM2L5plqHtFOAExM8jV+oKRZrqUREm9d
-         n+PZoZSVoiELbAEpS+t1Dw/OdxMX/c1r/A+usd7GEJY0KWy7dtPTBK9ZDWNhdUK7Qyi/
-         dP4PjWpi7iM+Z1i/jDHLcpqxQ6f2zqK10uDCB6AaKckLlZw4w6rGskOPoE2d9dXpZlss
-         S+hajuSXmL/h4m335de8iB/Tpv4Emj8Qi/dEb3qiMySf7hHcx+TAH5ZkWET8jtlJFPxc
-         D/zKdFRk/OvBp2lTooE6094QvFGfi0lbO2zCkrtZ+c6yPahEWq5J9iNqsWFrDfi+6Seo
-         O+sw==
+        bh=vy50Imp7hsFcD9fQ9yun20NmSXPiCxJvkitJven0GZ0=;
+        b=N7BDA+6Li75fATy2x1o65jGpuOrb7lkdTK+F7gqjzZamZHmeA1/dJsFUaBTORtlF1p
+         xSrGGWv9AQfvLbzgK92e+cL1Xu0DDcR1wK5+ZsS+Re/w2akiV0YF312CjhJkvMHNh6f7
+         L4psrlLf2eRerhGj7K8DXM6tQfatwe4NkZeIGpVam83zCnh8iQhQglNsKGHsWUwJ3AjG
+         Tb/uZP3W75cuZfYXoXr/wiq9dDU6kNNwXWgk7Rqb6ysKkugZ3btyBkvrLtno7dL5g2Sd
+         6OvGPVGJDMKsw1FxWVE45H7JDDNZYdu5/J1VaXBFxYS+QVwWdT/FCmA5F0crrK/Iu69z
+         rzYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696962202; x=1697567002;
+        d=1e100.net; s=20230601; t=1696962205; x=1697567005;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xYZtGWQnk+qTSD3PTRtexwtcvMKng8mprQW/gWAvlII=;
-        b=iv8p8ehGTJOdz8L8TGmcGr9+BVfVCdDnYs9Wt1tzOLdiwjQF+7gpya+IcP++qg0LB7
-         07XE5SEMN3FpoWAwQN/gOzq7lYZqHc7gWXGAdrD66+3rtQFmK0yfgMZbqMlyaQgkfits
-         z00Xuyc5PRHB5XtfjFGUtwvlMWIEjKL/ElKfTjXIGrRRm4ddYp792iROTmmPC6UQ2IY6
-         NcKX2MAoDQbXGyMPuncSC8ZrvjiPeC0c73u9mO6b4Z1vVvuySi5VPYOFgY/CU9hegAZ5
-         0z4I/COmNJjF85F3TG1mVCugFy9mL2iLlGhmbCn/EcLF4u7vEU5d8u+K3e4ZTCqQTQ6B
-         Zwjw==
-X-Gm-Message-State: AOJu0YyMwzyRm6mE3w1rsN15VMIal6RuxGuRKLVbJvgX70fVj0IQhsDl
-        OK7EyJ+jOndhWuXNxxhvK5U=
-X-Google-Smtp-Source: AGHT+IFeSuY+leWpp9QNGQShZwfaneWw9EVs9ggK3b4usECxkab1t01uZ2nxvXac8yGuffFvBzg59A==
-X-Received: by 2002:a05:600c:2298:b0:406:513d:7373 with SMTP id 24-20020a05600c229800b00406513d7373mr17049867wmf.11.1696962201906;
-        Tue, 10 Oct 2023 11:23:21 -0700 (PDT)
+        bh=vy50Imp7hsFcD9fQ9yun20NmSXPiCxJvkitJven0GZ0=;
+        b=Uq6V6Cajz8i2tKJILlH3Tco2Z9syTKkHfuOnrbFqARUSkQYR5KvIm8m6j+tH6Jm/mo
+         Pz15ofoMR2rcevDC0I9AYeCuPY/91NV5JlP/b/sAsVlI2T4cnmGhZD2jIz/pxhK2VflV
+         8mos1mkn5z+LEXjSvajiRJqqfqh0gGDfkyeeMEzhduhWrY6ckrH6tSP+7LJJporZispa
+         sd5UxzlDrkgJWqIN8i9Lw2jSLfSiNealP2NXqAaJVjfEslNy9fcn1AICE6gRSSff8NVf
+         uzFprY1s3M4PgD2An34XI7Zxk0BlgqnkQheIDlgkkz+lhqW2aLtXgioTVo5wllnKlli1
+         UpPg==
+X-Gm-Message-State: AOJu0YwPYENGMOFsb179UpW3z5FcblpSZdo7ESqqOEIo28xgp19GV3hr
+        5zckEN9nysCl2KnnXYPEbk0=
+X-Google-Smtp-Source: AGHT+IESkqPmjjAOvbILmnJkd4RsbqA/GSj+EQxsInZHrckbIauEIItGkohtMZgNuXuLytwtz90QZQ==
+X-Received: by 2002:a05:600c:ad0:b0:406:7029:7cc3 with SMTP id c16-20020a05600c0ad000b0040670297cc3mr15993235wmr.28.1696962204923;
+        Tue, 10 Oct 2023 11:23:24 -0700 (PDT)
 Received: from lucifer.home ([2a00:23c5:dc8c:8701:1663:9a35:5a7b:1d76])
-        by smtp.googlemail.com with ESMTPSA id j16-20020a5d6190000000b003217cbab88bsm13225312wru.16.2023.10.10.11.23.20
+        by smtp.googlemail.com with ESMTPSA id j16-20020a5d6190000000b003217cbab88bsm13225312wru.16.2023.10.10.11.23.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Oct 2023 11:23:20 -0700 (PDT)
+        Tue, 10 Oct 2023 11:23:22 -0700 (PDT)
 From:   Lorenzo Stoakes <lstoakes@gmail.com>
 To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -58,9 +58,9 @@ To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
 Cc:     "=Liam R . Howlett" <Liam.Howlett@oracle.com>,
         Vlastimil Babka <vbabka@suse.cz>,
         linux-fsdevel@vger.kernel.org, Lorenzo Stoakes <lstoakes@gmail.com>
-Subject: [PATCH v3 3/5] mm: make vma_merge() and split_vma() internal
-Date:   Tue, 10 Oct 2023 19:23:06 +0100
-Message-ID: <188659ab3a8efc58a26fbd64b735ebbb88a65aa0.1696929425.git.lstoakes@gmail.com>
+Subject: [PATCH v3 4/5] mm: abstract merge for new VMAs into vma_merge_new_vma()
+Date:   Tue, 10 Oct 2023 19:23:07 +0100
+Message-ID: <fe658ae961de1206f1557001f4d41d6e931d3919.1696929425.git.lstoakes@gmail.com>
 X-Mailer: git-send-email 2.42.0
 In-Reply-To: <cover.1696929425.git.lstoakes@gmail.com>
 References: <cover.1696929425.git.lstoakes@gmail.com>
@@ -76,103 +76,77 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Now the common pattern of - attempting a merge via vma_merge() and should
-this fail splitting VMAs via split_vma() - has been abstracted, the former
-can be placed into mm/internal.h and the latter made static.
+Only in mmap_region() and copy_vma() do we attempt to merge VMAs which
+occupy entirely new regions of virtual memory.
 
-In addition, the split_vma() nommu variant also need not be exported.
+We can abstract this logic and make the intent of this invocations of it
+completely explicit, rather than invoking vma_merge() with an inscrutable
+wall of parameters.
+
+This also paves the way for a simplification of the core vma_merge()
+implementation, as we seek to make it entirely an implementation detail.
+
+Note that on mmap_region(), VMA fields are initialised to zero, so we can
+simply reference these rather than explicitly specifying NULL.
 
 Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
 Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
 ---
- include/linux/mm.h | 9 ---------
- mm/internal.h      | 9 +++++++++
- mm/mmap.c          | 8 ++++----
- mm/nommu.c         | 4 ++--
- 4 files changed, 15 insertions(+), 15 deletions(-)
+ mm/mmap.c | 27 ++++++++++++++++++++-------
+ 1 file changed, 20 insertions(+), 7 deletions(-)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 83ee1f35febe..74d7547ffb70 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -3237,16 +3237,7 @@ extern int vma_expand(struct vma_iterator *vmi, struct vm_area_struct *vma,
- 		      struct vm_area_struct *next);
- extern int vma_shrink(struct vma_iterator *vmi, struct vm_area_struct *vma,
- 		       unsigned long start, unsigned long end, pgoff_t pgoff);
--extern struct vm_area_struct *vma_merge(struct vma_iterator *vmi,
--	struct mm_struct *, struct vm_area_struct *prev, unsigned long addr,
--	unsigned long end, unsigned long vm_flags, struct anon_vma *,
--	struct file *, pgoff_t, struct mempolicy *, struct vm_userfaultfd_ctx,
--	struct anon_vma_name *);
- extern struct anon_vma *find_mergeable_anon_vma(struct vm_area_struct *);
--extern int __split_vma(struct vma_iterator *vmi, struct vm_area_struct *,
--		       unsigned long addr, int new_below);
--extern int split_vma(struct vma_iterator *vmi, struct vm_area_struct *,
--			 unsigned long addr, int new_below);
- extern int insert_vm_struct(struct mm_struct *, struct vm_area_struct *);
- extern void unlink_file_vma(struct vm_area_struct *);
- extern struct vm_area_struct *copy_vma(struct vm_area_struct **,
-diff --git a/mm/internal.h b/mm/internal.h
-index 3a72975425bb..ddaeb9f2d9d7 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -1011,6 +1011,15 @@ struct page *follow_trans_huge_pmd(struct vm_area_struct *vma,
- 				   unsigned long addr, pmd_t *pmd,
- 				   unsigned int flags);
- 
-+/*
-+ * mm/mmap.c
-+ */
-+struct vm_area_struct *vma_merge(struct vma_iterator *vmi,
-+	struct mm_struct *, struct vm_area_struct *prev, unsigned long addr,
-+	unsigned long end, unsigned long vm_flags, struct anon_vma *,
-+	struct file *, pgoff_t, struct mempolicy *, struct vm_userfaultfd_ctx,
-+	struct anon_vma_name *);
-+
- enum {
- 	/* mark page accessed */
- 	FOLL_TOUCH = 1 << 16,
 diff --git a/mm/mmap.c b/mm/mmap.c
-index bca685820763..a516f2412f79 100644
+index a516f2412f79..db3842601a88 100644
 --- a/mm/mmap.c
 +++ b/mm/mmap.c
-@@ -2346,8 +2346,8 @@ static void unmap_region(struct mm_struct *mm, struct ma_state *mas,
-  * has already been checked or doesn't make sense to fail.
-  * VMA Iterator will point to the end VMA.
-  */
--int __split_vma(struct vma_iterator *vmi, struct vm_area_struct *vma,
--		unsigned long addr, int new_below)
-+static int __split_vma(struct vma_iterator *vmi, struct vm_area_struct *vma,
-+		       unsigned long addr, int new_below)
- {
- 	struct vma_prepare vp;
- 	struct vm_area_struct *new;
-@@ -2428,8 +2428,8 @@ int __split_vma(struct vma_iterator *vmi, struct vm_area_struct *vma,
-  * Split a vma into two pieces at address 'addr', a new vma is allocated
-  * either for the first part or the tail.
-  */
--int split_vma(struct vma_iterator *vmi, struct vm_area_struct *vma,
--	      unsigned long addr, int new_below)
-+static int split_vma(struct vma_iterator *vmi, struct vm_area_struct *vma,
-+		     unsigned long addr, int new_below)
- {
- 	if (vma->vm_mm->map_count >= sysctl_max_map_count)
- 		return -ENOMEM;
-diff --git a/mm/nommu.c b/mm/nommu.c
-index f9553579389b..fc4afe924ad5 100644
---- a/mm/nommu.c
-+++ b/mm/nommu.c
-@@ -1305,8 +1305,8 @@ SYSCALL_DEFINE1(old_mmap, struct mmap_arg_struct __user *, arg)
-  * split a vma into two pieces at address 'addr', a new vma is allocated either
-  * for the first part or the tail.
-  */
--int split_vma(struct vma_iterator *vmi, struct vm_area_struct *vma,
--	      unsigned long addr, int new_below)
-+static int split_vma(struct vma_iterator *vmi, struct vm_area_struct *vma,
-+		     unsigned long addr, int new_below)
- {
- 	struct vm_area_struct *new;
- 	struct vm_region *region;
+@@ -2485,6 +2485,22 @@ struct vm_area_struct *vma_modify(struct vma_iterator *vmi,
+ 	return vma;
+ }
+ 
++/*
++ * Attempt to merge a newly mapped VMA with those adjacent to it. The caller
++ * must ensure that [start, end) does not overlap any existing VMA.
++ */
++static struct vm_area_struct *vma_merge_new_vma(struct vma_iterator *vmi,
++						struct vm_area_struct *prev,
++						struct vm_area_struct *vma,
++						unsigned long start,
++						unsigned long end,
++						pgoff_t pgoff)
++{
++	return vma_merge(vmi, vma->vm_mm, prev, start, end, vma->vm_flags,
++			 vma->anon_vma, vma->vm_file, pgoff, vma_policy(vma),
++			 vma->vm_userfaultfd_ctx, anon_vma_name(vma));
++}
++
+ /*
+  * do_vmi_align_munmap() - munmap the aligned region from @start to @end.
+  * @vmi: The vma iterator
+@@ -2840,10 +2856,9 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+ 		 * vma again as we may succeed this time.
+ 		 */
+ 		if (unlikely(vm_flags != vma->vm_flags && prev)) {
+-			merge = vma_merge(&vmi, mm, prev, vma->vm_start,
+-				    vma->vm_end, vma->vm_flags, NULL,
+-				    vma->vm_file, vma->vm_pgoff, NULL,
+-				    NULL_VM_UFFD_CTX, NULL);
++			merge = vma_merge_new_vma(&vmi, prev, vma,
++						  vma->vm_start, vma->vm_end,
++						  pgoff);
+ 			if (merge) {
+ 				/*
+ 				 * ->mmap() can change vma->vm_file and fput
+@@ -3385,9 +3400,7 @@ struct vm_area_struct *copy_vma(struct vm_area_struct **vmap,
+ 	if (new_vma && new_vma->vm_start < addr + len)
+ 		return NULL;	/* should never get here */
+ 
+-	new_vma = vma_merge(&vmi, mm, prev, addr, addr + len, vma->vm_flags,
+-			    vma->anon_vma, vma->vm_file, pgoff, vma_policy(vma),
+-			    vma->vm_userfaultfd_ctx, anon_vma_name(vma));
++	new_vma = vma_merge_new_vma(&vmi, prev, vma, addr, addr + len, pgoff);
+ 	if (new_vma) {
+ 		/*
+ 		 * Source vma may have been merged into new_vma
 -- 
 2.42.0
 
