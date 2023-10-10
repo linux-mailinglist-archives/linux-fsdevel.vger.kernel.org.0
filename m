@@ -2,54 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 573997BFA61
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Oct 2023 13:52:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E49BE7BFA71
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Oct 2023 13:56:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231494AbjJJLwb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Oct 2023 07:52:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59200 "EHLO
+        id S231466AbjJJL4i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Oct 2023 07:56:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34356 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231459AbjJJLwa (ORCPT
+        with ESMTP id S230122AbjJJL4h (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Oct 2023 07:52:30 -0400
+        Tue, 10 Oct 2023 07:56:37 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00EF2A4;
-        Tue, 10 Oct 2023 04:52:28 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9EE1C433C8;
-        Tue, 10 Oct 2023 11:52:25 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F125AC;
+        Tue, 10 Oct 2023 04:56:36 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24079C433CA;
+        Tue, 10 Oct 2023 11:56:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696938748;
-        bh=lS6j666yQyoqSWNnJzvLxKDEG6aA7JaskJUk41LjEXs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KiEk4CH0tcflNyGjG7ZTG2xo4gmxTrebyMOCAKM/H9Yr6bkz/c88nKgStSnN0jpSx
-         Bg+gFqtkEkmiWdSYu/rw1fzgy/lwH1MxwHxtyaqXphULb9ywuoiGrn4UZ+5sopnAIy
-         Enxj834wq1Ug16wWZvuwwWYAd5T35D+kxhVa2Yflrpw1EqWolMtwzc/l8OBAUe37yi
-         Hw1R9gsx24+KTRXSKLVT9xYyZ/BThYTL2hYrGrOKtssp0PUIdYvXCOpDCIS+lrfwJb
-         eOO4dicGiN1ZVEDSNLgzZaKkrJ7Gg1hFIZMdXhwMoKM0ZpdG1GyxUhp1a2MLK81qCT
-         HCO91tVJegkTg==
-From:   Christian Brauner <brauner@kernel.org>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 0/3] Reduce impact of overlayfs backing files fake path
-Date:   Tue, 10 Oct 2023 13:52:09 +0200
-Message-Id: <20231010-lohnen-botanik-7bf974a5cecd@brauner>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20231009153712.1566422-1-amir73il@gmail.com>
-References: <20231009153712.1566422-1-amir73il@gmail.com>
+        s=k20201202; t=1696938996;
+        bh=0AsCbMCrI7tvcpSVF4Jgy/rDJw8pbCcpiPc+/XLXw0Q=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=cFRk+rVPpc3FOAiT8Od45wyxyPPnbtz6S5U823POW2R56qGu9e5slu/QdzGo7C0yk
+         HzIqkLZiq0iLFTmVAoQd2fjlG4KUg6hDtcsj+Au2jf+fj7jGWREV83JqoBAbb1Mx6O
+         LdWAD542yHPL097UbVE19BP0g4frWS6u2Yv7SlTZJ6zQFVWPnVuotU9R9DBTh2HtxX
+         1O9AOOKrdUENiTO+CmeKJiCvYXEgTBI8SYyzFDG021IGOu9VK1c22yWoy/fqVaZt+x
+         VT16pRttM5pCyAD719k+ohC3ndo2qph8Ziy23+LMwk3w9jQnoq63rzplfWD9784xzA
+         KghZr/QCYAsTQ==
+Date:   Tue, 10 Oct 2023 12:56:30 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Joey Gouly <joey.gouly@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, nd@arm.com,
+        akpm@linux-foundation.org, aneesh.kumar@linux.ibm.com,
+        catalin.marinas@arm.com, dave.hansen@linux.intel.com,
+        maz@kernel.org, oliver.upton@linux.dev, shuah@kernel.org,
+        will@kernel.org, kvmarm@lists.linux.dev,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v1 15/20] arm64: add POE signal support
+Message-ID: <88728437-2486-43c3-9fdb-fcd14ff39f11@sirena.org.uk>
+References: <20230927140123.5283-1-joey.gouly@arm.com>
+ <20230927140123.5283-16-joey.gouly@arm.com>
+ <a6e6c8a3-15b1-48e3-84fa-810ce575c09a@sirena.org.uk>
+ <20231010095702.GB2098677@e124191.cambridge.arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1146; i=brauner@kernel.org; h=from:subject:message-id; bh=lS6j666yQyoqSWNnJzvLxKDEG6aA7JaskJUk41LjEXs=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSqWj0RW27+IHNtNc+h6B4hm3VMFRl7+3L+7amr2nuh/N3N Ys35HaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABM5JMLwV1wgSujt+5k83WdfTjcw/S ic8jtytvD87y8d0jZO2pW1vJXhn/r6hUt2vPkq47fIhae1rkfU489Olind0hwdBcK/2fc08QAA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="L3OvJ2NHt06D34tb"
+Content-Disposition: inline
+In-Reply-To: <20231010095702.GB2098677@e124191.cambridge.arm.com>
+X-Cookie: I feel partially hydrogenated!
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
         RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
@@ -60,28 +59,44 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 09 Oct 2023 18:37:09 +0300, Amir Goldstein wrote:
-> Following v3 addresses Al's review comments on v2.
-> 
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
+--L3OvJ2NHt06D34tb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+On Tue, Oct 10, 2023 at 10:57:02AM +0100, Joey Gouly wrote:
+> On Thu, Oct 05, 2023 at 03:34:29PM +0100, Mark Brown wrote:
+> > On Wed, Sep 27, 2023 at 03:01:18PM +0100, Joey Gouly wrote:
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+> > > Add PKEY support to signals, by saving and restoring POR_EL0 from the stackframe.
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+> > It'd be nice to have at least a basic test that validates that we
+> > generate a POE signal frame when expected, though that should be a very
+> > minor thing which is unlikely to ever actually spot anything.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
+> The selftests/mm/protection_keys.c looks for the POE signal frame, do you think
+> we need a separate test?
 
-[1/3] fs: get mnt_writers count for an open backing file's real path
-      https://git.kernel.org/vfs/vfs/c/90e168d5fa01
-[2/3] fs: create helper file_user_path() for user displayed mapped file path
-      https://git.kernel.org/vfs/vfs/c/842b845c7657
-[3/3] fs: store real path instead of fake path in backing file f_path
-      https://git.kernel.org/vfs/vfs/c/6b9503cf48c9
+Like I say it'd be a very minor thing to have one - it is more just a
+thing you'd go looking for in the signals tests rather than something
+that's absolutely essential.  For trivial things like TPIDR2 I've just
+added a trivial thing that verifies that the frame is present iff the
+matching HWCAP is set.  Having the test in the mm tests is probably fine
+though.
+
+--L3OvJ2NHt06D34tb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmUlO+0ACgkQJNaLcl1U
+h9ALhQf+MAF7Qb061DA3jMKL8gAGgi2jobi8C9/WrJz95wSSl4KzgskqrM2Kxh8d
+ZLh0UpnLrsEk9Qze9IOzzdnbbn/VD6ENZ/vDRlWzvih8xVZxpoL1MiLqBSRsU78W
+WANs6c4fPBTQMLGlFEzz3YwYXcwQEqUyY4xmp8O8jbCzu1GYU29kafcXb6aypmgT
+YIPw2K8RecnKlhbjZRULjPa1TPZrGiq0/6zR1BhauqiJmVoYwcpvqc+WK4ZBSb+w
+5Td1tJT8KYSK43lBFqHY8gUk2s6M+BtANBsGCgyDjGlPjsvgusWNevKkaZ/l9mRO
+M9fyqG5gtyPbIU7dRP51Mnw19dgsxw==
+=hd/I
+-----END PGP SIGNATURE-----
+
+--L3OvJ2NHt06D34tb--
