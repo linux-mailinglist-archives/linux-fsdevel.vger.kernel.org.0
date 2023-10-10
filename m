@@ -2,188 +2,157 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F23D47BF61F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Oct 2023 10:37:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A63D57BF740
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Oct 2023 11:25:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346705AbjJJIhF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Oct 2023 04:37:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43870 "EHLO
+        id S229921AbjJJJZx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Oct 2023 05:25:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36202 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1443048AbjJJIga (ORCPT
+        with ESMTP id S229594AbjJJJZx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Oct 2023 04:36:30 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F473B0;
-        Tue, 10 Oct 2023 01:35:53 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-53829312d12so13926112a12.0;
-        Tue, 10 Oct 2023 01:35:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696926951; x=1697531751; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BMi8wdVxApb25LjYsbqQ7Zs0KqzUPo1pOmHWaAx78bA=;
-        b=FD7U6M8XqN+Yj1c9oZwfBz+QO7QV/lKsyM6Z0PZLD9bQGR6Wuz3feG/ZK4G86sBDzQ
-         Fr+PRwuF3zFqxaOY/o58hzfxRVnTG+L9WEs4/S5/IFalX6Bjm8mffprvRp6wT8C5wUvU
-         7N9nQRlFqYXx6fkI4fQ99/ARSONVieFevAN4y1uEy9VccRmaTh+JOnfLWbeLr4NwFmfL
-         FqHqwvAbH6/LWRUL/N/3b/IpZjTPmER4O0/ZTeA/YvMvYTt5KNtQB7v/m4JNnLCLbi78
-         IxC99pr6WLFyBgTCI7KfffWmW/fVRlXjqZcK20UaqJS3n8dk1uEA/OF10i0KRUbpOsD4
-         rseQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696926951; x=1697531751;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BMi8wdVxApb25LjYsbqQ7Zs0KqzUPo1pOmHWaAx78bA=;
-        b=Pe2TqSsvN0on/FjHSIIZSWf2IJeRbnwUXPFYfVbPCsdPgQti/Vt+M36hITaPTMduLn
-         NF010Nj6CnmwC24wibRWhz6Hm9yYKuYEOtQ6ARayP3lX1iCu6kX+lXArlHPKQ6Q3CzId
-         AK/4j7ifYtpK91ZHa9SCdgpC/c9Nm0J8QPF51Rj6rpHHYgZ9gBeyQ2aZlhRb66fn0L3i
-         GxcR03EMUQ88TUHdktxyupU4BB+86+rzli+rBjeU0osVLd7YueFhr2zDrjs6y+Hk093E
-         nY6sYt/gLRKBSU2/4ATNUvsp3E+n3eQIbc0uAJV3qZK6kA3esgQlS+n7NBeqZWVnI0tY
-         WsWw==
-X-Gm-Message-State: AOJu0YyAxHpxqyvHzvP3kgWOkMlyLvseIu8tNHw2CZbJw7tU+6P2Fq5q
-        yn7v1m5MT7ZoOzIfb8zWi9EUmDp4S6Q=
-X-Google-Smtp-Source: AGHT+IErGjDETTfbLZBe+IUptE2vO9PBQ0X0ZvVP3jvwOnlcuV4fFhG+shtCF2fNB/No8v3wNNpRIw==
-X-Received: by 2002:a05:6402:1a33:b0:522:582c:f427 with SMTP id be19-20020a0564021a3300b00522582cf427mr13675180edb.14.1696926951033;
-        Tue, 10 Oct 2023 01:35:51 -0700 (PDT)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id u1-20020a05640207c100b005311e934765sm7279443edy.27.2023.10.10.01.35.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Oct 2023 01:35:49 -0700 (PDT)
-From:   Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date:   Tue, 10 Oct 2023 10:35:48 +0200
-To:     Andrii Nakryiko <andrii@kernel.org>
-Cc:     bpf@vger.kernel.org, netdev@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keescook@chromium.org,
-        brauner@kernel.org, lennart@poettering.net, kernel-team@meta.com,
-        sargun@sargun.me
-Subject: Re: [PATCH v6 bpf-next 04/13] bpf: add BPF token support to
- BPF_MAP_CREATE command
-Message-ID: <ZSUM5A+dJHptbRSx@krava>
-References: <20230927225809.2049655-1-andrii@kernel.org>
- <20230927225809.2049655-5-andrii@kernel.org>
+        Tue, 10 Oct 2023 05:25:53 -0400
+Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D49C193;
+        Tue, 10 Oct 2023 02:25:50 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id 475495C028D;
+        Tue, 10 Oct 2023 05:25:50 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Tue, 10 Oct 2023 05:25:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alyssa.is; h=cc
+        :cc:content-transfer-encoding:content-type:content-type:date
+        :date:from:from:in-reply-to:message-id:mime-version:reply-to
+        :sender:subject:subject:to:to; s=fm1; t=1696929950; x=
+        1697016350; bh=ETNAk+cmNQvtBbCMDyx7O4aQl9NCuOdk+MTBq0tOexg=; b=L
+        aGGhGdX5jIFgCzgfyckJUhI8YK/Et3BZ0mlCFi6Tr6ffEiEisO4BFs5X/pR1SkPM
+        r9vPdvH79Bz4jCxqYMmrPoz08G2eBT9S7A5sKpHnzC6DUrEjpxhpJMkeJZQ7eWeP
+        QcL4jFP2Ak27f5DxCR4+YMGsm0GX1rpzgfEN5Y6A+3ZXL3FFDQrVv9HvHZjAYIj7
+        RGC1vCI6gYiIlR43NJXQaPWqbtv4xf29h4Uw+P8w84PGZFYwBqtaYYdxTjnOKuXp
+        SdoEfo5UsEfTxNeiRfPclV4tNRboGPk9Q7srCOFCIGdH0hh/zMqUUh+qOVuj29kY
+        mRCZUWcOMCe+JcJJQZpow==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:content-type:date:date:feedback-id:feedback-id
+        :from:from:in-reply-to:message-id:mime-version:reply-to:sender
+        :subject:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender
+        :x-me-sender:x-sasl-enc; s=fm2; t=1696929950; x=1697016350; bh=E
+        TNAk+cmNQvtBbCMDyx7O4aQl9NCuOdk+MTBq0tOexg=; b=XFjf2JnJhJ1GbV5vc
+        +eMSlrjXafQ2TZOtYl8sBSbg/1WWcYpkZ8PUSt2NygDUVWlrbP1EJ1CvWlftaRKn
+        c2xMxeVFFfWZKST3RQF5KIs4AIOQKZtZsegzc+hyPq7lNgfuq+jVE7HsXqFQHxg+
+        WVNU2kMt8vm+DaznzASv3x1P/7tVkq8gHhPi3ZQ7T+iYWLAZxakgfCgV9WtHEbjB
+        9PEuen+DEk3gRarytbRIAYEhGCYVsaLnEKhKnVd/9YRsbkvwCF7fWPcIXE6NKG2B
+        1M9ZJxIrkSWexAqysW91i0zEvrqV6XMnCtJRs5wu02/iIkMGPPxq7JgB8Npz8CSm
+        qx14w==
+X-ME-Sender: <xms:nRglZReI3jaSIZbcXScNtFd9-157EsnZmmbZaHcw55BCsAgZoKBOyA>
+    <xme:nRglZfO3LvpFfvBy_bMwJe2cqBPpbfCXfcgsPDM-TiykMzvy4F7o6jDoLspp4-hHr
+    Y7MtO7FglBNSmH2QQ>
+X-ME-Received: <xmr:nRglZaj8jMQQ95RfnBxDcyGRbmEnEtJ1gC-Jh0DI5N8NlJZRQ3hOrZZH-oONUc7N7IKltpNKrLH1_z0KcA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrheehgdduhecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefhvfevufffkffogggtgfesthekredtredtjeenucfhrhhomheptehlhihsshgr
+    ucftohhsshcuoehhihesrghlhihsshgrrdhisheqnecuggftrfgrthhtvghrnhepjeefhe
+    ffheejjefgtdffteektdfgfefgfeejgeffkeejjeegtdevjeelheellefhnecuvehluhhs
+    thgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhephhhisegrlhihshhsrg
+    drihhs
+X-ME-Proxy: <xmx:nRglZa_vyTq4lMmqhumyZ_gY9O9ArkhfjxUQ51jGyTYkg6htpvp9oA>
+    <xmx:nRglZdsL6mjcPF1-mSy2iCL3A8ts61Oc33OoT4QedBa1GWWV0ei6dQ>
+    <xmx:nRglZZFqGEuXUnFrminNouu4j9xdiB1iFwP6Wd2qtQyo_j7CQwJWhg>
+    <xmx:nhglZRghaqEpfS22ubj-dZcaWuqGscv92J1AXtMm-ogFbodKarsBgg>
+Feedback-ID: i12284293:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 10 Oct 2023 05:25:49 -0400 (EDT)
+Received: by mbp.qyliss.net (Postfix, from userid 1000)
+        id D7E29E9F; Tue, 10 Oct 2023 09:25:46 +0000 (UTC)
+From:   Alyssa Ross <hi@alyssa.is>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Eric Biederman <ebiederm@xmission.com>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] exec: allow executing block devices
+Date:   Tue, 10 Oct 2023 09:21:33 +0000
+Message-ID: <20231010092133.4093612-1-hi@alyssa.is>
+X-Mailer: git-send-email 2.42.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230927225809.2049655-5-andrii@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_PASS,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 27, 2023 at 03:58:00PM -0700, Andrii Nakryiko wrote:
+As far as I can tell, the S_ISREG() check is there to prevent
+executing files where that would be nonsensical, like directories,
+fifos, or sockets.  But the semantics for executing a block device are
+quite obvious — the block device acts just like a regular file.
 
-SNIP
+My use case is having a common VM image that takes a configurable
+payload to run.  The payload will always be a single ELF file.
 
-> -#define BPF_MAP_CREATE_LAST_FIELD map_extra
-> +#define BPF_MAP_CREATE_LAST_FIELD map_token_fd
->  /* called via syscall */
->  static int map_create(union bpf_attr *attr)
->  {
->  	const struct bpf_map_ops *ops;
-> +	struct bpf_token *token = NULL;
->  	int numa_node = bpf_map_attr_numa_node(attr);
->  	u32 map_type = attr->map_type;
->  	struct bpf_map *map;
-> @@ -1157,14 +1158,32 @@ static int map_create(union bpf_attr *attr)
->  	if (!ops->map_mem_usage)
->  		return -EINVAL;
->  
-> +	if (attr->map_token_fd) {
-> +		token = bpf_token_get_from_fd(attr->map_token_fd);
-> +		if (IS_ERR(token))
-> +			return PTR_ERR(token);
-> +
-> +		/* if current token doesn't grant map creation permissions,
-> +		 * then we can't use this token, so ignore it and rely on
-> +		 * system-wide capabilities checks
-> +		 */
-> +		if (!bpf_token_allow_cmd(token, BPF_MAP_CREATE) ||
-> +		    !bpf_token_allow_map_type(token, attr->map_type)) {
-> +			bpf_token_put(token);
-> +			token = NULL;
-> +		}
-> +	}
-> +
-> +	err = -EPERM;
-> +
->  	/* Intent here is for unprivileged_bpf_disabled to block BPF map
->  	 * creation for unprivileged users; other actions depend
->  	 * on fd availability and access to bpffs, so are dependent on
->  	 * object creation success. Even with unprivileged BPF disabled,
->  	 * capability checks are still carried out.
->  	 */
-> -	if (sysctl_unprivileged_bpf_disabled && !bpf_capable())
-> -		return -EPERM;
-> +	if (sysctl_unprivileged_bpf_disabled && !bpf_token_capable(token, CAP_BPF))
-> +		goto put_token;
->  
->  	/* check privileged map type permissions */
->  	switch (map_type) {
-> @@ -1197,25 +1216,27 @@ static int map_create(union bpf_attr *attr)
->  	case BPF_MAP_TYPE_LRU_PERCPU_HASH:
->  	case BPF_MAP_TYPE_STRUCT_OPS:
->  	case BPF_MAP_TYPE_CPUMAP:
-> -		if (!bpf_capable())
-> -			return -EPERM;
-> +		if (!bpf_token_capable(token, CAP_BPF))
-> +			goto put_token;
->  		break;
->  	case BPF_MAP_TYPE_SOCKMAP:
->  	case BPF_MAP_TYPE_SOCKHASH:
->  	case BPF_MAP_TYPE_DEVMAP:
->  	case BPF_MAP_TYPE_DEVMAP_HASH:
->  	case BPF_MAP_TYPE_XSKMAP:
-> -		if (!bpf_net_capable())
-> -			return -EPERM;
-> +		if (!bpf_token_capable(token, CAP_NET_ADMIN))
-> +			goto put_token;
->  		break;
->  	default:
->  		WARN(1, "unsupported map type %d", map_type);
-> -		return -EPERM;
-> +		goto put_token;
->  	}
->  
->  	map = ops->map_alloc(attr);
-> -	if (IS_ERR(map))
-> -		return PTR_ERR(map);
-> +	if (IS_ERR(map)) {
-> +		err = PTR_ERR(map);
-> +		goto put_token;
-> +	}
->  	map->ops = ops;
->  	map->map_type = map_type;
->  
-> @@ -1252,7 +1273,7 @@ static int map_create(union bpf_attr *attr)
->  		map->btf = btf;
->  
->  		if (attr->btf_value_type_id) {
-> -			err = map_check_btf(map, btf, attr->btf_key_type_id,
-> +			err = map_check_btf(map, token, btf, attr->btf_key_type_id,
->  					    attr->btf_value_type_id);
->  			if (err)
->  				goto free_map;
+I could share the file with virtio-fs, or I could create a disk image
+containing a filesystem containing the payload, but both of those add
+unnecessary layers of indirection when all I need to do is share a
+single executable blob with the VM.  Sharing it as a block device is
+the most natural thing to do, aside from the (arbitrary, as far as I
+can tell) restriction on executing block devices.  (The only slight
+complexity is that I need to ensure that my payload size is rounded up
+to a whole number of sectors, but that's trivial and fast in
+comparison to e.g. generating a filesystem image.)
 
-I might be missing something, but should we call bpf_token_put(token)
-on non-error path as well? probably after bpf_map_save_memcg call
+Signed-off-by: Alyssa Ross <hi@alyssa.is>
+---
+ fs/exec.c  | 6 ++++--
+ fs/namei.c | 2 +-
+ 2 files changed, 5 insertions(+), 3 deletions(-)
 
-jirka
+diff --git a/fs/exec.c b/fs/exec.c
+index 6518e33ea813..e29a9f16da5f 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -148,7 +148,8 @@ SYSCALL_DEFINE1(uselib, const char __user *, library)
+ 	 * and check again at the very end too.
+ 	 */
+ 	error = -EACCES;
+-	if (WARN_ON_ONCE(!S_ISREG(file_inode(file)->i_mode) ||
++	if (WARN_ON_ONCE((!S_ISREG(file_inode(file)->i_mode) &&
++			  !S_ISBLK(file_inode(file)->i_mode)) ||
+ 			 path_noexec(&file->f_path)))
+ 		goto exit;
+ 
+@@ -931,7 +932,8 @@ static struct file *do_open_execat(int fd, struct filename *name, int flags)
+ 	 * and check again at the very end too.
+ 	 */
+ 	err = -EACCES;
+-	if (WARN_ON_ONCE(!S_ISREG(file_inode(file)->i_mode) ||
++	if (WARN_ON_ONCE((!S_ISREG(file_inode(file)->i_mode) &&
++			  !S_ISBLK(file_inode(file)->i_mode)) ||
+ 			 path_noexec(&file->f_path)))
+ 		goto exit;
+ 
+diff --git a/fs/namei.c b/fs/namei.c
+index 567ee547492b..60c89321604a 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3254,7 +3254,7 @@ static int may_open(struct mnt_idmap *idmap, const struct path *path,
+ 		fallthrough;
+ 	case S_IFIFO:
+ 	case S_IFSOCK:
+-		if (acc_mode & MAY_EXEC)
++		if ((inode->i_mode & S_IFMT) != S_IFBLK && (acc_mode & MAY_EXEC))
+ 			return -EACCES;
+ 		flag &= ~O_TRUNC;
+ 		break;
 
-> @@ -1293,6 +1314,8 @@ static int map_create(union bpf_attr *attr)
->  free_map:
->  	btf_put(map->btf);
->  	map->ops->map_free(map);
-> +put_token:
-> +	bpf_token_put(token);
->  	return err;
->  }
->  
+base-commit: 94f6f0550c625fab1f373bb86a6669b45e9748b3
+-- 
+2.42.0
 
-SNIP
