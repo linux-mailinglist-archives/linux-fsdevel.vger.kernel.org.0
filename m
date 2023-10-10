@@ -2,97 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 729B17BFA85
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Oct 2023 14:00:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB73D7BFB9B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Oct 2023 14:36:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231791AbjJJMAL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Oct 2023 08:00:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43640 "EHLO
+        id S231816AbjJJMgB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Oct 2023 08:36:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36664 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231650AbjJJMAD (ORCPT
+        with ESMTP id S231698AbjJJMf4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Oct 2023 08:00:03 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7975111
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Oct 2023 04:59:55 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-991c786369cso927821866b.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Oct 2023 04:59:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1696939193; x=1697543993; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=wLQsQuOsWejoU0OnrXi9mSD8MpURT7HqfTQjNz0yMO8=;
-        b=frprtuXLSULbwGZLMrH92NuTOvW1SJRtIKKthHmBNWMtxPbX6XC4pfHIOllfwhEewv
-         6X31752vTuXWZ32L5EMUdSY+PMTB93duQQ79I6NpTt60vXTppOzRRIXyb4LjJzV8kg/J
-         XcjENQdmltGiJ5ZZd/ScsnvmFSNsFoeAW6Grw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696939193; x=1697543993;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wLQsQuOsWejoU0OnrXi9mSD8MpURT7HqfTQjNz0yMO8=;
-        b=rMUn856wcd3LRUpQ4a8G9B2kRGmeEd5FbcPTrvr0MbvxhYlzFiyBuX5K8GquBhOqOv
-         0N57FeBLKLyZSKMmak783HawM3EYSW1jHnR6LNChpi3WBsegQsySoVOJ1ZysEoR6sWjG
-         zPZfxy+ZSCqk9waeefk6V6LLnZJqJ63g4OiOR9ARhkMUCGQWbJj+eKnovU0+BhN3Tzk0
-         J7I9uICApe3DkMD7frtiCEyS5T7lu/UBNX8Nxmjxo+oBiIx6bfKPv3yqLtofkQgl+noo
-         xwnlFRzNZEtbBb87WxuV73kmjgMtRl4giSxF7mgMFhAh8Q5UvL4FOH3rtSSJFD/75McX
-         qj6A==
-X-Gm-Message-State: AOJu0YwulH0rQawCkbeB/n68xSLAc07zfX6eLSDq15Wzk3rsTbDNe4Fm
-        M/8bd0JYxXHhN8WRjh0OIxotJtK6otfsLd96NUDVfA==
-X-Google-Smtp-Source: AGHT+IHuPQMXvx41pjFlEOEJcQh0r2acSYASqorJEhhRFR3294C8jolKTvIf3FuZCDAP872XQzr3xhS13RvSz1m8JyM=
-X-Received: by 2002:a17:906:3050:b0:9a1:f10d:9746 with SMTP id
- d16-20020a170906305000b009a1f10d9746mr15703509ejd.20.1696939192671; Tue, 10
- Oct 2023 04:59:52 -0700 (PDT)
-MIME-Version: 1.0
-References: <20231009153712.1566422-1-amir73il@gmail.com> <20231009153712.1566422-4-amir73il@gmail.com>
-In-Reply-To: <20231009153712.1566422-4-amir73il@gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 10 Oct 2023 13:59:41 +0200
-Message-ID: <CAJfpegtcNOCMp+QBPFD5aUEok6u7AqwrGqAqMCZeeuyq6xfYFw@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] fs: store real path instead of fake path in
- backing file f_path
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        Tue, 10 Oct 2023 08:35:56 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D01759D
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Oct 2023 05:35:54 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 722141F8B0;
+        Tue, 10 Oct 2023 12:35:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1696941353; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=2RRtP+vYvF8BJUJh1g9jd2MU5oy2SZqDzSldc2oYFIo=;
+        b=BUF+jy8fuOxDsPEfP4VfSsc9bj9MXbAZt2yz9Wu/fXXaMssOZEqdhJOWw/SY8iexuPxSzg
+        4KuAHuB7DJdlig1hWzDth3A6j7vny4I5Z9vSCaPlyhc1PxVCBqUqjKY+Xks7MiD0m4fUVJ
+        OgjP+eyHDmAqJUcGTsB0txds5EOVwJQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1696941353;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=2RRtP+vYvF8BJUJh1g9jd2MU5oy2SZqDzSldc2oYFIo=;
+        b=qB/oHScGEjdKcpOFJsVUgHApmAZiD/GC9kf+StEU5dp701UzyvwjQb1RBKBHEBy9707BOm
+        qtKY9PS7Y0duAEBQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 62F341348E;
+        Tue, 10 Oct 2023 12:35:53 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id ZjX9FylFJWVxUQAAMHmgww
+        (envelope-from <jack@suse.cz>); Tue, 10 Oct 2023 12:35:53 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id E859FA061C; Tue, 10 Oct 2023 14:35:52 +0200 (CEST)
+Date:   Tue, 10 Oct 2023 14:35:52 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Alexey Dobriyan <adobriyan@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
+        Matthew Bobrowski <repnop@google.com>,
         linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+Subject: Re: [PATCH] fanotify: delete useless parenthesis in
+ FANOTIFY_INLINE_FH macro
+Message-ID: <20231010123552.m27vp23k4lob47lr@quack3>
+References: <633c251a-b548-4428-9e91-1cf8147d8c55@p183>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <633c251a-b548-4428-9e91-1cf8147d8c55@p183>
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_SOFTFAIL,URIBL_BLOCKED autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 9 Oct 2023 at 17:37, Amir Goldstein <amir73il@gmail.com> wrote:
+On Tue 10-10-23 14:44:35, Alexey Dobriyan wrote:
+> Parenthesis around identifier name in declaration are useless.
+> This is just "put every macro argument inside parenthesis" practice.
+> 
+> Now "size" must be constant expression, but using comma expression in
+> constant expression is useless too, therefore [] will guard "size"
+> expression just as well as ().
+> 
+> Also g++ is somewhat upset about these:
+> 
+> 	fs/notify/fanotify/fanotify.h:278:28: warning: unnecessary parentheses in declaration of ‘object_fh’ [-Wparentheses]
+> 	  278 |         struct fanotify_fh (name);
+> 
+> Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
 
->  static inline void put_file_access(struct file *file)
-> diff --git a/fs/open.c b/fs/open.c
-> index fe63e236da22..02dc608d40d8 100644
-> --- a/fs/open.c
-> +++ b/fs/open.c
-> @@ -881,7 +881,7 @@ static inline int file_get_write_access(struct file *f)
->         if (unlikely(error))
->                 goto cleanup_inode;
->         if (unlikely(f->f_mode & FMODE_BACKING)) {
-> -               error = mnt_get_write_access(backing_file_real_path(f)->mnt);
-> +               error = mnt_get_write_access(backing_file_user_path(f)->mnt);
->                 if (unlikely(error))
->                         goto cleanup_mnt;
->         }
+Yeah, ok. Added to my tree. Thanks!
 
-Do we really need write access on the overlay mount?
+								Honza
 
-If so, should the order of getting write access not be the other way
-round (overlay first, backing second)?
-
-Thanks,
-Miklos
+> ---
+> 
+>  fs/notify/fanotify/fanotify.h |    4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> --- a/fs/notify/fanotify/fanotify.h
+> +++ b/fs/notify/fanotify/fanotify.h
+> @@ -275,9 +275,9 @@ static inline void fanotify_init_event(struct fanotify_event *event,
+>  
+>  #define FANOTIFY_INLINE_FH(name, size)					\
+>  struct {								\
+> -	struct fanotify_fh (name);					\
+> +	struct fanotify_fh name;					\
+>  	/* Space for object_fh.buf[] - access with fanotify_fh_buf() */	\
+> -	unsigned char _inline_fh_buf[(size)];				\
+> +	unsigned char _inline_fh_buf[size];				\
+>  }
+>  
+>  struct fanotify_fid_event {
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
