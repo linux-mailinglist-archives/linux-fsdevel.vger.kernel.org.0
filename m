@@ -2,146 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A64BC7BF0FA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Oct 2023 04:35:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 640D17BF136
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Oct 2023 05:06:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1441906AbjJJCfX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Oct 2023 22:35:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45270 "EHLO
+        id S1379412AbjJJDGX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Oct 2023 23:06:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1441891AbjJJCfV (ORCPT
+        with ESMTP id S1379418AbjJJDGX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Oct 2023 22:35:21 -0400
-Received: from snail.cherry.relay.mailchannels.net (snail.cherry.relay.mailchannels.net [23.83.223.170])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8603EA4
-        for <linux-fsdevel@vger.kernel.org>; Mon,  9 Oct 2023 19:35:18 -0700 (PDT)
-X-Sender-Id: dreamhost|x-authsender|kjlx@templeofstupid.com
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-        by relay.mailchannels.net (Postfix) with ESMTP id 7B66C9016E5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Oct 2023 02:35:18 +0000 (UTC)
-Received: from pdx1-sub0-mail-a302.dreamhost.com (unknown [127.0.0.6])
-        (Authenticated sender: dreamhost)
-        by relay.mailchannels.net (Postfix) with ESMTPA id 1C92A901925
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Oct 2023 02:35:18 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1696905318; a=rsa-sha256;
-        cv=none;
-        b=WoUEhC7HaMKXTOHUpKZfjr8o0ihPE7I8ckkbIxNs8ZnhFxu8Betcrl6vxsRnilA8WtGGnC
-        /A9op85w1zDb+y6tx5sX/Wcnf66keQaf9KJWmjK72GyxHe5qo8weNhqJuQ5Ykj1N4wK+oz
-        OmT9SsXci3i3QKDMNvrL8wVl7UI7fxASPgvjfCUgpCXniSQnDuZMQSxMW+TdB+mOKYAKKE
-        3EJw6+alfnEa6XR/aIPo23TpK8KTRottky5R+foEFhN/zfeF4wopN17HgerzPTb4Mnz1co
-        deT5l1G+GteSzZn9hGWI4Yd5x5QpxRCoWae5by/mrTZDevp8Gl03Iwzpyq/Lyw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-        s=arc-2022; t=1696905318;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references:dkim-signature;
-        bh=1JVOiXTXOZdbi2lb57a4eTH6VFOz8zWW7VpahK0e+lI=;
-        b=NrJdzve6TmjWpdk6NoGnSPnYyNf+H7EprkdnyQVn+6PoAViVu7IBFSdtw4C9YZ1wMcrUXK
-        zbXcEIO1Clq7IH2qmDCW+eEqUWkanf7lqB1LBBTEBjFBR408+bVZDoFNy112ypGnV7F29q
-        amO6l0m4XfhqRLUZxlrw/Hr1KABjwxf5H9pSZGuwTs0pqtw0OzGvEIFDcVwkq94lFeLAVh
-        Kbbwr39ss2nKG13J/yXTl9Ib+rdgdzQ6IQwC/PS0Okk79La4kidJlSfXKrMTboMYQIfOdN
-        gxSnzuVzJTZLH1j/Gd8DOIeDGzi33X6CwYcVGTKLKkcwOFImmEw7Dmek/6dBig==
-ARC-Authentication-Results: i=1;
-        rspamd-7d5dc8fd68-n4jpv;
-        auth=pass smtp.auth=dreamhost smtp.mailfrom=kjlx@templeofstupid.com
-X-Sender-Id: dreamhost|x-authsender|kjlx@templeofstupid.com
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|kjlx@templeofstupid.com
-X-MailChannels-Auth-Id: dreamhost
-X-Eyes-Soft: 0e0d3ebd149463da_1696905318328_1766937770
-X-MC-Loop-Signature: 1696905318328:841988970
-X-MC-Ingress-Time: 1696905318328
-Received: from pdx1-sub0-mail-a302.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-        by 100.120.41.173 (trex/6.9.1);
-        Tue, 10 Oct 2023 02:35:18 +0000
-Received: from kmjvbox (c-73-231-176-24.hsd1.ca.comcast.net [73.231.176.24])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: kjlx@templeofstupid.com)
-        by pdx1-sub0-mail-a302.dreamhost.com (Postfix) with ESMTPSA id 4S4KkY2fxGz10m
-        for <linux-fsdevel@vger.kernel.org>; Mon,  9 Oct 2023 19:35:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=templeofstupid.com;
-        s=dreamhost; t=1696905317;
-        bh=1JVOiXTXOZdbi2lb57a4eTH6VFOz8zWW7VpahK0e+lI=;
-        h=Date:From:To:Cc:Subject:Content-Type;
-        b=Nokg/ZsKA47dB1+MZhw8eHTIA0xzSOvIGoHWMdSozdnUnX+7DceMMaKgdjlAVTK1c
-         nj54Z+kS0EpzvLFBp5hb2FlGOXiebgCK8HnvwRA8H0UknkqOtTzlCkQwKSuwK1C8BN
-         tNVlbt/fXXvCkQRTwaH3RWb1Ys9LCpe2+NOvlm5mwbedJLjY3KL24nsA2pwML30eZZ
-         45cQqrAVEABS3n0FWulSbKp/olZmtNDssWAf0GKKxgcgWErMVMuTF9SEIqYptDKFL3
-         1QU5HbKgIjXuuHWeCHJKARrJ7qqI9Pa74O0/eyN6XDcB43HJd6YzxC2W1fqLKmtez5
-         50Ip4+IoewrXQ==
-Received: from johansen (uid 1000)
-        (envelope-from kjlx@templeofstupid.com)
-        id e00f8
-        by kmjvbox (DragonFly Mail Agent v0.12);
-        Mon, 09 Oct 2023 19:35:12 -0700
-Date:   Mon, 9 Oct 2023 19:35:12 -0700
-From:   Krister Johansen <kjlx@templeofstupid.com>
-To:     Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc:     Krister Johansen <kjlx@templeofstupid.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel@vger.kernel.org,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        linux-kernel@vger.kernel.org,
-        German Maglione <gmaglione@redhat.com>,
-        Greg Kurz <groug@kaod.org>, Max Reitz <mreitz@redhat.com>
-Subject: Re: [resend PATCH v2 2/2] fuse: ensure that submounts lookup their
- parent
-Message-ID: <20231010023512.GB1983@templeofstupid.com>
-References: <cover.1696043833.git.kjlx@templeofstupid.com>
- <45778432fba32dce1fb1f5fd13272c89c95c3f52.1696043833.git.kjlx@templeofstupid.com>
- <3187f942-dcf0-4b2f-a106-0eb5d5a33949@fastmail.fm>
- <20231007004107.GA1967@templeofstupid.com>
- <968148ad-787e-4ccb-9d84-f32b5da88517@fastmail.fm>
- <20231009171525.GA1973@templeofstupid.com>
- <f5a431f8-fad9-4b1b-a3ae-86b6cff65b9b@fastmail.fm>
+        Mon, 9 Oct 2023 23:06:23 -0400
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFA56A7;
+        Mon,  9 Oct 2023 20:06:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=hF6lxVQ6evFyYtVvJFpE2W9il5nQR1vSVTE2wQU1M+E=; b=sjm4RXMQC9BX+t3FrdU+ybykLB
+        hB4kmCwo9bGy1ANj+ODkBbFPUfdViapCTdyJdTGgL298Y9pATXcuwbDEajLydZ8X4otoOSbcYTnyt
+        4IVYnAmNmP1HL+fSbQqNlWmT8F3W5+1h2LuwUoARQl10vogTHNUsoF3Scq56Pm7bYCGj+GdYEsnl8
+        tTUNP02hJGBoBMyqEslY2QoQ0soESE0PTTqlGs/IFLlY/yu14rU5uOQzQvaSViMAgmr9CCoza0SkP
+        3g3tAJI/uyax2g6ICO6jRXRnnD+2dj0AqRek9ed/yXJdREl+8OvDJYSCSDtU8wOMqCkkaNUTdBoL/
+        Qdi2MXtw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1qq34Z-00HPj4-2Y;
+        Tue, 10 Oct 2023 03:06:15 +0000
+Date:   Tue, 10 Oct 2023 04:06:15 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Mateusz Guzik <mjguzik@gmail.com>,
+        Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2] vfs: shave work on failed file open
+Message-ID: <20231010030615.GO800259@ZenIV>
+References: <20230928-themen-dilettanten-16bf329ab370@brauner>
+ <CAG48ez2d5CW=CDi+fBOU1YqtwHfubN3q6w=1LfD+ss+Q1PWHgQ@mail.gmail.com>
+ <CAHk-=wj-5ahmODDWDBVL81wSG-12qPYEw=o-iEo8uzY0HBGGRQ@mail.gmail.com>
+ <20230929-kerzen-fachjargon-ca17177e9eeb@brauner>
+ <CAG48ez2cExy+QFHpT01d9yh8jbOLR0V8VsR8_==O_AB2fQ+h4Q@mail.gmail.com>
+ <20230929-test-lauf-693fda7ae36b@brauner>
+ <CAGudoHHwvOMFqYoBQAoFwD9mMmtq12=EvEGQWeToYT0AMg9V0A@mail.gmail.com>
+ <CAGudoHHuQ2PjmX5HG+E6WMeaaOhSNEhdinCssd75dM0P+3ZG8Q@mail.gmail.com>
+ <CAHk-=wir8YObRivyUX6cuanNKCJNKvojK0p2Rg_fKyUiHDVs-A@mail.gmail.com>
+ <20230930-glitzer-errungenschaft-b86880c177c4@brauner>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f5a431f8-fad9-4b1b-a3ae-86b6cff65b9b@fastmail.fm>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
-        UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=unavailable
-        autolearn_force=no version=3.4.6
+In-Reply-To: <20230930-glitzer-errungenschaft-b86880c177c4@brauner>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 09, 2023 at 08:43:02PM +0200, Bernd Schubert wrote:
-> On 10/9/23 19:15, Krister Johansen wrote:
-> > Thanks, I had forgotten that d_make_root() would call iput() for me if
-> > d_alloc_anon() fails.  Let me restate this to suggest that I account the
-> > nlookup to the parent if fuse_dentry_revalidate_lookup() or fuse_iget()
-> > fail instead.  Does that sound right?
-> 
-> Hmm, so server/daemon side uses the lookup count to have an inode reference
-> - are you sure that parent is the right inode for the forget call? And what
-> is the probability for such failures? I.e. is that performance critical?
-> Wouldn't be much simpler and clearer to just avoid and doubt and to send an
-> immediate forget?
+On Sat, Sep 30, 2023 at 11:04:20AM +0200, Christian Brauner wrote:
+> +On newer kernels rcu based file lookup has been switched to rely on
+> +SLAB_TYPESAFE_BY_RCU instead of call_rcu(). It isn't sufficient anymore to just
+> +acquire a reference to the file in question under rcu using
+> +atomic_long_inc_not_zero() since the file might have already been recycled and
+> +someone else might have bumped the reference. In other words, the caller might
+> +see reference count bumps from newer users. For this is reason it is necessary
+> +to verify that the pointer is the same before and after the reference count
+> +increment. This pattern can be seen in get_file_rcu() and __files_get_rcu().
+> +
+> +In addition, it isn't possible to access or check fields in struct file without
+> +first aqcuiring a reference on it. Not doing that was always very dodgy and it
+> +was only usable for non-pointer data in struct file. With SLAB_TYPESAFE_BY_RCU
+> +it is necessary that callers first acquire a reference under rcu or they must
+> +hold the files_lock of the fdtable. Failing to do either one of this is a bug.
 
-Yeah, the server / daemon side need to track the lookup count so that it
-knows when it can close the fd for the file on the server-side. (At
-least for virtiofsd, anyway.).
+Trivial correction: the last paragraph applies only to rcu lookups - something
+like
+        spin_lock(&files->file_lock);
+        fdt = files_fdtable(files);
+        if (close->fd >= fdt->max_fds) {
+                spin_unlock(&files->file_lock);
+                goto err;  
+        }
+        file = rcu_dereference_protected(fdt->fd[close->fd],
+                        lockdep_is_held(&files->file_lock));
+        if (!file || io_is_uring_fops(file)) {
+		     ^^^^^^^^^^^^^^^^^^^^^ fetches file->f_op
+                spin_unlock(&files->file_lock);
+                goto err;
+        }
+	...
 
-The reason I had avoided doing the forget in the submount code is that
-it needs a forget linkage in order to call fuse_queue_forget().  One of
-these is allocated by fuse_alloc_inode().  A well formed parent should
-always have one.  However, if the fuse_iget() for the submount root
-fails, then there's no linkage to borrow from the new inode.  The code
-could always call fuse_alloc_forget() directly, like is done elsewhere.
-I thought it might be hard to get the memory for this allocation if
-fuse_iget() also can't allocate enough, but I could move the allocation
-earlier in the function and just free it if it's not used.
+should be still valid.  As written, the reference to "rcu based file lookup"
+is buried in the previous paragraph and it's not obvious that it applies to
+the last one as well.  Incidentally, I would probably turn that fragment
+(in io_uring/openclose.c:io_close()) into
+	spin_lock(&files->file_lock);
+	file = files_lookup_fd_locked(files, close->fd);
+	if (!file || io_is_uring_fops(file)) {
+		spin_unlock(&files->file_lock);
+		goto err;
+	}
+	...
 
-I'm not confident that would reduce the amount of code in the function,
-but if you'd find it clearer, I'm happy to modify it accordingly.
+> diff --git a/arch/powerpc/platforms/cell/spufs/coredump.c b/arch/powerpc/platforms/cell/spufs/coredump.c
+> index 1a587618015c..5e157f48995e 100644
+> --- a/arch/powerpc/platforms/cell/spufs/coredump.c
+> +++ b/arch/powerpc/platforms/cell/spufs/coredump.c
+> @@ -74,10 +74,13 @@ static struct spu_context *coredump_next_context(int *fd)
+>  	*fd = n - 1;
+>  
+>  	rcu_read_lock();
+> -	file = lookup_fd_rcu(*fd);
+> -	ctx = SPUFS_I(file_inode(file))->i_ctx;
+> -	get_spu_context(ctx);
+> +	file = lookup_fdget_rcu(*fd);
+>  	rcu_read_unlock();
+> +	if (file) {
+> +		ctx = SPUFS_I(file_inode(file))->i_ctx;
+> +		get_spu_context(ctx);
+> +		fput(file);
+> +	}
 
--K
+Well...  Here we should have descriptor table unshared, and we really
+do rely upon that - we expect the file we'd found to have been a spufs
+one *and* to have stayed that way.  So if anyone could change the
+descriptor table behind our back, we'd be FUBAR.
