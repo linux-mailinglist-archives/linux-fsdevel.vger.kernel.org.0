@@ -2,72 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 048AA7BEFB0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Oct 2023 02:23:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C49AC7BF020
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Oct 2023 03:14:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379152AbjJJAXf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Oct 2023 20:23:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57958 "EHLO
+        id S1379344AbjJJBO1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Oct 2023 21:14:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379119AbjJJAXe (ORCPT
+        with ESMTP id S1379287AbjJJBO0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Oct 2023 20:23:34 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47523A4;
-        Mon,  9 Oct 2023 17:23:33 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id 4fb4d7f45d1cf-538575a38ffso8319203a12.1;
-        Mon, 09 Oct 2023 17:23:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696897411; x=1697502211; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0+xtSIxKeZlWt1rOPef1/qN9coElu1e2jtPoBQvSrl4=;
-        b=GAHRsvlPfnZH5H4xc1ePKLCrYBP6I2VBMBzTNSfLGtYELuKXY/045qIB1mdtmyCaMR
-         9TlJ+8IQ8Q9IXOTbFQNkWeKp/ptn7QROVlNoBl9blXjUWQHESvorsrE2WXhEX6BXCyQN
-         miwda4zE9y9YOjqE1Zpk66tWdRZ0CK1U2X09Xz95/92q5fcJJTUvVgcYswkUeS/ipQdA
-         2QEY6gmhF3hOU0itykjP0Ml270hqLMSSuUasfzMmcm3EmiVTxiPsa+6Bz3O5ySTphEkZ
-         xeJY1UO7rZx6WnWKlx5XPhkFFIwYCGOnc0fvHbnmB+aDqeR00Y2rcmyDWAw0kuRpjnDz
-         8QiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696897411; x=1697502211;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0+xtSIxKeZlWt1rOPef1/qN9coElu1e2jtPoBQvSrl4=;
-        b=Ey9tt3oS/6LSw83FzpU8jASoGdyctBJ6xE5QQ15j0sE/YvbHHl2kgWrI07ZWvHbyrb
-         AQ8VAOsfqVovQYl9aBV86kiB+daDSHCsb/vUuWfuaICVIwiOycbQcd+YdJqXU160EhnF
-         /iQ2mH+TXXp5OwA9ZpcIrAeVktTq5UIKgA/CV/siOeYiTHxRaPLBD5AYJbGCNBDMggCb
-         tC4YmmgvQRm4UkqjsReLt2PTo2gqrzl9GfuqzlySsRWE3SCZkHqtmj5GylollMtm03yG
-         zMt5ch521M8cXPYL+a+XjB5Z6gr2LPog8CDlmS2pONmnlyMv/FoMRM9/W1zVgytJwRtr
-         dcQA==
-X-Gm-Message-State: AOJu0YwQnWRqj+Q9AcsB+m7PaS2kaWsafhlMXFtImXqHI2Fj/pmCwU8S
-        GQmyCGkIA0jQEUdzpiSWKyB0i41ZRQB50qFWrBk=
-X-Google-Smtp-Source: AGHT+IFcOS6mZD4ErCC+GOSNjKwQSa+Syn+k4d3jONYpT2mmZXA2SbvzfDb8387vIJxmxpk5S630q44mN7NU9wRQmQI=
-X-Received: by 2002:aa7:c508:0:b0:523:100b:462b with SMTP id
- o8-20020aa7c508000000b00523100b462bmr15510585edq.5.1696897411356; Mon, 09 Oct
- 2023 17:23:31 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230919214800.3803828-1-andrii@kernel.org> <20230919214800.3803828-4-andrii@kernel.org>
- <20230926-augen-biodiesel-fdb05e859aac@brauner> <CAEf4BzaH64kkccc1P-hqQj6Mccr3Q6x059G=A95d=KfU=yBMJQ@mail.gmail.com>
- <20230927-kaution-ventilator-33a41ee74d63@brauner> <CAEf4BzZ2a7ZR75ka6bjXex=qrf9bQBEyDBN5tPtkfWbErhuOTw@mail.gmail.com>
- <CAHC9VhTTzOCo8PL_wV=TwXHDjr7BymESMq8G1WQvsXnrw627uw@mail.gmail.com>
-In-Reply-To: <CAHC9VhTTzOCo8PL_wV=TwXHDjr7BymESMq8G1WQvsXnrw627uw@mail.gmail.com>
-From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Mon, 9 Oct 2023 17:23:19 -0700
-Message-ID: <CAEf4BzaQUXGi3jA5rDUTaE5DY0JjwSZyXH190q-HWQUtYSD_Vg@mail.gmail.com>
-Subject: Re: [PATCH v5 bpf-next 03/13] bpf: introduce BPF token object
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-        netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keescook@chromium.org,
-        lennart@poettering.net, kernel-team@meta.com, sargun@sargun.me
+        Mon, 9 Oct 2023 21:14:26 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F50B9D;
+        Mon,  9 Oct 2023 18:14:25 -0700 (PDT)
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39A16ApM012966;
+        Tue, 10 Oct 2023 01:14:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=OWNx4Dc16p2VrNqth4UHuwuTAqcH/+k7eoc5opXOse8=;
+ b=p3CQvMUR2m5vm70icim/T9NexzE2tPzXtLPyA3Na6oXL7RQtRuLVyok4zPmiXjWzFpJN
+ c71ydsKC6duhIhDeteHYnw9mcAbYW/aPLR2fjJdJFZAVrsvwHtaPxgi1uSouxsGiqdt+
+ n1Pbd+fJmE8Xv/x+S9hvsf0iz6n+/RTDtGemgTSyFjgPH48s5djKC9Ac/5JMyWf2AyzT
+ 5pFu2lfv3GFvmpib3srj9c3AICgCzT44mxR9uDW0uXl2nXcHFAXC4ESrZTYiIqG/N+dn
+ z1oaS+f7u0BUJGCwwu0yoaKsOfuiWFX/nKbUYjQNlovev26JmuRDsJACAbgYIaJRTooH LA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3tmvf1gpbf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 10 Oct 2023 01:14:08 +0000
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 39A1CJAw006277;
+        Tue, 10 Oct 2023 01:14:07 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3tmvf1gp8f-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 10 Oct 2023 01:14:07 +0000
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+        by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 399NNuP0000693;
+        Tue, 10 Oct 2023 01:14:04 GMT
+Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
+        by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3tkk5kct8r-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 10 Oct 2023 01:14:03 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+        by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 39A1E3tp42729816
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 10 Oct 2023 01:14:03 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3EB1258059;
+        Tue, 10 Oct 2023 01:14:03 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9504C58063;
+        Tue, 10 Oct 2023 01:14:02 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.61.60.67])
+        by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+        Tue, 10 Oct 2023 01:14:02 +0000 (GMT)
+Message-ID: <8e1fd27440e08741db52dbe7a55552552c78316b.camel@linux.ibm.com>
+Subject: Re: [PATCH] fs: Pass AT_GETATTR_NOSEC flag to getattr interface
+ function
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Christian Brauner <brauner@kernel.org>,
+        Amir Goldstein <amir73il@gmail.com>
+Cc:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-unionfs@vger.kernel.org, miklos@szeredi.hu,
+        Stefan Berger <stefanb@linux.ibm.com>,
+        syzbot+a67fc5321ffb4b311c98@syzkaller.appspotmail.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Tyler Hicks <code@tyhicks.com>
+Date:   Mon, 09 Oct 2023 21:14:02 -0400
+In-Reply-To: <20231003-bespielbar-tarnt-c61162656db5@brauner>
+References: <20231002125733.1251467-1-stefanb@linux.vnet.ibm.com>
+         <CAOQ4uxiuQxTDqn4F62ueGf_9f4KC4p7xqRZdwPvL8rEYrCOWbg@mail.gmail.com>
+         <20231003-bespielbar-tarnt-c61162656db5@brauner>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 1yiI-AWQMuJudohy-q7YX2HlXuaDbcol
+X-Proofpoint-ORIG-GUID: k889ZtI7slsu4wSAFluAHoNfPZBpPUNp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-10-10_01,2023-10-09_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ adultscore=0 mlxscore=0 spamscore=0 suspectscore=0 phishscore=0
+ priorityscore=1501 bulkscore=0 malwarescore=0 clxscore=1011
+ mlxlogscore=976 impostorscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2309180000 definitions=main-2310100007
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,
+        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -75,37 +101,52 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 9, 2023 at 3:53=E2=80=AFPM Paul Moore <paul@paul-moore.com> wro=
-te:
->
-> On Wed, Sep 27, 2023 at 12:03=E2=80=AFPM Andrii Nakryiko
-> <andrii.nakryiko@gmail.com> wrote:
-> > On Wed, Sep 27, 2023 at 2:52=E2=80=AFAM Christian Brauner <brauner@kern=
-el.org> wrote:
->
-> ...
->
-> > > IOW, everything stays the same apart from the fact that bpf token fds
-> > > are actually file descriptors referring to a detached bpffs file inst=
-ead
-> > > of an anonymous inode file. IOW, bpf tokens are actual bpffs objects
-> > > tied to a bpffs instance.
-> >
-> > Ah, ok, this is a much smaller change than what I was about to make.
-> > I'm glad I asked and thanks for elaborating! I'll use
-> > alloc_file_pseudo() using bpffs mount in the next revision.
->
-> Just a FYI, I'm still looking at v6 now, but moving from an anon_inode
-> to a bpffs inode may mean we need to drop a LSM hook in
-> bpf_token_create() to help mark the inode as a BPF token.  Not a big
-> deal either way, and I think it makes sense to use a bpffs inode as
-> opposed to an anonymous inode, just wanted to let you know.
+On Tue, 2023-10-03 at 15:38 +0200, Christian Brauner wrote:
+> On Mon, Oct 02, 2023 at 04:22:25PM +0300, Amir Goldstein wrote:
+> > On Mon, Oct 2, 2023 at 3:57 PM Stefan Berger <stefanb@linux.vnet.ibm.com> wrote:
+> > >
+> > > From: Stefan Berger <stefanb@linux.ibm.com>
+> > >
+> > > When vfs_getattr_nosec() calls a filesystem's getattr interface function
+> > > then the 'nosec' should propagate into this function so that
+> > > vfs_getattr_nosec() can again be called from the filesystem's gettattr
+> > > rather than vfs_getattr(). The latter would add unnecessary security
+> > > checks that the initial vfs_getattr_nosec() call wanted to avoid.
+> > > Therefore, introduce the getattr flag GETATTR_NOSEC and allow to pass
+> > > with the new getattr_flags parameter to the getattr interface function.
+> > > In overlayfs and ecryptfs use this flag to determine which one of the
+> > > two functions to call.
+> > >
+> > > In a recent code change introduced to IMA vfs_getattr_nosec() ended up
+> > > calling vfs_getattr() in overlayfs, which in turn called
+> > > security_inode_getattr() on an exiting process that did not have
+> > > current->fs set anymore, which then caused a kernel NULL pointer
+> > > dereference. With this change the call to security_inode_getattr() can
+> > > be avoided, thus avoiding the NULL pointer dereference.
+> > >
+> > > Reported-by: syzbot+a67fc5321ffb4b311c98@syzkaller.appspotmail.com
+> > > Fixes: db1d1e8b9867 ("IMA: use vfs_getattr_nosec to get the i_version")
+> > > Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> > > Cc: linux-fsdevel@vger.kernel.org
+> > > Cc: Miklos Szeredi <miklos@szeredi.hu>
+> > > Cc: Amir Goldstein <amir73il@gmail.com>
+> > > Cc: Tyler Hicks <code@tyhicks.com>
+> > > Cc: Mimi Zohar <zohar@linux.ibm.com>
+> > > Suggested-by: Christian Brauner <brauner@kernel.org>
+> > > Co-developed-by: Amir Goldstein <amir73il@gmail.com>
+> > > Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> > > ---
+> > 
+> > Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> > 
+> > Now let's see what vfs maintainers think about this...
+> 
+> Seems fine overall. We kind of need to propagate the knowledge through
+> the layers. But I don't like that we need something like it...
 
-Thanks for the heads up. I was about to post a new revision rebased on
-the latest bpf-next and with an unrelated selftest fix, but I'll give
-it a bit more time to get your feedback and incorporate it into the
-next revision. Thanks!
+So at this point there are two options.  Either revert commit
+db1d1e8b9867 ("IMA: use vfs_getattr_nosec to get the i_version") or
+this patch to fix it.  Christian, what do you prefer?
 
->
-> --
-> paul-moore.com
+Mimi
+
