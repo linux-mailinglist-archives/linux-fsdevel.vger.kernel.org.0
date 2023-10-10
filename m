@@ -2,70 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 884EE7C035C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Oct 2023 20:24:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 034877C0366
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Oct 2023 20:28:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343576AbjJJSYK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Oct 2023 14:24:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41930 "EHLO
+        id S232771AbjJJS27 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Oct 2023 14:28:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343565AbjJJSXg (ORCPT
+        with ESMTP id S233867AbjJJS2z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Oct 2023 14:23:36 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB2E7EA;
-        Tue, 10 Oct 2023 11:23:28 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-40666aa674fso56557175e9.0;
-        Tue, 10 Oct 2023 11:23:28 -0700 (PDT)
+        Tue, 10 Oct 2023 14:28:55 -0400
+Received: from mail-qv1-xf2b.google.com (mail-qv1-xf2b.google.com [IPv6:2607:f8b0:4864:20::f2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9421D9E;
+        Tue, 10 Oct 2023 11:28:53 -0700 (PDT)
+Received: by mail-qv1-xf2b.google.com with SMTP id 6a1803df08f44-65b0383f618so38729856d6.1;
+        Tue, 10 Oct 2023 11:28:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696962207; x=1697567007; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1696962532; x=1697567332; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tFbKpQ6SsRHnWdu3vxpCFtAo2jAJKsxmAumC1+QExjY=;
-        b=mRSdmMNVTB5GIWtcJ+byR1R+0scp6lLn+E5v+EXh/U1xudSkWEYIkaue6+vRcWXquQ
-         QaDbPpZ7e4vfUfj9bL36rBX0FwGpAMdXWZ1TAap7ney4pK0sogdr/9KL2tHQyDS51zRf
-         Eda2jZYZbawrgOyMtHdt2G6vewABiy4H9jVgF2Cp3SQ19eAJ29fILvOrH8fBTLGWvcGr
-         BVlCFCRGfqtkmJ4Mpc7tLcbOaS+dJaXFpydqFPTqo27oggv2KphLEe2w4q3t4lEuago9
-         CQrbwSrrhn5btTNCB1G7isduNMaioxEfP8Qmgsn12dnGbSVdLuLBKo3VXN1zbku2LWkx
-         3saA==
+        bh=wnajvNZsdDrjqmDE9m+4VY4K3z2D3qww+2KfBOKVw1Y=;
+        b=e4zTVIDgV/xdihFaUQvo1GC7mqQhc260fXf41qKAW8YQIHQKU7kYtnvStm4greE1Qu
+         XGmkU/bkciHoI8q5QpalDiQ4+4vRkjWKIWQP99Fo/bRhtp+Y+mJPHAMJP9cc32kBZrxf
+         mAbeycr9JiCT7u10FBE3FnWNuCOY5eBuC6GMd07Mpr/I4HGBZOTzv7b6eMG5ocsDbvoe
+         YP5oJ7jCCF2jwQyU4g6JGte25odgGX4UZ8WYorBsllu94PTMDEg8ZDnIu4ClmN0uJ8o/
+         3BTXtEzdGkxVmasNV28zhP+rw73ANJDyl5GYaq37wQeke69f6HWxMTf5duV8n+ECl9q6
+         eenA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696962207; x=1697567007;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1696962532; x=1697567332;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tFbKpQ6SsRHnWdu3vxpCFtAo2jAJKsxmAumC1+QExjY=;
-        b=Ln73uclyzEgeCHoLM7Q6WW2RzxpNHshhXxAAAziohI269DDImHOMo9xaRJQm2+NZ57
-         jau9x4ZkViUh7k4SxlixbrrzeUuSq8VHTcn7t6WbvkT9tcKC8b/PTMRfFBPKQ2ljThwn
-         PKqLIViotrG3rU3KqYR8eVsGSBQW5HFUszzDrWy/3nmUhnpetJuUkiFVQwBypE3N4ENe
-         /b9miaI0dOqWQLm9ZPnueeaG1CznUJQoTxL7+RGA5Iit7P7ebzBrFtgHiCIHwI8chUeB
-         0QO9k+cbqBnCfQQwuAscue5+LoTSkR9p/07vRh3WBUHIJXM2krjl2BDqlXtf4+XNzkN1
-         sIqw==
-X-Gm-Message-State: AOJu0Yy6HXWNAArDdAk1mNTsZ4wJtYQWIzBGymkC/lg5a8tflq0mV6m+
-        U3ELtQ6J1EI/xisbgVYWGc8=
-X-Google-Smtp-Source: AGHT+IHv1LOl5HKi62e1HGQi+SAntjdzxRBlNr+hjRg05MokHXX/rE8OMoNY9iwhCLEYBLbo73Wz5A==
-X-Received: by 2002:a05:6000:1cca:b0:320:8d6:74f5 with SMTP id bf10-20020a0560001cca00b0032008d674f5mr15754499wrb.28.1696962207032;
-        Tue, 10 Oct 2023 11:23:27 -0700 (PDT)
-Received: from lucifer.home ([2a00:23c5:dc8c:8701:1663:9a35:5a7b:1d76])
-        by smtp.googlemail.com with ESMTPSA id j16-20020a5d6190000000b003217cbab88bsm13225312wru.16.2023.10.10.11.23.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Oct 2023 11:23:25 -0700 (PDT)
-From:   Lorenzo Stoakes <lstoakes@gmail.com>
-To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>
-Cc:     "=Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        linux-fsdevel@vger.kernel.org, Lorenzo Stoakes <lstoakes@gmail.com>
-Subject: [PATCH v3 5/5] mm: abstract VMA merge and extend into vma_merge_extend() helper
-Date:   Tue, 10 Oct 2023 19:23:08 +0100
-Message-ID: <8134bfa4b1accb98645be3e8cb2af8ac5a92c469.1696929425.git.lstoakes@gmail.com>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <cover.1696929425.git.lstoakes@gmail.com>
-References: <cover.1696929425.git.lstoakes@gmail.com>
+        bh=wnajvNZsdDrjqmDE9m+4VY4K3z2D3qww+2KfBOKVw1Y=;
+        b=HD2uaq4IQFzewxbqqqpRDtvjPM6cLZ4JhuVXRKcX7oaJWOWxVM4wdMoBUPSE1Xw5wY
+         nSVKXEO+WVk6r4Nn2INLRzN9pWPyilg0uA3MidB4fXFbh8El/mSteTljwaUiFwHPGaqd
+         jHfqzYT3m47sC+u+oxpiPo8cFLpS4XjKKk4Hz8xEGCr0hn/c6ODbmHi9ttJjXemWkfoQ
+         I/GDRTg9RgvqD+NhGm1bN5Krq+QH1gCO+CgS3aq4vriXic+VIux4HEvwOLYHcgpoKGvD
+         FYN1DE6adTb2zA2w81STBQ8Phs5aoab8tDhK3rb4+h/VZFGXkB+NQG3M3sR/s6+dA5WO
+         UE6A==
+X-Gm-Message-State: AOJu0YzLf5D2XwmSqOVFIsBpDbrES7scfGHRhTtGkI9A+7uivXtU/a51
+        a/iyLcYZmqfEBIA970OeXlpUMXPOs36fdff/8Yw=
+X-Google-Smtp-Source: AGHT+IGOjBU3V2UBhf2oW84TcfxBy53NLZBbEJsIqRV0DPj+iZr9o2ZQe+dH7YssI0mKsfkjputPkReAeBl2Xjmhbqk=
+X-Received: by 2002:a0c:cb0b:0:b0:66a:f5ef:d7e7 with SMTP id
+ o11-20020a0ccb0b000000b0066af5efd7e7mr12457450qvk.27.1696962532599; Tue, 10
+ Oct 2023 11:28:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20231009153712.1566422-1-amir73il@gmail.com> <20231009153712.1566422-4-amir73il@gmail.com>
+ <CAJfpegtcNOCMp+QBPFD5aUEok6u7AqwrGqAqMCZeeuyq6xfYFw@mail.gmail.com>
+ <CAOQ4uxiAHJy6viXBubm0y7x3J3P7N5XijOU8C340fi2Dpc7zXA@mail.gmail.com>
+ <CAOQ4uxipA5oCQXn1-JZ+TbXw2-5O+_++FfNHC6fKqhNXfR7C0w@mail.gmail.com>
+ <CAJfpeguEf71ZknP5rGU9YNtJTp1wBGBKyv6M0JZ=5ETuaipDxQ@mail.gmail.com>
+ <20231010165504.GP800259@ZenIV> <20231010174146.GQ800259@ZenIV>
+ <CAOQ4uxjHKU0q8dSBQhGpcdp-Dg1Hx-zxs3AurXZBQnKBkV7PAw@mail.gmail.com> <20231010182141.GR800259@ZenIV>
+In-Reply-To: <20231010182141.GR800259@ZenIV>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 10 Oct 2023 21:28:41 +0300
+Message-ID: <CAOQ4uxg7ZmDfyEam2v7Be5Chv_WBccxpExTnG+70fRz9BooyyQ@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] fs: store real path instead of fake path in
+ backing file f_path
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Christian Brauner <brauner@kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
         RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
@@ -76,147 +83,103 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-mremap uses vma_merge() in the case where a VMA needs to be extended. This
-can be significantly simplified and abstracted.
+On Tue, Oct 10, 2023 at 9:21=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> w=
+rote:
+>
+> On Tue, Oct 10, 2023 at 08:57:21PM +0300, Amir Goldstein wrote:
+> > On Tue, Oct 10, 2023 at 8:41=E2=80=AFPM Al Viro <viro@zeniv.linux.org.u=
+k> wrote:
+> > >
+> > > On Tue, Oct 10, 2023 at 05:55:04PM +0100, Al Viro wrote:
+> > > > On Tue, Oct 10, 2023 at 03:34:45PM +0200, Miklos Szeredi wrote:
+> > > > > On Tue, 10 Oct 2023 at 15:17, Amir Goldstein <amir73il@gmail.com>=
+ wrote:
+> > > > >
+> > > > > > Sorry, you asked about ovl mount.
+> > > > > > To me it makes sense that if users observe ovl paths in writabl=
+e mapped
+> > > > > > memory, that ovl should not be remounted RO.
+> > > > > > Anyway, I don't see a good reason to allow remount RO for ovl i=
+n that case.
+> > > > > > Is there?
+> > > > >
+> > > > > Agreed.
+> > > > >
+> > > > > But is preventing remount RO important enough to warrant special
+> > > > > casing of backing file in generic code?  I'm not convinced either
+> > > > > way...
+> > > >
+> > > > You definitely want to guarantee that remounting filesystem r/o
+> > > > prevents the changes of visible contents; it's not just POSIX,
+> > > > it's a fairly basic common assumption about any local filesystems.
+> > >
+> > > Incidentally, could we simply keep a reference to original struct fil=
+e
+> > > instead of messing with path?
+> > >
+> > > The only caller of backing_file_open() gets &file->f_path as user_pat=
+h; how
+> > > about passing file instead, and having backing_file_open() do get_fil=
+e()
+> > > on it and stash the sucker into your object?
+> > >
+> > > And have put_file_access() do
+> > >         if (unlikely(file->f_mode & FMODE_BACKING))
+> > >                 fput(backing_file(file)->file);
+> > > in the end.
+> > >
+> > > No need to mess with write access in any special way and it's closer
+> > > to the semantics we have for normal mmap(), after all - it keeps the
+> > > file we'd passed to it open as long as mapping is there.
+> > >
+> > > Comments?
+> >
+> > Seems good to me.
+> > It also shrinks backing_file by one pointer.
+> >
+> > I think this patch can be an extra one after
+> > "fs: store real path instead of fake path in backing file f_path"
+> >
+> > Instead of changing storing of real_path to storing orig file in
+> > one change?
+> >
+> > If there are no objections, I will write it up.
+>
+> Actually, now that I'd looked at it a bit more...  Look:
+> we don't need to do *anything* in put_file_access(); just
+> make file_free()
+>         if (unlikely(f->f_mode & FMODE_BACKING))
+>                 fput(backing_file(f)->user_file);
+> instead of conditional path_put().  That + change of open_backing_file()
+> prototype + get_file() in there pretty much eliminates the work done
+> in 1/3 - you don't need to mess with {get,put}_file_write_access()
+> at all.
+>
+> I'd start with this:
+>
+> struct file *vm_user_file(struct vm_area_struct *vma)
+> {
+>         return vma->vm_file;
+> }
+> + replace file =3D vma->vm_file; with file =3D vm_user_file(vma) in
+> the places affected by your 2/3.  That's the first (obviously
+> safe) commit.  Then the change of backing_file_open() combined
+> with making vm_user_file() do this:
+>         file =3D vma->vm_file;
+>         if (file && unlikely(file->f_mode & FMODE_BACKING))
+>                 file =3D backing_file(file)->user_file;
+>         return file;
+>
+> Voila.  Two-commit series, considerably smaller than your
+> variant...
+>
 
-This makes it far easier to understand what the actual function is doing,
-avoids future mistakes in use of the confusing vma_merge() function and
-importantly allows us to make future changes to how vma_merge() is
-implemented by knowing explicitly which merge cases each invocation uses.
+Yap. looks very nice.
+I will try that out tomorrow.
 
-Note that in the mremap() extend case, we perform this merge only when
-old_len == vma->vm_end - addr. The extension_start, i.e. the start of the
-extended portion of the VMA is equal to addr + old_len, i.e. vma->vm_end.
+Anyway, it doesn't hurt to have the current version in linux-next
+for the night to see if the change from fake f_path to real f_path
+has any unexpected outcomes.
 
-With this refactoring, vma_merge() is no longer required anywhere except
-mm/mmap.c, so mark it static.
-
-Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
-Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
----
- mm/internal.h |  8 +++-----
- mm/mmap.c     | 31 ++++++++++++++++++++++++-------
- mm/mremap.c   | 30 +++++++++++++-----------------
- 3 files changed, 40 insertions(+), 29 deletions(-)
-
-diff --git a/mm/internal.h b/mm/internal.h
-index ddaeb9f2d9d7..6fa722b07a94 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -1014,11 +1014,9 @@ struct page *follow_trans_huge_pmd(struct vm_area_struct *vma,
- /*
-  * mm/mmap.c
-  */
--struct vm_area_struct *vma_merge(struct vma_iterator *vmi,
--	struct mm_struct *, struct vm_area_struct *prev, unsigned long addr,
--	unsigned long end, unsigned long vm_flags, struct anon_vma *,
--	struct file *, pgoff_t, struct mempolicy *, struct vm_userfaultfd_ctx,
--	struct anon_vma_name *);
-+struct vm_area_struct *vma_merge_extend(struct vma_iterator *vmi,
-+					struct vm_area_struct *vma,
-+					unsigned long delta);
- 
- enum {
- 	/* mark page accessed */
-diff --git a/mm/mmap.c b/mm/mmap.c
-index db3842601a88..fb0b8f2b8010 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -860,13 +860,13 @@ can_vma_merge_after(struct vm_area_struct *vma, unsigned long vm_flags,
-  * **** is not represented - it will be merged and the vma containing the
-  *      area is returned, or the function will return NULL
-  */
--struct vm_area_struct *vma_merge(struct vma_iterator *vmi, struct mm_struct *mm,
--			struct vm_area_struct *prev, unsigned long addr,
--			unsigned long end, unsigned long vm_flags,
--			struct anon_vma *anon_vma, struct file *file,
--			pgoff_t pgoff, struct mempolicy *policy,
--			struct vm_userfaultfd_ctx vm_userfaultfd_ctx,
--			struct anon_vma_name *anon_name)
-+static struct vm_area_struct
-+*vma_merge(struct vma_iterator *vmi, struct mm_struct *mm,
-+	   struct vm_area_struct *prev, unsigned long addr, unsigned long end,
-+	   unsigned long vm_flags, struct anon_vma *anon_vma, struct file *file,
-+	   pgoff_t pgoff, struct mempolicy *policy,
-+	   struct vm_userfaultfd_ctx vm_userfaultfd_ctx,
-+	   struct anon_vma_name *anon_name)
- {
- 	struct vm_area_struct *curr, *next, *res;
- 	struct vm_area_struct *vma, *adjust, *remove, *remove2;
-@@ -2501,6 +2501,23 @@ static struct vm_area_struct *vma_merge_new_vma(struct vma_iterator *vmi,
- 			 vma->vm_userfaultfd_ctx, anon_vma_name(vma));
- }
- 
-+/*
-+ * Expand vma by delta bytes, potentially merging with an immediately adjacent
-+ * VMA with identical properties.
-+ */
-+struct vm_area_struct *vma_merge_extend(struct vma_iterator *vmi,
-+					struct vm_area_struct *vma,
-+					unsigned long delta)
-+{
-+	pgoff_t pgoff = vma->vm_pgoff + vma_pages(vma);
-+
-+	/* vma is specified as prev, so case 1 or 2 will apply. */
-+	return vma_merge(vmi, vma->vm_mm, vma, vma->vm_end, vma->vm_end + delta,
-+			 vma->vm_flags, vma->anon_vma, vma->vm_file, pgoff,
-+			 vma_policy(vma), vma->vm_userfaultfd_ctx,
-+			 anon_vma_name(vma));
-+}
-+
- /*
-  * do_vmi_align_munmap() - munmap the aligned region from @start to @end.
-  * @vmi: The vma iterator
-diff --git a/mm/mremap.c b/mm/mremap.c
-index ce8a23ef325a..38d98465f3d8 100644
---- a/mm/mremap.c
-+++ b/mm/mremap.c
-@@ -1096,14 +1096,12 @@ SYSCALL_DEFINE5(mremap, unsigned long, addr, unsigned long, old_len,
- 	/* old_len exactly to the end of the area..
- 	 */
- 	if (old_len == vma->vm_end - addr) {
-+		unsigned long delta = new_len - old_len;
-+
- 		/* can we just expand the current mapping? */
--		if (vma_expandable(vma, new_len - old_len)) {
--			long pages = (new_len - old_len) >> PAGE_SHIFT;
--			unsigned long extension_start = addr + old_len;
--			unsigned long extension_end = addr + new_len;
--			pgoff_t extension_pgoff = vma->vm_pgoff +
--				((extension_start - vma->vm_start) >> PAGE_SHIFT);
--			VMA_ITERATOR(vmi, mm, extension_start);
-+		if (vma_expandable(vma, delta)) {
-+			long pages = delta >> PAGE_SHIFT;
-+			VMA_ITERATOR(vmi, mm, vma->vm_end);
- 			long charged = 0;
- 
- 			if (vma->vm_flags & VM_ACCOUNT) {
-@@ -1115,17 +1113,15 @@ SYSCALL_DEFINE5(mremap, unsigned long, addr, unsigned long, old_len,
- 			}
- 
- 			/*
--			 * Function vma_merge() is called on the extension we
--			 * are adding to the already existing vma, vma_merge()
--			 * will merge this extension with the already existing
--			 * vma (expand operation itself) and possibly also with
--			 * the next vma if it becomes adjacent to the expanded
--			 * vma and  otherwise compatible.
-+			 * Function vma_merge_extend() is called on the
-+			 * extension we are adding to the already existing vma,
-+			 * vma_merge_extend() will merge this extension with the
-+			 * already existing vma (expand operation itself) and
-+			 * possibly also with the next vma if it becomes
-+			 * adjacent to the expanded vma and otherwise
-+			 * compatible.
- 			 */
--			vma = vma_merge(&vmi, mm, vma, extension_start,
--				extension_end, vma->vm_flags, vma->anon_vma,
--				vma->vm_file, extension_pgoff, vma_policy(vma),
--				vma->vm_userfaultfd_ctx, anon_vma_name(vma));
-+			vma = vma_merge_extend(&vmi, vma, delta);
- 			if (!vma) {
- 				vm_unacct_memory(charged);
- 				ret = -ENOMEM;
--- 
-2.42.0
-
+Thanks for the suggestions!
+Amir.
