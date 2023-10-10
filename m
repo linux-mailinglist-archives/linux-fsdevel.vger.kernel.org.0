@@ -2,47 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B3567BFF57
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Oct 2023 16:31:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B7B97C0020
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Oct 2023 17:14:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233106AbjJJObt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Oct 2023 10:31:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52218 "EHLO
+        id S231865AbjJJPOk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Oct 2023 11:14:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233128AbjJJObs (ORCPT
+        with ESMTP id S230088AbjJJPOk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Oct 2023 10:31:48 -0400
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4FC7B8
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Oct 2023 07:31:46 -0700 (PDT)
-Received: by mail-ed1-x532.google.com with SMTP id 4fb4d7f45d1cf-53829312d12so14671642a12.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Oct 2023 07:31:46 -0700 (PDT)
+        Tue, 10 Oct 2023 11:14:40 -0400
+Received: from mail-yw1-x1129.google.com (mail-yw1-x1129.google.com [IPv6:2607:f8b0:4864:20::1129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77BDFB0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Oct 2023 08:14:38 -0700 (PDT)
+Received: by mail-yw1-x1129.google.com with SMTP id 00721157ae682-5a7b92cd0ccso14603627b3.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Oct 2023 08:14:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1696948305; x=1697553105; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=cuS8bKZtMp63zZ8KV8AdM2I8l9o+/2U0omiUDSwjZzA=;
-        b=YCEDKlFrUEYn0R47ccEFsW0KezlKX4tuQshYPo8htur4NUatmfTeddQ2fch62jAbaR
-         3btDLOCm3sj5+qvLS4BLL+/pdhr7Yt3sMJoETg0MBOAu/OlyiBi3nJnXTcufVDEm3vul
-         CImmMEAvor6GrFoGBz4oKEwcAeSTpgOSb8ufQ=
+        d=gmail.com; s=20230601; t=1696950877; x=1697555677; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5kq068J4n8hFmSzBZLHqBsK/AsztOycnacRHGEEx3NQ=;
+        b=cxMWwaeZX6AfwGPm19hOLGr/EQiJXnns6jyzVftmjNT8puutTirUqB3IjricuRTHUr
+         itVrysJMDoPoJKgyHR98CyEyx1CAm/DSrkLlCveN2hYG3+u+7WV+si8nfWJR3OcBBOkM
+         KuIVqxw431rN1ghJ1hg3vTklZmWBpLOEc9rbi6WzKBG19DC0690sLRYo6wRVQYYnU8UH
+         ibad8KnE/2zXsbe9lidUfMhOdNy2BlMwZXYek6Gcre7xeREB4FYLlK3GpwbRvSE/xqlV
+         9t8Pg1eK1NWJGp1xvTD32jz8QvZ03/181VHgjU0S6OJXNn+9xjtq8xGu3Opv+dlxsuyd
+         lh6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696948305; x=1697553105;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cuS8bKZtMp63zZ8KV8AdM2I8l9o+/2U0omiUDSwjZzA=;
-        b=phss1rf+rs5XLz+lKNebkKJQu3oLgwFjP7riiHn6bIf+Nl7UsP5Ny0d8RIMfIuuPgU
-         kyCZti0NU991d4BzYtQgE8iXiN7mwXcmf9Wg6MZLrDIQ4xAZnumQfWHiC2IWXevVIx02
-         KHaKa5plKcmvJN0/UP0seM510vq5seOFXOW2rW2ueDafYnf/9YO/qH6t+qEQE5sWr9Cy
-         9Q/lMLc3GXQAOaEsu35U9IHCCTORgUF5DkQ807FGMckr0ii9bnccAwaGS7oQNvTU0UC9
-         eif4tFo15F5OsMpla+9RdJmM28JMX9ufYbJ+MYwzuiAWZB8lgkgi43FpM946wOkI21ja
-         cQXw==
-X-Gm-Message-State: AOJu0YxEXuIj1InQwx+HVeAN8RxvhSQUpq7DAVsR5vvIbc1MDZoZQxuD
-        A7VKNyTTLIg3fxfXw/A5EBwUzVSV3HtxxSOIiNzOWcQFC69IBws2
-X-Google-Smtp-Source: AGHT+IFOEG7SDwF5lIZuXl7UqKaXB8GF0D0LbrZkUBUftr14D+iKvJxSFr/qgCYy7Dh0V3Sk5KvHjwPfRa1Qrgop/C8=
-X-Received: by 2002:a17:906:2dd3:b0:9b2:bdbb:f145 with SMTP id
- h19-20020a1709062dd300b009b2bdbbf145mr13891867eji.34.1696948305253; Tue, 10
- Oct 2023 07:31:45 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1696950877; x=1697555677;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5kq068J4n8hFmSzBZLHqBsK/AsztOycnacRHGEEx3NQ=;
+        b=roCj9pMjFYkYw79ChBiuSEvUxNjCLsaSC9HnblktVlfchiJk+LZrgiSZ3Ri0tX8fQd
+         zNxFUEie2ls3GJHZCV837o/GVQP5I2AvySyFxczIrZDiLi5NisJ1Lvm0SxzGdPKUyted
+         4dFd0w7Ampd62VOYNMQn+DnJMU0+++l43gTGcAfTptP9rhzGZ77mJFinj1Lf2WareqSz
+         A2QaapB03bk1/uQbCDGNzKMdGHpF9Wzp4vXIMbdGa9XBmIb6T5315AZRdzelRqaN8XDw
+         UWTJoVLqw+DZrDrA1aXlWNP9A+CZ3wcooSNmpU92kKDw/5mVLqP5VPVu74ALIM7/A1hA
+         l8HQ==
+X-Gm-Message-State: AOJu0YwdXidP3Yf9l6AuaQUL4ze0Iub2IUactdZDAnZHzxLOkTUBWF0w
+        G5Py/g45N8Iqtf/dL6qM8/znMS6Uzf4ekaZ6ZclABCBrfWQ=
+X-Google-Smtp-Source: AGHT+IHDNnJNKFcw3eofaqW77FHV73pG5zXnrGB2Nbl4lGdevJfceUkSajjfAmUK+0pMRn1YfTkoIEO4+k0lQYbQpdQ=
+X-Received: by 2002:a25:870d:0:b0:d81:a721:d812 with SMTP id
+ a13-20020a25870d000000b00d81a721d812mr18637334ybl.31.1696950877585; Tue, 10
+ Oct 2023 08:14:37 -0700 (PDT)
 MIME-Version: 1.0
 References: <20230519125705.598234-1-amir73il@gmail.com> <CAOQ4uxibuwUwaLaJNKSifLHBm9G-Tgn67k_TKWKcN1+A4Rw-zg@mail.gmail.com>
  <CAJfpegucD6S=yUTzpQGsR6C3E64ve+bgG_4TGP7Y+0NicqyQ_g@mail.gmail.com>
@@ -57,52 +61,77 @@ References: <20230519125705.598234-1-amir73il@gmail.com> <CAOQ4uxibuwUwaLaJNKSif
  <CAJfpegvS_KPprPCDCQ-HyWfaVoM7M2ioJivrKYNqy0P0GbZ1ww@mail.gmail.com>
  <CAOQ4uxhkcZ8Qf+n1Jr0R8_iGoi2Wj1-ZTQ4SNooryXzxxV_naw@mail.gmail.com>
  <CAJfpegstwnUSCX1vf2VsRqE_UqHuBegDnYmqt5LmXdR5CNLAVg@mail.gmail.com>
- <CAOQ4uxhu0RXf7Lf0zthfMv9vUzwKM3_FUdqeqANxqUsA5CRa7g@mail.gmail.com> <CAOQ4uxjQx3nBPuWiS0upV_q9Qe7xW=iJDG8Wyjq+rZfvWC3NWw@mail.gmail.com>
-In-Reply-To: <CAOQ4uxjQx3nBPuWiS0upV_q9Qe7xW=iJDG8Wyjq+rZfvWC3NWw@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 10 Oct 2023 16:31:33 +0200
-Message-ID: <CAJfpegtLAxY+vf18Yht+NPztv+wO9S28wyJp9MB_=yuAOSbCDA@mail.gmail.com>
+ <CAOQ4uxhu0RXf7Lf0zthfMv9vUzwKM3_FUdqeqANxqUsA5CRa7g@mail.gmail.com>
+ <CAOQ4uxjQx3nBPuWiS0upV_q9Qe7xW=iJDG8Wyjq+rZfvWC3NWw@mail.gmail.com> <CAJfpegtLAxY+vf18Yht+NPztv+wO9S28wyJp9MB_=yuAOSbCDA@mail.gmail.com>
+In-Reply-To: <CAJfpegtLAxY+vf18Yht+NPztv+wO9S28wyJp9MB_=yuAOSbCDA@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 10 Oct 2023 18:14:26 +0300
+Message-ID: <CAOQ4uxj1LvL+Gszag-3umA-YGLOhQBmC-WF6ks1v+upQUQNZ9w@mail.gmail.com>
 Subject: Re: [PATCH v13 00/10] fuse: Add support for passthrough read/write
-To:     Amir Goldstein <amir73il@gmail.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
 Cc:     Daniel Rosenberg <drosen@google.com>,
         Paul Lawrence <paullawrence@google.com>,
         Alessio Balsini <balsini@android.com>,
         fuse-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, 8 Oct 2023 at 19:53, Amir Goldstein <amir73il@gmail.com> wrote:
-
-> Ok, posted your original suggestion for opt-in to fake path:
-> https://lore.kernel.org/linux-fsdevel/20231007084433.1417887-1-amir73il@gmail.com/
+On Tue, Oct 10, 2023 at 5:31=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu> =
+wrote:
 >
-> Now the problem is that on FUSE_DEV_IOC_BACKING_OPEN ioctl,
-> the fake (fuse) path is not known.
+> On Sun, 8 Oct 2023 at 19:53, Amir Goldstein <amir73il@gmail.com> wrote:
 >
-> We can set the fake path on the first FOPEN_PASSTHROUGH response,
-> but then the whole concept of a backing id that is not bound to a
-> single file/inode
-> becomes a bit fuzzy.
+> > Ok, posted your original suggestion for opt-in to fake path:
+> > https://lore.kernel.org/linux-fsdevel/20231007084433.1417887-1-amir73il=
+@gmail.com/
+> >
+> > Now the problem is that on FUSE_DEV_IOC_BACKING_OPEN ioctl,
+> > the fake (fuse) path is not known.
+> >
+> > We can set the fake path on the first FOPEN_PASSTHROUGH response,
+> > but then the whole concept of a backing id that is not bound to a
+> > single file/inode
+> > becomes a bit fuzzy.
+> >
+> > One solution is to allocate a backing_file container per fuse file on
+> > FOPEN_PASSTHROUGH response.
 >
-> One solution is to allocate a backing_file container per fuse file on
-> FOPEN_PASSTHROUGH response.
+> Right.   How about the following idea:
+>
+>  - mapping request is done with an O_PATH fd.
+>  - fuse_open() always opens a backing file (just like overlayfs)
+>
 
-Right.   How about the following idea:
+I think it makes sense and it is in the direction that FUSE BPF took
+so that's good.
 
- - mapping request is done with an O_PATH fd.
- - fuse_open() always opens a backing file (just like overlayfs)
+> The disadvantage is one more struct file (the third).  The advantage
+> is that the server doesn't have to care about open flags, hence the
+> mapping can always be per-inode.
 
-The disadvantage is one more struct file (the third).  The advantage
-is that the server doesn't have to care about open flags, hence the
-mapping can always be per-inode.
+I am fine with that.
+One more struct file per inode is not that big of an overhead
+and one backing file per fuse file is the same overhead as overlayfs.
+
+Does it mean that we can drop backing_id's and use the "inode bound"
+FUSE_BACKING_MAP_INODE mode to map the O_PATH fd to an inode,
+where the FUSE_DEV_IOC_BACKING_OPEN ioctl takes a nodeid as
+an input argument?
+
+Or do you still think that we need the backing_id, so we can map
+the same O_PATH fd to different inodes?
+
+To me, one O_PATH fd per inode without any backing_id seems
+like a simpler start.
 
 Thanks,
-Miklos
+Amir.
