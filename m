@@ -2,68 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E46C7BFA1F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Oct 2023 13:44:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B3D57BFA31
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Oct 2023 13:47:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231400AbjJJLon (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Oct 2023 07:44:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57608 "EHLO
+        id S231487AbjJJLri (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Oct 2023 07:47:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33062 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231244AbjJJLom (ORCPT
+        with ESMTP id S231423AbjJJLri (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Oct 2023 07:44:42 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35308A9
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Oct 2023 04:44:39 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id 5b1f17b1804b1-4053c6f0db8so51643225e9.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Oct 2023 04:44:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696938277; x=1697543077; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dehdlhg2EDwAJUL11rByCk36xUEuX6DKabhCiiZaKfI=;
-        b=CWQ8u4/4H5SqKV/8wYlGQcGwFjxxOj7G6aJWHKlgqeqDcTD2w4JDuUXDbaVVXiLrWQ
-         WnKF8vFT5YWIHRuHYZ5upZcLcnPNKSbJex3YdFIsbbbi54nUExewe2GkiS41ebN+/4Nx
-         29E9rbyXC0S9L+YyiiMcebXgmHdlTgbXYsx/Ea4/Gwgs9tZWp3VUD5HaHP6tHAjk9L+9
-         /J41RX26JPKvjiQmM3o2cOnDVXZlQ1ks8rI4hO3oaSNaksvy/ns4g67ICfC5vO4xcxTA
-         rg1l4o72bHlhiXfVwqWyCd9qRRwdHWflVmy266/aT8Jx8Rv62JTxRNNl5hKSywq1djJU
-         Xq8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696938277; x=1697543077;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dehdlhg2EDwAJUL11rByCk36xUEuX6DKabhCiiZaKfI=;
-        b=UoD05M3Uf53t7m5yk1viINO1G/+Vimv/B+J2/b+cO71oBRkrmogmbXQvRZBSgxCjry
-         +Af1SfIAQp9BcXImZYlfsv+oCb7iK61HsI0+UbXJ62Un7TJlLPmom/8vQ/ODMW3aOdbD
-         mEuAs/UxTLBKPCCgQXWGfd/On0uqtlpEqIlNW0hqnJnkagy4R2hvOW+hkMDPsgGYeSFl
-         YhjeIXWZmgvGctUJLrHBLy8NvjWKXeqDxSHPbRVu2fSWsl0VS3wWfPRXd03/24nDcFeG
-         QII6Ds5YLtep/Gi6AfmcoxlaNgMkR6wBvw79LO3w+q3LZetAwRRABAIoIQGWoYmefeCP
-         EbTg==
-X-Gm-Message-State: AOJu0Yyz+WCpiD21eSBcmUYf8J/lHxNIVmGnGYzdfVKmN3laRDGd2dxx
-        53jKCUikixo2nTq9fGoMeA==
-X-Google-Smtp-Source: AGHT+IE50xl1/Jv/PZqQLZh3jblTd3whvFqfuBZA6Lsz1mrKBWIHY9nwiQ+f9J+4mfDcEs1ZXj/B7Q==
-X-Received: by 2002:adf:f1cb:0:b0:31a:d6cb:7f9e with SMTP id z11-20020adff1cb000000b0031ad6cb7f9emr13393600wro.21.1696938277410;
-        Tue, 10 Oct 2023 04:44:37 -0700 (PDT)
-Received: from p183 ([46.53.254.83])
-        by smtp.gmail.com with ESMTPSA id m15-20020adfe94f000000b0031984b370f2sm12453872wrn.47.2023.10.10.04.44.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Oct 2023 04:44:37 -0700 (PDT)
-Date:   Tue, 10 Oct 2023 14:44:35 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
-        Matthew Bobrowski <repnop@google.com>
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: [PATCH] fanotify: delete useless parenthesis in FANOTIFY_INLINE_FH
- macro
-Message-ID: <633c251a-b548-4428-9e91-1cf8147d8c55@p183>
+        Tue, 10 Oct 2023 07:47:38 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABB2799;
+        Tue, 10 Oct 2023 04:47:36 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43271C433C7;
+        Tue, 10 Oct 2023 11:47:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1696938456;
+        bh=dGsrZo+vQ1VzJbbq+maOQwDfORosg5+dHAq6SOZW1fU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Z6w98R1DPjR+hK+Pvfba9+Oe+swBF1fj3sbhODwLVVzS4l0cNsbvPqOyQNlKURMDu
+         6nadmgt7plrPizzdJ1voklnWCigMP4z+cRGtDLbXCHx/2WfSMk7JBIB9BF0wh8X22S
+         1rSBtn7QQKsiWKay3ZeX2JPUILNKfQIuC03XZbHWENdHW++GPegW8rCBjUhHnc/He8
+         60QYi96y4h0xXS2JqshRiHKYttFtMk2O/l6Hgl5Bqx5AdHjOg5b+S3lKeY+nhBWNNK
+         o+BhRIn+ukTgFldxd7spQOCVf6FCTGaw825s99Q3IfZ+8HxKxT3szW5RMNhEk6DuP8
+         3DvuSsMmkMm5A==
+Date:   Tue, 10 Oct 2023 12:47:19 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Joey Gouly <joey.gouly@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, nd@arm.com,
+        akpm@linux-foundation.org, aneesh.kumar@linux.ibm.com,
+        catalin.marinas@arm.com, dave.hansen@linux.intel.com,
+        maz@kernel.org, oliver.upton@linux.dev, shuah@kernel.org,
+        will@kernel.org, kvmarm@lists.linux.dev,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v1 05/20] arm64: context switch POR_EL0 register
+Message-ID: <c47d888c-e6be-47df-9ad2-af0f11fd5714@sirena.org.uk>
+References: <20230927140123.5283-1-joey.gouly@arm.com>
+ <20230927140123.5283-6-joey.gouly@arm.com>
+ <b1e43c42-111f-43e3-9e24-89ddef76fedc@sirena.org.uk>
+ <20231010095423.GA2098677@e124191.cambridge.arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="c1gCxq1Eu5WP02VS"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+In-Reply-To: <20231010095423.GA2098677@e124191.cambridge.arm.com>
+X-Cookie: I feel partially hydrogenated!
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
         RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -72,35 +59,39 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Parenthesis around identifier name in declaration are useless.
-This is just "put every macro argument inside parenthesis" practice.
 
-Now "size" must be constant expression, but using comma expression in
-constant expression is useless too, therefore [] will guard "size"
-expression just as well as ().
+--c1gCxq1Eu5WP02VS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Also g++ is somewhat upset about these:
+On Tue, Oct 10, 2023 at 10:54:23AM +0100, Joey Gouly wrote:
+> On Thu, Oct 05, 2023 at 03:14:50PM +0100, Mark Brown wrote:
+> > On Wed, Sep 27, 2023 at 03:01:08PM +0100, Joey Gouly wrote:
 
-	fs/notify/fanotify/fanotify.h:278:28: warning: unnecessary parentheses in declaration of ‘object_fh’ [-Wparentheses]
-	  278 |         struct fanotify_fh (name);
+> > > +	if (alternative_has_cap_unlikely(ARM64_HAS_S1POE)) {
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
----
+> > Why the _unlikely here?
 
- fs/notify/fanotify/fanotify.h |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> The only options are alternative_has_cap_{likely,unlikely}().
+> I went with unlikely as currently it is unlikely!
 
---- a/fs/notify/fanotify/fanotify.h
-+++ b/fs/notify/fanotify/fanotify.h
-@@ -275,9 +275,9 @@ static inline void fanotify_init_event(struct fanotify_event *event,
- 
- #define FANOTIFY_INLINE_FH(name, size)					\
- struct {								\
--	struct fanotify_fh (name);					\
-+	struct fanotify_fh name;					\
- 	/* Space for object_fh.buf[] - access with fanotify_fh_buf() */	\
--	unsigned char _inline_fh_buf[(size)];				\
-+	unsigned char _inline_fh_buf[size];				\
- }
- 
- struct fanotify_fid_event {
+Oh, if you have to pick one it doesn't really matter and that seems
+sensible.  Usually they're optional so outside of very hot paths they
+tend to be an antipattern.
+
+--c1gCxq1Eu5WP02VS
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmUlOcYACgkQJNaLcl1U
+h9CHBQf/ZXcCmrREeYk6HjwOAXBpILDhJEYF552Me/bljo1xHTcfrJ29itnqdzJd
+tJO760glWJ/CT+tmsH2Td0cYKaRZENARTmvlIpF0Dn0gUkdvusyYk8MD7s+2gmx1
+BaKOAAD0/WcE+4bWknMiYw7au2dFq6unT9xlXJY5ykHubP5YS/EqRrMBM+AEKpY/
+tnnjr5FboCv+867dluZHV4RGf09RsTf48iGGGJZjpKmoCB1I4UKMP9PfRJ492+dS
+Dy9i0DtFr+dq552w6Sk5FhUV9tsvf5RD0XNUu73vQnBDFQ9TgCkzLOwnjaC/nxh7
+2OLfAXCgeMqpBYoe5PHtp6VuSE9Qiw==
+=Qpeh
+-----END PGP SIGNATURE-----
+
+--c1gCxq1Eu5WP02VS--
