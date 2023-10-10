@@ -2,127 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 870387BF259
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Oct 2023 07:42:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82AE47BF26F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Oct 2023 07:47:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1442111AbjJJFmo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Oct 2023 01:42:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42654 "EHLO
+        id S1442159AbjJJFrv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Oct 2023 01:47:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37654 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378580AbjJJFmm (ORCPT
+        with ESMTP id S1379414AbjJJFrs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Oct 2023 01:42:42 -0400
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6336AA3
-        for <linux-fsdevel@vger.kernel.org>; Mon,  9 Oct 2023 22:42:39 -0700 (PDT)
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20231010054237epoutp01942b4549d5bfe3de9d0c4c5fd6fc5f0d~MqJ5F_3K-2995029950epoutp01M
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Oct 2023 05:42:37 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20231010054237epoutp01942b4549d5bfe3de9d0c4c5fd6fc5f0d~MqJ5F_3K-2995029950epoutp01M
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1696916557;
-        bh=6pbBvyHbWsmg3Q8Sb+ife4UjdqWf9M2wjjcRPO+cR84=;
-        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-        b=tMxjC471p5FTMFJ78dtuEScuQwrz7LforEr9aDE6IqPaeTMCtHRPn20BceIeAPvZ0
-         rZOgfvgeMFTZNwuooxAvIhJqlaDCMudu4+J3fTyZPQlaWfB5mbX6u1GHxwmoc7Y/jH
-         yXgcePU4khAwqxxwjHx+MHR9MI5S0MWYZf6lm/lc=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-        20231010054236epcas5p18da41d54dd761bd64f1aff7660f9b748~MqJ4reWeW1846918469epcas5p18;
-        Tue, 10 Oct 2023 05:42:36 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.179]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4S4Ptf0mnjz4x9Pv; Tue, 10 Oct
-        2023 05:42:34 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        1B.B4.09635.844E4256; Tue, 10 Oct 2023 14:42:32 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-        20231010054232epcas5p403c57f2d1ea934e2f467a335c1a98a80~MqJ0jThGg3261432614epcas5p49;
-        Tue, 10 Oct 2023 05:42:32 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20231010054232epsmtrp19a530e7d09fc9311abc33722482699e8~MqJ0iXX_G1806218062epsmtrp1X;
-        Tue, 10 Oct 2023 05:42:32 +0000 (GMT)
-X-AuditID: b6c32a4b-563fd700000025a3-68-6524e448714f
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        21.18.08788.844E4256; Tue, 10 Oct 2023 14:42:32 +0900 (KST)
-Received: from [107.122.11.51] (unknown [107.122.11.51]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20231010054229epsmtip291997c51a435da8b8bfabd97dce755a4~MqJyPfxlg0159301593epsmtip2-;
-        Tue, 10 Oct 2023 05:42:29 +0000 (GMT)
-Message-ID: <d25ae351-5131-1b3e-4ae8-bacb674008de@samsung.com>
-Date:   Tue, 10 Oct 2023 11:12:29 +0530
+        Tue, 10 Oct 2023 01:47:48 -0400
+Received: from bird.elm.relay.mailchannels.net (bird.elm.relay.mailchannels.net [23.83.212.17])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74AF692;
+        Mon,  9 Oct 2023 22:47:40 -0700 (PDT)
+X-Sender-Id: dreamhost|x-authsender|cosmos@claycon.org
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+        by relay.mailchannels.net (Postfix) with ESMTP id 983C5761605;
+        Tue, 10 Oct 2023 05:47:39 +0000 (UTC)
+Received: from pdx1-sub0-mail-a261.dreamhost.com (unknown [127.0.0.6])
+        (Authenticated sender: dreamhost)
+        by relay.mailchannels.net (Postfix) with ESMTPA id 27DC77611AA;
+        Tue, 10 Oct 2023 05:47:39 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1696916859; a=rsa-sha256;
+        cv=none;
+        b=3Z1e2c5Gqc2xgCnjewSbdWiqgp5EWzzAh1cooBlA68uNeMxNfXF7LqyqsyYei3XzERgfHd
+        JU+anznxsGCAaXKF+WQVmpjMLp9A/ncivPLYuR3u2OS4PkcecbapXNfBtM28ho4LJhsSvU
+        4gdlPWV+LS8g/nqgLXSEO4MRqe+f5qzRmKcVEaAyz7cnh1Mv3ETxGWsu2mU5Vha3x/lIhi
+        tkA7GcRyLqIz21KOlmBVC6vZ1wOyArEwbPnz6ju5rpPQIQCxaQRvaKopZedQOp4brJkBrH
+        ELBPtm3g8YNvejCrDBWcS2Ng1pTbcJiUe/v5NOuTj8y33N9ggJS5o9WrfzwweQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+        s=arc-2022; t=1696916859;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references:dkim-signature;
+        bh=1zJT0VoGrkLAtBvhsAQ+j3jJoyvQlLyGd/QNJF4U6d8=;
+        b=JsGi1WTL7PegJ2AJ2gkBsup3Lk3lxOerUAaqdnDDs+h1tuLYtG9DdYwB3qfWN4lpXzxsu/
+        6qmnWOpec2X0SoqM5MYd0QOXFtEjx18de83mHe1D7xpUvTWIqnU5BGPBALm0n46t1thZZv
+        7t8WFCru1+9rtsq8kWYEEUm/JTyDoy8xFlJGuuJC7Qx4yUz5Om4aBDMQumJtrqZiXPXb9X
+        U/TYVLLX64drNYCEaVHfx6m37O5lkBLwQ8ziHAgGHyoBtSSgch4iTS8hmlynEG5MvNtqIX
+        siuJ1p/S0/SuggU07JWvyUeGjTLTJDN/0v0mnwLwVSiHAfNOidwk4oIOl0B5Eg==
+ARC-Authentication-Results: i=1;
+        rspamd-7c449d4847-9wgh4;
+        auth=pass smtp.auth=dreamhost smtp.mailfrom=bugs@claycon.org
+X-Sender-Id: dreamhost|x-authsender|cosmos@claycon.org
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|cosmos@claycon.org
+X-MailChannels-Auth-Id: dreamhost
+X-Scare-Tangy: 23e2acda17cb4c22_1696916859459_3115200803
+X-MC-Loop-Signature: 1696916859459:1200585657
+X-MC-Ingress-Time: 1696916859458
+Received: from pdx1-sub0-mail-a261.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+        by 100.103.131.218 (trex/6.9.1);
+        Tue, 10 Oct 2023 05:47:39 +0000
+Received: from vps46052.dreamhostps.com (vps46052.dreamhostps.com [69.163.237.247])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: cosmos@claycon.org)
+        by pdx1-sub0-mail-a261.dreamhost.com (Postfix) with ESMTPSA id 4S4Q0V6Kd6z3H;
+        Mon,  9 Oct 2023 22:47:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=claycon.org;
+        s=dreamhost; t=1696916858;
+        bh=1zJT0VoGrkLAtBvhsAQ+j3jJoyvQlLyGd/QNJF4U6d8=;
+        h=Date:From:To:Cc:Subject:Content-Type:Content-Transfer-Encoding;
+        b=IHdXtsVEqd6iCHMau92UV943x3KhHWkAZtYK2DWLmbX8zDC9bVTEQhs6EH0tPXqNa
+         LkjQ1xd1VAJ90uF8XBvq5AN/S0+zQ7D8CVuoVU7AJjdzOcd0xijCq+VcRF5PadSfsx
+         OvCLW/kBnA+V+7yVExOpf3pIidagcKoh+AtNExjTRPGUwFHjUi4wmlff0AX0CEHt1y
+         Nu1fsWjgEj5yECIPeXmmCKKpkiio8OgPFEDCHHKxd3syH+bibtp0MphRGomXAxRybh
+         L7TEfDF0+UNU2XK+GFeJEZMgaTVqzEFZubRlZvxpHbygMm3tVjugnFmTOcihsIl6eI
+         qIDkI2G7dtYcw==
+Date:   Tue, 10 Oct 2023 00:47:37 -0500
+From:   Clay Harris <bugs@claycon.org>
+To:     Luis Henriques <lhenriques@suse.de>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        io-uring@vger.kernel.org
+Subject: Re: [RFC PATCH] fs: add AT_EMPTY_PATH support to unlinkat()
+Message-ID: <ZSTleVf6eNII3dg3@vps46052.dreamhostps.com>
+References: <20230929140456.23767-1-lhenriques@suse.de>
+ <20231009020623.GB800259@ZenIV>
+ <87lecbrfos.fsf@suse.de>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
-        Gecko/20100101 Thunderbird/91.8.1
-Subject: Re: [PATCH v2 04/15] fs: Restore write hint support
-Content-Language: en-US
-To:     Bart Van Assche <bvanassche@acm.org>, Jens Axboe <axboe@kernel.dk>
-Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Niklas Cassel <Niklas.Cassel@wdc.com>,
-        Avri Altman <Avri.Altman@wdc.com>,
-        Bean Huo <huobean@gmail.com>,
-        Daejun Park <daejun7.park@samsung.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>
-From:   Kanchan Joshi <joshi.k@samsung.com>
-In-Reply-To: <20231005194129.1882245-5-bvanassche@acm.org>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrDJsWRmVeSWpSXmKPExsWy7bCmlq7HE5VUg1PLDS1e/rzKZrH6bj+b
-        xevDnxgtpn34yWxxeupZJotVD8ItLj/hs1i5+iiTxZyzDUwWT9bPYrbYe0vbYs/ekywW3dd3
-        sFksP/6PyeLBn8fsFuf/Hmd1EPC4fMXbY+esu+wel8+Wemxa1cnmsftmA5vHx6e3WDz6tqxi
-        9Pi8Sc6j/UA3k8emJ2+ZAriism0yUhNTUosUUvOS81My89JtlbyD453jTc0MDHUNLS3MlRTy
-        EnNTbZVcfAJ03TJzgP5QUihLzCkFCgUkFhcr6dvZFOWXlqQqZOQXl9gqpRak5BSYFOgVJ+YW
-        l+al6+WlllgZGhgYmQIVJmRn9M3cxFSwWK3i9LmF7A2MT+S6GDk5JARMJD5tWMnaxcjFISSw
-        m1FizZeFUM4nRon9R84yQTjfGCWefNrNAtMyZ8tRqKq9jBIH33xhg3DeMkr8uLCfHaSKV8BO
-        YvqyhYwgNouAqsTjxb+g4oISJ2c+AZskKpAk8evqHLAaYQEbicvfb7KB2MwC4hK3nsxnArFF
-        BNwkGq7uAlvALNDEIvHt2V4gh4ODTUBT4sLkUpAaTgEriecbLzJC9MpLbH87hxni0jccEp+O
-        Qj3qItFwYBUjhC0s8er4FnYIW0riZX8blJ0scWnmOSYIu0Ti8Z6DULa9ROupfmaQtcxAa9fv
-        0odYxSfR+/sJE0hYQoBXoqNNCKJaUeLepKesELa4xMMZS6BsD4n919Yyw8NtU8MU1gmMCrOQ
-        QmUWku9nIflmFsLmBYwsqxglUwuKc9NTi00LjPNSy+ERnpyfu4kRnMy1vHcwPnrwQe8QIxMH
-        4yFGCQ5mJRHeR5kqqUK8KYmVValF+fFFpTmpxYcYTYHRM5FZSjQ5H5hP8kriDU0sDUzMzMxM
-        LI3NDJXEeV+3zk0REkhPLEnNTk0tSC2C6WPi4JRqYMrYVHiUMyog7foH31+WSmZJBuf6Moy1
-        D8oz9hz4IuC3tP5tUKHZj/02KfOuXHjPHym7qmfBzu6wajfX7atszsbXfJxdzTrD8vvauIb2
-        l1Kc9nqzhPls5nZ5X9oeJfvvjLhGhsJeHeUiH/3/UTl/RJmf5kd8y21sPnz5tUHi4TUt56ZP
-        /77jyRfRl+fXHHRt4OG+rGO2V3u26YmHk64FxQu/e/13xZojhbICnTP8Myxl02tlCs/48J5z
-        DBG+37LC5neFsF/K91VfnBImF+p2sIa/6U6cnThf3M3VSeOXkPC7I3ufZN0L/rpw4/Efr56+
-        aavT5zqcu1H6v0H7lQqLeQFulklPlpgp6pXvfqSUosRSnJFoqMVcVJwIAFcY2Y9vBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBIsWRmVeSWpSXmKPExsWy7bCSvK7HE5VUgzuPRC1e/rzKZrH6bj+b
-        xevDnxgtpn34yWxxeupZJotVD8ItLj/hs1i5+iiTxZyzDUwWT9bPYrbYe0vbYs/ekywW3dd3
-        sFksP/6PyeLBn8fsFuf/Hmd1EPC4fMXbY+esu+wel8+Wemxa1cnmsftmA5vHx6e3WDz6tqxi
-        9Pi8Sc6j/UA3k8emJ2+ZAriiuGxSUnMyy1KL9O0SuDL6Zm5iKlisVnH63EL2BsYncl2MnBwS
-        AiYSc7YcZe1i5OIQEtjNKDGreycLREJcovnaD3YIW1hi5b/n7BBFrxkl7h48ywiS4BWwk5i+
-        bCGYzSKgKvF48S92iLigxMmZT8AGiQokSey538gEYgsL2Ehc/n6TDcRmBlpw68l8sLiIgJtE
-        w9VdbCALmAVaWCTeH+0CKxIS2MsocfRVYhcjBwebgKbEhcmlIGFOASuJ5xsvMkLMMZPo2toF
-        ZctLbH87h3kCo9AsJGfMQrJuFpKWWUhaFjCyrGKUTC0ozk3PLTYsMMpLLdcrTswtLs1L10vO
-        z93ECI5cLa0djHtWfdA7xMjEwXiIUYKDWUmE91GmSqoQb0piZVVqUX58UWlOavEhRmkOFiVx
-        3m+ve1OEBNITS1KzU1MLUotgskwcnFINTLJTlFQa57BvE/3o4W/R/55lV1t6xsuHe5ZpdZxN
-        8tW1KWY0dz8sF8/yc9Lqa8rdoWqnjs+S3lU978gLZs+LXA8WMrutk92+wrrxrn5T6e0Ipz8d
-        q9LZ24qEtvi+nXA7s1lX9N4N06sX4rdyPrPuMamef1SEQ9CVrfREdaXM0XtHNux4rL28zvtg
-        dvX/iSlbWHLS7/rLt8z6JdBqyKIdJuBbk/+gq+VDg8eWq7Yx9/8EX005VGVSlte6rSxncbxl
-        n2uc3hnrD4d6vvP18H/c2ix+vYnx8vQjur/Ew9TWPXAorevbfY+rwbhNoWGyvvMUd8aOqh8F
-        J1jk9aTPccttifSfvEzq5haJf37fF/orsRRnJBpqMRcVJwIA4AiiPEsDAAA=
-X-CMS-MailID: 20231010054232epcas5p403c57f2d1ea934e2f467a335c1a98a80
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20231005194217epcas5p1538a3730290bbb38adca08f8c80f328e
-References: <20231005194129.1882245-1-bvanassche@acm.org>
-        <CGME20231005194217epcas5p1538a3730290bbb38adca08f8c80f328e@epcas5p1.samsung.com>
-        <20231005194129.1882245-5-bvanassche@acm.org>
-X-Spam-Status: No, score=-5.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_PASS,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87lecbrfos.fsf@suse.de>
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_INVALID,
+        DKIM_SIGNED,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,T_SPF_TEMPERROR,URIBL_BLOCKED autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -130,129 +104,130 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/6/2023 1:10 AM, Bart Van Assche wrote:
-> This patch reverts a small subset of commit c75e707fe1aa ("block: remove
-> the per-bio/request write hint"). The following functionality has been
-> restored:
-> - In F2FS, store data lifetime information in struct bio.
-> - In fs/iomap and fs/mpage.c, restore the code that sets the data
->    lifetime.
-> 
-> A new header file is introduced for the new bio_[sg]et_data_lifetime()
-> functions because there is no other header file yet that includes both
-> <linux/fs.h> and <linux/ioprio.h>.
-> 
-> The value WRITE_LIFE_NONE is mapped onto the data lifetime 0. This is
-> consistent with NVMe TPAR4093a. From that TPAR: "A value of 1h specifies
-> the shortest Data Lifetime. A value of 3Fh specifies the longest Data
-> Lifetime." This is also consistent with the SCSI specifications. From
-> T10 document 23-024r3: "0h: no relative lifetime is applicable; 1h:
-> shortest relative lifetime; ...; 3fh: longest relative lifetime".
-> 
-> Cc: Christoph Hellwig <hch@lst.de>
-> Signed-off-by: Bart Van Assche <bvanassche@acm.org>
-> ---
->   fs/f2fs/data.c              |  3 +++
->   fs/iomap/buffered-io.c      |  3 +++
->   fs/mpage.c                  |  2 ++
->   include/linux/fs-lifetime.h | 20 ++++++++++++++++++++
->   4 files changed, 28 insertions(+)
->   create mode 100644 include/linux/fs-lifetime.h
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 916e317ac925..2962cb335897 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -6,6 +6,7 @@
->    *             http://www.samsung.com/
->    */
->   #include <linux/fs.h>
-> +#include <linux/fs-lifetime.h>
->   #include <linux/f2fs_fs.h>
->   #include <linux/buffer_head.h>
->   #include <linux/sched/mm.h>
-> @@ -478,6 +479,8 @@ static struct bio *__bio_alloc(struct f2fs_io_info *fio, int npages)
->   	} else {
->   		bio->bi_end_io = f2fs_write_end_io;
->   		bio->bi_private = sbi;
-> +		bio_set_data_lifetime(bio,
-> +			f2fs_io_type_to_rw_hint(sbi, fio->type, fio->temp));
->   	}
->   	iostat_alloc_and_bind_ctx(sbi, bio, NULL);
->   
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 644479ccefbd..9bf05342ca65 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -6,6 +6,7 @@
->   #include <linux/module.h>
->   #include <linux/compiler.h>
->   #include <linux/fs.h>
-> +#include <linux/fs-lifetime.h>
->   #include <linux/iomap.h>
->   #include <linux/pagemap.h>
->   #include <linux/uio.h>
-> @@ -1660,6 +1661,7 @@ iomap_alloc_ioend(struct inode *inode, struct iomap_writepage_ctx *wpc,
->   			       REQ_OP_WRITE | wbc_to_write_flags(wbc),
->   			       GFP_NOFS, &iomap_ioend_bioset);
->   	bio->bi_iter.bi_sector = sector;
-> +	bio_set_data_lifetime(bio, inode->i_write_hint);
->   	wbc_init_bio(wbc, bio);
->   
->   	ioend = container_of(bio, struct iomap_ioend, io_inline_bio);
-> @@ -1690,6 +1692,7 @@ iomap_chain_bio(struct bio *prev)
->   	new = bio_alloc(prev->bi_bdev, BIO_MAX_VECS, prev->bi_opf, GFP_NOFS);
->   	bio_clone_blkg_association(new, prev);
->   	new->bi_iter.bi_sector = bio_end_sector(prev);
-> +	bio_set_data_lifetime(new, bio_get_data_lifetime(prev));
->   
->   	bio_chain(prev, new);
->   	bio_get(prev);		/* for iomap_finish_ioend */
-> diff --git a/fs/mpage.c b/fs/mpage.c
-> index 242e213ee064..888ca71c9ea7 100644
-> --- a/fs/mpage.c
-> +++ b/fs/mpage.c
-> @@ -20,6 +20,7 @@
->   #include <linux/gfp.h>
->   #include <linux/bio.h>
->   #include <linux/fs.h>
-> +#include <linux/fs-lifetime.h>
->   #include <linux/buffer_head.h>
->   #include <linux/blkdev.h>
->   #include <linux/highmem.h>
-> @@ -612,6 +613,7 @@ static int __mpage_writepage(struct folio *folio, struct writeback_control *wbc,
->   				GFP_NOFS);
->   		bio->bi_iter.bi_sector = blocks[0] << (blkbits - 9);
->   		wbc_init_bio(wbc, bio);
-> +		bio_set_data_lifetime(bio, inode->i_write_hint);
->   	}
->   
->   	/*
-> diff --git a/include/linux/fs-lifetime.h b/include/linux/fs-lifetime.h
-> new file mode 100644
-> index 000000000000..0e652e00cfab
-> --- /dev/null
-> +++ b/include/linux/fs-lifetime.h
-> @@ -0,0 +1,20 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#include <linux/bio.h>
-> +#include <linux/fs.h>
-> +#include <linux/ioprio.h>
-> +
-> +static inline enum rw_hint bio_get_data_lifetime(struct bio *bio)
-> +{
-> +	/* +1 to map 0 onto WRITE_LIFE_NONE. */
-> +	return IOPRIO_PRIO_LIFETIME(bio->bi_ioprio) + 1;
-> +}
-> +
-> +static inline void bio_set_data_lifetime(struct bio *bio, enum rw_hint lifetime)
-> +{
-> +	/* -1 to map WRITE_LIFE_NONE onto 0. */
-> +	if (lifetime != 0)
-> +		lifetime--;
+Apologies, this message was intended as a reply to Al Viro, but I accidentally
+deleted that message so I'm replying to the reply instead.
 
-How the driver can figure when lifetime is not set, and when it is set 
-to WRITE_LIFE_NONE? If it uses IOPRIO_PRIO_LIFETIME (as patch 8 does), 
-it will see 0 in both cases.
-F2FS fs-based whint_mode seems to expect distinct streams for 
-WRITE_LIFE_NOT_SET and WRITE_LIFE_NONE.
+On Mon, Oct 09 2023 at 16:14:27 +0100, Luis Henriques quoth thus:
+
+> Al Viro <viro@zeniv.linux.org.uk> writes:
+> 
+> > On Fri, Sep 29, 2023 at 03:04:56PM +0100, Luis Henriques wrote:
+> >
+> >> -int do_unlinkat(int dfd, struct filename *name)
+> >> +int do_unlinkat(int dfd, struct filename *name, int flags)
+> >>  {
+> >>  	int error;
+> >> -	struct dentry *dentry;
+> >> +	struct dentry *dentry, *parent;
+> >>  	struct path path;
+> >>  	struct qstr last;
+> >>  	int type;
+> >>  	struct inode *inode = NULL;
+> >>  	struct inode *delegated_inode = NULL;
+> >>  	unsigned int lookup_flags = 0;
+> >> -retry:
+> >> -	error = filename_parentat(dfd, name, lookup_flags, &path, &last, &type);
+> >> -	if (error)
+> >> -		goto exit1;
+> >> +	bool empty_path = (flags & AT_EMPTY_PATH);
+> >>  
+> >> -	error = -EISDIR;
+> >> -	if (type != LAST_NORM)
+> >> -		goto exit2;
+> >> +retry:
+> >> +	if (empty_path) {
+> >> +		error = filename_lookup(dfd, name, 0, &path, NULL);
+> >> +		if (error)
+> >> +			goto exit1;
+> >> +		parent = path.dentry->d_parent;
+> >> +		dentry = path.dentry;
+> >> +	} else {
+> >> +		error = filename_parentat(dfd, name, lookup_flags, &path, &last, &type);
+> >> +		if (error)
+> >> +			goto exit1;
+> >> +		error = -EISDIR;
+> >> +		if (type != LAST_NORM)
+> >> +			goto exit2;
+> >> +		parent = path.dentry;
+> >> +	}
+> >>  
+> >>  	error = mnt_want_write(path.mnt);
+> >>  	if (error)
+> >>  		goto exit2;
+> >>  retry_deleg:
+> >> -	inode_lock_nested(path.dentry->d_inode, I_MUTEX_PARENT);
+> >> -	dentry = lookup_one_qstr_excl(&last, path.dentry, lookup_flags);
+> >> +	inode_lock_nested(parent->d_inode, I_MUTEX_PARENT);
+> >> +	if (!empty_path)
+> >> +		dentry = lookup_one_qstr_excl(&last, parent, lookup_flags);
+> >
+> > For starters, your 'parent' might have been freed under you, just as you'd
+> > been trying to lock its inode.  Or it could have become negative just as you'd
+> > been fetching its ->d_inode, while we are at it.
+> >
+> > Races aside, you are changing permissions required for removing files.  For
+> > unlink() you need to be able to get to the parent directory; if it's e.g.
+> > outside of your namespace, you can't do anything to it.  If file had been
+> > opened there by somebody who could reach it and passed to you (via SCM_RIGHTS,
+> > for example) you currently can't remove the sucker.  With this change that
+> > is no longer true.
+> >
+> > The same goes for the situation when file is bound into your namespace (or
+> > chroot jail, for that matter).  path.dentry might very well be equal to
+> > root of path.mnt; path.dentry->d_parent might be in part of tree that is
+> > no longer visible *anywhere*.  rmdir() should not be able to do anything
+> > with it...
+> >
+> > IMO it's fundamentally broken; not just implementation, but the concept
+> > itself.
+> >
+> > NAKed-by: Al Viro <viro@zeniv.linux.org.uk>
+
+Al, thank you for this information.  It does shine a little light on where
+dragons may be hiding.  I was wondering if you could comment on a related
+issue.
+
+linkat does allow specifing AT_EMPTY_PATH.  However, it requires
+CAP_DAC_READ_SEARCH.  I saw that a patch went into the kernel to remove
+this restriction, but was shortly thereafter reverted with a comment
+to the effect of "We'll have to think about this a little more".  Then,
+radio silence.  Other than requiring /proc be mounted to bypass, what
+problem does this restriction solve?
+
+Also related, the thing I'm even more interested in is the ability to
+create an O_TMPFILE, populate it, set permissions, etc, and then make
+it appear in a directory.  The problem is I almost always don't want it
+to just appear, but rather atomically replace an older version of the
+file.
+
+dfd = openat(x, "y", O_RDONLY | O_CLOEXEC | O_DIRECTORY, 0)
+fd = openat(dfd, ".", O_RDWR | O_CLOEXEC | O_TMPFILE, 0600)
+do stuff with fd
+fsync(fd)
+linkat(fd, "", dfd, "z", AT_EMPTY_PATH | AT_REPLACE?)
+close(fd)
+fsync(dfd)
+close(dfd)
+
+The AT_REPLACE flag has been suggested before to work around the EEXIST
+behavior.  Alternatively, renameat2 could accept AT_EMPTY_PATH for
+olddirfd/oldpath, but fixing up linkat seems a little cleaner.  Without
+this, it hardly seems worthwhile to use O_TMPFILE at all, and instead
+just go through the hassle of creating the file with a random name
+(plus exposing that file and having to possibly rm it in case of an error).
+
+I haven't been able to find any explanation for the AT_REPLACE idea not
+gaining traction.  Is there some security reason for this?
+
+Thanks
+
+
+> Thank you for your review, which made me glad I sent out the patch early
+> as an RFC.  I (think I) understand the issues you pointed out and,
+> although some of them could be fixed (the races), I guess there's no point
+> pursuing this any further, since you consider the concept itself to be
+> broken.  Again, thank you for your time.
+> 
+> Cheers,
+> -- 
+> Luís
