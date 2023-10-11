@@ -1,166 +1,182 @@
-Return-Path: <linux-fsdevel+bounces-42-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D73547C4B8F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 09:17:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D392B7C4C19
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 09:39:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E45D11C20DCF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 07:17:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0320F1C20EDF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 07:39:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ECBB18C2D;
-	Wed, 11 Oct 2023 07:17:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB6E1199D6;
+	Wed, 11 Oct 2023 07:38:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TNVWckEj"
+	dkim=pass (2048-bit key) header.d=alyssa.is header.i=@alyssa.is header.b="K+QEtTpU";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="c+u2vqe0"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F5A018B1E
-	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Oct 2023 07:17:26 +0000 (UTC)
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B30678F
-	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Oct 2023 00:17:24 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id ffacd0b85a97d-32157c8e4c7so6392864f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Oct 2023 00:17:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697008643; x=1697613443; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ayhK5ZZITA9PWclc67B5lQjGuI1Rti5S1fpJxVmbBRY=;
-        b=TNVWckEjRNmiuyKqwHCq0e6NsSnQr26LQWFvaUd2u+yqWqn3OJwRy4c+UA9tWak6dt
-         xcr3b1614AiXdjHbpFDFrePYSQ8GX/Ay829IEm6xxTey5+qP1lC/hKqS0c44RoCbwYsV
-         g1b9g8RKMeGQKClBNFaFCTw6b3dzy8HQFw3CgmTFtd+60MugiKRuFxEMavjpWl3Sp/CY
-         OnHYRDDz3qpuTCk0cUstoH7eGVzheTY2MxkcgeddQiWXLCwgTg0UuiVEg/0Yv9qdzPi6
-         X6mL0/ionDNnuOVKwwDopz70UW73jlSj6/mKm7Z3p4be/F89juIjOzKYoWdv0sS8wO6t
-         7oRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697008643; x=1697613443;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ayhK5ZZITA9PWclc67B5lQjGuI1Rti5S1fpJxVmbBRY=;
-        b=OZ1+Kmqr96dha53KMEKvtCuzOMRQ4GGgIuVpxcnk+AkIKaAy8iGbBUKvmyNx5ByNZY
-         5ugBeR3PD7j7oHNFXl0k8UKnyXKlXkyhe3ZKJTwxqXvZwcI1hNqp3aO3sc7QazH487XN
-         2PmD9hf05vZwbx1eoJO0e8+wgptQJBqxtld4yqD2+mA4sVQfa9FOxmgZCS+WZuGNcuzy
-         8f/fSN9EDLe0urcLjewQ6EEnCYnV3U3GmzyYlaaeQacd6KCssvmxLZ5vd5hJizrHJK1f
-         GBOxleK+b8FC4+3jrkcO5cjB71UghD96iwS3agNDEnfARTQ6Ao5X8qaYC1wsk/ZNK41J
-         kCUA==
-X-Gm-Message-State: AOJu0YwE8Y3HtMC4+JPggQWo/cYf5NNTQa9jMeeQBumrUXfbV9DwDNYE
-	57v/kRKDvKI86IyEFc8t+wxdUw==
-X-Google-Smtp-Source: AGHT+IGSgMuPNZcSb/qoRef2LT95GhuxlKDkCfgKDCNsPI99qj2VC19cSkJtgFiebD0cnCw5aDp8BA==
-X-Received: by 2002:adf:ef91:0:b0:31f:f1f4:ca8b with SMTP id d17-20020adfef91000000b0031ff1f4ca8bmr16220473wro.40.1697008643069;
-        Wed, 11 Oct 2023 00:17:23 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id v26-20020a5d591a000000b0030ada01ca78sm14562733wrd.10.2023.10.11.00.17.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Oct 2023 00:17:22 -0700 (PDT)
-Date: Wed, 11 Oct 2023 10:17:20 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Bernd Schubert <bschubert@ddn.com>,
-	linux-fsdevel@vger.kernel.org
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	bernd.schubert@fastmail.fm, miklos@szeredi.hu, dsingh@ddn.com,
-	Bernd Schubert <bschubert@ddn.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH v9 4/7] vfs: Optimize atomic_open() on positive dentry
-Message-ID: <f1b371ce-9fa7-4d1c-bcad-968d1706ac99@kadam.mountain>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16DAE18E32
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Oct 2023 07:38:55 +0000 (UTC)
+Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B372792;
+	Wed, 11 Oct 2023 00:38:53 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailout.west.internal (Postfix) with ESMTP id 291A332013E6;
+	Wed, 11 Oct 2023 03:38:52 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Wed, 11 Oct 2023 03:38:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alyssa.is; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:sender
+	:subject:subject:to:to; s=fm1; t=1697009931; x=1697096331; bh=tg
+	uG2aXRGfx+BtSSdosiAuKFgDBmx4SGy972Szw14Xw=; b=K+QEtTpUgF75OMaZQu
+	awOhoNWZjzQIEpgcPHus85fajdr6TqnfsBJsZ5w7/Hyhd5QxiVx3HCDAAo37Z3wp
+	uo0ynzf3trRDe6iP5zwOfJB7CC7V1eJgWfm2Ojv3DEy0a+TOQYnL+JNXH7l1D9zP
+	t3JDyNXQ7XjIcnHqFTBoFspVyeCbBmyZrre+s8SKaKV+xt4oyrefhoUOPFVkbycq
+	knhid9ikyWWQ1XD5mmQrvvH3lf9Fm/xrBIkYTiA4aisF04SeC1P/Ir7Wnh70XRlj
+	eg4iI+L6gbpK/gmv4HafNsS373CQHPBuKtwHX8Wm++/bMqf9hHQbZFOTsJcc7DYa
+	dJIA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:sender:subject
+	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+	:x-sasl-enc; s=fm2; t=1697009931; x=1697096331; bh=tguG2aXRGfx+B
+	tSSdosiAuKFgDBmx4SGy972Szw14Xw=; b=c+u2vqe0zrP/tiv8UGK023yIbdcxV
+	arlU0jbHPpMOjz+/tXj/1IuUt2tZ6NV3OfkE8Un59DtrdF+QXfU7J7Kfh+9jEmUv
+	TeexUfps7fVBRWR8JnAezLtRb6eSRjlQk2wIYEx2KTG2dcyL+sZRCeMpASUCDLPm
+	hdRsd0PGOE0Qkhz+RnhfvJvnmtHWVBJ8fSxsGQ9tvK7vKYLlK+jfeLHl5rGK04cV
+	8y0S87gCyHQ4QhFx7mEF6RBDqxV8La9i8+yPeuK1tKkrPQInD9Peden9D1akrm/p
+	YkBfAE/0A11vsdNpKV+AuwR9H8bdy0mpdUed0GnScvlFhDmjsy8+gBxRg==
+X-ME-Sender: <xms:ClEmZXlqxfwXLwPjvCAoIkRRMUhwJgSu9jYnCKspgngy2V_ib5edKw>
+    <xme:ClEmZa0nOVvBZEQ0ia4tzTQ3-UYocRs6cBAfLWPm3lPcD18Z_txA2gClRWMNsKOQ6
+    mVoTziY344CnuztQQ>
+X-ME-Received: <xmr:ClEmZdqq18H23WE1uen6kuzhbSXh24MfPS7hwrh8WlCmPR1lc3fpHPCSuKL6FvAcr7pZs--dG8aHxdvB0w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrheejgdektdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefhvfevufgjfhffkfggtgesghdtreertddtjeenucfhrhhomheptehlhihsshgr
+    ucftohhsshcuoehhihesrghlhihsshgrrdhisheqnecuggftrfgrthhtvghrnhepteehve
+    dugfejgfehhfeijeduleekleejgedvkeeuuefhhfegvdevfeetveegteeinecuvehluhhs
+    thgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhephhhisegrlhihshhsrg
+    drihhs
+X-ME-Proxy: <xmx:ClEmZfkGLx6NcTiLggUcv7l9SWZN98xd42VtbXscB1cvSxwYRrRynw>
+    <xmx:ClEmZV1yGbIHL1Lw5W-Q9bfSPoHea-nAui-kY60LI7tfVpFQyEvPXg>
+    <xmx:ClEmZevbN0YNSBAIGI9qQWHPrqhWjSgT_nTpvp7nWfUmTOrWPyV8ig>
+    <xmx:C1EmZfpfNgOGiqfvxFacjhUpaPru0LBsOc7fI00Ri_ebpwf1VXX8AA>
+Feedback-ID: i12284293:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 11 Oct 2023 03:38:50 -0400 (EDT)
+Received: by mbp.qyliss.net (Postfix, from userid 1000)
+	id 461BBF0E; Wed, 11 Oct 2023 07:38:48 +0000 (UTC)
+From: Alyssa Ross <hi@alyssa.is>
+To: Kees Cook <keescook@chromium.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
+ <brauner@kernel.org>, Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+ Eric Biederman <ebiederm@xmission.com>, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] exec: allow executing block devices
+In-Reply-To: <202310101535.CEDA4DB84@keescook>
+References: <20231010092133.4093612-1-hi@alyssa.is>
+ <202310101535.CEDA4DB84@keescook>
+Date: Wed, 11 Oct 2023 07:38:39 +0000
+Message-ID: <87o7h5vcao.fsf@alyssa.is>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230920173445.3943581-5-bschubert@ddn.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.6
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha256; protocol="application/pgp-signature"
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+	RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-Hi Bernd,
+--=-=-=
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-kernel test robot noticed the following build warnings:
+Kees Cook <keescook@chromium.org> writes:
 
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> On Tue, Oct 10, 2023 at 09:21:33AM +0000, Alyssa Ross wrote:
+>> As far as I can tell, the S_ISREG() check is there to prevent
+>> executing files where that would be nonsensical, like directories,
+>> fifos, or sockets.  But the semantics for executing a block device are
+>> quite obvious =E2=80=94 the block device acts just like a regular file.
+>>=20
+>> My use case is having a common VM image that takes a configurable
+>> payload to run.  The payload will always be a single ELF file.
+>>=20
+>> I could share the file with virtio-fs, or I could create a disk image
+>> containing a filesystem containing the payload, but both of those add
+>> unnecessary layers of indirection when all I need to do is share a
+>> single executable blob with the VM.  Sharing it as a block device is
+>> the most natural thing to do, aside from the (arbitrary, as far as I
+>> can tell) restriction on executing block devices.  (The only slight
+>> complexity is that I need to ensure that my payload size is rounded up
+>> to a whole number of sectors, but that's trivial and fast in
+>> comparison to e.g. generating a filesystem image.)
+>>=20
+>> Signed-off-by: Alyssa Ross <hi@alyssa.is>
+>
+> Hi,
+>
+> Thanks for the suggestion! I would prefer to not change this rather core
+> behavior in the kernel for a few reasons, but it mostly revolves around
+> both user and developer expectations and the resulting fragility.
+>
+> For users, this hasn't been possible in the past, so if we make it
+> possible, what situations are suddenly exposed on systems that are trying
+> to very carefully control their execution environments?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Bernd-Schubert/fuse-rename-fuse_create_open/20230921-013805
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/idmapping.git for-next
-patch link:    https://lore.kernel.org/r/20230920173445.3943581-5-bschubert%40ddn.com
-patch subject: [PATCH v9 4/7] vfs: Optimize atomic_open() on positive dentry
-config: i386-randconfig-141-20230927 (https://download.01.org/0day-ci/archive/20231011/202310111259.WGjXat6p-lkp@intel.com/config)
-compiler: gcc-7 (Ubuntu 7.5.0-6ubuntu2) 7.5.0
-reproduce: (https://download.01.org/0day-ci/archive/20231011/202310111259.WGjXat6p-lkp@intel.com/reproduce)
+I expect very few, considering it's still necessary to have root chmod
+the block device to make it executable.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202310111259.WGjXat6p-lkp@intel.com/
+> For developers, this ends up exercising code areas that have never been
+> tested, and could lead to unexpected conditions. For example,
+> deny_write_access() is explicitly documented as "for regular files".
+> Perhaps it accidentally works with block devices, but this would need
+> much more careful examination, etc.
+>
+> And while looking at this from a design perspective, it looks like a
+> layering violation: roughly speaking, the kernel execute files, from
+> filesystems, from block devices. Bypassing layers tends to lead to
+> troublesome bugs and other weird problems.
+>
+> I wonder, though, if you can already get what you need through other
+> existing mechanisms that aren't too much more hassle? For example,
+> what about having a tool that creates a memfd from a block device and
+> executes that? The memfd code has been used in a lot of odd exec corner
+> cases in the past...
 
-New smatch warnings:
-fs/namei.c:3418 atomic_revalidate_open() warn: variable dereferenced before check 'got_write' (see line 3414)
+Is it possible to have a file-backed memfd?  Strange name if so!=20
 
-Old smatch warnings:
-fs/namei.c:1573 lookup_dcache() warn: passing zero to 'ERR_PTR'
-fs/namei.c:1658 lookup_fast() warn: passing zero to 'ERR_PTR'
-fs/namei.c:2189 hash_name() error: uninitialized symbol 'bdata'.
-fs/namei.c:2600 __kern_path_locked() warn: inconsistent returns '&path->dentry->d_inode->i_rwsem'.
-fs/namei.c:3480 lookup_open() error: uninitialized symbol 'error'.
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
-vim +/got_write +3418 fs/namei.c
+-----BEGIN PGP SIGNATURE-----
 
-0bb53ce89df211 Bernd Schubert 2023-09-20  3391  static struct dentry *atomic_revalidate_open(struct dentry *dentry,
-0bb53ce89df211 Bernd Schubert 2023-09-20  3392  					     struct nameidata *nd,
-0bb53ce89df211 Bernd Schubert 2023-09-20  3393  					     struct file *file,
-0bb53ce89df211 Bernd Schubert 2023-09-20  3394  					     const struct open_flags *op,
-0bb53ce89df211 Bernd Schubert 2023-09-20  3395  					     bool *got_write)
-0bb53ce89df211 Bernd Schubert 2023-09-20  3396  {
-0bb53ce89df211 Bernd Schubert 2023-09-20  3397  	struct mnt_idmap *idmap;
-0bb53ce89df211 Bernd Schubert 2023-09-20  3398  	struct dentry *dir = nd->path.dentry;
-0bb53ce89df211 Bernd Schubert 2023-09-20  3399  	struct inode *dir_inode = dir->d_inode;
-0bb53ce89df211 Bernd Schubert 2023-09-20  3400  	int open_flag = op->open_flag;
-0bb53ce89df211 Bernd Schubert 2023-09-20  3401  	umode_t mode = op->mode;
-0bb53ce89df211 Bernd Schubert 2023-09-20  3402  
-0bb53ce89df211 Bernd Schubert 2023-09-20  3403  	if (unlikely(IS_DEADDIR(dir_inode)))
-0bb53ce89df211 Bernd Schubert 2023-09-20  3404  		return ERR_PTR(-ENOENT);
-0bb53ce89df211 Bernd Schubert 2023-09-20  3405  
-0bb53ce89df211 Bernd Schubert 2023-09-20  3406  	file->f_mode &= ~FMODE_CREATED;
-0bb53ce89df211 Bernd Schubert 2023-09-20  3407  
-0bb53ce89df211 Bernd Schubert 2023-09-20  3408  	if (unlikely(open_flag & O_CREAT)) {
-0bb53ce89df211 Bernd Schubert 2023-09-20  3409  		WARN_ON(1);
-0bb53ce89df211 Bernd Schubert 2023-09-20  3410  		return ERR_PTR(-EINVAL);
-0bb53ce89df211 Bernd Schubert 2023-09-20  3411  	}
-0bb53ce89df211 Bernd Schubert 2023-09-20  3412  
-0bb53ce89df211 Bernd Schubert 2023-09-20  3413  	if (open_flag & (O_TRUNC | O_WRONLY | O_RDWR))
-0bb53ce89df211 Bernd Schubert 2023-09-20 @3414  		*got_write = !mnt_want_write(nd->path.mnt);
-
-Dereferenced
-
-0bb53ce89df211 Bernd Schubert 2023-09-20  3415  	else
-0bb53ce89df211 Bernd Schubert 2023-09-20  3416  		*got_write = false;
-
-Here too.
-
-0bb53ce89df211 Bernd Schubert 2023-09-20  3417  
-0bb53ce89df211 Bernd Schubert 2023-09-20 @3418  	if (!got_write)
-
-Checked too late.  But I think maybe it was supposed to check
-if (!*got_write)?
-
-0bb53ce89df211 Bernd Schubert 2023-09-20  3419  		open_flag &= ~O_TRUNC;
-0bb53ce89df211 Bernd Schubert 2023-09-20  3420  
-0bb53ce89df211 Bernd Schubert 2023-09-20  3421  	inode_lock_shared(dir->d_inode);
-0bb53ce89df211 Bernd Schubert 2023-09-20  3422  	dentry = atomic_open(nd, dentry, file, open_flag, mode);
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+iQIzBAEBCAAdFiEEH9wgcxqlHM/ARR3h+dvtSFmyccAFAmUmUP8ACgkQ+dvtSFmy
+ccC7DhAAgtwwDA4fn/aXYdqL7F7R68MtABW7LyXGNCjuGEmP1kZbkg0lEyEc7UCr
++dn5F8EXSzRGK5huEn2RzhPNnzU28KWBxmXN6bFED/YaCDKYBC9MM3cGUaXEbTPG
+fQyQAGo36qlB5m/hS5j8XMuM/uIcYlsEk8qkgpAkfebNAMEKTxxSTshUSFRyq5wa
+KTT76URCwrxPooy25Znv4JqjsR2taMPOvXnVV6bf8DXcCNuI+eVeu7J/nZ44LyEe
+0GykVN2hBeUwuSQEkyR11iKbaoxlTgYRyMMYOw+ylgaBUgfsJn88tGk1qCDlfRW+
+/B1QUJephRtk0LsBLGcjeEqATCJ4ITZaDoIe1CI1pUjluR8tJrMxhmhX9dlyWvjb
+b4CRpFck2sjXbDaP36sW9s7F7qgp9NspPLzSrcgVmKNPY90c/sTVvrkd8CXca2px
+0z1Yxa5P1OFPSSEwBbwqNUpTjsRwQMfsq8TUbcbzJ1h++9F6HEce79WkMz6AHGPD
+c/rpzHS7MqbHCj/nxHP9IuCU1XyR8rIXRynD9NFdDtp8bJMGwvGselrRHfHVz9+X
+tzX4PUuz9k+3PEoHSOVrIaHItIY5Ml7i5md1wpeARpi0lz7CeUvTWMLxXPb/Xc4Y
+BMlmXuKi7CZmjYS/zkw6d1KGddkMhyeZ2I76hkbyGTbfbKDNsU0=
+=S7sC
+-----END PGP SIGNATURE-----
+--=-=-=--
 
