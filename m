@@ -1,48 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-121-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-122-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42C9B7C5D61
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 21:02:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED32A7C5D65
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 21:06:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F13B0283012
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 19:02:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 223531C20F11
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 19:06:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE94E12E4D;
-	Wed, 11 Oct 2023 19:02:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C096F12E50;
+	Wed, 11 Oct 2023 19:06:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WbzwVOO1"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Kvpppry5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF22F12E4A;
-	Wed, 11 Oct 2023 19:02:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 418E6C433C7;
-	Wed, 11 Oct 2023 19:02:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1697050965;
-	bh=oMzXkjxA3unXfKGtJD03jI+dq4ZP8nkrRSfYX2Zg/8Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WbzwVOO1rZF+Rmk/7wPNIxo/1a9vz4yEBUfthqJ5lxlqWcHpA11NX42pvzA3tPVmT
-	 1DJPuru8mtHY+74bAxJdFcPix9HujyqTOXs7GOoAa0RkIn/N/Rn327VSILTOJs3sAH
-	 E5N76smjBPHvrk1dq424ad2waRQj1SFS0jfs+PuasL7V/RdB4Ym1GQIuWEwkjt8WGE
-	 vVsJGERlQ3lLeYnPK0Is9S9QSYR4ppQt0GFusAkn1l0cDo/ym2ogz5Deahg889Jm+z
-	 GbNW7FZBmY2Xw5EnpHfA9/Z162ykD7bEduIHZOvKOsfKj42t/XqzTIou5aysDr8ELg
-	 1FeyIxcBXhzpw==
-Date: Wed, 11 Oct 2023 12:02:44 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Andrey Albershteyn <aalbersh@redhat.com>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	fsverity@lists.linux.dev, ebiggers@kernel.org, david@fromorbit.com,
-	dchinner@redhat.com
-Subject: Re: [PATCH v3 24/28] xfs: disable direct read path for fs-verity
- sealed files
-Message-ID: <20231011190244.GW21298@frogsfrogsfrogs>
-References: <20231006184922.252188-1-aalbersh@redhat.com>
- <20231006184922.252188-25-aalbersh@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 970353A28E
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Oct 2023 19:06:44 +0000 (UTC)
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 576C990
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Oct 2023 12:06:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=QHliAQ1dbPi8wL6gAqug7RzPRCQpa8qmUkjp/nnpEg4=; b=Kvpppry5Tcf6mLXdyC+YC1SsAx
+	k0nnTMo5TxBk2WikeURmedx7cWPMVjCLTH5huWlDGOxygKfIzXVzPKsDMdhPEdCUzuclyRT+z9egs
+	GHPoXf2pzR0Ook7dtfft43Jmvdmw/nY50PbN/S9KsGTzgWbJAJS9wuJIALWx3fUl5FS1RC5UcCjDE
+	phiJ7+bKMzkXeABOt19AgJAIDSwJOHWQ7oEyAvp76Rhsry4zN6Yzxwew6zvJmt6WjK6t3HqhKilLa
+	Daxj2kHurT6DNqLgmUjLZrpXLS4iXkbJrTqmnpPDnnGYMRDIlMCJa2inBuvifITqKsZ2dfSx+YNhG
+	kpRj3rmg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1qqeXW-000LOC-0y;
+	Wed, 11 Oct 2023 19:06:38 +0000
+Date: Wed, 11 Oct 2023 20:06:38 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Mo Zou <lostzoumo@gmail.com>
+Cc: brauner@kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] Documentation: fs: fix directory locking proofs
+Message-ID: <20231011190638.GV800259@ZenIV>
+References: <20231011052815.15022-1-lostzoumo@gmail.com>
+ <20231011064608.GU800259@ZenIV>
+ <CAHfrynPiUWiB0Vg3-pTi_yC6cER0wYMmCo_V8HZyWAD5Q_m+jQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -51,58 +53,46 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231006184922.252188-25-aalbersh@redhat.com>
+In-Reply-To: <CAHfrynPiUWiB0Vg3-pTi_yC6cER0wYMmCo_V8HZyWAD5Q_m+jQ@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE,
+	T_FILL_THIS_FORM_SHORT,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.6
+X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
+	lindbergh.monkeyblade.net
 
-On Fri, Oct 06, 2023 at 08:49:18PM +0200, Andrey Albershteyn wrote:
-> The direct path is not supported on verity files. Attempts to use direct
-> I/O path on such files should fall back to buffered I/O path.
+On Wed, Oct 11, 2023 at 10:11:42PM +0800, Mo Zou wrote:
 > 
-> Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
-> ---
->  fs/xfs/xfs_file.c | 14 +++++++++++---
->  1 file changed, 11 insertions(+), 3 deletions(-)
+> Consider directories objects A, B, C. The pointer orders are that A < B
+> and C < A. And B is ancestor to C, so B < C. Thus we have A < B < C
+> < A!
 > 
-> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-> index a92c8197c26a..7363cbdff803 100644
-> --- a/fs/xfs/xfs_file.c
-> +++ b/fs/xfs/xfs_file.c
-> @@ -244,7 +244,8 @@ xfs_file_dax_read(
->  	struct kiocb		*iocb,
->  	struct iov_iter		*to)
->  {
-> -	struct xfs_inode	*ip = XFS_I(iocb->ki_filp->f_mapping->host);
-> +	struct inode		*inode = iocb->ki_filp->f_mapping->host;
-> +	struct xfs_inode	*ip = XFS_I(inode);
->  	ssize_t			ret = 0;
->  
->  	trace_xfs_file_dax_read(iocb, to);
-> @@ -297,10 +298,17 @@ xfs_file_read_iter(
->  
->  	if (IS_DAX(inode))
->  		ret = xfs_file_dax_read(iocb, to);
-> -	else if (iocb->ki_flags & IOCB_DIRECT)
-> +	else if (iocb->ki_flags & IOCB_DIRECT && !fsverity_active(inode))
->  		ret = xfs_file_dio_read(iocb, to);
-> -	else
-> +	else {
-> +		/*
-> +		 * In case fs-verity is enabled, we also fallback to the
-> +		 * buffered read from the direct read path. Therefore,
-> +		 * IOCB_DIRECT is set and need to be cleared
-> +		 */
-> +		iocb->ki_flags &= ~IOCB_DIRECT;
-
-We don't clear IOCB_DIRECT when directio writes fall back to buffered
-writes; why is it necessary here?
-
---D
-
->  		ret = xfs_file_buffered_read(iocb, to);
-> +	}
->  
->  	if (ret > 0)
->  		XFS_STATS_ADD(mp, xs_read_bytes, ret);
-> -- 
-> 2.40.1
+> A concrete deadlock  example can be constructed as follows. Suppose
+> the tree has following edges /A and /B/C and A < B and C < A. There are
+> three operations forming a deadlock.
 > 
+> rename(/A, /B) executes: lock /; lock A; (about to lock B)
+> unlink(/B/C) executes: lock B; (about to lock C)
+> rename(/A/x, /C/y) executes: lock C; (about to lock A)
+
+Nope - your C in line 2 is not C in line 3.
+
+There *IS* a deadlock, but it's more subtle than that.
+Look:
+# address(/X/A) < address(C) < address(X)
+T_1: rename /C/D /X/A/B
+T_2: exchange /X /C
+T_3: rmdir /X/A
+T_1:	looked up /X/A and /C (all in dcache)
+T_2:	looked up /
+T_3:	looked up /X
+T_1:	grabbed ->s_vfs_rename_mutex
+T_1:	grabbed /X/A
+T_2:	grabbed /
+T_2:	grabbed /C
+T_3:	grabbed /X
+T_2:	tries to grab /X
+T_3:	tries to grab /X/A
+T_1:	tries to grab /C
 
