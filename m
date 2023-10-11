@@ -1,47 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-113-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-114-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B64617C5B9B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 20:48:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E3777C5BCD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 20:49:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6E711C20FD3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 18:48:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB595282788
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 18:49:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82D5D1D54E;
-	Wed, 11 Oct 2023 18:48:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14CC820305;
+	Wed, 11 Oct 2023 18:49:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BmvM1TrK"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SXFwdGH9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B26971D524;
-	Wed, 11 Oct 2023 18:48:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FA2AC433C8;
-	Wed, 11 Oct 2023 18:48:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1697050117;
-	bh=jbbfJiF62YBYzMD/pdwAlQvbc8jryuoyLG9lrd9hXAk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BmvM1TrK3oFqA63mewqBXYw1vtbL/dH4zd88ElOSON47K9Sc5Ir7fOvTP/pOeMQe+
-	 LoSLKygV63WMpmEhVFKjOtNYyi1gqgtBtoh+g887d1Leca/IU4vbkvkXD9p4pjKzAn
-	 9HJPEDzF3JgaKiN73JJy+jYKYGaV8ORne/o7PMr4I6gBJSZ/1s0gSrj1oINq8BrYpJ
-	 5Ai7qaK6kR5IsrhrZTmSHyDH9kHOgQW8iyyNqCUYsY3WXGRq8Am+sJTzLq19Dxmkuf
-	 OEiPjDft2vubQ2tGxwEcqqLbQTQPF7kWT32eNcKBmTWJYJzs6pFyAAIFWE6tKzPtPg
-	 VKORKQbI3CoDg==
-Date: Wed, 11 Oct 2023 11:48:36 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Andrey Albershteyn <aalbersh@redhat.com>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	fsverity@lists.linux.dev, ebiggers@kernel.org, david@fromorbit.com,
-	dchinner@redhat.com
-Subject: Re: [PATCH v3 17/28] xfs: add attribute type for fs-verity
-Message-ID: <20231011184836.GQ21298@frogsfrogsfrogs>
-References: <20231006184922.252188-1-aalbersh@redhat.com>
- <20231006184922.252188-18-aalbersh@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A459F22301
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Oct 2023 18:49:34 +0000 (UTC)
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 578D310E
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Oct 2023 11:49:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=0rk6i7/jt81dwnETzkMbjuSyjTR9R3WkETb0wXI0Wfo=; b=SXFwdGH9i4Z9cG/erKOoacpHv1
+	ZCplqwWmHXJdeGd+boz1Xv1/FtxZfu4f3vvvcb4bTz1wfSHM6GzMqFXEPKDbFioG22m+HRRWbfZSu
+	NiggA/SM7243WP9rb3vl75cgv65Oa/Zskvfpl+WRlT39FpMi09isLlsx8z4Lfj/giex/ad96keL4L
+	WDsEmCHWxPN5gMv00j9dMOGF/zT/3JEndIA5RRJyNWri4GXHwh3AJ6JriLrfy7f+Gl5bqNFTd8KOz
+	dd2bmCHmZ13owvCJhOVA1RhJGeOw8w10W1nCZjD6tWRHbXczVLewArYtTfvN4kb3Sj6+AFFbhH7A+
+	4UHSpWCg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+	id 1qqeGn-00CM05-FS; Wed, 11 Oct 2023 18:49:21 +0000
+Date: Wed, 11 Oct 2023 19:49:21 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Jan Kara <jack@suse.cz>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Mirsad Todorovac <mirsad.todorovac@alu.unizg.hr>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/2] lib/find: Make functions safe on changing bitmaps
+Message-ID: <ZSbuMWGYyulgUA6g@casper.infradead.org>
+References: <20231011144320.29201-1-jack@suse.cz>
+ <20231011150252.32737-1-jack@suse.cz>
+ <ZSbo1aAjteepdmcz@yury-ThinkPad>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -50,131 +56,80 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231006184922.252188-18-aalbersh@redhat.com>
+In-Reply-To: <ZSbo1aAjteepdmcz@yury-ThinkPad>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+	SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.6
+X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
+	lindbergh.monkeyblade.net
 
-On Fri, Oct 06, 2023 at 08:49:11PM +0200, Andrey Albershteyn wrote:
-> The Merkle tree blocks and descriptor are stored in the extended
-> attributes of the inode. Add new attribute type for fs-verity
-> metadata. Add XFS_ATTR_INTERNAL_MASK to skip parent pointer and
-> fs-verity attributes as those are only for internal use. While we're
-> at it add a few comments in relevant places that internally visible
-> attributes are not suppose to be handled via interface defined in
-> xfs_xattr.c.
+On Wed, Oct 11, 2023 at 11:26:29AM -0700, Yury Norov wrote:
+> Long story short: KCSAN found some potential issues related to how
+> people use bitmap API. And instead of working through that issues,
+> the following code shuts down KCSAN by applying READ_ONCE() here
+> and there.
+
+Pfft.
+
+> READ_ONCE() fixes nothing because nothing is broken in find_bit() API.
+> As I suspected, and as Matthew confirmed in his email, the true reason
+> for READ_ONCE() here is to disable KCSAN check:
 > 
-> Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
-> ---
->  fs/xfs/libxfs/xfs_da_format.h  | 10 +++++++++-
->  fs/xfs/libxfs/xfs_log_format.h |  1 +
->  fs/xfs/xfs_ioctl.c             |  5 +++++
->  fs/xfs/xfs_trace.h             |  1 +
->  fs/xfs/xfs_xattr.c             |  9 +++++++++
->  5 files changed, 25 insertions(+), 1 deletion(-)
+>         READ_ONCE() serves two functions here;
+>         one is that it tells the compiler not to try anything fancy, and
+>         the other is that it tells KCSAN to not bother instrumenting this
+>         load; no load-delay-reload.
 > 
-> diff --git a/fs/xfs/libxfs/xfs_da_format.h b/fs/xfs/libxfs/xfs_da_format.h
-> index 6deefe03207f..b56bdae83563 100644
-> --- a/fs/xfs/libxfs/xfs_da_format.h
-> +++ b/fs/xfs/libxfs/xfs_da_format.h
-> @@ -699,14 +699,22 @@ struct xfs_attr3_leafblock {
->  #define	XFS_ATTR_ROOT_BIT	1	/* limit access to trusted attrs */
->  #define	XFS_ATTR_SECURE_BIT	2	/* limit access to secure attrs */
->  #define	XFS_ATTR_PARENT_BIT	3	/* parent pointer attrs */
-> +#define	XFS_ATTR_VERITY_BIT	4	/* verity merkle tree and descriptor */
->  #define	XFS_ATTR_INCOMPLETE_BIT	7	/* attr in middle of create/delete */
->  #define XFS_ATTR_LOCAL		(1u << XFS_ATTR_LOCAL_BIT)
->  #define XFS_ATTR_ROOT		(1u << XFS_ATTR_ROOT_BIT)
->  #define XFS_ATTR_SECURE		(1u << XFS_ATTR_SECURE_BIT)
->  #define XFS_ATTR_PARENT		(1u << XFS_ATTR_PARENT_BIT)
-> +#define XFS_ATTR_VERITY		(1u << XFS_ATTR_VERITY_BIT)
->  #define XFS_ATTR_INCOMPLETE	(1u << XFS_ATTR_INCOMPLETE_BIT)
->  #define XFS_ATTR_NSP_ONDISK_MASK \
-> -			(XFS_ATTR_ROOT | XFS_ATTR_SECURE | XFS_ATTR_PARENT)
-> +			(XFS_ATTR_ROOT | XFS_ATTR_SECURE | XFS_ATTR_PARENT | \
-> +			 XFS_ATTR_VERITY)
-> +
-> +/*
-> + * Internal attributes not exposed to the user
-> + */
-> +#define XFS_ATTR_INTERNAL_MASK (XFS_ATTR_PARENT | XFS_ATTR_VERITY)
->  
->  /*
->   * Alignment for namelist and valuelist entries (since they are mixed
-> diff --git a/fs/xfs/libxfs/xfs_log_format.h b/fs/xfs/libxfs/xfs_log_format.h
-> index 0bc1749fb7bb..c42cc58cd152 100644
-> --- a/fs/xfs/libxfs/xfs_log_format.h
-> +++ b/fs/xfs/libxfs/xfs_log_format.h
-> @@ -975,6 +975,7 @@ struct xfs_icreate_log {
->  #define XFS_ATTRI_FILTER_MASK		(XFS_ATTR_ROOT | \
->  					 XFS_ATTR_SECURE | \
->  					 XFS_ATTR_PARENT | \
-> +					 XFS_ATTR_VERITY | \
->  					 XFS_ATTR_INCOMPLETE)
->  
->  /*
-> diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-> index 55bb01173cde..3d6d680b6cf3 100644
-> --- a/fs/xfs/xfs_ioctl.c
-> +++ b/fs/xfs/xfs_ioctl.c
-> @@ -351,6 +351,11 @@ static unsigned int
->  xfs_attr_filter(
->  	u32			ioc_flags)
->  {
-> +	/*
-> +	 * Only externally visible attributes should be specified here.
-> +	 * Internally used attributes (such as parent pointers or fs-verity)
-> +	 * should not be exposed to userspace.
-> +	 */
->  	if (ioc_flags & XFS_IOC_ATTR_ROOT)
->  		return XFS_ATTR_ROOT;
->  	if (ioc_flags & XFS_IOC_ATTR_SECURE)
-> diff --git a/fs/xfs/xfs_trace.h b/fs/xfs/xfs_trace.h
-> index 3926cf7f2a6e..3696709907bf 100644
-> --- a/fs/xfs/xfs_trace.h
-> +++ b/fs/xfs/xfs_trace.h
-> @@ -82,6 +82,7 @@ struct xfs_perag;
->  #define XFS_ATTR_FILTER_FLAGS \
->  	{ XFS_ATTR_ROOT,	"ROOT" }, \
->  	{ XFS_ATTR_SECURE,	"SECURE" }, \
-> +	{ XFS_ATTR_VERITY,	"VERITY" }, \
->  	{ XFS_ATTR_INCOMPLETE,	"INCOMPLETE" }
->  
->  DECLARE_EVENT_CLASS(xfs_attr_list_class,
-> diff --git a/fs/xfs/xfs_xattr.c b/fs/xfs/xfs_xattr.c
-> index a3975f325f4e..56f7f4122fcb 100644
-> --- a/fs/xfs/xfs_xattr.c
-> +++ b/fs/xfs/xfs_xattr.c
-> @@ -20,6 +20,12 @@
->  
->  #include <linux/posix_acl_xattr.h>
->  
-> +/*
-> + * This file defines interface to work with externally visible extended
-> + * attributes, such as those in system or security namespaces. This interface
-
-"...such as those in user, system, or security namespaces."
-
-With that fixed,
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-
---D
-
-
-> + * should not be used for internally used attributes (consider xfs_attr.c).
-> + */
-> +
->  /*
->   * Get permission to use log-assisted atomic exchange of file extents.
->   *
-> @@ -241,6 +247,9 @@ xfs_xattr_put_listent(
->  
->  	ASSERT(context->count >= 0);
->  
-> +	if (flags & XFS_ATTR_INTERNAL_MASK)
-> +		return;
-> +
->  	if (flags & XFS_ATTR_ROOT) {
->  #ifdef CONFIG_XFS_POSIX_ACL
->  		if (namelen == SGI_ACL_FILE_SIZE &&
-> -- 
-> 2.40.1
+> https://lkml.kernel.org/linux-mm/ZQkhgVb8nWGxpSPk@casper.infradead.org/
 > 
+> And as side-effect, it of course hurts the performance. In the same
+> email Matthew said he doesn't believe me that READ_ONCE would do that,
+> so thank you for testing and confirming that it does.
+
+You really misinterpreted what Jan wrote to accomplish this motivated
+reasoning.
+
+> Jan, I think that in your last email you confirmed that the xarray
+> problem that you're trying to solve is about a lack of proper locking:
+> 
+>         Well, for xarray the write side is synchronized with a spinlock but the read
+>         side is not (only RCU protected).
+> 
+> https://lkml.kernel.org/linux-mm/20230918155403.ylhfdbscgw6yek6p@quack3/
+> 
+> If there's no enough synchronization, why not just adding it?
+
+You don't understand.  We _intend_ for there to be no locking.
+We_understand_ there is a race here.  We're _fine_ with there being
+a race here.
+
+> Regardless performance consideration, my main concern is that this patch
+> considers bitmap as an atomic structure, which is intentionally not.
+> There are just a few single-bit atomic operations like set_bit() and
+> clear_bit(). All other functions are non-atomic, including those
+> find_bit() operations.
+
+... and for KCSAN to understand that, we have to use READ_ONCE.
+
+> There is quite a lot of examples of wrong use of bitmaps wrt
+> atomicity, the most typical is like:
+>         for(idx = 0; idx < num; idx++) {
+>                 ...
+>                 set_bit(idx, bitmap);
+>         }
+> 
+> This is wrong because a series of atomic ops is not atomic itself, and
+> if you see something like this in you code, it should be converted to
+> using non-atomic __set_bit(), and protected externally if needed.
+
+That is a bad use of set_bit()!  I agree!  See, for example, commit
+b21866f514cb where I remove precisely this kind of code.
+
+> Similarly, READ_ONCE() in a for-loop doesn't guarantee any ordering or
+> atomicity, and only hurts the performance. And this is exactly what
+> this patch does.
+
+Go back and read Jan's patch again, instead of cherry-picking some
+little bits that confirm your prejudices.
 
