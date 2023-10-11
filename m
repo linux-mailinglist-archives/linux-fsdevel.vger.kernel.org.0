@@ -1,172 +1,117 @@
-Return-Path: <linux-fsdevel+bounces-57-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0EDA7C52E3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 14:07:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E12CE7C52DE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 14:07:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 769112828D6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 12:07:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 946B2282760
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 12:07:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 600761F160;
-	Wed, 11 Oct 2023 12:07:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6008B1EA9D;
+	Wed, 11 Oct 2023 12:07:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="P93Y+I3j";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FLds2aSo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jLXiu0po"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE6A01078D
-	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Oct 2023 12:07:12 +0000 (UTC)
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A07191;
-	Wed, 11 Oct 2023 05:07:10 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 188F321860;
-	Wed, 11 Oct 2023 12:06:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1697026017; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ULWC15oexVFAzs0lRcAcAF0IvOr+w9GqABbuWoIc/Yg=;
-	b=P93Y+I3jvub3oHkwH/c1R/KMW/S6/KfvMrZH3pAYZCdKewGtpg9u/a80DI7uZrktX4dHNl
-	Y7Vp057m/REZQdTl//uTh+JQg5DqrB4d3JvxuITbMRN+hytAzWUo2oYn8dNfqwIV6AvJ5V
-	ov63y0wUM+M2GLeYr5DVRNsdL4HnE+M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1697026017;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ULWC15oexVFAzs0lRcAcAF0IvOr+w9GqABbuWoIc/Yg=;
-	b=FLds2aSoOcZyIorbLDPOi9qbQP5BlAZxrWVsuKFI0gLaV5yAB64MylJ7VZgv4eEFqjrAoQ
-	4MkrzgM8XU07vsDQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-	(No client certificate requested)
-	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id D9BBB134F5;
-	Wed, 11 Oct 2023 12:06:56 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-	by imap2.suse-dmz.suse.de with ESMTPSA
-	id rW9JNOCPJmUgHgAAMHmgww
-	(envelope-from <jack@suse.cz>); Wed, 11 Oct 2023 12:06:56 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 06012A05BC; Wed, 11 Oct 2023 14:06:56 +0200 (CEST)
-Date: Wed, 11 Oct 2023 14:06:55 +0200
-From: Jan Kara <jack@suse.cz>
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: Jan Kara <jack@suse.cz>, Xiubo Li <xiubli@redhat.com>,
-	Ilya Dryomov <idryomov@gmail.com>, Jeff Layton <jlayton@kernel.org>,
-	Jan Kara <jack@suse.com>, Dave Kleikamp <shaggy@kernel.org>,
-	ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-ext4@vger.kernel.org, jfs-discussion@lists.sourceforge.net,
-	Christian Brauner <brauner@kernel.org>,
-	Yang Xu <xuyang2018.jy@fujitsu.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2] fs/{posix_acl,ext2,jfs,ceph}: apply umask if ACL
- support is disabled
-Message-ID: <20231011120655.ndb7bfasptjym3wl@quack3>
-References: <69dda7be-d7c8-401f-89f3-7a5ca5550e2f@oracle.com>
- <20231009144340.418904-1-max.kellermann@ionos.com>
- <20231010131125.3uyfkqbcetfcqsve@quack3>
- <CAKPOu+-nC2bQTZYL0XTzJL6Tx4Pi1gLfNWCjU2Qz1f_5CbJc1w@mail.gmail.com>
- <20231011100541.sfn3prgtmp7hk2oj@quack3>
- <CAKPOu+_xdFALt9sgdd5w66Ab6KTqiy8+Z0Yd3Ss4+92jh8nCwg@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DFCF1EA71
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Oct 2023 12:07:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 706D1C433C8;
+	Wed, 11 Oct 2023 12:07:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1697026021;
+	bh=tFhppGBYTVfoR/zH2jQ+I6wGMyiIAXE50U79NiRo1VQ=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=jLXiu0pou11TygVzRDl7l1fwebKf+vHNYXg87148WJCYZnR6hTAtWzlSmFpo6pE1k
+	 UbjulokydwTHv2jWkjlclUkhDjl7Wfg8UskAqwmXr/3KYSkyOAN0YZ9UEWyyFQTJDF
+	 cQ7cNeiI4+A20T+DJ8sz5rO3hxCMOBznBdCSu5RiB05EPmWl2mgQvvNUPx371k05Yq
+	 j53pWDqVbUrX/0kyFWwSbFGil/k7tacRKkwmjTkYZcMRjEKoxRGGhRxnlJ6FYLoB3j
+	 dYopGrNHlJW15BqtHe6l1YJ2PTzIjCv2cAr1bW+mgGrylTUJTul3dAeRdSSlJVMlrJ
+	 0k9a4rREVQhDg==
+Message-ID: <87c8dc9d4734e6e2a0250531bc08140880b4523d.camel@kernel.org>
+Subject: Re: [bug report] libceph: add new iov_iter-based ceph_msg_data_type
+ and ceph_osd_data_type
+From: Jeff Layton <jlayton@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: ceph-devel@vger.kernel.org, dhowells@redhat.com, 
+	linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
+Date: Wed, 11 Oct 2023 08:06:59 -0400
+In-Reply-To: <c5a75561-b6c7-4217-9e70-4b3212fd05f8@moroto.mountain>
+References: <c5a75561-b6c7-4217-9e70-4b3212fd05f8@moroto.mountain>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.module_f38+17164+63eeee4a) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKPOu+_xdFALt9sgdd5w66Ab6KTqiy8+Z0Yd3Ss4+92jh8nCwg@mail.gmail.com>
-Authentication-Results: smtp-out1.suse.de;
-	none
-X-Spam-Level: 
-X-Spam-Score: 0.40
-X-Spamd-Result: default: False [0.40 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 MIME_GOOD(-0.10)[text/plain];
-	 CLAM_VIRUS_FAIL(0.00)[failed to scan and retransmits exceed];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 RCPT_COUNT_TWELVE(0.00)[14];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_COUNT_TWO(0.00)[2];
-	 RCVD_TLS_ALL(0.00)[];
-	 FREEMAIL_CC(0.00)[suse.cz,redhat.com,gmail.com,kernel.org,suse.com,vger.kernel.org,lists.sourceforge.net,fujitsu.com]
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.6
-X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
-	lindbergh.monkeyblade.net
 
-On Wed 11-10-23 12:51:12, Max Kellermann wrote:
-> On Wed, Oct 11, 2023 at 12:05 PM Jan Kara <jack@suse.cz> wrote:
-> > So I've checked some more and the kernel doc comments before
-> > mode_strip_umask() and vfs_prepare_mode() make it pretty obvious - all
-> > paths creating new inodes must be calling vfs_prepare_mode(). As a result
-> > mode_strip_umask() which handles umask stripping for filesystems not
-> > supporting posix ACLs. For filesystems that do support ACLs,
-> > posix_acl_create() must be call and that handles umask stripping. So your
-> > fix should not be needed. CCed some relevant people for confirmation.
-> 
-> Thanks, Jan. Do you think the documentation is obvious enough, or
-> shall I look around and try to improve the documentation? I'm not a FS
-> expert, so it may be just my fault that it confused me.... I just
-> analyzed the O_TMPFILE vulnerability four years ago (because it was
-> reported to me as the maintainer of a userspace software).
-> 
-> Apart from my doubts that this API contract is too error prone, I'm
-> not quite sure if all filesystems really implement it properly.
-> 
-> For example, overlayfs unconditionally sets SB_POSIXACL, even if the
-> kernel has no ACL support. Would this ignore the umask? I'm not sure,
-> overlayfs is a special beast.
-> Then there's orangefs which allows setting the "acl" mount option (and
-> thus SB_POSIXACL) even if the kernel has no ACL support. Same for gfs2
-> and maybe cifs, maybe more, I didn't check them all.
+On Wed, 2023-10-11 at 12:50 +0300, Dan Carpenter wrote:
+> Hello Jeff Layton,
+>=20
+> To be honest, I'm not sure why I am only seeing this now.  These
+> warnings are hard to analyse because they involve such a long call tree.
+> Anyway, hopefully it's not too complicated for you since you know the
+> code.
+>=20
+> The patch dee0c5f83460: "libceph: add new iov_iter-based
+> ceph_msg_data_type and ceph_osd_data_type" from Jul 1, 2022
+> (linux-next), leads to the following Smatch static checker warning:
+>=20
+> 	lib/iov_iter.c:905 want_pages_array()
+> 	warn: sleeping in atomic context
+>=20
+> lib/iov_iter.c
+>     896 static int want_pages_array(struct page ***res, size_t size,
+>     897                             size_t start, unsigned int maxpages)
+>     898 {
+>     899         unsigned int count =3D DIV_ROUND_UP(size + start, PAGE_SI=
+ZE);
+>     900=20
+>     901         if (count > maxpages)
+>     902                 count =3D maxpages;
+>     903         WARN_ON(!count);        // caller should've prevented tha=
+t
+>     904         if (!*res) {
+> --> 905                 *res =3D kvmalloc_array(count, sizeof(struct page=
+ *), GFP_KERNEL);
+>     906                 if (!*res)
+>     907                         return 0;
+>     908         }
+>     909         return count;
+>     910 }
+>=20
+>=20
+> prep_next_sparse_read() <- disables preempt
+> -> advance_cursor()
+>    -> ceph_msg_data_next()
+>       -> ceph_msg_data_iter_next()
+>          -> iov_iter_get_pages2()
+>             -> __iov_iter_get_pages_alloc()
+>                -> want_pages_array()
+>=20
+> The prep_next_sparse_read() functions hold the spin_lock(&o->o_requests_l=
+ock);
+> lock so it can't sleep.  But iov_iter_get_pages2() seems like a sleeping
+> operation.
+>=20
+>=20
 
-Indeed, *that* looks like a bug. Good spotting! I'd say posix_acl_create()
-defined in include/linux/posix_acl.h for the !CONFIG_FS_POSIX_ACL case
-should be stripping mode using umask. Care to send a patch for this?
+I think this is a false alarm, but I'd appreciate a sanity check:
 
-> The "mainstream" filesystems like ext4 seem to be implemented
-> properly, though this is still too fragile for my taste... ext4 has
-> the SB_POSIXACL code even if there's no kernel ACL support, but it is
-> not reachable because EXT4_MOUNT_POSIX_ACL cannot be set from
-> userspace in that case. The code looks suspicious, but is okay in the
-> end - still not my taste.
-> 
-> I see so much redundant code regarding the "acl" mount option in all
-> filesystems. I believe the API should be designed in a way that it is
-> safe-by-default, and shouldn't need very careful considerations in
-> each and every filesystem, or else all filesystems repeat the same
-> mistakes until the last one gets fixed.
+iov_iter_get_pages2 has this:
 
-So I definitely agree that we should handle as many things as possible in
-VFS without relying on filesystems to get it right. Thus I agree VFS should
-do the right thing even if the filesystem sets SB_POSIXACl when
-!CONFIG_FS_POSIX_ACL.
+	BUG_ON(!pages);
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+...which should ensure that *res won't be NULL when want_pages_array is
+called. That said, this seems like kind of a fragile thing to rely on.
+Should we do something to make this a bit less subtle?
+--=20
+Jeff Layton <jlayton@kernel.org>
 
