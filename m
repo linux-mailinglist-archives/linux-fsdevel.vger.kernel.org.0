@@ -1,109 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-95-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-96-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF2DE7C59AB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 18:56:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24C077C59C6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 19:01:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C98A1C20E7A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 16:56:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CD331C20F92
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 17:01:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FCC628DA6;
-	Wed, 11 Oct 2023 16:56:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11BA1315BF;
+	Wed, 11 Oct 2023 17:01:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="Rc2/C7WG"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281DE1A59F
-	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Oct 2023 16:56:21 +0000 (UTC)
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50ACD98;
-	Wed, 11 Oct 2023 09:56:19 -0700 (PDT)
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1bf55a81eeaso270835ad.0;
-        Wed, 11 Oct 2023 09:56:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697043379; x=1697648179;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M/Cv7Nd9TpaBHaZP+kl37itMKz+kx+gxJ8bgWLYJbKw=;
-        b=I8xYUf0Fx+0BKw/Nd/+VZ4kZNye2fO0atjLkP5AodzoUZaDSk/pes63aNOhCtqOuGs
-         ZTO9QfGw9Waos+xoEBzAAS8LwhhMoVB5pZtB+6tztcReYFIRYNjeD6EhZANAi/Mj/vGO
-         judvHsRh0j4ltj5HGsRtRaeDgB+6dfEUvqX84LCbHl8w4D2erri9JhQTgS0v6JPS1fSB
-         YYXmfbIaTSpoksT8ngGWIkd8X5fIrPFKJYlz+Fxli8nKadHPRzW1KUVmjQJOnO+Oey4/
-         8zd0wH4BxdHrF6it8twpkJ4hwNPjlQNDI19ruEApsON46F+MSsshU6mENippkcuyN9LK
-         FUgg==
-X-Gm-Message-State: AOJu0Yy2Q4+GvnVn4JgqUa3ksMzL2Jo6a9MnIkmsXYZ4Hhvbtfi+qeN3
-	koyKeYbSHMr6xyBVkHakCjQ=
-X-Google-Smtp-Source: AGHT+IGfkszq35vECGxayqgD7G6bdJGRz3vHBpurE3uPcz6M2u5ehswy8SX8d5eeW/m0lW5nKvthuA==
-X-Received: by 2002:a17:902:ed93:b0:1c6:25b2:b720 with SMTP id e19-20020a170902ed9300b001c625b2b720mr17025371plj.44.1697043378230;
-        Wed, 11 Oct 2023 09:56:18 -0700 (PDT)
-Received: from ?IPV6:2620:15c:211:201:19de:6b54:16fe:c022? ([2620:15c:211:201:19de:6b54:16fe:c022])
-        by smtp.gmail.com with ESMTPSA id jc5-20020a17090325c500b001bf8779e051sm48696plb.289.2023.10.11.09.56.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Oct 2023 09:56:17 -0700 (PDT)
-Message-ID: <75fbd722-1bd5-453a-8b39-c988654d3bab@acm.org>
-Date: Wed, 11 Oct 2023 09:56:16 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A2EF200C4
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Oct 2023 17:01:30 +0000 (UTC)
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B719D8F
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Oct 2023 10:01:28 -0700 (PDT)
+Received: from cwcc.thunk.org (pool-173-48-102-152.bstnma.fios.verizon.net [173.48.102.152])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 39BH0gc9026643
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Oct 2023 13:00:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1697043645; bh=q/lSedKb7lshx7k2rQEAeRvB6s5o1LR/9RTjMM0Pa84=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=Rc2/C7WGlgIGRQErNzCcxSMHogE9oGRHAvNB2j3dbxswtI5n+kyI7gEaZ4G3t2XYD
+	 vgniCaTIjxuF5Kn7l7kN/sUqVEHVEphiRz6No2c+NguixtNdFguU5pxTAVFEMmRa7L
+	 mozXISoF8mD2gcTwwtoeTz0QTTpMTQy1dztVf/zBgg2ojvpJ30NPfFgfDc6EY8550C
+	 Vm6FKhIsyR0nd2gUYgV1vJ/bziErXOw/85jjMF7e91VuNXCjdk66m8RcrcHnr/7iJ4
+	 FcCSVVDBDUK9Hs1TLdx1HefX/oATTG+BHWGjmGUqVFW+iTE4PM8rEmDqGvJMrxTcHh
+	 r5JIaMzoS4H6w==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id 4C0C715C0255; Wed, 11 Oct 2023 13:00:42 -0400 (EDT)
+Date: Wed, 11 Oct 2023 13:00:42 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Max Kellermann <max.kellermann@ionos.com>,
+        Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.com>,
+        Dave Kleikamp <shaggy@kernel.org>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        jfs-discussion@lists.sourceforge.net,
+        Yang Xu <xuyang2018.jy@fujitsu.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2] fs/{posix_acl,ext2,jfs,ceph}: apply umask if ACL
+ support is disabled
+Message-ID: <20231011170042.GA267994@mit.edu>
+References: <20231009144340.418904-1-max.kellermann@ionos.com>
+ <20231010131125.3uyfkqbcetfcqsve@quack3>
+ <CAKPOu+-nC2bQTZYL0XTzJL6Tx4Pi1gLfNWCjU2Qz1f_5CbJc1w@mail.gmail.com>
+ <20231011100541.sfn3prgtmp7hk2oj@quack3>
+ <CAKPOu+_xdFALt9sgdd5w66Ab6KTqiy8+Z0Yd3Ss4+92jh8nCwg@mail.gmail.com>
+ <20231011120655.ndb7bfasptjym3wl@quack3>
+ <CAKPOu+-hLrrpZShHh0o6uc_KMW91suEd0_V_uzp5vMf4NM-8yw@mail.gmail.com>
+ <CAKPOu+_0yjg=PrwAR8jKok8WskjdDEJOBtu3uKR_4Qtp8b7H1Q@mail.gmail.com>
+ <20231011135922.4bij3ittlg4ujkd7@quack3>
+ <20231011-braumeister-anrufen-62127dc64de0@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 04/15] fs: Restore write hint support
-Content-Language: en-US
-To: Kanchan Joshi <joshi.k@samsung.com>, Jens Axboe <axboe@kernel.dk>
-Cc: linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-fsdevel@vger.kernel.org,
- "Martin K . Petersen" <martin.petersen@oracle.com>,
- Christoph Hellwig <hch@lst.de>, Niklas Cassel <Niklas.Cassel@wdc.com>,
- Avri Altman <Avri.Altman@wdc.com>, Bean Huo <huobean@gmail.com>,
- Daejun Park <daejun7.park@samsung.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
- Chao Yu <chao@kernel.org>, "Darrick J. Wong" <djwong@kernel.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>
-References: <20231005194129.1882245-1-bvanassche@acm.org>
- <CGME20231005194217epcas5p1538a3730290bbb38adca08f8c80f328e@epcas5p1.samsung.com>
- <20231005194129.1882245-5-bvanassche@acm.org>
- <d25ae351-5131-1b3e-4ae8-bacb674008de@samsung.com>
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <d25ae351-5131-1b3e-4ae8-bacb674008de@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231011-braumeister-anrufen-62127dc64de0@brauner>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+	SPF_NONE autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-On 10/9/23 22:42, Kanchan Joshi wrote:
-> On 10/6/2023 1:10 AM, Bart Van Assche wrote:
->> +static inline enum rw_hint bio_get_data_lifetime(struct bio *bio)
->> +{
->> +	/* +1 to map 0 onto WRITE_LIFE_NONE. */
->> +	return IOPRIO_PRIO_LIFETIME(bio->bi_ioprio) + 1;
->> +}
->> +
->> +static inline void bio_set_data_lifetime(struct bio *bio, enum rw_hint lifetime)
->> +{
->> +	/* -1 to map WRITE_LIFE_NONE onto 0. */
->> +	if (lifetime != 0)
->> +		lifetime--;
+On Wed, Oct 11, 2023 at 05:27:37PM +0200, Christian Brauner wrote:
+> Aside from that, the problem had been that filesystems like nfs v4
+> intentionally raised SB_POSIXACL to prevent umask stripping in the VFS.
+> IOW, for them SB_POSIXACL was equivalent to "don't apply any umask".
 > 
-> How the driver can figure when lifetime is not set, and when it is set
-> to WRITE_LIFE_NONE? If it uses IOPRIO_PRIO_LIFETIME (as patch 8 does),
-> it will see 0 in both cases.
-> F2FS fs-based whint_mode seems to expect distinct streams for
-> WRITE_LIFE_NOT_SET and WRITE_LIFE_NONE.
+> And afaict nfs v4 has it's own thing going on how and where umasks are
+> applied. However, since we now have the following commit in vfs.misc:
+> 
+>     fs: add a new SB_I_NOUMASK flag
 
-I will remove the -1 / +1 from the above code.
+To summarize, just to make sure I understand where we're going.  Since
+normally (excepting unusual cases like NFS), it's fine to strip the
+umask bits twice (once in the VFS, and once in the file system, for
+those file systems that are doing it), once we have SB_I_NOUMASK and
+NFS starts using it, then the VFS can just unconditionally strip the
+umask bits, and then we can gradually clean up the file system umask
+handling (which would then be harmlessly duplicative).
 
-Thanks,
+Did I get this right?
 
-Bart.
+					- Ted
 
