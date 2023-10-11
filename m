@@ -1,130 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-86-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-87-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8CD77C588A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 17:51:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 813377C58B5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 17:59:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A82A1C20F05
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 15:51:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A7CF28253D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 15:59:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 471252510A;
-	Wed, 11 Oct 2023 15:51:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CCC130FA6;
+	Wed, 11 Oct 2023 15:59:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tasefvpz"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kOdm9yp7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5098F19BDF
-	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Oct 2023 15:51:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4704CC433C8;
-	Wed, 11 Oct 2023 15:51:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1697039470;
-	bh=EcD+rqm/NhIn3meIeOkWIty0u746qayQHb6vTOuKoXc=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=tasefvpz/rppVX080bHBVxOs4v0BRL8iM+w7RqovByYcTsRT5Cq6MLeXhDuhyQvOR
-	 9jKTZunOWE38w/ld7PQkYcXAZkizyvFrCl5sYGCHgSucNSonyKZIxMXmCa2QvHNkiR
-	 zvYV7u6IWISBznpT4zfCtaQbSCCCsXuXj4wIt5nNppiDgqxZEKRTchk2wIsR3ew639
-	 KIqeGp+x6HUegIWrxKNre0qCKO4aTp1MTxGdVwHGpxUweSQ26nGNoKlQN8hAj4U/ZW
-	 wLCYvb5mXnU1wLJa3MV7D3zADqvQbmOZwBT2YWAu7oMUKfa69eahurYNQDEdGRTbeU
-	 AmcwcEKE2Vg6A==
-Message-ID: <e0599593fcff0eca5c8287b8d09631b5fcb3a7e4.camel@kernel.org>
-Subject: Re: [PATCH] xfs: reinstate the old i_version counter as
- STATX_CHANGE_COOKIE
-From: Jeff Layton <jlayton@kernel.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Chandan Babu R <chandan.babu@oracle.com>, Chuck Lever
- <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org,
- linux-xfs@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, brauner@kernel.org
-Date: Wed, 11 Oct 2023 11:51:08 -0400
-In-Reply-To: <20231011154938.GL21298@frogsfrogsfrogs>
-References: <20230929-xfs-iversion-v1-1-38587d7b5a52@kernel.org>
-	 <b4136500fe6c49ee689dba139ce25824684719f2.camel@kernel.org>
-	 <20231011154938.GL21298@frogsfrogsfrogs>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.module_f38+17164+63eeee4a) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C583208CF
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Oct 2023 15:59:16 +0000 (UTC)
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69475A4
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Oct 2023 08:59:15 -0700 (PDT)
+Received: by mail-pl1-x62d.google.com with SMTP id d9443c01a7336-1c9b7c234a7so16449625ad.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Oct 2023 08:59:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1697039955; x=1697644755; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4EBM6QELn8ef1132SlMYb+b5mnbgclrgGpye79FUDoA=;
+        b=kOdm9yp70z5nFVU+0weI+1eg23cIaj25FheAboD6zB4zEnLNzmjeqLn9MjCX/uc7v0
+         C4/BKUtrAVht43EvwZkJQlK7bkNv49u2D9En5mm7ez9Bc55zKqCdToKmdE8T3Lw6rRpc
+         IHTxWGl5ZiImOeL93KfhJVcgwO8RBsSsUtx1I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697039955; x=1697644755;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4EBM6QELn8ef1132SlMYb+b5mnbgclrgGpye79FUDoA=;
+        b=HctnjsHO1jMlsLVW+HzaPH+o1E/A+TFNpLxyZgPGc77May5D+XN434y2L/mhh+GaEg
+         KdTTj/z4i31Bicr5VQ3ZIwyb2kWnzLyPn9vfiUk0Ipn9tHd69wGOMoVZOtY/Ddm75P7b
+         gasMqRy5QgwneZtkVaBjL9Q8EuyES3EDkqqSbmTXHv/+ZThQEsj1/jHFWk9VL2Rlw5it
+         n9du1o94OsSOlxmZ/F4pLgofVfmxhwAtwB6tLiYEQ9uO1ZZdiPtICiVBLctv6LKZuNzv
+         VuV2hmKWLX+0y4l4biPmpkVWxU5cEgmWU5IQHkYlHMignum27SU+5UE2zUaJPsSnbLlg
+         jV9Q==
+X-Gm-Message-State: AOJu0YyMmulN7HBhMyKOHgB5uSzIT36YAlKCWmNRh5w0282PIlChmFXi
+	yWCNHFMezblTxXsEAlh4b+lPUfSSjZfydyU5A/8=
+X-Google-Smtp-Source: AGHT+IFnhzRKmMknQABhdyRSLqQ/OlvokCEslWYllvOvh9DztjV2jkf9w6Z8A6ji3ZgSPg2SoS9dEQ==
+X-Received: by 2002:a17:902:d716:b0:1c7:37e2:13e5 with SMTP id w22-20020a170902d71600b001c737e213e5mr18437786ply.21.1697039954910;
+        Wed, 11 Oct 2023 08:59:14 -0700 (PDT)
+Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id u7-20020a170902b28700b001c46d04d001sm9681plr.87.2023.10.11.08.59.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Oct 2023 08:59:14 -0700 (PDT)
+Date: Wed, 11 Oct 2023 08:59:12 -0700
+From: Kees Cook <keescook@chromium.org>
+To: Alyssa Ross <hi@alyssa.is>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+	Eric Biederman <ebiederm@xmission.com>,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] exec: allow executing block devices
+Message-ID: <202310110857.522FAFCA@keescook>
+References: <20231010092133.4093612-1-hi@alyssa.is>
+ <202310101535.CEDA4DB84@keescook>
+ <87o7h5vcao.fsf@alyssa.is>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87o7h5vcao.fsf@alyssa.is>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+	RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.6
+X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
+	lindbergh.monkeyblade.net
 
-On Wed, 2023-10-11 at 08:49 -0700, Darrick J. Wong wrote:
-> On Wed, Oct 11, 2023 at 09:09:38AM -0400, Jeff Layton wrote:
-> > On Fri, 2023-09-29 at 14:43 -0400, Jeff Layton wrote:
-> > > The handling of STATX_CHANGE_COOKIE was moved into generic_fillattr i=
-n
-> > > commit 0d72b92883c6 (fs: pass the request_mask to generic_fillattr), =
-but
-> > > we didn't account for the fact that xfs doesn't call generic_fillattr=
- at
-> > > all.
-> > >=20
-> > > Make XFS report its i_version as the STATX_CHANGE_COOKIE.
-> > >=20
-> > > Fixes: 0d72b92883c6 (fs: pass the request_mask to generic_fillattr)
-> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > ---
-> > > I had hoped to fix this in a better way with the multigrain patches, =
-but
-> > > it's taking longer than expected (if it even pans out at this point).
-> > >=20
-> > > Until then, make sure we use XFS's i_version as the STATX_CHANGE_COOK=
-IE,
-> > > even if it's bumped due to atime updates. Too many invalidations is
-> > > preferable to not enough.
-> > > ---
-> > >  fs/xfs/xfs_iops.c | 5 +++++
-> > >  1 file changed, 5 insertions(+)
-> > >=20
-> > > diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-> > > index 1c1e6171209d..2b3b05c28e9e 100644
-> > > --- a/fs/xfs/xfs_iops.c
-> > > +++ b/fs/xfs/xfs_iops.c
-> > > @@ -584,6 +584,11 @@ xfs_vn_getattr(
-> > >  		}
-> > >  	}
-> > > =20
-> > > +	if ((request_mask & STATX_CHANGE_COOKIE) && IS_I_VERSION(inode)) {
-> > > +		stat->change_cookie =3D inode_query_iversion(inode);
-> > > +		stat->result_mask |=3D STATX_CHANGE_COOKIE;
-> > > +	}
-> > > +
-> > >  	/*
-> > >  	 * Note: If you add another clause to set an attribute flag, please
-> > >  	 * update attributes_mask below.
-> > >=20
-> > > ---
-> > > base-commit: df964ce9ef9fea10cf131bf6bad8658fde7956f6
-> > > change-id: 20230929-xfs-iversion-819fa2c18591
-> > >=20
-> > > Best regards,
-> >=20
-> > Ping?
-> >=20
-> > This patch is needed in v6.6 to prevent a regression when serving XFS
-> > via NFSD. I'd prefer this go in via the xfs tree, but let me know if
-> > you need me to get this merged this via a different one.
->=20
-> Oh!   Right, this is needed because the "hide a state in the high bit of
-> tv_nsec" stuff got reverted in -rc3, correct?  So now nfsd needs some
-> way to know that something changed in the file, and better to have too
-> many client invalidations than not enough?  And I guess bumping
-> i_version will keep nfsd sane for now?
->=20
-> If the answers are [yes, yes, yes] then:
-> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+On Wed, Oct 11, 2023 at 07:38:39AM +0000, Alyssa Ross wrote:
+> Is it possible to have a file-backed memfd?  Strange name if so! 
 
-Yes, yes, and yes. Can you guys shepherd this into mainline?
+Not that I'm aware, but a program could just read the ELF from the block
+device and stick it in a memfd and execute the result.
 
-Thanks for the R-b!
---=20
-Jeff Layton <jlayton@kernel.org>
+-- 
+Kees Cook
 
