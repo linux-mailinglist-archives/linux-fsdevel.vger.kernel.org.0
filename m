@@ -1,195 +1,172 @@
-Return-Path: <linux-fsdevel+bounces-55-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-57-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79CC97C5270
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 13:49:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0EDA7C52E3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 14:07:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A973C1C20DB7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 11:49:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 769112828D6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 12:07:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 898C01EA7A;
-	Wed, 11 Oct 2023 11:48:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 600761F160;
+	Wed, 11 Oct 2023 12:07:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="P93Y+I3j";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FLds2aSo"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED9691097B
-	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Oct 2023 11:48:54 +0000 (UTC)
-Received: from mail-ot1-f77.google.com (mail-ot1-f77.google.com [209.85.210.77])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79864CA
-	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Oct 2023 04:48:50 -0700 (PDT)
-Received: by mail-ot1-f77.google.com with SMTP id 46e09a7af769-6c4afe695a7so9348732a34.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Oct 2023 04:48:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697024930; x=1697629730;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dvPO+gogj2TMD3QRmWPHiBIeaehacfqKQiwt3SM/RLA=;
-        b=O/lEJTkncnNJDFnzCjsY4Su8SvFYh34K2X2KUI6YWH3jhuAScsZ9CbRo/4m2awW49S
-         EaB4etEeNINa2QTaoWHXg5VtNh0cUKvJuJRJTKD3zqQz/RQ5DeVQA/bmqQ40Bdz3rVN4
-         CDrNP1Izm0sNTVHJgd5b0sswi2FZX9C2aQUoUsjSk7cihzRfyxelBb4IHJ2uThpf/ZHW
-         wQBYErI0DHUlHZLvJrtMZ6CdolzPjEZbR/anveckIG3gzwglcDd+F2xWajI5WDMaGMuI
-         NZ5y13ah78s0FcWaXSkH9MwWt2yqNtNxjEfiFfSKiDQ6gQnvjzwHXZnbrUyGQb5j0t5p
-         i6WQ==
-X-Gm-Message-State: AOJu0Yy7uVd3TG8W+KWLsW8nHtWTWmhnd2V5B2hTcP4Wf/i17PaxaPVy
-	ruoAo0YxVOW/oq7aefBLBuzVWvi4lx2Qr7TZRJRlvk1TlQL90J9msQ==
-X-Google-Smtp-Source: AGHT+IEhpG/z3De/SR73x/Sern95ULB4+POFxC41sig7+OOBFbrqeEVEgjwVKIKp6TWOD9FLk44cHY2qGHH6ctQGcjtI0weTvKO0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE6A01078D
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Oct 2023 12:07:12 +0000 (UTC)
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A07191;
+	Wed, 11 Oct 2023 05:07:10 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 188F321860;
+	Wed, 11 Oct 2023 12:06:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1697026017; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ULWC15oexVFAzs0lRcAcAF0IvOr+w9GqABbuWoIc/Yg=;
+	b=P93Y+I3jvub3oHkwH/c1R/KMW/S6/KfvMrZH3pAYZCdKewGtpg9u/a80DI7uZrktX4dHNl
+	Y7Vp057m/REZQdTl//uTh+JQg5DqrB4d3JvxuITbMRN+hytAzWUo2oYn8dNfqwIV6AvJ5V
+	ov63y0wUM+M2GLeYr5DVRNsdL4HnE+M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1697026017;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ULWC15oexVFAzs0lRcAcAF0IvOr+w9GqABbuWoIc/Yg=;
+	b=FLds2aSoOcZyIorbLDPOi9qbQP5BlAZxrWVsuKFI0gLaV5yAB64MylJ7VZgv4eEFqjrAoQ
+	4MkrzgM8XU07vsDQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+	(No client certificate requested)
+	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id D9BBB134F5;
+	Wed, 11 Oct 2023 12:06:56 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+	by imap2.suse-dmz.suse.de with ESMTPSA
+	id rW9JNOCPJmUgHgAAMHmgww
+	(envelope-from <jack@suse.cz>); Wed, 11 Oct 2023 12:06:56 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 06012A05BC; Wed, 11 Oct 2023 14:06:56 +0200 (CEST)
+Date: Wed, 11 Oct 2023 14:06:55 +0200
+From: Jan Kara <jack@suse.cz>
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: Jan Kara <jack@suse.cz>, Xiubo Li <xiubli@redhat.com>,
+	Ilya Dryomov <idryomov@gmail.com>, Jeff Layton <jlayton@kernel.org>,
+	Jan Kara <jack@suse.com>, Dave Kleikamp <shaggy@kernel.org>,
+	ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-ext4@vger.kernel.org, jfs-discussion@lists.sourceforge.net,
+	Christian Brauner <brauner@kernel.org>,
+	Yang Xu <xuyang2018.jy@fujitsu.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2] fs/{posix_acl,ext2,jfs,ceph}: apply umask if ACL
+ support is disabled
+Message-ID: <20231011120655.ndb7bfasptjym3wl@quack3>
+References: <69dda7be-d7c8-401f-89f3-7a5ca5550e2f@oracle.com>
+ <20231009144340.418904-1-max.kellermann@ionos.com>
+ <20231010131125.3uyfkqbcetfcqsve@quack3>
+ <CAKPOu+-nC2bQTZYL0XTzJL6Tx4Pi1gLfNWCjU2Qz1f_5CbJc1w@mail.gmail.com>
+ <20231011100541.sfn3prgtmp7hk2oj@quack3>
+ <CAKPOu+_xdFALt9sgdd5w66Ab6KTqiy8+Z0Yd3Ss4+92jh8nCwg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a9d:67cb:0:b0:6ab:8d3:5209 with SMTP id
- c11-20020a9d67cb000000b006ab08d35209mr6579019otn.5.1697024929803; Wed, 11 Oct
- 2023 04:48:49 -0700 (PDT)
-Date: Wed, 11 Oct 2023 04:48:49 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000001db56d06076f6861@google.com>
-Subject: [syzbot] [hfs?] KMSAN: uninit-value in hfsplus_rename_cat
-From: syzbot <syzbot+93f4402297a457fc6895@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
-	RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKPOu+_xdFALt9sgdd5w66Ab6KTqiy8+Z0Yd3Ss4+92jh8nCwg@mail.gmail.com>
+Authentication-Results: smtp-out1.suse.de;
+	none
+X-Spam-Level: 
+X-Spam-Score: 0.40
+X-Spamd-Result: default: False [0.40 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	 MIME_GOOD(-0.10)[text/plain];
+	 CLAM_VIRUS_FAIL(0.00)[failed to scan and retransmits exceed];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 RCPT_COUNT_TWELVE(0.00)[14];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 RCVD_COUNT_TWO(0.00)[2];
+	 RCVD_TLS_ALL(0.00)[];
+	 FREEMAIL_CC(0.00)[suse.cz,redhat.com,gmail.com,kernel.org,suse.com,vger.kernel.org,lists.sourceforge.net,fujitsu.com]
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-Hello,
+On Wed 11-10-23 12:51:12, Max Kellermann wrote:
+> On Wed, Oct 11, 2023 at 12:05 PM Jan Kara <jack@suse.cz> wrote:
+> > So I've checked some more and the kernel doc comments before
+> > mode_strip_umask() and vfs_prepare_mode() make it pretty obvious - all
+> > paths creating new inodes must be calling vfs_prepare_mode(). As a result
+> > mode_strip_umask() which handles umask stripping for filesystems not
+> > supporting posix ACLs. For filesystems that do support ACLs,
+> > posix_acl_create() must be call and that handles umask stripping. So your
+> > fix should not be needed. CCed some relevant people for confirmation.
+> 
+> Thanks, Jan. Do you think the documentation is obvious enough, or
+> shall I look around and try to improve the documentation? I'm not a FS
+> expert, so it may be just my fault that it confused me.... I just
+> analyzed the O_TMPFILE vulnerability four years ago (because it was
+> reported to me as the maintainer of a userspace software).
+> 
+> Apart from my doubts that this API contract is too error prone, I'm
+> not quite sure if all filesystems really implement it properly.
+> 
+> For example, overlayfs unconditionally sets SB_POSIXACL, even if the
+> kernel has no ACL support. Would this ignore the umask? I'm not sure,
+> overlayfs is a special beast.
+> Then there's orangefs which allows setting the "acl" mount option (and
+> thus SB_POSIXACL) even if the kernel has no ACL support. Same for gfs2
+> and maybe cifs, maybe more, I didn't check them all.
 
-syzbot found the following issue on:
+Indeed, *that* looks like a bug. Good spotting! I'd say posix_acl_create()
+defined in include/linux/posix_acl.h for the !CONFIG_FS_POSIX_ACL case
+should be stripping mode using umask. Care to send a patch for this?
 
-HEAD commit:    82714078aee4 Merge tag 'pm-6.6-rc5' of git://git.kernel.or..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=151aa759680000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7a5682d32a74b423
-dashboard link: https://syzkaller.appspot.com/bug?extid=93f4402297a457fc6895
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13095252680000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=123ba911680000
+> The "mainstream" filesystems like ext4 seem to be implemented
+> properly, though this is still too fragile for my taste... ext4 has
+> the SB_POSIXACL code even if there's no kernel ACL support, but it is
+> not reachable because EXT4_MOUNT_POSIX_ACL cannot be set from
+> userspace in that case. The code looks suspicious, but is okay in the
+> end - still not my taste.
+> 
+> I see so much redundant code regarding the "acl" mount option in all
+> filesystems. I believe the API should be designed in a way that it is
+> safe-by-default, and shouldn't need very careful considerations in
+> each and every filesystem, or else all filesystems repeat the same
+> mistakes until the last one gets fixed.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/d1f78c1d4d78/disk-82714078.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/e2a379fc35bb/vmlinux-82714078.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/e52238a1bd60/bzImage-82714078.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/286844f77c11/mount_0.gz
+So I definitely agree that we should handle as many things as possible in
+VFS without relying on filesystems to get it right. Thus I agree VFS should
+do the right thing even if the filesystem sets SB_POSIXACl when
+!CONFIG_FS_POSIX_ACL.
 
-Bisection is inconclusive: the issue happens on the oldest tested release.
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15b3eaee680000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=17b3eaee680000
-console output: https://syzkaller.appspot.com/x/log.txt?x=13b3eaee680000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+93f4402297a457fc6895@syzkaller.appspotmail.com
-
-         and is ignored by this kernel. Remove the mand
-         option from the mount to silence this warning.
-=======================================================
-general protection fault, probably for non-canonical address 0xdffffc0000000008: 0000 [#1] PREEMPT SMP KASAN
-KASAN: null-ptr-deref in range [0x0000000000000040-0x0000000000000047]
-CPU: 0 PID: 5030 Comm: syz-executor114 Not tainted 6.6.0-rc4-syzkaller-00229-g82714078aee4 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/06/2023
-RIP: 0010:hfsplus_rename_cat+0x4b3/0x1050 fs/hfsplus/catalog.c:480
-Code: 60 42 80 3c 20 00 48 8b 5c 24 20 74 05 e8 05 38 81 ff 48 8b 94 24 20 01 00 00 48 83 c3 40 48 89 d8 48 c1 e8 03 48 89 44 24 68 <42> 80 3c 20 00 48 89 54 24 08 74 0d 48 89 df e8 d9 37 81 ff 48 8b
-RSP: 0018:ffffc90003a6f780 EFLAGS: 00010202
-RAX: 0000000000000008 RBX: 0000000000000040 RCX: ffff8880203e1dc0
-RDX: ffff88801fb6f000 RSI: 0000000000000000 RDI: ffffc90003a6f8a0
-RBP: ffffc90003a6fbf0 R08: ffffffff8267c274 R09: ad0047e119000000
-R10: ad0047e119000000 R11: ad0047e1ad0047e1 R12: dffffc0000000000
-R13: ffffc90003a6f86c R14: ffffc90003a6f900 R15: 1ffff9200074df04
-FS:  0000555556d88380(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffd58aeb000 CR3: 0000000027125000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- hfsplus_unlink+0x308/0x790 fs/hfsplus/dir.c:376
- vfs_unlink+0x35d/0x5f0 fs/namei.c:4332
- do_unlinkat+0x4a7/0x950 fs/namei.c:4398
- __do_sys_unlink fs/namei.c:4446 [inline]
- __se_sys_unlink fs/namei.c:4444 [inline]
- __x64_sys_unlink+0x49/0x50 fs/namei.c:4444
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f9d18b02019
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffd58aea948 EFLAGS: 00000246 ORIG_RAX: 0000000000000057
-RAX: ffffffffffffffda RBX: 00007f9d18b4b082 RCX: 00007f9d18b02019
-RDX: 00007f9d18b02019 RSI: 00007f9d18b012f7 RDI: 00000000200000c0
-RBP: 00007f9d18b4b08c R08: 0000000020000000 R09: 0000000020000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffd58aea980
-R13: 00007ffd58aeaba8 R14: 431bde82d7b634db R15: 00007f9d18b4b03b
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:hfsplus_rename_cat+0x4b3/0x1050 fs/hfsplus/catalog.c:480
-Code: 60 42 80 3c 20 00 48 8b 5c 24 20 74 05 e8 05 38 81 ff 48 8b 94 24 20 01 00 00 48 83 c3 40 48 89 d8 48 c1 e8 03 48 89 44 24 68 <42> 80 3c 20 00 48 89 54 24 08 74 0d 48 89 df e8 d9 37 81 ff 48 8b
-RSP: 0018:ffffc90003a6f780 EFLAGS: 00010202
-RAX: 0000000000000008 RBX: 0000000000000040 RCX: ffff8880203e1dc0
-RDX: ffff88801fb6f000 RSI: 0000000000000000 RDI: ffffc90003a6f8a0
-RBP: ffffc90003a6fbf0 R08: ffffffff8267c274 R09: ad0047e119000000
-R10: ad0047e119000000 R11: ad0047e1ad0047e1 R12: dffffc0000000000
-R13: ffffc90003a6f86c R14: ffffc90003a6f900 R15: 1ffff9200074df04
-FS:  0000555556d88380(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffd58aeb000 CR3: 0000000027125000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess), 1 bytes skipped:
-   0:	42 80 3c 20 00       	cmpb   $0x0,(%rax,%r12,1)
-   5:	48 8b 5c 24 20       	mov    0x20(%rsp),%rbx
-   a:	74 05                	je     0x11
-   c:	e8 05 38 81 ff       	call   0xff813816
-  11:	48 8b 94 24 20 01 00 	mov    0x120(%rsp),%rdx
-  18:	00
-  19:	48 83 c3 40          	add    $0x40,%rbx
-  1d:	48 89 d8             	mov    %rbx,%rax
-  20:	48 c1 e8 03          	shr    $0x3,%rax
-  24:	48 89 44 24 68       	mov    %rax,0x68(%rsp)
-* 29:	42 80 3c 20 00       	cmpb   $0x0,(%rax,%r12,1) <-- trapping instruction
-  2e:	48 89 54 24 08       	mov    %rdx,0x8(%rsp)
-  33:	74 0d                	je     0x42
-  35:	48 89 df             	mov    %rbx,%rdi
-  38:	e8 d9 37 81 ff       	call   0xff813816
-  3d:	48                   	rex.W
-  3e:	8b                   	.byte 0x8b
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the bug is already fixed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite bug's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the bug is a duplicate of another bug, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
