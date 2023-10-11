@@ -1,193 +1,162 @@
-Return-Path: <linux-fsdevel+bounces-125-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-126-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9CD07C5D9D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 21:25:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E2227C5E2B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 22:18:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18B3D2823FD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 19:25:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44AF91C20CAA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 20:18:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C982E12E75;
-	Wed, 11 Oct 2023 19:25:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E58733CCF9;
+	Wed, 11 Oct 2023 20:18:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alu.unizg.hr header.i=@alu.unizg.hr header.b="0QPxj8Da";
-	dkim=pass (2048-bit key) header.d=alu.unizg.hr header.i=@alu.unizg.hr header.b="qUYoFHef"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="MMxyc78M"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E53EC3A29A
-	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Oct 2023 19:25:24 +0000 (UTC)
-Received: from domac.alu.hr (domac.alu.unizg.hr [IPv6:2001:b68:2:2800::3])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9FD48F
-	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Oct 2023 12:25:21 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-	by domac.alu.hr (Postfix) with ESMTP id 4ABC86016E;
-	Wed, 11 Oct 2023 21:25:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=alu.unizg.hr; s=mail;
-	t=1697052318; bh=u/eP8rpZytCfPggPUHSrU6b/q4c6VCh9lHTbmZs/ApU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=0QPxj8Da8kV8DxyyFWXFWc/0OlZL1F0eFnL9kT40rCRymjDsMlaDRwQ30h07rpaL8
-	 0ubRsa+WxbnmJVhXtXQGwwT2bR5cjKXpnI1e97BRvBjSOcET6hzuXlJD+iV86lmeI5
-	 /86Of5ufkpbnwncQPQXYoAQ8LgPdiv63ZjYy9R9jVXz+2O9LWjlyTRJIODC1tbwqiM
-	 u14n1owFw+v9UWpX0n4JNC7bOo2KgkULyBwa/3rzRuLno5SUMD3TT0a7n5MBRNPS/Q
-	 hc4l71n0lTopdNLSeG/V5JYse1zqHXKi7Y4YDgW73raZFrqJYvZb0bjjeQ5u8mpTvM
-	 DqVUoA2JFjsEQ==
-X-Virus-Scanned: Debian amavisd-new at domac.alu.hr
-Received: from domac.alu.hr ([127.0.0.1])
-	by localhost (domac.alu.hr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id nru4xqE08yuY; Wed, 11 Oct 2023 21:25:15 +0200 (CEST)
-Received: from [192.168.1.6] (78-1-184-43.adsl.net.t-com.hr [78.1.184.43])
-	by domac.alu.hr (Postfix) with ESMTPSA id 326EF60155;
-	Wed, 11 Oct 2023 21:25:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=alu.unizg.hr; s=mail;
-	t=1697052315; bh=u/eP8rpZytCfPggPUHSrU6b/q4c6VCh9lHTbmZs/ApU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qUYoFHefvlXg2oCBJ2IB0cFv22m3Yr5wovvuZNde9ujyhz38aS3O7wPUvJ3CQ8Q1l
-	 8pMRUaiJ8Nl0mr9wcvWyZJCTI5MtF3EEvRzC08JaKq6LHyjHVva/e5Ziz8MzZsSJsa
-	 Fm0CB/VNrNqEKsnTsFicC5UZJHARjlvQfan5MxVcrsalC+knrCUb+JXOkHtjGeMWq6
-	 EICL4cVfRMx/7i0bmSxXIx/RRY3bVViqtDgDVgc21JVZHGjdEIkkMhKdmkSplqN2TN
-	 teuhBF1W/KdG3D9zBCdg9KhBrCruMgRInQs2UyLAO+Xj3jtTfx8FV/dPbSJTuTLz4y
-	 Im4BBQWi4Y8UQ==
-Message-ID: <166ade6f-f3fb-4b37-bdf1-db0317d1796f@alu.unizg.hr>
-Date: Wed, 11 Oct 2023 21:25:14 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7571D12E5B
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Oct 2023 20:18:07 +0000 (UTC)
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C90369D;
+	Wed, 11 Oct 2023 13:18:05 -0700 (PDT)
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39BKF2gI004155;
+	Wed, 11 Oct 2023 20:17:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=jUFqUIlQQYDCiNzSso1s+qE/HAPZvK1rf/Wq5kMZ68U=;
+ b=MMxyc78MDYWVcppPIxi/Hi8vGw1uyrWzz6VQsY+VBBDMGoX1DTZ1PKtjpcEkkcDu4iry
+ WFEp0lxBMRBVZE/rbVmXOR432438HpZDfr0X+ouP/IAASy9jyDB0XtPhUUHXHNuOFxZV
+ M+N48WQTkQ9+F0oiq35xJ/nmhX3tbCnXl3j9U7Xf7mCtp67/Hgxq1IW+O4GOytN6OsV6
+ +gCU67CFQJVb0TP0FI9M83meN31Dom+SYh3Y+xTAF2A+HQarfQUf7otn3N8ybSUEihlT
+ upcVF0ob5+pytVc4a9Xlxy0r54McaQw2MqNZEkyAlycsw6UX/UuuXQo8HJUQPuU96oY3 vQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3tp23j18ft-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Oct 2023 20:17:36 +0000
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 39BJgK0I006816;
+	Wed, 11 Oct 2023 20:17:35 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3tp23j18f5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Oct 2023 20:17:35 +0000
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 39BI5Wbf024439;
+	Wed, 11 Oct 2023 20:17:33 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3tkhnsu26f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Oct 2023 20:17:33 +0000
+Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
+	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 39BKHWLB25363092
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 11 Oct 2023 20:17:32 GMT
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C5EAF58056;
+	Wed, 11 Oct 2023 20:17:32 +0000 (GMT)
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7E5F958052;
+	Wed, 11 Oct 2023 20:17:31 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.61.14.38])
+	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 11 Oct 2023 20:17:31 +0000 (GMT)
+Message-ID: <a9ed5a1a545e177f2491e132924d2b9a2a70496d.camel@linux.ibm.com>
+Subject: Re: [PATCH v3 04/25] ima: Align ima_file_mprotect() definition with
+ LSM infrastructure
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>, viro@zeniv.linux.org.uk,
+        brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
+        neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
+        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, dhowells@redhat.com, jarkko@kernel.org,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        casey@schaufler-ca.com
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>,
+        Stefan
+ Berger <stefanb@linux.ibm.com>
+Date: Wed, 11 Oct 2023 16:17:31 -0400
+In-Reply-To: <b9e204c1b34c204133059b87a9a307ae5bccb84b.camel@huaweicloud.com>
+References: <20230904133415.1799503-1-roberto.sassu@huaweicloud.com>
+	 <20230904133415.1799503-5-roberto.sassu@huaweicloud.com>
+	 <443fb4da33eb0ac51a580e8fd51fa271a59172ef.camel@linux.ibm.com>
+	 <b9e204c1b34c204133059b87a9a307ae5bccb84b.camel@huaweicloud.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] lib/find: Make functions safe on changing bitmaps
-Content-Language: en-US
-To: Matthew Wilcox <willy@infradead.org>, Yury Norov <yury.norov@gmail.com>
-Cc: Jan Kara <jack@suse.cz>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>, linux-fsdevel@vger.kernel.org
-References: <20231011144320.29201-1-jack@suse.cz>
- <20231011150252.32737-1-jack@suse.cz> <ZSbo1aAjteepdmcz@yury-ThinkPad>
- <ZSbuMWGYyulgUA6g@casper.infradead.org>
-From: Mirsad Todorovac <mirsad.todorovac@alu.unizg.hr>
-In-Reply-To: <ZSbuMWGYyulgUA6g@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: yEdWKnpi_9YFnuIHDzreB_r4e1hAuuoT
+X-Proofpoint-ORIG-GUID: N6YACTqlEzQz1g97roTeGL9JOHubZggC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-10-11_15,2023-10-11_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ priorityscore=1501 impostorscore=0 spamscore=0 clxscore=1015
+ mlxlogscore=726 lowpriorityscore=0 mlxscore=0 suspectscore=0 adultscore=0
+ malwarescore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2309180000 definitions=main-2310110178
 X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+	DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,
+	RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-
-
-On 10/11/23 20:49, Matthew Wilcox wrote:
-> On Wed, Oct 11, 2023 at 11:26:29AM -0700, Yury Norov wrote:
->> Long story short: KCSAN found some potential issues related to how
->> people use bitmap API. And instead of working through that issues,
->> the following code shuts down KCSAN by applying READ_ONCE() here
->> and there.
+On Wed, 2023-10-11 at 17:43 +0200, Roberto Sassu wrote:
+> On Wed, 2023-10-11 at 10:51 -0400, Mimi Zohar wrote:
+> > On Mon, 2023-09-04 at 15:33 +0200, Roberto Sassu wrote:
+> > > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > > 
+> > > Change ima_file_mprotect() definition, so that it can be registered
+> > > as implementation of the file_mprotect hook.
+> > > 
+> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > > Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+> > > ---
+> > >  include/linux/ima.h               | 5 +++--
+> > >  security/integrity/ima/ima_main.c | 6 ++++--
+> > >  security/security.c               | 2 +-
+> > >  3 files changed, 8 insertions(+), 5 deletions(-)
+> > > 
+> > > diff --git a/include/linux/ima.h b/include/linux/ima.h
+> > > index 893c3b98b4d0..56e72c0beb96 100644
+> > > --- a/include/linux/ima.h
+> > > +++ b/include/linux/ima.h
+> > > @@ -24,7 +24,8 @@ extern void ima_post_create_tmpfile(struct mnt_idmap *idmap,
+> > >  extern void ima_file_free(struct file *file);
+> > >  extern int ima_file_mmap(struct file *file, unsigned long reqprot,
+> > >  			 unsigned long prot, unsigned long flags);
+> > > -extern int ima_file_mprotect(struct vm_area_struct *vma, unsigned long prot);
+> > > +int ima_file_mprotect(struct vm_area_struct *vma, unsigned long reqprot,
+> > > +		      unsigned long prot);
+> > 
+> > "extern" is needed here and similarly in 5/25.
 > 
-> Pfft.
-> 
->> READ_ONCE() fixes nothing because nothing is broken in find_bit() API.
->> As I suspected, and as Matthew confirmed in his email, the true reason
->> for READ_ONCE() here is to disable KCSAN check:
->>
->>          READ_ONCE() serves two functions here;
->>          one is that it tells the compiler not to try anything fancy, and
->>          the other is that it tells KCSAN to not bother instrumenting this
->>          load; no load-delay-reload.
->>
->> https://lkml.kernel.org/linux-mm/ZQkhgVb8nWGxpSPk@casper.infradead.org/
->>
->> And as side-effect, it of course hurts the performance. In the same
->> email Matthew said he doesn't believe me that READ_ONCE would do that,
->> so thank you for testing and confirming that it does.
-> 
-> You really misinterpreted what Jan wrote to accomplish this motivated
-> reasoning.
-> 
->> Jan, I think that in your last email you confirmed that the xarray
->> problem that you're trying to solve is about a lack of proper locking:
->>
->>          Well, for xarray the write side is synchronized with a spinlock but the read
->>          side is not (only RCU protected).
->>
->> https://lkml.kernel.org/linux-mm/20230918155403.ylhfdbscgw6yek6p@quack3/
->>
->> If there's no enough synchronization, why not just adding it?
-> 
-> You don't understand.  We _intend_ for there to be no locking.
-> We_understand_ there is a race here.  We're _fine_ with there being
-> a race here.
-> 
->> Regardless performance consideration, my main concern is that this patch
->> considers bitmap as an atomic structure, which is intentionally not.
->> There are just a few single-bit atomic operations like set_bit() and
->> clear_bit(). All other functions are non-atomic, including those
->> find_bit() operations.
-> 
-> ... and for KCSAN to understand that, we have to use READ_ONCE.
-> 
->> There is quite a lot of examples of wrong use of bitmaps wrt
->> atomicity, the most typical is like:
->>          for(idx = 0; idx < num; idx++) {
->>                  ...
->>                  set_bit(idx, bitmap);
->>          }
->>
->> This is wrong because a series of atomic ops is not atomic itself, and
->> if you see something like this in you code, it should be converted to
->> using non-atomic __set_bit(), and protected externally if needed.
-> 
-> That is a bad use of set_bit()!  I agree!  See, for example, commit
-> b21866f514cb where I remove precisely this kind of code.
-> 
->> Similarly, READ_ONCE() in a for-loop doesn't guarantee any ordering or
->> atomicity, and only hurts the performance. And this is exactly what
->> this patch does.
-> 
-> Go back and read Jan's patch again, instead of cherry-picking some
-> little bits that confirm your prejudices.
+> I removed because of a complain from checkpatch.pl --strict.
 
-Hey Yuri,
+Intermixing with/without "extern" looks weird.  I would suggest
+removing all the externs as a separate patch, but they're being removed
+in "[PATCH v3 21/25] ima: Move to LSM infrastructure" anyway.  For now
+I would include the "extern".
 
-No hard feelings, but I tend to agree with Mr. Wilcox and Jan.
+-- 
+thanks,
 
-set_bit just as any atomic increment or memory barrier - by the same
-author you quoted - causes a LOCK prefix to the assembler instruction.
-By my modest knowledge of the machine language, this will cause the CPU
-core to LOCK the memory bus for the time the byte, word, longword or quadword
-(or even bit) is being read, changed, and written back.
+Mimi
 
-If I am not making a stupid logical mistake, this LOCK on the memory
-bus by a core is going to prevent the other cores from accessing memory
-or filling or flushing their caches.
 
-I agree with Mr. Wilcox that locking would have much worse performance
-penalty that a simply READ_ONCE() that is designed to prevent the compiler
-from the "funny" optimisations, such as using the two faster instructions
-instead of the atomic load - which might in the worst case be interrupted
-just between two half-loads.
-
-It does nothing to hurt performance on the level of a memory read or write barrier
-or the memory bus lock that stalls all cores.
-
-So, it silences KCSAN and I am happy with it, but I will not proceed with
-a formal patch proposal until we have a consensus about it.
-
-The data-race actually means that another core can tear your half-load and
-you get unexpected results. Why does it happen more often on my configuration
-that on the others I cannot tell. But it might hurt the integrity of any
-filesystem relying of find_first_bit() and find_next_bit() primitives.
-
-I mean, in the worst case scenario.
-
-Meaning, I might not opt to go to Mars with the ship's computer running
-with data-races ;-)
-
-Best regards,
-Mirsad Todorovac
 
