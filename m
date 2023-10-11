@@ -1,68 +1,68 @@
-Return-Path: <linux-fsdevel+bounces-10-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA1727C45D7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 02:07:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 527C47C45E2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 02:13:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40D36281E7F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 00:07:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87473281EC5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 00:13:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED7A3375;
-	Wed, 11 Oct 2023 00:07:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CC2A384;
+	Wed, 11 Oct 2023 00:13:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="XKCdBT4x"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="THVAZbLH"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 872A418F
-	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Oct 2023 00:07:03 +0000 (UTC)
-Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EE9791
-	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Oct 2023 17:07:01 -0700 (PDT)
-Received: by mail-pf1-x42b.google.com with SMTP id d2e1a72fcca58-690fe10b6a4so5194595b3a.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Oct 2023 17:07:01 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27DD2369
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Oct 2023 00:13:22 +0000 (UTC)
+Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B20A91
+	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Oct 2023 17:13:21 -0700 (PDT)
+Received: by mail-pf1-x431.google.com with SMTP id d2e1a72fcca58-690d8fb3b7eso5575663b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Oct 2023 17:13:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1696982821; x=1697587621; darn=vger.kernel.org;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1696983201; x=1697588001; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=pi+6fuCZ7nV+P3VswapuyLpGimJN9EBPXoRWDqou4vc=;
-        b=XKCdBT4xDLdhql/mIXTy0D/GZJwAroDCsmYkeaBpzG8J8bvZDgIY4Kylq9B2KfM6K7
-         j9iz/Aip7gxKYAsg+6LLcM0QLoHs2MH0LUyjSdYzClKGRFc6CV3/KtVsNj95oKYwXIDt
-         kSmOtJawACxFtedvM6VOe9++eDFqRxFZXq3by6LBCY749IwZSrGmUguKTqX3yI4RpRJt
-         T1b8YatNVCHuwpQRMV7Ov7FpFQK/4qrkLZZtskdIZ1AANbVx/FtDVgc/vejiz+GYycIG
-         KbCi/hoQbKcxaHFAsjWlyve5f8Lk7o5ACYb5yfiZacfBFjlJLXTTaY6zCZTHnFFW3mgR
-         DJvQ==
+        bh=bXYSMoj+4mDjgRP2mTt2Aa1GtDE1UTVBqHkHte3xwzo=;
+        b=THVAZbLHDOGUMC2GecjPMvtCxzk3eiP3aTrvbwVAmZidEWVOrPAXo2r+UHpS7wvTnx
+         PtNgVjzST+8AvmbSJzItwpVaMU9pgKBbr3474Gz19CJ+hfC+bKHy9niI6V90QIGw76ue
+         0UfiHkTWDez1BRdMrRMN9Fm9KrpVtjGHQyYZRN/x0sUX1Wi75EaJ43K7DffpMCHU7ygz
+         dGSg+tvidNXUEc3tcXW/gWJnMtGmyrYyRPsBM6y3eSrlOyRPbe+42vNSDGr8krIWLVt2
+         vURLIec4QX8A+NQL4+r/J7pPvH6TaiqPH4fFOmRGyoOG2gx0+RV1NcaUZlqUyGPFD6eH
+         giew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696982821; x=1697587621;
+        d=1e100.net; s=20230601; t=1696983201; x=1697588001;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pi+6fuCZ7nV+P3VswapuyLpGimJN9EBPXoRWDqou4vc=;
-        b=XYhyQn+j4VlzXAITXp9XZ1vXeq2ytgmTkEuo1SLrptjyBTL3sSbA1U1lGkvetNkIbp
-         8QVsgyj8lddwbpyt236eVmeBvw28h1ohZkPLhLiU9xHpjEYtnaLMi1bTJL5babI0o7IJ
-         6/FShHrNU0Jy4R73O6T8yRVCkAyUKZlSx7vT39Qj9FYC5TZWlQoEYpxpzNjyejItibr0
-         g5nzQ8ZAxhY0MA89hZm8LTnQbZDrbcl+7b1NxbsMd2IOP1bpNTW2GJmYWeKFMsAmqeMu
-         IHxBaYhEb35P+d64xmstdDA2t/VzPJYVvHNx074OWzs07+t8LbiCW+uQIHaZevqQkqj2
-         IcKQ==
-X-Gm-Message-State: AOJu0YymA958byIWURh7uwPurcR9D5muUPLSuU42ToKKKNN8/H7zA3YQ
-	R0vUpGhpyL8QXEr18JCFo7wJo5/CrZfBO3KMJ78=
-X-Google-Smtp-Source: AGHT+IFaQsl6J0oGbAmpi1RKpoyAS4x5TyIMLa9yejYUMWdd4HdS26Ku+N4gQppaQiaJj/ZVu9D0qw==
-X-Received: by 2002:a05:6a21:6d9b:b0:14b:8023:33cb with SMTP id wl27-20020a056a216d9b00b0014b802333cbmr25670485pzb.11.1696982820871;
-        Tue, 10 Oct 2023 17:07:00 -0700 (PDT)
+        bh=bXYSMoj+4mDjgRP2mTt2Aa1GtDE1UTVBqHkHte3xwzo=;
+        b=FMYOfk+1e8KXjTZQuYLtwFDLLLgoYbmfw0SP78B4H4i2g3CMUM5JwKvMNsegyNRCvW
+         GHBY1ZFrx7+L9uhHg4fgDJv487qEhutK/VAhFXsNci/oPpZihkIl8CbLIx/LhbE48h4E
+         YuYoNiP+TRy2xRHJBZd9Q1hBcbpWLvxJ0GF4ov+Wv0zvUT/olJfRaNBOI2dbG41E28AL
+         5BpRvD0xnq5WXep55cl93vbhHpSzBqHj7NKoLQehUwbBVg2SiXbaFomYi6izTzgVALCF
+         sEL3CgMFkPz0luWSEOvzJrTDTJW0CVVrOJhaTNWDtIYKw9N9q1KkYYtW9jjOuR685n24
+         0MbQ==
+X-Gm-Message-State: AOJu0YxdoE0wIdMd4mCzH2ItYV8Gl7FCXJArrhZxay/XHWrThTdkU2Us
+	6A+nIf+wzbJtDntXnaXWeW6ufQ==
+X-Google-Smtp-Source: AGHT+IEhIWc+rwqEXOm79XKP02Vs6tvtegdLCI6fFlAq/EvagoUmMI4WFKDIe3c26N4RyxgWNDKTzA==
+X-Received: by 2002:a05:6a20:9385:b0:161:3120:e840 with SMTP id x5-20020a056a20938500b001613120e840mr24937687pzh.2.1696983200909;
+        Tue, 10 Oct 2023 17:13:20 -0700 (PDT)
 Received: from dread.disaster.area (pa49-180-20-59.pa.nsw.optusnet.com.au. [49.180.20.59])
-        by smtp.gmail.com with ESMTPSA id ji9-20020a170903324900b001c5900c9e8fsm12483875plb.81.2023.10.10.17.07.00
+        by smtp.gmail.com with ESMTPSA id p10-20020a170902eaca00b001b8a85489a3sm12443132pld.262.2023.10.10.17.13.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Oct 2023 17:07:00 -0700 (PDT)
+        Tue, 10 Oct 2023 17:13:20 -0700 (PDT)
 Received: from dave by dread.disaster.area with local (Exim 4.96)
 	(envelope-from <david@fromorbit.com>)
-	id 1qqMkb-00CB10-3B;
-	Wed, 11 Oct 2023 11:06:58 +1100
-Date: Wed, 11 Oct 2023 11:06:57 +1100
+	id 1qqMqk-00CB5y-0c;
+	Wed, 11 Oct 2023 11:13:18 +1100
+Date: Wed, 11 Oct 2023 11:13:18 +1100
 From: Dave Chinner <david@fromorbit.com>
 To: Sarthak Kukreti <sarthakkukreti@chromium.org>
 Cc: dm-devel@redhat.com, linux-block@vger.kernel.org,
@@ -74,12 +74,11 @@ Cc: dm-devel@redhat.com, linux-block@vger.kernel.org,
 	Andreas Dilger <adilger.kernel@dilger.ca>,
 	Bart Van Assche <bvanassche@google.com>,
 	"Darrick J. Wong" <djwong@kernel.org>
-Subject: Re: [PATCH v8 5/5] block: Pass unshare intent via REQ_OP_PROVISION
-Message-ID: <ZSXnIYejKVo74doY@dread.disaster.area>
+Subject: Re: [PATCH v8 0/5] Introduce provisioning primitives
+Message-ID: <ZSXono3GkXhgrZ1T@dread.disaster.area>
 References: <20231007012817.3052558-1-sarthakkukreti@chromium.org>
- <20231007012817.3052558-6-sarthakkukreti@chromium.org>
- <ZSM64EOTVyKNkc/X@dread.disaster.area>
- <CAG9=OMP_YbfCyjJGGwoZfgwxO-FmR55F5zv3DO8c2-=YzY8iwA@mail.gmail.com>
+ <ZSNANlreccIVXuo+@dread.disaster.area>
+ <CAG9=OMMM3S373Y6UEeXxnOyvMvA9wmAVd4Jrdjt3gzkz9d2yUg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -89,76 +88,64 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG9=OMP_YbfCyjJGGwoZfgwxO-FmR55F5zv3DO8c2-=YzY8iwA@mail.gmail.com>
+In-Reply-To: <CAG9=OMMM3S373Y6UEeXxnOyvMvA9wmAVd4Jrdjt3gzkz9d2yUg@mail.gmail.com>
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.6
+	DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-On Tue, Oct 10, 2023 at 03:42:39PM -0700, Sarthak Kukreti wrote:
-> On Sun, Oct 8, 2023 at 4:27 PM Dave Chinner <david@fromorbit.com> wrote:
+On Tue, Oct 10, 2023 at 03:42:53PM -0700, Sarthak Kukreti wrote:
+> On Sun, Oct 8, 2023 at 4:50 PM Dave Chinner <david@fromorbit.com> wrote:
 > >
-> > On Fri, Oct 06, 2023 at 06:28:17PM -0700, Sarthak Kukreti wrote:
-> > > Allow REQ_OP_PROVISION to pass in an extra REQ_UNSHARE bit to
-> > > annotate unshare requests to underlying layers. Layers that support
-> > > FALLOC_FL_UNSHARE will be able to use this as an indicator of which
-> > > fallocate() mode to use.
+> > On Fri, Oct 06, 2023 at 06:28:12PM -0700, Sarthak Kukreti wrote:
+> > > Hi,
 > > >
-> > > Suggested-by: Darrick J. Wong <djwong@kernel.org>
-> > > Signed-off-by: Sarthak Kukreti <sarthakkukreti@chromium.org>
-> > > ---
-> > >  block/blk-lib.c           |  6 +++++-
-> > >  block/fops.c              |  6 ++++--
-> > >  drivers/block/loop.c      | 35 +++++++++++++++++++++++++++++------
-> > >  include/linux/blk_types.h |  3 +++
-> > >  include/linux/blkdev.h    |  3 ++-
-> > >  5 files changed, 43 insertions(+), 10 deletions(-)
+> > > This patch series is version 8 of the patch series to introduce
+> > > block-level provisioning mechanism (original [1]), which is useful for provisioning
+> > > space across thinly provisioned storage architectures (loop devices
+> > > backed by sparse files, dm-thin devices, virtio-blk). This series has
+> > > minimal changes over v7[2].
+> > >
+> > > This patch series is rebased from the linux-dm/dm-6.5-provision-support [1] on to
+> > > (cac405a3bfa2 Merge tag 'for-6.6-rc3-tag'). In addition, there's an
+> > > additional patch to allow passing through an unshare intent via REQ_OP_PROVISION
+> > > (suggested by Darrick in [4]).
 > >
-> > I have no idea how filesystems (or even userspace applications, for
-> > that matter) are supposed to use this - they have no idea if the
-> > underlying block device has shared blocks for LBA ranges it already
-> > has allocated and provisioned. IOWs, I don't know waht the semantics
-> > of this function is, it is not documented anywhere, and there is no
-> > use case present that tells me how it might get used.
+> > The XFS patches I just posted were smoke tested a while back against
+> > loop devices and then forward ported to this patchset. Good for
+> > testing that userspace driven file preallocation gets propagated by
+> > the filesystem down to the backing device correctly and that
+> > subsequent IO to the file then does the right thing (e.g. fio
+> > testing using fallocate() to set up the files being written to)....
 > >
-> > Yes, unshare at the file level means the filesystem tries to break
-> > internal data extent sharing, but if the block layers or backing
-> > devices are doing deduplication and sharing unknown to the
-> > application or filesystem, how do they ever know that this operation
-> > might need to be performed? In what cases do we need to be able to
-> > unshare block device ranges, and how is that different to the
-> > guarantees that REQ_PROVISION is already supposed to give for
-> > provisioned ranges that are then subsequently shared by the block
-> > device (e.g. by snapshots)?
-> >
-> > Also, from an API perspective, this is an "unshare" data operation,
-> > not a "provision" operation. Hence I'd suggest that the API should
-> > be blkdev_issue_unshare() rather than optional behaviour to
-> > _provision() which - before this patch - had clear and well defined
-> > meaning....
-> >
-> Fair points, the intent from the conversation with Darrick was the
-> addition of support for FALLOC_FL_UNSHARE_RANGE in patch 2 of v4
-> (originally suggested by Brian Forster in [1]): if we allow
-> fallocate(UNSHARE_RANGE) on a loop device (ex. for creating a
-> snapshot, similar in nature to the FICLONE example you mentioned on
-> the loop patch), we'd (ideally) want to pass it through to the
-> underlying layers and let them figure out what to do with it. But it
-> is only for situations where we are explicitly know what the
-> underlying layers are and what's the mecha
 > 
-> I agree though that it clouds the API a bit and I don't think it
-> necessarily needs to be a part of the initial patch series: for now, I
-> propose keeping just mode zero (and FALLOC_FL_KEEP_SIZE) handling in
-> the block series patch and drop this patch for now. WDYT?
+> Thanks! I've been testing with a WIP patch for ext4, I'll give your
+> patches a try. Once we are closer to submitting the filesystem
+> support, we can formalize the test into an xfstest (sparse file + loop
+> + filesystem, fallocate() file, check the size of the underlying
+> sparse file).
 
-Until we have an actual use case for unsharing (which explicitly
-breaks extent sharing) as opposed to provisioning (which ensures
-overwrites always succeed regardless of extent state) then let's
-leave it out of this -provisioning- series.
+That's not really a valid test - there are so many optional filesystem
+behaviours that can change the layout of the backing file for the
+same upper filesystem operations.
 
--Dave.
+What we actually need to test is the ENOSPC guarantees, not that
+fallocate has been called by the loop device. i.e. that ENOSPC is
+propagated from the underlying filesystem though the loop device to
+the application running on the upper filesystem appropriately.  e.g.
+when the lower filesystem is at ENOSPC, the writes into provisioned
+space in the loop device backing file continue to succeed without
+ENOSPC being reported to the upper filesystem.
+
+i.e. this needs to be tested from the perspective of the API
+presented to the upper filesystem, not by running an upper fs
+operation and then trying to infer correct behaviour by peering at
+the state of the lower filesystem...
+
+Cheers,
+
+Dave.
 -- 
 Dave Chinner
 david@fromorbit.com
