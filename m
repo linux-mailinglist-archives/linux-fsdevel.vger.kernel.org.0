@@ -1,81 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-49-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11A637C4F57
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 11:46:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30A237C510F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 13:07:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 063B61C20F44
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 09:46:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEC89282212
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 11:07:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 735331DA26;
-	Wed, 11 Oct 2023 09:46:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A0D91DDC7;
+	Wed, 11 Oct 2023 11:07:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MINSzmiM";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PuflIjs6"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ODAiov4O"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A10111856;
-	Wed, 11 Oct 2023 09:46:32 +0000 (UTC)
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99C2E92;
-	Wed, 11 Oct 2023 02:46:29 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 4CBEE21846;
-	Wed, 11 Oct 2023 09:46:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1697017588; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E5961097D
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Oct 2023 11:07:28 +0000 (UTC)
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EB731FE8
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Oct 2023 04:06:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1697022405;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=soXVte2VbxPbbCiLRCQN5td7yB/rAeQqYWLQLBxTIFU=;
-	b=MINSzmiMBqPcCbrrb5vPVjQ4FAleRRJnE1hYr+yINv0F92u7+T9emi+0wjSB8uUZUd69D0
-	zh4gFBG77P84Bzd6iajzSLr+gqwv8cUjeCNuBJedY1ICnaMghUIWuVEjc4F1Obrx6fG7bM
-	fXwXQ2CAmNnHT3yKSi8LykyvJd3qaN0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1697017588;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=soXVte2VbxPbbCiLRCQN5td7yB/rAeQqYWLQLBxTIFU=;
-	b=PuflIjs6dBQNsSmZ34SZrkDPJN2uCfXBS9AiB4CipN0nI/vA5+5fZYmJ2XDxUn5d3P7yKC
-	9X6t0U2qgkZGmDCg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-	(No client certificate requested)
-	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 3EDD6134F5;
-	Wed, 11 Oct 2023 09:46:28 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-	by imap2.suse-dmz.suse.de with ESMTPSA
-	id 5E5TD/RuJmWnSwAAMHmgww
-	(envelope-from <jack@suse.cz>); Wed, 11 Oct 2023 09:46:28 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id C200BA05BC; Wed, 11 Oct 2023 11:46:27 +0200 (CEST)
-Date: Wed, 11 Oct 2023 11:46:27 +0200
-From: Jan Kara <jack@suse.cz>
-To: Lorenzo Stoakes <lstoakes@gmail.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Mike Kravetz <mike.kravetz@oracle.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Hugh Dickins <hughd@google.com>, Andy Lutomirski <luto@kernel.org>,
-	Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] mm: enforce the mapping_map_writable() check
- after call_mmap()
-Message-ID: <20231011094627.3xohlpe4gm2idszm@quack3>
-References: <cover.1696709413.git.lstoakes@gmail.com>
- <d2748bc4077b53c60bcb06fccaf976cb2afee345.1696709413.git.lstoakes@gmail.com>
+	bh=U5ykf39aqWNOUh8hPUCI/eBpTU0D+3eGNJ/G++fJXuk=;
+	b=ODAiov4Ojb+loQTLw2jxvKnt8K6dXPVj9LL2Ls2Abl1vzLd8+gFpBdV5PvvvHVoOj0S35q
+	zyRKG1Rhpx1nGNuKdaCzUXs07ujphWLezS0dH/Z800ogadw8INteF+QlZUWA7oxooVuyMe
+	LZ45OX0I1/egVh1buTW/xvaYcrag7ko=
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
+ [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-692-9Z7TJsXwM_iJoZjJQ7KVZA-1; Wed, 11 Oct 2023 07:06:42 -0400
+X-MC-Unique: 9Z7TJsXwM_iJoZjJQ7KVZA-1
+Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-537efd62f36so5388597a12.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Oct 2023 04:06:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697022401; x=1697627201;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=U5ykf39aqWNOUh8hPUCI/eBpTU0D+3eGNJ/G++fJXuk=;
+        b=qiPU9gvb6spjOY4Tlwjkvv8eVcoa4sOfKmGyf74VFadho9bVOGL3pinJY6N86Lt87O
+         1pTuyB0YDb+VRdpxp2caPpLyjNKh+0xcR4nVWanVMJp3OxsmuJMQ1S18CMO4Me/gmBwg
+         dwa5pDfX1dAG610ijgg6lQ8mfm+HvulAaaKWLEnSzLFLzTSQEnW7gHRe4Lz1wFJlXs46
+         ME3IfiaMjaKbLuUe0K6dayopdv1frePAQ/281Q+Vh/ctRhsOkS0512Wds2sp7S2Ltpyp
+         UOxfSyWuloMOC+HdGTeT+QaENxWxtyAq/apNU6IvzkDMmvbe1aNcDN5rxfl1M+CMyfr8
+         UJ+Q==
+X-Gm-Message-State: AOJu0Yx6awMwS6qr1blh+v5sjqDHxZkhI21XICC4ucc8kFZGozGSFpuu
+	i5dmSdEDefaKt0lazyv4ujNTlGCWXbV1YhXBgjenyLKLNg/oICJRcfUztrIrWGQ98kGmTZIIsX2
+	PXznChCv2qpi7xTfjUMXbianZ
+X-Received: by 2002:a50:ee0a:0:b0:530:4967:df1a with SMTP id g10-20020a50ee0a000000b005304967df1amr16923182eds.17.1697022401084;
+        Wed, 11 Oct 2023 04:06:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFSGYnkltW7whS6Jj12+S7pY5s2T9PH4UQibdHpglYLF1SUbXTX1V2fcfwWWQglY7dJbEAyjA==
+X-Received: by 2002:a50:ee0a:0:b0:530:4967:df1a with SMTP id g10-20020a50ee0a000000b005304967df1amr16923158eds.17.1697022400685;
+        Wed, 11 Oct 2023 04:06:40 -0700 (PDT)
+Received: from thinky ([109.183.6.197])
+        by smtp.gmail.com with ESMTPSA id n14-20020aa7c44e000000b005361fadef32sm8628821edr.23.2023.10.11.04.06.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Oct 2023 04:06:40 -0700 (PDT)
+Date: Wed, 11 Oct 2023 13:06:39 +0200
+From: Andrey Albershteyn <aalbersh@redhat.com>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	fsverity@lists.linux.dev, djwong@kernel.org, david@fromorbit.com, dchinner@redhat.com
+Subject: Re: [PATCH v3 05/28] fs: add FS_XFLAG_VERITY for fs-verity sealed
+ inodes
+Message-ID: <bwwok7q2mf6loildyudbuwazvojz5e4aiqhnn4ptgmno4w2wym@xrvlvhk3u2hy>
+References: <20231006184922.252188-1-aalbersh@redhat.com>
+ <20231006184922.252188-6-aalbersh@redhat.com>
+ <20231011040544.GF1185@sol.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -84,94 +82,51 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d2748bc4077b53c60bcb06fccaf976cb2afee345.1696709413.git.lstoakes@gmail.com>
-X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-	SPF_SOFTFAIL,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.6
+In-Reply-To: <20231011040544.GF1185@sol.localdomain>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+	RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
+	SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-On Sat 07-10-23 21:51:01, Lorenzo Stoakes wrote:
-> In order for an F_SEAL_WRITE sealed memfd mapping to have an opportunity to
-> clear VM_MAYWRITE in seal_check_write() we must be able to invoke either
-> the shmem_mmap() or hugetlbfs_file_mmap() f_ops->mmap() handler to do so.
+On 2023-10-10 21:05:44, Eric Biggers wrote:
+> There's currently nowhere in the documentation or code that uses the phrase
+> "fs-verity sealed file".  It's instead called a verity file, or a file that has
+> fs-verity enabled.  I suggest we try to avoid inconsistent terminology.
 > 
-> We would otherwise fail the mapping_map_writable() check before we had
-> the opportunity to clear VM_MAYWRITE.
+> Also, it should be mentioned which kernel versions this works on.
 > 
-> However, the existing logic in mmap_region() performs this check BEFORE
-> calling call_mmap() (which invokes file->f_ops->mmap()). We must enforce
-> this check AFTER the function call.
+> See for example what the statx section of the documentation says just above the
+> new section that you're adding:
 > 
-> In order to avoid any risk of breaking call_mmap() handlers which assume
-> this will have been done first, we continue to mark the file writable
-> first, simply deferring enforcement of it failing until afterwards.
+>     Since Linux v5.5, the statx() system call sets STATX_ATTR_VERITY if
+>     the file has fs-verity enabled.
+
+Sure, will change terminology. Would it be fine to add kernel
+version in additional patch when patchset is merged?
+
 > 
-> This enables mmap(..., PROT_READ, MAP_SHARED, fd, 0) mappings for memfd's
-> sealed via F_SEAL_WRITE to succeed, whereas previously they were not
-> permitted.
+> Also, is FS_XFLAG_VERITY going to work on all filesystems?  The existing ways to
+> query the verity flag work on all filesystems.  Hopefully any new API will too.
 > 
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=217238
-> Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
 
-...
+Yes, if FS_VERITY_FL is set on the verity file. I will probably move
+hunks in fs/ioctl.c from [1] to this patch so it makes more sense.
 
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index 6f6856b3267a..9fbee92aaaee 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -2767,17 +2767,25 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
->  	vma->vm_pgoff = pgoff;
->  
->  	if (file) {
-> -		if (is_shared_maywrite(vm_flags)) {
-> -			error = mapping_map_writable(file->f_mapping);
-> -			if (error)
-> -				goto free_vma;
-> -		}
-> +		int writable_error = 0;
-> +
-> +		if (vma_is_shared_maywrite(vma))
-> +			writable_error = mapping_map_writable(file->f_mapping);
->  
->  		vma->vm_file = get_file(file);
->  		error = call_mmap(file, vma);
->  		if (error)
->  			goto unmap_and_free_vma;
->  
-> +		/*
-> +		 * call_mmap() may have changed VMA flags, so retry this check
-> +		 * if it failed before.
-> +		 */
-> +		if (writable_error && vma_is_shared_maywrite(vma)) {
-> +			error = writable_error;
-> +			goto close_and_free_vma;
-> +		}
-
-Hum, this doesn't quite give me a peace of mind ;). One bug I can see is
-that if call_mmap() drops the VM_MAYWRITE flag, we seem to forget to drop
-i_mmap_writeable counter here?
-
-I've checked why your v2 version broke i915 and I think the reason maybe
-has nothing to do with i915. Just in case call_mmap() failed, it ended up
-jumping to unmap_and_free_vma which calls mapping_unmap_writable() but we
-didn't call mapping_map_writable() yet so the counter became imbalanced.
-
-So I'd be for returning to v2 version, just fix up the error handling
-paths...
-
-								Honza
-
-
-> +
->  		/*
->  		 * Expansion is handled above, merging is handled below.
->  		 * Drivers should not alter the address of the VMA.
-> -- 
-> 2.42.0
+> Also, "Extended file attributes" is easily confused with, well, extended file
+> attributes (xattrs).  It should be made clear that this is talking about the
+> FS_IOC_FSGETXATTR ioctl, not real xattrs.
 > 
+> Also, it should be made clear that FS_XFLAG_VERITY cannot be set using
+> FS_IOC_FSSETXATTR.  See e.g. how the existing documentation says that
+> FS_IOC_GETFLAGS can get FS_VERITY_FL but FS_IOC_SETFLAGS cannot set it.
+
+Thanks, will add it.
+
+[1]: https://lore.kernel.org/all/20231011013940.GJ21298@frogsfrogsfrogs/T/#m75e77f585b9b7437556d108c325126865c1f6ce7
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+- Andrey
+
 
