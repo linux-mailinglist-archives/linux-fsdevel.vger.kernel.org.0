@@ -1,199 +1,435 @@
-Return-Path: <linux-fsdevel+bounces-68-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-69-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 554267C56CC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 16:27:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63F5E7C56FD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 16:36:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09DA42826BD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 14:27:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 866121C20F2D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 14:36:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C03B120335;
-	Wed, 11 Oct 2023 14:27:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F75C208A2;
+	Wed, 11 Oct 2023 14:36:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="kNh1IE6/"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bqauGNXh"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F5FB1EA8B
-	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Oct 2023 14:27:20 +0000 (UTC)
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F0C0B6;
-	Wed, 11 Oct 2023 07:27:18 -0700 (PDT)
-Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39BEKJgZ026056;
-	Wed, 11 Oct 2023 14:26:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=hwv9Ln5vwUJ6RTl5oYfvcx3p5aoxxW+VLSzODqPcTGI=;
- b=kNh1IE6/AIonVhJ3NCWkxse1DrFFdg9H2SIIDT0wD5L34gedEFjLcq5xQuuyRN3HvbIe
- tf/n/SVSv0/yCMxa1SfbrYd0Rxd7KoXtilfS5knyDmocKIVnYAQO++PUIMmMMTVNeMrz
- 6iLn6K+iDQYkNuqsEs6tdYZ7pTKGijxGrfB0Ijrd9efrHf3yAdRWnwXrScKgEFLAaA27
- 48x6JtzwPZd/cnaUR7o8QX5l/8s+Ton/qklkSwip7VmHnAe0nFrdNdGq5qPTf0csW1jV
- cRPO4ZyPhP7EhDlkKOIyWn6GYE9xIBy3Me+t4Z2mL3iYm6jpJ06cpbj6NEmr8W1r20F7 eg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3tnwcng7ek-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Oct 2023 14:26:30 +0000
-Received: from m0353723.ppops.net (m0353723.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 39BELEdB029444;
-	Wed, 11 Oct 2023 14:26:29 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3tnwcng7e5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Oct 2023 14:26:29 +0000
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 39BE3NVc025863;
-	Wed, 11 Oct 2023 14:26:28 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3tkjnngkm5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Oct 2023 14:26:28 +0000
-Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 39BEQSHP27001392
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 11 Oct 2023 14:26:28 GMT
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0038B5803F;
-	Wed, 11 Oct 2023 14:26:28 +0000 (GMT)
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AAC4558056;
-	Wed, 11 Oct 2023 14:26:26 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.61.67.198])
-	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 11 Oct 2023 14:26:26 +0000 (GMT)
-Message-ID: <e9c402eac882ada620b9bf9aadd507ae51bd4a7f.camel@linux.ibm.com>
-Subject: Re: [PATCH v3 01/25] ima: Align ima_inode_post_setattr() definition
- with LSM infrastructure
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>, viro@zeniv.linux.org.uk,
-        brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
-        neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
-        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, dhowells@redhat.com, jarkko@kernel.org,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        casey@schaufler-ca.com
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>,
-        Stefan
- Berger <stefanb@linux.ibm.com>
-Date: Wed, 11 Oct 2023 10:26:26 -0400
-In-Reply-To: <20230904133415.1799503-2-roberto.sassu@huaweicloud.com>
-References: <20230904133415.1799503-1-roberto.sassu@huaweicloud.com>
-	 <20230904133415.1799503-2-roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C92AD208A5
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Oct 2023 14:36:42 +0000 (UTC)
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF02B90
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Oct 2023 07:36:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1697035000;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=njQ4dnpfZGC4ByRw67xQr+GGX1qBvlFE3o000KfQ+QQ=;
+	b=bqauGNXhiX8uiXJ4OZZ8Qk+ELnQDOGv3/A5ca2cxQBWTadaiWbykUvhowqBRH73tHLE554
+	ShaXb67orNvi2f2WuKYId4YZzleu7FijbUKVnV6y696E+49E7IcPlHfcAmvHfsC3IagOjf
+	kcfIbQ1Vhx/K0u72KN8Fzog556W0s7g=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-558-67l-pFXnMRmAiBbld7-tMw-1; Wed, 11 Oct 2023 10:36:38 -0400
+X-MC-Unique: 67l-pFXnMRmAiBbld7-tMw-1
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-9b98bbf130cso534553566b.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Oct 2023 07:36:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697034997; x=1697639797;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=njQ4dnpfZGC4ByRw67xQr+GGX1qBvlFE3o000KfQ+QQ=;
+        b=XagAWHxKcOsnFN3QocrnYBHxWGpieCxRjY652S9HyX/G3Y2gCVLwR5W36AcYVAIYhr
+         koGKb26qCZx2dUw7e3QATjspMXIE3hajUsWV0GBaCAX9P1+hjH5vtlp1fb0obf/hq0Z5
+         ZAaUgSXUEzEJcazqNcAHODziUcvXq5shOXHmlXAd3pp5s1XiRLgDEA3DnIOxJNs4UqPF
+         FjaSB70G1odv0mYRZlBpNu8t34IIht2IoGKO2XY6h8Q+wF95e0SUSUn1imb2RQguvHFu
+         bnFf9n4pacuSibLKT4ZIARmc0blQ8rkeQPPlvAimLFtBmw75rELhscfT0E4jRzDDHxyL
+         KH9Q==
+X-Gm-Message-State: AOJu0Yyqz6DUeem0CV6jVtyYpDdC+LuNl3PhVQFx4ARmhxw6B/0UThlu
+	TQF+lM+x+POww+wrEjsFgCFGTcTxnWq229E1dmR5w8Tg+0vfY4eDqC0w3NuTVJFcFFRtyLGXxx/
+	ndO0OlXSczvg9kwYZ9J5GKCV2AgTmTF70
+X-Received: by 2002:a17:906:13:b0:9ae:519f:8276 with SMTP id 19-20020a170906001300b009ae519f8276mr18068020eja.73.1697034996746;
+        Wed, 11 Oct 2023 07:36:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFfkFfLegGCe3oDm6Tq+wmynkGrnlAFVucOt8YwkkD73ppT9Vc4NmBHI5FLVRzPHAWtxK4aPg==
+X-Received: by 2002:a17:906:13:b0:9ae:519f:8276 with SMTP id 19-20020a170906001300b009ae519f8276mr18068007eja.73.1697034996342;
+        Wed, 11 Oct 2023 07:36:36 -0700 (PDT)
+Received: from thinky ([109.183.6.197])
+        by smtp.gmail.com with ESMTPSA id y11-20020a17090629cb00b009ad829ed144sm9871905eje.130.2023.10.11.07.36.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Oct 2023 07:36:35 -0700 (PDT)
+Date: Wed, 11 Oct 2023 16:36:34 +0200
+From: Andrey Albershteyn <aalbersh@redhat.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	fsverity@lists.linux.dev, ebiggers@kernel.org, david@fromorbit.com, dchinner@redhat.com
+Subject: Re: [PATCH v3 25/28] xfs: add fs-verity support
+Message-ID: <4yogjyv77ljdz4kkj3roeez57k4vfceuvpsyhoppbd5twvz3i4@5ipzrf5voqod>
+References: <20231006184922.252188-1-aalbersh@redhat.com>
+ <20231006184922.252188-26-aalbersh@redhat.com>
+ <20231011013940.GJ21298@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: t0qch1x91VHPl_IFUTpYzTcwiC6OKrX2
-X-Proofpoint-GUID: Pm1mNEanTYeYNl1mS2QD2BQ4BS1Re_WB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-10-11_09,2023-10-11_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
- priorityscore=1501 malwarescore=0 adultscore=0 clxscore=1011
- suspectscore=0 mlxscore=0 mlxlogscore=999 lowpriorityscore=0 spamscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2309180000 definitions=main-2310110126
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,
-	RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.6
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231011013940.GJ21298@frogsfrogsfrogs>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+	RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
+	SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-On Mon, 2023-09-04 at 15:33 +0200, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
+On 2023-10-10 18:39:40, Darrick J. Wong wrote:
+> On Fri, Oct 06, 2023 at 08:49:19PM +0200, Andrey Albershteyn wrote:
+> > -	if (!args->value) {
+> > +	/*
+> > +	 * We don't want to allocate memory for fs-verity Merkle tree blocks
+> > +	 * (fs-verity descriptor is fine though). They will be stored in
+> > +	 * underlying xfs_buf
+> > +	 */
+> > +	if (!args->value && !xfs_verity_merkle_block(args)) {
 > 
-> Change ima_inode_post_setattr() definition, so that it can be registered as
-> implementation of the inode_post_setattr hook.
+> Hmm, why isn't this simply !(args->op_flags & XFS_DA_OP_BUFFER) ?
 
-Please indicate inode_post_settattr() is a new hook.  In general it
-should be stated on first usage.  In 02/25 the wording "(to be
-introduced)" is used, but not on first usage.  Please add "(to be
-introduced)" after inode_post_setattr.
+I check if args contains fs-verity block in multiple places so I
+wrapped it into a function. Also, XFS_DA_OP_BUFFER only sets
+args->bp. It doesn't affect where xfs_attr_copy_value copies the
+value (this is changed with XBF_DOUBLE_ALLOC).
 
-Adding a new security hook argument would be to support both IMA and
-EVM, which have different options.
-
-Mimi
-
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-> ---
->  fs/attr.c                             | 2 +-
->  include/linux/ima.h                   | 4 ++--
->  security/integrity/ima/ima_appraise.c | 3 ++-
->  3 files changed, 5 insertions(+), 4 deletions(-)
+> > -	if (args->attr_filter & XFS_ATTR_VERITY &&
+> > -			args->op_flags & XFS_DA_OP_BUFFER)
+> > +	if (xfs_verity_merkle_block(args))
+> >  		flags = XBF_DOUBLE_ALLOC;
 > 
-> diff --git a/fs/attr.c b/fs/attr.c
-> index d60dc1edb526..7d4553c1208d 100644
-> --- a/fs/attr.c
-> +++ b/fs/attr.c
-> @@ -486,7 +486,7 @@ int notify_change(struct mnt_idmap *idmap, struct dentry *dentry,
->  
->  	if (!error) {
->  		fsnotify_change(dentry, ia_valid);
-> -		ima_inode_post_setattr(idmap, dentry);
-> +		ima_inode_post_setattr(idmap, dentry, ia_valid);
->  		evm_inode_post_setattr(dentry, ia_valid);
->  	}
->  
-> diff --git a/include/linux/ima.h b/include/linux/ima.h
-> index 86b57757c7b1..910a2f11a906 100644
-> --- a/include/linux/ima.h
-> +++ b/include/linux/ima.h
-> @@ -186,7 +186,7 @@ static inline void ima_post_key_create_or_update(struct key *keyring,
->  #ifdef CONFIG_IMA_APPRAISE
->  extern bool is_ima_appraise_enabled(void);
->  extern void ima_inode_post_setattr(struct mnt_idmap *idmap,
-> -				   struct dentry *dentry);
-> +				   struct dentry *dentry, int ia_valid);
->  extern int ima_inode_setxattr(struct dentry *dentry, const char *xattr_name,
->  		       const void *xattr_value, size_t xattr_value_len);
->  extern int ima_inode_set_acl(struct mnt_idmap *idmap,
-> @@ -206,7 +206,7 @@ static inline bool is_ima_appraise_enabled(void)
->  }
->  h
->  static inline void ima_inode_post_setattr(struct mnt_idmap *idmap,
-> -					  struct dentry *dentry)
-> +					  struct dentry *dentry, int ia_valid)
->  {
->  	return;
->  }
-> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-> index 491c1aca0b1c..6b032bce4fe7 100644
-> --- a/security/integrity/ima/ima_appraise.c
-> +++ b/security/integrity/ima/ima_appraise.c
-> @@ -627,6 +627,7 @@ void ima_update_xattr(struct integrity_iint_cache *iint, struct file *file)
->   * ima_inode_post_setattr - reflect file metadata changes
->   * @idmap:  idmap of the mount the inode was found from
->   * @dentry: pointer to the affected dentry
-> + * @ia_valid: for the UID and GID status
->   *
->   * Changes to a dentry's metadata might result in needing to appraise.
->   *
-> @@ -634,7 +635,7 @@ void ima_update_xattr(struct integrity_iint_cache *iint, struct file *file)
->   * to lock the inode's i_mutex.
->   */
->  void ima_inode_post_setattr(struct mnt_idmap *idmap,
-> -			    struct dentry *dentry)
-> +			    struct dentry *dentry, int ia_valid)
->  {
->  	struct inode *inode = d_backing_inode(dentry);
->  	struct integrity_iint_cache *iint;
+> Hmm, not sure what DOUBLE_ALLOC does, but I'll get there as I go
+> backwards through the XFS patches...
+> 
 
+> > +/*
+> > + * fs-verity attribute name format
+> > + *
+> > + * Merkle tree blocks are stored under extended attributes of the inode. The
+> > + * name of the attributes are offsets into merkle tree.
+> 
+> Are these offsets byte offsets?
+> 
+
+Byte offsets.
+
+> > +++ b/fs/xfs/xfs_inode.h
+> > @@ -342,7 +342,8 @@ static inline bool xfs_inode_has_large_extent_counts(struct xfs_inode *ip)
+> >   * inactivation completes, both flags will be cleared and the inode is a
+> >   * plain old IRECLAIMABLE inode.
+> >   */
+> > -#define XFS_INACTIVATING	(1 << 13)
+> > +#define XFS_INACTIVATING		(1 << 13)
+> > +#define XFS_IVERITY_CONSTRUCTION	(1 << 14) /* merkle tree construction */
+> 
+> Under construction?  Or already built?
+
+Under construction.
+
+> >  
+> >  /* Quotacheck is running but inode has not been added to quota counts. */
+> >  #define XFS_IQUOTAUNCHECKED	(1 << 14)
+> 
+> These two iflags have the same definition.
+
+Oops! Don't know how did I missed that, thanks!
+
+> > diff --git a/fs/xfs/xfs_verity.c b/fs/xfs/xfs_verity.c
+> > new file mode 100644
+> > index 000000000000..a2db56974122
+> > --- /dev/null
+> > +++ b/fs/xfs/xfs_verity.c
+> > @@ -0,0 +1,257 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Copyright (C) 2023 Red Hat, Inc.
+> > + */
+> > +#include "xfs.h"
+> > +#include "xfs_shared.h"
+> > +#include "xfs_format.h"
+> > +#include "xfs_da_format.h"
+> > +#include "xfs_da_btree.h"
+> > +#include "xfs_trans_resv.h"
+> > +#include "xfs_mount.h"
+> > +#include "xfs_inode.h"
+> > +#include "xfs_attr.h"
+> > +#include "xfs_verity.h"
+> > +#include "xfs_bmap_util.h"
+> > +#include "xfs_log_format.h"
+> > +#include "xfs_trans.h"
+> > +
+> > +static int
+> 
+> Hum, why isn't this ssize_t?  That's what other IO functions return when
+> returning the number of bytes acted upon.
+
+The fs/verity prototype is with int, so I left it as int.
+
+> > +static int
+> > +xfs_drop_merkle_tree(
+> > +	struct xfs_inode	*ip,
+> > +	u64			merkle_tree_size,
+> > +	u8			log_blocksize)
+> > +{
+> > +	struct xfs_fsverity_merkle_key	name;
+> > +	int			error = 0, index;
+> > +	u64			offset = 0;
+> > +	struct xfs_da_args	args = {
+> > +		.dp		= ip,
+> > +		.whichfork	= XFS_ATTR_FORK,
+> > +		.attr_filter	= XFS_ATTR_VERITY,
+> > +		.namelen	= sizeof(struct xfs_fsverity_merkle_key),
+> > +		/* NULL value make xfs_attr_set remove the attr */
+> > +		.value		= NULL,
+> > +	};
+> > +
+> > +	for (index = 1; offset < merkle_tree_size; index++) {
+> > +		xfs_fsverity_merkle_key_to_disk(&name, offset);
+> > +		args.name = (const uint8_t *)&name.merkleoff;
+> > +		args.attr_filter = XFS_ATTR_VERITY;
+> 
+> Why do these two args. fields need to be reset every time through the
+> loop?
+
+Oh, yeah this should be ok. I will check it.
+
+> > +		error = xfs_attr_set(&args);
+> 
+> Why is it ok to drop the error here?
+> 
+
+My bad, will handle it.
+
+> > +		offset = index << log_blocksize;
+> 
+> Hm, ok, the merkle key offsets /are/ byte offsets.
+> 
+> Isn't this whole loop just:
+> 
+> 	args.name = ...;
+> 	args.attr_filter = ...;
+> 	for (offset = 0; offset < merkle_tree_size; offset++) {
+> 		xfs_fsverity_merkle_key_to_disk(&name, pos << log_blocksize);
+> 		error = xfs_attr_set(&args);
+> 		if (error)
+> 			return error;
+> 	}
+> 
+> > +static int
+> > +xfs_end_enable_verity(
+> > +	struct file		*filp,
+> > +	const void		*desc,
+> > +	size_t			desc_size,
+> > +	u64			merkle_tree_size,
+> > +	u8			log_blocksize)
+> > +{
+> > +	struct inode		*inode = file_inode(filp);
+> > +	struct xfs_inode	*ip = XFS_I(inode);
+> > +	struct xfs_mount	*mp = ip->i_mount;
+> > +	struct xfs_trans	*tp;
+> > +	struct xfs_da_args	args = {
+> > +		.dp		= ip,
+> > +		.whichfork	= XFS_ATTR_FORK,
+> > +		.attr_filter	= XFS_ATTR_VERITY,
+> > +		.attr_flags	= XATTR_CREATE,
+> > +		.name		= (const uint8_t *)XFS_VERITY_DESCRIPTOR_NAME,
+> > +		.namelen	= XFS_VERITY_DESCRIPTOR_NAME_LEN,
+> > +		.value		= (void *)desc,
+> > +		.valuelen	= desc_size,
+> > +	};
+> > +	int			error = 0;
+> > +
+> > +	ASSERT(xfs_isilocked(ip, XFS_IOLOCK_EXCL));
+> > +
+> > +	/* fs-verity failed, just cleanup */
+> > +	if (desc == NULL)
+> > +		goto out;
+> > +
+> > +	error = xfs_attr_set(&args);
+> > +	if (error)
+> > +		goto out;
+> > +
+> > +	/* Set fsverity inode flag */
+> > +	error = xfs_trans_alloc_inode(ip, &M_RES(mp)->tr_ichange,
+> > +			0, 0, false, &tp);
+> > +	if (error)
+> > +		goto out;
+> > +
+> > +	/*
+> > +	 * Ensure that we've persisted the verity information before we enable
+> > +	 * it on the inode and tell the caller we have sealed the inode.
+> > +	 */
+> > +	ip->i_diflags2 |= XFS_DIFLAG2_VERITY;
+> > +
+> > +	xfs_trans_log_inode(tp, ip, XFS_ILOG_CORE);
+> > +	xfs_trans_set_sync(tp);
+> > +
+> > +	error = xfs_trans_commit(tp);
+> > +	xfs_iunlock(ip, XFS_ILOCK_EXCL);
+> > +
+> > +	if (!error)
+> > +		inode->i_flags |= S_VERITY;
+> > +
+> > +out:
+> > +	if (error)
+> > +		WARN_ON_ONCE(xfs_drop_merkle_tree(ip, merkle_tree_size,
+> > +						  log_blocksize));
+> 
+> (Don't WARNings panic some kernels?)
+
+Not sure, but in case we fail to drop a tree (error already
+happened) we probably want to know that something going on and tree
+can not be removed. But I'm fine with removing this, not sure what
+are the guidelines on WARNinigs.
+
+> > +int
+> > +xfs_read_merkle_tree_block(
+> > +	struct inode		*inode,
+> > +	unsigned int		pos,
+> > +	struct fsverity_block	*block,
+> > +	unsigned long		num_ra_pages)
+> > +{
+> > +	struct xfs_inode	*ip = XFS_I(inode);
+> > +	struct xfs_fsverity_merkle_key name;
+> > +	int			error = 0;
+> > +	struct xfs_da_args	args = {
+> > +		.dp		= ip,
+> > +		.attr_filter	= XFS_ATTR_VERITY,
+> > +		.namelen	= sizeof(struct xfs_fsverity_merkle_key),
+> > +	};
+> > +	xfs_fsverity_merkle_key_to_disk(&name, pos);
+> > +	args.name = (const uint8_t *)&name.merkleoff;
+> > +
+> > +	error = xfs_attr_get(&args);
+> > +	if (error)
+> > +		goto out;
+> > +
+> > +	WARN_ON_ONCE(!args.valuelen);
+> > +
+> > +	/* now we also want to get underlying xfs_buf */
+> > +	args.op_flags = XFS_DA_OP_BUFFER;
+> 
+> If XFS_DA_OP_BUFFER returns the (bhold'd) xfs_buf containing the value,
+> then ... can't we call xfs_attr_get once?
+
+hmm, yeah, one call would be probably enough. The initial two calls
+were here because fs/verity expected an error if attribute doesn't
+exist. But with change to fs/verity/verify.c in patch 10 it's
+probably fine to do everything just in one call. Thanks!
+
+> Can the xfs_buf contents change after we drop the I{,O}LOCK?
+
+By fs-verity? No
+
+> Can users (or the kernel) change or add xattrs on a verity file?
+>
+> Are they allowed to move the file, and hence update the parent pointers?
+
+Moving is probably fine but I haven't tested if it works fine with
+parent pointers. But as they are xattrs I think it shouldn't be a
+problem. I will check it.
+
+> Or is the point of XBF_DOUBLE_ALLOC that we'll snapshot the attr data
+> into the second half of the buffer, and that's what gets passed to
+> fsverity core code?
+
+Yes, this
+
+> > +static int
+> > +xfs_write_merkle_tree_block(
+> > +	struct inode		*inode,
+> > +	const void		*buf,
+> > +	u64			pos,
+> > +	unsigned int		size)
+> > +{
+> > +	struct xfs_inode	*ip = XFS_I(inode);
+> > +	struct xfs_fsverity_merkle_key	name;
+> > +	struct xfs_da_args	args = {
+> > +		.dp		= ip,
+> > +		.whichfork	= XFS_ATTR_FORK,
+> > +		.attr_filter	= XFS_ATTR_VERITY,
+> > +		.attr_flags	= XATTR_CREATE,
+> 
+> What happens if merkle tree fails midway through writing the blobs to
+> the xattr tree?  If they're not removed, then won't XATTR_CREATE here
+> cause a second attempt to fail because there's a half-built tree?
+
+If write fails during tree building fs-verity calls
+xfs_end_enable_verity() which then goes into xfs_drop_merkle_tree()
+(if(desc == NULL) case).
+
+> > diff --git a/fs/xfs/xfs_verity.h b/fs/xfs/xfs_verity.h
+> > new file mode 100644
+> > index 000000000000..0f32fd212091
+> > --- /dev/null
+> > +++ b/fs/xfs/xfs_verity.h
+> > @@ -0,0 +1,37 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Copyright (C) 2022 Red Hat, Inc.
+> > + */
+> > +#ifndef __XFS_VERITY_H__
+> > +#define __XFS_VERITY_H__
+> > +
+> > +#include "xfs.h"
+> > +#include "xfs_da_format.h"
+> > +#include "xfs_da_btree.h"
+> > +#include <linux/fsverity.h>
+> > +
+> > +#define XFS_VERITY_DESCRIPTOR_NAME "verity_descriptor"
+> > +#define XFS_VERITY_DESCRIPTOR_NAME_LEN 17
+> 
+> Want to shorten this by one for u64 alignment? ;)
+
+sure :)
+
+> > +static inline bool
+> > +xfs_verity_merkle_block(
+> > +		struct xfs_da_args *args)
+> > +{
+> > +	if (!(args->attr_filter & XFS_ATTR_VERITY))
+> > +		return false;
+> > +
+> > +	if (!(args->op_flags & XFS_DA_OP_BUFFER))
+> > +		return false;
+> > +
+> > +	if (args->valuelen < 1024 || args->valuelen > PAGE_SIZE ||
+> > +			!is_power_of_2(args->valuelen))
+> > +		return false;
+> 
+> Why do we check the valuelen here?
+
+I use this function in multiple places to distinguish between
+xfs_da_args which contains:
+- fs-verity block
+- fs-verity descriptor/any other attribute
+
+Check for size is not necessary.
+
+But this is one of the requirements on fs-verity blocks so I thought
+it could be good candidate for one additional check. I'm fine with
+removing this
+
+> Also, if you're passing the xfs_buf out, I thought the buffer cache
+> could handle weird sizes?
+
+Not sure what you mean here
+
+-- 
+- Andrey
 
 
