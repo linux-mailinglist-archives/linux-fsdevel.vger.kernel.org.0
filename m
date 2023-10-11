@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-111-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-112-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADEA47C5B71
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 20:39:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC4397C5B90
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 20:47:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66A0A2824BB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 18:39:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD1B11C20982
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 18:47:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F04D1D53C;
-	Wed, 11 Oct 2023 18:39:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7020B1D549;
+	Wed, 11 Oct 2023 18:47:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="siKd/d+x"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QV5ZDLqE"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AA192231D;
-	Wed, 11 Oct 2023 18:39:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 086F2C433C7;
-	Wed, 11 Oct 2023 18:39:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A62731CA95;
+	Wed, 11 Oct 2023 18:47:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72C4FC433C8;
+	Wed, 11 Oct 2023 18:47:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1697049543;
-	bh=UbCn6O9YBidpTzFapwKPo7S7+nmU1avIXG3WnLaUUMA=;
+	s=k20201202; t=1697050029;
+	bh=n/iTOOI8M9sdxw8tpDCKVbuwmoL7GWdiRySmoGXwni4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=siKd/d+xer9U0ZdlCwLhn/JBgvlQ8vYQhXu4bBTftSajGrYgjmOwp1hQ6LMq9ScuH
-	 eH7XMhkKwMSHpgFS/D+/RN8lniEQhh3z5UBldpEUsry9QqsdSa0Pk5bhoZLlRIRc0P
-	 QEZH8vaJYjY17vu45XBPtRrX2llyx4uXr+SsYkgP+2ZCSgykYu5fzlblYWTgDPpp+o
-	 jGMWw1cgC54w+pnKFg3w0jlYmxvqL7Z8JE7hn8ZfsBJl22mv4gErXp/lYciGXaMVLj
-	 Ald8j4SwqsuFmvegq6oOxP3+AKzFJQCIl4pz0jU4e/A1OZkUH+W+1HcLlaveCTvZzR
-	 DgE4swulMf8rg==
-Date: Wed, 11 Oct 2023 11:39:02 -0700
+	b=QV5ZDLqEZ0D3QDDDkDO2SuOUviP5ER8zfJJCzKNLTwOpUJLzh2DnRVr6m1pfn8FYU
+	 sCVoVcVjK3vUtdAi6Tss83sydJUtqUsYLKl0XDMIT+ICUGkHqK3qxbXIeYxwBkDdoq
+	 3i2KQ2VZqb9J9IMKOZJIyAiK1ZklsaazaPBtX4jFFU+iBj9x5DHrhBa7iaj6/52KoC
+	 u/e4X3wc3onFzV8X/Acaq7gZ5XuGpOoUYSr7vkcVUbWUrsDVcJjI+Z67XLc55DxZGH
+	 M4/wLbBtOvhs4xLLLo4geAVq8R4sn1lRbISej+ffp9kR7TGsrLbwoimjpp1xR4LMFg
+	 Igx6k85mU9IuA==
+Date: Wed, 11 Oct 2023 11:47:09 -0700
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: Andrey Albershteyn <aalbersh@redhat.com>
 Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
 	fsverity@lists.linux.dev, ebiggers@kernel.org, david@fromorbit.com,
 	dchinner@redhat.com
-Subject: Re: [PATCH v3 12/28] iomap: allow filesystem to implement read path
- verification
-Message-ID: <20231011183902.GO21298@frogsfrogsfrogs>
+Subject: Re: [PATCH v3 16/28] xfs: add bio_set and submit_io for ioend
+ post-processing
+Message-ID: <20231011184709.GP21298@frogsfrogsfrogs>
 References: <20231006184922.252188-1-aalbersh@redhat.com>
- <20231006184922.252188-13-aalbersh@redhat.com>
+ <20231006184922.252188-17-aalbersh@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -51,164 +51,214 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231006184922.252188-13-aalbersh@redhat.com>
+In-Reply-To: <20231006184922.252188-17-aalbersh@redhat.com>
 
-On Fri, Oct 06, 2023 at 08:49:06PM +0200, Andrey Albershteyn wrote:
-> Currently, there is no interface to let filesystem do
-> post-processing of completed BIO (ioend) in read path. This can be
-> very handy for fs-verity verification. This patch add a callout to
-> filesystem provided ->submit_bio to configure BIO completion callout.
+On Fri, Oct 06, 2023 at 08:49:10PM +0200, Andrey Albershteyn wrote:
+> The read IO path provides callout for configuring ioend. This allows
+> filesystem to add verification of completed BIOs. One of such tasks
+> is verification against fs-verity tree when pages were read. iomap
+> allows using custom bio_set with submit_bio() to add ioend
+> processing. The xfs_prepare_read_ioend() configures bio->bi_end_io
+> which places verification task in the workqueue. The task does
+> fs-verity verification and then call back to the iomap to finish IO.
 > 
-> The read path ioend iomap_read_ioend are stored side by side with
-> BIOs allocated from filesystem provided bio_set.
-> 
-> Add IOMAP_F_READ_VERITY which indicates that iomap need to
-> verify BIO (e.g. fs-verity) after I/O is completed.
-> 
-> Any verification itself happens on filesystem side. The verification
-> is done when the BIO is processed by calling out ->bi_end_io().
+> This patch adds callouts implementation to verify pages with
+> fs-verity. Also implements folio operation .verify_folio for direct
+> folio verification by fs-verity.
 > 
 > Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
 > ---
->  fs/iomap/buffered-io.c | 40 +++++++++++++++++++++++++++++++++-------
->  include/linux/iomap.h  | 15 +++++++++++++++
->  2 files changed, 48 insertions(+), 7 deletions(-)
+>  fs/xfs/xfs_aops.c  | 84 ++++++++++++++++++++++++++++++++++++++++++++--
+>  fs/xfs/xfs_aops.h  |  2 ++
+>  fs/xfs/xfs_linux.h |  1 +
+>  fs/xfs/xfs_super.c |  9 ++++-
+>  4 files changed, 93 insertions(+), 3 deletions(-)
 > 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index ca78c7f62527..0a1bec91fdf6 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -332,6 +332,19 @@ static inline bool iomap_block_needs_zeroing(const struct iomap_iter *iter,
->  		pos >= i_size_read(iter->inode);
+> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+> index b413a2dbcc18..fceb0c3de61f 100644
+> --- a/fs/xfs/xfs_aops.c
+> +++ b/fs/xfs/xfs_aops.c
+> @@ -26,6 +26,8 @@ struct xfs_writepage_ctx {
+>  	unsigned int		cow_seq;
+>  };
+>  
+> +static struct bio_set xfs_read_ioend_bioset;
+> +
+>  static inline struct xfs_writepage_ctx *
+>  XFS_WPC(struct iomap_writepage_ctx *ctx)
+>  {
+> @@ -548,19 +550,97 @@ xfs_vm_bmap(
+>  	return iomap_bmap(mapping, block, &xfs_read_iomap_ops);
 >  }
 >  
 > +static void
-> +iomap_submit_read_io(const struct iomap_iter *iter,
-> +		struct iomap_readpage_ctx *ctx)
+> +xfs_read_work_end_io(
+> +	struct work_struct *work)
 > +{
-> +	if (!ctx->bio)
-> +		return;
+> +	struct iomap_read_ioend *ioend =
+> +		container_of(work, struct iomap_read_ioend, work);
+> +	struct bio *bio = &ioend->read_inline_bio;
 > +
-> +	if (ctx->ops && ctx->ops->submit_io)
-> +		ctx->ops->submit_io(iter, ctx->bio, iter->pos);
-> +	else
-> +		submit_bio(ctx->bio);
+> +	fsverity_verify_bio(bio);
+> +	iomap_read_end_io(bio);
+> +	/*
+> +	 * The iomap_read_ioend has been freed by bio_put() in
+> +	 * iomap_read_end_io()
+> +	 */
 > +}
 > +
->  static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
->  		struct iomap_readpage_ctx *ctx, loff_t offset)
+> +static void
+> +xfs_read_end_io(
+> +	struct bio *bio)
+> +{
+> +	struct iomap_read_ioend *ioend =
+> +		container_of(bio, struct iomap_read_ioend, read_inline_bio);
+> +	struct xfs_inode	*ip = XFS_I(ioend->io_inode);
+> +
+> +	WARN_ON_ONCE(!queue_work(ip->i_mount->m_postread_workqueue,
+> +					&ioend->work));
+
+If queue_work fails we should EIO the read.
+
+> +}
+> +
+> +static int
+> +xfs_verify_folio(
+> +	struct folio	*folio,
+> +	loff_t		pos,
+> +	unsigned int	len)
+> +{
+> +	if (fsverity_verify_blocks(folio, len, pos))
+> +		return 0;
+> +	return -EFSCORRUPTED;
+> +}
+> +
+> +int
+> +xfs_init_iomap_bioset(void)
+
+Probably should be marked __init, right?
+
+> +{
+> +	return bioset_init(&xfs_read_ioend_bioset,
+> +			   4 * (PAGE_SIZE / SECTOR_SIZE),
+> +			   offsetof(struct iomap_read_ioend, read_inline_bio),
+> +			   BIOSET_NEED_BVECS);
+
+Also, there's nothing specific to XFS in this bioset, is there?
+Shouldn't this be in fs/iomap/buffered-io.c and not XFS?
+
+> +}
+> +
+> +void
+> +xfs_free_iomap_bioset(void)
+> +{
+> +	bioset_exit(&xfs_read_ioend_bioset);
+> +}
+> +
+> +static void
+> +xfs_submit_read_bio(
+> +	const struct iomap_iter *iter,
+> +	struct bio *bio,
+> +	loff_t file_offset)
+> +{
+> +	struct iomap_read_ioend *ioend;
+> +
+> +	ioend = container_of(bio, struct iomap_read_ioend, read_inline_bio);
+> +	ioend->io_inode = iter->inode;
+> +	if (fsverity_active(ioend->io_inode)) {
+> +		INIT_WORK(&ioend->work, &xfs_read_work_end_io);
+> +		ioend->read_inline_bio.bi_end_io = &xfs_read_end_io;
+> +	}
+> +
+> +	submit_bio(bio);
+> +}
+> +
+> +static const struct iomap_readpage_ops xfs_readpage_ops = {
+> +	.verify_folio		= &xfs_verify_folio,
+> +	.submit_io		= &xfs_submit_read_bio,
+> +	.bio_set		= &xfs_read_ioend_bioset,
+> +};
+> +
+>  STATIC int
+>  xfs_vm_read_folio(
+>  	struct file		*unused,
+>  	struct folio		*folio)
 >  {
-> @@ -355,6 +368,13 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
->  
->  	if (iomap_block_needs_zeroing(iter, pos)) {
->  		folio_zero_range(folio, poff, plen);
-> +		if (iomap->flags & IOMAP_F_READ_VERITY) {
-> +			if (ctx->ops->verify_folio(folio, poff, plen)) {
+> -	return iomap_read_folio(folio, &xfs_read_iomap_ops, NULL);
+> +	return iomap_read_folio(folio, &xfs_read_iomap_ops, &xfs_readpage_ops);
 
-What validation does fsverity need to do for zeroed folios that aren't
-read from disk?  Does that imply that holes and unwritten extents are
-allowed in fsverity files, and that the merkle tree will actually
-contain an entry for them?
-
-> +				folio_set_error(folio);
-> +				goto done;
-> +			}
-> +		}
-> +
->  		iomap_set_range_uptodate(folio, poff, plen);
->  		goto done;
->  	}
-> @@ -371,13 +391,20 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
->  		gfp_t orig_gfp = gfp;
->  		unsigned int nr_vecs = DIV_ROUND_UP(length, PAGE_SIZE);
->  
-> -		if (ctx->bio)
-> -			submit_bio(ctx->bio);
-> +		iomap_submit_read_io(iter, ctx);
->  
->  		if (ctx->rac) /* same as readahead_gfp_mask */
->  			gfp |= __GFP_NORETRY | __GFP_NOWARN;
-> -		ctx->bio = bio_alloc(iomap->bdev, bio_max_segs(nr_vecs),
-> -				     REQ_OP_READ, gfp);
-> +
-> +		if (ctx->ops && ctx->ops->bio_set)
-> +			ctx->bio = bio_alloc_bioset(iomap->bdev,
-> +						    bio_max_segs(nr_vecs),
-> +						    REQ_OP_READ, GFP_NOFS,
-> +						    ctx->ops->bio_set);
-> +		else
-> +			ctx->bio = bio_alloc(iomap->bdev, bio_max_segs(nr_vecs),
-> +				REQ_OP_READ, gfp);
-
-/methinks this should be in the previous patch, and without the
-indenting damage.
+Leave the ops parameter as NULL for non-verity filesystems to avoid the
+overhead of indirect calls.  Work data partitions aren't going to enable
+verity.
 
 --D
 
+>  }
+>  
+>  STATIC void
+>  xfs_vm_readahead(
+>  	struct readahead_control	*rac)
+>  {
+> -	iomap_readahead(rac, &xfs_read_iomap_ops, NULL);
+> +	iomap_readahead(rac, &xfs_read_iomap_ops, &xfs_readpage_ops);
+>  }
+>  
+>  static int
+> diff --git a/fs/xfs/xfs_aops.h b/fs/xfs/xfs_aops.h
+> index e0bd68419764..fa7c512b2717 100644
+> --- a/fs/xfs/xfs_aops.h
+> +++ b/fs/xfs/xfs_aops.h
+> @@ -10,5 +10,7 @@ extern const struct address_space_operations xfs_address_space_operations;
+>  extern const struct address_space_operations xfs_dax_aops;
+>  
+>  int	xfs_setfilesize(struct xfs_inode *ip, xfs_off_t offset, size_t size);
+> +int	xfs_init_iomap_bioset(void);
+> +void	xfs_free_iomap_bioset(void);
+>  
+>  #endif /* __XFS_AOPS_H__ */
+> diff --git a/fs/xfs/xfs_linux.h b/fs/xfs/xfs_linux.h
+> index e9d317a3dafe..ee213c6dfcaf 100644
+> --- a/fs/xfs/xfs_linux.h
+> +++ b/fs/xfs/xfs_linux.h
+> @@ -64,6 +64,7 @@ typedef __u32			xfs_nlink_t;
+>  #include <linux/xattr.h>
+>  #include <linux/mnt_idmapping.h>
+>  #include <linux/debugfs.h>
+> +#include <linux/fsverity.h>
+>  
+>  #include <asm/page.h>
+>  #include <asm/div64.h>
+> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+> index 5e1ec5978176..3cdb642961f4 100644
+> --- a/fs/xfs/xfs_super.c
+> +++ b/fs/xfs/xfs_super.c
+> @@ -2375,11 +2375,17 @@ init_xfs_fs(void)
+>  	if (error)
+>  		goto out_remove_dbg_kobj;
+>  
+> -	error = register_filesystem(&xfs_fs_type);
+> +	error = xfs_init_iomap_bioset();
+>  	if (error)
+>  		goto out_qm_exit;
 > +
->  		/*
->  		 * If the bio_alloc fails, try it again for a single page to
->  		 * avoid having to deal with partial page reads.  This emulates
-> @@ -427,7 +454,7 @@ int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops,
->  		folio_set_error(folio);
+> +	error = register_filesystem(&xfs_fs_type);
+> +	if (error)
+> +		goto out_iomap_bioset;
+>  	return 0;
 >  
->  	if (ctx.bio) {
-> -		submit_bio(ctx.bio);
-> +		iomap_submit_read_io(&iter, &ctx);
->  		WARN_ON_ONCE(!ctx.cur_folio_in_bio);
->  	} else {
->  		WARN_ON_ONCE(ctx.cur_folio_in_bio);
-> @@ -502,8 +529,7 @@ void iomap_readahead(struct readahead_control *rac, const struct iomap_ops *ops,
->  	while (iomap_iter(&iter, ops) > 0)
->  		iter.processed = iomap_readahead_iter(&iter, &ctx);
->  
-> -	if (ctx.bio)
-> -		submit_bio(ctx.bio);
-> +	iomap_submit_read_io(&iter, &ctx);
->  	if (ctx.cur_folio) {
->  		if (!ctx.cur_folio_in_bio)
->  			folio_unlock(ctx.cur_folio);
-> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-> index 3565c449f3c9..8d7206cd2f0f 100644
-> --- a/include/linux/iomap.h
-> +++ b/include/linux/iomap.h
-> @@ -53,6 +53,9 @@ struct vm_fault;
->   *
->   * IOMAP_F_XATTR indicates that the iomap is for an extended attribute extent
->   * rather than a file data extent.
-> + *
-> + * IOMAP_F_READ_VERITY indicates that the iomap needs verification of read
-> + * folios
->   */
->  #define IOMAP_F_NEW		(1U << 0)
->  #define IOMAP_F_DIRTY		(1U << 1)
-> @@ -64,6 +67,7 @@ struct vm_fault;
->  #define IOMAP_F_BUFFER_HEAD	0
->  #endif /* CONFIG_BUFFER_HEAD */
->  #define IOMAP_F_XATTR		(1U << 5)
-> +#define IOMAP_F_READ_VERITY	(1U << 6)
->  
->  /*
->   * Flags set by the core iomap code during operations:
-> @@ -262,7 +266,18 @@ int iomap_file_buffered_write_punch_delalloc(struct inode *inode,
->  		struct iomap *iomap, loff_t pos, loff_t length, ssize_t written,
->  		int (*punch)(struct inode *inode, loff_t pos, loff_t length));
->  
-> +struct iomap_read_ioend {
-> +	struct inode		*io_inode;	/* file being read from */
-> +	struct work_struct	work;		/* post read work (e.g. fs-verity) */
-> +	struct bio		read_inline_bio;/* MUST BE LAST! */
-> +};
-> +
->  struct iomap_readpage_ops {
-> +	/*
-> +	 * Optional, verify folio when successfully read
-> +	 */
-> +	int (*verify_folio)(struct folio *folio, loff_t pos, unsigned int len);
-> +
->  	/*
->  	 * Filesystems wishing to attach private information to a direct io bio
->  	 * must provide a ->submit_io method that attaches the additional
+> + out_iomap_bioset:
+> +	xfs_free_iomap_bioset();
+>   out_qm_exit:
+>  	xfs_qm_exit();
+>   out_remove_dbg_kobj:
+> @@ -2412,6 +2418,7 @@ init_xfs_fs(void)
+>  STATIC void __exit
+>  exit_xfs_fs(void)
+>  {
+> +	xfs_free_iomap_bioset();
+>  	xfs_qm_exit();
+>  	unregister_filesystem(&xfs_fs_type);
+>  #ifdef DEBUG
 > -- 
 > 2.40.1
 > 
