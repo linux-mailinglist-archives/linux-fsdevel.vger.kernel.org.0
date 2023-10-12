@@ -1,133 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-154-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-155-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CED67C6488
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 07:18:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EA677C665D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 09:27:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A002282799
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 05:18:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D693D282862
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 07:27:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56063CA71;
-	Thu, 12 Oct 2023 05:18:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F7C9DF6E;
+	Thu, 12 Oct 2023 07:27:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IM2Miui2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uvWFNVfF"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A3A2CA4C
-	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Oct 2023 05:18:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D19BC433C7;
-	Thu, 12 Oct 2023 05:18:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FAFACA71;
+	Thu, 12 Oct 2023 07:27:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95052C433C8;
+	Thu, 12 Oct 2023 07:27:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1697087892;
-	bh=X2EgHL3bP9Z/d24NMKCsDm1I5GcM24gx9PTUqoTwRcw=;
-	h=References:From:To:Cc:Subject:Date:In-reply-to:From;
-	b=IM2Miui2wjqBg+35Y0cnpAfmvMhAbJP4euW8uYDawMrUzn52++iNi+x+lyWFr8ru+
-	 qKhJfozH87vDqthqM5EPznTuF0x5ajxxknOUbVR673mym/TK9QVN2ClTE4VbuGPyVq
-	 YyupIaWfGxZsIkQAl6DNF/VOcU6M4CVfQ4TOAzK78AYqvURCQ8UrWqhL6ryFVPss9O
-	 JKh4tB0pKPM5Ac2DkVwtY2vLZil4i9ztWVxy9NJi/iDzdth67EXRLNZHkKIClQEE8d
-	 iEw5OKDk2sMtUMvwRrUMVeyeZYrk1Shamj7KGlrZdB1En5IeffyTGWY51LKUst4tvP
-	 6OY2xZDPETYoA==
-References: <20230929-xfs-iversion-v1-1-38587d7b5a52@kernel.org>
- <b4136500fe6c49ee689dba139ce25824684719f2.camel@kernel.org>
- <20231011154938.GL21298@frogsfrogsfrogs>
- <e0599593fcff0eca5c8287b8d09631b5fcb3a7e4.camel@kernel.org>
- <20231011191200.GA21277@frogsfrogsfrogs>
-User-agent: mu4e 1.8.10; emacs 27.1
-From: Chandan Babu R <chandanbabu@kernel.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
- linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- brauner@kernel.org
-Subject: Re: [PATCH] xfs: reinstate the old i_version counter as
- STATX_CHANGE_COOKIE
-Date: Thu, 12 Oct 2023 10:17:44 +0530
-In-reply-to: <20231011191200.GA21277@frogsfrogsfrogs>
-Message-ID: <874jiwa06p.fsf@debian-BULLSEYE-live-builder-AMD64>
+	s=k20201202; t=1697095667;
+	bh=uFOVsO0iA7aERTg561QtZIyfEN81ZReHUhYxtMi3rEo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uvWFNVfFW7OtxSkeY822KLUGNK0/bFrW0/i73sSIrS7DPfp+ATEQGOEy+D0Hm9ngf
+	 CFHDGH2okbPQT4cu1sstJ+7w8Nqvzh1lwraH7kdqkghfyGMxYSaeosg8c70+sU3E3Z
+	 u/yfR5lpSao+952TLbTPLEEUu8YlyUOP8UV24hnj6RT/qm5SjMm2kmbU6g66UtXH5M
+	 E44Ma8qReRsi7UZBhO62Ts/yEq/Ln0HlOj9+sFo1kG+uZBmuqdr2lKc6+5Ccuyfv7t
+	 D/Sxr5EBT4kGs6NCT0OK9+zRW+JcObRaxJYbHPJ8flpg379R2VKtTWZHU3a7KNJhl2
+	 tuhRlcyIe+tVA==
+Date: Thu, 12 Oct 2023 00:27:46 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Andrey Albershteyn <aalbersh@redhat.com>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	fsverity@lists.linux.dev, djwong@kernel.org, david@fromorbit.com,
+	dchinner@redhat.com
+Subject: Re: [PATCH v3 07/28] fsverity: always use bitmap to track verified
+ status
+Message-ID: <20231012072746.GA2100@sol.localdomain>
+References: <20231006184922.252188-1-aalbersh@redhat.com>
+ <20231006184922.252188-8-aalbersh@redhat.com>
+ <20231011031543.GB1185@sol.localdomain>
+ <q75t2etmyq2zjskkquikatp4yg7k2yoyt4oab4grhlg7yu4wyi@6eax4ysvavyk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <q75t2etmyq2zjskkquikatp4yg7k2yoyt4oab4grhlg7yu4wyi@6eax4ysvavyk>
 
-On Wed, Oct 11, 2023 at 12:12:00 PM -0700, Darrick J. Wong wrote:
-> On Wed, Oct 11, 2023 at 11:51:08AM -0400, Jeff Layton wrote:
->> On Wed, 2023-10-11 at 08:49 -0700, Darrick J. Wong wrote:
->> > On Wed, Oct 11, 2023 at 09:09:38AM -0400, Jeff Layton wrote:
->> > > On Fri, 2023-09-29 at 14:43 -0400, Jeff Layton wrote:
->> > > > The handling of STATX_CHANGE_COOKIE was moved into generic_fillattr in
->> > > > commit 0d72b92883c6 (fs: pass the request_mask to generic_fillattr), but
->> > > > we didn't account for the fact that xfs doesn't call generic_fillattr at
->> > > > all.
->> > > > 
->> > > > Make XFS report its i_version as the STATX_CHANGE_COOKIE.
->> > > > 
->> > > > Fixes: 0d72b92883c6 (fs: pass the request_mask to generic_fillattr)
->> > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
->> > > > ---
->> > > > I had hoped to fix this in a better way with the multigrain patches, but
->> > > > it's taking longer than expected (if it even pans out at this point).
->> > > > 
->> > > > Until then, make sure we use XFS's i_version as the STATX_CHANGE_COOKIE,
->> > > > even if it's bumped due to atime updates. Too many invalidations is
->> > > > preferable to not enough.
->> > > > ---
->> > > >  fs/xfs/xfs_iops.c | 5 +++++
->> > > >  1 file changed, 5 insertions(+)
->> > > > 
->> > > > diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
->> > > > index 1c1e6171209d..2b3b05c28e9e 100644
->> > > > --- a/fs/xfs/xfs_iops.c
->> > > > +++ b/fs/xfs/xfs_iops.c
->> > > > @@ -584,6 +584,11 @@ xfs_vn_getattr(
->> > > >  		}
->> > > >  	}
->> > > >  
->> > > > +	if ((request_mask & STATX_CHANGE_COOKIE) && IS_I_VERSION(inode)) {
->> > > > +		stat->change_cookie = inode_query_iversion(inode);
->> > > > +		stat->result_mask |= STATX_CHANGE_COOKIE;
->> > > > +	}
->> > > > +
->> > > >  	/*
->> > > >  	 * Note: If you add another clause to set an attribute flag, please
->> > > >  	 * update attributes_mask below.
->> > > > 
->> > > > ---
->> > > > base-commit: df964ce9ef9fea10cf131bf6bad8658fde7956f6
->> > > > change-id: 20230929-xfs-iversion-819fa2c18591
->> > > > 
->> > > > Best regards,
->> > > 
->> > > Ping?
->> > > 
->> > > This patch is needed in v6.6 to prevent a regression when serving XFS
->> > > via NFSD. I'd prefer this go in via the xfs tree, but let me know if
->> > > you need me to get this merged this via a different one.
->> > 
->> > Oh!   Right, this is needed because the "hide a state in the high bit of
->> > tv_nsec" stuff got reverted in -rc3, correct?  So now nfsd needs some
->> > way to know that something changed in the file, and better to have too
->> > many client invalidations than not enough?  And I guess bumping
->> > i_version will keep nfsd sane for now?
->> > 
->> > If the answers are [yes, yes, yes] then:
->> > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
->> 
->> Yes, yes, and yes. Can you guys shepherd this into mainline?
->
-> Chandan, can you queue this (and the other xfs fixes I sent) for -rc6?
->
+On Wed, Oct 11, 2023 at 03:03:55PM +0200, Andrey Albershteyn wrote:
+> > How complicated would it be to keep supporting using the page bit when
+> > merkle_tree_block_size == page_size and the filesystem supports it?  It's an
+> > efficient solution, so it would be a shame to lose it.  Also it doesn't have the
+> > max file size limit that the bitmap has.
+> 
+> Well, I think it's possible but my motivation was to step away from
+> page manipulation as much as possible with intent to not affect other
+> filesystems too much. I can probably add handling of this case to
+> fsverity_read_merkle_tree_block() but fs/verity still will create
+> bitmap and have a limit. The other way is basically revert changes
+> done in patch 09, then, it probably will be quite a mix of page/block
+> handling in fs/verity/verify.c
 
-I have pulled in your fixes and also the current patch. I will have to execute
-fstests for atleast one day before updating xfs-linux's for-next branch.
+The page-based caching still has to be supported anyway, since that's what the
+other filesystems that support fsverity use, and it seems you don't plan to
+change that.  The question is where the "block verified" flags should be stored.
+Currently there are two options: PG_checked and the separate bitmap.  I'm not
+yet convinced that removing the support for the PG_checked method is a good
+change.  PG_checked is a nice solution for the cases where it can be used; it
+requires no extra memory, no locking, and has no max file size.  Also, this
+change seems mostly orthogonal to what you're actually trying to accomplish.
 
--- 
-Chandan
+> > > Also, this patch removes spinlock. The lock was used to reset bits
+> > > in bitmap belonging to one page. This patch works only with one
+> > > Merkle tree block and won't reset other blocks status.
+> > 
+> > The spinlock is needed when there are multiple Merkle tree blocks per page and
+> > the filesystem is using the page-based caching.  So I don't think you can remove
+> > it.  Can you elaborate on why you feel it can be removed?
+> 
+> With this patch is_hash_block_verified() doesn't reset bits for
+> blocks belonging to the same page. Even if page is re-instantiated
+> only one block is checked in this case. So, when other blocks are
+> checked they are reset.
+> 
+> 	if (block_cached)
+> 		return test_bit(hblock_idx, vi->hash_block_verified);
+
+When part of the Merkle tree cache is evicted and re-instantiated, whether that
+part is a "page" or something else, the verified status of all the blocks
+contained in that part need to be invalidated so that they get re-verified.  The
+existing code does that.  I don't see how your proposed code does that.
+
+- Eric
 
