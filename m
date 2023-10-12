@@ -1,211 +1,227 @@
-Return-Path: <linux-fsdevel+bounces-149-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-150-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BCF47C625F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 03:45:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B3947C62B6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 04:26:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 724E51C20C6C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 01:45:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6EAC282731
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 02:25:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7D5E7EF;
-	Thu, 12 Oct 2023 01:45:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="lL+Z9oNP"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 442CF7FC;
+	Thu, 12 Oct 2023 02:25:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9B66657;
-	Thu, 12 Oct 2023 01:45:20 +0000 (UTC)
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A444E98;
-	Wed, 11 Oct 2023 18:45:18 -0700 (PDT)
-Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20231012014516epoutp04c3ac5cb2248aba0ef58fba6a05c5bd6f~NONO2GwH41763017630epoutp04Z;
-	Thu, 12 Oct 2023 01:45:16 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20231012014516epoutp04c3ac5cb2248aba0ef58fba6a05c5bd6f~NONO2GwH41763017630epoutp04Z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1697075116;
-	bh=mSSwdhO6iAHAOEF3p3uIGoMW4JID2KH+xXt+a7q18zI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=lL+Z9oNPd3WBt7ClIJee/bGX23lhFYlt+FyXVO/vPzmWiiUFrjz66glJb3VqrIYaD
-	 hwKEnKLSmJb2/ORik1HXbq4t/FyKZhgx1/tbFIMIAx/ywuPW8WpARHtdbGRRMTLHDZ
-	 ujXQkYKJ+vLPDh/wAP8Wk7HF6UfsRPw4WBtq+4js=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTP id
-	20231012014516epcas2p4820e15420eb03a034943d280d0743666~NONOeTaKW1250412504epcas2p4E;
-	Thu, 12 Oct 2023 01:45:16 +0000 (GMT)
-Received: from epsmges2p2.samsung.com (unknown [182.195.36.69]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4S5XWv33qJz4x9Pr; Thu, 12 Oct
-	2023 01:45:15 +0000 (GMT)
-Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
-	epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-	62.78.09649.BAF47256; Thu, 12 Oct 2023 10:45:15 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
-	20231012014514epcas2p3ca99a067f3044c5753309a08cd0b05c4~NONNRgGSp1736217362epcas2p3Z;
-	Thu, 12 Oct 2023 01:45:14 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20231012014514epsmtrp11618661b71bca5b44530bba8ce23a48e~NONNO1nP52141621416epsmtrp1C;
-	Thu, 12 Oct 2023 01:45:14 +0000 (GMT)
-X-AuditID: b6c32a46-1c3eaa80000025b1-42-65274fab2c6b
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	04.0F.08742.AAF47256; Thu, 12 Oct 2023 10:45:14 +0900 (KST)
-Received: from tiffany (unknown [10.229.95.142]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20231012014514epsmtip1831e5824c182001ced8785e96c927f36~NONM7MXAT1906819068epsmtip1g;
-	Thu, 12 Oct 2023 01:45:14 +0000 (GMT)
-Date: Thu, 12 Oct 2023 10:35:05 +0900
-From: Hyesoo Yu <hyesoo.yu@samsung.com>
-To: Alexandru Elisei <alexandru.elisei@arm.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev,
-	maz@kernel.org, james.morse@arm.com, suzuki.poulose@arm.com,
-	yuzenghui@huawei.com, arnd@arndb.de, akpm@linux-foundation.org,
-	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org,
-	bsegall@google.com, mgorman@suse.de, bristot@redhat.com,
-	vschneid@redhat.com, mhiramat@kernel.org, rppt@kernel.org, hughd@google.com,
-	pcc@google.com, steven.price@arm.com, anshuman.khandual@arm.com,
-	vincenzo.frascino@arm.com, david@redhat.com, eugenis@google.com,
-	kcc@google.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 17/37] arm64: mte: Disable dynamic tag storage
- management if HW KASAN is enabled
-Message-ID: <20231012013505.GB2426387@tiffany>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D420F7E4
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Oct 2023 02:25:52 +0000 (UTC)
+Received: from mail-oi1-f208.google.com (mail-oi1-f208.google.com [209.85.167.208])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64596B8
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Oct 2023 19:25:50 -0700 (PDT)
+Received: by mail-oi1-f208.google.com with SMTP id 5614622812f47-3aec0675519so678307b6e.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Oct 2023 19:25:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697077549; x=1697682349;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FonEK2Cc8Fum2v2IQrVQ7j+RtZpE/wmPQ+M4vkmMyAo=;
+        b=hlsJ4lJURxR4L8n1MKGBDgvNjPw28Xm1+v7hK9y/onPD1Ywbf1KvWxOlUaVH7rvCUB
+         nNw7TceYm8NwUZpU6lzrSkCVPMZ/MxFyNK1kHsQCOhgrGb9hb+Gg6CMSPkwnlKjVMKYO
+         GtURk+B4SIZ+vvv+9tonYR/h4oLoN4EW8xhjHQHgY5Y9iXNidGNee9ijiZMhuiz3opmg
+         S33i8q90jEarsEuYfwcJL0rd21mZBucV/a5H6tzXJicET+Dkur7rPhPyEDUK9sDVofra
+         oYPHtSLI6xobLgv4grgVYoQ3EqouwViDdYeiWrPFW7oI4jhcoe6sedqmN42DoWrEYMFs
+         Y7cg==
+X-Gm-Message-State: AOJu0YxCwW/QlP65dTIVRBWtCDS5/icPvfoM1D5GpaXycmM1n5/vkHdA
+	3qOugJJMDM52dI9kAlKNxkPCNBxDGhHiVjG0IbXwLxTGI1+0
+X-Google-Smtp-Source: AGHT+IHmbATJqeEQ+PXig62KlRk11d8zQ7z1uRoC6eIktHGCvx53R5rBGRl5RdfD24eXQfQcgfYUF7Zh8Vzvseweo/cWHzo2eY1m
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20230823131350.114942-18-alexandru.elisei@arm.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA02TeTBdVxzHe+69777H9MW1JDmRSapPs9BanvWQEJOit1uqk6SdyXTCG+54
-	guflLdJEJ0UREbUbJYiloRFCbEksr5YXW1UbirG2KBPEUmlIKOnjaif/fX7f8/2e3zm/M4eH
-	6/3CNeT5SRSMTCIKEJDaRHWziZ3Z7U8OMZZ/9+qgzNJiEqXd6iGRqs0brSe1cFH3RK9Gmg4j
-	0EJBLEDPSldxNJlQhaPGnHkCTS7FEeh3VSGGRuJTCXRvag5DM5XNBIqueUag8ok+DqqrbydQ
-	T00miUaLX3KQuvRnAj3IbOeg5PkpgPILD6LuhhwMpb54QqL44X4StX7bgCFV9B+YxnsPQ2Hq
-	BRKlDw0BFK1exlH9xgsCVT1c4aKIYVs0cLOM63KALs4uBvTaahKgI1SDXDqnXElHqOc4dMUP
-	pnR50VWSLl9K4tLDfXUk3fbdGkHnhqbidMX3X9OPK9IBvaDqJemKn0Lop+X7Pagz/kfFjMiH
-	kRkxEu8gHz+Jr5Pgw5Oe73ra2lkKzYQOyF5gJBEFMk4C1488zNz9AjTDFBgFiwKUGslDJJcL
-	LJyPyoKUCsZIHCRXOAkYqU+A1F5qLhcFypUSX3MJo3AUWlpa2WqMXv7ilIxeTKqivpy+cTwU
-	VPBjgBYPUjaw7PojbgzQ5ulR9wHsyr2CscUSgCMlidvFMoBj9QlkDOBtRYYGHFm9HsCohLZt
-	0ySA4U9XOJv7EtQBOHe3mNxkkjoE2yoLwCYbUBZwvGoGbAZwqoOEI9c7sc0FfeoczI0f2zLx
-	KXNYVn8XY1kXtqf/SWyyFuUCo0ZvbnWDVKo2rK1eBOyRXOHq8jH2QvpwprWSy7IhnI6P2mZ/
-	OPJXAsmyAt7pDN3WrWHG1JWtvjglhr9OjW9vaQzVgwQr74DRzetcVubD6Cg9NmkMfyzIJlje
-	A8dLrnBYCw07Vz5mR9KmmdvsGpYA9me8cpmMV5qx/A7MqV0iMzRxnNoLCzd4LJrA0hqLHMAp
-	ArsYqTzQl5FbSa3+f17voMBysPWzTN3vg5S5RfMmgPFAE4A8XGDAH/d7i9Hj+4guXmJkQZ4y
-	ZQAjbwK2mqdJxA13egdpvqZE4Sm0cbC0sbMT2lvZWtoLdvNHI7N89ChfkYLxZxgpI/svh/G0
-	DEOxq5FGR6y/Mnw473YmrGeuZfW9UwOL/bbG/5zsH53MG7vVJHZFs+cKq17qmLXmRQccPu/T
-	Mb3v2FKk/nN8IS3rdnNdBflm8jW5uIV6NOTWqB4pCQ3mhaZXZc8njtYKqXBl3I1vdh6kmd2w
-	2nP9cs1ojdfnyfgdXXXI6dff+O1wHD/rU8n4ieSUwRwP7Emavcfsjj6XDX/nyvOxWUO0g1G+
-	e5GN6bX3g5X5tVZ7HY/I7DpCpmoiL5xuUD8w4cTqhhuUYF5dzt6fdbs1nhhjXrOemN/3BUel
-	Y4hdsHhunKg8e3FPwSXM5u0qeojK0/tgsvlxdXXXogt+1gnXh5fzrU+t7FLWCwi5WCQ0xWVy
-	0b9Bj5x04gQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUxTZxiG855zenpaqZ4VXN9KxpKiEpqtiMzszbZs/PDHu2SOhWSQACqV
-	nvBZ7FpwfiwR0iIMQQgMhbZxMOVjXSdSyscQOgZV2lijwVhFGGxAGeqQQcMWZHSjkGX+u3Pf
-	15U8Px6GFF/k7WKy8ws4bb4yT0YLqe5hWcSbloQobp9pOBqZ2600uvTtfRo5XBloveYWH43O
-	PNionhRTaLGlAqCV9hck8lV3keinxucU8i1foNCUo5VAP1fVUahnboFAT+3DFCrrW6GQbcbL
-	Q/0Dbgrd7zPTaNL6Dw852+9Q6Aezm4dqn88BdKV1LxodbCRQ3ervNKqaeEijkcpBAjnKfiE2
-	2B4CFTsXadQwPg5QmfNPEg0EVinUdfMvPjJMHEBjzdf58Xuw9bIV4LUXNQAbHI/5uNFWiA3O
-	BR7ubJNjm+VLGtuWa/h4wttPY1f9GoWbiupI3Hn1LJ7vbAB40fGAxp23z2C/LeITNkX4norL
-	yz7BaWPeTxdmTX2jJzQB0UnrlB8UgYpt5YBhIPsWHB97pxwIGTF7A0BLST0oB4KNXgqNfjex
-	lUPhlMHJ24JmALxrD5DBgWL3wIUOKx3MNBsFXfaWTTmMjYHTXU9BUCBZDw0vfGfkBYdQNgc2
-	Vf26CYlYBbw+0EEErxCzBVBfK9qqX4HuhlkqmElWDh8FnmwiJBsOWwNMsBaw8fDcZDNRDVjj
-	S4bxJcP4v9EISAuQchqdOlOti9XE5nOfK3RKta4wP1ORcVxtA5uvI4/uBT2WPxRDgGDAEIAM
-	KQsTTWfv5sQilfLUaU57/Ki2MI/TDYFwhpJJRJL5SpWYzVQWcLkcp+G0/60EI9hVRMSFnXkj
-	cvCerfZgmSFxzd53Iydt6d2UuI/2dvSmSrtDtk/7S1xelSMQ+Oqknb+UViKMbOanpNbw5o79
-	XembK8SPdl6r6Ikylcadkh1jCi67Rkeks55cRfiY6aCkzRvx0H3r427VgSZJbtehBP2aMKX/
-	cG/S+dX4bfvPSfZHmNXL5ntHDt3JOJ2V5kl+tXof/fVOI/3Mr5+tf2xIf126FH1TEBKT4LCk
-	wuJk/Wt3L04mj6234IyFxMVr9fGmUO9Rwacn5GmXPDk+ZkWnbJvf0Xk4cfKIZbtL4ytNoj7j
-	cW+nG5IyvxgK2WG+vV561bEya4r11H448uMHv0V+bzp7Hj+TUbosZayc1OqU/wIpMteEqQMA
-	AA==
-X-CMS-MailID: 20231012014514epcas2p3ca99a067f3044c5753309a08cd0b05c4
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----E9vxk1eHFJMo0Hi_Q_rTTD2vXp5VKj0nvvVRz8vbSgBSYVSL=_d92b1_"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20231012014514epcas2p3ca99a067f3044c5753309a08cd0b05c4
-References: <20230823131350.114942-1-alexandru.elisei@arm.com>
-	<20230823131350.114942-18-alexandru.elisei@arm.com>
-	<CGME20231012014514epcas2p3ca99a067f3044c5753309a08cd0b05c4@epcas2p3.samsung.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-	RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
-	SPF_HELO_PASS,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a05:6808:1786:b0:3a7:3737:60fd with SMTP id
+ bg6-20020a056808178600b003a7373760fdmr12087647oib.7.1697077549557; Wed, 11
+ Oct 2023 19:25:49 -0700 (PDT)
+Date: Wed, 11 Oct 2023 19:25:49 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000007f6b6e06077ba8fa@google.com>
+Subject: [syzbot] [ext4?] KASAN: wild-memory-access Read in read_block_bitmap
+From: syzbot <syzbot+47f3372b693d7f62b8ae@syzkaller.appspotmail.com>
+To: adilger.kernel@dilger.ca, jack@suse.com, linux-ext4@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,
+	SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-------E9vxk1eHFJMo0Hi_Q_rTTD2vXp5VKj0nvvVRz8vbSgBSYVSL=_d92b1_
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
+Hello,
 
-On Wed, Aug 23, 2023 at 02:13:30PM +0100, Alexandru Elisei wrote:
-> Reserving the tag storage associated with a tagged page requires the
-> ability to migrate existing data if the tag storage is in use for data.
-> 
-> The kernel allocates pages, which are now tagged because of HW KASAN, in
-> non-preemptible contexts, which can make reserving the associate tag
-> storage impossible.
-> 
-> Don't expose the tag storage pages to the memory allocator if HW KASAN is
-> enabled.
-> 
-> Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
-> ---
->  arch/arm64/kernel/mte_tag_storage.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/arch/arm64/kernel/mte_tag_storage.c b/arch/arm64/kernel/mte_tag_storage.c
-> index 4a6bfdf88458..f45128d0244e 100644
-> --- a/arch/arm64/kernel/mte_tag_storage.c
-> +++ b/arch/arm64/kernel/mte_tag_storage.c
-> @@ -314,6 +314,18 @@ static int __init mte_tag_storage_activate_regions(void)
->  		return 0;
->  	}
->  
-> +	/*
-> +	 * The kernel allocates memory in non-preemptible contexts, which makes
-> +	 * migration impossible when reserving the associated tag storage.
-> +	 *
-> +	 * The check is safe to make because KASAN HW tags are enabled before
-> +	 * the rest of the init functions are called, in smp_prepare_boot_cpu().
-> +	 */
-> +	if (kasan_hw_tags_enabled()) {
-> +		pr_info("KASAN HW tags enabled, disabling tag storage");
-> +		return 0;
-> +	}
-> +
+syzbot found the following issue on:
 
-Hi.
+HEAD commit:    19af4a4ed414 Merge branch 'for-next/core', remote-tracking..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=137ade41680000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=80eedef55cd21fa4
+dashboard link: https://syzkaller.appspot.com/bug?extid=47f3372b693d7f62b8ae
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1035f9ce680000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=132439c9680000
 
-Is there no plan to enable HW KASAN in the current design ? 
-I wonder if dynamic MTE is only used for user ? 
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/702d996331e0/disk-19af4a4e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/2a48ce0aeb32/vmlinux-19af4a4e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/332eb4a803d2/Image-19af4a4e.gz.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/9ab1853e4248/mount_0.gz
 
-Thanks,
-Hyesoo Yu.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+47f3372b693d7f62b8ae@syzkaller.appspotmail.com
+
+EXT2-fs (loop0): error: ext2_free_branches: Read failure, inode=16, block=1669132791
+EXT2-fs (loop0): error: ext2_free_branches: Read failure, inode=16, block=262144
+==================================================================
+BUG: KASAN: wild-memory-access in generic_test_bit include/asm-generic/bitops/generic-non-atomic.h:128 [inline]
+BUG: KASAN: wild-memory-access in test_bit_le include/asm-generic/bitops/le.h:21 [inline]
+BUG: KASAN: wild-memory-access in ext2_valid_block_bitmap fs/ext2/balloc.c:86 [inline]
+BUG: KASAN: wild-memory-access in read_block_bitmap+0x338/0x628 fs/ext2/balloc.c:153
+Read of size 8 at addr 1fff00018751cff8 by task syz-executor221/6316
+
+CPU: 1 PID: 6316 Comm: syz-executor221 Not tainted 6.6.0-rc4-syzkaller-g19af4a4ed414 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/06/2023
+Call trace:
+ dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:233
+ show_stack+0x2c/0x44 arch/arm64/kernel/stacktrace.c:240
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xd0/0x124 lib/dump_stack.c:106
+ print_report+0xe4/0x514 mm/kasan/report.c:478
+ kasan_report+0xd8/0x138 mm/kasan/report.c:588
+ __asan_report_load8_noabort+0x20/0x2c mm/kasan/report_generic.c:381
+ generic_test_bit include/asm-generic/bitops/generic-non-atomic.h:128 [inline]
+ test_bit_le include/asm-generic/bitops/le.h:21 [inline]
+ ext2_valid_block_bitmap fs/ext2/balloc.c:86 [inline]
+ read_block_bitmap+0x338/0x628 fs/ext2/balloc.c:153
+ ext2_free_blocks+0x284/0x998 fs/ext2/balloc.c:514
+ ext2_free_data fs/ext2/inode.c:1102 [inline]
+ ext2_free_branches+0x2f4/0x3c4 fs/ext2/inode.c:1159
+ ext2_free_branches+0x180/0x3c4 fs/ext2/inode.c:1150
+ ext2_free_branches+0x180/0x3c4 fs/ext2/inode.c:1150
+ __ext2_truncate_blocks+0x9a8/0xd00 fs/ext2/inode.c:1233
+ ext2_setsize fs/ext2/inode.c:1291 [inline]
+ ext2_setattr+0x774/0xa44 fs/ext2/inode.c:1661
+ notify_change+0x9d4/0xc8c fs/attr.c:499
+ do_truncate+0x1c0/0x28c fs/open.c:66
+ handle_truncate fs/namei.c:3298 [inline]
+ do_open fs/namei.c:3643 [inline]
+ path_openat+0x2130/0x27f8 fs/namei.c:3796
+ do_filp_open+0x1bc/0x3cc fs/namei.c:3823
+ do_sys_openat2+0x124/0x1b8 fs/open.c:1422
+ do_sys_open fs/open.c:1437 [inline]
+ __do_sys_openat fs/open.c:1453 [inline]
+ __se_sys_openat fs/open.c:1448 [inline]
+ __arm64_sys_openat+0x1f0/0x240 fs/open.c:1448
+ __invoke_syscall arch/arm64/kernel/syscall.c:37 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:51
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:136
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:155
+ el0_svc+0x58/0x16c arch/arm64/kernel/entry-common.c:678
+ el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:696
+ el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:595
+==================================================================
+EXT2-fs (loop0): error: ext2_valid_block_bitmap: Invalid block bitmap - block_group = 0, block = 0
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks in system zones - Block = 3, count = 3
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 983269, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 589827, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 2185560079, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 18346, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks in system zones - Block = 2, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 33261, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: bit already cleared for block 100
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 1669132791, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 1669132791, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: bit already cleared for block 64
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 65536, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 268435456, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 1, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 1803188595, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 1701604449, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 2054779762, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 1819042155, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 7565925, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 1937768448, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 1634433657, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 1919249516, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 1803188595, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 1701604449, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 2054779762, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 1819042155, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 2037609061, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 1818323834, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 3133565699, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 327680, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 150994944, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 2683928664, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 2683928664, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 2683928664, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 1669132791, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 2683928664, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 3925999616, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 3409668, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: bit already cleared for block 40
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 1635017060, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 1936876908, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 1634433657, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 1919249516, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 1803188595, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 1701604449, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 2054779762, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 1819042155, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 2037609061, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 1818323834, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 1936876908, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: bit already cleared for block 9
+EXT2-fs (loop0): error: ext2_free_blocks: bit already cleared for block 13
+EXT2-fs (loop0): error: ext2_free_blocks: bit already cleared for block 32
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 163928, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 2683895808, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 1669132790, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks not in datazone - block = 131072, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks in system zones - Block = 5, count = 1
+EXT2-fs (loop0): error: ext2_free_blocks: Freeing blocks in system zones - Block = 5, count = 1
+EXT2-fs (loop0): error: ext2_free_branches: Read failure, inode=16, block=16777216
 
 
->  	for (i = 0; i < num_tag_regions; i++) {
->  		tag_range = &tag_regions[i].tag_range;
->  		for (pfn = tag_range->start; pfn <= tag_range->end; pfn += pageblock_nr_pages) {
-> -- 
-> 2.41.0
-> 
-> 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-------E9vxk1eHFJMo0Hi_Q_rTTD2vXp5VKj0nvvVRz8vbSgBSYVSL=_d92b1_
-Content-Type: text/plain; charset="utf-8"
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-------E9vxk1eHFJMo0Hi_Q_rTTD2vXp5VKj0nvvVRz8vbSgBSYVSL=_d92b1_--
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
