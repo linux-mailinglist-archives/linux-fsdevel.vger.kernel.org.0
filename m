@@ -1,197 +1,108 @@
-Return-Path: <linux-fsdevel+bounces-175-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-176-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 225F67C6F60
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 15:36:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 060A97C6F89
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 15:44:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D13F0282955
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 13:36:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF2A6282B1C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 13:44:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C5E929424;
-	Thu, 12 Oct 2023 13:36:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91DD22AB42;
+	Thu, 12 Oct 2023 13:44:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="WNbvvIUI"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R5Dnv/Vv"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8329929417
-	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Oct 2023 13:36:04 +0000 (UTC)
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 890F7E0;
-	Thu, 12 Oct 2023 06:36:02 -0700 (PDT)
-Received: from pps.filterd (m0353727.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39CDRnMh001704;
-	Thu, 12 Oct 2023 13:35:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=3e+sP/4LvWake3Mp2WG5hQgW0F0A4aNnsHpEEfmrHxE=;
- b=WNbvvIUIojMIV41Cz5CqCdRBwCEBUU/zQM07fHAVgYKTKiTflOrjKjTAbKmzufKzKDmT
- HfoTbVREAAoW6QQsXqqjuQk7iOEsJvWExXLsMUUimMND2Zo2QcyqvUhkIVYTexlNZKlx
- XhhqX6YLMCMbjS0MufJHaGP/qdHxBpDqOaGw5HDDVGTGVmNLPgFVyt7m8/svvoOpOG5O
- Nue0qTXS58JOPJ/KYJQESzC+PKm98d4taszazcNy28R73hFJ1rnVlVwghGJa1ObRx4B4
- /9uXn592PptaMTn8zHmRmq1ViReVAKi5x866W2a9znt2KnHRUAW0i5T3KXRUb+SfZSd8 lg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3tphpvr92e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Oct 2023 13:35:32 +0000
-Received: from m0353727.ppops.net (m0353727.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 39CDSMhP003478;
-	Thu, 12 Oct 2023 13:35:31 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3tphpvr90m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Oct 2023 13:35:31 +0000
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 39CBDmKX001170;
-	Thu, 12 Oct 2023 13:35:29 GMT
-Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3tkkvk7bd9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Oct 2023 13:35:29 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 39CDZSuM23396882
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 12 Oct 2023 13:35:29 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A01A858064;
-	Thu, 12 Oct 2023 13:35:28 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7BB215805F;
-	Thu, 12 Oct 2023 13:35:26 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.61.11.225])
-	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 12 Oct 2023 13:35:26 +0000 (GMT)
-Message-ID: <4c11613696d2ffd92a652c1a734d4abfc489ff40.camel@linux.ibm.com>
-Subject: Re: [PATCH v3 14/25] security: Introduce file_post_open hook
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>, viro@zeniv.linux.org.uk,
-        brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
-        neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
-        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, dhowells@redhat.com, jarkko@kernel.org,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        casey@schaufler-ca.com
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
-Date: Thu, 12 Oct 2023 09:35:24 -0400
-In-Reply-To: <e6f0e7929abda6fa6ae7ef450b6e155b420a5f5b.camel@huaweicloud.com>
-References: <20230904133415.1799503-1-roberto.sassu@huaweicloud.com>
-	 <20230904133415.1799503-15-roberto.sassu@huaweicloud.com>
-	 <2026a46459563d8f5d132a099f402ddad8f06fae.camel@linux.ibm.com>
-	 <e6f0e7929abda6fa6ae7ef450b6e155b420a5f5b.camel@huaweicloud.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 405B427705
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Oct 2023 13:44:42 +0000 (UTC)
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 503DEC6;
+	Thu, 12 Oct 2023 06:44:39 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-406618d0991so10125465e9.2;
+        Thu, 12 Oct 2023 06:44:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1697118278; x=1697723078; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hOu+ioq+TirtMxJ+BaI2PKvCmkWg65munbmrrDQrxOk=;
+        b=R5Dnv/Vv3rift11mwskQ31zLSXAGXJJOsqcKW6SVDHhETxQ3h/gOzoQwEQwzY+FLJH
+         aR/S7s5mQS4FkX0m7oNIYEpf2KiOxDZXgXfXazmWwq3Cynn/EppnGTH6yUsLCElMvIys
+         K+jS/G04WkqlTHKU+X+9P8LRHs8jKclpRgCX2NsfnjAe5XcAglbUZANlie/c9TTdomVC
+         BcWeFlgDY5XY6/gof3/0qZABQRK1b2GQ18LscoRteXnNaSktXe3ZbvJ84s2LwMzVXH0W
+         DlbNfw4rPokrt8rkP2odEaJUcbl66/OXxoGnBvGKb4zRNaXe6O/XzCot3zF0dUXYAo/C
+         7Y/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697118278; x=1697723078;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hOu+ioq+TirtMxJ+BaI2PKvCmkWg65munbmrrDQrxOk=;
+        b=ldXdmjWDs346yhcbZuvcGJSvOw+vOJzPrONbfE7hXnk2Ffy2sSyT5bcuqTeypt7Q8Z
+         RrfeuL1RcFCK9VNhuls/o8Lva6gI1u8tUSvtLK+EXpV4LtzxYGycOrnTqUDpKgvYMKxa
+         4nSLJY9Ed1e+6yJCP8k5M4gOY8R3rBWSHko8r8PH2SCVXAeVIHTzoniBZ2jcwGbwQjZT
+         m97YEFPy2wr3ZwX0JJ2XymVqXuT3VQDYMIil803oBZCP8P3+ONMBD0lz3n6X80VCb0Mv
+         i5EyZH6aFqAngfMsxS1AiEQkya+K5gIW11kRrI/rf/XA9eizzRcWy8yhlOIizQ50siD0
+         +smQ==
+X-Gm-Message-State: AOJu0Yw3C6WoR/QL6aR3mLuOOvo6xuS23i2odS0IU/Wl/1R/PTeZmHP4
+	jsGVwjiXww+PEY8igLXpCC4VvSwBA5o=
+X-Google-Smtp-Source: AGHT+IHrnZER/qylP+y+n6A8ve2nocogOhAeetjkz2WSo10Ofy3nyQD2zLpZgoYASzLkOQOrHTM14g==
+X-Received: by 2002:a7b:cb8b:0:b0:402:8c7e:3fc4 with SMTP id m11-20020a7bcb8b000000b004028c7e3fc4mr21502656wmi.30.1697118277561;
+        Thu, 12 Oct 2023 06:44:37 -0700 (PDT)
+Received: from amir-ThinkPad-T480.lan ([5.29.249.86])
+        by smtp.gmail.com with ESMTPSA id l16-20020a7bc450000000b0040536dcec17sm21825154wmi.27.2023.10.12.06.44.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Oct 2023 06:44:35 -0700 (PDT)
+From: Amir Goldstein <amir73il@gmail.com>
+To: Miklos Szeredi <miklos@szeredi.hu>,
+	Christian Brauner <brauner@kernel.org>
+Cc: linux-unionfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH 0/2] ovl: fix regression from new mount api conversion
+Date: Thu, 12 Oct 2023 16:44:26 +0300
+Message-Id: <20231012134428.1874373-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: U59meXdpALm_ufaoOhFcEc8lkx0Nv5y8
-X-Proofpoint-GUID: 6V-BGdQlrt4k18kJFgz7alScEp_zj-0E
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-10-12_05,2023-10-12_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- spamscore=0 phishscore=0 malwarescore=0 suspectscore=0 adultscore=0
- priorityscore=1501 mlxscore=0 mlxlogscore=999 lowpriorityscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2309180000 definitions=main-2310120111
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+	RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-On Thu, 2023-10-12 at 14:45 +0200, Roberto Sassu wrote:
-> On Thu, 2023-10-12 at 08:36 -0400, Mimi Zohar wrote:
-> > On Mon, 2023-09-04 at 15:34 +0200, Roberto Sassu wrote:
-> > > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > > 
-> > > In preparation to move IMA and EVM to the LSM infrastructure, introduce the
-> > > file_post_open hook. Also, export security_file_post_open() for NFS.
-> > > 
-> > > It is useful for IMA to calculate the dhigest of the file content, and to
-> > > decide based on that digest whether the file should be made accessible to
-> > > the requesting process.
-> > 
-> > Please remove "It is usefile for".   Perhaps something along the lines:
-> > 
-> > 
-> > Based on policy, IMA calculates the digest of the file content and
-> > decides ...
-> 
-> Ok.
-> 
-> > > 
-> > > LSMs should use this hook instead of file_open, if they need to make their
-> > > decision based on an opened file (for example by inspecting the file
-> > > content). The file is not open yet in the file_open hook.
+Miklos, Christian,
 
-Needing to inspect the file contents is a good example.
+I decided this was easy enough to fix with a generic helper without
+duplicating code, so we'd better fix it while 6.5.y is still taking
+fixed.
 
->  
-> > The security hooks were originally defined for enforcing access
-> > control.  As a result the hooks were placed before the action.  The
-> > usage of the LSM hooks is not limited to just enforcing access control
-> > these days.  For IMA/EVM to become full LSMs additional hooks are
-> > needed post action.  Other LSMs, probably non-access control ones,
-> > could similarly take some action post action, in this case successful
-> > file open.
-> 
-> I don't know, I would not exclude LSMs to enforce access control. The
-> post action can be used to update the state, which can be used to check
-> next accesses (exactly what happens for EVM).
-> 
-> > Having to justify the new LSM post hooks in terms of the existing LSMs,
-> > which enforce access control, is really annoying and makes no sense. 
-> > Please don't.
-> 
-> Well, there is a relationship between the pre and post. But if you
-> prefer, I remove this comparison.
+It looks like smb3_fs_context_parse_monolithic() could also use the
+generic helper, but it is not a straight forward change, so I will leave
+that to smb client developers.
 
-My comments, above, were a result of the wording of the hook
-definition, below.
+Thanks,
+Amir.
 
-> > > +/**
-> > > + * security_file_post_open() - Recheck access to a file after it has been opened
-> > 
-> > The LSM post hooks aren't needed to enforce access control.   Probably
-> > better to say something along the lines of "take some action after
-> > successful file open".
-> > 
-> > > + * @file: the file
-> > > + * @mask: access mask
-> > > + *
-> > > + * Recheck access with mask after the file has been opened. The hook is useful
-> > > + * for LSMs that require the file content to be available in order to make
-> > > + * decisions.
-> > 
-> > And reword the above accordingly.
-> > 
-> > > + *
-> > > + * Return: Returns 0 if permission is granted.
-> > > + */
-> > > +int security_file_post_open(struct file *file, int mask)
-> > > +{
-> > > +	return call_int_hook(file_post_open, 0, file, mask);
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(security_file_post_open);
-> > > +
-> > >  /**
-> > >   * security_file_truncate() - Check if truncating a file is allowed
-> > >   * @file: file
-> > 
-> 
+Amir Goldstein (2):
+  fs: factor out vfs_parse_monolithic_sep() helper
+  ovl: fix regression in parsing of mount options with esacped comma
 
+ fs/fs_context.c            | 34 +++++++++++++++++++++++++++++-----
+ fs/overlayfs/params.c      | 29 +++++++++++++++++++++++++++++
+ include/linux/fs_context.h |  2 ++
+ 3 files changed, 60 insertions(+), 5 deletions(-)
+
+-- 
+2.34.1
 
 
