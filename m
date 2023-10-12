@@ -1,74 +1,74 @@
-Return-Path: <linux-fsdevel+bounces-135-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-136-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF2AB7C616F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 02:09:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 395A17C6178
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 02:09:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AACF2826CB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 00:09:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AE361C20EAD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 00:09:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6344C632;
-	Thu, 12 Oct 2023 00:08:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F166C632;
+	Thu, 12 Oct 2023 00:09:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="oFos6gMI"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="eVvsm5BZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 300CB626
-	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Oct 2023 00:08:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F300B62A
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Oct 2023 00:09:12 +0000 (UTC)
 Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 072C794;
-	Wed, 11 Oct 2023 17:08:55 -0700 (PDT)
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39BNo0SK028771;
-	Thu, 12 Oct 2023 00:08:23 GMT
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C620B9E;
+	Wed, 11 Oct 2023 17:09:11 -0700 (PDT)
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39BNqOqG011484;
+	Thu, 12 Oct 2023 00:08:36 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
  from : to : cc : date : in-reply-to : references : content-type :
  mime-version : content-transfer-encoding; s=pp1;
- bh=wHZ9LLNSDUQ8Ytx9R6wBhip/mO543PZlnyG+Rebf0Qo=;
- b=oFos6gMICUP7q6yA+uofS5sFNDtVsgOTIu+EcTKoyRaNLtiAZxTVsaAQKsLCM4eDK0Iv
- R20Rdcqf+1TyeaKGcYsdtccQBtkKJ/sYjrNxxKWSGSpC+SX4xvFu8u5c8wRC+KOjLIdp
- pe4s3yrFDARhhDUjOU0g8e+QbwGTXKQ2XloIrRhldeq0BNfbGO//ksqwO9YmGZuA5cJX
- T4NiELwBsSJ5Tx7OWcpzsyF3sANy1iUcf/fqiCRwuQPtg56A2yn6LuuZ5jDKJq5d3uZV
- e6AhAO8r+WKB7/cq34h1DThfdXqUh6i/PZXP429jDIaoXfF5tYGIQt36R2rjSfAUzdU/ FA== 
+ bh=tVUs754GTmsd/82A0CVOFnptgnFOYRg9uwUOAaFRkEU=;
+ b=eVvsm5BZJXEsbId1grkLTL9gqvCgUVrDhmvob8iKjjVg5m4mNf/fVvqqwapGJbl3P2l2
+ wRrjgALqVohBtjb+aR9GOmEBXC1GUcUZ7enEnGj13NwzdCCSaa4BSpqg3reml7EI3PCw
+ RjvHtRFXTgTNGx6/buwe8Tb9XNN3Hk/pOwqqyNATy2gR3yzYmVy8fiRVGZCwE7oYLXlp
+ P7S9hpume5bZvkOavyjj6K1nXbTFjaUINQev1Dj6oFSDHxSxrzDk7+3CEwUGV3+Za6fX
+ 48TmVZkFrRLTcI0turz6ksNLjUC+HnNe8J6sIws1htsYGeF5y54ephQi1MpXFGQOaJ9h jw== 
 Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3tp5qkrd74-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3tp5rs8a7u-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Oct 2023 00:08:23 +0000
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 39BNoGnw030140;
-	Thu, 12 Oct 2023 00:08:22 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3tp5qkrd6k-1
+	Thu, 12 Oct 2023 00:08:35 +0000
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 39BNtO4w018625;
+	Thu, 12 Oct 2023 00:08:35 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3tp5rs8a7d-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Oct 2023 00:08:22 +0000
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 39BN8Dj1001148;
-	Thu, 12 Oct 2023 00:08:21 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3tkkvk3f6b-1
+	Thu, 12 Oct 2023 00:08:35 +0000
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 39BNoMXu028633;
+	Thu, 12 Oct 2023 00:08:33 GMT
+Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3tkj1yc1kk-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Oct 2023 00:08:21 +0000
-Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 39C08Krn31785598
+	Thu, 12 Oct 2023 00:08:33 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 39C08WpY24117978
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 12 Oct 2023 00:08:20 GMT
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BF4FA5805B;
-	Thu, 12 Oct 2023 00:08:20 +0000 (GMT)
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5CE3658066;
-	Thu, 12 Oct 2023 00:08:18 +0000 (GMT)
+	Thu, 12 Oct 2023 00:08:33 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CBA7D5805D;
+	Thu, 12 Oct 2023 00:08:32 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4177C58057;
+	Thu, 12 Oct 2023 00:08:31 +0000 (GMT)
 Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.61.14.38])
-	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 12 Oct 2023 00:08:18 +0000 (GMT)
-Message-ID: <c0eb88bb5b1d9f41e90b510f14835cc664ca0bf3.camel@linux.ibm.com>
-Subject: Re: [PATCH v3 11/25] security: Align inode_setattr hook definition
- with EVM
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 12 Oct 2023 00:08:31 +0000 (GMT)
+Message-ID: <cf2b236df5dad097e7524d82c32f214d5eb448d8.camel@linux.ibm.com>
+Subject: Re: [PATCH v3 10/25] evm: Align evm_inode_post_setxattr()
+ definition with LSM infrastructure
 From: Mimi Zohar <zohar@linux.ibm.com>
 To: Roberto Sassu <roberto.sassu@huaweicloud.com>, viro@zeniv.linux.org.uk,
         brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
@@ -83,10 +83,10 @@ Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>,
         Stefan
  Berger <stefanb@linux.ibm.com>
-Date: Wed, 11 Oct 2023 20:08:17 -0400
-In-Reply-To: <20230904133415.1799503-12-roberto.sassu@huaweicloud.com>
+Date: Wed, 11 Oct 2023 20:08:30 -0400
+In-Reply-To: <20230904133415.1799503-11-roberto.sassu@huaweicloud.com>
 References: <20230904133415.1799503-1-roberto.sassu@huaweicloud.com>
-	 <20230904133415.1799503-12-roberto.sassu@huaweicloud.com>
+	 <20230904133415.1799503-11-roberto.sassu@huaweicloud.com>
 Content-Type: text/plain; charset="ISO-8859-15"
 X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
 Precedence: bulk
@@ -97,15 +97,15 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 7mdV88iSURbaj26H_JUAXnRg0kS4EETs
-X-Proofpoint-GUID: 2vkJVfKlIv6BqFbb-niFqe8y5vcWlSLM
+X-Proofpoint-ORIG-GUID: 40kazML9wUzurd1SXHfwP-DsxFR6U6Z_
+X-Proofpoint-GUID: FH0FSDcMiZDUXQUjb__bVzPn-DELCNST
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
  definitions=2023-10-11_18,2023-10-11_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- mlxlogscore=835 lowpriorityscore=0 spamscore=0 priorityscore=1501
- adultscore=0 phishscore=0 mlxscore=0 suspectscore=0 impostorscore=0
- clxscore=1015 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
+ mlxscore=0 mlxlogscore=780 clxscore=1015 malwarescore=0 spamscore=0
+ lowpriorityscore=0 priorityscore=1501 adultscore=0 bulkscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2309180000 definitions=main-2310110213
 X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
@@ -116,12 +116,11 @@ X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 On Mon, 2023-09-04 at 15:34 +0200, Roberto Sassu wrote:
 > From: Roberto Sassu <roberto.sassu@huawei.com>
 > 
-> Add the idmap parameter to the definition, so that evm_inode_setattr() can
-> be registered as this hook implementation.
+> Change evm_inode_post_setxattr() definition, so that it can be registered
+> as implementation of the inode_post_setxattr hook.
 > 
 > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 > Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
 
 Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 
