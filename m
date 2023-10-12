@@ -1,171 +1,160 @@
-Return-Path: <linux-fsdevel+bounces-206-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-207-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 407B67C7935
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Oct 2023 00:02:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F4447C7942
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Oct 2023 00:08:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 330D11C21101
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 22:02:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5660A282C61
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 22:08:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13F7B3FB1A;
-	Thu, 12 Oct 2023 22:02:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5BF13FB30;
+	Thu, 12 Oct 2023 22:07:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FZa6+yvd"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Lvn7N9uv"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B79BD3B28A
-	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Oct 2023 22:02:00 +0000 (UTC)
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA13DC9
-	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Oct 2023 15:01:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1697148118;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jO+V0kCCN2H4fTh8SDF52Bqu9Ca+4ziotGTsqK4FPs0=;
-	b=FZa6+yvd8lPAiY8/U++FYBnR3zhISHTB0qLZx6rFRc0d66TwgQ1y2Gm9m46GsSDuinhcd7
-	wCuotVdhUBRieHQ6ehVhaZCvRz368Su8KDaR47c8gFMAhZlT45i6YTBbJvJ1tbo7HPD1j+
-	3wx2iG1nCRGMwRDeFlXsNcNu6zsAMlE=
-Received: from mail-oi1-f197.google.com (mail-oi1-f197.google.com
- [209.85.167.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-90-Ti4S2pVnOmmbshrhn1DT3g-1; Thu, 12 Oct 2023 18:01:41 -0400
-X-MC-Unique: Ti4S2pVnOmmbshrhn1DT3g-1
-Received: by mail-oi1-f197.google.com with SMTP id 5614622812f47-3ae2377058bso292708b6e.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Oct 2023 15:01:41 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 161F13B28A
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Oct 2023 22:07:51 +0000 (UTC)
+Received: from mail-ot1-x335.google.com (mail-ot1-x335.google.com [IPv6:2607:f8b0:4864:20::335])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38C8AE0
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Oct 2023 15:07:49 -0700 (PDT)
+Received: by mail-ot1-x335.google.com with SMTP id 46e09a7af769-6bc9353be9bso212141a34.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Oct 2023 15:07:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1697148468; x=1697753268; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BX2/UVo10WOnZMCSNHexte/JXK8qu4Upt2chvVFA7x8=;
+        b=Lvn7N9uv69OZ121AzsqYZ2McrKtiTMN2tMUBLVvOksqkKLDH+drXyGVEVaXdxKGXTx
+         Phb21hBcMMvtmC913ArKg86TM83fNUWdt7laSTB8IF6uWHxQDsC81Z5o+GS5GA42AWv8
+         mPXjVN/rkqLLJCTzlddx52AtBxdiwEArOLdZWa1CJhdFKijFmJcAjZcqeHeiUhoDGI/x
+         qnOlMa53ZqH+u6HjpAlgHTBUhKnKOvVYHFOmkHvFDrsn7TnjTn2+1tz6R3C7C1KOTuui
+         KO5Ki88kPktgoJHCceTHiKrtkqZk1F5mT0lg48Jn0EfRFlmvai8eqdVUgHdM2CKRt8VO
+         DZGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697148101; x=1697752901;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jO+V0kCCN2H4fTh8SDF52Bqu9Ca+4ziotGTsqK4FPs0=;
-        b=OQU5FjcbIPY2lX0203G4OlgdfuHZn5EY6T97IPr98t3w+Zeqt36fVzh9XRAC9oXS+T
-         jBI1y0fHbEs+mVgW7hFQouXpfpTen4jBTby1KdNKVNSTUGCXGi8CteY3WBDjh2S4T+LS
-         IXMRYfNAGMu/okcLF5Lj5Cdh3xiH6ZiT4C4VkCrbru/fRkQoKNy1hprUqTTjbNVE47ae
-         Q+HWYed9TMDjayorQJky4fT/JcvCddvyvBewtj+NIGfGn8k+Bimp+9cKslIy4GPj1H9r
-         dKw1d4j7YHBwcv03WzRv/xQJgw+9Ok//6CPAzvFVjwSmh+pIaCR190+02Jl7BCGoOSK5
-         WzhA==
-X-Gm-Message-State: AOJu0Yx0mDMXUvMUtaWjg78s2xLz2XdFw4squxVIf/n6dSJjenhq+FKT
-	D7xROg5OcrAt/valTeF8sG2gsPXl2ULMibgV7BaZ7IUylWm07QYJM/L5rOCzW4/laeGne4rBf1h
-	zQoyPugcj6lJf0UUc/yi2/cqlUw==
-X-Received: by 2002:a05:6808:2087:b0:3b2:9c2f:50e0 with SMTP id s7-20020a056808208700b003b29c2f50e0mr7037845oiw.5.1697148101010;
-        Thu, 12 Oct 2023 15:01:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGxqOd0z9Rrm05kMUw7f1NwIqG2E5WysntGtAunm/GI19UXZNOiR7r13fJ46GNQ81YF0h/Yjg==
-X-Received: by 2002:a05:6808:2087:b0:3b2:9c2f:50e0 with SMTP id s7-20020a056808208700b003b29c2f50e0mr7037819oiw.5.1697148100725;
-        Thu, 12 Oct 2023 15:01:40 -0700 (PDT)
-Received: from x1n (cpe5c7695f3aee0-cm5c7695f3aede.cpe.net.cable.rogers.com. [99.254.144.39])
-        by smtp.gmail.com with ESMTPSA id p4-20020ac84604000000b004181234dd1dsm106401qtn.96.2023.10.12.15.01.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Oct 2023 15:01:40 -0700 (PDT)
-Date: Thu, 12 Oct 2023 18:01:37 -0400
-From: Peter Xu <peterx@redhat.com>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: akpm@linux-foundation.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
-	shuah@kernel.org, aarcange@redhat.com, lokeshgidra@google.com,
-	david@redhat.com, hughd@google.com, mhocko@suse.com,
-	axelrasmussen@google.com, rppt@kernel.org, willy@infradead.org,
-	Liam.Howlett@oracle.com, jannh@google.com, zhangpeng362@huawei.com,
-	bgeffon@google.com, kaleshsingh@google.com, ngeoffray@google.com,
-	jdduke@google.com, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH v3 1/3] mm/rmap: support move to different root anon_vma
- in folio_move_anon_rmap()
-Message-ID: <ZShswW2rkKTwnrV3@x1n>
-References: <20231009064230.2952396-1-surenb@google.com>
- <20231009064230.2952396-2-surenb@google.com>
+        d=1e100.net; s=20230601; t=1697148468; x=1697753268;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BX2/UVo10WOnZMCSNHexte/JXK8qu4Upt2chvVFA7x8=;
+        b=U5Wfq2F+vsNOUQ0QMhCTNkeVHvOu/ZS46npSZOuEiNuLTPCD/0iMXfcrpk+jxR6TV/
+         xmPPs9xpVF364a5vVzSNszsKnMh52KR2SNxupZavE5aPNLOBYsEQrRB7+ji837/GUKws
+         zQPbQ+rwkNLsfw5iU7szGztyHAL0tnwoPEBnZSt41lV5L5EN5nH/qYqZGxRSqYJe9qnL
+         PB2ey6ckfu+k2F//Yh0zW0sxgX0OAEmawHW5gEsFKyho+AexMWQNoM4/7ftnjCHWt1iJ
+         0UwieHf1sWoWx7CDjk2CDrggcSAo4C3Spgc5CVBJTNbR5clqUDmnycbV9dCYDTVmOAZy
+         iTcQ==
+X-Gm-Message-State: AOJu0Yy7uj1/XNIf1wEho1zhAttecTQbmegOwe8Y5+uKHCpuPrUUHro1
+	0YFVUKzUg3YWuSMHg1ssHo1Gsw==
+X-Google-Smtp-Source: AGHT+IE69wm+LfM1P9hVAjNQFO/fTOBepgHbSEMYy1IVhm+plv/9fJIRwOYYZ4z6oxAD4V9Qyp04lg==
+X-Received: by 2002:a9d:51cb:0:b0:6bf:5010:9d35 with SMTP id d11-20020a9d51cb000000b006bf50109d35mr25251752oth.3.1697148468435;
+        Thu, 12 Oct 2023 15:07:48 -0700 (PDT)
+Received: from [192.168.1.136] ([198.8.77.194])
+        by smtp.gmail.com with ESMTPSA id o10-20020a056a001bca00b0068c670afe30sm7442663pfw.124.2023.10.12.15.07.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Oct 2023 15:07:47 -0700 (PDT)
+Message-ID: <eb150179-c328-4058-80e3-f517d45310c4@kernel.dk>
+Date: Thu, 12 Oct 2023 16:07:46 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20231009064230.2952396-2-surenb@google.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-	RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
-	SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
-	version=3.4.6
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] audit,io_uring: io_uring openat triggers audit reference
+ count underflow
+Content-Language: en-US
+To: Dan Clash <daclash@linux.microsoft.com>, audit@vger.kernel.org,
+ io-uring@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, paul@paul-moore.com,
+ linux-fsdevel@vger.kernel.org, brauner@kernel.org, dan.clash@microsoft.com
+References: <20231012215518.GA4048@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20231012215518.GA4048@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-On Sun, Oct 08, 2023 at 11:42:26PM -0700, Suren Baghdasaryan wrote:
-> From: Andrea Arcangeli <aarcange@redhat.com>
+On 10/12/23 3:55 PM, Dan Clash wrote:
+> An io_uring openat operation can update an audit reference count
+> from multiple threads resulting in the call trace below.
 > 
-> For now, folio_move_anon_rmap() was only used to move a folio to a
-> different anon_vma after fork(), whereby the root anon_vma stayed
-> unchanged. For that, it was sufficient to hold the folio lock when
-> calling folio_move_anon_rmap().
+> A call to io_uring_submit() with a single openat op with a flag of
+> IOSQE_ASYNC results in the following reference count updates.
 > 
-> However, we want to make use of folio_move_anon_rmap() to move folios
-> between VMAs that have a different root anon_vma. As folio_referenced()
-> performs an RMAP walk without holding the folio lock but only holding the
-> anon_vma in read mode, holding the folio lock is insufficient.
+> These first part of the system call performs two increments that do not race.
 > 
-> When moving to an anon_vma with a different root anon_vma, we'll have to
-> hold both, the folio lock and the anon_vma lock in write mode.
-> Consequently, whenever we succeeded in folio_lock_anon_vma_read() to
-> read-lock the anon_vma, we have to re-check if the mapping was changed
-> in the meantime. If that was the case, we have to retry.
+> do_syscall_64()
+>   __do_sys_io_uring_enter()
+>     io_submit_sqes()
+>       io_openat_prep()
+>         __io_openat_prep()
+>           getname()
+>             getname_flags()       /* update 1 (increment) */
+>               __audit_getname()   /* update 2 (increment) */
 > 
-> Note that folio_move_anon_rmap() must only be called if the anon page is
-> exclusive to a process, and must not be called on KSM folios.
+> The openat op is queued to an io_uring worker thread which starts the
+> opportunity for a race.  The system call exit performs one decrement.
 > 
-> This is a preparation for UFFDIO_MOVE, which will hold the folio lock,
-> the anon_vma lock in write mode, and the mmap_lock in read mode.
+> do_syscall_64()
+>   syscall_exit_to_user_mode()
+>     syscall_exit_to_user_mode_prepare()
+>       __audit_syscall_exit()
+>         audit_reset_context()
+>            putname()              /* update 3 (decrement) */
 > 
-> Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
-> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> ---
->  mm/rmap.c | 24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
+> The io_uring worker thread performs one increment and two decrements.
+> These updates can race with the system call decrement.
 > 
-> diff --git a/mm/rmap.c b/mm/rmap.c
-> index c1f11c9dbe61..f9ddc50269d2 100644
-> --- a/mm/rmap.c
-> +++ b/mm/rmap.c
-> @@ -542,7 +542,9 @@ struct anon_vma *folio_lock_anon_vma_read(struct folio *folio,
->  	struct anon_vma *root_anon_vma;
->  	unsigned long anon_mapping;
->  
-> +retry:
->  	rcu_read_lock();
-> +retry_under_rcu:
->  	anon_mapping = (unsigned long)READ_ONCE(folio->mapping);
->  	if ((anon_mapping & PAGE_MAPPING_FLAGS) != PAGE_MAPPING_ANON)
->  		goto out;
-> @@ -552,6 +554,16 @@ struct anon_vma *folio_lock_anon_vma_read(struct folio *folio,
->  	anon_vma = (struct anon_vma *) (anon_mapping - PAGE_MAPPING_ANON);
->  	root_anon_vma = READ_ONCE(anon_vma->root);
->  	if (down_read_trylock(&root_anon_vma->rwsem)) {
-> +		/*
-> +		 * folio_move_anon_rmap() might have changed the anon_vma as we
-> +		 * might not hold the folio lock here.
-> +		 */
-> +		if (unlikely((unsigned long)READ_ONCE(folio->mapping) !=
-> +			     anon_mapping)) {
-> +			up_read(&root_anon_vma->rwsem);
-> +			goto retry_under_rcu;
+> io_wqe_worker()
+>   io_worker_handle_work()
+>     io_wq_submit_work()
+>       io_issue_sqe()
+>         io_openat()
+>           io_openat2()
+>             do_filp_open()
+>               path_openat()
+>                 __audit_inode()   /* update 4 (increment) */
+>             putname()             /* update 5 (decrement) */
+>         __audit_uring_exit()
+>           audit_reset_context()
+>             putname()             /* update 6 (decrement) */
+> 
+> The fix is to change the refcnt member of struct audit_names
+> from int to atomic_t.
+> 
+> kernel BUG at fs/namei.c:262!
+> Call Trace:
+> ...
+>  ? putname+0x68/0x70
+>  audit_reset_context.part.0.constprop.0+0xe1/0x300
+>  __audit_uring_exit+0xda/0x1c0
+>  io_issue_sqe+0x1f3/0x450
+>  ? lock_timer_base+0x3b/0xd0
+>  io_wq_submit_work+0x8d/0x2b0
+>  ? __try_to_del_timer_sync+0x67/0xa0
+>  io_worker_handle_work+0x17c/0x2b0
+>  io_wqe_worker+0x10a/0x350
+> 
+> Cc: <stable@vger.kernel.org>
+> Link: https://lore.kernel.org/lkml/MW2PR2101MB1033FFF044A258F84AEAA584F1C9A@MW2PR2101MB1033.namprd21.prod.outlook.com/
+> Fixes: 5bd2182d58e9 ("audit,io_uring,io-wq: add some basic audit support to io_uring")
+> Signed-off-by: Dan Clash <daclash@linux.microsoft.com>
 
-Is adding this specific label worthwhile?  How about rcu unlock and goto
-retry (then it'll also be clear that we won't hold rcu read lock for
-unpredictable time)?
-
-> +		}
-> +
->  		/*
->  		 * If the folio is still mapped, then this anon_vma is still
->  		 * its anon_vma, and holding the mutex ensures that it will
+Reviewed-by: Jens Axboe <axboe@kernel.dk>
 
 -- 
-Peter Xu
+Jens Axboe
+
 
 
