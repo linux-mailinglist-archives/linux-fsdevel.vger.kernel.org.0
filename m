@@ -1,125 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-181-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-182-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FD5E7C701B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 16:11:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D19367C704D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 16:30:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C36F1C210A9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 14:11:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D05651C210DF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 14:30:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E07EA30FA1;
-	Thu, 12 Oct 2023 14:11:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E8A266DA;
+	Thu, 12 Oct 2023 14:30:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=jagalactic.com header.i=@jagalactic.com header.b="AHwHf/Sc";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="JeHnrzoI"
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="W081j5tW"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49D4530F80
-	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Oct 2023 14:11:03 +0000 (UTC)
-Received: from a11-77.smtp-out.amazonses.com (a11-77.smtp-out.amazonses.com [54.240.11.77])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1032291
-	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Oct 2023 07:10:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=rjayupzefgi7e6fmzxcxe4cv4arrjs35; d=jagalactic.com; t=1697119857;
-	h=Subject:From:To:Cc:Date:Mime-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:References:Message-Id;
-	bh=06+A+Lwel4vw/jfjX8u3x/pI6DzxkHO6EhEhZY9kd8s=;
-	b=AHwHf/Scwcgi7xfh56rkgz7ZXn0ykvxuIasSzwzvtR/wb5tLo1cFikTAWrgKVCLU
-	z6zBBbbUPaxdGGG7a77vJMqnyya3L56s2Hd6y6miYaICnBLwa8TLR9XDJVzkhbcvvrN
-	RdIeP2ft3PCC18t8I+7egMI1C4HriCerFLZK/y2k=
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=224i4yxa5dv7c2xz3womw6peuasteono; d=amazonses.com; t=1697119857;
-	h=Subject:From:To:Cc:Date:Mime-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:References:Message-Id:Feedback-ID;
-	bh=06+A+Lwel4vw/jfjX8u3x/pI6DzxkHO6EhEhZY9kd8s=;
-	b=JeHnrzoI4e0j05l9SP4xIPxoFsQKwXAwcid9P36PRMPIJE1jxVnjLqxKOn1f861G
-	P1ZLRA0ROJkX4zC/qA28GV+GwD2Dyf7goxe3hbzPaWOjwOOoo01OBuqrGCxw4UBwn1B
-	zrFnOLsZ1x6d7y33h0IuvAPmR9V1QumUKfpDZXSs=
-Subject: Re: Question about fuse dax support
-From: =?UTF-8?Q?John_Groves?= <john@jagalactic.com>
-To: =?UTF-8?Q?Miklos_Szeredi?= <miklos@szeredi.hu>
-Cc: 
-	=?UTF-8?Q?linux-fsdevel=40vger=2Ekernel=2Eorg?= <linux-fsdevel@vger.kernel.org>, 
-	=?UTF-8?Q?jgroves=40micron=2Ecom?= <jgroves@micron.com>, 
-	=?UTF-8?Q?Amir_Goldstein?= <amir73il@gmail.com>, 
-	=?UTF-8?Q?fuse-devel=40lists=2Esourceforge=2Enet?= <fuse-devel@lists.sourceforge.net>
-Date: Thu, 12 Oct 2023 14:10:57 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FC71266BE
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Oct 2023 14:30:08 +0000 (UTC)
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23455BB
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Oct 2023 07:30:07 -0700 (PDT)
+Received: from cwcc.thunk.org (pool-173-48-111-200.bstnma.fios.verizon.net [173.48.111.200])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 39CETIWq012545
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Oct 2023 10:29:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1697120962; bh=Fmcr5RwuJwayVhUbngXLq3LrYuBYwHACNuwCZH5c+28=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=W081j5tW+M3CusLvAKm2TNgPiad4Xmuv60pn0cMLFB5AjiGc2JttGCMCA8KlhNMHs
+	 5C3mCxqhrtR3ekKhhrFTa5qaG9CfpP5HcM0G4rq6Gl4pq5y3M6bUR5tEf+pJaboBZt
+	 qWn7L6TFYnvU7ekPCViU9Zt/keviwUbXxICidUBi3Rb/Qn/aprQmoDzfYMaWVRh7UQ
+	 PJDpC0wVBpFM+lxuvMUnfUoexvBEBGwXf4UWADRqQVePUiVW8bQ78sfaFC1Okx50/5
+	 70AuQDIZz+2Cx7LWvQwUuEuV4LXzBHztnowIu6BW5vFGriao3e79YYlcOaNfKO1dKh
+	 G/9xFBApDA+rQ==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id 6BF5215C0255; Thu, 12 Oct 2023 10:29:18 -0400 (EDT)
+Date: Thu, 12 Oct 2023 10:29:18 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Jan Kara <jack@suse.cz>
+Cc: Christian Brauner <brauner@kernel.org>,
+        Max Kellermann <max.kellermann@ionos.com>,
+        Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.com>,
+        Dave Kleikamp <shaggy@kernel.org>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        jfs-discussion@lists.sourceforge.net,
+        Yang Xu <xuyang2018.jy@fujitsu.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2] fs/{posix_acl,ext2,jfs,ceph}: apply umask if ACL
+ support is disabled
+Message-ID: <20231012142918.GB255452@mit.edu>
+References: <CAKPOu+-nC2bQTZYL0XTzJL6Tx4Pi1gLfNWCjU2Qz1f_5CbJc1w@mail.gmail.com>
+ <20231011100541.sfn3prgtmp7hk2oj@quack3>
+ <CAKPOu+_xdFALt9sgdd5w66Ab6KTqiy8+Z0Yd3Ss4+92jh8nCwg@mail.gmail.com>
+ <20231011120655.ndb7bfasptjym3wl@quack3>
+ <CAKPOu+-hLrrpZShHh0o6uc_KMW91suEd0_V_uzp5vMf4NM-8yw@mail.gmail.com>
+ <CAKPOu+_0yjg=PrwAR8jKok8WskjdDEJOBtu3uKR_4Qtp8b7H1Q@mail.gmail.com>
+ <20231011135922.4bij3ittlg4ujkd7@quack3>
+ <20231011-braumeister-anrufen-62127dc64de0@brauner>
+ <20231011170042.GA267994@mit.edu>
+ <20231011172606.mztqyvclq6hq2qa2@quack3>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: 
- <CAJfpegsvhbmAYD22Y981BiV8ut7QfZbRZMvGY7Vs-hCM2L+=dQ@mail.gmail.com>
-References: <nx43owwj2x46rfidyi7iziv2dbw3licpjn24ff5sv76nuoe3dt@seenck6dhbz7> 
- <0100018b0631277b-799ea048-5215-4993-a327-65f1b50fb169-000000@email.amazonses.com> 
- <CAJfpegsvhbmAYD22Y981BiV8ut7QfZbRZMvGY7Vs-hCM2L+=dQ@mail.gmail.com> 
- <eeokvydlogqzlhjrjcf4knvazklizjk4tdd2kkb3qvgy7orfke@ijorgccnytsg>
-X-Mailer: Amazon WorkMail
-Thread-Index: AQHZ+IC0O72aZ+HeRa6RJwxZy8QIbwDAkNASASVNs6c=
-Thread-Topic: Question about fuse dax support
-X-Wm-Sent-Timestamp: 1697119856
-Message-ID: <0100018b2439ebf3-a442db6f-f685-4bc4-b4b0-28dc333f6712-000000@email.amazonses.com>
-Feedback-ID: 1.us-east-1.LF00NED762KFuBsfzrtoqw+Brn/qlF9OYdxWukAhsl8=:AmazonSES
-X-SES-Outgoing: 2023.10.12-54.240.11.77
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-	RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231011172606.mztqyvclq6hq2qa2@quack3>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+	SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
+	version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-On 23/10/10 04:06PM, Miklos Szeredi wrote:=0D=0A> On Fri, 6 Oct 2023 at 2=
-0:12, John Groves <john@jagalactic.com> wrote:=0D=0A> >=0D=0A> > I see th=
-at there is some limited support for dax mapping of fuse files, but=0D=0A=
-> > it seems to be specifically for virtiofs. I admit I barely understand=
- that=0D=0A> > use case, but there is another fuse/dax use case that I=E2=
-=80=99d like to explore.=0D=0A> > I would appreciate feedback on this, in=
-cluding pointers to RTFM material,=0D=0A> > etc.=0D=0A> >=0D=0A> > I=E2=80=
-=99m interested in creating a file system interface to fabric-attached sh=
-ared=0D=0A> > memory (cxl). Think of a fuse file system that receives met=
-adata (how MD is=0D=0A> > distributed is orthogonal) and instantiates fil=
-es that are backed by dax=0D=0A> > memory (S_DAX files), such that the sa=
-me =E2=80=98data sets=E2=80=99 can be visible as=0D=0A> > mmap-able files=
- on more than one server. I=E2=80=99d like feedback as to whether=0D=0A> =
-> this is (or could be) doable via fuse.=0D=0A> >=0D=0A> > Here is the ma=
-in rub though. For this to perform adequately, I don=E2=80=99t think=0D=0A=
-> > it would be acceptable for each fault to call up to user space to res=
-olve=0D=0A> > the dax device & offset. So the kernel side of fuse would n=
-eed to cache a=0D=0A> > dax extent list for each file to TLB/page-table m=
-isses.=0D=0A> >=0D=0A> > I would appreciate any questions, pointers or fe=
-edback.=0D=0A>=20=0D=0A> I think the passthrough patches should take care=
- of this use case as well:=0D=0A>=20=0D=0A> https://lore.kernel.org/all/2=
-0230519125705.598234-1-amir73il@gmail.com/=0D=0A> Thanks,=0D=0A> Miklos=0D=
-=0A=0D=0AThanks for the reply Miklos.=0D=0A=0D=0AI've looked over that pa=
-tch set, and I'm pretty sure it's not what is needed=0D=0Afor my use case=
-=2E I can see how my statement above "backed by dax memory=0D=0A(S_DAX fi=
-les)" could have implied that there is an S_DAX backing file that=0D=0Afu=
-se could use - but there is not already a backing file, just a dax device=
-=2E=0D=0A=0D=0ASo it is the fuse file that would need to have the S_DAX f=
-lag and handle=0D=0Amapping to an extent list from the dax device (rather=
- than referring to a=0D=0Abacking file that already does this).=0D=0A=0D=0A=
-This is a performance-sensitive use case - S_DAX files are for direct acc=
-ess=0D=0Ato memory (duh). Posix read/write are supported, but the main us=
-e case for=0D=0AS_DAX files is performant mmap. So I think this can only =
-be viable if:=0D=0A=0D=0A1) The fuse kernel module supports files with th=
-e S_DAX flag, and performs the=0D=0A   appropriate mapping in conjunction=
- with the dax driver (iomap, etc.)=0D=0A2) The fuse kernel module caches =
-the extent list of the backing memory=0D=0A   (extents of the form [offse=
-t, length] or [device, offset, length]) so that=0D=0A   TLB/page-table fa=
-ults could be resolved without calling out to the user=0D=0A   space hand=
-ler.=0D=0A=0D=0AMy naive reading of the existence of some sort of fuse/da=
-x support for virtiofs=0D=0Asuggested that there might be a way of doing =
-this - but I may be wrong about=0D=0Athat.=0D=0A=0D=0APlease let me know =
-your thoughts on this.=0D=0A=0D=0AAlso: I will be at Linux Plumbers, and =
-I'm speaking about this use case in=0D=0Athe cxl microconference. If you =
-will be there, perhaps we can discuss it.=0D=0AAny others interested in d=
-iscussing it, here or at Plumbers, please ping me.=0D=0A=0D=0AThanks,=0D=0A=
-John Groves=0D=0AMicron=0D=0A=0D=0A
+On Wed, Oct 11, 2023 at 07:26:06PM +0200, Jan Kara wrote:
+> I don't think this is accurate. posix_acl_create() needs unmasked 'mode'
+> because instead of using current_umask() for masking it wants to use
+> whatever is stored in the ACLs as an umask.
+> 
+> So I still think we need to keep umask handling in both posix_acl_create()
+> and vfs_prepare_mode(). But filesystem's only obligation would be to call
+> posix_acl_create() if the inode is IS_POSIXACL. No more caring about when
+> to apply umask and when not based on config or mount options.
+
+Ah, right, thanks for the clarification.  I *think* the following
+patch in the ext4 dev branch (not yet in Linus's tree, but it should
+be in linux-next) should be harmless, though, right?  And once we get
+the changes in vfs_prepare_mode() we can revert in ext4 --- or do
+folks I think I should just drop it from the ext4 dev branch now?
+
+Thanks,
+
+						- Ted
+
+commit 484fd6c1de13b336806a967908a927cc0356e312
+Author: Max Kellermann <max.kellermann@ionos.com>
+Date:   Tue Sep 19 10:18:23 2023 +0200
+
+    ext4: apply umask if ACL support is disabled
+    
+    The function ext4_init_acl() calls posix_acl_create() which is
+    responsible for applying the umask.  But without
+    CONFIG_EXT4_FS_POSIX_ACL, ext4_init_acl() is an empty inline function,
+    and nobody applies the umask.
+    
+    This fixes a bug which causes the umask to be ignored with O_TMPFILE
+    on ext4:
+    
+     https://github.com/MusicPlayerDaemon/MPD/issues/558
+     https://bugs.gentoo.org/show_bug.cgi?id=686142#c3
+     https://bugzilla.kernel.org/show_bug.cgi?id=203625
+    
+    Reviewed-by: "J. Bruce Fields" <bfields@redhat.com>
+    Cc: stable@vger.kernel.org
+    Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+    Link: https://lore.kernel.org/r/20230919081824.1096619-1-max.kellermann@ionos.com
+    Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+
+diff --git a/fs/ext4/acl.h b/fs/ext4/acl.h
+index 0c5a79c3b5d4..ef4c19e5f570 100644
+--- a/fs/ext4/acl.h
++++ b/fs/ext4/acl.h
+@@ -68,6 +68,11 @@ extern int ext4_init_acl(handle_t *, struct inode *, struct inode *);
+ static inline int
+ ext4_init_acl(handle_t *handle, struct inode *inode, struct inode *dir)
+ {
++	/* usually, the umask is applied by posix_acl_create(), but if
++	   ext4 ACL support is disabled at compile time, we need to do
++	   it here, because posix_acl_create() will never be called */
++	inode->i_mode &= ~current_umask();
++
+ 	return 0;
+ }
+ #endif  /* CONFIG_EXT4_FS_POSIX_ACL */
 
