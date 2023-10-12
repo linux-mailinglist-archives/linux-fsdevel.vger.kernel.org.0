@@ -1,163 +1,152 @@
-Return-Path: <linux-fsdevel+bounces-193-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-194-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4B427C74FE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 19:42:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8293B7C7519
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 19:51:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D01C81C210D8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 17:42:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01161282B04
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 17:51:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC1C36B1B;
-	Thu, 12 Oct 2023 17:42:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 765CE3714C;
+	Thu, 12 Oct 2023 17:51:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3W2IPThL"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 850F0D2EE
-	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Oct 2023 17:42:13 +0000 (UTC)
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0C27B8;
-	Thu, 12 Oct 2023 10:42:10 -0700 (PDT)
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-692779f583fso1006206b3a.0;
-        Thu, 12 Oct 2023 10:42:10 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C6636B16
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Oct 2023 17:51:14 +0000 (UTC)
+Received: from mail-vs1-xe2e.google.com (mail-vs1-xe2e.google.com [IPv6:2607:f8b0:4864:20::e2e])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D8EBBB
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Oct 2023 10:51:13 -0700 (PDT)
+Received: by mail-vs1-xe2e.google.com with SMTP id ada2fe7eead31-4526b9404b0so1564733137.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Oct 2023 10:51:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1697133073; x=1697737873; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R/kcvd3Ium4zd9I0dnayawEHaM8pcXlmWMrCCjUShbo=;
+        b=3W2IPThLUpR4uRpb6oTtQfLXnzANytWXRUZiYHiRYSFhKxf9lemNt20TYDEXYshlOr
+         i0sJ9ca542vaR2iT186pzEru/LiPQMEpsGKhKkB+s+NsXi+tdJ6TRV/bgSqnj+krUJ7S
+         3/1nz6DgSOEPcBgAg6VV4ss7/gBWvftrymcbkeEnwk0eebJNw70AeWeWQlEHiNIgmSXm
+         61sA/AAiL8cr88SacWq3D7hJaWMsMPm9XZfRnDa4fKrNYVmtc2rL45byNu5W51dyKYvv
+         OpP4yIez6M53AOheVIEEvhtPcTEnBE/DeVhF1WYu/LmdzdybqskNQh7AC87UQWSCZ3Yw
+         feEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697132530; x=1697737330;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2Ndqa30CQIymFuT6Sso7sr9ap3JdzBFoNx9/TN24OZA=;
-        b=p/D53b+TG6l29MdLDIjkTLLm3zSXwfCd7lnyRpR9Rj7TilQ++M9XsOTeWsGOIxBeHr
-         Vl9c0kE+3zqD2LGOYehuDCuMud0bhufieU0I8BbFKoybEHEQh0AFK8m1nQ4Z45XeBWwR
-         EY75QtA1KDp+pS7tnFJGjJc1Mwz+wdrMFh9odUCtVRdBHvNWNc7cEJ0ykPT7UD2tyLTj
-         MilA16G4qLNPlpNoKlNNBZSynJiCKrvn2rsXqI3oTSKIL4mnXKTM5Q6TkCtpp/FzfE44
-         NxoYv5R8rJ9I4vVjSSYvv1ar1jU7BIcCuPyJoBvPtMqirq+B/kMwOOxUqzk64Bg+0XYT
-         BvYw==
-X-Gm-Message-State: AOJu0YyaxCyVVZrfkopnOpvRMnT7cM+X9R6kq/VWbivRSv9ho6ik7Bin
-	Y2+jsIbViozGEdkrJiCvg8M=
-X-Google-Smtp-Source: AGHT+IGuSZ0jrtcDlQYNhibLnF4qw/wlJA70J2vp7mluVMdeCdB2FOOuxqQvednZKKWfpx5XDBNBoA==
-X-Received: by 2002:a05:6a20:12c6:b0:174:63a9:293 with SMTP id v6-20020a056a2012c600b0017463a90293mr4307565pzg.48.1697132529924;
-        Thu, 12 Oct 2023 10:42:09 -0700 (PDT)
-Received: from ?IPV6:2620:15c:211:201:414d:a1fb:8def:b3ee? ([2620:15c:211:201:414d:a1fb:8def:b3ee])
-        by smtp.gmail.com with ESMTPSA id jk22-20020a170903331600b001bfd92ec592sm2258829plb.292.2023.10.12.10.42.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Oct 2023 10:42:09 -0700 (PDT)
-Message-ID: <a490bc37-464e-4edc-b11a-91b11d24af6d@acm.org>
-Date: Thu, 12 Oct 2023 10:42:07 -0700
+        d=1e100.net; s=20230601; t=1697133073; x=1697737873;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=R/kcvd3Ium4zd9I0dnayawEHaM8pcXlmWMrCCjUShbo=;
+        b=ewG4As2S+6AOqM/f2hShXerOCq3Gc9ntA1YpNRbV+VutUlpscZGytOGvuLjqnPjC2x
+         kEEtnTfWPAkP0zjuED91enM9+doa3EpaHnKl5JUEFKVv32LEPg9AUk7FdqvmTdiwNpNv
+         pkDHbZV+KQeYkOR/If3kZvK9ot3uQWT2MiFpOSVg1yixTNgmJaPlrExEgbhdpcOudrFD
+         Um/gawXv4wv07Ag2Fku1l3eO7/CwohpnvN382q6YQCwG3eINAIzzp98OnecevIrixe+q
+         p3raKNszBURh2XsrmT6iQ7v6G/gOdkC17F+eUAHNSvSfCJcMH2PELFUdCqMwqDhOaMjl
+         eFFw==
+X-Gm-Message-State: AOJu0YxGQEXcPdFEcspiXsuGKKSTNe5vvo2qAdp4OmKFkq2EsxP6rRIk
+	t6iQjORNoPYSAe1NRdwQvmAbP+4BdUBlIdbQmox0Gw==
+X-Google-Smtp-Source: AGHT+IFBDsg58VP5xYZQboRt0WLteQXM1skYg3czfbQs8hc1QGVa/ZbStRHvWCw3FQEgq8wuA3BSiMYUfa0Ix7/fOAY=
+X-Received: by 2002:a05:6102:579b:b0:452:6d82:56e3 with SMTP id
+ dh27-20020a056102579b00b004526d8256e3mr13976905vsb.6.1697133072474; Thu, 12
+ Oct 2023 10:51:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/15] block: Make bio_set_ioprio() modify fewer
- bio->bi_ioprio bits
-Content-Language: en-US
-To: Kanchan Joshi <joshi.k@samsung.com>, Jens Axboe <axboe@kernel.dk>
-Cc: linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-fsdevel@vger.kernel.org,
- "Martin K . Petersen" <martin.petersen@oracle.com>,
- Christoph Hellwig <hch@lst.de>, Niklas Cassel <Niklas.Cassel@wdc.com>,
- Avri Altman <Avri.Altman@wdc.com>, Bean Huo <huobean@gmail.com>,
- Daejun Park <daejun7.park@samsung.com>, Damien Le Moal <dlemoal@kernel.org>
-References: <20231005194129.1882245-1-bvanassche@acm.org>
- <CGME20231005194156epcas5p14c65d7fbecc60f97624a9ef968bebf2e@epcas5p1.samsung.com>
- <20231005194129.1882245-2-bvanassche@acm.org>
- <28f21f46-60f1-1651-e6a9-938fd2340ff5@samsung.com>
- <bfb7e2be-79f8-4f5e-b87e-3045d9c937b4@acm.org>
- <fdf765a0-54a0-a9e9-fffa-3e733c2535b0@samsung.com>
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <fdf765a0-54a0-a9e9-fffa-3e733c2535b0@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+References: <20220927131518.30000-1-ojeda@kernel.org> <20220927131518.30000-26-ojeda@kernel.org>
+ <Y0BfN1BdVCWssvEu@hirez.programming.kicks-ass.net> <CABCJKuenkHXtbWOLZ0_isGewxd19qkM7OcLeE2NzM6dSkXS4mQ@mail.gmail.com>
+ <CANiq72k6s4=0E_AHv7FPsCQhkyxf7c-b+wUtzfjf+Spehe9Fmg@mail.gmail.com>
+ <CABCJKuca0fOAs=E6LeHJiT2LOXEoPvLVKztA=u+ARcw=tbT=tw@mail.gmail.com> <20231012104741.GN6307@noisy.programming.kicks-ass.net>
+In-Reply-To: <20231012104741.GN6307@noisy.programming.kicks-ass.net>
+From: Sami Tolvanen <samitolvanen@google.com>
+Date: Thu, 12 Oct 2023 10:50:36 -0700
+Message-ID: <CABCJKufEagwJ=TQnmVSK07RDjsPUt=3JGtwnK9ASmFqb7Vx8JQ@mail.gmail.com>
+Subject: Re: [PATCH v10 25/27] x86: enable initial Rust support
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	patches@lists.linux.dev, Jarkko Sakkinen <jarkko@kernel.org>, 
+	Kees Cook <keescook@chromium.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@google.com>, David Gow <davidgow@google.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+	ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+	USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
+	autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-On 10/12/23 01:49, Kanchan Joshi wrote:
-> Function does OR bio->bi_ioprio with whatever is the return of
-> get_current_ioprio().
+On Thu, Oct 12, 2023 at 3:47=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
+>
+> On Fri, Oct 14, 2022 at 11:34:30AM -0700, Sami Tolvanen wrote:
+> > On Fri, Oct 14, 2022 at 11:05 AM Miguel Ojeda
+> > <miguel.ojeda.sandonis@gmail.com> wrote:
+> > >
+> > > On Tue, Oct 11, 2022 at 1:16 AM Sami Tolvanen <samitolvanen@google.co=
+m> wrote:
+> > > >
+> > > > Rust supports IBT with -Z cf-protection=3Dbranch, but I don't see t=
+his
+> > > > option being enabled in the kernel yet. Cross-language CFI is going=
+ to
+> > > > require a lot more work though because the type systems are not qui=
+te
+> > > > compatible:
+> > > >
+> > > > https://github.com/rust-lang/rfcs/pull/3296
+> > >
+> > > I have pinged Ramon de C Valle as he is the author of the RFC above
+> > > and implementation work too; since a month or so ago he also leads th=
+e
+> > > Exploit Mitigations Project Group in Rust.
+> >
+> > Thanks, Miguel. I also talked to Ramon about KCFI earlier this week
+> > and he expressed interest in helping with rustc support for it. In the
+> > meanwhile, I think we can just add a depends on !CFI_CLANG to avoid
+> > issues here.
+>
+> Having just read up on the thing it looks like the KCFI thing is
+> resolved.
+>
+> I'm not sure I understand most of the objections in that thread through
+> -- enabling CFI *will* break stuff, so what.
+>
+> Squashing the integer types seems a workable compromise I suppose. One
+> thing that's been floated in the past is adding a 'seed' attribute to
+> some functions in order to distinguish functions of otherwise identical
+> signature.
+>
+> The Rust thing would then also need to support this attribute.
+>
+> Are there any concrete plans for this? It would allow, for example,
+> to differentiate address_space_operations::swap_deactivate() from any
+> other random function that takes only a file argument, say:
+> locks_remove_file().
 
-No, that's not what ioprio_set_class_and_level() does. It clears the 
-hint bits before it performs a logical OR.
+I haven't really had time to look into it, so no concrete plans yet.
+Adding an attribute shouldn't be terribly difficult, but Kees
+expressed interest in automatic salting as well, which might be a more
+involved project:
 
-> So if lifetime bits were set in get_current_ioprio(), you will end up
-> setting that in bio->bi_ioprio too.
-I'm not sure there are any use cases where it is useful to set the data
-lifetime for an entire process.
+https://github.com/ClangBuiltLinux/linux/issues/1736
 
-Anyway, how about replacing this patch with the patch below? This will
-allow to set hint information for an entire process.
-
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index e2d11183f62e..3419ca4c1bf4 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -2924,9 +2924,14 @@ static inline struct request 
-*blk_mq_get_cached_request(struct request_queue *q,
-
-  static void bio_set_ioprio(struct bio *bio)
-  {
-+	u16 cur_ioprio = get_current_ioprio();
-+
-  	/* Nobody set ioprio so far? Initialize it based on task's nice value */
-  	if (IOPRIO_PRIO_CLASS(bio->bi_ioprio) == IOPRIO_CLASS_NONE)
--		bio->bi_ioprio = get_current_ioprio();
-+		bio->bi_ioprio |= cur_ioprio & IOPRIO_CLASS_LEVEL_MASK;
-+	if (IOPRIO_PRIO_HINT(bio->bi_ioprio) == 0)
-+		bio->bi_ioprio |= cur_ioprio &
-+			(IOPRIO_HINT_MASK << IOPRIO_HINT_SHIFT);
-  	blkcg_set_ioprio(bio);
-  }
-
-diff --git a/include/linux/ioprio.h b/include/linux/ioprio.h
-index 7578d4f6a969..5697832f35a3 100644
---- a/include/linux/ioprio.h
-+++ b/include/linux/ioprio.h
-@@ -71,4 +71,7 @@ static inline int ioprio_check_cap(int ioprio)
-  }
-  #endif /* CONFIG_BLOCK */
-
-+#define IOPRIO_CLASS_LEVEL_MASK ((IOPRIO_CLASS_MASK << 
-IOPRIO_CLASS_SHIFT) | \
-+				 (IOPRIO_LEVEL_MASK << 0))
-+
-  #endif
-
-
->> ioprio_set_class_and_level() preserves the hint bits set by F2FS.
->>
->>> And what is the user interface you have in mind. Is it ioprio based, or
->>> write-hint based or mix of both?
->>
->> Since the data lifetime is encoded in the hint bits, the hint bits need
->> to be set by user space to set a data lifetime.
-> 
-> I asked because more than one way seems to emerge here. Parts of this
-> series (Patch 4) are taking inode->i_write_hint (and not ioprio value)
-> and putting that into bio.
-> I wonder what to expect if application get to send one lifetime with
-> fcntl (write-hints) and different one with ioprio. Is that not racy?
-
-There is no race condition. F_SET_RW_HINT can be used to set 
-inode->i_write_hint. The filesystem may use the inode->i_write_hint 
-information. I think F2FS uses this information in its block allocator.
-
->> +            --prio=$((i<<6))
-> 
-> This will not work as prio can only take values between 0-7.
-> Perhaps you want to use "priohint" to send lifetime.
-
-Thanks for having mentioned the priohint option. The above works on my
-test setup since I modified fio locally to accept larger prio values. I
-will switch to the priohint option.
-
-Bart.
+Sami
 
