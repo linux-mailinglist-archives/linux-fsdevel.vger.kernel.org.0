@@ -1,235 +1,264 @@
-Return-Path: <linux-fsdevel+bounces-198-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-199-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77D197C777B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 21:56:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9315C7C77AC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 22:11:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A922B1C2110D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 19:56:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BCA92828B4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 20:11:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 931203C6A5;
-	Thu, 12 Oct 2023 19:56:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFB0E3D385;
+	Thu, 12 Oct 2023 20:11:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="MO2uI2mP"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YaJJnzGp"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1245B28E16;
-	Thu, 12 Oct 2023 19:56:02 +0000 (UTC)
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23601B7;
-	Thu, 12 Oct 2023 12:56:01 -0700 (PDT)
-Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39CIAhMJ029785;
-	Thu, 12 Oct 2023 12:56:00 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-id :
- content-type : mime-version; s=s2048-2021-q4;
- bh=zNSQOKmij6heabehQLoMl6vsr+Qe7vs70ugGnLsQSMo=;
- b=MO2uI2mPeL99aZ2RXmxF6CIcUct47EbnbbYCsyD0+YBcs1t6glXahLyhMPMeWKSqNm7L
- ITnqJ0XvJ0SGgI1/Hcrb+cv1CF3KUi5QihHz9kdJk1ObwsCBhtqwL7Km0w5Ssp9nXYuO
- D30670MA2Sj6XZhITgnlGfz+CbLRRTTGqm1+avqXr78j82ygTWZNo0xLJfZujSqbhkGB
- PGrF2vH7gmb6yBZhdk4MEewmi/vVnznQIXrx13hfzhpgPwHxXicEX5lR0w4+GKDFVHr+
- SVq53bnYT118DciJhl7TTi6QQUk48bZuDdDkpudJ6w+ATt95Su7MBnwXlHIRBgi+Olc3 Fw== 
-Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2168.outbound.protection.outlook.com [104.47.59.168])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3tpbryr513-3
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Oct 2023 12:56:00 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Dcw8NOdGfd+UCFP5RaKk50sg0MlC62v/cWIDaVCceILXGvyLmkzsDCgpA675E/H8watl+xmKW1f9RxE9vUoSSTZzvcMOYjNp2+erw9mVB8Uqm9I9lmdtrI8R2Ejlz77cqJtXl6+12+I8KRt2wL8dc1Uf5apMZQh7ecLySGtkrQ1bRktTfRgu6rOC5CuRUsHyPHLJIccKcVd4powhmbmRFAwaf5kpp+oqhM7Zh2NV39X1KHqSWGYksV/sfH8xwJAP17UCyCeVTCtdYbi7IQYbIx+QQT0N//au1uFTgJ4A6JDGIn892ldfvkir0XuW8w5iVtNc5SlYjFw+VF4vrfyQ/Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zNSQOKmij6heabehQLoMl6vsr+Qe7vs70ugGnLsQSMo=;
- b=JHBcFXK6iYsFg6/cARIwtBiazCr7nGpx36MfQuNJ3KZ1RFwf0GwLwu1CC1wJafNhsMxsk4cmzdkqf0hFETj5LzHr6x7mHS7vTfcFyZkcNIJxYha03tAL/uhId8OWMkBwloH0It6zE33ladHHIxmz2pvq0yiYQ5EWclfyVGOGxg91OoRMUB1CzCOagSrRoDbM2w+HA5JLLL9v2PM6fNaWccFBekJUP5cAB4HbpY4NUJjja6zO8I/pXzS8j47DjAB8SNk2ow8x1nOncEJrgQ9Skt+xetW589V3DxPjlT5MEFrgFYGsWKnDwWykHxEJb6AApK2cAzGdYNFBCTdq4H/0Ww==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=meta.com; dmarc=pass action=none header.from=meta.com;
- dkim=pass header.d=meta.com; arc=none
-Received: from BY5PR15MB3667.namprd15.prod.outlook.com (2603:10b6:a03:1f9::18)
- by DM6PR15MB3829.namprd15.prod.outlook.com (2603:10b6:5:2bb::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6863.45; Thu, 12 Oct
- 2023 19:55:55 +0000
-Received: from BY5PR15MB3667.namprd15.prod.outlook.com
- ([fe80::60e6:62d8:ca42:402f]) by BY5PR15MB3667.namprd15.prod.outlook.com
- ([fe80::60e6:62d8:ca42:402f%3]) with mapi id 15.20.6863.043; Thu, 12 Oct 2023
- 19:55:55 +0000
-From: Nick Terrell <terrelln@meta.com>
-To: Kees Cook <keescook@chromium.org>
-CC: Nick Terrell <terrelln@meta.com>, Eric Biggers <ebiggers@kernel.org>,
-        Nick
- Terrell <terrelln@meta.com>,
-        syzbot
-	<syzbot+1f2eb3e8cd123ffce499@syzkaller.appspotmail.com>,
-        Chris Mason
-	<clm@meta.com>, "dsterba@suse.com" <dsterba@suse.com>,
-        "josef@toxicpanda.com"
-	<josef@toxicpanda.com>,
-        "linux-btrfs@vger.kernel.org"
-	<linux-btrfs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org"
-	<linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "syzkaller-bugs@googlegroups.com"
-	<syzkaller-bugs@googlegroups.com>,
-        "linux-hardening@vger.kernel.org"
-	<linux-hardening@vger.kernel.org>
-Subject: Re: [syzbot] [zstd] UBSAN: array-index-out-of-bounds in
- FSE_decompress_wksp_body_bmi2
-Thread-Topic: [syzbot] [zstd] UBSAN: array-index-out-of-bounds in
- FSE_decompress_wksp_body_bmi2
-Thread-Index: AQHZ+WIW2tZXKI1VfkS0RwXdr6keRLBBuYeAgATf4AA=
-Date: Thu, 12 Oct 2023 19:55:55 +0000
-Message-ID: <19E42116-8FE3-4C4B-8D26-E9B47B0B9AC5@meta.com>
-References: <00000000000049964e06041f2cbf@google.com>
- <20231007210556.GA174883@sol.localdomain> <202310091025.4939AEBC9@keescook>
-In-Reply-To: <202310091025.4939AEBC9@keescook>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BY5PR15MB3667:EE_|DM6PR15MB3829:EE_
-x-ms-office365-filtering-correlation-id: a9f60fb9-a1df-4ca1-6689-08dbcb5d3eef
-x-fb-source: Internal
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 
- 2kwbMpW6/FRzkS9c9wY7hImNSsbKtlgMJ0wpfz5esyJNPLZgDAOPyON9AVi6X5Daip8PskyGLza3W7/vxCzqtIbXo4k7OmlOcPQ710lNoz6TcNlksfIQdXtA/XvOQ7DnDqjV4s2lplU3kGfNa7H7MpbPT9nfngVtZANM9w0eFepe1IJLa+abi67qnBKtGrgcEGFc0UBFDN4Tt+TPadBaoinujR5az0bp1XJCwm6uKBzzeKqlo0O0JTwsUp90jBA1RyLFMYW1szKm7zvv06J2qZBC2hht8yk+cZ6ZsEX4oS2UBcF86TmoKObZk1suj4dHWlJZ+Q+gwNXJMXRrlkbXcXfswVhLK+l7JFHBlPbtX+MtXeN/cgQusbeJLtBzZlql1QUk7DfksxJBno5YyVdDSwLzSQQNtuKXpgyrM9+DXan9BlE155tsbX3aAOXcOXFH6/b1lxRNE1b6AtbEdUBGUwTQT8pwXVJAoF2gzFMtHuJGEV5OvELdXxc5iOfqhSMTJ9RzZBvRHNjG4NRUt7HTHUcXb2ziHiqtc3ZMKf1KEzn5KJyvS0C2tALy93V8JsFpN9h6beDMHZf5EnfFQaqcx5rHI+/+GcA6xtHaBZDx6mL/wuYPf22w3iRPGpDPbdzi8801sfIwuhPNpFjJZ+cMEw==
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR15MB3667.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(136003)(39860400002)(376002)(396003)(346002)(366004)(230922051799003)(1800799009)(451199024)(64100799003)(186009)(7416002)(71200400001)(2906002)(6486002)(966005)(478600001)(41300700001)(4326008)(8936002)(8676002)(5660300002)(66556008)(76116006)(66446008)(66476007)(54906003)(64756008)(91956017)(66946007)(316002)(6916009)(36756003)(83380400001)(33656002)(6506007)(2616005)(6512007)(122000001)(38100700002)(38070700005)(86362001)(53546011)(45980500001);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?us-ascii?Q?aEkfsEurJJsKUKsGcZseVb0D1StzbuThw5CneQUuWKmC0e2XoAxgbd95yRXy?=
- =?us-ascii?Q?ozFuGqHQWuySrKCXmHyuJfJ9dJEoJikkIiGlkrf1Cp+1+tG/1zuxEIel9Uqm?=
- =?us-ascii?Q?nxS6ukw4E4NbbA5snPQGFQa82va9E9zhxc0qQGSZLGZlVljv19Xfeoz1ezL9?=
- =?us-ascii?Q?FbCKiX/ITdroTpKbRGibqo8yD9pff5jdLP2T6NYBlOQgaD7Go/7GnBID+t7W?=
- =?us-ascii?Q?UEajBBONvI2IgOL7ViJaVyemorIXNd1DeUPMH/y52jO9RMQeEkDjBVRzyYZV?=
- =?us-ascii?Q?lQV5pDq9bjCknUTQU1BkSln5hxcI+NAXiFhduN8ZD8ouVefEKqKMW6x1ocPZ?=
- =?us-ascii?Q?eOaunaVYIFqE1oMZB8YKafn1Wivb2MaWWzL6c/Ug0v4plZe/47RnFN5ViWPQ?=
- =?us-ascii?Q?lal9FxUC0f5dEKurYuYfhI6+86SPX/Mn7zctazo/SShDQJuyoKfR7DDYxzeK?=
- =?us-ascii?Q?Yq0hRA/PZjzhv+4hSiaqe+W8rdeDl6NwOrjsBibSo25oPHZ5Dp3H4ACmSebL?=
- =?us-ascii?Q?dCPjVpAWV9brO7zb9lGkaygcFWmLHBsExupPE9zyM8sy6ac+gRRpFsogV3mY?=
- =?us-ascii?Q?Sn9AFv9/m+pTW3XieLQgh3hcbq7e3dO93dmTFJnBDeojyxtEBJnjfdbtE8R0?=
- =?us-ascii?Q?zwERTkY0f6+2Hw3EWi0aUoek96AQ39T2Chw001B4MDLSzJ9AHO1tIsued6DH?=
- =?us-ascii?Q?HLv9AZYRW9ywMURwO/ErpiD+0tJSaAG4J/VZ6VCS2aSg3aqP8bEvIJLgND4k?=
- =?us-ascii?Q?tHvBt96PdFr6g3ZwMVOFd0SJ1WYlYtk+vfMG6Hqu0+u5mLFR0Fy/ouqI0Y36?=
- =?us-ascii?Q?khNuyiwtb1WHBKZk0vnksWo+UwKVQF/duyaPXhnQd7nOaXy12zDnx17Y5TkD?=
- =?us-ascii?Q?OSlf7WOPZFj+DZPPva3ilA0/fsoIcypKTSjG6BkUTZhcupuWqoDkB70KObt6?=
- =?us-ascii?Q?fJiSBMSlFtCFJXe4AzpwdekI2SgOZljKzQxrt0WqU00gstB9SCdIRDig1IWB?=
- =?us-ascii?Q?KfNf+K1ucU1AJrGin3OGZbrzAY4nypJ3emn2djVvwqTax/m2hLko8YnWaz3c?=
- =?us-ascii?Q?flv28El45SbNvplfAf02gfJQxhcjB7gkUgca8wkHRNhpilsiCZumoUlAlSyQ?=
- =?us-ascii?Q?cKtTTo9kcgU+wEBxs0A20lbih4iA9QxpjoEI8sBfzI0WqMioTc79WW7UnAqo?=
- =?us-ascii?Q?lnecbblph8yyEuvPBWJdWFXsOhzclGZP40Nt3UV+RH92P9WaXpZ+uqkSTMv/?=
- =?us-ascii?Q?N41kTGzgWxj0N8CRl8bUd5nn3+qU+fLVTWkr+b6jmRfw89j1J77HkGjvrzYU?=
- =?us-ascii?Q?CbfoUGu6JxLrCSA6RlNoVwnEMy41mpTqBQMV6speB9w18fu4SyFUJFBLyJuU?=
- =?us-ascii?Q?hK1yVA3oqzlFz+sL43mp4IxpLLFN8W0pL/LqF/ICQReWm6W7tTMmTi8WWxRi?=
- =?us-ascii?Q?tx0p9fb7SeVYqN0vc9O2fdZJn/fe7sl9Crhr/Acy/QdNk/wz6bTv5r8khjRX?=
- =?us-ascii?Q?A863cBFwa/W32G7wJrZiKIa3Zliq280GSeTKhYmWRKFGYPVmO1ZmoX/OIzAx?=
- =?us-ascii?Q?YzuEdytX2lS/QOPt7IdL4mpLmDaxqj1rQK49WlqjDTP/dKb109Wo4/OdaMuO?=
- =?us-ascii?Q?NepG8oiH/GiUdRB7u6uWWF0=3D?=
-Content-ID: <7542183AE913FF4DBE5D0A19ECBBEDE0@namprd15.prod.outlook.com>
-X-OriginatorOrg: meta.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BY5PR15MB3667.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a9f60fb9-a1df-4ca1-6689-08dbcb5d3eef
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Oct 2023 19:55:55.1054
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: CD4zjJgj6ejthvuJANh1CRLLKftfioD657Wg/DG4nQHqMpMsHbmEq2oSaKW8CRVufEUq5y+smlxkM9rzQ3BiJA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR15MB3829
-X-Proofpoint-GUID: pX3tiQ7Tk0GZIHmH1y2NVmCMh-0Xhwf2
-X-Proofpoint-ORIG-GUID: pX3tiQ7Tk0GZIHmH1y2NVmCMh-0Xhwf2
-Content-Type: text/plain; charset="us-ascii"
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2DBA3CCFE
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Oct 2023 20:11:17 +0000 (UTC)
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0AFCB7
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Oct 2023 13:11:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1697141475;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Em5EkWmjEsngnt7dHkCr2mWPqoW9Gs15U305nbGgAN0=;
+	b=YaJJnzGpa6Esa9+aizLqLNLb4XB0BdNyrOHGmG0HsMp2sX/xZNE7sYkp7mWNucciDvpJKp
+	nNmr3PSEkt8BvDXWbUNxb3m5ELQiivwTdGAG1zbEREVrF/aUSCvg+zQn1ozKhUm0xRALDN
+	oB3UuPXSSp0QbOQjWYx2hDFsG1Fbs4A=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-288-Q_lEVdlDPLilEF8XRdOoOg-1; Thu, 12 Oct 2023 16:11:13 -0400
+X-MC-Unique: Q_lEVdlDPLilEF8XRdOoOg-1
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-775842dc945so23028785a.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Oct 2023 13:11:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697141473; x=1697746273;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Em5EkWmjEsngnt7dHkCr2mWPqoW9Gs15U305nbGgAN0=;
+        b=tWmhDZM9w6Y0dwtLiVSTwGCLnHU1NmJ+xjalIOEhrceAZNVtvpHIcL7ZzDSEgNDnrT
+         3zNtQCM0y3iidwrnzqZYAmREKTV2VCMZ3fC9EIlkcDWfz45zbQBWL1xE05g3BdoBlZvJ
+         6tWPHnY2KC7MRlpBHDUr8db06A0TjwekrgP548AjT1E7k4kfRi0pgWSeE+NUp23Ed6Tf
+         T5D14cYeewCXQBgg4gc1/drbPL1rJQi5WR8dJlYEApPHfJMu6tDlxLcWZBzndzPf+2tZ
+         ZhXpLK+i1hGxXkZ6Sp912KglileTzkg+9Ns9Ur6kGcdfHjJC75onSdOTq0wnPTdU3tNw
+         oJ/Q==
+X-Gm-Message-State: AOJu0YzwguejtYuGHyrDg4HG0rl/weFMDpSulZRKSET9b8Ephm1uSTTZ
+	PLQ3Vb+6IhPhu0KaEnl7W0XITrLy/fGkWsL0GUAPAZvoyWefN1oetzNj3nZGyOkVWbvfpD1ogfI
+	9Xp2gSm+wYKKTGvDsRowfaUSbFA==
+X-Received: by 2002:a05:620a:2915:b0:775:7520:5214 with SMTP id m21-20020a05620a291500b0077575205214mr28705708qkp.0.1697141473164;
+        Thu, 12 Oct 2023 13:11:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGrTzFhd634tYhp+FNrxPrpihtMkRR6O+7rzeEXn7vy0t6q0EEePDs0hzOnDb3mMY91toGulA==
+X-Received: by 2002:a05:620a:2915:b0:775:7520:5214 with SMTP id m21-20020a05620a291500b0077575205214mr28705671qkp.0.1697141472802;
+        Thu, 12 Oct 2023 13:11:12 -0700 (PDT)
+Received: from x1n (cpe5c7695f3aee0-cm5c7695f3aede.cpe.net.cable.rogers.com. [99.254.144.39])
+        by smtp.gmail.com with ESMTPSA id 5-20020a05620a06c500b0076dacd14484sm54961qky.83.2023.10.12.13.11.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Oct 2023 13:11:12 -0700 (PDT)
+Date: Thu, 12 Oct 2023 16:11:09 -0400
+From: Peter Xu <peterx@redhat.com>
+To: Lokesh Gidra <lokeshgidra@google.com>
+Cc: David Hildenbrand <david@redhat.com>,
+	Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, shuah@kernel.org,
+	aarcange@redhat.com, hughd@google.com, mhocko@suse.com,
+	axelrasmussen@google.com, rppt@kernel.org, willy@infradead.org,
+	Liam.Howlett@oracle.com, jannh@google.com, zhangpeng362@huawei.com,
+	bgeffon@google.com, kaleshsingh@google.com, ngeoffray@google.com,
+	jdduke@google.com, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH v3 2/3] userfaultfd: UFFDIO_MOVE uABI
+Message-ID: <ZShS3UT+cjJFmtEy@x1n>
+References: <20231009064230.2952396-1-surenb@google.com>
+ <20231009064230.2952396-3-surenb@google.com>
+ <214b78ed-3842-5ba1-fa9c-9fa719fca129@redhat.com>
+ <CAJuCfpHzSm+z9b6uxyYFeqr5b5=6LehE9O0g192DZdJnZqmQEw@mail.gmail.com>
+ <478697aa-f55c-375a-6888-3abb343c6d9d@redhat.com>
+ <CA+EESO5nvzka0KzFGzdGgiCWPLg7XD-8jA9=NTUOKFy-56orUg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-10-12_12,2023-10-12_01,2023-05-22_02
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-	RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
-	autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+EESO5nvzka0KzFGzdGgiCWPLg7XD-8jA9=NTUOKFy-56orUg@mail.gmail.com>
+X-Spam-Status: No, score=-0.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+	RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
+	RCVD_IN_SORBS_WEB,SPF_HELO_NONE,SPF_NONE autolearn=no
+	autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
+On Mon, Oct 09, 2023 at 05:29:08PM +0100, Lokesh Gidra wrote:
+> On Mon, Oct 9, 2023 at 5:24 PM David Hildenbrand <david@redhat.com> wrote:
+> >
+> > On 09.10.23 18:21, Suren Baghdasaryan wrote:
+> > > On Mon, Oct 9, 2023 at 7:38 AM David Hildenbrand <david@redhat.com> wrote:
+> > >>
+> > >> On 09.10.23 08:42, Suren Baghdasaryan wrote:
+> > >>> From: Andrea Arcangeli <aarcange@redhat.com>
+> > >>>
+> > >>> Implement the uABI of UFFDIO_MOVE ioctl.
+> > >>> UFFDIO_COPY performs ~20% better than UFFDIO_MOVE when the application
+> > >>> needs pages to be allocated [1]. However, with UFFDIO_MOVE, if pages are
+> > >>> available (in userspace) for recycling, as is usually the case in heap
+> > >>> compaction algorithms, then we can avoid the page allocation and memcpy
+> > >>> (done by UFFDIO_COPY). Also, since the pages are recycled in the
+> > >>> userspace, we avoid the need to release (via madvise) the pages back to
+> > >>> the kernel [2].
+> > >>> We see over 40% reduction (on a Google pixel 6 device) in the compacting
+> > >>> thread’s completion time by using UFFDIO_MOVE vs. UFFDIO_COPY. This was
+> > >>> measured using a benchmark that emulates a heap compaction implementation
+> > >>> using userfaultfd (to allow concurrent accesses by application threads).
+> > >>> More details of the usecase are explained in [2].
+> > >>> Furthermore, UFFDIO_MOVE enables moving swapped-out pages without
+> > >>> touching them within the same vma. Today, it can only be done by mremap,
+> > >>> however it forces splitting the vma.
+> > >>>
+> > >>> [1] https://lore.kernel.org/all/1425575884-2574-1-git-send-email-aarcange@redhat.com/
+> > >>> [2] https://lore.kernel.org/linux-mm/CA+EESO4uO84SSnBhArH4HvLNhaUQ5nZKNKXqxRCyjniNVjp0Aw@mail.gmail.com/
+> > >>>
+> > >>> Update for the ioctl_userfaultfd(2)  manpage:
+> > >>>
+> > >>>      UFFDIO_MOVE
+> > >>>          (Since Linux xxx)  Move a continuous memory chunk into the
+> > >>>          userfault registered range and optionally wake up the blocked
+> > >>>          thread. The source and destination addresses and the number of
+> > >>>          bytes to move are specified by the src, dst, and len fields of
+> > >>>          the uffdio_move structure pointed to by argp:
+> > >>>
+> > >>>              struct uffdio_move {
+> > >>>                  __u64 dst;    /* Destination of move */
+> > >>>                  __u64 src;    /* Source of move */
+> > >>>                  __u64 len;    /* Number of bytes to move */
+> > >>>                  __u64 mode;   /* Flags controlling behavior of move */
+> > >>>                  __s64 move;   /* Number of bytes moved, or negated error */
+> > >>>              };
+> > >>>
+> > >>>          The following value may be bitwise ORed in mode to change the
+> > >>>          behavior of the UFFDIO_MOVE operation:
+> > >>>
+> > >>>          UFFDIO_MOVE_MODE_DONTWAKE
+> > >>>                 Do not wake up the thread that waits for page-fault
+> > >>>                 resolution
+> > >>>
+> > >>>          UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES
+> > >>>                 Allow holes in the source virtual range that is being moved.
+> > >>>                 When not specified, the holes will result in ENOENT error.
+> > >>>                 When specified, the holes will be accounted as successfully
+> > >>>                 moved memory. This is mostly useful to move hugepage aligned
+> > >>>                 virtual regions without knowing if there are transparent
+> > >>>                 hugepages in the regions or not, but preventing the risk of
+> > >>>                 having to split the hugepage during the operation.
+> > >>>
+> > >>>          The move field is used by the kernel to return the number of
+> > >>>          bytes that was actually moved, or an error (a negated errno-
+> > >>>          style value).  If the value returned in move doesn't match the
+> > >>>          value that was specified in len, the operation fails with the
+> > >>>          error EAGAIN.  The move field is output-only; it is not read by
+> > >>>          the UFFDIO_MOVE operation.
+> > >>>
+> > >>>          The operation may fail for various reasons. Usually, remapping of
+> > >>>          pages that are not exclusive to the given process fail; once KSM
+> > >>>          might deduplicate pages or fork() COW-shares pages during fork()
+> > >>>          with child processes, they are no longer exclusive. Further, the
+> > >>>          kernel might only perform lightweight checks for detecting whether
+> > >>>          the pages are exclusive, and return -EBUSY in case that check fails.
+> > >>>          To make the operation more likely to succeed, KSM should be
+> > >>>          disabled, fork() should be avoided or MADV_DONTFORK should be
+> > >>>          configured for the source VMA before fork().
+> > >>>
+> > >>>          This ioctl(2) operation returns 0 on success.  In this case, the
+> > >>>          entire area was moved.  On error, -1 is returned and errno is
+> > >>>          set to indicate the error.  Possible errors include:
+> > >>>
+> > >>>          EAGAIN The number of bytes moved (i.e., the value returned in
+> > >>>                 the move field) does not equal the value that was
+> > >>>                 specified in the len field.
+> > >>>
+> > >>>          EINVAL Either dst or len was not a multiple of the system page
+> > >>>                 size, or the range specified by src and len or dst and len
+> > >>>                 was invalid.
+> > >>>
+> > >>>          EINVAL An invalid bit was specified in the mode field.
+> > >>>
+> > >>>          ENOENT
+> > >>>                 The source virtual memory range has unmapped holes and
+> > >>>                 UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES is not set.
+> > >>>
+> > >>>          EEXIST
+> > >>>                 The destination virtual memory range is fully or partially
+> > >>>                 mapped.
+> > >>>
+> > >>>          EBUSY
+> > >>>                 The pages in the source virtual memory range are not
+> > >>>                 exclusive to the process. The kernel might only perform
+> > >>>                 lightweight checks for detecting whether the pages are
+> > >>>                 exclusive. To make the operation more likely to succeed,
+> > >>>                 KSM should be disabled, fork() should be avoided or
+> > >>>                 MADV_DONTFORK should be configured for the source virtual
+> > >>>                 memory area before fork().
+> > >>>
+> > >>>          ENOMEM Allocating memory needed for the operation failed.
+> > >>>
+> > >>>          ESRCH
+> > >>>                 The faulting process has exited at the time of a
+> > >>>                 UFFDIO_MOVE operation.
+> > >>>
+> > >>
+> > >> A general comment simply because I realized that just now: does anything
+> > >> speak against limiting the operations now to a single MM?
+> > >>
+> > >> The use cases I heard so far don't need it. If ever required, we could
+> > >> consider extending it.
+> > >>
+> > >> Let's reduce complexity and KIS unless really required.
+> > >
+> > > Let me check if there are use cases that require moves between MMs.
+> > > Andrea seems to have put considerable effort to make it work between
+> > > MMs and it would be a pity to lose that. I can send a follow-up patch
+> > > to recover that functionality and even if it does not get merged, it
+> > > can be used in the future as a reference. But first let me check if we
+> > > can drop it.
+> 
+> For the compaction use case that we have it's fine to limit it to
+> single MM. However, for general use I think Peter will have a better
+> idea.
 
+I used to have the same thought with David on whether we can simplify the
+design to e.g. limit it to single mm.  Then I found that the trickiest is
+actually patch 1 together with the anon_vma manipulations, and the problem
+is that's not avoidable even if we restrict the api to apply on single mm.
 
-> On Oct 9, 2023, at 1:29 PM, Kees Cook <keescook@chromium.org> wrote:
-> 
-> !-------------------------------------------------------------------|
->  This Message Is From an External Sender
-> 
-> |-------------------------------------------------------------------!
-> 
-> On Sat, Oct 07, 2023 at 02:05:56PM -0700, Eric Biggers wrote:
->> Hi Nick,
->> 
->> On Wed, Aug 30, 2023 at 12:49:53AM -0700, syzbot wrote:
->>> UBSAN: array-index-out-of-bounds in lib/zstd/common/fse_decompress.c:345:30
->>> index 33 is out of range for type 'FSE_DTable[1]' (aka 'unsigned int[1]')
->> 
->> Zstandard needs to be converted to use C99 flex-arrays instead of length-1
->> arrays.  https://github.com/facebook/zstd/pull/3785 would fix this in upstream
->> Zstandard, though it doesn't work well with the fact that upstream Zstandard
->> supports C90.  Not sure how you want to handle this.
-> 
-> For the kernel, we just need:
-> 
-> diff --git a/lib/zstd/common/fse_decompress.c b/lib/zstd/common/fse_decompress.c
-> index a0d06095be83..b11e87fff261 100644
-> --- a/lib/zstd/common/fse_decompress.c
-> +++ b/lib/zstd/common/fse_decompress.c
-> @@ -312,7 +312,7 @@ size_t FSE_decompress_wksp(void* dst, size_t dstCapacity, const void* cSrc, size
-> 
-> typedef struct {
->     short ncount[FSE_MAX_SYMBOL_VALUE + 1];
-> -    FSE_DTable dtable[1]; /* Dynamically sized */
-> +    FSE_DTable dtable[]; /* Dynamically sized */
-> } FSE_DecompressWksp;
+What else we can benefit from single mm?  One less mmap read lock, but
+probably that's all we can get; IIUC we need to keep most of the rest of
+the code, e.g. pgtable walks, double pgtable lockings, etc.
 
-Thanks Eric and Kees for the report and the fix! I am working on putting this
-patch up now, just need to test the fix myself to ensure I can reproduce the
-issue and the fix.
+Actually, even though I have no solid clue, but I had a feeling that there
+can be some interesting way to leverage this across-mm movement, while
+keeping things all safe (by e.g. elaborately requiring other proc to create
+uffd and deliver to this proc).
 
-In your opinion does this worth trying to get this patch into v6.6, or should it
-wait for v6.7?
+Considering Andrea's original version already contains those bits and all
+above, I'd vote that we go ahead with supporting two MMs.
 
-Best,
-Nick Terrell
+Thanks,
 
-> And if upstream wants to stay C89 compat, perhaps:
-> 
-> #if __STDC_VERSION__ >= 199901L
-> # define __FLEX_ARRAY_DIM /*C99*/
-> #else
-> # define __FLEX_ARRAY_DIM 0
-> #endif
-> 
-> and then use __FLEX_ARRAY_DIM as needed (and keep the other "-1" changes
-> in the github commit):
-> 
-> typedef struct {
->     short ncount[FSE_MAX_SYMBOL_VALUE + 1];
-> -    FSE_DTable dtable[1]; /* Dynamically sized */
-> +    FSE_DTable dtable[__FLEX_ARRAY_DIM]; /* Dynamically sized */
-> } FSE_DecompressWksp;
-> 
-> 
-> -- 
-> Kees Cook
+-- 
+Peter Xu
 
 
