@@ -1,149 +1,164 @@
-Return-Path: <linux-fsdevel+bounces-196-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-197-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D92287C758B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 20:00:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 981657C75E0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 20:31:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FB2B282C06
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 18:00:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A39DE282B0E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 18:31:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C2B538DDD;
-	Thu, 12 Oct 2023 18:00:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B0343A28A;
+	Thu, 12 Oct 2023 18:31:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nMRJwDb7"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A8734CEF
-	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Oct 2023 18:00:37 +0000 (UTC)
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BBDBA9;
-	Thu, 12 Oct 2023 11:00:35 -0700 (PDT)
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1c8a6aa0cd1so10954265ad.0;
-        Thu, 12 Oct 2023 11:00:35 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 523FF3A272
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Oct 2023 18:31:28 +0000 (UTC)
+Received: from mail-oo1-xc36.google.com (mail-oo1-xc36.google.com [IPv6:2607:f8b0:4864:20::c36])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C3D7BE
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Oct 2023 11:31:26 -0700 (PDT)
+Received: by mail-oo1-xc36.google.com with SMTP id 006d021491bc7-57b8cebf57dso701464eaf.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Oct 2023 11:31:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1697135485; x=1697740285; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=kmUopNj4SKl1oz8w54FsmEGmf+2bTIjcRS6uvAC4XKo=;
+        b=nMRJwDb7lLq45Vq56/8oKuRCxXSym2fA17TvfEEtl/Np1rAVXrvr5bzD7D+wvTe1di
+         YfigpvNCXV18e2daBOAOTx+fJ2SiKYJKRg5xNJD/NZTwgAOlQeuGIM6Vs/d8DnVeNvjU
+         66LpLgCt+Y7EwbE+V43RmcPQUUuf3MqLj/hwQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697133635; x=1697738435;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1697135485; x=1697740285;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dKdTAQn3XzGpY+ZUQb5LPKQnf1Hcd0mnfJpRNv4Os8M=;
-        b=onV4ETD4N//+jrjlBwLysmkr9AXGC2f4m4RUUTQYBYoljHR0NEcHsquC0Nk4vxj6cU
-         SrR5hCYygWsIOWJq0Q4GyPk/YWYoaFNgx41DSZFPe2Hemu1+YeTApUFs0s/oygyTiZVn
-         VcZpzAtPV9u9Q1h6W6F3vG2k3UaSA2q/tMy6pwrc7IFiUj/uzo0SJOXxG5nfVP9vAIOI
-         0cEhrtZMt1H/AYvTjDFq4lPTQMYfDSfhpyVbLy6rUSLEQ8eR79ds6PqFHawap8mzXGUn
-         F5x1aw6f9x9NbODV0a22MivZH+FDY6A884mNktaJi1bHqcEWwBEYbimS4mVcd+DVVYmh
-         lspg==
-X-Gm-Message-State: AOJu0YyU7YvyffpfVUNl05DLZg8YWIBOq2Mu1kD7s+Ox6Za459jZtji1
-	ZE6hSJ+vRQI1zNPB4TyR+xwLa+zbjVU=
-X-Google-Smtp-Source: AGHT+IGyN4MZ/M2Jss6UPhOTXhh9Fgs9O3Po1iWNHBYd+0Kw+xv1jSQxnZ0byMtB9uGQJV/XAKRHDg==
-X-Received: by 2002:a17:902:e5cb:b0:1c8:78b5:2ceb with SMTP id u11-20020a170902e5cb00b001c878b52cebmr27711014plf.40.1697133634801;
-        Thu, 12 Oct 2023 11:00:34 -0700 (PDT)
-Received: from ?IPV6:2620:15c:211:201:414d:a1fb:8def:b3ee? ([2620:15c:211:201:414d:a1fb:8def:b3ee])
-        by smtp.gmail.com with ESMTPSA id h6-20020a170902680600b001c627413e87sm2315934plk.290.2023.10.12.11.00.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Oct 2023 11:00:34 -0700 (PDT)
-Message-ID: <4fee2c56-7631-45d2-b709-2dadea057f52@acm.org>
-Date: Thu, 12 Oct 2023 11:00:32 -0700
+        bh=kmUopNj4SKl1oz8w54FsmEGmf+2bTIjcRS6uvAC4XKo=;
+        b=HmW2n4pgnqVwQErxzn/R4yEdYNbdYlUhyp817TrX6a08a6YdqsYgwUVB0XCQ6KfQct
+         Uz/yRgOO3zIvziO3dQJgf4s1Tf3eSzgDK71JbrL3jJXz3o6yNqje/PSpxf1GK2Uw5wCl
+         16unRT10+OAhAapKQuP477mxcTYG/Fm65qOGrq2MSOE4OaCqw7AHdGnAWBieZn6LFgK9
+         ka9ReHP9svhz2VWmBuombOUsdOM6MTl5SNq3BUp9hTmnzC0rFwCYG0IzzRO1RG9+IFE6
+         HMDFVQAEOf6tukF3geqktzhoJAdxqA5ECic70zRhHCNyje8ydm6muln44Dv9/oVz5ZWC
+         kAkA==
+X-Gm-Message-State: AOJu0YyJzfCPIuy2avLhXCjpsdTtmAHsCCRE2hk0yT5tIeiq/OSpf1QS
+	pJd4jTMByX5zEmFk1bt2in1kZw==
+X-Google-Smtp-Source: AGHT+IFb1ckH/xhcO6Zgz8KHFb8znJRiSnNP1u2o9ir74qQo0GMUO1tDivlCPnScZzkxDX4RIMu5BQ==
+X-Received: by 2002:a05:6358:52c5:b0:14c:4411:2f4b with SMTP id z5-20020a05635852c500b0014c44112f4bmr32545120rwz.22.1697135485618;
+        Thu, 12 Oct 2023 11:31:25 -0700 (PDT)
+Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id x3-20020aa793a3000000b0068a54866ca8sm12088064pff.134.2023.10.12.11.31.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Oct 2023 11:31:25 -0700 (PDT)
+Date: Thu, 12 Oct 2023 11:31:16 -0700
+From: Kees Cook <keescook@chromium.org>
+To: Sami Tolvanen <samitolvanen@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, patches@lists.linux.dev,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@google.com>,
+	David Gow <davidgow@google.com>, Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v10 25/27] x86: enable initial Rust support
+Message-ID: <202310121130.256F581823@keescook>
+References: <20220927131518.30000-1-ojeda@kernel.org>
+ <20220927131518.30000-26-ojeda@kernel.org>
+ <Y0BfN1BdVCWssvEu@hirez.programming.kicks-ass.net>
+ <CABCJKuenkHXtbWOLZ0_isGewxd19qkM7OcLeE2NzM6dSkXS4mQ@mail.gmail.com>
+ <CANiq72k6s4=0E_AHv7FPsCQhkyxf7c-b+wUtzfjf+Spehe9Fmg@mail.gmail.com>
+ <CABCJKuca0fOAs=E6LeHJiT2LOXEoPvLVKztA=u+ARcw=tbT=tw@mail.gmail.com>
+ <20231012104741.GN6307@noisy.programming.kicks-ass.net>
+ <CABCJKufEagwJ=TQnmVSK07RDjsPUt=3JGtwnK9ASmFqb7Vx8JQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 03/15] block: Support data lifetime in the I/O priority
- bitfield
-Content-Language: en-US
-To: Damien Le Moal <dlemoal@kernel.org>, Jens Axboe <axboe@kernel.dk>
-Cc: linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-fsdevel@vger.kernel.org,
- "Martin K . Petersen" <martin.petersen@oracle.com>,
- Christoph Hellwig <hch@lst.de>, Niklas Cassel <Niklas.Cassel@wdc.com>,
- Avri Altman <Avri.Altman@wdc.com>, Bean Huo <huobean@gmail.com>,
- Daejun Park <daejun7.park@samsung.com>, Hannes Reinecke <hare@suse.de>
-References: <20231005194129.1882245-1-bvanassche@acm.org>
- <20231005194129.1882245-4-bvanassche@acm.org>
- <8aec03bb-4cef-9423-0ce4-c10d060afce4@kernel.org>
- <46c17c1b-29be-41a3-b799-79163851f972@acm.org>
- <b0b015bf-0a27-4e89-950a-597b9fed20fb@acm.org>
- <447f3095-66cb-417b-b48c-90005d37b5d3@kernel.org>
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <447f3095-66cb-417b-b48c-90005d37b5d3@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CABCJKufEagwJ=TQnmVSK07RDjsPUt=3JGtwnK9ASmFqb7Vx8JQ@mail.gmail.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+	RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-On 10/11/23 18:02, Damien Le Moal wrote:
-> Some have stated interest in CDL in NVMe-oF context, which could
-> imply that combining CDL and lifetime may be something useful to do
-> in that space...
+On Thu, Oct 12, 2023 at 10:50:36AM -0700, Sami Tolvanen wrote:
+> On Thu, Oct 12, 2023 at 3:47 AM Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > On Fri, Oct 14, 2022 at 11:34:30AM -0700, Sami Tolvanen wrote:
+> > > On Fri, Oct 14, 2022 at 11:05 AM Miguel Ojeda
+> > > <miguel.ojeda.sandonis@gmail.com> wrote:
+> > > >
+> > > > On Tue, Oct 11, 2022 at 1:16 AM Sami Tolvanen <samitolvanen@google.com> wrote:
+> > > > >
+> > > > > Rust supports IBT with -Z cf-protection=branch, but I don't see this
+> > > > > option being enabled in the kernel yet. Cross-language CFI is going to
+> > > > > require a lot more work though because the type systems are not quite
+> > > > > compatible:
+> > > > >
+> > > > > https://github.com/rust-lang/rfcs/pull/3296
+> > > >
+> > > > I have pinged Ramon de C Valle as he is the author of the RFC above
+> > > > and implementation work too; since a month or so ago he also leads the
+> > > > Exploit Mitigations Project Group in Rust.
+> > >
+> > > Thanks, Miguel. I also talked to Ramon about KCFI earlier this week
+> > > and he expressed interest in helping with rustc support for it. In the
+> > > meanwhile, I think we can just add a depends on !CFI_CLANG to avoid
+> > > issues here.
+> >
+> > Having just read up on the thing it looks like the KCFI thing is
+> > resolved.
+> >
+> > I'm not sure I understand most of the objections in that thread through
+> > -- enabling CFI *will* break stuff, so what.
+> >
+> > Squashing the integer types seems a workable compromise I suppose. One
+> > thing that's been floated in the past is adding a 'seed' attribute to
+> > some functions in order to distinguish functions of otherwise identical
+> > signature.
+> >
+> > The Rust thing would then also need to support this attribute.
+> >
+> > Are there any concrete plans for this? It would allow, for example,
+> > to differentiate address_space_operations::swap_deactivate() from any
+> > other random function that takes only a file argument, say:
+> > locks_remove_file().
+> 
+> I haven't really had time to look into it, so no concrete plans yet.
+> Adding an attribute shouldn't be terribly difficult, but Kees
+> expressed interest in automatic salting as well, which might be a more
+> involved project:
+> 
+> https://github.com/ClangBuiltLinux/linux/issues/1736
 
-We are having this discussion because bi_ioprio is sixteen bits wide and
-because we don't want to make struct bio larger. How about expanding the
-bi_ioprio field from 16 to 32 bits and to use separate bits for CDL
-information and data lifetimes?
+Automatic would be nice, but having an attribute would let us at least
+start the process manually (or apply salting from static analysis
+output, etc).
 
-This patch does not make struct bio bigger because it changes a three
-byte hole with a one byte hole:
+-Kees
 
---- a/include/linux/blk_types.h
-+++ b/include/linux/blk_types.h
-@@ -268,8 +268,8 @@ struct bio {
-                                                  * req_flags.
-                                                  */
-         unsigned short          bi_flags;       /* BIO_* below */
--       unsigned short          bi_ioprio;
-         blk_status_t            bi_status;
-+       u32                     bi_ioprio;
-         atomic_t                __bi_remaining;
-
-         struct bvec_iter        bi_iter;
-
-
- From the pahole output:
-
-struct bio {
-         struct bio *               bi_next;              /*     0     8 */
-         struct block_device *      bi_bdev;              /*     8     8 */
-         blk_opf_t                  bi_opf;               /*    16     4 */
-         short unsigned int         bi_flags;             /*    20     2 */
-         blk_status_t               bi_status;            /*    22     1 */
-
-         /* XXX 1 byte hole, try to pack */
-
-         u32                        bi_ioprio;            /*    24     4 */
-         atomic_t                   __bi_remaining;       /*    28     4 */
-         struct bvec_iter           bi_iter;              /*    32    20 */
-         blk_qc_t                   bi_cookie;            /*    52     4 */
-         bio_end_io_t *             bi_end_io;            /*    56     8 */
-         /* --- cacheline 1 boundary (64 bytes) --- */
-         void *                     bi_private;           /*    64     8 */
-         struct bio_crypt_ctx *     bi_crypt_context;     /*    72     8 */
-         union {
-                 struct bio_integrity_payload * bi_integrity; /*    80 
-   8 */
-         };                                               /*    80     8 */
-         short unsigned int         bi_vcnt;              /*    88     2 */
-         short unsigned int         bi_max_vecs;          /*    90     2 */
-         atomic_t                   __bi_cnt;             /*    92     4 */
-         struct bio_vec *           bi_io_vec;            /*    96     8 */
-         struct bio_set *           bi_pool;              /*   104     8 */
-         struct bio_vec             bi_inline_vecs[];     /*   112     0 */
-
-         /* size: 112, cachelines: 2, members: 19 */
-         /* sum members: 111, holes: 1, sum holes: 1 */
-         /* last cacheline: 48 bytes */
-};
-
-Thanks,
-
-Bart.
+-- 
+Kees Cook
 
