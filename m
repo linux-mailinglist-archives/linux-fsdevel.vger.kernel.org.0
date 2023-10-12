@@ -1,191 +1,154 @@
-Return-Path: <linux-fsdevel+bounces-190-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-191-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DF897C73B0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 19:04:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07F3D7C73F2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 19:16:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FD591C210F4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 17:04:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B47A3282E4E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 17:16:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BFFA34CCA;
-	Thu, 12 Oct 2023 17:04:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56AA034199;
+	Thu, 12 Oct 2023 17:16:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EKyrHvpe"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="b2mv3jUx"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E7682AB57;
-	Thu, 12 Oct 2023 17:04:41 +0000 (UTC)
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF7EED6;
-	Thu, 12 Oct 2023 10:04:39 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id ffacd0b85a97d-32157c8e4c7so1158221f8f.1;
-        Thu, 12 Oct 2023 10:04:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697130278; x=1697735078; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VkUJ0oO3Mp9xCXnylh1JdkHseQH/mUhjkeml5gm5SR8=;
-        b=EKyrHvpe3wR6P8/JJLVVlxu74L7tuvaOtZLYAV60i5Qdk9bLS5Vp4TRpQMPanXcRIG
-         HNfal8veY8MW4jukBlswEr9s8TtYCcm/Cv7MarTEP1tLYoI3OF8xSPmTzi/kTmuM7HlJ
-         c9ouDVCNnFEJ697ucVTGzopnAXIlHxBZk3x9Ji9MeJ34LGt/zWbRICS3wR/S/e8Bk69S
-         a8oGXCn+LD8SME9pxhaTjkIKacFE6D6q9ANZt5xFd2syMgp+kC4UDrSD+ucLMfSrPHsg
-         AZxgDJGmTLhqpITP2CF8ILNJhCIQ1dSHwv2ze9Yl+UoSAaB97VLpf6+lEaeQBxxiPn+w
-         eorg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697130278; x=1697735078;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VkUJ0oO3Mp9xCXnylh1JdkHseQH/mUhjkeml5gm5SR8=;
-        b=w3zobfsJvyT4yvIfjLmWAzo2KESGNkbozblTTk5HptZ/zSRKE5NiJRe8dP31oWgY5k
-         NTH64CeZEgbUrii/lB3TgQbfTXTVVXqYVXYC76N4QuKgT/i/afgYpI5Oh69mv/nTOYqj
-         tur+WwIdo5TJlM7cN65zcB1PRjI80+rZJ+sOdjcdtw7cCCloPD5YjYcL5qtUX6UGEVf+
-         YkqM3GRwTGKCCTlgIkXAzJnPJ5F6AtM/vj9Xo61PwD8zohnRfcJQEyeNWhCvWdPXOb2l
-         aEt4muFugEdgEFqH8t0TarHnBVPp/tmdI9O98O3DKkcRUD22xtO0KcyBt83hqC6O+E1v
-         g8tQ==
-X-Gm-Message-State: AOJu0YwOBYRp4wQdbF4OqJj6WVbM+Zx9BGSuBdXEm3lkQPLJaL9JcGXV
-	chbzpemZqCtXEyeqwKljePM=
-X-Google-Smtp-Source: AGHT+IGEfvOX2oiWBKkh4O/yKmWydOZ76wDsxaQCjAqvjCnNn57Y9QF5SeE6lMfg3rl+IKZUkH80og==
-X-Received: by 2002:a05:6000:b0f:b0:32d:9572:6469 with SMTP id dj15-20020a0560000b0f00b0032d95726469mr1470249wrb.46.1697130277811;
-        Thu, 12 Oct 2023 10:04:37 -0700 (PDT)
-Received: from lucifer.home ([2a00:23c5:dc8c:8701:1663:9a35:5a7b:1d76])
-        by smtp.googlemail.com with ESMTPSA id h16-20020adffd50000000b003197869bcd7sm18875418wrs.13.2023.10.12.10.04.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Oct 2023 10:04:36 -0700 (PDT)
-From: Lorenzo Stoakes <lstoakes@gmail.com>
-To: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: Mike Kravetz <mike.kravetz@oracle.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Hugh Dickins <hughd@google.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	Lorenzo Stoakes <lstoakes@gmail.com>
-Subject: [PATCH v4 3/3] mm: perform the mapping_map_writable() check after call_mmap()
-Date: Thu, 12 Oct 2023 18:04:30 +0100
-Message-ID: <55e413d20678a1bb4c7cce889062bbb07b0df892.1697116581.git.lstoakes@gmail.com>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <cover.1697116581.git.lstoakes@gmail.com>
-References: <cover.1697116581.git.lstoakes@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA66224CF
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Oct 2023 17:16:32 +0000 (UTC)
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1422D6;
+	Thu, 12 Oct 2023 10:16:27 -0700 (PDT)
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39CH2IQJ007409;
+	Thu, 12 Oct 2023 17:15:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=ruLAwstVJYOfziGmebf4MFgKg/exPipsxwb0UugNc+4=;
+ b=b2mv3jUxA6k4cTp8yMzRSfLlz0S4Zy/Nc0UwZtt3Szi4QUfJ1Q+rStBO4u52y64zObaR
+ ro/AiG7XiWrbz4Pxcgz9EmLvf/DoOywBPWDCH+I3Nw05JfLi0tzpjZhIZc9vM232dnMU
+ ETX0JVSw5lp/ME6rm38lMrh2gPaoZc4AzFLlIFe846AJwQY9cbLP0b7r9Q38S68ztnAV
+ AOmOZTArLtdDroBx2bmcjeCB4ANq065yMuOgntkJ1pyl2UaNiVdHVeKhzTVxiGMuQGae
+ khByidn34IHmUOGBnrkpqPr2uJPly5yHdMsKno390q7OztC+dZWRvsQh/nZ2oWwWMOkO hA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3tpmuj0d14-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Oct 2023 17:15:44 +0000
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 39CHFhwb020298;
+	Thu, 12 Oct 2023 17:15:43 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3tpmuj0cwm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Oct 2023 17:15:43 +0000
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 39CFCsfw028188;
+	Thu, 12 Oct 2023 17:10:53 GMT
+Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3tkj1yh8y6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Oct 2023 17:10:53 +0000
+Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
+	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 39CHAqUv50135662
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 12 Oct 2023 17:10:53 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C5ADB5805A;
+	Thu, 12 Oct 2023 17:10:52 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 87EDD5805D;
+	Thu, 12 Oct 2023 17:10:50 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.watson.ibm.com (unknown [9.31.99.90])
+	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 12 Oct 2023 17:10:50 +0000 (GMT)
+Message-ID: <102b06b30518ac6595022e079de92717c92f3b8e.camel@linux.ibm.com>
+Subject: Re: [PATCH v3 02/25] ima: Align ima_post_path_mknod() definition
+ with LSM infrastructure
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>, viro@zeniv.linux.org.uk,
+        brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
+        neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
+        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, dhowells@redhat.com, jarkko@kernel.org,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        casey@schaufler-ca.com
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
+Date: Thu, 12 Oct 2023 13:10:50 -0400
+In-Reply-To: <4866a6ef46deebf9a9afdeb7efd600edb589da93.camel@huaweicloud.com>
+References: <20230904133415.1799503-1-roberto.sassu@huaweicloud.com>
+	 <20230904133415.1799503-3-roberto.sassu@huaweicloud.com>
+	 <a733fe780a3197150067ad35ed280bf85e11fa97.camel@linux.ibm.com>
+	 <b51baf7741de1fdee8b36a87bd2dde71184d47a8.camel@huaweicloud.com>
+	 <8646e30b0074a2932076b5a0a792b14be034de98.camel@linux.ibm.com>
+	 <16c8c95f2e63ab9a2fba8cba919bf129d0541b61.camel@huaweicloud.com>
+	 <c16551704db68c6e0ba89c729c892e9401f05dfc.camel@linux.ibm.com>
+	 <2336abd6ae195eda221d54e3c2349a4760afaff2.camel@huaweicloud.com>
+	 <84cfe4d93cb5b02591f4bd921b828eb6f3e95faa.camel@linux.ibm.com>
+	 <4866a6ef46deebf9a9afdeb7efd600edb589da93.camel@huaweicloud.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-	RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.6
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: JsOvQDlFYlC1UJRUF-UeTH3-IMW7Gucg
+X-Proofpoint-GUID: d359mtKa2PkNdJRCP2N4Q_la3JjXXcGd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-10-12_09,2023-10-12_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
+ clxscore=1015 malwarescore=0 spamscore=0 mlxscore=0 mlxlogscore=806
+ phishscore=0 priorityscore=1501 adultscore=0 lowpriorityscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2309180000 definitions=main-2310120143
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-In order for a F_SEAL_WRITE sealed memfd mapping to have an opportunity to
-clear VM_MAYWRITE, we must be able to invoke the appropriate vm_ops->mmap()
-handler to do so. We would otherwise fail the mapping_map_writable() check
-before we had the opportunity to avoid it.
+> > > > > We need to make sure that ima_post_path_mknod() has the same parameters
+> > > > > as the LSM hook at the time we register it to the LSM infrastructure.
+> > > > 
+> > > > I'm trying to understand why the pre hook parameters and the missing
+> > > > IMA parameter are used, as opposed to just defining the new
+> > > > post_path_mknod hook like IMA.
+> > > 
+> > > As an empyrical rule, I pass the same parameters as the corresponding
+> > > pre hook (plus idmap, in this case). This is similar to the
+> > > inode_setxattr hook. But I can be wrong, if desired I can reduce.
+> > 
+> > The inode_setxattr hook change example is legitimate, as EVM includes
+> > idmap, while IMA doesn't. 
+> > 
+> > Unless there is a good reason for the additional parameters, I'm not
+> > sure that adding them makes sense.  Not modifying the parameter list
+> > will reduce the size of this patch set.
+> 
+> The hook is going to be used by any LSM. Without knowing all the
+> possible use cases, maybe it is better to include more information now,
+> than modifying the hook and respective implementations later.
+> 
+> (again, no problem to reduce)
 
-This patch moves this check after the call_mmap() invocation. Only memfd
-actively denies write access causing a potential failure here (in
-memfd_add_seals()), so there should be no impact on non-memfd cases.
+Unless there is a known use case for a specific parameter, please
+minimize them.   Additional parameters can be added later as needed. 
 
-This patch makes the userland-visible change that MAP_SHARED, PROT_READ
-mappings of an F_SEAL_WRITE sealed memfd mapping will now succeed.
-
-There is a delicate situation with cleanup paths assuming that a writable
-mapping must have occurred in circumstances where it may now not have. In
-order to ensure we do not accidentally mark a writable file unwritable by
-mistake, we explicitly track whether we have a writable mapping and
-unmap only if we do.
-
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=217238
-Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
----
- mm/mmap.c | 23 ++++++++++++++---------
- 1 file changed, 14 insertions(+), 9 deletions(-)
-
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 0041e3631f6c..7f45a08e7973 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -2752,6 +2752,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
- 	unsigned long charged = 0;
- 	unsigned long end = addr + len;
- 	unsigned long merge_start = addr, merge_end = end;
-+	bool writable_file_mapping = false;
- 	pgoff_t vm_pgoff;
- 	int error;
- 	VMA_ITERATOR(vmi, mm, addr);
-@@ -2846,17 +2847,19 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
- 	vma->vm_pgoff = pgoff;
- 
- 	if (file) {
--		if (is_shared_maywrite(vm_flags)) {
--			error = mapping_map_writable(file->f_mapping);
--			if (error)
--				goto free_vma;
--		}
--
- 		vma->vm_file = get_file(file);
- 		error = call_mmap(file, vma);
- 		if (error)
- 			goto unmap_and_free_vma;
- 
-+		if (vma_is_shared_maywrite(vma)) {
-+			error = mapping_map_writable(file->f_mapping);
-+			if (error)
-+				goto close_and_free_vma;
-+
-+			writable_file_mapping = true;
-+		}
-+
- 		/*
- 		 * Expansion is handled above, merging is handled below.
- 		 * Drivers should not alter the address of the VMA.
-@@ -2920,8 +2923,10 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
- 	mm->map_count++;
- 	if (vma->vm_file) {
- 		i_mmap_lock_write(vma->vm_file->f_mapping);
--		if (vma_is_shared_maywrite(vma))
-+		if (vma_is_shared_maywrite(vma)) {
- 			mapping_allow_writable(vma->vm_file->f_mapping);
-+			writable_file_mapping = true;
-+		}
- 
- 		flush_dcache_mmap_lock(vma->vm_file->f_mapping);
- 		vma_interval_tree_insert(vma, &vma->vm_file->f_mapping->i_mmap);
-@@ -2937,7 +2942,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
- 
- 	/* Once vma denies write, undo our temporary denial count */
- unmap_writable:
--	if (file && is_shared_maywrite(vm_flags))
-+	if (writable_file_mapping)
- 		mapping_unmap_writable(file->f_mapping);
- 	file = vma->vm_file;
- 	ksm_add_vma(vma);
-@@ -2985,7 +2990,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
- 		unmap_region(mm, &vmi.mas, vma, prev, next, vma->vm_start,
- 			     vma->vm_end, vma->vm_end, true);
- 	}
--	if (file && is_shared_maywrite(vm_flags))
-+	if (writable_file_mapping)
- 		mapping_unmap_writable(file->f_mapping);
- free_vma:
- 	vm_area_free(vma);
 -- 
-2.42.0
+thanks,
+
+Mimi
 
 
