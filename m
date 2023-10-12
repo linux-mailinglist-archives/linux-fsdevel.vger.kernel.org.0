@@ -1,224 +1,175 @@
-Return-Path: <linux-fsdevel+bounces-132-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-133-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2FEE7C6144
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 01:54:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 29B707C6161
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 02:08:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CF1E1C20A6E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Oct 2023 23:54:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 568081C20E75
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 00:08:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD5B92B76D;
-	Wed, 11 Oct 2023 23:54:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F4EA37A;
+	Thu, 12 Oct 2023 00:08:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F6HGtgeq"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="OVy+Cmvy"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 203642B750
-	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Oct 2023 23:53:58 +0000 (UTC)
-Received: from mail-vk1-xa33.google.com (mail-vk1-xa33.google.com [IPv6:2607:f8b0:4864:20::a33])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AA7A90;
-	Wed, 11 Oct 2023 16:53:55 -0700 (PDT)
-Received: by mail-vk1-xa33.google.com with SMTP id 71dfb90a1353d-4a18f724d47so134504e0c.3;
-        Wed, 11 Oct 2023 16:53:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697068434; x=1697673234; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PUtRXirdj/rui6epJsUlvt/EsmEY1Wgvv8OAOJHEF+4=;
-        b=F6HGtgeq3XUqZKdYelJ8qXfWwoE6AykAAjgW+L9+9490zKBfCmLbWTotqDXxsXhP+Y
-         kS6XLojqTYPg7aGKvJztOQtbtwgnro5ZFDvvKU++SrUmpEFvb2HL2dRbpIbjLsLceihi
-         SA8UXsgEnbEqgn5b7tdpFYsYQa6zyrMWEVztqPwmULjb00o8CKw9BAb6LsWcz263J/ie
-         +XL/Zn7wuY175Bs+CddeVCPd7ihP6obiaurQ1KcsR3vMzrWDDhJIhHToMxQ+NbjHoK0g
-         DGH7NBxbxovH6L0WQOMex7XoB8A3qg4LGhbgWAnyj3umg/59GPhlMAxJvvKypJgmhKUT
-         NA8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697068434; x=1697673234;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PUtRXirdj/rui6epJsUlvt/EsmEY1Wgvv8OAOJHEF+4=;
-        b=ExuE5cuNzxuwji+l7owd+McRAR93oE2l4iG3KwmM4+6mBOQ83mt+bOLlg7LCXpRHgF
-         9Hm5Lnjaz6wy6ujGdHZ0oApBbgEMYO36E4cv+EXF9yhiYRecEJCgZP+HLfsUjyxqPd39
-         /S7WwfZKq/WSBf5ncDwx4sIhdR1Bc4k9CKakYbUfG8UbmpMH6q+P5nm81rMeIr+Fbif4
-         o2haJ73vi6x4+z6tbPDDnIijYzeGQvxnZLr14AcwFXmGOIbaCpNv1AtWVO7zYyHvGIJ1
-         DrYecSq+NBk9hJeFkeYogluRS37WEu+wdGmeNZxXrTjxsdX54f4ftGaX3reOoTHkM2Za
-         Kzzw==
-X-Gm-Message-State: AOJu0Yynl08vK3T4gk1N7drzVydUFtdgFandfNQzmtRADCWr7M0qAcn9
-	j/fpBq3Rc1+newrHYLsqbyVNTZhdPt5qfKmynpI=
-X-Google-Smtp-Source: AGHT+IHEP24cW7bJTMG7j9O7/PrmB2IivXDbB+fxOo6F7UkPE1P/21ax1Hkz75j24bn+XAEKV0AGU3W76LFSjvnzgRs=
-X-Received: by 2002:a1f:e641:0:b0:49d:e70:6258 with SMTP id
- d62-20020a1fe641000000b0049d0e706258mr16202662vkh.3.1697068434490; Wed, 11
- Oct 2023 16:53:54 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8A3119B
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Oct 2023 00:08:04 +0000 (UTC)
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A30BD94;
+	Wed, 11 Oct 2023 17:08:03 -0700 (PDT)
+Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39BNolws012543;
+	Thu, 12 Oct 2023 00:07:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=uiaSbBpM/Pa4uCwRgwG3S7EBa1GDOotgmEOLvNJZmGw=;
+ b=OVy+CmvyaWOQo9XaYjZUd8HyxhhPY0CUmed/WgVIGq7HkqHnGn03l5Eg1p+8CWjuZA0p
+ pqeXF7paoU30W/vD0RFUHgkCBQK4Nh/tisz5FlCu9SIQ11JY7AXWGNgyWqU2doVX7UQQ
+ eP+1BhBp9x+D0T8jjyr80EeHAbO4WpOs7ULwtkLPzHEBhDR1ikNb48lRsg+U9Vz1hlDa
+ U1hvyghoHaKzvB0CeixJC2yuU1MmY7UFCRMAB1125dAt+/da+l29UcmLyS5zFqJzWtNj
+ regAOZJNmK03a84djtRiLqbHEE+yseMRpie35GYFWgyueIlaZ96hjggPzllrWLM7pjTy Hw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3tp5r08ade-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Oct 2023 00:07:31 +0000
+Received: from m0353722.ppops.net (m0353722.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 39C0680L022307;
+	Thu, 12 Oct 2023 00:07:31 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3tp5r08acy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Oct 2023 00:07:31 +0000
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 39BNAA2B023021;
+	Thu, 12 Oct 2023 00:07:30 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3tkmc1uc85-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Oct 2023 00:07:30 +0000
+Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
+	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 39C07Tqm20644476
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 12 Oct 2023 00:07:29 GMT
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 67DCF58055;
+	Thu, 12 Oct 2023 00:07:29 +0000 (GMT)
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9F0A658059;
+	Thu, 12 Oct 2023 00:07:26 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.61.14.38])
+	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 12 Oct 2023 00:07:26 +0000 (GMT)
+Message-ID: <f38831743d8ad127031171016eb2d962d0fe3210.camel@linux.ibm.com>
+Subject: Re: [PATCH v3 07/25] ima: Align ima_post_read_file() definition
+ with LSM infrastructure
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>, viro@zeniv.linux.org.uk,
+        brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
+        neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
+        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, dhowells@redhat.com, jarkko@kernel.org,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        casey@schaufler-ca.com
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>,
+        Stefan
+ Berger <stefanb@linux.ibm.com>
+Date: Wed, 11 Oct 2023 20:07:26 -0400
+In-Reply-To: <20230904133415.1799503-8-roberto.sassu@huaweicloud.com>
+References: <20230904133415.1799503-1-roberto.sassu@huaweicloud.com>
+	 <20230904133415.1799503-8-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20230907204256.3700336-1-gpiccoli@igalia.com> <e673d8d6-bfa8-be30-d1c1-fe09b5f811e3@redhat.com>
- <202310091034.4F58841@keescook>
-In-Reply-To: <202310091034.4F58841@keescook>
-From: Ryan Houdek <sonicadvance1@gmail.com>
-Date: Wed, 11 Oct 2023 16:53:43 -0700
-Message-ID: <CABnRqDdzqfB1_ixd-2JnfSocKvXNM+9ivM1hhd1C=ejLQyen8g@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/2] Introduce a way to expose the interpreted file
- with binfmt_misc
-To: Kees Cook <keescook@chromium.org>
-Cc: "Guilherme G. Piccoli" <gpiccoli@igalia.com>, David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, kernel-dev@igalia.com, 
-	kernel@gpiccoli.net, ebiederm@xmission.com, oleg@redhat.com, 
-	yzaikin@google.com, mcgrof@kernel.org, akpm@linux-foundation.org, 
-	brauner@kernel.org, viro@zeniv.linux.org.uk, willy@infradead.org, 
-	dave@stgolabs.net, joshua@froggi.es
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-	FREEMAIL_FROM,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.6
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: SJldbvHMDQU6DaxPyQXHOSQ2m3C9GIPB
+X-Proofpoint-ORIG-GUID: bdXpaMZzUWfwWN2NTKW83feLuOtpR7qc
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-10-11_18,2023-10-11_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ lowpriorityscore=0 spamscore=0 mlxscore=0 phishscore=0 suspectscore=0
+ priorityscore=1501 bulkscore=0 clxscore=1015 malwarescore=0
+ impostorscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2309180000 definitions=main-2310110212
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,
+	RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-On Mon, Oct 9, 2023 at 10:37=E2=80=AFAM Kees Cook <keescook@chromium.org> w=
-rote:
->
-> On Fri, Oct 06, 2023 at 02:07:16PM +0200, David Hildenbrand wrote:
-> > On 07.09.23 22:24, Guilherme G. Piccoli wrote:
-> > > Currently the kernel provides a symlink to the executable binary, in =
-the
-> > > form of procfs file exe_file (/proc/self/exe_file for example). But w=
-hat
-> > > happens in interpreted scenarios (like binfmt_misc) is that such link
-> > > always points to the *interpreter*. For cases of Linux binary emulato=
-rs,
-> > > like FEX [0] for example, it's then necessary to somehow mask that an=
-d
-> > > emulate the true binary path.
-> >
-> > I'm absolutely no expert on that, but I'm wondering if, instead of modi=
-fying
-> > exe_file and adding an interpreter file, you'd want to leave exe_file a=
-lone
-> > and instead provide an easier way to obtain the interpreted file.
-> >
-> > Can you maybe describe why modifying exe_file is desired (about which
-> > consumers are we worrying? ) and what exactly FEX does to handle that (=
-how
-> > does it mask that?).
-> >
-> > So a bit more background on the challenges without this change would be
-> > appreciated.
->
-> Yeah, it sounds like you're dealing with a process that examines
-> /proc/self/exe_file for itself only to find the binfmt_misc interpreter
-> when it was run via binfmt_misc?
->
-> What actually breaks? Or rather, why does the process to examine
-> exe_file? I'm just trying to see if there are other solutions here that
-> would avoid creating an ambiguous interface...
->
-> --
-> Kees Cook
+On Mon, 2023-09-04 at 15:33 +0200, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+> 
+> Change ima_post_read_file() definition, so that it can be registered as
+> implementation of the post_read_file hook.
 
-Hey there, FEX-Emu developer here. I can try and explain some of the issues=
-.
+The only change here is making "void *buf" a "char *buf".
 
-First thing is that we should set the stage here that there is a
-fundamental discrepancy
-between how ELF interpreters are represented versus binfmt_misc
-interpreters when it
-comes to procfs exe. An ELF file today can either be static or dynamic, wit=
-h the
-dynamic ELF files having a program header called PT_INTERP which will tell =
-the
-kernel where its interpreter executable lives. In an x86-64 environment thi=
-s
-is likely to be something like /lib64/ld-linux-x86-64.so.2. Today, the Kern=
-el
-doesn't put the PT_INTERP handle into procfs exe, it instead uses the
-dynamic ELF
-that was originally launched.
+thanks,
 
-In contrast to how this behaviour works, a binfmt_misc interpreter
-file getting launched
-through execve may or may not have ELF header sections. But it is left up t=
-o the
-binfmt_misc handler to do whatever it may need. The kernel sets procfs
-exe to the
-binfmt_misc interpreter instead of the executable.
+Mimi
 
-This is fundamentally the contrasting behaviour that is trying to be
-improved. It seems
-like the this behaviour is an oversight of the original binfmt_misc
-implementation
-rather than any sort of ambition to ensure there is a difference. It's
-already ambiguous
-that the interface changes when executing an executable through binfmt_misc=
-.
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+> ---
+>  include/linux/ima.h               | 6 +++---
+>  security/integrity/ima/ima_main.c | 2 +-
+>  2 files changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/include/linux/ima.h b/include/linux/ima.h
+> index 93e3c6cdf1f8..6e4d060ff378 100644
+> --- a/include/linux/ima.h
+> +++ b/include/linux/ima.h
+> @@ -31,8 +31,8 @@ extern int ima_post_load_data(char *buf, loff_t size,
+>  			      enum kernel_load_data_id id, char *description);
+>  extern int ima_read_file(struct file *file, enum kernel_read_file_id id,
+>  			 bool contents);
+> -extern int ima_post_read_file(struct file *file, void *buf, loff_t size,
+> -			      enum kernel_read_file_id id);
+> +int ima_post_read_file(struct file *file, char *buf, loff_t size,
+> +		       enum kernel_read_file_id id);
+>  extern void ima_post_path_mknod(struct mnt_idmap *idmap,
+>  				const struct path *dir, struct dentry *dentry,
+>  				umode_t mode, unsigned int dev);
+> @@ -112,7 +112,7 @@ static inline int ima_read_file(struct file *file, enum kernel_read_file_id id,
+>  	return 0;
+>  }
+>  
+> -static inline int ima_post_read_file(struct file *file, void *buf, loff_t size,
+> +static inline int ima_post_read_file(struct file *file, char *buf, loff_t size,
+>  				     enum kernel_read_file_id id)
+>  {
+>  	return 0;
+> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> index e9e2a3ad25a1..f8581032e62c 100644
+> --- a/security/integrity/ima/ima_main.c
+> +++ b/security/integrity/ima/ima_main.c
+> @@ -801,7 +801,7 @@ const int read_idmap[READING_MAX_ID] = {
+>   * On success return 0.  On integrity appraisal error, assuming the file
+>   * is in policy and IMA-appraisal is in enforcing mode, return -EACCES.
+>   */
+> -int ima_post_read_file(struct file *file, void *buf, loff_t size,
+> +int ima_post_read_file(struct file *file, char *buf, loff_t size,
+>  		       enum kernel_read_file_id read_id)
+>  {
+>  	enum ima_hooks func;
 
-Some simple ways applications break:
-- Applications like chrome tend to relaunch themselves through execve
-with `/proc/self/exe`
-  - Chrome does this. I think Flatpaks or AppImage applications do this?
-  - There are definitely more that do this that I have noticed.
-- In the cover letter there was a link to Mesa, the OSS OpenGL/Vulkan
-drivers using this
-  - This library uses this interface to find out what application is
-running for applying
-     workarounds for application bugs. Plenty of historical
-applications that use the API
-     badly or incorrectly and need specific driver workarounds for them.
-- Some applications may use this path to open their own executable path and=
- then
-   mmap back in for doing tricky memory mirroring or dynamic linking
-of themselves.
-   - Saw some old abandoned emulator software doing this.
 
-There's likely more uses that I haven't noticed from software using
-this interface.
-
-Onward to what FEX-Emu is and how it tries working around the issue
-with a fairly naive hack.
-FEX-Emu is an x86 and x86-64 CPU emulator that gets installed as a
-binfmt_misc interpreter.
-It then executes x86 and x86-64 ELF files on an Arm64 device as
-effectively a multi-arch
-capable fashion. It's lightweight in that all application processes
-and threads are just
-regular Arm64 processes and threads. This is similar to how qemu-user opera=
-tes.
-
-When processing system calls, FEX will intercept any call that
-consumes a pathname,
-it will then inspect that path name and if it is one of the ways it is
-possible to access
-procfs/exe then it redirects to the true x86/x86-64 executable. This
-is an attempt to behave
-like how if the ELF was executed without a binfmt_misc handler.
-
-Pathnames captured in FEX-Emu today:
-- /proc/self/exe
-- /proc/<pid>/exe
-- /proc/thread-self/exe
-
-This is very fragile and doesn't cover the full range of how
-applications could access procfs.
-Applications could end up using the *at variants of syscalls with an
-FD that has /proc/self/
-open. They could do simple tricks like `/proc/self/../self/exe` and it
-would side-step this check.
-It's a game of whack-a-mole and escalating overhead to try and close
-the gap purely due
-to, what appears to be, an oversight in how binfmt_misc and PT_INTERP
-is handled.
-
-Hopefully this explains why this is necessary and that reducing the
-differences between
-how PT_INTERP and binfmt_misc are represented is desired.
 
