@@ -1,127 +1,203 @@
-Return-Path: <linux-fsdevel+bounces-158-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-159-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3A707C675B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 10:03:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0F087C67A2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 10:39:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F0C51C20F75
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 08:03:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D89A2282A12
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Oct 2023 08:39:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 811E818032;
-	Thu, 12 Oct 2023 08:03:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D34731D523;
+	Thu, 12 Oct 2023 08:39:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Wl+Ozvuj";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="OqpZ1G7F"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF1D101C1
-	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Oct 2023 08:03:32 +0000 (UTC)
-X-Greylist: delayed 1181 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 12 Oct 2023 01:03:27 PDT
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8C9290;
-	Thu, 12 Oct 2023 01:03:27 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.229])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4S5hBk5V4Sz9yrH2;
-	Thu, 12 Oct 2023 15:30:54 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwBnwJGGoydlzkoQAg--.30762S2;
-	Thu, 12 Oct 2023 08:43:16 +0100 (CET)
-Message-ID: <80e4a1ea172edb2d4d441b70dcd93bfa1654a5b7.camel@huaweicloud.com>
-Subject: Re: [PATCH v3 12/25] security: Introduce inode_post_setattr hook
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Mimi Zohar <zohar@linux.ibm.com>, viro@zeniv.linux.org.uk, 
- brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
- neilb@suse.de,  kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
- dmitry.kasatkin@gmail.com,  paul@paul-moore.com, jmorris@namei.org,
- serge@hallyn.com, dhowells@redhat.com,  jarkko@kernel.org,
- stephen.smalley.work@gmail.com, eparis@parisplace.org, 
- casey@schaufler-ca.com
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, keyrings@vger.kernel.org, 
-	selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
-Date: Thu, 12 Oct 2023 09:42:58 +0200
-In-Reply-To: <22761c3d88c2c4dbac747cc7ddca3d743c6d88d9.camel@linux.ibm.com>
-References: <20230904133415.1799503-1-roberto.sassu@huaweicloud.com>
-	 <20230904133415.1799503-13-roberto.sassu@huaweicloud.com>
-	 <22761c3d88c2c4dbac747cc7ddca3d743c6d88d9.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73361611F;
+	Thu, 12 Oct 2023 08:39:01 +0000 (UTC)
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6DF690;
+	Thu, 12 Oct 2023 01:38:59 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 8BBC91F74C;
+	Thu, 12 Oct 2023 08:38:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1697099938; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8c6j9VDLhFYc5XmunB4hBYMK+2M9al9NYLUoZ11ZYVE=;
+	b=Wl+Ozvuj8Nk9C7oDWauDDMtBBusebE03rVPeCwDvmJYrHMkxfXOBPt0zc63Nr50YITICVE
+	Xc/wXLDUGEX9TYzBQy6WMirJ6fYNPooqR4EDMFOvfpLJGYmQ2WaSHcsYxFRTMTlI5jJtoT
+	vpz+tCQoL9srkPNQBkiIETjg2bz2zgU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1697099938;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8c6j9VDLhFYc5XmunB4hBYMK+2M9al9NYLUoZ11ZYVE=;
+	b=OqpZ1G7FQHL2iZ2KYqxZhwCiDkq/qYL7Juof0mRlQdToTCF/UL3aew1AKtlnygFIL9OYWc
+	8WHEHcon6A+TfqBw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+	(No client certificate requested)
+	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 7BB79139F9;
+	Thu, 12 Oct 2023 08:38:58 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+	by imap2.suse-dmz.suse.de with ESMTPSA
+	id sckdHqKwJ2XPUgAAMHmgww
+	(envelope-from <jack@suse.cz>); Thu, 12 Oct 2023 08:38:58 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id E8078A06B0; Thu, 12 Oct 2023 10:38:57 +0200 (CEST)
+Date: Thu, 12 Oct 2023 10:38:57 +0200
+From: Jan Kara <jack@suse.cz>
+To: Lorenzo Stoakes <lstoakes@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Mike Kravetz <mike.kravetz@oracle.com>,
+	Muchun Song <muchun.song@linux.dev>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Hugh Dickins <hughd@google.com>, Andy Lutomirski <luto@kernel.org>,
+	linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] mm: enforce the mapping_map_writable() check
+ after call_mmap()
+Message-ID: <20231012083857.ty66retpyhxkaem3@quack3>
+References: <cover.1696709413.git.lstoakes@gmail.com>
+ <d2748bc4077b53c60bcb06fccaf976cb2afee345.1696709413.git.lstoakes@gmail.com>
+ <20231011094627.3xohlpe4gm2idszm@quack3>
+ <512d8089-759c-47b7-864d-f4a38a9eacf3@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwBnwJGGoydlzkoQAg--.30762S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Zw1fKrykCF43XF13tw1rtFb_yoW8JFyxpF
-	W8Ga1DKr98Kry7C3s3tF48ZayFvayfKw4UXrZrJryxAFsrWw13Kan7Gay8ua4DGrWUGr1Y
-	qry2gasrXa4DZa7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkFb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26r4j6r4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI
-	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY
-	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWxJVW8Jr1lIxAIcV
-	CF04k26cxKx2IYs7xG6rWUJVWrZr1UMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2
-	jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UQZ2-UUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAIBF1jj5DumAAAsZ
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
-	RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE autolearn=ham
-	autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <512d8089-759c-47b7-864d-f4a38a9eacf3@lucifer.local>
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+	SPF_HELO_NONE,SPF_SOFTFAIL autolearn=no autolearn_force=no
+	version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-On Wed, 2023-10-11 at 20:08 -0400, Mimi Zohar wrote:
-> gOn Mon, 2023-09-04 at 15:34 +0200, Roberto Sassu wrote:
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
-> >=20
-> > In preparation for moving IMA and EVM to the LSM infrastructure, introd=
-uce
-> > the inode_post_setattr hook.
-> >=20
-> > It is useful for EVM to recalculate the HMAC on modified file attribute=
-s
-> > and other file metadata, after it verified the HMAC of current file
-> > metadata with the inode_setattr hook.
->=20
-> "useful"? =20
->=20
-> At inode_setattr hook, EVM verifies the file's existing HMAC value.  At
-> inode_post_setattr, EVM re-calculates the file's HMAC based on the
-> modified file attributes and other file metadata.
->=20
-> >=20
-> > LSMs should use the new hook instead of inode_setattr, when they need t=
-o
-> > know that the operation was done successfully (not known in inode_setat=
-tr).
-> > The new hook cannot return an error and cannot cause the operation to b=
-e
-> > reverted.
->=20
-> Other LSMs could similarly update security xattrs or ...
+On Wed 11-10-23 19:14:10, Lorenzo Stoakes wrote:
+> On Wed, Oct 11, 2023 at 11:46:27AM +0200, Jan Kara wrote:
+> > On Sat 07-10-23 21:51:01, Lorenzo Stoakes wrote:
+> > > In order for an F_SEAL_WRITE sealed memfd mapping to have an opportunity to
+> > > clear VM_MAYWRITE in seal_check_write() we must be able to invoke either
+> > > the shmem_mmap() or hugetlbfs_file_mmap() f_ops->mmap() handler to do so.
+> > >
+> > > We would otherwise fail the mapping_map_writable() check before we had
+> > > the opportunity to clear VM_MAYWRITE.
+> > >
+> > > However, the existing logic in mmap_region() performs this check BEFORE
+> > > calling call_mmap() (which invokes file->f_ops->mmap()). We must enforce
+> > > this check AFTER the function call.
+> > >
+> > > In order to avoid any risk of breaking call_mmap() handlers which assume
+> > > this will have been done first, we continue to mark the file writable
+> > > first, simply deferring enforcement of it failing until afterwards.
+> > >
+> > > This enables mmap(..., PROT_READ, MAP_SHARED, fd, 0) mappings for memfd's
+> > > sealed via F_SEAL_WRITE to succeed, whereas previously they were not
+> > > permitted.
+> > >
+> > > Link: https://bugzilla.kernel.org/show_bug.cgi?id=217238
+> > > Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
+> >
+> > ...
+> >
+> > > diff --git a/mm/mmap.c b/mm/mmap.c
+> > > index 6f6856b3267a..9fbee92aaaee 100644
+> > > --- a/mm/mmap.c
+> > > +++ b/mm/mmap.c
+> > > @@ -2767,17 +2767,25 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+> > >  	vma->vm_pgoff = pgoff;
+> > >
+> > >  	if (file) {
+> > > -		if (is_shared_maywrite(vm_flags)) {
+> > > -			error = mapping_map_writable(file->f_mapping);
+> > > -			if (error)
+> > > -				goto free_vma;
+> > > -		}
+> > > +		int writable_error = 0;
+> > > +
+> > > +		if (vma_is_shared_maywrite(vma))
+> > > +			writable_error = mapping_map_writable(file->f_mapping);
+> > >
+> > >  		vma->vm_file = get_file(file);
+> > >  		error = call_mmap(file, vma);
+> > >  		if (error)
+> > >  			goto unmap_and_free_vma;
+> > >
+> > > +		/*
+> > > +		 * call_mmap() may have changed VMA flags, so retry this check
+> > > +		 * if it failed before.
+> > > +		 */
+> > > +		if (writable_error && vma_is_shared_maywrite(vma)) {
+> > > +			error = writable_error;
+> > > +			goto close_and_free_vma;
+> > > +		}
+> >
+> > Hum, this doesn't quite give me a peace of mind ;). One bug I can see is
+> > that if call_mmap() drops the VM_MAYWRITE flag, we seem to forget to drop
+> > i_mmap_writeable counter here?
+> 
+> This wouldn't be applicable in the F_SEAL_WRITE case, as the
+> i_mmap_writable counter would already have been decremented, and thus an
+> error would arise causing no further decrement, and everything would work
+> fine.
+> 
+> It'd be very odd for something to be writable here but the driver to make
+> it not writable. But we do need to account for this.
 
-I added your sentence. The one above is to satisfy Casey's request to
-justify the addition of the new hook, and to explain why inode_setattr
-is not sufficient.
+Yeah, it may be odd but this is indeed what i915 driver appears to be
+doing in i915_gem_object_mmap():
 
-Thanks
+        if (i915_gem_object_is_readonly(obj)) {
+                if (vma->vm_flags & VM_WRITE) {
+                        i915_gem_object_put(obj);
+                        return -EINVAL;
+                }
+                vm_flags_clear(vma, VM_MAYWRITE);
+        }
 
-Roberto
+> > I've checked why your v2 version broke i915 and I think the reason maybe
+> > has nothing to do with i915. Just in case call_mmap() failed, it ended up
+> > jumping to unmap_and_free_vma which calls mapping_unmap_writable() but we
+> > didn't call mapping_map_writable() yet so the counter became imbalanced.
+> 
+> yeah that must be the cause, I thought perhaps somehow
+> __remove_shared_vm_struct() got invoked by i915_gem_mmap() but I didn't
+> trace it through to see if it was possible.
+> 
+> Looking at it again, i don't think that is possible, as we hold a mmap/vma
+> write lock, and the only operations that can cause
+> __remove_shared_vm_struct() to run are things that would not be able to do
+> so with this lock held.
+> 
+> > So I'd be for returning to v2 version, just fix up the error handling
+> > paths...
+> 
+> So in conclusion, I agree, this is the better approach. Will respin in v4.
 
-> >=20
-> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
->=20
-> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-
+Thanks!
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
