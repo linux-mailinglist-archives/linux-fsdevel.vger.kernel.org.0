@@ -1,220 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-252-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-253-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCFF47C831B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Oct 2023 12:32:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E14F7C846C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Oct 2023 13:32:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59E1B282D01
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Oct 2023 10:32:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67ABE1C210BA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Oct 2023 11:32:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27DA5125AF;
-	Fri, 13 Oct 2023 10:32:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GzPUTXkK";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="KRkE/GJn"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DF6013AE2;
+	Fri, 13 Oct 2023 11:32:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9465C134AD;
-	Fri, 13 Oct 2023 10:32:13 +0000 (UTC)
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93DB5B7;
-	Fri, 13 Oct 2023 03:32:10 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id CB4991F37E;
-	Fri, 13 Oct 2023 10:32:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1697193128; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=66B4eH+VSglevS0FFJUbqlfaivXzDyXujiWgnWbKsn0=;
-	b=GzPUTXkKn6AZFQGjDKin2eF0ALSipmF8QhOq+wKShSHdUM4pyXff0HoSjkzHgl0ILNFnrt
-	0ylBSy+c5OBebJmS00aKBcPckR149JRtqf9c9TX9zNeQyq4jsUE/T28W8luwYtTibxbeoT
-	EYRQYFZNGWnmOg5BXIVewxMraQ3BLSc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1697193128;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=66B4eH+VSglevS0FFJUbqlfaivXzDyXujiWgnWbKsn0=;
-	b=KRkE/GJnaQzE12WFx22/2vpu1a25IfI/GaPJQa5Awjb4ic5Jm4rBt153Td8maYEyerLFyK
-	ohh3fn+NvA+bPYAA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-	(No client certificate requested)
-	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id BA3B7138EF;
-	Fri, 13 Oct 2023 10:32:08 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-	by imap2.suse-dmz.suse.de with ESMTPSA
-	id cRFxLagcKWU2NAAAMHmgww
-	(envelope-from <jack@suse.cz>); Fri, 13 Oct 2023 10:32:08 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 54305A05C4; Fri, 13 Oct 2023 12:32:08 +0200 (CEST)
-Date: Fri, 13 Oct 2023 12:32:08 +0200
-From: Jan Kara <jack@suse.cz>
-To: Lorenzo Stoakes <lstoakes@gmail.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Mike Kravetz <mike.kravetz@oracle.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Hugh Dickins <hughd@google.com>, Andy Lutomirski <luto@kernel.org>,
-	Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] mm: update memfd seal write check to include
- F_SEAL_WRITE
-Message-ID: <20231013103208.kdffpyerufr4ygnw@quack3>
-References: <cover.1697116581.git.lstoakes@gmail.com>
- <913628168ce6cce77df7d13a63970bae06a526e0.1697116581.git.lstoakes@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC55311720
+	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Oct 2023 11:32:43 +0000 (UTC)
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DF82A9;
+	Fri, 13 Oct 2023 04:32:41 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.18.147.228])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4S6PDL5vqYz9yxfd;
+	Fri, 13 Oct 2023 19:19:46 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwBXsJGuKillo+ciAg--.35350S2;
+	Fri, 13 Oct 2023 12:32:12 +0100 (CET)
+Message-ID: <d0afbd03940e45219852787a1001d8debe48bf09.camel@huaweicloud.com>
+Subject: Re: [PATCH v3 25/25] integrity: Switch from rbtree to LSM-managed
+ blob for integrity_iint_cache
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Stefan Berger <stefanb@linux.ibm.com>, viro@zeniv.linux.org.uk, 
+ brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
+ neilb@suse.de,  kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
+ zohar@linux.ibm.com,  dmitry.kasatkin@gmail.com, paul@paul-moore.com,
+ jmorris@namei.org,  serge@hallyn.com, dhowells@redhat.com,
+ jarkko@kernel.org,  stephen.smalley.work@gmail.com, eparis@parisplace.org,
+ casey@schaufler-ca.com
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, linux-integrity@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, keyrings@vger.kernel.org, 
+	selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
+Date: Fri, 13 Oct 2023 13:31:55 +0200
+In-Reply-To: <a0913021426ead2fc5e2a3db013335a67cdd4322.camel@huaweicloud.com>
+References: <20230904133415.1799503-1-roberto.sassu@huaweicloud.com>
+	 <20230904134049.1802006-6-roberto.sassu@huaweicloud.com>
+	 <82486de4-2917-afb6-2ae3-6ea7f1346dc0@linux.ibm.com>
+	 <a0913021426ead2fc5e2a3db013335a67cdd4322.camel@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <913628168ce6cce77df7d13a63970bae06a526e0.1697116581.git.lstoakes@gmail.com>
-Authentication-Results: smtp-out2.suse.de;
-	none
-X-Spam-Level: 
-X-Spam-Score: -10.60
-X-Spamd-Result: default: False [-10.60 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 MIME_GOOD(-0.10)[text/plain];
-	 REPLY(-4.00)[];
-	 NEURAL_HAM_LONG(-3.00)[-1.000];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 NEURAL_HAM_SHORT(-1.00)[-1.000];
-	 RCPT_COUNT_TWELVE(0.00)[14];
-	 FREEMAIL_TO(0.00)[gmail.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_COUNT_TWO(0.00)[2];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-3.00)[100.00%]
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-CM-TRANSID:LxC2BwBXsJGuKillo+ciAg--.35350S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxJF4kWFyDXryUKr1kWw43Awb_yoW5Gr4xpF
+	4IgayUJw4DZry0kr4vvFW5urWSg3yjgayUWrn0k3WkZryvvr1YgF45Aryj9FyUGrWxtw10
+	qr1jkrW3ZF1DArJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
+	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
+	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
+	xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
+	c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UAkuxUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAJBF1jj5D80gAAsA
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
+	RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE autolearn=ham
+	autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-On Thu 12-10-23 18:04:29, Lorenzo Stoakes wrote:
-> The seal_check_future_write() function is called by shmem_mmap() or
-> hugetlbfs_file_mmap() to disallow any future writable mappings of an memfd
-> sealed this way.
-> 
-> The F_SEAL_WRITE flag is not checked here, as that is handled via the
-> mapping->i_mmap_writable mechanism and so any attempt at a mapping would
-> fail before this could be run.
-> 
-> However we intend to change this, meaning this check can be performed for
-> F_SEAL_WRITE mappings also.
-> 
-> The logic here is equally applicable to both flags, so update this function
-> to accommodate both and rename it accordingly.
-> 
-> Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
+On Fri, 2023-09-15 at 11:39 +0200, Roberto Sassu wrote:
+> On Tue, 2023-09-12 at 12:19 -0400, Stefan Berger wrote:
+> > On 9/4/23 09:40, Roberto Sassu wrote:
+> > > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > >=20
+> > > Before the security field of kernel objects could be shared among LSM=
+s with
+> > > the LSM stacking feature, IMA and EVM had to rely on an alternative s=
+torage
+> > > of inode metadata. The association between inode metadata and inode i=
+s
+> > > maintained through an rbtree.
+> > >=20
+> > > With the reservation mechanism offered by the LSM infrastructure, the
+> > > rbtree is no longer necessary, as each LSM could reserve a space in t=
+he
+> > > security blob for each inode. Thus, request from the 'integrity' LSM =
+a
+> > > space in the security blob for the pointer of inode metadata
+> > > (integrity_iint_cache structure).
+> > >=20
+> > > Prefer this to allocating the integrity_iint_cache structure directly=
+, as
+> > > IMA would require it only for a subset of inodes. Always allocating i=
+t
+> > > would cause a waste of memory.
+> > >=20
+> > > Introduce two primitives for getting and setting the pointer of
+> > > integrity_iint_cache in the security blob, respectively
+> > > integrity_inode_get_iint() and integrity_inode_set_iint(). This would=
+ make
+> > > the code more understandable, as they directly replace rbtree operati=
+ons.
+> > >=20
+> > > Locking is not needed, as access to inode metadata is not shared, it =
+is per
+> > > inode.
+> > >=20
+> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > > Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+> > > ---
+> > >=20
+> > > @@ -145,10 +91,8 @@ static void integrity_inode_free(struct inode *in=
+ode)
+> > >   	if (!IS_IMA(inode))
+> > >   		return;
+> >=20
+> > I think you can remove this check !IS_IMA()=C2=A0 as well since the nex=
+t=20
+> > function called here integrity_iint_find() already has this check:
+> >=20
+> > struct integrity_iint_cache *integrity_iint_find(struct inode *inode)
+> > {
+> >  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!IS_IMA(inode))
+> >  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 return NULL;
+> >=20
+> >  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return integrity_inode_get_=
+iint(inode);
+> > }
+>=20
+> I agree, thanks!
 
-For some reason only this one patch landed in my inbox but I've checked all
-three on lore and they look good to me. Feel free to add:
+Actually, I had to keep it otherwise, without a check on iint,
+iint_free() can get NULL as argument.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Roberto
 
-to all of them. Thanks!
+> Roberto
+>=20
+> > >  =20
+> > > -	write_lock(&integrity_iint_lock);
+> > > -	iint =3D __integrity_iint_find(inode);
+> > > -	rb_erase(&iint->rb_node, &integrity_iint_tree);
+> > > -	write_unlock(&integrity_iint_lock);
+> > > +	iint =3D integrity_iint_find(inode);         <--------------
+> > > +	integrity_inode_set_iint(inode, NULL);
+> > >  =20
+> > >   	iint_free(iint);
+> > >   }
+>=20
 
-								Honza
-
-> ---
->  fs/hugetlbfs/inode.c |  2 +-
->  include/linux/mm.h   | 15 ++++++++-------
->  mm/shmem.c           |  2 +-
->  3 files changed, 10 insertions(+), 9 deletions(-)
-> 
-> diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-> index 06693bb1153d..5c333373dcc9 100644
-> --- a/fs/hugetlbfs/inode.c
-> +++ b/fs/hugetlbfs/inode.c
-> @@ -112,7 +112,7 @@ static int hugetlbfs_file_mmap(struct file *file, struct vm_area_struct *vma)
->  	vm_flags_set(vma, VM_HUGETLB | VM_DONTEXPAND);
->  	vma->vm_ops = &hugetlb_vm_ops;
->  
-> -	ret = seal_check_future_write(info->seals, vma);
-> +	ret = seal_check_write(info->seals, vma);
->  	if (ret)
->  		return ret;
->  
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index bae234d18d81..26d7dc3b342b 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -4078,25 +4078,26 @@ static inline void mem_dump_obj(void *object) {}
->  #endif
->  
->  /**
-> - * seal_check_future_write - Check for F_SEAL_FUTURE_WRITE flag and handle it
-> + * seal_check_write - Check for F_SEAL_WRITE or F_SEAL_FUTURE_WRITE flags and
-> + *                    handle them.
->   * @seals: the seals to check
->   * @vma: the vma to operate on
->   *
-> - * Check whether F_SEAL_FUTURE_WRITE is set; if so, do proper check/handling on
-> - * the vma flags.  Return 0 if check pass, or <0 for errors.
-> + * Check whether F_SEAL_WRITE or F_SEAL_FUTURE_WRITE are set; if so, do proper
-> + * check/handling on the vma flags.  Return 0 if check pass, or <0 for errors.
->   */
-> -static inline int seal_check_future_write(int seals, struct vm_area_struct *vma)
-> +static inline int seal_check_write(int seals, struct vm_area_struct *vma)
->  {
-> -	if (seals & F_SEAL_FUTURE_WRITE) {
-> +	if (seals & (F_SEAL_WRITE | F_SEAL_FUTURE_WRITE)) {
->  		/*
->  		 * New PROT_WRITE and MAP_SHARED mmaps are not allowed when
-> -		 * "future write" seal active.
-> +		 * write seals are active.
->  		 */
->  		if ((vma->vm_flags & VM_SHARED) && (vma->vm_flags & VM_WRITE))
->  			return -EPERM;
->  
->  		/*
-> -		 * Since an F_SEAL_FUTURE_WRITE sealed memfd can be mapped as
-> +		 * Since an F_SEAL_[FUTURE_]WRITE sealed memfd can be mapped as
->  		 * MAP_SHARED and read-only, take care to not allow mprotect to
->  		 * revert protections on such mappings. Do this only for shared
->  		 * mappings. For private mappings, don't need to mask
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index 6503910b0f54..cab053831fea 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -2405,7 +2405,7 @@ static int shmem_mmap(struct file *file, struct vm_area_struct *vma)
->  	struct shmem_inode_info *info = SHMEM_I(inode);
->  	int ret;
->  
-> -	ret = seal_check_future_write(info->seals, vma);
-> +	ret = seal_check_write(info->seals, vma);
->  	if (ret)
->  		return ret;
->  
-> -- 
-> 2.42.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
 
