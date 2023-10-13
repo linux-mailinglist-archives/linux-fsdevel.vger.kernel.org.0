@@ -1,213 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-261-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-262-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59AF97C87BD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Oct 2023 16:21:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F09907C88B1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Oct 2023 17:31:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 888CB1C2118D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Oct 2023 14:21:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66A6DB20979
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Oct 2023 15:31:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A269B19BD6;
-	Fri, 13 Oct 2023 14:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="WCGALqVN"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5797B1B29D;
+	Fri, 13 Oct 2023 15:30:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5B218E38
-	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Oct 2023 14:21:36 +0000 (UTC)
-Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D24B9CE
-	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Oct 2023 07:21:34 -0700 (PDT)
-Received: by mail-io1-xd2e.google.com with SMTP id ca18e2360f4ac-7a2874d2820so29494539f.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Oct 2023 07:21:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1697206894; x=1697811694; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AScjHWZao3JWzSTjB5/ohVC8e3iHyB9Wq7OFyIrmWB0=;
-        b=WCGALqVN6mIgNUe82QIUlKXjiDAF+udqOQd+aF8rspE47C0XKATFIS8ziQs+tixtjA
-         CJ782Aq0TzYOQJeEIlL5YfYGNho8XfdO1t3CZ0u0EpJPj+m9cYHwBOAjXlCoSErSFxWo
-         zyp4zSeIpeIbDLh5Z8Sn6ULZQueU3uAkn5X3zdq3V3slt67B9T2kdBGYihHIzKdQmuNN
-         EEf6zWndS32dUbW8+B+YzwpUo5/HbFc+1wi3DfDMTU3pcKiDLOlOrEeum2ubvMzwmepj
-         kYRIv4OFl6nsPEv0GWaGcPiMiDbmZ04oiRdf892Wh++9vUU/sJ4CEcsgtgOKlGC7Pkvo
-         GG3Q==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E900D1A266
+	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Oct 2023 15:30:54 +0000 (UTC)
+Received: from mail-oa1-f78.google.com (mail-oa1-f78.google.com [209.85.160.78])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F63FBD
+	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Oct 2023 08:30:53 -0700 (PDT)
+Received: by mail-oa1-f78.google.com with SMTP id 586e51a60fabf-1e170528d43so2617519fac.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Oct 2023 08:30:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697206894; x=1697811694;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AScjHWZao3JWzSTjB5/ohVC8e3iHyB9Wq7OFyIrmWB0=;
-        b=CQOT/eddPLcn5P0GQKaSUP++iiHDYuCCJWgfb4gHsU1yZKyS8oLK1fc51YqGXtpmbs
-         zjjZBZDimdt3+yEOz/bwlvAzOX2oEZI86OJImALjvTk97LqP48Cpo+ADX9QeDBkisF9U
-         8d3o8IxodRiskLrVbVVIFZ5E16xp0eSxJUtHZf35U/bCd2UMuJR+TQ/yXpGTZ9883aUS
-         vi2zU7/Lu/i41VGR442zw4sSJdbNGK0v0bLkw4VvYvjglkMAqnYIC+wJqovRKPmQ86c9
-         eb5ngOBWtvPbqB1zxc958Vzd6Aq3EWMD8UE0XYBuKeFFeJW2CvUwGFcTyqIfT/H0Jgdw
-         mhnQ==
-X-Gm-Message-State: AOJu0YxbmMz95ommdmokzcoQtyiyVaZPKmiRn2AHe1iqZAgAH9bG/EP7
-	B0FZNwXiFnIiawyAknhMzdLyNuOQ4XaAOwfybb563A==
-X-Google-Smtp-Source: AGHT+IG4Rtj3NyiZvBnrsWw8vZbB/oOVwWkg1O+QaRYX/lm7eF3rhFGao8bunVUuyXcTNCS5dZmTBg==
-X-Received: by 2002:a6b:5a0a:0:b0:790:958e:a667 with SMTP id o10-20020a6b5a0a000000b00790958ea667mr25742740iob.2.1697206894059;
-        Fri, 13 Oct 2023 07:21:34 -0700 (PDT)
-Received: from [192.168.1.94] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id i13-20020a02b68d000000b004290fd3a68dsm4549709jam.1.2023.10.13.07.21.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Oct 2023 07:21:33 -0700 (PDT)
-Message-ID: <672d257e-e28f-42bc-8ac7-253d20fe187c@kernel.dk>
-Date: Fri, 13 Oct 2023 08:21:32 -0600
+        d=1e100.net; s=20230601; t=1697211052; x=1697815852;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NhJ4hNQE1jF7Xc7uGs+UQjjw34bM64JOf7BnAqEBrGs=;
+        b=mRpzdbbvk7deKWSl4gBLZmwbQLMvu/L+GRCGtD2c9UB5rzGhAi83OFFXrazlFpybew
+         M767Uh4vrBx2Gebjce2TdvyHHeHKcjkdYwAAIl1nCswbn07VbWmt55tS3UT2zZ+qZauO
+         AFGzxJZB/xdokPb4GdeAoWKIsY27DTgdrK457/F7k5AIXbCrAgCCwrFCk5v/WIr1yeuo
+         /s+TQ+MwhGWaUBW2GPV3Xcq1pHpukAGCsWRDJoCKGdli7Ozry6Pp9+X7bcJ3OUQdTW3J
+         mSW7KXkzFZGurxr9iqIV2zcEqciORVZJtoRnbymcYdh9ZFz5dYa6S/v40EWSzEOEx3bD
+         Gzfw==
+X-Gm-Message-State: AOJu0YwTX7gpJhd6fq+H2ZmLqx9XtbaCYjnYLHx4UvFZdrbCF+O82WAN
+	Ffl313pFfn9KUhqWMwS8YxSDt7uYpe14AwknJ0DjlgCmPx2k
+X-Google-Smtp-Source: AGHT+IGHrc+EEUWgxVOKQQwB6eTUTwuRMO/wXYfx22aThVpmlW75dhx20KUPMKtI7FNZztc322nCN4qtWZtpxG2MQN83M1QVZ5cn
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] audit,io_uring: io_uring openat triggers audit reference
- count underflow
-Content-Language: en-US
-To: Christian Brauner <brauner@kernel.org>,
- Dan Clash <daclash@linux.microsoft.com>
-Cc: audit@vger.kernel.org, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org, paul@paul-moore.com,
- linux-fsdevel@vger.kernel.org, dan.clash@microsoft.com
-References: <20231012215518.GA4048@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
- <20231013-insofern-gegolten-75ca48b24cf5@brauner>
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20231013-insofern-gegolten-75ca48b24cf5@brauner>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.6
+X-Received: by 2002:a05:6870:718f:b0:1e9:c362:a397 with SMTP id
+ d15-20020a056870718f00b001e9c362a397mr1546778oah.10.1697211052430; Fri, 13
+ Oct 2023 08:30:52 -0700 (PDT)
+Date: Fri, 13 Oct 2023 08:30:52 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e39e0e06079abd8e@google.com>
+Subject: [syzbot] [fs?] KCSAN: data-race in __d_lookup_rcu / dont_mount
+From: syzbot <syzbot+b015897b5913b3aa2ecd@syzkaller.appspotmail.com>
+To: brauner@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
+	RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-On 10/13/23 2:24 AM, Christian Brauner wrote:
-> On Thu, Oct 12, 2023 at 02:55:18PM -0700, Dan Clash wrote:
->> An io_uring openat operation can update an audit reference count
->> from multiple threads resulting in the call trace below.
->>
->> A call to io_uring_submit() with a single openat op with a flag of
->> IOSQE_ASYNC results in the following reference count updates.
->>
->> These first part of the system call performs two increments that do not race.
->>
->> do_syscall_64()
->>   __do_sys_io_uring_enter()
->>     io_submit_sqes()
->>       io_openat_prep()
->>         __io_openat_prep()
->>           getname()
->>             getname_flags()       /* update 1 (increment) */
->>               __audit_getname()   /* update 2 (increment) */
->>
->> The openat op is queued to an io_uring worker thread which starts the
->> opportunity for a race.  The system call exit performs one decrement.
->>
->> do_syscall_64()
->>   syscall_exit_to_user_mode()
->>     syscall_exit_to_user_mode_prepare()
->>       __audit_syscall_exit()
->>         audit_reset_context()
->>            putname()              /* update 3 (decrement) */
->>
->> The io_uring worker thread performs one increment and two decrements.
->> These updates can race with the system call decrement.
->>
->> io_wqe_worker()
->>   io_worker_handle_work()
->>     io_wq_submit_work()
->>       io_issue_sqe()
->>         io_openat()
->>           io_openat2()
->>             do_filp_open()
->>               path_openat()
->>                 __audit_inode()   /* update 4 (increment) */
->>             putname()             /* update 5 (decrement) */
->>         __audit_uring_exit()
->>           audit_reset_context()
->>             putname()             /* update 6 (decrement) */
->>
->> The fix is to change the refcnt member of struct audit_names
->> from int to atomic_t.
->>
->> kernel BUG at fs/namei.c:262!
->> Call Trace:
->> ...
->>  ? putname+0x68/0x70
->>  audit_reset_context.part.0.constprop.0+0xe1/0x300
->>  __audit_uring_exit+0xda/0x1c0
->>  io_issue_sqe+0x1f3/0x450
->>  ? lock_timer_base+0x3b/0xd0
->>  io_wq_submit_work+0x8d/0x2b0
->>  ? __try_to_del_timer_sync+0x67/0xa0
->>  io_worker_handle_work+0x17c/0x2b0
->>  io_wqe_worker+0x10a/0x350
->>
->> Cc: <stable@vger.kernel.org>
->> Link: https://lore.kernel.org/lkml/MW2PR2101MB1033FFF044A258F84AEAA584F1C9A@MW2PR2101MB1033.namprd21.prod.outlook.com/
->> Fixes: 5bd2182d58e9 ("audit,io_uring,io-wq: add some basic audit support to io_uring")
->> Signed-off-by: Dan Clash <daclash@linux.microsoft.com>
->> ---
->>  fs/namei.c         | 9 +++++----
->>  include/linux/fs.h | 2 +-
->>  kernel/auditsc.c   | 8 ++++----
->>  3 files changed, 10 insertions(+), 9 deletions(-)
->>
->> diff --git a/fs/namei.c b/fs/namei.c
->> index 567ee547492b..94565bd7e73f 100644
->> --- a/fs/namei.c
->> +++ b/fs/namei.c
->> @@ -188,7 +188,7 @@ getname_flags(const char __user *filename, int flags, int *empty)
->>  		}
->>  	}
->>  
->> -	result->refcnt = 1;
->> +	atomic_set(&result->refcnt, 1);
->>  	/* The empty path is special. */
->>  	if (unlikely(!len)) {
->>  		if (empty)
->> @@ -249,7 +249,7 @@ getname_kernel(const char * filename)
->>  	memcpy((char *)result->name, filename, len);
->>  	result->uptr = NULL;
->>  	result->aname = NULL;
->> -	result->refcnt = 1;
->> +	atomic_set(&result->refcnt, 1);
->>  	audit_getname(result);
->>  
->>  	return result;
->> @@ -261,9 +261,10 @@ void putname(struct filename *name)
->>  	if (IS_ERR(name))
->>  		return;
->>  
->> -	BUG_ON(name->refcnt <= 0);
->> +	if (WARN_ON_ONCE(!atomic_read(&name->refcnt)))
->> +		return;
->>  
->> -	if (--name->refcnt > 0)
->> +	if (!atomic_dec_and_test(&name->refcnt))
->>  		return;
-> 
-> Fine by me. I'd write this as:
-> 
-> count = atomic_dec_if_positive(&name->refcnt);
-> if (WARN_ON_ONCE(unlikely(count < 0))
-> 	return;
-> if (count > 0)
-> 	return;
+Hello,
 
-Would be fine too, my suspicion was that most archs don't implement a
-primitive for that, and hence it might be more expensive than
-atomic_read()/atomic_dec_and_test() which do. But I haven't looked at
-the code generation. The dec_if_positive degenerates to a atomic cmpxchg
-for most cases.
+syzbot found the following issue on:
 
--- 
-Jens Axboe
+HEAD commit:    94f6f0550c62 Linux 6.6-rc5
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=152d6bee680000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=70d8e328e7a4e377
+dashboard link: https://syzkaller.appspot.com/bug?extid=b015897b5913b3aa2ecd
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/6a29ef1a56e4/disk-94f6f055.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/24e09ea50a82/vmlinux-94f6f055.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/1365bbf9b381/bzImage-94f6f055.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+b015897b5913b3aa2ecd@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KCSAN: data-race in __d_lookup_rcu / dont_mount
+
+read to 0xffff8881382e76c0 of 4 bytes by task 3386 on cpu 0:
+ __d_lookup_rcu+0x42/0x290 fs/dcache.c:2360
+ lookup_fast+0x8e/0x290 fs/namei.c:1628
+ walk_component+0x3f/0x230 fs/namei.c:1997
+ lookup_last fs/namei.c:2458 [inline]
+ path_lookupat+0x10a/0x2a0 fs/namei.c:2482
+ filename_lookup+0x126/0x300 fs/namei.c:2511
+ vfs_statx+0xa2/0x430 fs/stat.c:240
+ vfs_fstatat+0xcd/0x100 fs/stat.c:295
+ __do_sys_newfstatat fs/stat.c:459 [inline]
+ __se_sys_newfstatat+0x58/0x260 fs/stat.c:453
+ __x64_sys_newfstatat+0x55/0x60 fs/stat.c:453
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+read-write to 0xffff8881382e76c0 of 4 bytes by task 3374 on cpu 1:
+ dont_mount+0x27/0x40 include/linux/dcache.h:351
+ vfs_rmdir+0x2a9/0x2f0 fs/namei.c:4209
+ do_rmdir+0x194/0x310 fs/namei.c:4262
+ __do_sys_rmdir fs/namei.c:4281 [inline]
+ __se_sys_rmdir fs/namei.c:4279 [inline]
+ __x64_sys_rmdir+0x30/0x40 fs/namei.c:4279
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+Reported by Kernel Concurrency Sanitizer on:
+CPU: 1 PID: 3374 Comm: udevd Not tainted 6.6.0-rc5-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/06/2023
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
