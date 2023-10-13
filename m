@@ -1,163 +1,254 @@
-Return-Path: <linux-fsdevel+bounces-343-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-344-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AE7C7C8DE7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Oct 2023 21:46:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 263E37C8E23
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Oct 2023 22:06:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AA5C2821B9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Oct 2023 19:46:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D18AF282F9A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Oct 2023 20:06:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 128AF241E5;
-	Fri, 13 Oct 2023 19:46:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07180250F2;
+	Fri, 13 Oct 2023 20:06:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="oNakhZdh"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="TS7ygbJ/"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82B8233C8
-	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Oct 2023 19:46:01 +0000 (UTC)
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24B8DAD;
-	Fri, 13 Oct 2023 12:46:00 -0700 (PDT)
-Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39DJgHCq011983;
-	Fri, 13 Oct 2023 19:45:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=Pc0KhaMZjt1JJ8BTzzbAY2PLqOgVWSZXPMggq2UpqC4=;
- b=oNakhZdhqyiBB1xeneH9eObxYi6grzwt2PDYW492vVwRxRHgvoQ4Syn9r9QPmjAYIaTP
- 6aKFPreFl3Yp9g31WJWZvNEcbbD4/UuZ238sO1vfk6vrhXcrc7ds24k3ugEI1rGJrgIZ
- KPrd7F0Vljj/fqcs80mDqn6AHRCyivlWACao6vOPeXQjaf8OXIoG3LlbGWw6i1nEDfVV
- 7tGi264DEu0LvW8MdjleOwBT44b+/tIluYg2nsH2wmZvDndITs0RoqvP9z+mK+rJD81O
- Y/Ww8GD1Twmteqk/oZTZ8T4kZFtlTRyhnJ6+naZx+yLRRvKo/g5SgJmy6fK3rOUAbsmF pg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3tqc9gr3q0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Oct 2023 19:45:19 +0000
-Received: from m0353726.ppops.net (m0353726.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 39DJhCV3014636;
-	Fri, 13 Oct 2023 19:45:19 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3tqc9gr3ja-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Oct 2023 19:45:18 +0000
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 39DJHpjQ008837;
-	Fri, 13 Oct 2023 19:45:13 GMT
-Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3tpt57p9ef-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Oct 2023 19:45:13 +0000
-Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
-	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 39DJjDH564029094
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 13 Oct 2023 19:45:13 GMT
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1013E58061;
-	Fri, 13 Oct 2023 19:45:13 +0000 (GMT)
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5C56A58057;
-	Fri, 13 Oct 2023 19:45:11 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.61.129.99])
-	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 13 Oct 2023 19:45:11 +0000 (GMT)
-Message-ID: <ea1de829cec76d7e20efa305df0b0758fc986aac.camel@linux.ibm.com>
-Subject: Re: [PATCH v3 00/25] security: Move IMA and EVM to the LSM
- infrastructure
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>, viro@zeniv.linux.org.uk,
-        brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
-        neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
-        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, dhowells@redhat.com, jarkko@kernel.org,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        casey@schaufler-ca.com
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
-Date: Fri, 13 Oct 2023 15:45:10 -0400
-In-Reply-To: <20230904133415.1799503-1-roberto.sassu@huaweicloud.com>
-References: <20230904133415.1799503-1-roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 974A91BDED
+	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Oct 2023 20:06:19 +0000 (UTC)
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTP id E7D60B7;
+	Fri, 13 Oct 2023 13:06:17 -0700 (PDT)
+Received: from [192.168.7.187] (pool-72-77-59-129.pitbpa.fios.verizon.net [72.77.59.129])
+	by linux.microsoft.com (Postfix) with ESMTPSA id B2B8120B74C0;
+	Fri, 13 Oct 2023 13:06:16 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B2B8120B74C0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1697227577;
+	bh=xoKklGFnQggRTNMZpyLB1ZexVKJ4U9krNfxQ+3+ZUhI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TS7ygbJ/cMYAAjVfnFfnImCzrYQ6bGVzRBm+P0Dsk6O3F3u9VTdbcvygJKNlUsTi+
+	 ouyT+c6gfLKbOlD0JEkfNDGsaW6DRnQusYCBu5xJzzeLzmsN3xXSyp/jHJGXzl8DRP
+	 0OGHC554QkXuyNxP6qsBvbJpHeGzcQMu5OK4Bdgw=
+Message-ID: <19d3cb0b-e5ec-4a35-9ec5-06522903a80c@linux.microsoft.com>
+Date: Fri, 13 Oct 2023 16:06:15 -0400
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: vFTp2Ee0JeBQOP1vrgvHIBWFlp1Y_sdO
-X-Proofpoint-ORIG-GUID: iQnGzuzPyAealHWZ8tc09AvVLAvGFvSP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-10-13_11,2023-10-12_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 spamscore=0 suspectscore=0 mlxlogscore=999 clxscore=1015
- mlxscore=0 adultscore=0 priorityscore=1501 bulkscore=0 phishscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2309180000 definitions=main-2310130170
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] audit,io_uring: io_uring openat triggers audit reference
+ count underflow
+Content-Language: en-US
+To: Paul Moore <paul@paul-moore.com>, Jens Axboe <axboe@kernel.dk>
+Cc: Christian Brauner <brauner@kernel.org>, audit@vger.kernel.org,
+ io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, dan.clash@microsoft.com
+References: <20231012215518.GA4048@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+ <20231013-insofern-gegolten-75ca48b24cf5@brauner>
+ <672d257e-e28f-42bc-8ac7-253d20fe187c@kernel.dk>
+ <CAHC9VhQcSY9q=wVT7hOz9y=o3a67BVUnVGNotgAvE6vK7WAkBw@mail.gmail.com>
+From: Dan Clash <daclash@linux.microsoft.com>
+In-Reply-To: <CAHC9VhQcSY9q=wVT7hOz9y=o3a67BVUnVGNotgAvE6vK7WAkBw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-17.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,ENV_AND_HDR_SPF_MATCH,SPF_HELO_PASS,SPF_PASS,
+	USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
+	autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-On Mon, 2023-09-04 at 15:33 +0200, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
-> 
-> IMA and EVM are not effectively LSMs, especially due the fact that in the
-> past they could not provide a security blob while there is another LSM
-> active.
-> 
-> That changed in the recent years, the LSM stacking feature now makes it
-> possible to stack together multiple LSMs, and allows them to provide a
-> security blob for most kernel objects. While the LSM stacking feature has
-> some limitations being worked out, it is already suitable to make IMA and
-> EVM as LSMs.
-> 
-> In short, while this patch set is big, it does not make any functional
-> change to IMA and EVM. IMA and EVM functions are called by the LSM
-> infrastructure in the same places as before (except ima_post_path_mknod()),
-> rather being hardcoded calls, and the inode metadata pointer is directly
-> stored in the inode security blob rather than in a separate rbtree.
-> 
-> More specifically, patches 1-11 make IMA and EVM functions suitable to
-> be registered to the LSM infrastructure, by aligning function parameters.
-> 
-> Patches 12-20 add new LSM hooks in the same places where IMA and EVM
-> functions are called, if there is no LSM hook already.
-> 
-> Patches 21-24 do the bulk of the work, remove hardcoded calls to IMA, EVM
-> and integrity functions, register those functions in the LSM
-> infrastructure, and let the latter call them. In addition, they also
-> reserve one slot for EVM to supply an xattr with the inode_init_security
-> hook.
-> 
-> Finally, patch 25 removes the rbtree used to bind metadata to the inodes,
-> and instead reserves a space in the inode security blob to store the
-> pointer to metadata. This also brings performance improvements due to
-> retrieving metadata in constant time, as opposed to logarithmic.
-> 
-> The patch set applies on top of lsm/next, commit 8e4672d6f902 ("lsm:
-> constify the 'file' parameter in security_binder_transfer_file()")
-
-Thanks, Roberto!   There were just a few suggestions/changes, which
-though minor, will result in some patch churn.   Other than that, there
-were some suggestions patch description suggestions.
-
--- 
-thanks,
-
-Mimi
 
 
+On 2023-10-13 11:43, Paul Moore wrote:
+> On Fri, Oct 13, 2023 at 10:21 AM Jens Axboe <axboe@kernel.dk> wrote:
+>> On 10/13/23 2:24 AM, Christian Brauner wrote:
+>>> On Thu, Oct 12, 2023 at 02:55:18PM -0700, Dan Clash wrote:
+>>>> An io_uring openat operation can update an audit reference count
+>>>> from multiple threads resulting in the call trace below.
+>>>>
+>>>> A call to io_uring_submit() with a single openat op with a flag of
+>>>> IOSQE_ASYNC results in the following reference count updates.
+>>>>
+>>>> These first part of the system call performs two increments that do not race.
+>>>>
+>>>> do_syscall_64()
+>>>>    __do_sys_io_uring_enter()
+>>>>      io_submit_sqes()
+>>>>        io_openat_prep()
+>>>>          __io_openat_prep()
+>>>>            getname()
+>>>>              getname_flags()       /* update 1 (increment) */
+>>>>                __audit_getname()   /* update 2 (increment) */
+>>>>
+>>>> The openat op is queued to an io_uring worker thread which starts the
+>>>> opportunity for a race.  The system call exit performs one decrement.
+>>>>
+>>>> do_syscall_64()
+>>>>    syscall_exit_to_user_mode()
+>>>>      syscall_exit_to_user_mode_prepare()
+>>>>        __audit_syscall_exit()
+>>>>          audit_reset_context()
+>>>>             putname()              /* update 3 (decrement) */
+>>>>
+>>>> The io_uring worker thread performs one increment and two decrements.
+>>>> These updates can race with the system call decrement.
+>>>>
+>>>> io_wqe_worker()
+>>>>    io_worker_handle_work()
+>>>>      io_wq_submit_work()
+>>>>        io_issue_sqe()
+>>>>          io_openat()
+>>>>            io_openat2()
+>>>>              do_filp_open()
+>>>>                path_openat()
+>>>>                  __audit_inode()   /* update 4 (increment) */
+>>>>              putname()             /* update 5 (decrement) */
+>>>>          __audit_uring_exit()
+>>>>            audit_reset_context()
+>>>>              putname()             /* update 6 (decrement) */
+>>>>
+>>>> The fix is to change the refcnt member of struct audit_names
+>>>> from int to atomic_t.
+>>>>
+>>>> kernel BUG at fs/namei.c:262!
+>>>> Call Trace:
+>>>> ...
+>>>>   ? putname+0x68/0x70
+>>>>   audit_reset_context.part.0.constprop.0+0xe1/0x300
+>>>>   __audit_uring_exit+0xda/0x1c0
+>>>>   io_issue_sqe+0x1f3/0x450
+>>>>   ? lock_timer_base+0x3b/0xd0
+>>>>   io_wq_submit_work+0x8d/0x2b0
+>>>>   ? __try_to_del_timer_sync+0x67/0xa0
+>>>>   io_worker_handle_work+0x17c/0x2b0
+>>>>   io_wqe_worker+0x10a/0x350
+>>>>
+>>>> Cc: <stable@vger.kernel.org>
+>>>> Link: https://lore.kernel.org/lkml/MW2PR2101MB1033FFF044A258F84AEAA584F1C9A@MW2PR2101MB1033.namprd21.prod.outlook.com/
+>>>> Fixes: 5bd2182d58e9 ("audit,io_uring,io-wq: add some basic audit support to io_uring")
+>>>> Signed-off-by: Dan Clash <daclash@linux.microsoft.com>
+>>>> ---
+>>>>   fs/namei.c         | 9 +++++----
+>>>>   include/linux/fs.h | 2 +-
+>>>>   kernel/auditsc.c   | 8 ++++----
+>>>>   3 files changed, 10 insertions(+), 9 deletions(-)
+>>>>
+>>>> diff --git a/fs/namei.c b/fs/namei.c
+>>>> index 567ee547492b..94565bd7e73f 100644
+>>>> --- a/fs/namei.c
+>>>> +++ b/fs/namei.c
+>>>> @@ -188,7 +188,7 @@ getname_flags(const char __user *filename, int flags, int *empty)
+>>>>               }
+>>>>       }
+>>>>
+>>>> -    result->refcnt = 1;
+>>>> +    atomic_set(&result->refcnt, 1);
+>>>>       /* The empty path is special. */
+>>>>       if (unlikely(!len)) {
+>>>>               if (empty)
+>>>> @@ -249,7 +249,7 @@ getname_kernel(const char * filename)
+>>>>       memcpy((char *)result->name, filename, len);
+>>>>       result->uptr = NULL;
+>>>>       result->aname = NULL;
+>>>> -    result->refcnt = 1;
+>>>> +    atomic_set(&result->refcnt, 1);
+>>>>       audit_getname(result);
+>>>>
+>>>>       return result;
+>>>> @@ -261,9 +261,10 @@ void putname(struct filename *name)
+>>>>       if (IS_ERR(name))
+>>>>               return;
+>>>>
+>>>> -    BUG_ON(name->refcnt <= 0);
+>>>> +    if (WARN_ON_ONCE(!atomic_read(&name->refcnt)))
+>>>> +            return;
+>>>>
+>>>> -    if (--name->refcnt > 0)
+>>>> +    if (!atomic_dec_and_test(&name->refcnt))
+>>>>               return;
+>>>
+>>> Fine by me. I'd write this as:
+>>>
+>>> count = atomic_dec_if_positive(&name->refcnt);
+>>> if (WARN_ON_ONCE(unlikely(count < 0))
+>>>        return;
+>>> if (count > 0)
+>>>        return;
+>>
+>> Would be fine too, my suspicion was that most archs don't implement a
+>> primitive for that, and hence it might be more expensive than
+>> atomic_read()/atomic_dec_and_test() which do. But I haven't looked at
+>> the code generation. The dec_if_positive degenerates to a atomic cmpxchg
+>> for most cases.
+> 
+> I'm not too concerned, either approach works for me, the important bit
+> is moving to an atomic_t/refcount_t so we can protect ourselves
+> against the race.  The patch looks good to me and I'd like to get this
+> fix merged.
+> 
+> Dan, barring any further back-and-forth on the putname() change, I
+> would say to go ahead and make the change Christian suggested and
+> repost the patch.  Based on Jens comment above it seems safe to
+> preserve his 'Reviewed-by:' tag on the next revision.  Assuming there
+> are no objections posted in the meantime, I'll plan to merge the next
+> revision into the audit/stable-6.6 branch and get that up to Linus
+> (likely next week since it's Friday).
+
+I did not see many arch implementations of atomic_dec_if_positive.
+The x86_64 generated code looks like arch_atomic_dec_unless_positive()
+in atomic-arch-fallback.h with a loop around lock cmpxchg.
+
+I did not want to compound the email race so I did not send patch v2 but 
+I can if desired.
+
+
+devvm2 ~/linux $ sysctl kernel.arch
+kernel.arch = x86_64
+
+devvm2 ~/linux $ cat -n ./fs/namei.c | grep -B 7 -A 4 atomic_dec_if_positive
+    259  void putname(struct filename *name)
+    260  {
+    261          int count;
+    262
+    263          if (IS_ERR(name))
+    264                  return;
+    265
+    266          count = atomic_dec_if_positive(&name->refcnt);
+    267          if (WARN_ON_ONCE(unlikely(count < 0)))
+    268                  return;
+    269          if (count > 0)
+    270                  return;
+
+devvm2 ~/linux $ objdump --disassemble --line-numbers ./fs/namei.o | \
+grep -B 8 -A 12 atomic_dec_if_positive
+/home/daclash/linux/fs/namei.c:260
+      22e:       55                      push   %rbp
+      22f:       48 89 e5                mov    %rsp,%rbp
+      232:       41 54                   push   %r12
+arch_atomic_read():
+/home/daclash/linux/./arch/x86/include/asm/atomic.h:23
+      234:       8b 47 10                mov    0x10(%rdi),%eax
+      237:       49 89 fc                mov    %rdi,%r12
+raw_atomic_dec_if_positive():
+/home/daclash/linux/./include/linux/atomic/atomic-arch-fallback.h:2535
+      23a:       89 c2                   mov    %eax,%edx
+      23c:       83 ea 01                sub    $0x1,%edx
+      23f:       78 50                   js     291 <putname+0x71>
+arch_atomic_try_cmpxchg():
+/home/daclash/linux/./arch/x86/include/asm/atomic.h:115
+      241:       f0 41 0f b1 54 24 10    lock cmpxchg %edx,0x10(%r12)
+      248:       75 f0                   jne    23a <putname+0x1a>
+putname():
+/home/daclash/linux/fs/namei.c:269
+      24a:       85 d2                   test   %edx,%edx
+      24c:       75 22                   jne    270 <putname+0x50>
 
 
