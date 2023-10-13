@@ -1,210 +1,163 @@
-Return-Path: <linux-fsdevel+bounces-236-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-237-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 464067C7BAE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Oct 2023 04:40:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C45267C7BE9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Oct 2023 05:12:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64C5C1C21093
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Oct 2023 02:40:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D4B8B209B6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Oct 2023 03:12:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9E34A56;
-	Fri, 13 Oct 2023 02:40:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE2CCED7;
+	Fri, 13 Oct 2023 03:12:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="h98MYJKT";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Jt+wF3cE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cm8OSBhz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5ABD365
-	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Oct 2023 02:40:05 +0000 (UTC)
-Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7C4DDE;
-	Thu, 12 Oct 2023 19:40:03 -0700 (PDT)
-Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
-	by mailout.nyi.internal (Postfix) with ESMTP id 646F45C0380;
-	Thu, 12 Oct 2023 22:40:01 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute7.internal (MEProxy); Thu, 12 Oct 2023 22:40:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:sender:subject:subject:to:to; s=fm1; t=
-	1697164801; x=1697251201; bh=v/NfjpcqgjT4cCUGFXPV+Rh0Ny4ORRueTJG
-	R6kwHMb8=; b=h98MYJKTyJxh5BlvDbqEbS/QDtKUAxWwg2gGTDuH6bPyNZVeWqr
-	wx7264K7BBz32R/co1ATerAhNOMz75YLvm0fgTpgMMNQu55w/LVhZfVZ8OAJaCJq
-	7nb9dXr37pUg3xsw+b7il6/ccYQEcPhPb1vK4CCQEDrzy95IV5o4SoOHlrLXJpUS
-	Eb6yPF/vCqUumwQwHr6SUOmSXmec1KGdbHy/VnWCwJ1VS7MFAVN4kRWjtDai5r4e
-	6Iyb5UfYgyfG6nkNOqOd32AZHM4b4h2XiUHG2i77ha6HhTxsKzAs97rGYCPcA6Jm
-	X5Z16cCuPlMvm2fDFuvmbQ+0wtUWZGtKmxA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:sender:subject:subject:to:to:x-me-proxy
-	:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1697164801; x=1697251201; bh=v/NfjpcqgjT4cCUGFXPV+Rh0Ny4ORRueTJG
-	R6kwHMb8=; b=Jt+wF3cEaxzWcr3/XY+Wti7uxW1slOr+Hh/k2JZeVBiHjcLII+Z
-	nY0JUMQAUmDbFKRWkpDfuKIptHIvAR4kGoNSizhDviET/VuKiZVCLSJwzXlYZuVd
-	CpnkeoHXGKe3B0+EamZEayG0kSpjwW7ne9v4AUmksO5OEuGQtcIFvB9B8Tp7Kdlb
-	8KnNMyLprmaqX8wELioBDQZV7M5B73HYVbhOMQu/7XxjsD97mBwdVhOEsAQdEYiM
-	4Zs6ZIclabu89A++eIi9tF47Z7p4t5528a4i5yVVr0vyQgwSV2oj8Dm/R1FxOYyU
-	hjjXgGv4TTuQcjNkFh96NNn3NsYXWo/LI0g==
-X-ME-Sender: <xms:AK4oZfYmg8hEeYfVAyN9-NVArxIb9pHAIGMu3LtUcRruvGFiFXYofA>
-    <xme:AK4oZea2lrufPdbPIb_b2cpZxrufVNi-KdhmDGxE6gD8ljT5zvF1TCt_XZjTxXcnY
-    ctZD-IlCEos>
-X-ME-Received: <xmr:AK4oZR_c5k74EqiyFt1B-u0NuLBMh1OUK8IicBC-0xnMyiMUjlVPKb21xDJnQHX7pAYonr_C7pXIwMswwGu5E6yaqAnpZ1_E9drmkcuN1Xom8hNHEleP_4lU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedriedugdeitdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefkffggfgfhvfevfhfujggtgfesthekredttdefjeenucfhrhhomhepkfgrnhcu
-    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpe
-    ekueffkefhffetjeeikeevtdfhgefhgeetfedvgeevveejgeffleelffekveejtdenucev
-    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehrrghvvghnse
-    hthhgvmhgrfidrnhgvth
-X-ME-Proxy: <xmx:AK4oZVr_hhUjuDK8v1CelxtwSzRQiPkQJ28QaIhT5GG36oeAhMe8dA>
-    <xmx:AK4oZapZISNp-1EU-J-rAeME2Ys8rS-j8-lysqiKkCn9cG15lAW-6g>
-    <xmx:AK4oZbSFYIFmjcllZIBS8h0RkMXumwjif1oWQKDJk2WMEEF9D0_4Rw>
-    <xmx:Aa4oZVB9SQ5uAQPRwuokl4D2K98Gt4SH7aFjq0x66MdNJYh_gIZC1A>
-Feedback-ID: i31e841b0:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 12 Oct 2023 22:39:53 -0400 (EDT)
-Message-ID: <c45fc3e5-05ca-14ab-0536-4f670973b927@themaw.net>
-Date: Fri, 13 Oct 2023 10:39:49 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 153A0EA6;
+	Fri, 13 Oct 2023 03:12:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72E13C433C8;
+	Fri, 13 Oct 2023 03:12:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1697166730;
+	bh=NYHI34uOZW76WOHd3rPCVjTdBM893fhqz6wst0gmhdg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Cm8OSBhzNy2O8iproEg02gP1ZCrhhtALvbD5HsU056LgPHKrtaUqknpifaMnelL9q
+	 2TwwYIvrxlo57G4x8QKhW4KNTwcLk2+SprfASeebo9BBx5L9hzZdrnpCuiynVYWGM9
+	 1RbHpayuQ+gRV2yl9yDPSrhsJkYV6pHHhxZCQKR83gEH8yo3oxncoMlNhnqVFCp9my
+	 vlVBOng5/Oqc6+eca0fRXopdbozveiZ1kCUziYr2IZ50BwhnF0Nay2wbL/CKZFSGOI
+	 UOHh3xpUxWbodZCGSNXHXY1fhiocPDQDPXuh/jmipEGfw7v33dED7xPfZCEA3D1v3F
+	 EDx9cdjAsfW3w==
+Date: Thu, 12 Oct 2023 20:12:09 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Andrey Albershteyn <aalbersh@redhat.com>, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, fsverity@lists.linux.dev,
+	david@fromorbit.com, dchinner@redhat.com
+Subject: Re: [PATCH v3 07/28] fsverity: always use bitmap to track verified
+ status
+Message-ID: <20231013031209.GS21298@frogsfrogsfrogs>
+References: <20231006184922.252188-1-aalbersh@redhat.com>
+ <20231006184922.252188-8-aalbersh@redhat.com>
+ <20231011031543.GB1185@sol.localdomain>
+ <q75t2etmyq2zjskkquikatp4yg7k2yoyt4oab4grhlg7yu4wyi@6eax4ysvavyk>
+ <20231012072746.GA2100@sol.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-From: Ian Kent <raven@themaw.net>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Paul Moore <paul@paul-moore.com>, Miklos Szeredi <mszeredi@redhat.com>,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-api@vger.kernel.org, linux-man@vger.kernel.org,
- linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
- David Howells <dhowells@redhat.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <christian@brauner.io>,
- Amir Goldstein <amir73il@gmail.com>, Matthew House
- <mattlloydhouse@gmail.com>, Florian Weimer <fweimer@redhat.com>,
- Arnd Bergmann <arnd@arndb.de>
-References: <20230928130147.564503-1-mszeredi@redhat.com>
- <20230928130147.564503-5-mszeredi@redhat.com>
- <CAHC9VhQD9r+Qf5Vz1XmxUdJJJO7HNTKdo8Ux=n+xkxr=JGFMrw@mail.gmail.com>
- <CAJfpegsPbDgaz46x4Rr9ZgCpF9rohVHsvuWtQ5LNAdiYU_D4Ww@mail.gmail.com>
- <a25f2736-1837-f4ca-b401-85db24f46452@themaw.net>
- <CAJfpegv78njkWdaShTskKXoGOpKAndvYYJwq7CLibiu+xmLCvg@mail.gmail.com>
- <7fe3c01f-c225-394c-fac5-cabfc70f3606@themaw.net>
-Content-Language: en-US
-Subject: Re: [PATCH v3 4/4] add listmount(2) syscall
-In-Reply-To: <7fe3c01f-c225-394c-fac5-cabfc70f3606@themaw.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-6.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,
-	RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_NONE
-	autolearn=ham autolearn_force=no version=3.4.6
-X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
-	lindbergh.monkeyblade.net
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231012072746.GA2100@sol.localdomain>
 
-On 6/10/23 08:27, Ian Kent wrote:
-> On 5/10/23 23:47, Miklos Szeredi wrote:
->> On Thu, 5 Oct 2023 at 06:23, Ian Kent <raven@themaw.net> wrote:
->>
->>> The proc interfaces essentially use <mount namespace>->list to provide
->>>
->>> the mounts that can be seen so it's filtered by mount namespace of the
->>>
->>> task that's doing the open().
->>>
->>>
->>> See fs/namespace.c:mnt_list_next() and just below the m_start(), 
->>> m_next(),
->> /proc/$PID/mountinfo will list the mount namespace of $PID. Whether
->> current task has permission to do so is decided at open time.
->>
->> listmount() will list the children of the given mount ID.  The mount
->> ID is looked up in the task's mount namespace, so this cannot be used
->> to list mounts of other namespaces.  It's a more limited interface.
->
-> Yep. But isn't the ability to see these based on task privilege?
->
->
-> Is the proc style restriction actually what we need here (or some 
-> variation
->
-> of that implementation)?
->
->
-> An privileged task typically has the init namespace as its mount 
-> namespace
->
-> and mounts should propagate from there so it should be able to see all 
-> mounts.
->
->
-> If the file handle has been opened in a task that is using some other 
-> mount
->
-> namespace then presumably that's what the program author wants the 
-> task to see.
->
-> So I'm not sure I see a problem obeying the namespace of a given task.
+Hi Eric,
 
-I've had a look through the code we had in the old fsinfo() proposal
+[Please excuse my ignorance, this is only the third time I've dived
+into fsverity.]
 
-because I think we need to consider the use cases that are needed.
+On Thu, Oct 12, 2023 at 12:27:46AM -0700, Eric Biggers wrote:
+> On Wed, Oct 11, 2023 at 03:03:55PM +0200, Andrey Albershteyn wrote:
+> > > How complicated would it be to keep supporting using the page bit when
+> > > merkle_tree_block_size == page_size and the filesystem supports it?  It's an
+> > > efficient solution, so it would be a shame to lose it.  Also it doesn't have the
+> > > max file size limit that the bitmap has.
 
+How complex would it be to get rid of the bitmap entirely, and validate
+all the verity tree blocks within a page all at once instead of
+individual blocks within a page?
 
-IIRC initially we had a flag FSINFO_ATTR_MOUNT_CHILDREN that essentially
+Assuming willy isn't grinding his axe to get rid of PGchecked,
+obviously. ;)
 
-enumerated the children of the given mount in much the same way as is
+> > Well, I think it's possible but my motivation was to step away from
+> > page manipulation as much as possible with intent to not affect other
+> > filesystems too much. I can probably add handling of this case to
+> > fsverity_read_merkle_tree_block() but fs/verity still will create
+> > bitmap and have a limit. The other way is basically revert changes
+> > done in patch 09, then, it probably will be quite a mix of page/block
+> > handling in fs/verity/verify.c
+> 
+> The page-based caching still has to be supported anyway, since that's what the
+> other filesystems that support fsverity use, and it seems you don't plan to
+> change that.
 
-done now in this system call.
+I frankly have been asking myself why /this/ patchset adds so much extra
+code and flags and whatnot to XFS and fs/verity.  From what I can tell,
+the xfs buffer cache has been extended to allocate double the memory so
+that xattr contents can be shadowed.  getxattr for merkle tree contents
+then pins the buffer, shadows the contents, and hands both back to the
+caller (aka xfs_read_merkle_tree_block).   The shadow memory is then
+handed to fs/verity to do its magic; following that, fsverity releases
+the reference and we can eventually drop the xfs_buf reference.
 
+But this seems way overcomplicated to me.  ->read_merkle_tree_page hands
+us a pgoff_t and a suggestion for page readahead, and wants us to return
+an uptodate locked page, right?
 
-But because we needed to enumerate mounts in the same way as the proc file
+Why can't xfs allocate a page, walk the requested range to fill the page
+with merkle tree blocks that were written to the xattr structure (or
+zero the page contents if there is no xattr), and hand that page to
+fsverity?  (It helps to provide the merkle tree block size to
+xfs_read_merkle_tree_page, thanks for adding that).
 
-system mount tables a flag FSINFO_ATTR_MOUNT_ALL was added that essentially
+Assuming fsverity also wants some caching, we could augment the
+xfs_inode to point to a separate address_space for cached merkle tree
+pages, and then xfs_read_merkle_tree_page can use __filemap_get_folio to
+find uptodate cached pages, or instantiate one and make it uptodate.
+Even better, we can pretty easily use multipage folios for this, though
+AFAICT the fs/verity code isn't yet up to handling that.
 
-used the mount namespace mounts list in a similar way to the proc file
+The only thing I can't quite figure out is how to get memory reclaim to
+scan the extra address_space when it wants to try to reclaim pages.
+That part ext4 and f2fs got for free because they stuffed the merkle
+tree in the posteof space.
 
-system so that a list of mounts for a mount namespace could be retrieved.
+But wouldn't that solve /all/ the plumbing problems without scattering
+bits of new code and flags into the xfs buffer cache, the extended
+attributes code, and elsewhere?  And then xfs would not need to burn up
+vmap space to allocate 8K memory blocks just to provide 4k merkel tree
+blocks to fs/verity.
 
+That's just my 2 cents from spending a couple of hours hypothesizing how
+I would fill out the fsverity_operations.
 
-This later use case is what is used by processes that monitor mounts and
+> The question is where the "block verified" flags should be stored.
+> Currently there are two options: PG_checked and the separate bitmap.  I'm not
+> yet convinced that removing the support for the PG_checked method is a good
+> change.  PG_checked is a nice solution for the cases where it can be used; it
+> requires no extra memory, no locking, and has no max file size.  Also, this
+> change seems mostly orthogonal to what you're actually trying to accomplish.
 
-is what's needed more so than enumerating the children as we do now.
+That scheme sounds way better to me than the bitmap. ;)
 
+--D
 
-I'm still looking at the mount id lookup.
-
-
-Ian
-
->
->
-> Ian
->
->>
->> I sort of understand the reasoning behind calling into a security hook
->> on entry to statmount() and listmount().  And BTW I also think that if
->> statmount() and listmount() is limited in this way, then the same
->> limitation should be applied to the proc interfaces.  But that needs
->> to be done real carefully because it might cause regressions. OTOH if
->> it's only done on the new interfaces, then what is the point, since
->> the old interfaces will be available indefinitely?
->>
->> Also I cannot see the point in hiding some mount ID's from the list.
->> It seems to me that the list is just an array of numbers that in
->> itself doesn't carry any information.
->>
->> Thanks,
->> Miklos
+> > > > Also, this patch removes spinlock. The lock was used to reset bits
+> > > > in bitmap belonging to one page. This patch works only with one
+> > > > Merkle tree block and won't reset other blocks status.
+> > > 
+> > > The spinlock is needed when there are multiple Merkle tree blocks per page and
+> > > the filesystem is using the page-based caching.  So I don't think you can remove
+> > > it.  Can you elaborate on why you feel it can be removed?
+> > 
+> > With this patch is_hash_block_verified() doesn't reset bits for
+> > blocks belonging to the same page. Even if page is re-instantiated
+> > only one block is checked in this case. So, when other blocks are
+> > checked they are reset.
+> > 
+> > 	if (block_cached)
+> > 		return test_bit(hblock_idx, vi->hash_block_verified);
+> 
+> When part of the Merkle tree cache is evicted and re-instantiated, whether that
+> part is a "page" or something else, the verified status of all the blocks
+> contained in that part need to be invalidated so that they get re-verified.  The
+> existing code does that.  I don't see how your proposed code does that.
+> 
+> - Eric
 
