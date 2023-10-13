@@ -1,109 +1,253 @@
-Return-Path: <linux-fsdevel+bounces-288-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-324-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A95627C89C7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Oct 2023 18:06:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A60D17C8A29
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Oct 2023 18:12:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49FFEB20FC7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Oct 2023 16:06:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C85351C21112
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Oct 2023 16:12:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D00C11CABC;
-	Fri, 13 Oct 2023 16:05:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ABE11DA39;
+	Fri, 13 Oct 2023 16:12:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="CgWHbEBf"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JVBL9oCY"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95EED2137B
-	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Oct 2023 16:05:15 +0000 (UTC)
-Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BB6A192
-	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Oct 2023 09:05:12 -0700 (PDT)
-Received: by mail-yb1-xb31.google.com with SMTP id 3f1490d57ef6-d77ad095f13so2261156276.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Oct 2023 09:05:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1697213111; x=1697817911; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tJIUpMJ5wACe5qVMzOsP9GUn7pUpbtvNyTj02yy63pw=;
-        b=CgWHbEBf4CeGZwSS+Iwwm7byS3IDHNWp24uKKZbOOQe7dvaAXNdUmD2AJS0AlaY6sf
-         d0dNs2V8Yx4bft/zp19dYJpFSOCybDGaO0SxkkkHbHggJitkqpdvjzzc/zxDC1VutWWo
-         eBrQBRYfYzbB3gn5kZiKQ+7IG2xTbLmOqF4qeuiy5Kj9MD9bVqQm85nL5hoPoCEuDVMw
-         fjmE5kscePYUzzT9NpAO3YQT2KxY9ct7Lvi6C1pYu+Ox85r7gYrZ7LwGpVt00JOjJLqo
-         w4s7HGy/IeKKkaYgQkPVJ267XujjkI8KpkoFnhcLOwjZ5yI+UZAMpMvB5E8mh9KykRAG
-         VevQ==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DC28210E4
+	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Oct 2023 16:12:02 +0000 (UTC)
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC10B6E92
+	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Oct 2023 09:10:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1697213320;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=l877RZEJE1wmnlu2HXZmUf5JJOPmxuWtRyzMAVCkcBQ=;
+	b=JVBL9oCY4422oBfbk03eutK689EL8OWDIsZYdJfbkFtKqAhhQAMgNqrHXXCFdkT9bl4S7u
+	umOUiS2lxdLBoqNE5Pt69dZQuTmG5oqEdwzY2EUTtdhyOVftZW4Lc7JQB832rFWfxfastd
+	NSLjSdJbkvd1eNdiu4Mv531QlCHJNJI=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-592-rBEsG4QDOTOemDrj6doisg-1; Fri, 13 Oct 2023 12:08:13 -0400
+X-MC-Unique: rBEsG4QDOTOemDrj6doisg-1
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-774292de453so32768985a.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Oct 2023 09:08:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697213111; x=1697817911;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tJIUpMJ5wACe5qVMzOsP9GUn7pUpbtvNyTj02yy63pw=;
-        b=l6HayjqT6zqWqQWZlQ8AcJoUq6hPqHB7J+1vOkbdn9asbQDBmMGe1jv89NiZmXhBk5
-         I1wT+eRPxBeSEYeNNB/OcGS26Iydm4OsQx8T7XyOFlLOsicvN4Sp1Cvqac1FLX23Ycua
-         1n59Jm71C73hQvVObv/eQRJxs/mXI77Fqv34Ll3rcu/Y27wDClQyNQYTp5fuBWfDD17W
-         rRBsS84usQVbxlqpavCtm43sh+DOR8xz/sl+hoAALzjwEnhX3S+esUDdfMayQ7l21aDA
-         jSDwt664UNVgkSsmsDghzlMTUs/5gVi27aoq+SJ5AfF812HBmiHPI6JG0AAFKvZX+za+
-         zgJQ==
-X-Gm-Message-State: AOJu0YxDjlIVG5bB641tyVOVcriQF273F/Ovh9V83bHXXVQm0qHe5aFO
-	/N85aDFgE6FQCMufW0Q7h0KJIUxyngc6iWT2fBCq
-X-Google-Smtp-Source: AGHT+IHpOSANOrQKBQgtUgStfgXLEaTDhiwuX8RmP+7vz4a8DNxO1ohlNmWN6m1GXQ9c27fFcBbMW4NNTEH1Lhj5YvE=
-X-Received: by 2002:a25:4e05:0:b0:d69:8faa:5a28 with SMTP id
- c5-20020a254e05000000b00d698faa5a28mr24864064ybb.55.1697213111288; Fri, 13
- Oct 2023 09:05:11 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1697213293; x=1697818093;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l877RZEJE1wmnlu2HXZmUf5JJOPmxuWtRyzMAVCkcBQ=;
+        b=VwvaPkp7HXf3CsfuxtVGo8ioWw3HgOsAjstNQOIUf9QKtR67TbKzJyxDIbBVDenPUS
+         Au/Oa/G13riEe+G82elPAjx/1+iaVQNSZrhykxOgq40ueHLNOkkZiKVp/8GQnjfs8wVQ
+         GKassfi6xS1CacG0DpF+ILUVeZAUldr9kiM9GxpbnP+VlLqs30lR9AyMRbCsDBzBr32U
+         e2OYk+kxfH73Ao7aul74KYVxKPmO5JSE/00LYzGUozmSFpGLnL397zuGMLaE+Uy49jVy
+         +e/nmeakQvn00y5PmAI+4JLapYKOkMOFB1K1jmAaNpXwNfMl7COftPbqvEMBc/vE/4pU
+         d1jA==
+X-Gm-Message-State: AOJu0YzsMurFBubU2fL3RSGH/MrQPmdhV8/JQZGi1mxZ2yuffCg25W1T
+	j6BatKm20zpGpvj8JxuyJsGys8oQozA8cPMZke8+gMpu4YKiQ9SWcle1g2vUsAhel5wiT7END0V
+	PwJ1NZ1FHrOpEjqfMdCCBRKVqYw==
+X-Received: by 2002:a05:620a:1995:b0:773:ad1f:3d5b with SMTP id bm21-20020a05620a199500b00773ad1f3d5bmr29031622qkb.0.1697213292974;
+        Fri, 13 Oct 2023 09:08:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEMzq+HmVjk9ZMncHpY2NS0XXagXp4pSZDtTRpzZctU6hE/hHC4ErkahV4f14Sr5cFXgAXzhg==
+X-Received: by 2002:a05:620a:1995:b0:773:ad1f:3d5b with SMTP id bm21-20020a05620a199500b00773ad1f3d5bmr29031582qkb.0.1697213292607;
+        Fri, 13 Oct 2023 09:08:12 -0700 (PDT)
+Received: from x1n (cpe5c7695f3aee0-cm5c7695f3aede.cpe.net.cable.rogers.com. [99.254.144.39])
+        by smtp.gmail.com with ESMTPSA id s17-20020a05620a031100b007770673e757sm734564qkm.94.2023.10.13.09.08.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Oct 2023 09:08:12 -0700 (PDT)
+Date: Fri, 13 Oct 2023 12:08:10 -0400
+From: Peter Xu <peterx@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Lokesh Gidra <lokeshgidra@google.com>,
+	Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, shuah@kernel.org,
+	aarcange@redhat.com, hughd@google.com, mhocko@suse.com,
+	axelrasmussen@google.com, rppt@kernel.org, willy@infradead.org,
+	Liam.Howlett@oracle.com, jannh@google.com, zhangpeng362@huawei.com,
+	bgeffon@google.com, kaleshsingh@google.com, ngeoffray@google.com,
+	jdduke@google.com, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH v3 2/3] userfaultfd: UFFDIO_MOVE uABI
+Message-ID: <ZSlragGjFEw9QS1Y@x1n>
+References: <20231009064230.2952396-1-surenb@google.com>
+ <20231009064230.2952396-3-surenb@google.com>
+ <214b78ed-3842-5ba1-fa9c-9fa719fca129@redhat.com>
+ <CAJuCfpHzSm+z9b6uxyYFeqr5b5=6LehE9O0g192DZdJnZqmQEw@mail.gmail.com>
+ <478697aa-f55c-375a-6888-3abb343c6d9d@redhat.com>
+ <CA+EESO5nvzka0KzFGzdGgiCWPLg7XD-8jA9=NTUOKFy-56orUg@mail.gmail.com>
+ <ZShS3UT+cjJFmtEy@x1n>
+ <205abf01-9699-ff1c-3e4e-621913ada64e@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231012215518.GA4048@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
- <20231013-karierte-mehrzahl-6a938035609e@brauner> <CAHC9VhTQFyyE59A3WG3Z0xkP6m31h1M0bvS=yihE7ukpUiDMug@mail.gmail.com>
- <55620008-1d90-4312-921e-cef348bc7b85@kernel.dk>
-In-Reply-To: <55620008-1d90-4312-921e-cef348bc7b85@kernel.dk>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 13 Oct 2023 12:05:00 -0400
-Message-ID: <CAHC9VhTb6T6fiVTQTBKP6t-zQnDtSck1TuBbETBjs4bt=ryh=Q@mail.gmail.com>
-Subject: Re: [PATCH] audit,io_uring: io_uring openat triggers audit reference
- count underflow
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Christian Brauner <brauner@kernel.org>, Dan Clash <daclash@linux.microsoft.com>, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	dan.clash@microsoft.com, audit@vger.kernel.org, io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <205abf01-9699-ff1c-3e4e-621913ada64e@redhat.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+	RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
+	SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
 	version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-On Fri, Oct 13, 2023 at 12:00=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wrote=
-:
-> On 10/13/23 9:56 AM, Paul Moore wrote:
-> > * You didn't mention if you've marked this for stable or if you're
-> > going to send this up to Linus now or wait for the merge window.  At a
-> > minimum this should be marked for stable, and I believe it should also
-> > be sent up to Linus prior to the v6.6 release; I'm guessing that is
-> > what you're planning to do, but you didn't mention it here.
->
-> The patch already has a stable tag and the commit it fixes, can't
-> imagine anyone would strip those...
+On Fri, Oct 13, 2023 at 11:56:31AM +0200, David Hildenbrand wrote:
+> Hi Peter,
 
-I've had that done in the past with patches, although admittedly not
-with VFS related patches and not by Christian.  I just wanted to make
-sure since it wasn't clear from the (automated?) merge response.
+Hi, David,
 
-> But yes, as per my email, just
-> wanting to make sure this is going to 6.6 and not queued for 6.7.
+> 
+> > I used to have the same thought with David on whether we can simplify the
+> > design to e.g. limit it to single mm.  Then I found that the trickiest is
+> > actually patch 1 together with the anon_vma manipulations, and the problem
+> > is that's not avoidable even if we restrict the api to apply on single mm.
+> > 
+> > What else we can benefit from single mm?  One less mmap read lock, but
+> > probably that's all we can get; IIUC we need to keep most of the rest of
+> > the code, e.g. pgtable walks, double pgtable lockings, etc.
+> 
+> No existing mechanisms move anon pages between unrelated processes, that
+> naturally makes me nervous if we're doing it "just because we can".
 
-Agreed.
+IMHO that's also the potential, when guarded with userfaultfd descriptor
+being shared between two processes.
 
---=20
-paul-moore.com
+See below with more comment on the raised concerns.
+
+> 
+> > 
+> > Actually, even though I have no solid clue, but I had a feeling that there
+> > can be some interesting way to leverage this across-mm movement, while
+> > keeping things all safe (by e.g. elaborately requiring other proc to create
+> > uffd and deliver to this proc).
+> 
+> Okay, but no real use cases yet.
+
+I can provide a "not solid" example.  I didn't mention it because it's
+really something that just popped into my mind when thinking cross-mm, so I
+never discussed with anyone yet nor shared it anywhere.
+
+Consider VM live upgrade in a generic form (e.g., no VFIO), we can do that
+very efficiently with shmem or hugetlbfs, but not yet anonymous.  We can do
+extremely efficient postcopy live upgrade now with anonymous if with REMAP.
+
+Basically I see it a potential way of moving memory efficiently especially
+with thp.
+
+> 
+> > 
+> > Considering Andrea's original version already contains those bits and all
+> > above, I'd vote that we go ahead with supporting two MMs.
+> 
+> You can do nasty things with that, as it stands, on the upstream codebase.
+> 
+> If you pin the page in src_mm and move it to dst_mm, you successfully broke
+> an invariant that "exclusive" means "no other references from other
+> processes". That page is marked exclusive but it is, in fact, not exclusive.
+
+It is still exclusive to the dst mm?  I see your point, but I think you're
+taking exclusiveness altogether with pinning, and IMHO that may not be
+always necessary?
+
+> 
+> Once you achieved that, you can easily have src_mm not have MMF_HAS_PINNED,
+
+(I suppose you meant dst_mm here)
+
+> so you can just COW-share that page. Now you successfully broke the
+> invariant that COW-shared pages must not be pinned. And you can even trigger
+> VM_BUG_ONs, like in sanity_check_pinned_pages().
+
+Yeah, that's really unfortunate.  But frankly, I don't think it's the fault
+of this new feature, but the rest.
+
+Let's imagine if the MMF_HAS_PINNED wasn't proposed as a per-mm flag, but
+per-vma, which I don't see why we can't because it's simply a hint so far.
+Then if we apply the same rule here, UFFDIO_REMAP won't even work for
+single-mm as long as cross-vma. Then UFFDIO_REMAP as a whole feature will
+be NACKed simply because of this..
+
+And I don't think anyone can guarantee a per-vma MMF_HAS_PINNED can never
+happen, or any further change to pinning solution that may affect this.  So
+far it just looks unsafe to remap a pin page to me.
+
+I don't have a good suggestion here if this is a risk.. I'd think it risky
+then to do REMAP over pinned pages no matter cross-mm or single-mm.  It
+means probably we just rule them out: folio_maybe_dma_pinned() may not even
+be enough to be safe with fast-gup.  We may need page_needs_cow_for_dma()
+with proper write_protect_seq no matter cross-mm or single-mm?
+
+> 
+> Can it all be fixed? Sure, with more complexity. For something without clear
+> motivation, I'll have to pass.
+
+I think what you raised is a valid concern, but IMHO it's better fixed no
+matter cross-mm or single-mm.  What do you think?
+
+In general, pinning lose its whole point here to me for an userspace either
+if it DONTNEEDs it or REMAP it.  What would be great to do here is we unpin
+it upon DONTNEED/REMAP/whatever drops the page, because it loses its
+coherency anyway, IMHO.
+
+> 
+> Once there is real demand, we can revisit it and explore what else we would
+> have to take care of (I don't know how memcg behaves when moving between
+> completely unrelated processes, maybe that works as expected, I don't know
+> and I have no time to spare on reviewing features with no real use cases)
+> and announce it as a new feature.
+
+Good point.  memcg is probably needed..
+
+So you reminded me to do a more thorough review against zap/fault paths, I
+think what's missing are (besides page pinning):
+
+  - mem_cgroup_charge()/mem_cgroup_uncharge(): 
+
+    (side note: I think folio_throttle_swaprate() is only for when
+     allocating new pages, so not needed here)
+
+  - check_stable_address_space() (under pgtable lock)
+
+  - tlb flush
+
+    Hmm???????????????? I can't see anywhere we did tlb flush, batched or
+    not, either single-mm or cross-mm should need it.  Is this missing?
+
+> 
+> 
+> Note: that (with only reading the documentation) it also kept me wondering
+> how the MMs are even implied from
+> 
+>        struct uffdio_move {
+>            __u64 dst;    /* Destination of move */
+>            __u64 src;    /* Source of move */
+>            __u64 len;    /* Number of bytes to move */
+>            __u64 mode;   /* Flags controlling behavior of move */
+>            __s64 move;   /* Number of bytes moved, or negated error */
+>        };
+> 
+> That probably has to be documented as well, in which address space dst and
+> src reside.
+
+Agreed, some better documentation will never hurt.  Dst should be in the mm
+address space that was bound to the userfault descriptor.  Src should be in
+the current mm address space.
+
+Thanks,
+
+-- 
+Peter Xu
+
 
