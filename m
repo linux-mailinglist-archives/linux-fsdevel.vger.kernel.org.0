@@ -1,73 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-349-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-350-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E41A7C8FA6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Oct 2023 23:55:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ADE87C8FA9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Oct 2023 23:55:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C7ABB20BB3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Oct 2023 21:55:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28C271C211D0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Oct 2023 21:55:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4B1728E1F;
-	Fri, 13 Oct 2023 21:55:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D542B5C9;
+	Fri, 13 Oct 2023 21:55:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aNDexg5u"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ipyAs54/"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A638A262B0;
-	Fri, 13 Oct 2023 21:55:26 +0000 (UTC)
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7261DCA;
-	Fri, 13 Oct 2023 14:55:24 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id ffacd0b85a97d-32d849cc152so2400910f8f.1;
-        Fri, 13 Oct 2023 14:55:24 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35772B5C1;
+	Fri, 13 Oct 2023 21:55:38 +0000 (UTC)
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE6FACE;
+	Fri, 13 Oct 2023 14:55:36 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id 4fb4d7f45d1cf-53dd752685fso4573233a12.3;
+        Fri, 13 Oct 2023 14:55:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697234123; x=1697838923; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1697234135; x=1697838935; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tz29dYX5FIygAwUtE9INYy/iUWfEF9vs6rd2O71c8r4=;
-        b=aNDexg5udpQfg++Q+rsgGgg0LCGhJ4gSbhLtEEYh98Y1MGa2n/iBsPq8c2NKTuCxAx
-         TbUzdFF3sCDYP/GJiB95qRTTlb9PLaA18zeFEJa4TsJEJdg5bY9HaRmrynC7lpiPsAil
-         aw6fyDSuX9dodQMHLT7s/D1JCkUzv0ozAy7HI+K/a8UVn2ceUTPpcprHfHxAygrLIATN
-         D/uwlfSkZZLP0IUdbMMjAb0EEWbqFzg7nv/jRJWpKcROx4CllJefOSjxp4F0VJmYWZoz
-         sBvucU6bpokNBTOhR1cnobCi8oZKnHJFOVb93izkxx7kdCQbz4wyhcUY4EO/ImO16iF3
-         Jkxg==
+        bh=IIsoon5ifapyRHJFHWDM6c5fi2ejPFzuYB8rlmAp+E4=;
+        b=ipyAs54/+GsCk8OOtlvDe7OeTPzUwUccB2tNIm1ue+YjOu98ZTXVl162L7WgkJZo+P
+         WoJZlgIqMacCliwLL79PaN4NLXaEZHvU8Rg8FoKxY7lRGy9hDlrXaLvGIZOu12r+Iwc0
+         0ODhJFOfGZU1vKVqkVSsuFWXVVVvU6kBwfY3iop1WPwU0Nku6k5kjE/PwV1gP180OpEN
+         cQh6oj6+ZsI9TgjHUSPHF9EU9vHjpaUuqVvDAwQgOIsSflrVK+JfagWN9a8Jzuy2NTd2
+         gMzZNKQNT/EuuJJC6c69lyxKyJZJDbZXjWAgECzKE0seQHnpy6IC4y47HY4EP0wDAv8g
+         PxRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697234123; x=1697838923;
+        d=1e100.net; s=20230601; t=1697234135; x=1697838935;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tz29dYX5FIygAwUtE9INYy/iUWfEF9vs6rd2O71c8r4=;
-        b=MgR/s1oQV+3tlzSpHmBGxvdPBk0DmoRYjSR5FWHGmwqPvGnNEvagZHVuGnWrc32m7U
-         pbbCXVnYH6+8QM4GPoKiJxPAdfZ05bI/vNOxnuZ5GP2niQMXf2XQOgUFJBo0PTBjqpym
-         L7yu8PXzs5mSfeHF4OB1MUL26WMIqWhhXYUzta5Pm+3Y0WFErc9WrCRSu/djkU2V/VH/
-         rhkgzVN/RNj9HAemekvypiaJa4WZbXpbBaG7WsBhhqoVFf4ILkXB8kMNtibRImG5ih5I
-         OewVabssPGA1z36FoUwo3X3aifltCRXsDeZ2eB41eDexaw+Hk10Cg6tcze1Pq4je1giL
-         a2lg==
-X-Gm-Message-State: AOJu0YxYu8tI6tZTC4CvYuZ9u7R7aQ6SsH/YpQrXbJYqL6lgBSVIcJyn
-	T6Y5jFseFBrXWXsYSEXJe2js6vma9akjuVnUz8OpjKUj
-X-Google-Smtp-Source: AGHT+IFVWzgLGGkOnGu8a5sn52Ly4Ije0IIYsxq+b0E1BtPiE4E2R7LVPon6EfYV5C9Ske4Qxz8aJJ5bcmbAz7YPeUY=
-X-Received: by 2002:a05:6000:14e:b0:320:a19:7f87 with SMTP id
- r14-20020a056000014e00b003200a197f87mr24226550wrx.18.1697234122772; Fri, 13
- Oct 2023 14:55:22 -0700 (PDT)
+        bh=IIsoon5ifapyRHJFHWDM6c5fi2ejPFzuYB8rlmAp+E4=;
+        b=PbpwYgKC0chNAeHkRimnW6A5YQqYTxRZN9/A9eIlw+imurdN1FFEYZKxzVikwgyrCd
+         7fBOoUJywS5UukANQf4uOeavOnBrxbGuBsC7z0LWTWDwNhfYeUq6dqzDA7QVVecEVD9+
+         0Sx2KTqyAyafgtebpdAvr5c9NTaySdIx0H/em5yXP5J6/kFZ5OimtutnrVMAvsNE2UWn
+         gQ4qoO+UG+1wrPej1ZXbYzuaXUWKXhKjq9vNnWRLAk8MBsS5I2a8CdnHt+LtKs1CYihJ
+         5B3bsj5QSOwMCuStAuFPfLpvJJ8aSyIsSpWiHU3jHAMdqlMmRjvzUjcOjAX0c4/8MjYh
+         J6rA==
+X-Gm-Message-State: AOJu0Yzo49JT/yH3hKXGAke33AIl7UYiglGxpXV4hSQ7wWZf4iRypbGd
+	pzFwk25DeaEJy/tWHCqZw2ERw8GDPaoWmHdonJs=
+X-Google-Smtp-Source: AGHT+IFRq0uCNp2DqUaQzM1voq5+iFisevdEN33yDgeV9vMFdHUgZLKLjCIYxV2ALVtrXgCkixX3qn+aEchlhlCXLQo=
+X-Received: by 2002:a50:9fc1:0:b0:53e:2e0a:f5c6 with SMTP id
+ c59-20020a509fc1000000b0053e2e0af5c6mr2895234edf.40.1697234135345; Fri, 13
+ Oct 2023 14:55:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231012222810.4120312-12-andrii@kernel.org> <91ed4874a98b620dfa2bd6fe2966f8a7.paul@paul-moore.com>
-In-Reply-To: <91ed4874a98b620dfa2bd6fe2966f8a7.paul@paul-moore.com>
+References: <20231012222810.4120312-7-andrii@kernel.org> <f739928b1db9a9e45da89249c0389e85.paul@paul-moore.com>
+In-Reply-To: <f739928b1db9a9e45da89249c0389e85.paul@paul-moore.com>
 From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 13 Oct 2023 14:55:11 -0700
-Message-ID: <CAEf4BzbYu0+6p+V8EmDSUA3q8Hi7QVmAz3rwg3EuhOK+BQnK9A@mail.gmail.com>
-Subject: Re: [PATCH v7 11/18] bpf,lsm: add bpf_token_create and bpf_token_free
- LSM hooks
+Date: Fri, 13 Oct 2023 14:55:24 -0700
+Message-ID: <CAEf4BzZWDSZOyoVF+8pKBcvwjcpCC-XMG8J9kaJXXS=P+i5FmA@mail.gmail.com>
+Subject: Re: [PATCH v7 6/18] bpf: add BPF token support to BPF_PROG_LOAD command
 To: Paul Moore <paul@paul-moore.com>
 Cc: Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, netdev@vger.kernel.org, 
 	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
@@ -87,65 +86,120 @@ ote:
 >
 > On Oct 12, 2023 Andrii Nakryiko <andrii@kernel.org> wrote:
 > >
-> > Wire up bpf_token_create and bpf_token_free LSM hooks, which allow to
-> > allocate LSM security blob (we add `void *security` field to struct
-> > bpf_token for that), but also control who can instantiate BPF token.
-> > This follows existing pattern for BPF map and BPF prog.
+> > Add basic support of BPF token to BPF_PROG_LOAD. Wire through a set of
+> > allowed BPF program types and attach types, derived from BPF FS at BPF
+> > token creation time. Then make sure we perform bpf_token_capable()
+> > checks everywhere where it's relevant.
 > >
 > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
 > > ---
-> >  include/linux/bpf.h           |  3 +++
-> >  include/linux/lsm_hook_defs.h |  3 +++
-> >  include/linux/security.h      | 11 +++++++++++
-> >  kernel/bpf/bpf_lsm.c          |  2 ++
-> >  kernel/bpf/token.c            |  6 ++++++
-> >  security/security.c           | 28 ++++++++++++++++++++++++++++
-> >  6 files changed, 53 insertions(+)
+> >  include/linux/bpf.h                           |  6 ++
+> >  include/uapi/linux/bpf.h                      |  2 +
+> >  kernel/bpf/core.c                             |  1 +
+> >  kernel/bpf/inode.c                            |  6 +-
+> >  kernel/bpf/syscall.c                          | 87 ++++++++++++++-----
+> >  kernel/bpf/token.c                            | 27 ++++++
+> >  tools/include/uapi/linux/bpf.h                |  2 +
+> >  .../selftests/bpf/prog_tests/libbpf_probes.c  |  2 +
+> >  .../selftests/bpf/prog_tests/libbpf_str.c     |  3 +
+> >  9 files changed, 110 insertions(+), 26 deletions(-)
 >
 > ...
 >
-> > diff --git a/kernel/bpf/token.c b/kernel/bpf/token.c
-> > index d4e0cc8075d3..18fd1e04f92d 100644
-> > --- a/kernel/bpf/token.c
-> > +++ b/kernel/bpf/token.c
-> > @@ -7,6 +7,7 @@
-> >  #include <linux/idr.h>
-> >  #include <linux/namei.h>
-> >  #include <linux/user_namespace.h>
-> > +#include <linux/security.h>
-> >
-> >  bool bpf_token_capable(const struct bpf_token *token, int cap)
-> >  {
-> > @@ -28,6 +29,7 @@ void bpf_token_inc(struct bpf_token *token)
-> >
-> >  static void bpf_token_free(struct bpf_token *token)
-> >  {
-> > +     security_bpf_token_free(token);
-> >       put_user_ns(token->userns);
-> >       kvfree(token);
+> > diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+> > index a2c9edcbcd77..c6b00aee3b62 100644
+> > --- a/kernel/bpf/syscall.c
+> > +++ b/kernel/bpf/syscall.c
+> > @@ -2584,13 +2584,15 @@ static bool is_perfmon_prog_type(enum bpf_prog_=
+type prog_type)
 > >  }
-> > @@ -183,6 +185,10 @@ int bpf_token_create(union bpf_attr *attr)
-> >       token->allowed_progs =3D mnt_opts->delegate_progs;
-> >       token->allowed_attachs =3D mnt_opts->delegate_attachs;
 > >
-> > +     err =3D security_bpf_token_create(token, attr, &path);
-> > +     if (err)
-> > +             goto out_token;
+> >  /* last field in 'union bpf_attr' used by this command */
+> > -#define      BPF_PROG_LOAD_LAST_FIELD log_true_size
+> > +#define BPF_PROG_LOAD_LAST_FIELD prog_token_fd
+> >
+> >  static int bpf_prog_load(union bpf_attr *attr, bpfptr_t uattr, u32 uat=
+tr_size)
+> >  {
+> >       enum bpf_prog_type type =3D attr->prog_type;
+> >       struct bpf_prog *prog, *dst_prog =3D NULL;
+> >       struct btf *attach_btf =3D NULL;
+> > +     struct bpf_token *token =3D NULL;
+> > +     bool bpf_cap;
+> >       int err;
+> >       char license[128];
+> >
+> > @@ -2606,10 +2608,31 @@ static int bpf_prog_load(union bpf_attr *attr, =
+bpfptr_t uattr, u32 uattr_size)
+> >                                BPF_F_XDP_DEV_BOUND_ONLY))
+> >               return -EINVAL;
+> >
+> > +     bpf_prog_load_fixup_attach_type(attr);
 > > +
-> >       fd =3D get_unused_fd_flags(O_CLOEXEC);
-> >       if (fd < 0) {
-> >               err =3D fd;
+> > +     if (attr->prog_token_fd) {
+> > +             token =3D bpf_token_get_from_fd(attr->prog_token_fd);
+> > +             if (IS_ERR(token))
+> > +                     return PTR_ERR(token);
+> > +             /* if current token doesn't grant prog loading permission=
+s,
+> > +              * then we can't use this token, so ignore it and rely on
+> > +              * system-wide capabilities checks
+> > +              */
+> > +             if (!bpf_token_allow_cmd(token, BPF_PROG_LOAD) ||
+> > +                 !bpf_token_allow_prog_type(token, attr->prog_type,
+> > +                                            attr->expected_attach_type=
+)) {
+> > +                     bpf_token_put(token);
+> > +                     token =3D NULL;
+> > +             }
 >
-> As long as bpf_token_alloc() remains separate from bpf_token_create()
-> I'm not comfortable not having a security_bpf_token_alloc() hook in
-> bpf_token_alloc().  If you really don't want a LSM token alloc hook
-> can you fold bpf_token_alloc() into bpf_token_create()?
+> At the start of this effort I mentioned how we wanted to have LSM
+> control points when the token is created and when it is used.  It is
+> for this reason that we still want a hook inside the
+> bpf_token_allow_cmd() function as it allows us to enable/disable use
+> of the token when its use is first attempted.  If the LSM decides to
+> disallow use of the token in this particular case then the token is
+> disabled (set to NULL) while the operation is still allowed to move
+> forward, simply without the token.  It's a much cleaner and well
+> behaved approach as it allows the normal BPF access controls to do
+> their work.
 
-Yeah, that's easy, I'll just inline it into bpf_token_create(), which
-is the only place where I was intending to use it anyways. I just want
-to keep all this consistent between map, token, and progs.
+I see, ok, so you want to be able to say "no BPF token for you", but
+not just error out the entire operation. Makes sense.
 
 >
-> --
-> paul-moore.com
+> > +     }
+> > +
+> > +     bpf_cap =3D bpf_token_capable(token, CAP_BPF);
+>
+> Similar to the above comment, we want to a LSM control point in
+> bpf_token_capable() so that the LSM can control the token's
+> ability to delegate capability privileges when they are used.  Having
+> to delay this access control point to security_bpf_prog_load() is not
+> only awkward but it requires either manual synchronization between
+> all of the different LSMs and the the capability checks in the
+> bpf_prog_load() function or a completely different set of LSM
+> permissions for a token-based BPF program load over a normal BPF
+> program load.
+>
+> We really need these hooks Andrii, I wouldn't have suggested them if
+> I didn't believe they were important.
+
+No problem, I'll add both of them. I really didn't want to add hooks
+for allow_{maps,progs,attachs} (which you agreed shouldn't be added,
+so we are good), but I think allow_cmds and capable checks are fine.
+Will add in the next revision.
+
+>
+> > +     err =3D -EPERM;
+> > +
+> >       if (!IS_ENABLED(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS) &&
+> >           (attr->prog_flags & BPF_F_ANY_ALIGNMENT) &&
+> > -         !bpf_capable())
+> > -             return -EPERM;
+> > +         !bpf_cap)
+> > +             goto put_token;
+> >
+
+[...]
 
