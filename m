@@ -1,51 +1,51 @@
-Return-Path: <linux-fsdevel+bounces-291-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-292-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 082C87C89CC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Oct 2023 18:06:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D8F347C89D2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Oct 2023 18:06:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9AF2EB21294
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Oct 2023 16:06:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E324B212A9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Oct 2023 16:06:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD1A1EA8A;
-	Fri, 13 Oct 2023 16:05:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C745224D7;
+	Fri, 13 Oct 2023 16:05:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="B4UDUhiI"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ggsrkVcV"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C5F921A15
-	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Oct 2023 16:05:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281C3224D2
+	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Oct 2023 16:05:20 +0000 (UTC)
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48287184
-	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Oct 2023 09:05:16 -0700 (PDT)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A0461BB
+	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Oct 2023 09:05:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1697213115;
+	s=mimecast20190719; t=1697213117;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=/wI2ukAfhLlByZQe0rXpGLnwelltmScQCYU5cYtls1s=;
-	b=B4UDUhiINTkRrv3y6Ws7JDC6AE+6jTP89lTZ5ryiOu/ShJprShpX13vItjPSU5jeBXIb0k
-	ez16yNbonBI3Te5T/73oijTNMBbc/Ev8lzyhcFMS/VuYhaUr0gXiSKOoBNKFSB2HEyl+XC
-	n4f2mZSOp9jeHB24jiW9/RZuhRXe0X8=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-393-Y3JGXtQpP-C4R3eDg4Xd4A-1; Fri, 13 Oct 2023 12:05:12 -0400
-X-MC-Unique: Y3JGXtQpP-C4R3eDg4Xd4A-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+	bh=ontDGl26Z2fbsTnGmpaZePgZN/TS57PItn3SJDCoVuk=;
+	b=ggsrkVcVFL29VqRFgI5j7FuubWYWDSmZleavAkWU+A+WCmUKjl1lBmapPqVwmT2bAskKcv
+	7XWrxZiDO70pr0ZGXjA6Y+bPbJvNvJs39uviwkRL3Y++UdguKaFHfPPoKbMbcUdt1Y44Yn
+	Rpgqez345bCq+zA37t2o0RrLO4VGmsA=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-133-rWbD_8zjPn63ZHOu7ytAzw-1; Fri, 13 Oct 2023 12:05:15 -0400
+X-MC-Unique: rWbD_8zjPn63ZHOu7ytAzw-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D4C5A88B7A8;
-	Fri, 13 Oct 2023 16:05:10 +0000 (UTC)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 190583823337;
+	Fri, 13 Oct 2023 16:05:14 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.42.28.226])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 5A8DB201F457;
-	Fri, 13 Oct 2023 16:05:08 +0000 (UTC)
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 97A0425C0;
+	Fri, 13 Oct 2023 16:05:11 +0000 (UTC)
 From: David Howells <dhowells@redhat.com>
 To: Jeff Layton <jlayton@kernel.org>,
 	Steve French <smfrench@gmail.com>
@@ -68,9 +68,9 @@ Cc: David Howells <dhowells@redhat.com>,
 	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-cachefs@redhat.com
-Subject: [RFC PATCH 13/53] netfs: Add bounce buffering support
-Date: Fri, 13 Oct 2023 17:03:42 +0100
-Message-ID: <20231013160423.2218093-14-dhowells@redhat.com>
+Subject: [RFC PATCH 14/53] netfs: Add func to calculate pagecount/size-limited span of an iterator
+Date: Fri, 13 Oct 2023 17:03:43 +0100
+Message-ID: <20231013160423.2218093-15-dhowells@redhat.com>
 In-Reply-To: <20231013160423.2218093-1-dhowells@redhat.com>
 References: <20231013160423.2218093-1-dhowells@redhat.com>
 Precedence: bulk
@@ -80,18 +80,18 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.1
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
 	RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
-	SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
-	version=3.4.6
+	SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-Add a second xarray struct to netfs_io_request for the purposes of holding
-a bounce buffer for when we have to deal with encrypted/compressed data or
-if we have to up/download data in blocks larger than we were asked for.
+Add a function to work out how much of an ITER_BVEC or ITER_XARRAY iterator
+we can use in a pagecount-limited and size-limited span.  This will be
+used, for example, to limit the number of segments in a subrequest to the
+maximum number of elements that an RDMA transfer can handle.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 cc: Jeff Layton <jlayton@kernel.org>
@@ -99,75 +99,127 @@ cc: linux-cachefs@redhat.com
 cc: linux-fsdevel@vger.kernel.org
 cc: linux-mm@kvack.org
 ---
- fs/netfs/io.c         | 6 +++++-
- fs/netfs/objects.c    | 3 +++
- include/linux/netfs.h | 2 ++
- 3 files changed, 10 insertions(+), 1 deletion(-)
+ fs/netfs/iterator.c   | 97 +++++++++++++++++++++++++++++++++++++++++++
+ include/linux/netfs.h |  2 +
+ 2 files changed, 99 insertions(+)
 
-diff --git a/fs/netfs/io.c b/fs/netfs/io.c
-index e9d408e211b8..d8e9cd6ce338 100644
---- a/fs/netfs/io.c
-+++ b/fs/netfs/io.c
-@@ -643,7 +643,11 @@ int netfs_begin_read(struct netfs_io_request *rreq, bool sync)
- 		return -EIO;
- 	}
- 
--	rreq->io_iter = rreq->iter;
-+	if (test_bit(NETFS_RREQ_USE_BOUNCE_BUFFER, &rreq->flags))
-+		iov_iter_xarray(&rreq->io_iter, ITER_DEST, &rreq->bounce,
-+				rreq->start, rreq->len);
-+	else
-+		rreq->io_iter = rreq->iter;
- 
- 	INIT_WORK(&rreq->work, netfs_rreq_work);
- 
-diff --git a/fs/netfs/objects.c b/fs/netfs/objects.c
-index 4396318081bf..0782a284dda8 100644
---- a/fs/netfs/objects.c
-+++ b/fs/netfs/objects.c
-@@ -35,6 +35,7 @@ struct netfs_io_request *netfs_alloc_request(struct address_space *mapping,
- 	rreq->inode	= inode;
- 	rreq->i_size	= i_size_read(inode);
- 	rreq->debug_id	= atomic_inc_return(&debug_ids);
-+	xa_init(&rreq->bounce);
- 	INIT_LIST_HEAD(&rreq->subrequests);
- 	refcount_set(&rreq->ref, 1);
- 	__set_bit(NETFS_RREQ_IN_PROGRESS, &rreq->flags);
-@@ -43,6 +44,7 @@ struct netfs_io_request *netfs_alloc_request(struct address_space *mapping,
- 	if (rreq->netfs_ops->init_request) {
- 		ret = rreq->netfs_ops->init_request(rreq, file);
- 		if (ret < 0) {
-+			xa_destroy(&rreq->bounce);
- 			kfree(rreq);
- 			return ERR_PTR(ret);
- 		}
-@@ -96,6 +98,7 @@ static void netfs_free_request(struct work_struct *work)
- 		}
- 		kvfree(rreq->direct_bv);
- 	}
-+	netfs_clear_buffer(&rreq->bounce);
- 	kfree_rcu(rreq, rcu);
- 	netfs_stat_d(&netfs_n_rh_rreq);
+diff --git a/fs/netfs/iterator.c b/fs/netfs/iterator.c
+index 2ff07ba655a0..b781bbbf1d8d 100644
+--- a/fs/netfs/iterator.c
++++ b/fs/netfs/iterator.c
+@@ -101,3 +101,100 @@ ssize_t netfs_extract_user_iter(struct iov_iter *orig, size_t orig_len,
+ 	return npages;
  }
+ EXPORT_SYMBOL_GPL(netfs_extract_user_iter);
++
++/*
++ * Select the span of a bvec iterator we're going to use.  Limit it by both maximum
++ * size and maximum number of segments.  Returns the size of the span in bytes.
++ */
++static size_t netfs_limit_bvec(const struct iov_iter *iter, size_t start_offset,
++			       size_t max_size, size_t max_segs)
++{
++	const struct bio_vec *bvecs = iter->bvec;
++	unsigned int nbv = iter->nr_segs, ix = 0, nsegs = 0;
++	size_t len, span = 0, n = iter->count;
++	size_t skip = iter->iov_offset + start_offset;
++
++	if (WARN_ON(!iov_iter_is_bvec(iter)) ||
++	    WARN_ON(start_offset > n) ||
++	    n == 0)
++		return 0;
++
++	while (n && ix < nbv && skip) {
++		len = bvecs[ix].bv_len;
++		if (skip < len)
++			break;
++		skip -= len;
++		n -= len;
++		ix++;
++	}
++
++	while (n && ix < nbv) {
++		len = min3(n, bvecs[ix].bv_len - skip, max_size);
++		span += len;
++		nsegs++;
++		ix++;
++		if (span >= max_size || nsegs >= max_segs)
++			break;
++		skip = 0;
++		n -= len;
++	}
++
++	return min(span, max_size);
++}
++
++/*
++ * Select the span of an xarray iterator we're going to use.  Limit it by both
++ * maximum size and maximum number of segments.  It is assumed that segments
++ * can be larger than a page in size, provided they're physically contiguous.
++ * Returns the size of the span in bytes.
++ */
++static size_t netfs_limit_xarray(const struct iov_iter *iter, size_t start_offset,
++				 size_t max_size, size_t max_segs)
++{
++	struct folio *folio;
++	unsigned int nsegs = 0;
++	loff_t pos = iter->xarray_start + iter->iov_offset;
++	pgoff_t index = pos / PAGE_SIZE;
++	size_t span = 0, n = iter->count;
++
++	XA_STATE(xas, iter->xarray, index);
++
++	if (WARN_ON(!iov_iter_is_xarray(iter)) ||
++	    WARN_ON(start_offset > n) ||
++	    n == 0)
++		return 0;
++	max_size = min(max_size, n - start_offset);
++
++	rcu_read_lock();
++	xas_for_each(&xas, folio, ULONG_MAX) {
++		size_t offset, flen, len;
++		if (xas_retry(&xas, folio))
++			continue;
++		if (WARN_ON(xa_is_value(folio)))
++			break;
++		if (WARN_ON(folio_test_hugetlb(folio)))
++			break;
++
++		flen = folio_size(folio);
++		offset = offset_in_folio(folio, pos);
++		len = min(max_size, flen - offset);
++		span += len;
++		nsegs++;
++		if (span >= max_size || nsegs >= max_segs)
++			break;
++	}
++
++	rcu_read_unlock();
++	return min(span, max_size);
++}
++
++size_t netfs_limit_iter(const struct iov_iter *iter, size_t start_offset,
++			size_t max_size, size_t max_segs)
++{
++	if (iov_iter_is_bvec(iter))
++		return netfs_limit_bvec(iter, start_offset, max_size, max_segs);
++	if (iov_iter_is_xarray(iter))
++		return netfs_limit_xarray(iter, start_offset, max_size, max_segs);
++	BUG();
++}
++EXPORT_SYMBOL(netfs_limit_iter);
 diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-index e8d702ac6968..a7220e906287 100644
+index a7220e906287..2b5e04ea4db2 100644
 --- a/include/linux/netfs.h
 +++ b/include/linux/netfs.h
-@@ -196,6 +196,7 @@ struct netfs_io_request {
- 	struct iov_iter		iter;		/* Unencrypted-side iterator */
- 	struct iov_iter		io_iter;	/* I/O (Encrypted-side) iterator */
- 	struct bio_vec		*direct_bv;	/* DIO buffer list (when handling iovec-iter) */
-+	struct xarray		bounce;		/* Bounce buffer (eg. for crypto/compression) */
- 	void			*netfs_priv;	/* Private data for the netfs */
- 	unsigned int		direct_bv_count; /* Number of elements in bv[] */
- 	unsigned int		debug_id;
-@@ -220,6 +221,7 @@ struct netfs_io_request {
- #define NETFS_RREQ_IN_PROGRESS		5	/* Unlocked when the request completes */
- #define NETFS_RREQ_NONBLOCK		6	/* Don't block if possible (O_NONBLOCK) */
- #define NETFS_RREQ_BLOCKED		7	/* We blocked */
-+#define NETFS_RREQ_USE_BOUNCE_BUFFER	8	/* Use bounce buffer */
- 	const struct netfs_request_ops *netfs_ops;
- };
+@@ -328,6 +328,8 @@ void netfs_stats_show(struct seq_file *);
+ ssize_t netfs_extract_user_iter(struct iov_iter *orig, size_t orig_len,
+ 				struct iov_iter *new,
+ 				iov_iter_extraction_t extraction_flags);
++size_t netfs_limit_iter(const struct iov_iter *iter, size_t start_offset,
++			size_t max_size, size_t max_segs);
  
+ int netfs_start_io_read(struct inode *inode);
+ void netfs_end_io_read(struct inode *inode);
 
 
