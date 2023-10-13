@@ -1,167 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-253-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-254-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E14F7C846C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Oct 2023 13:32:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C00057C857B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Oct 2023 14:18:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67ABE1C210BA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Oct 2023 11:32:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F16881C20A21
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Oct 2023 12:18:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DF6013AE2;
-	Fri, 13 Oct 2023 11:32:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3408014AA3;
+	Fri, 13 Oct 2023 12:18:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fN+CMP8c"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC55311720
-	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Oct 2023 11:32:43 +0000 (UTC)
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DF82A9;
-	Fri, 13 Oct 2023 04:32:41 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.228])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4S6PDL5vqYz9yxfd;
-	Fri, 13 Oct 2023 19:19:46 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwBXsJGuKillo+ciAg--.35350S2;
-	Fri, 13 Oct 2023 12:32:12 +0100 (CET)
-Message-ID: <d0afbd03940e45219852787a1001d8debe48bf09.camel@huaweicloud.com>
-Subject: Re: [PATCH v3 25/25] integrity: Switch from rbtree to LSM-managed
- blob for integrity_iint_cache
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Stefan Berger <stefanb@linux.ibm.com>, viro@zeniv.linux.org.uk, 
- brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
- neilb@suse.de,  kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
- zohar@linux.ibm.com,  dmitry.kasatkin@gmail.com, paul@paul-moore.com,
- jmorris@namei.org,  serge@hallyn.com, dhowells@redhat.com,
- jarkko@kernel.org,  stephen.smalley.work@gmail.com, eparis@parisplace.org,
- casey@schaufler-ca.com
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, keyrings@vger.kernel.org, 
-	selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
-Date: Fri, 13 Oct 2023 13:31:55 +0200
-In-Reply-To: <a0913021426ead2fc5e2a3db013335a67cdd4322.camel@huaweicloud.com>
-References: <20230904133415.1799503-1-roberto.sassu@huaweicloud.com>
-	 <20230904134049.1802006-6-roberto.sassu@huaweicloud.com>
-	 <82486de4-2917-afb6-2ae3-6ea7f1346dc0@linux.ibm.com>
-	 <a0913021426ead2fc5e2a3db013335a67cdd4322.camel@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEA7F14291
+	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Oct 2023 12:18:06 +0000 (UTC)
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7621BD
+	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Oct 2023 05:18:04 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-991c786369cso327856766b.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Oct 2023 05:18:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1697199483; x=1697804283; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kfMcaSPK1nNALi0ZL2/STHAwFBjikJyI73GljAs8CFY=;
+        b=fN+CMP8czqx+zKvehOpSezbKnn4yGuWRS59DGkEVqSyFoz54Ky9XBIOIEPcp4BIzCm
+         1f3e2MenjsQ/U9J3UwBGHV7ykr055TonK5NvMg81vNxUvgzs1EjkllLqMcT0pt6Gfp05
+         UN3FwUZLPzVCZM8a/ANAUDnIS4BQTjPPyx0/OYWMTvNXrhIkDo7REemt2mCRXCT2pRqp
+         BXiFsBUEMlRCUoTBj0J7U4ZbLKQ95PrcP97yq8Ayf9H9/KWCbNG1POiFDoivyLgKlT93
+         j0mcTHDZ8yzHnH10kPWpuApqq+OuxtmXpCNvIe9V/ghixUb4yS+f+VrG5OSFboE5ACa8
+         +60Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697199483; x=1697804283;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kfMcaSPK1nNALi0ZL2/STHAwFBjikJyI73GljAs8CFY=;
+        b=UI6+PeD9XfITreeIuYwFYJ7HX5UNRxSFKxwM2K0+8KHNDKvjX5IhvWxLruc9nvI+zF
+         NI0nA7I58TlSXLzTsJ7DjW+JTC+ybfKAGfmW5nu31hRXpHjlQb2Zdgs15kHVe2N29AOh
+         +pMI+B2FayLT+JaLoGxb/+7l/4ZonRq5D1WWcP0ZZA6YYvtjKbtW/K4QE/BwJYR4tUmU
+         9HyQbojx5XLT066AACbskQN1S1PZkV0aZwLvUvOWMrZnTbgCosWQUVNE05R6zMsR4/WO
+         RJIyhKy4faOp+P+v8ICZwrhOqskjKfI823hfUMU+bsvujHzUV4i3sB5EOvEVJC0CfY9y
+         I9vQ==
+X-Gm-Message-State: AOJu0YzlWQHGoP7cJipOvXDfgwmTD5w6tTV9t3J+MYgUfYHfM83BHmFN
+	gTg+4GA0sRqbZnJItF84elIrk2tpx6zkX5MXc/Ok2Q==
+X-Google-Smtp-Source: AGHT+IGQJ9SEIC8vE0aqfRJOcMNPn+seOjJOdw/SPreQJQAaFkIsSMzyhkSV+UwdtrZcN9HIBGcHUUvxmzb9X/Yth+w=
+X-Received: by 2002:a17:906:fe07:b0:9bd:e036:387d with SMTP id
+ wy7-20020a170906fe0700b009bde036387dmr587057ejb.21.1697199483200; Fri, 13 Oct
+ 2023 05:18:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwBXsJGuKillo+ciAg--.35350S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxJF4kWFyDXryUKr1kWw43Awb_yoW5Gr4xpF
-	4IgayUJw4DZry0kr4vvFW5urWSg3yjgayUWrn0k3WkZryvvr1YgF45Aryj9FyUGrWxtw10
-	qr1jkrW3ZF1DArJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
-	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-	xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-	c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UAkuxUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAJBF1jj5D80gAAsA
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
-	RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE autolearn=ham
+References: <20220927131518.30000-1-ojeda@kernel.org> <20220927131518.30000-26-ojeda@kernel.org>
+ <Y0BfN1BdVCWssvEu@hirez.programming.kicks-ass.net> <CABCJKuenkHXtbWOLZ0_isGewxd19qkM7OcLeE2NzM6dSkXS4mQ@mail.gmail.com>
+ <CANiq72k6s4=0E_AHv7FPsCQhkyxf7c-b+wUtzfjf+Spehe9Fmg@mail.gmail.com>
+ <CABCJKuca0fOAs=E6LeHJiT2LOXEoPvLVKztA=u+ARcw=tbT=tw@mail.gmail.com>
+ <20231012104741.GN6307@noisy.programming.kicks-ass.net> <CABCJKufEagwJ=TQnmVSK07RDjsPUt=3JGtwnK9ASmFqb7Vx8JQ@mail.gmail.com>
+ <202310121130.256F581823@keescook> <CAOcBZOTed1a1yOimdUN9yuuysZ1h6VXa57+5fLAE99SZxCwBMQ@mail.gmail.com>
+ <20231013075005.GB12118@noisy.programming.kicks-ass.net>
+In-Reply-To: <20231013075005.GB12118@noisy.programming.kicks-ass.net>
+From: Ramon de C Valle <rcvalle@google.com>
+Date: Fri, 13 Oct 2023 05:17:50 -0700
+Message-ID: <CAOcBZOTP_vQuFaqREqy-hkG69aBvJ+xrhEQi_EFKvtsNjne1dw@mail.gmail.com>
+Subject: Re: [PATCH v10 25/27] x86: enable initial Rust support
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Kees Cook <keescook@chromium.org>, Sami Tolvanen <samitolvanen@google.com>, 
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	patches@lists.linux.dev, Jarkko Sakkinen <jarkko@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@google.com>, 
+	David Gow <davidgow@google.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+	ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
+	USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
 	autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-On Fri, 2023-09-15 at 11:39 +0200, Roberto Sassu wrote:
-> On Tue, 2023-09-12 at 12:19 -0400, Stefan Berger wrote:
-> > On 9/4/23 09:40, Roberto Sassu wrote:
-> > > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > >=20
-> > > Before the security field of kernel objects could be shared among LSM=
-s with
-> > > the LSM stacking feature, IMA and EVM had to rely on an alternative s=
-torage
-> > > of inode metadata. The association between inode metadata and inode i=
-s
-> > > maintained through an rbtree.
-> > >=20
-> > > With the reservation mechanism offered by the LSM infrastructure, the
-> > > rbtree is no longer necessary, as each LSM could reserve a space in t=
-he
-> > > security blob for each inode. Thus, request from the 'integrity' LSM =
-a
-> > > space in the security blob for the pointer of inode metadata
-> > > (integrity_iint_cache structure).
-> > >=20
-> > > Prefer this to allocating the integrity_iint_cache structure directly=
-, as
-> > > IMA would require it only for a subset of inodes. Always allocating i=
-t
-> > > would cause a waste of memory.
-> > >=20
-> > > Introduce two primitives for getting and setting the pointer of
-> > > integrity_iint_cache in the security blob, respectively
-> > > integrity_inode_get_iint() and integrity_inode_set_iint(). This would=
- make
-> > > the code more understandable, as they directly replace rbtree operati=
-ons.
-> > >=20
-> > > Locking is not needed, as access to inode metadata is not shared, it =
-is per
-> > > inode.
-> > >=20
-> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
-> > > ---
-> > >=20
-> > > @@ -145,10 +91,8 @@ static void integrity_inode_free(struct inode *in=
-ode)
-> > >   	if (!IS_IMA(inode))
-> > >   		return;
-> >=20
-> > I think you can remove this check !IS_IMA()=C2=A0 as well since the nex=
-t=20
-> > function called here integrity_iint_find() already has this check:
-> >=20
-> > struct integrity_iint_cache *integrity_iint_find(struct inode *inode)
-> > {
-> >  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!IS_IMA(inode))
-> >  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 return NULL;
-> >=20
-> >  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return integrity_inode_get_=
-iint(inode);
-> > }
->=20
-> I agree, thanks!
+On Fri, Oct 13, 2023 at 12:50=E2=80=AFAM Peter Zijlstra <peterz@infradead.o=
+rg> wrote:
+>
+> On Thu, Oct 12, 2023 at 03:15:12PM -0700, Ramon de C Valle wrote:
+>
+> > [1]:
+> > https://doc.rust-lang.org/nightly/unstable-book/language-features/cfi-e=
+ncoding.html
+>
+> I'm sorry, but that looks like a comment from where I'm sitting :-(
+> Worst part is it being on a line of it's own and thus unrelated to
+> anything.
+>
+> This rust syntax is horrific..
 
-Actually, I had to keep it otherwise, without a check on iint,
-iint_free() can get NULL as argument.
+I understand where you're coming from. I'm still getting used to Rust synta=
+x.
 
-Roberto
+>
+>
+> > [2]:
+> > https://doc.rust-lang.org/book/ch19-04-advanced-types.html#using-the-ne=
+wtype-pattern-for-type-safety-and-abstraction
+>
+> I don't speak enough rust to even begin following this :/
+>
+> > [3]: Wrapping a type in a struct should achieve something similar even
+> > without using the cfi_encoding attribute since the encoding for structs=
+ in
+> > both are <length><name>, where <name> is <unscoped-name>.
+>
+> You're not talking about C, right?
 
-> Roberto
->=20
-> > >  =20
-> > > -	write_lock(&integrity_iint_lock);
-> > > -	iint =3D __integrity_iint_find(inode);
-> > > -	rb_erase(&iint->rb_node, &integrity_iint_tree);
-> > > -	write_unlock(&integrity_iint_lock);
-> > > +	iint =3D integrity_iint_find(inode);         <--------------
-> > > +	integrity_inode_set_iint(inode, NULL);
-> > >  =20
-> > >   	iint_free(iint);
-> > >   }
->=20
-
+Both C and repr(C) Rust structs have this encoding, but I understand
+the problems with doing this in C since it doesn't have
+repr(transparent) structs so there would be a lot of casting back and
+forth. Maybe there is an alternative or this could be done for less
+used function pairs?
 
