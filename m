@@ -1,262 +1,362 @@
-Return-Path: <linux-fsdevel+bounces-354-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-355-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5A2E7C925C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Oct 2023 04:53:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0A247C9344
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Oct 2023 09:36:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24DA61F21A36
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Oct 2023 02:53:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9505B20AE6
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Oct 2023 07:36:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B471CEA9;
-	Sat, 14 Oct 2023 02:53:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 663D2569D;
+	Sat, 14 Oct 2023 07:36:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AF57E7Zk"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RAZVSNDp"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 655C6367
-	for <linux-fsdevel@vger.kernel.org>; Sat, 14 Oct 2023 02:53:49 +0000 (UTC)
-Received: from mail-yw1-x112a.google.com (mail-yw1-x112a.google.com [IPv6:2607:f8b0:4864:20::112a])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77CFCB7;
-	Fri, 13 Oct 2023 19:53:46 -0700 (PDT)
-Received: by mail-yw1-x112a.google.com with SMTP id 00721157ae682-59b5484fbe6so33749747b3.1;
-        Fri, 13 Oct 2023 19:53:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697252025; x=1697856825; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hGncKTdfCimdngO7kKPOQgHCStOsPVpBFk/n5kdBRjA=;
-        b=AF57E7ZkrpqQEFli4FO2dD5xBD0mVV4F0PkOM5QE28ULYC9PnhVxPc8c7rLIyxlu2h
-         WQPkYVV7XqtXf10Pj90yifND2SsgxLKAV3I+U5zWQWp2ZTz1q18mhzXxv7VfKm6XZolk
-         zCdVFMB7weDm8uh5aqPQMzfqs3JtjLAcN8ydrCqgnMpI3SzbvInTNAaWKHmPMR7vTf7z
-         fh+wTQV4E5gca6FxNdgwZWfMCI1UTelXKyWAyDrm+IDfK3Htmq2XfujH777mZo+rt875
-         dQZEZZxGHksLszkWxDAnaq+zR1G+6ZTI+46bO4kon2zKRbe0BhL9MdCu8oyhWW8owNXi
-         h/9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697252025; x=1697856825;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hGncKTdfCimdngO7kKPOQgHCStOsPVpBFk/n5kdBRjA=;
-        b=gHek8FFNWjXmj2SmZCcbkfmzbWpZ1E0D+xLVCamkXzLhTe9adfywhVZm4lQeB1nleg
-         VJuQYAiqC5gjQqDCMV34tHFbx0CMWa2Lzoz/E75Z7s1jnhr3qfywM1BaDfdl91DMJEa1
-         YB1wdYHOsO4N3ESyLv+2hDPxQZNZmDME7jXLXrys5JLLk31UqvneUV/Qx/mxf6yowpmr
-         2v3IoLNHTg2CLKaIDIzPtCEpBvP2ihCChW7Rh1MEUQEDPtzVAkLMR9s8LSQ9+S8mGnWE
-         cPaE9ognIoJrQf0NHZMlpZPh6NgPN9X0PvG56IIxFkJYzksjG8YsY1vWoBvJf8teEZKc
-         dHIw==
-X-Gm-Message-State: AOJu0Yy6MznIPLiiCw0gpy3Pa3RgOkZghMqDdH5rfKNLxMX8QczfEcka
-	sm0gDufGF5LeVWaNW3PPHsp7Ufv52muQAg==
-X-Google-Smtp-Source: AGHT+IF64BUBlHNToy/kVSEqM9physpRohj2L1qshJhiIksiQK26raMAYveyRWZt09UIwX5jq0K99A==
-X-Received: by 2002:a81:ad42:0:b0:5a7:aa65:c536 with SMTP id l2-20020a81ad42000000b005a7aa65c536mr14292411ywk.0.1697252025487;
-        Fri, 13 Oct 2023 19:53:45 -0700 (PDT)
-Received: from localhost ([2607:fb90:3e1c:8d18:7450:8e7a:f047:ce0a])
-        by smtp.gmail.com with ESMTPSA id f124-20020a0ddc82000000b0058427045833sm242832ywe.133.2023.10.13.19.53.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Oct 2023 19:53:44 -0700 (PDT)
-Date: Fri, 13 Oct 2023 19:53:43 -0700
-From: Yury Norov <yury.norov@gmail.com>
-To: Mirsad Goran Todorovac <mirsad.todorovac@alu.unizg.hr>
-Cc: Jan Kara <jack@suse.cz>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] lib/find: Make functions safe on changing bitmaps
-Message-ID: <ZSoCt5+DybhpsuGv@yury-ThinkPad>
-References: <20231011144320.29201-1-jack@suse.cz>
- <20231011150252.32737-1-jack@suse.cz>
- <ZSbo1aAjteepdmcz@yury-ThinkPad>
- <20231012122110.zii5pg3ohpragpi7@quack3>
- <ZSndoNcA7YWHXeUi@yury-ThinkPad>
- <021970ad-942a-4fe8-ac95-c8089527f7d2@alu.unizg.hr>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C111877;
+	Sat, 14 Oct 2023 07:36:15 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.43])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94DB0BF;
+	Sat, 14 Oct 2023 00:36:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1697268974; x=1728804974;
+  h=date:from:to:cc:subject:message-id;
+  bh=LcwfZEcYEf/f4tUcGzyWriVFV01q/faDVa9sxT4TF3Q=;
+  b=RAZVSNDp7McP8Frnn4DyGKk4WXcenU4hKRpLMK3Ai1nVS8c+59q0SErr
+   KTlo1qarck4YFtP5wo76Vrn4zxuifyGH4V+uTRtiRAx0W3aUY5M8o0chy
+   QNsn3YkjDWs9FvNIGs0nTVK6lj9WnOFAGG6pxWMTYvd0O1QZmCc9g8zu2
+   R0LyZOKJ6K0Uz36fxMhE7bwghfGXZfZf4RUfCePq1uW8l0e3OSsWEkC09
+   3JzSY6y9bpcQRzzuikfD+Ydky4YD5aP2FR1BXn6BssW9aVt8wp+Bnq/4W
+   xd6hMcxLklUaR25XaRtmZEfVRX/Fw5E2+fsYgK+O+FcY5rQDtqUCxcula
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10862"; a="471540301"
+X-IronPort-AV: E=Sophos;i="6.03,224,1694761200"; 
+   d="scan'208";a="471540301"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2023 00:36:14 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10862"; a="748618440"
+X-IronPort-AV: E=Sophos;i="6.03,224,1694761200"; 
+   d="scan'208";a="748618440"
+Received: from lkp-server02.sh.intel.com (HELO f64821696465) ([10.239.97.151])
+  by orsmga007.jf.intel.com with ESMTP; 14 Oct 2023 00:36:10 -0700
+Received: from kbuild by f64821696465 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1qrZBv-0005pD-1M;
+	Sat, 14 Oct 2023 07:36:07 +0000
+Date: Sat, 14 Oct 2023 15:35:44 +0800
+From: kernel test robot <lkp@intel.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linux Memory Management List <linux-mm@kvack.org>,
+ amd-gfx@lists.freedesktop.org, bpf@vger.kernel.org,
+ intel-gfx@lists.freedesktop.org, linux-crypto@vger.kernel.org,
+ linux-fpga@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-staging@lists.linux.dev, ntfs3@lists.linux.dev
+Subject: [linux-next:master] BUILD REGRESSION
+ e3b18f7200f45d66f7141136c25554ac1e82009b
+Message-ID: <202310141529.B09neLqf-lkp@intel.com>
+User-Agent: s-nail v14.9.24
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+	RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE autolearn=ham
+	autolearn_force=no version=3.4.6
+X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
+	lindbergh.monkeyblade.net
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <021970ad-942a-4fe8-ac95-c8089527f7d2@alu.unizg.hr>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-	RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.6
-X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
-	lindbergh.monkeyblade.net
 
-On Sat, Oct 14, 2023 at 04:21:50AM +0200, Mirsad Goran Todorovac wrote:
-> On 10/14/2023 2:15 AM, Yury Norov wrote:
-> > Restore LKML
-> > 
-> > On Thu, Oct 12, 2023 at 02:21:10PM +0200, Jan Kara wrote:
-> > > On Wed 11-10-23 11:26:29, Yury Norov wrote:
-> > > > Long story short: KCSAN found some potential issues related to how
-> > > > people use bitmap API. And instead of working through that issues,
-> > > > the following code shuts down KCSAN by applying READ_ONCE() here
-> > > > and there.
-> > > 
-> > > I'm sorry but this is not what the patch does. I'm not sure how to get the
-> > > message across so maybe let me start from a different angle:
-> > > 
-> > > Bitmaps are perfectly fine to be used without any external locking if
-> > > only atomic bit ops (set_bit, clear_bit, test_and_{set/clear}_bit) are
-> > > used. This is a significant performance gain compared to using a spinlock
-> > > or other locking and people do this for a long time. I hope we agree on
-> > > that.
-> > > 
-> > > Now it is also common that you need to find a set / clear bit in a bitmap.
-> > > To maintain lockless protocol and deal with races people employ schemes
-> > > like (the dumbest form):
-> > > 
-> > > 	do {
-> > > 		bit = find_first_bit(bitmap, n);
-> > > 		if (bit >= n)
-> > > 			abort...
-> > > 	} while (!test_and_clear_bit(bit, bitmap));
-> > > 
-> > > So the code loops until it finds a set bit that is successfully cleared by
-> > > it. This is perfectly fine and safe lockless code and such use should be
-> > > supported. Agreed?
-> > 
-> > Great example. When you're running non-atomic functions concurrently,
-> > the result may easily become incorrect, and this is what you're
-> > demonstrating here.
-> > 
-> > Regarding find_first_bit() it means that:
-> >   - it may erroneously return unset bit;
-> >   - it may erroneously return non-first set bit;
-> >   - it may erroneously return no bits for non-empty bitmap.
-> > 
-> > Effectively it means that find_first bit may just return a random number.
-> > 
-> > Let's take another example:
-> > 
-> > 	do {
-> > 		bit = get_random_number();
-> > 		if (bit >= n)
-> > 			abort...
-> > 	} while (!test_and_clear_bit(bit, bitmap));
-> > 
-> > When running concurrently, the difference between this and your code
-> > is only in probability of getting set bit somewhere from around the
-> > beginning of bitmap.
-> > 
-> > The key point is that find_bit() may return undef even if READ_ONCE() is
-> > used. If bitmap gets changed anytime in the process, the result becomes
-> > invalid. It may happen even after returning from find_first_bit().
-> > 
-> > And if my understanding correct, your code is designed in the
-> > assumption that find_first_bit() may return garbage, so handles it
-> > correctly.
-> > 
-> > > *Except* that the above actually is not safe due to find_first_bit()
-> > > implementation and KCSAN warns about that. The problem is that:
-> > > 
-> > > Assume *addr == 1
-> > > CPU1			CPU2
-> > > find_first_bit(addr, 64)
-> > >    val = *addr;
-> > >    if (val) -> true
-> > > 			clear_bit(0, addr)
-> > >      val = *addr -> compiler decided to refetch addr contents for whatever
-> > > 		   reason in the generated assembly
-> > >      __ffs(val) -> now executed for value 0 which has undefined results.
-> > 
-> > Yes, __ffs(0) is undef. But the whole function is undef when accessing
-> > bitmap concurrently.
-> > 
-> > > And the READ_ONCE() this patch adds prevents the compiler from adding the
-> > > refetching of addr into the assembly.
-> > 
-> > That's true. But it doesn't improve on the situation. It was an undef
-> > before, and it's undef after, but a 2% slower undef.
-> > 
-> > Now on that KCSAN warning. If I understand things correctly, for the
-> > example above, KCSAN warning is false-positive, because you're
-> > intentionally running lockless.
-> > 
-> > But for some other people it may be a true error, and now they'll have
-> > no chance to catch it if KCSAN is forced to ignore find_bit() entirely.
-> > 
-> > We've got the whole class of lockless algorithms that allow safe concurrent
-> > access to the memory. And now that there's a tool that searches for them
-> > (concurrent accesses), we need to have an option to somehow teach it
-> > to suppress irrelevant warnings. Maybe something like this?
-> > 
-> >          lockless_algorithm_begin(bitmap, bitmap_size(nbits));
-> > 	do {
-> > 		bit = find_first_bit(bitmap, nbits);
-> > 		if (bit >= nbits)
-> > 			break;
-> > 	} while (!test_and_clear_bit(bit, bitmap));
-> >          lockless_algorithm_end(bitmap, bitmap_size(nbits));
-> > 
-> > And, of course, as I suggested a couple iterations ago, you can invent
-> > a thread-safe version of find_bit(), that would be perfectly correct
-> > for lockless use:
-> > 
-> >   unsigned long _find_and_clear_bit(volatile unsigned long *addr, unsigned long size)
-> >   {
-> >          unsigned long bit = 0;
-> >          while (!test_and_clear_bit(bit, bitmap) {
-> >                  bit = FIND_FIRST_BIT(addr[idx], /* nop */, size);
-> >                  if (bit >= size)
-> >                          return size;
-> >          }
-> > 
-> >          return bit;
-> >   }
-> 
-> Hi, Yuri,
-> 
-> But the code above effectively does the same as the READ_ONCE() macro
-> as defined in rwonce.h:
-> 
-> #ifndef __READ_ONCE
-> #define __READ_ONCE(x)	(*(const volatile __unqual_scalar_typeof(x) *)&(x))
-> #endif
-> 
-> #define READ_ONCE(x)							\
-> ({									\
-> 	compiletime_assert_rwonce_type(x);				\
-> 	__READ_ONCE(x);							\
-> })
-> 
-> Both uses only prevent the funny stuff the compiler might have done to the
-> read of the addr[idx], there's no black magic in READ_ONCE().
-> 
-> Both examples would probably result in the same assembly and produce the
-> same 2% slowdown ...
-> 
-> Only you declare volatile in one place, and READ_ONCE() in each read, but
-> this will only compile a bit slower and generate the same machine code.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
+branch HEAD: e3b18f7200f45d66f7141136c25554ac1e82009b  Add linux-next specific files for 20231013
 
-The difference is that find_and_clear_bit() has a semantics of
-atomic operation. Those who will decide to use it will also anticipate
-associate downsides. And other hundreds (or thousands) users of
-non-atomic find_bit() functions will not have to pay extra buck
-for unneeded atomicity.
+Error/Warning reports:
 
-Check how 'volatile' is used in test_and_clear_bit(), and consider
-find_and_clear_bit() as a wrapper around test_and_clear_bit().
+https://lore.kernel.org/oe-kbuild-all/202309212121.cul1pTRa-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202309212339.hxhBu2F1-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202310051547.40nm4Sif-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202310052201.AnVbpgPr-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202310100409.LrBAYpmk-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202310132104.O9S9Fdpn-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202310132128.grw00tS2-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202310140301.H2JW530r-lkp@intel.com
 
-In other words, this patch suggests to make find_bit() thread-safe by
-using READ_ONCE(), and it doesn't work. find_and_clear_bit(), on the
-other hand, is simply a wrapper around test_and_clear_bit(), and
-doesn't imply any new restriction that test_and_clear_bit() doesn't.
+Error/Warning: (recently discovered and may have been fixed)
 
-Think of it as an optimized version of:
-         while (bit < nbits && !test_and_clear_bit(bit, bitmap)
-                bit++;
+drivers/fpga/altera-ps-spi.c:74:34: warning: unused variable 'of_ef_match' [-Wunused-const-variable]
+drivers/gpu/drm/amd/amdgpu/../display/dc/dcn35/dcn35_hwseq.c:159 dcn35_init_hw() warn: variable dereferenced before check 'res_pool->dccg' (see line 150)
+drivers/gpu/drm/amd/amdgpu/../display/dc/dcn35/dcn35_hwseq.c:206 dcn35_init_hw() error: we previously assumed 'res_pool->hubbub' could be null (see line 159)
+drivers/gpu/drm/amd/amdgpu/../display/dc/dcn35/dcn35_hwseq.c:285 dcn35_init_hw() error: we previously assumed 'dc->clk_mgr' could be null (see line 136)
+drivers/gpu/drm/amd/amdgpu/../display/dc/dcn35/dcn35_hwseq.c:977 dcn35_calc_blocks_to_gate() error: we previously assumed 'pipe_ctx->plane_res.hubp' could be null (see line 973)
+drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c:274: warning: Function parameter or member 'gart_placement' not described in 'amdgpu_gmc_gart_location'
+fs/bcachefs/extents.h:603:17: warning: writing 8 bytes into a region of size 0 [-Wstringop-overflow=]
+kernel/bpf/helpers.c:1909:19: warning: no previous declaration for 'bpf_percpu_obj_new_impl' [-Wmissing-declarations]
+kernel/bpf/helpers.c:1945:18: warning: no previous declaration for 'bpf_percpu_obj_drop_impl' [-Wmissing-declarations]
+kernel/bpf/helpers.c:2480:18: warning: no previous declaration for 'bpf_throw' [-Wmissing-declarations]
 
-If you think it's worth to try in your code, I can send a patch for
-you.
+Unverified Error/Warning (likely false positive, please contact us if interested):
 
-Thanks,
-Yury
+crypto/lskcipher.c:639 lskcipher_alloc_instance_simple() warn: passing zero to 'ERR_PTR'
+drivers/staging/octeon/ethernet.c:204:37: error: storage size of 'rx_status' isn't known
+drivers/staging/octeon/ethernet.c:205:37: error: storage size of 'tx_status' isn't known
+drivers/staging/octeon/ethernet.c:801:49: error: storage size of 'imode' isn't known
+drivers/staging/octeon/ethernet.c:802:21: error: variable 'imode' has initializer but incomplete type
+fs/ntfs3/bitmap.c:663 wnd_init() warn: Please consider using kvcalloc instead of kvmalloc_array
+
+Error/Warning ids grouped by kconfigs:
+
+gcc_recent_errors
+|-- alpha-allyesconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+|-- arc-allmodconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+|-- arc-allyesconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+|-- arc-randconfig-002-20231013
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+|-- arm-allmodconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+|-- arm-allyesconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+|-- arm64-allmodconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+|-- arm64-allyesconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+|-- arm64-randconfig-004-20231013
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+|-- csky-allmodconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+|-- csky-allyesconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+|-- i386-allmodconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+|-- i386-allyesconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+|-- i386-randconfig-003-20231013
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+|-- i386-randconfig-141-20230905
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-dcn35-dcn35_hwseq.c-dcn35_calc_blocks_to_gate()-error:we-previously-assumed-pipe_ctx-plane_res.hubp-could-be-null-(see-line-)
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-dcn35-dcn35_hwseq.c-dcn35_calc_blocks_to_gate()-warn:always-true-condition-(pipe_ctx-plane_res.mpcc_inst-)-(-)
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-dcn35-dcn35_hwseq.c-dcn35_init_hw()-error:we-previously-assumed-dc-clk_mgr-could-be-null-(see-line-)
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-dcn35-dcn35_hwseq.c-dcn35_init_hw()-error:we-previously-assumed-res_pool-hubbub-could-be-null-(see-line-)
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-dcn35-dcn35_hwseq.c-dcn35_init_hw()-warn:inconsistent-indenting
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-dcn35-dcn35_hwseq.c-dcn35_init_hw()-warn:variable-dereferenced-before-check-res_pool-dccg-(see-line-)
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-dcn35-dcn35_resource.c-dcn35_resource_construct()-warn:inconsistent-indenting
+|-- loongarch-allmodconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+|-- loongarch-allyesconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+|-- loongarch-defconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+|-- loongarch-loongson3_defconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+|-- loongarch-randconfig-001-20231013
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+|-- loongarch-randconfig-002-20231013
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+|-- microblaze-allmodconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+|-- microblaze-allyesconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+|-- mips-allmodconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+|-- mips-allyesconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+|-- mips-cavium_octeon_defconfig
+|   |-- drivers-staging-octeon-ethernet.c:error:storage-size-of-imode-isn-t-known
+|   |-- drivers-staging-octeon-ethernet.c:error:storage-size-of-rx_status-isn-t-known
+|   |-- drivers-staging-octeon-ethernet.c:error:storage-size-of-tx_status-isn-t-known
+|   `-- drivers-staging-octeon-ethernet.c:error:variable-imode-has-initializer-but-incomplete-type
+|-- openrisc-allmodconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+|-- openrisc-allyesconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+|-- parisc-allmodconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+|-- parisc-allyesconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+|-- powerpc-allmodconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+|-- powerpc-allyesconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+|-- powerpc-randconfig-001-20231013
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+|-- powerpc-randconfig-002-20231013
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+|-- powerpc64-randconfig-001-20231013
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+|-- powerpc64-randconfig-001-20231014
+|   `-- fs-bcachefs-extents.h:warning:writing-bytes-into-a-region-of-size
+|-- powerpc64-randconfig-002-20231013
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+|-- powerpc64-randconfig-003-20231013
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+|-- riscv-allyesconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+|-- s390-allmodconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+|-- s390-allyesconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+|-- s390-randconfig-002-20231013
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+|-- sparc-allmodconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+|-- sparc-allyesconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+|-- sparc64-allmodconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+|-- sparc64-allyesconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+|-- x86_64-allyesconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+|-- x86_64-randconfig-001-20231013
+|   |-- kernel-bpf-helpers.c:warning:no-previous-declaration-for-bpf_percpu_obj_drop_impl
+|   |-- kernel-bpf-helpers.c:warning:no-previous-declaration-for-bpf_percpu_obj_new_impl
+|   `-- kernel-bpf-helpers.c:warning:no-previous-declaration-for-bpf_throw
+|-- x86_64-randconfig-161-20231013
+|   |-- crypto-lskcipher.c-lskcipher_alloc_instance_simple()-warn:passing-zero-to-ERR_PTR
+|   |-- drivers-gpu-drm-i915-display-intel_dsb.c-_intel_dsb_commit()-warn:always-true-condition-(dewake_scanline-)-(-u32max-)
+|   |-- fs-ntfs3-bitmap.c-wnd_init()-warn:Please-consider-using-kvcalloc-instead-of-kvmalloc_array
+|   `-- mm-gup.c-pin_user_pages_fd()-warn:unsigned-start-is-never-less-than-zero.
+`-- xtensa-randconfig-001-20231013
+    `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gmc.c:warning:Function-parameter-or-member-gart_placement-not-described-in-amdgpu_gmc_gart_location
+clang_recent_errors
+`-- hexagon-randconfig-r011-20211004
+    `-- drivers-fpga-altera-ps-spi.c:warning:unused-variable-of_ef_match
+
+elapsed time: 1460m
+
+configs tested: 118
+configs skipped: 2
+
+tested configs:
+alpha                             allnoconfig   gcc  
+alpha                            allyesconfig   gcc  
+alpha                               defconfig   gcc  
+arc                              allmodconfig   gcc  
+arc                               allnoconfig   gcc  
+arc                              allyesconfig   gcc  
+arc                                 defconfig   gcc  
+arc                   randconfig-001-20231013   gcc  
+arm                              allmodconfig   gcc  
+arm                               allnoconfig   gcc  
+arm                              allyesconfig   gcc  
+arm                                 defconfig   gcc  
+arm                          gemini_defconfig   gcc  
+arm                         nhk8815_defconfig   gcc  
+arm                   randconfig-001-20231013   gcc  
+arm                         vf610m4_defconfig   gcc  
+arm64                            allmodconfig   gcc  
+arm64                             allnoconfig   gcc  
+arm64                            allyesconfig   gcc  
+arm64                               defconfig   gcc  
+csky                             allmodconfig   gcc  
+csky                              allnoconfig   gcc  
+csky                             allyesconfig   gcc  
+csky                                defconfig   gcc  
+i386                             allmodconfig   gcc  
+i386                              allnoconfig   gcc  
+i386                             allyesconfig   gcc  
+i386                              debian-10.3   gcc  
+i386                                defconfig   gcc  
+i386                  randconfig-001-20231013   gcc  
+i386                  randconfig-002-20231013   gcc  
+i386                  randconfig-003-20231013   gcc  
+i386                  randconfig-004-20231013   gcc  
+i386                  randconfig-005-20231013   gcc  
+i386                  randconfig-006-20231013   gcc  
+loongarch                        alldefconfig   gcc  
+loongarch                        allmodconfig   gcc  
+loongarch                         allnoconfig   gcc  
+loongarch                        allyesconfig   gcc  
+loongarch                           defconfig   gcc  
+loongarch                 loongson3_defconfig   gcc  
+loongarch             randconfig-001-20231013   gcc  
+m68k                             allmodconfig   gcc  
+m68k                              allnoconfig   gcc  
+m68k                             allyesconfig   gcc  
+m68k                                defconfig   gcc  
+m68k                            q40_defconfig   gcc  
+m68k                          sun3x_defconfig   gcc  
+microblaze                       allmodconfig   gcc  
+microblaze                        allnoconfig   gcc  
+microblaze                       allyesconfig   gcc  
+microblaze                          defconfig   gcc  
+mips                             allmodconfig   gcc  
+mips                              allnoconfig   gcc  
+mips                             allyesconfig   gcc  
+mips                           ip22_defconfig   clang
+mips                      pic32mzda_defconfig   clang
+nios2                            allmodconfig   gcc  
+nios2                             allnoconfig   gcc  
+nios2                            allyesconfig   gcc  
+nios2                               defconfig   gcc  
+openrisc                         allmodconfig   gcc  
+openrisc                          allnoconfig   gcc  
+openrisc                         allyesconfig   gcc  
+openrisc                            defconfig   gcc  
+parisc                           allmodconfig   gcc  
+parisc                            allnoconfig   gcc  
+parisc                           allyesconfig   gcc  
+parisc                              defconfig   gcc  
+parisc64                            defconfig   gcc  
+powerpc                          allmodconfig   gcc  
+powerpc                           allnoconfig   gcc  
+powerpc                          allyesconfig   gcc  
+powerpc                  mpc885_ads_defconfig   clang
+powerpc                      ppc64e_defconfig   clang
+powerpc                     tqm8548_defconfig   gcc  
+powerpc                     tqm8560_defconfig   clang
+riscv                             allnoconfig   gcc  
+riscv                            allyesconfig   gcc  
+riscv                               defconfig   gcc  
+riscv                 randconfig-001-20231013   gcc  
+riscv                          rv32_defconfig   gcc  
+s390                             allmodconfig   gcc  
+s390                              allnoconfig   gcc  
+s390                             allyesconfig   gcc  
+s390                                defconfig   gcc  
+s390                  randconfig-001-20231013   gcc  
+sh                               allmodconfig   gcc  
+sh                                allnoconfig   gcc  
+sh                               allyesconfig   gcc  
+sh                                  defconfig   gcc  
+sh                           se7750_defconfig   gcc  
+sh                        sh7785lcr_defconfig   gcc  
+sparc                            allmodconfig   gcc  
+sparc                             allnoconfig   gcc  
+sparc                            allyesconfig   gcc  
+sparc                               defconfig   gcc  
+sparc                 randconfig-001-20231013   gcc  
+sparc64                          allmodconfig   gcc  
+sparc64                          allyesconfig   gcc  
+sparc64                             defconfig   gcc  
+um                               allmodconfig   clang
+um                                allnoconfig   clang
+um                               allyesconfig   clang
+um                                  defconfig   gcc  
+um                             i386_defconfig   gcc  
+um                           x86_64_defconfig   gcc  
+x86_64                            allnoconfig   gcc  
+x86_64                           allyesconfig   gcc  
+x86_64                              defconfig   gcc  
+x86_64                randconfig-001-20231013   gcc  
+x86_64                randconfig-002-20231013   gcc  
+x86_64                randconfig-003-20231013   gcc  
+x86_64                randconfig-004-20231013   gcc  
+x86_64                randconfig-005-20231013   gcc  
+x86_64                randconfig-006-20231013   gcc  
+x86_64                          rhel-8.3-rust   clang
+x86_64                               rhel-8.3   gcc  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
