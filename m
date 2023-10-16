@@ -1,114 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-502-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-503-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10F0A7CB661
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 00:14:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E79BA7CB6A9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 00:43:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 424001C20BCE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Oct 2023 22:14:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E41028176F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Oct 2023 22:43:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A166F38F9C;
-	Mon, 16 Oct 2023 22:14:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9CCC347A5;
+	Mon, 16 Oct 2023 22:43:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jZNsRbOS"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="KdwJiWvh"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD70381DC
-	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Oct 2023 22:14:21 +0000 (UTC)
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E5A19B;
-	Mon, 16 Oct 2023 15:14:20 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-5079eed8bfbso4055113e87.1;
-        Mon, 16 Oct 2023 15:14:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697494458; x=1698099258; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KvN8fCLlFe7Jrcf7tnyNS2O/KMreYubvjkRXV3ZF900=;
-        b=jZNsRbOSRBEMNnJXAd+I0My/oZyydqs0wjNPcMlv/8bALsBZSfk7rpti63vbfe20Sv
-         dkngUZ1vpxkTz+7lrxBsLZ0zvgwF/VuxX5bcJncSEao90kNyyOV9FydZ3GKM15K3/1sB
-         HG4XG/JHzfSoPDYY1FXF1R0mtZELyQWV9xJLjrZZeqEcsXql64EJwIStXPlZAdDnZx63
-         xoQgKkUhlQ57yAwANd1i2fj4BBdnJGPCbfIXF4tpE4II09PDXQr5StKTJlZdjJGfuaOS
-         b9e3a3nnTAw+IzDgOtVkoq3Ynk3aTYCd6Yo3u2PID1Rz9STocQzvjrJsCI85CJRbvagr
-         cCQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697494458; x=1698099258;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KvN8fCLlFe7Jrcf7tnyNS2O/KMreYubvjkRXV3ZF900=;
-        b=TmEFoxeKI9/gHylF5VtL7bStJ2KCux0qEGbKmt/0ED+FVbiB2zXvcwzY3wWsSUZRgG
-         /xhcl0uCPvK+W7gJX6nEOUmku1mVp1NGZBWxOVaGEPwBt+fuBuSHvzCIQOGnLyttMDVe
-         pMR+ps1KYwXH1DhQYic/AE7R5BZuEGtBaOG3GyF/pgGeE+0aocEy4iFJnVacjC3SZDDl
-         3KzYtIcuw0lyqXAiKvtgAA4JwUkmJuIyelnu2RcB4s0le2iOkyBBRc87QpKxbIpB8fdD
-         aUDJ8dA5IchasBHf80EUtVKJ3ljFG06IYY1FURa9qnZT1Yw9qvPf+Rb/LgOLxwZqqp1d
-         RAww==
-X-Gm-Message-State: AOJu0Yycw771QItygW18NUaG6EUsAhXSRYfPvf9uVH2iT0lLRyp/w+2D
-	QtmmL4WDH3QfvU0BlswCo+SmrWuI55TpLc8YHDgPGGSAP+bezw==
-X-Google-Smtp-Source: AGHT+IFXFt/eaJWjHKduGhvzniZ6R3YYjayeqqEwooMHqMLyF5XD1We0e5s+zndoyLW1kupxy0QwGcfYS3q2cotGUGo=
-X-Received: by 2002:ac2:5de2:0:b0:503:1775:fc1 with SMTP id
- z2-20020ac25de2000000b0050317750fc1mr474446lfq.31.1697494458303; Mon, 16 Oct
- 2023 15:14:18 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D109D328A6
+	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Oct 2023 22:43:17 +0000 (UTC)
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 959D195
+	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Oct 2023 15:43:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
+	bh=omD9ln1E5+fKJwEQjo6x1zEyoxhYRXPhqjkRl53Qz20=; b=KdwJiWvhPu6Ol1d1Di8D3XSCBy
+	HTwZ8g0d+ztloctebGqitsoJuGVLBXoin/e+DO2WrpKWh8hUn0RV6xqBebH7m82RFVPjEmLpKQO0L
+	Xo80v+1TX2NBBoLeFaJRCieqZJoeFpE9KkstE7M5Gng2snck7irdG7cUDF6FppEtAWUcjJjdpMpzV
+	QuYr35wYaMsSIBuRoNG21057PFjFeCFOmRtdBDf3pdbZy2qsY4gxiqKCT+7bxjjKfgiF+s30aKqJg
+	quOnv6LX9aBPGHcqzUR36eL5KaWph6lJgICBnGhmdSqJnxY7a9L40f1BtsHjyYJoO+K/2Kkpki7lA
+	MDCazOfQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1qsWIp-001s7J-2M;
+	Mon, 16 Oct 2023 22:43:11 +0000
+Date: Mon, 16 Oct 2023 23:43:11 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
+	kernel@pengutronix.de
+Subject: Re: [PATCH] chardev: Simplify usage of try_module_get()
+Message-ID: <20231016224311.GI800259@ZenIV>
+References: <20231013132441.1406200-2-u.kleine-koenig@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAH2r5mui-uk5XVnJMM2UQ40VJM5dyA=+YChGpDcLAapBTCk4kw@mail.gmail.com>
- <ZS1zSoRwv+yr5BHS@casper.infradead.org>
-In-Reply-To: <ZS1zSoRwv+yr5BHS@casper.infradead.org>
-From: Steve French <smfrench@gmail.com>
-Date: Mon, 16 Oct 2023 17:14:06 -0500
-Message-ID: <CAH2r5mvBqqas=qrR+Sxfz2T99B2YbuJRn1O8vdpXhUc1CcnoQw@mail.gmail.com>
-Subject: Re: [PATCH][SMB3 client] fix touch -h of symlink
-To: Matthew Wilcox <willy@infradead.org>
-Cc: CIFS <linux-cifs@vger.kernel.org>, 
-	samba-technical <samba-technical@lists.samba.org>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-	RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20231013132441.1406200-2-u.kleine-koenig@pengutronix.de>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE
+	autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-On Mon, Oct 16, 2023 at 12:30=E2=80=AFPM Matthew Wilcox <willy@infradead.or=
-g> wrote:
->
-> On Mon, Oct 16, 2023 at 12:26:23PM -0500, Steve French wrote:
-> > For example:
-> >           touch -h -t 02011200 testfile
-> >     where testfile is a symlink would not change the timestamp, but
-> >           touch -t 02011200 testfile
-> >     does work to change the timestamp of the target
-> >
-> > Looks like some symlink inode operations are missing for other fs as we=
-ll
->
-> Do we have an xfstests for this?
+On Fri, Oct 13, 2023 at 03:24:42PM +0200, Uwe Kleine-König wrote:
+> try_module_get(NULL) is true, so there is no need to check owner being
+> NULL.
+> 
+> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+> ---
+>  fs/char_dev.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/char_dev.c b/fs/char_dev.c
+> index 950b6919fb87..6ba032442b39 100644
+> --- a/fs/char_dev.c
+> +++ b/fs/char_dev.c
+> @@ -350,7 +350,7 @@ static struct kobject *cdev_get(struct cdev *p)
+>  	struct module *owner = p->owner;
+>  	struct kobject *kobj;
+>  
+> -	if (owner && !try_module_get(owner))
+> +	if (!try_module_get(owner))
+>  		return NULL;
+>  	kobj = kobject_get_unless_zero(&p->kobj);
+>  	if (!kobj)
 
-I was thinking the same thing - would be useful to add an xfstest for
-this.  I actually noticed this old bug when someone reported an
-unrelated problem (where "find . -type l" doesn't show the symlink but
-"ls" and "stat" do) and the other unrelated symlink bug could be
-useful to add to the same test
-
-Are there other scenarios we could repro problems to an fs that
-doesn't have a .getattr method (like cifs.ko, afs) or .permission
-(like nfs and ext4)?
-
-
---=20
-Thanks,
-
-Steve
+I wouldn't mind that, if that logics in try_module_get() was inlined.
+It isn't...
 
