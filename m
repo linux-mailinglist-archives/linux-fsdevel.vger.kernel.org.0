@@ -1,307 +1,201 @@
-Return-Path: <linux-fsdevel+bounces-384-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-385-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 487377CA3FA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Oct 2023 11:23:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E52A7CA55E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Oct 2023 12:30:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B30ACB20D9C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Oct 2023 09:23:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2C42B20E22
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Oct 2023 10:30:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F40301C6AE;
-	Mon, 16 Oct 2023 09:23:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3982123748;
+	Mon, 16 Oct 2023 10:30:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Jy0d75Xx";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qLM9PAUH"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZM9sAAKO"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E9151C689
-	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Oct 2023 09:23:05 +0000 (UTC)
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 270B0B4;
-	Mon, 16 Oct 2023 02:23:01 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id BFBA01F8C1;
-	Mon, 16 Oct 2023 09:22:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1697448179; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ncEmaJpGCEkUvSIDaJyvviOSOQUcVNocJwvIFZralxs=;
-	b=Jy0d75XxHX0wz6UMRr6WwZ3ATAiOBsPEcBvB6Hg2vJMoQl40TjoDDwvutlrOhW6Vc9NP0z
-	1FGS9YVdZAV2e6YJaNG0Vif1ii7Hj5jpUFcxBPwwP236fNuXPZN26fYxagu3wng8QKv40u
-	YpnAwjqaCb0SYUWYcRxg0cwKKrrDMQY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1697448179;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ncEmaJpGCEkUvSIDaJyvviOSOQUcVNocJwvIFZralxs=;
-	b=qLM9PAUHUeiMgdewTO8M250jYv8exh9MKMhgrvQL0Jl3j4Vaf5TuaeuEau7OGrB+M9T3b1
-	v/1MGu7eCCt1OhCQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-	(No client certificate requested)
-	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id AFC9C138EF;
-	Mon, 16 Oct 2023 09:22:59 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-	by imap2.suse-dmz.suse.de with ESMTPSA
-	id APrkKvMALWUFMAAAMHmgww
-	(envelope-from <jack@suse.cz>); Mon, 16 Oct 2023 09:22:59 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 34460A0657; Mon, 16 Oct 2023 11:22:59 +0200 (CEST)
-Date: Mon, 16 Oct 2023 11:22:59 +0200
-From: Jan Kara <jack@suse.cz>
-To: Yury Norov <yury.norov@gmail.com>
-Cc: Jan Kara <jack@suse.cz>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Mirsad Todorovac <mirsad.todorovac@alu.unizg.hr>,
-	Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] lib/find: Make functions safe on changing bitmaps
-Message-ID: <20231016092259.h4ny5slr4v5hcmpy@quack3>
-References: <20231011144320.29201-1-jack@suse.cz>
- <20231011150252.32737-1-jack@suse.cz>
- <ZSbo1aAjteepdmcz@yury-ThinkPad>
- <20231012122110.zii5pg3ohpragpi7@quack3>
- <ZSndoNcA7YWHXeUi@yury-ThinkPad>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ACB123740
+	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Oct 2023 10:30:26 +0000 (UTC)
+Received: from mail-oi1-x22e.google.com (mail-oi1-x22e.google.com [IPv6:2607:f8b0:4864:20::22e])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D96ADEA
+	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Oct 2023 03:30:21 -0700 (PDT)
+Received: by mail-oi1-x22e.google.com with SMTP id 5614622812f47-3af603da0f0so2843929b6e.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Oct 2023 03:30:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1697452221; x=1698057021; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EBC6xeFm+CN3ABZOuHXE0paAAwVB5wUlw+oDzZda2HE=;
+        b=ZM9sAAKO9B0EcLMcA/O2dMLePYriZnT/rtqN3Gik0ltjr4j3Ye7yjPwi+ijXn+q0aM
+         uyuwJa27isbXYk9TTtTL6z8+kafx9BqAl7d0COqw9OybL7socfNn4c3Lqr96IWoJ5zNR
+         kPoNLo6oJEkvEdfq5IDHAf1D+CzE3G+xLw5HyOBU/jmX6zk+MK+pL+S0Qe8S7z05NBH/
+         qYzU4FPbv2hjvH1NOzLxAUcTP7a80RW6HFQgIHvyQTsWNH6iTaNMtloqBzPTlVgDDKTd
+         chQxemietRMWHzW4vPhhuqbnCB3GZqFhYfIF2zIYq+EMdKres9/uapm6TfOHRUgzwUwb
+         Khbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697452221; x=1698057021;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EBC6xeFm+CN3ABZOuHXE0paAAwVB5wUlw+oDzZda2HE=;
+        b=NUK7ekn+IIIaN/QKmBXdX2j8EIZhaxZ4QX4cUEMjgFgL/22bMbefcMvOvRUqp0NMRc
+         K9nJJoLazT2pGHr/H9CpJBFBsvLgoDZ3h05Tv0pJMG8SakW8Xi1JPk5hQNh308Djz9U2
+         Ff2WMZ3ou/ri48IMAXU2TaS8Uj711CL/3lahvvyR0K/utQOMTNknEHBe5izALQn9p2OB
+         xAFwWZrG9yWAqm4iat4ylaskbx4abNIqj3HI53R6rVIpg+1P0Pj4C6LwlUksQSOO5vt0
+         Hw64IDBx9BbZhjR8kuj4MzAlWDhYB5/9g0q8wvHvongK3PFUaphA/4UXQh/h1NonGSBm
+         BT/A==
+X-Gm-Message-State: AOJu0YwMPj87A+iMkyndQFIuneop8+o8pDTk/FTxskTLLcABIKIkhxJ/
+	1tUmunfScnXykYP/cNsPZrgRgtVaMcW2eVgrHg3/DJO7nWW/Vg==
+X-Google-Smtp-Source: AGHT+IFmXNGEbDgQO20kAvjOMwn4CCQDm2IwySwrtCAVCpV/XmHOPdNfn3VZipCio9egRy0VcHyyewAnKguxSSfjYMo=
+X-Received: by 2002:a05:6808:138b:b0:3af:9fc4:26c6 with SMTP id
+ c11-20020a056808138b00b003af9fc426c6mr40481990oiw.20.1697452220964; Mon, 16
+ Oct 2023 03:30:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZSndoNcA7YWHXeUi@yury-ThinkPad>
-Authentication-Results: smtp-out2.suse.de;
-	none
-X-Spam-Level: 
-X-Spam-Score: 0.90
-X-Spamd-Result: default: False [0.90 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 BAYES_HAM(-3.00)[100.00%];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 TAGGED_RCPT(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 NEURAL_HAM_SHORT(-1.00)[-1.000];
-	 NEURAL_SPAM_LONG(3.00)[1.000];
-	 RCPT_COUNT_SEVEN(0.00)[8];
-	 FREEMAIL_TO(0.00)[gmail.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_COUNT_TWO(0.00)[2];
-	 RCVD_TLS_ALL(0.00)[];
-	 SUSPICIOUS_RECIPS(1.50)[]
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+References: <20230519125705.598234-1-amir73il@gmail.com> <CAOQ4uxibuwUwaLaJNKSifLHBm9G-Tgn67k_TKWKcN1+A4Rw-zg@mail.gmail.com>
+ <CAJfpegucD6S=yUTzpQGsR6C3E64ve+bgG_4TGP7Y+0NicqyQ_g@mail.gmail.com>
+ <CAOQ4uxjGWHnwd5fcp8VwHk59q=BftAhw0uYbdR-KmJCq3fpnDg@mail.gmail.com>
+ <CAJfpegu2+aMaEmUCjem7em0om8ZWr0ENfvihxXMkSsoV-vLKrw@mail.gmail.com>
+ <CAOQ4uxgySnycfgqgNkZ83h5U4k-m4GF2bPvqgfFuWzerf2gHRQ@mail.gmail.com>
+ <CAOQ4uxi_Kv+KLbDyT3GXbaPHySbyu6fqMaWGvmwqUbXDSQbOPA@mail.gmail.com>
+ <CAJfpegvRBj8tRQnnQ-1doKctqM796xTv+S4C7Z-tcCSpibMAGw@mail.gmail.com>
+ <CAOQ4uxjBA81pU_4H3t24zsC1uFCTx6SaGSWvcC5LOetmWNQ8yA@mail.gmail.com>
+ <CAJfpegs1DB5qwobtTky2mtyCiFdhO_Au0cJVbkHQ4cjk_+B9=A@mail.gmail.com>
+ <CAOQ4uxgpLvATavet1pYAV7e1DfaqEXnO4pfgqx37FY4-j0+Zzg@mail.gmail.com>
+ <CAJfpegvS_KPprPCDCQ-HyWfaVoM7M2ioJivrKYNqy0P0GbZ1ww@mail.gmail.com>
+ <CAOQ4uxhkcZ8Qf+n1Jr0R8_iGoi2Wj1-ZTQ4SNooryXzxxV_naw@mail.gmail.com>
+ <CAJfpegstwnUSCX1vf2VsRqE_UqHuBegDnYmqt5LmXdR5CNLAVg@mail.gmail.com>
+ <CAOQ4uxhu0RXf7Lf0zthfMv9vUzwKM3_FUdqeqANxqUsA5CRa7g@mail.gmail.com>
+ <CAOQ4uxjQx3nBPuWiS0upV_q9Qe7xW=iJDG8Wyjq+rZfvWC3NWw@mail.gmail.com> <CAJfpegtLAxY+vf18Yht+NPztv+wO9S28wyJp9MB_=yuAOSbCDA@mail.gmail.com>
+In-Reply-To: <CAJfpegtLAxY+vf18Yht+NPztv+wO9S28wyJp9MB_=yuAOSbCDA@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 16 Oct 2023 13:30:09 +0300
+Message-ID: <CAOQ4uxg+8H5+iXDygA_8G+yZPpxkKOADVhNOPPfuuwo4wYmojQ@mail.gmail.com>
+Subject: Re: [PATCH v13 00/10] fuse: Add support for passthrough read/write
+To: Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc: Daniel Rosenberg <drosen@google.com>, Paul Lawrence <paullawrence@google.com>, 
+	Alessio Balsini <balsini@android.com>, fuse-devel@lists.sourceforge.net, 
+	linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+	RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-On Fri 13-10-23 17:15:28, Yury Norov wrote:
-> On Thu, Oct 12, 2023 at 02:21:10PM +0200, Jan Kara wrote:
-> > On Wed 11-10-23 11:26:29, Yury Norov wrote:
-> > > Long story short: KCSAN found some potential issues related to how
-> > > people use bitmap API. And instead of working through that issues,
-> > > the following code shuts down KCSAN by applying READ_ONCE() here
-> > > and there.
-> > 
-> > I'm sorry but this is not what the patch does. I'm not sure how to get the
-> > message across so maybe let me start from a different angle:
-> > 
-> > Bitmaps are perfectly fine to be used without any external locking if
-> > only atomic bit ops (set_bit, clear_bit, test_and_{set/clear}_bit) are
-> > used. This is a significant performance gain compared to using a spinlock
-> > or other locking and people do this for a long time. I hope we agree on
-> > that.
-> > 
-> > Now it is also common that you need to find a set / clear bit in a bitmap.
-> > To maintain lockless protocol and deal with races people employ schemes
-> > like (the dumbest form):
-> > 
-> > 	do {
-> > 		bit = find_first_bit(bitmap, n);
-> > 		if (bit >= n)
-> > 			abort...
-> > 	} while (!test_and_clear_bit(bit, bitmap));
-> > 
-> > So the code loops until it finds a set bit that is successfully cleared by
-> > it. This is perfectly fine and safe lockless code and such use should be
-> > supported. Agreed?
-> 
-> Great example. When you're running non-atomic functions concurrently,
-> the result may easily become incorrect, and this is what you're
-> demonstrating here.
-> 
-> Regarding find_first_bit() it means that:
->  - it may erroneously return unset bit;
->  - it may erroneously return non-first set bit;
->  - it may erroneously return no bits for non-empty bitmap.
+On Tue, Oct 10, 2023 at 5:31=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu> =
+wrote:
+>
+> On Sun, 8 Oct 2023 at 19:53, Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> > Ok, posted your original suggestion for opt-in to fake path:
+> > https://lore.kernel.org/linux-fsdevel/20231007084433.1417887-1-amir73il=
+@gmail.com/
+> >
+> > Now the problem is that on FUSE_DEV_IOC_BACKING_OPEN ioctl,
+> > the fake (fuse) path is not known.
+> >
+> > We can set the fake path on the first FOPEN_PASSTHROUGH response,
+> > but then the whole concept of a backing id that is not bound to a
+> > single file/inode
+> > becomes a bit fuzzy.
+> >
+> > One solution is to allocate a backing_file container per fuse file on
+> > FOPEN_PASSTHROUGH response.
+>
+> Right.   How about the following idea:
+>
+>  - mapping request is done with an O_PATH fd.
+>  - fuse_open() always opens a backing file (just like overlayfs)
+>
+> The disadvantage is one more struct file (the third).  The advantage
+> is that the server doesn't have to care about open flags, hence the
+> mapping can always be per-inode.
+>
 
-Correct.
+OK, this was pushed to the POC branches [2][3].
 
-> Effectively it means that find_first bit may just return a random number.
+NOTE that in this version, backing ids are completely server managed.
+The passthrough_hp example keeps backing_id in the server's Inode
+object and closes the backing file when server's inode.nopen drops to 0.
+Even if OPEN/CREATE reply with backing_id failed to create/open the
+fuse inode, RELEASE should still be called with the server provided nodeid,
+so server should be able to close the backing file after a failed open/crea=
+te.
 
-I prefer to think that it can return a result that is no longer valid by
-the time we further use it :)
+I am ready to post v14 patches, but since they depend on vfs and overlayfs
+changes queued for 6.7, and since fuse passthrough is not a likely candidat=
+e
+for 6.7, I thought I will wait with posting, because you must be busy prepa=
+ring
+for 6.7(?).
 
-> Let's take another example:
-> 
-> 	do {
-> 		bit = get_random_number();
-> 		if (bit >= n)
-> 			abort...
-> 	} while (!test_and_clear_bit(bit, bitmap));
-> 
-> When running concurrently, the difference between this and your code
-> is only in probability of getting set bit somewhere from around the
-> beginning of bitmap.
+The remaining question about lsof-visibility of the backing files got me
+thinking and I wanted to consult with io_uring developers regarding using
+io_uring fixed files table for FUSE backing files [*].
 
-Well, as you say the difference is in the probability - i.e., average
-number of loops taken is higher with using truly random number and that is
-the whole point. We bother with complexity of lockless access exactly
-because of performance :). As long as find_first_bit() returns set bit in
-case there's no collision with other bitmap modification, we are fine with
-its results (usually we don't expect the collision to happen, often the
-bitmap users also employ schemes to spread different processes modifying
-the bitmap to different parts of the bitmap to further reduce likelyhood of
-a collision).
+[*] The term "FUSE backing files" is now VERY confusing since we
+     have two types of "FUSE backing files", so we desperately need
+     better names to describe those two types:
+1. struct file, which is referred via backing_id in per FUSE sb map
+2. struct backing_file, which is referred via fuse file ->private
+    (just like overlayfs backing files)
 
-> The key point is that find_bit() may return undef even if READ_ONCE() is
-> used. If bitmap gets changed anytime in the process, the result becomes
-> invalid. It may happen even after returning from find_first_bit().
-> 
-> And if my understanding correct, your code is designed in the
-> assumption that find_first_bit() may return garbage, so handles it
-> correctly.
+The concern is about the lsof-visibility of the first type, which the serve=
+r
+can open as many as it wants without having any connection to number
+of fuse inodes and file objects in the kernel and server can close those
+fds in its process file table, making those open files invisible to users.
 
-Yes, that is true.
+This looks and sounds a lot like io_uring fixed files, especially consideri=
+ng
+that the server could even pick the backing_id itself. So why do we need
+to reinvent this wheel?
 
-> > *Except* that the above actually is not safe due to find_first_bit()
-> > implementation and KCSAN warns about that. The problem is that:
-> > 
-> > Assume *addr == 1
-> > CPU1			CPU2
-> > find_first_bit(addr, 64)
-> >   val = *addr;
-> >   if (val) -> true
-> > 			clear_bit(0, addr)
-> >     val = *addr -> compiler decided to refetch addr contents for whatever
-> > 		   reason in the generated assembly
-> >     __ffs(val) -> now executed for value 0 which has undefined results.
-> 
-> Yes, __ffs(0) is undef. But the whole function is undef when accessing
-> bitmap concurrently.
+Does io_uring expose the fixed files table via lsof or otherwise?
 
-So here I think we get at the core of our misunderstanding :): Yes,
-find_first_bit() may return a bit number that is not set any longer. But it
-is guaranteed to return some number between 0 and n where n is the bitmap
-size. What __ffs() does when passed 0 value is unclear and likely will be
-architecture dependent. If we are guaranteed it returns some number between
-0 and 8*sizeof(unsigned long), then we are fine. But I'm concerned it may
-throw exception (similarly to division by 0) or return number greater than
-8*sizeof(unsigned long) for some architecture and that would be a problem.
-E.g. reading the x86 bsf instruction documentation, the destination
-register is untouched if there is no set bit so the result can indeed be >
-8*sizeof(unsigned long). So __ffs(0) can result in returning a number
-beyond the end of the bitmap (e.g. 0xffffffff). And that is IMO
-unacceptable output for find_first_bit().
+Bernd,
 
-> > And the READ_ONCE() this patch adds prevents the compiler from adding the
-> > refetching of addr into the assembly.
-> 
-> That's true. But it doesn't improve on the situation. It was an undef
-> before, and it's undef after, but a 2% slower undef.
-> 
-> Now on that KCSAN warning. If I understand things correctly, for the
-> example above, KCSAN warning is false-positive, because you're
-> intentionally running lockless.
+IIUC, your work on FUSE io_uring queue is only for kernel -> user
+requests. Is that correct?
+Is there also a plan to have a user -> kernel uring as well?
 
-As I wrote above, there are different levels of "undefinedness" and that
-matters in this case. KCSAN is complaining that the value passed to __ffs()
-function may be different one from the one tested in the condition before
-it. Depending on exact __ffs() behavior this may be fine or it may be not.
+I wouldn't mind if FUSE passthrough depended on FUSE io_uring
+queue, because essentially, I think that both features address problems
+from the same domain of FUSE performance issues. Do you agree?
 
-> But for some other people it may be a true error, and now they'll have
-> no chance to catch it if KCSAN is forced to ignore find_bit() entirely.
+Am I over engineering this?
 
-I agree some people may accidentally use bitmap function unlocked without
-properly handling the races. However in this case KCSAN does not warn about
-unsafe use of the result from find_bit() (which is what should happen for
-those unsafe uses). It complains about unsafe internal implementation of
-find_bit() when it is used without external synchronization. These two are
-different things so I don't think this is a good argument for leaving the
-race in find_bit().
+Thanks,
+Amir.
 
-Furthermore I'd note that READ_ONCE() does not make KCSAN ignore find_bit()
-completely. READ_ONCE() forces the compiler to use the same value for the
-test and __ffs() argument (by telling it it cannot assume the standard C
-memory model using "volatile" keyword for this fetch). That's all.  That
-makes it impossible for KCSAN to inject a modification of the bitmap &
-refetch from memory inbetween the two uses of the local variable and thus
-it doesn't generate the warning anymore.
+Changes from v14-rc1 to v14-rc2 [2]:
+- rebase on 6.6-rc6 (and overlayfs and vfs next branches)
+- open a backing_file per fuse_file with fuse file's path and flags
+- factor out common splice/mmap helpers from overlayfs
+- remove inode-bound (no backing id) backing file mode
+- use backing_id as input arg for close ioctl
+- remove auto-close mode
 
-> We've got the whole class of lockless algorithms that allow safe concurrent
-> access to the memory. And now that there's a tool that searches for them
-> (concurrent accesses), we need to have an option to somehow teach it
-> to suppress irrelevant warnings. Maybe something like this?
-> 
->         lockless_algorithm_begin(bitmap, bitmap_size(nbits));
-> 	do {
-> 		bit = find_first_bit(bitmap, nbits);
-> 		if (bit >= nbits)
-> 			break;
-> 	} while (!test_and_clear_bit(bit, bitmap));
->         lockless_algorithm_end(bitmap, bitmap_size(nbits));
-> 
-> And, of course, as I suggested a couple iterations ago, you can invent
-> a thread-safe version of find_bit(), that would be perfectly correct
-> for lockless use:
-> 
->  unsigned long _find_and_clear_bit(volatile unsigned long *addr, unsigned long size)
->  {
->         unsigned long bit = 0;
->  
->         while (!test_and_clear_bit(bit, bitmap) {
->                 bit = FIND_FIRST_BIT(addr[idx], /* nop */, size);
->                 if (bit >= size)
->                         return size;
->         }
-> 
->         return bit;
->  }
-> 
-> Didn't test that, but I hope 'volatile' specifier should be enough
-> for compiler to realize that it shouldn't optimize memory access, and
-> for KCSAN that everything's OK here. 
+Changes from v13 to v14-rc1 [1]:
+- rebase on 6.6-rc1
+- factor out common read/write helpers from overlayfs
+- factor out ioctl helpers
+- per-file and per-inode backing file modes
+- optional auto close flag
 
-Based on my research regarding __ffs() we indeed do need find_*_bit()
-functions that are guaranteed to return number in 0-n range even in
-presence of concurrent bitmap modifications. Do I get it right you'd
-rather prefer cloning all the find_*_bit() implementations to create
-such variants? IMO that's worse both in terms of maintainability (more
-code) and usability (users have to be aware special functions are needed
-for lockless code) so the 2% of performance overhead until gcc is fixed
-isn't IMO worth it but you are the maintainer...
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+[1] https://github.com/amir73il/linux/commits/fuse-backing-fd-rc1
+[2] https://github.com/amir73il/linux/commits/fuse-backing-fd-rc2
+[3] https://github.com/amir73il/libfuse/commits/fuse-backing-fd
 
