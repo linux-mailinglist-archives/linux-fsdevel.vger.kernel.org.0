@@ -1,34 +1,34 @@
-Return-Path: <linux-fsdevel+bounces-405-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-406-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 669D97CA832
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Oct 2023 14:40:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03A4A7CA835
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Oct 2023 14:41:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70E85B20F1D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Oct 2023 12:40:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34D5B1C20AD1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Oct 2023 12:40:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12B1F1F613;
-	Mon, 16 Oct 2023 12:40:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF6A31D551;
+	Mon, 16 Oct 2023 12:40:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 777D8273E2;
-	Mon, 16 Oct 2023 12:40:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B110273D2;
+	Mon, 16 Oct 2023 12:40:51 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9DCED1A6;
-	Mon, 16 Oct 2023 05:40:12 -0700 (PDT)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTP id CDCF7D76;
+	Mon, 16 Oct 2023 05:40:47 -0700 (PDT)
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DD7541FB;
-	Mon, 16 Oct 2023 05:40:51 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0D2672F4;
+	Mon, 16 Oct 2023 05:41:28 -0700 (PDT)
 Received: from monolith (unknown [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E092D3F5A1;
-	Mon, 16 Oct 2023 05:40:05 -0700 (PDT)
-Date: Mon, 16 Oct 2023 13:40:39 +0100
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F2A323F5A1;
+	Mon, 16 Oct 2023 05:40:41 -0700 (PDT)
+Date: Mon, 16 Oct 2023 13:41:15 +0100
 From: Alexandru Elisei <alexandru.elisei@arm.com>
 To: Hyesoo Yu <hyesoo.yu@samsung.com>
 Cc: catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev,
@@ -45,12 +45,13 @@ Cc: catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev,
 	linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
 	linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
 	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 04/37] mm: Add MIGRATE_METADATA allocation policy
-Message-ID: <ZS0vRz6PlUJM8MN9@monolith>
+Subject: Re: [PATCH RFC 06/37] mm: page_alloc: Allocate from movable pcp
+ lists only if ALLOC_FROM_METADATA
+Message-ID: <ZS0va9nICZo8bF03@monolith>
 References: <20230823131350.114942-1-alexandru.elisei@arm.com>
- <20230823131350.114942-5-alexandru.elisei@arm.com>
- <CGME20231012013834epcas2p28ff3162673294077caef3b0794b69e72@epcas2p2.samsung.com>
- <20231012012824.GA2426387@tiffany>
+ <20230823131350.114942-7-alexandru.elisei@arm.com>
+ <CGME20231012013524epcas2p4b50f306e3e4d0b937b31f978022844e5@epcas2p4.samsung.com>
+ <20231010074823.GA2536665@tiffany>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,103 +60,106 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231012012824.GA2426387@tiffany>
+In-Reply-To: <20231010074823.GA2536665@tiffany>
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
 	RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE autolearn=ham
 	autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-Hello,
+Hi,
 
-On Thu, Oct 12, 2023 at 10:28:24AM +0900, Hyesoo Yu wrote:
-> On Wed, Aug 23, 2023 at 02:13:17PM +0100, Alexandru Elisei wrote:
-> > Some architectures implement hardware memory coloring to catch incorrect
-> > usage of memory allocation. One such architecture is arm64, which calls its
-> > hardware implementation Memory Tagging Extension.
+On Thu, Oct 12, 2023 at 10:25:11AM +0900, Hyesoo Yu wrote:
+> On Wed, Aug 23, 2023 at 02:13:19PM +0100, Alexandru Elisei wrote:
+> > pcp lists keep MIGRATE_METADATA pages on the MIGRATE_MOVABLE list. Make
+> > sure pages from the movable list are allocated only when the
+> > ALLOC_FROM_METADATA alloc flag is set, as otherwise the page allocator
+> > could end up allocating a metadata page when that page cannot be used.
 > > 
-> > So far, the memory which stores the metadata has been configured by
-> > firmware and hidden from Linux. For arm64, it is impossible to to have the
-> > entire system RAM allocated with metadata because executable memory cannot
-> > be tagged. Furthermore, in practice, only a chunk of all the memory that
-> > can have tags is actually used as tagged. which leaves a portion of
-> > metadata memory unused. As such, it would be beneficial to use this memory,
-> > which so far has been unaccessible to Linux, to service allocation
-> > requests. To prepare for exposing this metadata memory a new migratetype is
-> > being added to the page allocator, called MIGRATE_METADATA.
+> > __alloc_pages_bulk() sidesteps rmqueue() and calls __rmqueue_pcplist()
+> > directly. Add a check for the flag before calling __rmqueue_pcplist(), and
+> > fallback to __alloc_pages() if the check is false.
 > > 
-> > One important aspect is that for arm64 the memory that stores metadata
-> > cannot have metadata associated with it, it can only be used to store
-> > metadata for other pages. This means that the page allocator will *not*
-> > allocate from this migratetype if at least one of the following is true:
-> > 
-> > - The allocation also needs metadata to be allocated.
-> > - The allocation isn't movable. A metadata page storing data must be
-> >   able to be migrated at any given time so it can be repurposed to store
-> >   metadata.
-> > 
-> > Both cases are specific to arm64's implementation of memory metadata.
-> > 
-> > For now, metadata storage pages management is disabled, and it will be
-> > enabled once the architecture-specific handling is added.
+> > Note that CMA isn't a problem for __alloc_pages_bulk(): an allocation can
+> > always use CMA pages if the requested migratetype is MIGRATE_MOVABLE, which
+> > is not the case with MIGRATE_METADATA pages.
 > > 
 > > Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
 > > ---
-> > [..]
-> > @@ -2144,6 +2156,15 @@ __rmqueue(struct zone *zone, unsigned int order, int migratetype,
-> >  		if (alloc_flags & ALLOC_CMA)
-> >  			page = __rmqueue_cma_fallback(zone, order);
+> >  mm/page_alloc.c | 21 +++++++++++++++++----
+> >  1 file changed, 17 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> > index 829134a4dfa8..a693e23c4733 100644
+> > --- a/mm/page_alloc.c
+> > +++ b/mm/page_alloc.c
+> > @@ -2845,11 +2845,16 @@ struct page *rmqueue(struct zone *preferred_zone,
 > >  
-> > +		/*
-> > +		 * Allocate data pages from MIGRATE_METADATA only if the regular
-> > +		 * allocation path fails to increase the chance that the
-> > +		 * metadata page is available when the associated data page
-> > +		 * needs it.
-> > +		 */
-> > +		if (!page && (alloc_flags & ALLOC_FROM_METADATA))
-> > +			page = __rmqueue_metadata_fallback(zone, order);
+> >  	if (likely(pcp_allowed_order(order))) {
+> >  		/*
+> > -		 * MIGRATE_MOVABLE pcplist could have the pages on CMA area and
+> > -		 * we need to skip it when CMA area isn't allowed.
+> > +		 * PCP lists keep MIGRATE_CMA/MIGRATE_METADATA pages on the same
+> > +		 * movable list. Make sure it's allowed to allocate both type of
+> > +		 * pages before allocating from the movable list.
+> >  		 */
+> > -		if (!IS_ENABLED(CONFIG_CMA) || alloc_flags & ALLOC_CMA ||
+> > -				migratetype != MIGRATE_MOVABLE) {
+> > +		bool movable_allowed = (!IS_ENABLED(CONFIG_CMA) ||
+> > +					(alloc_flags & ALLOC_CMA)) &&
+> > +				       (!IS_ENABLED(CONFIG_MEMORY_METADATA) ||
+> > +					(alloc_flags & ALLOC_FROM_METADATA));
 > > +
+> > +		if (migratetype != MIGRATE_MOVABLE || movable_allowed) {
 > 
 > Hi!
 > 
-> I guess it would cause non-movable page starving issue as CMA.
+> I don't think it would be effcient when the majority of movable pages
+> do not use GFP_TAGGED.
+> 
+> Metadata pages have a low probability of being in the pcp list
+> because metadata pages is bypassed when freeing pages.
+> 
+> The allocation performance of most movable pages is likely to decrease
+> if only the request with ALLOC_FROM_METADATA could be allocated.
 
-I don't understand what you mean by "non-movable page starving issue as
-CMA". Would you care to elaborate?
+You're right, I hadn't considered that.
 
-> The metadata pages cannot be used for non-movable allocations.
-> Metadata pages are utilized poorly, non-movable allocations may end up
-> getting starved if all regular movable pages are allocated and the only
-> pages left are metadata. If the system has a lot of CMA pages, then
-> this problem would become more bad. I think it would be better to make
-> use of it in places where performance is not critical, including some
-> GFP_METADATA ?
+> 
+> How about not including metadata pages in the pcp list at all ?
 
-GFP_METADATA pages must be used only for movable allocations. The kernel
-must be able to migrate GFP_METADATA pages (if they have been allocated)
-when they are reserved to serve as tag storage for a newly allocated tagged
-page.
+Sounds reasonable, I will keep it in mind for the next iteration of the
+series.
 
-If you are referring to the fact that GFP_METADATA pages are allocated only
-when there are no more free pages in the zone, then yes, I can understand
-that that might be an issue. However, it's worth keeping in mind that if a
-GFP_METADATA page is in use when it needs to be repurposed to serve as tag
-storage, its contents must be migrated first, and this is obviously slow.
-
-To put it another way, the more eager the page allocator is to allocate
-from GFP_METADATA, the slower it will be to allocate tagged pages because
-reserving the corresponding tag storage will be slow due to migration.
-
-Before making a decision, I think it would be very helpful to run
-performance tests with different allocation policies for GFP_METADATA. But I
-would say that it's a bit premature for that, and I think it would be best
-to wait until the series stabilizes.
-
-And thank you for the feedback!
-
+Thanks,
 Alex
 
 > 
 > Thanks,
 > Hyesoo Yu.
+> 
+> >  			page = rmqueue_pcplist(preferred_zone, zone, order,
+> >  					migratetype, alloc_flags);
+> >  			if (likely(page))
+> > @@ -4388,6 +4393,14 @@ unsigned long __alloc_pages_bulk(gfp_t gfp, int preferred_nid,
+> >  		goto out;
+> >  	gfp = alloc_gfp;
+> >  
+> > +	/*
+> > +	 * pcp lists puts MIGRATE_METADATA on the MIGRATE_MOVABLE list, don't
+> > +	 * use pcp if allocating metadata pages is not allowed.
+> > +	 */
+> > +	if (metadata_storage_enabled() && ac.migratetype == MIGRATE_MOVABLE &&
+> > +	    !(alloc_flags & ALLOC_FROM_METADATA))
+> > +		goto failed;
+> > +
+> >  	/* Find an allowed local zone that meets the low watermark. */
+> >  	for_each_zone_zonelist_nodemask(zone, z, ac.zonelist, ac.highest_zoneidx, ac.nodemask) {
+> >  		unsigned long mark;
+> > -- 
+> > 2.41.0
+> > 
+> > 
+
+
 
