@@ -1,78 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-404-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-405-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 249AD7CA81C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Oct 2023 14:37:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 669D97CA832
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Oct 2023 14:40:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F6701C20A3A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Oct 2023 12:37:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70E85B20F1D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Oct 2023 12:40:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FE05273E7;
-	Mon, 16 Oct 2023 12:37:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fgtkUBqW"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12B1F1F613;
+	Mon, 16 Oct 2023 12:40:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F4931F613
-	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Oct 2023 12:37:19 +0000 (UTC)
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6BB3AD
-	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Oct 2023 05:37:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1697459836;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Su8yaNN6gleYsl9c5NRTrh5jb8id9qjQrOt8Qy4EQT8=;
-	b=fgtkUBqWajvxpA0bTEPyOVw87UuR+Go4t5HGvlpjL53OiU2KUcNxoUs4DIqADlUQIjU5aP
-	4eAqk7SmnEdi4V8ZzSzv2WSxDLnob72K51IiqIjjAaxAkP1+zyA3P2DohRgs/BaqASebS+
-	CeTrrpworRslKqpq9jGwl0WR2FxAKZE=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-352-JrGd67O1NLujghmLTj6aUQ-1; Mon, 16 Oct 2023 08:37:14 -0400
-X-MC-Unique: JrGd67O1NLujghmLTj6aUQ-1
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-9c15543088aso129943166b.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Oct 2023 05:37:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697459833; x=1698064633;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Su8yaNN6gleYsl9c5NRTrh5jb8id9qjQrOt8Qy4EQT8=;
-        b=KLT3gvxUbrJceXruOOyjwHOWwP4aq6yYAwI9ghv9xClV0uOgxVl7lA9Ee1zd0kaeqv
-         gqWD9/4yJHzIa2ku9JCNxWSvn/dJdARd0BsKQXfSEko/xInkCdChW9Stp3cDM3x4l+yV
-         cabxkXfiprsdH+g5zG4s8EsSkkZknHgaCg9NqjxQiElamw3lz54dRLkZKpbvehf8RuIY
-         aV3zdgbsqAXWfsfVjAYTbLWl6yE/jICdvoitWEn45PfLsgUlT9OKgs9qiNrlWykFMozl
-         DzE9AhrVOhpOgL1ZiEyp83K91aLDDz+W2aDXNdbWr5sdy4TVVt4+me0MybkwUi8TJDZ5
-         KuKQ==
-X-Gm-Message-State: AOJu0YzxoX6ChJe8MgpXQF9j0IyclxDJRuTwy5DYxqY6BoJhSQHnAFm5
-	1mrppDgYDPqIpfqlceKJDCO5HC0Or4pBeRXZfhoECk4LLR0g7B5apbBcPG72ahGjOp9BYeQyg0+
-	R8QyYXsXmaaC7Kw/h8e/SoywK
-X-Received: by 2002:a17:907:7ea7:b0:9ad:cbc0:9f47 with SMTP id qb39-20020a1709077ea700b009adcbc09f47mr6137025ejc.12.1697459833622;
-        Mon, 16 Oct 2023 05:37:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGTeQ/M+ycZkOVQebj4aUcWiSA9VpuBVUaM9K8JgYaF1bg0BBb1USApDPF/nmxRKtrWDQwtMg==
-X-Received: by 2002:a17:907:7ea7:b0:9ad:cbc0:9f47 with SMTP id qb39-20020a1709077ea700b009adcbc09f47mr6137016ejc.12.1697459833363;
-        Mon, 16 Oct 2023 05:37:13 -0700 (PDT)
-Received: from thinky ([109.183.6.197])
-        by smtp.gmail.com with ESMTPSA id ck22-20020a170906c45600b009b2d46425absm3979682ejb.85.2023.10.16.05.37.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Oct 2023 05:37:12 -0700 (PDT)
-Date: Mon, 16 Oct 2023 14:37:12 +0200
-From: Andrey Albershteyn <aalbersh@redhat.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	fsverity@lists.linux.dev, ebiggers@kernel.org, david@fromorbit.com, dchinner@redhat.com
-Subject: Re: [PATCH v3 15/28] xfs: introduce workqueue for post read IO work
-Message-ID: <skhqdob6wt3azlx64ndumvk3mxd2bxrbvqxho6ykf3otwed5vj@5bzi44xmh7vs>
-References: <20231006184922.252188-1-aalbersh@redhat.com>
- <20231006184922.252188-16-aalbersh@redhat.com>
- <20231011185558.GS21298@frogsfrogsfrogs>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 777D8273E2;
+	Mon, 16 Oct 2023 12:40:19 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9DCED1A6;
+	Mon, 16 Oct 2023 05:40:12 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DD7541FB;
+	Mon, 16 Oct 2023 05:40:51 -0700 (PDT)
+Received: from monolith (unknown [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E092D3F5A1;
+	Mon, 16 Oct 2023 05:40:05 -0700 (PDT)
+Date: Mon, 16 Oct 2023 13:40:39 +0100
+From: Alexandru Elisei <alexandru.elisei@arm.com>
+To: Hyesoo Yu <hyesoo.yu@samsung.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev,
+	maz@kernel.org, james.morse@arm.com, suzuki.poulose@arm.com,
+	yuzenghui@huawei.com, arnd@arndb.de, akpm@linux-foundation.org,
+	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	bristot@redhat.com, vschneid@redhat.com, mhiramat@kernel.org,
+	rppt@kernel.org, hughd@google.com, pcc@google.com,
+	steven.price@arm.com, anshuman.khandual@arm.com,
+	vincenzo.frascino@arm.com, david@redhat.com, eugenis@google.com,
+	kcc@google.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC 04/37] mm: Add MIGRATE_METADATA allocation policy
+Message-ID: <ZS0vRz6PlUJM8MN9@monolith>
+References: <20230823131350.114942-1-alexandru.elisei@arm.com>
+ <20230823131350.114942-5-alexandru.elisei@arm.com>
+ <CGME20231012013834epcas2p28ff3162673294077caef3b0794b69e72@epcas2p2.samsung.com>
+ <20231012012824.GA2426387@tiffany>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -81,41 +59,103 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231011185558.GS21298@frogsfrogsfrogs>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-	RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
-	autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20231012012824.GA2426387@tiffany>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
+	RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE autolearn=ham
+	autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-On 2023-10-11 11:55:58, Darrick J. Wong wrote:
-> On Fri, Oct 06, 2023 at 08:49:09PM +0200, Andrey Albershteyn wrote:
-> > As noted by Dave there are two problems with using fs-verity's
-> > workqueue in XFS:
+Hello,
+
+On Thu, Oct 12, 2023 at 10:28:24AM +0900, Hyesoo Yu wrote:
+> On Wed, Aug 23, 2023 at 02:13:17PM +0100, Alexandru Elisei wrote:
+> > Some architectures implement hardware memory coloring to catch incorrect
+> > usage of memory allocation. One such architecture is arm64, which calls its
+> > hardware implementation Memory Tagging Extension.
 > > 
-> > 1. High priority workqueues are used within XFS to ensure that data
-> >    IO completion cannot stall processing of journal IO completions.
-> >    Hence using a WQ_HIGHPRI workqueue directly in the user data IO
-> >    path is a potential filesystem livelock/deadlock vector.
+> > So far, the memory which stores the metadata has been configured by
+> > firmware and hidden from Linux. For arm64, it is impossible to to have the
+> > entire system RAM allocated with metadata because executable memory cannot
+> > be tagged. Furthermore, in practice, only a chunk of all the memory that
+> > can have tags is actually used as tagged. which leaves a portion of
+> > metadata memory unused. As such, it would be beneficial to use this memory,
+> > which so far has been unaccessible to Linux, to service allocation
+> > requests. To prepare for exposing this metadata memory a new migratetype is
+> > being added to the page allocator, called MIGRATE_METADATA.
 > > 
-> > 2. The fsverity workqueue is global - it creates a cross-filesystem
-> >    contention point.
+> > One important aspect is that for arm64 the memory that stores metadata
+> > cannot have metadata associated with it, it can only be used to store
+> > metadata for other pages. This means that the page allocator will *not*
+> > allocate from this migratetype if at least one of the following is true:
 > > 
-> > This patch adds per-filesystem, per-cpu workqueue for fsverity
-> > work.
+> > - The allocation also needs metadata to be allocated.
+> > - The allocation isn't movable. A metadata page storing data must be
+> >   able to be migrated at any given time so it can be repurposed to store
+> >   metadata.
+> > 
+> > Both cases are specific to arm64's implementation of memory metadata.
+> > 
+> > For now, metadata storage pages management is disabled, and it will be
+> > enabled once the architecture-specific handling is added.
+> > 
+> > Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
+> > ---
+> > [..]
+> > @@ -2144,6 +2156,15 @@ __rmqueue(struct zone *zone, unsigned int order, int migratetype,
+> >  		if (alloc_flags & ALLOC_CMA)
+> >  			page = __rmqueue_cma_fallback(zone, order);
+> >  
+> > +		/*
+> > +		 * Allocate data pages from MIGRATE_METADATA only if the regular
+> > +		 * allocation path fails to increase the chance that the
+> > +		 * metadata page is available when the associated data page
+> > +		 * needs it.
+> > +		 */
+> > +		if (!page && (alloc_flags & ALLOC_FROM_METADATA))
+> > +			page = __rmqueue_metadata_fallback(zone, order);
+> > +
 > 
-> If we ever want to implement compression and/or fscrypt, can we use this
-> pread workqueue for that too?
+> Hi!
+> 
+> I guess it would cause non-movable page starving issue as CMA.
 
-I think yes.
+I don't understand what you mean by "non-movable page starving issue as
+CMA". Would you care to elaborate?
 
-> Sounds good to me...
-> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+> The metadata pages cannot be used for non-movable allocations.
+> Metadata pages are utilized poorly, non-movable allocations may end up
+> getting starved if all regular movable pages are allocated and the only
+> pages left are metadata. If the system has a lot of CMA pages, then
+> this problem would become more bad. I think it would be better to make
+> use of it in places where performance is not critical, including some
+> GFP_METADATA ?
 
-Thanks!
+GFP_METADATA pages must be used only for movable allocations. The kernel
+must be able to migrate GFP_METADATA pages (if they have been allocated)
+when they are reserved to serve as tag storage for a newly allocated tagged
+page.
 
--- 
-- Andrey
+If you are referring to the fact that GFP_METADATA pages are allocated only
+when there are no more free pages in the zone, then yes, I can understand
+that that might be an issue. However, it's worth keeping in mind that if a
+GFP_METADATA page is in use when it needs to be repurposed to serve as tag
+storage, its contents must be migrated first, and this is obviously slow.
 
+To put it another way, the more eager the page allocator is to allocate
+from GFP_METADATA, the slower it will be to allocate tagged pages because
+reserving the corresponding tag storage will be slow due to migration.
+
+Before making a decision, I think it would be very helpful to run
+performance tests with different allocation policies for GFP_METADATA. But I
+would say that it's a bit premature for that, and I think it would be best
+to wait until the series stabilizes.
+
+And thank you for the feedback!
+
+Alex
+
+> 
+> Thanks,
+> Hyesoo Yu.
 
