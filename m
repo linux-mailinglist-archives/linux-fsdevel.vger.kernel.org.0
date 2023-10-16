@@ -1,155 +1,171 @@
-Return-Path: <linux-fsdevel+bounces-366-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-367-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D2867C9C65
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Oct 2023 00:22:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 046FD7C9DB3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Oct 2023 05:23:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 609561C20968
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Oct 2023 22:22:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7595EB20D4E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Oct 2023 03:22:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3565814AAF;
-	Sun, 15 Oct 2023 22:22:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F28323B7;
+	Mon, 16 Oct 2023 03:22:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mh+DtIoT"
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="cb/Ld+RY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D05B15D4
-	for <linux-fsdevel@vger.kernel.org>; Sun, 15 Oct 2023 22:22:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A0E2C433C7;
-	Sun, 15 Oct 2023 22:22:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1697408536;
-	bh=n5eTHT4FC+5SGFkkalU1P/ultlRemjXtW9CBzRjBKvc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mh+DtIoT+xWY0xHkOQR8mY5SIv+bq0u8F6Feo6EuzF7KVWmtZCQobZIkAPXA0TOFF
-	 X3QRcy7qQxKnLf8eGr18852RTZv0sTgLTzYH10I2SE4jl41BcJVPQiRKkBdqvan+rI
-	 F/BnS22ZBI63kH7PqRAtZ+/aRGm3Ba+SzwS+ZVViVG3bZM74BQ3qilkDk9VxFBLxOD
-	 fzkw5xT3PEEljvh7rO2h2EoyiinhXaBJrdTPStrvTlsf++GyNCoSpn96wZSbFhFdio
-	 2IP+92vJPXU8+8qOIsMmEwZajXL+Xmm9okAAw3VSk+k2tkVh/1QZlTErgGY1keLtDT
-	 j6VNOEiw/IjaQ==
-Message-ID: <69c5d947-27a1-4feb-b823-35e33d86f74c@kernel.org>
-Date: Mon, 16 Oct 2023 07:22:13 +0900
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21BC3187C
+	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Oct 2023 03:22:47 +0000 (UTC)
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6319DA
+	for <linux-fsdevel@vger.kernel.org>; Sun, 15 Oct 2023 20:22:42 -0700 (PDT)
+Received: by mail-pj1-x102c.google.com with SMTP id 98e67ed59e1d1-27d4b280e4eso1526846a91.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 15 Oct 2023 20:22:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1697426562; x=1698031362; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gczzW0LaNc0vEssMkLzS11PtF6rOzBiU0Uwpu4VNOxY=;
+        b=cb/Ld+RYc/kfM0acwFfmBZDSGqIgmB9RRKUmfvpMbLV+bGLt/VBqBnUDrB3hvOaJRH
+         9YfHz6zdU8+nkD2tV+cKNgDxVDO37zIpuhTerGagihbCgvkXMn4B6W7WCdV1pVcWlp5L
+         /OWFxmm4jhNi4ATYTOgpjQUzKfrFDrveAqxc1PMuhDWzsoyUcgC4ReZoic+AAOL3bS9u
+         3KfaU9XYeFrdqhfjYCdxdPoye5uW94FuIYpEkIP+6wRe8fF99k8ZQwM6yA4+PPUil++k
+         ryxlJDu74W3/MRUfgVmoLlarh7g0OWEE7pqJD2ckBH4wKHHBVH4+n81t2Io6gi7W3y51
+         +27Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697426562; x=1698031362;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gczzW0LaNc0vEssMkLzS11PtF6rOzBiU0Uwpu4VNOxY=;
+        b=xLxrSf2yV+lQwUUSZCf4A6SulYNVgv7zVigRw/cVMninAX1IEzQQApjtSUm0wXupEj
+         FDP4PdtqJnvqhRi1J88vvcTEtjfJIqkwCT1JrKkL7YE+AX/v7vvQ4+gAY32VmMWfJHNt
+         P2/3p+5I27ndbXtz+ycxtZX10k6wPP8pkutcf4sYV+FMXKvPZWhLns/WYjXjPVKUb0Zl
+         MdP2DRayZHfy5kS2GiixSNUKx1bFQc6dcgV3pyJx19GfolLMqmQrDYaWuT38hwlCiMB2
+         8Aimeo7pOiFORzrhMaqosGF5VIvUqJXDzoiE2i/1JGb5xdA2/kcmA0TZyvGOeMTvgCYK
+         oxGA==
+X-Gm-Message-State: AOJu0Yy2RTT6BOgz1MMVmDWnHNor8IEnRHCDztucbLrsvlDre3tLqIfG
+	FizCHD0buBNjZyTZPmk2VmNbdg==
+X-Google-Smtp-Source: AGHT+IFzFX6024nzxiosM9l+6Ya1tT1Cn5ggSgsLi/0x1b1M6T1Yxj2Q5/ayz8g2pgVlEQTFv5OCyw==
+X-Received: by 2002:a17:90a:c202:b0:27c:f282:adac with SMTP id e2-20020a17090ac20200b0027cf282adacmr9364622pjt.0.1697426562152;
+        Sun, 15 Oct 2023 20:22:42 -0700 (PDT)
+Received: from GL4FX4PXWL.bytedance.net ([139.177.225.232])
+        by smtp.gmail.com with ESMTPSA id d8-20020a17090ae28800b0027758c7f585sm3452770pjz.52.2023.10.15.20.22.35
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Sun, 15 Oct 2023 20:22:41 -0700 (PDT)
+From: Peng Zhang <zhangpeng.00@bytedance.com>
+To: Liam.Howlett@oracle.com,
+	corbet@lwn.net,
+	akpm@linux-foundation.org,
+	willy@infradead.org,
+	brauner@kernel.org,
+	surenb@google.com,
+	michael.christie@oracle.com,
+	mjguzik@gmail.com,
+	mathieu.desnoyers@efficios.com,
+	npiggin@gmail.com,
+	peterz@infradead.org,
+	oliver.sang@intel.com,
+	mst@redhat.com
+Cc: zhangpeng.00@bytedance.com,
+	maple-tree@lists.infradead.org,
+	linux-mm@kvack.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH v5 00/10] Introduce __mt_dup() to improve the performance of fork()
+Date: Mon, 16 Oct 2023 11:22:16 +0800
+Message-Id: <20231016032226.59199-1-zhangpeng.00@bytedance.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-145)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 03/15] block: Support data lifetime in the I/O priority
- bitfield
-To: Bart Van Assche <bvanassche@acm.org>, Jens Axboe <axboe@kernel.dk>
-Cc: linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-fsdevel@vger.kernel.org,
- "Martin K . Petersen" <martin.petersen@oracle.com>,
- Christoph Hellwig <hch@lst.de>, Niklas Cassel <Niklas.Cassel@wdc.com>,
- Avri Altman <Avri.Altman@wdc.com>, Bean Huo <huobean@gmail.com>,
- Daejun Park <daejun7.park@samsung.com>, Hannes Reinecke <hare@suse.de>
-References: <20231005194129.1882245-1-bvanassche@acm.org>
- <20231005194129.1882245-4-bvanassche@acm.org>
- <8aec03bb-4cef-9423-0ce4-c10d060afce4@kernel.org>
- <46c17c1b-29be-41a3-b799-79163851f972@acm.org>
- <b0b015bf-0a27-4e89-950a-597b9fed20fb@acm.org>
- <447f3095-66cb-417b-b48c-90005d37b5d3@kernel.org>
- <4fee2c56-7631-45d2-b709-2dadea057f52@acm.org>
- <2fa9ea51-c343-4cc2-b755-a5de024bb32f@kernel.org>
- <94c58f6a-cdbf-4718-b60f-ba4082a040b5@acm.org>
-Content-Language: en-US
-From: Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <94c58f6a-cdbf-4718-b60f-ba4082a040b5@acm.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.6
+X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
+	lindbergh.monkeyblade.net
 
-On 10/14/23 05:18, Bart Van Assche wrote:
-> On 10/12/23 18:08, Damien Le Moal wrote:
->> On 10/13/23 03:00, Bart Van Assche wrote:
->>> We are having this discussion because bi_ioprio is sixteen bits wide and
->>> because we don't want to make struct bio larger. How about expanding the
->>> bi_ioprio field from 16 to 32 bits and to use separate bits for CDL
->>> information and data lifetimes?
->>
->> I guess we could do that as well. User side aio_reqprio field of struct aiocb,
->> which is used by io_uring and libaio, is an int, so 32-bits also. Changing
->> bi_ioprio to match that should not cause regressions or break user space I
->> think. Kernel uapi ioprio.h will need some massaging though.
-> 
-> Hmm ... are we perhaps looking at different kernel versions? This is
-> what I found:
-> 
-> $ git grep -nHE 'ioprio;|reqprio;' include/uapi/linux/{io_uring,aio_abi}.h
-> include/uapi/linux/aio_abi.h:89:	__s16	aio_reqprio;
-> include/uapi/linux/io_uring.h:33:	__u16	ioprio;		/* ioprio for the 
-> request */
+Hi all,
 
-My bad. I looked at "man aio" but that is the posix AIO API, not Linux native.
+This series introduces __mt_dup() to improve the performance of fork(). During
+the duplication process of mmap, all VMAs are traversed and inserted one by one
+into the new maple tree, causing the maple tree to be rebalanced multiple times.
+Balancing the maple tree is a costly operation. To duplicate VMAs more
+efficiently, mtree_dup() and __mt_dup() are introduced for the maple tree. They
+can efficiently duplicate a maple tree.
 
-> The struct iocb used for asynchronous I/O has a size of 64 bytes and
-> does not have any holes. struct io_uring_sqe also has a size of 64 bytes
-> and does not have any holes either. The ioprio_set() and ioprio_get()
-> system calls use the data type int so these wouldn't need any changes to
-> increase the number of ioprio bits.
+Here are some algorithmic details about {mtree,__mt}_dup(). We perform a DFS
+pre-order traversal of all nodes in the source maple tree. During this process,
+we fully copy the nodes from the source tree to the new tree. This involves
+memory allocation, and when encountering a new node, if it is a non-leaf node,
+all its child nodes are allocated at once.
 
-Yes, but I think it would be better to keep the bio bi_ioprio field size synced
-with the per AIO aio_reqprio/ioprio for libaio and io_uring, that is, 16-bits.
+Some previous discussions can be referred to as [1]. For a more detailed
+analysis of the algorithm, please refer to the logs for patch [3/10] and patch
+[10/10]
 
->> Reading Niklas's reply to Kanchan, I was reminded that using ioprio hint for
->> the lifetime may have one drawback: that information will be propagated to the
->> device only for direct IOs, no ? For buffered IOs, the information will be
->> lost. The other potential disadvantage of the ioprio interface is that we
->> cannot define ioprio+hint per file (or per inode really), unlike the old
->> write_hint that you initially reintroduced. Are these points blockers for the
->> user API you were thinking of ? How do you envision the user specifying
->> lifetime ? Per file ? Or are you thinking of not relying on the user to specify
->> that but rather the FS (e.g. f2fs) deciding on its own ? If it is the latter, I
->> think ioprio+hint is fine (it is simple). But if it is the former, the ioprio
->> API may not be the best suited for the job at hand.
-> 
-> The way I see it is that the primary purpose of the bits in the
-> bi_ioprio member that are used for the data lifetime is to allow
-> filesystems to provide data lifetime information to block drivers.
-> 
-> Specifying data lifetime information for direct I/O is convenient when
-> writing test scripts that verify whether data lifetime supports works
-> correctly. There may be other use cases but this is not my primary
-> focus.
-> 
-> I think that applications that want to specify data lifetime information
-> should use fcntl(fd, F_SET_RW_HINT, ...). It is up to the filesystem to
-> make sure that this information ends up in the bi_ioprio field. The
-> block layer is responsible for passing the information in the bi_ioprio
-> member to block drivers. Filesystems can support multiple policies for
-> combining the i_write_hint and other information into a data lifetime.
-> See also the whint_mode restored by patch 05/15 in this series.
+There is a "spawn" in byte-unixbench[2], which can be used to test the
+performance of fork(). I modified it slightly to make it work with
+different number of VMAs.
 
-Explaining this in the cover letter of the series would be helpful for one to
-understand your view of how the information is propagated from user to device.
+Below are the test results. The first row shows the number of VMAs.
+The second and third rows show the number of fork() calls per ten seconds,
+corresponding to next-20231006 and the this patchset, respectively. The
+test results were obtained with CPU binding to avoid scheduler load
+balancing that could cause unstable results. There are still some
+fluctuations in the test results, but at least they are better than the
+original performance.
 
-I am not a fan of having a fcntl() call ending up modifying the ioprio of IOs
-using hints, given that hints in themselves are already a user facing
-information/API. This is confusing... What if we have a user issue direct IOs
-with a lifetime value hint on a file that has a different lifetime set with
-fcntl() ? And I am sure there are other corner cases like this.
+21     121   221    421    821    1621   3221   6421   12821  25621  51221
+112100 76261 54227  34035  20195  11112  6017   3161   1606   802    393
+114558 83067 65008  45824  28751  16072  8922   4747   2436   1233   599
+2.19%  8.92% 19.88% 34.64% 42.37% 44.64% 48.28% 50.17% 51.68% 53.74% 52.42%
 
-Given that lifetime is per file (inode) and IO prio is per process or per I/O,
-having different user APIs makes sense. The issue of not growing (if possible)
-the bio and request structures remains. For bio, you identified a hole already,
-so what about using another 16-bits field for lifetime ? Not sure for requests.
-I thought also of a union with bi_ioprio, but that would prevent using lifetime
-and IO priority together, which is not ideal.
+Thanks for Liam's review.
 
-> 
-> Thanks,
-> 
-> Bart.
+Changes since v4:
+ - Change the handling method for the failure of dup_mmap(). Handle it in
+   exit_mmap().
+ - Update check_forking() and bench_forking().
+ - Add the corresponding copyright statement.
+
+Peng Zhang (10):
+  maple_tree: Add mt_free_one() and mt_attr() helpers
+  maple_tree: Introduce {mtree,mas}_lock_nested()
+  maple_tree: Introduce interfaces __mt_dup() and mtree_dup()
+  radix tree test suite: Align kmem_cache_alloc_bulk() with kernel
+    behavior.
+  maple_tree: Add test for mtree_dup()
+  maple_tree: Update the documentation of maple tree
+  maple_tree: Skip other tests when BENCH is enabled
+  maple_tree: Update check_forking() and bench_forking()
+  maple_tree: Preserve the tree attributes when destroying maple tree
+  fork: Use __mt_dup() to duplicate maple tree in dup_mmap()
+
+ Documentation/core-api/maple_tree.rst |   4 +
+ include/linux/maple_tree.h            |   7 +
+ kernel/fork.c                         |  39 ++-
+ lib/maple_tree.c                      | 304 ++++++++++++++++++++-
+ lib/test_maple_tree.c                 | 123 +++++----
+ mm/memory.c                           |   7 +-
+ mm/mmap.c                             |   9 +-
+ tools/include/linux/rwsem.h           |   4 +
+ tools/include/linux/spinlock.h        |   1 +
+ tools/testing/radix-tree/linux.c      |  45 +++-
+ tools/testing/radix-tree/maple.c      | 363 ++++++++++++++++++++++++++
+ 11 files changed, 815 insertions(+), 91 deletions(-)
 
 -- 
-Damien Le Moal
-Western Digital Research
+2.20.1
 
 
