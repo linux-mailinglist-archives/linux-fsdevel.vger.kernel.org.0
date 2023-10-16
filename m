@@ -1,243 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-400-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-403-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5A357CA80B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Oct 2023 14:33:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B9DD7CA819
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Oct 2023 14:35:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C8982814FC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Oct 2023 12:33:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD8131C20983
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Oct 2023 12:35:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F14727729;
-	Mon, 16 Oct 2023 12:32:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D193273FC;
+	Mon, 16 Oct 2023 12:35:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="G7bWTMK6";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iVYdcofE"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LMXsnBpK"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5740273CF
-	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Oct 2023 12:32:48 +0000 (UTC)
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47EB9F5
-	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Oct 2023 05:32:47 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E53601F74A;
-	Mon, 16 Oct 2023 12:32:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1697459565; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D20E7273EB
+	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Oct 2023 12:35:23 +0000 (UTC)
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E80CAB
+	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Oct 2023 05:35:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1697459716;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=kG6qEanlcZAFrWtqDvq2DOjtZ/PgnCIAShHsDI4JaDA=;
-	b=G7bWTMK6OeJm3c9u7GcSGRGnss2Y3L3N+g+C/h5ivPSYTtv895D+FUD1KoM24C16dRwWYv
-	FBapv77jxR/8bnLec8mYcMAV/9gm5qjgsl7PatELvGxpwHqqECc6puOTZ1T40rdqjoBgtT
-	HVlyAGlYuAlbVxN9S6YHm6xXrk1hmpg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1697459565;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kG6qEanlcZAFrWtqDvq2DOjtZ/PgnCIAShHsDI4JaDA=;
-	b=iVYdcofEpNrDhRxzW6jwtJXIB3YHd/Iie27fgBeIdDuEmmm2DZMz7pW6kbPyARzVce0kF9
-	CFcMv/1Ffg2FGfBg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-	(No client certificate requested)
-	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id CF930133B7;
-	Mon, 16 Oct 2023 12:32:45 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-	by imap2.suse-dmz.suse.de with ESMTPSA
-	id xlShMW0tLWVWHwAAMHmgww
-	(envelope-from <chrubis@suse.cz>); Mon, 16 Oct 2023 12:32:45 +0000
-From: Cyril Hrubis <chrubis@suse.cz>
-To: ltp@lists.linux.it
-Cc: Matthew Wilcox <willy@infradead.org>,
-	amir73il@gmail.com,
-	mszeredi@redhat.com,
-	brauner@kernel.org,
-	viro@zeniv.linux.org.uk,
-	Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 4/4] syscalls: splice07: New splice tst_fd iterator test
-Date: Mon, 16 Oct 2023 14:33:20 +0200
-Message-ID: <20231016123320.9865-5-chrubis@suse.cz>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20231016123320.9865-1-chrubis@suse.cz>
-References: <20231016123320.9865-1-chrubis@suse.cz>
+	bh=fnlyZ/CR5vsw8OMZxmx5aDd65PDqqyZREj3O4xB3j3o=;
+	b=LMXsnBpKppCPhpZNf9G0UU8Gsfb6fg0pn4WCt6fUajakzWszMNmeExwxNfCCLxHpdelAcX
+	I/8l2Uo3Ojd0vImjZLMfZ/2gj8mC1rFAF1y7a1+JrrcvsR4nq6Rvf3SIdpmA38G/9+FdLA
+	WaDNTRTqChiY8UVsYd1uUHu01N5MMso=
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
+ [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-662-wm8dOpBPPXWpEaN8FSiAYg-1; Mon, 16 Oct 2023 08:35:15 -0400
+X-MC-Unique: wm8dOpBPPXWpEaN8FSiAYg-1
+Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-538128e18e9so3338782a12.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Oct 2023 05:35:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697459714; x=1698064514;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fnlyZ/CR5vsw8OMZxmx5aDd65PDqqyZREj3O4xB3j3o=;
+        b=fRhJrlQFZfkx2TRwFNentr01s6iP9r0/0RRNQu5fc2+1ADzU9UuQP2eOvWN5JMSgfA
+         NHvtTSc7EXp0fPR2zAB/bJaKYsQuHPWO7pyeeTILHviQ+ELnO77qO+5OA7KGUEB+SqtT
+         I5RLR2E90P2tbhOtXhfZjEDx9vjIBLrB80mgsKwnYIZow2Gf9H9R8+zum4s6hN56XgSd
+         ToPS7f9/nz3imm3xV9fcbDRFsRkbtB7q5k8UGlXrYKCg5AwnhePptZLjNgaLduUObioS
+         c5fq2NBP1xSrxfNbuJxdu8VUBQwZWw2zup7scL0x+vGVzfQ0KDiXFqvWYXQeEwzCLDX8
+         CJ6Q==
+X-Gm-Message-State: AOJu0Yze3GUq5DeUEOuEbnXsGiyOr522GcWK2/RTj+8xUikcYIwe8dKC
+	gTBDh8m2NVgY8xTWnm7ExdXP5L6PoTQfkZyyKzeLGhgZBTd23N4h1lIPxtXVxb9alf8LGeBKgnV
+	wsPFYWO8EXqMJPOzDo1n38bpd
+X-Received: by 2002:a17:907:785:b0:9bf:ad86:ece8 with SMTP id xd5-20020a170907078500b009bfad86ece8mr3919674ejb.25.1697459713995;
+        Mon, 16 Oct 2023 05:35:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHqAlWgKovauCzw+CvDXuoKXPDymeOPBUmFvlvX4u/xw/mh1KisWyrhFdlyfV1pcUFxK+1bRA==
+X-Received: by 2002:a17:907:785:b0:9bf:ad86:ece8 with SMTP id xd5-20020a170907078500b009bfad86ece8mr3919659ejb.25.1697459713646;
+        Mon, 16 Oct 2023 05:35:13 -0700 (PDT)
+Received: from thinky ([109.183.6.197])
+        by smtp.gmail.com with ESMTPSA id e8-20020a17090681c800b009be23a040cfsm3928853ejx.40.2023.10.16.05.35.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Oct 2023 05:35:13 -0700 (PDT)
+Date: Mon, 16 Oct 2023 14:35:12 +0200
+From: Andrey Albershteyn <aalbersh@redhat.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	fsverity@lists.linux.dev, ebiggers@kernel.org, david@fromorbit.com, dchinner@redhat.com
+Subject: Re: [PATCH v3 11/28] iomap: pass readpage operation to read path
+Message-ID: <owraoh7xqk4dhf2mh4pdnh5iwh4on5asmwbpyg5nturzqnqcin@ticdzwwyj2kw>
+References: <20231006184922.252188-1-aalbersh@redhat.com>
+ <20231006184922.252188-12-aalbersh@redhat.com>
+ <20231011183117.GN21298@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Authentication-Results: smtp-out2.suse.de;
-	none
-X-Spam-Score: 6.90
-X-Spamd-Result: default: False [6.90 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 R_MISSING_CHARSET(2.50)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 BROKEN_CONTENT_TYPE(1.50)[];
-	 R_RATELIMIT(0.00)[from(RLwca6rbpw4iejis8bsi6)];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 NEURAL_HAM_SHORT(-1.00)[-0.998];
-	 NEURAL_SPAM_LONG(3.00)[1.000];
-	 RCPT_COUNT_SEVEN(0.00)[8];
-	 MID_CONTAINS_FROM(1.00)[];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 RCVD_COUNT_TWO(0.00)[2];
-	 RCVD_TLS_ALL(0.00)[];
-	 FREEMAIL_CC(0.00)[infradead.org,gmail.com,redhat.com,kernel.org,zeniv.linux.org.uk,suse.cz,vger.kernel.org]
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231011183117.GN21298@frogsfrogsfrogs>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+	RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
+	autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-We loop over all possible combinations of file descriptors in the test
-and filter out combinations that actually make sense and either block or
-attempt to copy data.
+On 2023-10-11 11:31:17, Darrick J. Wong wrote:
+> On Fri, Oct 06, 2023 at 08:49:05PM +0200, Andrey Albershteyn wrote:
+> > diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> > index 96dd0acbba44..3565c449f3c9 100644
+> > --- a/include/linux/iomap.h
+> > +++ b/include/linux/iomap.h
+> > @@ -262,8 +262,25 @@ int iomap_file_buffered_write_punch_delalloc(struct inode *inode,
+> >  		struct iomap *iomap, loff_t pos, loff_t length, ssize_t written,
+> >  		int (*punch)(struct inode *inode, loff_t pos, loff_t length));
+> >  
+> > -int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops);
+> > -void iomap_readahead(struct readahead_control *, const struct iomap_ops *ops);
+> > +struct iomap_readpage_ops {
+> > +	/*
+> > +	 * Filesystems wishing to attach private information to a direct io bio
+> > +	 * must provide a ->submit_io method that attaches the additional
+> > +	 * information to the bio and changes the ->bi_end_io callback to a
+> > +	 * custom function.  This function should, at a minimum, perform any
+> > +	 * relevant post-processing of the bio and end with a call to
+> > +	 * iomap_read_end_io.
+> > +	 */
+> > +	void (*submit_io)(const struct iomap_iter *iter, struct bio *bio,
+> > +			loff_t file_offset);
+> > +	struct bio_set *bio_set;
+> 
+> Needs a comment to mention that iomap will allocate bios from @bio_set
+> if non-null; or its own internal bioset if null.
 
-The rest of invalid options produce either EINVAL or EBADF and there
-does not seem to be any clear pattern to the choices of these two.
+Sure.
 
-Signed-off-by: Cyril Hrubis <chrubis@suse.cz>
----
- runtest/syscalls                            |  1 +
- testcases/kernel/syscalls/splice/.gitignore |  1 +
- testcases/kernel/syscalls/splice/splice07.c | 85 +++++++++++++++++++++
- 3 files changed, 87 insertions(+)
- create mode 100644 testcases/kernel/syscalls/splice/splice07.c
+> > +};
+> 
+> It's odd that this patch adds this ops structure but doesn't actually
+> start using it until the next patch.
 
-diff --git a/runtest/syscalls b/runtest/syscalls
-index 55396aad8..3af634c11 100644
---- a/runtest/syscalls
-+++ b/runtest/syscalls
-@@ -1515,6 +1515,7 @@ splice03 splice03
- splice04 splice04
- splice05 splice05
- splice06 splice06
-+splice07 splice07
- 
- tee01 tee01
- tee02 tee02
-diff --git a/testcases/kernel/syscalls/splice/.gitignore b/testcases/kernel/syscalls/splice/.gitignore
-index 61e979ad6..88a8dff78 100644
---- a/testcases/kernel/syscalls/splice/.gitignore
-+++ b/testcases/kernel/syscalls/splice/.gitignore
-@@ -4,3 +4,4 @@
- /splice04
- /splice05
- /splice06
-+/splice07
-diff --git a/testcases/kernel/syscalls/splice/splice07.c b/testcases/kernel/syscalls/splice/splice07.c
-new file mode 100644
-index 000000000..74d3e9c7a
---- /dev/null
-+++ b/testcases/kernel/syscalls/splice/splice07.c
-@@ -0,0 +1,85 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+
-+/*
-+ * Copyright (C) 2023 Cyril Hrubis <chrubis@suse.cz>
-+ */
-+
-+/*\
-+ * [Description]
-+ *
-+ */
-+#define _GNU_SOURCE
-+
-+#include <sys/socket.h>
-+#include <netinet/in.h>
-+
-+#include "tst_test.h"
-+
-+void check_splice(struct tst_fd *fd_in, struct tst_fd *fd_out)
-+{
-+	int exp_errno = EINVAL;
-+
-+	/* These combinations just hang */
-+	if (fd_in->type == TST_FD_PIPE_READ) {
-+		switch (fd_out->type) {
-+		case TST_FD_FILE:
-+		case TST_FD_PIPE_WRITE:
-+		case TST_FD_UNIX_SOCK:
-+		case TST_FD_INET_SOCK:
-+		case TST_FD_MEMFD:
-+			return;
-+		default:
-+		break;
-+		}
-+	}
-+
-+	if (fd_out->type == TST_FD_PIPE_WRITE) {
-+		switch (fd_in->type) {
-+		/* While these combinations succeeed */
-+		case TST_FD_FILE:
-+		case TST_FD_MEMFD:
-+			return;
-+		/* And this complains about socket not being connected */
-+		case TST_FD_INET_SOCK:
-+			return;
-+		default:
-+		break;
-+		}
-+	}
-+
-+	/* These produce EBADF instead of EINVAL */
-+	switch (fd_out->type) {
-+	case TST_FD_DIR:
-+	case TST_FD_DEV_ZERO:
-+	case TST_FD_PROC_MAPS:
-+	case TST_FD_INOTIFY:
-+	case TST_FD_PIPE_READ:
-+		exp_errno = EBADF;
-+	default:
-+	break;
-+	}
-+
-+	if (fd_in->type == TST_FD_PIPE_WRITE)
-+		exp_errno = EBADF;
-+
-+	if (fd_in->type == TST_FD_OPEN_TREE || fd_out->type == TST_FD_OPEN_TREE ||
-+	    fd_in->type == TST_FD_PATH || fd_out->type == TST_FD_PATH)
-+		exp_errno = EBADF;
-+
-+	TST_EXP_FAIL2(splice(fd_in->fd, NULL, fd_out->fd, NULL, 1, 0),
-+		exp_errno, "splice() on %s -> %s",
-+		tst_fd_desc(fd_in), tst_fd_desc(fd_out));
-+}
-+
-+static void verify_splice(void)
-+{
-+	TST_FD_FOREACH(fd_in) {
-+		tst_res(TINFO, "%s -> ...", tst_fd_desc(&fd_in));
-+		TST_FD_FOREACH(fd_out)
-+			check_splice(&fd_in, &fd_out);
-+	}
-+}
-+
-+static struct tst_test test = {
-+	.test_all = verify_splice,
-+};
+I wanted to separate iomap changes with xfs changes so it's easier
+to go through, but I fine with merging these two.
+
 -- 
-2.41.0
+- Andrey
 
 
