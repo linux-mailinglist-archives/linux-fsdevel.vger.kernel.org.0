@@ -1,62 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-422-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-423-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C19B7CAE7A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Oct 2023 18:09:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CBC77CAE7B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Oct 2023 18:09:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B0861C20926
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Oct 2023 16:09:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A7E61C209DD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Oct 2023 16:09:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5505930CE4;
-	Mon, 16 Oct 2023 16:09:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8A3C30CF0;
+	Mon, 16 Oct 2023 16:09:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JBrADG+V"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZprY/Sav"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C51D2377B
-	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Oct 2023 16:09:11 +0000 (UTC)
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 537E783
-	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Oct 2023 09:09:09 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id ffacd0b85a97d-32d81864e3fso3873629f8f.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Oct 2023 09:09:09 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D12030CE7
+	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Oct 2023 16:09:13 +0000 (UTC)
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5394FA2
+	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Oct 2023 09:09:11 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id ffacd0b85a97d-32da7ac5c4fso1707169f8f.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Oct 2023 09:09:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697472548; x=1698077348; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xTlDGYWDvZpkZxswquAXq1cIaJ0qU0Vm4mzZMBRn1hc=;
-        b=JBrADG+VfTp0CaNMPif3u76A0EMj2d/lYXvy5VI1p4zxe+6btbymm2glCdNRMkzwlV
-         /0zk7aXTcvHlIpsChbAQg/bkpqrCgls3BD03Xkrzd+mwhh1wZYczTi9OIeXMsbOEJnu1
-         zTy6pFm2cNo95gb3B2uKixYZl7JD3l3eEWQTT1yFqQ1dPecFSwH8j+Wu5trKakTTQWo0
-         9CBKvCD8MOlG5ry0IuVTfMPI4+LYPwFkJT1zhXyIC8E6C6/DVwo1y7Y6fRKF/nLFLWC5
-         NnIzky8aruUyA0iR/op/2+1Ch9om/pTrES2LJ685KNy1z+RyC1px4YbPuIc/bob7SMKr
-         GJsg==
+        d=gmail.com; s=20230601; t=1697472550; x=1698077350; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RAyvQOyGcN/B0Rn4yR0F7IUyZRuhu1LBoDh3dxJXrDQ=;
+        b=ZprY/SavqM+Snf4h+cDPGn7xoAVrLmaMzK8FmOcEYibh1QRSAlNYWeQq16xTmBRqRh
+         J5DDf86lNmlda7HSkbNZBoksHcdCeo2R1t/Tx+VVlp91wLeZ8hHl8sakPs1ChSR9JTje
+         Z5g+R+0ajgnpSHeS7Bn90KzhprnO7clav3qZen9L6IK4CQhM5N+42oOEBW1tvBhupmrz
+         leLuElSb75yZRukFhu57N8M6XowBEq6/GgynFtB2zdi4pfMGAvPa72FEo4/3vMNsMFe/
+         rUG2SBTXkjHPpu93yi6nbQOMko53OvVvqsrlubRVOiqRBjOlVeDuWVo+dUMREHrxMLIG
+         WTdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697472548; x=1698077348;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xTlDGYWDvZpkZxswquAXq1cIaJ0qU0Vm4mzZMBRn1hc=;
-        b=XZJCQS5OSv70YKnzuCN7/yDMiW/oyM/l8YberHs2GTWBQam/+b5biAx/K+840ayaeX
-         HsMLCi2HIsQlPkT9oeQ370ZsLp316YETYWBPyNWZoFHlWRuThGX7QlAjkr30RM4Xi6vR
-         +vdZSLjL03V6wnyEczjBYi2R6fG5lsHiWKsdwtBqQsljns8T1nBdH6r0tfPFNJvk9LjJ
-         Pm4wSWnLjyfASQmFV6kSudI0KNROhL5NLk2MgGBmVeKKfevybC6K6ipuFxDFnTwWshNI
-         JaekjL/thcLCLx3cFVfA6oEjY4HrPTEA1O+2FecSAZEWp0uJFiXJsEEXjXcsIqN9VcVv
-         9i7A==
-X-Gm-Message-State: AOJu0YzHedfIw2tKrhjD0LJF0a4hnsQlU7M6xcp272HXkjMQPoP3Nngc
-	He5NdXmPi9uxoRG9jRk4PkE=
-X-Google-Smtp-Source: AGHT+IHApMwNUENesm4K4o+3OeC1yTt4ceAWpPmpqAGpja0E5nclWizznI77YMQK7XTF9pFnO6wF4A==
-X-Received: by 2002:a5d:5441:0:b0:32d:a853:af68 with SMTP id w1-20020a5d5441000000b0032da853af68mr4763439wrv.52.1697472547542;
-        Mon, 16 Oct 2023 09:09:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1697472550; x=1698077350;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RAyvQOyGcN/B0Rn4yR0F7IUyZRuhu1LBoDh3dxJXrDQ=;
+        b=gD5lPkqcqnbY7BsHoAiIKM8qfCUjrpKWf3J3TS1/NPVZ3KFn5oTDRjVkJDfIMKxe+D
+         +ysQrHcsjTKLTS+v4SFD+DnPG515mwdXs4nw3FBbjCQblPCVkc4eYFDVPj4RYIHj6FY7
+         RpIu+2jjhxoRaU8kS1XRU7GKCRsGmrxdwRoSUHEqCIs+e+8xT9gDar0JUMxP5xjJ+NJi
+         LL9kugNQRf7fvqoyk8HksJk99XqEDIdp46cstGWNlb133uHRLGA8WdH0Bjr70gFCcZdG
+         /Wi9c8MfwrNWYOhXhZ+5Y1aGo0xC9WEFWoASyJ0HdkVPB+7ju/3XZquIj8xxop4HV5HY
+         t1sA==
+X-Gm-Message-State: AOJu0YyMwSOIFcV+e4neNLs5+lNew8/1tgoun5lmUaizy5fKLfkNWQ6q
+	sEhshpQKokW1LEs1Zd0hNC0=
+X-Google-Smtp-Source: AGHT+IGUUu0PSchqx3OOENENsz10ti9lng9+tssrrpkiSTUVzR5lsH0/Cko9wo9XFIYFntaCWbkwGA==
+X-Received: by 2002:adf:f0c5:0:b0:32d:9f1a:9f60 with SMTP id x5-20020adff0c5000000b0032d9f1a9f60mr6820693wro.61.1697472549453;
+        Mon, 16 Oct 2023 09:09:09 -0700 (PDT)
 Received: from amir-ThinkPad-T480.lan ([5.29.249.86])
-        by smtp.gmail.com with ESMTPSA id p8-20020adfce08000000b003271be8440csm27379935wrn.101.2023.10.16.09.09.06
+        by smtp.gmail.com with ESMTPSA id p8-20020adfce08000000b003271be8440csm27379935wrn.101.2023.10.16.09.09.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Oct 2023 09:09:07 -0700 (PDT)
+        Mon, 16 Oct 2023 09:09:08 -0700 (PDT)
 From: Amir Goldstein <amir73il@gmail.com>
 To: Miklos Szeredi <miklos@szeredi.hu>
 Cc: Bernd Schubert <bernd.schubert@fastmail.fm>,
@@ -66,10 +67,12 @@ Cc: Bernd Schubert <bernd.schubert@fastmail.fm>,
 	Christian Brauner <brauner@kernel.org>,
 	fuse-devel@lists.sourceforge.net,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v14 00/12] FUSE passthrough for file io
-Date: Mon, 16 Oct 2023 19:08:50 +0300
-Message-Id: <20231016160902.2316986-1-amir73il@gmail.com>
+Subject: [PATCH v14 01/12] fs: prepare for stackable filesystems backing file helpers
+Date: Mon, 16 Oct 2023 19:08:51 +0300
+Message-Id: <20231016160902.2316986-2-amir73il@gmail.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20231016160902.2316986-1-amir73il@gmail.com>
+References: <20231016160902.2316986-1-amir73il@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -84,109 +87,243 @@ X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-Miklos,
+In preparation for factoring out some backing file io helpers from
+overlayfs, move backing_file_open() into a new file fs/backing-file.c
+and header.
 
-I've shared several POC branches since the posting of v13 back in May
-and played with several API choices. It is time to post v14.
+Add a MAINTAINERS entry for stackable filesystems and add a Kconfig
+FS_STACK which stackable filesystems need to select.
 
-The API we converged to is server managed shared backing files that are
-referenced by backing id plus per-file re-opened backing_file.
+For now, the backing_file struct, the backing_file alloc/free functions
+and the backing_file_real_path() accessor remain internal to file_table.c.
+We may change that in the future.
 
-This model looks coherent to me. I think that the example server [3]
-demonstrates that this API is simple enough to work with.
-
-There is quite a bit of re-factored code in this version - I've actually
-declared this common code as a new vfs subsystem [stackable filesystems]
-in MAINTAINERS per Christian's request.
-
-The re-factored common code is based on overlayfs-next and Christian's
-vfs.misc branch (for the backing_file changes).
-
-I am not posting performance numbers again. Alessio has already posted
-performance numbers back in v12 and nothing has changed in this regard.
-We are using a variant of v12 patches in production and the performance
-improvement is very noticable.
-
-Bernd and Nikolaus have helped with improving running fstests on fuse
-passthrough examples.
-
-I have ran the -g auto fstests with v14 patches with the example server.
-Compared to the baseline test results with passthrough_hp, the backing
-file passthrough passes several more test, mainly tests related to data
-coherecy, such as generic/451.
-
-The following tests are the only ones that pass on baseline passthtough_hp
-and fail with my backing file passthrough example:
-
-  generic/080 generic/120 generic/193 generic/215 generic/355
-
-Those tests are failing because of missing mtime/atime/ctime updates
-in some use cases and failure to strip suid/sgid bits in some cases.
-
-The model of who is responsible for updating timestamps and stripping
-suid/sgid bits is not always clear when it comes to backing file
-passthrough. I tried to invalidate attr caches similar to how fuse
-read/write behaves, but it does not cover all cases correctly.
-
-Let me know what you think of this version and if you think there is
-anything else that we need to take care of before upstreaming.
-
-Thanks,
-Amir.
-
-Changes from v13 [1]:
-- rebase on 6.6-rc6 (and overlayfs and vfs next branches)
-- server managed shared backing files without auto-close mode
-- open a backing_file per fuse_file with fuse file's path and flags
-- factor out common read/write/splice/mmap helpers from overlayfs
-- factor out ioctl helpers
-
-[1] https://lore.kernel.org/r/20230519125705.598234-1-amir73il@gmail.com/
-[2] https://github.com/amir73il/linux/commits/fuse-backing-fd-v14
-[3] https://github.com/amir73il/libfuse/commits/fuse-backing-fd
-
-Amir Goldstein (12):
-  fs: prepare for stackable filesystems backing file helpers
-  fs: factor out backing_file_{read,write}_iter() helpers
-  fs: factor out backing_file_splice_{read,write}() helpers
-  fs: factor out backing_file_mmap() helper
-  fuse: factor out helper for FUSE_DEV_IOC_CLONE
-  fuse: introduce FUSE_PASSTHROUGH capability
-  fuse: pass optional backing_id in struct fuse_open_out
-  fuse: implement ioctls to manage backing files
-  fuse: implement read/write passthrough
-  fuse: implement splice_{read/write} passthrough
-  fuse: implement passthrough for mmap
-  fuse: implement passthrough for readdir
-
- MAINTAINERS                  |   9 +
- fs/Kconfig                   |   4 +
- fs/Makefile                  |   1 +
- fs/backing-file.c            | 319 ++++++++++++++++++++++++++++
- fs/fuse/Kconfig              |  11 +
- fs/fuse/Makefile             |   1 +
- fs/fuse/cuse.c               |   3 +-
- fs/fuse/dev.c                |  98 ++++++---
- fs/fuse/dir.c                |   2 +-
- fs/fuse/file.c               |  69 ++++--
- fs/fuse/fuse_i.h             |  72 ++++++-
- fs/fuse/inode.c              |  25 +++
- fs/fuse/ioctl.c              |   3 +-
- fs/fuse/passthrough.c        | 392 +++++++++++++++++++++++++++++++++++
- fs/fuse/readdir.c            |  12 +-
- fs/open.c                    |  38 ----
- fs/overlayfs/Kconfig         |   1 +
- fs/overlayfs/file.c          | 246 ++++------------------
- fs/overlayfs/overlayfs.h     |   8 +-
- fs/overlayfs/super.c         |  11 +-
- include/linux/backing-file.h |  42 ++++
- include/linux/fs.h           |   3 -
- include/uapi/linux/fuse.h    |  23 +-
- 23 files changed, 1085 insertions(+), 308 deletions(-)
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+---
+ MAINTAINERS                  |  9 +++++++
+ fs/Kconfig                   |  4 +++
+ fs/Makefile                  |  1 +
+ fs/backing-file.c            | 48 ++++++++++++++++++++++++++++++++++++
+ fs/open.c                    | 38 ----------------------------
+ fs/overlayfs/Kconfig         |  1 +
+ fs/overlayfs/file.c          |  1 +
+ include/linux/backing-file.h | 17 +++++++++++++
+ include/linux/fs.h           |  3 ---
+ 9 files changed, 81 insertions(+), 41 deletions(-)
  create mode 100644 fs/backing-file.c
- create mode 100644 fs/fuse/passthrough.c
  create mode 100644 include/linux/backing-file.h
 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 7a7bd8bd80e9..2e3e9a6c1604 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8050,6 +8050,15 @@ F:	include/linux/fs_types.h
+ F:	include/uapi/linux/fs.h
+ F:	include/uapi/linux/openat2.h
+ 
++FILESYSTEMS [STACKABLE]
++M:	Miklos Szeredi <miklos@szeredi.hu>
++M:	Amir Goldstein <amir73il@gmail.com>
++L:	linux-fsdevel@vger.kernel.org
++L:	linux-unionfs@vger.kernel.org
++S:	Maintained
++F:	fs/backing-file.c
++F:	include/linux/backing-file.h
++
+ FINTEK F75375S HARDWARE MONITOR AND FAN CONTROLLER DRIVER
+ M:	Riku Voipio <riku.voipio@iki.fi>
+ L:	linux-hwmon@vger.kernel.org
+diff --git a/fs/Kconfig b/fs/Kconfig
+index aa7e03cc1941..2af673d7390e 100644
+--- a/fs/Kconfig
++++ b/fs/Kconfig
+@@ -18,6 +18,10 @@ config VALIDATE_FS_PARSER
+ config FS_IOMAP
+ 	bool
+ 
++# Stackable filesystems
++config FS_STACK
++	bool
++
+ config BUFFER_HEAD
+ 	bool
+ 
+diff --git a/fs/Makefile b/fs/Makefile
+index f9541f40be4e..6fffddc4afde 100644
+--- a/fs/Makefile
++++ b/fs/Makefile
+@@ -39,6 +39,7 @@ obj-$(CONFIG_COMPAT_BINFMT_ELF)	+= compat_binfmt_elf.o
+ obj-$(CONFIG_BINFMT_ELF_FDPIC)	+= binfmt_elf_fdpic.o
+ obj-$(CONFIG_BINFMT_FLAT)	+= binfmt_flat.o
+ 
++obj-$(CONFIG_FS_STACK)		+= backing-file.o
+ obj-$(CONFIG_FS_MBCACHE)	+= mbcache.o
+ obj-$(CONFIG_FS_POSIX_ACL)	+= posix_acl.o
+ obj-$(CONFIG_NFS_COMMON)	+= nfs_common/
+diff --git a/fs/backing-file.c b/fs/backing-file.c
+new file mode 100644
+index 000000000000..04b33036f709
+--- /dev/null
++++ b/fs/backing-file.c
+@@ -0,0 +1,48 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Common helpers for stackable filesystems and backing files.
++ *
++ * Copyright (C) 2023 CTERA Networks.
++ */
++
++#include <linux/fs.h>
++#include <linux/backing-file.h>
++
++#include "internal.h"
++
++/**
++ * backing_file_open - open a backing file for kernel internal use
++ * @user_path:	path that the user reuqested to open
++ * @flags:	open flags
++ * @real_path:	path of the backing file
++ * @cred:	credentials for open
++ *
++ * Open a backing file for a stackable filesystem (e.g., overlayfs).
++ * @user_path may be on the stackable filesystem and @real_path on the
++ * underlying filesystem.  In this case, we want to be able to return the
++ * @user_path of the stackable filesystem. This is done by embedding the
++ * returned file into a container structure that also stores the stacked
++ * file's path, which can be retrieved using backing_file_user_path().
++ */
++struct file *backing_file_open(const struct path *user_path, int flags,
++			       const struct path *real_path,
++			       const struct cred *cred)
++{
++	struct file *f;
++	int error;
++
++	f = alloc_empty_backing_file(flags, cred);
++	if (IS_ERR(f))
++		return f;
++
++	path_get(user_path);
++	*backing_file_user_path(f) = *user_path;
++	error = vfs_open(real_path, f);
++	if (error) {
++		fput(f);
++		f = ERR_PTR(error);
++	}
++
++	return f;
++}
++EXPORT_SYMBOL_GPL(backing_file_open);
+diff --git a/fs/open.c b/fs/open.c
+index 02dc608d40d8..b90142c51797 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -1180,44 +1180,6 @@ struct file *kernel_file_open(const struct path *path, int flags,
+ }
+ EXPORT_SYMBOL_GPL(kernel_file_open);
+ 
+-/**
+- * backing_file_open - open a backing file for kernel internal use
+- * @user_path:	path that the user reuqested to open
+- * @flags:	open flags
+- * @real_path:	path of the backing file
+- * @cred:	credentials for open
+- *
+- * Open a backing file for a stackable filesystem (e.g., overlayfs).
+- * @user_path may be on the stackable filesystem and @real_path on the
+- * underlying filesystem.  In this case, we want to be able to return the
+- * @user_path of the stackable filesystem. This is done by embedding the
+- * returned file into a container structure that also stores the stacked
+- * file's path, which can be retrieved using backing_file_user_path().
+- */
+-struct file *backing_file_open(const struct path *user_path, int flags,
+-			       const struct path *real_path,
+-			       const struct cred *cred)
+-{
+-	struct file *f;
+-	int error;
+-
+-	f = alloc_empty_backing_file(flags, cred);
+-	if (IS_ERR(f))
+-		return f;
+-
+-	path_get(user_path);
+-	*backing_file_user_path(f) = *user_path;
+-	f->f_path = *real_path;
+-	error = do_dentry_open(f, d_inode(real_path->dentry), NULL);
+-	if (error) {
+-		fput(f);
+-		f = ERR_PTR(error);
+-	}
+-
+-	return f;
+-}
+-EXPORT_SYMBOL_GPL(backing_file_open);
+-
+ #define WILL_CREATE(flags)	(flags & (O_CREAT | __O_TMPFILE))
+ #define O_PATH_FLAGS		(O_DIRECTORY | O_NOFOLLOW | O_PATH | O_CLOEXEC)
+ 
+diff --git a/fs/overlayfs/Kconfig b/fs/overlayfs/Kconfig
+index fec5020c3495..2ac67e04a6fb 100644
+--- a/fs/overlayfs/Kconfig
++++ b/fs/overlayfs/Kconfig
+@@ -1,6 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config OVERLAY_FS
+ 	tristate "Overlay filesystem support"
++	select FS_STACK
+ 	select EXPORTFS
+ 	help
+ 	  An overlay filesystem combines two filesystems - an 'upper' filesystem
+diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+index acdd79dd4bfa..19d4d4768fc7 100644
+--- a/fs/overlayfs/file.c
++++ b/fs/overlayfs/file.c
+@@ -13,6 +13,7 @@
+ #include <linux/security.h>
+ #include <linux/mm.h>
+ #include <linux/fs.h>
++#include <linux/backing-file.h>
+ #include "overlayfs.h"
+ 
+ #include "../internal.h"	/* for sb_init_dio_done_wq */
+diff --git a/include/linux/backing-file.h b/include/linux/backing-file.h
+new file mode 100644
+index 000000000000..55c9e804f780
+--- /dev/null
++++ b/include/linux/backing-file.h
+@@ -0,0 +1,17 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Common helpers for stackable filesystems and backing files.
++ *
++ * Copyright (C) 2023 CTERA Networks.
++ */
++
++#ifndef _LINUX_BACKING_FILE_H
++#define _LINUX_BACKING_FILE_H
++
++#include <linux/file.h>
++
++struct file *backing_file_open(const struct path *user_path, int flags,
++			       const struct path *real_path,
++			       const struct cred *cred);
++
++#endif /* _LINUX_BACKING_FILE_H */
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 59b2d2ee2465..9b262516ca93 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2456,9 +2456,6 @@ struct file *dentry_open(const struct path *path, int flags,
+ 			 const struct cred *creds);
+ struct file *dentry_create(const struct path *path, int flags, umode_t mode,
+ 			   const struct cred *cred);
+-struct file *backing_file_open(const struct path *user_path, int flags,
+-			       const struct path *real_path,
+-			       const struct cred *cred);
+ struct path *backing_file_user_path(struct file *f);
+ 
+ /*
 -- 
 2.34.1
 
