@@ -1,249 +1,307 @@
-Return-Path: <linux-fsdevel+bounces-383-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-384-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDD2D7CA3F0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Oct 2023 11:20:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 487377CA3FA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Oct 2023 11:23:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53497B20EB8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Oct 2023 09:20:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B30ACB20D9C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Oct 2023 09:23:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA8251C6A5;
-	Mon, 16 Oct 2023 09:20:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F40301C6AE;
+	Mon, 16 Oct 2023 09:23:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="GnNYTVAF";
-	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="KqZw3e6s"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Jy0d75Xx";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qLM9PAUH"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27BDC18047
-	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Oct 2023 09:20:18 +0000 (UTC)
-Received: from esa4.hgst.iphmx.com (esa4.hgst.iphmx.com [216.71.154.42])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0255AB;
-	Mon, 16 Oct 2023 02:20:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1697448016; x=1728984016;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=utuckHxdGobixYh9wdn+26cFfN/BWfxl7CHpScbq9mY=;
-  b=GnNYTVAF9ONmPGVqCBBMjSi+aG5ZzvnPPOxT2b64Hc3zfip8fqTzy3EU
-   OzTYmSRhKhur/TsqDTt7CKVTYESiKbTtFblH1crM69ztOt7PEYmeFSiFO
-   UKlJsXJk2YaDBSA92KNEGG2FVjxHphr+ZGoJrwFVZ+mMCqeUBxtvpS+TQ
-   xI/fnOWlSmqvOd4cSEchvCtELJ5AANzPkPYVq1jRhXIJMGam4hse6TODX
-   imNv0uB900UKkQR76O/SDrn1XiopxE5kRJLtnjKH+Vui3/bBf7iQMbtZa
-   3Cv/nb2yAS1hD+Od7aCia2VobPQ8gzH5e8Molk1DE2qORXNwOYjBUzFmA
-   w==;
-X-CSE-ConnectionGUID: GyNdhyv3QqWRINRD4TNx4g==
-X-CSE-MsgGUID: nJjVMA2nRcGX3FMfmM6gEg==
-X-IronPort-AV: E=Sophos;i="6.03,229,1694707200"; 
-   d="scan'208";a="244730745"
-Received: from mail-bn7nam10lp2101.outbound.protection.outlook.com (HELO NAM10-BN7-obe.outbound.protection.outlook.com) ([104.47.70.101])
-  by ob1.hgst.iphmx.com with ESMTP; 16 Oct 2023 17:20:14 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=WHuQrqvk3DGyRIAwzK5HayGbLPAOl+SX69zO1c6q17HhhKLj38m7lC0GBd3As2DXtlFDpPnTRNdPCXZrQuV5y+NE/m36HbshLu6WcyZ+WBIEj1ZwAQyomHd20XcJZA7OuK9z79NjuhCGak0bQH8vpeup29ecrt297eMLr65X/VgtkkwdLSDq7Uw+cChcY/dwG9Ec7SM4R7Z64kII0PNXKhA/EpkoaqR1fZ+bQRnkHNFt3e7T/S8PRD6QLB52x8M6Uu+KTN8vW9+Mr8ROtKmgz4ylQcvxyuidSksQhmIYf30WeWJdwsASR5ls41WJWbrJ2SpIYMWSQclDMA7J26cSLA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RG2Ws3NIjy+q/n10MKyj4XHnV92W6l0lMMnha+1+qDY=;
- b=Jmd+I4WaXrDGp/u4hCS3FBp5Jap9WLHYBOwcpYbfFFOc5BjB2tC9oLUngKH/SHEfeYyLBSIeL/mr/5lofi/9+AF3IhJlq1Z0kD5fbTHBkIeSXj+g8qQd7aEiDVSNt7I8a5NFiaMYpgAjLDDQ5x4xuhUtPKlqiyJIGiPM+XMjy/sleWMJ7DgZoCYCQgqJQzkBU6pXR6CKAytnIg0e54HWb9dWdBaNHi2wTnHyUM1t7XQGBrkZ6gxU7AUR0LuYJomfI7fI+cId4emRr2/K3jH6AP2xz80/JhASxlYBMhAgev23/SvR8LwCJM2pbAM6d+ophJim1MEfLoLEKUFoi4hbMg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RG2Ws3NIjy+q/n10MKyj4XHnV92W6l0lMMnha+1+qDY=;
- b=KqZw3e6s6BqyTTTUeHpgmknhK1U1Vz4GMooFagsm6Z/EfZlyl9wE7/T5fkrquW2xJAlc3L1wvylKVvNELRcbeReSZkKEPanwF24XpdPIbDdPUDQ5ZO24CNFFeqdoUXZTEprEcchbVFcGmnOXtxmjr4LiWJSrlPV6WSWOm+YxcXs=
-Received: from MN2PR04MB6272.namprd04.prod.outlook.com (2603:10b6:208:e0::27)
- by PH0PR04MB8355.namprd04.prod.outlook.com (2603:10b6:510:da::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6907.19; Mon, 16 Oct
- 2023 09:20:11 +0000
-Received: from MN2PR04MB6272.namprd04.prod.outlook.com
- ([fe80::6fb5:ecb:1ea0:3b1d]) by MN2PR04MB6272.namprd04.prod.outlook.com
- ([fe80::6fb5:ecb:1ea0:3b1d%6]) with mapi id 15.20.6907.018; Mon, 16 Oct 2023
- 09:20:10 +0000
-From: Niklas Cassel <Niklas.Cassel@wdc.com>
-To: Bart Van Assche <bvanassche@acm.org>
-CC: Damien Le Moal <dlemoal@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "Martin K .
- Petersen" <martin.petersen@oracle.com>, Christoph Hellwig <hch@lst.de>, Avri
- Altman <Avri.Altman@wdc.com>, Bean Huo <huobean@gmail.com>, Daejun Park
-	<daejun7.park@samsung.com>, Hannes Reinecke <hare@suse.de>
-Subject: Re: [PATCH v2 03/15] block: Support data lifetime in the I/O priority
- bitfield
-Thread-Topic: [PATCH v2 03/15] block: Support data lifetime in the I/O
- priority bitfield
-Thread-Index:
- AQHZ98QEzxK1K1BQ10ix4dd17lPdvbA8bDoAgACkDQCACAl4AIAARiqAgAEcigCAAHeSgIAAjSEAgADFeYCAA+3CAA==
-Date: Mon, 16 Oct 2023 09:20:10 +0000
-Message-ID: <ZS0ASN6OY0KeOx+C@x1-carbon>
-References: <20231005194129.1882245-1-bvanassche@acm.org>
- <20231005194129.1882245-4-bvanassche@acm.org>
- <8aec03bb-4cef-9423-0ce4-c10d060afce4@kernel.org>
- <46c17c1b-29be-41a3-b799-79163851f972@acm.org>
- <b0b015bf-0a27-4e89-950a-597b9fed20fb@acm.org>
- <447f3095-66cb-417b-b48c-90005d37b5d3@kernel.org>
- <4fee2c56-7631-45d2-b709-2dadea057f52@acm.org>
- <2fa9ea51-c343-4cc2-b755-a5de024bb32f@kernel.org>
- <ZSkO8J9pD+IVaGPf@x1-carbon> <2f092612-eed0-4c4b-940f-48793b97b068@acm.org>
-In-Reply-To: <2f092612-eed0-4c4b-940f-48793b97b068@acm.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=wdc.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MN2PR04MB6272:EE_|PH0PR04MB8355:EE_
-x-ms-office365-filtering-correlation-id: 5d8d1a34-0f7f-40f8-cb9e-08dbce291874
-wdcipoutbound: EOP-TRUE
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info:
- XKBAlEFzXlrT1ArQL+2xMem+LsAqRlYuEV16GAfOiBXZ9fGfWtsmERBGSAwzk3bmcCyHZftONRtD34pqLBQHQR9/3oIEIymZpB5LIJGW8ZjPZovW+EIdXTeVs5kS/chBn3gjylW+thl1vWXVQ/WpQ8/S/ueftqT0XEWfEmDNgYSKkJRGtUMxhCQAhsex/saf4zFwDHQQOaaI7geqMCClN+gMx81atrYs0BCc3COYy1cCaa1U5YJyftWQDMxWzxjZMCwMOyQX6CYCzgnx/HF5DWpHxYCM+qdgSsAQ/ZMpgI95NvhP2ZOdPvB6XRl/HiqfmBJ7gXCfrLE1Zl/sVlSZ4E86KIPppBFELjmrHkZxwNbal6bIZ3WdAn8gbevFTc2REUOfrwncsNmg3FwdfrLWQ0HPhg7iTP0yk1R+tW1Ir59hIhVmkA5N3afnuBja3J9dgnun6nvEbfw33YPs8XGvmIga1od/EXEWRSyU3ywLCdDKjNoipk2+IXVxtMc1tYdP6MStYn61/KOUnR8ayxb8ZtVjPfOxcaU89WZkFT+lbTIpY2L+p5ttNn4V6lT4gJHYuLGTUJsgHuu5u8rgWMmuJz4KI7fzKBPH07GbLtPukfhd5OmSGTWu+dAzj7V9Ott2jVd/eO6yX9hAeClSKrqivw==
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR04MB6272.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7916004)(39860400002)(346002)(396003)(136003)(366004)(376002)(230922051799003)(186009)(1800799009)(64100799003)(451199024)(478600001)(6486002)(71200400001)(76116006)(91956017)(66946007)(66556008)(6916009)(54906003)(64756008)(66446008)(66476007)(26005)(53546011)(6506007)(6512007)(9686003)(316002)(33716001)(4326008)(8676002)(8936002)(7416002)(2906002)(5660300002)(41300700001)(38070700005)(122000001)(86362001)(83380400001)(38100700002)(82960400001)(67856001);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?QKMJnHl7FXUQflqjt0v7BncnXUCs24PogFsjY7I0mSEwYxaFJ8w7SNyKN/uo?=
- =?us-ascii?Q?9uoTZiJthZcpepdNxbNIyfEcCE4ncOjkwRDh1aWjvgzMoiVL6mHidoOqOJpy?=
- =?us-ascii?Q?NfDbHyz8e6a8KYp+00QDiGg6lsuE7LqZhYkNZFctgrTQNUsSXjQfiJVKz5ys?=
- =?us-ascii?Q?IL/dlf1oc0iPplnq/PKarjxIbjGo+vA5s43RTVrZnfq9kDHpPwDXVOkbKi5G?=
- =?us-ascii?Q?CxwZjACU6/lSuw09Tr2DcBpuD7koKa1xAoWwbHW5jSFJ9i3jD+1UKbPCRjq9?=
- =?us-ascii?Q?d+SJD3+HAePTwi24nQicA3vqPgA+T+Tiv+K6ZJKtnUbcArImhVQtSAjSNR5p?=
- =?us-ascii?Q?+aCe4gzYBNayFwcJ3RiVmRNSCe9+JAGAu8IvYjxWoNP26TyNz+kKhrt0wpKJ?=
- =?us-ascii?Q?EKxpznnif1kWH4yNdUygHgdaddKgw7FJcRTz7F2V+ZcI7dW+FjRbznj3+v6I?=
- =?us-ascii?Q?uTcxyv/oG4l6tNex6rheU+da6rvlBVpPEWABD+JXiqa/u52ZdEm+SN5WKL57?=
- =?us-ascii?Q?hMNLKo2psbfwS5mqsn7+eHr6dCxP4xpuCz/K8aBfN6roGTAZzZIoAQn1Vs7A?=
- =?us-ascii?Q?tYAhwDutNV62uiosBSSDWk5Y1tW8WSLuYdglkDOwg7F4Zm5r1T5S5QW5kGYC?=
- =?us-ascii?Q?7NkOLeaOvM2TXZ/s86thVSR02/734fU41qrTrbt5K+FeYDRqiBETQRxwN4qL?=
- =?us-ascii?Q?kx86eQFVcq/Ek22DIOk39JlouWqATWY7pufIs0E6rJ+rGfMfCBAKgMtzXnLP?=
- =?us-ascii?Q?Ubti46/rMHg5xG0Yu5tR7euLplbxLQY7w2qpjiIP5EoNCgs50GmAaXINTZK+?=
- =?us-ascii?Q?H6+tsmLJUhqgCfA4p4mb7yGfmnj3FgOR4NNIzJQRjU5G4k0VQy4swdY/tR4y?=
- =?us-ascii?Q?SNvq0ko6kWP/KlXAmiiQt7fDzE7avS9GUzZvAttc7W2UQvmHamOxgbPer+Q5?=
- =?us-ascii?Q?gPJ/fGzqSH4a63liiVpLplTiJpGUthd8MMR5IttRgale4GD+KrynkMBuyCTd?=
- =?us-ascii?Q?gtE9yAsIVYrvmJgyQcHfobd4VC31nDgFCkZjBvqLhYQss7XLmjoPvNWIIW7T?=
- =?us-ascii?Q?4mjAS+MsN9RESLOJSFC1w3GhdauzorNsJhyvYXtCfGTeQBfZFWsq1Ktj4u2x?=
- =?us-ascii?Q?ZfbGZ4zkEyG070hxNdXN8UXK6m22bGFIEKPbU2pqlPZarruwsx9roOA4jz6w?=
- =?us-ascii?Q?NAyrF9/+El7BZ38hcnWVeTgk6udt97TOvLeO25hGBXMLK4sXY16DGuXlA8za?=
- =?us-ascii?Q?iUg4DUbbeB5QS73PICazfdR9szExLflM/s1XhDQU158DKxHhEbord5X8IHvm?=
- =?us-ascii?Q?OS3U5/rjZYAcbnPqX2fMRfzNJJiagGN8KrpB4wbvglJM9xIyYnuMVGWbDJpr?=
- =?us-ascii?Q?gvTrzYwuclO/AYxTMsdfuvweerZf/hBhUlKdygUI5zcfwB4H22mGpxPicPiV?=
- =?us-ascii?Q?kCNmvnDKcwv/sCze/l7QhtNEmoR6t0ODwQDj3FvxGHZWl9W5Z1QDqqnO+URI?=
- =?us-ascii?Q?5mf/dUuFNAr9gwka3A9JHDorDWPPtGYvWZSTnglyD0ctEHRP4RclqAIrh8Xa?=
- =?us-ascii?Q?NwSfP7u9tc+Oe0BvQe5tZeMN/EsSPa7aTg6aZ23ypJ/9JX1SjOipoVFa/M99?=
- =?us-ascii?Q?Lw=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <FE52232292CDCA4694EB62FA0FED060C@namprd04.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E9151C689
+	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Oct 2023 09:23:05 +0000 (UTC)
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 270B0B4;
+	Mon, 16 Oct 2023 02:23:01 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id BFBA01F8C1;
+	Mon, 16 Oct 2023 09:22:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1697448179; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ncEmaJpGCEkUvSIDaJyvviOSOQUcVNocJwvIFZralxs=;
+	b=Jy0d75XxHX0wz6UMRr6WwZ3ATAiOBsPEcBvB6Hg2vJMoQl40TjoDDwvutlrOhW6Vc9NP0z
+	1FGS9YVdZAV2e6YJaNG0Vif1ii7Hj5jpUFcxBPwwP236fNuXPZN26fYxagu3wng8QKv40u
+	YpnAwjqaCb0SYUWYcRxg0cwKKrrDMQY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1697448179;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ncEmaJpGCEkUvSIDaJyvviOSOQUcVNocJwvIFZralxs=;
+	b=qLM9PAUHUeiMgdewTO8M250jYv8exh9MKMhgrvQL0Jl3j4Vaf5TuaeuEau7OGrB+M9T3b1
+	v/1MGu7eCCt1OhCQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+	(No client certificate requested)
+	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id AFC9C138EF;
+	Mon, 16 Oct 2023 09:22:59 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+	by imap2.suse-dmz.suse.de with ESMTPSA
+	id APrkKvMALWUFMAAAMHmgww
+	(envelope-from <jack@suse.cz>); Mon, 16 Oct 2023 09:22:59 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 34460A0657; Mon, 16 Oct 2023 11:22:59 +0200 (CEST)
+Date: Mon, 16 Oct 2023 11:22:59 +0200
+From: Jan Kara <jack@suse.cz>
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Jan Kara <jack@suse.cz>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Mirsad Todorovac <mirsad.todorovac@alu.unizg.hr>,
+	Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] lib/find: Make functions safe on changing bitmaps
+Message-ID: <20231016092259.h4ny5slr4v5hcmpy@quack3>
+References: <20231011144320.29201-1-jack@suse.cz>
+ <20231011150252.32737-1-jack@suse.cz>
+ <ZSbo1aAjteepdmcz@yury-ThinkPad>
+ <20231012122110.zii5pg3ohpragpi7@quack3>
+ <ZSndoNcA7YWHXeUi@yury-ThinkPad>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	=?us-ascii?Q?wEQUFfzUeU4DUK7YYvHSuL18jmKY2Egq+K8yl8huLM3oSesbSgSoIaQxVL3M?=
- =?us-ascii?Q?QHC+0HS2UWqKxPxleajKt5ofoOfTpcjialuFJB7LopoZqtNMK357BaQi9K9q?=
- =?us-ascii?Q?HkEkb/HCRRI/NWLNTM0clsX1amIMIR+rU6grnPoGuGi6c1XP75uXYsapW/rU?=
- =?us-ascii?Q?P91PNBwUMONxbYedDLlk3DCHDdmHR9knGuKAbGPmUgUT/H+S/Xgh05l3yC+t?=
- =?us-ascii?Q?xNEm1tlFhYWJ3T/7gSzcS6yNV02KnOFMEz5kZUA0zMtmBqQj5CzrK35i5WqI?=
- =?us-ascii?Q?amL1hAa/u5qyFJ0xb0gnK9nsuwgHGDs02zLjQB/k4Sb5hF0K0q4F871Y1kST?=
- =?us-ascii?Q?Xj/YCS1XdLwEx69fFcakrAl638J+aSttnWsWahDETLngTDBnoGMK0v3nHFXZ?=
- =?us-ascii?Q?ylSuxJVIdt/oFp+lQabqPYebIuO4u+zM/UM/88ivOEpjYhIW/04ercRWIP7G?=
- =?us-ascii?Q?wC8gSXtBZpF8neS0P8mwzSAnI+JLCk6f4/FZcdlZ2xljUM8LNB5jsVPNJnUQ?=
- =?us-ascii?Q?xi8CkLkNwSnx5+BnSBjCRxsyOLtneA303cnf3HoURinaK6laLkynNZOdiB1o?=
- =?us-ascii?Q?+MkpDHtj6hw1EhA87D++NQDo59TT13S/qAVIzcMIspOFmcmuavLEXcFmILH3?=
- =?us-ascii?Q?vSgWOtjhaxl02TTqVpcry7youbVe8pJmn3gkFgoQ19Qm3hq2r5gG7guVKUET?=
- =?us-ascii?Q?0u8QnGSwUiLLlUoa6PGo+z5r0dzLxIPcd9y+eD9LHThHfM3rJead1SAKTcVI?=
- =?us-ascii?Q?RTndzj/LFffuaDS3Y6JOk5sjqAeOSuYISrqIHup+4VesFQYmibeiLoOWwSeG?=
- =?us-ascii?Q?EfAoMYKbYhv5qegFxYFXeV319zVuN7+zQqW4n85FYC28YWpDz3QRzy8OVvDJ?=
- =?us-ascii?Q?Hc90cndMX5zB9h1LvKLY9+O/YqC8WUnIOYpei5qFvjjZV1WVCtTG65GX4y5k?=
- =?us-ascii?Q?0JUfGAjRoYV4saaw9OdgdyfyjgZSu0Wl4Hg1As4PiL8=3D?=
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR04MB6272.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5d8d1a34-0f7f-40f8-cb9e-08dbce291874
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Oct 2023 09:20:10.2204
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 1J7RY0bfVkq8Psxyq1CoVWHnrdRV4Muv9873nvAQafxKvmXi2neW4UXf/xsZyFybJQxf8gzNlDgqZyYSXt1lWw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR04MB8355
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZSndoNcA7YWHXeUi@yury-ThinkPad>
+Authentication-Results: smtp-out2.suse.de;
+	none
+X-Spam-Level: 
+X-Spam-Score: 0.90
+X-Spamd-Result: default: False [0.90 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 BAYES_HAM(-3.00)[100.00%];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	 TAGGED_RCPT(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 NEURAL_HAM_SHORT(-1.00)[-1.000];
+	 NEURAL_SPAM_LONG(3.00)[1.000];
+	 RCPT_COUNT_SEVEN(0.00)[8];
+	 FREEMAIL_TO(0.00)[gmail.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 RCVD_COUNT_TWO(0.00)[2];
+	 RCVD_TLS_ALL(0.00)[];
+	 SUSPICIOUS_RECIPS(1.50)[]
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_PASS,
-	SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+	DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-On Fri, Oct 13, 2023 at 02:20:23PM -0700, Bart Van Assche wrote:
-> On 10/13/23 02:33, Niklas Cassel wrote:
-> > In commit c75e707fe1aa ("block: remove the per-bio/request write hint")
-> > this line from fs/direct-io.c was removed:
-> > -       bio->bi_write_hint =3D dio->iocb->ki_hint;
-> >=20
-> > I'm not sure why this series does not readd a similar line to set the
-> > lifetime (using bio_set_data_lifetime()) also for fs/direct-io.c.
->=20
-> It depends on how we want the user to specify the data lifetime for
-> direct I/O. This assignment is not modified by this patch series and
-> copies the data lifetime information from the ioprio bitfield from user
-> space into the bio:
->=20
-> 		bio->bi_ioprio =3D dio->iocb->ki_ioprio;
+On Fri 13-10-23 17:15:28, Yury Norov wrote:
+> On Thu, Oct 12, 2023 at 02:21:10PM +0200, Jan Kara wrote:
+> > On Wed 11-10-23 11:26:29, Yury Norov wrote:
+> > > Long story short: KCSAN found some potential issues related to how
+> > > people use bitmap API. And instead of working through that issues,
+> > > the following code shuts down KCSAN by applying READ_ONCE() here
+> > > and there.
+> > 
+> > I'm sorry but this is not what the patch does. I'm not sure how to get the
+> > message across so maybe let me start from a different angle:
+> > 
+> > Bitmaps are perfectly fine to be used without any external locking if
+> > only atomic bit ops (set_bit, clear_bit, test_and_{set/clear}_bit) are
+> > used. This is a significant performance gain compared to using a spinlock
+> > or other locking and people do this for a long time. I hope we agree on
+> > that.
+> > 
+> > Now it is also common that you need to find a set / clear bit in a bitmap.
+> > To maintain lockless protocol and deal with races people employ schemes
+> > like (the dumbest form):
+> > 
+> > 	do {
+> > 		bit = find_first_bit(bitmap, n);
+> > 		if (bit >= n)
+> > 			abort...
+> > 	} while (!test_and_clear_bit(bit, bitmap));
+> > 
+> > So the code loops until it finds a set bit that is successfully cleared by
+> > it. This is perfectly fine and safe lockless code and such use should be
+> > supported. Agreed?
+> 
+> Great example. When you're running non-atomic functions concurrently,
+> the result may easily become incorrect, and this is what you're
+> demonstrating here.
+> 
+> Regarding find_first_bit() it means that:
+>  - it may erroneously return unset bit;
+>  - it may erroneously return non-first set bit;
+>  - it may erroneously return no bits for non-empty bitmap.
 
-Before per-bio/request write hints were removed, things looked like this:
+Correct.
 
-io_uring.c:
-req->rw.kiocb.ki_hint =3D ki_hint_validate(file_write_hint(req->file));
+> Effectively it means that find_first bit may just return a random number.
 
-fs/fcntl.c:
-static inline enum rw_hint file_write_hint(struct file *file)
-{
-	if (file->f_write_hint !=3D WRITE_LIFE_NOT_SET)
-		return file->f_write_hint;
+I prefer to think that it can return a result that is no longer valid by
+the time we further use it :)
 
-	return file_inode(file)->i_write_hint;
-}
+> Let's take another example:
+> 
+> 	do {
+> 		bit = get_random_number();
+> 		if (bit >= n)
+> 			abort...
+> 	} while (!test_and_clear_bit(bit, bitmap));
+> 
+> When running concurrently, the difference between this and your code
+> is only in probability of getting set bit somewhere from around the
+> beginning of bitmap.
 
-direct-io.c:
-bio->bi_write_hint =3D dio->iocb->ki_hint;
+Well, as you say the difference is in the probability - i.e., average
+number of loops taken is higher with using truly random number and that is
+the whole point. We bother with complexity of lockless access exactly
+because of performance :). As long as find_first_bit() returns set bit in
+case there's no collision with other bitmap modification, we are fine with
+its results (usually we don't expect the collision to happen, often the
+bitmap users also employ schemes to spread different processes modifying
+the bitmap to different parts of the bitmap to further reduce likelyhood of
+a collision).
 
-buffered-io.c:
-bio->bi_write_hint =3D inode->i_write_hint;
+> The key point is that find_bit() may return undef even if READ_ONCE() is
+> used. If bitmap gets changed anytime in the process, the result becomes
+> invalid. It may happen even after returning from find_first_bit().
+> 
+> And if my understanding correct, your code is designed in the
+> assumption that find_first_bit() may return garbage, so handles it
+> correctly.
 
+Yes, that is true.
 
+> > *Except* that the above actually is not safe due to find_first_bit()
+> > implementation and KCSAN warns about that. The problem is that:
+> > 
+> > Assume *addr == 1
+> > CPU1			CPU2
+> > find_first_bit(addr, 64)
+> >   val = *addr;
+> >   if (val) -> true
+> > 			clear_bit(0, addr)
+> >     val = *addr -> compiler decided to refetch addr contents for whatever
+> > 		   reason in the generated assembly
+> >     __ffs(val) -> now executed for value 0 which has undefined results.
+> 
+> Yes, __ffs(0) is undef. But the whole function is undef when accessing
+> bitmap concurrently.
 
-After this series, things instead look like this:
+So here I think we get at the core of our misunderstanding :): Yes,
+find_first_bit() may return a bit number that is not set any longer. But it
+is guaranteed to return some number between 0 and n where n is the bitmap
+size. What __ffs() does when passed 0 value is unclear and likely will be
+architecture dependent. If we are guaranteed it returns some number between
+0 and 8*sizeof(unsigned long), then we are fine. But I'm concerned it may
+throw exception (similarly to division by 0) or return number greater than
+8*sizeof(unsigned long) for some architecture and that would be a problem.
+E.g. reading the x86 bsf instruction documentation, the destination
+register is untouched if there is no set bit so the result can indeed be >
+8*sizeof(unsigned long). So __ffs(0) can result in returning a number
+beyond the end of the bitmap (e.g. 0xffffffff). And that is IMO
+unacceptable output for find_first_bit().
 
-direct-io.c:
-bio->bi_ioprio =3D dio->iocb->ki_ioprio;
+> > And the READ_ONCE() this patch adds prevents the compiler from adding the
+> > refetching of addr into the assembly.
+> 
+> That's true. But it doesn't improve on the situation. It was an undef
+> before, and it's undef after, but a 2% slower undef.
+> 
+> Now on that KCSAN warning. If I understand things correctly, for the
+> example above, KCSAN warning is false-positive, because you're
+> intentionally running lockless.
 
-buffered-io.c:
-bio_set_data_lifetime(bio, inode->i_write_hint);
+As I wrote above, there are different levels of "undefinedness" and that
+matters in this case. KCSAN is complaining that the value passed to __ffs()
+function may be different one from the one tested in the condition before
+it. Depending on exact __ffs() behavior this may be fine or it may be not.
 
+> But for some other people it may be a true error, and now they'll have
+> no chance to catch it if KCSAN is forced to ignore find_bit() entirely.
 
-So when you say:
-"It depends on how we want the user to specify the data lifetime for
-direct I/O.", do you mean that buffered I/O should use fcntl() to specify
-data lifetime, but direct I/O should used Linux IO priority API to specify
-the same?
+I agree some people may accidentally use bitmap function unlocked without
+properly handling the races. However in this case KCSAN does not warn about
+unsafe use of the result from find_bit() (which is what should happen for
+those unsafe uses). It complains about unsafe internal implementation of
+find_bit() when it is used without external synchronization. These two are
+different things so I don't think this is a good argument for leaving the
+race in find_bit().
 
-Because, to me that seems to be how the series is currently working.
-(I am sorry if I am missing something.)
+Furthermore I'd note that READ_ONCE() does not make KCSAN ignore find_bit()
+completely. READ_ONCE() forces the compiler to use the same value for the
+test and __ffs() argument (by telling it it cannot assume the standard C
+memory model using "volatile" keyword for this fetch). That's all.  That
+makes it impossible for KCSAN to inject a modification of the bitmap &
+refetch from memory inbetween the two uses of the local variable and thus
+it doesn't generate the warning anymore.
 
+> We've got the whole class of lockless algorithms that allow safe concurrent
+> access to the memory. And now that there's a tool that searches for them
+> (concurrent accesses), we need to have an option to somehow teach it
+> to suppress irrelevant warnings. Maybe something like this?
+> 
+>         lockless_algorithm_begin(bitmap, bitmap_size(nbits));
+> 	do {
+> 		bit = find_first_bit(bitmap, nbits);
+> 		if (bit >= nbits)
+> 			break;
+> 	} while (!test_and_clear_bit(bit, bitmap));
+>         lockless_algorithm_end(bitmap, bitmap_size(nbits));
+> 
+> And, of course, as I suggested a couple iterations ago, you can invent
+> a thread-safe version of find_bit(), that would be perfectly correct
+> for lockless use:
+> 
+>  unsigned long _find_and_clear_bit(volatile unsigned long *addr, unsigned long size)
+>  {
+>         unsigned long bit = 0;
+>  
+>         while (!test_and_clear_bit(bit, bitmap) {
+>                 bit = FIND_FIRST_BIT(addr[idx], /* nop */, size);
+>                 if (bit >= size)
+>                         return size;
+>         }
+> 
+>         return bit;
+>  }
+> 
+> Didn't test that, but I hope 'volatile' specifier should be enough
+> for compiler to realize that it shouldn't optimize memory access, and
+> for KCSAN that everything's OK here. 
 
-Kind regards,
-Niklas=
+Based on my research regarding __ffs() we indeed do need find_*_bit()
+functions that are guaranteed to return number in 0-n range even in
+presence of concurrent bitmap modifications. Do I get it right you'd
+rather prefer cloning all the find_*_bit() implementations to create
+such variants? IMO that's worse both in terms of maintainability (more
+code) and usability (users have to be aware special functions are needed
+for lockless code) so the 2% of performance overhead until gcc is fixed
+isn't IMO worth it but you are the maintainer...
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
