@@ -1,572 +1,249 @@
-Return-Path: <linux-fsdevel+bounces-382-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-383-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D81597CA3CE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Oct 2023 11:15:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DDD2D7CA3F0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Oct 2023 11:20:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D8EDB20E4C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Oct 2023 09:15:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53497B20EB8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Oct 2023 09:20:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEB7E1C2AF;
-	Mon, 16 Oct 2023 09:15:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA8251C6A5;
+	Mon, 16 Oct 2023 09:20:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="asGkYUdJ"
+	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="GnNYTVAF";
+	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="KqZw3e6s"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E621775F
-	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Oct 2023 09:15:05 +0000 (UTC)
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A370F9;
-	Mon, 16 Oct 2023 02:15:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=CZhZvdQQ3EZe8vFqbFcCuiiLm8jOgTSVaqi8kmgJ1lQ=; b=asGkYUdJYdm7nroEKWRh1cJXBZ
-	Tl0G9hP5s5dtug9Q9mQH8n+Jsq9EbVoTT41bya/J5N0yMRtkO2p1aRENgtrrG8YbiTYhUMJPWZ1gd
-	w/f9YPnhoV1p5olGsrTY3TmTwTBHea4IaWzIyCCuHbXAp8+qMSWk38IIdfAdDcbg4nkXR+2uk7yEN
-	Ncspf4DL12gBSfLa3WsNYehZ8w8IgK7PawhHsGH/fudm0cKvAE5qTdlJkhMAw9zhVEEBc+3TFh/D4
-	4LVd4sFRXG7P+uctnpuHdxLYRfOlZPHtM43qDPkmf0uKR+xKoxkzOaf0xt1cJZIIE4YMqRJ8eevw+
-	YHMxiL4w==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1qsJgi-008xWb-0s;
-	Mon, 16 Oct 2023 09:15:00 +0000
-Date: Mon, 16 Oct 2023 02:15:00 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Andrey Albershteyn <aalbersh@redhat.com>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	fsverity@lists.linux.dev, djwong@kernel.org, ebiggers@kernel.org,
-	david@fromorbit.com, dchinner@redhat.com
-Subject: Re: [PATCH v3 11/28] iomap: pass readpage operation to read path
-Message-ID: <ZSz/FLK+tNIQzOA/@infradead.org>
-References: <20231006184922.252188-1-aalbersh@redhat.com>
- <20231006184922.252188-12-aalbersh@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27BDC18047
+	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Oct 2023 09:20:18 +0000 (UTC)
+Received: from esa4.hgst.iphmx.com (esa4.hgst.iphmx.com [216.71.154.42])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0255AB;
+	Mon, 16 Oct 2023 02:20:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1697448016; x=1728984016;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=utuckHxdGobixYh9wdn+26cFfN/BWfxl7CHpScbq9mY=;
+  b=GnNYTVAF9ONmPGVqCBBMjSi+aG5ZzvnPPOxT2b64Hc3zfip8fqTzy3EU
+   OzTYmSRhKhur/TsqDTt7CKVTYESiKbTtFblH1crM69ztOt7PEYmeFSiFO
+   UKlJsXJk2YaDBSA92KNEGG2FVjxHphr+ZGoJrwFVZ+mMCqeUBxtvpS+TQ
+   xI/fnOWlSmqvOd4cSEchvCtELJ5AANzPkPYVq1jRhXIJMGam4hse6TODX
+   imNv0uB900UKkQR76O/SDrn1XiopxE5kRJLtnjKH+Vui3/bBf7iQMbtZa
+   3Cv/nb2yAS1hD+Od7aCia2VobPQ8gzH5e8Molk1DE2qORXNwOYjBUzFmA
+   w==;
+X-CSE-ConnectionGUID: GyNdhyv3QqWRINRD4TNx4g==
+X-CSE-MsgGUID: nJjVMA2nRcGX3FMfmM6gEg==
+X-IronPort-AV: E=Sophos;i="6.03,229,1694707200"; 
+   d="scan'208";a="244730745"
+Received: from mail-bn7nam10lp2101.outbound.protection.outlook.com (HELO NAM10-BN7-obe.outbound.protection.outlook.com) ([104.47.70.101])
+  by ob1.hgst.iphmx.com with ESMTP; 16 Oct 2023 17:20:14 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=WHuQrqvk3DGyRIAwzK5HayGbLPAOl+SX69zO1c6q17HhhKLj38m7lC0GBd3As2DXtlFDpPnTRNdPCXZrQuV5y+NE/m36HbshLu6WcyZ+WBIEj1ZwAQyomHd20XcJZA7OuK9z79NjuhCGak0bQH8vpeup29ecrt297eMLr65X/VgtkkwdLSDq7Uw+cChcY/dwG9Ec7SM4R7Z64kII0PNXKhA/EpkoaqR1fZ+bQRnkHNFt3e7T/S8PRD6QLB52x8M6Uu+KTN8vW9+Mr8ROtKmgz4ylQcvxyuidSksQhmIYf30WeWJdwsASR5ls41WJWbrJ2SpIYMWSQclDMA7J26cSLA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RG2Ws3NIjy+q/n10MKyj4XHnV92W6l0lMMnha+1+qDY=;
+ b=Jmd+I4WaXrDGp/u4hCS3FBp5Jap9WLHYBOwcpYbfFFOc5BjB2tC9oLUngKH/SHEfeYyLBSIeL/mr/5lofi/9+AF3IhJlq1Z0kD5fbTHBkIeSXj+g8qQd7aEiDVSNt7I8a5NFiaMYpgAjLDDQ5x4xuhUtPKlqiyJIGiPM+XMjy/sleWMJ7DgZoCYCQgqJQzkBU6pXR6CKAytnIg0e54HWb9dWdBaNHi2wTnHyUM1t7XQGBrkZ6gxU7AUR0LuYJomfI7fI+cId4emRr2/K3jH6AP2xz80/JhASxlYBMhAgev23/SvR8LwCJM2pbAM6d+ophJim1MEfLoLEKUFoi4hbMg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RG2Ws3NIjy+q/n10MKyj4XHnV92W6l0lMMnha+1+qDY=;
+ b=KqZw3e6s6BqyTTTUeHpgmknhK1U1Vz4GMooFagsm6Z/EfZlyl9wE7/T5fkrquW2xJAlc3L1wvylKVvNELRcbeReSZkKEPanwF24XpdPIbDdPUDQ5ZO24CNFFeqdoUXZTEprEcchbVFcGmnOXtxmjr4LiWJSrlPV6WSWOm+YxcXs=
+Received: from MN2PR04MB6272.namprd04.prod.outlook.com (2603:10b6:208:e0::27)
+ by PH0PR04MB8355.namprd04.prod.outlook.com (2603:10b6:510:da::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6907.19; Mon, 16 Oct
+ 2023 09:20:11 +0000
+Received: from MN2PR04MB6272.namprd04.prod.outlook.com
+ ([fe80::6fb5:ecb:1ea0:3b1d]) by MN2PR04MB6272.namprd04.prod.outlook.com
+ ([fe80::6fb5:ecb:1ea0:3b1d%6]) with mapi id 15.20.6907.018; Mon, 16 Oct 2023
+ 09:20:10 +0000
+From: Niklas Cassel <Niklas.Cassel@wdc.com>
+To: Bart Van Assche <bvanassche@acm.org>
+CC: Damien Le Moal <dlemoal@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "Martin K .
+ Petersen" <martin.petersen@oracle.com>, Christoph Hellwig <hch@lst.de>, Avri
+ Altman <Avri.Altman@wdc.com>, Bean Huo <huobean@gmail.com>, Daejun Park
+	<daejun7.park@samsung.com>, Hannes Reinecke <hare@suse.de>
+Subject: Re: [PATCH v2 03/15] block: Support data lifetime in the I/O priority
+ bitfield
+Thread-Topic: [PATCH v2 03/15] block: Support data lifetime in the I/O
+ priority bitfield
+Thread-Index:
+ AQHZ98QEzxK1K1BQ10ix4dd17lPdvbA8bDoAgACkDQCACAl4AIAARiqAgAEcigCAAHeSgIAAjSEAgADFeYCAA+3CAA==
+Date: Mon, 16 Oct 2023 09:20:10 +0000
+Message-ID: <ZS0ASN6OY0KeOx+C@x1-carbon>
+References: <20231005194129.1882245-1-bvanassche@acm.org>
+ <20231005194129.1882245-4-bvanassche@acm.org>
+ <8aec03bb-4cef-9423-0ce4-c10d060afce4@kernel.org>
+ <46c17c1b-29be-41a3-b799-79163851f972@acm.org>
+ <b0b015bf-0a27-4e89-950a-597b9fed20fb@acm.org>
+ <447f3095-66cb-417b-b48c-90005d37b5d3@kernel.org>
+ <4fee2c56-7631-45d2-b709-2dadea057f52@acm.org>
+ <2fa9ea51-c343-4cc2-b755-a5de024bb32f@kernel.org>
+ <ZSkO8J9pD+IVaGPf@x1-carbon> <2f092612-eed0-4c4b-940f-48793b97b068@acm.org>
+In-Reply-To: <2f092612-eed0-4c4b-940f-48793b97b068@acm.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=wdc.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MN2PR04MB6272:EE_|PH0PR04MB8355:EE_
+x-ms-office365-filtering-correlation-id: 5d8d1a34-0f7f-40f8-cb9e-08dbce291874
+wdcipoutbound: EOP-TRUE
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info:
+ XKBAlEFzXlrT1ArQL+2xMem+LsAqRlYuEV16GAfOiBXZ9fGfWtsmERBGSAwzk3bmcCyHZftONRtD34pqLBQHQR9/3oIEIymZpB5LIJGW8ZjPZovW+EIdXTeVs5kS/chBn3gjylW+thl1vWXVQ/WpQ8/S/ueftqT0XEWfEmDNgYSKkJRGtUMxhCQAhsex/saf4zFwDHQQOaaI7geqMCClN+gMx81atrYs0BCc3COYy1cCaa1U5YJyftWQDMxWzxjZMCwMOyQX6CYCzgnx/HF5DWpHxYCM+qdgSsAQ/ZMpgI95NvhP2ZOdPvB6XRl/HiqfmBJ7gXCfrLE1Zl/sVlSZ4E86KIPppBFELjmrHkZxwNbal6bIZ3WdAn8gbevFTc2REUOfrwncsNmg3FwdfrLWQ0HPhg7iTP0yk1R+tW1Ir59hIhVmkA5N3afnuBja3J9dgnun6nvEbfw33YPs8XGvmIga1od/EXEWRSyU3ywLCdDKjNoipk2+IXVxtMc1tYdP6MStYn61/KOUnR8ayxb8ZtVjPfOxcaU89WZkFT+lbTIpY2L+p5ttNn4V6lT4gJHYuLGTUJsgHuu5u8rgWMmuJz4KI7fzKBPH07GbLtPukfhd5OmSGTWu+dAzj7V9Ott2jVd/eO6yX9hAeClSKrqivw==
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR04MB6272.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7916004)(39860400002)(346002)(396003)(136003)(366004)(376002)(230922051799003)(186009)(1800799009)(64100799003)(451199024)(478600001)(6486002)(71200400001)(76116006)(91956017)(66946007)(66556008)(6916009)(54906003)(64756008)(66446008)(66476007)(26005)(53546011)(6506007)(6512007)(9686003)(316002)(33716001)(4326008)(8676002)(8936002)(7416002)(2906002)(5660300002)(41300700001)(38070700005)(122000001)(86362001)(83380400001)(38100700002)(82960400001)(67856001);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?QKMJnHl7FXUQflqjt0v7BncnXUCs24PogFsjY7I0mSEwYxaFJ8w7SNyKN/uo?=
+ =?us-ascii?Q?9uoTZiJthZcpepdNxbNIyfEcCE4ncOjkwRDh1aWjvgzMoiVL6mHidoOqOJpy?=
+ =?us-ascii?Q?NfDbHyz8e6a8KYp+00QDiGg6lsuE7LqZhYkNZFctgrTQNUsSXjQfiJVKz5ys?=
+ =?us-ascii?Q?IL/dlf1oc0iPplnq/PKarjxIbjGo+vA5s43RTVrZnfq9kDHpPwDXVOkbKi5G?=
+ =?us-ascii?Q?CxwZjACU6/lSuw09Tr2DcBpuD7koKa1xAoWwbHW5jSFJ9i3jD+1UKbPCRjq9?=
+ =?us-ascii?Q?d+SJD3+HAePTwi24nQicA3vqPgA+T+Tiv+K6ZJKtnUbcArImhVQtSAjSNR5p?=
+ =?us-ascii?Q?+aCe4gzYBNayFwcJ3RiVmRNSCe9+JAGAu8IvYjxWoNP26TyNz+kKhrt0wpKJ?=
+ =?us-ascii?Q?EKxpznnif1kWH4yNdUygHgdaddKgw7FJcRTz7F2V+ZcI7dW+FjRbznj3+v6I?=
+ =?us-ascii?Q?uTcxyv/oG4l6tNex6rheU+da6rvlBVpPEWABD+JXiqa/u52ZdEm+SN5WKL57?=
+ =?us-ascii?Q?hMNLKo2psbfwS5mqsn7+eHr6dCxP4xpuCz/K8aBfN6roGTAZzZIoAQn1Vs7A?=
+ =?us-ascii?Q?tYAhwDutNV62uiosBSSDWk5Y1tW8WSLuYdglkDOwg7F4Zm5r1T5S5QW5kGYC?=
+ =?us-ascii?Q?7NkOLeaOvM2TXZ/s86thVSR02/734fU41qrTrbt5K+FeYDRqiBETQRxwN4qL?=
+ =?us-ascii?Q?kx86eQFVcq/Ek22DIOk39JlouWqATWY7pufIs0E6rJ+rGfMfCBAKgMtzXnLP?=
+ =?us-ascii?Q?Ubti46/rMHg5xG0Yu5tR7euLplbxLQY7w2qpjiIP5EoNCgs50GmAaXINTZK+?=
+ =?us-ascii?Q?H6+tsmLJUhqgCfA4p4mb7yGfmnj3FgOR4NNIzJQRjU5G4k0VQy4swdY/tR4y?=
+ =?us-ascii?Q?SNvq0ko6kWP/KlXAmiiQt7fDzE7avS9GUzZvAttc7W2UQvmHamOxgbPer+Q5?=
+ =?us-ascii?Q?gPJ/fGzqSH4a63liiVpLplTiJpGUthd8MMR5IttRgale4GD+KrynkMBuyCTd?=
+ =?us-ascii?Q?gtE9yAsIVYrvmJgyQcHfobd4VC31nDgFCkZjBvqLhYQss7XLmjoPvNWIIW7T?=
+ =?us-ascii?Q?4mjAS+MsN9RESLOJSFC1w3GhdauzorNsJhyvYXtCfGTeQBfZFWsq1Ktj4u2x?=
+ =?us-ascii?Q?ZfbGZ4zkEyG070hxNdXN8UXK6m22bGFIEKPbU2pqlPZarruwsx9roOA4jz6w?=
+ =?us-ascii?Q?NAyrF9/+El7BZ38hcnWVeTgk6udt97TOvLeO25hGBXMLK4sXY16DGuXlA8za?=
+ =?us-ascii?Q?iUg4DUbbeB5QS73PICazfdR9szExLflM/s1XhDQU158DKxHhEbord5X8IHvm?=
+ =?us-ascii?Q?OS3U5/rjZYAcbnPqX2fMRfzNJJiagGN8KrpB4wbvglJM9xIyYnuMVGWbDJpr?=
+ =?us-ascii?Q?gvTrzYwuclO/AYxTMsdfuvweerZf/hBhUlKdygUI5zcfwB4H22mGpxPicPiV?=
+ =?us-ascii?Q?kCNmvnDKcwv/sCze/l7QhtNEmoR6t0ODwQDj3FvxGHZWl9W5Z1QDqqnO+URI?=
+ =?us-ascii?Q?5mf/dUuFNAr9gwka3A9JHDorDWPPtGYvWZSTnglyD0ctEHRP4RclqAIrh8Xa?=
+ =?us-ascii?Q?NwSfP7u9tc+Oe0BvQe5tZeMN/EsSPa7aTg6aZ23ypJ/9JX1SjOipoVFa/M99?=
+ =?us-ascii?Q?Lw=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <FE52232292CDCA4694EB62FA0FED060C@namprd04.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231006184922.252188-12-aalbersh@redhat.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-	SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	=?us-ascii?Q?wEQUFfzUeU4DUK7YYvHSuL18jmKY2Egq+K8yl8huLM3oSesbSgSoIaQxVL3M?=
+ =?us-ascii?Q?QHC+0HS2UWqKxPxleajKt5ofoOfTpcjialuFJB7LopoZqtNMK357BaQi9K9q?=
+ =?us-ascii?Q?HkEkb/HCRRI/NWLNTM0clsX1amIMIR+rU6grnPoGuGi6c1XP75uXYsapW/rU?=
+ =?us-ascii?Q?P91PNBwUMONxbYedDLlk3DCHDdmHR9knGuKAbGPmUgUT/H+S/Xgh05l3yC+t?=
+ =?us-ascii?Q?xNEm1tlFhYWJ3T/7gSzcS6yNV02KnOFMEz5kZUA0zMtmBqQj5CzrK35i5WqI?=
+ =?us-ascii?Q?amL1hAa/u5qyFJ0xb0gnK9nsuwgHGDs02zLjQB/k4Sb5hF0K0q4F871Y1kST?=
+ =?us-ascii?Q?Xj/YCS1XdLwEx69fFcakrAl638J+aSttnWsWahDETLngTDBnoGMK0v3nHFXZ?=
+ =?us-ascii?Q?ylSuxJVIdt/oFp+lQabqPYebIuO4u+zM/UM/88ivOEpjYhIW/04ercRWIP7G?=
+ =?us-ascii?Q?wC8gSXtBZpF8neS0P8mwzSAnI+JLCk6f4/FZcdlZ2xljUM8LNB5jsVPNJnUQ?=
+ =?us-ascii?Q?xi8CkLkNwSnx5+BnSBjCRxsyOLtneA303cnf3HoURinaK6laLkynNZOdiB1o?=
+ =?us-ascii?Q?+MkpDHtj6hw1EhA87D++NQDo59TT13S/qAVIzcMIspOFmcmuavLEXcFmILH3?=
+ =?us-ascii?Q?vSgWOtjhaxl02TTqVpcry7youbVe8pJmn3gkFgoQ19Qm3hq2r5gG7guVKUET?=
+ =?us-ascii?Q?0u8QnGSwUiLLlUoa6PGo+z5r0dzLxIPcd9y+eD9LHThHfM3rJead1SAKTcVI?=
+ =?us-ascii?Q?RTndzj/LFffuaDS3Y6JOk5sjqAeOSuYISrqIHup+4VesFQYmibeiLoOWwSeG?=
+ =?us-ascii?Q?EfAoMYKbYhv5qegFxYFXeV319zVuN7+zQqW4n85FYC28YWpDz3QRzy8OVvDJ?=
+ =?us-ascii?Q?Hc90cndMX5zB9h1LvKLY9+O/YqC8WUnIOYpei5qFvjjZV1WVCtTG65GX4y5k?=
+ =?us-ascii?Q?0JUfGAjRoYV4saaw9OdgdyfyjgZSu0Wl4Hg1As4PiL8=3D?=
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR04MB6272.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5d8d1a34-0f7f-40f8-cb9e-08dbce291874
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Oct 2023 09:20:10.2204
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 1J7RY0bfVkq8Psxyq1CoVWHnrdRV4Muv9873nvAQafxKvmXi2neW4UXf/xsZyFybJQxf8gzNlDgqZyYSXt1lWw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR04MB8355
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_PASS,
+	SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-Looking at the entire series, it seems like the only XFS-specific
-part of the fsverity processing in iomap is the per-sb workqueue
-now that the fsverity interfaces were cleaned up.
+On Fri, Oct 13, 2023 at 02:20:23PM -0700, Bart Van Assche wrote:
+> On 10/13/23 02:33, Niklas Cassel wrote:
+> > In commit c75e707fe1aa ("block: remove the per-bio/request write hint")
+> > this line from fs/direct-io.c was removed:
+> > -       bio->bi_write_hint =3D dio->iocb->ki_hint;
+> >=20
+> > I'm not sure why this series does not readd a similar line to set the
+> > lifetime (using bio_set_data_lifetime()) also for fs/direct-io.c.
+>=20
+> It depends on how we want the user to specify the data lifetime for
+> direct I/O. This assignment is not modified by this patch series and
+> copies the data lifetime information from the ioprio bitfield from user
+> space into the bio:
+>=20
+> 		bio->bi_ioprio =3D dio->iocb->ki_ioprio;
 
-Based on that it seems like we'd be much better just doing all the
-work inside iomap, and just allow XFS to pass the workqueue to
-iomap_read_folio and iomap_readahead.  The patch below does that
-as an untested WIP on top of your branch.
+Before per-bio/request write hints were removed, things looked like this:
 
-If we go down that way I suspect the better interface would be
-to allocate the iomap_readpage_ctx in the callers of these functions
-instead of passing an extra argument, but I'm not entirely sure
-about that yet.
+io_uring.c:
+req->rw.kiocb.ki_hint =3D ki_hint_validate(file_write_hint(req->file));
 
----
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 0a1bec91fdf678..95077676b714cf 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -6,6 +6,7 @@
- #include <linux/module.h>
- #include <linux/compiler.h>
- #include <linux/fs.h>
-+#include <linux/fsverity.h>
- #include <linux/iomap.h>
- #include <linux/pagemap.h>
- #include <linux/uio.h>
-@@ -264,7 +265,7 @@ static void iomap_finish_folio_read(struct folio *folio, size_t offset,
- 		folio_unlock(folio);
- }
- 
--void iomap_read_end_io(struct bio *bio)
-+static void iomap_read_end_io(struct bio *bio)
- {
- 	int error = blk_status_to_errno(bio->bi_status);
- 	struct folio_iter fi;
-@@ -273,14 +274,13 @@ void iomap_read_end_io(struct bio *bio)
- 		iomap_finish_folio_read(fi.folio, fi.offset, fi.length, error);
- 	bio_put(bio);
- }
--EXPORT_SYMBOL_GPL(iomap_read_end_io);
- 
- struct iomap_readpage_ctx {
- 	struct folio		*cur_folio;
- 	bool			cur_folio_in_bio;
- 	struct bio		*bio;
- 	struct readahead_control *rac;
--	const struct iomap_readpage_ops *ops;
-+	struct workqueue_struct	*wq;
- };
- 
- /**
-@@ -332,17 +332,55 @@ static inline bool iomap_block_needs_zeroing(const struct iomap_iter *iter,
- 		pos >= i_size_read(iter->inode);
- }
- 
-+#ifdef CONFIG_FS_VERITY
-+struct iomap_fsverity_bio {
-+	struct work_struct	work;
-+	struct bio		bio;
-+};
-+static struct bio_set iomap_fsverity_bioset;
-+
- static void
--iomap_submit_read_io(const struct iomap_iter *iter,
--		struct iomap_readpage_ctx *ctx)
-+iomap_read_fsverify_end_io_work(struct work_struct *work)
- {
--	if (!ctx->bio)
--		return;
-+	struct iomap_fsverity_bio *fbio =
-+		container_of(work, struct iomap_fsverity_bio, work);
- 
--	if (ctx->ops && ctx->ops->submit_io)
--		ctx->ops->submit_io(iter, ctx->bio, iter->pos);
--	else
--		submit_bio(ctx->bio);
-+	fsverity_verify_bio(&fbio->bio);
-+	iomap_read_end_io(&fbio->bio);
-+}
-+
-+static void
-+iomap_read_fsverity_end_io(struct bio *bio)
-+{
-+	struct iomap_fsverity_bio *fbio =
-+		container_of(bio, struct iomap_fsverity_bio, bio);
-+
-+	INIT_WORK(&fbio->work, iomap_read_fsverify_end_io_work);
-+	queue_work(bio->bi_private, &fbio->work);
-+}
-+#endif /* CONFIG_FS_VERITY */
-+
-+static struct bio *iomap_read_bio_alloc(struct inode *inode,
-+		struct block_device *bdev, int nr_vecs, gfp_t gfp,
-+		struct workqueue_struct *wq)
-+{
-+	struct bio *bio;
-+
-+#ifdef CONFIG_FS_VERITY
-+	if (fsverity_active(inode)) {
-+		bio = bio_alloc_bioset(bdev, nr_vecs, REQ_OP_READ, gfp,
-+					&iomap_fsverity_bioset);
-+		if (bio) {
-+			bio->bi_private = wq;
-+			bio->bi_end_io = iomap_read_fsverity_end_io;
-+		}
-+		return bio;
-+	}
-+#endif
-+	bio = bio_alloc(bdev, nr_vecs, REQ_OP_READ, gfp);
-+	if (bio)
-+		bio->bi_end_io = iomap_read_end_io;
-+	return bio;
- }
- 
- static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
-@@ -368,11 +406,10 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
- 
- 	if (iomap_block_needs_zeroing(iter, pos)) {
- 		folio_zero_range(folio, poff, plen);
--		if (iomap->flags & IOMAP_F_READ_VERITY) {
--			if (ctx->ops->verify_folio(folio, poff, plen)) {
--				folio_set_error(folio);
--				goto done;
--			}
-+		if (fsverity_active(iter->inode) &&
-+		    !fsverity_verify_blocks(folio, poff, plen)) {
-+			folio_set_error(folio);
-+			goto done;
- 		}
- 
- 		iomap_set_range_uptodate(folio, poff, plen);
-@@ -389,21 +426,16 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
- 	    !bio_add_folio(ctx->bio, folio, plen, poff)) {
- 		gfp_t gfp = mapping_gfp_constraint(folio->mapping, GFP_KERNEL);
- 		gfp_t orig_gfp = gfp;
--		unsigned int nr_vecs = DIV_ROUND_UP(length, PAGE_SIZE);
- 
--		iomap_submit_read_io(iter, ctx);
-+		if (ctx->bio)
-+			submit_bio(ctx->bio);
- 
- 		if (ctx->rac) /* same as readahead_gfp_mask */
- 			gfp |= __GFP_NORETRY | __GFP_NOWARN;
- 
--		if (ctx->ops && ctx->ops->bio_set)
--			ctx->bio = bio_alloc_bioset(iomap->bdev,
--						    bio_max_segs(nr_vecs),
--						    REQ_OP_READ, GFP_NOFS,
--						    ctx->ops->bio_set);
--		else
--			ctx->bio = bio_alloc(iomap->bdev, bio_max_segs(nr_vecs),
--				REQ_OP_READ, gfp);
-+		ctx->bio = iomap_read_bio_alloc(iter->inode, iomap->bdev,
-+				bio_max_segs(DIV_ROUND_UP(length, PAGE_SIZE)),
-+				gfp, ctx->wq);
- 
- 		/*
- 		 * If the bio_alloc fails, try it again for a single page to
-@@ -411,13 +443,12 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
- 		 * what do_mpage_read_folio does.
- 		 */
- 		if (!ctx->bio) {
--			ctx->bio = bio_alloc(iomap->bdev, 1, REQ_OP_READ,
--					     orig_gfp);
-+			ctx->bio = iomap_read_bio_alloc(iter->inode,
-+					iomap->bdev, 1, orig_gfp, ctx->wq);
- 		}
- 		if (ctx->rac)
- 			ctx->bio->bi_opf |= REQ_RAHEAD;
- 		ctx->bio->bi_iter.bi_sector = sector;
--		ctx->bio->bi_end_io = iomap_read_end_io;
- 		bio_add_folio_nofail(ctx->bio, folio, plen, poff);
- 	}
- 
-@@ -432,7 +463,7 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
- }
- 
- int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops,
--		const struct iomap_readpage_ops *readpage_ops)
-+		struct workqueue_struct *wq)
- {
- 	struct iomap_iter iter = {
- 		.inode		= folio->mapping->host,
-@@ -441,7 +472,7 @@ int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops,
- 	};
- 	struct iomap_readpage_ctx ctx = {
- 		.cur_folio	= folio,
--		.ops		= readpage_ops,
-+		.wq		= wq,
- 	};
- 	int ret;
- 
-@@ -454,7 +485,7 @@ int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops,
- 		folio_set_error(folio);
- 
- 	if (ctx.bio) {
--		iomap_submit_read_io(&iter, &ctx);
-+		submit_bio(ctx.bio);
- 		WARN_ON_ONCE(!ctx.cur_folio_in_bio);
- 	} else {
- 		WARN_ON_ONCE(ctx.cur_folio_in_bio);
-@@ -499,7 +530,7 @@ static loff_t iomap_readahead_iter(const struct iomap_iter *iter,
-  * iomap_readahead - Attempt to read pages from a file.
-  * @rac: Describes the pages to be read.
-  * @ops: The operations vector for the filesystem.
-- * @readpage_ops: Filesystem supplied folio processiong operation
-+ * @wq: Workqueue for post-I/O processing (only need for fsverity)
-  *
-  * This function is for filesystems to call to implement their readahead
-  * address_space operation.
-@@ -512,7 +543,7 @@ static loff_t iomap_readahead_iter(const struct iomap_iter *iter,
-  * the filesystem to be reentered.
-  */
- void iomap_readahead(struct readahead_control *rac, const struct iomap_ops *ops,
--		const struct iomap_readpage_ops *readpage_ops)
-+		struct workqueue_struct *wq)
- {
- 	struct iomap_iter iter = {
- 		.inode	= rac->mapping->host,
-@@ -521,7 +552,7 @@ void iomap_readahead(struct readahead_control *rac, const struct iomap_ops *ops,
- 	};
- 	struct iomap_readpage_ctx ctx = {
- 		.rac	= rac,
--		.ops	= readpage_ops,
-+		.wq	= wq,
- 	};
- 
- 	trace_iomap_readahead(rac->mapping->host, readahead_count(rac));
-@@ -529,7 +560,8 @@ void iomap_readahead(struct readahead_control *rac, const struct iomap_ops *ops,
- 	while (iomap_iter(&iter, ops) > 0)
- 		iter.processed = iomap_readahead_iter(&iter, &ctx);
- 
--	iomap_submit_read_io(&iter, &ctx);
-+	if (ctx.bio)
-+		submit_bio(ctx.bio);
- 	if (ctx.cur_folio) {
- 		if (!ctx.cur_folio_in_bio)
- 			folio_unlock(ctx.cur_folio);
-@@ -2022,10 +2054,25 @@ iomap_writepages(struct address_space *mapping, struct writeback_control *wbc,
- }
- EXPORT_SYMBOL_GPL(iomap_writepages);
- 
-+#define IOMAP_POOL_SIZE		(4 * (PAGE_SIZE / SECTOR_SIZE))
-+
- static int __init iomap_init(void)
- {
--	return bioset_init(&iomap_ioend_bioset, 4 * (PAGE_SIZE / SECTOR_SIZE),
--			   offsetof(struct iomap_ioend, io_inline_bio),
--			   BIOSET_NEED_BVECS);
-+	int error;
-+
-+	error = bioset_init(&iomap_ioend_bioset, IOMAP_POOL_SIZE,
-+			    offsetof(struct iomap_ioend, io_inline_bio),
-+			    BIOSET_NEED_BVECS);
-+#ifdef CONFIG_FS_VERITY
-+	if (error)
-+		return error;
-+
-+	error = bioset_init(&iomap_fsverity_bioset, IOMAP_POOL_SIZE,
-+			    offsetof(struct iomap_fsverity_bio, bio),
-+			    BIOSET_NEED_BVECS);
-+	if (error)
-+		bioset_exit(&iomap_ioend_bioset);
-+#endif
-+	return error;
- }
- fs_initcall(iomap_init);
-diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-index fceb0c3de61ff3..1982bdb456d0ee 100644
---- a/fs/xfs/xfs_aops.c
-+++ b/fs/xfs/xfs_aops.c
-@@ -26,8 +26,6 @@ struct xfs_writepage_ctx {
- 	unsigned int		cow_seq;
- };
- 
--static struct bio_set xfs_read_ioend_bioset;
--
- static inline struct xfs_writepage_ctx *
- XFS_WPC(struct iomap_writepage_ctx *ctx)
- {
-@@ -550,97 +548,30 @@ xfs_vm_bmap(
- 	return iomap_bmap(mapping, block, &xfs_read_iomap_ops);
- }
- 
--static void
--xfs_read_work_end_io(
--	struct work_struct *work)
-+static inline struct workqueue_struct *
-+xfs_fsverity_wq(
-+	struct address_space	*mapping)
- {
--	struct iomap_read_ioend *ioend =
--		container_of(work, struct iomap_read_ioend, work);
--	struct bio *bio = &ioend->read_inline_bio;
--
--	fsverity_verify_bio(bio);
--	iomap_read_end_io(bio);
--	/*
--	 * The iomap_read_ioend has been freed by bio_put() in
--	 * iomap_read_end_io()
--	 */
-+	if (fsverity_active(mapping->host))
-+		return XFS_I(mapping->host)->i_mount->m_postread_workqueue;
-+	return NULL;
- }
- 
--static void
--xfs_read_end_io(
--	struct bio *bio)
--{
--	struct iomap_read_ioend *ioend =
--		container_of(bio, struct iomap_read_ioend, read_inline_bio);
--	struct xfs_inode	*ip = XFS_I(ioend->io_inode);
--
--	WARN_ON_ONCE(!queue_work(ip->i_mount->m_postread_workqueue,
--					&ioend->work));
--}
--
--static int
--xfs_verify_folio(
--	struct folio	*folio,
--	loff_t		pos,
--	unsigned int	len)
--{
--	if (fsverity_verify_blocks(folio, len, pos))
--		return 0;
--	return -EFSCORRUPTED;
--}
--
--int
--xfs_init_iomap_bioset(void)
--{
--	return bioset_init(&xfs_read_ioend_bioset,
--			   4 * (PAGE_SIZE / SECTOR_SIZE),
--			   offsetof(struct iomap_read_ioend, read_inline_bio),
--			   BIOSET_NEED_BVECS);
--}
--
--void
--xfs_free_iomap_bioset(void)
--{
--	bioset_exit(&xfs_read_ioend_bioset);
--}
--
--static void
--xfs_submit_read_bio(
--	const struct iomap_iter *iter,
--	struct bio *bio,
--	loff_t file_offset)
--{
--	struct iomap_read_ioend *ioend;
--
--	ioend = container_of(bio, struct iomap_read_ioend, read_inline_bio);
--	ioend->io_inode = iter->inode;
--	if (fsverity_active(ioend->io_inode)) {
--		INIT_WORK(&ioend->work, &xfs_read_work_end_io);
--		ioend->read_inline_bio.bi_end_io = &xfs_read_end_io;
--	}
--
--	submit_bio(bio);
--}
--
--static const struct iomap_readpage_ops xfs_readpage_ops = {
--	.verify_folio		= &xfs_verify_folio,
--	.submit_io		= &xfs_submit_read_bio,
--	.bio_set		= &xfs_read_ioend_bioset,
--};
--
- STATIC int
- xfs_vm_read_folio(
- 	struct file		*unused,
- 	struct folio		*folio)
- {
--	return iomap_read_folio(folio, &xfs_read_iomap_ops, &xfs_readpage_ops);
-+	return iomap_read_folio(folio, &xfs_read_iomap_ops,
-+				xfs_fsverity_wq(folio->mapping));
- }
- 
- STATIC void
- xfs_vm_readahead(
- 	struct readahead_control	*rac)
- {
--	iomap_readahead(rac, &xfs_read_iomap_ops, &xfs_readpage_ops);
-+	iomap_readahead(rac, &xfs_read_iomap_ops,
-+			xfs_fsverity_wq(rac->mapping));
- }
- 
- static int
-diff --git a/fs/xfs/xfs_aops.h b/fs/xfs/xfs_aops.h
-index fa7c512b27176e..e0bd684197643d 100644
---- a/fs/xfs/xfs_aops.h
-+++ b/fs/xfs/xfs_aops.h
-@@ -10,7 +10,5 @@ extern const struct address_space_operations xfs_address_space_operations;
- extern const struct address_space_operations xfs_dax_aops;
- 
- int	xfs_setfilesize(struct xfs_inode *ip, xfs_off_t offset, size_t size);
--int	xfs_init_iomap_bioset(void);
--void	xfs_free_iomap_bioset(void);
- 
- #endif /* __XFS_AOPS_H__ */
-diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-index 80b249c420678a..18c8f168b1532d 100644
---- a/fs/xfs/xfs_iomap.c
-+++ b/fs/xfs/xfs_iomap.c
-@@ -132,9 +132,6 @@ xfs_bmbt_to_iomap(
- 	    (ip->i_itemp->ili_fsync_fields & ~XFS_ILOG_TIMESTAMP))
- 		iomap->flags |= IOMAP_F_DIRTY;
- 
--	if (fsverity_active(VFS_I(ip)))
--		iomap->flags |= IOMAP_F_READ_VERITY;
--
- 	iomap->validity_cookie = sequence_cookie;
- 	iomap->folio_ops = &xfs_iomap_folio_ops;
- 	return 0;
-diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-index f32392add622f3..880d9039437eb1 100644
---- a/fs/xfs/xfs_super.c
-+++ b/fs/xfs/xfs_super.c
-@@ -2385,17 +2385,11 @@ init_xfs_fs(void)
- 	if (error)
- 		goto out_remove_dbg_kobj;
- 
--	error = xfs_init_iomap_bioset();
--	if (error)
--		goto out_qm_exit;
--
- 	error = register_filesystem(&xfs_fs_type);
- 	if (error)
--		goto out_iomap_bioset;
-+		goto out_qm_exit;
- 	return 0;
- 
-- out_iomap_bioset:
--	xfs_free_iomap_bioset();
-  out_qm_exit:
- 	xfs_qm_exit();
-  out_remove_dbg_kobj:
-@@ -2428,7 +2422,6 @@ init_xfs_fs(void)
- STATIC void __exit
- exit_xfs_fs(void)
- {
--	xfs_free_iomap_bioset();
- 	xfs_qm_exit();
- 	unregister_filesystem(&xfs_fs_type);
- #ifdef DEBUG
-diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index 8d7206cd2f0f49..c7522eb3a8eafd 100644
---- a/include/linux/iomap.h
-+++ b/include/linux/iomap.h
-@@ -53,9 +53,6 @@ struct vm_fault;
-  *
-  * IOMAP_F_XATTR indicates that the iomap is for an extended attribute extent
-  * rather than a file data extent.
-- *
-- * IOMAP_F_READ_VERITY indicates that the iomap needs verification of read
-- * folios
-  */
- #define IOMAP_F_NEW		(1U << 0)
- #define IOMAP_F_DIRTY		(1U << 1)
-@@ -67,7 +64,6 @@ struct vm_fault;
- #define IOMAP_F_BUFFER_HEAD	0
- #endif /* CONFIG_BUFFER_HEAD */
- #define IOMAP_F_XATTR		(1U << 5)
--#define IOMAP_F_READ_VERITY	(1U << 6)
- 
- /*
-  * Flags set by the core iomap code during operations:
-@@ -266,36 +262,10 @@ int iomap_file_buffered_write_punch_delalloc(struct inode *inode,
- 		struct iomap *iomap, loff_t pos, loff_t length, ssize_t written,
- 		int (*punch)(struct inode *inode, loff_t pos, loff_t length));
- 
--struct iomap_read_ioend {
--	struct inode		*io_inode;	/* file being read from */
--	struct work_struct	work;		/* post read work (e.g. fs-verity) */
--	struct bio		read_inline_bio;/* MUST BE LAST! */
--};
--
--struct iomap_readpage_ops {
--	/*
--	 * Optional, verify folio when successfully read
--	 */
--	int (*verify_folio)(struct folio *folio, loff_t pos, unsigned int len);
--
--	/*
--	 * Filesystems wishing to attach private information to a direct io bio
--	 * must provide a ->submit_io method that attaches the additional
--	 * information to the bio and changes the ->bi_end_io callback to a
--	 * custom function.  This function should, at a minimum, perform any
--	 * relevant post-processing of the bio and end with a call to
--	 * iomap_read_end_io.
--	 */
--	void (*submit_io)(const struct iomap_iter *iter, struct bio *bio,
--			loff_t file_offset);
--	struct bio_set *bio_set;
--};
--
--void iomap_read_end_io(struct bio *bio);
- int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops,
--		const struct iomap_readpage_ops *readpage_ops);
-+		struct workqueue_struct *wq);
- void iomap_readahead(struct readahead_control *, const struct iomap_ops *ops,
--		const struct iomap_readpage_ops *readpage_ops);
-+		struct workqueue_struct *wq);
- bool iomap_is_partially_uptodate(struct folio *, size_t from, size_t count);
- struct folio *iomap_get_folio(struct iomap_iter *iter, loff_t pos, size_t len);
- bool iomap_release_folio(struct folio *folio, gfp_t gfp_flags);
+fs/fcntl.c:
+static inline enum rw_hint file_write_hint(struct file *file)
+{
+	if (file->f_write_hint !=3D WRITE_LIFE_NOT_SET)
+		return file->f_write_hint;
+
+	return file_inode(file)->i_write_hint;
+}
+
+direct-io.c:
+bio->bi_write_hint =3D dio->iocb->ki_hint;
+
+buffered-io.c:
+bio->bi_write_hint =3D inode->i_write_hint;
+
+
+
+After this series, things instead look like this:
+
+direct-io.c:
+bio->bi_ioprio =3D dio->iocb->ki_ioprio;
+
+buffered-io.c:
+bio_set_data_lifetime(bio, inode->i_write_hint);
+
+
+So when you say:
+"It depends on how we want the user to specify the data lifetime for
+direct I/O.", do you mean that buffered I/O should use fcntl() to specify
+data lifetime, but direct I/O should used Linux IO priority API to specify
+the same?
+
+Because, to me that seems to be how the series is currently working.
+(I am sorry if I am missing something.)
+
+
+Kind regards,
+Niklas=
 
