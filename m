@@ -1,123 +1,353 @@
-Return-Path: <linux-fsdevel+bounces-500-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-501-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 253A97CB4C4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Oct 2023 22:36:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD2257CB63D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 00:08:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8F0EB21253
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Oct 2023 20:36:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF85B1C20C1F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Oct 2023 22:08:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D41381DF;
-	Mon, 16 Oct 2023 20:36:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871C938FAA;
+	Mon, 16 Oct 2023 22:08:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nabijaczleweli.xyz header.i=@nabijaczleweli.xyz header.b="C1tqd1IU"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="AP798oGV"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 794A3381CE
-	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Oct 2023 20:36:07 +0000 (UTC)
-Received: from tarta.nabijaczleweli.xyz (tarta.nabijaczleweli.xyz [139.28.40.42])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01D7119B;
-	Mon, 16 Oct 2023 13:36:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nabijaczleweli.xyz;
-	s=202305; t=1697488561;
-	bh=GkcnvUcVpOCe5CAn1FqxU2g9Mal7SpC32VFF9WWd900=;
-	h=Date:From:Cc:Subject:References:In-Reply-To:From;
-	b=C1tqd1IUfTUwcsTencFYK4ZinxRZ0QuZ2dZaoE4ARNPRyq9gW9vWpdT8w5ibyI9IO
-	 r/FM5jS6XvZd94ewaBp3MmdkRCL01YlZZssVYT41RzBlOUuSwQmqV+o25Ai1oqf73g
-	 whBgvc+ZQIe1ix40Z7jL4XY9W38v3Z3RqOdHieeMFPqJmKEnGktgj7gqgPU8eFoxmn
-	 IucbGc2OFlHummOanDb/K4JlQDjB2Lrog6jG0eHqeDRjXWJq25q7gLNGnW7fC69FOK
-	 cZaaNZmMMW+ARrhcgZtdy2gtZEiAZ/iNRHUwVcZRPlnB2HWc4b5sja3KX4egmRmtL5
-	 DhT5tHfmd/Wsg==
-Received: from tarta.nabijaczleweli.xyz (unknown [192.168.1.250])
-	by tarta.nabijaczleweli.xyz (Postfix) with ESMTPSA id 6EDA4FAF2;
-	Mon, 16 Oct 2023 22:36:01 +0200 (CEST)
-Date: Mon, 16 Oct 2023 22:36:01 +0200
-From: 
-	Ahelenia =?utf-8?Q?Ziemia=C5=84ska?= <nabijaczleweli@nabijaczleweli.xyz>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 11/11] splice: splice_to_socket: always request MSG_DONTWAIT
-Message-ID: <813e1805aa942862d300bec4d0563c5a466dce78.1697486714.git.nabijaczleweli@nabijaczleweli.xyz>
-References: <cover.1697486714.git.nabijaczleweli@nabijaczleweli.xyz>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD7A938F95
+	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Oct 2023 22:08:41 +0000 (UTC)
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B02F7A2;
+	Mon, 16 Oct 2023 15:08:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
+	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=G1EUxetWjs0qOtiUH5tq0mLBZ10VZFvJHINvC7djz08=; b=AP798oGVcQFaoR+bfW9MbfgGz1
+	zelAD9u35kqPo1eM3njrtfroxaF4lOY4JYIHcduw2vfFS+HwW1RO7V9wH0pEuJhSZGAzGXG2I12La
+	P4i27v//FxpHatdl2vHmNRJZruJ829xkgC6ClzEWmOksLiSMr8sAtTva6cEgzxQNcNk8us9mncOOe
+	E5wD+aY3lQ0hhszKritoyXhdpRQRAppXXLSEdjhP/9qu/3zpI+pOiGrjitbHW/OlxAl0gOI1oMUaS
+	9jpjqdo0RWT3WdF+XotVMT2UmqFjxSs+E7+1T8DaR40CZIbQ4+yf7nX4cQePLvYrszHxV6+bOPaeL
+	1rH83buQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1qsVlL-001rfB-2f;
+	Mon, 16 Oct 2023 22:08:36 +0000
+Date: Mon, 16 Oct 2023 23:08:35 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: selinux@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>
+Subject: [PATCH][RFC] selinuxfs: saner handling of policy reloads
+Message-ID: <20231016220835.GH800259@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4tuu7g3cnuobllgt"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1697486714.git.nabijaczleweli@nabijaczleweli.xyz>
-User-Agent: NeoMutt/20231006
-X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,MISSING_HEADERS,
-	RCVD_IN_DNSWL_BLOCKED,SPF_HELO_PASS,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.6
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE
+	autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
+[
+That thing sits in viro/vfs.git#work.selinuxfs; I have
+lock_rename()-related followups in another branch, so a pull would be more
+convenient for me than cherry-pick.  NOTE: testing and comments would
+be very welcome - as it is, the patch is pretty much untested beyond
+"it builds".
+]
 
---4tuu7g3cnuobllgt
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On policy reload selinuxfs replaces two subdirectories (/booleans
+and /class) with new variants.  Unfortunately, that's done with
+serious abuses of directory locking.
 
-Otherwise we risk sleeping with the pipe locked for indeterminate
-lengths of time.
+1) lock_rename() should be done to parents, not to objects being
+exchanged
 
-Signed-off-by: Ahelenia Ziemia=C5=84ska <nabijaczleweli@nabijaczleweli.xyz>
+2) there's a bunch of reasons why it should not be done for directories
+that do not have a common ancestor; most of those do not apply to
+selinuxfs, but even in the best case the proof is subtle and brittle.
+
+3) failure halfway through the creation of /class will leak
+names and values arrays.
+
+4) use of d_genocide() is also rather brittle; it's probably not much of
+a bug per se, but e.g. an overmount of /sys/fs/selinuxfs/classes/shm/index
+with any regular file will end up with leaked mount on policy reload.
+Sure, don't do it, but...
+
+Let's stop messing with disconnected directories; just create
+a temporary (/.swapover) with no permissions for anyone (on the
+level of ->permission() returing -EPERM, no matter who's calling
+it) and build the new /booleans and /class in there; then
+lock_rename on root and that temporary directory and d_exchange()
+old and new both for class and booleans.  Then unlock and use
+simple_recursive_removal() to take the temporary out; it's much
+more robust.
+
+And instead of bothering with separate pathways for freeing
+new (on failure halfway through) and old (on success) names/values,
+do all freeing in one place.  With temporaries swapped with the
+old ones when we are past all possible failures.
+
+The only user-visible difference is that /.swapover shows up
+(but isn't possible to open, look up into, etc.) for the
+duration of policy reload.
+
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/splice.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/fs/splice.c b/fs/splice.c
-index 81788bf7daa1..d5885032f9a8 100644
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -869,13 +869,11 @@ ssize_t splice_to_socket(struct pipe_inode_info *pipe=
-, struct file *out,
- 		if (!bc)
- 			break;
-=20
--		msg.msg_flags =3D MSG_SPLICE_PAGES;
-+		msg.msg_flags =3D MSG_SPLICE_PAGES | MSG_DONTWAIT;
- 		if (flags & SPLICE_F_MORE)
- 			msg.msg_flags |=3D MSG_MORE;
- 		if (remain && pipe_occupancy(pipe->head, tail) > 0)
- 			msg.msg_flags |=3D MSG_MORE;
--		if (out->f_flags & O_NONBLOCK)
--			msg.msg_flags |=3D MSG_DONTWAIT;
-=20
- 		iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, bvec, bc,
- 			      len - remain);
---=20
-2.39.2
-
---4tuu7g3cnuobllgt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEfWlHToQCjFzAxEFjvP0LAY0mWPEFAmUtnrEACgkQvP0LAY0m
-WPFaiw/+PYxS4XTUis48aaacFF5+UetcG8qMihZRg51JtDxWGPZp4BjlVL6pODGg
-tCRTmD6NsG5XDSeKHSKx0TRSmY+aBTtEmxlg0HvQ2etwqGBgbiZ7JR5PI8oxtr7G
-LbMaqhTeLfE8u62NfGYM37mCRLbQcVam0pjcKH/JlUzJhdh8lnzvrqTfzF4T1Mhb
-jM42T3cy0Qq0kG0BWI2mSH0cBuklkb+2I6SiEIRSjZsqQxawCxavVve5JAQYfCDZ
-eulH5r115uagSiKcZIec2qfywUv9ATUZ9Lr71j8U4YBsfIh4uo/kSjtZcrHCxmFc
-weUWiweg3VTHfdHmIUOMWZ3Yt4zwNzf6v3gK7e3glYBiFLYuAU/NqKlkWBJVGLJy
-wBEf0L/vf0z/DQJPOWgLpqSbVelNjgiA0U6kTggLy6QImCHaCKqti+0mj/JPGsWn
-P63QY/wyxtI/bmaMOhp8mNovo1tZnr9L9liXcLhkBA70eROu8OIyxlFT1Cm8ueKM
-NNL3vixRal7Lz+Le4YcbXzSbfkf9OGf5qVFzGL0UY4YmmlbaBB4WEeE8RwmPT3QA
-Zf+WFnYoCH7x+QKSUWmAXNgrHPADtk1qG5RCrMOuBcqEEq24vPC14vje+ZFxXLDq
-3xJPtVnNQrzwrTsDr5Syw3mg8tV2/yGAtg4DTkX+jxsgDmuFDVg=
-=alCd
------END PGP SIGNATURE-----
-
---4tuu7g3cnuobllgt--
+diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
+index 6fa640263216..ab4beb1cdf20 100644
+--- a/security/selinux/selinuxfs.c
++++ b/security/selinux/selinuxfs.c
+@@ -336,12 +336,9 @@ static struct dentry *sel_make_dir(struct dentry *dir, const char *name,
+ 			unsigned long *ino);
+ 
+ /* declaration for sel_make_policy_nodes */
+-static struct dentry *sel_make_disconnected_dir(struct super_block *sb,
++static struct dentry *sel_make_swapover_dir(struct super_block *sb,
+ 						unsigned long *ino);
+ 
+-/* declaration for sel_make_policy_nodes */
+-static void sel_remove_entries(struct dentry *de);
+-
+ static ssize_t sel_read_mls(struct file *filp, char __user *buf,
+ 				size_t count, loff_t *ppos)
+ {
+@@ -508,13 +505,13 @@ static int sel_make_policy_nodes(struct selinux_fs_info *fsi,
+ 				struct selinux_policy *newpolicy)
+ {
+ 	int ret = 0;
+-	struct dentry *tmp_parent, *tmp_bool_dir, *tmp_class_dir, *old_dentry;
+-	unsigned int tmp_bool_num, old_bool_num;
+-	char **tmp_bool_names, **old_bool_names;
+-	int *tmp_bool_values, *old_bool_values;
++	struct dentry *tmp_parent, *tmp_bool_dir, *tmp_class_dir;
++	unsigned int bool_num = 0;
++	char **bool_names = NULL;
++	int *bool_values = NULL;
+ 	unsigned long tmp_ino = fsi->last_ino; /* Don't increment last_ino in this function */
+ 
+-	tmp_parent = sel_make_disconnected_dir(fsi->sb, &tmp_ino);
++	tmp_parent = sel_make_swapover_dir(fsi->sb, &tmp_ino);
+ 	if (IS_ERR(tmp_parent))
+ 		return PTR_ERR(tmp_parent);
+ 
+@@ -532,8 +529,8 @@ static int sel_make_policy_nodes(struct selinux_fs_info *fsi,
+ 		goto out;
+ 	}
+ 
+-	ret = sel_make_bools(newpolicy, tmp_bool_dir, &tmp_bool_num,
+-			     &tmp_bool_names, &tmp_bool_values);
++	ret = sel_make_bools(newpolicy, tmp_bool_dir, &bool_num,
++			     &bool_names, &bool_values);
+ 	if (ret)
+ 		goto out;
+ 
+@@ -542,38 +539,30 @@ static int sel_make_policy_nodes(struct selinux_fs_info *fsi,
+ 	if (ret)
+ 		goto out;
+ 
++	lock_rename(tmp_parent, fsi->sb->s_root);
++
+ 	/* booleans */
+-	old_dentry = fsi->bool_dir;
+-	lock_rename(tmp_bool_dir, old_dentry);
+ 	d_exchange(tmp_bool_dir, fsi->bool_dir);
+ 
+-	old_bool_num = fsi->bool_num;
+-	old_bool_names = fsi->bool_pending_names;
+-	old_bool_values = fsi->bool_pending_values;
+-
+-	fsi->bool_num = tmp_bool_num;
+-	fsi->bool_pending_names = tmp_bool_names;
+-	fsi->bool_pending_values = tmp_bool_values;
+-
+-	sel_remove_old_bool_data(old_bool_num, old_bool_names, old_bool_values);
++	swap(fsi->bool_num, bool_num);
++	swap(fsi->bool_pending_names, bool_names);
++	swap(fsi->bool_pending_values, bool_values);
+ 
+ 	fsi->bool_dir = tmp_bool_dir;
+-	unlock_rename(tmp_bool_dir, old_dentry);
+ 
+ 	/* classes */
+-	old_dentry = fsi->class_dir;
+-	lock_rename(tmp_class_dir, old_dentry);
+ 	d_exchange(tmp_class_dir, fsi->class_dir);
+ 	fsi->class_dir = tmp_class_dir;
+-	unlock_rename(tmp_class_dir, old_dentry);
++
++	unlock_rename(tmp_parent, fsi->sb->s_root);
+ 
+ out:
++	sel_remove_old_bool_data(bool_num, bool_names, bool_values);
+ 	/* Since the other temporary dirs are children of tmp_parent
+ 	 * this will handle all the cleanup in the case of a failure before
+ 	 * the swapover
+ 	 */
+-	sel_remove_entries(tmp_parent);
+-	dput(tmp_parent); /* d_genocide() only handles the children */
++	simple_recursive_removal(tmp_parent, NULL);
+ 
+ 	return ret;
+ }
+@@ -1351,54 +1340,48 @@ static const struct file_operations sel_commit_bools_ops = {
+ 	.llseek		= generic_file_llseek,
+ };
+ 
+-static void sel_remove_entries(struct dentry *de)
+-{
+-	d_genocide(de);
+-	shrink_dcache_parent(de);
+-}
+-
+ static int sel_make_bools(struct selinux_policy *newpolicy, struct dentry *bool_dir,
+ 			  unsigned int *bool_num, char ***bool_pending_names,
+ 			  int **bool_pending_values)
+ {
+ 	int ret;
+-	ssize_t len;
+-	struct dentry *dentry = NULL;
+-	struct inode *inode = NULL;
+-	struct inode_security_struct *isec;
+-	char **names = NULL, *page;
++	char **names, *page;
+ 	u32 i, num;
+-	int *values = NULL;
+-	u32 sid;
+ 
+-	ret = -ENOMEM;
+ 	page = (char *)get_zeroed_page(GFP_KERNEL);
+ 	if (!page)
+-		goto out;
++		return -ENOMEM;
+ 
+-	ret = security_get_bools(newpolicy, &num, &names, &values);
++	ret = security_get_bools(newpolicy, &num, &names, bool_pending_values);
+ 	if (ret)
+ 		goto out;
+ 
++	*bool_num = num;
++	*bool_pending_names = names;
++
+ 	for (i = 0; i < num; i++) {
+-		ret = -ENOMEM;
++		struct dentry *dentry;
++		struct inode *inode;
++		struct inode_security_struct *isec;
++		ssize_t len;
++		u32 sid;
++
++		len = snprintf(page, PAGE_SIZE, "/%s/%s", BOOL_DIR_NAME, names[i]);
++		if (len >= PAGE_SIZE) {
++			ret = -ENAMETOOLONG;
++			break;
++		}
+ 		dentry = d_alloc_name(bool_dir, names[i]);
+-		if (!dentry)
+-			goto out;
++		if (!dentry) {
++			ret = -ENOMEM;
++			break;
++		}
+ 
+-		ret = -ENOMEM;
+ 		inode = sel_make_inode(bool_dir->d_sb, S_IFREG | S_IRUGO | S_IWUSR);
+ 		if (!inode) {
+ 			dput(dentry);
+-			goto out;
+-		}
+-
+-		ret = -ENAMETOOLONG;
+-		len = snprintf(page, PAGE_SIZE, "/%s/%s", BOOL_DIR_NAME, names[i]);
+-		if (len >= PAGE_SIZE) {
+-			dput(dentry);
+-			iput(inode);
+-			goto out;
++			ret = -ENOMEM;
++			break;
+ 		}
+ 
+ 		isec = selinux_inode(inode);
+@@ -1416,23 +1399,8 @@ static int sel_make_bools(struct selinux_policy *newpolicy, struct dentry *bool_
+ 		inode->i_ino = i|SEL_BOOL_INO_OFFSET;
+ 		d_add(dentry, inode);
+ 	}
+-	*bool_num = num;
+-	*bool_pending_names = names;
+-	*bool_pending_values = values;
+-
+-	free_page((unsigned long)page);
+-	return 0;
+ out:
+ 	free_page((unsigned long)page);
+-
+-	if (names) {
+-		for (i = 0; i < num; i++)
+-			kfree(names[i]);
+-		kfree(names);
+-	}
+-	kfree(values);
+-	sel_remove_entries(bool_dir);
+-
+ 	return ret;
+ }
+ 
+@@ -1961,20 +1929,39 @@ static struct dentry *sel_make_dir(struct dentry *dir, const char *name,
+ 	return dentry;
+ }
+ 
+-static struct dentry *sel_make_disconnected_dir(struct super_block *sb,
++static int reject_all(struct mnt_idmap *idmap, struct inode *inode, int mask)
++{
++	return -EPERM;	// no access for anyone, root or no root.
++}
++
++static const struct inode_operations swapover_dir_inode_operations = {
++	.lookup		= simple_lookup,
++	.permission	= reject_all,
++};
++
++static struct dentry *sel_make_swapover_dir(struct super_block *sb,
+ 						unsigned long *ino)
+ {
+-	struct inode *inode = sel_make_inode(sb, S_IFDIR | S_IRUGO | S_IXUGO);
++	struct dentry *dentry = d_alloc_name(sb->s_root, ".swapover");
++	struct inode *inode;
+ 
+-	if (!inode)
++	if (!dentry)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	inode->i_op = &simple_dir_inode_operations;
+-	inode->i_fop = &simple_dir_operations;
++	inode = sel_make_inode(sb, S_IFDIR);
++	if (!inode) {
++		dput(dentry);
++		return ERR_PTR(-ENOMEM);
++	}
++
++	inode->i_op = &swapover_dir_inode_operations;
+ 	inode->i_ino = ++(*ino);
+ 	/* directory inodes start off with i_nlink == 2 (for "." entry) */
+ 	inc_nlink(inode);
+-	return d_obtain_alias(inode);
++	inode_lock(sb->s_root->d_inode);
++	d_add(dentry, inode);
++	inode_unlock(sb->s_root->d_inode);
++	return dentry;
+ }
+ 
+ #define NULL_FILE_NAME "null"
 
