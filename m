@@ -1,63 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-426-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-427-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9A167CAE7E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Oct 2023 18:09:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13A4D7CAE7F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Oct 2023 18:09:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA8071C20AD7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Oct 2023 16:09:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6243BB21089
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Oct 2023 16:09:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0696130D0D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19DB930CE3;
 	Mon, 16 Oct 2023 16:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bGqj1h/w"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jio2YlHj"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8292130D06
-	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Oct 2023 16:09:18 +0000 (UTC)
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D741DAB
-	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Oct 2023 09:09:15 -0700 (PDT)
-Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-40572aeb673so46196785e9.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Oct 2023 09:09:15 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5303130D0C
+	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Oct 2023 16:09:19 +0000 (UTC)
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EAA583
+	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Oct 2023 09:09:17 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id ffacd0b85a97d-3296b3f03e5so4067400f8f.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Oct 2023 09:09:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697472554; x=1698077354; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1697472556; x=1698077356; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=pUb7jMt3+90fOvXmi3BU9GENaGJW8LhkaaNhVF50Qy4=;
-        b=bGqj1h/wBFsqUoP2rI8iVNdEAVpTTp3GpJZw79l6TbTI1MWKqWw0Jx10Y0r5nK2wa8
-         y1D55GVHGJTEiDZLuLAB6wEBP5Bbx6SX5QLyckOV9SDq6bi4xFsrXPGqMQrbOlRdpu48
-         pz4VvIyd/d/5WYIQKW0Wo3R+YUxbeou70IZ04BrhJHdULuBM+jBnDmSSp/5v9Kfc4QkZ
-         tqi9V1e8Ra96v2RWI+YzRRw7S2jmQeyUsL9lalJuluiM/yNKJA4u9WE6n9pSKdh6P+JS
-         Gru20nwC8wHUnxkt2jKy66HSkV+2377oeRiCR5mXfiKj8e9AnHgh1qASA5bJIaBUnRbJ
-         y1GQ==
+        bh=x1N1OrLMa6t8qMkOD0BLoblqhbOaLOnVx09FMW3MOGg=;
+        b=Jio2YlHjwoI3iLPfjs0HUCGLwK/jF38OIZL0LVEEc7P3wkUzYjC6sbPnToGHfyDdN/
+         L4AelHpyCFIqB7zb20xI9CbRvlrGpCyW40ik9DBdq2uzxgSnkKU3zYjTxcWKxfrUtFWo
+         xhedtn5YVa0MxY5u3vxwMr+oMu6yn1Q9jcD11gP00DsPWZhAquwS20oCZajU+p57RRsf
+         iVT1ds9JZLbDtYcF2uDt7frIRPxVUXxX0Ok5xFFZkiWO6tKFzeBFA1MIeR+2FJcap8Ei
+         kgBXiVhcgfWXpFBTYVY3OLoVqE3XocS4TTQvHVCLLepqdd3tH1OgWH0YxvOe3dJ48FUz
+         tJDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697472554; x=1698077354;
+        d=1e100.net; s=20230601; t=1697472556; x=1698077356;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=pUb7jMt3+90fOvXmi3BU9GENaGJW8LhkaaNhVF50Qy4=;
-        b=UBBbjIq6vOltTg2VJGPI4v4WvdlnOg9Tk2eVfiLZ9ZHToAPkNftHxKqERnxxzRTwmM
-         QaWquR4M4rDVBA/noX2MmhBlFl1VIkmqG0Ie2RvoPwZat86DeQHqyZJcRUmLzFVKurOb
-         7p22wd7aC3FDKlwO/DrzcXHVdMx5WS61+rgxikfbk/KyTol2b1SOwL+ET+gYQuk6vXz1
-         GVY0KxksyGrcG63Wt/57OLpd87VBMZKCTDJ+mazbuVpANJDprvNF4NFl1xZ5WSQ8FWNK
-         Uxk+gl/WzoYyYdJP1geyt07yV8DEpr9/IKITt9WKrb3DagHWFvRtzD0WVAk0O+ajyKx1
-         hHbA==
-X-Gm-Message-State: AOJu0YwG5g3Ew5sf5SBVHq6i+ntr2P3/fCPO+ciEmQ30rOs6ggWHO1zn
-	N43rqJRPicxDsLFHgHvdRKw=
-X-Google-Smtp-Source: AGHT+IGoPvp5R13iJ4kvLDrWskohRWqEdNQ50X3PuF8UbGTvnASt3KNhLdrAi76yZMES9TsC+6uSaQ==
-X-Received: by 2002:a7b:cd85:0:b0:404:7670:90b8 with SMTP id y5-20020a7bcd85000000b00404767090b8mr31145930wmj.27.1697472554259;
-        Mon, 16 Oct 2023 09:09:14 -0700 (PDT)
+        bh=x1N1OrLMa6t8qMkOD0BLoblqhbOaLOnVx09FMW3MOGg=;
+        b=pRAkPzxJHHOTcQuel7zVjQ84Eb7l2ZyGa8I8Oj0aKpORiKDviqpeOSVE/ISuNSD1HG
+         Z4zEKdoyzUbY3cgJb7vzX0IvgSmV6GiVdI/oGDkaiDfkoUwNgRIZne3UaIEaduFsch7x
+         wcekv61ixLSOfhEko3bP4n2uGODJIgziSUI/Ip1hMdCGY9inFgI+1Zh5g8oVkEfOC+r2
+         wreolDIfQH75/GYisvIcY8Gb8uLfJz+aAvbTST3t+8eFOmKJS1XRSuBlPLLkhtucYP7S
+         V+tULAx8bvMHdYOrEwTuhOKX7uI7Kuk/DQgnxiyOc8Zy9ocNFwud9cYd/GLPh3M/K5fO
+         gs0A==
+X-Gm-Message-State: AOJu0YxshbwY3Tg1GpSqx/p/v4gLTbCIw19sRmOl8mEDNUIfLUdCoZjV
+	R86FvHWauXLwniNS+seQKVc=
+X-Google-Smtp-Source: AGHT+IH1VbIK5nASmREGa+PC81Bcos2E3kSV0vkRnQtSjC/5EEluRn63pxhApHxkpy3Okr7sJMoO1g==
+X-Received: by 2002:a5d:440a:0:b0:32d:9f1b:3a1f with SMTP id z10-20020a5d440a000000b0032d9f1b3a1fmr6576365wrq.31.1697472555953;
+        Mon, 16 Oct 2023 09:09:15 -0700 (PDT)
 Received: from amir-ThinkPad-T480.lan ([5.29.249.86])
-        by smtp.gmail.com with ESMTPSA id p8-20020adfce08000000b003271be8440csm27379935wrn.101.2023.10.16.09.09.12
+        by smtp.gmail.com with ESMTPSA id p8-20020adfce08000000b003271be8440csm27379935wrn.101.2023.10.16.09.09.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Oct 2023 09:09:13 -0700 (PDT)
+        Mon, 16 Oct 2023 09:09:15 -0700 (PDT)
 From: Amir Goldstein <amir73il@gmail.com>
 To: Miklos Szeredi <miklos@szeredi.hu>
 Cc: Bernd Schubert <bernd.schubert@fastmail.fm>,
@@ -67,9 +67,9 @@ Cc: Bernd Schubert <bernd.schubert@fastmail.fm>,
 	Christian Brauner <brauner@kernel.org>,
 	fuse-devel@lists.sourceforge.net,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v14 04/12] fs: factor out backing_file_mmap() helper
-Date: Mon, 16 Oct 2023 19:08:54 +0300
-Message-Id: <20231016160902.2316986-5-amir73il@gmail.com>
+Subject: [PATCH v14 05/12] fuse: factor out helper for FUSE_DEV_IOC_CLONE
+Date: Mon, 16 Oct 2023 19:08:55 +0300
+Message-Id: <20231016160902.2316986-6-amir73il@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20231016160902.2316986-1-amir73il@gmail.com>
 References: <20231016160902.2316986-1-amir73il@gmail.com>
@@ -87,116 +87,94 @@ X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-Assert that the file object is allocated in a backing_file container
-so that file_user_path() could be used to display the user path and
-not the backing file's path in /proc/<pid>/maps.
+In preparation to adding more fuse dev ioctls.
 
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/backing-file.c            | 27 +++++++++++++++++++++++++++
- fs/overlayfs/file.c          | 23 ++++++-----------------
- include/linux/backing-file.h |  2 ++
- 3 files changed, 35 insertions(+), 17 deletions(-)
+ fs/fuse/dev.c | 59 ++++++++++++++++++++++++++++-----------------------
+ 1 file changed, 33 insertions(+), 26 deletions(-)
 
-diff --git a/fs/backing-file.c b/fs/backing-file.c
-index f32dd9012720..1601a32e8e6a 100644
---- a/fs/backing-file.c
-+++ b/fs/backing-file.c
-@@ -11,6 +11,7 @@
- #include <linux/fs.h>
- #include <linux/backing-file.h>
- #include <linux/splice.h>
-+#include <linux/mm.h>
- 
- #include "internal.h"
- 
-@@ -279,6 +280,32 @@ ssize_t backing_file_splice_write(struct pipe_inode_info *pipe,
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index 1a8f82f478cb..eba68b57bd7c 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -2251,43 +2251,50 @@ static int fuse_device_clone(struct fuse_conn *fc, struct file *new)
+ 	return 0;
  }
- EXPORT_SYMBOL_GPL(backing_file_splice_write);
  
-+int backing_file_mmap(struct file *file, struct vm_area_struct *vma,
-+		      struct backing_file_ctx *ctx)
-+{
-+	const struct cred *old_cred;
-+	int ret;
+-static long fuse_dev_ioctl(struct file *file, unsigned int cmd,
+-			   unsigned long arg)
++static long fuse_dev_ioctl_clone(struct file *file, __u32 __user *argp)
+ {
+ 	int res;
+ 	int oldfd;
+ 	struct fuse_dev *fud = NULL;
+ 	struct fd f;
+ 
++	if (get_user(oldfd, argp))
++		return -EFAULT;
 +
-+	if (WARN_ON_ONCE(!(file->f_mode & FMODE_BACKING)) ||
-+	    WARN_ON_ONCE(ctx->user_file != vma->vm_file))
-+		return -EIO;
++	f = fdget(oldfd);
++	if (!f.file)
++		return -EINVAL;
 +
-+	if (!file->f_op->mmap)
-+		return -ENODEV;
++	/*
++	 * Check against file->f_op because CUSE
++	 * uses the same ioctl handler.
++	 */
++	if (f.file->f_op == file->f_op)
++		fud = fuse_get_dev(f.file);
 +
-+	vma_set_file(vma, file);
++	res = -EINVAL;
++	if (fud) {
++		mutex_lock(&fuse_mutex);
++		res = fuse_device_clone(fud->fc, file);
++		mutex_unlock(&fuse_mutex);
++	}
 +
-+	old_cred = override_creds(ctx->cred);
-+	ret = call_mmap(vma->vm_file, vma);
-+	revert_creds(old_cred);
-+
-+	if (ctx->accessed)
-+		ctx->accessed(ctx->user_file);
-+
-+	return ret;
++	fdput(f);
++	return res;
 +}
-+EXPORT_SYMBOL_GPL(backing_file_mmap);
 +
- static int __init backing_aio_init(void)
- {
- 	backing_aio_cachep = kmem_cache_create("backing_aio",
-diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-index 6a7af440733b..034b8088c408 100644
---- a/fs/overlayfs/file.c
-+++ b/fs/overlayfs/file.c
-@@ -10,7 +10,6 @@
- #include <linux/uio.h>
- #include <linux/uaccess.h>
- #include <linux/security.h>
--#include <linux/mm.h>
- #include <linux/fs.h>
- #include <linux/backing-file.h>
- #include "overlayfs.h"
-@@ -418,23 +417,13 @@ static int ovl_fsync(struct file *file, loff_t start, loff_t end, int datasync)
- static int ovl_mmap(struct file *file, struct vm_area_struct *vma)
- {
- 	struct file *realfile = file->private_data;
--	const struct cred *old_cred;
--	int ret;
--
--	if (!realfile->f_op->mmap)
--		return -ENODEV;
--
--	if (WARN_ON(file != vma->vm_file))
--		return -EIO;
--
--	vma_set_file(vma, realfile);
--
--	old_cred = ovl_override_creds(file_inode(file)->i_sb);
--	ret = call_mmap(vma->vm_file, vma);
--	revert_creds(old_cred);
--	ovl_file_accessed(file);
-+	struct backing_file_ctx ctx = {
-+		.cred = ovl_creds(file_inode(file)->i_sb),
-+		.user_file = file,
-+		.accessed = ovl_file_accessed,
-+	};
++static long fuse_dev_ioctl(struct file *file, unsigned int cmd,
++			   unsigned long arg)
++{
++	void __user *argp = (void __user *)arg;
++
+ 	switch (cmd) {
+ 	case FUSE_DEV_IOC_CLONE:
+-		if (get_user(oldfd, (__u32 __user *)arg))
+-			return -EFAULT;
++		return fuse_dev_ioctl_clone(file, argp);
  
--	return ret;
-+	return backing_file_mmap(realfile, vma, &ctx);
+-		f = fdget(oldfd);
+-		if (!f.file)
+-			return -EINVAL;
+-
+-		/*
+-		 * Check against file->f_op because CUSE
+-		 * uses the same ioctl handler.
+-		 */
+-		if (f.file->f_op == file->f_op)
+-			fud = fuse_get_dev(f.file);
+-
+-		res = -EINVAL;
+-		if (fud) {
+-			mutex_lock(&fuse_mutex);
+-			res = fuse_device_clone(fud->fc, file);
+-			mutex_unlock(&fuse_mutex);
+-		}
+-		fdput(f);
+-		break;
+ 	default:
+-		res = -ENOTTY;
+-		break;
++		return -ENOTTY;
+ 	}
+-	return res;
  }
  
- static long ovl_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
-diff --git a/include/linux/backing-file.h b/include/linux/backing-file.h
-index 0546d5b1c9f5..3f1fe1774f1b 100644
---- a/include/linux/backing-file.h
-+++ b/include/linux/backing-file.h
-@@ -36,5 +36,7 @@ ssize_t backing_file_splice_write(struct pipe_inode_info *pipe,
- 				  struct file *out, loff_t *ppos, size_t len,
- 				  unsigned int flags,
- 				  struct backing_file_ctx *ctx);
-+int backing_file_mmap(struct file *file, struct vm_area_struct *vma,
-+		      struct backing_file_ctx *ctx);
- 
- #endif /* _LINUX_BACKING_FILE_H */
+ const struct file_operations fuse_dev_operations = {
 -- 
 2.34.1
 
