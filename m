@@ -1,63 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-425-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-426-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAEA97CAE7D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Oct 2023 18:09:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A9A167CAE7E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Oct 2023 18:09:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED5331C20A5C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Oct 2023 16:09:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA8071C20AD7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Oct 2023 16:09:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4FDC30D0A;
-	Mon, 16 Oct 2023 16:09:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0696130D0D;
+	Mon, 16 Oct 2023 16:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ot0iHtWf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bGqj1h/w"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BA1B30CE7
-	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Oct 2023 16:09:16 +0000 (UTC)
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DA41B4
-	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Oct 2023 09:09:14 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id ffacd0b85a97d-31c5cac3ae2so4228346f8f.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Oct 2023 09:09:14 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8292130D06
+	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Oct 2023 16:09:18 +0000 (UTC)
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D741DAB
+	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Oct 2023 09:09:15 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-40572aeb673so46196785e9.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Oct 2023 09:09:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697472552; x=1698077352; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1697472554; x=1698077354; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=X1GVL753j0kWCcGaDbo+LaxJ3YjkbH9HnSX1kLHwrJg=;
-        b=Ot0iHtWfzkEI96ovoiQgiKTLsAtIZArwqSPBZLZ/vMdFIEift+pTtxdEjpg8QfCvmw
-         9KO5KrusBEvXre0spHE3yqTuyZmfGMkjeYpNNUa6ITBO1UIe3Q/v8JBpsD+aLx+JjnMr
-         Zg5o27kOX01uTk/tia60dlIWglcUO/T7RN65nHbXtq+DnpvrsDBVuotbnssuS7u2j03t
-         mIMo6YQplqpB/ExODuBKBfOZDqUld6udW4bAjelkf0adbqH1nKXYnbshdsOPDV9+KJOY
-         olreYp0+V5cwDHdGLgSYOPn79zM/2sjxKLw9cBpFcdW4QAm2CnU4aqwmjmr1RGtnVYua
-         /RBQ==
+        bh=pUb7jMt3+90fOvXmi3BU9GENaGJW8LhkaaNhVF50Qy4=;
+        b=bGqj1h/wBFsqUoP2rI8iVNdEAVpTTp3GpJZw79l6TbTI1MWKqWw0Jx10Y0r5nK2wa8
+         y1D55GVHGJTEiDZLuLAB6wEBP5Bbx6SX5QLyckOV9SDq6bi4xFsrXPGqMQrbOlRdpu48
+         pz4VvIyd/d/5WYIQKW0Wo3R+YUxbeou70IZ04BrhJHdULuBM+jBnDmSSp/5v9Kfc4QkZ
+         tqi9V1e8Ra96v2RWI+YzRRw7S2jmQeyUsL9lalJuluiM/yNKJA4u9WE6n9pSKdh6P+JS
+         Gru20nwC8wHUnxkt2jKy66HSkV+2377oeRiCR5mXfiKj8e9AnHgh1qASA5bJIaBUnRbJ
+         y1GQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697472552; x=1698077352;
+        d=1e100.net; s=20230601; t=1697472554; x=1698077354;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=X1GVL753j0kWCcGaDbo+LaxJ3YjkbH9HnSX1kLHwrJg=;
-        b=IcetOZv8+ue4xcUPBhVP5cnkjuzO4eZGV/6jOhT7Evpq+xfc4ozixRRNaU+zkcFHHk
-         nrleqCvG+jjkuC0k5qtTa7NMLeu6sWRUDlaybBubctNNrPX25QwWOc6skWcIiIqGNPZh
-         BlziT/KMZyAQNayQ+X7JMLO4aKlv6IK5sy4CeuPFYhtR0MYWle0oJRF1sOEPed7GQQrw
-         GsU+zZwSgh7kTLz381t8T9LdhNSFuWftqoy1w2xIeN/R9giP2ksOgh7N1U55CMNY94ig
-         9XUtgswVacTcNcgQLDXcKYj8NKq5Jwj5j92y0DWWjelI+ZFdUR+Cq6pi58yeqzB3XWzv
-         g7YQ==
-X-Gm-Message-State: AOJu0YxPqF0xR8YR/2e8Y4eRtDA0/hJQC4lzGFzyK0J2t2IIyfYK7c23
-	EeNVxGMAClTTVNOB4VYwJqo=
-X-Google-Smtp-Source: AGHT+IERILeWeU4Rsr2CfaYqiUrxNwvpC6z8NlxCN14lfIDhqsTT4KRtHIZzMfAMf98KO1tfqb57UQ==
-X-Received: by 2002:a05:6000:49:b0:32d:5cc0:2f0c with SMTP id k9-20020a056000004900b0032d5cc02f0cmr15615486wrx.40.1697472552557;
-        Mon, 16 Oct 2023 09:09:12 -0700 (PDT)
+        bh=pUb7jMt3+90fOvXmi3BU9GENaGJW8LhkaaNhVF50Qy4=;
+        b=UBBbjIq6vOltTg2VJGPI4v4WvdlnOg9Tk2eVfiLZ9ZHToAPkNftHxKqERnxxzRTwmM
+         QaWquR4M4rDVBA/noX2MmhBlFl1VIkmqG0Ie2RvoPwZat86DeQHqyZJcRUmLzFVKurOb
+         7p22wd7aC3FDKlwO/DrzcXHVdMx5WS61+rgxikfbk/KyTol2b1SOwL+ET+gYQuk6vXz1
+         GVY0KxksyGrcG63Wt/57OLpd87VBMZKCTDJ+mazbuVpANJDprvNF4NFl1xZ5WSQ8FWNK
+         Uxk+gl/WzoYyYdJP1geyt07yV8DEpr9/IKITt9WKrb3DagHWFvRtzD0WVAk0O+ajyKx1
+         hHbA==
+X-Gm-Message-State: AOJu0YwG5g3Ew5sf5SBVHq6i+ntr2P3/fCPO+ciEmQ30rOs6ggWHO1zn
+	N43rqJRPicxDsLFHgHvdRKw=
+X-Google-Smtp-Source: AGHT+IGoPvp5R13iJ4kvLDrWskohRWqEdNQ50X3PuF8UbGTvnASt3KNhLdrAi76yZMES9TsC+6uSaQ==
+X-Received: by 2002:a7b:cd85:0:b0:404:7670:90b8 with SMTP id y5-20020a7bcd85000000b00404767090b8mr31145930wmj.27.1697472554259;
+        Mon, 16 Oct 2023 09:09:14 -0700 (PDT)
 Received: from amir-ThinkPad-T480.lan ([5.29.249.86])
-        by smtp.gmail.com with ESMTPSA id p8-20020adfce08000000b003271be8440csm27379935wrn.101.2023.10.16.09.09.11
+        by smtp.gmail.com with ESMTPSA id p8-20020adfce08000000b003271be8440csm27379935wrn.101.2023.10.16.09.09.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Oct 2023 09:09:12 -0700 (PDT)
+        Mon, 16 Oct 2023 09:09:13 -0700 (PDT)
 From: Amir Goldstein <amir73il@gmail.com>
 To: Miklos Szeredi <miklos@szeredi.hu>
 Cc: Bernd Schubert <bernd.schubert@fastmail.fm>,
@@ -67,9 +67,9 @@ Cc: Bernd Schubert <bernd.schubert@fastmail.fm>,
 	Christian Brauner <brauner@kernel.org>,
 	fuse-devel@lists.sourceforge.net,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v14 03/12] fs: factor out backing_file_splice_{read,write}() helpers
-Date: Mon, 16 Oct 2023 19:08:53 +0300
-Message-Id: <20231016160902.2316986-4-amir73il@gmail.com>
+Subject: [PATCH v14 04/12] fs: factor out backing_file_mmap() helper
+Date: Mon, 16 Oct 2023 19:08:54 +0300
+Message-Id: <20231016160902.2316986-5-amir73il@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20231016160902.2316986-1-amir73il@gmail.com>
 References: <20231016160902.2316986-1-amir73il@gmail.com>
@@ -87,43 +87,50 @@ X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-There is not much in those helpers, but it makes sense to have them
-logically next to the backing_file_{read,write}_iter() helpers as they
-may grow more common logic in the future.
+Assert that the file object is allocated in a backing_file container
+so that file_user_path() could be used to display the user path and
+not the backing file's path in /proc/<pid>/maps.
 
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/backing-file.c            | 41 ++++++++++++++++++++++++++++++++++++
- fs/overlayfs/file.c          | 30 ++++++++++++--------------
- include/linux/backing-file.h |  8 +++++++
- 3 files changed, 62 insertions(+), 17 deletions(-)
+ fs/backing-file.c            | 27 +++++++++++++++++++++++++++
+ fs/overlayfs/file.c          | 23 ++++++-----------------
+ include/linux/backing-file.h |  2 ++
+ 3 files changed, 35 insertions(+), 17 deletions(-)
 
 diff --git a/fs/backing-file.c b/fs/backing-file.c
-index 2969ea6295ce..f32dd9012720 100644
+index f32dd9012720..1601a32e8e6a 100644
 --- a/fs/backing-file.c
 +++ b/fs/backing-file.c
-@@ -10,6 +10,7 @@
- 
+@@ -11,6 +11,7 @@
  #include <linux/fs.h>
  #include <linux/backing-file.h>
-+#include <linux/splice.h>
+ #include <linux/splice.h>
++#include <linux/mm.h>
  
  #include "internal.h"
  
-@@ -238,6 +239,46 @@ ssize_t backing_file_write_iter(struct file *file, struct iov_iter *iter,
+@@ -279,6 +280,32 @@ ssize_t backing_file_splice_write(struct pipe_inode_info *pipe,
  }
- EXPORT_SYMBOL_GPL(backing_file_write_iter);
+ EXPORT_SYMBOL_GPL(backing_file_splice_write);
  
-+ssize_t backing_file_splice_read(struct file *in, loff_t *ppos,
-+				 struct pipe_inode_info *pipe, size_t len,
-+				 unsigned int flags,
-+				 struct backing_file_ctx *ctx)
++int backing_file_mmap(struct file *file, struct vm_area_struct *vma,
++		      struct backing_file_ctx *ctx)
 +{
 +	const struct cred *old_cred;
-+	ssize_t ret;
++	int ret;
++
++	if (WARN_ON_ONCE(!(file->f_mode & FMODE_BACKING)) ||
++	    WARN_ON_ONCE(ctx->user_file != vma->vm_file))
++		return -EIO;
++
++	if (!file->f_op->mmap)
++		return -ENODEV;
++
++	vma_set_file(vma, file);
 +
 +	old_cred = override_creds(ctx->cred);
-+	ret = vfs_splice_read(in, ppos, pipe, len, flags);
++	ret = call_mmap(vma->vm_file, vma);
 +	revert_creds(old_cred);
 +
 +	if (ctx->accessed)
@@ -131,120 +138,63 @@ index 2969ea6295ce..f32dd9012720 100644
 +
 +	return ret;
 +}
-+EXPORT_SYMBOL_GPL(backing_file_splice_read);
-+
-+ssize_t backing_file_splice_write(struct pipe_inode_info *pipe,
-+				  struct file *out, loff_t *ppos, size_t len,
-+				  unsigned int flags,
-+				  struct backing_file_ctx *ctx)
-+{
-+	const struct cred *old_cred;
-+	ssize_t ret;
-+
-+	old_cred = override_creds(ctx->cred);
-+	file_start_write(out);
-+	ret = iter_file_splice_write(pipe, out, ppos, len, flags);
-+	file_end_write(out);
-+	revert_creds(old_cred);
-+
-+	if (ctx->end_write)
-+		ctx->end_write(ctx->user_file);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(backing_file_splice_write);
++EXPORT_SYMBOL_GPL(backing_file_mmap);
 +
  static int __init backing_aio_init(void)
  {
  	backing_aio_cachep = kmem_cache_create("backing_aio",
 diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-index 1376f2d308fe..6a7af440733b 100644
+index 6a7af440733b..034b8088c408 100644
 --- a/fs/overlayfs/file.c
 +++ b/fs/overlayfs/file.c
-@@ -9,7 +9,6 @@
- #include <linux/xattr.h>
+@@ -10,7 +10,6 @@
  #include <linux/uio.h>
  #include <linux/uaccess.h>
--#include <linux/splice.h>
  #include <linux/security.h>
- #include <linux/mm.h>
+-#include <linux/mm.h>
  #include <linux/fs.h>
-@@ -332,20 +331,21 @@ static ssize_t ovl_splice_read(struct file *in, loff_t *ppos,
- 			       struct pipe_inode_info *pipe, size_t len,
- 			       unsigned int flags)
+ #include <linux/backing-file.h>
+ #include "overlayfs.h"
+@@ -418,23 +417,13 @@ static int ovl_fsync(struct file *file, loff_t start, loff_t end, int datasync)
+ static int ovl_mmap(struct file *file, struct vm_area_struct *vma)
  {
+ 	struct file *realfile = file->private_data;
 -	const struct cred *old_cred;
- 	struct fd real;
- 	ssize_t ret;
+-	int ret;
+-
+-	if (!realfile->f_op->mmap)
+-		return -ENODEV;
+-
+-	if (WARN_ON(file != vma->vm_file))
+-		return -EIO;
+-
+-	vma_set_file(vma, realfile);
+-
+-	old_cred = ovl_override_creds(file_inode(file)->i_sb);
+-	ret = call_mmap(vma->vm_file, vma);
+-	revert_creds(old_cred);
+-	ovl_file_accessed(file);
 +	struct backing_file_ctx ctx = {
-+		.cred = ovl_creds(file_inode(in)->i_sb),
-+		.user_file = in,
++		.cred = ovl_creds(file_inode(file)->i_sb),
++		.user_file = file,
 +		.accessed = ovl_file_accessed,
 +	};
  
- 	ret = ovl_real_fdget(in, &real);
- 	if (ret)
- 		return ret;
- 
--	old_cred = ovl_override_creds(file_inode(in)->i_sb);
--	ret = vfs_splice_read(real.file, ppos, pipe, len, flags);
--	revert_creds(old_cred);
--	ovl_file_accessed(in);
--
-+	ret = backing_file_splice_read(real.file, ppos, pipe, len, flags, &ctx);
- 	fdput(real);
-+
- 	return ret;
+-	return ret;
++	return backing_file_mmap(realfile, vma, &ctx);
  }
  
-@@ -361,9 +361,13 @@ static ssize_t ovl_splice_write(struct pipe_inode_info *pipe, struct file *out,
- 				loff_t *ppos, size_t len, unsigned int flags)
- {
- 	struct fd real;
--	const struct cred *old_cred;
- 	struct inode *inode = file_inode(out);
- 	ssize_t ret;
-+	struct backing_file_ctx ctx = {
-+		.cred = ovl_creds(inode->i_sb),
-+		.user_file = out,
-+		.end_write = ovl_file_modified,
-+	};
- 
- 	inode_lock(inode);
- 	/* Update mode */
-@@ -376,15 +380,7 @@ static ssize_t ovl_splice_write(struct pipe_inode_info *pipe, struct file *out,
- 	if (ret)
- 		goto out_unlock;
- 
--	old_cred = ovl_override_creds(inode->i_sb);
--	file_start_write(real.file);
--
--	ret = iter_file_splice_write(pipe, real.file, ppos, len, flags);
--
--	file_end_write(real.file);
--	/* Update size */
--	ovl_file_modified(out);
--	revert_creds(old_cred);
-+	ret = backing_file_splice_write(pipe, real.file, ppos, len, flags, &ctx);
- 	fdput(real);
- 
- out_unlock:
+ static long ovl_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
 diff --git a/include/linux/backing-file.h b/include/linux/backing-file.h
-index 0648d548a418..0546d5b1c9f5 100644
+index 0546d5b1c9f5..3f1fe1774f1b 100644
 --- a/include/linux/backing-file.h
 +++ b/include/linux/backing-file.h
-@@ -28,5 +28,13 @@ ssize_t backing_file_read_iter(struct file *file, struct iov_iter *iter,
- ssize_t backing_file_write_iter(struct file *file, struct iov_iter *iter,
- 				struct kiocb *iocb, int flags,
- 				struct backing_file_ctx *ctx);
-+ssize_t backing_file_splice_read(struct file *in, loff_t *ppos,
-+				 struct pipe_inode_info *pipe, size_t len,
-+				 unsigned int flags,
-+				 struct backing_file_ctx *ctx);
-+ssize_t backing_file_splice_write(struct pipe_inode_info *pipe,
-+				  struct file *out, loff_t *ppos, size_t len,
-+				  unsigned int flags,
-+				  struct backing_file_ctx *ctx);
+@@ -36,5 +36,7 @@ ssize_t backing_file_splice_write(struct pipe_inode_info *pipe,
+ 				  struct file *out, loff_t *ppos, size_t len,
+ 				  unsigned int flags,
+ 				  struct backing_file_ctx *ctx);
++int backing_file_mmap(struct file *file, struct vm_area_struct *vma,
++		      struct backing_file_ctx *ctx);
  
  #endif /* _LINUX_BACKING_FILE_H */
 -- 
