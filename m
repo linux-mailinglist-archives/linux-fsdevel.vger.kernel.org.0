@@ -1,42 +1,42 @@
-Return-Path: <linux-fsdevel+bounces-547-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-548-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 539177CCB0D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 20:48:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC8FC7CCB0C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 20:48:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 269DDB2128B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 18:48:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 336301C20A41
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 18:48:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82EB144487;
-	Tue, 17 Oct 2023 18:48:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA0D45F42;
+	Tue, 17 Oct 2023 18:48:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SfCbzY8z"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Y3eX7LW/"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CBA642BFF
-	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Oct 2023 18:48:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA33843AB3
+	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Oct 2023 18:48:37 +0000 (UTC)
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E53B92;
-	Tue, 17 Oct 2023 11:48:34 -0700 (PDT)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD82F9F;
+	Tue, 17 Oct 2023 11:48:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
 	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=3p4oO3bOXrhbykt9aeueJv3mlaSlSZVuqrgRI70Z3n8=; b=SfCbzY8znMcuOv5VNgHyY+biQY
-	p6t02rycUvs0jSeqmIaPRyf8SaAeE1kyDbpncHpx47/XZogN88cEkUYcbKe9+dqxEAHVqVSNqibbU
-	RrhyjhPgpBmYTFWO/h/Pm87q/nkj9jD66p3V3ZeUo8KG5lEDAnx61/NPfWAT2kQfrG/ILtJWv36Zf
-	XvFD+SgML9ux/P3GQ0ksyNSxe5TBY5MVcSeKMnDVHmhoJ7iVn9yRBHPOwsU09k1DN1OeruWBDkgik
-	JMZd8KtC+L8cfQiUknwiHVJE1OvzDddWM4tMyZweAIx5GYre2vVm0kRRaoUfKQPibnXhiM3P+z62v
-	2WrgfhNw==;
+	bh=oX4lK1dfp58L5xH7/9zRG/fX7LPq226bYG22aZQTTco=; b=Y3eX7LW/yg1a5UHuEm5j8dX+1w
+	54lZBmXwcmu/0mYRF8xdAiRRwmARSOJB4jRUtGOdm9OihJjKmd5LDb1NMi61YNiXV4PYIgYKVhh5Y
+	S1UZ1fSzAcMUXqIXt+SSl2MU6D1D1btmeHRXymrQUcTH7Frp1BW8IWU73iAQjfxHlSrtnJKYXc1t8
+	PolLzlyWrWt7BcQ12xHEseKTc+5ZbfSJW5exXvtETxsvVAc9mLliBfMNysy27jj6CCfK18onsuVdG
+	aTEpBVzUN2P7PA7QpE/2ACPgvHbANLRny5Zc1+sis4zOYSd4pN13erV7qGrO3d+PLVw0vWse/zYjU
+	D9R6UvHg==;
 Received: from 2a02-8389-2341-5b80-39d3-4735-9a3c-88d8.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:39d3:4735:9a3c:88d8] helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-	id 1qsp7G-00D0Kj-24;
-	Tue, 17 Oct 2023 18:48:30 +0000
+	id 1qsp7J-00D0Ku-1I;
+	Tue, 17 Oct 2023 18:48:33 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Christian Brauner <brauner@kernel.org>,
 	Al Viro <viro@zeniv.linux.org.uk>,
@@ -45,9 +45,9 @@ Cc: Jan Kara <jack@suse.cz>,
 	Denis Efremov <efremov@linux.com>,
 	linux-block@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 1/5] block: simplify bdev_del_partition()
-Date: Tue, 17 Oct 2023 20:48:19 +0200
-Message-Id: <20231017184823.1383356-2-hch@lst.de>
+Subject: [PATCH 2/5] block: WARN_ON_ONCE() when we remove active partitions
+Date: Tue, 17 Oct 2023 20:48:20 +0200
+Message-Id: <20231017184823.1383356-3-hch@lst.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20231017184823.1383356-1-hch@lst.de>
 References: <20231017184823.1383356-1-hch@lst.de>
@@ -68,59 +68,81 @@ X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 
 From: Christian Brauner <brauner@kernel.org>
 
-BLKPG_DEL_PARTITION refuses to delete partitions that still have
-openers, i.e., that has an elevated @bdev->bd_openers count. If a device
-is claimed by setting @bdev->bd_holder and @bdev->bd_holder_ops
-@bdev->bd_openers and @bdev->bd_holders are incremented.
-@bdev->bd_openers is effectively guaranteed to be >= @bdev->bd_holders.
-So as long as @bdev->bd_openers isn't zero we know that this partition
-is still in active use and that there might still be @bdev->bd_holder
-and @bdev->bd_holder_ops set.
+The logic for disk->open_partitions is:
 
-The only current example is @fs_holder_ops for filesystems. But that
-means bdev_mark_dead() which calls into
-bdev->bd_holder_ops->mark_dead::fs_bdev_mark_dead() is a nop. As long as
-there's an elevated @bdev->bd_openers count we can't delete the
-partition and if there isn't an elevated @bdev->bd_openers count then
-there's no @bdev->bd_holder or @bdev->bd_holder_ops.
+blkdev_get_by_*()
+-> bdev_is_partition()
+   -> blkdev_get_part()
+      -> blkdev_get_whole() // bdev_whole->bd_openers++
+      -> if (part->bd_openers == 0)
+                 disk->open_partitions++
+         part->bd_openers
 
-So simply open-code what we need to do. This gets rid of one more
-instance where we acquire s_umount under @disk->open_mutex.
+In other words, when we first claim/open a partition we increment
+disk->open_partitions and only when all part->bd_openers are closed will
+disk->open_partitions be zero. That should mean that
+disk->open_partitions is always > 0 as long as there's anyone that
+has an open partition.
 
-Link: https://lore.kernel.org/r/20231016-fototermin-umriss-59f1ea6c1fe6@brauner
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Jens Axboe <axboe@kernel.dk>
+So the check for disk->open_partitions should meand that we can never
+remove an active partition that has a holder and holder ops set. Assert
+that in the code. The main disk isn't removed so that check doesn't work
+for disk->part0 which is what we want. After all we only care about
+partition not about the main disk.
+
 Signed-off-by: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- block/partitions/core.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ block/partitions/core.c | 30 +++++++++++++++++-------------
+ 1 file changed, 17 insertions(+), 13 deletions(-)
 
 diff --git a/block/partitions/core.c b/block/partitions/core.c
-index e137a87f4db0d3..b0585536b407a5 100644
+index b0585536b407a5..f47ffcfdfcec22 100644
 --- a/block/partitions/core.c
 +++ b/block/partitions/core.c
-@@ -485,7 +485,18 @@ int bdev_del_partition(struct gendisk *disk, int partno)
- 	if (atomic_read(&part->bd_openers))
- 		goto out_unlock;
+@@ -274,17 +274,6 @@ void drop_partition(struct block_device *part)
+ 	put_device(&part->bd_device);
+ }
  
--	delete_partition(part);
-+	/*
-+	 * We verified that @part->bd_openers is zero above and so
-+	 * @part->bd_holder{_ops} can't be set. And since we hold
-+	 * @disk->open_mutex the device can't be claimed by anyone.
-+	 *
-+	 * So no need to call @part->bd_holder_ops->mark_dead() here.
-+	 * Just delete the partition and invalidate it.
-+	 */
+-static void delete_partition(struct block_device *part)
+-{
+-	/*
+-	 * Remove the block device from the inode hash, so that it cannot be
+-	 * looked up any more even when openers still hold references.
+-	 */
+-	remove_inode_hash(part->bd_inode);
+-	bdev_mark_dead(part, false);
+-	drop_partition(part);
+-}
+-
+ static ssize_t whole_disk_show(struct device *dev,
+ 			       struct device_attribute *attr, char *buf)
+ {
+@@ -674,8 +663,23 @@ int bdev_disk_changed(struct gendisk *disk, bool invalidate)
+ 	sync_blockdev(disk->part0);
+ 	invalidate_bdev(disk->part0);
+ 
+-	xa_for_each_start(&disk->part_tbl, idx, part, 1)
+-		delete_partition(part);
++	xa_for_each_start(&disk->part_tbl, idx, part, 1) {
++		/*
++		 * Remove the block device from the inode hash, so that
++		 * it cannot be looked up any more even when openers
++		 * still hold references.
++		 */
++		remove_inode_hash(part->bd_inode);
 +
-+	remove_inode_hash(part->bd_inode);
-+	invalidate_bdev(part);
-+	drop_partition(part);
- 	ret = 0;
- out_unlock:
- 	mutex_unlock(&disk->open_mutex);
++		/*
++		 * If @disk->open_partitions isn't elevated but there's
++		 * still an active holder of that block device things
++		 * are broken.
++		 */
++		WARN_ON_ONCE(atomic_read(&part->bd_openers));
++		invalidate_bdev(part);
++		drop_partition(part);
++	}
+ 	clear_bit(GD_NEED_PART_SCAN, &disk->state);
+ 
+ 	/*
 -- 
 2.39.2
 
