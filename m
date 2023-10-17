@@ -1,268 +1,161 @@
-Return-Path: <linux-fsdevel+bounces-543-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-544-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BEE87CCA11
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 19:44:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBB487CCA1E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 19:47:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5B9E281995
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 17:44:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 863432813EB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 17:46:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 361749CA77;
-	Tue, 17 Oct 2023 17:44:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F0EB2D024;
+	Tue, 17 Oct 2023 17:46:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DL2Tcku5"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W0eBRw7p"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD5CD44469;
-	Tue, 17 Oct 2023 17:44:16 +0000 (UTC)
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F254B0;
-	Tue, 17 Oct 2023 10:44:13 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id 4fb4d7f45d1cf-53de8fc1ad8so10304121a12.0;
-        Tue, 17 Oct 2023 10:44:13 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DCBD2D78E;
+	Tue, 17 Oct 2023 17:46:47 +0000 (UTC)
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3AFB9E;
+	Tue, 17 Oct 2023 10:46:45 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id 4fb4d7f45d1cf-53e84912038so5209798a12.1;
+        Tue, 17 Oct 2023 10:46:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697564652; x=1698169452; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1697564804; x=1698169604; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wAbIIRYDWhAwyhng7S7d49FJtlugEyorbb7eIRB4Uq8=;
-        b=DL2Tcku5zbWMuHqpS2LVUuuuqno2r3e6UMYVXBfYLsaa92o+zCOjODoP7nRC7eyutt
-         pkoHKbxmGNmL6rwRJfpV+idYW4zkCBxxgp6LJ8gSI1DB7gbwM7Mqa2nVvIr6/Vd3BhJg
-         QbE27tKC28boAKyFvtri4yMDyGltTXBUnnJuSPnuZ1Uyc2+yxIUMj2iAdBTdiXDFFggk
-         TVJib1sUoLLbPUudTwmVYkCirK6nwCGId5nTs3rRE9krVVME0HOg35n/ozXsRRGYEcUU
-         ev2/P30xxUvF1lqaYf/gDrKR3bfduIahls6QlG4oBGTDiYkFZlTU+Aeuij4OLhma3ajP
-         Vj+A==
+        bh=ZTJcOzkVSYuq3kdfWyM6/478vxCOCOP6lLPkJ2SdCTM=;
+        b=W0eBRw7pPBw0LgH7eY75+XKjNwPp6qARg0GYJU1DBzYzRycL2nFcUHueMOW0NjR94r
+         iMptzkXIt03mGzygTNRBXA1k4f9D5GtxhdUOvGExTXpIIEtnkKVnrzMzoOq2Ohxcnjpu
+         TQTmbHY7isk53BAEgL5M6xITC8UF6TK3o2Eyoii6apY1QXqEZHGO9TrOOn7XD0hcLDE1
+         xNsOE2qsMudG3Gd4YDXu5W6v7GBgb3QF1hVZ5EhP7R8DxFGqj+2LgwJZYyGeY+ZW7guG
+         jFDaQccXS+mDbxpgT8jQJB5/vNX7Cq4naPyLx/xJd+gHoKAvBDy5XgapNAMG6v7Su22f
+         jQyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697564652; x=1698169452;
+        d=1e100.net; s=20230601; t=1697564804; x=1698169604;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wAbIIRYDWhAwyhng7S7d49FJtlugEyorbb7eIRB4Uq8=;
-        b=RC7CFnZu6VyaBcyW+La434xCibkzkmTEse0Sj9MihVkflDgvr+vERULNbVcnI+JjMP
-         10nSnjV9nVrdj1GSsGMa6HChoFsbHPZecbhb3Zwl5lipMj54CjKJ/MLnuR9cRqvSd3a1
-         fqL5JDbe9MHvrrZXj/YKYODDLK4lhhOS4iZDESwmQbQbdJBXEiRniwRH14ownN0i48Px
-         tum3heq4ytK+DffdnmMDeEKU4zegMQFDSkKOYWSDTsuWCD8U/7Sf7MoZAx/OoJ1FyzmX
-         2fW6zYrxm7Hf5nAGV0blGmb6nLVLEh/G8EoNTwEvS4Yg4zXDXWIB/MX9h/8z6Pq95WAx
-         gbHg==
-X-Gm-Message-State: AOJu0YzdX1bvZIdbup13IGdh3KoXxg5g9xV+sp0bUu6ANNTPgUZEAPkB
-	W1+s26NtQX3UNGt9kp9DXdbKF+cpgeEElRw82xY=
-X-Google-Smtp-Source: AGHT+IEaYBlIDsuqXTLWTVMQQsQrI0+VnKE10ZEbi58ENFFmqvMgA2wEhCPcDulab/6SsClXkh/+SC16Rr4EkTT32pA=
-X-Received: by 2002:a05:6402:5256:b0:536:e5f7:b329 with SMTP id
- t22-20020a056402525600b00536e5f7b329mr2800108edd.33.1697564651724; Tue, 17
- Oct 2023 10:44:11 -0700 (PDT)
+        bh=ZTJcOzkVSYuq3kdfWyM6/478vxCOCOP6lLPkJ2SdCTM=;
+        b=nIOgyr587rGbEWtdGa15D+x4ASLnnrF5zV4xgPqaDNZd8x2VMJ4/o9Ia3IsR/Ltpa7
+         WfhHTT/B1AQ0Ttgh0f+t9Ph0IGmXz8kEKZsOgEgIp//Lap/nitPxorPW5C8ZzpvzaoqX
+         JeFhZWiXgQIwNlR8H0pSmythe6tOasYQwx5lXObgFrMpU9Z3RtHP5gVdzw1nWbpHjwaz
+         hldcrwQsn9mmjXI+hqV3FGkLG7aC6v4UZX2jRInsprgXcdHw/FNkoKj1CT69CT+x+q3g
+         gHVH9ulkwzzAyeKOljg9a47OpgEgow8dRHt1n22GvMZIFxfvAyj64s6l0FCWZxlFJnf0
+         a3xw==
+X-Gm-Message-State: AOJu0Yy8B0KjElDHJ7m05m6Krpe99/x9gta5Brye3Jz/owNERzhGIr1I
+	OJ4hdLD0N9DxwGtOedCrfAw9Go2xkXhDTStrYKM=
+X-Google-Smtp-Source: AGHT+IF5SdawNji0JQ5EenvvwzkSH87GiKHVfD8DHFgGHgtaMPq9u4MQVqu7f7GBxWz3XY3Y2YEWNPJNHJ+Djc05Tfg=
+X-Received: by 2002:a05:6402:2314:b0:53d:b839:2045 with SMTP id
+ l20-20020a056402231400b0053db8392045mr2345712eda.25.1697564803833; Tue, 17
+ Oct 2023 10:46:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231016180220.3866105-1-andrii@kernel.org> <20231016180220.3866105-18-andrii@kernel.org>
- <ZS5ptHMhvMAkB+Tb@krava> <CAEf4BzZEoAAfb3BdDavAjHAsQSEsEOwHA7ELUMGqskinH19HTQ@mail.gmail.com>
-In-Reply-To: <CAEf4BzZEoAAfb3BdDavAjHAsQSEsEOwHA7ELUMGqskinH19HTQ@mail.gmail.com>
+References: <20231016180220.3866105-10-andrii@kernel.org> <202310172156.zcehiHbq-lkp@intel.com>
+In-Reply-To: <202310172156.zcehiHbq-lkp@intel.com>
 From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 17 Oct 2023 10:44:00 -0700
-Message-ID: <CAEf4BzZ-8Dj0BrrTyjNWOYXTyTCeP1F9c7Q9k2QyexpFT5iF0Q@mail.gmail.com>
-Subject: Re: [PATCH v8 bpf-next 17/18] selftests/bpf: add BPF token-enabled tests
-To: Jiri Olsa <olsajiri@gmail.com>
+Date: Tue, 17 Oct 2023 10:46:32 -0700
+Message-ID: <CAEf4BzbJBDkCTO9VOdBiMzrhwOXAd3UsguJqNA5oZAR7Q8Eo8A@mail.gmail.com>
+Subject: Re: [PATCH v8 bpf-next 09/18] bpf,lsm: refactor bpf_prog_alloc/bpf_prog_free
+ LSM hooks
+To: kernel test robot <lkp@intel.com>
 Cc: Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	keescook@chromium.org, brauner@kernel.org, lennart@poettering.net, 
-	kernel-team@meta.com, sargun@sargun.me
+	oe-kbuild-all@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, keescook@chromium.org, 
+	brauner@kernel.org, lennart@poettering.net, kernel-team@meta.com, 
+	sargun@sargun.me
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-	RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-On Tue, Oct 17, 2023 at 10:32=E2=80=AFAM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
+On Tue, Oct 17, 2023 at 6:56=E2=80=AFAM kernel test robot <lkp@intel.com> w=
+rote:
 >
-> On Tue, Oct 17, 2023 at 4:02=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> wr=
-ote:
-> >
-> > On Mon, Oct 16, 2023 at 11:02:19AM -0700, Andrii Nakryiko wrote:
-> > > Add a selftest that attempts to conceptually replicate intended BPF
-> > > token use cases inside user namespaced container.
-> > >
-> > > Child process is forked. It is then put into its own userns and mount=
-ns.
-> > > Child creates BPF FS context object and sets it up as desired. This
-> > > ensures child userns is captures as owning userns for this instance o=
-f
-> > > BPF FS.
-> > >
-> > > This context is passed back to privileged parent process through Unix
-> > > socket, where parent creates and mounts it as a detached mount. This
-> > > mount FD is passed back to the child to be used for BPF token creatio=
-n,
-> > > which allows otherwise privileged BPF operations to succeed inside
-> > > userns.
-> > >
-> > > We validate that all of token-enabled privileged commands (BPF_BTF_LO=
-AD,
-> > > BPF_MAP_CREATE, and BPF_PROG_LOAD) work as intended. They should only
-> > > succeed inside the userns if a) BPF token is provided with proper
-> > > allowed sets of commands and types; and b) namespaces CAP_BPF and oth=
-er
-> > > privileges are set. Lacking a) or b) should lead to -EPERM failures.
-> > >
-> > > Based on suggested workflow by Christian Brauner ([0]).
-> > >
-> > >   [0] https://lore.kernel.org/bpf/20230704-hochverdient-lehne-eeb9eee=
-f785e@brauner/
-> > >
-> > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> > > ---
-> > >  .../testing/selftests/bpf/prog_tests/token.c  | 629 ++++++++++++++++=
-++
-> > >  1 file changed, 629 insertions(+)
-> > >  create mode 100644 tools/testing/selftests/bpf/prog_tests/token.c
-> > >
-> > > diff --git a/tools/testing/selftests/bpf/prog_tests/token.c b/tools/t=
-esting/selftests/bpf/prog_tests/token.c
-> > > new file mode 100644
-> > > index 000000000000..41cee6b4731e
-> > > --- /dev/null
-> > > +++ b/tools/testing/selftests/bpf/prog_tests/token.c
-> > > @@ -0,0 +1,629 @@
-> > > +// SPDX-License-Identifier: GPL-2.0
-> > > +/* Copyright (c) 2023 Meta Platforms, Inc. and affiliates. */
-> > > +#define _GNU_SOURCE
-> > > +#include <test_progs.h>
-> > > +#include <bpf/btf.h>
-> > > +#include "cap_helpers.h"
-> > > +#include <fcntl.h>
-> > > +#include <sched.h>
-> > > +#include <signal.h>
-> > > +#include <unistd.h>
-> > > +#include <linux/filter.h>
-> > > +#include <linux/unistd.h>
-> > > +#include <sys/mount.h>
-> > > +#include <sys/socket.h>
-> > > +#include <sys/syscall.h>
-> > > +#include <sys/un.h>
-> > > +
-> > > +/* copied from include/uapi/linux/mount.h, as including it conflicts=
- with
-> > > + * sys/mount.h include
-> > > + */
-> > > +enum fsconfig_command {
-> > > +     FSCONFIG_SET_FLAG       =3D 0,    /* Set parameter, supplying n=
-o value */
-> > > +     FSCONFIG_SET_STRING     =3D 1,    /* Set parameter, supplying a=
- string value */
-> > > +     FSCONFIG_SET_BINARY     =3D 2,    /* Set parameter, supplying a=
- binary blob value */
-> > > +     FSCONFIG_SET_PATH       =3D 3,    /* Set parameter, supplying a=
-n object by path */
-> > > +     FSCONFIG_SET_PATH_EMPTY =3D 4,    /* Set parameter, supplying a=
-n object by (empty) path */
-> > > +     FSCONFIG_SET_FD         =3D 5,    /* Set parameter, supplying a=
-n object by fd */
-> > > +     FSCONFIG_CMD_CREATE     =3D 6,    /* Invoke superblock creation=
- */
-> > > +     FSCONFIG_CMD_RECONFIGURE =3D 7,   /* Invoke superblock reconfig=
-uration */
-> > > +};
-> >
-> > I'm getting compilation fail, because fsconfig_command seems to be
-> > included through the sys/mount.h include, but CI is green hum :-\
-> >
-> > when I get -E output I can see:
-> >
-> >         ...
-> >         # 16 "./cap_helpers.h"
-> >         int cap_enable_effective(__u64 caps, __u64 *old_caps);
-> >         int cap_disable_effective(__u64 caps, __u64 *old_caps);
-> >         # 7 "/home/jolsa/kernel/linux-qemu/tools/testing/selftests/bpf/=
-prog_tests/token.c" 2
-> >
-> >         # 1 "/usr/include/sys/mount.h" 1 3 4
-> >         # 27 "/usr/include/sys/mount.h" 3 4
-> >         # 1 "/usr/lib/gcc/x86_64-redhat-linux/13/include/stddef.h" 1 3 =
-4
-> >         # 28 "/usr/include/sys/mount.h" 2 3 4
-> >
-> >         # 1 "/home/jolsa/kernel/linux-qemu/tools/include/uapi/linux/mou=
-nt.h" 1 3 4
-> >         # 96 "/home/jolsa/kernel/linux-qemu/tools/include/uapi/linux/mo=
-unt.h" 3 4
-> >
-> >         # 96 "/home/jolsa/kernel/linux-qemu/tools/include/uapi/linux/mo=
-unt.h" 3 4
-> >         enum fsconfig_command {
-> >          FSCONFIG_SET_FLAG =3D 0,
-> >          FSCONFIG_SET_STRING =3D 1,
-> >          FSCONFIG_SET_BINARY =3D 2,
-> >          FSCONFIG_SET_PATH =3D 3,
-> >          FSCONFIG_SET_PATH_EMPTY =3D 4,
-> >          FSCONFIG_SET_FD =3D 5,
-> >          FSCONFIG_CMD_CREATE =3D 6,
-> >          FSCONFIG_CMD_RECONFIGURE =3D 7,
-> >         };
-> >
-> >
-> >         ...
-> >
-> >
-> >         # 21 "/home/jolsa/kernel/linux-qemu/tools/testing/selftests/bpf=
-/prog_tests/token.c"
-> >         enum fsconfig_command {
-> >          FSCONFIG_SET_FLAG =3D 0,
-> >          FSCONFIG_SET_STRING =3D 1,
-> >          FSCONFIG_SET_BINARY =3D 2,
-> >          FSCONFIG_SET_PATH =3D 3,
-> >          FSCONFIG_SET_PATH_EMPTY =3D 4,
-> >          FSCONFIG_SET_FD =3D 5,
-> >          FSCONFIG_CMD_CREATE =3D 6,
-> >          FSCONFIG_CMD_RECONFIGURE =3D 7,
-> >         };
-> >
-> >
-> > it's probably included through this bit in the /usr/include/sys/mount.h=
-:
-> >
-> >         #ifdef __has_include
-> >         # if __has_include ("linux/mount.h")
-> >         #  include "linux/mount.h"
-> >         # endif
-> >         #endif
-> >
-> > which was added 'recently' in https://sourceware.org/git/?p=3Dglibc.git=
-;a=3Dcommit;h=3D774058d72942249f71d74e7f2b639f77184160a6
-> >
-> > maybe you use older glibs headers? or perhaps it might be my build setu=
-p
+> Hi Andrii,
 >
-> No, I'm pretty sure I have older headers. I'd like this to work in
-> both environments, so I need to fix this. I'll try to make this work
-> with uapi header, I guess. Thanks for reporting!
+> kernel test robot noticed the following build warnings:
 >
-
-Ok, I just dropped sys/mount.h include and defined my own
-
-static inline int sys_mount(const char *dev_name, const char *dir_name,
-                            const char *type, unsigned long flags,
-                            const void *data)
-{
-        return syscall(__NR_mount, dev_name, dir_name, type, flags, data);
-}
-
-
-That was the only thing I needed sys/mount.h for. So consider this fixed.
-
-
-> >
-> > jirka
-> >
+> [auto build test WARNING on bpf-next/master]
 >
-> [...]
+> url:    https://github.com/intel-lab-lkp/linux/commits/Andrii-Nakryiko/bp=
+f-align-CAP_NET_ADMIN-checks-with-bpf_capable-approach/20231017-152928
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git =
+master
+> patch link:    https://lore.kernel.org/r/20231016180220.3866105-10-andrii=
+%40kernel.org
+> patch subject: [PATCH v8 bpf-next 09/18] bpf,lsm: refactor bpf_prog_alloc=
+/bpf_prog_free LSM hooks
+> config: m68k-allyesconfig (https://download.01.org/0day-ci/archive/202310=
+17/202310172156.zcehiHbq-lkp@intel.com/config)
+> compiler: m68k-linux-gcc (GCC) 13.2.0
+> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
+ve/20231017/202310172156.zcehiHbq-lkp@intel.com/reproduce)
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202310172156.zcehiHbq-lkp=
+@intel.com/
+>
+> All warnings (new ones prefixed by >>):
+>
+> >> security/security.c:5196: warning: Function parameter or member 'prog'=
+ not described in 'security_bpf_prog_load'
+>
+>
+> vim +5196 security/security.c
+>
+> 55e853201a9e03 Paul Moore      2023-02-16  5181
+> 55e853201a9e03 Paul Moore      2023-02-16  5182  /**
+> 82c20ee03a7a4e Andrii Nakryiko 2023-10-16  5183   * security_bpf_prog_loa=
+d() - Check if loading of BPF program is allowed
+> 82c20ee03a7a4e Andrii Nakryiko 2023-10-16  5184   * @prog BPF program obj=
+ect
+
+missing colon after @prog, cute, will fix
+
+> 82c20ee03a7a4e Andrii Nakryiko 2023-10-16  5185   * @attr: BPF syscall at=
+tributes used to create BPF program
+> 82c20ee03a7a4e Andrii Nakryiko 2023-10-16  5186   * @token: BPF token use=
+d to grant user access to BPF subsystem
+> 55e853201a9e03 Paul Moore      2023-02-16  5187   *
+> 82c20ee03a7a4e Andrii Nakryiko 2023-10-16  5188   * Do a check when the k=
+ernel allocates BPF program object and is about to
+> 82c20ee03a7a4e Andrii Nakryiko 2023-10-16  5189   * pass it to BPF verifi=
+er for additional correctness checks. This is also the
+> 82c20ee03a7a4e Andrii Nakryiko 2023-10-16  5190   * point where LSM blob =
+is allocated for LSMs that need them.
+> 55e853201a9e03 Paul Moore      2023-02-16  5191   *
+> 55e853201a9e03 Paul Moore      2023-02-16  5192   * Return: Returns 0 on =
+success, error on failure.
+> 55e853201a9e03 Paul Moore      2023-02-16  5193   */
+> 82c20ee03a7a4e Andrii Nakryiko 2023-10-16  5194  int security_bpf_prog_lo=
+ad(struct bpf_prog *prog, union bpf_attr *attr,
+> 82c20ee03a7a4e Andrii Nakryiko 2023-10-16  5195                          =
+  struct bpf_token *token)
+> afdb09c720b62b Chenbo Feng     2017-10-18 @5196  {
+> 82c20ee03a7a4e Andrii Nakryiko 2023-10-16  5197         return call_int_h=
+ook(bpf_prog_load, 0, prog, attr, token);
+> afdb09c720b62b Chenbo Feng     2017-10-18  5198  }
+> 55e853201a9e03 Paul Moore      2023-02-16  5199
+>
+> --
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
 
