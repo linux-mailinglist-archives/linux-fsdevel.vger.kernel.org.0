@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-563-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-564-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E66C7CCE97
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 22:48:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6407F7CCE98
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 22:48:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58925281B1E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 20:48:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8813D1C20CDA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 20:48:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1ADF2E3FA;
-	Tue, 17 Oct 2023 20:48:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 022782E40C;
+	Tue, 17 Oct 2023 20:48:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 798E2430E9
-	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Oct 2023 20:48:19 +0000 (UTC)
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70C2CED;
-	Tue, 17 Oct 2023 13:48:18 -0700 (PDT)
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-6b709048f32so3130633b3a.0;
-        Tue, 17 Oct 2023 13:48:18 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC5942E3FF
+	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Oct 2023 20:48:21 +0000 (UTC)
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28C73F0;
+	Tue, 17 Oct 2023 13:48:20 -0700 (PDT)
+Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-6bd04558784so4295711a34.3;
+        Tue, 17 Oct 2023 13:48:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697575698; x=1698180498;
+        d=1e100.net; s=20230601; t=1697575699; x=1698180499;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yoHPYDQbTkwUBMMunMv9kXgtGCryiEzUWGYqg25wuEw=;
-        b=S+3GwpSZI88XIlFDGt7RMfiqSVDPkaZp+yMnkM0kPsx+MZDc6xZIH/2DBmxVwuGSHk
-         n/G4KQIu8vc+LazMn0yBmmRgVhGB2UGdZ4nzJnRqZhuuCodJv5dOANEzVXsczEzSLn0V
-         k5kp9ZV8rlSD9CsmVhMvBW1Pj3aiJK+Y0T+Ng5OTeeiab612tXZ8Sfe+KImPxwERW1mi
-         2OkiPBfzvSnuIBw28yFTQD7YxE4gmGFI38c1KgrgywSzaKL0Qbx3ClF6Cdzp6bvMH6jw
-         bLXyiodnz/lB5vs71SS8VSzhpF3p1YCZ3E42gf473gqfsZSm4PIRO1zOHayFbaoyj/lD
-         mpWA==
-X-Gm-Message-State: AOJu0YxRFuZ8bYFhpVw5k5dP7LwU0yxGJgtdEx3doUUr7Hf0lEcNm28M
-	6CXncvD8Fazp8Ydau268C88=
-X-Google-Smtp-Source: AGHT+IGGo232JgEpvGCW1xTE/zif4CZSXY7EyIlhzXdDHgWYzLvrFd1xG6e4xQ2gZEvytT8a+UK0wg==
-X-Received: by 2002:a05:6a00:230b:b0:68b:c562:da65 with SMTP id h11-20020a056a00230b00b0068bc562da65mr3422101pfh.26.1697575697688;
-        Tue, 17 Oct 2023 13:48:17 -0700 (PDT)
+        bh=0zKJwlNU37xBJ2eHozPULDjMADCdbgGWOVklVioEvRw=;
+        b=Gxlro9T61b1KesibqkjGemRoap/RNCyK/8Ee2ueiuBbn/a3JD2GtbtESncvg9wEgCP
+         snXF6aOXfo2/cwlBdWmc5qPXRdjDxokeB7+zqkYYJMC3/lGzfRyXaVmM+daR0bqJLnwV
+         uWpBSTZuQ+OYIPnNKgLGcKrv5yaoQ06TI/lO1sSdhZL5aoi1jlW1Z7HyODyWXA5bPiHP
+         vk/PEzDKHaWDMqxdohrtAvUKEMdU5CIIc4dSced8/EuqWcJ2BFIitSwa2H+VO/26ADok
+         C6P31FC24jakwi9xd/Xq+ltKRjzyqGF4dh4VxTEi/23CWsZcCCKKojTJhtabR7q5Go/c
+         jbwg==
+X-Gm-Message-State: AOJu0Yz8w6FtUUwwxK1cZCwEBPMl0uCBENN5j9wqoEB7QfSMTsQvXJ9a
+	qnJbo+navUeVtw6gI+DUHig=
+X-Google-Smtp-Source: AGHT+IEE6N0vYqYBGbaDDPav+vLSuM2Vwj8TQAV4LWIeBTn/WK/tEcpCesHGpwI+JsErwXCHOyTl/g==
+X-Received: by 2002:a9d:4811:0:b0:6c4:fc45:8681 with SMTP id c17-20020a9d4811000000b006c4fc458681mr3499731otf.25.1697575699367;
+        Tue, 17 Oct 2023 13:48:19 -0700 (PDT)
 Received: from bvanassche-linux.mtv.corp.google.com ([2620:15c:211:201:8f02:2919:9600:ac09])
-        by smtp.gmail.com with ESMTPSA id fa36-20020a056a002d2400b006b2e07a6235sm1874704pfb.136.2023.10.17.13.48.16
+        by smtp.gmail.com with ESMTPSA id fa36-20020a056a002d2400b006b2e07a6235sm1874704pfb.136.2023.10.17.13.48.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Oct 2023 13:48:17 -0700 (PDT)
+        Tue, 17 Oct 2023 13:48:19 -0700 (PDT)
 From: Bart Van Assche <bvanassche@acm.org>
 To: Jens Axboe <axboe@kernel.dk>
 Cc: linux-block@vger.kernel.org,
@@ -57,16 +57,10 @@ Cc: linux-block@vger.kernel.org,
 	Bean Huo <huobean@gmail.com>,
 	Daejun Park <daejun7.park@samsung.com>,
 	Bart Van Assche <bvanassche@acm.org>,
-	Jan Kara <jack@suse.cz>,
-	Christian Brauner <brauner@kernel.org>,
-	Jaegeuk Kim <jaegeuk@kernel.org>,
-	Chao Yu <chao@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jeff Layton <jlayton@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>
-Subject: [PATCH v3 01/14] fs: Move enum rw_hint into a new header file
-Date: Tue, 17 Oct 2023 13:47:09 -0700
-Message-ID: <20231017204739.3409052-2-bvanassche@acm.org>
+	Damien Le Moal <dlemoal@kernel.org>
+Subject: [PATCH v3 02/14] block: Restore data lifetime support in struct bio and struct request
+Date: Tue, 17 Oct 2023 13:47:10 -0700
+Message-ID: <20231017204739.3409052-3-bvanassche@acm.org>
 X-Mailer: git-send-email 2.42.0.655.g421f12c284-goog
 In-Reply-To: <20231017204739.3409052-1-bvanassche@acm.org>
 References: <20231017204739.3409052-1-bvanassche@acm.org>
@@ -79,132 +73,150 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
 	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.6
+	RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-Move enum rw_hint into a new header file to prepare for using this data
-type in the block layer. Add the attribute __packed to reduce the space
-occupied by instances of this data type from four bytes to one byte.
-Change the data type of i_write_hint from u8 into enum rw_hint. Change
-the RWH_* constants into literal constants to prevent that
-<uapi/linux/fcntl.h> would have to be included.
+Provide a mechanism for filesystems to pass data lifetime information
+to block drivers. Data lifetime information can be used by block devices
+with append/erase storage technology (NAND flash) to reduce garbage
+collection activity.
 
-Cc: Jan Kara <jack@suse.cz>
+This patch restores a subset of the functionality that was removed by
+commit c75e707fe1aa ("block: remove the per-bio/request write hint").
+
 Cc: Christoph Hellwig <hch@lst.de>
-Cc: Christian Brauner <brauner@kernel.org>
+Cc: Damien Le Moal <dlemoal@kernel.org>
 Signed-off-by: Bart Van Assche <bvanassche@acm.org>
 ---
- fs/f2fs/f2fs.h          |  1 +
- fs/fcntl.c              |  1 +
- fs/inode.c              |  1 +
- include/linux/fs.h      | 16 ++--------------
- include/linux/rw_hint.h | 20 ++++++++++++++++++++
- 5 files changed, 25 insertions(+), 14 deletions(-)
- create mode 100644 include/linux/rw_hint.h
+ block/bio.c                 | 2 ++
+ block/blk-crypto-fallback.c | 1 +
+ block/blk-merge.c           | 6 ++++++
+ block/blk-mq.c              | 1 +
+ block/bounce.c              | 1 +
+ include/linux/blk-mq.h      | 2 ++
+ include/linux/blk_types.h   | 2 ++
+ 7 files changed, 15 insertions(+)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 6d688e42d89c..56ee7fff55c7 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -24,6 +24,7 @@
- #include <linux/blkdev.h>
- #include <linux/quotaops.h>
- #include <linux/part_stat.h>
-+#include <linux/rw_hint.h>
- #include <crypto/hash.h>
+diff --git a/block/bio.c b/block/bio.c
+index 816d412c06e9..1a3733635079 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -251,6 +251,7 @@ void bio_init(struct bio *bio, struct block_device *bdev, struct bio_vec *table,
+ 	bio->bi_opf = opf;
+ 	bio->bi_flags = 0;
+ 	bio->bi_ioprio = 0;
++	bio->bi_lifetime = 0;
+ 	bio->bi_status = 0;
+ 	bio->bi_iter.bi_sector = 0;
+ 	bio->bi_iter.bi_size = 0;
+@@ -813,6 +814,7 @@ static int __bio_clone(struct bio *bio, struct bio *bio_src, gfp_t gfp)
+ {
+ 	bio_set_flag(bio, BIO_CLONED);
+ 	bio->bi_ioprio = bio_src->bi_ioprio;
++	bio->bi_lifetime = bio_src->bi_lifetime;
+ 	bio->bi_iter = bio_src->bi_iter;
  
- #include <linux/fscrypt.h>
-diff --git a/fs/fcntl.c b/fs/fcntl.c
-index e871009f6c88..ed923640aecf 100644
---- a/fs/fcntl.c
-+++ b/fs/fcntl.c
-@@ -27,6 +27,7 @@
- #include <linux/memfd.h>
- #include <linux/compat.h>
- #include <linux/mount.h>
-+#include <linux/rw_hint.h>
+ 	if (bio->bi_bdev) {
+diff --git a/block/blk-crypto-fallback.c b/block/blk-crypto-fallback.c
+index e6468eab2681..e25a6d551594 100644
+--- a/block/blk-crypto-fallback.c
++++ b/block/blk-crypto-fallback.c
+@@ -172,6 +172,7 @@ static struct bio *blk_crypto_fallback_clone_bio(struct bio *bio_src)
+ 	if (bio_flagged(bio_src, BIO_REMAPPED))
+ 		bio_set_flag(bio, BIO_REMAPPED);
+ 	bio->bi_ioprio		= bio_src->bi_ioprio;
++	bio->bi_lifetime	= bio_src->bi_lifetime;
+ 	bio->bi_iter.bi_sector	= bio_src->bi_iter.bi_sector;
+ 	bio->bi_iter.bi_size	= bio_src->bi_iter.bi_size;
  
- #include <linux/poll.h>
- #include <asm/siginfo.h>
-diff --git a/fs/inode.c b/fs/inode.c
-index 84bc3c76e5cc..ebcc41ac9682 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -20,6 +20,7 @@
- #include <linux/ratelimit.h>
- #include <linux/list_lru.h>
- #include <linux/iversion.h>
-+#include <linux/rw_hint.h>
- #include <trace/events/writeback.h>
- #include "internal.h"
+diff --git a/block/blk-merge.c b/block/blk-merge.c
+index 65e75efa9bd3..62718cc871bd 100644
+--- a/block/blk-merge.c
++++ b/block/blk-merge.c
+@@ -814,6 +814,9 @@ static struct request *attempt_merge(struct request_queue *q,
+ 	if (rq_data_dir(req) != rq_data_dir(next))
+ 		return NULL;
  
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index b528f063e8ff..971f0bafa782 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -43,6 +43,7 @@
- #include <linux/cred.h>
- #include <linux/mnt_idmapping.h>
- #include <linux/slab.h>
-+#include <linux/rw_hint.h>
- 
- #include <asm/byteorder.h>
- #include <uapi/linux/fs.h>
-@@ -309,19 +310,6 @@ struct address_space;
- struct writeback_control;
- struct readahead_control;
- 
--/*
-- * Write life time hint values.
-- * Stored in struct inode as u8.
-- */
--enum rw_hint {
--	WRITE_LIFE_NOT_SET	= 0,
--	WRITE_LIFE_NONE		= RWH_WRITE_LIFE_NONE,
--	WRITE_LIFE_SHORT	= RWH_WRITE_LIFE_SHORT,
--	WRITE_LIFE_MEDIUM	= RWH_WRITE_LIFE_MEDIUM,
--	WRITE_LIFE_LONG		= RWH_WRITE_LIFE_LONG,
--	WRITE_LIFE_EXTREME	= RWH_WRITE_LIFE_EXTREME,
--};
--
- /* Match RWF_* bits to IOCB bits */
- #define IOCB_HIPRI		(__force int) RWF_HIPRI
- #define IOCB_DSYNC		(__force int) RWF_DSYNC
-@@ -677,7 +665,7 @@ struct inode {
- 	spinlock_t		i_lock;	/* i_blocks, i_bytes, maybe i_size */
- 	unsigned short          i_bytes;
- 	u8			i_blkbits;
--	u8			i_write_hint;
-+	enum rw_hint		i_write_hint;
- 	blkcnt_t		i_blocks;
- 
- #ifdef __NEED_I_SIZE_ORDERED
-diff --git a/include/linux/rw_hint.h b/include/linux/rw_hint.h
-new file mode 100644
-index 000000000000..4a7d28945973
---- /dev/null
-+++ b/include/linux/rw_hint.h
-@@ -0,0 +1,20 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _LINUX_RW_HINT_H
-+#define _LINUX_RW_HINT_H
++	if (req->lifetime != next->lifetime)
++		return NULL;
 +
-+#include <linux/build_bug.h>
-+#include <linux/compiler_attributes.h>
+ 	if (req->ioprio != next->ioprio)
+ 		return NULL;
+ 
+@@ -941,6 +944,9 @@ bool blk_rq_merge_ok(struct request *rq, struct bio *bio)
+ 	if (!bio_crypt_rq_ctx_compatible(rq, bio))
+ 		return false;
+ 
++	if (rq->lifetime != bio->bi_lifetime)
++		return NULL;
 +
-+/* Block storage write lifetime hint values. */
-+enum rw_hint {
-+	WRITE_LIFE_NOT_SET	= 0, /* RWH_WRITE_LIFE_NOT_SET */
-+	WRITE_LIFE_NONE		= 1, /* RWH_WRITE_LIFE_NONE */
-+	WRITE_LIFE_SHORT	= 2, /* RWH_WRITE_LIFE_SHORT */
-+	WRITE_LIFE_MEDIUM	= 3, /* RWH_WRITE_LIFE_MEDIUM */
-+	WRITE_LIFE_LONG		= 4, /* RWH_WRITE_LIFE_LONG */
-+	WRITE_LIFE_EXTREME	= 5, /* RWH_WRITE_LIFE_EXTREME */
-+} __packed;
-+
-+static_assert(sizeof(enum rw_hint) == 1);
-+
-+#endif /* _LINUX_RW_HINT_H */
+ 	if (rq->ioprio != bio_prio(bio))
+ 		return false;
+ 
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index a815403f375c..10540a3b3c49 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -3148,6 +3148,7 @@ int blk_rq_prep_clone(struct request *rq, struct request *rq_src,
+ 	}
+ 	rq->nr_phys_segments = rq_src->nr_phys_segments;
+ 	rq->ioprio = rq_src->ioprio;
++	rq->lifetime = rq_src->lifetime;
+ 
+ 	if (rq->bio && blk_crypto_rq_bio_prep(rq, rq->bio, gfp_mask) < 0)
+ 		goto free_and_out;
+diff --git a/block/bounce.c b/block/bounce.c
+index 7cfcb242f9a1..b03e4944ace8 100644
+--- a/block/bounce.c
++++ b/block/bounce.c
+@@ -169,6 +169,7 @@ static struct bio *bounce_clone_bio(struct bio *bio_src)
+ 	if (bio_flagged(bio_src, BIO_REMAPPED))
+ 		bio_set_flag(bio, BIO_REMAPPED);
+ 	bio->bi_ioprio		= bio_src->bi_ioprio;
++	bio->bi_lifetime	= bio_src->bi_lifetime;
+ 	bio->bi_iter.bi_sector	= bio_src->bi_iter.bi_sector;
+ 	bio->bi_iter.bi_size	= bio_src->bi_iter.bi_size;
+ 
+diff --git a/include/linux/blk-mq.h b/include/linux/blk-mq.h
+index 1ab3081c82ed..1afd731432fe 100644
+--- a/include/linux/blk-mq.h
++++ b/include/linux/blk-mq.h
+@@ -136,6 +136,7 @@ struct request {
+ #endif
+ 
+ 	unsigned short ioprio;
++	enum rw_hint lifetime;
+ 
+ 	enum mq_rq_state state;
+ 	atomic_t ref;
+@@ -957,6 +958,7 @@ static inline void blk_rq_bio_prep(struct request *rq, struct bio *bio,
+ 	rq->__data_len = bio->bi_iter.bi_size;
+ 	rq->bio = rq->biotail = bio;
+ 	rq->ioprio = bio_prio(bio);
++	rq->lifetime = bio->bi_lifetime;
+ }
+ 
+ void blk_mq_hctx_set_fq_lock_class(struct blk_mq_hw_ctx *hctx,
+diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+index d5c5e59ddbd2..5e21f44141fb 100644
+--- a/include/linux/blk_types.h
++++ b/include/linux/blk_types.h
+@@ -10,6 +10,7 @@
+ #include <linux/bvec.h>
+ #include <linux/device.h>
+ #include <linux/ktime.h>
++#include <linux/rw_hint.h>
+ 
+ struct bio_set;
+ struct bio;
+@@ -269,6 +270,7 @@ struct bio {
+ 						 */
+ 	unsigned short		bi_flags;	/* BIO_* below */
+ 	unsigned short		bi_ioprio;
++	enum rw_hint		bi_lifetime;	/* data lifetime */
+ 	blk_status_t		bi_status;
+ 	atomic_t		__bi_remaining;
+ 
 
