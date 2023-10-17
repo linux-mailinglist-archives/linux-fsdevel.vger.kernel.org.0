@@ -1,173 +1,86 @@
-Return-Path: <linux-fsdevel+bounces-513-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-514-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0E447CBFD2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 11:46:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6BEB7CBFF3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 11:54:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 712162818FD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 09:46:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D776B1C20AC7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 09:54:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57032405FB;
-	Tue, 17 Oct 2023 09:45:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E70F4120E;
+	Tue, 17 Oct 2023 09:54:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qr+c6v55"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="k97tu0+a"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A0D7381D8
-	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Oct 2023 09:45:52 +0000 (UTC)
-Received: from mail-qv1-xf35.google.com (mail-qv1-xf35.google.com [IPv6:2607:f8b0:4864:20::f35])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 716F78E
-	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Oct 2023 02:45:51 -0700 (PDT)
-Received: by mail-qv1-xf35.google.com with SMTP id 6a1803df08f44-66d36b2a247so20379826d6.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Oct 2023 02:45:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697535950; x=1698140750; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/K8yTy9C12yEGh5lGBpdn6/HEaPH1gqB1lhG2qMrBfw=;
-        b=Qr+c6v55lYnygwGPT2JgI99e2TXcCfwhdz7Tw4nWITlpLhVfl0q1MAgQFFZ2d0HKz/
-         Jl1ZyOcqN0VT3adibxMdPqMcktn1UKPtilAwsD59CoV4XphA/Eb2dVCg8dlPH3EB+i8S
-         JN5shirmgIRpMXRIsYhDrGGiwhRMP0QUcK8MVmHABUXfY6pCkLBB9B8FWWo0Jy+tOFw8
-         LzP/GBz1cCz3+/IB34oJdmiO+imz/r9yFC3L/7NyY1Mte+pP5YA5ZdJ5OstPd/PZC5lr
-         hkx/CJ/eZm0iHm1vnySsFtgHsGQMpImnm4IzdpCNNComBfj21e9zmpsb3X3bKZVcelfC
-         1Z1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697535950; x=1698140750;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/K8yTy9C12yEGh5lGBpdn6/HEaPH1gqB1lhG2qMrBfw=;
-        b=nYe9QNZ6Mq5pfWZGsiu/LanptXjFC98Gg203WvdQiUkHC6ZQ9ILMVEL5ZGL5t4/yW7
-         3IiGpBAoMNeR3sjWHDqKg2yKfgYGTpAcaOp0GRdfJTs49oyDNJQO7dBMpWBPLmrl7gPN
-         C9Yv4P2Jj+2SZVDHjEmbzJBGjWx74gSV1KBk9HYReoUuD5cOCEwFMgDo7RRR+CIdzIYa
-         29vsJQfmREsMhPkFC7Fgy60pByR6BOZDwXVs+eECqBTORMx0vt9MfkaLIMAcYqade71r
-         3/zyEaIFn6cxj3OyqOcG2SAVH1+J7uYgR1x138U9CV2GxZTTGmfqSZ8jMr2zU8vZ75YH
-         AjIg==
-X-Gm-Message-State: AOJu0YykUOXNAF0w/RyYJ4WV1LmYe6tS20MYrL9tXXd52aZKyzgi2n/E
-	zNnaXbvGkiNtQeTd1mU315eAWaRO3Yhnol0Df6QPsFoTw90=
-X-Google-Smtp-Source: AGHT+IHUuc3ID0kV+JzyDedjVffFxiC2l+8sgvzd3B0WRTYO/OG7MuGWg6VDA3rJyAZTh7AJreqTlbPrawQkjZKtYaI=
-X-Received: by 2002:ad4:5f0f:0:b0:658:8f94:5e61 with SMTP id
- fo15-20020ad45f0f000000b006588f945e61mr2353789qvb.43.1697535950491; Tue, 17
- Oct 2023 02:45:50 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53723405F4
+	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Oct 2023 09:54:17 +0000 (UTC)
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9337C98
+	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Oct 2023 02:54:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
+	bh=95gBHJpbv7/wfHCeOeSKH/7du8d7XC4kqiMmilDw5CI=; b=k97tu0+axo61nf3tdMUIVPxXYb
+	q5YlwQh4Y11hdXxZ8VFPjo/kq7NdjXxoSt15vCICvMHmdvtzodVoDkxD61l11nrb/xQ0bAjPjZ4fU
+	5GliOOnTJHlMYehNVsVrfYAhooABW6tFE0uVJRgk5reXAZu2qoihSbg/pijg89khBa6L5MvyeFpoS
+	ZYnX6Cu9iDzd0mpoh+gbpzCY/WkoIZ35IW3fARC6ssCjNKHah/10qURU76fSq79sRIKUQZwOvBTyE
+	L2SM4+6mUWWkUOT3ybXuNWwVtqGrdguvRhH8oRiTaeRHdfuP+YzjjXaR2LbE3ITMtT8UIv39vHr8e
+	pYvGPjhg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1qsgmE-0020Lh-06;
+	Tue, 17 Oct 2023 09:54:14 +0000
+Date: Tue, 17 Oct 2023 10:54:13 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
+	kernel@pengutronix.de
+Subject: Re: [PATCH] chardev: Simplify usage of try_module_get()
+Message-ID: <20231017095413.GP800259@ZenIV>
+References: <20231013132441.1406200-2-u.kleine-koenig@pengutronix.de>
+ <20231016224311.GI800259@ZenIV>
+ <20231017091353.6fhpmrcx66jj2jls@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231016160902.2316986-1-amir73il@gmail.com> <20231016160902.2316986-9-amir73il@gmail.com>
-In-Reply-To: <20231016160902.2316986-9-amir73il@gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 17 Oct 2023 12:45:39 +0300
-Message-ID: <CAOQ4uxijCjSb3gRd+qZ=gs-JvujFpCvJhJ=nXTkmP11LjU2TZQ@mail.gmail.com>
-Subject: Re: [PATCH v14 08/12] fuse: implement ioctls to manage backing files
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, Daniel Rosenberg <drosen@google.com>, 
-	Paul Lawrence <paullawrence@google.com>, Alessio Balsini <balsini@android.com>, 
-	Christian Brauner <brauner@kernel.org>, fuse-devel@lists.sourceforge.net, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-	RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20231017091353.6fhpmrcx66jj2jls@pengutronix.de>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE
+	autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-On Mon, Oct 16, 2023 at 7:09=E2=80=AFPM Amir Goldstein <amir73il@gmail.com>=
- wrote:
->
-> FUSE server calls the FUSE_DEV_IOC_BACKING_OPEN ioctl with a backing file
-> descriptor.  If the call succeeds, a backing file identifier is returned.
->
-> A later reply to OPEN request with the flag FOPEN_PASSTHROUGH will setup
-> passthrough of file operations on the open FUSE file to the backing file
-> associated with the id.  If there is no backing file associated with id,
-> FOPEN_PASSTHROUGH flag is ignored.
->
-> The FUSE server may call FUSE_DEV_IOC_BACKING_CLOSE ioctl to close the
-> backing file by its id.
-> If there is no backing file with that id, -ENOENT is returned.
->
-> This can be done at any time, but if an open reply with FOPEN_PASSTHROUGH
-> flag is still in progress, the open may or may not end up setting up the
-> passthrough to the backing file.
->
-> In any case, the backing file will be kept open by the FUSE driver until
-> the last fuse_file that was setup to passthrough to that backing file is
-> closed AND the FUSE_DEV_IOC_BACKING_CLOSE ioctl was called.
->
-> Setting up backing files requires a server with CAP_SYS_ADMIN privileges.
-> For the backing file to be successfully setup, the backing file must
-> implement both read_iter and write_iter file operations.
->
-> The limitation on the level of filesystem stacking allowed for the
-> backing file is enforced before setting up the backing file.
->
-> Signed-off-by: Alessio Balsini <balsini@android.com>
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> ---
+On Tue, Oct 17, 2023 at 11:13:53AM +0200, Uwe Kleine-König wrote:
 
-[...]
+> I don't understand what you intend to say here. What is "that"? Are you
+> talking about
+> 
+> 	owner && !try_module_get(owner)
+> 
+> vs
+> 
+> 	!try_module_get(owner)
+> 
+> or the following line with kobject_get_unless_zero? Do you doubt the
+> validity of my patch, or is it about something try_module_get()
+> could/should do more than it currently does?
 
-> +int fuse_backing_open(struct fuse_conn *fc, struct fuse_backing_map *map=
-)
-> +{
-> +       struct file *file;
-> +       struct super_block *backing_sb;
-> +       struct fuse_backing *fb =3D NULL;
-> +       int res;
-> +
-> +       pr_debug("%s: fd=3D%d flags=3D0x%x\n", __func__, map->fd, map->fl=
-ags);
-> +
-> +       /* TODO: relax CAP_SYS_ADMIN once backing files are visible to ls=
-of */
-> +       res =3D -EPERM;
-> +       if (!fc->passthrough || !capable(CAP_SYS_ADMIN))
-> +               goto out;
-> +
-> +       res =3D -EINVAL;
-> +       if (map->flags)
-> +               goto out;
-> +
-> +       file =3D fget(map->fd);
-> +       res =3D -EBADF;
-> +       if (!file)
-> +               goto out;
-> +
-> +       res =3D -EOPNOTSUPP;
-> +       if (!file->f_op->read_iter || !file->f_op->write_iter)
-> +               goto out_fput;
-> +
-
-Miklos,
-
-I need to clarify one thing regarding this patch.
-Your suggestion was:
-
-- mapping request is done with an O_PATH fd.
-- fuse_open() always opens a backing file (just like overlayfs)
-
-The reason I did not use fget_raw() to support O_PATH fd is
-because I wanted to keep the EOPNOTSUPP check above
-at ioctl time rather than deferring it to open/create reply time,
-when the user has no feedback of failure reasons.
-
-We could add O_PATH support later, but I think it is going to be
-more important when we support passthrough to inode operations
-and the limitation of requiring a non O_PATH fd is not is not that bad.
-It also serves as a proof that the server user is allowed to open the
-backing file for read/write and avoid the later permission failure of
-backing_file_open().
-
-Thanks,
-Amir.
+I'm saying that it would be a good idea to turn try_module_get() into
+an inline in all cases, including the CONFIG_MODULE_UNLOAD one.
+Turning it into something like !module || __try_module_get(module),
+with the latter being out of line.  With that done, your patch would be
+entirely unobjectionable...
 
