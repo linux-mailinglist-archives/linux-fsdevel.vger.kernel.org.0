@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-573-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-572-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DDDA7CCEB5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 22:48:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 374117CCEB1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 22:48:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF1471C20D7D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 20:48:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 683EE1C20D93
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 20:48:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 835EB2F51E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 064172F516;
 	Tue, 17 Oct 2023 20:48:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD8A12E416
-	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Oct 2023 20:48:33 +0000 (UTC)
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B295F9;
-	Tue, 17 Oct 2023 13:48:32 -0700 (PDT)
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-6ba172c5f3dso2822699b3a.0;
-        Tue, 17 Oct 2023 13:48:32 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82D312F50B
+	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Oct 2023 20:48:35 +0000 (UTC)
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7D9310B;
+	Tue, 17 Oct 2023 13:48:33 -0700 (PDT)
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-6c7ce16ddfaso4246676a34.3;
+        Tue, 17 Oct 2023 13:48:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697575712; x=1698180512;
+        d=1e100.net; s=20230601; t=1697575713; x=1698180513;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/amIXBh2OmwTU85hCgujumlTfo/mnD8IJjMcbcGdMyM=;
-        b=rivGhzSeZtDCGz+2H4pjclqRkayqC4n7Q3lAH1MuWGXTiwO3oP45FJ0w1ec3RZoEyL
-         7Vxvb8qkNSJ3XTA0dGaC4d5qWjdDgN83hN/NaPMnQn+zhTW1JHMIwzoJB9FS2qyyac0D
-         koAl5DuGkRIY6Eabhul0QrxCI5Wvzett105B7784zb5iVOyyHvRkdWKCVzdhRhgKQh9l
-         KbA4qsWGYYA56T8xO2WM1Qq6+pWE4pEQ8pVxKu9JoDEMQUBhx7uKLgO9vtM+eS2hR4Rn
-         m7Tlf6mncNR7MIiD0iwt5Q6HBNXhr0mdojYIBk4v2qaja19v23nDjdgozvUkA1SdRQxv
-         43JA==
-X-Gm-Message-State: AOJu0YyXu6cQt/5xYs1Vm58i8V3dIKoPMKJlDGJn++T1iEclwMVNI0Ft
-	jAAKXI98rLm0gNo0BXifVGI=
-X-Google-Smtp-Source: AGHT+IG8H89iYb8bSQyP2l3JUs90G/z/NmytVkTWV1KBTgXA2IhnL3HAGHo39NpzPOiPU/GFHy6KTw==
-X-Received: by 2002:a05:6a00:22cb:b0:690:c75e:25d7 with SMTP id f11-20020a056a0022cb00b00690c75e25d7mr3804199pfj.18.1697575711687;
-        Tue, 17 Oct 2023 13:48:31 -0700 (PDT)
+        bh=WgLtfRupmxASF+XQWKDQIVeDU0ZhEvhZXbulw0ZxJ0s=;
+        b=ATDcgei/f47g2DINDRjORZSFt84TIwqXdGK8GJ1SFWWvGXDFOjm/1pDVFujUH4ELjz
+         4rJl5B1nwg7hmF66vmqd5VWfvUB/sZ+iQQdcK/dIBQ12Cj8bLTfdUxjJ+HVew7e/ev6N
+         fZbp0KvX0Gk/2N+NrUaKnius4C5BqN+zm7dDdA9foosYrTsGP/Y/xaAtGJ7bjKBAcroN
+         lURWhr/HlNPkiNx8w9bNFtheHTQxILYslDOqW4Y6/hbqtVgkiRSirG+FUPBuCmR06m+y
+         FPrakz2Z1SivD3yQTyeF2BR/+RFWbZ2uUaDCBR+eL5ESK7h2Eu7DpxnxGEz5QtIGGw6M
+         Q7jw==
+X-Gm-Message-State: AOJu0YyJcvPczeTXt42JHSUb5fGrHHeOEQJQxPCGyekkv0cXxoyNDO/R
+	KGrLi2kV9EdymqXOX4PtVnU=
+X-Google-Smtp-Source: AGHT+IFRkJ+7tMIkyFke2H6yk/D/xHF/7PGCHIXuKBREezajI9+DgZbxy0a8rHy1aKOMH9mBk5PJMQ==
+X-Received: by 2002:a05:6830:1007:b0:6c6:42ca:ed52 with SMTP id a7-20020a056830100700b006c642caed52mr3254291otp.30.1697575713103;
+        Tue, 17 Oct 2023 13:48:33 -0700 (PDT)
 Received: from bvanassche-linux.mtv.corp.google.com ([2620:15c:211:201:8f02:2919:9600:ac09])
-        by smtp.gmail.com with ESMTPSA id fa36-20020a056a002d2400b006b2e07a6235sm1874704pfb.136.2023.10.17.13.48.30
+        by smtp.gmail.com with ESMTPSA id fa36-20020a056a002d2400b006b2e07a6235sm1874704pfb.136.2023.10.17.13.48.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Oct 2023 13:48:31 -0700 (PDT)
+        Tue, 17 Oct 2023 13:48:32 -0700 (PDT)
 From: Bart Van Assche <bvanassche@acm.org>
 To: Jens Axboe <axboe@kernel.dk>
 Cc: linux-block@vger.kernel.org,
@@ -59,9 +59,9 @@ Cc: linux-block@vger.kernel.org,
 	Bart Van Assche <bvanassche@acm.org>,
 	Douglas Gilbert <dgilbert@interlog.com>,
 	"James E.J. Bottomley" <jejb@linux.ibm.com>
-Subject: [PATCH v3 10/14] scsi_debug: Rework page code error handling
-Date: Tue, 17 Oct 2023 13:47:18 -0700
-Message-ID: <20231017204739.3409052-11-bvanassche@acm.org>
+Subject: [PATCH v3 11/14] scsi_debug: Rework subpage code error handling
+Date: Tue, 17 Oct 2023 13:47:19 -0700
+Message-ID: <20231017204739.3409052-12-bvanassche@acm.org>
 X-Mailer: git-send-email 2.42.0.655.g421f12c284-goog
 In-Reply-To: <20231017204739.3409052-1-bvanassche@acm.org>
 References: <20231017204739.3409052-1-bvanassche@acm.org>
@@ -79,80 +79,140 @@ X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-Instead of tracking whether or not the page code is valid in a boolean
-variable, jump to error handling code if an unsupported page code is
-encountered.
+Move the subpage code checks into the switch statement to make it easier
+to add support for new page code / subpage code combinations.
 
 Cc: Martin K. Petersen <martin.petersen@oracle.com>
 Cc: Douglas Gilbert <dgilbert@interlog.com>
 Signed-off-by: Bart Van Assche <bvanassche@acm.org>
 ---
- drivers/scsi/scsi_debug.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ drivers/scsi/scsi_debug.c | 70 ++++++++++++++++++++-------------------
+ 1 file changed, 36 insertions(+), 34 deletions(-)
 
 diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
-index 88cba9374166..6b87d267c9c5 100644
+index 6b87d267c9c5..a96eb0d10346 100644
 --- a/drivers/scsi/scsi_debug.c
 +++ b/drivers/scsi/scsi_debug.c
-@@ -2327,7 +2327,7 @@ static int resp_mode_sense(struct scsi_cmnd *scp,
- 	unsigned char *ap;
- 	unsigned char arr[SDEBUG_MAX_MSENSE_SZ];
- 	unsigned char *cmd = scp->cmnd;
--	bool dbd, llbaa, msense_6, is_disk, is_zbc, bad_pcode;
-+	bool dbd, llbaa, msense_6, is_disk, is_zbc;
- 
- 	dbd = !!(cmd[1] & 0x8);		/* disable block descriptors */
- 	pcontrol = (cmd[2] & 0xc0) >> 6;
-@@ -2391,7 +2391,6 @@ static int resp_mode_sense(struct scsi_cmnd *scp,
- 		mk_sense_invalid_fld(scp, SDEB_IN_CDB, 3, -1);
- 		return check_condition_result;
+@@ -2386,22 +2386,22 @@ static int resp_mode_sense(struct scsi_cmnd *scp,
+ 		ap = arr + offset;
  	}
--	bad_pcode = false;
  
+-	if ((subpcode > 0x0) && (subpcode < 0xff) && (0x19 != pcode)) {
+-		/* TODO: Control Extension page */
+-		mk_sense_invalid_fld(scp, SDEB_IN_CDB, 3, -1);
+-		return check_condition_result;
+-	}
+-
  	switch (pcode) {
  	case 0x1:	/* Read-Write error recovery page, direct access */
-@@ -2406,15 +2405,17 @@ static int resp_mode_sense(struct scsi_cmnd *scp,
++		if (subpcode > 0x0 && subpcode < 0xff)
++			goto bad_subpcode;
+ 		len = resp_err_recov_pg(ap, pcontrol, target);
+ 		offset += len;
+ 		break;
+ 	case 0x2:	/* Disconnect-Reconnect page, all devices */
++		if (subpcode > 0x0 && subpcode < 0xff)
++			goto bad_subpcode;
+ 		len = resp_disconnect_pg(ap, pcontrol, target);
+ 		offset += len;
+ 		break;
+ 	case 0x3:       /* Format device page, direct access */
++		if (subpcode > 0x0 && subpcode < 0xff)
++			goto bad_subpcode;
  		if (is_disk) {
  			len = resp_format_pg(ap, pcontrol, target);
  			offset += len;
--		} else
--			bad_pcode = true;
-+		} else {
-+			goto bad_pcode;
-+		}
+@@ -2410,6 +2410,8 @@ static int resp_mode_sense(struct scsi_cmnd *scp,
+ 		}
  		break;
  	case 0x8:	/* Caching page, direct access */
++		if (subpcode > 0x0 && subpcode < 0xff)
++			goto bad_subpcode;
  		if (is_disk || is_zbc) {
  			len = resp_caching_pg(ap, pcontrol, target);
  			offset += len;
--		} else
--			bad_pcode = true;
-+		} else {
-+			goto bad_pcode;
-+		}
- 		break;
- 	case 0xa:	/* Control Mode page, all devices */
- 		len = resp_ctrl_m_pg(ap, pcontrol, target);
-@@ -2467,18 +2468,17 @@ static int resp_mode_sense(struct scsi_cmnd *scp,
+@@ -2418,14 +2420,14 @@ static int resp_mode_sense(struct scsi_cmnd *scp,
  		}
  		break;
+ 	case 0xa:	/* Control Mode page, all devices */
++		if (subpcode > 0x0 && subpcode < 0xff)
++			goto bad_subpcode;
+ 		len = resp_ctrl_m_pg(ap, pcontrol, target);
+ 		offset += len;
+ 		break;
+ 	case 0x19:	/* if spc==1 then sas phy, control+discover */
+-		if ((subpcode > 0x2) && (subpcode < 0xff)) {
+-			mk_sense_invalid_fld(scp, SDEB_IN_CDB, 3, -1);
+-			return check_condition_result;
+-		}
++		if (subpcode > 0x2 && subpcode < 0xff)
++			goto bad_subpcode;
+ 		len = 0;
+ 		if ((0x0 == subpcode) || (0xff == subpcode))
+ 			len += resp_sas_sf_m_pg(ap + len, pcontrol, target);
+@@ -2437,35 +2439,31 @@ static int resp_mode_sense(struct scsi_cmnd *scp,
+ 		offset += len;
+ 		break;
+ 	case 0x1c:	/* Informational Exceptions Mode page, all devices */
++		if (subpcode > 0x0 && subpcode < 0xff)
++			goto bad_subpcode;
+ 		len = resp_iec_m_pg(ap, pcontrol, target);
+ 		offset += len;
+ 		break;
+ 	case 0x3f:	/* Read all Mode pages */
+-		if ((0 == subpcode) || (0xff == subpcode)) {
+-			len = resp_err_recov_pg(ap, pcontrol, target);
+-			len += resp_disconnect_pg(ap + len, pcontrol, target);
+-			if (is_disk) {
+-				len += resp_format_pg(ap + len, pcontrol,
+-						      target);
+-				len += resp_caching_pg(ap + len, pcontrol,
+-						       target);
+-			} else if (is_zbc) {
+-				len += resp_caching_pg(ap + len, pcontrol,
+-						       target);
+-			}
+-			len += resp_ctrl_m_pg(ap + len, pcontrol, target);
+-			len += resp_sas_sf_m_pg(ap + len, pcontrol, target);
+-			if (0xff == subpcode) {
+-				len += resp_sas_pcd_m_spg(ap + len, pcontrol,
+-						  target, target_dev_id);
+-				len += resp_sas_sha_m_spg(ap + len, pcontrol);
+-			}
+-			len += resp_iec_m_pg(ap + len, pcontrol, target);
+-			offset += len;
+-		} else {
+-			mk_sense_invalid_fld(scp, SDEB_IN_CDB, 3, -1);
+-			return check_condition_result;
++		if (subpcode > 0x0 && subpcode < 0xff)
++			goto bad_subpcode;
++		len = resp_err_recov_pg(ap, pcontrol, target);
++		len += resp_disconnect_pg(ap + len, pcontrol, target);
++		if (is_disk) {
++			len += resp_format_pg(ap + len, pcontrol, target);
++			len += resp_caching_pg(ap + len, pcontrol, target);
++		} else if (is_zbc) {
++			len += resp_caching_pg(ap + len, pcontrol, target);
++		}
++		len += resp_ctrl_m_pg(ap + len, pcontrol, target);
++		len += resp_sas_sf_m_pg(ap + len, pcontrol, target);
++		if (0xff == subpcode) {
++			len += resp_sas_pcd_m_spg(ap + len, pcontrol, target,
++						  target_dev_id);
++			len += resp_sas_sha_m_spg(ap + len, pcontrol);
+ 		}
++		len += resp_iec_m_pg(ap + len, pcontrol, target);
++		offset += len;
+ 		break;
  	default:
--		bad_pcode = true;
--		break;
--	}
--	if (bad_pcode) {
--		mk_sense_invalid_fld(scp, SDEB_IN_CDB, 2, 5);
--		return check_condition_result;
-+		goto bad_pcode;
- 	}
- 	if (msense_6)
- 		arr[0] = offset - 1;
- 	else
- 		put_unaligned_be16((offset - 2), arr + 0);
- 	return fill_from_dev_buffer(scp, arr, min_t(u32, alloc_len, offset));
+ 		goto bad_pcode;
+@@ -2479,6 +2477,10 @@ static int resp_mode_sense(struct scsi_cmnd *scp,
+ bad_pcode:
+ 	mk_sense_invalid_fld(scp, SDEB_IN_CDB, 2, 5);
+ 	return check_condition_result;
 +
-+bad_pcode:
-+	mk_sense_invalid_fld(scp, SDEB_IN_CDB, 2, 5);
++bad_subpcode:
++	mk_sense_invalid_fld(scp, SDEB_IN_CDB, 3, -1);
 +	return check_condition_result;
  }
  
