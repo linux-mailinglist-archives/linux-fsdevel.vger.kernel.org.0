@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-566-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-567-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C46A7CCE9D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 22:48:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 93B067CCEA4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 22:48:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6068281A31
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 20:48:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A3DC2819CC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 20:48:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2563C2E402;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF40B2E41E;
 	Tue, 17 Oct 2023 20:48:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F6512E414
-	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Oct 2023 20:48:25 +0000 (UTC)
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A56CC6;
-	Tue, 17 Oct 2023 13:48:23 -0700 (PDT)
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1ca74e77aecso20602815ad.1;
-        Tue, 17 Oct 2023 13:48:23 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8503A2D055
+	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Oct 2023 20:48:26 +0000 (UTC)
+Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51AE79F;
+	Tue, 17 Oct 2023 13:48:25 -0700 (PDT)
+Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-581b6b93bd1so1541938eaf.1;
+        Tue, 17 Oct 2023 13:48:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697575703; x=1698180503;
+        d=1e100.net; s=20230601; t=1697575704; x=1698180504;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=m+VQXOryPBR0w8OfYGjgYJWwAn5XaqF9GFf/iAaLAsQ=;
-        b=OCZ3j4AOl9qNB9nFhw0cr57K8l8V670gFw9vK+O7jA+mCNn7i6Lt4Ahm4tWvDzm4BQ
-         d0GzEibgsAn4bDlMrEae7IJZi71UjV10aOnSGBUk0IGaxDZKlMCBn1oHnq6SNlY7RbTH
-         tRTVkciDiScRLcSjwymtYEQoq9n6/Wk8gGoupRUIKBmhHDAgWdvNF5TYm4q/uH95kTMj
-         TNLsIx0bSbSOwRLLiW5Ozcn1SOch3UujE7uXpa3GHhJi5oU2xx6+VWq+BLoWAEql/aRq
-         dP+lAbEem4PQCqGYH12CPJGOaodS8CkX/NzQZogn7XyX6IvyLS8G58IsJ4dFWd4fs2/r
-         LnxQ==
-X-Gm-Message-State: AOJu0YyUH5+xz9rgV5eMBgBZA1Yc3FKiYtxeCUzFLV48TpJiToI2rCRT
-	YUg36dhoePp7mRqE5hFyo5w=
-X-Google-Smtp-Source: AGHT+IGxj8k+Wf+TuS/3SI/H1kAqB/XVRY2YjyO9eAbl5kLOqsRSOSoUZXbQaHQDwAOj1fGmcP1PLQ==
-X-Received: by 2002:a17:903:2287:b0:1c9:dac0:fbc2 with SMTP id b7-20020a170903228700b001c9dac0fbc2mr4812720plh.13.1697575702834;
-        Tue, 17 Oct 2023 13:48:22 -0700 (PDT)
+        bh=29C1aI2A2KGCyq9yUe4PdFSu3conZ39y3j9E4Fn9lFo=;
+        b=j9LncJK8KKfvkioT8Q21lW79nOTP87JFPP2ux04k12QwwkUYgQauzAKlrpumiLyrUs
+         3s3eEnl3zD9gAhXtrDD31CC5g0d6MyMN7ezjBWtPs7rxV0vlsJNDDOQb/igQ+hPp1/zT
+         XZKtA9C5xj0JudsjDPxroeqxeoMFD9DrUL0n0kFNT3Dbz4roBuPqM5UmRAC0oKljTi51
+         y3A2qKleolR06oY/9+iBLIIC2iLX86p8pOJySbEldtLy4Y3vv7Iz22MbombjFRbsFu2t
+         AotsXJkKXg/tSp4e/Wa29aYNuIw5bubPIUzWFiZJsOQiO/rQXMQrAFHnDYHyeyRc/7iF
+         taZg==
+X-Gm-Message-State: AOJu0Yzo4wk3eyWUJO625J8RqB9ZVHT63Jf5ych9/YkS3ri9LCuGIlVH
+	Y6fMJWMwDy36FdihykkkTtk=
+X-Google-Smtp-Source: AGHT+IGsmXt7VpkLw0tEtaclHjsoZRsI/bJIG6ugvFa+zQMCcSze01pj0EjA5AExdkd8s3WJ4VSHUg==
+X-Received: by 2002:a05:6358:c62a:b0:166:ce95:7122 with SMTP id fd42-20020a056358c62a00b00166ce957122mr3802323rwb.14.1697575704430;
+        Tue, 17 Oct 2023 13:48:24 -0700 (PDT)
 Received: from bvanassche-linux.mtv.corp.google.com ([2620:15c:211:201:8f02:2919:9600:ac09])
-        by smtp.gmail.com with ESMTPSA id fa36-20020a056a002d2400b006b2e07a6235sm1874704pfb.136.2023.10.17.13.48.21
+        by smtp.gmail.com with ESMTPSA id fa36-20020a056a002d2400b006b2e07a6235sm1874704pfb.136.2023.10.17.13.48.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Oct 2023 13:48:22 -0700 (PDT)
+        Tue, 17 Oct 2023 13:48:24 -0700 (PDT)
 From: Bart Van Assche <bvanassche@acm.org>
 To: Jens Axboe <axboe@kernel.dk>
 Cc: linux-block@vger.kernel.org,
@@ -58,13 +58,10 @@ Cc: linux-block@vger.kernel.org,
 	Daejun Park <daejun7.park@samsung.com>,
 	Bart Van Assche <bvanassche@acm.org>,
 	Avri Altman <avri.altman@wdc.com>,
-	Bean Huo <beanhuo@micron.com>,
-	Jaegeuk Kim <jaegeuk@kernel.org>,
-	Chao Yu <chao@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH v3 04/14] fs/f2fs: Restore data lifetime support
-Date: Tue, 17 Oct 2023 13:47:12 -0700
-Message-ID: <20231017204739.3409052-5-bvanassche@acm.org>
+	"James E.J. Bottomley" <jejb@linux.ibm.com>
+Subject: [PATCH v3 05/14] scsi: core: Query the Block Limits Extension VPD page
+Date: Tue, 17 Oct 2023 13:47:13 -0700
+Message-ID: <20231017204739.3409052-6-bvanassche@acm.org>
 X-Mailer: git-send-email 2.42.0.655.g421f12c284-goog
 In-Reply-To: <20231017204739.3409052-1-bvanassche@acm.org>
 References: <20231017204739.3409052-1-bvanassche@acm.org>
@@ -77,354 +74,149 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
 	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.6
+	RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-Restore support for the whint_mode mount option by reverting commit
-930e2607638d ("f2fs: remove obsolete whint_mode"). Additionally, restore
-the bio->bi_lifetime assignment in __bio_alloc() that was removed by
-commit c75e707fe1aa ("block: remove the per-bio/request write hint").
+Parse the Reduced Stream Control Supported (RSCS) bit from the block
+limits extension VPD page. The RSCS bit is defined in SBC-5 r05
+(https://www.t10.org/cgi-bin/ac.pl?t=f&f=sbc5r05.pdf).
 
-Cc: Avri Altman <avri.altman@wdc.com>
-Cc: Bean Huo <beanhuo@micron.com>
-Cc: Daejun Park <daejun7.park@samsung.com>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Chao Yu <chao@kernel.org>
+Reviewed-by: Avri Altman <avri.altman@wdc.com>
+Reviewed-by: Daejun Park <daejun7.park@samsung.com>
+Cc: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Bart Van Assche <bvanassche@acm.org>
 ---
- Documentation/filesystems/f2fs.rst | 70 ++++++++++++++++++++++
- fs/f2fs/data.c                     |  2 +
- fs/f2fs/f2fs.h                     |  9 +++
- fs/f2fs/segment.c                  | 95 ++++++++++++++++++++++++++++++
- fs/f2fs/super.c                    | 32 +++++++++-
- 5 files changed, 207 insertions(+), 1 deletion(-)
+ drivers/scsi/scsi.c        |  2 ++
+ drivers/scsi/scsi_sysfs.c  | 10 ++++++++++
+ drivers/scsi/sd.c          | 13 +++++++++++++
+ drivers/scsi/sd.h          |  1 +
+ include/scsi/scsi_device.h |  1 +
+ 5 files changed, 27 insertions(+)
 
-diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
-index d32c6209685d..de412ddebcc8 100644
---- a/Documentation/filesystems/f2fs.rst
-+++ b/Documentation/filesystems/f2fs.rst
-@@ -242,6 +242,12 @@ offgrpjquota		 Turn off group journalled quota.
- offprjjquota		 Turn off project journalled quota.
- quota			 Enable plain user disk quota accounting.
- noquota			 Disable all plain disk quota option.
-+whint_mode=%s		 Control which write hints are passed down to block
-+			 layer. This supports "off", "user-based", and
-+			 "fs-based".  In "off" mode (default), f2fs does not pass
-+			 down hints. In "user-based" mode, f2fs tries to pass
-+			 down hints given by users. And in "fs-based" mode, f2fs
-+			 passes down hints with its policy.
- alloc_mode=%s		 Adjust block allocation policy, which supports "reuse"
- 			 and "default".
- fsync_mode=%s		 Control the policy of fsync. Currently supports "posix",
-@@ -776,6 +782,70 @@ In order to identify whether the data in the victim segment are valid or not,
- F2FS manages a bitmap. Each bit represents the validity of a block, and the
- bitmap is composed of a bit stream covering whole blocks in main area.
- 
-+Write-hint Policy
-+-----------------
-+
-+1) whint_mode=off. F2FS only passes down WRITE_LIFE_NOT_SET.
-+
-+2) whint_mode=user-based. F2FS tries to pass down hints given by
-+users.
-+
-+===================== ======================== ===================
-+User                  F2FS                     Block
-+===================== ======================== ===================
-+N/A                   META                     WRITE_LIFE_NOT_SET
-+N/A                   HOT_NODE                 "
-+N/A                   WARM_NODE                "
-+N/A                   COLD_NODE                "
-+ioctl(COLD)           COLD_DATA                WRITE_LIFE_EXTREME
-+extension list        "                        "
-+
-+-- buffered io
-+WRITE_LIFE_EXTREME    COLD_DATA                WRITE_LIFE_EXTREME
-+WRITE_LIFE_SHORT      HOT_DATA                 WRITE_LIFE_SHORT
-+WRITE_LIFE_NOT_SET    WARM_DATA                WRITE_LIFE_NOT_SET
-+WRITE_LIFE_NONE       "                        "
-+WRITE_LIFE_MEDIUM     "                        "
-+WRITE_LIFE_LONG       "                        "
-+
-+-- direct io
-+WRITE_LIFE_EXTREME    COLD_DATA                WRITE_LIFE_EXTREME
-+WRITE_LIFE_SHORT      HOT_DATA                 WRITE_LIFE_SHORT
-+WRITE_LIFE_NOT_SET    WARM_DATA                WRITE_LIFE_NOT_SET
-+WRITE_LIFE_NONE       "                        WRITE_LIFE_NONE
-+WRITE_LIFE_MEDIUM     "                        WRITE_LIFE_MEDIUM
-+WRITE_LIFE_LONG       "                        WRITE_LIFE_LONG
-+===================== ======================== ===================
-+
-+3) whint_mode=fs-based. F2FS passes down hints with its policy.
-+
-+===================== ======================== ===================
-+User                  F2FS                     Block
-+===================== ======================== ===================
-+N/A                   META                     WRITE_LIFE_MEDIUM;
-+N/A                   HOT_NODE                 WRITE_LIFE_NOT_SET
-+N/A                   WARM_NODE                "
-+N/A                   COLD_NODE                WRITE_LIFE_NONE
-+ioctl(COLD)           COLD_DATA                WRITE_LIFE_EXTREME
-+extension list        "                        "
-+
-+-- buffered io
-+WRITE_LIFE_EXTREME    COLD_DATA                WRITE_LIFE_EXTREME
-+WRITE_LIFE_SHORT      HOT_DATA                 WRITE_LIFE_SHORT
-+WRITE_LIFE_NOT_SET    WARM_DATA                WRITE_LIFE_LONG
-+WRITE_LIFE_NONE       "                        "
-+WRITE_LIFE_MEDIUM     "                        "
-+WRITE_LIFE_LONG       "                        "
-+
-+-- direct io
-+WRITE_LIFE_EXTREME    COLD_DATA                WRITE_LIFE_EXTREME
-+WRITE_LIFE_SHORT      HOT_DATA                 WRITE_LIFE_SHORT
-+WRITE_LIFE_NOT_SET    WARM_DATA                WRITE_LIFE_NOT_SET
-+WRITE_LIFE_NONE       "                        WRITE_LIFE_NONE
-+WRITE_LIFE_MEDIUM     "                        WRITE_LIFE_MEDIUM
-+WRITE_LIFE_LONG       "                        WRITE_LIFE_LONG
-+===================== ======================== ===================
-+
- Fallocate(2) Policy
- -------------------
- 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 916e317ac925..4a5edb9a1a1e 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -478,6 +478,8 @@ static struct bio *__bio_alloc(struct f2fs_io_info *fio, int npages)
- 	} else {
- 		bio->bi_end_io = f2fs_write_end_io;
- 		bio->bi_private = sbi;
-+		bio->bi_lifetime = f2fs_io_type_to_rw_hint(sbi, fio->type,
-+							   fio->temp);
+diff --git a/drivers/scsi/scsi.c b/drivers/scsi/scsi.c
+index d0911bc28663..5ad291770806 100644
+--- a/drivers/scsi/scsi.c
++++ b/drivers/scsi/scsi.c
+@@ -499,6 +499,8 @@ void scsi_attach_vpd(struct scsi_device *sdev)
+ 			scsi_update_vpd_page(sdev, 0xb1, &sdev->vpd_pgb1);
+ 		if (vpd_buf->data[i] == 0xb2)
+ 			scsi_update_vpd_page(sdev, 0xb2, &sdev->vpd_pgb2);
++		if (vpd_buf->data[i] == 0xb7)
++			scsi_update_vpd_page(sdev, 0xb7, &sdev->vpd_pgb7);
  	}
- 	iostat_alloc_and_bind_ctx(sbi, bio, NULL);
+ 	kfree(vpd_buf);
+ }
+diff --git a/drivers/scsi/scsi_sysfs.c b/drivers/scsi/scsi_sysfs.c
+index 24f6eefb6803..93652a786a46 100644
+--- a/drivers/scsi/scsi_sysfs.c
++++ b/drivers/scsi/scsi_sysfs.c
+@@ -449,6 +449,7 @@ static void scsi_device_dev_release(struct device *dev)
+ 	struct scsi_vpd *vpd_pg80 = NULL, *vpd_pg83 = NULL;
+ 	struct scsi_vpd *vpd_pg0 = NULL, *vpd_pg89 = NULL;
+ 	struct scsi_vpd *vpd_pgb0 = NULL, *vpd_pgb1 = NULL, *vpd_pgb2 = NULL;
++	struct scsi_vpd *vpd_pgb7 = NULL;
+ 	unsigned long flags;
  
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 56ee7fff55c7..8d408afb044b 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -158,6 +158,7 @@ struct f2fs_mount_info {
- 	int s_jquota_fmt;			/* Format of quota to use */
- #endif
- 	/* For which write hints are passed down to block layer */
-+	int whint_mode;
- 	int alloc_mode;			/* segment allocation policy */
- 	int fsync_mode;			/* fsync policy */
- 	int fs_mode;			/* fs mode: LFS or ADAPTIVE */
-@@ -1344,6 +1345,12 @@ enum {
- 	FS_MODE_FRAGMENT_BLK,		/* block fragmentation mode */
- };
+ 	might_sleep();
+@@ -494,6 +495,8 @@ static void scsi_device_dev_release(struct device *dev)
+ 				       lockdep_is_held(&sdev->inquiry_mutex));
+ 	vpd_pgb2 = rcu_replace_pointer(sdev->vpd_pgb2, vpd_pgb2,
+ 				       lockdep_is_held(&sdev->inquiry_mutex));
++	vpd_pgb7 = rcu_replace_pointer(sdev->vpd_pgb7, vpd_pgb7,
++				       lockdep_is_held(&sdev->inquiry_mutex));
+ 	mutex_unlock(&sdev->inquiry_mutex);
  
-+enum {
-+	WHINT_MODE_OFF,		/* not pass down write hints */
-+	WHINT_MODE_USER,	/* try to pass down hints given by users */
-+	WHINT_MODE_FS,		/* pass down hints with F2FS policy */
-+};
+ 	if (vpd_pg0)
+@@ -510,6 +513,8 @@ static void scsi_device_dev_release(struct device *dev)
+ 		kfree_rcu(vpd_pgb1, rcu);
+ 	if (vpd_pgb2)
+ 		kfree_rcu(vpd_pgb2, rcu);
++	if (vpd_pgb7)
++		kfree_rcu(vpd_pgb7, rcu);
+ 	kfree(sdev->inquiry);
+ 	kfree(sdev);
+ 
+@@ -921,6 +926,7 @@ sdev_vpd_pg_attr(pg89);
+ sdev_vpd_pg_attr(pgb0);
+ sdev_vpd_pg_attr(pgb1);
+ sdev_vpd_pg_attr(pgb2);
++sdev_vpd_pg_attr(pgb7);
+ sdev_vpd_pg_attr(pg0);
+ 
+ static ssize_t show_inquiry(struct file *filep, struct kobject *kobj,
+@@ -1295,6 +1301,9 @@ static umode_t scsi_sdev_bin_attr_is_visible(struct kobject *kobj,
+ 	if (attr == &dev_attr_vpd_pgb2 && !sdev->vpd_pgb2)
+ 		return 0;
+ 
++	if (attr == &dev_attr_vpd_pgb7 && !sdev->vpd_pgb7)
++		return 0;
 +
- enum {
- 	ALLOC_MODE_DEFAULT,	/* stay default */
- 	ALLOC_MODE_REUSE,	/* reuse segments as much as possible */
-@@ -3728,6 +3735,8 @@ void f2fs_destroy_segment_manager(struct f2fs_sb_info *sbi);
- int __init f2fs_create_segment_manager_caches(void);
- void f2fs_destroy_segment_manager_caches(void);
- int f2fs_rw_hint_to_seg_type(enum rw_hint hint);
-+enum rw_hint f2fs_io_type_to_rw_hint(struct f2fs_sb_info *sbi,
-+			enum page_type type, enum temp_type temp);
- unsigned int f2fs_usable_segs_in_sec(struct f2fs_sb_info *sbi,
- 			unsigned int segno);
- unsigned int f2fs_usable_blks_in_seg(struct f2fs_sb_info *sbi,
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index d05b41608fc0..38c0cb8d9571 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -3290,6 +3290,101 @@ int f2fs_rw_hint_to_seg_type(enum rw_hint hint)
- 	}
+ 	return S_IRUGO;
  }
  
-+/* This returns write hints for each segment type. This hints will be
-+ * passed down to block layer. There are mapping tables which depend on
-+ * the mount option 'whint_mode'.
-+ *
-+ * 1) whint_mode=off. F2FS only passes down WRITE_LIFE_NOT_SET.
-+ *
-+ * 2) whint_mode=user-based. F2FS tries to pass down hints given by users.
-+ *
-+ * User                  F2FS                     Block
-+ * ----                  ----                     -----
-+ *                       META                     WRITE_LIFE_NOT_SET
-+ *                       HOT_NODE                 "
-+ *                       WARM_NODE                "
-+ *                       COLD_NODE                "
-+ * ioctl(COLD)           COLD_DATA                WRITE_LIFE_EXTREME
-+ * extension list        "                        "
-+ *
-+ * -- buffered io
-+ * WRITE_LIFE_EXTREME    COLD_DATA                WRITE_LIFE_EXTREME
-+ * WRITE_LIFE_SHORT      HOT_DATA                 WRITE_LIFE_SHORT
-+ * WRITE_LIFE_NOT_SET    WARM_DATA                WRITE_LIFE_NOT_SET
-+ * WRITE_LIFE_NONE       "                        "
-+ * WRITE_LIFE_MEDIUM     "                        "
-+ * WRITE_LIFE_LONG       "                        "
-+ *
-+ * -- direct io
-+ * WRITE_LIFE_EXTREME    COLD_DATA                WRITE_LIFE_EXTREME
-+ * WRITE_LIFE_SHORT      HOT_DATA                 WRITE_LIFE_SHORT
-+ * WRITE_LIFE_NOT_SET    WARM_DATA                WRITE_LIFE_NOT_SET
-+ * WRITE_LIFE_NONE       "                        WRITE_LIFE_NONE
-+ * WRITE_LIFE_MEDIUM     "                        WRITE_LIFE_MEDIUM
-+ * WRITE_LIFE_LONG       "                        WRITE_LIFE_LONG
-+ *
-+ * 3) whint_mode=fs-based. F2FS passes down hints with its policy.
-+ *
-+ * User                  F2FS                     Block
-+ * ----                  ----                     -----
-+ *                       META                     WRITE_LIFE_MEDIUM;
-+ *                       HOT_NODE                 WRITE_LIFE_NOT_SET
-+ *                       WARM_NODE                "
-+ *                       COLD_NODE                WRITE_LIFE_NONE
-+ * ioctl(COLD)           COLD_DATA                WRITE_LIFE_EXTREME
-+ * extension list        "                        "
-+ *
-+ * -- buffered io
-+ * WRITE_LIFE_EXTREME    COLD_DATA                WRITE_LIFE_EXTREME
-+ * WRITE_LIFE_SHORT      HOT_DATA                 WRITE_LIFE_SHORT
-+ * WRITE_LIFE_NOT_SET    WARM_DATA                WRITE_LIFE_LONG
-+ * WRITE_LIFE_NONE       "                        "
-+ * WRITE_LIFE_MEDIUM     "                        "
-+ * WRITE_LIFE_LONG       "                        "
-+ *
-+ * -- direct io
-+ * WRITE_LIFE_EXTREME    COLD_DATA                WRITE_LIFE_EXTREME
-+ * WRITE_LIFE_SHORT      HOT_DATA                 WRITE_LIFE_SHORT
-+ * WRITE_LIFE_NOT_SET    WARM_DATA                WRITE_LIFE_NOT_SET
-+ * WRITE_LIFE_NONE       "                        WRITE_LIFE_NONE
-+ * WRITE_LIFE_MEDIUM     "                        WRITE_LIFE_MEDIUM
-+ * WRITE_LIFE_LONG       "                        WRITE_LIFE_LONG
-+ */
-+
-+enum rw_hint f2fs_io_type_to_rw_hint(struct f2fs_sb_info *sbi,
-+				enum page_type type, enum temp_type temp)
+@@ -1347,6 +1356,7 @@ static struct bin_attribute *scsi_sdev_bin_attrs[] = {
+ 	&dev_attr_vpd_pgb0,
+ 	&dev_attr_vpd_pgb1,
+ 	&dev_attr_vpd_pgb2,
++	&dev_attr_vpd_pgb7,
+ 	&dev_attr_inquiry,
+ 	NULL
+ };
+diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+index c92a317ba547..879edbc1a065 100644
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -3019,6 +3019,18 @@ static void sd_read_block_limits(struct scsi_disk *sdkp)
+ 	rcu_read_unlock();
+ }
+ 
++/* Parse the Block Limits Extension VPD page (0xb7) */
++static void sd_read_block_limits_ext(struct scsi_disk *sdkp)
 +{
-+	if (F2FS_OPTION(sbi).whint_mode == WHINT_MODE_USER) {
-+		if (type == DATA) {
-+			if (temp == WARM)
-+				return WRITE_LIFE_NOT_SET;
-+			else if (temp == HOT)
-+				return WRITE_LIFE_SHORT;
-+			else if (temp == COLD)
-+				return WRITE_LIFE_EXTREME;
-+		} else {
-+			return WRITE_LIFE_NOT_SET;
-+		}
-+	} else if (F2FS_OPTION(sbi).whint_mode == WHINT_MODE_FS) {
-+		if (type == DATA) {
-+			if (temp == WARM)
-+				return WRITE_LIFE_LONG;
-+			else if (temp == HOT)
-+				return WRITE_LIFE_SHORT;
-+			else if (temp == COLD)
-+				return WRITE_LIFE_EXTREME;
-+		} else if (type == NODE) {
-+			if (temp == WARM || temp == HOT)
-+				return WRITE_LIFE_NOT_SET;
-+			else if (temp == COLD)
-+				return WRITE_LIFE_NONE;
-+		} else if (type == META) {
-+			return WRITE_LIFE_MEDIUM;
-+		}
-+	}
-+	return WRITE_LIFE_NOT_SET;
++	struct scsi_vpd *vpd;
++
++	rcu_read_lock();
++	vpd = rcu_dereference(sdkp->device->vpd_pgb7);
++	if (vpd && vpd->len >= 2)
++		sdkp->rscs = vpd->data[5] & 1;
++	rcu_read_unlock();
 +}
 +
- static int __get_segment_type_2(struct f2fs_io_info *fio)
- {
- 	if (fio->type == DATA)
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index a8c8232852bb..5bb062075acf 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -141,6 +141,7 @@ enum {
- 	Opt_jqfmt_vfsold,
- 	Opt_jqfmt_vfsv0,
- 	Opt_jqfmt_vfsv1,
-+	Opt_whint,
- 	Opt_alloc,
- 	Opt_fsync,
- 	Opt_test_dummy_encryption,
-@@ -220,6 +221,7 @@ static match_table_t f2fs_tokens = {
- 	{Opt_jqfmt_vfsold, "jqfmt=vfsold"},
- 	{Opt_jqfmt_vfsv0, "jqfmt=vfsv0"},
- 	{Opt_jqfmt_vfsv1, "jqfmt=vfsv1"},
-+	{Opt_whint, "whint_mode=%s"},
- 	{Opt_alloc, "alloc_mode=%s"},
- 	{Opt_fsync, "fsync_mode=%s"},
- 	{Opt_test_dummy_encryption, "test_dummy_encryption=%s"},
-@@ -988,6 +990,22 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
- 			f2fs_info(sbi, "quota operations not supported");
- 			break;
- #endif
-+		case Opt_whint:
-+			name = match_strdup(&args[0]);
-+			if (!name)
-+				return -ENOMEM;
-+			if (!strcmp(name, "user-based")) {
-+				F2FS_OPTION(sbi).whint_mode = WHINT_MODE_USER;
-+			} else if (!strcmp(name, "off")) {
-+				F2FS_OPTION(sbi).whint_mode = WHINT_MODE_OFF;
-+			} else if (!strcmp(name, "fs-based")) {
-+				F2FS_OPTION(sbi).whint_mode = WHINT_MODE_FS;
-+			} else {
-+				kfree(name);
-+				return -EINVAL;
-+			}
-+			kfree(name);
-+			break;
- 		case Opt_alloc:
- 			name = match_strdup(&args[0]);
- 			if (!name)
-@@ -1389,6 +1407,12 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
- 		return -EINVAL;
- 	}
+ /**
+  * sd_read_block_characteristics - Query block dev. characteristics
+  * @sdkp: disk to query
+@@ -3373,6 +3385,7 @@ static int sd_revalidate_disk(struct gendisk *disk)
+ 		if (scsi_device_supports_vpd(sdp)) {
+ 			sd_read_block_provisioning(sdkp);
+ 			sd_read_block_limits(sdkp);
++			sd_read_block_limits_ext(sdkp);
+ 			sd_read_block_characteristics(sdkp);
+ 			sd_zbc_read_zones(sdkp, buffer);
+ 			sd_read_cpr(sdkp);
+diff --git a/drivers/scsi/sd.h b/drivers/scsi/sd.h
+index 5eea762f84d1..84685168b6e0 100644
+--- a/drivers/scsi/sd.h
++++ b/drivers/scsi/sd.h
+@@ -150,6 +150,7 @@ struct scsi_disk {
+ 	unsigned	urswrz : 1;
+ 	unsigned	security : 1;
+ 	unsigned	ignore_medium_access_errors : 1;
++	bool		rscs : 1; /* reduced stream control support */
+ };
+ #define to_scsi_disk(obj) container_of(obj, struct scsi_disk, disk_dev)
  
-+	/* Not pass down write hints if the number of active logs is lesser
-+	 * than NR_CURSEG_PERSIST_TYPE.
-+	 */
-+	if (F2FS_OPTION(sbi).active_logs != NR_CURSEG_PERSIST_TYPE)
-+		F2FS_OPTION(sbi).whint_mode = WHINT_MODE_OFF;
-+
- 	if (f2fs_sb_has_readonly(sbi) && !f2fs_readonly(sbi->sb)) {
- 		f2fs_err(sbi, "Allow to mount readonly mode only");
- 		return -EROFS;
-@@ -2060,6 +2084,10 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
- 		seq_puts(seq, ",prjquota");
- #endif
- 	f2fs_show_quota_options(seq, sbi->sb);
-+	if (F2FS_OPTION(sbi).whint_mode == WHINT_MODE_USER)
-+		seq_printf(seq, ",whint_mode=%s", "user-based");
-+	else if (F2FS_OPTION(sbi).whint_mode == WHINT_MODE_FS)
-+		seq_printf(seq, ",whint_mode=%s", "fs-based");
+diff --git a/include/scsi/scsi_device.h b/include/scsi/scsi_device.h
+index b9230b6add04..2dd96ae101e1 100644
+--- a/include/scsi/scsi_device.h
++++ b/include/scsi/scsi_device.h
+@@ -153,6 +153,7 @@ struct scsi_device {
+ 	struct scsi_vpd __rcu *vpd_pgb0;
+ 	struct scsi_vpd __rcu *vpd_pgb1;
+ 	struct scsi_vpd __rcu *vpd_pgb2;
++	struct scsi_vpd __rcu *vpd_pgb7;
  
- 	fscrypt_show_test_dummy_encryption(seq, ',', sbi->sb);
+ 	struct scsi_target      *sdev_target;
  
-@@ -2129,6 +2157,7 @@ static void default_options(struct f2fs_sb_info *sbi, bool remount)
- 		F2FS_OPTION(sbi).active_logs = NR_CURSEG_PERSIST_TYPE;
- 
- 	F2FS_OPTION(sbi).inline_xattr_size = DEFAULT_INLINE_XATTR_ADDRS;
-+	F2FS_OPTION(sbi).whint_mode = WHINT_MODE_OFF;
- 	if (le32_to_cpu(F2FS_RAW_SUPER(sbi)->segment_count_main) <=
- 							SMALL_VOLUME_SEGMENTS)
- 		F2FS_OPTION(sbi).alloc_mode = ALLOC_MODE_REUSE;
-@@ -2443,7 +2472,8 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 		need_stop_gc = true;
- 	}
- 
--	if (*flags & SB_RDONLY) {
-+	if (*flags & SB_RDONLY ||
-+	    F2FS_OPTION(sbi).whint_mode != org_mount_opt.whint_mode) {
- 		sync_inodes_sb(sb);
- 
- 		set_sbi_flag(sbi, SBI_IS_DIRTY);
 
