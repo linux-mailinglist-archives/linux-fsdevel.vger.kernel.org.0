@@ -1,52 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-507-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-508-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AEAA7CB9DE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 06:58:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32E867CBA5B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 07:50:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BA9B1C209ED
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 04:58:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F0B21C20B65
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 05:50:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E25DBE6C;
-	Tue, 17 Oct 2023 04:58:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ADC6C155;
+	Tue, 17 Oct 2023 05:50:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vR2QFenT"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="G/8MMlC9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 831E8399;
-	Tue, 17 Oct 2023 04:58:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF989C433C8;
-	Tue, 17 Oct 2023 04:58:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1697518715;
-	bh=LT82CcEfgjH509sP2t7HICsjcgQCpwi07/cHZno/Uyo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vR2QFenTto8Cc4l9v6dxOhop5hvyh5y1SnHGFGyBm3iNOCd5alCKL708cWjfQfrd+
-	 S2CndunoNWnu+ymLa4mI/CjNgrPI5iTYRBkcOd+1E0iw4OUp4ytFW8i+EIV+F17A9a
-	 4AtmddcFBPJ1zm7DhR2F5IQR+dZaoh2rycQ3aLCmlBSDygnjTobYxXxVI0yzGpiSO8
-	 ejMfj4OMJ0mAKl6QPyY+Zf9TUZBbUHhSoWd92ZYYVOrB6jPTPM6i3e9EBu8yk1yxex
-	 HsdqNYvfOkLVHWH55y5oyZadF4Wd05679u4xfkV6nF0n5R2Wgg+kzr7G4ba+8GvwJL
-	 nVDk/nugKrwOA==
-Date: Mon, 16 Oct 2023 21:58:34 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Andrey Albershteyn <aalbersh@redhat.com>, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, fsverity@lists.linux.dev,
-	david@fromorbit.com, dchinner@redhat.com
-Subject: Re: [PATCH v3 07/28] fsverity: always use bitmap to track verified
- status
-Message-ID: <20231017045834.GC1907@sol.localdomain>
-References: <20231006184922.252188-1-aalbersh@redhat.com>
- <20231006184922.252188-8-aalbersh@redhat.com>
- <20231011031543.GB1185@sol.localdomain>
- <q75t2etmyq2zjskkquikatp4yg7k2yoyt4oab4grhlg7yu4wyi@6eax4ysvavyk>
- <20231012072746.GA2100@sol.localdomain>
- <20231013031209.GS21298@frogsfrogsfrogs>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D168C134
+	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Oct 2023 05:50:44 +0000 (UTC)
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75E2B9E
+	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Oct 2023 22:50:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=uVNo3e2jqLDSok7VxZ2csgFZJHEvyUH0i7SUrzYWQzw=; b=G/8MMlC9GhkGCanSlYwLbU2rXu
+	GJtod75SbNjbQgELtBRbKsLLMxjwNAWLoW0GWQjaGrmNn3uRJwUemISdJJe3DNcHEFfW3iryKEWOk
+	wWTG6740X8KkVbQyjXGwNNCoNogPBBFn0kEj6t6nRSsGNEDZTnyHmqKKOHEV3uwuDP2c7Y5mp1FAb
+	QcBI2Wtu+cyI1F9+YtAyzKo0+9HeYXLXvMcbTPO9wqLdFoS6wVZmAkBD7HQ+HOw57iUodc9FRTq7L
+	VHO/r/udaKsKDwpYKE418WbxfcO27+ADxa1VwYyuR0LBqa7Y/otuRUTFGCkqdYJVlIriw53a8RdI7
+	hWBLwyag==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1qscyW-001x8d-2o;
+	Tue, 17 Oct 2023 05:50:41 +0000
+Date: Tue, 17 Oct 2023 06:50:40 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>,
+	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+Subject: [RFC] weirdness in f2fs_rename() with RENAME_WHITEOUT
+Message-ID: <20231017055040.GN800259@ZenIV>
+References: <20231011195620.GW800259@ZenIV>
+ <20231011203412.GA85476@ZenIV>
+ <CAHk-=wjSbompMCgMwR2-MB59QDB+OZ7Ohp878QoDc9o7z4pbNg@mail.gmail.com>
+ <20231011215138.GX800259@ZenIV>
+ <20231011230105.GA92231@ZenIV>
+ <CAHfrynNbfPtAjY4Y7N0cyWyH35dyF_BcpfR58ASCCC7=-TfSFw@mail.gmail.com>
+ <20231012050209.GY800259@ZenIV>
+ <20231012103157.mmn6sv4e6hfrqkai@quack3>
+ <20231012145758.yopnkhijksae5akp@quack3>
+ <20231012191551.GZ800259@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -55,91 +61,59 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231013031209.GS21298@frogsfrogsfrogs>
+In-Reply-To: <20231012191551.GZ800259@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE
+	autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
+	lindbergh.monkeyblade.net
 
-On Thu, Oct 12, 2023 at 08:12:09PM -0700, Darrick J. Wong wrote:
-> Hi Eric,
-> 
-> [Please excuse my ignorance, this is only the third time I've dived
-> into fsverity.]
-> 
-> On Thu, Oct 12, 2023 at 12:27:46AM -0700, Eric Biggers wrote:
-> > On Wed, Oct 11, 2023 at 03:03:55PM +0200, Andrey Albershteyn wrote:
-> > > > How complicated would it be to keep supporting using the page bit when
-> > > > merkle_tree_block_size == page_size and the filesystem supports it?  It's an
-> > > > efficient solution, so it would be a shame to lose it.  Also it doesn't have the
-> > > > max file size limit that the bitmap has.
-> 
-> How complex would it be to get rid of the bitmap entirely, and validate
-> all the verity tree blocks within a page all at once instead of
-> individual blocks within a page?
-> 
-> Assuming willy isn't grinding his axe to get rid of PGchecked,
-> obviously. ;)
+[f2fs folks Cc'd]
 
-See what I wrote earlier at
-https://lore.kernel.org/linux-xfs/Y5ltzp6yeMo1oDSk@sol.localdomain.
-Basically it would increase the worst-case latency by a lot.
+	There's something very odd in f2fs_rename();
+this:
+        f2fs_down_write(&F2FS_I(old_inode)->i_sem);
+        if (!old_dir_entry || whiteout)
+                file_lost_pino(old_inode);
+        else   
+                /* adjust dir's i_pino to pass fsck check */
+                f2fs_i_pino_write(old_inode, new_dir->i_ino);
+        f2fs_up_write(&F2FS_I(old_inode)->i_sem);
+and this:
+                if (old_dir != new_dir && !whiteout)
+                        f2fs_set_link(old_inode, old_dir_entry,
+                                                old_dir_page, new_dir);
+                else
+                        f2fs_put_page(old_dir_page, 0);
+The latter really stinks, especially considering
+struct dentry *f2fs_get_parent(struct dentry *child)
+{
+        struct page *page;
+        unsigned long ino = f2fs_inode_by_name(d_inode(child), &dotdot_name, &page);
 
-> 
-> > > Well, I think it's possible but my motivation was to step away from
-> > > page manipulation as much as possible with intent to not affect other
-> > > filesystems too much. I can probably add handling of this case to
-> > > fsverity_read_merkle_tree_block() but fs/verity still will create
-> > > bitmap and have a limit. The other way is basically revert changes
-> > > done in patch 09, then, it probably will be quite a mix of page/block
-> > > handling in fs/verity/verify.c
-> > 
-> > The page-based caching still has to be supported anyway, since that's what the
-> > other filesystems that support fsverity use, and it seems you don't plan to
-> > change that.
-> 
-> I frankly have been asking myself why /this/ patchset adds so much extra
-> code and flags and whatnot to XFS and fs/verity.  From what I can tell,
-> the xfs buffer cache has been extended to allocate double the memory so
-> that xattr contents can be shadowed.  getxattr for merkle tree contents
-> then pins the buffer, shadows the contents, and hands both back to the
-> caller (aka xfs_read_merkle_tree_block).   The shadow memory is then
-> handed to fs/verity to do its magic; following that, fsverity releases
-> the reference and we can eventually drop the xfs_buf reference.
-> 
-> But this seems way overcomplicated to me.  ->read_merkle_tree_page hands
-> us a pgoff_t and a suggestion for page readahead, and wants us to return
-> an uptodate locked page, right?
-> 
-> Why can't xfs allocate a page, walk the requested range to fill the page
-> with merkle tree blocks that were written to the xattr structure (or
-> zero the page contents if there is no xattr), and hand that page to
-> fsverity?  (It helps to provide the merkle tree block size to
-> xfs_read_merkle_tree_page, thanks for adding that).
+        if (!ino) {
+                if (IS_ERR(page))
+                        return ERR_CAST(page);
+                return ERR_PTR(-ENOENT);
+        }
+        return d_obtain_alias(f2fs_iget(child->d_sb, ino));
+}
 
-Earlier versions of this patchset did that.  But, it's only really feasible if
-the pages are actually cached.  Otherwise it's very inefficient and can result
-in random ENOMEM.
+You want correct inumber in the ".." link.  And cross-directory
+rename does move the source to new parent, even if you'd been asked
+to leave a whiteout in the old place.
 
-> Assuming fsverity also wants some caching, we could augment the
-> xfs_inode to point to a separate address_space for cached merkle tree
-> pages, and then xfs_read_merkle_tree_page can use __filemap_get_folio to
-> find uptodate cached pages, or instantiate one and make it uptodate.
-> Even better, we can pretty easily use multipage folios for this, though
-> AFAICT the fs/verity code isn't yet up to handling that.
-> 
-> The only thing I can't quite figure out is how to get memory reclaim to
-> scan the extra address_space when it wants to try to reclaim pages.
-> That part ext4 and f2fs got for free because they stuffed the merkle
-> tree in the posteof space.
-> 
-> But wouldn't that solve /all/ the plumbing problems without scattering
-> bits of new code and flags into the xfs buffer cache, the extended
-> attributes code, and elsewhere?  And then xfs would not need to burn up
-> vmap space to allocate 8K memory blocks just to provide 4k merkel tree
-> blocks to fs/verity.
-> 
-> That's just my 2 cents from spending a couple of hours hypothesizing how
-> I would fill out the fsverity_operations.
+Why is that stuff conditional on whiteout?  AFAICS, that went into the
+tree in the same commit that added RENAME_WHITEOUT support on f2fs,
+mentioning "For now, we just try to follow the way that xfs/ext4 use"
+in commit message.  But ext4 does *NOT* do anything of that sort -
+at the time of that commit the relevant piece had been
+        if (old.dir_bh) {
+		retval = ext4_rename_dir_finish(handle, &old, new.dir->i_ino);
+and old.dir_bh is set by
+                retval = ext4_rename_dir_prepare(handle, &old);
+a few lines prior, which is not conditional upon the whiteout.
 
-That might work.  I'm not sure about the details though, e.g. can mapping->host
-point to the file's inode or would it need to be a fake one.
-
-- Eric
+What am I missing there?
 
