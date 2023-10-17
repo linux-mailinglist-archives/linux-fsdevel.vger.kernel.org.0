@@ -1,42 +1,42 @@
-Return-Path: <linux-fsdevel+bounces-550-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-551-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51D217CCB0F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 20:48:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2C297CCB10
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 20:49:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B7A4281A57
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 18:48:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 538ADB213DD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 18:49:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21BF89CA66;
-	Tue, 17 Oct 2023 18:48:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F19ED9CA74;
+	Tue, 17 Oct 2023 18:48:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UYWaETAj"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="4nI0BtNm"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B849CA5B
-	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Oct 2023 18:48:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E329CA5B
+	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Oct 2023 18:48:46 +0000 (UTC)
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0F43D3;
-	Tue, 17 Oct 2023 11:48:42 -0700 (PDT)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D681F9F;
+	Tue, 17 Oct 2023 11:48:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
 	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=cl8di6G3DxLLFf5MtSBQgO7MOKUrZZ/L+falVxOQuKg=; b=UYWaETAjbVF1TF5AWFnEd2BOv1
-	UYLxmX1xpq33/xS5o+//DLjuFFRDybdy6/xDYyukec8TdQo1RhAHTXlBwSR4HLxpakXzKc6KCGhIZ
-	TtYs/1Izxqoqt1KutZNfApLPSUQpUhf5rSRksn+sJ7hpgnLU/FSDAo3gSlKmcpMVHxZ6b3VXKegSx
-	on7F9aMyj+JdT73fT827+VJ0t0qMOzljjgz5quwpQxfRTCaqW0QeEO+Q18/QOp73uoByRImHln4/S
-	9pIsPL/RmV+Mmmma1r8dEhrcRDTTJxjDdVdChuGWFQuPk9e4SkhzE1CYB28dg6RIV3IzoNZS/dpiQ
-	0zysKpyA==;
+	bh=0KHrNOLeXAvlCnl+foXim6n8WJn/OE532LLlnYjnot4=; b=4nI0BtNm3eNIytc+Qk8UvPefiD
+	m2SL10YJP1ysHbUiCmaDNw55Ke4ElvXfBNHuNQ+K2if1zo2pUGEMvRNLeKVA7gKtOePX/+Lx73nIG
+	NLKzyfIqF1+6hnHUx5YHsYthFX8quKCo9D7WpWGWZrdQKwMbtkC3Hm/i7vuY9SSrJ9RUSZrdZ/SaR
+	odEfsdGbr2Zey3hzfYSI7DEs+j1tQ27u14PqoonJ6K+435avBxBFh5orHu3kdO0Geec5fXeuZ3+Xe
+	3xwlMeoXx/UELjlC/vmjzVvmFReztMA90TY1cWPhf5VzuXWZ1+4St/2nZUjLaa4svbC4rAqbqa+A6
+	WiySBblQ==;
 Received: from 2a02-8389-2341-5b80-39d3-4735-9a3c-88d8.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:39d3:4735:9a3c:88d8] helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-	id 1qsp7P-00D0Le-0h;
-	Tue, 17 Oct 2023 18:48:39 +0000
+	id 1qsp7R-00D0M3-2w;
+	Tue, 17 Oct 2023 18:48:42 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Christian Brauner <brauner@kernel.org>,
 	Al Viro <viro@zeniv.linux.org.uk>,
@@ -45,9 +45,9 @@ Cc: Jan Kara <jack@suse.cz>,
 	Denis Efremov <efremov@linux.com>,
 	linux-block@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 4/5] block: assert that we're not holding open_mutex over blk_report_disk_dead
-Date: Tue, 17 Oct 2023 20:48:22 +0200
-Message-Id: <20231017184823.1383356-5-hch@lst.de>
+Subject: [PATCH 5/5] fs: assert that open_mutex isn't held over holder ops
+Date: Tue, 17 Oct 2023 20:48:23 +0200
+Message-Id: <20231017184823.1383356-6-hch@lst.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20231017184823.1383356-1-hch@lst.de>
 References: <20231017184823.1383356-1-hch@lst.de>
@@ -68,46 +68,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 
 From: Christian Brauner <brauner@kernel.org>
 
-blk_report_disk_dead() has the following major callers:
-
-(1) del_gendisk()
-(2) blk_mark_disk_dead()
-
-Since del_gendisk() acquires disk->open_mutex it's clear that all
-callers are assumed to be called without disk->open_mutex held.
-In turn, blk_report_disk_dead() is called without disk->open_mutex held
-in del_gendisk().
-
-All callers of blk_mark_disk_dead() call it without disk->open_mutex as
-well.
-
-Ensure that it is clear that blk_report_disk_dead() is called without
-disk->open_mutex on purpose by asserting it and a comment in the code.
+With recent block level changes we should never be in a situation where
+we hold disk->open_mutex when calling into these helpers. So assert that
+in the code.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- block/genhd.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ fs/super.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/block/genhd.c b/block/genhd.c
-index 4a16a424f57d4f..c9d06f72c587e8 100644
---- a/block/genhd.c
-+++ b/block/genhd.c
-@@ -559,6 +559,13 @@ static void blk_report_disk_dead(struct gendisk *disk, bool surprise)
- 	struct block_device *bdev;
- 	unsigned long idx;
+diff --git a/fs/super.c b/fs/super.c
+index 26b96191e9b3ca..ce54cfcecaa156 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -1443,6 +1443,7 @@ static void fs_bdev_mark_dead(struct block_device *bdev, bool surprise)
  
-+	/*
-+	 * On surprise disk removal, bdev_mark_dead() may call into file
-+	 * systems below. Make it clear that we're expecting to not hold
-+	 * disk->open_mutex.
-+	 */
-+	lockdep_assert_not_held(&disk->open_mutex);
-+
- 	rcu_read_lock();
- 	xa_for_each(&disk->part_tbl, idx, bdev) {
- 		if (!kobject_get_unless_zero(&bdev->bd_device.kobj))
+ 	/* bd_holder_lock ensures that the sb isn't freed */
+ 	lockdep_assert_held(&bdev->bd_holder_lock);
++	lockdep_assert_not_held(&bdev->bd_disk->open_mutex);
+ 
+ 	if (!super_lock_shared_active(sb))
+ 		return;
+@@ -1462,6 +1463,7 @@ static void fs_bdev_sync(struct block_device *bdev)
+ 	struct super_block *sb = bdev->bd_holder;
+ 
+ 	lockdep_assert_held(&bdev->bd_holder_lock);
++	lockdep_assert_not_held(&bdev->bd_disk->open_mutex);
+ 
+ 	if (!super_lock_shared_active(sb))
+ 		return;
 -- 
 2.39.2
 
