@@ -1,165 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-537-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-539-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ED127CC7B8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 17:44:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1A047CC81F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 17:54:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4C641F2331D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 15:44:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51BDDB2126A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 15:54:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD687450FC;
-	Tue, 17 Oct 2023 15:44:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EewtEhMo"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D132645F4A;
+	Tue, 17 Oct 2023 15:53:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB17450E2;
-	Tue, 17 Oct 2023 15:44:43 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.43])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59048B0;
-	Tue, 17 Oct 2023 08:44:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1697557482; x=1729093482;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=XgkULBRZsTb/2jKvTsppmPErophz+plcbU7s38fli/I=;
-  b=EewtEhMo0EmpB8HrDUe2ayEOEW1ac3dk+p4ipKOXp3TM170DG65GZ3ri
-   tpRTy59kZ0fUsz4lyBZD0UHyRq2ndU3wxHpG3qBfA7keKwZEnFk/bd9S5
-   PVbnT10wPzBhu811a87avcRyyh8lpew93gWuexEfy/p+U3VPx05IE1Pjy
-   1OA81MgpA5f2xpHLUILY0h5l+J89fab5kawUtiJ84OXd2IWZPsLZvc12p
-   wB6v5H/+rD2bR4QkBEyeY78ChVgCUy2Pmz2H0E3v8CWAKK34w3GVoFF4c
-   EBFXnS2IS9/+VTmWwwbWWCnO3tokmO10edN8BN/Gim+eEx3pgGjoSqhNN
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10866"; a="472035332"
-X-IronPort-AV: E=Sophos;i="6.03,232,1694761200"; 
-   d="scan'208";a="472035332"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2023 08:44:42 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10866"; a="822023718"
-X-IronPort-AV: E=Sophos;i="6.03,232,1694761200"; 
-   d="scan'208";a="822023718"
-Received: from lkp-server02.sh.intel.com (HELO f64821696465) ([10.239.97.151])
-  by fmsmga008.fm.intel.com with ESMTP; 17 Oct 2023 08:44:39 -0700
-Received: from kbuild by f64821696465 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1qsmFJ-0009l1-13;
-	Tue, 17 Oct 2023 15:44:37 +0000
-Date: Tue, 17 Oct 2023 23:44:27 +0800
-From: kernel test robot <lkp@intel.com>
-To: Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	netdev@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, keescook@chromium.org,
-	brauner@kernel.org, lennart@poettering.net, kernel-team@meta.com,
-	sargun@sargun.me
-Subject: Re: [PATCH v8 bpf-next 11/18] bpf,lsm: add BPF token LSM hooks
-Message-ID: <202310172329.EQgtSkRh-lkp@intel.com>
-References: <20231016180220.3866105-12-andrii@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C1DE450F2
+	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Oct 2023 15:53:52 +0000 (UTC)
+Received: from mail-oa1-f79.google.com (mail-oa1-f79.google.com [209.85.160.79])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1273E114
+	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Oct 2023 08:53:46 -0700 (PDT)
+Received: by mail-oa1-f79.google.com with SMTP id 586e51a60fabf-1ea01dcf2ccso4676774fac.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Oct 2023 08:53:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697558026; x=1698162826;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KSb0XyCU38BNui475xyYgCEOUAo9lpZ5H7S1vx0SMI8=;
+        b=K1wcME7Ik9ir4NhQEUbst2nbCeTU3JCjg9anElKXm/ZhIAvVC1l+MI3tDcO8lUOsG9
+         6KoI/reDB5zS1t43V2RJ37yoIV5qczysBQbQ6VRyD7PznYNztB8Soyt9s0bjxLpC6lUU
+         /GDJ85uxk8yV2aeYDUnBrVf8shWRPRr0mnNvzIHFop3oZUv/1QDyu/JNx0BTgROJ5NpL
+         f6fKfenC4JM4xD9tWwiRHPcnywnRXyCOuBERDIfwxef4/3V157gP7oKwGlBsi2PGqVoM
+         z2VOVyiFEB4dkIo1H5qYjid2cr9LLiPa2brXi2u7U8KETaZPsGqQBPZKmHO8wrcIfJUA
+         ZzXw==
+X-Gm-Message-State: AOJu0Yxmda5In/b8afQokGwIv3sECgYGig8ALp1W5xPtFzg6KQoJxRQf
+	otBrq/m6kGn3vaacSVjr7+wyTCF3YFOOpSN5BdTE89LQG0s0
+X-Google-Smtp-Source: AGHT+IEGQT98DKVHdiFnHMkzKzazgsdC17X7KhLEqVs3JN8DOyFE591GTNasywWXN1MShMGWKANruRmWJVdbMQYlSsUVSiMhjeT3
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231016180220.3866105-12-andrii@kernel.org>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-	SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a05:6870:8197:b0:1e9:a86f:ec44 with SMTP id
+ k23-20020a056870819700b001e9a86fec44mr899339oae.2.1697558025799; Tue, 17 Oct
+ 2023 08:53:45 -0700 (PDT)
+Date: Tue, 17 Oct 2023 08:53:45 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001d10130607eb873a@google.com>
+Subject: [syzbot] [bfs?] WARNING in mark_buffer_dirty (6)
+From: syzbot <syzbot+d98fd19acd08b36ff422@syzkaller.appspotmail.com>
+To: aivazian.tigran@gmail.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-Hi Andrii,
+Hello,
 
-kernel test robot noticed the following build warnings:
+syzbot found the following issue on:
 
-[auto build test WARNING on bpf-next/master]
+HEAD commit:    727fb8376504 Merge tag 'input-for-v6.6-rc5' of git://git.k..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=165b5361680000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=32d0b9b42ceb8b10
+dashboard link: https://syzkaller.appspot.com/bug?extid=d98fd19acd08b36ff422
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12ab3d03680000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1651329d680000
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Andrii-Nakryiko/bpf-align-CAP_NET_ADMIN-checks-with-bpf_capable-approach/20231017-152928
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
-patch link:    https://lore.kernel.org/r/20231016180220.3866105-12-andrii%40kernel.org
-patch subject: [PATCH v8 bpf-next 11/18] bpf,lsm: add BPF token LSM hooks
-config: m68k-allyesconfig (https://download.01.org/0day-ci/archive/20231017/202310172329.EQgtSkRh-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231017/202310172329.EQgtSkRh-lkp@intel.com/reproduce)
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/756c4ab74278/disk-727fb837.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f8c21021e277/vmlinux-727fb837.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/46bc1f7ddaac/bzImage-727fb837.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/05fb682fb025/mount_0.gz
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202310172329.EQgtSkRh-lkp@intel.com/
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d98fd19acd08b36ff422@syzkaller.appspotmail.com
 
-All warnings (new ones prefixed by >>):
+loop0: detected capacity change from 0 to 64
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 5092 at fs/buffer.c:1188 mark_buffer_dirty+0x376/0x3e0 fs/buffer.c:1188
+Modules linked in:
+CPU: 0 PID: 5092 Comm: syz-executor341 Not tainted 6.6.0-rc5-syzkaller-00243-g727fb8376504 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/06/2023
+RIP: 0010:mark_buffer_dirty+0x376/0x3e0 fs/buffer.c:1188
+Code: e9 ff e6 89 ff e8 fa e6 89 ff 48 89 ef e8 42 87 e7 ff 5b 5d e9 eb e6 89 ff e8 e6 e6 89 ff 0f 0b e9 10 fe ff ff e8 da e6 89 ff <0f> 0b e9 b7 fc ff ff e8 ce e6 89 ff 0f 0b e9 d6 fc ff ff 48 89 df
+RSP: 0018:ffffc90003bcf968 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: ffff888076754488 RCX: 0000000000000000
+RDX: ffff8880268f1dc0 RSI: ffffffff81fde006 RDI: 0000000000000001
+RBP: ffff888076753e00 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000009
+R13: ffff8880275ca000 R14: dffffc0000000000 R15: ffffed1004eb942c
+FS:  00007ff0e3a7f6c0(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020004000 CR3: 00000000177ca000 CR4: 0000000000350ef0
+Call Trace:
+ <TASK>
+ bfs_move_block fs/bfs/file.c:43 [inline]
+ bfs_move_blocks fs/bfs/file.c:56 [inline]
+ bfs_get_block+0x37f/0xdd0 fs/bfs/file.c:125
+ __block_write_begin_int+0x3c0/0x1560 fs/buffer.c:2120
+ __block_write_begin fs/buffer.c:2169 [inline]
+ block_write_begin+0xb1/0x490 fs/buffer.c:2228
+ bfs_write_begin+0x31/0xd0 fs/bfs/file.c:177
+ generic_perform_write+0x278/0x600 mm/filemap.c:3969
+ __generic_file_write_iter+0x1f9/0x240 mm/filemap.c:4064
+ generic_file_write_iter+0xe3/0x350 mm/filemap.c:4090
+ call_write_iter include/linux/fs.h:1956 [inline]
+ new_sync_write fs/read_write.c:491 [inline]
+ vfs_write+0x650/0xe40 fs/read_write.c:584
+ ksys_write+0x12f/0x250 fs/read_write.c:637
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x38/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7ff0e3ac2b99
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 b1 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ff0e3a7f218 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007ff0e3b4a6c8 RCX: 00007ff0e3ac2b99
+RDX: 000000000208e24b RSI: 0000000020000440 RDI: 0000000000000004
+RBP: 00007ff0e3b4a6c0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007ff0e3b170c0
+R13: 00007ff0e3b1706b R14: 0030656c69662f2e R15: 0031656c69662f2e
+ </TASK>
 
-   security/security.c:5182: warning: Function parameter or member 'map' not described in 'security_bpf_map_create'
-   security/security.c:5200: warning: Function parameter or member 'prog' not described in 'security_bpf_prog_load'
->> security/security.c:5217: warning: Function parameter or member 'token' not described in 'security_bpf_token_create'
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-vim +5217 security/security.c
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-  5168	
-  5169	/**
-  5170	 * security_bpf_map_create() - Check if BPF map creation is allowed
-  5171	 * @map BPF map object
-  5172	 * @attr: BPF syscall attributes used to create BPF map
-  5173	 * @token: BPF token used to grant user access
-  5174	 *
-  5175	 * Do a check when the kernel creates a new BPF map. This is also the
-  5176	 * point where LSM blob is allocated for LSMs that need them.
-  5177	 *
-  5178	 * Return: Returns 0 on success, error on failure.
-  5179	 */
-  5180	int security_bpf_map_create(struct bpf_map *map, union bpf_attr *attr,
-  5181				    struct bpf_token *token)
-> 5182	{
-  5183		return call_int_hook(bpf_map_create, 0, map, attr, token);
-  5184	}
-  5185	
-  5186	/**
-  5187	 * security_bpf_prog_load() - Check if loading of BPF program is allowed
-  5188	 * @prog BPF program object
-  5189	 * @attr: BPF syscall attributes used to create BPF program
-  5190	 * @token: BPF token used to grant user access to BPF subsystem
-  5191	 *
-  5192	 * Do a check when the kernel allocates BPF program object and is about to
-  5193	 * pass it to BPF verifier for additional correctness checks. This is also the
-  5194	 * point where LSM blob is allocated for LSMs that need them.
-  5195	 *
-  5196	 * Return: Returns 0 on success, error on failure.
-  5197	 */
-  5198	int security_bpf_prog_load(struct bpf_prog *prog, union bpf_attr *attr,
-  5199				   struct bpf_token *token)
-  5200	{
-  5201		return call_int_hook(bpf_prog_load, 0, prog, attr, token);
-  5202	}
-  5203	
-  5204	/**
-  5205	 * security_bpf_token_create() - Check if creating of BPF token is allowed
-  5206	 * @token BPF token object
-  5207	 * @attr: BPF syscall attributes used to create BPF token
-  5208	 * @path: path pointing to BPF FS mount point from which BPF token is created
-  5209	 *
-  5210	 * Do a check when the kernel instantiates a new BPF token object from BPF FS
-  5211	 * instance. This is also the point where LSM blob can be allocated for LSMs.
-  5212	 *
-  5213	 * Return: Returns 0 on success, error on failure.
-  5214	 */
-  5215	int security_bpf_token_create(struct bpf_token *token, union bpf_attr *attr,
-  5216				      struct path *path)
-> 5217	{
-  5218		return call_int_hook(bpf_token_create, 0, token, attr, path);
-  5219	}
-  5220	
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
