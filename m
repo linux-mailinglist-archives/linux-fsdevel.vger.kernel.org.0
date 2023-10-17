@@ -1,166 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-561-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-562-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04A987CCE10
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 22:29:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 142807CCE8F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 22:48:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EAD61C20B1E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 20:29:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F6DBB212B3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 20:48:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3E904311A;
-	Tue, 17 Oct 2023 20:29:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="LHg3lNh1"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C530C2E3FA;
+	Tue, 17 Oct 2023 20:48:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61D45430F9
-	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Oct 2023 20:29:08 +0000 (UTC)
-Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2D00ED
-	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Oct 2023 13:29:04 -0700 (PDT)
-Received: by mail-yb1-xb29.google.com with SMTP id 3f1490d57ef6-d9a6b21d1daso7141334276.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Oct 2023 13:29:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1697574544; x=1698179344; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=roSMLNHP+gwwhTlf1XgKo9nsppqOzmaJeO33fNjYZrs=;
-        b=LHg3lNh1F51W5OV4SYB2lmGKVQKH7e+yhqd/eB9+xSKwyYepok7895AZFBYT5gd2KR
-         cYvnyXxqg2/ijVsrer42IH5dXydBpht9bMds0n0o6fset6C9jRAa1PBMoPBUf80SIlMO
-         /MWI/cnOvo+pyTQIpY4X5Ov49Ab+fUgaagiXVSBf8K5Q8aE+TigiODo0sRT4TtiyW8he
-         KMddW5Rs2JEOXK2+jMnt0hXGRrlLr/pkERIObqkF97fdyC7EyKg7u1WwSDQtweIrMF2j
-         iasmne18dl3/qdwS0HOfR9/rVl1TSGkdj6U4toXWCEdSajyjzki7Cbl44iu8I9gEiVwE
-         nLKQ==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6674430E9
+	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Oct 2023 20:48:05 +0000 (UTC)
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B9519F;
+	Tue, 17 Oct 2023 13:48:04 -0700 (PDT)
+Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-6ccfe703184so590946a34.0;
+        Tue, 17 Oct 2023 13:48:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697574544; x=1698179344;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=roSMLNHP+gwwhTlf1XgKo9nsppqOzmaJeO33fNjYZrs=;
-        b=QBMUgzV1lyxRyXhoXNlDlEck6r6q/bOgW+q9s0IGV7hERts5UECgX+Fhe5Tc98m+4A
-         Vifs7UpDHZ2d//VNhTcbWW7++5/a82V7kNVddu/PPe7ReKE1KHeBObcf0jIY5QT9R83b
-         S3DQOSBJe4tD8epoZKkb7yvOOgW12rJ3npdLdASbkcL5bn8PE9DF7v0/MrkdmK2dyAZg
-         Q87fJVEJ9/eZVIIbKa2A6Jx5x6T+Iath0kfPHgkjHwkUY6IpcR1DUp6rgsnhZLwuHMur
-         Lg82xO14QjG46k+/ljLqbWnhOiq9ywWI4JGUaXou6RKbpVvwFtCeF/x5ORspzFHOkTpx
-         svCg==
-X-Gm-Message-State: AOJu0YzpdP7SnuGfy3CrU+u+VdGfiSZReY8TOIraL3zBAVeOnSuKcdvz
-	6NgmPY1Hu9DU1VRSAXqgPyC6OGWs6mhwaw9HXMVM
-X-Google-Smtp-Source: AGHT+IGvNV1FfJaLKzey6xiCnly4wAs5hFFddtmKpsUjR1qoFsj84V/1SbJSw10p4QdGugFMtNNhrLE1hlfj+3vZx9Y=
-X-Received: by 2002:a25:b120:0:b0:d9a:ca1f:4c0 with SMTP id
- g32-20020a25b120000000b00d9aca1f04c0mr3519306ybj.43.1697574543993; Tue, 17
- Oct 2023 13:29:03 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1697575684; x=1698180484;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kbBT1xDh7WYKSKNXnHCqCoE9Yu3usLjG2NJObTTm2fQ=;
+        b=XduhaDKcElJECbQ3ooBX+qEPyFKDWH2un+ixNE+2YygjWIh3mFNLIJl3A2wGuziIjB
+         thALPaeaGLQWkjlM5uPyOn530VIoDBxg50imT3ekCMnvvFu9XJ5IQ29oV/4wLZadBwR/
+         tZD5TSV5oeIypmRnrgY5bXnFS7Q6fQJJeJRan7+uOOnMyAMn83XwbbBCRfJNWOBN3YTn
+         Dr5KVyicAf34ov4rdVMGOxDHXTGOp0ddPwHhey9Wk+sHT0YtH/WLeu8BZk32UV6uCJsD
+         jDDWHJYFQCJX9tRcsxes5/d+evOJxworxl93POx1xI/eKEqU7hYiDrLg2cNCzJdHeo7J
+         Wt3A==
+X-Gm-Message-State: AOJu0YxC+BYraJxD34zOEBCZN5/5db2ntHqcJXUeTa5jf1EhK3Xa4AyN
+	QW9p32jB2oPU2qEXX3xo9ZY=
+X-Google-Smtp-Source: AGHT+IHHbuqPJ2VB3wK+8HHomLZL5aKX1G2MTg+XemJ1Mz3DuHjHPLAQ6ActyfmxNJZluiHMSqi4Hw==
+X-Received: by 2002:a9d:67c4:0:b0:6c4:eea8:cf13 with SMTP id c4-20020a9d67c4000000b006c4eea8cf13mr3400933otn.27.1697575683770;
+        Tue, 17 Oct 2023 13:48:03 -0700 (PDT)
+Received: from bvanassche-linux.mtv.corp.google.com ([2620:15c:211:201:8f02:2919:9600:ac09])
+        by smtp.gmail.com with ESMTPSA id fa36-20020a056a002d2400b006b2e07a6235sm1874704pfb.136.2023.10.17.13.48.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Oct 2023 13:48:03 -0700 (PDT)
+From: Bart Van Assche <bvanassche@acm.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org,
+	linux-scsi@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	Christoph Hellwig <hch@lst.de>,
+	Niklas Cassel <Niklas.Cassel@wdc.com>,
+	Avri Altman <Avri.Altman@wdc.com>,
+	Bean Huo <huobean@gmail.com>,
+	Daejun Park <daejun7.park@samsung.com>,
+	Bart Van Assche <bvanassche@acm.org>
+Subject: [PATCH v3 00/14] Pass data temperature information to SCSI disk devices
+Date: Tue, 17 Oct 2023 13:47:08 -0700
+Message-ID: <20231017204739.3409052-1-bvanassche@acm.org>
+X-Mailer: git-send-email 2.42.0.655.g421f12c284-goog
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231016220835.GH800259@ZenIV>
-In-Reply-To: <20231016220835.GH800259@ZenIV>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 17 Oct 2023 16:28:53 -0400
-Message-ID: <CAHC9VhTToc-rELe0EyOV4kRtOJuAmPzPB_QNn8Lw_EfMg+Edzw@mail.gmail.com>
-Subject: Re: [PATCH][RFC] selinuxfs: saner handling of policy reloads
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: selinux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, 
-	selinux-refpolicy@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-On Mon, Oct 16, 2023 at 6:08=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> w=
-rote:
->
-> [
-> That thing sits in viro/vfs.git#work.selinuxfs; I have
-> lock_rename()-related followups in another branch, so a pull would be mor=
-e
-> convenient for me than cherry-pick.  NOTE: testing and comments would
-> be very welcome - as it is, the patch is pretty much untested beyond
-> "it builds".
-> ]
->
-> On policy reload selinuxfs replaces two subdirectories (/booleans
-> and /class) with new variants.  Unfortunately, that's done with
-> serious abuses of directory locking.
->
-> 1) lock_rename() should be done to parents, not to objects being
-> exchanged
->
-> 2) there's a bunch of reasons why it should not be done for directories
-> that do not have a common ancestor; most of those do not apply to
-> selinuxfs, but even in the best case the proof is subtle and brittle.
->
-> 3) failure halfway through the creation of /class will leak
-> names and values arrays.
->
-> 4) use of d_genocide() is also rather brittle; it's probably not much of
-> a bug per se, but e.g. an overmount of /sys/fs/selinuxfs/classes/shm/inde=
-x
-> with any regular file will end up with leaked mount on policy reload.
-> Sure, don't do it, but...
->
-> Let's stop messing with disconnected directories; just create
-> a temporary (/.swapover) with no permissions for anyone (on the
-> level of ->permission() returing -EPERM, no matter who's calling
-> it) and build the new /booleans and /class in there; then
-> lock_rename on root and that temporary directory and d_exchange()
-> old and new both for class and booleans.  Then unlock and use
-> simple_recursive_removal() to take the temporary out; it's much
-> more robust.
->
-> And instead of bothering with separate pathways for freeing
-> new (on failure halfway through) and old (on success) names/values,
-> do all freeing in one place.  With temporaries swapped with the
-> old ones when we are past all possible failures.
->
-> The only user-visible difference is that /.swapover shows up
-> (but isn't possible to open, look up into, etc.) for the
-> duration of policy reload.
+Hi Jens,
 
-Thanks Al.
+UFS vendors need the data lifetime information to achieve good performance.
+Without this information there is significantly higher write amplification due
+to garbage collection. Hence this patch series that add support in F2FS and
+also in the block layer for data lifetime information. The SCSI disk (sd)
+driver is modified such that it passes write hint information to SCSI devices
+via the GROUP NUMBER field.
 
-Giving this a very quick look, I like the code simplifications that
-come out of this change and I'll trust you on the idea that this
-approach is better from a VFS perspective.
+Please consider this patch series for the next merge window.
 
-While the reject_all() permission hammer is good, I do want to make
-sure we are covered from a file labeling perspective; even though the
-DAC/reject_all() check hits first and avoids the LSM inode permission
-hook, we still want to make sure the files are labeled properly.  It
-looks like given the current SELinux Reference Policy this shouldn't
-be a problem, it will be labeled like most everything else in
-selinuxfs via genfscon (SELinux policy construct).  I expect those
-with custom SELinux policies will have something similar in place with
-a sane default that would cover the /sys/fs/selinux/.swapover
-directory but I did add the selinux-refpol list to the CC line just in
-case I'm being dumb and forgetting something important with respect to
-policy.
+Thanks,
 
-The next step is to actually boot up a kernel with this patch and make
-sure it doesn't break anything.  Simply booting up a SELinux system
-and running 'load_policy' a handful of times should exercise the
-policy (re)load path, and if you want a (relatively) simple SELinux
-test suite you can find one here:
+Bart.
 
-* https://github.com/SELinuxProject/selinux-testsuite
+Changes compared to v1:
+- Instead of storing data lifetime information in bi_ioprio, introduce the
+  new struct bio member bi_lifetime and also the struct request member
+  'lifetime'.
+- Removed the bio_set_data_lifetime() and bio_get_data_lifetime() functions
+  and replaced these with direct assignments.
+- Dropped all changes related to I/O priority.
+- Improved patch descriptions.
 
-The README.md should have the instructions necessary to get it
-running.  If you can't do that, and no one else on the mailing list is
-able to test this out, I'll give it a go but expect it to take a while
-as I'm currently swamped with reviews and other stuff.
+Changes compared to v1:
+- Use six bits from the ioprio field for data lifetime information. The
+  bio->bi_write_hint / req->write_hint / iocb->ki_hint members that were
+  introduced in v1 have been removed again.
+- The F_GET_FILE_RW_HINT and F_SET_FILE_RW_HINT fcntls have been removed.
+- In the SCSI disk (sd) driver, query the stream status and check the PERM bit.
+- The GET STREAM STATUS command has been implemented in the scsi_debug driver.
 
---=20
-paul-moore.com
+Bart Van Assche (14):
+  fs: Move enum rw_hint into a new header file
+  block: Restore data lifetime support in struct bio and struct request
+  fs: Restore write hint support
+  fs/f2fs: Restore data lifetime support
+  scsi: core: Query the Block Limits Extension VPD page
+  scsi_proto: Add structures and constants related to I/O groups and
+    streams
+  sd: Translate data lifetime information
+  scsi_debug: Reduce code duplication
+  scsi_debug: Support the block limits extension VPD page
+  scsi_debug: Rework page code error handling
+  scsi_debug: Rework subpage code error handling
+  scsi_debug: Implement the IO Advice Hints Grouping mode page
+  scsi_debug: Implement GET STREAM STATUS
+  scsi_debug: Maintain write statistics per group number
+
+ Documentation/filesystems/f2fs.rst |  70 ++++++++
+ block/bio.c                        |   2 +
+ block/blk-crypto-fallback.c        |   1 +
+ block/blk-merge.c                  |   6 +
+ block/blk-mq.c                     |   1 +
+ block/bounce.c                     |   1 +
+ block/fops.c                       |   3 +
+ drivers/scsi/scsi.c                |   2 +
+ drivers/scsi/scsi_debug.c          | 247 +++++++++++++++++++++--------
+ drivers/scsi/scsi_sysfs.c          |  10 ++
+ drivers/scsi/sd.c                  | 111 ++++++++++++-
+ drivers/scsi/sd.h                  |   3 +
+ fs/f2fs/data.c                     |   2 +
+ fs/f2fs/f2fs.h                     |  10 ++
+ fs/f2fs/segment.c                  |  95 +++++++++++
+ fs/f2fs/super.c                    |  32 +++-
+ fs/fcntl.c                         |   1 +
+ fs/inode.c                         |   1 +
+ fs/iomap/buffered-io.c             |   2 +
+ fs/iomap/direct-io.c               |   1 +
+ fs/mpage.c                         |   1 +
+ include/linux/blk-mq.h             |   2 +
+ include/linux/blk_types.h          |   2 +
+ include/linux/fs.h                 |  16 +-
+ include/linux/rw_hint.h            |  20 +++
+ include/scsi/scsi_device.h         |   1 +
+ include/scsi/scsi_proto.h          |  75 +++++++++
+ 27 files changed, 635 insertions(+), 83 deletions(-)
+ create mode 100644 include/linux/rw_hint.h
+
 
