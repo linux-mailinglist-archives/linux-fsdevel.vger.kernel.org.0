@@ -1,147 +1,243 @@
-Return-Path: <linux-fsdevel+bounces-541-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-542-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A62E7CC84A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 18:03:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A2CB7CC9F5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 19:32:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AEA11C20C6D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 16:03:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E8422812CB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 17:32:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1CE145F5E;
-	Tue, 17 Oct 2023 16:03:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEDD89CA5E;
+	Tue, 17 Oct 2023 17:32:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GPhX0UHz"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kpqBWV6Y"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A605645F53
-	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Oct 2023 16:03:35 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 823CF115;
-	Tue, 17 Oct 2023 09:03:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1697558613; x=1729094613;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=fyyKNi0IkBnP9QP15IVk/3ltZ+9j8xhjS81Gic3AQrI=;
-  b=GPhX0UHzGar++PAASabjYkWq4dF7+P2Xr2AdA+3lb+IACG6xXS9wQ8B1
-   uUXdQeLzlIfJolmpWQ+VaJjREhIk7inPrz/oPh/RupCe7pYpidUU/DIfo
-   OrbRPBzha+1MI9XsCNcXiZtr3lUiYMnySOE4wf93+elqTYRMNlffysbP5
-   J8wy5E7R2GtZ5hRMNaLRHRJG9tYZoyB+goH7/xw/f8ezsYLZRj+hvKB3r
-   XhIeBJe9VuaKdYYepnn1VFzmb7kfAxtc8u7oia3dV0cJcUM0N1OkUCLEH
-   SMZYm/bW6rWvh0jRkDCwSngZ4u+9p+To88fyQFhLgKqTWG8tEKah/bwhi
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10866"; a="7374847"
-X-IronPort-AV: E=Sophos;i="6.03,232,1694761200"; 
-   d="scan'208";a="7374847"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2023 09:02:58 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10866"; a="929812874"
-X-IronPort-AV: E=Sophos;i="6.03,232,1694761200"; 
-   d="scan'208";a="929812874"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orsmga005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2023 09:02:55 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97-RC2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1qsmWz-00000006LEs-0OI1;
-	Tue, 17 Oct 2023 19:02:53 +0300
-Date: Tue, 17 Oct 2023 19:02:52 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Jan Kara <jack@suse.cz>
-Cc: Ferry Toth <ftoth@exalondelft.nl>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
-Subject: Re: [GIT PULL] ext2, quota, and udf fixes for 6.6-rc1
-Message-ID: <ZS6wLKrQJDf1_TUe@smile.fi.intel.com>
-References: <20230830102434.xnlh66omhs6ninet@quack3>
- <ZS5hhpG97QSvgYPf@smile.fi.intel.com>
- <ZS5iB2RafBj6K7r3@smile.fi.intel.com>
- <ZS5i1cWZF1fLurLz@smile.fi.intel.com>
- <ZS50DI8nw9oSc4Or@smile.fi.intel.com>
- <20231017133245.lvadrhbgklppnffv@quack3>
- <ZS6PRdhHRehDC+02@smile.fi.intel.com>
- <ZS6fIkTVtIs-UhFI@smile.fi.intel.com>
- <ZS6k7nLcbdsaxUGZ@smile.fi.intel.com>
- <ZS6pmuofSP3uDMIo@smile.fi.intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8015E44474;
+	Tue, 17 Oct 2023 17:32:28 +0000 (UTC)
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E49F98;
+	Tue, 17 Oct 2023 10:32:26 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-52bd9ddb741so10429185a12.0;
+        Tue, 17 Oct 2023 10:32:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1697563945; x=1698168745; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1pVb3nd+X8dVBnTnMAKO6K124VfixR+DKVbfHkqiwnQ=;
+        b=kpqBWV6Y2C4+j3/+WERZFhFHVfpfo1fQxmuCujnQFISOJYD4Ff6dQjD+FSXAmn/bs6
+         XPSUYrEAptNtaL7mWErHbeyngGp5oirArw3Haniqb4K5tVp8I6KkB1dol3LMCuLOPyMK
+         isFORZQLgnD4OIVxnq2EsPYx/tPrUvP/b6asOhF1OeZk/TauQ97ZR9092VadcyZWmqgY
+         lRjjL7D511YpX/+FBJ3nKeIWMe4duFWWezR0qEhLWJczcJR1vAuZosMgKGIOCGmN+JN4
+         bzKtvUOLkuURYaW5eDsfQim37s/gopl4Jg2/sb6ISO2yvfwMTjl3K4D6dy6/7Jd74ECT
+         XogA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697563945; x=1698168745;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1pVb3nd+X8dVBnTnMAKO6K124VfixR+DKVbfHkqiwnQ=;
+        b=t2YDcTVZBhAu0SPV4/JKo6PE3hU0XWZyJpwF+l27vP389vwOGRtIQaB4ZDr4PB5kgy
+         C3T6EVFi2uOCnOJrr8W+BQEdCSBpJOSo8wxj2BhXOnW/1UQMqxrSZu+HGyZ1nF2oU27d
+         R4tJnjCyie3Sko2c0VFpMG5gXz7z4175LWAeTHGNMyPwGJyOomlzase0c4fagVl/RFeH
+         OQmsqGfrNQldSVzdDqRGtesnT9ltncfHds8HBHKGIIQSaQs6SkXQviT9Clb+hW3Ndu0k
+         z4Ht3RXVRpuSaWoFWVfmlCshZcAg8gsHnIO3yDkz8EfJBOlcFm5D9c6HTu1DWnFTugAG
+         Kw8A==
+X-Gm-Message-State: AOJu0YxJi1PFIf3Jwa6lsPSXQn7/PBPUn1czjEOVDtHoM/57Q3XNkWMS
+	I58BEW57bC/0E8qD/eZK7Vhalw4jE2qTQi9Ycc8=
+X-Google-Smtp-Source: AGHT+IEJFlx67yTO5zvCdPDh2En50wVFcfRoncVmwrd9zx9wYk80D7kZAhcK06adauwCd3qynz7L85kCUjn4EidmQ5Y=
+X-Received: by 2002:a50:d09b:0:b0:53e:f4:ef85 with SMTP id v27-20020a50d09b000000b0053e00f4ef85mr2226865edd.10.1697563944308;
+ Tue, 17 Oct 2023 10:32:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZS6pmuofSP3uDMIo@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-	RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE autolearn=ham
+References: <20231016180220.3866105-1-andrii@kernel.org> <20231016180220.3866105-18-andrii@kernel.org>
+ <ZS5ptHMhvMAkB+Tb@krava>
+In-Reply-To: <ZS5ptHMhvMAkB+Tb@krava>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 17 Oct 2023 10:32:12 -0700
+Message-ID: <CAEf4BzZEoAAfb3BdDavAjHAsQSEsEOwHA7ELUMGqskinH19HTQ@mail.gmail.com>
+Subject: Re: [PATCH v8 bpf-next 17/18] selftests/bpf: add BPF token-enabled tests
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	keescook@chromium.org, brauner@kernel.org, lennart@poettering.net, 
+	kernel-team@meta.com, sargun@sargun.me
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+	RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-On Tue, Oct 17, 2023 at 06:34:50PM +0300, Andy Shevchenko wrote:
-> On Tue, Oct 17, 2023 at 06:14:54PM +0300, Andy Shevchenko wrote:
-> > On Tue, Oct 17, 2023 at 05:50:10PM +0300, Andy Shevchenko wrote:
-> > > On Tue, Oct 17, 2023 at 04:42:29PM +0300, Andy Shevchenko wrote:
-> > > > On Tue, Oct 17, 2023 at 03:32:45PM +0200, Jan Kara wrote:
-> > > > > On Tue 17-10-23 14:46:20, Andy Shevchenko wrote:
-> > > > > > On Tue, Oct 17, 2023 at 01:32:53PM +0300, Andy Shevchenko wrote:
-> > > > > > > On Tue, Oct 17, 2023 at 01:29:27PM +0300, Andy Shevchenko wrote:
-> > > > > > > > On Tue, Oct 17, 2023 at 01:27:19PM +0300, Andy Shevchenko wrote:
-> > > > > > > > > On Wed, Aug 30, 2023 at 12:24:34PM +0200, Jan Kara wrote:
-> > > > > > > > > >   Hello Linus,
+On Tue, Oct 17, 2023 at 4:02=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> wrot=
+e:
+>
+> On Mon, Oct 16, 2023 at 11:02:19AM -0700, Andrii Nakryiko wrote:
+> > Add a selftest that attempts to conceptually replicate intended BPF
+> > token use cases inside user namespaced container.
+> >
+> > Child process is forked. It is then put into its own userns and mountns=
+.
+> > Child creates BPF FS context object and sets it up as desired. This
+> > ensures child userns is captures as owning userns for this instance of
+> > BPF FS.
+> >
+> > This context is passed back to privileged parent process through Unix
+> > socket, where parent creates and mounts it as a detached mount. This
+> > mount FD is passed back to the child to be used for BPF token creation,
+> > which allows otherwise privileged BPF operations to succeed inside
+> > userns.
+> >
+> > We validate that all of token-enabled privileged commands (BPF_BTF_LOAD=
+,
+> > BPF_MAP_CREATE, and BPF_PROG_LOAD) work as intended. They should only
+> > succeed inside the userns if a) BPF token is provided with proper
+> > allowed sets of commands and types; and b) namespaces CAP_BPF and other
+> > privileges are set. Lacking a) or b) should lead to -EPERM failures.
+> >
+> > Based on suggested workflow by Christian Brauner ([0]).
+> >
+> >   [0] https://lore.kernel.org/bpf/20230704-hochverdient-lehne-eeb9eeef7=
+85e@brauner/
+> >
+> > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> > ---
+> >  .../testing/selftests/bpf/prog_tests/token.c  | 629 ++++++++++++++++++
+> >  1 file changed, 629 insertions(+)
+> >  create mode 100644 tools/testing/selftests/bpf/prog_tests/token.c
+> >
+> > diff --git a/tools/testing/selftests/bpf/prog_tests/token.c b/tools/tes=
+ting/selftests/bpf/prog_tests/token.c
+> > new file mode 100644
+> > index 000000000000..41cee6b4731e
+> > --- /dev/null
+> > +++ b/tools/testing/selftests/bpf/prog_tests/token.c
+> > @@ -0,0 +1,629 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/* Copyright (c) 2023 Meta Platforms, Inc. and affiliates. */
+> > +#define _GNU_SOURCE
+> > +#include <test_progs.h>
+> > +#include <bpf/btf.h>
+> > +#include "cap_helpers.h"
+> > +#include <fcntl.h>
+> > +#include <sched.h>
+> > +#include <signal.h>
+> > +#include <unistd.h>
+> > +#include <linux/filter.h>
+> > +#include <linux/unistd.h>
+> > +#include <sys/mount.h>
+> > +#include <sys/socket.h>
+> > +#include <sys/syscall.h>
+> > +#include <sys/un.h>
+> > +
+> > +/* copied from include/uapi/linux/mount.h, as including it conflicts w=
+ith
+> > + * sys/mount.h include
+> > + */
+> > +enum fsconfig_command {
+> > +     FSCONFIG_SET_FLAG       =3D 0,    /* Set parameter, supplying no =
+value */
+> > +     FSCONFIG_SET_STRING     =3D 1,    /* Set parameter, supplying a s=
+tring value */
+> > +     FSCONFIG_SET_BINARY     =3D 2,    /* Set parameter, supplying a b=
+inary blob value */
+> > +     FSCONFIG_SET_PATH       =3D 3,    /* Set parameter, supplying an =
+object by path */
+> > +     FSCONFIG_SET_PATH_EMPTY =3D 4,    /* Set parameter, supplying an =
+object by (empty) path */
+> > +     FSCONFIG_SET_FD         =3D 5,    /* Set parameter, supplying an =
+object by fd */
+> > +     FSCONFIG_CMD_CREATE     =3D 6,    /* Invoke superblock creation *=
+/
+> > +     FSCONFIG_CMD_RECONFIGURE =3D 7,   /* Invoke superblock reconfigur=
+ation */
+> > +};
+>
+> I'm getting compilation fail, because fsconfig_command seems to be
+> included through the sys/mount.h include, but CI is green hum :-\
+>
+> when I get -E output I can see:
+>
+>         ...
+>         # 16 "./cap_helpers.h"
+>         int cap_enable_effective(__u64 caps, __u64 *old_caps);
+>         int cap_disable_effective(__u64 caps, __u64 *old_caps);
+>         # 7 "/home/jolsa/kernel/linux-qemu/tools/testing/selftests/bpf/pr=
+og_tests/token.c" 2
+>
+>         # 1 "/usr/include/sys/mount.h" 1 3 4
+>         # 27 "/usr/include/sys/mount.h" 3 4
+>         # 1 "/usr/lib/gcc/x86_64-redhat-linux/13/include/stddef.h" 1 3 4
+>         # 28 "/usr/include/sys/mount.h" 2 3 4
+>
+>         # 1 "/home/jolsa/kernel/linux-qemu/tools/include/uapi/linux/mount=
+.h" 1 3 4
+>         # 96 "/home/jolsa/kernel/linux-qemu/tools/include/uapi/linux/moun=
+t.h" 3 4
+>
+>         # 96 "/home/jolsa/kernel/linux-qemu/tools/include/uapi/linux/moun=
+t.h" 3 4
+>         enum fsconfig_command {
+>          FSCONFIG_SET_FLAG =3D 0,
+>          FSCONFIG_SET_STRING =3D 1,
+>          FSCONFIG_SET_BINARY =3D 2,
+>          FSCONFIG_SET_PATH =3D 3,
+>          FSCONFIG_SET_PATH_EMPTY =3D 4,
+>          FSCONFIG_SET_FD =3D 5,
+>          FSCONFIG_CMD_CREATE =3D 6,
+>          FSCONFIG_CMD_RECONFIGURE =3D 7,
+>         };
+>
+>
+>         ...
+>
+>
+>         # 21 "/home/jolsa/kernel/linux-qemu/tools/testing/selftests/bpf/p=
+rog_tests/token.c"
+>         enum fsconfig_command {
+>          FSCONFIG_SET_FLAG =3D 0,
+>          FSCONFIG_SET_STRING =3D 1,
+>          FSCONFIG_SET_BINARY =3D 2,
+>          FSCONFIG_SET_PATH =3D 3,
+>          FSCONFIG_SET_PATH_EMPTY =3D 4,
+>          FSCONFIG_SET_FD =3D 5,
+>          FSCONFIG_CMD_CREATE =3D 6,
+>          FSCONFIG_CMD_RECONFIGURE =3D 7,
+>         };
+>
+>
+> it's probably included through this bit in the /usr/include/sys/mount.h:
+>
+>         #ifdef __has_include
+>         # if __has_include ("linux/mount.h")
+>         #  include "linux/mount.h"
+>         # endif
+>         #endif
+>
+> which was added 'recently' in https://sourceware.org/git/?p=3Dglibc.git;a=
+=3Dcommit;h=3D774058d72942249f71d74e7f2b639f77184160a6
+>
+> maybe you use older glibs headers? or perhaps it might be my build setup
 
-...
+No, I'm pretty sure I have older headers. I'd like this to work in
+both environments, so I need to fix this. I'll try to make this work
+with uapi header, I guess. Thanks for reporting!
 
-> > > > > > > > > This merge commit (?) broke boot on Intel Merrifield.
-> > > > > > > > > It has earlycon enabled and only what I got is watchdog
-> > > > > > > > > trigger without a bit of information printed out.
-> > > > > > 
-> > > > > > Okay, seems false positive as with different configuration it
-> > > > > > boots. It might be related to the size of the kernel itself.
-> > > > > 
-> > > > > Ah, ok, that makes some sense.
-> > > > 
-> > > > I should have mentioned that it boots with the configuration say "A",
-> > > > while not with "B", where "B" = "A" + "C" and definitely the kernel
-> > > > and initrd sizes in the "B" case are bigger.
-> > > 
-> > > If it's a size (which is only grew from 13M->14M), it's weird.
-> > > 
-> > > Nevertheless, I reverted these in my local tree
-> > > 
-> > > 85515a7f0ae7 (HEAD -> topic/mrfld) Revert "defconfig: enable DEBUG_SPINLOCK"
-> > > 786e04262621 Revert "defconfig: enable DEBUG_ATOMIC_SLEEP"
-> > > 76ad0a0c3f2d Revert "defconfig: enable DEBUG_INFO"
-> > > f8090166c1be Revert "defconfig: enable DEBUG_LIST && DEBUG_OBJECTS_RCU_HEAD"
-> > > 
-> > > and it boots again! So, after this merge something affects one of this?
-> > > 
-> > > I'll continuing debugging which one is a culprit, just want to share
-> > > the intermediate findings.
-> > 
-> > CONFIG_DEBUG_LIST with this merge commit somehow triggers this issue.
-> > Any ideas?
+>
+> jirka
+>
 
-> Dropping CONFIG_QUOTA* helps as well.
-
-More precisely it's enough to drop either from CONFIG_DEBUG_LIST and CONFIG_QUOTA
-to make it boot again.
-
-And I'm done for today.
-
-> So something definitely goes on in this merge commit.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+[...]
 
