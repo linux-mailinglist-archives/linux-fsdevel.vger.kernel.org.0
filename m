@@ -1,99 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-510-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-511-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65F6F7CBA79
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 08:01:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E263F7CBEAD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 11:14:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D41F281768
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 06:01:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72C4BB2110F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 09:14:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9A05C8C8;
-	Tue, 17 Oct 2023 06:01:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rZpBase/"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A59D3F4C0;
+	Tue, 17 Oct 2023 09:14:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B81C2CF
-	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Oct 2023 06:01:14 +0000 (UTC)
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C221A2;
-	Mon, 16 Oct 2023 23:01:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=4bEHl2/EkI0ra4f4Wh8/YbcmlifE4mAAH5TzvuP3FPs=; b=rZpBase/H9lCbb7wClp5H+3hqK
-	svNmCn/GuNUzHIhElX68yOPUxts5EB4vtiYchsy7PJR04VNYXr0DAIipgVNwWx/rejJ1oFW/KQ513
-	e3gFgJNVzQhDJ4irHVzV/0JS+kPq+EEy1L16Bs++d02yXGM01EwFP4nCoMBMYEtkPJ9gAWn5tVfEO
-	88RRvfVfLR8xICaUHj+7V+9YVphPsmLAOi5NPTGcM9MwCqqaoT78WBhHofPSYnX12zCHbWlKfoaap
-	ECpWX8e+7ksNEFGamQMrVHIL3XUA8v5hr9umGTlA8p4WnUh6/lHW3kvEusLg2vYKgLKZEWQssGSnr
-	mBcAjUEw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1qsd8h-00BLVN-28;
-	Tue, 17 Oct 2023 06:01:11 +0000
-Date: Mon, 16 Oct 2023 23:01:11 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Eric Biggers <ebiggers@kernel.org>,
-	Andrey Albershteyn <aalbersh@redhat.com>, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, fsverity@lists.linux.dev,
-	david@fromorbit.com, dchinner@redhat.com
-Subject: Re: [PATCH v3 07/28] fsverity: always use bitmap to track verified
- status
-Message-ID: <ZS4jJ/3VxSoEVYxl@infradead.org>
-References: <20231006184922.252188-1-aalbersh@redhat.com>
- <20231006184922.252188-8-aalbersh@redhat.com>
- <20231011031543.GB1185@sol.localdomain>
- <q75t2etmyq2zjskkquikatp4yg7k2yoyt4oab4grhlg7yu4wyi@6eax4ysvavyk>
- <20231012072746.GA2100@sol.localdomain>
- <20231013031209.GS21298@frogsfrogsfrogs>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EDEE27721
+	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Oct 2023 09:13:57 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 378548E
+	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Oct 2023 02:13:56 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1qsg9C-000471-Mz; Tue, 17 Oct 2023 11:13:54 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1qsg9C-002HmY-7w; Tue, 17 Oct 2023 11:13:54 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1qsg9B-0009Zy-V3; Tue, 17 Oct 2023 11:13:53 +0200
+Date: Tue, 17 Oct 2023 11:13:53 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
+	kernel@pengutronix.de
+Subject: Re: [PATCH] chardev: Simplify usage of try_module_get()
+Message-ID: <20231017091353.6fhpmrcx66jj2jls@pengutronix.de>
+References: <20231013132441.1406200-2-u.kleine-koenig@pengutronix.de>
+ <20231016224311.GI800259@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qf5kc5bqy2ce2zac"
 Content-Disposition: inline
-In-Reply-To: <20231013031209.GS21298@frogsfrogsfrogs>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-	SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20231016224311.GI800259@ZenIV>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-fsdevel@vger.kernel.org
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
+	RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-On Thu, Oct 12, 2023 at 08:12:09PM -0700, Darrick J. Wong wrote:
-> I frankly have been asking myself why /this/ patchset adds so much extra
-> code and flags and whatnot to XFS and fs/verity.  From what I can tell,
-> the xfs buffer cache has been extended to allocate double the memory so
-> that xattr contents can be shadowed.  getxattr for merkle tree contents
-> then pins the buffer, shadows the contents, and hands both back to the
-> caller (aka xfs_read_merkle_tree_block).   The shadow memory is then
-> handed to fs/verity to do its magic; following that, fsverity releases
-> the reference and we can eventually drop the xfs_buf reference.
-> 
-> But this seems way overcomplicated to me.  ->read_merkle_tree_page hands
-> us a pgoff_t and a suggestion for page readahead, and wants us to return
-> an uptodate locked page, right?
 
-It does.  That beeing said I really much prefer the block based
-interface from Andrey.  It is a lot cleaner and without weird page
-cache internals, although it can still be implemented very nicely
-by file systems that store the tree in the page cache.
+--qf5kc5bqy2ce2zac
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> The only thing I can't quite figure out is how to get memory reclaim to
-> scan the extra address_space when it wants to try to reclaim pages.
-> That part ext4 and f2fs got for free because they stuffed the merkle
-> tree in the posteof space.
+On Mon, Oct 16, 2023 at 11:43:11PM +0100, Al Viro wrote:
+> On Fri, Oct 13, 2023 at 03:24:42PM +0200, Uwe Kleine-K=F6nig wrote:
+> > try_module_get(NULL) is true, so there is no need to check owner being
+> > NULL.
+> >=20
+> > Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+> > ---
+> >  fs/char_dev.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >=20
+> > diff --git a/fs/char_dev.c b/fs/char_dev.c
+> > index 950b6919fb87..6ba032442b39 100644
+> > --- a/fs/char_dev.c
+> > +++ b/fs/char_dev.c
+> > @@ -350,7 +350,7 @@ static struct kobject *cdev_get(struct cdev *p)
+> >  	struct module *owner =3D p->owner;
+> >  	struct kobject *kobj;
+> > =20
+> > -	if (owner && !try_module_get(owner))
+> > +	if (!try_module_get(owner))
+> >  		return NULL;
+> >  	kobj =3D kobject_get_unless_zero(&p->kobj);
+> >  	if (!kobj)
+>=20
+> I wouldn't mind that, if that logics in try_module_get() was inlined.
+> It isn't...
 
-Except for th magic swapper_spaces, and address_space without an
-inode is not a thing, so you need to allocate an extra inode anyway,
-which is what reclaim works on.
+I don't understand what you intend to say here. What is "that"? Are you
+talking about
 
+	owner && !try_module_get(owner)
+
+vs
+
+	!try_module_get(owner)
+
+or the following line with kobject_get_unless_zero? Do you doubt the
+validity of my patch, or is it about something try_module_get()
+could/should do more than it currently does?
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--qf5kc5bqy2ce2zac
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmUuUFEACgkQj4D7WH0S
+/k5J8wf/U6ztkvUGlgmbMOhDFtQxTecM1daemwfE40sVEGvLXuZmHjf01lia2R1b
+XfqE5gCQ/yOUmFyh2eT9RyvJv4XBAZvGiji7uTHIsYagWAqRA1tYItTEP8quAkae
+Hhd9EAtK9T6MOnzdTlASbtK2VotUoZRuARxQbfvnkGOBm7cP+upmwSv7Z75hD38g
+bkQIqrINo15UUcHBJJmqYjY0G0Jh7l/Q1wOdwhaMZt/yPoi2do7eYqCJ2mIh45S2
+LvUQQ1n0zA/CtGk9V09/ox0//8swWQF8xWLw4DbdBv+Ps/pWr8MCNdEp0W4sFo5z
+yiR96DK5WyA3uTPcXa7nowAimPsOvw==
+=ropI
+-----END PGP SIGNATURE-----
+
+--qf5kc5bqy2ce2zac--
 
