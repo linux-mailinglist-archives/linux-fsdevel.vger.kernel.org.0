@@ -1,40 +1,51 @@
-Return-Path: <linux-fsdevel+bounces-620-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-621-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0242C7CDA19
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 13:15:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92AA07CDA52
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 13:28:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 335C61C20D21
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 11:15:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD49C1C20ABE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 11:28:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 023F41A70C;
-	Wed, 18 Oct 2023 11:15:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A61441F176;
+	Wed, 18 Oct 2023 11:28:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CDx6kAC4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n+yp622a"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3755618C10
-	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Oct 2023 11:15:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E387BC433C7;
-	Wed, 18 Oct 2023 11:15:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBFF31772A
+	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Oct 2023 11:28:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3312C433C7;
+	Wed, 18 Oct 2023 11:27:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1697627744;
-	bh=eqnb/qNu51ZmgB//9K6h6NWc3AFRVlk3BSEB6pAXkJ8=;
-	h=From:Date:Subject:To:Cc:From;
-	b=CDx6kAC4XqX3kYRnRTuuUydj0qo9JpnZCSEtNIzTaMtJFPxa1GPjkX/IvRPXTCvwl
-	 N3CY/Hmb4NWoPaZEtwk8ZFHkD7jmHd7mgOBM/Rx+xO3xblf74JO+arjs8HxadGlLnd
-	 CQeuYj3sdm4/fis401LI6lYeiBmeLlOo8VFHO2UlucRMsnRcFfwIqeTfQ8UuVshmyE
-	 Mlj60cqHThFagDSlEGcdsjN3vD4JdkXB5jTa6IDHoYv5zjW9CJ9wczI3J0wiMCrHZp
-	 a50DbIuU42cSw0SsuVr7Na8mm1rqGFFySRuqhrpj0KEqhxj4gfqpK1T89b/IPifwsp
-	 ZhK7YjfJ2awCg==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Wed, 18 Oct 2023 07:15:40 -0400
-Subject: [PATCH] fat: fix mtime handing in __fat_write_inode
+	s=k20201202; t=1697628481;
+	bh=d7KMTswEJFbw29MM0oVn+hRSoGQ+XyawIjEi6ipJ6iA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=n+yp622a7ptW5fJZntOu2GmLe1y+buFR87R4B7j6I602pP/yh17V8Tn8O9ecoHo/4
+	 gVLNRK4F+rm/u3t9YggtKoK7f9xRQab/Z4eSTMxD4DJ3b/H3gv2FQvU66sk4CQf/md
+	 n8UkQ5FIDnJeAdeavvsiNM0hW6cbz8rkrwB30DnILI1sS7PzgLZ0fkykglRWC+BBjg
+	 BoLekJ1CAOFiYFtyxZwCVMNaoD6u4VNAT8K1TshUdtwynBUhnf2z1nUvUygoihTLvz
+	 iED9FQos1lUmkqmtoGfDFqTGvsCNt9N6i4Tk1wlo1Y2FUtg5UBqmFLnEmIIGQLsNMD
+	 /tBunWCvvMbaA==
+From: Christian Brauner <brauner@kernel.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+	Klara Modin <klarasmodin@gmail.com>,
+	Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH] fat: fix mtime handing in __fat_write_inode
+Date: Wed, 18 Oct 2023 13:27:55 +0200
+Message-Id: <20231018-ineinander-gaben-8a939fa0a180@brauner>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20231018-amtime-v1-1-e066bae97285@kernel.org>
+References: <20231018-amtime-v1-1-e066bae97285@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -42,75 +53,36 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20231018-amtime-v1-1-e066bae97285@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAFu+L2UC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI2NDA0ML3cTckszcVF0jkxSj1LS05GTLREsloOKCotS0zAqwQdGxtbUA9I1
- pHVgAAAA=
-To: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, 
- Klara Modin <klarasmodin@gmail.com>, Christian Brauner <brauner@kernel.org>, 
- Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1412; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=eqnb/qNu51ZmgB//9K6h6NWc3AFRVlk3BSEB6pAXkJ8=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBlL75fXmq2zfmW9Xdd8xNXSSW99pSGmhSQR6U+O
- hQcUHf+coKJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZS++XwAKCRAADmhBGVaC
- FX6WEAC9nKhANczujf31/07xncKpeHmV409EfIwvIg1jL4PHEy18gcKqdqTpQ2egNKuac2M3cZv
- nAc06PMwTaGEPYqJCxkz/dEON5QGFwyPmsctCPUNcyPGO3vMalxYUaZWA2tkokAD0QTmVB7sZol
- 5IqjybIKcdYk63ezrNb1RMlyYPh0iDoRVC3t4Mqjn6Jls9Fwd7b/htLJoXIwlCvY3dlmdi9vWmQ
- +29uYoLTx6Rxr1f0nQUYi0rWn7w6vHOqIe6o79rMngbhAEXbWqcZ5ed6s4wctGyNa5q+3m1vFfD
- A7iqYWAMSJ7XxTX9VEgAFlDEj6CGwfHrwy1YLGfjGIuNt4q1OQt0rZ5QfoMoOPizmnmTakDwVrB
- 50Nc0tDj421CAdtk0k1YIusgMY5TH5s46EcoyZaUK2SEC/dBkvg64DLPz3gEtoPQl3RjUWYKbtG
- ZQOzh1Q3AEjf/aoM9HsdxiSh5l9WWAVxnkhF+VSrnXEAn7yNK4AM/IE48uf8ne6VJ86Al1rWXxQ
- 0y8UVhM2jpG++mEpnrJPPed9tDqHJ/9b31w/zulnB3T01zGhJxetuxL4scm+Scb/h9on5JwNvaf
- vV2vrcEXCPBLZ8ET4WcWvPSU5FKdoTs+M0rPferF/vNc+rwi/KfiWOyRp7h9pPtcikoio/WGZ6m
- 9JbdIyfGlBoM+YQ==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1059; i=brauner@kernel.org; h=from:subject:message-id; bh=d7KMTswEJFbw29MM0oVn+hRSoGQ+XyawIjEi6ipJ6iA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTqHzRhvR5pWfny23NeO4fYg9tuXmObI/N98irhqXs3l+fV 9JSv6ihlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjIhnCG/zHfnn91/r3a1XfHpJqSYL GjFQ+ePL+0RmfKv7g/7N9UFsxhZJh0LEDko9ONXcrBVgntTrKzG2yVQjmir1/4cs54T1+WGx8A
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-Klara reported seeing mangled mtimes when dealing with FAT. Fix the
-braino in the FAT conversion to the new timestamp accessors.
+On Wed, 18 Oct 2023 07:15:40 -0400, Jeff Layton wrote:
+> Klara reported seeing mangled mtimes when dealing with FAT. Fix the
+> braino in the FAT conversion to the new timestamp accessors.
+> 
+> 
 
-Fixes: e57260ae3226 (fat: convert to new timestamp accessors)
-Reported-by: Klara Modin <klarasmodin@gmail.com>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
-This patch fixes the bug that Klara reported late yesterday. The issue
-is a bad by-hand conversion of __fat_write_inode to the new timestamp
-accessor functions.
-
-Christian, this patch should probably be squashed into e57260ae3226.
-
-Thanks!
-Jeff
----
- fs/fat/inode.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/fat/inode.c b/fs/fat/inode.c
-index aa87f323fd44..1fac3dabf130 100644
---- a/fs/fat/inode.c
-+++ b/fs/fat/inode.c
-@@ -888,9 +888,9 @@ static int __fat_write_inode(struct inode *inode, int wait)
- 		raw_entry->size = cpu_to_le32(inode->i_size);
- 	raw_entry->attr = fat_make_attrs(inode);
- 	fat_set_start(raw_entry, MSDOS_I(inode)->i_logstart);
-+	mtime = inode_get_mtime(inode);
- 	fat_time_unix2fat(sbi, &mtime, &raw_entry->time,
- 			  &raw_entry->date, NULL);
--	inode_set_mtime_to_ts(inode, mtime);
- 	if (sbi->options.isvfat) {
- 		struct timespec64 ts = inode_get_atime(inode);
- 		__le16 atime;
+Thanks for the quick fix!
+Folded into "fat: convert to new timestamp accessors" as requested.
 
 ---
-base-commit: fea0e8fc7829dc85f82c8a1a8249630f6fb85553
-change-id: 20231018-amtime-24d2effcc9a9
 
-Best regards,
--- 
-Jeff Layton <jlayton@kernel.org>
+Applied to the vfs.ctime branch of the vfs/vfs.git tree.
+Patches in the vfs.ctime branch should appear in linux-next soon.
 
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.ctime
+
+[1/1] fat: convert to new timestamp accessors 
+      https://git.kernel.org/vfs/vfs/c/07b7351751a8
 
