@@ -1,113 +1,221 @@
-Return-Path: <linux-fsdevel+bounces-651-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-652-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8588B7CDE5A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 16:09:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D74BA7CDEEC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 16:15:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7A6D1C20DB4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 14:09:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9205E281D1A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 14:15:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4139237170;
-	Wed, 18 Oct 2023 14:09:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75430374D9;
+	Wed, 18 Oct 2023 14:15:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="A82ROViW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GgS5BPAx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F25137163;
-	Wed, 18 Oct 2023 14:09:19 +0000 (UTC)
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65EF8134;
-	Wed, 18 Oct 2023 07:09:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=rpuNbd94xDpC5yviFqSYGb67pMTnatBYUkMFHMRu+WQ=; b=A82ROViWDiEH/4M8z9imm3e3/s
-	x3RZpyqNnJVjq0TTDrFUnQWW0cApFYG2OBqbUdhaJ5dv7tI4kZtXZdv7Q6uMron4TrtFc4csYr81K
-	IzWKOwYfwxQzxuVeilxnF09krQw/KDNK4OnstLrWDgoIDPAi3seMj2BV9TAubjJq+caaUBxekrS4g
-	67ih3Qc27mQsMD/D5mIT185qkJW7k8Ij5dS2tQVLevrYTmfE24at7lH9r05KP3FBjEeJ6yY446GpW
-	UZ2bC6OY1SIFkny/wEnPNHrpDc83dWl0BYXOQ4xtfDuLYKahDDeUqGRaS5DR2VaQn3L/jhjGQZbDX
-	gP/2Gl+g==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-	id 1qt7Dg-001ICr-G8; Wed, 18 Oct 2023 14:08:20 +0000
-Date: Wed, 18 Oct 2023 15:08:20 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Sourav Panda <souravpanda@google.com>
-Cc: corbet@lwn.net, gregkh@linuxfoundation.org, rafael@kernel.org,
-	akpm@linux-foundation.org, mike.kravetz@oracle.com,
-	muchun.song@linux.dev, rppt@kernel.org, david@redhat.com,
-	rdunlap@infradead.org, chenlinxuan@uniontech.com,
-	yang.yang29@zte.com.cn, tomas.mudrunka@gmail.com,
-	bhelgaas@google.com, ivan@cloudflare.com, pasha.tatashin@soleen.com,
-	yosryahmed@google.com, hannes@cmpxchg.org, shakeelb@google.com,
-	kirill.shutemov@linux.intel.com, wangkefeng.wang@huawei.com,
-	adobriyan@gmail.com, vbabka@suse.cz, Liam.Howlett@oracle.com,
-	surenb@google.com, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH v2 1/1] mm: report per-page metadata information
-Message-ID: <ZS/m1KRwTLkcJY8y@casper.infradead.org>
-References: <20231018005548.3505662-1-souravpanda@google.com>
- <20231018005548.3505662-2-souravpanda@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99C8336B1A
+	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Oct 2023 14:15:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AB27C43395;
+	Wed, 18 Oct 2023 14:15:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1697638513;
+	bh=s6aY1ZS/yXo5J/gpAx2yUrzGUVyMMUnsaK92PMe3VII=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=GgS5BPAxJF1KKE3iLdd8lnhjobPqK3vI6/tDryYftWSIb5E+JLWCDk4VbkjZ0NCdz
+	 6MZWMJ8gyzFNFwhJs5EtoaqrvBu0Bxb5O1aVXJe9yl9TcqSKbyLPMsxE8C+crki0Hh
+	 bZBdy5Z+VPiSNNoXOBjWJEhEuwihLF3qiyRd/0S9fjQQSPno863UlZkbXjsj5jpesd
+	 3/fXhuQu2Yu2+PdnBqFN4jPTCDt8R4RxbBKeLJ6Yy2P0+I6hBiRy/IpPHiU+v6mhtU
+	 c49DbKXVmb/048/8Wp3vK4cJMAhUECdRSVBA6bklHrktJOuqpDalg1BrXCQaDtbUAD
+	 xKDVhfVMUfXnw==
+Message-ID: <59e186df80ae6a841ccfada0369110b301ebbaa2.camel@kernel.org>
+Subject: Re: [PATCH 2/5] exportfs: add helpers to check if filesystem can
+ encode/decode file handles
+From: Jeff Layton <jlayton@kernel.org>
+To: Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>
+Cc: Chuck Lever <chuck.lever@oracle.com>, Christian Brauner
+ <brauner@kernel.org>,  linux-fsdevel@vger.kernel.org,
+ linux-nfs@vger.kernel.org
+Date: Wed, 18 Oct 2023 10:15:11 -0400
+In-Reply-To: <20231018100000.2453965-3-amir73il@gmail.com>
+References: <20231018100000.2453965-1-amir73il@gmail.com>
+	 <20231018100000.2453965-3-amir73il@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231018005548.3505662-2-souravpanda@google.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-	SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
-X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
-	lindbergh.monkeyblade.net
 
-On Tue, Oct 17, 2023 at 05:55:48PM -0700, Sourav Panda wrote:
-> +		mod_node_early_perpage_metadata(pgdat->node_id,
-> +						PAGE_ALIGN(size) >> PAGE_SHIFT);
-
-What a curious way of writing DIV_ROUND_UP(size, PAGE_SIZE)
-(throughout).  A quick grep shows about 230 DIV_ROUND_UP and 110 of what
-you wrote, so it's not something you invented, but DIV_ROUND_UP is
-clearer.
-
-> @@ -303,18 +308,25 @@ static int __meminit init_section_page_ext(unsigned long pfn, int nid)
->  
->  static void free_page_ext(void *addr)
+On Wed, 2023-10-18 at 12:59 +0300, Amir Goldstein wrote:
+> The logic of whether filesystem can encode/decode file handles is open
+> coded in many places.
+>=20
+> In preparation to changing the logic, move the open coded logic into
+> inline helpers.
+>=20
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> ---
+>  fs/exportfs/expfs.c                |  8 ++------
+>  fs/fhandle.c                       |  6 +-----
+>  fs/nfsd/export.c                   |  3 +--
+>  fs/notify/fanotify/fanotify_user.c |  4 ++--
+>  fs/overlayfs/util.c                |  2 +-
+>  include/linux/exportfs.h           | 27 +++++++++++++++++++++++++++
+>  6 files changed, 34 insertions(+), 16 deletions(-)
+>=20
+> diff --git a/fs/exportfs/expfs.c b/fs/exportfs/expfs.c
+> index c20704aa21b3..9ee205df8fa7 100644
+> --- a/fs/exportfs/expfs.c
+> +++ b/fs/exportfs/expfs.c
+> @@ -396,11 +396,7 @@ int exportfs_encode_inode_fh(struct inode *inode, st=
+ruct fid *fid,
 >  {
-> +	size_t table_size;
-> +	struct page *page;
-> +
-> +	table_size = page_ext_size * PAGES_PER_SECTION;
-> +
->  	if (is_vmalloc_addr(addr)) {
-> +		page = vmalloc_to_page(addr);
->  		vfree(addr);
->  	} else {
-> -		struct page *page = virt_to_page(addr);
-> -		size_t table_size;
-> -
-> -		table_size = page_ext_size * PAGES_PER_SECTION;
-> +		page = virt_to_page(addr);
->  
->  		BUG_ON(PageReserved(page));
->  		kmemleak_free(addr);
->  		free_pages_exact(addr, table_size);
+>  	const struct export_operations *nop =3D inode->i_sb->s_export_op;
+> =20
+> -	/*
+> -	 * If a decodeable file handle was requested, we need to make sure that
+> -	 * filesystem can decode file handles.
+> -	 */
+> -	if (nop && !(flags & EXPORT_FH_FID) && !nop->fh_to_dentry)
+> +	if (!exportfs_can_encode_fh(nop, flags))
+>  		return -EOPNOTSUPP;
+> =20
+>  	if (nop && nop->encode_fh)
+> @@ -456,7 +452,7 @@ exportfs_decode_fh_raw(struct vfsmount *mnt, struct f=
+id *fid, int fh_len,
+>  	/*
+>  	 * Try to get any dentry for the given file handle from the filesystem.
+>  	 */
+> -	if (!nop || !nop->fh_to_dentry)
+> +	if (!exportfs_can_decode_fh(nop))
+>  		return ERR_PTR(-ESTALE);
+>  	result =3D nop->fh_to_dentry(mnt->mnt_sb, fid, fh_len, fileid_type);
+>  	if (IS_ERR_OR_NULL(result))
+> diff --git a/fs/fhandle.c b/fs/fhandle.c
+> index 6ea8d35a9382..18b3ba8dc8ea 100644
+> --- a/fs/fhandle.c
+> +++ b/fs/fhandle.c
+> @@ -26,12 +26,8 @@ static long do_sys_name_to_handle(const struct path *p=
+ath,
+>  	/*
+>  	 * We need to make sure whether the file system support decoding of
+>  	 * the file handle if decodeable file handle was requested.
+> -	 * Otherwise, even empty export_operations are sufficient to opt-in
+> -	 * to encoding FIDs.
+>  	 */
+> -	if (!path->dentry->d_sb->s_export_op ||
+> -	    (!(fh_flags & EXPORT_FH_FID) &&
+> -	     !path->dentry->d_sb->s_export_op->fh_to_dentry))
+> +	if (!exportfs_can_encode_fh(path->dentry->d_sb->s_export_op, fh_flags))
+>  		return -EOPNOTSUPP;
+> =20
+>  	if (copy_from_user(&f_handle, ufh, sizeof(struct file_handle)))
+> diff --git a/fs/nfsd/export.c b/fs/nfsd/export.c
+> index 11a0eaa2f914..dc99dfc1d411 100644
+> --- a/fs/nfsd/export.c
+> +++ b/fs/nfsd/export.c
+> @@ -421,8 +421,7 @@ static int check_export(struct path *path, int *flags=
+, unsigned char *uuid)
+>  		return -EINVAL;
 >  	}
+> =20
+> -	if (!inode->i_sb->s_export_op ||
+> -	    !inode->i_sb->s_export_op->fh_to_dentry) {
+> +	if (!exportfs_can_decode_fh(inode->i_sb->s_export_op)) {
+>  		dprintk("exp_export: export of invalid fs type.\n");
+>  		return -EINVAL;
+>  	}
+> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fano=
+tify_user.c
+> index 537c70beaad0..ce926eb9feea 100644
+> --- a/fs/notify/fanotify/fanotify_user.c
+> +++ b/fs/notify/fanotify/fanotify_user.c
+> @@ -1595,7 +1595,7 @@ static int fanotify_test_fid(struct dentry *dentry,=
+ unsigned int flags)
+>  	 * file handles so user can use name_to_handle_at() to compare fids
+>  	 * reported with events to the file handle of watched objects.
+>  	 */
+> -	if (!nop)
+> +	if (!exportfs_can_encode_fid(nop))
+>  		return -EOPNOTSUPP;
+> =20
+>  	/*
+> @@ -1603,7 +1603,7 @@ static int fanotify_test_fid(struct dentry *dentry,=
+ unsigned int flags)
+>  	 * supports decoding file handles, so user has a way to map back the
+>  	 * reported fids to filesystem objects.
+>  	 */
+> -	if (mark_type !=3D FAN_MARK_INODE && !nop->fh_to_dentry)
+> +	if (mark_type !=3D FAN_MARK_INODE && !exportfs_can_decode_fh(nop))
+>  		return -EOPNOTSUPP;
+> =20
+>  	return 0;
+> diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
+> index 89e0d60d35b6..f0a712214ec2 100644
+> --- a/fs/overlayfs/util.c
+> +++ b/fs/overlayfs/util.c
+> @@ -55,7 +55,7 @@ int ovl_can_decode_fh(struct super_block *sb)
+>  	if (!capable(CAP_DAC_READ_SEARCH))
+>  		return 0;
+> =20
+> -	if (!sb->s_export_op || !sb->s_export_op->fh_to_dentry)
+> +	if (!exportfs_can_decode_fh(sb->s_export_op))
+>  		return 0;
+> =20
+>  	return sb->s_export_op->encode_fh ? -1 : FILEID_INO32_GEN;
+> diff --git a/include/linux/exportfs.h b/include/linux/exportfs.h
+> index 11fbd0ee1370..5b3c9f30b422 100644
+> --- a/include/linux/exportfs.h
+> +++ b/include/linux/exportfs.h
+> @@ -233,6 +233,33 @@ extern int exportfs_encode_inode_fh(struct inode *in=
+ode, struct fid *fid,
+>  extern int exportfs_encode_fh(struct dentry *dentry, struct fid *fid,
+>  			      int *max_len, int flags);
+> =20
+> +static inline bool exportfs_can_encode_fid(const struct export_operation=
+s *nop)
+> +{
+> +	return nop;
+> +}
 > +
-> +	__mod_node_page_state(page_pgdat(page), NR_PAGE_METADATA,
-> +			      -1L * (PAGE_ALIGN(table_size) >> PAGE_SHIFT));
+> +static inline bool exportfs_can_decode_fh(const struct export_operations=
+ *nop)
+> +{
+> +	return nop && nop->fh_to_dentry;
+> +}
+> +
+> +static inline bool exportfs_can_encode_fh(const struct export_operations=
+ *nop,
+> +					  int fh_flags)
+> +{
+> +	/*
+> +	 * If a non-decodeable file handle was requested, we only need to make
+> +	 * sure that filesystem can encode file handles.
+> +	 */
+> +	if (fh_flags & EXPORT_FH_FID)
+> +		return exportfs_can_encode_fid(nop);
+> +
+> +	/*
+> +	 * If a decodeable file handle was requested, we need to make sure that
+> +	 * filesystem can also decode file handles.
+> +	 */
+> +	return exportfs_can_decode_fh(nop);
+> +}
+> +
+>  static inline int exportfs_encode_fid(struct inode *inode, struct fid *f=
+id,
+>  				      int *max_len)
+>  {
 
-This troubles me.  We're freeing the memory and then dereferencing
-the page that was freed.  I know that struct pages don't go away when
-they're freed, and they don't change which node they're allocated to,
-but it feels wrong.  I'd be happier if the page_pgdat() were extracted
-prior to freeing the memory.
+Nice cleanup.
+
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
