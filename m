@@ -1,62 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-628-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-629-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 869BB7CDB7E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 14:25:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEC2B7CDB7F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 14:25:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B02D1F21EE0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 12:25:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1E4A1C20D6B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 12:25:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAEED347A7;
-	Wed, 18 Oct 2023 12:25:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34447347C3;
+	Wed, 18 Oct 2023 12:25:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U/2LrsG+"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rh2MO0Fu"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 966F2341A1;
-	Wed, 18 Oct 2023 12:25:43 +0000 (UTC)
-Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 190DE10E;
-	Wed, 18 Oct 2023 05:25:40 -0700 (PDT)
-Received: by mail-pl1-x632.google.com with SMTP id d9443c01a7336-1c9d3a21f7aso54620885ad.2;
-        Wed, 18 Oct 2023 05:25:40 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BFDE341A1;
+	Wed, 18 Oct 2023 12:25:46 +0000 (UTC)
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 707E6112;
+	Wed, 18 Oct 2023 05:25:44 -0700 (PDT)
+Received: by mail-pl1-x633.google.com with SMTP id d9443c01a7336-1c9d922c039so54580295ad.3;
+        Wed, 18 Oct 2023 05:25:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697631939; x=1698236739; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EHs9rCs8x4QUhZl508/QQpGlG46IC0KzP6IesPq9PKQ=;
-        b=U/2LrsG+cNQ2jsSRFQABnZwrZFO0XF2HqJS8JVJJmd1SzXLuGEpRck++8PjkeCD3C7
-         NVUpPVzorHNx16u5+7o4kOz9WVaIXQFxthDJ73gLmQYihNWcBhLmnVQoP7LWeifrp0xc
-         8OLZjVW9JEl7OniR6gPrvv7tHRIWHxhVETONbuG3L2WZr7/6lsUcRgIVW54fQhnMD8Gv
-         GWoLjNMMpIVMILV69K2iJa+ZB9fyOVNyteKCWlPNIn0BI24rwlh5gxttYkthB4eyTyuw
-         HHeuSsFGHD1Fbtuc349Jq4hrJ281fzBQrri6uIQdwjLid+pNlNiPp6xWTUJzu9aiSZgI
-         1vbQ==
+        d=gmail.com; s=20230601; t=1697631944; x=1698236744; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Xex43RS2jNp3vQd6oNEUXyjdswTtSBFkdu+lQ9eZYV0=;
+        b=Rh2MO0FuxoyWaDoGp0i2hcbU0P0nq6f6x179mXNCuu/9vRQy1TYejZKFcmDhLBVJxG
+         Mg+b2/3VYUzHvCeCbPq8BTlZm+j4Urz9ZoRVKN+x54cbpyWFtNX2NN9dhZaLRcW9FYDN
+         ZeOw25McPwyFP8s7dxNMuCqAy01j3Hs8H778S8X31nmJO//HeqbENyByvt6wqPCwRqdL
+         pLWz5I5irHjpQKrk9tbHd5inuBZechh0FetkwEq+7HZ8aC3EAbLjZRDC2gRmQRn7+SAW
+         Ha0xrB4SDgUCYDIJHEaDVDcpu6ZSHz+QlrrHjcqylaPowiVcXrwBxVgZrs6TU7oUdsbb
+         ToKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697631939; x=1698236739;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EHs9rCs8x4QUhZl508/QQpGlG46IC0KzP6IesPq9PKQ=;
-        b=cnpzojBh5jq88lIWapd6/EvkmS3O+W9awASOle2kKpb7erV+F8H4RsLVNND586dHhT
-         IQXf1k9MNwrinF/cP5Ii9ze161rjvRGEcXy4ZMluX2wxdWgWYGhlMXfAsO/BEjj/p23C
-         GAgeniK+lDTVnD8p8ZciMaQ8xRuCxov/Xjr9qMzfijTb1ocbWaipVfixuw8N7c7yOtOR
-         ZtR3hSMWvtgsrIF4V7E2qGQTflxww38iarFw59A3Ows94fbkUoARIj2ZeHh+yKsEcTpI
-         rfWJBxXq5YIQ/1YCamtoioa39mXoUrqXRJPFk42Rz9mSPMzIasUBm8DFraJBUxXBnhko
-         3vJw==
-X-Gm-Message-State: AOJu0Yw4I94QkgIuNzqMFP5eT1qiZsTa5boiGc98x/XHpX0ypO9PzWAl
-	BXeCk/Q/lNNbOlsvPuY6tC0=
-X-Google-Smtp-Source: AGHT+IGPlLnxWcUSiSEWJfC4z5iw6hs7k7HUWD5Q6zQMMfeUVqq5hXqzfyTOUg+EczxpvqNEx2CQYg==
-X-Received: by 2002:a17:902:c404:b0:1bc:6c8:cded with SMTP id k4-20020a170902c40400b001bc06c8cdedmr6507130plk.67.1697631939386;
-        Wed, 18 Oct 2023 05:25:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1697631944; x=1698236744;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Xex43RS2jNp3vQd6oNEUXyjdswTtSBFkdu+lQ9eZYV0=;
+        b=Rf77AjxiAqBOpcfydXhx+VBWD6E29bUz90LdQxEGuMncSfxiDZjNIiPrBxJvpvcBCN
+         YEtwVowN9vW1q4NTJalnMSP+Rm6HHKXA7hLBrd7fhbF2fon8+jWz90wl+NI/AIb1bpCT
+         jLgvLA+ORBgbcyYfvNlhIe00vCFN8bnvhgA2jNI5Ah9CALQDfYju+fTYx5TGpkCVjyPv
+         vMYsoDC0F2mTRzuwwa6pWZLG+/2IiX8UB8nSrO0Jcp9TKYDIoKOG+uxKY9KB1CIPZwyP
+         XylWpuRz4lbSn/TmXRuwKU5CUpU40uCfP/eKRqquH9Bwc7qZMDmN87kQTVetJLuVdYSo
+         xBMQ==
+X-Gm-Message-State: AOJu0Yzyva50sIbZYNxQPXOgeOFPpw2L3PA3+kggUDQbj+8pDdSASk8N
+	KsBwac34cCST0ki7CnE8V9o=
+X-Google-Smtp-Source: AGHT+IHkRBzV2dTXTNWcXbjYFGuqrxzZoK1XnpQG76IA1lMQfND1KnbOY7w4b+5ctUXQ1kZ0GTAcow==
+X-Received: by 2002:a17:903:32d0:b0:1ca:1be4:bda4 with SMTP id i16-20020a17090332d000b001ca1be4bda4mr5525882plr.4.1697631943795;
+        Wed, 18 Oct 2023 05:25:43 -0700 (PDT)
 Received: from wedsonaf-dev.. ([2804:389:7122:43b8:9b73:6339:3351:cce0])
-        by smtp.googlemail.com with ESMTPSA id j1-20020a170902c3c100b001c736b0037fsm3411046plj.231.2023.10.18.05.25.35
+        by smtp.googlemail.com with ESMTPSA id j1-20020a170902c3c100b001c736b0037fsm3411046plj.231.2023.10.18.05.25.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Oct 2023 05:25:39 -0700 (PDT)
+        Wed, 18 Oct 2023 05:25:43 -0700 (PDT)
 From: Wedson Almeida Filho <wedsonaf@gmail.com>
 To: Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>,
@@ -66,10 +67,12 @@ Cc: Kent Overstreet <kent.overstreet@gmail.com>,
 	linux-fsdevel@vger.kernel.org,
 	rust-for-linux@vger.kernel.org,
 	Wedson Almeida Filho <walmeida@microsoft.com>
-Subject: [RFC PATCH 00/19] Rust abstractions for VFS
-Date: Wed, 18 Oct 2023 09:24:59 -0300
-Message-Id: <20231018122518.128049-1-wedsonaf@gmail.com>
+Subject: [RFC PATCH 01/19] rust: fs: add registration/unregistration of file systems
+Date: Wed, 18 Oct 2023 09:25:00 -0300
+Message-Id: <20231018122518.128049-2-wedsonaf@gmail.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20231018122518.128049-1-wedsonaf@gmail.com>
+References: <20231018122518.128049-1-wedsonaf@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -86,98 +89,145 @@ X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 
 From: Wedson Almeida Filho <walmeida@microsoft.com>
 
-This series introduces Rust abstractions that allow page-cache-backed read-only
-file systems to be written in Rust.
+Allow basic registration and unregistration of Rust file system types.
+Unregistration happens automatically when a registration variable is
+dropped (e.g., when it goes out of scope).
 
-There are two file systems that are built on top of these abstractions: tarfs
-and puzzlefs. The former has zero unsafe blocks and is included as a patch in
-this series; the latter is described elsewhere [1]. We limit the functionality
-to the bare minimum needed to implement them.
+File systems registered this way are visible in `/proc/filesystems` but
+cannot be mounted yet because `init_fs_context` fails.
 
-Rust file system modules can be declared with the `module_fs` macro and are
-required to implement the following functions (which are part of the
-`FileSystem` trait):
-
-impl FileSystem for MyFS {
-    fn super_params(sb: &NewSuperBlock<Self>) -> Result<SuperParams<Self::Data>>;
-    fn init_root(sb: &SuperBlock<Self>) -> Result<ARef<INode<Self>>>;
-    fn read_dir(inode: &INode<Self>, emitter: &mut DirEmitter) -> Result;
-    fn lookup(parent: &INode<Self>, name: &[u8]) -> Result<ARef<INode<Self>>>;
-    fn read_folio(inode: &INode<Self>, folio: LockedFolio<'_>) -> Result;
-}
-
-They can optionally implement the following:
-
-fn read_xattr(inode: &INode<Self>, name: &CStr, outbuf: &mut [u8]) -> Result<usize>;
-fn statfs(sb: &SuperBlock<Self>) -> Result<Stat>;
-
-They may also choose the type of the data they can attach to superblocks and/or
-inodes.
-
-There a couple of issues that are likely to lead to unsoundness that have to do
-with the unregistration of file systems. I will send separate emails about
-them.
-
-A git tree is available here:
-    git://github.com/wedsonaf/linux.git vfs
-
-Web:
-    https://github.com/wedsonaf/linux/commits/vfs
-
-[1]: The PuzzleFS container filesystem: https://lwn.net/Articles/945320/
-
-Wedson Almeida Filho (19):
-  rust: fs: add registration/unregistration of file systems
-  rust: fs: introduce the `module_fs` macro
-  samples: rust: add initial ro file system sample
-  rust: fs: introduce `FileSystem::super_params`
-  rust: fs: introduce `INode<T>`
-  rust: fs: introduce `FileSystem::init_root`
-  rust: fs: introduce `FileSystem::read_dir`
-  rust: fs: introduce `FileSystem::lookup`
-  rust: folio: introduce basic support for folios
-  rust: fs: introduce `FileSystem::read_folio`
-  rust: fs: introduce `FileSystem::read_xattr`
-  rust: fs: introduce `FileSystem::statfs`
-  rust: fs: introduce more inode types
-  rust: fs: add per-superblock data
-  rust: fs: add basic support for fs buffer heads
-  rust: fs: allow file systems backed by a block device
-  rust: fs: allow per-inode data
-  rust: fs: export file type from mode constants
-  tarfs: introduce tar fs
-
- fs/Kconfig                        |    1 +
- fs/Makefile                       |    1 +
- fs/tarfs/Kconfig                  |   16 +
- fs/tarfs/Makefile                 |    8 +
- fs/tarfs/defs.rs                  |   80 ++
- fs/tarfs/tar.rs                   |  322 +++++++
- rust/bindings/bindings_helper.h   |   13 +
- rust/bindings/lib.rs              |    6 +
- rust/helpers.c                    |  142 ++++
- rust/kernel/error.rs              |    6 +-
- rust/kernel/folio.rs              |  214 +++++
- rust/kernel/fs.rs                 | 1290 +++++++++++++++++++++++++++++
- rust/kernel/fs/buffer.rs          |   60 ++
- rust/kernel/lib.rs                |    2 +
- rust/kernel/mem_cache.rs          |    2 -
- samples/rust/Kconfig              |   10 +
- samples/rust/Makefile             |    1 +
- samples/rust/rust_rofs.rs         |  154 ++++
- scripts/generate_rust_analyzer.py |    2 +-
- 19 files changed, 2324 insertions(+), 6 deletions(-)
- create mode 100644 fs/tarfs/Kconfig
- create mode 100644 fs/tarfs/Makefile
- create mode 100644 fs/tarfs/defs.rs
- create mode 100644 fs/tarfs/tar.rs
- create mode 100644 rust/kernel/folio.rs
+Signed-off-by: Wedson Almeida Filho <walmeida@microsoft.com>
+---
+ rust/bindings/bindings_helper.h |  1 +
+ rust/kernel/error.rs            |  2 -
+ rust/kernel/fs.rs               | 80 +++++++++++++++++++++++++++++++++
+ rust/kernel/lib.rs              |  1 +
+ 4 files changed, 82 insertions(+), 2 deletions(-)
  create mode 100644 rust/kernel/fs.rs
- create mode 100644 rust/kernel/fs/buffer.rs
- create mode 100644 samples/rust/rust_rofs.rs
 
-
-base-commit: b0bc357ef7a98904600826dea3de79c0c67eb0a7
+diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
+index 3b620ae07021..9c23037b33d0 100644
+--- a/rust/bindings/bindings_helper.h
++++ b/rust/bindings/bindings_helper.h
+@@ -8,6 +8,7 @@
+ 
+ #include <kunit/test.h>
+ #include <linux/errname.h>
++#include <linux/fs.h>
+ #include <linux/slab.h>
+ #include <linux/refcount.h>
+ #include <linux/wait.h>
+diff --git a/rust/kernel/error.rs b/rust/kernel/error.rs
+index 05fcab6abfe6..e6d7ce46be55 100644
+--- a/rust/kernel/error.rs
++++ b/rust/kernel/error.rs
+@@ -320,8 +320,6 @@ pub(crate) fn from_err_ptr<T>(ptr: *mut T) -> Result<*mut T> {
+ ///     })
+ /// }
+ /// ```
+-// TODO: Remove `dead_code` marker once an in-kernel client is available.
+-#[allow(dead_code)]
+ pub(crate) fn from_result<T, F>(f: F) -> T
+ where
+     T: From<i16>,
+diff --git a/rust/kernel/fs.rs b/rust/kernel/fs.rs
+new file mode 100644
+index 000000000000..f3fb09db41ba
+--- /dev/null
++++ b/rust/kernel/fs.rs
+@@ -0,0 +1,80 @@
++// SPDX-License-Identifier: GPL-2.0
++
++//! Kernel file systems.
++//!
++//! This module allows Rust code to register new kernel file systems.
++//!
++//! C headers: [`include/linux/fs.h`](../../include/linux/fs.h)
++
++use crate::error::{code::*, from_result, to_result, Error};
++use crate::types::Opaque;
++use crate::{bindings, init::PinInit, str::CStr, try_pin_init, ThisModule};
++use core::{marker::PhantomPinned, pin::Pin};
++use macros::{pin_data, pinned_drop};
++
++/// A file system type.
++pub trait FileSystem {
++    /// The name of the file system type.
++    const NAME: &'static CStr;
++}
++
++/// A registration of a file system.
++#[pin_data(PinnedDrop)]
++pub struct Registration {
++    #[pin]
++    fs: Opaque<bindings::file_system_type>,
++    #[pin]
++    _pin: PhantomPinned,
++}
++
++// SAFETY: `Registration` doesn't provide any `&self` methods, so it is safe to pass references
++// to it around.
++unsafe impl Sync for Registration {}
++
++// SAFETY: Both registration and unregistration are implemented in C and safe to be performed
++// from any thread, so `Registration` is `Send`.
++unsafe impl Send for Registration {}
++
++impl Registration {
++    /// Creates the initialiser of a new file system registration.
++    pub fn new<T: FileSystem + ?Sized>(module: &'static ThisModule) -> impl PinInit<Self, Error> {
++        try_pin_init!(Self {
++            _pin: PhantomPinned,
++            fs <- Opaque::try_ffi_init(|fs_ptr: *mut bindings::file_system_type| {
++                // SAFETY: `try_ffi_init` guarantees that `fs_ptr` is valid for write.
++                unsafe { fs_ptr.write(bindings::file_system_type::default()) };
++
++                // SAFETY: `try_ffi_init` guarantees that `fs_ptr` is valid for write, and it has
++                // just been initialised above, so it's also valid for read.
++                let fs = unsafe { &mut *fs_ptr };
++                fs.owner = module.0;
++                fs.name = T::NAME.as_char_ptr();
++                fs.init_fs_context = Some(Self::init_fs_context_callback);
++                fs.kill_sb = Some(Self::kill_sb_callback);
++                fs.fs_flags = 0;
++
++                // SAFETY: Pointers stored in `fs` are static so will live for as long as the
++                // registration is active (it is undone in `drop`).
++                to_result(unsafe { bindings::register_filesystem(fs_ptr) })
++            }),
++        })
++    }
++
++    unsafe extern "C" fn init_fs_context_callback(
++        _fc_ptr: *mut bindings::fs_context,
++    ) -> core::ffi::c_int {
++        from_result(|| Err(ENOTSUPP))
++    }
++
++    unsafe extern "C" fn kill_sb_callback(_sb_ptr: *mut bindings::super_block) {}
++}
++
++#[pinned_drop]
++impl PinnedDrop for Registration {
++    fn drop(self: Pin<&mut Self>) {
++        // SAFETY: If an instance of `Self` has been successfully created, a call to
++        // `register_filesystem` has necessarily succeeded. So it's ok to call
++        // `unregister_filesystem` on the previously registered fs.
++        unsafe { bindings::unregister_filesystem(self.fs.get()) };
++    }
++}
+diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+index 187d58f906a5..00059b80c240 100644
+--- a/rust/kernel/lib.rs
++++ b/rust/kernel/lib.rs
+@@ -34,6 +34,7 @@
+ mod allocator;
+ mod build_assert;
+ pub mod error;
++pub mod fs;
+ pub mod init;
+ pub mod ioctl;
+ #[cfg(CONFIG_KUNIT)]
 -- 
 2.34.1
 
