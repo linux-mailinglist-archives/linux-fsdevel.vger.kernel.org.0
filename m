@@ -1,62 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-586-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-587-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D23B7CD29E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 05:19:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 068BD7CD2E2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 06:35:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03853B211A9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 03:19:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 319DD1C20CB1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 04:35:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D39905249;
-	Wed, 18 Oct 2023 03:19:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACC928F4E;
+	Wed, 18 Oct 2023 04:35:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fasvnEde"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="BHILHLNI"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8414436
-	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Oct 2023 03:19:05 +0000 (UTC)
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58649FE
-	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Oct 2023 20:19:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1697599143;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8zVoFF6aUxd9VaJA+YrLxhoeUc7CrRCl7wEDGMfXOIc=;
-	b=fasvnEdejbSWyFSdMb4LrGWCTtr/ME8H2tk1WerK4n518Ii1GMN1rzE7A6YvX9o+dM3hIs
-	Mtc8r0FOHNQpg1Y/zApZE4VRITxPGaRR+wRHKoK60/knnm1w2GcCRuukk7dzR/XSrmhQ3U
-	mAXNny1cd5gIGR0ROzBN8CaM9Pp3PAM=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-577-YAMtSfHVPQqLcrpN2E1-AA-1; Tue, 17 Oct 2023 23:18:48 -0400
-X-MC-Unique: YAMtSfHVPQqLcrpN2E1-AA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 96417101FA22;
-	Wed, 18 Oct 2023 03:18:47 +0000 (UTC)
-Received: from fedora (unknown [10.72.120.2])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 19A2E1121314;
-	Wed, 18 Oct 2023 03:18:42 +0000 (UTC)
-Date: Wed, 18 Oct 2023 11:18:38 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>,
-	Jan Kara <jack@suse.cz>, Denis Efremov <efremov@linux.com>,
-	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 4/5] block: assert that we're not holding open_mutex over
- blk_report_disk_dead
-Message-ID: <ZS9OjlDuELDHJ4XM@fedora>
-References: <20231017184823.1383356-1-hch@lst.de>
- <20231017184823.1383356-5-hch@lst.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 323828F41
+	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Oct 2023 04:35:39 +0000 (UTC)
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84BF593;
+	Tue, 17 Oct 2023 21:35:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=qYQT9+blz7r7f5JPqtYLXwbpV6EPD3GUZ3EjmsXbKr0=; b=BHILHLNI4vlnIbUp1qdqp+gwBq
+	RYR+gdFhNYfYF9HSxQD9uP9qUL1TxJFiZCOc1r42fzA9NtouTMvbAXBhfUime6+Tg/bIdRSDw8zcx
+	tT+oRCGOrD4SbziL5UxgPqnfaJQaBCk3rQOU0aVMJPdkIe+xBZ+6nQp2vhkfKIrCkKO2o9VqxR8+q
+	KH1zdHrI4nzG/kZKrED31sgdUh5Zl6EnvqptE15HIF8KGVB2AQbbVDlCUp0LRodE77LsuKZUutx6Z
+	6Zf2S5rvSf+kYwXFE/fmdZmaQBpBHRVl4vf5D3aOK8awlLulEncOH1QcByq2YmSxJtC7zVGfu9NuT
+	oVLyhhTA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1qsyHM-002Fgi-2i;
+	Wed, 18 Oct 2023 04:35:33 +0000
+Date: Wed, 18 Oct 2023 05:35:32 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Paul Moore <paul@paul-moore.com>
+Cc: selinux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>,
+	selinux-refpolicy@vger.kernel.org
+Subject: Re: [PATCH][RFC] selinuxfs: saner handling of policy reloads
+Message-ID: <20231018043532.GS800259@ZenIV>
+References: <20231016220835.GH800259@ZenIV>
+ <CAHC9VhTToc-rELe0EyOV4kRtOJuAmPzPB_QNn8Lw_EfMg+Edzw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,63 +55,50 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231017184823.1383356-5-hch@lst.de>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.3
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-	RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
-	SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <CAHC9VhTToc-rELe0EyOV4kRtOJuAmPzPB_QNn8Lw_EfMg+Edzw@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE
+	autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-On Tue, Oct 17, 2023 at 08:48:22PM +0200, Christoph Hellwig wrote:
-> From: Christian Brauner <brauner@kernel.org>
+On Tue, Oct 17, 2023 at 04:28:53PM -0400, Paul Moore wrote:
+> Thanks Al.
 > 
-> blk_report_disk_dead() has the following major callers:
+> Giving this a very quick look, I like the code simplifications that
+> come out of this change and I'll trust you on the idea that this
+> approach is better from a VFS perspective.
 > 
-> (1) del_gendisk()
-> (2) blk_mark_disk_dead()
+> While the reject_all() permission hammer is good, I do want to make
+> sure we are covered from a file labeling perspective; even though the
+> DAC/reject_all() check hits first and avoids the LSM inode permission
+> hook, we still want to make sure the files are labeled properly.  It
+> looks like given the current SELinux Reference Policy this shouldn't
+> be a problem, it will be labeled like most everything else in
+> selinuxfs via genfscon (SELinux policy construct).  I expect those
+> with custom SELinux policies will have something similar in place with
+> a sane default that would cover the /sys/fs/selinux/.swapover
+> directory but I did add the selinux-refpol list to the CC line just in
+> case I'm being dumb and forgetting something important with respect to
+> policy.
 > 
-> Since del_gendisk() acquires disk->open_mutex it's clear that all
-> callers are assumed to be called without disk->open_mutex held.
-> In turn, blk_report_disk_dead() is called without disk->open_mutex held
-> in del_gendisk().
+> The next step is to actually boot up a kernel with this patch and make
+> sure it doesn't break anything.  Simply booting up a SELinux system
+> and running 'load_policy' a handful of times should exercise the
+> policy (re)load path, and if you want a (relatively) simple SELinux
+> test suite you can find one here:
 > 
-> All callers of blk_mark_disk_dead() call it without disk->open_mutex as
-> well.
+> * https://github.com/SELinuxProject/selinux-testsuite
 > 
-> Ensure that it is clear that blk_report_disk_dead() is called without
-> disk->open_mutex on purpose by asserting it and a comment in the code.
-> 
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  block/genhd.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/block/genhd.c b/block/genhd.c
-> index 4a16a424f57d4f..c9d06f72c587e8 100644
-> --- a/block/genhd.c
-> +++ b/block/genhd.c
-> @@ -559,6 +559,13 @@ static void blk_report_disk_dead(struct gendisk *disk, bool surprise)
->  	struct block_device *bdev;
->  	unsigned long idx;
->  
-> +	/*
-> +	 * On surprise disk removal, bdev_mark_dead() may call into file
-> +	 * systems below. Make it clear that we're expecting to not hold
-> +	 * disk->open_mutex.
-> +	 */
-> +	lockdep_assert_not_held(&disk->open_mutex);
-> +
->  	rcu_read_lock();
->  	xa_for_each(&disk->part_tbl, idx, bdev) {
->  		if (!kobject_get_unless_zero(&bdev->bd_device.kobj))
+> The README.md should have the instructions necessary to get it
+> running.  If you can't do that, and no one else on the mailing list is
+> able to test this out, I'll give it a go but expect it to take a while
+> as I'm currently swamped with reviews and other stuff.
 
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
-
-
-thanks, 
-Ming
-
+It does survive repeated load_policy (as well as semodule -d/semodule -e,
+with expected effect on /booleans, AFAICS).  As for the testsuite...
+No regressions compared to clean -rc5, but then there are (identical)
+failures on both - "Failed 8/76 test programs. 88/1046 subtests failed."
+Incomplete defconfig, at a guess...
 
