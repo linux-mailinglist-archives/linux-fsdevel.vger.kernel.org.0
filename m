@@ -1,41 +1,41 @@
-Return-Path: <linux-fsdevel+bounces-679-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-680-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 399E87CE4D1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 19:41:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1347A7CE4D3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 19:41:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A7FB1C20ADD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 17:41:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26D54B212F7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 17:41:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2FF93FB26;
-	Wed, 18 Oct 2023 17:41:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F7813FB3A;
+	Wed, 18 Oct 2023 17:41:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HmbULKUS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vHqr3PeT"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 397342F531
-	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Oct 2023 17:41:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76D2FC433C8;
-	Wed, 18 Oct 2023 17:41:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A76C93FB2F
+	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Oct 2023 17:41:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0865C433CD;
+	Wed, 18 Oct 2023 17:41:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1697650891;
-	bh=kOWxubIvgkUuX1LHF9Uvd3PXOcCevsiFIHXsUMPyfII=;
-	h=From:Subject:Date:To:Cc:From;
-	b=HmbULKUSdAVTYh0NKXFEKevWhFCUwYFMuL4ZE6MnHrMRc//1huWLlflMoK0S8D7HT
-	 RpsmiCca/5mXfeyTb19e8+kl8UJFzEghrdotH3KvXYHZLUsXcKKlbUVfvdQyMx62z6
-	 34Xsrh7WT/00XDtz5t6InI84zeLOx7tPeu8rJA9Rwn1Zx9HeCyi0I3fC4LOiYur/fE
-	 JDN4Vyc3XcT+ERm/aUw1zN6TI4Le3vB5HM60CU8WN2sV4b/rcSCzdsY2aZvIqYa99Z
-	 sjX65S2Oku9xYqAVYGzUC0sAqceFqJ82GaotgiDmurcJyHeCgtRQvu9Ale3NAijBbP
-	 rOv1uoNIL4Tnw==
+	s=k20201202; t=1697650894;
+	bh=jWmZ1Ravl5cu/wOo4Bog6k1d+CwyPST2G6rAUV4ZYAc=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=vHqr3PeTFpDRNPF3idVxxCdnb1iVi0NE8DkKoUZrVcZEfyflEgmWCoz3c30QBIYgV
+	 QHUjC6yzrdbgCryMrV/z8AraieOhCmp5ydSy1Jlqy/frfz3I7YSKlgI5kDCw9W9L0G
+	 6wdcPzpynxo6jrP6c7EPrU4xUvOBBF8acqKT80+bwKIiWoG+0FKGZn2rspmzYEp5Uw
+	 yczqNkmwK3PiefZQP5RsLlEHZJRaSQCGu1OYDHgU58+Yl+kixzJq6GJmgUYJk5WB9q
+	 jGypQFbK++CbII2WD5VXoDWHRSnbQ9wKs9T6uoUfg0c1QygVUa4DSDyJFGF5QUtR0X
+	 akQ1ufOzxnSZQ==
 From: Jeff Layton <jlayton@kernel.org>
-Subject: [PATCH RFC 0/9] fs: multigrain timestamps (redux)
-Date: Wed, 18 Oct 2023 13:41:07 -0400
-Message-Id: <20231018-mgtime-v1-0-4a7a97b1f482@kernel.org>
+Date: Wed, 18 Oct 2023 13:41:08 -0400
+Subject: [PATCH RFC 1/9] fs: switch timespec64 fields in inode to discrete
+ integers
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -44,9 +44,9 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIALMYMGUC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI2NDA0Mz3dz0kszcVN20VOPURHPTZLM0U0sloOKCotS0zAqwQdFKQW7OSrG
- 1tQAHBm97XQAAAA==
+Message-Id: <20231018-mgtime-v1-1-4a7a97b1f482@kernel.org>
+References: <20231018-mgtime-v1-0-4a7a97b1f482@kernel.org>
+In-Reply-To: <20231018-mgtime-v1-0-4a7a97b1f482@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>, 
  Alexander Viro <viro@zeniv.linux.org.uk>, 
  Christian Brauner <brauner@kernel.org>, John Stultz <jstultz@google.com>, 
@@ -64,151 +64,183 @@ Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-btrfs@vger.kernel.org, linux-mm@kvack.org, linux-nfs@vger.kernel.org, 
  Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5629; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=kOWxubIvgkUuX1LHF9Uvd3PXOcCevsiFIHXsUMPyfII=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBlMBjAuucpyDoopVPNBPSV5kIUK51y3+JkIuJbJ
- MfA0arDDZaJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZTAYwAAKCRAADmhBGVaC
- FRcGD/4gWTfDUlUYR99pZVwm1+RHd3+PX9zlbEqYbvDvs6/aA8B9q7koy4wlyncLKHzM5nrgYHf
- rFzENOpzsSadkGkDajVLKfFaQ7akLUv8uZiji9WsSoT+e1AyWZj0DskG0JKmYteynPzh30YyJL0
- KHzsJ7pfrumiZBtdXtMJAa8Skoueq0gWV/7oshhybg6JEOMLOQ+4ANJDMsIfpb6+sHdFitMACRF
- q4gKZPjsX7FZIx1dd0SQdMlRjw4An+JYEwgjP3bkdy7XTjz6sW5sitQstxEDS/JaxZ6XIIL7xqB
- OO/Jkxmo5/vSa05/4RVeplhTkAh1uV5n4LuWsjuh+Q8bON7Zv4VKdYJP8r9WBL/5zQwCPpHM2SO
- c5eE9cT+BmXGcJIzAw52UsXAbp0LO+gYHlR+G7q+I5GEVg2+g6LFRoxL0+OpYvIWcycfYQps5NH
- XnbuDRwrAVg96y3GpdKaOGuEzu1Sm5CLNXS0jYorIwAossaz50WdaaVRJxMjPRinrp+sP8fv7+l
- h2X/0Yla61mKX6fZZArxV7sA9uEGbMcZPQcXRw5DW7EhjKh1QbyGwF46sawjrX93/UoxFvWEHso
- iVcm5rVdVOTBwEy9iFhY241oVCW3E7NtCZ/SNf/hiaRQFTl/Sn7Q3aluI/ogOfLPa0eG+eRYdo8
- H373khRmD98lzxQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4674; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=jWmZ1Ravl5cu/wOo4Bog6k1d+CwyPST2G6rAUV4ZYAc=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBlMBjIMZMk9hA0a0rbXtgzOBS8+JUCWebR2P/8J
+ wgnb+onjoOJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZTAYyAAKCRAADmhBGVaC
+ FRN4D/4hg/46V/lM9F5UuttDEfFBixG4KR0EymQEurGFApb4lySZ+KxbxVkqAm7IyL+FGAaylWc
+ HWdk3vSQOpB0wg/2wS4ymKQcXH85SVmR/9XEb7cwkGmGji5l1IRuyksbprbUJUoYrd74o3VwZ2J
+ FGfFODjJ1z2g8QOi+FPBhSrHSMPe6a+6t1RhTll6jSfUaLC5mT72UQKVTqezrCk3c7BrDg7wF8W
+ P3sKppsD3IboBFnqLbTs+9FMukgmOdVC5ot278zCccIfSVSTWJov4PuYGZGg2sxnKJHL00sXNzC
+ UpTPwBA06FEZnVVSubHR+v91WVQ9P8C7VgWnpAkNm0CuuoNGtBmtvA7dEM95ePdvysiYdTNgfbL
+ lw9ll9YwoDxfKsgg8rC6dm6qHAEDZ4d2yBpi2ytPeV6cosMnf7ABN6v1L7saN4C9DAj43QdvZ0L
+ NI9Sf0xSeBKtgKlsAkaKw1vFv9SxFWOvRLr06pyTa7aogQymJeKR714W1uy52Hb7lXCTSQGiDqt
+ LBOBs244/a4JkQg0YfaivbgWS4haeHjH/Tc/YCT7wc6YGa+dUSQIviYyiczEXqT1Xvim3WEL+vK
+ QXaNIVewLajwOQrViIMfh0wl3NievUibTIxrqaKsoZH9/zvSBivCwxyjO+SU5bOzzJvjm6OM1Zz
+ MO1qldTLt22SnAw==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-The VFS always uses coarse-grained timestamps when updating the
-ctime and mtime after a change. This has the benefit of allowing
-filesystems to optimize away a lot metadata updates, down to around 1
-per jiffy, even when a file is under heavy writes.
+This shaves 8 bytes off struct inode with a garden-variety Fedora
+Kconfig, but it moves the i_lock into the previous cacheline, away from
+the fields it protects. To remedy that, move the i_generation just after
+the nanosecond fields, which moves the 4 byte hole down next to
+i_fsnotify_mask.
 
-Unfortunately, this coarseness has always been an issue when we're
-exporting via NFSv3, which relies on timestamps to validate caches. A
-lot of changes can happen in a jiffy, so timestamps aren't sufficient to
-help the client decide to invalidate the cache.
-
-Even with NFSv4, a lot of exported filesystems don't properly support a
-change attribute and are subject to the same problems with timestamp
-granularity. Other applications have similar issues with timestamps (e.g
-backup applications).
-
-If we were to always use fine-grained timestamps, that would improve the
-situation, but that becomes rather expensive, as the underlying
-filesystem would have to log a lot more metadata updates.
-
-What we need is a way to only use fine-grained timestamps when they are
-being actively queried. The idea is to use an unused bit in the ctime's
-tv_nsec field to mark when the mtime or ctime has been queried via
-getattr. Once that has been marked, the next m/ctime update will use a
-fine-grained timestamp.
-
-The original merge of multigrain timestamps for v6.6 had to be reverted,
-as a file with a coarse-grained timestamp could incorrectly appear to be
-modified before a file with a fine-grained timestamp, when that wasn't
-the case.
-
-This revision solves that problem by making it so that when a
-fine-grained timespec64 is handed out, that that value becomes the floor
-for further coarse-grained timespec64 fetches. This requires new
-timekeeper interfaces with a potential downside: when a file is
-stamped with a fine-grained timestamp, it has to (briefly) take the
-global timekeeper spinlock.
-
-Because of that, this set takes greater pains to avoid issuing new
-fine-grained timestamps when possible. A fine-grained timestamp is now
-only required if the current mtime or ctime have been fetched for a
-getattr, and the next coarse-grained tick has not happened yet. For any
-other case, a coarse-grained timestamp is fine, and that is done using
-the seqcount.
-
-In order to get some hard numbers about how often the lock would be
-taken, I've added a couple of percpu counters and a debugfs file for
-tracking both types of multigrain timekeeper fetches.
-
-With this, I did a kdevops fstests run on xfs (CRC mode). I ran "make
-fstests-baseline" and then immediately grabbed the counter values, and
-calcuated the percentage:
-
-$ time make fstests-baseline
-real    324m17.337s
-user    27m23.213s
-sys     2m40.313s
-
-fine            3059498
-coarse          383848171
-pct fine        .79075661
-
-Next I did a kdevops fstests run with NFS. One server serving 3 clients
-(v4.2, v4.0 and v3). Again, timed "make fstests-baseline" and then
-grabbed the multigrain counters from the NFS server:
-
-$ time make fstests-baseline
-real    181m57.585s
-user    16m8.266s
-sys     1m45.864s
-
-fine            8137657
-coarse          44726007
-pct fine        15.393668
-
-We can't run as many tests on nfs as xfs, so the run is shorter. nfsd is
-a very getattr-heavy workload, and the clients aggressively coalesce
-writes, so this is probably something of a pessimal case for number of
-fine-grained timestamps over time.
-
-At this point I'm mainly wondering whether (briefly) taking the
-timekeeper spinlock in this codepath is unreasonable. It does very
-little work under it, so I'm hoping the impact would be unmeasurable for
-most workloads.
-
-Side Q: what's the best tool for measuring spinlock contention? It'd be
-interesting to see how often (and how long) we end up spinning on this
-lock under different workloads.
-
-Note that some of the patches in the series are virtually identical to
-the ones before. I stripped the prior Reviewed-by/Acked-by tags though
-since the underlying infrastructure has changed a bit.
-
-Comments and suggestions welcome.
-
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Suggested-by: Amir Goldstein <amir73il@gmail.com>
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
-Jeff Layton (9):
-      fs: switch timespec64 fields in inode to discrete integers
-      timekeeping: new interfaces for multigrain timestamp handing
-      timekeeping: add new debugfs file to count multigrain timestamps
-      fs: add infrastructure for multigrain timestamps
-      fs: have setattr_copy handle multigrain timestamps appropriately
-      xfs: switch to multigrain timestamps
-      ext4: switch to multigrain timestamps
-      btrfs: convert to multigrain timestamps
-      tmpfs: add support for multigrain timestamps
+ include/linux/fs.h | 56 +++++++++++++++++++++++++++++++-----------------------
+ 1 file changed, 32 insertions(+), 24 deletions(-)
 
- fs/attr.c                           |  52 ++++++++++++++--
- fs/btrfs/file.c                     |  25 ++------
- fs/btrfs/super.c                    |   5 +-
- fs/ext4/super.c                     |   2 +-
- fs/inode.c                          |  70 ++++++++++++++++++++-
- fs/stat.c                           |  41 ++++++++++++-
- fs/xfs/libxfs/xfs_trans_inode.c     |   6 +-
- fs/xfs/xfs_iops.c                   |  10 +--
- fs/xfs/xfs_super.c                  |   2 +-
- include/linux/fs.h                  |  85 ++++++++++++++++++--------
- include/linux/timekeeper_internal.h |   2 +
- include/linux/timekeeping.h         |   4 ++
- kernel/time/timekeeping.c           | 117 ++++++++++++++++++++++++++++++++++++
- mm/shmem.c                          |   2 +-
- 14 files changed, 352 insertions(+), 71 deletions(-)
----
-base-commit: 12cd44023651666bd44baa36a5c999698890debb
-change-id: 20231016-mgtime-fe3ea75c6f59
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index cc29518517f7..78786c1c32fd 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -671,9 +671,13 @@ struct inode {
+ 	};
+ 	dev_t			i_rdev;
+ 	loff_t			i_size;
+-	struct timespec64	__i_atime;
+-	struct timespec64	__i_mtime;
+-	struct timespec64	__i_ctime; /* use inode_*_ctime accessors! */
++	time64_t		i_atime_sec;
++	time64_t		i_mtime_sec;
++	time64_t		i_ctime_sec;
++	u32			i_atime_nsec;
++	u32			i_mtime_nsec;
++	u32			i_ctime_nsec;
++	u32			i_generation;
+ 	spinlock_t		i_lock;	/* i_blocks, i_bytes, maybe i_size */
+ 	unsigned short          i_bytes;
+ 	u8			i_blkbits;
+@@ -730,10 +734,10 @@ struct inode {
+ 		unsigned		i_dir_seq;
+ 	};
+ 
+-	__u32			i_generation;
+ 
+ #ifdef CONFIG_FSNOTIFY
+ 	__u32			i_fsnotify_mask; /* all events this inode cares about */
++	/* 32bit hole reserved for expanding i_fsnotify_mask to 64bit */
+ 	struct fsnotify_mark_connector __rcu	*i_fsnotify_marks;
+ #endif
+ 
+@@ -1513,23 +1517,27 @@ struct timespec64 inode_set_ctime_current(struct inode *inode);
+ 
+ static inline time64_t inode_get_atime_sec(const struct inode *inode)
+ {
+-	return inode->__i_atime.tv_sec;
++	return inode->i_atime_sec;
+ }
+ 
+ static inline long inode_get_atime_nsec(const struct inode *inode)
+ {
+-	return inode->__i_atime.tv_nsec;
++	return inode->i_atime_nsec;
+ }
+ 
+ static inline struct timespec64 inode_get_atime(const struct inode *inode)
+ {
+-	return inode->__i_atime;
++	struct timespec64 ts = { .tv_sec  = inode_get_atime_sec(inode),
++				 .tv_nsec = inode_get_atime_nsec(inode) };
++
++	return ts;
+ }
+ 
+ static inline struct timespec64 inode_set_atime_to_ts(struct inode *inode,
+ 						      struct timespec64 ts)
+ {
+-	inode->__i_atime = ts;
++	inode->i_atime_sec = ts.tv_sec;
++	inode->i_atime_nsec = ts.tv_nsec;
+ 	return ts;
+ }
+ 
+@@ -1538,28 +1546,32 @@ static inline struct timespec64 inode_set_atime(struct inode *inode,
+ {
+ 	struct timespec64 ts = { .tv_sec  = sec,
+ 				 .tv_nsec = nsec };
++
+ 	return inode_set_atime_to_ts(inode, ts);
+ }
+ 
+ static inline time64_t inode_get_mtime_sec(const struct inode *inode)
+ {
+-	return inode->__i_mtime.tv_sec;
++	return inode->i_mtime_sec;
+ }
+ 
+ static inline long inode_get_mtime_nsec(const struct inode *inode)
+ {
+-	return inode->__i_mtime.tv_nsec;
++	return inode->i_mtime_nsec;
+ }
+ 
+ static inline struct timespec64 inode_get_mtime(const struct inode *inode)
+ {
+-	return inode->__i_mtime;
++	struct timespec64 ts = { .tv_sec  = inode_get_mtime_sec(inode),
++				 .tv_nsec = inode_get_mtime_nsec(inode) };
++	return ts;
+ }
+ 
+ static inline struct timespec64 inode_set_mtime_to_ts(struct inode *inode,
+ 						      struct timespec64 ts)
+ {
+-	inode->__i_mtime = ts;
++	inode->i_mtime_sec = ts.tv_sec;
++	inode->i_mtime_nsec = ts.tv_nsec;
+ 	return ts;
+ }
+ 
+@@ -1573,34 +1585,30 @@ static inline struct timespec64 inode_set_mtime(struct inode *inode,
+ 
+ static inline time64_t inode_get_ctime_sec(const struct inode *inode)
+ {
+-	return inode->__i_ctime.tv_sec;
++	return inode->i_ctime_sec;
+ }
+ 
+ static inline long inode_get_ctime_nsec(const struct inode *inode)
+ {
+-	return inode->__i_ctime.tv_nsec;
++	return inode->i_ctime_nsec;
+ }
+ 
+ static inline struct timespec64 inode_get_ctime(const struct inode *inode)
+ {
+-	return inode->__i_ctime;
++	struct timespec64 ts = { .tv_sec  = inode_get_ctime_sec(inode),
++				 .tv_nsec = inode_get_ctime_nsec(inode) };
++
++	return ts;
+ }
+ 
+ static inline struct timespec64 inode_set_ctime_to_ts(struct inode *inode,
+ 						      struct timespec64 ts)
+ {
+-	inode->__i_ctime = ts;
++	inode->i_ctime_sec = ts.tv_sec;
++	inode->i_ctime_nsec = ts.tv_nsec;
+ 	return ts;
+ }
+ 
+-/**
+- * inode_set_ctime - set the ctime in the inode
+- * @inode: inode in which to set the ctime
+- * @sec: tv_sec value to set
+- * @nsec: tv_nsec value to set
+- *
+- * Set the ctime in @inode to { @sec, @nsec }
+- */
+ static inline struct timespec64 inode_set_ctime(struct inode *inode,
+ 						time64_t sec, long nsec)
+ {
 
-Best regards,
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.41.0
 
 
