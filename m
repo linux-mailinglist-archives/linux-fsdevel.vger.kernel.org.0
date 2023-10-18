@@ -1,121 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-648-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-650-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 942DB7CDCB2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 15:07:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 933DC7CDD8A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 15:40:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B75561C20D2A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 13:07:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9C5F281BC8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 13:40:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0646035897;
-	Wed, 18 Oct 2023 13:07:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 685FA358BE;
+	Wed, 18 Oct 2023 13:40:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="ONp22F3X";
-	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="GYA1fN8K"
+	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="Z2kYEgzy";
+	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="LA34Q5J3"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8275515ACE;
-	Wed, 18 Oct 2023 13:07:16 +0000 (UTC)
-X-Greylist: delayed 62 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 18 Oct 2023 06:07:14 PDT
-Received: from alln-iport-3.cisco.com (alln-iport-3.cisco.com [173.37.142.90])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 654B6F7;
-	Wed, 18 Oct 2023 06:07:14 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7111F18636;
+	Wed, 18 Oct 2023 13:40:14 +0000 (UTC)
+Received: from alln-iport-1.cisco.com (alln-iport-1.cisco.com [173.37.142.88])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E336ABA;
+	Wed, 18 Oct 2023 06:40:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=cisco.com; i=@cisco.com; l=5728; q=dns/txt; s=iport;
-  t=1697634434; x=1698844034;
+  d=cisco.com; i=@cisco.com; l=5941; q=dns/txt; s=iport;
+  t=1697636412; x=1698846012;
   h=from:to:cc:subject:date:message-id:references:
    in-reply-to:content-id:content-transfer-encoding:
    mime-version;
-  bh=S36GLf7gs9lUZj6Y6REPtD8HI2srWr3Gx+iY0eF/q/Q=;
-  b=ONp22F3XcX6UTyrnpuhIV1QABUIl4TMUD69Y05SRSrrzLpsZFPLrH/sT
-   IeexpFNMPn35+BPEPquyjgCpYvKbI27HjziIw3PRR6bSl8e+Tv+QMG2BT
-   ogBJYq/29PGKTGHcgnJYlX8yz11pOhS7jCv01YbJULhzXU7xgDjOOcdkA
-   k=;
-X-CSE-ConnectionGUID: A80esMR8Qe6+tbh+6hoj+A==
-X-CSE-MsgGUID: 2dESGmFbRLupdVf5swWXdQ==
-X-IPAS-Result: =?us-ascii?q?A0ClAAAN1y9l/4ENJK1aHQEBAQEJARIBBQUBQCWBFggBC?=
- =?us-ascii?q?wGBZiooB3ECWSoSSIgeA4ROX4ZAgiMDgRORRIskgSUDVg8BAQENAQExEwQBA?=
- =?us-ascii?q?YUGAocUAiY0CQ4BAgICAQEBAQMCAwEBAQEBAQECAQEFAQEBAgEHBIEKE4VoD?=
- =?us-ascii?q?YZMAQEBAQMSFRMGAQE3AQ8CAQgVAx4QMiUCBA4FCBqCBFmCXgMBpw4BgUACi?=
- =?us-ascii?q?ih4gQEzgQGCCQEBBgQFSbIjCYFIAYgJAYoGJxuBSUSBFYE8gTc4PoJhAoFgh?=
- =?us-ascii?q?iEig3aDG4FkPAUCMoEKDAmBA4J6NSqBFIl5XiJHcBsDBwOBAxArBwQvGwcGC?=
- =?us-ascii?q?RYYFSUGUQQtJAkTEj4EgWeBUQqBBj8PDhGCQyICBzY2GUuCWwkVDDRNdhAqB?=
- =?us-ascii?q?BQXgRIEah8VHhIlERIXDQMIdh0CESM8AwUDBDQKFQ0LIQUUQwNHBkoLAwIcB?=
- =?us-ascii?q?QMDBIE2BQ0eAhAaBg4nAwMZTQIQFAMeHQMDBgMLMQMwgR4MWQNsHzYJTANEH?=
- =?us-ascii?q?UADeD01FBttnUWCaHsTASVaMRRrHB0RlgsBjBSiYgqEDIwBlR5JA4VBowSBD?=
- =?us-ascii?q?y6YDpZWjGCEcAIEAgQFAg4BAQaBYzyBWXAVO4JnCUkZD44gCRmDVoYViWR2O?=
- =?us-ascii?q?wIHCwEBAwmLSgEB?=
-IronPort-PHdr: A9a23:coPg/hxROC7XZK7XCzMRngc9DxPP8539OgoTr50/hK0LK+Ko/o/pO
- wrU4vA+xFPKXICO8/tfkKKWqKHvX2Uc/IyM+G4Pap1CVhIJyI0WkgUsDdTDCBjTJ//xZCt8F
- 8NHBxd+53/uCUFOA47lYkHK5Hi77DocABL6YANwJ+/oHofJp8+2zOu1vZbUZlYAiD+0e7gnN
- Byttk2RrpwPnIJ4I6Atyx3E6ndJYLFQwmVlZBqfyh39/cy3upVk9kxt
-IronPort-Data: A9a23:OX5S/6JlItph7CMzFE+RjZQlxSXFcZb7ZxGr2PjKsXjdYENShTRWn
- WAZWT2FMqqLZjP8cohzYd7lpkxQvZ7VztU2GlAd+CA2RRqmiyZq6fd1j6vUF3nPRiEWZBs/t
- 63yUvGZcYZpCCea/k/9WlTYhSEU/bmSQbbhA/LzNCl0RAt1IA8skhsLd9QR2uaEuvDnRVvW0
- T/Oi5eHYgT8g2ckajl8B5+r8XuDgtyj4Fv0gXRmDRx7lAe2v2UYCpsZOZawIxPQKmWDNrfnL
- wpr5OjRElLxp3/BOPv8+lrIWhFirorpAOS7oiE+t55OLfR1jndaPq4TbJLwYKrM4tmDt4gZJ
- N5l7fRcReq1V0HBsLx1bvVWL81xFYQWoLLcBELviMHNjFHMcziyw/JsT2hjaOX0+s4vaY1P3
- fUcLDZIZReZiqfnhrm6UeJrwM8kKaEHPqtG5Somlm+fVK1gGMqSK0nJzYcwMDMYj8VPFuvab
- tExYjt0ZxOGaBpKUrsSIMtgwrf42yiuKFW0rnrPqYcMzG39xjZVzaDhDtSIYcO1dclsyxPwS
- mXuuj6R7gshHMaC0ibA/HW2w+vOmz7rcJwdGaf+9fNwhlCXgGsJB3U+UVq9vOn8hFWyVsxSL
- 2QK9Sc066s/7kqmSp/6RRLQnZKflhcYX9wVGOog5UTcjKHV+A2eQGMDS1atdeAbiSP/fhRzv
- nehlNLyDjspu7qQIU9xPJ/Pxd9uEUD59VM/WBI=
-IronPort-HdrOrdr: A9a23:LWJuNal3Lmu2SG1406taIQyyk2vpDfNQiWdD5ihNYBxZY6Wkfp
- +V7ZcmPE7P6Ar5BktApTnZAtjwfZq9z/JICYl4B8baYOF/0FHYYr2KnrGSswEIfBeOt9K1tJ
- 0QPJSWbeeAb2SS4vyKnTVQf+xQp+VvtZrY+9s2rE0dDT2CCZsQkzuRYzzzeiYZNWw2YabRVq
- DsmfavzADQAUj/G/7LfEXtKNKz3OEj+qiWByIuNloM0iXLpzWu77LxDhif2Tkjcx4n+90f2F
- mAuTbUooG4vd+G6jK07QLuBpJt9+fJ+59mPoihm8IVIjLjhkKDf4J6QYCPuzgzvaWG9EsquM
- OkmWZjA+1Dr1fqOk2lqxrk3AftlBw07WX59FOeiXz/5eTkWTMBDdZbj44xSGqd16NghqA57E
- t45RPei3NlN2KYoM073amRa/herDvynZPlq59Js5UQa/pFVFYbl/1twKocKuZzIMu90vFlLA
- GrZ/usuMq/tjihHi3kl3gqz9q2UnspGBCaBkAEp8yOyjBT2Gt01k0C2aUk7z09Hb8GOtF5Dt
- 7/Q+9VvaALStVTYbN2Be8HT8fyAmvRQQjUOGbXJVj8DqkIN3/EtpayudwOla2XUY1NyIF3lI
- XKUVteu2J3c0XyCdeW1JkO9hzWWm2yUTnk18kb7Zlkvb/3QqbtLES4OR0Tutrlp+9aDtzQWv
- 61Np4TC/j/LXH2EYIMxAH6U4k6EwhWbCTUgKdMZ7ujmLO9FmSxjJ2vTB/6HsuYLQoZ
-X-Talos-CUID: 9a23:D5/qVGHs2LYCy1QBqmJOpBYZAeUfIkTQkjTMKU/7V2ZuSv68HAo=
-X-Talos-MUID: 9a23:5q2SJghLkVChRwhsrGTWY8MpbstF2IurJko3tYget/eKaDdvBAeRtWHi
+  bh=+zDupWqIRJNfuG+oj4XxwiBaZkueALv8xAxkFTk80hU=;
+  b=Z2kYEgzytNbe11G9jcSAJMnXK3RhvWiJjo4Uk7IW6IZfWZcUnR3vjWyj
+   9BKLizMVL4kjAzKGlMBT6XtWtiV8kem1iJCpGHr175WIw/HhijVmnZjh/
+   K+EOQsW1TK7OPC+q2z680H11X4FzqNDlv9Kp7ZRSgC61/TlTD8YG4h7BO
+   8=;
+X-CSE-ConnectionGUID: AD89X5dbSkSsV/WH+airlg==
+X-CSE-MsgGUID: mbrfXLYRTQC0KR4DMIHCRQ==
+X-IPAS-Result: =?us-ascii?q?A0A1AwDd3y9lmIMNJK1agQklgSqBZ1J4AlkqEkiIHgOFL?=
+ =?us-ascii?q?YZAgiMDkleLJIElA1YPAQEBDQEBOQsEAQGFBgKHFAImNAkOAQICAgEBAQEDA?=
+ =?us-ascii?q?gMBAQEBAQEBAgEBBQEBAQIBBwQUAQEBAQEBAQEeGQUQDieFaA2GTAEBAQEDE?=
+ =?us-ascii?q?hUTBgEBNwEPAgEIFQMeEDIlAgQOBQgaglwBgl4DARCnBAGBQAKKKHiBATOBA?=
+ =?us-ascii?q?YIJAQEGBAVJewGxJwmBSIgKAYoGJxuBSUSBFYMrPoJhAQECgTYoLAyGC4N2h?=
+ =?us-ascii?q?H88BxQEGoIigno1KoEUiXleIkdwGwMHA4EDECsHBC8bBwYJFhgVJQZRBC0kC?=
+ =?us-ascii?q?RMSPgSBZ4FRCoEGPw8OEYJDIgIHNjYZS4JbCRUMNE12ECoEFBeBEgRqHxUeE?=
+ =?us-ascii?q?iUREhcNAwh2HQIRIzwDBQMENAoVDQshBRRDA0cGSgsDAhwFAwMEgTYFDR4CE?=
+ =?us-ascii?q?BoGDicDAxlNAhAUAx4dAwMGAwsxAzCBHgxZA2wfNglMA0QdQAN4PTUUG22cW?=
+ =?us-ascii?q?G2CIiYgexMBKyKBYi4LOpJ/gmMBjBSiYgqEDIwBlR5JA4NrgVaSC5IImDyLG?=
+ =?us-ascii?q?YJMiHGMRYULAgQCBAUCDgEBBoFjOoFbcBWDIgkWMxkPjjmDX4RZgTw8iSh2O?=
+ =?us-ascii?q?wIHCwEBAwmIb4JbAQE?=
+IronPort-PHdr: A9a23:JlYbLxDLjfghbtwNfbF/UyQVoBdPi9zP1kY98JErjfdJaqu8us6kN
+ 03E7vIrh1jMDs3X6PNB3vLfqLuoGXcB7pCIrG0YfdRSWgUEh8Qbk01oAMOMBUDhav+/Ryc7B
+ 89FElRi+iLzKlBbTf73fEaauXiu9XgXExT7OxByI7H8H4/ZksC+zMi5+obYZENDgz/uKb93J
+ Q+9+B3YrdJewZM3M7s40BLPvnpOdqxaxHg9I1WVkle06pK7/YVo9GJbvPdJyg==
+IronPort-Data: A9a23:2s6oNKqwr0jl51bLd+6s0Q8t0npeBmLOZRIvgKrLsJaIsI4StFCzt
+ garIBmAOPeJNmHwc4t0bt+28xlTvpTSx9NlSVY/ri4yQXhB9+PIVI+TRqvS04x+DSFioGZPt
+ Zh2hgzodZhsJpPkjk7wdOCn9T8ljf3gqoPUUIbsIjp2SRJvVBAvgBdin/9RqoNziLBVOSvV0
+ T/Ji5OZYATNNwJcaDpOsPvb8UM35pwehRtB1rAATaET1LPhvyF94KI3fcmZM3b+S49IKe+2L
+ 86rIGaRpz6xE78FU7tJo56jGqE4aue60Tum1hK6b5Ofbi1q/UTe5EqU2M00Mi+7gx3R9zx4J
+ U4kWZaYEW/FNYWU8AgRvoUx/yxWZcV7FLH7zXeXmODDnn2bf3HXwM51MgYJHc4R+/xzDjQbn
+ RAYAGhlghGrjuayxvewTfNhw51lJ8jwN4RZsXZlpd3bJa95GtaYHeOTvpkBh25YasNmRZ4yY
+ +IQbDtkcRDJeDVEO0wcD9Q1m+LAanzXKm0B8wLF/fJri4TV5Al7yrbdFOvvRuWhHeZvwmq9h
+ 0LtxV2sV3n2M/TGmWbarRpAnNTnhz7gRMccE6f98v9snU272GMeElsVWEG9rP3/jVSxM/pbK
+ koJ6m8gtqQ/6kGvZsfyUgf+o3OeuBMYHd1KHIUHBBqlw67Q5UOSAXIJC2cHY909v8hwTjsvv
+ rOUoz/3LRVD4OylFH6XzbSvtg31BghWJG4YYSBRGGPp/OLfiI00ixvOSPNqH6i0ksD5FFnML
+ 9ai8XdWa1I70JFj6kmrwbzUq2n3/8SUF2bZ8i2SDz39sFIoDGKwT9HwgWU3+8qsO2pworOpk
+ HUCh8+YhAzlJc7TznXVKAnh8U3A2hpoGDTYhVgqFJ47+nH0vXWiZotXpjp5IS+F0/romxe3O
+ yc/WisIu/e/2UdGi4csM+pd7Oxxk8Dd+SzNDKy8Uza3SsEZmPW71C9vf1WM+GvmjVIhl6oyU
+ b/CL5fzUChFVfg5lWrnLwv47VPN7n1vrY80bc6jpylLLZLFDJJoYe5faQDXPrxRAF2s+VyPr
+ 76zyPdmOz0GALGhPUE7AKYYLEsBKjAgFIvqpslMHtNv0SI4cFzN/8T5mOt7E6Q8xvw9vr6Rr
+ hmVBBQCoHKh3iKvFOl/Qi05AF8Zdcwh/StT0O1FFQvA5kXPlq71svdHLcVuIOl8nAGhpNYtJ
+ 8Q4lwy7Kq0nYhzM+i8Wat/2q4kKSfhhrVjm0/aNCNTnQ6Ndeg==
+IronPort-HdrOrdr: A9a23:4QxTkKsebodQenDy8Gw/qLkQ7skCCoAji2hC6mlwRA09TyXGrb
+ HMoB1L73/JYWgqOU3IwerwSZVoIUmxyXZ0ibNhRItLxGHdySWVxfJZnPvfKlrbamzDH49mpO
+ hdms1Feb/N5DdB/LvHCWWDYrEdKZy8gd6VbITlvjdQpGNRGt1dBm5CY27xfDwSNW177NgCZe
+ WhD6F81kKdkAEsH76G7w4+LpP+TrPw5fTbSC9DLSQKrCOJijSl4qP7FR+34jcyOgkk/Z4StU
+ L+v0jc/KuMj9GXoyWw64bU1ftrseqk7uEGKN2Hi8ATJDmpoB2vfp5dV7qLuy1wiP2z6X4x+e
+ O84SsIDoBW0Tf8b2u1qRzi103LyzA18ULvzleenD/KvdH5fjQnEMBM7LgpNycxqnBQ+O2U4p
+ g7mV5xhKAnVC8oWx6Nv+QgYisa0XZcZ0BSytL7wUYvC7f2I4Uh3rD3tHklYqvoWhiKq7zO1I
+ JVfZ3hDDE8SyLGU1nJ+mZo29CiRXI1A1OPRVUDoNWc13xMkGl+1FZw/r1Uop4szuN0d3B/3Z
+ WODo140LVVCsMGZ6N0A+kMBcOxF2zWWBrJdGafO07uGq0LM2/E78ef2sR42Mi6PJgTiJcikp
+ XIV11V8WY0ZkL1EMWLmJlG6ArETmmxVSnkjste+596sLvhQ6eDC1zPdHk+18+75/kPCMzSXP
+ i+fJpQHv/4NGPrXZ1E2gXvMqMiYEX2kPdlzOrTd2j+1f4jcLeaw9AzWMyjUIbQLQ==
+X-Talos-CUID: 9a23:N9n0/mDVC8p/rC36EwBLpB8kR8wvSX7m10mXHG/7AGdzTLLAHA==
+X-Talos-MUID: =?us-ascii?q?9a23=3A7y17FgzCt1Ik3KnjZNdKrcOY2oiaqKGkEk49taQ?=
+ =?us-ascii?q?8h/CvbQ9KZxu4rRSceLZyfw=3D=3D?=
 X-IronPort-Anti-Spam-Filtered: true
-Received: from alln-core-9.cisco.com ([173.36.13.129])
-  by alln-iport-3.cisco.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2023 13:06:11 +0000
-Received: from alln-opgw-1.cisco.com (alln-opgw-1.cisco.com [173.37.147.229])
-	by alln-core-9.cisco.com (8.15.2/8.15.2) with ESMTPS id 39ID6BXS007045
+Received: from alln-core-1.cisco.com ([173.36.13.131])
+  by alln-iport-1.cisco.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2023 13:40:10 +0000
+Received: from rcdn-opgw-2.cisco.com (rcdn-opgw-2.cisco.com [72.163.7.163])
+	by alln-core-1.cisco.com (8.15.2/8.15.2) with ESMTPS id 39IDe7lL017203
 	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 18 Oct 2023 13:06:11 GMT
-X-CSE-ConnectionGUID: 9d+jYpKMTFKaMH06PccHpQ==
-X-CSE-MsgGUID: +Kf5Q5feTwWKwfDCVOlkVw==
-Authentication-Results: alln-opgw-1.cisco.com; dkim=pass (signature verified) header.i=@cisco.com; spf=Pass smtp.mailfrom=amiculas@cisco.com; dmarc=pass (p=quarantine dis=none) d=cisco.com
+	Wed, 18 Oct 2023 13:40:10 GMT
+X-CSE-ConnectionGUID: jqzO5Z+FSa+kJRXkLVI1fA==
+X-CSE-MsgGUID: /mKrw47zRxuwML92bx5p2A==
+Authentication-Results: rcdn-opgw-2.cisco.com; dkim=pass (signature verified) header.i=@cisco.com; spf=Pass smtp.mailfrom=amiculas@cisco.com; dmarc=pass (p=quarantine dis=none) d=cisco.com
 X-IronPort-AV: E=Sophos;i="6.03,235,1694736000"; 
-   d="scan'208";a="5251203"
-Received: from mail-dm6nam04lp2041.outbound.protection.outlook.com (HELO NAM04-DM6-obe.outbound.protection.outlook.com) ([104.47.73.41])
-  by alln-opgw-1.cisco.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2023 13:06:10 +0000
+   d="scan'208";a="5174216"
+Received: from mail-mw2nam12lp2041.outbound.protection.outlook.com (HELO NAM12-MW2-obe.outbound.protection.outlook.com) ([104.47.66.41])
+  by rcdn-opgw-2.cisco.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2023 13:40:05 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Vbj5l8kQ4yKXHs7+FziCfqt3vtAIIREXmVsw6xN11+hs4pZebtqQTpG9IZgRX5eGLXDfkIEmpKaGw0TdCc4g3y21GMJLwKeLdUKgSsAEiHVRyp36vZJMwKfgftFTw/wnhnCdHY7KqrvbsaCD1nUmYEk77alqIDIISE3PAdS8NFTnv4EjJ3IE/6H6nxXH2SWrJGFGucsbkT5EYFCroY+0iVFJXvcAXBs+YD3ckIIQCpsAQjZaPlQSP8SYWoNsXImwdB1dVrlru5nukR6s83zUklbrrrRXxI0f0xsAhe14hi2Ue4klXsAcqHMK2vWP1mYw9ah8EEECx1kGqT6IgxZkNQ==
+ b=GZtWRJBEeIhREi46ae7vZ9/VkK3xO6hmBOC1/qBscF0FMHcUToIckOOJQQ+wH5E9lTsdqAl+NaKYrloCW7Td+aGr4OhYV2+0sLPj4sdxJgpEdhYcyr0UzMCyV7xs/DLtajW8UqAmOzP6vqxzatoG7IvNEMzGG3yqelMOclFucrEbEPQoypdRs4YPVqXU8gSF2FpWPUdv3LqXF5yWvVDeY/w6NeuRT7p7AH1ya+V12B1wEzgaC/7/7PKn+MQIJbGTUlOWBvcblTP39+mxwCZ/HXbkKyei3untjpr10QMUKA8/AgZ+xQAee/uyQE82Cpxmf/6/v3Hv4NYHQIvvyMeU6g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=S9JCu/NidTmmrhgwctRTZ7nlpmiLBh+UX0+ZuJhJc4c=;
- b=SvUiqP2fSzzSfy/kA88RLbtQHdoTilzb3jaoMUkIuIgxBUkIhjZuqpewlTY4TJa9wTSO1MRnN1vV9Slpg85pxDpobo03qixkEFkTvWuQIcClp/4fvsNkWO7EAYvjONwaplZROqND3JMB8iHHdsPwbkQVFaZ09oEuZiXNVLgH3sOhlORD5hW6mStmqjhN6v1wbjR6q399MR6WgBZaJoG9D6mFqM36Zhk3PgiyQk4vSBbcSjWGg17xLtk62sz3QAwR33cUlgjWGQyVhcWLUEmlkm+gxj+C8pY4H3tYxCzN1EySh/p2mMJ1FCO+v8kNokwDQbBOcG8rZXe4mOb2M/A6SA==
+ bh=6cNeg3t5lkLQUIWqXXHEdf/im3bp86FEMFBzVuh2hjc=;
+ b=kvmOVM820lSHYhRLoYRyTk1TR4W9Nw9DGn/MdL6R+iMacHN6dZ9n1O7I3Kxbty2jdJbfAJeLJYd0nvG5pDfc6XKqbF8+6iQCMcBLLiJ9Wyb5WBMFMQVkdBixit9OI08We7DFsRG040TmOFgwXkqRSbe1NDhwmYmwn6nvoiVzYeeNU2xdGiK4qnaSimUmLssdw8Bc0IyPW7vOWaj3rgzdJaN769nUbr2MJuQutFOmiZZwG6/XJemYfDeu5LVJYTaPscocSkawcnBf3MsRHOA8NJ9E9d9NEnCSf6jhRSDQgMCy646sXRBcEzefLpGcLi/Ug7zxhUkTm6NycRePDiQdZw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=cisco.com; dmarc=pass action=none header.from=cisco.com;
  dkim=pass header.d=cisco.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cisco.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=S9JCu/NidTmmrhgwctRTZ7nlpmiLBh+UX0+ZuJhJc4c=;
- b=GYA1fN8K0LReSmvZVyKliGdC6Md3MbCL/PFAXj/QbAH0RG4pgnmo48LrT6armSyNTgY+R/9XksZBzcbyz4ka5wGFaSj/g8/XPnOSpVBKjpffVRxvpWViuLzck7E6uq1FNqC2mIKitLmf3xR+28MIqNtZ47p81iGVaak8PlfpaHE=
+ bh=6cNeg3t5lkLQUIWqXXHEdf/im3bp86FEMFBzVuh2hjc=;
+ b=LA34Q5J3F6ZpI2/e9fKxCptRmZk5V/z1IhJAcO+xCl6fzQBO744pxZed6sFSzkL6GCCSgX6rNTTFvrkM0QJWsP0o33Vrvq37noTwKNr7WA9Ucg0f5zD5/QYI0/er7XcnP65ZXQOpAqd4dB4+i9s5Qpf35clR+n2vUjGMIboJvIA=
 Received: from CH0PR11MB5299.namprd11.prod.outlook.com (2603:10b6:610:be::21)
- by SA1PR11MB8521.namprd11.prod.outlook.com (2603:10b6:806:3ab::22) with
+ by CH3PR11MB7868.namprd11.prod.outlook.com (2603:10b6:610:12e::5) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6907.21; Wed, 18 Oct
- 2023 13:06:09 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6863.47; Wed, 18 Oct
+ 2023 13:40:03 +0000
 Received: from CH0PR11MB5299.namprd11.prod.outlook.com
  ([fe80::6c6c:63b0:2c91:a8d9]) by CH0PR11MB5299.namprd11.prod.outlook.com
  ([fe80::6c6c:63b0:2c91:a8d9%7]) with mapi id 15.20.6907.021; Wed, 18 Oct 2023
- 13:06:09 +0000
+ 13:40:01 +0000
 From: "Ariel Miculas (amiculas)" <amiculas@cisco.com>
 To: Wedson Almeida Filho <wedsonaf@gmail.com>
 CC: Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -129,59 +136,58 @@ CC: Alexander Viro <viro@zeniv.linux.org.uk>,
         "rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>,
         Wedson
  Almeida Filho <walmeida@microsoft.com>
-Subject: Re: [RFC PATCH 11/19] rust: fs: introduce `FileSystem::read_xattr`
-Thread-Topic: [RFC PATCH 11/19] rust: fs: introduce `FileSystem::read_xattr`
-Thread-Index: AQHaAcPc4i2M1EsASUmwgM+UiRg3wg==
-Date: Wed, 18 Oct 2023 13:06:09 +0000
-Message-ID: <jbhv4sp4ojqbfusbqpwxgi3n2wsnnwxeax7tmdvkewwymbofwi@mqdgc7oym2tb>
+Subject: Re: [RFC PATCH 00/19] Rust abstractions for VFS
+Thread-Topic: [RFC PATCH 00/19] Rust abstractions for VFS
+Thread-Index: AQHaAciXnZKobs/TAU2550HvQLRRhA==
+Date: Wed, 18 Oct 2023 13:40:01 +0000
+Message-ID: <fglmouoerwv2wedf5kmfyggalcs5hbdhru5ms4jqftlie6ta5a@2726hqdlcste>
 References: <20231018122518.128049-1-wedsonaf@gmail.com>
- <20231018122518.128049-12-wedsonaf@gmail.com>
-In-Reply-To: <20231018122518.128049-12-wedsonaf@gmail.com>
+In-Reply-To: <20231018122518.128049-1-wedsonaf@gmail.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach:
 X-MS-TNEF-Correlator:
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CH0PR11MB5299:EE_|SA1PR11MB8521:EE_
-x-ms-office365-filtering-correlation-id: 1b8aad0c-478c-45c7-5c5e-08dbcfdaff12
+x-ms-traffictypediagnostic: CH0PR11MB5299:EE_|CH3PR11MB7868:EE_
+x-ms-office365-filtering-correlation-id: fcaf0d34-221b-4760-53bd-08dbcfdfba70
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
 x-microsoft-antispam-message-info:
- DjLovFOBg1OH2s+2t9/xNilbaI5wAba7T8jMSE0Qx7gLfhR+iZCQVsN7LKsoO2kE9ycpA4mIVl/w7GfEizTlqQ1JnJPPKaOUX9jo8YPIMvD3+EVh/zko+yuDHdPcHhOrIK4q7+WBgKYcjRCRt+zv05BICbD30YDWSFlWez4TwNyi3YPsmzpSzYRi4+gY5cW10JP6jA0QSkLfewcVVgq+s9FrIw6DiIOQ/LWGPyKjc1H+3wABrKT6Oyzdb+ag/DemCSHyB6/DhwiTwP7Pu+pfDUzUv62DVN11gHNH9TOgHE33vihbRGWY6wIejkN6c7ixNFefuz/cYnweeD4H7kOTF9wxYCc3k3dpkSkJrLp0qhFcR7pxla39uC6lIMYxMDZe5jihkwbVNCvZlOs4lSO8/pbgnTFwu0O+YvBkSHCHBj+fFClRXbL8DtoKbglzegF9+jzh3ht/joyCPadbCxy0o5tfJQr9tMtp5J4a9OSprE5vuddiTZ2COHjhCCDzmjEIUir9+VdAnd+6Webd09mzRX85tui/B3Yz0J/RAOQ6VlU07QmNqYGFLG2O2w105Kd95ktiodcoa02/Pj6SdkGw32lJowg3XMOtNMS1D8Wp7E6LBymV6ww0p7/66FF+kRrI/NQn8uiv216+UM7lo52+dA==
+ jgHZ0Hf8poqO9UQODbevn4bKFkVJkkPR96byBjG3vBlb/NnCwVQCydYasZGJnl7DF44uLLpIIju7VVAHEfLb2NZrZ82Y7ZtO4UZU7q4zqAQSRmkSZal1BlVk/P7CV3y42CJGqmUt+24IKE2etllq3mNhgaadSB2DsNNOsw2VycQW6hZIiYsZkZmhWvxLEldNueN/jzl+5YuRLw/fcuFlCewRReA7Ma5o6CAR3og6/t++MrB1O09hWOlg6/fsqDcMRNzvglSikblo9UvDlPaJMVskpCUkb0Z4+UjeykRwp5Lfcxz5xA+RGRNbFe+unIyf+8h2D3ACls2cb85oOKaoN4YbZrYfdCTjX1U9UT2SctIt/Wmba6ez/QNEPtuAn2+dnpURPVmWsu23sfPdSxLqMckVUy5zOjKbsKEe9wNpFayjFUfsR07Z5DYhYoOuOh6iEM5AraZaRWgKs2PkiBRDznfwgXS5IM6DKEkETG75YxmNmBRTd2R6U0UX2WD+e7HZ7uDz7UnOITBSY0AzQSaXtIEEAyXKp39bM4nGkBObBqi8t9g4iztY/lEtm9EVkQ+7gymHZQ5Bq2gjQqPBODHL/UGQa+yOgWRi34l5BKJmAfA/oZq9Qd2kaWp12BR0bxE/PGeU3QWhUeS8iQvnUzTCfw==
 x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR11MB5299.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7916004)(396003)(39860400002)(376002)(136003)(366004)(346002)(230922051799003)(1800799009)(186009)(451199024)(64100799003)(6506007)(33716001)(2906002)(8676002)(8936002)(4326008)(41300700001)(6512007)(5660300002)(64756008)(54906003)(91956017)(76116006)(66446008)(66946007)(66556008)(6916009)(66476007)(6486002)(316002)(478600001)(9686003)(71200400001)(38070700005)(26005)(38100700002)(83380400001)(86362001)(122000001)(81973001);DIR:OUT;SFP:1101;
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR11MB5299.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7916004)(136003)(346002)(376002)(396003)(366004)(39860400002)(230922051799003)(186009)(64100799003)(1800799009)(451199024)(5660300002)(966005)(6506007)(8936002)(8676002)(83380400001)(2906002)(66946007)(41300700001)(76116006)(91956017)(66556008)(66476007)(54906003)(66446008)(6916009)(64756008)(316002)(122000001)(86362001)(4326008)(478600001)(33716001)(9686003)(38070700005)(38100700002)(6512007)(26005)(71200400001)(6486002);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?Gf+YB7Bt8+E9t3qq7uTT8FADhr3gwWm9W6IDKqiZRu4LBEtSTOu1nqxOHHe/?=
- =?us-ascii?Q?kz/PqRV4eGn/2Pywzody5Xe2nksT4BYNG6OwdUTc8MPF7iIrp8Vwi706TKnE?=
- =?us-ascii?Q?0At6R1CNtam/iPC6rgESTCR0n23Gcm/QejL1seb2X0yN+LeqtamQHv0JYMcq?=
- =?us-ascii?Q?ahoD7NUwOQk1S3rFKMHFzMql9zdWWdh4Ok1Kw5Atde8EhA5fbdGb14uCecog?=
- =?us-ascii?Q?mtJ/5yI14+gQnaqWzXA9BHMK6puEILSduMjRYYA9ke1NhjLUsla0fH2EMUH7?=
- =?us-ascii?Q?gfRBGUkR7/mppF2pp9OqE7RQePJ6YskyH5GCmcUqrk+Hy6dLNr6+23HoXlBX?=
- =?us-ascii?Q?5e6LwS/kJtwNJD/HMpUrndmarOlsyHRDCQJL+YcU/FMPdOBmy1YQEkh1+u3/?=
- =?us-ascii?Q?K87Vwr9sjzTNjb8iReWDXp4pZC6tMFPnLFBhTsG/Y7dolzbma/hgrzKXKTWe?=
- =?us-ascii?Q?2tx5EzDQboyR0wXfwkjhR9WC8CZrpToawtag9ftBQk+j/QHQiAlJnAs5WH4Z?=
- =?us-ascii?Q?giSauz1mvnLSoRtuuTXa2SUU3tjFacOQgVo9PPbB+JtWk/z+Gpmv8RJurFzU?=
- =?us-ascii?Q?+D34JiTW2e2iDPjU1cbrzmj8I8MTTF6SlqaEFpBZP/iVPTDzlOzcc4Imlh1A?=
- =?us-ascii?Q?BS6T0au9aitEuA2QDqd+REbGF2B1ygfH681ac5RsIAcUAwtePZuMz8aG3/NR?=
- =?us-ascii?Q?f3HV0fYNnpNvfMi06lBuhjkfH5lgZs/bWkdJB7s942cvwz/SUmgdtoOV0GX2?=
- =?us-ascii?Q?dLLzcifUfPI0FMllnfDCCJHbkTn8iA9slFxA/F5SMelRp+8MzzkJ2NA8a/lc?=
- =?us-ascii?Q?TVAqv09yoYkrkmxl4MLhGih8eS1JBA+fNfRagA/q+O/dUtAEu4hCOqgHVK+Z?=
- =?us-ascii?Q?MCjpC5jYCTkKYp/rJZSazcGDQuLosQZSbmvL/5OeFjhTak8hiZc5oxUN6+RK?=
- =?us-ascii?Q?xu0QNvNHdExXBIUToT/9d/gs8W+bVFjDD2zDqOS6vUol5goKaLXLTPatZrju?=
- =?us-ascii?Q?ynwjkOkjqZZ3h+rCCNZGdwCMDbQJM7Ep4/4ah2MitgLAGjQqv1udS5CyDzsx?=
- =?us-ascii?Q?DqFpu8GtDJmbwZZgK6BGn9wAxIrx65h0g0WyXURDtvckekuGT7RrQcxWh8g/?=
- =?us-ascii?Q?fFnnue6cAB7zJBaWClOGPIRkkdMRbtYG5Yn/nirQ8PwhbQ1m/YPVGUOGKYkh?=
- =?us-ascii?Q?+TVvHJXPEV7JCVQtPtk7QVYyIx8UJbP4aKF/lf/W9ajCTQhq5bnUc8w1BEPJ?=
- =?us-ascii?Q?EeAM7Fd4g5pBAj0SelAL53KCnNODsGpqnEg3Un0km8XpbzVCnHXguWUma6fx?=
- =?us-ascii?Q?GMLsHr8wIGcJeQgW3Rr2iYIHdKyljybfyxM2wmB3PpDevhLAlNq+vrz0toU7?=
- =?us-ascii?Q?8kEUUC83oTe3qe62Z9UsYvW17rwFEMnBfmvHrvvPghoR5A0YWQOxt/s7L+oe?=
- =?us-ascii?Q?xyjgiI7RxcvseQORJa2KF8mVqHZr/eLbuGzlKDVxY9Xz3LnKYJc4GJxiXlge?=
- =?us-ascii?Q?xpE80TYbFmOQBsQ8mOX+vzsbOiG1TOw340Ioo1Lm7J6mcEcW8zC9v9UV66AX?=
- =?us-ascii?Q?GTtbcXVmJFq/th41Yi1ORRtEZe7MG7QVQDDhWbuI?=
+ =?us-ascii?Q?PXdIwPktq2qzAg/nVA5A06zlqYXHqYeKe624OWBygC20ADkAFEsJpLthRlvD?=
+ =?us-ascii?Q?juDzFY7lJKjh9GAEGUzJ3vGkhr2lAd1qpNQ4t6l1etKBthMtL+Gt30hnCb5X?=
+ =?us-ascii?Q?ToZ1q7P+G6BEMHdF5BA2Dd2Mr34K1LiCjPmFJ9oE2tkTUTOzMAzBZ7T3p7Vm?=
+ =?us-ascii?Q?ahHNWm2VA6+9WkAkkDkCr7MzAD9sLjY+sjLXkhCyR9eTG3/255k0F62rD8Pl?=
+ =?us-ascii?Q?x2JoOKV4YBX8+VFNQnl6rdnCqBfnta3FI1k9Dv3BNqPLLRXtBWG9LEcLwn/Z?=
+ =?us-ascii?Q?lyEm3UjADlLcMNHHNzHaX+ppvfnnVLnNZpIQ1gaS1e3glZkTPBrcuigo3FCW?=
+ =?us-ascii?Q?DDdVAecoeJL7D1O9PRJ4St2xVghJTs7qu2LN462lfiAUZwoTTuiaQo6kTo+h?=
+ =?us-ascii?Q?7IuNMw0uEGWNwzM04yJsgF/nOFv1NIwcUUUl7WGuYG2/Xow2PDc/tvy4rzpA?=
+ =?us-ascii?Q?A4cmIWpz6CtvfIJAGrglXKfw6nCPmrl4tMFdHfc2tWokW2SA/lnjjimbu5+v?=
+ =?us-ascii?Q?qd7uaPlPL+vfaG0waU+qjSFYADcPBNBoTn5IrfYq6xFlm46W14UISnCm9O4h?=
+ =?us-ascii?Q?JrQQYLo8JGhkx87cucaPl84dZL8LoC1mV+DTuaS/lHc8F1UEbyaI9/DjMnsc?=
+ =?us-ascii?Q?zg7NWKRmhxZ0yhFDW/mFH1Vu9zy3CiiksW5LmQiopESv40yZyEGWMeyFH/R/?=
+ =?us-ascii?Q?ASffwoBKDDG6M7JTIU6iUWzM7C0hOB5dByJ6N3MgfFoOQyNwlYy7znsozWEF?=
+ =?us-ascii?Q?0Rr5we9zpkzLaM4vXgYS8Feesad6IQeJFjt3Y1zKFbo1nDa5Fm0NpwJpyvPQ?=
+ =?us-ascii?Q?kX8derC7zLZaXMkiQzDzBZ1VPSqYkoIkkuRoVyf2fKNDELeS7P3nPod3L+bo?=
+ =?us-ascii?Q?EcCpXs6norvICFYacii6xhIAT65eoDw7xJEzH4lqRyMJGrum3sND/03nNX1+?=
+ =?us-ascii?Q?AyDmZlc0UnusD/gN++bu52ypL6/fDffdwGUUIHbvnJ9oolcDyMhv8VtN5Q40?=
+ =?us-ascii?Q?WUtRaUgQNut+oS9hmV5mF4jl2lZ6ftYtxU3EQH0r6bNrznagdsleVIzkv2x3?=
+ =?us-ascii?Q?vZMBd41dDdk1PGyF+cFHUJSpGgOFMRdo+d4V1enltquqsv33kG0N2WmgbZsI?=
+ =?us-ascii?Q?sUB0OTX0m15aoAbgZNQiU7SFtcmj6BJQLkGgHJsYaRRa50p5vKlkgdv6i9CC?=
+ =?us-ascii?Q?/RKNszrikC4Q1xeXcSDnEfYaT3doJCgIr/VMyUxV05m4x+JRCq5AMgyGa8cC?=
+ =?us-ascii?Q?W2TrMsZmZd7S88bx4SV5w7W8+2wLe5BcpzMgGPu1g74SgAQa+UvP6JOknxYB?=
+ =?us-ascii?Q?JmRxyZrJavKg/iOhJKSANs4245qZdAENEMoZkEtLsECjC4Qb/vNvotPXWfpK?=
+ =?us-ascii?Q?59veRHh+Q/Gu04JIlfigbEUDXnHngZWUsSDRpMdNV67O7AvNIEBCTdAgmsWP?=
+ =?us-ascii?Q?F55ozrPnqIF9kaOYhUNuBzIYdli7BaCn5lq2sE5I78cdxe4cPzDRnoJ35fJ1?=
+ =?us-ascii?Q?PnjJR259GHLeR29ZGPzWOx2FVJQ5Q5lkGmcNzUYUekNWFnsqE+Z8bdpW+giK?=
+ =?us-ascii?Q?nYC1D5NxzEC3uZ4tAS/YSdt7brPhyDnEOlpmtmdR?=
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <B238D3271DBE014D92711ED5891F9A22@namprd11.prod.outlook.com>
+Content-ID: <77CDEA352A647E49846C622FB3A1051B@namprd11.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -192,16 +198,16 @@ MIME-Version: 1.0
 X-OriginatorOrg: cisco.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: CH0PR11MB5299.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1b8aad0c-478c-45c7-5c5e-08dbcfdaff12
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Oct 2023 13:06:09.1773
+X-MS-Exchange-CrossTenant-Network-Message-Id: fcaf0d34-221b-4760-53bd-08dbcfdfba70
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Oct 2023 13:40:01.5582
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 5ae1af62-9505-4097-a69a-c1553ef7840e
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: IiczTZ17uwD2Y2XfrIqkKgNaxILOP7Am6rZr3l6GAc+eD9Zb1P0SxXbrTPGfiXd6VZaDWbnSCpKWbCLt3XTkUg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB8521
-X-Outbound-SMTP-Client: 173.37.147.229, alln-opgw-1.cisco.com
-X-Outbound-Node: alln-core-9.cisco.com
+X-MS-Exchange-CrossTenant-userprincipalname: QYU6g4KFDO3NLl3kvzTvYnQKlZ7R06fSAH5hcjtj+R//KgFOVvEW6ZV/wrdiCvnLmJPF9QuXRS7hVnOUYC4qDw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB7868
+X-Outbound-SMTP-Client: 72.163.7.163, rcdn-opgw-2.cisco.com
+X-Outbound-Node: alln-core-1.cisco.com
 X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIMWL_WL_MED,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
 	RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,
@@ -210,153 +216,161 @@ X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-On 23/10/18 09:25AM, Wedson Almeida Filho wrote:
+On 23/10/18 09:24AM, Wedson Almeida Filho wrote:
 > From: Wedson Almeida Filho <walmeida@microsoft.com>
 >=20
-> Allow Rust file systems to expose xattrs associated with inodes.
-> `overlayfs` uses an xattr to indicate that a directory is opaque (i.e.,
-> that lower layers should not be looked up). The planned file systems
-> need to support opaque directories, so they must be able to implement
-> this.
+> This series introduces Rust abstractions that allow page-cache-backed rea=
+d-only
+> file systems to be written in Rust.
 >=20
-> Signed-off-by: Wedson Almeida Filho <walmeida@microsoft.com>
-> ---
->  rust/bindings/bindings_helper.h |  1 +
->  rust/kernel/error.rs            |  2 ++
->  rust/kernel/fs.rs               | 43 +++++++++++++++++++++++++++++++++
->  3 files changed, 46 insertions(+)
+> There are two file systems that are built on top of these abstractions: t=
+arfs
+> and puzzlefs. The former has zero unsafe blocks and is included as a patc=
+h in
+> this series; the latter is described elsewhere [1]. We limit the function=
+ality
+> to the bare minimum needed to implement them.
 >=20
-> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_hel=
-per.h
-> index 53a99ea512d1..fa754c5e85a2 100644
-> --- a/rust/bindings/bindings_helper.h
-> +++ b/rust/bindings/bindings_helper.h
-> @@ -15,6 +15,7 @@
->  #include <linux/refcount.h>
->  #include <linux/wait.h>
->  #include <linux/sched.h>
-> +#include <linux/xattr.h>
-> =20
->  /* `bindgen` gets confused at certain things. */
->  const size_t BINDINGS_ARCH_SLAB_MINALIGN =3D ARCH_SLAB_MINALIGN;
-> diff --git a/rust/kernel/error.rs b/rust/kernel/error.rs
-> index 484fa7c11de1..6c167583b275 100644
-> --- a/rust/kernel/error.rs
-> +++ b/rust/kernel/error.rs
-> @@ -81,6 +81,8 @@ macro_rules! declare_err {
->      declare_err!(EIOCBQUEUED, "iocb queued, will get completion event.")=
-;
->      declare_err!(ERECALLCONFLICT, "Conflict with recalled state.");
->      declare_err!(ENOGRACE, "NFS file lock reclaim refused.");
-> +    declare_err!(ENODATA, "No data available.");
-> +    declare_err!(EOPNOTSUPP, "Operation not supported on transport endpo=
-int.");
->  }
-> =20
->  /// Generic integer kernel error.
-> diff --git a/rust/kernel/fs.rs b/rust/kernel/fs.rs
-> index ee3dce87032b..adf9cbee16d2 100644
-> --- a/rust/kernel/fs.rs
-> +++ b/rust/kernel/fs.rs
-> @@ -42,6 +42,14 @@ pub trait FileSystem {
-> =20
->      /// Reads the contents of the inode into the given folio.
->      fn read_folio(inode: &INode<Self>, folio: LockedFolio<'_>) -> Result=
-;
-> +
-> +    /// Reads an xattr.
-> +    ///
-> +    /// Returns the number of bytes written to `outbuf`. If it is too sm=
-all, returns the number of
-> +    /// bytes needs to hold the attribute.
-> +    fn read_xattr(_inode: &INode<Self>, _name: &CStr, _outbuf: &mut [u8]=
-) -> Result<usize> {
-> +        Err(EOPNOTSUPP)
-> +    }
->  }
-> =20
->  /// The types of directory entries reported by [`FileSystem::read_dir`].
-> @@ -418,6 +426,7 @@ impl<T: FileSystem + ?Sized> Tables<T> {
-> =20
->              sb.0.s_magic =3D params.magic as _;
->              sb.0.s_op =3D &Tables::<T>::SUPER_BLOCK;
-> +            sb.0.s_xattr =3D &Tables::<T>::XATTR_HANDLERS[0];
->              sb.0.s_maxbytes =3D params.maxbytes;
->              sb.0.s_time_gran =3D params.time_gran;
->              sb.0.s_blocksize_bits =3D params.blocksize_bits;
-> @@ -487,6 +496,40 @@ impl<T: FileSystem + ?Sized> Tables<T> {
->          shutdown: None,
->      };
-> =20
-> +    const XATTR_HANDLERS: [*const bindings::xattr_handler; 2] =3D [&Self=
-::XATTR_HANDLER, ptr::null()];
-> +
-> +    const XATTR_HANDLER: bindings::xattr_handler =3D bindings::xattr_han=
-dler {
-> +        name: ptr::null(),
-> +        prefix: crate::c_str!("").as_char_ptr(),
-> +        flags: 0,
-> +        list: None,
-> +        get: Some(Self::xattr_get_callback),
-> +        set: None,
-> +    };
-> +
-> +    unsafe extern "C" fn xattr_get_callback(
-> +        _handler: *const bindings::xattr_handler,
-> +        _dentry: *mut bindings::dentry,
-> +        inode_ptr: *mut bindings::inode,
-> +        name: *const core::ffi::c_char,
-> +        buffer: *mut core::ffi::c_void,
-> +        size: usize,
-> +    ) -> core::ffi::c_int {
-> +        from_result(|| {
-> +            // SAFETY: The C API guarantees that `inode_ptr` is a valid =
-inode.
-> +            let inode =3D unsafe { &*inode_ptr.cast::<INode<T>>() };
-> +
-> +            // SAFETY: The c API guarantees that `name` is a valid null-=
-terminated string. It
-> +            // also guarantees that it's valid for the duration of the c=
-allback.
-> +            let name =3D unsafe { CStr::from_char_ptr(name) };
-> +
-> +            // SAFETY: The C API guarantees that `buffer` is at least `s=
-ize` bytes in length.
-> +            let buf =3D unsafe { core::slice::from_raw_parts_mut(buffer.=
-cast(), size) };
+> Rust file system modules can be declared with the `module_fs` macro and a=
+re
+> required to implement the following functions (which are part of the
+> `FileSystem` trait):
+>=20
+> impl FileSystem for MyFS {
+>     fn super_params(sb: &NewSuperBlock<Self>) -> Result<SuperParams<Self:=
+:Data>>;
+>     fn init_root(sb: &SuperBlock<Self>) -> Result<ARef<INode<Self>>>;
+>     fn read_dir(inode: &INode<Self>, emitter: &mut DirEmitter) -> Result;
+>     fn lookup(parent: &INode<Self>, name: &[u8]) -> Result<ARef<INode<Sel=
+f>>>;
+>     fn read_folio(inode: &INode<Self>, folio: LockedFolio<'_>) -> Result;
+> }
+>=20
+> They can optionally implement the following:
+>=20
+> fn read_xattr(inode: &INode<Self>, name: &CStr, outbuf: &mut [u8]) -> Res=
+ult<usize>;
+> fn statfs(sb: &SuperBlock<Self>) -> Result<Stat>;
+>=20
+> They may also choose the type of the data they can attach to superblocks =
+and/or
+> inodes.
+>=20
+> There a couple of issues that are likely to lead to unsoundness that have=
+ to do
+> with the unregistration of file systems. I will send separate emails abou=
+t
+> them.
+>=20
+> A git tree is available here:
+>     git://github.com/wedsonaf/linux.git vfs
+>=20
+> Web:
+>     https://github.com/wedsonaf/linux/commits/vfs
 
-I think this is not safe. from_raw_parts_mut's documentation says:
+I've checked out your branch and but it doesn't compile:
 ```
-`data` must be non-null and aligned even for zero-length slices. One
-reason for this is that enum layout optimizations may rely on references
-(including slices of any length) being aligned and non-null to distinguish
-them from other data. You can obtain a pointer that is usable as `data`
-for zero-length slices using [`NonNull::dangling()`].
+$ make LLVM=3D1 -j4
+  DESCEND objtool
+  CALL    scripts/checksyscalls.sh
+make[4]: 'install_headers' is up to date.
+  RUSTC L rust/kernel.o
+error[E0425]: cannot find function `folio_alloc` in crate `bindings`
+     --> rust/kernel/folio.rs:43:54
+      |
+43    |           let f =3D ptr::NonNull::new(unsafe { bindings::folio_allo=
+c(bindings::GFP_KERNEL, order) })
+      |                                                        ^^^^^^^^^^^ =
+help: a function with a similar name exists: `__folio_alloc`
+      |
+     ::: /home/amiculas/work/linux/rust/bindings/bindings_generated.rs:1731=
+1:5
+      |
+17311 | /     pub fn __folio_alloc(
+17312 | |         gfp: gfp_t,
+17313 | |         order: core::ffi::c_uint,
+17314 | |         preferred_nid: core::ffi::c_int,
+17315 | |         nodemask: *mut nodemask_t,
+17316 | |     ) -> *mut folio;
+      | |___________________- similarly named function `__folio_alloc` defi=
+ned here
+
+error: aborting due to previous error
+
+For more information about this error, try `rustc --explain E0425`.
+make[2]: *** [rust/Makefile:460: rust/kernel.o] Error 1
+make[1]: *** [/home/amiculas/work/linux/Makefile:1208: prepare] Error 2
+make: *** [Makefile:234: __sub-make] Error 2
 ```
 
-`vfs_getxattr_alloc` explicitly calls the `get` handler with `buffer` set
-to NULL and `size` set to 0, in order to determine the required size for
-the extended attributes:
+I'm missing `CONFIG_NUMA`, which seems to guard `folio_alloc`
+(include/linux/gfp.h):
 ```
-error =3D handler->get(handler, dentry, inode, name, NULL, 0);
-if (error < 0)
-	return error;
+#ifdef CONFIG_NUMA
+struct page *alloc_pages(gfp_t gfp, unsigned int order);
+struct folio *folio_alloc(gfp_t gfp, unsigned order);
+struct folio *vma_alloc_folio(gfp_t gfp, int order, struct vm_area_struct *=
+vma,
+		unsigned long addr, bool hugepage);
+#else
 ```
 
-So `buffer` is definitely NULL in the first call to the handler.
 
-When `buffer` is NULL, the first argument to `from_raw_parts_mut` should
-be `NonNull::dangling()`.
-
-> +            let len =3D T::read_xattr(inode, name, buf)?;
-> +            Ok(len.try_into()?)
-> +        })
-> +    }
-> +
->      const DIR_FILE_OPERATIONS: bindings::file_operations =3D bindings::f=
-ile_operations {
->          owner: ptr::null_mut(),
->          llseek: Some(bindings::generic_file_llseek),
+>=20
+> [1]: The PuzzleFS container filesystem: https://lwn.net/Articles/945320/
+>=20
+> Wedson Almeida Filho (19):
+>   rust: fs: add registration/unregistration of file systems
+>   rust: fs: introduce the `module_fs` macro
+>   samples: rust: add initial ro file system sample
+>   rust: fs: introduce `FileSystem::super_params`
+>   rust: fs: introduce `INode<T>`
+>   rust: fs: introduce `FileSystem::init_root`
+>   rust: fs: introduce `FileSystem::read_dir`
+>   rust: fs: introduce `FileSystem::lookup`
+>   rust: folio: introduce basic support for folios
+>   rust: fs: introduce `FileSystem::read_folio`
+>   rust: fs: introduce `FileSystem::read_xattr`
+>   rust: fs: introduce `FileSystem::statfs`
+>   rust: fs: introduce more inode types
+>   rust: fs: add per-superblock data
+>   rust: fs: add basic support for fs buffer heads
+>   rust: fs: allow file systems backed by a block device
+>   rust: fs: allow per-inode data
+>   rust: fs: export file type from mode constants
+>   tarfs: introduce tar fs
+>=20
+>  fs/Kconfig                        |    1 +
+>  fs/Makefile                       |    1 +
+>  fs/tarfs/Kconfig                  |   16 +
+>  fs/tarfs/Makefile                 |    8 +
+>  fs/tarfs/defs.rs                  |   80 ++
+>  fs/tarfs/tar.rs                   |  322 +++++++
+>  rust/bindings/bindings_helper.h   |   13 +
+>  rust/bindings/lib.rs              |    6 +
+>  rust/helpers.c                    |  142 ++++
+>  rust/kernel/error.rs              |    6 +-
+>  rust/kernel/folio.rs              |  214 +++++
+>  rust/kernel/fs.rs                 | 1290 +++++++++++++++++++++++++++++
+>  rust/kernel/fs/buffer.rs          |   60 ++
+>  rust/kernel/lib.rs                |    2 +
+>  rust/kernel/mem_cache.rs          |    2 -
+>  samples/rust/Kconfig              |   10 +
+>  samples/rust/Makefile             |    1 +
+>  samples/rust/rust_rofs.rs         |  154 ++++
+>  scripts/generate_rust_analyzer.py |    2 +-
+>  19 files changed, 2324 insertions(+), 6 deletions(-)
+>  create mode 100644 fs/tarfs/Kconfig
+>  create mode 100644 fs/tarfs/Makefile
+>  create mode 100644 fs/tarfs/defs.rs
+>  create mode 100644 fs/tarfs/tar.rs
+>  create mode 100644 rust/kernel/folio.rs
+>  create mode 100644 rust/kernel/fs.rs
+>  create mode 100644 rust/kernel/fs/buffer.rs
+>  create mode 100644 samples/rust/rust_rofs.rs
+>=20
+>=20
+> base-commit: b0bc357ef7a98904600826dea3de79c0c67eb0a7
 > --=20
 > 2.34.1
 > =
