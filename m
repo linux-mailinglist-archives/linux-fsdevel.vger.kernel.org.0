@@ -1,93 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-594-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-595-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7322F7CD785
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 11:07:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B53FC7CD7A4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 11:16:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29CE0281CC2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 09:07:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E67481C20C5D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 09:16:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07D37168DA;
-	Wed, 18 Oct 2023 09:07:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96C54171BA;
+	Wed, 18 Oct 2023 09:15:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Es+vckhM"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IcOQZchT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB5E7495
-	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Oct 2023 09:07:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8165EC433C8;
-	Wed, 18 Oct 2023 09:07:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1697620055;
-	bh=l4Oi5jf7qwP7CNkVZZNY8DYKTprQka+ShuoW7/Do0XQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Es+vckhML6CwqSwgV65RXAlRZMWLbJFu15MMUKk8v2FW7P8yVmNtSfevXtU6CZVpi
-	 1aXIT0xlmZQxoHDSB41Hd0M6Yl5gvFB9ndB/3MMRYkyK0SVbwmycZILJ34ScJgsEI1
-	 MZkiuI/7TrNP63l93BvLPwohbV30RvwSgY0KJADjWYGGcJ4x2qNuqCiAWWW1CQej3z
-	 +CgXIt6LkEbIqhSbQyziW92oHc+fMua0o8X8/UXdgEeNT6MJ66KP0XhIvN7LfbQTlu
-	 zwj2I0fNQaXGsNv7zZnI7XS/xDrYK4X5emfstphKe1WOs4AyPbL86nShPFJAslBb0b
-	 kaYvjnNnjiEUA==
-From: Christian Brauner <brauner@kernel.org>
-To: Jingbo Xu <jefflexu@linux.alibaba.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6040D17756
+	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Oct 2023 09:15:55 +0000 (UTC)
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C17B0119
+	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Oct 2023 02:15:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1697620552;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=g/qWmMyaSoOmFzIVwgqNv8CarT9NCUVK0T0yzdu7ukI=;
+	b=IcOQZchTxVIbC4m4k0qhQhEq5AnF/VAP/2dWqXryUnvtUQGNZhOx8v+XVbD5riace2WiIV
+	bsO3BSVL+cNlgrRYzd4E2doxPLmQqfb8oSXZGyStDn5jqiSGYYGUbwu18cfD27pEVfsNoI
+	Y7qg9wjZwmwTQurDfG+XmL3FKlrcbTU=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-695-34SCTa7HMEO5n_1ihoTmaQ-1; Wed, 18 Oct 2023 05:15:47 -0400
+X-MC-Unique: 34SCTa7HMEO5n_1ihoTmaQ-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 01A282825E8D;
+	Wed, 18 Oct 2023 09:15:47 +0000 (UTC)
+Received: from fedora (unknown [10.72.120.15])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id C41182166B26;
+	Wed, 18 Oct 2023 09:15:41 +0000 (UTC)
+Date: Wed, 18 Oct 2023 17:15:36 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Christoph Hellwig <hch@lst.de>
 Cc: Christian Brauner <brauner@kernel.org>,
-	lizefan.x@bytedance.com,
-	hannes@cmpxchg.org,
-	cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	viro@zeniv.linux.org.uk,
-	willy@infradead.org,
-	joseph.qi@linux.alibaba.com,
-	tj@kernel.org,
-	jack@suse.cz,
-	Roman Gushchin <roman.gushchin@linux.dev>
-Subject: Re: [PATCH v3] writeback, cgroup: switch inodes with dirty timestamps to release dying cgwbs
-Date: Wed, 18 Oct 2023 11:07:20 +0200
-Message-Id: <20231018-dinkelbrot-botanik-b119bb8f4989@brauner>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20231014125511.102978-1-jefflexu@linux.alibaba.com>
-References: <20231014125511.102978-1-jefflexu@linux.alibaba.com>
+	Al Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>,
+	Jan Kara <jack@suse.cz>, Denis Efremov <efremov@linux.com>,
+	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 3/5] block: move bdev_mark_dead out of
+ disk_check_media_change
+Message-ID: <ZS+iOA//0ShbY7Fk@fedora>
+References: <20231017184823.1383356-1-hch@lst.de>
+ <20231017184823.1383356-4-hch@lst.de>
+ <ZS9ODABLaRVcI5iy@fedora>
+ <20231018064646.GA18710@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1313; i=brauner@kernel.org; h=from:subject:message-id; bh=l4Oi5jf7qwP7CNkVZZNY8DYKTprQka+ShuoW7/Do0XQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTqL9D597YqabVumacg890tWi7FOTdf1KYeag5488dwi5LI iveXOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACYSm8vI0GzdrhQdq1mSnma6TOJwtz XT0uMtbxSiu66+2fQ6IyFgKiPDR7GfSf1cU1mbQo5t+FomoMy+3rL19dQL72xfbnh0TDCOCwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231018064646.GA18710@lst.de>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+	RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
+	SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
+	version=3.4.6
+X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
+	lindbergh.monkeyblade.net
 
-On Sat, 14 Oct 2023 20:55:11 +0800, Jingbo Xu wrote:
-> The cgwb cleanup routine will try to release the dying cgwb by switching
-> the attached inodes.  It fetches the attached inodes from wb->b_attached
-> list, omitting the fact that inodes only with dirty timestamps reside in
-> wb->b_dirty_time list, which is the case when lazytime is enabled.  This
-> causes enormous zombie memory cgroup when lazytime is enabled, as inodes
-> with dirty timestamps can not be switched to a live cgwb for a long time.
+On Wed, Oct 18, 2023 at 08:46:46AM +0200, Christoph Hellwig wrote:
+> On Wed, Oct 18, 2023 at 11:16:28AM +0800, Ming Lei wrote:
+> > On Tue, Oct 17, 2023 at 08:48:21PM +0200, Christoph Hellwig wrote:
+> > > disk_check_media_change is mostly called from ->open where it makes
+> > > little sense to mark the file system on the device as dead, as we
+> > > are just opening it.  So instead of calling bdev_mark_dead from
+> > > disk_check_media_change move it into the few callers that are not
+> > > in an open instance.  This avoid calling into bdev_mark_dead and
+> > > thus taking s_umount with open_mutex held.
+> > 
+> > ->open() is called when opening bdev every times, and there can be
+> > existed openers, so not sure if it makes little sense here.
 > 
-> [...]
+> Yes. It has to be a non-exclusive open, though, and how is that going
+> to help us with any general use case?  If we really want to make the
+> media change notifications any useful we'd better just do the work
+> straight from the workqueue that polls for it.
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
+Given ->mark_dead() is added recently, userspace shouldn't depend on
+this behavior, so this patch looks fine:
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+Thanks,
+Ming
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
-
-[1/1] writeback, cgroup: switch inodes with dirty timestamps to release dying cgwbs
-      https://git.kernel.org/vfs/vfs/c/27890db5162c
 
