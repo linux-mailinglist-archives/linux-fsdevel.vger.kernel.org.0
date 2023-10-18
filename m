@@ -1,110 +1,217 @@
-Return-Path: <linux-fsdevel+bounces-577-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-578-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC19E7CD006
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 00:31:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 223A37CD182
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 02:56:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0E39B212AE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Oct 2023 22:31:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1D5C2817DE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 00:55:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06E032F522;
-	Tue, 17 Oct 2023 22:31:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C1931388;
+	Wed, 18 Oct 2023 00:55:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SKp0jfg+"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KgneW3Oe"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF8042F52D
-	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Oct 2023 22:31:17 +0000 (UTC)
-Received: from mail-vs1-xe31.google.com (mail-vs1-xe31.google.com [IPv6:2607:f8b0:4864:20::e31])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 997A8BA;
-	Tue, 17 Oct 2023 15:31:16 -0700 (PDT)
-Received: by mail-vs1-xe31.google.com with SMTP id ada2fe7eead31-457c7177a42so1994387137.2;
-        Tue, 17 Oct 2023 15:31:16 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1733763B
+	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Oct 2023 00:55:53 +0000 (UTC)
+Received: from mail-yw1-x1149.google.com (mail-yw1-x1149.google.com [IPv6:2607:f8b0:4864:20::1149])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5751EFC
+	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Oct 2023 17:55:51 -0700 (PDT)
+Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-5a81cd8d267so75142087b3.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Oct 2023 17:55:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697581875; x=1698186675; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+        d=google.com; s=20230601; t=1697590550; x=1698195350; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=UEdo/IXrUIEoUHUCXW+U91HMMI7R0F6XSMyAesChus0=;
-        b=SKp0jfg+glJZ87GVUGugRHbU0EBgUEt7gZ5a3xblz3LBKIQxJvXhL4BifmDRo3Vgkt
-         KLhCTFEHnpkeeaVtoyfNYIJCKGFZjtkOrcVRPRWM6FybJmDICKF9EtVnT95Md1b+3Sbu
-         3shqGa832A+BmdJwfdAoUPTAU2IKJ3HpHnPrgVqcpxNCu1nn8SfsZjWX6nnNjuX2zfK+
-         gZdjmdRVjmQpwpnZm5mDpMJ1iU1n1TqpGJ3gEz0sZNHcOpiqnN7874BwaMcaalxOOQja
-         mnTdt1dgW0B9AS0anOwnooWwFe4NPMmNQzSzoOusLVprh/X9TLNhRkCXKAwtNkhh+oZ3
-         dGFg==
+        bh=RtN1cX7OnFY4c89ZOmsAINIHxJE4cdFfX8n5PNBpJGI=;
+        b=KgneW3Oe5RHM8xksCub1w77ZaBsnFs5fWKyELoxmpt+V5UjkrheW3h5b9u/KAVAc3Y
+         Go8N4AsXF7YHU84oRKrLsb+WxZVl5H27os50mzHla9C0a0FH3OiAC8g8rW5elmDHox50
+         QgFIxZpcVe665cpWJvsN1vSb0sC8Vl7zeq+BxNRGvGdHiwHnAsEj6+2/2MfdUS0GN4TI
+         kypfYCKgObKZoSU11IJnGFyR+lOLCYulYfgBGgDlwouTA2twT/sSUIuhuAggBWYUrZLD
+         bv89JGD9YhKGVEeNMCK/7ZC2UqFmFxX5IeyqWsYtFR+T+JWWEVe5oL6rZCNqZwNYtB/V
+         2NGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697581875; x=1698186675;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+        d=1e100.net; s=20230601; t=1697590550; x=1698195350;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=UEdo/IXrUIEoUHUCXW+U91HMMI7R0F6XSMyAesChus0=;
-        b=jM8PxkPU/tf3gyL2heRknuh7Z1+gOS5KFdCE/bBetfSW8UeUm2m+ZM+W7k1PUB0Q6E
-         BtO0tGXF7FqtOhpa92safWddes334E/POFFp0zbANNlInGw//e1KkVKMwoc7muEwIS/1
-         d51o1uFlFjN8+U1Jm8R4U2yPBW0eib5ujbKdBc0wocHDKwKSaFUOHhSrIA76sc938exi
-         o5Df+jn5gGGSRy53Bi4VpKrRweQ9PaqIac0OP124Uw7DR0vKBR5TX7sHss18XWqtLsF8
-         80O0j7Wvu4uVgs8MvkNGmmqjNa9lJqWSTJmWbT+s3NXgjf/P7gZn1gevB9zBjlzh9WEq
-         OfFw==
-X-Gm-Message-State: AOJu0YzniUtn9QG5LKVTG7Rn+55jfva9oudOObZL+pFLkPnNSNE607rG
-	Ff5g/eE5BV7J+FKYGUnUnsqhZtj/qcWPJBDVyzK3WQeEJeQ=
-X-Google-Smtp-Source: AGHT+IG04PskU4tI0kwAZpFlSgCBYttHxRqtRZNOMql9fLhu3o2BuP5ehfAYs0OlSDftVhqufFykXArHTl2r8ZP2rZM=
-X-Received: by 2002:a67:c187:0:b0:457:e9fe:66b with SMTP id
- h7-20020a67c187000000b00457e9fe066bmr4328066vsj.2.1697581875578; Tue, 17 Oct
- 2023 15:31:15 -0700 (PDT)
+        bh=RtN1cX7OnFY4c89ZOmsAINIHxJE4cdFfX8n5PNBpJGI=;
+        b=GWMk0kY+Er/dv4di23nbdtRekfYhcxpjmzWZyMcPKvfi5R1dMIK/ULc/ySPHkYdY2G
+         JWB2QQKxrzNQoCQl1U2imHs1z8BdshaYYXoATMXIs1t5lOT431SOuscIrTeRQD5k3PzE
+         UXqhfb4AdxtyzEqDtppQ9Qyd5/DPH5ZtarwObtPgnNNk0FMNmBMpmlaq6e7qUkP/JV0E
+         lCfNORh0B4rPZL8/wkTmaBdDk23HlSUfC9WFr5Ss1FZiHABy4wlGvlydfBSmM+uQzYUn
+         xVRfi9GReuVS4uGAPjQ/qfsHpz3TQAIKLJcJCKlrK4+zVGP2dSGM4oUlBCDC3gmGuxSf
+         s9Yg==
+X-Gm-Message-State: AOJu0YwsGSbQN70Mp9m1DJV+AxVF3jmsiOb79FurMuN6x2a7jGPqKmwi
+	PS0lq5JRgMVXEaYUZ98zQQqshza2DMUFi/9szA==
+X-Google-Smtp-Source: AGHT+IG3xQKinhI0hluOWrkIGk67L4r7161FfPWTDhQsiOFXX1Myf7Znfr216Md1QRT5RSFMskz/ufJkibAIW2xRaw==
+X-Received: from souravpanda.svl.corp.google.com ([2620:15c:2a3:200:26ea:df99:e4a5:e557])
+ (user=souravpanda job=sendgmr) by 2002:a81:4f94:0:b0:5a7:b9b0:d23f with SMTP
+ id d142-20020a814f94000000b005a7b9b0d23fmr80315ywb.6.1697590550545; Tue, 17
+ Oct 2023 17:55:50 -0700 (PDT)
+Date: Tue, 17 Oct 2023 17:55:47 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-From: Klara Modin <klarasmodin@gmail.com>
-Date: Wed, 18 Oct 2023 00:31:04 +0200
-Message-ID: <CABq1_vgwYJpqKkWzw4U=s-fmZ94Tzu6wCXxw=O84wX6bf0WFfA@mail.gmail.com>
-Subject: [BUG] vfat garbled mtimes (e57260ae3226bda354e6e5c838c62a6a88c2c5bc)
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: jlayton@kernel.org, brauner@kernel.org
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.42.0.655.g421f12c284-goog
+Message-ID: <20231018005548.3505662-1-souravpanda@google.com>
+Subject: [PATCH v2 0/1] mm: report per-page metadata information
+From: Sourav Panda <souravpanda@google.com>
+To: corbet@lwn.net, gregkh@linuxfoundation.org, rafael@kernel.org, 
+	akpm@linux-foundation.org, mike.kravetz@oracle.com, muchun.song@linux.dev, 
+	rppt@kernel.org, david@redhat.com, rdunlap@infradead.org, 
+	chenlinxuan@uniontech.com, yang.yang29@zte.com.cn, souravpanda@google.com, 
+	tomas.mudrunka@gmail.com, bhelgaas@google.com, ivan@cloudflare.com, 
+	pasha.tatashin@soleen.com, yosryahmed@google.com, hannes@cmpxchg.org, 
+	shakeelb@google.com, kirill.shutemov@linux.intel.com, 
+	wangkefeng.wang@huawei.com, adobriyan@gmail.com, vbabka@suse.cz, 
+	Liam.Howlett@Oracle.com, surenb@google.com, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	willy@infradead.org
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-	RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+	SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable
 	autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-Hi,
+Changelog:
+v2:
+	- Fixed the three bugs reported by kernel test robot.
+	- Enhanced the commit message as recommended by David Hildenbrand.
+	- Addressed comments from Matthew Wilcox:
+	  	- Simplified alloc_vmemmap_page_list() and
+		  free_page_ext() as recommended.
+		- Used the appropriate comment style in mm/vmstat.c.
+		- Replaced writeout_early_perpage_metadata() with
+		  store_early_perpage_metadata() to reduce ambiguity
+		  with what swap does.
+	- Addressed comments from Mike Rapoport:
+	  	- Simplified the loop in alloc_vmemmap_page_list().
+		- Could NOT address a comment to move
+		  store_early_perpage_metadata() near where nodes
+		  and page allocator are initialized.
+		- Included the vmalloc()ed page_ext in accounting
+		  within free_page_ext().
+		- Made early_perpage_metadata[MAX_NUMNODES] static.
 
-https://lore.kernel.org/r/20231004185347.80880-35-jlayton@kernel.org
-causes garbled mtimes for me on vfat.
 
-(next-20231017, e57260ae3226bda354e6e5c838c62a6a88c2c5bc fat: convert
-to new timestamp accessors)
+Previous approaches and discussions
+-----------------------------------
+v1:
+https://lore.kernel.org/r/20230913173000.4016218-2-souravpanda@google.com
 
-Kind regards,
-Klara Modin
+Hi!
 
-Examples:
-# touch test && sync && ls -l && stat test
-total 0
--rwxr-xr-x 1 root root 0 20 jan  -3904093 test
-  File: test
-  Size: 0             Blocks: 0          IO Block: 4096   regular empty file
-Device: 8,17    Inode: 4           Links: 1
-Access: (0755/-rwxr-xr-x)  Uid: (    0/    root)   Gid: (    0/    root)
-Access: 2023-10-17 02:00:00.000000000 +0200
-Modify: -3904093-01-20 12:54:32.134624768 +0053
-Change: 2023-10-18 00:05:50.000000000 +0200
- Birth: 2023-10-17 23:07:39.500000000 +0200
-# touch test && sync && ls -l && stat test
-total 0
--rwxr-xr-x 1 root root 0 26 maj  1916 test
-  File: test
-  Size: 0             Blocks: 0          IO Block: 4096   regular empty file
-Device: 8,17    Inode: 4           Links: 1
-Access: (0755/-rwxr-xr-x)  Uid: (    0/    root)   Gid: (    0/    root)
-Access: 2023-10-17 02:00:00.000000000 +0200
-Modify: 1916-05-26 13:50:39.*(0'(*(,- +0200
-Change: 2023-10-18 00:06:10.000000000 +0200
- Birth: 2023-10-17 23:07:39.500000000 +0200
+This patch adds a new per-node PageMetadata field to
+/sys/devices/system/node/nodeN/meminfo and a global PageMetadata field
+to /proc/meminfo. This information can be used by users to see how much
+memory is being used by per-page metadata, which can vary depending on
+build configuration, machine architecture, and system use.
+
+Per-page metadata is the amount of memory that Linux needs in order to
+manage memory at the page granularity. The majority of such memory is
+used by "struct page" and "page_ext" data structures.
+
+
+Background
+----------
+
+Kernel overhead observability is missing some of the largest
+allocations during runtime, including vmemmap (struct pages) and
+page_ext. This patch aims to address this problem by exporting a
+new metric PageMetadata.
+
+On the contrary, the kernel does provide observibility for boot memory
+allocations. For example, the metric reserved_pages depicts the pages
+allocated by the bootmem allocator. This can be simply calculated as
+present_pages - managed_pages, which are both exported in /proc/zoneinfo.
+The metric reserved_pages is primarily composed of struct pages and
+page_ext.
+
+What about the struct pages (allocated by bootmem allocator) that are
+free'd during hugetlbfs allocations and then allocated by buddy-allocator
+once hugtlbfs pages are free'd?
+
+/proc/meminfo MemTotal changes: MemTotal does not include memblock
+allocations but includes buddy allocations. However, during runtime
+memblock allocations can be shifted into buddy allocations, and therefore
+become part of MemTotal.
+
+Once the struct pages get allocated by buddy allocator, we lose track of
+these struct page allocations overhead accounting. Therefore, we must
+export a new metric that we shall refer to as PageMetadata (exported by
+node). This shall also comprise the struct page and page_ext allocations
+made during runtime.
+
+Results and analysis
+--------------------
+
+Memory model: Sparsemem-vmemmap
+$ echo 1 > /proc/sys/vm/hugetlb_optimize_vmemmap
+
+$ cat /proc/meminfo | grep MemTotal
+	MemTotal:       32918196 kB
+$ cat /proc/meminfo | grep Meta
+	PageMetadata:     589824 kB
+$ cat /sys/devices/system/node/node0/meminfo | grep Meta
+	Node 0 PageMetadata:     294912 kB
+$ cat /sys/devices/system/node/node1/meminfo | grep Meta
+	Node 1 PageMetadata:     294912 kB
+
+
+AFTER HUGTLBFS RESERVATION
+$ echo 512 > /proc/sys/vm/nr_hugepages
+
+$ cat /proc/meminfo | grep MemTotal
+
+MemTotal:       32934580 kB
+$ cat /proc/meminfo | grep Meta
+PageMetadata:     575488 kB
+$ cat /sys/devices/system/node/node0/meminfo | grep Meta
+Node 0 PageMetadata:     287744 kB
+$ cat /sys/devices/system/node/node1/meminfo | grep Meta
+Node 1 PageMetadata:     287744 kB
+
+AFTER FREEING HUGTLBFS RESERVATION
+$ echo 0 > /proc/sys/vm/nr_hugepages
+$ cat /proc/meminfo | grep MemTotal
+MemTotal:       32934580 kB
+$ cat /proc/meminfo | grep Meta
+PageMetadata:    589824 kB
+$ cat /sys/devices/system/node/node0/meminfo | grep Meta
+Node 0 PageMetadata:       294912 kB
+$ cat /sys/devices/system/node/node1/meminfo | grep Meta
+Node 1 PageMetadata:       294912 kB
+
+Sourav Panda (1):
+  mm: report per-page metadata information
+
+ Documentation/filesystems/proc.rst |  3 +++
+ drivers/base/node.c                |  2 ++
+ fs/proc/meminfo.c                  |  7 +++++++
+ include/linux/mmzone.h             |  3 +++
+ include/linux/vmstat.h             |  4 ++++
+ mm/hugetlb.c                       |  8 +++++++-
+ mm/hugetlb_vmemmap.c               |  8 +++++++-
+ mm/mm_init.c                       |  3 +++
+ mm/page_alloc.c                    |  1 +
+ mm/page_ext.c                      | 18 ++++++++++++++----
+ mm/sparse-vmemmap.c                |  3 +++
+ mm/sparse.c                        |  7 ++++++-
+ mm/vmstat.c                        | 24 ++++++++++++++++++++++++
+ 13 files changed, 84 insertions(+), 7 deletions(-)
+
+-- 
+2.42.0.655.g421f12c284-goog
+
 
