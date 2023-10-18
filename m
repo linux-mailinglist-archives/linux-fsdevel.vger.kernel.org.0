@@ -1,598 +1,363 @@
-Return-Path: <linux-fsdevel+bounces-647-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-648-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77C6A7CDB97
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 14:27:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 942DB7CDCB2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 15:07:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0FDAB21C55
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 12:27:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B75561C20D2A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 13:07:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 636CF347AB;
-	Wed, 18 Oct 2023 12:27:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0646035897;
+	Wed, 18 Oct 2023 13:07:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G40kn9DB"
+	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="ONp22F3X";
+	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="GYA1fN8K"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99131341A5;
-	Wed, 18 Oct 2023 12:27:06 +0000 (UTC)
-Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 408B1112;
-	Wed, 18 Oct 2023 05:27:04 -0700 (PDT)
-Received: by mail-pl1-x634.google.com with SMTP id d9443c01a7336-1c9d407bb15so57083175ad.0;
-        Wed, 18 Oct 2023 05:27:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697632024; x=1698236824; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WW97z1/PhNr6yRKp2DsDMj86gMe+7lyob+R76qs++n4=;
-        b=G40kn9DB/dl2OpeoLOPTVOB0AUjKmHkSE+5jKpeR+vu1CITOFijR28hDTfI0wrdaof
-         NCsDXPy9HD2aLae9aXYff5BhRO/oTYZBFQjNlQ9JHtTPBuA6qqS+7y/W8oc+AIohLzdj
-         i2DPI2Kbqm330iLH0idn2f5GIZylvUC76H0+MhFkk9oxVbHNhWibkcMB9C25RvsjfSt5
-         YCHpzkz6asQmPib5TO0XBp4SpQJgm44od3eRr8yuwV9cEkw8JHbRkcGKBIz2dAcKbSGM
-         xRgXBL+/YIieuc2HxMfKshRpk8DQ6pjfo+HDrPxtGajpCYXzLoIYC2TJLytmcPz+mLH8
-         8t6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697632024; x=1698236824;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WW97z1/PhNr6yRKp2DsDMj86gMe+7lyob+R76qs++n4=;
-        b=L1WiCsC+bUGfp3ityD2DicYRICDMFf8VOJ19AR2Ykb2kp6kpXwinuTqwW3CxGC8q22
-         e7JBfj3zt9lHWFMtwfC+qZRwIYDw5lHDnLA+ifsC0i5LKnOHAo62Wx4gRvZd6dgDa8aq
-         0K+p4FhQS4ak20mAAeUHB0oGe09qmaOD1EcZxRgqcZn5GkjkFtiyGpzxhSlMjlWLfR2v
-         wajuPxO3hPuWLwLesOhfsrQbSSY4eaCW6KLAZYh+pxgA3qbZR71UDHeKTSsz/NtQovQp
-         ceQaVCpGDjN1qpfmwm3qXXXGQnYWdXwR8sNYfaVp1S7qb7jhEzqf6HUm1NGLth8nkeIi
-         636A==
-X-Gm-Message-State: AOJu0Yyh1rRirVyN4I9S/7K7vPwdUM/5IW8lHVX9lSqXbw8UhzXenXzU
-	hyCA4ynSUFytjtZ9bDPZLxA=
-X-Google-Smtp-Source: AGHT+IFJMhkaG5JqJbKqTYW4s3HNsRTDHmpOm68nw+3WbyX3+kZ7yOAy+rfixB8SUYGtMBEjy44Y0g==
-X-Received: by 2002:a17:902:fb87:b0:1ca:1c55:abcf with SMTP id lg7-20020a170902fb8700b001ca1c55abcfmr4724487plb.3.1697632023529;
-        Wed, 18 Oct 2023 05:27:03 -0700 (PDT)
-Received: from wedsonaf-dev.. ([2804:389:7122:43b8:9b73:6339:3351:cce0])
-        by smtp.googlemail.com with ESMTPSA id j1-20020a170902c3c100b001c736b0037fsm3411046plj.231.2023.10.18.05.26.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Oct 2023 05:27:03 -0700 (PDT)
-From: Wedson Almeida Filho <wedsonaf@gmail.com>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>
-Cc: Kent Overstreet <kent.overstreet@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-fsdevel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	Wedson Almeida Filho <walmeida@microsoft.com>
-Subject: [RFC PATCH 19/19] tarfs: introduce tar fs
-Date: Wed, 18 Oct 2023 09:25:18 -0300
-Message-Id: <20231018122518.128049-20-wedsonaf@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20231018122518.128049-1-wedsonaf@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8275515ACE;
+	Wed, 18 Oct 2023 13:07:16 +0000 (UTC)
+X-Greylist: delayed 62 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 18 Oct 2023 06:07:14 PDT
+Received: from alln-iport-3.cisco.com (alln-iport-3.cisco.com [173.37.142.90])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 654B6F7;
+	Wed, 18 Oct 2023 06:07:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=cisco.com; i=@cisco.com; l=5728; q=dns/txt; s=iport;
+  t=1697634434; x=1698844034;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=S36GLf7gs9lUZj6Y6REPtD8HI2srWr3Gx+iY0eF/q/Q=;
+  b=ONp22F3XcX6UTyrnpuhIV1QABUIl4TMUD69Y05SRSrrzLpsZFPLrH/sT
+   IeexpFNMPn35+BPEPquyjgCpYvKbI27HjziIw3PRR6bSl8e+Tv+QMG2BT
+   ogBJYq/29PGKTGHcgnJYlX8yz11pOhS7jCv01YbJULhzXU7xgDjOOcdkA
+   k=;
+X-CSE-ConnectionGUID: A80esMR8Qe6+tbh+6hoj+A==
+X-CSE-MsgGUID: 2dESGmFbRLupdVf5swWXdQ==
+X-IPAS-Result: =?us-ascii?q?A0ClAAAN1y9l/4ENJK1aHQEBAQEJARIBBQUBQCWBFggBC?=
+ =?us-ascii?q?wGBZiooB3ECWSoSSIgeA4ROX4ZAgiMDgRORRIskgSUDVg8BAQENAQExEwQBA?=
+ =?us-ascii?q?YUGAocUAiY0CQ4BAgICAQEBAQMCAwEBAQEBAQECAQEFAQEBAgEHBIEKE4VoD?=
+ =?us-ascii?q?YZMAQEBAQMSFRMGAQE3AQ8CAQgVAx4QMiUCBA4FCBqCBFmCXgMBpw4BgUACi?=
+ =?us-ascii?q?ih4gQEzgQGCCQEBBgQFSbIjCYFIAYgJAYoGJxuBSUSBFYE8gTc4PoJhAoFgh?=
+ =?us-ascii?q?iEig3aDG4FkPAUCMoEKDAmBA4J6NSqBFIl5XiJHcBsDBwOBAxArBwQvGwcGC?=
+ =?us-ascii?q?RYYFSUGUQQtJAkTEj4EgWeBUQqBBj8PDhGCQyICBzY2GUuCWwkVDDRNdhAqB?=
+ =?us-ascii?q?BQXgRIEah8VHhIlERIXDQMIdh0CESM8AwUDBDQKFQ0LIQUUQwNHBkoLAwIcB?=
+ =?us-ascii?q?QMDBIE2BQ0eAhAaBg4nAwMZTQIQFAMeHQMDBgMLMQMwgR4MWQNsHzYJTANEH?=
+ =?us-ascii?q?UADeD01FBttnUWCaHsTASVaMRRrHB0RlgsBjBSiYgqEDIwBlR5JA4VBowSBD?=
+ =?us-ascii?q?y6YDpZWjGCEcAIEAgQFAg4BAQaBYzyBWXAVO4JnCUkZD44gCRmDVoYViWR2O?=
+ =?us-ascii?q?wIHCwEBAwmLSgEB?=
+IronPort-PHdr: A9a23:coPg/hxROC7XZK7XCzMRngc9DxPP8539OgoTr50/hK0LK+Ko/o/pO
+ wrU4vA+xFPKXICO8/tfkKKWqKHvX2Uc/IyM+G4Pap1CVhIJyI0WkgUsDdTDCBjTJ//xZCt8F
+ 8NHBxd+53/uCUFOA47lYkHK5Hi77DocABL6YANwJ+/oHofJp8+2zOu1vZbUZlYAiD+0e7gnN
+ Byttk2RrpwPnIJ4I6Atyx3E6ndJYLFQwmVlZBqfyh39/cy3upVk9kxt
+IronPort-Data: A9a23:OX5S/6JlItph7CMzFE+RjZQlxSXFcZb7ZxGr2PjKsXjdYENShTRWn
+ WAZWT2FMqqLZjP8cohzYd7lpkxQvZ7VztU2GlAd+CA2RRqmiyZq6fd1j6vUF3nPRiEWZBs/t
+ 63yUvGZcYZpCCea/k/9WlTYhSEU/bmSQbbhA/LzNCl0RAt1IA8skhsLd9QR2uaEuvDnRVvW0
+ T/Oi5eHYgT8g2ckajl8B5+r8XuDgtyj4Fv0gXRmDRx7lAe2v2UYCpsZOZawIxPQKmWDNrfnL
+ wpr5OjRElLxp3/BOPv8+lrIWhFirorpAOS7oiE+t55OLfR1jndaPq4TbJLwYKrM4tmDt4gZJ
+ N5l7fRcReq1V0HBsLx1bvVWL81xFYQWoLLcBELviMHNjFHMcziyw/JsT2hjaOX0+s4vaY1P3
+ fUcLDZIZReZiqfnhrm6UeJrwM8kKaEHPqtG5Somlm+fVK1gGMqSK0nJzYcwMDMYj8VPFuvab
+ tExYjt0ZxOGaBpKUrsSIMtgwrf42yiuKFW0rnrPqYcMzG39xjZVzaDhDtSIYcO1dclsyxPwS
+ mXuuj6R7gshHMaC0ibA/HW2w+vOmz7rcJwdGaf+9fNwhlCXgGsJB3U+UVq9vOn8hFWyVsxSL
+ 2QK9Sc066s/7kqmSp/6RRLQnZKflhcYX9wVGOog5UTcjKHV+A2eQGMDS1atdeAbiSP/fhRzv
+ nehlNLyDjspu7qQIU9xPJ/Pxd9uEUD59VM/WBI=
+IronPort-HdrOrdr: A9a23:LWJuNal3Lmu2SG1406taIQyyk2vpDfNQiWdD5ihNYBxZY6Wkfp
+ +V7ZcmPE7P6Ar5BktApTnZAtjwfZq9z/JICYl4B8baYOF/0FHYYr2KnrGSswEIfBeOt9K1tJ
+ 0QPJSWbeeAb2SS4vyKnTVQf+xQp+VvtZrY+9s2rE0dDT2CCZsQkzuRYzzzeiYZNWw2YabRVq
+ DsmfavzADQAUj/G/7LfEXtKNKz3OEj+qiWByIuNloM0iXLpzWu77LxDhif2Tkjcx4n+90f2F
+ mAuTbUooG4vd+G6jK07QLuBpJt9+fJ+59mPoihm8IVIjLjhkKDf4J6QYCPuzgzvaWG9EsquM
+ OkmWZjA+1Dr1fqOk2lqxrk3AftlBw07WX59FOeiXz/5eTkWTMBDdZbj44xSGqd16NghqA57E
+ t45RPei3NlN2KYoM073amRa/herDvynZPlq59Js5UQa/pFVFYbl/1twKocKuZzIMu90vFlLA
+ GrZ/usuMq/tjihHi3kl3gqz9q2UnspGBCaBkAEp8yOyjBT2Gt01k0C2aUk7z09Hb8GOtF5Dt
+ 7/Q+9VvaALStVTYbN2Be8HT8fyAmvRQQjUOGbXJVj8DqkIN3/EtpayudwOla2XUY1NyIF3lI
+ XKUVteu2J3c0XyCdeW1JkO9hzWWm2yUTnk18kb7Zlkvb/3QqbtLES4OR0Tutrlp+9aDtzQWv
+ 61Np4TC/j/LXH2EYIMxAH6U4k6EwhWbCTUgKdMZ7ujmLO9FmSxjJ2vTB/6HsuYLQoZ
+X-Talos-CUID: 9a23:D5/qVGHs2LYCy1QBqmJOpBYZAeUfIkTQkjTMKU/7V2ZuSv68HAo=
+X-Talos-MUID: 9a23:5q2SJghLkVChRwhsrGTWY8MpbstF2IurJko3tYget/eKaDdvBAeRtWHi
+X-IronPort-Anti-Spam-Filtered: true
+Received: from alln-core-9.cisco.com ([173.36.13.129])
+  by alln-iport-3.cisco.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2023 13:06:11 +0000
+Received: from alln-opgw-1.cisco.com (alln-opgw-1.cisco.com [173.37.147.229])
+	by alln-core-9.cisco.com (8.15.2/8.15.2) with ESMTPS id 39ID6BXS007045
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 18 Oct 2023 13:06:11 GMT
+X-CSE-ConnectionGUID: 9d+jYpKMTFKaMH06PccHpQ==
+X-CSE-MsgGUID: +Kf5Q5feTwWKwfDCVOlkVw==
+Authentication-Results: alln-opgw-1.cisco.com; dkim=pass (signature verified) header.i=@cisco.com; spf=Pass smtp.mailfrom=amiculas@cisco.com; dmarc=pass (p=quarantine dis=none) d=cisco.com
+X-IronPort-AV: E=Sophos;i="6.03,235,1694736000"; 
+   d="scan'208";a="5251203"
+Received: from mail-dm6nam04lp2041.outbound.protection.outlook.com (HELO NAM04-DM6-obe.outbound.protection.outlook.com) ([104.47.73.41])
+  by alln-opgw-1.cisco.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2023 13:06:10 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Vbj5l8kQ4yKXHs7+FziCfqt3vtAIIREXmVsw6xN11+hs4pZebtqQTpG9IZgRX5eGLXDfkIEmpKaGw0TdCc4g3y21GMJLwKeLdUKgSsAEiHVRyp36vZJMwKfgftFTw/wnhnCdHY7KqrvbsaCD1nUmYEk77alqIDIISE3PAdS8NFTnv4EjJ3IE/6H6nxXH2SWrJGFGucsbkT5EYFCroY+0iVFJXvcAXBs+YD3ckIIQCpsAQjZaPlQSP8SYWoNsXImwdB1dVrlru5nukR6s83zUklbrrrRXxI0f0xsAhe14hi2Ue4klXsAcqHMK2vWP1mYw9ah8EEECx1kGqT6IgxZkNQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=S9JCu/NidTmmrhgwctRTZ7nlpmiLBh+UX0+ZuJhJc4c=;
+ b=SvUiqP2fSzzSfy/kA88RLbtQHdoTilzb3jaoMUkIuIgxBUkIhjZuqpewlTY4TJa9wTSO1MRnN1vV9Slpg85pxDpobo03qixkEFkTvWuQIcClp/4fvsNkWO7EAYvjONwaplZROqND3JMB8iHHdsPwbkQVFaZ09oEuZiXNVLgH3sOhlORD5hW6mStmqjhN6v1wbjR6q399MR6WgBZaJoG9D6mFqM36Zhk3PgiyQk4vSBbcSjWGg17xLtk62sz3QAwR33cUlgjWGQyVhcWLUEmlkm+gxj+C8pY4H3tYxCzN1EySh/p2mMJ1FCO+v8kNokwDQbBOcG8rZXe4mOb2M/A6SA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=cisco.com; dmarc=pass action=none header.from=cisco.com;
+ dkim=pass header.d=cisco.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cisco.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=S9JCu/NidTmmrhgwctRTZ7nlpmiLBh+UX0+ZuJhJc4c=;
+ b=GYA1fN8K0LReSmvZVyKliGdC6Md3MbCL/PFAXj/QbAH0RG4pgnmo48LrT6armSyNTgY+R/9XksZBzcbyz4ka5wGFaSj/g8/XPnOSpVBKjpffVRxvpWViuLzck7E6uq1FNqC2mIKitLmf3xR+28MIqNtZ47p81iGVaak8PlfpaHE=
+Received: from CH0PR11MB5299.namprd11.prod.outlook.com (2603:10b6:610:be::21)
+ by SA1PR11MB8521.namprd11.prod.outlook.com (2603:10b6:806:3ab::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6907.21; Wed, 18 Oct
+ 2023 13:06:09 +0000
+Received: from CH0PR11MB5299.namprd11.prod.outlook.com
+ ([fe80::6c6c:63b0:2c91:a8d9]) by CH0PR11MB5299.namprd11.prod.outlook.com
+ ([fe80::6c6c:63b0:2c91:a8d9%7]) with mapi id 15.20.6907.021; Wed, 18 Oct 2023
+ 13:06:09 +0000
+From: "Ariel Miculas (amiculas)" <amiculas@cisco.com>
+To: Wedson Almeida Filho <wedsonaf@gmail.com>
+CC: Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner
+	<brauner@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Kent Overstreet
+	<kent.overstreet@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>,
+        Wedson
+ Almeida Filho <walmeida@microsoft.com>
+Subject: Re: [RFC PATCH 11/19] rust: fs: introduce `FileSystem::read_xattr`
+Thread-Topic: [RFC PATCH 11/19] rust: fs: introduce `FileSystem::read_xattr`
+Thread-Index: AQHaAcPc4i2M1EsASUmwgM+UiRg3wg==
+Date: Wed, 18 Oct 2023 13:06:09 +0000
+Message-ID: <jbhv4sp4ojqbfusbqpwxgi3n2wsnnwxeax7tmdvkewwymbofwi@mqdgc7oym2tb>
 References: <20231018122518.128049-1-wedsonaf@gmail.com>
+ <20231018122518.128049-12-wedsonaf@gmail.com>
+In-Reply-To: <20231018122518.128049-12-wedsonaf@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CH0PR11MB5299:EE_|SA1PR11MB8521:EE_
+x-ms-office365-filtering-correlation-id: 1b8aad0c-478c-45c7-5c5e-08dbcfdaff12
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info:
+ DjLovFOBg1OH2s+2t9/xNilbaI5wAba7T8jMSE0Qx7gLfhR+iZCQVsN7LKsoO2kE9ycpA4mIVl/w7GfEizTlqQ1JnJPPKaOUX9jo8YPIMvD3+EVh/zko+yuDHdPcHhOrIK4q7+WBgKYcjRCRt+zv05BICbD30YDWSFlWez4TwNyi3YPsmzpSzYRi4+gY5cW10JP6jA0QSkLfewcVVgq+s9FrIw6DiIOQ/LWGPyKjc1H+3wABrKT6Oyzdb+ag/DemCSHyB6/DhwiTwP7Pu+pfDUzUv62DVN11gHNH9TOgHE33vihbRGWY6wIejkN6c7ixNFefuz/cYnweeD4H7kOTF9wxYCc3k3dpkSkJrLp0qhFcR7pxla39uC6lIMYxMDZe5jihkwbVNCvZlOs4lSO8/pbgnTFwu0O+YvBkSHCHBj+fFClRXbL8DtoKbglzegF9+jzh3ht/joyCPadbCxy0o5tfJQr9tMtp5J4a9OSprE5vuddiTZ2COHjhCCDzmjEIUir9+VdAnd+6Webd09mzRX85tui/B3Yz0J/RAOQ6VlU07QmNqYGFLG2O2w105Kd95ktiodcoa02/Pj6SdkGw32lJowg3XMOtNMS1D8Wp7E6LBymV6ww0p7/66FF+kRrI/NQn8uiv216+UM7lo52+dA==
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR11MB5299.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7916004)(396003)(39860400002)(376002)(136003)(366004)(346002)(230922051799003)(1800799009)(186009)(451199024)(64100799003)(6506007)(33716001)(2906002)(8676002)(8936002)(4326008)(41300700001)(6512007)(5660300002)(64756008)(54906003)(91956017)(76116006)(66446008)(66946007)(66556008)(6916009)(66476007)(6486002)(316002)(478600001)(9686003)(71200400001)(38070700005)(26005)(38100700002)(83380400001)(86362001)(122000001)(81973001);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?Gf+YB7Bt8+E9t3qq7uTT8FADhr3gwWm9W6IDKqiZRu4LBEtSTOu1nqxOHHe/?=
+ =?us-ascii?Q?kz/PqRV4eGn/2Pywzody5Xe2nksT4BYNG6OwdUTc8MPF7iIrp8Vwi706TKnE?=
+ =?us-ascii?Q?0At6R1CNtam/iPC6rgESTCR0n23Gcm/QejL1seb2X0yN+LeqtamQHv0JYMcq?=
+ =?us-ascii?Q?ahoD7NUwOQk1S3rFKMHFzMql9zdWWdh4Ok1Kw5Atde8EhA5fbdGb14uCecog?=
+ =?us-ascii?Q?mtJ/5yI14+gQnaqWzXA9BHMK6puEILSduMjRYYA9ke1NhjLUsla0fH2EMUH7?=
+ =?us-ascii?Q?gfRBGUkR7/mppF2pp9OqE7RQePJ6YskyH5GCmcUqrk+Hy6dLNr6+23HoXlBX?=
+ =?us-ascii?Q?5e6LwS/kJtwNJD/HMpUrndmarOlsyHRDCQJL+YcU/FMPdOBmy1YQEkh1+u3/?=
+ =?us-ascii?Q?K87Vwr9sjzTNjb8iReWDXp4pZC6tMFPnLFBhTsG/Y7dolzbma/hgrzKXKTWe?=
+ =?us-ascii?Q?2tx5EzDQboyR0wXfwkjhR9WC8CZrpToawtag9ftBQk+j/QHQiAlJnAs5WH4Z?=
+ =?us-ascii?Q?giSauz1mvnLSoRtuuTXa2SUU3tjFacOQgVo9PPbB+JtWk/z+Gpmv8RJurFzU?=
+ =?us-ascii?Q?+D34JiTW2e2iDPjU1cbrzmj8I8MTTF6SlqaEFpBZP/iVPTDzlOzcc4Imlh1A?=
+ =?us-ascii?Q?BS6T0au9aitEuA2QDqd+REbGF2B1ygfH681ac5RsIAcUAwtePZuMz8aG3/NR?=
+ =?us-ascii?Q?f3HV0fYNnpNvfMi06lBuhjkfH5lgZs/bWkdJB7s942cvwz/SUmgdtoOV0GX2?=
+ =?us-ascii?Q?dLLzcifUfPI0FMllnfDCCJHbkTn8iA9slFxA/F5SMelRp+8MzzkJ2NA8a/lc?=
+ =?us-ascii?Q?TVAqv09yoYkrkmxl4MLhGih8eS1JBA+fNfRagA/q+O/dUtAEu4hCOqgHVK+Z?=
+ =?us-ascii?Q?MCjpC5jYCTkKYp/rJZSazcGDQuLosQZSbmvL/5OeFjhTak8hiZc5oxUN6+RK?=
+ =?us-ascii?Q?xu0QNvNHdExXBIUToT/9d/gs8W+bVFjDD2zDqOS6vUol5goKaLXLTPatZrju?=
+ =?us-ascii?Q?ynwjkOkjqZZ3h+rCCNZGdwCMDbQJM7Ep4/4ah2MitgLAGjQqv1udS5CyDzsx?=
+ =?us-ascii?Q?DqFpu8GtDJmbwZZgK6BGn9wAxIrx65h0g0WyXURDtvckekuGT7RrQcxWh8g/?=
+ =?us-ascii?Q?fFnnue6cAB7zJBaWClOGPIRkkdMRbtYG5Yn/nirQ8PwhbQ1m/YPVGUOGKYkh?=
+ =?us-ascii?Q?+TVvHJXPEV7JCVQtPtk7QVYyIx8UJbP4aKF/lf/W9ajCTQhq5bnUc8w1BEPJ?=
+ =?us-ascii?Q?EeAM7Fd4g5pBAj0SelAL53KCnNODsGpqnEg3Un0km8XpbzVCnHXguWUma6fx?=
+ =?us-ascii?Q?GMLsHr8wIGcJeQgW3Rr2iYIHdKyljybfyxM2wmB3PpDevhLAlNq+vrz0toU7?=
+ =?us-ascii?Q?8kEUUC83oTe3qe62Z9UsYvW17rwFEMnBfmvHrvvPghoR5A0YWQOxt/s7L+oe?=
+ =?us-ascii?Q?xyjgiI7RxcvseQORJa2KF8mVqHZr/eLbuGzlKDVxY9Xz3LnKYJc4GJxiXlge?=
+ =?us-ascii?Q?xpE80TYbFmOQBsQ8mOX+vzsbOiG1TOw340Ioo1Lm7J6mcEcW8zC9v9UV66AX?=
+ =?us-ascii?Q?GTtbcXVmJFq/th41Yi1ORRtEZe7MG7QVQDDhWbuI?=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <B238D3271DBE014D92711ED5891F9A22@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-	RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-OriginatorOrg: cisco.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CH0PR11MB5299.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1b8aad0c-478c-45c7-5c5e-08dbcfdaff12
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Oct 2023 13:06:09.1773
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 5ae1af62-9505-4097-a69a-c1553ef7840e
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: IiczTZ17uwD2Y2XfrIqkKgNaxILOP7Am6rZr3l6GAc+eD9Zb1P0SxXbrTPGfiXd6VZaDWbnSCpKWbCLt3XTkUg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB8521
+X-Outbound-SMTP-Client: 173.37.147.229, alln-opgw-1.cisco.com
+X-Outbound-Node: alln-core-9.cisco.com
+X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIMWL_WL_MED,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+	RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,
+	SPF_HELO_PASS,SPF_NONE,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-From: Wedson Almeida Filho <walmeida@microsoft.com>
+On 23/10/18 09:25AM, Wedson Almeida Filho wrote:
+> From: Wedson Almeida Filho <walmeida@microsoft.com>
+>=20
+> Allow Rust file systems to expose xattrs associated with inodes.
+> `overlayfs` uses an xattr to indicate that a directory is opaque (i.e.,
+> that lower layers should not be looked up). The planned file systems
+> need to support opaque directories, so they must be able to implement
+> this.
+>=20
+> Signed-off-by: Wedson Almeida Filho <walmeida@microsoft.com>
+> ---
+>  rust/bindings/bindings_helper.h |  1 +
+>  rust/kernel/error.rs            |  2 ++
+>  rust/kernel/fs.rs               | 43 +++++++++++++++++++++++++++++++++
+>  3 files changed, 46 insertions(+)
+>=20
+> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_hel=
+per.h
+> index 53a99ea512d1..fa754c5e85a2 100644
+> --- a/rust/bindings/bindings_helper.h
+> +++ b/rust/bindings/bindings_helper.h
+> @@ -15,6 +15,7 @@
+>  #include <linux/refcount.h>
+>  #include <linux/wait.h>
+>  #include <linux/sched.h>
+> +#include <linux/xattr.h>
+> =20
+>  /* `bindgen` gets confused at certain things. */
+>  const size_t BINDINGS_ARCH_SLAB_MINALIGN =3D ARCH_SLAB_MINALIGN;
+> diff --git a/rust/kernel/error.rs b/rust/kernel/error.rs
+> index 484fa7c11de1..6c167583b275 100644
+> --- a/rust/kernel/error.rs
+> +++ b/rust/kernel/error.rs
+> @@ -81,6 +81,8 @@ macro_rules! declare_err {
+>      declare_err!(EIOCBQUEUED, "iocb queued, will get completion event.")=
+;
+>      declare_err!(ERECALLCONFLICT, "Conflict with recalled state.");
+>      declare_err!(ENOGRACE, "NFS file lock reclaim refused.");
+> +    declare_err!(ENODATA, "No data available.");
+> +    declare_err!(EOPNOTSUPP, "Operation not supported on transport endpo=
+int.");
+>  }
+> =20
+>  /// Generic integer kernel error.
+> diff --git a/rust/kernel/fs.rs b/rust/kernel/fs.rs
+> index ee3dce87032b..adf9cbee16d2 100644
+> --- a/rust/kernel/fs.rs
+> +++ b/rust/kernel/fs.rs
+> @@ -42,6 +42,14 @@ pub trait FileSystem {
+> =20
+>      /// Reads the contents of the inode into the given folio.
+>      fn read_folio(inode: &INode<Self>, folio: LockedFolio<'_>) -> Result=
+;
+> +
+> +    /// Reads an xattr.
+> +    ///
+> +    /// Returns the number of bytes written to `outbuf`. If it is too sm=
+all, returns the number of
+> +    /// bytes needs to hold the attribute.
+> +    fn read_xattr(_inode: &INode<Self>, _name: &CStr, _outbuf: &mut [u8]=
+) -> Result<usize> {
+> +        Err(EOPNOTSUPP)
+> +    }
+>  }
+> =20
+>  /// The types of directory entries reported by [`FileSystem::read_dir`].
+> @@ -418,6 +426,7 @@ impl<T: FileSystem + ?Sized> Tables<T> {
+> =20
+>              sb.0.s_magic =3D params.magic as _;
+>              sb.0.s_op =3D &Tables::<T>::SUPER_BLOCK;
+> +            sb.0.s_xattr =3D &Tables::<T>::XATTR_HANDLERS[0];
+>              sb.0.s_maxbytes =3D params.maxbytes;
+>              sb.0.s_time_gran =3D params.time_gran;
+>              sb.0.s_blocksize_bits =3D params.blocksize_bits;
+> @@ -487,6 +496,40 @@ impl<T: FileSystem + ?Sized> Tables<T> {
+>          shutdown: None,
+>      };
+> =20
+> +    const XATTR_HANDLERS: [*const bindings::xattr_handler; 2] =3D [&Self=
+::XATTR_HANDLER, ptr::null()];
+> +
+> +    const XATTR_HANDLER: bindings::xattr_handler =3D bindings::xattr_han=
+dler {
+> +        name: ptr::null(),
+> +        prefix: crate::c_str!("").as_char_ptr(),
+> +        flags: 0,
+> +        list: None,
+> +        get: Some(Self::xattr_get_callback),
+> +        set: None,
+> +    };
+> +
+> +    unsafe extern "C" fn xattr_get_callback(
+> +        _handler: *const bindings::xattr_handler,
+> +        _dentry: *mut bindings::dentry,
+> +        inode_ptr: *mut bindings::inode,
+> +        name: *const core::ffi::c_char,
+> +        buffer: *mut core::ffi::c_void,
+> +        size: usize,
+> +    ) -> core::ffi::c_int {
+> +        from_result(|| {
+> +            // SAFETY: The C API guarantees that `inode_ptr` is a valid =
+inode.
+> +            let inode =3D unsafe { &*inode_ptr.cast::<INode<T>>() };
+> +
+> +            // SAFETY: The c API guarantees that `name` is a valid null-=
+terminated string. It
+> +            // also guarantees that it's valid for the duration of the c=
+allback.
+> +            let name =3D unsafe { CStr::from_char_ptr(name) };
+> +
+> +            // SAFETY: The C API guarantees that `buffer` is at least `s=
+ize` bytes in length.
+> +            let buf =3D unsafe { core::slice::from_raw_parts_mut(buffer.=
+cast(), size) };
 
-It is a file system based on tar files and an index appended to them (to
-facilitate finding fs entries without having to traverse the whole tar
-file).
+I think this is not safe. from_raw_parts_mut's documentation says:
+```
+`data` must be non-null and aligned even for zero-length slices. One
+reason for this is that enum layout optimizations may rely on references
+(including slices of any length) being aligned and non-null to distinguish
+them from other data. You can obtain a pointer that is usable as `data`
+for zero-length slices using [`NonNull::dangling()`].
+```
 
-Signed-off-by: Wedson Almeida Filho <walmeida@microsoft.com>
----
- fs/Kconfig                        |   1 +
- fs/Makefile                       |   1 +
- fs/tarfs/Kconfig                  |  16 ++
- fs/tarfs/Makefile                 |   8 +
- fs/tarfs/defs.rs                  |  80 ++++++++
- fs/tarfs/tar.rs                   | 322 ++++++++++++++++++++++++++++++
- scripts/generate_rust_analyzer.py |   2 +-
- 7 files changed, 429 insertions(+), 1 deletion(-)
- create mode 100644 fs/tarfs/Kconfig
- create mode 100644 fs/tarfs/Makefile
- create mode 100644 fs/tarfs/defs.rs
- create mode 100644 fs/tarfs/tar.rs
+`vfs_getxattr_alloc` explicitly calls the `get` handler with `buffer` set
+to NULL and `size` set to 0, in order to determine the required size for
+the extended attributes:
+```
+error =3D handler->get(handler, dentry, inode, name, NULL, 0);
+if (error < 0)
+	return error;
+```
 
-diff --git a/fs/Kconfig b/fs/Kconfig
-index aa7e03cc1941..f4b8c33ea624 100644
---- a/fs/Kconfig
-+++ b/fs/Kconfig
-@@ -331,6 +331,7 @@ source "fs/sysv/Kconfig"
- source "fs/ufs/Kconfig"
- source "fs/erofs/Kconfig"
- source "fs/vboxsf/Kconfig"
-+source "fs/tarfs/Kconfig"
- 
- endif # MISC_FILESYSTEMS
- 
-diff --git a/fs/Makefile b/fs/Makefile
-index f9541f40be4e..e3389f8b049d 100644
---- a/fs/Makefile
-+++ b/fs/Makefile
-@@ -129,3 +129,4 @@ obj-$(CONFIG_EFIVAR_FS)		+= efivarfs/
- obj-$(CONFIG_EROFS_FS)		+= erofs/
- obj-$(CONFIG_VBOXSF_FS)		+= vboxsf/
- obj-$(CONFIG_ZONEFS_FS)		+= zonefs/
-+obj-$(CONFIG_TARFS_FS)		+= tarfs/
-diff --git a/fs/tarfs/Kconfig b/fs/tarfs/Kconfig
-new file mode 100644
-index 000000000000..d3e19eb2adbc
---- /dev/null
-+++ b/fs/tarfs/Kconfig
-@@ -0,0 +1,16 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+#
-+
-+config TARFS_FS
-+	tristate "TAR file system support"
-+	depends on RUST && BLOCK
-+	select BUFFER_HEAD
-+	help
-+	  This is a simple read-only file system intended for mounting
-+	  tar files that have had an index appened to them.
-+
-+	  To compile this file system support as a module, choose M here: the
-+	  module will be called tarfs.
-+
-+	  If you don't know whether you need it, then you don't need it:
-+	  answer N.
-diff --git a/fs/tarfs/Makefile b/fs/tarfs/Makefile
-new file mode 100644
-index 000000000000..011c5d64fbe3
---- /dev/null
-+++ b/fs/tarfs/Makefile
-@@ -0,0 +1,8 @@
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Makefile for the linux tarfs filesystem routines.
-+#
-+
-+obj-$(CONFIG_TARFS_FS) += tarfs.o
-+
-+tarfs-y := tar.o
-diff --git a/fs/tarfs/defs.rs b/fs/tarfs/defs.rs
-new file mode 100644
-index 000000000000..7481b75aaab2
---- /dev/null
-+++ b/fs/tarfs/defs.rs
-@@ -0,0 +1,80 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+//! Definitions of tarfs structures.
-+
-+use kernel::types::LE;
-+
-+/// Flags used in [`Inode::flags`].
-+pub mod inode_flags {
-+    /// Indicates that the inode is opaque.
-+    ///
-+    /// When set, inode will have the "trusted.overlay.opaque" set to "y" at runtime.
-+    pub const OPAQUE: u8 = 0x1;
-+}
-+
-+kernel::derive_readable_from_bytes! {
-+    /// An inode in the tarfs inode table.
-+    #[repr(C)]
-+    pub struct Inode {
-+        /// The mode of the inode.
-+        ///
-+        /// The bottom 9 bits are the rwx bits for owner, group, all.
-+        ///
-+        /// The bits in the [`S_IFMT`] mask represent the file mode.
-+        pub mode: LE<u16>,
-+
-+        /// Tarfs flags for the inode.
-+        ///
-+        /// Values are drawn from the [`inode_flags`] module.
-+        pub flags: u8,
-+
-+        /// The bottom 4 bits represent the top 4 bits of mtime.
-+        pub hmtime: u8,
-+
-+        /// The owner of the inode.
-+        pub owner: LE<u32>,
-+
-+        /// The group of the inode.
-+        pub group: LE<u32>,
-+
-+        /// The bottom 32 bits of mtime.
-+        pub lmtime: LE<u32>,
-+
-+        /// Size of the contents of the inode.
-+        pub size: LE<u64>,
-+
-+        /// Either the offset to the data, or the major and minor numbers of a device.
-+        ///
-+        /// For the latter, the 32 LSB are the minor, and the 32 MSB are the major numbers.
-+        pub offset: LE<u64>,
-+    }
-+
-+    /// An entry in a tarfs directory entry table.
-+    #[repr(C)]
-+    pub struct DirEntry {
-+        /// The inode number this entry refers to.
-+        pub ino: LE<u64>,
-+
-+        /// The offset to the name of the entry.
-+        pub name_offset: LE<u64>,
-+
-+        /// The length of the name of the entry.
-+        pub name_len: LE<u64>,
-+
-+        /// The type of entry.
-+        pub etype: u8,
-+
-+        /// Unused padding.
-+        pub _padding: [u8; 7],
-+    }
-+
-+    /// The super-block of a tarfs instance.
-+    #[repr(C)]
-+    pub struct Header {
-+        /// The offset to the beginning of the inode-table.
-+        pub inode_table_offset: LE<u64>,
-+
-+        /// The number of inodes in the file system.
-+        pub inode_count: LE<u64>,
-+    }
-+}
-diff --git a/fs/tarfs/tar.rs b/fs/tarfs/tar.rs
-new file mode 100644
-index 000000000000..1a71b1ccf8e7
---- /dev/null
-+++ b/fs/tarfs/tar.rs
-@@ -0,0 +1,322 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+//! File system based on tar files and an index.
-+
-+use core::mem::size_of;
-+use defs::*;
-+use kernel::fs::{
-+    DirEmitter, DirEntryType, INode, INodeParams, INodeType, NewSuperBlock, Stat, Super,
-+    SuperBlock, SuperParams,
-+};
-+use kernel::types::{ARef, Either, FromBytes};
-+use kernel::{c_str, folio::Folio, folio::LockedFolio, fs, prelude::*};
-+
-+pub mod defs;
-+
-+kernel::module_fs! {
-+    type: TarFs,
-+    name: "tarfs",
-+    author: "Wedson Almeida Filho <walmeida@microsoft.com>",
-+    description: "File system for indexed tar files",
-+    license: "GPL",
-+}
-+
-+const SECTOR_SIZE: u64 = 512;
-+const TARFS_BSIZE: u64 = 1 << TARFS_BSIZE_BITS;
-+const TARFS_BSIZE_BITS: u8 = 12;
-+const SECTORS_PER_BLOCK: u64 = TARFS_BSIZE / SECTOR_SIZE;
-+const TARFS_MAGIC: u32 = 0x54415246;
-+
-+static_assert!(SECTORS_PER_BLOCK > 0);
-+
-+struct INodeData {
-+    offset: u64,
-+    flags: u8,
-+}
-+
-+struct TarFs {
-+    data_size: u64,
-+    inode_table_offset: u64,
-+    inode_count: u64,
-+}
-+
-+impl TarFs {
-+    fn iget(sb: &SuperBlock<Self>, ino: u64) -> Result<ARef<INode<Self>>> {
-+        // Check that the inode number is valid.
-+        let h = sb.data();
-+        if ino == 0 || ino > h.inode_count {
-+            return Err(ENOENT);
-+        }
-+
-+        // Create an inode or find an existing (cached) one.
-+        let inode = match sb.get_or_create_inode(ino)? {
-+            Either::Left(existing) => return Ok(existing),
-+            Either::Right(new) => new,
-+        };
-+
-+        static_assert!((TARFS_BSIZE as usize) % size_of::<Inode>() == 0);
-+
-+        // Load inode details from storage.
-+        let offset = h.inode_table_offset + (ino - 1) * u64::try_from(size_of::<Inode>())?;
-+
-+        let bh = sb.bread(offset / TARFS_BSIZE)?;
-+        let b = bh.data();
-+        let idata = Inode::from_bytes(b, (offset & (TARFS_BSIZE - 1)) as usize).ok_or(EIO)?;
-+
-+        let mode = idata.mode.value();
-+
-+        // Ignore inodes that have unknown mode bits.
-+        if (u32::from(mode) & !(fs::mode::S_IFMT | 0o777)) != 0 {
-+            return Err(ENOENT);
-+        }
-+
-+        let doffset = idata.offset.value();
-+        let size = idata.size.value().try_into()?;
-+        let secs = u64::from(idata.lmtime.value()) | (u64::from(idata.hmtime & 0xf) << 32);
-+        let ts = kernel::time::Timespec::new(secs, 0)?;
-+        let typ = match u32::from(mode) & fs::mode::S_IFMT {
-+            fs::mode::S_IFREG => INodeType::Reg,
-+            fs::mode::S_IFDIR => INodeType::Dir,
-+            fs::mode::S_IFLNK => INodeType::Lnk,
-+            fs::mode::S_IFSOCK => INodeType::Sock,
-+            fs::mode::S_IFIFO => INodeType::Fifo,
-+            fs::mode::S_IFCHR => INodeType::Chr((doffset >> 32) as u32, doffset as u32),
-+            fs::mode::S_IFBLK => INodeType::Blk((doffset >> 32) as u32, doffset as u32),
-+            _ => return Err(ENOENT),
-+        };
-+        inode.init(INodeParams {
-+            typ,
-+            mode: mode & 0o777,
-+            size,
-+            blocks: (idata.size.value() + TARFS_BSIZE - 1) / TARFS_BSIZE,
-+            nlink: 1,
-+            uid: idata.owner.value(),
-+            gid: idata.group.value(),
-+            ctime: ts,
-+            mtime: ts,
-+            atime: ts,
-+            value: INodeData {
-+                offset: doffset,
-+                flags: idata.flags,
-+            },
-+        })
-+    }
-+
-+    fn name_eq(sb: &SuperBlock<Self>, mut name: &[u8], offset: u64) -> Result<bool> {
-+        for v in sb.read(offset, name.len().try_into()?)? {
-+            let v = v?;
-+            let b = v.data();
-+            if b != &name[..b.len()] {
-+                return Ok(false);
-+            }
-+            name = &name[b.len()..];
-+        }
-+        Ok(true)
-+    }
-+
-+    fn read_name(sb: &SuperBlock<Self>, mut name: &mut [u8], offset: u64) -> Result<bool> {
-+        for v in sb.read(offset, name.len().try_into()?)? {
-+            let v = v?;
-+            let b = v.data();
-+            name[..b.len()].copy_from_slice(b);
-+            name = &mut name[b.len()..];
-+        }
-+        Ok(true)
-+    }
-+}
-+
-+impl fs::FileSystem for TarFs {
-+    type Data = Box<Self>;
-+    type INodeData = INodeData;
-+    const NAME: &'static CStr = c_str!("tar");
-+    const SUPER_TYPE: Super = Super::BlockDev;
-+
-+    fn super_params(sb: &NewSuperBlock<Self>) -> Result<SuperParams<Self::Data>> {
-+        let scount = sb.sector_count()?;
-+        if scount < SECTORS_PER_BLOCK {
-+            pr_err!("Block device is too small: sector count={scount}\n");
-+            return Err(ENXIO);
-+        }
-+
-+        let tarfs = {
-+            let mut folio = Folio::try_new(0)?;
-+            sb.sread(
-+                (scount / SECTORS_PER_BLOCK - 1) * SECTORS_PER_BLOCK,
-+                SECTORS_PER_BLOCK as usize,
-+                &mut folio,
-+            )?;
-+            let mapped = folio.map_page(0)?;
-+            let hdr =
-+                Header::from_bytes(&mapped, (TARFS_BSIZE - SECTOR_SIZE) as usize).ok_or(EIO)?;
-+            Box::try_new(TarFs {
-+                inode_table_offset: hdr.inode_table_offset.value(),
-+                inode_count: hdr.inode_count.value(),
-+                data_size: scount.checked_mul(SECTOR_SIZE).ok_or(ERANGE)?,
-+            })?
-+        };
-+
-+        // Check that the inode table starts within the device data and is aligned to the block
-+        // size.
-+        if tarfs.inode_table_offset >= tarfs.data_size {
-+            pr_err!(
-+                "inode table offset beyond data size: {} >= {}\n",
-+                tarfs.inode_table_offset,
-+                tarfs.data_size
-+            );
-+            return Err(E2BIG);
-+        }
-+
-+        if tarfs.inode_table_offset % SECTOR_SIZE != 0 {
-+            pr_err!(
-+                "inode table offset not aligned to sector size: {}\n",
-+                tarfs.inode_table_offset,
-+            );
-+            return Err(EDOM);
-+        }
-+
-+        // Check that the last inode is within bounds (and that there is no overflow when
-+        // calculating its offset).
-+        let offset = tarfs
-+            .inode_count
-+            .checked_mul(u64::try_from(size_of::<Inode>())?)
-+            .ok_or(ERANGE)?
-+            .checked_add(tarfs.inode_table_offset)
-+            .ok_or(ERANGE)?;
-+        if offset > tarfs.data_size {
-+            pr_err!(
-+                "inode table extends beyond the data size : {} > {}\n",
-+                tarfs.inode_table_offset + (tarfs.inode_count * size_of::<Inode>() as u64),
-+                tarfs.data_size,
-+            );
-+            return Err(E2BIG);
-+        }
-+
-+        Ok(SuperParams {
-+            magic: TARFS_MAGIC,
-+            blocksize_bits: TARFS_BSIZE_BITS,
-+            maxbytes: fs::MAX_LFS_FILESIZE,
-+            time_gran: 1000000000,
-+            data: tarfs,
-+        })
-+    }
-+
-+    fn init_root(sb: &SuperBlock<Self>) -> Result<ARef<INode<Self>>> {
-+        Self::iget(sb, 1)
-+    }
-+
-+    fn read_dir(inode: &INode<Self>, emitter: &mut DirEmitter) -> Result {
-+        let sb = inode.super_block();
-+        let mut name = Vec::<u8>::new();
-+        let pos = emitter.pos();
-+
-+        if pos < 0 || pos % size_of::<DirEntry>() as i64 != 0 {
-+            return Err(ENOENT);
-+        }
-+
-+        if pos >= inode.size() {
-+            return Ok(());
-+        }
-+
-+        // Make sure the inode data doesn't overflow the data area.
-+        let size = u64::try_from(inode.size())?;
-+        if inode.data().offset.checked_add(size).ok_or(EIO)? > sb.data().data_size {
-+            return Err(EIO);
-+        }
-+
-+        for v in sb.read(inode.data().offset + pos as u64, size - pos as u64)? {
-+            for e in DirEntry::from_bytes_to_slice(v?.data()).ok_or(EIO)? {
-+                let name_len = usize::try_from(e.name_len.value())?;
-+                if name_len > name.len() {
-+                    name.try_resize(name_len, 0)?;
-+                }
-+
-+                Self::read_name(sb, &mut name[..name_len], e.name_offset.value())?;
-+
-+                if !emitter.emit(
-+                    size_of::<DirEntry>() as i64,
-+                    &name[..name_len],
-+                    e.ino.value(),
-+                    DirEntryType::try_from(u32::from(e.etype))?,
-+                ) {
-+                    return Ok(());
-+                }
-+            }
-+        }
-+
-+        Ok(())
-+    }
-+
-+    fn lookup(parent: &INode<Self>, name: &[u8]) -> Result<ARef<INode<Self>>> {
-+        let name_len = u64::try_from(name.len())?;
-+        let sb = parent.super_block();
-+
-+        for v in sb.read(parent.data().offset, parent.size().try_into()?)? {
-+            for e in DirEntry::from_bytes_to_slice(v?.data()).ok_or(EIO)? {
-+                if e.name_len.value() != name_len || e.name_len.value() > usize::MAX as u64 {
-+                    continue;
-+                }
-+                if Self::name_eq(sb, name, e.name_offset.value())? {
-+                    return Self::iget(sb, e.ino.value());
-+                }
-+            }
-+        }
-+
-+        Err(ENOENT)
-+    }
-+
-+    fn read_folio(inode: &INode<Self>, mut folio: LockedFolio<'_>) -> Result {
-+        let pos = u64::try_from(folio.pos()).unwrap_or(u64::MAX);
-+        let size = u64::try_from(inode.size())?;
-+        let sb = inode.super_block();
-+
-+        let copied = if pos >= size {
-+            0
-+        } else {
-+            let offset = inode.data().offset.checked_add(pos).ok_or(ERANGE)?;
-+            let len = core::cmp::min(size - pos, folio.size().try_into()?);
-+            let mut foffset = 0;
-+
-+            if offset.checked_add(len).ok_or(ERANGE)? > sb.data().data_size {
-+                return Err(EIO);
-+            }
-+
-+            for v in sb.read(offset, len)? {
-+                let v = v?;
-+                folio.write(foffset, v.data())?;
-+                foffset += v.data().len();
-+            }
-+            foffset
-+        };
-+
-+        folio.zero_out(copied, folio.size() - copied)?;
-+        folio.mark_uptodate();
-+        folio.flush_dcache();
-+
-+        Ok(())
-+    }
-+
-+    fn read_xattr(inode: &INode<Self>, name: &CStr, outbuf: &mut [u8]) -> Result<usize> {
-+        if inode.data().flags & inode_flags::OPAQUE == 0
-+            || name.as_bytes() != b"trusted.overlay.opaque"
-+        {
-+            return Err(ENODATA);
-+        }
-+
-+        if !outbuf.is_empty() {
-+            outbuf[0] = b'y';
-+        }
-+
-+        Ok(1)
-+    }
-+
-+    fn statfs(sb: &SuperBlock<Self>) -> Result<Stat> {
-+        let data = sb.data();
-+        Ok(Stat {
-+            magic: TARFS_MAGIC,
-+            namelen: i64::MAX,
-+            bsize: TARFS_BSIZE as _,
-+            blocks: data.inode_table_offset / TARFS_BSIZE,
-+            files: data.inode_count,
-+        })
-+    }
-+}
-diff --git a/scripts/generate_rust_analyzer.py b/scripts/generate_rust_analyzer.py
-index fc52bc41d3e7..8dc74991894e 100755
---- a/scripts/generate_rust_analyzer.py
-+++ b/scripts/generate_rust_analyzer.py
-@@ -116,7 +116,7 @@ def generate_crates(srctree, objtree, sysroot_src, external_src, cfgs):
-     # Then, the rest outside of `rust/`.
-     #
-     # We explicitly mention the top-level folders we want to cover.
--    extra_dirs = map(lambda dir: srctree / dir, ("samples", "drivers"))
-+    extra_dirs = map(lambda dir: srctree / dir, ("samples", "drivers", "fs"))
-     if external_src is not None:
-         extra_dirs = [external_src]
-     for folder in extra_dirs:
--- 
-2.34.1
+So `buffer` is definitely NULL in the first call to the handler.
 
+When `buffer` is NULL, the first argument to `from_raw_parts_mut` should
+be `NonNull::dangling()`.
+
+> +            let len =3D T::read_xattr(inode, name, buf)?;
+> +            Ok(len.try_into()?)
+> +        })
+> +    }
+> +
+>      const DIR_FILE_OPERATIONS: bindings::file_operations =3D bindings::f=
+ile_operations {
+>          owner: ptr::null_mut(),
+>          llseek: Some(bindings::generic_file_llseek),
+> --=20
+> 2.34.1
+> =
 
