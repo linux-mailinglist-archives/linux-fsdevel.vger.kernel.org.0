@@ -1,30 +1,30 @@
-Return-Path: <linux-fsdevel+bounces-606-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-613-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93D9A7CD99A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 12:51:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EF147CD9B1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 12:52:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F042281C7B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 10:51:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F584B216D5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 10:52:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5ABD199CE;
-	Wed, 18 Oct 2023 10:51:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B52200DE;
+	Wed, 18 Oct 2023 10:51:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EFEF11717;
-	Wed, 18 Oct 2023 10:51:31 +0000 (UTC)
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.135])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45F30F9;
-	Wed, 18 Oct 2023 03:51:27 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BCF31A5BE;
+	Wed, 18 Oct 2023 10:51:34 +0000 (UTC)
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.133])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 058E410C;
+	Wed, 18 Oct 2023 03:51:30 -0700 (PDT)
 Received: from weisslap.aisec.fraunhofer.de ([91.67.186.133]) by
  mrelayeu.kundenserver.de (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis)
- id 1MfL5v-1rTTgR3Mkt-00grKp; Wed, 18 Oct 2023 12:51:04 +0200
+ id 1MIbzB-1qnFFs3Lb3-00EhG5; Wed, 18 Oct 2023 12:51:05 +0200
 From: =?UTF-8?q?Michael=20Wei=C3=9F?= <michael.weiss@aisec.fraunhofer.de>
 To: Alexander Mikhalitsyn <alexander@mihalicyn.com>,
 	Christian Brauner <brauner@kernel.org>,
@@ -49,10 +49,11 @@ Cc: Daniel Borkmann <daniel@iogearbox.net>,
 	linux-kernel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	gyroidos@aisec.fraunhofer.de,
-	=?UTF-8?q?Michael=20Wei=C3=9F?= <michael.weiss@aisec.fraunhofer.de>
-Subject: [RFC PATCH v2 12/14] bpf: Add flag BPF_DEVCG_ACC_MKNOD_UNS for device access
-Date: Wed, 18 Oct 2023 12:50:31 +0200
-Message-Id: <20231018105033.13669-13-michael.weiss@aisec.fraunhofer.de>
+	=?UTF-8?q?Michael=20Wei=C3=9F?= <michael.weiss@aisec.fraunhofer.de>,
+	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Subject: [RFC PATCH v2 13/14] bpf: cgroup: Introduce helper cgroup_bpf_current_enabled()
+Date: Wed, 18 Oct 2023 12:50:32 +0200
+Message-Id: <20231018105033.13669-14-michael.weiss@aisec.fraunhofer.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20231018105033.13669-1-michael.weiss@aisec.fraunhofer.de>
 References: <20231018105033.13669-1-michael.weiss@aisec.fraunhofer.de>
@@ -64,51 +65,78 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:jFFIwS4qwpApd71uT5/zzBofJHrQqQbMnQCJHEMIWW1Lqc23Bv6
- CLaXIgZryPTHHNnoyvu1YqBoKOYSFhL+2PrXRkZWBsk2opEc0nVBAFlgDl0hobyxG49s0Ud
- 9YG/8xesCxM8FUqNmbqiQ6caI/0dbJYKNpvwSg28bF8XMhCPg66tLPMklXLhksz8jbOX5Be
- XCthwxUiwm541vxbY+hXA==
-UI-OutboundReport: notjunk:1;M01:P0:MNEgPA54IMs=;me9EvLyitsl0wTv0UsXt+4LxB3G
- Eh0yoMuL7/IahwR85VE3A2qEg6zChPO0GZuzIR1zs5Jg9SQnajBFHzvj7/g7SVxDbaGwPtDbu
- F7Hh5GIa0i+RmWI2OzLgXPGBCqe1A7h2DTWlvI0zAdlwwinvGaZhoqZ/NaZcM7ktbEvFazgys
- +ivqxBeoHVCwclRyx88ZiwSpRjr7SNnUbuRV/dqHyTy5KHLL7dNamTRD92l9Xvpsu5E1MmTA8
- c9ethuj7kCZbBt3Hso5+dXjLc5K+xJp9sV9uJhSh9jYzP5ZxTSygD/VTo6gjBfUO/QqwHgDiz
- DN2b3nPQ/Ka+xDOyXiogyMb+RiDo5eN28l7YLzEZPZvOIlPKyR1gniVBBmHIN1hGqPnHaSUmq
- b096EXkbEEbEKE+sSxGYr8MAb8Xjc/tEqzIIQ8yAW1iJquYM1rZGrICDCSHwkSblINPpsfULD
- OdI1QFuBmuuSEYvCwaFLYlELH/MEGqntz5GEbi2VrFAQs7RNDTYrKHHwz0V3HECnp0MHGCyla
- iIDYh6MStky1f2Z112vlezC18zvZI7y5xmNfx4rMXFvaPoYgP1J5I4aBxDVhvdBZVUpQ/9WWq
- WCQSyKBPIt7tOt1AM4T9pEtbme68dVzHEj00Wu0WrfYAA9EttXA75nqVYaJNdFdSkaklL6sqq
- OMnVc+K/LfD5LpC5oMG9OB3Jl4ELffgkabBtNhPqXE3IZDE5g0pkAdhiM75yPFDKgXL+KleWt
- IMJuv7bdK+xSGELVf0mabwDYZ+t2hJx2tfHTDauWnBOqCEULvpciMaMv2o/ulUR7MMl/umNkW
- YpMPYmf7O+6hjzc9yOYOXJEHoSp2/IbkkvZhSkf2YDawB4xecEGdSdap2eMAwzEW6v+VOUjNx
- E6VXNm2pv7kGcVsIISJwHqEvFCyj8YoVj7KA=
+X-Provags-ID: V03:K1:c7boRBZce2o/4oyHXPUGFehTs5JEo4g6y6oz3dtk/Y6oo6Xq1OZ
+ DyXf2R5XCAR9DzvSH64sG4crHyJQcx4oZLXOjTppA/Y29rRBvUthw5BF1I90tp85AhOeaEV
+ c1i9nOH12egtUOHVDUgcg/Jwmabwg9DrnHrEGcJQt4+Qz+rnH1TqlyzQGjfc7d/4VKVcvHk
+ 6AsVvg4MCFwyIP4TKCUZQ==
+UI-OutboundReport: notjunk:1;M01:P0:3YIXBCIAPsI=;VvwaHwhP8dS0yqCdMME8AKSP4u3
+ t11wuyWmmbY4TIWIOAk+AMDBYGk87iFjxb0mIzvfGEHhvGxQH7Frw+5HgP4N8v6JfwSTzadTR
+ bY7l7r80uVWW9czZ70/gzjsZzsvRXOt3pFzUtmVsLjqz/Asuvs/jZP4w5wYzRbYf695kiWZz2
+ ai2fOmzF6kL4CuVbcgG8njL2jcatb7IsEz/88D9Y8CThrR4+BaPcrA8Ui69i/oTEkQzA5dXKM
+ v9On9Q3AL7haTuz262+8HvgNoWyYg8RVD67z6XR7DSEp16hrupaDMwMuB2H9DEF8GesQWATNr
+ WKPlj8R7bSFqNsWtr9MF0OcKJ4T2hfMzHGYl33inbj5lkMHm4aHArxKLle4p4ZenKpTjxJ+Cs
+ AKjTOtB3ZBer8bPQwhDobC4qPB/kst1LezQybTmht5rdmO7rs1bcV1Y0VoxIH8InRbLTXbyCJ
+ pnvnBTSKf8HslIjI2A1+E6IlswwutDjM81ds7L6K6Qgg0Z1pVV2s2V4ynNC22WKCnmJwFBfuo
+ 9upJNxY2uT5d512Hy6X13vSOHXbAWw/VeCx7in1qpMeWtev6mPN3LxYUw9QyqVs1C9WtJLaeX
+ 3b1WGpZEyBNdKvt3WUBhTmYLtqyxGz3FUIItFYaEbkrb6Ck1vXrbY3tziBHnhZPoAh1crM4bQ
+ 624UK5nwJtArRMyNpgpqtNVrO69T81tkHYuD08L9wM/p/Tlwi7ASU7a4LTvFnK/FpmZ7RgVgT
+ D8yHsHwCVreZSedhBfh0LqWTTf4dNsvUorbV6EAgRX6Y9XRhzzSjam1/ZrRnYJKWiUKQuFEye
+ MYGwTUwt4Q3QrwatpTk4/fYjQZ/zvEtpmfOU2kHb5HJ1HgbeJ8IFQyLxUehS4A6qtG0LB60Ae
+ 6BxrnuZmsGObyTg==
 X-Spam-Status: No, score=-1.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-	RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_SOFTFAIL
-	autolearn=no autolearn_force=no version=3.4.6
+	RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_SOFTFAIL autolearn=no
+	autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-With this new flag for bpf cgroup device programs, it should be
-possible to guard mknod() access in non-initial user namespaces
-later on.
+This helper can be used to check if a cgroup-bpf specific program is
+active for the current task.
 
 Signed-off-by: Michael Weiß <michael.weiss@aisec.fraunhofer.de>
+Reviewed-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 ---
- include/uapi/linux/bpf.h | 1 +
- 1 file changed, 1 insertion(+)
+ include/linux/bpf-cgroup.h |  2 ++
+ kernel/bpf/cgroup.c        | 14 ++++++++++++++
+ 2 files changed, 16 insertions(+)
 
-diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
-index 0448700890f7..0196b9c72d3e 100644
---- a/include/uapi/linux/bpf.h
-+++ b/include/uapi/linux/bpf.h
-@@ -6927,6 +6927,7 @@ enum {
- 	BPF_DEVCG_ACC_MKNOD	= (1ULL << 0),
- 	BPF_DEVCG_ACC_READ	= (1ULL << 1),
- 	BPF_DEVCG_ACC_WRITE	= (1ULL << 2),
-+	BPF_DEVCG_ACC_MKNOD_UNS	= (1ULL << 3),
- };
+diff --git a/include/linux/bpf-cgroup.h b/include/linux/bpf-cgroup.h
+index 8506690dbb9c..655697c2a620 100644
+--- a/include/linux/bpf-cgroup.h
++++ b/include/linux/bpf-cgroup.h
+@@ -184,6 +184,8 @@ static inline bool cgroup_bpf_sock_enabled(struct sock *sk,
+ 	return array != &bpf_empty_prog_array.hdr;
+ }
  
- enum {
++bool cgroup_bpf_current_enabled(enum cgroup_bpf_attach_type type);
++
+ /* Wrappers for __cgroup_bpf_run_filter_skb() guarded by cgroup_bpf_enabled. */
+ #define BPF_CGROUP_RUN_PROG_INET_INGRESS(sk, skb)			      \
+ ({									      \
+diff --git a/kernel/bpf/cgroup.c b/kernel/bpf/cgroup.c
+index 03b3d4492980..19ae3d037db7 100644
+--- a/kernel/bpf/cgroup.c
++++ b/kernel/bpf/cgroup.c
+@@ -24,6 +24,20 @@
+ DEFINE_STATIC_KEY_ARRAY_FALSE(cgroup_bpf_enabled_key, MAX_CGROUP_BPF_ATTACH_TYPE);
+ EXPORT_SYMBOL(cgroup_bpf_enabled_key);
+ 
++bool cgroup_bpf_current_enabled(enum cgroup_bpf_attach_type type)
++{
++	struct cgroup *cgrp;
++	struct bpf_prog_array *array;
++
++	rcu_read_lock();
++	cgrp = task_dfl_cgroup(current);
++	rcu_read_unlock();
++
++	array = rcu_access_pointer(cgrp->bpf.effective[type]);
++	return array != &bpf_empty_prog_array.hdr;
++}
++EXPORT_SYMBOL(cgroup_bpf_current_enabled);
++
+ /* __always_inline is necessary to prevent indirect call through run_prog
+  * function pointer.
+  */
 -- 
 2.30.2
 
