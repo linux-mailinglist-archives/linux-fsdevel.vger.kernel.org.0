@@ -1,117 +1,214 @@
-Return-Path: <linux-fsdevel+bounces-678-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-679-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 621F77CE44D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 19:20:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 399E87CE4D1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 19:41:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9C1A281A6F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 17:20:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A7FB1C20ADD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 17:41:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53F5A3FB01;
-	Wed, 18 Oct 2023 17:20:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2FF93FB26;
+	Wed, 18 Oct 2023 17:41:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UIQBdSCq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HmbULKUS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF6BB3D984;
-	Wed, 18 Oct 2023 17:20:28 +0000 (UTC)
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E64E35AC;
-	Wed, 18 Oct 2023 10:20:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=NJ1BTP4enJNNNxCONLlghXCw4BKj6HZF59i7tPQQ3q4=; b=UIQBdSCq8VXUQ0YaI2sU7iCwpN
-	XO0OCWPf1TJbyHOFpE+2uvC11vloGWvOX+//b9ffLb2iKLoG75cmtiqNgUHxjkmZ0CZseXZ0n17pS
-	0YImBIUPE0Xo+0+qNVUmdq2lvv5Xq9bNxrSq5H3v0cunVktjL6aofUJeXBdpk8gdFQzqWhQBUCm72
-	fQUpazpLJchjdI0ZOM036PhyTnAKwNIPWKlnFK33DLQIvLVUnhjAhOywhErm6XAsHaG2l7ILbvHi+
-	g3noZWD5ZuAVYc5J9F8P0jWWvOuxDKTDF72Smp0VhjlcHPiwuLFNhDIfibnK1U97dv+D13XfJ8l3i
-	SSZY17Sg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-	id 1qtADJ-0027gQ-Vj; Wed, 18 Oct 2023 17:20:10 +0000
-Date: Wed, 18 Oct 2023 18:20:09 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Wedson Almeida Filho <wedsonaf@gmail.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Kent Overstreet <kent.overstreet@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-fsdevel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	Wedson Almeida Filho <walmeida@microsoft.com>
-Subject: Re: [RFC PATCH 19/19] tarfs: introduce tar fs
-Message-ID: <ZTATyXETyGeAVSxd@casper.infradead.org>
-References: <20231018122518.128049-1-wedsonaf@gmail.com>
- <20231018122518.128049-20-wedsonaf@gmail.com>
- <ZTAOfMvegVAc58Yn@casper.infradead.org>
- <CANeycqqTgj_cVyRx1ZvGFjZjK0ACBUPobDk93ovP41DSXK2Xmg@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 397342F531
+	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Oct 2023 17:41:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76D2FC433C8;
+	Wed, 18 Oct 2023 17:41:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1697650891;
+	bh=kOWxubIvgkUuX1LHF9Uvd3PXOcCevsiFIHXsUMPyfII=;
+	h=From:Subject:Date:To:Cc:From;
+	b=HmbULKUSdAVTYh0NKXFEKevWhFCUwYFMuL4ZE6MnHrMRc//1huWLlflMoK0S8D7HT
+	 RpsmiCca/5mXfeyTb19e8+kl8UJFzEghrdotH3KvXYHZLUsXcKKlbUVfvdQyMx62z6
+	 34Xsrh7WT/00XDtz5t6InI84zeLOx7tPeu8rJA9Rwn1Zx9HeCyi0I3fC4LOiYur/fE
+	 JDN4Vyc3XcT+ERm/aUw1zN6TI4Le3vB5HM60CU8WN2sV4b/rcSCzdsY2aZvIqYa99Z
+	 sjX65S2Oku9xYqAVYGzUC0sAqceFqJ82GaotgiDmurcJyHeCgtRQvu9Ale3NAijBbP
+	 rOv1uoNIL4Tnw==
+From: Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH RFC 0/9] fs: multigrain timestamps (redux)
+Date: Wed, 18 Oct 2023 13:41:07 -0400
+Message-Id: <20231018-mgtime-v1-0-4a7a97b1f482@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANeycqqTgj_cVyRx1ZvGFjZjK0ACBUPobDk93ovP41DSXK2Xmg@mail.gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-	SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
-X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
-	lindbergh.monkeyblade.net
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALMYMGUC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI2NDA0Mz3dz0kszcVN20VOPURHPTZLM0U0sloOKCotS0zAqwQdFKQW7OSrG
+ 1tQAHBm97XQAAAA==
+To: Linus Torvalds <torvalds@linux-foundation.org>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, John Stultz <jstultz@google.com>, 
+ Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>, 
+ Chandan Babu R <chandan.babu@oracle.com>, 
+ "Darrick J. Wong" <djwong@kernel.org>, Dave Chinner <david@fromorbit.com>, 
+ Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, 
+ Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, 
+ David Sterba <dsterba@suse.com>, Hugh Dickins <hughd@google.com>, 
+ Andrew Morton <akpm@linux-foundation.org>, 
+ Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.de>, 
+ David Howells <dhowells@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, 
+ linux-btrfs@vger.kernel.org, linux-mm@kvack.org, linux-nfs@vger.kernel.org, 
+ Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5629; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=kOWxubIvgkUuX1LHF9Uvd3PXOcCevsiFIHXsUMPyfII=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBlMBjAuucpyDoopVPNBPSV5kIUK51y3+JkIuJbJ
+ MfA0arDDZaJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZTAYwAAKCRAADmhBGVaC
+ FRcGD/4gWTfDUlUYR99pZVwm1+RHd3+PX9zlbEqYbvDvs6/aA8B9q7koy4wlyncLKHzM5nrgYHf
+ rFzENOpzsSadkGkDajVLKfFaQ7akLUv8uZiji9WsSoT+e1AyWZj0DskG0JKmYteynPzh30YyJL0
+ KHzsJ7pfrumiZBtdXtMJAa8Skoueq0gWV/7oshhybg6JEOMLOQ+4ANJDMsIfpb6+sHdFitMACRF
+ q4gKZPjsX7FZIx1dd0SQdMlRjw4An+JYEwgjP3bkdy7XTjz6sW5sitQstxEDS/JaxZ6XIIL7xqB
+ OO/Jkxmo5/vSa05/4RVeplhTkAh1uV5n4LuWsjuh+Q8bON7Zv4VKdYJP8r9WBL/5zQwCPpHM2SO
+ c5eE9cT+BmXGcJIzAw52UsXAbp0LO+gYHlR+G7q+I5GEVg2+g6LFRoxL0+OpYvIWcycfYQps5NH
+ XnbuDRwrAVg96y3GpdKaOGuEzu1Sm5CLNXS0jYorIwAossaz50WdaaVRJxMjPRinrp+sP8fv7+l
+ h2X/0Yla61mKX6fZZArxV7sA9uEGbMcZPQcXRw5DW7EhjKh1QbyGwF46sawjrX93/UoxFvWEHso
+ iVcm5rVdVOTBwEy9iFhY241oVCW3E7NtCZ/SNf/hiaRQFTl/Sn7Q3aluI/ogOfLPa0eG+eRYdo8
+ H373khRmD98lzxQ==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-On Wed, Oct 18, 2023 at 02:05:51PM -0300, Wedson Almeida Filho wrote:
-> On Wed, 18 Oct 2023 at 13:57, Matthew Wilcox <willy@infradead.org> wrote:
-> >
-> > On Wed, Oct 18, 2023 at 09:25:18AM -0300, Wedson Almeida Filho wrote:
-> > > +    fn read_folio(inode: &INode<Self>, mut folio: LockedFolio<'_>) -> Result {
-> > > +        let pos = u64::try_from(folio.pos()).unwrap_or(u64::MAX);
-> > > +        let size = u64::try_from(inode.size())?;
-> > > +        let sb = inode.super_block();
-> > > +
-> > > +        let copied = if pos >= size {
-> > > +            0
-> > > +        } else {
-> > > +            let offset = inode.data().offset.checked_add(pos).ok_or(ERANGE)?;
-> > > +            let len = core::cmp::min(size - pos, folio.size().try_into()?);
-> > > +            let mut foffset = 0;
-> > > +
-> > > +            if offset.checked_add(len).ok_or(ERANGE)? > sb.data().data_size {
-> > > +                return Err(EIO);
-> > > +            }
-> > > +
-> > > +            for v in sb.read(offset, len)? {
-> > > +                let v = v?;
-> > > +                folio.write(foffset, v.data())?;
-> > > +                foffset += v.data().len();
-> > > +            }
-> > > +            foffset
-> > > +        };
-> > > +
-> > > +        folio.zero_out(copied, folio.size() - copied)?;
-> > > +        folio.mark_uptodate();
-> > > +        folio.flush_dcache();
-> > > +
-> > > +        Ok(())
-> > > +    }
-> >
-> > Who unlocks the folio here?
-> 
-> The `Drop` implementation of `LockedFolio`.
-> 
-> Note that `read_folio` is given ownership of `folio` (the last
-> argument), so when it goes out of scope (or when it's explicitly
-> dropped) its `drop` function is called automatically. You'll its
-> implementation (and the call to `folio_unlock`) in patch 9.
+The VFS always uses coarse-grained timestamps when updating the
+ctime and mtime after a change. This has the benefit of allowing
+filesystems to optimize away a lot metadata updates, down to around 1
+per jiffy, even when a file is under heavy writes.
 
-That works for synchronous implementations of read_folio(), but for
-an asynchronous implementation, we need to unlock the folio once the
-read completes, typically in the bio completion handler.  What's the
-plan for that?  Hand ownership of the folio to the bio submission path,
-which hands it to the bio completion path, which drops the folio?
+Unfortunately, this coarseness has always been an issue when we're
+exporting via NFSv3, which relies on timestamps to validate caches. A
+lot of changes can happen in a jiffy, so timestamps aren't sufficient to
+help the client decide to invalidate the cache.
+
+Even with NFSv4, a lot of exported filesystems don't properly support a
+change attribute and are subject to the same problems with timestamp
+granularity. Other applications have similar issues with timestamps (e.g
+backup applications).
+
+If we were to always use fine-grained timestamps, that would improve the
+situation, but that becomes rather expensive, as the underlying
+filesystem would have to log a lot more metadata updates.
+
+What we need is a way to only use fine-grained timestamps when they are
+being actively queried. The idea is to use an unused bit in the ctime's
+tv_nsec field to mark when the mtime or ctime has been queried via
+getattr. Once that has been marked, the next m/ctime update will use a
+fine-grained timestamp.
+
+The original merge of multigrain timestamps for v6.6 had to be reverted,
+as a file with a coarse-grained timestamp could incorrectly appear to be
+modified before a file with a fine-grained timestamp, when that wasn't
+the case.
+
+This revision solves that problem by making it so that when a
+fine-grained timespec64 is handed out, that that value becomes the floor
+for further coarse-grained timespec64 fetches. This requires new
+timekeeper interfaces with a potential downside: when a file is
+stamped with a fine-grained timestamp, it has to (briefly) take the
+global timekeeper spinlock.
+
+Because of that, this set takes greater pains to avoid issuing new
+fine-grained timestamps when possible. A fine-grained timestamp is now
+only required if the current mtime or ctime have been fetched for a
+getattr, and the next coarse-grained tick has not happened yet. For any
+other case, a coarse-grained timestamp is fine, and that is done using
+the seqcount.
+
+In order to get some hard numbers about how often the lock would be
+taken, I've added a couple of percpu counters and a debugfs file for
+tracking both types of multigrain timekeeper fetches.
+
+With this, I did a kdevops fstests run on xfs (CRC mode). I ran "make
+fstests-baseline" and then immediately grabbed the counter values, and
+calcuated the percentage:
+
+$ time make fstests-baseline
+real    324m17.337s
+user    27m23.213s
+sys     2m40.313s
+
+fine            3059498
+coarse          383848171
+pct fine        .79075661
+
+Next I did a kdevops fstests run with NFS. One server serving 3 clients
+(v4.2, v4.0 and v3). Again, timed "make fstests-baseline" and then
+grabbed the multigrain counters from the NFS server:
+
+$ time make fstests-baseline
+real    181m57.585s
+user    16m8.266s
+sys     1m45.864s
+
+fine            8137657
+coarse          44726007
+pct fine        15.393668
+
+We can't run as many tests on nfs as xfs, so the run is shorter. nfsd is
+a very getattr-heavy workload, and the clients aggressively coalesce
+writes, so this is probably something of a pessimal case for number of
+fine-grained timestamps over time.
+
+At this point I'm mainly wondering whether (briefly) taking the
+timekeeper spinlock in this codepath is unreasonable. It does very
+little work under it, so I'm hoping the impact would be unmeasurable for
+most workloads.
+
+Side Q: what's the best tool for measuring spinlock contention? It'd be
+interesting to see how often (and how long) we end up spinning on this
+lock under different workloads.
+
+Note that some of the patches in the series are virtually identical to
+the ones before. I stripped the prior Reviewed-by/Acked-by tags though
+since the underlying infrastructure has changed a bit.
+
+Comments and suggestions welcome.
+
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+Jeff Layton (9):
+      fs: switch timespec64 fields in inode to discrete integers
+      timekeeping: new interfaces for multigrain timestamp handing
+      timekeeping: add new debugfs file to count multigrain timestamps
+      fs: add infrastructure for multigrain timestamps
+      fs: have setattr_copy handle multigrain timestamps appropriately
+      xfs: switch to multigrain timestamps
+      ext4: switch to multigrain timestamps
+      btrfs: convert to multigrain timestamps
+      tmpfs: add support for multigrain timestamps
+
+ fs/attr.c                           |  52 ++++++++++++++--
+ fs/btrfs/file.c                     |  25 ++------
+ fs/btrfs/super.c                    |   5 +-
+ fs/ext4/super.c                     |   2 +-
+ fs/inode.c                          |  70 ++++++++++++++++++++-
+ fs/stat.c                           |  41 ++++++++++++-
+ fs/xfs/libxfs/xfs_trans_inode.c     |   6 +-
+ fs/xfs/xfs_iops.c                   |  10 +--
+ fs/xfs/xfs_super.c                  |   2 +-
+ include/linux/fs.h                  |  85 ++++++++++++++++++--------
+ include/linux/timekeeper_internal.h |   2 +
+ include/linux/timekeeping.h         |   4 ++
+ kernel/time/timekeeping.c           | 117 ++++++++++++++++++++++++++++++++++++
+ mm/shmem.c                          |   2 +-
+ 14 files changed, 352 insertions(+), 71 deletions(-)
+---
+base-commit: 12cd44023651666bd44baa36a5c999698890debb
+change-id: 20231016-mgtime-fe3ea75c6f59
+
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
+
 
