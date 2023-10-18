@@ -1,63 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-637-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-638-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 777DE7CDB8C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 14:26:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8922F7CDB8D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 14:26:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CBF9280EF5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 12:26:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82F79B21430
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 12:26:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02AAB358AF;
-	Wed, 18 Oct 2023 12:26:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE258347A9;
+	Wed, 18 Oct 2023 12:26:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AaNZigKQ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fd3rpBty"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40A4D358A3;
-	Wed, 18 Oct 2023 12:26:21 +0000 (UTC)
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09305116;
-	Wed, 18 Oct 2023 05:26:19 -0700 (PDT)
-Received: by mail-pl1-x62f.google.com with SMTP id d9443c01a7336-1caa371dcd8so7635195ad.0;
-        Wed, 18 Oct 2023 05:26:19 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DA351DDFC;
+	Wed, 18 Oct 2023 12:26:25 +0000 (UTC)
+Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F052112;
+	Wed, 18 Oct 2023 05:26:23 -0700 (PDT)
+Received: by mail-pl1-x635.google.com with SMTP id d9443c01a7336-1ca6809fb8aso22946905ad.1;
+        Wed, 18 Oct 2023 05:26:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697631978; x=1698236778; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1697631983; x=1698236783; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=faga32+UB08pXXYjH8Xoi0IpDu5Cj+Cqa9Vnfplfui4=;
-        b=AaNZigKQf5HquBYd488kxYjmfeFcFMHzz9CStJG4rpKiJu0jPR28F7F32EII7Pj24T
-         2ZPgR6lPvhEMQv5N1ybbO1CcJOKjvfL7QcWdEu6HzdxLiR8RGRPyJKWbLvauaMCUrkGm
-         IohmL/SRP07u++ypscbywF20+PYkAX+1KCdVZj572fYH+QjA/EfkOmnHpWTTw7fwdL4r
-         8hS0nQXYsfo8Ych3389b2iCl0TlaS9IupQy9ToNJJoShTmesvPW3WPB0nAvKZrY5gbXs
-         23fGXcSaDzH18WdUys9SOJIgCRYpw+l5kIMNm4IygUHvviyK5LYfjLYBAeuGsd3bVHPw
-         CM7Q==
+        bh=Tw7Bt710S9wSgq7lYwmiNaJcrZn0u8YLmYwj+jhFGJE=;
+        b=fd3rpBty1UIm35fgsgMx0xcQzlrZ/kpHW7btmTFnsF6238b0yXSm5GJN52BwYC2Xj3
+         5AhspMX8cKDRm/ALYmNtPa9nFVhmoEqbpqSYpeu/9I+fTIVYlkGGrVI6+PKNIEOyoTTM
+         gsVwT6pxN5UygXVyLIVQDp4ehlq/Qhr22EzmC/3iTVEKQpE8AsL8g3MXBUEWsddk+9SM
+         DDj3QIw/iGLNByhW6+Rf8JLc9avaEcKp1Ei3WCmZUeFLdKLtSOiI7g6lLLM9czeu2cv5
+         ciw2a/iwmhkf2N4rzT39NCl/FOXjX9FZjnyt0/aqyJmDAZlSqCqaq4pk5mzOVQb55dfm
+         Epfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697631978; x=1698236778;
+        d=1e100.net; s=20230601; t=1697631983; x=1698236783;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=faga32+UB08pXXYjH8Xoi0IpDu5Cj+Cqa9Vnfplfui4=;
-        b=tfsWrCtZSaYU2aW03UTC5No0psmjosyLJCaqNnfUiowuSwJ4GFVyAaI4r4KyqMcfVs
-         Cnk4x1nFXQ5OEHNvH+X54y1JUkgfEtNPaaE3Gueo++PM+rbsO0GJ5d5mNlbX7fvbz0Hl
-         ZzfOYjVxGsGJfjHy18ahGGCkO+w2RjLmgjqJ8baEXCo00opBlL5sLEU/Gn7/p6DFRFe4
-         J0sDkto0ol+DSeJdvUcW4T5TM++IigTGlWhYcsnW6e3RV7YnVvnfs/25gHPe1q4svCDF
-         hrpXxP4RML27+YyoOkX7gnByxAB5oHHRktU7nBplLzXmonJcXSTUQLcC0lF/UyYgppc5
-         0pJQ==
-X-Gm-Message-State: AOJu0Yymbz89TKYxmkViAAECPEhsSoX+RhqvDjkRZ/drSU1NKVCDwznv
-	eKGbtXhfAfDRUuGoiujq7og=
-X-Google-Smtp-Source: AGHT+IGuqmopLtWEmMFS8GxV6IVwolnbr7D96FufPBfeXCR6T08KFASr57fpppBgMIzJ5gtM6lA6ag==
-X-Received: by 2002:a17:903:246:b0:1c7:5a63:43bb with SMTP id j6-20020a170903024600b001c75a6343bbmr6044847plh.8.1697631978312;
-        Wed, 18 Oct 2023 05:26:18 -0700 (PDT)
+        bh=Tw7Bt710S9wSgq7lYwmiNaJcrZn0u8YLmYwj+jhFGJE=;
+        b=ZytczmKWgTbxAc37wN3BwY69B1GW3EPTQLdHrBwzFNoCsIt8aRPWgQWLmmfABHweAN
+         cWEHqC1vaEbVvXZqJ6O7u5BktqzzRcjj0clplXpFBkw388aqQzkoMWZBnBPQ1mdttg0/
+         yJQHgdZM41DSrtBoFSptdyP2fh1KRtlXQdhlTCB6tw1rM8nGyrCGb0903iOeQbhQyi02
+         WbH1g27wQ3IoTXkbDOCZBqq0vq2HmJSDHz8d+L95PAwT9e9YPrUvtX1fxCVqLTjRijyJ
+         MVk6V7U3/oouJDjMBIm0pHc/7TbIn/mOTonOLi+A/4RHx+XueR4TCgN5bi5IapvurKo+
+         F6aA==
+X-Gm-Message-State: AOJu0YyWQWYvSgW+Y5a64tl6ov/Ap3hDviEZrQiNSZa8Ht5iVIRzO7Jo
+	o1PokKAoZbHKJRZYimeHbjc=
+X-Google-Smtp-Source: AGHT+IHX6mepXTgcyTGX7wAyKHqMQZGOk55mDoa3YY/X49KACM8npsQb+3j1IqlhtuYu4pPtY0SJRQ==
+X-Received: by 2002:a17:903:32d0:b0:1c9:e0f9:a676 with SMTP id i16-20020a17090332d000b001c9e0f9a676mr4846526plr.6.1697631982965;
+        Wed, 18 Oct 2023 05:26:22 -0700 (PDT)
 Received: from wedsonaf-dev.. ([2804:389:7122:43b8:9b73:6339:3351:cce0])
-        by smtp.googlemail.com with ESMTPSA id j1-20020a170902c3c100b001c736b0037fsm3411046plj.231.2023.10.18.05.26.14
+        by smtp.googlemail.com with ESMTPSA id j1-20020a170902c3c100b001c736b0037fsm3411046plj.231.2023.10.18.05.26.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Oct 2023 05:26:18 -0700 (PDT)
+        Wed, 18 Oct 2023 05:26:22 -0700 (PDT)
 From: Wedson Almeida Filho <wedsonaf@gmail.com>
 To: Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>,
@@ -67,9 +67,9 @@ Cc: Kent Overstreet <kent.overstreet@gmail.com>,
 	linux-fsdevel@vger.kernel.org,
 	rust-for-linux@vger.kernel.org,
 	Wedson Almeida Filho <walmeida@microsoft.com>
-Subject: [RFC PATCH 09/19] rust: folio: introduce basic support for folios
-Date: Wed, 18 Oct 2023 09:25:08 -0300
-Message-Id: <20231018122518.128049-10-wedsonaf@gmail.com>
+Subject: [RFC PATCH 10/19] rust: fs: introduce `FileSystem::read_folio`
+Date: Wed, 18 Oct 2023 09:25:09 -0300
+Message-Id: <20231018122518.128049-11-wedsonaf@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20231018122518.128049-1-wedsonaf@gmail.com>
 References: <20231018122518.128049-1-wedsonaf@gmail.com>
@@ -89,393 +89,272 @@ X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 
 From: Wedson Almeida Filho <walmeida@microsoft.com>
 
-Allow Rust file systems to handle ref-counted folios.
-
-Provide the minimum needed to implement `read_folio` (part of `struct
-address_space_operations`) in read-only file systems and to read
-uncached blocks.
+Allow Rust file systems to create regular file inodes backed by the page
+cache. The contents of such files are read into folios via `read_folio`.
 
 Signed-off-by: Wedson Almeida Filho <walmeida@microsoft.com>
 ---
- rust/bindings/bindings_helper.h |   3 +
- rust/bindings/lib.rs            |   2 +
- rust/helpers.c                  |  81 ++++++++++++
- rust/kernel/folio.rs            | 215 ++++++++++++++++++++++++++++++++
- rust/kernel/lib.rs              |   1 +
- 5 files changed, 302 insertions(+)
- create mode 100644 rust/kernel/folio.rs
+ rust/kernel/folio.rs      |  1 -
+ rust/kernel/fs.rs         | 75 +++++++++++++++++++++++++++++++++++++--
+ samples/rust/rust_rofs.rs | 69 ++++++++++++++++++++++++-----------
+ 3 files changed, 122 insertions(+), 23 deletions(-)
 
-diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-index ca1898ce9527..53a99ea512d1 100644
---- a/rust/bindings/bindings_helper.h
-+++ b/rust/bindings/bindings_helper.h
-@@ -11,6 +11,7 @@
- #include <linux/fs.h>
- #include <linux/fs_context.h>
- #include <linux/slab.h>
-+#include <linux/pagemap.h>
- #include <linux/refcount.h>
- #include <linux/wait.h>
- #include <linux/sched.h>
-@@ -27,3 +28,5 @@ const slab_flags_t BINDINGS_SLAB_ACCOUNT = SLAB_ACCOUNT;
- const unsigned long BINDINGS_SB_RDONLY = SB_RDONLY;
- 
- const loff_t BINDINGS_MAX_LFS_FILESIZE = MAX_LFS_FILESIZE;
-+
-+const size_t BINDINGS_PAGE_SIZE = PAGE_SIZE;
-diff --git a/rust/bindings/lib.rs b/rust/bindings/lib.rs
-index 426915d3fb57..a96b7f08e57d 100644
---- a/rust/bindings/lib.rs
-+++ b/rust/bindings/lib.rs
-@@ -59,3 +59,5 @@ mod bindings_helper {
- pub const SB_RDONLY: core::ffi::c_ulong = BINDINGS_SB_RDONLY;
- 
- pub const MAX_LFS_FILESIZE: loff_t = BINDINGS_MAX_LFS_FILESIZE;
-+
-+pub const PAGE_SIZE: usize = BINDINGS_PAGE_SIZE;
-diff --git a/rust/helpers.c b/rust/helpers.c
-index c5a2bec6467d..f2ce3e7b688c 100644
---- a/rust/helpers.c
-+++ b/rust/helpers.c
-@@ -23,10 +23,14 @@
- #include <kunit/test-bug.h>
- #include <linux/bug.h>
- #include <linux/build_bug.h>
-+#include <linux/cacheflush.h>
- #include <linux/err.h>
- #include <linux/errname.h>
- #include <linux/fs.h>
-+#include <linux/highmem.h>
-+#include <linux/mm.h>
- #include <linux/mutex.h>
-+#include <linux/pagemap.h>
- #include <linux/refcount.h>
- #include <linux/sched/signal.h>
- #include <linux/spinlock.h>
-@@ -145,6 +149,77 @@ struct kunit *rust_helper_kunit_get_current_test(void)
- }
- EXPORT_SYMBOL_GPL(rust_helper_kunit_get_current_test);
- 
-+void *rust_helper_kmap(struct page *page)
-+{
-+	return kmap(page);
-+}
-+EXPORT_SYMBOL_GPL(rust_helper_kmap);
-+
-+void rust_helper_kunmap(struct page *page)
-+{
-+	kunmap(page);
-+}
-+EXPORT_SYMBOL_GPL(rust_helper_kunmap);
-+
-+void rust_helper_folio_get(struct folio *folio)
-+{
-+	folio_get(folio);
-+}
-+EXPORT_SYMBOL_GPL(rust_helper_folio_get);
-+
-+void rust_helper_folio_put(struct folio *folio)
-+{
-+	folio_put(folio);
-+}
-+EXPORT_SYMBOL_GPL(rust_helper_folio_put);
-+
-+struct page *rust_helper_folio_page(struct folio *folio, size_t n)
-+{
-+	return folio_page(folio, n);
-+}
-+
-+loff_t rust_helper_folio_pos(struct folio *folio)
-+{
-+	return folio_pos(folio);
-+}
-+EXPORT_SYMBOL_GPL(rust_helper_folio_pos);
-+
-+size_t rust_helper_folio_size(struct folio *folio)
-+{
-+	return folio_size(folio);
-+}
-+EXPORT_SYMBOL_GPL(rust_helper_folio_size);
-+
-+void rust_helper_folio_mark_uptodate(struct folio *folio)
-+{
-+	folio_mark_uptodate(folio);
-+}
-+EXPORT_SYMBOL_GPL(rust_helper_folio_mark_uptodate);
-+
-+void rust_helper_folio_set_error(struct folio *folio)
-+{
-+	folio_set_error(folio);
-+}
-+EXPORT_SYMBOL_GPL(rust_helper_folio_set_error);
-+
-+void rust_helper_flush_dcache_folio(struct folio *folio)
-+{
-+	flush_dcache_folio(folio);
-+}
-+EXPORT_SYMBOL_GPL(rust_helper_flush_dcache_folio);
-+
-+void *rust_helper_kmap_local_folio(struct folio *folio, size_t offset)
-+{
-+	return kmap_local_folio(folio, offset);
-+}
-+EXPORT_SYMBOL_GPL(rust_helper_kmap_local_folio);
-+
-+void rust_helper_kunmap_local(const void *vaddr)
-+{
-+	kunmap_local(vaddr);
-+}
-+EXPORT_SYMBOL_GPL(rust_helper_kunmap_local);
-+
- void rust_helper_i_uid_write(struct inode *inode, uid_t uid)
- {
- 	i_uid_write(inode, uid);
-@@ -163,6 +238,12 @@ off_t rust_helper_i_size_read(const struct inode *inode)
- }
- EXPORT_SYMBOL_GPL(rust_helper_i_size_read);
- 
-+void rust_helper_mapping_set_large_folios(struct address_space *mapping)
-+{
-+	mapping_set_large_folios(mapping);
-+}
-+EXPORT_SYMBOL_GPL(rust_helper_mapping_set_large_folios);
-+
- /*
-  * `bindgen` binds the C `size_t` type as the Rust `usize` type, so we can
-  * use it in contexts where Rust expects a `usize` like slice (array) indices.
 diff --git a/rust/kernel/folio.rs b/rust/kernel/folio.rs
-new file mode 100644
-index 000000000000..ef8a08b97962
---- /dev/null
+index ef8a08b97962..b7f80291b0e1 100644
+--- a/rust/kernel/folio.rs
 +++ b/rust/kernel/folio.rs
-@@ -0,0 +1,215 @@
-+// SPDX-License-Identifier: GPL-2.0
+@@ -123,7 +123,6 @@ impl LockedFolio<'_> {
+     /// Callers must ensure that the folio is valid and locked. Additionally, that the
+     /// responsibility of unlocking is transferred to the new instance of [`LockedFolio`]. Lastly,
+     /// that the returned [`LockedFolio`] doesn't outlive the refcount that keeps it alive.
+-    #[allow(dead_code)]
+     pub(crate) unsafe fn from_raw(folio: *const bindings::folio) -> Self {
+         let ptr = folio.cast();
+         // SAFETY: The safety requirements ensure that `folio` (from which `ptr` is derived) is
+diff --git a/rust/kernel/fs.rs b/rust/kernel/fs.rs
+index 681fef8e3af1..ee3dce87032b 100644
+--- a/rust/kernel/fs.rs
++++ b/rust/kernel/fs.rs
+@@ -8,7 +8,10 @@
+ 
+ use crate::error::{code::*, from_result, to_result, Error, Result};
+ use crate::types::{ARef, AlwaysRefCounted, Either, Opaque};
+-use crate::{bindings, init::PinInit, str::CStr, time::Timespec, try_pin_init, ThisModule};
++use crate::{
++    bindings, folio::LockedFolio, init::PinInit, str::CStr, time::Timespec, try_pin_init,
++    ThisModule,
++};
+ use core::{marker::PhantomData, marker::PhantomPinned, mem::ManuallyDrop, pin::Pin, ptr};
+ use macros::{pin_data, pinned_drop};
+ 
+@@ -36,6 +39,9 @@ pub trait FileSystem {
+ 
+     /// Returns the inode corresponding to the directory entry with the given name.
+     fn lookup(parent: &INode<Self>, name: &[u8]) -> Result<ARef<INode<Self>>>;
 +
-+//! Groups of contiguous pages, folios.
-+//!
-+//! C headers: [`include/linux/mm.h`](../../include/linux/mm.h)
++    /// Reads the contents of the inode into the given folio.
++    fn read_folio(inode: &INode<Self>, folio: LockedFolio<'_>) -> Result;
+ }
+ 
+ /// The types of directory entries reported by [`FileSystem::read_dir`].
+@@ -74,6 +80,7 @@ impl From<INodeType> for DirEntryType {
+     fn from(value: INodeType) -> Self {
+         match value {
+             INodeType::Dir => DirEntryType::Dir,
++            INodeType::Reg => DirEntryType::Reg,
+         }
+     }
+ }
+@@ -232,6 +239,15 @@ pub fn init(self, params: INodeParams) -> Result<ARef<INode<T>>> {
+                 inode.i_op = &Tables::<T>::DIR_INODE_OPERATIONS;
+                 bindings::S_IFDIR
+             }
++            INodeType::Reg => {
++                // SAFETY: `generic_ro_fops` never changes, it's safe to reference it.
++                inode.__bindgen_anon_3.i_fop = unsafe { &bindings::generic_ro_fops };
++                inode.i_data.a_ops = &Tables::<T>::FILE_ADDRESS_SPACE_OPERATIONS;
 +
-+use crate::error::{code::*, Result};
-+use crate::types::{ARef, AlwaysRefCounted, Opaque, ScopeGuard};
-+use core::{cmp::min, ptr};
++                // SAFETY: The `i_mapping` pointer doesn't change and is valid.
++                unsafe { bindings::mapping_set_large_folios(inode.i_mapping) };
++                bindings::S_IFREG
++            }
+         };
+ 
+         inode.i_mode = (params.mode & 0o777) | u16::try_from(mode)?;
+@@ -268,6 +284,9 @@ fn drop(&mut self) {
+ pub enum INodeType {
+     /// Directory type.
+     Dir,
 +
-+/// Wraps the kernel's `struct folio`.
-+///
-+/// # Invariants
-+///
-+/// Instances of this type are always ref-counted, that is, a call to `folio_get` ensures that the
-+/// allocation remains valid at least until the matching call to `folio_put`.
-+#[repr(transparent)]
-+pub struct Folio(pub(crate) Opaque<bindings::folio>);
++    /// Regular file type.
++    Reg,
+ }
+ 
+ /// Required inode parameters.
+@@ -588,6 +607,55 @@ extern "C" fn lookup_callback(
+             },
+         }
+     }
 +
-+// SAFETY: The type invariants guarantee that `Folio` is always ref-counted.
-+unsafe impl AlwaysRefCounted for Folio {
-+    fn inc_ref(&self) {
-+        // SAFETY: The existence of a shared reference means that the refcount is nonzero.
-+        unsafe { bindings::folio_get(self.0.get()) };
++    const FILE_ADDRESS_SPACE_OPERATIONS: bindings::address_space_operations =
++        bindings::address_space_operations {
++            writepage: None,
++            read_folio: Some(Self::read_folio_callback),
++            writepages: None,
++            dirty_folio: None,
++            readahead: None,
++            write_begin: None,
++            write_end: None,
++            bmap: None,
++            invalidate_folio: None,
++            release_folio: None,
++            free_folio: None,
++            direct_IO: None,
++            migrate_folio: None,
++            launder_folio: None,
++            is_partially_uptodate: None,
++            is_dirty_writeback: None,
++            error_remove_page: None,
++            swap_activate: None,
++            swap_deactivate: None,
++            swap_rw: None,
++        };
++
++    extern "C" fn read_folio_callback(
++        _file: *mut bindings::file,
++        folio: *mut bindings::folio,
++    ) -> i32 {
++        from_result(|| {
++            // SAFETY: All pointers are valid and stable.
++            let inode = unsafe {
++                &*(*(*folio)
++                    .__bindgen_anon_1
++                    .page
++                    .__bindgen_anon_1
++                    .__bindgen_anon_1
++                    .mapping)
++                    .host
++                    .cast::<INode<T>>()
++            };
++
++            // SAFETY: The C contract guarantees that the folio is valid and locked, with ownership
++            // of the lock transferred to the callee (this function). The folio is also guaranteed
++            // not to outlive this function.
++            T::read_folio(inode, unsafe { LockedFolio::from_raw(folio) })?;
++            Ok(0)
++        })
++    }
+ }
+ 
+ /// Directory entry emitter.
+@@ -673,7 +741,7 @@ fn init(module: &'static ThisModule) -> impl PinInit<Self, Error> {
+ /// # mod module_fs_sample {
+ /// use kernel::fs::{DirEmitter, INode, NewSuperBlock, SuperBlock, SuperParams};
+ /// use kernel::prelude::*;
+-/// use kernel::{c_str, fs, types::ARef};
++/// use kernel::{c_str, folio::LockedFolio, fs, types::ARef};
+ ///
+ /// kernel::module_fs! {
+ ///     type: MyFs,
+@@ -698,6 +766,9 @@ fn init(module: &'static ThisModule) -> impl PinInit<Self, Error> {
+ ///     fn lookup(_: &INode<Self>, _: &[u8]) -> Result<ARef<INode<Self>>> {
+ ///         todo!()
+ ///     }
++///     fn read_folio(_: &INode<Self>, _: LockedFolio<'_>) -> Result {
++///         todo!()
++///     }
+ /// }
+ /// # }
+ /// ```
+diff --git a/samples/rust/rust_rofs.rs b/samples/rust/rust_rofs.rs
+index 4cc8525884a9..ef651ad38185 100644
+--- a/samples/rust/rust_rofs.rs
++++ b/samples/rust/rust_rofs.rs
+@@ -6,7 +6,7 @@
+     DirEmitter, INode, INodeParams, INodeType, NewSuperBlock, SuperBlock, SuperParams,
+ };
+ use kernel::prelude::*;
+-use kernel::{c_str, fs, time::UNIX_EPOCH, types::ARef, types::Either};
++use kernel::{c_str, folio::LockedFolio, fs, time::UNIX_EPOCH, types::ARef, types::Either};
+ 
+ kernel::module_fs! {
+     type: RoFs,
+@@ -20,6 +20,7 @@ struct Entry {
+     name: &'static [u8],
+     ino: u64,
+     etype: INodeType,
++    contents: &'static [u8],
+ }
+ 
+ const ENTRIES: [Entry; 3] = [
+@@ -27,16 +28,19 @@ struct Entry {
+         name: b".",
+         ino: 1,
+         etype: INodeType::Dir,
++        contents: b"",
+     },
+     Entry {
+         name: b"..",
+         ino: 1,
+         etype: INodeType::Dir,
++        contents: b"",
+     },
+     Entry {
+-        name: b"subdir",
++        name: b"test.txt",
+         ino: 2,
+-        etype: INodeType::Dir,
++        etype: INodeType::Reg,
++        contents: b"hello\n",
+     },
+ ];
+ 
+@@ -95,23 +99,48 @@ fn lookup(parent: &INode<Self>, name: &[u8]) -> Result<ARef<INode<Self>>> {
+             return Err(ENOENT);
+         }
+ 
+-        match name {
+-            b"subdir" => match parent.super_block().get_or_create_inode(2)? {
+-                Either::Left(existing) => Ok(existing),
+-                Either::Right(new) => new.init(INodeParams {
+-                    typ: INodeType::Dir,
+-                    mode: 0o555,
+-                    size: 0,
+-                    blocks: 1,
+-                    nlink: 2,
+-                    uid: 0,
+-                    gid: 0,
+-                    atime: UNIX_EPOCH,
+-                    ctime: UNIX_EPOCH,
+-                    mtime: UNIX_EPOCH,
+-                }),
+-            },
+-            _ => Err(ENOENT),
++        for e in &ENTRIES {
++            if name == e.name {
++                return match parent.super_block().get_or_create_inode(e.ino)? {
++                    Either::Left(existing) => Ok(existing),
++                    Either::Right(new) => new.init(INodeParams {
++                        typ: e.etype,
++                        mode: 0o444,
++                        size: e.contents.len().try_into()?,
++                        blocks: 1,
++                        nlink: 1,
++                        uid: 0,
++                        gid: 0,
++                        atime: UNIX_EPOCH,
++                        ctime: UNIX_EPOCH,
++                        mtime: UNIX_EPOCH,
++                    }),
++                };
++            }
+         }
++
++        Err(ENOENT)
 +    }
 +
-+    unsafe fn dec_ref(obj: ptr::NonNull<Self>) {
-+        // SAFETY: The safety requirements guarantee that the refcount is nonzero.
-+        unsafe { bindings::folio_put(obj.cast().as_ptr()) }
-+    }
-+}
++    fn read_folio(inode: &INode<Self>, mut folio: LockedFolio<'_>) -> Result {
++        let data = match inode.ino() {
++            2 => ENTRIES[2].contents,
++            _ => return Err(EINVAL),
++        };
 +
-+impl Folio {
-+    /// Tries to allocate a new folio.
-+    ///
-+    /// On success, returns a folio made up of 2^order pages.
-+    pub fn try_new(order: u32) -> Result<UniqueFolio> {
-+        if order > bindings::MAX_ORDER {
-+            return Err(EDOM);
-+        }
++        let pos = usize::try_from(folio.pos()).unwrap_or(usize::MAX);
++        let copied = if pos >= data.len() {
++            0
++        } else {
++            let to_copy = core::cmp::min(data.len() - pos, folio.size());
++            folio.write(0, &data[pos..][..to_copy])?;
++            to_copy
++        };
 +
-+        // SAFETY: We checked that `order` is within the max allowed value.
-+        let f = ptr::NonNull::new(unsafe { bindings::folio_alloc(bindings::GFP_KERNEL, order) })
-+            .ok_or(ENOMEM)?;
-+
-+        // SAFETY: The folio returned by `folio_alloc` is referenced. The ownership of the
-+        // reference is transferred to the `ARef` instance.
-+        Ok(UniqueFolio(unsafe { ARef::from_raw(f.cast()) }))
-+    }
-+
-+    /// Returns the byte position of this folio in its file.
-+    pub fn pos(&self) -> i64 {
-+        // SAFETY: The folio is valid because the shared reference implies a non-zero refcount.
-+        unsafe { bindings::folio_pos(self.0.get()) }
-+    }
-+
-+    /// Returns the byte size of this folio.
-+    pub fn size(&self) -> usize {
-+        // SAFETY: The folio is valid because the shared reference implies a non-zero refcount.
-+        unsafe { bindings::folio_size(self.0.get()) }
-+    }
-+
-+    /// Flushes the data cache for the pages that make up the folio.
-+    pub fn flush_dcache(&self) {
-+        // SAFETY: The folio is valid because the shared reference implies a non-zero refcount.
-+        unsafe { bindings::flush_dcache_folio(self.0.get()) }
-+    }
-+}
-+
-+/// A [`Folio`] that has a single reference to it.
-+pub struct UniqueFolio(pub(crate) ARef<Folio>);
-+
-+impl UniqueFolio {
-+    /// Maps the contents of a folio page into a slice.
-+    pub fn map_page(&self, page_index: usize) -> Result<MapGuard<'_>> {
-+        if page_index >= self.0.size() / bindings::PAGE_SIZE {
-+            return Err(EDOM);
-+        }
-+
-+        // SAFETY: We just checked that the index is within bounds of the folio.
-+        let page = unsafe { bindings::folio_page(self.0 .0.get(), page_index) };
-+
-+        // SAFETY: `page` is valid because it was returned by `folio_page` above.
-+        let ptr = unsafe { bindings::kmap(page) };
-+
-+        // SAFETY: We just mapped `ptr`, so it's valid for read.
-+        let data = unsafe { core::slice::from_raw_parts(ptr.cast::<u8>(), bindings::PAGE_SIZE) };
-+
-+        Ok(MapGuard { data, page })
-+    }
-+}
-+
-+/// A mapped [`UniqueFolio`].
-+pub struct MapGuard<'a> {
-+    data: &'a [u8],
-+    page: *mut bindings::page,
-+}
-+
-+impl core::ops::Deref for MapGuard<'_> {
-+    type Target = [u8];
-+
-+    fn deref(&self) -> &Self::Target {
-+        self.data
-+    }
-+}
-+
-+impl Drop for MapGuard<'_> {
-+    fn drop(&mut self) {
-+        // SAFETY: A `MapGuard` instance is only created when `kmap` succeeds, so it's ok to unmap
-+        // it when the guard is dropped.
-+        unsafe { bindings::kunmap(self.page) };
-+    }
-+}
-+
-+/// A locked [`Folio`].
-+pub struct LockedFolio<'a>(&'a Folio);
-+
-+impl LockedFolio<'_> {
-+    /// Creates a new locked folio from a raw pointer.
-+    ///
-+    /// # Safety
-+    ///
-+    /// Callers must ensure that the folio is valid and locked. Additionally, that the
-+    /// responsibility of unlocking is transferred to the new instance of [`LockedFolio`]. Lastly,
-+    /// that the returned [`LockedFolio`] doesn't outlive the refcount that keeps it alive.
-+    #[allow(dead_code)]
-+    pub(crate) unsafe fn from_raw(folio: *const bindings::folio) -> Self {
-+        let ptr = folio.cast();
-+        // SAFETY: The safety requirements ensure that `folio` (from which `ptr` is derived) is
-+        // valid and will remain valid while the `LockedFolio` instance lives.
-+        Self(unsafe { &*ptr })
-+    }
-+
-+    /// Marks the folio as being up to date.
-+    pub fn mark_uptodate(&mut self) {
-+        // SAFETY: The folio is valid because the shared reference implies a non-zero refcount.
-+        unsafe { bindings::folio_mark_uptodate(self.0 .0.get()) }
-+    }
-+
-+    /// Sets the error flag on the folio.
-+    pub fn set_error(&mut self) {
-+        // SAFETY: The folio is valid because the shared reference implies a non-zero refcount.
-+        unsafe { bindings::folio_set_error(self.0 .0.get()) }
-+    }
-+
-+    fn for_each_page(
-+        &mut self,
-+        offset: usize,
-+        len: usize,
-+        mut cb: impl FnMut(&mut [u8]) -> Result,
-+    ) -> Result {
-+        let mut remaining = len;
-+        let mut next_offset = offset;
-+
-+        // Check that we don't overflow the folio.
-+        let end = offset.checked_add(len).ok_or(EDOM)?;
-+        if end > self.size() {
-+            return Err(EINVAL);
-+        }
-+
-+        while remaining > 0 {
-+            let page_offset = next_offset & (bindings::PAGE_SIZE - 1);
-+            let usable = min(remaining, bindings::PAGE_SIZE - page_offset);
-+            // SAFETY: The folio is valid because the shared reference implies a non-zero refcount;
-+            // `next_offset` is also guaranteed be lesss than the folio size.
-+            let ptr = unsafe { bindings::kmap_local_folio(self.0 .0.get(), next_offset) };
-+
-+            // SAFETY: `ptr` was just returned by the `kmap_local_folio` above.
-+            let _guard = ScopeGuard::new(|| unsafe { bindings::kunmap_local(ptr) });
-+
-+            // SAFETY: `kmap_local_folio` maps whole page so we know it's mapped for at least
-+            // `usable` bytes.
-+            let s = unsafe { core::slice::from_raw_parts_mut(ptr.cast::<u8>(), usable) };
-+            cb(s)?;
-+
-+            next_offset += usable;
-+            remaining -= usable;
-+        }
++        folio.zero_out(copied, folio.size() - copied)?;
++        folio.mark_uptodate();
++        folio.flush_dcache();
 +
 +        Ok(())
-+    }
-+
-+    /// Writes the given slice into the folio.
-+    pub fn write(&mut self, offset: usize, data: &[u8]) -> Result {
-+        let mut remaining = data;
-+
-+        self.for_each_page(offset, data.len(), |s| {
-+            s.copy_from_slice(&remaining[..s.len()]);
-+            remaining = &remaining[s.len()..];
-+            Ok(())
-+        })
-+    }
-+
-+    /// Writes zeroes into the folio.
-+    pub fn zero_out(&mut self, offset: usize, len: usize) -> Result {
-+        self.for_each_page(offset, len, |s| {
-+            s.fill(0);
-+            Ok(())
-+        })
-+    }
-+}
-+
-+impl core::ops::Deref for LockedFolio<'_> {
-+    type Target = Folio;
-+    fn deref(&self) -> &Self::Target {
-+        self.0
-+    }
-+}
-+
-+impl Drop for LockedFolio<'_> {
-+    fn drop(&mut self) {
-+        // SAFETY: The folio is valid because the shared reference implies a non-zero refcount.
-+        unsafe { bindings::folio_unlock(self.0 .0.get()) }
-+    }
-+}
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index 00059b80c240..0e85b380da64 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -34,6 +34,7 @@
- mod allocator;
- mod build_assert;
- pub mod error;
-+pub mod folio;
- pub mod fs;
- pub mod init;
- pub mod ioctl;
+     }
+ }
 -- 
 2.34.1
 
