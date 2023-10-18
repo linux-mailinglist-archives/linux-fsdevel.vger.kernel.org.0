@@ -1,30 +1,30 @@
-Return-Path: <linux-fsdevel+bounces-614-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-616-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B16F57CD9B4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 12:52:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E733E7CD9D0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 12:57:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CC35B2100D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 10:52:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A113C281CE6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 10:57:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D6DD2AB47;
-	Wed, 18 Oct 2023 10:51:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0F141A5BE;
+	Wed, 18 Oct 2023 10:57:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C1DF199B8;
-	Wed, 18 Oct 2023 10:51:33 +0000 (UTC)
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.187])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D99D109;
-	Wed, 18 Oct 2023 03:51:29 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5496619BB8;
+	Wed, 18 Oct 2023 10:57:04 +0000 (UTC)
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.131])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCEEB92;
+	Wed, 18 Oct 2023 03:57:01 -0700 (PDT)
 Received: from weisslap.aisec.fraunhofer.de ([91.67.186.133]) by
  mrelayeu.kundenserver.de (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis)
- id 1MAtoX-1qhkY30v9N-00BOPd; Wed, 18 Oct 2023 12:51:02 +0200
+ id 1MpCz1-1rJY4G0S1H-00qmy3; Wed, 18 Oct 2023 12:51:03 +0200
 From: =?UTF-8?q?Michael=20Wei=C3=9F?= <michael.weiss@aisec.fraunhofer.de>
 To: Alexander Mikhalitsyn <alexander@mihalicyn.com>,
 	Christian Brauner <brauner@kernel.org>,
@@ -50,9 +50,9 @@ Cc: Daniel Borkmann <daniel@iogearbox.net>,
 	linux-fsdevel@vger.kernel.org,
 	gyroidos@aisec.fraunhofer.de,
 	=?UTF-8?q?Michael=20Wei=C3=9F?= <michael.weiss@aisec.fraunhofer.de>
-Subject: [RFC PATCH v2 09/14] lsm: Add security_inode_mknod_nscap() hook
-Date: Wed, 18 Oct 2023 12:50:28 +0200
-Message-Id: <20231018105033.13669-10-michael.weiss@aisec.fraunhofer.de>
+Subject: [RFC PATCH v2 10/14] lsm: Add security_sb_alloc_userns() hook
+Date: Wed, 18 Oct 2023 12:50:29 +0200
+Message-Id: <20231018105033.13669-11-michael.weiss@aisec.fraunhofer.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20231018105033.13669-1-michael.weiss@aisec.fraunhofer.de>
 References: <20231018105033.13669-1-michael.weiss@aisec.fraunhofer.de>
@@ -64,79 +64,75 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:5lxDhBdnRK6z/qneyHrExxpGGfNqKmn9/t+GHCV67i7gdyqABcu
- sqNuzvbWCst+BiDlXc96S54DVuWryXVblKlyxZ0G+0XC241SZV/ZSM5WIzaOYnGa2HwVhD7
- w12pjkFUdUUIkGyG6Y/MWWJZTpEwRid3PsLC7MyY+Om2nm6t0bHDIB2WtzcILbedxiB17w1
- Bpg7935I0mCv9jw2zLkcg==
-UI-OutboundReport: notjunk:1;M01:P0:2+i2Uh/X6wo=;2uxYOw5HC84hKPQexFNKPLKAGkt
- fQYhBSxyE+Ny/qlYqBNh/lRNoj42Lvenpzoqt2sOm2fb+ItLxK2aqhvRnBuFWEBxBV2pkGfJP
- LAqSq1V7TtAdHMMxnT6flWVbEJw+eHAGjOobF7hT2NJYUGKT21zIJ7HY5dUUVbNLy5y/vRBD8
- 1T8q4EotydMXbeuFrz8QJx0J+W8yFO2rFizCl7PrsLIOJ/cCvLfdoD8xj9lTUa3Ea/OLXBUJ8
- iDtALlENbL5H32dD4XJjmauzfESGsfYA1O5BC2zco6zwEP0IFpAMzK3ptiddi64N9yyk4VFu8
- lu31rT2lrrjcuz1QwvaME+6njgIpYTvLZcrKN0P4Q8ZcpY1JyBbnnYnUghq4+3LrIbTa5nTOc
- 4QzBp6H7vYMPeDLhlGokJggteXh7QlSbtGyom1xXBxlhk9FrQNg0WX2AdqGqIQIhKsz2DShs8
- VHMOQHRqat2gdEuf76pB5RSMak36+SS16dZpeJCjNq0vuasSM+Q5hq8MwyaEPoaWUdhY+IeE8
- 5Gobc5CWqypvuYQGijWmwNT/5O2bmLmBaP8B1DuzVi5bWN30oioawo2FEmbyu32jDVyV42ZVD
- 2Khd2mrRFNcUge6Xc05REdy4mMIc4pmF+6D4qU9+nZ2fPHum1D4GN43IzUAi/fQVR6Cj3VM2w
- WuCnLxjl9jrN2xRPoyd6iXZdeHgKhpyuKqOvd7/b/rmstCPY23TZqiFDNqfQKrYnDCXEuHNYM
- i3jM5RmJVmJ2993fmi1/CK2zJVhsHYRyn9a/1Iwf9lnX6x8eSvO2X6k4ONeKEpUDX9+S4PzJT
- NlmyYPjb+abDxWdmHgRnZN6yEMH6yPeUt6QpqbwMmqmvsJhMuko00/NRJEpAFW8Qe/VrgQ6hC
- d0PA89QcvI6H7fw==
-X-Spam-Status: No, score=-1.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-	RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_SOFTFAIL autolearn=no
-	autolearn_force=no version=3.4.6
+X-Provags-ID: V03:K1:1r5RyqGAN9dy40dCcTVA8P+ZdQrnAWjyMfT7NWw+AjP5k7SdSAx
+ KK6ojyZeqMoIKXoNN5B05l8hRYYrpxg2YsWGs0W0oVR5FlK/vd0aZOYdG0AL/l+CQ5iGm5e
+ O0YnfYkhugXo/lJhVr+PA2rOcH47EsknuLQQnKrXL07VgH3KwnC4ufExd7KzXs9PeBLvufI
+ ET/oTA9gKppKW3e2BLdgQ==
+UI-OutboundReport: notjunk:1;M01:P0:7me07hlkTME=;sNgRW1+b87bFkPd2ci/jNOKxrY/
+ E3OsrEQIpRvOmvjffQg2b9fa3t3DZkvTrHLDkqf3oYKKFUgeSxdR5qG18aSrsBOK1Pa00KKbL
+ /UQcWTQ/nuYrv0QvLDl50sf086WdgoBfJ2/URhBwnTv3KRQ7t1il7cgJceSozFxcemIogxidQ
+ LL3M7TsNkb7ASSMhpnDNiMHiNTkCb1yiA82Nrq/W/9+yDZxO2s49HocioaBiV1xOGuEPUMONT
+ 5U3G+4fXY7tdTs13VnJmVlLF92Z5idVgVqYYm/5QZ5uKKT4maSQSfG00nf94lEsDFTiPIkn+S
+ ZtHGKa+F96ZkdZjnU8HvdbGCQebFMQIM08okjd5W441mzGfzGU9FrScSOsOeecy9/uxvBGh3a
+ o1NprWiXBUNBGiz81EQMjrmU3nCGoIFu9sjU7jb+HlsX6va7+AhzTp2gZDMHaOv+v2LTx7PCv
+ JFP3BiK90WUmdBc1poLC6wEhfDmVzclkLzJ30wAC089UquOrE90adQwCB5QcDQMN9ffOqWgcd
+ PiH00bjbtVzeuknhKCGGOYCVepoOa32lfVdtoXIlqaQOaa2WHt55aPihU/lIfuAdkTHb4HR4E
+ b2I/CdlUPHHEg1y5An6i9eeJ/e4H4K0lGCHxR9Dw2sTu0iJFz7I06zTgsrXPoVkEopPu0r/48
+ hY7IU5/UR9hiCk9hCcwQ8C/RkZiX0ZtNwi9crKi+5zomHZoKB22oZlbH/Cx00W6i9rUJAetZe
+ KJ+cOaHVobJZdbTDq8FHjFDCH1XKnYFYP+kv+m289poYuRD09l91FbFx4B2n4y0zC4jKHAndJ
+ Twfv3u/b7Mwi6HYZXKp8uVign0Z2zewzMYSYzTlx4nMib1DuCWW8mNEDVEuw6HK7uKorvcUhW
+ sfBrRi+IYWzODCABGVCbEVEkHzTs9PrJrERU=
+X-Spam-Status: No, score=-1.2 required=5.0 tests=BAYES_00,
+	RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,
+	SPF_HELO_NONE,SPF_SOFTFAIL autolearn=no autolearn_force=no
+	version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-Provide a new lsm hook which may be used to allow mknod in
-non-initial userns. If access to the device is guarded by this
-hook, access to mknod may be granted by checking cap mknod for
-unprivileged user namespaces.
+Provide a new lsm hook which may be used to allow access to device
+nodes for super blocks created in unprivileged namespaces if some
+sort of device guard to control access is implemented.
 
-By default this will return -EPERM if no lsm implements the
-hook. A first lsm to use this will be the lately converted
-cgroup_device module.
+By default this will return -EPERM if no lsm implements the hook.
+A first lsm to use this will be the lately converted cgroup_device
+module.
 
 Signed-off-by: Michael Weiß <michael.weiss@aisec.fraunhofer.de>
 ---
- include/linux/lsm_hook_defs.h |  2 ++
- include/linux/security.h      |  8 ++++++++
- security/security.c           | 31 +++++++++++++++++++++++++++++++
- 3 files changed, 41 insertions(+)
+ include/linux/lsm_hook_defs.h |  1 +
+ include/linux/security.h      |  5 +++++
+ security/security.c           | 26 ++++++++++++++++++++++++++
+ 3 files changed, 32 insertions(+)
 
 diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index a868982725a9..f4fa01182910 100644
+index f4fa01182910..0f734a0a5ebc 100644
 --- a/include/linux/lsm_hook_defs.h
 +++ b/include/linux/lsm_hook_defs.h
-@@ -276,6 +276,8 @@ LSM_HOOK(int, 0, inode_setsecctx, struct dentry *dentry, void *ctx, u32 ctxlen)
- LSM_HOOK(int, 0, inode_getsecctx, struct inode *inode, void **ctx,
- 	 u32 *ctxlen)
+@@ -278,6 +278,7 @@ LSM_HOOK(int, 0, inode_getsecctx, struct inode *inode, void **ctx,
  LSM_HOOK(int, 0, dev_permission, umode_t mode, dev_t dev, int mask)
-+LSM_HOOK(int, -EPERM, inode_mknod_nscap, struct inode *dir, struct dentry *dentry,
-+	 umode_t mode, dev_t dev)
+ LSM_HOOK(int, -EPERM, inode_mknod_nscap, struct inode *dir, struct dentry *dentry,
+ 	 umode_t mode, dev_t dev)
++LSM_HOOK(int, -EPERM, sb_alloc_userns, struct super_block *sb)
  
  #if defined(CONFIG_SECURITY) && defined(CONFIG_WATCH_QUEUE)
  LSM_HOOK(int, 0, post_notification, const struct cred *w_cred,
 diff --git a/include/linux/security.h b/include/linux/security.h
-index 8bc6ac8816c6..bad6992877f4 100644
+index bad6992877f4..0f66be1ed1ed 100644
 --- a/include/linux/security.h
 +++ b/include/linux/security.h
-@@ -485,6 +485,8 @@ int security_inode_setsecctx(struct dentry *dentry, void *ctx, u32 ctxlen);
- int security_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen);
- int security_locked_down(enum lockdown_reason what);
+@@ -487,6 +487,7 @@ int security_locked_down(enum lockdown_reason what);
  int security_dev_permission(umode_t mode, dev_t dev, int mask);
-+int security_inode_mknod_nscap(struct inode *dir, struct dentry *dentry,
-+			       umode_t mode, dev_t dev);
+ int security_inode_mknod_nscap(struct inode *dir, struct dentry *dentry,
+ 			       umode_t mode, dev_t dev);
++int security_sb_alloc_userns(struct super_block *sb);
  #else /* CONFIG_SECURITY */
  
  static inline int call_blocking_lsm_notifier(enum lsm_event event, void *data)
-@@ -1400,6 +1402,12 @@ static inline int security_dev_permission(umode_t mode, dev_t dev, int mask)
+@@ -1408,6 +1409,10 @@ static inline int security_inode_mknod_nscap(struct inode *dir,
  {
- 	return 0;
+ 	return -EPERM;
  }
-+static inline int security_inode_mknod_nscap(struct inode *dir,
-+					     struct dentry *dentry,
-+					     umode_t mode, dev_t dev);
++static inline int security_sb_alloc_userns(struct super_block *sb)
 +{
 +	return -EPERM;
 +}
@@ -144,35 +140,30 @@ index 8bc6ac8816c6..bad6992877f4 100644
  
  #if defined(CONFIG_SECURITY) && defined(CONFIG_WATCH_QUEUE)
 diff --git a/security/security.c b/security/security.c
-index 40f6787df3b1..7708374b6d7e 100644
+index 7708374b6d7e..9d5d4ec28e62 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -4034,6 +4034,37 @@ int security_dev_permission(umode_t mode, dev_t dev, int mask)
+@@ -4065,6 +4065,32 @@ int security_inode_mknod_nscap(struct inode *dir, struct dentry *dentry,
  }
- EXPORT_SYMBOL(security_dev_permission);
+ EXPORT_SYMBOL(security_inode_mknod_nscap);
  
 +/**
-+ * security_inode_mknod_nscap() - Check if device is guarded
-+ * @dir: parent directory
-+ * @dentry: new file
-+ * @mode: new file mode
-+ * @dev: device number
++ * security_sb_alloc_userns() - Grand access to device nodes on sb in userns
 + *
-+ * If access to the device is guarded by this hook, access to mknod may be granted by
-+ * checking cap mknod for unprivileged user namespaces.
++ * If device access is provided elsewere, this hook will grand access to device nodes
++ * on the allocated sb for unprivileged user namespaces.
 + *
 + * Return: Returns 0 on success, error on failure.
 + */
-+int security_inode_mknod_nscap(struct inode *dir, struct dentry *dentry,
-+			       umode_t mode, dev_t dev)
++int security_sb_alloc_userns(struct super_block *sb)
 +{
 +	int thisrc;
-+	int rc = LSM_RET_DEFAULT(inode_mknod_nscap);
++	int rc = LSM_RET_DEFAULT(sb_alloc_userns);
 +	struct security_hook_list *hp;
 +
-+	hlist_for_each_entry(hp, &security_hook_heads.inode_mknod_nscap, list) {
-+		thisrc = hp->hook.inode_mknod_nscap(dir, dentry, mode, dev);
-+		if (thisrc != LSM_RET_DEFAULT(inode_mknod_nscap)) {
++	hlist_for_each_entry(hp, &security_hook_heads.sb_alloc_userns, list) {
++		thisrc = hp->hook.sb_alloc_userns(sb);
++		if (thisrc != LSM_RET_DEFAULT(sb_alloc_userns)) {
 +			rc = thisrc;
 +			if (thisrc != 0)
 +				break;
@@ -180,7 +171,7 @@ index 40f6787df3b1..7708374b6d7e 100644
 +	}
 +	return rc;
 +}
-+EXPORT_SYMBOL(security_inode_mknod_nscap);
++EXPORT_SYMBOL(security_sb_alloc_userns);
 +
  #ifdef CONFIG_WATCH_QUEUE
  /**
