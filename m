@@ -1,298 +1,183 @@
-Return-Path: <linux-fsdevel+bounces-660-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-661-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A41827CE0A7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 17:03:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 889377CE0CC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 17:11:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51B30281D00
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 15:03:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 870EA1C20D68
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 15:11:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CA2B37CB2;
-	Wed, 18 Oct 2023 15:03:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1A8F38BAF;
+	Wed, 18 Oct 2023 15:11:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gn2cvizO"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nW8nRn+U"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C3C831A86;
-	Wed, 18 Oct 2023 15:03:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF3E9C433C8;
-	Wed, 18 Oct 2023 15:03:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1697641393;
-	bh=L6D+qpbBdCzUDrl/li04wVioUZCLruBmB/YXF1xf4Bs=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=Gn2cvizOXkUy01k71YGxTE7X4z6vLqaoJLFafo+1V2D8V7Wv88ZBfmZ6d50ZFxvKj
-	 r0STRxGjErKUq13H3Iv7mn7AvIVCLxpKl0n0AqJx/zBkuo7ZkXLhcheBVnAbwngAJy
-	 S2skRkZqL4VlJYnoY86FUfOK7xrHRmF0ZzWNiFTOC5AyErC5YFeuU702fAYEtK/kQ0
-	 aIQ4dUnbHPpyCEC4k4S/zZbe8fb2opZ517pamFcrGwYG5OKsJ8cUyxGf+7h0XtSe7s
-	 mTD2R7Bi85VJqLSadyBjO5Aq+0cQCsfNSkx/qUgSy3TUsIJ33tfm5uq6iku67rtVOB
-	 05ypzoiMkKRgg==
-Message-ID: <9d2fc137b4295058ac3f88f1cca7a54bc67f01fd.camel@kernel.org>
-Subject: Re: [RFC PATCH 12/53] netfs: Provide tools to create a buffer in an
- xarray
-From: Jeff Layton <jlayton@kernel.org>
-To: David Howells <dhowells@redhat.com>, Steve French <smfrench@gmail.com>
-Cc: Matthew Wilcox <willy@infradead.org>, Marc Dionne
- <marc.dionne@auristor.com>,  Paulo Alcantara <pc@manguebit.com>, Shyam
- Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, Dominique
- Martinet <asmadeus@codewreck.org>, Ilya Dryomov <idryomov@gmail.com>,
- Christian Brauner <christian@brauner.io>,  linux-afs@lists.infradead.org,
- linux-cifs@vger.kernel.org,  linux-nfs@vger.kernel.org,
- ceph-devel@vger.kernel.org, v9fs@lists.linux.dev, 
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-cachefs@redhat.com
-Date: Wed, 18 Oct 2023 11:03:10 -0400
-In-Reply-To: <20231013160423.2218093-13-dhowells@redhat.com>
-References: <20231013160423.2218093-1-dhowells@redhat.com>
-	 <20231013160423.2218093-13-dhowells@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4954037CA4
+	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Oct 2023 15:11:16 +0000 (UTC)
+Received: from mail-qv1-xf29.google.com (mail-qv1-xf29.google.com [IPv6:2607:f8b0:4864:20::f29])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB900BA;
+	Wed, 18 Oct 2023 08:11:14 -0700 (PDT)
+Received: by mail-qv1-xf29.google.com with SMTP id 6a1803df08f44-66d332f23e4so32332606d6.0;
+        Wed, 18 Oct 2023 08:11:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1697641874; x=1698246674; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5FpvFnukoeHY6S5Dy9p7ld3NtJ9RPldAXr0YchJyUBY=;
+        b=nW8nRn+Utpa1IBTAL2f1QeKoPeRjjBm4N9qhUQHEDIgLFr6D5qwgxL1nuoAoNLS5s0
+         23kTnq/ljn0izfQ9VWadURuulqI4bRSoBIyAA7Rs2gokPvcDz4WJxkn/DVnvJwF70hiV
+         E3V/CJxqGVRUlJmKvIonebOVsbgvUiw+HsAgJya+5OtWUAQAOHCI4oNR3ItsBecuIInG
+         ixbu6h9c2qweu0vM72TJgpyoA5/gCngSBCBfLZyL0FYD4Z9+QDFXZquV9dVHO72Qy3hp
+         ah+Xatwh5hgPQUV5Udra9zPVMV/F6YkHwV84JalcqolDl9RVUnRv1FGLBDC1FlUpczeo
+         5WLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697641874; x=1698246674;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5FpvFnukoeHY6S5Dy9p7ld3NtJ9RPldAXr0YchJyUBY=;
+        b=Rc5SiAzHpu/tbvqqSMMdOVE9jpAtDmVxjMWbsh32pK8hZIE7zVE+zzLjUXe/Ug+YwZ
+         rFsSAOEc5wynaIOP9B2nph+l9WgC9nDRvgVFSIi8WfpHKfruYY21WhE9yckQQu35qPSK
+         fIUACfrscMU8RzlXxzcn6eoBpapYPo4uUrhZmYKyZEpMFWWn6YBwE+vjcOmc1uQYZNCa
+         n6YX/lJJs+mbW+G3RI8FWwAV7ia5gpYV0K/De63mn+7WHkYgC84Bh+8jdKw8NPvP/HsZ
+         UFQhLIHfTLf6MBRZMcompHMZV52m3NAeygvjt9toXZK5AQI5nVAHagANaj7esU16aUP9
+         orvQ==
+X-Gm-Message-State: AOJu0Yz6S7Ae7tsxZv2zDlfL64Shu0L2T4zUuYYOniTeATyvDpZ5WLEt
+	/72SXIHlPJNKFMuzZt6M4szhU6UZ8AGofD5MhenWfzeWOHI=
+X-Google-Smtp-Source: AGHT+IFrGJ/TfN5PQ6lELsQlBM8ybbEpwJ747yNpZotHnbE1XIdgrKLRBAa5UaRrRMB1npZ5yaSVnAW1c4YrLq3+AZc=
+X-Received: by 2002:a05:6214:628:b0:66d:15de:329c with SMTP id
+ a8-20020a056214062800b0066d15de329cmr6713329qvx.43.1697641873488; Wed, 18 Oct
+ 2023 08:11:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20231018100000.2453965-1-amir73il@gmail.com> <20231018100000.2453965-6-amir73il@gmail.com>
+ <f4f27df2a26605a01b2e7f62a8ec6d946695e1d6.camel@kernel.org>
+In-Reply-To: <f4f27df2a26605a01b2e7f62a8ec6d946695e1d6.camel@kernel.org>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 18 Oct 2023 18:11:02 +0300
+Message-ID: <CAOQ4uxjbg_46xKp6NzDfm=5=ght+a3hcH1Bqsf6kq+54nxSm7w@mail.gmail.com>
+Subject: Re: [PATCH 5/5] exportfs: support encoding non-decodeable file
+ handles by default
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Chuck Lever <chuck.lever@oracle.com>, 
+	Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+	RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.6
+X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
+	lindbergh.monkeyblade.net
 
-On Fri, 2023-10-13 at 17:03 +0100, David Howells wrote:
-> Provide tools to create a buffer in an xarray, with a function to add
-> new folios with a mark.  This will be used to create bounce buffer and ca=
-n be
-> used more easily to create a list of folios the span of which would requi=
-re
-> more than a page's worth of bio_vec structs.
->=20
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Jeff Layton <jlayton@kernel.org>
-> cc: linux-cachefs@redhat.com
-> cc: linux-fsdevel@vger.kernel.org
-> cc: linux-mm@kvack.org
-> ---
->  fs/netfs/internal.h   |  16 +++++
->  fs/netfs/misc.c       | 140 ++++++++++++++++++++++++++++++++++++++++++
->  include/linux/netfs.h |   4 ++
->  3 files changed, 160 insertions(+)
->=20
-> diff --git a/fs/netfs/internal.h b/fs/netfs/internal.h
-> index 1f067aa96c50..00e01278316f 100644
-> --- a/fs/netfs/internal.h
-> +++ b/fs/netfs/internal.h
-> @@ -52,6 +52,22 @@ static inline void netfs_proc_add_rreq(struct netfs_io=
-_request *rreq) {}
->  static inline void netfs_proc_del_rreq(struct netfs_io_request *rreq) {}
->  #endif
-> =20
-> +/*
-> + * misc.c
-> + */
-> +int netfs_xa_store_and_mark(struct xarray *xa, unsigned long index,
-> +			    struct folio *folio, bool put_mark,
-> +			    bool pagecache_mark, gfp_t gfp_mask);
-> +int netfs_add_folios_to_buffer(struct xarray *buffer,
-> +			       struct address_space *mapping,
-> +			       pgoff_t index, pgoff_t to, gfp_t gfp_mask);
-> +int netfs_set_up_buffer(struct xarray *buffer,
-> +			struct address_space *mapping,
-> +			struct readahead_control *ractl,
-> +			struct folio *keep,
-> +			pgoff_t have_index, unsigned int have_folios);
-> +void netfs_clear_buffer(struct xarray *buffer);
-> +
->  /*
->   * objects.c
->   */
-> diff --git a/fs/netfs/misc.c b/fs/netfs/misc.c
-> index c3baf2b247d9..c70f856f3129 100644
-> --- a/fs/netfs/misc.c
-> +++ b/fs/netfs/misc.c
-> @@ -8,6 +8,146 @@
->  #include <linux/swap.h>
->  #include "internal.h"
-> =20
-> +/*
-> + * Attach a folio to the buffer and maybe set marks on it to say that we=
- need
-> + * to put the folio later and twiddle the pagecache flags.
-> + */
-> +int netfs_xa_store_and_mark(struct xarray *xa, unsigned long index,
-> +			    struct folio *folio, bool put_mark,
-> +			    bool pagecache_mark, gfp_t gfp_mask)
-> +{
-> +	XA_STATE_ORDER(xas, xa, index, folio_order(folio));
-> +
-> +retry:
-> +	xas_lock(&xas);
-> +	for (;;) {
-> +		xas_store(&xas, folio);
-> +		if (!xas_error(&xas))
-> +			break;
-> +		xas_unlock(&xas);
-> +		if (!xas_nomem(&xas, gfp_mask))
-> +			return xas_error(&xas);
-> +		goto retry;
-> +	}
-> +
-> +	if (put_mark)
-> +		xas_set_mark(&xas, NETFS_BUF_PUT_MARK);
-> +	if (pagecache_mark)
-> +		xas_set_mark(&xas, NETFS_BUF_PAGECACHE_MARK);
-> +	xas_unlock(&xas);
-> +	return xas_error(&xas);
-> +}
-> +
-> +/*
-> + * Create the specified range of folios in the buffer attached to the re=
-ad
-> + * request.  The folios are marked with NETFS_BUF_PUT_MARK so that we kn=
-ow that
-> + * these need freeing later.
-> + */
+On Wed, Oct 18, 2023 at 5:28=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wr=
+ote:
+>
+> On Wed, 2023-10-18 at 13:00 +0300, Amir Goldstein wrote:
+> > AT_HANDLE_FID was added as an API for name_to_handle_at() that request
+> > the encoding of a file id, which is not intended to be decoded.
+> >
+> > This file id is used by fanotify to describe objects in events.
+> >
+> > So far, overlayfs is the only filesystem that supports encoding
+> > non-decodeable file ids, by providing export_operations with an
+> > ->encode_fh() method and without a ->decode_fh() method.
+> >
+> > Add support for encoding non-decodeable file ids to all the filesystems
+> > that do not provide export_operations, by encoding a file id of type
+> > FILEID_INO64_GEN from { i_ino, i_generation }.
+> >
+> > A filesystem may that does not support NFS export, can opt-out of
+> > encoding non-decodeable file ids for fanotify by defining an empty
+> > export_operations struct (i.e. with a NULL ->encode_fh() method).
+> >
+> > This allows the use of fanotify events with file ids on filesystems
+> > like 9p which do not support NFS export to bring fanotify in feature
+> > parity with inotify on those filesystems.
+> >
+> > Note that fanotify also requires that the filesystems report a non-null
+> > fsid.  Currently, many simple filesystems that have support for inotify
+> > (e.g. debugfs, tracefs, sysfs) report a null fsid, so can still not be
+> > used with fanotify in file id reporting mode.
+> >
+> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > ---
+> >  fs/exportfs/expfs.c      | 30 +++++++++++++++++++++++++++---
+> >  include/linux/exportfs.h | 10 +++++++---
+> >  2 files changed, 34 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/fs/exportfs/expfs.c b/fs/exportfs/expfs.c
+> > index 30da4539e257..34e7d835d4ef 100644
+> > --- a/fs/exportfs/expfs.c
+> > +++ b/fs/exportfs/expfs.c
+> > @@ -383,6 +383,30 @@ int generic_encode_ino32_fh(struct inode *inode, _=
+_u32 *fh, int *max_len,
+> >  }
+> >  EXPORT_SYMBOL_GPL(generic_encode_ino32_fh);
+> >
+> > +/**
+> > + * exportfs_encode_ino64_fid - encode non-decodeable 64bit ino file id
+> > + * @inode:   the object to encode
+> > + * @fid:     where to store the file handle fragment
+> > + * @max_len: maximum length to store there
+> > + *
+> > + * This generic function is used to encode a non-decodeable file id fo=
+r
+> > + * fanotify for filesystems that do not support NFS export.
+> > + */
+> > +static int exportfs_encode_ino64_fid(struct inode *inode, struct fid *=
+fid,
+> > +                                  int *max_len)
+> > +{
+> > +     if (*max_len < 3) {
+> > +             *max_len =3D 3;
+> > +             return FILEID_INVALID;
+> > +     }
+> > +
+> > +     fid->i64.ino =3D inode->i_ino;
+> > +     fid->i64.gen =3D inode->i_generation;
+>
+> Note that i_ino is unsigned long and so is a 32-bit value on 32-bit
+> arches. If the backend storage uses 64-bit inodes, then we usually end
+> up hashing them down to 32-bits first. e.g. see nfs_fattr_to_ino_t().
+> ceph has some similar code.
+>
+> The upshot is that if you're relying on i_ino, the value can change
+> between different arches, even when they are dealing with the same
+> backend filesystem.
+>
+> Since this is expected to be used by filesystems that don't set up
+> export operations, then that may just be something they have to deal
+> with. I'm not sure what else you can use in lieu of i_ino in this case.
+>
 
-Some kerneldoc comments on these new helpers would be nice. I assume
-that "index" and "to" are "start" and "end" for this, but it'd be nice
-to make that explicit.
+True. That is one more justification for patch [1/5].
 
+If we only support watching inodes when the reported fid is
+{i_ino, i_generation}, then the likelihood of collision drops
+considerably compared to watching sb/mount.
 
-> +int netfs_add_folios_to_buffer(struct xarray *buffer,
-> +			       struct address_space *mapping,
-> +			       pgoff_t index, pgoff_t to, gfp_t gfp_mask)
-> +{
-> +	struct folio *folio;
-> +	int ret;
-> +
-> +	if (to + 1 =3D=3D index) /* Page range is inclusive */
-> +		return 0;
-> +
-> +	do {
-> +		/* TODO: Figure out what order folio can be allocated here */
-> +		folio =3D filemap_alloc_folio(readahead_gfp_mask(mapping), 0);
-> +		if (!folio)
-> +			return -ENOMEM;
-> +		folio->index =3D index;
-> +		ret =3D netfs_xa_store_and_mark(buffer, index, folio,
-> +					      true, false, gfp_mask);
-> +		if (ret < 0) {
-> +			folio_put(folio);
-> +			return ret;
-> +		}
-> +
-> +		index +=3D folio_nr_pages(folio);
-> +	} while (index <=3D to && index !=3D 0);
-> +
-> +	return 0;
-> +}
-> +
-> +/*
-> + * Set up a buffer into which to data will be read or decrypted/decompre=
-ssed.
-> + * The folios to be read into are attached to this buffer and the gaps f=
-illed
-> + * in to form a continuous region.
-> + */
-> +int netfs_set_up_buffer(struct xarray *buffer,
-> +			struct address_space *mapping,
-> +			struct readahead_control *ractl,
-> +			struct folio *keep,
-> +			pgoff_t have_index, unsigned int have_folios)
-> +{
-> +	struct folio *folio;
-> +	gfp_t gfp_mask =3D readahead_gfp_mask(mapping);
-> +	unsigned int want_folios =3D have_folios;
-> +	pgoff_t want_index =3D have_index;
-> +	int ret;
-> +
-> +	ret =3D netfs_add_folios_to_buffer(buffer, mapping, want_index,
-> +					 have_index - 1, gfp_mask);
-> +	if (ret < 0)
-> +		return ret;
-> +	have_folios +=3D have_index - want_index;
-> +
-> +	ret =3D netfs_add_folios_to_buffer(buffer, mapping,
-> +					 have_index + have_folios,
-> +					 want_index + want_folios - 1,
-> +					 gfp_mask);
+Because watcher cannot decode fid, watcher must use
+name_to_handle_at() when setting up the inode watch and
+store it in some index, so it knows how to map from event->fid
+to inode later.
 
-I don't get it. Why are you calling netfs_add_folios_to_buffer twice
-here? Why not just make one call? Either way, a comment here explaining
-that would also be nice.
+This means that even if there is a fid collision between two inodes,
+then the watcher can detect the collision when setting up the
+inode watch.
 
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	/* Transfer the folios proposed by the VM into the buffer and take refs
-> +	 * on them.  The locks will be dropped in netfs_rreq_unlock().
-> +	 */
-> +	if (ractl) {
-> +		while ((folio =3D readahead_folio(ractl))) {
-> +			folio_get(folio);
-> +			if (folio =3D=3D keep)
-> +				folio_get(folio);
-> +			ret =3D netfs_xa_store_and_mark(buffer, folio->index, folio,
-> +						      true, true, gfp_mask);
-> +			if (ret < 0) {
-> +				if (folio !=3D keep)
-> +					folio_unlock(folio);
-> +				folio_put(folio);
-> +				return ret;
-> +			}
-> +		}
-> +	} else {
-> +		folio_get(keep);
-> +		ret =3D netfs_xa_store_and_mark(buffer, keep->index, keep,
-> +					      true, true, gfp_mask);
-> +		if (ret < 0) {
-> +			folio_put(keep);
-> +			return ret;
-> +		}
-> +	}
-> +	return 0;
-> +}
-> +
-> +/*
-> + * Clear an xarray buffer, putting a ref on the folios that have
-> + * NETFS_BUF_PUT_MARK set.
-> + */
-> +void netfs_clear_buffer(struct xarray *buffer)
-> +{
-> +	struct folio *folio;
-> +	XA_STATE(xas, buffer, 0);
-> +
-> +	rcu_read_lock();
-> +	xas_for_each_marked(&xas, folio, ULONG_MAX, NETFS_BUF_PUT_MARK) {
-> +		folio_put(folio);
-> +	}
-> +	rcu_read_unlock();
-> +	xa_destroy(buffer);
-> +}
-> +
->  /**
->   * netfs_invalidate_folio - Invalidate or partially invalidate a folio
->   * @folio: Folio proposed for release
-> diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-> index 66479a61ad00..e8d702ac6968 100644
-> --- a/include/linux/netfs.h
-> +++ b/include/linux/netfs.h
-> @@ -109,6 +109,10 @@ static inline int wait_on_page_fscache_killable(stru=
-ct page *page)
->  	return folio_wait_private_2_killable(page_folio(page));
->  }
-> =20
-> +/* Marks used on xarray-based buffers */
-> +#define NETFS_BUF_PUT_MARK	XA_MARK_0	/* - Page needs putting  */
-> +#define NETFS_BUF_PAGECACHE_MARK XA_MARK_1	/* - Page needs wb/dirty flag=
- wrangling */
-> +
->  enum netfs_io_source {
->  	NETFS_FILL_WITH_ZEROES,
->  	NETFS_DOWNLOAD_FROM_SERVER,
->=20
-
---=20
-Jeff Layton <jlayton@kernel.org>
+Thanks,
+Amir.
 
