@@ -1,41 +1,41 @@
-Return-Path: <linux-fsdevel+bounces-681-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-682-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 863777CE4D2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 19:41:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 880427CE4D4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 19:41:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA7651C20B2A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 17:41:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14F30281DF6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 17:41:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 904B93FE25;
-	Wed, 18 Oct 2023 17:41:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 467DB3FB2F;
+	Wed, 18 Oct 2023 17:41:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LUqQBlq5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GcpsqU3P"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFD463FB2F
-	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Oct 2023 17:41:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BDD8C433C9;
-	Wed, 18 Oct 2023 17:41:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80D5B3FB12
+	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Oct 2023 17:41:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1BBFC433D9;
+	Wed, 18 Oct 2023 17:41:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1697650896;
-	bh=l0xHAIUUN2BOMaLZLaXQNle/CdEVUPvjoRJwRfogB3k=;
+	s=k20201202; t=1697650899;
+	bh=oV0lFdI7Yn7QJ5JE87c+C5HW+Uto4gEIDr/OnGVhofo=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=LUqQBlq5SbTTxc8Kx4I5i/jnPXcg/nEx9UsQqT9B+eDje7FSiAkGbhYGwQRlQFBq5
-	 qVEbFGoYB6HtCUqP3zUIt+ld6j6Qti0Vb6h7iw3F8f44xPv78xT8mBKrr/YGDlufQ9
-	 tndvU4bWohBgShTn/iB4jplkLEklhbyiqF8FTwc8sM4T1UzsplSeCJur567WQZbXkF
-	 F3VaIwe+XEc1jHV5/4BFZD6UVt0Ts9otCsK7RVipp0nXKmd8N0NrfkdWxQulPKu5wY
-	 MC9cv5D2gqFsKKlnLdO+j02QzxS5+ftCkhlMxWxW+z9Nwcgi51mkMCUSSoD22g8q1W
-	 bjWwbHPGI2/yg==
+	b=GcpsqU3PkpNElzrRNZAh3XTjk9L9FU1ZFKJ0Nuy36O4dTnIGzGvLmzqNHSEPu56yj
+	 fwpfkupeILBixno66h7UwaC+ESWCL5Mn9+PHSEDIe/d39R2QJtMWQdIk9dtKO+8mBv
+	 fs9yJoR0RLy47E5axLbnbDIwRRY/K92Ahi/zp/JiYqTrHQqZBsRgMsLEMiI58WmFY7
+	 CPOULDJXAtNvZY2Y4tUNSA5fdezHHf+X+L8uPAgCasaFp2dpwPzXlw41p5JMyEMgSF
+	 V8IDjIp+cpdNbLf2y+84w2Z35QTu7OAnQl+JskaMxc+mKp7GxaRqPDtAUViX1j0jwi
+	 1qYxkdVgrYioQ==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Wed, 18 Oct 2023 13:41:09 -0400
-Subject: [PATCH RFC 2/9] timekeeping: new interfaces for multigrain
- timestamp handing
+Date: Wed, 18 Oct 2023 13:41:10 -0400
+Subject: [PATCH RFC 3/9] timekeeping: add new debugfs file to count
+ multigrain timestamps
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -44,7 +44,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20231018-mgtime-v1-2-4a7a97b1f482@kernel.org>
+Message-Id: <20231018-mgtime-v1-3-4a7a97b1f482@kernel.org>
 References: <20231018-mgtime-v1-0-4a7a97b1f482@kernel.org>
 In-Reply-To: <20231018-mgtime-v1-0-4a7a97b1f482@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>, 
@@ -64,206 +64,105 @@ Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-btrfs@vger.kernel.org, linux-mm@kvack.org, linux-nfs@vger.kernel.org, 
  Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6981; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=l0xHAIUUN2BOMaLZLaXQNle/CdEVUPvjoRJwRfogB3k=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBlMBjI+0b0/ffAFY3zqBSBgVUVHdNbNXYnmuLk7
- 4JnuUitV2OJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZTAYyAAKCRAADmhBGVaC
- FQx3EACBnusFhJaHiDBDntSYskmOtKC9J0xUZA3qU6cq1/bt0CXSpLwV13odEIY6OqqXNUiFOeg
- zPsedjKHT90OgQ9De85Z2zj3ZP2Ne5Pl1IT58xW7uMWIdkIJpJ0CQAO6Ah2MYsDGPZgWIVN5ehL
- C2FXIHhVCvw0ZpRu96Vcou1wkA+eZuY1ODNnY1Y2It1eKv8HXIeCa6GKqz1YABH/YWpPrF2K4FD
- FHvvrN04Me65L/xgLUZWs/c9IuR+IkZrM3vzaUBRr2X+JYyj0EsyCiXnStSs5vSeDaJXWdceykW
- 9td0tzdxB7Q4yGflpOYRwR+awAiWHytZ0pBmzjS/KO33Z8GCtb4Lmt8sIQDddhjn6sPSiO4+CdT
- pNxkoE9t1KfhEo9ekAhh4WmOcx4HoES1scAKLKN9boy8Ycb+5zSVRj7kVyO3htCXW+4wKBWtRCW
- tWuN5BDRlluKCBx+7/SVs7BgZOm2FVaN/8mdYyMr3ysA/3zjaUy3yMdsl0WtJirPH6tiByo5VpS
- 9/68nBxm1oKiI1czGW4mWPuYXe1KWsPLLPKl/c60N/UK2KykHaxDCJIyLh6VSthY/pULGM4XwXq
- 2JZAYsJOXw/W6f4tmwd1vQ0f2q4ue8FZJV9TLHDbpUUxncalFo2hfgqU5SCX2MttvcncAi33zDG
- rifmicacYuiP+yg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2249; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=oV0lFdI7Yn7QJ5JE87c+C5HW+Uto4gEIDr/OnGVhofo=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBlMBjIZJAEh2EvSWsTRIXNUoSp+/gPrdnrW38DM
+ 8NdE4JkFmWJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZTAYyAAKCRAADmhBGVaC
+ FYbiD/0ZFfWVcuSGUPgSgemJY2MzGuMffXnd/jkl+/NHQ1nlRsWS01DWyVwdWucUQasEC1H0rdI
+ 5uXOT2GcTX/68+GO+2tqvb1JlhSnujcLZm1Lg456xiDlllxlwIhZ9tZrlYVCOrYuP8jEqXYvjZU
+ V+pX3XjE/kpytbDpv4jBNXvd33alsrO1+bznAl0pM2sOm/dVXZQSQ8NYrpztvxjJk5qNLqUPS7Z
+ U77qUZBIXUm2mQR8NpLwL471ld2/NmDB4pWDRjvCl9+E9LUaKW68g5iDdMrP1FYZEgo5nuBug26
+ G9gk1+WG8MzsHsYFl6ELLbS2zBVqoMtrdqt568EogG7jT0bV9ZMQdIYySUOXW4QYfw8xmG5gMep
+ x76CG8p1DUeFingRztj1TLljnTJOBjvvu6/y4uHysrrk48R5ZJgW10j9GNfzFxlmWLjzROb5uq1
+ DrLstWJYcyyzYThiFx6ceWhtadCHD8oOozKVH0QwA2Iz6TUjCXq4wmT/TUthsNQ64iTwZKIscuS
+ i8Te9fkr7v+sjrBd7L3KROqoW+H82LEsMIQaJGP7fXOLTpmGndcbF9RRWYs3TY48ha1YUBvq1tG
+ mr5XAlH/ldtbzv9DCdGsn+zCmXwMuFoPEEiGSzhQzKBi1Xi62s7eCGftf2cmFcAvZBqTr8ByLyl
+ avNZl9vDKp3Z4KQ==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-Multigrain timestamps allow VFS to request fine-grained timestamps when
-there has been recent interest in the file's attributes. Unfortunately,
-the coarse-grained timestamps can lag the fine-grained ones. A file
-stamped with a coarse-grained timestamp after one with a fine-grained
-one can appear to have been modified in reverse order. This is
-problematic for programs like "make" or "rsync" which depend on being
-able to compare timestamps between two different inodes.
-
-One way to prevent this is to ensure that when we stamp a file with a
-fine-grained timestamp, that we use that value to establish a floor for
-any later timestamp update.
-
-Add a new mg_nsec field to the timekeeper structure for tracking the
-nsec value of the most recent multigrain timestamp, along with two new
-helper functions for fetching coarse and fine grained timestamps. When
-getting a fine-grained timestamp update the mg_nsec with the value that
-was fetched via timekeeping_get_ns.
-
-When fetching a coarse-grained timestamp, set the mg_nsec to
-TK_MG_NSEC_IGNORE. When fetching a coarse-grained time for a multigrain
-timestamp, apply the mg_nsec value if it's not set to TK_MG_NSEC_IGNORE.
+Add two percpu counters for tracking multigrain timestamps -- one for
+coarse-grained timestamps and one for fine-grained ones. Add a new
+debugfs file for summing them and outputting the result.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- include/linux/timekeeper_internal.h |  2 +
- include/linux/timekeeping.h         |  4 ++
- kernel/time/timekeeping.c           | 80 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 86 insertions(+)
+ kernel/time/timekeeping.c | 37 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
 
-diff --git a/include/linux/timekeeper_internal.h b/include/linux/timekeeper_internal.h
-index 84ff2844df2a..6583b06e7d08 100644
---- a/include/linux/timekeeper_internal.h
-+++ b/include/linux/timekeeper_internal.h
-@@ -55,6 +55,7 @@ struct tk_read_base {
-  * @tai_offset:		The current UTC to TAI offset in seconds
-  * @clock_was_set_seq:	The sequence number of clock was set events
-  * @cs_was_changed_seq:	The sequence number of clocksource change events
-+ * @mg_nsec:		Nanosecond delta for multigrain timestamps
-  * @next_leap_ktime:	CLOCK_MONOTONIC time value of a pending leap-second
-  * @raw_sec:		CLOCK_MONOTONIC_RAW  time in seconds
-  * @monotonic_to_boot:	CLOCK_MONOTONIC to CLOCK_BOOTTIME offset
-@@ -110,6 +111,7 @@ struct timekeeper {
- 	u64			xtime_interval;
- 	s64			xtime_remainder;
- 	u64			raw_interval;
-+	u64			mg_nsec;
- 	/* The ntp_tick_length() value currently being used.
- 	 * This cached copy ensures we consistently apply the tick
- 	 * length for an entire tick, as ntp_tick_length may change
-diff --git a/include/linux/timekeeping.h b/include/linux/timekeeping.h
-index fe1e467ba046..5dc0ad619d42 100644
---- a/include/linux/timekeeping.h
-+++ b/include/linux/timekeeping.h
-@@ -44,6 +44,10 @@ extern void ktime_get_real_ts64(struct timespec64 *tv);
- extern void ktime_get_coarse_ts64(struct timespec64 *ts);
- extern void ktime_get_coarse_real_ts64(struct timespec64 *ts);
- 
-+/* multigrain timestamp support */
-+void ktime_get_mg_fine_ts64(struct timespec64 *ts);
-+void ktime_get_mg_coarse_ts64(struct timespec64 *ts);
-+
- void getboottime64(struct timespec64 *ts);
- 
- /*
 diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-index 266d02809dbb..7c20c98b1ea8 100644
+index 7c20c98b1ea8..c843838cb643 100644
 --- a/kernel/time/timekeeping.c
 +++ b/kernel/time/timekeeping.c
-@@ -33,6 +33,9 @@
- #define TK_MIRROR		(1 << 1)
- #define TK_CLOCK_WAS_SET	(1 << 2)
+@@ -24,6 +24,8 @@
+ #include <linux/compiler.h>
+ #include <linux/audit.h>
+ #include <linux/random.h>
++#include <linux/seq_file.h>
++#include <linux/debugfs.h>
  
-+/* When mg_nsec is set to this, ignore it */
-+#define TK_MG_NSEC_IGNORE	(~(0ULL))
+ #include "tick-internal.h"
+ #include "ntp_internal.h"
+@@ -59,6 +61,9 @@ static struct {
+ 
+ static struct timekeeper shadow_timekeeper;
+ 
++struct percpu_counter mg_fine_ts;
++struct percpu_counter mg_coarse_ts;
 +
- enum timekeeping_adv_mode {
- 	/* Update timekeeper when a tick has passed */
- 	TK_ADV_TICK,
-@@ -139,6 +142,7 @@ static void tk_set_xtime(struct timekeeper *tk, const struct timespec64 *ts)
- {
- 	tk->xtime_sec = ts->tv_sec;
- 	tk->tkr_mono.xtime_nsec = (u64)ts->tv_nsec << tk->tkr_mono.shift;
-+	tk->mg_nsec = TK_MG_NSEC_IGNORE;
+ /* flag for if timekeeping is suspended */
+ int __read_mostly timekeeping_suspended;
+ 
+@@ -2326,6 +2331,7 @@ void ktime_get_mg_fine_ts64(struct timespec64 *ts)
+ 
+ 	ts->tv_nsec = 0;
+ 	timespec64_add_ns(ts, nsecs);
++	percpu_counter_inc(&mg_fine_ts);
  }
  
- static void tk_xtime_add(struct timekeeper *tk, const struct timespec64 *ts)
-@@ -146,6 +150,7 @@ static void tk_xtime_add(struct timekeeper *tk, const struct timespec64 *ts)
- 	tk->xtime_sec += ts->tv_sec;
- 	tk->tkr_mono.xtime_nsec += (u64)ts->tv_nsec << tk->tkr_mono.shift;
- 	tk_normalize_xtime(tk);
-+	tk->mg_nsec = TK_MG_NSEC_IGNORE;
+ /**
+@@ -2361,6 +2367,7 @@ void ktime_get_mg_coarse_ts64(struct timespec64 *ts)
+ 		ts->tv_nsec = 0;
+ 		timespec64_add_ns(ts, nsec);
+ 	}
++	percpu_counter_inc(&mg_coarse_ts);
  }
  
- static void tk_set_wall_to_mono(struct timekeeper *tk, struct timespec64 wtm)
-@@ -1664,6 +1669,7 @@ void __init timekeeping_init(void)
- 	tk_setup_internals(tk, clock);
- 
- 	tk_set_xtime(tk, &wall_time);
-+	tk->mg_nsec = TK_MG_NSEC_IGNORE;
- 	tk->raw_sec = 0;
- 
- 	tk_set_wall_to_mono(tk, wall_to_mono);
-@@ -2283,6 +2289,80 @@ void ktime_get_coarse_ts64(struct timespec64 *ts)
- }
- EXPORT_SYMBOL(ktime_get_coarse_ts64);
- 
-+/**
-+ * ktime_get_mg_fine_ts64 - Returns a fine-grained time of day in a timespec64
-+ * @ts: pointer to the timespec64 to be set
-+ *
-+ * Multigrain filesystems use a scheme where they use coarse-grained
-+ * timestamps most of the time, but will use a fine-grained timestamp
-+ * if the previous timestamp was queried and the coarse-grained clock
-+ * hasn't ticked yet.
-+ *
-+ * For this case, the caller is requesting a fine-grained timestamp,
-+ * so we must update the sliding mg_nsec value before returning it. This
-+ * ensures that any coarse-grained timestamp updates that occur after
-+ * this won't appear to have occurred before.
-+ *
-+ * Fills in @ts with the current fine-grained time of day, suitable for
-+ * a file timestamp.
-+ */
-+void ktime_get_mg_fine_ts64(struct timespec64 *ts)
-+{
-+	struct timekeeper *tk = &tk_core.timekeeper;
-+	unsigned long flags;
-+	u32 nsecs;
-+
-+	WARN_ON(timekeeping_suspended);
-+
-+	raw_spin_lock_irqsave(&timekeeper_lock, flags);
-+	write_seqcount_begin(&tk_core.seq);
-+
-+	ts->tv_sec = tk->xtime_sec;
-+	nsecs = timekeeping_get_ns(&tk->tkr_mono);
-+	tk->mg_nsec = nsecs;
-+
-+	write_seqcount_end(&tk_core.seq);
-+	raw_spin_unlock_irqrestore(&timekeeper_lock, flags);
-+
-+	ts->tv_nsec = 0;
-+	timespec64_add_ns(ts, nsecs);
-+}
-+
-+/**
-+ * ktime_get_mg_coarse_ts64 - Returns a coarse-grained time of day in a timespec64
-+ * @ts: pointer to the timespec64 to be set
-+ *
-+ * Multigrain filesystems use a scheme where they use coarse-grained
-+ * timestamps most of the time, but will use a fine-grained timestamp
-+ * if the previous timestamp was queried and the coarse-grained clock
-+ * hasn't ticked yet.
-+ *
-+ * For this case, the caller is requesting a coarse-grained timestamp,
-+ * which will always be equal to or later than the latest fine-grained
-+ * timestamp that has been handed out.
-+ *
-+ * Fills in @ts with the current coarse-grained time of day, suitable
-+ * for a file timestamp.
-+ */
-+void ktime_get_mg_coarse_ts64(struct timespec64 *ts)
-+{
-+	struct timekeeper *tk = &tk_core.timekeeper;
-+	unsigned int seq;
-+	u64 nsec;
-+
-+	do {
-+		seq = read_seqcount_begin(&tk_core.seq);
-+
-+		*ts = tk_xtime(tk);
-+		nsec = tk->mg_nsec;
-+	} while (read_seqcount_retry(&tk_core.seq, seq));
-+
-+	if (nsec != TK_MG_NSEC_IGNORE) {
-+		ts->tv_nsec = 0;
-+		timespec64_add_ns(ts, nsec);
-+	}
-+}
-+
  /*
-  * Must hold jiffies_lock
-  */
+@@ -2581,3 +2588,33 @@ void hardpps(const struct timespec64 *phase_ts, const struct timespec64 *raw_ts)
+ }
+ EXPORT_SYMBOL(hardpps);
+ #endif /* CONFIG_NTP_PPS */
++
++static int fgts_show(struct seq_file *s, void *p)
++{
++	u64 fine = percpu_counter_sum(&mg_fine_ts);
++	u64 coarse = percpu_counter_sum(&mg_coarse_ts);
++
++	seq_printf(s, "%llu %llu\n", fine, coarse);
++	return 0;
++}
++
++DEFINE_SHOW_ATTRIBUTE(fgts);
++
++static int __init tk_debugfs_init(void)
++{
++	int ret = percpu_counter_init(&mg_fine_ts, 0, GFP_KERNEL);
++
++	if (ret)
++		return ret;
++
++	ret = percpu_counter_init(&mg_coarse_ts, 0, GFP_KERNEL);
++	if (ret) {
++		percpu_counter_destroy(&mg_fine_ts);
++		return ret;
++	}
++
++	debugfs_create_file("multigrain_timestamps", S_IFREG | S_IRUGO,
++				NULL, NULL, &fgts_fops);
++	return 0;
++}
++late_initcall(tk_debugfs_init);
 
 -- 
 2.41.0
