@@ -1,136 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-654-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-655-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCFEE7CDF37
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 16:18:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58A6F7CDF64
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 16:21:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 844A3281D8A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 14:18:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BD2B1C20D0D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 14:21:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC7BD374D9;
-	Wed, 18 Oct 2023 14:18:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9515C374F2;
+	Wed, 18 Oct 2023 14:21:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="in80ri9d"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ibs+RNxU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F32FCBE5B
-	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Oct 2023 14:18:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F0BFC433C7;
-	Wed, 18 Oct 2023 14:18:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1697638685;
-	bh=UB2hb8s5CEd3FPPIfnwCMCcqL6WX+kKb6T2In5KzbfY=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=in80ri9duSGMlOA42NDLRVWiGWKWI1hoLO2QmWeLNj/jIvZ5lbrv7jmTfP8Tk0kUG
-	 CwyLBHEsmB0SnfD64r+zGIXAQEsWHt9urtYBoihNMBmXRr06JDIMwAamTYPY7pv3Qc
-	 j8f8LcsHfksAouIIB2JvIKMPcCbYlfbBmLeGHjYg5RXUya+NryZIgaqU47jcC1zeYB
-	 Qd8AHBA8jZ9xqsRty0odusQRmgQqrtn6E6QMkByNKd0cfq77ebbAjNCxMcmQK8n8m6
-	 f9BNAD0kvuvQ4mzv14BErDYZoId3MS+LG2EQG1rQeUZJBuycxbde5648nmzT1qYscI
-	 uuuT4mW2XNY+w==
-Message-ID: <4106d2d1f94dcc992d6bd9b4d478f9a5588c6403.camel@kernel.org>
-Subject: Re: [PATCH 4/5] exportfs: define FILEID_INO64_GEN* file handle types
-From: Jeff Layton <jlayton@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>
-Cc: Chuck Lever <chuck.lever@oracle.com>, Christian Brauner
- <brauner@kernel.org>,  linux-fsdevel@vger.kernel.org,
- linux-nfs@vger.kernel.org
-Date: Wed, 18 Oct 2023 10:18:03 -0400
-In-Reply-To: <20231018100000.2453965-5-amir73il@gmail.com>
-References: <20231018100000.2453965-1-amir73il@gmail.com>
-	 <20231018100000.2453965-5-amir73il@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B6B6374D4
+	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Oct 2023 14:21:35 +0000 (UTC)
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F15BD6FBF;
+	Wed, 18 Oct 2023 07:19:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=glPK2nMlq3eHDbWVN7H4C3ISIh1VNxtl/70uXeL9vlY=; b=Ibs+RNxU+J51GkYsnDaoEWnUiP
+	luhtw2e3kMrs3u4Fzqd+KhmRb87sI1fUxfxufl6IDoWLh8ZH5+1jcC2+LdgtGMS3Ep1r+8rkrFcmf
+	3RG/aq07vRBh6yJGuf3wfIbGtb++ObXL076PGk6duum97gslZBZpW2IIDEvlvMvBe8ibsoKed6PSh
+	lTZBRNnx5TnhfSlAgL6Nl5A1AZdAbKUZYIpacxJH+XinPssyhI4K0tp2v+gTKpvQpx6V3fHkKLb7W
+	1snV5MuO5HKVjY8+kEs2509Dd4asRWcbVnaTg8CoaA5x5efBzrRlF4p4o/t88DcfOB4IXDeXqIolS
+	1tLPjCZQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+	id 1qt7O2-001KzI-8R; Wed, 18 Oct 2023 14:19:02 +0000
+Date: Wed, 18 Oct 2023 15:19:02 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org, gfs2@lists.linux.dev,
+	linux-nilfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
+	ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
+	reiserfs-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
+	Pankaj Raghav <p.raghav@samsung.com>
+Subject: Re: [PATCH v2 01/27] buffer: Return bool from grow_dev_folio()
+Message-ID: <ZS/pVp9I4M8p4vwh@casper.infradead.org>
+References: <20231016201114.1928083-1-willy@infradead.org>
+ <20231016201114.1928083-2-willy@infradead.org>
+ <CAKFNMonj9XQe1PdeCny7N8MFAHwQVQNDf6A2S4g-gxX4iJLvZQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKFNMonj9XQe1PdeCny7N8MFAHwQVQNDf6A2S4g-gxX4iJLvZQ@mail.gmail.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+	SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
+	lindbergh.monkeyblade.net
 
-On Wed, 2023-10-18 at 12:59 +0300, Amir Goldstein wrote:
-> Similar to the common FILEID_INO32* file handle types, define common
-> FILEID_INO64* file handle types.
->=20
-> The type values of FILEID_INO64_GEN and FILEID_INO64_GEN_PARENT are the
-> values returned by fuse and xfs for 64bit ino encoded file handle types.
->=20
-> Note that these type value are filesystem specific and they do not define
-> a universal file handle format, for example:
-> fuse encodes FILEID_INO64_GEN as [ino-hi32,ino-lo32,gen] and xfs encodes
-> FILEID_INO64_GEN as [hostr-order-ino64,gen] (a.k.a xfs_fid64).
->=20
-> The FILEID_INO64_GEN fhandle type is going to be used for file ids for
-> fanotify from filesystems that do not support NFS export.
->=20
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> ---
->  fs/fuse/inode.c          |  7 ++++---
->  include/linux/exportfs.h | 11 +++++++++++
->  2 files changed, 15 insertions(+), 3 deletions(-)
->=20
-> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> index 2e4eb7cf26fb..e63f966698a5 100644
-> --- a/fs/fuse/inode.c
-> +++ b/fs/fuse/inode.c
-> @@ -1002,7 +1002,7 @@ static int fuse_encode_fh(struct inode *inode, u32 =
-*fh, int *max_len,
->  	}
-> =20
->  	*max_len =3D len;
-> -	return parent ? 0x82 : 0x81;
-> +	return parent ? FILEID_INO64_GEN_PARENT : FILEID_INO64_GEN;
->  }
-> =20
->  static struct dentry *fuse_fh_to_dentry(struct super_block *sb,
-> @@ -1010,7 +1010,8 @@ static struct dentry *fuse_fh_to_dentry(struct supe=
-r_block *sb,
->  {
->  	struct fuse_inode_handle handle;
-> =20
-> -	if ((fh_type !=3D 0x81 && fh_type !=3D 0x82) || fh_len < 3)
-> +	if ((fh_type !=3D FILEID_INO64_GEN &&
-> +	     fh_type !=3D FILEID_INO64_GEN_PARENT) || fh_len < 3)
->  		return NULL;
-> =20
->  	handle.nodeid =3D (u64) fid->raw[0] << 32;
-> @@ -1024,7 +1025,7 @@ static struct dentry *fuse_fh_to_parent(struct supe=
-r_block *sb,
->  {
->  	struct fuse_inode_handle parent;
-> =20
-> -	if (fh_type !=3D 0x82 || fh_len < 6)
-> +	if (fh_type !=3D FILEID_INO64_GEN_PARENT || fh_len < 6)
->  		return NULL;
-> =20
->  	parent.nodeid =3D (u64) fid->raw[3] << 32;
-> diff --git a/include/linux/exportfs.h b/include/linux/exportfs.h
-> index 6b6e01321405..21eeb9f6bdbd 100644
-> --- a/include/linux/exportfs.h
-> +++ b/include/linux/exportfs.h
-> @@ -98,6 +98,17 @@ enum fid_type {
->  	 */
->  	FILEID_FAT_WITH_PARENT =3D 0x72,
-> =20
-> +	/*
-> +	 * 64 bit inode number, 32 bit generation number.
-> +	 */
-> +	FILEID_INO64_GEN =3D 0x81,
-> +
-> +	/*
-> +	 * 64 bit inode number, 32 bit generation number,
-> +	 * 64 bit parent inode number, 32 bit parent generation.
-> +	 */
-> +	FILEID_INO64_GEN_PARENT =3D 0x82,
-> +
->  	/*
->  	 * 128 bit child FID (struct lu_fid)
->  	 * 128 bit parent FID (struct lu_fid)
+On Wed, Oct 18, 2023 at 04:41:44AM +0900, Ryusuke Konishi wrote:
+> On Tue, Oct 17, 2023 at 5:11 AM Matthew Wilcox (Oracle) wrote:
+> >
+> > Rename grow_dev_page() to grow_dev_folio() and make it return a bool.
+> > Document what that bool means; it's more subtle than it first appears.
+> > Also rename the 'failed' label to 'unlock' beacuse it's not exactly
+> > 'failed'.  It just hasn't succeeded.
+> 
+> This changes the return type of grow_buffers() from "int"  to "bool".
+> But, it seems that the caller, __getblk_slow(), has not changed the
+> type of the variable "ret" that receives its return value:
+[...]
+> 
+> So, it looks like the error check immediately after calling
+> grow_buffers() will not branch like before.
+> Is this okay ?   Or, am I missing some other changes?
+> 
+> Also, there is a typo in the changelog: "beacuse" -> "because".
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Argh, yes.  Andrew, please drop this patch for now.  I'll submit
+something better next cycle.
 
