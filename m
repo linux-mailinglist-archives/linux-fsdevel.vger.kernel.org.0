@@ -1,137 +1,166 @@
-Return-Path: <linux-fsdevel+bounces-676-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-677-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD2D97CE444
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 19:18:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BECC47CE44C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 19:20:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 915DD281C95
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 17:18:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4ED50B21299
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 17:20:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E6323D982;
-	Wed, 18 Oct 2023 17:17:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14E603E48C;
+	Wed, 18 Oct 2023 17:20:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HccU353B"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AhDYq/j+"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32E72199CE;
-	Wed, 18 Oct 2023 17:17:55 +0000 (UTC)
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E21E1FED;
-	Wed, 18 Oct 2023 10:17:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=l1O9IUhCgD84U9jHaGppKeFo9ECoVkPjzmvdZdQQzJk=; b=HccU353BUxHHSbnR7sb5bzqEw8
-	rmW7iejYuUAEXoq37BG3mnDEh8jIHgtKtaNF2FNq9UuSFYVKxniHb+I9V3cqxUfzyyzLy4K/OjBgM
-	cZ3qtZqqS6E9AStsHsC+CtnXwVdpehk09ySa1ohCrQiLtWdzb9CBWFoegwbOKklOkseIoKnzjP+jT
-	1jTuJYzg1uoxkWYRGaQdD2uewLVa/8NfLd30OAd1k/O4WOtUyNfG1rIxNvh3xv8319vmYkF7wAVmk
-	hf6eVvv+Ql2h4vX856xsNbavJgRRlB8xBTYJIwgZuOCxw94aAbfA15lnLJ6hM4Jmx+9wptVakQqj4
-	tI0cR6RQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-	id 1qtAAc-0027Zt-8y; Wed, 18 Oct 2023 17:17:22 +0000
-Date: Wed, 18 Oct 2023 18:17:22 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Wedson Almeida Filho <wedsonaf@gmail.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Kent Overstreet <kent.overstreet@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-fsdevel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	Wedson Almeida Filho <walmeida@microsoft.com>
-Subject: Re: [RFC PATCH 09/19] rust: folio: introduce basic support for folios
-Message-ID: <ZTATIhi9U6ObAnN7@casper.infradead.org>
-References: <20231018122518.128049-1-wedsonaf@gmail.com>
- <20231018122518.128049-10-wedsonaf@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D693B3D965
+	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Oct 2023 17:20:24 +0000 (UTC)
+Received: from mail-yw1-x1133.google.com (mail-yw1-x1133.google.com [IPv6:2607:f8b0:4864:20::1133])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C0D73273;
+	Wed, 18 Oct 2023 10:19:57 -0700 (PDT)
+Received: by mail-yw1-x1133.google.com with SMTP id 00721157ae682-5a7dafb659cso86416707b3.0;
+        Wed, 18 Oct 2023 10:19:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1697649596; x=1698254396; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kEhYXwKlNRKuJG2R6Sj8ITboKE4QxjoJsQDvPN3BEP4=;
+        b=AhDYq/j+T35q4IEIhHwPURM4QIxDpKxRxFWZ7LlEjMa5AHU1zdAwuItfn7wte0lXn7
+         BVSIx6bbH4l5rPcivyP5Nxg06MMvn+gXtBxTXLoQwT0ew+sVc6ctZufE8NCe4d8zv/Pg
+         1EGjTvApUSNs3YsxWIoX4WFQ0qte5R2OMBIGEaHfZqGjUVd6v9/qU/vvbCGky3VaRKsw
+         ZR1W/iHHH25Mi0gSGjfo01soqJEDfWSmAF6lJ1Say2F7+EDScdnwgRU1tRcwm00B8F3m
+         KbFq8+bs/TrHT1U1nyQ80Lco6tTnLcMdEGQUYSRptgM+UekSyh5kFeaKx/fRqaarF1rB
+         xYYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697649596; x=1698254396;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kEhYXwKlNRKuJG2R6Sj8ITboKE4QxjoJsQDvPN3BEP4=;
+        b=vU9x9nfozOUK56s3SkbWbdejyc7h+X1Y90ncsDJKgtg5O39nSteVCHkwDTxGkoR8KQ
+         D31mcPXhXSWoOX1f4PeuApZtpL9AEcvlUDt7uyPhvr1Rw9ssjdhcCfMcXtCTiRoCEjWR
+         tVQof9DjdEmQS1gC79kn0XXqjvDGwGkWXRVPOVLJk5hpsL1Ou+fiMyVQDtvDGT+vifQo
+         ezhqHTJ6MNuRITC+Uz7cXYHiVxe1znaI/oy91YPq09ZqJ6Ilm9XtFAzh8SawuI2oSs8Y
+         IfRoho7t/eTK3sVtm4gbe9I6xZWRekkCFbRPILG+/pTaLa6D1ow5T+r3MaMMdSVBAIvW
+         k4rg==
+X-Gm-Message-State: AOJu0YyWk32mk0utloWizYfvvM/37gm1VSJnjnIgYqUybcUfRIj1mQsT
+	w2stnueAfQ3Bjzv3YoyBMZg3yT3rRLUWDeSJSV1PQcLe
+X-Google-Smtp-Source: AGHT+IF10FRb/5w3eMY+ixdibeePFD8DKC4yRtWqEmPPJwmX0wfE2re6wpOMo5JAKPbZarPPNgMFf3mSxGwQ1aDfLlI=
+X-Received: by 2002:a81:b40f:0:b0:583:f5fe:d73e with SMTP id
+ h15-20020a81b40f000000b00583f5fed73emr5903683ywi.30.1697649595953; Wed, 18
+ Oct 2023 10:19:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231018122518.128049-10-wedsonaf@gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-	SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+References: <20231018100000.2453965-1-amir73il@gmail.com> <20231018100000.2453965-6-amir73il@gmail.com>
+ <ZS/5fp4XL4D49q9T@tissot.1015granger.net>
+In-Reply-To: <ZS/5fp4XL4D49q9T@tissot.1015granger.net>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 18 Oct 2023 20:19:44 +0300
+Message-ID: <CAOQ4uxhaoup7OCTCcbV-uqZF8SaLWppqN8tM3svZsfAf022Jsw@mail.gmail.com>
+Subject: Re: [PATCH 5/5] exportfs: support encoding non-decodeable file
+ handles by default
+To: Chuck Lever <chuck.lever@oracle.com>
+Cc: Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>, 
+	Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+	RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-On Wed, Oct 18, 2023 at 09:25:08AM -0300, Wedson Almeida Filho wrote:
-> +void *rust_helper_kmap(struct page *page)
-> +{
-> +	return kmap(page);
-> +}
-> +EXPORT_SYMBOL_GPL(rust_helper_kmap);
-> +
-> +void rust_helper_kunmap(struct page *page)
-> +{
-> +	kunmap(page);
-> +}
-> +EXPORT_SYMBOL_GPL(rust_helper_kunmap);
+On Wed, Oct 18, 2023 at 6:28=E2=80=AFPM Chuck Lever <chuck.lever@oracle.com=
+> wrote:
+>
+> On Wed, Oct 18, 2023 at 01:00:00PM +0300, Amir Goldstein wrote:
+> > AT_HANDLE_FID was added as an API for name_to_handle_at() that request
+> > the encoding of a file id, which is not intended to be decoded.
+> >
+> > This file id is used by fanotify to describe objects in events.
+> >
+> > So far, overlayfs is the only filesystem that supports encoding
+> > non-decodeable file ids, by providing export_operations with an
+> > ->encode_fh() method and without a ->decode_fh() method.
+> >
+> > Add support for encoding non-decodeable file ids to all the filesystems
+> > that do not provide export_operations, by encoding a file id of type
+> > FILEID_INO64_GEN from { i_ino, i_generation }.
+> >
+> > A filesystem may that does not support NFS export, can opt-out of
+> > encoding non-decodeable file ids for fanotify by defining an empty
+> > export_operations struct (i.e. with a NULL ->encode_fh() method).
+> >
+> > This allows the use of fanotify events with file ids on filesystems
+> > like 9p which do not support NFS export to bring fanotify in feature
+> > parity with inotify on those filesystems.
+> >
+> > Note that fanotify also requires that the filesystems report a non-null
+> > fsid.  Currently, many simple filesystems that have support for inotify
+> > (e.g. debugfs, tracefs, sysfs) report a null fsid, so can still not be
+> > used with fanotify in file id reporting mode.
+> >
+> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > ---
+> >  fs/exportfs/expfs.c      | 30 +++++++++++++++++++++++++++---
+> >  include/linux/exportfs.h | 10 +++++++---
+> >  2 files changed, 34 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/fs/exportfs/expfs.c b/fs/exportfs/expfs.c
+> > index 30da4539e257..34e7d835d4ef 100644
+> > --- a/fs/exportfs/expfs.c
+> > +++ b/fs/exportfs/expfs.c
+> > @@ -383,6 +383,30 @@ int generic_encode_ino32_fh(struct inode *inode, _=
+_u32 *fh, int *max_len,
+> >  }
+> >  EXPORT_SYMBOL_GPL(generic_encode_ino32_fh);
+> >
+> > +/**
+> > + * exportfs_encode_ino64_fid - encode non-decodeable 64bit ino file id
+> > + * @inode:   the object to encode
+> > + * @fid:     where to store the file handle fragment
+> > + * @max_len: maximum length to store there
+>
+> Length in what units? Is the 3 below in units of bytes or
+> sizeof(__be32) ? I'm guessing it's the latter; if so, it should
+> be mentioned here. (We have XDR_UNIT for this purpose, btw).
+>
+> export_encode_fh() isn't exactly clear about that either, sadly.
+>
+>
 
-I'm not thrilled by exposing kmap()/kunmap() to Rust code.  The vast
-majority of code really only needs kmap_local_*() / kunmap_local().
-Can you elaborate on why you need the old kmap() in new Rust code?
+Yeh, it's the same all over the place including in filesystem
+implementations.
 
-> +void rust_helper_folio_set_error(struct folio *folio)
-> +{
-> +	folio_set_error(folio);
-> +}
-> +EXPORT_SYMBOL_GPL(rust_helper_folio_set_error);
+> > + *
+> > + * This generic function is used to encode a non-decodeable file id fo=
+r
+> > + * fanotify for filesystems that do not support NFS export.
+> > + */
+> > +static int exportfs_encode_ino64_fid(struct inode *inode, struct fid *=
+fid,
+> > +                                  int *max_len)
+> > +{
+> > +     if (*max_len < 3) {
+> > +             *max_len =3D 3;
+>
+> Let's make this a symbolic constant rather than a naked integer.
+>
 
-I'm trying to get rid of the error flag.  Can you share the situations
-in which you've needed the error flag?  Or is it just copying existing
-practices?
+Sure, no problem.
 
-> +    /// Returns the byte position of this folio in its file.
-> +    pub fn pos(&self) -> i64 {
-> +        // SAFETY: The folio is valid because the shared reference implies a non-zero refcount.
-> +        unsafe { bindings::folio_pos(self.0.get()) }
-> +    }
-
-I think it's a mistake to make file positions an i64.  I estimate 64
-bits will not be enough by 2035-2040.  We should probably have a numeric
-type which is i64 on 32-bit and isize on other CPUs (I also project
-64-bit pointers will be insufficient by 2035-2040 and so we will have
-128-bit pointers around the same time, so we're not going to need i128
-file offsets with i64 pointers).
-
-> +/// A [`Folio`] that has a single reference to it.
-> +pub struct UniqueFolio(pub(crate) ARef<Folio>);
-
-How do we know it only has a single reference?  Do you mean "has at
-least one reference"?  Or am I confusing Rust's notion of a reference
-with Linux's notion of a reference?
-
-> +impl UniqueFolio {
-> +    /// Maps the contents of a folio page into a slice.
-> +    pub fn map_page(&self, page_index: usize) -> Result<MapGuard<'_>> {
-> +        if page_index >= self.0.size() / bindings::PAGE_SIZE {
-> +            return Err(EDOM);
-> +        }
-> +
-> +        // SAFETY: We just checked that the index is within bounds of the folio.
-> +        let page = unsafe { bindings::folio_page(self.0 .0.get(), page_index) };
-> +
-> +        // SAFETY: `page` is valid because it was returned by `folio_page` above.
-> +        let ptr = unsafe { bindings::kmap(page) };
-
-Surely this can be:
-
-	   let ptr = unsafe { bindings::kmap_local_folio(folio, page_index * PAGE_SIZE) };
-
-> +        // SAFETY: We just mapped `ptr`, so it's valid for read.
-> +        let data = unsafe { core::slice::from_raw_parts(ptr.cast::<u8>(), bindings::PAGE_SIZE) };
-
-Can we hide away the "if this isn't a HIGHMEM system, this maps to the
-end of the folio, but if it is, it only maps to the end of the page"
-problem here?
-
+Thanks for the review.
+Amir.
 
