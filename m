@@ -1,30 +1,31 @@
-Return-Path: <linux-fsdevel+bounces-617-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-615-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ABBD7CD9D3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 12:57:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA2677CD9CF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 12:57:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D88FE281D64
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 10:57:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F8D3281BF2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 10:57:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C286C1A737;
-	Wed, 18 Oct 2023 10:57:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 990D31A28A;
+	Wed, 18 Oct 2023 10:57:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8593A1A5A3;
-	Wed, 18 Oct 2023 10:57:06 +0000 (UTC)
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.134])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2C18112;
-	Wed, 18 Oct 2023 03:57:00 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 765CA199A4;
+	Wed, 18 Oct 2023 10:57:02 +0000 (UTC)
+X-Greylist: delayed 332 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 18 Oct 2023 03:56:59 PDT
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.131])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5D3E10A;
+	Wed, 18 Oct 2023 03:56:59 -0700 (PDT)
 Received: from weisslap.aisec.fraunhofer.de ([91.67.186.133]) by
  mrelayeu.kundenserver.de (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis)
- id 1M9Ib1-1qvWya16jX-006PWF; Wed, 18 Oct 2023 12:50:59 +0200
+ id 1Myevl-1rkb8513aX-00ywBN; Wed, 18 Oct 2023 12:51:00 +0200
 From: =?UTF-8?q?Michael=20Wei=C3=9F?= <michael.weiss@aisec.fraunhofer.de>
 To: Alexander Mikhalitsyn <alexander@mihalicyn.com>,
 	Christian Brauner <brauner@kernel.org>,
@@ -50,9 +51,9 @@ Cc: Daniel Borkmann <daniel@iogearbox.net>,
 	linux-fsdevel@vger.kernel.org,
 	gyroidos@aisec.fraunhofer.de,
 	=?UTF-8?q?Michael=20Wei=C3=9F?= <michael.weiss@aisec.fraunhofer.de>
-Subject: [RFC PATCH v2 06/14] block: Switch from devcgroup_check_permission to security hook
-Date: Wed, 18 Oct 2023 12:50:25 +0200
-Message-Id: <20231018105033.13669-7-michael.weiss@aisec.fraunhofer.de>
+Subject: [RFC PATCH v2 07/14] drm/amdkfd: Switch from devcgroup_check_permission to security hook
+Date: Wed, 18 Oct 2023 12:50:26 +0200
+Message-Id: <20231018105033.13669-8-michael.weiss@aisec.fraunhofer.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20231018105033.13669-1-michael.weiss@aisec.fraunhofer.de>
 References: <20231018105033.13669-1-michael.weiss@aisec.fraunhofer.de>
@@ -64,24 +65,24 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:g2BQi8jhy6myxnCus8ZQPoNW58k4bHpqaw0EG5w9henscj1hzwh
- +LRuATaGTnBWBWkD6WqjEFcQ2oo8oocdg45yWtogdxsTACLQLaTrVi/wC0nt3/pzp/HwB7l
- WbXaEvirGLkTgf1rTZHblrr/Ij+/xiLQhErhPbKLn88BU0G2c8pYTNh6rS+z1bruMVDNP6g
- fHJxRmLTFHsoJ8N+Aq7ww==
-UI-OutboundReport: notjunk:1;M01:P0:JXHVyhNThiA=;cyZuFiGGc0TW4/kMx14p4/R+huY
- yNY4t5YbgqKc/8n6xoDjinZccz47BgP5UVdZxa85ZQt9DYeKBataf98xF8MxWxynC/YhUweXI
- M48qBzu6COM3TvjVWMzzB7BxmpevoBQlmdSMX5vHwq3NYj2ZyuCheQT17No7DsfVHw9IFBAkA
- v/grs9MhuLPTciXhgYjTvWv0deyNIkjiakQRLjUayb7a9vA41LeoOsceIHVfo2Poym9T/SV0O
- P7zqahNznxNAOYRtBTEmEKqjHhJYy1JfaK+bBU2FC3tndeb5YBQo7ge8x9eRPmlre0+NQmKHX
- 8RPAyzvuRgBukbLPlk2kTbU/I/nnsyk7Qq9v+fBBPVQmLj0jC9dwITHFzyulC1qeDpjx4MAit
- qFctqbf8B5L2HgSJ5OTnBYtVA5wnL6u4Swi5qCrEplqVYNScX6UoWsTf+tj+BOGEYGNhSO0xe
- 1EabzTnaK5SLzISTInCVw3v+Av0SewD5io4bpLZIqveLkZLrMDK08U/SiDgj0t6wZfvtk4mik
- k9O/etP0/M10ZGqFi0Ty4ZRiR3c0r2GLiWreIgO/WWLzP6YoMBADEdRWzzHK4tP9rqlghlKzu
- 0/6gxAWsJqykevu/GbFjp0BUyWuU5bR84YiO06z9H5HW1M8kGam1MUwBl5cKmqup9wQrO9Exx
- kWU8cT+oQHJf9GT9IErHeV9uYHZdK0ZfEH7PwgJsuVJ1gItz7Mxwa13JYKGqwoAlAD7kx049H
- 5AywXgxU3wvNGP9lVGRvEDsPVCkGoiy12bJlR2fUy5p8+35ks7NZeBihThQ9hdtI695zc3vvH
- b48pbPFaKeeRxoPb+uXfkhT3zIdIKX3m7e6AJ8nxGwXnTz5nYsyRNhOtY3n6sfhl2N6/wG9r/
- f4q9SG0yLyvLSog==
+X-Provags-ID: V03:K1:5hEHFJ1ImyT/QBoZt+16PZOB0PG8GCYi6JjwGtaP6iS7hUpeti4
+ SQkmld3M5LO4Um0eZThRUP8ulZFPP+a7w11JYT5kc+yKewkRv47KcwH+ZUHSnHecFJqezO1
+ kmiKN3Jv2MKghSH9lFZYmT8Jk7fJvfL2Y+iJ4CREoeJGJJGWsyQtOo9/38siC3NrBZnmenN
+ bR0USbbnxTsgNCcwoS86Q==
+UI-OutboundReport: notjunk:1;M01:P0:GtiADAAjAwY=;LC6o+4QflxJbOhLM1dykXA+PqWA
+ DXAh9zy91am0hr7PYpYyD4+FPQqw7awKB7Gcpw5icJ6sQUly0ayUAUWqy/aWUqkIM5Nn7Dkiy
+ WiJk7AzjBK0puAEu89YWyyWS+F5mfZIGUCFRuEzGWpoIo3HuCnRT1BYULf2Wsjl0zQGWF3QSF
+ u7AAH7MrCJwKgv5P1nz+5xGqDmytVwALHJys+Bke29D7IzdFNx8e1T9WBAJPFszCwaVfpIf4k
+ ERBxSLBRNZfVd2kf2AGI4+tAyd3J18rhisnNysVUjl/4eeBPw48jRtMx+k5LC7rJ1ftwc4G/3
+ EugVRAdbqmmEb/S4Cr73MaIPdCJK3e+md+9X5DfYYy+cPB0yayJeYTJT65mEzO29RN1YTeEDd
+ UUhDHcZvhMtpkHIwLLL8kpkUuf1K7HUO8BrwEjATSlRrjXqaYJWoP5eua8yKaDNsNupmET7n2
+ Eeerq5i/DZWD0t14Jy4xh/BuAdBwFwvbFpMjaqqdgFiP3MdgarW9ayr9idjmPlZb6n6G5Foj4
+ NMCDT5uQPjbGM6gFMdjqJg8Sx6vZM3SbsIaGaY4JbBZyRtyAnDGfycaLGsBzGpRJOe0DQ/6NW
+ Yv+dc66TYfV+IlVu+T0OYwgAJwrFTWPE7k25Pn0AkVjOfH2adPwAGsM4Ujms/4D8TfdMGuQkN
+ QM3BJuC64orDPjgDXm/6aYne4+HExF3wazTVThD3kepQkPPpiqGHZKwhObk+8fmtLu8QZfgIF
+ E8yfPKJKZCb9VPRQRIqYCFnabCE8FJ4KmWDXoqJp4kmUCs9uaqLbAClyfwwCxs1j1ZwOI0azk
+ 81t+E0E+AWYMxSTff25Cl+HLAmFD+hsn4EBgD0vujsbgWcGc4y/ETnw4mCMwJCwGNVoSCxVNs
+ vVEcbR9TcxtzDHw==
 X-Spam-Status: No, score=-1.2 required=5.0 tests=BAYES_00,
 	RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,
 	SPF_HELO_NONE,SPF_SOFTFAIL autolearn=no autolearn_force=no
@@ -96,43 +97,34 @@ directly calling devcgroup_check_permission().
 
 Signed-off-by: Michael Weiß <michael.weiss@aisec.fraunhofer.de>
 ---
- block/bdev.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/amd/amdkfd/kfd_priv.h | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/block/bdev.c b/block/bdev.c
-index f3b13aa1b7d4..fc6de4e2a80b 100644
---- a/block/bdev.c
-+++ b/block/bdev.c
-@@ -10,7 +10,6 @@
- #include <linux/slab.h>
- #include <linux/kmod.h>
- #include <linux/major.h>
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_priv.h b/drivers/gpu/drm/amd/amdkfd/kfd_priv.h
+index fa24e1852493..50979f332e38 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_priv.h
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_priv.h
+@@ -38,7 +38,7 @@
+ #include <linux/seq_file.h>
+ #include <linux/kref.h>
+ #include <linux/sysfs.h>
 -#include <linux/device_cgroup.h>
- #include <linux/blkdev.h>
- #include <linux/blk-integrity.h>
- #include <linux/backing-dev.h>
-@@ -27,6 +26,7 @@
- #include <linux/part_stat.h>
- #include <linux/uaccess.h>
- #include <linux/stat.h>
 +#include <linux/security.h>
- #include "../fs/internal.h"
- #include "blk.h"
+ #include <drm/drm_file.h>
+ #include <drm/drm_drv.h>
+ #include <drm/drm_device.h>
+@@ -1487,9 +1487,8 @@ static inline int kfd_devcgroup_check_permission(struct kfd_node *kfd)
+ #if defined(CONFIG_CGROUP_DEVICE) || defined(CONFIG_CGROUP_BPF)
+ 	struct drm_device *ddev = adev_to_drm(kfd->adev);
  
-@@ -757,10 +757,9 @@ struct block_device *blkdev_get_by_dev(dev_t dev, blk_mode_t mode, void *holder,
- 	struct gendisk *disk;
- 	int ret;
- 
--	ret = devcgroup_check_permission(DEVCG_DEV_BLOCK,
--			MAJOR(dev), MINOR(dev),
--			((mode & BLK_OPEN_READ) ? DEVCG_ACC_READ : 0) |
--			((mode & BLK_OPEN_WRITE) ? DEVCG_ACC_WRITE : 0));
-+	ret = security_dev_permission(S_IFBLK, dev,
-+			((mode & BLK_OPEN_READ) ? MAY_READ : 0) |
-+			((mode & BLK_OPEN_WRITE) ? MAY_WRITE : 0));
- 	if (ret)
- 		return ERR_PTR(ret);
- 
+-	return devcgroup_check_permission(DEVCG_DEV_CHAR, DRM_MAJOR,
+-					  ddev->render->index,
+-					  DEVCG_ACC_WRITE | DEVCG_ACC_READ);
++	return security_dev_permission(S_IFCHR, MKDEV(DRM_MAJOR, ddev->render->index),
++				       MAY_WRITE | MAY_READ);
+ #else
+ 	return 0;
+ #endif
 -- 
 2.30.2
 
