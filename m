@@ -1,30 +1,30 @@
-Return-Path: <linux-fsdevel+bounces-609-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-606-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A59F87CD9A7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 12:52:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93D9A7CD99A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 12:51:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DA2AB2158F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 10:52:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F042281C7B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 10:51:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F7F218E30;
-	Wed, 18 Oct 2023 10:51:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5ABD199CE;
+	Wed, 18 Oct 2023 10:51:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5F371945A;
-	Wed, 18 Oct 2023 10:51:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EFEF11717;
+	Wed, 18 Oct 2023 10:51:31 +0000 (UTC)
 Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.135])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8809F101;
-	Wed, 18 Oct 2023 03:51:28 -0700 (PDT)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45F30F9;
+	Wed, 18 Oct 2023 03:51:27 -0700 (PDT)
 Received: from weisslap.aisec.fraunhofer.de ([91.67.186.133]) by
  mrelayeu.kundenserver.de (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis)
- id 1N8EdM-1rfLHD3yTI-014Buu; Wed, 18 Oct 2023 12:51:04 +0200
+ id 1MfL5v-1rTTgR3Mkt-00grKp; Wed, 18 Oct 2023 12:51:04 +0200
 From: =?UTF-8?q?Michael=20Wei=C3=9F?= <michael.weiss@aisec.fraunhofer.de>
 To: Alexander Mikhalitsyn <alexander@mihalicyn.com>,
 	Christian Brauner <brauner@kernel.org>,
@@ -50,9 +50,9 @@ Cc: Daniel Borkmann <daniel@iogearbox.net>,
 	linux-fsdevel@vger.kernel.org,
 	gyroidos@aisec.fraunhofer.de,
 	=?UTF-8?q?Michael=20Wei=C3=9F?= <michael.weiss@aisec.fraunhofer.de>
-Subject: [RFC PATCH v2 11/14] vfs: Wire up security hooks for lsm-based device guard in userns
-Date: Wed, 18 Oct 2023 12:50:30 +0200
-Message-Id: <20231018105033.13669-12-michael.weiss@aisec.fraunhofer.de>
+Subject: [RFC PATCH v2 12/14] bpf: Add flag BPF_DEVCG_ACC_MKNOD_UNS for device access
+Date: Wed, 18 Oct 2023 12:50:31 +0200
+Message-Id: <20231018105033.13669-13-michael.weiss@aisec.fraunhofer.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20231018105033.13669-1-michael.weiss@aisec.fraunhofer.de>
 References: <20231018105033.13669-1-michael.weiss@aisec.fraunhofer.de>
@@ -64,95 +64,51 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:QKuNcHsyjzZeVFhJge7r9EgZaJUd1hSQUNm5KrdnKw9WPc7MzKn
- oARcftJeCxBau0k8RbuFVQsbaKvoER/ApOI5iziIof3ikARFUAYuQ/e3CpGm2DvTbMneYjZ
- 3mAX2olG5AbqRXD86FY2w3uJ7IS/uhVx/WgvP8bUqG6rm8A9UyrXr2PJ8PYZ5hkTbfiuPsc
- R65uN8EIxjOlPB7Uel4gg==
-UI-OutboundReport: notjunk:1;M01:P0:UsmMmelH1QY=;Te31CKQmgxElaICDoMa60Hv9NZr
- V7G+LrLIi9tu0IPzzq2E4kLeXGgyZnPSxd4kOwZQGmR+qzhpNrEKSesPDqB/jdYVUzYevhqkU
- JasgoppivfgdH7GD47iRzHYMH+Ba3JEcNFoIcXGt313SnBMDRQMv32dBKGVzbx4kGSP9WhOFV
- nwfvj9+HHXgmUCEBukfuf9VNUDl2rdO7i83v1xmJl4Cg9O3MI3sANH3Ff7LjbbjJQwtshK7S4
- q7Nco8SVY99bn3hIKBxk5TiEMWUYRB53apBZ8cT7RwjaN5LYFnIWdnOrUkGUPETqffBVymt+F
- xePopQ1rUUR+6t1U4kzi8E8LDVtjqQhSVTsf3lLxYMuRChNAnEMvLLLViyVCWQcOKiTrPj2NU
- vhV85ztJkAkDnQwv5oI3uPKPeDnDjKMmnYQfE9y9ZX8wKKzG9TKcGbe7EAi3jWyMoaqXZRuzk
- JbyzfpiiTzcnWM5QJugsTt+qPJoTEQvuPpVYy1JJT2/faj9V35B4fEJzZgQ1LkAld78JVwcD2
- 4tH4DE7joCdgoNdPIQsHTNIjfpMHrPjGs5uk4R8l6PWmKxwhdF8GYifopLp8HnrUcznBxqRmH
- jAbig9gTzAfKD/KLTCxrE2ORxhfyVvmaOw2oG028cicY/hXniY5taOu29c+l20ZiBHOkYr7QW
- zZmjytwe7FKRBT7p8jD9C90WMRXXDBn+UtKTiUATgzZhlxK2mGxvGXy4Ox94qvEDhpXQbaWam
- Ua3y7egjlnbF0P/3ji4700ALzjAYV5ZjlY++leIpVqA6Z5EZ18DL2XQCTrwjygDe9rcqNhCxm
- a/KNT4V6WtGUrp86t4Q/tXpHjkl/1iWtd/0bJUE8V/nGKq/Hf+3nm/4n0FitxEAER+klCFsL2
- DZRdVItQ32YjjNA==
+X-Provags-ID: V03:K1:jFFIwS4qwpApd71uT5/zzBofJHrQqQbMnQCJHEMIWW1Lqc23Bv6
+ CLaXIgZryPTHHNnoyvu1YqBoKOYSFhL+2PrXRkZWBsk2opEc0nVBAFlgDl0hobyxG49s0Ud
+ 9YG/8xesCxM8FUqNmbqiQ6caI/0dbJYKNpvwSg28bF8XMhCPg66tLPMklXLhksz8jbOX5Be
+ XCthwxUiwm541vxbY+hXA==
+UI-OutboundReport: notjunk:1;M01:P0:MNEgPA54IMs=;me9EvLyitsl0wTv0UsXt+4LxB3G
+ Eh0yoMuL7/IahwR85VE3A2qEg6zChPO0GZuzIR1zs5Jg9SQnajBFHzvj7/g7SVxDbaGwPtDbu
+ F7Hh5GIa0i+RmWI2OzLgXPGBCqe1A7h2DTWlvI0zAdlwwinvGaZhoqZ/NaZcM7ktbEvFazgys
+ +ivqxBeoHVCwclRyx88ZiwSpRjr7SNnUbuRV/dqHyTy5KHLL7dNamTRD92l9Xvpsu5E1MmTA8
+ c9ethuj7kCZbBt3Hso5+dXjLc5K+xJp9sV9uJhSh9jYzP5ZxTSygD/VTo6gjBfUO/QqwHgDiz
+ DN2b3nPQ/Ka+xDOyXiogyMb+RiDo5eN28l7YLzEZPZvOIlPKyR1gniVBBmHIN1hGqPnHaSUmq
+ b096EXkbEEbEKE+sSxGYr8MAb8Xjc/tEqzIIQ8yAW1iJquYM1rZGrICDCSHwkSblINPpsfULD
+ OdI1QFuBmuuSEYvCwaFLYlELH/MEGqntz5GEbi2VrFAQs7RNDTYrKHHwz0V3HECnp0MHGCyla
+ iIDYh6MStky1f2Z112vlezC18zvZI7y5xmNfx4rMXFvaPoYgP1J5I4aBxDVhvdBZVUpQ/9WWq
+ WCQSyKBPIt7tOt1AM4T9pEtbme68dVzHEj00Wu0WrfYAA9EttXA75nqVYaJNdFdSkaklL6sqq
+ OMnVc+K/LfD5LpC5oMG9OB3Jl4ELffgkabBtNhPqXE3IZDE5g0pkAdhiM75yPFDKgXL+KleWt
+ IMJuv7bdK+xSGELVf0mabwDYZ+t2hJx2tfHTDauWnBOqCEULvpciMaMv2o/ulUR7MMl/umNkW
+ YpMPYmf7O+6hjzc9yOYOXJEHoSp2/IbkkvZhSkf2YDawB4xecEGdSdap2eMAwzEW6v+VOUjNx
+ E6VXNm2pv7kGcVsIISJwHqEvFCyj8YoVj7KA=
 X-Spam-Status: No, score=-1.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
 	RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_SOFTFAIL
 	autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
-Wire up security_inode_mknod_capns() in fs/namei.c. If implemented
-and access is granted by an lsm, check ns_capable() instead of the
-global CAP_MKNOD.
-
-Wire up security_sb_alloc_userns() in fs/super.c. If implemented
-and access is granted by an lsm, the created super block will allow
-access to device nodes also if it was created in a non-inital userns.
+With this new flag for bpf cgroup device programs, it should be
+possible to guard mknod() access in non-initial user namespaces
+later on.
 
 Signed-off-by: Michael Weiß <michael.weiss@aisec.fraunhofer.de>
 ---
- fs/namei.c | 16 +++++++++++++++-
- fs/super.c |  6 +++++-
- 2 files changed, 20 insertions(+), 2 deletions(-)
+ include/uapi/linux/bpf.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/namei.c b/fs/namei.c
-index f601fcbdc4d2..1f68d160e2c0 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3949,6 +3949,20 @@ inline struct dentry *user_path_create(int dfd, const char __user *pathname,
- }
- EXPORT_SYMBOL(user_path_create);
+diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+index 0448700890f7..0196b9c72d3e 100644
+--- a/include/uapi/linux/bpf.h
++++ b/include/uapi/linux/bpf.h
+@@ -6927,6 +6927,7 @@ enum {
+ 	BPF_DEVCG_ACC_MKNOD	= (1ULL << 0),
+ 	BPF_DEVCG_ACC_READ	= (1ULL << 1),
+ 	BPF_DEVCG_ACC_WRITE	= (1ULL << 2),
++	BPF_DEVCG_ACC_MKNOD_UNS	= (1ULL << 3),
+ };
  
-+static bool mknod_capable(struct inode *dir, struct dentry *dentry,
-+			  umode_t mode, dev_t dev)
-+{
-+	/*
-+	 * In case of a security hook implementation check mknod in user
-+	 * namespace. Otherwise just check global capability.
-+	 */
-+	int error = security_inode_mknod_nscap(dir, dentry, mode, dev);
-+	if (!error)
-+		return ns_capable(current_user_ns(), CAP_MKNOD);
-+	else
-+		return capable(CAP_MKNOD);
-+}
-+
- /**
-  * vfs_mknod - create device node or file
-  * @idmap:	idmap of the mount the inode was found from
-@@ -3975,7 +3989,7 @@ int vfs_mknod(struct mnt_idmap *idmap, struct inode *dir,
- 		return error;
- 
- 	if ((S_ISCHR(mode) || S_ISBLK(mode)) && !is_whiteout &&
--	    !capable(CAP_MKNOD))
-+	    !mknod_capable(dir, dentry, mode, dev))
- 		return -EPERM;
- 
- 	if (!dir->i_op->mknod)
-diff --git a/fs/super.c b/fs/super.c
-index 2d762ce67f6e..bb01db6d9986 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -362,7 +362,11 @@ static struct super_block *alloc_super(struct file_system_type *type, int flags,
- 	}
- 	s->s_bdi = &noop_backing_dev_info;
- 	s->s_flags = flags;
--	if (s->s_user_ns != &init_user_ns)
-+	/*
-+	 * We still have to think about this here. Several concerns exist
-+	 * about the security model, especially about malicious fuse.
-+	 */
-+	if (s->s_user_ns != &init_user_ns && security_sb_alloc_userns(s))
- 		s->s_iflags |= SB_I_NODEV;
- 	INIT_HLIST_NODE(&s->s_instances);
- 	INIT_HLIST_BL_HEAD(&s->s_roots);
+ enum {
 -- 
 2.30.2
 
