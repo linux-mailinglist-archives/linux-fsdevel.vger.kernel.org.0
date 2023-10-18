@@ -1,63 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-638-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-639-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8922F7CDB8D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 14:26:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EF617CDB8E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 14:27:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82F79B21430
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 12:26:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C74B3281C8C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Oct 2023 12:27:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE258347A9;
-	Wed, 18 Oct 2023 12:26:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDA8D347C6;
+	Wed, 18 Oct 2023 12:26:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fd3rpBty"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l6H2IcdA"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DA351DDFC;
-	Wed, 18 Oct 2023 12:26:25 +0000 (UTC)
-Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F052112;
-	Wed, 18 Oct 2023 05:26:23 -0700 (PDT)
-Received: by mail-pl1-x635.google.com with SMTP id d9443c01a7336-1ca6809fb8aso22946905ad.1;
-        Wed, 18 Oct 2023 05:26:23 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4864F2E3E2;
+	Wed, 18 Oct 2023 12:26:29 +0000 (UTC)
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6AA0116;
+	Wed, 18 Oct 2023 05:26:27 -0700 (PDT)
+Received: by mail-pl1-x630.google.com with SMTP id d9443c01a7336-1c5cd27b1acso56935005ad.2;
+        Wed, 18 Oct 2023 05:26:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697631983; x=1698236783; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1697631987; x=1698236787; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Tw7Bt710S9wSgq7lYwmiNaJcrZn0u8YLmYwj+jhFGJE=;
-        b=fd3rpBty1UIm35fgsgMx0xcQzlrZ/kpHW7btmTFnsF6238b0yXSm5GJN52BwYC2Xj3
-         5AhspMX8cKDRm/ALYmNtPa9nFVhmoEqbpqSYpeu/9I+fTIVYlkGGrVI6+PKNIEOyoTTM
-         gsVwT6pxN5UygXVyLIVQDp4ehlq/Qhr22EzmC/3iTVEKQpE8AsL8g3MXBUEWsddk+9SM
-         DDj3QIw/iGLNByhW6+Rf8JLc9avaEcKp1Ei3WCmZUeFLdKLtSOiI7g6lLLM9czeu2cv5
-         ciw2a/iwmhkf2N4rzT39NCl/FOXjX9FZjnyt0/aqyJmDAZlSqCqaq4pk5mzOVQb55dfm
-         Epfg==
+        bh=TOXJ6HCqnTLSNdE+9pmC2+R+Ar90JbQvM+mVG2JfMR8=;
+        b=l6H2IcdAtcJ5znLozguRdMvBzON4CR8fO4yVgukzlvZTOqFqDStDjq0MFLFMQqdv3K
+         W4P+ndjG2Eq4oI1iWBJjNwUxLQPSmmuxOqHX+O4z9IdkPGpsRykCPGswpftGTLAvrwho
+         toJt9Iue9nX+LXiB7XRvitW4mksINFhJzt+/VIr644rIi860MALp83so+x9XO2I9D2IK
+         hUa7hLaeCaxLP+nOLxArg+WE0qEgqY53/+ze+zyjhQU4WOPaGVe2x373YLeY3ILHsxHj
+         qMq2r0OsrfMg32JWIqsdxAk5fJ+79EqNuLRExd5AwoYwWJ7b4775p2XoKLF3CRbLFZBE
+         lSlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697631983; x=1698236783;
+        d=1e100.net; s=20230601; t=1697631987; x=1698236787;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Tw7Bt710S9wSgq7lYwmiNaJcrZn0u8YLmYwj+jhFGJE=;
-        b=ZytczmKWgTbxAc37wN3BwY69B1GW3EPTQLdHrBwzFNoCsIt8aRPWgQWLmmfABHweAN
-         cWEHqC1vaEbVvXZqJ6O7u5BktqzzRcjj0clplXpFBkw388aqQzkoMWZBnBPQ1mdttg0/
-         yJQHgdZM41DSrtBoFSptdyP2fh1KRtlXQdhlTCB6tw1rM8nGyrCGb0903iOeQbhQyi02
-         WbH1g27wQ3IoTXkbDOCZBqq0vq2HmJSDHz8d+L95PAwT9e9YPrUvtX1fxCVqLTjRijyJ
-         MVk6V7U3/oouJDjMBIm0pHc/7TbIn/mOTonOLi+A/4RHx+XueR4TCgN5bi5IapvurKo+
-         F6aA==
-X-Gm-Message-State: AOJu0YyWQWYvSgW+Y5a64tl6ov/Ap3hDviEZrQiNSZa8Ht5iVIRzO7Jo
-	o1PokKAoZbHKJRZYimeHbjc=
-X-Google-Smtp-Source: AGHT+IHX6mepXTgcyTGX7wAyKHqMQZGOk55mDoa3YY/X49KACM8npsQb+3j1IqlhtuYu4pPtY0SJRQ==
-X-Received: by 2002:a17:903:32d0:b0:1c9:e0f9:a676 with SMTP id i16-20020a17090332d000b001c9e0f9a676mr4846526plr.6.1697631982965;
-        Wed, 18 Oct 2023 05:26:22 -0700 (PDT)
+        bh=TOXJ6HCqnTLSNdE+9pmC2+R+Ar90JbQvM+mVG2JfMR8=;
+        b=BZoK0QpVmIDxwE1uE5vSZTk+BiflnOw16NbAQ8R+JQLdYDCbXfmnH7/rgCJFe3nc7c
+         e6bKLM/ryg+M3CjbYBhbJmufiMJD5QsOoIBTFhpwAlEEoY8OwO8PPjq+GqYNi1WvQ+I4
+         Vc0l6jMel+rgCPYJ9F3LC3vNFfyXZ/bIJI8YBGWO665PrVs5h/v1q9zGvienTtCBHF7z
+         RSF6CtBqPXBUibK3cJU0cQozdCzZfU9lNJtlekdctpfynYGfvP8c4pwrnE98+aGO5qu4
+         LGehAckalwSi5hPz5TMR7Ghk9IeqgLPuelGVHvZhwVVr8Wt6oCQBTFxN2v6jq9m9yTUa
+         HK4w==
+X-Gm-Message-State: AOJu0YxVfVQKPbcxttax33hKk2UqerEZ+Rut4fw/eTfhYn5DUxvKiRct
+	wwKR97Ffv8GqPAgWJ3bc5h0=
+X-Google-Smtp-Source: AGHT+IHmI+V3WZWkIG5bC05LPMNEeVYGYnLJAfVX+xOxPrJPBJdygDxXPnb/BwmwGl65cxUCLX/UBQ==
+X-Received: by 2002:a17:902:cf47:b0:1bb:9f07:5e0 with SMTP id e7-20020a170902cf4700b001bb9f0705e0mr4697508plg.60.1697631987295;
+        Wed, 18 Oct 2023 05:26:27 -0700 (PDT)
 Received: from wedsonaf-dev.. ([2804:389:7122:43b8:9b73:6339:3351:cce0])
-        by smtp.googlemail.com with ESMTPSA id j1-20020a170902c3c100b001c736b0037fsm3411046plj.231.2023.10.18.05.26.18
+        by smtp.googlemail.com with ESMTPSA id j1-20020a170902c3c100b001c736b0037fsm3411046plj.231.2023.10.18.05.26.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Oct 2023 05:26:22 -0700 (PDT)
+        Wed, 18 Oct 2023 05:26:27 -0700 (PDT)
 From: Wedson Almeida Filho <wedsonaf@gmail.com>
 To: Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>,
@@ -67,9 +67,9 @@ Cc: Kent Overstreet <kent.overstreet@gmail.com>,
 	linux-fsdevel@vger.kernel.org,
 	rust-for-linux@vger.kernel.org,
 	Wedson Almeida Filho <walmeida@microsoft.com>
-Subject: [RFC PATCH 10/19] rust: fs: introduce `FileSystem::read_folio`
-Date: Wed, 18 Oct 2023 09:25:09 -0300
-Message-Id: <20231018122518.128049-11-wedsonaf@gmail.com>
+Subject: [RFC PATCH 11/19] rust: fs: introduce `FileSystem::read_xattr`
+Date: Wed, 18 Oct 2023 09:25:10 -0300
+Message-Id: <20231018122518.128049-12-wedsonaf@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20231018122518.128049-1-wedsonaf@gmail.com>
 References: <20231018122518.128049-1-wedsonaf@gmail.com>
@@ -82,279 +82,119 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-	RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 	lindbergh.monkeyblade.net
 
 From: Wedson Almeida Filho <walmeida@microsoft.com>
 
-Allow Rust file systems to create regular file inodes backed by the page
-cache. The contents of such files are read into folios via `read_folio`.
+Allow Rust file systems to expose xattrs associated with inodes.
+`overlayfs` uses an xattr to indicate that a directory is opaque (i.e.,
+that lower layers should not be looked up). The planned file systems
+need to support opaque directories, so they must be able to implement
+this.
 
 Signed-off-by: Wedson Almeida Filho <walmeida@microsoft.com>
 ---
- rust/kernel/folio.rs      |  1 -
- rust/kernel/fs.rs         | 75 +++++++++++++++++++++++++++++++++++++--
- samples/rust/rust_rofs.rs | 69 ++++++++++++++++++++++++-----------
- 3 files changed, 122 insertions(+), 23 deletions(-)
+ rust/bindings/bindings_helper.h |  1 +
+ rust/kernel/error.rs            |  2 ++
+ rust/kernel/fs.rs               | 43 +++++++++++++++++++++++++++++++++
+ 3 files changed, 46 insertions(+)
 
-diff --git a/rust/kernel/folio.rs b/rust/kernel/folio.rs
-index ef8a08b97962..b7f80291b0e1 100644
---- a/rust/kernel/folio.rs
-+++ b/rust/kernel/folio.rs
-@@ -123,7 +123,6 @@ impl LockedFolio<'_> {
-     /// Callers must ensure that the folio is valid and locked. Additionally, that the
-     /// responsibility of unlocking is transferred to the new instance of [`LockedFolio`]. Lastly,
-     /// that the returned [`LockedFolio`] doesn't outlive the refcount that keeps it alive.
--    #[allow(dead_code)]
-     pub(crate) unsafe fn from_raw(folio: *const bindings::folio) -> Self {
-         let ptr = folio.cast();
-         // SAFETY: The safety requirements ensure that `folio` (from which `ptr` is derived) is
+diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
+index 53a99ea512d1..fa754c5e85a2 100644
+--- a/rust/bindings/bindings_helper.h
++++ b/rust/bindings/bindings_helper.h
+@@ -15,6 +15,7 @@
+ #include <linux/refcount.h>
+ #include <linux/wait.h>
+ #include <linux/sched.h>
++#include <linux/xattr.h>
+ 
+ /* `bindgen` gets confused at certain things. */
+ const size_t BINDINGS_ARCH_SLAB_MINALIGN = ARCH_SLAB_MINALIGN;
+diff --git a/rust/kernel/error.rs b/rust/kernel/error.rs
+index 484fa7c11de1..6c167583b275 100644
+--- a/rust/kernel/error.rs
++++ b/rust/kernel/error.rs
+@@ -81,6 +81,8 @@ macro_rules! declare_err {
+     declare_err!(EIOCBQUEUED, "iocb queued, will get completion event.");
+     declare_err!(ERECALLCONFLICT, "Conflict with recalled state.");
+     declare_err!(ENOGRACE, "NFS file lock reclaim refused.");
++    declare_err!(ENODATA, "No data available.");
++    declare_err!(EOPNOTSUPP, "Operation not supported on transport endpoint.");
+ }
+ 
+ /// Generic integer kernel error.
 diff --git a/rust/kernel/fs.rs b/rust/kernel/fs.rs
-index 681fef8e3af1..ee3dce87032b 100644
+index ee3dce87032b..adf9cbee16d2 100644
 --- a/rust/kernel/fs.rs
 +++ b/rust/kernel/fs.rs
-@@ -8,7 +8,10 @@
+@@ -42,6 +42,14 @@ pub trait FileSystem {
  
- use crate::error::{code::*, from_result, to_result, Error, Result};
- use crate::types::{ARef, AlwaysRefCounted, Either, Opaque};
--use crate::{bindings, init::PinInit, str::CStr, time::Timespec, try_pin_init, ThisModule};
-+use crate::{
-+    bindings, folio::LockedFolio, init::PinInit, str::CStr, time::Timespec, try_pin_init,
-+    ThisModule,
-+};
- use core::{marker::PhantomData, marker::PhantomPinned, mem::ManuallyDrop, pin::Pin, ptr};
- use macros::{pin_data, pinned_drop};
- 
-@@ -36,6 +39,9 @@ pub trait FileSystem {
- 
-     /// Returns the inode corresponding to the directory entry with the given name.
-     fn lookup(parent: &INode<Self>, name: &[u8]) -> Result<ARef<INode<Self>>>;
+     /// Reads the contents of the inode into the given folio.
+     fn read_folio(inode: &INode<Self>, folio: LockedFolio<'_>) -> Result;
 +
-+    /// Reads the contents of the inode into the given folio.
-+    fn read_folio(inode: &INode<Self>, folio: LockedFolio<'_>) -> Result;
++    /// Reads an xattr.
++    ///
++    /// Returns the number of bytes written to `outbuf`. If it is too small, returns the number of
++    /// bytes needs to hold the attribute.
++    fn read_xattr(_inode: &INode<Self>, _name: &CStr, _outbuf: &mut [u8]) -> Result<usize> {
++        Err(EOPNOTSUPP)
++    }
  }
  
  /// The types of directory entries reported by [`FileSystem::read_dir`].
-@@ -74,6 +80,7 @@ impl From<INodeType> for DirEntryType {
-     fn from(value: INodeType) -> Self {
-         match value {
-             INodeType::Dir => DirEntryType::Dir,
-+            INodeType::Reg => DirEntryType::Reg,
-         }
-     }
- }
-@@ -232,6 +239,15 @@ pub fn init(self, params: INodeParams) -> Result<ARef<INode<T>>> {
-                 inode.i_op = &Tables::<T>::DIR_INODE_OPERATIONS;
-                 bindings::S_IFDIR
-             }
-+            INodeType::Reg => {
-+                // SAFETY: `generic_ro_fops` never changes, it's safe to reference it.
-+                inode.__bindgen_anon_3.i_fop = unsafe { &bindings::generic_ro_fops };
-+                inode.i_data.a_ops = &Tables::<T>::FILE_ADDRESS_SPACE_OPERATIONS;
-+
-+                // SAFETY: The `i_mapping` pointer doesn't change and is valid.
-+                unsafe { bindings::mapping_set_large_folios(inode.i_mapping) };
-+                bindings::S_IFREG
-+            }
-         };
+@@ -418,6 +426,7 @@ impl<T: FileSystem + ?Sized> Tables<T> {
  
-         inode.i_mode = (params.mode & 0o777) | u16::try_from(mode)?;
-@@ -268,6 +284,9 @@ fn drop(&mut self) {
- pub enum INodeType {
-     /// Directory type.
-     Dir,
-+
-+    /// Regular file type.
-+    Reg,
- }
+             sb.0.s_magic = params.magic as _;
+             sb.0.s_op = &Tables::<T>::SUPER_BLOCK;
++            sb.0.s_xattr = &Tables::<T>::XATTR_HANDLERS[0];
+             sb.0.s_maxbytes = params.maxbytes;
+             sb.0.s_time_gran = params.time_gran;
+             sb.0.s_blocksize_bits = params.blocksize_bits;
+@@ -487,6 +496,40 @@ impl<T: FileSystem + ?Sized> Tables<T> {
+         shutdown: None,
+     };
  
- /// Required inode parameters.
-@@ -588,6 +607,55 @@ extern "C" fn lookup_callback(
-             },
-         }
-     }
++    const XATTR_HANDLERS: [*const bindings::xattr_handler; 2] = [&Self::XATTR_HANDLER, ptr::null()];
 +
-+    const FILE_ADDRESS_SPACE_OPERATIONS: bindings::address_space_operations =
-+        bindings::address_space_operations {
-+            writepage: None,
-+            read_folio: Some(Self::read_folio_callback),
-+            writepages: None,
-+            dirty_folio: None,
-+            readahead: None,
-+            write_begin: None,
-+            write_end: None,
-+            bmap: None,
-+            invalidate_folio: None,
-+            release_folio: None,
-+            free_folio: None,
-+            direct_IO: None,
-+            migrate_folio: None,
-+            launder_folio: None,
-+            is_partially_uptodate: None,
-+            is_dirty_writeback: None,
-+            error_remove_page: None,
-+            swap_activate: None,
-+            swap_deactivate: None,
-+            swap_rw: None,
-+        };
++    const XATTR_HANDLER: bindings::xattr_handler = bindings::xattr_handler {
++        name: ptr::null(),
++        prefix: crate::c_str!("").as_char_ptr(),
++        flags: 0,
++        list: None,
++        get: Some(Self::xattr_get_callback),
++        set: None,
++    };
 +
-+    extern "C" fn read_folio_callback(
-+        _file: *mut bindings::file,
-+        folio: *mut bindings::folio,
-+    ) -> i32 {
++    unsafe extern "C" fn xattr_get_callback(
++        _handler: *const bindings::xattr_handler,
++        _dentry: *mut bindings::dentry,
++        inode_ptr: *mut bindings::inode,
++        name: *const core::ffi::c_char,
++        buffer: *mut core::ffi::c_void,
++        size: usize,
++    ) -> core::ffi::c_int {
 +        from_result(|| {
-+            // SAFETY: All pointers are valid and stable.
-+            let inode = unsafe {
-+                &*(*(*folio)
-+                    .__bindgen_anon_1
-+                    .page
-+                    .__bindgen_anon_1
-+                    .__bindgen_anon_1
-+                    .mapping)
-+                    .host
-+                    .cast::<INode<T>>()
-+            };
++            // SAFETY: The C API guarantees that `inode_ptr` is a valid inode.
++            let inode = unsafe { &*inode_ptr.cast::<INode<T>>() };
 +
-+            // SAFETY: The C contract guarantees that the folio is valid and locked, with ownership
-+            // of the lock transferred to the callee (this function). The folio is also guaranteed
-+            // not to outlive this function.
-+            T::read_folio(inode, unsafe { LockedFolio::from_raw(folio) })?;
-+            Ok(0)
++            // SAFETY: The c API guarantees that `name` is a valid null-terminated string. It
++            // also guarantees that it's valid for the duration of the callback.
++            let name = unsafe { CStr::from_char_ptr(name) };
++
++            // SAFETY: The C API guarantees that `buffer` is at least `size` bytes in length.
++            let buf = unsafe { core::slice::from_raw_parts_mut(buffer.cast(), size) };
++            let len = T::read_xattr(inode, name, buf)?;
++            Ok(len.try_into()?)
 +        })
 +    }
- }
- 
- /// Directory entry emitter.
-@@ -673,7 +741,7 @@ fn init(module: &'static ThisModule) -> impl PinInit<Self, Error> {
- /// # mod module_fs_sample {
- /// use kernel::fs::{DirEmitter, INode, NewSuperBlock, SuperBlock, SuperParams};
- /// use kernel::prelude::*;
--/// use kernel::{c_str, fs, types::ARef};
-+/// use kernel::{c_str, folio::LockedFolio, fs, types::ARef};
- ///
- /// kernel::module_fs! {
- ///     type: MyFs,
-@@ -698,6 +766,9 @@ fn init(module: &'static ThisModule) -> impl PinInit<Self, Error> {
- ///     fn lookup(_: &INode<Self>, _: &[u8]) -> Result<ARef<INode<Self>>> {
- ///         todo!()
- ///     }
-+///     fn read_folio(_: &INode<Self>, _: LockedFolio<'_>) -> Result {
-+///         todo!()
-+///     }
- /// }
- /// # }
- /// ```
-diff --git a/samples/rust/rust_rofs.rs b/samples/rust/rust_rofs.rs
-index 4cc8525884a9..ef651ad38185 100644
---- a/samples/rust/rust_rofs.rs
-+++ b/samples/rust/rust_rofs.rs
-@@ -6,7 +6,7 @@
-     DirEmitter, INode, INodeParams, INodeType, NewSuperBlock, SuperBlock, SuperParams,
- };
- use kernel::prelude::*;
--use kernel::{c_str, fs, time::UNIX_EPOCH, types::ARef, types::Either};
-+use kernel::{c_str, folio::LockedFolio, fs, time::UNIX_EPOCH, types::ARef, types::Either};
- 
- kernel::module_fs! {
-     type: RoFs,
-@@ -20,6 +20,7 @@ struct Entry {
-     name: &'static [u8],
-     ino: u64,
-     etype: INodeType,
-+    contents: &'static [u8],
- }
- 
- const ENTRIES: [Entry; 3] = [
-@@ -27,16 +28,19 @@ struct Entry {
-         name: b".",
-         ino: 1,
-         etype: INodeType::Dir,
-+        contents: b"",
-     },
-     Entry {
-         name: b"..",
-         ino: 1,
-         etype: INodeType::Dir,
-+        contents: b"",
-     },
-     Entry {
--        name: b"subdir",
-+        name: b"test.txt",
-         ino: 2,
--        etype: INodeType::Dir,
-+        etype: INodeType::Reg,
-+        contents: b"hello\n",
-     },
- ];
- 
-@@ -95,23 +99,48 @@ fn lookup(parent: &INode<Self>, name: &[u8]) -> Result<ARef<INode<Self>>> {
-             return Err(ENOENT);
-         }
- 
--        match name {
--            b"subdir" => match parent.super_block().get_or_create_inode(2)? {
--                Either::Left(existing) => Ok(existing),
--                Either::Right(new) => new.init(INodeParams {
--                    typ: INodeType::Dir,
--                    mode: 0o555,
--                    size: 0,
--                    blocks: 1,
--                    nlink: 2,
--                    uid: 0,
--                    gid: 0,
--                    atime: UNIX_EPOCH,
--                    ctime: UNIX_EPOCH,
--                    mtime: UNIX_EPOCH,
--                }),
--            },
--            _ => Err(ENOENT),
-+        for e in &ENTRIES {
-+            if name == e.name {
-+                return match parent.super_block().get_or_create_inode(e.ino)? {
-+                    Either::Left(existing) => Ok(existing),
-+                    Either::Right(new) => new.init(INodeParams {
-+                        typ: e.etype,
-+                        mode: 0o444,
-+                        size: e.contents.len().try_into()?,
-+                        blocks: 1,
-+                        nlink: 1,
-+                        uid: 0,
-+                        gid: 0,
-+                        atime: UNIX_EPOCH,
-+                        ctime: UNIX_EPOCH,
-+                        mtime: UNIX_EPOCH,
-+                    }),
-+                };
-+            }
-         }
 +
-+        Err(ENOENT)
-+    }
-+
-+    fn read_folio(inode: &INode<Self>, mut folio: LockedFolio<'_>) -> Result {
-+        let data = match inode.ino() {
-+            2 => ENTRIES[2].contents,
-+            _ => return Err(EINVAL),
-+        };
-+
-+        let pos = usize::try_from(folio.pos()).unwrap_or(usize::MAX);
-+        let copied = if pos >= data.len() {
-+            0
-+        } else {
-+            let to_copy = core::cmp::min(data.len() - pos, folio.size());
-+            folio.write(0, &data[pos..][..to_copy])?;
-+            to_copy
-+        };
-+
-+        folio.zero_out(copied, folio.size() - copied)?;
-+        folio.mark_uptodate();
-+        folio.flush_dcache();
-+
-+        Ok(())
-     }
- }
+     const DIR_FILE_OPERATIONS: bindings::file_operations = bindings::file_operations {
+         owner: ptr::null_mut(),
+         llseek: Some(bindings::generic_file_llseek),
 -- 
 2.34.1
 
