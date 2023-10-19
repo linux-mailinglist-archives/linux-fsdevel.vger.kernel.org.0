@@ -1,101 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-731-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-732-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3A557CF421
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 11:36:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 18A6C7CF4B8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 12:09:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 139341C20E24
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 09:36:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E6B61C20E71
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 10:09:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18168171DE;
-	Thu, 19 Oct 2023 09:36:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20543179AD;
+	Thu, 19 Oct 2023 10:09:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IhZY85mW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bw11o5+I"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E4A4171D4
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 09:36:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9CFFC433C8;
-	Thu, 19 Oct 2023 09:36:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 427371798C
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 10:09:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD16AC433C8;
+	Thu, 19 Oct 2023 10:09:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1697708165;
-	bh=hJZR4W2zZc1CrGsCWcAic1HmEejzXatx0UDZBAvsyjM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IhZY85mWeObaIuqnAGTv3w41NuyOJlimTHFvXXypwg+TGlQ2DNmeeIH6jfDKW2nyU
-	 RirgfhrmRelue2d20q3oj1VzmDBf4JwGI1gASTDNI/2+PYfDJVojdWZTuMChi2bttU
-	 PrJlOcQb/xfmG65GleKUaapsZgHh+RnkTxNvmIgAWkMCr+81d4UhdtzDt1zBsexcum
-	 eeXKA4/Q3BnXvs7RvgIolpk0ljvGL8vruG4ONGpdVNUqWuIPOs9bx+sKWvaA2A4cl2
-	 SRBvt2iCpqSE9HDZ0TxuqAPbJgBVGMXF+VOA6mmvZrqeHGj9pgwU8AGerMenaYcA9+
-	 pLzjduwxNaBuA==
+	s=k20201202; t=1697710142;
+	bh=96LKDRMrRpLCVaVRlRGnvTj5m9adaIRHeaHEEEyRJ08=;
+	h=From:To:Cc:Subject:Date:From;
+	b=bw11o5+I3+JgbuMc86sGALFuZS98+e+bGbUS8JrPwOxU3Q0ubZK2zl+9zdkOTHPbl
+	 wKz5mENFYv86mcaut0k3L6WbS7H4zVjxWymnyj6zy8qP3oFTR6oe8QtNOhSMve7JFG
+	 fFyza1W6Fcl52wiOaKODHGfHqazlRitBwfKjJ26tMkLCmptavmALEHLgKofwXXDnlX
+	 z0UA0YxLh7k4znCV7/pV5Oq6cUMsjh5X2px2wx9W9gSFC385JS9rl1dcYLlzoaIQIi
+	 9F3szJfxBqg3TGb+C4XwjCgStcuppwk7GoJY++OY8nmbR8qWwMfCDNcLb/P8uzxyn7
+	 T+d8nJh9yI68Q==
 From: Christian Brauner <brauner@kernel.org>
-To: Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Denis Efremov <efremov@linux.com>,
-	linux-block@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
-	Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: don't take s_umount under open_mutex
-Date: Thu, 19 Oct 2023 11:35:54 +0200
-Message-Id: <20231019-gebangt-inhalieren-b0466ff3e1c2@brauner>
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] vfs fixes
+Date: Thu, 19 Oct 2023 12:07:08 +0200
+Message-Id: <20231019-kampfsport-metapher-e5211d7be247@brauner>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20231017184823.1383356-1-hch@lst.de>
-References: <20231017184823.1383356-1-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1789; i=brauner@kernel.org; h=from:subject:message-id; bh=hJZR4W2zZc1CrGsCWcAic1HmEejzXatx0UDZBAvsyjM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQa/ChImW+UIbbFw3rSw5yNM/qlLa3E8qZM3Wf864DmtnlT Zcw3dpSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAExk90yG/wX9q+vfKi6M6S2tds/axc vIdWr9hOaVCSteht0J/vj28HeGPxwSPt94rts8NaiYO3+icqNv1jH35wtOil6bb2530r1OgBcA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1973; i=brauner@kernel.org; h=from:subject:message-id; bh=96LKDRMrRpLCVaVRlRGnvTj5m9adaIRHeaHEEEyRJ08=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQa/F/fd/vBj5BZmU0bllctWrzpRppozLYdMXIuN39+c513 8dqbaR2lLAxiXAyyYoosDu0m4XLLeSo2G2VqwMxhZQIZwsDFKQATeZfJ8N/lr4zrjkC5/WcirmQlHr ksNb204onEr+lb53Np3+cWFzjByPBol8mfCy/+Z2Zd/5vrzJmjxZd1a8O8uGfrzi7pOMh+bTY3AA==
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Tue, 17 Oct 2023 20:48:18 +0200, Christoph Hellwig wrote:
-> Christian has been pestering Jan and me a bit about finally fixing
-> all the pre-existing mostly theoretical cases of s_umount taken under
-> open_mutex.  This series, which is mostly from him with some help from
-> me should get us to that goal by replacing bdev_mark_dead calls that
-> can't ever reach a file system holder to call into with simple bdev
-> page invalidation.
-> 
-> [...]
+Hey Linus,
 
-I've applied this so it ends up in -next now.
-@Jens, let me know if you have objections.
+/* Summary */
+An openat() call from io_uring triggering an audit call can apparently
+cause the refcount of struct filename to be incremented from multiple
+threads concurrently during async execution, triggering a refcount
+underflow and hitting a BUG_ON(). That bug has been lurking around since
+at least v5.16 apparently.
 
----
+Switch to an atomic counter to fix that. The underflow check is
+downgraded from a BUG_ON() to a WARN_ON_ONCE() but we could easily
+remove that check altogether tbh and not waste an additional atomic. So
+if you feel that extra check isn't needed you could just remove in case
+you're pulling.
 
-Applied to the vfs.super branch of the vfs/vfs.git tree.
-Patches in the vfs.super branch should appear in linux-next soon.
+/* Testing */
+clang: Ubuntu clang version 15.0.7
+gcc: (Ubuntu 12.2.0-3ubuntu1) 12.2.0
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+All patches are based on v6.6-rc6 and have been sitting in linux-next.
+No build failures or warnings were observed.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+/* Conflicts */
+At the time of creating this PR no merge conflicts were reported from
+linux-next and no merge conflicts showed up doing a test-merge with
+current mainline.
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+The following changes since commit 94f6f0550c625fab1f373bb86a6669b45e9748b3:
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.super
+  Linux 6.6-rc5 (2023-10-08 13:49:43 -0700)
 
-[1/5] block: simplify bdev_del_partition()
-      https://git.kernel.org/vfs/vfs/c/b0df741ed69d
-[2/5] block: WARN_ON_ONCE() when we remove active partitions
-      https://git.kernel.org/vfs/vfs/c/2ff3adfb95a3
-[3/5] block: move bdev_mark_dead out of disk_check_media_change
-      https://git.kernel.org/vfs/vfs/c/6d4367bc04fd
-[4/5] block: assert that we're not holding open_mutex over blk_report_disk_dead
-      https://git.kernel.org/vfs/vfs/c/7addcb222703
-[5/5] fs: assert that open_mutex isn't held over holder ops
-      https://git.kernel.org/vfs/vfs/c/43ab05549df4
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/v6.6-rc7.vfs.fixes
+
+for you to fetch changes up to 03adc61edad49e1bbecfb53f7ea5d78f398fe368:
+
+  audit,io_uring: io_uring openat triggers audit reference count underflow (2023-10-13 18:34:46 +0200)
+
+Please consider pulling these changes from the signed v6.6-rc7.vfs.fixes tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+v6.6-rc7.vfs.fixes
+
+----------------------------------------------------------------
+Dan Clash (1):
+      audit,io_uring: io_uring openat triggers audit reference count underflow
+
+ fs/namei.c         | 9 +++++----
+ include/linux/fs.h | 2 +-
+ kernel/auditsc.c   | 8 ++++----
+ 3 files changed, 10 insertions(+), 9 deletions(-)
 
