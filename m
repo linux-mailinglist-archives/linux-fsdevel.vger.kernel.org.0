@@ -1,456 +1,209 @@
-Return-Path: <linux-fsdevel+bounces-759-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-760-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79A9B7CFCC0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 16:31:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDEF57CFCD0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 16:34:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D0531C20EF2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 14:31:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1E061C20D6B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 14:34:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ECAB2FE10;
-	Thu, 19 Oct 2023 14:31:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 965F22FE1C;
+	Thu, 19 Oct 2023 14:34:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="XGkIuLwx"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RZhTa2xh"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1BCD2FE08
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 14:31:32 +0000 (UTC)
-Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7180FD45
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 07:31:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1697725868; x=1697985068;
-	bh=4VRsucx7Os9zi35oChWOMMTwI2zOzp8mr3Zm9FvgxKk=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=XGkIuLwxHS5h79IsiDPVEU/zHjxh7MP7jGdbdEdiZl6Sm8WLod1UtUdIGfGZhD5ty
-	 PX+Vfcg2qwSfrLLktP1/i1fP3ngFrB5x+GqjinsFhqCgB4VOH7fui643URPMNGTDYX
-	 l8VyiNv/UKNmOAT1mPyzCVmScX7ZzhNV83KHUT9OZXOf0fnu06AjTHg3kWM/6c4c6E
-	 3FMyDtv+czX+0B4d/RKbsIl+AQYs1OnLOPSVdkXIp+wBtZwmh1SjK8wcnboG1bPG1h
-	 fWYjrnUXZ3vifVpMWzPtJN3+Pzb/SZrj6zcznHvciZjxuPAXLjjHk5trHIMi5BMg6N
-	 bNlPpRdMZ/aEQ==
-Date: Thu, 19 Oct 2023 14:30:56 +0000
-To: Wedson Almeida Filho <wedsonaf@gmail.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Matthew Wilcox <willy@infradead.org>, Kent Overstreet <kent.overstreet@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-fsdevel@vger.kernel.org, rust-for-linux@vger.kernel.org, Wedson Almeida Filho <walmeida@microsoft.com>
-Subject: Re: [RFC PATCH 06/19] rust: fs: introduce `FileSystem::init_root`
-Message-ID: <OjZkAoZLnJc9yA0MENJhQx_32ptXZ1cLAFjEnEFog05C4pEmaAUHaA6wBvCFXWtaXbrNN5upFFi3ohQ6neLklIXZBURaYLlQYf3-2gscw_s=@proton.me>
-In-Reply-To: <20231018122518.128049-7-wedsonaf@gmail.com>
-References: <20231018122518.128049-1-wedsonaf@gmail.com> <20231018122518.128049-7-wedsonaf@gmail.com>
-Feedback-ID: 71780778:user:proton
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BE992FE13
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 14:33:59 +0000 (UTC)
+Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F540195
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 07:33:57 -0700 (PDT)
+Received: by mail-yb1-xb30.google.com with SMTP id 3f1490d57ef6-d852b28ec3bso9088807276.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 07:33:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1697726036; x=1698330836; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rDjLug5hf3bXeKiJXgN2m00hJ8i4tYtBfCbplmbScVg=;
+        b=RZhTa2xhrNh0Nsjg/As2Eqa7sM+fqxIRDIlThjYtps0TP5u9BEjGlkXvgwEw1BY1zr
+         7mHxEIe4odAFm6NwugKWA1Z9b9HrEm2lxerH7l3HL6Ag8HQQwe9DXmcSELm/Vt7tX+jO
+         k4xady6CwGlL7SiyW7XgUCqnhxCkPmJIkJdXtLE/g+YAtF7YGKbLMiMrB+WfNEY1l40C
+         aLfH7GS6ExpKSqvEt1Oea7QNoY1b9CtpCrrnwcuYrOHUTwtUN4mTC7sFgv+E70cu2xnc
+         M+MKZVZnzzCoW/6Jpc+oRYm9cH6fhljxuqEL5X9COY862CubV08q6hbdGs11AuaYavhO
+         Y97g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697726036; x=1698330836;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rDjLug5hf3bXeKiJXgN2m00hJ8i4tYtBfCbplmbScVg=;
+        b=eM3oVij/jg2gn2XmGDJO64DmUPb6/AmCPJc7eqxWA/jXwZyLgRz2CsmFjTiYaKUxd1
+         sOcjirTzGi0jYMZRc1qubLmvmaGy6z6m6ZjHDcjmYWazz79p6J1ghQ9mlKxqlktA918G
+         k8gULZ7QhJI59ozpBZ0sLps73nXx+2CntRIbjuvTNgwJwL9juAFAal30SnYYp9qNqMp5
+         kKPaybBX+bfW/llJ8Viq1pSLfRPz9o42aeXW+GB8SJCUwvEElHZV/mS+A1sS1j5ulgMn
+         XD6wMXTsP9WWQBA/inAowAstjWfbeHDA9543QqQEEjoZG+rKI87R2pPSCzb5IZsNGF3W
+         TVoQ==
+X-Gm-Message-State: AOJu0YzOnbgdK+3PsH/LRWSbGDG6ThAxgv9eniXO34GtIhznrjfHyHP0
+	UO0KeBAAxITddex9973omx1wJv5FPbnslITHl1k81svQpT0=
+X-Google-Smtp-Source: AGHT+IGHc2fgsHmCpsXmar2P/tavs6EnNGdUDKO2ZS5/GCBjQPtrt5t0C47it5pe6pF3LXPymEsRCf7xNstbvDbLbvA=
+X-Received: by 2002:a25:8e87:0:b0:d9b:e407:663f with SMTP id
+ q7-20020a258e87000000b00d9be407663fmr2525476ybl.15.1697726036148; Thu, 19 Oct
+ 2023 07:33:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20231016160902.2316986-1-amir73il@gmail.com>
+In-Reply-To: <20231016160902.2316986-1-amir73il@gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 19 Oct 2023 17:33:44 +0300
+Message-ID: <CAOQ4uxh=cLySge6htd+DnJrqAKF=C_oJYfVrbpvQGik0wR-+iw@mail.gmail.com>
+Subject: Re: [PATCH v14 00/12] FUSE passthrough for file io
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, Daniel Rosenberg <drosen@google.com>, 
+	Paul Lawrence <paullawrence@google.com>, Alessio Balsini <balsini@android.com>, 
+	Christian Brauner <brauner@kernel.org>, fuse-devel@lists.sourceforge.net, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On 18.10.23 14:25, Wedson Almeida Filho wrote:
-> From: Wedson Almeida Filho <walmeida@microsoft.com>
->=20
-> Allow Rust file systems to specify their root directory. Also allow them
-> to create (and do cache lookups of) directory inodes. (More types of
-> inodes are added in subsequent patches in the series.)
->=20
-> The `NewINode` type ensures that a new inode is properly initialised
-> before it is marked so. It also facilitates error paths by automatically
-> marking inodes as failed if they're not properly initialised.
->=20
-> Signed-off-by: Wedson Almeida Filho <walmeida@microsoft.com>
-> ---
->   rust/helpers.c            |  12 +++
->   rust/kernel/fs.rs         | 178 +++++++++++++++++++++++++++++++-------
->   samples/rust/rust_rofs.rs |  22 ++++-
->   3 files changed, 181 insertions(+), 31 deletions(-)
->=20
-> diff --git a/rust/helpers.c b/rust/helpers.c
-> index fe45f8ddb31f..c5a2bec6467d 100644
-> --- a/rust/helpers.c
-> +++ b/rust/helpers.c
-> @@ -145,6 +145,18 @@ struct kunit *rust_helper_kunit_get_current_test(voi=
-d)
->   }
->   EXPORT_SYMBOL_GPL(rust_helper_kunit_get_current_test);
->=20
-> +void rust_helper_i_uid_write(struct inode *inode, uid_t uid)
-> +{
-> +=09i_uid_write(inode, uid);
-> +}
-> +EXPORT_SYMBOL_GPL(rust_helper_i_uid_write);
-> +
-> +void rust_helper_i_gid_write(struct inode *inode, gid_t gid)
-> +{
-> +=09i_gid_write(inode, gid);
-> +}
-> +EXPORT_SYMBOL_GPL(rust_helper_i_gid_write);
-> +
->   off_t rust_helper_i_size_read(const struct inode *inode)
->   {
->   =09return i_size_read(inode);
-> diff --git a/rust/kernel/fs.rs b/rust/kernel/fs.rs
-> index 30fa1f312f33..f3a41cf57502 100644
-> --- a/rust/kernel/fs.rs
-> +++ b/rust/kernel/fs.rs
-> @@ -7,9 +7,9 @@
->   //! C headers: [`include/linux/fs.h`](../../include/linux/fs.h)
->=20
->   use crate::error::{code::*, from_result, to_result, Error, Result};
-> -use crate::types::{AlwaysRefCounted, Opaque};
-> -use crate::{bindings, init::PinInit, str::CStr, try_pin_init, ThisModule=
-};
-> -use core::{marker::PhantomData, marker::PhantomPinned, pin::Pin, ptr};
-> +use crate::types::{ARef, AlwaysRefCounted, Either, Opaque};
-> +use crate::{bindings, init::PinInit, str::CStr, time::Timespec, try_pin_=
-init, ThisModule};
-> +use core::{marker::PhantomData, marker::PhantomPinned, mem::ManuallyDrop=
-, pin::Pin, ptr};
->   use macros::{pin_data, pinned_drop};
->=20
->   /// Maximum size of an inode.
-> @@ -22,6 +22,12 @@ pub trait FileSystem {
->=20
->       /// Returns the parameters to initialise a super block.
->       fn super_params(sb: &NewSuperBlock<Self>) -> Result<SuperParams>;
-> +
-> +    /// Initialises and returns the root inode of the given superblock.
-> +    ///
-> +    /// This is called during initialisation of a superblock after [`Fil=
-eSystem::super_params`] has
-> +    /// completed successfully.
-> +    fn init_root(sb: &SuperBlock<Self>) -> Result<ARef<INode<Self>>>;
->   }
->=20
->   /// A registration of a file system.
-> @@ -143,12 +149,136 @@ unsafe fn dec_ref(obj: ptr::NonNull<Self>) {
->       }
->   }
->=20
-> +/// An inode that is locked and hasn't been initialised yet.
-> +#[repr(transparent)]
-> +pub struct NewINode<T: FileSystem + ?Sized>(ARef<INode<T>>);
-> +
-> +impl<T: FileSystem + ?Sized> NewINode<T> {
-> +    /// Initialises the new inode with the given parameters.
-> +    pub fn init(self, params: INodeParams) -> Result<ARef<INode<T>>> {
-> +        // SAFETY: This is a new inode, so it's safe to manipulate it mu=
-tably.
+On Mon, Oct 16, 2023 at 7:09=E2=80=AFPM Amir Goldstein <amir73il@gmail.com>=
+ wrote:
+>
+> Miklos,
+>
+> I've shared several POC branches since the posting of v13 back in May
+> and played with several API choices. It is time to post v14.
+>
+> The API we converged to is server managed shared backing files that are
+> referenced by backing id plus per-file re-opened backing_file.
+>
+> This model looks coherent to me. I think that the example server [3]
+> demonstrates that this API is simple enough to work with.
+>
+> There is quite a bit of re-factored code in this version - I've actually
+> declared this common code as a new vfs subsystem [stackable filesystems]
+> in MAINTAINERS per Christian's request.
+>
+> The re-factored common code is based on overlayfs-next and Christian's
+> vfs.misc branch (for the backing_file changes).
+>
+> I am not posting performance numbers again. Alessio has already posted
+> performance numbers back in v12 and nothing has changed in this regard.
+> We are using a variant of v12 patches in production and the performance
+> improvement is very noticable.
+>
+> Bernd and Nikolaus have helped with improving running fstests on fuse
+> passthrough examples.
+>
+> I have ran the -g auto fstests with v14 patches with the example server.
+> Compared to the baseline test results with passthrough_hp, the backing
+> file passthrough passes several more test, mainly tests related to data
+> coherency, such as generic/451.
 
-How do you know that this is a new inode? Maybe add a type invariant?
+FWIW, baseline passthrough_hp --nocache does pass generic/451.
+Not surprising considering that the test is for
+"Test data integrity when mixing buffered reads and asynchronous
+ direct writes a file."
 
-> +        let inode =3D unsafe { &mut *self.0 .0.get() };
-> +
-> +        let mode =3D match params.typ {
-> +            INodeType::Dir =3D> {
-> +                // SAFETY: `simple_dir_operations` never changes, it's s=
-afe to reference it.
-> +                inode.__bindgen_anon_3.i_fop =3D unsafe { &bindings::sim=
-ple_dir_operations };
-> +
-> +                // SAFETY: `simple_dir_inode_operations` never changes, =
-it's safe to reference it.
-> +                inode.i_op =3D unsafe { &bindings::simple_dir_inode_oper=
-ations };
-> +                bindings::S_IFDIR
-> +            }
-> +        };
-> +
-> +        inode.i_mode =3D (params.mode & 0o777) | u16::try_from(mode)?;
-> +        inode.i_size =3D params.size;
-> +        inode.i_blocks =3D params.blocks;
-> +
-> +        inode.__i_ctime =3D params.ctime.into();
-> +        inode.i_mtime =3D params.mtime.into();
-> +        inode.i_atime =3D params.atime.into();
-> +
-> +        // SAFETY: inode is a new inode, so it is valid for write.
-> +        unsafe {
-> +            bindings::set_nlink(inode, params.nlink);
-> +            bindings::i_uid_write(inode, params.uid);
-> +            bindings::i_gid_write(inode, params.gid);
-> +            bindings::unlock_new_inode(inode);
-> +        }
-> +
-> +        // SAFETY: We are manually destructuring `self` and preventing `=
-drop` from being called.
-> +        Ok(unsafe { (&ManuallyDrop::new(self).0 as *const ARef<INode<T>>=
-).read() })
+>
+> The following tests are the only ones that pass on baseline passthtough_h=
+p
+> and fail with my backing file passthrough example:
+>
+>   generic/080 generic/120 generic/193 generic/215 generic/355
+>
+> Those tests are failing because of missing mtime/atime/ctime updates
 
-Add a comment that explains why you need to do this instead of `self.0`.
+Some more detailed analysis:
 
-> +    }
-> +}
-> +
-> +impl<T: FileSystem + ?Sized> Drop for NewINode<T> {
-> +    fn drop(&mut self) {
-> +        // SAFETY: The new inode failed to be turned into an initialised=
- inode, so it's safe (and
-> +        // in fact required) to call `iget_failed` on it.
-> +        unsafe { bindings::iget_failed(self.0 .0.get()) };
-> +    }
-> +}
-> +
-> +/// The type of the inode.
-> +#[derive(Copy, Clone)]
-> +pub enum INodeType {
-> +    /// Directory type.
-> +    Dir,
-> +}
-> +
-> +/// Required inode parameters.
-> +///
-> +/// This is used when creating new inodes.
-> +pub struct INodeParams {
-> +    /// The access mode. It's a mask that grants execute (1), write (2) =
-and read (4) access to
-> +    /// everyone, the owner group, and the owner.
-> +    pub mode: u16,
-> +
-> +    /// Type of inode.
-> +    ///
-> +    /// Also carries additional per-type data.
-> +    pub typ: INodeType,
-> +
-> +    /// Size of the contents of the inode.
-> +    ///
-> +    /// Its maximum value is [`MAX_LFS_FILESIZE`].
-> +    pub size: i64,
-> +
-> +    /// Number of blocks.
-> +    pub blocks: u64,
-> +
-> +    /// Number of links to the inode.
-> +    pub nlink: u32,
-> +
-> +    /// User id.
-> +    pub uid: u32,
-> +
-> +    /// Group id.
-> +    pub gid: u32,
-> +
-> +    /// Creation time.
-> +    pub ctime: Timespec,
-> +
-> +    /// Last modification time.
-> +    pub mtime: Timespec,
-> +
-> +    /// Last access time.
-> +    pub atime: Timespec,
-> +}
-> +
->   /// A file system super block.
->   ///
->   /// Wraps the kernel's `struct super_block`.
->   #[repr(transparent)]
->   pub struct SuperBlock<T: FileSystem + ?Sized>(Opaque<bindings::super_bl=
-ock>, PhantomData<T>);
->=20
-> +impl<T: FileSystem + ?Sized> SuperBlock<T> {
-> +    /// Tries to get an existing inode or create a new one if it doesn't=
- exist yet.
-> +    pub fn get_or_create_inode(&self, ino: Ino) -> Result<Either<ARef<IN=
-ode<T>>, NewINode<T>>> {
-> +        // SAFETY: The only initialisation missing from the superblock i=
-s the root, and this
-> +        // function is needed to create the root, so it's safe to call i=
-t.
+generic/120 tests -o noatime and fails because atime is
+updated (on the backing file).
+This is a general FUSE issue and passthrough_hp --nocache fails
+the same test (i.e. it only passed because of attribute cache).
 
-This is a weird safety comment. Why is the superblock not fully
-initialized? Why is safe to call the function? This comment doesn't
-really explain anything.
+generic/080, generic/215 both test for c/mtime updates after mapped writes.
+It is not surprising that backing file passthrough fails these tests -
+there is no "passthrough getattr" like overlayfs and there is no opportunit=
+y
+to invalidate the FUSE inode attribute cache.
 
-> +        let inode =3D
-> +            ptr::NonNull::new(unsafe { bindings::iget_locked(self.0.get(=
-), ino) }).ok_or(ENOMEM)?;
-> +
-> +        // SAFETY: `inode` is valid for read, but there could be concurr=
-ent writers (e.g., if it's
-> +        // an already-initialised inode), so we use `read_volatile` to r=
-ead its current state.
-> +        let state =3D unsafe { ptr::read_volatile(ptr::addr_of!((*inode.=
-as_ptr()).i_state)) };
+> in some use cases and failure to strip suid/sgid bits in some cases.
 
-Are you sure that `read_volatile` is sufficient for this use case? The
-documentation [1] clearly states that concurrent write operations are still
-UB:
+The suid/sgid strip failures (generic/193, generic/355) were just a silly b=
+ug.
+Forgot to add file_remove_privs() in passthrough write.
+I now moved it from overlayfs into the common backing_file helpers.
 
-    Just like in C, whether an operation is volatile has no bearing
-    whatsoever on questions involving concurrent access from multiple
-    threads. Volatile accesses behave exactly like non-atomic accesses in
-    that regard. In particular, a race between a read_volatile and any
-    write operation to the same location is undefined behavior.
+I don't think that the issue with mapped writes c/mtime update is a
+show stopper?
 
-[1]: https://doc.rust-lang.org/core/ptr/fn.read_volatile.html
+Thanks,
+Amir.
 
---=20
-Cheers,
-Benno
-
-> +        if state & u64::from(bindings::I_NEW) =3D=3D 0 {
-> +            // The inode is cached. Just return it.
-> +            //
-> +            // SAFETY: `inode` had its refcount incremented by `iget_loc=
-ked`; this increment is now
-> +            // owned by `ARef`.
-> +            Ok(Either::Left(unsafe { ARef::from_raw(inode.cast()) }))
-> +        } else {
-> +            // SAFETY: The new inode is valid but not fully initialised =
-yet, so it's ok to create a
-> +            // `NewINode`.
-> +            Ok(Either::Right(NewINode(unsafe {
-> +                ARef::from_raw(inode.cast())
-> +            })))
-> +        }
-> +    }
-> +}
-> +
->   /// Required superblock parameters.
->   ///
->   /// This is returned by implementations of [`FileSystem::super_params`]=
-.
-> @@ -215,41 +345,28 @@ impl<T: FileSystem + ?Sized> Tables<T> {
->               sb.0.s_blocksize =3D 1 << sb.0.s_blocksize_bits;
->               sb.0.s_flags |=3D bindings::SB_RDONLY;
->=20
-> -            // The following is scaffolding code that will be removed in=
- a subsequent patch. It is
-> -            // needed to build a root dentry, otherwise core code will B=
-UG().
-> -            // SAFETY: `sb` is the superblock being initialised, it is v=
-alid for read and write.
-> -            let inode =3D unsafe { bindings::new_inode(&mut sb.0) };
-> -            if inode.is_null() {
-> -                return Err(ENOMEM);
-> -            }
-> -
-> -            // SAFETY: `inode` is valid for write.
-> -            unsafe { bindings::set_nlink(inode, 2) };
-> -
-> -            {
-> -                // SAFETY: This is a newly-created inode. No other refer=
-ences to it exist, so it is
-> -                // safe to mutably dereference it.
-> -                let inode =3D unsafe { &mut *inode };
-> -                inode.i_ino =3D 1;
-> -                inode.i_mode =3D (bindings::S_IFDIR | 0o755) as _;
-> -
-> -                // SAFETY: `simple_dir_operations` never changes, it's s=
-afe to reference it.
-> -                inode.__bindgen_anon_3.i_fop =3D unsafe { &bindings::sim=
-ple_dir_operations };
-> +            // SAFETY: The callback contract guarantees that `sb_ptr` is=
- a unique pointer to a
-> +            // newly-created (and initialised above) superblock.
-> +            let sb =3D unsafe { &mut *sb_ptr.cast() };
-> +            let root =3D T::init_root(sb)?;
->=20
-> -                // SAFETY: `simple_dir_inode_operations` never changes, =
-it's safe to reference it.
-> -                inode.i_op =3D unsafe { &bindings::simple_dir_inode_oper=
-ations };
-> +            // Reject root inode if it belongs to a different superblock=
-.
-> +            if !ptr::eq(root.super_block(), sb) {
-> +                return Err(EINVAL);
->               }
->=20
->               // SAFETY: `d_make_root` requires that `inode` be valid and=
- referenced, which is the
->               // case for this call.
->               //
->               // It takes over the inode, even on failure, so we don't ne=
-ed to clean it up.
-> -            let dentry =3D unsafe { bindings::d_make_root(inode) };
-> +            let dentry =3D unsafe { bindings::d_make_root(ManuallyDrop::=
-new(root).0.get()) };
->               if dentry.is_null() {
->                   return Err(ENOMEM);
->               }
->=20
-> -            sb.0.s_root =3D dentry;
-> +            // SAFETY: The callback contract guarantees that `sb_ptr` is=
- a unique pointer to a
-> +            // newly-created (and initialised above) superblock.
-> +            unsafe { (*sb_ptr).s_root =3D dentry };
->=20
->               Ok(0)
->           })
-> @@ -314,9 +431,9 @@ fn init(module: &'static ThisModule) -> impl PinInit<=
-Self, Error> {
->   ///
->   /// ```
->   /// # mod module_fs_sample {
-> -/// use kernel::fs::{NewSuperBlock, SuperParams};
-> +/// use kernel::fs::{INode, NewSuperBlock, SuperBlock, SuperParams};
->   /// use kernel::prelude::*;
-> -/// use kernel::{c_str, fs};
-> +/// use kernel::{c_str, fs, types::ARef};
->   ///
->   /// kernel::module_fs! {
->   ///     type: MyFs,
-> @@ -332,6 +449,9 @@ fn init(module: &'static ThisModule) -> impl PinInit<=
-Self, Error> {
->   ///     fn super_params(_: &NewSuperBlock<Self>) -> Result<SuperParams>=
- {
->   ///         todo!()
->   ///     }
-> +///     fn init_root(_sb: &SuperBlock<Self>) -> Result<ARef<INode<Self>>=
-> {
-> +///         todo!()
-> +///     }
->   /// }
->   /// # }
->   /// ```
-> diff --git a/samples/rust/rust_rofs.rs b/samples/rust/rust_rofs.rs
-> index 9878bf88b991..9e5f4c7d1c06 100644
-> --- a/samples/rust/rust_rofs.rs
-> +++ b/samples/rust/rust_rofs.rs
-> @@ -2,9 +2,9 @@
->=20
->   //! Rust read-only file system sample.
->=20
-> -use kernel::fs::{NewSuperBlock, SuperParams};
-> +use kernel::fs::{INode, INodeParams, INodeType, NewSuperBlock, SuperBloc=
-k, SuperParams};
->   use kernel::prelude::*;
-> -use kernel::{c_str, fs};
-> +use kernel::{c_str, fs, time::UNIX_EPOCH, types::ARef, types::Either};
->=20
->   kernel::module_fs! {
->       type: RoFs,
-> @@ -26,4 +26,22 @@ fn super_params(_sb: &NewSuperBlock<Self>) -> Result<S=
-uperParams> {
->               time_gran: 1,
->           })
->       }
-> +
-> +    fn init_root(sb: &SuperBlock<Self>) -> Result<ARef<INode<Self>>> {
-> +        match sb.get_or_create_inode(1)? {
-> +            Either::Left(existing) =3D> Ok(existing),
-> +            Either::Right(new) =3D> new.init(INodeParams {
-> +                typ: INodeType::Dir,
-> +                mode: 0o555,
-> +                size: 1,
-> +                blocks: 1,
-> +                nlink: 2,
-> +                uid: 0,
-> +                gid: 0,
-> +                atime: UNIX_EPOCH,
-> +                ctime: UNIX_EPOCH,
-> +                mtime: UNIX_EPOCH,
-> +            }),
-> +        }
-> +    }
->   }
+>
+> Changes from v13 [1]:
+> - rebase on 6.6-rc6 (and overlayfs and vfs next branches)
+> - server managed shared backing files without auto-close mode
+> - open a backing_file per fuse_file with fuse file's path and flags
+> - factor out common read/write/splice/mmap helpers from overlayfs
+> - factor out ioctl helpers
+>
+> [1] https://lore.kernel.org/r/20230519125705.598234-1-amir73il@gmail.com/
+> [2] https://github.com/amir73il/linux/commits/fuse-backing-fd-v14
+> [3] https://github.com/amir73il/libfuse/commits/fuse-backing-fd
+>
+> Amir Goldstein (12):
+>   fs: prepare for stackable filesystems backing file helpers
+>   fs: factor out backing_file_{read,write}_iter() helpers
+>   fs: factor out backing_file_splice_{read,write}() helpers
+>   fs: factor out backing_file_mmap() helper
+>   fuse: factor out helper for FUSE_DEV_IOC_CLONE
+>   fuse: introduce FUSE_PASSTHROUGH capability
+>   fuse: pass optional backing_id in struct fuse_open_out
+>   fuse: implement ioctls to manage backing files
+>   fuse: implement read/write passthrough
+>   fuse: implement splice_{read/write} passthrough
+>   fuse: implement passthrough for mmap
+>   fuse: implement passthrough for readdir
+>
+>  MAINTAINERS                  |   9 +
+>  fs/Kconfig                   |   4 +
+>  fs/Makefile                  |   1 +
+>  fs/backing-file.c            | 319 ++++++++++++++++++++++++++++
+>  fs/fuse/Kconfig              |  11 +
+>  fs/fuse/Makefile             |   1 +
+>  fs/fuse/cuse.c               |   3 +-
+>  fs/fuse/dev.c                |  98 ++++++---
+>  fs/fuse/dir.c                |   2 +-
+>  fs/fuse/file.c               |  69 ++++--
+>  fs/fuse/fuse_i.h             |  72 ++++++-
+>  fs/fuse/inode.c              |  25 +++
+>  fs/fuse/ioctl.c              |   3 +-
+>  fs/fuse/passthrough.c        | 392 +++++++++++++++++++++++++++++++++++
+>  fs/fuse/readdir.c            |  12 +-
+>  fs/open.c                    |  38 ----
+>  fs/overlayfs/Kconfig         |   1 +
+>  fs/overlayfs/file.c          | 246 ++++------------------
+>  fs/overlayfs/overlayfs.h     |   8 +-
+>  fs/overlayfs/super.c         |  11 +-
+>  include/linux/backing-file.h |  42 ++++
+>  include/linux/fs.h           |   3 -
+>  include/uapi/linux/fuse.h    |  23 +-
+>  23 files changed, 1085 insertions(+), 308 deletions(-)
+>  create mode 100644 fs/backing-file.c
+>  create mode 100644 fs/fuse/passthrough.c
+>  create mode 100644 include/linux/backing-file.h
+>
 > --
 > 2.34.1
->=20
-> 
+>
 
