@@ -1,127 +1,174 @@
-Return-Path: <linux-fsdevel+bounces-736-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-738-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FF4E7CF6C9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 13:28:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D7E807CF7DD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 14:01:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF957282085
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 11:28:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91F46282074
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 12:01:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C0311947A;
-	Thu, 19 Oct 2023 11:28:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 598DA1DFE3;
+	Thu, 19 Oct 2023 12:01:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HBA7HSvG"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hx4ugaGv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78ED719442
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 11:28:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18A89C433C7;
-	Thu, 19 Oct 2023 11:28:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1697714932;
-	bh=frnWz1sFRBQuYonb5RmQwPk5jf/lF7GP4WLN8JSXa7M=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=HBA7HSvGoIRn7e8pKkbEW9dLvkhR6UbP9YryXoyb0yOjeGBF3+t2/uXVAqhO8+5XZ
-	 g0zjGzFjnXF/LfXiIIdiO8O+s2WH1DbOU5PxZHMy5BGmXDF1pxMFXw5belLfcYtN7H
-	 99/gEqDLZv0OG5nrh2/sMZTcmW/PdfrhuOSXelnXPQnJC1BordF3CwVUQNbDT7FTNG
-	 nn177O3fNCLQE2ooDHVnWEyFQh2gHAsFOuYPrlz1K/YrfOpU/ht9vUd3N/Bwu8Bm8m
-	 10CRzoGlUcfNESgswU4BLKxSdAsGBM5bqEhUzQbS/iUBrFcZX0/oc11HUt7teGBqNa
-	 7K8NLvWb7IZrw==
-Message-ID: <0a1a847af4372e62000b259e992850527f587205.camel@kernel.org>
-Subject: Re: [PATCH RFC 2/9] timekeeping: new interfaces for multigrain
- timestamp handing
-From: Jeff Layton <jlayton@kernel.org>
-To: Christian Brauner <brauner@kernel.org>, Linus Torvalds
-	 <torvalds@linux-foundation.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, John Stultz
- <jstultz@google.com>,  Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd
- <sboyd@kernel.org>, Chandan Babu R <chandan.babu@oracle.com>,  "Darrick J.
- Wong" <djwong@kernel.org>, Dave Chinner <david@fromorbit.com>, Theodore
- Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Chris
- Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba
- <dsterba@suse.com>,  Hugh Dickins <hughd@google.com>, Andrew Morton
- <akpm@linux-foundation.org>, Amir Goldstein <amir73il@gmail.com>, Jan Kara
- <jack@suse.de>, David Howells <dhowells@redhat.com>, 
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, 
- linux-btrfs@vger.kernel.org, linux-mm@kvack.org, linux-nfs@vger.kernel.org
-Date: Thu, 19 Oct 2023 07:28:48 -0400
-In-Reply-To: <20231019-fluor-skifahren-ec74ceb6c63e@brauner>
-References: <20231018-mgtime-v1-0-4a7a97b1f482@kernel.org>
-	 <20231018-mgtime-v1-2-4a7a97b1f482@kernel.org>
-	 <CAHk-=wixObEhBXM22JDopRdt7Z=tGGuizq66g4RnUmG9toA2DA@mail.gmail.com>
-	 <d6162230b83359d3ed1ee706cc1cb6eacfb12a4f.camel@kernel.org>
-	 <CAHk-=wiKJgOg_3z21Sy9bu+3i_34S86r8fd6ngvJpZDwa-ww8Q@mail.gmail.com>
-	 <5f96e69d438ab96099bb67d16b77583c99911caa.camel@kernel.org>
-	 <20231019-fluor-skifahren-ec74ceb6c63e@brauner>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C27F31DFDC
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 12:01:49 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.115])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36F7FBE;
+	Thu, 19 Oct 2023 05:01:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1697716908; x=1729252908;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=4V++UoxtdSzTR5kXnKpe8ug3pFMLBj4yDeQKHsZglIA=;
+  b=hx4ugaGvL6wZz/Lk43TQCTozduclggKOqQbJzmAke3KBIGwH9cxQ6xsf
+   BK6u05c01RHwiU4zCzL0yIu734J/irho5htBky/Kbxrlz4fj2u5ghGOM+
+   aB9cDp8uaAcl7JMly7i0CeAy4qzFC1S5Tb5QPvyQD1D4DkHpxajt+BGui
+   9yW98LRTb7rTj6hC20dn52u4GTnD7hr25bag2B23QJmW6PSJ1p9Czmc6r
+   5NVklJeO0DUggIxUZe62XlcCLV6vbrWU1lGldQa+7qSU1otillKDjIS03
+   gWYpJCHnZqbpGIJ2buoW0udAdy02Hn8C+lmW0BtmEslBb76eRmwWyRFqQ
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10867"; a="386060930"
+X-IronPort-AV: E=Sophos;i="6.03,237,1694761200"; 
+   d="scan'208";a="386060930"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2023 05:01:47 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10867"; a="873445589"
+X-IronPort-AV: E=Sophos;i="6.03,237,1694761200"; 
+   d="scan'208";a="873445589"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmsmga002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2023 05:01:46 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97-RC2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1qtRih-00000006r2S-2kgO;
+	Thu, 19 Oct 2023 15:01:43 +0300
+Date: Thu, 19 Oct 2023 15:01:43 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Jan Kara <jack@suse.cz>
+Cc: Ferry Toth <ftoth@exalondelft.nl>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
+Subject: Re: [GIT PULL] ext2, quota, and udf fixes for 6.6-rc1
+Message-ID: <ZTEap8A1W3IIY7Bg@smile.fi.intel.com>
+References: <ZS50DI8nw9oSc4Or@smile.fi.intel.com>
+ <20231017133245.lvadrhbgklppnffv@quack3>
+ <ZS6PRdhHRehDC+02@smile.fi.intel.com>
+ <ZS6fIkTVtIs-UhFI@smile.fi.intel.com>
+ <ZS6k7nLcbdsaxUGZ@smile.fi.intel.com>
+ <ZS6pmuofSP3uDMIo@smile.fi.intel.com>
+ <ZS6wLKrQJDf1_TUe@smile.fi.intel.com>
+ <20231018184613.tphd3grenbxwgy2v@quack3>
+ <ZTDtAiDRuPcS2Vwd@smile.fi.intel.com>
+ <20231019101854.yb5gurasxgbdtui5@quack3>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231019101854.yb5gurasxgbdtui5@quack3>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Thu, 2023-10-19 at 11:29 +0200, Christian Brauner wrote:
-> > Back to your earlier point though:
-> >=20
-> > Is a global offset really a non-starter? I can see about doing somethin=
-g
-> > per-superblock, but ktime_get_mg_coarse_ts64 should be roughly as cheap
-> > as ktime_get_coarse_ts64. I don't see the downside there for the non-
-> > multigrain filesystems to call that.
->=20
-> I have to say that this doesn't excite me. This whole thing feels a bit
-> hackish. I think that a change version is the way more sane way to go.
->=20
+On Thu, Oct 19, 2023 at 12:18:54PM +0200, Jan Kara wrote:
+> On Thu 19-10-23 11:46:58, Andy Shevchenko wrote:
+> > On Wed, Oct 18, 2023 at 08:46:13PM +0200, Jan Kara wrote:
+> > > On Tue 17-10-23 19:02:52, Andy Shevchenko wrote:
+> > > > On Tue, Oct 17, 2023 at 06:34:50PM +0300, Andy Shevchenko wrote:
+> > > > > On Tue, Oct 17, 2023 at 06:14:54PM +0300, Andy Shevchenko wrote:
+> > > > > > On Tue, Oct 17, 2023 at 05:50:10PM +0300, Andy Shevchenko wrote:
+> > > > > > > On Tue, Oct 17, 2023 at 04:42:29PM +0300, Andy Shevchenko wrote:
+> > > > > > > > On Tue, Oct 17, 2023 at 03:32:45PM +0200, Jan Kara wrote:
+> > > > > > > > > On Tue 17-10-23 14:46:20, Andy Shevchenko wrote:
+> > > > > > > > > > On Tue, Oct 17, 2023 at 01:32:53PM +0300, Andy Shevchenko wrote:
+> > > > > > > > > > > On Tue, Oct 17, 2023 at 01:29:27PM +0300, Andy Shevchenko wrote:
+> > > > > > > > > > > > On Tue, Oct 17, 2023 at 01:27:19PM +0300, Andy Shevchenko wrote:
+> > > > > > > > > > > > > On Wed, Aug 30, 2023 at 12:24:34PM +0200, Jan Kara wrote:
+> > > > > > > > > > > > > >   Hello Linus,
 
-What is it about this set that feels so much more hackish to you? Most
-of this set is pretty similar to what we had to revert. Is it just the
-timekeeper changes? Why do you feel those are a problem?
+...
 
-> >=20
-> > On another note: maybe I need to put this behind a Kconfig option
-> > initially too?
->=20
-> So can we for a second consider not introducing fine-grained timestamps
-> at all. We let NFSv3 live with the cache problem it's been living with
-> forever.
->=20
-> And for NFSv4 we actually do introduce a proper i_version for all
-> filesystems that matter to it.
->=20
-> What filesystems exactly don't expose a proper i_version and what does
-> prevent them from adding one or fixing it?
+> > > > > > > > > > > > > This merge commit (?) broke boot on Intel Merrifield.
+> > > > > > > > > > > > > It has earlycon enabled and only what I got is watchdog
+> > > > > > > > > > > > > trigger without a bit of information printed out.
+> > > > > > > > > > 
+> > > > > > > > > > Okay, seems false positive as with different configuration it
+> > > > > > > > > > boots. It might be related to the size of the kernel itself.
+> > > > > > > > > 
+> > > > > > > > > Ah, ok, that makes some sense.
+> > > > > > > > 
+> > > > > > > > I should have mentioned that it boots with the configuration say "A",
+> > > > > > > > while not with "B", where "B" = "A" + "C" and definitely the kernel
+> > > > > > > > and initrd sizes in the "B" case are bigger.
+> > > > > > > 
+> > > > > > > If it's a size (which is only grew from 13M->14M), it's weird.
+> > > > > > > 
+> > > > > > > Nevertheless, I reverted these in my local tree
+> > > > > > > 
+> > > > > > > 85515a7f0ae7 (HEAD -> topic/mrfld) Revert "defconfig: enable DEBUG_SPINLOCK"
+> > > > > > > 786e04262621 Revert "defconfig: enable DEBUG_ATOMIC_SLEEP"
+> > > > > > > 76ad0a0c3f2d Revert "defconfig: enable DEBUG_INFO"
+> > > > > > > f8090166c1be Revert "defconfig: enable DEBUG_LIST && DEBUG_OBJECTS_RCU_HEAD"
+> > > > > > > 
+> > > > > > > and it boots again! So, after this merge something affects one of this?
+> > > > > > > 
+> > > > > > > I'll continuing debugging which one is a culprit, just want to share
+> > > > > > > the intermediate findings.
+> > > > > > 
+> > > > > > CONFIG_DEBUG_LIST with this merge commit somehow triggers this issue.
+> > > > > > Any ideas?
+> > > > 
+> > > > > Dropping CONFIG_QUOTA* helps as well.
+> > > > 
+> > > > More precisely it's enough to drop either from CONFIG_DEBUG_LIST and CONFIG_QUOTA
+> > > > to make it boot again.
+> > > > 
+> > > > And I'm done for today.
+> > > 
+> > > OK, thanks for debugging! So can you perhaps enable CONFIG_DEBUG_LIST
+> > > permanently in your kernel config and then bisect through the quota changes
+> > > in the merge? My guess is commit dabc8b20756 ("quota: fix dqput() to follow
+> > > the guarantees dquot_srcu should provide") might be the culprit given your
+> > > testing but I fail to see how given I don't expect any quotas to be used
+> > > during boot of your platform... BTW, there's also fixup: 869b6ea160
+> > > ("quota: Fix slow quotaoff") merged last week so you could try testing a
+> > > kernel after this fix to see whether it changes anything.
+> > 
+> > It's exactly what my initial report is about, CONFIG_DEBUG_LIST was there
+> > always with CONFIG_QUOTA as well.
+> 
+> Ah, ok.
+> 
+> > Two bisections (v6.5 .. v6.6-rc1 & something...v6.6-rc6) pointed out to
+> > merge commit!
+> 
+> I thought CONFIG_DEBUG_LIST arrived through one path, some problematic
+> quota change arrived through another path and because they cause problems
+> only together, then bisecting to the merge would be exactly the outcome.
+> Alas that doesn't seem to be the case :-|.
+> 
+> > I _had_ tried to simply revert the quota changes (I haven't
+> > said about that before) and it didn't help. I'm so puzzled with all this.
+> 
+> Aha, OK. If even reverting quota changes doesn't help, then it's really
+> weird...
 
-Certainly we can drop this series altogether if that's the consensus.
+Lemme to confirm that, it might be that I forgot to update configuration in
+between.
 
-The main exportable filesystem that doesn't have a suitable change
-counter now is XFS. Fixing it will require an on-disk format change to
-accommodate a new version counter that doesn't increment on atime
-updates. This is something the XFS folks were specifically looking to
-avoid, but maybe that's the simpler option.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-There is also bcachefs which I don't think has a change attr yet. They'd
-also likely need a on-disk format change, but hopefully that's a easier
-thing to do there since it's a brand new filesystem.
 
-There are a smattering of lesser-used local filesystems (f2fs, nilfs2,
-etc.) that have no i_version support. Multigrain timestamps would make
-it simple to add better change attribute support there, but they can (in
-principle) all undergo an on-disk format change too if they decide to
-add one.
-
-Then there are filesystems like ntfs that are exportable, but where we
-can't extend the on-disk format. Those could probably benefit from
-multigrain timestamps, but those are much lower priority. Not many
-people sharing their NTFS filesystem via NFS anyway.
---=20
-Jeff Layton <jlayton@kernel.org>
 
