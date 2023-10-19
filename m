@@ -1,118 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-768-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-769-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 530677CFDD6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 17:28:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26D0C7CFDDD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 17:31:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E549282117
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 15:28:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4097B1C20E9E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 15:31:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 577CE31595;
-	Thu, 19 Oct 2023 15:28:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3744F3159F;
+	Thu, 19 Oct 2023 15:31:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Zg4/aLh6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IVrvJlgO"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D2FD3158B
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 15:28:07 +0000 (UTC)
-Received: from mail-vs1-xe31.google.com (mail-vs1-xe31.google.com [IPv6:2607:f8b0:4864:20::e31])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDA8E124
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 08:28:05 -0700 (PDT)
-Received: by mail-vs1-xe31.google.com with SMTP id ada2fe7eead31-4580a2ec248so1700796137.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 08:28:05 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A14DC30FB4
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 15:30:58 +0000 (UTC)
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F86A121;
+	Thu, 19 Oct 2023 08:30:57 -0700 (PDT)
+Received: by mail-lf1-x12b.google.com with SMTP id 2adb3069b0e04-507962561adso10081935e87.0;
+        Thu, 19 Oct 2023 08:30:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697729285; x=1698334085; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ePdjmTFlmWfaU2E17cd2rM20Zga7y8maCxRmtdGFBCc=;
-        b=Zg4/aLh6AhTSDdo7KIdqEZgb4FAOnWiw4lafqI37kOB7W3Pl5eu4zSI4jMu1MXIVj0
-         tBzG0LMB6tbXmSjcKkTSRf/ZxqBYxDJDUNDuZZB09T6HfA9x3Ooy7SGehpamTE9rtuJ7
-         cGSsgZ7Nd+N1vntrIEKyFBn3nBSg6f8urI/5AEIbbnQ6Hr7a7vsIpD7GSjEoLU7x+xai
-         P8GdgWo8oeIe2Z70ALxZcmQAoyTVrwqMW2VFHvDDejG2M3rQaYDBZSMYFmtO3+9e/7SY
-         MO1YDKKbUWQ+SkTjUsojbIwpBr4Refge4Rt+efkrdvrWCSHOlf9bA1pWsyeu1cmMf2bn
-         p2kQ==
+        d=gmail.com; s=20230601; t=1697729454; x=1698334254; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4FWVeU9IigKcVsNnwc6AFvvF7vK4/01UmH97KV2uxsw=;
+        b=IVrvJlgO2v4myj+dkNpwFhW3vJ3xYsBb6CbrokhO6QOIvNYx8EMmZLd8b/5LRDvIyj
+         au8eC73E7ebWlEekOejUFJhf43DvKxM0fE5H1OiHYyJupmxSSUg07p8gpwQTwxrccfIX
+         wobQlsZXDfL6UE4gv4oye8+y8Ku8KPL1nk6WN10vSnAYjztcK158JZD5ESXKu7+SIELb
+         DW0twGkgVrH+Oni+15BnX7UvO0vo9PIcrKJeLvV7mm1dgSaugzony8pFYcLTv2+8+Efa
+         g7zv/4Kuxmc4pKe8GViNkab7528ZW+KKy7BaC2JtEJi0p7hx+BQoRlORsG+urmADbmAo
+         WpIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697729285; x=1698334085;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ePdjmTFlmWfaU2E17cd2rM20Zga7y8maCxRmtdGFBCc=;
-        b=fkyH+V/rXDVxPOVZeErmdAlrNuwOPooV6WgpJ3Ls2S6T8Nba6fBs/MNndqMtdMr2ep
-         VP6VkbfLU33GtoV7GZ/M7uz9WBTxB32EWYCHFiTShbtiqd9lAKOsjZKVALAcnmoAoYsj
-         nYB/92RdFKEZb3hZ0l4hw32BT2jeU7SxiXsTIdXAMq8Z7GLJmpm5bwLGLpQySQ4Aqf0r
-         5XYD2Q4TCT2RLOKcgxblgXv3RvXp0TjV0TI8B8x9DF099LFlsT7HwcUq4fKeICYcSxCD
-         ynnRNGpuTZHJN84SBBsYsmMWpF/D8tHleBADapW0VyYqLaOwlI6nSBTCAK8ZDH5ydzHR
-         xoIA==
-X-Gm-Message-State: AOJu0YxhIEzlOv3tAG03aA1QcXj+heIeTxA/qtOTOQyBWAmUPX1zuPwN
-	q3kOHJeQhppGOPwsPkP2WWxk07D6TH58hxTN/qPWHQ==
-X-Google-Smtp-Source: AGHT+IFRtisHRQ8llbCtMKcbt98E2rge5LFbQnavaVa23CCczzG4eiu/FxAW29PkAGxdTosFN9IPxLiigCvq1crVf+A=
-X-Received: by 2002:a05:6102:1009:b0:457:ce8f:ded8 with SMTP id
- q9-20020a056102100900b00457ce8fded8mr2492151vsp.3.1697729284825; Thu, 19 Oct
- 2023 08:28:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1697729454; x=1698334254;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4FWVeU9IigKcVsNnwc6AFvvF7vK4/01UmH97KV2uxsw=;
+        b=Lm5wz2jSZHZV8mEUn27tufZ8OBAySIhLQ8KY+DjABURG13jyIMoUHhqbMWEq7HkE1W
+         XKYHB5rlHnkDeRav/hkTUPpUhWPVjvKRFdr8mJi2UZ9x/e/zuy2JnT7Hjpkg+SyS5Uup
+         fzyp3ZVtKSN3hxGRu8VcXQhojyuitUNCsFQiwTx+mvLj8y/FOCPtnUzQh4S6VYxioA4X
+         vGjjzC5ZeN3GD+Oh63uJpfGKPO2BWaP59u0qGUBakHQb6sSaxhifiLFYjZNsCZ51QoVB
+         TcKRW+Sc8gjZNA66cYC1xeWrKBP14d0Doa7Pa/KTaZDNZkNZ6iWKCB1yW2rmz2m0RI/L
+         E68A==
+X-Gm-Message-State: AOJu0Yy8aNVRvYD3AyI1ByBx1ku0ZykzG48VzPRuN1Dbg4eEzNbaGnqy
+	dVF5Q2StKycoKMzjr3PuDiY=
+X-Google-Smtp-Source: AGHT+IGypHTslM4jzHKGC5Rcxh8As846X2fCX1u0jn27VNqfaCCTCqDXLPG4/BVtbxed1W+TEDszdg==
+X-Received: by 2002:a19:e007:0:b0:500:adbd:43e9 with SMTP id x7-20020a19e007000000b00500adbd43e9mr1973084lfg.15.1697729453971;
+        Thu, 19 Oct 2023 08:30:53 -0700 (PDT)
+Received: from f (cst-prg-84-171.cust.vodafone.cz. [46.135.84.171])
+        by smtp.gmail.com with ESMTPSA id j4-20020a5d4524000000b00317a04131c5sm4753323wra.57.2023.10.19.08.30.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Oct 2023 08:30:53 -0700 (PDT)
+Date: Thu, 19 Oct 2023 17:30:40 +0200
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Dave Chinner <dchinner@redhat.com>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-bcachefs@vger.kernel.org,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: (subset) [PATCH 22/32] vfs: inode cache conversion to hash-bl
+Message-ID: <20231019153040.lj3anuescvdprcq7@f>
+References: <20230509165657.1735798-1-kent.overstreet@linux.dev>
+ <20230509165657.1735798-23-kent.overstreet@linux.dev>
+ <20230523-zujubeln-heizsysteme-f756eefe663e@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Thu, 19 Oct 2023 20:57:53 +0530
-Message-ID: <CA+G9fYt75r4i39DuB4E3y6jRLaLoSEHGbBcJy=AQZBQ2SmBbiQ@mail.gmail.com>
-Subject: re: autofs: add autofs_parse_fd()
-To: open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
-	linux-fsdevel@vger.kernel.org, autofs@vger.kernel.org
-Cc: Ian Kent <raven@themaw.net>, "Bill O'Donnell" <bodonnel@redhat.com>, 
-	Christian Brauner <brauner@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20230523-zujubeln-heizsysteme-f756eefe663e@brauner>
 
-The qemu-x86_64 and x86_64 booting with 64bit kernel and 32bit rootfs we call
-it as compat mode boot testing. Recently it started to failed to get login
-prompt.
+On Tue, May 23, 2023 at 11:28:38AM +0200, Christian Brauner wrote:
+> On Tue, 09 May 2023 12:56:47 -0400, Kent Overstreet wrote:
+> > Because scalability of the global inode_hash_lock really, really
+> > sucks.
+> > 
+> > 32-way concurrent create on a couple of different filesystems
+> > before:
+> > 
+> > -   52.13%     0.04%  [kernel]            [k] ext4_create
+> >    - 52.09% ext4_create
+> >       - 41.03% __ext4_new_inode
+> >          - 29.92% insert_inode_locked
+> >             - 25.35% _raw_spin_lock
+> >                - do_raw_spin_lock
+> >                   - 24.97% __pv_queued_spin_lock_slowpath
+> > 
+> > [...]
+> 
+> This is interesting completely independent of bcachefs so we should give
+> it some testing.
+> 
+> I updated a few places that had outdated comments.
+> 
+> ---
+> 
+> Applied to the vfs.unstable.inode-hash branch of the vfs/vfs.git tree.
+> Patches in the vfs.unstable.inode-hash branch should appear in linux-next soon.
+> 
+> Please report any outstanding bugs that were missed during review in a
+> new review to the original patch series allowing us to drop it.
+> 
+> It's encouraged to provide Acked-bys and Reviewed-bys even though the
+> patch has now been applied. If possible patch trailers will be updated.
+> 
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+> branch: vfs.unstable.inode-hash
+> 
+> [22/32] vfs: inode cache conversion to hash-bl
+>         https://git.kernel.org/vfs/vfs/c/e3e92d47e6b1
 
-We have not seen any kernel crash logs.
+What, if anything, is blocking this? It is over 5 months now, I don't
+see it in master nor -next.
 
-Anders, bisection is pointing to first bad commit,
-546694b8f658 autofs: add autofs_parse_fd()
+To be clear there is no urgency as far as I'm concerned, but I did run
+into something which is primarily bottlenecked by inode hash lock and
+looks like the above should sort it out.
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-Reported-by: Anders Roxell <anders.roxell@linaro.org>
+Looks like the patch was simply forgotten.
 
-steps to reproduce:
-----------------
-# To install tuxrun to your home directory at ~/.local/bin:
-# pip3 install -U --user tuxrun==0.49.2
-#
-# Or install a deb/rpm depending on the running distribution
-# See https://tuxmake.org/install-deb/ or
-# https://tuxmake.org/install-rpm/
-#
-# See https://tuxrun.org/ for complete documentation.
-#
-
-tuxrun --runtime podman --device qemu-x86_64 --boot-args rw --kernel
-https://storage.tuxsuite.com/public/linaro/lkft/builds/2WyQyyM0OvXnnbI0d84HL0v1J56/bzImage
---modules https://storage.tuxsuite.com/public/linaro/lkft/builds/2WyQyyM0OvXnnbI0d84HL0v1J56/modules.tar.xz
---rootfs https://storage.tuxboot.com/debian/bookworm/i386/rootfs.ext4.xz
---parameters SKIPFILE=skipfile-lkft.yaml --parameters SHARD_NUMBER=10
---parameters SHARD_INDEX=3 --image
-docker.io/linaro/tuxrun-dispatcher:v0.49.2 --tests ltp-cve --timeouts
-boot=15 --overlay
-https://storage.tuxboot.com/overlays/debian/bookworm/i386/ltp/20230929/ltp.tar.xz
-
-
-Please find related links to test and results comparison.
-
-Links:
- - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20231019/testrun/20695093/suite/boot/test/gcc-13-lkftconfig-compat/history/?page=1
- - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20230926/testrun/20125035/suite/boot/test/gcc-13-lkftconfig-compat/details/
- - https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2WyR2MGbyTalC8rGugHIZXPMldC/reproducer
- - https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2WyR2MGbyTalC8rGugHIZXPMldC
---
-Linaro LKFT
-https://lkft.linaro.org
+tl;dr can this land in -next please
 
