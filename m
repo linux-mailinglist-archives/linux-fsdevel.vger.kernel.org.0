@@ -1,153 +1,359 @@
-Return-Path: <linux-fsdevel+bounces-787-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-788-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 414ED7D01FC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 20:44:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B601D7D0294
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 21:33:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BCC1EB2140B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 18:44:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8D681C20E97
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 19:33:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B68439853;
-	Thu, 19 Oct 2023 18:44:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DACCE39868;
+	Thu, 19 Oct 2023 19:33:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="KZA0xFi8"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KSN0j0a9"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 535A139845
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 18:44:09 +0000 (UTC)
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91AB4124
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 11:44:07 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-98377c5d53eso6406266b.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 11:44:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1697741046; x=1698345846; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=C2XVpy+BS1K4w7gayf3/1HjO0gNsFZkxXqHhB++XT2g=;
-        b=KZA0xFi8n22uIkwv4S5EA2cN2KsfIlrTz4BfkjjFrkyAiekcqqu4jfYYmCxRWfyF/2
-         y7zbfhRjNH/yet3T94VYBJa7HHwGv//bzk1oIgd6LFn9fZCL55jhGs3rtm0ItWLrwxMr
-         g9ELMpJD3KeMi3v6FMsfadcYERZUidjX/uytM=
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8EB336AE2
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 19:33:30 +0000 (UTC)
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC340FA
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 12:33:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1697744008;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2FjYAtvDvXRjIix5kXoA10+zXT6ErSvL+h1IeZEyCdg=;
+	b=KSN0j0a9weD3yvrwLIbZwPAPeYKTPIg7VxAXc/CvdI4wh+0bpMCkj9MM+Nmr+8MXq5xbdc
+	wRLj1YunktAgxMnsE74RcGSzg1Ps3BZXwPVPLOy43oC9g7iAeaVeUNgJ6DReURG0jspfDw
+	J1GlX59rNcemUzGkcNfTUUETuVLWzH0=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-484-GRHWHeYgPSCO5C1zFnS_Sg-1; Thu, 19 Oct 2023 15:33:25 -0400
+X-MC-Unique: GRHWHeYgPSCO5C1zFnS_Sg-1
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-65623d0075aso212476d6.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 12:33:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697741046; x=1698345846;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=C2XVpy+BS1K4w7gayf3/1HjO0gNsFZkxXqHhB++XT2g=;
-        b=RvjAUYudGOavVeIhBA790Ro8dOa3lafyLC+zVkbC4p43BYs6+S2kfAryDz+ZpC8Eyj
-         08Ud0XBmbPweq+Hqb0toEf0xY2ULDnSgYqiixBsRd3+ezU7/kl1N9Ix1Ti5YoZwfMJdP
-         BE35IizOiegBbjnqP37uCw3d1QXV7PeSARjUt3JLPqLJK2CDxv2mWuMJPTmtqMdqeURb
-         4Ji9zsNY498484XIwIbjckPzt6ZJ9VGaoCLIIzIH1jhjMQaW2Q0NZqECfEPNbM+QrVzJ
-         u9orAat+AJp6stDzPIdyzRVfRqDCvCOiJx/tkl8yRNGQsU4tNfZdRu+R9PMmY/7/1/35
-         k4hw==
-X-Gm-Message-State: AOJu0YxGyTjFMix9UQ4lpL9jGVxK2G5OWwDELH2lSX3QtyH+F6Cd/Hcx
-	KJnh+cNsGt02i/HqDvoUY6kWqzq13hyXzTQc1cVp30Y8
-X-Google-Smtp-Source: AGHT+IHgdTsGkFcZASWnEnKjHlklaFfeo0ICjTIdaquBbNSTFlJ+e5nztpoKDFknaXwWA1yiy044ew==
-X-Received: by 2002:a17:907:9306:b0:9ba:3af4:333e with SMTP id bu6-20020a170907930600b009ba3af4333emr2363189ejc.14.1697741045835;
-        Thu, 19 Oct 2023 11:44:05 -0700 (PDT)
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com. [209.85.218.42])
-        by smtp.gmail.com with ESMTPSA id qh12-20020a170906ecac00b009b9af27d98csm23578ejb.132.2023.10.19.11.44.05
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Oct 2023 11:44:05 -0700 (PDT)
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-9c75ceea588so2885366b.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 11:44:05 -0700 (PDT)
-X-Received: by 2002:a17:907:72c9:b0:9a5:9f3c:9615 with SMTP id
- du9-20020a17090772c900b009a59f3c9615mr2626024ejc.63.1697741044936; Thu, 19
- Oct 2023 11:44:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1697744004; x=1698348804;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2FjYAtvDvXRjIix5kXoA10+zXT6ErSvL+h1IeZEyCdg=;
+        b=fjmbioC4o/jKvvwnEsuMI7JQxMeqYvQinS/QgwhqgrA6MGZlf0DTiaHn/g1OQAWVoI
+         kswV50EAQ1L6OOH3lMIMHQCjo2+20q7w/QnmnoGadLZiFKr7nhUQmTEFe9JbDtvbbxvW
+         cVUzXsuWQRBB7dbORE+nNI06c0XGSyQCcl0g7PofFY4zWyCwXHIDbl9OvESnoFAZAbN0
+         Rm2bdTbIzRCNYr+WayCV3x8y/Rkt9GKv4pb9wtdoyk4qc4BWY4h655KF6I4X7FJ52kfT
+         bsaLRlACvumjl+3gbj4rQFqeAF8xGKalYciEflMzz0aAVVQsTMPNXQ2HhbsihLKTU2ym
+         04fA==
+X-Gm-Message-State: AOJu0YzxVPRnUsA1M0lUIu+588Nz/nyo5RziG02Z4MEzC3unbDurKLa6
+	yE2kOD0XbSPUlVUhaaZ2Ir2nmw/vQ5IsQGu4zseD1qfPq1uAfDZVuSxt10594bM5AFD3A1KTE/a
+	I2+wx0Ha5SRibU+KL8J95h9Om6Q==
+X-Received: by 2002:a0c:c3c4:0:b0:66d:264c:450f with SMTP id p4-20020a0cc3c4000000b0066d264c450fmr3372673qvi.0.1697744004336;
+        Thu, 19 Oct 2023 12:33:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEySUVGYdiNI41djpnNt8DvZOKaaR+Ss0NZxR6LoARW1JHB7/096+uVjxmgd3k7TNVmtlmjLw==
+X-Received: by 2002:a0c:c3c4:0:b0:66d:264c:450f with SMTP id p4-20020a0cc3c4000000b0066d264c450fmr3372648qvi.0.1697744003979;
+        Thu, 19 Oct 2023 12:33:23 -0700 (PDT)
+Received: from x1n (cpe5c7695f3aee0-cm5c7695f3aede.cpe.net.cable.rogers.com. [99.254.144.39])
+        by smtp.gmail.com with ESMTPSA id y3-20020ad457c3000000b0066d1e71e515sm86901qvx.113.2023.10.19.12.33.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Oct 2023 12:33:23 -0700 (PDT)
+Date: Thu, 19 Oct 2023 15:33:21 -0400
+From: Peter Xu <peterx@redhat.com>
+To: Axel Rasmussen <axelrasmussen@google.com>
+Cc: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, shuah@kernel.org,
+	aarcange@redhat.com, lokeshgidra@google.com, david@redhat.com,
+	hughd@google.com, mhocko@suse.com, rppt@kernel.org,
+	willy@infradead.org, Liam.Howlett@oracle.com, jannh@google.com,
+	zhangpeng362@huawei.com, bgeffon@google.com, kaleshsingh@google.com,
+	ngeoffray@google.com, jdduke@google.com, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH v3 3/3] selftests/mm: add UFFDIO_MOVE ioctl test
+Message-ID: <ZTGEgR/L8ZmNvmkm@x1n>
+References: <20231009064230.2952396-1-surenb@google.com>
+ <20231009064230.2952396-4-surenb@google.com>
+ <ZShzSvrN7FgdXi71@x1n>
+ <CAJuCfpE2SmiF6C6xh93ruCxQd_rBK5Vb8jCpKT=y2LSdgHpjgQ@mail.gmail.com>
+ <CAJHvVchpKHBBNYGYCiGmpHbax2_oKkmEoqE0NnY9ChowC+tPEA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231018184613.tphd3grenbxwgy2v@quack3> <ZTDtAiDRuPcS2Vwd@smile.fi.intel.com>
- <20231019101854.yb5gurasxgbdtui5@quack3> <ZTEap8A1W3IIY7Bg@smile.fi.intel.com>
- <ZTFAzuE58mkFbScV@smile.fi.intel.com> <20231019164240.lhg5jotsh6vfuy67@treble>
- <ZTFh0NeYtvgcjSv8@smile.fi.intel.com> <CAHk-=wjXG52UNKCwwEU1A+QWHYfvKOieV0uFOpPkLR0NSvOjtg@mail.gmail.com>
- <CAHk-=whis2BJF2fv1xySAg2NTQ+C5fViNSGkLNCOqGzi-3y+8w@mail.gmail.com>
- <ZTFxEcjo4d6vXbo5@smile.fi.intel.com> <ZTFydEbdEYlxOxc1@smile.fi.intel.com>
-In-Reply-To: <ZTFydEbdEYlxOxc1@smile.fi.intel.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 19 Oct 2023 11:43:47 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wh_gbZE_ZsQ6+9gSPdXfoCtmuK-MFmBkO3ywMKFQEvb6g@mail.gmail.com>
-Message-ID: <CAHk-=wh_gbZE_ZsQ6+9gSPdXfoCtmuK-MFmBkO3ywMKFQEvb6g@mail.gmail.com>
-Subject: Re: [GIT PULL] ext2, quota, and udf fixes for 6.6-rc1
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Kees Cook <keescook@chromium.org>, Ferry Toth <ftoth@exalondelft.nl>, 
-	linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJHvVchpKHBBNYGYCiGmpHbax2_oKkmEoqE0NnY9ChowC+tPEA@mail.gmail.com>
 
-On Thu, 19 Oct 2023 at 11:16, Andy Shevchenko
-<andriy.shevchenko@intel.com> wrote:
->
-> Meanwhile a wild idea, can it be some git (automatic) conflict resolution that
-> makes that merge affect another (not related to the main contents of the merge)
-> files? Like upstream has one base, the merge has another which is older/newer
-> in the history?
+On Thu, Oct 19, 2023 at 10:29:27AM -0700, Axel Rasmussen wrote:
+> On Thu, Oct 19, 2023 at 8:43 AM Suren Baghdasaryan <surenb@google.com> wrote:
+> >
+> > On Thu, Oct 12, 2023 at 3:29 PM Peter Xu <peterx@redhat.com> wrote:
+> > >
+> > > On Sun, Oct 08, 2023 at 11:42:28PM -0700, Suren Baghdasaryan wrote:
+> > > > Add a test for new UFFDIO_MOVE ioctl which uses uffd to move source
+> > > > into destination buffer while checking the contents of both after
+> > > > remapping. After the operation the content of the destination buffer
+> > > > should match the original source buffer's content while the source
+> > > > buffer should be zeroed.
+> > > >
+> > > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > > > ---
+> > > >  tools/testing/selftests/mm/uffd-common.c     | 41 ++++++++++++-
+> > > >  tools/testing/selftests/mm/uffd-common.h     |  1 +
+> > > >  tools/testing/selftests/mm/uffd-unit-tests.c | 62 ++++++++++++++++++++
+> > > >  3 files changed, 102 insertions(+), 2 deletions(-)
+> > > >
+> > > > diff --git a/tools/testing/selftests/mm/uffd-common.c b/tools/testing/selftests/mm/uffd-common.c
+> > > > index 02b89860e193..ecc1244f1c2b 100644
+> > > > --- a/tools/testing/selftests/mm/uffd-common.c
+> > > > +++ b/tools/testing/selftests/mm/uffd-common.c
+> > > > @@ -52,6 +52,13 @@ static int anon_allocate_area(void **alloc_area, bool is_src)
+> > > >               *alloc_area = NULL;
+> > > >               return -errno;
+> > > >       }
+> > > > +
+> > > > +     /* Prevent source pages from collapsing into THPs */
+> > > > +     if (madvise(*alloc_area, nr_pages * page_size, MADV_NOHUGEPAGE)) {
+> > > > +             *alloc_area = NULL;
+> > > > +             return -errno;
+> > > > +     }
+> > >
+> > > Can we move this to test specific code?
+> >
+> > Ack. I think that's doable.
+> >
+> > >
+> > > > +
+> > > >       return 0;
+> > > >  }
+> > > >
+> > > > @@ -484,8 +491,14 @@ void uffd_handle_page_fault(struct uffd_msg *msg, struct uffd_args *args)
+> > > >               offset = (char *)(unsigned long)msg->arg.pagefault.address - area_dst;
+> > > >               offset &= ~(page_size-1);
+> > > >
+> > > > -             if (copy_page(uffd, offset, args->apply_wp))
+> > > > -                     args->missing_faults++;
+> > > > +             /* UFFD_MOVE is supported for anon non-shared mappings. */
+> > > > +             if (uffd_test_ops == &anon_uffd_test_ops && !map_shared) {
+> > >
+> > > IIUC this means move_page() will start to run on many other tests... as
+> > > long as anonymous & private.  Probably not wanted, because not all tests
+> > > may need this MOVE test, and it also means UFFDIO_COPY is never tested on
+> > > anonymous..
+> > >
+> > > You can overwrite uffd_args.handle_fault().  Axel just added a hook which
+> > > seems also usable here.  See 99aa77215ad02.
+> >
+> > Yes, I was thinking about adding a completely new set of tests for
+> > UFFDIO_MOVE but was not sure. With your confirmation I'll follow that
+> > path so that UFFDIO_COPY tests stay the same.
 
-I already looked at any obvious case of that.
+Sounds good.
 
-The only quota-related issue on the other side is an obvious
-one-liner: commit 86be6b8bd834 ("quota: Check presence of quota
-operation structures instead of ->quota_read and ->quota_write
-callbacks").
+If you want you can also torture MOVE a bit with uffd-stress.c to do
+bouncing test all with MOVE, may need a new option and some more code
+changes, though.
 
-It didn't affect the merge, because it was not related to  any of the
-changes that came in from the quota branch (it was physically close to
-the change that used lockdep_assert_held_write() instead of a
-WARN_ON_ONCE(down_read_trylock()) sequence, but it is unrelated to
-it).
+> >
+> > >
+> > > > +                     if (move_page(uffd, offset))
+> > > > +                             args->missing_faults++;
+> > > > +             } else {
+> > > > +                     if (copy_page(uffd, offset, args->apply_wp))
+> > > > +                             args->missing_faults++;
+> > > > +             }
+> > > >       }
+> > > >  }
+> > > >
+> > > > @@ -620,6 +633,30 @@ int copy_page(int ufd, unsigned long offset, bool wp)
+> > > >       return __copy_page(ufd, offset, false, wp);
+> > > >  }
+> > > >
+> > > > +int move_page(int ufd, unsigned long offset)
+> > > > +{
+> > > > +     struct uffdio_move uffdio_move;
+> > > > +
+> > > > +     if (offset >= nr_pages * page_size)
+> > > > +             err("unexpected offset %lu\n", offset);
+> > > > +     uffdio_move.dst = (unsigned long) area_dst + offset;
+> > > > +     uffdio_move.src = (unsigned long) area_src + offset;
+> > > > +     uffdio_move.len = page_size;
+> > > > +     uffdio_move.mode = UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES;
+> > > > +     uffdio_move.move = 0;
+> > > > +     if (ioctl(ufd, UFFDIO_MOVE, &uffdio_move)) {
+> > > > +             /* real retval in uffdio_move.move */
+> > > > +             if (uffdio_move.move != -EEXIST)
+> > > > +                     err("UFFDIO_MOVE error: %"PRId64,
+> > > > +                         (int64_t)uffdio_move.move);
+> > > > +             wake_range(ufd, uffdio_move.dst, page_size);
+> > > > +     } else if (uffdio_move.move != page_size) {
+> > > > +             err("UFFDIO_MOVE error: %"PRId64, (int64_t)uffdio_move.move);
+> > > > +     } else
+> > > > +             return 1;
+> > > > +     return 0;
+> > > > +}
+> > > > +
+> > > >  int uffd_open_dev(unsigned int flags)
+> > > >  {
+> > > >       int fd, uffd;
+> > > > diff --git a/tools/testing/selftests/mm/uffd-common.h b/tools/testing/selftests/mm/uffd-common.h
+> > > > index 7c4fa964c3b0..f4d79e169a3d 100644
+> > > > --- a/tools/testing/selftests/mm/uffd-common.h
+> > > > +++ b/tools/testing/selftests/mm/uffd-common.h
+> > > > @@ -111,6 +111,7 @@ void wp_range(int ufd, __u64 start, __u64 len, bool wp);
+> > > >  void uffd_handle_page_fault(struct uffd_msg *msg, struct uffd_args *args);
+> > > >  int __copy_page(int ufd, unsigned long offset, bool retry, bool wp);
+> > > >  int copy_page(int ufd, unsigned long offset, bool wp);
+> > > > +int move_page(int ufd, unsigned long offset);
+> > > >  void *uffd_poll_thread(void *arg);
+> > > >
+> > > >  int uffd_open_dev(unsigned int flags);
+> > > > diff --git a/tools/testing/selftests/mm/uffd-unit-tests.c b/tools/testing/selftests/mm/uffd-unit-tests.c
+> > > > index 2709a34a39c5..f0ded3b34367 100644
+> > > > --- a/tools/testing/selftests/mm/uffd-unit-tests.c
+> > > > +++ b/tools/testing/selftests/mm/uffd-unit-tests.c
+> > > > @@ -824,6 +824,10 @@ static void uffd_events_test_common(bool wp)
+> > > >       char c;
+> > > >       struct uffd_args args = { 0 };
+> > > >
+> > > > +     /* Prevent source pages from being mapped more than once */
+> > > > +     if (madvise(area_src, nr_pages * page_size, MADV_DONTFORK))
+> > > > +             err("madvise(MADV_DONTFORK) failed");
+> > >
+> > > Modifying events test is weird.. I assume you don't need this anymore after
+> > > you switch to the handle_fault() hook.
+> >
+> > I think so but let me try first and I'll get back on that.
+> >
+> > >
+> > > > +
+> > > >       fcntl(uffd, F_SETFL, uffd_flags | O_NONBLOCK);
+> > > >       if (uffd_register(uffd, area_dst, nr_pages * page_size,
+> > > >                         true, wp, false))
+> > > > @@ -1062,6 +1066,58 @@ static void uffd_poison_test(uffd_test_args_t *targs)
+> > > >       uffd_test_pass();
+> > > >  }
+> > > >
+> > > > +static void uffd_move_test(uffd_test_args_t *targs)
+> > > > +{
+> > > > +     unsigned long nr;
+> > > > +     pthread_t uffd_mon;
+> > > > +     char c;
+> > > > +     unsigned long long count;
+> > > > +     struct uffd_args args = { 0 };
+> > > > +
+> > > > +     if (uffd_register(uffd, area_dst, nr_pages * page_size,
+> > > > +                       true, false, false))
+> > > > +             err("register failure");
+> > > > +
+> > > > +     if (pthread_create(&uffd_mon, NULL, uffd_poll_thread, &args))
+> > > > +             err("uffd_poll_thread create");
+> > > > +
+> > > > +     /*
+> > > > +      * Read each of the pages back using the UFFD-registered mapping. We
+> > > > +      * expect that the first time we touch a page, it will result in a missing
+> > > > +      * fault. uffd_poll_thread will resolve the fault by remapping source
+> > > > +      * page to destination.
+> > > > +      */
+> > > > +     for (nr = 0; nr < nr_pages; nr++) {
+> > > > +             /* Check area_src content */
+> > > > +             count = *area_count(area_src, nr);
+> > > > +             if (count != count_verify[nr])
+> > > > +                     err("nr %lu source memory invalid %llu %llu\n",
+> > > > +                         nr, count, count_verify[nr]);
+> > > > +
+> > > > +             /* Faulting into area_dst should remap the page */
+> > > > +             count = *area_count(area_dst, nr);
+> > > > +             if (count != count_verify[nr])
+> > > > +                     err("nr %lu memory corruption %llu %llu\n",
+> > > > +                         nr, count, count_verify[nr]);
+> > > > +
+> > > > +             /* Re-check area_src content which should be empty */
+> > > > +             count = *area_count(area_src, nr);
+> > > > +             if (count != 0)
+> > > > +                     err("nr %lu move failed %llu %llu\n",
+> > > > +                         nr, count, count_verify[nr]);
+> > >
+> > > All of above should see zeros, right?  Because I don't think anyone boosted
+> > > the counter at all..
+> > >
+> > > Maybe set some non-zero values to it?  Then the re-check can make more
+> > > sense.
+> >
+> > I thought uffd_test_ctx_init() is initializing area_count(area_src,
+> > nr), so the source pages should contain non-zero data before the move.
+> > Am I missing something?
+> 
+> You're correct, uffd_test_ctx_init() fills in some data in area_src.
 
-I guess you could try reverting that one-liner after the merge, but I
-_really_ don't think it is at all relevant.
+Indeed.
 
-What *would* probably be interesting is to start at the pre-merge
-state, and rebase the code that got merged in. And then bisect *that*
-series.
+> 
+> >
+> > >
+> > > If you want, I think we can also make uffd-stress.c test to cover MOVE too,
+> > > basically replacing all UFFDIO_COPY when e.g. user specified from cmdline.
+> > > Optional, and may need some touch ups here and there, though.
+> >
+> > That's a good idea. I'll add that in the next version.
+> > Thanks,
+> > Suren.
+> >
+> > >
+> > > Thanks,
+> > >
+> > > > +     }
+> > > > +
+> > > > +     if (write(pipefd[1], &c, sizeof(c)) != sizeof(c))
+> > > > +             err("pipe write");
+> > > > +     if (pthread_join(uffd_mon, NULL))
+> > > > +             err("join() failed");
+> > > > +
+> > > > +     if (args.missing_faults != nr_pages || args.minor_faults != 0)
+> > > > +             uffd_test_fail("stats check error");
+> > > > +     else
+> > > > +             uffd_test_pass();
+> > > > +}
+> > > > +
+> > > >  /*
+> > > >   * Test the returned uffdio_register.ioctls with different register modes.
+> > > >   * Note that _UFFDIO_ZEROPAGE is tested separately in the zeropage test.
+> > > > @@ -1139,6 +1195,12 @@ uffd_test_case_t uffd_tests[] = {
+> > > >               .mem_targets = MEM_ALL,
+> > > >               .uffd_feature_required = 0,
+> > > >       },
+> > > > +     {
+> > > > +             .name = "move",
+> > > > +             .uffd_fn = uffd_move_test,
+> > > > +             .mem_targets = MEM_ANON,
+> > > > +             .uffd_feature_required = UFFD_FEATURE_MOVE,
+> > > > +     },
+> > > >       {
+> > > >               .name = "wp-fork",
+> > > >               .uffd_fn = uffd_wp_fork_test,
+> > > > --
+> > > > 2.42.0.609.gbb76f46606-goog
+> > > >
+> > >
+> > > --
+> > > Peter Xu
+> > >
+> > > --
+> > > To unsubscribe from this group and stop receiving emails from it, send an email to kernel-team+unsubscribe@android.com.
+> > >
+> 
 
-IOW, with the merge that triggers your bisection being commit
-1500e7e0726e, do perhaps something like this:
+-- 
+Peter Xu
 
-  # Name the states before the merge
-  git branch pre-merge 1500e7e0726e^
-  git branch jan-state 1500e7e0726e^2
-
-  # Now double-check that this works for you, of course.
-  # Just to be safe...
-  git checkout pre-merge
-  .. test-build and test-boot this with the bad config ..
-
-  # Then, let's create a new branch that is
-  # the rebased version of Jan's state:
-  git checkout -b jan-rebased jan-state
-  git rebase pre-merge
-
-  # Verify that the tree is the same as the merge
-  git diff 1500e7e0726e
-
-  # Ok, that was empty, so do a bisect on this
-  # rebased history
-  git bisect start
-  git bisect bad
-  git bisect good pre-merge
-
-.. and see what commit it *now* claims is the bad commit.
-
-Would you be willing to do this? It should be only a few bisects,
-since Jan's branch only brought in 17 commits that the above rebases
-into this test branch. So four or five bisections should pinpoint the
-exact point where it goes bad.
-
-Of course, since this is apparently about some "random code generation
-issue", that exact point still may not be very interesting.
-
-                Linus
 
