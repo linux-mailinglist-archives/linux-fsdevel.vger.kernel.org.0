@@ -1,121 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-778-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-779-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A39A57CFFED
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 18:49:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBA697D0029
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 19:05:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43D9AB21348
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 16:49:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85F142822E7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 17:05:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F5D52FE0B;
-	Thu, 19 Oct 2023 16:49:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8999432C68;
+	Thu, 19 Oct 2023 17:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G7NnErs6"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27E94225B0
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 16:48:58 +0000 (UTC)
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA6A511F;
-	Thu, 19 Oct 2023 09:48:57 -0700 (PDT)
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-6b709048d8eso4790951b3a.2;
-        Thu, 19 Oct 2023 09:48:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697734137; x=1698338937;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6OQ/V/nmMT5goORuYpAJZd1eIlhxBW5C6vgEyeLZR4c=;
-        b=L1/DXn807zm/g/dH07Hcwzz33jtIlsDI+3q2cq3nbRozNeTaSQ4l1qItCkEftjke3Q
-         re1zyPW6Ewd7vclBAWfYjE0GFYsftjJDxieQ348D8X3J2p+oCBUOcGuzkqAPa+Wbid+W
-         PTN9Lw4cAT2mxeWCvGsSxgy2YwI9drPocws0WFbZoHIkN13twOGr3r9b6SVEb7orD8ol
-         dKIv5FlCFukm2O1IcBNb5D6uVqao4N4kQ3kCIvauozmxPk7pHUuUb6l6h7FSZjXKlWkh
-         h914PXkH7izqojQwP55R/Hsj8dRlWO6tgzzkDZJxkUmsQ6lNTMddBDE+RiejctoCr4bi
-         P+kA==
-X-Gm-Message-State: AOJu0YxGIM564eg8xsj75J57m9OlLO2vZojacMjNZn+cG6qDYY7fvkV3
-	Oq52p7/gkPWSNcCl1yHNQiw=
-X-Google-Smtp-Source: AGHT+IGSWSvk10pYjqYsDI8lv9W77YvQn0x4qX8bJ2rKwADb9C4yARLDafmx85viOsU9fxSPgWbHCg==
-X-Received: by 2002:a05:6a21:71c7:b0:157:609f:6057 with SMTP id ay7-20020a056a2171c700b00157609f6057mr2435162pzc.27.1697734137082;
-        Thu, 19 Oct 2023 09:48:57 -0700 (PDT)
-Received: from ?IPV6:2620:15c:211:201:3306:3a7f:54e8:2149? ([2620:15c:211:201:3306:3a7f:54e8:2149])
-        by smtp.gmail.com with ESMTPSA id f3-20020a6547c3000000b005b82611378bsm3196957pgs.52.2023.10.19.09.48.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Oct 2023 09:48:56 -0700 (PDT)
-Message-ID: <7908138a-3ae5-4ff5-9bda-4f41e81f2ef1@acm.org>
-Date: Thu, 19 Oct 2023 09:48:54 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFF7830F82
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 17:05:32 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.20])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B32EC130;
+	Thu, 19 Oct 2023 10:05:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1697735130; x=1729271130;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=SvRT6LTSrzS+ByQI2jQdeZOuYjcngLGwBF4+TKTOda0=;
+  b=G7NnErs6GaEDfqZfERWKHcS3qcKgvT/+Q4D+A/SpSM4AKbc01PTCkTJz
+   kMa95aZmx2gOmQwgb+WUYN8hIXeQZ3PG8VfSHkPDI39INIaVtoTmzg5NB
+   VRV/5qV6YZcJyUh7kwcADUIUrtnr9mljugxslJqmNj2dRvNeYw7qB0xw4
+   imAV+IKHwcyCuV4h8fVwC7tg87SZI/GHc/43XVWCi696SO7b4dAn7JW+q
+   rEl3BMeZt/nw0pnFGJfIPQMxPrsH3WSOjysCGUiWJaJqavxsiWJxRenDL
+   4qMohFI00DSVI6FNjZriy2L1OEsv0CichDXd85pi4L4m78KFYHB8CuGCK
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10868"; a="376691831"
+X-IronPort-AV: E=Sophos;i="6.03,237,1694761200"; 
+   d="scan'208";a="376691831"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2023 10:05:27 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10868"; a="880746237"
+X-IronPort-AV: E=Sophos;i="6.03,237,1694761200"; 
+   d="scan'208";a="880746237"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orsmga004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2023 10:05:23 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97-RC2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1qtWSW-00000006w92-1Z6p;
+	Thu, 19 Oct 2023 20:05:20 +0300
+Date: Thu, 19 Oct 2023 20:05:20 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Kees Cook <keescook@chromium.org>,
+	Ferry Toth <ftoth@exalondelft.nl>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
+Subject: Re: [GIT PULL] ext2, quota, and udf fixes for 6.6-rc1
+Message-ID: <ZTFh0NeYtvgcjSv8@smile.fi.intel.com>
+References: <ZS6fIkTVtIs-UhFI@smile.fi.intel.com>
+ <ZS6k7nLcbdsaxUGZ@smile.fi.intel.com>
+ <ZS6pmuofSP3uDMIo@smile.fi.intel.com>
+ <ZS6wLKrQJDf1_TUe@smile.fi.intel.com>
+ <20231018184613.tphd3grenbxwgy2v@quack3>
+ <ZTDtAiDRuPcS2Vwd@smile.fi.intel.com>
+ <20231019101854.yb5gurasxgbdtui5@quack3>
+ <ZTEap8A1W3IIY7Bg@smile.fi.intel.com>
+ <ZTFAzuE58mkFbScV@smile.fi.intel.com>
+ <20231019164240.lhg5jotsh6vfuy67@treble>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 00/14] Pass data temperature information to SCSI disk
- devices
-Content-Language: en-US
-To: Damien Le Moal <dlemoal@kernel.org>, Jens Axboe <axboe@kernel.dk>
-Cc: linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-fsdevel@vger.kernel.org,
- "Martin K . Petersen" <martin.petersen@oracle.com>,
- Christoph Hellwig <hch@lst.de>, Niklas Cassel <Niklas.Cassel@wdc.com>,
- Avri Altman <Avri.Altman@wdc.com>, Bean Huo <huobean@gmail.com>,
- Daejun Park <daejun7.park@samsung.com>
-References: <20231017204739.3409052-1-bvanassche@acm.org>
- <3f3c2289-3185-4895-92cb-0692e3ca9ebc@kernel.dk>
- <e8b49fac-77ce-4b61-ac4d-e4ace58d8319@acm.org>
- <e2e56cdf-0cfe-4c5b-991f-ea6a80452891@kernel.org>
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <e2e56cdf-0cfe-4c5b-991f-ea6a80452891@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20231019164240.lhg5jotsh6vfuy67@treble>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 10/18/23 17:33, Damien Le Moal wrote:
-> On 10/19/23 04:34, Bart Van Assche wrote:
- >> On 10/18/23 12:09, Jens Axboe wrote:
->>> I'm also really against growing struct bio just for this. Why is patch 2
->>> not just using the ioprio field at least?
->>
->> Hmm ... shouldn't the bits in the ioprio field in struct bio have the
->> same meaning as in the ioprio fields used in interfaces between user
->> space and the kernel? Damien Le Moal asked me not to use any of the
->> ioprio bits passing data lifetime information from user space to the kernel.
+On Thu, Oct 19, 2023 at 09:42:40AM -0700, Josh Poimboeuf wrote:
+> On Thu, Oct 19, 2023 at 05:44:30PM +0300, Andy Shevchenko wrote:
+> > So, what I have done so far.
+> > 1) I have cleaned ccaches and stuff as I used it to avoid collisions;
+> > 2) I have confirmed that CONFIG_DEBUG_LIST affects boot, the repo
+> >    I'm using is published here [0][1];
+> >    3) reverted quota patches until before this merge ([2] - last patch),
+> >       still boots;
+> > 4) reverted disabling of CONFIG_DEBUG_LIST [2], doesn't boot;
+> > 5) okay, rebased on top of merge, i.e. 1500e7e0726e,  with DEBUG_LIST [3],
+> > 	   doesn't boot;
+> > 6) rebased [3] on one merge before, i.e. 63580f669d7f [4], voilà -- it boots!;
+> > 
+> > And (tadaam!) I have had an idea for a while to replace GCC with LLVM
+> > (at least for this test), so [0] boots as well!
+> > 
+> > So, this merge triggered a bug in GCC, seems like... And it's _the_ merge
+> > commit, which is so-o weird!
 > 
-> I said so in the context that if lifetime is a per-inode property, then ioprio
-> is the wrong interface since the ioprio API is per process or per IO. There is a
-> mismatch.
-> 
-> One version of your patch series used fnctl() to set the lifetime per inode,
-> which is fine, and then used the BIO ioprio to pass the lifetime down to the
-> device driver. That is in theory a nice trick, but that creates conflicts with
-> the userspace ioprio API if the user uses that at the same time.
-> 
-> So may be we should change bio ioprio from int to u16 and use the freedup u16
-> for lifetime. With that, things are cleanly separated without growing struct bio.
+> I'm not really a compiler person, but IMO it's highly unlikely to be a
+> GCC bug unless you can point to the bad code generation.
 
-Hmm ... I think that bi_ioprio has been 16 bits wide since the 
-introduction of that data structure member in 2016?
+Hmm... Then what's the difference between clang and GCC on the very same source
+code? One of them has a bug in my opinion.
 
->> Is it clear that the size of struct bio has not been changed because the
->> new bi_lifetime member fills a hole in struct bio?
-> 
-> When the struct is randomized, holes move or disappear. Don't count on that...
+> If CONFIG_DEBUG_LIST is triggering it, it's most likely some kind of
+> memory corruption, in which case seemingly random events can trigger the
+> detection of it (or lack thereof).
 
-We should aim to maximize performance for users who do not use data 
-structure layout randomization.
+Note disabling QUOTA has the same effect, so if it's a corruption it happens
+somewhere there.
 
-Additionally, I doubt that anyone is using full structure layout 
-randomization for SCSI devices. No SCSI driver has any 
-__no_randomize_layout / __randomize_layout annotations although I'm sure 
-there are plenty of data structures in SCSI drivers for which the layout 
-matters.
+> Any chance it boots with the following?
 
-Thanks,
+Nope, no luck.
 
-Bart.
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
 
