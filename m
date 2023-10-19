@@ -1,157 +1,151 @@
-Return-Path: <linux-fsdevel+bounces-728-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-729-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FA607CF323
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 10:47:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 620BB7CF3D6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 11:17:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90E871C20D6B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 08:47:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02C58B2128B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 09:17:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 907F115AE8;
-	Thu, 19 Oct 2023 08:47:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28A09171BE;
+	Thu, 19 Oct 2023 09:17:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="abC0Hpjq"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gUJNtTYM"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 270CC15AD2
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 08:47:08 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.136])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9881129;
-	Thu, 19 Oct 2023 01:47:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1697705226; x=1729241226;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=KhvXCMyEWYMwIFdsWR0gUBefdbmD8tWEPpF0paNPlzk=;
-  b=abC0HpjqnOxxCFQIVHliZaMZxK63EHbC7x08TYI57wD+6b02RIHV6jWK
-   cWkceWylJtBjhHQ5cfQzGb2hvU2dC8j5S7wCdbByweOgqGgXN8Ai6MMQq
-   TbGcHfg6LY6pFQMSdyM5Bpm9ktAj5Y5bVjI1DacqIa2rqF7SQESQ5wkSn
-   qh7UF5ZC7K7gkGfb9UzghGGPmWQfEyOygiMXLnvAIw5vR0PWEaXMYNc3A
-   WQF1V2Nd47kCF0J0+2p7p7OiFzTKKmS2WHFTu8Rn2H3/okRyYhq84p92O
-   wtqsZsUbR04AYXE5Vr0cbnqxw37kIGAWJMLcavWyRv6N+2I5iCa9Nqz85
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10867"; a="365555116"
-X-IronPort-AV: E=Sophos;i="6.03,236,1694761200"; 
-   d="scan'208";a="365555116"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2023 01:47:04 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10867"; a="760557572"
-X-IronPort-AV: E=Sophos;i="6.03,236,1694761200"; 
-   d="scan'208";a="760557572"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2023 01:47:01 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97-RC2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1qtOgE-00000006oO5-3zaq;
-	Thu, 19 Oct 2023 11:46:58 +0300
-Date: Thu, 19 Oct 2023 11:46:58 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Jan Kara <jack@suse.cz>
-Cc: Ferry Toth <ftoth@exalondelft.nl>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
-Subject: Re: [GIT PULL] ext2, quota, and udf fixes for 6.6-rc1
-Message-ID: <ZTDtAiDRuPcS2Vwd@smile.fi.intel.com>
-References: <ZS5iB2RafBj6K7r3@smile.fi.intel.com>
- <ZS5i1cWZF1fLurLz@smile.fi.intel.com>
- <ZS50DI8nw9oSc4Or@smile.fi.intel.com>
- <20231017133245.lvadrhbgklppnffv@quack3>
- <ZS6PRdhHRehDC+02@smile.fi.intel.com>
- <ZS6fIkTVtIs-UhFI@smile.fi.intel.com>
- <ZS6k7nLcbdsaxUGZ@smile.fi.intel.com>
- <ZS6pmuofSP3uDMIo@smile.fi.intel.com>
- <ZS6wLKrQJDf1_TUe@smile.fi.intel.com>
- <20231018184613.tphd3grenbxwgy2v@quack3>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1807E171B3
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 09:17:14 +0000 (UTC)
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA70BA3
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 02:17:11 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id 4fb4d7f45d1cf-53f98cbcd76so4709a12.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 02:17:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1697707030; x=1698311830; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CEyDbtqB+udvOtvaRFHUtqkxP21cSIdHZt9QvgU76Yo=;
+        b=gUJNtTYMrP5DGqoqxGj9WuqZk22rfp9lcd62KUldL91ausAgz/MBXtVh9xH3wIyciJ
+         n0j5YQ91PA60pk+gW3M1D2a4rvwRchL3gFD5qlGrLxNYMevMZZX51yQu9vRRUIMC5dzx
+         7yb9s+qTdgXD/XusbB0f8zHj0ZuVBTaEfbxgZz3su1xeGfg2TUKfqnOLa2CxO45TOVB4
+         TCY5i4NhjEa6euMXefLFjM167qtiXoQdybBq4/xyC3lCZt2gmFZq+kl2s4kslU13KBMk
+         pZZmwzols+DXQM3+sjj+cBKLmr2l7Nlteu2hI6Bba6jzF81StfMv4MCtOBt9TPHrdf71
+         aAag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697707030; x=1698311830;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CEyDbtqB+udvOtvaRFHUtqkxP21cSIdHZt9QvgU76Yo=;
+        b=RJRZg/2qgY4jK5JYsFvmhjEuEy9/pl3lTgKA6hdrPQWWto3lkOTOuoItBwt7JXRhd1
+         8wmSk9P7VMiyi/kC+2qkbEN7TG5SJy1GTZlISIWv6MVOqtArLGVO37R2GfoX3CYN2lLz
+         rjxO6jLRPG26UdTJexhOaGrHeBQa9vy9/YpHBrVrz293mcLUHDGEZ6cf77I3SvV9hDep
+         EloI4EEqqb8U0HYbYEp9j+DTREoVUFhDTSyV1+OfXuUMqKewX+vXk0XlMBO5T+vflkIN
+         Tj+1ukoVYjjpkWKIRg4aJLJqTGZclOC0mclvn3qHOSA6WvfjvFHqMTSZxdjGcIFQX7CQ
+         TMAg==
+X-Gm-Message-State: AOJu0Yz4MZsOjg9Na6cBkM6mGCJ+vHkF1JXs0d/SaJoJMmkUXSo9i/UT
+	efJ6S0qXVFBzvgGB7zWaLmv6SL16xn+JeESLE6qNNQ==
+X-Google-Smtp-Source: AGHT+IFEEOs06c4WLSibf/51HO7uvqmnfpk/QYoWjbqqV6cbgP/iEpuh1W4eTm4WVvsBFqs3xdA3t1pCVl57WxJ/c9c=
+X-Received: by 2002:a50:a45a:0:b0:53d:b53c:946b with SMTP id
+ v26-20020a50a45a000000b0053db53c946bmr92741edb.2.1697707030233; Thu, 19 Oct
+ 2023 02:17:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231018184613.tphd3grenbxwgy2v@quack3>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20230704122727.17096-1-jack@suse.cz> <20230704125702.23180-1-jack@suse.cz>
+ <20230822053523.GA8949@sol.localdomain> <20230822101154.7udsf4tdwtns2prj@quack3>
+In-Reply-To: <20230822101154.7udsf4tdwtns2prj@quack3>
+From: Aleksandr Nogikh <nogikh@google.com>
+Date: Thu, 19 Oct 2023 11:16:55 +0200
+Message-ID: <CANp29Y6uBuSzLXuCMGzVNZjT+xFqV4dtWKWb7GR7Opx__Diuzg@mail.gmail.com>
+Subject: Re: [PATCH 1/6] block: Add config option to not allow writing to
+ mounted devices
+To: Jan Kara <jack@suse.cz>
+Cc: Eric Biggers <ebiggers@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-block@vger.kernel.org, Christoph Hellwig <hch@infradead.org>, 
+	Christian Brauner <brauner@kernel.org>, Jens Axboe <axboe@kernel.dk>, Kees Cook <keescook@google.com>, 
+	Ted Tso <tytso@mit.edu>, syzkaller <syzkaller@googlegroups.com>, 
+	Alexander Popov <alex.popov@linux.com>, linux-xfs@vger.kernel.org, 
+	linux-btrfs@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 18, 2023 at 08:46:13PM +0200, Jan Kara wrote:
-> On Tue 17-10-23 19:02:52, Andy Shevchenko wrote:
-> > On Tue, Oct 17, 2023 at 06:34:50PM +0300, Andy Shevchenko wrote:
-> > > On Tue, Oct 17, 2023 at 06:14:54PM +0300, Andy Shevchenko wrote:
-> > > > On Tue, Oct 17, 2023 at 05:50:10PM +0300, Andy Shevchenko wrote:
-> > > > > On Tue, Oct 17, 2023 at 04:42:29PM +0300, Andy Shevchenko wrote:
-> > > > > > On Tue, Oct 17, 2023 at 03:32:45PM +0200, Jan Kara wrote:
-> > > > > > > On Tue 17-10-23 14:46:20, Andy Shevchenko wrote:
-> > > > > > > > On Tue, Oct 17, 2023 at 01:32:53PM +0300, Andy Shevchenko wrote:
-> > > > > > > > > On Tue, Oct 17, 2023 at 01:29:27PM +0300, Andy Shevchenko wrote:
-> > > > > > > > > > On Tue, Oct 17, 2023 at 01:27:19PM +0300, Andy Shevchenko wrote:
-> > > > > > > > > > > On Wed, Aug 30, 2023 at 12:24:34PM +0200, Jan Kara wrote:
-> > > > > > > > > > > >   Hello Linus,
+Hi Jan,
 
-...
+Thank you for the series!
 
-> > > > > > > > > > > This merge commit (?) broke boot on Intel Merrifield.
-> > > > > > > > > > > It has earlycon enabled and only what I got is watchdog
-> > > > > > > > > > > trigger without a bit of information printed out.
-> > > > > > > > 
-> > > > > > > > Okay, seems false positive as with different configuration it
-> > > > > > > > boots. It might be related to the size of the kernel itself.
-> > > > > > > 
-> > > > > > > Ah, ok, that makes some sense.
-> > > > > > 
-> > > > > > I should have mentioned that it boots with the configuration say "A",
-> > > > > > while not with "B", where "B" = "A" + "C" and definitely the kernel
-> > > > > > and initrd sizes in the "B" case are bigger.
-> > > > > 
-> > > > > If it's a size (which is only grew from 13M->14M), it's weird.
-> > > > > 
-> > > > > Nevertheless, I reverted these in my local tree
-> > > > > 
-> > > > > 85515a7f0ae7 (HEAD -> topic/mrfld) Revert "defconfig: enable DEBUG_SPINLOCK"
-> > > > > 786e04262621 Revert "defconfig: enable DEBUG_ATOMIC_SLEEP"
-> > > > > 76ad0a0c3f2d Revert "defconfig: enable DEBUG_INFO"
-> > > > > f8090166c1be Revert "defconfig: enable DEBUG_LIST && DEBUG_OBJECTS_RCU_HEAD"
-> > > > > 
-> > > > > and it boots again! So, after this merge something affects one of this?
-> > > > > 
-> > > > > I'll continuing debugging which one is a culprit, just want to share
-> > > > > the intermediate findings.
-> > > > 
-> > > > CONFIG_DEBUG_LIST with this merge commit somehow triggers this issue.
-> > > > Any ideas?
-> > 
-> > > Dropping CONFIG_QUOTA* helps as well.
-> > 
-> > More precisely it's enough to drop either from CONFIG_DEBUG_LIST and CONFIG_QUOTA
-> > to make it boot again.
-> > 
-> > And I'm done for today.
-> 
-> OK, thanks for debugging! So can you perhaps enable CONFIG_DEBUG_LIST
-> permanently in your kernel config and then bisect through the quota changes
-> in the merge? My guess is commit dabc8b20756 ("quota: fix dqput() to follow
-> the guarantees dquot_srcu should provide") might be the culprit given your
-> testing but I fail to see how given I don't expect any quotas to be used
-> during boot of your platform... BTW, there's also fixup: 869b6ea160
-> ("quota: Fix slow quotaoff") merged last week so you could try testing a
-> kernel after this fix to see whether it changes anything.
+Have you already had a chance to push an updated version of it?
+I tried to search LKML, but didn't find anything.
 
-It's exactly what my initial report is about, CONFIG_DEBUG_LIST was there
-always with CONFIG_QUOTA as well.
+Or did you decide to put it off until later?
 
-Two bisections (v6.5 .. v6.6-rc1 & something...v6.6-rc6) pointed out to
-merge commit! I _had_ tried to simply revert the quota changes (I haven't
-said about that before) and it didn't help. I'm so puzzled with all this.
+--=20
+Aleksandr
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+On Tue, Aug 22, 2023 at 12:12=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+>
+> Hi Eric!
+>
+> On Mon 21-08-23 22:35:23, Eric Biggers wrote:
+> > On Tue, Jul 04, 2023 at 02:56:49PM +0200, Jan Kara wrote:
+> > > Writing to mounted devices is dangerous and can lead to filesystem
+> > > corruption as well as crashes. Furthermore syzbot comes with more and
+> > > more involved examples how to corrupt block device under a mounted
+> > > filesystem leading to kernel crashes and reports we can do nothing
+> > > about. Add tracking of writers to each block device and a kernel cmdl=
+ine
+> > > argument which controls whether writes to block devices open with
+> > > BLK_OPEN_BLOCK_WRITES flag are allowed. We will make filesystems use
+> > > this flag for used devices.
+> > >
+> > > Syzbot can use this cmdline argument option to avoid uninteresting
+> > > crashes. Also users whose userspace setup does not need writing to
+> > > mounted block devices can set this option for hardening.
+> > >
+> > > Link: https://lore.kernel.org/all/60788e5d-5c7c-1142-e554-c21d709acfd=
+9@linaro.org
+> > > Signed-off-by: Jan Kara <jack@suse.cz>
+> >
+> > Can you make it clear that the important thing this patch prevents is
+> > writes to the block device's buffer cache, not writes to the underlying
+> > storage?  It's super important not to confuse the two cases.
+>
+> Right, I've already updated the description of the help text in the kconf=
+ig
+> to explicitely explain that this does not prevent underlying device conte=
+nt
+> from being modified, it just prevents writes the the block device itself.
+> But I guess I can also explain this (with a bit more technical details) i=
+n
+> the changelog. Good idea.
+>
+> > Related to this topic, I wonder if there is any value in providing an o=
+ption
+> > that would allow O_DIRECT writes but forbid buffered writes?  Would tha=
+t be
+> > useful for any of the known use cases for writing to mounted block devi=
+ces?
+>
+> I'm not sure how useful that would be but it would be certainly rather
+> difficult to implement. The problem is we can currently fallback from
+> direct to buffered IO as we see fit, also we need to invalidate page cach=
+e
+> while doing direct IO which can fail etc. So it will be a rather nasty ca=
+n
+> of worms to open...
+>
+>                                                                 Honza
+> --
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
+>
 
