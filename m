@@ -1,361 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-782-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-783-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE9CA7D008A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 19:30:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 205807D00F8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 19:51:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 050371C208E4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 17:30:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 515221C20ED5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 17:51:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDABF335CC;
-	Thu, 19 Oct 2023 17:30:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E01436B17;
+	Thu, 19 Oct 2023 17:51:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="W3MxB/Rc"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="QsZMDPwa"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4A2632C9D
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 17:30:09 +0000 (UTC)
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58233138
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 10:30:07 -0700 (PDT)
-Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-9ad8a822508so1347521566b.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 10:30:07 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D652832C6E
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 17:51:40 +0000 (UTC)
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37CB2119
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 10:51:39 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-99c1c66876aso1343821366b.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 10:51:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1697736605; x=1698341405; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FAurVaDY4Y7iKpcdCWtd8DcvDhclHUigROPGt0DwP4I=;
-        b=W3MxB/RcgWqrP0X6LIzTAA609jUI0QOm/pyOz3XJw3ND9NrTrVVlGGvQ0v00eOGfuR
-         K71Quu7r/tZxj1OFYUFRkEdg56F2laXYmIWn37pWNmWDdMK+m+MpSbhUvv+Fdr8+NNtO
-         ZYnYs8XVTrpQLhTX6c6J+o3Gz245BQfE2eOdUb4dV4xL+gIJE34VkZJ+iAGYai4cio+N
-         LVaMlg6m9Fwomn9vb1f0T2qkCWJ6G9vsIhvnCf9AUJvaORVlp/++NVbQjv6pnHABUC4v
-         rFKv4tjdf2Vnw/Tnudqk84I6VKZDg50bQoCb+vGeL5zrXB6W9l0WOqvwjxh0ZiNJiEXi
-         QIqQ==
+        d=linux-foundation.org; s=google; t=1697737897; x=1698342697; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=NxyRz0yQqVJRY3zmZ6nwicjRS4ksR0Rz7BgzZVO3P6w=;
+        b=QsZMDPwaK9757OCMA6CxKXTGBXJ0OpZ++/Eawo173gLhGaLZKF2GFLvh2OZfkzX/nd
+         RkgNjIEo5BTaFVETMjVcvZZhOjbmTiGshre5AC/cyvGrtm5Dtuo0nK/5NoJPVfGVLI6D
+         Qo/fC085fMKpBO4zSVWVcXYOvvHLMnVK88coA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697736605; x=1698341405;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FAurVaDY4Y7iKpcdCWtd8DcvDhclHUigROPGt0DwP4I=;
-        b=cBdxIGXlLZ7cpmWzJYC1VbqZMUDhwakclYR6MlysSWJuqwahSCb63DlGnj2aq6WFIo
-         fO4wwFRhYtSIXXIDg+faLHSmKgiicIWW0WF8OByw8rX3DvYEMCatRwNd/bgvPVNSLqSF
-         5MwQYVYlf5vvPMaXv83VkfYt6nBfcsB8k0LqOPnjwyrj1P6sPIJb3e1wZlQsyDfL7k0J
-         pK1keljmTglRMmJ0cQB4y4dv/CJN5gCotmC21fDhtOpt1WGyRZpmfnnxaa1w+FKIw9RR
-         hZa7HTFcXdbhADsjAD7feqoz7f9ok/B34LPQRipZ3645wiVuopvEraH/H5Lc57VXMU4R
-         tlaw==
-X-Gm-Message-State: AOJu0Yw3SH4azOwIXnEI39loMLbrFDaVEzMOuJH0wGWmXbPldfXeJBtZ
-	9+VKRMXeZ0nUkDFxzRNvdqQhmZfWFJMxnC/IUT+HwQ==
-X-Google-Smtp-Source: AGHT+IHSZri8nXlKAjUkj+Rn1zxVvwP9rVjfWLt21urXdgubxJwwllu1ZEhXZeg6mDIzbPAa3WiOaM+FoK+uOXkcy60=
-X-Received: by 2002:a17:907:3687:b0:9ae:57b8:ad1b with SMTP id
- bi7-20020a170907368700b009ae57b8ad1bmr2090783ejc.21.1697736605364; Thu, 19
- Oct 2023 10:30:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1697737897; x=1698342697;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NxyRz0yQqVJRY3zmZ6nwicjRS4ksR0Rz7BgzZVO3P6w=;
+        b=YDcCaPtzWuUqVu9cVYdhhhcGpAu5aJpSvd1KTU1D2DBjwNMKh7GgB7aX8kW5MR0d7v
+         KX4EEAA1Wb3w/HYEYSyrAA2BJ15N84ibd6APiuOrK7fAhQnllskSEL6g3gnukYn+Mz7r
+         ICu/LxrzFkzcrTddWlmvly20ibYw3YZBuei8wb+7w6bWHB1yTj87FoPB9DQed+ncnBwB
+         pomx0zN2NhzFzrQ7F9zrn60G7hBskxgKqtNdWtA3AADQ6AzYPYTzvPm5MyiWWO7+B8QD
+         Q/U9keW+UzERM+O1mbOTDjvW4EmBDzuvD15IJxur7lvpVAi9rRYpe49TphWxO7QtvhYS
+         xJ8Q==
+X-Gm-Message-State: AOJu0YzKCUFadaCVoqgV/oFcR8ay8QwPi2eRH1kwxeQWEe5rmmXXjIpL
+	digy+yqVUgelxvFZ/pb5ZXLGcl5YLF93jmdyFojBVSqJ
+X-Google-Smtp-Source: AGHT+IFMv2/+t9aYR9zHOhjq59CUrGdQBqp1ciIuzR7Sq9wd95t1+t1xvdDRBmYGNT48PsmQZu6sDQ==
+X-Received: by 2002:a17:906:eec5:b0:9b2:8df4:c692 with SMTP id wu5-20020a170906eec500b009b28df4c692mr2453830ejb.27.1697737897378;
+        Thu, 19 Oct 2023 10:51:37 -0700 (PDT)
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com. [209.85.218.51])
+        by smtp.gmail.com with ESMTPSA id q20-20020a170906145400b009c387ff67bdsm3966407ejc.22.2023.10.19.10.51.36
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Oct 2023 10:51:36 -0700 (PDT)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-9ad8a822508so1351011866b.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 10:51:36 -0700 (PDT)
+X-Received: by 2002:a17:907:31c5:b0:9be:ef46:6b9c with SMTP id
+ xf5-20020a17090731c500b009beef466b9cmr2784575ejb.70.1697737896286; Thu, 19
+ Oct 2023 10:51:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231009064230.2952396-1-surenb@google.com> <20231009064230.2952396-4-surenb@google.com>
- <ZShzSvrN7FgdXi71@x1n> <CAJuCfpE2SmiF6C6xh93ruCxQd_rBK5Vb8jCpKT=y2LSdgHpjgQ@mail.gmail.com>
-In-Reply-To: <CAJuCfpE2SmiF6C6xh93ruCxQd_rBK5Vb8jCpKT=y2LSdgHpjgQ@mail.gmail.com>
-From: Axel Rasmussen <axelrasmussen@google.com>
-Date: Thu, 19 Oct 2023 10:29:27 -0700
-Message-ID: <CAJHvVchpKHBBNYGYCiGmpHbax2_oKkmEoqE0NnY9ChowC+tPEA@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] selftests/mm: add UFFDIO_MOVE ioctl test
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: Peter Xu <peterx@redhat.com>, akpm@linux-foundation.org, viro@zeniv.linux.org.uk, 
-	brauner@kernel.org, shuah@kernel.org, aarcange@redhat.com, 
-	lokeshgidra@google.com, david@redhat.com, hughd@google.com, mhocko@suse.com, 
-	rppt@kernel.org, willy@infradead.org, Liam.Howlett@oracle.com, 
-	jannh@google.com, zhangpeng362@huawei.com, bgeffon@google.com, 
-	kaleshsingh@google.com, ngeoffray@google.com, jdduke@google.com, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	kernel-team@android.com
+References: <ZS6fIkTVtIs-UhFI@smile.fi.intel.com> <ZS6k7nLcbdsaxUGZ@smile.fi.intel.com>
+ <ZS6pmuofSP3uDMIo@smile.fi.intel.com> <ZS6wLKrQJDf1_TUe@smile.fi.intel.com>
+ <20231018184613.tphd3grenbxwgy2v@quack3> <ZTDtAiDRuPcS2Vwd@smile.fi.intel.com>
+ <20231019101854.yb5gurasxgbdtui5@quack3> <ZTEap8A1W3IIY7Bg@smile.fi.intel.com>
+ <ZTFAzuE58mkFbScV@smile.fi.intel.com> <20231019164240.lhg5jotsh6vfuy67@treble>
+ <ZTFh0NeYtvgcjSv8@smile.fi.intel.com> <CAHk-=wjXG52UNKCwwEU1A+QWHYfvKOieV0uFOpPkLR0NSvOjtg@mail.gmail.com>
+In-Reply-To: <CAHk-=wjXG52UNKCwwEU1A+QWHYfvKOieV0uFOpPkLR0NSvOjtg@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 19 Oct 2023 10:51:18 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whis2BJF2fv1xySAg2NTQ+C5fViNSGkLNCOqGzi-3y+8w@mail.gmail.com>
+Message-ID: <CAHk-=whis2BJF2fv1xySAg2NTQ+C5fViNSGkLNCOqGzi-3y+8w@mail.gmail.com>
+Subject: Re: [GIT PULL] ext2, quota, and udf fixes for 6.6-rc1
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Kees Cook <keescook@chromium.org>, Ferry Toth <ftoth@exalondelft.nl>, 
+	linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 19, 2023 at 8:43=E2=80=AFAM Suren Baghdasaryan <surenb@google.c=
-om> wrote:
+On Thu, 19 Oct 2023 at 10:26, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> On Thu, Oct 12, 2023 at 3:29=E2=80=AFPM Peter Xu <peterx@redhat.com> wrot=
-e:
-> >
-> > On Sun, Oct 08, 2023 at 11:42:28PM -0700, Suren Baghdasaryan wrote:
-> > > Add a test for new UFFDIO_MOVE ioctl which uses uffd to move source
-> > > into destination buffer while checking the contents of both after
-> > > remapping. After the operation the content of the destination buffer
-> > > should match the original source buffer's content while the source
-> > > buffer should be zeroed.
-> > >
-> > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > > ---
-> > >  tools/testing/selftests/mm/uffd-common.c     | 41 ++++++++++++-
-> > >  tools/testing/selftests/mm/uffd-common.h     |  1 +
-> > >  tools/testing/selftests/mm/uffd-unit-tests.c | 62 ++++++++++++++++++=
-++
-> > >  3 files changed, 102 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/tools/testing/selftests/mm/uffd-common.c b/tools/testing=
-/selftests/mm/uffd-common.c
-> > > index 02b89860e193..ecc1244f1c2b 100644
-> > > --- a/tools/testing/selftests/mm/uffd-common.c
-> > > +++ b/tools/testing/selftests/mm/uffd-common.c
-> > > @@ -52,6 +52,13 @@ static int anon_allocate_area(void **alloc_area, b=
-ool is_src)
-> > >               *alloc_area =3D NULL;
-> > >               return -errno;
-> > >       }
-> > > +
-> > > +     /* Prevent source pages from collapsing into THPs */
-> > > +     if (madvise(*alloc_area, nr_pages * page_size, MADV_NOHUGEPAGE)=
-) {
-> > > +             *alloc_area =3D NULL;
-> > > +             return -errno;
-> > > +     }
-> >
-> > Can we move this to test specific code?
+> That said, the quota dependency is quite odd, since normally I
+> wouldn't expect the quota code to really even trigger much during
+> boot. When it triggers that consistently, and that early during boot,
+> I would expect others to have reported more of this.
 >
-> Ack. I think that's doable.
->
-> >
-> > > +
-> > >       return 0;
-> > >  }
-> > >
-> > > @@ -484,8 +491,14 @@ void uffd_handle_page_fault(struct uffd_msg *msg=
-, struct uffd_args *args)
-> > >               offset =3D (char *)(unsigned long)msg->arg.pagefault.ad=
-dress - area_dst;
-> > >               offset &=3D ~(page_size-1);
-> > >
-> > > -             if (copy_page(uffd, offset, args->apply_wp))
-> > > -                     args->missing_faults++;
-> > > +             /* UFFD_MOVE is supported for anon non-shared mappings.=
- */
-> > > +             if (uffd_test_ops =3D=3D &anon_uffd_test_ops && !map_sh=
-ared) {
-> >
-> > IIUC this means move_page() will start to run on many other tests... as
-> > long as anonymous & private.  Probably not wanted, because not all test=
-s
-> > may need this MOVE test, and it also means UFFDIO_COPY is never tested =
-on
-> > anonymous..
-> >
-> > You can overwrite uffd_args.handle_fault().  Axel just added a hook whi=
-ch
-> > seems also usable here.  See 99aa77215ad02.
->
-> Yes, I was thinking about adding a completely new set of tests for
-> UFFDIO_MOVE but was not sure. With your confirmation I'll follow that
-> path so that UFFDIO_COPY tests stay the same.
->
-> >
-> > > +                     if (move_page(uffd, offset))
-> > > +                             args->missing_faults++;
-> > > +             } else {
-> > > +                     if (copy_page(uffd, offset, args->apply_wp))
-> > > +                             args->missing_faults++;
-> > > +             }
-> > >       }
-> > >  }
-> > >
-> > > @@ -620,6 +633,30 @@ int copy_page(int ufd, unsigned long offset, boo=
-l wp)
-> > >       return __copy_page(ufd, offset, false, wp);
-> > >  }
-> > >
-> > > +int move_page(int ufd, unsigned long offset)
-> > > +{
-> > > +     struct uffdio_move uffdio_move;
-> > > +
-> > > +     if (offset >=3D nr_pages * page_size)
-> > > +             err("unexpected offset %lu\n", offset);
-> > > +     uffdio_move.dst =3D (unsigned long) area_dst + offset;
-> > > +     uffdio_move.src =3D (unsigned long) area_src + offset;
-> > > +     uffdio_move.len =3D page_size;
-> > > +     uffdio_move.mode =3D UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES;
-> > > +     uffdio_move.move =3D 0;
-> > > +     if (ioctl(ufd, UFFDIO_MOVE, &uffdio_move)) {
-> > > +             /* real retval in uffdio_move.move */
-> > > +             if (uffdio_move.move !=3D -EEXIST)
-> > > +                     err("UFFDIO_MOVE error: %"PRId64,
-> > > +                         (int64_t)uffdio_move.move);
-> > > +             wake_range(ufd, uffdio_move.dst, page_size);
-> > > +     } else if (uffdio_move.move !=3D page_size) {
-> > > +             err("UFFDIO_MOVE error: %"PRId64, (int64_t)uffdio_move.=
-move);
-> > > +     } else
-> > > +             return 1;
-> > > +     return 0;
-> > > +}
-> > > +
-> > >  int uffd_open_dev(unsigned int flags)
-> > >  {
-> > >       int fd, uffd;
-> > > diff --git a/tools/testing/selftests/mm/uffd-common.h b/tools/testing=
-/selftests/mm/uffd-common.h
-> > > index 7c4fa964c3b0..f4d79e169a3d 100644
-> > > --- a/tools/testing/selftests/mm/uffd-common.h
-> > > +++ b/tools/testing/selftests/mm/uffd-common.h
-> > > @@ -111,6 +111,7 @@ void wp_range(int ufd, __u64 start, __u64 len, bo=
-ol wp);
-> > >  void uffd_handle_page_fault(struct uffd_msg *msg, struct uffd_args *=
-args);
-> > >  int __copy_page(int ufd, unsigned long offset, bool retry, bool wp);
-> > >  int copy_page(int ufd, unsigned long offset, bool wp);
-> > > +int move_page(int ufd, unsigned long offset);
-> > >  void *uffd_poll_thread(void *arg);
-> > >
-> > >  int uffd_open_dev(unsigned int flags);
-> > > diff --git a/tools/testing/selftests/mm/uffd-unit-tests.c b/tools/tes=
-ting/selftests/mm/uffd-unit-tests.c
-> > > index 2709a34a39c5..f0ded3b34367 100644
-> > > --- a/tools/testing/selftests/mm/uffd-unit-tests.c
-> > > +++ b/tools/testing/selftests/mm/uffd-unit-tests.c
-> > > @@ -824,6 +824,10 @@ static void uffd_events_test_common(bool wp)
-> > >       char c;
-> > >       struct uffd_args args =3D { 0 };
-> > >
-> > > +     /* Prevent source pages from being mapped more than once */
-> > > +     if (madvise(area_src, nr_pages * page_size, MADV_DONTFORK))
-> > > +             err("madvise(MADV_DONTFORK) failed");
-> >
-> > Modifying events test is weird.. I assume you don't need this anymore a=
-fter
-> > you switch to the handle_fault() hook.
->
-> I think so but let me try first and I'll get back on that.
->
-> >
-> > > +
-> > >       fcntl(uffd, F_SETFL, uffd_flags | O_NONBLOCK);
-> > >       if (uffd_register(uffd, area_dst, nr_pages * page_size,
-> > >                         true, wp, false))
-> > > @@ -1062,6 +1066,58 @@ static void uffd_poison_test(uffd_test_args_t =
-*targs)
-> > >       uffd_test_pass();
-> > >  }
-> > >
-> > > +static void uffd_move_test(uffd_test_args_t *targs)
-> > > +{
-> > > +     unsigned long nr;
-> > > +     pthread_t uffd_mon;
-> > > +     char c;
-> > > +     unsigned long long count;
-> > > +     struct uffd_args args =3D { 0 };
-> > > +
-> > > +     if (uffd_register(uffd, area_dst, nr_pages * page_size,
-> > > +                       true, false, false))
-> > > +             err("register failure");
-> > > +
-> > > +     if (pthread_create(&uffd_mon, NULL, uffd_poll_thread, &args))
-> > > +             err("uffd_poll_thread create");
-> > > +
-> > > +     /*
-> > > +      * Read each of the pages back using the UFFD-registered mappin=
-g. We
-> > > +      * expect that the first time we touch a page, it will result i=
-n a missing
-> > > +      * fault. uffd_poll_thread will resolve the fault by remapping =
-source
-> > > +      * page to destination.
-> > > +      */
-> > > +     for (nr =3D 0; nr < nr_pages; nr++) {
-> > > +             /* Check area_src content */
-> > > +             count =3D *area_count(area_src, nr);
-> > > +             if (count !=3D count_verify[nr])
-> > > +                     err("nr %lu source memory invalid %llu %llu\n",
-> > > +                         nr, count, count_verify[nr]);
-> > > +
-> > > +             /* Faulting into area_dst should remap the page */
-> > > +             count =3D *area_count(area_dst, nr);
-> > > +             if (count !=3D count_verify[nr])
-> > > +                     err("nr %lu memory corruption %llu %llu\n",
-> > > +                         nr, count, count_verify[nr]);
-> > > +
-> > > +             /* Re-check area_src content which should be empty */
-> > > +             count =3D *area_count(area_src, nr);
-> > > +             if (count !=3D 0)
-> > > +                     err("nr %lu move failed %llu %llu\n",
-> > > +                         nr, count, count_verify[nr]);
-> >
-> > All of above should see zeros, right?  Because I don't think anyone boo=
-sted
-> > the counter at all..
-> >
-> > Maybe set some non-zero values to it?  Then the re-check can make more
-> > sense.
->
-> I thought uffd_test_ctx_init() is initializing area_count(area_src,
-> nr), so the source pages should contain non-zero data before the move.
-> Am I missing something?
+> Strange.
 
-You're correct, uffd_test_ctx_init() fills in some data in area_src.
+Hmm. I do think the quota list handling has some odd things going on.
+And it did change with the whole ->dq_free thing.
 
->
-> >
-> > If you want, I think we can also make uffd-stress.c test to cover MOVE =
-too,
-> > basically replacing all UFFDIO_COPY when e.g. user specified from cmdli=
-ne.
-> > Optional, and may need some touch ups here and there, though.
->
-> That's a good idea. I'll add that in the next version.
-> Thanks,
-> Suren.
->
-> >
-> > Thanks,
-> >
-> > > +     }
-> > > +
-> > > +     if (write(pipefd[1], &c, sizeof(c)) !=3D sizeof(c))
-> > > +             err("pipe write");
-> > > +     if (pthread_join(uffd_mon, NULL))
-> > > +             err("join() failed");
-> > > +
-> > > +     if (args.missing_faults !=3D nr_pages || args.minor_faults !=3D=
- 0)
-> > > +             uffd_test_fail("stats check error");
-> > > +     else
-> > > +             uffd_test_pass();
-> > > +}
-> > > +
-> > >  /*
-> > >   * Test the returned uffdio_register.ioctls with different register =
-modes.
-> > >   * Note that _UFFDIO_ZEROPAGE is tested separately in the zeropage t=
-est.
-> > > @@ -1139,6 +1195,12 @@ uffd_test_case_t uffd_tests[] =3D {
-> > >               .mem_targets =3D MEM_ALL,
-> > >               .uffd_feature_required =3D 0,
-> > >       },
-> > > +     {
-> > > +             .name =3D "move",
-> > > +             .uffd_fn =3D uffd_move_test,
-> > > +             .mem_targets =3D MEM_ANON,
-> > > +             .uffd_feature_required =3D UFFD_FEATURE_MOVE,
-> > > +     },
-> > >       {
-> > >               .name =3D "wp-fork",
-> > >               .uffd_fn =3D uffd_wp_fork_test,
-> > > --
-> > > 2.42.0.609.gbb76f46606-goog
-> > >
-> >
-> > --
-> > Peter Xu
-> >
-> > --
-> > To unsubscribe from this group and stop receiving emails from it, send =
-an email to kernel-team+unsubscribe@android.com.
-> >
+Some of it is just bad:
+
+  #ifdef CONFIG_QUOTA_DEBUG
+          /* sanity check */
+          BUG_ON(!list_empty(&dquot->dq_free));
+  #endif
+
+is done under a spinlock, and if it ever triggers, the machine is
+dead. Dammit, I *hate* how people use BUG_ON() for assertions. It's a
+disgrace. That should be a WARN_ON_ONCE().
+
+And it does have quite a bit of list-related changes, with the whole
+series from Baokun Li changing how the ->dq_free list works.
+
+The fact that it consistently bisects to the merge is still odd.
+
+                 Linus
 
