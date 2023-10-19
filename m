@@ -1,132 +1,129 @@
-Return-Path: <linux-fsdevel+bounces-715-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-716-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE14C7CECCF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 02:33:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE84B7CED9D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 03:39:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F71D1F22FED
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 00:33:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97C53B2116D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 01:39:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B3EC9469;
-	Thu, 19 Oct 2023 00:33:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAB1164F;
+	Thu, 19 Oct 2023 01:39:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VAoKYohH"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="B/hriZb/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44F3E9444
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 00:33:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CCECC433C8;
-	Thu, 19 Oct 2023 00:33:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1697675628;
-	bh=ub2poWEDZ0m0k0zYhYsMeLfrRJ9CszztgPlp7gkyR6o=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VAoKYohHcNKvxXDF0IRZlFnNr5/U6M+ayq9rFQB8OmA3ZYwqlRYojwuRI5hYeLn6S
-	 hbrTy7C/ExndfUg1OnXA4h74TmR7oZVbw1NfaLma/lfd2chkwK+DDCddrvfF0s3w7N
-	 jzc61RtGLkjzN6r5g2gPAglp/CZlzLrtSGRCCnj0x7NkFPeGc5WDaR34WBKRAeEOIA
-	 J+rTS2J1olJuj9UgoXD3cF/eCE6UQvfZtyP8eWm5p0FIjKfpDlNXuC+wqq4kM5HWMP
-	 yWV/UL0RiL8AtHD7Q38NpzT9iMAikySnQgJ7axXLQl473Ax/aclHzIsYpB4KhqxvLX
-	 wbWkV3PgQXgxw==
-Message-ID: <e2e56cdf-0cfe-4c5b-991f-ea6a80452891@kernel.org>
-Date: Thu, 19 Oct 2023 09:33:46 +0900
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4523138C
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 01:39:24 +0000 (UTC)
+Received: from mail-yb1-xb2f.google.com (mail-yb1-xb2f.google.com [IPv6:2607:f8b0:4864:20::b2f])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E70F89F
+	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Oct 2023 18:39:21 -0700 (PDT)
+Received: by mail-yb1-xb2f.google.com with SMTP id 3f1490d57ef6-d9abc069c8bso7834425276.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Oct 2023 18:39:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1697679561; x=1698284361; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vX68/OE0qLrF3A1/NDlCjZF1ajE8ZMP/wy8PcFgCC1k=;
+        b=B/hriZb/a5usUFTona5xSSGqFGx7M7E+IQoS3ZNjotoDDqZoV2dWm77wY8kONdLpMi
+         N1XfykBCX1djn41p8RS7XMmDUowa3OP5AGT0mp4MQbIQZ6RRVQgB8apci73hwTR4ETbG
+         p0fUcSOar50eWTrlnQjWQmv+TuMa8nhx/RAoIK9QlbtHYk8066iD5kEeRtTJXtijmwLn
+         2TnHslHatbWcO+iatBIhBDSXlPgZbIA10sVt6AgKHuk4YlXxeRSCceqeBiDHOdMUvbxP
+         zAKAJNby7R85c1iq1QJtEkEGUMIsh3vYjRTAfnoYpeUj4DgnNMDe2dL1SQvgapZKCN7k
+         zWYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697679561; x=1698284361;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vX68/OE0qLrF3A1/NDlCjZF1ajE8ZMP/wy8PcFgCC1k=;
+        b=MdCKB5bVZ3wYQn96RdamD1FWCgug1ygmL1jPFEgk5BHvf4qpnQyUk2oSqyMMGM6AUe
+         B1gTEM7rVoVFeub1QW0IsV/+2+txtrG/wOb2zb80wXG3zKxl6ZXOYoyX4TLLrIeoavdT
+         7fyXiYVmt70XlnpCgrs5eEX+/pSGgHwx0pTiESFfA4KTN7Z0q2Jj45+KPKTXeDbR6YtW
+         OBoc0mGXvwo4VloyCNPqyAsAi32fh3toldy8f6I0vqKynou/MZS5HV4XL8QG9OvUPsJM
+         QuhBX9pF1i3YAci0VsoSrQEPkocFEuDxeZoEUIu2YdboJ6li/gsXjp5/MU666F4unkzG
+         zcVA==
+X-Gm-Message-State: AOJu0Yz4L2GgQNuT4TQ8IXdky8Ku5cv7uX/YwO7raS89PV6E1tADmAou
+	kBhhFoADaQkmgid+eyx/YQI3BG/FEU5ncxqp0vHt
+X-Google-Smtp-Source: AGHT+IHhIoDNFAW1nx6xHUnFoODV7tpJlxCRuJvySLom8kFciPpNz1TSp3WvEUHvnPNxYR6g8vN0WkWsdcb6Dfh3VC4=
+X-Received: by 2002:a25:ada4:0:b0:d9a:4da4:b793 with SMTP id
+ z36-20020a25ada4000000b00d9a4da4b793mr1172039ybi.62.1697679561081; Wed, 18
+ Oct 2023 18:39:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 00/14] Pass data temperature information to SCSI disk
- devices
-Content-Language: en-US
-To: Bart Van Assche <bvanassche@acm.org>, Jens Axboe <axboe@kernel.dk>
-Cc: linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-fsdevel@vger.kernel.org,
- "Martin K . Petersen" <martin.petersen@oracle.com>,
- Christoph Hellwig <hch@lst.de>, Niklas Cassel <Niklas.Cassel@wdc.com>,
- Avri Altman <Avri.Altman@wdc.com>, Bean Huo <huobean@gmail.com>,
- Daejun Park <daejun7.park@samsung.com>
-References: <20231017204739.3409052-1-bvanassche@acm.org>
- <3f3c2289-3185-4895-92cb-0692e3ca9ebc@kernel.dk>
- <e8b49fac-77ce-4b61-ac4d-e4ace58d8319@acm.org>
-From: Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <e8b49fac-77ce-4b61-ac4d-e4ace58d8319@acm.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20231016220835.GH800259@ZenIV> <CAHC9VhTToc-rELe0EyOV4kRtOJuAmPzPB_QNn8Lw_EfMg+Edzw@mail.gmail.com>
+ <20231018043532.GS800259@ZenIV>
+In-Reply-To: <20231018043532.GS800259@ZenIV>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 18 Oct 2023 21:39:10 -0400
+Message-ID: <CAHC9VhSx0UiHyQYR-=va4X0r3XpEFz9n9f96DkQ9bhbB97RnnQ@mail.gmail.com>
+Subject: Re: [PATCH][RFC] selinuxfs: saner handling of policy reloads
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: selinux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, 
+	selinux-refpolicy@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/19/23 04:34, Bart Van Assche wrote:
-> 
-> On 10/18/23 12:09, Jens Axboe wrote:
->> My main hesitation with this is that there's a big gap between what
->> makes theoretical sense and practical sense. When we previously tried
->> this, turns out devices retained the data temperature on media, as
->> expected, but tossed it out when data was GC'ed. That made it more of a
->> benchmarking case than anything else. How do we know that things are
->> better now? In previous postings I've seen you point at some papers, but
->> I'm mostly concerned with practical use cases and devices. Are there any
->> results, at all, from that? Or is this a case of vendors asking for
->> something to check some marketing boxes or have value add?
-> 
-> Hi Jens,
-> 
-> Multiple UFS vendors made it clear to me that this feature is essential 
-> for their UFS devices to perform well. I will reach out to some of these
-> vendors off-list and will ask them to share performance numbers.
-> 
-> A note: persistent stream support is a feature that was only added
-> recently in the latest SCSI SBC-5 draft. This SCSI specification change
-> allows SCSI device vendors to interpret the GROUP NUMBER field as a data
-> lifetime. UFS device vendors interpret the GROUP NUMBER field as a data
-> lifetime since a long time - long before this was allowed by the SCSI
-> standards. See also the "ContextID" feature in the UFS specification.
-> That feature is mentioned in every version of the UFS specification I
-> have access to. The oldest version of the UFS specification I have
-> access to is version 2.2, published in 2016.
-> (https://www.jedec.org/system/files/docs/JESD220C-2_2.pdf). This
-> document is available free of charge after an account has been created 
-> on the JEDEC website.
-> 
->> I'm also really against growing struct bio just for this. Why is patch 2
->> not just using the ioprio field at least?
-> 
-> Hmm ... shouldn't the bits in the ioprio field in struct bio have the
-> same meaning as in the ioprio fields used in interfaces between user
-> space and the kernel? Damien Le Moal asked me not to use any of the
-> ioprio bits passing data lifetime information from user space to the kernel.
+On Wed, Oct 18, 2023 at 12:35=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> =
+wrote:
+> On Tue, Oct 17, 2023 at 04:28:53PM -0400, Paul Moore wrote:
+> > Thanks Al.
+> >
+> > Giving this a very quick look, I like the code simplifications that
+> > come out of this change and I'll trust you on the idea that this
+> > approach is better from a VFS perspective.
+> >
+> > While the reject_all() permission hammer is good, I do want to make
+> > sure we are covered from a file labeling perspective; even though the
+> > DAC/reject_all() check hits first and avoids the LSM inode permission
+> > hook, we still want to make sure the files are labeled properly.  It
+> > looks like given the current SELinux Reference Policy this shouldn't
+> > be a problem, it will be labeled like most everything else in
+> > selinuxfs via genfscon (SELinux policy construct).  I expect those
+> > with custom SELinux policies will have something similar in place with
+> > a sane default that would cover the /sys/fs/selinux/.swapover
+> > directory but I did add the selinux-refpol list to the CC line just in
+> > case I'm being dumb and forgetting something important with respect to
+> > policy.
+> >
+> > The next step is to actually boot up a kernel with this patch and make
+> > sure it doesn't break anything.  Simply booting up a SELinux system
+> > and running 'load_policy' a handful of times should exercise the
+> > policy (re)load path, and if you want a (relatively) simple SELinux
+> > test suite you can find one here:
+> >
+> > * https://github.com/SELinuxProject/selinux-testsuite
+> >
+> > The README.md should have the instructions necessary to get it
+> > running.  If you can't do that, and no one else on the mailing list is
+> > able to test this out, I'll give it a go but expect it to take a while
+> > as I'm currently swamped with reviews and other stuff.
+>
+> It does survive repeated load_policy (as well as semodule -d/semodule -e,
+> with expected effect on /booleans, AFAICS).  As for the testsuite...
+> No regressions compared to clean -rc5, but then there are (identical)
+> failures on both - "Failed 8/76 test programs. 88/1046 subtests failed."
+> Incomplete defconfig, at a guess...
 
-I said so in the context that if lifetime is a per-inode property, then ioprio
-is the wrong interface since the ioprio API is per process or per IO. There is a
-mismatch.
+Thanks for the smoke testing, the tests should run clean, but if you
+didn't adjust the Kconfig you're likely correct that it is the source
+of the failures.  I'll build a kernel with the patch and give it a
+test.
 
-One version of your patch series used fnctl() to set the lifetime per inoe,
-which is fine, and then used the BIO ioprio to pass the lifetime down to the
-device driver. That is in theory a nice trick, but that creates conflicts with
-the userspace ioprio API if the user uses that at the same time.
+From what I can see, it doesn't look like this is a candidate for
+stable, correct?
 
-So may be we should change bio ioprio from int to u16 and use the freedup u16
-for lifetime. With that, things are cleanly separated without growing struct bio.
-
-> 
-> Is it clear that the size of struct bio has not been changed because the
-> new bi_lifetime member fills a hole in struct bio?
-
-When the struct is randomized, holes move or disappear. Don't count on that...
-
-> 
-> Thanks,
-> 
-> Bart.
-> 
-> 
-
--- 
-Damien Le Moal
-Western Digital Research
-
+--=20
+paul-moore.com
 
