@@ -1,175 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-766-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-767-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50D9B7CFDAF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 17:20:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 621FC7CFDBC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 17:23:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81BF71C20E7D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 15:20:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B16C2820BD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 15:23:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C2D92FE23;
-	Thu, 19 Oct 2023 15:20:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE5E2FE28;
+	Thu, 19 Oct 2023 15:22:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JojRJhIq"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q0Uk+E7u"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690E32FE1D
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 15:20:06 +0000 (UTC)
-Received: from mail-yw1-x112c.google.com (mail-yw1-x112c.google.com [IPv6:2607:f8b0:4864:20::112c])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00CEF121
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 08:20:04 -0700 (PDT)
-Received: by mail-yw1-x112c.google.com with SMTP id 00721157ae682-5a7af45084eso103693657b3.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 08:20:04 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 133092747A
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 15:22:56 +0000 (UTC)
+Received: from mail-qv1-xf31.google.com (mail-qv1-xf31.google.com [IPv6:2607:f8b0:4864:20::f31])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F97911F;
+	Thu, 19 Oct 2023 08:22:55 -0700 (PDT)
+Received: by mail-qv1-xf31.google.com with SMTP id 6a1803df08f44-66cfd874520so52084986d6.2;
+        Thu, 19 Oct 2023 08:22:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1697728804; x=1698333604; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1697728974; x=1698333774; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=FRnUGTvblTffidsZLvzhyxUVdZqdHJIWMYZoMmdQD9g=;
-        b=JojRJhIqePzP8nEwaV77iL43Ult2vaCz3uHYjIDX6kiEkCSEHAoqMy0hvLaBx36785
-         2Fh0ndEfXYxaewcCHSScTlctjy23Bn5YoM5OvZmL4wvfnwxZZVzskqcjZi4OGvNRQIF9
-         J9FxCjdeC7OQbaidiM+fXo0AvsAAGcmq1RYjHg+iheQ0cpXVloOJ2Z22LpgsxYP8z9hv
-         B3l/jGPFlms+o/1zucpV9BUmVOCXlkxrUECSd7P80NrIEj9gIWY73GJyoD/AoAJxhoLp
-         kLm2JqknSf+JI7uDXRfOPd4Bvq/OPi/tGGUuE66gpjIyFWkC32o9rvYGnP86gBvAqwyX
-         NNfA==
+        bh=MTokfEhHW21by/jO57PLAHs5gEsNWQ+7mMyGsbJSujo=;
+        b=Q0Uk+E7uwUjGflczioeyrUni/DzpQn6ki8ZeJEmhpPRN+FCs7pA+iEW1vXz6cQBtOD
+         tlW2s7Y5k2kydfVHlMD7l7gMcPmoqR5LdthziBfljecf+SGw2qDAqwMJvBZtNQNY193T
+         LNiz3CfsjrjTYxiusqHPDCNujr4PFbDBu2MOHVugEcEqBzsSeVvMKBMBoINNPjGHXyD6
+         ggDwj8WJ20Rp2Wa7vJVSOZ1qvcEQCbq8tgeHY7wNWP7bqmIr27M2HzF66H5EaLM/heKN
+         0kTOKdezw2MLtgRjhWlCr+j8+pAFr4sFw+M2+4trnQHupkhpdWU/IT5oRjeVnr7u9J6t
+         qp+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697728804; x=1698333604;
+        d=1e100.net; s=20230601; t=1697728974; x=1698333774;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=FRnUGTvblTffidsZLvzhyxUVdZqdHJIWMYZoMmdQD9g=;
-        b=B6krE9QiiO3WdZSMphYcT+wWgFhExm8HoMmJ7t5+uISUZwruMARA6CqbY7/KyPjNJa
-         3iOJOcbHJWUbBBXSYkaDiHVdkfdtSnEh1jH02td9vLrDmdT/5uQhMkN2VMNFzvPlMbUG
-         9bu2IQCCgY/Q2xY6wt3lqYYjaZZF0WAPmedUzZ75pjEYcEdVPEI8UYfU4Q3zdZ8TiFys
-         6VXBvoUqzcGX3sKSLRwiqCbOhg5/OfQ1exZLJ8724soE7ULfx0y4XktJX8cUGapIULML
-         b1WAjyDk1a9rZzMhYD30QmUptSpbhLfKFhD0Myp4pa/+oml6BuVht3oZY6iBtv04HZfn
-         5IdA==
-X-Gm-Message-State: AOJu0YwThY9jlYvdYGVgB3BErR2qEfFrtG8Fy9kbK9ELVdY4VXfpcJio
-	9XsBSoAdUnGl2T/d7Ki9bMLR7EinOTS+MQRIDsJJFQ==
-X-Google-Smtp-Source: AGHT+IF0k6UMqpib1oXKFwqqUTgDYexYaE+vjZ9HjrI6meVqchr+93GJHlAwtx4opiMUXj0lZtYCc2bRPUEM94NV5SQ=
-X-Received: by 2002:a81:9255:0:b0:5a7:d9ce:363c with SMTP id
- j82-20020a819255000000b005a7d9ce363cmr2795218ywg.6.1697728803811; Thu, 19 Oct
- 2023 08:20:03 -0700 (PDT)
+        bh=MTokfEhHW21by/jO57PLAHs5gEsNWQ+7mMyGsbJSujo=;
+        b=uvI8Fz2LnlpYbYt8mDKzrkbMoNOCftGgC9Y3zelIzXFC06Rk7YBr9eXZti7opsmD0D
+         AOaLANKHmlc7mQVMR7TXmzR12BDlrb9FwclpGGdviso2u4qxhffHvI6TB6t+iYe0hF5k
+         GQipYJicC74IfNHqMluBxQFOoaisqplqzskjEyzOpQzNvnTXc4y6+VBTa4QqyTEVDYc6
+         2LK/M7yNDOQcAx8GqEMWhDQL1IIR2UviVlUk06JqczC2WsejsgqkKdPLRBzv1tLPgIxz
+         YRAXAtU68GsJV6KObm9RRpL8tUBY1NnMzEjJ1OlkYlKTW/6uV09mCzeukQRwARcRfHG5
+         YnMA==
+X-Gm-Message-State: AOJu0YxfjH4+r474FYKVYjnGVAjq+cUeA0ffmCmO7y7ifaRHoBlUxUwO
+	aeJdOkRTmFmBwUepoke1xtTMfZI1vvP41cUNqR4=
+X-Google-Smtp-Source: AGHT+IGxYXaVkCUPqjQ6sPtaF4WKbhk6BNsMVFo2fphnEMh0pPdOudjijcRm+Qso+5or7eNgr6CvMfy5kxG371LrFI4=
+X-Received: by 2002:ad4:5f05:0:b0:66d:17a2:34cc with SMTP id
+ fo5-20020ad45f05000000b0066d17a234ccmr2617117qvb.64.1697728974033; Thu, 19
+ Oct 2023 08:22:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231009064230.2952396-1-surenb@google.com> <20231009064230.2952396-2-surenb@google.com>
- <ZShswW2rkKTwnrV3@x1n> <7495754c-9267-74af-b943-9b0f86619b5d@redhat.com>
-In-Reply-To: <7495754c-9267-74af-b943-9b0f86619b5d@redhat.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Thu, 19 Oct 2023 08:19:50 -0700
-Message-ID: <CAJuCfpFEVq_OXESTUCmYYr9ZGbH6i_Vigh8_6FD0PJXXZFEi4Q@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] mm/rmap: support move to different root anon_vma
- in folio_move_anon_rmap()
-To: David Hildenbrand <david@redhat.com>
-Cc: Peter Xu <peterx@redhat.com>, akpm@linux-foundation.org, viro@zeniv.linux.org.uk, 
-	brauner@kernel.org, shuah@kernel.org, aarcange@redhat.com, 
-	lokeshgidra@google.com, hughd@google.com, mhocko@suse.com, 
-	axelrasmussen@google.com, rppt@kernel.org, willy@infradead.org, 
-	Liam.Howlett@oracle.com, jannh@google.com, zhangpeng362@huawei.com, 
-	bgeffon@google.com, kaleshsingh@google.com, ngeoffray@google.com, 
-	jdduke@google.com, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	kernel-team@android.com
+References: <20231018100000.2453965-1-amir73il@gmail.com> <20231018100000.2453965-4-amir73il@gmail.com>
+ <20231019144026.2qypsldg5hlca5zc@quack3>
+In-Reply-To: <20231019144026.2qypsldg5hlca5zc@quack3>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 19 Oct 2023 18:22:42 +0300
+Message-ID: <CAOQ4uxirRaQj8ix3aEA+SfUgXa55zaCQM3Rq+U26iqxjqnJZbA@mail.gmail.com>
+Subject: Re: [PATCH 3/5] exportfs: make ->encode_fh() a mandatory method for
+ NFS export
+To: Jan Kara <jack@suse.cz>
+Cc: Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
+	Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, David Sterba <dsterba@suse.com>, 
+	Luis de Bethencourt <luisbg@kernel.org>, Salah Triki <salah.triki@gmail.com>, Gao Xiang <xiang@kernel.org>, 
+	Chao Yu <chao@kernel.org>, "Theodore Ts'o" <tytso@mit.edu>, 
+	Andreas Dilger <adilger.kernel@dilger.ca>, Jaegeuk Kim <jaegeuk@kernel.org>, 
+	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, Dave Kleikamp <shaggy@kernel.org>, 
+	David Woodhouse <dwmw2@infradead.org>, Richard Weinberger <richard@nod.at>, 
+	Anton Altaparmakov <anton@tuxera.com>, 
+	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, Steve French <sfrench@samba.org>, 
+	Phillip Lougher <phillip@squashfs.org.uk>, Evgeniy Dushistov <dushistov@mail.ru>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 13, 2023 at 1:04=E2=80=AFAM David Hildenbrand <david@redhat.com=
-> wrote:
+On Thu, Oct 19, 2023 at 5:40=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
 >
-> On 13.10.23 00:01, Peter Xu wrote:
-> > On Sun, Oct 08, 2023 at 11:42:26PM -0700, Suren Baghdasaryan wrote:
-> >> From: Andrea Arcangeli <aarcange@redhat.com>
-> >>
-> >> For now, folio_move_anon_rmap() was only used to move a folio to a
-> >> different anon_vma after fork(), whereby the root anon_vma stayed
-> >> unchanged. For that, it was sufficient to hold the folio lock when
-> >> calling folio_move_anon_rmap().
-> >>
-> >> However, we want to make use of folio_move_anon_rmap() to move folios
-> >> between VMAs that have a different root anon_vma. As folio_referenced(=
-)
-> >> performs an RMAP walk without holding the folio lock but only holding =
-the
-> >> anon_vma in read mode, holding the folio lock is insufficient.
-> >>
-> >> When moving to an anon_vma with a different root anon_vma, we'll have =
+> On Wed 18-10-23 12:59:58, Amir Goldstein wrote:
+> > export_operations ->encode_fh() no longer has a default implementation =
 to
-> >> hold both, the folio lock and the anon_vma lock in write mode.
-> >> Consequently, whenever we succeeded in folio_lock_anon_vma_read() to
-> >> read-lock the anon_vma, we have to re-check if the mapping was changed
-> >> in the meantime. If that was the case, we have to retry.
-> >>
-> >> Note that folio_move_anon_rmap() must only be called if the anon page =
-is
-> >> exclusive to a process, and must not be called on KSM folios.
-> >>
-> >> This is a preparation for UFFDIO_MOVE, which will hold the folio lock,
-> >> the anon_vma lock in write mode, and the mmap_lock in read mode.
-> >>
-> >> Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
-> >> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> >> ---
-> >>   mm/rmap.c | 24 ++++++++++++++++++++++++
-> >>   1 file changed, 24 insertions(+)
-> >>
-> >> diff --git a/mm/rmap.c b/mm/rmap.c
-> >> index c1f11c9dbe61..f9ddc50269d2 100644
-> >> --- a/mm/rmap.c
-> >> +++ b/mm/rmap.c
-> >> @@ -542,7 +542,9 @@ struct anon_vma *folio_lock_anon_vma_read(struct f=
-olio *folio,
-> >>      struct anon_vma *root_anon_vma;
-> >>      unsigned long anon_mapping;
-> >>
-> >> +retry:
-> >>      rcu_read_lock();
-> >> +retry_under_rcu:
-> >>      anon_mapping =3D (unsigned long)READ_ONCE(folio->mapping);
-> >>      if ((anon_mapping & PAGE_MAPPING_FLAGS) !=3D PAGE_MAPPING_ANON)
-> >>              goto out;
-> >> @@ -552,6 +554,16 @@ struct anon_vma *folio_lock_anon_vma_read(struct =
-folio *folio,
-> >>      anon_vma =3D (struct anon_vma *) (anon_mapping - PAGE_MAPPING_ANO=
-N);
-> >>      root_anon_vma =3D READ_ONCE(anon_vma->root);
-> >>      if (down_read_trylock(&root_anon_vma->rwsem)) {
-> >> +            /*
-> >> +             * folio_move_anon_rmap() might have changed the anon_vma=
- as we
-> >> +             * might not hold the folio lock here.
-> >> +             */
-> >> +            if (unlikely((unsigned long)READ_ONCE(folio->mapping) !=
-=3D
-> >> +                         anon_mapping)) {
-> >> +                    up_read(&root_anon_vma->rwsem);
-> >> +                    goto retry_under_rcu;
+> > encode FILEID_INO32_GEN* file handles.
 > >
-> > Is adding this specific label worthwhile?  How about rcu unlock and got=
+> > Rename the default helper for encoding FILEID_INO32_GEN* file handles t=
 o
-> > retry (then it'll also be clear that we won't hold rcu read lock for
-> > unpredictable time)?
+> > generic_encode_ino32_fh() and convert the filesystems that used the
+> > default implementation to use the generic helper explicitly.
+> >
+> > This is a step towards allowing filesystems to encode non-decodeable fi=
+le
+> > handles for fanotify without having to implement any export_operations.
+> >
+> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 >
-> +1, sounds good to me
+> Just one typo cleanup. Also I agree we need a "nop" variant of
+> generic_encode_ino32_fh() or move this to fs/libfs.c like e.g.
+> generic_fh_to_dentry().
+>
 
-Sorry for the delay, I was travelling for a week.
+I did this:
 
-I was hesitant about RCU unlocking and then immediately re-locking but
-your point about holding it for unpredictable time makes sense. Will
-change. Thanks!
+ /*
+  * Generic helpers for filesystems.
+  */
++#ifdef CONFIG_EXPORTFS
++int generic_encode_ino32_fh(struct inode *inode, __u32 *fh, int *max_len,
++                           struct inode *parent);
++#else
++#define generic_encode_ino32_fh NULL
++#endif
 
+I like it better than moving to fs/libfs.c, because if CONFIG_EXPORTFS
+is not defined, no code should be calling generic_encode_ino32_fh().
+
+It might be a good idea to define exportfs_can_*() helpers to false
+when CONFIG_EXPORTFS is not defined, but at least for fanotify,
+this is not relevant because fanotify selects EXPORTFS.
+
+> > diff --git a/Documentation/filesystems/porting.rst b/Documentation/file=
+systems/porting.rst
+> > index 4d05b9862451..197ef78a5014 100644
+> > --- a/Documentation/filesystems/porting.rst
+> > +++ b/Documentation/filesystems/porting.rst
+> > @@ -1045,3 +1045,12 @@ filesystem type is now moved to a later point wh=
+en the devices are closed:
+> >  As this is a VFS level change it has no practical consequences for fil=
+esystems
+> >  other than that all of them must use one of the provided kill_litter_s=
+uper(),
+> >  kill_anon_super(), or kill_block_super() helpers.
+> > +
+> > +---
+> > +
+> > +**mandatory**
+> > +
+> > +export_operations ->encode_fh() no longer has a default implementation=
+ to
+> > +encode FILEID_INO32_GEN* file handles.
+> > +Fillesystems that used the default implementation may use the generic =
+helper
+>    ^^^ Filesystems
 >
-> --
-> Cheers,
->
-> David / dhildenb
->
+
+Thanks!
+Amir.
 
