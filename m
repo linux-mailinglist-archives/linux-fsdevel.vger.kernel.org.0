@@ -1,209 +1,165 @@
-Return-Path: <linux-fsdevel+bounces-760-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-762-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDEF57CFCD0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 16:34:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D733C7CFD0C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 16:40:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1E061C20D6B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 14:34:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5CC90B21348
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 14:40:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 965F22FE1C;
-	Thu, 19 Oct 2023 14:34:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2733C2FE09;
+	Thu, 19 Oct 2023 14:40:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RZhTa2xh"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vtKaJo3f";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7AlKnQYe"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BE992FE13
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 14:33:59 +0000 (UTC)
-Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F540195
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 07:33:57 -0700 (PDT)
-Received: by mail-yb1-xb30.google.com with SMTP id 3f1490d57ef6-d852b28ec3bso9088807276.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 07:33:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697726036; x=1698330836; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rDjLug5hf3bXeKiJXgN2m00hJ8i4tYtBfCbplmbScVg=;
-        b=RZhTa2xhrNh0Nsjg/As2Eqa7sM+fqxIRDIlThjYtps0TP5u9BEjGlkXvgwEw1BY1zr
-         7mHxEIe4odAFm6NwugKWA1Z9b9HrEm2lxerH7l3HL6Ag8HQQwe9DXmcSELm/Vt7tX+jO
-         k4xady6CwGlL7SiyW7XgUCqnhxCkPmJIkJdXtLE/g+YAtF7YGKbLMiMrB+WfNEY1l40C
-         aLfH7GS6ExpKSqvEt1Oea7QNoY1b9CtpCrrnwcuYrOHUTwtUN4mTC7sFgv+E70cu2xnc
-         M+MKZVZnzzCoW/6Jpc+oRYm9cH6fhljxuqEL5X9COY862CubV08q6hbdGs11AuaYavhO
-         Y97g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697726036; x=1698330836;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rDjLug5hf3bXeKiJXgN2m00hJ8i4tYtBfCbplmbScVg=;
-        b=eM3oVij/jg2gn2XmGDJO64DmUPb6/AmCPJc7eqxWA/jXwZyLgRz2CsmFjTiYaKUxd1
-         sOcjirTzGi0jYMZRc1qubLmvmaGy6z6m6ZjHDcjmYWazz79p6J1ghQ9mlKxqlktA918G
-         k8gULZ7QhJI59ozpBZ0sLps73nXx+2CntRIbjuvTNgwJwL9juAFAal30SnYYp9qNqMp5
-         kKPaybBX+bfW/llJ8Viq1pSLfRPz9o42aeXW+GB8SJCUwvEElHZV/mS+A1sS1j5ulgMn
-         XD6wMXTsP9WWQBA/inAowAstjWfbeHDA9543QqQEEjoZG+rKI87R2pPSCzb5IZsNGF3W
-         TVoQ==
-X-Gm-Message-State: AOJu0YzOnbgdK+3PsH/LRWSbGDG6ThAxgv9eniXO34GtIhznrjfHyHP0
-	UO0KeBAAxITddex9973omx1wJv5FPbnslITHl1k81svQpT0=
-X-Google-Smtp-Source: AGHT+IGHc2fgsHmCpsXmar2P/tavs6EnNGdUDKO2ZS5/GCBjQPtrt5t0C47it5pe6pF3LXPymEsRCf7xNstbvDbLbvA=
-X-Received: by 2002:a25:8e87:0:b0:d9b:e407:663f with SMTP id
- q7-20020a258e87000000b00d9be407663fmr2525476ybl.15.1697726036148; Thu, 19 Oct
- 2023 07:33:56 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A21B12FE07
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 14:40:38 +0000 (UTC)
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A551118A;
+	Thu, 19 Oct 2023 07:40:31 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 45432210EA;
+	Thu, 19 Oct 2023 14:40:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1697726427; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7yWQ++yj3meNsM51OVma38ZOF7XpIW69AOySyO8IM0Y=;
+	b=vtKaJo3fU0v4xPgYDe3J7ys1BQREGEf71+ieyhVmED1/RjuNNKtJulS7OGBBisg5hLbKwy
+	ZA0lthUkbKlF65yIKXvYhAqD/0M49B1onOR1kCl/q+smWRojv6bwQI9NykPnt0qt+Abxgl
+	n1NhmednkL6THWFZsZHk4sG9dhtqIcA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1697726427;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7yWQ++yj3meNsM51OVma38ZOF7XpIW69AOySyO8IM0Y=;
+	b=7AlKnQYeH7OHkMWPmlNWOw67HQ58182uZcd10gyz9w1+M4PK6XdoD2EETLu+2QhbSFd6n4
+	OP0rnqgXXDVJQVBQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+	(No client certificate requested)
+	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 31C541357F;
+	Thu, 19 Oct 2023 14:40:27 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+	by imap2.suse-dmz.suse.de with ESMTPSA
+	id t6wbDNs/MWV8CQAAMHmgww
+	(envelope-from <jack@suse.cz>); Thu, 19 Oct 2023 14:40:27 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 9F12CA06B0; Thu, 19 Oct 2023 16:40:26 +0200 (CEST)
+Date: Thu, 19 Oct 2023 16:40:26 +0200
+From: Jan Kara <jack@suse.cz>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+	David Sterba <dsterba@suse.com>,
+	Luis de Bethencourt <luisbg@kernel.org>,
+	Salah Triki <salah.triki@gmail.com>, Gao Xiang <xiang@kernel.org>,
+	Chao Yu <chao@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
+	Andreas Dilger <adilger.kernel@dilger.ca>,
+	Jaegeuk Kim <jaegeuk@kernel.org>,
+	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+	Dave Kleikamp <shaggy@kernel.org>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Richard Weinberger <richard@nod.at>,
+	Anton Altaparmakov <anton@tuxera.com>,
+	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+	Steve French <sfrench@samba.org>,
+	Phillip Lougher <phillip@squashfs.org.uk>,
+	Evgeniy Dushistov <dushistov@mail.ru>
+Subject: Re: [PATCH 3/5] exportfs: make ->encode_fh() a mandatory method for
+ NFS export
+Message-ID: <20231019144026.2qypsldg5hlca5zc@quack3>
+References: <20231018100000.2453965-1-amir73il@gmail.com>
+ <20231018100000.2453965-4-amir73il@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231016160902.2316986-1-amir73il@gmail.com>
-In-Reply-To: <20231016160902.2316986-1-amir73il@gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 19 Oct 2023 17:33:44 +0300
-Message-ID: <CAOQ4uxh=cLySge6htd+DnJrqAKF=C_oJYfVrbpvQGik0wR-+iw@mail.gmail.com>
-Subject: Re: [PATCH v14 00/12] FUSE passthrough for file io
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, Daniel Rosenberg <drosen@google.com>, 
-	Paul Lawrence <paullawrence@google.com>, Alessio Balsini <balsini@android.com>, 
-	Christian Brauner <brauner@kernel.org>, fuse-devel@lists.sourceforge.net, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231018100000.2453965-4-amir73il@gmail.com>
+Authentication-Results: smtp-out1.suse.de;
+	none
+X-Spam-Level: 
+X-Spam-Score: -2.77
+X-Spamd-Result: default: False [-2.77 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 BAYES_HAM(-0.67)[82.91%];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com,mail.ru];
+	 TAGGED_RCPT(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 NEURAL_HAM_LONG(-3.00)[-1.000];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 NEURAL_HAM_SHORT(-1.00)[-1.000];
+	 RCPT_COUNT_TWELVE(0.00)[24];
+	 FREEMAIL_TO(0.00)[gmail.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 RCVD_COUNT_TWO(0.00)[2];
+	 RCVD_TLS_ALL(0.00)[];
+	 SUSPICIOUS_RECIPS(1.50)[];
+	 FREEMAIL_CC(0.00)[suse.cz,kernel.org,oracle.com,vger.kernel.org,suse.com,gmail.com,mit.edu,dilger.ca,mail.parknet.co.jp,infradead.org,nod.at,tuxera.com,paragon-software.com,samba.org,squashfs.org.uk,mail.ru]
 
-On Mon, Oct 16, 2023 at 7:09=E2=80=AFPM Amir Goldstein <amir73il@gmail.com>=
- wrote:
->
-> Miklos,
->
-> I've shared several POC branches since the posting of v13 back in May
-> and played with several API choices. It is time to post v14.
->
-> The API we converged to is server managed shared backing files that are
-> referenced by backing id plus per-file re-opened backing_file.
->
-> This model looks coherent to me. I think that the example server [3]
-> demonstrates that this API is simple enough to work with.
->
-> There is quite a bit of re-factored code in this version - I've actually
-> declared this common code as a new vfs subsystem [stackable filesystems]
-> in MAINTAINERS per Christian's request.
->
-> The re-factored common code is based on overlayfs-next and Christian's
-> vfs.misc branch (for the backing_file changes).
->
-> I am not posting performance numbers again. Alessio has already posted
-> performance numbers back in v12 and nothing has changed in this regard.
-> We are using a variant of v12 patches in production and the performance
-> improvement is very noticable.
->
-> Bernd and Nikolaus have helped with improving running fstests on fuse
-> passthrough examples.
->
-> I have ran the -g auto fstests with v14 patches with the example server.
-> Compared to the baseline test results with passthrough_hp, the backing
-> file passthrough passes several more test, mainly tests related to data
-> coherency, such as generic/451.
+On Wed 18-10-23 12:59:58, Amir Goldstein wrote:
+> export_operations ->encode_fh() no longer has a default implementation to
+> encode FILEID_INO32_GEN* file handles.
+> 
+> Rename the default helper for encoding FILEID_INO32_GEN* file handles to
+> generic_encode_ino32_fh() and convert the filesystems that used the
+> default implementation to use the generic helper explicitly.
+> 
+> This is a step towards allowing filesystems to encode non-decodeable file
+> handles for fanotify without having to implement any export_operations.
+> 
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 
-FWIW, baseline passthrough_hp --nocache does pass generic/451.
-Not surprising considering that the test is for
-"Test data integrity when mixing buffered reads and asynchronous
- direct writes a file."
+Just one typo cleanup. Also I agree we need a "nop" variant of
+generic_encode_ino32_fh() or move this to fs/libfs.c like e.g.
+generic_fh_to_dentry().
 
->
-> The following tests are the only ones that pass on baseline passthtough_h=
-p
-> and fail with my backing file passthrough example:
->
->   generic/080 generic/120 generic/193 generic/215 generic/355
->
-> Those tests are failing because of missing mtime/atime/ctime updates
+> diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesystems/porting.rst
+> index 4d05b9862451..197ef78a5014 100644
+> --- a/Documentation/filesystems/porting.rst
+> +++ b/Documentation/filesystems/porting.rst
+> @@ -1045,3 +1045,12 @@ filesystem type is now moved to a later point when the devices are closed:
+>  As this is a VFS level change it has no practical consequences for filesystems
+>  other than that all of them must use one of the provided kill_litter_super(),
+>  kill_anon_super(), or kill_block_super() helpers.
+> +
+> +---
+> +
+> +**mandatory**
+> +
+> +export_operations ->encode_fh() no longer has a default implementation to
+> +encode FILEID_INO32_GEN* file handles.
+> +Fillesystems that used the default implementation may use the generic helper
+   ^^^ Filesystems
 
-Some more detailed analysis:
+> +generic_encode_ino32_fh() explicitly.
 
-generic/120 tests -o noatime and fails because atime is
-updated (on the backing file).
-This is a general FUSE issue and passthrough_hp --nocache fails
-the same test (i.e. it only passed because of attribute cache).
-
-generic/080, generic/215 both test for c/mtime updates after mapped writes.
-It is not surprising that backing file passthrough fails these tests -
-there is no "passthrough getattr" like overlayfs and there is no opportunit=
-y
-to invalidate the FUSE inode attribute cache.
-
-> in some use cases and failure to strip suid/sgid bits in some cases.
-
-The suid/sgid strip failures (generic/193, generic/355) were just a silly b=
-ug.
-Forgot to add file_remove_privs() in passthrough write.
-I now moved it from overlayfs into the common backing_file helpers.
-
-I don't think that the issue with mapped writes c/mtime update is a
-show stopper?
-
-Thanks,
-Amir.
-
->
-> Changes from v13 [1]:
-> - rebase on 6.6-rc6 (and overlayfs and vfs next branches)
-> - server managed shared backing files without auto-close mode
-> - open a backing_file per fuse_file with fuse file's path and flags
-> - factor out common read/write/splice/mmap helpers from overlayfs
-> - factor out ioctl helpers
->
-> [1] https://lore.kernel.org/r/20230519125705.598234-1-amir73il@gmail.com/
-> [2] https://github.com/amir73il/linux/commits/fuse-backing-fd-v14
-> [3] https://github.com/amir73il/libfuse/commits/fuse-backing-fd
->
-> Amir Goldstein (12):
->   fs: prepare for stackable filesystems backing file helpers
->   fs: factor out backing_file_{read,write}_iter() helpers
->   fs: factor out backing_file_splice_{read,write}() helpers
->   fs: factor out backing_file_mmap() helper
->   fuse: factor out helper for FUSE_DEV_IOC_CLONE
->   fuse: introduce FUSE_PASSTHROUGH capability
->   fuse: pass optional backing_id in struct fuse_open_out
->   fuse: implement ioctls to manage backing files
->   fuse: implement read/write passthrough
->   fuse: implement splice_{read/write} passthrough
->   fuse: implement passthrough for mmap
->   fuse: implement passthrough for readdir
->
->  MAINTAINERS                  |   9 +
->  fs/Kconfig                   |   4 +
->  fs/Makefile                  |   1 +
->  fs/backing-file.c            | 319 ++++++++++++++++++++++++++++
->  fs/fuse/Kconfig              |  11 +
->  fs/fuse/Makefile             |   1 +
->  fs/fuse/cuse.c               |   3 +-
->  fs/fuse/dev.c                |  98 ++++++---
->  fs/fuse/dir.c                |   2 +-
->  fs/fuse/file.c               |  69 ++++--
->  fs/fuse/fuse_i.h             |  72 ++++++-
->  fs/fuse/inode.c              |  25 +++
->  fs/fuse/ioctl.c              |   3 +-
->  fs/fuse/passthrough.c        | 392 +++++++++++++++++++++++++++++++++++
->  fs/fuse/readdir.c            |  12 +-
->  fs/open.c                    |  38 ----
->  fs/overlayfs/Kconfig         |   1 +
->  fs/overlayfs/file.c          | 246 ++++------------------
->  fs/overlayfs/overlayfs.h     |   8 +-
->  fs/overlayfs/super.c         |  11 +-
->  include/linux/backing-file.h |  42 ++++
->  include/linux/fs.h           |   3 -
->  include/uapi/linux/fuse.h    |  23 +-
->  23 files changed, 1085 insertions(+), 308 deletions(-)
->  create mode 100644 fs/backing-file.c
->  create mode 100644 fs/fuse/passthrough.c
->  create mode 100644 include/linux/backing-file.h
->
-> --
-> 2.34.1
->
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
