@@ -1,74 +1,74 @@
-Return-Path: <linux-fsdevel+bounces-727-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-728-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3ECC7CF312
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 10:43:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FA607CF323
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 10:47:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F7C5281F4F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 08:43:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90E871C20D6B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 08:47:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94BF615ADF;
-	Thu, 19 Oct 2023 08:43:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 907F115AE8;
+	Thu, 19 Oct 2023 08:47:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="T6yWSTbL";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="xF7rD5Rn"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="abC0Hpjq"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98105FC15
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 08:43:41 +0000 (UTC)
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 590DB1BCA;
-	Thu, 19 Oct 2023 01:43:40 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 03F8B1FD8C;
-	Thu, 19 Oct 2023 08:43:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1697705019; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cYET0BJw7ocS3OlFzKj/k4LkNiu6Z0iSBZYVxMidfVw=;
-	b=T6yWSTbLeqFDDITYvRVkOtphzBo+NYyQiEpiduILNwk8u3sfcE9vtHNiuLChqlYot8ha6t
-	cTldsHYzFX5k50r9otD84EKG/qsYidbQ7E6CLdOqMpMdCFcd8IIMB58VcdAmbY36LLhOBh
-	grSPKAVhL1jkpqztTBUe8SwNF2le104=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1697705019;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cYET0BJw7ocS3OlFzKj/k4LkNiu6Z0iSBZYVxMidfVw=;
-	b=xF7rD5RnrQUerfjluvjdEUSNbaBeOKdZu/v3JpN/DFDnFjexRQOj+8RPLrEaMC8Q6zCBho
-	L6wPXB/2A9c49rDA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-	(No client certificate requested)
-	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id E85181357F;
-	Thu, 19 Oct 2023 08:43:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-	by imap2.suse-dmz.suse.de with ESMTPSA
-	id RGa1ODrsMGUyQwAAMHmgww
-	(envelope-from <jack@suse.cz>); Thu, 19 Oct 2023 08:43:38 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 94D1FA06B0; Thu, 19 Oct 2023 10:43:38 +0200 (CEST)
-Date: Thu, 19 Oct 2023 10:43:38 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>,
-	Jan Kara <jack@suse.cz>, Denis Efremov <efremov@linux.com>,
-	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 5/5] fs: assert that open_mutex isn't held over holder ops
-Message-ID: <20231019084338.xu4ppzz3nx24saj4@quack3>
-References: <20231017184823.1383356-1-hch@lst.de>
- <20231017184823.1383356-6-hch@lst.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 270CC15AD2
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 08:47:08 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.136])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9881129;
+	Thu, 19 Oct 2023 01:47:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1697705226; x=1729241226;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=KhvXCMyEWYMwIFdsWR0gUBefdbmD8tWEPpF0paNPlzk=;
+  b=abC0HpjqnOxxCFQIVHliZaMZxK63EHbC7x08TYI57wD+6b02RIHV6jWK
+   cWkceWylJtBjhHQ5cfQzGb2hvU2dC8j5S7wCdbByweOgqGgXN8Ai6MMQq
+   TbGcHfg6LY6pFQMSdyM5Bpm9ktAj5Y5bVjI1DacqIa2rqF7SQESQ5wkSn
+   qh7UF5ZC7K7gkGfb9UzghGGPmWQfEyOygiMXLnvAIw5vR0PWEaXMYNc3A
+   WQF1V2Nd47kCF0J0+2p7p7OiFzTKKmS2WHFTu8Rn2H3/okRyYhq84p92O
+   wtqsZsUbR04AYXE5Vr0cbnqxw37kIGAWJMLcavWyRv6N+2I5iCa9Nqz85
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10867"; a="365555116"
+X-IronPort-AV: E=Sophos;i="6.03,236,1694761200"; 
+   d="scan'208";a="365555116"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2023 01:47:04 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10867"; a="760557572"
+X-IronPort-AV: E=Sophos;i="6.03,236,1694761200"; 
+   d="scan'208";a="760557572"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmsmga007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2023 01:47:01 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97-RC2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1qtOgE-00000006oO5-3zaq;
+	Thu, 19 Oct 2023 11:46:58 +0300
+Date: Thu, 19 Oct 2023 11:46:58 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Jan Kara <jack@suse.cz>
+Cc: Ferry Toth <ftoth@exalondelft.nl>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
+Subject: Re: [GIT PULL] ext2, quota, and udf fixes for 6.6-rc1
+Message-ID: <ZTDtAiDRuPcS2Vwd@smile.fi.intel.com>
+References: <ZS5iB2RafBj6K7r3@smile.fi.intel.com>
+ <ZS5i1cWZF1fLurLz@smile.fi.intel.com>
+ <ZS50DI8nw9oSc4Or@smile.fi.intel.com>
+ <20231017133245.lvadrhbgklppnffv@quack3>
+ <ZS6PRdhHRehDC+02@smile.fi.intel.com>
+ <ZS6fIkTVtIs-UhFI@smile.fi.intel.com>
+ <ZS6k7nLcbdsaxUGZ@smile.fi.intel.com>
+ <ZS6pmuofSP3uDMIo@smile.fi.intel.com>
+ <ZS6wLKrQJDf1_TUe@smile.fi.intel.com>
+ <20231018184613.tphd3grenbxwgy2v@quack3>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -77,73 +77,81 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231017184823.1383356-6-hch@lst.de>
-Authentication-Results: smtp-out2.suse.de;
-	none
-X-Spam-Level: 
-X-Spam-Score: -6.60
-X-Spamd-Result: default: False [-6.60 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 NEURAL_HAM_LONG(-3.00)[-1.000];
-	 MIME_GOOD(-0.10)[text/plain];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 NEURAL_HAM_SHORT(-1.00)[-1.000];
-	 RCPT_COUNT_SEVEN(0.00)[8];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_COUNT_TWO(0.00)[2];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-3.00)[99.99%]
+In-Reply-To: <20231018184613.tphd3grenbxwgy2v@quack3>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue 17-10-23 20:48:23, Christoph Hellwig wrote:
-> From: Christian Brauner <brauner@kernel.org>
+On Wed, Oct 18, 2023 at 08:46:13PM +0200, Jan Kara wrote:
+> On Tue 17-10-23 19:02:52, Andy Shevchenko wrote:
+> > On Tue, Oct 17, 2023 at 06:34:50PM +0300, Andy Shevchenko wrote:
+> > > On Tue, Oct 17, 2023 at 06:14:54PM +0300, Andy Shevchenko wrote:
+> > > > On Tue, Oct 17, 2023 at 05:50:10PM +0300, Andy Shevchenko wrote:
+> > > > > On Tue, Oct 17, 2023 at 04:42:29PM +0300, Andy Shevchenko wrote:
+> > > > > > On Tue, Oct 17, 2023 at 03:32:45PM +0200, Jan Kara wrote:
+> > > > > > > On Tue 17-10-23 14:46:20, Andy Shevchenko wrote:
+> > > > > > > > On Tue, Oct 17, 2023 at 01:32:53PM +0300, Andy Shevchenko wrote:
+> > > > > > > > > On Tue, Oct 17, 2023 at 01:29:27PM +0300, Andy Shevchenko wrote:
+> > > > > > > > > > On Tue, Oct 17, 2023 at 01:27:19PM +0300, Andy Shevchenko wrote:
+> > > > > > > > > > > On Wed, Aug 30, 2023 at 12:24:34PM +0200, Jan Kara wrote:
+> > > > > > > > > > > >   Hello Linus,
+
+...
+
+> > > > > > > > > > > This merge commit (?) broke boot on Intel Merrifield.
+> > > > > > > > > > > It has earlycon enabled and only what I got is watchdog
+> > > > > > > > > > > trigger without a bit of information printed out.
+> > > > > > > > 
+> > > > > > > > Okay, seems false positive as with different configuration it
+> > > > > > > > boots. It might be related to the size of the kernel itself.
+> > > > > > > 
+> > > > > > > Ah, ok, that makes some sense.
+> > > > > > 
+> > > > > > I should have mentioned that it boots with the configuration say "A",
+> > > > > > while not with "B", where "B" = "A" + "C" and definitely the kernel
+> > > > > > and initrd sizes in the "B" case are bigger.
+> > > > > 
+> > > > > If it's a size (which is only grew from 13M->14M), it's weird.
+> > > > > 
+> > > > > Nevertheless, I reverted these in my local tree
+> > > > > 
+> > > > > 85515a7f0ae7 (HEAD -> topic/mrfld) Revert "defconfig: enable DEBUG_SPINLOCK"
+> > > > > 786e04262621 Revert "defconfig: enable DEBUG_ATOMIC_SLEEP"
+> > > > > 76ad0a0c3f2d Revert "defconfig: enable DEBUG_INFO"
+> > > > > f8090166c1be Revert "defconfig: enable DEBUG_LIST && DEBUG_OBJECTS_RCU_HEAD"
+> > > > > 
+> > > > > and it boots again! So, after this merge something affects one of this?
+> > > > > 
+> > > > > I'll continuing debugging which one is a culprit, just want to share
+> > > > > the intermediate findings.
+> > > > 
+> > > > CONFIG_DEBUG_LIST with this merge commit somehow triggers this issue.
+> > > > Any ideas?
+> > 
+> > > Dropping CONFIG_QUOTA* helps as well.
+> > 
+> > More precisely it's enough to drop either from CONFIG_DEBUG_LIST and CONFIG_QUOTA
+> > to make it boot again.
+> > 
+> > And I'm done for today.
 > 
-> With recent block level changes we should never be in a situation where
-> we hold disk->open_mutex when calling into these helpers. So assert that
-> in the code.
-> 
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> OK, thanks for debugging! So can you perhaps enable CONFIG_DEBUG_LIST
+> permanently in your kernel config and then bisect through the quota changes
+> in the merge? My guess is commit dabc8b20756 ("quota: fix dqput() to follow
+> the guarantees dquot_srcu should provide") might be the culprit given your
+> testing but I fail to see how given I don't expect any quotas to be used
+> during boot of your platform... BTW, there's also fixup: 869b6ea160
+> ("quota: Fix slow quotaoff") merged last week so you could try testing a
+> kernel after this fix to see whether it changes anything.
 
-Looks good to me. Feel free to add:
+It's exactly what my initial report is about, CONFIG_DEBUG_LIST was there
+always with CONFIG_QUOTA as well.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Two bisections (v6.5 .. v6.6-rc1 & something...v6.6-rc6) pointed out to
+merge commit! I _had_ tried to simply revert the quota changes (I haven't
+said about that before) and it didn't help. I'm so puzzled with all this.
 
-								Honza
-
-> ---
->  fs/super.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/fs/super.c b/fs/super.c
-> index 26b96191e9b3ca..ce54cfcecaa156 100644
-> --- a/fs/super.c
-> +++ b/fs/super.c
-> @@ -1443,6 +1443,7 @@ static void fs_bdev_mark_dead(struct block_device *bdev, bool surprise)
->  
->  	/* bd_holder_lock ensures that the sb isn't freed */
->  	lockdep_assert_held(&bdev->bd_holder_lock);
-> +	lockdep_assert_not_held(&bdev->bd_disk->open_mutex);
->  
->  	if (!super_lock_shared_active(sb))
->  		return;
-> @@ -1462,6 +1463,7 @@ static void fs_bdev_sync(struct block_device *bdev)
->  	struct super_block *sb = bdev->bd_holder;
->  
->  	lockdep_assert_held(&bdev->bd_holder_lock);
-> +	lockdep_assert_not_held(&bdev->bd_disk->open_mutex);
->  
->  	if (!super_lock_shared_active(sb))
->  		return;
-> -- 
-> 2.39.2
-> 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+With Best Regards,
+Andy Shevchenko
+
+
 
