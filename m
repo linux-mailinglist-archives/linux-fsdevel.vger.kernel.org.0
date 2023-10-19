@@ -1,90 +1,74 @@
-Return-Path: <linux-fsdevel+bounces-762-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-763-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D733C7CFD0C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 16:40:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0D0A7CFD13
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 16:41:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5CC90B21348
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 14:40:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A9C2282210
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 14:41:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2733C2FE09;
-	Thu, 19 Oct 2023 14:40:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B42472FE1B;
+	Thu, 19 Oct 2023 14:41:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vtKaJo3f";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7AlKnQYe"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="s3/NkTWM";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="F1DHfkkM"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A21B12FE07
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 14:40:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29D732FE09
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 14:41:18 +0000 (UTC)
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A551118A;
-	Thu, 19 Oct 2023 07:40:31 -0700 (PDT)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E9E710D3;
+	Thu, 19 Oct 2023 07:41:15 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 45432210EA;
-	Thu, 19 Oct 2023 14:40:27 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 45DEF21A60;
+	Thu, 19 Oct 2023 14:41:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1697726427; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1697726473; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=7yWQ++yj3meNsM51OVma38ZOF7XpIW69AOySyO8IM0Y=;
-	b=vtKaJo3fU0v4xPgYDe3J7ys1BQREGEf71+ieyhVmED1/RjuNNKtJulS7OGBBisg5hLbKwy
-	ZA0lthUkbKlF65yIKXvYhAqD/0M49B1onOR1kCl/q+smWRojv6bwQI9NykPnt0qt+Abxgl
-	n1NhmednkL6THWFZsZHk4sG9dhtqIcA=
+	bh=giUtDebGC6NH2VxVmcfSKNOmZ8T50HmB+uU52TrCw5s=;
+	b=s3/NkTWMWcdC2YaKJScEK9z2CwoGs+34LvlukdkIbgzgmhJOypbE1F5tQu1CgN+e/SODY+
+	yVM1R8TakTBTpd8Kfu2OTLsyN9BAX1DSvHWkTxLaygzz1TlA58landeXMwKmdDwBVUfQ+z
+	+SOND7nf19WVZHBtjO0mIIyC6qnAt2k=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1697726427;
+	s=susede2_ed25519; t=1697726473;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=7yWQ++yj3meNsM51OVma38ZOF7XpIW69AOySyO8IM0Y=;
-	b=7AlKnQYeH7OHkMWPmlNWOw67HQ58182uZcd10gyz9w1+M4PK6XdoD2EETLu+2QhbSFd6n4
-	OP0rnqgXXDVJQVBQ==
+	bh=giUtDebGC6NH2VxVmcfSKNOmZ8T50HmB+uU52TrCw5s=;
+	b=F1DHfkkMuiKq0YZfVvVhiGNdbjG3MziNMFeVI2cSYkIflSvXsylQXbT11Hg7y2BdnUJC+S
+	cr2n8RuwMwCA3zCQ==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
 	(No client certificate requested)
-	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 31C541357F;
-	Thu, 19 Oct 2023 14:40:27 +0000 (UTC)
+	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 36F5E1357F;
+	Thu, 19 Oct 2023 14:41:13 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
 	by imap2.suse-dmz.suse.de with ESMTPSA
-	id t6wbDNs/MWV8CQAAMHmgww
-	(envelope-from <jack@suse.cz>); Thu, 19 Oct 2023 14:40:27 +0000
+	id 6ZJjDQlAMWXcCQAAMHmgww
+	(envelope-from <jack@suse.cz>); Thu, 19 Oct 2023 14:41:13 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 9F12CA06B0; Thu, 19 Oct 2023 16:40:26 +0200 (CEST)
-Date: Thu, 19 Oct 2023 16:40:26 +0200
+	id BA13FA06B0; Thu, 19 Oct 2023 16:41:12 +0200 (CEST)
+Date: Thu, 19 Oct 2023 16:41:12 +0200
 From: Jan Kara <jack@suse.cz>
 To: Amir Goldstein <amir73il@gmail.com>
 Cc: Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>,
 	Chuck Lever <chuck.lever@oracle.com>,
 	Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-	David Sterba <dsterba@suse.com>,
-	Luis de Bethencourt <luisbg@kernel.org>,
-	Salah Triki <salah.triki@gmail.com>, Gao Xiang <xiang@kernel.org>,
-	Chao Yu <chao@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	Jaegeuk Kim <jaegeuk@kernel.org>,
-	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-	Dave Kleikamp <shaggy@kernel.org>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Richard Weinberger <richard@nod.at>,
-	Anton Altaparmakov <anton@tuxera.com>,
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-	Steve French <sfrench@samba.org>,
-	Phillip Lougher <phillip@squashfs.org.uk>,
-	Evgeniy Dushistov <dushistov@mail.ru>
-Subject: Re: [PATCH 3/5] exportfs: make ->encode_fh() a mandatory method for
- NFS export
-Message-ID: <20231019144026.2qypsldg5hlca5zc@quack3>
+	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org
+Subject: Re: [PATCH 4/5] exportfs: define FILEID_INO64_GEN* file handle types
+Message-ID: <20231019144112.anbgoixxe2aol5s6@quack3>
 References: <20231018100000.2453965-1-amir73il@gmail.com>
- <20231018100000.2453965-4-amir73il@gmail.com>
+ <20231018100000.2453965-5-amir73il@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -93,72 +77,116 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231018100000.2453965-4-amir73il@gmail.com>
+In-Reply-To: <20231018100000.2453965-5-amir73il@gmail.com>
 Authentication-Results: smtp-out1.suse.de;
 	none
 X-Spam-Level: 
-X-Spam-Score: -2.77
-X-Spamd-Result: default: False [-2.77 / 50.00];
+X-Spam-Score: -6.60
+X-Spamd-Result: default: False [-6.60 / 50.00];
 	 ARC_NA(0.00)[];
 	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 BAYES_HAM(-0.67)[82.91%];
 	 FROM_HAS_DN(0.00)[];
 	 TO_DN_SOME(0.00)[];
 	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com,mail.ru];
-	 TAGGED_RCPT(0.00)[];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
 	 MIME_GOOD(-0.10)[text/plain];
 	 NEURAL_HAM_LONG(-3.00)[-1.000];
 	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	 NEURAL_HAM_SHORT(-1.00)[-1.000];
-	 RCPT_COUNT_TWELVE(0.00)[24];
+	 RCPT_COUNT_SEVEN(0.00)[7];
 	 FREEMAIL_TO(0.00)[gmail.com];
 	 FROM_EQ_ENVFROM(0.00)[];
 	 MIME_TRACE(0.00)[0:+];
 	 MID_RHS_NOT_FQDN(0.50)[];
 	 RCVD_COUNT_TWO(0.00)[2];
 	 RCVD_TLS_ALL(0.00)[];
-	 SUSPICIOUS_RECIPS(1.50)[];
-	 FREEMAIL_CC(0.00)[suse.cz,kernel.org,oracle.com,vger.kernel.org,suse.com,gmail.com,mit.edu,dilger.ca,mail.parknet.co.jp,infradead.org,nod.at,tuxera.com,paragon-software.com,samba.org,squashfs.org.uk,mail.ru]
+	 BAYES_HAM(-3.00)[100.00%]
 
-On Wed 18-10-23 12:59:58, Amir Goldstein wrote:
-> export_operations ->encode_fh() no longer has a default implementation to
-> encode FILEID_INO32_GEN* file handles.
+On Wed 18-10-23 12:59:59, Amir Goldstein wrote:
+> Similar to the common FILEID_INO32* file handle types, define common
+> FILEID_INO64* file handle types.
 > 
-> Rename the default helper for encoding FILEID_INO32_GEN* file handles to
-> generic_encode_ino32_fh() and convert the filesystems that used the
-> default implementation to use the generic helper explicitly.
+> The type values of FILEID_INO64_GEN and FILEID_INO64_GEN_PARENT are the
+> values returned by fuse and xfs for 64bit ino encoded file handle types.
 > 
-> This is a step towards allowing filesystems to encode non-decodeable file
-> handles for fanotify without having to implement any export_operations.
+> Note that these type value are filesystem specific and they do not define
+> a universal file handle format, for example:
+> fuse encodes FILEID_INO64_GEN as [ino-hi32,ino-lo32,gen] and xfs encodes
+> FILEID_INO64_GEN as [hostr-order-ino64,gen] (a.k.a xfs_fid64).
+> 
+> The FILEID_INO64_GEN fhandle type is going to be used for file ids for
+> fanotify from filesystems that do not support NFS export.
 > 
 > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 
-Just one typo cleanup. Also I agree we need a "nop" variant of
-generic_encode_ino32_fh() or move this to fs/libfs.c like e.g.
-generic_fh_to_dentry().
+Yeah, better than the plain numbers. Feel free to add:
 
-> diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesystems/porting.rst
-> index 4d05b9862451..197ef78a5014 100644
-> --- a/Documentation/filesystems/porting.rst
-> +++ b/Documentation/filesystems/porting.rst
-> @@ -1045,3 +1045,12 @@ filesystem type is now moved to a later point when the devices are closed:
->  As this is a VFS level change it has no practical consequences for filesystems
->  other than that all of them must use one of the provided kill_litter_super(),
->  kill_anon_super(), or kill_block_super() helpers.
-> +
-> +---
-> +
-> +**mandatory**
-> +
-> +export_operations ->encode_fh() no longer has a default implementation to
-> +encode FILEID_INO32_GEN* file handles.
-> +Fillesystems that used the default implementation may use the generic helper
-   ^^^ Filesystems
-
-> +generic_encode_ino32_fh() explicitly.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
 								Honza
+
+> ---
+>  fs/fuse/inode.c          |  7 ++++---
+>  include/linux/exportfs.h | 11 +++++++++++
+>  2 files changed, 15 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> index 2e4eb7cf26fb..e63f966698a5 100644
+> --- a/fs/fuse/inode.c
+> +++ b/fs/fuse/inode.c
+> @@ -1002,7 +1002,7 @@ static int fuse_encode_fh(struct inode *inode, u32 *fh, int *max_len,
+>  	}
+>  
+>  	*max_len = len;
+> -	return parent ? 0x82 : 0x81;
+> +	return parent ? FILEID_INO64_GEN_PARENT : FILEID_INO64_GEN;
+>  }
+>  
+>  static struct dentry *fuse_fh_to_dentry(struct super_block *sb,
+> @@ -1010,7 +1010,8 @@ static struct dentry *fuse_fh_to_dentry(struct super_block *sb,
+>  {
+>  	struct fuse_inode_handle handle;
+>  
+> -	if ((fh_type != 0x81 && fh_type != 0x82) || fh_len < 3)
+> +	if ((fh_type != FILEID_INO64_GEN &&
+> +	     fh_type != FILEID_INO64_GEN_PARENT) || fh_len < 3)
+>  		return NULL;
+>  
+>  	handle.nodeid = (u64) fid->raw[0] << 32;
+> @@ -1024,7 +1025,7 @@ static struct dentry *fuse_fh_to_parent(struct super_block *sb,
+>  {
+>  	struct fuse_inode_handle parent;
+>  
+> -	if (fh_type != 0x82 || fh_len < 6)
+> +	if (fh_type != FILEID_INO64_GEN_PARENT || fh_len < 6)
+>  		return NULL;
+>  
+>  	parent.nodeid = (u64) fid->raw[3] << 32;
+> diff --git a/include/linux/exportfs.h b/include/linux/exportfs.h
+> index 6b6e01321405..21eeb9f6bdbd 100644
+> --- a/include/linux/exportfs.h
+> +++ b/include/linux/exportfs.h
+> @@ -98,6 +98,17 @@ enum fid_type {
+>  	 */
+>  	FILEID_FAT_WITH_PARENT = 0x72,
+>  
+> +	/*
+> +	 * 64 bit inode number, 32 bit generation number.
+> +	 */
+> +	FILEID_INO64_GEN = 0x81,
+> +
+> +	/*
+> +	 * 64 bit inode number, 32 bit generation number,
+> +	 * 64 bit parent inode number, 32 bit parent generation.
+> +	 */
+> +	FILEID_INO64_GEN_PARENT = 0x82,
+> +
+>  	/*
+>  	 * 128 bit child FID (struct lu_fid)
+>  	 * 128 bit parent FID (struct lu_fid)
+> -- 
+> 2.34.1
+> 
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR
