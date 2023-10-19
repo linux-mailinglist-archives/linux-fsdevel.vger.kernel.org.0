@@ -1,185 +1,837 @@
-Return-Path: <linux-fsdevel+bounces-801-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-802-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D69537D055F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 01:23:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B2177D0592
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 01:54:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A93428200E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 23:23:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F8551C20E61
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 23:54:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D9A3450DD;
-	Thu, 19 Oct 2023 23:23:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0BB747358;
+	Thu, 19 Oct 2023 23:54:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P/IRaJFF"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lXiqtN87"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A640A19440;
-	Thu, 19 Oct 2023 23:23:49 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.100])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F346C124;
-	Thu, 19 Oct 2023 16:23:47 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E3AF321AA;
+	Thu, 19 Oct 2023 23:54:47 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.43])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 640A211D;
+	Thu, 19 Oct 2023 16:54:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1697757828; x=1729293828;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=9q51xMKpOqTNxKPj3WYQ7KS0PEq3Na0ag+ZZZWy3hE8=;
-  b=P/IRaJFF9QIIqh+xYGY9410fwNNhJxiptjiooJCEqshetptWe4MfbnIB
-   8ZKbf2zzmI+wZDaJYf/Nr+BHxgQcVWHoIqyt2fkPJAxkBzVhOEc7wxox8
-   h9wwwQImo6+1kWEiBwEpn8M8dxqj2pJ8+4pL70+wG38FepMReP3fc01UZ
-   AUr+t7IlchdadY/02aajLBi9gFfGfpX7qWAnRg5mwosOVUwB80lE2Cwdw
-   NX39utTtxkKF7Y1z9A/5IFq+axfZ/cSyAtHyuHlKEBLAY+Wt0N/B3bu+6
-   G8D73uadcrkVXxRqJN3nUoSu2tV6pyq5G4H/ZiLJSKWM5QuJZiyAB1yyQ
+  t=1697759682; x=1729295682;
+  h=date:from:to:cc:subject:message-id;
+  bh=kr+mV+XO4hD5EM+tzWdP00/WC64+4ANwDEniagGeMjw=;
+  b=lXiqtN87OareHnCp7ypfd9qJFUlRTGZc2Tqc4iF93xv7ogXW6QnfdSOK
+   xVWAjN1xnq5/bwvFD5Ts2XhhrO/9sq9FgDaZZWhgrYVwlRnku+OsiWjR3
+   dI7/E2QBlIFBM6XIrOh8Jwyds3voFOkKbBDqikbhirLtonWdfmSWyCmh9
+   /tx3tswpm7qYa4iXjwVvU/4WX2iavLb9sz9FoRcwIgyGG9NpQNqGErW9u
+   HT3upXP2m/d5e5VcNfhGDQD6DlIqS0eod1DIfAc1ZdKu+IvySk4+551bl
+   cVY991U2SmI/nITCyQ0XN3iqOz17bfS7BgOVDmaU7cIEoCK7Ehx5BqMYD
    Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10868"; a="452868816"
+X-IronPort-AV: E=McAfee;i="6600,9927,10868"; a="472620319"
 X-IronPort-AV: E=Sophos;i="6.03,238,1694761200"; 
-   d="scan'208";a="452868816"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2023 16:23:45 -0700
+   d="scan'208";a="472620319"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2023 16:54:41 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10868"; a="847881606"
+X-IronPort-AV: E=McAfee;i="6600,9927,10868"; a="1088548687"
 X-IronPort-AV: E=Sophos;i="6.03,238,1694761200"; 
-   d="scan'208";a="847881606"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by FMSMGA003.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 19 Oct 2023 16:23:45 -0700
-Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.32; Thu, 19 Oct 2023 16:23:44 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.32; Thu, 19 Oct 2023 16:23:44 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.32 via Frontend Transport; Thu, 19 Oct 2023 16:23:44 -0700
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.101)
- by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.32; Thu, 19 Oct 2023 16:23:43 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Q8ZgWbJSbSwqiy+GL+g8fKs3bGkmy2xIa6keCMKX0DFi0FrZ7znhndv2d3oRwARajkLACUfnFKG2HrwzTXLzhb2ietLqsT3H6ScayVEwW0iTPwqpDz71UDKZ/eLTUaXfIi3TkUDhsEE/Edhlmfg2GcYjc+s0FWugw+KX5XUpj41KxwkgQDaWnwdi4QoXme1XFi25ryJZsn5xLzEukE4TFtehAnbFIDwxrnAnvaxuXLDkr2gpG40QtAeceEuU4Cvx2GL/wSkbxmJoTsOPUqK4pZpxj//yxj6NtXWC3zRS8R/pdLjrtkmhRlzjBXP/H0eh5gDjjeZ9/IhzexJfnNlhTg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4AIT6Mw5NE+RWeerLeDVpBI6GsIjM16lJKQz97bQEqI=;
- b=VyqpcuEC3u1Jqvf+NYoqvBX8p/PYy3PSl14NVTaS1Jfclcq/abwnL4sxY5v5sDT7P7YQ2AfH6Q0WTPsm54FDdQtn2styVSe0EMzYQapb0U5FojLzbbA1tO3ApHsrqKGgaig2OX98lg/nxLVtnvcUsBk8NcscdXgFZPcaE4LbmCFOekdDK01sW/6eThV4xtQygy4oIHdCKsoyrQLo7gYtJiCLNHMalpKaropl73hShDz/EKNKkQD6UU+SqhSWkiD0psAn6qvEXyVXyucv0f7Isnx0MFhV32oIWFTVZHspUfxOGaLWqt2NgusFA7XINcg4XZ1G5iQIDB3mwyCKwo+ObQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BL0PR11MB2995.namprd11.prod.outlook.com (2603:10b6:208:7a::28)
- by BN9PR11MB5545.namprd11.prod.outlook.com (2603:10b6:408:102::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6907.24; Thu, 19 Oct
- 2023 23:23:42 +0000
-Received: from BL0PR11MB2995.namprd11.prod.outlook.com
- ([fe80::f64:17c0:d3ab:196]) by BL0PR11MB2995.namprd11.prod.outlook.com
- ([fe80::f64:17c0:d3ab:196%7]) with mapi id 15.20.6907.022; Thu, 19 Oct 2023
- 23:23:41 +0000
-Date: Fri, 20 Oct 2023 07:23:31 +0800
-From: Philip Li <philip.li@intel.com>
-To: Heiko Carstens <hca@linux.ibm.com>
-CC: kernel test robot <lkp@intel.com>, Andrew Morton
-	<akpm@linux-foundation.org>, Linux Memory Management List
-	<linux-mm@kvack.org>, <amd-gfx@lists.freedesktop.org>, <kvm@vger.kernel.org>,
-	<linux-arch@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-	<linux-fsdevel@vger.kernel.org>, <linux-rockchip@lists.infradead.org>,
-	<linux-s390@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
-	<linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [linux-next:master] BUILD REGRESSION
- 2dac75696c6da3c848daa118a729827541c89d33
-Message-ID: <ZTG6c3E7ti1uFI5y@rli9-mobl>
-References: <202310190456.pryB092r-lkp@intel.com>
- <20231019153205.9160-A-hca@linux.ibm.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20231019153205.9160-A-hca@linux.ibm.com>
-X-ClientProxiedBy: SG2PR04CA0160.apcprd04.prod.outlook.com (2603:1096:4::22)
- To BL0PR11MB2995.namprd11.prod.outlook.com (2603:10b6:208:7a::28)
+   d="scan'208";a="1088548687"
+Received: from lkp-server01.sh.intel.com (HELO 8917679a5d3e) ([10.239.97.150])
+  by fmsmga005.fm.intel.com with ESMTP; 19 Oct 2023 16:54:35 -0700
+Received: from kbuild by 8917679a5d3e with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1qtcqX-0002jN-14;
+	Thu, 19 Oct 2023 23:54:33 +0000
+Date: Fri, 20 Oct 2023 07:54:25 +0800
+From: kernel test robot <lkp@intel.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linux Memory Management List <linux-mm@kvack.org>,
+ amd-gfx@lists.freedesktop.org, linux-arch@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org,
+ linux-m68k@lists.linux-m68k.org, linux-s390@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
+ sparclinux@vger.kernel.org
+Subject: [linux-next:master] BUILD REGRESSION
+ 4230ea146b1e64628f11e44290bb4008e391bc24
+Message-ID: <202310200707.piSzZcdi-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL0PR11MB2995:EE_|BN9PR11MB5545:EE_
-X-MS-Office365-Filtering-Correlation-Id: bfe60795-c231-43ea-4313-08dbd0fa6e3d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: vbiZ3soXsj/7SRZTahePHso3lcaLUhJt+sPcDWpytqAfgh6XFLXu//mBi/oATw9K6n/CVFIneiTit803btRdxjmYWZ7jDkusm65wj+BKJMNMaUt96Yj6qgMThFhyCUckdWo5rWLiQ7BfNQw3gbtSi+4UUme0bpV61YI2zlDwia7LKKbAuqz8OhFlrLh1y9ZMyYqOp4q8ec/H2BmATXTg6F+rMv/T9PoC9AcMPQBjIPab7x8r/ngjsaZ0BfZLF4oG6S9bBrdnkdndJDDgzWcjyhiJBlqNWiXZoyOo3CmSe7SJhxbJ3h28gBEzudSdQGTrx2srL9YUk5PFrAmdYds/o5b1KWw0ycRf0ZZZ8ghnN4n3Lz3YVeHXKDzLO5snS+TLt1RO30AwSAFM699KBgfHqrQF4DTQlGzUIDXyeeleRNbEiBCagpAxURxaBtvwzAe0WzW+HhuBrEmezZTW6PqAo6ksXwDAIBDvC6eioK41JziFMAw7b52Zi5Ol1IYFgXQHqFIGa/prXned1fdOpdORRLJmJcOGTddVbyP3k94xEK4ZZaHjJiH/m7j1UwtCEMxI
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL0PR11MB2995.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7916004)(346002)(366004)(396003)(39860400002)(136003)(376002)(230922051799003)(186009)(451199024)(64100799003)(1800799009)(82960400001)(26005)(38100700002)(41300700001)(83380400001)(8676002)(86362001)(8936002)(66556008)(54906003)(7416002)(66946007)(4326008)(316002)(2906002)(44832011)(5660300002)(6916009)(66476007)(6486002)(6506007)(478600001)(6666004)(6512007)(9686003)(33716001);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?bi6TRHk/GbJtCdVWJf46sJDmbNgkR6sCSHu7UFZkpEAFl08JDR5WeauF+q8z?=
- =?us-ascii?Q?fi+qPjcDpR7xvwenjH0Qm8E18NJ5owvPt4hcaYh+SSdDF5HGnjya/wXdmv2g?=
- =?us-ascii?Q?2Xzwr1e4GwST3H2cJkK3kLkyq+k+mSAd/KaZkmteuPl5MKmn2lVqestKn8o0?=
- =?us-ascii?Q?mbebC4w2+5W7gS8Qft/QIVbzaQwfNXxPcKZ9hml47s0C3G7aobYryaVzsqRo?=
- =?us-ascii?Q?ujnn0M+/no1rFb7e1W/jsaEGmJnK+M3P/AcjHpGImVoFJ59yH+PANmO3cSyl?=
- =?us-ascii?Q?Ic1rXi2IlkuW+u8q/j2mMkx/nYM83qY0HB1TFEix/RlTItcpIYqrBKr6hvAQ?=
- =?us-ascii?Q?nq8rH+O92LigwjyhRmGaJJm7QbLDZMqFRs3FSGalzCa4kO07bOf0fZgtgkFA?=
- =?us-ascii?Q?aGMeabfs//arb1S9jDUhA0V+eoSwM+WAhJ7qjZZzYNzrIrfAwgEbayC7fvoZ?=
- =?us-ascii?Q?jsJrYuqx46+xXlyq6nIN+v7hXpRhBjX+Kp7RF/Vx2OVLeIehrwinkqQ1y/P2?=
- =?us-ascii?Q?sMi/EZrfBv8nRxqOvTIO6b3hFL/guQMleGdAzX3duBQkZCUOnlnsaAzMjCU+?=
- =?us-ascii?Q?CvkH/EWkyhXwEZB4xKBzqu9OJNUSclPR/KvKPtYSDPM1pu8yofb6qKBNHNtY?=
- =?us-ascii?Q?uPg4XnRZZhjoBHtjT1luqh1ULOg/KeqM80A6IVH3/h3TRYKJKbjURueDOrJI?=
- =?us-ascii?Q?wjdLKyK5ylZS/5sjExpYUmCA5cpWNhlmnjyeRaEBTxlEqfYaBLZ9m0OTrqWl?=
- =?us-ascii?Q?qVck8Xn1qKhV0jihXIEX87JC1yprMtWna7QCbFf7azq3AOnrPK+uT9hrAq17?=
- =?us-ascii?Q?8sLrt+tey98qa16+2o6C7+c0RCBMwY07TRuUg3WeM27Agd5TLWak4V8IqP1W?=
- =?us-ascii?Q?VXJ0mYrJL41ZwBdVqhEqsB/7fMZ86LQLu78kVOoN1ZjCUAoQVGaC7DOLG9Aj?=
- =?us-ascii?Q?QmnypCT/7dS92Mz4bUU0avzFI8E4YKn+IHE9VYLweMneQuN/1G+PQ7dUBUvz?=
- =?us-ascii?Q?mI/Z6SKkTlAknIdTFyveEYttapEyvgnsIXI9WR9s4Pl1SS7vrSxVwDOGrKr4?=
- =?us-ascii?Q?hXmzUsVwbpT5NI/y72eU/+OpQzcjWZvbDlCYQhORMzYMMRqfKJb1uY8Zv7tR?=
- =?us-ascii?Q?7dliELFPMLSIi4TcuynplqbePasj5vyQjxdaY1Lhl042F5C/Z4rT9r9ol0vY?=
- =?us-ascii?Q?pEMncbRMxKV0HM5t4VFYgC2Xvi7BpcCM8QA2eNcdwtOE9gZWhYGGEGjr9W8g?=
- =?us-ascii?Q?4SZP10F9s+PhtOWTvg0rUNU0wNe8U7ceN3WElKB2vh2S/m029fddaEVYvP/K?=
- =?us-ascii?Q?8wb/2Qjh/UMiK+tLMbGAQewibwe2hIhGZH1eDDKe39ATEwphLnplpN5LpkWE?=
- =?us-ascii?Q?dKV5Q+58fGma+n6cWZnPISIniu53twpHmHoJZWdVPfxoR3cwJX42TbOcW+hJ?=
- =?us-ascii?Q?srPDc6C6CB94jRddhNEwJaXcLS3yU7vStuGY2J0Cx4MnvyP9mMbDagnvawKZ?=
- =?us-ascii?Q?AxF9Ikh3xoBod/sRqrQgJXxTgXZxTeC3bERd/9pQo1h2ZL8lUDyQ6yQi/neU?=
- =?us-ascii?Q?1VFJffn2fyjOfE55IS3Pp4vMlTq7PFBf1tvtYrKH?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: bfe60795-c231-43ea-4313-08dbd0fa6e3d
-X-MS-Exchange-CrossTenant-AuthSource: BL0PR11MB2995.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Oct 2023 23:23:41.6688
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: pryZnC4Xcowf2QHpafKlLxt8fZRJcgkqKD30rGADyKy59+MtQWGLP6z0HNt19oo2ZIhnP8Gv+JkaJfC3gIh7Pw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN9PR11MB5545
-X-OriginatorOrg: intel.com
 
-On Thu, Oct 19, 2023 at 05:32:05PM +0200, Heiko Carstens wrote:
-> On Thu, Oct 19, 2023 at 04:07:35AM +0800, kernel test robot wrote:
-> > arch/s390/include/asm/ctlreg.h:129:9: warning: array subscript 0 is outside array bounds of 'struct ctlreg[0]' [-Warray-bounds=]
-> > arch/s390/include/asm/ctlreg.h:80:9: warning: array subscript 0 is outside array bounds of 'struct ctlreg[0]' [-Warray-bounds=]
-> ...
-> > |-- s390-defconfig
-> > |   `-- arch-s390-include-asm-ctlreg.h:warning:array-subscript-is-outside-array-bounds-of-struct-ctlreg
-> ...
-> > s390                                defconfig   gcc  
-> 
-> I'm wondering how this warning can appear in the builds. array-bounds
-> warnings are explicitly disabled, see init/Kconfig: CC_NO_ARRAY_BOUNDS. And
-> as expected, if I compile the kernel with gcc, defconfig, and with or
-> without W=1 the option -Wno-array-bounds is passed to the compiler.
-> 
-> And also as expected I do not see the above warnings.
-> 
-> So something is quite odd here.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
+branch HEAD: 4230ea146b1e64628f11e44290bb4008e391bc24  Add linux-next specific files for 20231019
 
-Sorry about this Heiko, this is a bug in the bot that it wrongly ignores
-the CC_NO_ARRAY_BOUNDS config and always test with -Warray-bounds. We
-will fix this asap.
+Error/Warning reports:
 
-> 
+https://lore.kernel.org/oe-kbuild-all/202309200103.grXWDKTx-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202310171905.azfrKoID-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202310181800.Bh66q0T1-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202310181854.pKtHd7fD-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202310182303.V3tTgNQZ-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202310190116.5JjceoZJ-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202310190741.mbPtQRpD-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202310190833.oIL4wrlx-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202310191301.QrQ2ba0o-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202310200550.p46bE4w7-lkp@intel.com
+
+Error/Warning: (recently discovered and may have been fixed)
+
+arch/m68k/include/asm/raw_io.h:20:18: warning: array subscript 0 is outside array bounds of 'const volatile u8[0]' {aka 'const volatile unsigned char[]'} [-Warray-bounds=]
+arch/s390/include/asm/ctlreg.h:129:9: warning: array subscript 0 is outside array bounds of 'struct ctlreg[0]' [-Warray-bounds=]
+arch/sparc/include/asm/string.h:15:25: warning: '__builtin_memcpy' offset [0, 2] is out of the bounds [0, 0] [-Warray-bounds=]
+drivers/gpu/drm/amd/amdgpu/../pm/swsmu/smu13/smu_v13_0_6_ppt.c:286:52: warning: '%s' directive output may be truncated writing up to 29 bytes into a region of size 23 [-Wformat-truncation=]
+drivers/gpu/drm/amd/amdgpu/../pm/swsmu/smu14/smu_v14_0.c:72:52: warning: '%s' directive output may be truncated writing up to 29 bytes into a region of size 23 [-Wformat-truncation=]
+drivers/net/wireless/mediatek/mt76/mt7996/mcu.c:483:61: warning: array subscript <unknown> is outside array bounds of 'struct <anonymous>[0]' [-Warray-bounds=]
+fs/bcachefs/btree_trans_commit.c:702:35: warning: array subscript 0 is outside the bounds of an interior zero-length array 'struct bkey_i[0]' [-Wzero-length-bounds]
+fs/bcachefs/btree_update_interior.c:2414:28: warning: array subscript 0 is outside the bounds of an interior zero-length array 'struct bkey_i[0]' [-Wzero-length-bounds]
+fs/bcachefs/btree_update_interior.h:274:50: warning: array subscript 0 is outside the bounds of an interior zero-length array 'struct bkey_packed[0]' [-Wzero-length-bounds]
+fs/bcachefs/extents.h:55:26: warning: array subscript 'const union bch_extent_entry[0]' is partly outside array bounds of 'struct bch_extent_stripe_ptr[1]' [-Warray-bounds=]
+fs/bcachefs/journal_seq_blacklist.c:110:18: warning: array subscript 'i' is outside the bounds of an interior zero-length array 'struct journal_seq_blacklist_entry[0]' [-Wzero-length-bounds]
+fs/bcachefs/journal_seq_blacklist.c:148:26: warning: array subscript <unknown> is outside array bounds of 'struct journal_seq_blacklist_table_entry[0]' [-Warray-bounds=]
+fs/bcachefs/journal_seq_blacklist.c:176:27: warning: array subscript i is outside array bounds of 'struct journal_seq_blacklist_table_entry[0]' [-Warray-bounds=]
+fs/bcachefs/journal_seq_blacklist.c:176:64: warning: array subscript '(unsigned int) _33 + 4294967295' is outside the bounds of an interior zero-length array 'struct journal_seq_blacklist_entry[0]' [-Wzero-length-bounds]
+fs/bcachefs/journal_seq_blacklist.c:53:34: warning: array subscript 268435454 is outside the bounds of an interior zero-length array 'struct journal_seq_blacklist_entry[0]' [-Wzero-length-bounds]
+fs/bcachefs/journal_seq_blacklist.c:53:34: warning: array subscript 4294967294 is outside the bounds of an interior zero-length array 'struct journal_seq_blacklist_entry[0]' [-Wzero-length-bounds]
+fs/bcachefs/journal_seq_blacklist.h:9:56: warning: array subscript 0 is outside the bounds of an interior zero-length array 'struct journal_seq_blacklist_entry[0]' [-Wzero-length-bounds]
+fs/bcachefs/recovery.c:214:44: warning: array subscript 0 is outside the bounds of an interior zero-length array 'struct bkey_i[0]' [-Wzero-length-bounds]
+fs/bcachefs/snapshot.c:134:70: warning: array subscript <unknown> is outside array bounds of 'struct snapshot_t[0]' [-Warray-bounds=]
+fs/bcachefs/snapshot.c:168:16: warning: array subscript idx is outside array bounds of 'struct snapshot_t[0]' [-Warray-bounds=]
+fs/bcachefs/snapshot.h:36:16: warning: array subscript <unknown> is outside array bounds of 'struct snapshot_t[0]' [-Warray-bounds=]
+fs/bcachefs/snapshot.h:36:21: warning: array subscript <unknown> is outside array bounds of 'struct snapshot_t[0]' [-Warray-bounds=]
+fs/tracefs/event_inode.c:734:10: error: casting from randomized structure pointer type 'struct dentry *' to 'struct eventfs_inode *'
+include/asm-generic/rwonce.h:44:26: warning: array subscript 0 is outside array bounds of '__u8[0]' {aka 'unsigned char[]'} [-Warray-bounds=]
+include/asm-generic/rwonce.h:44:26: warning: array subscript 0 is outside array bounds of '__u8[0]' {aka 'unsigned char[]'} [-Warray-bounds]
+include/linux/fortify-string.h:57:33: warning: '__builtin_memcpy' offset [0, 2] is out of the bounds [0, 0] [-Warray-bounds=]
+include/linux/fortify-string.h:57:33: warning: '__builtin_memcpy' offset [0, 2] is out of the bounds [0, 0] [-Warray-bounds]
+net/bluetooth/hci_event.c:524:9: warning: 'memcpy' offset [0, 2] is out of the bounds [0, 0] [-Warray-bounds=]
+
+Unverified Error/Warning (likely false positive, please contact us if interested):
+
+Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml:
+Documentation/devicetree/bindings/mfd/qcom-pm8xxx.yaml:
+{standard input}:1212: Error: unknown .loc sub-directive `i'
+
+Error/Warning ids grouped by kconfigs:
+
+gcc_recent_errors
+|-- alpha-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-net-wireless-mediatek-mt76-mt7996-mcu.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-anonymous
+|   |-- fs-bcachefs-btree_trans_commit.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.h:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_packed
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-i-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-journal_seq_blacklist_entry
+|   |-- fs-bcachefs-recovery.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-idx-is-outside-array-bounds-of-struct-snapshot_t
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|   `-- fs-bcachefs-snapshot.h:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|-- alpha-defconfig
+|   `-- include-asm-generic-rwonce.h:warning:array-subscript-is-outside-array-bounds-of-__u8-aka-unsigned-char
+|-- arc-allmodconfig
+|   |-- drivers-net-wireless-mediatek-mt76-mt7996-mcu.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-anonymous
+|   |-- fs-bcachefs-btree_trans_commit.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.h:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_packed
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-i-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-journal_seq_blacklist_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-recovery.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-idx-is-outside-array-bounds-of-struct-snapshot_t
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|   `-- fs-bcachefs-snapshot.h:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|-- arc-allyesconfig
+|   |-- drivers-net-wireless-mediatek-mt76-mt7996-mcu.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-anonymous
+|   |-- fs-bcachefs-btree_trans_commit.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.h:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_packed
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-i-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-journal_seq_blacklist_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-recovery.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-idx-is-outside-array-bounds-of-struct-snapshot_t
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|   `-- fs-bcachefs-snapshot.h:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|-- arc-defconfig
+|   `-- include-asm-generic-rwonce.h:warning:array-subscript-is-outside-array-bounds-of-__u8-aka-unsigned-char
+|-- arm-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-net-wireless-mediatek-mt76-mt7996-mcu.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-anonymous
+|   |-- fs-bcachefs-btree_trans_commit.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.h:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_packed
+|   |-- fs-bcachefs-extents.h:warning:array-subscript-const-union-bch_extent_entry-is-partly-outside-array-bounds-of-struct-bch_extent_stripe_ptr
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-i-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-journal_seq_blacklist_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-recovery.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-idx-is-outside-array-bounds-of-struct-snapshot_t
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|   `-- fs-bcachefs-snapshot.h:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|-- arm-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-net-wireless-mediatek-mt76-mt7996-mcu.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-anonymous
+|   |-- fs-bcachefs-btree_trans_commit.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.h:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_packed
+|   |-- fs-bcachefs-extents.h:warning:array-subscript-const-union-bch_extent_entry-is-partly-outside-array-bounds-of-struct-bch_extent_stripe_ptr
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-i-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-journal_seq_blacklist_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-recovery.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-idx-is-outside-array-bounds-of-struct-snapshot_t
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|   `-- fs-bcachefs-snapshot.h:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|-- arm-randconfig-002-20231019
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   `-- include-linux-fortify-string.h:warning:__builtin_memcpy-offset-is-out-of-the-bounds
+|-- arm-randconfig-004-20231019
+|   `-- net-bluetooth-hci_event.c:warning:memcpy-offset-is-out-of-the-bounds
+|-- arm64-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-net-wireless-mediatek-mt76-mt7996-mcu.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-anonymous
+|   |-- fs-bcachefs-btree_trans_commit.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.h:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_packed
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-journal_seq_blacklist_entry
+|   |-- fs-bcachefs-recovery.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-idx-is-outside-array-bounds-of-struct-snapshot_t
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|   `-- fs-bcachefs-snapshot.h:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|-- arm64-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-net-wireless-mediatek-mt76-mt7996-mcu.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-anonymous
+|   |-- fs-bcachefs-btree_trans_commit.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.h:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_packed
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-journal_seq_blacklist_entry
+|   |-- fs-bcachefs-recovery.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-idx-is-outside-array-bounds-of-struct-snapshot_t
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|   `-- fs-bcachefs-snapshot.h:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|-- arm64-randconfig-003-20231019
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   `-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|-- csky-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-net-wireless-mediatek-mt76-mt7996-mcu.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-anonymous
+|   |-- fs-bcachefs-btree_trans_commit.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.h:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_packed
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-i-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-journal_seq_blacklist_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-recovery.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-idx-is-outside-array-bounds-of-struct-snapshot_t
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|   `-- fs-bcachefs-snapshot.h:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|-- csky-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-net-wireless-mediatek-mt76-mt7996-mcu.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-anonymous
+|   |-- fs-bcachefs-btree_trans_commit.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.h:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_packed
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-i-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-journal_seq_blacklist_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-recovery.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-idx-is-outside-array-bounds-of-struct-snapshot_t
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|   `-- fs-bcachefs-snapshot.h:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|-- i386-allmodconfig
+|   |-- fs-bcachefs-btree_trans_commit.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.h:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_packed
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-journal_seq_blacklist_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.h:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-journal_seq_blacklist_entry
+|   `-- fs-bcachefs-recovery.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|-- i386-allyesconfig
+|   |-- fs-bcachefs-btree_trans_commit.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.h:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_packed
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-journal_seq_blacklist_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.h:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-journal_seq_blacklist_entry
+|   `-- fs-bcachefs-recovery.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|-- i386-randconfig-006-20231019
+|   |-- include-asm-generic-rwonce.h:warning:array-subscript-is-outside-array-bounds-of-__u8-aka-unsigned-char
+|   `-- include-linux-fortify-string.h:warning:__builtin_memcpy-offset-is-out-of-the-bounds
+|-- i386-randconfig-011-20231019
+|   `-- include-linux-fortify-string.h:warning:__builtin_memcpy-offset-is-out-of-the-bounds
+|-- loongarch-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-net-wireless-mediatek-mt76-mt7996-mcu.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-anonymous
+|   |-- fs-bcachefs-btree_trans_commit.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.h:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_packed
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-i-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-journal_seq_blacklist_entry
+|   |-- fs-bcachefs-recovery.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-idx-is-outside-array-bounds-of-struct-snapshot_t
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|   `-- fs-bcachefs-snapshot.h:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|-- loongarch-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-net-wireless-mediatek-mt76-mt7996-mcu.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-anonymous
+|   |-- fs-bcachefs-btree_trans_commit.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.h:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_packed
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-i-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-journal_seq_blacklist_entry
+|   |-- fs-bcachefs-recovery.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-idx-is-outside-array-bounds-of-struct-snapshot_t
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|   `-- fs-bcachefs-snapshot.h:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|-- loongarch-defconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   `-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|-- loongarch-randconfig-001-20231019
+|   |-- Documentation-devicetree-bindings-mfd-qcom-pm8xxx.yaml:
+|   |-- Documentation-devicetree-bindings-mfd-qcom-tcsr.yaml:
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   `-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|-- loongarch-randconfig-002-20231019
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   `-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|-- m68k-allmodconfig
+|   |-- arch-m68k-include-asm-raw_io.h:warning:array-subscript-is-outside-array-bounds-of-const-volatile-u8-aka-const-volatile-unsigned-char
+|   |-- fs-bcachefs-btree_trans_commit.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.h:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_packed
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-i-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-journal_seq_blacklist_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-recovery.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-idx-is-outside-array-bounds-of-struct-snapshot_t
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|   `-- fs-bcachefs-snapshot.h:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|-- m68k-allyesconfig
+|   |-- arch-m68k-include-asm-raw_io.h:warning:array-subscript-is-outside-array-bounds-of-const-volatile-u8-aka-const-volatile-unsigned-char
+|   |-- fs-bcachefs-btree_trans_commit.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.h:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_packed
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-i-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-journal_seq_blacklist_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-recovery.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-idx-is-outside-array-bounds-of-struct-snapshot_t
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|   `-- fs-bcachefs-snapshot.h:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|-- microblaze-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-net-wireless-mediatek-mt76-mt7996-mcu.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-anonymous
+|   |-- fs-bcachefs-btree_trans_commit.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.h:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_packed
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-i-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-journal_seq_blacklist_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-recovery.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-idx-is-outside-array-bounds-of-struct-snapshot_t
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|   `-- fs-bcachefs-snapshot.h:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|-- microblaze-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-net-wireless-mediatek-mt76-mt7996-mcu.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-anonymous
+|   |-- fs-bcachefs-btree_trans_commit.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.h:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_packed
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-i-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-journal_seq_blacklist_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-recovery.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-idx-is-outside-array-bounds-of-struct-snapshot_t
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|   `-- fs-bcachefs-snapshot.h:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|-- microblaze-defconfig
+|   `-- include-asm-generic-rwonce.h:warning:array-subscript-is-outside-array-bounds-of-__u8-aka-unsigned-char
+|-- mips-allmodconfig
+|   |-- drivers-net-wireless-mediatek-mt76-mt7996-mcu.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-anonymous
+|   |-- fs-bcachefs-btree_trans_commit.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.h:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_packed
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-i-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-journal_seq_blacklist_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-recovery.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-idx-is-outside-array-bounds-of-struct-snapshot_t
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|   `-- fs-bcachefs-snapshot.h:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|-- mips-allyesconfig
+|   |-- drivers-net-wireless-mediatek-mt76-mt7996-mcu.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-anonymous
+|   |-- fs-bcachefs-btree_trans_commit.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.h:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_packed
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-i-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-journal_seq_blacklist_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-recovery.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-idx-is-outside-array-bounds-of-struct-snapshot_t
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|   `-- fs-bcachefs-snapshot.h:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|-- nios2-allmodconfig
+|   |-- fs-bcachefs-btree_trans_commit.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.h:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_packed
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-i-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-journal_seq_blacklist_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-recovery.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-idx-is-outside-array-bounds-of-struct-snapshot_t
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|   `-- fs-bcachefs-snapshot.h:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|-- nios2-allyesconfig
+|   |-- fs-bcachefs-btree_trans_commit.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.h:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_packed
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-i-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-journal_seq_blacklist_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-recovery.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-idx-is-outside-array-bounds-of-struct-snapshot_t
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|   `-- fs-bcachefs-snapshot.h:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|-- nios2-defconfig
+|   `-- include-asm-generic-rwonce.h:warning:array-subscript-is-outside-array-bounds-of-__u8-aka-unsigned-char
+|-- openrisc-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-net-wireless-mediatek-mt76-mt7996-mcu.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-anonymous
+|   |-- fs-bcachefs-btree_trans_commit.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.h:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_packed
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-i-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-journal_seq_blacklist_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-recovery.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-idx-is-outside-array-bounds-of-struct-snapshot_t
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|   `-- fs-bcachefs-snapshot.h:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|-- openrisc-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-net-wireless-mediatek-mt76-mt7996-mcu.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-anonymous
+|   |-- fs-bcachefs-btree_trans_commit.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.h:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_packed
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-i-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-journal_seq_blacklist_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-recovery.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-idx-is-outside-array-bounds-of-struct-snapshot_t
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|   `-- fs-bcachefs-snapshot.h:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|-- openrisc-defconfig
+|   `-- include-asm-generic-rwonce.h:warning:array-subscript-is-outside-array-bounds-of-__u8-aka-unsigned-char
+|-- parisc-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-net-wireless-mediatek-mt76-mt7996-mcu.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-anonymous
+|   |-- fs-bcachefs-btree_trans_commit.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.h:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_packed
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-journal_seq_blacklist_entry
+|   |-- fs-bcachefs-recovery.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-idx-is-outside-array-bounds-of-struct-snapshot_t
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|   `-- fs-bcachefs-snapshot.h:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|-- parisc-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-net-wireless-mediatek-mt76-mt7996-mcu.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-anonymous
+|   |-- fs-bcachefs-btree_trans_commit.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.h:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_packed
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-i-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-journal_seq_blacklist_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-recovery.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-idx-is-outside-array-bounds-of-struct-snapshot_t
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|   `-- fs-bcachefs-snapshot.h:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|-- parisc-randconfig-002-20231019
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   `-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|-- powerpc-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-net-wireless-mediatek-mt76-mt7996-mcu.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-anonymous
+|   |-- fs-bcachefs-btree_trans_commit.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.h:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_packed
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-i-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-journal_seq_blacklist_entry
+|   |-- fs-bcachefs-recovery.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-idx-is-outside-array-bounds-of-struct-snapshot_t
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|   `-- fs-bcachefs-snapshot.h:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|-- powerpc-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-net-wireless-mediatek-mt76-mt7996-mcu.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-anonymous
+|   |-- fs-bcachefs-btree_trans_commit.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.h:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_packed
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-i-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-journal_seq_blacklist_entry
+|   |-- fs-bcachefs-recovery.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-idx-is-outside-array-bounds-of-struct-snapshot_t
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|   `-- fs-bcachefs-snapshot.h:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|-- powerpc-randconfig-001-20231019
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   `-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|-- powerpc-randconfig-002-20231019
+|   `-- drivers-net-wireless-mediatek-mt76-mt7996-mcu.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-anonymous
+|-- powerpc64-randconfig-001-20231019
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   `-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|-- riscv-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-net-wireless-mediatek-mt76-mt7996-mcu.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-anonymous
+|   |-- fs-bcachefs-btree_trans_commit.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.h:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_packed
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-i-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-journal_seq_blacklist_entry
+|   |-- fs-bcachefs-recovery.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-idx-is-outside-array-bounds-of-struct-snapshot_t
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|   `-- fs-bcachefs-snapshot.h:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|-- riscv-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-net-wireless-mediatek-mt76-mt7996-mcu.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-anonymous
+|   |-- fs-bcachefs-btree_trans_commit.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.h:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_packed
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-i-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-journal_seq_blacklist_entry
+|   |-- fs-bcachefs-recovery.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-idx-is-outside-array-bounds-of-struct-snapshot_t
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|   `-- fs-bcachefs-snapshot.h:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|-- s390-allmodconfig
+|   |-- arch-s390-include-asm-ctlreg.h:warning:array-subscript-is-outside-array-bounds-of-struct-ctlreg
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- fs-bcachefs-btree_trans_commit.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.h:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_packed
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-i-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-journal_seq_blacklist_entry
+|   |-- fs-bcachefs-recovery.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-idx-is-outside-array-bounds-of-struct-snapshot_t
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|   `-- fs-bcachefs-snapshot.h:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|-- s390-allnoconfig
+|   `-- arch-s390-include-asm-ctlreg.h:warning:array-subscript-is-outside-array-bounds-of-struct-ctlreg
+|-- s390-allyesconfig
+|   |-- arch-s390-include-asm-ctlreg.h:warning:array-subscript-is-outside-array-bounds-of-struct-ctlreg
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- fs-bcachefs-btree_trans_commit.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.h:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_packed
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-i-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-journal_seq_blacklist_entry
+|   |-- fs-bcachefs-recovery.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-idx-is-outside-array-bounds-of-struct-snapshot_t
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|   `-- fs-bcachefs-snapshot.h:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|-- s390-defconfig
+|   `-- arch-s390-include-asm-ctlreg.h:warning:array-subscript-is-outside-array-bounds-of-struct-ctlreg
+|-- s390-randconfig-001-20231019
+|   `-- arch-s390-include-asm-ctlreg.h:warning:array-subscript-is-outside-array-bounds-of-struct-ctlreg
+|-- s390-randconfig-002-20231019
+|   |-- arch-s390-include-asm-ctlreg.h:warning:array-subscript-is-outside-array-bounds-of-struct-ctlreg
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   `-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|-- sh-allmodconfig
+|   |-- fs-bcachefs-btree_trans_commit.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.h:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_packed
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-i-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-journal_seq_blacklist_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-recovery.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-idx-is-outside-array-bounds-of-struct-snapshot_t
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|   `-- fs-bcachefs-snapshot.h:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|-- sh-allyesconfig
+|   |-- fs-bcachefs-btree_trans_commit.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.h:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_packed
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-i-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-journal_seq_blacklist_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-recovery.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-idx-is-outside-array-bounds-of-struct-snapshot_t
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|   `-- fs-bcachefs-snapshot.h:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|-- sh-randconfig-r003-20221002
+|   `-- standard-input:Error:unknown-.loc-sub-directive-i
+|-- sparc-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-net-wireless-mediatek-mt76-mt7996-mcu.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-anonymous
+|   |-- fs-bcachefs-btree_trans_commit.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.h:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_packed
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-i-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-journal_seq_blacklist_entry
+|   |-- fs-bcachefs-recovery.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-idx-is-outside-array-bounds-of-struct-snapshot_t
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|   `-- fs-bcachefs-snapshot.h:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|-- sparc-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-net-wireless-mediatek-mt76-mt7996-mcu.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-anonymous
+|   |-- fs-bcachefs-btree_trans_commit.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.h:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_packed
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-i-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-journal_seq_blacklist_entry
+|   |-- fs-bcachefs-recovery.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-idx-is-outside-array-bounds-of-struct-snapshot_t
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|   `-- fs-bcachefs-snapshot.h:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|-- sparc-randconfig-001-20231019
+|   `-- arch-sparc-include-asm-string.h:warning:__builtin_memcpy-offset-is-out-of-the-bounds
+|-- sparc64-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-net-wireless-mediatek-mt76-mt7996-mcu.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-anonymous
+|   |-- fs-bcachefs-btree_trans_commit.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.h:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_packed
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-i-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-journal_seq_blacklist_entry
+|   |-- fs-bcachefs-recovery.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-idx-is-outside-array-bounds-of-struct-snapshot_t
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|   `-- fs-bcachefs-snapshot.h:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|-- sparc64-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-net-wireless-mediatek-mt76-mt7996-mcu.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-anonymous
+|   |-- fs-bcachefs-btree_trans_commit.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.h:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_packed
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-i-is-outside-array-bounds-of-struct-journal_seq_blacklist_table_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-journal_seq_blacklist_entry
+|   |-- fs-bcachefs-recovery.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-idx-is-outside-array-bounds-of-struct-snapshot_t
+|   |-- fs-bcachefs-snapshot.c:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|   `-- fs-bcachefs-snapshot.h:warning:array-subscript-unknown-is-outside-array-bounds-of-struct-snapshot_t
+|-- x86_64-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   |-- fs-bcachefs-btree_trans_commit.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|   |-- fs-bcachefs-btree_update_interior.h:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_packed
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-(unsigned-int)-_33-is-outside-the-bounds-of-an-interior-zero-length-array-struct-journal_seq_blacklist_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-i-is-outside-the-bounds-of-an-interior-zero-length-array-struct-journal_seq_blacklist_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-journal_seq_blacklist_entry
+|   |-- fs-bcachefs-journal_seq_blacklist.h:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-journal_seq_blacklist_entry
+|   `-- fs-bcachefs-recovery.c:warning:array-subscript-is-outside-the-bounds-of-an-interior-zero-length-array-struct-bkey_i
+|-- x86_64-buildonly-randconfig-006-20231019
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   `-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|-- x86_64-randconfig-003-20231019
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   `-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|-- x86_64-randconfig-004-20231019
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   `-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|-- x86_64-randconfig-006-20231019
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   `-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|-- x86_64-randconfig-013-20231019
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   `-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|-- x86_64-randconfig-014-20231019
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   `-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|-- x86_64-randconfig-073-20231019
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   `-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|-- x86_64-randconfig-075-20231019
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+|   `-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu14-smu_v14_0.c:warning:s-directive-output-may-be-truncated-writing-up-to-bytes-into-a-region-of-size
+`-- xtensa-randconfig-001-20231019
+    `-- include-asm-generic-rwonce.h:warning:array-subscript-is-outside-array-bounds-of-__u8-aka-unsigned-char
+clang_recent_errors
+`-- hexagon-randconfig-r001-20230603
+    `-- fs-tracefs-event_inode.c:error:casting-from-randomized-structure-pointer-type-struct-dentry-to-struct-eventfs_inode
+
+elapsed time: 929m
+
+configs tested: 134
+configs skipped: 2
+
+tested configs:
+alpha                             allnoconfig   gcc  
+alpha                            allyesconfig   gcc  
+alpha                               defconfig   gcc  
+arc                              allmodconfig   gcc  
+arc                               allnoconfig   gcc  
+arc                              allyesconfig   gcc  
+arc                                 defconfig   gcc  
+arc                   randconfig-001-20231019   gcc  
+arm                              allmodconfig   gcc  
+arm                               allnoconfig   gcc  
+arm                              allyesconfig   gcc  
+arm                                 defconfig   gcc  
+arm                   randconfig-001-20231019   gcc  
+arm64                            allmodconfig   gcc  
+arm64                             allnoconfig   gcc  
+arm64                            allyesconfig   gcc  
+arm64                               defconfig   gcc  
+csky                             allmodconfig   gcc  
+csky                              allnoconfig   gcc  
+csky                             allyesconfig   gcc  
+csky                                defconfig   gcc  
+i386                             allmodconfig   gcc  
+i386                              allnoconfig   gcc  
+i386                             allyesconfig   gcc  
+i386         buildonly-randconfig-001-20231019   gcc  
+i386         buildonly-randconfig-002-20231019   gcc  
+i386         buildonly-randconfig-003-20231019   gcc  
+i386         buildonly-randconfig-004-20231019   gcc  
+i386         buildonly-randconfig-005-20231019   gcc  
+i386         buildonly-randconfig-006-20231019   gcc  
+i386                              debian-10.3   gcc  
+i386                                defconfig   gcc  
+i386                  randconfig-001-20231019   gcc  
+i386                  randconfig-002-20231019   gcc  
+i386                  randconfig-003-20231019   gcc  
+i386                  randconfig-004-20231019   gcc  
+i386                  randconfig-005-20231019   gcc  
+i386                  randconfig-006-20231019   gcc  
+i386                  randconfig-011-20231019   gcc  
+i386                  randconfig-012-20231019   gcc  
+i386                  randconfig-013-20231019   gcc  
+i386                  randconfig-014-20231019   gcc  
+i386                  randconfig-015-20231019   gcc  
+i386                  randconfig-016-20231019   gcc  
+loongarch                        allmodconfig   gcc  
+loongarch                         allnoconfig   gcc  
+loongarch                        allyesconfig   gcc  
+loongarch                           defconfig   gcc  
+loongarch             randconfig-001-20231019   gcc  
+m68k                             allmodconfig   gcc  
+m68k                              allnoconfig   gcc  
+m68k                             allyesconfig   gcc  
+m68k                                defconfig   gcc  
+microblaze                       allmodconfig   gcc  
+microblaze                        allnoconfig   gcc  
+microblaze                       allyesconfig   gcc  
+microblaze                          defconfig   gcc  
+mips                             allmodconfig   gcc  
+mips                              allnoconfig   gcc  
+mips                             allyesconfig   gcc  
+nios2                            allmodconfig   gcc  
+nios2                             allnoconfig   gcc  
+nios2                            allyesconfig   gcc  
+nios2                               defconfig   gcc  
+openrisc                         allmodconfig   gcc  
+openrisc                          allnoconfig   gcc  
+openrisc                         allyesconfig   gcc  
+openrisc                            defconfig   gcc  
+parisc                           allmodconfig   gcc  
+parisc                            allnoconfig   gcc  
+parisc                           allyesconfig   gcc  
+parisc                              defconfig   gcc  
+parisc64                            defconfig   gcc  
+powerpc                          allmodconfig   gcc  
+powerpc                           allnoconfig   gcc  
+powerpc                          allyesconfig   gcc  
+riscv                            allmodconfig   gcc  
+riscv                             allnoconfig   gcc  
+riscv                            allyesconfig   gcc  
+riscv                               defconfig   gcc  
+riscv                 randconfig-001-20231019   gcc  
+riscv                          rv32_defconfig   gcc  
+s390                             allmodconfig   gcc  
+s390                              allnoconfig   gcc  
+s390                             allyesconfig   gcc  
+s390                                defconfig   gcc  
+s390                  randconfig-001-20231019   gcc  
+sh                               allmodconfig   gcc  
+sh                                allnoconfig   gcc  
+sh                               allyesconfig   gcc  
+sh                                  defconfig   gcc  
+sparc                            allmodconfig   gcc  
+sparc                             allnoconfig   gcc  
+sparc                            allyesconfig   gcc  
+sparc                               defconfig   gcc  
+sparc                 randconfig-001-20231019   gcc  
+sparc64                          allmodconfig   gcc  
+sparc64                          allyesconfig   gcc  
+sparc64                             defconfig   gcc  
+um                               allmodconfig   clang
+um                                allnoconfig   clang
+um                               allyesconfig   clang
+um                                  defconfig   gcc  
+um                             i386_defconfig   gcc  
+um                           x86_64_defconfig   gcc  
+x86_64                            allnoconfig   gcc  
+x86_64                           allyesconfig   gcc  
+x86_64       buildonly-randconfig-001-20231019   gcc  
+x86_64       buildonly-randconfig-002-20231019   gcc  
+x86_64       buildonly-randconfig-003-20231019   gcc  
+x86_64       buildonly-randconfig-004-20231019   gcc  
+x86_64       buildonly-randconfig-005-20231019   gcc  
+x86_64       buildonly-randconfig-006-20231019   gcc  
+x86_64                              defconfig   gcc  
+x86_64                randconfig-001-20231019   gcc  
+x86_64                randconfig-002-20231019   gcc  
+x86_64                randconfig-003-20231019   gcc  
+x86_64                randconfig-004-20231019   gcc  
+x86_64                randconfig-005-20231019   gcc  
+x86_64                randconfig-006-20231019   gcc  
+x86_64                randconfig-011-20231019   gcc  
+x86_64                randconfig-012-20231019   gcc  
+x86_64                randconfig-013-20231019   gcc  
+x86_64                randconfig-014-20231019   gcc  
+x86_64                randconfig-015-20231019   gcc  
+x86_64                randconfig-016-20231019   gcc  
+x86_64                randconfig-071-20231019   gcc  
+x86_64                randconfig-072-20231019   gcc  
+x86_64                randconfig-073-20231019   gcc  
+x86_64                randconfig-074-20231019   gcc  
+x86_64                randconfig-075-20231019   gcc  
+x86_64                randconfig-076-20231019   gcc  
+x86_64                          rhel-8.3-rust   clang
+x86_64                               rhel-8.3   gcc  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
