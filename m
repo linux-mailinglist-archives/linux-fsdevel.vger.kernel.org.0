@@ -1,133 +1,171 @@
-Return-Path: <linux-fsdevel+bounces-798-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-799-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9A827D04F5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 00:40:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F04AA7D04FB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 00:41:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93E7928231D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 22:40:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77DADB20DD1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 22:41:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AA134292F;
-	Thu, 19 Oct 2023 22:40:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B1C74292A;
+	Thu, 19 Oct 2023 22:41:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RMBzEXjR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tr1q75UN"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9EE33DFF9
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 22:40:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB89CC433C8;
-	Thu, 19 Oct 2023 22:40:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D00819440
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 22:41:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBA01C433C7;
+	Thu, 19 Oct 2023 22:41:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1697755248;
-	bh=QfTE4cUL4mwaaLPvxL0PL45XS44NzfljHt3kH5CTJGE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RMBzEXjRTclL7lVdSbp6YvoCjsj6TKlg0HvBQToQMPw1OAml4ShpUAykVfRVIlT98
-	 CY20I8kMpqqfMU/9ytXrWTDCA2DKR2WLz3mW74uyNTQE5ODGgrxFRvgkXULr8hzYeX
-	 WTHFUcBASkfJu11+JcXLl1U8l5kUdz+p4Sf8NtMiWz9xfYDegyATWthXdEMkdLyG/s
-	 9gop+/tOFikgY5iXAfChufK4Q6CXBj5g5sHSqjKX13zCnA106xxRQxlc73auxbuq/Z
-	 koXoMrUbF/HTyna0jFukE6gPLvTlXimvDDARM50ekKvUSHCdeMZVIfSZ3RW7nw4IIP
-	 ImlgpIM1FAb8Q==
-Message-ID: <58ec6750-5582-4775-a38f-7d56d761136c@kernel.org>
-Date: Fri, 20 Oct 2023 07:40:44 +0900
+	s=k20201202; t=1697755273;
+	bh=QrXcJSvkmaQhGlxDlCzTaTqOEgDsZKKUGEg6yjmzxzg=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=tr1q75UNywUIX/G6rnqagELNuFJwsL6pDbS6FlXWZlik9RgUeQusLFYc5diqKK9ql
+	 mPjhMDQEuo8T1/QLme8z+3R0ZkNkPifdGSSwtsihpkHyjk8zrZ4bs4nfZMqb+RYomH
+	 XCkUotEhvIKc70pvPqo7Hn7c9pK+iaGc8QakV7aEv9AkvvYxFRdoJPJC08VvICsx7O
+	 wI8hLrYDRlOYjC4B7ldOO0oIL1GWcH7h16/zWoqPqjyZPVhwwvj37JF480Bx7XLNLq
+	 eMckjH8mw2HavbZ1wfJqhXhq/euFpxU2lvg6uyIVp1VQNmfOE2UgS+b6AWTZyRGyjS
+	 FrUgtEfZHaF+w==
+Message-ID: <69b627f565d6ca92182b7100cd1178a28646eef0.camel@kernel.org>
+Subject: Re: [PATCH RFC 2/9] timekeeping: new interfaces for multigrain
+ timestamp handing
+From: Jeff Layton <jlayton@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Linus Torvalds
+ <torvalds@linux-foundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, John Stultz <jstultz@google.com>,
+ Stephen Boyd <sboyd@kernel.org>, Chandan Babu R <chandan.babu@oracle.com>,
+ "Darrick J. Wong" <djwong@kernel.org>, Dave Chinner <david@fromorbit.com>,
+ Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>,
+ Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba
+ <dsterba@suse.com>,  Hugh Dickins <hughd@google.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Amir Goldstein <amir73il@gmail.com>, Jan Kara
+ <jack@suse.de>, David Howells <dhowells@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, 
+	linux-btrfs@vger.kernel.org, linux-mm@kvack.org, linux-nfs@vger.kernel.org
+Date: Thu, 19 Oct 2023 18:41:09 -0400
+In-Reply-To: <87o7gu2rxw.ffs@tglx>
+References: <87o7gu2rxw.ffs@tglx>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 00/14] Pass data temperature information to SCSI disk
- devices
-To: Bart Van Assche <bvanassche@acm.org>, Jens Axboe <axboe@kernel.dk>
-Cc: linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-fsdevel@vger.kernel.org,
- "Martin K . Petersen" <martin.petersen@oracle.com>,
- Christoph Hellwig <hch@lst.de>, Niklas Cassel <Niklas.Cassel@wdc.com>,
- Avri Altman <Avri.Altman@wdc.com>, Bean Huo <huobean@gmail.com>,
- Daejun Park <daejun7.park@samsung.com>
-References: <20231017204739.3409052-1-bvanassche@acm.org>
- <3f3c2289-3185-4895-92cb-0692e3ca9ebc@kernel.dk>
- <e8b49fac-77ce-4b61-ac4d-e4ace58d8319@acm.org>
- <e2e56cdf-0cfe-4c5b-991f-ea6a80452891@kernel.org>
- <7908138a-3ae5-4ff5-9bda-4f41e81f2ef1@acm.org>
-Content-Language: en-US
-From: Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <7908138a-3ae5-4ff5-9bda-4f41e81f2ef1@acm.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 10/20/23 01:48, Bart Van Assche wrote:
-> On 10/18/23 17:33, Damien Le Moal wrote:
->> On 10/19/23 04:34, Bart Van Assche wrote:
->  >> On 10/18/23 12:09, Jens Axboe wrote:
->>>> I'm also really against growing struct bio just for this. Why is patch 2
->>>> not just using the ioprio field at least?
->>>
->>> Hmm ... shouldn't the bits in the ioprio field in struct bio have the
->>> same meaning as in the ioprio fields used in interfaces between user
->>> space and the kernel? Damien Le Moal asked me not to use any of the
->>> ioprio bits passing data lifetime information from user space to the kernel.
->>
->> I said so in the context that if lifetime is a per-inode property, then ioprio
->> is the wrong interface since the ioprio API is per process or per IO. There is a
->> mismatch.
->>
->> One version of your patch series used fnctl() to set the lifetime per inode,
->> which is fine, and then used the BIO ioprio to pass the lifetime down to the
->> device driver. That is in theory a nice trick, but that creates conflicts with
->> the userspace ioprio API if the user uses that at the same time.
->>
->> So may be we should change bio ioprio from int to u16 and use the freedup u16
->> for lifetime. With that, things are cleanly separated without growing struct bio.
-> 
-> Hmm ... I think that bi_ioprio has been 16 bits wide since the 
-> introduction of that data structure member in 2016?
+On Fri, 2023-10-20 at 00:00 +0200, Thomas Gleixner wrote:
+> Jeff!
+>=20
+> On Wed, Oct 18 2023 at 13:41, Jeff Layton wrote:
+> > +void ktime_get_mg_fine_ts64(struct timespec64 *ts)
+> > +{
+> > +	struct timekeeper *tk =3D &tk_core.timekeeper;
+> > +	unsigned long flags;
+> > +	u32 nsecs;
+> > +
+> > +	WARN_ON(timekeeping_suspended);
+> > +
+> > +	raw_spin_lock_irqsave(&timekeeper_lock, flags);
+> > +	write_seqcount_begin(&tk_core.seq);
+>=20
+> Depending on the usage scenario, this will end up as a scalability issue
+> which affects _all_ of timekeeping.
+>=20
+> The usage of timekeeper_lock and the sequence count has been carefully
+> crafted to be as non-contended as possible. We went a great length to
+> optimize that because the ktime_get*() functions are really hotpath all
+> over the place.
+>=20
 
-My bad. struct bio->bi_ioprio is an unsigned short. I got confused with the user
-API and kernel functions using an int in many places. We really should change
-the kernel functions to use unsigned short for ioprio everywhere.
+> Exposing such an interface which wreckages that is a recipe for disaster
+> down the road. It might be a non-issue today, but once we hit the
+> bottleneck of that global lock, we are up the creek without a
+> paddle.
+>=20
 
->>> Is it clear that the size of struct bio has not been changed because the
->>> new bi_lifetime member fills a hole in struct bio?
->>
->> When the struct is randomized, holes move or disappear. Don't count on that...
-> 
-> We should aim to maximize performance for users who do not use data 
-> structure layout randomization.
-> 
-> Additionally, I doubt that anyone is using full structure layout 
-> randomization for SCSI devices. No SCSI driver has any 
-> __no_randomize_layout / __randomize_layout annotations although I'm sure 
-> there are plenty of data structures in SCSI drivers for which the layout 
-> matters.
+Thanks for taking the explanation, Thomas. That's understandable, and
+that was my main worry with this set. I'll look at doing this another
+way given your feedback. I just started by plumbing this into the
+timekeeping code since that seemed like the most obvious place to do it.
 
-Well, if Jens is OK with adding another "unsigned short bi_lifetime" in a hole
-in struct bio, that's fine with me. Otherwise, we are back to discussing how to
-pack bi_ioprio in a sensible manner so that we do not create a mess between the
-use cases and APIs:
-1) inode based lifetime with FS setting up the bi_ioprio field
-2) Direct IOs to files of an FS with lifetime set by user per IO (e.g.
-aio/io_uring/ioprio_set()) and/or fcntl()
-3) Direct IOs to raw block devices with lifetime set by user per IO (e.g.
-aio/io_uring/ioprio_set())
+I think it's probably still possible to do this by caching the values
+returned by the timekeeper at the vfs layer, but there seems to be some
+reticence to the basic idea that I don't quite understand yet.
 
-Any of the above case should also allow using ioprio class/level and CDL hint.
+> Well not really, but all we can do then is fall back to
+> ktime_get_real(). So let me ask the obvious question:
+>=20
+>      Why don't we do that right away?
+>=20
+> Many moons ago when we added ktime_get_real_coarse() the main reason was
+> that reading the time from the underlying hardware was insanely
+> expensive.
+>=20
+> Many moons later this is not true anymore, except for the stupid case
+> where the BIOS wreckaged the TSC, but that's a hopeless case for
+> performance no matter what. Optimizing for that would be beyond stupid.
+>=20
+> I'm well aware that ktime_get_real_coarse() is still faster than
+> ktime_get_real() in micro-benchmarks, i.e. 5ns vs. 15ns on the four
+> years old laptop I'm writing this.
+>=20
+> Many moons ago it was in the ballpark of 40ns vs. 5us due to TSC being
+> useless and even TSC read was way more expensive (factor 8-10x IIRC) in
+> comparison. That really mattered for FS, but does todays overhead still
+> make a difference in the real FS use case scenario?
+>=20
+> I'm not in the position of running meaningful FS benchmarks to analyze
+> that, but I think the delta between ktime_get_real_coarse() and
+> ktime_get_real() on contemporary hardware is small enough that it
+> justifies this question.
+>=20
+> The point is that both functions have pretty much the same D-cache
+> pattern because they access the same data in the very same
+> cacheline. The only difference is the actual TSC read and the extra
+> conversion, but that's it. The TSC read has been massively optimized by
+> the CPU vendors. I know that the ARM64 counter has been optimized too,
+> though I have no idea about PPC64 and S390, but I would be truly
+> surprised if they didn't optimize the hell out of it because time read
+> is really used heavily both in kernel and user space.
+>=20
+> Does anyone have numbers on contemporary hardware to shed some light on
+> that in the context of FS and the problem at hand?
 
-I think the most problematic part is (2) when lifetime are set with both fcntl()
-and per IO: which lifetime is the valid one ? The one set with fcntl() or the
-one specified for the IO ? I think the former is the one we want here.
+That was sort of my suspicion and it's good to have confirmation that
+fetching a fine-grained timespec64 from the timekeeper is cheap. It
+looked that way when I was poking around in there, but I wasn't sure
+whether it was always the case.
 
-If we can clarify that, then I guess using 3 or 4 bits from the 10 bits ioprio
-hint should be OK. That would  give you 7 or 15 lifetime values. Enough no ?
+It turns out however that the main benefit of using a coarse-grained
+timestamp is that it allows the file system to skip a lot of inode
+metadata updates.
 
--- 
-Damien Le Moal
-Western Digital Research
+The way it works today is that when we go to update the timestamp on an
+inode, we check whether they have made any visible change, and we dirty
+the inode metadata if so. This means that we only really update the
+inode on disk once per jiffy or so when an inode is under heavy writes.
 
+The idea with this set is to only use fine-grained timestamps when
+someone is actively fetching them via getattr. When the mtime or ctime
+is viewed via getattr, we mark the inode and then the following
+timestamp update will get a fine-grained timestamp (unless the coarse-
+grained clock has already ticked).
+
+That allows us to keep the number of inode updates down to a bare
+minimum, but still allows an observer to always see a change in the
+timestamp when there have been changes to the inode.
+
+Thanks again for the review! For the next iteration I (probably) won't
+need to touch the timekeeper.
+--=20
+Jeff Layton <jlayton@kernel.org>
 
