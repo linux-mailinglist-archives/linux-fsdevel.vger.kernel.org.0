@@ -1,132 +1,113 @@
-Return-Path: <linux-fsdevel+bounces-769-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-770-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26D0C7CFDDD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 17:31:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABCDD7CFE1A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 17:39:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4097B1C20E9E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 15:31:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B5EFB21408
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 15:39:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3744F3159F;
-	Thu, 19 Oct 2023 15:31:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06B06315A8;
+	Thu, 19 Oct 2023 15:39:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IVrvJlgO"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="GbHccPC3"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A14DC30FB4
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 15:30:58 +0000 (UTC)
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F86A121;
-	Thu, 19 Oct 2023 08:30:57 -0700 (PDT)
-Received: by mail-lf1-x12b.google.com with SMTP id 2adb3069b0e04-507962561adso10081935e87.0;
-        Thu, 19 Oct 2023 08:30:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697729454; x=1698334254; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4FWVeU9IigKcVsNnwc6AFvvF7vK4/01UmH97KV2uxsw=;
-        b=IVrvJlgO2v4myj+dkNpwFhW3vJ3xYsBb6CbrokhO6QOIvNYx8EMmZLd8b/5LRDvIyj
-         au8eC73E7ebWlEekOejUFJhf43DvKxM0fE5H1OiHYyJupmxSSUg07p8gpwQTwxrccfIX
-         wobQlsZXDfL6UE4gv4oye8+y8Ku8KPL1nk6WN10vSnAYjztcK158JZD5ESXKu7+SIELb
-         DW0twGkgVrH+Oni+15BnX7UvO0vo9PIcrKJeLvV7mm1dgSaugzony8pFYcLTv2+8+Efa
-         g7zv/4Kuxmc4pKe8GViNkab7528ZW+KKy7BaC2JtEJi0p7hx+BQoRlORsG+urmADbmAo
-         WpIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697729454; x=1698334254;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4FWVeU9IigKcVsNnwc6AFvvF7vK4/01UmH97KV2uxsw=;
-        b=Lm5wz2jSZHZV8mEUn27tufZ8OBAySIhLQ8KY+DjABURG13jyIMoUHhqbMWEq7HkE1W
-         XKYHB5rlHnkDeRav/hkTUPpUhWPVjvKRFdr8mJi2UZ9x/e/zuy2JnT7Hjpkg+SyS5Uup
-         fzyp3ZVtKSN3hxGRu8VcXQhojyuitUNCsFQiwTx+mvLj8y/FOCPtnUzQh4S6VYxioA4X
-         vGjjzC5ZeN3GD+Oh63uJpfGKPO2BWaP59u0qGUBakHQb6sSaxhifiLFYjZNsCZ51QoVB
-         TcKRW+Sc8gjZNA66cYC1xeWrKBP14d0Doa7Pa/KTaZDNZkNZ6iWKCB1yW2rmz2m0RI/L
-         E68A==
-X-Gm-Message-State: AOJu0Yy8aNVRvYD3AyI1ByBx1ku0ZykzG48VzPRuN1Dbg4eEzNbaGnqy
-	dVF5Q2StKycoKMzjr3PuDiY=
-X-Google-Smtp-Source: AGHT+IGypHTslM4jzHKGC5Rcxh8As846X2fCX1u0jn27VNqfaCCTCqDXLPG4/BVtbxed1W+TEDszdg==
-X-Received: by 2002:a19:e007:0:b0:500:adbd:43e9 with SMTP id x7-20020a19e007000000b00500adbd43e9mr1973084lfg.15.1697729453971;
-        Thu, 19 Oct 2023 08:30:53 -0700 (PDT)
-Received: from f (cst-prg-84-171.cust.vodafone.cz. [46.135.84.171])
-        by smtp.gmail.com with ESMTPSA id j4-20020a5d4524000000b00317a04131c5sm4753323wra.57.2023.10.19.08.30.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Oct 2023 08:30:53 -0700 (PDT)
-Date: Thu, 19 Oct 2023 17:30:40 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Dave Chinner <dchinner@redhat.com>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-bcachefs@vger.kernel.org,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: (subset) [PATCH 22/32] vfs: inode cache conversion to hash-bl
-Message-ID: <20231019153040.lj3anuescvdprcq7@f>
-References: <20230509165657.1735798-1-kent.overstreet@linux.dev>
- <20230509165657.1735798-23-kent.overstreet@linux.dev>
- <20230523-zujubeln-heizsysteme-f756eefe663e@brauner>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26BB30F82;
+	Thu, 19 Oct 2023 15:39:19 +0000 (UTC)
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 851AE9E;
+	Thu, 19 Oct 2023 08:39:18 -0700 (PDT)
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39JFadhM006435;
+	Thu, 19 Oct 2023 15:38:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=pp1; bh=j0R1Ga/kpGsfsZxYDsOKQGw5axBGZpmFvBJQOoMUbIU=;
+ b=GbHccPC3f5652sKQHy/rCTbSwZdvRDqPhlrZARyg/uBbQ3htwghs01EZk9vQXiMZ1GmD
+ 9sy8xQmnlZFD74BQGG05Ueb9OI9WAAf1IrmHHwUNxQC332qnzyY4Tj+n2jpoRmxrYkc2
+ WeDa1Dm0/td6cjlpgWmHK0pft+fPJJvwVAlf0/MWeX5LT36I+Bk9YW25QvxV16rU/xfo
+ 8AWWem0HqL791Vq5LTm3YbSspcyMHAGUgz5QoELfYCzbHvwuoS+rO8A2Md4aoeS5Xmt2
+ mR8bisLHydthj/dLUvxrgr/2ltm5GP0Mrls12vdWfQ4ODDTWQ7qopib6tQ4JlOHELK13 sg== 
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3tu71q0thp-10
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 19 Oct 2023 15:38:09 +0000
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 39JEin6J030742;
+	Thu, 19 Oct 2023 15:32:09 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3tr7hk1bbd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 19 Oct 2023 15:32:09 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 39JFW8NC44368204
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 19 Oct 2023 15:32:08 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EE89020043;
+	Thu, 19 Oct 2023 15:32:07 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5A2FE20040;
+	Thu, 19 Oct 2023 15:32:07 +0000 (GMT)
+Received: from osiris (unknown [9.171.41.136])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 19 Oct 2023 15:32:07 +0000 (GMT)
+Date: Thu, 19 Oct 2023 17:32:05 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: kernel test robot <lkp@intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        amd-gfx@lists.freedesktop.org, kvm@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        linux-s390@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [linux-next:master] BUILD REGRESSION
+ 2dac75696c6da3c848daa118a729827541c89d33
+Message-ID: <20231019153205.9160-A-hca@linux.ibm.com>
+References: <202310190456.pryB092r-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230523-zujubeln-heizsysteme-f756eefe663e@brauner>
+In-Reply-To: <202310190456.pryB092r-lkp@intel.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: pLCVHeZl1pGGUcpHU0HZgqokDhWlFOun
+X-Proofpoint-GUID: pLCVHeZl1pGGUcpHU0HZgqokDhWlFOun
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-10-19_14,2023-10-19_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 bulkscore=0
+ phishscore=0 spamscore=0 impostorscore=0 mlxlogscore=702
+ lowpriorityscore=0 malwarescore=0 priorityscore=1501 clxscore=1011
+ mlxscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2309180000 definitions=main-2310190130
 
-On Tue, May 23, 2023 at 11:28:38AM +0200, Christian Brauner wrote:
-> On Tue, 09 May 2023 12:56:47 -0400, Kent Overstreet wrote:
-> > Because scalability of the global inode_hash_lock really, really
-> > sucks.
-> > 
-> > 32-way concurrent create on a couple of different filesystems
-> > before:
-> > 
-> > -   52.13%     0.04%  [kernel]            [k] ext4_create
-> >    - 52.09% ext4_create
-> >       - 41.03% __ext4_new_inode
-> >          - 29.92% insert_inode_locked
-> >             - 25.35% _raw_spin_lock
-> >                - do_raw_spin_lock
-> >                   - 24.97% __pv_queued_spin_lock_slowpath
-> > 
-> > [...]
-> 
-> This is interesting completely independent of bcachefs so we should give
-> it some testing.
-> 
-> I updated a few places that had outdated comments.
-> 
-> ---
-> 
-> Applied to the vfs.unstable.inode-hash branch of the vfs/vfs.git tree.
-> Patches in the vfs.unstable.inode-hash branch should appear in linux-next soon.
-> 
-> Please report any outstanding bugs that were missed during review in a
-> new review to the original patch series allowing us to drop it.
-> 
-> It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> patch has now been applied. If possible patch trailers will be updated.
-> 
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> branch: vfs.unstable.inode-hash
-> 
-> [22/32] vfs: inode cache conversion to hash-bl
->         https://git.kernel.org/vfs/vfs/c/e3e92d47e6b1
+On Thu, Oct 19, 2023 at 04:07:35AM +0800, kernel test robot wrote:
+> arch/s390/include/asm/ctlreg.h:129:9: warning: array subscript 0 is outside array bounds of 'struct ctlreg[0]' [-Warray-bounds=]
+> arch/s390/include/asm/ctlreg.h:80:9: warning: array subscript 0 is outside array bounds of 'struct ctlreg[0]' [-Warray-bounds=]
+...
+> |-- s390-defconfig
+> |   `-- arch-s390-include-asm-ctlreg.h:warning:array-subscript-is-outside-array-bounds-of-struct-ctlreg
+...
+> s390                                defconfig   gcc  
 
-What, if anything, is blocking this? It is over 5 months now, I don't
-see it in master nor -next.
+I'm wondering how this warning can appear in the builds. array-bounds
+warnings are explicitly disabled, see init/Kconfig: CC_NO_ARRAY_BOUNDS. And
+as expected, if I compile the kernel with gcc, defconfig, and with or
+without W=1 the option -Wno-array-bounds is passed to the compiler.
 
-To be clear there is no urgency as far as I'm concerned, but I did run
-into something which is primarily bottlenecked by inode hash lock and
-looks like the above should sort it out.
+And also as expected I do not see the above warnings.
 
-Looks like the patch was simply forgotten.
-
-tl;dr can this land in -next please
+So something is quite odd here.
 
