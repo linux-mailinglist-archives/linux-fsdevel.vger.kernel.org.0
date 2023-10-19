@@ -1,168 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-775-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-774-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC41A7CFFCC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 18:40:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEDEC7CFFB9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 18:37:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 873F8282171
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 16:40:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF3CFB213F4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 16:37:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D42832C70;
-	Thu, 19 Oct 2023 16:40:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A2CF32C7E;
+	Thu, 19 Oct 2023 16:37:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LhvilC3Q"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="NdAuZKrr"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10B1A32C62;
-	Thu, 19 Oct 2023 16:40:34 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6C84124;
-	Thu, 19 Oct 2023 09:40:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1697733633; x=1729269633;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=B68lb5bc3nlqxKW2HoQvNAzdwFIr+BMgv0ZP+rlvfxo=;
-  b=LhvilC3Qg9AxwrA9+1Yqeoirpjyhe/Fmc27Ug9GaQZ41neAjF517lXPf
-   opcViqgh/0TXAyb+qJc/+cgnZPEHphDBPkGlEyrMNnWSJdP5QZ9tmqGmu
-   M8c4IVDGmqGdWnDx2D+I8rkwyyDXw1XfP8r+DFI0kt75BxSfiX8CuXPek
-   l9ibuUaYm8nFJjwtg6o2fml6dWszX4jz38LsjqI+sSuRv+RvftfeMX5pX
-   8tFeaiqoc/B835QueXDypu/2VMD0gis0A73JfG1fpO1zFMPlJ0z16Uewg
-   2BqwtB2OsmO9oBEw4PKxyJne2Pm750TKfqj1F/OgCkiNYDokUXkPE7PAi
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10868"; a="7864227"
-X-IronPort-AV: E=Sophos;i="6.03,237,1694761200"; 
-   d="scan'208";a="7864227"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2023 09:36:24 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10868"; a="706900365"
-X-IronPort-AV: E=Sophos;i="6.03,237,1694761200"; 
-   d="scan'208";a="706900365"
-Received: from lkp-server01.sh.intel.com (HELO 8917679a5d3e) ([10.239.97.150])
-  by orsmga003.jf.intel.com with ESMTP; 19 Oct 2023 09:36:16 -0700
-Received: from kbuild by 8917679a5d3e with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1qtW0L-0002GE-2M;
-	Thu, 19 Oct 2023 16:36:13 +0000
-Date: Fri, 20 Oct 2023 00:35:56 +0800
-From: kernel test robot <lkp@intel.com>
-To: Nitesh Shetty <nj.shetty@samsung.com>, Jens Axboe <axboe@kernel.dk>,
-	Jonathan Corbet <corbet@lwn.net>, Alasdair Kergon <agk@redhat.com>,
-	Mike Snitzer <snitzer@kernel.org>, dm-devel@lists.linux.dev,
-	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Chaitanya Kulkarni <kch@nvidia.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, martin.petersen@oracle.com,
-	linux-scsi@vger.kernel.org, nitheshshetty@gmail.com,
-	anuj1072538@gmail.com, gost.dev@samsung.com, mcgrof@kernel.org,
-	Nitesh Shetty <nj.shetty@samsung.com>,
-	Hannes Reinecke <hare@suse.de>,
-	Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-	Anuj Gupta <anuj20.g@samsung.com>,
-	Vincent Fu <vincent.fu@samsung.com>, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v17 12/12] null_blk: add support for copy offload
-Message-ID: <202310200001.UU0bBx9w-lkp@intel.com>
-References: <20231019110147.31672-13-nj.shetty@samsung.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20C1932C75
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 16:37:46 +0000 (UTC)
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C64E11D
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 09:37:44 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-53b32dca0bfso2193587a12.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 09:37:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1697733462; x=1698338262; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=KVg72uPUJlCNP5ZghklHQ33G/OMrolR4hmAv20/o7n0=;
+        b=NdAuZKrrXymKctFN1ivCrJa0AVUdvVikwwSoA24LZqajnOpokfMjpkfcSLfDKTLPMd
+         4RMuv0r7da8unFutLJTc2aQ827eaqf/9FXsMLM9aoVgXWiLQynA3HPqv+ozy2Bl/sg7X
+         7wLnNMVkFNBORgN284Tykgde7I+QZK/658pgI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697733462; x=1698338262;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KVg72uPUJlCNP5ZghklHQ33G/OMrolR4hmAv20/o7n0=;
+        b=uaYYWGc7OoLB3f3RTjq2OFVM+zSJp+l6/Drlz41eCeof9vBdaBNytCrH7gL/+BYTpu
+         SEUlWD9rmA/TxCLlImRkVlJ6fWobkrlkfdcHjWh8/M8eOf9/UsJMYyCv+4qoxKhQZZja
+         QJSjwJVmO9F8CEBamts8ny/foa8jkKH84PeLIsDP5QQR0lWLPfJGIKOahgRm727hCiZ7
+         LvcumZ5tI6OPU6DbOtXX7suJwB+ZHS9SA/mtXyawkfABNM+YiaSfmji7Qw2GIjd7UfXq
+         HoU6D2EoH3KLPyXHYTA3IqTsUEIphyGpTXqJr8NooMNHrIY2V30pFajkrGcFMYoE4YVS
+         K4nw==
+X-Gm-Message-State: AOJu0YzBqZz9QV2NfXRhY7UwODtuClWflMWT7k3AZD/8rTfVdCQuk6cF
+	lN6lzicMqFaOxcWV/HqazDkWcES9QR6j+Ti2npY5xA9N
+X-Google-Smtp-Source: AGHT+IGnjZBt+XqqDQL2jSBG96XE15XpiyvM+tbsDIwt+NKyyUOPVjwqtXS5R6GJ6UoIVqeW8Vq3dQ==
+X-Received: by 2002:a05:6402:26c9:b0:53d:b59c:8f8d with SMTP id x9-20020a05640226c900b0053db59c8f8dmr2499927edd.8.1697733462455;
+        Thu, 19 Oct 2023 09:37:42 -0700 (PDT)
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com. [209.85.208.43])
+        by smtp.gmail.com with ESMTPSA id d25-20020a50cd59000000b0053f9578ec97sm1347014edj.56.2023.10.19.09.37.41
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Oct 2023 09:37:41 -0700 (PDT)
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-53e16f076b3so2157572a12.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 09:37:41 -0700 (PDT)
+X-Received: by 2002:a17:907:97d6:b0:9a9:405b:26d1 with SMTP id
+ js22-20020a17090797d600b009a9405b26d1mr2298936ejc.5.1697733461464; Thu, 19
+ Oct 2023 09:37:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231019110147.31672-13-nj.shetty@samsung.com>
+References: <20231019-kampfsport-metapher-e5211d7be247@brauner>
+In-Reply-To: <20231019-kampfsport-metapher-e5211d7be247@brauner>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 19 Oct 2023 09:37:24 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whBXdLJ=QDpYmDEH-Tn71dXasGJSX4Jz4qMo8V4-7vYkg@mail.gmail.com>
+Message-ID: <CAHk-=whBXdLJ=QDpYmDEH-Tn71dXasGJSX4Jz4qMo8V4-7vYkg@mail.gmail.com>
+Subject: Re: [GIT PULL] vfs fixes
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Nitesh,
+On Thu, 19 Oct 2023 at 03:09, Christian Brauner <brauner@kernel.org> wrote:
+>
+> An openat() call from io_uring triggering an audit call can apparently
+> cause the refcount of struct filename to be incremented from multiple
+> threads concurrently during async execution, triggering a refcount
+> underflow and hitting a BUG_ON(). That bug has been lurking around since
+> at least v5.16 apparently.
 
-kernel test robot noticed the following build warnings:
+Ouch. That filename ref by audit was always supposed to be
+thread-local in a "for this system call" kind of sense.
 
-[auto build test WARNING on 213f891525c222e8ed145ce1ce7ae1f47921cb9c]
+But yes, looks like the io_uring stuff ended up making it no longer
+thread-local.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Nitesh-Shetty/block-Introduce-queue-limits-and-sysfs-for-copy-offload-support/20231019-200658
-base:   213f891525c222e8ed145ce1ce7ae1f47921cb9c
-patch link:    https://lore.kernel.org/r/20231019110147.31672-13-nj.shetty%40samsung.com
-patch subject: [PATCH v17 12/12] null_blk: add support for copy offload
-config: parisc-allyesconfig (https://download.01.org/0day-ci/archive/20231020/202310200001.UU0bBx9w-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231020/202310200001.UU0bBx9w-lkp@intel.com/reproduce)
+That said, using atomics for reference counting is our default
+behavior and should be normal, so the patch isn't wrong, it's just
+annoying since getname/putname is very much in the critical path of
+filename handling.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202310200001.UU0bBx9w-lkp@intel.com/
+That said, the extra atomics are hopefully not really noticeable.
 
-All warnings (new ones prefixed by >>):
+Some people might want to use the non-refcounted version (ie we have
+getname/putname used by ksmbd too, for example), if they really care.
 
-   In file included from include/trace/define_trace.h:102,
-                    from drivers/block/null_blk/trace.h:104,
-                    from drivers/block/null_blk/main.c:15:
-   drivers/block/null_blk/./trace.h: In function 'trace_raw_output_nullb_copy_op':
->> drivers/block/null_blk/./trace.h:91:27: warning: format '%lu' expects argument of type 'long unsigned int', but argument 7 has type 'size_t' {aka 'unsigned int'} [-Wformat=]
-      91 |                 TP_printk("%s req=%-15s: dst=%llu, src=%llu, len=%lu",
-         |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/trace/trace_events.h:203:34: note: in definition of macro 'DECLARE_EVENT_CLASS'
-     203 |         trace_event_printf(iter, print);                                \
-         |                                  ^~~~~
-   include/trace/trace_events.h:45:30: note: in expansion of macro 'PARAMS'
-      45 |                              PARAMS(print));                   \
-         |                              ^~~~~~
-   drivers/block/null_blk/./trace.h:73:1: note: in expansion of macro 'TRACE_EVENT'
-      73 | TRACE_EVENT(nullb_copy_op,
-         | ^~~~~~~~~~~
-   drivers/block/null_blk/./trace.h:91:17: note: in expansion of macro 'TP_printk'
-      91 |                 TP_printk("%s req=%-15s: dst=%llu, src=%llu, len=%lu",
-         |                 ^~~~~~~~~
-   In file included from include/trace/trace_events.h:237:
-   drivers/block/null_blk/./trace.h:91:68: note: format string is defined here
-      91 |                 TP_printk("%s req=%-15s: dst=%llu, src=%llu, len=%lu",
-         |                                                                  ~~^
-         |                                                                    |
-         |                                                                    long unsigned int
-         |                                                                  %u
+It already exists, as __getname/__putname.
 
+But the normal open/stat/etc system call paths are obviously now going
+to hit those extra atomics. Not lovely, but I guess it's the best we
+can do.
 
-vim +91 drivers/block/null_blk/./trace.h
+> Switch to an atomic counter to fix that. The underflow check is
+> downgraded from a BUG_ON() to a WARN_ON_ONCE() but we could easily
+> remove that check altogether tbh and not waste an additional atomic. So
+> if you feel that extra check isn't needed you could just remove in case
+> you're pulling.
 
-    72	
-    73	TRACE_EVENT(nullb_copy_op,
-    74			TP_PROTO(struct request *req,
-    75				 sector_t dst, sector_t src, size_t len),
-    76			TP_ARGS(req, dst, src, len),
-    77			TP_STRUCT__entry(
-    78					 __array(char, disk, DISK_NAME_LEN)
-    79					 __field(enum req_op, op)
-    80					 __field(sector_t, dst)
-    81					 __field(sector_t, src)
-    82					 __field(size_t, len)
-    83			),
-    84			TP_fast_assign(
-    85				       __entry->op = req_op(req);
-    86				       __assign_disk_name(__entry->disk, req->q->disk);
-    87				       __entry->dst = dst;
-    88				       __entry->src = src;
-    89				       __entry->len = len;
-    90			),
-  > 91			TP_printk("%s req=%-15s: dst=%llu, src=%llu, len=%lu",
-    92				  __print_disk_name(__entry->disk),
-    93				  blk_op_str(__entry->op),
-    94				  __entry->dst, __entry->src, __entry->len)
-    95	);
-    96	#endif /* _TRACE_NULLB_H */
-    97	
+Well, the atomic *read* is cheap - the expensive part is the
+atomic_dec_and_test() (and the atomic_inc in the audit code.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+I'm not sure why you made it check just for zero in the WARN_ON_ONCE,
+rather than <= 0 as it used to, but that check is racy regardless, so
+it doesn't matter. It would miss two concurrent decrements coming in
+with a count of 1.
+
+We don't have the ternary test of atomic decrement results (positive,
+zero or negative), so it is what it is.
+
+                 Linus
 
