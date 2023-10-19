@@ -1,94 +1,195 @@
-Return-Path: <linux-fsdevel+bounces-722-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-723-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB6A27CF23E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 10:17:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D92CB7CF29D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 10:31:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8BC16B2122B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 08:17:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF145B211CB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 08:31:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA7CE14F8E;
-	Thu, 19 Oct 2023 08:16:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 974BE156F6;
+	Thu, 19 Oct 2023 08:31:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZCJu8YsM"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sHe7kQU8";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4KNnnkMB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0075FDF42
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 08:16:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33A89C433C8;
-	Thu, 19 Oct 2023 08:16:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1697703418;
-	bh=KoPOEv3TLEtJeiwOPb/kRjSE6RR3q8fabseskuKoq0Q=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZCJu8YsMXNG8CnhGKzAi2g/dhtwDrZdnmQHJPZ+F+HYath++Z9l1yb0ZaPwhLaHJs
-	 p7VDuJCxPI/H/CR65Sq1BsxrHjhH1iCuAiRg6a1cZa9QUDzY9m+aniWKibh1fIxOKq
-	 d7Ii5s6+f5AeoDCItPyIyhHIks06Zd3dwplSfIUEZ9xcJe/QSm9dPDGrbQs8S0aYfr
-	 Dhi6g/AH/Eae/FbTVKwQgiSmpquqTUoF5DRuMQUUDH104YowefFUO3lUZCClYopjur
-	 1PCtA8kIjm1OXNU4clgDNaslC6xuj1CvBq1U20OCJ4I1N2UTE9m0DDm0+pRC2EYQ7c
-	 2KBtnkAXhs6fg==
-From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B375156DB
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 08:31:13 +0000 (UTC)
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 021FE129;
+	Thu, 19 Oct 2023 01:31:10 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 885461F88B;
+	Thu, 19 Oct 2023 08:31:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1697704268; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Trgk7bVrAE5DykQszLb8Bbjyoi8PuBc0fr4BNkiXBlw=;
+	b=sHe7kQU8H8Yq8Hf8X7fxpvzTwt8TTBYMcdqJriU5HNf9miJha+lm+VlkHRTiqB0x4Avs+S
+	kM05EmpnBlT/Z6fbcXXxoBhHms06sj/Jh7A5mZ/c47DbIAZa0Xbs5EUi5kk9S7v3YxeZ1c
+	p8AFUGIfIb0pCZ+DphReQPQSrl1yTzc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1697704268;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Trgk7bVrAE5DykQszLb8Bbjyoi8PuBc0fr4BNkiXBlw=;
+	b=4KNnnkMBCdcz50ff/i9Y8iOMHdn7uvNkKwmJEhllJEDQX+3hbPf0aWUU5LaL67d36uRTnS
+	lO9IxoKqwCKdQ4DA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+	(No client certificate requested)
+	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 730811357F;
+	Thu, 19 Oct 2023 08:31:08 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+	by imap2.suse-dmz.suse.de with ESMTPSA
+	id PU77G0zpMGVMPAAAMHmgww
+	(envelope-from <jack@suse.cz>); Thu, 19 Oct 2023 08:31:08 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 0198AA06B0; Thu, 19 Oct 2023 10:31:07 +0200 (CEST)
+Date: Thu, 19 Oct 2023 10:31:07 +0200
+From: Jan Kara <jack@suse.cz>
+To: Christoph Hellwig <hch@lst.de>
 Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH] fs: Avoid grabbing sb->s_umount under bdev->bd_holder_lock
-Date: Thu, 19 Oct 2023 10:16:48 +0200
-Message-Id: <20231019-kontinental-gutgesinnt-8fe10612026e@brauner>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20231018152924.3858-1-jack@suse.cz>
-References: <20231018152924.3858-1-jack@suse.cz>
+	Al Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>,
+	Jan Kara <jack@suse.cz>, Denis Efremov <efremov@linux.com>,
+	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/5] block: WARN_ON_ONCE() when we remove active
+ partitions
+Message-ID: <20231019083107.mm7tcgv6of6pszac@quack3>
+References: <20231017184823.1383356-1-hch@lst.de>
+ <20231017184823.1383356-3-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1659; i=brauner@kernel.org; h=from:subject:message-id; bh=KoPOEv3TLEtJeiwOPb/kRjSE6RR3q8fabseskuKoq0Q=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQaPH2VntWmIRAlPstakr/hxfZqbZnUf5fKVzx52ZJyY479 XUnDjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgImYnmZk+LHlX+PuGWvumcxxvHTfji vsR67w7Ju2JmGeLAEG1dMaeBkZ3kpstG1KM2+ewfUvdUlQ2zaxfxumHXjasanb2z+3aZk7FwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231017184823.1383356-3-hch@lst.de>
+Authentication-Results: smtp-out2.suse.de;
+	none
+X-Spam-Level: 
+X-Spam-Score: -6.60
+X-Spamd-Result: default: False [-6.60 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 NEURAL_HAM_LONG(-3.00)[-1.000];
+	 MIME_GOOD(-0.10)[text/plain];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 NEURAL_HAM_SHORT(-1.00)[-1.000];
+	 RCPT_COUNT_SEVEN(0.00)[8];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 RCVD_COUNT_TWO(0.00)[2];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-3.00)[100.00%]
 
-On Wed, 18 Oct 2023 17:29:24 +0200, Jan Kara wrote:
-> The implementation of bdev holder operations such as fs_bdev_mark_dead()
-> and fs_bdev_sync() grab sb->s_umount semaphore under
-> bdev->bd_holder_lock. This is problematic because it leads to
-> disk->open_mutex -> sb->s_umount lock ordering which is counterintuitive
-> (usually we grab higher level (e.g. filesystem) locks first and lower
-> level (e.g. block layer) locks later) and indeed makes lockdep complain
-> about possible locking cycles whenever we open a block device while
-> holding sb->s_umount semaphore. Implement a function
-> bdev_super_lock_shared() which safely transitions from holding
-> bdev->bd_holder_lock to holding sb->s_umount on alive superblock without
-> introducing the problematic lock dependency. We use this function
-> fs_bdev_sync() and fs_bdev_mark_dead().
+On Tue 17-10-23 20:48:20, Christoph Hellwig wrote:
+> From: Christian Brauner <brauner@kernel.org>
 > 
-> [...]
+> The logic for disk->open_partitions is:
+> 
+> blkdev_get_by_*()
+> -> bdev_is_partition()
+>    -> blkdev_get_part()
+>       -> blkdev_get_whole() // bdev_whole->bd_openers++
+>       -> if (part->bd_openers == 0)
+>                  disk->open_partitions++
+>          part->bd_openers
+> 
+> In other words, when we first claim/open a partition we increment
+> disk->open_partitions and only when all part->bd_openers are closed will
+> disk->open_partitions be zero. That should mean that
+> disk->open_partitions is always > 0 as long as there's anyone that
+> has an open partition.
+> 
+> So the check for disk->open_partitions should meand that we can never
+> remove an active partition that has a holder and holder ops set. Assert
+> that in the code. The main disk isn't removed so that check doesn't work
+> for disk->part0 which is what we want. After all we only care about
+> partition not about the main disk.
+> 
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-Thanks!
+Looks good to me. Feel free to add:
 
----
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Applied to the vfs.super branch of the vfs/vfs.git tree.
-Patches in the vfs.super branch should appear in linux-next soon.
+								Honza
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.super
-
-[1/1] fs: Avoid grabbing sb->s_umount under bdev->bd_holder_lock
-      https://git.kernel.org/vfs/vfs/c/4f4f1b3da625
+> ---
+>  block/partitions/core.c | 30 +++++++++++++++++-------------
+>  1 file changed, 17 insertions(+), 13 deletions(-)
+> 
+> diff --git a/block/partitions/core.c b/block/partitions/core.c
+> index b0585536b407a5..f47ffcfdfcec22 100644
+> --- a/block/partitions/core.c
+> +++ b/block/partitions/core.c
+> @@ -274,17 +274,6 @@ void drop_partition(struct block_device *part)
+>  	put_device(&part->bd_device);
+>  }
+>  
+> -static void delete_partition(struct block_device *part)
+> -{
+> -	/*
+> -	 * Remove the block device from the inode hash, so that it cannot be
+> -	 * looked up any more even when openers still hold references.
+> -	 */
+> -	remove_inode_hash(part->bd_inode);
+> -	bdev_mark_dead(part, false);
+> -	drop_partition(part);
+> -}
+> -
+>  static ssize_t whole_disk_show(struct device *dev,
+>  			       struct device_attribute *attr, char *buf)
+>  {
+> @@ -674,8 +663,23 @@ int bdev_disk_changed(struct gendisk *disk, bool invalidate)
+>  	sync_blockdev(disk->part0);
+>  	invalidate_bdev(disk->part0);
+>  
+> -	xa_for_each_start(&disk->part_tbl, idx, part, 1)
+> -		delete_partition(part);
+> +	xa_for_each_start(&disk->part_tbl, idx, part, 1) {
+> +		/*
+> +		 * Remove the block device from the inode hash, so that
+> +		 * it cannot be looked up any more even when openers
+> +		 * still hold references.
+> +		 */
+> +		remove_inode_hash(part->bd_inode);
+> +
+> +		/*
+> +		 * If @disk->open_partitions isn't elevated but there's
+> +		 * still an active holder of that block device things
+> +		 * are broken.
+> +		 */
+> +		WARN_ON_ONCE(atomic_read(&part->bd_openers));
+> +		invalidate_bdev(part);
+> +		drop_partition(part);
+> +	}
+>  	clear_bit(GD_NEED_PART_SCAN, &disk->state);
+>  
+>  	/*
+> -- 
+> 2.39.2
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
