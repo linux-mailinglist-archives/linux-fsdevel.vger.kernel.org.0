@@ -1,350 +1,162 @@
-Return-Path: <linux-fsdevel+bounces-772-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-773-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B49257CFE7B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 17:43:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 726867CFEEE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 18:00:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D78A71C20E24
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 15:43:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3EEB1C20EC7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 16:00:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7982315B3;
-	Thu, 19 Oct 2023 15:43:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6DF532194;
+	Thu, 19 Oct 2023 16:00:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MSjlhChO"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hV84FMsE"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E96230FB0
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 15:43:38 +0000 (UTC)
-Received: from mail-yb1-xb34.google.com (mail-yb1-xb34.google.com [IPv6:2607:f8b0:4864:20::b34])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5217CF
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 08:43:21 -0700 (PDT)
-Received: by mail-yb1-xb34.google.com with SMTP id 3f1490d57ef6-d9cb74cf53fso753759276.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 08:43:21 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3067830FB0
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 16:00:16 +0000 (UTC)
+Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0575B6;
+	Thu, 19 Oct 2023 09:00:13 -0700 (PDT)
+Received: by mail-lj1-x229.google.com with SMTP id 38308e7fff4ca-2c50cd16f3bso91075641fa.2;
+        Thu, 19 Oct 2023 09:00:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1697730201; x=1698335001; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0DPDsfu8aU8LPZp5ceCevOLz2QIEW4bMfW3ekc28nuA=;
-        b=MSjlhChOw4FdF/DM8FPldM0IDkJxUbF7VdpGVfrvKcwpzMtKbk1qXfgsT34zMEIG0p
-         aaBKrfX0VVJxLHEBtTauHPJzcWeQUGQjnblyuwfMSUiwWGKS6OhJ5iI9Vqe+u98aKzuM
-         ktVCsooA8pPo8j2+gTNPjF1LjalT/yrpKiG0Jss3/5wU5MreBHpwoAYw9oaERtTkX3ce
-         eIzWDeislL9Yqb67L3t3Mo3WdhYcbNIze0IgS8OiUyBKZ9TIXKFqODt3vaac5vdl9a+O
-         k+XHmiIuCW3JZXlzWi+GNtuUimq5cxjZjmciUKWlWEbBpvXjUjr/SOzBIPtg+IvrkA8l
-         XQHg==
+        d=gmail.com; s=20230601; t=1697731212; x=1698336012; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fSDDMkWKOscG8d7aFe9xNzMWpe2tWGppER9q+Picffw=;
+        b=hV84FMsEQDUDbv3DeZ4WLdHhDp46aXY8d6E7vntBVsTWmx/tB96wrkNmsqdmvqXKM5
+         dAQKz4k1qsqUD6eEt/Mbkan7OMT7SePQ5IE2jyY5EnkZxQXY6GkWK5oVGIWawPeG3uGg
+         znzeJJRjtxv7vO/XDyjCTnvKQxnByYL4Wx63P5How7UUeGXT9nPu6zkbybA0H8+cgOSG
+         1hWtbGaZMXRsZYs/1LhyC8Zjcn3DQDonKYMTd8eCNQc0XY4K6jmDLRiwJwedoST9ymMX
+         wsPy70KHyoN7LeQ3+snu4s+oGitQHKdDYX2NdLiQo1tuXdkKJ8rXGz78WmJ6tBQEeOji
+         alLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697730201; x=1698335001;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0DPDsfu8aU8LPZp5ceCevOLz2QIEW4bMfW3ekc28nuA=;
-        b=PrEnHSTcJeailRCms2B5oyRd7ZaMOKzZBp7d1kcKfk7O+Ss6Os4COy0YGX4F0W2QrV
-         Z05kNzB5XmCCliwL4Ss5tOh7AzdgQ57mPqz+5aGNE+UQmL0hml4zPm1AKD3q7RI7n5EB
-         4+tsCUCjOfrBAeqVrki9FV+wu0NQp2SFIIyokzq82w9dIeQdK9i4AuVT1LG8WHEHAmbd
-         g63C8c5w1BLRdn2VyNUMfKNdnYoLv76IdyjgAoYi8lfnM84GnXuUMD1oGxmXoo/P2oR9
-         yWdiJTxDLbl3zvGosdngGGlSOKAtqha4MWbJ60LebUHCGumXzVDRgf6AAOUBsyxtCa/i
-         /8lw==
-X-Gm-Message-State: AOJu0Yy6c0XKykDYBF+66GNjF4c/qf/oz5F8u2S+jUHMbQohaEzrRPLv
-	9BGibBPgGjz2bM918Y3PmQqrFTx9WNCnFjnlUjdbaw==
-X-Google-Smtp-Source: AGHT+IHe28QnWKSdMzGbZBpSd2uD/FXtVN47Cyko18LnBywC9KLnDTZu5KY3QtF/uku8HpgQF5dunHQMdDre0XAaHhs=
-X-Received: by 2002:a05:6902:302:b0:d9b:6c9d:e6a with SMTP id
- b2-20020a056902030200b00d9b6c9d0e6amr2644471ybs.0.1697730200564; Thu, 19 Oct
- 2023 08:43:20 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1697731212; x=1698336012;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fSDDMkWKOscG8d7aFe9xNzMWpe2tWGppER9q+Picffw=;
+        b=fmIv/UrNc0iD6Cln3bjO5F4NLuLoUmb5RxCvEjJ6OJ6+Ne2M3/r+ZNn4t51DKmAxlD
+         10x3vyQobs7kNS3MLCh/20wV/XGo9mQff3m+8S9asQpAmMH5Z+OvVh0NK+5kP1fF5oQa
+         wBcSgcb+U5B6tL5/y1c2CdvFBHbY+1yH79tGxvOnliUGJcnY06qEfXUmEcH5GeM68Ut3
+         HM3ayVkx3M/n6mUaRtUrQTCJzj5uV6uZt5Un+WXxuYCwJua76Z/iV052X0JygQIjLILC
+         DWLXOv8p+Q9/C0mxhMSLPBzT4S/8Xu5WW75D9iqdOIsDVwGkbluNEym0YK9eVvzNkPlC
+         b6Rg==
+X-Gm-Message-State: AOJu0YzSeerCvboRHnt9i9gTIQL/LvjUeSIA++iMyUabYBPN23nlMfiE
+	xrr3Y2+k+9fKCb17/JGMozU=
+X-Google-Smtp-Source: AGHT+IG3e6RX4/S2XxCBBQFe1+QWTlT36Exu33T/w95mZLQJPeQ2D33wxraevY5sRm43e/jMnglcSw==
+X-Received: by 2002:a2e:97ca:0:b0:2bc:d5f1:b9cf with SMTP id m10-20020a2e97ca000000b002bcd5f1b9cfmr1737842ljj.27.1697731211784;
+        Thu, 19 Oct 2023 09:00:11 -0700 (PDT)
+Received: from f (cst-prg-84-171.cust.vodafone.cz. [46.135.84.171])
+        by smtp.gmail.com with ESMTPSA id i18-20020a05600c481200b00407b93d8085sm4675459wmo.27.2023.10.19.09.00.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Oct 2023 09:00:11 -0700 (PDT)
+Date: Thu, 19 Oct 2023 17:59:58 +0200
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Dave Chinner <dchinner@redhat.com>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-bcachefs@vger.kernel.org,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: (subset) [PATCH 22/32] vfs: inode cache conversion to hash-bl
+Message-ID: <20231019155958.7ek7oyljs6y44ah7@f>
+References: <20230509165657.1735798-1-kent.overstreet@linux.dev>
+ <20230509165657.1735798-23-kent.overstreet@linux.dev>
+ <20230523-zujubeln-heizsysteme-f756eefe663e@brauner>
+ <20231019153040.lj3anuescvdprcq7@f>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231009064230.2952396-1-surenb@google.com> <20231009064230.2952396-4-surenb@google.com>
- <ZShzSvrN7FgdXi71@x1n>
-In-Reply-To: <ZShzSvrN7FgdXi71@x1n>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Thu, 19 Oct 2023 08:43:07 -0700
-Message-ID: <CAJuCfpE2SmiF6C6xh93ruCxQd_rBK5Vb8jCpKT=y2LSdgHpjgQ@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] selftests/mm: add UFFDIO_MOVE ioctl test
-To: Peter Xu <peterx@redhat.com>
-Cc: akpm@linux-foundation.org, viro@zeniv.linux.org.uk, brauner@kernel.org, 
-	shuah@kernel.org, aarcange@redhat.com, lokeshgidra@google.com, 
-	david@redhat.com, hughd@google.com, mhocko@suse.com, axelrasmussen@google.com, 
-	rppt@kernel.org, willy@infradead.org, Liam.Howlett@oracle.com, 
-	jannh@google.com, zhangpeng362@huawei.com, bgeffon@google.com, 
-	kaleshsingh@google.com, ngeoffray@google.com, jdduke@google.com, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20231019153040.lj3anuescvdprcq7@f>
 
-On Thu, Oct 12, 2023 at 3:29=E2=80=AFPM Peter Xu <peterx@redhat.com> wrote:
->
-> On Sun, Oct 08, 2023 at 11:42:28PM -0700, Suren Baghdasaryan wrote:
-> > Add a test for new UFFDIO_MOVE ioctl which uses uffd to move source
-> > into destination buffer while checking the contents of both after
-> > remapping. After the operation the content of the destination buffer
-> > should match the original source buffer's content while the source
-> > buffer should be zeroed.
-> >
-> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+On Thu, Oct 19, 2023 at 05:30:40PM +0200, Mateusz Guzik wrote:
+> On Tue, May 23, 2023 at 11:28:38AM +0200, Christian Brauner wrote:
+> > On Tue, 09 May 2023 12:56:47 -0400, Kent Overstreet wrote:
+> > > Because scalability of the global inode_hash_lock really, really
+> > > sucks.
+> > > 
+> > > 32-way concurrent create on a couple of different filesystems
+> > > before:
+> > > 
+> > > -   52.13%     0.04%  [kernel]            [k] ext4_create
+> > >    - 52.09% ext4_create
+> > >       - 41.03% __ext4_new_inode
+> > >          - 29.92% insert_inode_locked
+> > >             - 25.35% _raw_spin_lock
+> > >                - do_raw_spin_lock
+> > >                   - 24.97% __pv_queued_spin_lock_slowpath
+> > > 
+> > > [...]
+> > 
+> > This is interesting completely independent of bcachefs so we should give
+> > it some testing.
+> > 
+> > I updated a few places that had outdated comments.
+> > 
 > > ---
-> >  tools/testing/selftests/mm/uffd-common.c     | 41 ++++++++++++-
-> >  tools/testing/selftests/mm/uffd-common.h     |  1 +
-> >  tools/testing/selftests/mm/uffd-unit-tests.c | 62 ++++++++++++++++++++
-> >  3 files changed, 102 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/tools/testing/selftests/mm/uffd-common.c b/tools/testing/s=
-elftests/mm/uffd-common.c
-> > index 02b89860e193..ecc1244f1c2b 100644
-> > --- a/tools/testing/selftests/mm/uffd-common.c
-> > +++ b/tools/testing/selftests/mm/uffd-common.c
-> > @@ -52,6 +52,13 @@ static int anon_allocate_area(void **alloc_area, boo=
-l is_src)
-> >               *alloc_area =3D NULL;
-> >               return -errno;
-> >       }
-> > +
-> > +     /* Prevent source pages from collapsing into THPs */
-> > +     if (madvise(*alloc_area, nr_pages * page_size, MADV_NOHUGEPAGE)) =
-{
-> > +             *alloc_area =3D NULL;
-> > +             return -errno;
-> > +     }
->
-> Can we move this to test specific code?
+> > 
+> > Applied to the vfs.unstable.inode-hash branch of the vfs/vfs.git tree.
+> > Patches in the vfs.unstable.inode-hash branch should appear in linux-next soon.
+> > 
+> > Please report any outstanding bugs that were missed during review in a
+> > new review to the original patch series allowing us to drop it.
+> > 
+> > It's encouraged to provide Acked-bys and Reviewed-bys even though the
+> > patch has now been applied. If possible patch trailers will be updated.
+> > 
+> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+> > branch: vfs.unstable.inode-hash
+> > 
+> > [22/32] vfs: inode cache conversion to hash-bl
+> >         https://git.kernel.org/vfs/vfs/c/e3e92d47e6b1
+> 
+> What, if anything, is blocking this? It is over 5 months now, I don't
+> see it in master nor -next.
+> 
+> To be clear there is no urgency as far as I'm concerned, but I did run
+> into something which is primarily bottlenecked by inode hash lock and
+> looks like the above should sort it out.
+> 
+> Looks like the patch was simply forgotten.
+> 
+> tl;dr can this land in -next please
 
-Ack. I think that's doable.
+In case you can't be arsed, here is something funny which may convince
+you to expedite. ;)
 
->
-> > +
-> >       return 0;
-> >  }
-> >
-> > @@ -484,8 +491,14 @@ void uffd_handle_page_fault(struct uffd_msg *msg, =
-struct uffd_args *args)
-> >               offset =3D (char *)(unsigned long)msg->arg.pagefault.addr=
-ess - area_dst;
-> >               offset &=3D ~(page_size-1);
-> >
-> > -             if (copy_page(uffd, offset, args->apply_wp))
-> > -                     args->missing_faults++;
-> > +             /* UFFD_MOVE is supported for anon non-shared mappings. *=
-/
-> > +             if (uffd_test_ops =3D=3D &anon_uffd_test_ops && !map_shar=
-ed) {
->
-> IIUC this means move_page() will start to run on many other tests... as
-> long as anonymous & private.  Probably not wanted, because not all tests
-> may need this MOVE test, and it also means UFFDIO_COPY is never tested on
-> anonymous..
->
-> You can overwrite uffd_args.handle_fault().  Axel just added a hook which
-> seems also usable here.  See 99aa77215ad02.
+I did some benching by running 20 processes in parallel, each doing stat
+on a tree of 1 million files (one tree per proc, 1000 dirs x 1000 files,
+so 20 mln inodes in total).  Box had 24 cores and 24G RAM.
 
-Yes, I was thinking about adding a completely new set of tests for
-UFFDIO_MOVE but was not sure. With your confirmation I'll follow that
-path so that UFFDIO_COPY tests stay the same.
+Best times:
+Linux:          7.60s user 1306.90s system 1863% cpu 1:10.55 total
+FreeBSD:        3.49s user 345.12s system 1983% cpu 17.573 total
+OpenBSD:        5.01s user 6463.66s system 2000% cpu 5:23.42 total
+DragonflyBSD:   11.73s user 1316.76s system 1023% cpu 2:09.78 total
+OmniosCE:       9.17s user 516.53s system 1550% cpu 33.905 total
 
->
-> > +                     if (move_page(uffd, offset))
-> > +                             args->missing_faults++;
-> > +             } else {
-> > +                     if (copy_page(uffd, offset, args->apply_wp))
-> > +                             args->missing_faults++;
-> > +             }
-> >       }
-> >  }
-> >
-> > @@ -620,6 +633,30 @@ int copy_page(int ufd, unsigned long offset, bool =
-wp)
-> >       return __copy_page(ufd, offset, false, wp);
-> >  }
-> >
-> > +int move_page(int ufd, unsigned long offset)
-> > +{
-> > +     struct uffdio_move uffdio_move;
-> > +
-> > +     if (offset >=3D nr_pages * page_size)
-> > +             err("unexpected offset %lu\n", offset);
-> > +     uffdio_move.dst =3D (unsigned long) area_dst + offset;
-> > +     uffdio_move.src =3D (unsigned long) area_src + offset;
-> > +     uffdio_move.len =3D page_size;
-> > +     uffdio_move.mode =3D UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES;
-> > +     uffdio_move.move =3D 0;
-> > +     if (ioctl(ufd, UFFDIO_MOVE, &uffdio_move)) {
-> > +             /* real retval in uffdio_move.move */
-> > +             if (uffdio_move.move !=3D -EEXIST)
-> > +                     err("UFFDIO_MOVE error: %"PRId64,
-> > +                         (int64_t)uffdio_move.move);
-> > +             wake_range(ufd, uffdio_move.dst, page_size);
-> > +     } else if (uffdio_move.move !=3D page_size) {
-> > +             err("UFFDIO_MOVE error: %"PRId64, (int64_t)uffdio_move.mo=
-ve);
-> > +     } else
-> > +             return 1;
-> > +     return 0;
-> > +}
-> > +
-> >  int uffd_open_dev(unsigned int flags)
-> >  {
-> >       int fd, uffd;
-> > diff --git a/tools/testing/selftests/mm/uffd-common.h b/tools/testing/s=
-elftests/mm/uffd-common.h
-> > index 7c4fa964c3b0..f4d79e169a3d 100644
-> > --- a/tools/testing/selftests/mm/uffd-common.h
-> > +++ b/tools/testing/selftests/mm/uffd-common.h
-> > @@ -111,6 +111,7 @@ void wp_range(int ufd, __u64 start, __u64 len, bool=
- wp);
-> >  void uffd_handle_page_fault(struct uffd_msg *msg, struct uffd_args *ar=
-gs);
-> >  int __copy_page(int ufd, unsigned long offset, bool retry, bool wp);
-> >  int copy_page(int ufd, unsigned long offset, bool wp);
-> > +int move_page(int ufd, unsigned long offset);
-> >  void *uffd_poll_thread(void *arg);
-> >
-> >  int uffd_open_dev(unsigned int flags);
-> > diff --git a/tools/testing/selftests/mm/uffd-unit-tests.c b/tools/testi=
-ng/selftests/mm/uffd-unit-tests.c
-> > index 2709a34a39c5..f0ded3b34367 100644
-> > --- a/tools/testing/selftests/mm/uffd-unit-tests.c
-> > +++ b/tools/testing/selftests/mm/uffd-unit-tests.c
-> > @@ -824,6 +824,10 @@ static void uffd_events_test_common(bool wp)
-> >       char c;
-> >       struct uffd_args args =3D { 0 };
-> >
-> > +     /* Prevent source pages from being mapped more than once */
-> > +     if (madvise(area_src, nr_pages * page_size, MADV_DONTFORK))
-> > +             err("madvise(MADV_DONTFORK) failed");
->
-> Modifying events test is weird.. I assume you don't need this anymore aft=
-er
-> you switch to the handle_fault() hook.
+NetBSD failed to complete the run, OOM-killing workers:
+http://mail-index.netbsd.org/tech-kern/2023/10/19/msg029242.html
+OpenBSD is shafted by a big kernel lock, so no surprise it takes a long
+time.
 
-I think so but let me try first and I'll get back on that.
+So what I find funny is that Linux needed more time than OmniosCE (an
+Illumos variant, fork of Solaris).
 
->
-> > +
-> >       fcntl(uffd, F_SETFL, uffd_flags | O_NONBLOCK);
-> >       if (uffd_register(uffd, area_dst, nr_pages * page_size,
-> >                         true, wp, false))
-> > @@ -1062,6 +1066,58 @@ static void uffd_poison_test(uffd_test_args_t *t=
-args)
-> >       uffd_test_pass();
-> >  }
-> >
-> > +static void uffd_move_test(uffd_test_args_t *targs)
-> > +{
-> > +     unsigned long nr;
-> > +     pthread_t uffd_mon;
-> > +     char c;
-> > +     unsigned long long count;
-> > +     struct uffd_args args =3D { 0 };
-> > +
-> > +     if (uffd_register(uffd, area_dst, nr_pages * page_size,
-> > +                       true, false, false))
-> > +             err("register failure");
-> > +
-> > +     if (pthread_create(&uffd_mon, NULL, uffd_poll_thread, &args))
-> > +             err("uffd_poll_thread create");
-> > +
-> > +     /*
-> > +      * Read each of the pages back using the UFFD-registered mapping.=
- We
-> > +      * expect that the first time we touch a page, it will result in =
-a missing
-> > +      * fault. uffd_poll_thread will resolve the fault by remapping so=
-urce
-> > +      * page to destination.
-> > +      */
-> > +     for (nr =3D 0; nr < nr_pages; nr++) {
-> > +             /* Check area_src content */
-> > +             count =3D *area_count(area_src, nr);
-> > +             if (count !=3D count_verify[nr])
-> > +                     err("nr %lu source memory invalid %llu %llu\n",
-> > +                         nr, count, count_verify[nr]);
-> > +
-> > +             /* Faulting into area_dst should remap the page */
-> > +             count =3D *area_count(area_dst, nr);
-> > +             if (count !=3D count_verify[nr])
-> > +                     err("nr %lu memory corruption %llu %llu\n",
-> > +                         nr, count, count_verify[nr]);
-> > +
-> > +             /* Re-check area_src content which should be empty */
-> > +             count =3D *area_count(area_src, nr);
-> > +             if (count !=3D 0)
-> > +                     err("nr %lu move failed %llu %llu\n",
-> > +                         nr, count, count_verify[nr]);
->
-> All of above should see zeros, right?  Because I don't think anyone boost=
-ed
-> the counter at all..
->
-> Maybe set some non-zero values to it?  Then the re-check can make more
-> sense.
+It also needed more time than FreeBSD, which is not necessarily funny
+but not that great either.
 
-I thought uffd_test_ctx_init() is initializing area_count(area_src,
-nr), so the source pages should contain non-zero data before the move.
-Am I missing something?
-
->
-> If you want, I think we can also make uffd-stress.c test to cover MOVE to=
-o,
-> basically replacing all UFFDIO_COPY when e.g. user specified from cmdline=
-.
-> Optional, and may need some touch ups here and there, though.
-
-That's a good idea. I'll add that in the next version.
-Thanks,
-Suren.
-
->
-> Thanks,
->
-> > +     }
-> > +
-> > +     if (write(pipefd[1], &c, sizeof(c)) !=3D sizeof(c))
-> > +             err("pipe write");
-> > +     if (pthread_join(uffd_mon, NULL))
-> > +             err("join() failed");
-> > +
-> > +     if (args.missing_faults !=3D nr_pages || args.minor_faults !=3D 0=
-)
-> > +             uffd_test_fail("stats check error");
-> > +     else
-> > +             uffd_test_pass();
-> > +}
-> > +
-> >  /*
-> >   * Test the returned uffdio_register.ioctls with different register mo=
-des.
-> >   * Note that _UFFDIO_ZEROPAGE is tested separately in the zeropage tes=
-t.
-> > @@ -1139,6 +1195,12 @@ uffd_test_case_t uffd_tests[] =3D {
-> >               .mem_targets =3D MEM_ALL,
-> >               .uffd_feature_required =3D 0,
-> >       },
-> > +     {
-> > +             .name =3D "move",
-> > +             .uffd_fn =3D uffd_move_test,
-> > +             .mem_targets =3D MEM_ANON,
-> > +             .uffd_feature_required =3D UFFD_FEATURE_MOVE,
-> > +     },
-> >       {
-> >               .name =3D "wp-fork",
-> >               .uffd_fn =3D uffd_wp_fork_test,
-> > --
-> > 2.42.0.609.gbb76f46606-goog
-> >
->
-> --
-> Peter Xu
->
-> --
-> To unsubscribe from this group and stop receiving emails from it, send an=
- email to kernel-team+unsubscribe@android.com.
->
+All systems were mostly busy contending on locks and in particular Linux
+was almost exclusively busy waiting on inode hash lock.
 
