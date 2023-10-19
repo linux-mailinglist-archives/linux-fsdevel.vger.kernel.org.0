@@ -1,129 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-752-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-753-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 071D27CFA4C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 15:03:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 980C57CFA74
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 15:10:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28AFB1C20F56
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 13:03:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C56361C20D67
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 13:10:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4365C225DD;
-	Thu, 19 Oct 2023 13:03:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE9AE225D7;
+	Thu, 19 Oct 2023 13:10:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hyYrZPih"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GJMDnDkR"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB13D225D1
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 13:03:13 +0000 (UTC)
-Received: from mail-ot1-x332.google.com (mail-ot1-x332.google.com [IPv6:2607:f8b0:4864:20::332])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AD17198;
-	Thu, 19 Oct 2023 06:03:11 -0700 (PDT)
-Received: by mail-ot1-x332.google.com with SMTP id 46e09a7af769-6ce2988d62eso364087a34.1;
-        Thu, 19 Oct 2023 06:03:11 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD5D1A290
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 13:10:46 +0000 (UTC)
+Received: from mail-ot1-x32f.google.com (mail-ot1-x32f.google.com [IPv6:2607:f8b0:4864:20::32f])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A90DF106;
+	Thu, 19 Oct 2023 06:10:42 -0700 (PDT)
+Received: by mail-ot1-x32f.google.com with SMTP id 46e09a7af769-6ce2bcb131fso278987a34.1;
+        Thu, 19 Oct 2023 06:10:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697720590; x=1698325390; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1697721042; x=1698325842; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lrbctvwUdJjoFDMB39ofux9myN+UyVqHAZvecjGxGQk=;
-        b=hyYrZPihzsIiEnizqvyT9GOBFPlpZDMam3dFqxXdqkfbxDq3poqajsXuF7JERY2adx
-         xtbM/EdRIwoJ+CL0W3qxDpEpAkMFyMNhtNJIIqTtZhe5NKG2OxoxN3U8LN4imrZutKgg
-         R+W4NLA0cycEjOXXM4xqTxD2UDm2/YVhgRZSzSQFXP14VoPDFFgAZ5EmZHecj0ZV+Dh2
-         FAtxXleh6LZ1+D7Ezw4TNOOeV3DngZacyA1p3j1j5+41AU+SMe4BxpyV9kMyPDWxdQA0
-         /OYc9BOcdFy1paLeG6uP6JW7CtlKwGdIDFJ5LyFO2UrPMR00+PNiHiVV3nZKst0WWIB/
-         7Y+Q==
+        bh=ye6vMdiBk6fCMdBWCFZSgU3VdZTZqteq+5mpIGl0jX0=;
+        b=GJMDnDkRA3X+lbF/YFuSc90319T3zD8e2x4zLjyrbCeSZOGZds6lXBIv1LNe7hZcFY
+         o7xcjEa4EUFHNrfw3gs7M8ad5IPiNrJ6zg4Ch1GrcdiX8tJRarTQZwKferBJFvREX9Z2
+         HtXHpbV7VXKHw/9le78JMkWXqwpdSudeOk6AVK2/xLtDwnN5ZOGdpROJcbjzPeoVQ8gb
+         LS4DDLR1b7VWA2Z0yBH5mLxxnYc+E+nKZpFXlQTTBixjHDh9kT2Deo75NkV3jbkz3nmm
+         d6U6aoYhSKlJ0p/JcEFbuW7CPeaZTnaiqCoaIE/bAvshqK68QQFZc59yJYQj1IRsK9Y6
+         0AHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697720590; x=1698325390;
+        d=1e100.net; s=20230601; t=1697721042; x=1698325842;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=lrbctvwUdJjoFDMB39ofux9myN+UyVqHAZvecjGxGQk=;
-        b=OEZzkCTEudSPcyFvNFhwi88zZvhLWPuIdlpCnyZ6H0bDAxvvQEM1PTQ+IBXphDgIbn
-         GqqJHmuJArfkZBV2/MbNq4MV3KmsixhWL7E+89TyBrdlH+c0OkEl4UYuOfdY/u/TsXOK
-         gazT1KAwypmnPgiD5zJ0LlXFaDQl3OekaUQ9yVMEWp/s6wZG4fKJ+iZHQn9STaHbZi13
-         SjSyvZQvSUrne61Eye0ZYzWWBaR+ot+0YPW6bn0zv5+LfnftZ4c4FtVb1sU8+ncDzh/n
-         dXvAvDHF+++PYE9Sv+wfDUmB4nTwYacy75jc9/+WgWKuL7ZK23pZOA0YKvKRTQbwdHeA
-         rf3Q==
-X-Gm-Message-State: AOJu0YyRvoAu+CNgWOjXGwMxfa7ctg749Z7kjs+vocrYIeZYCJlJaM43
-	+oJZR2u9uWXAVTaVbFzfuEImw1MUh0Osy1HNOG0=
-X-Google-Smtp-Source: AGHT+IE/5Atx+eyvSwnNFpj6hHaOhQKFVZ7HWKWxYDUzAGdLQ9ty+OD0UGqt1Bms3c9wXOiRcP906iq8LA/zGrzptU4=
-X-Received: by 2002:a05:6830:16cb:b0:6bc:8cd2:dd97 with SMTP id
- l11-20020a05683016cb00b006bc8cd2dd97mr2053350otr.29.1697720590232; Thu, 19
- Oct 2023 06:03:10 -0700 (PDT)
+        bh=ye6vMdiBk6fCMdBWCFZSgU3VdZTZqteq+5mpIGl0jX0=;
+        b=q9tx9/Fyptyxf0tDuFe868wp4a3k6IAcqX6UVXH3qUKWNJL0Bn9KyrOOkW3J2lae3G
+         4iVaj04lzpJkeevhe9sorkD/EXrGlM7WtPhUgXxEltwydC45oL77z+AiIAL7E0R/D6Gw
+         wgQ3/YcIY/aULh0sysOn49WL+kshpPYRLQWwGir+octQAORJq4N7k4WfgruXmwoM04Ma
+         dGanl0O65etF3sFcQ6gm7/hI/wj3PCTVGYMetOq5+DbQY/gddhkfOele6iD1KqWFL7f2
+         2ZCPPp6uWdBxQA1uTPd54qHsgPylMTpc89PYY6QINcmX/inXyt7m2UWkwp3GMoCZ10Ym
+         JrUQ==
+X-Gm-Message-State: AOJu0YzEZ3ptHYOtZKUQIKwt124wZ3aiWZcOqaU8DP6SR6qPrjGhxCVt
+	txQnyaLARA4rFN22Oe8rL+G6WuICehOMRJoGGxuVoQsc
+X-Google-Smtp-Source: AGHT+IE430VZdkDsbpKvKxWDhEVGR82dqG4XagbT+n0EzWQMp9t2bf8FhO6KPFmDelhSMtZKIw7J4E0XfoJ7Lbza4KM=
+X-Received: by 2002:a05:6830:1d43:b0:6bc:fdbd:ccb8 with SMTP id
+ p3-20020a0568301d4300b006bcfdbdccb8mr2267424oth.13.1697721041742; Thu, 19 Oct
+ 2023 06:10:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231016220835.GH800259@ZenIV>
-In-Reply-To: <20231016220835.GH800259@ZenIV>
+References: <20231016220835.GH800259@ZenIV> <CAHC9VhTToc-rELe0EyOV4kRtOJuAmPzPB_QNn8Lw_EfMg+Edzw@mail.gmail.com>
+ <20231018043532.GS800259@ZenIV>
+In-Reply-To: <20231018043532.GS800259@ZenIV>
 From: Stephen Smalley <stephen.smalley.work@gmail.com>
-Date: Thu, 19 Oct 2023 09:02:59 -0400
-Message-ID: <CAEjxPJ5gdkXcpco3Y8xLTpia7QHoP+zL82pzZNXvEOnpzW=i1g@mail.gmail.com>
+Date: Thu, 19 Oct 2023 09:10:30 -0400
+Message-ID: <CAEjxPJ6W8170OtXxyxM2VH+hChtey6Ny814wzpd2Cda+Cmepew@mail.gmail.com>
 Subject: Re: [PATCH][RFC] selinuxfs: saner handling of policy reloads
 To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: selinux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>
+Cc: Paul Moore <paul@paul-moore.com>, selinux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Christian Brauner <brauner@kernel.org>, selinux-refpolicy@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 16, 2023 at 6:08=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> w=
-rote:
+On Wed, Oct 18, 2023 at 12:35=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> =
+wrote:
 >
-> [
-> That thing sits in viro/vfs.git#work.selinuxfs; I have
-> lock_rename()-related followups in another branch, so a pull would be mor=
-e
-> convenient for me than cherry-pick.  NOTE: testing and comments would
-> be very welcome - as it is, the patch is pretty much untested beyond
-> "it builds".
-> ]
+> On Tue, Oct 17, 2023 at 04:28:53PM -0400, Paul Moore wrote:
+> > Thanks Al.
+> >
+> > Giving this a very quick look, I like the code simplifications that
+> > come out of this change and I'll trust you on the idea that this
+> > approach is better from a VFS perspective.
+> >
+> > While the reject_all() permission hammer is good, I do want to make
+> > sure we are covered from a file labeling perspective; even though the
+> > DAC/reject_all() check hits first and avoids the LSM inode permission
+> > hook, we still want to make sure the files are labeled properly.  It
+> > looks like given the current SELinux Reference Policy this shouldn't
+> > be a problem, it will be labeled like most everything else in
+> > selinuxfs via genfscon (SELinux policy construct).  I expect those
+> > with custom SELinux policies will have something similar in place with
+> > a sane default that would cover the /sys/fs/selinux/.swapover
+> > directory but I did add the selinux-refpol list to the CC line just in
+> > case I'm being dumb and forgetting something important with respect to
+> > policy.
+> >
+> > The next step is to actually boot up a kernel with this patch and make
+> > sure it doesn't break anything.  Simply booting up a SELinux system
+> > and running 'load_policy' a handful of times should exercise the
+> > policy (re)load path, and if you want a (relatively) simple SELinux
+> > test suite you can find one here:
+> >
+> > * https://github.com/SELinuxProject/selinux-testsuite
+> >
+> > The README.md should have the instructions necessary to get it
+> > running.  If you can't do that, and no one else on the mailing list is
+> > able to test this out, I'll give it a go but expect it to take a while
+> > as I'm currently swamped with reviews and other stuff.
 >
-> On policy reload selinuxfs replaces two subdirectories (/booleans
-> and /class) with new variants.  Unfortunately, that's done with
-> serious abuses of directory locking.
->
-> 1) lock_rename() should be done to parents, not to objects being
-> exchanged
->
-> 2) there's a bunch of reasons why it should not be done for directories
-> that do not have a common ancestor; most of those do not apply to
-> selinuxfs, but even in the best case the proof is subtle and brittle.
->
-> 3) failure halfway through the creation of /class will leak
-> names and values arrays.
->
-> 4) use of d_genocide() is also rather brittle; it's probably not much of
-> a bug per se, but e.g. an overmount of /sys/fs/selinuxfs/classes/shm/inde=
-x
-> with any regular file will end up with leaked mount on policy reload.
-> Sure, don't do it, but...
->
-> Let's stop messing with disconnected directories; just create
-> a temporary (/.swapover) with no permissions for anyone (on the
-> level of ->permission() returing -EPERM, no matter who's calling
-> it) and build the new /booleans and /class in there; then
-> lock_rename on root and that temporary directory and d_exchange()
-> old and new both for class and booleans.  Then unlock and use
-> simple_recursive_removal() to take the temporary out; it's much
-> more robust.
->
-> And instead of bothering with separate pathways for freeing
-> new (on failure halfway through) and old (on success) names/values,
-> do all freeing in one place.  With temporaries swapped with the
-> old ones when we are past all possible failures.
->
-> The only user-visible difference is that /.swapover shows up
-> (but isn't possible to open, look up into, etc.) for the
-> duration of policy reload.
->
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> It does survive repeated load_policy (as well as semodule -d/semodule -e,
+> with expected effect on /booleans, AFAICS).  As for the testsuite...
+> No regressions compared to clean -rc5, but then there are (identical)
+> failures on both - "Failed 8/76 test programs. 88/1046 subtests failed."
+> Incomplete defconfig, at a guess...
 
-Reviewed-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+All tests passed for me using the defconfig fragment from the selinux-tests=
+uite.
 
