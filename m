@@ -1,162 +1,168 @@
-Return-Path: <linux-fsdevel+bounces-773-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-775-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 726867CFEEE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 18:00:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC41A7CFFCC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 18:40:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3EEB1C20EC7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 16:00:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 873F8282171
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 16:40:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6DF532194;
-	Thu, 19 Oct 2023 16:00:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D42832C70;
+	Thu, 19 Oct 2023 16:40:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hV84FMsE"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LhvilC3Q"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3067830FB0
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 16:00:16 +0000 (UTC)
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0575B6;
-	Thu, 19 Oct 2023 09:00:13 -0700 (PDT)
-Received: by mail-lj1-x229.google.com with SMTP id 38308e7fff4ca-2c50cd16f3bso91075641fa.2;
-        Thu, 19 Oct 2023 09:00:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697731212; x=1698336012; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fSDDMkWKOscG8d7aFe9xNzMWpe2tWGppER9q+Picffw=;
-        b=hV84FMsEQDUDbv3DeZ4WLdHhDp46aXY8d6E7vntBVsTWmx/tB96wrkNmsqdmvqXKM5
-         dAQKz4k1qsqUD6eEt/Mbkan7OMT7SePQ5IE2jyY5EnkZxQXY6GkWK5oVGIWawPeG3uGg
-         znzeJJRjtxv7vO/XDyjCTnvKQxnByYL4Wx63P5How7UUeGXT9nPu6zkbybA0H8+cgOSG
-         1hWtbGaZMXRsZYs/1LhyC8Zjcn3DQDonKYMTd8eCNQc0XY4K6jmDLRiwJwedoST9ymMX
-         wsPy70KHyoN7LeQ3+snu4s+oGitQHKdDYX2NdLiQo1tuXdkKJ8rXGz78WmJ6tBQEeOji
-         alLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697731212; x=1698336012;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fSDDMkWKOscG8d7aFe9xNzMWpe2tWGppER9q+Picffw=;
-        b=fmIv/UrNc0iD6Cln3bjO5F4NLuLoUmb5RxCvEjJ6OJ6+Ne2M3/r+ZNn4t51DKmAxlD
-         10x3vyQobs7kNS3MLCh/20wV/XGo9mQff3m+8S9asQpAmMH5Z+OvVh0NK+5kP1fF5oQa
-         wBcSgcb+U5B6tL5/y1c2CdvFBHbY+1yH79tGxvOnliUGJcnY06qEfXUmEcH5GeM68Ut3
-         HM3ayVkx3M/n6mUaRtUrQTCJzj5uV6uZt5Un+WXxuYCwJua76Z/iV052X0JygQIjLILC
-         DWLXOv8p+Q9/C0mxhMSLPBzT4S/8Xu5WW75D9iqdOIsDVwGkbluNEym0YK9eVvzNkPlC
-         b6Rg==
-X-Gm-Message-State: AOJu0YzSeerCvboRHnt9i9gTIQL/LvjUeSIA++iMyUabYBPN23nlMfiE
-	xrr3Y2+k+9fKCb17/JGMozU=
-X-Google-Smtp-Source: AGHT+IG3e6RX4/S2XxCBBQFe1+QWTlT36Exu33T/w95mZLQJPeQ2D33wxraevY5sRm43e/jMnglcSw==
-X-Received: by 2002:a2e:97ca:0:b0:2bc:d5f1:b9cf with SMTP id m10-20020a2e97ca000000b002bcd5f1b9cfmr1737842ljj.27.1697731211784;
-        Thu, 19 Oct 2023 09:00:11 -0700 (PDT)
-Received: from f (cst-prg-84-171.cust.vodafone.cz. [46.135.84.171])
-        by smtp.gmail.com with ESMTPSA id i18-20020a05600c481200b00407b93d8085sm4675459wmo.27.2023.10.19.09.00.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Oct 2023 09:00:11 -0700 (PDT)
-Date: Thu, 19 Oct 2023 17:59:58 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Dave Chinner <dchinner@redhat.com>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-bcachefs@vger.kernel.org,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: (subset) [PATCH 22/32] vfs: inode cache conversion to hash-bl
-Message-ID: <20231019155958.7ek7oyljs6y44ah7@f>
-References: <20230509165657.1735798-1-kent.overstreet@linux.dev>
- <20230509165657.1735798-23-kent.overstreet@linux.dev>
- <20230523-zujubeln-heizsysteme-f756eefe663e@brauner>
- <20231019153040.lj3anuescvdprcq7@f>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10B1A32C62;
+	Thu, 19 Oct 2023 16:40:34 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6C84124;
+	Thu, 19 Oct 2023 09:40:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1697733633; x=1729269633;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=B68lb5bc3nlqxKW2HoQvNAzdwFIr+BMgv0ZP+rlvfxo=;
+  b=LhvilC3Qg9AxwrA9+1Yqeoirpjyhe/Fmc27Ug9GaQZ41neAjF517lXPf
+   opcViqgh/0TXAyb+qJc/+cgnZPEHphDBPkGlEyrMNnWSJdP5QZ9tmqGmu
+   M8c4IVDGmqGdWnDx2D+I8rkwyyDXw1XfP8r+DFI0kt75BxSfiX8CuXPek
+   l9ibuUaYm8nFJjwtg6o2fml6dWszX4jz38LsjqI+sSuRv+RvftfeMX5pX
+   8tFeaiqoc/B835QueXDypu/2VMD0gis0A73JfG1fpO1zFMPlJ0z16Uewg
+   2BqwtB2OsmO9oBEw4PKxyJne2Pm750TKfqj1F/OgCkiNYDokUXkPE7PAi
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10868"; a="7864227"
+X-IronPort-AV: E=Sophos;i="6.03,237,1694761200"; 
+   d="scan'208";a="7864227"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2023 09:36:24 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10868"; a="706900365"
+X-IronPort-AV: E=Sophos;i="6.03,237,1694761200"; 
+   d="scan'208";a="706900365"
+Received: from lkp-server01.sh.intel.com (HELO 8917679a5d3e) ([10.239.97.150])
+  by orsmga003.jf.intel.com with ESMTP; 19 Oct 2023 09:36:16 -0700
+Received: from kbuild by 8917679a5d3e with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1qtW0L-0002GE-2M;
+	Thu, 19 Oct 2023 16:36:13 +0000
+Date: Fri, 20 Oct 2023 00:35:56 +0800
+From: kernel test robot <lkp@intel.com>
+To: Nitesh Shetty <nj.shetty@samsung.com>, Jens Axboe <axboe@kernel.dk>,
+	Jonathan Corbet <corbet@lwn.net>, Alasdair Kergon <agk@redhat.com>,
+	Mike Snitzer <snitzer@kernel.org>, dm-devel@lists.linux.dev,
+	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Chaitanya Kulkarni <kch@nvidia.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, martin.petersen@oracle.com,
+	linux-scsi@vger.kernel.org, nitheshshetty@gmail.com,
+	anuj1072538@gmail.com, gost.dev@samsung.com, mcgrof@kernel.org,
+	Nitesh Shetty <nj.shetty@samsung.com>,
+	Hannes Reinecke <hare@suse.de>,
+	Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+	Anuj Gupta <anuj20.g@samsung.com>,
+	Vincent Fu <vincent.fu@samsung.com>, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v17 12/12] null_blk: add support for copy offload
+Message-ID: <202310200001.UU0bBx9w-lkp@intel.com>
+References: <20231019110147.31672-13-nj.shetty@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231019153040.lj3anuescvdprcq7@f>
+In-Reply-To: <20231019110147.31672-13-nj.shetty@samsung.com>
 
-On Thu, Oct 19, 2023 at 05:30:40PM +0200, Mateusz Guzik wrote:
-> On Tue, May 23, 2023 at 11:28:38AM +0200, Christian Brauner wrote:
-> > On Tue, 09 May 2023 12:56:47 -0400, Kent Overstreet wrote:
-> > > Because scalability of the global inode_hash_lock really, really
-> > > sucks.
-> > > 
-> > > 32-way concurrent create on a couple of different filesystems
-> > > before:
-> > > 
-> > > -   52.13%     0.04%  [kernel]            [k] ext4_create
-> > >    - 52.09% ext4_create
-> > >       - 41.03% __ext4_new_inode
-> > >          - 29.92% insert_inode_locked
-> > >             - 25.35% _raw_spin_lock
-> > >                - do_raw_spin_lock
-> > >                   - 24.97% __pv_queued_spin_lock_slowpath
-> > > 
-> > > [...]
-> > 
-> > This is interesting completely independent of bcachefs so we should give
-> > it some testing.
-> > 
-> > I updated a few places that had outdated comments.
-> > 
-> > ---
-> > 
-> > Applied to the vfs.unstable.inode-hash branch of the vfs/vfs.git tree.
-> > Patches in the vfs.unstable.inode-hash branch should appear in linux-next soon.
-> > 
-> > Please report any outstanding bugs that were missed during review in a
-> > new review to the original patch series allowing us to drop it.
-> > 
-> > It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> > patch has now been applied. If possible patch trailers will be updated.
-> > 
-> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> > branch: vfs.unstable.inode-hash
-> > 
-> > [22/32] vfs: inode cache conversion to hash-bl
-> >         https://git.kernel.org/vfs/vfs/c/e3e92d47e6b1
-> 
-> What, if anything, is blocking this? It is over 5 months now, I don't
-> see it in master nor -next.
-> 
-> To be clear there is no urgency as far as I'm concerned, but I did run
-> into something which is primarily bottlenecked by inode hash lock and
-> looks like the above should sort it out.
-> 
-> Looks like the patch was simply forgotten.
-> 
-> tl;dr can this land in -next please
+Hi Nitesh,
 
-In case you can't be arsed, here is something funny which may convince
-you to expedite. ;)
+kernel test robot noticed the following build warnings:
 
-I did some benching by running 20 processes in parallel, each doing stat
-on a tree of 1 million files (one tree per proc, 1000 dirs x 1000 files,
-so 20 mln inodes in total).  Box had 24 cores and 24G RAM.
+[auto build test WARNING on 213f891525c222e8ed145ce1ce7ae1f47921cb9c]
 
-Best times:
-Linux:          7.60s user 1306.90s system 1863% cpu 1:10.55 total
-FreeBSD:        3.49s user 345.12s system 1983% cpu 17.573 total
-OpenBSD:        5.01s user 6463.66s system 2000% cpu 5:23.42 total
-DragonflyBSD:   11.73s user 1316.76s system 1023% cpu 2:09.78 total
-OmniosCE:       9.17s user 516.53s system 1550% cpu 33.905 total
+url:    https://github.com/intel-lab-lkp/linux/commits/Nitesh-Shetty/block-Introduce-queue-limits-and-sysfs-for-copy-offload-support/20231019-200658
+base:   213f891525c222e8ed145ce1ce7ae1f47921cb9c
+patch link:    https://lore.kernel.org/r/20231019110147.31672-13-nj.shetty%40samsung.com
+patch subject: [PATCH v17 12/12] null_blk: add support for copy offload
+config: parisc-allyesconfig (https://download.01.org/0day-ci/archive/20231020/202310200001.UU0bBx9w-lkp@intel.com/config)
+compiler: hppa-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231020/202310200001.UU0bBx9w-lkp@intel.com/reproduce)
 
-NetBSD failed to complete the run, OOM-killing workers:
-http://mail-index.netbsd.org/tech-kern/2023/10/19/msg029242.html
-OpenBSD is shafted by a big kernel lock, so no surprise it takes a long
-time.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202310200001.UU0bBx9w-lkp@intel.com/
 
-So what I find funny is that Linux needed more time than OmniosCE (an
-Illumos variant, fork of Solaris).
+All warnings (new ones prefixed by >>):
 
-It also needed more time than FreeBSD, which is not necessarily funny
-but not that great either.
+   In file included from include/trace/define_trace.h:102,
+                    from drivers/block/null_blk/trace.h:104,
+                    from drivers/block/null_blk/main.c:15:
+   drivers/block/null_blk/./trace.h: In function 'trace_raw_output_nullb_copy_op':
+>> drivers/block/null_blk/./trace.h:91:27: warning: format '%lu' expects argument of type 'long unsigned int', but argument 7 has type 'size_t' {aka 'unsigned int'} [-Wformat=]
+      91 |                 TP_printk("%s req=%-15s: dst=%llu, src=%llu, len=%lu",
+         |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/trace/trace_events.h:203:34: note: in definition of macro 'DECLARE_EVENT_CLASS'
+     203 |         trace_event_printf(iter, print);                                \
+         |                                  ^~~~~
+   include/trace/trace_events.h:45:30: note: in expansion of macro 'PARAMS'
+      45 |                              PARAMS(print));                   \
+         |                              ^~~~~~
+   drivers/block/null_blk/./trace.h:73:1: note: in expansion of macro 'TRACE_EVENT'
+      73 | TRACE_EVENT(nullb_copy_op,
+         | ^~~~~~~~~~~
+   drivers/block/null_blk/./trace.h:91:17: note: in expansion of macro 'TP_printk'
+      91 |                 TP_printk("%s req=%-15s: dst=%llu, src=%llu, len=%lu",
+         |                 ^~~~~~~~~
+   In file included from include/trace/trace_events.h:237:
+   drivers/block/null_blk/./trace.h:91:68: note: format string is defined here
+      91 |                 TP_printk("%s req=%-15s: dst=%llu, src=%llu, len=%lu",
+         |                                                                  ~~^
+         |                                                                    |
+         |                                                                    long unsigned int
+         |                                                                  %u
 
-All systems were mostly busy contending on locks and in particular Linux
-was almost exclusively busy waiting on inode hash lock.
+
+vim +91 drivers/block/null_blk/./trace.h
+
+    72	
+    73	TRACE_EVENT(nullb_copy_op,
+    74			TP_PROTO(struct request *req,
+    75				 sector_t dst, sector_t src, size_t len),
+    76			TP_ARGS(req, dst, src, len),
+    77			TP_STRUCT__entry(
+    78					 __array(char, disk, DISK_NAME_LEN)
+    79					 __field(enum req_op, op)
+    80					 __field(sector_t, dst)
+    81					 __field(sector_t, src)
+    82					 __field(size_t, len)
+    83			),
+    84			TP_fast_assign(
+    85				       __entry->op = req_op(req);
+    86				       __assign_disk_name(__entry->disk, req->q->disk);
+    87				       __entry->dst = dst;
+    88				       __entry->src = src;
+    89				       __entry->len = len;
+    90			),
+  > 91			TP_printk("%s req=%-15s: dst=%llu, src=%llu, len=%lu",
+    92				  __print_disk_name(__entry->disk),
+    93				  blk_op_str(__entry->op),
+    94				  __entry->dst, __entry->src, __entry->len)
+    95	);
+    96	#endif /* _TRACE_NULLB_H */
+    97	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
