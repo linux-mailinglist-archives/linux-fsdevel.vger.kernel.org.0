@@ -1,219 +1,434 @@
-Return-Path: <linux-fsdevel+bounces-836-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-839-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8EDA7D11DF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 16:52:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B91DA7D1237
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 17:07:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0BA5B214F5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 14:52:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B2EA282504
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 15:07:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B79E1D539;
-	Fri, 20 Oct 2023 14:52:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97CEF1DA43;
+	Fri, 20 Oct 2023 15:07:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bxBxZo86"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="qzA0ywzN"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D627D19BD8
-	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 14:52:09 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.20])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A1F4D60;
-	Fri, 20 Oct 2023 07:52:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1697813527; x=1729349527;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3XWNrkJxpcG5XnvrOEt4u1Ox2Hb8JJ6aMB6sHnTLW7k=;
-  b=bxBxZo86Se4MKYBVo8e1MNfPA68MdCCZ0z2t3Mmelk4IEul6rHQ1y39D
-   CP3kZ/vDLHfaZDqSLWfbWdMuYEyebMVfr2Nzxdw3teDQpVh7brm4znUgS
-   4g1yUUvYxyFUB3zDFTAqcZC5IMsYHYwry57rFwPbvbkQj8zc/MROy6AHE
-   tNi8LPNCR1pGSzeg1KflAxYZPSbjeF5BOjPiyiLe90Bllmy6yFbn9ua+j
-   /Nj3AyTYahiMZ0vreI4/F4KvwCvT68hYSTX4i7HdmyniwmRtBytnVusEk
-   NiP3hh0z3r5HDreyZM/sBfyasl3MgIMpmL2VL6uKEl4lnYSHOyp3q1PGa
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10869"; a="376888872"
-X-IronPort-AV: E=Sophos;i="6.03,239,1694761200"; 
-   d="scan'208";a="376888872"
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2023 07:52:06 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10869"; a="1004628451"
-X-IronPort-AV: E=Sophos;i="6.03,239,1694761200"; 
-   d="scan'208";a="1004628451"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2023 07:52:03 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97-RC2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1qtqr2-00000007AQi-0ltp;
-	Fri, 20 Oct 2023 17:52:00 +0300
-Date: Fri, 20 Oct 2023 17:51:59 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Jan Kara <jack@suse.cz>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Kees Cook <keescook@chromium.org>,
-	Ferry Toth <ftoth@exalondelft.nl>, linux-fsdevel@vger.kernel.org,
-	linux-ext4@vger.kernel.org
-Subject: Re: [GIT PULL] ext2, quota, and udf fixes for 6.6-rc1
-Message-ID: <ZTKUDzONVHXnWAJc@smile.fi.intel.com>
-References: <20231019101854.yb5gurasxgbdtui5@quack3>
- <ZTEap8A1W3IIY7Bg@smile.fi.intel.com>
- <ZTFAzuE58mkFbScV@smile.fi.intel.com>
- <20231019164240.lhg5jotsh6vfuy67@treble>
- <ZTFh0NeYtvgcjSv8@smile.fi.intel.com>
- <CAHk-=wjXG52UNKCwwEU1A+QWHYfvKOieV0uFOpPkLR0NSvOjtg@mail.gmail.com>
- <CAHk-=whis2BJF2fv1xySAg2NTQ+C5fViNSGkLNCOqGzi-3y+8w@mail.gmail.com>
- <ZTFxEcjo4d6vXbo5@smile.fi.intel.com>
- <ZTFydEbdEYlxOxc1@smile.fi.intel.com>
- <CAHk-=wh_gbZE_ZsQ6+9gSPdXfoCtmuK-MFmBkO3ywMKFQEvb6g@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BBC41DA38
+	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 15:07:34 +0000 (UTC)
+X-Greylist: delayed 583 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 20 Oct 2023 08:07:31 PDT
+Received: from smtp-42ac.mail.infomaniak.ch (smtp-42ac.mail.infomaniak.ch [IPv6:2001:1600:4:17::42ac])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A9F5A3
+	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 08:07:31 -0700 (PDT)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4SBnkc6psDzMq06D;
+	Fri, 20 Oct 2023 14:57:44 +0000 (UTC)
+Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4SBnkc1QKXzMpp01;
+	Fri, 20 Oct 2023 16:57:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+	s=20191114; t=1697813864;
+	bh=+E3xuq2zscvbr6YOq9c7+a3VmTvrRogs9lMHmeV5taM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qzA0ywzN5ziDEy154xfSJ4qEGNj8DgZciquGG3ZrQk4LuTqFIqVqG1Tp1KG7PyGcO
+	 /E1EBc1XmNxptF8Ssp4WE4he2DxcTEteUskQkmNULrJxpP3aL7vfxu2vc1ijxuGVKh
+	 WA9aA5orDwzxy4fKeY+5Y8+7CzmaReH29Ib2Hjpk=
+Date: Fri, 20 Oct 2023 16:57:39 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Cc: Christian Brauner <brauner@kernel.org>, 
+	linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
+	Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
+	linux-fsdevel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>
+Subject: Re: [PATCH v3 0/5] Landlock: IOCTL support
+Message-ID: <20231020.moefooYeV9ei@digikod.net>
+References: <20230814172816.3907299-1-gnoack@google.com>
+ <20230818.iechoCh0eew0@digikod.net>
+ <ZOjCz5j4+tgptF53@google.com>
+ <20230825.Zoo4ohn1aivo@digikod.net>
+ <20230826.ohtooph0Ahmu@digikod.net>
+ <ZPMiVaL3kVaTnivh@google.com>
+ <20230904.aiWae8eineo4@digikod.net>
+ <ZP7lxmXklksadvz+@google.com>
+ <20230911.jie6Rai8ughe@digikod.net>
+ <ZTGpIBve2LVlbt6p@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wh_gbZE_ZsQ6+9gSPdXfoCtmuK-MFmBkO3ywMKFQEvb6g@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZTGpIBve2LVlbt6p@google.com>
+X-Infomaniak-Routing: alpha
 
-On Thu, Oct 19, 2023 at 11:43:47AM -0700, Linus Torvalds wrote:
-> On Thu, 19 Oct 2023 at 11:16, Andy Shevchenko
-> <andriy.shevchenko@intel.com> wrote:
-> >
-> > Meanwhile a wild idea, can it be some git (automatic) conflict resolution that
-> > makes that merge affect another (not related to the main contents of the merge)
-> > files? Like upstream has one base, the merge has another which is older/newer
-> > in the history?
+On Fri, Oct 20, 2023 at 12:09:36AM +0200, Günther Noack wrote:
+> Hello!
 > 
-> I already looked at any obvious case of that.
+> On Mon, Sep 11, 2023 at 05:25:31PM +0200, Mickaël Salaün wrote:
+> > On Mon, Sep 11, 2023 at 12:02:46PM +0200, Günther Noack wrote:
+> > > Thank you for making the algorithm that explicit -- that helps to trace down the
+> > > differences.  I can follow the logic now, but I still don't understand what your
+> > > underlying rationale for that is?
+> > > 
+> > > I believe that fundamentally, a core difference is:
+> > > 
+> > > For an access right R and a file F, for these two cases:
+> > > 
+> > >  (a) the access right R is unhandled  (nothing gets restricted)
+> > >  (b) the access right R is handled, but R is granted for F in a rule.
+> > > 
+> > > I believe that accesses in case (a) and (b) to the file F should have the same
+> > > results.
+> > > 
+> > > This is at least how the existing Landlock implementation works, as far as I can
+> > > tell.
+> > > 
+> > > ("Refer" is an exceptional case, but we have documented that it was always
+> > > "implicitly handled" in ABI V1, which makes it consistent again.)
+> > > 
+> > > 
+> > > When I expand your code above to a boolean table, I end up with the following
+> > > decisions, depending on whether IOCTL and READ are handled or not, and whether
+> > > they are explicitly permitted for the file through a rule:
+> > > 
+> > > 
+> > > Mickaël's        IOCTL      IOCTL      IOCTL
+> > > suggestion       handled,   handled,   unhandled
+> > > 2023-09-04       file       file not
+> > >                  permitted  permitted
+> > > --------------------------------------------------
+> > > READ handled,
+> > > file permitted   allow      allow      allow
+> > > 
+> > > READ handled,
+> > > f not permitted  deny       deny       allow
+> > > 
+> > > READ unhandled   allow      deny       allow
+> > > 
+> > > 
+> > > In patch set V3, this is different: Because I think that cases (a) and (b) from
+> > > above should always behave the same, the first and third column and row must be
+> > > symmetric and have the same entries.  So, in patch set V3, it is sufficient if
+> > > *one of* the two rights IOCTL and READ_FILE are present, in order to use the
+> > > FIONREAD IOCTL:
+> > > 
+> > > 
+> > > Günther's        IOCTL      IOCTL      IOCTL
+> > > patch set V3     handled,   handled,   unhandled
+> > > 2023-08-14       file       file not
+> > >                  permitted  permitted
+> > > --------------------------------------------------
+> > > READ handled,
+> > > file permitted   allow      allow      allow
+> > > 
+> > > READ handled,
+> > > f not permitted  allow      deny       allow
+> > > 
+> > > READ unhandled   allow      allow      allow
+> > 
+> > A first difference is about (READ unhandled) AND (IOCTL handled +
+> > file not permitted). It will not be possible to follow the same logic
+> > with new Landlock access right (e.g. LANDLOCK_ACCESS_FS_READ_METADATA
+> > that should also allow FS_IOC_FSGETXATTR), and I'd like to keep it
+> > consistent.
+> > 
+> > A second difference is about (READ handled + f not permitted) AND
+> > (IOCTL handled + file permitted). The reasoning was to avoid giving too
+> > much power to LANDLOCK_ACCESS_FS_IOCTL and dowgrade it as new access
+> > rights are implemented. This looks quite similar to the CAP_SYS_ADMIN
+> > right that can basically do anything, and new capabilites are mainly a
+> > subset of this one. My proposal was to incrementally downgrade the power
+> > given by LANDLOCK_ACCESS_FS_IOCTL while still being compatible. On the
+> > I was thinking that, if we make a requirement to have the "new correct"
+> > access right, the application update might drop the IOCTL access right.
+> > I now think this reasoning is flawed.
+> > 
+> > Indeed, this comparaison doesn't fit well because IOCTLs are not a
+> > superset of all access rights, and because nothing can force developers
+> > that already gave access to all IOCTLs for a file to not just add
+> > another access right (instead of swapping them).
+> > 
+> > Instead, I think user space libraries should manage this kind of access
+> > right swapping when possible and have a fallback mechanism relying on
+> > the LANDLOCK_ACCESS_FS_IOCTL right. This would be valuable because they
+> > may be updated before the (stable system) kernel, and this would be
+> > easier for developers to manage.
+> > 
+> > In a nutshell, it is about giving control for an action (e.g. FIONREAD)
+> > to either a unique access right or to a set of access rights. At first,
+> > I would have preferred to have a unique access right to control an
+> > action, because it is simpler (e.g. for audit/debug). On the other hand,
+> > we need to handle access rights that allow the same action (e.g. file
+> > read OR write for FIOQSIZE). I now think your approach (i.e. set of
+> > access rights to control an action) could make more sense. Another good
+> > point is to not downgrade the power of LANDLOCK_ACCESS_FS_IOCTL, which
+> > could in fact be difficult to understand for users. Nested Landlock
+> > domains should also be easier to manage with this logic.
+
+Hmm, in fact I think my initial reasoning was better. I still agree with
+my suggestion from 2023-09-04, and I think you're now proposing the
+same. Handling access right in an exclusive way (i.e. a specific IOCTL
+command is always handle by only one access rigth, but this one may
+depend on the handle access rights) is indeed better because it will
+force developers to not use the generic IOCTL access right instead of
+e.g. the GFX one once they want to use it. In practice, it can reduce
+the set of IOCTL commands allowed for LANDLOCK_ACCESS_FS_IOCTL-only file
+hierarchies if users only allow the new LANDLOCK_ACCESS_FS_GFX to the
+appropriate (e.g. /dev/dri) files.
+
+To summarize, the reasoning is as follow: when READ is handled, the
+related IOCTL commands (e.g. FIONREAD) are delegated to the READ access
+right (both for the ruleset and the related rules), and the IOCTL access
+right doesn't handle at all FIONREAD. If READ is not handled, then the
+IOCTL access right handles FIONREAD as well. The same logic applies to
+any current or future access rights, like LANDLOCK_ACCESS_FS_GFX.
+
 > 
-> The only quota-related issue on the other side is an obvious
-> one-liner: commit 86be6b8bd834 ("quota: Check presence of quota
-> operation structures instead of ->quota_read and ->quota_write
-> callbacks").
+> After we discussed this difficult topic briefly off-list, let me try to
+> summarize my takeaways and write it up here for reference.
 > 
-> It didn't affect the merge, because it was not related to  any of the
-> changes that came in from the quota branch (it was physically close to
-> the change that used lockdep_assert_held_write() instead of a
-> WARN_ON_ONCE(down_read_trylock()) sequence, but it is unrelated to
-> it).
+> I think the requirements for the logic of the IOCTL right are as follows:
 > 
-> I guess you could try reverting that one-liner after the merge, but I
-> _really_ don't think it is at all relevant.
+>  (1) In the future, if a new FOO access right is introduced, this right should
+>      implicitly give access to FOO-related IOCTLs on the affected same files,
+>      *without requiring the LANDLOCK_ACCESS_FS_IOCTL right*.
 > 
-> What *would* probably be interesting is to start at the pre-merge
-> state, and rebase the code that got merged in. And then bisect *that*
-> series.
+>      Example: If in Landlock version 10, we introduce LANDLOCK_ACCESS_FS_GFX for
+>      graphics-related functionality, this access right should potentially give
+>      access to graphics-related ioctl commands.  I'll use the "GFX" example
+>      below as a stand-in for a generic future access right which should give
+>      access to a set of IOCTL commands.
 > 
-> IOW, with the merge that triggers your bisection being commit
-> 1500e7e0726e, do perhaps something like this:
+> and then the ones which are a bit more obvious:
 > 
->   # Name the states before the merge
->   git branch pre-merge 1500e7e0726e^
->   git branch jan-state 1500e7e0726e^2
+>  (2) When stacking additional Landlock layers, the thread's available access can
+>      only be restricted further (it should not accidentally be able to do more
+>      than before).
 > 
->   # Now double-check that this works for you, of course.
->   # Just to be safe...
->   git checkout pre-merge
->   .. test-build and test-boot this with the bad config ..
-
-That's I have checked already [4], but okay, let me double check.
-[5] is the same as [4] according to `git diff`.
-
-It boots.
-
->   # Then, let's create a new branch that is
->   # the rebased version of Jan's state:
->   git checkout -b jan-rebased jan-state
->   git rebase pre-merge
-
-[6] is created.
-
->   # Verify that the tree is the same as the merge
->   git diff 1500e7e0726e
-
-Yes, nothing in output.
-
-And it does not boot.
-
->   # Ok, that was empty, so do a bisect on this
->   # rebased history
->   git bisect start
->   git bisect bad
->   git bisect good pre-merge
+>  (3) Landlock usages need to stay compatible across kernel versions.
+>      The Landlock usages that are in use today need to do the same thing
+>      in future kernel versions.
 > 
-> .. and see what commit it *now* claims is the bad commit.
+> I had indeed overlooked requirement (1) and did not realize that my proposal was
+> going to be at odds with that.
+> 
+> 
+> 
+> ## Some counterexamples for approaches that don't work
+> 
+> So: Counterexample for why my earlier proposal (OR-combination) does not work:
+> 
+>   In my proposal, a GFX-related IOCTL would be permitted when *either one* of
+>   the ..._GFX or the ..._IOCTL rights are available for the file.  (The READ
+>   right in the tables above should work the same as the GFX or FOO rights from
+>   requirement (1), for consistency).
+> 
+>   So a user who today uses
+> 
+>     handled: LANDLOCK_ACCESS_FS_IOCTL
+>     allowed: (nothing)
+> 
+>   will expect that GFX-related IOCTL operations are forbidden.  (We do not know
+>   yet whether the "GFX" access right will ever exist, therefore it is covered by
+>   LANDLOCK_ACCESS_FS_IOCTL.)
+> 
+>   Now we introduce the LANDLOCK_ACCESS_FS_GFX right, and suddenly, GFX-related
+>   IOCTL commands are checked with a new logic: You *either* need to have the
+>   LANDLOCK_ACCESS_FS_IOCTL right, *or* the LANDLOCK_ACCESS_FS_GFX right.  So
+>   when the user again uses
+> 
+>     handled: LANDLOCK_ACCESS_FS_IOCTL
+>     allowed: (nothing)
+> 
+>   the user would according to the new logic suddenly *have* the
+>   LANDLOCK_ACCESS_FS_GFX right, and these IOCTL commands would be permitted.
+> 
+>   This is a change of how Landlock behaves compared to the earlier version,
+>   and that is at odds with rule (3).
+> 
+> 
+> The other obvious bitwise combination (AND) does not work either -- that one
+> would violate requirement (1).
+> 
 
-git bisect start
-# status: waiting for both good and bad commits
-# good: [63580f669d7ff5aa5a1fa2e3994114770a491722] Merge tag 'ovl-update-6.6' of git://git.kernel.org/pub/scm/linux/kernel/git/overlayfs/vfs
-git bisect good 63580f669d7ff5aa5a1fa2e3994114770a491722
-# status: waiting for bad commit, 1 good commit known
-# bad: [2447ff4196091e41d385635f9b6d003119f24199] ext2: Fix kernel-doc warnings
-git bisect bad 2447ff4196091e41d385635f9b6d003119f24199
-# bad: [a7c4109a1fa7f9f8cfa9aa93e7aae52d0df820f6] MAINTAINERS: change reiserfs status to obsolete
-git bisect bad a7c4109a1fa7f9f8cfa9aa93e7aae52d0df820f6
-# bad: [74fdc82e4a4302bf8a519101a40691b78d9beb6c] quota: add new helper dquot_active()
-git bisect bad 74fdc82e4a4302bf8a519101a40691b78d9beb6c
-# bad: [e64db1c50eb5d3be2187b56d32ec39e56b739845] quota: factor out dquot_write_dquot()
-git bisect bad e64db1c50eb5d3be2187b56d32ec39e56b739845
-# good: [eea7e964642984753768ddbb710e2eefd32c7a89] ext2: remove redundant assignment to variable desc and variable best_desc
-git bisect good eea7e964642984753768ddbb710e2eefd32c7a89
-# first bad commit: [e64db1c50eb5d3be2187b56d32ec39e56b739845] quota: factor out dquot_write_dquot()
+Good summary, thanks!
 
-> Would you be willing to do this? It should be only a few bisects,
-> since Jan's branch only brought in 17 commits that the above rebases
-> into this test branch. So four or five bisections should pinpoint the
-> exact point where it goes bad.
+> 
+> ## A new proposal
+> 
+> We have discussed above that one option would be to start distinguishing between
+> the case where a right is "not handled" and the case where the right is
+> "handled, but allowed on the file".
+> 
+> This is not very nice, because it would be inconsistent with the semantics which
+> we had before for all other rights.
+> 
+> After thinking a bit more about it, one way to look at it is that we are using
+> the "handled" flags to control how the IOCTLs are grouped.  I agree that we have
+> to control the IOCTL grouping, but I am not sure whether the "handled" flags are
+> the right place to do that. -- We could just as well pass instructions about the
+> IOCTL grouping out of band, and I think it might make that logic clearer:
+> 
+> To put forward something concrete, how about this:
+> 
+> * LANDLOCK_ACCESS_FS_IOCTL: This access right controls the invocation of IOCTL
+>   commands, unless these commands are controlled by another access right.
+> 
+>   In every layer, each IOCTL command is only controlled through one access right.
 
-See above.
+Yes, I agree with that, see the reasoning about handling access right in
+an exclusive way above.
 
-I even rebuilt again with just rebased on top of e64db1c50eb5 and it doesn't
-boot, so we found the culprit that triggers this issue.
+> 
+> * LANDLOCK_ACCESS_FS_READ_FILE: This access right controls opening files for
+>   reading, and additionally the use of the FIONREAD ioctl command.
 
-> Of course, since this is apparently about some "random code generation
-> issue", that exact point still may not be very interesting.
+Yes
 
-On top of the above I have tried the following:
-1) dropping inline, replacing it to __always_inline -- no help;
-2) commenting out the error message -- helps!
+> 
+> * We introduce a flag in struct landlock_ruleset_attr which controls whether the
+>   graphics-related IOCTLs are controlled through the LANDLOCK_ACCESS_FS_GFX
+>   access right, rather than through LANDLOCK_ACCESS_FS_IOCTL.
+> 
+>   (This could potentially also be put in the "flags" argument to
+>   landlock_create_ruleset(), but it feels a bit more appropriate in the struct I
+>   think, as it influences the interpretation of the logic.  But I'm open to
+>   suggestions.)
+> 
 
---- a/fs/quota/dquot.c
-+++ b/fs/quota/dquot.c
-@@ -632,8 +632,10 @@ static inline int dquot_write_dquot(struct dquot *dquot)
- {
-        int ret = dquot->dq_sb->dq_op->write_dquot(dquot);
-        if (ret < 0) {
-+#if 0
-                quota_error(dquot->dq_sb, "Can't write quota structure "
-                            "(error %d). Quota may get out of sync!", ret);
-+#endif
-                /* Clear dirty bit anyway to avoid infinite loop. */
-                clear_dquot_dirty(dquot);
-        }
+What would be the difference with creating a
+LANDLOCK_ACCESS_FS_GFX_IOCTL access right?
 
-If it's a timing issue it's related to that error message, as the new helper is
-run outside of the spinlock.
+The main issue with this approach is that it complexifies the usage of
+Landlock, and users would need to tweak more knobs to configure a
+ruleset.
 
-What's is fishy there besides the error message being available only in one
-case, is the pointer that is used for dp_op. I'm not at all familiar with the
-code, but can it be that these superblocks are different for those two cases?
-
-[4]: https://bitbucket.org/andy-shev/linux/src/test-mrfld-before-merge/
-[5]: https://bitbucket.org/andy-shev/linux/src/test-mrfld-pre-merge/
-[6]: https://bitbucket.org/andy-shev/linux/src/test-mrfld-jan-rebased/
+What about keeping my proposal (mainly the IOCTL handling and delegation
+logic) for the user interface, and translate that for kernel internals
+to your proposal? See the below example.
 
 
--- 
-With Best Regards,
-Andy Shevchenko
+> 
+> Example: Without the flag, the IOCTL groups will be:
+> 
+>   These are always permitted:   FIOCLEX, FIONCLEX, FIONBIO, etc.
+>   LANDLOCK_ACCESS_FS_READ_FILE: controls FIONREAD
+>   LANDLOCK_ACCESS_FS_IOCTL:     controls all other IOCTL commands
+> 
+> but when users set the flag, the IOCTL groups will be:
+> 
+>   These are always permitted:   FIOCLEX, FIONCLEX, FIONBIO, etc.
+>   LANDLOCK_ACCESS_FS_READ_FILE: controls FIONREAD
+>   LANDLOCK_ACCESS_FS_GFX:       controls (list of gfx-related IOCTLs)
+>   LANDLOCK_ACCESS_FS_IOCTL:     controls all other IOCTL commands
+> 
 
+Does this mean that handling LANDLOCK_ACCESS_FS_GFX without the flag
+would not allow GFX-related IOCTL commands? Thit would be inconsistent
+with the way LANDLOCK_ACCESS_FS_READ_FILE is handled.
 
+Would this flag works with non-GFX access rights as well? Would there be
+potentially one new flag per new access right?
+
+> 
+> Implementation-wise, I think it would actually look very similar to what would
+> be needed for your proposal of having a new special meaning for "handled".  It
+> would have the slight advantage that the new flag is actually only needed at the
+> time when we introduce a new way of grouping the IOCTL commands, so we would
+> only burden users with the additional complexity when it's actually required.
+
+Indeed, and burdening users with more flags would increase the cost of
+(properly) using Landlock.
+
+I'm definitely in favor to make the Landlock interface as simple as
+possible, taking into account the inherent compatibilty complexity, and
+pushing most of this complexity handling to user space libraries, and if
+it not possible, pushing the rest of the complexity into the kernel.
+
+> 
+> One implementation approach that I find reasonable to think about is to create
+> "synthetic" access rights when rulesets are enabled.  That is, we introduce
+> LANDLOCK_ACCESS_FS_SYNTHETIC_GFX_IOCTL (name TBD), but we keep this constant
+> private to the kernel.
+> 
+> * *At ruleset enablement time*, we populate the bit for this access right either
+>   from the LANDLOCK_ACCESS_FS_GFX or the LANDLOCK_ACCESS_FS_IOCTL bit from the
+>   same access_mask_t, depending on the IOCTL grouping which the ruleset is
+>   configured with.
+> 
+> * *In hook_file_open*, we then check for LANDLOCK_ACCESS_FS_SYNTHETIC_GFX_IOCTL
+>   for the GFX-related IOCTL commands.
+> 
+> I'm in favor of using the synthetic access rights, because I find it clearer to
+> understand that the effective access rights for a file from different layers are
+> just combined with a bitwise AND, and will give the right results.  We could
+> probably also make these path walk helpers aware of the special cases and only
+> have the synthetic right in layer_masks_dom, but I'd prefer not to complicate
+> these helpers even further.
+
+I like this synthetic access right approach, but what worries me is that
+it will potentially double the number of access rights. This is not an
+issue for the handled access right (i.e. per ruleset layer), but we
+should avoid that for allowed accesses (i.e. rules). Indeed, the
+layer_masks[] size is proportional to the number of potential allowed
+access rights, and increasing this array could increase the kernel stack
+size (see is_access_to_paths_allowed).  It would not be an issue for now
+though, we have a lot of room, it is just something to keep in mind.
+
+Because of the way we need to compare file hierarchies (cf. FS_REFER),
+it seems to be safer to only rely on (synthetic) access rights. So I
+think it is the right approach.
+
+> 
+> 
+> Sorry for the long mail, I hope that the examples clarify it a bit. :)
+> 
+> In summary, it seems conceptually cleaner to me to control every IOCTL command
+> with only one access right, and let users control which one that should be with
+> a separate flag, so that "handled" keeps its original semantics.  It would also
+> have the upside that we can delay that implementation until the time where we
+> actually introduce new IOCTL-aware access rights on top of the current patch st.
+
+I don't see how we'll not get an inconsistent logic: a first one with
+old/current access rights, and another one for future access rights
+(e.g. GFX).
+
+> 
+> I'd be interested to hear your thoughts on it.
+
+Thanks for this detailed explanation, that is useful.
+
+I'm in favor of the synthetic access right, but I'd like to not add
+optional flags to the user API.  What do you think about the kernel
+doing the translation to the synthetic access rights?
+
+To make the reasoning easier for the kernel implementation, following
+the synthetic access rights idea, we can create these groups:
+
+* IOCTL_CMD_G1: FIOQSIZE
+* IOCTL_CMD_G2: FS_IOCT_FIEMAP | FIBMAP | FIGETBSZ
+* IOCTL_CMD_G3: FIONREAD | FIDEDUPRANGE
+* IOCTL_CMD_G4: FICLONE | FICLONERANGE | FS_IOC_RESVSP | FS_IOC_RESVSP64
+  | FS_IOC_UNRESVSP | FS_IOC_UNRESVSP64 | FS_IOC_ZERO_RANGE
+
+Existing (and future) access rights would automatically get the related
+IOCTL fine-grained rights *if* LANDLOCK_ACCESS_FS_IOCTL is handled:
+* LANDLOCK_ACCESS_FS_WRITE_FILE: IOCTL_CMD_G1 | IOCTL_CMD_G2 | IOCTL_CMD_G4
+* LANDLOCK_ACCESS_FS_READ_FILE: IOCTL_CMD_G1 | IOCTL_CMD_G2 | IOCTL_CMD_G3
+* LANDLOCK_ACCESS_FS_READ_DIR: IOCTL_CMD_G1
+
+This works with the ruleset handled access rights and the related rules
+allowed accesses by simply ORing the access rights.
+
+We should also keep in mind that some IOCTL commands may only be related
+to some specific file types or filesystems, either now or in the future
+(see the GFX example).
 
