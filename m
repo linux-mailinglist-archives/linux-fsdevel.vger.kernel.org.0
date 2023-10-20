@@ -1,122 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-817-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-818-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DFE77D0DDD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 12:47:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 068597D0E0E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 13:01:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B75A02824E6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 10:47:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA08C2824EC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 11:01:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 008BE179B9;
-	Fri, 20 Oct 2023 10:47:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FAD318B06;
+	Fri, 20 Oct 2023 11:01:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TMhub7YJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RUVpp1pl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE2E91775C
-	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 10:47:44 +0000 (UTC)
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B54A4170A
-	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 03:45:20 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id ffacd0b85a97d-32d9cb5e0fcso492603f8f.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 03:45:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697798714; x=1698403514; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RvEQ8mt8eYMykZs5TLAkFCakeg9wZKE+HYZHsSkpNlI=;
-        b=TMhub7YJJ6Kumjgh3cuyIvXeJlO0LtaDBeRJ8HP9UJroMNC/RC+g4LnKQJgXtHVFdy
-         YY+/iicyhq3BRmUZlfaeXt8uotCIlc3YLiThblvLvyMS00DFhgVr08cHJ4bBRYz6VKlq
-         7VQYKFpYHQMzHAwV8DNP4GaeD7ZS76uLVToelA/lJ1nWx5iQBjB0UJmGKOXJNBCtJz3A
-         aciGuWmvGdXm1hcLQ+PnotmcY+l5czMwfU/RycCcqbF5o6UkU5mlJgFk8K1nHjSvGRIE
-         exxJeMtK1TvLXhhdC1dQ9QkTnHKvAvc4Lth8Cn69C5DP4MJgwtfyXzdaWhzt20+ae4EG
-         D5xQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697798714; x=1698403514;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RvEQ8mt8eYMykZs5TLAkFCakeg9wZKE+HYZHsSkpNlI=;
-        b=n0Tt6erEzWGcoTvj1PreGSMKKeKyEyur9oDTk8ol/A486mRATKQpfqxR3WfqTK24Mi
-         dcAOMWXYIRJcRh4r4e0lsexGYLgslLNYl/IJC7ioKLFXPxvECFe7K+80aJcHoYKNtIZK
-         d7Owjt9aKt5JKbMPyZ3zpMtJQvi30z9a5pwRey2977+ZtsAjuQBoG8ktn5trPLWlOvKD
-         KpSt6AbdKFdFPPJnChn+NA67uaKuu0Ka3syXgd5AtndzvD0JCO8iCrZ2PmLcMKF6ENkx
-         2if6rFoH91XDwDydQiDxuPSNOFok4fiAAcGfAVYOWIrtg7loqx3QrJsJUrwg6564goar
-         RllQ==
-X-Gm-Message-State: AOJu0Yzv5v3DyfYP/RzWRihhrDp9ZDL/4EY65/bvWD34Pkr2TXRoKPnX
-	CuezMW6V7WPSfYv450RMOgwA8WglBTrCBhjL/io=
-X-Google-Smtp-Source: AGHT+IEj6fj7TraRCzQIK7M+eAhjdrJaD5M6Xk8G59vkZU7mWDhQ4Woe+azc7YxNTxe46KLfNZ83IA==
-X-Received: by 2002:a05:6000:1244:b0:32d:a409:84c8 with SMTP id j4-20020a056000124400b0032da40984c8mr1056752wrx.67.1697798714225;
-        Fri, 20 Oct 2023 03:45:14 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id p17-20020a5d68d1000000b0032d687fd9d0sm1425968wrw.19.2023.10.20.03.45.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Oct 2023 03:45:13 -0700 (PDT)
-Date: Fri, 20 Oct 2023 13:45:10 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Anders Roxell <anders.roxell@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Naresh Kamboju <naresh.kamboju@linaro.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	lkft-triage@lists.linaro.org, linux-fsdevel@vger.kernel.org,
-	autofs@vger.kernel.org, Ian Kent <raven@themaw.net>,
-	Bill O'Donnell <bodonnel@redhat.com>,
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: autofs: add autofs_parse_fd()
-Message-ID: <432f1c1c-2f77-4b1b-b3f8-28330fd6bac3@kadam.mountain>
-References: <CA+G9fYt75r4i39DuB4E3y6jRLaLoSEHGbBcJy=AQZBQ2SmBbiQ@mail.gmail.com>
- <71adfca4-4e80-4a93-b480-3031e26db409@app.fastmail.com>
- <CADYN=9+HDwqAz-eLV7uVuMa+_+foj+_keSG-TmD2imkwVJ_mpQ@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 833B51804D;
+	Fri, 20 Oct 2023 11:01:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6448DC433C8;
+	Fri, 20 Oct 2023 11:01:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1697799709;
+	bh=4Rkb5V2D8bP++SzpqDTXV2hlkoc7FCRIfbSezE4goj4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RUVpp1plkdOHyyFAde2H/Cn0OKs1eY343jIXt+VEfhg6e25IqEkTenBDwlTD0kBf4
+	 TWuJ/UbvrzK2VihpOsWF0IaSwXAEkxZ4Mzz2DsgwHWru0nD5lBn1fjiXdHcGHXS/0u
+	 kRqudxzqp1lftoa+HgmsSm50bq/jgUdDmVpiy8M6qbT8i4SDa5r7+sYJkdh3z+VPS6
+	 jud37U/LvIdCTy4HA4okQOhqwILpyrOY5fjP6r5tkZY3W2bUUTELVjRXnFigCX0Gnh
+	 ng1HjGxAv3fRnlLxqYzqbear4pGhLpzjR/1x4O20u28EUXWfjyIjhOuw9eRcZFpeYK
+	 kPQGWdgXjVZCg==
+Date: Fri, 20 Oct 2023 13:01:44 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jesse Hathaway <jesse@mbuki-mvuki.org>, Christoph Hellwig <hch@lst.de>,
+	Florian Weimer <fweimer@redhat.com>,
+	Aleksa Sarai <cyphar@cyphar.com>, linux-fsdevel@vger.kernel.org,
+	Al Viro <viro@zeniv.linux.org.uk>, stable@vger.kernel.org,
+	Greg KH <gregkh@linuxfoundation.org>,
+	Linux regressions mailing list <regressions@lists.linux.dev>,
+	giuseppe@scrivano.org
+Subject: Re: [PATCH] attr: block mode changes of symlinks
+Message-ID: <20231020-allgegenwart-torbogen-33dc58e9a7aa@brauner>
+References: <CANSNSoUYMdPPLuZhofOW6DaKzCF47WhZ+T9BnL8sA37M7b4F+g@mail.gmail.com>
+ <2023101819-satisfied-drool-49bb@gregkh>
+ <CANSNSoV6encjhH2u-Ua8wmjy==emvpi+76HTZasxbfzobMQ_Vw@mail.gmail.com>
+ <38bf9c2b-25e2-498e-ae50-362792219e50@leemhuis.info>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CADYN=9+HDwqAz-eLV7uVuMa+_+foj+_keSG-TmD2imkwVJ_mpQ@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <38bf9c2b-25e2-498e-ae50-362792219e50@leemhuis.info>
 
-On Fri, Oct 20, 2023 at 11:55:57AM +0200, Anders Roxell wrote:
-> On Fri, 20 Oct 2023 at 08:37, Arnd Bergmann <arnd@arndb.de> wrote:
-> >
-> > On Thu, Oct 19, 2023, at 17:27, Naresh Kamboju wrote:
-> > > The qemu-x86_64 and x86_64 booting with 64bit kernel and 32bit rootfs we call
-> > > it as compat mode boot testing. Recently it started to failed to get login
-> > > prompt.
-> > >
-> > > We have not seen any kernel crash logs.
-> > >
-> > > Anders, bisection is pointing to first bad commit,
-> > > 546694b8f658 autofs: add autofs_parse_fd()
-> > >
-> > > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> > > Reported-by: Anders Roxell <anders.roxell@linaro.org>
-> >
-> > I tried to find something in that commit that would be different
-> > in compat mode, but don't see anything at all -- this appears
-> > to be just a simple refactoring of the code, unlike the commits
-> > that immediately follow it and that do change the mount
-> > interface.
-> >
-> > Unfortunately this makes it impossible to just revert the commit
-> > on top of linux-next. Can you double-check your bisection by
-> > testing 546694b8f658 and the commit before it again?
+On Fri, Oct 20, 2023 at 10:34:36AM +0200, Linux regression tracking (Thorsten Leemhuis) wrote:
+> [adding Christian, the author of what appears to be the culprit]
 > 
-> I tried these two patches again:
-> 546694b8f658 ("autofs: add autofs_parse_fd()") - doesn't boot
-> bc69fdde0ae1 ("autofs: refactor autofs_prepare_pipe()") - boots
+> On 18.10.23 20:49, Jesse Hathaway wrote:
+> > On Wed, Oct 18, 2023 at 1:40 PM Greg KH <gregkh@linuxfoundation.org> wrote:
 > 
+> FWIW, this thread afaics was supposed to be in reply to this submission:
+> 
+> https://lore.kernel.org/all/20230712-vfs-chmod-symlinks-v1-1-27921df6011f@kernel.org/
+> 
+> That patch later became 5d1f903f75a80d ("attr: block mode changes of
+> symlinks") [v6.6-rc1, v6.5.5, v6.1.55, v5.4.257, v5.15.133, v5.10.197,
+> v4.19.295, v4.14.326]
+> 
+> >>> Unfortunately, this has not held up in LTSes without causing
+> >>> regressions, specifically in crun:
+> >>>
+> >>> Crun issue and patch
+> >>>  1. https://github.com/containers/crun/issues/1308
+> >>>  2. https://github.com/containers/crun/pull/1309
+> >>
+> >> So thre's a fix already for this, they agree that symlinks shouldn't
+> >> have modes, so what's the issue?
+> > 
+> > The problem is that it breaks crun in Debian stable. They have fixed the
+> > issue in crun, but that patch may not be backported to Debian's stable
+> > version. In other words the patch seems to break existing software in
+> > the wild.
+> > 
+> >> It needs to reverted in Linus's tree first, otherwise you will hit the
+> >> same problem when moving to a new kernel.
+> > 
+> > Okay, I'll raise the issue on the linux kernel mailing list.
+> 
+> Did you do that? I could not find anything. Just wondering, as right now
+> there is still some time to fix this regression before 6.6 is released
+> (and then the fix can be backported to the stable trees, too).
 
-One difference that I notice between those two patches is that we no
-long call autofs_prepare_pipe().  We just call autofs_check_pipe().
+I have not seen a report other than the crun fix I commented on.
 
-regards,
-dan carpenter
+The crun authors had agreed to fix this in crun. As symlink mode changes
+are severly broken to the point that it's not even supported through the
+official glibc and musl system call wrappers anymore not having to
+revert this from mainline would be the ideal outcome.
 
+So ideally, the crun bugfix would be backported to Debian stable just as
+it was already backported to Fedora or crun make a new point release for
+the 1.8.* series.
+
+The other option to consider would be to revert the backport of the attr
+changes to stable kernels. I'm not sure what Greg's stance on this is
+but given that crun versions in -testing already include that fix that
+means all future Debian releases will already have a fixed crun version.
+
+That symlink stuff is so brittle and broken that we'd do more long-term
+harm by letting it go on. Which is why we did this.
+
+@Linus, this is ultimately your call of course.
 
