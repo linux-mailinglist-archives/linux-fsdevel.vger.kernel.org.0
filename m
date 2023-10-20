@@ -1,155 +1,182 @@
-Return-Path: <linux-fsdevel+bounces-803-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-804-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 424A57D059B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 01:56:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B5737D05D3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 02:31:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C46D7B21384
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Oct 2023 23:55:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B0FC1C20F18
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 00:31:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9189347343;
-	Thu, 19 Oct 2023 23:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A35DA1371;
+	Fri, 20 Oct 2023 00:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JhmSFgl9"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5140B321AA
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 23:55:53 +0000 (UTC)
-Received: from mail-ot1-f79.google.com (mail-ot1-f79.google.com [209.85.210.79])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51CF012F
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 16:55:51 -0700 (PDT)
-Received: by mail-ot1-f79.google.com with SMTP id 46e09a7af769-6c660a0f0e8so356274a34.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Oct 2023 16:55:51 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA2180B;
+	Fri, 20 Oct 2023 00:31:27 +0000 (UTC)
+Received: from mail-oi1-x231.google.com (mail-oi1-x231.google.com [IPv6:2607:f8b0:4864:20::231])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22D61C0;
+	Thu, 19 Oct 2023 17:31:26 -0700 (PDT)
+Received: by mail-oi1-x231.google.com with SMTP id 5614622812f47-3af957bd7e9so202068b6e.3;
+        Thu, 19 Oct 2023 17:31:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1697761885; x=1698366685; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3r6n12dcvLAs9ctOBgjIkVIyGgOjKo0m6wllsB7zMSo=;
+        b=JhmSFgl9RH1o931YReUBSH6RJDA+IbbZlAk6NQpO4BhZeCpp9et8HQ5ODpM+pSlny2
+         ByoyiROScDssgoIjGFH/2gZ2Ko0hmbSoblTSHy2R3KrFvie3F0nlMu3UhPnw6EhdVV8f
+         CK138E7prjdQJk+E13wZiDC4/zRQOjc3EFAwgjSqdf9Ho+CMVmjg4UYLPz7wSmU0N9dS
+         BDZMLz8wuqlQFdcP3Iw6ZyFbJfppGpESoJXPseLULlD9BfCy49KYZ7P1M+4WqThiw/G0
+         9MifS6yZVxoZQpiJ0Trg3Eaw1J7n0e0T3dmO875baQeitFPyLD99MdF7SZLX6XOfpQ1a
+         6yEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697759750; x=1698364550;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uWSEJ9xYUbBy9cya3rocEpazxIwASpRVIWUfmU2j3cg=;
-        b=HgcOZIn2i2XQ2lygOiTw4zmt0F/lMvPdDKPhcQM/ddvJqtxX9oMplonIdDzy8NSpLn
-         TdU9MYScJOuzZHqj2FjX1K4TpYTEl9c7C3iSuVNyBJB/CvtS0dNtA88q7wJtN8nLZhS4
-         q33MHf6+hEy999gT65xwiuN51TGJdNQZwDl5V9AZJNGLqV9pYlqyHYYWp+iE9DWifq2g
-         4NiNurQFVnLqI8JWSjMgygW3oI6a7yiEXHyIeYSyaf/r+I91yhcXvAiLu8/TKCQPUYC7
-         SKPL+6CrLnp6zKudXQ5PXo9G4PWp81OhRguPT5AygnHZJXFhg4hMe8skZ+j5JDVh5uLe
-         2ZXQ==
-X-Gm-Message-State: AOJu0YwKWWXxdj2wljkmzGfN/r1nw1rvrr1zqE3kcQpORKrcqkHDxKVj
-	roeJgCzwL5wR/kJ9nyVIuK9fuxUGcz5UuLC/8kL76I7vBo7D
-X-Google-Smtp-Source: AGHT+IHDp+QRpTSXHAcCvBFlVlpv+f4IueDYjCTJbN2MkjKh0HDR371FxFBBYf9bJ1/GU7TLewxDySYgN7G3P+ho725Ufj7j0low
+        d=1e100.net; s=20230601; t=1697761885; x=1698366685;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3r6n12dcvLAs9ctOBgjIkVIyGgOjKo0m6wllsB7zMSo=;
+        b=uizyMRZ5UEubrrl8U93KPm3m8DKgVq9kKV8LTaMklkHIWH7dAyaId+r4aO58P5z6Ql
+         bvU1+1FSsxpYIT6X12g3Zm35jm/YV/7CFQbXX8fsfsc1FcBPiT3kLcK7OXZNe3sOqSZA
+         BlfXldLw/VRPecTVJXdjHh4+m2VWpAZVJ9AynH9ZK6WHL7ZF44BzQTooH/SjOXpXb9VW
+         V7SLZ7WRLUBTL1LnjbOpF/wsWCib2ktdIUXwmbGgpRAQ/K8TTSGHPwqLaaCoXesSuD/+
+         3CdUJAYeEZm++WTchi/+50I9Oo/B5qAS2v/tBWEK5HBlEWUYpEjIQmJjdLbwXU79ccnd
+         avsw==
+X-Gm-Message-State: AOJu0Yy0olTZYRH2hHF5metn7zAHyD2n6or7QVJnN6NqkXI/6RGHlYss
+	GCxO8PWSx+qeF21BhgONAzk=
+X-Google-Smtp-Source: AGHT+IEY/0huzIt4M9qHmp3pJrCuA078DjJ4RMTNmKb4LbMojTa+j9VtbdyXS18ZPFndKt1D9yPK9Q==
+X-Received: by 2002:a05:6808:1985:b0:3ae:1298:257a with SMTP id bj5-20020a056808198500b003ae1298257amr450011oib.1.1697761885357;
+        Thu, 19 Oct 2023 17:31:25 -0700 (PDT)
+Received: from auth2-smtp.messagingengine.com (auth2-smtp.messagingengine.com. [66.111.4.228])
+        by smtp.gmail.com with ESMTPSA id jy12-20020a0562142b4c00b0065823d20381sm266957qvb.8.2023.10.19.17.31.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Oct 2023 17:31:25 -0700 (PDT)
+Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
+	by mailauth.nyi.internal (Postfix) with ESMTP id 9FF8827C0067;
+	Thu, 19 Oct 2023 20:31:24 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute7.internal (MEProxy); Thu, 19 Oct 2023 20:31:24 -0400
+X-ME-Sender: <xms:WsoxZSs-BCawXg6xPOgxzM7x8KoHYbIpDMSffExRSWj_D1rVgCAq5w>
+    <xme:WsoxZXc2Q-G04xaDuGVbpI9n2U6JFL9S-NR9InQGBPRmj_-8moa6Efb3OPzoY2v0z
+    R6CqBkddErrv9Y_6Q>
+X-ME-Received: <xmr:WsoxZdxyoat_MdbwQO_Bd-LIjLUbRUhmvBWm9tarRiwgVyyjYlvo4WtHB64>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrjeejgdefgecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvvefukfhfgggtuggjsehttdortddttddvnecuhfhrohhmpeeuohhquhhn
+    ucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrth
+    htvghrnhepiedtfeevhfetkeelgfethfegleekfeffledvvefhheeukedtvefhtedtvdet
+    vedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsg
+    hoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieeg
+    qddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigi
+    hmvgdrnhgrmhgv
+X-ME-Proxy: <xmx:WsoxZdP7ohA4VeZYvRn0l2fU-Q5meqt8iYGFNXhNRfm1E2qT3gGIPA>
+    <xmx:WsoxZS-PbOBmNwnuXiDXuf_2wKp8OCJVL-fT5uzgvhpaweyK9CSW2Q>
+    <xmx:WsoxZVXNF1lpe2YeHKdFHNvEEDEj_aImkB3subKxI2X31sQPglMYdg>
+    <xmx:XMoxZWTKQpo_Wl2PEkyy6jhZ0q-iuO_XW5mDFQiOtMoRt_iF7bTyBA>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 19 Oct 2023 20:31:22 -0400 (EDT)
+Date: Thu, 19 Oct 2023 17:30:57 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Wedson Almeida Filho <wedsonaf@gmail.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Kent Overstreet <kent.overstreet@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-fsdevel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	Wedson Almeida Filho <walmeida@microsoft.com>
+Subject: Re: [RFC PATCH 06/19] rust: fs: introduce `FileSystem::init_root`
+Message-ID: <ZTHKQdAciXClXnut@boqun-archlinux>
+References: <20231018122518.128049-1-wedsonaf@gmail.com>
+ <20231018122518.128049-7-wedsonaf@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a9d:7518:0:b0:6b9:5156:a493 with SMTP id
- r24-20020a9d7518000000b006b95156a493mr57782otk.4.1697759750681; Thu, 19 Oct
- 2023 16:55:50 -0700 (PDT)
-Date: Thu, 19 Oct 2023 16:55:50 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000da80e106081a7eed@google.com>
-Subject: [syzbot] [btrfs?] WARNING: refcount bug in btrfs_evict_inode (2)
-From: syzbot <syzbot+3968e6b73153451563ef@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231018122518.128049-7-wedsonaf@gmail.com>
 
-Hello,
+On Wed, Oct 18, 2023 at 09:25:05AM -0300, Wedson Almeida Filho wrote:
+[...]
+> +/// An inode that is locked and hasn't been initialised yet.
+> +#[repr(transparent)]
+> +pub struct NewINode<T: FileSystem + ?Sized>(ARef<INode<T>>);
+> +
+> +impl<T: FileSystem + ?Sized> NewINode<T> {
+> +    /// Initialises the new inode with the given parameters.
+> +    pub fn init(self, params: INodeParams) -> Result<ARef<INode<T>>> {
+> +        // SAFETY: This is a new inode, so it's safe to manipulate it mutably.
+> +        let inode = unsafe { &mut *self.0 .0.get() };
+> +
+> +        let mode = match params.typ {
+> +            INodeType::Dir => {
+> +                // SAFETY: `simple_dir_operations` never changes, it's safe to reference it.
+> +                inode.__bindgen_anon_3.i_fop = unsafe { &bindings::simple_dir_operations };
+> +
+> +                // SAFETY: `simple_dir_inode_operations` never changes, it's safe to reference it.
+> +                inode.i_op = unsafe { &bindings::simple_dir_inode_operations };
+> +                bindings::S_IFDIR
+> +            }
+> +        };
+> +
+> +        inode.i_mode = (params.mode & 0o777) | u16::try_from(mode)?;
+> +        inode.i_size = params.size;
+> +        inode.i_blocks = params.blocks;
+> +
+> +        inode.__i_ctime = params.ctime.into();
+> +        inode.i_mtime = params.mtime.into();
+> +        inode.i_atime = params.atime.into();
+> +
+> +        // SAFETY: inode is a new inode, so it is valid for write.
+> +        unsafe {
+> +            bindings::set_nlink(inode, params.nlink);
+> +            bindings::i_uid_write(inode, params.uid);
+> +            bindings::i_gid_write(inode, params.gid);
+> +            bindings::unlock_new_inode(inode);
+> +        }
+> +
+> +        // SAFETY: We are manually destructuring `self` and preventing `drop` from being called.
+> +        Ok(unsafe { (&ManuallyDrop::new(self).0 as *const ARef<INode<T>>).read() })
 
-syzbot found the following issue on:
+How do we feel about using transmute here? ;-) I.e.
 
-HEAD commit:    9a3dad63edbe Merge tag '6.6-rc5-ksmbd-server-fixes' of git..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=126116e5680000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=11e478e28144788c
-dashboard link: https://syzkaller.appspot.com/bug?extid=3968e6b73153451563ef
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=139d2f55680000
+	// SAFETY: `NewINode` is transparent to `ARef<INode<_>>`, and
+	// the inode has been initialised, so it's safety to change the
+	// object type.
+	Ok(unsafe { core::mem::transmute(self) })
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/33c965444183/disk-9a3dad63.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/337f5c485902/vmlinux-9a3dad63.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/4c5f5b84773a/bzImage-9a3dad63.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/263d3fb612d5/mount_0.gz
+What we actually want here is changing the type of the object (i.e.
+bitwise move from one type to another), seems to me that transmute is
+the best fit here.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+3968e6b73153451563ef@syzkaller.appspotmail.com
+Thoughts?
 
-------------[ cut here ]------------
-refcount_t: underflow; use-after-free.
-WARNING: CPU: 1 PID: 5068 at lib/refcount.c:28 refcount_warn_saturate+0x144/0x1b0 lib/refcount.c:28
-Modules linked in:
-CPU: 1 PID: 5068 Comm: syz-executor.4 Not tainted 6.6.0-rc5-syzkaller-00267-g9a3dad63edbe #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/06/2023
-RIP: 0010:refcount_warn_saturate+0x144/0x1b0 lib/refcount.c:28
-Code: 0a 01 48 c7 c7 a0 30 59 8b e8 98 97 15 fd 0f 0b eb a9 e8 cf 74 4f fd c6 05 64 cc 46 0a 01 48 c7 c7 00 31 59 8b e8 7c 97 15 fd <0f> 0b eb 8d e8 b3 74 4f fd c6 05 45 cc 46 0a 01 48 c7 c7 40 30 59
-RSP: 0018:ffffc9000410f9c8 EFLAGS: 00010246
-RAX: 87d3e0a2fce9e500 RBX: ffff8880283d7108 RCX: ffff88807b601dc0
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: 0000000000000003 R08: ffffffff81543302 R09: 1ffff1101732516a
-R10: dffffc0000000000 R11: ffffed101732516b R12: ffff888027e3c000
-R13: 0000000000000000 R14: ffff8880793fa1fe R15: 1ffff1100d13240f
-FS:  0000555555d3f480(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000555555d48938 CR3: 000000002a44c000 CR4: 00000000003506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- btrfs_evict_inode+0x724/0x1000 fs/btrfs/inode.c:5305
- evict+0x2a4/0x620 fs/inode.c:664
- dispose_list fs/inode.c:697 [inline]
- evict_inodes+0x5f8/0x690 fs/inode.c:747
- generic_shutdown_super+0x9d/0x2c0 fs/super.c:672
- kill_anon_super+0x3b/0x70 fs/super.c:1292
- btrfs_kill_super+0x41/0x50 fs/btrfs/super.c:2144
- deactivate_locked_super+0xa4/0x110 fs/super.c:481
- cleanup_mnt+0x426/0x4c0 fs/namespace.c:1254
- task_work_run+0x24a/0x300 kernel/task_work.c:180
- resume_user_mode_work include/linux/resume_user_mode.h:49 [inline]
- exit_to_user_mode_loop+0xde/0x100 kernel/entry/common.c:171
- exit_to_user_mode_prepare+0xb1/0x140 kernel/entry/common.c:204
- __syscall_exit_to_user_mode_work kernel/entry/common.c:285 [inline]
- syscall_exit_to_user_mode+0x64/0x280 kernel/entry/common.c:296
- do_syscall_64+0x4d/0xc0 arch/x86/entry/common.c:86
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7fdf2aa7de17
-Code: b0 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 b0 ff ff ff f7 d8 64 89 02 b8
-RSP: 002b:00007fff45f80ce8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007fdf2aa7de17
-RDX: 0000000000000000 RSI: 000000000000000a RDI: 00007fff45f80da0
-RBP: 00007fff45f80da0 R08: 0000000000000000 R09: 0000000000000000
-R10: 00000000ffffffff R11: 0000000000000246 R12: 00007fff45f81e60
-R13: 00007fdf2aac73b9 R14: 000000000006a985 R15: 0000000000000003
- </TASK>
+Regards,
+Boqun
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the bug is already fixed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite bug's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the bug is a duplicate of another bug, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> +    }
+> +}
+> +
+> +impl<T: FileSystem + ?Sized> Drop for NewINode<T> {
+> +    fn drop(&mut self) {
+> +        // SAFETY: The new inode failed to be turned into an initialised inode, so it's safe (and
+> +        // in fact required) to call `iget_failed` on it.
+> +        unsafe { bindings::iget_failed(self.0 .0.get()) };
+> +    }
+> +}
+> +
+[...]
 
