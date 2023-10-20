@@ -1,105 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-805-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-806-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBE877D05F7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 02:52:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA0887D074C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 06:12:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64C89282473
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 00:52:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2330B1C20F42
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 04:12:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F85B39E;
-	Fri, 20 Oct 2023 00:52:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B6F539A;
+	Fri, 20 Oct 2023 04:11:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bhjRURgg"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MvH/RZcM"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF73361;
-	Fri, 20 Oct 2023 00:52:38 +0000 (UTC)
-Received: from mail-yb1-xb2f.google.com (mail-yb1-xb2f.google.com [IPv6:2607:f8b0:4864:20::b2f])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C1F8FA;
-	Thu, 19 Oct 2023 17:52:37 -0700 (PDT)
-Received: by mail-yb1-xb2f.google.com with SMTP id 3f1490d57ef6-d9beb863816so298353276.1;
-        Thu, 19 Oct 2023 17:52:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697763156; x=1698367956; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lgzfp5LbJfR0YnY8IHn9QHYvXqGLG0fdjjho/GjjqQo=;
-        b=bhjRURggXuaXkZayDfggSw7AtQpk+SyGANqnJmNq4g/S45Mvc1Nb8tOjwHqUSUEn72
-         f2Gwh/6ZdchG3XC+XGcIN5DuSElKL4qP7uW08lnZ7+trbZon2g/FVu2rtY48WN9UT3Fa
-         RwdrWPxxcxbNxg3CkThFyJFeiZGuNJADWM+BhkVbUnzrmbkLPwtn2YfyFFGwAXvtLnjv
-         xZ3/4CYopIXVBBZtxQVGT4Aak9xda/MsNGZoE7AnM0FHd/lmdjTzIb8uZQuBtWHhBlLW
-         dXf087Z45GnC/P1SYsl0ssyGIupV66teX0GLzGUf9f80hLPQdpOZrGceVN+UssBU78eD
-         KRrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697763156; x=1698367956;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lgzfp5LbJfR0YnY8IHn9QHYvXqGLG0fdjjho/GjjqQo=;
-        b=HdS0hIKzIh7SFxAPW7Dok4kJhC0OE/5wjYM7tA6qplPKEE/WkbEkKBec0HqiiCUzma
-         EwPbmUkoKzFRgbK2DpYm+FFNgbDVKRtWm2VR3GM8sxsG9D9LKTOsAdG744ubkkp24M1q
-         ISFdioCT0jc4xDW9A+hgPkIeGOG06pcAXAZBWlu/W7SRnMK+8yxnlon7ppERmFZrS+Pp
-         MfWsS32Qc9zuoT9R2IeiGK/cCZ1m3qvfsMXcJNm/mnu7d71NTksYhsdCZ1YH08j0R8Qj
-         VyWW+aJSqgg2lmInXk9nF45kuH+JHgq5nEJwGhy2+wq8p4jqHGZshauZiuHLnH7cBMCJ
-         ztiw==
-X-Gm-Message-State: AOJu0Yxg1KTm7J4wUd6+1AUkrmrwC0CD57xZr4bkwmKp2S7rQqr2EUGQ
-	ru2TImxrLxPPCHJn0obM7+w=
-X-Google-Smtp-Source: AGHT+IGr4CBljgUlj1oAMTPExXWIhzlBiiQhawo9dvh3i4x9mYNTG6jZN1i8G0L6gebdIwNjAzPqRw==
-X-Received: by 2002:a25:9384:0:b0:d9a:e6d3:ae1c with SMTP id a4-20020a259384000000b00d9ae6d3ae1cmr396238ybm.53.1697763156198;
-        Thu, 19 Oct 2023 17:52:36 -0700 (PDT)
-Received: from auth2-smtp.messagingengine.com (auth2-smtp.messagingengine.com. [66.111.4.228])
-        by smtp.gmail.com with ESMTPSA id y3-20020ad457c3000000b0066d1e71e515sm269114qvx.113.2023.10.19.17.52.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Oct 2023 17:52:35 -0700 (PDT)
-Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
-	by mailauth.nyi.internal (Postfix) with ESMTP id 81B5C27C005A;
-	Thu, 19 Oct 2023 20:52:35 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute7.internal (MEProxy); Thu, 19 Oct 2023 20:52:35 -0400
-X-ME-Sender: <xms:Us8xZdxR9SjmGliZYdwsp661qDr54stDxmRs-tRrlI1rliLugthT7w>
-    <xme:Us8xZdSexV6UsdcJBydP8TTQIWEaI5N8HoUnd11Jf_162B8WkoAdxvR1w6q6fszAG
-    uHsgVBUmw8jpAFfqw>
-X-ME-Received: <xmr:Us8xZXVwpyE4f3y9tLH0lkUDgKMYsV9-IBIJ4KGnRxJW44DekODM8GCyb9k>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrjeejgdefkecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhn
-    ucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrth
-    htvghrnhepjeeihfdtuedvgedvtddufffggeefhefgtdeivdevveelvefhkeehffdtkeei
-    hedvnecuffhomhgrihhnpehruhhsthdqlhgrnhhgrdhorhhgnecuvehluhhsthgvrhfuih
-    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghu
-    thhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqh
-    hunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgv
-X-ME-Proxy: <xmx:Us8xZfhrEyoPzmL27F1Aofh-jTb8sF6ejCNLxq0qqXy5G3NnN-niYw>
-    <xmx:Us8xZfCMKTLhbmgJ_NoUiAcLnJVM4_i780kqb-Q5MK-PeKh1sowFdQ>
-    <xmx:Us8xZYI-dz7SB1oNiJSTbYqotTrs9Zuz8cpKTC09D8EvkbHvL83beg>
-    <xmx:U88xZbt6O9_oxioQlEtQy9H1wcjZgBxbf8lAlGVH8xnhogoHcRMWqQ>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 19 Oct 2023 20:52:34 -0400 (EDT)
-Date: Thu, 19 Oct 2023 17:52:09 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5124320FB;
+	Fri, 20 Oct 2023 04:11:50 +0000 (UTC)
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86A54FA;
+	Thu, 19 Oct 2023 21:11:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=0TRfYcY4FztgXN27eg6Q00CIuzPsmunhjJWurKwX5G8=; b=MvH/RZcMmLdb7Q69xTuPczSnac
+	3BU2DYEurlpQCzCZygRCaTxsHBcsrRQAPdtGu5BpkttRXz4h9wsG53XZWYhplEC1jIIy370YfWCSW
+	GhXnIfCIdZGmHupz8Q7r+lbP5+Dv3rgCAvcl4TVoKZPu3ki1EKWoJTW4sAmtVmGCOJQ1x+d0Db7FS
+	2wWIM3AXejW6NLBmBtcNbWi0BGIvyPuh+TUvSJpOIHYZTGNcetJjgUED79ZDnvU7fRkrSA1yY5fes
+	ajxydxygvgT8fFZzsnhccKkgveDrSd1IfFr2XONqxWAUg4FIKkTUt04ketkiL5XmKRCeWRKd5R1LH
+	Pcjl7Bew==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+	id 1qtgrK-00B1CM-Pv; Fri, 20 Oct 2023 04:11:38 +0000
+Date: Fri, 20 Oct 2023 05:11:38 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Wedson Almeida Filho <wedsonaf@gmail.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
 	Kent Overstreet <kent.overstreet@gmail.com>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-fsdevel@vger.kernel.org, rust-for-linux@vger.kernel.org,
 	Wedson Almeida Filho <walmeida@microsoft.com>
-Subject: Re: [RFC PATCH 06/19] rust: fs: introduce `FileSystem::init_root`
-Message-ID: <ZTHPOfy4dhj0x5ch@boqun-archlinux>
+Subject: Re: [RFC PATCH 09/19] rust: folio: introduce basic support for folios
+Message-ID: <ZTH9+sF+NPyRjyRN@casper.infradead.org>
 References: <20231018122518.128049-1-wedsonaf@gmail.com>
- <20231018122518.128049-7-wedsonaf@gmail.com>
- <OjZkAoZLnJc9yA0MENJhQx_32ptXZ1cLAFjEnEFog05C4pEmaAUHaA6wBvCFXWtaXbrNN5upFFi3ohQ6neLklIXZBURaYLlQYf3-2gscw_s=@proton.me>
+ <20231018122518.128049-10-wedsonaf@gmail.com>
+ <ZTATIhi9U6ObAnN7@casper.infradead.org>
+ <CANeycqoWfWJ5bxuh+UWK99D9jYH0cKKy1=ikHJTpY=fP1ZJMrg@mail.gmail.com>
+ <ZTAwLGi4sCup+B1r@casper.infradead.org>
+ <CANeycqrp_s20pCO_OJXHpqN5tZ_Uq5icTupWiVeLf69JOFj4cA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -108,42 +60,217 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <OjZkAoZLnJc9yA0MENJhQx_32ptXZ1cLAFjEnEFog05C4pEmaAUHaA6wBvCFXWtaXbrNN5upFFi3ohQ6neLklIXZBURaYLlQYf3-2gscw_s=@proton.me>
+In-Reply-To: <CANeycqrp_s20pCO_OJXHpqN5tZ_Uq5icTupWiVeLf69JOFj4cA@mail.gmail.com>
 
-On Thu, Oct 19, 2023 at 02:30:56PM +0000, Benno Lossin wrote:
+On Thu, Oct 19, 2023 at 10:25:39AM -0300, Wedson Almeida Filho wrote:
+> On Wed, 18 Oct 2023 at 16:21, Matthew Wilcox <willy@infradead.org> wrote:
+> >
+> > On Wed, Oct 18, 2023 at 03:32:36PM -0300, Wedson Almeida Filho wrote:
+> > > On Wed, 18 Oct 2023 at 14:17, Matthew Wilcox <willy@infradead.org> wrote:
+> > > >
+> > > > On Wed, Oct 18, 2023 at 09:25:08AM -0300, Wedson Almeida Filho wrote:
+> > > > > +void *rust_helper_kmap(struct page *page)
+> > > > > +{
+> > > > > +     return kmap(page);
+> > > > > +}
+> > > > > +EXPORT_SYMBOL_GPL(rust_helper_kmap);
+> > > > > +
+> > > > > +void rust_helper_kunmap(struct page *page)
+> > > > > +{
+> > > > > +     kunmap(page);
+> > > > > +}
+> > > > > +EXPORT_SYMBOL_GPL(rust_helper_kunmap);
+> > > >
+> > > > I'm not thrilled by exposing kmap()/kunmap() to Rust code.  The vast
+> > > > majority of code really only needs kmap_local_*() / kunmap_local().
+> > > > Can you elaborate on why you need the old kmap() in new Rust code?
+> > >
+> > > The difficulty we have with kmap_local_*() has to do with the
+> > > requirement that maps and unmaps need to be nested neatly. For
+> > > example:
+> > >
+> > > let a = folio1.map_local(...);
+> > > let b = folio2.map_local(...);
+> > > // Do something with `a` and `b`.
+> > > drop(a);
+> > > drop(b);
+> > >
+> > > The code obviously violates the requirements.
+> >
+> > Is that the only problem, or are there situations where we might try
+> > to do something like:
+> >
+> > a = folio1.map.local()
+> > b = folio2.map.local()
+> > drop(a)
+> > a = folio3.map.local()
+> > drop(b)
+> > b = folio4.map.local()
+> > drop (a)
+> > a = folio5.map.local()
+> > ...
+> 
+> This is also a problem. We don't control the order in which users are
+> going to unmap.
+
+OK.  I have something in the works, but it's not quite ready yet.
+
+> If you don't want to scan the whole array, we could have a solution
+> where we add an indirection between the available indices and the
+> stack of allocations; this way C could continue to work as is and Rust
+> would have a slightly different API that returns both the mapped
+> address and an index (which would be used to unmap).
+> 
+> It's simple to remember the index in Rust and it wouldn't have to be
+> exposed to end users, they'd still just do:
+> 
+> let a = folio1.map_local(...);
+> 
+> And when `a` is dropped, it would call unmap and pass the index back.
+> (It's also safe in the sense that users would not be able to
+> accidentally pass the wrong index.)
+> 
+> But if scanning the whole array is acceptable performance-wise, it's
+> definitely a simpler solution.
+
+Interesting idea.  There are some other possibilities too ... let's see.
+
+> > > > > +/// A [`Folio`] that has a single reference to it.
+> > > > > +pub struct UniqueFolio(pub(crate) ARef<Folio>);
+> > > >
+> > > > How do we know it only has a single reference?  Do you mean "has at
+> > > > least one reference"?  Or am I confusing Rust's notion of a reference
+> > > > with Linux's notion of a reference?
+> > >
+> > > Instances of `UniqueFolio` are only produced by calls to
+> > > `folio_alloc`. They encode the fact that it's safe for us to map the
+> > > folio and know that there aren't any concurrent threads/CPUs doing the
+> > > same to the same folio.
+> >
+> > Mmm ... it's always safe to map a folio, even if other people have a
+> > reference to it.  And Linux can make temporary spurious references to
+> > folios appear, although those should be noticed by the other party and
+> > released again before they access the contents of the folio.  So from
+> > the point of view of being memory-safe, you can ignore them, but you
+> > might see the refcount of the folio as >1, even if you just got the
+> > folio back from the allocator.
+> 
+> Sure, it's safe to map a folio in general, but Rust has stricter rules
+> about aliasing and mutability that are part of how memory safety is
+> achieved. In particular, it requires that we never have mutable and
+> immutable pointers to the same memory at once (modulo interior
+> mutability).
+> 
+> So we need to avoid something like:
+> 
+> let a = folio.map(); // `a` is a shared pointer to the contents of the folio.
+> 
+> // While we have a shared (and therefore immutable) pointer, we're
+> changing the contents of the folio.
+> sb.sread(sector_number, sector_count, folio);
+> 
+> This violates Rust rules. `UniqueFolio` helps us address this for our
+> use case; if we try the above with a UniqueFolio, the compiler will
+> error out saying that  `a` has a shared reference to the folio, so we
+> can't call `sread` on it (because sread requires a mutable, and
+> therefore not shareable, reference to the folio).
+
+This is going to be quite the impedance mismatch.  Still, I imagine
+you're used to dealing with those by now and have a toolbox of ideas.
+
+We don't have that rule for the pagecache as it is.  We do have rules that
+prevent data corruption!  For example, if the folio is !uptodate then you
+must have the lock to write to the folio in order to bring it uptodate
+(so we have a single writer rule in that regard).  But once the folio is
+uptodate, all bets are off in terms of who can be writing to it / reading
+it at the same time.  And that's going to have to continue to be true;
+multiple processes can have the same page mmaped writable and write to
+it at the same time.  There's no possible synchronisation between them.
+
+But I think your concern is really more limited.  You're concerned
+with filesystem metadata obeying Rust's rules.  And for a read-write
+filesystem, you're going to have to have ... something ... which gets a
+folio from the page cache, and establishes that this is the only thread
+which can modify that folio (maybe it's an interior node of a Btree,
+maybe it's a free space bitmap, ...).  We could probably use the folio
+lock bit for that purpose,  For the read-only filesystems, you only need
+be concerned about freshly-allocated folios, but you need something more
+when it comes to doing an ext2 clone.
+
+There's general concern about the overuse of the folio lock bit, but
+this is a reasonable use -- preventing two threads from modifying the
+same folio at the same time.
+
+(I have simplified all this; both iomap and buffer heads support folios
+which are partially uptodate, but conceptually this is accurate)
+
+> > On systems without HIGHMEM, kmap() is a no-op.  So we could do something
+> > like this:
+> >
+> >         let data = unsafe { core::slice::from_raw_parts(ptr.cast::<u8>(),
+> >                 if (folio_test_highmem(folio))
+> >                         bindings::PAGE_SIZE
+> >                 else
+> >                         folio_size(folio) - page_idx * PAGE_SIZE) }
+> >
+> > ... modulo whatever the correct syntax is in Rust.
+> 
+> We can certainly do that. But since there's the possibility that the
+> array will be capped at PAGE_SIZE in the HIGHMEM case, callers would
+> still need a loop to traverse the whole folio, right?
+> 
+> let mut offset = 0;
+> while offset < folio.size() {
+>     let a = folio.map(offset);
+>     // Do something with a.
+>     offset += a.len();
+> }
+> 
+> I guess the advantage is that we'd have a single iteration in systems
+> without HIGHMEM.
+
+Right.  You can see something similar to that in memcpy_from_folio() in
+highmem.h.
+
+> > Something I forgot to mention was that I found it more useful to express
+> > "map this chunk of a folio" in bytes rather than pages.  You might find
+> > the same, in which case it's just folio.map(offset: usize) instead of
+> > folio.map_page(page_index: usize)
+> 
+> Oh, thanks for the feedback. I'll switch to bytes then for v2.
+> (Already did in the example above.)
+
+Great!  Something else I think would be a good idea is open-coding some
+of the trivial accessors.  eg instead of doing:
+
++size_t rust_helper_folio_size(struct folio *folio)
++{
++	return folio_size(folio);
++}
++EXPORT_SYMBOL_GPL(rust_helper_folio_size);
 [...]
-> > +        let inode =
-> > +            ptr::NonNull::new(unsafe { bindings::iget_locked(self.0.get(), ino) }).ok_or(ENOMEM)?;
-> > +
-> > +        // SAFETY: `inode` is valid for read, but there could be concurrent writers (e.g., if it's
-> > +        // an already-initialised inode), so we use `read_volatile` to read its current state.
-> > +        let state = unsafe { ptr::read_volatile(ptr::addr_of!((*inode.as_ptr()).i_state)) };
-> 
-> Are you sure that `read_volatile` is sufficient for this use case? The
-> documentation [1] clearly states that concurrent write operations are still
-> UB:
-> 
->     Just like in C, whether an operation is volatile has no bearing
->     whatsoever on questions involving concurrent access from multiple
->     threads. Volatile accesses behave exactly like non-atomic accesses in
->     that regard. In particular, a race between a read_volatile and any
->     write operation to the same location is undefined behavior.
-> 
++    pub fn size(&self) -> usize {
++        // SAFETY: The folio is valid because the shared reference implies a non-zero refcount.
++        unsafe { bindings::folio_size(self.0.get()) }
++    }
 
-Right, `read_volatile` can have data race. I think what we can do here
-is:
+add:
 
-	// SAFETY: `i_state` in `inode` is `unsigned long`, therefore
-	// it's safe to treat it as `AtomicUsize` and do a relaxed read.
-	let state = unsafe { *(ptr::addr_of!((*inode.as_ptr()).i_state).cast::<AtomicUsize>()).load(Relaxed) };
+impl Folio {
+...
+    pub fn order(&self) -> u8 {
+	if (self.flags & (1 << PG_head))
+	    self._flags_1 & 0xff
+	else
+	    0
+    }
 
-Regards,
-Boqun
+    pub fn size(&self) -> usize {
+	bindings::PAGE_SIZE << self.order()
+    }
+}
 
-> [1]: https://doc.rust-lang.org/core/ptr/fn.read_volatile.html
-> 
-> -- 
-> Cheers,
-> Benno
-> 
+... or have I misunderstood what is possible here?  My hope is that the
+compiler gets to "see through" the abstraction, which surely can't be
+done when there's a function call.
 
