@@ -1,119 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-831-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-832-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24ADB7D1060
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 15:18:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06F9C7D1091
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 15:31:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B38A6282412
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 13:18:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 000B11C21005
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 13:31:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 033B21A73B;
-	Fri, 20 Oct 2023 13:18:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B0501C2AC;
+	Fri, 20 Oct 2023 13:31:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=isovalent.com header.i=@isovalent.com header.b="KUOW6tHo"
+	dkim=pass (2048-bit key) header.d=scrivano.org header.i=@scrivano.org header.b="f/Akho6D"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ADFB1A70E
-	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 13:18:45 +0000 (UTC)
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1119919E
-	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 06:18:44 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id a640c23a62f3a-9adb9fa7200so180519166b.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 06:18:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=isovalent.com; s=google; t=1697807922; x=1698412722; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/RjDLc0f7CsZ3ZAhf+7oO+KfDgSRyr9/BS+BP5jxyc4=;
-        b=KUOW6tHoH0YoRWmfTiYARPJh3y1s6CDX5alQWBN3z01Pox70KX1YmMeO4X8gmj80tz
-         K4RAjFE7F6eu6sKWA8DNl5+VOzXiOhmW2Purw1TYWmojIpSfMpme5ITPOvFlXJW6gkOs
-         RUxubMSHkKeGzfJUt/vfeX5Uvqu3tle5S0pJ1kJxeDkH9ty7a5MtTh6X0UWOjNkr/NSy
-         GR2ERAP5mG5IONJh4g0dqFblVKeR620s2ZyBbRuOvXXt+WPG/xWFf1UHvocjUakUUMWV
-         Sy7YWU6fCNmb4JC58tx/qKchZHrcWyHiJcH9jxYAOKOnVZzjUG9M47GXWwKI/rtndEKX
-         BwcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697807922; x=1698412722;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/RjDLc0f7CsZ3ZAhf+7oO+KfDgSRyr9/BS+BP5jxyc4=;
-        b=uO23yS6uzpOvbWPntuVJvt2FeY5er9zQcg4bAQc9k90QtTsBTVlrrtexcsVzYK5FLJ
-         hho9ozKLKQu8jiiauh69MYJpAHYxJbHvUk2fU5PWjFafmYosVCTIHKCNXkuR4B0MkHFE
-         vzZp2kAYlcaJhv7gx4Kefc5/nNAK37cJGV4nZ7lGG21gdHYp9H9W73NVq5VplQIX6qjV
-         eqQe+jyAaYgs1JVKQD94yaGOb+8flEA9xqZVqdczG/TC+vhiRMCsbwY1sRncvzmoZTKr
-         qm23Wqt+mfKPGXfJ1sTUdUGu+iYfkRU6B6OhBlcSmSo5DyJq2pAv/9K7We6DALXdSTC3
-         P0PA==
-X-Gm-Message-State: AOJu0Yzj9mIC+UqJ5szqvVtrnaq5GzwPv+Kq/w1k5oHKRffpfItZvY8m
-	tg6y5cHmP0x5oCK+YkIQSUr0KMTRihpQ/i/wq9y6QD2zLRBggNWECbQ=
-X-Google-Smtp-Source: AGHT+IHJ0YVjts5wXBN5Jqp31pQ7zOyCplhCxmKRWiIG/OBUb9hPTVLkywcsxvesYEBUsruBmhSCSDcUubMxrq+Mqbc=
-X-Received: by 2002:a17:907:7f2a:b0:9ae:659f:4d2f with SMTP id
- qf42-20020a1709077f2a00b009ae659f4d2fmr1364024ejc.26.1697807922329; Fri, 20
- Oct 2023 06:18:42 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD011BDD4
+	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 13:31:18 +0000 (UTC)
+X-Greylist: delayed 303 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 20 Oct 2023 06:31:17 PDT
+Received: from m32-12.eu.mailgun.net (m32-12.eu.mailgun.net [141.193.32.12])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DEF51A8
+	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 06:31:17 -0700 (PDT)
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=scrivano.org;
+ q=dns/txt; s=email; t=1697808675; x=1697815875; h=Content-Transfer-Encoding:
+ Content-Type: MIME-Version: Message-ID: In-Reply-To: Date: References:
+ Subject: Subject: Cc: To: To: From: From: Sender: Sender;
+ bh=H30MfQJ7jYcuOdi1JUAUJ6pywT2nj7wKmIdh5yZHems=;
+ b=f/Akho6DGg+cUUdHnEzlWMOIonVTJ+57DCw3aFLxbY2Im8eggebXsHIaizL7h9xz3KEdDVEtQe7tt/780uY/dYAIdGOHuwlwB6DbG0Udt6xjv6bmSUWIWshR+o2OcVSWlUX4f1HxIV9jVJfNEWPdzrCxsLIdr2OXgT1cnkZol3LbHjOnR0drfAFbT5TlK006uRI2I42ooMCajRsOHYJRRMRAU2vYrpQ1V39rqV4ewRZnPE5vVZko5Fgc4SQImJ0hlNxz/AFDOda8COf22eOAlKUdd/o+ftW53vMvf6i0p0uf0Ez5ty033wdzfQbC/L7Nsb9KxbrDX3fYdUoDnqCCIQ==
+X-Mailgun-Sending-Ip: 141.193.32.12
+X-Mailgun-Sid: WyI4YjkwYSIsImxpbnV4LWZzZGV2ZWxAdmdlci5rZXJuZWwub3JnIiwiNmYxOGEiXQ==
+Received: from localhost (93-38-24-113.ip68.fastwebnet.it [93.38.24.113]) by
+ 9bd0fe46fe11 with SMTP id 65327ff09361f864fc7dc614 (version=TLS1.3,
+ cipher=TLS_AES_128_GCM_SHA256); Fri, 20 Oct 2023 13:26:08 GMT
+Sender: giuseppe@scrivano.org
+From: Giuseppe Scrivano <giuseppe@scrivano.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,  Jesse Hathaway
+ <jesse@mbuki-mvuki.org>,  Christoph Hellwig <hch@lst.de>,  Florian Weimer
+ <fweimer@redhat.com>,  Aleksa Sarai <cyphar@cyphar.com>,
+  linux-fsdevel@vger.kernel.org,  Al Viro <viro@zeniv.linux.org.uk>,
+  stable@vger.kernel.org,  Greg KH <gregkh@linuxfoundation.org>,  Linux
+ regressions mailing list <regressions@lists.linux.dev>,
+  giuseppe@scrivano.org
+Subject: Re: [PATCH] attr: block mode changes of symlinks
+References: <CANSNSoUYMdPPLuZhofOW6DaKzCF47WhZ+T9BnL8sA37M7b4F+g@mail.gmail.com>
+	<2023101819-satisfied-drool-49bb@gregkh>
+	<CANSNSoV6encjhH2u-Ua8wmjy==emvpi+76HTZasxbfzobMQ_Vw@mail.gmail.com>
+	<38bf9c2b-25e2-498e-ae50-362792219e50@leemhuis.info>
+	<20231020-allgegenwart-torbogen-33dc58e9a7aa@brauner>
+Date: Fri, 20 Oct 2023 15:26:07 +0200
+In-Reply-To: <20231020-allgegenwart-torbogen-33dc58e9a7aa@brauner> (Christian
+	Brauner's message of "Fri, 20 Oct 2023 13:01:44 +0200")
+Message-ID: <878r7x77dc.fsf@redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.3 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231016180220.3866105-1-andrii@kernel.org>
-In-Reply-To: <20231016180220.3866105-1-andrii@kernel.org>
-From: Lorenz Bauer <lorenz.bauer@isovalent.com>
-Date: Fri, 20 Oct 2023 14:18:31 +0100
-Message-ID: <CAN+4W8hu+zWiWejWtc72WwQb6ydL3U3LXvaFBdc0o826JKzoAQ@mail.gmail.com>
-Subject: Re: [PATCH v8 bpf-next 00/18] BPF token and BPF FS-based delegation
-To: Andrii Nakryiko <andrii@kernel.org>
-Cc: bpf@vger.kernel.org, netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, keescook@chromium.org, 
-	brauner@kernel.org, lennart@poettering.net, kernel-team@meta.com, 
-	sargun@sargun.me
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 16, 2023 at 7:03=E2=80=AFPM Andrii Nakryiko <andrii@kernel.org>=
- wrote:
-...
-> This patch set adds a basic minimum of functionality to make BPF token id=
-ea
-> useful and to discuss API and functionality. Currently only low-level lib=
-bpf
-> APIs support creating and passing BPF token around, allowing to test kern=
-el
-> functionality, but for the most part is not sufficient for real-world
-> applications, which typically use high-level libbpf APIs based on `struct
-> bpf_object` type. This was done with the intent to limit the size of patc=
-h set
-> and concentrate on mostly kernel-side changes. All the necessary plumbing=
- for
-> libbpf will be sent as a separate follow up patch set kernel support make=
-s it
-> upstream.
+Christian Brauner <brauner@kernel.org> writes:
+
+> On Fri, Oct 20, 2023 at 10:34:36AM +0200, Linux regression tracking (Thor=
+sten Leemhuis) wrote:
+>> [adding Christian, the author of what appears to be the culprit]
+>>=20
+>> On 18.10.23 20:49, Jesse Hathaway wrote:
+>> > On Wed, Oct 18, 2023 at 1:40=E2=80=AFPM Greg KH <gregkh@linuxfoundatio=
+n.org> wrote:
+>>=20
+>> FWIW, this thread afaics was supposed to be in reply to this submission:
+>>=20
+>> https://lore.kernel.org/all/20230712-vfs-chmod-symlinks-v1-1-27921df6011=
+f@kernel.org/
+>>=20
+>> That patch later became 5d1f903f75a80d ("attr: block mode changes of
+>> symlinks") [v6.6-rc1, v6.5.5, v6.1.55, v5.4.257, v5.15.133, v5.10.197,
+>> v4.19.295, v4.14.326]
+>>=20
+>> >>> Unfortunately, this has not held up in LTSes without causing
+>> >>> regressions, specifically in crun:
+>> >>>
+>> >>> Crun issue and patch
+>> >>>  1. https://github.com/containers/crun/issues/1308
+>> >>>  2. https://github.com/containers/crun/pull/1309
+>> >>
+>> >> So thre's a fix already for this, they agree that symlinks shouldn't
+>> >> have modes, so what's the issue?
+>> >=20
+>> > The problem is that it breaks crun in Debian stable. They have fixed t=
+he
+>> > issue in crun, but that patch may not be backported to Debian's stable
+>> > version. In other words the patch seems to break existing software in
+>> > the wild.
+>> >=20
+>> >> It needs to reverted in Linus's tree first, otherwise you will hit the
+>> >> same problem when moving to a new kernel.
+>> >=20
+>> > Okay, I'll raise the issue on the linux kernel mailing list.
+>>=20
+>> Did you do that? I could not find anything. Just wondering, as right now
+>> there is still some time to fix this regression before 6.6 is released
+>> (and then the fix can be backported to the stable trees, too).
 >
-> Another part that should happen once kernel-side BPF token is established=
-, is
-> a set of conventions between applications (e.g., systemd), tools (e.g.,
-> bpftool), and libraries (e.g., libbpf) on exposing delegatable BPF FS
-> instance(s) at well-defined locations to allow applications take advantag=
-e of
-> this in automatic fashion without explicit code changes on BPF applicatio=
-n's
-> side. But I'd like to postpone this discussion to after BPF token concept
-> lands.
+> I have not seen a report other than the crun fix I commented on.
+>
+> The crun authors had agreed to fix this in crun. As symlink mode changes
+> are severly broken to the point that it's not even supported through the
+> official glibc and musl system call wrappers anymore not having to
+> revert this from mainline would be the ideal outcome.
+>
+> So ideally, the crun bugfix would be backported to Debian stable just as
+> it was already backported to Fedora or crun make a new point release for
+> the 1.8.* series.
+>
+> The other option to consider would be to revert the backport of the attr
+> changes to stable kernels. I'm not sure what Greg's stance on this is
+> but given that crun versions in -testing already include that fix that
+> means all future Debian releases will already have a fixed crun version.
+>
+> That symlink stuff is so brittle and broken that we'd do more long-term
+> harm by letting it go on. Which is why we did this.
+>
+> @Linus, this is ultimately your call of course.
 
-In the patch set you've extended MAP_CREATE, PROG_LOAD and BTF_LOAD to
-accept an additional token_fd. How many more commands will need a
-token as a context like this? It would cause a lot of churn to support
-many BPF commands like this, since every command will have token_fd at
-a different offset in bpf_attr. This means we need to write extra code
-for each new command, both in kernel as well as user space.
+my two cents as the crun maintainer:
 
-Could we pass the token in a way that is uniform across commands?
-Something like additional arg to the syscall or similar.
+We were messing with /proc/*/fd files to do something not supported.
+The kernel patch made the error explicit instead of ignoring errors just
+in some cases.
 
-Lorenz
+Since it was already fixed upstream in crun and the fix is included in
+the last three releases, Debian could simply pick a newer version; or I
+can help with a backport if that is what they prefer.
 
