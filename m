@@ -1,151 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-845-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-846-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 445B17D14D2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 19:24:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1F367D14D9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 19:26:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBC8B281F40
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 17:24:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD69A1C20FBE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 17:26:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F15FD2030F;
-	Fri, 20 Oct 2023 17:24:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1369120312;
+	Fri, 20 Oct 2023 17:26:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="dRV6fBr7"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="eB2dZqUP"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DC6D20302
-	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 17:24:21 +0000 (UTC)
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8083BD6E
-	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 10:24:17 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-9adb9fa7200so233564866b.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 10:24:17 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CF101DA43
+	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 17:26:48 +0000 (UTC)
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B811D7A
+	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 10:26:47 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-9be02fcf268so163343166b.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 10:26:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1697822656; x=1698427456; darn=vger.kernel.org;
+        d=linux-foundation.org; s=google; t=1697822805; x=1698427605; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=EdhkfPsGi9gy/YeBNgsDbPiV4gQ/kZVT9dE/yOFv4Jk=;
-        b=dRV6fBr7qaM9ZRb+nSrwxEMoad+qE9kk1IWtQSGVH1vDatvVD8w1F0BFCYh65KOl82
-         JHSDXQWRrrlu0qX5Y7EpcoLaTKUTKYMaUXuvteArPHrjKJ0L5tzia8vm54r3FEK+5VuC
-         w/nk3quiypHUlJsSGchaTS/KOtKz9V9HwCNd0=
+        bh=hFd/PeJUrCqAUlQIC7OhOkLtSLgI8B2z7y+zqnxlUNQ=;
+        b=eB2dZqUPQ9v4yToflXPaXZPk0YAI60nb98j7RvFY893P/OSuRehkBmF5wl0SSS5BY7
+         vS9Zix0BU5ZCKLivGaoZ1Jc38KBSYzZK5ZbnP5lQvFtk+2dps3xXcc/p8EwjCREvT2wa
+         JjrygDBcHUGcrNbMCFT/TCVaBqtWC0P9tyIVw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697822656; x=1698427456;
+        d=1e100.net; s=20230601; t=1697822805; x=1698427605;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=EdhkfPsGi9gy/YeBNgsDbPiV4gQ/kZVT9dE/yOFv4Jk=;
-        b=JhgH5P0KobrbCxcXB8oVktVMXZ1V9jgDuq8GIqDvk+tJsEkPSV/nwB4JYJMufEGhnm
-         yWWjPzFdEVF43sS+FjdN0BTG+YGNmAxnYUZLJXHuyKeSHx/6UHqlCrYt/6zbzZdM1BTa
-         hqjsAQuzBpVpLRRtJXxRhZXlQJIthGHqzCoO3SnY1vs2gdrEPIVwmVojyOQuAGcZHTf+
-         Lj85uKmiWIndYHY66yPl49cshLVNl4+lwFFniyzxMnQI522+p8M23lGAESLLRH51hNwX
-         f1KGkvz3IHBSCtD64k2AMsd25SEastGj7yGEQtp02Bibkfdgh6dHKl3PwpjsT8lnS3JT
-         qSZg==
-X-Gm-Message-State: AOJu0YwPYSWwsaf3ngSuDhTvbvFFBgq/qdbaYRWw0Hc9zbEia7kCxIt6
-	/lNmaCtDsGAwYyQOVFfMzJFghAaUGxYPXJxrM9dzS2R4
-X-Google-Smtp-Source: AGHT+IEdNYcuygwMYxPk0NEJ703fSWpBh7nNNEqC6IqA+VfqAReS3CnfhVSHHIaGsoFqKtSyuIw3dA==
-X-Received: by 2002:a17:907:2d90:b0:9c7:5186:de2a with SMTP id gt16-20020a1709072d9000b009c75186de2amr4981954ejc.6.1697822655713;
-        Fri, 20 Oct 2023 10:24:15 -0700 (PDT)
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com. [209.85.218.51])
-        by smtp.gmail.com with ESMTPSA id gy5-20020a0564025bc500b0053d9cb67248sm1777342edb.18.2023.10.20.10.24.15
+        bh=hFd/PeJUrCqAUlQIC7OhOkLtSLgI8B2z7y+zqnxlUNQ=;
+        b=dfHxMHDtv+He5VHYOv9JOclsV3R7pHzJgpHC/Hrt+V8jt9dE6lTyNahBO9ldwcbJRl
+         hNBq1XL/JxhoqLJ2T//184OePiIioJBEXonslAxz6oNAeLhjrDvofdOepcA30b9u9DUX
+         1Kp1GlVZbPJGRC6D2PB5MpwDg61jfIx3mujzI5ucsZYD8ArL6R7DEXCXX3DSZsmXBQUr
+         8XZ88a9u3EG2loJWKofbV2VeDhmZMq8VbONdl8Rf5c5YoHe+LJ0o798Mwu+X/9/TV86F
+         t57Bwx+qjCF9vUuan4yIw1MQWiZvVd8z54fKf7gG3Ov7iX1qJY807iRQkC8AXB2Bzn3a
+         TdLg==
+X-Gm-Message-State: AOJu0Yx61KQEtLS0bA/l24n/ZcXjnOx3K9L2UIX1QBmNpSgD5c0XC+FO
+	oTQrGW3GXCRmn33iqOUJYdvm3lWBb/N/wPDjfojztpYk
+X-Google-Smtp-Source: AGHT+IH2BJcFM9/3LmZg+JF0HcvLX9Yq7Udm0+APMjO1jZ2GwyzMjJtRR2cQs5nx6LymK6s3uk5mcw==
+X-Received: by 2002:a17:906:4fca:b0:9b2:cf77:a105 with SMTP id i10-20020a1709064fca00b009b2cf77a105mr2096681ejw.15.1697822805416;
+        Fri, 20 Oct 2023 10:26:45 -0700 (PDT)
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com. [209.85.218.50])
+        by smtp.gmail.com with ESMTPSA id m19-20020a1709066d1300b0099bd453357esm1856128ejr.41.2023.10.20.10.26.43
         for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Oct 2023 10:24:15 -0700 (PDT)
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-9c3aec5f326so464993266b.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 10:24:15 -0700 (PDT)
-X-Received: by 2002:a17:906:7308:b0:9a2:295a:9bbc with SMTP id
- di8-20020a170906730800b009a2295a9bbcmr1923815ejc.37.1697822654738; Fri, 20
- Oct 2023 10:24:14 -0700 (PDT)
+        Fri, 20 Oct 2023 10:26:43 -0700 (PDT)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-9b1ebc80d0aso166820266b.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 10:26:43 -0700 (PDT)
+X-Received: by 2002:a17:906:fe06:b0:9bf:1477:ad82 with SMTP id
+ wy6-20020a170906fe0600b009bf1477ad82mr2068018ejb.76.1697822803062; Fri, 20
+ Oct 2023 10:26:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231019101854.yb5gurasxgbdtui5@quack3> <ZTEap8A1W3IIY7Bg@smile.fi.intel.com>
- <ZTFAzuE58mkFbScV@smile.fi.intel.com> <20231019164240.lhg5jotsh6vfuy67@treble>
+References: <ZTFAzuE58mkFbScV@smile.fi.intel.com> <20231019164240.lhg5jotsh6vfuy67@treble>
  <ZTFh0NeYtvgcjSv8@smile.fi.intel.com> <CAHk-=wjXG52UNKCwwEU1A+QWHYfvKOieV0uFOpPkLR0NSvOjtg@mail.gmail.com>
  <CAHk-=whis2BJF2fv1xySAg2NTQ+C5fViNSGkLNCOqGzi-3y+8w@mail.gmail.com>
  <ZTFxEcjo4d6vXbo5@smile.fi.intel.com> <ZTFydEbdEYlxOxc1@smile.fi.intel.com>
- <CAHk-=wh_gbZE_ZsQ6+9gSPdXfoCtmuK-MFmBkO3ywMKFQEvb6g@mail.gmail.com> <ZTKUDzONVHXnWAJc@smile.fi.intel.com>
-In-Reply-To: <ZTKUDzONVHXnWAJc@smile.fi.intel.com>
+ <CAHk-=wh_gbZE_ZsQ6+9gSPdXfoCtmuK-MFmBkO3ywMKFQEvb6g@mail.gmail.com>
+ <ZTKUDzONVHXnWAJc@smile.fi.intel.com> <ZTKXbbSS2Pvmc-Fh@smile.fi.intel.com> <ZTKY6nRGWoYsEJjj@smile.fi.intel.com>
+In-Reply-To: <ZTKY6nRGWoYsEJjj@smile.fi.intel.com>
 From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 20 Oct 2023 10:23:57 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wipA4605yvnmjW7T9EvARPRCGLARty8UUzRGxic1SXqvg@mail.gmail.com>
-Message-ID: <CAHk-=wipA4605yvnmjW7T9EvARPRCGLARty8UUzRGxic1SXqvg@mail.gmail.com>
+Date: Fri, 20 Oct 2023 10:26:26 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whzn2AVM6iSfy64h8TPjL6DtirO-YKW9o8afEw1s9nbjw@mail.gmail.com>
+Message-ID: <CAHk-=whzn2AVM6iSfy64h8TPjL6DtirO-YKW9o8afEw1s9nbjw@mail.gmail.com>
 Subject: Re: [GIT PULL] ext2, quota, and udf fixes for 6.6-rc1
-To: Andy Shevchenko <andriy.shevchenko@intel.com>, Baokun Li <libaokun1@huawei.com>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Jan Kara <jack@suse.cz>, 
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Baokun Li <libaokun1@huawei.com>, Josh Poimboeuf <jpoimboe@kernel.org>, Jan Kara <jack@suse.cz>, 
 	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
 	Kees Cook <keescook@chromium.org>, Ferry Toth <ftoth@exalondelft.nl>, 
 	linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 20 Oct 2023 at 07:52, Andy Shevchenko
+On Fri, 20 Oct 2023 at 08:12, Andy Shevchenko
 <andriy.shevchenko@intel.com> wrote:
 >
-> # first bad commit: [e64db1c50eb5d3be2187b56d32ec39e56b739845] quota: factor out dquot_write_dquot()
-
-Ok, so commit 024128477809 ("quota: factor out dquot_write_dquot()") pre-rebase.
-
-Which honestly seems entirely innocuous, and the only change seems to
-be a slight massaging of the return value checking, in that it did a
-"if (err)" ine one place before, now it does "if (err < 0)".
-
-And the whole "now it always warns about errors", which used to happen
-only in dqput() before.
-
-Neither seems to be very relevant, which just reinforces that yes,
-this looks like a timing thing.
-
-> On top of the above I have tried the following:
-> 1) dropping inline, replacing it to __always_inline -- no help;
-> 2) commenting out the error message -- helps!
+> > > --- a/fs/quota/dquot.c
+> > > +++ b/fs/quota/dquot.c
+> > > @@ -632,8 +632,10 @@ static inline int dquot_write_dquot(struct dquot *dquot)
+> > >  {
+> > >         int ret = dquot->dq_sb->dq_op->write_dquot(dquot);
+> > >         if (ret < 0) {
+> > > +#if 0
+> > >                 quota_error(dquot->dq_sb, "Can't write quota structure "
+> > >                             "(error %d). Quota may get out of sync!", ret);
+> > > +#endif
+> > >                 /* Clear dirty bit anyway to avoid infinite loop. */
+> > >                 clear_dquot_dirty(dquot);
+> > >         }
 >
-> --- a/fs/quota/dquot.c
-> +++ b/fs/quota/dquot.c
-> @@ -632,8 +632,10 @@ static inline int dquot_write_dquot(struct dquot *dquot)
->  {
->         int ret = dquot->dq_sb->dq_op->write_dquot(dquot);
->         if (ret < 0) {
-> +#if 0
->                 quota_error(dquot->dq_sb, "Can't write quota structure "
->                             "(error %d). Quota may get out of sync!", ret);
-> +#endif
->                 /* Clear dirty bit anyway to avoid infinite loop. */
->                 clear_dquot_dirty(dquot);
->         }
+> Doing the same on the my branch based on top of v6.6-rc6 does not help.
+> So looks like a race condition somewhere happening related to that dirty bit
+> (as comment states it needs to be cleaned to avoid infinite loop, that's
+>  probably what happens).
 
-The only thing quota_error() does is the varags handling and a printk,
-so yeah, all that #if 0" would do even if the error triggers (and it
-presumably doesn't) is to change code generation around that point,
-and change timing.
+Hmm. Normally, dirty bits should always be cleared *before* the
+write-back, not after it. Otherwise you might lose a dirty event that
+happened *during* writeback.
 
-But what *is* interesting is that that commit that triggers it is
-before all the other list-handling changes, so the fact that this was
-triggered by that merge and that one commit, *all* that really
-happened to trigger your boot failure is literally this:
+But I don't know the quota code.
 
-   git log 1500e7e0726e^..024128477809
+... the fact that the #if 0 doesn't help in another case does say that
+it's not the quota_error() call itself. Which it really couldn't have
+been (apart from timing and compiler bugs), but it's still a data
+point, I guess.
 
-(that "1500e7e0726e^" is the pre-merge state). So it's not that the
-problem was introduced by one of the other list-handling changes and
-then 024128477809 just happened to change the timing. No, it's
-literally that one commit that moves code around, and that one
-quota_error() printout that makes the problem show for you.
-
-So it really looks like the bug is pre-existing. Or actually a
-compiler problem that is introduced by the added call that changes
-code generation, but honestly, that is a very unlikely thing.
-
-That said - while unlikely, mind just sending me the *failing* copy of
-the fs/quota/dquot.o object file, and I'll take a look at the code
-around that call. I've looked at enough code generation issues that
-it's worth trying..
-
-                 Linus
+               Linus
 
