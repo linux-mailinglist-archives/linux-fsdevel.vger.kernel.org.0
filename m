@@ -1,121 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-854-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-855-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA9A27D167B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 21:44:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42D1A7D16C4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 22:07:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9576A28265A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 19:44:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E01B1C21025
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 20:07:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C83D222332;
-	Fri, 20 Oct 2023 19:44:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50B82241EF;
+	Fri, 20 Oct 2023 20:06:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="alPPSER8"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="EfK/H/GL"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B3E1802E
-	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 19:44:18 +0000 (UTC)
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC896D52
-	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 12:44:16 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id 2adb3069b0e04-507be298d2aso1719368e87.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 12:44:16 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C6651DA59
+	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 20:06:55 +0000 (UTC)
+Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BB84D63
+	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 13:06:54 -0700 (PDT)
+Received: by mail-lj1-x22f.google.com with SMTP id 38308e7fff4ca-2bfed7c4e6dso18486351fa.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 13:06:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1697831055; x=1698435855; darn=vger.kernel.org;
+        d=linux-foundation.org; s=google; t=1697832412; x=1698437212; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=NnnjNkqgXxS0pckrv1oPel8s8uR9/bn0uOyrsj0uCGA=;
-        b=alPPSER8Jb2LCXXrEsza92LYG7E6LRL6g930ClGmnEP8DJqoLHc68UjXV0cJPK5UFZ
-         krj8zljdzac/fY0EJNhVlNfTuOU0CQigJYvVdMSNgv+Xra9YVDD6ruWPiAyBXIvp0L3Z
-         ol2srF1cYOmr/Hbc4TX0kkK55HxsHvfeR8L9Y=
+        bh=FJwcfh7XT4p/d8xdEQd3o4yb8QA8P7Clkcjdf6k/CEg=;
+        b=EfK/H/GLHx0/aqNqd/ehf8SerD5bueKNAIIvBIi/aGQCOt1XlGC78879l7Zp7buCuL
+         t2CV3kMlUg1OVKtRm9uNuIoRI+jylsojzmhVpdG7jt/RF28GUQkpJqfmQYQpuga5Npo8
+         yLM/mZfrOpsTh504cehZyfwfrx15cTdPW5KAA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697831055; x=1698435855;
+        d=1e100.net; s=20230601; t=1697832412; x=1698437212;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=NnnjNkqgXxS0pckrv1oPel8s8uR9/bn0uOyrsj0uCGA=;
-        b=QsNrGPdJ3DbfRhUbDG5d33BPmZMKNZ7wKSib3PXYIj25gQkumFQO+2/+pc7Nl5XxcS
-         PGf/8g+d6GKZQGGvB8nG4NNnhYiD+05PYcETh62FbasdqAmTuBGEygkcQfHdu1q5PkNO
-         +MZ9aNgaB0Y6mtZ0t8aeTdK9Xuo9+dKZ1N0Kdnfr59BheTv5wfJctQpRuxAhpT1qtHoe
-         QLMazOalbkU03av6BHSvFYxVGZy2tKZyOlPtu/cuAaxVNOCmDekdTv4lR2EG7QG/+UlJ
-         EivCtqdpyI2BQhUUz+6ig3AY3HNFtXl3N/kIjpb8xHUR5W5kqekYfi3TEDUutYU4ayqK
-         Gf4A==
-X-Gm-Message-State: AOJu0YzvP0VKwfhfau85kcMCUl6KaBHvCmp2XRYbdADNRNVxnh7hv+1a
-	n58SXYCvQ9qTJT6hO9gUlB/OjyCLuL64AZ4kckMMLbft
-X-Google-Smtp-Source: AGHT+IFsVkPx54kjzaC5huR1IT85OmQm8Y6Mqi2YXBg/6qdwS5eNLMJgxufUzjOcn9IsAQ15A0W8qQ==
-X-Received: by 2002:ac2:52a2:0:b0:503:1c07:f7f9 with SMTP id r2-20020ac252a2000000b005031c07f7f9mr2060810lfm.29.1697831054691;
-        Fri, 20 Oct 2023 12:44:14 -0700 (PDT)
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com. [209.85.208.51])
-        by smtp.gmail.com with ESMTPSA id l22-20020a50d6d6000000b005309eb7544fsm2053358edj.45.2023.10.20.12.44.14
+        bh=FJwcfh7XT4p/d8xdEQd3o4yb8QA8P7Clkcjdf6k/CEg=;
+        b=tRcBk2OUw1wDx04K7N4wLL2Idottv1ZlkoOcWVOB2JfF4JFkotmfuUHEndGe5tupfE
+         saXn8XH3Bjyl7E8Km0cVh7RxGzqP8CxKGxMmz+VSQ17URPC3bljJPqbgPNggj/3BVVSX
+         LQzxrkB3WdkCll8f6E34KAwJFI/TmubJWZpSA2xKTJjoyeEQvkd+7NzIUclLe+nOs+vC
+         8kUg5EWBzMj1aFeFv2N3um5ukIgO+oWwLUaqWdRfiBdQCiSPcsGs8vBbMhqlMBXYBQRy
+         Cnk4GXSECCtjjZGRQL9mQYKZj33IL5tA1E95NAwKSGGn8V4eykZ0uFQVOsdRDjKIjHix
+         L24w==
+X-Gm-Message-State: AOJu0YyESFOKKc1EdZUlLTGvDcZ4mXu8YMIgcuckzLgUUoweX2N/DCL8
+	ZPjahT1DpPUFwdlY7XMLAxy+R/BwP+SIgg+EJGKjUqBg
+X-Google-Smtp-Source: AGHT+IFja2SAnKeLs1TZFJrYJVyRwu1Fit9Wzi7Bpo3sIdPzvLQw3ZXeYPyXyvlv2+C/c+vZTzE+Hw==
+X-Received: by 2002:a2e:b790:0:b0:2c2:a337:5ea with SMTP id n16-20020a2eb790000000b002c2a33705eamr2117652ljo.27.1697832411744;
+        Fri, 20 Oct 2023 13:06:51 -0700 (PDT)
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
+        by smtp.gmail.com with ESMTPSA id v19-20020a2e9913000000b002c514b5931esm512867lji.7.2023.10.20.13.06.51
         for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Oct 2023 12:44:14 -0700 (PDT)
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-53e08e439c7so1839613a12.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 12:44:14 -0700 (PDT)
-X-Received: by 2002:a17:907:2d08:b0:9bf:d65d:dc0f with SMTP id
- gs8-20020a1709072d0800b009bfd65ddc0fmr1770580ejc.4.1697831053735; Fri, 20 Oct
- 2023 12:44:13 -0700 (PDT)
+        Fri, 20 Oct 2023 13:06:51 -0700 (PDT)
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-507c5249d55so1682604e87.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 13:06:51 -0700 (PDT)
+X-Received: by 2002:a17:907:c1f:b0:9ba:65e:752b with SMTP id
+ ga31-20020a1709070c1f00b009ba065e752bmr2061794ejc.39.1697832390868; Fri, 20
+ Oct 2023 13:06:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZTFAzuE58mkFbScV@smile.fi.intel.com> <20231019164240.lhg5jotsh6vfuy67@treble>
- <ZTFh0NeYtvgcjSv8@smile.fi.intel.com> <CAHk-=wjXG52UNKCwwEU1A+QWHYfvKOieV0uFOpPkLR0NSvOjtg@mail.gmail.com>
- <CAHk-=whis2BJF2fv1xySAg2NTQ+C5fViNSGkLNCOqGzi-3y+8w@mail.gmail.com>
- <ZTFxEcjo4d6vXbo5@smile.fi.intel.com> <ZTFydEbdEYlxOxc1@smile.fi.intel.com>
- <CAHk-=wh_gbZE_ZsQ6+9gSPdXfoCtmuK-MFmBkO3ywMKFQEvb6g@mail.gmail.com>
- <ZTKUDzONVHXnWAJc@smile.fi.intel.com> <CAHk-=wipA4605yvnmjW7T9EvARPRCGLARty8UUzRGxic1SXqvg@mail.gmail.com>
- <ZTLHBYv6wSUVD/DW@smile.fi.intel.com>
-In-Reply-To: <ZTLHBYv6wSUVD/DW@smile.fi.intel.com>
+References: <20231018-mgtime-v1-0-4a7a97b1f482@kernel.org> <20231018-mgtime-v1-2-4a7a97b1f482@kernel.org>
+ <CAHk-=wixObEhBXM22JDopRdt7Z=tGGuizq66g4RnUmG9toA2DA@mail.gmail.com>
+ <d6162230b83359d3ed1ee706cc1cb6eacfb12a4f.camel@kernel.org>
+ <CAHk-=wiKJgOg_3z21Sy9bu+3i_34S86r8fd6ngvJpZDwa-ww8Q@mail.gmail.com>
+ <5f96e69d438ab96099bb67d16b77583c99911caa.camel@kernel.org>
+ <20231019-fluor-skifahren-ec74ceb6c63e@brauner> <0a1a847af4372e62000b259e992850527f587205.camel@kernel.org>
+ <ZTGncMVw19QVJzI6@dread.disaster.area> <eb3b9e71ee9c6d8e228b0927dec3ac9177b06ec6.camel@kernel.org>
+In-Reply-To: <eb3b9e71ee9c6d8e228b0927dec3ac9177b06ec6.camel@kernel.org>
 From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 20 Oct 2023 12:43:56 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgHFSTuANT3jXsw1EtzdHQe-XQtWQACzeFxn2BEBzX-gA@mail.gmail.com>
-Message-ID: <CAHk-=wgHFSTuANT3jXsw1EtzdHQe-XQtWQACzeFxn2BEBzX-gA@mail.gmail.com>
-Subject: Re: [GIT PULL] ext2, quota, and udf fixes for 6.6-rc1
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Baokun Li <libaokun1@huawei.com>, Josh Poimboeuf <jpoimboe@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Kees Cook <keescook@chromium.org>, Ferry Toth <ftoth@exalondelft.nl>, 
-	linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
+Date: Fri, 20 Oct 2023 13:06:13 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjma9_TSwXosG7GBXQaZ465VH1t4a4iQ8J=PFpE=4bhVA@mail.gmail.com>
+Message-ID: <CAHk-=wjma9_TSwXosG7GBXQaZ465VH1t4a4iQ8J=PFpE=4bhVA@mail.gmail.com>
+Subject: Re: [PATCH RFC 2/9] timekeeping: new interfaces for multigrain
+ timestamp handing
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Dave Chinner <david@fromorbit.com>, Kent Overstreet <kent.overstreet@linux.dev>, 
+	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	John Stultz <jstultz@google.com>, Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>, 
+	Chandan Babu R <chandan.babu@oracle.com>, "Darrick J. Wong" <djwong@kernel.org>, 
+	"Theodore Ts'o" <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, 
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Hugh Dickins <hughd@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.de>, 
+	David Howells <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mm@kvack.org, 
+	linux-nfs@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 20 Oct 2023 at 11:29, Andy Shevchenko
-<andriy.shevchenko@intel.com> wrote:
+On Fri, 20 Oct 2023 at 05:12, Jeff Layton <jlayton@kernel.org> wrote:.
 >
-> I'll reply to this with the attached object file, I assume it won't go to the
-> mailing list, but should be available in your mailbox.
+> I'd _really_ like to see a proper change counter added before it's
+> merged, or at least space in the on-disk inode reserved for one until we
+> can get it plumbed in.
 
-Honestly, both cases (that function gets inlined twice) look
-*identical* from a quick look, apart from obviously the extra call to
-__quota_error().
+Hmm. Can we not perhaps just do an in-memory change counter, and try
+to initialize it to a random value when instantiating an inode? Do we
+even *require* on-disk format changes?
 
-I might be missing something, but this most definitely is not a "gcc
-ends up creating very different code when it doesn't need to
-synchronize around the call" thing.
+So on reboot, the inode would count as "changed" as far any remote
+user is concerned. It would flush client caches, but isn't that what
+you'd want anyway? I'd hate to waste lots of memory, but maybe people
+would be ok with just a 32-bit random value. And if not...
 
-So a compiler issue looks very unlikely. No absolute guarantees - I
-didn't do *that* kind of walk-through instruction by instruction - but
-the results actually seem to line up perfectly.
+But I actually came into this whole discussion purely through the
+inode timestamp side, so I may *entirely* miss what the change counter
+requirements for NFSd actually are. If it needs to be stable across
+reboots, my idea is clearly complete garbage.
 
-Even register allocation didn't change, making the compare between #if
-0 and without rather easy.
+You can now all jump on me and point out my severe intellectual
+limitations. Please use small words when you do ;)
 
-There's one extra spill/reload due to the call in the "non-#if0" case,
-and that actually made me look twice (because it spilled %eax, and
-then reloaded it as %rcx), but it turns that %eax/%ecx had the same
-value at the time of the spill, so even that was not a "real"
-difference.
-
-So I will claim that no, it's not the compiler. It's some unrelated
-subtle timing, or possibly just a random code layout issue (because
-the code addresses do obviously change).
-
-                    Linus
+              Linus
 
