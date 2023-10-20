@@ -1,124 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-808-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-809-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74BB87D0890
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 08:37:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D94E7D093C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 09:10:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B8031C20F3D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 06:37:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E2BB1F23AA7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 07:10:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1660EC127;
-	Fri, 20 Oct 2023 06:37:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="JGJvSwBi";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="LC0wQbny"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61843D2E4;
+	Fri, 20 Oct 2023 07:10:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E99C46670
-	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 06:37:02 +0000 (UTC)
-Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06393A3;
-	Thu, 19 Oct 2023 23:37:01 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailout.nyi.internal (Postfix) with ESMTP id 7401E5C0BD9;
-	Fri, 20 Oct 2023 02:37:00 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Fri, 20 Oct 2023 02:37:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:sender
-	:subject:subject:to:to; s=fm2; t=1697783820; x=1697870220; bh=xA
-	WhvJyTwIlMRjiPKv8rd0f6EZnz1syx0+2giec34Ls=; b=JGJvSwBi2KS9Z09BYB
-	fJVxONUbLX7Z4H3etKXqaHoHj29lkP8DiHI93taxql0ZYLHdCII2C4SaljI1Yina
-	6OZ5tpfbD/7lV+0Z8R4IQjaP4DzQWIawi0uHZnHDPzWFesrBuvQjK07LBGg21RHC
-	WiK/90slio8eFBjDUV9QojelCKfXay1MhzWZT/NYNi0VHPuWGHfY5R18GmbLxTVd
-	BnETZX/MRMdl1DEMk8t5AG9u1n0tI3NEYe95zi9FIDERy7r/xPUP2OFnI5a04czq
-	wRrM2fHfVIU0h5wa3bs9EG2FbbC98wDTTyRPsWSd3YmKAwKv7CAShUgYPhEjZdDp
-	lKRg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:sender:subject
-	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-	:x-sasl-enc; s=fm3; t=1697783820; x=1697870220; bh=xAWhvJyTwIlMR
-	jiPKv8rd0f6EZnz1syx0+2giec34Ls=; b=LC0wQbnyB2iq8ETSI9WRrIMX/Bkjk
-	YAEsisbyPxiLLZOPcp4qoUaQ4jwWmTJaTWhakoWIjCsjMleEHOzED5av8hgAM0Gc
-	XE6enpluUOKV19cdZ0QBMlUxhQbl7a+iiSo8UmB5536NN5+N4Kb8ESUzqQv7nnQs
-	/JDATVM3sgDxyGD1QEOyj+R1pKxF/HTVNnv2tAW/HM53gik6Qx9aYOaIXpamycqa
-	FvUKbjvJfFZDIlW6OzMGjiL3C40vu+WN39SC0PLJcVomwrxUv4HO71Of6QKQOnsx
-	aV9JaoM0d5HifHMQnwjPXj3mGHZNqdnjpPaYFLFqIcbS5OxFaYO7je5Dw==
-X-ME-Sender: <xms:DCAyZV74mP2H0aDjEcE-9ZyXUl743ig-YDnrN8LHDelVz6r5cA-Ixw>
-    <xme:DCAyZS5Q5Csfw8kYT6u7jduf4n7UKf3G1vv_xOHVqKwk9q25x7rCFlniSflKOb326
-    PQhFFmYFmS0fPlRWao>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrjeejgddutdejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
-    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:DCAyZcfPB5YpCJZZu3BmSFLjpUPcSiJpbSlSB1SgdrCnI2UUnlJSPA>
-    <xmx:DCAyZeKtV0j3GkVcdTE2wRWGHeDdoUDIyTtGoaOPKsNK9vD5_zhykw>
-    <xmx:DCAyZZLZKRi4pqukADcJxP7eHgSQyR-Pif-4KnYvK58RMeUArIAbfA>
-    <xmx:DCAyZepB2nT6S-keWgBFCWivTkyLef3Pm9zg8qU0_p91whZnnoneEg>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 237B7B60089; Fri, 20 Oct 2023 02:37:00 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.9.0-alpha0-1048-g9229b632c5-fm-20231019.001-g9229b632
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB741D260
+	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 07:10:40 +0000 (UTC)
+Received: from mail-ot1-f71.google.com (mail-ot1-f71.google.com [209.85.210.71])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C49E21AE
+	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 00:10:38 -0700 (PDT)
+Received: by mail-ot1-f71.google.com with SMTP id 46e09a7af769-6ccf7049ed4so718134a34.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 00:10:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697785838; x=1698390638;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lWL0rNLl5jF/ivasCRcew47fQzuvd0OIJz60/b6FZdY=;
+        b=U+8+7x17X7zzF1rVD0vBxzG7lerHmQBcjIaVn8JJmkRNqjwHucMULiF51Pj+e1Pj99
+         7oNBmtWcGkgbW5e6YhJGg+zcPYycOyp4Ctcc213bnPMAmm4em8d6WJ5P5lJ8s17cp3Mp
+         MdVdtxgBXN6fHY2sf9qgxw8B9mtEhGN3QndMQ3WeKs6vs91IvRd3Rqc9rHm25m96TFSH
+         FEvWXpIm3/IcJx6ApW2X+Q6EBsHZoIisXZ7JNj7RpQSmcbvZTp1e+m7EiKJPCMHCuUPj
+         pYw/jpRe8G5lrXKfsYwyGSdiNXyldjT7ZHwFEAi+Kdofzk8r6gjok5OJNPGAn10Z6kyb
+         82nQ==
+X-Gm-Message-State: AOJu0YxGG3alWBkza4HBdvyIXIVh73+U6jyo9t38xT522NJ0/FR+ugzS
+	jpw0tiouxxW/bJLCuLAvGgXD2z0Jl/ICJrzGqGO5GkLFJm5Y
+X-Google-Smtp-Source: AGHT+IGTxmGob7Dc/DPgC3p4zZRvObLuhFsv4iCL/svsCC2b2UrLxyCog5rpqjctEWdGkRbOPSHHWA/IV8941w7lnpeNC3TMVIqS
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <71adfca4-4e80-4a93-b480-3031e26db409@app.fastmail.com>
-In-Reply-To: 
- <CA+G9fYt75r4i39DuB4E3y6jRLaLoSEHGbBcJy=AQZBQ2SmBbiQ@mail.gmail.com>
-References: 
- <CA+G9fYt75r4i39DuB4E3y6jRLaLoSEHGbBcJy=AQZBQ2SmBbiQ@mail.gmail.com>
-Date: Fri, 20 Oct 2023 08:36:39 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Naresh Kamboju" <naresh.kamboju@linaro.org>,
- "open list" <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org,
- linux-fsdevel@vger.kernel.org, autofs@vger.kernel.org
-Cc: "Ian Kent" <raven@themaw.net>, "Bill O'Donnell" <bodonnel@redhat.com>,
- "Christian Brauner" <brauner@kernel.org>,
- "Dan Carpenter" <dan.carpenter@linaro.org>,
- "Anders Roxell" <anders.roxell@linaro.org>
-Subject: Re: autofs: add autofs_parse_fd()
-Content-Type: text/plain
+X-Received: by 2002:a05:6870:c18c:b0:1e1:3367:1429 with SMTP id
+ h12-20020a056870c18c00b001e133671429mr503641oad.10.1697785838117; Fri, 20 Oct
+ 2023 00:10:38 -0700 (PDT)
+Date: Fri, 20 Oct 2023 00:10:38 -0700
+In-Reply-To: <0000000000000c44b0060760bd00@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c92c0d06082091ee@google.com>
+Subject: Re: [syzbot] [gfs2?] WARNING: suspicious RCU usage in gfs2_permission
+From: syzbot <syzbot+3e5130844b0c0e2b4948@syzkaller.appspotmail.com>
+To: agruenba@redhat.com, cluster-devel@redhat.com, gfs2@lists.linux.dev, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	postmaster@duagon.onmicrosoft.com, rpeterso@redhat.com, 
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Oct 19, 2023, at 17:27, Naresh Kamboju wrote:
-> The qemu-x86_64 and x86_64 booting with 64bit kernel and 32bit rootfs we call
-> it as compat mode boot testing. Recently it started to failed to get login
-> prompt.
->
-> We have not seen any kernel crash logs.
->
-> Anders, bisection is pointing to first bad commit,
-> 546694b8f658 autofs: add autofs_parse_fd()
->
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> Reported-by: Anders Roxell <anders.roxell@linaro.org>
+syzbot has bisected this issue to:
 
-I tried to find something in that commit that would be different
-in compat mode, but don't see anything at all -- this appears
-to be just a simple refactoring of the code, unlike the commits
-that immediately follow it and that do change the mount
-interface.
+commit 0abd1557e21c617bd13fc18f7725fc6363c05913
+Author: Al Viro <viro@zeniv.linux.org.uk>
+Date:   Mon Oct 2 02:33:44 2023 +0000
 
-Unfortunately this makes it impossible to just revert the commit
-on top of linux-next. Can you double-check your bisection by
-testing 546694b8f658 and the commit before it again?
+    gfs2: fix an oops in gfs2_permission
 
-What are the exact mount options you pass to autofs in your fstab?
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10b21c33680000
+start commit:   2dac75696c6d Add linux-next specific files for 20231018
+git tree:       linux-next
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=12b21c33680000
+console output: https://syzkaller.appspot.com/x/log.txt?x=14b21c33680000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6f8545e1ef7a2b66
+dashboard link: https://syzkaller.appspot.com/bug?extid=3e5130844b0c0e2b4948
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=101c8d09680000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11a07475680000
 
-    Arnd
+Reported-by: syzbot+3e5130844b0c0e2b4948@syzkaller.appspotmail.com
+Fixes: 0abd1557e21c ("gfs2: fix an oops in gfs2_permission")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
