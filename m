@@ -1,202 +1,245 @@
-Return-Path: <linux-fsdevel+bounces-814-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-816-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA92F7D0C6D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 11:57:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78E1C7D0C9C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 12:02:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 263D6B213C9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 09:57:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B1732824FD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 10:02:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C9214F94;
-	Fri, 20 Oct 2023 09:57:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 421E615E99;
+	Fri, 20 Oct 2023 10:02:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TWGDyFTC"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MnUbM5d7"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C4AE156C0
-	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 09:57:36 +0000 (UTC)
-Received: from mail-qk1-x736.google.com (mail-qk1-x736.google.com [IPv6:2607:f8b0:4864:20::736])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F7921A6
-	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 02:57:34 -0700 (PDT)
-Received: by mail-qk1-x736.google.com with SMTP id af79cd13be357-77063481352so142915985a.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 02:57:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697795853; x=1698400653; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UaxbJPPE3rFAMH204LGMbjHaXXB+dNgwSRGAlzN+0DY=;
-        b=TWGDyFTCGvIdL/7KuQn9klFCwxdSNXWQ4kgOpTYoUL++ZN8WITBFVGrKJeF7lP9pDa
-         UaIk1znaOH6YFgoQ4GzvreTvJ1LvM08ZmXB1rrJ7kDIfN3ue7D0+naBuGzaloTXg5rzt
-         LrMNOX5nrjKiE5NoBDj8YTUsr+Nf8M4NBujmSsi9vAhBm34edeAMjQeVvAndhpXj9DHD
-         EDohpaXtl6HLpbPylLpt6UXIpSxuJhBJ3oMdE6jC7Wh7Z11eVTlZT74ESDDOUfPEFOa8
-         zDJ1UKgFOCzJ40tpMsVR/MENWZcNg2JK/NGBTlXXaPGkGt3KSqi0wODeMeLFDqQaL63c
-         atXg==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA930156FD
+	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 10:02:27 +0000 (UTC)
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBD53D8
+	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 03:02:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1697796145;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=DkCqzPplBFPYgjJf4t0QjtC4cYyCvLwawhN6fpCigWs=;
+	b=MnUbM5d7Xt8KM+GqUZi5f6eJdsBT8BhsJL91b3VDO3hjE3oTLc+nNwdTUGfHLWOnd84cwv
+	sBfCTv9TFay0jeBp/sGhkWh0CCXbOp7pbJQuG7X5vfGLBwHxxEgqaPYZEQjYBOHAMe9Bbf
+	n2UYc4gSCWyfTmUwBEdLwWzmEkrVfns=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-658-4NKtgiIAMFCCIPJZRyYHNQ-1; Fri, 20 Oct 2023 06:02:23 -0400
+X-MC-Unique: 4NKtgiIAMFCCIPJZRyYHNQ-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4083a670d25so4076535e9.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 03:02:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697795853; x=1698400653;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UaxbJPPE3rFAMH204LGMbjHaXXB+dNgwSRGAlzN+0DY=;
-        b=dlaVZ78xSx3/MQEkQHqfOU3RcrQ6FqNd2savrj1y0Qq48uC9OqTmcbdI3M5s14l9QR
-         dcL/ZPgqzSQ8VBNK3RmAizlRFJkxN1XHEJdczDkbG1CJ5JuenKo7pJFLKLYhHPT6wecV
-         EcjHm1klpm7xdgB/bAlI5Jk0RXU9voeqPxwgmSkBpcWg6GnBbmGArAk9gvCHlL9Xx8oh
-         tr7s3C4eC/VdcGLuAyELY5eF4t66Ma/Eas8y6ZxIJzLgzT/M7sM3yAU9MHPW35Z+hNXM
-         d+NBMJNRjAUiNc9/UL+3QcFtpzauuzWXSMDLg4ejTFMHU22VPEwKGQFIezuKBcBxJWUl
-         B/7w==
-X-Gm-Message-State: AOJu0YwCHqcaKYXnehzVJr8+sJ4y8GQi/9H+W4ZTJyxmfIU9yxIUL0oY
-	uf9DNYpVYPKCQ5SiCKJuJgF53Rp6gaQahkjeaiSonQ==
-X-Google-Smtp-Source: AGHT+IEF1x89nhV2dTpKBvv/vtgC082DqTQEqOMGUDZ0q9v0tw+GzmkgHxunO/2VJvHy/Aa2HeP9jelsk4qRtZKePrY=
-X-Received: by 2002:a05:620a:4407:b0:774:20b7:b88 with SMTP id
- v7-20020a05620a440700b0077420b70b88mr6932070qkp.0.1697795853355; Fri, 20 Oct
- 2023 02:57:33 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1697796143; x=1698400943;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DkCqzPplBFPYgjJf4t0QjtC4cYyCvLwawhN6fpCigWs=;
+        b=E59sTvQp+G+/DQMdSnLXMfs7TLIzNNZd52AKT1sbvArEhv0+6hVmk2CLhy4B5KzTxF
+         /57DlbtIOEnllg3R6WzX3L1j0pz6w7p3moqfX3Cqtx/cDOheMGx1yoFPQC31zJONbriM
+         xk/XpRKTJxKya1UClhdtgXOdEUcIGX8HC+DJMs23up71SG+u9qYnBEh0qSpLXbt9EAML
+         OWg5rZD6++D1IkK0K8b5KyFJnURBSXef5h27e9PYqpNnoj8tKsZ0CA3u4JMgujuBKyZA
+         C3vrMprT2fZN5i45/XlklZy32tn4kAt8ZKgETXdCvm9DQqYzu1a8CvbmRDuI9trWHqrO
+         EKXQ==
+X-Gm-Message-State: AOJu0Yw1bvBm/s5u17KKLoXxjSCJYWNqrierBJU7sSbd5s9i9Gt0ZxsP
+	ruzkZak+Q3VT37z4jsVyT9r+uS1gdtXZhLf1Q9BZ4aRaLX+OLHCsii5oIhPD240VugkHp6OBqqg
+	2F/SfKS252eXbHKu4ZiV4z67K/w==
+X-Received: by 2002:a05:600c:35ca:b0:405:3955:5872 with SMTP id r10-20020a05600c35ca00b0040539555872mr1138489wmq.18.1697796142636;
+        Fri, 20 Oct 2023 03:02:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFHM369pSv2IVpw5SDZC9sAjVu72UGtDGPQ01F6BNkUEB/ftsbIqn3tOfEmp6/+2/Z/fm+9XA==
+X-Received: by 2002:a05:600c:35ca:b0:405:3955:5872 with SMTP id r10-20020a05600c35ca00b0040539555872mr1138457wmq.18.1697796142106;
+        Fri, 20 Oct 2023 03:02:22 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c719:c100:5d8:2d46:b11e:6784? (p200300cbc719c10005d82d46b11e6784.dip0.t-ipconnect.de. [2003:cb:c719:c100:5d8:2d46:b11e:6784])
+        by smtp.gmail.com with ESMTPSA id f18-20020a05600c155200b00402ff8d6086sm1773905wmg.18.2023.10.20.03.02.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 Oct 2023 03:02:21 -0700 (PDT)
+Message-ID: <81cf0943-e258-494c-812a-0c00b11cf807@redhat.com>
+Date: Fri, 20 Oct 2023 12:02:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+G9fYt75r4i39DuB4E3y6jRLaLoSEHGbBcJy=AQZBQ2SmBbiQ@mail.gmail.com>
- <71adfca4-4e80-4a93-b480-3031e26db409@app.fastmail.com> <CA+G9fYtFqCX82L=oLvTpOQRWfz6CUKb79ybBncULkK2gK3aTrg@mail.gmail.com>
- <6dde13bc-590d-483c-950c-4d8aeee98823@app.fastmail.com>
-In-Reply-To: <6dde13bc-590d-483c-950c-4d8aeee98823@app.fastmail.com>
-From: Anders Roxell <anders.roxell@linaro.org>
-Date: Fri, 20 Oct 2023 11:57:22 +0200
-Message-ID: <CADYN=9+O4ZGjewzkk90zis85+AQWKbNz6ttMKZiFravHuy4Vqw@mail.gmail.com>
-Subject: Re: autofs: add autofs_parse_fd()
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, open list <linux-kernel@vger.kernel.org>, 
-	lkft-triage@lists.linaro.org, linux-fsdevel@vger.kernel.org, 
-	autofs@vger.kernel.org, Ian Kent <raven@themaw.net>, 
-	"Bill O'Donnell" <bodonnel@redhat.com>, Christian Brauner <brauner@kernel.org>, 
-	Dan Carpenter <dan.carpenter@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/3] userfaultfd: UFFDIO_MOVE uABI
+To: Peter Xu <peterx@redhat.com>
+Cc: Lokesh Gidra <lokeshgidra@google.com>,
+ Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org,
+ viro@zeniv.linux.org.uk, brauner@kernel.org, shuah@kernel.org,
+ aarcange@redhat.com, hughd@google.com, mhocko@suse.com,
+ axelrasmussen@google.com, rppt@kernel.org, willy@infradead.org,
+ Liam.Howlett@oracle.com, jannh@google.com, zhangpeng362@huawei.com,
+ bgeffon@google.com, kaleshsingh@google.com, ngeoffray@google.com,
+ jdduke@google.com, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ kernel-team@android.com
+References: <478697aa-f55c-375a-6888-3abb343c6d9d@redhat.com>
+ <CA+EESO5nvzka0KzFGzdGgiCWPLg7XD-8jA9=NTUOKFy-56orUg@mail.gmail.com>
+ <ZShS3UT+cjJFmtEy@x1n> <205abf01-9699-ff1c-3e4e-621913ada64e@redhat.com>
+ <ZSlragGjFEw9QS1Y@x1n> <12588295-2616-eb11-43d2-96a3c62bd181@redhat.com>
+ <ZS2IjEP479WtVdMi@x1n> <8d187891-f131-4912-82d8-13112125b210@redhat.com>
+ <ZS7ZqztMbhrG52JQ@x1n> <d40b8c86-6163-4529-ada4-d2b3c1065cba@redhat.com>
+ <ZTGJHesvkV84c+l6@x1n>
+Content-Language: en-US
+From: David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <ZTGJHesvkV84c+l6@x1n>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, 20 Oct 2023 at 11:02, Arnd Bergmann <arnd@arndb.de> wrote:
->
-> On Fri, Oct 20, 2023, at 09:48, Naresh Kamboju wrote:
-> > On Fri, 20 Oct 2023 at 12:07, Arnd Bergmann <arnd@arndb.de> wrote:
-> >>
-> >> On Thu, Oct 19, 2023, at 17:27, Naresh Kamboju wrote:
-> >> > The qemu-x86_64 and x86_64 booting with 64bit kernel and 32bit rootf=
-s we call
-> >> > it as compat mode boot testing. Recently it started to failed to get=
- login
-> >> > prompt.
-> >> >
-> >> > We have not seen any kernel crash logs.
-> >> >
-> >> > Anders, bisection is pointing to first bad commit,
-> >> > 546694b8f658 autofs: add autofs_parse_fd()
-> >> >
-> >> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> >> > Reported-by: Anders Roxell <anders.roxell@linaro.org>
-> >>
-> >> I tried to find something in that commit that would be different
-> >> in compat mode, but don't see anything at all -- this appears
-> >> to be just a simple refactoring of the code, unlike the commits
-> >> that immediately follow it and that do change the mount
-> >> interface.
-> >>
-> >> Unfortunately this makes it impossible to just revert the commit
-> >> on top of linux-next. Can you double-check your bisection by
-> >> testing 546694b8f658 and the commit before it again?
-> >
-> > I will try your suggested ways.
-> >
-> > Is this information helpful ?
-> > Linux-next the regression started happening from next-20230925.
-> >
-> > GOOD: next-20230925
-> > BAD: next-20230926
-> >
-> > $ git log --oneline next-20230925..next-20230926 -- fs/autofs/
-> > dede367149c4 autofs: fix protocol sub version setting
-> > e6ec453bd0f0 autofs: convert autofs to use the new mount api
-> > 1f50012d9c63 autofs: validate protocol version
-> > 9b2731666d1d autofs: refactor parse_options()
-> > 7efd93ea790e autofs: reformat 0pt enum declaration
-> > a7467430b4de autofs: refactor super block info init
-> > 546694b8f658 autofs: add autofs_parse_fd()
-> > bc69fdde0ae1 autofs: refactor autofs_prepare_pipe()
->
-> Right, and it looks like the bottom five patches of this
-> should be fairly harmless as they only try to move code
-> around in preparation of the later changes, and even the
-> other ones should not cause any difference between a 32-bit
-> or a 64-bit /sbin/mount binary.
->
-> If the native (full 64-bit or full 32-bit) test run still
-> works with the same version, there may be some other difference
-> here.
->
-> >> What are the exact mount options you pass to autofs in your fstab?
-> >
-> > mount output shows like this,
-> > systemd-1 on /proc/sys/fs/binfmt_misc type autofs
-> > (rw,relatime,fd=3D30,pgrp=3D1,timeout=3D0,minproto=3D5,maxproto=3D5,dir=
-ect,pipe_ino=3D1421)
->
-> This is only the binfmt-misc mount, which should not
-> prevent your rootfs from getting mounted, but it's possible
-> that failure to mount this prevents you from running
-> 32-bit binaries.
->
-> I see this comes from the "proc-sys-fs-binfmt_misc.automount"
-> service in systemd.  I see this is defined in
-> https://github.com/systemd/systemd/blob/main/units/proc-sys-fs-binfmt_mis=
-c.automount
-> but I don't know exactly what its purpose is here. On a
-> 64-bit system, you normally use compat_binfmt_elf.ko to run
-> 32-bit binaries, and this does not require any specific mount
-> points. Alternatively, you could use binfmt_misc.ko with
-> the procfs mount to configure running arbitrary binary
-> formats such as arm32 on x86_64 with qemu-user emulation.
->
-> I double-checked your rootfs image from
-> https://storage.tuxboot.com/debian/bookworm/i386/rootfs.ext4.xz
-> to ensure that this indeed contains i386 executables rather than
-> arm32 ones, and that is all fine.
->
-> I also see in your log file at
-> https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20230926/=
-testrun/20125035/suite/boot/test/gcc-13-lkftconfig-compat/log
-> that it is running the i386 binaries from the rootfs, but
-> it does get stuck soon after trying to set up the binfmt-misc
-> mount at the end of the log:
->
-> [[0;32m  OK  [0m] Reached target [0;1;39mlocal-fs.target[0m - Local File =
-Systems.
->          Starting [0;1;39msystemd-binfmt.se=C3=A2=E2=82=AC=C2=A6et Up Add=
-itional Binary Formats...
->          Starting [0;1;39msystemd-tmpfiles-=C3=A2=E2=82=AC=C2=A6 Volatile=
- Files and Directories...
->          Starting [0;1;39msystemd-udevd.ser=C3=A2=E2=82=AC=C2=A6ger for D=
-evice Events and Files...
-> [   15.869404] igb 0000:01:00.0 eno1: renamed from eth0 (while UP)
-> [   15.883753] igb 0000:02:00.0 eno2: renamed from eth1
-> [   20.053885] (udev-worker) (175) used greatest stack depth: 12416 bytes=
- left
->  quit
->
-> I'm a bit out of ideas at that point, my best guess now is
-> that your bisection points to something in autofs that makes
-> it hang while setting up autofs, but that neither autofs
-> nor binfmt-misc are actually being used otherwise.
->
-> Maybe you can try to modify your rootfs to disable or remove
-> the systemd-binfmt.service, to confirm that autofs is not
-> actually needed here but does cause the crash?
+On 19.10.23 21:53, Peter Xu wrote:
+> On Thu, Oct 19, 2023 at 05:41:01PM +0200, David Hildenbrand wrote:
+>> That's not my main point. It can easily become a maintenance burden without
+>> any real use cases yet that we are willing to support.
+> 
+> That's why I requested a few times that we can discuss the complexity of
+> cross-mm support already here, and I'm all ears if I missed something on
+> the "maintenance burden" part..
+> 
+> I started by listing what I think might be different, and we can easily
+> speedup single-mm with things like "if (ctx->mm != mm)" checks with
+> e.g. memcg, just like what this patch already did with pgtable depositions.
+> 
+> We keep saying "maintenance burden" but we refuse to discuss what is that..
 
-I removed systemd-binfmt.service from the rootfs and booted
-546694b8f658 ("autofs: add autofs_parse_fd()") and now it booted fine.
+Let's recap
 
+(1) We have person A up-streaming code written by person B, whereby B is 
+not involved in the discussions nor seems to be active to maintain that 
+code.
+
+Worse, the code that is getting up-streamed was originally based on a 
+different kernel version that has significant differences in some key 
+areas -- for example, page pinning, exclusive vs. shared.
+
+I claim that nobody here fully understands the code at hand (just look 
+at the previous discussions), and reviewers have to sort out the mess 
+that was created by the very way this stuff is getting upstreamed here.
+
+We're already struggling to get the single-mm case working correctly.
+
+
+(2) Cross-mm was not even announced anywhere nor mentioned which use it 
+would have; I had to stumble over this while digging through the code. 
+Further, is it even *tested*? AFAIKS in patch #3 no. Why do we have to 
+make the life of reviewers harder by forcing them to review code that 
+currently *nobody* on this earth needs?
+
+
+(3) You said "What else we can benefit from single mm?  One less mmap 
+read lock, but probably that's all we can get;" and I presented two 
+non-obvious issues. I did not even look any further because I really 
+have better things to do than review complicated code without real use 
+cases at hand. As I said "maybe that works as expected, I
+don't know and I have no time to spare on reviewing features with no
+real use cases)"; apparently I was right by just guessing that memcg 
+handling is missing.
+
+
+The sub-feature in question (cross-mm) has no solid use cases; at this 
+point I am not even convinced the use case you raised requires 
+*userfaultfd*; for the purpose of moving a whole VMA worth of pages 
+between two processes; I don't see the immediate need to get userfaultfd 
+involved and move individual pages under page lock etc.
+
+> 
+> I'll leave that to Suren and Lokesh to decide.  For me the worst case is
+> one more flag which might be confusing, which is not the end of the world..
+> Suren, you may need to work more thoroughly to remove cross-mm implications
+> if so, just like when renaming REMAP to MOVE.
+
+I'm asking myself why you are pushing so hard to include complexity 
+"just because we can"; doesn't make any sense to me, honestly.
+
+Maybe you have some other real use cases that ultimately require 
+userfaultfd for cross-mm that you cannot share?
+
+Will the world end when we have to use a separate flag so we can open 
+this pandora's box when really required?
+
+
+Again, moving anon pages within a process is a known thing; we do that 
+already via mremap; the only difference here really is, that we have to 
+get the rmap right because we don't adjust VMAs. It's a shame we don't 
+try to combine both code paths, maybe it's not easily possible like we 
+did with mprotect vs. uffd-wp.
+
+Moving anon pages between process is currently only done via COW, where 
+all things (page pinning, memcg, ...) have been figured out and are 
+simply working as expected. Making uffd special by coding-up their own 
+thing does not sound compelling to me.
+
+
+I am clearly against any unwarranted features+complexity. Again, I will 
+stop arguing further, the whole thing of "include it just because we 
+can" to avoid a flag (that we might never even see) doesn't make any 
+sense to me and likely never will.
+
+The whole way this feature is getting upstreamed is just messed up IMHO 
+and I the reasoning used in this thread to stick
+as-close-as-possible to some code person B wrote some years ago (e.g., 
+naming, sub-features) is far out of my comprehension.
+
+-- 
 Cheers,
-Anders
+
+David / dhildenb
+
 
