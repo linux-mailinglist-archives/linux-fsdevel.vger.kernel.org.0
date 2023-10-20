@@ -1,276 +1,228 @@
-Return-Path: <linux-fsdevel+bounces-806-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-807-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA0887D074C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 06:12:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CADD7D081A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 08:07:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2330B1C20F42
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 04:12:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FE201C20D1C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 06:07:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B6F539A;
-	Fri, 20 Oct 2023 04:11:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E9A2BE53;
+	Fri, 20 Oct 2023 06:07:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MvH/RZcM"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AGsdPJ5R"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5124320FB;
-	Fri, 20 Oct 2023 04:11:50 +0000 (UTC)
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86A54FA;
-	Thu, 19 Oct 2023 21:11:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=0TRfYcY4FztgXN27eg6Q00CIuzPsmunhjJWurKwX5G8=; b=MvH/RZcMmLdb7Q69xTuPczSnac
-	3BU2DYEurlpQCzCZygRCaTxsHBcsrRQAPdtGu5BpkttRXz4h9wsG53XZWYhplEC1jIIy370YfWCSW
-	GhXnIfCIdZGmHupz8Q7r+lbP5+Dv3rgCAvcl4TVoKZPu3ki1EKWoJTW4sAmtVmGCOJQ1x+d0Db7FS
-	2wWIM3AXejW6NLBmBtcNbWi0BGIvyPuh+TUvSJpOIHYZTGNcetJjgUED79ZDnvU7fRkrSA1yY5fes
-	ajxydxygvgT8fFZzsnhccKkgveDrSd1IfFr2XONqxWAUg4FIKkTUt04ketkiL5XmKRCeWRKd5R1LH
-	Pcjl7Bew==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-	id 1qtgrK-00B1CM-Pv; Fri, 20 Oct 2023 04:11:38 +0000
-Date: Fri, 20 Oct 2023 05:11:38 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Wedson Almeida Filho <wedsonaf@gmail.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Kent Overstreet <kent.overstreet@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-fsdevel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	Wedson Almeida Filho <walmeida@microsoft.com>
-Subject: Re: [RFC PATCH 09/19] rust: folio: introduce basic support for folios
-Message-ID: <ZTH9+sF+NPyRjyRN@casper.infradead.org>
-References: <20231018122518.128049-1-wedsonaf@gmail.com>
- <20231018122518.128049-10-wedsonaf@gmail.com>
- <ZTATIhi9U6ObAnN7@casper.infradead.org>
- <CANeycqoWfWJ5bxuh+UWK99D9jYH0cKKy1=ikHJTpY=fP1ZJMrg@mail.gmail.com>
- <ZTAwLGi4sCup+B1r@casper.infradead.org>
- <CANeycqrp_s20pCO_OJXHpqN5tZ_Uq5icTupWiVeLf69JOFj4cA@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F119B6112
+	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 06:07:14 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 855C9126;
+	Thu, 19 Oct 2023 23:07:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1697782033; x=1729318033;
+  h=date:from:to:cc:subject:message-id:in-reply-to:
+   mime-version;
+  bh=QmnRmtauu7llxECxVGDOIuQ4umU6PdCC8bMlFkbOPzk=;
+  b=AGsdPJ5RMp/V3SJBXsD4pow7qm5Zu8BPbRgejTMQbQOz0IOXtTzOI8rt
+   bTc0dZRTW5t7Tl6M4lyV9m+ZeOzRB5M6s4CS9vLdDaCU9UC5FQN0W7wQr
+   GfE32fxoDRGgX6oFY/I9hV4s7zxrSit94/ZiNVFwR9TTX80IiXsaOI9E6
+   WtPLn6CV7jv0wolLglbaeE7B73JqvwojBo8xRxc26xpUlu+2+lC1mwVho
+   Zgodll+j3TyfnIqz1Mb0Wpo8g70hshMhE9QfYZll1zwVPtosG91O2v4LR
+   MfDXSyocYNgbuIbb8Xi3S1wIrokoZ1+7b0Wsjdiyz8/8AsrtwWj/ooS8s
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10868"; a="8000626"
+X-IronPort-AV: E=Sophos;i="6.03,238,1694761200"; 
+   d="scan'208";a="8000626"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2023 23:07:13 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.03,238,1694761200"; 
+   d="scan'208";a="5283106"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 19 Oct 2023 23:07:14 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.32; Thu, 19 Oct 2023 23:07:12 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.32 via Frontend Transport; Thu, 19 Oct 2023 23:07:12 -0700
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.168)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.32; Thu, 19 Oct 2023 23:06:43 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Nru9cV96/bw8iTkJs2V23DoH80A4kuK2yvWjQXX6qJssFpRJTrh0QJT+ZlDVa0rS0K9kG23jQzN+76ck5/0PCuEMb249PLlK2D0Gmo3YujKf1PKf4tmxsD7haCXDiARDETomNTpfbPNfGYWL5PmszIWdbwNA3sXkbOHvidLpZ/vpwMN+3QqT1TdK28zGESFLVV3XEVwUor9lspALchkx6/0GjOunfiRRwagC49tE9gX1twI79QWzMoPpajCvDis8H0Z7cvYL3G0iJEBgMz+oUZsslu/39ujyEJ5fWKdj8A89n10/0tMtjKqepI2gekrRCHtK7QBw1NsxFgA3ABflpQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=H1URGM3KeJS0zub2VV915z26j0xAlu0l++wWPzuwy/g=;
+ b=ZpwxdepPjNWjP0ReQx/eUUZQ5+hshZJEF8UZ3JzqUUkQ74nI1bg4P0WECrrpl5dQ3lNkmoaG/leIf9QOXmjcRv7yYcxdoqZYurgnh3JPQ97XCo0Pn8BbzIobCWn32ILEeEo1v9gkWqjrpQ8IBXYkn0sTJkLel//S7/Cv0LWZ60C3Ea8wKQkiHZ49ESzyuIx3b64bZb0Ag65Ax/g6FI7FPqrEih+R+eWWZtOyeVrKSfnFWT0w4PB4WsO2I0UHIuO/uOm/UhKU+4F+gCKGbj1SrTHCc7GKK144uGpMuR7jFYMHf/O3nOHWmWacizg8SXw+xzBW8OYpMUV9ees9QQv8/A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH8PR11MB6779.namprd11.prod.outlook.com (2603:10b6:510:1ca::17)
+ by IA1PR11MB7917.namprd11.prod.outlook.com (2603:10b6:208:3fe::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6907.26; Fri, 20 Oct
+ 2023 06:06:41 +0000
+Received: from PH8PR11MB6779.namprd11.prod.outlook.com
+ ([fe80::134a:412c:eb02:ae17]) by PH8PR11MB6779.namprd11.prod.outlook.com
+ ([fe80::134a:412c:eb02:ae17%5]) with mapi id 15.20.6863.046; Fri, 20 Oct 2023
+ 06:06:40 +0000
+Date: Fri, 20 Oct 2023 14:06:31 +0800
+From: kernel test robot <oliver.sang@intel.com>
+To: Alyssa Ross <hi@alyssa.is>
+CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, <linux-mm@kvack.org>,
+	<linux-fsdevel@vger.kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>,
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, Eric Biederman
+	<ebiederm@xmission.com>, <linux-kernel@vger.kernel.org>,
+	<oliver.sang@intel.com>
+Subject: Re: [PATCH] exec: allow executing block devices
+Message-ID: <202310201132.ec34d76b-oliver.sang@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20231010092133.4093612-1-hi@alyssa.is>
+X-ClientProxiedBy: SI2PR01CA0016.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:191::20) To PH8PR11MB6779.namprd11.prod.outlook.com
+ (2603:10b6:510:1ca::17)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANeycqrp_s20pCO_OJXHpqN5tZ_Uq5icTupWiVeLf69JOFj4cA@mail.gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR11MB6779:EE_|IA1PR11MB7917:EE_
+X-MS-Office365-Filtering-Correlation-Id: ac0d4136-7043-464d-97d7-08dbd132ba31
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: MCdNEplHhNtpQlFNM+qSc1mvJQ2UKLYXdLXbGjuhL/LsZ2v71X7eFjwvf42UPozPI6UKuDoYfvn9R7dFnj35bOUTjmK5bdyOfkYDBJYXSaqQnGO6QOsVXjlvm29MI7zDQSWgQJBNt5yr3QW5rCcSV2YL/jbTzzlx1e6su23tz/GL1Tq+qGl0Rlixgual01w4MdeZoVMTxPyCrnIQ4VaWxpY/E3NlYC2Aaw9aYmbAjS47BX/tI2rA+RvmCT5r+oA5/8klG+ls9gvK+hpSoAXqeZmtWyA0zS20caHM1lM4WlXfUxapbSJxz+nkz0Y2J3gcsyjBYWqDTkA6e40hwDpQ57TZ6JpUzcmLSj/zIrHRw+QHtU5UgnLHOD+04lo0zonOE4kyM7G1X67YQFZr5vnI9vf81UJyOn9dPWRQpWhirU5YWkkuJSOKWDzud0aV328TEkw5uWXKAe6hNFAHV3ZXtNk6EaChHXxQ9ryYlzR7DM2Cc9mDE1D4jF3hnY3+p+ob+euQtQi+56g42USwD1ocCVJes4wm781SGst9TDbTPnw19vb1WBM/A+hv8B3zJfzdH56LOawSkFQlZ0FAqvfpFg==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB6779.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(39860400002)(136003)(366004)(376002)(396003)(346002)(230922051799003)(451199024)(1800799009)(64100799003)(186009)(2906002)(66476007)(6916009)(66946007)(66556008)(316002)(54906003)(8936002)(966005)(6666004)(6486002)(8676002)(478600001)(4326008)(41300700001)(36756003)(86362001)(83380400001)(7416002)(5660300002)(38100700002)(6506007)(26005)(107886003)(2616005)(6512007)(1076003)(82960400001);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?GwTacHDcCtX6fr5wfSpWKDy8AReTWYQxnJQmQCm4FjfcvVqACtmS3v09frfv?=
+ =?us-ascii?Q?k0bnI1qSaGTM0CgwiYkMe9KqMNUG7Sf1s/YeHwrfipjAoZYYSOTOUbquqmqk?=
+ =?us-ascii?Q?7OK1wKs4aOkKWzacpWe0XnBhkMjPWLsvTs2Q5LsbQJk7sd8zgABBTmEt4VZQ?=
+ =?us-ascii?Q?qjwUv4AdWBXMCFHgOb1os0pgV/RtUvvLuUa752jDSJuvBJBwngncLmFQHkRB?=
+ =?us-ascii?Q?37Zy6uraQnqymzt/qWweakh0MXgH3eLzIU7f/Uh7Fvjo81N7k6o/x5vsOET+?=
+ =?us-ascii?Q?pyeHeByEbflJmzMh8lXr+lWQ+oiOISdNAgrqZfMixC6CD/jUaZvGG6+nB3fU?=
+ =?us-ascii?Q?bXHFsKmuW7nXdr/YzZpy7CIZ97WaEv2d2li6dXrlpLRgxjCgw3A89I7pFFkF?=
+ =?us-ascii?Q?RHQw78nMcXbQkud0KeUEPrP0DFGR9hq5RgjwYNm04XX/tzZkhJ3wNEUrqAAv?=
+ =?us-ascii?Q?Sd05VCBgBCeVNtYAVEDdvKQtEFwTrPEs2PqP6A321fwcygqmIiMIxF/EWk3i?=
+ =?us-ascii?Q?l8MtRJ0UtJ4QucbH/+CX5ps0+FoL6mWWOGKl4AlyrFKT1KkNkZW6puYp1UY+?=
+ =?us-ascii?Q?tWTp8dGEfz9fsrz6LdVFbX5m1iE5MDIlS6m4wxlo9vBx36D+BeMnMbZSTC69?=
+ =?us-ascii?Q?cvdvwYvfJoWehAc5YOjycegnOtRzVkAuoQc8MXqwqeGNCl7sxtjkzkuZYxD+?=
+ =?us-ascii?Q?EVQVIx2DvZV7WB2iPjZUbj83qqbI++nF2/8cPgMYcaUKpMjgidIJb+HX6GXq?=
+ =?us-ascii?Q?1T1u1zI35VADOHFTYH9lR9BQgoBM2K5f16VcAtqrWBnUOBWAfL8Igr5rWnB/?=
+ =?us-ascii?Q?GnVo13cxKg5w3J9z9AQLOkaoo68AoedZ93CrhQQj3xzyGSeti9N6QWhqXdcm?=
+ =?us-ascii?Q?rEehvlkcRY4xyegGPHBLCnEF4jiucBushgbpBfGlavfcLsKQOBRZVb70z9Cx?=
+ =?us-ascii?Q?c0AbVx1d/5SXO6FGzLKWcZNTXH34KK3NJmVWKPTFVrBRaaRr0jcvadTGve8I?=
+ =?us-ascii?Q?GuaI8+wAhbda7wLuBW/RC1olBApbQOjXBSiYChzv+NN0b0V2Fu7CyvuZk3YF?=
+ =?us-ascii?Q?dUysMUxpjF3Qq4N3fWauy7w3NzXLTeD3IE9vatZ7Z5zniBi8neYJxX1BW+hc?=
+ =?us-ascii?Q?1zOUt1jguXOo40bBUnQE286h9xBUGUmPCzs1NxNX19j3ngc5fQqR8Yrtj9lj?=
+ =?us-ascii?Q?AF2P81iImHlEgqhQBSkm1M57HUENtTQ7pbegBHo3dAlghT7IYTOOzmrWoDRp?=
+ =?us-ascii?Q?omt8wm+27u5Zg4Zzn9Ta/xWiQHXqNx4cj/TMmFJPbCP/kdKe9jBZ7s3f4PRS?=
+ =?us-ascii?Q?PVsK6oEcW+af6UMjzzdz9YKAF+QITmw/T3rpRdQMaw2R8CP4WNAA6T++math?=
+ =?us-ascii?Q?1St8bPN1UCwtlhkCPT8YkcdijB1p3iGBIKWuVu7N3v5DCd4EdQBn9WeeYmLQ?=
+ =?us-ascii?Q?UgEAfo33Hb9Q98t3GxSIGAgzqgtfZwtzImiaxPZc+LeOZB/ros8zKXlRd3NX?=
+ =?us-ascii?Q?g/sApm7GYUxKOxCkb0PRnEpETzWSkdmlV0mC1QmQDKpGbK3/4vUjekcN99/z?=
+ =?us-ascii?Q?ISk0Qq6eyy3ozAxJai9cVlw0gAEp8ZDENlCs5pRLyZ1eTd3shL0DoZo/M6L0?=
+ =?us-ascii?Q?cg=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: ac0d4136-7043-464d-97d7-08dbd132ba31
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB6779.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2023 06:06:40.8372
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: YYaslacSzQkh/Sy1wmC5kLrcdaBvwxfT+bZi8dDFGOzwb+W8ngjk7pQmlLAyMGQ+sEsa0lR9p/OtiG7f67PEww==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB7917
+X-OriginatorOrg: intel.com
 
-On Thu, Oct 19, 2023 at 10:25:39AM -0300, Wedson Almeida Filho wrote:
-> On Wed, 18 Oct 2023 at 16:21, Matthew Wilcox <willy@infradead.org> wrote:
-> >
-> > On Wed, Oct 18, 2023 at 03:32:36PM -0300, Wedson Almeida Filho wrote:
-> > > On Wed, 18 Oct 2023 at 14:17, Matthew Wilcox <willy@infradead.org> wrote:
-> > > >
-> > > > On Wed, Oct 18, 2023 at 09:25:08AM -0300, Wedson Almeida Filho wrote:
-> > > > > +void *rust_helper_kmap(struct page *page)
-> > > > > +{
-> > > > > +     return kmap(page);
-> > > > > +}
-> > > > > +EXPORT_SYMBOL_GPL(rust_helper_kmap);
-> > > > > +
-> > > > > +void rust_helper_kunmap(struct page *page)
-> > > > > +{
-> > > > > +     kunmap(page);
-> > > > > +}
-> > > > > +EXPORT_SYMBOL_GPL(rust_helper_kunmap);
-> > > >
-> > > > I'm not thrilled by exposing kmap()/kunmap() to Rust code.  The vast
-> > > > majority of code really only needs kmap_local_*() / kunmap_local().
-> > > > Can you elaborate on why you need the old kmap() in new Rust code?
-> > >
-> > > The difficulty we have with kmap_local_*() has to do with the
-> > > requirement that maps and unmaps need to be nested neatly. For
-> > > example:
-> > >
-> > > let a = folio1.map_local(...);
-> > > let b = folio2.map_local(...);
-> > > // Do something with `a` and `b`.
-> > > drop(a);
-> > > drop(b);
-> > >
-> > > The code obviously violates the requirements.
-> >
-> > Is that the only problem, or are there situations where we might try
-> > to do something like:
-> >
-> > a = folio1.map.local()
-> > b = folio2.map.local()
-> > drop(a)
-> > a = folio3.map.local()
-> > drop(b)
-> > b = folio4.map.local()
-> > drop (a)
-> > a = folio5.map.local()
-> > ...
-> 
-> This is also a problem. We don't control the order in which users are
-> going to unmap.
 
-OK.  I have something in the works, but it's not quite ready yet.
 
-> If you don't want to scan the whole array, we could have a solution
-> where we add an indirection between the available indices and the
-> stack of allocations; this way C could continue to work as is and Rust
-> would have a slightly different API that returns both the mapped
-> address and an index (which would be used to unmap).
-> 
-> It's simple to remember the index in Rust and it wouldn't have to be
-> exposed to end users, they'd still just do:
-> 
-> let a = folio1.map_local(...);
-> 
-> And when `a` is dropped, it would call unmap and pass the index back.
-> (It's also safe in the sense that users would not be able to
-> accidentally pass the wrong index.)
-> 
-> But if scanning the whole array is acceptable performance-wise, it's
-> definitely a simpler solution.
+Hello,
 
-Interesting idea.  There are some other possibilities too ... let's see.
+kernel test robot noticed "kernel-selftests.exec.non-regular.fail" on:
 
-> > > > > +/// A [`Folio`] that has a single reference to it.
-> > > > > +pub struct UniqueFolio(pub(crate) ARef<Folio>);
-> > > >
-> > > > How do we know it only has a single reference?  Do you mean "has at
-> > > > least one reference"?  Or am I confusing Rust's notion of a reference
-> > > > with Linux's notion of a reference?
-> > >
-> > > Instances of `UniqueFolio` are only produced by calls to
-> > > `folio_alloc`. They encode the fact that it's safe for us to map the
-> > > folio and know that there aren't any concurrent threads/CPUs doing the
-> > > same to the same folio.
-> >
-> > Mmm ... it's always safe to map a folio, even if other people have a
-> > reference to it.  And Linux can make temporary spurious references to
-> > folios appear, although those should be noticed by the other party and
-> > released again before they access the contents of the folio.  So from
-> > the point of view of being memory-safe, you can ignore them, but you
-> > might see the refcount of the folio as >1, even if you just got the
-> > folio back from the allocator.
-> 
-> Sure, it's safe to map a folio in general, but Rust has stricter rules
-> about aliasing and mutability that are part of how memory safety is
-> achieved. In particular, it requires that we never have mutable and
-> immutable pointers to the same memory at once (modulo interior
-> mutability).
-> 
-> So we need to avoid something like:
-> 
-> let a = folio.map(); // `a` is a shared pointer to the contents of the folio.
-> 
-> // While we have a shared (and therefore immutable) pointer, we're
-> changing the contents of the folio.
-> sb.sread(sector_number, sector_count, folio);
-> 
-> This violates Rust rules. `UniqueFolio` helps us address this for our
-> use case; if we try the above with a UniqueFolio, the compiler will
-> error out saying that  `a` has a shared reference to the folio, so we
-> can't call `sread` on it (because sread requires a mutable, and
-> therefore not shareable, reference to the folio).
+commit: f086dcc88a64a2022314af666bd15d64c6748d27 ("[PATCH] exec: allow executing block devices")
+url: https://github.com/intel-lab-lkp/linux/commits/Alyssa-Ross/exec-allow-executing-block-devices/20231010-172704
+patch link: https://lore.kernel.org/all/20231010092133.4093612-1-hi@alyssa.is/
+patch subject: [PATCH] exec: allow executing block devices
 
-This is going to be quite the impedance mismatch.  Still, I imagine
-you're used to dealing with those by now and have a toolbox of ideas.
+in testcase: kernel-selftests
+version: kernel-selftests-x86_64-60acb023-1_20230329
+with following parameters:
 
-We don't have that rule for the pagecache as it is.  We do have rules that
-prevent data corruption!  For example, if the folio is !uptodate then you
-must have the lock to write to the folio in order to bring it uptodate
-(so we have a single writer rule in that regard).  But once the folio is
-uptodate, all bets are off in terms of who can be writing to it / reading
-it at the same time.  And that's going to have to continue to be true;
-multiple processes can have the same page mmaped writable and write to
-it at the same time.  There's no possible synchronisation between them.
+	group: group-01
 
-But I think your concern is really more limited.  You're concerned
-with filesystem metadata obeying Rust's rules.  And for a read-write
-filesystem, you're going to have to have ... something ... which gets a
-folio from the page cache, and establishes that this is the only thread
-which can modify that folio (maybe it's an interior node of a Btree,
-maybe it's a free space bitmap, ...).  We could probably use the folio
-lock bit for that purpose,  For the read-only filesystems, you only need
-be concerned about freshly-allocated folios, but you need something more
-when it comes to doing an ext2 clone.
 
-There's general concern about the overuse of the folio lock bit, but
-this is a reasonable use -- preventing two threads from modifying the
-same folio at the same time.
 
-(I have simplified all this; both iomap and buffer heads support folios
-which are partially uptodate, but conceptually this is accurate)
+compiler: gcc-12
+test machine: 36 threads 1 sockets Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz (Cascade Lake) with 32G memory
 
-> > On systems without HIGHMEM, kmap() is a no-op.  So we could do something
-> > like this:
-> >
-> >         let data = unsafe { core::slice::from_raw_parts(ptr.cast::<u8>(),
-> >                 if (folio_test_highmem(folio))
-> >                         bindings::PAGE_SIZE
-> >                 else
-> >                         folio_size(folio) - page_idx * PAGE_SIZE) }
-> >
-> > ... modulo whatever the correct syntax is in Rust.
-> 
-> We can certainly do that. But since there's the possibility that the
-> array will be capped at PAGE_SIZE in the HIGHMEM case, callers would
-> still need a loop to traverse the whole folio, right?
-> 
-> let mut offset = 0;
-> while offset < folio.size() {
->     let a = folio.map(offset);
->     // Do something with a.
->     offset += a.len();
-> }
-> 
-> I guess the advantage is that we'd have a single iteration in systems
-> without HIGHMEM.
+(please refer to attached dmesg/kmsg for entire log/backtrace)
 
-Right.  You can see something similar to that in memcpy_from_folio() in
-highmem.h.
 
-> > Something I forgot to mention was that I found it more useful to express
-> > "map this chunk of a folio" in bytes rather than pages.  You might find
-> > the same, in which case it's just folio.map(offset: usize) instead of
-> > folio.map_page(page_index: usize)
-> 
-> Oh, thanks for the feedback. I'll switch to bytes then for v2.
-> (Already did in the example above.)
 
-Great!  Something else I think would be a good idea is open-coding some
-of the trivial accessors.  eg instead of doing:
 
-+size_t rust_helper_folio_size(struct folio *folio)
-+{
-+	return folio_size(folio);
-+}
-+EXPORT_SYMBOL_GPL(rust_helper_folio_size);
-[...]
-+    pub fn size(&self) -> usize {
-+        // SAFETY: The folio is valid because the shared reference implies a non-zero refcount.
-+        unsafe { bindings::folio_size(self.0.get()) }
-+    }
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <oliver.sang@intel.com>
+| Closes: https://lore.kernel.org/oe-lkp/202310201132.ec34d76b-oliver.sang@intel.com
 
-add:
 
-impl Folio {
-...
-    pub fn order(&self) -> u8 {
-	if (self.flags & (1 << PG_head))
-	    self._flags_1 & 0xff
-	else
-	    0
-    }
 
-    pub fn size(&self) -> usize {
-	bindings::PAGE_SIZE << self.order()
-    }
-}
+# timeout set to 300
+# selftests: exec: non-regular
+# TAP version 13
+# 1..6
+# # Starting 6 tests from 6 test cases.
+# #  RUN           file.S_IFLNK.exec_errno ...
+# #            OK  file.S_IFLNK.exec_errno
+# ok 1 file.S_IFLNK.exec_errno
+# #  RUN           file.S_IFDIR.exec_errno ...
+# #            OK  file.S_IFDIR.exec_errno
+# ok 2 file.S_IFDIR.exec_errno
+# #  RUN           file.S_IFBLK.exec_errno ...
+# # non-regular.c:166:exec_errno:Expected errno (6) == variant->expected (13)
+# # exec_errno: Test failed at step #4
+# #          FAIL  file.S_IFBLK.exec_errno
+# not ok 3 file.S_IFBLK.exec_errno
+# #  RUN           file.S_IFCHR.exec_errno ...
+# #            OK  file.S_IFCHR.exec_errno
+# ok 4 file.S_IFCHR.exec_errno
+# #  RUN           file.S_IFIFO.exec_errno ...
+# #            OK  file.S_IFIFO.exec_errno
+# ok 5 file.S_IFIFO.exec_errno
+# #  RUN           sock.exec_errno ...
+# #            OK  sock.exec_errno
+# ok 6 sock.exec_errno
+# # FAILED: 5 / 6 tests passed.
+# # Totals: pass:5 fail:1 xfail:0 xpass:0 skip:0 error:0
+not ok 5 selftests: exec: non-regular # exit=1
 
-... or have I misunderstood what is possible here?  My hope is that the
-compiler gets to "see through" the abstraction, which surely can't be
-done when there's a function call.
+
+
+The kernel config and materials to reproduce are available at:
+https://download.01.org/0day-ci/archive/20231020/202310201132.ec34d76b-oliver.sang@intel.com
+
+
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
