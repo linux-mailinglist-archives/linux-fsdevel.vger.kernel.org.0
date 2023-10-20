@@ -1,192 +1,249 @@
-Return-Path: <linux-fsdevel+bounces-825-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-826-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CF9B7D0F5B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 14:04:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F83C7D0F78
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 14:12:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90FBC282591
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 12:04:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 712671C20F9C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 12:12:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29B21199DB;
-	Fri, 20 Oct 2023 12:04:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4351E19BA7;
+	Fri, 20 Oct 2023 12:12:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="NCH6nyAh";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="TvZxT0uf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u1KeUXaw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40A66199D0
-	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 12:04:40 +0000 (UTC)
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0302C9F
-	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 05:04:38 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 5F259219CD;
-	Fri, 20 Oct 2023 12:04:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1697803477; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FYMPZ6ys4lB4T9tCk7h7jDsvJBMMVkLCmIu6i0I16Hk=;
-	b=NCH6nyAh4vTXQXs1aKpqjIIWRtbLdVM807Ha62fsaBYclrDwiaX59piKQt5JL6CARgn59A
-	F9MW4iMfpGKyBt08mRxkVj/xPjDzl9KSz2SN+PITTnS/RNJ2bJe/EwsD5wounbpFqZ8oa8
-	+DkgvRJ7PzFZOV9giS7ELUvOm00qXVA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1697803477;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FYMPZ6ys4lB4T9tCk7h7jDsvJBMMVkLCmIu6i0I16Hk=;
-	b=TvZxT0uf4mrc6QNGrZYVZw3HGkeRK3bQJtBAs9Tedl9zYB80c23QUk8JIQK2k9TeLBmDbj
-	cTD7OWntvgXYxeBg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-	(No client certificate requested)
-	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4985C13584;
-	Fri, 20 Oct 2023 12:04:37 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-	by imap2.suse-dmz.suse.de with ESMTPSA
-	id wJMBEtVsMmUMfQAAMHmgww
-	(envelope-from <jack@suse.cz>); Fri, 20 Oct 2023 12:04:37 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 6DFE9A06E3; Fri, 20 Oct 2023 14:04:36 +0200 (CEST)
-Date: Fri, 20 Oct 2023 14:04:36 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs: Avoid grabbing sb->s_umount under
- bdev->bd_holder_lock
-Message-ID: <20231020120436.jgxdlawibpfuprnz@quack3>
-References: <20231018152924.3858-1-jack@suse.cz>
- <20231019-galopp-zeltdach-b14b7727f269@brauner>
- <ZTExy7YTFtToAOOx@infradead.org>
- <20231020-enthusiasmus-vielsagend-463a7c821bf3@brauner>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83CA8199DB
+	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 12:12:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB3EAC433C7;
+	Fri, 20 Oct 2023 12:12:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1697803969;
+	bh=kB1Zjc2tT/Kiij0RZHUaSZTbaKT3uaV6kt0MZRqO3ao=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=u1KeUXawoYyG3rdDy6jdJTAMa6CBiujADoCmEXdNuYkXyu9MLmAhCs59XHfewH69Z
+	 1YZtXxAjuumkL12vc+r8XM0XyYBZEzhXynSZ8iHJcmV+MiHV1Js0QSa9/YPOzeTCNg
+	 ddC9z/urYYAvgVu/TEDRRvWgEO9YYF+FZ8oYuLQg7R8KKucqjObvftSldeq5NRaMUN
+	 ySFtaBhZ3Ud0vLczoN7hL8eQ5kMDVN+Cbtg1oCUsjPsRtKmaAHvc+K9G3jPnZvPiyH
+	 hVMKjWAP6YVlcCH6eSZNXNhEobwTgcvkSLHsZetlLf5JFxGLWQYlbapQu1DCjW/MN1
+	 iu2/HSTHJb02A==
+Message-ID: <eb3b9e71ee9c6d8e228b0927dec3ac9177b06ec6.camel@kernel.org>
+Subject: Re: [PATCH RFC 2/9] timekeeping: new interfaces for multigrain
+ timestamp handing
+From: Jeff Layton <jlayton@kernel.org>
+To: Dave Chinner <david@fromorbit.com>, Kent Overstreet
+	 <kent.overstreet@linux.dev>
+Cc: Christian Brauner <brauner@kernel.org>, Linus Torvalds
+ <torvalds@linux-foundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+ John Stultz <jstultz@google.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Stephen Boyd <sboyd@kernel.org>,  Chandan Babu R <chandan.babu@oracle.com>,
+ "Darrick J. Wong" <djwong@kernel.org>, Theodore Ts'o <tytso@mit.edu>, 
+ Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, Josef
+ Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Hugh Dickins
+ <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, Amir
+ Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.de>, David Howells
+ <dhowells@redhat.com>,  linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org,  linux-xfs@vger.kernel.org,
+ linux-ext4@vger.kernel.org,  linux-btrfs@vger.kernel.org,
+ linux-mm@kvack.org, linux-nfs@vger.kernel.org
+Date: Fri, 20 Oct 2023 08:12:45 -0400
+In-Reply-To: <ZTGncMVw19QVJzI6@dread.disaster.area>
+References: <20231018-mgtime-v1-0-4a7a97b1f482@kernel.org>
+	 <20231018-mgtime-v1-2-4a7a97b1f482@kernel.org>
+	 <CAHk-=wixObEhBXM22JDopRdt7Z=tGGuizq66g4RnUmG9toA2DA@mail.gmail.com>
+	 <d6162230b83359d3ed1ee706cc1cb6eacfb12a4f.camel@kernel.org>
+	 <CAHk-=wiKJgOg_3z21Sy9bu+3i_34S86r8fd6ngvJpZDwa-ww8Q@mail.gmail.com>
+	 <5f96e69d438ab96099bb67d16b77583c99911caa.camel@kernel.org>
+	 <20231019-fluor-skifahren-ec74ceb6c63e@brauner>
+	 <0a1a847af4372e62000b259e992850527f587205.camel@kernel.org>
+	 <ZTGncMVw19QVJzI6@dread.disaster.area>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231020-enthusiasmus-vielsagend-463a7c821bf3@brauner>
-Authentication-Results: smtp-out1.suse.de;
-	none
-X-Spam-Level: 
-X-Spam-Score: -6.60
-X-Spamd-Result: default: False [-6.60 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 RCPT_COUNT_THREE(0.00)[4];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 NEURAL_HAM_LONG(-3.00)[-1.000];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 NEURAL_HAM_SHORT(-1.00)[-1.000];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_COUNT_TWO(0.00)[2];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-3.00)[100.00%]
 
-On Fri 20-10-23 13:31:20, Christian Brauner wrote:
-> On Thu, Oct 19, 2023 at 06:40:27AM -0700, Christoph Hellwig wrote:
-> > On Thu, Oct 19, 2023 at 10:33:36AM +0200, Christian Brauner wrote:
-> > > some device removal. I also messed around with the loop code and
-> > > specifically used LOOP_CHANGE_FD to force a disk_force_media_change() on
-> > > a filesystem.
-> > 
-> > Can you wire that up for either blktests or xfstests as well?
-> 
-> Yeah, I'll try to find some time to do this.
-> 
-> So while I was testing this I realized that the behavior of
-> LOOP_CHANGE_FD changed in commit 9f65c489b68d ("loop: raise media_change
-> event") and I'm not clear whether this is actually correct or not.
-> 
-> loop(4) states
->               
-> "Switch the backing store of the loop device to the new file identified
->  file descriptor specified in the (third) ioctl(2) argument, which is an
->  integer.  This operation is possible only if the loop device is
->  read-only and the new backing store is the same size and type as the
->  old backing store."
-> 
-> So the original use-case for this ioctl seems to have been to silently
-> swap out the backing store. Specifcially it seems to have been used once
-> upon a time for live images together with device mapper over read-only
-> loop devices. Where device mapper can direct the writes to some other
-> location or sm.
+On Fri, 2023-10-20 at 09:02 +1100, Dave Chinner wrote:
+> On Thu, Oct 19, 2023 at 07:28:48AM -0400, Jeff Layton wrote:
+> > On Thu, 2023-10-19 at 11:29 +0200, Christian Brauner wrote:
+> > > > Back to your earlier point though:
+> > > >=20
+> > > > Is a global offset really a non-starter? I can see about doing some=
+thing
+> > > > per-superblock, but ktime_get_mg_coarse_ts64 should be roughly as c=
+heap
+> > > > as ktime_get_coarse_ts64. I don't see the downside there for the no=
+n-
+> > > > multigrain filesystems to call that.
+> > >=20
+> > > I have to say that this doesn't excite me. This whole thing feels a b=
+it
+> > > hackish. I think that a change version is the way more sane way to go=
+.
+> > >=20
+> >=20
+> > What is it about this set that feels so much more hackish to you? Most
+> > of this set is pretty similar to what we had to revert. Is it just the
+> > timekeeper changes? Why do you feel those are a problem?
+> >=20
+> > > >=20
+> > > > On another note: maybe I need to put this behind a Kconfig option
+> > > > initially too?
+> > >=20
+> > > So can we for a second consider not introducing fine-grained timestam=
+ps
+> > > at all. We let NFSv3 live with the cache problem it's been living wit=
+h
+> > > forever.
+> > >=20
+> > > And for NFSv4 we actually do introduce a proper i_version for all
+> > > filesystems that matter to it.
+> > >=20
+> > > What filesystems exactly don't expose a proper i_version and what doe=
+s
+> > > prevent them from adding one or fixing it?
+> >=20
+> > Certainly we can drop this series altogether if that's the consensus.
+> >=20
+> > The main exportable filesystem that doesn't have a suitable change
+> > counter now is XFS. Fixing it will require an on-disk format change to
+> > accommodate a new version counter that doesn't increment on atime
+> > updates. This is something the XFS folks were specifically looking to
+> > avoid, but maybe that's the simpler option.
+>=20
+> And now we have travelled the full circle.
+>=20
 
-LOOP_CHANGE_FD was an old hacky way to switch from read-only installation
-image to a full-blown RW filesystem without reboot. I'm not sure about
-details how it was supposed to work but reportedly Al Viro implemented that
-for Fedora installation back in the old days.
+LOL, yes!
 
-> Assuming that's correct, I think as long as you have something like
-> device mapper that doesn't use blk_holder_ops it would still work. But
-> that commit changed behavior for filesystems because we now do:
-> 
-> loop_change_fd()
-> -> disk_force_media_change()
->    -> bdev_mark_dead()
->       -> bdev->bd_holder_ops->mark_dead::fs_mark_dead()
-> 
-> So in essence if you have a filesystem on a loop device via:
-> 
-> truncate -s 10G img1
-> mkfs.xfs -f img1
-> LOOP_DEV=$(sudo losetup -f --read-only --show img1)
-> 
-> truncate -s 10G img2
-> sudo ./loop_change_fd $LOOP_DEV ./img2
-> 
-> We'll shut down that filesystem. I personally think that's correct and
-> it's buggy not to do that when we have the ability to inform the fs
-> about media removal but technically it kinda defeats the original
-> use-case for LOOP_CHANGE_FD.
+> The problem NFS has with atime updates on XFS is a result of
+> the default behaviour of relatime - it *always* forces a persistent
+> atime update after mtime has changed. Hence a read-after-write
+> operation will trigger an atime update because atime is older than
+> mtime. This is what causes XFS to run a transaction (i.e. a
+> persistent atime update) and that bumps iversion.
+>=20
 
-I agree that it breaks the original usecase for LOOP_CHANGE_FD. I'd say it
-also shows nobody is likely using LOOP_CHANGE_FD anymore. Maybe time to try
-deprecating it?
+Those particular atime updates are not a problem. If we're updating the
+mtime and ctime anyway, then bumping the change attribute is OK.
 
-> In practice however, I don't think it matters because I think no one is
-> using LOOP_CHANGE_FD in that way. Right now all this is a useful for is
-> a bdev_mark_dead() test.
+The problem is that relatime _also_ does an on-disk update once a day
+for just an atime update. On XFS, this means that the change attribute
+also gets bumped and the clients invalidate their caches all at once.
 
-:)
+That doesn't sound like a big problem at first, but what if you're
+sharing a multi-gigabyte r/o file between multiple clients? This sort of
+thing is fairly common on render-farm workloads, and all of your clients
+will end up invalidating their caches once once a day if you're serving
+from XFS.
 
-> And one final question:
-> 
-> dev_set_uevent_suppress(disk_to_dev(lo->lo_disk), 1);
-> disk_force_media_change(lo->lo_disk);
-> /* more stuff */
-> dev_set_uevent_suppress(disk_to_dev(lo->lo_disk), 0);
-> 
-> What exactly does that achieve? Does it just delay the delivery of the
-> uevent after the disk sequence number was changed in
-> disk_force_media_change()? Because it doesn't seem to actually prevent
-> uevent generation.
+> lazytime does not behave this way - it delays all persistent
+> timestamp updates until the next persistent change or until the
+> lazytime aggregation period expires (24 hours). Hence with lazytime,
+> read-after-write operations do not trigger a persistent atime
+> update, and so XFS does not run a transaction to update atime. Hence
+> i_version does not get bumped, and NFS behaves as expected.
+>=20
 
-Well, if you grep for dev_get_uevent_suppress() you'll notice there is
-exactly *one* place looking at it - the generation of ADD event when adding
-a partition bdev. I'm not sure what's the rationale behind this
-functionality.
+Similar problem here. Once a day, NFS clients will invalidate the cache
+on any static content served from XFS.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> IOWs, what the NFS server actually wants from the filesytsems is for
+> lazy timestamp updates to always be used on read operations. It does
+> not want persistent timestamp updates that change on-disk state. The
+> recent "redefinition" of when i_version should change effectively
+> encodes this - i_version should only change when a persistent
+> metadata or data change is made that also changes [cm]time.
+>
+> Hence the simple, in-memory solution to this problem is for NFS to
+> tell the filesysetms that it needs to using lazy (in-memory) atime
+> updates for the given operation rather than persistent atime updates.
+>
+> We already need to modify how atime updates work for io_uring -
+> io_uring needs atime updates to be guaranteed non-blocking similar
+> to updating mtime in the write IO path. If a persistent timestamp
+> change needs to be run, then the timestamp update needs to return
+> -EAGAIN rather than (potentially) blocking so the entire operation
+> can be punted to a context that can block.
+>=20
+> This requires control flags to be passed to the core atime handling
+> functions.  If a filesystem doesn't understand/support the flags, it
+> can just ignore it and do the update however it was going to do it.
+> It won't make anything work incorrectly, just might do something
+> that is not ideal.
+>=20
+> With this new "non-blocking update only" flag for io_uring and a
+> new "non-persistent update only" flag for NFS, we have a very
+> similar conditional atime update requirements from two completely
+> independent in-kernel applications.
+>=20
+> IOWs, this can be solved quite simply by having the -application-
+> define the persistence semantics of the operation being performed.
+> Add a RWF_LAZYTIME/IOCB_LAZYTIME flag for read IO that is being
+> issued from the nfs daemon (i.e. passed to vfs_iter_read()) and then
+> the vfs/filesystem can do exactly the right thing for the IO being
+> issued.
+>=20
+> This is what io_uring does with IOCB_NOWAIT to tell the filesystems
+> that the IO must be non-blocking, and it's the key we already use
+> for non-blocking mtime updates and will use to trigger non-blocking
+> atime updates....
+>=20
+> I also know of cases where a per-IO RWF_LAZYTIME flag would be
+> beneficial - large databases are already using lazytime mount
+> options so that their data IO doesn't take persistent mtime update
+> overhead hits on every write IO.....
+>=20
+
+I don't think that trying to do something "special" for activity that is
+initiated by the NFS server solves anything. Bear in mind that NFS
+clients care about locally-initiated activity too.
+
+The bottom line is that we don't want to be foisting a cache
+invalidation on the clients just because someone read a file, or did
+some similar activity like a readdir or readlink. The lazytime/relatime
+options may mitigate the problem, but they're not a real solution.
+
+What NFS _really_ wants is a proper change counter that doesn't
+increment on read(like) operations. In practice, that comes down to just
+not incrementing it on atime updates.
+
+btrfs, ext4 and tmpfs have this (now). xfs does not because its change
+attribute is incremented when an atime update is logged, and that is
+evidently something that cannot be changed without an on-disk format
+change.
+
+> > There is also bcachefs which I don't think has a change attr yet. They'=
+d
+> > also likely need a on-disk format change, but hopefully that's a easier
+> > thing to do there since it's a brand new filesystem.
+>=20
+> It's not a "brand new filesystem". It's been out there for quite a
+> long while, and it has many users that would be impacted by on-disk
+> format changes at this point in it's life. on-disk format changes
+> are a fairly major deal for filesystems, and if there is any way we
+> can avoid them we should.
+
+
+Sure. It's new to me though. It's also not yet merged into mainline.
+
+I'd _really_ like to see a proper change counter added before it's
+merged, or at least space in the on-disk inode reserved for one until we
+can get it plumbed in. That would suck for the current users, I suppose,
+but at least that userbase is small now. Once it's merged, there will be
+a lot more people using it and it becomes just that much more difficult.
+
+I suppose bcachefs could try to hold out for the multigrain timestamp
+work too, but that may not ever make it in.
+--=20
+Jeff Layton <jlayton@kernel.org>
 
