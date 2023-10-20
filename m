@@ -1,87 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-821-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-822-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09E887D0E4B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 13:18:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D22047D0E56
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 13:24:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6003E282469
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 11:18:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 235A5B21483
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 11:23:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3454B18E04;
-	Fri, 20 Oct 2023 11:18:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F38C718E10;
+	Fri, 20 Oct 2023 11:23:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ICtfLaEG"
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="hk1zlwoa";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XXMigayB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2D618C24
-	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 11:18:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FECEC433C8;
-	Fri, 20 Oct 2023 11:18:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1697800726;
-	bh=7LMkhwAnISurWBIJkOGvJQmIwQJ1MgdA3oGoHmCYmwA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ICtfLaEGF3xbyXu4EubB2zm8oPViJlVrwb3QKoNIQ6RPHFo4dOiO9WrOUbjz/oaKZ
-	 cN6QVA22BhfOmFkkwxk184U37redRRfYjKeEB94up+MAKmPYm7Q9gE93IOBfd3wkN+
-	 TEkK/dlMY4rRqHpN8TNbEA05M5f4+N2MX3xqpWRtuxC7ofQ6pDzKC1iy0SebsXllqZ
-	 NwwX/E3Bcnr7XhVNy4xgWkZGeVr8nkz7PGi7MzIG3m4Q9L8eAIBCMpqvpaNmG9ndRK
-	 2pwQquzKqrxVqZ7YYH95FKAHVo1wDXtFvxg3hyUMnhxs1/ym53THmic48nsOQ1iCAB
-	 P7Y1qpfChjo3g==
-Date: Fri, 20 Oct 2023 13:18:42 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Christoph Hellwig <hch@infradead.org>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs: Avoid grabbing sb->s_umount under
- bdev->bd_holder_lock
-Message-ID: <20231020-alibi-funkanstalt-75d796ad7ff3@brauner>
-References: <20231018152924.3858-1-jack@suse.cz>
- <20231019-galopp-zeltdach-b14b7727f269@brauner>
- <20231019105717.s35ahlgflx2rk3nj@quack3>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F399C18E03
+	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 11:23:48 +0000 (UTC)
+Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D08AC2;
+	Fri, 20 Oct 2023 04:23:47 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailout.nyi.internal (Postfix) with ESMTP id E55A15C0C3D;
+	Fri, 20 Oct 2023 07:23:44 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Fri, 20 Oct 2023 07:23:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:sender
+	:subject:subject:to:to; s=fm2; t=1697801024; x=1697887424; bh=wp
+	E9zAbVzd//8TsG30moNfOnsvMj+EYkAkZbMvhvoao=; b=hk1zlwoa5Jk84W10dt
+	zWmZx4aJpGDQ6xaymLZL3MOxO4FNGDGJHVFPcx5aMJLVJn5cXz4Ay/i7yhCiWACh
+	86OVeuIb8x0O1Iuiv/qil1ttasrCaSCggTDvdhJnn4ZpeH8h7wbU0ae89n7WxxhF
+	vlb/ssQbXaVcrG5Zl369oT05fONGRaNwoCDjDTOJtXxamyWsImti6cuyD7ziK9D1
+	1nv/7sodihqIx3kMnBkZ4L8D18yz3oKzV/crHIZkJYUQwkoMv2R+iPcHCzCD+AZl
+	r8gyfvnCmUQQn9Zb0DjFognLtuh3TZkRyLBgP4ytj792YpaeYZP3ajgtuW4/bA6L
+	BmJg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:sender:subject
+	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+	:x-sasl-enc; s=fm3; t=1697801024; x=1697887424; bh=wpE9zAbVzd//8
+	TsG30moNfOnsvMj+EYkAkZbMvhvoao=; b=XXMigayBs9CwyZww9675DooC525/F
+	BuG4C2qbxz+qV42S38RoHo4+BBOweEo0fu3MIaIJ2XdlU3DZ72GJB38HIDW5iAwF
+	f5+sBW5mgP9YXTw0+bLYSlF1L6mDwVvVt5wcHwY4mmEc7lltTlYHKDmEGoql3CAe
+	pa9g+gV36ak+eddzmLkiEBBaWy7/t0LOMBNErYTiJru4uLZ0grneiWqK5EQkWiwW
+	yb0755gtwFpradsNao75i3U9xoZCkngrnC3bQ4vk+nc8vO4yAApGZP1nLVnLyiZT
+	oHQ73Cs2FdRFMKrh1d3Djhrv9tb0yTe15THfEtY29XJiLJdYC+heePZVQ==
+X-ME-Sender: <xms:QGMyZYzZzBB4D3kQMCosu-m-LG0_srYuUxO1xxdAP2jzbGT65BtOuw>
+    <xme:QGMyZcSEsm_7-depqOQffpO3oyQT95XQZjG4HnvXWXXr8RkUQ7Dh978hfMGUN31tP
+    Y4iA3QYYoN6mLyI-P8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrjeekgdefkecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
+    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
+    gvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedtkeet
+    ffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
+    hnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:QGMyZaX3WkYfe4CPrZPzzBUPSJIiqwdfcgQ7Ihe7zHO6IJWOIGM26g>
+    <xmx:QGMyZWgbOVYD3ZI6eE0yamwZc_Bei6R7QaZbBGRuYIeSahS_xIGBTg>
+    <xmx:QGMyZaDfE7WGjoZBTNTtzW42EcULJPb1vuEUl0L06EQPB8wF8oLgYw>
+    <xmx:QGMyZQDIlly3jfufdoKyM6Gc3RjDWerVZbOB1hpaE3aTck3y3_d-Pw>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id A322DB60089; Fri, 20 Oct 2023 07:23:44 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.9.0-alpha0-1048-g9229b632c5-fm-20231019.001-g9229b632
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20231019105717.s35ahlgflx2rk3nj@quack3>
+Message-Id: <f1cddf6e-2103-4786-84ff-12c305341d7c@app.fastmail.com>
+In-Reply-To: <432f1c1c-2f77-4b1b-b3f8-28330fd6bac3@kadam.mountain>
+References: 
+ <CA+G9fYt75r4i39DuB4E3y6jRLaLoSEHGbBcJy=AQZBQ2SmBbiQ@mail.gmail.com>
+ <71adfca4-4e80-4a93-b480-3031e26db409@app.fastmail.com>
+ <CADYN=9+HDwqAz-eLV7uVuMa+_+foj+_keSG-TmD2imkwVJ_mpQ@mail.gmail.com>
+ <432f1c1c-2f77-4b1b-b3f8-28330fd6bac3@kadam.mountain>
+Date: Fri, 20 Oct 2023 13:23:22 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Dan Carpenter" <dan.carpenter@linaro.org>,
+ "Anders Roxell" <anders.roxell@linaro.org>
+Cc: "Naresh Kamboju" <naresh.kamboju@linaro.org>,
+ "open list" <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org,
+ linux-fsdevel@vger.kernel.org, autofs@vger.kernel.org,
+ "Ian Kent" <raven@themaw.net>, "Bill O'Donnell" <bodonnel@redhat.com>,
+ "Christian Brauner" <brauner@kernel.org>
+Subject: Re: autofs: add autofs_parse_fd()
+Content-Type: text/plain
 
-On Thu, Oct 19, 2023 at 12:57:17PM +0200, Jan Kara wrote:
-> On Thu 19-10-23 10:33:36, Christian Brauner wrote:
-> > On Wed, Oct 18, 2023 at 05:29:24PM +0200, Jan Kara wrote:
-> > > The implementation of bdev holder operations such as fs_bdev_mark_dead()
-> > > and fs_bdev_sync() grab sb->s_umount semaphore under
-> > > bdev->bd_holder_lock. This is problematic because it leads to
-> > > disk->open_mutex -> sb->s_umount lock ordering which is counterintuitive
-> > > (usually we grab higher level (e.g. filesystem) locks first and lower
-> > > level (e.g. block layer) locks later) and indeed makes lockdep complain
-> > > about possible locking cycles whenever we open a block device while
-> > > holding sb->s_umount semaphore. Implement a function
-> > 
-> > This patches together with my series that Christoph sent out for me
-> > Link: https://lore.kernel.org/r/20231017184823.1383356-1-hch@lst.de
-> > two days ago (tyvm!) the lockdep false positives are all gone and we
-> > also eliminated the counterintuitive ordering requirement that forces us
-> > to give up s_umount before opening block devices.
-> > 
-> > I've verified that yesterday and did a bunch of testing via sudden
-> > device removal.
-> > 
-> > Christoph had thankfully added generic/730 and generic/731 to emulate
-> > some device removal. I also messed around with the loop code and
-> > specifically used LOOP_CHANGE_FD to force a disk_force_media_change() on
-> > a filesystem.
-> 
-> Ah, glad to hear that! So now we can also slowly work on undoing the unlock
-> s_umount, open bdev, lock s_umount games we have introduced in several
-> places. But I guess let's wait a bit for the dust to settle :)
+On Fri, Oct 20, 2023, at 12:45, Dan Carpenter wrote:
+> On Fri, Oct 20, 2023 at 11:55:57AM +0200, Anders Roxell wrote:
+>> On Fri, 20 Oct 2023 at 08:37, Arnd Bergmann <arnd@arndb.de> wrote:
+>> >
+>> > On Thu, Oct 19, 2023, at 17:27, Naresh Kamboju wrote:
+>> > > The qemu-x86_64 and x86_64 booting with 64bit kernel and 32bit rootfs we call
+>> > > it as compat mode boot testing. Recently it started to failed to get login
+>> > > prompt.
+>> > >
+>> > > We have not seen any kernel crash logs.
+>> > >
+>> > > Anders, bisection is pointing to first bad commit,
+>> > > 546694b8f658 autofs: add autofs_parse_fd()
+>> > >
+>> > > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+>> > > Reported-by: Anders Roxell <anders.roxell@linaro.org>
+>> >
+>> > I tried to find something in that commit that would be different
+>> > in compat mode, but don't see anything at all -- this appears
+>> > to be just a simple refactoring of the code, unlike the commits
+>> > that immediately follow it and that do change the mount
+>> > interface.
+>> >
+>> > Unfortunately this makes it impossible to just revert the commit
+>> > on top of linux-next. Can you double-check your bisection by
+>> > testing 546694b8f658 and the commit before it again?
+>> 
+>> I tried these two patches again:
+>> 546694b8f658 ("autofs: add autofs_parse_fd()") - doesn't boot
+>> bc69fdde0ae1 ("autofs: refactor autofs_prepare_pipe()") - boots
+>> 
+>
+> One difference that I notice between those two patches is that we no
+> long call autofs_prepare_pipe().  We just call autofs_check_pipe().
 
-Yeah, I had thought about this right away as well. And agreed, that can
-happen later. :)
+Indeed, so some of the f_flags end up being different. I assumed
+this was done intentionally, but it might be worth checking if
+the patch below makes any difference when the flags get put
+back the way they were. This is probably not the correct fix, but
+may help figure out what is going on. It should apply to anything
+from 546694b8f658 ("autofs: add autofs_parse_fd()") to the current
+linux-next:
+
+--- a/fs/autofs/inode.c
++++ b/fs/autofs/inode.c
+@@ -358,6 +358,11 @@ static int autofs_fill_super(struct super_block *s, struct fs_context *fc)
+        pr_debug("pipe fd = %d, pgrp = %u\n",
+                 sbi->pipefd, pid_nr(sbi->oz_pgrp));
+ 
++        /* We want a packet pipe */
++        sbi->pipe->f_flags |= O_DIRECT;
++        /* We don't expect -EAGAIN */
++        sbi->pipe->f_flags &= ~O_NONBLOCK;
++
+        sbi->flags &= ~AUTOFS_SBI_CATATONIC;
+ 
+        /*
 
