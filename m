@@ -1,94 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-859-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-860-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C56A87D174E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 22:45:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61F4E7D17AC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 23:05:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77AE8281F2A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 20:45:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78CE21C2102A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 21:05:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B79CF208DB;
-	Fri, 20 Oct 2023 20:45:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F93B249E8;
+	Fri, 20 Oct 2023 21:05:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CxRn5Wen"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 955A01802E
-	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 20:45:48 +0000 (UTC)
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBA9B172E;
-	Fri, 20 Oct 2023 13:45:42 -0700 (PDT)
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-5a9bc2ec556so897590a12.0;
-        Fri, 20 Oct 2023 13:45:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697834742; x=1698439542;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vutrsb5JnCQsKaXFvh73rRJHAgEusiSsuInphwVkJa4=;
-        b=SNnyYSdeoWe+upBQ1AdNgtA3pwSinRXfR8V8pEp8pDbXL36MLAMY0b9XqgJS9ISRmw
-         XyTG+JqeC7tbbaI14RmDWpVVGJaY+xXrXWcCL+YaG/dp/6we4U+LphH6q64qGREDKXxS
-         Igo7CBHqFr4GiYe6isfxay0smdXP4+kKwh69RtQ7JSCntchpKLxgnMxUyVeOGSDpcE1v
-         y4AIz9vmxfTzAhDlQEWdtFRWgebSp3DCF3llV/yrm2f6916cssjzP28Ds1X3VAkrTHOt
-         3G7v/xEMfz3x5EKfa/DK2EBqPDEQ4tPBS8STLuwIQZhRSovWZKLfGZh0oNTtUkqCcFtH
-         /u9Q==
-X-Gm-Message-State: AOJu0YwYg0jRqvJ/o1LvVuabSH4gFv6GaXDDXIHlMDeMdYfM6B6flY1W
-	wI31kquLHLnFTgXsH0iqtCo=
-X-Google-Smtp-Source: AGHT+IHcoxyaOXOn8IwRdHquaMtX3ArdAIWiXujrLn6NFN7C5QoFgHXgr8GegShqNs5oO3F0PpFnDw==
-X-Received: by 2002:a05:6a20:7d96:b0:13a:e955:d958 with SMTP id v22-20020a056a207d9600b0013ae955d958mr3258701pzj.7.1697834742070;
-        Fri, 20 Oct 2023 13:45:42 -0700 (PDT)
-Received: from ?IPV6:2620:15c:211:201:72ba:c99b:d191:901c? ([2620:15c:211:201:72ba:c99b:d191:901c])
-        by smtp.gmail.com with ESMTPSA id a6-20020aa78e86000000b0068fd026b496sm1968205pfr.46.2023.10.20.13.45.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Oct 2023 13:45:41 -0700 (PDT)
-Message-ID: <42639844-8758-4396-bb2c-ffcc8593d205@acm.org>
-Date: Fri, 20 Oct 2023 13:45:40 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27B771EA90
+	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 21:05:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4056BC433C7;
+	Fri, 20 Oct 2023 21:05:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1697835907;
+	bh=Elxhk2Dpng0QYormybPqQvqGrljIJdvhIjHnQugf8Aw=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=CxRn5Wen+tHmFyOjC5cErUb4FjXC/5aXJGY8YCKssgsr8mHrQ6FS4MqWkmUwlKa6O
+	 njiflYbjExbJJ4hmFju1xJi01RSXH4oemQqyQNGsTjbV2jEbsCLpu0+CEzMhSS+kPH
+	 qLHZGbGZ8re9P6Mgpk/IcJ+27RzSwckdZHUhZxagACHPGeIYfBcWITdudsTDqALdUx
+	 t9SSVavuWrkfW5vhC/g9L5WemB+jWjWlxzfHH6aYJ2P8WmEgK7zAe1adYDuOtMOzR1
+	 XwX2fAnz3V3D2eIBCalnWQDUdtWsh4JzFqOf3ISEKtU+d7C9zwH90UOwNXGOhznsYN
+	 Cmm9MoAgXB2qA==
+Message-ID: <301d4acd4dd208239c00cec196d1c26c6bcf1a91.camel@kernel.org>
+Subject: Re: [PATCH RFC 2/9] timekeeping: new interfaces for multigrain
+ timestamp handing
+From: Jeff Layton <jlayton@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Dave Chinner <david@fromorbit.com>, Kent Overstreet
+ <kent.overstreet@linux.dev>, Christian Brauner <brauner@kernel.org>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, John Stultz <jstultz@google.com>,
+ Thomas Gleixner <tglx@linutronix.de>,  Stephen Boyd <sboyd@kernel.org>,
+ Chandan Babu R <chandan.babu@oracle.com>, "Darrick J. Wong"
+ <djwong@kernel.org>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger
+ <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, Josef Bacik
+ <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Hugh Dickins
+ <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, Amir
+ Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.de>, David Howells
+ <dhowells@redhat.com>,  linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org,  linux-xfs@vger.kernel.org,
+ linux-ext4@vger.kernel.org,  linux-btrfs@vger.kernel.org,
+ linux-mm@kvack.org, linux-nfs@vger.kernel.org
+Date: Fri, 20 Oct 2023 17:05:03 -0400
+In-Reply-To: <CAHk-=wjma9_TSwXosG7GBXQaZ465VH1t4a4iQ8J=PFpE=4bhVA@mail.gmail.com>
+References: <20231018-mgtime-v1-0-4a7a97b1f482@kernel.org>
+	 <20231018-mgtime-v1-2-4a7a97b1f482@kernel.org>
+	 <CAHk-=wixObEhBXM22JDopRdt7Z=tGGuizq66g4RnUmG9toA2DA@mail.gmail.com>
+	 <d6162230b83359d3ed1ee706cc1cb6eacfb12a4f.camel@kernel.org>
+	 <CAHk-=wiKJgOg_3z21Sy9bu+3i_34S86r8fd6ngvJpZDwa-ww8Q@mail.gmail.com>
+	 <5f96e69d438ab96099bb67d16b77583c99911caa.camel@kernel.org>
+	 <20231019-fluor-skifahren-ec74ceb6c63e@brauner>
+	 <0a1a847af4372e62000b259e992850527f587205.camel@kernel.org>
+	 <ZTGncMVw19QVJzI6@dread.disaster.area>
+	 <eb3b9e71ee9c6d8e228b0927dec3ac9177b06ec6.camel@kernel.org>
+	 <CAHk-=wjma9_TSwXosG7GBXQaZ465VH1t4a4iQ8J=PFpE=4bhVA@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 00/14] Pass data temperature information to SCSI disk
- devices
-Content-Language: en-US
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-fsdevel@vger.kernel.org,
- "Martin K . Petersen" <martin.petersen@oracle.com>,
- Christoph Hellwig <hch@lst.de>, Niklas Cassel <Niklas.Cassel@wdc.com>,
- Avri Altman <Avri.Altman@wdc.com>, Bean Huo <huobean@gmail.com>,
- Daejun Park <daejun7.park@samsung.com>
-References: <20231017204739.3409052-1-bvanassche@acm.org>
- <3f3c2289-3185-4895-92cb-0692e3ca9ebc@kernel.dk>
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <3f3c2289-3185-4895-92cb-0692e3ca9ebc@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 10/18/23 12:09, Jens Axboe wrote:
-> I'm also really against growing struct bio just for this. Why is patch 2
-> not just using the ioprio field at least?
+On Fri, 2023-10-20 at 13:06 -0700, Linus Torvalds wrote:
+> On Fri, 20 Oct 2023 at 05:12, Jeff Layton <jlayton@kernel.org> wrote:.
+> >=20
+> > I'd _really_ like to see a proper change counter added before it's
+> > merged, or at least space in the on-disk inode reserved for one until w=
+e
+> > can get it plumbed in.
+>=20
+> Hmm. Can we not perhaps just do an in-memory change counter, and try
+> to initialize it to a random value when instantiating an inode? Do we
+> even *require* on-disk format changes?
+>=20
+> So on reboot, the inode would count as "changed" as far any remote
+> user is concerned. It would flush client caches, but isn't that what
+> you'd want anyway? I'd hate to waste lots of memory, but maybe people
+> would be ok with just a 32-bit random value. And if not...
+>=20
+> But I actually came into this whole discussion purely through the
+> inode timestamp side, so I may *entirely* miss what the change counter
+> requirements for NFSd actually are. If it needs to be stable across
+> reboots, my idea is clearly complete garbage.
+>=20
+> You can now all jump on me and point out my severe intellectual
+> limitations. Please use small words when you do ;)
+>=20
 
-Hi Jens,
+Much like inode timestamps, we do depend on the change attribute
+persisting across reboots. Having to invalidate all of your cached data
+just because the server rebooted is particularly awful. That usually
+results in the server being hammered with reads from all of the clients
+at once, soon after rebooting.
 
-Can you please clarify whether your concern is about the size of struct 
-bio only or also about the runtime impact of the comparisons that have 
-been added in attempt_merge() and blk_rq_merge_ok()? It may be possible 
-to eliminate the overhead of the new comparisons as follows:
-* Introduce a union of struct { I/O priority; data lifetime; } and u32.
-* Use that union in struct bio instead of bi_ioprio and bi_lifetime.
-* Use that union in struct request instead of the ioprio and lifetime
-   members.
-* In attempt_merge() and blk_rq_merge_ok(), compare the u32 union member
-   instead of comparing the I/O priority and data lifetime separately.
-
-Thanks,
-
-Bart.
+--=20
+Jeff Layton <jlayton@kernel.org>
 
