@@ -1,111 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-858-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-859-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D97A97D1720
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 22:36:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C56A87D174E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 22:45:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 173501C20F42
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 20:36:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77AE8281F2A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Oct 2023 20:45:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9818424A07;
-	Fri, 20 Oct 2023 20:36:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B79CF208DB;
+	Fri, 20 Oct 2023 20:45:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 463F8249F3
-	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 20:36:41 +0000 (UTC)
-Received: from fgw23-7.mail.saunalahti.fi (fgw23-7.mail.saunalahti.fi [62.142.5.84])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25C2BD65
-	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 13:36:40 -0700 (PDT)
-Received: from localhost (88-113-24-34.elisa-laajakaista.fi [88.113.24.34])
-	by fgw23.mail.saunalahti.fi (Halon) with ESMTP
-	id 5d4b40fc-6f88-11ee-b972-005056bdfda7;
-	Fri, 20 Oct 2023 23:36:37 +0300 (EEST)
-From: andy.shevchenko@gmail.com
-Date: Fri, 20 Oct 2023 23:36:36 +0300
-To: Jan Kara <jack@suse.cz>
-Cc: Andy Shevchenko <andriy.shevchenko@intel.com>,
-	Baokun Li <libaokun1@huawei.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>, Jan Kara <jack@suse.cz>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Kees Cook <keescook@chromium.org>,
-	Ferry Toth <ftoth@exalondelft.nl>, linux-fsdevel@vger.kernel.org,
-	linux-ext4@vger.kernel.org
-Subject: Re: [GIT PULL] ext2, quota, and udf fixes for 6.6-rc1
-Message-ID: <ZTLk1G0KCF7YNjRx@surfacebook.localdomain>
-References: <ZTFh0NeYtvgcjSv8@smile.fi.intel.com>
- <CAHk-=wjXG52UNKCwwEU1A+QWHYfvKOieV0uFOpPkLR0NSvOjtg@mail.gmail.com>
- <CAHk-=whis2BJF2fv1xySAg2NTQ+C5fViNSGkLNCOqGzi-3y+8w@mail.gmail.com>
- <ZTFxEcjo4d6vXbo5@smile.fi.intel.com>
- <ZTFydEbdEYlxOxc1@smile.fi.intel.com>
- <CAHk-=wh_gbZE_ZsQ6+9gSPdXfoCtmuK-MFmBkO3ywMKFQEvb6g@mail.gmail.com>
- <ZTKUDzONVHXnWAJc@smile.fi.intel.com>
- <CAHk-=wipA4605yvnmjW7T9EvARPRCGLARty8UUzRGxic1SXqvg@mail.gmail.com>
- <ZTLHBYv6wSUVD/DW@smile.fi.intel.com>
- <CAHk-=wgHFSTuANT3jXsw1EtzdHQe-XQtWQACzeFxn2BEBzX-gA@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 955A01802E
+	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Oct 2023 20:45:48 +0000 (UTC)
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBA9B172E;
+	Fri, 20 Oct 2023 13:45:42 -0700 (PDT)
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-5a9bc2ec556so897590a12.0;
+        Fri, 20 Oct 2023 13:45:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697834742; x=1698439542;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vutrsb5JnCQsKaXFvh73rRJHAgEusiSsuInphwVkJa4=;
+        b=SNnyYSdeoWe+upBQ1AdNgtA3pwSinRXfR8V8pEp8pDbXL36MLAMY0b9XqgJS9ISRmw
+         XyTG+JqeC7tbbaI14RmDWpVVGJaY+xXrXWcCL+YaG/dp/6we4U+LphH6q64qGREDKXxS
+         Igo7CBHqFr4GiYe6isfxay0smdXP4+kKwh69RtQ7JSCntchpKLxgnMxUyVeOGSDpcE1v
+         y4AIz9vmxfTzAhDlQEWdtFRWgebSp3DCF3llV/yrm2f6916cssjzP28Ds1X3VAkrTHOt
+         3G7v/xEMfz3x5EKfa/DK2EBqPDEQ4tPBS8STLuwIQZhRSovWZKLfGZh0oNTtUkqCcFtH
+         /u9Q==
+X-Gm-Message-State: AOJu0YwYg0jRqvJ/o1LvVuabSH4gFv6GaXDDXIHlMDeMdYfM6B6flY1W
+	wI31kquLHLnFTgXsH0iqtCo=
+X-Google-Smtp-Source: AGHT+IHcoxyaOXOn8IwRdHquaMtX3ArdAIWiXujrLn6NFN7C5QoFgHXgr8GegShqNs5oO3F0PpFnDw==
+X-Received: by 2002:a05:6a20:7d96:b0:13a:e955:d958 with SMTP id v22-20020a056a207d9600b0013ae955d958mr3258701pzj.7.1697834742070;
+        Fri, 20 Oct 2023 13:45:42 -0700 (PDT)
+Received: from ?IPV6:2620:15c:211:201:72ba:c99b:d191:901c? ([2620:15c:211:201:72ba:c99b:d191:901c])
+        by smtp.gmail.com with ESMTPSA id a6-20020aa78e86000000b0068fd026b496sm1968205pfr.46.2023.10.20.13.45.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 Oct 2023 13:45:41 -0700 (PDT)
+Message-ID: <42639844-8758-4396-bb2c-ffcc8593d205@acm.org>
+Date: Fri, 20 Oct 2023 13:45:40 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wgHFSTuANT3jXsw1EtzdHQe-XQtWQACzeFxn2BEBzX-gA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 00/14] Pass data temperature information to SCSI disk
+ devices
+Content-Language: en-US
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org,
+ "Martin K . Petersen" <martin.petersen@oracle.com>,
+ Christoph Hellwig <hch@lst.de>, Niklas Cassel <Niklas.Cassel@wdc.com>,
+ Avri Altman <Avri.Altman@wdc.com>, Bean Huo <huobean@gmail.com>,
+ Daejun Park <daejun7.park@samsung.com>
+References: <20231017204739.3409052-1-bvanassche@acm.org>
+ <3f3c2289-3185-4895-92cb-0692e3ca9ebc@kernel.dk>
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <3f3c2289-3185-4895-92cb-0692e3ca9ebc@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Fri, Oct 20, 2023 at 12:43:56PM -0700, Linus Torvalds kirjoitti:
-> On Fri, 20 Oct 2023 at 11:29, Andy Shevchenko
-> <andriy.shevchenko@intel.com> wrote:
-> >
-> > I'll reply to this with the attached object file, I assume it won't go to the
-> > mailing list, but should be available in your mailbox.
-> 
-> Honestly, both cases (that function gets inlined twice) look
-> *identical* from a quick look, apart from obviously the extra call to
-> __quota_error().
-> 
-> I might be missing something, but this most definitely is not a "gcc
-> ends up creating very different code when it doesn't need to
-> synchronize around the call" thing.
-> 
-> So a compiler issue looks very unlikely. No absolute guarantees - I
-> didn't do *that* kind of walk-through instruction by instruction - but
-> the results actually seem to line up perfectly.
-> 
-> Even register allocation didn't change, making the compare between #if
-> 0 and without rather easy.
-> 
-> There's one extra spill/reload due to the call in the "non-#if0" case,
-> and that actually made me look twice (because it spilled %eax, and
-> then reloaded it as %rcx), but it turns that %eax/%ecx had the same
-> value at the time of the spill, so even that was not a "real"
-> difference.
-> 
-> So I will claim that no, it's not the compiler. It's some unrelated
-> subtle timing, or possibly just a random code layout issue (because
-> the code addresses do obviously change).
+On 10/18/23 12:09, Jens Axboe wrote:
+> I'm also really against growing struct bio just for this. Why is patch 2
+> not just using the ioprio field at least?
 
-Okay, but since now I can't use the certain configuration, the bug is
-persistent to me after this merge with the GCC. Yet, you mentioned that
-you would expect some reports but I don't think many people have a
-configuration similar to what I have. In any case a bug is lurking somewhere
-there.
+Hi Jens,
 
-Let me check next week on different CPU (but I'm quite sceptical that it
-may anyhow trigger the same behaviour as if it's a timing, many parameters
-are involved, including hardware clocks, etc).
+Can you please clarify whether your concern is about the size of struct 
+bio only or also about the runtime impact of the comparisons that have 
+been added in attempt_merge() and blk_rq_merge_ok()? It may be possible 
+to eliminate the overhead of the new comparisons as follows:
+* Introduce a union of struct { I/O priority; data lifetime; } and u32.
+* Use that union in struct bio instead of bi_ioprio and bi_lifetime.
+* Use that union in struct request instead of the ioprio and lifetime
+   members.
+* In attempt_merge() and blk_rq_merge_ok(), compare the u32 union member
+   instead of comparing the I/O priority and data lifetime separately.
 
-That said, if you or anyone has ideas how to debug futher, I'm all ears!
+Thanks,
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Bart.
 
