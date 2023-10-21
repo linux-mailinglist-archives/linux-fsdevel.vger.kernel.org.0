@@ -1,195 +1,104 @@
-Return-Path: <linux-fsdevel+bounces-875-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-876-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE8B47D1E27
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Oct 2023 18:10:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B8B97D1E5E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Oct 2023 18:47:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 631DBB210A3
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Oct 2023 16:10:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1683AB21274
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Oct 2023 16:47:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5860A171B5;
-	Sat, 21 Oct 2023 16:10:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16DD9DDB9;
+	Sat, 21 Oct 2023 16:47:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alyssa.is header.i=@alyssa.is header.b="tDYwxDNY";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="btOztuzL"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="dTP1n71r"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D3AD531
-	for <linux-fsdevel@vger.kernel.org>; Sat, 21 Oct 2023 16:10:33 +0000 (UTC)
-Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E86C01A8
-	for <linux-fsdevel@vger.kernel.org>; Sat, 21 Oct 2023 09:10:28 -0700 (PDT)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailout.nyi.internal (Postfix) with ESMTP id C3B125C01E6;
-	Sat, 21 Oct 2023 12:10:25 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Sat, 21 Oct 2023 12:10:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alyssa.is; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:sender
-	:subject:subject:to:to; s=fm2; t=1697904625; x=1697991025; bh=oR
-	x/3T3+anRPR+hsEa7pcHpZMcaj2WraCFrupzwjhb0=; b=tDYwxDNYRMD71FIlP7
-	/AWEHQlN7BviJoaZNvIULfyA2TxphEzVLS0aGf1AEV97LmOccQ2ISIdpJjC2mC+s
-	YBHIIfIbr23hll3vGlBozQB003encXe/ocTstt0zAqeKmUOZ62MnOIeclvfDZ8EI
-	QvyFNONck2izueEFvKjFTP89by8uo/Jpsr3x31Mo7Zqdt+Nepi1ZPv2yy3wP+wVH
-	s6Fz6L0qCKHVuqtg1lLOiOKDNVtu6/S3qlyB510KE5rA6Fs5pMdR86oPCnM73X3l
-	IIFQlPiZ340Qi+Bv3aaBmA/NPibLtgr1E4y9LwgdV7A/yulbmUVdoepr0d7HHMFb
-	1FLA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:sender:subject
-	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-	:x-sasl-enc; s=fm3; t=1697904625; x=1697991025; bh=oRx/3T3+anRPR
-	+hsEa7pcHpZMcaj2WraCFrupzwjhb0=; b=btOztuzLfrpe41FReDm64vM5+Gh4U
-	0u6zxP6d1Zew8I9BBoeaDoDmIXna4Sh1hw145FWrGDbM4ri28SJue3E1EIogGUJw
-	ckzvJmzfBYX+i+Niv502e53V8HxEGlE2Xk37+EvJztJ0Cg7IhlvzYL+UJ1rYjAoT
-	z0Wyb7Vy5g8iBO6ePhMaaCf6Ajfqn5FSdife3TAAGXuin+wmNOA4jDjv+NlFe0PU
-	0bdqId3P+brvI/uTv73tD1A8MafXMPgr6y6S5piNaD2gLxa8TL0raf9PinMwvSz1
-	Tnti839O0YyDYr8x9X5dmGU6iIN5ZqEHTjojFav6Il8ifHYHmid50ZBuQ==
-X-ME-Sender: <xms:8PczZZB5BftcT-GNW5DCRjhknDJtYczwDA2MWZI3E14OucXfJy7uvg>
-    <xme:8PczZXg-QgVQrEBRuw4nQSUZUTbHwCJKzyvdkGbXslcif-P4R_N-QZGKTMOfvYx8u
-    9nM_inM08PYNPLyXg>
-X-ME-Received: <xmr:8PczZUnBVF8EsehZDNtjEtgxmPxYXqBIpv8zL7Z1uN8BpVTWKPc2P2ThxghJahSUeRdU2dLNKnk2XfLIgw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrkedtgdelfecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvvefukfhfgggtuggjsehgtdfsredttdejnecuhfhrohhmpeetlhihshhs
-    rgcutfhoshhsuceohhhisegrlhihshhsrgdrihhsqeenucggtffrrghtthgvrhhnpefgtd
-    evledtkeeigeffjedtvdeugfefffdtgfdttdefvdetvdduudegueegffdtjeenucffohhm
-    rghinhepghhithhlrggsrdgtohhmnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhephhhisegrlhihshhsrgdrihhs
-X-ME-Proxy: <xmx:8PczZTxO7X7ZshYqz0Bvv2URRmvtZhoom5LZrD-8mMVjuUUaK__sLw>
-    <xmx:8PczZeT756KyDsM_IF5yP7UBER7j1mlwIW5FsFzrRGqucc7OEUX8yA>
-    <xmx:8PczZWa0KzhmDuwF2TCALSD2weIfCrILRyLFDDGxz_S0pBaWb1L1kA>
-    <xmx:8fczZbIqtFGPdEArt2P3YDZlP3_7X5HCzXMB7x5bXtNRDCvB5JIkew>
-Feedback-ID: i12284293:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 21 Oct 2023 12:10:24 -0400 (EDT)
-Received: by mbp.qyliss.net (Postfix, from userid 1000)
-	id 2BF741965; Sat, 21 Oct 2023 16:10:21 +0000 (UTC)
-Date: Sat, 21 Oct 2023 16:10:21 +0000
-From: Alyssa Ross <hi@alyssa.is>
-To: Vivek Goyal <vgoyal@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com, miklos@szeredi.hu, 
-	stefanha@redhat.com, mzxreary@0pointer.de, gmaglione@redhat.com
-Subject: Re: [PATCH] virtiofs: Export filesystem tags through sysfs
-Message-ID: <zdor636rec2ni6oxuic3x55khtr4bkcpqazu3xjdhvlbemsylr@pwjyz2qfa4mm>
-References: <20231005203030.223489-1-vgoyal@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 742A163D
+	for <linux-fsdevel@vger.kernel.org>; Sat, 21 Oct 2023 16:47:01 +0000 (UTC)
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB4C81A8
+	for <linux-fsdevel@vger.kernel.org>; Sat, 21 Oct 2023 09:46:56 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id 4fb4d7f45d1cf-52bd9ddb741so2762020a12.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 21 Oct 2023 09:46:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1697906815; x=1698511615; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=OSjTUcgTd18PHEYhijTK/4fWY0j7UY3vKA/ggDHvC6g=;
+        b=dTP1n71rDU+s5s6eyJqPOKZoGZfY4RQ2vNq3HbB9Clx/2szD6ZFQUohgW+DjkXQWB8
+         dfFTVK9ABw8nuX2Lz3X6mHrR5G/XCQs4D4lTXs0794SplLsfgkj+D77t2OoHPn8ccUE/
+         mEgIka471CJLyB0rv+T0y2bbfblpVKj4NmHZE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697906815; x=1698511615;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OSjTUcgTd18PHEYhijTK/4fWY0j7UY3vKA/ggDHvC6g=;
+        b=MrNH5I6uI3p4bRhpJixkCqAzlO4ThCy/zlasPRg8M/cllazxdbCxc2yKKMnQdyhb49
+         3Q88o6BLrXxsGT0vXjqq4Oxu5D1cld7QZXRtJ+gZYZLpX/dG8Yg5ak1StKLVmAxm3O5i
+         +6l+p0DTMldaQuyYUl3xbto2lGcXqPtzjYYbfIGE8v5loBrK6Bj0A6diHQts2JwnfT9j
+         zwhIR++M/l+oEnvlTIZmPBN6DiNlN/qygHoi5ubEcbkkL7PR5EDuOAYg7Wl7+uy+WIVw
+         xk3ZjqWK+CGQE4Yv8JX/IT8uGfzDAwas1NRPbd9YES4Lx8RkylMBGglhtY5wxPD2STl2
+         d0hg==
+X-Gm-Message-State: AOJu0YzGRIhfomS7ljIF20AhXTrJ1GLezReGM07nrqwQFyoMHrhkOqTZ
+	GKnyNL4yg3BSWpZBL0OAZfMBB5KpPbZi8bRPc+ew+5lW
+X-Google-Smtp-Source: AGHT+IHVAmeyXbSK4lmauz0SEsWWujFkD88AxtPeWZ2ZGKcZ4pYFwZ5n6Y4Bp/EUSEbzohmOlsdbDQ==
+X-Received: by 2002:a50:bb44:0:b0:53e:5f9:328b with SMTP id y62-20020a50bb44000000b0053e05f9328bmr3220398ede.2.1697906815362;
+        Sat, 21 Oct 2023 09:46:55 -0700 (PDT)
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com. [209.85.208.46])
+        by smtp.gmail.com with ESMTPSA id bt15-20020a0564020a4f00b0053e0f63ce33sm3614092edb.95.2023.10.21.09.46.54
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 21 Oct 2023 09:46:54 -0700 (PDT)
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-52bd9ddb741so2762002a12.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 21 Oct 2023 09:46:54 -0700 (PDT)
+X-Received: by 2002:a50:c30a:0:b0:53d:b2c8:6783 with SMTP id
+ a10-20020a50c30a000000b0053db2c86783mr3094776edb.14.1697906813973; Sat, 21
+ Oct 2023 09:46:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="4hrx2uig745c5dti"
-Content-Disposition: inline
-In-Reply-To: <20231005203030.223489-1-vgoyal@redhat.com>
+References: <169786962623.1265253.5321166241579915281.stg-ugh@frogsfrogsfrogs>
+In-Reply-To: <169786962623.1265253.5321166241579915281.stg-ugh@frogsfrogsfrogs>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sat, 21 Oct 2023 09:46:35 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whNsCXwidLvx8u_JBH91=Z5EFw9FVj57HQ51P7uWs4yGQ@mail.gmail.com>
+Message-ID: <CAHk-=whNsCXwidLvx8u_JBH91=Z5EFw9FVj57HQ51P7uWs4yGQ@mail.gmail.com>
+Subject: Re: [GIT PULL] iomap: bug fixes for 6.6-rc7
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: hch@lst.de, jstancek@redhat.com, linux-fsdevel@vger.kernel.org, 
+	linux-xfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-
---4hrx2uig745c5dti
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Oct 05, 2023 at 04:30:30PM -0400, Vivek Goyal wrote:
-> virtiofs filesystem is mounted using a "tag" which is exported by the
-> virtiofs device. virtiofs driver knows about all the available tags but
-> these are not exported to user space.
+On Fri, 20 Oct 2023 at 23:27, Darrick J. Wong <djwong@kernel.org> wrote:
 >
-> People have asked these tags to be exported to user space. Most recently
-> Lennart Poettering has asked for it as he wants to scan the tags and mount
-> virtiofs automatically in certain cases.
+> Please pull this branch with changes for iomap for 6.6-rc7.
 >
-> https://gitlab.com/virtio-fs/virtiofsd/-/issues/128
+> As usual, I did a test-merge with the main upstream branch as of a few
+> minutes ago, and didn't see any conflicts.  Please let me know if you
+> encounter any problems.
 
-Hi, I was one of those people. :)
+.. and as usual, the branch you point to does not actually exist.
 
-> This patch exports tags through sysfs. One tag is associated with each
-> virtiofs device. A new "tag" file appears under virtiofs device dir.
-> Actual filesystem tag can be obtained by reading this "tag" file.
->
-> For example, if a virtiofs device exports tag "myfs", a new file "tag"
-> will show up here.
->
-> /sys/bus/virtio/devices/virtio<N>/tag
->
-> # cat /sys/bus/virtio/devices/virtio<N>/tag
-> myfs
->
-> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+Because you *again* pointed to the wrong tree.
 
-Are you still thinking about exposing this in the uevent as well?
-That would be much more convenient for me, because with this approach
-by the time the "remove" uevent arrives, it's no longer possible to
-check what tag was associated with the device =E2=80=94 you have to store it
-somewhere when the device appears, so you can look it up again when the
-device is removed.  (Not everybody uses udev.)
+This time I remembered what the mistake was last time, and picked out
+the right tree by hand, but *please* just fix your completely broken
+scripts or workflow.
 
-Regardless,
+> https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git iomap-6.6-fixes-5
 
-Tested-by: Alyssa Ross <hi@alyssa.is>
+No.
 
-=E2=80=A6 and a review comment below.
+It's pub/scm/fs/xfs/xfs-linux, once again.
 
-> ---
->  fs/fuse/virtio_fs.c | 34 ++++++++++++++++++++++++++++++++++
->  1 file changed, 34 insertions(+)
->
-> diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-> index 5f1be1da92ce..a5b11e18f331 100644
-> --- a/fs/fuse/virtio_fs.c
-> +++ b/fs/fuse/virtio_fs.c
-> @@ -107,6 +107,21 @@ static const struct fs_parameter_spec virtio_fs_para=
-meters[] =3D {
->  	{}
->  };
->
-> +/* Forward Declarations */
-> +static void virtio_fs_stop_all_queues(struct virtio_fs *fs);
-> +
-> +/* sysfs related */
-> +static ssize_t tag_show(struct device *dev, struct device_attribute *att=
-r,
-> +			char *buf)
-> +{
-> +	struct virtio_device *vdev =3D container_of(dev, struct virtio_device,
-> +						  dev);
-> +	struct virtio_fs *fs =3D vdev->priv;
-> +
-> +	return sysfs_emit(buf, "%s", fs->tag);
-
-All of the other files in the device directory end with trailing
-newlines.  Should this one be an exception?
-
-> +}
-> +static DEVICE_ATTR_RO(tag);
-
---4hrx2uig745c5dti
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEH9wgcxqlHM/ARR3h+dvtSFmyccAFAmUz99oACgkQ+dvtSFmy
-ccACZg//SZNxNUCxHZmFo775x0ukdlk7V21OpOnQxIZbmyz3lFU/cy41MCQnTLDZ
-sOCud1CXqlDNDrqxQsVRVaq40bQTAsEukNCVo4EVqtHMRyPFa3iWayzvy+wMDMvg
-K9t39TAQIn/xSgKhpV/xJlnIEiKl5XY1TTfQyCyOvntXAsYWhDfz5d0hHnsVzXgO
-+vMioJdLT+rJLy1abtZth125NOhsieKkUmwjLnGm4jUhyzUQabjTfYPsUKZBssP7
-eRkTSoTnzL/zqVOYXhdNO4xpSq+/wg/4STBG7rFgLVsaI1zvZicbmHhjcHy4Nk07
-kQxnLTeciYNbU+D0cVOwelmOCXFkaxOYB5/oOtpCC5DKELo7sVFoOX3Zq5InXQtC
-CvptihrJr+XJKBjsd6C0FMCIU6ki40i0mzdXNS6wsqM0Q/KL+EfZxCqlYw7Mh/BR
-FEmxLYlj7GFWQQy7KpWfrDVMuSaN7MsTGsW8F2/6F2zF57JE65aqnJh9kVDriynX
-+U1eUhaW59QSreq6pr7ssmAB/zIoE0RGu/zqlnDB7If2BAe4jNZgE0jjZgYfzL/5
-uiSfUMZlDGEmPM+kZNYjVdvScwmz05bXSH0IMET42IgbVgQSGsCrMlbhvkQr1f/f
-cHmiynIdAISNUMVF4jjljBp5DVsejqfnQbr9pATqqG3Ik+UyjRs=
-=VAq9
------END PGP SIGNATURE-----
-
---4hrx2uig745c5dti--
+                 Linus
 
