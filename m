@@ -1,87 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-881-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-882-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 053987D207A
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Oct 2023 01:36:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A00F7D20C5
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Oct 2023 04:41:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CE071C209E2
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Oct 2023 23:36:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93F712817AC
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Oct 2023 02:41:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D1442111A;
-	Sat, 21 Oct 2023 23:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jes7izl8"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37A7EA28;
+	Sun, 22 Oct 2023 02:40:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D9C920E6
-	for <linux-fsdevel@vger.kernel.org>; Sat, 21 Oct 2023 23:36:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACE04C433C8;
-	Sat, 21 Oct 2023 23:36:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1697931382;
-	bh=ePJsVbVghIPpOSlBWXWL3Zpf8CxGc78DT241F9Znn6s=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=Jes7izl8GIZDoZdhjcdKpFSDBNTYlqrZtRgp1KMFoTgz6Vv5Eg9lJrtxsgw+/Pd8k
-	 SCgmHgcw5X+ZY5Lx5o7GwzjY39xpPA+U3sDOGJZE+Ru6soJLTDHo/r5UVmYfmfz3NY
-	 ozD9uqdLam9a7jDUeLpi/XC3H8yV5WI3neuN/wWGYO3a+vVCAbxQBWKaA/8nURCTEk
-	 DAsVdxCchnhMtzBMEfwZx9HhMmYqcViHBYsFgLuv3pd3+AtEB03wR2aFJzxfDf/nta
-	 l5OzRTx3Tbnbysuqf6f4KlwSbKHQe9x6RVGDEgb2SPMwwVJd+CJugFtP4qfX21VsSf
-	 uyB5ST6KcupdA==
-Date: Sat, 21 Oct 2023 16:36:19 -0700
-From: Kees Cook <kees@kernel.org>
-To: andy.shevchenko@gmail.com, Jan Kara <jack@suse.cz>
-CC: Andy Shevchenko <andriy.shevchenko@intel.com>,
- Baokun Li <libaokun1@huawei.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>,
- Kees Cook <keescook@chromium.org>, Ferry Toth <ftoth@exalondelft.nl>,
- linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
-Subject: Re: [GIT PULL] ext2, quota, and udf fixes for 6.6-rc1
-User-Agent: K-9 Mail for Android
-In-Reply-To: <ZTLk1G0KCF7YNjRx@surfacebook.localdomain>
-References: <ZTFh0NeYtvgcjSv8@smile.fi.intel.com> <CAHk-=wjXG52UNKCwwEU1A+QWHYfvKOieV0uFOpPkLR0NSvOjtg@mail.gmail.com> <CAHk-=whis2BJF2fv1xySAg2NTQ+C5fViNSGkLNCOqGzi-3y+8w@mail.gmail.com> <ZTFxEcjo4d6vXbo5@smile.fi.intel.com> <ZTFydEbdEYlxOxc1@smile.fi.intel.com> <CAHk-=wh_gbZE_ZsQ6+9gSPdXfoCtmuK-MFmBkO3ywMKFQEvb6g@mail.gmail.com> <ZTKUDzONVHXnWAJc@smile.fi.intel.com> <CAHk-=wipA4605yvnmjW7T9EvARPRCGLARty8UUzRGxic1SXqvg@mail.gmail.com> <ZTLHBYv6wSUVD/DW@smile.fi.intel.com> <CAHk-=wgHFSTuANT3jXsw1EtzdHQe-XQtWQACzeFxn2BEBzX-gA@mail.gmail.com> <ZTLk1G0KCF7YNjRx@surfacebook.localdomain>
-Message-ID: <BF6761C0-B813-4C98-9563-8323C208F67D@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A9F2362
+	for <linux-fsdevel@vger.kernel.org>; Sun, 22 Oct 2023 02:40:56 +0000 (UTC)
+Received: from mail-oa1-f77.google.com (mail-oa1-f77.google.com [209.85.160.77])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EF41E3
+	for <linux-fsdevel@vger.kernel.org>; Sat, 21 Oct 2023 19:40:54 -0700 (PDT)
+Received: by mail-oa1-f77.google.com with SMTP id 586e51a60fabf-1e9f6006f9cso3534822fac.3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 21 Oct 2023 19:40:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697942454; x=1698547254;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uU8lb1l1yKfhs7iHHIqOMOJAFdCISWoOXZEw6aTB7b4=;
+        b=HD4Zseo1s/fgwu15AwDbueaW+JeWF2V/ctss1sTastuvmg4WgnmZNt+Zz9tszvBS18
+         6oqBv86lUQ82kd6cRMyLh2JVUr/H6lGAwwppb+XvLRpQb5JnYMrYPaepJb6rmEc4pv0f
+         Xc3G2/PJYc+jwDpUGuMGEfQAvKf6zsVtmaJZ631wypnJQkUver4rFtq3+UnIys+++sOj
+         VKIoQuCw8/kM3OXoaHqInOoYKY+wIUA0urrFCDSd58BTBSXAt07bKXO3IBfBzkwxh6lw
+         KZLv7vPiaIMDOrYevgbk8p061p3ir9m+9RYb6r6XG1X+PMPSxIAEYZPQNd9DAHY4o7A8
+         WwvA==
+X-Gm-Message-State: AOJu0YzwVlI1Wf/SclYaRYvNb2eWO2aqjHk35UFYRjcvybVv2Ri9hKDq
+	3pMSZwWDpCvFVy0eWWRKUFVgw4bcv6bxhFKM6+ELWprHK5nK
+X-Google-Smtp-Source: AGHT+IFHZ6P7o+3eMU28/NkHHkQTYEEHjSvBSzx432SAOF7tvLU7F4B1w1hLQmsTWuE5/cSvMxyb5JkINrs9wcT8EwARUgU91GPM
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a05:6870:5692:b0:1ea:1bc4:d06b with SMTP id
+ p18-20020a056870569200b001ea1bc4d06bmr2659490oao.10.1697942453878; Sat, 21
+ Oct 2023 19:40:53 -0700 (PDT)
+Date: Sat, 21 Oct 2023 19:40:53 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d005440608450810@google.com>
+Subject: [syzbot] [btrfs?] BUG: MAX_LOCKDEP_CHAIN_HLOCKS too low! (4)
+From: syzbot <syzbot+b2869947e0c9467a41b6@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    78124b0c1d10 Merge branch 'for-next/core' into for-kernelci
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=1557da89680000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f27cd6e68911e026
+dashboard link: https://syzkaller.appspot.com/bug?extid=b2869947e0c9467a41b6
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=137ac45d680000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16e4640b680000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/bd512de820ae/disk-78124b0c.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/a47a437b1d4f/vmlinux-78124b0c.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/3ae8b966bcd7/Image-78124b0c.gz.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/d5d514495f15/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+b2869947e0c9467a41b6@syzkaller.appspotmail.com
+
+BUG: MAX_LOCKDEP_CHAIN_HLOCKS too low!
+turning off the locking correctness validator.
+CPU: 0 PID: 5571 Comm: kworker/u4:8 Not tainted 6.6.0-rc6-syzkaller-g78124b0c1d10 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/06/2023
+Workqueue: btrfs-cache btrfs_work_helper
+Call trace:
+ dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:233
+ show_stack+0x2c/0x44 arch/arm64/kernel/stacktrace.c:240
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xd0/0x124 lib/dump_stack.c:106
+ dump_stack+0x1c/0x28 lib/dump_stack.c:113
+ lookup_chain_cache_add kernel/locking/lockdep.c:3815 [inline]
+ validate_chain kernel/locking/lockdep.c:3836 [inline]
+ __lock_acquire+0x1c60/0x75e8 kernel/locking/lockdep.c:5136
+ lock_acquire+0x23c/0x71c kernel/locking/lockdep.c:5753
+ __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
+ _raw_spin_lock+0x48/0x60 kernel/locking/spinlock.c:154
+ spin_lock include/linux/spinlock.h:351 [inline]
+ __clear_extent_bit+0x1b4/0xaf0 fs/btrfs/extent-io-tree.c:596
+ clear_extent_bit fs/btrfs/extent-io-tree.h:146 [inline]
+ clear_extent_bits fs/btrfs/extent-io-tree.h:158 [inline]
+ btrfs_free_excluded_extents fs/btrfs/block-group.c:840 [inline]
+ caching_thread+0x18bc/0x1b64 fs/btrfs/block-group.c:909
+ btrfs_work_helper+0x340/0x1504 fs/btrfs/async-thread.c:314
+ process_one_work+0x694/0x1204 kernel/workqueue.c:2630
+ process_scheduled_works kernel/workqueue.c:2703 [inline]
+ worker_thread+0x938/0xef4 kernel/workqueue.c:2784
+ kthread+0x288/0x310 kernel/kthread.c:388
+ ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:857
+BTRFS info (device loop0): qgroup scan completed (inconsistency flag cleared)
+BTRFS info (device loop0): qgroup scan completed (inconsistency flag cleared)
+BTRFS info (device loop0): qgroup scan completed (inconsistency flag cleared)
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-On October 20, 2023 1:36:36 PM PDT, andy=2Eshevchenko@gmail=2Ecom wrote:
->That said, if you or anyone has ideas how to debug futher, I'm all ears!
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-I don't think this has been tried yet:
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-When I've had these kind of hard-to-find glitches I've used manual built-b=
-inary bisection=2E Assuming you have a source tree that works when built wi=
-th Clang and not with GCC:
-- build the tree with Clang with, say, O=3Dbuild-clang
-- build the tree with GCC, O=3Dbuild-gcc
-- make a new tree for testing: cp -a build-clang build-test
-- pick a suspect =2Eo file (or files) to copy from build-gcc into build-te=
-st
-- perform a relink: "make O=3Dbuild-test" should DTRT since the copied-in =
-=2Eo files should be newer than the =2Ea and other targets
-- test for failure, repeat
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-Once you've isolated it to (hopefully) a single =2Eo file, then comes the =
-byte-by-byte analysis or something similar=2E=2E=2E
+If you want to overwrite bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-I hope that helps! These kinds of bugs are super frustrating=2E
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
 
--Kees
-
---=20
-Kees Cook
+If you want to undo deduplication, reply with:
+#syz undup
 
