@@ -1,196 +1,412 @@
-Return-Path: <linux-fsdevel+bounces-902-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-901-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECB087D2B47
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 09:27:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DD2F7D2B1D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 09:21:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6B02281510
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 07:27:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1430628154F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 07:21:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A01D101E3;
-	Mon, 23 Oct 2023 07:27:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="vWYv5YdI"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 419E2101D4;
+	Mon, 23 Oct 2023 07:21:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17941101D4
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 07:27:33 +0000 (UTC)
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 774C0D6B;
-	Mon, 23 Oct 2023 00:27:31 -0700 (PDT)
-Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20231023072728epoutp016f16d270b9d58d77a3df83a636430be8~Qq_JRhUIp1250612506epoutp01L;
-	Mon, 23 Oct 2023 07:27:28 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20231023072728epoutp016f16d270b9d58d77a3df83a636430be8~Qq_JRhUIp1250612506epoutp01L
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1698046048;
-	bh=yQ0o45G+VG1R4BSnMeP2FwuyP8TuVxRSYxt30sCvGNU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=vWYv5YdIqTb8esz/7oR57rVdrqQiQW9bXDca8BNdaR4ZY3WdofGJiE8CuQjHf2HLk
-	 CksB44uQ7Cwl6cRBx5dgShygTWEKAZiKeokXTu4VPGDUWLw+tj7S9/6kDD0WvlC+iM
-	 //7xf1s/6FWok/KbWp9xlHw5Xn6dt7rRjL6/WqUI=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTP id
-	20231023072727epcas2p4eb120f3e7d6e0b6a0a76ae809bcf413e~Qq_I3l0GM2774427744epcas2p4m;
-	Mon, 23 Oct 2023 07:27:27 +0000 (GMT)
-Received: from epsmges2p1.samsung.com (unknown [182.195.36.101]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4SDRbg0FN6z4x9Q1; Mon, 23 Oct
-	2023 07:27:27 +0000 (GMT)
-Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
-	epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	7D.5A.10006.E5026356; Mon, 23 Oct 2023 16:27:26 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
-	20231023072726epcas2p22a956be89b7f25f9edf2faff418e507a~Qq_HuFV_g1856218562epcas2p2J;
-	Mon, 23 Oct 2023 07:27:26 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20231023072726epsmtrp243c3957bce73fbbad6710deba8333a18~Qq_Hsw4u43069830698epsmtrp2B;
-	Mon, 23 Oct 2023 07:27:26 +0000 (GMT)
-X-AuditID: b6c32a45-3ebfd70000002716-b6-6536205e5a1e
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	3C.BF.08755.E5026356; Mon, 23 Oct 2023 16:27:26 +0900 (KST)
-Received: from tiffany (unknown [10.229.95.142]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20231023072725epsmtip1ca6761ce4659bf69cb32b5496d0bcbf8~Qq_HPonl_2906329063epsmtip1Q;
-	Mon, 23 Oct 2023 07:27:25 +0000 (GMT)
-Date: Mon, 23 Oct 2023 16:16:56 +0900
-From: Hyesoo Yu <hyesoo.yu@samsung.com>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Alexandru Elisei <alexandru.elisei@arm.com>, will@kernel.org,
-	oliver.upton@linux.dev, maz@kernel.org, james.morse@arm.com,
-	suzuki.poulose@arm.com, yuzenghui@huawei.com, arnd@arndb.de,
-	akpm@linux-foundation.org, mingo@redhat.com, peterz@infradead.org,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	bristot@redhat.com, vschneid@redhat.com, mhiramat@kernel.org,
-	rppt@kernel.org, hughd@google.com, pcc@google.com, steven.price@arm.com,
-	anshuman.khandual@arm.com, vincenzo.frascino@arm.com, david@redhat.com,
-	eugenis@google.com, kcc@google.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH RFC 06/37] mm: page_alloc: Allocate from movable pcp
- lists only if ALLOC_FROM_METADATA
-Message-ID: <20231023071656.GA344850@tiffany>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F2AE747A
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 07:21:04 +0000 (UTC)
+Received: from esa4.hc1455-7.c3s2.iphmx.com (esa4.hc1455-7.c3s2.iphmx.com [68.232.139.117])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86449E6;
+	Mon, 23 Oct 2023 00:21:00 -0700 (PDT)
+X-IronPort-AV: E=McAfee;i="6600,9927,10871"; a="137285934"
+X-IronPort-AV: E=Sophos;i="6.03,244,1694703600"; 
+   d="scan'208";a="137285934"
+Received: from unknown (HELO yto-r4.gw.nic.fujitsu.com) ([218.44.52.220])
+  by esa4.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2023 16:20:57 +0900
+Received: from yto-m3.gw.nic.fujitsu.com (yto-nat-yto-m3.gw.nic.fujitsu.com [192.168.83.66])
+	by yto-r4.gw.nic.fujitsu.com (Postfix) with ESMTP id 6916FD3EBD;
+	Mon, 23 Oct 2023 16:20:55 +0900 (JST)
+Received: from kws-ab3.gw.nic.fujitsu.com (kws-ab3.gw.nic.fujitsu.com [192.51.206.21])
+	by yto-m3.gw.nic.fujitsu.com (Postfix) with ESMTP id 9561BD9684;
+	Mon, 23 Oct 2023 16:20:54 +0900 (JST)
+Received: from edo.cn.fujitsu.com (edo.cn.fujitsu.com [10.167.33.5])
+	by kws-ab3.gw.nic.fujitsu.com (Postfix) with ESMTP id 29D5B20095B56;
+	Mon, 23 Oct 2023 16:20:54 +0900 (JST)
+Received: from irides.g08.fujitsu.local (unknown [10.167.226.34])
+	by edo.cn.fujitsu.com (Postfix) with ESMTP id 1C6051A0070;
+	Mon, 23 Oct 2023 15:20:53 +0800 (CST)
+From: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+To: linux-fsdevel@vger.kernel.org,
+	nvdimm@lists.linux.dev,
+	linux-xfs@vger.kernel.org,
+	linux-mm@kvack.org,
+	chandanbabu@kernel.org
+Cc: dan.j.williams@intel.com,
+	willy@infradead.org,
+	jack@suse.cz,
+	akpm@linux-foundation.org,
+	djwong@kernel.org,
+	mcgrof@kernel.org
+Subject: [PATCH v15.1] mm, pmem, xfs: Introduce MF_MEM_PRE_REMOVE for unbind
+Date: Mon, 23 Oct 2023 15:20:46 +0800
+Message-ID: <20231023072046.1626474-1-ruansy.fnst@fujitsu.com>
+X-Mailer: git-send-email 2.42.0
+In-Reply-To: <20230928103227.250550-1-ruansy.fnst@fujitsu.com>
+References: <20230928103227.250550-1-ruansy.fnst@fujitsu.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZS5hXFHs08zQOboi@arm.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Te0xbVRj39N7eFgQtjOEZSybr5hTk0SItZwbYsiG5OmcwEolOxAo3tFBK
-	1xajMgQW5LFsg4FM3mLmYCCPpYBAVwpSXgXC5pZN3jgeBYlQYY5m4JgXLjP77/f9Ht93Hvm4
-	mKOJ48KVKTSUSiGR8wlb/BejG/L81FVMCRbSECqpryHQ91V3CGToi0SPc3s46PbMXZr6MxVH
-	lorzAD2sX8fQXE4Thn4tX8bR3OpFHE0ZKlloIjsfR83mJRZabDTiKFP3EEfamXtspG8z4eiO
-	roRAkzVP2Ki1xMRGectmgK5UHkK3O8pZKP/RXwTKHv+dQL0XOljIkPkHC3XVN7NQapeFQIVj
-	YwBldq1hqG3zEY6auq0clDYuQiNXr3OOHiRrymoAubGeC8g0wyiHLNcmkGldS2yy4Zo7qa3O
-	Ikjtai6HHL+nJ8i+gg2c/DElHyMbfkomFxoKAWkx3CXIhoFE8oF2Xwjv41h/KSWJolSulCIy
-	PkqmiA7gn/gg4niESCwQegoPIz++q0ISRwXwg94N8QyWyel35Lt+IZEn0FSIRK3mewf6q+IT
-	NJSrNF6tCeBTyii50k/ppZbEqRMU0V4KSvOmUCDwEdHGz2Kl88UnlEsvfmkxnUoBs3bngA0X
-	8nyh+fwUfg7Ych15LQBOVk5jTLEK4CVL4Y6yBmBGRzbnaaR7zEIwQhuA/1Tp2EwxB2DKoJm1
-	5cJ5r8CVDv12guC9CvsaK8AWduJ5wlvp3223xXg6AlpNWnxL2MWTw5xp3bbJnjY1behZDHaA
-	psLZbY8N3eiutRFshSEv3RbWZ5lpgUMXQbDlJHO6XXCxt3HnpC7wwXIbweBYOLGSs4M1sG4w
-	ZcfzBiwyZ2yPxXhSqDfcou/PpfkDsGsUZ+gXYKbxMYeh7WFmuiOTPADbK8pwBu+B07UZbMZC
-	wqyVZOZFrrJge5qRnQP2FT1zl6JnhjHYA5bfWCWK6DjG2wsrN7kMdIP1Ou9ywK4GzpRSHRdN
-	qX2Uwv9/NzI+Tgu2d8r9rRaQt/S3VydgcUEngFyM72RfHOZLOdpHSb76mlLFR6gS5JS6E4jo
-	n7mEueyOjKeXUqGJEPoeFviKxUI/H5HAj/+S/eS3pVGOvGiJhoqlKCWleppjcW1cUlivBwXL
-	k6rOfPLytbHTxUNhRr8ZTox1JEkluJlwUXev7pCHl5ODtS7JOnQ6PFL/nne7SOZc1qrH+z8f
-	jCnYxNknW21q3xeP5ThmhEe2KTx/W+k+q4+SxSqcZOv2x68fXRi2C7hidnq+f0/S8OiK24VQ
-	N1ne7g0C24xxdgh3ST47bmf1EQxUr7Y5/4x9FDjiccYU6jAbWu0XflnxTXR9wN7guqFhpf+N
-	y9a1qYNqq5FddKz/uQmxtLly1rb3w3f4nsLE0nmtc0/wkzhLg9f9Hq6oJDjVrlR85AfNfMXN
-	QONrYVL/niMDBWH3RcX+ik5ZSXNio6H21NtzIfvj8kr6/l1sOsbH1VKJ0B1TqSX/AZTw3Tfc
-	BAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sb0wbdRjH/d1dr0dN41lmuP0JNnUbQkYHzcQnbBqjb04TErO5LWFmesIF
-	iG2pLWwTY+gyZAw3V7F1Fhh2wVFGOoG2CNZSEcqg/DFbJ5sbVJw4LI2jUAQGRLSlMe7dN8/n
-	+3meNw+FS4yCLVSRuoTXqjmljBQR3/TJktOPSrP4jHuXBFDfaiPhwpWbJHgG8+DvmmtC8E+N
-	RUczJwkIN51FsNi6isN9QwcOP1hmCbgf+YSASY8Vg8B5EwGd0w8wCDn7CKhyLRJgn7olAHe3
-	j4CbrnoSfrH9I4Bv630C+Gx2GkGjdSf4eywYmFb+JOH8xG0SBs71YOCp+hUDb2snBie9YRLM
-	4+MIqrxLOHSvrxDQ0b8shIqJ5+DO5TbhS9tZW4MNsWurNYit8NwVshZ7KVvhfSBgHc1prL3l
-	DMnaIzVCduKWm2QHv1gj2Et6E846vipngw4zYsOeMZJ1DH/ALtiTX6dzRfvyeWXRMV67+8W3
-	RYWh7kpcc1V8wuufQ3rULapGCRRD72H6x8NkNRJREvo7xDSaKlEcbGZqF3xYPCcykxVeQbw0
-	hZjFhggRAwS9g5nvcQtjmaRTmEFn04a8iU5nrlcaiZiA026SqV65S8ZAIq1kDL+5NkriaKlj
-	zY3Ft1oxxlhnFcTBk4zP/PvGBZxOY35en4mWqGjeyljXqdg4IXpsbNmJDIiufcSofcSo/d+w
-	ILwFbeY1OlWBSpepyVTzx+U6TqUrVRfI84pVdrTxOGmpXaizZU7eizAK9SKGwmWbxHWH9/AS
-	cT73fhmvLX5LW6rkdb1oK0XIksRJwXP5ErqAK+Hf5XkNr/2PYlTCFj32qTP34ILzna/9bTMX
-	PFd72hWGU2ek5aMmedbTWV1m5VnV86FrhZn20NDxMBbufCJP1VypHO43u9tzZw1yJvuiRR/Y
-	ZSdfeKwvRdLWmPFKgPtpqSHljYD4KcuhVFej+rKkbGmIHVb3Gl/7a/+4edfI6qHbOdukkm3t
-	ftNufmAtwq0nCovDzx7UU59/dPrDBt/RvUklzVyT1KS5kZPjatk5Gmg/XahWlH2pvvNe6rSt
-	nyia304oRg/M/nEi+9jQyIHsGwM/ll9cLrn+TCQo3aeYL3YYj4yYPuYWku89vvdI8PuOpZfr
-	cucmHza9+VDRtcM7U5Oe3vqqOyP5VFBTHwkldckIXSGXmYZrddy/l57xSKcDAAA=
-X-CMS-MailID: 20231023072726epcas2p22a956be89b7f25f9edf2faff418e507a
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----kpWfbNyO0dZ94JZMx8UaZzOLaVw4Eds-FlcQ7ND7-zj3ifPP=_5344b_"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20231012013524epcas2p4b50f306e3e4d0b937b31f978022844e5
-References: <20230823131350.114942-1-alexandru.elisei@arm.com>
-	<20230823131350.114942-7-alexandru.elisei@arm.com>
-	<CGME20231012013524epcas2p4b50f306e3e4d0b937b31f978022844e5@epcas2p4.samsung.com>
-	<20231010074823.GA2536665@tiffany> <ZS0va9nICZo8bF03@monolith>
-	<ZS5hXFHs08zQOboi@arm.com>
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-TM-AS-Product-Ver: IMSS-9.1.0.1417-9.0.0.1002-27952.005
+X-TM-AS-User-Approved-Sender: Yes
+X-TMASE-Version: IMSS-9.1.0.1417-9.0.1002-27952.005
+X-TMASE-Result: 10--21.286700-10.000000
+X-TMASE-MatchedRID: 91tjdmtuWYO0Tit9+Kk6bk4bkCZIwDi+fb+ZO7kHlEjKY//WmIj/oYYM
+	uV3kzHSdj6ja18TEeMjhm5RK14IfCzHiD7ssqslsKsurITpSv+OycrvYxo9Kp7Xl40gTGJ5pF6b
+	g4tIbLUSI2CAno9ubYVu3MPlIluMukZmKVOLxy1LEOJqSsn5KmW31RVaGptEha0TOsL14A2kKzN
+	3kYLPjJOIkog2fXJ1JKao4mTYQoAJkQckJEC3Q2uQoIU4rAATMKQNhMboqZlqp3QxRZDyTwzCTE
+	d+L/eo9d8mnSvYsqD7mn3xyPJAJogKQjoxqav1/b/oIJuUAIuEFeeAjqMW+l4EBeX0uQ+npwPgx
+	kqlR8CkMiVaxvErZjVDhyrIzFNxiYwDOL7t3RyGHmRpBdG9H1/lSepWcgdLPxFoXVXVzZ7+CF54
+	D/22LzbdR/tddFY/Bj/pFz/QcMFvVPASp6ZbxMfQxpA7auLwMF4r8H5YrEqx3de2OoBqgwm8RqA
+	sgLeLogcDogF3e9CyTRxvg8CdUPV4bwANKTm+ido0n+JPFcJp9LQinZ4QefPcjNeVeWlqY+gtHj
+	7OwNO0CpgETeT0ynA==
+X-TMASE-SNAP-Result: 1.821001.0001-0-1-22:0,33:0,34:0-0
 
-------kpWfbNyO0dZ94JZMx8UaZzOLaVw4Eds-FlcQ7ND7-zj3ifPP=_5344b_
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
+Changes since v15:
+ 1. Rebased on v6.6-rc7
 
-On Tue, Oct 17, 2023 at 11:26:36AM +0100, Catalin Marinas wrote:
-> On Mon, Oct 16, 2023 at 01:41:15PM +0100, Alexandru Elisei wrote:
-> > On Thu, Oct 12, 2023 at 10:25:11AM +0900, Hyesoo Yu wrote:
-> > > I don't think it would be effcient when the majority of movable pages
-> > > do not use GFP_TAGGED.
-> > > 
-> > > Metadata pages have a low probability of being in the pcp list
-> > > because metadata pages is bypassed when freeing pages.
-> > > 
-> > > The allocation performance of most movable pages is likely to decrease
-> > > if only the request with ALLOC_FROM_METADATA could be allocated.
-> > 
-> > You're right, I hadn't considered that.
-> > 
-> > > 
-> > > How about not including metadata pages in the pcp list at all ?
-> > 
-> > Sounds reasonable, I will keep it in mind for the next iteration of the
-> > series.
-> 
-> BTW, I suggest for the next iteration we drop MIGRATE_METADATA, only use
-> CMA and assume that the tag storage itself supports tagging. Hopefully
-> it makes the patches a bit simpler.
-> 
+Now, if we suddenly remove a PMEM device(by calling unbind) which
+contains FSDAX while programs are still accessing data in this device,
+e.g.:
+```
+ $FSSTRESS_PROG -d $SCRATCH_MNT -n 99999 -p 4 &
+ # $FSX_PROG -N 1000000 -o 8192 -l 500000 $SCRATCH_MNT/t001 &
+ echo "pfn1.1" > /sys/bus/nd/drivers/nd_pmem/unbind
+```
+it could come into an unacceptable state:
+  1. device has gone but mount point still exists, and umount will fail
+       with "target is busy"
+  2. programs will hang and cannot be killed
+  3. may crash with NULL pointer dereference
 
-I am curious about the plan for the next iteration.
+To fix this, we introduce a MF_MEM_PRE_REMOVE flag to let it know that we
+are going to remove the whole device, and make sure all related processes
+could be notified so that they could end up gracefully.
 
-Does tag storage itself supports tagging? Will the following version be unusable
-if the hardware does not support it? The document of google said that 
-"If this memory is itself mapped as Tagged Normal (which should not happen!)
-then tag updates on it either raise a fault or do nothing, but never change the
-contents of any other page."
-(https://github.com/google/sanitizers/blob/master/mte-dynamic-carveout/spec.md)
+This patch is inspired by Dan's "mm, dax, pmem: Introduce
+dev_pagemap_failure()"[1].  With the help of dax_holder and
+->notify_failure() mechanism, the pmem driver is able to ask filesystem
+on it to unmap all files in use, and notify processes who are using
+those files.
 
-The support of H/W is very welcome because it is good to make the patches simpler.
-But if H/W doesn't support it, Can't the new solution be used?
+Call trace:
+trigger unbind
+ -> unbind_store()
+  -> ... (skip)
+   -> devres_release_all()
+    -> kill_dax()
+     -> dax_holder_notify_failure(dax_dev, 0, U64_MAX, MF_MEM_PRE_REMOVE)
+      -> xfs_dax_notify_failure()
+      `-> freeze_super()             // freeze (kernel call)
+      `-> do xfs rmap
+      ` -> mf_dax_kill_procs()
+      `  -> collect_procs_fsdax()    // all associated processes
+      `  -> unmap_and_kill()
+      ` -> invalidate_inode_pages2_range() // drop file's cache
+      `-> thaw_super()               // thaw (both kernel & user call)
 
-Thanks,
-Regards.
+Introduce MF_MEM_PRE_REMOVE to let filesystem know this is a remove
+event.  Use the exclusive freeze/thaw[2] to lock the filesystem to prevent
+new dax mapping from being created.  Do not shutdown filesystem directly
+if configuration is not supported, or if failure range includes metadata
+area.  Make sure all files and processes(not only the current progress)
+are handled correctly.  Also drop the cache of associated files before
+pmem is removed.
 
-> -- 
-> Catalin
-> 
+[1]: https://lore.kernel.org/linux-mm/161604050314.1463742.14151665140035795571.stgit@dwillia2-desk3.amr.corp.intel.com/
+[2]: https://lore.kernel.org/linux-xfs/169116275623.3187159.16862410128731457358.stg-ugh@frogsfrogsfrogs/
 
-------kpWfbNyO0dZ94JZMx8UaZzOLaVw4Eds-FlcQ7ND7-zj3ifPP=_5344b_
-Content-Type: text/plain; charset="utf-8"
+Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+---
+ drivers/dax/super.c         |   3 +-
+ fs/xfs/xfs_notify_failure.c | 108 ++++++++++++++++++++++++++++++++++--
+ include/linux/mm.h          |   1 +
+ mm/memory-failure.c         |  21 +++++--
+ 4 files changed, 122 insertions(+), 11 deletions(-)
 
+diff --git a/drivers/dax/super.c b/drivers/dax/super.c
+index 0da9232ea175..f4b635526345 100644
+--- a/drivers/dax/super.c
++++ b/drivers/dax/super.c
+@@ -326,7 +326,8 @@ void kill_dax(struct dax_device *dax_dev)
+ 		return;
+ 
+ 	if (dax_dev->holder_data != NULL)
+-		dax_holder_notify_failure(dax_dev, 0, U64_MAX, 0);
++		dax_holder_notify_failure(dax_dev, 0, U64_MAX,
++				MF_MEM_PRE_REMOVE);
+ 
+ 	clear_bit(DAXDEV_ALIVE, &dax_dev->flags);
+ 	synchronize_srcu(&dax_srcu);
+diff --git a/fs/xfs/xfs_notify_failure.c b/fs/xfs/xfs_notify_failure.c
+index a7daa522e00f..fa50e5308292 100644
+--- a/fs/xfs/xfs_notify_failure.c
++++ b/fs/xfs/xfs_notify_failure.c
+@@ -22,6 +22,7 @@
+ 
+ #include <linux/mm.h>
+ #include <linux/dax.h>
++#include <linux/fs.h>
+ 
+ struct xfs_failure_info {
+ 	xfs_agblock_t		startblock;
+@@ -73,10 +74,16 @@ xfs_dax_failure_fn(
+ 	struct xfs_mount		*mp = cur->bc_mp;
+ 	struct xfs_inode		*ip;
+ 	struct xfs_failure_info		*notify = data;
++	struct address_space		*mapping;
++	pgoff_t				pgoff;
++	unsigned long			pgcnt;
+ 	int				error = 0;
+ 
+ 	if (XFS_RMAP_NON_INODE_OWNER(rec->rm_owner) ||
+ 	    (rec->rm_flags & (XFS_RMAP_ATTR_FORK | XFS_RMAP_BMBT_BLOCK))) {
++		/* Continue the query because this isn't a failure. */
++		if (notify->mf_flags & MF_MEM_PRE_REMOVE)
++			return 0;
+ 		notify->want_shutdown = true;
+ 		return 0;
+ 	}
+@@ -92,14 +99,60 @@ xfs_dax_failure_fn(
+ 		return 0;
+ 	}
+ 
+-	error = mf_dax_kill_procs(VFS_I(ip)->i_mapping,
+-				  xfs_failure_pgoff(mp, rec, notify),
+-				  xfs_failure_pgcnt(mp, rec, notify),
+-				  notify->mf_flags);
++	mapping = VFS_I(ip)->i_mapping;
++	pgoff = xfs_failure_pgoff(mp, rec, notify);
++	pgcnt = xfs_failure_pgcnt(mp, rec, notify);
++
++	/* Continue the rmap query if the inode isn't a dax file. */
++	if (dax_mapping(mapping))
++		error = mf_dax_kill_procs(mapping, pgoff, pgcnt,
++					  notify->mf_flags);
++
++	/* Invalidate the cache in dax pages. */
++	if (notify->mf_flags & MF_MEM_PRE_REMOVE)
++		invalidate_inode_pages2_range(mapping, pgoff,
++					      pgoff + pgcnt - 1);
++
+ 	xfs_irele(ip);
+ 	return error;
+ }
+ 
++static int
++xfs_dax_notify_failure_freeze(
++	struct xfs_mount	*mp)
++{
++	struct super_block	*sb = mp->m_super;
++	int			error;
++
++	error = freeze_super(sb, FREEZE_HOLDER_KERNEL);
++	if (error)
++		xfs_emerg(mp, "already frozen by kernel, err=%d", error);
++
++	return error;
++}
++
++static void
++xfs_dax_notify_failure_thaw(
++	struct xfs_mount	*mp,
++	bool			kernel_frozen)
++{
++	struct super_block	*sb = mp->m_super;
++	int			error;
++
++	if (kernel_frozen) {
++		error = thaw_super(sb, FREEZE_HOLDER_KERNEL);
++		if (error)
++			xfs_emerg(mp, "still frozen after notify failure, err=%d",
++				error);
++	}
++
++	/*
++	 * Also thaw userspace call anyway because the device is about to be
++	 * removed immediately.
++	 */
++	thaw_super(sb, FREEZE_HOLDER_USERSPACE);
++}
++
+ static int
+ xfs_dax_notify_ddev_failure(
+ 	struct xfs_mount	*mp,
+@@ -112,15 +165,29 @@ xfs_dax_notify_ddev_failure(
+ 	struct xfs_btree_cur	*cur = NULL;
+ 	struct xfs_buf		*agf_bp = NULL;
+ 	int			error = 0;
++	bool			kernel_frozen = false;
+ 	xfs_fsblock_t		fsbno = XFS_DADDR_TO_FSB(mp, daddr);
+ 	xfs_agnumber_t		agno = XFS_FSB_TO_AGNO(mp, fsbno);
+ 	xfs_fsblock_t		end_fsbno = XFS_DADDR_TO_FSB(mp,
+ 							     daddr + bblen - 1);
+ 	xfs_agnumber_t		end_agno = XFS_FSB_TO_AGNO(mp, end_fsbno);
+ 
++	if (mf_flags & MF_MEM_PRE_REMOVE) {
++		xfs_info(mp, "Device is about to be removed!");
++		/*
++		 * Freeze fs to prevent new mappings from being created.
++		 * - Keep going on if others already hold the kernel forzen.
++		 * - Keep going on if other errors too because this device is
++		 *   starting to fail.
++		 * - If kernel frozen state is hold successfully here, thaw it
++		 *   here as well at the end.
++		 */
++		kernel_frozen = xfs_dax_notify_failure_freeze(mp) == 0;
++	}
++
+ 	error = xfs_trans_alloc_empty(mp, &tp);
+ 	if (error)
+-		return error;
++		goto out;
+ 
+ 	for (; agno <= end_agno; agno++) {
+ 		struct xfs_rmap_irec	ri_low = { };
+@@ -165,11 +232,26 @@ xfs_dax_notify_ddev_failure(
+ 	}
+ 
+ 	xfs_trans_cancel(tp);
+-	if (error || notify.want_shutdown) {
++
++	/*
++	 * Shutdown fs from a force umount in pre-remove case which won't fail,
++	 * so errors can be ignored.  Otherwise, shutdown the filesystem with
++	 * CORRUPT flag if error occured or notify.want_shutdown was set during
++	 * RMAP querying.
++	 */
++	if (mf_flags & MF_MEM_PRE_REMOVE)
++		xfs_force_shutdown(mp, SHUTDOWN_FORCE_UMOUNT);
++	else if (error || notify.want_shutdown) {
+ 		xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_ONDISK);
+ 		if (!error)
+ 			error = -EFSCORRUPTED;
+ 	}
++
++out:
++	/* Thaw the fs if it has been frozen before. */
++	if (mf_flags & MF_MEM_PRE_REMOVE)
++		xfs_dax_notify_failure_thaw(mp, kernel_frozen);
++
+ 	return error;
+ }
+ 
+@@ -197,6 +279,14 @@ xfs_dax_notify_failure(
+ 
+ 	if (mp->m_logdev_targp && mp->m_logdev_targp->bt_daxdev == dax_dev &&
+ 	    mp->m_logdev_targp != mp->m_ddev_targp) {
++		/*
++		 * In the pre-remove case the failure notification is attempting
++		 * to trigger a force unmount.  The expectation is that the
++		 * device is still present, but its removal is in progress and
++		 * can not be cancelled, proceed with accessing the log device.
++		 */
++		if (mf_flags & MF_MEM_PRE_REMOVE)
++			return 0;
+ 		xfs_err(mp, "ondisk log corrupt, shutting down fs!");
+ 		xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_ONDISK);
+ 		return -EFSCORRUPTED;
+@@ -210,6 +300,12 @@ xfs_dax_notify_failure(
+ 	ddev_start = mp->m_ddev_targp->bt_dax_part_off;
+ 	ddev_end = ddev_start + bdev_nr_bytes(mp->m_ddev_targp->bt_bdev) - 1;
+ 
++	/* Notify failure on the whole device. */
++	if (offset == 0 && len == U64_MAX) {
++		offset = ddev_start;
++		len = bdev_nr_bytes(mp->m_ddev_targp->bt_bdev);
++	}
++
+ 	/* Ignore the range out of filesystem area */
+ 	if (offset + len - 1 < ddev_start)
+ 		return -ENXIO;
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index bf5d0b1b16f4..385eee0d05a2 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -3831,6 +3831,7 @@ enum mf_flags {
+ 	MF_UNPOISON = 1 << 4,
+ 	MF_SW_SIMULATED = 1 << 5,
+ 	MF_NO_RETRY = 1 << 6,
++	MF_MEM_PRE_REMOVE = 1 << 7,
+ };
+ int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index,
+ 		      unsigned long count, int mf_flags);
+diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+index 4d6e43c88489..6e43ae369fef 100644
+--- a/mm/memory-failure.c
++++ b/mm/memory-failure.c
+@@ -679,7 +679,7 @@ static void add_to_kill_fsdax(struct task_struct *tsk, struct page *p,
+  */
+ static void collect_procs_fsdax(struct page *page,
+ 		struct address_space *mapping, pgoff_t pgoff,
+-		struct list_head *to_kill)
++		struct list_head *to_kill, bool pre_remove)
+ {
+ 	struct vm_area_struct *vma;
+ 	struct task_struct *tsk;
+@@ -687,8 +687,15 @@ static void collect_procs_fsdax(struct page *page,
+ 	i_mmap_lock_read(mapping);
+ 	rcu_read_lock();
+ 	for_each_process(tsk) {
+-		struct task_struct *t = task_early_kill(tsk, true);
++		struct task_struct *t = tsk;
+ 
++		/*
++		 * Search for all tasks while MF_MEM_PRE_REMOVE is set, because
++		 * the current may not be the one accessing the fsdax page.
++		 * Otherwise, search for the current task.
++		 */
++		if (!pre_remove)
++			t = task_early_kill(tsk, true);
+ 		if (!t)
+ 			continue;
+ 		vma_interval_tree_foreach(vma, &mapping->i_mmap, pgoff, pgoff) {
+@@ -1792,6 +1799,7 @@ int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index,
+ 	dax_entry_t cookie;
+ 	struct page *page;
+ 	size_t end = index + count;
++	bool pre_remove = mf_flags & MF_MEM_PRE_REMOVE;
+ 
+ 	mf_flags |= MF_ACTION_REQUIRED | MF_MUST_KILL;
+ 
+@@ -1803,9 +1811,14 @@ int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index,
+ 		if (!page)
+ 			goto unlock;
+ 
+-		SetPageHWPoison(page);
++		if (!pre_remove)
++			SetPageHWPoison(page);
+ 
+-		collect_procs_fsdax(page, mapping, index, &to_kill);
++		/*
++		 * The pre_remove case is revoking access, the memory is still
++		 * good and could theoretically be put back into service.
++		 */
++		collect_procs_fsdax(page, mapping, index, &to_kill, pre_remove);
+ 		unmap_and_kill(&to_kill, page_to_pfn(page), mapping,
+ 				index, mf_flags);
+ unlock:
+-- 
+2.42.0
 
-------kpWfbNyO0dZ94JZMx8UaZzOLaVw4Eds-FlcQ7ND7-zj3ifPP=_5344b_--
 
