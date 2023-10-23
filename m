@@ -1,317 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-906-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-908-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E54C7D2C08
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 09:58:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB2967D2D26
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 10:50:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D901C281462
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 07:58:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62DE8B20E14
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 08:49:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56D2C1097A;
-	Mon, 23 Oct 2023 07:58:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 330CB11CB4;
+	Mon, 23 Oct 2023 08:49:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="MjE2z6su"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ljiBvRZr"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 464566FDD
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 07:58:00 +0000 (UTC)
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C46CD71
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 00:57:56 -0700 (PDT)
-Received: from mail-yw1-f198.google.com (mail-yw1-f198.google.com [209.85.128.198])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id A277A3F140
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 07:57:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1698047874;
-	bh=u7GScWjArWDBsmslExt09yQ/w9U+lCmA3/2l6avmmBw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=MjE2z6suaG8Ck5ZtMcWyQqzBg1ZKOq8eacg+5UXfqoJ0v6zlegZm4TiwkhrPS5ktr
-	 66pFaCuZO+mqTxxSUbKC15+/ZNAA9mHilUNf2TwRWsuWFAUvAZUdwirf1/OCD+8m53
-	 e90NxQJO8rJTpCtkOCqw7KNmEvP8Lv40AF91wP5/ZRtbzsqAzPYuOPRSFHUse6iWnf
-	 NLkc41Q76tsBOKWoonUw1EhkCtkkdINRpdkuZV8foVpaRRwWR1KuQMHaB8dkLVX23s
-	 vM657r7Qo/oOeYOdVHUfWCB0zX6flIhmRX83A9JzjHUCYHe10EXdP86tOj2/cC3pvY
-	 rGzpEhdvp3M4Q==
-Received: by mail-yw1-f198.google.com with SMTP id 00721157ae682-5a7bbe0a453so38500357b3.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 00:57:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698047873; x=1698652673;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=u7GScWjArWDBsmslExt09yQ/w9U+lCmA3/2l6avmmBw=;
-        b=V3A8Gg4qUioym81/nPwhqHySp1K7QgiPqC1+A5xHp7OiXKnK80aDu7uW9nO0grHWiz
-         YcSjRORvRvORgFbzSRPOqhnDF6KXneJ2pzCcOtn3h4f2lqSx5EAKEIzBo8Z8puOH1srb
-         kWywLQy9VGWcfhCMXsZaAbh4gYtfG6ZoRhIRpx+WqASYh4qVU0RlQX9Em7dkn6gja7l1
-         l/aOkxtNyZk2ffrj+YdF9swhDrBRqD5ZXwCcx9SmiUVXnvenR2lcSgbZQ9DelQjB4170
-         r3qdCRf03V4Mrz0MCFNhe/wMWG4RTT+Sqk/pRgdkj996zal15do0oXYp9jxPunYnXQ8w
-         eJCw==
-X-Gm-Message-State: AOJu0YwUxS3P8eTVAn/FYo5jiDE7TvMi8jK9Dk8NCmblprhskKChSdW1
-	acwQCvR/gKyDQNqDUTgkxGtQdRzLcCgn1REYygy2TnWfpEeHZWFwa5DV3/efPBSzp2NqJcYJ1Nb
-	v0uwBGQGeBw6yGFfRKpx9tLBs3u4CRCb7cf+3o8P6QhAtdS+gCLwJoJC+boyy+HdtBRA=
-X-Received: by 2002:a81:a091:0:b0:5a7:d9ce:363c with SMTP id x139-20020a81a091000000b005a7d9ce363cmr7817503ywg.6.1698047873207;
-        Mon, 23 Oct 2023 00:57:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHy+WSIuaqer8Tu4PIB5kMYpkbya8+N3WwyVpebn8chFwLsb/rKl1kccsuRoPtpYrp1bhd7Au/PM2ka8Xarfnc=
-X-Received: by 2002:a81:a091:0:b0:5a7:d9ce:363c with SMTP id
- x139-20020a81a091000000b005a7d9ce363cmr7817492ywg.6.1698047872886; Mon, 23
- Oct 2023 00:57:52 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38F910A32
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 08:49:49 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.151])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 169B4110;
+	Mon, 23 Oct 2023 01:49:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1698050988; x=1729586988;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zB75TwBLWtoFLJkkH9ws2OpWEgFKiuj86yMx6gAvD1s=;
+  b=ljiBvRZrDtyzM5/UuDHQ/Z/yFSudsXB2QvV+89e/HlPUI2/ED/hKV3Zx
+   jWiYazAFj8jKe0Y49pz/SOJASX5tVuKeDM3E0/eKtguHhFLuYvT+P8AUM
+   POxcYGbh3IgtlhxlkBz8lzIFWYKEPluY9CGRYaBVuYMWFAGSy4vljwUY3
+   XUIdBXwRj+pGLjJ7m22znPAkwOJnYz6lPpxjZTOkEreIkoz5wYXfBFjMr
+   +dEY9QfucJnDFqtlq/Glw9yg0yhqYqZRa+FjZecx8m12IhL3geVjuj/mK
+   33mMCpz0V/8mzbqYPhu0g2YoqIotPPuEJZx+dm9AMO63ktmbA4PS8UShx
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10871"; a="367026960"
+X-IronPort-AV: E=Sophos;i="6.03,244,1694761200"; 
+   d="scan'208";a="367026960"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2023 01:49:47 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10871"; a="931629271"
+X-IronPort-AV: E=Sophos;i="6.03,244,1694761200"; 
+   d="scan'208";a="931629271"
+Received: from joe-255.igk.intel.com (HELO localhost) ([10.91.220.57])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2023 01:49:45 -0700
+Date: Mon, 23 Oct 2023 10:49:43 +0200
+From: Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Matthew Wilcox <willy@infradead.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>
+Subject: Re: [PATCH] XArray: Make xa_lock_init macro
+Message-ID: <20231023084943.GE704032@linux.intel.com>
+References: <20231002082535.1516405-1-stanislaw.gruszka@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20230807132626.182101-1-aleksandr.mikhalitsyn@canonical.com>
- <bcda164b-e4b7-1c16-2714-13e3c6514b47@redhat.com> <CAEivzxf-W1-q=BkG1UndFcX_AbzH-HtHX7p6j4iAwVbKnPn+sQ@mail.gmail.com>
- <772a6282-d690-b299-6cf4-c96dd20792fa@redhat.com>
-In-Reply-To: <772a6282-d690-b299-6cf4-c96dd20792fa@redhat.com>
-From: Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Date: Mon, 23 Oct 2023 09:57:41 +0200
-Message-ID: <CAEivzxf56EXhNToVZRNZ9HsS4NKYidXqE-89oT6L-XY=s0nPcQ@mail.gmail.com>
-Subject: Re: [PATCH v10 00/12] ceph: support idmapped mounts
-To: Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>
-Cc: brauner@kernel.org, stgraber@ubuntu.com, linux-fsdevel@vger.kernel.org, 
-	Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231002082535.1516405-1-stanislaw.gruszka@linux.intel.com>
 
-On Thu, Oct 19, 2023 at 7:42=E2=80=AFAM Xiubo Li <xiubli@redhat.com> wrote:
->
->
-> On 10/17/23 17:20, Aleksandr Mikhalitsyn wrote:
-> > On Tue, Aug 8, 2023 at 2:45=E2=80=AFAM Xiubo Li <xiubli@redhat.com> wro=
-te:
-> >> LGTM.
-> >>
-> >> Reviewed-by: Xiubo Li <xiubli@redhat.com>
-> >>
-> >> I will queue this to the 'testing' branch and then we will run ceph qa
-> >> tests.
-> >>
-> >> Thanks Alex.
-> >>
-> >> - Xiubo
-> > Hi Xiubo,
-> >
-> > will this series be landed to 6.6?
-> >
-> > Userspace part was backported and merged to the Ceph Quincy release
-> > (https://github.com/ceph/ceph/pull/53139)
-> > And waiting to be tested and merged to the Ceph reef and pacific releas=
-es.
-> > But the kernel part is still in the testing branch.
->
-> This changes have been in the 'testing' branch for more than two mounts
-> and well test, till now we haven't seen any issue.
->
-> IMO it should be ready.
+On Mon, Oct 02, 2023 at 10:25:35AM +0200, Stanislaw Gruszka wrote:
+> Make xa_init_flags() macro to avoid false positive lockdep splats.
 
-Thanks, Xiubo!
-It would be awesome to have this in v.6.6.
 
-Kind regards,
-Alex
+Friendly ping. The subject should be changed to mention xa_init_flags(),
+but anything else should be done here to get it apply ?
 
->
-> Ilya ?
->
-> Thanks
->
-> - Xiubo
->
->
-> > Kind regards,
-> > Alex
-> >
-> >> On 8/7/23 21:26, Alexander Mikhalitsyn wrote:
-> >>> Dear friends,
-> >>>
-> >>> This patchset was originally developed by Christian Brauner but I'll =
-continue
-> >>> to push it forward. Christian allowed me to do that :)
-> >>>
-> >>> This feature is already actively used/tested with LXD/LXC project.
-> >>>
-> >>> Git tree (based on https://github.com/ceph/ceph-client.git testing):
-> >>> v10: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v10
-> >>> current: https://github.com/mihalicyn/linux/tree/fs.idmapped.ceph
-> >>>
-> >>> In the version 3 I've changed only two commits:
-> >>> - fs: export mnt_idmap_get/mnt_idmap_put
-> >>> - ceph: allow idmapped setattr inode op
-> >>> and added a new one:
-> >>> - ceph: pass idmap to __ceph_setattr
-> >>>
-> >>> In the version 4 I've reworked the ("ceph: stash idmapping in mdsc re=
-quest")
-> >>> commit. Now we take idmap refcounter just in place where req->r_mnt_i=
-dmap
-> >>> is filled. It's more safer approach and prevents possible refcounter =
-underflow
-> >>> on error paths where __register_request wasn't called but ceph_mdsc_r=
-elease_request is
-> >>> called.
-> >>>
-> >>> Changelog for version 5:
-> >>> - a few commits were squashed into one (as suggested by Xiubo Li)
-> >>> - started passing an idmapping everywhere (if possible), so a caller
-> >>> UID/GID-s will be mapped almost everywhere (as suggested by Xiubo Li)
-> >>>
-> >>> Changelog for version 6:
-> >>> - rebased on top of testing branch
-> >>> - passed an idmapping in a few places (readdir, ceph_netfs_issue_op_i=
-nline)
-> >>>
-> >>> Changelog for version 7:
-> >>> - rebased on top of testing branch
-> >>> - this thing now requires a new cephfs protocol extension CEPHFS_FEAT=
-URE_HAS_OWNER_UIDGID
-> >>> https://github.com/ceph/ceph/pull/52575
-> >>>
-> >>> Changelog for version 8:
-> >>> - rebased on top of testing branch
-> >>> - added enable_unsafe_idmap module parameter to make idmapped mounts
-> >>> work with old MDS server versions
-> >>> - properly handled case when old MDS used with new kernel client
-> >>>
-> >>> Changelog for version 9:
-> >>> - added "struct_len" field in struct ceph_mds_request_head as request=
-ed by Xiubo Li
-> >>>
-> >>> Changelog for version 10:
-> >>> - fill struct_len field properly (use cpu_to_le32)
-> >>> - add extra checks IS_CEPH_MDS_OP_NEWINODE(..) as requested by Xiubo =
-to match
-> >>>     userspace client behavior
-> >>> - do not set req->r_mnt_idmap for MKSNAP operation
-> >>> - atomic_open: set req->r_mnt_idmap only for CEPH_MDS_OP_CREATE as us=
-erspace client does
-> >>>
-> >>> I can confirm that this version passes xfstests and
-> >>> tested with old MDS (without CEPHFS_FEATURE_HAS_OWNER_UIDGID)
-> >>> and with recent MDS version.
-> >>>
-> >>> Links to previous versions:
-> >>> v1: https://lore.kernel.org/all/20220104140414.155198-1-brauner@kerne=
-l.org/
-> >>> v2: https://lore.kernel.org/lkml/20230524153316.476973-1-aleksandr.mi=
-khalitsyn@canonical.com/
-> >>> tree: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v2
-> >>> v3: https://lore.kernel.org/lkml/20230607152038.469739-1-aleksandr.mi=
-khalitsyn@canonical.com/#t
-> >>> v4: https://lore.kernel.org/lkml/20230607180958.645115-1-aleksandr.mi=
-khalitsyn@canonical.com/#t
-> >>> tree: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v4
-> >>> v5: https://lore.kernel.org/lkml/20230608154256.562906-1-aleksandr.mi=
-khalitsyn@canonical.com/#t
-> >>> tree: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v5
-> >>> v6: https://lore.kernel.org/lkml/20230609093125.252186-1-aleksandr.mi=
-khalitsyn@canonical.com/
-> >>> tree: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v6
-> >>> v7: https://lore.kernel.org/all/20230726141026.307690-1-aleksandr.mik=
-halitsyn@canonical.com/
-> >>> tree: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v7
-> >>> v8: https://lore.kernel.org/all/20230803135955.230449-1-aleksandr.mik=
-halitsyn@canonical.com/
-> >>> tree: -
-> >>> v9: https://lore.kernel.org/all/20230804084858.126104-1-aleksandr.mik=
-halitsyn@canonical.com/
-> >>> tree: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v9
-> >>>
-> >>> Kind regards,
-> >>> Alex
-> >>>
-> >>> Original description from Christian:
-> >>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >>> This patch series enables cephfs to support idmapped mounts, i.e. the
-> >>> ability to alter ownership information on a per-mount basis.
-> >>>
-> >>> Container managers such as LXD support sharaing data via cephfs betwe=
-en
-> >>> the host and unprivileged containers and between unprivileged contain=
-ers.
-> >>> They may all use different idmappings. Idmapped mounts can be used to
-> >>> create mounts with the idmapping used for the container (or a differe=
-nt
-> >>> one specific to the use-case).
-> >>>
-> >>> There are in fact more use-cases such as remapping ownership for
-> >>> mountpoints on the host itself to grant or restrict access to differe=
-nt
-> >>> users or to make it possible to enforce that programs running as root
-> >>> will write with a non-zero {g,u}id to disk.
-> >>>
-> >>> The patch series is simple overall and few changes are needed to ceph=
-fs.
-> >>> There is one cephfs specific issue that I would like to discuss and
-> >>> solve which I explain in detail in:
-> >>>
-> >>> [PATCH 02/12] ceph: handle idmapped mounts in create_request_message(=
-)
-> >>>
-> >>> It has to do with how to handle mds serves which have id-based access
-> >>> restrictions configured. I would ask you to please take a look at the
-> >>> explanation in the aforementioned patch.
-> >>>
-> >>> The patch series passes the vfs and idmapped mount testsuite as part =
-of
-> >>> xfstests. To run it you will need a config like:
-> >>>
-> >>> [ceph]
-> >>> export FSTYP=3Dceph
-> >>> export TEST_DIR=3D/mnt/test
-> >>> export TEST_DEV=3D10.103.182.10:6789:/
-> >>> export TEST_FS_MOUNT_OPTS=3D"-o name=3Dadmin,secret=3D$password
-> >>>
-> >>> and then simply call
-> >>>
-> >>> sudo ./check -g idmapped
-> >>>
-> >>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >>>
-> >>> Alexander Mikhalitsyn (3):
-> >>>     fs: export mnt_idmap_get/mnt_idmap_put
-> >>>     ceph: add enable_unsafe_idmap module parameter
-> >>>     ceph: pass idmap to __ceph_setattr
-> >>>
-> >>> Christian Brauner (9):
-> >>>     ceph: stash idmapping in mdsc request
-> >>>     ceph: handle idmapped mounts in create_request_message()
-> >>>     ceph: pass an idmapping to mknod/symlink/mkdir
-> >>>     ceph: allow idmapped getattr inode op
-> >>>     ceph: allow idmapped permission inode op
-> >>>     ceph: allow idmapped setattr inode op
-> >>>     ceph/acl: allow idmapped set_acl inode op
-> >>>     ceph/file: allow idmapped atomic_open inode op
-> >>>     ceph: allow idmapped mounts
-> >>>
-> >>>    fs/ceph/acl.c                 |  6 +--
-> >>>    fs/ceph/crypto.c              |  2 +-
-> >>>    fs/ceph/dir.c                 |  4 ++
-> >>>    fs/ceph/file.c                | 11 ++++-
-> >>>    fs/ceph/inode.c               | 29 +++++++------
-> >>>    fs/ceph/mds_client.c          | 78 +++++++++++++++++++++++++++++++=
-+---
-> >>>    fs/ceph/mds_client.h          |  8 +++-
-> >>>    fs/ceph/super.c               |  7 +++-
-> >>>    fs/ceph/super.h               |  3 +-
-> >>>    fs/mnt_idmapping.c            |  2 +
-> >>>    include/linux/ceph/ceph_fs.h  | 10 ++++-
-> >>>    include/linux/mnt_idmapping.h |  3 ++
-> >>>    12 files changed, 136 insertions(+), 27 deletions(-)
-> >>>
->
+Regards
+Stanislaw
+
+
+> When spin_lock_init() is used inside initialization function (like
+> in xa_init_flags()) which can be called many times, lockdep assign
+> the same key to different locks.
+> 
+> For example this splat is seen with intel_vpu driver which uses
+> two xarrays and has two separate xa_init_flags() calls:
+> 
+> [ 1139.148679] WARNING: inconsistent lock state
+> [ 1139.152941] 6.6.0-hardening.1+ #2 Tainted: G           OE
+> [ 1139.158758] --------------------------------
+> [ 1139.163024] inconsistent {HARDIRQ-ON-W} -> {IN-HARDIRQ-W} usage.
+> [ 1139.169018] kworker/10:1/109 [HC1[1]:SC0[0]:HE0:SE1] takes:
+> [ 1139.174576] ffff888137237150 (&xa->xa_lock#18){?.+.}-{2:2}, at: ivpu_mmu_user_context_mark_invalid+0x1c/0x80 [intel_vpu]
+> [ 1139.185438] {HARDIRQ-ON-W} state was registered at:
+> [ 1139.190305]   lock_acquire+0x1a3/0x4a0
+> [ 1139.194055]   _raw_spin_lock+0x2c/0x40
+> [ 1139.197800]   ivpu_submit_ioctl+0xf0b/0x3520 [intel_vpu]
+> [ 1139.203114]   drm_ioctl_kernel+0x201/0x3f0 [drm]
+> [ 1139.207791]   drm_ioctl+0x47d/0xa20 [drm]
+> [ 1139.211846]   __x64_sys_ioctl+0x12e/0x1a0
+> [ 1139.215849]   do_syscall_64+0x59/0x90
+> [ 1139.219509]   entry_SYSCALL_64_after_hwframe+0x6e/0xd8
+> [ 1139.224636] irq event stamp: 45500
+> [ 1139.228037] hardirqs last  enabled at (45499): [<ffffffff92ef0314>] _raw_spin_unlock_irq+0x24/0x50
+> [ 1139.236961] hardirqs last disabled at (45500): [<ffffffff92eadf8f>] common_interrupt+0xf/0x90
+> [ 1139.245457] softirqs last  enabled at (44956): [<ffffffff92ef3430>] __do_softirq+0x4c0/0x712
+> [ 1139.253862] softirqs last disabled at (44461): [<ffffffff907df310>] irq_exit_rcu+0xa0/0xd0
+> [ 1139.262098]
+>                other info that might help us debug this:
+> [ 1139.268604]  Possible unsafe locking scenario:
+> 
+> [ 1139.274505]        CPU0
+> [ 1139.276955]        ----
+> [ 1139.279403]   lock(&xa->xa_lock#18);
+> [ 1139.282978]   <Interrupt>
+> [ 1139.285601]     lock(&xa->xa_lock#18);
+> [ 1139.289345]
+>                 *** DEADLOCK ***
+> 
+> Lockdep falsely identified xa_lock from two different xarrays as the same
+> lock and report deadlock. More detailed description of the problem
+> is provided in commit c21f11d182c2 ("drm: fix drmm_mutex_init()")
+> 
+> Signed-off-by: Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>
+> ---
+>  include/linux/xarray.h | 17 +++++++----------
+>  1 file changed, 7 insertions(+), 10 deletions(-)
+> 
+> diff --git a/include/linux/xarray.h b/include/linux/xarray.h
+> index cb571dfcf4b1..409d9d739ee9 100644
+> --- a/include/linux/xarray.h
+> +++ b/include/linux/xarray.h
+> @@ -375,12 +375,12 @@ void xa_destroy(struct xarray *);
+>   *
+>   * Context: Any context.
+>   */
+> -static inline void xa_init_flags(struct xarray *xa, gfp_t flags)
+> -{
+> -	spin_lock_init(&xa->xa_lock);
+> -	xa->xa_flags = flags;
+> -	xa->xa_head = NULL;
+> -}
+> +#define xa_init_flags(_xa, _flags)	\
+> +do {					\
+> +	spin_lock_init(&(_xa)->xa_lock);\
+> +	(_xa)->xa_flags = (_flags);	\
+> +	(_xa)->xa_head = NULL;		\
+> +} while (0)
+>  
+>  /**
+>   * xa_init() - Initialise an empty XArray.
+> @@ -390,10 +390,7 @@ static inline void xa_init_flags(struct xarray *xa, gfp_t flags)
+>   *
+>   * Context: Any context.
+>   */
+> -static inline void xa_init(struct xarray *xa)
+> -{
+> -	xa_init_flags(xa, 0);
+> -}
+> +#define xa_init(xa) xa_init_flags(xa, 0)
+>  
+>  /**
+>   * xa_empty() - Determine if an array has any present entries.
+> -- 
+> 2.25.1
+> 
 
