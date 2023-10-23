@@ -1,119 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-930-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-931-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B926D7D38F8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 16:08:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3F417D394B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 16:28:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62DC928107B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 14:08:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 394DA1C20A0C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 14:28:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FA691B282;
-	Mon, 23 Oct 2023 14:08:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87F701B29F;
+	Mon, 23 Oct 2023 14:28:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Szg7Da0f"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RQgR5MdW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D91813FE5
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 14:08:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAA1EC433C8;
-	Mon, 23 Oct 2023 14:08:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1698070106;
-	bh=3gWo7tjBRuYZBJ9f+7lIbsNH/KkmhwnNlWXy4mRvp9s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Szg7Da0f3wnwQL27SHYE6vRppiIKmUoLGjknTMmg7hDaRzs2YVNgeA4Y5mqLIeLec
-	 Iq23GC2pziIxZM42pnEFcfX3FH2QH1XdVunea72/GcIiQgask8oqzHmHnPsVR9sjwp
-	 1nBF0v+6eOkI/36t8eY98NwOROQlDtWUL6mBTgCpiqWOCJzy27sdflFLICCCk/+O2q
-	 qykaoUPQDZ/0e9RTMvCywZ3bbPAzC+9XGNFwdVQIWGw/PM1Ir6TEIKtunPOpyzsurE
-	 OcuS73wE+CXF5mMWfAF3T2GGDXSdwkSyiFUhmiguvMV1o1RUNGKtpRIi3XWue27tTc
-	 4PE5EcHFdTESg==
-Date: Mon, 23 Oct 2023 16:08:21 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
-Subject: LOOP_CONFIGURE uevents
-Message-ID: <20231023-biberbau-spatzen-282ccea0825a@brauner>
-References: <20231018152924.3858-1-jack@suse.cz>
- <20231019-galopp-zeltdach-b14b7727f269@brauner>
- <ZTExy7YTFtToAOOx@infradead.org>
- <20231020-enthusiasmus-vielsagend-463a7c821bf3@brauner>
- <20231020120436.jgxdlawibpfuprnz@quack3>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F3E6134DF;
+	Mon, 23 Oct 2023 14:28:46 +0000 (UTC)
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 561A9DD;
+	Mon, 23 Oct 2023 07:28:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=eJ9wptQOy3DXDZN8YbGeVcfaYB+0Ek+ymB3Thh5UoEU=; b=RQgR5MdWu7alC+E8XMn/GCeCtl
+	oqT+IVASajqYJp/YWUEoMbj3gr9x2OELGrz07E8RGC3vHSOY5+MXU5RBG1ztPRHRliZKrjmk+769O
+	rgNvcDcPHamAdKTLnCd93aV3h2eSUS4w+EVcfuw2xDs8vBWCDWtOhZ+Df0wve4/7IrJungvP/DqSl
+	jAHZeyordi6IYUIZknSeYFb+tyOIvPdUF5L5BLBTiQrH5KHQqCvpuNxJFFQ/NPPjapQ6/lbXj+Zob
+	qc8rtsTSsAO95oYo7vn0aC9Vk+Pq65ADTb3XD+nzGqIHOB52r15OR2t9c2xU+lMYgV+yejNFXH5Ap
+	I3E7JVFg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+	id 1quvv3-00EH5J-PT; Mon, 23 Oct 2023 14:28:37 +0000
+Date: Mon, 23 Oct 2023 15:28:37 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: "Andreas Hindborg (Samsung)" <nmi@metaspace.dk>
+Cc: Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Kent Overstreet <kent.overstreet@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-fsdevel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	Wedson Almeida Filho <walmeida@microsoft.com>
+Subject: Re: [RFC PATCH 09/19] rust: folio: introduce basic support for folios
+Message-ID: <ZTaDFe/s2wvyI9u2@casper.infradead.org>
+References: <20231018122518.128049-1-wedsonaf@gmail.com>
+ <20231018122518.128049-10-wedsonaf@gmail.com>
+ <ZTATIhi9U6ObAnN7@casper.infradead.org>
+ <CANeycqoWfWJ5bxuh+UWK99D9jYH0cKKy1=ikHJTpY=fP1ZJMrg@mail.gmail.com>
+ <ZTAwLGi4sCup+B1r@casper.infradead.org>
+ <CANeycqrp_s20pCO_OJXHpqN5tZ_Uq5icTupWiVeLf69JOFj4cA@mail.gmail.com>
+ <ZTH9+sF+NPyRjyRN@casper.infradead.org>
+ <87h6mhfwbm.fsf@metaspace.dk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231020120436.jgxdlawibpfuprnz@quack3>
+In-Reply-To: <87h6mhfwbm.fsf@metaspace.dk>
 
-> > And one final question:
-> > 
-> > dev_set_uevent_suppress(disk_to_dev(lo->lo_disk), 1);
-> > disk_force_media_change(lo->lo_disk);
-> > /* more stuff */
-> > dev_set_uevent_suppress(disk_to_dev(lo->lo_disk), 0);
-> > 
-> > What exactly does that achieve? Does it just delay the delivery of the
-> > uevent after the disk sequence number was changed in
-> > disk_force_media_change()? Because it doesn't seem to actually prevent
-> > uevent generation.
-> 
-> Well, if you grep for dev_get_uevent_suppress() you'll notice there is
-> exactly *one* place looking at it - the generation of ADD event when adding
-> a partition bdev. I'm not sure what's the rationale behind this
-> functionality.
+On Mon, Oct 23, 2023 at 12:48:33PM +0200, Andreas Hindborg (Samsung) wrote:
+> The build system and Rust compiler can inline and optimize across
+> function calls and languages when LTO is enabled. Some patches are
+> needed to make it work though.
 
-I looked at dev_set_uevent_suppress() before and what it does is that it
-fully prevents the generation of uevents for the kobject. It doesn't
-just hold them back like the comments "uncork" in loop_change_fd() and
-loop_configure() suggest:
+That's fine, but something like folio_put() is performance-critical.
 
-static inline void dev_set_uevent_suppress(struct device *dev, int val)
+Relying on the linker to figure out that it _should_ inline through
+
++void rust_helper_folio_put(struct folio *folio)
++{
++	folio_put(folio);
++}
++EXPORT_SYMBOL_GPL(rust_helper_folio_put);
+
+seems like a very bad idea to me.  For reference, folio_put() is
+defined as:
+
+static inline void folio_put(struct folio *folio)
 {
-        dev->kobj.uevent_suppress = val;
+        if (folio_put_testzero(folio))
+                __folio_put(folio);
 }
 
-and then
+which turns into (once you work your way through all the gunk that hasn't
+been cleaned up yet)
 
-int kobject_uevent_env(struct kobject *kobj, enum kobject_action action,
-                       char *envp_ext[])
-{
+	if (atomic_dec_and_test(&folio->_refcount))
+		__folio_put(folio)
 
-        [...]
- 
-        /* skip the event, if uevent_suppress is set*/
-        if (kobj->uevent_suppress) {
-                pr_debug("kobject: '%s' (%p): %s: uevent_suppress "
-                                 "caused the event to drop!\n",
-                                 kobject_name(kobj), kobj, __func__);
-                return 0;
-        }
+ie it's a single dec-and-test insn followed by a conditional function
+call.  Yes, there's some expensive debug you can turn on in there, but
+it's an incredibly frequent call, and we shouldn't be relying on linker
+magic to optimise it all away.
 
-So commit 498ef5c777d9 ("loop: suppress uevents while reconfiguring the device")
-tried to fix a problem where uevents were generated for LOOP_SET_FD
-before LOOP_SET_STATUS* was called.
+Of course, I don't want to lose the ability to turn on the debug code,
+so folio.put() can't be as simple as the call to atomic_dec_and_test(),
+but I hope you see my point.
 
-That broke LOOP_CONFIGURE because LOOP_CONFIGURE is supposed to be
-LOOP_SET_FD + LOOP_SET_STATUS in one shot.
+Wedson wrote in a later email,
+> Having said that, while it's possible to do what you suggested above,
+> we try to avoid it so that maintainers can continue to have a single
+> place they need to change if they ever decide to change things. A
+> simple example from above is order(), if you decide to implement it
+> differently (I don't know, if you change the flag, you decide to have
+> an explicit field, whatever), then you'd have to change the C _and_
+> the Rust versions. Worse yet, there's a chance that forgetting to
+> update the Rust version wouldn't break the build, which would make it
+> harder to catch mismatched versions.
 
-Then commit bb430b694226 ("loop: LOOP_CONFIGURE: send uevents for partitions")
-fixed that by moving loop_reread_partitions() out of the uevent
-suppression.
+I understand that concern!  Indeed, I did change the implementation
+of folio_order() recently.  I'm happy to commit to keeping the Rust
+implementation updated as I modify the C implementation of folios,
+but I appreciate that other maintainers may not be willing to make such
+a commitment.
 
-No you get uevents if you trigger a partition rescan but only if there
-are actually partitions. What you never get however is a media change
-event even though we do increment the disk sequence number and attach an
-image to the loop device.
-
-This seems problematic because we leave userspace unable to listen for
-attaching images to a loop device. Shouldn't we regenerate the media
-change event after we're done setting up the device and before the
-partition rescan for LOOP_CONFIGURE?
+I'm all the way up to Chapter 5: References in the Blandy book now!
+I expect to understand the patches you're sending any week now ;-)
 
