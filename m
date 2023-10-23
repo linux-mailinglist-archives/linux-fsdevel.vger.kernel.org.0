@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-953-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-958-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F01697D3F3D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 20:31:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09B597D3F46
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 20:31:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D0D91C20AF8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 18:31:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2E8D281723
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 18:31:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14E6F21A09;
-	Mon, 23 Oct 2023 18:31:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5BF7219FD;
+	Mon, 23 Oct 2023 18:31:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b="zZiIJIqt"
+	dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b="pJd9bnAA"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E62219F2
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 18:31:05 +0000 (UTC)
-Received: from outbound-ip179a.ess.barracuda.com (outbound-ip179a.ess.barracuda.com [209.222.82.47])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BD28100
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 11:30:59 -0700 (PDT)
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04lp2041.outbound.protection.outlook.com [104.47.74.41]) by mx-outbound47-12.us-east-2c.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Mon, 23 Oct 2023 18:30:46 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF37219FC
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 18:31:39 +0000 (UTC)
+Received: from outbound-ip7a.ess.barracuda.com (outbound-ip7a.ess.barracuda.com [209.222.82.174])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32F9E8E
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 11:31:28 -0700 (PDT)
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2041.outbound.protection.outlook.com [104.47.66.41]) by mx-outbound10-173.us-east-2a.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Mon, 23 Oct 2023 18:30:47 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ZRj995sMZulNT64zkuGT7xAkhc0FxX1humEZOiuXhODMAEGyHG+iIXzHl7CMiUg2QYk3+eLjWB6ESp5lW7mhAob4J1rgMhzvdpv9TgnNVUOrdnWqEdB0j8UwWUEfpGxuFR7OmVlPfTHvYiMBHY4zbqmI5FSzes5vTgqv5ze5JllEIgAwE1h6lkPIrq0S1zzythcXulVqKRzH2+1HpCVsyv7So6m6ubOp55Qv/P297j6L/+nX+O21335OzeVuFfolcaCP7tcNftII/sDdG8F4Fd/ernlkMh0nUhWThLiE1V2qWJ9rCiROwwNaGJ5OHoAZKyFmkjIdY6W6THjCloMAVA==
+ b=M8sA7cs4MsZvogDWhAz+kOCMlPx3B3TBSspbP8jJDEEs0Tzw8VnHsksHi6H6BUducmBPgZ5pQ8a3I3c+CJoR6AlJwGtGQoH6mXQmhC92KaaxxkRfzSl7iLO2V4eXNQJ/plrHiI9nsRpfFhP2RwE3KJ5qCcFEYPAFFxk/PCcbBhoUygRrH6DVhB26ZnvbCsh50WMIxRkyVs+KHOtKrR2BNZLqb5fNHScKPz4ThGewMEBuMuBFUundxEII60cPPAmYjfK5OvLZygWszqcOgLIggFGQGwDzWB0dKw/R8/CcgCtEd/jduS81jyfURNhRHojH+hhBaD7dBSezAkEuJLEzrg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jC8HcmX/NlF7J1DEGtJ7Fl7q/p5K7KFOWCXDW4M5qDI=;
- b=EEszzpRpp1xRF0wkHzpvZbUBxB1HTnqkp38SM98WPtJrEmyjWU0GFHzmD9UyUsE9kobOrxCOAebRnMLmS5Xvm2agtoYR4oxf+6zkcxgwczjwYIJsAm/ip7krCjWD1iUM69xqCmGE0t0Y5n0CX4ztdQ9h/HDOjLF8X5foL1AKz/Pp72+iuKkMFISR9VCt75+x9PWureK1hMGnuS2TuQKFBeD1LUBRwXrUlgyW1K2zgLTRIFu13liyfUK7/uoy42o7PbwmxCmvzEmxCLff07t2B+bjfLSTEV82Uoc8lTB28t8Y08u+R8IvF9IthYXlMv9nZEhoo6qMogzHcY9q9OINDA==
+ bh=XnGsrkVVMqV1KMJdP9tisj9vGiOk5M8tb+zWEZdFth0=;
+ b=LAPEystHuOY7C9p19ONSfhr5xqKHBI1bdn0UTHKGb3zHS1fNO/iKJVXnClUT2Afb3c0h+0YaViKgCDV3SGeWXqmaEwj1lV9UxsQPyNnCFZL1mTEJMMSrFMsGTh7RXzJ48Mp01xyGaTS/+O2BQo1+7xEBIZfyX4V9bnOhnrQKUHKDNf/aRF2yfSFasAsuECzwZfjfJ+MTfHTzvxAvu8ozFaINAbikSJOaRbPt22PwYQugC1x/Q/szutcr/q4MXAgQM5R22ZMA6qqgD6aKsoEz5ZB8O3nXQNBIe2hCynmNgeBAVUvBZzauyCNzhS1mKKOzAIGEXG/x+B+paibF/wDVRQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  50.222.100.11) smtp.rcpttodomain=ddn.com smtp.mailfrom=ddn.com; dmarc=pass
  (p=reject sp=reject pct=100) action=none header.from=ddn.com; dkim=none
  (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ddn.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jC8HcmX/NlF7J1DEGtJ7Fl7q/p5K7KFOWCXDW4M5qDI=;
- b=zZiIJIqtb+35QBRGVAOFOg3wqDMzU/y8DtZdYZlyEk01t098yZCQ5Zuemajk/nXS7VlrOO5ya81ioAh8+aMZpCg9iKCksaM/bnXLmVLIX1diD89ZsxoOb8A5PlgiNcudd2E6jNIbVaD37smjzesuHkJs2Rrk7oaq53n1fy82AII=
-Received: from MW4PR03CA0312.namprd03.prod.outlook.com (2603:10b6:303:dd::17)
- by SA1PR19MB4880.namprd19.prod.outlook.com (2603:10b6:806:1aa::17) with
+ bh=XnGsrkVVMqV1KMJdP9tisj9vGiOk5M8tb+zWEZdFth0=;
+ b=pJd9bnAAWerg727xKVl8IjMpnwWJSDx6gOJahaIcMry3KhWNtMxf5Nf5+JAMOsjkbX4U5XA/kiAGgTvdfF1UPjdwdxG7VLbtMKIcMmbeKUGNFTstGJ22OPpxHD25/lDd3xMMIqmPcDzSXxAC9aZdmZZhCYYu6oJcdsH65JYPswA=
+Received: from BN8PR15CA0045.namprd15.prod.outlook.com (2603:10b6:408:80::22)
+ by PH7PR19MB6505.namprd19.prod.outlook.com (2603:10b6:510:1fb::6) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6907.26; Mon, 23 Oct
- 2023 18:30:43 +0000
-Received: from MW2NAM04FT024.eop-NAM04.prod.protection.outlook.com
- (2603:10b6:303:dd:cafe::7b) by MW4PR03CA0312.outlook.office365.com
- (2603:10b6:303:dd::17) with Microsoft SMTP Server (version=TLS1_2,
+ 2023 18:30:42 +0000
+Received: from BN8NAM04FT004.eop-NAM04.prod.protection.outlook.com
+ (2603:10b6:408:80:cafe::96) by BN8PR15CA0045.outlook.office365.com
+ (2603:10b6:408:80::22) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6907.33 via Frontend
  Transport; Mon, 23 Oct 2023 18:30:42 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 50.222.100.11)
@@ -56,12 +56,12 @@ Received-SPF: Pass (protection.outlook.com: domain of ddn.com designates
  50.222.100.11 as permitted sender) receiver=protection.outlook.com;
  client-ip=50.222.100.11; helo=uww-mx01.datadirectnet.com; pr=C
 Received: from uww-mx01.datadirectnet.com (50.222.100.11) by
- MW2NAM04FT024.mail.protection.outlook.com (10.13.30.177) with Microsoft SMTP
+ BN8NAM04FT004.mail.protection.outlook.com (10.13.161.176) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6933.18 via Frontend Transport; Mon, 23 Oct 2023 18:30:42 +0000
+ 15.20.6933.16 via Frontend Transport; Mon, 23 Oct 2023 18:30:42 +0000
 Received: from localhost (unknown [10.68.0.8])
-	by uww-mx01.datadirectnet.com (Postfix) with ESMTP id 7E6D020C684B;
-	Mon, 23 Oct 2023 12:31:45 -0600 (MDT)
+	by uww-mx01.datadirectnet.com (Postfix) with ESMTP id 778A220C684C;
+	Mon, 23 Oct 2023 12:31:46 -0600 (MDT)
 From: Bernd Schubert <bschubert@ddn.com>
 To: linux-fsdevel@vger.kernel.org
 Cc: bernd.schubert@fastmail.fm,
@@ -69,11 +69,11 @@ Cc: bernd.schubert@fastmail.fm,
 	dsingh@ddn.com,
 	Bernd Schubert <bschubert@ddn.com>,
 	Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Amir Goldstein <amir73il@gmail.com>
-Subject: [PATCH v10 3/8] [RFC] Allow atomic_open() on positive dentry (O_CREAT)
-Date: Mon, 23 Oct 2023 20:30:30 +0200
-Message-Id: <20231023183035.11035-4-bschubert@ddn.com>
+	Amir Goldstein <amir73il@gmail.com>,
+	Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH v10 4/8] [RFC] Allow atomic_open() on positive dentry (w/o O_CREAT)
+Date: Mon, 23 Oct 2023 20:30:31 +0200
+Message-Id: <20231023183035.11035-5-bschubert@ddn.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20231023183035.11035-1-bschubert@ddn.com>
 References: <20231023183035.11035-1-bschubert@ddn.com>
@@ -86,54 +86,54 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW2NAM04FT024:EE_|SA1PR19MB4880:EE_
+X-MS-TrafficTypeDiagnostic: BN8NAM04FT004:EE_|PH7PR19MB6505:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 26a59001-2d36-4617-0692-08dbd3f62a13
+X-MS-Office365-Filtering-Correlation-Id: 4032c68d-5cce-403a-10fb-08dbd3f62a21
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info:
-	zoVWP2WfZnx3JDIM153e02P5NEmQNFCPyvieVW+vvXHprX8kq9lLw7CX/iJaWIzAHd8m/X0/BdKhhVxZgse+IaY+koX9gzFAI0sC0KpI5HceZynJV/OGOt5ybO7nXfyHHqWIA6HAYFglumkQUkCBBLcXokzsQEIBbqV684GSZhoglqAP+OF6I1e1tUcWs3pbHaINrGZ/QHGIQTNQ9z8BKlYuhmYq3/Zvo3YDOQiogphm6zDUDIqzuwbnA1jeM3RTfm1BJEMN/qacNVnDL5vjX2HeFRMy6SA/VzG9lM5izAOdyoLPKQalNcLpVwxYFCO57MGsjDsVEkr5E8JQNpNINLDKDpl8X3zTGztgZzuG/7ogGa7zYpNl4AgP85G5hz6EHvrjzJPM8x86KzyQexs121uVHF+VhJT1SZikRRGjqZ34hYiGRAs0bJZn++IoCYysqjZbp9lfnjeI2gmJGe3Dgw8XhOg54I9dZMgg8HHyhjhmuy7uEFVR/XKy7u22/bmqtdkZc6nFw9cSDxYchr55oPmOiRLuWo3/N4HQLGHpcsId1dBJieks7Sxgu06YtxXWCMqp8z58HmPibeIYSLEjvdcXg1uHPFVJIPRKk6Xa7FA8NOcVxga+kf+Lv4gtaoQxwAoTTWorIjMo8aE24Z7uKuIvoPkO1SizXTLxtfXxCbtnLSC2wMnD+kiHLYDlbxRp/Ql2HPXzxMnWlaMFURZb/tizV4Ubhzr/vqi/3haC1mv41EHEQlkiZjwjjPxykrzj
+	ON/CzRpJdoXCVtFMF5gG4gPjLjziT49x+Fk5oa+e8MH0hYqF12gWcCSG4AtNoi9S+tzd3wdLXIzdyqkV+T0eTyFDz4sPpP95g3QQGkMiiGUhaTuySXa6hKm2ukbK9kZScZAYkrEOLANO136veqcPlELABTMiL64T9sUxwZO5vAV3K2OqDOtXkpPOyj+3a0kazXt2okVs0jHvXwf0w9njeyQVEFFcxZsVaXWZ8T+bDyrXt6CKUneZjOy3ngeovVPC4RWIsJ4AOPVBg1D5VJWNS/A4lrg6KIKNcVHBRoeB93oqfE9SsWduwNZyY5zyhmX8mqJvXy5LuO1lT36v7ETjeHt1F117taQRFyvT22XJN+PoUyhDLle2rnBT+MsqBR/XTXCoZY67H/WcheuKe3mW1n2CMelQ2j0pFFfv+8tzvrPiBh1ypWIlexAAZM6orDoTGXDaA7FulJBwrvmy2MnLd4Cc7E6rZsQ6amc+yRgr6PCDPHKcPQ2XEIZMaob/7RQE5E6vnJKaEFh2YkxcYNXAzqVl4gSe3+R+iVT90MpuWzSc5mbxP3ssOzORmRh6jGljCjwNo+5UOwvc42TruPFXBJRGXaEjaCDgEXW9f5Syd7LRoBZfsKWhV27KxpQsFp9SyN8Re0Bca+E8ysjNBCnAqU2sm6B/4MUT9/KHrkYDoR/P0SbTlyDe2A8u/wzQDfARb29y4ArBZS8PPLzgeyZlbwMSHdvmIayjSlhM7vXEYkqWljNyLU1IkwInZSJxzSHn
 X-Forefront-Antispam-Report:
-	CIP:50.222.100.11;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:uww-mx01.datadirectnet.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(4636009)(136003)(376002)(396003)(39850400004)(346002)(230922051799003)(451199024)(1800799009)(186009)(82310400011)(64100799003)(36840700001)(46966006)(81166007)(356005)(82740400003)(86362001)(40480700001)(36756003)(316002)(54906003)(6916009)(70586007)(2616005)(70206006)(478600001)(1076003)(6666004)(8676002)(8936002)(4326008)(41300700001)(5660300002)(26005)(2906002)(47076005)(36860700001)(6266002)(336012)(83380400001)(36900700001);DIR:OUT;SFP:1101;
+	CIP:50.222.100.11;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:uww-mx01.datadirectnet.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(4636009)(346002)(136003)(39850400004)(396003)(376002)(230922051799003)(64100799003)(82310400011)(186009)(451199024)(1800799009)(46966006)(36840700001)(40480700001)(41300700001)(6666004)(2906002)(86362001)(478600001)(4326008)(8936002)(8676002)(70206006)(6916009)(5660300002)(316002)(70586007)(54906003)(83380400001)(47076005)(6266002)(356005)(82740400003)(336012)(81166007)(26005)(36756003)(36860700001)(1076003)(2616005)(36900700001);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	=?us-ascii?Q?Yfyk5pP++P++3tutR0707tDjmSi3pMJtIIZ2jhykWfcnt/UgfevST9Q/YoIR?=
- =?us-ascii?Q?QgE8cVzhX7DeVYigwLB406V9Tf7/MgQNzSPOCzJDR6rI8mEK4An3C9GNzxwp?=
- =?us-ascii?Q?1yVRnzyHrBO6pLBZa1ckCf8vzJIVUyITgrod0XT4Jf9wks6po9Z5jfwjGCWl?=
- =?us-ascii?Q?BNhYQc6Jty6MS+KGtwCIkrFAkpP3KkOseACdGCdRSr0hdbreQJBBWIifjK6p?=
- =?us-ascii?Q?0Y9L+kTewmveJs2+xQNDJ03luLR+5u+SikudXgeWEVd2eXXSV0bTjrVg8S2q?=
- =?us-ascii?Q?33WNIBLEXa7skuiv4HTmDMkOPW7FGxAx9fn3aXIRUtgbog1hbFTAr2Xf4Ffo?=
- =?us-ascii?Q?uny9zqYIOk4X6z0dgcDKUF20rhFXNAEwpzvG9I41oMKkdSUEFAgUcxkS5Fdg?=
- =?us-ascii?Q?dr/xRhxk1910S4+0A4mypn/AG2FKSR06Id2Y33RfDMXkelPmiHLkkCZpSiuC?=
- =?us-ascii?Q?zXkZd/s2rxowHpQbECi6NJLVSoYqeVvPlijeAWMius3yB8j0YkntmIxLtx2l?=
- =?us-ascii?Q?VZzIPF2NNmEDPlU+OFbdjl9gQ70sQCPZ3KQStTl4tiJl7ZJBc63RMQvZ4FTD?=
- =?us-ascii?Q?aWyQPEIVDPCleLEBsxQhYCZZF5lDOFY9oql4Fj2P3p135fCOfZY8bg8gCRx9?=
- =?us-ascii?Q?UAu6jzylLYvRdXFxIQatSYFr6s/ikT3li1eqjUvLIxV/FQkBiPtHA8rGj0Ra?=
- =?us-ascii?Q?2XSg9pPtJqu1MUEdBvX5gn1zmrYFlJ0CWvEen+z7/HIGLqFr7QaAQ8sJBxhq?=
- =?us-ascii?Q?d91c2kc6z2UhtGwwOEECO+4ezPmzWkSgQme+E/N/27wJpP0UfCGaGEp6Rbfm?=
- =?us-ascii?Q?sVqw9RJMdMVZYAck8GZxsGK74f0L6JuQe2gynnEbz1FWgYV01pGAq6ld0DXQ?=
- =?us-ascii?Q?o1qk4a6clzPk+VHe3kAI5Yfh5qKRMk1wRU3d/XgLQ1Di8j8AbRvohaRBNGhW?=
- =?us-ascii?Q?NlAsra2LYLwd4H2PoxpKVw=3D=3D?=
+	=?us-ascii?Q?uf8xiSYwCW4NOgsF4do/HnV7DOv4SXRH7FMNyK0e2X75EEw6K1xg4dUvxDtv?=
+ =?us-ascii?Q?cbYUEPnon0AVlGCP4916V5GbXA8a2bPbHTFlwxCiyJwaK8qAhGhXDYgytVwc?=
+ =?us-ascii?Q?SY2pQO9ZZf+nPrElEk09t6fvF0HOLoobHd1EAZUNAfjNaCvDnA3vDc118q17?=
+ =?us-ascii?Q?EJvxqXoS1jkWQJOaGz21KHJeJSDmko0bjba76OE082rzxB/B4fQIKVHdZ3Us?=
+ =?us-ascii?Q?gVdUI0VJFwaSKRPAvUZA2AFkaP4qKq6MPfh4b4eRoaO2tGMQWyM98AtU7JbA?=
+ =?us-ascii?Q?2xFrb9/Z/iJKUqy2bFr0iGzb8/Z3hmThZEV3a38Sxtq+RkaFzkQLQu7Bd7o3?=
+ =?us-ascii?Q?5my9yLFO1tkWzljkNSemiYYyfaB2A/38yxAV0E7UqK5MG3vgwo2ygUCsJ5kn?=
+ =?us-ascii?Q?CFc35PwyC7Dc565fS629LxNZyRU1BW9nowIhUAw4bgso+YsvjTUInzQZTEMw?=
+ =?us-ascii?Q?6JFSB+HCajmphv4CkF4+4lxGBhXT+A/Rn0IlI5NoMATzR38E6g99u4KVx6y4?=
+ =?us-ascii?Q?YfKMwDtu9qlZh43sD6ehSnafvCeoFznxuUMvnUU2ISHihym4SFTojTfr9mQq?=
+ =?us-ascii?Q?aNNa0sp0m/oeh8mFQ6TYn7cRPk7CLOmVdf/e7imFr22TnObTz56Re0g7/+ML?=
+ =?us-ascii?Q?xDv2BcQTny2cEzTP403WPpwstGfVrT064QaMSnCbooJ4iQlNUprKk1mM/sGj?=
+ =?us-ascii?Q?7z3cAUQaRb6HGE61ZvxW0OED5CexvPd3J+JBnvCF5sndVMKjedxlngMiuQQP?=
+ =?us-ascii?Q?+LNOXcVGG9hYHQq1tBpEh4/AvcvdvRQpBHSWBm936piqp+oc2HxvZgOuairT?=
+ =?us-ascii?Q?ErFUh/XsVsp+54wtaiaovehdui+94D/hwULSGyi/fuEDMLQ1b59uXpoFacUB?=
+ =?us-ascii?Q?JnKolRXn9XFoEap3g3Jzs/IN9EAshlCakta44cg566sZkA13TBoxvSXR72v5?=
+ =?us-ascii?Q?DGSQ6/ftrk3dOCnmeX/zFA=3D=3D?=
 X-OriginatorOrg: ddn.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2023 18:30:42.3425
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2023 18:30:42.3876
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 26a59001-2d36-4617-0692-08dbd3f62a13
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4032c68d-5cce-403a-10fb-08dbd3f62a21
 X-MS-Exchange-CrossTenant-Id: 753b6e26-6fd3-43e6-8248-3f1735d59bb4
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=753b6e26-6fd3-43e6-8248-3f1735d59bb4;Ip=[50.222.100.11];Helo=[uww-mx01.datadirectnet.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	MW2NAM04FT024.eop-NAM04.prod.protection.outlook.com
+	BN8NAM04FT004.eop-NAM04.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR19MB4880
-X-BESS-ID: 1698085846-112044-12599-1009-1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR19MB6505
+X-BESS-ID: 1698085847-102733-30922-1853-1
 X-BESS-VER: 2019.1_20231020.1656
-X-BESS-Apparent-Source-IP: 104.47.74.41
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVsbGZmZAVgZQ0NwsMSk1MdHU0D
-	wxxcTI3MzMzCQtJcUkNdkk0cLC0sJIqTYWAA8jtT5BAAAA
+X-BESS-Apparent-Source-IP: 104.47.66.41
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKViZmFpZAVgZQMMXSwDzRJNEsxd
+	zExMjA2NgkKSXV3BjIMUhJMzRPNFaqjQUAgbqBT0EAAAA=
 X-BESS-Outbound-Spam-Score: 0.00
 X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.251639 [from 
-	cloudscan18-214.us-east-2b.ess.aws.cudaops.com]
+	cloudscan18-205.us-east-2b.ess.aws.cudaops.com]
 	Rule breakdown below
 	 pts rule name              description
 	---- ---------------------- --------------------------------
@@ -141,99 +141,163 @@ X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.251639 [from
 X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS124931 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
 X-BESS-BRTS-Status:1
 
-From: Miklos Szeredi <miklos@szeredi.hu>
+Previous patch allowed atomic-open on a positive dentry when
+O_CREAT was set (in lookup_open). This adds in atomic-open
+when O_CREAT is not set.
 
-atomic_open() will do an open-by-name or create-and-open
-depending on the flags.
+Code wise it would be possible to just drop the dentry in
+open_last_lookups and then fall through to lookup_open.
+But then this would add some overhead for dentry drop,
+re-lookup and actually also call into d_revalidate.
+So as suggested by Miklos, this adds a helper function
+(atomic_revalidate_open) to immediately open the dentry
+with atomic_open.
 
-If file was created, then the old positive dentry is obviously
-stale, so it will be invalidated and a new one will be allocated.
-
-If not created, then check whether it's the same inode (same as in
-->d_revalidate()) and if not, invalidate & allocate new dentry.
-
-This only works with O_CREAT, without O_CREAT open_last_lookups
-will call into lookup_fast and then return the dentry via
-finish_lookup - lookup_open is never called.
-This is going to be addressed in the next commit.
-
-Another included change is the introduction of an enum as
-d_revalidate return code.
-
-Co-developed-by: Bernd Schubert <bschubert@ddn.com>
 Signed-off-by: Bernd Schubert <bschubert@ddn.com>
-Signed-off-by: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Miklos Szeredi <miklos@szeredi.hu>
 Cc: Dharmendra Singh <dsingh@ddn.com>
+Cc: Christian Brauner <brauner@kernel.org>
 Cc: Amir Goldstein <amir73il@gmail.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
 Cc: linux-fsdevel@vger.kernel.org
 ---
- fs/namei.c            | 11 ++++++-----
- include/linux/namei.h |  7 +++++++
- 2 files changed, 13 insertions(+), 5 deletions(-)
+ fs/namei.c | 66 +++++++++++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 63 insertions(+), 3 deletions(-)
 
 diff --git a/fs/namei.c b/fs/namei.c
-index 567ee547492b..ff913e6b12b4 100644
+index ff913e6b12b4..5e2d569ffe38 100644
 --- a/fs/namei.c
 +++ b/fs/namei.c
-@@ -860,7 +860,7 @@ static inline int d_revalidate(struct dentry *dentry, unsigned int flags)
- 	if (unlikely(dentry->d_flags & DCACHE_OP_REVALIDATE))
- 		return dentry->d_op->d_revalidate(dentry, flags);
- 	else
--		return 1;
-+		return D_REVALIDATE_VALID;
+@@ -1614,10 +1614,11 @@ struct dentry *lookup_one_qstr_excl(const struct qstr *name,
  }
+ EXPORT_SYMBOL(lookup_one_qstr_excl);
  
- /**
-@@ -3330,8 +3330,9 @@ static int may_o_create(struct mnt_idmap *idmap,
- }
+-static struct dentry *lookup_fast(struct nameidata *nd)
++static struct dentry *lookup_fast(struct nameidata *nd, bool *atomic_revalidate)
+ {
+ 	struct dentry *dentry, *parent = nd->path.dentry;
+ 	int status = 1;
++	*atomic_revalidate = false;
  
- /*
-- * Attempt to atomically look up, create and open a file from a negative
-- * dentry.
-+ * Attempt to atomically look up, create and open a file from a
-+ * dentry. Unless the file system returns D_REVALIDATE_ATOMIC in ->d_revalidate,
-+ * the dentry is always negative.
-  *
-  * Returns 0 if successful.  The file will have been created and attached to
-  * @file by the filesystem calling finish_open().
-@@ -3406,7 +3407,7 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
- 	struct inode *dir_inode = dir->d_inode;
- 	int open_flag = op->open_flag;
- 	struct dentry *dentry;
--	int error, create_error = 0;
-+	int error = 0, create_error = 0;
- 	umode_t mode = op->mode;
- 	DECLARE_WAIT_QUEUE_HEAD_ONSTACK(wq);
- 
-@@ -3433,7 +3434,7 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
+ 	/*
+ 	 * Rename seqlock is not required here because in the off chance
+@@ -1659,6 +1660,10 @@ static struct dentry *lookup_fast(struct nameidata *nd)
  		dput(dentry);
- 		dentry = NULL;
+ 		return ERR_PTR(status);
  	}
--	if (dentry->d_inode) {
-+	if (dentry->d_inode && error != D_REVALIDATE_ATOMIC) {
- 		/* Cached positive dentry: will open in f_op->open */
- 		return dentry;
- 	}
-diff --git a/include/linux/namei.h b/include/linux/namei.h
-index 1463cbda4888..a70e87d2b2a9 100644
---- a/include/linux/namei.h
-+++ b/include/linux/namei.h
-@@ -47,6 +47,13 @@ enum {LAST_NORM, LAST_ROOT, LAST_DOT, LAST_DOTDOT};
- /* LOOKUP_* flags which do scope-related checks based on the dirfd. */
- #define LOOKUP_IS_SCOPED (LOOKUP_BENEATH | LOOKUP_IN_ROOT)
- 
-+/* ->d_revalidate return codes */
-+enum {
-+	D_REVALIDATE_INVALID = 0, /* invalid dentry */
-+	D_REVALIDATE_VALID   = 1, /* valid dentry */
-+	D_REVALIDATE_ATOMIC =  2, /* atomic_open will revalidate */
-+};
 +
- extern int path_pts(struct path *path);
++	if (status == D_REVALIDATE_ATOMIC)
++		*atomic_revalidate = true;
++
+ 	return dentry;
+ }
  
- extern int user_path_at_empty(int, const char __user *, unsigned, struct path *, int *empty);
+@@ -1984,6 +1989,7 @@ static const char *handle_dots(struct nameidata *nd, int type)
+ static const char *walk_component(struct nameidata *nd, int flags)
+ {
+ 	struct dentry *dentry;
++	bool atomic_revalidate;
+ 	/*
+ 	 * "." and ".." are special - ".." especially so because it has
+ 	 * to be able to know about the current root directory and
+@@ -1994,7 +2000,7 @@ static const char *walk_component(struct nameidata *nd, int flags)
+ 			put_link(nd);
+ 		return handle_dots(nd, nd->last_type);
+ 	}
+-	dentry = lookup_fast(nd);
++	dentry = lookup_fast(nd, &atomic_revalidate);
+ 	if (IS_ERR(dentry))
+ 		return ERR_CAST(dentry);
+ 	if (unlikely(!dentry)) {
+@@ -2002,6 +2008,9 @@ static const char *walk_component(struct nameidata *nd, int flags)
+ 		if (IS_ERR(dentry))
+ 			return ERR_CAST(dentry);
+ 	}
++
++	WARN_ON_ONCE(atomic_revalidate);
++
+ 	if (!(flags & WALK_MORE) && nd->depth)
+ 		put_link(nd);
+ 	return step_into(nd, flags, dentry);
+@@ -3383,6 +3392,42 @@ static struct dentry *atomic_open(struct nameidata *nd, struct dentry *dentry,
+ 	return dentry;
+ }
+ 
++static struct dentry *atomic_revalidate_open(struct dentry *dentry,
++					     struct nameidata *nd,
++					     struct file *file,
++					     const struct open_flags *op,
++					     bool *got_write)
++{
++	struct mnt_idmap *idmap;
++	struct dentry *dir = nd->path.dentry;
++	struct inode *dir_inode = dir->d_inode;
++	int open_flag = op->open_flag;
++	umode_t mode = op->mode;
++
++	if (unlikely(IS_DEADDIR(dir_inode)))
++		return ERR_PTR(-ENOENT);
++
++	file->f_mode &= ~FMODE_CREATED;
++
++	if (WARN_ON_ONCE(open_flag & O_CREAT))
++		return ERR_PTR(-EINVAL);
++
++	if (open_flag & (O_TRUNC | O_WRONLY | O_RDWR))
++		*got_write = !mnt_want_write(nd->path.mnt);
++	else
++		*got_write = false;
++
++	if (!*got_write)
++		open_flag &= ~O_TRUNC;
++
++	inode_lock_shared(dir->d_inode);
++	dentry = atomic_open(nd, dentry, file, open_flag, mode);
++	inode_unlock_shared(dir->d_inode);
++
++	return dentry;
++
++}
++
+ /*
+  * Look up and maybe create and open the last component.
+  *
+@@ -3527,12 +3572,26 @@ static const char *open_last_lookups(struct nameidata *nd,
+ 	}
+ 
+ 	if (!(open_flag & O_CREAT)) {
++		bool atomic_revalidate;
++
+ 		if (nd->last.name[nd->last.len])
+ 			nd->flags |= LOOKUP_FOLLOW | LOOKUP_DIRECTORY;
+ 		/* we _can_ be in RCU mode here */
+-		dentry = lookup_fast(nd);
++		dentry = lookup_fast(nd, &atomic_revalidate);
+ 		if (IS_ERR(dentry))
+ 			return ERR_CAST(dentry);
++		if (dentry && unlikely(atomic_revalidate)) {
++			/* The file system shall not claim to support atomic
++			 * revalidate in RCU mode
++			 */
++			if (WARN_ON_ONCE(nd->flags & LOOKUP_RCU)) {
++				dput(dentry);
++				return ERR_PTR(-ECHILD);
++			}
++			dentry = atomic_revalidate_open(dentry, nd, file, op,
++							&got_write);
++			goto drop_write;
++		}
+ 		if (likely(dentry))
+ 			goto finish_lookup;
+ 
+@@ -3569,6 +3628,7 @@ static const char *open_last_lookups(struct nameidata *nd,
+ 	else
+ 		inode_unlock_shared(dir->d_inode);
+ 
++drop_write:
+ 	if (got_write)
+ 		mnt_drop_write(nd->path.mnt);
+ 
 -- 
 2.39.2
 
