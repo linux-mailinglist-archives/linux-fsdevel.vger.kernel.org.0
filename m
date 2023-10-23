@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-914-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-915-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 456C77D35E3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 13:55:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 498997D3609
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 14:03:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C77082815C9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 11:55:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3FDD2812CE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 12:03:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 464F91804A;
-	Mon, 23 Oct 2023 11:55:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0383A18638;
+	Mon, 23 Oct 2023 12:03:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YgxtEHbD"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KdxPYAdv"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA8FB18032
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 11:55:30 +0000 (UTC)
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E002E9
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 04:55:28 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5B2A18629
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 12:03:22 +0000 (UTC)
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C1D0E4
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 05:03:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1698062127;
+	s=mimecast20190719; t=1698062600;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=o/9FLnbNSf/pR1bSdYODMnRrmn+49lv+yZ1gIhHzF7k=;
-	b=YgxtEHbDFNzWXlbaJvPfLwrvmm1wM/MhHrGS9sqmTPM5GvnzZaoHd5JEcT+Y6Odw3Ip9Zb
-	Xkfwr+fYdgrBjqTgBQvmJyZn3O3nVlfoK7+khfnTtmXuywMIllMsihasKpKrsmiJzDxiht
-	tYljqSa8495KRBzqOD8frphwbP0dJto=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=Hofm46pISELYVvTcrs2tDQX/iIBeSQbRrL6PHoZxa54=;
+	b=KdxPYAdvBNe6T8OZFSsWgHi1QhQp8GHchW4y0vYsPw3+VLjg/kxyqQvC43P8S77Zlm10sF
+	XV5GRegCkt+y3S9cJ0t+vHIhmf7O1+QT3LmlEIduYTngZMnjC2/6J554VQoFTEmdI6p+GM
+	1ROd//xscR1x5rbQQUHjmpkKo0nwO8g=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-613-k72VAeZ2MQahQec3GfrXAA-1; Mon, 23 Oct 2023 07:55:16 -0400
-X-MC-Unique: k72VAeZ2MQahQec3GfrXAA-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4084d0b171eso18486615e9.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 04:55:15 -0700 (PDT)
+ us-mta-436-inCTcgNTNWu5L5owVB8HKQ-1; Mon, 23 Oct 2023 08:03:19 -0400
+X-MC-Unique: inCTcgNTNWu5L5owVB8HKQ-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4084d08235fso20982125e9.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 05:03:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698062115; x=1698666915;
+        d=1e100.net; s=20230601; t=1698062598; x=1698667398;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
+         :references:cc:to:content-language:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=o/9FLnbNSf/pR1bSdYODMnRrmn+49lv+yZ1gIhHzF7k=;
-        b=k1WvW472rqFG9x+cL0mcK5HYBzF12T6Ue57CeZuPe63ZdF5UIFM9L55mAFe7qvXrbW
-         GgpGOSWGChuAxmp4qZVUKi3RTnmdoe6vhzEVvinsvuEZTUfZMY23esG3YiGBAcYdx24r
-         s9Ous3bj/3j525qo8Pu1INQaGjdnyKNpY1dKfbLIvD5oG+etw+HXuprvhnvp9N6wPxYe
-         U0/PNo9+FVfROKP9Df9iQLIt4LLcW6X0s980Hin+ZrnqQPL8+WzvbFN/JOCUps+Y4wjW
-         Xz4bw0JE6vIrHpU/5MTZsow+RmjXoPz25WUXJzfzaYK4mK1MTxPDGH2hnPaH9+jHFY7b
-         icKQ==
-X-Gm-Message-State: AOJu0YzhXiVjyo9D3/HsITwqcs5ur5i4b35UJcGAvFlWjDxGd0E2Xj6C
-	bJQd57/yl+4nu0j9M+ndupcabmQXQKyNZ7XHUavQhmXoi4oR+MHTMzkLsyZ1a+7O+QessAKglVq
-	6Zs7udW2yGER2h0RjKpW5g1mDYw==
-X-Received: by 2002:a05:600c:2b10:b0:407:73fc:6818 with SMTP id y16-20020a05600c2b1000b0040773fc6818mr11867974wme.2.1698062114867;
-        Mon, 23 Oct 2023 04:55:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGlr9qIwPl6k6OX+uZdhA5xuIhpGw+iftZpfgyQvE2XhPBIipN6WbijSbqNG+SHoesh1bMHHQ==
-X-Received: by 2002:a05:600c:2b10:b0:407:73fc:6818 with SMTP id y16-20020a05600c2b1000b0040773fc6818mr11867936wme.2.1698062114449;
-        Mon, 23 Oct 2023 04:55:14 -0700 (PDT)
+        bh=Hofm46pISELYVvTcrs2tDQX/iIBeSQbRrL6PHoZxa54=;
+        b=FU398wdPQwzXY8CHJa31xvaAbxPMPj0SKoa+h1cP9qjcVpezQQj5f3xhC1A0Gsek+2
+         9DgNqr0C3Hv6FGi0KJR6QgTJ703cRP06s/ky6I5Dkve/Mx+EKkR8inOos2I7KOA/yVS3
+         w9i2MNHxjbL1GcTWCThnCOAo2X6xNLyTQVGiZfAAExbXkpLgeptChN1yiiJiZsTn2i/z
+         Hv/F3m1GlaBbo5zYc9bO73SYWBT9fHPqeAOQer0dOaM4iw2hdnhGVodIqhe47+silCh6
+         +d0secclGCk/qHv3rBqtVoOI5Pw6t+NEgI6iZDCZNhkxXrpbJOv5PTUdQwjYgfmkKLF5
+         8cWg==
+X-Gm-Message-State: AOJu0YyjalrkRw+rQICevT/PaBDy1W7FF8AnKWXYVDyOiRXDVVKxgLTv
+	Gj7pAd7bcycukYtNf9//VvkuM+P8FKJk9ox0nRP+hriuV4hMYsLGDx0xVwU9SGpJl6pnsBu7TDQ
+	1bi+QSr98tMOZue/JMh36301CQQ==
+X-Received: by 2002:a05:600c:1992:b0:401:daf2:2735 with SMTP id t18-20020a05600c199200b00401daf22735mr6975953wmq.31.1698062598090;
+        Mon, 23 Oct 2023 05:03:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGjCM8aHYWLMLQFlLsMrI3+VgN1lbGjpOb416V0h+2yLN0yDsDmWXyw/czfkJyiu2/jCcJ95Q==
+X-Received: by 2002:a05:600c:1992:b0:401:daf2:2735 with SMTP id t18-20020a05600c199200b00401daf22735mr6975912wmq.31.1698062597638;
+        Mon, 23 Oct 2023 05:03:17 -0700 (PDT)
 Received: from ?IPV6:2003:cb:c738:1900:b6ea:5b9:62c0:34e? (p200300cbc7381900b6ea05b962c0034e.dip0.t-ipconnect.de. [2003:cb:c738:1900:b6ea:5b9:62c0:34e])
-        by smtp.gmail.com with ESMTPSA id z6-20020a05600c220600b0040684abb623sm13855577wml.24.2023.10.23.04.55.12
+        by smtp.gmail.com with ESMTPSA id g16-20020a05600c311000b0040651505684sm9310909wmo.29.2023.10.23.05.03.16
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Oct 2023 04:55:13 -0700 (PDT)
-Message-ID: <25fad62e-b1d9-4d63-9d95-08c010756231@redhat.com>
-Date: Mon, 23 Oct 2023 13:55:12 +0200
+        Mon, 23 Oct 2023 05:03:17 -0700 (PDT)
+Message-ID: <1156ad46-1952-4892-8092-bfbb8588c3f3@redhat.com>
+Date: Mon, 23 Oct 2023 14:03:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -74,29 +74,26 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 06/37] mm: page_alloc: Allocate from movable pcp lists
- only if ALLOC_FROM_METADATA
-To: Catalin Marinas <catalin.marinas@arm.com>,
- Hyesoo Yu <hyesoo.yu@samsung.com>
-Cc: Alexandru Elisei <alexandru.elisei@arm.com>, will@kernel.org,
- oliver.upton@linux.dev, maz@kernel.org, james.morse@arm.com,
- suzuki.poulose@arm.com, yuzenghui@huawei.com, arnd@arndb.de,
- akpm@linux-foundation.org, mingo@redhat.com, peterz@infradead.org,
- juri.lelli@redhat.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
- rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
- bristot@redhat.com, vschneid@redhat.com, mhiramat@kernel.org,
- rppt@kernel.org, hughd@google.com, pcc@google.com, steven.price@arm.com,
- anshuman.khandual@arm.com, vincenzo.frascino@arm.com, eugenis@google.com,
- kcc@google.com, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
- linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org
-References: <20230823131350.114942-1-alexandru.elisei@arm.com>
- <20230823131350.114942-7-alexandru.elisei@arm.com>
- <CGME20231012013524epcas2p4b50f306e3e4d0b937b31f978022844e5@epcas2p4.samsung.com>
- <20231010074823.GA2536665@tiffany> <ZS0va9nICZo8bF03@monolith>
- <ZS5hXFHs08zQOboi@arm.com> <20231023071656.GA344850@tiffany>
- <ZTZP66CA1r35yTmp@arm.com>
+Subject: Re: [PATCH v3 2/3] userfaultfd: UFFDIO_MOVE uABI
 Content-Language: en-US
+To: Peter Xu <peterx@redhat.com>
+Cc: Suren Baghdasaryan <surenb@google.com>,
+ Lokesh Gidra <lokeshgidra@google.com>, akpm@linux-foundation.org,
+ viro@zeniv.linux.org.uk, brauner@kernel.org, shuah@kernel.org,
+ aarcange@redhat.com, hughd@google.com, mhocko@suse.com,
+ axelrasmussen@google.com, rppt@kernel.org, willy@infradead.org,
+ Liam.Howlett@oracle.com, jannh@google.com, zhangpeng362@huawei.com,
+ bgeffon@google.com, kaleshsingh@google.com, ngeoffray@google.com,
+ jdduke@google.com, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ kernel-team@android.com
+References: <ZSlragGjFEw9QS1Y@x1n>
+ <12588295-2616-eb11-43d2-96a3c62bd181@redhat.com> <ZS2IjEP479WtVdMi@x1n>
+ <8d187891-f131-4912-82d8-13112125b210@redhat.com> <ZS7ZqztMbhrG52JQ@x1n>
+ <d40b8c86-6163-4529-ada4-d2b3c1065cba@redhat.com> <ZTGJHesvkV84c+l6@x1n>
+ <81cf0943-e258-494c-812a-0c00b11cf807@redhat.com>
+ <CAJuCfpHZWfjW530CvQCFx-PYNSaeQwkh-+Z6KgdfFyZHRGSEDQ@mail.gmail.com>
+ <d34dfe82-3e31-4f85-8405-c582a0650688@redhat.com> <ZTVD18RgBfITsQC4@x1n>
 From: David Hildenbrand <david@redhat.com>
 Autocrypt: addr=david@redhat.com; keydata=
  xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
@@ -143,120 +140,41 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <ZTZP66CA1r35yTmp@arm.com>
+In-Reply-To: <ZTVD18RgBfITsQC4@x1n>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 23.10.23 12:50, Catalin Marinas wrote:
-> On Mon, Oct 23, 2023 at 04:16:56PM +0900, Hyesoo Yu wrote:
->> On Tue, Oct 17, 2023 at 11:26:36AM +0100, Catalin Marinas wrote:
->>> BTW, I suggest for the next iteration we drop MIGRATE_METADATA, only use
->>> CMA and assume that the tag storage itself supports tagging. Hopefully
->>> it makes the patches a bit simpler.
->>
->> I am curious about the plan for the next iteration.
+On 22.10.23 17:46, Peter Xu wrote:
+> On Fri, Oct 20, 2023 at 07:16:19PM +0200, David Hildenbrand wrote:
+>> These are rather the vibes I'm getting from Peter. "Why rename it, could
+>> confuse people because the original patches are old", "Why exclude it if it
+>> has been included in the original patches". Not the kind of reasoning I can
+>> relate to when it comes to upstreaming some patches.
 > 
-> Alex is working on it.
+> You can't blame anyone if you misunderstood and biased the question.
 > 
->> Does tag storage itself supports tagging? Will the following version be unusable
->> if the hardware does not support it? The document of google said that
->> "If this memory is itself mapped as Tagged Normal (which should not happen!)
->> then tag updates on it either raise a fault or do nothing, but never change the
->> contents of any other page."
->> (https://github.com/google/sanitizers/blob/master/mte-dynamic-carveout/spec.md)
->>
->> The support of H/W is very welcome because it is good to make the patches simpler.
->> But if H/W doesn't support it, Can't the new solution be used?
+> The first question is definitely valid, even until now.  You guys still
+> prefer to rename it, which I'm totally fine with.
 > 
-> AFAIK on the current interconnects this is supported but the offsets
-> will need to be configured by firmware in such a way that a tag access
-> to the tag carve-out range still points to physical RAM, otherwise, as
-> per Google's doc, you can get some unexpected behaviour.
+> The 2nd question is wrong from your interpretation.  That's not my point,
+> at least not starting from a few replies already.  What I was asking for is
+> why such page movement between mm is dangerous.  I don't think I get solid
+> answers even until now.
 > 
-> Let's take a simplified example, we have:
+> Noticing "memcg is missing" is not an argument for "cross-mm is dangerous",
+> it's a review comment.  Suren can address that.
 > 
->    phys_addr - physical address, linearised, starting from 0
->    ram_size - the size of RAM (also corresponds to the end of PA+1)
+> You'll propose a new feature that may tag an mm is not an argument either,
+> if it's not merged yet.  We can also address that depending on what it is,
+> also on which lands earlier.
 > 
-> A typical configuration is to designate the top 1/32 of RAM for tags:
+> It'll be good to discuss these details even in a single-mm support.  Anyone
+> would like to add that can already refer to discussion in this thread.
 > 
->    tag_offset = ram_size - ram_size / 32
->    tag_carveout_start = tag_offset
+> I hope I'm clear.
 > 
-> The tag address for a given phys_addr is calculated as:
-> 
->    tag_addr = phys_addr / 32 + tag_offset
-> 
-> To keep things simple, we reserve the top 1/(32*32) of the RAM as tag
-> storage for the main/reusable tag carveout.
-> 
->    tag_carveout2_start = tag_carveout_start / 32 + tag_offset
-> 
-> This gives us the end of the first reusable carveout:
-> 
->    tag_carveout_end = tag_carveout2_start - 1
-> 
-> and this way in Linux we can have (inclusive ranges):
-> 
->    0..(tag_carveout_start-1): normal memory, data only
->    tag_carveout_start..tag_carveout_end: CMA, reused as tags or data
->    tag_carveout2_start..(ram_size-1): reserved for tags (not touched by the OS)
-> 
-> For this to work, we need the last page in the first carveout to have
-> a tag storage within RAM. And, of course, all of the above need to be at
-> least 4K aligned.
-> 
-> The simple configuration of 1/(32*32) of RAM for the second carveout is
-> sufficient but not fully utilised. We could be a bit more efficient to
-> gain a few more pages. Apart from the page alignment requirements, the
-> only strict requirement we need is:
-> 
->    tag_carverout2_end < ram_size
-> 
-> where tag_carveout2_end is the tag storage corresponding to the end of
-> the main/reusable carveout, just before tag_carveout2_start:
-> 
->    tag_carveout2_end = tag_carveout_end / 32 + tag_offset
-> 
-> Assuming that my on-paper substitutions are correct, the inequality
-> above becomes:
-> 
->    tag_offset < (1024 * ram_size + 32) / 1057
-> 
-> and tag_offset is a multiple of PAGE_SIZE * 32 (so that the
-> tag_carveout2_start is a multiple of PAGE_SIZE).
-> 
-> As a concrete example, for 16GB of RAM starting from 0:
-> 
->    tag_offset = 0x3e0060000
->    tag_carverout2_start = 0x3ff063000
-> 
-> Without the optimal placement, the default tag_offset of top 1/32 of RAM
-> would have been:
-> 
->    tag_offset = 0x3e0000000
->    tag_carveou2_start = 0x3ff000000
-> 
-> so an extra 396KB gained with optimal placement (out of 16G, not sure
-> it's worth).
-> 
-> One can put the calculations in some python script to get the optimal
-> tag offset in case I got something wrong on paper.
 
-I followed what you are saying, but I didn't quite read the following 
-clearly stated in your calculations: Using this model, how much memory 
-would you be able to reuse, and how much not?
-
-I suspect you would *not* be able to reuse "1/(32*32)" [second 
-carve-out] but be able to reuse "1/32 - 1/(32*32)" [first carve-out] or 
-am I completely off?
-
-Further, (just thinking about it) I assume you've taken care of the 
-condition that memory cannot self-host it's own tag memory. So that 
-cannot happen in the model proposed here, right?
-
-Anyhow, happy to see that we might be able to make it work just by 
-mostly reusing existing CMA.
+I said everything I had to say, go read what I wrote.
 
 -- 
 Cheers,
