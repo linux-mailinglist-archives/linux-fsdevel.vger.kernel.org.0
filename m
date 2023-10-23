@@ -1,133 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-941-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-942-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF85F7D3CCA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 18:44:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C44797D3D12
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 19:08:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E22981C204D6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 16:44:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DA3D28145F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 17:08:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 216071805C;
-	Mon, 23 Oct 2023 16:44:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a6rO0X2z"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A73991DA23;
+	Mon, 23 Oct 2023 17:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA8D33C8
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 16:44:17 +0000 (UTC)
-Received: from mail-qv1-xf32.google.com (mail-qv1-xf32.google.com [IPv6:2607:f8b0:4864:20::f32])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8E938E;
-	Mon, 23 Oct 2023 09:44:15 -0700 (PDT)
-Received: by mail-qv1-xf32.google.com with SMTP id 6a1803df08f44-66d09b6d007so25630026d6.1;
-        Mon, 23 Oct 2023 09:44:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698079455; x=1698684255; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BGTQYMFPpXuQ/hm3cgO//PE+4QyM6sGQHf352NdYoOA=;
-        b=a6rO0X2zskHUUdzn83Wj8C7b+lGquw37jZToZi6PIi78aeew49dJAaOpIv76mwsdNz
-         oCLF0QS+hnpvsXnDMTL3/Y2gFfDh/fVSkRaqZkcl186F6slau5IfoYY+Z1mtkpT5m/SH
-         eA2ov4mGIrl/R+jHB9F9zFU+tcwwkuWZTbyXewVoBXJ0WGoJr1vRSMOEWJIfr8zylRvc
-         rEusLvrQwHJ36vOTY3oDIN5e0lvuEbrPpxkgXBhGigpg5CC77jWiRHs8EsZePxp/QcaR
-         px4GbxedWeRrdUVk5UFRrhmLkwJJ4GJl8tV1hyJMCMbZVIBn5WvRkusZHD/Nk5vWAQ97
-         LOvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698079455; x=1698684255;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BGTQYMFPpXuQ/hm3cgO//PE+4QyM6sGQHf352NdYoOA=;
-        b=vvXZe21BrQgR9aEu2k6VgATpYx519pJWqXZXjCxn4RmUfZHcPl6SbFgZLVn00rSxgO
-         btlRJJ27yAttYAX1dhxToTFdwEeKH+CUZ+iyjthy3zxrSigGQW54KnFMlde031Nh3KqA
-         4VaH87jtmXEtdpYb2TWM0pa9TdOU2GhvHhIRwkTVMcTC3HPpW2zMpyt1qYhlZz00PeUy
-         CgDdAiphWsfjwqZTMKvfaRBH0HrxtVA0A/OYo4jq6P6aCpd+z7sFe4QXfSo4fsuvpyo5
-         3ZWP+PZxTOqURpLLUAu9XduQHtNlIHhfLAb8TqSAezLPDOZQrQV9EiuNZHQQeBuiX1Ar
-         6OEw==
-X-Gm-Message-State: AOJu0Yz80GpiJvWEXIoOxmutCSRQYmFILkt79ezz3yIIf5DnJMS7Rnh1
-	26JMYYegBq8JWTpbm0GSpOQPo7dus/tcD2E9Jic=
-X-Google-Smtp-Source: AGHT+IHbDDbp9ITF5wztijgJ/vhFLt5sif4XgHrx2vxvQTHVLkHC7VejE6I+inFBaksA5v/xT1GyMROqI0rowldHIRo=
-X-Received: by 2002:ad4:5f07:0:b0:658:997f:79b7 with SMTP id
- fo7-20020ad45f07000000b00658997f79b7mr12538546qvb.3.1698079454938; Mon, 23
- Oct 2023 09:44:14 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D5D1B28C;
+	Mon, 23 Oct 2023 17:08:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EBAEC433C8;
+	Mon, 23 Oct 2023 17:08:24 +0000 (UTC)
+Date: Mon, 23 Oct 2023 18:08:21 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Hyesoo Yu <hyesoo.yu@samsung.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>, will@kernel.org,
+	oliver.upton@linux.dev, maz@kernel.org, james.morse@arm.com,
+	suzuki.poulose@arm.com, yuzenghui@huawei.com, arnd@arndb.de,
+	akpm@linux-foundation.org, mingo@redhat.com, peterz@infradead.org,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
+	mhiramat@kernel.org, rppt@kernel.org, hughd@google.com,
+	pcc@google.com, steven.price@arm.com, anshuman.khandual@arm.com,
+	vincenzo.frascino@arm.com, eugenis@google.com, kcc@google.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH RFC 06/37] mm: page_alloc: Allocate from movable pcp
+ lists only if ALLOC_FROM_METADATA
+Message-ID: <ZTaohewXhtkqoLZD@arm.com>
+References: <20230823131350.114942-1-alexandru.elisei@arm.com>
+ <20230823131350.114942-7-alexandru.elisei@arm.com>
+ <CGME20231012013524epcas2p4b50f306e3e4d0b937b31f978022844e5@epcas2p4.samsung.com>
+ <20231010074823.GA2536665@tiffany>
+ <ZS0va9nICZo8bF03@monolith>
+ <ZS5hXFHs08zQOboi@arm.com>
+ <20231023071656.GA344850@tiffany>
+ <ZTZP66CA1r35yTmp@arm.com>
+ <25fad62e-b1d9-4d63-9d95-08c010756231@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231018100000.2453965-1-amir73il@gmail.com> <20231018100000.2453965-6-amir73il@gmail.com>
- <CAOQ4uxhiRU2nNnYtuXUaURMCuYjssC9Rn=ORWW=MmVyMD1H6Rg@mail.gmail.com> <20231023163308.7szzloiuzzc7lnia@quack3>
-In-Reply-To: <20231023163308.7szzloiuzzc7lnia@quack3>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Mon, 23 Oct 2023 19:44:03 +0300
-Message-ID: <CAOQ4uxjnK5XNjRsza6mrUzXcqSgCZ9G6MuMTt1X_B6QTwCoWDw@mail.gmail.com>
-Subject: Re: [PATCH 5/5] exportfs: support encoding non-decodeable file
- handles by default
-To: Jan Kara <jack@suse.cz>
-Cc: Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
-	Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <25fad62e-b1d9-4d63-9d95-08c010756231@redhat.com>
 
-On Mon, Oct 23, 2023 at 7:33=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Mon 23-10-23 16:55:40, Amir Goldstein wrote:
-> > On Wed, Oct 18, 2023 at 1:00=E2=80=AFPM Amir Goldstein <amir73il@gmail.=
-com> wrote:
-> > >
-> > > AT_HANDLE_FID was added as an API for name_to_handle_at() that reques=
-t
-> > > the encoding of a file id, which is not intended to be decoded.
-> > >
-> > > This file id is used by fanotify to describe objects in events.
-> > >
-> > > So far, overlayfs is the only filesystem that supports encoding
-> > > non-decodeable file ids, by providing export_operations with an
-> > > ->encode_fh() method and without a ->decode_fh() method.
-> > >
-> > > Add support for encoding non-decodeable file ids to all the filesyste=
-ms
-> > > that do not provide export_operations, by encoding a file id of type
-> > > FILEID_INO64_GEN from { i_ino, i_generation }.
-> > >
-> > > A filesystem may that does not support NFS export, can opt-out of
-> > > encoding non-decodeable file ids for fanotify by defining an empty
-> > > export_operations struct (i.e. with a NULL ->encode_fh() method).
-> > >
-> > > This allows the use of fanotify events with file ids on filesystems
-> > > like 9p which do not support NFS export to bring fanotify in feature
-> > > parity with inotify on those filesystems.
-> > >
-> > > Note that fanotify also requires that the filesystems report a non-nu=
-ll
-> > > fsid.  Currently, many simple filesystems that have support for inoti=
-fy
-> > > (e.g. debugfs, tracefs, sysfs) report a null fsid, so can still not b=
-e
-> > > used with fanotify in file id reporting mode.
-> > >
-> > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > > ---
-> >
-> > Hi Jan,
-> >
-> > Did you get a chance to look at this patch?
-> > I saw your review comments on the rest of the series, so was waiting
-> > for feedback on this last one before posting v2.
->
-> Ah, sorry. I don't have any further comments regarding this patch besides
-> what Chuck already wrote.
+On Mon, Oct 23, 2023 at 01:55:12PM +0200, David Hildenbrand wrote:
+> On 23.10.23 12:50, Catalin Marinas wrote:
+> > On Mon, Oct 23, 2023 at 04:16:56PM +0900, Hyesoo Yu wrote:
+> > > Does tag storage itself supports tagging? Will the following version be unusable
+> > > if the hardware does not support it? The document of google said that
+> > > "If this memory is itself mapped as Tagged Normal (which should not happen!)
+> > > then tag updates on it either raise a fault or do nothing, but never change the
+> > > contents of any other page."
+> > > (https://github.com/google/sanitizers/blob/master/mte-dynamic-carveout/spec.md)
+> > > 
+> > > The support of H/W is very welcome because it is good to make the patches simpler.
+> > > But if H/W doesn't support it, Can't the new solution be used?
+> > 
+> > AFAIK on the current interconnects this is supported but the offsets
+> > will need to be configured by firmware in such a way that a tag access
+> > to the tag carve-out range still points to physical RAM, otherwise, as
+> > per Google's doc, you can get some unexpected behaviour.
+[...]
+> I followed what you are saying, but I didn't quite read the following
+> clearly stated in your calculations: Using this model, how much memory would
+> you be able to reuse, and how much not?
+> 
+> I suspect you would *not* be able to reuse "1/(32*32)" [second carve-out]
+> but be able to reuse "1/32 - 1/(32*32)" [first carve-out] or am I completely
+> off?
 
-No worries.
-I will post v2 with minor fixes and add your RVB to all patches.
+That's correct. In theory, from the hardware perspective, we could even
+go recursively to the third/fourth etc. carveout until the last one is a
+single page but I'd rather not complicate things further.
 
-Thanks,
-Amir.
+> Further, (just thinking about it) I assume you've taken care of the
+> condition that memory cannot self-host it's own tag memory. So that cannot
+> happen in the model proposed here, right?
+
+I don't fully understand what you mean. The tags for the first data
+range (0 .. ram_size * 31/32) are stored in the first tag carveout.
+That's where we'll need CMA. For the tag carveout, when hosting data
+pages as tagged, the tags go in the second carveout which is fully
+reserved (still TBD but possibly the firmware won't even tell the kernel
+about it).
+
+-- 
+Catalin
 
