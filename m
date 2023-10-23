@@ -1,140 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-910-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-911-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 916D07D305F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 12:49:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B54277D3066
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 12:50:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D31D2815B9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 10:49:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2AA6B20E1B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 10:50:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3C01125CA;
-	Mon, 23 Oct 2023 10:49:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=metaspace-dk.20230601.gappssmtp.com header.i=@metaspace-dk.20230601.gappssmtp.com header.b="Jn8LcuGo"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFC0D13AC8;
+	Mon, 23 Oct 2023 10:50:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4778F101FD
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 10:49:06 +0000 (UTC)
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C04BCD6B
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 03:49:03 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-40859c46447so12750365e9.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 03:49:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=metaspace-dk.20230601.gappssmtp.com; s=20230601; t=1698058142; x=1698662942; darn=vger.kernel.org;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
-        bh=PxxSsu42bs3+Iwqm/wDWLkLK1lFZbZiMJDO4ZsnwkfE=;
-        b=Jn8LcuGozOC7U9dgYnfVJAKT99EVIDwx995+W6LWlcX6zJqqFeN93pn77C5H7fuqJI
-         8J4A7L/KbTLy9IY5ODhokjkG9SN9O5nsyytYw/7r3icBj+xCM+D0/sCnCZnM1ExBW68I
-         5EUf5BcB63D6AMPR6UbB15dmd4RtLbXeYVLXaErtNva+ANA6AmqiPUfVl6MZZPD53IoP
-         vxMdhVnsEjaUBMCn5YyICQ3BcRRDkBYISQYJL5SH92MJVJhRKXM65lP2rnyzH6SI7V+G
-         PM18aYHxYgiHqe+DgOZkeMCegzvaXJnkCa+S9DHvWjREP6DbJGsHfC5n/pG8clCOQMC8
-         61Ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698058142; x=1698662942;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PxxSsu42bs3+Iwqm/wDWLkLK1lFZbZiMJDO4ZsnwkfE=;
-        b=tfv4Lt1PGb3h0iRmhjX2AYD4UrDkh7qTP9A7pknanElzkmDz2t0VAZS6FV0G0z5BpL
-         2LGn290/TfkWUk3vEeWmgugYwyIOX5nUPeLGwYCjZu2xxumWCmX9aYFUoAIC7PFiA2HC
-         vkNi26AzIUp+rC7CoMwQomyuGkRRiB6t6IhCZLtC+rYaHPQ25Gpvt+pH9TsAcY/8lpHO
-         y6IQPZDFWNrH3zuovbec8UhcyUFhBGNkkk9rh90UGf7zLqc9bYSzfZmRtkGkQsFWu+jV
-         iFZb0D82O2yrXNpoztJgZpGGJwuuM0y/xlJX/ZLi0cYXrZ9OQO0E6r6EPBuy51EmH238
-         Ty0A==
-X-Gm-Message-State: AOJu0YxPOVh/QU8n7B567/avpS8f68MRrdP9oacaMXZMxBz5bfNMK5ih
-	pC4GNJxHe1qmXwpR6onH2B9CkA==
-X-Google-Smtp-Source: AGHT+IGE8vjdY1gUQoWouASrmp6/loTLmbA6TTrfY0sIMkyhTT3AUKwq2ef1szeJ9zVf38zVjYfyvA==
-X-Received: by 2002:a05:600c:19d1:b0:405:7b92:453e with SMTP id u17-20020a05600c19d100b004057b92453emr7459123wmq.37.1698058142026;
-        Mon, 23 Oct 2023 03:49:02 -0700 (PDT)
-Received: from localhost ([165.225.194.214])
-        by smtp.gmail.com with ESMTPSA id w11-20020a05600c474b00b00405959469afsm9151952wmo.3.2023.10.23.03.49.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Oct 2023 03:49:01 -0700 (PDT)
-References: <20231018122518.128049-1-wedsonaf@gmail.com>
- <20231018122518.128049-10-wedsonaf@gmail.com>
- <ZTATIhi9U6ObAnN7@casper.infradead.org>
- <CANeycqoWfWJ5bxuh+UWK99D9jYH0cKKy1=ikHJTpY=fP1ZJMrg@mail.gmail.com>
- <ZTAwLGi4sCup+B1r@casper.infradead.org>
- <CANeycqrp_s20pCO_OJXHpqN5tZ_Uq5icTupWiVeLf69JOFj4cA@mail.gmail.com>
- <ZTH9+sF+NPyRjyRN@casper.infradead.org>
-User-agent: mu4e 1.10.7; emacs 28.2.50
-From: "Andreas Hindborg (Samsung)" <nmi@metaspace.dk>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Wedson Almeida Filho <wedsonaf@gmail.com>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Kent
- Overstreet <kent.overstreet@gmail.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, linux-fsdevel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, Wedson Almeida Filho
- <walmeida@microsoft.com>
-Subject: Re: [RFC PATCH 09/19] rust: folio: introduce basic support for folios
-Date: Mon, 23 Oct 2023 12:48:33 +0200
-In-reply-to: <ZTH9+sF+NPyRjyRN@casper.infradead.org>
-Message-ID: <87h6mhfwbm.fsf@metaspace.dk>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDBA512B90;
+	Mon, 23 Oct 2023 10:50:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86CFEC433C8;
+	Mon, 23 Oct 2023 10:50:21 +0000 (UTC)
+Date: Mon, 23 Oct 2023 11:50:19 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Hyesoo Yu <hyesoo.yu@samsung.com>
+Cc: Alexandru Elisei <alexandru.elisei@arm.com>, will@kernel.org,
+	oliver.upton@linux.dev, maz@kernel.org, james.morse@arm.com,
+	suzuki.poulose@arm.com, yuzenghui@huawei.com, arnd@arndb.de,
+	akpm@linux-foundation.org, mingo@redhat.com, peterz@infradead.org,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
+	mhiramat@kernel.org, rppt@kernel.org, hughd@google.com,
+	pcc@google.com, steven.price@arm.com, anshuman.khandual@arm.com,
+	vincenzo.frascino@arm.com, david@redhat.com, eugenis@google.com,
+	kcc@google.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH RFC 06/37] mm: page_alloc: Allocate from movable pcp
+ lists only if ALLOC_FROM_METADATA
+Message-ID: <ZTZP66CA1r35yTmp@arm.com>
+References: <20230823131350.114942-1-alexandru.elisei@arm.com>
+ <20230823131350.114942-7-alexandru.elisei@arm.com>
+ <CGME20231012013524epcas2p4b50f306e3e4d0b937b31f978022844e5@epcas2p4.samsung.com>
+ <20231010074823.GA2536665@tiffany>
+ <ZS0va9nICZo8bF03@monolith>
+ <ZS5hXFHs08zQOboi@arm.com>
+ <20231023071656.GA344850@tiffany>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231023071656.GA344850@tiffany>
 
+On Mon, Oct 23, 2023 at 04:16:56PM +0900, Hyesoo Yu wrote:
+> On Tue, Oct 17, 2023 at 11:26:36AM +0100, Catalin Marinas wrote:
+> > BTW, I suggest for the next iteration we drop MIGRATE_METADATA, only use
+> > CMA and assume that the tag storage itself supports tagging. Hopefully
+> > it makes the patches a bit simpler.
+> 
+> I am curious about the plan for the next iteration.
 
-Matthew Wilcox <willy@infradead.org> writes:
+Alex is working on it.
 
-(snip)
+> Does tag storage itself supports tagging? Will the following version be unusable
+> if the hardware does not support it? The document of google said that 
+> "If this memory is itself mapped as Tagged Normal (which should not happen!)
+> then tag updates on it either raise a fault or do nothing, but never change the
+> contents of any other page."
+> (https://github.com/google/sanitizers/blob/master/mte-dynamic-carveout/spec.md)
+> 
+> The support of H/W is very welcome because it is good to make the patches simpler.
+> But if H/W doesn't support it, Can't the new solution be used?
 
->> > Something I forgot to mention was that I found it more useful to express
->> > "map this chunk of a folio" in bytes rather than pages.  You might find
->> > the same, in which case it's just folio.map(offset: usize) instead of
->> > folio.map_page(page_index: usize)
->> 
->> Oh, thanks for the feedback. I'll switch to bytes then for v2.
->> (Already did in the example above.)
->
-> Great!  Something else I think would be a good idea is open-coding some
-> of the trivial accessors.  eg instead of doing:
->
-> +size_t rust_helper_folio_size(struct folio *folio)
-> +{
-> +	return folio_size(folio);
-> +}
-> +EXPORT_SYMBOL_GPL(rust_helper_folio_size);
-> [...]
-> +    pub fn size(&self) -> usize {
-> +        // SAFETY: The folio is valid because the shared reference implies a non-zero refcount.
-> +        unsafe { bindings::folio_size(self.0.get()) }
-> +    }
->
-> add:
->
-> impl Folio {
-> ...
->     pub fn order(&self) -> u8 {
-> 	if (self.flags & (1 << PG_head))
-> 	    self._flags_1 & 0xff
-> 	else
-> 	    0
->     }
->
->     pub fn size(&self) -> usize {
-> 	bindings::PAGE_SIZE << self.order()
->     }
-> }
->
-> ... or have I misunderstood what is possible here?  My hope is that the
-> compiler gets to "see through" the abstraction, which surely can't be
-> done when there's a function call.
+AFAIK on the current interconnects this is supported but the offsets
+will need to be configured by firmware in such a way that a tag access
+to the tag carve-out range still points to physical RAM, otherwise, as
+per Google's doc, you can get some unexpected behaviour.
 
-The build system and Rust compiler can inline and optimize across
-function calls and languages when LTO is enabled. Some patches are
-needed to make it work though.
+Let's take a simplified example, we have:
 
-BR Andreas
+  phys_addr - physical address, linearised, starting from 0
+  ram_size - the size of RAM (also corresponds to the end of PA+1)
+
+A typical configuration is to designate the top 1/32 of RAM for tags:
+
+  tag_offset = ram_size - ram_size / 32
+  tag_carveout_start = tag_offset
+
+The tag address for a given phys_addr is calculated as:
+
+  tag_addr = phys_addr / 32 + tag_offset
+
+To keep things simple, we reserve the top 1/(32*32) of the RAM as tag
+storage for the main/reusable tag carveout.
+
+  tag_carveout2_start = tag_carveout_start / 32 + tag_offset
+
+This gives us the end of the first reusable carveout:
+
+  tag_carveout_end = tag_carveout2_start - 1
+
+and this way in Linux we can have (inclusive ranges):
+
+  0..(tag_carveout_start-1): normal memory, data only
+  tag_carveout_start..tag_carveout_end: CMA, reused as tags or data
+  tag_carveout2_start..(ram_size-1): reserved for tags (not touched by the OS)
+
+For this to work, we need the last page in the first carveout to have
+a tag storage within RAM. And, of course, all of the above need to be at
+least 4K aligned.
+
+The simple configuration of 1/(32*32) of RAM for the second carveout is
+sufficient but not fully utilised. We could be a bit more efficient to
+gain a few more pages. Apart from the page alignment requirements, the
+only strict requirement we need is:
+
+  tag_carverout2_end < ram_size
+
+where tag_carveout2_end is the tag storage corresponding to the end of
+the main/reusable carveout, just before tag_carveout2_start:
+
+  tag_carveout2_end = tag_carveout_end / 32 + tag_offset
+
+Assuming that my on-paper substitutions are correct, the inequality
+above becomes:
+
+  tag_offset < (1024 * ram_size + 32) / 1057
+
+and tag_offset is a multiple of PAGE_SIZE * 32 (so that the
+tag_carveout2_start is a multiple of PAGE_SIZE).
+
+As a concrete example, for 16GB of RAM starting from 0:
+
+  tag_offset = 0x3e0060000
+  tag_carverout2_start = 0x3ff063000
+
+Without the optimal placement, the default tag_offset of top 1/32 of RAM
+would have been:
+
+  tag_offset = 0x3e0000000
+  tag_carveou2_start = 0x3ff000000
+
+so an extra 396KB gained with optimal placement (out of 16G, not sure
+it's worth).
+
+One can put the calculations in some python script to get the optimal
+tag offset in case I got something wrong on paper.
+
+-- 
+Catalin
 
