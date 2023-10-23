@@ -1,53 +1,64 @@
-Return-Path: <linux-fsdevel+bounces-911-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-912-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B54277D3066
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 12:50:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAB147D3519
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 13:45:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2AA6B20E1B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 10:50:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56C0DB20D8D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 11:45:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFC0D13AC8;
-	Mon, 23 Oct 2023 10:50:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9653417758;
+	Mon, 23 Oct 2023 11:45:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDBA512B90;
-	Mon, 23 Oct 2023 10:50:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86CFEC433C8;
-	Mon, 23 Oct 2023 10:50:21 +0000 (UTC)
-Date: Mon, 23 Oct 2023 11:50:19 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Hyesoo Yu <hyesoo.yu@samsung.com>
-Cc: Alexandru Elisei <alexandru.elisei@arm.com>, will@kernel.org,
-	oliver.upton@linux.dev, maz@kernel.org, james.morse@arm.com,
-	suzuki.poulose@arm.com, yuzenghui@huawei.com, arnd@arndb.de,
-	akpm@linux-foundation.org, mingo@redhat.com, peterz@infradead.org,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
-	mhiramat@kernel.org, rppt@kernel.org, hughd@google.com,
-	pcc@google.com, steven.price@arm.com, anshuman.khandual@arm.com,
-	vincenzo.frascino@arm.com, david@redhat.com, eugenis@google.com,
-	kcc@google.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH RFC 06/37] mm: page_alloc: Allocate from movable pcp
- lists only if ALLOC_FROM_METADATA
-Message-ID: <ZTZP66CA1r35yTmp@arm.com>
-References: <20230823131350.114942-1-alexandru.elisei@arm.com>
- <20230823131350.114942-7-alexandru.elisei@arm.com>
- <CGME20231012013524epcas2p4b50f306e3e4d0b937b31f978022844e5@epcas2p4.samsung.com>
- <20231010074823.GA2536665@tiffany>
- <ZS0va9nICZo8bF03@monolith>
- <ZS5hXFHs08zQOboi@arm.com>
- <20231023071656.GA344850@tiffany>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75DF5168BA
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 11:45:13 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.120])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04BDEDB;
+	Mon, 23 Oct 2023 04:45:11 -0700 (PDT)
+X-IronPort-AV: E=McAfee;i="6600,9927,10871"; a="385701223"
+X-IronPort-AV: E=Sophos;i="6.03,244,1694761200"; 
+   d="scan'208";a="385701223"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2023 04:45:11 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10871"; a="874681317"
+X-IronPort-AV: E=Sophos;i="6.03,244,1694761200"; 
+   d="scan'208";a="874681317"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmsmga002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2023 04:45:08 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97-RC2)
+	(envelope-from <andy.shevchenko@gmail.com>)
+	id 1qutMn-00000007vRG-3QFa;
+	Mon, 23 Oct 2023 14:45:05 +0300
+Date: Mon, 23 Oct 2023 14:45:05 +0300
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+To: Kees Cook <kees@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Baokun Li <libaokun1@huawei.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Kees Cook <keescook@chromium.org>,
+	Ferry Toth <ftoth@exalondelft.nl>, linux-fsdevel@vger.kernel.org,
+	linux-ext4@vger.kernel.org
+Subject: Re: [GIT PULL] ext2, quota, and udf fixes for 6.6-rc1
+Message-ID: <ZTZcwU+nCB0RUI+y@smile.fi.intel.com>
+References: <CAHk-=whis2BJF2fv1xySAg2NTQ+C5fViNSGkLNCOqGzi-3y+8w@mail.gmail.com>
+ <ZTFxEcjo4d6vXbo5@smile.fi.intel.com>
+ <ZTFydEbdEYlxOxc1@smile.fi.intel.com>
+ <CAHk-=wh_gbZE_ZsQ6+9gSPdXfoCtmuK-MFmBkO3ywMKFQEvb6g@mail.gmail.com>
+ <ZTKUDzONVHXnWAJc@smile.fi.intel.com>
+ <CAHk-=wipA4605yvnmjW7T9EvARPRCGLARty8UUzRGxic1SXqvg@mail.gmail.com>
+ <ZTLHBYv6wSUVD/DW@smile.fi.intel.com>
+ <CAHk-=wgHFSTuANT3jXsw1EtzdHQe-XQtWQACzeFxn2BEBzX-gA@mail.gmail.com>
+ <ZTLk1G0KCF7YNjRx@surfacebook.localdomain>
+ <BF6761C0-B813-4C98-9563-8323C208F67D@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -56,103 +67,40 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231023071656.GA344850@tiffany>
+In-Reply-To: <BF6761C0-B813-4C98-9563-8323C208F67D@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, Oct 23, 2023 at 04:16:56PM +0900, Hyesoo Yu wrote:
-> On Tue, Oct 17, 2023 at 11:26:36AM +0100, Catalin Marinas wrote:
-> > BTW, I suggest for the next iteration we drop MIGRATE_METADATA, only use
-> > CMA and assume that the tag storage itself supports tagging. Hopefully
-> > it makes the patches a bit simpler.
+On Sat, Oct 21, 2023 at 04:36:19PM -0700, Kees Cook wrote:
+> On October 20, 2023 1:36:36 PM PDT, andy.shevchenko@gmail.com wrote:
+> >That said, if you or anyone has ideas how to debug futher, I'm all ears!
 > 
-> I am curious about the plan for the next iteration.
-
-Alex is working on it.
-
-> Does tag storage itself supports tagging? Will the following version be unusable
-> if the hardware does not support it? The document of google said that 
-> "If this memory is itself mapped as Tagged Normal (which should not happen!)
-> then tag updates on it either raise a fault or do nothing, but never change the
-> contents of any other page."
-> (https://github.com/google/sanitizers/blob/master/mte-dynamic-carveout/spec.md)
+> I don't think this has been tried yet:
 > 
-> The support of H/W is very welcome because it is good to make the patches simpler.
-> But if H/W doesn't support it, Can't the new solution be used?
+> When I've had these kind of hard-to-find glitches I've used manual
+> built-binary bisection. Assuming you have a source tree that works when built
+> with Clang and not with GCC:
+> - build the tree with Clang with, say, O=build-clang
+> - build the tree with GCC, O=build-gcc
+> - make a new tree for testing: cp -a build-clang build-test
+> - pick a suspect .o file (or files) to copy from build-gcc into build-test
+> - perform a relink: "make O=build-test" should DTRT since the copied-in .o
+> files should be newer than the .a and other targets
+> - test for failure, repeat
+> 
+> Once you've isolated it to (hopefully) a single .o file, then comes the
+> byte-by-byte analysis or something similar...
+> 
+> I hope that helps! These kinds of bugs are super frustrating.
 
-AFAIK on the current interconnects this is supported but the offsets
-will need to be configured by firmware in such a way that a tag access
-to the tag carve-out range still points to physical RAM, otherwise, as
-per Google's doc, you can get some unexpected behaviour.
-
-Let's take a simplified example, we have:
-
-  phys_addr - physical address, linearised, starting from 0
-  ram_size - the size of RAM (also corresponds to the end of PA+1)
-
-A typical configuration is to designate the top 1/32 of RAM for tags:
-
-  tag_offset = ram_size - ram_size / 32
-  tag_carveout_start = tag_offset
-
-The tag address for a given phys_addr is calculated as:
-
-  tag_addr = phys_addr / 32 + tag_offset
-
-To keep things simple, we reserve the top 1/(32*32) of the RAM as tag
-storage for the main/reusable tag carveout.
-
-  tag_carveout2_start = tag_carveout_start / 32 + tag_offset
-
-This gives us the end of the first reusable carveout:
-
-  tag_carveout_end = tag_carveout2_start - 1
-
-and this way in Linux we can have (inclusive ranges):
-
-  0..(tag_carveout_start-1): normal memory, data only
-  tag_carveout_start..tag_carveout_end: CMA, reused as tags or data
-  tag_carveout2_start..(ram_size-1): reserved for tags (not touched by the OS)
-
-For this to work, we need the last page in the first carveout to have
-a tag storage within RAM. And, of course, all of the above need to be at
-least 4K aligned.
-
-The simple configuration of 1/(32*32) of RAM for the second carveout is
-sufficient but not fully utilised. We could be a bit more efficient to
-gain a few more pages. Apart from the page alignment requirements, the
-only strict requirement we need is:
-
-  tag_carverout2_end < ram_size
-
-where tag_carveout2_end is the tag storage corresponding to the end of
-the main/reusable carveout, just before tag_carveout2_start:
-
-  tag_carveout2_end = tag_carveout_end / 32 + tag_offset
-
-Assuming that my on-paper substitutions are correct, the inequality
-above becomes:
-
-  tag_offset < (1024 * ram_size + 32) / 1057
-
-and tag_offset is a multiple of PAGE_SIZE * 32 (so that the
-tag_carveout2_start is a multiple of PAGE_SIZE).
-
-As a concrete example, for 16GB of RAM starting from 0:
-
-  tag_offset = 0x3e0060000
-  tag_carverout2_start = 0x3ff063000
-
-Without the optimal placement, the default tag_offset of top 1/32 of RAM
-would have been:
-
-  tag_offset = 0x3e0000000
-  tag_carveou2_start = 0x3ff000000
-
-so an extra 396KB gained with optimal placement (out of 16G, not sure
-it's worth).
-
-One can put the calculations in some python script to get the optimal
-tag offset in case I got something wrong on paper.
+I'm sorry, but I can't see how this is not an error prone approach.
+If it's a timing issue then the arbitrary object change may help and it doesn't
+prove anything. As earlier I tried to comment out the error message, and it
+worked with GCC as well. The difference is so little (according to Linus) that
+it may not be suspectible. Maybe I am missing the point...
 
 -- 
-Catalin
+With Best Regards,
+Andy Shevchenko
+
+
 
