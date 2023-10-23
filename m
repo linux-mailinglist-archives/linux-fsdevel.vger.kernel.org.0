@@ -1,124 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-898-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-899-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D8247D2997
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 07:30:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 45B707D2AA3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 08:42:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2019F2814CA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 05:30:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03DF828147B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 06:42:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 388AB538C;
-	Mon, 23 Oct 2023 05:30:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E02936FD6;
+	Mon, 23 Oct 2023 06:42:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="Pa9+5evt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZHI0yAH1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B71B4C93
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 05:29:57 +0000 (UTC)
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64986D5D
-	for <linux-fsdevel@vger.kernel.org>; Sun, 22 Oct 2023 22:29:56 -0700 (PDT)
-Received: by mail-pl1-x636.google.com with SMTP id d9443c01a7336-1cab2c24ecdso15700395ad.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 22 Oct 2023 22:29:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1698038996; x=1698643796; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pA6hmVfAJV/uW1mtP/POTKyiCL1mpB/iphXnZFNui5E=;
-        b=Pa9+5evt2O9FS/RBhPIP3FmRBiViiOFNUZ3SVa2Z3gNh/daHLbVXdNlkkyV29B6o/l
-         TmR1jRxEp3izSQV5jsXCem4tAC/TfHZKMAE0yFMFadZabG028XfOOWrfoJe2zwzVTGKb
-         C9cpDrcEARRTMsFiL+PrPZz5eL6M4Vu1xgXG2iWLceZlIu4PJS9iyhQl9LueVDgu7yf/
-         6oW0DzFK2aE4K+8lEvHKMFbG3PKPdlqb5MXvc1W4eFxl/RkkxyoflqiUhLlrhN/2oLJU
-         vbHTVP+ob1KfwTUJK4O6Vnr1Omwlem6lV0UFlPjfpg3QCHHetkBH/8DyjR9h8UbkDQ5M
-         b4OA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698038996; x=1698643796;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pA6hmVfAJV/uW1mtP/POTKyiCL1mpB/iphXnZFNui5E=;
-        b=sp3h192Ph56SoWx4T7bsL/azuGEFWi2wiojqqzbhBYvwKYMFGQF+x3+Mn39WwGRogw
-         jdG3/ebIl4uIAJJTy4qTIEAlpgT/YgxbMwNE+e1FOFNj5L2Rc4LYRvwcSqP8FzRE9vao
-         yOFdkfpUfkuQJAirEkAG78W2VbK7ok7jfAuHQW83OYzgIW+KvRgHXZkQRPU3zEkbSWIJ
-         85YkuAyPFAmOkKElibmeAte4u0UWJNEQ1JoxDoXX+54yEMKbWsCFnw+VD5tBn9TcrQMo
-         Tfk6LD+K51dQfDJc52dZJzm7MMhbs/dZW+GLdpi5h0wH2iM8IGRIgwNVt0ycBosrvFXV
-         B84A==
-X-Gm-Message-State: AOJu0Yzb5cgdtlnpNU32HyzlyR3poOpp+FclaLZyFjH7wKzc6PyEMyrC
-	kSDECyElrh0a2Rmot6fwSw0nHQ==
-X-Google-Smtp-Source: AGHT+IGr1TX1aoeWNoXlEFhl/SEfwGB6Q5EzrGvo4R2SBtWrIE0uDaB8F16voX3bfOsUOQHFW9XR2g==
-X-Received: by 2002:a17:902:ec84:b0:1c7:443d:7419 with SMTP id x4-20020a170902ec8400b001c7443d7419mr7057135plg.29.1698038995793;
-        Sun, 22 Oct 2023 22:29:55 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-20-59.pa.nsw.optusnet.com.au. [49.180.20.59])
-        by smtp.gmail.com with ESMTPSA id h21-20020a170902eed500b001bfd92ec592sm5185773plb.292.2023.10.22.22.29.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Oct 2023 22:29:55 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1qunVg-002kOq-0Y;
-	Mon, 23 Oct 2023 16:29:52 +1100
-Date: Mon, 23 Oct 2023 16:29:52 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Matthew Wilcox <willy@infradead.org>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Kent Overstreet <kent.overstreet@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-fsdevel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	Wedson Almeida Filho <walmeida@microsoft.com>,
-	Marco Elver <elver@google.com>
-Subject: Re: [RFC PATCH 06/19] rust: fs: introduce `FileSystem::init_root`
-Message-ID: <ZTYE0PSDwITrWMHv@dread.disaster.area>
-References: <20231018122518.128049-1-wedsonaf@gmail.com>
- <20231018122518.128049-7-wedsonaf@gmail.com>
- <OjZkAoZLnJc9yA0MENJhQx_32ptXZ1cLAFjEnEFog05C4pEmaAUHaA6wBvCFXWtaXbrNN5upFFi3ohQ6neLklIXZBURaYLlQYf3-2gscw_s=@proton.me>
- <ZTHPOfy4dhj0x5ch@boqun-archlinux>
- <vT8j_VVzNv0Cx7iTO9OobT9H8zEc_I-dxmh2sF6GZWqRQ0nhjnaNZqtWPtYm37wOhwGek2vLUYwAM-jJ83AZEe8TXMDx9N6pZ3mZW1WdNNw=@proton.me>
- <ZTP06kdjBQzZ3KYD@Boquns-Mac-mini.home>
- <ZTQDztmY0ivPcGO/@casper.infradead.org>
- <ZTQnpeFcPwMoEcgO@Boquns-Mac-mini.home>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 158F429A8;
+	Mon, 23 Oct 2023 06:42:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07E34C433C7;
+	Mon, 23 Oct 2023 06:42:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1698043323;
+	bh=TtUtqC54sB4zN71mLaaG1Nx+Kiivp6Rce9RehCA/AiY=;
+	h=References:From:To:Cc:Subject:Date:In-reply-to:From;
+	b=ZHI0yAH149Uc0iS7zncfy2evBfd0OJyTNLRX7L+HVXKbcq+jW/8+vmSIgUFk9MWTz
+	 fimCJY75BT19RMwVDKUPn2e701QXOdv+VWPBBM+kPNo3y1ab/KRasFbaXomIBplmyY
+	 yt9Xoaww0tDfzDXkP+77SlV1L/WGPluB3ABKq2XoGPXZuzOdIBpD/+CMXCKz69N8cv
+	 w3rWZ6BkmAsK6bwVzZaySGtR1nXt+UfoIA6KNutPJB4+7nb5GvHvzzvmSmSYXdSGUA
+	 VzNavw9kH4nff/ZpoC80SSlBgxSBXzdnaumFaQJQEjdBSn2tMimlbyHzhl18alflx8
+	 1SBy10GM61NQQ==
+References: <20230828065744.1446462-1-ruansy.fnst@fujitsu.com>
+ <20230928103227.250550-1-ruansy.fnst@fujitsu.com>
+ <875y31wr2d.fsf@debian-BULLSEYE-live-builder-AMD64>
+ <20231020154009.GS3195650@frogsfrogsfrogs>
+User-agent: mu4e 1.8.10; emacs 27.1
+From: Chandan Babu R <chandanbabu@kernel.org>
+To: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+Cc: akpm@linux-foundation.org, "Darrick J. Wong" <djwong@kernel.org>,
+ linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
+ linux-xfs@vger.kernel.org, linux-mm@kvack.org, dan.j.williams@intel.com,
+ willy@infradead.org, jack@suse.cz, mcgrof@kernel.org
+Subject: Re: [PATCH v15] mm, pmem, xfs: Introduce MF_MEM_PRE_REMOVE for unbind
+Date: Mon, 23 Oct 2023 12:10:10 +0530
+In-reply-to: <20231020154009.GS3195650@frogsfrogsfrogs>
+Message-ID: <87msw9zvpk.fsf@debian-BULLSEYE-live-builder-AMD64>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZTQnpeFcPwMoEcgO@Boquns-Mac-mini.home>
+Content-Type: text/plain
 
-On Sat, Oct 21, 2023 at 12:33:57PM -0700, Boqun Feng wrote:
-> On Sat, Oct 21, 2023 at 06:01:02PM +0100, Matthew Wilcox wrote:
-> > I'm only an expert on the page cache, not the rest of the VFS.  So
-> > what are the rules around modifying i_state for the VFS?
-> 
-> Agreed, same question here.
 
-inode->i_state should only be modified under inode->i_lock.
+On Fri, Oct 20, 2023 at 08:40:09 AM -0700, Darrick J. Wong wrote:
+> On Fri, Oct 20, 2023 at 03:26:32PM +0530, Chandan Babu R wrote:
+>> On Thu, Sep 28, 2023 at 06:32:27 PM +0800, Shiyang Ruan wrote:
+>> > ====
+>> > Changes since v14:
+>> >  1. added/fixed code comments per Dan's comments
+>> > ====
+>> >
+>> > Now, if we suddenly remove a PMEM device(by calling unbind) which
+>> > contains FSDAX while programs are still accessing data in this device,
+>> > e.g.:
+>> > ```
+>> >  $FSSTRESS_PROG -d $SCRATCH_MNT -n 99999 -p 4 &
+>> >  # $FSX_PROG -N 1000000 -o 8192 -l 500000 $SCRATCH_MNT/t001 &
+>> >  echo "pfn1.1" > /sys/bus/nd/drivers/nd_pmem/unbind
+>> > ```
+>> > it could come into an unacceptable state:
+>> >   1. device has gone but mount point still exists, and umount will fail
+>> >        with "target is busy"
+>> >   2. programs will hang and cannot be killed
+>> >   3. may crash with NULL pointer dereference
+>> >
+>> > To fix this, we introduce a MF_MEM_PRE_REMOVE flag to let it know that we
+>> > are going to remove the whole device, and make sure all related processes
+>> > could be notified so that they could end up gracefully.
+>> >
+>> > This patch is inspired by Dan's "mm, dax, pmem: Introduce
+>> > dev_pagemap_failure()"[1].  With the help of dax_holder and
+>> > ->notify_failure() mechanism, the pmem driver is able to ask filesystem
+>> > on it to unmap all files in use, and notify processes who are using
+>> > those files.
+>> >
+>> > Call trace:
+>> > trigger unbind
+>> >  -> unbind_store()
+>> >   -> ... (skip)
+>> >    -> devres_release_all()
+>> >     -> kill_dax()
+>> >      -> dax_holder_notify_failure(dax_dev, 0, U64_MAX, MF_MEM_PRE_REMOVE)
+>> >       -> xfs_dax_notify_failure()
+>> >       `-> freeze_super()             // freeze (kernel call)
+>> >       `-> do xfs rmap
+>> >       ` -> mf_dax_kill_procs()
+>> >       `  -> collect_procs_fsdax()    // all associated processes
+>> >       `  -> unmap_and_kill()
+>> >       ` -> invalidate_inode_pages2_range() // drop file's cache
+>> >       `-> thaw_super()               // thaw (both kernel & user call)
+>> >
+>> > Introduce MF_MEM_PRE_REMOVE to let filesystem know this is a remove
+>> > event.  Use the exclusive freeze/thaw[2] to lock the filesystem to prevent
+>> > new dax mapping from being created.  Do not shutdown filesystem directly
+>> > if configuration is not supported, or if failure range includes metadata
+>> > area.  Make sure all files and processes(not only the current progress)
+>> > are handled correctly.  Also drop the cache of associated files before
+>> > pmem is removed.
+>> >
+>> > [1]: https://lore.kernel.org/linux-mm/161604050314.1463742.14151665140035795571.stgit@dwillia2-desk3.amr.corp.intel.com/
+>> > [2]: https://lore.kernel.org/linux-xfs/169116275623.3187159.16862410128731457358.stg-ugh@frogsfrogsfrogs/
+>> >
+>> > Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+>> > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+>> > Acked-by: Dan Williams <dan.j.williams@intel.com>
+>> 
+>> Hi Andrew,
+>> 
+>> Shiyang had indicated that this patch has been added to
+>> akpm/mm-hotfixes-unstable branch. However, I don't see the patch listed in
+>> that branch.
+>> 
+>> I am about to start collecting XFS patches for v6.7 cycle. Please let me know
+>> if you have any objections with me taking this patch via the XFS tree.
+>
+> V15 was dropped from his tree on 28 Sept., you might as well pull it
+> into your own tree for 6.7.  It's been testing fine on my trees for the
+> past 3 weeks.
+>
+> https://lore.kernel.org/mm-commits/20230928172815.EE6AFC433C8@smtp.kernel.org/
 
-And in most situations, you have to hold the inode->i_lock to read
-state flags as well so that reads are serialised against
-modifications which are typically non-atomic RMW operations.
+Shiyang, this patch does not apply cleanly on v6.6-rc7. Can you please rebase
+the patch on v6.6-rc7 and send it to the mailing list?
 
-There is, I think, one main exception to read side locking and this
-is find_inode_rcu() which does an unlocked check for I_WILL_FREE |
-I_FREEING. In this case, the inode->i_state updates in iput_final()
-use WRITE_ONCE under the inode->i_lock to provide the necessary
-semantics for the unlocked READ_ONCE() done under rcu_read_lock().
-
-IOWs, if you follow the general rule that any inode->i_state access
-(read or write) needs to hold inode->i_lock, you probably won't
-screw up. 
-
--Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+Chandan
 
