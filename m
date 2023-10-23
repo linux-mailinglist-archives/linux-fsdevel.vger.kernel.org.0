@@ -1,80 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-894-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-895-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 157CE7D286D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 04:16:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B76B37D298B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 07:03:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AAC48B20D54
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 02:16:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E843C1C20852
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 05:03:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD9415C6;
-	Mon, 23 Oct 2023 02:16:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABF1C5240;
+	Mon, 23 Oct 2023 05:03:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="AGP4QGqk"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="J+nJfNz8";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+2ztQzXb"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 049F61390
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 02:16:30 +0000 (UTC)
-Received: from m1345.mail.163.com (m1345.mail.163.com [220.181.13.45])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 76A1693;
-	Sun, 22 Oct 2023 19:16:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=1HW0ANDOOB5ziqCL5xX6+HVEBIq+Al/PA87Yd2ajnVI=; b=A
-	GP4QGqkmQRFWOiUBBdSHwzAZQrYkAW3ZcPm+B+TMEM/oGpE5BcdxgM3Ekp3qf0hu
-	CZjMk2fKBUlocUmSGtLMQ6J49Ep2HdoSp7gBJezDMn6GjebaXS21OLllOi/ESP7P
-	7nZlAxmlYYshn8/FCdglDcFJzQ+cuW15V3j+Zf8wmQ=
-Received: from 00107082$163.com ( [111.35.186.243] ) by ajax-webmail-wmsvr45
- (Coremail) ; Mon, 23 Oct 2023 10:16:14 +0800 (CST)
-X-Originating-IP: [111.35.186.243]
-Date: Mon, 23 Oct 2023 10:16:14 +0800 (CST)
-From: "David Wang" <00107082@163.com>
-To: "Dave Chinner" <david@fromorbit.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PERFORMANCE]fs: sendfile suffer performance degradation when
- buffer size have performance impact on underling IO
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20230109(dcb5de15)
- Copyright (c) 2002-2023 www.mailtech.cn 163com
-In-Reply-To: <ZTWn3QtTggmMHWxS@dread.disaster.area>
-References: <28de01eb.208.18b4f9a0051.Coremail.00107082@163.com>
- <ZTWn3QtTggmMHWxS@dread.disaster.area>
-X-NTES-SC: AL_QuySCvyZuEss4iKaZOkXn0oTju85XMCzuv8j3YJeN500hynS8DIxUkJzEFTo/d2tCQKqjSWybhFu6OVLUY53XZ09oMdV4q4C066prKtq5lz4
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D62855221
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 05:03:44 +0000 (UTC)
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3792B9;
+	Sun, 22 Oct 2023 22:03:42 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 470901FD6D;
+	Mon, 23 Oct 2023 05:03:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1698037421; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M3FiI24Lz0BDoFAv2KmmVJyfmQQdLhLTKq1sMxVk3sI=;
+	b=J+nJfNz8B9kuGroRmoRdSzMzTfD6Gth7HIFXiCv0CBcXo89rdVvW0YyPBkMVn6mCFSfNf5
+	Q3ROPiQcfeCpEtld3TapK7bb0p9fGG23vCltQUb63s9Idxqc2iemFLOLAG4e3eWoYaHti0
+	4PQ7zgTriYaSzxb4lRfg4oE5ZoCU2jQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1698037421;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M3FiI24Lz0BDoFAv2KmmVJyfmQQdLhLTKq1sMxVk3sI=;
+	b=+2ztQzXbrsFLw1W2hJ9hWXtV9BMqrX6tux1fQSZkK7Wud2n83rwqfaI7mpHDPAotjxtISu
+	IDYIXYpuZDtTY0CA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+	(No client certificate requested)
+	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 1788D133E5;
+	Mon, 23 Oct 2023 05:03:41 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+	by imap2.suse-dmz.suse.de with ESMTPSA
+	id VHQZBK3+NWXDMwAAMHmgww
+	(envelope-from <hare@suse.de>); Mon, 23 Oct 2023 05:03:41 +0000
+Message-ID: <af5e4736-5b24-4cff-a843-de54a269fed1@suse.de>
+Date: Mon, 23 Oct 2023 07:03:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <61f74c43.16f9.18b5a51868f.Coremail.00107082@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:LcGowAD3vzRv1zVl0uYWAA--.56189W
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiOwYRqmC5oBhZ1wAEst
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 04/18] fs/buffer.c: use accessor function to translate
+ page index to sectors
+Content-Language: en-US
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Christoph Hellwig <hch@lst.de>,
+ Jens Axboe <axboe@kernel.dk>, Pankaj Raghav <p.raghav@samsung.com>,
+ linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20230918110510.66470-1-hare@suse.de>
+ <20230918110510.66470-5-hare@suse.de> <ZTLW9jOJ0Crt/ZD3@casper.infradead.org>
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <ZTLW9jOJ0Crt/ZD3@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Authentication-Results: smtp-out2.suse.de;
+	none
+X-Spam-Level: 
+X-Spam-Score: -6.79
+X-Spamd-Result: default: False [-6.79 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 XM_UA_NO_VERSION(0.01)[];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 BAYES_HAM(-2.70)[98.70%];
+	 MIME_GOOD(-0.10)[text/plain];
+	 NEURAL_HAM_LONG(-3.00)[-1.000];
+	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 NEURAL_HAM_SHORT(-1.00)[-1.000];
+	 RCPT_COUNT_SEVEN(0.00)[7];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 RCVD_COUNT_TWO(0.00)[2];
+	 RCVD_TLS_ALL(0.00)[];
+	 MID_RHS_MATCH_FROM(0.00)[]
 
-CgoKQXQgMjAyMy0xMC0yMyAwNjo1MzoxNywgIkRhdmUgQ2hpbm5lciIgPGRhdmlkQGZyb21vcmJp
-dC5jb20+IHdyb3RlOgoKPgo+T19EU1lOQyBpcyB0aGUgcHJvYmxlbSBoZXJlLgo+Cj5UaGlzIGZv
-cmNlcyBhbiBJTyB0byBkaXNrIGZvciBldmVyeSB3cml0ZSBJTyBzdWJtaXNzaW9uIGZyb20KPnNl
-bmRmaWxlIHRvIHRoZSBmaWxlc3lzdGVtLiBGb3Igc3luY2hyb25vdXMgSU8gKGFzIGluICJ3YWl0
-aW5nIGZvcgo+Y29tcGxldGlvbiBiZWZvcmUgc2VuZGluZyB0aGUgbmV4dCBJTyksIGEgbGFyZ2Vy
-IElPIHNpemUgd2lsbAo+KmFsd2F5cyogbW92ZSBkYXRhIGZhc3RlciB0byBzdG9yYWdlLgo+Cj5G
-V0lXLCB5b3UnbGwgZ2V0IHRoZSBzYW1lIGJlaGF2aW91ciBpZiB5b3UgdXNlIE9fRElSRUNUIGZv
-ciBlaXRoZXIKPnNvdXJjZSBvciBkZXN0aW5hdGlvbiBmaWxlIHdpdGggc2VuZGZpbGUgLSBzeW5j
-aHJvbm91cyA2NGtCIElPcyBhcmUKPmEgbWFzc2l2ZSBwZXJmb3JtYW5jZSBsaW1pdGF0aW9uIGV2
-ZW4gd2l0aG91dCBPX0RTWU5DLgo+Cj5JT1dzLCBkb24ndCB1c2Ugc2VuZGZpbGUgbGlrZSB0aGlz
-LiBVc2UgYnVmZmVyZWQgSU8gYW5kCj5zZW5kZmlsZShmZCk7IGZkYXRhc3luYyhmZCk7IGlmIHlv
-dSBuZWVkIGRhdGEgaW50ZWdyaXR5IGd1YXJhbnRlZXMKPmFuZCB5b3Ugd29uJ3Qgc2VlIGFueSBw
-ZXJmIHByb2JsZW1zIHJlc3VsdGluZyBmcm9tIHRoZSBzaXplIG9mIHRoZQo+aW50ZXJuYWwgc2Vu
-ZGZpbGUgYnVmZmVyLi4uLgo+Cj4tRGF2ZS4KPi0tIAo+RGF2ZSBDaGlubmVyCj5kYXZpZEBmcm9t
-b3JiaXQuY29tCgpUaGFua3MgZm9yIHRoZSBpbmZvcm1hdGlvbiwgYW5kIFllcywgYnVmZmVyZWQg
-SU8gc2hvd3Mgbm8gc2lnbmlmaWNhbnQgCnBlcmZvcm1hbmNlIGRpZmZlcmVuY2UuCkZlZWwgdGhh
-dCB0aGlzIHVzYWdlIGNhdmVhdCBzaG91bGQgYmUgcmVjb3JkZWQgaW4gdGhlICJOT1RFIiBzZWN0
-aW9uIG9mIG1hbiBwYWdlIGZvciBzZW5kZmlsZS4KClRoYW5rcwpEYXZpZAoKIAo=
+On 10/20/23 21:37, Matthew Wilcox wrote:
+> On Mon, Sep 18, 2023 at 01:04:56PM +0200, Hannes Reinecke wrote:
+>> Use accessor functions block_index_to_sector() and block_sector_to_index()
+>> to translate the page index into the block sector and vice versa.
+> 
+> You missed two in grow_dev_page() (which I just happened upon):
+> 
+>          bh = folio_buffers(folio);
+>          if (bh) {
+>                  if (bh->b_size == size) {
+>                          end_block = folio_init_buffers(folio, bdev,
+>                                          (sector_t)index << sizebits, size);
+>                          goto done;
+>                  }
+> ...
+>          spin_lock(&inode->i_mapping->private_lock);
+>          link_dev_buffers(folio, bh);
+>          end_block = folio_init_buffers(folio, bdev,
+>                          (sector_t)index << sizebits, size);
+> 
+> Can UBSAN be of help here?  It should catch shifting by a negative
+> amount.  That sizebits is calculated in grow_buffers:
+> 
+>          sizebits = PAGE_SHIFT - __ffs(size);
+> 
+Ah, thanks. I'm currently working with Luis and Pankay to get a combined 
+patchset; I'll make sure to have that included.
+
+Cheers,
+
+Hannes
+-- 
+Dr. Hannes Reinecke                Kernel Storage Architect
+hare@suse.de                              +49 911 74053 688
+SUSE Software Solutions GmbH, Maxfeldstr. 5, 90409 Nürnberg
+HRB 36809 (AG Nürnberg), Geschäftsführer: Ivo Totev, Andrew
+Myers, Andrew McDonald, Martje Boudien Moerman
+
 
