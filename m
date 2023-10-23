@@ -1,237 +1,164 @@
-Return-Path: <linux-fsdevel+bounces-932-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-933-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 151C37D3955
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 16:31:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A81947D39EA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 16:43:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3794A1C20A41
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 14:31:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61BA728148C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 14:43:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F8291BDE7;
-	Mon, 23 Oct 2023 14:31:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F47719BCF;
+	Mon, 23 Oct 2023 14:43:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nKQ771sX"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="C6qrs4g0";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="IVdZCgiS"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E081BDC4
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 14:30:59 +0000 (UTC)
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 427BAD7D;
-	Mon, 23 Oct 2023 07:30:57 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id ffacd0b85a97d-32dc918d454so2166257f8f.2;
-        Mon, 23 Oct 2023 07:30:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698071455; x=1698676255; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8uwT+INyfSEhUg8urPKaaeAxSI9K09w0usUEfl77gdI=;
-        b=nKQ771sX5m7t0+E/QZ69PXcEjyj80kbrIr1abYJ9Mi8Pv/lqqxr6tyhOyw+1lY9vGG
-         76rT950UfjfB0VgHF4g3rjMSZ4BPSsQT9nZ5LaJYmSsU95xEnnEsZyWEY7CHBWhtOi9L
-         YeecInt9/ferdssdgMx6d+uK21iEzDMxjljWPgv+EAtsYGbWxsJRcaXDHCNv9gFQsifX
-         r3TD+DtsupsJMQtGUoZ+s2+QGGwDYOGze0AqakGgH+saXMFg4Y5lPUjy31bGXcy+ZjvS
-         4bqz1+LqfMkYlaZqr/nk8V0J3T67q1iZBqDhrawFSO+DQjH+Bfxc8dLQefIKT4WYWixz
-         VGEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698071455; x=1698676255;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8uwT+INyfSEhUg8urPKaaeAxSI9K09w0usUEfl77gdI=;
-        b=TCO5lnUChGleBA+YyESCPONRV32orrKmUYXZvWV68nzw/9KTasBfPIoWtu/6LDV499
-         wCmaSLVk85JL24r9BmoLk/Bx7ta/K8VLM273RPJOyJGOw8anDHdStouuq0iXO/u6blP9
-         k7t9EUOIelEBtNNRjhTSZ2L3urwBbE8GmKDn0QwarX9AoYJbRVCVhdlDNRDF6ggQvZ4L
-         WNogExQTT2tszxUAfLU80D8+pyaD8Mi2/nl0jVXZSO00iDefyV5TS551TFCBgTTNLLCc
-         6GzBOZKxyeR7g1xHuFmzSTOySewaSm7QtPikSWJkWUTAocne/hx3T5euZWHmKTtmFbPx
-         cbLg==
-X-Gm-Message-State: AOJu0Yz+ZGvjwerEKI0RPk6JfmMDRdOOWWa3T+YnlU7mzxrLgVVALe99
-	SoiqNRnsPmZtbtcsxQQhCKo=
-X-Google-Smtp-Source: AGHT+IEjDkVly3YZ2IksWBbnieMRKmSsB81SGeuDejCUCrtn9Fh79CTXmeBjVuLRRD6ITnP248WjTg==
-X-Received: by 2002:adf:ea88:0:b0:32d:8961:d864 with SMTP id s8-20020adfea88000000b0032d8961d864mr6074731wrm.48.1698071455338;
-        Mon, 23 Oct 2023 07:30:55 -0700 (PDT)
-Received: from amir-ThinkPad-T480.lan ([5.29.249.86])
-        by smtp.gmail.com with ESMTPSA id v5-20020a5d43c5000000b0031c6e1ea4c7sm7929892wrr.90.2023.10.23.07.30.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Oct 2023 07:30:54 -0700 (PDT)
-From: Amir Goldstein <amir73il@gmail.com>
-To: Jan Kara <jack@suse.cz>
-Cc: Jeff Layton <jlayton@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	Jeremy Kerr <jk@ozlabs.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Mike Kravetz <mike.kravetz@oracle.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Tejun Heo <tj@kernel.org>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Dominique Martinet <asmadeus@codewreck.org>
-Subject: [PATCH] fs: report f_fsid from s_dev for "simple" filesystems
-Date: Mon, 23 Oct 2023 17:30:49 +0300
-Message-Id: <20231023143049.2944970-1-amir73il@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A432B18E0D
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 14:43:48 +0000 (UTC)
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49717269D;
+	Mon, 23 Oct 2023 07:43:33 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 731642188D;
+	Mon, 23 Oct 2023 14:43:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1698072211;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3mWnimA+rB45DdXIO//K0LJL74BS6+rPPoMNkuJC8w4=;
+	b=C6qrs4g0jsDTg/6TjxWrP2fI0tkZUezsEVX5EraDP83B9ZInndNT3opR3YA/aF4lTpEF6N
+	aGY2OpJHJMZmRIZqm1tdh1N+DEk53L7NbXtq5gbPrRMEfDKLYg2euxd8RXJ/Dyn8OFmrMF
+	q5cV+n9DAXfJ455zH4C3YdIs/XEXqkY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1698072211;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3mWnimA+rB45DdXIO//K0LJL74BS6+rPPoMNkuJC8w4=;
+	b=IVdZCgiSzyXjHkb8KY2QiZabkPJ/NYpnPHJVjtkdaw5LEgBoTmgi3WGlOittza//ekkulb
+	CrAHXdpfja+VplDA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+	(No client certificate requested)
+	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 3E00A139C2;
+	Mon, 23 Oct 2023 14:43:31 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+	by imap2.suse-dmz.suse.de with ESMTPSA
+	id OyF7DpOGNmVLdwAAMHmgww
+	(envelope-from <dsterba@suse.cz>); Mon, 23 Oct 2023 14:43:31 +0000
+Date: Mon, 23 Oct 2023 16:36:37 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Aleksandr Nogikh <nogikh@google.com>
+Cc: syzbot <syzbot+b2869947e0c9467a41b6@syzkaller.appspotmail.com>,
+	clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
+	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+	Dmitry Vyukov <dvyukov@google.com>
+Subject: Re: [syzbot] [btrfs?] BUG: MAX_LOCKDEP_CHAIN_HLOCKS too low! (4)
+Message-ID: <20231023143637.GI26353@suse.cz>
+Reply-To: dsterba@suse.cz
+References: <000000000000d005440608450810@google.com>
+ <20231023130830.GG26353@twin.jikos.cz>
+ <CANp29Y4VNqAX0oPiGy557ubwQKjhWVbwjT7xdCBGLricJPJ5Yg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANp29Y4VNqAX0oPiGy557ubwQKjhWVbwjT7xdCBGLricJPJ5Yg@mail.gmail.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+Authentication-Results: smtp-out1.suse.de;
+	none
+X-Spam-Level: 
+X-Spam-Score: -8.30
+X-Spamd-Result: default: False [-8.30 / 50.00];
+	 ARC_NA(0.00)[];
+	 HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=f27cd6e68911e026];
+	 TAGGED_RCPT(0.00)[b2869947e0c9467a41b6];
+	 REPLYTO_ADDR_EQ_FROM(0.00)[];
+	 REPLY(-4.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 BAYES_HAM(-3.00)[100.00%];
+	 SUBJECT_HAS_QUESTION(0.00)[];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 SUBJECT_HAS_EXCLAIM(0.00)[];
+	 NEURAL_HAM_SHORT(-1.00)[-1.000];
+	 RCPT_COUNT_SEVEN(0.00)[10];
+	 NEURAL_HAM_LONG(-3.00)[-1.000];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 RCVD_COUNT_TWO(0.00)[2];
+	 RCVD_TLS_ALL(0.00)[];
+	 MID_RHS_MATCH_FROM(0.00)[];
+	 SUSPICIOUS_RECIPS(1.50)[]
 
-There are many "simple" filesystems (*) that report null f_fsid in
-statfs(2).  Those "simple" filesystems report sb->s_dev as the st_dev
-field of the stat syscalls for all inodes of the filesystem (**).
+On Mon, Oct 23, 2023 at 03:30:16PM +0200, Aleksandr Nogikh wrote:
+> On Mon, Oct 23, 2023 at 3:15 PM David Sterba <dsterba@suse.cz> wrote:
+> >
+> > On Sat, Oct 21, 2023 at 07:40:53PM -0700, syzbot wrote:
+> > > Hello,
+> > >
+> > > syzbot found the following issue on:
+> > >
+> > > HEAD commit:    78124b0c1d10 Merge branch 'for-next/core' into for-kernelci
+> > > git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+> > > console output: https://syzkaller.appspot.com/x/log.txt?x=1557da89680000
+> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=f27cd6e68911e026
+> > > dashboard link: https://syzkaller.appspot.com/bug?extid=b2869947e0c9467a41b6
+> > > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> > > userspace arch: arm64
+> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=137ac45d680000
+> > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16e4640b680000
+> > >
+> > > Downloadable assets:
+> > > disk image: https://storage.googleapis.com/syzbot-assets/bd512de820ae/disk-78124b0c.raw.xz
+> > > vmlinux: https://storage.googleapis.com/syzbot-assets/a47a437b1d4f/vmlinux-78124b0c.xz
+> > > kernel image: https://storage.googleapis.com/syzbot-assets/3ae8b966bcd7/Image-78124b0c.gz.xz
+> > > mounted in repro: https://storage.googleapis.com/syzbot-assets/d5d514495f15/mount_0.gz
+> > >
+> > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > > Reported-by: syzbot+b2869947e0c9467a41b6@syzkaller.appspotmail.com
+> > >
+> > > BUG: MAX_LOCKDEP_CHAIN_HLOCKS too low!
+> >
+> > #syz invalid
+> >
+> > This is a frequent warning, can be worked around by increasing
+> > CONFIG_LOCKDEP_CHAINS_BITS in config (18 could be a good value but may
+> > still not be enough).
+> 
+> By invalidating a frequently occurring issue we only cause syzbot to
+> report it once again, so it's better to keep the report open until the
+> root cause is resolved. There'll likely be a report (5) soon.
 
-In order to enable fanotify reporting of events with fsid on those
-"simple" filesystems, report the sb->s_dev number in f_fsid field of
-statfs(2).
+The root cause is somewhere in lockdep and not easy to fix so we'll have
+to see the duplicate reports or
 
-(*) For most of the "simple" filesystem refered to in this commit, the
-->statfs() operation is simple_statfs(). Some of those fs assign the
-simple_statfs() method directly in their ->s_op struct and some assign it
-indirectly via a call to simple_fill_super() or to pseudo_fs_fill_super()
-with either custom or "simple" s_op.
-We also make the same change to efivarfs and hugetlbfs, although they do
-not use simple_statfs(), because they use the simple_* inode opreations
-(e.g. simple_lookup()).
+> We keep CONFIG_LOCKDEP_CHAINS_BITS at 16 for arm64 because (at least
+> in 2022) the kernel used not to boot on GCE arm64 VMs with
+> CONFIG_LOCKDEP_CHAINS_BITS=18. Maybe it's time to try it once more.
 
-(**) For most of the "simple" filesystems, the ->getattr() method is not
-assigned, so stat() is implemented by generic_fillattr().  A few "simple"
-filesystem use the simple_getattr() method which also calls
-generic_fillattr() to fill most of the stat struct.
-
-The two exceptions are procfs and 9p. procfs implements several different
-->getattr() methods, but they all end up calling generic_fillattr() to
-fill the st_dev field from sb->s_dev.
-
-9p has more complicated ->getattr() methods, but they too, end up calling
-generic_fillattr() to fill the st_dev field from sb->s_dev.
-
-Note that 9p and kernfs also call simple_statfs() from custom ->statfs()
-methods which already fill the f_fsid field, but v9fs_statfs() calls
-simple_statfs() only in case f_fsid was not filled and kenrfs_statfs()
-overwrites f_fsid after calling simple_statfs().
-
-Link: https://lore.kernel.org/r/20230919094820.g5bwharbmy2dq46w@quack3/
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
----
-
-Jan,
-
-This is a variant of the approach that you suggested in the Link above.
-The two variations from your suggestion are:
-
-1. I chose to use s_dev instead of s_uuid - I see no point in generating
-   s_uuid for those simple filesystems. IMO, for the simple filesystems
-   without open_by_handle_at() support, fanotify fid doesn't need to be
-   more unique than {st_dev,st_ino}, because the inode mark pins the
-   inode and prevent st_dev,st_ino collisions.
-
-2. f_fsid is not filled by vfs according to fstype flag, but by
-   ->statfs() implementations (simple_statfs() for the majority).
-
-When applied together with the generic AT_HANDLE_FID support patches [1],
-all of those simple filesystems can be watches with FAN_ERPORT_FID.
-
-According to your audit of filesystems in the Link above, this leaves:
-"afs, coda, nfs - networking filesystems where inotify and fanotify have
-                  dubious value anyway.
-
- freevxfs - the only real filesystem without f_fsid. Trivial to handle one
-            way or the other.
-"
-
-There are two other filesystems that I found in my audit which also don't
-fill f_fsid: fuse and gfs2.
-
-fuse is also a sort of a networking filesystems. Also, fuse supports NFS
-export (as does nfs in some configurations) and I would like to stick to
-the rule that filesystems the support decodable file handles, use an fsid
-that is more unique than s_dev.
-
-gfs2 already has s_uuid, so we know what f_fsid should be.
-BTW, afs also has a server uuid, it just doesn't set s_uuid.
-
-For btrfs, which fills a non-null, but non-uniform fsid, I already have
-patches for inode_get_fsid [2] per your suggestion.
-
-IMO, we can defer dealing with all those remaining cases for later and
-solve the "simple" cases first.
-
-Do you agree?
-
-So far, there were no objections to the generic AT_HANDLE_FID support
-patches [1], although I am still waiting on an ACK from you on the last
-patch. If this fsid patch is also aaceptable, do you think they could
-be candidated for upcoming 6.7?
-
-Thanks,
-Amir.
-
-[1] https://lore.kernel.org/r/20231018100000.2453965-1-amir73il@gmail.com/
-[2] https://github.com/amir73il/linux/commits/inode_fsid
-
- fs/efivarfs/super.c  | 2 ++
- fs/hugetlbfs/inode.c | 2 ++
- fs/libfs.c           | 3 +++
- 3 files changed, 7 insertions(+)
-
-diff --git a/fs/efivarfs/super.c b/fs/efivarfs/super.c
-index 996271473609..2933090ad11f 100644
---- a/fs/efivarfs/super.c
-+++ b/fs/efivarfs/super.c
-@@ -30,6 +30,7 @@ static int efivarfs_statfs(struct dentry *dentry, struct kstatfs *buf)
- 			 EFI_VARIABLE_BOOTSERVICE_ACCESS |
- 			 EFI_VARIABLE_RUNTIME_ACCESS;
- 	u64 storage_space, remaining_space, max_variable_size;
-+	u64 id = huge_encode_dev(dentry->d_sb->s_dev);
- 	efi_status_t status;
- 
- 	/* Some UEFI firmware does not implement QueryVariableInfo() */
-@@ -53,6 +54,7 @@ static int efivarfs_statfs(struct dentry *dentry, struct kstatfs *buf)
- 	buf->f_blocks	= storage_space;
- 	buf->f_bfree	= remaining_space;
- 	buf->f_type	= dentry->d_sb->s_magic;
-+	buf->f_fsid	= u64_to_fsid(id);
- 
- 	/*
- 	 * In f_bavail we declare the free space that the kernel will allow writing
-diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-index 316c4cebd3f3..c003a27be6fe 100644
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -1204,7 +1204,9 @@ static int hugetlbfs_statfs(struct dentry *dentry, struct kstatfs *buf)
- {
- 	struct hugetlbfs_sb_info *sbinfo = HUGETLBFS_SB(dentry->d_sb);
- 	struct hstate *h = hstate_inode(d_inode(dentry));
-+	u64 id = huge_encode_dev(dentry->d_sb->s_dev);
- 
-+	buf->f_fsid = u64_to_fsid(id);
- 	buf->f_type = HUGETLBFS_MAGIC;
- 	buf->f_bsize = huge_page_size(h);
- 	if (sbinfo) {
-diff --git a/fs/libfs.c b/fs/libfs.c
-index 37f2d34ee090..8117b24b929d 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -41,6 +41,9 @@ EXPORT_SYMBOL(simple_getattr);
- 
- int simple_statfs(struct dentry *dentry, struct kstatfs *buf)
- {
-+	u64 id = huge_encode_dev(dentry->d_sb->s_dev);
-+
-+	buf->f_fsid = u64_to_fsid(id);
- 	buf->f_type = dentry->d_sb->s_magic;
- 	buf->f_bsize = PAGE_SIZE;
- 	buf->f_namelen = NAME_MAX;
--- 
-2.34.1
-
+yeah, you can increase the config value.
 
