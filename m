@@ -1,163 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-897-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-898-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A1B57D2996
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 07:19:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D8247D2997
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 07:30:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA523B20E13
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 05:19:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2019F2814CA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 05:30:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A0605240;
-	Mon, 23 Oct 2023 05:19:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 388AB538C;
+	Mon, 23 Oct 2023 05:30:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gwmail.gwu.edu header.i=@gwmail.gwu.edu header.b="REJoacNJ"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="Pa9+5evt"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B384C92
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 05:19:16 +0000 (UTC)
-Received: from mail-vs1-xe32.google.com (mail-vs1-xe32.google.com [IPv6:2607:f8b0:4864:20::e32])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE129E9
-	for <linux-fsdevel@vger.kernel.org>; Sun, 22 Oct 2023 22:19:14 -0700 (PDT)
-Received: by mail-vs1-xe32.google.com with SMTP id ada2fe7eead31-457bac7c3f5so1166564137.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 22 Oct 2023 22:19:14 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B71B4C93
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 05:29:57 +0000 (UTC)
+Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64986D5D
+	for <linux-fsdevel@vger.kernel.org>; Sun, 22 Oct 2023 22:29:56 -0700 (PDT)
+Received: by mail-pl1-x636.google.com with SMTP id d9443c01a7336-1cab2c24ecdso15700395ad.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 22 Oct 2023 22:29:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gwmail.gwu.edu; s=google; t=1698038354; x=1698643154; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DPKNsYw47vEU08LvLMgxXuyAW0YiYMmyg4gd050CiD0=;
-        b=REJoacNJJCD37L8IrikoySgOmq0HKaAdufNFEnfL7A/8Y/jsZwbmi9mALQ6eFHT3s4
-         CjTN4hUnKxiwo6aKD+W6CNYAkg1fUKtMtuQiEnEnKCrE8dhGInrRLvp2kTwga+AIqCM9
-         qBa6Gy55g9miiUG24DzdyMYpa2dm30+MqfQTy5fQJqXzschjVEZ/Zv8g20WXfPnt3wVJ
-         TeStnX5ezRInQVVPHtyL5wMRzDq7alAA0rpZbKEVLOUmSaqxJtI7cZEsZDNtJJ4aYKCm
-         Wq2uPf1yMLpPx8nYYIikkM1hyBKy6mcQnYCCMq3bizPwaLAnmRfDx2VFlWSihL+bQ1XH
-         MorQ==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1698038996; x=1698643796; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pA6hmVfAJV/uW1mtP/POTKyiCL1mpB/iphXnZFNui5E=;
+        b=Pa9+5evt2O9FS/RBhPIP3FmRBiViiOFNUZ3SVa2Z3gNh/daHLbVXdNlkkyV29B6o/l
+         TmR1jRxEp3izSQV5jsXCem4tAC/TfHZKMAE0yFMFadZabG028XfOOWrfoJe2zwzVTGKb
+         C9cpDrcEARRTMsFiL+PrPZz5eL6M4Vu1xgXG2iWLceZlIu4PJS9iyhQl9LueVDgu7yf/
+         6oW0DzFK2aE4K+8lEvHKMFbG3PKPdlqb5MXvc1W4eFxl/RkkxyoflqiUhLlrhN/2oLJU
+         vbHTVP+ob1KfwTUJK4O6Vnr1Omwlem6lV0UFlPjfpg3QCHHetkBH/8DyjR9h8UbkDQ5M
+         b4OA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698038354; x=1698643154;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DPKNsYw47vEU08LvLMgxXuyAW0YiYMmyg4gd050CiD0=;
-        b=YPYQSBc5zaHMJqdSSafmho8m+ik7coOK4zZ1zYeOBV1/RUUMyZKprolKETBfQjMDYv
-         1YrqJ6BtLj0MjMWhH4gFc6F+ednWGJKTkaIM+P8JJGPh5RAe5ow3TbHPl1xpDCdC7myU
-         kJ9NA8ClhcJsm4lVNy7hc53pGChP3ukIUnOKVIOiEAObqgpifkvDi3IBnwS/3Y99WuIh
-         075MbItAF0aQ62YyI5RsPyLEmTz1+4a5b8nfhJcCqBuUI/BQIcNk96M1/qkM3D5fC6zq
-         eKLOMonEC7U6BLtYXNj6YEez51VKmEMDdsdK0ejXhdMgJ4sexs8OEmg8qRkIYkpMGn36
-         Q+mg==
-X-Gm-Message-State: AOJu0YzFD13ULmpr4YtKt2iFTulDQZMUNI9Ad8xX+KiZqy6VpTTmdahB
-	+R5xINaEYaSarv7yPoGtlU5GLpAFW9jD9bS5jpmQQQ8SyNp2vRHltuY=
-X-Google-Smtp-Source: AGHT+IEh6O5HX3O6bl7YbAamdDTtMciz3awzt2ARYdDjbYU12YPU+XbGQCu2nw5h2MHEdeM5mI/xBn2w4BcOndf5v3Q=
-X-Received: by 2002:a67:c003:0:b0:457:e2cf:2a6 with SMTP id
- v3-20020a67c003000000b00457e2cf02a6mr8088241vsi.8.1698038354028; Sun, 22 Oct
- 2023 22:19:14 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1698038996; x=1698643796;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pA6hmVfAJV/uW1mtP/POTKyiCL1mpB/iphXnZFNui5E=;
+        b=sp3h192Ph56SoWx4T7bsL/azuGEFWi2wiojqqzbhBYvwKYMFGQF+x3+Mn39WwGRogw
+         jdG3/ebIl4uIAJJTy4qTIEAlpgT/YgxbMwNE+e1FOFNj5L2Rc4LYRvwcSqP8FzRE9vao
+         yOFdkfpUfkuQJAirEkAG78W2VbK7ok7jfAuHQW83OYzgIW+KvRgHXZkQRPU3zEkbSWIJ
+         85YkuAyPFAmOkKElibmeAte4u0UWJNEQ1JoxDoXX+54yEMKbWsCFnw+VD5tBn9TcrQMo
+         Tfk6LD+K51dQfDJc52dZJzm7MMhbs/dZW+GLdpi5h0wH2iM8IGRIgwNVt0ycBosrvFXV
+         B84A==
+X-Gm-Message-State: AOJu0Yzb5cgdtlnpNU32HyzlyR3poOpp+FclaLZyFjH7wKzc6PyEMyrC
+	kSDECyElrh0a2Rmot6fwSw0nHQ==
+X-Google-Smtp-Source: AGHT+IGr1TX1aoeWNoXlEFhl/SEfwGB6Q5EzrGvo4R2SBtWrIE0uDaB8F16voX3bfOsUOQHFW9XR2g==
+X-Received: by 2002:a17:902:ec84:b0:1c7:443d:7419 with SMTP id x4-20020a170902ec8400b001c7443d7419mr7057135plg.29.1698038995793;
+        Sun, 22 Oct 2023 22:29:55 -0700 (PDT)
+Received: from dread.disaster.area (pa49-180-20-59.pa.nsw.optusnet.com.au. [49.180.20.59])
+        by smtp.gmail.com with ESMTPSA id h21-20020a170902eed500b001bfd92ec592sm5185773plb.292.2023.10.22.22.29.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 22 Oct 2023 22:29:55 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1qunVg-002kOq-0Y;
+	Mon, 23 Oct 2023 16:29:52 +1100
+Date: Mon, 23 Oct 2023 16:29:52 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Matthew Wilcox <willy@infradead.org>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Kent Overstreet <kent.overstreet@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-fsdevel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	Wedson Almeida Filho <walmeida@microsoft.com>,
+	Marco Elver <elver@google.com>
+Subject: Re: [RFC PATCH 06/19] rust: fs: introduce `FileSystem::init_root`
+Message-ID: <ZTYE0PSDwITrWMHv@dread.disaster.area>
+References: <20231018122518.128049-1-wedsonaf@gmail.com>
+ <20231018122518.128049-7-wedsonaf@gmail.com>
+ <OjZkAoZLnJc9yA0MENJhQx_32ptXZ1cLAFjEnEFog05C4pEmaAUHaA6wBvCFXWtaXbrNN5upFFi3ohQ6neLklIXZBURaYLlQYf3-2gscw_s=@proton.me>
+ <ZTHPOfy4dhj0x5ch@boqun-archlinux>
+ <vT8j_VVzNv0Cx7iTO9OobT9H8zEc_I-dxmh2sF6GZWqRQ0nhjnaNZqtWPtYm37wOhwGek2vLUYwAM-jJ83AZEe8TXMDx9N6pZ3mZW1WdNNw=@proton.me>
+ <ZTP06kdjBQzZ3KYD@Boquns-Mac-mini.home>
+ <ZTQDztmY0ivPcGO/@casper.infradead.org>
+ <ZTQnpeFcPwMoEcgO@Boquns-Mac-mini.home>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZO9NK0FchtYjOuIH@infradead.org> <8718a8a3-1e62-0e2b-09d0-7bce3155b045@roeck-us.net>
- <ZPkDLp0jyteubQhh@dread.disaster.area> <20230906215327.18a45c89@gandalf.local.home>
- <4af7c904-ac36-44c9-83c4-2cb30c732672@kadam.mountain> <20230907110409.GH19790@gate.crashing.org>
- <bd1fb81a-6bb7-4ab4-9f8c-55307f3e9590@kadam.mountain> <20230907123016.GJ19790@gate.crashing.org>
- <CAFiYyc3mqzH+K+woJpLMtQ4oOWkfq9KFb35pdNhKHOwQQvjJPw@mail.gmail.com>
-In-Reply-To: <CAFiYyc3mqzH+K+woJpLMtQ4oOWkfq9KFb35pdNhKHOwQQvjJPw@mail.gmail.com>
-From: Eric Gallager <egall@gwmail.gwu.edu>
-Date: Mon, 23 Oct 2023 01:19:02 -0400
-Message-ID: <CAMfHzOs3B9wqh5YmOm61B7inknDMR39+LWTYeovybPp=3PE_9g@mail.gmail.com>
-Subject: Re: [MAINTAINERS/KERNEL SUMMIT] Trust and maintenance of file systems
-To: Richard Biener <richard.guenther@gmail.com>
-Cc: Segher Boessenkool <segher@kernel.crashing.org>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Dave Chinner <david@fromorbit.com>, 
-	Guenter Roeck <linux@roeck-us.net>, Christoph Hellwig <hch@infradead.org>, ksummit@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org, gcc-patches@gcc.gnu.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZTQnpeFcPwMoEcgO@Boquns-Mac-mini.home>
 
-On Tue, Sep 12, 2023 at 5:53=E2=80=AFAM Richard Biener via Gcc-patches
-<gcc-patches@gcc.gnu.org> wrote:
->
-> On Thu, Sep 7, 2023 at 2:32=E2=80=AFPM Segher Boessenkool
-> <segher@kernel.crashing.org> wrote:
-> >
-> > On Thu, Sep 07, 2023 at 02:23:00PM +0300, Dan Carpenter wrote:
-> > > On Thu, Sep 07, 2023 at 06:04:09AM -0500, Segher Boessenkool wrote:
-> > > > On Thu, Sep 07, 2023 at 12:48:25PM +0300, Dan Carpenter via Gcc-pat=
-ches wrote:
-> > > > > I started to hunt
-> > > > > down all the Makefile which add a -Werror but there are a lot and
-> > > > > eventually I got bored and gave up.
-> > > >
-> > > > I have a patch stack for that, since 2014 or so.  I build Linux wit=
-h
-> > > > unreleased GCC versions all the time, so pretty much any new warnin=
-g is
-> > > > fatal if you unwisely use -Werror.
-> > > >
-> > > > > Someone should patch GCC so there it checks an environment variab=
-le to
-> > > > > ignore -Werror.  Somethine like this?
-> > > >
-> > > > No.  You should patch your program, instead.
-> > >
-> > > There are 2930 Makefiles in the kernel source.
-> >
-> > Yes.  And you need patches to about thirty.  Or a bit more, if you want
-> > to do it more cleanly.  This isn't a guess.
-> >
-> > > > One easy way is to add a
-> > > > -Wno-error at the end of your command lines.  Or even just -w if yo=
-u
-> > > > want or need a bigger hammer.
-> > >
-> > > I tried that.  Some of the Makefiles check an environemnt variable as
-> > > well if you want to turn off -Werror.  It's not a complete solution a=
-t
-> > > all.  I have no idea what a complete solution looks like because I ga=
-ve
-> > > up.
-> >
-> > A solution can not involve changing the compiler.  That is just saying
-> > the kernel doesn't know how to fix its own problems, so let's give the
-> > compiler some more unnecessary problems.
->
-> You can change the compiler by replacing it with a script that appends
-> -Wno-error
-> for example.
+On Sat, Oct 21, 2023 at 12:33:57PM -0700, Boqun Feng wrote:
+> On Sat, Oct 21, 2023 at 06:01:02PM +0100, Matthew Wilcox wrote:
+> > I'm only an expert on the page cache, not the rest of the VFS.  So
+> > what are the rules around modifying i_state for the VFS?
+> 
+> Agreed, same question here.
 
-I personally would find the original proposal of an IGNORE_WERROR
-environment variable much simpler than any of the alternative proposed
-solutions, especially for complicated build systems where I can't tell
-where the "-Werror" is getting inserted from. Often times I'm not
-actually the developer of the package I'm trying to compile, so saying
-"fix your code" in such a case doesn't make sense, since it's not
-actually my code to fix in the first place. It would be much easier
-for end-users in such a situation to just set an environment variable,
-rather than asking them to try to become developers themselves, which
-is what some of these alternative proposals (such as "write your own
-script!") seem to be asking.
+inode->i_state should only be modified under inode->i_lock.
 
->
-> > > > Or nicer, put it all in Kconfig, like powerpc already has for examp=
-le.
-> > > > There is a CONFIG_WERROR as well, so maybe use that in all places?
-> > >
-> > > That's a good idea but I'm trying to compile old kernels and not the
-> > > current kernel.
-> >
-> > You can patch older kernels, too, you know :-)
-> >
-> > If you need to not make any changes to your source code for some crazy
-> > reason (political perhaps?), just use a shell script or shell function
-> > instead of invoking the compiler driver directly?
-> >
-> >
-> > Segher
-> >
-> > Segher
+And in most situations, you have to hold the inode->i_lock to read
+state flags as well so that reads are serialised against
+modifications which are typically non-atomic RMW operations.
+
+There is, I think, one main exception to read side locking and this
+is find_inode_rcu() which does an unlocked check for I_WILL_FREE |
+I_FREEING. In this case, the inode->i_state updates in iput_final()
+use WRITE_ONCE under the inode->i_lock to provide the necessary
+semantics for the unlocked READ_ONCE() done under rcu_read_lock().
+
+IOWs, if you follow the general rule that any inode->i_state access
+(read or write) needs to hold inode->i_lock, you probably won't
+screw up. 
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
