@@ -1,126 +1,237 @@
-Return-Path: <linux-fsdevel+bounces-931-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-932-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3F417D394B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 16:28:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 151C37D3955
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 16:31:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 394DA1C20A0C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 14:28:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3794A1C20A41
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 14:31:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87F701B29F;
-	Mon, 23 Oct 2023 14:28:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F8291BDE7;
+	Mon, 23 Oct 2023 14:31:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RQgR5MdW"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nKQ771sX"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F3E6134DF;
-	Mon, 23 Oct 2023 14:28:46 +0000 (UTC)
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 561A9DD;
-	Mon, 23 Oct 2023 07:28:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=eJ9wptQOy3DXDZN8YbGeVcfaYB+0Ek+ymB3Thh5UoEU=; b=RQgR5MdWu7alC+E8XMn/GCeCtl
-	oqT+IVASajqYJp/YWUEoMbj3gr9x2OELGrz07E8RGC3vHSOY5+MXU5RBG1ztPRHRliZKrjmk+769O
-	rgNvcDcPHamAdKTLnCd93aV3h2eSUS4w+EVcfuw2xDs8vBWCDWtOhZ+Df0wve4/7IrJungvP/DqSl
-	jAHZeyordi6IYUIZknSeYFb+tyOIvPdUF5L5BLBTiQrH5KHQqCvpuNxJFFQ/NPPjapQ6/lbXj+Zob
-	qc8rtsTSsAO95oYo7vn0aC9Vk+Pq65ADTb3XD+nzGqIHOB52r15OR2t9c2xU+lMYgV+yejNFXH5Ap
-	I3E7JVFg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-	id 1quvv3-00EH5J-PT; Mon, 23 Oct 2023 14:28:37 +0000
-Date: Mon, 23 Oct 2023 15:28:37 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: "Andreas Hindborg (Samsung)" <nmi@metaspace.dk>
-Cc: Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E081BDC4
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 14:30:59 +0000 (UTC)
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 427BAD7D;
+	Mon, 23 Oct 2023 07:30:57 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id ffacd0b85a97d-32dc918d454so2166257f8f.2;
+        Mon, 23 Oct 2023 07:30:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1698071455; x=1698676255; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8uwT+INyfSEhUg8urPKaaeAxSI9K09w0usUEfl77gdI=;
+        b=nKQ771sX5m7t0+E/QZ69PXcEjyj80kbrIr1abYJ9Mi8Pv/lqqxr6tyhOyw+1lY9vGG
+         76rT950UfjfB0VgHF4g3rjMSZ4BPSsQT9nZ5LaJYmSsU95xEnnEsZyWEY7CHBWhtOi9L
+         YeecInt9/ferdssdgMx6d+uK21iEzDMxjljWPgv+EAtsYGbWxsJRcaXDHCNv9gFQsifX
+         r3TD+DtsupsJMQtGUoZ+s2+QGGwDYOGze0AqakGgH+saXMFg4Y5lPUjy31bGXcy+ZjvS
+         4bqz1+LqfMkYlaZqr/nk8V0J3T67q1iZBqDhrawFSO+DQjH+Bfxc8dLQefIKT4WYWixz
+         VGEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698071455; x=1698676255;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8uwT+INyfSEhUg8urPKaaeAxSI9K09w0usUEfl77gdI=;
+        b=TCO5lnUChGleBA+YyESCPONRV32orrKmUYXZvWV68nzw/9KTasBfPIoWtu/6LDV499
+         wCmaSLVk85JL24r9BmoLk/Bx7ta/K8VLM273RPJOyJGOw8anDHdStouuq0iXO/u6blP9
+         k7t9EUOIelEBtNNRjhTSZ2L3urwBbE8GmKDn0QwarX9AoYJbRVCVhdlDNRDF6ggQvZ4L
+         WNogExQTT2tszxUAfLU80D8+pyaD8Mi2/nl0jVXZSO00iDefyV5TS551TFCBgTTNLLCc
+         6GzBOZKxyeR7g1xHuFmzSTOySewaSm7QtPikSWJkWUTAocne/hx3T5euZWHmKTtmFbPx
+         cbLg==
+X-Gm-Message-State: AOJu0Yz+ZGvjwerEKI0RPk6JfmMDRdOOWWa3T+YnlU7mzxrLgVVALe99
+	SoiqNRnsPmZtbtcsxQQhCKo=
+X-Google-Smtp-Source: AGHT+IEjDkVly3YZ2IksWBbnieMRKmSsB81SGeuDejCUCrtn9Fh79CTXmeBjVuLRRD6ITnP248WjTg==
+X-Received: by 2002:adf:ea88:0:b0:32d:8961:d864 with SMTP id s8-20020adfea88000000b0032d8961d864mr6074731wrm.48.1698071455338;
+        Mon, 23 Oct 2023 07:30:55 -0700 (PDT)
+Received: from amir-ThinkPad-T480.lan ([5.29.249.86])
+        by smtp.gmail.com with ESMTPSA id v5-20020a5d43c5000000b0031c6e1ea4c7sm7929892wrr.90.2023.10.23.07.30.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Oct 2023 07:30:54 -0700 (PDT)
+From: Amir Goldstein <amir73il@gmail.com>
+To: Jan Kara <jack@suse.cz>
+Cc: Jeff Layton <jlayton@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
 	Christian Brauner <brauner@kernel.org>,
-	Kent Overstreet <kent.overstreet@gmail.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-nfs@vger.kernel.org,
+	Jeremy Kerr <jk@ozlabs.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Mike Kravetz <mike.kravetz@oracle.com>,
+	Muchun Song <muchun.song@linux.dev>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-fsdevel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	Wedson Almeida Filho <walmeida@microsoft.com>
-Subject: Re: [RFC PATCH 09/19] rust: folio: introduce basic support for folios
-Message-ID: <ZTaDFe/s2wvyI9u2@casper.infradead.org>
-References: <20231018122518.128049-1-wedsonaf@gmail.com>
- <20231018122518.128049-10-wedsonaf@gmail.com>
- <ZTATIhi9U6ObAnN7@casper.infradead.org>
- <CANeycqoWfWJ5bxuh+UWK99D9jYH0cKKy1=ikHJTpY=fP1ZJMrg@mail.gmail.com>
- <ZTAwLGi4sCup+B1r@casper.infradead.org>
- <CANeycqrp_s20pCO_OJXHpqN5tZ_Uq5icTupWiVeLf69JOFj4cA@mail.gmail.com>
- <ZTH9+sF+NPyRjyRN@casper.infradead.org>
- <87h6mhfwbm.fsf@metaspace.dk>
+	Tejun Heo <tj@kernel.org>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>,
+	Dominique Martinet <asmadeus@codewreck.org>
+Subject: [PATCH] fs: report f_fsid from s_dev for "simple" filesystems
+Date: Mon, 23 Oct 2023 17:30:49 +0300
+Message-Id: <20231023143049.2944970-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87h6mhfwbm.fsf@metaspace.dk>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 23, 2023 at 12:48:33PM +0200, Andreas Hindborg (Samsung) wrote:
-> The build system and Rust compiler can inline and optimize across
-> function calls and languages when LTO is enabled. Some patches are
-> needed to make it work though.
+There are many "simple" filesystems (*) that report null f_fsid in
+statfs(2).  Those "simple" filesystems report sb->s_dev as the st_dev
+field of the stat syscalls for all inodes of the filesystem (**).
 
-That's fine, but something like folio_put() is performance-critical.
+In order to enable fanotify reporting of events with fsid on those
+"simple" filesystems, report the sb->s_dev number in f_fsid field of
+statfs(2).
 
-Relying on the linker to figure out that it _should_ inline through
+(*) For most of the "simple" filesystem refered to in this commit, the
+->statfs() operation is simple_statfs(). Some of those fs assign the
+simple_statfs() method directly in their ->s_op struct and some assign it
+indirectly via a call to simple_fill_super() or to pseudo_fs_fill_super()
+with either custom or "simple" s_op.
+We also make the same change to efivarfs and hugetlbfs, although they do
+not use simple_statfs(), because they use the simple_* inode opreations
+(e.g. simple_lookup()).
 
-+void rust_helper_folio_put(struct folio *folio)
-+{
-+	folio_put(folio);
-+}
-+EXPORT_SYMBOL_GPL(rust_helper_folio_put);
+(**) For most of the "simple" filesystems, the ->getattr() method is not
+assigned, so stat() is implemented by generic_fillattr().  A few "simple"
+filesystem use the simple_getattr() method which also calls
+generic_fillattr() to fill most of the stat struct.
 
-seems like a very bad idea to me.  For reference, folio_put() is
-defined as:
+The two exceptions are procfs and 9p. procfs implements several different
+->getattr() methods, but they all end up calling generic_fillattr() to
+fill the st_dev field from sb->s_dev.
 
-static inline void folio_put(struct folio *folio)
-{
-        if (folio_put_testzero(folio))
-                __folio_put(folio);
-}
+9p has more complicated ->getattr() methods, but they too, end up calling
+generic_fillattr() to fill the st_dev field from sb->s_dev.
 
-which turns into (once you work your way through all the gunk that hasn't
-been cleaned up yet)
+Note that 9p and kernfs also call simple_statfs() from custom ->statfs()
+methods which already fill the f_fsid field, but v9fs_statfs() calls
+simple_statfs() only in case f_fsid was not filled and kenrfs_statfs()
+overwrites f_fsid after calling simple_statfs().
 
-	if (atomic_dec_and_test(&folio->_refcount))
-		__folio_put(folio)
+Link: https://lore.kernel.org/r/20230919094820.g5bwharbmy2dq46w@quack3/
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+---
 
-ie it's a single dec-and-test insn followed by a conditional function
-call.  Yes, there's some expensive debug you can turn on in there, but
-it's an incredibly frequent call, and we shouldn't be relying on linker
-magic to optimise it all away.
+Jan,
 
-Of course, I don't want to lose the ability to turn on the debug code,
-so folio.put() can't be as simple as the call to atomic_dec_and_test(),
-but I hope you see my point.
+This is a variant of the approach that you suggested in the Link above.
+The two variations from your suggestion are:
 
-Wedson wrote in a later email,
-> Having said that, while it's possible to do what you suggested above,
-> we try to avoid it so that maintainers can continue to have a single
-> place they need to change if they ever decide to change things. A
-> simple example from above is order(), if you decide to implement it
-> differently (I don't know, if you change the flag, you decide to have
-> an explicit field, whatever), then you'd have to change the C _and_
-> the Rust versions. Worse yet, there's a chance that forgetting to
-> update the Rust version wouldn't break the build, which would make it
-> harder to catch mismatched versions.
+1. I chose to use s_dev instead of s_uuid - I see no point in generating
+   s_uuid for those simple filesystems. IMO, for the simple filesystems
+   without open_by_handle_at() support, fanotify fid doesn't need to be
+   more unique than {st_dev,st_ino}, because the inode mark pins the
+   inode and prevent st_dev,st_ino collisions.
 
-I understand that concern!  Indeed, I did change the implementation
-of folio_order() recently.  I'm happy to commit to keeping the Rust
-implementation updated as I modify the C implementation of folios,
-but I appreciate that other maintainers may not be willing to make such
-a commitment.
+2. f_fsid is not filled by vfs according to fstype flag, but by
+   ->statfs() implementations (simple_statfs() for the majority).
 
-I'm all the way up to Chapter 5: References in the Blandy book now!
-I expect to understand the patches you're sending any week now ;-)
+When applied together with the generic AT_HANDLE_FID support patches [1],
+all of those simple filesystems can be watches with FAN_ERPORT_FID.
+
+According to your audit of filesystems in the Link above, this leaves:
+"afs, coda, nfs - networking filesystems where inotify and fanotify have
+                  dubious value anyway.
+
+ freevxfs - the only real filesystem without f_fsid. Trivial to handle one
+            way or the other.
+"
+
+There are two other filesystems that I found in my audit which also don't
+fill f_fsid: fuse and gfs2.
+
+fuse is also a sort of a networking filesystems. Also, fuse supports NFS
+export (as does nfs in some configurations) and I would like to stick to
+the rule that filesystems the support decodable file handles, use an fsid
+that is more unique than s_dev.
+
+gfs2 already has s_uuid, so we know what f_fsid should be.
+BTW, afs also has a server uuid, it just doesn't set s_uuid.
+
+For btrfs, which fills a non-null, but non-uniform fsid, I already have
+patches for inode_get_fsid [2] per your suggestion.
+
+IMO, we can defer dealing with all those remaining cases for later and
+solve the "simple" cases first.
+
+Do you agree?
+
+So far, there were no objections to the generic AT_HANDLE_FID support
+patches [1], although I am still waiting on an ACK from you on the last
+patch. If this fsid patch is also aaceptable, do you think they could
+be candidated for upcoming 6.7?
+
+Thanks,
+Amir.
+
+[1] https://lore.kernel.org/r/20231018100000.2453965-1-amir73il@gmail.com/
+[2] https://github.com/amir73il/linux/commits/inode_fsid
+
+ fs/efivarfs/super.c  | 2 ++
+ fs/hugetlbfs/inode.c | 2 ++
+ fs/libfs.c           | 3 +++
+ 3 files changed, 7 insertions(+)
+
+diff --git a/fs/efivarfs/super.c b/fs/efivarfs/super.c
+index 996271473609..2933090ad11f 100644
+--- a/fs/efivarfs/super.c
++++ b/fs/efivarfs/super.c
+@@ -30,6 +30,7 @@ static int efivarfs_statfs(struct dentry *dentry, struct kstatfs *buf)
+ 			 EFI_VARIABLE_BOOTSERVICE_ACCESS |
+ 			 EFI_VARIABLE_RUNTIME_ACCESS;
+ 	u64 storage_space, remaining_space, max_variable_size;
++	u64 id = huge_encode_dev(dentry->d_sb->s_dev);
+ 	efi_status_t status;
+ 
+ 	/* Some UEFI firmware does not implement QueryVariableInfo() */
+@@ -53,6 +54,7 @@ static int efivarfs_statfs(struct dentry *dentry, struct kstatfs *buf)
+ 	buf->f_blocks	= storage_space;
+ 	buf->f_bfree	= remaining_space;
+ 	buf->f_type	= dentry->d_sb->s_magic;
++	buf->f_fsid	= u64_to_fsid(id);
+ 
+ 	/*
+ 	 * In f_bavail we declare the free space that the kernel will allow writing
+diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+index 316c4cebd3f3..c003a27be6fe 100644
+--- a/fs/hugetlbfs/inode.c
++++ b/fs/hugetlbfs/inode.c
+@@ -1204,7 +1204,9 @@ static int hugetlbfs_statfs(struct dentry *dentry, struct kstatfs *buf)
+ {
+ 	struct hugetlbfs_sb_info *sbinfo = HUGETLBFS_SB(dentry->d_sb);
+ 	struct hstate *h = hstate_inode(d_inode(dentry));
++	u64 id = huge_encode_dev(dentry->d_sb->s_dev);
+ 
++	buf->f_fsid = u64_to_fsid(id);
+ 	buf->f_type = HUGETLBFS_MAGIC;
+ 	buf->f_bsize = huge_page_size(h);
+ 	if (sbinfo) {
+diff --git a/fs/libfs.c b/fs/libfs.c
+index 37f2d34ee090..8117b24b929d 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -41,6 +41,9 @@ EXPORT_SYMBOL(simple_getattr);
+ 
+ int simple_statfs(struct dentry *dentry, struct kstatfs *buf)
+ {
++	u64 id = huge_encode_dev(dentry->d_sb->s_dev);
++
++	buf->f_fsid = u64_to_fsid(id);
+ 	buf->f_type = dentry->d_sb->s_magic;
+ 	buf->f_bsize = PAGE_SIZE;
+ 	buf->f_namelen = NAME_MAX;
+-- 
+2.34.1
+
 
