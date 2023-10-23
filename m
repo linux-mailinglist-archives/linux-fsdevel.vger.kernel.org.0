@@ -1,221 +1,232 @@
-Return-Path: <linux-fsdevel+bounces-928-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-929-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2493B7D388B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 15:56:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E59317D389C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 15:58:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E416B20AF6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 13:56:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3C3D281453
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 13:58:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F8C51A72D;
-	Mon, 23 Oct 2023 13:55:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A5DD1B260;
+	Mon, 23 Oct 2023 13:57:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fiNWZqb3"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PaIesrfs"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49BC911CAC
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 13:55:54 +0000 (UTC)
-Received: from mail-qt1-x82a.google.com (mail-qt1-x82a.google.com [IPv6:2607:f8b0:4864:20::82a])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AB59101;
-	Mon, 23 Oct 2023 06:55:52 -0700 (PDT)
-Received: by mail-qt1-x82a.google.com with SMTP id d75a77b69052e-41cd444d9d0so19161601cf.2;
-        Mon, 23 Oct 2023 06:55:52 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C4011CAC
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 13:57:57 +0000 (UTC)
+Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93146100
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 06:57:54 -0700 (PDT)
+Received: by mail-oi1-x233.google.com with SMTP id 5614622812f47-3add37de892so1901988b6e.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 06:57:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698069351; x=1698674151; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iPMGAbfbGK+qnLdNLN/64hlEEDrMuPiSA0pG5FYaVUE=;
-        b=fiNWZqb3fACXY82aLv4gCbe2BznksQYTpAiG1HNd3f6awoNGzmIyVb5FAYJN80Xusx
-         ZfBsHatYCsIOWEVDUKroW5nKgManZVXbA8Mya7kZQa/OJbU8kNtzGSTIJpHFxCgfof7e
-         J+YKaa6yEfBtCC5dA5AO0pnUy58UUVzpsitrnVg954Vg/gBEaZXuq0YoUZYZBs5xMFgM
-         iiUbIuv32lGR7Ydu0PECDSTrQk1cJmTnoPLXfH9hd9jWVOLXsMylRFB13tw35QuDdu2K
-         qfvgTM2835clJ9OQeBrf31dxElTF52x1m5FAEWgI9fisV6Qn5uqh8XgsXCVzQRlaVCAP
-         90bg==
+        d=linaro.org; s=google; t=1698069474; x=1698674274; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=uAR9jRMbJYUaNeURAFSY6EICyx4/2aLGhiU5vbPVydU=;
+        b=PaIesrfselMNTcKHGlDY9hZ7R9HF6bKiAVc1JrgNVEjCNepTg3YsCqBBIN5VdPfMmS
+         NQSfVyrpm4aN9F9g34nxFqZHU+ZQOk+cWM8mtspKJ4/NJTZd5i0FPA7hbHWYQooOJq2D
+         nW8x62ptzhTCKIspk9K98a7+SHfO35rOhFFYBgT6+XPv3cSbjtYWDdeuCLsnmNS+wFwZ
+         +HXFtMEZ77T+TdXBQUJ+omT5OLoqzjUspAF1CwUdwcsxDje+ZV2LE/h436qrxoevz5Vi
+         VTp8CWO9vDbmTaCfJgsovSBCu5J1Nj/c3lDxOrRkFbsyO76tWNkqQvFdh4JrR1vrQlfv
+         X+zQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698069351; x=1698674151;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iPMGAbfbGK+qnLdNLN/64hlEEDrMuPiSA0pG5FYaVUE=;
-        b=imTm/5ptaZOu/Gv/hohxEUy3bOWuf0Q+QmXGSVudjrvBW52CNGvNYH8NivpSy0xrzn
-         TnDdwa3LXXVVrYvPsladGzMBOoLUnsXthvdxwNdEkR72ZqzV5lVvI25j6h5hr1YLUmCd
-         KUNt9jHJvAMc6ZBZQpo1phMZ/h4M4z/3zFvaYvR6xFae7idbuFeUlofFjWv4P+JE5Jkw
-         zDoCZdlZDzP8MHCGW3Z67eVD4maxP1ceo5wLsqJU9eN7SUGU65onXmUnqSgdd/nFbmr2
-         MxQ5PRvdNVNdbzxbtLH2T7tFCNpl0qoG6N9+2qLhPFjFJ0GnteVPVLksQ9tSUo82LL9F
-         wcQQ==
-X-Gm-Message-State: AOJu0Yw+1RQnMPJgWnbFKgyY8ZBoP+aaCA7FAQKfctmymaZupFxsrw0F
-	OnxbkBga897XkdxGgCuCLOYOfqKpp4bmYLRtAzU=
-X-Google-Smtp-Source: AGHT+IFbl2Pn1JNaoh2hAr9EDzPf6M9UPdOvN2Abps+ScggKZIhxy3ScvMSwdLXnoLZ2NnMuUP/y6X/DZROGYU/83/A=
-X-Received: by 2002:a05:6214:19ed:b0:66d:1e8f:bb98 with SMTP id
- q13-20020a05621419ed00b0066d1e8fbb98mr9957696qvc.59.1698069351488; Mon, 23
- Oct 2023 06:55:51 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1698069474; x=1698674274;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uAR9jRMbJYUaNeURAFSY6EICyx4/2aLGhiU5vbPVydU=;
+        b=GlRGFBnIADdLIMr1MFC2tZiSXepPkoZehYXUE4JjXx5d2UU9X1Prr4lDa2c/myGUiN
+         SM9hlEpi0NeonFiChqaITYMhsbMtGLPiFHFN+eji8LYgjAkUvK0CEgPzruuWc85zogg8
+         qHos7r8PGrUOxcMXBfLkO/26S57yeMSjn7GzZ/oLmzmi1vIudx1AkUCYJ+1l9v4QFL36
+         eRbiPhiLZrw7EmBSHHg0kp1r2Aavd3tCdt+VWxAgQYMxVhamUabcdo/6zGennZ+MeAuo
+         Pde6DE57HAnd9uHpZiLoSQjbkUHhUDAy2UQO3GKI7UM/fRzgjWO1sGtHVvFzJJbDeNHT
+         aqWg==
+X-Gm-Message-State: AOJu0Yyr14ywXtQ2fDPH8Om+DwwIviSDBZULpoLDg4EKVdPXDSgSZHsq
+	9GLYxNK8xRUgxYicb61cEnwQxQjOTXIfKd8xdB3gvw==
+X-Google-Smtp-Source: AGHT+IE8n7Akqlfn8IuvmHYLL/NxGHF4IszpExxzbeU/MQwZ6u4W7ehZfYI0EZCXdhnrrVSvNykKWGnMIyiIHSj8y4s=
+X-Received: by 2002:a05:6808:144d:b0:3af:26e3:92e with SMTP id
+ x13-20020a056808144d00b003af26e3092emr11037614oiv.28.1698069473779; Mon, 23
+ Oct 2023 06:57:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231018100000.2453965-1-amir73il@gmail.com> <20231018100000.2453965-6-amir73il@gmail.com>
-In-Reply-To: <20231018100000.2453965-6-amir73il@gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Mon, 23 Oct 2023 16:55:40 +0300
-Message-ID: <CAOQ4uxhiRU2nNnYtuXUaURMCuYjssC9Rn=ORWW=MmVyMD1H6Rg@mail.gmail.com>
-Subject: Re: [PATCH 5/5] exportfs: support encoding non-decodeable file
- handles by default
-To: Jan Kara <jack@suse.cz>
-Cc: Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
-	Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org
+References: <CA+G9fYt75r4i39DuB4E3y6jRLaLoSEHGbBcJy=AQZBQ2SmBbiQ@mail.gmail.com>
+ <71adfca4-4e80-4a93-b480-3031e26db409@app.fastmail.com> <CADYN=9+HDwqAz-eLV7uVuMa+_+foj+_keSG-TmD2imkwVJ_mpQ@mail.gmail.com>
+ <432f1c1c-2f77-4b1b-b3f8-28330fd6bac3@kadam.mountain> <f1cddf6e-2103-4786-84ff-12c305341d7c@app.fastmail.com>
+ <11ba98f2-2e59-d64b-1a1a-fd32fd8ba358@themaw.net> <9217caeb-0d7e-b101-33f0-859da175a6ef@themaw.net>
+ <a5dfbe4f-b6fc-e282-2a3c-3e487493336c@themaw.net>
+In-Reply-To: <a5dfbe4f-b6fc-e282-2a3c-3e487493336c@themaw.net>
+From: Anders Roxell <anders.roxell@linaro.org>
+Date: Mon, 23 Oct 2023 15:57:43 +0200
+Message-ID: <CADYN=9JS5QO5pmcFPJXY2TJB7TKg30k867SJ9BwPcgY-Wvm61A@mail.gmail.com>
+Subject: Re: autofs: add autofs_parse_fd()
+To: Ian Kent <raven@themaw.net>
+Cc: Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Naresh Kamboju <naresh.kamboju@linaro.org>, open list <linux-kernel@vger.kernel.org>, 
+	lkft-triage@lists.linaro.org, linux-fsdevel@vger.kernel.org, 
+	autofs@vger.kernel.org, "Bill O'Donnell" <bodonnel@redhat.com>, 
+	Christian Brauner <brauner@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 18, 2023 at 1:00=E2=80=AFPM Amir Goldstein <amir73il@gmail.com>=
- wrote:
+On Mon, 23 Oct 2023 at 09:35, Ian Kent <raven@themaw.net> wrote:
 >
-> AT_HANDLE_FID was added as an API for name_to_handle_at() that request
-> the encoding of a file id, which is not intended to be decoded.
+> On 23/10/23 08:48, Ian Kent wrote:
+> > On 20/10/23 21:09, Ian Kent wrote:
+> >> On 20/10/23 19:23, Arnd Bergmann wrote:
+> >>> On Fri, Oct 20, 2023, at 12:45, Dan Carpenter wrote:
+> >>>> On Fri, Oct 20, 2023 at 11:55:57AM +0200, Anders Roxell wrote:
+> >>>>> On Fri, 20 Oct 2023 at 08:37, Arnd Bergmann <arnd@arndb.de> wrote:
+> >>>>>> On Thu, Oct 19, 2023, at 17:27, Naresh Kamboju wrote:
+> >>>>>>> The qemu-x86_64 and x86_64 booting with 64bit kernel and 32bit
+> >>>>>>> rootfs we call
+> >>>>>>> it as compat mode boot testing. Recently it started to failed to
+> >>>>>>> get login
+> >>>>>>> prompt.
+> >>>>>>>
+> >>>>>>> We have not seen any kernel crash logs.
+> >>>>>>>
+> >>>>>>> Anders, bisection is pointing to first bad commit,
+> >>>>>>> 546694b8f658 autofs: add autofs_parse_fd()
+> >>>>>>>
+> >>>>>>> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> >>>>>>> Reported-by: Anders Roxell <anders.roxell@linaro.org>
+> >>>>>> I tried to find something in that commit that would be different
+> >>>>>> in compat mode, but don't see anything at all -- this appears
+> >>>>>> to be just a simple refactoring of the code, unlike the commits
+> >>>>>> that immediately follow it and that do change the mount
+> >>>>>> interface.
+> >>>>>>
+> >>>>>> Unfortunately this makes it impossible to just revert the commit
+> >>>>>> on top of linux-next. Can you double-check your bisection by
+> >>>>>> testing 546694b8f658 and the commit before it again?
+> >>>>> I tried these two patches again:
+> >>>>> 546694b8f658 ("autofs: add autofs_parse_fd()") - doesn't boot
+> >>>>> bc69fdde0ae1 ("autofs: refactor autofs_prepare_pipe()") - boots
+> >>>>>
+> >>>> One difference that I notice between those two patches is that we no
+> >>>> long call autofs_prepare_pipe().  We just call autofs_check_pipe().
+> >>> Indeed, so some of the f_flags end up being different. I assumed
+> >>> this was done intentionally, but it might be worth checking if
+> >>> the patch below makes any difference when the flags get put
+> >>> back the way they were. This is probably not the correct fix, but
+> >>> may help figure out what is going on. It should apply to anything
+> >>> from 546694b8f658 ("autofs: add autofs_parse_fd()") to the current
+> >>> linux-next:
+> >>>
+> >>> --- a/fs/autofs/inode.c
+> >>> +++ b/fs/autofs/inode.c
+> >>> @@ -358,6 +358,11 @@ static int autofs_fill_super(struct super_block
+> >>> *s, struct fs_context *fc)
+> >>>          pr_debug("pipe fd = %d, pgrp = %u\n",
+> >>>                   sbi->pipefd, pid_nr(sbi->oz_pgrp));
+> >>>   +        /* We want a packet pipe */
+> >>> +        sbi->pipe->f_flags |= O_DIRECT;
+> >>> +        /* We don't expect -EAGAIN */
+> >>> +        sbi->pipe->f_flags &= ~O_NONBLOCK;
+> >>> +
+> >>
+> >>
+> >> That makes sense, we do want a packet pipe and that does also mean
+> >>
+> >> we don't want a non-blocking pipe, it will be interesting to see
+> >>
+> >> if that makes a difference. It's been a long time since Linus
+> >>
+> >> implemented that packet pipe and I can't remember now what the
+> >>
+> >> case was that lead to it.
+> >
+> > After thinking about this over the weekend I'm pretty sure my mistake
+> >
+> > is dropping the call to autofs_prepare_pipe() without adding the tail
+> >
+> > end of it into autofs_parse_fd().
+> >
+> >
+> > To explain a bit of history which I'll include in the fix description.
+> >
+> > During autofs v5 development I decided to stay with the existing usage
+> >
+> > instead of changing to a packed structure for autofs <=> user space
+> >
+> > communications which turned out to be a mistake on my part.
+> >
+> >
+> > Problems arose and they were fixed by allowing for the 64 bit to 32 bit
+> >
+> > size difference in the automount(8) code.
+> >
+> >
+> > Along the way systemd started to use autofs and eventually encountered
+> >
+> > this problem too. systemd refused to compensate for the length difference
+> >
+> > insisting it be fixed in the kernel. Fortunately Linus implemented the
+> >
+> > packetized pipe which resolved the problem in a straight forward and
+> >
+> > simple way.
+> >
+> >
+> > So I pretty sure that the cause of the problem is the inadvertent
+> > dropping
+> >
+> > of the flags setting in autofs_fill_super() that Arnd spotted although I
+> >
+> > don't think putting it in autofs_fill_super() is the right thing to do.
+> >
+> >
+> > I'll produce a patch today which includes most of this explanation for
+> >
+> > future travelers ...
 >
-> This file id is used by fanotify to describe objects in events.
+> So I have a patch.
 >
-> So far, overlayfs is the only filesystem that supports encoding
-> non-decodeable file ids, by providing export_operations with an
-> ->encode_fh() method and without a ->decode_fh() method.
 >
-> Add support for encoding non-decodeable file ids to all the filesystems
-> that do not provide export_operations, by encoding a file id of type
-> FILEID_INO64_GEN from { i_ino, i_generation }.
+> I'm of two minds whether to try and use the instructions to reproduce this
 >
-> A filesystem may that does not support NFS export, can opt-out of
-> encoding non-decodeable file ids for fanotify by defining an empty
-> export_operations struct (i.e. with a NULL ->encode_fh() method).
+> or not because of experiences I have had with other similar testing
+> automation
 >
-> This allows the use of fanotify events with file ids on filesystems
-> like 9p which do not support NFS export to bring fanotify in feature
-> parity with inotify on those filesystems.
+> systems that claim to provide a reproducer and end up a huge waste of
+> time and
 >
-> Note that fanotify also requires that the filesystems report a non-null
-> fsid.  Currently, many simple filesystems that have support for inotify
-> (e.g. debugfs, tracefs, sysfs) report a null fsid, so can still not be
-> used with fanotify in file id reporting mode.
+> are significantly frustrating.
 >
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> ---
+>
+> Can someone please perform a test for me once I provide the patch?
 
-Hi Jan,
+Just tested it, and it passed our tests. Added a tested by flag in your patch.
 
-Did you get a chance to look at this patch?
-I saw your review comments on the rest of the series, so was waiting
-for feedback on this last one before posting v2.
+Thanks for the prompt fix.
 
-BTW, I am going to post a complementary patch to add fsid support for
-the simple filesystems.
+Cheers,
+Anders
 
-Thanks,
-Amir.
 
->  fs/exportfs/expfs.c      | 30 +++++++++++++++++++++++++++---
->  include/linux/exportfs.h | 10 +++++++---
->  2 files changed, 34 insertions(+), 6 deletions(-)
+
+
+
 >
-> diff --git a/fs/exportfs/expfs.c b/fs/exportfs/expfs.c
-> index 30da4539e257..34e7d835d4ef 100644
-> --- a/fs/exportfs/expfs.c
-> +++ b/fs/exportfs/expfs.c
-> @@ -383,6 +383,30 @@ int generic_encode_ino32_fh(struct inode *inode, __u=
-32 *fh, int *max_len,
->  }
->  EXPORT_SYMBOL_GPL(generic_encode_ino32_fh);
 >
-> +/**
-> + * exportfs_encode_ino64_fid - encode non-decodeable 64bit ino file id
-> + * @inode:   the object to encode
-> + * @fid:     where to store the file handle fragment
-> + * @max_len: maximum length to store there
-> + *
-> + * This generic function is used to encode a non-decodeable file id for
-> + * fanotify for filesystems that do not support NFS export.
-> + */
-> +static int exportfs_encode_ino64_fid(struct inode *inode, struct fid *fi=
-d,
-> +                                    int *max_len)
-> +{
-> +       if (*max_len < 3) {
-> +               *max_len =3D 3;
-> +               return FILEID_INVALID;
-> +       }
-> +
-> +       fid->i64.ino =3D inode->i_ino;
-> +       fid->i64.gen =3D inode->i_generation;
-> +       *max_len =3D 3;
-> +
-> +       return FILEID_INO64_GEN;
-> +}
-> +
->  /**
->   * exportfs_encode_inode_fh - encode a file handle from inode
->   * @inode:   the object to encode
-> @@ -401,10 +425,10 @@ int exportfs_encode_inode_fh(struct inode *inode, s=
-truct fid *fid,
->         if (!exportfs_can_encode_fh(nop, flags))
->                 return -EOPNOTSUPP;
+> Ian
 >
-> -       if (nop && nop->encode_fh)
-> -               return nop->encode_fh(inode, fid->raw, max_len, parent);
-> +       if (!nop && (flags & EXPORT_FH_FID))
-> +               return exportfs_encode_ino64_fid(inode, fid, max_len);
->
-> -       return -EOPNOTSUPP;
-> +       return nop->encode_fh(inode, fid->raw, max_len, parent);
->  }
->  EXPORT_SYMBOL_GPL(exportfs_encode_inode_fh);
->
-> diff --git a/include/linux/exportfs.h b/include/linux/exportfs.h
-> index 21eeb9f6bdbd..6688e457da64 100644
-> --- a/include/linux/exportfs.h
-> +++ b/include/linux/exportfs.h
-> @@ -134,7 +134,11 @@ struct fid {
->                         u32 parent_ino;
->                         u32 parent_gen;
->                 } i32;
-> -               struct {
-> +               struct {
-> +                       u64 ino;
-> +                       u32 gen;
-> +               } __packed i64;
-> +               struct {
->                         u32 block;
->                         u16 partref;
->                         u16 parent_partref;
-> @@ -246,7 +250,7 @@ extern int exportfs_encode_fh(struct dentry *dentry, =
-struct fid *fid,
->
->  static inline bool exportfs_can_encode_fid(const struct export_operation=
-s *nop)
->  {
-> -       return nop && nop->encode_fh;
-> +       return !nop || nop->encode_fh;
->  }
->
->  static inline bool exportfs_can_decode_fh(const struct export_operations=
- *nop)
-> @@ -259,7 +263,7 @@ static inline bool exportfs_can_encode_fh(const struc=
-t export_operations *nop,
->  {
->         /*
->          * If a non-decodeable file handle was requested, we only need to=
- make
-> -        * sure that filesystem can encode file handles.
-> +        * sure that filesystem did not opt-out of encoding fid.
->          */
->         if (fh_flags & EXPORT_FH_FID)
->                 return exportfs_can_encode_fid(nop);
-> --
-> 2.34.1
->
+> >
+> >
+> >>
+> >>
+> >> Ian
+> >>
+> >>>          sbi->flags &= ~AUTOFS_SBI_CATATONIC;
+> >>>            /*
 
