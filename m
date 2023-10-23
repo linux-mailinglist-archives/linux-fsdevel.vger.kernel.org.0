@@ -1,60 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-962-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-963-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA5937D3FA4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 20:57:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B1B57D3FBE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 21:00:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72758B20E4B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 18:57:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDF36B20E75
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 19:00:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7436A219EE;
-	Mon, 23 Oct 2023 18:57:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09F1C21A01;
+	Mon, 23 Oct 2023 19:00:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Wk56tLmf"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PMoDV5oP"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B01714AA9
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 18:57:08 +0000 (UTC)
-Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90C54D7A
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 11:57:05 -0700 (PDT)
-Received: by mail-yb1-xb31.google.com with SMTP id 3f1490d57ef6-d9ace5370a0so2826398276.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 11:57:05 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B61F219EE
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 19:00:33 +0000 (UTC)
+Received: from mail-yw1-x1129.google.com (mail-yw1-x1129.google.com [IPv6:2607:f8b0:4864:20::1129])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9FB2172C
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 12:00:21 -0700 (PDT)
+Received: by mail-yw1-x1129.google.com with SMTP id 00721157ae682-5a7fb84f6ceso34950637b3.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 12:00:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1698087424; x=1698692224; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1698087621; x=1698692421; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2yqqvVSxSrZk5/pIhCtZC81tg5RVxwkjwG9586NW/1Y=;
-        b=Wk56tLmfhHoxYX77HGCVbTeFROiZFFkVFLPcQwJQqM7BSRIW5v2qGxIfsFGfv+S5Dl
-         I6UG48TfQ2ovJu1bMLmhY6Vz+0bCVJZLIgOnDbqP9k6zR/m4irt4Xspx34KpmENbUwu4
-         3Iqo6d9SQi5BwpCxcuwIs6Dv2KT2qvRSjXLSQrEx73ALQskoJb+MTSnGVSDQCkOucYnH
-         HElD7bALWRZusECe9Xqm7C1LHY6frbnASp7V9UvKr9VjrEtQyBkbpqSsh/iQRhKj3XHI
-         CsmLjh53BW9oEqb4p+5mDigjDFG3gl1LVJS36sNkRjt8nHAp+L3WcQFpW9PcisW37yth
-         wHzw==
+        bh=dtdA9ub/ANr7ejS62Fd8050vwxz1kSazOAjElqLmkxM=;
+        b=PMoDV5oPWWZLd9mFQbXBvL+JlLndRu926JSGLEhJMxss3Lp8WoBDWKdmp+xRF0Lf7E
+         GkLPVBkUCV3ME9LzUyD+VC283keAsJ+wwhGBV3N/tgEZXRGXnJtTj12tteov5HxVufgm
+         b67/0BZddh+lo0ekqlQnsY42r4/wrmeMXmSA60x1Tq4L5SaBijYBr8w3Hn6Hntsv6w8V
+         PoTJY8RclYmTmh2JWK/rYqkD58NVAK/WffOkhzICBJE4/FjvdRRd1fPHCH09StKc5/6b
+         pGc6SRBHBCOq6QCdQdDcB/x1zCG1BmlluAhrbtZq9KyZ8AL+F8AhBPdLXebKQiOunsOS
+         KtJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698087424; x=1698692224;
+        d=1e100.net; s=20230601; t=1698087621; x=1698692421;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2yqqvVSxSrZk5/pIhCtZC81tg5RVxwkjwG9586NW/1Y=;
-        b=FqqJ3Otw6mvfbwH49T5nW3SIzoqPposlU8zl0kAQjckd92jKEOU2H/jxZg6cdRjOV3
-         1E5Uzr0cwg+kCWrqwvZ+7MdF/yxsd0Nlj3zaXh8n9WwUW1lXWKgkRn78o21z85VtqFgT
-         gKI8WvlTm1M08RS/+iievTCe7Z36PHQWD5slMgZeASMozYWjNQ8R5NymWwdVNe9sguy3
-         uPyOWGR70z/V8vb74Q5ta/3bWDmKwlWswe0xvv1LuBDvtBExSIRv0FjBfwWJbYwLK3wF
-         O+lHFnuRnqYoO2FkA3ffVVzL6F2HN+5nEE6RP4poR1JLCMtDBwuJ5lXPk/o8C/Ru4Gir
-         D5SQ==
-X-Gm-Message-State: AOJu0YzBFWMklnbmB5oUwUHI6Mr/Yw63c9CvpIU0DgDj1bYY03npnHH0
-	qzMpCQ886/qN8ATfdolU7IP24fKxizQjpdoxtAzqcA==
-X-Google-Smtp-Source: AGHT+IHNQUEfjaARExOLomnsfHsumATRv6sH0Qq1Lhf5GhWbo8qoEifZvXPrlpQp8hcXTGjjpDeRLsUE+mhmHgPPud4=
-X-Received: by 2002:a25:410e:0:b0:d9c:a3b8:f39d with SMTP id
- o14-20020a25410e000000b00d9ca3b8f39dmr8025930yba.65.1698087424379; Mon, 23
- Oct 2023 11:57:04 -0700 (PDT)
+        bh=dtdA9ub/ANr7ejS62Fd8050vwxz1kSazOAjElqLmkxM=;
+        b=F+ZUraGhNG+Uxw21A65GC4CSNJ49oIeTRvXnmUI4qQ+he+vE4Bf09D3l9s1X8TarGk
+         k8zUZTo9PIfCzvDymWKYMeMTIUK7rv/1Z09+mMSe+kUJwPhix3wVRmxI6N/EzoAxkqAn
+         DthV5ty8wdJ2wMYy0wFZDOCSwwa53/QWDV1liRvmyQ7nd7iT96Kfz9bLUGuHGTgwt8GO
+         rhon0SP1mJpPE8FXkf6T7bqSCj87xOQfgB9utAvibVkLhNjQmDsQ9a1zjTTtWbyVTaQl
+         2XDdbNumhfe4ERqzlmWhmzdtKD/gr06Ai6oF0yv/qLMt1KAY0MZDXyW+tjlsn5K/XNLC
+         8/kQ==
+X-Gm-Message-State: AOJu0Yy6Ki0cwOIKaJCkw3NEemt3cgCSzIEDfAC4SnmL3Cfhi/UYDLNi
+	PP5R8FnBwEFC60YbZpcQ7ImSp4kKFxp7JlfEcUxIKg==
+X-Google-Smtp-Source: AGHT+IHoBU3f92OsehjvOqFbu0XBgHXFL1aR9fooZex3IOmb5ltIYm/8vL48yXoinuA4SJCQtcFh+3IhHsrl1XTH5gA=
+X-Received: by 2002:a25:86c1:0:b0:d9a:b522:6870 with SMTP id
+ y1-20020a2586c1000000b00d9ab5226870mr8756763ybm.0.1698087620747; Mon, 23 Oct
+ 2023 12:00:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,11 +62,11 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20231009064230.2952396-1-surenb@google.com> <20231009064230.2952396-3-surenb@google.com>
- <721366d0-7909-45c9-ae49-f652c8369b9d@redhat.com>
-In-Reply-To: <721366d0-7909-45c9-ae49-f652c8369b9d@redhat.com>
+ <721366d0-7909-45c9-ae49-f652c8369b9d@redhat.com> <045c35ba-7872-40a7-bd86-e37771076b88@redhat.com>
+In-Reply-To: <045c35ba-7872-40a7-bd86-e37771076b88@redhat.com>
 From: Suren Baghdasaryan <surenb@google.com>
-Date: Mon, 23 Oct 2023 11:56:50 -0700
-Message-ID: <CAJuCfpErrAqZuiiU5uthVU87Sa=yztRRqnTszezFCMQgBEawCg@mail.gmail.com>
+Date: Mon, 23 Oct 2023 12:00:09 -0700
+Message-ID: <CAJuCfpH8oare_erzHuhiV0knbwVEmOzq6DnoywNQpOCAqJMucA@mail.gmail.com>
 Subject: Re: [PATCH v3 2/3] userfaultfd: UFFDIO_MOVE uABI
 To: David Hildenbrand <david@redhat.com>
 Cc: akpm@linux-foundation.org, viro@zeniv.linux.org.uk, brauner@kernel.org, 
@@ -81,121 +81,37 @@ Cc: akpm@linux-foundation.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 23, 2023 at 5:29=E2=80=AFAM David Hildenbrand <david@redhat.com=
+On Mon, Oct 23, 2023 at 8:53=E2=80=AFAM David Hildenbrand <david@redhat.com=
 > wrote:
 >
-> Focusing on validate_remap_areas():
->
-> > +
-> > +static int validate_remap_areas(struct vm_area_struct *src_vma,
-> > +                             struct vm_area_struct *dst_vma)
-> > +{
-> > +     /* Only allow remapping if both have the same access and protecti=
-on */
-> > +     if ((src_vma->vm_flags & VM_ACCESS_FLAGS) !=3D (dst_vma->vm_flags=
- & VM_ACCESS_FLAGS) ||
-> > +         pgprot_val(src_vma->vm_page_prot) !=3D pgprot_val(dst_vma->vm=
-_page_prot))
-> > +             return -EINVAL;
->
-> Makes sense. I do wonder about pkey and friends and if we even have to
-> so anything special.
-
-I don't see anything special done for mremap. Do you have something in mind=
-?
-
->
-> > +
-> > +     /* Only allow remapping if both are mlocked or both aren't */
-> > +     if ((src_vma->vm_flags & VM_LOCKED) !=3D (dst_vma->vm_flags & VM_=
+> On 23.10.23 14:29, David Hildenbrand wrote:
+> >> +
+> >> +    /* Only allow remapping if both are mlocked or both aren't */
+> >> +    if ((src_vma->vm_flags & VM_LOCKED) !=3D (dst_vma->vm_flags & VM_=
 LOCKED))
-> > +             return -EINVAL;
-> > +
-> > +     if (!(src_vma->vm_flags & VM_WRITE) || !(dst_vma->vm_flags & VM_W=
+> >> +            return -EINVAL;
+> >> +
+> >> +    if (!(src_vma->vm_flags & VM_WRITE) || !(dst_vma->vm_flags & VM_W=
 RITE))
-> > +             return -EINVAL;
+> >> +            return -EINVAL;
+> >
+> > Why does one of both need VM_WRITE? If one really needs it, then the
+> > destination (where we're moving stuff to).
 >
-> Why does one of both need VM_WRITE? If one really needs it, then the
-> destination (where we're moving stuff to).
-
-As you noticed later, both should have VM_WRITE.
-
+> Just realized that we want both to be writable.
 >
-> > +
-> > +     /*
-> > +      * Be strict and only allow remap_pages if either the src or
-> > +      * dst range is registered in the userfaultfd to prevent
-> > +      * userland errors going unnoticed. As far as the VM
-> > +      * consistency is concerned, it would be perfectly safe to
-> > +      * remove this check, but there's no useful usage for
-> > +      * remap_pages ouside of userfaultfd registered ranges. This
-> > +      * is after all why it is an ioctl belonging to the
-> > +      * userfaultfd and not a syscall.
->
-> I think the last sentence is the important bit and the comment can
-> likely be reduced.
+> If you have this in place, there is no need to use maybe*_mkwrite(), you
+> can use the non-maybe variants.
 
-Ok, I'll look into shortening it.
+Ack.
 
 >
-> > +      *
-> > +      * Allow both vmas to be registered in the userfaultfd, just
-> > +      * in case somebody finds a way to make such a case useful.
-> > +      * Normally only one of the two vmas would be registered in
-> > +      * the userfaultfd.
->
-> Should we just check the destination? That makes most sense to me,
-> because with uffd we are resolving uffd-events. And just like
-> copy/zeropage we want to resolve a page fault ("userfault") of a
-> non-present page on the destination.
+> I recall that for UFFDIO_COPY we even support PROT_NONE VMAs, is there
+> any reason why we want to have different semantics here?
 
-I think that makes sense. Not sure why the original implementation
-needed the check for source too. Seems unnecessary.
+I don't think so. At least not for the single-mm case.
 
 >
->
-> > +      */
-> > +     if (!dst_vma->vm_userfaultfd_ctx.ctx &&
-> > +         !src_vma->vm_userfaultfd_ctx.ctx)
-> > +             return -EINVAL;
->
->
->
-> > +
-> > +     /*
-> > +      * FIXME: only allow remapping across anonymous vmas,
-> > +      * tmpfs should be added.
-> > +      */
-> > +     if (!vma_is_anonymous(src_vma) || !vma_is_anonymous(dst_vma))
-> > +             return -EINVAL;
->
-> Why a FIXME here? Just drop the comment completely or replace it with
-> "We only allow to remap anonymous folios accross anonymous VMAs".
-
-Will do. I guess Andrea had plans to cover tmpfs as well.
-
->
-> > +
-> > +     /*
-> > +      * Ensure the dst_vma has a anon_vma or this page
-> > +      * would get a NULL anon_vma when moved in the
-> > +      * dst_vma.
-> > +      */
-> > +     if (unlikely(anon_vma_prepare(dst_vma)))
-> > +             return -ENOMEM;
->
-> Makes sense.
->
-> > +
-> > +     return 0;
-> > +}
->
->
-
-Thanks,
-Suren.
-
-
 > --
 > Cheers,
 >
