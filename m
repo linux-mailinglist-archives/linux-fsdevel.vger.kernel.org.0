@@ -1,261 +1,317 @@
-Return-Path: <linux-fsdevel+bounces-907-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-906-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B6EE7D2C22
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 10:03:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E54C7D2C08
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 09:58:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E21D8B20E0A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 08:03:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D901C281462
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 07:58:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67D891118F;
-	Mon, 23 Oct 2023 08:03:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56D2C1097A;
+	Mon, 23 Oct 2023 07:58:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="C2i54pr8"
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="MjE2z6su"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D82D10954;
-	Mon, 23 Oct 2023 08:03:05 +0000 (UTC)
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38C9D10C4;
-	Mon, 23 Oct 2023 01:03:00 -0700 (PDT)
-Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20231023080258epoutp0415e688a9ab35ee365957a92bdd5d060e~QrdI9hV2X0433704337epoutp04k;
-	Mon, 23 Oct 2023 08:02:58 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20231023080258epoutp0415e688a9ab35ee365957a92bdd5d060e~QrdI9hV2X0433704337epoutp04k
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1698048178;
-	bh=AACSYwStM2Fj3YRgCcuvQYmMDqXUgVQCwVuy+yFJJfU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=C2i54pr8WrkMTXO05efoz5ahzb1e8OynmLqKGA7rV+1xNvaXw7aRGtdqzYfw9BcMf
-	 ySljRnS5a3+rjcTLGpCHhQ2eP47qr3UKvE5JWgCLFMAVNcykcukaZNmeurE9ddZ6tt
-	 fQSgrIlyAdvoXGT/bMR+yjqCVUKFgxbrul8jZtFw=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas2p3.samsung.com (KnoxPortal) with ESMTP id
-	20231023080257epcas2p3d49beb068b29d8d3bfa396d29ad9f634~QrdIpeO570450704507epcas2p3Q;
-	Mon, 23 Oct 2023 08:02:57 +0000 (GMT)
-Received: from epsmges2p2.samsung.com (unknown [182.195.36.69]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4SDSNd05j1z4x9Q9; Mon, 23 Oct
-	2023 08:02:57 +0000 (GMT)
-Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
-	epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-	D7.76.09622.0B826356; Mon, 23 Oct 2023 17:02:56 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
-	20231023080256epcas2p327a8a17e7d92f5c58e010d0b7e153be0~QrdHhRHlZ2526025260epcas2p3C;
-	Mon, 23 Oct 2023 08:02:56 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20231023080256epsmtrp2f6390c094fa52e7b213a55464083f04b~QrdHfpZG61878518785epsmtrp2Q;
-	Mon, 23 Oct 2023 08:02:56 +0000 (GMT)
-X-AuditID: b6c32a46-fcdfd70000002596-5a-653628b0189b
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	D0.DF.18939.0B826356; Mon, 23 Oct 2023 17:02:56 +0900 (KST)
-Received: from tiffany (unknown [10.229.95.142]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20231023080256epsmtip22527cb7f5cd0fc263896ab2c4f53fa14~QrdHH64gP1774517745epsmtip2i;
-	Mon, 23 Oct 2023 08:02:56 +0000 (GMT)
-Date: Mon, 23 Oct 2023 16:52:29 +0900
-From: Hyesoo Yu <hyesoo.yu@samsung.com>
-To: Alexandru Elisei <alexandru.elisei@arm.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev,
-	maz@kernel.org, james.morse@arm.com, suzuki.poulose@arm.com,
-	yuzenghui@huawei.com, arnd@arndb.de, akpm@linux-foundation.org,
-	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org,
-	bsegall@google.com, mgorman@suse.de, bristot@redhat.com,
-	vschneid@redhat.com, mhiramat@kernel.org, rppt@kernel.org, hughd@google.com,
-	pcc@google.com, steven.price@arm.com, anshuman.khandual@arm.com,
-	vincenzo.frascino@arm.com, david@redhat.com, eugenis@google.com,
-	kcc@google.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 04/37] mm: Add MIGRATE_METADATA allocation policy
-Message-ID: <20231023075229.GB344850@tiffany>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 464566FDD
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 07:58:00 +0000 (UTC)
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C46CD71
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 00:57:56 -0700 (PDT)
+Received: from mail-yw1-f198.google.com (mail-yw1-f198.google.com [209.85.128.198])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id A277A3F140
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 07:57:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1698047874;
+	bh=u7GScWjArWDBsmslExt09yQ/w9U+lCmA3/2l6avmmBw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=MjE2z6suaG8Ck5ZtMcWyQqzBg1ZKOq8eacg+5UXfqoJ0v6zlegZm4TiwkhrPS5ktr
+	 66pFaCuZO+mqTxxSUbKC15+/ZNAA9mHilUNf2TwRWsuWFAUvAZUdwirf1/OCD+8m53
+	 e90NxQJO8rJTpCtkOCqw7KNmEvP8Lv40AF91wP5/ZRtbzsqAzPYuOPRSFHUse6iWnf
+	 NLkc41Q76tsBOKWoonUw1EhkCtkkdINRpdkuZV8foVpaRRwWR1KuQMHaB8dkLVX23s
+	 vM657r7Qo/oOeYOdVHUfWCB0zX6flIhmRX83A9JzjHUCYHe10EXdP86tOj2/cC3pvY
+	 rGzpEhdvp3M4Q==
+Received: by mail-yw1-f198.google.com with SMTP id 00721157ae682-5a7bbe0a453so38500357b3.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 00:57:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698047873; x=1698652673;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=u7GScWjArWDBsmslExt09yQ/w9U+lCmA3/2l6avmmBw=;
+        b=V3A8Gg4qUioym81/nPwhqHySp1K7QgiPqC1+A5xHp7OiXKnK80aDu7uW9nO0grHWiz
+         YcSjRORvRvORgFbzSRPOqhnDF6KXneJ2pzCcOtn3h4f2lqSx5EAKEIzBo8Z8puOH1srb
+         kWywLQy9VGWcfhCMXsZaAbh4gYtfG6ZoRhIRpx+WqASYh4qVU0RlQX9Em7dkn6gja7l1
+         l/aOkxtNyZk2ffrj+YdF9swhDrBRqD5ZXwCcx9SmiUVXnvenR2lcSgbZQ9DelQjB4170
+         r3qdCRf03V4Mrz0MCFNhe/wMWG4RTT+Sqk/pRgdkj996zal15do0oXYp9jxPunYnXQ8w
+         eJCw==
+X-Gm-Message-State: AOJu0YwUxS3P8eTVAn/FYo5jiDE7TvMi8jK9Dk8NCmblprhskKChSdW1
+	acwQCvR/gKyDQNqDUTgkxGtQdRzLcCgn1REYygy2TnWfpEeHZWFwa5DV3/efPBSzp2NqJcYJ1Nb
+	v0uwBGQGeBw6yGFfRKpx9tLBs3u4CRCb7cf+3o8P6QhAtdS+gCLwJoJC+boyy+HdtBRA=
+X-Received: by 2002:a81:a091:0:b0:5a7:d9ce:363c with SMTP id x139-20020a81a091000000b005a7d9ce363cmr7817503ywg.6.1698047873207;
+        Mon, 23 Oct 2023 00:57:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHy+WSIuaqer8Tu4PIB5kMYpkbya8+N3WwyVpebn8chFwLsb/rKl1kccsuRoPtpYrp1bhd7Au/PM2ka8Xarfnc=
+X-Received: by 2002:a81:a091:0:b0:5a7:d9ce:363c with SMTP id
+ x139-20020a81a091000000b005a7d9ce363cmr7817492ywg.6.1698047872886; Mon, 23
+ Oct 2023 00:57:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZS0vRz6PlUJM8MN9@monolith>
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0xTdxTHvY/eFhbctSj7rTOGXaNDFGgrjx8GlsURchdZgnPJJmzDpr2j
-	CJSmLcxhFkBAKuhAHOMhsjoQmBZw5Y2UZycvTQYEjLxUkAbJoI7HkJeucNH43+ec3/fke37n
-	5PAwfi9XwAtTaBiVQhJBEbZ4TfsB6HLbyZMR/pblAfMr9ATM/qOfgE2dUrieeZcL+yYGrKln
-	CTi0FF9E4GLFCgYnM6ox2KqbxeHk3M84fNRUgsLR9Cwc1ppnUDhd1Y5DbcMiDg0TgxzYaOzC
-	YX9DPgHH9K840FRxH4f1+V0ceGXWjMDCkv2wr0WHwqzlfwiYPvKAgB2XWlDYpH2MWrW1KEww
-	WQiYOzyMQK3pPwwaXy7jsPqvJS5MGvGAD2/c5n6yj9YX6BF6dSUToZOahri0zhBNJ5lmOHRl
-	qTNtuHmBoA1zmVx6ZLCRoDtzVnH6enwWRlcWxdFTlbkIbWkaIOjKnrP0vGFPIBkU7iNnJDJG
-	5cgopFGyMEWoL3XsRMinIR6eQpGLyBt6UY4KSSTjS/kFBLr4h0VYh0k5xkgioq2pQIlaTbl9
-	7KOKitYwjvIotcaXYpSyCKWX0lUtiVRHK0JdFYzmiEgoFHtYhafC5Ql9TzjKooNnFhLNaDxS
-	RqUiNjxAuoOhmhwiFbHl8ck6BKwNryNsMIeAkuYV4k3wPPE+93WJSbuObzCfrEfAi+XvWNEk
-	Asw5LZsinNwHjKkXsQ0myI9AZ1UxssE7STcwXj29aYGR3QQYvXoP3XiwJz8DWZaETbYjXUBZ
-	oQFjeQfoyn1qdePxbEgnULPMbNQCMtUWzFZMc9iO/MD1+UcYy/ZguqNqq1MBmJ81EiyHg9F/
-	M7ZYA8rvxW9pDoM8c8pmcxgpB3mjDZwNL0DuBaYhnE1vB9r2dS6btgPa83y2ci9oLi7AWX4f
-	jJelbHVDA0OPEWVnokVBT1opkYHsyXvrN3lvubF8COjuzBF5VguM/ACUvOSxeABUNLjpEM5N
-	xIFRqiNDGbVYKX6zYGlUpAHZvC1n/zrkl5nnrm0IykPaEMDDqJ12V79yZ/h2MsmPsYwqKkQV
-	HcGo2xAP624uY4Jd0ijrcSo0ISJ3b6G7p6fIS+wh9KLesxtLvibjk6ESDRPOMEpG9boO5dkI
-	4tGieUpvYYxyXF8bpFPt3p0Miw9XdH9rzE6v9Qw6/qFM2VIvGzKNSLN9+VfmwGT2/CGt/0T1
-	QOzJoyWl54xHErIzyCSX8e11nrrBqonyvsdd9msB3aeeLjyrFR998cC7/LwoKbh95DSzyp+O
-	yTstuxVu6vQOPlHs6/cDb1H/au2b35e8XM/5mR3wVuGto5o/L/xEfb/tpPTajgDdrjvliaZ8
-	h/A0Nb8zblAOv/6y/11BWmLjFwLbs4LAu5MzT9xqkhd/1WreiS3Yn1Q15fR3b3C3Je5SdGDr
-	DfFxKsWSG+Oz2jjZ3HMmYigS70hp5izHFB4EU8aF4Lax3m2fL9HHYuBDClfLJSJnTKWW/A+g
-	MGdE5AQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprEKsWRmVeSWpSXmKPExsWy7bCSvO4GDbNUg6k7+S3mrF/DZjF95WU2
-	i30nki3+TjrGbnHp8VWg0MtGFov3y3oYLb6u/8Vs8XTCVmaLgwvesVg8/dTHYnF/33Imi7v9
-	U1kstj97y2TxasthFouOXV9ZLDY9vsZqsWfvSRaLy7vmsFncW/Of1eLI+rMsFjvnnGS1mPzu
-	GaPF4uVqFpcOLGCymPrzDZtF/53rbBbHew8wWezreMAEVLudyaLxyHs2i5m3bzNadBz5xmyx
-	999PFoutR7+zW7TcMbW4uXQDu4Oqx5p5axg9fv+axOjRsu8Wu8eCTaUeLUfesnpsXqHlsWlV
-	J5vHpk+T2D3uXNvD5nFixm8Wj4UNU5k9Ni+p93ixeSajx/t9V9k8Np+u9vi8SS5AIIrLJiU1
-	J7MstUjfLoEro3faDraCJxoVB+e/ZW9gbFPoYuTkkBAwkTjS8ZcFxBYS2M4o8eBTPkRcUmLW
-	55NMELawxP2WI6xdjFxANY8ZJaZsnskKkmARUJXY29XDDGKzCahLnNiyjBHEFhHQl3i09RUj
-	SAOzwBk2ib7Vs8AahAU8Jaa+bwSbyiugK7F28SZmiM1dTBKtJ30h4oISJ2c+AbuIWUBL4sa/
-	l0D1HEC2tMTyfxwgJqeAhsS2n6kTGAVmIWmYhaRhFkLDAkbmVYyiqQXFuem5yQWGesWJucWl
-	eel6yfm5mxjByUYraAfjsvV/9Q4xMnEwHmKU4GBWEuGdHW6SKsSbklhZlVqUH19UmpNafIhR
-	moNFSZxXOaczRUggPbEkNTs1tSC1CCbLxMEp1cCkGqW3+q7KBPn7OtGcT1fMNi5XlD/2ZmLH
-	lPXPslTCTtZfE3Ep8xD5ZZT4ITzginPRoz8rnI63mMkKmSue/WghVr6vVFQgfVHxH60DCSUK
-	IpEfGFSWGv3b/unGxj2sC6TWuMcFluqo35P4GMlePfWOr/89Jhez4xmnVfWnV5grXeibP2dB
-	3okpH8LFV3wvDvOTur+58n5b34OFfhPmb2DaH3k9XDb88OlFGhvmae7mbmx1YJvP29Hp9POU
-	qv9dm4ajTU3fa6Jn25pr/VsanqN38qr8sQm7J0128Z26uWSSnMqf97oHlfacF5vq/ryqw6F4
-	w7q6zKyz+TyZG6ccdiwNLkl5PZlFu/Tw9XgtkQ1KLMUZiYZazEXFiQCNL+iFpQMAAA==
-X-CMS-MailID: 20231023080256epcas2p327a8a17e7d92f5c58e010d0b7e153be0
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----QkVgGvrvWiyli5pqMJpqhgOu5Z7YYftLzn.eTqKOKf81mxr7=_53dc1_"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20231012013834epcas2p28ff3162673294077caef3b0794b69e72
-References: <20230823131350.114942-1-alexandru.elisei@arm.com>
-	<20230823131350.114942-5-alexandru.elisei@arm.com>
-	<CGME20231012013834epcas2p28ff3162673294077caef3b0794b69e72@epcas2p2.samsung.com>
-	<20231012012824.GA2426387@tiffany> <ZS0vRz6PlUJM8MN9@monolith>
+References: <20230807132626.182101-1-aleksandr.mikhalitsyn@canonical.com>
+ <bcda164b-e4b7-1c16-2714-13e3c6514b47@redhat.com> <CAEivzxf-W1-q=BkG1UndFcX_AbzH-HtHX7p6j4iAwVbKnPn+sQ@mail.gmail.com>
+ <772a6282-d690-b299-6cf4-c96dd20792fa@redhat.com>
+In-Reply-To: <772a6282-d690-b299-6cf4-c96dd20792fa@redhat.com>
+From: Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Date: Mon, 23 Oct 2023 09:57:41 +0200
+Message-ID: <CAEivzxf56EXhNToVZRNZ9HsS4NKYidXqE-89oT6L-XY=s0nPcQ@mail.gmail.com>
+Subject: Re: [PATCH v10 00/12] ceph: support idmapped mounts
+To: Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>
+Cc: brauner@kernel.org, stgraber@ubuntu.com, linux-fsdevel@vger.kernel.org, 
+	Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-------QkVgGvrvWiyli5pqMJpqhgOu5Z7YYftLzn.eTqKOKf81mxr7=_53dc1_
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
+On Thu, Oct 19, 2023 at 7:42=E2=80=AFAM Xiubo Li <xiubli@redhat.com> wrote:
+>
+>
+> On 10/17/23 17:20, Aleksandr Mikhalitsyn wrote:
+> > On Tue, Aug 8, 2023 at 2:45=E2=80=AFAM Xiubo Li <xiubli@redhat.com> wro=
+te:
+> >> LGTM.
+> >>
+> >> Reviewed-by: Xiubo Li <xiubli@redhat.com>
+> >>
+> >> I will queue this to the 'testing' branch and then we will run ceph qa
+> >> tests.
+> >>
+> >> Thanks Alex.
+> >>
+> >> - Xiubo
+> > Hi Xiubo,
+> >
+> > will this series be landed to 6.6?
+> >
+> > Userspace part was backported and merged to the Ceph Quincy release
+> > (https://github.com/ceph/ceph/pull/53139)
+> > And waiting to be tested and merged to the Ceph reef and pacific releas=
+es.
+> > But the kernel part is still in the testing branch.
+>
+> This changes have been in the 'testing' branch for more than two mounts
+> and well test, till now we haven't seen any issue.
+>
+> IMO it should be ready.
 
-On Mon, Oct 16, 2023 at 01:40:39PM +0100, Alexandru Elisei wrote:
-> Hello,
-> 
-> On Thu, Oct 12, 2023 at 10:28:24AM +0900, Hyesoo Yu wrote:
-> > On Wed, Aug 23, 2023 at 02:13:17PM +0100, Alexandru Elisei wrote:
-> > > Some architectures implement hardware memory coloring to catch incorrect
-> > > usage of memory allocation. One such architecture is arm64, which calls its
-> > > hardware implementation Memory Tagging Extension.
-> > > 
-> > > So far, the memory which stores the metadata has been configured by
-> > > firmware and hidden from Linux. For arm64, it is impossible to to have the
-> > > entire system RAM allocated with metadata because executable memory cannot
-> > > be tagged. Furthermore, in practice, only a chunk of all the memory that
-> > > can have tags is actually used as tagged. which leaves a portion of
-> > > metadata memory unused. As such, it would be beneficial to use this memory,
-> > > which so far has been unaccessible to Linux, to service allocation
-> > > requests. To prepare for exposing this metadata memory a new migratetype is
-> > > being added to the page allocator, called MIGRATE_METADATA.
-> > > 
-> > > One important aspect is that for arm64 the memory that stores metadata
-> > > cannot have metadata associated with it, it can only be used to store
-> > > metadata for other pages. This means that the page allocator will *not*
-> > > allocate from this migratetype if at least one of the following is true:
-> > > 
-> > > - The allocation also needs metadata to be allocated.
-> > > - The allocation isn't movable. A metadata page storing data must be
-> > >   able to be migrated at any given time so it can be repurposed to store
-> > >   metadata.
-> > > 
-> > > Both cases are specific to arm64's implementation of memory metadata.
-> > > 
-> > > For now, metadata storage pages management is disabled, and it will be
-> > > enabled once the architecture-specific handling is added.
-> > > 
-> > > Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
-> > > ---
-> > > [..]
-> > > @@ -2144,6 +2156,15 @@ __rmqueue(struct zone *zone, unsigned int order, int migratetype,
-> > >  		if (alloc_flags & ALLOC_CMA)
-> > >  			page = __rmqueue_cma_fallback(zone, order);
-> > >  
-> > > +		/*
-> > > +		 * Allocate data pages from MIGRATE_METADATA only if the regular
-> > > +		 * allocation path fails to increase the chance that the
-> > > +		 * metadata page is available when the associated data page
-> > > +		 * needs it.
-> > > +		 */
-> > > +		if (!page && (alloc_flags & ALLOC_FROM_METADATA))
-> > > +			page = __rmqueue_metadata_fallback(zone, order);
-> > > +
-> > 
-> > Hi!
-> > 
-> > I guess it would cause non-movable page starving issue as CMA.
-> 
-> I don't understand what you mean by "non-movable page starving issue as
-> CMA". Would you care to elaborate?
-> 
+Thanks, Xiubo!
+It would be awesome to have this in v.6.6.
 
-Before below patch, I frequently encountered situations where there was free CMA memory
-available but the allocation of unmovable page failed. That patch has improved this
-issue. ("mm,page_alloc,cma: conditionally prefer cma pageblocks for movable allocations)
-https://lore.kernel.org/linux-mm/20200306150102.3e77354b@imladris.surriel.com/
+Kind regards,
+Alex
 
-I guess it would be beneficial to add a policy for effectively utilizing the metadata
-area as well. I think migration is cheaper than app killing or swap in terms
-of performance.
-
-But, if the next iteration tries to use only cma, as discussed in recent mailing lists,
-I think this concern would be fine.
-
-Thanks,
-Regards.
-
-> > The metadata pages cannot be used for non-movable allocations.
-> > Metadata pages are utilized poorly, non-movable allocations may end up
-> > getting starved if all regular movable pages are allocated and the only
-> > pages left are metadata. If the system has a lot of CMA pages, then
-> > this problem would become more bad. I think it would be better to make
-> > use of it in places where performance is not critical, including some
-> > GFP_METADATA ?
-> 
-> GFP_METADATA pages must be used only for movable allocations. The kernel
-> must be able to migrate GFP_METADATA pages (if they have been allocated)
-> when they are reserved to serve as tag storage for a newly allocated tagged
-> page.
-> 
-> If you are referring to the fact that GFP_METADATA pages are allocated only
-> when there are no more free pages in the zone, then yes, I can understand
-> that that might be an issue. However, it's worth keeping in mind that if a
-> GFP_METADATA page is in use when it needs to be repurposed to serve as tag
-> storage, its contents must be migrated first, and this is obviously slow.
-> 
-> To put it another way, the more eager the page allocator is to allocate
-> from GFP_METADATA, the slower it will be to allocate tagged pages because
-> reserving the corresponding tag storage will be slow due to migration.
-> 
-> Before making a decision, I think it would be very helpful to run
-> performance tests with different allocation policies for GFP_METADATA. But I
-> would say that it's a bit premature for that, and I think it would be best
-> to wait until the series stabilizes.
-> 
-> And thank you for the feedback!
-> 
-> Alex
-> 
-> > 
-> > Thanks,
-> > Hyesoo Yu.
-> 
-
-------QkVgGvrvWiyli5pqMJpqhgOu5Z7YYftLzn.eTqKOKf81mxr7=_53dc1_
-Content-Type: text/plain; charset="utf-8"
-
-
-------QkVgGvrvWiyli5pqMJpqhgOu5Z7YYftLzn.eTqKOKf81mxr7=_53dc1_--
+>
+> Ilya ?
+>
+> Thanks
+>
+> - Xiubo
+>
+>
+> > Kind regards,
+> > Alex
+> >
+> >> On 8/7/23 21:26, Alexander Mikhalitsyn wrote:
+> >>> Dear friends,
+> >>>
+> >>> This patchset was originally developed by Christian Brauner but I'll =
+continue
+> >>> to push it forward. Christian allowed me to do that :)
+> >>>
+> >>> This feature is already actively used/tested with LXD/LXC project.
+> >>>
+> >>> Git tree (based on https://github.com/ceph/ceph-client.git testing):
+> >>> v10: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v10
+> >>> current: https://github.com/mihalicyn/linux/tree/fs.idmapped.ceph
+> >>>
+> >>> In the version 3 I've changed only two commits:
+> >>> - fs: export mnt_idmap_get/mnt_idmap_put
+> >>> - ceph: allow idmapped setattr inode op
+> >>> and added a new one:
+> >>> - ceph: pass idmap to __ceph_setattr
+> >>>
+> >>> In the version 4 I've reworked the ("ceph: stash idmapping in mdsc re=
+quest")
+> >>> commit. Now we take idmap refcounter just in place where req->r_mnt_i=
+dmap
+> >>> is filled. It's more safer approach and prevents possible refcounter =
+underflow
+> >>> on error paths where __register_request wasn't called but ceph_mdsc_r=
+elease_request is
+> >>> called.
+> >>>
+> >>> Changelog for version 5:
+> >>> - a few commits were squashed into one (as suggested by Xiubo Li)
+> >>> - started passing an idmapping everywhere (if possible), so a caller
+> >>> UID/GID-s will be mapped almost everywhere (as suggested by Xiubo Li)
+> >>>
+> >>> Changelog for version 6:
+> >>> - rebased on top of testing branch
+> >>> - passed an idmapping in a few places (readdir, ceph_netfs_issue_op_i=
+nline)
+> >>>
+> >>> Changelog for version 7:
+> >>> - rebased on top of testing branch
+> >>> - this thing now requires a new cephfs protocol extension CEPHFS_FEAT=
+URE_HAS_OWNER_UIDGID
+> >>> https://github.com/ceph/ceph/pull/52575
+> >>>
+> >>> Changelog for version 8:
+> >>> - rebased on top of testing branch
+> >>> - added enable_unsafe_idmap module parameter to make idmapped mounts
+> >>> work with old MDS server versions
+> >>> - properly handled case when old MDS used with new kernel client
+> >>>
+> >>> Changelog for version 9:
+> >>> - added "struct_len" field in struct ceph_mds_request_head as request=
+ed by Xiubo Li
+> >>>
+> >>> Changelog for version 10:
+> >>> - fill struct_len field properly (use cpu_to_le32)
+> >>> - add extra checks IS_CEPH_MDS_OP_NEWINODE(..) as requested by Xiubo =
+to match
+> >>>     userspace client behavior
+> >>> - do not set req->r_mnt_idmap for MKSNAP operation
+> >>> - atomic_open: set req->r_mnt_idmap only for CEPH_MDS_OP_CREATE as us=
+erspace client does
+> >>>
+> >>> I can confirm that this version passes xfstests and
+> >>> tested with old MDS (without CEPHFS_FEATURE_HAS_OWNER_UIDGID)
+> >>> and with recent MDS version.
+> >>>
+> >>> Links to previous versions:
+> >>> v1: https://lore.kernel.org/all/20220104140414.155198-1-brauner@kerne=
+l.org/
+> >>> v2: https://lore.kernel.org/lkml/20230524153316.476973-1-aleksandr.mi=
+khalitsyn@canonical.com/
+> >>> tree: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v2
+> >>> v3: https://lore.kernel.org/lkml/20230607152038.469739-1-aleksandr.mi=
+khalitsyn@canonical.com/#t
+> >>> v4: https://lore.kernel.org/lkml/20230607180958.645115-1-aleksandr.mi=
+khalitsyn@canonical.com/#t
+> >>> tree: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v4
+> >>> v5: https://lore.kernel.org/lkml/20230608154256.562906-1-aleksandr.mi=
+khalitsyn@canonical.com/#t
+> >>> tree: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v5
+> >>> v6: https://lore.kernel.org/lkml/20230609093125.252186-1-aleksandr.mi=
+khalitsyn@canonical.com/
+> >>> tree: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v6
+> >>> v7: https://lore.kernel.org/all/20230726141026.307690-1-aleksandr.mik=
+halitsyn@canonical.com/
+> >>> tree: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v7
+> >>> v8: https://lore.kernel.org/all/20230803135955.230449-1-aleksandr.mik=
+halitsyn@canonical.com/
+> >>> tree: -
+> >>> v9: https://lore.kernel.org/all/20230804084858.126104-1-aleksandr.mik=
+halitsyn@canonical.com/
+> >>> tree: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v9
+> >>>
+> >>> Kind regards,
+> >>> Alex
+> >>>
+> >>> Original description from Christian:
+> >>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >>> This patch series enables cephfs to support idmapped mounts, i.e. the
+> >>> ability to alter ownership information on a per-mount basis.
+> >>>
+> >>> Container managers such as LXD support sharaing data via cephfs betwe=
+en
+> >>> the host and unprivileged containers and between unprivileged contain=
+ers.
+> >>> They may all use different idmappings. Idmapped mounts can be used to
+> >>> create mounts with the idmapping used for the container (or a differe=
+nt
+> >>> one specific to the use-case).
+> >>>
+> >>> There are in fact more use-cases such as remapping ownership for
+> >>> mountpoints on the host itself to grant or restrict access to differe=
+nt
+> >>> users or to make it possible to enforce that programs running as root
+> >>> will write with a non-zero {g,u}id to disk.
+> >>>
+> >>> The patch series is simple overall and few changes are needed to ceph=
+fs.
+> >>> There is one cephfs specific issue that I would like to discuss and
+> >>> solve which I explain in detail in:
+> >>>
+> >>> [PATCH 02/12] ceph: handle idmapped mounts in create_request_message(=
+)
+> >>>
+> >>> It has to do with how to handle mds serves which have id-based access
+> >>> restrictions configured. I would ask you to please take a look at the
+> >>> explanation in the aforementioned patch.
+> >>>
+> >>> The patch series passes the vfs and idmapped mount testsuite as part =
+of
+> >>> xfstests. To run it you will need a config like:
+> >>>
+> >>> [ceph]
+> >>> export FSTYP=3Dceph
+> >>> export TEST_DIR=3D/mnt/test
+> >>> export TEST_DEV=3D10.103.182.10:6789:/
+> >>> export TEST_FS_MOUNT_OPTS=3D"-o name=3Dadmin,secret=3D$password
+> >>>
+> >>> and then simply call
+> >>>
+> >>> sudo ./check -g idmapped
+> >>>
+> >>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >>>
+> >>> Alexander Mikhalitsyn (3):
+> >>>     fs: export mnt_idmap_get/mnt_idmap_put
+> >>>     ceph: add enable_unsafe_idmap module parameter
+> >>>     ceph: pass idmap to __ceph_setattr
+> >>>
+> >>> Christian Brauner (9):
+> >>>     ceph: stash idmapping in mdsc request
+> >>>     ceph: handle idmapped mounts in create_request_message()
+> >>>     ceph: pass an idmapping to mknod/symlink/mkdir
+> >>>     ceph: allow idmapped getattr inode op
+> >>>     ceph: allow idmapped permission inode op
+> >>>     ceph: allow idmapped setattr inode op
+> >>>     ceph/acl: allow idmapped set_acl inode op
+> >>>     ceph/file: allow idmapped atomic_open inode op
+> >>>     ceph: allow idmapped mounts
+> >>>
+> >>>    fs/ceph/acl.c                 |  6 +--
+> >>>    fs/ceph/crypto.c              |  2 +-
+> >>>    fs/ceph/dir.c                 |  4 ++
+> >>>    fs/ceph/file.c                | 11 ++++-
+> >>>    fs/ceph/inode.c               | 29 +++++++------
+> >>>    fs/ceph/mds_client.c          | 78 +++++++++++++++++++++++++++++++=
++---
+> >>>    fs/ceph/mds_client.h          |  8 +++-
+> >>>    fs/ceph/super.c               |  7 +++-
+> >>>    fs/ceph/super.h               |  3 +-
+> >>>    fs/mnt_idmapping.c            |  2 +
+> >>>    include/linux/ceph/ceph_fs.h  | 10 ++++-
+> >>>    include/linux/mnt_idmapping.h |  3 ++
+> >>>    12 files changed, 136 insertions(+), 27 deletions(-)
+> >>>
+>
 
