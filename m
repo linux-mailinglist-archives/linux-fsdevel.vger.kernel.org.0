@@ -1,106 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-912-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-913-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAB147D3519
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 13:45:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 852B57D35D9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 13:53:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56C0DB20D8D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 11:45:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B64811C20A1E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Oct 2023 11:53:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9653417758;
-	Mon, 23 Oct 2023 11:45:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 974F61803B;
+	Mon, 23 Oct 2023 11:53:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75DF5168BA
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 11:45:13 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.120])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04BDEDB;
-	Mon, 23 Oct 2023 04:45:11 -0700 (PDT)
-X-IronPort-AV: E=McAfee;i="6600,9927,10871"; a="385701223"
-X-IronPort-AV: E=Sophos;i="6.03,244,1694761200"; 
-   d="scan'208";a="385701223"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2023 04:45:11 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10871"; a="874681317"
-X-IronPort-AV: E=Sophos;i="6.03,244,1694761200"; 
-   d="scan'208";a="874681317"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2023 04:45:08 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97-RC2)
-	(envelope-from <andy.shevchenko@gmail.com>)
-	id 1qutMn-00000007vRG-3QFa;
-	Mon, 23 Oct 2023 14:45:05 +0300
-Date: Mon, 23 Oct 2023 14:45:05 +0300
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-To: Kees Cook <kees@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Baokun Li <libaokun1@huawei.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Kees Cook <keescook@chromium.org>,
-	Ferry Toth <ftoth@exalondelft.nl>, linux-fsdevel@vger.kernel.org,
-	linux-ext4@vger.kernel.org
-Subject: Re: [GIT PULL] ext2, quota, and udf fixes for 6.6-rc1
-Message-ID: <ZTZcwU+nCB0RUI+y@smile.fi.intel.com>
-References: <CAHk-=whis2BJF2fv1xySAg2NTQ+C5fViNSGkLNCOqGzi-3y+8w@mail.gmail.com>
- <ZTFxEcjo4d6vXbo5@smile.fi.intel.com>
- <ZTFydEbdEYlxOxc1@smile.fi.intel.com>
- <CAHk-=wh_gbZE_ZsQ6+9gSPdXfoCtmuK-MFmBkO3ywMKFQEvb6g@mail.gmail.com>
- <ZTKUDzONVHXnWAJc@smile.fi.intel.com>
- <CAHk-=wipA4605yvnmjW7T9EvARPRCGLARty8UUzRGxic1SXqvg@mail.gmail.com>
- <ZTLHBYv6wSUVD/DW@smile.fi.intel.com>
- <CAHk-=wgHFSTuANT3jXsw1EtzdHQe-XQtWQACzeFxn2BEBzX-gA@mail.gmail.com>
- <ZTLk1G0KCF7YNjRx@surfacebook.localdomain>
- <BF6761C0-B813-4C98-9563-8323C208F67D@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2F1179BF
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 11:53:50 +0000 (UTC)
+Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8D7DF9;
+	Mon, 23 Oct 2023 04:53:46 -0700 (PDT)
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R441e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046049;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0VukpfTY_1698062022;
+Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0VukpfTY_1698062022)
+          by smtp.aliyun-inc.com;
+          Mon, 23 Oct 2023 19:53:43 +0800
+From: Jingbo Xu <jefflexu@linux.alibaba.com>
+To: miklos@szeredi.hu,
+	linux-fsdevel@vger.kernel.org
+Cc: zyfjeff@linux.alibaba.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] fuse: make delete_stale configurable
+Date: Mon, 23 Oct 2023 19:53:41 +0800
+Message-Id: <20231023115341.60127-1-jefflexu@linux.alibaba.com>
+X-Mailer: git-send-email 2.19.1.6.gb485710b
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <BF6761C0-B813-4C98-9563-8323C208F67D@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Sat, Oct 21, 2023 at 04:36:19PM -0700, Kees Cook wrote:
-> On October 20, 2023 1:36:36 PM PDT, andy.shevchenko@gmail.com wrote:
-> >That said, if you or anyone has ideas how to debug futher, I'm all ears!
-> 
-> I don't think this has been tried yet:
-> 
-> When I've had these kind of hard-to-find glitches I've used manual
-> built-binary bisection. Assuming you have a source tree that works when built
-> with Clang and not with GCC:
-> - build the tree with Clang with, say, O=build-clang
-> - build the tree with GCC, O=build-gcc
-> - make a new tree for testing: cp -a build-clang build-test
-> - pick a suspect .o file (or files) to copy from build-gcc into build-test
-> - perform a relink: "make O=build-test" should DTRT since the copied-in .o
-> files should be newer than the .a and other targets
-> - test for failure, repeat
-> 
-> Once you've isolated it to (hopefully) a single .o file, then comes the
-> byte-by-byte analysis or something similar...
-> 
-> I hope that helps! These kinds of bugs are super frustrating.
+From: Yifei Zhang <zyfjeff@linux.alibaba.com>
 
-I'm sorry, but I can't see how this is not an error prone approach.
-If it's a timing issue then the arbitrary object change may help and it doesn't
-prove anything. As earlier I tried to comment out the error message, and it
-worked with GCC as well. The difference is so little (according to Linus) that
-it may not be suspectible. Maybe I am missing the point...
+Fuse tends to cache dentries in LRU list for performance, which makes
+the fuse server always keep a reference to the opened fd.  If the file
+is deleted by a third party process (neither fuse server nor fuse
+client), the fuse server will always keep a reference to the deleted
+file, in which case the deleted file cannot be released.
 
+Fix this by making the delete_stale feature configurable.  Fuse servers
+can enable this if a file may be unlinked not through fuse server nor
+client.  Actually virtiofs enables this by default.  Make this
+configurable for other fuse filesystems.
+
+Signed-off-by: Yifei Zhang <zyfjeff@linux.alibaba.com>
+Signed-off-by: Jingbo Xu <jefflexu@linux.alibaba.com>
+---
+ fs/fuse/inode.c           | 5 ++++-
+ include/uapi/linux/fuse.h | 2 ++
+ 2 files changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index 2e4eb7cf26fb..635bf0b11147 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -1234,6 +1234,8 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
+ 				fc->create_supp_group = 1;
+ 			if (flags & FUSE_DIRECT_IO_RELAX)
+ 				fc->direct_io_relax = 1;
++			if (flags & FUSE_DELETE_STALE)
++				fc->delete_stale = 1;
+ 		} else {
+ 			ra_pages = fc->max_read / PAGE_SIZE;
+ 			fc->no_lock = 1;
+@@ -1280,7 +1282,8 @@ void fuse_send_init(struct fuse_mount *fm)
+ 		FUSE_NO_OPENDIR_SUPPORT | FUSE_EXPLICIT_INVAL_DATA |
+ 		FUSE_HANDLE_KILLPRIV_V2 | FUSE_SETXATTR_EXT | FUSE_INIT_EXT |
+ 		FUSE_SECURITY_CTX | FUSE_CREATE_SUPP_GROUP |
+-		FUSE_HAS_EXPIRE_ONLY | FUSE_DIRECT_IO_RELAX;
++		FUSE_HAS_EXPIRE_ONLY | FUSE_DIRECT_IO_RELAX |
++		FUSE_DELETE_STALE;
+ #ifdef CONFIG_FUSE_DAX
+ 	if (fm->fc->dax)
+ 		flags |= FUSE_MAP_ALIGNMENT;
+diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+index db92a7202b34..8d0926d21d2e 100644
+--- a/include/uapi/linux/fuse.h
++++ b/include/uapi/linux/fuse.h
+@@ -411,6 +411,7 @@ struct fuse_file_lock {
+  * FUSE_HAS_EXPIRE_ONLY: kernel supports expiry-only entry invalidation
+  * FUSE_DIRECT_IO_RELAX: relax restrictions in FOPEN_DIRECT_IO mode, for now
+  *                       allow shared mmap
++ * FUSE_DELETE_STALE:	delete dentry if timeout is zero
+  */
+ #define FUSE_ASYNC_READ		(1 << 0)
+ #define FUSE_POSIX_LOCKS	(1 << 1)
+@@ -450,6 +451,7 @@ struct fuse_file_lock {
+ #define FUSE_CREATE_SUPP_GROUP	(1ULL << 34)
+ #define FUSE_HAS_EXPIRE_ONLY	(1ULL << 35)
+ #define FUSE_DIRECT_IO_RELAX	(1ULL << 36)
++#define FUSE_DELETE_STALE	(1ULL << 37)
+ 
+ /**
+  * CUSE INIT request/reply flags
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.19.1.6.gb485710b
 
 
