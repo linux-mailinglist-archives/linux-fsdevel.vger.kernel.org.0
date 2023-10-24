@@ -1,178 +1,181 @@
-Return-Path: <linux-fsdevel+bounces-969-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-970-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B33E7D44F9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 03:26:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ABCF17D4613
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 05:40:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBB4CB209DE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 01:26:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FCACB20EE3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 03:40:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C389A63B1;
-	Tue, 24 Oct 2023 01:26:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB8767468;
+	Tue, 24 Oct 2023 03:40:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d7Nk2X/o"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="Yka22y6G"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56CC6568A
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 01:26:40 +0000 (UTC)
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E80EA10C0
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 18:26:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1698110798;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vq2XxiPaMfNNhYoiNTp4t4HbMspKVC35io247MdFBeE=;
-	b=d7Nk2X/ovVFO4Y3KhA0Vq7ISDLxtsbCCx2I1eZ9qmqDlLi/oh0bPXwvmdY1n1IkedZEv18
-	oxXnEwX5GuSKbO6TyoCQE1Y0kmCBYuoE4qX+Aw5ZKAvdhOhpXyW4tnv2WMljBKLIFc5mXb
-	u7+h+7KxZrsdVTPEVLel+hmUA2Zwg8A=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-457-odKU-i64N6SMrp57C7EpdQ-1; Mon,
- 23 Oct 2023 21:26:34 -0400
-X-MC-Unique: odKU-i64N6SMrp57C7EpdQ-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A41053813F2B;
-	Tue, 24 Oct 2023 01:26:32 +0000 (UTC)
-Received: from [10.22.8.176] (unknown [10.22.8.176])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 2B6C98C0A;
-	Tue, 24 Oct 2023 01:26:32 +0000 (UTC)
-Message-ID: <bffabf0a-36e9-46c6-a52e-4ac9f47e6d3f@redhat.com>
-Date: Mon, 23 Oct 2023 21:26:31 -0400
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 931471863
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 03:40:42 +0000 (UTC)
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A512CB7
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 20:40:40 -0700 (PDT)
+Received: by mail-pl1-x62e.google.com with SMTP id d9443c01a7336-1c9de3f66e5so24324755ad.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 20:40:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1698118840; x=1698723640; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oWeGYZJ7Zqr0SZ51s3Tlaj8JTzPWhfxnA67l062INq8=;
+        b=Yka22y6GudilGqFN93hZ3gwUjSZ7fiAGVB18y4YS4VOx58FRysiSaOTltq7hIkbDBd
+         HPXEDh59iJ3MMQ96QGEDnefC0uQijgkyObUH9MU4SVox2nSN+nx8v13NOTjz8p3rnxMY
+         jD8H5GanpdTZOGT+9uo9YTlYuv2KagQsVwNsOG3qC3oci8YOhcZRYJ7jn0lz/Q/P6e27
+         PLsZyIvvJ5kJ+BVqjs3Gpf3tuW9rtUzbWudkY7Z16SUUP/5epPAtS32tHEwpdoAZO2rj
+         OZ5NlqtIiGQTPibS/tUMx/VVSgXuisk/853Fpn45b9rUTefWXD6Zy7yMeU/+HbSKPCG8
+         H4Ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698118840; x=1698723640;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oWeGYZJ7Zqr0SZ51s3Tlaj8JTzPWhfxnA67l062INq8=;
+        b=HwKl6HzujL3wYVMBuLj2cByMQO0aDFbQxTzipTZRKReDXb9ujefnaR/m/8QI9l9tiz
+         PPqv17HJBdwZ7AnHl/cZ3ZgCq+5yEHJXjmulm+rZK9OTgbq1QdSpFb3NHjOqlDfZ90E5
+         nE6uMrUADFpAx/e5n8m0z/Kr+GQJ7Y62SFuGKR0c+4n9HcRWmoGWS3AXQZRy61gmmksr
+         7lnOJPmSK7KNauTdYQ2R9WMRsyb72tIDUtgETnm37H/MtPx8EW7OqMLsgHkX01xwOInO
+         FggJzWIjZfoX69AFi2HsyVQVYW9iyZhfsAMYj0RJ2o5D5tXfVNLJrY70xZLDeb9kLBOz
+         1V7Q==
+X-Gm-Message-State: AOJu0Yx0LPqXAu59JxsOCyOD5t/LKvW15Ij2ieeSfn3lYT7GgH1tL2WB
+	6sHgWC+SS0MQOSmtcH2b4yMhGw==
+X-Google-Smtp-Source: AGHT+IHBoF+8WS2RfetzLDwdufPuai+lmlctVilCrpXxsuy5LNKEo/W+GvWNVlLVD0/hEfe7bag85w==
+X-Received: by 2002:a17:903:84f:b0:1c9:d25c:17c6 with SMTP id ks15-20020a170903084f00b001c9d25c17c6mr8511411plb.1.1698118840059;
+        Mon, 23 Oct 2023 20:40:40 -0700 (PDT)
+Received: from dread.disaster.area (pa49-180-20-59.pa.nsw.optusnet.com.au. [49.180.20.59])
+        by smtp.gmail.com with ESMTPSA id n14-20020a170902d2ce00b001c739768214sm6668917plc.92.2023.10.23.20.40.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Oct 2023 20:40:39 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1qv8HU-0039F0-1Z;
+	Tue, 24 Oct 2023 14:40:36 +1100
+Date: Tue, 24 Oct 2023 14:40:36 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jeff Layton <jlayton@kernel.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	John Stultz <jstultz@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Chandan Babu R <chandan.babu@oracle.com>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Theodore Ts'o <tytso@mit.edu>,
+	Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	Hugh Dickins <hughd@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.de>,
+	David Howells <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org,
+	linux-mm@kvack.org, linux-nfs@vger.kernel.org
+Subject: Re: [PATCH RFC 2/9] timekeeping: new interfaces for multigrain
+ timestamp handing
+Message-ID: <ZTc8tClCRkfX3kD7@dread.disaster.area>
+References: <CAHk-=wiKJgOg_3z21Sy9bu+3i_34S86r8fd6ngvJpZDwa-ww8Q@mail.gmail.com>
+ <5f96e69d438ab96099bb67d16b77583c99911caa.camel@kernel.org>
+ <20231019-fluor-skifahren-ec74ceb6c63e@brauner>
+ <0a1a847af4372e62000b259e992850527f587205.camel@kernel.org>
+ <ZTGncMVw19QVJzI6@dread.disaster.area>
+ <eb3b9e71ee9c6d8e228b0927dec3ac9177b06ec6.camel@kernel.org>
+ <ZTWfX3CqPy9yCddQ@dread.disaster.area>
+ <61b32a4093948ae1ae8603688793f07de764430f.camel@kernel.org>
+ <ZTcBI2xaZz1GdMjX@dread.disaster.area>
+ <CAHk-=whphyjjLwDcEthOOFXXfgwGrtrMnW2iyjdQioV6YSMEPw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Subject: Re: [PATCH] XArray: Make xa_lock_init macro
-Content-Language: en-US
-To: Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- Matthew Wilcox <willy@infradead.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>
-References: <20231002082535.1516405-1-stanislaw.gruszka@linux.intel.com>
- <20231023084943.GE704032@linux.intel.com>
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <20231023084943.GE704032@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=whphyjjLwDcEthOOFXXfgwGrtrMnW2iyjdQioV6YSMEPw@mail.gmail.com>
 
+On Mon, Oct 23, 2023 at 02:18:12PM -1000, Linus Torvalds wrote:
+> On Mon, 23 Oct 2023 at 13:26, Dave Chinner <david@fromorbit.com> wrote:
+> >
+> > The problem is the first read request after a modification has been
+> > made. That is causing relatime to see mtime > atime and triggering
+> > an atime update. XFS sees this, does an atime update, and in
+> > committing that persistent inode metadata update, it calls
+> > inode_maybe_inc_iversion(force = false) to check if an iversion
+> > update is necessary. The VFS sees I_VERSION_QUERIED, and so it bumps
+> > i_version and tells XFS to persist it.
+> 
+> Could we perhaps just have a mode where we don't increment i_version
+> for just atime updates?
+>
+> Maybe we don't even need a mode, and could just decide that atime
+> updates aren't i_version updates at all?
 
-On 10/23/23 04:49, Stanislaw Gruszka wrote:
-> On Mon, Oct 02, 2023 at 10:25:35AM +0200, Stanislaw Gruszka wrote:
->> Make xa_init_flags() macro to avoid false positive lockdep splats.
->
-> Friendly ping. The subject should be changed to mention xa_init_flags(),
-> but anything else should be done here to get it apply ?
->
-> Regards
-> Stanislaw
->
->
->> When spin_lock_init() is used inside initialization function (like
->> in xa_init_flags()) which can be called many times, lockdep assign
->> the same key to different locks.
->>
->> For example this splat is seen with intel_vpu driver which uses
->> two xarrays and has two separate xa_init_flags() calls:
->>
->> [ 1139.148679] WARNING: inconsistent lock state
->> [ 1139.152941] 6.6.0-hardening.1+ #2 Tainted: G           OE
->> [ 1139.158758] --------------------------------
->> [ 1139.163024] inconsistent {HARDIRQ-ON-W} -> {IN-HARDIRQ-W} usage.
->> [ 1139.169018] kworker/10:1/109 [HC1[1]:SC0[0]:HE0:SE1] takes:
->> [ 1139.174576] ffff888137237150 (&xa->xa_lock#18){?.+.}-{2:2}, at: ivpu_mmu_user_context_mark_invalid+0x1c/0x80 [intel_vpu]
->> [ 1139.185438] {HARDIRQ-ON-W} state was registered at:
->> [ 1139.190305]   lock_acquire+0x1a3/0x4a0
->> [ 1139.194055]   _raw_spin_lock+0x2c/0x40
->> [ 1139.197800]   ivpu_submit_ioctl+0xf0b/0x3520 [intel_vpu]
->> [ 1139.203114]   drm_ioctl_kernel+0x201/0x3f0 [drm]
->> [ 1139.207791]   drm_ioctl+0x47d/0xa20 [drm]
->> [ 1139.211846]   __x64_sys_ioctl+0x12e/0x1a0
->> [ 1139.215849]   do_syscall_64+0x59/0x90
->> [ 1139.219509]   entry_SYSCALL_64_after_hwframe+0x6e/0xd8
->> [ 1139.224636] irq event stamp: 45500
->> [ 1139.228037] hardirqs last  enabled at (45499): [<ffffffff92ef0314>] _raw_spin_unlock_irq+0x24/0x50
->> [ 1139.236961] hardirqs last disabled at (45500): [<ffffffff92eadf8f>] common_interrupt+0xf/0x90
->> [ 1139.245457] softirqs last  enabled at (44956): [<ffffffff92ef3430>] __do_softirq+0x4c0/0x712
->> [ 1139.253862] softirqs last disabled at (44461): [<ffffffff907df310>] irq_exit_rcu+0xa0/0xd0
->> [ 1139.262098]
->>                 other info that might help us debug this:
->> [ 1139.268604]  Possible unsafe locking scenario:
->>
->> [ 1139.274505]        CPU0
->> [ 1139.276955]        ----
->> [ 1139.279403]   lock(&xa->xa_lock#18);
->> [ 1139.282978]   <Interrupt>
->> [ 1139.285601]     lock(&xa->xa_lock#18);
->> [ 1139.289345]
->>                  *** DEADLOCK ***
->>
->> Lockdep falsely identified xa_lock from two different xarrays as the same
->> lock and report deadlock. More detailed description of the problem
->> is provided in commit c21f11d182c2 ("drm: fix drmm_mutex_init()")
->>
->> Signed-off-by: Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>
->> ---
->>   include/linux/xarray.h | 17 +++++++----------
->>   1 file changed, 7 insertions(+), 10 deletions(-)
->>
->> diff --git a/include/linux/xarray.h b/include/linux/xarray.h
->> index cb571dfcf4b1..409d9d739ee9 100644
->> --- a/include/linux/xarray.h
->> +++ b/include/linux/xarray.h
->> @@ -375,12 +375,12 @@ void xa_destroy(struct xarray *);
->>    *
->>    * Context: Any context.
->>    */
->> -static inline void xa_init_flags(struct xarray *xa, gfp_t flags)
->> -{
->> -	spin_lock_init(&xa->xa_lock);
->> -	xa->xa_flags = flags;
->> -	xa->xa_head = NULL;
->> -}
->> +#define xa_init_flags(_xa, _flags)	\
->> +do {					\
->> +	spin_lock_init(&(_xa)->xa_lock);\
->> +	(_xa)->xa_flags = (_flags);	\
->> +	(_xa)->xa_head = NULL;		\
->> +} while (0)
->>   
->>   /**
->>    * xa_init() - Initialise an empty XArray.
->> @@ -390,10 +390,7 @@ static inline void xa_init_flags(struct xarray *xa, gfp_t flags)
->>    *
->>    * Context: Any context.
->>    */
->> -static inline void xa_init(struct xarray *xa)
->> -{
->> -	xa_init_flags(xa, 0);
->> -}
->> +#define xa_init(xa) xa_init_flags(xa, 0)
->>   
->>   /**
->>    * xa_empty() - Determine if an array has any present entries.
->> -- 
->> 2.25.1
->>
-LGTM. However, it is up to Matthew to take it or not as he is the XArray 
-maintainer.
+We do that already - in memory atime updates don't bump i_version at
+all. The issue is the rare persistent atime update requests that
+still happen - they are the ones that trigger an i_version bump on
+XFS, and one of the relatime heuristics tickle this specific issue.
 
-Acked-by: Waiman Long <longman@redhat.com>
+If we push the problematic persistent atime updates to be in-memory
+updates only, then the whole problem with i_version goes away....
 
+> Yes, yes, it's obviously technically a "inode modification", but does
+> anybody actually *want* atime updates with no actual other changes to
+> be version events?
+
+Well, yes, there was. That's why we defined i_version in the on disk
+format this way well over a decade ago. It was part of some deep
+dark magical HSM beans that allowed the application to combine
+multiple scans for different inode metadata changes into a single
+pass. atime changes was one of the things it needed to know about
+for tiering and space scavenging purposes....
+
+> Or maybe i_version can update, but callers of getattr() could have two
+> bits for that STATX_CHANGE_COOKIE, one for "I care about atime" and
+> one for others, and we'd pass that down to inode_query_version, and
+> we'd have a I_VERSION_QUERIED and a I_VERSION_QUERIED_STRICT, and the
+> "I care about atime" case ould set the strict one.
+
+This makes correct behaviour reliant on the applicaiton using the
+query mechanism correctly. I have my doubts that userspace
+developers will be able to understand the subtle difference between
+the two options and always choose correctly....
+
+And then there's always the issue that we might end up with both
+flags set and we get conflicting bug reports about how atime is not
+behaving the way the applications want it to behave.
+
+> Then inode_maybe_inc_iversion() could - for atome updates - skip the
+> version update *unless* it sees that I_VERSION_QUERIED_STRICT bit.
+> 
+> Does that sound sane to people?
+
+I'd much prefer we just do the right thing transparently at the
+filesystem level; all we need is for the inode to be flagged that it
+should be doing in memory atime updates rather than persistent
+updates.
+
+Perhaps the nfs server should just set a new S_LAZYTIME flag on
+inodes it accesses similar to how we can set S_NOATIME on inodes to
+elide atime updates altogether. Once set, the inode will behave that
+way until it is reclaimed from memory....
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
