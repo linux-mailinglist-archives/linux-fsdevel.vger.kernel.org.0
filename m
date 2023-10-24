@@ -1,326 +1,331 @@
-Return-Path: <linux-fsdevel+bounces-1000-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1001-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 837FE7D4AC1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 10:46:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06D667D4ACE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 10:48:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36AF9281815
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 08:46:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 296B11C20BD2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 08:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 185B214F77;
-	Tue, 24 Oct 2023 08:45:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EA22171B5;
+	Tue, 24 Oct 2023 08:48:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="XNxYoMp0"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ai5TqzV5"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94AFB11CA7
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 08:45:54 +0000 (UTC)
-Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A77EAC
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 01:45:52 -0700 (PDT)
-Received: by mail-pf1-x42e.google.com with SMTP id d2e1a72fcca58-6bf03b98b9bso3462394b3a.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 01:45:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1698137152; x=1698741952; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:cc:references:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QshcxRLMkYxbpDovzhpTFyvJdC1mbiOC7DrihsySHcY=;
-        b=XNxYoMp0h0HjwAWxHQ/ayhj6eghZugeHwIIGccbpsXTQRP9ELDvDGwD7XqE7C/C/H+
-         CMoNi+UcpIbMgKOG5TNHWyzYpMoQ5gG2wKmKcytgw3C2sqHq3qnEMeK2nR+/RnLz9N6l
-         8w9XzrCKcsOFHGVLa/j96zhbr8nyGkjlPHwTcSfzSGvbs3oQNx9IvNx+B4jmuYBzv1c/
-         Tv0fXek4J5mMX+oHCB8rWw7c/mOn7ME1oilob973Ugjwe5EbzGR2uSD6ntsPqsFRvh5J
-         6Ao/GbBoKrwn0eSTjGAIfdEnW+knS63enFU4ZQKcpl6RB+hiSfSUwZ0tcS4/wYd1GTwg
-         iGbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698137152; x=1698741952;
-        h=content-transfer-encoding:in-reply-to:from:cc:references:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=QshcxRLMkYxbpDovzhpTFyvJdC1mbiOC7DrihsySHcY=;
-        b=GR4NZaCZzuYK65ga9YZH7XmZaEQcx0pD4tuXiy96ZRDnwCm4FugxFbiA/bfTwlfTmk
-         Wfs7vudiPh2el4aEoG7izLBGtVeyDrOku3jUaVIUe3u9pgb5YeWl+LLeWnqT4LQsA28A
-         /vn/Ns9extr3Zp0JYwxVkDoMJaM3rC2QOvwlEwj23DRPGaQGteK5IBxw9UGRzkFFfVl4
-         zPIJ1Rs4Meu40MtlHyuQrEcMbzAb6XQrg504xsD6k6rHpmuujMIdCgAwil3HZNx39GJ0
-         advKQax6bXZnWK+4lMY26lWyA6Zcps3s/vkqbYyNcDe8OhY12i95C3nMPG7Omcb4Op98
-         4k5A==
-X-Gm-Message-State: AOJu0Ywqu0aSP5dAt7TijRfnO9XViMQA840iNiN/yWNYGMu4nN8qqHRs
-	ALl97eix7JV3U8A0HBTdUmW0Zg==
-X-Google-Smtp-Source: AGHT+IHU/AWhNhPA3MvC+yOsf1y7zPifeXf6fsB2427YQf9ZBN+LQTweWv9W0xdu4HDJksTGqApvAw==
-X-Received: by 2002:a17:903:5d0:b0:1c7:27a1:a9e5 with SMTP id kf16-20020a17090305d000b001c727a1a9e5mr11537246plb.33.1698137151687;
-        Tue, 24 Oct 2023 01:45:51 -0700 (PDT)
-Received: from [10.84.146.196] ([203.208.167.147])
-        by smtp.gmail.com with ESMTPSA id x4-20020a170902ec8400b001c74df14e6fsm6990749plg.284.2023.10.24.01.45.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Oct 2023 01:45:51 -0700 (PDT)
-Message-ID: <2f4422ba-b9d3-4fc1-a502-1060436052ab@bytedance.com>
-Date: Tue, 24 Oct 2023 16:45:43 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDAD3134BD
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 08:48:35 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.151])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B498E99
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 01:48:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1698137313; x=1729673313;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=L8TI/iUXl3tePX2XjOj/2usdk56ycetCkmROpiM20NI=;
+  b=Ai5TqzV5n4qoTW16g+WiDO9k8Tx6GZ8VT6UQaQe7EMEObCgtlXUnfRcn
+   e/Uvu4VoRl8AUnmL9haqGzgiP5wJObZC0wwnVON4bJV3u1t8O/+GQ7hWF
+   IatLmHw9sGxJ6VapTkj6XV0mqaugjs/8k8MouN+q8QVCrqbMGHehS/kJV
+   jMasnSBm6tQ2+Gy1elK1INKcHpucm+u5gXdK5RIb8PFc26af520DCMaKn
+   fuJFKAwv4/3GqEjN3MyQjXIcqAsPIiylZH9kHXcJJJofdqvgPEQIEsQML
+   Lrw3ga1VS/uiNTt1otVnTzKwdjKdnK5lyGyozFP3VAcgVEUqKitdjQrMW
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10872"; a="367242727"
+X-IronPort-AV: E=Sophos;i="6.03,247,1694761200"; 
+   d="scan'208";a="367242727"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2023 01:48:33 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10872"; a="882043773"
+X-IronPort-AV: E=Sophos;i="6.03,247,1694761200"; 
+   d="scan'208";a="882043773"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by orsmga004.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 24 Oct 2023 01:48:33 -0700
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.32; Tue, 24 Oct 2023 01:48:32 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.32 via Frontend Transport; Tue, 24 Oct 2023 01:48:32 -0700
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.40) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.32; Tue, 24 Oct 2023 01:48:32 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=dwPcMS6EqwxNi/oKo/3SxBR1TcI18AMB8w2SAAULiYt28MeT8RV2yjRVJ0XSRAA+5Ve3AxNlMM362WBlJInE1lKLrO7DFyFqZiwKmmBlR8rBV59cEfDAd+znREJG95RMFewpXoPXyHA4I1F/5/dc7oYozzmiUJPnt8yNbr+qiH9qLmriYq146udFrhi2I0xjSldLfp0PLGshjGFPdEDdFZPLM2xtAKk8Jyk7jEW+3kd866rSnLUKdauDkjhydUoqo/W2SyzC/HxkeOvDnGy8QaKvj2OG5UmoI7Q3AkZWnwSB6zCbKlIygHufQSv99RfreLk8iRjYk+ukHYxm1xABjQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1c4C8ICiIApzTCve02pFG0DPJ0HRIV321yMAL8C9tuQ=;
+ b=IlAj45qWBzQTvvWzceWHGBiICbmGaDEUAOPeLvMT67qcUbDLLaxMwIB51P5BpNvGOlBtBUD8xWfCpvA7bGNlcRkamjow2FJhr3LXo82Jk8wIbYnp+8TPXDEsAVKyuguG5bL/vuPlwyo0dvFLjMfvGKmED9q0vLPB9MtLfzJJjojDSy0aBlLseRxtKPishvzO74u4k4bFIG4gJxwBmofPJm2TCuy4O8hlGbBOKWf0Yz/19eTugQDxIjxIPXsE/wVNlKMvnG1ONxb0E/gj4NEEcSjDcxTpUE+CBNYwsgMmNfkND6+X4KDYNsQmaYLiC/XJquHrh/972GldShRdLFXpcA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH8PR11MB6779.namprd11.prod.outlook.com (2603:10b6:510:1ca::17)
+ by BN9PR11MB5515.namprd11.prod.outlook.com (2603:10b6:408:104::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6907.33; Tue, 24 Oct
+ 2023 08:48:30 +0000
+Received: from PH8PR11MB6779.namprd11.prod.outlook.com
+ ([fe80::29f0:3f0f:2591:d1f6]) by PH8PR11MB6779.namprd11.prod.outlook.com
+ ([fe80::29f0:3f0f:2591:d1f6%3]) with mapi id 15.20.6907.032; Tue, 24 Oct 2023
+ 08:48:30 +0000
+Date: Tue, 24 Oct 2023 16:48:23 +0800
+From: kernel test robot <oliver.sang@intel.com>
+To: Jeff Layton <jlayton@kernel.org>
+CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>,
+	<linux-fsdevel@vger.kernel.org>, <oliver.sang@intel.com>
+Subject: [jlayton:kdevops] [fs]  c8e00140fa:
+ BUG:unable_to_handle_page_fault_for_address
+Message-ID: <202310241644.67f17b98-oliver.sang@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+X-ClientProxiedBy: SG3P274CA0018.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:be::30)
+ To PH8PR11MB6779.namprd11.prod.outlook.com (2603:10b6:510:1ca::17)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 10/10] fork: Use __mt_dup() to duplicate maple tree in
- dup_mmap()
-To: "Liam R. Howlett" <Liam.Howlett@Oracle.com>
-References: <20231016032226.59199-1-zhangpeng.00@bytedance.com>
- <20231016032226.59199-11-zhangpeng.00@bytedance.com>
- <20231017135020.dqq3u6zwvnbrsgfo@revolver>
-Cc: Peng Zhang <zhangpeng.00@bytedance.com>, corbet@lwn.net,
- akpm@linux-foundation.org, willy@infradead.org, brauner@kernel.org,
- surenb@google.com, michael.christie@oracle.com, mjguzik@gmail.com,
- mathieu.desnoyers@efficios.com, npiggin@gmail.com, peterz@infradead.org,
- oliver.sang@intel.com, mst@redhat.com, maple-tree@lists.infradead.org,
- linux-mm@kvack.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org
-From: Peng Zhang <zhangpeng.00@bytedance.com>
-In-Reply-To: <20231017135020.dqq3u6zwvnbrsgfo@revolver>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR11MB6779:EE_|BN9PR11MB5515:EE_
+X-MS-Office365-Filtering-Correlation-Id: ecd8abb0-a07d-4455-2b6d-08dbd46dfef3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 7DVbMBMvC8VV9gBMjGuXH7SSPYpxWABCF4dYrHxkpMun778M5OVwDitJiyp6B3z/GhBhkRsjFbFDTBiH4HHgq0VIhVr3x6WZXNxkv2IPJMfejDmyDvmYLjh3+U6L18iH052LDj1v87YwF2zd5vLUaWlxJue/MYZvby3M84dcc5XirMyAW8/Q3zuPe2s10fyYO/dFwPbSNEsJqlmpXjUEsujxlh1KiWjMYVnu0w2rhBPgRFD+mTLrgByeE/Cmh4RB6+XO07j+35P2nUw4gfGnRFSF1DhhAUOMPywSAyVymOpwa6ypgNHesCx5J5TODs8z08CVyNC/YvjFz4QdCJuwJOhbuzirV61zlSi9SKfRK2xv1XS187iuALJPASrQOQVbTytIsCxVEwFxZsBk7o2WsYUyhpbWRVdgT6BIwTCzY0RdvSK4bm1eteAUA61yTI4OeYUqr8IdhV+7eSAUGfToKZ7uNAyMzGnU32aUgQl2rCb7rN1XnFYzYHR4k2jrTmWIqhn7UFpUoZopPk2/7jl7/MioYJzDdt0t0Iof+QUZdgXzF1P3+YDPhXhTxj+8GT9zHW27W3n448TOsPOMFsQFGw==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB6779.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376002)(346002)(136003)(39860400002)(396003)(366004)(230922051799003)(451199024)(186009)(64100799003)(1800799009)(26005)(478600001)(1076003)(6512007)(6666004)(86362001)(6506007)(316002)(6916009)(38100700002)(66946007)(66556008)(66476007)(36756003)(2616005)(966005)(6486002)(107886003)(2906002)(83380400001)(8936002)(8676002)(4326008)(82960400001)(5660300002)(41300700001)(45080400002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?WpYtUfN++zRmlP62uMyJo4lvmY0sfqHbTsaS//Ya2aixalo/JpaV2/byI/mY?=
+ =?us-ascii?Q?TzfOMyshhTv2xrADWr8rizP+Ee9Zq4RPe/h8sUwvqOE0jN7n+G2KLTjX+FXH?=
+ =?us-ascii?Q?TgBemXPOTsi5u/GMVdp2iRQ3FIMIGVdq0Tz9jJhGLTQP7JU6VuPuOV2x5tEh?=
+ =?us-ascii?Q?+SpaCaj6D3nZYRzexfJ0l6Kys4AZnZ0T4IhUfErgZ1CXzLj1fMr0qpdNZxDy?=
+ =?us-ascii?Q?NcWt9qto2eHHAUkFQHGnSG2iNxGGKza1BhQvm0/GZ4HDNcbGB8J7fBciUcVn?=
+ =?us-ascii?Q?XbidbbEGocI5PEKRj3vbDVifxWLiCdeLue9LH7+7R7NvsS1hDkvTojcVJIWQ?=
+ =?us-ascii?Q?SmyIRMTFTy1eRer0Yg9BlsVXeiBaMH6S0dxcaGzIS+qVHUB9UvJP2C8/8sKy?=
+ =?us-ascii?Q?/aB/c6E5GphTQwT761VXxZRUiwR+YmLFSujH38ZDDNXZaOpt7nYm0UyATrEh?=
+ =?us-ascii?Q?IEA1u7fL6n6BrIqCz+mS3sFG6rthY/01qTVNZWPkr8dwV8pf2Pl3bx7sGLrN?=
+ =?us-ascii?Q?R/Al4fHAb4Le8b7mHeK2Wjk3r9e92w8RvGGBzHMvTxSfIxWiY5Ij252GPuvl?=
+ =?us-ascii?Q?uipV6NBvUMBEY7euy0dB8PnPWL0stPk5+pyxZxSf+oDQq6U6qGct6/rxmLAw?=
+ =?us-ascii?Q?Sdq444IyZs6vyVqjB3VG15f0eVy7iUK8A3zSG8H9oVJJpDL4Xk8zrMYu68mN?=
+ =?us-ascii?Q?BnqY91s4/Qd41Y4JXyM68PoxGLKTxF3ouDDUG4xbUTLbCyCQTEvxk5v31srZ?=
+ =?us-ascii?Q?ziwqHoetf9ju+pB363Tgbi56nqCu2PQ+jcukm1H8yUFkJNnyYjeV9rhNRWWj?=
+ =?us-ascii?Q?1qUvslVS1ywYWgfKLeIDjyg18ImNAXMd42UGcZuanZEJoVECeXnJ+eF7JWeT?=
+ =?us-ascii?Q?yPRHEiQ4nXC0XH0iGxagKpQ7CDLR3ZZ6LLne9FGYyQOZxwY56UftoEbcK50C?=
+ =?us-ascii?Q?0GCwXodSvPv18FjmXtdHKajJr2KwNssRa9z03kTpyevsR38Y3KH/rh3nb4dl?=
+ =?us-ascii?Q?jLfLX9HsXB3FZbg1EJw4Nv3WtYO+mV+Uesisw04p6tFFYFAC0u8gs/yvFpRH?=
+ =?us-ascii?Q?fD5DMGCQSfpmkzJADlD7v+mgktqm0dLVnc6nFvIoQj1+DIOfGCSkqPaX1ODZ?=
+ =?us-ascii?Q?AUiUAEXaPkv9OYUE2+cwpRe0UzKdNGLmYRWtuCGJ1ReQN8d0XsN32C1weGoI?=
+ =?us-ascii?Q?zdxxw9Szjq/9eYAzJlAqiFxZRMp5oPtkoUrRL/X80Nbdli4/X0YOVDawNNZ4?=
+ =?us-ascii?Q?mzIrSWcTWt+nkGmBxjhG2QwHvHwTs+L3Bc4Dy8fKObiZoN+9GZK9T0XdS3jp?=
+ =?us-ascii?Q?u6bUT0YfKbIIMzLEwOc2M9JHm65qmO1E+llzLuSct14Bzd3k1VGVLvn26r5I?=
+ =?us-ascii?Q?c2ZXJsir35YbzF4bG35UCGZxgfaDXtpvCYYFFBu7DwGlCtqdyNldrqlOszz3?=
+ =?us-ascii?Q?/XMyXSHvUUR8KSYjV4BJIbO1YYxDDt6eg0L08fZssK+tIDVFaURB6QYnPG16?=
+ =?us-ascii?Q?0YK1//lPGf3JNp9xi5H/XXTUvEA+4d2ZpYlpP5WPgN+nqocQGaIDaybUo8fw?=
+ =?us-ascii?Q?NrVS8dungKKdJKWqV4NlB4gpyMeHvfsTW/cfE05gXfYii1AYbhEsuZIucQ1y?=
+ =?us-ascii?Q?fQ=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: ecd8abb0-a07d-4455-2b6d-08dbd46dfef3
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB6779.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2023 08:48:29.9269
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZaSDMS7MAsp2AHN1I47hE8x1FiYjfeYWNDVx5TDqpW7TUEFTMpJnS+jIBgqs4Z8j5AMZsBzjwfYdc822F4ZdqA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN9PR11MB5515
+X-OriginatorOrg: intel.com
 
 
 
-在 2023/10/17 21:50, Liam R. Howlett 写道:
-> * Peng Zhang <zhangpeng.00@bytedance.com> [231015 23:23]:
->> In dup_mmap(), using __mt_dup() to duplicate the old maple tree and then
->> directly replacing the entries of VMAs in the new maple tree can result
->> in better performance. __mt_dup() uses DFS pre-order to duplicate the
->> maple tree, so it is efficient.
->>
->> The average time complexity of __mt_dup() is O(n), where n is the number
->> of VMAs. The proof of the time complexity is provided in the commit log
->> that introduces __mt_dup(). After duplicating the maple tree, each element
->> is traversed and replaced (ignoring the cases of deletion, which are rare).
->> Since it is only a replacement operation for each element, this process is
->> also O(n).
->>
->> Analyzing the exact time complexity of the previous algorithm is
->> challenging because each insertion can involve appending to a node, pushing
->> data to adjacent nodes, or even splitting nodes. The frequency of each
->> action is difficult to calculate. The worst-case scenario for a single
->> insertion is when the tree undergoes splitting at every level. If we
->> consider each insertion as the worst-case scenario, we can determine that
->> the upper bound of the time complexity is O(n*log(n)), although this is a
->> loose upper bound. However, based on the test data, it appears that the
->> actual time complexity is likely to be O(n).
->>
->> As the entire maple tree is duplicated using __mt_dup(), if dup_mmap()
->> fails, there will be a portion of VMAs that have not been duplicated in
->> the maple tree. To handle this, we mark the failure point with
->> XA_ZERO_ENTRY. In exit_mmap(), if this marker is encountered, stop
->> releasing VMAs that have not been duplicated after this point.
->>
->> There is a "spawn" in byte-unixbench[1], which can be used to test the
->> performance of fork(). I modified it slightly to make it work with
->> different number of VMAs.
->>
->> Below are the test results. The first row shows the number of VMAs.
->> The second and third rows show the number of fork() calls per ten seconds,
->> corresponding to next-20231006 and the this patchset, respectively. The
->> test results were obtained with CPU binding to avoid scheduler load
->> balancing that could cause unstable results. There are still some
->> fluctuations in the test results, but at least they are better than the
->> original performance.
->>
->> 21     121   221    421    821    1621   3221   6421   12821  25621  51221
->> 112100 76261 54227  34035  20195  11112  6017   3161   1606   802    393
->> 114558 83067 65008  45824  28751  16072  8922   4747   2436   1233   599
->> 2.19%  8.92% 19.88% 34.64% 42.37% 44.64% 48.28% 50.17% 51.68% 53.74% 52.42%
->>
->> [1] https://github.com/kdlucas/byte-unixbench/tree/master
->>
->> Signed-off-by: Peng Zhang <zhangpeng.00@bytedance.com>
->> ---
->>   kernel/fork.c | 39 ++++++++++++++++++++++++++++-----------
->>   mm/memory.c   |  7 ++++++-
->>   mm/mmap.c     |  9 ++++++---
->>   3 files changed, 40 insertions(+), 15 deletions(-)
->>
->> diff --git a/kernel/fork.c b/kernel/fork.c
->> index 0ff2e0cd4109..0be15501e52e 100644
->> --- a/kernel/fork.c
->> +++ b/kernel/fork.c
->> @@ -650,7 +650,6 @@ static __latent_entropy int dup_mmap(struct mm_struct *mm,
->>   	int retval;
->>   	unsigned long charge = 0;
->>   	LIST_HEAD(uf);
->> -	VMA_ITERATOR(old_vmi, oldmm, 0);
->>   	VMA_ITERATOR(vmi, mm, 0);
->>   
->>   	uprobe_start_dup_mmap();
->> @@ -678,16 +677,21 @@ static __latent_entropy int dup_mmap(struct mm_struct *mm,
->>   		goto out;
->>   	khugepaged_fork(mm, oldmm);
->>   
->> -	retval = vma_iter_bulk_alloc(&vmi, oldmm->map_count);
->> -	if (retval)
->> +	/* Use __mt_dup() to efficiently build an identical maple tree. */
->> +	retval = __mt_dup(&oldmm->mm_mt, &mm->mm_mt, GFP_KERNEL);
->> +	if (unlikely(retval))
->>   		goto out;
->>   
->>   	mt_clear_in_rcu(vmi.mas.tree);
->> -	for_each_vma(old_vmi, mpnt) {
->> +	for_each_vma(vmi, mpnt) {
->>   		struct file *file;
->>   
->>   		vma_start_write(mpnt);
->>   		if (mpnt->vm_flags & VM_DONTCOPY) {
->> +			retval = mas_store_gfp(&vmi.mas, NULL, GFP_KERNEL);
-> 
-> vma_iter_clear_gfp() exists, but needs to be relocated from internal.h
-> to mm.h to be used here.
-Done in v6, thanks.
-> 
->> +			if (retval)
->> +				goto loop_out;
->> +
->>   			vm_stat_account(mm, mpnt->vm_flags, -vma_pages(mpnt));
->>   			continue;
->>   		}
->> @@ -749,9 +753,11 @@ static __latent_entropy int dup_mmap(struct mm_struct *mm,
->>   		if (is_vm_hugetlb_page(tmp))
->>   			hugetlb_dup_vma_private(tmp);
->>   
->> -		/* Link the vma into the MT */
->> -		if (vma_iter_bulk_store(&vmi, tmp))
->> -			goto fail_nomem_vmi_store;
->> +		/*
->> +		 * Link the vma into the MT. After using __mt_dup(), memory
->> +		 * allocation is not necessary here, so it cannot fail.
->> +		 */
-> 
-> Allocations didn't happen here with the bulk store either, and the
-> vma_iter_bulk_store() does a mas_store() - see include/linux/mm.h
-> 
-> The vma iterator is used when possible for type safety.
-Done in v6, thanks.
-> 
->> +		mas_store(&vmi.mas, tmp);
->>   
->>   		mm->map_count++;
->>   		if (!(tmp->vm_flags & VM_WIPEONFORK))
->> @@ -760,15 +766,28 @@ static __latent_entropy int dup_mmap(struct mm_struct *mm,
->>   		if (tmp->vm_ops && tmp->vm_ops->open)
->>   			tmp->vm_ops->open(tmp);
->>   
->> -		if (retval)
->> +		if (retval) {
->> +			mpnt = vma_next(&vmi);
->>   			goto loop_out;
->> +		}
->>   	}
->>   	/* a new mm has just been created */
->>   	retval = arch_dup_mmap(oldmm, mm);
->>   loop_out:
->>   	vma_iter_free(&vmi);
->> -	if (!retval)
->> +	if (!retval) {
->>   		mt_set_in_rcu(vmi.mas.tree);
->> +	} else if (mpnt) {
->> +		/*
->> +		 * The entire maple tree has already been duplicated. If the
->> +		 * mmap duplication fails, mark the failure point with
->> +		 * XA_ZERO_ENTRY. In exit_mmap(), if this marker is encountered,
->> +		 * stop releasing VMAs that have not been duplicated after this
->> +		 * point.
->> +		 */
->> +		mas_set_range(&vmi.mas, mpnt->vm_start, mpnt->vm_end - 1);
->> +		mas_store(&vmi.mas, XA_ZERO_ENTRY);
-> 
-> vma_iter_clear() exists but uses the preallocation call.  I really don't
-> want mas_ calls where unnecessary, but this seems like a special case.
-> We have a vma iterator here so it's messy.
-If mas_ interface is not used, it may be necessary to add another
-vma_iter_ interface to do this.
-> 
->> +	}
->>   out:
->>   	mmap_write_unlock(mm);
->>   	flush_tlb_mm(oldmm);
->> @@ -778,8 +797,6 @@ static __latent_entropy int dup_mmap(struct mm_struct *mm,
->>   	uprobe_end_dup_mmap();
->>   	return retval;
->>   
->> -fail_nomem_vmi_store:
->> -	unlink_anon_vmas(tmp);
->>   fail_nomem_anon_vma_fork:
->>   	mpol_put(vma_policy(tmp));
->>   fail_nomem_policy:
->> diff --git a/mm/memory.c b/mm/memory.c
->> index b320af6466cc..ea48bd4b1feb 100644
->> --- a/mm/memory.c
->> +++ b/mm/memory.c
->> @@ -374,6 +374,8 @@ void free_pgtables(struct mmu_gather *tlb, struct ma_state *mas,
->>   		 * be 0.  This will underflow and is okay.
->>   		 */
->>   		next = mas_find(mas, ceiling - 1);
->> +		if (unlikely(xa_is_zero(next)))
->> +			next = NULL;
->>   
->>   		/*
->>   		 * Hide vma from rmap and truncate_pagecache before freeing
->> @@ -395,6 +397,8 @@ void free_pgtables(struct mmu_gather *tlb, struct ma_state *mas,
->>   			       && !is_vm_hugetlb_page(next)) {
->>   				vma = next;
->>   				next = mas_find(mas, ceiling - 1);
->> +				if (unlikely(xa_is_zero(next)))
->> +					next = NULL;
->>   				if (mm_wr_locked)
->>   					vma_start_write(vma);
->>   				unlink_anon_vmas(vma);
->> @@ -1743,7 +1747,8 @@ void unmap_vmas(struct mmu_gather *tlb, struct ma_state *mas,
->>   		unmap_single_vma(tlb, vma, start, end, &details,
->>   				 mm_wr_locked);
->>   		hugetlb_zap_end(vma, &details);
->> -	} while ((vma = mas_find(mas, tree_end - 1)) != NULL);
->> +		vma = mas_find(mas, tree_end - 1);
->> +	} while (vma && likely(!xa_is_zero(vma)));
->>   	mmu_notifier_invalidate_range_end(&range);
->>   }
->>   
->> diff --git a/mm/mmap.c b/mm/mmap.c
->> index 1855a2d84200..12ce17863e62 100644
->> --- a/mm/mmap.c
->> +++ b/mm/mmap.c
->> @@ -3213,10 +3213,11 @@ void exit_mmap(struct mm_struct *mm)
->>   	arch_exit_mmap(mm);
->>   
->>   	vma = mas_find(&mas, ULONG_MAX);
->> -	if (!vma) {
->> +	if (!vma || unlikely(xa_is_zero(vma))) {
->>   		/* Can happen if dup_mmap() received an OOM */
->>   		mmap_read_unlock(mm);
->> -		return;
->> +		mmap_write_lock(mm);
->> +		goto destroy;
->>   	}
->>   
->>   	lru_add_drain();
->> @@ -3251,11 +3252,13 @@ void exit_mmap(struct mm_struct *mm)
->>   		remove_vma(vma, true);
->>   		count++;
->>   		cond_resched();
->> -	} while ((vma = mas_find(&mas, ULONG_MAX)) != NULL);
->> +		vma = mas_find(&mas, ULONG_MAX);
->> +	} while (vma && likely(!xa_is_zero(vma)));
->>   
->>   	BUG_ON(count != mm->map_count);
->>   
->>   	trace_exit_mmap(mm);
->> +destroy:
->>   	__mt_destroy(&mm->mm_mt);
->>   	mmap_write_unlock(mm);
->>   	vm_unacct_memory(nr_accounted);
->> -- 
->> 2.20.1
->>
-> 
+Hello,
+
+kernel test robot noticed "BUG:unable_to_handle_page_fault_for_address" on:
+
+commit: c8e00140fa86367e0840b148e5ad41f5ae6e24c8 ("fs: add infrastructure for multigrain timestamps")
+https://git.kernel.org/cgit/linux/kernel/git/jlayton/linux.git kdevops
+
+in testcase: boot
+
+compiler: gcc-12
+test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
+
+(please refer to attached dmesg/kmsg for entire log/backtrace)
+
+
++----------------------------------------------------------------------------------+------------+------------+
+|                                                                                  | 84f0c2d484 | c8e00140fa |
++----------------------------------------------------------------------------------+------------+------------+
+| BUG:unable_to_handle_page_fault_for_address                                      | 0          | 6          |
+| Oops:#[##]                                                                       | 0          | 6          |
+| EIP:percpu_counter_add_batch                                                     | 0          | 6          |
+| Kernel_panic-not_syncing:Fatal_exception                                         | 0          | 6          |
++----------------------------------------------------------------------------------+------------+------------+
+
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <oliver.sang@intel.com>
+| Closes: https://lore.kernel.org/oe-lkp/202310241644.67f17b98-oliver.sang@intel.com
+
+
+[    0.988550][    T0] BUG: unable to handle page fault for address: 26a4c000
+[    0.990169][    T0] #PF: supervisor read access in kernel mode
+[    0.991590][    T0] #PF: error_code(0x0000) - not-present page
+[    0.991876][    T0] *pde = 00000000
+[    0.991876][    T0] Oops: 0000 [#1] SMP
+[    0.991876][    T0] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 6.6.0-rc6-00092-gc8e00140fa86 #1
+[    0.991876][    T0] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+[ 0.991876][ T0] EIP: percpu_counter_add_batch (lib/percpu_counter.c:93 (discriminator 1)) 
+[ 0.991876][ T0] Code: 43 34 11 53 28 f7 de 64 01 30 89 d8 e8 ea 5e 5e 00 9c 58 f6 c4 02 74 ca e8 e2 6d 5d 00 eb c3 e8 5b 96 bd ff 8b 4b 34 8b 7d e0 <64> 8b 31 89 f0 99 03 45 e4 13 55 e8 89 55 f0 89 c2 89 45 ec 8b 45
+All code
+========
+   0:	43 34 11             	rex.XB xor $0x11,%al
+   3:	53                   	push   %rbx
+   4:	28 f7                	sub    %dh,%bh
+   6:	de 64 01 30          	fisubs 0x30(%rcx,%rax,1)
+   a:	89 d8                	mov    %ebx,%eax
+   c:	e8 ea 5e 5e 00       	call   0x5e5efb
+  11:	9c                   	pushf
+  12:	58                   	pop    %rax
+  13:	f6 c4 02             	test   $0x2,%ah
+  16:	74 ca                	je     0xffffffffffffffe2
+  18:	e8 e2 6d 5d 00       	call   0x5d6dff
+  1d:	eb c3                	jmp    0xffffffffffffffe2
+  1f:	e8 5b 96 bd ff       	call   0xffffffffffbd967f
+  24:	8b 4b 34             	mov    0x34(%rbx),%ecx
+  27:	8b 7d e0             	mov    -0x20(%rbp),%edi
+  2a:*	64 8b 31             	mov    %fs:(%rcx),%esi		<-- trapping instruction
+  2d:	89 f0                	mov    %esi,%eax
+  2f:	99                   	cltd
+  30:	03 45 e4             	add    -0x1c(%rbp),%eax
+  33:	13 55 e8             	adc    -0x18(%rbp),%edx
+  36:	89 55 f0             	mov    %edx,-0x10(%rbp)
+  39:	89 c2                	mov    %eax,%edx
+  3b:	89 45 ec             	mov    %eax,-0x14(%rbp)
+  3e:	8b                   	.byte 0x8b
+  3f:	45                   	rex.RB
+
+Code starting with the faulting instruction
+===========================================
+   0:	64 8b 31             	mov    %fs:(%rcx),%esi
+   3:	89 f0                	mov    %esi,%eax
+   5:	99                   	cltd
+   6:	03 45 e4             	add    -0x1c(%rbp),%eax
+   9:	13 55 e8             	adc    -0x18(%rbp),%edx
+   c:	89 55 f0             	mov    %edx,-0x10(%rbp)
+   f:	89 c2                	mov    %eax,%edx
+  11:	89 45 ec             	mov    %eax,-0x14(%rbp)
+  14:	8b                   	.byte 0x8b
+  15:	45                   	rex.RB
+[    0.991876][    T0] EAX: 00000001 EBX: c2df4ca0 ECX: 00000000 EDX: c15cef45
+[    0.991876][    T0] ESI: 00000020 EDI: 00000000 EBP: c212be18 ESP: c212bdf4
+[    0.991876][    T0] DS: 007b ES: 007b FS: 00d8 GS: 0000 SS: 0068 EFLAGS: 00210002
+[    0.991876][    T0] CR0: 80050033 CR2: 26a4c000 CR3: 02704000 CR4: 00000690
+[    0.991876][    T0] Call Trace:
+[ 0.991876][ T0] ? show_regs (arch/x86/kernel/dumpstack.c:479 arch/x86/kernel/dumpstack.c:465) 
+[ 0.991876][ T0] ? __die (arch/x86/kernel/dumpstack.c:421 arch/x86/kernel/dumpstack.c:434) 
+[ 0.991876][ T0] ? page_fault_oops (arch/x86/mm/fault.c:707) 
+[ 0.991876][ T0] ? kernelmode_fixup_or_oops+0x78/0xd0 
+[ 0.991876][ T0] ? __bad_area_nosemaphore+0x11c/0x1f4 
+[ 0.991876][ T0] ? bad_area_nosemaphore (arch/x86/mm/fault.c:867) 
+[ 0.991876][ T0] ? do_user_addr_fault (arch/x86/mm/fault.c:1476) 
+[ 0.991876][ T0] ? exc_page_fault (arch/x86/include/asm/irqflags.h:26 arch/x86/include/asm/irqflags.h:67 arch/x86/include/asm/irqflags.h:127 arch/x86/mm/fault.c:1513 arch/x86/mm/fault.c:1561) 
+[ 0.991876][ T0] ? pvclock_clocksource_read_nowd (arch/x86/mm/fault.c:1518) 
+[ 0.991876][ T0] ? handle_exception (arch/x86/entry/entry_32.S:1056) 
+[ 0.991876][ T0] ? percpu_counter_add_batch (lib/percpu_counter.c:93 (discriminator 1)) 
+[ 0.991876][ T0] ? sched_core_share_pid (kernel/sched/core_sched.c:225 (discriminator 16)) 
+[ 0.991876][ T0] ? pvclock_clocksource_read_nowd (arch/x86/mm/fault.c:1518) 
+[ 0.991876][ T0] ? percpu_counter_add_batch (lib/percpu_counter.c:93 (discriminator 1)) 
+[ 0.991876][ T0] ? sched_core_share_pid (kernel/sched/core_sched.c:225 (discriminator 16)) 
+[ 0.991876][ T0] ? pvclock_clocksource_read_nowd (arch/x86/mm/fault.c:1518) 
+[ 0.991876][ T0] ? percpu_counter_add_batch (lib/percpu_counter.c:93 (discriminator 1)) 
+[ 0.991876][ T0] ? trace_hardirqs_on (kernel/trace/trace_preemptirq.c:63) 
+[ 0.991876][ T0] ktime_get_mg_coarse_ts64 (kernel/time/timekeeping.c:2371) 
+[ 0.991876][ T0] ? __lock_release+0x4a/0x134 
+[ 0.991876][ T0] inode_set_ctime_current (fs/inode.c:2563 fs/inode.c:2576) 
+[ 0.991876][ T0] ? inode_sb_list_add (fs/inode.c:496) 
+[ 0.991876][ T0] simple_inode_init_ts (fs/libfs.c:1929) 
+[ 0.991876][ T0] __shmem_get_inode (mm/shmem.c:2459) 
+[ 0.991876][ T0] shmem_fill_super (mm/shmem.c:4356) 
+[ 0.991876][ T0] ? shmem_fill_super (mm/shmem.c:4356) 
+[ 0.991876][ T0] ? shmem_fileattr_set (mm/shmem.c:4267) 
+[ 0.991876][ T0] get_tree_nodev (fs/super.c:1335 fs/super.c:1354) 
+[ 0.991876][ T0] shmem_get_tree (mm/shmem.c:4375) 
+[ 0.991876][ T0] vfs_get_tree (fs/super.c:1750) 
+[ 0.991876][ T0] vfs_kern_mount (fs/namespace.c:4751) 
+[ 0.991876][ T0] ? shmem_parse_one (mm/shmem.c:4424) 
+[ 0.991876][ T0] kern_mount (fs/namespace.c:4754) 
+[ 0.991876][ T0] shmem_init (mm/shmem.c:4615) 
+[ 0.991876][ T0] mnt_init (fs/namespace.c:4738) 
+[ 0.991876][ T0] vfs_caches_init (fs/dcache.c:3351) 
+[ 0.991876][ T0] start_kernel (init/main.c:1053) 
+[ 0.991876][ T0] i386_start_kernel (??:?) 
+[ 0.991876][ T0] startup_32_smp (arch/x86/kernel/head_32.S:305) 
+[    0.991876][    T0] Modules linked in:
+[    0.991876][    T0] CR2: 0000000026a4c000
+[    0.991876][    T0] ---[ end trace 0000000000000000 ]---
+[ 0.991876][ T0] EIP: percpu_counter_add_batch (lib/percpu_counter.c:93 (discriminator 1)) 
+[ 0.991876][ T0] Code: 43 34 11 53 28 f7 de 64 01 30 89 d8 e8 ea 5e 5e 00 9c 58 f6 c4 02 74 ca e8 e2 6d 5d 00 eb c3 e8 5b 96 bd ff 8b 4b 34 8b 7d e0 <64> 8b 31 89 f0 99 03 45 e4 13 55 e8 89 55 f0 89 c2 89 45 ec 8b 45
+All code
+========
+   0:	43 34 11             	rex.XB xor $0x11,%al
+   3:	53                   	push   %rbx
+   4:	28 f7                	sub    %dh,%bh
+   6:	de 64 01 30          	fisubs 0x30(%rcx,%rax,1)
+   a:	89 d8                	mov    %ebx,%eax
+   c:	e8 ea 5e 5e 00       	call   0x5e5efb
+  11:	9c                   	pushf
+  12:	58                   	pop    %rax
+  13:	f6 c4 02             	test   $0x2,%ah
+  16:	74 ca                	je     0xffffffffffffffe2
+  18:	e8 e2 6d 5d 00       	call   0x5d6dff
+  1d:	eb c3                	jmp    0xffffffffffffffe2
+  1f:	e8 5b 96 bd ff       	call   0xffffffffffbd967f
+  24:	8b 4b 34             	mov    0x34(%rbx),%ecx
+  27:	8b 7d e0             	mov    -0x20(%rbp),%edi
+  2a:*	64 8b 31             	mov    %fs:(%rcx),%esi		<-- trapping instruction
+  2d:	89 f0                	mov    %esi,%eax
+  2f:	99                   	cltd
+  30:	03 45 e4             	add    -0x1c(%rbp),%eax
+  33:	13 55 e8             	adc    -0x18(%rbp),%edx
+  36:	89 55 f0             	mov    %edx,-0x10(%rbp)
+  39:	89 c2                	mov    %eax,%edx
+  3b:	89 45 ec             	mov    %eax,-0x14(%rbp)
+  3e:	8b                   	.byte 0x8b
+  3f:	45                   	rex.RB
+
+Code starting with the faulting instruction
+===========================================
+   0:	64 8b 31             	mov    %fs:(%rcx),%esi
+   3:	89 f0                	mov    %esi,%eax
+   5:	99                   	cltd
+   6:	03 45 e4             	add    -0x1c(%rbp),%eax
+   9:	13 55 e8             	adc    -0x18(%rbp),%edx
+   c:	89 55 f0             	mov    %edx,-0x10(%rbp)
+   f:	89 c2                	mov    %eax,%edx
+  11:	89 45 ec             	mov    %eax,-0x14(%rbp)
+  14:	8b                   	.byte 0x8b
+  15:	45                   	rex.RB
+
+
+The kernel config and materials to reproduce are available at:
+https://download.01.org/0day-ci/archive/20231024/202310241644.67f17b98-oliver.sang@intel.com
+
+
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
