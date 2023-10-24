@@ -1,311 +1,214 @@
-Return-Path: <linux-fsdevel+bounces-1092-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1093-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D1827D5477
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 16:54:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA69F7D548C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 16:58:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF3D1B2106B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 14:54:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80E17281A1D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 14:58:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04B0F2C859;
-	Tue, 24 Oct 2023 14:54:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D55732C84D;
+	Tue, 24 Oct 2023 14:58:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="etLnl+IZ"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lxA+ktu1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C9727EC7
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 14:54:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD1ABC433CB;
-	Tue, 24 Oct 2023 14:54:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1698159252;
-	bh=+0FJM42wSRlrkZRX413gII31Xps3fFIfnfwjB6IUDfs=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=etLnl+IZf/lJQIDjpEDMIpDK/7FsMzOl3EfQoNi34wghhLY+uOzfMjPXBr9Yr4u5q
-	 w3V3et3K6+LSObSEoMppvVjdsldExlEKKfY/aAuPwqF+mRBMtiLLP0TAhDGroA9sCx
-	 /bnb4eWxRGZ1qhu0n+aU2/7UvlFRFcuDLeMhFEJVrXx7SPUs3zqAVSLe8+iL/03vu1
-	 fpCfGgTwEKPZCbLyEH7huwZV+RWYbfq2OAt/096+1rSJSI8HkC/24naRLgE6+eRB5O
-	 E0yS8iOuGh9R6drOxF9Ly0d1vQbc1X9n08IHWzG+nTjZJCHVOUM8Mb3UTyiCJ5iKM5
-	 Te5pMxXQS8EOg==
-From: Christian Brauner <brauner@kernel.org>
-Date: Tue, 24 Oct 2023 16:53:44 +0200
-Subject: [PATCH RFC 6/6] fs: add ->yield_devices()
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C500231A61
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 14:58:35 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EED8ACC;
+	Tue, 24 Oct 2023 07:58:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1698159514; x=1729695514;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=C6IdOkpwYw0wn6gnNyHdezVBscMASvkkdmL0IsrKTB4=;
+  b=lxA+ktu1i7bHsnLoRENmxbe3jf3C4T4B4nPolAFkKBEniXbkGT3TL8Fm
+   fBcw3XfRPDNhQmQU8zSXP6KSxDxS6/naJ41WwAPP6ZRuixXl53IsC+c5Q
+   QLK4D0cfs3n2t2Wz845tf9UJ/oUY/OSpmv6HaSG/1Ti2qoW1Bc9vYBhJK
+   wNBC+srRtpSiUu4QyDvgVj0XHCGdt+dFZHdldOsQ3f9D8ovvHL3hS+8fS
+   vlpRMdwGcM1Sf2+mBkYDnshsc6TuJVmjDDhVQ+GCNVjIKQZWKsrqyP7QA
+   hGUCSbKjHczwVFvalprYTZwWZ+0yS0gNzHp2jvT7TraeR9ULXkpoDwLaT
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10873"; a="8628355"
+X-IronPort-AV: E=Sophos;i="6.03,248,1694761200"; 
+   d="scan'208";a="8628355"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2023 07:58:26 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10873"; a="752020214"
+X-IronPort-AV: E=Sophos;i="6.03,248,1694761200"; 
+   d="scan'208";a="752020214"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by orsmga007.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 24 Oct 2023 07:58:26 -0700
+Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.32; Tue, 24 Oct 2023 07:58:25 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.32 via Frontend Transport; Tue, 24 Oct 2023 07:58:25 -0700
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.40) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.32; Tue, 24 Oct 2023 07:58:23 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Wjuk/pW9epPX/FOusgSl61Vvmw84JesLRZd3LwcWwOptsjmdAAnCP6GLaZoZyDXRUlVUCm2t7HSrioob3mEvfYbqywggvyB2in5FRKzWG/7OwwGtI7i7dc26YC3ThQhr6Yb0HlhPoAhj9DtE1/XfnHNANgnIAUOt7q4zokWMQOVLNYqyVMs8dF1gVItB/ZJPsGETIKW18arZFOEtPJo06KY1L4y19oVRaNmgMn9eM4md7YXpOXPO3j0+fSJ4KKx+Szj2+WVGrsB/qLN9ldLxmCUuVnEp9G1bt7bya4Lp4Yr82lrM/x+nHdXtWwv1wQzPnq2/sXoutNoL2Wt1153Yng==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=y8XBX0j0ydhGIkL0qgMDNdsWCbMCEwGqKzO5JaoqHWE=;
+ b=oasHWGF65Gf4GOH7Eqbr0jC9LBQ+3vJNQ0++pzuXAn6VcNN9YeKG7X8ryKqW8xPAgUBqHigcImJnSp0kjE1lPd4wuk5yPYjjq8Lkn3tlFGdDg6wdm7UQSw7oZwuaGbAt3lizzkeSpMOKRdt8i85n8Ry5ADKvFCmILrIs9ot3gVqYr2nGwnyYPEirPFTfy0O2Sm2SY5Tis0vjBE1X5OQvSq+2tSZdtmwFajwc8BcNXMRElzVVJDpyV8ioecCrtdOJcVhEU1FWkUdWBDbF6UVDS/IjjX2GmRWh4ZhRZbIiAqeKJFRT67EUxz3kzcgub3C9jkgX/opluaoebizjaE3HQg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH8PR11MB6779.namprd11.prod.outlook.com (2603:10b6:510:1ca::17)
+ by DS7PR11MB7691.namprd11.prod.outlook.com (2603:10b6:8:e4::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6907.33; Tue, 24 Oct
+ 2023 14:58:18 +0000
+Received: from PH8PR11MB6779.namprd11.prod.outlook.com
+ ([fe80::29f0:3f0f:2591:d1f6]) by PH8PR11MB6779.namprd11.prod.outlook.com
+ ([fe80::29f0:3f0f:2591:d1f6%3]) with mapi id 15.20.6907.032; Tue, 24 Oct 2023
+ 14:58:17 +0000
+Date: Tue, 24 Oct 2023 22:58:10 +0800
+From: kernel test robot <oliver.sang@intel.com>
+To: Roberto Sassu <roberto.sassu@huawei.com>
+CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>,
+	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-integrity@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+	<oliver.sang@intel.com>
+Subject: [robertosassu:ima-evm-lsms-v4-devel-v7] [evm]  ea31d8b249:
+ Kernel_panic-not_syncing:security_add_hooks_Too_many_LSMs_registered
+Message-ID: <202310242253.12601f42-oliver.sang@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+X-ClientProxiedBy: SG2PR04CA0194.apcprd04.prod.outlook.com
+ (2603:1096:4:14::32) To PH8PR11MB6779.namprd11.prod.outlook.com
+ (2603:10b6:510:1ca::17)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20231024-vfs-super-rework-v1-6-37a8aa697148@kernel.org>
-References: <20231024-vfs-super-rework-v1-0-37a8aa697148@kernel.org>
-In-Reply-To: <20231024-vfs-super-rework-v1-0-37a8aa697148@kernel.org>
-To: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
-X-Mailer: b4 0.13-dev-26615
-X-Developer-Signature: v=1; a=openpgp-sha256; l=8696; i=brauner@kernel.org;
- h=from:subject:message-id; bh=+0FJM42wSRlrkZRX413gII31Xps3fFIfnfwjB6IUDfs=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSa3+qa1PvhoWvBrNKEORd2KYoxuKsxn95+bLXwhDL9nXPm
- XXz3saOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiXHmMDItKbkgrftn679Il6R3dV8
- 4venGY70frzkfZFs7b9F3vqf5k+Kf0X7n3RM5fl7/vdMI8M5L+rZlWcy+5NebesfVngplypvEBAA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp;
- fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR11MB6779:EE_|DS7PR11MB7691:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6fb0d005-0329-406b-943b-08dbd4a1a7f6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: z8Y892IxGcOzDujuH7M8MGPlp1/7KsjZj9+TzWscmcW9JRqkK8dVp0KGvtI/b9pq08GBYSJk/3H2gF3oo8y4ZOQx3n2fTJT64q4PedDQAC/443Nw50eoZ257iqPxqzw5kVCg3REZpnTU3EtM6x88LNTFNMXX2S546XFarWhxsk3Bxbs9/BK87wjdICVSda2vR8jlKkkNSxW+ifwA3QWiJ1f0cfrEuwD6YKFpfPxzJSmxXXTr/6Tg1hPKxPSJirOIPTQMCb+67VaYkiy33QKRhKNfCFhea4OXzPchc1u+j2zfK9Iag6JzHXKgxO9olBIqfxRuiAKa7uwPRvn8+AJc6RDBofBt3dlrxk5iz0IWOnuK7xdD7sk7l4W8Z9Yo9/UNYPgdHh9IyB2b33kComnfWevKeBJn7e887CPNSEQ52siNquIxT/h8k+ROM/qN63GPS04w7xJsIHYhaL91Rfb1zOeJb2mzwrSiBt5G2e8StmwWqwM7buVrWNGcdWa8GdmeMsg5oRQFa8GFA/7SGYFJYG/YkFBxAd8RoClo2Fw6wsZFc9FN0RCa+SoL0/IZCGf1rbIC/zXYTkXzTIjEp9I4qQ==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB6779.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(39860400002)(136003)(376002)(396003)(346002)(366004)(230922051799003)(64100799003)(186009)(451199024)(1800799009)(2906002)(4326008)(8676002)(8936002)(5660300002)(41300700001)(6506007)(6666004)(83380400001)(6512007)(38100700002)(86362001)(15650500001)(82960400001)(66946007)(107886003)(66556008)(66476007)(6916009)(316002)(966005)(6486002)(2616005)(26005)(1076003)(478600001)(36756003);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?D3x47SiEMm1AhHLrMXWKPXLklSD6+Ucor8mfmh+Kq19GI7Z09SJSvO/Yhq9c?=
+ =?us-ascii?Q?Y9bEsui4PD1hK8IN2+MNpHG2iuFj4ceG4qb9uDa2dJkfCyqtb5TOfd2NSmQK?=
+ =?us-ascii?Q?zGXm3IiV5AgaDEsaTGOIoteLbmDoapaQSC/e8KB5VN1KyA0aOx41ZVgXJ1Fy?=
+ =?us-ascii?Q?NekXeJCaD6XapxNBT/OgY8OcD0Hp0ifW7n2x1toLbJ3G8bHNbFFEfcIw5bIe?=
+ =?us-ascii?Q?duKRQMFeKBGFLWHde0tBQXSvQ8dBliqsro0vprX6Xvkw6A12ONyNnBhZ3YXM?=
+ =?us-ascii?Q?xh6Rk1pGWYDlor8ARA7Sft9GnVmsKb8sOj9FZDE0wQUQi21nPzczLges4wF4?=
+ =?us-ascii?Q?X8PdLgU4i0/w5fa7OK4KWZkNdcKolUmtsHavSdFb2HtHKMTMduitC//xjr2G?=
+ =?us-ascii?Q?wL/Tp0gtPhdZCtrK9zsdTjABE/tjUPLccvr0zHqbYYAHGkN5bWlsi6yDlgGm?=
+ =?us-ascii?Q?yoAayFY3MJ6/GP4BKGQXGH4i9UzM498AOKn29dv+m4/XzE+/OqkWHEqwvckI?=
+ =?us-ascii?Q?gYIPcIL1NrpqBRMWX9HBW8a0pz+V9IMudtnRUFMbASXrJYJDbw59O1AuZS4H?=
+ =?us-ascii?Q?Vqm56KeplXNJxyQ+Ouij5La2NLBjHVpssZtU9lWvNmSjS/+BUhSx214z56ah?=
+ =?us-ascii?Q?NpTFGO8hyhVqTyVHS+TvZkCOTjH45MGgxhIgqIxWMRFvhtrg3kV6xocfBhr1?=
+ =?us-ascii?Q?7HP02bLrDiL7lbIikbI5sg7kS2QMuNwykN9Vr2HqdjiAKypfTpzi2QkUZyb1?=
+ =?us-ascii?Q?YrXkmhM0x+wLbVgdcR5k8/Q4pM9X8+1zVLSWVTgFM/y7v+uRlHeMB9dYhW/K?=
+ =?us-ascii?Q?Vvkos7AAjosrQewZhRmPz8tAKYPkSnjmpAfurM2JxWd2Xn1ztnEZ75cOMw+/?=
+ =?us-ascii?Q?YvJ29ePDWp1gP+cSu/vOrZkk4Zkw+ughjjzo7HUniQ/teE5RULD6gtni6xWG?=
+ =?us-ascii?Q?X3sI+mCL/Q9dS10bfir18t1uT3MH2O1U+y2tj4cScWf+J2KIVbrLXqPOaUq7?=
+ =?us-ascii?Q?j7w9YTeomjHWtJozZzTpGFCTOd1mvv2lr5w6yaEVnmBmXj7mg+hYaiuS4Wzf?=
+ =?us-ascii?Q?SPw37BWDTaBSESX3IoliTxMq48hiK2hnlWHLGhvUpj2leAsyENSnGdidfg6i?=
+ =?us-ascii?Q?WAPo2wS0CXA2JNfODOcia74wCuEtqq3R3ml0RL/Z0QG5NXzB/EwvhFL/AQE0?=
+ =?us-ascii?Q?Ak7lo4uhNggnfOLi4NoPcfKkKBMGcANHW3tbywLRNpk0fZNiBOeU+ZpJPJDH?=
+ =?us-ascii?Q?ZkJFHgwbOR/dljkJLAI1WQTlS9tEydQ+32g7K5oA8hHJ3dX8kiMk6+XHEWKz?=
+ =?us-ascii?Q?2j1JgYT7HTUOQ+EjZNbSmNLHIm0OvpVssSR7uj39IhnsxS8rp32pLy40BMpZ?=
+ =?us-ascii?Q?WsdOnn2ugKkkT4Q9V2kneK8/vXYe/Lme7plFPRcWq1xFtahPpPNsNdCXC6PE?=
+ =?us-ascii?Q?tR+ax3H2ftdGkCzblUbh6hpnt9B2Lu5WgEzP0F1Ou1BFolAsnA0L0oLHXqPF?=
+ =?us-ascii?Q?QlDPcwIqlunOYGDs/v4Dqp32U9QkSuxUduwVIQIo8XjI2wPk2Vz3xgb+YBjz?=
+ =?us-ascii?Q?3DkOTjxm1GRNiHrM8spNxQkXj3q+kg1HouZTFCfRcJPHVbNFFfyDeUvf016T?=
+ =?us-ascii?Q?sQ=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6fb0d005-0329-406b-943b-08dbd4a1a7f6
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB6779.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2023 14:58:17.7654
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: hID5v3OuXGZB68VFSABI6NLa2ksyjAW5ZgA6g7H0rno7Mv/Pil+Jq/kB1ctVBpzpC4teh+f7+V7U9XdP/CORRA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR11MB7691
+X-OriginatorOrg: intel.com
 
-and allow filesystems to mark devices as about to be released allowing
-concurrent openers to wait until the device is reclaimable.
 
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- fs/ext4/super.c    | 12 ++++++++++++
- fs/super.c         | 51 ++++++++++++++++++++-------------------------------
- fs/xfs/xfs_super.c | 27 +++++++++++++++++++++++++++
- include/linux/fs.h |  1 +
- 4 files changed, 60 insertions(+), 31 deletions(-)
 
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index e94df97ea440..45f550801329 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -1477,6 +1477,17 @@ static void ext4_shutdown(struct super_block *sb)
-        ext4_force_shutdown(sb, EXT4_GOING_FLAGS_NOLOGFLUSH);
- }
- 
-+static void ext4_yield_devices(struct super_block *sb)
-+{
-+	struct ext4_sb_info *sbi = sb->s_fs_info;
-+	struct bdev_handle *journal_bdev_handle =
-+		sbi ? sbi->s_journal_bdev_handle : NULL;
-+
-+	if (journal_bdev_handle)
-+		bdev_yield(journal_bdev_handle);
-+	bdev_yield(sb->s_bdev_handle);
-+}
-+
- static void init_once(void *foo)
- {
- 	struct ext4_inode_info *ei = foo;
-@@ -1638,6 +1649,7 @@ static const struct super_operations ext4_sops = {
- 	.statfs		= ext4_statfs,
- 	.show_options	= ext4_show_options,
- 	.shutdown	= ext4_shutdown,
-+	.yield_devices	= ext4_yield_devices,
- #ifdef CONFIG_QUOTA
- 	.quota_read	= ext4_quota_read,
- 	.quota_write	= ext4_quota_write,
-diff --git a/fs/super.c b/fs/super.c
-index 4edde92d5e8f..7e24bbd65be2 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -87,10 +87,10 @@ static inline bool wait_born(struct super_block *sb)
- 
- 	/*
- 	 * Pairs with smp_store_release() in super_wake() and ensures
--	 * that we see SB_BORN or SB_DYING after we're woken.
-+	 * that we see SB_BORN or SB_DEAD after we're woken.
- 	 */
- 	flags = smp_load_acquire(&sb->s_flags);
--	return flags & (SB_BORN | SB_DYING);
-+	return flags & (SB_BORN | SB_DEAD);
- }
- 
- /**
-@@ -101,12 +101,12 @@ static inline bool wait_born(struct super_block *sb)
-  * If the superblock has neither passed through vfs_get_tree() or
-  * generic_shutdown_super() yet wait for it to happen. Either superblock
-  * creation will succeed and SB_BORN is set by vfs_get_tree() or we're
-- * woken and we'll see SB_DYING.
-+ * woken and we'll see SB_DEAD.
-  *
-  * The caller must have acquired a temporary reference on @sb->s_count.
-  *
-  * Return: The function returns true if SB_BORN was set and with
-- *         s_umount held. The function returns false if SB_DYING was
-+ *         s_umount held. The function returns false if SB_DEAD was
-  *         set and without s_umount held.
-  */
- static __must_check bool super_lock(struct super_block *sb, bool excl)
-@@ -122,7 +122,7 @@ static __must_check bool super_lock(struct super_block *sb, bool excl)
- 	 * @sb->s_root is NULL and @sb->s_active is 0. No one needs to
- 	 * grab a reference to this. Tell them so.
- 	 */
--	if (sb->s_flags & SB_DYING) {
-+	if (sb->s_flags & SB_DEAD) {
- 		super_unlock(sb, excl);
- 		return false;
- 	}
-@@ -137,7 +137,7 @@ static __must_check bool super_lock(struct super_block *sb, bool excl)
- 	wait_var_event(&sb->s_flags, wait_born(sb));
- 
- 	/*
--	 * Neither SB_BORN nor SB_DYING are ever unset so we never loop.
-+	 * Neither SB_BORN nor SB_DEAD are ever unset so we never loop.
- 	 * Just reacquire @sb->s_umount for the caller.
- 	 */
- 	goto relock;
-@@ -439,18 +439,17 @@ void put_super(struct super_block *sb)
- 
- static void kill_super_notify(struct super_block *sb)
- {
--	lockdep_assert_not_held(&sb->s_umount);
-+	const struct super_operations *sop = sb->s_op;
- 
--	/* already notified earlier */
--	if (sb->s_flags & SB_DEAD)
--		return;
-+	lockdep_assert_held(&sb->s_umount);
-+
-+	/* Allow openers to wait for the devices to be cleaned up. */
-+	if (sop->yield_devices)
-+		sop->yield_devices(sb);
- 
- 	/*
- 	 * Remove it from @fs_supers so it isn't found by new
--	 * sget{_fc}() walkers anymore. Any concurrent mounter still
--	 * managing to grab a temporary reference is guaranteed to
--	 * already see SB_DYING and will wait until we notify them about
--	 * SB_DEAD.
-+	 * sget{_fc}() walkers anymore.
- 	 */
- 	spin_lock(&sb_lock);
- 	hlist_del_init(&sb->s_instances);
-@@ -459,7 +458,7 @@ static void kill_super_notify(struct super_block *sb)
- 	/*
- 	 * Let concurrent mounts know that this thing is really dead.
- 	 * We don't need @sb->s_umount here as every concurrent caller
--	 * will see SB_DYING and either discard the superblock or wait
-+	 * will see SB_DEAD and either discard the superblock or wait
- 	 * for SB_DEAD.
- 	 */
- 	super_wake(sb, SB_DEAD);
-@@ -483,8 +482,6 @@ void deactivate_locked_super(struct super_block *s)
- 		unregister_shrinker(&s->s_shrink);
- 		fs->kill_sb(s);
- 
--		kill_super_notify(s);
--
- 		/*
- 		 * Since list_lru_destroy() may sleep, we cannot call it from
- 		 * put_super(), where we hold the sb_lock. Therefore we destroy
-@@ -583,7 +580,7 @@ static bool grab_super(struct super_block *sb)
- bool super_trylock_shared(struct super_block *sb)
- {
- 	if (down_read_trylock(&sb->s_umount)) {
--		if (!(sb->s_flags & SB_DYING) && sb->s_root &&
-+		if (!(sb->s_flags & SB_DEAD) && sb->s_root &&
- 		    (sb->s_flags & SB_BORN))
- 			return true;
- 		super_unlock_shared(sb);
-@@ -689,16 +686,9 @@ void generic_shutdown_super(struct super_block *sb)
- 			spin_unlock(&sb->s_inode_list_lock);
- 		}
- 	}
--	/*
--	 * Broadcast to everyone that grabbed a temporary reference to this
--	 * superblock before we removed it from @fs_supers that the superblock
--	 * is dying. Every walker of @fs_supers outside of sget{_fc}() will now
--	 * discard this superblock and treat it as dead.
--	 *
--	 * We leave the superblock on @fs_supers so it can be found by
--	 * sget{_fc}() until we passed sb->kill_sb().
--	 */
--	super_wake(sb, SB_DYING);
-+
-+	kill_super_notify(sb);
-+
- 	super_unlock_excl(sb);
- 	if (sb->s_bdi != &noop_backing_dev_info) {
- 		if (sb->s_iflags & SB_I_PERSB_BDI)
-@@ -790,7 +780,7 @@ struct super_block *sget_fc(struct fs_context *fc,
- 	/*
- 	 * Make the superblock visible on @super_blocks and @fs_supers.
- 	 * It's in a nascent state and users should wait on SB_BORN or
--	 * SB_DYING to be set.
-+	 * SB_DEAD to be set.
- 	 */
- 	list_add_tail(&s->s_list, &super_blocks);
- 	hlist_add_head(&s->s_instances, &s->s_type->fs_supers);
-@@ -906,7 +896,7 @@ static void __iterate_supers(void (*f)(struct super_block *))
- 	spin_lock(&sb_lock);
- 	list_for_each_entry(sb, &super_blocks, s_list) {
- 		/* Pairs with memory marrier in super_wake(). */
--		if (smp_load_acquire(&sb->s_flags) & SB_DYING)
-+		if (smp_load_acquire(&sb->s_flags) & SB_DEAD)
- 			continue;
- 		sb->s_count++;
- 		spin_unlock(&sb_lock);
-@@ -1248,7 +1238,6 @@ void kill_anon_super(struct super_block *sb)
- {
- 	dev_t dev = sb->s_dev;
- 	generic_shutdown_super(sb);
--	kill_super_notify(sb);
- 	free_anon_bdev(dev);
- }
- EXPORT_SYMBOL(kill_anon_super);
-diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-index 84107d162e41..f7a0cb92c7c0 100644
---- a/fs/xfs/xfs_super.c
-+++ b/fs/xfs/xfs_super.c
-@@ -1170,6 +1170,32 @@ xfs_fs_shutdown(
- 	xfs_force_shutdown(XFS_M(sb), SHUTDOWN_DEVICE_REMOVED);
- }
- 
-+static void xfs_fs_bdev_yield(struct bdev_handle *handle,
-+			      struct super_block *sb)
-+{
-+	if (handle != sb->s_bdev_handle)
-+		bdev_yield(handle);
-+}
-+
-+static void
-+xfs_fs_yield_devices(
-+	struct super_block *sb)
-+{
-+	struct xfs_mount	*mp = XFS_M(sb);
-+
-+	if (mp) {
-+		if (mp->m_logdev_targp &&
-+		    mp->m_logdev_targp != mp->m_ddev_targp)
-+			xfs_fs_bdev_yield(mp->m_logdev_targp->bt_bdev_handle, sb);
-+		if (mp->m_rtdev_targp)
-+			xfs_fs_bdev_yield(mp->m_rtdev_targp->bt_bdev_handle, sb);
-+		if (mp->m_ddev_targp)
-+			xfs_fs_bdev_yield(mp->m_ddev_targp->bt_bdev_handle, sb);
-+	}
-+
-+	bdev_yield(sb->s_bdev_handle);
-+}
-+
- static const struct super_operations xfs_super_operations = {
- 	.alloc_inode		= xfs_fs_alloc_inode,
- 	.destroy_inode		= xfs_fs_destroy_inode,
-@@ -1184,6 +1210,7 @@ static const struct super_operations xfs_super_operations = {
- 	.nr_cached_objects	= xfs_fs_nr_cached_objects,
- 	.free_cached_objects	= xfs_fs_free_cached_objects,
- 	.shutdown		= xfs_fs_shutdown,
-+	.yield_devices		= xfs_fs_yield_devices,
- };
- 
- static int
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 5174e821d451..f0278bf4ca03 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2026,6 +2026,7 @@ struct super_operations {
- 	long (*free_cached_objects)(struct super_block *,
- 				    struct shrink_control *);
- 	void (*shutdown)(struct super_block *sb);
-+	void (*yield_devices)(struct super_block *sb);
- };
- 
- /*
+Message-ID: <202310242253.12601f42-oliver.sang@intel.com>
+TO: Roberto Sassu <roberto.sassu@huawei.com>
+CC: oe-lkp@lists.linux.dev, lkp@intel.com, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org
+BCC: 
+
+
+
+Hello,
+
+kernel test robot noticed "Kernel_panic-not_syncing:security_add_hooks_Too_many_LSMs_registered" on:
+
+commit: ea31d8b2497ad757c81550037fe49a28e8fe5887 ("evm: Move to LSM infrastructure")
+https://github.com/robertosassu/linux ima-evm-lsms-v4-devel-v7
+
+in testcase: boot
+
+compiler: gcc-12
+test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
+
+(please refer to attached dmesg/kmsg for entire log/backtrace)
+
+
++----------------------------------------------------------------------+------------+------------+
+|                                                                      | df77cb3dab | ea31d8b249 |
++----------------------------------------------------------------------+------------+------------+
+| Kernel_panic-not_syncing:security_add_hooks_Too_many_LSMs_registered | 0          | 6          |
++----------------------------------------------------------------------+------------+------------+
+
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <oliver.sang@intel.com>
+| Closes: https://lore.kernel.org/oe-lkp/202310242253.12601f42-oliver.sang@intel.com
+
+
+[    9.120367][    T0] x86/fpu: x87 FPU will use FXSAVE
+[    9.133888][    T0] Freeing SMP alternatives memory: 32K
+[    9.136370][    T0] pid_max: default: 32768 minimum: 301
+[    9.144589][    T0] LSM: initializing lsm=capability,landlock,safesetid,integrity,ima,evm
+[    9.148867][    T0] landlock: Up and running.
+[    9.152625][    T0] Kernel panic - not syncing: security_add_hooks Too many LSMs registered.
+[    9.156308][    T0] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 6.6.0-rc3-00044-gea31d8b2497a #1 0abe8f00443bfd0d07e7cec4aee08e82c1b9667d
+[    9.156308][    T0] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+[    9.156308][    T0] Call Trace:
+[ 9.156308][ T0] dump_stack_lvl (kbuild/src/consumer/lib/dump_stack.c:107) 
+[ 9.156308][ T0] dump_stack (kbuild/src/consumer/lib/dump_stack.c:114) 
+[ 9.156308][ T0] panic (kbuild/src/consumer/kernel/panic.c:340) 
+[ 9.156308][ T0] security_add_hooks (kbuild/src/consumer/security/security.c:559) 
+[ 9.156308][ T0] init_evm_lsm (kbuild/src/consumer/security/integrity/evm/evm_main.c:1046) 
+
+
+The kernel config and materials to reproduce are available at:
+https://download.01.org/0day-ci/archive/20231024/202310242253.12601f42-oliver.sang@intel.com
+
+
 
 -- 
-2.34.1
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
 
