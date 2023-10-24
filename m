@@ -1,69 +1,73 @@
-Return-Path: <linux-fsdevel+bounces-1038-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1039-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DC267D5225
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 15:46:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 554B77D522D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 15:47:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 433782813AD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 13:46:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C57A28131C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 13:47:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED9C2B5C3;
-	Tue, 24 Oct 2023 13:46:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87B682B5DA;
+	Tue, 24 Oct 2023 13:46:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LLogfqlT"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ghrl/xBO"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 420452AB46
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 13:46:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 477822B5C8
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 13:46:48 +0000 (UTC)
 Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA644111
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 06:46:42 -0700 (PDT)
-Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-5a828bdcfbaso61797027b3.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 06:46:42 -0700 (PDT)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E62B7D79
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 06:46:44 -0700 (PDT)
+Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-5a7d1816bccso59387497b3.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 06:46:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1698155202; x=1698760002; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=oKd8MZGxRHabclv0gvs1NEl/RqZcn7BJTw9p45Kd1TY=;
-        b=LLogfqlTRkYqohgDuuyJut/+4wKtX6ENRh1UD3YvkMxXvUkJ6Uubw08yPXASh7Hj6n
-         3EveuInZaPM+OXyoVWn1hed3dwyyMKGzFENEXwlVPn9KKWQLuW4KWBacOYguH1Zi2Vvg
-         RjYNsz6/PAq2yYBUBivpbXTGae8rA+8hch8TAokFrvRb8mOaXbKggqSjaJk9xraVohx1
-         4lv1TyRFLLSHscnftKxprzRGCNnhyRj6xpoOGLcARJZnB2CoBv2FaW1TqwYIBUqAbVpe
-         6P2+bK35F1QK5iihcEOM7zjH2Kqcj4x+iaHCuuP/mF6xyKSBkJnEUUhQ+GFHcve4qqxI
-         u7oA==
+        d=google.com; s=20230601; t=1698155204; x=1698760004; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=C4ig+ghmPhQV+NN9gQrUnAhQK6p3EzwOX4/nD/QGc34=;
+        b=Ghrl/xBO9kFO8Fqa8Mb+WQjtMSofpnfAlgHUxIxZo6mQWKvLfgW8ST3GO51SFS60Mn
+         PN0tZP15ONP/jirzJQN93tNsr1Iitns/OICLRoNL76Iy06WGsH2iijYnse0B7lcFPAo8
+         RUUVLw3NZRCDvw1WD0xHjBAwdV4mS6fNRe0a6p71uGcQVfQ3EMNFsC69d0VB2J7y+RBS
+         W4z0IVExXQv/nJZVOz+PRjIJBXZh9eoRKFGHFq7Ax0Zivjcs0slsOx/99TLeuoXpAolu
+         XFK27eWqO3Pk1uaMEnY9K5NhHEp3aLUgNpvJU4gyeXTDSBrG5MgYnAUP7R2L6NO1E2m0
+         6B9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698155202; x=1698760002;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oKd8MZGxRHabclv0gvs1NEl/RqZcn7BJTw9p45Kd1TY=;
-        b=NCogl1qVk1T1RguvE5c3V+v7hEaXjaRJsCqtzkoCT7CFUwMEfm/rw2em45PXenVu7u
-         LuaWp29gg2oFWaIXrI0JEU690dGh8Mkqew1OUMAJi67/oNLZbjZWkcl5N1Pw1I5XG29X
-         9GSPNxvyQMaLOFLb7uaRXamuVlHCROS1M7OGkT8katoZD/zUI1ZHO0g1rEOQjLTbqRtU
-         EScByXFtYKntzU2NCMzkO9C5xDN1Lwf98kSh/AnVL7NDBBm/Zis4NOoJQXGINQkRCInX
-         V+fuqJuC8Le50sv9PwdiVYe7+TaCIGQByzWREEQ4co1NIl1OAQfXfTND6XPrjPIWEEYg
-         /Uww==
-X-Gm-Message-State: AOJu0YwJUaTxVDKpnNcNK9QrqPvyyCbagz6zoIZdeYEPKB1iKhdgWyYg
-	aX6hcnfBIGwprDV2tF/rzysZhR5uOlk=
-X-Google-Smtp-Source: AGHT+IGRo0Dts1mklOBuLsmCD4jbLwl57kFf/772sactqVlWblbXhzRu2gxKqpZGL0ZMuPeoj+qPhP/RqeA=
+        d=1e100.net; s=20230601; t=1698155204; x=1698760004;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=C4ig+ghmPhQV+NN9gQrUnAhQK6p3EzwOX4/nD/QGc34=;
+        b=OlYQs4KTfJ7i2jZzfQnpPRnELanCKUxoJWbc1m2IdHuPAlGA7FU/fNK670KjGUye65
+         6WG4O94sQpahmjMN/r8zjGlNX9kb0sQ874sktTo0LCHpuVMmunWya9hChIzLzjuW4/HQ
+         8MkIqESj9Hh+SxMV9a9T5VNHIn0lkgyWRMyOsBfx2GfQdGJo8B/hLAo3dtOIppg8sIRW
+         83PqG8f36Eq2b5v5rXNdiL7E0Bb4hkjtiqg6jnuhBhBlwAf3TV1/jwv7NAAQcQhmC2Uc
+         psx3lNu5ICHJ6l9nMDzmWOAOGhshrseeJOR+H06i6JlO+a02roVxEW0XnTP/6UR8tDkY
+         CPkA==
+X-Gm-Message-State: AOJu0YzVnRfM8DyUf/PS2COAyGaRufrx72c5m73dUw9Qx3uXxAhVIKWw
+	/r/Kmo8ygW/nOM3XBDikT2EEzGEPLic=
+X-Google-Smtp-Source: AGHT+IH/oTVJ1Mu9lou4puXON+M9/Y6l8UTmlhuGUIs6R4EkfIBTFxk7sH9NDcndoJzEgmocQcXHiryGytM=
 X-Received: from surenb-desktop.mtv.corp.google.com ([2620:15c:211:201:45ba:3318:d7a5:336a])
- (user=surenb job=sendgmr) by 2002:a0d:cbc9:0:b0:59b:f138:c835 with SMTP id
- n192-20020a0dcbc9000000b0059bf138c835mr283078ywd.5.1698155201726; Tue, 24 Oct
- 2023 06:46:41 -0700 (PDT)
-Date: Tue, 24 Oct 2023 06:45:57 -0700
+ (user=surenb job=sendgmr) by 2002:a25:d7d8:0:b0:d9a:da03:97e8 with SMTP id
+ o207-20020a25d7d8000000b00d9ada0397e8mr212597ybg.2.1698155203948; Tue, 24 Oct
+ 2023 06:46:43 -0700 (PDT)
+Date: Tue, 24 Oct 2023 06:45:58 -0700
+In-Reply-To: <20231024134637.3120277-1-surenb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20231024134637.3120277-1-surenb@google.com>
 X-Mailer: git-send-email 2.42.0.758.gaed0368e0e-goog
-Message-ID: <20231024134637.3120277-1-surenb@google.com>
-Subject: [PATCH v2 00/39] Memory allocation profiling
+Message-ID: <20231024134637.3120277-2-surenb@google.com>
+Subject: [PATCH v2 01/39] lib/string_helpers: Add flags param to string_get_size()
 From: Suren Baghdasaryan <surenb@google.com>
 To: akpm@linux-foundation.org
 Cc: kent.overstreet@linux.dev, mhocko@suse.com, vbabka@suse.cz, 
@@ -90,342 +94,334 @@ Cc: kent.overstreet@linux.dev, mhocko@suse.com, vbabka@suse.cz,
 	linux-kernel@vger.kernel.org, iommu@lists.linux.dev, 
 	linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
 	linux-modules@vger.kernel.org, kasan-dev@googlegroups.com, 
-	cgroups@vger.kernel.org
+	cgroups@vger.kernel.org, Andy Shevchenko <andy@kernel.org>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, 
+	Paul Mackerras <paulus@samba.org>, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	"=?UTF-8?q?Noralf=20Tr=C3=B8nnes?=" <noralf@tronnes.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Updates since the last version [1]
-- Simplified allocation tagging macros;
-- Runtime enable/disable sysctl switch (/proc/sys/vm/mem_profiling)
-instead of kernel command-line option;
-- CONFIG_MEM_ALLOC_PROFILING_BY_DEFAULT to select default enable state;
-- Changed the user-facing API from debugfs to procfs (/proc/allocinfo);
-- Removed context capture support to make patch incremental;
-- Renamed uninstrumented allocation functions to use _noprof suffix;
-- Added __GFP_LAST_BIT to make the code cleaner;
-- Removed lazy per-cpu counters; it turned out the memory savings was
-minimal and not worth the performance impact;
+From: Kent Overstreet <kent.overstreet@linux.dev>
 
-Things we could not address:
-- Alternative way of instrument allocation functions. We discussed an
-alternative way of instrumenting the allocators and Steven Rostedt wrote
-a proposal [2] to provide compiler support for Callsite Trampolines - a
-special attribution of functions to be instrumented. So far we spoke to
-representatives of GNU and CLANG communities, will be presenting a
-proposal at LPC 2023 and we are working on a proof of concept for CLANG
-(see [example 1]). While we will keep working with compiler community on
-adding this support, posting the latest version of the patchset as an
-immediately available solution until compiler support is implemented;
-- Reclaim memory used by pageexts, slabexts, pcpuexts when profiling is
-disabled. The main obstacles of reclaiming the memory used for profiling:
-  1. References from already allocated objects still point to the
-     allocation tags we are trying to reclaim; We would have to scan and
-     kill all references before reclaiming;
-  2. pageext memory is allocated during early boot when fragmentation is
-     low. Once reclaimed we might not be able to get it back;
-  3. pageext and slabext objects used for profiling can be interleaved
-     with other data. Reformatting these vectors of objects at runtime is
-     a complex and racy task.
+The new flags parameter allows controlling
+ - Whether or not the units suffix is separated by a space, for
+   compatibility with sort -h
+ - Whether or not to append a B suffix - we're not always printing
+   bytes.
 
-Overview
+Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+Cc: Andy Shevchenko <andy@kernel.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Jason Wang <jasowang@redhat.com>
+Cc: "Noralf Tr=C3=B8nnes" <noralf@tronnes.org>
+Cc: Jens Axboe <axboe@kernel.dk>
+---
+ arch/powerpc/mm/book3s64/radix_pgtable.c      |  2 +-
+ drivers/block/virtio_blk.c                    |  4 ++--
+ drivers/gpu/drm/gud/gud_drv.c                 |  2 +-
+ drivers/mmc/core/block.c                      |  4 ++--
+ drivers/mtd/spi-nor/debugfs.c                 |  6 ++---
+ .../ethernet/chelsio/cxgb4/cxgb4_debugfs.c    |  4 ++--
+ drivers/scsi/sd.c                             |  8 +++----
+ include/linux/string_helpers.h                | 13 +++++-----
+ lib/string_helpers.c                          | 24 +++++++++++++------
+ lib/test-string_helpers.c                     |  4 ++--
+ mm/hugetlb.c                                  |  8 +++----
+ 11 files changed, 44 insertions(+), 35 deletions(-)
 
-Memory allocation profiling infrastructure provides a low overhead
-mechanism to make all kernel allocations in the system visible. It can be
-used to monitor memory usage, track memory hotspots, detect memory leaks,
-identify memory regressions.
-
-To keep the overhead to the minimum, we record only allocation sizes for
-every allocation in the codebase. The data is exposed to the user space
-via /proc/allocinfo interface. Usage example:
-
-$ sort -hr /proc/allocinfo | head
-  153MiB     8599 mm/slub.c:1826 module:slub func:alloc_slab_page
- 6.08MiB      49 mm/slab_common.c:950 module:slab_common func:_kmalloc_order
- 5.09MiB     6335 mm/memcontrol.c:2814 module:memcontrol func:alloc_slab_obj_exts
- 4.54MiB      78 mm/page_alloc.c:5777 module:page_alloc func:alloc_pages_exact
- 1.32MiB      338 include/asm-generic/pgalloc.h:63 module:pgtable func:__pte_alloc_one
- 1.16MiB      603 fs/xfs/xfs_log_priv.h:700 module:xfs func:xlog_kvmalloc
- 1.00MiB      256 mm/swap_cgroup.c:48 module:swap_cgroup func:swap_cgroup_prepare
-  734KiB     5380 fs/xfs/kmem.c:20 module:xfs func:kmem_alloc
-  640KiB      160 kernel/rcu/tree.c:3184 module:tree func:fill_page_cache_func
-  640KiB      160 drivers/char/virtio_console.c:452 module:virtio_console func:alloc_buf
-
-Support for more detailed allocation context including pid, tgid, task
-name, allocation size, timestamp and call stack is not posted in this
-patchset to keep it small.
-
-Implementation utilizes a more generic concept of code tagging, introduced
-as part of this patchset. Code tag is a structure identifying a specific
-location in the source code which is generated at compile time and can be
-embedded in an application-specific structure. A number of applications
-for code tagging have been presented in the original RFC [3].
-Code tagging uses the old trick of "define a special elf section for
-objects of a given type so that we can iterate over them at runtime" and
-creates a proper library for it.
-
-To profile memory allocations, we instrument page, slab and percpu
-allocators to record total memory allocated in the associated code tag at
-every allocation in the codebase. Every time an allocation is performed by
-an instrumented allocator, the code tag at that location increments its
-counter by allocation size. Every time the memory is freed the counter is
-decremented. To decrement the counter upon freeing, allocated object needs
-a reference to its code tag. Page allocators use page_ext to record this
-reference while slab allocators use memcg_data (renamed into more generic
-slabobj_ext) of the slab page.
-
-Module allocations are accounted for the same way as other kernel
-allocations. Module loading and unloading is supported. If a module is
-unloaded while one or more of its allocations is still not freed (rather
-rare condition), its data section will be kept in memory to allow later
-code tag referencing when the allocation is freed later on.
-
-As part of this series we introduce several kernel configs:
-CONFIG_CODE_TAGGING - to enable code tagging framework.
-CONFIG_MEM_ALLOC_PROFILING - enables memory allocation profiling.
-CONFIG_MEM_ALLOC_PROFILING_ENABLED_BY_DEFAULT - enables memory allocation
-profiling by default.
-CONFIG_MEM_ALLOC_PROFILING_DEBUG - enables memory allocation profiling
-validation.
-Note: CONFIG_MEM_ALLOC_PROFILING enables CONFIG_PAGE_EXTENSION to store
-code tag reference in the page_ext object.
-
-/proc/sys/vm/mem_profiling sysctl is provided to enable/disable the
-functionality and avoid the performance overhead.
-
-Overhead
-To measure the overhead we are comparing the following configurations:
-(1) Baseline
-(2) Disabled by default (CONFIG_MEM_ALLOC_PROFILING &
-    !CONFIG_MEM_ALLOC_PROFILING_BY_DEFAULT)
-(3) Enabled by default (CONFIG_MEM_ALLOC_PROFILING &
-    CONFIG_MEM_ALLOC_PROFILING_BY_DEFAULT)
-(4) Enabled at runtime (CONFIG_MEM_ALLOC_PROFILING &
-    !CONFIG_MEM_ALLOC_PROFILING_BY_DEFAULT & /proc/sys/vm/mem_profiling=1)
-(5) Memcg (CONFIG_MEMCG_KMEM)
-(6) Enabled by default with memcg (CONFIG_MEM_ALLOC_PROFILING &
-    CONFIG_MEM_ALLOC_PROFILING_BY_DEFAULT & CONFIG_MEMCG_KMEM)
-
-Performance overhead:
-To evaluate performance we implemented an in-kernel test executing
-multiple get_free_page/free_page and kmalloc/kfree calls with allocation
-sizes growing from 8 to 240 bytes with CPU frequency set to max and CPU
-affinity set to a specific CPU to minimize the noise. Below is performance
-comparison between the baseline kernel, profiling when enabled, profiling
-when disabled and (for comparison purposes) baseline with
-CONFIG_MEMCG_KMEM enabled and allocations using __GFP_ACCOUNT:
-
-                        kmalloc                 pgalloc
-(1 baseline)            12.041s                 49.190s
-(2 default disabled)    14.970s (+24.33%)       49.684s (+1.00%)
-(3 default enabled)     16.859s (+40.01%)       56.287s (+14.43%)
-(4 runtime enabled)     16.983s (+41.04%)       55.760s (+13.36%)
-(5 memcg)               33.831s (+180.96%)      51.433s (+4.56%)
-(6 enabled & memcg)     39.145s (+225.10%)      56.874s (+15.62%)
-
-Memory overhead:
-Kernel size:
-
-   text           data            bss            dec            hex
-(1) 32638461      18286426        18325508       69250395       420ad5b
-(2) 32710110      18646586        18071556       69428252       423641c
-(3) 32706918      18646586        18071556       69425060       42357a4
-(4) 32709664      18646586        18071556       69427806       423625e
-(5) 32715893      18345334        18239492       69300719       42171ef
-(6) 32786068      18701958        17993732       69481758       424351e
-
-Memory consumption on a 56 core Intel CPU with 125GB of memory running
-Fedora:
-Code tags:           192 kB
-PageExts:         262144 kB (256MB)
-SlabExts:           9876 kB (9.6MB)
-PcpuExts:            512 kB (0.5MB)
-
-Total overhead is 0.2% of total memory.
-
-[1] https://lore.kernel.org/all/20230501165450.15352-1-surenb@google.com/
-[2] https://docs.google.com/presentation/d/1zQnuMbEfcq9lHUXgJRUZsd1McRAkr3Xq6Wk693YA0To/edit?usp=sharing
-[3] https://lore.kernel.org/all/20220830214919.53220-1-surenb@google.com/
-
-[example 1]:
-typedef struct codetag {
-  const char* file;
-  int line;
-  int counter;
-} codetag;
-
-void my_trampoline(func_ptr func, ...) {
-  static codetag callsite_data __section("alloc_tags") =
-    { __callsite_FILE, __callsite_LINE, 0 };
-  callsite_data.counter++;
-  func(...);
-}
-
-__callsite_wrapper(my_trampoline)
-__attribute__ ((always_inline))
-static inline void foo1(void) {
-  printf("foo1 function\n");
-}
-
-__callsite_wrapper(my_trampoline)
-__attribute__ ((always_inline))
-static inline void foo2(void) {
-  printf("foo2 function\n");
-}
-
-void bar(void) {
-  foo1();
-}
-
-int main(int argc, char** argv) {
-  foo1();
-  foo2();
-  bar();
-  return 0;
-}
-
-Kent Overstreet (16):
-  lib/string_helpers: Add flags param to string_get_size()
-  scripts/kallysms: Always include __start and __stop symbols
-  fs: Convert alloc_inode_sb() to a macro
-  nodemask: Split out include/linux/nodemask_types.h
-  prandom: Remove unused include
-  change alloc_pages name in ivpu_bo_ops to avoid conflicts
-  mm/slub: Mark slab_free_freelist_hook() __always_inline
-  mempool: Hook up to memory allocation profiling
-  xfs: Memory allocation profiling fixups
-  timekeeping: Fix a circular include dependency
-  mm: percpu: Introduce pcpuobj_ext
-  mm: percpu: Add codetag reference into pcpuobj_ext
-  arm64: Fix circular header dependency
-  mm: vmalloc: Enable memory allocation profiling
-  rhashtable: Plumb through alloc tag
-  MAINTAINERS: Add entries for code tagging and memory allocation
-    profiling
-
-Suren Baghdasaryan (23):
-  mm: enumerate all gfp flags
-  mm: introduce slabobj_ext to support slab object extensions
-  mm: introduce __GFP_NO_OBJ_EXT flag to selectively prevent slabobj_ext
-    creation
-  mm/slab: introduce SLAB_NO_OBJ_EXT to avoid obj_ext creation
-  mm: prevent slabobj_ext allocations for slabobj_ext and kmem_cache
-    objects
-  slab: objext: introduce objext_flags as extension to
-    page_memcg_data_flags
-  lib: code tagging framework
-  lib: code tagging module support
-  lib: prevent module unloading if memory is not freed
-  lib: add allocation tagging support for memory allocation profiling
-  lib: introduce support for page allocation tagging
-  change alloc_pages name in dma_map_ops to avoid name conflicts
-  mm: enable page allocation tagging
-  mm: create new codetag references during page splitting
-  mm/page_ext: enable early_page_ext when
-    CONFIG_MEM_ALLOC_PROFILING_DEBUG=y
-  lib: add codetag reference into slabobj_ext
-  mm/slab: add allocation accounting into slab allocation and free paths
-  mm/slab: enable slab allocation tagging for kmalloc and friends
-  mm: percpu: enable per-cpu allocation tagging
-  lib: add memory allocations report in show_mem()
-  codetag: debug: skip objext checking when it's for objext itself
-  codetag: debug: mark codetags for reserved pages as empty
-  codetag: debug: introduce OBJEXTS_ALLOC_FAIL to mark failed slab_ext
-    allocations
-
- Documentation/admin-guide/sysctl/vm.rst       |  16 ++
- Documentation/filesystems/proc.rst            |  28 ++
- MAINTAINERS                                   |  16 ++
- arch/arm64/include/asm/spectre.h              |   4 +-
- arch/powerpc/mm/book3s64/radix_pgtable.c      |   2 +-
- arch/x86/kernel/amd_gart_64.c                 |   2 +-
- drivers/accel/ivpu/ivpu_gem.c                 |   8 +-
- drivers/accel/ivpu/ivpu_gem.h                 |   2 +-
- drivers/block/virtio_blk.c                    |   4 +-
- drivers/gpu/drm/gud/gud_drv.c                 |   2 +-
- drivers/iommu/dma-iommu.c                     |   2 +-
- drivers/mmc/core/block.c                      |   4 +-
- drivers/mtd/spi-nor/debugfs.c                 |   6 +-
- .../ethernet/chelsio/cxgb4/cxgb4_debugfs.c    |   4 +-
- drivers/scsi/sd.c                             |   8 +-
- drivers/staging/media/atomisp/pci/hmm/hmm.c   |   2 +-
- drivers/xen/grant-dma-ops.c                   |   2 +-
- drivers/xen/swiotlb-xen.c                     |   2 +-
- fs/xfs/kmem.c                                 |   4 +-
- fs/xfs/kmem.h                                 |  10 +-
- include/asm-generic/codetag.lds.h             |  14 +
- include/asm-generic/vmlinux.lds.h             |   3 +
- include/linux/alloc_tag.h                     | 188 +++++++++++++
- include/linux/codetag.h                       |  83 ++++++
- include/linux/dma-map-ops.h                   |   2 +-
- include/linux/fortify-string.h                |   5 +-
- include/linux/fs.h                            |   6 +-
- include/linux/gfp.h                           | 111 +++++---
- include/linux/gfp_types.h                     | 101 +++++--
- include/linux/hrtimer.h                       |   2 +-
- include/linux/memcontrol.h                    |  56 +++-
- include/linux/mempool.h                       |  73 +++--
- include/linux/mm.h                            |   8 +
- include/linux/mm_types.h                      |   4 +-
- include/linux/nodemask.h                      |   2 +-
- include/linux/nodemask_types.h                |   9 +
- include/linux/page_ext.h                      |   1 -
- include/linux/pagemap.h                       |   9 +-
- include/linux/percpu.h                        |  23 +-
- include/linux/pgalloc_tag.h                   | 105 +++++++
- include/linux/prandom.h                       |   1 -
- include/linux/rhashtable-types.h              |  11 +-
- include/linux/sched.h                         |  26 +-
- include/linux/slab.h                          | 180 ++++++------
- include/linux/slab_def.h                      |   2 +-
- include/linux/slub_def.h                      |   4 +-
- include/linux/string.h                        |   4 +-
- include/linux/string_helpers.h                |  13 +-
- include/linux/time_namespace.h                |   2 +
- include/linux/vmalloc.h                       |  60 +++-
- init/Kconfig                                  |   4 +
- kernel/dma/mapping.c                          |   4 +-
- kernel/kallsyms_selftest.c                    |   2 +-
- kernel/module/main.c                          |  25 +-
- lib/Kconfig.debug                             |  31 +++
- lib/Makefile                                  |   3 +
- lib/alloc_tag.c                               | 212 ++++++++++++++
- lib/codetag.c                                 | 258 ++++++++++++++++++
- lib/rhashtable.c                              |  52 +++-
- lib/string_helpers.c                          |  24 +-
- lib/test-string_helpers.c                     |   4 +-
- mm/compaction.c                               |   7 +-
- mm/filemap.c                                  |   6 +-
- mm/huge_memory.c                              |   2 +
- mm/hugetlb.c                                  |   8 +-
- mm/kfence/core.c                              |  14 +-
- mm/kfence/kfence.h                            |   4 +-
- mm/memcontrol.c                               |  56 +---
- mm/mempolicy.c                                |  42 +--
- mm/mempool.c                                  |  34 +--
- mm/mm_init.c                                  |   1 +
- mm/page_alloc.c                               |  66 +++--
- mm/page_ext.c                                 |  13 +
- mm/page_owner.c                               |   2 +-
- mm/percpu-internal.h                          |  26 +-
- mm/percpu.c                                   | 120 ++++----
- mm/show_mem.c                                 |  15 +
- mm/slab.c                                     |  24 +-
- mm/slab.h                                     | 246 +++++++++++++----
- mm/slab_common.c                              |  96 +++++--
- mm/slub.c                                     |  26 +-
- mm/util.c                                     |  44 +--
- mm/vmalloc.c                                  |  88 +++---
- scripts/kallsyms.c                            |  13 +
- scripts/module.lds.S                          |   7 +
- 85 files changed, 2117 insertions(+), 698 deletions(-)
- create mode 100644 include/asm-generic/codetag.lds.h
- create mode 100644 include/linux/alloc_tag.h
- create mode 100644 include/linux/codetag.h
- create mode 100644 include/linux/nodemask_types.h
- create mode 100644 include/linux/pgalloc_tag.h
- create mode 100644 lib/alloc_tag.c
- create mode 100644 lib/codetag.c
-
--- 
+diff --git a/arch/powerpc/mm/book3s64/radix_pgtable.c b/arch/powerpc/mm/boo=
+k3s64/radix_pgtable.c
+index c6a4ac766b2b..27aa5a083ff0 100644
+--- a/arch/powerpc/mm/book3s64/radix_pgtable.c
++++ b/arch/powerpc/mm/book3s64/radix_pgtable.c
+@@ -260,7 +260,7 @@ print_mapping(unsigned long start, unsigned long end, u=
+nsigned long size, bool e
+ 	if (end <=3D start)
+ 		return;
+=20
+-	string_get_size(size, 1, STRING_UNITS_2, buf, sizeof(buf));
++	string_get_size(size, 1, STRING_SIZE_BASE2, buf, sizeof(buf));
+=20
+ 	pr_info("Mapped 0x%016lx-0x%016lx with %s pages%s\n", start, end, buf,
+ 		exec ? " (exec)" : "");
+diff --git a/drivers/block/virtio_blk.c b/drivers/block/virtio_blk.c
+index 1fe011676d07..59140424d755 100644
+--- a/drivers/block/virtio_blk.c
++++ b/drivers/block/virtio_blk.c
+@@ -986,9 +986,9 @@ static void virtblk_update_capacity(struct virtio_blk *=
+vblk, bool resize)
+ 	nblocks =3D DIV_ROUND_UP_ULL(capacity, queue_logical_block_size(q) >> 9);
+=20
+ 	string_get_size(nblocks, queue_logical_block_size(q),
+-			STRING_UNITS_2, cap_str_2, sizeof(cap_str_2));
++			STRING_SIZE_BASE2, cap_str_2, sizeof(cap_str_2));
+ 	string_get_size(nblocks, queue_logical_block_size(q),
+-			STRING_UNITS_10, cap_str_10, sizeof(cap_str_10));
++			0, cap_str_10, sizeof(cap_str_10));
+=20
+ 	dev_notice(&vdev->dev,
+ 		   "[%s] %s%llu %d-byte logical blocks (%s/%s)\n",
+diff --git a/drivers/gpu/drm/gud/gud_drv.c b/drivers/gpu/drm/gud/gud_drv.c
+index 9d7bf8ee45f1..6b1748e1f666 100644
+--- a/drivers/gpu/drm/gud/gud_drv.c
++++ b/drivers/gpu/drm/gud/gud_drv.c
+@@ -329,7 +329,7 @@ static int gud_stats_debugfs(struct seq_file *m, void *=
+data)
+ 	struct gud_device *gdrm =3D to_gud_device(entry->dev);
+ 	char buf[10];
+=20
+-	string_get_size(gdrm->bulk_len, 1, STRING_UNITS_2, buf, sizeof(buf));
++	string_get_size(gdrm->bulk_len, 1, STRING_SIZE_BASE2, buf, sizeof(buf));
+ 	seq_printf(m, "Max buffer size: %s\n", buf);
+ 	seq_printf(m, "Number of errors:  %u\n", gdrm->stats_num_errors);
+=20
+diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
+index 3a8f27c3e310..411dc8137f7c 100644
+--- a/drivers/mmc/core/block.c
++++ b/drivers/mmc/core/block.c
+@@ -2511,7 +2511,7 @@ static struct mmc_blk_data *mmc_blk_alloc_req(struct =
+mmc_card *card,
+=20
+ 	blk_queue_write_cache(md->queue.queue, cache_enabled, fua_enabled);
+=20
+-	string_get_size((u64)size, 512, STRING_UNITS_2,
++	string_get_size((u64)size, 512, STRING_SIZE_BASE2,
+ 			cap_str, sizeof(cap_str));
+ 	pr_info("%s: %s %s %s%s\n",
+ 		md->disk->disk_name, mmc_card_id(card), mmc_card_name(card),
+@@ -2707,7 +2707,7 @@ static int mmc_blk_alloc_rpmb_part(struct mmc_card *c=
+ard,
+=20
+ 	list_add(&rpmb->node, &md->rpmbs);
+=20
+-	string_get_size((u64)size, 512, STRING_UNITS_2,
++	string_get_size((u64)size, 512, STRING_SIZE_BASE2,
+ 			cap_str, sizeof(cap_str));
+=20
+ 	pr_info("%s: %s %s %s, chardev (%d:%d)\n",
+diff --git a/drivers/mtd/spi-nor/debugfs.c b/drivers/mtd/spi-nor/debugfs.c
+index 6e163cb5b478..a1b61938fee2 100644
+--- a/drivers/mtd/spi-nor/debugfs.c
++++ b/drivers/mtd/spi-nor/debugfs.c
+@@ -85,7 +85,7 @@ static int spi_nor_params_show(struct seq_file *s, void *=
+data)
+=20
+ 	seq_printf(s, "name\t\t%s\n", info->name);
+ 	seq_printf(s, "id\t\t%*ph\n", SPI_NOR_MAX_ID_LEN, nor->id);
+-	string_get_size(params->size, 1, STRING_UNITS_2, buf, sizeof(buf));
++	string_get_size(params->size, 1, STRING_SIZE_BASE2, buf, sizeof(buf));
+ 	seq_printf(s, "size\t\t%s\n", buf);
+ 	seq_printf(s, "write size\t%u\n", params->writesize);
+ 	seq_printf(s, "page size\t%u\n", params->page_size);
+@@ -130,14 +130,14 @@ static int spi_nor_params_show(struct seq_file *s, vo=
+id *data)
+ 		struct spi_nor_erase_type *et =3D &erase_map->erase_type[i];
+=20
+ 		if (et->size) {
+-			string_get_size(et->size, 1, STRING_UNITS_2, buf,
++			string_get_size(et->size, 1, STRING_SIZE_BASE2, buf,
+ 					sizeof(buf));
+ 			seq_printf(s, " %02x (%s) [%d]\n", et->opcode, buf, i);
+ 		}
+ 	}
+=20
+ 	if (!(nor->flags & SNOR_F_NO_OP_CHIP_ERASE)) {
+-		string_get_size(params->size, 1, STRING_UNITS_2, buf, sizeof(buf));
++		string_get_size(params->size, 1, STRING_SIZE_BASE2, buf, sizeof(buf));
+ 		seq_printf(s, " %02x (%s)\n", SPINOR_OP_CHIP_ERASE, buf);
+ 	}
+=20
+diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c b/drivers/n=
+et/ethernet/chelsio/cxgb4/cxgb4_debugfs.c
+index 14e0d989c3ba..7d5fbebd36fc 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c
+@@ -3457,8 +3457,8 @@ static void mem_region_show(struct seq_file *seq, con=
+st char *name,
+ {
+ 	char buf[40];
+=20
+-	string_get_size((u64)to - from + 1, 1, STRING_UNITS_2, buf,
+-			sizeof(buf));
++	string_get_size((u64)to - from + 1, 1, STRING_SIZE_BASE2,
++			buf, sizeof(buf));
+ 	seq_printf(seq, "%-15s %#x-%#x [%s]\n", name, from, to, buf);
+ }
+=20
+diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+index 83b6a3f3863b..c37593f76b65 100644
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -2689,10 +2689,10 @@ sd_print_capacity(struct scsi_disk *sdkp,
+ 	if (!sdkp->first_scan && old_capacity =3D=3D sdkp->capacity)
+ 		return;
+=20
+-	string_get_size(sdkp->capacity, sector_size,
+-			STRING_UNITS_2, cap_str_2, sizeof(cap_str_2));
+-	string_get_size(sdkp->capacity, sector_size,
+-			STRING_UNITS_10, cap_str_10, sizeof(cap_str_10));
++	string_get_size(sdkp->capacity, sector_size, STRING_SIZE_BASE2,
++			cap_str_2, sizeof(cap_str_2));
++	string_get_size(sdkp->capacity, sector_size, 0,
++			cap_str_10, sizeof(cap_str_10));
+=20
+ 	sd_printk(KERN_NOTICE, sdkp,
+ 		  "%llu %d-byte logical blocks: (%s/%s)\n",
+diff --git a/include/linux/string_helpers.h b/include/linux/string_helpers.=
+h
+index 9d1f5bb74dd5..a54467d891db 100644
+--- a/include/linux/string_helpers.h
++++ b/include/linux/string_helpers.h
+@@ -17,15 +17,14 @@ static inline bool string_is_terminated(const char *s, =
+int len)
+ 	return memchr(s, '\0', len) ? true : false;
+ }
+=20
+-/* Descriptions of the types of units to
+- * print in */
+-enum string_size_units {
+-	STRING_UNITS_10,	/* use powers of 10^3 (standard SI) */
+-	STRING_UNITS_2,		/* use binary powers of 2^10 */
++enum string_size_flags {
++	STRING_SIZE_BASE2	=3D (1 << 0),
++	STRING_SIZE_NOSPACE	=3D (1 << 1),
++	STRING_SIZE_NOBYTES	=3D (1 << 2),
+ };
+=20
+-void string_get_size(u64 size, u64 blk_size, enum string_size_units units,
+-		     char *buf, int len);
++int string_get_size(u64 size, u64 blk_size, enum string_size_flags flags,
++		    char *buf, int len);
+=20
+ int parse_int_array_user(const char __user *from, size_t count, int **arra=
+y);
+=20
+diff --git a/lib/string_helpers.c b/lib/string_helpers.c
+index 9982344cca34..b1496499b113 100644
+--- a/lib/string_helpers.c
++++ b/lib/string_helpers.c
+@@ -19,11 +19,17 @@
+ #include <linux/string.h>
+ #include <linux/string_helpers.h>
+=20
++enum string_size_units {
++	STRING_UNITS_10,	/* use powers of 10^3 (standard SI) */
++	STRING_UNITS_2,		/* use binary powers of 2^10 */
++};
++
+ /**
+  * string_get_size - get the size in the specified units
+  * @size:	The size to be converted in blocks
+  * @blk_size:	Size of the block (use 1 for size in bytes)
+- * @units:	units to use (powers of 1000 or 1024)
++ * @flags:	units to use (powers of 1000 or 1024), whether to include space
++ *		separator
+  * @buf:	buffer to format to
+  * @len:	length of buffer
+  *
+@@ -32,14 +38,16 @@
+  * at least 9 bytes and will always be zero terminated.
+  *
+  */
+-void string_get_size(u64 size, u64 blk_size, const enum string_size_units =
+units,
+-		     char *buf, int len)
++int string_get_size(u64 size, u64 blk_size, enum string_size_flags flags,
++		    char *buf, int len)
+ {
++	enum string_size_units units =3D flags & flags & STRING_SIZE_BASE2
++		? STRING_UNITS_2 : STRING_UNITS_10;
+ 	static const char *const units_10[] =3D {
+-		"B", "kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"
++		"", "k", "M", "G", "T", "P", "E", "Z", "Y"
+ 	};
+ 	static const char *const units_2[] =3D {
+-		"B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"
++		"", "Ki", "Mi", "Gi", "Ti", "Pi", "Ei", "Zi", "Yi"
+ 	};
+ 	static const char *const *const units_str[] =3D {
+ 		[STRING_UNITS_10] =3D units_10,
+@@ -126,8 +134,10 @@ void string_get_size(u64 size, u64 blk_size, const enu=
+m string_size_units units,
+ 	else
+ 		unit =3D units_str[units][i];
+=20
+-	snprintf(buf, len, "%u%s %s", (u32)size,
+-		 tmp, unit);
++	return snprintf(buf, len, "%u%s%s%s%s", (u32)size, tmp,
++			(flags & STRING_SIZE_NOSPACE)		? "" : " ",
++			unit,
++			(flags & STRING_SIZE_NOBYTES)		? "" : "B");
+ }
+ EXPORT_SYMBOL(string_get_size);
+=20
+diff --git a/lib/test-string_helpers.c b/lib/test-string_helpers.c
+index 9a68849a5d55..0b01ffca96fb 100644
+--- a/lib/test-string_helpers.c
++++ b/lib/test-string_helpers.c
+@@ -507,8 +507,8 @@ static __init void __test_string_get_size(const u64 siz=
+e, const u64 blk_size,
+ 	char buf10[string_get_size_maxbuf];
+ 	char buf2[string_get_size_maxbuf];
+=20
+-	string_get_size(size, blk_size, STRING_UNITS_10, buf10, sizeof(buf10));
+-	string_get_size(size, blk_size, STRING_UNITS_2, buf2, sizeof(buf2));
++	string_get_size(size, blk_size, 0, buf10, sizeof(buf10));
++	string_get_size(size, blk_size, STRING_SIZE_BASE2, buf2, sizeof(buf2));
+=20
+ 	test_string_get_size_check("STRING_UNITS_10", exp_result10, buf10,
+ 				   size, blk_size);
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 52d26072dfda..37f2148d3b9c 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -3228,7 +3228,7 @@ static void __init hugetlb_hstate_alloc_pages_onenode=
+(struct hstate *h, int nid)
+ 	if (i =3D=3D h->max_huge_pages_node[nid])
+ 		return;
+=20
+-	string_get_size(huge_page_size(h), 1, STRING_UNITS_2, buf, 32);
++	string_get_size(huge_page_size(h), 1, STRING_SIZE_BASE2, buf, 32);
+ 	pr_warn("HugeTLB: allocating %u of page size %s failed node%d.  Only allo=
+cated %lu hugepages.\n",
+ 		h->max_huge_pages_node[nid], buf, nid, i);
+ 	h->max_huge_pages -=3D (h->max_huge_pages_node[nid] - i);
+@@ -3290,7 +3290,7 @@ static void __init hugetlb_hstate_alloc_pages(struct =
+hstate *h)
+ 	if (i < h->max_huge_pages) {
+ 		char buf[32];
+=20
+-		string_get_size(huge_page_size(h), 1, STRING_UNITS_2, buf, 32);
++		string_get_size(huge_page_size(h), 1, STRING_SIZE_BASE2, buf, 32);
+ 		pr_warn("HugeTLB: allocating %lu of page size %s failed.  Only allocated=
+ %lu hugepages.\n",
+ 			h->max_huge_pages, buf, i);
+ 		h->max_huge_pages =3D i;
+@@ -3336,7 +3336,7 @@ static void __init report_hugepages(void)
+ 	for_each_hstate(h) {
+ 		char buf[32];
+=20
+-		string_get_size(huge_page_size(h), 1, STRING_UNITS_2, buf, 32);
++		string_get_size(huge_page_size(h), 1, STRING_SIZE_BASE2, buf, 32);
+ 		pr_info("HugeTLB: registered %s page size, pre-allocated %ld pages\n",
+ 			buf, h->free_huge_pages);
+ 		pr_info("HugeTLB: %d KiB vmemmap can be freed for a %s page\n",
+@@ -4227,7 +4227,7 @@ static int __init hugetlb_init(void)
+ 				char buf[32];
+=20
+ 				string_get_size(huge_page_size(&default_hstate),
+-					1, STRING_UNITS_2, buf, 32);
++					1, STRING_SIZE_BASE2, buf, 32);
+ 				pr_warn("HugeTLB: Ignoring hugepages=3D%lu associated with %s page siz=
+e\n",
+ 					default_hstate.max_huge_pages, buf);
+ 				pr_warn("HugeTLB: Using hugepages=3D%lu for number of default huge pag=
+es\n",
+--=20
 2.42.0.758.gaed0368e0e-goog
 
 
