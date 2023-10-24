@@ -1,211 +1,352 @@
-Return-Path: <linux-fsdevel+bounces-1113-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1114-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C30077D5984
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 19:12:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA1467D59F6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 19:52:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C612B21073
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 17:12:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3216A2818D9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 17:52:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 842803A290;
-	Tue, 24 Oct 2023 17:12:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15EC93B2A8;
+	Tue, 24 Oct 2023 17:52:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bUwq3TU0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BJzYRlrO"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DF613588B
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 17:12:34 +0000 (UTC)
-Received: from mail-qk1-x72e.google.com (mail-qk1-x72e.google.com [IPv6:2607:f8b0:4864:20::72e])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFE86129;
-	Tue, 24 Oct 2023 10:12:32 -0700 (PDT)
-Received: by mail-qk1-x72e.google.com with SMTP id af79cd13be357-77784edc2edso292355285a.1;
-        Tue, 24 Oct 2023 10:12:32 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FAF521A19;
+	Tue, 24 Oct 2023 17:52:25 +0000 (UTC)
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24F7AE8;
+	Tue, 24 Oct 2023 10:52:23 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id 4fb4d7f45d1cf-53ed4688b9fso7096113a12.0;
+        Tue, 24 Oct 2023 10:52:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698167552; x=1698772352; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1698169941; x=1698774741; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0APWsN9sAkS47gK58kM+OT6Zez1NqQFELwGD0pR6lhY=;
-        b=bUwq3TU0SS3UnH/imwup379EfXrD+G67Y3/4sLZEJVBrA6NV5Ai/isGtBMc4GY667Y
-         bTDJu9klfgF007MFRMm4RB6loNjz9UwXAC20QLQEsddP8hO/3V6oEympeHkcMFruV47r
-         NATeydlvT93kBOTz5yM8GXh9H2dtwUzDvPhMwC7jsWIwbpizecaKJpKLqV6kaYOcjWzq
-         eAxIJ+ddf+f0DXeun3IATj4VuBDRfki3Yp7hg5i2IUV7QFyyAWJpu0P9jK9j6+tBqcah
-         u/znxa/Tj362RDyroywXNXjJNbLGWvek4btha0B3PsK/XO6kjzK8dWKrzyfz5A5Ne9GU
-         aLmQ==
+        bh=T46xYbc9SnhWUAzFRxoyQoMZoGtasSe/R4I6iHwAO7w=;
+        b=BJzYRlrO3LhcbLoBTmbqPSpA/ZXwXlkxVh6WNVPcOjdZbbtPp/ukBnYMSkayYYfgsF
+         ungpcoEKG/blUkVU5a0ue1FOTY/VDriuoJwMaG+raBJ1hS2mTrvxht6USbl1BnSlqLQF
+         Jog1zd12lfxvEnhESXl/htbSJCsPHs5H4dP5pWZ+HiwBr3mUP9I1j98TkPKH+OT5eJsG
+         HrWATggqO1VOqDXolvDv7KK2bY9yFQzcTDWV7J78p+HWdSM/2XafZLoyudlP7pKyqKtl
+         8q8kLl+NINRy95DSsoPy6DEyFkF4JeE+uvXn/ljQair6OPrr0h/zSpIzyGpchrTWXSdF
+         L+cQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698167552; x=1698772352;
+        d=1e100.net; s=20230601; t=1698169941; x=1698774741;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0APWsN9sAkS47gK58kM+OT6Zez1NqQFELwGD0pR6lhY=;
-        b=U6uYOaKxHPt1qVTsHl1tWDxZBEZf01YkkuD4y3JdRhHz4efsZbjsuwTSCqoKYUn29B
-         dOtX1OuviIFRoTSlUIJmuJCD9I7DJa7GvzsqxawRZexRrWFx/HQMtgPOhg5UcFqq6DMj
-         obtxI6zdtH0EAMtzQYkF4F3ScNrx/EGI/p9Yv5E/rVLBZg312h7mUxouxxRDSiHWZFmJ
-         7KUiWF9N2AQLJv3A1WYMCz1g/YgcJQ8M+sYA0R+m8rtyFu0QsZ60M9Rrn0+8RKH5V4t+
-         4pxVqXFt0Ww9uJW/Q3CSfupZ3MVI5VQ4LJ9ZVqVKBceuThQiJzYmVOpYzuDkQV2QCTjm
-         phjQ==
-X-Gm-Message-State: AOJu0YyL3lDhITs59UOKrH6+RBJEU742Ad5BVPOk9Bau0p4iGx4iFyr6
-	5hbuBXNpn0+xXFHCQtefjpMM4Tn20bMTkGtULe0=
-X-Google-Smtp-Source: AGHT+IHWpT0cXScMuorbJL6/7AyuCzj6Atd8wVIC/dTA/Wd8jG1ZNaY8YBuDB/lGDjNkA4d7X38K0XoiKWglBveRMCg=
-X-Received: by 2002:a05:6214:ca6:b0:649:8f20:5528 with SMTP id
- s6-20020a0562140ca600b006498f205528mr17988802qvs.60.1698167551591; Tue, 24
- Oct 2023 10:12:31 -0700 (PDT)
+        bh=T46xYbc9SnhWUAzFRxoyQoMZoGtasSe/R4I6iHwAO7w=;
+        b=gkHCJCGymKHX3BpL7Jxvg0JiHHUfAUIUfCAHWYZsr/7HddxyHaueZooKgy0V/KBd8t
+         dlIIXluaq34SD4hVc/AWyRUMNw4Jnbjiap4lWibmvkndoRX5oSVGVZMOiuQcTQhALyaj
+         3wtoyAilqgH9nWolpbHJk6Q+H6UD1usnwVyHC7P34sMkbzqY7LntdoqAkr3CQc+fiYmo
+         lGiUSmtpv1EPCZQ9HFkGnIalIH8YSAgKOu+3cq8wOaB0OeFhhm58UhOOrb5ruOuWjbxm
+         184JFe1lZ7QW61tlUt62iaLIEQ+/7d7tuaYkXaHYb/jIJMn/RHMwM7tnnYRrt3NHNUP9
+         xMAA==
+X-Gm-Message-State: AOJu0YxO53JugiQ0apDsARaeh2H7Zu1Txu5ooPtB7pLzGRPdR2CmMh22
+	aWeL78rGIQj9Yx1wzfaoHZLXRp+xS/qzQUn/hlU=
+X-Google-Smtp-Source: AGHT+IFnWsGWEYeJij82wqTSVOt37wI6bf5HG3ryeu/szQVpa/IlM/AEGs/P1oIaYcgW47iV8bupkeXyX3uS9Kc4cs4=
+X-Received: by 2002:a17:907:728b:b0:9b7:292:85f6 with SMTP id
+ dt11-20020a170907728b00b009b7029285f6mr9888199ejc.12.1698169941102; Tue, 24
+ Oct 2023 10:52:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231024110109.3007794-1-amir73il@gmail.com> <1CFE0178-CE91-4C99-B43E-33EF78D0BEBF@redhat.com>
- <CAOQ4uxhe5pH3yRxFS_8pvtCgbXspKB6r9aacRJ8FysGQE2Hu9g@mail.gmail.com> <2382DA9B-D66B-41D9-8413-1C5319C01165@redhat.com>
-In-Reply-To: <2382DA9B-D66B-41D9-8413-1C5319C01165@redhat.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 24 Oct 2023 20:12:19 +0300
-Message-ID: <CAOQ4uxho0ryGuq7G+LaoTvqHRR_kg2fCNL2sGMLvNujODA8YPQ@mail.gmail.com>
-Subject: Re: [PATCH] nfs: derive f_fsid from server's fsid
-To: Benjamin Coddington <bcodding@redhat.com>
-Cc: Trond Myklebust <trond.myklebust@hammerspace.com>, Anna Schumaker <anna@kernel.org>, 
-	Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org
+References: <20231016180220.3866105-1-andrii@kernel.org>
+In-Reply-To: <20231016180220.3866105-1-andrii@kernel.org>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 24 Oct 2023 10:52:09 -0700
+Message-ID: <CAEf4BzaMLg31g6Jm9LmFM9UYUjm1Eq7P6Y-KnoiDoh7Sbj_RWg@mail.gmail.com>
+Subject: Re: [PATCH v8 bpf-next 00/18] BPF token and BPF FS-based delegation
+To: Andrii Nakryiko <andrii@kernel.org>, Paul Moore <paul@paul-moore.com>
+Cc: bpf@vger.kernel.org, netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, keescook@chromium.org, 
+	brauner@kernel.org, lennart@poettering.net, kernel-team@meta.com, 
+	sargun@sargun.me
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 24, 2023 at 6:32=E2=80=AFPM Benjamin Coddington <bcodding@redha=
-t.com> wrote:
+On Mon, Oct 16, 2023 at 11:04=E2=80=AFAM Andrii Nakryiko <andrii@kernel.org=
+> wrote:
 >
-> On 24 Oct 2023, at 10:58, Amir Goldstein wrote:
+> This patch set introduces an ability to delegate a subset of BPF subsyste=
+m
+> functionality from privileged system-wide daemon (e.g., systemd or any ot=
+her
+> container manager) through special mount options for userns-bound BPF FS =
+to
+> a *trusted* unprivileged application. Trust is the key here. This
+> functionality is not about allowing unconditional unprivileged BPF usage.
+> Establishing trust, though, is completely up to the discretion of respect=
+ive
+> privileged application that would create and mount a BPF FS instance with
+> delegation enabled, as different production setups can and do achieve it
+> through a combination of different means (signing, LSM, code reviews, etc=
+),
+> and it's undesirable and infeasible for kernel to enforce any particular =
+way
+> of validating trustworthiness of particular process.
 >
-> > On Tue, Oct 24, 2023 at 5:01=E2=80=AFPM Benjamin Coddington <bcodding@r=
-edhat.com> wrote:
-> >>
-> >> On 24 Oct 2023, at 7:01, Amir Goldstein wrote:
-> >>
-> >>> Fold the server's 128bit fsid to report f_fsid in statfs(2).
-> >>> This is similar to how uuid is folded for f_fsid of ext2/ext4/zonefs.
-> >>>
-> >>> This allows nfs client to be monitored by fanotify filesystem watch
-> >>> for local client access if nfs supports re-export.
-> >>>
-> >>> For example, with inotify-tools 4.23.8.0, the following command can b=
-e
-> >>> used to watch local client access over entire nfs filesystem:
-> >>>
-> >>>   fsnotifywatch --filesystem /mnt/nfs
-> >>>
-> >>> Note that fanotify filesystem watch does not report remote changes on
-> >>> server.  It provides the same notifications as inotify, but it watche=
-s
-> >>> over the entire filesystem and reports file handle of objects and fsi=
-d
-> >>> with events.
-> >>
-> >> I think this will run into trouble where an NFSv4 will report both
-> >> fsid.major and fsid.minor as zero for the special root filesystem.   W=
-e can
-> >> expect an NFSv4 client to have one of these per server.
-> >>
-> >> Could use s_dev from nfs_server for a unique major/minor for each moun=
-t on
-> >> the client, but these values won't be stable against a particular serv=
-er
-> >> export.
-> >>
-> >
-> > That's a good point.
-> > Not sure I understand the relation between mount/server/export.
-> >
-> > If the client mounts the special NFSv4 root filesystem at /mnt/nfs,
-> > are the rest of the server exports going to be accessible via the same
-> > mount/sb or via new auto mounts of different nfs sb?
+> The main motivation for this work is a desire to enable containerized BPF
+> applications to be used together with user namespaces. This is currently
+> impossible, as CAP_BPF, required for BPF subsystem usage, cannot be names=
+paced
+> or sandboxed, as a general rule. E.g., tracing BPF programs, thanks to BP=
+F
+> helpers like bpf_probe_read_kernel() and bpf_probe_read_user() can safely=
+ read
+> arbitrary memory, and it's impossible to ensure that they only read memor=
+y of
+> processes belonging to any given namespace. This means that it's impossib=
+le to
+> have a mechanically verifiable namespace-aware CAP_BPF capability, and as=
+ such
+> another mechanism to allow safe usage of BPF functionality is necessary.B=
+PF FS
+> delegation mount options and BPF token derived from such BPF FS instance =
+is
+> such a mechanism. Kernel makes no assumption about what "trusted" constit=
+utes
+> in any particular case, and it's up to specific privileged applications a=
+nd
+> their surrounding infrastructure to decide that. What kernel provides is =
+a set
+> of APIs to setup and mount special BPF FS instanecs and derive BPF tokens=
+ from
+> it. BPF FS and BPF token are both bound to its owning userns and in such =
+a way
+> are constrained inside intended container. Users can then pass BPF token =
+FD to
+> privileged bpf() syscall commands, like BPF map creation and BPF program
+> loading, to perform such operations without having init userns privileged=
+.
 >
-> If we cross into a new filesystem on the server, then the client will als=
-o
-> cross and leave the "root" and have a new sb with non-zero fsid.
+> This version incorporates feedback and suggestions ([3]) received on v3 o=
+f
+> this patch set, and instead of allowing to create BPF tokens directly ass=
+uming
+> capable(CAP_SYS_ADMIN), we instead enhance BPF FS to accepts a few new
+> delegation mount options. If these options are used and BPF FS itself is
+> properly created, set up, and mounted inside the user namespaced containe=
+r,
+> user application is able to derive a BPF token object from BPF FS instanc=
+e,
+> and pass that token to bpf() syscall. As explained in patch #2, BPF token
+> itself doesn't grant access to BPF functionality, but instead allows kern=
+el to
+> do namespaced capabilities checks (ns_capable() vs capable()) for CAP_BPF=
+,
+> CAP_PERFMON, CAP_NET_ADMIN, and CAP_SYS_ADMIN, as applicable. So it forms=
+ one
+> half of a puzzle and allows container managers and sys admins to have saf=
+e and
+> flexible configuration options: determining which containers get delegati=
+on of
+> BPF functionality through BPF FS, and then which applications within such
+> containers are allowed to perform bpf() commands, based on namespaces
+> capabilities.
 >
-> > In any case, f_fsid does not have to be uniform across all inodes
-> > of the same sb. This is the case with btrfs, where the the btrfs sb
-> > has inodes from the root volume and from sub-volumes.
-> > inodes from btrfs sub-volumes have a different f_fsid than inodes
-> > in the root btrfs volume.
+> Previous attempt at addressing this very same problem ([0]) attempted to
+> utilize authoritative LSM approach, but was conclusively rejected by upst=
+ream
+> LSM maintainers. BPF token concept is not changing anything about LSM
+> approach, but can be combined with LSM hooks for very fine-grained securi=
+ty
+> policy. Some ideas about making BPF token more convenient to use with LSM=
+ (in
+> particular custom BPF LSM programs) was briefly described in recent LSF/M=
+M/BPF
+> 2023 presentation ([1]). E.g., an ability to specify user-provided data
+> (context), which in combination with BPF LSM would allow implementing a v=
+ery
+> dynamic and fine-granular custom security policies on top of BPF token. I=
+n the
+> interest of minimizing API surface area and discussions this was relegate=
+d to
+> follow up patches, as it's not essential to the fundamental concept of
+> delegatable BPF token.
 >
-> This isn't what I'm worried about.  I'm worried about the case where an n=
-fs
-> client will have multiple mounts with fsid's of 0:0, and those are
-> distinctly different mounts of the "root" of NFSv4 on different servers.
+> It should be noted that BPF token is conceptually quite similar to the id=
+ea of
+> /dev/bpf device file, proposed by Song a while ago ([2]). The biggest
+> difference is the idea of using virtual anon_inode file to hold BPF token=
+ and
+> allowing multiple independent instances of them, each (potentially) with =
+its
+> own set of restrictions. And also, crucially, BPF token approach is not u=
+sing
+> any special stateful task-scoped flags. Instead, bpf() syscall accepts
+> token_fd parameters explicitly for each relevant BPF command. This addres=
+ses
+> main concerns brought up during the /dev/bpf discussion, and fits better =
+with
+> overall BPF subsystem design.
 >
+> This patch set adds a basic minimum of functionality to make BPF token id=
+ea
+> useful and to discuss API and functionality. Currently only low-level lib=
+bpf
+> APIs support creating and passing BPF token around, allowing to test kern=
+el
+> functionality, but for the most part is not sufficient for real-world
+> applications, which typically use high-level libbpf APIs based on `struct
+> bpf_object` type. This was done with the intent to limit the size of patc=
+h set
+> and concentrate on mostly kernel-side changes. All the necessary plumbing=
+ for
+> libbpf will be sent as a separate follow up patch set kernel support make=
+s it
+> upstream.
+>
+> Another part that should happen once kernel-side BPF token is established=
+, is
+> a set of conventions between applications (e.g., systemd), tools (e.g.,
+> bpftool), and libraries (e.g., libbpf) on exposing delegatable BPF FS
+> instance(s) at well-defined locations to allow applications take advantag=
+e of
+> this in automatic fashion without explicit code changes on BPF applicatio=
+n's
+> side. But I'd like to postpone this discussion to after BPF token concept
+> lands.
+>
+>   [0] https://lore.kernel.org/bpf/20230412043300.360803-1-andrii@kernel.o=
+rg/
+>   [1] http://vger.kernel.org/bpfconf2023_material/Trusted_unprivileged_BP=
+F_LSFMM2023.pdf
+>   [2] https://lore.kernel.org/bpf/20190627201923.2589391-2-songliubraving=
+@fb.com/
+>   [3] https://lore.kernel.org/bpf/20230704-hochverdient-lehne-eeb9eeef785=
+e@brauner/
+>
+> v7->v8:
+>   - add bpf_token_allow_cmd and bpf_token_capable hooks (Paul);
+>   - inline bpf_token_alloc() into bpf_token_create() to prevent accidenta=
+l
+>     divergence with security_bpf_token_create() hook (Paul);
 
-fanotify_mark() fails with -ENODEV when trying to watch an sb with
-zero f_fsid. This is the current state with nfs, so there is no concern
-for a problem - it just means that fanotify will not be able to watch
-those mounts. It's not great.
+Hi Paul,
 
-> > We try to detect this case in fanotify, which currently does not
-> > support watching btrfs sub-volume for that reason.
-> > I have a WIP branch [1] for handling non-uniform f_fsid in
-> > fanotify by introducing the s_op->get_fsid(inode) method.
-> >
-> > Anyway, IIUC, my proposed f_fsid change is going to be fine for
-> > NFSv2/3 and best effort for NFSv4:
-> > - For NFSv2/3 mount, f_fsid is a good identifier?
->
-> Yes, it should represent the same filesystem on the server.  You could st=
-ill
-> get duplicates between servers. What's returned in the protocol's u64 fsi=
-d
-> goes into major with minor always zero.
->
-> I'm sure there was discussion about what implementations should use long
-> ago, but that predates me.
->
+I believe I addressed all the concerns you had in this revision. Can
+you please take a look and confirm that all things look good to you
+from LSM perspective? Thanks!
 
-Yeh, duplicates aren't great when watching two different sb with same
-f_fsid, it is not possible to know which sb the events came from.
-However, the process setting the sb watches can know that in advance.
 
-> > - For NFSv4 mount of a specific export, f_fsid is a good identifier?
+> v6->v7:
+>   - separate patches to refactor bpf_prog_alloc/bpf_map_alloc LSM hooks, =
+as
+>     discussed with Paul, and now they also accept struct bpf_token;
+>   - added bpf_token_create/bpf_token_free to allow LSMs (SELinux,
+>     specifically) to set up security LSM blob (Paul);
+>   - last patch also wires bpf_security_struct setup by SELinux, similar t=
+o how
+>     it's done for BPF map/prog, though I'm not sure if that's enough, so =
+worst
+>     case it's easy to drop this patch if more full fledged SELinux
+>     implementation will be done separately;
+>   - small fixes for issues caught by code reviews (Jiri, Hou);
+>   - fix for test_maps test that doesn't use LIBBPF_OPTS() macro (CI);
+> v5->v6:
+>   - fix possible use of uninitialized variable in selftests (CI);
+>   - don't use anon_inode, instead create one from BPF FS instance (Christ=
+ian);
+>   - don't store bpf_token inside struct bpf_map, instead pass it explicit=
+ly to
+>     map_check_btf(). We do store bpf_token inside prog->aux, because it's=
+ used
+>     during verification and even can be checked during attach time for so=
+me
+>     program types;
+>   - LSM hooks are left intact pending the conclusion of discussion with P=
+aul
+>     Moore; I'd prefer to do LSM-related changes as a follow up patch set
+>     anyways;
+> v4->v5:
+>   - add pre-patch unifying CAP_NET_ADMIN handling inside kernel/bpf/sysca=
+ll.c
+>     (Paul Moore);
+>   - fix build warnings and errors in selftests and kernel, detected by CI=
+ and
+>     kernel test robot;
+> v3->v4:
+>   - add delegation mount options to BPF FS;
+>   - BPF token is derived from the instance of BPF FS and associates itsel=
+f
+>     with BPF FS' owning userns;
+>   - BPF token doesn't grant BPF functionality directly, it just turns
+>     capable() checks into ns_capable() checks within BPF FS' owning user;
+>   - BPF token cannot be pinned;
+> v2->v3:
+>   - make BPF_TOKEN_CREATE pin created BPF token in BPF FS, and disallow
+>     BPF_OBJ_PIN for BPF token;
+> v1->v2:
+>   - fix build failures on Kconfig with CONFIG_BPF_SYSCALL unset;
+>   - drop BPF_F_TOKEN_UNKNOWN_* flags and simplify UAPI (Stanislav).
 >
-> Yes, but if the specific export is on the same server's filesystem as the
-> "root", you'll still get zero.  There are various ways to set fsid on
-> exports for linux servers, but the fsid will be the same for all exports =
-of
-> the same filesystem on the server.
+> Andrii Nakryiko (18):
+>   bpf: align CAP_NET_ADMIN checks with bpf_capable() approach
+>   bpf: add BPF token delegation mount options to BPF FS
+>   bpf: introduce BPF token object
+>   bpf: add BPF token support to BPF_MAP_CREATE command
+>   bpf: add BPF token support to BPF_BTF_LOAD command
+>   bpf: add BPF token support to BPF_PROG_LOAD command
+>   bpf: take into account BPF token when fetching helper protos
+>   bpf: consistenly use BPF token throughout BPF verifier logic
+>   bpf,lsm: refactor bpf_prog_alloc/bpf_prog_free LSM hooks
+>   bpf,lsm: refactor bpf_map_alloc/bpf_map_free LSM hooks
+>   bpf,lsm: add BPF token LSM hooks
+>   libbpf: add bpf_token_create() API
+>   selftests/bpf: fix test_maps' use of bpf_map_create_opts
+>   libbpf: add BPF token support to bpf_map_create() API
+>   libbpf: add BPF token support to bpf_btf_load() API
+>   libbpf: add BPF token support to bpf_prog_load() API
+>   selftests/bpf: add BPF token-enabled tests
+>   bpf,selinux: allocate bpf_security_struct per BPF token
 >
-
-OK. good to know. I thought zero fsid was only for the root itself.
-
-> > - For the NFSv4 root export mount, f_fsid remains zero as it is now
+>  drivers/media/rc/bpf-lirc.c                   |   2 +-
+>  include/linux/bpf.h                           |  83 ++-
+>  include/linux/filter.h                        |   2 +-
+>  include/linux/lsm_hook_defs.h                 |  15 +-
+>  include/linux/security.h                      |  43 +-
+>  include/uapi/linux/bpf.h                      |  44 ++
+>  kernel/bpf/Makefile                           |   2 +-
+>  kernel/bpf/arraymap.c                         |   2 +-
+>  kernel/bpf/bpf_lsm.c                          |  15 +-
+>  kernel/bpf/cgroup.c                           |   6 +-
+>  kernel/bpf/core.c                             |   3 +-
+>  kernel/bpf/helpers.c                          |   6 +-
+>  kernel/bpf/inode.c                            |  98 ++-
+>  kernel/bpf/syscall.c                          | 215 ++++--
+>  kernel/bpf/token.c                            | 247 +++++++
+>  kernel/bpf/verifier.c                         |  13 +-
+>  kernel/trace/bpf_trace.c                      |   2 +-
+>  net/core/filter.c                             |  36 +-
+>  net/ipv4/bpf_tcp_ca.c                         |   2 +-
+>  net/netfilter/nf_bpf_link.c                   |   2 +-
+>  security/security.c                           | 101 ++-
+>  security/selinux/hooks.c                      |  47 +-
+>  tools/include/uapi/linux/bpf.h                |  44 ++
+>  tools/lib/bpf/bpf.c                           |  30 +-
+>  tools/lib/bpf/bpf.h                           |  39 +-
+>  tools/lib/bpf/libbpf.map                      |   1 +
+>  .../bpf/map_tests/map_percpu_stats.c          |  20 +-
+>  .../selftests/bpf/prog_tests/libbpf_probes.c  |   4 +
+>  .../selftests/bpf/prog_tests/libbpf_str.c     |   6 +
+>  .../testing/selftests/bpf/prog_tests/token.c  | 629 ++++++++++++++++++
+>  30 files changed, 1577 insertions(+), 182 deletions(-)
+>  create mode 100644 kernel/bpf/token.c
+>  create mode 100644 tools/testing/selftests/bpf/prog_tests/token.c
 >
-> Yes.
+> --
+> 2.34.1
 >
-> > Am I understanding this correctly?
 >
-> I think so.
->
-> > Do you see a reason not to make this change?
-> > Do you see a reason to limit this change for NFSv2/3?
->
-> I'm not familiar with fanotify enough to know if having multiple fsid 0
-> mounts of different filesystems on different servers will do the right
-> thing.  I wanted to point out that very real possibility for v4.
->
-
-The fact that fsid 0 would be very common for many nfs mounts
-makes this patch much less attractive.
-
-Because we only get events for local client changes, we do not
-have to tie the fsid with the server's fsid, we could just use a local
-volatile fsid, as we do in other non-blockdev fs (tmpfs, kernfs).
-
-I am not decisive about the best way to tackle this and since
-Jan was not sure about the value of local-only notifications
-for network filesystems, I am going to put this one on hold.
-
-Thanks for the useful feedback!
-Amir.
 
