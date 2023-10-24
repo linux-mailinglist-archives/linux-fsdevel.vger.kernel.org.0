@@ -1,60 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-1054-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1055-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC3577D529A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 15:48:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0505F7D52A2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 15:48:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5486A281C25
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 13:48:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D21951C20C0A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 13:48:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F082B77E;
-	Tue, 24 Oct 2023 13:47:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E23E328AA;
+	Tue, 24 Oct 2023 13:47:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YQSQ/XfV"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EuxrHBnn"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6E3B2B771
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 13:47:23 +0000 (UTC)
-Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F374170F
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 06:47:16 -0700 (PDT)
-Received: by mail-yb1-xb49.google.com with SMTP id 3f1490d57ef6-d9caf486775so5283805276.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 06:47:16 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12C482B5E5
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 13:47:28 +0000 (UTC)
+Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F047199A
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 06:47:19 -0700 (PDT)
+Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-5a7aa161b2fso57972307b3.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 06:47:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1698155235; x=1698760035; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1698155237; x=1698760037; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=K+jSKdm0qvzH//duzEhIZcT0jtfDLsmvFXjZdfhiaL8=;
-        b=YQSQ/XfVaVgsZfCntf57aDIjYf72U4J+N39GvOE5WWmQ+jVwb5c0nhnFJ5ePleqyBt
-         9cN5w6qTcNjJN8//R27g9eGmTpJMyCKHJPLMUkm05uTViCKTqiZj5t7eqsrRj46VMx5l
-         ASxibRCCBlOSsMlM25li2YDei5HkUeB/Uf3KPDVbWZxbcuZx0coCwjD979vldHDr2GyF
-         M0AMzkvJoq6hdFNI7xQ/7JgjyZxDWkca+adYqToZqYiIWd1j3dDN3WwRaW4eOdY8C9u7
-         uSpGcimTvD0a+NU2qzWTKnVOPkZZ+J6vjpbNjLWoKhPLZlBZDx48PVafcpx3S/yuFqnu
-         ee2g==
+        bh=Xnkv01D37mdYs16/e0X4XkgAogHBJsuQ+iVjrKs+el4=;
+        b=EuxrHBnnGWjn9JRknw1OT8akESrqgNNUzY6H2W3aj1xIl2YcqpTr80iyM49ZGtShxL
+         kuhMylQuqa4aPWq2ibAkZF0fjUD79T8VVtYouzA1C1B+9UaL7cpqBkc54W34TkP8qtRn
+         +i6AVLnnKZ4w9Jb3TDX/Ju2g29yQszEIMtJE4JtrLMQ06kL8uKbRyG/qkSwMRyjgWHxu
+         oyLjrMe9gPmNmJ72k4jI6dRNE96iRYY+OaU08VaCxc+eCfSehFBdYUo+U9Ip0BkLXbxN
+         woEenRP4rVrwcNd7nYO0AiyWZ00FJ70RsJwDJNRoy/46Dke44EtXNLGpt1JajR2ajlmm
+         VseQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698155235; x=1698760035;
+        d=1e100.net; s=20230601; t=1698155237; x=1698760037;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=K+jSKdm0qvzH//duzEhIZcT0jtfDLsmvFXjZdfhiaL8=;
-        b=WzgQNXQajYcT8nqU5AmfRW48y9Lf+VStyT8GFWYTVXBIAX0g9nq5adeXlHKEMYCqOv
-         +a3veKoFeHcTnx3v6/+W4dAmrpDaMMFYSnb12sKpag0qNvj+uHuFWZiN7UPzv/3SUJUA
-         QeELS++4SFrcgAv9NiGXeHZBBYbLGTzpvWHrIiZd6tofh3YZkJPZGXqCVY9++Z2mY5gL
-         VvAe92tY3duoYsKOpV03P8ZtRDPu1xvbgt0SAHoNz8TXYrHOm6xNY5BCnMnlT1HhMUJq
-         +CJxR4xvGUq+XbtYIT7D5DTJ5cSGo3LbjsrJTcVqYUquBZ+C0JKqSZhyCbKVJntoAEyQ
-         5D6Q==
-X-Gm-Message-State: AOJu0Yz63VRwHVJlkfy1Z4LHk5LyVEu0kG1cW914n4fHdfCuqJAS2Cfg
-	QPNapaMaVAMCTMQTynP9i6S8sEmzfiw=
-X-Google-Smtp-Source: AGHT+IEIa4lubk7zVV+55Kssyl5IiCjPBPehEtm0DwQdG9mxypz8Eg4MHfMNeuEtWe6Z19f/ZGvIAMikRMg=
+        bh=Xnkv01D37mdYs16/e0X4XkgAogHBJsuQ+iVjrKs+el4=;
+        b=fJ5mL3Glp5B3xuUWJtUzVAJ3MUK3Uz+VCTSafAL1s8cF0i/jJdjij8glmqGWe1hMMC
+         iwtVP0jL/BtehvL9Im4pIM01+GtoS5uxl+2WG5s/Bc+O6XEVKhPkkXJZ2zcFa3N8oi+D
+         bD6azKeQGAJCyQ6Q7w32lnq/OJLXhNnSsHAYNt846udumUL/p4CuK5GZg2XAL1pbRE9e
+         5tYG0jPMFL62UAmbqqfKTh9tcgcf7chI/F9wokntRhRgVZQfpaCcChhtB+qpwrFxhA9g
+         uk7PSSlxwZn4ORxGqtQkEd+7matFYBhwRo3pmxytvnD9DPPgVYj6ms0cGvK3JY1C4W+3
+         OdnA==
+X-Gm-Message-State: AOJu0Yxg++HM9zU4e1CQT6m5RNl313zUCrzkvewVw7vqUrvSHVIGOThh
+	zGKKHKtDqMPy6L3TgBxqARTMsOHW5Ts=
+X-Google-Smtp-Source: AGHT+IF+McJ3mA6RssmQwfp7//Pg5OsKi1Xdwm0aQawyQdn+hvoXflHVr9pzXpd28dOZCYLaDsPpXEXkw0g=
 X-Received: from surenb-desktop.mtv.corp.google.com ([2620:15c:211:201:45ba:3318:d7a5:336a])
- (user=surenb job=sendgmr) by 2002:a05:6902:1083:b0:d9a:cc6b:cf1a with SMTP id
- v3-20020a056902108300b00d9acc6bcf1amr317480ybu.8.1698155234917; Tue, 24 Oct
- 2023 06:47:14 -0700 (PDT)
-Date: Tue, 24 Oct 2023 06:46:12 -0700
+ (user=surenb job=sendgmr) by 2002:a0d:d954:0:b0:5a7:bfcf:2cb8 with SMTP id
+ b81-20020a0dd954000000b005a7bfcf2cb8mr268838ywe.1.1698155237063; Tue, 24 Oct
+ 2023 06:47:17 -0700 (PDT)
+Date: Tue, 24 Oct 2023 06:46:13 -0700
 In-Reply-To: <20231024134637.3120277-1-surenb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -64,9 +64,8 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20231024134637.3120277-1-surenb@google.com>
 X-Mailer: git-send-email 2.42.0.758.gaed0368e0e-goog
-Message-ID: <20231024134637.3120277-16-surenb@google.com>
-Subject: [PATCH v2 15/39] lib: add allocation tagging support for memory
- allocation profiling
+Message-ID: <20231024134637.3120277-17-surenb@google.com>
+Subject: [PATCH v2 16/39] lib: introduce support for page allocation tagging
 From: Suren Baghdasaryan <surenb@google.com>
 To: akpm@linux-foundation.org
 Cc: kent.overstreet@linux.dev, mhocko@suse.com, vbabka@suse.cz, 
@@ -96,587 +95,232 @@ Cc: kent.overstreet@linux.dev, mhocko@suse.com, vbabka@suse.cz,
 	cgroups@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Introduce CONFIG_MEM_ALLOC_PROFILING which provides definitions to easily
-instrument memory allocators. It registers an "alloc_tags" codetag type
-with /proc/allocinfo interface to output allocation tag information when
-the feature is enabled.
-CONFIG_MEM_ALLOC_PROFILING_DEBUG is provided for debugging the memory
-allocation profiling instrumentation.
-Memory allocation profiling can be enabled or disabled at runtime using
-/proc/sys/vm/mem_profiling sysctl when CONFIG_MEM_ALLOC_PROFILING_DEBUG=n.
-CONFIG_MEM_ALLOC_PROFILING_ENABLED_BY_DEFAULT enables memory allocation
-profiling by default.
+Introduce helper functions to easily instrument page allocators by
+storing a pointer to the allocation tag associated with the code that
+allocated the page in a page_ext field.
 
-Co-developed-by: Kent Overstreet <kent.overstreet@linux.dev>
 Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+Co-developed-by: Kent Overstreet <kent.overstreet@linux.dev>
 Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
 ---
- Documentation/admin-guide/sysctl/vm.rst |  16 +++
- Documentation/filesystems/proc.rst      |  28 +++++
- include/asm-generic/codetag.lds.h       |  14 +++
- include/asm-generic/vmlinux.lds.h       |   3 +
- include/linux/alloc_tag.h               | 133 ++++++++++++++++++++
- include/linux/sched.h                   |  24 ++++
- lib/Kconfig.debug                       |  25 ++++
- lib/Makefile                            |   2 +
- lib/alloc_tag.c                         | 158 ++++++++++++++++++++++++
- scripts/module.lds.S                    |   7 ++
- 10 files changed, 410 insertions(+)
- create mode 100644 include/asm-generic/codetag.lds.h
- create mode 100644 include/linux/alloc_tag.h
- create mode 100644 lib/alloc_tag.c
+ include/linux/page_ext.h    |  1 -
+ include/linux/pgalloc_tag.h | 73 +++++++++++++++++++++++++++++++++++++
+ lib/Kconfig.debug           |  1 +
+ lib/alloc_tag.c             | 17 +++++++++
+ mm/mm_init.c                |  1 +
+ mm/page_alloc.c             |  4 ++
+ mm/page_ext.c               |  4 ++
+ 7 files changed, 100 insertions(+), 1 deletion(-)
+ create mode 100644 include/linux/pgalloc_tag.h
 
-diff --git a/Documentation/admin-guide/sysctl/vm.rst b/Documentation/admin-guide/sysctl/vm.rst
-index 45ba1f4dc004..0a012ac13a38 100644
---- a/Documentation/admin-guide/sysctl/vm.rst
-+++ b/Documentation/admin-guide/sysctl/vm.rst
-@@ -43,6 +43,7 @@ Currently, these files are in /proc/sys/vm:
- - legacy_va_layout
- - lowmem_reserve_ratio
- - max_map_count
-+- mem_profiling         (only if CONFIG_MEM_ALLOC_PROFILING=y)
- - memory_failure_early_kill
- - memory_failure_recovery
- - min_free_kbytes
-@@ -425,6 +426,21 @@ e.g., up to one or two maps per allocation.
- The default value is 65530.
+diff --git a/include/linux/page_ext.h b/include/linux/page_ext.h
+index be98564191e6..07e0656898f9 100644
+--- a/include/linux/page_ext.h
++++ b/include/linux/page_ext.h
+@@ -4,7 +4,6 @@
  
+ #include <linux/types.h>
+ #include <linux/stacktrace.h>
+-#include <linux/stackdepot.h>
  
-+mem_profiling
-+==============
-+
-+Enable memory profiling (when CONFIG_MEM_ALLOC_PROFILING=y)
-+
-+1: Enable memory profiling.
-+
-+0: Disabld memory profiling.
-+
-+Enabling memory profiling introduces a small performance overhead for all
-+memory allocations.
-+
-+The default value depends on CONFIG_MEM_ALLOC_PROFILING_ENABLED_BY_DEFAULT.
-+
-+
- memory_failure_early_kill:
- ==========================
+ struct pglist_data;
  
-diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-index 2b59cff8be17..41a7e6d95fe8 100644
---- a/Documentation/filesystems/proc.rst
-+++ b/Documentation/filesystems/proc.rst
-@@ -688,6 +688,7 @@ files are there, and which are missing.
-  ============ ===============================================================
-  File         Content
-  ============ ===============================================================
-+ allocinfo    Memory allocations profiling information
-  apm          Advanced power management info
-  buddyinfo    Kernel memory allocator information (see text)	(2.5)
-  bus          Directory containing bus specific information
-@@ -947,6 +948,33 @@ also be allocatable although a lot of filesystem metadata may have to be
- reclaimed to achieve this.
- 
- 
-+allocinfo
-+~~~~~~~
-+
-+Provides information about memory allocations at all locations in the code
-+base. Each allocation in the code is identified by its source file, line
-+number, module and the function calling the allocation. The number of bytes
-+allocated at each location is reported.
-+
-+Example output.
-+
-+::
-+
-+    > cat /proc/allocinfo
-+
-+      153MiB     mm/slub.c:1826 module:slub func:alloc_slab_page
-+     6.08MiB     mm/slab_common.c:950 module:slab_common func:_kmalloc_order
-+     5.09MiB     mm/memcontrol.c:2814 module:memcontrol func:alloc_slab_obj_exts
-+     4.54MiB     mm/page_alloc.c:5777 module:page_alloc func:alloc_pages_exact
-+     1.32MiB     include/asm-generic/pgalloc.h:63 module:pgtable func:__pte_alloc_one
-+     1.16MiB     fs/xfs/xfs_log_priv.h:700 module:xfs func:xlog_kvmalloc
-+     1.00MiB     mm/swap_cgroup.c:48 module:swap_cgroup func:swap_cgroup_prepare
-+      734KiB     fs/xfs/kmem.c:20 module:xfs func:kmem_alloc
-+      640KiB     kernel/rcu/tree.c:3184 module:tree func:fill_page_cache_func
-+      640KiB     drivers/char/virtio_console.c:452 module:virtio_console func:alloc_buf
-+      ...
-+
-+
- meminfo
- ~~~~~~~
- 
-diff --git a/include/asm-generic/codetag.lds.h b/include/asm-generic/codetag.lds.h
+diff --git a/include/linux/pgalloc_tag.h b/include/linux/pgalloc_tag.h
 new file mode 100644
-index 000000000000..64f536b80380
+index 000000000000..a060c26eb449
 --- /dev/null
-+++ b/include/asm-generic/codetag.lds.h
-@@ -0,0 +1,14 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+#ifndef __ASM_GENERIC_CODETAG_LDS_H
-+#define __ASM_GENERIC_CODETAG_LDS_H
-+
-+#define SECTION_WITH_BOUNDARIES(_name)	\
-+	. = ALIGN(8);			\
-+	__start_##_name = .;		\
-+	KEEP(*(_name))			\
-+	__stop_##_name = .;
-+
-+#define CODETAG_SECTIONS()		\
-+	SECTION_WITH_BOUNDARIES(alloc_tags)
-+
-+#endif /* __ASM_GENERIC_CODETAG_LDS_H */
-diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-index 67d8dd2f1bde..f04661824939 100644
---- a/include/asm-generic/vmlinux.lds.h
-+++ b/include/asm-generic/vmlinux.lds.h
-@@ -50,6 +50,8 @@
-  *               [__nosave_begin, __nosave_end] for the nosave data
-  */
- 
-+#include <asm-generic/codetag.lds.h>
-+
- #ifndef LOAD_OFFSET
- #define LOAD_OFFSET 0
- #endif
-@@ -367,6 +369,7 @@
- 	. = ALIGN(8);							\
- 	BOUNDED_SECTION_BY(__dyndbg_classes, ___dyndbg_classes)		\
- 	BOUNDED_SECTION_BY(__dyndbg, ___dyndbg)				\
-+	CODETAG_SECTIONS()						\
- 	LIKELY_PROFILE()		       				\
- 	BRANCH_PROFILE()						\
- 	TRACE_PRINTKS()							\
-diff --git a/include/linux/alloc_tag.h b/include/linux/alloc_tag.h
-new file mode 100644
-index 000000000000..cf55a149fa84
---- /dev/null
-+++ b/include/linux/alloc_tag.h
-@@ -0,0 +1,133 @@
++++ b/include/linux/pgalloc_tag.h
+@@ -0,0 +1,73 @@
 +/* SPDX-License-Identifier: GPL-2.0 */
 +/*
-+ * allocation tagging
++ * page allocation tagging
 + */
-+#ifndef _LINUX_ALLOC_TAG_H
-+#define _LINUX_ALLOC_TAG_H
++#ifndef _LINUX_PGALLOC_TAG_H
++#define _LINUX_PGALLOC_TAG_H
 +
-+#include <linux/bug.h>
-+#include <linux/codetag.h>
-+#include <linux/container_of.h>
-+#include <linux/preempt.h>
-+#include <asm/percpu.h>
-+#include <linux/cpumask.h>
-+#include <linux/static_key.h>
-+
-+struct alloc_tag_counters {
-+	u64 bytes;
-+	u64 calls;
-+};
-+
-+/*
-+ * An instance of this structure is created in a special ELF section at every
-+ * allocation callsite. At runtime, the special section is treated as
-+ * an array of these. Embedded codetag utilizes codetag framework.
-+ */
-+struct alloc_tag {
-+	struct codetag			ct;
-+	struct alloc_tag_counters __percpu	*counters;
-+} __aligned(8);
++#include <linux/alloc_tag.h>
 +
 +#ifdef CONFIG_MEM_ALLOC_PROFILING
 +
-+static inline struct alloc_tag *ct_to_alloc_tag(struct codetag *ct)
++#include <linux/page_ext.h>
++
++extern struct page_ext_operations page_alloc_tagging_ops;
++extern struct page_ext *page_ext_get(struct page *page);
++extern void page_ext_put(struct page_ext *page_ext);
++
++static inline union codetag_ref *codetag_ref_from_page_ext(struct page_ext *page_ext)
 +{
-+	return container_of(ct, struct alloc_tag, ct);
++	return (void *)page_ext + page_alloc_tagging_ops.offset;
 +}
 +
-+#ifdef ARCH_NEEDS_WEAK_PER_CPU
-+/*
-+ * When percpu variables are required to be defined as weak, static percpu
-+ * variables can't be used inside a function (see comments for DECLARE_PER_CPU_SECTION).
-+ */
-+#error "Memory allocation profiling is incompatible with ARCH_NEEDS_WEAK_PER_CPU"
-+#endif
-+
-+#define DEFINE_ALLOC_TAG(_alloc_tag, _old)					\
-+	static DEFINE_PER_CPU(struct alloc_tag_counters, _alloc_tag_cntr);	\
-+	static struct alloc_tag _alloc_tag __used __aligned(8)			\
-+	__section("alloc_tags") = {						\
-+		.ct = CODE_TAG_INIT,						\
-+		.counters = &_alloc_tag_cntr };					\
-+	struct alloc_tag * __maybe_unused _old = alloc_tag_save(&_alloc_tag)
-+
-+DECLARE_STATIC_KEY_MAYBE(CONFIG_MEM_ALLOC_PROFILING_ENABLED_BY_DEFAULT,
-+			mem_alloc_profiling_key);
-+
-+static inline bool mem_alloc_profiling_enabled(void)
++static inline struct page_ext *page_ext_from_codetag_ref(union codetag_ref *ref)
 +{
-+	return static_branch_maybe(CONFIG_MEM_ALLOC_PROFILING_ENABLED_BY_DEFAULT,
-+				   &mem_alloc_profiling_key);
++	return (void *)ref - page_alloc_tagging_ops.offset;
 +}
 +
-+static inline struct alloc_tag_counters alloc_tag_read(struct alloc_tag *tag)
++static inline union codetag_ref *get_page_tag_ref(struct page *page)
 +{
-+	struct alloc_tag_counters v = { 0, 0 };
-+	struct alloc_tag_counters *counter;
-+	int cpu;
++	if (page && mem_alloc_profiling_enabled()) {
++		struct page_ext *page_ext = page_ext_get(page);
 +
-+	for_each_possible_cpu(cpu) {
-+		counter = per_cpu_ptr(tag->counters, cpu);
-+		v.bytes += counter->bytes;
-+		v.calls += counter->calls;
++		if (page_ext)
++			return codetag_ref_from_page_ext(page_ext);
 +	}
-+
-+	return v;
++	return NULL;
 +}
 +
-+static inline void __alloc_tag_sub(union codetag_ref *ref, size_t bytes)
++static inline void put_page_tag_ref(union codetag_ref *ref)
 +{
-+	struct alloc_tag *tag;
-+
-+#ifdef CONFIG_MEM_ALLOC_PROFILING_DEBUG
-+	WARN_ONCE(ref && !ref->ct, "alloc_tag was not set\n");
-+#endif
-+	if (!ref || !ref->ct)
-+		return;
-+
-+	tag = ct_to_alloc_tag(ref->ct);
-+
-+	this_cpu_sub(tag->counters->bytes, bytes);
-+	this_cpu_dec(tag->counters->calls);
-+
-+	ref->ct = NULL;
++	page_ext_put(page_ext_from_codetag_ref(ref));
 +}
 +
-+static inline void alloc_tag_sub(union codetag_ref *ref, size_t bytes)
++static inline void pgalloc_tag_add(struct page *page, struct task_struct *task,
++				   unsigned int order)
 +{
-+	__alloc_tag_sub(ref, bytes);
++	union codetag_ref *ref = get_page_tag_ref(page);
++
++	if (ref) {
++		alloc_tag_add(ref, task->alloc_tag, PAGE_SIZE << order);
++		put_page_tag_ref(ref);
++	}
 +}
 +
-+static inline void alloc_tag_sub_noalloc(union codetag_ref *ref, size_t bytes)
++static inline void pgalloc_tag_sub(struct page *page, unsigned int order)
 +{
-+	__alloc_tag_sub(ref, bytes);
++	union codetag_ref *ref = get_page_tag_ref(page);
++
++	if (ref) {
++		alloc_tag_sub(ref, PAGE_SIZE << order);
++		put_page_tag_ref(ref);
++	}
 +}
 +
-+static inline void alloc_tag_add(union codetag_ref *ref, struct alloc_tag *tag, size_t bytes)
-+{
-+#ifdef CONFIG_MEM_ALLOC_PROFILING_DEBUG
-+	WARN_ONCE(ref && ref->ct,
-+		  "alloc_tag was not cleared (got tag for %s:%u)\n",\
-+		  ref->ct->filename, ref->ct->lineno);
++#else /* CONFIG_MEM_ALLOC_PROFILING */
 +
-+	WARN_ONCE(!tag, "current->alloc_tag not set");
-+#endif
-+	if (!ref || !tag)
-+		return;
++static inline void pgalloc_tag_add(struct page *page, struct task_struct *task,
++				   unsigned int order) {}
++static inline void pgalloc_tag_sub(struct page *page, unsigned int order) {}
 +
-+	ref->ct = &tag->ct;
-+	this_cpu_add(tag->counters->bytes, bytes);
-+	this_cpu_inc(tag->counters->calls);
-+}
++#endif /* CONFIG_MEM_ALLOC_PROFILING */
 +
-+#else
-+
-+#define DEFINE_ALLOC_TAG(_alloc_tag, _old)
-+static inline void alloc_tag_sub(union codetag_ref *ref, size_t bytes) {}
-+static inline void alloc_tag_sub_noalloc(union codetag_ref *ref, size_t bytes) {}
-+static inline void alloc_tag_add(union codetag_ref *ref, struct alloc_tag *tag,
-+				 size_t bytes) {}
-+
-+#endif
-+
-+#endif /* _LINUX_ALLOC_TAG_H */
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 12a2554a3164..d35901d8de06 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -767,6 +767,10 @@ struct task_struct {
- 	unsigned int			flags;
- 	unsigned int			ptrace;
- 
-+#ifdef CONFIG_MEM_ALLOC_PROFILING
-+	struct alloc_tag		*alloc_tag;
-+#endif
-+
- #ifdef CONFIG_SMP
- 	int				on_cpu;
- 	struct __call_single_node	wake_entry;
-@@ -806,6 +810,7 @@ struct task_struct {
- 	struct task_group		*sched_task_group;
- #endif
- 
-+
- #ifdef CONFIG_UCLAMP_TASK
- 	/*
- 	 * Clamp values requested for a scheduling entity.
-@@ -2457,4 +2462,23 @@ static inline int sched_core_idle_cpu(int cpu) { return idle_cpu(cpu); }
- 
- extern void sched_set_stop_task(int cpu, struct task_struct *stop);
- 
-+#ifdef CONFIG_MEM_ALLOC_PROFILING
-+static inline struct alloc_tag *alloc_tag_save(struct alloc_tag *tag)
-+{
-+	swap(current->alloc_tag, tag);
-+	return tag;
-+}
-+
-+static inline void alloc_tag_restore(struct alloc_tag *tag, struct alloc_tag *old)
-+{
-+#ifdef CONFIG_MEM_ALLOC_PROFILING_DEBUG
-+	WARN(current->alloc_tag != tag, "current->alloc_tag was changed:\n");
-+#endif
-+	current->alloc_tag = old;
-+}
-+#else
-+static inline struct alloc_tag *alloc_tag_save(struct alloc_tag *tag) { return NULL; }
-+#define alloc_tag_restore(_tag, _old)
-+#endif
-+
- #endif
++#endif /* _LINUX_PGALLOC_TAG_H */
 diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 2acbef24e93e..475a14e70566 100644
+index 475a14e70566..e1eda1450d68 100644
 --- a/lib/Kconfig.debug
 +++ b/lib/Kconfig.debug
-@@ -966,6 +966,31 @@ config CODE_TAGGING
- 	bool
- 	select KALLSYMS
- 
-+config MEM_ALLOC_PROFILING
-+	bool "Enable memory allocation profiling"
-+	default n
-+	depends on PROC_FS
-+	depends on !DEBUG_FORCE_WEAK_PER_CPU
-+	select CODE_TAGGING
-+	help
-+	  Track allocation source code and record total allocation size
-+	  initiated at that code location. The mechanism can be used to track
-+	  memory leaks with a low performance and memory impact.
-+
-+config MEM_ALLOC_PROFILING_ENABLED_BY_DEFAULT
-+	bool "Enable memory allocation profiling by default"
-+	default y
-+	depends on MEM_ALLOC_PROFILING
-+
-+config MEM_ALLOC_PROFILING_DEBUG
-+	bool "Memory allocation profiler debugging"
-+	default n
-+	depends on MEM_ALLOC_PROFILING
-+	select MEM_ALLOC_PROFILING_ENABLED_BY_DEFAULT
-+	help
-+	  Adds warnings with helpful error messages for memory allocation
-+	  profiling.
-+
- source "lib/Kconfig.kasan"
- source "lib/Kconfig.kfence"
- source "lib/Kconfig.kmsan"
-diff --git a/lib/Makefile b/lib/Makefile
-index b50212b5b999..4525469637fe 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -234,6 +234,8 @@ obj-$(CONFIG_OF_RECONFIG_NOTIFIER_ERROR_INJECT) += \
- obj-$(CONFIG_FUNCTION_ERROR_INJECTION) += error-inject.o
- 
- obj-$(CONFIG_CODE_TAGGING) += codetag.o
-+obj-$(CONFIG_MEM_ALLOC_PROFILING) += alloc_tag.o
-+
- lib-$(CONFIG_GENERIC_BUG) += bug.o
- 
- obj-$(CONFIG_HAVE_ARCH_TRACEHOOK) += syscall.o
+@@ -972,6 +972,7 @@ config MEM_ALLOC_PROFILING
+ 	depends on PROC_FS
+ 	depends on !DEBUG_FORCE_WEAK_PER_CPU
+ 	select CODE_TAGGING
++	select PAGE_EXTENSION
+ 	help
+ 	  Track allocation source code and record total allocation size
+ 	  initiated at that code location. The mechanism can be used to track
 diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
-new file mode 100644
-index 000000000000..4fc031f9cefd
---- /dev/null
+index 4fc031f9cefd..2d5226d9262d 100644
+--- a/lib/alloc_tag.c
 +++ b/lib/alloc_tag.c
-@@ -0,0 +1,158 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+#include <linux/alloc_tag.h>
-+#include <linux/fs.h>
-+#include <linux/gfp.h>
-+#include <linux/module.h>
-+#include <linux/proc_fs.h>
-+#include <linux/seq_buf.h>
-+#include <linux/seq_file.h>
-+
-+static struct codetag_type *alloc_tag_cttype;
-+
-+DEFINE_STATIC_KEY_MAYBE(CONFIG_MEM_ALLOC_PROFILING_ENABLED_BY_DEFAULT,
-+			mem_alloc_profiling_key);
-+
-+static void *allocinfo_start(struct seq_file *m, loff_t *pos)
-+{
-+	struct codetag_iterator *iter;
-+	struct codetag *ct;
-+	loff_t node = *pos;
-+
-+	iter = kzalloc(sizeof(*iter), GFP_KERNEL);
-+	m->private = iter;
-+	if (!iter)
-+		return NULL;
-+
-+	codetag_lock_module_list(alloc_tag_cttype, true);
-+	*iter = codetag_get_ct_iter(alloc_tag_cttype);
-+	while ((ct = codetag_next_ct(iter)) != NULL && node)
-+		node--;
-+
-+	return ct ? iter : NULL;
-+}
-+
-+static void *allocinfo_next(struct seq_file *m, void *arg, loff_t *pos)
-+{
-+	struct codetag_iterator *iter = (struct codetag_iterator *)arg;
-+	struct codetag *ct = codetag_next_ct(iter);
-+
-+	(*pos)++;
-+	if (!ct)
-+		return NULL;
-+
-+	return iter;
-+}
-+
-+static void allocinfo_stop(struct seq_file *m, void *arg)
-+{
-+	struct codetag_iterator *iter = (struct codetag_iterator *)m->private;
-+
-+	if (iter) {
-+		codetag_lock_module_list(alloc_tag_cttype, false);
-+		kfree(iter);
-+	}
-+}
-+
-+static void alloc_tag_to_text(struct seq_buf *out, struct codetag *ct)
-+{
-+	struct alloc_tag *tag = ct_to_alloc_tag(ct);
-+	struct alloc_tag_counters counter = alloc_tag_read(tag);
-+	s64 bytes = counter.bytes;
-+	char val[10], *p = val;
-+
-+	if (bytes < 0) {
-+		*p++ = '-';
-+		bytes = -bytes;
-+	}
-+
-+	string_get_size(bytes, 1,
-+			STRING_SIZE_BASE2|STRING_SIZE_NOSPACE,
-+			p, val + ARRAY_SIZE(val) - p);
-+
-+	seq_buf_printf(out, "%8s %8llu ", val, counter.calls);
-+	codetag_to_text(out, ct);
-+	seq_buf_putc(out, ' ');
-+	seq_buf_putc(out, '\n');
-+}
-+
-+static int allocinfo_show(struct seq_file *m, void *arg)
-+{
-+	struct codetag_iterator *iter = (struct codetag_iterator *)arg;
-+	char *bufp;
-+	size_t n = seq_get_buf(m, &bufp);
-+	struct seq_buf buf;
-+
-+	seq_buf_init(&buf, bufp, n);
-+	alloc_tag_to_text(&buf, iter->ct);
-+	seq_commit(m, seq_buf_used(&buf));
-+	return 0;
-+}
-+
-+static const struct seq_operations allocinfo_seq_op = {
-+	.start	= allocinfo_start,
-+	.next	= allocinfo_next,
-+	.stop	= allocinfo_stop,
-+	.show	= allocinfo_show,
-+};
-+
-+static void __init procfs_init(void)
-+{
-+	proc_create_seq("allocinfo", 0444, NULL, &allocinfo_seq_op);
-+}
-+
-+static bool alloc_tag_module_unload(struct codetag_type *cttype,
-+				    struct codetag_module *cmod)
-+{
-+	struct codetag_iterator iter = codetag_get_ct_iter(cttype);
-+	struct alloc_tag_counters counter;
-+	bool module_unused = true;
-+	struct alloc_tag *tag;
-+	struct codetag *ct;
-+
-+	for (ct = codetag_next_ct(&iter); ct; ct = codetag_next_ct(&iter)) {
-+		if (iter.cmod != cmod)
-+			continue;
-+
-+		tag = ct_to_alloc_tag(ct);
-+		counter = alloc_tag_read(tag);
-+
-+		if (WARN(counter.bytes, "%s:%u module %s func:%s has %llu allocated at module unload",
-+			  ct->filename, ct->lineno, ct->modname, ct->function, counter.bytes))
-+			module_unused = false;
-+	}
-+
-+	return module_unused;
-+}
-+
-+static struct ctl_table memory_allocation_profiling_sysctls[] = {
-+	{
-+		.procname	= "mem_profiling",
-+		.data		= &mem_alloc_profiling_key,
-+#ifdef CONFIG_MEM_ALLOC_PROFILING_DEBUG
-+		.mode		= 0444,
-+#else
-+		.mode		= 0644,
-+#endif
-+		.proc_handler	= proc_do_static_key,
-+	},
-+	{ }
-+};
-+
-+static int __init alloc_tag_init(void)
-+{
-+	const struct codetag_type_desc desc = {
-+		.section	= "alloc_tags",
-+		.tag_size	= sizeof(struct alloc_tag),
-+		.module_unload	= alloc_tag_module_unload,
-+	};
-+
-+	alloc_tag_cttype = codetag_register_type(&desc);
-+	if (IS_ERR_OR_NULL(alloc_tag_cttype))
-+		return PTR_ERR(alloc_tag_cttype);
-+
-+	register_sysctl_init("vm", memory_allocation_profiling_sysctls);
-+	procfs_init();
-+
-+	return 0;
-+}
-+module_init(alloc_tag_init);
-diff --git a/scripts/module.lds.S b/scripts/module.lds.S
-index bf5bcf2836d8..45c67a0994f3 100644
---- a/scripts/module.lds.S
-+++ b/scripts/module.lds.S
-@@ -9,6 +9,8 @@
- #define DISCARD_EH_FRAME	*(.eh_frame)
- #endif
- 
-+#include <asm-generic/codetag.lds.h>
-+
- SECTIONS {
- 	/DISCARD/ : {
- 		*(.discard)
-@@ -47,12 +49,17 @@ SECTIONS {
- 	.data : {
- 		*(.data .data.[0-9a-zA-Z_]*)
- 		*(.data..L*)
-+		CODETAG_SECTIONS()
- 	}
- 
- 	.rodata : {
- 		*(.rodata .rodata.[0-9a-zA-Z_]*)
- 		*(.rodata..L*)
- 	}
-+#else
-+	.data : {
-+		CODETAG_SECTIONS()
-+	}
- #endif
+@@ -3,6 +3,7 @@
+ #include <linux/fs.h>
+ #include <linux/gfp.h>
+ #include <linux/module.h>
++#include <linux/page_ext.h>
+ #include <linux/proc_fs.h>
+ #include <linux/seq_buf.h>
+ #include <linux/seq_file.h>
+@@ -124,6 +125,22 @@ static bool alloc_tag_module_unload(struct codetag_type *cttype,
+ 	return module_unused;
  }
  
++static __init bool need_page_alloc_tagging(void)
++{
++	return true;
++}
++
++static __init void init_page_alloc_tagging(void)
++{
++}
++
++struct page_ext_operations page_alloc_tagging_ops = {
++	.size = sizeof(union codetag_ref),
++	.need = need_page_alloc_tagging,
++	.init = init_page_alloc_tagging,
++};
++EXPORT_SYMBOL(page_alloc_tagging_ops);
++
+ static struct ctl_table memory_allocation_profiling_sysctls[] = {
+ 	{
+ 		.procname	= "mem_profiling",
+diff --git a/mm/mm_init.c b/mm/mm_init.c
+index 50f2f34745af..8e72e431dc35 100644
+--- a/mm/mm_init.c
++++ b/mm/mm_init.c
+@@ -24,6 +24,7 @@
+ #include <linux/page_ext.h>
+ #include <linux/pti.h>
+ #include <linux/pgtable.h>
++#include <linux/stackdepot.h>
+ #include <linux/swap.h>
+ #include <linux/cma.h>
+ #include "internal.h"
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 95546f376302..d490d0f73e72 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -52,6 +52,7 @@
+ #include <linux/psi.h>
+ #include <linux/khugepaged.h>
+ #include <linux/delayacct.h>
++#include <linux/pgalloc_tag.h>
+ #include <asm/div64.h>
+ #include "internal.h"
+ #include "shuffle.h"
+@@ -1093,6 +1094,7 @@ static __always_inline bool free_pages_prepare(struct page *page,
+ 			__memcg_kmem_uncharge_page(page, order);
+ 		reset_page_owner(page, order);
+ 		page_table_check_free(page, order);
++		pgalloc_tag_sub(page, order);
+ 		return false;
+ 	}
+ 
+@@ -1135,6 +1137,7 @@ static __always_inline bool free_pages_prepare(struct page *page,
+ 	page->flags &= ~PAGE_FLAGS_CHECK_AT_PREP;
+ 	reset_page_owner(page, order);
+ 	page_table_check_free(page, order);
++	pgalloc_tag_sub(page, order);
+ 
+ 	if (!PageHighMem(page)) {
+ 		debug_check_no_locks_freed(page_address(page),
+@@ -1535,6 +1538,7 @@ inline void post_alloc_hook(struct page *page, unsigned int order,
+ 
+ 	set_page_owner(page, order, gfp_flags);
+ 	page_table_check_alloc(page, order);
++	pgalloc_tag_add(page, current, order);
+ }
+ 
+ static void prep_new_page(struct page *page, unsigned int order, gfp_t gfp_flags,
+diff --git a/mm/page_ext.c b/mm/page_ext.c
+index 4548fcc66d74..3c58fe8a24df 100644
+--- a/mm/page_ext.c
++++ b/mm/page_ext.c
+@@ -10,6 +10,7 @@
+ #include <linux/page_idle.h>
+ #include <linux/page_table_check.h>
+ #include <linux/rcupdate.h>
++#include <linux/pgalloc_tag.h>
+ 
+ /*
+  * struct page extension
+@@ -82,6 +83,9 @@ static struct page_ext_operations *page_ext_ops[] __initdata = {
+ #if defined(CONFIG_PAGE_IDLE_FLAG) && !defined(CONFIG_64BIT)
+ 	&page_idle_ops,
+ #endif
++#ifdef CONFIG_MEM_ALLOC_PROFILING
++	&page_alloc_tagging_ops,
++#endif
+ #ifdef CONFIG_PAGE_TABLE_CHECK
+ 	&page_table_check_ops,
+ #endif
 -- 
 2.42.0.758.gaed0368e0e-goog
 
