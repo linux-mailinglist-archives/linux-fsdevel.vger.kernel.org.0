@@ -1,142 +1,154 @@
-Return-Path: <linux-fsdevel+bounces-1094-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1095-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2087C7D548F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 16:59:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76CC07D5495
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 17:01:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94EB9B210EB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 14:59:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A83541C20C05
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 15:01:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2760E2C857;
-	Tue, 24 Oct 2023 14:59:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED80129414;
+	Tue, 24 Oct 2023 15:00:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UGBPU5SR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gCgiTpzW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B459827EE3
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 14:59:10 +0000 (UTC)
-Received: from mail-qv1-xf29.google.com (mail-qv1-xf29.google.com [IPv6:2607:f8b0:4864:20::f29])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78E05111;
-	Tue, 24 Oct 2023 07:59:09 -0700 (PDT)
-Received: by mail-qv1-xf29.google.com with SMTP id 6a1803df08f44-66d4453ba38so28523926d6.0;
-        Tue, 24 Oct 2023 07:59:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698159548; x=1698764348; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lgC1tceMFuFWQh3HbwcDE2UVKXUmrKtvxdP2vIm+wYw=;
-        b=UGBPU5SRcFK8aZpJDcKkOsUzxKplU+fEykeBJceljGnYzk6WvOcnpCo1D59Sy86iV9
-         T4/eqEIlydXIE8RAyncrErdpvWWP/n+hroehfPHau08wlWj7MRf7Hh6DUddSKnnNbwQl
-         b23Fdn+4DmXFf1dINoZzVIGpJrhH9YKfGwtjGCWfxRsygmHIma3U4T8iMGzXcqEycleP
-         El7hzJxDw+MYneyl6548IPhrxy7u1CTsMEscWF1niD4TANBGriDdsy109x2f858p97J9
-         xLVNibL2cbQHnRBINBDSAM6zwGkgx1UJWfgNyYGn/t9nLUAA8Qfoa5VC7L95NOwYkPll
-         YMaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698159548; x=1698764348;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lgC1tceMFuFWQh3HbwcDE2UVKXUmrKtvxdP2vIm+wYw=;
-        b=FgsalX7c5RV9iluJz36J+7Cff3EaSzJzFHCRHzYqMdx0K+EsOm9HcEMs2jJJR030g2
-         42sRDRDkNfB4P7kNr7Vn62exxwqpsgsgXdUZkbJkmFlxtdCWqvhbmj0yO294xHT0C7k0
-         VSZ6L6VOBRHRVbbSsGJ0Z3Ru7X8wMlUT5WUYV9Pzh59KGDasbUG4kcut/hzn5920QA8V
-         zAr/ThbtPX2nFHmchPYtv0KGzO8+AvtgqR77tUO27WJocRVVdZU+Zti7zUikO0d/D6OB
-         gMVuGWRy9jaYxo8DgUSPoBpmTkUZlQn4EgEAe2U2VdKLkp4b1+M5nPIn413CjA9dPMca
-         uUUA==
-X-Gm-Message-State: AOJu0Yw5ngvApwUVQ5TSMsFnYIiEhKbNn3TUlaoqgGIdlvW5FWxN+v8G
-	YeFfMAKKUSBunmGiekkVjqwr4HQ720rdQY39m2Q=
-X-Google-Smtp-Source: AGHT+IHrPj+CY3Fq33tp7/y60luma0WG70v1g+RWQ4k5Z/GgQWxnimTKhpiCcGrtqeYYftWomBMsfsJMcYyciiCSlQk=
-X-Received: by 2002:a05:6214:2266:b0:66d:1174:3b46 with SMTP id
- gs6-20020a056214226600b0066d11743b46mr19435648qvb.50.1698159548459; Tue, 24
- Oct 2023 07:59:08 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A66614ABF
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 15:00:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7F6BC433C8;
+	Tue, 24 Oct 2023 15:00:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1698159653;
+	bh=1er9HDGuyZurPRrSEMxddQ3gFQVJxN7X/63TVQfVyDM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gCgiTpzW+N0zqUe1030TfPCtTzFbG2nIDdcPEgBtxnHx3Q4IcfKswjDuxXnOO/iLX
+	 CpreOOIL3IF/282EdX3MV7RK3en1zf9Qx0KLe1qfjZaE9dHZgcA8bI2InlExVuP/Y8
+	 LossIoICrvSkNYgqxTxj57G00NyG6zRFwn+nAqSzPWqonzLutkbcFaFQcTkwwTp7Wr
+	 YTCz5/kNWXt0O7B7K63Lu1HqdMovwrvZ7bZjhs0jcOO8NAxdQubQVIXt8qXzYE6aEf
+	 yrSnMPWRyyJl65YpTF39U90ePMG9hSQ+ljD6CZ+ZnIQCpPgqpMqD0its6wU319jJWT
+	 Ei9hGlPoFSvZQ==
+Date: Tue, 24 Oct 2023 08:00:53 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>, Matthew Wilcox <willy@infradead.org>,
+	Ilya Dryomov <idryomov@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 1/3] filemap: add a per-mapping stable writes flag
+Message-ID: <20231024150053.GY3195650@frogsfrogsfrogs>
+References: <20231024064416.897956-1-hch@lst.de>
+ <20231024064416.897956-2-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231024110109.3007794-1-amir73il@gmail.com> <1CFE0178-CE91-4C99-B43E-33EF78D0BEBF@redhat.com>
-In-Reply-To: <1CFE0178-CE91-4C99-B43E-33EF78D0BEBF@redhat.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 24 Oct 2023 17:58:57 +0300
-Message-ID: <CAOQ4uxhe5pH3yRxFS_8pvtCgbXspKB6r9aacRJ8FysGQE2Hu9g@mail.gmail.com>
-Subject: Re: [PATCH] nfs: derive f_fsid from server's fsid
-To: Benjamin Coddington <bcodding@redhat.com>
-Cc: Trond Myklebust <trond.myklebust@hammerspace.com>, Anna Schumaker <anna@kernel.org>, 
-	Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231024064416.897956-2-hch@lst.de>
 
-On Tue, Oct 24, 2023 at 5:01=E2=80=AFPM Benjamin Coddington <bcodding@redha=
-t.com> wrote:
->
-> On 24 Oct 2023, at 7:01, Amir Goldstein wrote:
->
-> > Fold the server's 128bit fsid to report f_fsid in statfs(2).
-> > This is similar to how uuid is folded for f_fsid of ext2/ext4/zonefs.
-> >
-> > This allows nfs client to be monitored by fanotify filesystem watch
-> > for local client access if nfs supports re-export.
-> >
-> > For example, with inotify-tools 4.23.8.0, the following command can be
-> > used to watch local client access over entire nfs filesystem:
-> >
-> >   fsnotifywatch --filesystem /mnt/nfs
-> >
-> > Note that fanotify filesystem watch does not report remote changes on
-> > server.  It provides the same notifications as inotify, but it watches
-> > over the entire filesystem and reports file handle of objects and fsid
-> > with events.
->
-> I think this will run into trouble where an NFSv4 will report both
-> fsid.major and fsid.minor as zero for the special root filesystem.   We c=
-an
-> expect an NFSv4 client to have one of these per server.
->
-> Could use s_dev from nfs_server for a unique major/minor for each mount o=
-n
-> the client, but these values won't be stable against a particular server
-> export.
->
+On Tue, Oct 24, 2023 at 08:44:14AM +0200, Christoph Hellwig wrote:
+> folio_wait_stable waits for writeback to finish before modifying the
+> contents of a folio again, e.g. to support check summing of the data
+> in the block integrity code.
+> 
+> Currently this behavior is controlled by the SB_I_STABLE_WRITES flag
+> on the super_block, which means it is uniform for the entire file system.
+> This is wrong for the block device pseudofs which is shared by all
+> block devices, or file systems that can use multiple devices like XFS
+> witht the RT subvolume or btrfs (although btrfs currently reimplements
+> folio_wait_stable anyway).
+> 
+> Add a per-address_space AS_STABLE_WRITES flag to control the behavior
+> in a more fine grained way.  The existing SB_I_STABLE_WRITES is kept
+> to initialize AS_STABLE_WRITES to the existing default which covers
+> most cases.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  fs/inode.c              |  2 ++
+>  include/linux/pagemap.h | 17 +++++++++++++++++
+>  mm/page-writeback.c     |  2 +-
 
-That's a good point.
-Not sure I understand the relation between mount/server/export.
+For a hot second I wondered if we could get rid of SB_I_STABLE_WRITES
+too, but then had an AHA moment when I saw that NFS also sets it.
 
-If the client mounts the special NFSv4 root filesystem at /mnt/nfs,
-are the rest of the server exports going to be accessible via the same
-mount/sb or via new auto mounts of different nfs sb?
+This looks reasonable,
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
-In any case, f_fsid does not have to be uniform across all inodes
-of the same sb. This is the case with btrfs, where the the btrfs sb
-has inodes from the root volume and from sub-volumes.
-inodes from btrfs sub-volumes have a different f_fsid than inodes
-in the root btrfs volume.
+--D
 
-We try to detect this case in fanotify, which currently does not
-support watching btrfs sub-volume for that reason.
-I have a WIP branch [1] for handling non-uniform f_fsid in
-fanotify by introducing the s_op->get_fsid(inode) method.
-
-Anyway, IIUC, my proposed f_fsid change is going to be fine for
-NFSv2/3 and best effort for NFSv4:
-- For NFSv2/3 mount, f_fsid is a good identifier?
-- For NFSv4 mount of a specific export, f_fsid is a good identifier?
-- For the NFSv4 root export mount, f_fsid remains zero as it is now
-
-Am I understanding this correctly?
-Do you see a reason not to make this change?
-Do you see a reason to limit this change for NFSv2/3?
-
-Thanks,
-Amir.
-
-[1] https://github.com/amir73il/linux/commits/inode_fsid
+>  3 files changed, 20 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/inode.c b/fs/inode.c
+> index 84bc3c76e5ccb5..ae1a6410b53d7e 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -215,6 +215,8 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
+>  	lockdep_set_class_and_name(&mapping->invalidate_lock,
+>  				   &sb->s_type->invalidate_lock_key,
+>  				   "mapping.invalidate_lock");
+> +	if (sb->s_iflags & SB_I_STABLE_WRITES)
+> +		mapping_set_stable_writes(mapping);
+>  	inode->i_private = NULL;
+>  	inode->i_mapping = mapping;
+>  	INIT_HLIST_HEAD(&inode->i_dentry);	/* buggered by rcu freeing */
+> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+> index 351c3b7f93a14e..8c9608b217b000 100644
+> --- a/include/linux/pagemap.h
+> +++ b/include/linux/pagemap.h
+> @@ -204,6 +204,8 @@ enum mapping_flags {
+>  	AS_NO_WRITEBACK_TAGS = 5,
+>  	AS_LARGE_FOLIO_SUPPORT = 6,
+>  	AS_RELEASE_ALWAYS,	/* Call ->release_folio(), even if no private data */
+> +	AS_STABLE_WRITES,	/* must wait for writeback before modifying
+> +				   folio contents */
+>  };
+>  
+>  /**
+> @@ -289,6 +291,21 @@ static inline void mapping_clear_release_always(struct address_space *mapping)
+>  	clear_bit(AS_RELEASE_ALWAYS, &mapping->flags);
+>  }
+>  
+> +static inline bool mapping_stable_writes(const struct address_space *mapping)
+> +{
+> +	return test_bit(AS_STABLE_WRITES, &mapping->flags);
+> +}
+> +
+> +static inline void mapping_set_stable_writes(struct address_space *mapping)
+> +{
+> +	set_bit(AS_STABLE_WRITES, &mapping->flags);
+> +}
+> +
+> +static inline void mapping_clear_stable_writes(struct address_space *mapping)
+> +{
+> +	clear_bit(AS_STABLE_WRITES, &mapping->flags);
+> +}
+> +
+>  static inline gfp_t mapping_gfp_mask(struct address_space * mapping)
+>  {
+>  	return mapping->gfp_mask;
+> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+> index b8d3d7040a506a..4656534b8f5cc6 100644
+> --- a/mm/page-writeback.c
+> +++ b/mm/page-writeback.c
+> @@ -3110,7 +3110,7 @@ EXPORT_SYMBOL_GPL(folio_wait_writeback_killable);
+>   */
+>  void folio_wait_stable(struct folio *folio)
+>  {
+> -	if (folio_inode(folio)->i_sb->s_iflags & SB_I_STABLE_WRITES)
+> +	if (mapping_stable_writes(folio_mapping(folio)))
+>  		folio_wait_writeback(folio);
+>  }
+>  EXPORT_SYMBOL_GPL(folio_wait_stable);
+> -- 
+> 2.39.2
+> 
 
