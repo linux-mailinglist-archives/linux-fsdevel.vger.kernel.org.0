@@ -1,127 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-982-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-983-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07B977D4913
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 09:55:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 631D47D4914
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 09:55:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D82628188D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 07:55:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 620A41C20B58
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 07:55:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90E4614A92;
-	Tue, 24 Oct 2023 07:55:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E20414F88;
+	Tue, 24 Oct 2023 07:55:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mgPBBOZc"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WQo/BDGE"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C10FB13FED
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 07:55:36 +0000 (UTC)
-Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8764F9;
-	Tue, 24 Oct 2023 00:55:34 -0700 (PDT)
-Received: by mail-pl1-x62c.google.com with SMTP id d9443c01a7336-1c9bf22fe05so25586045ad.2;
-        Tue, 24 Oct 2023 00:55:34 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C72E15483
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 07:55:44 +0000 (UTC)
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A33A11A
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 00:55:42 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-4083f61312eso33757175e9.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 00:55:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698134133; x=1698738933; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rryMd0X9WV6QFu55eyAQUdUJEIXyug/kgmEK9WWRvfQ=;
-        b=mgPBBOZcnFhTdGj94p7wAnxLw9spkHglgm7IgCipSFkZn1vQakLdbiGxdCg3+1yL5j
-         3zX8UXURqNaVavfpIV1FhZO34DxBC2JsD8W4QSuWhp6AowAcA5o6CtkPWEKzHG0tt7PT
-         +MjdL9kfOOzP5nOiwPBmyX+Lb5eJuhKGFEz5fo0axneyAmtveP22R2/eEmAD1SbAVcsQ
-         DEys1xXGhujhinuo+EYBJMDE/Iid1qeKy6SkBatbNHgfEZBHcMHtmjlRsgwpmVnQ+5Hf
-         xXs7nGW+LYEH6yC+LjVf38loJqN01Vspmpwl4Lh6slE4EmqdaT3z+wrHnt9FrFGsMpa+
-         4lOg==
+        d=gmail.com; s=20230601; t=1698134141; x=1698738941; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=y+18Cg9WmaAh8a3daasUHdD04vDnvoaOPywc9c9gIuw=;
+        b=WQo/BDGEzqLN7tNiLQuoOFHvZfLVZKwF/BXzYhsP4nCXQgp4eDD7wQkVGR1HQrD1n8
+         hSjcQyGDP0y9L3R1rGG8Ud/HXo8JmHZ+FKH4cdezXbg16SPMQuUNM448HXx2qn8xyu3j
+         iAYEFl+hmIlo0b3wop6UOtd5N5nUYQrRp/W7drGvD14w0h00zvamyZEmuP6aajEBENy7
+         p9xUwL6W9Yq2gYNqDzREERDTbjcV1yQoDl63n7j18C940xDLbXr9o54/0MqjtAzeLzgj
+         oaH9uA6NWAX+B3LbgJveXxJ4YJLXumBzh73lsNTIvgUsdwk1bO+Wo5nc9z5dpg8QVFbR
+         /VGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698134133; x=1698738933;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=rryMd0X9WV6QFu55eyAQUdUJEIXyug/kgmEK9WWRvfQ=;
-        b=w7s1RRXM/9D1f/D2NgXRw1nDKsoRZDB7l8eZfbBHQUCQAjOVDSXKZuD4qMS6aH3177
-         5xkg/fxqlteUoLxAq/11GEw+tB/44f2kuJb9fqxdP5QQBR2O/vqveftC06FEKLef3lNl
-         UCItewoNytZdbBCnNmXZRtMWzeXcFn/U86obXNQmHsSjQF4x3vOeZMWx8EwRVwqqsH+G
-         33zmYykTh2OWXXMq14jdPAahUTh6UyUbjmjoaNDjIIiYHwY2x+mPTvMRo9qGmYN4JS5o
-         OoEhN3l4UD/HoKdNuxsUnoo0dG8DvJZQTOBkLNi4Wtcd9z8l2eQn2o/Ew4TaziFwqx45
-         e8hQ==
-X-Gm-Message-State: AOJu0YwiPe4GjmMJZp9qJGSdi6+Pq7aFi2TNwlnMVIbe8P3UksDcTv7u
-	QyBtfLwFcYl6sovCdJsCKx6dqRrhX+I=
-X-Google-Smtp-Source: AGHT+IFzIRaOleX12I4ui38DgrzuR5MDHSegKCH+0WDtTjaT5p3P/qRLJ2gPYCdahRV3qCjph6dhEw==
-X-Received: by 2002:a17:902:ca0b:b0:1c4:72c9:64ef with SMTP id w11-20020a170902ca0b00b001c472c964efmr7090388pld.40.1698134133184;
-        Tue, 24 Oct 2023 00:55:33 -0700 (PDT)
-Received: from [192.168.0.106] ([103.131.18.64])
-        by smtp.gmail.com with ESMTPSA id iy17-20020a170903131100b001ca86a9caccsm7051112plb.228.2023.10.24.00.55.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Oct 2023 00:55:32 -0700 (PDT)
-Message-ID: <429b452c-2211-436a-9af7-21332f68db7d@gmail.com>
-Date: Tue, 24 Oct 2023 14:55:27 +0700
+        d=1e100.net; s=20230601; t=1698134141; x=1698738941;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=y+18Cg9WmaAh8a3daasUHdD04vDnvoaOPywc9c9gIuw=;
+        b=Pq7T5E4Y+qGI5ektPY+E9c2WhXhVpR5Bl4RPpxfUZVIBDQ3yE59W9jEemz8An5xOdc
+         NGtFdSGoOzl2pfs1qkh7Rt4424Ll+dvqtdECZWsaxlcNusgHIZKWjV+3Yn2VPZlx1ydu
+         gGLSifFoZFM63cuwsxGb7+k16OTZiA+/Eja9xTiStSJFRGjeQkgiIgTqngTXZ6cIvVG/
+         fMHNBCciOSfKqdc+jvPmML1Z0JtDwHPgQFGVeZ+02EAubuzV0m8eF9B05vKmJPh/0CbY
+         bnxo3Xj6R7Q4wG4bSlHM5YX3Z7zCYxr2rR/EsalXz5yMyRYJgjITjKV38J2t3d/OujoL
+         LG0g==
+X-Gm-Message-State: AOJu0YyAc1gcwAJourk85FaNKS37lvOKjidpALVkWhOuxKiP4uVvbv0+
+	a/OJJz9UWrW34F3z64wBMP4=
+X-Google-Smtp-Source: AGHT+IGHTmUr+pgzGDmBFz1x75w99MYvBGvhAeWEJxniTpOSArnqI1lUIZkOJfE6woIeL+zwVQwkKw==
+X-Received: by 2002:a1c:770a:0:b0:406:53e4:4d23 with SMTP id t10-20020a1c770a000000b0040653e44d23mr8604561wmi.23.1698134140800;
+        Tue, 24 Oct 2023 00:55:40 -0700 (PDT)
+Received: from amir-ThinkPad-T480.lan ([5.29.249.86])
+        by smtp.gmail.com with ESMTPSA id iv15-20020a05600c548f00b00405c7591b09sm11376199wmb.35.2023.10.24.00.55.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Oct 2023 00:55:40 -0700 (PDT)
+From: Amir Goldstein <amir73il@gmail.com>
+To: Andreas Gruenbacher <agruenba@redhat.com>
+Cc: Jan Kara <jack@suse.cz>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	Bob Peterson <rpeterso@redhat.com>,
+	gfs2@lists.linux.dev
+Subject: [PATCH] gfs2: fs: derive f_fsid from s_uuid
+Date: Tue, 24 Oct 2023 10:55:35 +0300
+Message-Id: <20231024075535.2994553-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Memory Management List <linux-mm@kvack.org>,
- Linux Filesystem Development <linux-fsdevel@vger.kernel.org>,
- Linux Regressions <regressions@lists.linux.dev>
-Cc: Chuck Lever <chuck.lever@oracle.com>,
- Christian Brauner <brauner@kernel.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Andrew Morton <akpm@linux-foundation.org>, vladbu@nvidia.com
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-Subject: Fwd: Memleaks in offset_ctx->xa (shmem)
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi,
+gfs2 already has optional persistent uuid.
 
-I notice a regression report on Bugzilla [1]. Quoting from it:
+Use that uuid to report f_fsid in statfs(2), same as ext2/ext4/zonefs.
 
-> We have been getting memleaks in offset_ctx->xa in our networking tests:
-> 
-> unreferenced object 0xffff8881004cd080 (size 576):
->   comm "systemd", pid 1, jiffies 4294893373 (age 1992.864s)
->   hex dump (first 32 bytes):
->     00 00 06 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->     38 5c 7c 02 81 88 ff ff 98 d0 4c 00 81 88 ff ff  8\|.......L.....
->   backtrace:
->     [<000000000f554608>] xas_alloc+0x306/0x430
->     [<0000000075537d52>] xas_create+0x4b4/0xc80
->     [<00000000a927aab2>] xas_store+0x73/0x1680
->     [<0000000020a61203>] __xa_alloc+0x1d8/0x2d0
->     [<00000000ae300af2>] __xa_alloc_cyclic+0xf1/0x310
->     [<000000001032332c>] simple_offset_add+0xd8/0x170
->     [<0000000073229fad>] shmem_mknod+0xbf/0x180
->     [<00000000242520ce>] vfs_mknod+0x3b0/0x5c0
->     [<000000001ef218dd>] unix_bind+0x2c2/0xdb0
->     [<0000000009b9a8dd>] __sys_bind+0x127/0x1e0
->     [<000000003c949fbb>] __x64_sys_bind+0x6e/0xb0
->     [<00000000b8a767c7>] do_syscall_64+0x3d/0x90
->     [<000000006132ae0d>] entry_SYSCALL_64_after_hwframe+0x46/0xb0
-> 
-> Memleak trace points to some syscall performed by systemd and none of our tests do anything more advanced with it than 'systemctl restart ovs-vswitchd'. Basically it is a setup with Fedora and an upstream kernel that executes bunch of network offload tests with Open vSwitch, iproute2 tc, Linux bridge, etc.
-> 
-> It looks like those may be caused by recent commit 6faddda69f62 ("libfs: Add directory operations for stable offsets") but we don't have a proper reproduction, just sometimes arbitrary getting the memleak complains during/after the regression run.
+This allows gfs2 to be monitored by fanotify filesystem watch.
+for example, with inotify-tools 4.23.8.0, the following command can be
+used to watch changes over entire filesystem:
 
-See Bugzilla for the full thread.
+  fsnotifywatch --filesystem /mnt/gfs2
 
-Anyway, I'm adding it to regzbot:
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+---
 
-#regzbot introduced: 6faddda69f623d https://bugzilla.kernel.org/show_bug.cgi?id=218039
-#regzbot title: stable offsets directory operation support triggers offset_ctx->xa memory leak
+Andreas,
 
-Thanks.
+I do not have a test setup for gfs2, but this change it quite trivial,
+so I am posting it only compile tested.
 
-[1]: https://bugzilla.kernel.org/show_bug.cgi?id=218039
+There is no need to test fanotify. It enough to test statfs returns
+a non-zero f_fsid, e.g.:
 
+  strace -e fstatfs du /mnt/gfs2
+
+Thanks,
+Amir.
+
+ fs/gfs2/super.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/fs/gfs2/super.c b/fs/gfs2/super.c
+index 02d93da21b2b..ea769af6bb23 100644
+--- a/fs/gfs2/super.c
++++ b/fs/gfs2/super.c
+@@ -1006,6 +1006,7 @@ static int gfs2_statfs(struct dentry *dentry, struct kstatfs *buf)
+ 	buf->f_files = sc.sc_dinodes + sc.sc_free;
+ 	buf->f_ffree = sc.sc_free;
+ 	buf->f_namelen = GFS2_FNAMESIZE;
++	buf->f_fsid = uuid_to_fsid(sb->s_uuid.b);
+ 
+ 	return 0;
+ }
 -- 
-An old man doll... just what I always wanted! - Clara
+2.34.1
+
 
