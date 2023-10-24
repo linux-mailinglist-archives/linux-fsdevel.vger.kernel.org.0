@@ -1,135 +1,135 @@
-Return-Path: <linux-fsdevel+bounces-1014-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1015-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E42CE7D4E7A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 13:01:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E11B7D4E98
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 13:10:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E23011C20BAB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 11:01:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 503F51C20BBF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 11:10:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0CED26284;
-	Tue, 24 Oct 2023 11:01:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65FB82628F;
+	Tue, 24 Oct 2023 11:10:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jQaHMRlf"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="AdYr1z2/";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="upfptmnJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9A367498
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 11:01:17 +0000 (UTC)
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EBEF123;
-	Tue, 24 Oct 2023 04:01:16 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id ffacd0b85a97d-32d9effe314so2999377f8f.3;
-        Tue, 24 Oct 2023 04:01:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698145274; x=1698750074; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=k/Hy9mjKVZEp592T+CI4HCA7TuFfPuvSuvsA6aj3cwg=;
-        b=jQaHMRlf+a2eRckLdvetdSv1C/2tA+o/brpu6mLUnwCNjKRaCjaOj2YXOfiwR/f2uG
-         soJK5q5DXU9+gUgRHgr53CFVLJEX9ZN/ZQ0a1rtAMD6ldULG1ymdz4RKADQVj5Pzwcy5
-         b9VPDx18EjEpZXRbntbtho6iv5QWa4XLl4ELDY4j7jPumxmzXhUP83WJ84SwJ4RQUIRi
-         OiSYMcyKbtjM3tfD2Z+UfNY0sjOdJ74eYT5KKSMKQ4aGwH3R9l47o40lYzLmpg5o3vNN
-         DSkg0MCFvNVLTBQ17cFwJA7P72vfezyVkmSfkqrhUw/iSsuJ6AVRAd/Up0sUIIqL/62X
-         E/Lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698145274; x=1698750074;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=k/Hy9mjKVZEp592T+CI4HCA7TuFfPuvSuvsA6aj3cwg=;
-        b=lA2QRHKtrZIUO7iuJZNnD7ZNw6wM1V+eDVs1FfPz16Jp1nnpPoBYFysFibIAMKAOSs
-         ckaRI6Xo5fgnKyxclPWtDWsoeJY2wHZgfuhTNqt8l6eFczdXR8axr595Gqvldl+vnFZL
-         GFU7vO1vmYoC3NguWo2AMtgpDGiWMzIZmYKiQgz+Ae6ZlA9kT8Ks6WeHlU3Sx0k2u28m
-         rT779GWhxqH3yLNYJWdlSddXhM/Va6fvYPJOsC5FBwT+h7MTVo6KmcIHK1K2kRcrV6rh
-         5FypbBd2MU/5+U6F73om49KPfc47RNRRlp0Usbv09AJgEe7RhOodAXWDg4/d7Qq56IZk
-         t34g==
-X-Gm-Message-State: AOJu0YzmKRBOcbmvcYo9PvfwxaNO74qW82XxWbeYNQ1eYd5ntPW9Qctf
-	N8PP3Uvm2MUNT0gXDA/PYyM=
-X-Google-Smtp-Source: AGHT+IEU1jutgb9sVKgdnyuesST+oIr997jElQQEBnEoqERofOMlH9lBASsXRPh6FHq5zA9+MkhWyg==
-X-Received: by 2002:a05:6000:b41:b0:32d:8f4c:a70b with SMTP id dk1-20020a0560000b4100b0032d8f4ca70bmr9844603wrb.9.1698145274217;
-        Tue, 24 Oct 2023 04:01:14 -0700 (PDT)
-Received: from amir-ThinkPad-T480.lan ([5.29.249.86])
-        by smtp.gmail.com with ESMTPSA id o12-20020a05600c4fcc00b0040775501256sm11707312wmq.16.2023.10.24.04.01.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Oct 2023 04:01:13 -0700 (PDT)
-From: Amir Goldstein <amir73il@gmail.com>
-To: Trond Myklebust <trond.myklebust@hammerspace.com>,
-	Anna Schumaker <anna@kernel.org>
-Cc: Jeff Layton <jlayton@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB06526288
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 11:10:21 +0000 (UTC)
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1F56D7F;
+	Tue, 24 Oct 2023 04:10:16 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 8D36921B8B;
+	Tue, 24 Oct 2023 11:10:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1698145815; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7GNlnvsY+DYZUeQFr2rzYE4qXsApeBSmjyzIRlCaWx0=;
+	b=AdYr1z2/jHeJpL4z4hGxWiB7//ZUIxp2jgoOHeqSVfXKkVcJ7kqcsfhYzqi72WfnNzip3v
+	UZJx0QROGCCMwG3hUh2TE7K50ZzsqlxQQ249fRhPqTN5xcEO1R9/XXfWIbqzV9qfCm+8iN
+	UQfZVyj0AIXBalggihFi3iu6xhRLMm4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1698145815;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7GNlnvsY+DYZUeQFr2rzYE4qXsApeBSmjyzIRlCaWx0=;
+	b=upfptmnJVvkV+Biac6KUb3cLwMsJzIcVLVwasmaBvvzuA3gdF+2uJV1j9Ns+HPe3S+AAzA
+	+JQJrDcWnq3u8EDQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+	(No client certificate requested)
+	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 7B1151391C;
+	Tue, 24 Oct 2023 11:10:15 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+	by imap2.suse-dmz.suse.de with ESMTPSA
+	id Kgz4HRemN2W7PAAAMHmgww
+	(envelope-from <jack@suse.cz>); Tue, 24 Oct 2023 11:10:15 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 0942CA05BC; Tue, 24 Oct 2023 13:10:15 +0200 (CEST)
+Date: Tue, 24 Oct 2023 13:10:15 +0200
+From: Jan Kara <jack@suse.cz>
+To: Aleksandr Nogikh <nogikh@google.com>
+Cc: Jan Kara <jack@suse.cz>, Eric Biggers <ebiggers@kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+	Christoph Hellwig <hch@infradead.org>,
 	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org,
-	linux-nfs@vger.kernel.org
-Subject: [PATCH] nfs: derive f_fsid from server's fsid
-Date: Tue, 24 Oct 2023 14:01:09 +0300
-Message-Id: <20231024110109.3007794-1-amir73il@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	Jens Axboe <axboe@kernel.dk>, Kees Cook <keescook@google.com>,
+	Ted Tso <tytso@mit.edu>, syzkaller <syzkaller@googlegroups.com>,
+	Alexander Popov <alex.popov@linux.com>, linux-xfs@vger.kernel.org,
+	linux-btrfs@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>
+Subject: Re: [PATCH 1/6] block: Add config option to not allow writing to
+ mounted devices
+Message-ID: <20231024111015.k4sbjpw5fa46k6il@quack3>
+References: <20230704122727.17096-1-jack@suse.cz>
+ <20230704125702.23180-1-jack@suse.cz>
+ <20230822053523.GA8949@sol.localdomain>
+ <20230822101154.7udsf4tdwtns2prj@quack3>
+ <CANp29Y6uBuSzLXuCMGzVNZjT+xFqV4dtWKWb7GR7Opx__Diuzg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANp29Y6uBuSzLXuCMGzVNZjT+xFqV4dtWKWb7GR7Opx__Diuzg@mail.gmail.com>
+Authentication-Results: smtp-out1.suse.de;
+	none
+X-Spam-Level: 
+X-Spam-Score: -5.10
+X-Spamd-Result: default: False [-5.10 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 NEURAL_HAM_LONG(-3.00)[-1.000];
+	 MIME_GOOD(-0.10)[text/plain];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 NEURAL_HAM_SHORT(-1.00)[-1.000];
+	 RCPT_COUNT_TWELVE(0.00)[15];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 RCVD_COUNT_TWO(0.00)[2];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-1.50)[91.72%]
 
-Fold the server's 128bit fsid to report f_fsid in statfs(2).
-This is similar to how uuid is folded for f_fsid of ext2/ext4/zonefs.
+Hi!
 
-This allows nfs client to be monitored by fanotify filesystem watch
-for local client access if nfs supports re-export.
+On Thu 19-10-23 11:16:55, Aleksandr Nogikh wrote:
+> Thank you for the series!
+> 
+> Have you already had a chance to push an updated version of it?
+> I tried to search LKML, but didn't find anything.
+> 
+> Or did you decide to put it off until later?
 
-For example, with inotify-tools 4.23.8.0, the following command can be
-used to watch local client access over entire nfs filesystem:
+So there is preliminary series sitting in VFS tree that changes how block
+devices are open. There are some conflicts with btrfs tree and bcachefs
+merge that complicate all this (plus there was quite some churn in VFS
+itself due to changing rules how block devices are open) so I didn't push
+out the series that actually forbids opening of mounted block devices
+because that would cause a "merge from hell" issues. I plan to push out the
+remaining patches once the merge window closes and all the dependencies are
+hopefully in a stable state. Maybe I can push out the series earlier based
+on linux-next so that people can have a look at the current state.
 
-  fsnotifywatch --filesystem /mnt/nfs
-
-Note that fanotify filesystem watch does not report remote changes on
-server.  It provides the same notifications as inotify, but it watches
-over the entire filesystem and reports file handle of objects and fsid
-with events.
-
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
----
-
-Anna, Trond,
-
-I realize that the value of watching local changes without getting
-notifications on remote changes is questionable, but still, we want
-fanotify to be on-par with inotify in that regard.
-
-Remote notification via fanotify has been requested in the past for fuse
-and for smb3. If we ever implement those, they will most likely require
-a new opt-in flag to fanotify.
-
-I think that exporting a digest of the server's fsid via statfs(2) on the
-client mounts is useful regardless of fanotify, so please consider this
-change to NFS client.
-
-Thanks,
-Amir.
-
- fs/nfs/super.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/fs/nfs/super.c b/fs/nfs/super.c
-index 0d6473cb00cb..d0f41f53b795 100644
---- a/fs/nfs/super.c
-+++ b/fs/nfs/super.c
-@@ -295,6 +295,7 @@ int nfs_statfs(struct dentry *dentry, struct kstatfs *buf)
- 	buf->f_ffree = res.afiles;
- 
- 	buf->f_namelen = server->namelen;
-+	buf->f_fsid = u64_to_fsid(server->fsid.major ^ server->fsid.minor);
- 
- 	return 0;
- 
+								Honza
 -- 
-2.34.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
