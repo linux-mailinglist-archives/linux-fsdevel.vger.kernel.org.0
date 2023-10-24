@@ -1,49 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-1098-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1100-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A59277D54BA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 17:09:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CD9F7D54E1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 17:10:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D64651C20C87
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 15:09:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE0E71C20880
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 15:10:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3E582B776;
-	Tue, 24 Oct 2023 15:09:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C066C2E659;
+	Tue, 24 Oct 2023 15:10:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sWKtZ5Ak"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="d0OntYfe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0425013FED
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 15:09:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1E2EC433C8;
-	Tue, 24 Oct 2023 15:09:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1698160144;
-	bh=+sTxJDVws6hFbRRZY3T4c/3V2tpunBXLS+DBgSiQAfM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sWKtZ5AkdfEFeb+k6ZpIxTkcLf+AQx1r2Mg3lGcLZLu7ZazlSpberuRpGGgiza/rs
-	 vFHx72m+VaquZN/srqBqLAy8XQE6EDzEEL++XrxO7tiwGBBLYcbGnokd+EEz7letQA
-	 IFCWLgNZdouVqq4q36Mi8u9dMVfj8pRgGULg/7cgZj7RO1nDb5XEUZDQXPqJcDtwK4
-	 BnCnYnsAeF6Qt2ToYWCxKD2hF2hGa2MXLUkujWXM/C/ncAZnOOkB3kpaJvo/S5/APE
-	 vD5eemoPWutD3m97mu90bSuAMYWKPtLKSAsWVEEpvopCkdqlWT7fz7OmQDNt6m6eDB
-	 hnpqkcpuHRZlg==
-Date: Tue, 24 Oct 2023 08:09:04 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Matthew Wilcox <willy@infradead.org>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52FDF2E625
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 15:10:36 +0000 (UTC)
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF5B910FA;
+	Tue, 24 Oct 2023 08:10:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Ql2eltEQ8DJZApzT9fh9fzvtNpsHZrs3XNxvxh5UtMA=; b=d0OntYfe0ymPyU6quYfPhRqgcF
+	OJxFCZ5PfPy9fB8HnMowNXML29uvEblIoET9udJzrwy3YZNOSsCcVkDS0LucMMqBEVLLiD10NcX5e
+	I/xRRf+bmH+76vuIlWn/kMLFmrZjvjcGdbCSf+EOJTcR8TTNYr6h75dXk0j//BJdNgN1od94Uk9S3
+	64Y1a2TvoE8Fll/xUUBIjP/3MUkVG7iixoNXWS1+M/koff/mE514g9i13gkaHcPiwUScwKBMgMgSW
+	o4WN7pu1SJ9RLUvGq4V28TCcm/xcfitWI36hYIpYm5sXYf3R6z11gWbx6ALlpmiIm9HQlTeif7uo5
+	86yxe23A==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+	id 1qvJ35-0039Gq-9s; Tue, 24 Oct 2023 15:10:27 +0000
+Date: Tue, 24 Oct 2023 16:10:27 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
 	Ilya Dryomov <idryomov@gmail.com>,
 	Andrew Morton <akpm@linux-foundation.org>,
 	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
 	linux-xfs@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 3/3] xfs: respect the stable writes flag on the RT device
-Message-ID: <20231024150904.GA3195650@frogsfrogsfrogs>
+Subject: Re: [PATCH 1/3] filemap: add a per-mapping stable writes flag
+Message-ID: <ZTfeYzvFV7QoVT1z@casper.infradead.org>
 References: <20231024064416.897956-1-hch@lst.de>
- <20231024064416.897956-4-hch@lst.de>
+ <20231024064416.897956-2-hch@lst.de>
+ <20231024150053.GY3195650@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,100 +56,20 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231024064416.897956-4-hch@lst.de>
+In-Reply-To: <20231024150053.GY3195650@frogsfrogsfrogs>
 
-On Tue, Oct 24, 2023 at 08:44:16AM +0200, Christoph Hellwig wrote:
-> Update the per-folio stable writes flag dependening on which device an
-> inode resides on.
+On Tue, Oct 24, 2023 at 08:00:53AM -0700, Darrick J. Wong wrote:
+> On Tue, Oct 24, 2023 at 08:44:14AM +0200, Christoph Hellwig wrote:
+> > Add a per-address_space AS_STABLE_WRITES flag to control the behavior
+> > in a more fine grained way.  The existing SB_I_STABLE_WRITES is kept
+> > to initialize AS_STABLE_WRITES to the existing default which covers
+> > most cases.
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  fs/xfs/xfs_inode.h | 8 ++++++++
->  fs/xfs/xfs_ioctl.c | 9 +++++++++
->  fs/xfs/xfs_iops.c  | 7 +++++++
->  3 files changed, 24 insertions(+)
-> 
-> diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
-> index 0c5bdb91152e1c..682959c8f78cb0 100644
-> --- a/fs/xfs/xfs_inode.h
-> +++ b/fs/xfs/xfs_inode.h
-> @@ -561,6 +561,14 @@ extern void xfs_setup_inode(struct xfs_inode *ip);
->  extern void xfs_setup_iops(struct xfs_inode *ip);
->  extern void xfs_diflags_to_iflags(struct xfs_inode *ip, bool init);
->  
-> +static inline void xfs_update_stable_writes(struct xfs_inode *ip)
-> +{
-> +	if (bdev_stable_writes(xfs_inode_buftarg(ip)->bt_bdev))
-> +		mapping_set_stable_writes(VFS_I(ip)->i_mapping);
-> +	else
-> +		mapping_clear_stable_writes(VFS_I(ip)->i_mapping);
-> +}
-> +
->  /*
->   * When setting up a newly allocated inode, we need to call
->   * xfs_finish_inode_setup() once the inode is fully instantiated at
-> diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-> index 55bb01173cde8c..67bf613b3c86bc 100644
-> --- a/fs/xfs/xfs_ioctl.c
-> +++ b/fs/xfs/xfs_ioctl.c
-> @@ -1147,6 +1147,15 @@ xfs_ioctl_setattr_xflags(
->  	ip->i_diflags2 = i_flags2;
->  
->  	xfs_diflags_to_iflags(ip, false);
-> +
-> +	/*
-> +	 * Make the stable writes flag match that of the device the inode
-> +	 * resides on when flipping the RT flag.
-> +	 */
-> +	if (S_ISREG(VFS_I(ip)->i_mode) &&
-> +	    XFS_IS_REALTIME_INODE(ip) != (fa->fsx_xflags & FS_XFLAG_REALTIME))
-> +		xfs_update_stable_writes(ip);
+> For a hot second I wondered if we could get rid of SB_I_STABLE_WRITES
+> too, but then had an AHA moment when I saw that NFS also sets it.
 
-Hmm.  Won't the masking operation here result in the if test comparing 0
-or FS_XFLAG_REALTIME to 0 or 1?
-
-Oh.  FS_XFLAG_REALTIME == 1, so that's not an issue in this one case.
-That's a bit subtle though, I'd have preferred
-
-	    XFS_IS_REALTIME_INODE(ip) != !!(fa->fsx_xflags & FS_XFLAG_REALTIME))
-
-to make it more obvious that the if test isn't comparing apples to
-oranges.
-
-> +
->  	xfs_trans_ichgtime(tp, ip, XFS_ICHGTIME_CHG);
->  	xfs_trans_log_inode(tp, ip, XFS_ILOG_CORE);
->  	XFS_STATS_INC(mp, xs_ig_attrchg);
-> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-> index 2b3b05c28e9e48..b8ec045708c318 100644
-> --- a/fs/xfs/xfs_iops.c
-> +++ b/fs/xfs/xfs_iops.c
-> @@ -1298,6 +1298,13 @@ xfs_setup_inode(
->  	gfp_mask = mapping_gfp_mask(inode->i_mapping);
->  	mapping_set_gfp_mask(inode->i_mapping, (gfp_mask & ~(__GFP_FS)));
->  
-> +	/*
-> +	 * For real-time inodes update the stable write flags to that of the RT
-> +	 * device instead of the data device.
-> +	 */
-> +	if (S_ISREG(inode->i_mode) && XFS_IS_REALTIME_INODE(ip))
-> +		xfs_update_stable_writes(ip);
-
-I wonder if xfs_update_stable_writes should become an empty function for
-the CONFIG_XFS_RT=n case, to avoid the atomic flags update?
-
-(The extra code is probably not worth the microoptimization.)
-
-With the !! nit addressed,
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-
---D
-
-> +
->  	/*
->  	 * If there is no attribute fork no ACL can exist on this inode,
->  	 * and it can't have any file capabilities attached to it either.
-> -- 
-> 2.39.2
-> 
+I mean, we could if we're short on flags, or it just offends our
+aesthetics to have it.  NFS (and others) would just have to
+call mapping_set_stable_writes() in their inode initialisation
+routines.  I don't personally find it a big deal either way.
 
