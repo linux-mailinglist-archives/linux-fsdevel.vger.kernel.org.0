@@ -1,146 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-1078-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1079-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99F7A7D5326
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 15:50:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EEF97D536B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 15:58:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48681281B2C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 13:50:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 729FCB2103F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 13:58:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D3DB30FA5;
-	Tue, 24 Oct 2023 13:48:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 180162B75C;
+	Tue, 24 Oct 2023 13:58:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SzE1AUc4"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="dBGQjqFy"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C5B93A27E
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 13:48:16 +0000 (UTC)
-Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57D622116
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 06:48:09 -0700 (PDT)
-Received: by mail-yb1-xb49.google.com with SMTP id 3f1490d57ef6-d81e9981ff4so4175228276.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 06:48:09 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2BFE125DE
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 13:58:01 +0000 (UTC)
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 977262720
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 06:57:58 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-9c603e2354fso937218366b.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 06:57:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1698155288; x=1698760088; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5iA9XL/oyX6Tyl0rnn5vdBOVip3jqaNokzkLete42fs=;
-        b=SzE1AUc4BKZmpNvrK36+SD3sWBCP8XLcqDoSN7SaMr2sU/BG1aGfkwvE/f4JQXF1Ni
-         hMF1o0lNDayxObo0C0wjdTZL8vll7r8pHHyLG7ycDypgWlfcaIqRWfAtBLLsA0BrpBju
-         FzAAj+z5fJfNRaY9+A3lV6zqMBZMFytgHluIRpWvQ3sZxRKVk0/VlTAtIhv1vlgDxCFT
-         1X0QR2xi2xN0sadEGLcjq9JrBII48akc5UqV38dawVcqLr033J2tJARubY1zouO5IWW8
-         ObNjzyLUon3FC8l21rKOSCG4nSNGOECtt/Pzik0zSbCvIpn6JtaWo302ot6QhuiBaU7v
-         3hsg==
+        d=szeredi.hu; s=google; t=1698155877; x=1698760677; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=CFq2Fg3zVAnOrmEfLn53FQxN7jmqeIO+YSPDEZIOjqc=;
+        b=dBGQjqFyfkxCERh0ht6T4zHtOMCIAEEElWD0aSCE56alg9Tf21JyvwveX0xPtdPfJM
+         2lNl7cJUacZQZfQsx6uluR+8JzJ/pMrkSihbCje0m4cS3jM8oLrrlfpDYCiy6VeP+X72
+         nsEYRXs8dvXwPwr3u5i/31goOMOKzmLc8zBag=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698155288; x=1698760088;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5iA9XL/oyX6Tyl0rnn5vdBOVip3jqaNokzkLete42fs=;
-        b=A08fTBTu5j3+wlhaofwFsL5ObR5mKxDOMpfsybB9hNrxhycwWkIUemvQuIJdEZmk9O
-         jC/v+nTjcPGtuS/NHwgADAYWSqLaXL39IE9v96a59FzqT5Hd6SrY8sR40X/xr3L72sjH
-         Za0rEFIHOQHP1xd6HYwf424UTPd7rgXsWbeg5pVKwRRhu/n6ZTJPPR/chTK7OfAUp/wk
-         mGtmGcV3mbBpWt/lRXG1zCI6OCCORm4SPfNAfPuaE4ODi86n5o/F9+0IxlC3pI8SzB9n
-         3PehhkIfE9F9yciLZrcD0z0ESADFcZygfFVMqnWMH3DkQt3iD1f8ZnXZLsMznaAmcov6
-         BvcA==
-X-Gm-Message-State: AOJu0YyL2qnj5X2xb3+Fl9vjiA2nNTuY8xilPmU+QLTHGsno1XZQ7d2V
-	7e2jKRj8oSg4QJfHHR54ZZ2C2jlv/kY=
-X-Google-Smtp-Source: AGHT+IG2dGz7nkvTfdEUK5vnzGjBRQVPkaal0DQpTev0jCoT6FkWge7pFcsduGaJ7nCMKZx++nF8KYSK16A=
-X-Received: from surenb-desktop.mtv.corp.google.com ([2620:15c:211:201:45ba:3318:d7a5:336a])
- (user=surenb job=sendgmr) by 2002:a25:ade8:0:b0:d89:dd12:163d with SMTP id
- d40-20020a25ade8000000b00d89dd12163dmr222107ybe.1.1698155288323; Tue, 24 Oct
- 2023 06:48:08 -0700 (PDT)
-Date: Tue, 24 Oct 2023 06:46:36 -0700
-In-Reply-To: <20231024134637.3120277-1-surenb@google.com>
+        d=1e100.net; s=20230601; t=1698155877; x=1698760677;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CFq2Fg3zVAnOrmEfLn53FQxN7jmqeIO+YSPDEZIOjqc=;
+        b=SFZORk/zE2doPEngb5yz/Wr0IHf79qrzxleWu7lag8MbCVNArhJ/QYCw/RX5roo/Mx
+         s+5kaXgyEyJglfBsmH+9X8Q6mg4K4n8rzW1vEeV2wdiooIxf0/ha5fPgHuniBeAfJ4CC
+         LhKVlVgFMm0yOocdR0j6nSc/D3DkHwSkwx+/m7ScHjk2SAjz6RKHGkXLTI594EfGLd6p
+         fLfvQ6KqdXteceuz6zr+udzx1cM5CjMs+D78Wtk/9UImoJQQQAnDOTmWlqIYlnKLszk0
+         oB/W4o8oSref9xUsQOWth0ar5vZlZVODs4D/b3x20aZspGlBttlolf8AJE+f8F8w1wVE
+         cxJw==
+X-Gm-Message-State: AOJu0Yzy3uDS/mm2v+AaG8BpmjtMh0p/QGJbDx80ahQushNKiF1c4O4X
+	rEyPzmQyisEpnzayN2rpHPPtAjLRgp0kTd21qtM4iA==
+X-Google-Smtp-Source: AGHT+IEV11aVuDatR+GsbiTzkdam4eLmDzs7DndyyWqozB2d9zhCaHb3NdyEF13kC/pQx/zoObUqvAUWAIwVd1XT2cQ=
+X-Received: by 2002:a17:907:94cd:b0:9ae:614e:4560 with SMTP id
+ dn13-20020a17090794cd00b009ae614e4560mr9998911ejc.29.1698155877064; Tue, 24
+ Oct 2023 06:57:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20231024134637.3120277-1-surenb@google.com>
-X-Mailer: git-send-email 2.42.0.758.gaed0368e0e-goog
-Message-ID: <20231024134637.3120277-40-surenb@google.com>
-Subject: [PATCH v2 39/39] MAINTAINERS: Add entries for code tagging and memory
- allocation profiling
-From: Suren Baghdasaryan <surenb@google.com>
-To: akpm@linux-foundation.org
-Cc: kent.overstreet@linux.dev, mhocko@suse.com, vbabka@suse.cz, 
-	hannes@cmpxchg.org, roman.gushchin@linux.dev, mgorman@suse.de, 
-	dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com, 
-	corbet@lwn.net, void@manifault.com, peterz@infradead.org, 
-	juri.lelli@redhat.com, ldufour@linux.ibm.com, catalin.marinas@arm.com, 
-	will@kernel.org, arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com, 
-	dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com, 
-	david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org, 
-	nathan@kernel.org, dennis@kernel.org, tj@kernel.org, muchun.song@linux.dev, 
-	rppt@kernel.org, paulmck@kernel.org, pasha.tatashin@soleen.com, 
-	yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com, 
-	hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org, 
-	ndesaulniers@google.com, vvvvvv@google.com, gregkh@linuxfoundation.org, 
-	ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org, 
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
-	bristot@redhat.com, vschneid@redhat.com, cl@linux.com, penberg@kernel.org, 
-	iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com, 
-	elver@google.com, dvyukov@google.com, shakeelb@google.com, 
-	songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com, 
-	minchan@google.com, kaleshsingh@google.com, surenb@google.com, 
-	kernel-team@android.com, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev, 
-	linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-modules@vger.kernel.org, kasan-dev@googlegroups.com, 
-	cgroups@vger.kernel.org
+MIME-Version: 1.0
+References: <20230928130147.564503-1-mszeredi@redhat.com> <20230928130147.564503-5-mszeredi@redhat.com>
+ <CAHC9VhQD9r+Qf5Vz1XmxUdJJJO7HNTKdo8Ux=n+xkxr=JGFMrw@mail.gmail.com>
+ <CAJfpegsPbDgaz46x4Rr9ZgCpF9rohVHsvuWtQ5LNAdiYU_D4Ww@mail.gmail.com>
+ <a25f2736-1837-f4ca-b401-85db24f46452@themaw.net> <CAJfpegv78njkWdaShTskKXoGOpKAndvYYJwq7CLibiu+xmLCvg@mail.gmail.com>
+ <7fe3c01f-c225-394c-fac5-cabfc70f3606@themaw.net> <c45fc3e5-05ca-14ab-0536-4f670973b927@themaw.net>
+In-Reply-To: <c45fc3e5-05ca-14ab-0536-4f670973b927@themaw.net>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 24 Oct 2023 15:57:45 +0200
+Message-ID: <CAJfpegvTFFzCN9nssL0B6g97qW5xbm6KsrFPRqtSp5B1jaYbLg@mail.gmail.com>
+Subject: Re: [PATCH v3 4/4] add listmount(2) syscall
+To: Ian Kent <raven@themaw.net>
+Cc: Paul Moore <paul@paul-moore.com>, Miklos Szeredi <mszeredi@redhat.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-api@vger.kernel.org, linux-man@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>, 
+	David Howells <dhowells@redhat.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <christian@brauner.io>, 
+	Amir Goldstein <amir73il@gmail.com>, Matthew House <mattlloydhouse@gmail.com>, 
+	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>
 Content-Type: text/plain; charset="UTF-8"
 
-From: Kent Overstreet <kent.overstreet@linux.dev>
+On Fri, 13 Oct 2023 at 04:40, Ian Kent <raven@themaw.net> wrote:
 
-The new code & libraries added are being maintained - mark them as such.
+> But because we needed to enumerate mounts in the same way as the proc file
+>
+> system mount tables a flag FSINFO_ATTR_MOUNT_ALL was added that essentially
+>
+> used the mount namespace mounts list in a similar way to the proc file
+>
+> system so that a list of mounts for a mount namespace could be retrieved.
 
-Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
-Signed-off-by: Suren Baghdasaryan <surenb@google.com>
----
- MAINTAINERS | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+Makes sense.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 2894f0777537..22e51de42131 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5118,6 +5118,13 @@ S:	Supported
- F:	Documentation/process/code-of-conduct-interpretation.rst
- F:	Documentation/process/code-of-conduct.rst
- 
-+CODE TAGGING
-+M:	Suren Baghdasaryan <surenb@google.com>
-+M:	Kent Overstreet <kent.overstreet@linux.dev>
-+S:	Maintained
-+F:	include/linux/codetag.h
-+F:	lib/codetag.c
-+
- COMEDI DRIVERS
- M:	Ian Abbott <abbotti@mev.co.uk>
- M:	H Hartley Sweeten <hsweeten@visionengravers.com>
-@@ -13708,6 +13715,15 @@ F:	mm/memblock.c
- F:	mm/mm_init.c
- F:	tools/testing/memblock/
- 
-+MEMORY ALLOCATION PROFILING
-+M:	Suren Baghdasaryan <surenb@google.com>
-+M:	Kent Overstreet <kent.overstreet@linux.dev>
-+S:	Maintained
-+F:	include/linux/alloc_tag.h
-+F:	include/linux/codetag_ctx.h
-+F:	lib/alloc_tag.c
-+F:	lib/pgalloc_tag.c
-+
- MEMORY CONTROLLER DRIVERS
- M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
- L:	linux-kernel@vger.kernel.org
--- 
-2.42.0.758.gaed0368e0e-goog
+Added a LISTMOUNT_RECURSIVE flag.
 
+Thanks,
+Miklos
 
