@@ -1,77 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-1005-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1006-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E1C07D4C7B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 11:33:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 255C97D4C84
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 11:34:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1770328194E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 09:33:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA6FCB20F99
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 09:34:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3732F2421C;
-	Tue, 24 Oct 2023 09:33:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8175D2421E;
+	Tue, 24 Oct 2023 09:34:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="A7Vf/h2I";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZK7UCKmm"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Taeu222U";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6swiuuTu"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 028C814F9E
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 09:33:25 +0000 (UTC)
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB88C1BC7
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 02:33:22 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39712224F7
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 09:34:05 +0000 (UTC)
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB51E10C0
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 02:34:03 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 4673F1FD87;
-	Tue, 24 Oct 2023 09:33:21 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A6E762189E;
+	Tue, 24 Oct 2023 09:34:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1698140001; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1698140041; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Ahilqsyr34aypjt/QhYgtXq9Mqz9d3Qr7GdrM7vyV4k=;
-	b=A7Vf/h2IFo4ALjRJ92tHdk2YjxG9xror+tVzcbBgjcjPUcZZN9C2wve9YGHqf5lgcixDtc
-	SZbXg53yxtYlUQlK55T4OAP+1KqgvVccgWS5NenPUmsCdTc9gJA35qYJhopOFHQXaaAlbB
-	agxPG8pjyWPrHGPS1aGb/UwysKakLvE=
+	bh=jIHaUscQTq1/wxwXcDzx5FjA6aS8KhMLGKHlRvr84P4=;
+	b=Taeu222UV9/DMDpx+957XHJpswK8QtqtYGHN1uLSpQ81q3ZbEI4u1QL0qU+C42fUn+sgDS
+	i7FnNcPjV2ZfcE67admWeGxW/8bMz8+JkEm10iV1O2Y4Q/CHBhdBIMthFMLYJMlyEpGXqj
+	rN37fr9zRKJ41rNYsYHsoR91TZqx8pA=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1698140001;
+	s=susede2_ed25519; t=1698140041;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Ahilqsyr34aypjt/QhYgtXq9Mqz9d3Qr7GdrM7vyV4k=;
-	b=ZK7UCKmmHBdSzcKp7QqFlf37S+M85PAzpvhZ5wY66rkwY3UN2CAfButL7jOXiahmL69Y77
-	AdHfT0zg0iGE/yDQ==
+	bh=jIHaUscQTq1/wxwXcDzx5FjA6aS8KhMLGKHlRvr84P4=;
+	b=6swiuuTumTS5psyi1mb8eNNLazSJ9YvK6C10hwZ0DfJG0JR6SkC0WoR3U+Me5UmGiot67X
+	56CQibwllqrJMIBA==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
 	(No client certificate requested)
-	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 361C1134F5;
-	Tue, 24 Oct 2023 09:33:21 +0000 (UTC)
+	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 8CBF1134F5;
+	Tue, 24 Oct 2023 09:34:01 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
 	by imap2.suse-dmz.suse.de with ESMTPSA
-	id MPUtDWGPN2V+CAAAMHmgww
-	(envelope-from <jack@suse.cz>); Tue, 24 Oct 2023 09:33:21 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id A5632A05BC; Tue, 24 Oct 2023 11:33:20 +0200 (CEST)
-Date: Tue, 24 Oct 2023 11:33:20 +0200
-From: Jan Kara <jack@suse.cz>
-To: Cyril Hrubis <chrubis@suse.cz>
-Cc: Richard Palethorpe <rpalethorpe@suse.de>, mszeredi@redhat.com,
-	brauner@kernel.org, Jan Kara <jack@suse.cz>,
+	id sAkpIYmPN2XTCAAAMHmgww
+	(envelope-from <chrubis@suse.cz>); Tue, 24 Oct 2023 09:34:01 +0000
+Date: Tue, 24 Oct 2023 11:34:33 +0200
+From: Cyril Hrubis <chrubis@suse.cz>
+To: Richard Palethorpe <rpalethorpe@suse.de>
+Cc: mszeredi@redhat.com, brauner@kernel.org, Jan Kara <jack@suse.cz>,
 	Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
 	linux-fsdevel@vger.kernel.org, ltp@lists.linux.it
-Subject: Re: [LTP] [PATCH v2 4/4] syscalls: splice07: New splice tst_fd
- iterator test
-Message-ID: <20231024093320.wsusd5qtveqt64dt@quack3>
+Subject: Re: [LTP] [PATCH v2 3/4] syscalls: accept: Add tst_fd test
+Message-ID: <ZTePqRn48CjcZT1T@yuki>
 References: <20231016123320.9865-1-chrubis@suse.cz>
- <20231016123320.9865-5-chrubis@suse.cz>
- <87o7gpuxfl.fsf@suse.de>
- <ZTd4v-aY2jXkUgr0@yuki>
+ <20231016123320.9865-4-chrubis@suse.cz>
+ <87fs20v07j.fsf@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -80,12 +75,12 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZTd4v-aY2jXkUgr0@yuki>
-Authentication-Results: smtp-out2.suse.de;
+In-Reply-To: <87fs20v07j.fsf@suse.de>
+Authentication-Results: smtp-out1.suse.de;
 	none
 X-Spam-Level: 
-X-Spam-Score: -9.91
-X-Spamd-Result: default: False [-9.91 / 50.00];
+X-Spam-Score: -7.60
+X-Spamd-Result: default: False [-7.60 / 50.00];
 	 ARC_NA(0.00)[];
 	 RCVD_VIA_SMTP_AUTH(0.00)[];
 	 FROM_HAS_DN(0.00)[];
@@ -96,88 +91,57 @@ X-Spamd-Result: default: False [-9.91 / 50.00];
 	 REPLY(-4.00)[];
 	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	 NEURAL_HAM_SHORT(-1.00)[-1.000];
-	 RCPT_COUNT_SEVEN(0.00)[9];
+	 RCPT_COUNT_SEVEN(0.00)[8];
 	 FROM_EQ_ENVFROM(0.00)[];
 	 MIME_TRACE(0.00)[0:+];
 	 MID_RHS_NOT_FQDN(0.50)[];
 	 RCVD_COUNT_TWO(0.00)[2];
 	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-2.31)[96.76%]
+	 BAYES_HAM(-0.00)[37.18%]
 
-On Tue 24-10-23 09:56:47, Cyril Hrubis wrote:
-> > > +	if (fd_in->type == TST_FD_PIPE_READ) {
-> > > +		switch (fd_out->type) {
-> > > +		case TST_FD_FILE:
-> > > +		case TST_FD_PIPE_WRITE:
-> > > +		case TST_FD_UNIX_SOCK:
-> > > +		case TST_FD_INET_SOCK:
-> > > +		case TST_FD_MEMFD:
-> > > +			return;
-> > > +		default:
-> > > +		break;
-> > > +		}
-> > > +	}
-> > > +
-> > > +	if (fd_out->type == TST_FD_PIPE_WRITE) {
-> > > +		switch (fd_in->type) {
-> > > +		/* While these combinations succeeed */
-> > > +		case TST_FD_FILE:
-> > > +		case TST_FD_MEMFD:
-> > > +			return;
-> > > +		/* And this complains about socket not being connected */
-> > > +		case TST_FD_INET_SOCK:
-> > > +			return;
-> > > +		default:
-> > > +		break;
-> > > +		}
-> > > +	}
-> > > +
-> > > +	/* These produce EBADF instead of EINVAL */
-> > > +	switch (fd_out->type) {
-> > > +	case TST_FD_DIR:
-> > > +	case TST_FD_DEV_ZERO:
-> > > +	case TST_FD_PROC_MAPS:
-> > > +	case TST_FD_INOTIFY:
-> > > +	case TST_FD_PIPE_READ:
-> > > +		exp_errno = EBADF;
-> > > +	default:
-> > > +	break;
-> > > +	}
-> > > +
-> > > +	if (fd_in->type == TST_FD_PIPE_WRITE)
-> > > +		exp_errno = EBADF;
-> > > +
-> > > +	if (fd_in->type == TST_FD_OPEN_TREE || fd_out->type == TST_FD_OPEN_TREE ||
-> > > +	    fd_in->type == TST_FD_PATH || fd_out->type == TST_FD_PATH)
-> > > +		exp_errno = EBADF;
-> > 
-> > This seems like something that could change due to checks changing
-> > order.
+Hi!
+> >  int invalid_socketfd = 400; /* anything that is not an open file */
+> > -int devnull_fd;
+> >  int socket_fd;
+> >  int udp_fd;
+> >  
+> > @@ -45,10 +44,6 @@ static struct test_case {
+> >  		(struct sockaddr *)&fsin1, sizeof(fsin1), EBADF,
+> >  		"bad file descriptor"
+> >  	},
+> > -	{
+> > -		PF_INET, SOCK_STREAM, 0, &devnull_fd, (struct sockaddr *)&fsin1,
+> > -		sizeof(fsin1), ENOTSOCK, "fd is not socket"
+> > -	},
+> >  	{
+> >  		PF_INET, SOCK_STREAM, 0, &socket_fd, (struct sockaddr *)3,
+> >  		sizeof(fsin1), EINVAL, "invalid socket buffer"
+> > @@ -73,8 +68,6 @@ static void test_setup(void)
+> >  	sin0.sin_port = 0;
+> >  	sin0.sin_addr.s_addr = INADDR_ANY;
+> >  
+> > -	devnull_fd = SAFE_OPEN("/dev/null", O_WRONLY);
+> > -
+> >  	socket_fd = SAFE_SOCKET(PF_INET, SOCK_STREAM, 0);
+> >  	SAFE_BIND(socket_fd, (struct sockaddr *)&sin0, sizeof(sin0));
+> >  
+> > @@ -88,7 +81,6 @@ static void test_setup(void)
+> >  
+> >  static void test_cleanup(void)
+> >  {
+> > -	SAFE_CLOSE(devnull_fd);
+> >  	SAFE_CLOSE(socket_fd);
+> >  	SAFE_CLOSE(udp_fd);
+> >  }
 > 
-> I was hoping that kernel devs would look at the current state, which is
-> documented in these conditions and tell me how shold we set the
-> expectations. At least the open_tree() seems to differ from the rest in
-> several cases, so maybe needs to be aligned with the rest.
+> Is this supposed to be part of the patchset?
+> 
+> I don't mind, but if we are strict, it should be in another commit.
 
-Yeah, so the EINVAL vs EBADF vs EISDIR vs ESPIPE distinction is somewhat
-arbitrary and as mentioned it very much depends on the order of checks we
-do and that is not very consistent among different operations or over
-longer time periods. So it would be good if tests could accept all errors
-that make some sense. 
+That removes ENOTSOCK test that is now handled in accept03, I suppose I
+should have explained that better in the comit message.
 
-E.g. when we cannot seek (change file position) of the fd, ESPIPE is a
-valid error return for any operation involving changing file position.
-EISDIR is valid error for any directory fd when doing operation not expected
-to work on directories. EINVAL and EBADF are quite generic and should be
-accepted anytime fd is not suitable for the operation (generally we try to
-return EBADF when the descriptor itself isn't suitable - e.g. O_PATH
-descriptor, closed descriptor, ... - and return EINVAL when the open
-*object* is not suitable but that is a very rough guideline people don't
-always follow). EACCES / EPERM should be accepted error return when we
-don't have enough permissions to perform operation on the fd. And so on.
-
-								Honza
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Cyril Hrubis
+chrubis@suse.cz
 
