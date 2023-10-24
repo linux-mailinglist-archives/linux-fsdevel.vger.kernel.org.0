@@ -1,117 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-1115-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1116-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BF957D5A0B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 20:01:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9685C7D5A5B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 20:23:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E011AB21055
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 18:01:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F36A1F21BC8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 18:23:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CCEE3B2BD;
-	Tue, 24 Oct 2023 18:01:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D178F3B7BF;
+	Tue, 24 Oct 2023 18:23:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JMr6o4nO"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="GoBMniGd"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1518273CB
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 18:01:04 +0000 (UTC)
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 691DA10DA
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 11:01:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1698170462;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/rRUTdijOYZODyhIUu5lwhM1sh+LeLiZh2xcrppa9E0=;
-	b=JMr6o4nOJcQoe+m3kzgZ6lKB1YBCZJTcZrTqNXaEUwzX1SrAil1EL3S4mk6xeeafMUbbS8
-	GMgFU87utQozRVASzWH+2dtPpsD99jPuEvF/rKCephz+iPfVZrciIpWd6nFYYrne7ox/TW
-	9vCREjBfFDHg0u7/N57r/ypNV//O740=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-210-qDrhfe1EOneTbvC3vZXt9Q-1; Tue, 24 Oct 2023 14:00:57 -0400
-X-MC-Unique: qDrhfe1EOneTbvC3vZXt9Q-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 34D82857A86;
-	Tue, 24 Oct 2023 18:00:56 +0000 (UTC)
-Received: from [100.85.132.103] (unknown [10.22.48.7])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 883682026D4C;
-	Tue, 24 Oct 2023 18:00:54 +0000 (UTC)
-From: Benjamin Coddington <bcodding@redhat.com>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Trond Myklebust <trond.myklebust@hammerspace.com>,
- Anna Schumaker <anna@kernel.org>, Jeff Layton <jlayton@kernel.org>,
- Chuck Lever <chuck.lever@oracle.com>, Christian Brauner <brauner@kernel.org>,
- Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
- linux-nfs@vger.kernel.org
-Subject: Re: [PATCH] nfs: derive f_fsid from server's fsid
-Date: Tue, 24 Oct 2023 14:00:53 -0400
-Message-ID: <41F5B54F-0345-4C44-99FB-6E2A6C9F365C@redhat.com>
-In-Reply-To: <CAOQ4uxho0ryGuq7G+LaoTvqHRR_kg2fCNL2sGMLvNujODA8YPQ@mail.gmail.com>
-References: <20231024110109.3007794-1-amir73il@gmail.com>
- <1CFE0178-CE91-4C99-B43E-33EF78D0BEBF@redhat.com>
- <CAOQ4uxhe5pH3yRxFS_8pvtCgbXspKB6r9aacRJ8FysGQE2Hu9g@mail.gmail.com>
- <2382DA9B-D66B-41D9-8413-1C5319C01165@redhat.com>
- <CAOQ4uxho0ryGuq7G+LaoTvqHRR_kg2fCNL2sGMLvNujODA8YPQ@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF644134B2
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 18:23:34 +0000 (UTC)
+Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD6A9C4
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 11:23:33 -0700 (PDT)
+Received: by mail-yb1-xb2b.google.com with SMTP id 3f1490d57ef6-d9a4c0d89f7so4386400276.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 11:23:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1698171813; x=1698776613; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fhPdOnDAT6+PH0Vz8+OhielyBKDSwn2hQuYPBjz8d74=;
+        b=GoBMniGdumoQamnCW981sYPNKX4w3n07WuWq2knVER51Gc5Y7j/PQkY1mforczzlua
+         t/H+c1wmbpIVoX6Bl5WjQKy3UDWumv22J8txGIMAYH4lsxAfrdEG1MHKxyW/bwFcW7zZ
+         efy0cilMUzI+bke3LuELpoNSzX/pjD9AzGa8J3eL4+ZJ71cGIaGJTZHiz6vDuBvvmh+K
+         ke8VL+eBHQAXdnOf3n9/aReOaw4Gcw53UkMnkLEx+4bQ4skHqn86sfnagYJiX3E4LkGI
+         1XX8pY+sAXDhetrHi/U9Ii22D8cbB7i6MWLDC4w1bZCkVsaIQBw5XMdIHwK1Mj8qx/cL
+         oC6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698171813; x=1698776613;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fhPdOnDAT6+PH0Vz8+OhielyBKDSwn2hQuYPBjz8d74=;
+        b=Ful8OtV9f9AVyNyP1tKh3xc2qwBaPaaIAJkkMXM8Uc+sn46KU91QOZ8jHhK02MWnbH
+         DlHycMxSOqQp8nGM86I4ZzgrZiI40QYQRc01g6fcW41AyUZVbqCmvUbrmlzAvuQjN6KP
+         g+LOtnU3bLpPbwf4plfjhZVTLKyym3RpatId51L959AUVp/JBA7Oco4v6ZMjqG0HJ/ko
+         sisNPU3EbuqqFulqId3zaSiP3n5Q1iXQIlbCAwps1JzI3p5NFN0leV7xXIYbuetpVTB2
+         8wDX97f5GUCu70LTOYIekWxNRnVgZiqOrzET5LXYsyV4LhbdAKw4jd+0Udm/WwtPuE4Z
+         beMg==
+X-Gm-Message-State: AOJu0Yzx/R74U60phv7R86KQKiKlVbDfcQ3gjVWN7h9r5cnAWUfybBeL
+	Fzhor+SfdjbeLiQ5188PJenIPfPIUmoRoxPkWo9r
+X-Google-Smtp-Source: AGHT+IGYicwo5fgU8AO29MEj/Hqf7OL3O4Fu0oZpB1YjJyeL4usUQIL7t8AbMBYxOoSYtknsoEYzmYx0zZzWthpg+eM=
+X-Received: by 2002:a25:b322:0:b0:d9b:4c61:26f1 with SMTP id
+ l34-20020a25b322000000b00d9b4c6126f1mr12961292ybj.24.1698171812890; Tue, 24
+ Oct 2023 11:23:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.4
+References: <20231016180220.3866105-1-andrii@kernel.org> <CAEf4BzaMLg31g6Jm9LmFM9UYUjm1Eq7P6Y-KnoiDoh7Sbj_RWg@mail.gmail.com>
+In-Reply-To: <CAEf4BzaMLg31g6Jm9LmFM9UYUjm1Eq7P6Y-KnoiDoh7Sbj_RWg@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 24 Oct 2023 14:23:21 -0400
+Message-ID: <CAHC9VhRxR3ygxskpfbukHeM5wmX0=SifvLny2eiezWvwAyB9tw@mail.gmail.com>
+Subject: Re: [PATCH v8 bpf-next 00/18] BPF token and BPF FS-based delegation
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	keescook@chromium.org, brauner@kernel.org, lennart@poettering.net, 
+	kernel-team@meta.com, sargun@sargun.me
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 24 Oct 2023, at 13:12, Amir Goldstein wrote:
-> On Tue, Oct 24, 2023 at 6:32 PM Benjamin Coddington <bcodding@redhat.com> wrote:
->> Yes, but if the specific export is on the same server's filesystem as the
->> "root", you'll still get zero.  There are various ways to set fsid on
->> exports for linux servers, but the fsid will be the same for all exports of
->> the same filesystem on the server.
->>
->
-> OK. good to know. I thought zero fsid was only for the root itself.
-
-Yes, but by "root" here I always mean the special NFSv4 root - the special
-per-server global root filehandle.
+On Tue, Oct 24, 2023 at 1:52=E2=80=AFPM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
+> On Mon, Oct 16, 2023 at 11:04=E2=80=AFAM Andrii Nakryiko <andrii@kernel.o=
+rg> wrote:
 
 ...
 
->> I'm not familiar with fanotify enough to know if having multiple fsid 0
->> mounts of different filesystems on different servers will do the right
->> thing.  I wanted to point out that very real possibility for v4.
->>
+> > v7->v8:
+> >   - add bpf_token_allow_cmd and bpf_token_capable hooks (Paul);
+> >   - inline bpf_token_alloc() into bpf_token_create() to prevent acciden=
+tal
+> >     divergence with security_bpf_token_create() hook (Paul);
 >
-> The fact that fsid 0 would be very common for many nfs mounts
-> makes this patch much less attractive.
+> Hi Paul,
 >
-> Because we only get events for local client changes, we do not
-> have to tie the fsid with the server's fsid, we could just use a local
-> volatile fsid, as we do in other non-blockdev fs (tmpfs, kernfs).
+> I believe I addressed all the concerns you had in this revision. Can
+> you please take a look and confirm that all things look good to you
+> from LSM perspective? Thanks!
 
-A good way to do this would be to use the nfs_server->s_dev's major:minor -
-this represents the results of nfs_compare_super(), so it should be the same
-value if NFS is treating it as the same filesystem.
+Yes, thanks for that, this patchset is near the top of my list, there
+just happen to be a lot of things vying for my time at the moment.  My
+apologies on the delay.
 
-> I am not decisive about the best way to tackle this and since
-> Jan was not sure about the value of local-only notifications
-> for network filesystems, I am going to put this one on hold.
->
-> Thanks for the useful feedback!
-
-Sure!
-
-Ben
-
+--=20
+paul-moore.com
 
