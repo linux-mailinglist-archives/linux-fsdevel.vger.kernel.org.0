@@ -1,63 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-987-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-988-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 209F57D4A24
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 10:33:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BC7A7D4A29
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 10:33:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F9391C20BD3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 08:33:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F2992818E4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 08:33:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2016611732;
-	Tue, 24 Oct 2023 08:33:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47CD221A1C;
+	Tue, 24 Oct 2023 08:33:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="B94SZKzS"
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="kuVRWVg+"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A143C24
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 08:33:18 +0000 (UTC)
-Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECCA5A1
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 01:33:17 -0700 (PDT)
-Received: by mail-pf1-x42a.google.com with SMTP id d2e1a72fcca58-6b36e1fcea0so3271515b3a.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 01:33:17 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FBD821370
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 08:33:25 +0000 (UTC)
+Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 549C3A1
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 01:33:24 -0700 (PDT)
+Received: by mail-pf1-x430.google.com with SMTP id d2e1a72fcca58-692c02adeefso3266547b3a.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 01:33:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1698136397; x=1698741197; darn=vger.kernel.org;
+        d=bytedance.com; s=google; t=1698136404; x=1698741204; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7MLK4HxQMsxrLAQzNmdHMtQCN++SQMztyyHR1MHkRQQ=;
-        b=B94SZKzSqsawfuayEI/UehMSGtS4IxKFKCX0IwoUmRF+6j0ja4TTqt59k0u7TDRF1p
-         v8R7VVFKp8LBp57ATeW2It8DKLS65pyhb/4rSN1Fuow/XilrMzprvcYO9Ib6AryUsYvt
-         YNxAebFQw7nuEBiyji2mdf1YCtIejq8msAXlzACmiB0SxmPyLjHzQ+MhHyFxUncgRaNY
-         ET7bPkppLatdrhxoRPCaGsHcAf3WK9yj1xKa7paPjkbbjhvUENO6mKi7Wn9+gnuaK01H
-         k5wygUCn0Bb+cF+rTWWBJX3aTMOhgtQZfmuJc8fNMRgGXEcKy9AQYfv8VFC5ClTASV/b
-         OPpA==
+        bh=r3L72Q2C0A6XyhsC7UMGOLSZK5Azm/i+GpPRU3MZq4Q=;
+        b=kuVRWVg+GOfFDNXgWomsTeaxeDK5DweWacq3Eh7wQKXo50OjyMnBfSUMh2r9xGvEfT
+         5cOPGlpVkPwNjL5sT+eqGivC285OAWO8LyWrQejCOA69F4FNVQSJZesTTLXPm5Z7jVf0
+         83RE/i4wmr4jYUpiwAG5MjzsexAlzEWSxlHjM7teRNWIqujqCbSdIzKR61K71/dOJOXm
+         Ezu6Uj0oBQqxu7nSaliDAlNU2sROr908almnzcXk7xG/Hbj5dCZiS/sDebWuYuaDGMQh
+         IwWnYpTQWHDBYu9DMf9ChpeGRgyLtAAncNwBf4dpxn3UARsGA4r93f7Mbmj6w+OyVbZW
+         Ubeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698136397; x=1698741197;
+        d=1e100.net; s=20230601; t=1698136404; x=1698741204;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7MLK4HxQMsxrLAQzNmdHMtQCN++SQMztyyHR1MHkRQQ=;
-        b=du6VyGSnEZknml77gFPHUiRd/7T2ytHK1dtVCszCo+WL18dU1X8JcJgrHVNgi1YC7w
-         j+FZEq38I7ozU0ulsQNhEVNnne9SuZkbBzQmt11hNjvuks7kIFl0iqVp+117SlZuGFQJ
-         bhF9yrUTgHF3DcIYPgO8mrTdAqVS0+XWKU+dz4cxOa1TlG15DtP/vNmMPidC6zWYhJs1
-         PPuatX9KUX12Ry2siqJfbSM1RCV7Y4YsRQ8ihvOFYZW+dGgkcTU4pJxMZTkBirMmbdyO
-         nr+fkCBK7QMzlQ+yIENVZeprWmmu2Cg8YJ1V52n14eRT3bW2l8AfMNFMcGnNZzhvr3lq
-         Omag==
-X-Gm-Message-State: AOJu0Yzt5vQjybwcfJdO08vF2+uiSlyg3gGUOZnQ5Z/w6pADJ1awLyj0
-	SHO6Wc59ajWbOksrjE8zqTPtXQ==
-X-Google-Smtp-Source: AGHT+IHB77N08kpQP3kK7g9QlYWTNYn9tfxBH6TdMNcz14U0iu/fhKvY168Jlzr+1CThhjfwCpOJUw==
-X-Received: by 2002:a05:6a00:2292:b0:6bd:7cbd:15a2 with SMTP id f18-20020a056a00229200b006bd7cbd15a2mr10659966pfe.26.1698136397397;
-        Tue, 24 Oct 2023 01:33:17 -0700 (PDT)
+        bh=r3L72Q2C0A6XyhsC7UMGOLSZK5Azm/i+GpPRU3MZq4Q=;
+        b=t2lbnjDwVy9uo07dsx3cp6zOWcNCYCrR8vfZYaCgYVLefhagvLzXNm7NOYmW/HYCoE
+         3J3Ie7n3vFX1hktNcdokZD5VgQAK5U53BsIFxHsKm2Mq2Y1nu9hrRhTNvCTt4oJzCKR4
+         h9FXuhIJn4EsSHdAMVL1zRSeTpxT1+xi8aj9AKAr/WNsCUT4RDuDRUUF9cQ5o0uouCw0
+         JZfPmok0noXtAfLsmx7CQPeNROW5zUGUbF1dIE5T5ZzvkqACGu1+Au+GFds3NWK0xDMm
+         vPSmmzTojjdSUhTySqN7NdG5xeWQqz+gLPzAw+m4ncpCiauXenhdP9rPrGgq4wSc5wl1
+         hPeA==
+X-Gm-Message-State: AOJu0Yz6jEXgAh9cWlqmUyBQqJPk7r6k80aqWxMmYwcwWv5OJ6ZTYAjv
+	3d1K7HM7ZXWb43np6oCzhDd+YA==
+X-Google-Smtp-Source: AGHT+IFRF2d7NaEqXWWjz92Xh2LjjQSzD8bGo9Dbzm/HViEErv6yA9g/lWFc+D2a7eTh24RKV68/bg==
+X-Received: by 2002:a05:6a21:a108:b0:17a:e79c:c5ab with SMTP id aq8-20020a056a21a10800b0017ae79cc5abmr1692896pzc.48.1698136403796;
+        Tue, 24 Oct 2023 01:33:23 -0700 (PDT)
 Received: from GL4FX4PXWL.bytedance.net ([203.208.167.147])
-        by smtp.gmail.com with ESMTPSA id y21-20020aa79af5000000b0068be348e35fsm7236977pfp.166.2023.10.24.01.33.11
+        by smtp.gmail.com with ESMTPSA id y21-20020aa79af5000000b0068be348e35fsm7236977pfp.166.2023.10.24.01.33.17
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 24 Oct 2023 01:33:17 -0700 (PDT)
+        Tue, 24 Oct 2023 01:33:23 -0700 (PDT)
 From: Peng Zhang <zhangpeng.00@bytedance.com>
 To: Liam.Howlett@oracle.com,
 	corbet@lwn.net,
@@ -78,9 +78,9 @@ Cc: zhangpeng.00@bytedance.com,
 	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v6 01/10] maple_tree: Add mt_free_one() and mt_attr() helpers
-Date: Tue, 24 Oct 2023 16:32:49 +0800
-Message-Id: <20231024083258.65750-2-zhangpeng.00@bytedance.com>
+Subject: [PATCH v6 02/10] maple_tree: Introduce {mtree,mas}_lock_nested()
+Date: Tue, 24 Oct 2023 16:32:50 +0800
+Message-Id: <20231024083258.65750-3-zhangpeng.00@bytedance.com>
 X-Mailer: git-send-email 2.39.3 (Apple Git-145)
 In-Reply-To: <20231024083258.65750-1-zhangpeng.00@bytedance.com>
 References: <20231024083258.65750-1-zhangpeng.00@bytedance.com>
@@ -92,52 +92,53 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add two helpers:
-1. mt_free_one(), used to free a maple node.
-2. mt_attr(), used to obtain the attributes of maple tree.
+In some cases, nested locks may be needed, so {mtree,mas}_lock_nested is
+introduced. For example, when duplicating maple tree, we need to hold
+the locks of two trees, in which case nested locks are needed.
+
+At the same time, add the definition of spin_lock_nested() in tools for
+testing.
 
 Signed-off-by: Peng Zhang <zhangpeng.00@bytedance.com>
 ---
- lib/maple_tree.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ include/linux/maple_tree.h     | 4 ++++
+ tools/include/linux/spinlock.h | 1 +
+ 2 files changed, 5 insertions(+)
 
-diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-index bb24d84a4922..ca7039633844 100644
---- a/lib/maple_tree.c
-+++ b/lib/maple_tree.c
-@@ -165,6 +165,11 @@ static inline int mt_alloc_bulk(gfp_t gfp, size_t size, void **nodes)
- 	return kmem_cache_alloc_bulk(maple_node_cache, gfp, size, nodes);
- }
+diff --git a/include/linux/maple_tree.h b/include/linux/maple_tree.h
+index d01e850b570f..f91dbc7fe091 100644
+--- a/include/linux/maple_tree.h
++++ b/include/linux/maple_tree.h
+@@ -256,6 +256,8 @@ struct maple_tree {
+ 	struct maple_tree name = MTREE_INIT(name, 0)
  
-+static inline void mt_free_one(struct maple_node *node)
-+{
-+	kmem_cache_free(maple_node_cache, node);
-+}
-+
- static inline void mt_free_bulk(size_t size, void __rcu **nodes)
- {
- 	kmem_cache_free_bulk(maple_node_cache, size, (void **)nodes);
-@@ -205,6 +210,11 @@ static unsigned int mas_mt_height(struct ma_state *mas)
- 	return mt_height(mas->tree);
- }
+ #define mtree_lock(mt)		spin_lock((&(mt)->ma_lock))
++#define mtree_lock_nested(mas, subclass) \
++		spin_lock_nested((&(mt)->ma_lock), subclass)
+ #define mtree_unlock(mt)	spin_unlock((&(mt)->ma_lock))
  
-+static inline unsigned int mt_attr(struct maple_tree *mt)
-+{
-+	return mt->ma_flags & ~MT_FLAGS_HEIGHT_MASK;
-+}
-+
- static inline enum maple_type mte_node_type(const struct maple_enode *entry)
- {
- 	return ((unsigned long)entry >> MAPLE_NODE_TYPE_SHIFT) &
-@@ -5573,7 +5583,7 @@ void mas_destroy(struct ma_state *mas)
- 			mt_free_bulk(count, (void __rcu **)&node->slot[1]);
- 			total -= count;
- 		}
--		kmem_cache_free(maple_node_cache, node);
-+		mt_free_one(ma_mnode_ptr(node));
- 		total--;
- 	}
+ /*
+@@ -406,6 +408,8 @@ struct ma_wr_state {
+ };
  
+ #define mas_lock(mas)           spin_lock(&((mas)->tree->ma_lock))
++#define mas_lock_nested(mas, subclass) \
++		spin_lock_nested(&((mas)->tree->ma_lock), subclass)
+ #define mas_unlock(mas)         spin_unlock(&((mas)->tree->ma_lock))
+ 
+ 
+diff --git a/tools/include/linux/spinlock.h b/tools/include/linux/spinlock.h
+index 622266b197d0..a6cdf25b6b9d 100644
+--- a/tools/include/linux/spinlock.h
++++ b/tools/include/linux/spinlock.h
+@@ -11,6 +11,7 @@
+ #define spin_lock_init(x)	pthread_mutex_init(x, NULL)
+ 
+ #define spin_lock(x)			pthread_mutex_lock(x)
++#define spin_lock_nested(x, subclass)	pthread_mutex_lock(x)
+ #define spin_unlock(x)			pthread_mutex_unlock(x)
+ #define spin_lock_bh(x)			pthread_mutex_lock(x)
+ #define spin_unlock_bh(x)		pthread_mutex_unlock(x)
 -- 
 2.20.1
 
