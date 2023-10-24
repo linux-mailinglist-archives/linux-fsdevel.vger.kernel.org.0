@@ -1,151 +1,127 @@
-Return-Path: <linux-fsdevel+bounces-981-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-982-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACEDB7D47FB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 09:08:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07B977D4913
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 09:55:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 937171F21BAF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 07:08:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D82628188D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 07:55:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E11B913AE0;
-	Tue, 24 Oct 2023 07:08:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90E4614A92;
+	Tue, 24 Oct 2023 07:55:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FkuzKWGP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mgPBBOZc"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA8EF134C1
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 07:08:41 +0000 (UTC)
-Received: from mail-qv1-xf30.google.com (mail-qv1-xf30.google.com [IPv6:2607:f8b0:4864:20::f30])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60402118;
-	Tue, 24 Oct 2023 00:08:40 -0700 (PDT)
-Received: by mail-qv1-xf30.google.com with SMTP id 6a1803df08f44-66d0ea3e5b8so28240466d6.0;
-        Tue, 24 Oct 2023 00:08:40 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C10FB13FED
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 07:55:36 +0000 (UTC)
+Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8764F9;
+	Tue, 24 Oct 2023 00:55:34 -0700 (PDT)
+Received: by mail-pl1-x62c.google.com with SMTP id d9443c01a7336-1c9bf22fe05so25586045ad.2;
+        Tue, 24 Oct 2023 00:55:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698131319; x=1698736119; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1698134133; x=1698738933; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=SqdvkUsqWd4zu3IEIRbwUNktCPDbd/gk6A5nLT4VIeM=;
-        b=FkuzKWGPgKu23f7MQ6y7O95S5s8tdJxnEbTm32ctOfOzqfZw7wYlQ2m+cQebQCvLmI
-         QdA81shifDt2PODrds6dL+fS7CXobtOJCrjpR6bG7dbnqTbba20b86rafCdcSTgR/Yyi
-         KzSHzflOfAjLM2oAOpuInTpgoRIjN73+gB70dH5KP1MKe/mVp8Smo8dLW+Vl/yJcO+tw
-         x3qxY8+uEOiMj50y9K1UEbNMMdyd7u0+YttX0ItYMBsV9yKRN/Tkedh1b/9VeZK5b99n
-         He/6UcX91drwZ24+2yQtdX/e1Wv5PULL+1PepPdkeFoREss0CjJrH3ThxhlylPut3C+j
-         ZTVw==
+        bh=rryMd0X9WV6QFu55eyAQUdUJEIXyug/kgmEK9WWRvfQ=;
+        b=mgPBBOZcnFhTdGj94p7wAnxLw9spkHglgm7IgCipSFkZn1vQakLdbiGxdCg3+1yL5j
+         3zX8UXURqNaVavfpIV1FhZO34DxBC2JsD8W4QSuWhp6AowAcA5o6CtkPWEKzHG0tt7PT
+         +MjdL9kfOOzP5nOiwPBmyX+Lb5eJuhKGFEz5fo0axneyAmtveP22R2/eEmAD1SbAVcsQ
+         DEys1xXGhujhinuo+EYBJMDE/Iid1qeKy6SkBatbNHgfEZBHcMHtmjlRsgwpmVnQ+5Hf
+         xXs7nGW+LYEH6yC+LjVf38loJqN01Vspmpwl4Lh6slE4EmqdaT3z+wrHnt9FrFGsMpa+
+         4lOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698131319; x=1698736119;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SqdvkUsqWd4zu3IEIRbwUNktCPDbd/gk6A5nLT4VIeM=;
-        b=NkEpQjSoPD02q96gAuiLXCwVsdB03WrXXvWt/qHtUYGeWVvS2Bam1So3U1/5ingnnE
-         MViCUCkh/KACYZodogDDXXtIEdxr793RkFpEi3WIjMAlKGagpq7br7iFApD14Htz4wbC
-         sIgT0eZJbNtXprhehOU/aZOnCuKyCESJpLETvndw5OUtg/lodN0SXWO0J+3UyzSyEfzJ
-         jicRp82Ox19E+35RtfgT+ke9gdjMJLDvzrwpNxs69o84ZsudXimUaGyH8XWuIyMTe6Fq
-         piwtM24i5NI39wmAuYESGr0FRvb1sE7RqGRbe6gM1DRz5vOJ4pqqozKNRwsTq7jtvHTm
-         TOOQ==
-X-Gm-Message-State: AOJu0YyG7MvE0y3hL5cdKABpm48QPrTnT6hVCTG2qoAOdUeNh3TSJg2n
-	dVnZM2byIrYgctYY8om2S5gHu0XtNmHRZBrpzp4=
-X-Google-Smtp-Source: AGHT+IE3cbJpQKZFd6RGOof+Net59golChwN9iI+4rus52ve4TnU6zTtzWsEuc24BZZmeNAApernLLkRejdVGhlj2/w=
-X-Received: by 2002:a05:6214:224c:b0:658:7441:ff1b with SMTP id
- c12-20020a056214224c00b006587441ff1bmr14513785qvc.45.1698131319478; Tue, 24
- Oct 2023 00:08:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1698134133; x=1698738933;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=rryMd0X9WV6QFu55eyAQUdUJEIXyug/kgmEK9WWRvfQ=;
+        b=w7s1RRXM/9D1f/D2NgXRw1nDKsoRZDB7l8eZfbBHQUCQAjOVDSXKZuD4qMS6aH3177
+         5xkg/fxqlteUoLxAq/11GEw+tB/44f2kuJb9fqxdP5QQBR2O/vqveftC06FEKLef3lNl
+         UCItewoNytZdbBCnNmXZRtMWzeXcFn/U86obXNQmHsSjQF4x3vOeZMWx8EwRVwqqsH+G
+         33zmYykTh2OWXXMq14jdPAahUTh6UyUbjmjoaNDjIIiYHwY2x+mPTvMRo9qGmYN4JS5o
+         OoEhN3l4UD/HoKdNuxsUnoo0dG8DvJZQTOBkLNi4Wtcd9z8l2eQn2o/Ew4TaziFwqx45
+         e8hQ==
+X-Gm-Message-State: AOJu0YwiPe4GjmMJZp9qJGSdi6+Pq7aFi2TNwlnMVIbe8P3UksDcTv7u
+	QyBtfLwFcYl6sovCdJsCKx6dqRrhX+I=
+X-Google-Smtp-Source: AGHT+IFzIRaOleX12I4ui38DgrzuR5MDHSegKCH+0WDtTjaT5p3P/qRLJ2gPYCdahRV3qCjph6dhEw==
+X-Received: by 2002:a17:902:ca0b:b0:1c4:72c9:64ef with SMTP id w11-20020a170902ca0b00b001c472c964efmr7090388pld.40.1698134133184;
+        Tue, 24 Oct 2023 00:55:33 -0700 (PDT)
+Received: from [192.168.0.106] ([103.131.18.64])
+        by smtp.gmail.com with ESMTPSA id iy17-20020a170903131100b001ca86a9caccsm7051112plb.228.2023.10.24.00.55.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Oct 2023 00:55:32 -0700 (PDT)
+Message-ID: <429b452c-2211-436a-9af7-21332f68db7d@gmail.com>
+Date: Tue, 24 Oct 2023 14:55:27 +0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHk-=wiKJgOg_3z21Sy9bu+3i_34S86r8fd6ngvJpZDwa-ww8Q@mail.gmail.com>
- <5f96e69d438ab96099bb67d16b77583c99911caa.camel@kernel.org>
- <20231019-fluor-skifahren-ec74ceb6c63e@brauner> <0a1a847af4372e62000b259e992850527f587205.camel@kernel.org>
- <ZTGncMVw19QVJzI6@dread.disaster.area> <eb3b9e71ee9c6d8e228b0927dec3ac9177b06ec6.camel@kernel.org>
- <ZTWfX3CqPy9yCddQ@dread.disaster.area> <61b32a4093948ae1ae8603688793f07de764430f.camel@kernel.org>
- <ZTcBI2xaZz1GdMjX@dread.disaster.area> <CAHk-=whphyjjLwDcEthOOFXXfgwGrtrMnW2iyjdQioV6YSMEPw@mail.gmail.com>
- <ZTc8tClCRkfX3kD7@dread.disaster.area>
-In-Reply-To: <ZTc8tClCRkfX3kD7@dread.disaster.area>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 24 Oct 2023 10:08:28 +0300
-Message-ID: <CAOQ4uxhJGkZrUdUJ72vjRuLec0g8VqgRXRH=x7W9ogMU6rBxcQ@mail.gmail.com>
-Subject: Re: [PATCH RFC 2/9] timekeeping: new interfaces for multigrain
- timestamp handing
-To: Dave Chinner <david@fromorbit.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Jeff Layton <jlayton@kernel.org>, 
-	Kent Overstreet <kent.overstreet@linux.dev>, Christian Brauner <brauner@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, John Stultz <jstultz@google.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>, 
-	Chandan Babu R <chandan.babu@oracle.com>, "Darrick J. Wong" <djwong@kernel.org>, 
-	"Theodore Ts'o" <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, 
-	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Hugh Dickins <hughd@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.de>, 
-	David Howells <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mm@kvack.org, 
-	linux-nfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Memory Management List <linux-mm@kvack.org>,
+ Linux Filesystem Development <linux-fsdevel@vger.kernel.org>,
+ Linux Regressions <regressions@lists.linux.dev>
+Cc: Chuck Lever <chuck.lever@oracle.com>,
+ Christian Brauner <brauner@kernel.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Andrew Morton <akpm@linux-foundation.org>, vladbu@nvidia.com
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+Subject: Fwd: Memleaks in offset_ctx->xa (shmem)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 24, 2023 at 6:40=E2=80=AFAM Dave Chinner <david@fromorbit.com> =
-wrote:
->
-> On Mon, Oct 23, 2023 at 02:18:12PM -1000, Linus Torvalds wrote:
-> > On Mon, 23 Oct 2023 at 13:26, Dave Chinner <david@fromorbit.com> wrote:
-> > >
-> > > The problem is the first read request after a modification has been
-> > > made. That is causing relatime to see mtime > atime and triggering
-> > > an atime update. XFS sees this, does an atime update, and in
-> > > committing that persistent inode metadata update, it calls
-> > > inode_maybe_inc_iversion(force =3D false) to check if an iversion
-> > > update is necessary. The VFS sees I_VERSION_QUERIED, and so it bumps
-> > > i_version and tells XFS to persist it.
-> >
-> > Could we perhaps just have a mode where we don't increment i_version
-> > for just atime updates?
-> >
-> > Maybe we don't even need a mode, and could just decide that atime
-> > updates aren't i_version updates at all?
->
-> We do that already - in memory atime updates don't bump i_version at
-> all. The issue is the rare persistent atime update requests that
-> still happen - they are the ones that trigger an i_version bump on
-> XFS, and one of the relatime heuristics tickle this specific issue.
->
-> If we push the problematic persistent atime updates to be in-memory
-> updates only, then the whole problem with i_version goes away....
->
-> > Yes, yes, it's obviously technically a "inode modification", but does
-> > anybody actually *want* atime updates with no actual other changes to
-> > be version events?
->
-> Well, yes, there was. That's why we defined i_version in the on disk
-> format this way well over a decade ago. It was part of some deep
-> dark magical HSM beans that allowed the application to combine
-> multiple scans for different inode metadata changes into a single
-> pass. atime changes was one of the things it needed to know about
-> for tiering and space scavenging purposes....
->
+Hi,
 
-But if this is such an ancient mystical program, why do we have to
-keep this XFS behavior in the present?
-BTW, is this the same HSM whose DMAPI ioctls were deprecated
-a few years back?
+I notice a regression report on Bugzilla [1]. Quoting from it:
 
-I mean, I understand that you do not want to change the behavior of
-i_version update without an opt-in config or mount option - let the distro
-make that choice.
-But calling this an "on-disk format change" is a very long stretch.
+> We have been getting memleaks in offset_ctx->xa in our networking tests:
+> 
+> unreferenced object 0xffff8881004cd080 (size 576):
+>   comm "systemd", pid 1, jiffies 4294893373 (age 1992.864s)
+>   hex dump (first 32 bytes):
+>     00 00 06 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>     38 5c 7c 02 81 88 ff ff 98 d0 4c 00 81 88 ff ff  8\|.......L.....
+>   backtrace:
+>     [<000000000f554608>] xas_alloc+0x306/0x430
+>     [<0000000075537d52>] xas_create+0x4b4/0xc80
+>     [<00000000a927aab2>] xas_store+0x73/0x1680
+>     [<0000000020a61203>] __xa_alloc+0x1d8/0x2d0
+>     [<00000000ae300af2>] __xa_alloc_cyclic+0xf1/0x310
+>     [<000000001032332c>] simple_offset_add+0xd8/0x170
+>     [<0000000073229fad>] shmem_mknod+0xbf/0x180
+>     [<00000000242520ce>] vfs_mknod+0x3b0/0x5c0
+>     [<000000001ef218dd>] unix_bind+0x2c2/0xdb0
+>     [<0000000009b9a8dd>] __sys_bind+0x127/0x1e0
+>     [<000000003c949fbb>] __x64_sys_bind+0x6e/0xb0
+>     [<00000000b8a767c7>] do_syscall_64+0x3d/0x90
+>     [<000000006132ae0d>] entry_SYSCALL_64_after_hwframe+0x46/0xb0
+> 
+> Memleak trace points to some syscall performed by systemd and none of our tests do anything more advanced with it than 'systemctl restart ovs-vswitchd'. Basically it is a setup with Fedora and an upstream kernel that executes bunch of network offload tests with Open vSwitch, iproute2 tc, Linux bridge, etc.
+> 
+> It looks like those may be caused by recent commit 6faddda69f62 ("libfs: Add directory operations for stable offsets") but we don't have a proper reproduction, just sometimes arbitrary getting the memleak complains during/after the regression run.
 
-Does xfs_repair guarantee that changes of atime, or any inode changes
-for that matter, update i_version? No, it does not.
-So IMO, "atime does not update i_version" is not an "on-disk format change"=
-,
-it is a runtime behavior change, just like lazytime is.
+See Bugzilla for the full thread.
 
-Thanks,
-Amir.
+Anyway, I'm adding it to regzbot:
+
+#regzbot introduced: 6faddda69f623d https://bugzilla.kernel.org/show_bug.cgi?id=218039
+#regzbot title: stable offsets directory operation support triggers offset_ctx->xa memory leak
+
+Thanks.
+
+[1]: https://bugzilla.kernel.org/show_bug.cgi?id=218039
+
+-- 
+An old man doll... just what I always wanted! - Clara
 
