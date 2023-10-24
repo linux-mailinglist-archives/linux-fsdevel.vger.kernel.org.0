@@ -1,97 +1,228 @@
-Return-Path: <linux-fsdevel+bounces-1003-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1004-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1D347D4B7B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 11:05:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 888ED7D4C3A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 11:28:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F28C1C20BD2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 09:05:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9FA81C209C6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 09:28:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39D41219E9;
-	Tue, 24 Oct 2023 09:05:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MGA4ESXh"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD2E123765;
+	Tue, 24 Oct 2023 09:28:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F5081FDF;
-	Tue, 24 Oct 2023 09:05:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF8BCC433C8;
-	Tue, 24 Oct 2023 09:05:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1698138343;
-	bh=59hvrldRJ6uHH8sM4+zj+t2v8z3bBouCHY3CG9BajyU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=MGA4ESXhY0f2OKr4KInojAvuScuCjl6gw45D8810SB2NH1jT9Qkw2Fwh/77nYuDLm
-	 WU/1Rhdxr1BvFskdbItp3xC5s6cgPLw/NT3evNHurwJUU5M9/tfCLWyEgV/9H6CIL7
-	 TMMJOvJu/RDOG6ijDVUzPtUluBMs+OhpvNTzwRj3fz00rguNZ9arGfMB1njOu06jSI
-	 4RVpXmoPLasREjRm3E+7wI2yzjK7367voCx5QTP6sMpAz9czVeZstHqriVgHLFlt4y
-	 9lRiqs+t40TnJdB/wcohgUeoKMcsV2Iop/lmRxBAi85icypa8bB3NsSRry6JLg2wBP
-	 VDos+C0gyn9ig==
-From: Christian Brauner <brauner@kernel.org>
-To: Ian Kent <raven@themaw.net>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Naresh Kamboju <naresh.kamboju@linaro.org>,
-	Bill O'Donnell <bodonnel@redhat.com>,
-	Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	autofs mailing list <autofs@vger.kernel.org>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-	lkft-triage@lists.linaro.org,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Linux Kernel Functional Testing <lkft@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Subject: Re: [PATCH] autofs: fix add autofs_parse_fd()
-Date: Tue, 24 Oct 2023 11:05:30 +0200
-Message-Id: <20231024-vorarbeit-unmittelbar-009365985901@brauner>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20231023093359.64265-1-raven@themaw.net>
-References: <20231023093359.64265-1-raven@themaw.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C999220B0B
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 09:28:43 +0000 (UTC)
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85B4F1BD4
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 02:28:21 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+	by smtp-out2.suse.de (Postfix) with ESMTP id 204A11FD71;
+	Tue, 24 Oct 2023 09:28:19 +0000 (UTC)
+Received: from g78 (rpalethorpe.udp.ovpn1.nue.suse.de [10.163.25.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by relay2.suse.de (Postfix) with ESMTPS id 5A3B02CB0D;
+	Tue, 24 Oct 2023 09:28:18 +0000 (UTC)
+References: <20231016123320.9865-1-chrubis@suse.cz>
+ <20231016123320.9865-4-chrubis@suse.cz>
+User-agent: mu4e 1.10.7; emacs 29.1
+From: Richard Palethorpe <rpalethorpe@suse.de>
+To: Cyril Hrubis <chrubis@suse.cz>
+Cc: mszeredi@redhat.com, brauner@kernel.org, Jan Kara <jack@suse.cz>,
+ Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
+ linux-fsdevel@vger.kernel.org, ltp@lists.linux.it
+Subject: Re: [LTP] [PATCH v2 3/4] syscalls: accept: Add tst_fd test
+Date: Tue, 24 Oct 2023 10:26:19 +0100
+Organization: Linux Private Site
+Reply-To: rpalethorpe@suse.de
+In-reply-to: <20231016123320.9865-4-chrubis@suse.cz>
+Message-ID: <87fs20v07j.fsf@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1107; i=brauner@kernel.org; h=from:subject:message-id; bh=aN5/eaaNILz6XykqLa8odZYq/sxBDsVAL1pYfRRqBBo=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSad+wXlSgyEkhNUlzaGalaaiWs94KfLf3doztHQo59nPL6 TfmUjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgInoZjP8D97ucS50F9fss3Mm+Si2qr JcP2F7feGBixtsgqZbqu72PM7wP/3PhByWVMfnBh8f/6v/8MZEN6uyY1Pxpf/VhzMONj1iZAQA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Spam-Level: 
+Authentication-Results: smtp-out2.suse.de;
+	dkim=none;
+	dmarc=none;
+	spf=softfail (smtp-out2.suse.de: 149.44.160.134 is neither permitted nor denied by domain of rpalethorpe@suse.de) smtp.mailfrom=rpalethorpe@suse.de
+X-Rspamd-Server: rspamd2
+X-Spamd-Result: default: False [-2.21 / 50.00];
+	 ARC_NA(0.00)[];
+	 HAS_REPLYTO(0.30)[rpalethorpe@suse.de];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 RWL_MAILSPIKE_GOOD(0.00)[149.44.160.134:from];
+	 NEURAL_HAM_LONG(-3.00)[-1.000];
+	 MIME_GOOD(-0.10)[text/plain];
+	 REPLYTO_ADDR_EQ_FROM(0.00)[];
+	 DMARC_NA(0.20)[suse.de];
+	 R_SPF_SOFTFAIL(0.60)[~all:c];
+	 HAS_ORG_HEADER(0.00)[];
+	 TO_MATCH_ENVRCPT_SOME(0.00)[];
+	 VIOLATED_DIRECT_SPF(3.50)[];
+	 MX_GOOD(-0.01)[];
+	 NEURAL_HAM_SHORT(-1.00)[-1.000];
+	 RCPT_COUNT_SEVEN(0.00)[8];
+	 RCVD_NO_TLS_LAST(0.10)[];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 R_DKIM_NA(0.20)[];
+	 MIME_TRACE(0.00)[0:+];
+	 RCVD_COUNT_TWO(0.00)[2];
+	 MID_RHS_MATCH_FROM(0.00)[];
+	 BAYES_HAM(-3.00)[100.00%]
+X-Spam-Score: -2.21
+X-Rspamd-Queue-Id: 204A11FD71
 
-On Mon, 23 Oct 2023 17:33:59 +0800, Ian Kent wrote:
-> We are seeing systemd hang on its autofs direct mount at
-> /proc/sys/fs/binfmt_misc.
-> 
-> Historically this was due to a mismatch in the communication structure
-> size between a 64 bit kernel and a 32 bit user space and was fixed by
-> making the pipe communication record oriented.
-> 
-> [...]
+Hello,
 
-Thanks for the fix!
+Cyril Hrubis <chrubis@suse.cz> writes:
 
----
+> It looks like we return wrong errno on O_PATH file and open_tree() file descriptors.
+>
+> Signed-off-by: Cyril Hrubis <chrubis@suse.cz>
+> ---
+>  runtest/syscalls                            |  1 +
+>  testcases/kernel/syscalls/accept/.gitignore |  1 +
+>  testcases/kernel/syscalls/accept/accept01.c |  8 ----
+>  testcases/kernel/syscalls/accept/accept03.c | 47 +++++++++++++++++++++
+>  4 files changed, 49 insertions(+), 8 deletions(-)
+>  create mode 100644 testcases/kernel/syscalls/accept/accept03.c
+>
+> diff --git a/runtest/syscalls b/runtest/syscalls
+> index 53e519639..55396aad8 100644
+> --- a/runtest/syscalls
+> +++ b/runtest/syscalls
+> @@ -3,6 +3,7 @@ abort01 abort01
+>  
+>  accept01 accept01
+>  accept02 accept02
+> +accept03 accept03
+>  
+>  accept4_01 accept4_01
+>  
+> diff --git a/testcases/kernel/syscalls/accept/.gitignore b/testcases/kernel/syscalls/accept/.gitignore
+> index 5b1462699..f81d4bec9 100644
+> --- a/testcases/kernel/syscalls/accept/.gitignore
+> +++ b/testcases/kernel/syscalls/accept/.gitignore
+> @@ -1,2 +1,3 @@
+>  /accept01
+>  /accept02
+> +/accept03
+> diff --git a/testcases/kernel/syscalls/accept/accept01.c b/testcases/kernel/syscalls/accept/accept01.c
+> index 85af0f8af..e5db1dfec 100644
+> --- a/testcases/kernel/syscalls/accept/accept01.c
+> +++ b/testcases/kernel/syscalls/accept/accept01.c
+> @@ -26,7 +26,6 @@
+>  struct sockaddr_in sin0, sin1, fsin1;
+>  
+>  int invalid_socketfd = 400; /* anything that is not an open file */
+> -int devnull_fd;
+>  int socket_fd;
+>  int udp_fd;
+>  
+> @@ -45,10 +44,6 @@ static struct test_case {
+>  		(struct sockaddr *)&fsin1, sizeof(fsin1), EBADF,
+>  		"bad file descriptor"
+>  	},
+> -	{
+> -		PF_INET, SOCK_STREAM, 0, &devnull_fd, (struct sockaddr *)&fsin1,
+> -		sizeof(fsin1), ENOTSOCK, "fd is not socket"
+> -	},
+>  	{
+>  		PF_INET, SOCK_STREAM, 0, &socket_fd, (struct sockaddr *)3,
+>  		sizeof(fsin1), EINVAL, "invalid socket buffer"
+> @@ -73,8 +68,6 @@ static void test_setup(void)
+>  	sin0.sin_port = 0;
+>  	sin0.sin_addr.s_addr = INADDR_ANY;
+>  
+> -	devnull_fd = SAFE_OPEN("/dev/null", O_WRONLY);
+> -
+>  	socket_fd = SAFE_SOCKET(PF_INET, SOCK_STREAM, 0);
+>  	SAFE_BIND(socket_fd, (struct sockaddr *)&sin0, sizeof(sin0));
+>  
+> @@ -88,7 +81,6 @@ static void test_setup(void)
+>  
+>  static void test_cleanup(void)
+>  {
+> -	SAFE_CLOSE(devnull_fd);
+>  	SAFE_CLOSE(socket_fd);
+>  	SAFE_CLOSE(udp_fd);
+>  }
 
-Applied to the vfs.autofs branch of the vfs/vfs.git tree.
-Patches in the vfs.autofs branch should appear in linux-next soon.
+Is this supposed to be part of the patchset?
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+I don't mind, but if we are strict, it should be in another commit.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+> diff --git a/testcases/kernel/syscalls/accept/accept03.c b/testcases/kernel/syscalls/accept/accept03.c
+> new file mode 100644
+> index 000000000..084bedaf4
+> --- /dev/null
+> +++ b/testcases/kernel/syscalls/accept/accept03.c
+> @@ -0,0 +1,47 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +
+> +/*
+> + * Copyright (C) 2023 Cyril Hrubis <chrubis@suse.cz>
+> + */
+> +
+> +/*\
+> + * [Description]
+> + *
+> + * Verify that accept() returns ENOTSOCK for non-socket file descriptors.
+> + */
+> +
+> +#include <sys/socket.h>
+> +#include <netinet/in.h>
+> +
+> +#include "tst_test.h"
+> +
+> +void check_accept(struct tst_fd *fd)
+> +{
+> +	struct sockaddr_in addr = {
+> +		.sin_family = AF_INET,
+> +		.sin_port = 0,
+> +		.sin_addr = {.s_addr = INADDR_ANY},
+> +	};
+> +	socklen_t size = sizeof(addr);
+> +
+> +	switch (fd->type) {
+> +	case TST_FD_UNIX_SOCK:
+> +	case TST_FD_INET_SOCK:
+> +		return;
+> +	default:
+> +		break;
+> +	}
+> +
+> +	TST_EXP_FAIL2(accept(fd->fd, (void*)&addr, &size),
+> +		ENOTSOCK, "accept() on %s", tst_fd_desc(fd));
+> +}
+> +
+> +static void verify_accept(void)
+> +{
+> +	TST_FD_FOREACH(fd)
+> +		check_accept(&fd);
+> +}
+> +
+> +static struct tst_test test = {
+> +	.test_all = verify_accept,
+> +};
+> -- 
+> 2.41.0
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+Reviewed-by: Richard Palethorpe <rpalethorpe@suse.com>
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.autofs
-
-[1/1] autofs: fix add autofs_parse_fd()
-      https://git.kernel.org/vfs/vfs/c/d3c50061765d
+-- 
+Thank you,
+Richard.
 
