@@ -1,106 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-973-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-974-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 241E77D476D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 08:26:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 259E57D47A5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 08:44:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F01F281817
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 06:26:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4068D1C20B5C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 06:44:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3856111BF;
-	Tue, 24 Oct 2023 06:26:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24CAC11721;
+	Tue, 24 Oct 2023 06:44:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LVyU92IX"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="z/koJWZi"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F134D79F4
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 06:26:22 +0000 (UTC)
-Received: from mail-yw1-x112c.google.com (mail-yw1-x112c.google.com [IPv6:2607:f8b0:4864:20::112c])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 506B3111
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 23:26:21 -0700 (PDT)
-Received: by mail-yw1-x112c.google.com with SMTP id 00721157ae682-5a822f96aedso42097677b3.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Oct 2023 23:26:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1698128780; x=1698733580; darn=vger.kernel.org;
-        h=mime-version:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=MRLwLQJKqVoT8fAKMRJ96SHZ2jjS/GjWK4rsxxnvJlw=;
-        b=LVyU92IXWcr6lzH7jV0dRJgAY+uYSTscjxqOU5Ycbqoh2H2u4cEwmgsf/IBaELuCXd
-         /L38REceOHcKbggOb8wD13PXKDk40eJNZSgMMJR1VyyJOopU09xu76Tmnwi/cqsEBHPD
-         BXWsskepUUimPHeGZHAu0T5OPJkoZoKZsxUSOrtu/4vLLM1d645c0fLuUzABJIVBnlaQ
-         F2lZjHliuZjgH/+o4RiPHzvMJC+ulXfveXXZmklH5LB53BUx2IZAIfhA4QJzZkZGfChW
-         Zs3AtBIUDKV2yS2fLWZOi9CrmhMy6xPT6h6XJl5lNP9LuhjeXjchppQNU9Ywmlep4KaH
-         8dbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698128780; x=1698733580;
-        h=mime-version:message-id:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MRLwLQJKqVoT8fAKMRJ96SHZ2jjS/GjWK4rsxxnvJlw=;
-        b=AxcAY3PNvakqJgAOcoh21n/7/F5MneK8BwS58TjPGhtWlKldm9TmcIUn8LbUYXAlWT
-         x5JGMqk/TlhaOJNiza4jiGf6VgHaC6euaRQku5eKSKDYwwpRR7DgcoroqG/yPo4aIZEk
-         OsqYgfQL4eVjGDInnpLlUi8LVi211sK7o66FYaQ11nq+kIhZy3KygXxnoGjiYvh3FtTj
-         gkBPs3qvPur3g9CRXhZEfXUUDS1qEGeSQM5KRUdIaJZCJJVqYq7NE++2FhW3zEMj50+i
-         QQ6R71lXdpx2zdCTqsPH6DHZprSbXtyKv6K/7R905nP6WYq7xvLGNkEXMQ8ehB2FU9TA
-         vxWg==
-X-Gm-Message-State: AOJu0YyTOK8p9/T7SSHS9VwUuJMLr30qlrZCHFqoX8oHwTJthNGxxtZL
-	fx/+z8b4UHZzdX4iI1aVlbX7vw==
-X-Google-Smtp-Source: AGHT+IHkd91huJN9SozlpT3bpFGAimQGDOyF8TB28iFOdp/ZJ3Ha6mPQMckl0DxRoAFPL47z13RAig==
-X-Received: by 2002:a0d:cc44:0:b0:5a7:c49e:3f5c with SMTP id o65-20020a0dcc44000000b005a7c49e3f5cmr11383544ywd.21.1698128780387;
-        Mon, 23 Oct 2023 23:26:20 -0700 (PDT)
-Received: from ripple.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id d7-20020a0df407000000b0057a8de72338sm3783004ywf.68.2023.10.23.23.26.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Oct 2023 23:26:19 -0700 (PDT)
-Date: Mon, 23 Oct 2023 23:26:08 -0700 (PDT)
-From: Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@ripple.attlocal.net
-To: Andrew Morton <akpm@linux-foundation.org>
-cc: Matthew Wilcox <willy@infradead.org>, Hui Zhu <teawater@antgroup.com>, 
-    Jan Kara <jack@suse.cz>, Theodore Ts'o <tytso@mit.edu>, 
-    linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, 
-    linux-mm@kvack.org
-Subject: [PATCH] ext4: add __GFP_NOWARN to GFP_NOWAIT in readahead
-Message-ID: <7bc6ad16-9a4d-dd90-202e-47d6cbb5a136@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65048101E3
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 06:44:26 +0000 (UTC)
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C7F1111;
+	Mon, 23 Oct 2023 23:44:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=mWJbrqGyOWZeG8arA3kiVOL37IHuK2xpDuB998/3rz0=; b=z/koJWZinP93IY3dpVf4azl6nx
+	9ZjZXmOm83+5dIu6+Hdiqeiv2fLG6s+3JktdHxcWCNgsG/9EO9bUQuV5dKZKOXCBWhCe3i0zSeCMH
+	lDoagtXHwO7U9dEf2seHBV5hBW0BuYDeDDmNenjcbDxBX/ONdDW5egCa8h2+iXRKr55TW13TC7+Iz
+	UmL4FW4g8FLWJQ3kWws+XwRuLd7FYluXIuvR5dijb6jEijG5RocFccb0TOgik5oH5LlBnhV4uwZKE
+	/aTGfJ7EeD8pauHT2HSIi/g3MAA2SaAKK7J4BRJg+jDxyDESVUYZnUHNsQ47Za5cWo43AX4884xQ2
+	FlGywEMQ==;
+Received: from 2a02-8389-2341-5b80-39d3-4735-9a3c-88d8.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:39d3:4735:9a3c:88d8] helo=localhost)
+	by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+	id 1qvB9I-0090RP-18;
+	Tue, 24 Oct 2023 06:44:20 +0000
+From: Christoph Hellwig <hch@lst.de>
+To: Jens Axboe <axboe@kernel.dk>,
+	Matthew Wilcox <willy@infradead.org>
+Cc: Ilya Dryomov <idryomov@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: add and use a per-mapping stable writes flag
+Date: Tue, 24 Oct 2023 08:44:13 +0200
+Message-Id: <20231024064416.897956-1-hch@lst.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Since mm-hotfixes-stable commit e509ad4d77e6 ("ext4: use bdev_getblk() to
-avoid memory reclaim in readahead path") rightly replaced GFP_NOFAIL
-allocations by GFP_NOWAIT allocations, I've occasionally been seeing
-"page allocation failure: order:0" warnings under load: all with
-ext4_sb_breadahead_unmovable() in the stack.  I don't think those
-warnings are of any interest: suppress them with __GFP_NOWARN.
+Hi all
 
-Fixes: e509ad4d77e6 ("ext4: use bdev_getblk() to avoid memory reclaim in readahead path")
-Signed-off-by: Hugh Dickins <hughd@google.com>
----
- fs/ext4/super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+A while ago Ilya pointer out that since commit 1cb039f3dc16 ("bdi:
+replace BDI_CAP_STABLE_WRITES with a queue and a sb flag"), the stable
+write flag on the queue wasn't used for writes to the block devices
+nodes any more, and willy suggested fixing this by adding a stable write
+flags on each address_space.  This series implements this fix, and also
+fixes the stable write flag when the XFS RT device requires it, but the
+main device doesn't (which is probably more a theoretical than a
+practical problem).
 
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index c00ec159dea5..56a08fc5c5d5 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -262,7 +262,7 @@ struct buffer_head *ext4_sb_bread_unmovable(struct super_block *sb,
- void ext4_sb_breadahead_unmovable(struct super_block *sb, sector_t block)
- {
- 	struct buffer_head *bh = bdev_getblk(sb->s_bdev, block,
--			sb->s_blocksize, GFP_NOWAIT);
-+			sb->s_blocksize, GFP_NOWAIT | __GFP_NOWARN);
- 
- 	if (likely(bh)) {
- 		if (trylock_buffer(bh))
--- 
-2.35.3
-
+Diffstat:
+ block/bdev.c            |    2 ++
+ fs/inode.c              |    2 ++
+ fs/xfs/xfs_inode.h      |    8 ++++++++
+ fs/xfs/xfs_ioctl.c      |    9 +++++++++
+ fs/xfs/xfs_iops.c       |    7 +++++++
+ include/linux/pagemap.h |   17 +++++++++++++++++
+ mm/page-writeback.c     |    2 +-
+ 7 files changed, 46 insertions(+), 1 deletion(-)
 
