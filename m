@@ -1,204 +1,117 @@
-Return-Path: <linux-fsdevel+bounces-1084-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1086-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 297337D542B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 16:37:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 164577D5470
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 16:54:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD54EB21046
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 14:37:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DAD51C20848
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 14:54:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3476A36B05;
-	Tue, 24 Oct 2023 14:37:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72E4C30CEA;
+	Tue, 24 Oct 2023 14:54:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fmFcvI/3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DqZ13b95"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B4636B15
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 14:37:07 +0000 (UTC)
-Received: from mail-ot1-x32d.google.com (mail-ot1-x32d.google.com [IPv6:2607:f8b0:4864:20::32d])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4578A8F
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 07:37:06 -0700 (PDT)
-Received: by mail-ot1-x32d.google.com with SMTP id 46e09a7af769-6ce2eaf7c2bso3004307a34.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 07:37:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1698158225; x=1698763025; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AAOhUkJjCv880R1NKQbAjINSlXvyzmgC43sxJnCAkZ0=;
-        b=fmFcvI/31jfAFpZyPTAkpth67CdokxZYXrakVccghD+qDbqZH0QaiFWFlCRNakWglu
-         2g9v4IXx0DEalVoVrvWkr7SBUB6fEdNE1Hd/3nmED1BVjfofpWJi2qICBjDaXM/aiAKP
-         XOK6WEnZl+EeRDomI+l/pF7W8K5LjWDeFAQopKf8K7PO5D+LYom2qrMFvlNqv0LTFkLu
-         LWCQj8BE8O0ezpmUr2r7mVvu28qdjJ0VTYVGrO1vT2oQCzFYdeVSMxZJSRBxsftTibky
-         BYhwnON1qkJivAAqiulMH18eYXy95fK7PiJvtzOw9UuZxtvI35npTwEyL4M2mc2E85+1
-         26FQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698158225; x=1698763025;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AAOhUkJjCv880R1NKQbAjINSlXvyzmgC43sxJnCAkZ0=;
-        b=mUJruOP8mJNVhfajPrd4RmtMryENOjIIUSNG5mlZk7BZDy6a+lyK91rqf00AxXirLR
-         x49qOKK4Nz33YaS+iRK70EFF/Wcd+M8JSyLgUkaTETVDS1zlvH8IU2iLHZiIzH1tQgjN
-         EhhRFi3cRq+yB8FvkzpoW3GU9EEkiEHHDNiW0mtMDW5sg/qAk3xdU2ATRbzqUEpLIBIx
-         HanlSVxI+RFvwWeBj6BnHJyuVaNRCzTy6e+t1T1aUIv3zPti52ynoBPORV6A1jm69kss
-         Q1KONe71/Y4/MV/5I38TGtSR1z5qso/sjZm6/Cu0jLU8pIYx9F7hRv3rCEE6PLaLAwRg
-         vN7w==
-X-Gm-Message-State: AOJu0Yz5AHOXL+7iR1/s0V3wMYzPgIt+FSCZY56nrtqJv6isijIg+8pE
-	V1IkAGsU5O9WzZxNpJOPEgdON4BkqBJxa1ZV/xk1/A==
-X-Google-Smtp-Source: AGHT+IGmaL1lCubVBE3q3NWkBv6nBQrZ0wRsy6ngThBW4I3ExrtLI9tz2AGRjsobSL7vHMdWw5sje4QO7Pqt6rn0QgM=
-X-Received: by 2002:a05:6830:1e30:b0:6af:95f9:7adc with SMTP id
- t16-20020a0568301e3000b006af95f97adcmr12051128otr.14.1698158225267; Tue, 24
- Oct 2023 07:37:05 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0AA62E64E
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 14:54:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09A01C433C8;
+	Tue, 24 Oct 2023 14:54:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1698159244;
+	bh=iuOglcChqbe4jFXhJE+CY0Jyv51Sh6M4fFVtedJpDJw=;
+	h=From:Subject:Date:To:Cc:From;
+	b=DqZ13b95PIYaMJOB92ZeKl5MZlXYM5So+ziTblA+IEnabC1UWuWPiXVGIrLdLI0hR
+	 hVNrzb6WsS0DUrBm+/1zgS+yDYJKybmIyFIxy+LRSP/i7O7jw6F99Pr9vPezMdg+L3
+	 HMSLFPPKie6Ik7MbeTP0LdWrDEj6xTZf4YShsi/zTIyZrTrFlu99JCUwBAktXJHzGh
+	 /ihoqh7uv+gC95hnSwu7+u/Q75npNFhBLo8lyUA36zljPRamLKZb3keDkUSJnRmnd+
+	 HB09ceTk/3IvCDMqEwGBYzE7eaO/NpIy3m87CW1hUAfmJh1Iusk7jUmZXl5Rdm/OKH
+	 uFFEfvmvlTTZw==
+From: Christian Brauner <brauner@kernel.org>
+Subject: [PATCH RFC 0/6] fs,block: yield devices
+Date: Tue, 24 Oct 2023 16:53:38 +0200
+Message-Id: <20231024-vfs-super-rework-v1-0-37a8aa697148@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231009064230.2952396-1-surenb@google.com> <20231009064230.2952396-3-surenb@google.com>
- <721366d0-7909-45c9-ae49-f652c8369b9d@redhat.com> <CAJuCfpErrAqZuiiU5uthVU87Sa=yztRRqnTszezFCMQgBEawCg@mail.gmail.com>
- <356a8b2e-1f70-45dd-b2f7-6c0b6b87b53b@redhat.com>
-In-Reply-To: <356a8b2e-1f70-45dd-b2f7-6c0b6b87b53b@redhat.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Tue, 24 Oct 2023 07:36:51 -0700
-Message-ID: <CAJuCfpF_qYsbW=gokP9jfc314UCb4erqhCjAo1vFi6orewSC=w@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] userfaultfd: UFFDIO_MOVE uABI
-To: David Hildenbrand <david@redhat.com>
-Cc: akpm@linux-foundation.org, viro@zeniv.linux.org.uk, brauner@kernel.org, 
-	shuah@kernel.org, aarcange@redhat.com, lokeshgidra@google.com, 
-	peterx@redhat.com, hughd@google.com, mhocko@suse.com, 
-	axelrasmussen@google.com, rppt@kernel.org, willy@infradead.org, 
-	Liam.Howlett@oracle.com, jannh@google.com, zhangpeng362@huawei.com, 
-	bgeffon@google.com, kaleshsingh@google.com, ngeoffray@google.com, 
-	jdduke@google.com, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHLaN2UC/yXMQQrCQAyF4auUrE2ZTgdEt4IHcCsu0jG1QZiWB
+ KtQendjXf4P3reAsQobHKsFlGcxGYtHs6sgD1QejHL3hhhi24SYcO4N7TWxovJ71CdmSmlPbUw
+ hH8Bvk3Ivn428wuV8gpuPHRljp1Ty8NMcqTek/iOwrl8LM8wjigAAAA==
+To: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.13-dev-26615
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2251; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=iuOglcChqbe4jFXhJE+CY0Jyv51Sh6M4fFVtedJpDJw=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSa3+qSis4WCgnkuljXtaBFoFG6av1PjRnTDcP3P3Re89OF
+ 1X9NRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwERsfzIyLDgdObFQYibLm3ePym89OZ
+ t4RLAnKPvgstDF4QdOv1zx/iHD/4hnzm4B0oJ7Llb+0P6d9n8RH5+Xi7nLFta2z7lPiubdZgAA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-On Tue, Oct 24, 2023 at 7:27=E2=80=AFAM David Hildenbrand <david@redhat.com=
-> wrote:
->
-> On 23.10.23 20:56, Suren Baghdasaryan wrote:
-> > On Mon, Oct 23, 2023 at 5:29=E2=80=AFAM David Hildenbrand <david@redhat=
-.com> wrote:
-> >>
-> >> Focusing on validate_remap_areas():
-> >>
-> >>> +
-> >>> +static int validate_remap_areas(struct vm_area_struct *src_vma,
-> >>> +                             struct vm_area_struct *dst_vma)
-> >>> +{
-> >>> +     /* Only allow remapping if both have the same access and protec=
-tion */
-> >>> +     if ((src_vma->vm_flags & VM_ACCESS_FLAGS) !=3D (dst_vma->vm_fla=
-gs & VM_ACCESS_FLAGS) ||
-> >>> +         pgprot_val(src_vma->vm_page_prot) !=3D pgprot_val(dst_vma->=
-vm_page_prot))
-> >>> +             return -EINVAL;
-> >>
-> >> Makes sense. I do wonder about pkey and friends and if we even have to
-> >> so anything special.
-> >
-> > I don't see anything special done for mremap. Do you have something in =
-mind?
->
-> Nothing concrete, not a pkey expert. But as there is indeed nothing
-> pkey-special in the VMA, there is nothing we can really check for and/or
-> adjust.
->
-> So let's assume this is fine.
+Hey,
 
-Sounds good until someone tells us otherwise.
+This is a mechanism that allows the holder of a block device to yield
+device access before actually closing the block device.
 
->
-> >>
-> >>> +
-> >>> +     /* Only allow remapping if both are mlocked or both aren't */
-> >>> +     if ((src_vma->vm_flags & VM_LOCKED) !=3D (dst_vma->vm_flags & V=
-M_LOCKED))
-> >>> +             return -EINVAL;
-> >>> +
-> >>> +     if (!(src_vma->vm_flags & VM_WRITE) || !(dst_vma->vm_flags & VM=
-_WRITE))
-> >>> +             return -EINVAL;
-> >>
-> >> Why does one of both need VM_WRITE? If one really needs it, then the
-> >> destination (where we're moving stuff to).
-> >
-> > As you noticed later, both should have VM_WRITE.
->
-> Can you comment why? Just a simplification for now? Would be good to add
-> that comment in the code as well.
+If a someone yields a device then any concurrent opener claiming the
+device exclusively with the same blk_holder_ops as the current owner can
+wait for the device to be given up. Filesystems by default use
+fs_holder_ps and so can wait on each other.
 
-Yeah, I thought to move a page both areas should be writable since we
-are technically modifying both by this operation.
+This mechanism allows us to simplify superblock handling quite a bit at
+the expense of requiring filesystems to yield devices. A filesytems must
+yield devices under s_umount. This allows costly work to be done outside
+of s_umount.
 
->
-> /* For now, we keep it simple and only move between writable VMAs. */
+There's nothing wrong with the way we currently do things but this does
+allow us to simplify things and kills a whole class of theoretical UAF
+when walking the superblock list.
 
-Ack. Will add.
+I had originally considered doing it this way but wasn't able
+(time-wise) to code that up but since we recently had that discussion
+again here it is.
 
->
-> >>> +      */
-> >>> +     if (!dst_vma->vm_userfaultfd_ctx.ctx &&
-> >>> +         !src_vma->vm_userfaultfd_ctx.ctx)
-> >>> +             return -EINVAL;
-> >>
-> >>
-> >>
-> >>> +
-> >>> +     /*
-> >>> +      * FIXME: only allow remapping across anonymous vmas,
-> >>> +      * tmpfs should be added.
-> >>> +      */
-> >>> +     if (!vma_is_anonymous(src_vma) || !vma_is_anonymous(dst_vma))
-> >>> +             return -EINVAL;
-> >>
-> >> Why a FIXME here? Just drop the comment completely or replace it with
-> >> "We only allow to remap anonymous folios accross anonymous VMAs".
-> >
-> > Will do. I guess Andrea had plans to cover tmpfs as well.
->
->
-> That is rather future work (or what's to fix here?) and better
-> documented in the cover letter.
+Survives both xfstests and blktests. Also tested this by introducing
+custom delays into kill_block_super() to widen the race where a
+superblock is removed from the instance list and the device is fully
+closed and synced.
+Based on on vfs.super and the freezer work sent out earlier.
+Very barebones commit messages and less analyzed then usually for
+possible side-effects.
 
-Ack.
+Thanks!
+Christian
 
->
-> Having thought about VMA checks, I do wonder if we want to just block
-> some VM_ flags right at the beginning (VM_IO,VM_PFNMAP,VM_HUGETLB,...).
-> That might be covered by some other checks here implicitly, but I'm not
-> 100% sure if that's always the case. An explicit list as in
-> vma_ksm_compatible() might be clearer.
->
-> Further, I wonder if we have to block VM_SHADOW_STACK; we certainly
-> don't want to let users modify the shadow stack by moving modified
-> target pages into place. But this might already be covered by earlier
-> checks (vm_page_prot? but I didn't look up with which setting we ended
-> up in the upstream version).
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+Christian Brauner (6):
+      fs: simplify setup_bdev_super() calls
+      xfs: simplify device handling
+      ext4: simplify device handling
+      bdev: simplify waiting for concurrent claimers
+      block: mark device as about to be released
+      fs: add ->yield_devices()
 
-Good point. I'll check if existing checks already cover these and if
-not will add them.
-Thanks,
-Suren.
+ block/bdev.c              | 54 +++++++++++++++++++++++++++-----------
+ fs/ext4/super.c           | 15 ++++++++---
+ fs/super.c                | 67 ++++++++++++++---------------------------------
+ fs/xfs/xfs_super.c        | 46 +++++++++++++++++++++-----------
+ include/linux/blk_types.h |  8 +++++-
+ include/linux/blkdev.h    |  1 +
+ include/linux/fs.h        |  1 +
+ 7 files changed, 109 insertions(+), 83 deletions(-)
+---
+base-commit: c6cc4b13e95115c13433136a17150768d562a54c
+change-id: 20231024-vfs-super-rework-ca447a3240c9
 
->
-> Cc'ing Rick: see "validate_remap_areas()" in [1]
->
-> [1] https://lkml.kernel.org/r/20231009064230.2952396-3-surenb@google.com
->
->
-> --
-> Cheers,
->
-> David / dhildenb
->
 
