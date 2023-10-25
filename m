@@ -1,129 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-1124-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1125-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F28A7D5DFC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Oct 2023 00:20:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 014AA7D5EEC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Oct 2023 02:02:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D8081C20D35
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Oct 2023 22:20:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEBB0281BE5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Oct 2023 00:02:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D15543D386;
-	Tue, 24 Oct 2023 22:20:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7691423A4;
+	Wed, 25 Oct 2023 00:02:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vBRHjWs+";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="933tbh9j"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m0XB9JBw"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A198638F96
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Oct 2023 22:20:27 +0000 (UTC)
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29DC910C3;
-	Tue, 24 Oct 2023 15:20:23 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 23F4521C7F;
-	Tue, 24 Oct 2023 22:20:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1698186021; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CDeMMzqwERdWZxhGUFthQI91/gdqCAMKlu74LJU3/pc=;
-	b=vBRHjWs+sgfl44CHFZ67PsaMWBbaUhtaEl5ETVD8Y0K0pcxZYwDcyKDSfVQ+0AXfiwf7pX
-	tysZQkyaSTF165wNCkKoDUQBOtlPwXih0BBfQtH07RNP67rRqBicWF1gZnzlWiC5ftYa0z
-	BGq4v9yZKpo3MpVDdjtrgn+w8gH7ox0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1698186021;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CDeMMzqwERdWZxhGUFthQI91/gdqCAMKlu74LJU3/pc=;
-	b=933tbh9jJpH40D8bAgtuwIP3Oz7cqUkB+n7n5/w3vxtF14VC633YCAUySmXy/JoYWnrKhe
-	85Ty07IujwoJWGBg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-	(No client certificate requested)
-	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id E23631391C;
-	Tue, 24 Oct 2023 22:20:20 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-	by imap2.suse-dmz.suse.de with ESMTPSA
-	id 4vKlMSRDOGXYBgAAMHmgww
-	(envelope-from <krisman@suse.de>); Tue, 24 Oct 2023 22:20:20 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Eric Biggers <ebiggers@kernel.org>,  viro@zeniv.linux.org.uk,
-  tytso@mit.edu,  jaegeuk@kernel.org,  linux-fsdevel@vger.kernel.org,
-  linux-ext4@vger.kernel.org,  linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [PATCH v6 0/9] Support negative dentries on case-insensitive
- ext4 and f2fs
-In-Reply-To: <20230822-denkmal-operette-f16d8bd815fc@brauner> (Christian
-	Brauner's message of "Tue, 22 Aug 2023 11:03:48 +0200")
-Organization: SUSE
-References: <20230816050803.15660-1-krisman@suse.de>
-	<20230817170658.GD1483@sol.localdomain>
-	<20230821-derart-serienweise-3506611e576d@brauner>
-	<871qfwns61.fsf@suse.de>
-	<20230822-denkmal-operette-f16d8bd815fc@brauner>
-Date: Tue, 24 Oct 2023 18:20:19 -0400
-Message-ID: <87pm138xy4.fsf@>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C40680F
+	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Oct 2023 00:02:05 +0000 (UTC)
+Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F016ADA;
+	Tue, 24 Oct 2023 17:02:03 -0700 (PDT)
+Received: by mail-pj1-x1031.google.com with SMTP id 98e67ed59e1d1-27db9fdec16so3887181a91.2;
+        Tue, 24 Oct 2023 17:02:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1698192123; x=1698796923; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2Q7n7eEoCIAK2rGAN6IyglN3NhntUutFp1NL35nDz+g=;
+        b=m0XB9JBwT8uEhqUPfRW+sSbzbJ7Pocj9QnLs6iOLBfo7WDpDM+LRmh9LnIGe+dKhES
+         PPvuI5QdDBNXJJR1hw3EMHoEIe6awV865f6nxNIxKmF54RV+uLAlkSTfDxEIGOiuKPwm
+         8bzUJJSahyRoZoDsi45ZJY+U12T3sXXbDjCLq/xUaMr/edmw4wTgBpS/Vdpvy6lu2oQy
+         x9Dt4Sw8dlW8K7/OOx9XLOO5mJ39RVOfcuEnl86IG4aO2vHCZGmIwBSAQM34fF+I3ooc
+         LLzIR5WlukFmPzU9jQV/JZrWPaQer/YNB0lCuv0Q+ZPbuYBqIF6VcN6Advx399QW6n7R
+         qPDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698192123; x=1698796923;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2Q7n7eEoCIAK2rGAN6IyglN3NhntUutFp1NL35nDz+g=;
+        b=FKSDmqG4ItfTIBmZS1EHZqOxMAvYN9CK1l5xp2bofk4FIRLvKBkUEAbhGRi96/UWZ2
+         cR17leQMrXX3F+U5F7NUbMML9ZxGIZODUTHeoj1RkyBSOSSu/KcueoLVuUmxRexGLGbV
+         PviDH0XEkH3GSVGfYxVzNcJTEmQJi+DvBxt1nIZSFhagsvtmavNeBTikLn/GRgM9dslp
+         XdLRDjaVXmuedpqugIugykE5yywKQceXQCKqZ5U/ypuQHM3XQDX7PIfVIDLVDfMaTpQV
+         Figdh9mnxPv6pHGJ78WrSpDkmYTQoFyOn8Njnud9l02nGlrTDwP3VvQp75CrP7XOzKQO
+         bJsA==
+X-Gm-Message-State: AOJu0YzarhOvfKTy31X5HwJeO6mXO9fhBDcgijrd23fTlFL/YFIERymJ
+	WyK95keY0uTMRgBYjTqFzdDUf/n6dQg=
+X-Google-Smtp-Source: AGHT+IHqp0fgXno/O+LMjdsIA9+MhoOLdZSecl/wbg0PuSHBIWNGSfBx3I4yfchMij2mH/s+AytZgA==
+X-Received: by 2002:a17:90a:df8f:b0:27d:237b:558b with SMTP id p15-20020a17090adf8f00b0027d237b558bmr11985553pjv.5.1698192123380;
+        Tue, 24 Oct 2023 17:02:03 -0700 (PDT)
+Received: from [192.168.0.106] ([103.131.18.64])
+        by smtp.gmail.com with ESMTPSA id 21-20020a17090a01d500b0027732eb24bbsm10501271pjd.4.2023.10.24.17.02.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Oct 2023 17:02:02 -0700 (PDT)
+Message-ID: <04c51182-97b7-4a10-a6f7-195da19358be@gmail.com>
+Date: Wed, 25 Oct 2023 07:01:56 +0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Authentication-Results: smtp-out1.suse.de;
-	none
-X-Spam-Level: 
-X-Spam-Score: -3.78
-X-Spamd-Result: default: False [-3.78 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 NEURAL_HAM_LONG(-3.00)[-1.000];
-	 MIME_GOOD(-0.10)[text/plain];
-	 HAS_ORG_HEADER(0.00)[];
-	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 NEURAL_HAM_SHORT(-1.00)[-1.000];
-	 RCPT_COUNT_SEVEN(0.00)[8];
-	 INVALID_MSGID(1.70)[];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_COUNT_TWO(0.00)[2];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-1.88)[94.35%]
+User-Agent: Mozilla Thunderbird
+Subject: Re: Fwd: Memleaks in offset_ctx->xa (shmem)
+To: Linux regressions mailing list <regressions@lists.linux.dev>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Memory Management List <linux-mm@kvack.org>,
+ Linux Filesystem Development <linux-fsdevel@vger.kernel.org>
+Cc: Chuck Lever <chuck.lever@oracle.com>,
+ Christian Brauner <brauner@kernel.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Andrew Morton <akpm@linux-foundation.org>, vladbu@nvidia.com
+References: <429b452c-2211-436a-9af7-21332f68db7d@gmail.com>
+ <f21c7064-dac1-4667-96c6-0d85368300ca@leemhuis.info>
+Content-Language: en-US
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+In-Reply-To: <f21c7064-dac1-4667-96c6-0d85368300ca@leemhuis.info>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Christian Brauner <brauner@kernel.org> writes:
+On 24/10/2023 21:18, Linux regression tracking (Thorsten Leemhuis) wrote:
+> Bagas, FWIW, before doing so you in the future might want to search lore
+> for an abbreviated commit-id with a wildcard (e.g.
+> https://lore.kernel.org/all/?q=6faddda6* ) and the bugzilla url (e.g.
+> https://lore.kernel.org/all/?q=https%3A%2F%2Fbugzilla.kernel.org%2Fshow_bug.cgi%3Fid%3D218039).
+> Because then in this case you would have noticed that this was already
+> discussed on the lists and Chuck asked to bring it to bugzilla for
+> further tracking, so forwarding this likely was not worth it:
+> https://lore.kernel.org/all/87ttqhq0i7.fsf@nvidia.com/
+> 
 
->> Targeting 6.7 is fine by me. will you pick it up through the vfs tree? I
->> prefer it goes through there since it mostly touches vfs.
->
-> Yes, I think that's what will end up happening.
-
-Hi Christian,
-
-Sorry for the ping again, but I got a question about your process.
-
-I noticed this patchset did not make into linux-next in preparation for
-the 6.7 merge request. It also doesn't show in your vfs.all, but an
-older iteration (definitely not the v6 that Eric acked) exists in a
-vfs.dcache.casefold branch.  Is this expected and I'm missing something?
-
-I considered this applied but I might have misunderstood. Please let me
-know if you need me to rebase.
+Thanks for the tip reminder! I always forget it then...
 
 -- 
-Gabriel Krisman Bertazi
+An old man doll... just what I always wanted! - Clara
+
 
