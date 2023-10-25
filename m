@@ -1,140 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-1159-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1158-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24A4F7D6CDE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Oct 2023 15:15:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7A6D7D6CC8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Oct 2023 15:11:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0820281CEC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Oct 2023 13:15:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1377B1C20DFA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Oct 2023 13:11:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AC4127EFB;
-	Wed, 25 Oct 2023 13:15:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="epGQ+73y";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5hLiBJRQ"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA5527EF2;
+	Wed, 25 Oct 2023 13:11:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 738EC1CAB2
-	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Oct 2023 13:15:30 +0000 (UTC)
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28C8312F
-	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Oct 2023 06:15:29 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 017B021B19;
-	Wed, 25 Oct 2023 13:15:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1698239727; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7S3NZUd9Id4GdZju7Yi2l3epkSfPOcBzfVR/Bm6hOMk=;
-	b=epGQ+73yrmLSIGT5aZbbQf3TKDlWTZEsjpm65sIfnrtee6W2cqLpscrUoIPNy6nVAP49qp
-	t8a9onZTbLWrHHeuRhdv1YW7uf6LkzAnxtjNODkC0CleTUVrGfBxs+ssZUpge0cNUVL42F
-	D2RmsLUQckRwbKCHGsylHKaNsLJHkXY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1698239727;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7S3NZUd9Id4GdZju7Yi2l3epkSfPOcBzfVR/Bm6hOMk=;
-	b=5hLiBJRQgmmLuWSHSIVhKsP60dc5a9VNxKM8jkuP0ismuCTamCTty+j7+K08ba4t77MOlR
-	JQ0MoBkTPxMVJoCA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-	(No client certificate requested)
-	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id DCCCF13524;
-	Wed, 25 Oct 2023 13:15:26 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-	by imap2.suse-dmz.suse.de with ESMTPSA
-	id Bv7SNe4UOWVRdAAAMHmgww
-	(envelope-from <jack@suse.cz>); Wed, 25 Oct 2023 13:15:26 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 41353A06E5; Wed, 25 Oct 2023 14:36:35 +0200 (CEST)
-Date: Wed, 25 Oct 2023 14:36:35 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 03/10] bdev: surface the error from sync_blockdev()
-Message-ID: <20231025123635.twu7ynspjlvnjhvq@quack3>
-References: <20231024-vfs-super-freeze-v2-0-599c19f4faac@kernel.org>
- <20231024-vfs-super-freeze-v2-3-599c19f4faac@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66FDA27EE2
+	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Oct 2023 13:11:04 +0000 (UTC)
+Received: from mail-oi1-f199.google.com (mail-oi1-f199.google.com [209.85.167.199])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8C5E133
+	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Oct 2023 06:11:02 -0700 (PDT)
+Received: by mail-oi1-f199.google.com with SMTP id 5614622812f47-3b3fb625e3bso6655582b6e.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Oct 2023 06:11:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698239462; x=1698844262;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hWpAq0qt+Sym+g6msHmfcBrTUqlbALA8L+MY8O3Otlk=;
+        b=KMPbZFejusTtM2tCVwWHnsgtWBH2ODq5Iv+6J8l6MERiZ2PeyZv8765gOjjxQhxh6U
+         4fYlFc/QelRpHfO2LCFqJa97J4iF8jppYwuxxupIK7TIblq+/TqSMQvJ1EAwtWi0kqCz
+         GJq5KrZ86KQvjbvEdLyTW7dZgD8pEQJRwRFnd3mwNR3bhSDfspIOfc9npuidSzr2lJDs
+         9gfDI8ee6mu8ttukj/NQynvvHMkZU24sHV6moFN7XZbSI+mTjV3RG0abJuer6Q3EmXix
+         1XrfyGq8TBh28B8vl4GvsgGohETt8dbLhvoNYV0k5Q8ZikmURlWG8NGSOxMqUqEr3nL2
+         EImQ==
+X-Gm-Message-State: AOJu0YyDyuBvPpAK4yFjjDK8CGlXTwLGntlg9+DqXEUf0UzNJW4jyppM
+	+TQTj5B5+R0twihrTF6rNhlsSAXlg05Wx59O+hreZ+5STXb3
+X-Google-Smtp-Source: AGHT+IHZqjJ7AFE3HHDQt/4jalCqo82QYwyks3DKeuyCuJZJDqpjOsRv4QXy7Ipa/ozXFLZ3foCbjN7BxACV6GZvp0wrIIIEQo5U
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231024-vfs-super-freeze-v2-3-599c19f4faac@kernel.org>
-Authentication-Results: smtp-out1.suse.de;
-	none
-X-Spam-Level: 
-X-Spam-Score: -6.60
-X-Spamd-Result: default: False [-6.60 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 NEURAL_HAM_LONG(-3.00)[-1.000];
-	 MIME_GOOD(-0.10)[text/plain];
-	 RCPT_COUNT_FIVE(0.00)[5];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 NEURAL_HAM_SHORT(-1.00)[-1.000];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_COUNT_TWO(0.00)[2];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-3.00)[99.99%]
+X-Received: by 2002:a05:6808:2116:b0:3ae:c95:ad2c with SMTP id
+ r22-20020a056808211600b003ae0c95ad2cmr6259597oiw.0.1698239462133; Wed, 25 Oct
+ 2023 06:11:02 -0700 (PDT)
+Date: Wed, 25 Oct 2023 06:11:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e2597206088a2f80@google.com>
+Subject: [syzbot] Monthly exfat report (Oct 2023)
+From: syzbot <syzbot+listfa892e83a062ac7f9716@syzkaller.appspotmail.com>
+To: linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, sj1557.seo@samsung.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue 24-10-23 15:01:09, Christian Brauner wrote:
-> When freeze_super() is called, sync_filesystem() will be called which
-> calls sync_blockdev() and already surfaces any errors. Do the same for
-> block devices that aren't owned by a superblock and also for filesystems
-> that don't call sync_blockdev() internally but implicitly rely on
-> bdev_freeze() to do it.
-> 
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+Hello exfat maintainers/developers,
 
-Looks good. Feel free to add:
+This is a 31-day syzbot report for the exfat subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/exfat
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-								Honza
+During the period, 1 new issues were detected and 0 were fixed.
+In total, 4 issues are still open and 12 have been fixed so far.
 
-> ---
->  block/bdev.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/block/bdev.c b/block/bdev.c
-> index d674ad381c52..a3e2af580a73 100644
-> --- a/block/bdev.c
-> +++ b/block/bdev.c
-> @@ -245,7 +245,7 @@ int bdev_freeze(struct block_device *bdev)
->  	bdev->bd_fsfreeze_sb = sb;
->  
->  sync:
-> -	sync_blockdev(bdev);
-> +	error = sync_blockdev(bdev);
->  done:
->  	mutex_unlock(&bdev->bd_fsfreeze_mutex);
->  	return error;
-> 
-> -- 
-> 2.34.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Some of the still happening issues:
+
+Ref Crashes Repro Title
+<1> 80      No    INFO: task hung in exfat_sync_fs
+                  https://syzkaller.appspot.com/bug?extid=205c2644abdff9d3f9fc
+<2> 38      Yes   INFO: task hung in exfat_write_inode
+                  https://syzkaller.appspot.com/bug?extid=2f73ed585f115e98aee8
+<3> 8       Yes   INFO: task hung in __generic_file_fsync (3)
+                  https://syzkaller.appspot.com/bug?extid=ed920a72fd23eb735158
+<4> 2       Yes   INFO: task hung in fat_write_inode
+                  https://syzkaller.appspot.com/bug?extid=6f75830acb2e4cdc8e50
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
