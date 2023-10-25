@@ -1,248 +1,231 @@
-Return-Path: <linux-fsdevel+bounces-1154-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1155-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D52857D692C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Oct 2023 12:42:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 488337D6A51
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Oct 2023 13:42:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED0CA1C20D06
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Oct 2023 10:42:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 793611C20DBB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Oct 2023 11:42:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9DD7266DD;
-	Wed, 25 Oct 2023 10:42:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78F45273FF;
+	Wed, 25 Oct 2023 11:42:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mbr2SmSV"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bzsgmTnY"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8918915B4
-	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Oct 2023 10:42:12 +0000 (UTC)
-Received: from mail-qk1-x736.google.com (mail-qk1-x736.google.com [IPv6:2607:f8b0:4864:20::736])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F36091BDB;
-	Wed, 25 Oct 2023 03:41:58 -0700 (PDT)
-Received: by mail-qk1-x736.google.com with SMTP id af79cd13be357-7789a4c01ddso371588885a.1;
-        Wed, 25 Oct 2023 03:41:58 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA7953A1
+	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Oct 2023 11:42:35 +0000 (UTC)
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 581A4129;
+	Wed, 25 Oct 2023 04:42:34 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id ffacd0b85a97d-32d9effe314so3783855f8f.3;
+        Wed, 25 Oct 2023 04:42:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698230518; x=1698835318; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=waqA3Wuu0WYamjZmXtBbHzp1YM3pbNgPBrZtQ2JTrdM=;
-        b=mbr2SmSV3miUD750RE7vqS+m+1hEZdPEg+6mKrAEl8ZnmcB4nHilOn8c/rioVIl95+
-         Hj1DdUTbL4O4itVTKd6AWlzbScI095b4XhMIvE6DFgCWlh+eBGQ2GCf7utKtn3TR/a0z
-         EHOLNyjEBLNxuCtYTMk6ADWTWQ3skeyyx1YafVSXgtnakWqqLkDT7cY8df9+L/Fe7EG+
-         LqAAUxqp6EIttGtA5HqQE5Xdf5F+y/R+23KcxbYErRXGoHvzwtw8owncSCFCdOUapzMQ
-         GtTMIKjK6XARd11b7fg61U/4a5ALJmwjG3ubFuwTj/Iyh7tHxRGffFsfx0Uf1kByaQ0Q
-         rYqA==
+        d=gmail.com; s=20230601; t=1698234153; x=1698838953; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ztxc7fGS03CwDDABLfZLza22pE8XDXpGxJKNBdIYUXU=;
+        b=bzsgmTnY17zg5np2VmDz3XlAMk9VsA3IVErVBuWyK+dhzaD5MW7cn33GuyC7OMZ8fa
+         0Qi9o2F/YcycHsJyPeB7x1b3PcEqZgWcDa1Geh8M4pTm2VD0++qUwRV+zlqahuieHME/
+         zn5qbUCAHOR09b7pmuRX+6XPzTiriTA4Whel20mgR+38B0LQ/2W3lx6fFfgc2VLQncxY
+         +fwTN81covF9zPITqU7CvpjS1iF+xe4W5na5DaME/BMXpAlG/KDKHsvPSB246PUP7WuH
+         T91VPcLBCSLMHCAwfKMLIygG7hHLWlnmeKT2l96/Gz9TeRhYcH5LbQow8zMVN1VpxAet
+         /01w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698230518; x=1698835318;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=waqA3Wuu0WYamjZmXtBbHzp1YM3pbNgPBrZtQ2JTrdM=;
-        b=SIWQU2Tj7xm6yMkFkZP1I4ws6fdNVn2WKW9C7B8dWQfOlxwnLL1Ewzr0knkNzN7kqx
-         pN/UnMm0QTV3+o9ycHscpWo7hRmiswKwCLechXCE20/GmvjNtEYnK9ynLAGPrRo2o1pA
-         mKzbIrWSNvNEVZ1VHSsup+H7TIXchUvZv01wg9aGLGIGs2ThvL6OrVK1523Z/ZQLxG68
-         NgCcf/tE15CphGJ3Rp+xcswDad7oS0HkRDouvOhVa6UyUQQDejWGn7tJzoti7Je+Hi6q
-         Xp2LrXEC02oNKS3VF5yhhFwHlnQAShNdINYBVYq82tEE12Of5hMkjndgDBnI193eR6jH
-         Ae8A==
-X-Gm-Message-State: AOJu0YzMNkqb7Qw6Cv8hukUc3hJH5BHhna2+Rolsj869sAQNCbP1oVus
-	lD63uccw8XLDRogH7rE9mU8Yqmwdzp/zLOSdI1U=
-X-Google-Smtp-Source: AGHT+IE1T4f/B4rMNL1sPJuZ3K0wNsQZDTWnBqxx6Z/H8yseAqJoiFBDHVNFekFm4dV4XwCG1j1ncqG33Ax+9qoCLa8=
-X-Received: by 2002:a05:620a:10a6:b0:76f:1a6b:571 with SMTP id
- h6-20020a05620a10a600b0076f1a6b0571mr14824898qkk.27.1698230517883; Wed, 25
- Oct 2023 03:41:57 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1698234153; x=1698838953;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ztxc7fGS03CwDDABLfZLza22pE8XDXpGxJKNBdIYUXU=;
+        b=ZLjTgnenZpgNwaWkp6+e1WVFfbN6NCP0lcR3EhB0MJX5OfWW5VC2RCAdg17Jny2whv
+         JIO57X0enYZQW0ch7JxruFOfikF7/UDhs4OEZq21hAnbK+IuXgub6n5nHSwwgO3NwW3D
+         3ov+QMckObcdVWfkXA6uHKQGx2XO5GiSO4GFtZyNdQORRm6HVE3tKiLO3ftEcXLWdkoJ
+         gL79VDYnT1MaX5Br6L6KuDvCeyWW60RGC/sWWRL0LUwP38rVyh5IrbYm/CfPQTif6Tcf
+         Jrb6ka0Wdza6hU5WOVelZO9eY75sm23S/QJSNj30goFNFQqk3s17oFVSsHNQrW5mccrY
+         pqKQ==
+X-Gm-Message-State: AOJu0YypdTH/H31qxotp1uICeYt9romP1i1TSFrE0VzqfzhwBC/zVNWy
+	0xKmqaAkTvO8wZCHlmUO0f8=
+X-Google-Smtp-Source: AGHT+IFY+SR+Sf5nD52JKdyMtbcRm3JEuKPSzPT36Byf04+0cg6qCgx+Sz1a4qdOIy3xAs9+I1LM8w==
+X-Received: by 2002:adf:ef4e:0:b0:324:8502:6355 with SMTP id c14-20020adfef4e000000b0032485026355mr9735089wrp.46.1698234152508;
+        Wed, 25 Oct 2023 04:42:32 -0700 (PDT)
+Received: from amir-ThinkPad-T480.lan ([5.29.249.86])
+        by smtp.gmail.com with ESMTPSA id r6-20020a5d6946000000b00318147fd2d3sm11844955wrw.41.2023.10.25.04.42.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Oct 2023 04:42:32 -0700 (PDT)
+From: Amir Goldstein <amir73il@gmail.com>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Trond Myklebust <trond.myklebust@hammerspace.com>,
+	Anna Schumaker <anna@kernel.org>,
+	Benjamin Coddington <bcodding@redhat.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org,
+	linux-unionfs@vger.kernel.org,
+	linux-nfs@vger.kernel.org
+Subject: [PATCH] fuse: derive f_fsid from s_dev and connection start time
+Date: Wed, 25 Oct 2023 14:42:28 +0300
+Message-Id: <20231025114228.23167-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <0a1a847af4372e62000b259e992850527f587205.camel@kernel.org>
- <ZTGncMVw19QVJzI6@dread.disaster.area> <eb3b9e71ee9c6d8e228b0927dec3ac9177b06ec6.camel@kernel.org>
- <ZTWfX3CqPy9yCddQ@dread.disaster.area> <61b32a4093948ae1ae8603688793f07de764430f.camel@kernel.org>
- <ZTcBI2xaZz1GdMjX@dread.disaster.area> <CAHk-=whphyjjLwDcEthOOFXXfgwGrtrMnW2iyjdQioV6YSMEPw@mail.gmail.com>
- <ZTc8tClCRkfX3kD7@dread.disaster.area> <CAOQ4uxhJGkZrUdUJ72vjRuLec0g8VqgRXRH=x7W9ogMU6rBxcQ@mail.gmail.com>
- <d539804a2a73ad70265c5fa599ecd663cd235843.camel@kernel.org> <ZTjMRRqmlJ+fTys2@dread.disaster.area>
-In-Reply-To: <ZTjMRRqmlJ+fTys2@dread.disaster.area>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 25 Oct 2023 13:41:46 +0300
-Message-ID: <CAOQ4uxj7o4SVyDqXQp-vqjJptXdFpZ736ARjk=L8knc+gaSWXg@mail.gmail.com>
-Subject: Re: [PATCH RFC 2/9] timekeeping: new interfaces for multigrain
- timestamp handing
-To: Dave Chinner <david@fromorbit.com>
-Cc: Jeff Layton <jlayton@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Kent Overstreet <kent.overstreet@linux.dev>, Christian Brauner <brauner@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, John Stultz <jstultz@google.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>, 
-	Chandan Babu R <chandan.babu@oracle.com>, "Darrick J. Wong" <djwong@kernel.org>, 
-	"Theodore Ts'o" <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, 
-	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Hugh Dickins <hughd@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.de>, 
-	David Howells <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mm@kvack.org, 
-	linux-nfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 25, 2023 at 11:05=E2=80=AFAM Dave Chinner <david@fromorbit.com>=
- wrote:
->
-> On Tue, Oct 24, 2023 at 02:40:06PM -0400, Jeff Layton wrote:
-> > On Tue, 2023-10-24 at 10:08 +0300, Amir Goldstein wrote:
-> > > On Tue, Oct 24, 2023 at 6:40=E2=80=AFAM Dave Chinner <david@fromorbit=
-.com> wrote:
-> > > >
-> > > > On Mon, Oct 23, 2023 at 02:18:12PM -1000, Linus Torvalds wrote:
-> > > > > On Mon, 23 Oct 2023 at 13:26, Dave Chinner <david@fromorbit.com> =
-wrote:
-> > > > > >
-> > > > > > The problem is the first read request after a modification has =
-been
-> > > > > > made. That is causing relatime to see mtime > atime and trigger=
-ing
-> > > > > > an atime update. XFS sees this, does an atime update, and in
-> > > > > > committing that persistent inode metadata update, it calls
-> > > > > > inode_maybe_inc_iversion(force =3D false) to check if an iversi=
-on
-> > > > > > update is necessary. The VFS sees I_VERSION_QUERIED, and so it =
-bumps
-> > > > > > i_version and tells XFS to persist it.
-> > > > >
-> > > > > Could we perhaps just have a mode where we don't increment i_vers=
-ion
-> > > > > for just atime updates?
-> > > > >
-> > > > > Maybe we don't even need a mode, and could just decide that atime
-> > > > > updates aren't i_version updates at all?
-> > > >
-> > > > We do that already - in memory atime updates don't bump i_version a=
-t
-> > > > all. The issue is the rare persistent atime update requests that
-> > > > still happen - they are the ones that trigger an i_version bump on
-> > > > XFS, and one of the relatime heuristics tickle this specific issue.
-> > > >
-> > > > If we push the problematic persistent atime updates to be in-memory
-> > > > updates only, then the whole problem with i_version goes away....
-> > > >
-> > > > > Yes, yes, it's obviously technically a "inode modification", but =
-does
-> > > > > anybody actually *want* atime updates with no actual other change=
-s to
-> > > > > be version events?
-> > > >
-> > > > Well, yes, there was. That's why we defined i_version in the on dis=
-k
-> > > > format this way well over a decade ago. It was part of some deep
-> > > > dark magical HSM beans that allowed the application to combine
-> > > > multiple scans for different inode metadata changes into a single
-> > > > pass. atime changes was one of the things it needed to know about
-> > > > for tiering and space scavenging purposes....
-> > > >
-> > >
-> > > But if this is such an ancient mystical program, why do we have to
-> > > keep this XFS behavior in the present?
-> > > BTW, is this the same HSM whose DMAPI ioctls were deprecated
-> > > a few years back?
->
-> Drop the attitude, Amir.
->
-> That "ancient mystical program" is this:
->
-> https://buy.hpe.com/us/en/enterprise-solutions/high-performance-computing=
--solutions/high-performance-computing-storage-solutions/hpc-storage-solutio=
-ns/hpe-data-management-framework-7/p/1010144088
->
+Use s_dev number and connection start time to report f_fsid in statfs(2).
 
-Sorry for the attitude Dave, I somehow got the impression that you
-were talking about a hypothetical old program that may be out of use.
-I believe that Jeff and Linus got the same impression...
+The s_dev number could be easily recycled, so we use lower 32bits of the
+connection start time to try to avoid the recycling of f_fsid.
+The anon bdev number is only 20 bits (major is 0), so we could use more
+bits from connection start time, but avoiding f_fsid recycling is not
+critical, so 32bit is enough.
 
-> Yup, that product is backed by a proprietary descendent of the Irix
-> XFS code base XFS that is DMAPI enabled and still in use today. It's
-> called HPE XFS these days....
->
+If the server does not support NFS export, fuse client still advertizes
+->s_export_op, but those are non compliant operations that often cannot
+decode file handles, or worse, decode file hanldes to wrong objects.
 
-What do you mean?
-Do you mean that the HPE product uses patched XFS?
-If so, why is that an upstream concern?
+In this case, leave f_fsid zero to signal fanotify and aware users to
+avoid exporting this incompliant fuse filesystem to NFS.
 
-Upstream xfs indeed preserves di_dmstate,di_dmevmask, but it does
-not change those state members when file changes happen.
+This allows fuse client to be monitored by fanotify filesystem watch
+for local client file access if server supports NFS export.
 
-So if mounting an HPE XFS disk on with upstream kernel is not
-going to record DMAPI state changes, does it matter if upstream
-xfs does not update di_changecount on atime change?
+For example, with inotify-tools 4.23.8.0, the following command can be
+used to watch local client access over entire nfs filesystem:
 
-Maybe I did not understand the situation w.r.t HPE XFS.
+  fsnotifywatch --filesystem /mnt/fuse
 
-> > > I mean, I understand that you do not want to change the behavior of
-> > > i_version update without an opt-in config or mount option - let the d=
-istro
-> > > make that choice.
-> > > But calling this an "on-disk format change" is a very long stretch.
->
-> Telling the person who created, defined and implemented the on disk
-> format that they don't know what constitutes a change of that
-> on-disk format seems kinda Dunning-Kruger to me....
->
+Note that fanotify filesystem watch does not report remote changes on
+server.  It provides the same notifications as inotify, but it watches
+over the entire filesystem and reports file handle of objects and fsid
+with events.
 
-OK. I will choose my words more carefully:
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+---
 
-I still do not understand, from everything that you have told us
-so far, including the mention of the specific product above,
-why not updating di_changecount on atime update constitutes
-an on-disk format change and not a runtime behavior change.
+Miklos,
 
-You also did not address my comment that xfs_repair does not
-update di_changecount on any inode changes to the best of my
-code reading abilities.
+I'd like to explain why I chose to tie setting fuse f_fsid with fuse
+server NFS export capability.
 
-> There are *lots* of ways that di_changecount is now incompatible
-> with the VFS change counter. That's now defined as "i_version should
-> only change when [cm]time is changed".
->
-> di_changecount is defined to be a count of the number of changes
-> made to the attributes of the inode.  It's not just atime at issue
-> here - we bump di_changecount when make any inode change, including
-> background work that does not otherwise change timestamps. e.g.
-> allocation at writeback time, unwritten extent conversion, on-disk
-> EOF extension at IO completion, removal of speculative
-> pre-allocation beyond EOF, etc.
->
+Since v6.6-rc7, fanotify permits sb/mount watch only for filesystems
+that know how to decode ALL file handles (not only how to encode).
+fanotify checks for the ->fh_to_dentry() method, which fuse always
+implements regardless of server NFS export support.
 
-I see.
-Does xfs update ctime on all those inode block map changes?
+At first I considered assigning s_export_op depending on server NFS
+export support, but that would break the exising fuse best-effort decode
+behavior, whatever it is worth.
 
-> IOWs, di_changecount was never defined as a linux "i_version"
-> counter, regardless of the fact we originally we able to implement
-> i_version with it - all extra bumps to di_changecount were not
-> important to the users of i_version for about a decade.
->
-> Unfortunately, the new i_version definition is very much
-> incompatible with the existing di_changecount definition and that's
-> the underlying problem here. i.e. the problem is not that we bump
-> i_version on atime, it's that di_changecount is now completely
-> incompatible with the new i_version change semantics.
->
-> To implement the new i_version semantics exactly, we need to add a
-> new field to the inode to hold this information.
-> If we change the on disk format like this, then the atime
-> problems go away because the new field would not get updated on
-> atime updates. We'd still be bumping di_changecount on atime
-> updates, though, because that's what is required by the on-disk
-> format.
->
+Currently, fanotify sb watch does not support fuse because of zero f_fsid,
+so I decided to keep it this way for the incomplete NFS export case.
 
-I fully agree with you that we should avoid on-disk format change.
-This is exactly the reason that I'm insisting on the point of clarifying
-how exactly, this semantic change of di_changecount is going to
-break existing applications that run on upstream kernel.
+Regardless of my own reasons, I think this behavior also makes sense for
+users that want to export fuse to NFS:
+
+In order to export fuse to NFS, user needs to specify an explicit "fsid"
+argument in /etc/exports.  Until now, there was no clue from fuse w.r.t
+a good value for the export fsid.
+
+With this change, f_fsid would be a good candidate for export fsid.
+Naturally, exported file handles would become stale after fuse server
+restart, but that is much better that having file handles decode the
+wrong object.
+
+Even more important, if users would know that they can use f_fsid as
+a valid export fsid, a zero f_fsid is also a good indication that
+exporting this fuse fs is not a good idea.
 
 Thanks,
 Amir.
+
+ fs/fuse/fuse_i.h |  3 +++
+ fs/fuse/inode.c  | 26 +++++++++++++++++++++-----
+ 2 files changed, 24 insertions(+), 5 deletions(-)
+
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index bf0b85d0b95c..963a7dbf4224 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -815,6 +815,9 @@ struct fuse_conn {
+ 	/** Device ID from the root super block */
+ 	dev_t dev;
+ 
++	/** Connection start time in jiffies */
++	u64 start_time;
++
+ 	/** Dentries in the control filesystem */
+ 	struct dentry *ctl_dentry[FUSE_CTL_NUM_DENTRIES];
+ 
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index e63f966698a5..480bd2e7ad37 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -533,7 +533,6 @@ static void fuse_send_destroy(struct fuse_mount *fm)
+ 
+ static void convert_fuse_statfs(struct kstatfs *stbuf, struct fuse_kstatfs *attr)
+ {
+-	stbuf->f_type    = FUSE_SUPER_MAGIC;
+ 	stbuf->f_bsize   = attr->bsize;
+ 	stbuf->f_frsize  = attr->frsize;
+ 	stbuf->f_blocks  = attr->blocks;
+@@ -542,7 +541,22 @@ static void convert_fuse_statfs(struct kstatfs *stbuf, struct fuse_kstatfs *attr
+ 	stbuf->f_files   = attr->files;
+ 	stbuf->f_ffree   = attr->ffree;
+ 	stbuf->f_namelen = attr->namelen;
+-	/* fsid is left zero */
++}
++
++static void fuse_get_fsid(struct super_block *sb, __kernel_fsid_t *fsid)
++{
++	struct fuse_mount *fm = get_fuse_mount_super(sb);
++
++	/* fsid is left zero when server does not support NFS export */
++	if (!fm->fc->export_support)
++		return;
++
++	/*
++	 * Using the anon bdev number to avoid local f_fsid collisions with
++	 * lowers bit of connection start time to avoid recycling of f_fsid.
++	 */
++	fsid->val[0] = new_encode_dev(sb->s_dev);
++	fsid->val[1] = (u32) fm->fc->start_time;
+ }
+ 
+ static int fuse_statfs(struct dentry *dentry, struct kstatfs *buf)
+@@ -553,10 +567,11 @@ static int fuse_statfs(struct dentry *dentry, struct kstatfs *buf)
+ 	struct fuse_statfs_out outarg;
+ 	int err;
+ 
+-	if (!fuse_allow_current_process(fm->fc)) {
+-		buf->f_type = FUSE_SUPER_MAGIC;
++	buf->f_type = FUSE_SUPER_MAGIC;
++	fuse_get_fsid(sb, &buf->f_fsid);
++
++	if (!fuse_allow_current_process(fm->fc))
+ 		return 0;
+-	}
+ 
+ 	memset(&outarg, 0, sizeof(outarg));
+ 	args.in_numargs = 0;
+@@ -874,6 +889,7 @@ void fuse_conn_init(struct fuse_conn *fc, struct fuse_mount *fm,
+ 	fc->user_ns = get_user_ns(user_ns);
+ 	fc->max_pages = FUSE_DEFAULT_MAX_PAGES_PER_REQ;
+ 	fc->max_pages_limit = FUSE_MAX_MAX_PAGES;
++	fc->start_time = get_jiffies_64();
+ 
+ 	INIT_LIST_HEAD(&fc->mounts);
+ 	list_add(&fm->fc_entry, &fc->mounts);
+-- 
+2.34.1
+
 
