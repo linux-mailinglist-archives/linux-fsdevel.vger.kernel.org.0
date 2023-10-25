@@ -1,151 +1,205 @@
-Return-Path: <linux-fsdevel+bounces-1210-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1211-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63F3D7D7658
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Oct 2023 23:07:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F07257D7717
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Oct 2023 23:51:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F430281CB6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Oct 2023 21:07:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F17F5B21245
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Oct 2023 21:51:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DDC5328CC;
-	Wed, 25 Oct 2023 21:07:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6CD935888;
+	Wed, 25 Oct 2023 21:51:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="STiV4Ih9"
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="iRbIVns0"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5C13328B1
-	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Oct 2023 21:06:59 +0000 (UTC)
-Received: from mail-qv1-xf2d.google.com (mail-qv1-xf2d.google.com [IPv6:2607:f8b0:4864:20::f2d])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02FD0181
-	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Oct 2023 14:06:58 -0700 (PDT)
-Received: by mail-qv1-xf2d.google.com with SMTP id 6a1803df08f44-66d0760cd20so1569256d6.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Oct 2023 14:06:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1698268017; x=1698872817; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+ZytB5j+cqWISPSB2svmNjXmS7qMmv4D7nJ0QJibgwE=;
-        b=STiV4Ih9HEytD8mlaTSn3AA9rjFRK7OVjNTvoylJdftAcJ7C/8MdvjhfWvNqiO2M3/
-         bCENxkGJx6XsNZGxNu50U71RqoEHfNJuycxrx6BAAAtU4ntm5YnJz4ujSCWL6VuqhhpE
-         ZVixUhex2nKKEztoJQUrgEE27VLRoRdwLiG+XHCgnemBAt64mqsIKg+xo60iLDK0yd6e
-         b7KDy0awK3BY7vK1rWaRS+TuFion/cK20D8NgUcbAXfe9yDLMa4PaQSQEf2Bo57qOqBS
-         z9R+ODqz8RCMmwT5wOyRHYqir4szEn7gys8MeGUSccKGofkOpB0l34fF3svxFYoaFOsj
-         QFgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698268017; x=1698872817;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+ZytB5j+cqWISPSB2svmNjXmS7qMmv4D7nJ0QJibgwE=;
-        b=I3qQiDKO5JBjaomvBNnznfc2UNchfiypw9UbW7E8OoKRb5ZyDTnHWPKCg3CeUJjub1
-         qMhRtEaEmQsUBLKfpacPumsQvzTlhDjmIoDEunsTnjgFgBJyMl4tK29TtCLZkvVwsPKf
-         am4XfQey4skKhp8wI3YGwHbtOEu+OoNk9GxSwVTmFe0dByFGTR1XSFdwfwISUvHkbHD0
-         D2GgbGjQ4aI3aZXN4yq0JDDVwJr7AqQ6UosYKLZXng1mEEuEUdFvZIB06yw3K5U5yAak
-         d0spyXXH3x48gOvHQxH9pgR5ejgwYZGe292wxpF4okrHeAk0dwcsRhgfC+BqCYjHrPg+
-         gSUg==
-X-Gm-Message-State: AOJu0YwDOsbC28CYgdi7e57GKdnddl3uKDR6GNDD5q7FOLnaP55ZJuxp
-	IHuBb72QXKtHVxTkm+KuY0NdXUYugQ9E9NzxismiFw==
-X-Google-Smtp-Source: AGHT+IGcBa0TRZ5uW5atJ7v3fMab4ZQ6EkgZwGLsRQCLj8vifJJB+HBcIj1pl9b1b/ZUv28xfQYwPg==
-X-Received: by 2002:a05:6214:418a:b0:66d:327:bf8f with SMTP id ld10-20020a056214418a00b0066d0327bf8fmr1058030qvb.30.1698268017035;
-        Wed, 25 Oct 2023 14:06:57 -0700 (PDT)
-Received: from localhost (cpe-76-182-20-124.nc.res.rr.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id jy20-20020a0562142b5400b0065d051fc445sm4716902qvb.55.2023.10.25.14.06.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Oct 2023 14:06:56 -0700 (PDT)
-Date: Wed, 25 Oct 2023 17:06:54 -0400
-From: Josef Bacik <josef@toxicpanda.com>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
-	Christian Brauner <brauner@kernel.org>, Chris Mason <clm@fb.com>,
-	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/3] fanotify support for btrfs sub-volumes
-Message-ID: <20231025210654.GA2892534@perftesting>
-References: <20231025135048.36153-1-amir73il@gmail.com>
- <ZTk1ffCMDe9GrJjC@infradead.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A0DC8C0
+	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Oct 2023 21:51:38 +0000 (UTC)
+Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCFF6192;
+	Wed, 25 Oct 2023 14:51:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1698270694; x=1698529894;
+	bh=+mIMtJy5g/3pP0bfV4kNM3vtmyjGkqlYbw5iT4J0tl8=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=iRbIVns0Dvfe0uo4iphsA8sVRHbI3fybSM6Y3MW1meOEMhMW3SdN9huZmKHpXxX2A
+	 oAK5DOYYJZdr4M/kC5NJ+cqGDRzHm0csHrZ4b6h6eWh/WH8RjXWL5YFH4eqIncxgIJ
+	 EDkHDM3DRwaW+RxWzN2/5QYQpFRbt83ITw/C427DwracoFThk79D0EYG8u3lo7UpQs
+	 FS7NOh7g+xWsN0rozPH61QKY3ppBd5gPVD4R5zuO4AN2dgdGKfGi97VAyLAaXJOs9/
+	 9+4MysEB0mgU9ipH7wCJyhJkoNKt1bVhQErSz7YIkKG7dA/2UiizCzBeuMdLrL5lPb
+	 nu1WNLGiBcOsQ==
+Date: Wed, 25 Oct 2023 21:51:28 +0000
+To: Boqun Feng <boqun.feng@gmail.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, llvm@lists.linux.dev, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, Alan Stern <stern@rowland.harvard.edu>, Andrea Parri <parri.andrea@gmail.com>, Will Deacon <will@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Nicholas Piggin <npiggin@gmail.com>, David Howells <dhowells@redhat.com>, Jade Alglave <j.alglave@ucl.ac.uk>, Luc Maranget <luc.maranget@inria.fr>, "Paul E. McKenney" <paulmck@kernel.org>, Akira Yokosawa <akiyks@gmail.com>, Daniel Lustig <dlustig@nvidia.com>, Joel Fernandes <joel@joelfernandes.org>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, Tom Rix <trix@redhat.com>, Alexander Viro
+	<viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, kent.overstreet@gmail.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com, Matthew Wilcox <willy@infradead.org>, Dave Chinner <david@fromorbit.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC] rust: types: Add read_once and write_once
+Message-ID: <VEhpQqgTM0U-aNYRUQ89ICIHW9Eehr66yw92DrmBZcZOah2mLqlz24HxEwDwYPVDOnaigDiZDEVl5mWqZJxoAtRheqTMjzpxuTKe0sr1uZs=@proton.me>
+In-Reply-To: <20231025195339.1431894-1-boqun.feng@gmail.com>
+References: <20231025195339.1431894-1-boqun.feng@gmail.com>
+Feedback-ID: 71780778:user:proton
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZTk1ffCMDe9GrJjC@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 25, 2023 at 08:34:21AM -0700, Christoph Hellwig wrote:
-> On Wed, Oct 25, 2023 at 04:50:45PM +0300, Amir Goldstein wrote:
-> > Jan,
-> > 
-> > This patch set implements your suggestion [1] for handling fanotify
-> > events for filesystems with non-uniform f_fsid.
-> 
-> File systems nust never report non-uniform fsids (or st_dev) for that
-> matter.  btrfs is simply broken here and needs to be fixed.
+> In theory, `read_volatile` and `write_volatile` in Rust can have UB in
+> case of the data races [1]. However, kernel uses volatiles to implement
 
-We keep going around and around on this so I'd like to get a set of steps laid
-out for us to work towards to resolve this once and for all.
+I would not write "In theory", but rather state that data races involving
+`read_volatile` is documented to still be UB.
 
-HYSTERICAL RAISINS (why we do st_dev)
--------------------------------------
+> READ_ONCE() and WRITE_ONCE(), and expects races on these marked accesses
 
-Chris made this decision forever ago because things like rsync would screw up
-with snapshots and end up backing up the same thing over and over again.  We saw
-it was using st_dev (as were a few other standard tools) to distinguish between
-file systems, so we abused this to make userspace happy.
+Missing "`"?
 
-The other nice thing this provided was a solution for the fact that we re-use
-inode numbers in the file system, as they're unique for the subvolume only.
+> don't cause UB. And they are proven to have a lot of usages in kernel.
+>=20
+> To close this gap, `read_once` and `write_once` are introduced, they
+> have the same semantics as `READ_ONCE` and `WRITE_ONCE` especially
+> regarding data races under the assumption that `read_volatile` and
 
-PROBLEMS WE WANT TO SOLVE
--------------------------
+I would separate implementation from specification. We specify
+`read_once` and `write_once` to have the same semantics as `READ_ONCE`
+and `WRITE_ONCE`. But we implement them using
+`read_volatile`/`write_volatile`, so we might still encounter UB, but it
+is still a sort of best effort. As soon as we have the actual thing in
+Rust, we will switch the implementation.
 
-1) Stop abusing st_dev.  We actually want this as btrfs developers because it's
-   kind of annoying to figure out which device is mounted when st_dev doesn't
-   map to any of the devices in /proc/mounts.
+> `write_volatile` have the same behavior as a volatile pointer in C from
+> a compiler point of view.
+>=20
+> Longer term solution is to work with Rust language side for a better way
+> to implement `read_once` and `write_once`. But so far, it should be good
+> enough.
+>=20
+> Suggested-by: Alice Ryhl <aliceryhl@google.com>
+> Link: https://doc.rust-lang.org/std/ptr/fn.read_volatile.html#safety [1]
+> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+> ---
+>=20
+> Notice I also make the primitives only work on T: Copy, since I don't
+> think Rust side and C side will use a !Copy type to communicate, but we
+> can always remove that constrait later.
+>=20
+>=20
+>  rust/kernel/prelude.rs |  2 ++
+>  rust/kernel/types.rs   | 43 ++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 45 insertions(+)
+>=20
+> diff --git a/rust/kernel/prelude.rs b/rust/kernel/prelude.rs
+> index ae21600970b3..351ad182bc63 100644
+> --- a/rust/kernel/prelude.rs
+> +++ b/rust/kernel/prelude.rs
+> @@ -38,3 +38,5 @@
+>  pub use super::init::{InPlaceInit, Init, PinInit};
+>=20
+>  pub use super::current;
+> +
+> +pub use super::types::{read_once, write_once};
 
-2) Give user space a way to tell it's on a subvolume, so it can not be confused
-   by the repeating inode numbers.
+Do we really want people to use these so often that they should be in
+the prelude?
 
-POSSIBLE SOLUTIONS
-------------------
+Sure there will not really be any name conflicts, but I think an
+explicit import might make sense.
 
-1) A statx field for subvolume id.  The subvolume id's are unique to the file
-   system, so subvolume id + inode number is unique to the file system.  This is
-   a u64, so is nice and easy to export through statx.
-2) A statx field for the uuid/fsid of the file system.  I'd like this because
-   again, being able to easily stat a couple of files and tell they're on the
-   same file system is a valuable thing.  We have a per-fs uuid that we can
-   export here.
-3) A statx field for the uuid of the subvolume.  Our subvolumes have their own
-   unique uuid.  This could be an alternative for the subvolume id option, or an
-   addition.
+> diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
+> index d849e1979ac7..b0872f751f97 100644
+> --- a/rust/kernel/types.rs
+> +++ b/rust/kernel/types.rs
 
-Either 1 or 3 are necessary to give userspace a way to tell they've wandered
-into a different subvolume.  I'd like to have all 3, but I recognize that may be
-wishful thinking.  2 isn't necessary, but if we're going to go about messing
-with statx then I'd like to do it all at once, and I want this for the reasons
-stated above.
+I don't think this should go into `types.rs`. But I do not have a good
+name for the new module.
 
-SEQUENCE OF EVENTS
-------------------
+> @@ -432,3 +432,46 @@ pub enum Either<L, R> {
+>      /// Constructs an instance of [`Either`] containing a value of type =
+`R`.
+>      Right(R),
+>  }
+> +
+> +/// (Concurrent) Primitives to interact with C side, which are considere=
+d as marked access:
+> +///
+> +/// tools/memory-memory/Documentation/access-marking.txt
+> +
 
-We do one of the statx changes, that rolls into a real kernel.  We run around
-and submit patches for rsync and anything else we can think of to take advantage
-of the statx feature.
+Accidental empty line? Or is this meant as a comment for both
+functions?
 
-Then we wait, call it 2 kernel releases after the initial release.  Then we go
-and rip out the dev_t hack.
+> +/// The counter part of C `READ_ONCE()`.
+> +///
+> +/// The semantics is exactly the same as `READ_ONCE()`, especially when =
+used for intentional data
+> +/// races.
 
-Does this sound like a reasonable path forward to resolve everybody's concerns?
-I feel like I'm missing some other argument here, but I'm currently on vacation
-and can't think of what it is nor have the energy to go look it up at the
-moment.  Thanks,
+It would be great if these semantics are either linked or spelled out
+here. Ideally both.
 
-Josef
+> +///
+> +/// # Safety
+> +///
+> +/// * `src` must be valid for reads.
+> +/// * `src` must be properly aligned.
+> +/// * `src` must point to a properly initialized value of value `T`.
+> +#[inline(always)]
+> +pub unsafe fn read_once<T: Copy>(src: *const T) -> T {
+
+Why only `T: Copy`?
+
+> +    // SAFETY: the read is valid because of the function's safety requir=
+ement, plus the assumption
+> +    // here is that 1) a volatile pointer dereference in C and 2) a `rea=
+d_volatile` in Rust have the
+> +    // same semantics, so this function should have the same behavior as=
+ `READ_ONCE()` regarding
+> +    // data races.
+
+I would explicitly state that we might have UB here due to data races.
+But that we have not seen any invalid codegen and thus assume there to
+be no UB (you might also want to write this in the commit message).
+
+--
+Cheers,
+Benno
+
+> +    unsafe { src.read_volatile() }
+> +}
+> +
+> +/// The counter part of C `WRITE_ONCE()`.
+> +///
+> +/// The semantics is exactly the same as `WRITE_ONCE()`, especially when=
+ used for intentional data
+> +/// races.
+> +///
+> +/// # Safety
+> +///
+> +/// * `dst` must be valid for writes.
+> +/// * `dst` must be properly aligned.
+> +#[inline(always)]
+> +pub unsafe fn write_once<T: Copy>(dst: *mut T, value: T) {
+> +    // SAFETY: the write is valid because of the function's safety requi=
+rement, plus the assumption
+> +    // here is that 1) a write to a volatile pointer dereference in C an=
+d 2) a `write_volatile` in
+> +    // Rust have the same semantics, so this function should have the sa=
+me behavior as
+> +    // `WRITE_ONCE()` regarding data races.
+> +    unsafe {
+> +        core::ptr::write_volatile(dst, value);
+> +    }
+> +}
+> --
+> 2.41.0
 
