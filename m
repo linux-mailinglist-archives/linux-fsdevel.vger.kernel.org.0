@@ -1,89 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-1208-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1209-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23BCF7D75F2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Oct 2023 22:46:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 440E07D75FA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Oct 2023 22:53:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB2ED281D2C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Oct 2023 20:46:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D9761C20E5A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Oct 2023 20:53:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0DA21D6A8;
-	Wed, 25 Oct 2023 20:46:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E2EB28DDE;
+	Wed, 25 Oct 2023 20:52:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a/hg1NBH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OSZiex5N"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F33B9883B
-	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Oct 2023 20:46:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6863DC433C7;
-	Wed, 25 Oct 2023 20:46:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77C3412B6D
+	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Oct 2023 20:52:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6826EC433CB;
+	Wed, 25 Oct 2023 20:52:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1698266793;
-	bh=o702EcOFL0DAfS7XE8JGuacE5VsTaHhEKgHL1MQiy4Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=a/hg1NBH2ShtcRDxZr/yWoVFf4sAKBHbv/wuOs84xuFdjpGUvYi79LX0g3bd7a12z
-	 F79yZhzApQi4HrQfHxH/VVNJoBygTbI94Jb3UAN9Y3x9uR8252+w951E72CETS/Y6+
-	 ANPu5h0y6ShCyVbGHoDZdclI4GqInFLXk7XFAZ2tIK4NySk716JC/bnynU3cHUbInF
-	 nlfg4VLiRcFXtvnh7Zx5IuqowhvzyJenSxDWv+l9Pf5Ihv0d64EMR1vC+0bN9TRRRz
-	 ZWe4NeYdSdgJFCRsvxf2Vmcj8QKSxKo/6HYWuxYRA3TU5jVW3n04wndqGtA41frjih
-	 NCqaqLWKMzLlw==
-Date: Wed, 25 Oct 2023 22:46:29 +0200
+	s=k20201202; t=1698267177;
+	bh=Vdk7BnaY8q7QNCJoZksb3qatX/oTAIiXyJ2WGA8kKz4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=OSZiex5NLJLIdwo3OGE5y7GNejpyJLbYAEka2BD5acr7DERGI/UPOUliBT28wY/d+
+	 BYEn67m5J+liIGKKo5fN2/4gAWzWiI4zFnz+t/TSrwxzy2+SCny6uiNO4ZQa9RLNhj
+	 Zv9+P9oyRw/YyLK41ux2FKUKXIpoQ6v0skIHd5tSbQWeZYzjRFOrJsYtCMXHe2P9mQ
+	 Uk7AY261ugtcGjlbiGFVwQ7xFkLP5P1elylb1RW85Ekfw9Tczh5I2Y0U1CXW3K1WJm
+	 P8sPbRrwtnyvKxcXUwOvTLN8KDKND4tf+HxftvcIKyR3ZPOHpui5LTSaykkPIvr023
+	 UFMSq+ukGAdsg==
 From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH RFC 0/6] fs,block: yield devices
-Message-ID: <20231025-ersuchen-restbetrag-05047ba130b5@brauner>
-References: <20231024-vfs-super-rework-v1-0-37a8aa697148@kernel.org>
- <20231025172057.kl5ajjkdo3qtr2st@quack3>
+To: Christoph Hellwig <hch@lst.de>,
+	Amir Goldstein <amir73il@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] freevxfs: derive f_fsid from bdev->bd_dev
+Date: Wed, 25 Oct 2023 22:52:52 +0200
+Message-Id: <20231025-armaturen-semantik-d87139f9b0e1@brauner>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20231024121457.3014063-1-amir73il@gmail.com>
+References: <20231024121457.3014063-1-amir73il@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20231025172057.kl5ajjkdo3qtr2st@quack3>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1093; i=brauner@kernel.org; h=from:subject:message-id; bh=Vdk7BnaY8q7QNCJoZksb3qatX/oTAIiXyJ2WGA8kKz4=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRaNii0fC9cIPvK/sHFrU+3vFKYPuPW1VkS7x7Mzdy1IHFj Ss/k+I5SFgYxLgZZMUUWh3aTcLnlPBWbjTI1YOawMoEMYeDiFICJ3K5hZGjZ1cl2/sa9TexfJFfxNA dyBXufnhowrXK54vmLMh992M8yMqya7lV+SvtKWuqXjce5zhZFMDuLHTj6IndP+vag1muTPnIBAA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 25, 2023 at 07:20:57PM +0200, Jan Kara wrote:
-> Hello!
+On Tue, 24 Oct 2023 15:14:57 +0300, Amir Goldstein wrote:
+> The majority of blockdev filesystems, which do not have a UUID in their
+> on-disk format, derive f_fsid of statfs(2) from bdev->bd_dev.
 > 
-> On Tue 24-10-23 16:53:38, Christian Brauner wrote:
-> > This is a mechanism that allows the holder of a block device to yield
-> > device access before actually closing the block device.
-> > 
-> > If a someone yields a device then any concurrent opener claiming the
-> > device exclusively with the same blk_holder_ops as the current owner can
-> > wait for the device to be given up. Filesystems by default use
-> > fs_holder_ps and so can wait on each other.
-> > 
-> > This mechanism allows us to simplify superblock handling quite a bit at
-> > the expense of requiring filesystems to yield devices. A filesytems must
-> > yield devices under s_umount. This allows costly work to be done outside
-> > of s_umount.
-> > 
-> > There's nothing wrong with the way we currently do things but this does
-> > allow us to simplify things and kills a whole class of theoretical UAF
-> > when walking the superblock list.
+> Use the same practice for freevxfs.
 > 
-> I'm not sure why is it better to create new ->yield callback called under
-> sb->s_umount rather than just move blkdev_put() calls back into
-> ->put_super? Or at least yielding could be done in ->put_super instead of
+> This will allow reporting fanotify events with fanotify_event_info_fid.
+> 
+> [...]
 
-The main reason was to not call potentially expensive
-blkdev_put()/bdev_release() under s_umount. If we don't care about this
-though then this shouldn't be a problem. And yes, then we need to move
-blkdev_put()/bdev_release() under s_umount including the main block
-device. IOW, we need to ensure that all bdev calls are done under
-s_umount before we remove the superblock from the instance list. I think
-that should be fine but I wanted to propose an alternative to that as
-well: cheap mark-for-release under s_umount and heavy-duty without
-s_umount. But I guess it doesn't matter because most filesystems did use
-to close devices under s_umount before anyway. Let me know what you
-think makes the most sense.
+Applied to the vfs.f_fsid branch of the vfs/vfs.git tree.
+Patches in the vfs.f_fsid branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.f_fsid
+
+[1/1] freevxfs: derive f_fsid from bdev->bd_dev
+      https://git.kernel.org/vfs/vfs/c/462e67783c2e
 
