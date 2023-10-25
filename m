@@ -1,395 +1,227 @@
-Return-Path: <linux-fsdevel+bounces-1212-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1213-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A11EC7D779A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Oct 2023 00:07:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C6D57D7857
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Oct 2023 01:02:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BA06281C85
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Oct 2023 22:07:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D01CC28203A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Oct 2023 23:02:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA28F37161;
-	Wed, 25 Oct 2023 22:07:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FD7534CF1;
+	Wed, 25 Oct 2023 23:02:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KHnlA/Nr"
+	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="bUSQrAC9"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B732522C
-	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Oct 2023 22:07:39 +0000 (UTC)
-Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D72113A
-	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Oct 2023 15:07:37 -0700 (PDT)
-Received: by mail-yb1-xb4a.google.com with SMTP id 3f1490d57ef6-d9cb79eb417so191573276.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Oct 2023 15:07:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1698271656; x=1698876456; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:references
-         :mime-version:message-id:in-reply-to:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PZjfm6M3ZyL4GTxC6afhaxfOainDyB0qJf3X7vDUSrY=;
-        b=KHnlA/Nr2a8xeQ/T/Ax0TvkX2lzwuAlNPAyVJ2sk0b3UTQP4ijiLguRXSNnOtECyS1
-         ORWMB4LnyLScJJWNjWdDDhBgI+V+mpH0mf6MgqrBZqxVsoZN8Tm/XdvKtbbGlmNCQlhU
-         vVqlcA2mzclTr1pa3kP924JbgQz+XugN0chpery1wsVWZjHr4oxh6KsPgbmMdTVnjcNO
-         cB1tUCX3uJA3OwETZOh9+jEedTeZEweuSQAes+r8gEKcSqNLd+4+YOpL2s/sSsQrqPz1
-         qxTfwKMUIIQFbWiuNgG02FpLDRr9l+DL8yK+ZJPc1kj4SkWp0oYrI+0GrmCZWsWub4gF
-         mM4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698271656; x=1698876456;
-        h=content-transfer-encoding:cc:to:from:subject:references
-         :mime-version:message-id:in-reply-to:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=PZjfm6M3ZyL4GTxC6afhaxfOainDyB0qJf3X7vDUSrY=;
-        b=h4taG4Z2MKuVPp8UO0GfuqHWxPwRA/apaiOzA8zMUSqEdYOdS9tQpbloiQYXPba3XV
-         zHoR+uUiSzdbuz1ux82D6AuuuB4MD3Ve6i9fgKqPOOP/fd7wJH5qQf1Q+bLR3689/Ozd
-         MLRf8hFgvl6227O+t4iaTvHsK/alT73sUWNEIzWcFYfJUAJPKFyTk9yX0Flpo/vwQntv
-         8pvCMNbqaBG7wmfY8LcAT1PIHM7DTRwx20L1A75J0FgKBggDwdbSB1gIP3hiUXjd6c7W
-         a03HeN4Mvp3b6lV3N46MkNMC9ymKyFMTRTmtP5SZOVI4e0ZKlsxJKhwjkMDNn0kUc8y3
-         U3Gg==
-X-Gm-Message-State: AOJu0Yyf1ZOZ9J4Q6N61o2BOefXwx7JRD3c08aITh3rMLqIzxpiaGXCr
-	RJ1yVTUTDAdikge6CoeWRbVcjJRvbzU=
-X-Google-Smtp-Source: AGHT+IFAJkR9hmEUyRLLCIYpQZ04800OS1y5+OMGkFch3gaCiBDbRs3/GtVeFcygY7tLBXcYNTHnm7Afdgg=
-X-Received: from sport.zrh.corp.google.com ([2a00:79e0:9d:4:c5af:3ae7:e526:c7a2])
- (user=gnoack job=sendgmr) by 2002:a25:42c9:0:b0:d9a:bce6:acf3 with SMTP id
- p192-20020a2542c9000000b00d9abce6acf3mr313798yba.0.1698271656378; Wed, 25 Oct
- 2023 15:07:36 -0700 (PDT)
-Date: Thu, 26 Oct 2023 00:07:28 +0200
-In-Reply-To: <20231020.moefooYeV9ei@digikod.net>
-Message-Id: <ZTmRoESR5eXEA_ky@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF3027EFF
+	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Oct 2023 23:02:46 +0000 (UTC)
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66D56129;
+	Wed, 25 Oct 2023 16:02:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.com;
+	s=s31663417; t=1698274945; x=1698879745; i=quwenruo.btrfs@gmx.com;
+	bh=t8QfgQrUAguQpNC3vJ8kXVDb9X8U3ZmEzWIIrF4UCEY=;
+	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
+	 In-Reply-To;
+	b=bUSQrAC9JWoDB2Xux12+hKJlkhHDHpyFNqqXf2QY0npAYeNBfkj0ZNaKpVXb+M5g
+	 3daJ1cnfYwENu/bXO6/Jqm1kEcsjL82xasliEdo+r/0prOJDU+KQlXoHjEmi1WGcF
+	 K8H/Yx7VcNLPvxak8zROD+WnI23maWkCnf68O3zmNcnGAYMKK1bBUcfjxOY8ww2TY
+	 GLCciXmmXzkk/TyUe7hvw4+Tin8zP04gsPkvwgsZY4Ryi349XrKNsQLXryK7jTVsu
+	 xlN7J0z+3H8MIA8fsDBtzwcb4CdVr9maExNKNLqc6I4pA+rLF202ThpN+aQAG1k1a
+	 8FwYoJOYPRZROaFq5g==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [172.16.0.101] ([122.151.37.21]) by mail.gmx.net (mrgmx005
+ [212.227.17.184]) with ESMTPSA (Nemesis) id 1M8ykW-1qt0wY0z8o-0067vX; Thu, 26
+ Oct 2023 01:02:25 +0200
+Message-ID: <628a975f-11a1-47f9-b2f8-8cbcfa812ef6@gmx.com>
+Date: Thu, 26 Oct 2023 09:32:11 +1030
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20230818.iechoCh0eew0@digikod.net> <ZOjCz5j4+tgptF53@google.com>
- <20230825.Zoo4ohn1aivo@digikod.net> <20230826.ohtooph0Ahmu@digikod.net>
- <ZPMiVaL3kVaTnivh@google.com> <20230904.aiWae8eineo4@digikod.net>
- <ZP7lxmXklksadvz+@google.com> <20230911.jie6Rai8ughe@digikod.net>
- <ZTGpIBve2LVlbt6p@google.com> <20231020.moefooYeV9ei@digikod.net>
-Subject: Re: [PATCH v3 0/5] Landlock: IOCTL support
-From: "=?iso-8859-1?Q?G=FCnther?= Noack" <gnoack@google.com>
-To: "=?iso-8859-1?Q?Micka=EBl_Sala=FCn?=" <mic@digikod.net>
-Cc: Christian Brauner <brauner@kernel.org>, linux-security-module@vger.kernel.org, 
-	Jeff Xu <jeffxu@google.com>, Jorge Lucangeli Obes <jorgelo@chromium.org>, 
-	Allen Webb <allenwebb@google.com>, Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
-	linux-fsdevel@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] fanotify support for btrfs sub-volumes
+Content-Language: en-US
+To: Josef Bacik <josef@toxicpanda.com>, Christoph Hellwig <hch@infradead.org>
+Cc: Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
+ Christian Brauner <brauner@kernel.org>, Chris Mason <clm@fb.com>,
+ David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org
+References: <20231025135048.36153-1-amir73il@gmail.com>
+ <ZTk1ffCMDe9GrJjC@infradead.org> <20231025210654.GA2892534@perftesting>
+From: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
+ BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00iVQUJDToH
+ pgAKCRDCPZHzoSX+qNKACACkjDLzCvcFuDlgqCiS4ajHAo6twGra3uGgY2klo3S4JespWifr
+ BLPPak74oOShqNZ8yWzB1Bkz1u93Ifx3c3H0r2vLWrImoP5eQdymVqMWmDAq+sV1Koyt8gXQ
+ XPD2jQCrfR9nUuV1F3Z4Lgo+6I5LjuXBVEayFdz/VYK63+YLEAlSowCF72Lkz06TmaI0XMyj
+ jgRNGM2MRgfxbprCcsgUypaDfmhY2nrhIzPUICURfp9t/65+/PLlV4nYs+DtSwPyNjkPX72+
+ LdyIdY+BqS8cZbPG5spCyJIlZonADojLDYQq4QnufARU51zyVjzTXMg5gAttDZwTH+8LbNI4
+ mm2YzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
+ CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
+ /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
+ GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
+ q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
+ ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00ibgUJDToHvwAK
+ CRDCPZHzoSX+qK6vB/9yyZlsS+ijtsvwYDjGA2WhVhN07Xa5SBBvGCAycyGGzSMkOJcOtUUf
+ tD+ADyrLbLuVSfRN1ke738UojphwkSFj4t9scG5A+U8GgOZtrlYOsY2+cG3R5vjoXUgXMP37
+ INfWh0KbJodf0G48xouesn08cbfUdlphSMXujCA8y5TcNyRuNv2q5Nizl8sKhUZzh4BascoK
+ DChBuznBsucCTAGrwPgG4/ul6HnWE8DipMKvkV9ob1xJS2W4WJRPp6QdVrBWJ9cCdtpR6GbL
+ iQi22uZXoSPv/0oUrGU+U5X4IvdnvT+8viPzszL5wXswJZfqfy8tmHM85yjObVdIG6AlnrrD
+In-Reply-To: <20231025210654.GA2892534@perftesting>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
-
-On Fri, Oct 20, 2023 at 04:57:39PM +0200, Micka=C3=ABl Sala=C3=BCn wrote:
-> On Fri, Oct 20, 2023 at 12:09:36AM +0200, G=C3=BCnther Noack wrote:
-> > * We introduce a flag in struct landlock_ruleset_attr which controls wh=
-ether the
-> >   graphics-related IOCTLs are controlled through the LANDLOCK_ACCESS_FS=
-_GFX
-> >   access right, rather than through LANDLOCK_ACCESS_FS_IOCTL.
-> >=20
-> >   (This could potentially also be put in the "flags" argument to
-> >   landlock_create_ruleset(), but it feels a bit more appropriate in the=
- struct I
-> >   think, as it influences the interpretation of the logic.  But I'm ope=
-n to
-> >   suggestions.)
-> >=20
->=20
-> What would be the difference with creating a
-> LANDLOCK_ACCESS_FS_GFX_IOCTL access right?
->=20
-> The main issue with this approach is that it complexifies the usage of
-> Landlock, and users would need to tweak more knobs to configure a
-> ruleset.
->=20
-> What about keeping my proposal (mainly the IOCTL handling and delegation
-> logic) for the user interface, and translate that for kernel internals
-> to your proposal? See the below example.
-
-Yes!
-
-I have pondered this for about a day now, and tried to break the example in
-various ways, but I believe you are right with this -- I think we can actua=
-lly
-use the "handled" flags to control the IOCTL grouping, and then translate a=
-ll of
-it quickly to synthetic access rights for the internal logic.  When doing t=
-he
-translation only once during ruleset enablement time, we can keep using the
-existing logic for the synthetic rights and it'll obviously work correctly =
-when
-layers are stacked.  (I paraphrase it in more detail at the end, to make su=
-re we
-are on the same page. -- But I think we are.)
+X-Provags-ID: V03:K1:5rr5bfMpKbBOuNyIaKoh13Iecfs2wIsxx4DUBu+zgfzgoB42g44
+ HDjgLVVI57JjWb5HFhdY7r+nbUgDfeNenSQr47GNpJP5yafylEzDGO+IjyDNwRuNLd5RW+b
+ ydDnJZNjbfMXHu7Np+NKZ2N0IrSyY04BdalxSaf25ph5iVb+9ydIKyZo5SoQ7X9ZfYRMEl4
+ k4SKNuZD2Gmn942O+sFpQ==
+UI-OutboundReport: notjunk:1;M01:P0:GMcuwDytY+w=;EqthME9VjzB69SNlV8u1l8FbAGf
+ S8fY9U4OMP0hE+0VCQRlPyERiuITFU9h113P0aZ3gvbEaSAtORi+TLjjUSISAz44VqweuR3e8
+ b79NJOL09C/s7yeH6d/hFto2GMei90srgb0IHsNdIb7Ry7SkJv7cHjaOvFjUd7efenaF5z8fL
+ O9yqj79n1Xc23PvTEDLZxawWnebS6FXbA+b/YvDATKDNoXzMMg09u+wjp6N/0QI5hspAa0KR2
+ JgLkD55ydcNPyHYLvyydUKbilARnh4BSoiTL9Tb/FOmACnJjz2WCgQjAA0wuyY+rVDdA5n928
+ gALmfPHY9us95PDDJdVBlf+5C7QMaMobMdwOFOel3Rhrh3iaokGHjziaKJYBk+1AieoTuLcbf
+ NMYhXDUnbBAjm2/UL0rtXVbFHCb4t88DZSmT39CAqKRUmmhdTPvYix3/nGywTlnSLWW3XeV4a
+ AnkduZ7JGwEI4WwCTYr+k0EEenhhVnzN68SJOTji+4gvs/Id44nHkQtQgNK7YFhKNJB2L4HNb
+ OxOrXBo+it2fvuM9YL3LpLt/xVWVaCN00wW1n9TRvzACKwLYT3clw4dN5PHe5xlAw7GvYZzcl
+ Q+XcRalJDKTMXOTPta+UAMO5gHYNYkfKjHZwboaKSw/sd1yUB/qiSJoD7K6ZBS029cVt1/tCw
+ PQRlSLTJw0GF6SAT8CkSIOoefUUoFrJlXhi3pWl+9Jn8kfiK2nhpnJMNuzRJkz2TWRhGL4Q0N
+ ETsaKwolQb8VTo6hyvOYq25vj88GszKEG4PvzOnyh+DWkRzhLjWHHOa0m65zsNhrFmQNLT1Z6
+ /TRTF/bKDw8LOE4WUgqLxp/fAqfT23saXVC0lT7mTejVNyJiKm5+ub6jMRn5aqybZqXS74oSO
+ I/V4LEny/VX3pzbh2ulPO+94nIELyARRP8hAVdSk+2MBZLVGqoZFRHG7rwZ968ck4MAeXr2yL
+ 89id1b3vpU667d2FyfdVJKi++qI=
 
 
-> > Example: Without the flag, the IOCTL groups will be:
-> >=20
-> >   These are always permitted:   FIOCLEX, FIONCLEX, FIONBIO, etc.
-> >   LANDLOCK_ACCESS_FS_READ_FILE: controls FIONREAD
-> >   LANDLOCK_ACCESS_FS_IOCTL:     controls all other IOCTL commands
-> >=20
-> > but when users set the flag, the IOCTL groups will be:
-> >=20
-> >   These are always permitted:   FIOCLEX, FIONCLEX, FIONBIO, etc.
-> >   LANDLOCK_ACCESS_FS_READ_FILE: controls FIONREAD
-> >   LANDLOCK_ACCESS_FS_GFX:       controls (list of gfx-related IOCTLs)
-> >   LANDLOCK_ACCESS_FS_IOCTL:     controls all other IOCTL commands
-> >=20
->=20
-> Does this mean that handling LANDLOCK_ACCESS_FS_GFX without the flag
-> would not allow GFX-related IOCTL commands? Thit would be inconsistent
-> with the way LANDLOCK_ACCESS_FS_READ_FILE is handled.
 
-Yes, that is how I had imagined that.  It's true that it's slightly inconsi=
-stent
-in usage, and you are right that it creates some new concepts in the API wh=
-ich
-are maybe avoidable.  Let's try it the way you proposed and control it with=
- the
-"handled" flags.
+On 2023/10/26 07:36, Josef Bacik wrote:
+> On Wed, Oct 25, 2023 at 08:34:21AM -0700, Christoph Hellwig wrote:
+>> On Wed, Oct 25, 2023 at 04:50:45PM +0300, Amir Goldstein wrote:
+>>> Jan,
+>>>
+>>> This patch set implements your suggestion [1] for handling fanotify
+>>> events for filesystems with non-uniform f_fsid.
+>>
+>> File systems nust never report non-uniform fsids (or st_dev) for that
+>> matter.  btrfs is simply broken here and needs to be fixed.
+>
+> We keep going around and around on this so I'd like to get a set of step=
+s laid
+> out for us to work towards to resolve this once and for all.
+>
+> HYSTERICAL RAISINS (why we do st_dev)
+> -------------------------------------
+>
+> Chris made this decision forever ago because things like rsync would scr=
+ew up
+> with snapshots and end up backing up the same thing over and over again.=
+  We saw
+> it was using st_dev (as were a few other standard tools) to distinguish =
+between
+> file systems, so we abused this to make userspace happy.
+>
+> The other nice thing this provided was a solution for the fact that we r=
+e-use
+> inode numbers in the file system, as they're unique for the subvolume on=
+ly.
+>
+> PROBLEMS WE WANT TO SOLVE
+> -------------------------
+>
+> 1) Stop abusing st_dev.  We actually want this as btrfs developers becau=
+se it's
+>     kind of annoying to figure out which device is mounted when st_dev d=
+oesn't
+>     map to any of the devices in /proc/mounts.
+>
+> 2) Give user space a way to tell it's on a subvolume, so it can not be c=
+onfused
+>     by the repeating inode numbers.
+>
+> POSSIBLE SOLUTIONS
+> ------------------
+>
+> 1) A statx field for subvolume id.  The subvolume id's are unique to the=
+ file
+>     system, so subvolume id + inode number is unique to the file system.=
+  This is
+>     a u64, so is nice and easy to export through statx.
+> 2) A statx field for the uuid/fsid of the file system.  I'd like this be=
+cause
+>     again, being able to easily stat a couple of files and tell they're =
+on the
+>     same file system is a valuable thing.  We have a per-fs uuid that we=
+ can
+>     export here.
+> 3) A statx field for the uuid of the subvolume.  Our subvolumes have the=
+ir own
+>     unique uuid.  This could be an alternative for the subvolume id opti=
+on, or an
+>     addition.
 
+No need for a full UUID, just a u64 is good enough.
 
-> Would this flag works with non-GFX access rights as well? Would there be
-> potentially one new flag per new access right?
->=20
-> >=20
-> > Implementation-wise, I think it would actually look very similar to wha=
-t would
-> > be needed for your proposal of having a new special meaning for "handle=
-d".  It
-> > would have the slight advantage that the new flag is actually only need=
-ed at the
-> > time when we introduce a new way of grouping the IOCTL commands, so we =
-would
-> > only burden users with the additional complexity when it's actually req=
-uired.
->=20
-> Indeed, and burdening users with more flags would increase the cost of
-> (properly) using Landlock.
->=20
-> I'm definitely in favor to make the Landlock interface as simple as
-> possible, taking into account the inherent compatibilty complexity, and
-> pushing most of this complexity handling to user space libraries, and if
-> it not possible, pushing the rest of the complexity into the kernel.
-
-Ack, sounds good.
-
-
-> > One implementation approach that I find reasonable to think about is to=
- create
-> > "synthetic" access rights when rulesets are enabled.  That is, we intro=
-duce
-> > LANDLOCK_ACCESS_FS_SYNTHETIC_GFX_IOCTL (name TBD), but we keep this con=
-stant
-> > private to the kernel.
-> >=20
-> > * *At ruleset enablement time*, we populate the bit for this access rig=
-ht either
-> >   from the LANDLOCK_ACCESS_FS_GFX or the LANDLOCK_ACCESS_FS_IOCTL bit f=
-rom the
-> >   same access_mask_t, depending on the IOCTL grouping which the ruleset=
- is
-> >   configured with.
-> >=20
-> > * *In hook_file_open*, we then check for LANDLOCK_ACCESS_FS_SYNTHETIC_G=
-FX_IOCTL
-> >   for the GFX-related IOCTL commands.
-> >=20
-> > I'm in favor of using the synthetic access rights, because I find it cl=
-earer to
-> > understand that the effective access rights for a file from different l=
-ayers are
-> > just combined with a bitwise AND, and will give the right results.  We =
-could
-> > probably also make these path walk helpers aware of the special cases a=
-nd only
-> > have the synthetic right in layer_masks_dom, but I'd prefer not to comp=
-licate
-> > these helpers even further.
->=20
-> I like this synthetic access right approach, but what worries me is that
-> it will potentially double the number of access rights. This is not an
-> issue for the handled access right (i.e. per ruleset layer), but we
-> should avoid that for allowed accesses (i.e. rules). Indeed, the
-> layer_masks[] size is proportional to the number of potential allowed
-> access rights, and increasing this array could increase the kernel stack
-> size (see is_access_to_paths_allowed).  It would not be an issue for now
-> though, we have a lot of room, it is just something to keep in mind.
-
-Yes, acknowledged.
-
-FWIW, LANDLOCK_ACCESS_FS_IOCTL is already 1 << 15, so adding the synthetic
-rights will indeed make access_mask_t go up to 32 bit.  (This was already d=
-one
-in the patch for the metadata access, but that one was not merged yet.)  I =
-also
-feel that the stack usage is the case where this is most likely to be an is=
-sue.
+Although a full UUID for the subvolumes won't hurt and can reduce the
+need to call the btrfs specific ioctl just to receive the UUID.
 
 
-> Because of the way we need to compare file hierarchies (cf. FS_REFER),
-> it seems to be safer to only rely on (synthetic) access rights. So I
-> think it is the right approach.
->=20
-> >=20
-> >=20
-> > Sorry for the long mail, I hope that the examples clarify it a bit. :)
-> >=20
-> > In summary, it seems conceptually cleaner to me to control every IOCTL =
-command
-> > with only one access right, and let users control which one that should=
- be with
-> > a separate flag, so that "handled" keeps its original semantics.  It wo=
-uld also
-> > have the upside that we can delay that implementation until the time wh=
-ere we
-> > actually introduce new IOCTL-aware access rights on top of the current =
-patch st.
->=20
-> I don't see how we'll not get an inconsistent logic: a first one with
-> old/current access rights, and another one for future access rights
-> (e.g. GFX).
->=20
-> >=20
-> > I'd be interested to hear your thoughts on it.
->=20
-> Thanks for this detailed explanation, that is useful.
->=20
-> I'm in favor of the synthetic access right, but I'd like to not add
-> optional flags to the user API.  What do you think about the kernel
-> doing the translation to the synthetic access rights?
->=20
-> To make the reasoning easier for the kernel implementation, following
-> the synthetic access rights idea, we can create these groups:
->=20
-> * IOCTL_CMD_G1: FIOQSIZE
-> * IOCTL_CMD_G2: FS_IOCT_FIEMAP | FIBMAP | FIGETBSZ
-> * IOCTL_CMD_G3: FIONREAD | FIDEDUPRANGE
-> * IOCTL_CMD_G4: FICLONE | FICLONERANGE | FS_IOC_RESVSP | FS_IOC_RESVSP64
->   | FS_IOC_UNRESVSP | FS_IOC_UNRESVSP64 | FS_IOC_ZERO_RANGE
->=20
-> Existing (and future) access rights would automatically get the related
-> IOCTL fine-grained rights *if* LANDLOCK_ACCESS_FS_IOCTL is handled:
-> * LANDLOCK_ACCESS_FS_WRITE_FILE: IOCTL_CMD_G1 | IOCTL_CMD_G2 | IOCTL_CMD_=
-G4
-> * LANDLOCK_ACCESS_FS_READ_FILE: IOCTL_CMD_G1 | IOCTL_CMD_G2 | IOCTL_CMD_G=
-3
-> * LANDLOCK_ACCESS_FS_READ_DIR: IOCTL_CMD_G1
->=20
-> This works with the ruleset handled access rights and the related rules
-> allowed accesses by simply ORing the access rights.
->=20
-> We should also keep in mind that some IOCTL commands may only be related
-> to some specific file types or filesystems, either now or in the future
-> (see the GFX example).
+My concern is, such new members would not be utilized by any other fs,
+would it cause some compatibility problem?
 
-I am coming around to your approach with using "handled" bits to determine =
-the
-grouping.  Let me paraphrase some key concepts to make sure we are on the s=
-ame
-page:
+>
+> Either 1 or 3 are necessary to give userspace a way to tell they've wand=
+ered
+> into a different subvolume.  I'd like to have all 3, but I recognize tha=
+t may be
+> wishful thinking.  2 isn't necessary, but if we're going to go about mes=
+sing
+> with statx then I'd like to do it all at once, and I want this for the r=
+easons
+> stated above.
+>
+> SEQUENCE OF EVENTS
+> ------------------
+>
+> We do one of the statx changes, that rolls into a real kernel.  We run a=
+round
+> and submit patches for rsync and anything else we can think of to take a=
+dvantage
+> of the statx feature.
 
-* The IOCTL groups are modeled as synthetic access rights, IOCTL_CMD_G1...G=
-4 in
-  your example.  Each IOCTL command maps to exactly one of these groups.
+My main concern is, how older programs could handle this? Like programs
+utilizing stat() only, and for whatever reasons they don't bother to add
+statx() support.
+(Can vary from lack of maintenance to weird compatibility reasons)
 
-  Because the presence of these groups is an implementation detail in the
-  kernel, we can adapt it later and make it more fine-grained if needed.
+Thus we still need such st_dev hack, until there is no real world
+programs utilizing vanilla stat() only.
+(Which everyone knows it's impossible)
 
-* We use "handled" bits like LANDLOCK_ACCESS_FS_WRITE_FILE to determine the
-  synthetic access rights.
-
-  We can populate the synthetic IOCTL_CMD_G1...G4 groups depending on how t=
-he
-  "handled" bits are populated.
-
-  In my understanding, the logic could roughly be this:
-
-  static access_mask_t expand_ioctl(access_mask_t handled, access_mask_t am=
-,
-                                    access_mask_t src, access_mask_t dst)
-  {
-    if (handled & src) {
-      /* If "src" access right is handled, populate "dst" from "src". */
-      return am | ((am & src) ? dst : 0);
-    } else {
-      /* Otherwise, populate "dst" flag from "ioctl" flag. */
-      return am | ((am & LANDLOCK_ACCESS_FS_IOCTL) ? dst : 0);
-    }
-  }
-
-  static access_mask_t expand_all_ioctl(access_mask_t handled, access_mask_=
-t am)
-  {
-    am =3D expand_ioctl(handled, am,
-                      LANDLOCK_ACCESS_FS_WRITE_FILE,
-		      IOCTL_CMD_G1 | IOCTL_CMD_G2 | IOCTL_CMD_G4);
-    am =3D expand_ioctl(handled, am,
-                      LANDLOCK_ACCESS_FS_READ_FILE,
-		      IOCTL_CMD_G1 | IOCTL_CMD_G2 | IOCTL_CMD_G3);
-    am =3D expand_ioctl(handled, am,
-                      LANDLOCK_ACCESS_FS_READ_DIR,
-		      IOCTL_CMD_G1);
-    return am;
-  }
-
-  and then during the installing of a ruleset, we'd call
-  expand_all_ioctl(handled, access) for each specified file access, and
-  expand_all_ioctl(handled, handled) for the handled access rights,
-  to populate the synthetic IOCTL_CMD_G* access rights.
-
-  In expand_ioctl() above, if "src" is *not* handled, we populate the assoc=
-iated
-  synthetic access rights "dst" from the value in LANDLOCK_ACCESS_FS_IOCTL.
-  With that, when enabling a ruleset, we map everything to the most specifi=
-c
-  grouping which is available, and later on, the LSM hook can just ignore t=
-hat
-  different grouping configurations are possible.
-
-* In the ioctl LSM hook, each possible cmd is controlled by exactly one acc=
-ess
-  right.  The ones that you have listed are all controlled by one of the
-  IOCTL_CMD_G1...G4 access rights, and all others by LANDLOCK_ACCESS_FS_IOC=
-TL.
-
-I was previously concerned that the usage of "handled" to control the group=
-ing
-would be at odds with the layer composition logic, but with this logic, we =
-are
-now mapping these to the synthetic access rights at enablement time, and al=
-l the
-ruleset composition logic can stay working as it is (at least until we run =
-out
-of bits in access_mask_t).
-
-I've also been concerned before that we would break compatibility across
-versions, but this also seems less likely now that we've discussed this in =
-all
-this detail %-)
-
-I suspect that the normal upgrade path from one Landlock version to the nex=
-t
-will be for most users to always use the full set of "handled" flags that t=
-heir
-library knows about.  When we add the hypothetical "GFX" flag to that set, =
-this
-will change the IOCTL grouping a bit, so that files which were previously l=
-isted
-as having the LANDLOCK_ACCESS_FS_IOCTL right, might now not be enabled for =
-GFX
-ioctls.  But that is (A) probably correct anyway in most cases, and (B) use=
-rs
-upgrading from one Landlock ABI version to the next have a chance to read t=
-heir
-library changelog as part of that upgrade.
-
-I think this is a reasonable approach.  If you agree, I'm willing to give i=
-t a
-shot and adapt the patch set to implement that.
-
-=E2=80=94G=C3=BCnther
+Thanks,
+Qu
+>
+> Then we wait, call it 2 kernel releases after the initial release.  Then=
+ we go
+> and rip out the dev_t hack. >
+> Does this sound like a reasonable path forward to resolve everybody's co=
+ncerns?
+> I feel like I'm missing some other argument here, but I'm currently on v=
+acation
+> and can't think of what it is nor have the energy to go look it up at th=
+e
+> moment.  Thanks,
+>
+> Josef
 
