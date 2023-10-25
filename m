@@ -1,227 +1,336 @@
-Return-Path: <linux-fsdevel+bounces-1213-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1214-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C6D57D7857
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Oct 2023 01:02:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B10BB7D785A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Oct 2023 01:03:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D01CC28203A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Oct 2023 23:02:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EE302821CE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Oct 2023 23:03:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FD7534CF1;
-	Wed, 25 Oct 2023 23:02:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 508BF374FB;
+	Wed, 25 Oct 2023 23:03:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="bUSQrAC9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jXCfQ4Mk"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF3027EFF
-	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Oct 2023 23:02:46 +0000 (UTC)
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66D56129;
-	Wed, 25 Oct 2023 16:02:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.com;
-	s=s31663417; t=1698274945; x=1698879745; i=quwenruo.btrfs@gmx.com;
-	bh=t8QfgQrUAguQpNC3vJ8kXVDb9X8U3ZmEzWIIrF4UCEY=;
-	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
-	 In-Reply-To;
-	b=bUSQrAC9JWoDB2Xux12+hKJlkhHDHpyFNqqXf2QY0npAYeNBfkj0ZNaKpVXb+M5g
-	 3daJ1cnfYwENu/bXO6/Jqm1kEcsjL82xasliEdo+r/0prOJDU+KQlXoHjEmi1WGcF
-	 K8H/Yx7VcNLPvxak8zROD+WnI23maWkCnf68O3zmNcnGAYMKK1bBUcfjxOY8ww2TY
-	 GLCciXmmXzkk/TyUe7hvw4+Tin8zP04gsPkvwgsZY4Ryi349XrKNsQLXryK7jTVsu
-	 xlN7J0z+3H8MIA8fsDBtzwcb4CdVr9maExNKNLqc6I4pA+rLF202ThpN+aQAG1k1a
-	 8FwYoJOYPRZROaFq5g==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [172.16.0.101] ([122.151.37.21]) by mail.gmx.net (mrgmx005
- [212.227.17.184]) with ESMTPSA (Nemesis) id 1M8ykW-1qt0wY0z8o-0067vX; Thu, 26
- Oct 2023 01:02:25 +0200
-Message-ID: <628a975f-11a1-47f9-b2f8-8cbcfa812ef6@gmx.com>
-Date: Thu, 26 Oct 2023 09:32:11 +1030
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A221E37159;
+	Wed, 25 Oct 2023 23:03:34 +0000 (UTC)
+Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEB3CBB;
+	Wed, 25 Oct 2023 16:03:32 -0700 (PDT)
+Received: by mail-yb1-xb31.google.com with SMTP id 3f1490d57ef6-d81d09d883dso196429276.0;
+        Wed, 25 Oct 2023 16:03:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1698275012; x=1698879812; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=61JSi82jmprMEy2wjLB3v55zpvhJh5bM0LopIsNdZBI=;
+        b=jXCfQ4MkgGZo0vVIaUkQGcBd881pWRRXMSrwxv/sCVleGYRejRAr87UbXvghsAPxHn
+         l3i0yypXGre04zp0ZRfEVy8Fmc8+khED2wJDIgRWowq2mBfQWtUCkiJy7vgSsoXwnsso
+         +za+35BYb2yeBGUzDoKB3VYs7+Oqpi80RryGtFaME5ulMd/9ByVYFJuEHC5X+yPIuVQl
+         PYQypJ6mPdz9Y5NxBX4IjjIXv4/5pb9IuKIdaB+63q4gBhFvHZNxE7u/LdX3DW5G9Lmp
+         In5Nzr2ce/PxOEnXw1ciR4y/5OXaqAd3dkwa3onqoe/gpI3hHwEbX8hiiOKN5bZBd8yH
+         ZpHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698275012; x=1698879812;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=61JSi82jmprMEy2wjLB3v55zpvhJh5bM0LopIsNdZBI=;
+        b=TnkJ7udCbkcQL66SWDbbdCgGzyb0kXp5ZGNPMVcAq+waQ4EcSnYfe+hD/NdB0L3R6G
+         br+xf+bZcZ8SD57X6XJJTniSrrPNOUZlCxdMZHgtDHT98wlQ7pnYF48OI2BlEwOJ7+WP
+         XgRprXnjiYPg3FNoiB+ZXeR2IbLXTbHwy3Xv3vb4v8vAIJkxr86oy8VS4C4MvNUNgzPr
+         fD9MUEF45tXKjeFGWdLf4/awwYpmgRuopCCHLuEyNEu+EiE184FInLF/Gx8bGxaKt84V
+         xBgOgFzJFHqBZHUP74LGxJncB6G3Mlhc+ecMdX8AkLpSIo33j8KIhXbobsOms97lF4Xx
+         KyTQ==
+X-Gm-Message-State: AOJu0Yy28fr0NaeZHBnDjSDR3ZI0ebm1vyD8KK3ADoM3Fkwa1BXqFd2R
+	FrMQp9x4L84/E7BiMJ7W1eA=
+X-Google-Smtp-Source: AGHT+IHzO+kZQE6t+6SokT/XjMJiUdNBfvOO3vMCUbf3gh0kZ9vOkSrhSIeP9wvnukh1IIjW55IOtw==
+X-Received: by 2002:a25:cfc9:0:b0:da0:68a0:7cc6 with SMTP id f192-20020a25cfc9000000b00da068a07cc6mr3923847ybg.17.1698275011722;
+        Wed, 25 Oct 2023 16:03:31 -0700 (PDT)
+Received: from auth2-smtp.messagingengine.com (auth2-smtp.messagingengine.com. [66.111.4.228])
+        by smtp.gmail.com with ESMTPSA id m10-20020a258c8a000000b00d9a4aad7f40sm4722392ybl.24.2023.10.25.16.03.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Oct 2023 16:03:31 -0700 (PDT)
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+	by mailauth.nyi.internal (Postfix) with ESMTP id 15D0227C005B;
+	Wed, 25 Oct 2023 19:03:30 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute1.internal (MEProxy); Wed, 25 Oct 2023 19:03:30 -0400
+X-ME-Sender: <xms:wZ45ZXhrsAQv86EZB20iNdVStWugNJLSiSs8UqlV8WOzkdpe3iscVg>
+    <xme:wZ45ZUCuQeq1Fm7OMN92dciAz3VWEIKPi3isoU5Jy_HhjiwzD_MfmO3hxdl73AXqq
+    a9wQ14E2glff84OkA>
+X-ME-Received: <xmr:wZ45ZXEJ5dqgov2_NYos_099EEN_Matr_EBjJtuXtODoXPxOeC9MHdFg1eE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrledugdduiecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvvefukfhfgggtugfgjgesthekrodttddtjeenucfhrhhomhepuehoqhhu
+    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
+    htthgvrhhnpeelgfegfeehtdeftedvjeffffdutddtvdduvddutdeigfffheehjeeutdeu
+    keeuieenucffohhmrghinheprhhushhtqdhlrghnghdrohhrghenucevlhhushhtvghruf
+    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgr
+    uhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsoh
+    hquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvg
+X-ME-Proxy: <xmx:wZ45ZUT3D_EgD3vYO4rUAkdJ_hj7h1AKSYudX2jVrHUrRPsJrL5ACg>
+    <xmx:wZ45ZUwk5yKED0_O9mfPn1S6DyCpCrQEmzr1U-03ZkU6bGSLR_qkHw>
+    <xmx:wZ45Za5Y_WVxM_VIkdzobstZ76uBfYKYIPpNf_yGiTzqLqsPJg-8jQ>
+    <xmx:wp45ZVRw4Nc-eD9_tWFDJqqPeb_AOUnatoLTu8HK250Oa41qsU7erA>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 25 Oct 2023 19:03:28 -0400 (EDT)
+Date: Wed, 25 Oct 2023 16:02:45 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org, llvm@lists.linux.dev,
+	Miguel Ojeda <ojeda@kernel.org>,	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Andrea Parri <parri.andrea@gmail.com>,	Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Nicholas Piggin <npiggin@gmail.com>,	David Howells <dhowells@redhat.com>,
+	Jade Alglave <j.alglave@ucl.ac.uk>,	Luc Maranget <luc.maranget@inria.fr>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Akira Yokosawa <akiyks@gmail.com>,	Daniel Lustig <dlustig@nvidia.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,	Tom Rix <trix@redhat.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, kent.overstreet@gmail.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com,
+	Matthew Wilcox <willy@infradead.org>,	Dave Chinner <david@fromorbit.com>,
+ linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC] rust: types: Add read_once and write_once
+Message-ID: <ZTmelWlSncdtExXp@boqun-archlinux>
+References: <20231025195339.1431894-1-boqun.feng@gmail.com>
+ <VEhpQqgTM0U-aNYRUQ89ICIHW9Eehr66yw92DrmBZcZOah2mLqlz24HxEwDwYPVDOnaigDiZDEVl5mWqZJxoAtRheqTMjzpxuTKe0sr1uZs=@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] fanotify support for btrfs sub-volumes
-Content-Language: en-US
-To: Josef Bacik <josef@toxicpanda.com>, Christoph Hellwig <hch@infradead.org>
-Cc: Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
- Christian Brauner <brauner@kernel.org>, Chris Mason <clm@fb.com>,
- David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org
-References: <20231025135048.36153-1-amir73il@gmail.com>
- <ZTk1ffCMDe9GrJjC@infradead.org> <20231025210654.GA2892534@perftesting>
-From: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
- BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00iVQUJDToH
- pgAKCRDCPZHzoSX+qNKACACkjDLzCvcFuDlgqCiS4ajHAo6twGra3uGgY2klo3S4JespWifr
- BLPPak74oOShqNZ8yWzB1Bkz1u93Ifx3c3H0r2vLWrImoP5eQdymVqMWmDAq+sV1Koyt8gXQ
- XPD2jQCrfR9nUuV1F3Z4Lgo+6I5LjuXBVEayFdz/VYK63+YLEAlSowCF72Lkz06TmaI0XMyj
- jgRNGM2MRgfxbprCcsgUypaDfmhY2nrhIzPUICURfp9t/65+/PLlV4nYs+DtSwPyNjkPX72+
- LdyIdY+BqS8cZbPG5spCyJIlZonADojLDYQq4QnufARU51zyVjzTXMg5gAttDZwTH+8LbNI4
- mm2YzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
- CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
- /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
- GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
- q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
- ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00ibgUJDToHvwAK
- CRDCPZHzoSX+qK6vB/9yyZlsS+ijtsvwYDjGA2WhVhN07Xa5SBBvGCAycyGGzSMkOJcOtUUf
- tD+ADyrLbLuVSfRN1ke738UojphwkSFj4t9scG5A+U8GgOZtrlYOsY2+cG3R5vjoXUgXMP37
- INfWh0KbJodf0G48xouesn08cbfUdlphSMXujCA8y5TcNyRuNv2q5Nizl8sKhUZzh4BascoK
- DChBuznBsucCTAGrwPgG4/ul6HnWE8DipMKvkV9ob1xJS2W4WJRPp6QdVrBWJ9cCdtpR6GbL
- iQi22uZXoSPv/0oUrGU+U5X4IvdnvT+8viPzszL5wXswJZfqfy8tmHM85yjObVdIG6AlnrrD
-In-Reply-To: <20231025210654.GA2892534@perftesting>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:5rr5bfMpKbBOuNyIaKoh13Iecfs2wIsxx4DUBu+zgfzgoB42g44
- HDjgLVVI57JjWb5HFhdY7r+nbUgDfeNenSQr47GNpJP5yafylEzDGO+IjyDNwRuNLd5RW+b
- ydDnJZNjbfMXHu7Np+NKZ2N0IrSyY04BdalxSaf25ph5iVb+9ydIKyZo5SoQ7X9ZfYRMEl4
- k4SKNuZD2Gmn942O+sFpQ==
-UI-OutboundReport: notjunk:1;M01:P0:GMcuwDytY+w=;EqthME9VjzB69SNlV8u1l8FbAGf
- S8fY9U4OMP0hE+0VCQRlPyERiuITFU9h113P0aZ3gvbEaSAtORi+TLjjUSISAz44VqweuR3e8
- b79NJOL09C/s7yeH6d/hFto2GMei90srgb0IHsNdIb7Ry7SkJv7cHjaOvFjUd7efenaF5z8fL
- O9yqj79n1Xc23PvTEDLZxawWnebS6FXbA+b/YvDATKDNoXzMMg09u+wjp6N/0QI5hspAa0KR2
- JgLkD55ydcNPyHYLvyydUKbilARnh4BSoiTL9Tb/FOmACnJjz2WCgQjAA0wuyY+rVDdA5n928
- gALmfPHY9us95PDDJdVBlf+5C7QMaMobMdwOFOel3Rhrh3iaokGHjziaKJYBk+1AieoTuLcbf
- NMYhXDUnbBAjm2/UL0rtXVbFHCb4t88DZSmT39CAqKRUmmhdTPvYix3/nGywTlnSLWW3XeV4a
- AnkduZ7JGwEI4WwCTYr+k0EEenhhVnzN68SJOTji+4gvs/Id44nHkQtQgNK7YFhKNJB2L4HNb
- OxOrXBo+it2fvuM9YL3LpLt/xVWVaCN00wW1n9TRvzACKwLYT3clw4dN5PHe5xlAw7GvYZzcl
- Q+XcRalJDKTMXOTPta+UAMO5gHYNYkfKjHZwboaKSw/sd1yUB/qiSJoD7K6ZBS029cVt1/tCw
- PQRlSLTJw0GF6SAT8CkSIOoefUUoFrJlXhi3pWl+9Jn8kfiK2nhpnJMNuzRJkz2TWRhGL4Q0N
- ETsaKwolQb8VTo6hyvOYq25vj88GszKEG4PvzOnyh+DWkRzhLjWHHOa0m65zsNhrFmQNLT1Z6
- /TRTF/bKDw8LOE4WUgqLxp/fAqfT23saXVC0lT7mTejVNyJiKm5+ub6jMRn5aqybZqXS74oSO
- I/V4LEny/VX3pzbh2ulPO+94nIELyARRP8hAVdSk+2MBZLVGqoZFRHG7rwZ968ck4MAeXr2yL
- 89id1b3vpU667d2FyfdVJKi++qI=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <VEhpQqgTM0U-aNYRUQ89ICIHW9Eehr66yw92DrmBZcZOah2mLqlz24HxEwDwYPVDOnaigDiZDEVl5mWqZJxoAtRheqTMjzpxuTKe0sr1uZs=@proton.me>
 
+On Wed, Oct 25, 2023 at 09:51:28PM +0000, Benno Lossin wrote:
+> > In theory, `read_volatile` and `write_volatile` in Rust can have UB in
+> > case of the data races [1]. However, kernel uses volatiles to implement
+> 
+> I would not write "In theory", but rather state that data races involving
+> `read_volatile` is documented to still be UB.
+> 
 
+Good point.
 
-On 2023/10/26 07:36, Josef Bacik wrote:
-> On Wed, Oct 25, 2023 at 08:34:21AM -0700, Christoph Hellwig wrote:
->> On Wed, Oct 25, 2023 at 04:50:45PM +0300, Amir Goldstein wrote:
->>> Jan,
->>>
->>> This patch set implements your suggestion [1] for handling fanotify
->>> events for filesystems with non-uniform f_fsid.
->>
->> File systems nust never report non-uniform fsids (or st_dev) for that
->> matter.  btrfs is simply broken here and needs to be fixed.
->
-> We keep going around and around on this so I'd like to get a set of step=
-s laid
-> out for us to work towards to resolve this once and for all.
->
-> HYSTERICAL RAISINS (why we do st_dev)
-> -------------------------------------
->
-> Chris made this decision forever ago because things like rsync would scr=
-ew up
-> with snapshots and end up backing up the same thing over and over again.=
-  We saw
-> it was using st_dev (as were a few other standard tools) to distinguish =
-between
-> file systems, so we abused this to make userspace happy.
->
-> The other nice thing this provided was a solution for the fact that we r=
-e-use
-> inode numbers in the file system, as they're unique for the subvolume on=
-ly.
->
-> PROBLEMS WE WANT TO SOLVE
-> -------------------------
->
-> 1) Stop abusing st_dev.  We actually want this as btrfs developers becau=
-se it's
->     kind of annoying to figure out which device is mounted when st_dev d=
-oesn't
->     map to any of the devices in /proc/mounts.
->
-> 2) Give user space a way to tell it's on a subvolume, so it can not be c=
-onfused
->     by the repeating inode numbers.
->
-> POSSIBLE SOLUTIONS
-> ------------------
->
-> 1) A statx field for subvolume id.  The subvolume id's are unique to the=
- file
->     system, so subvolume id + inode number is unique to the file system.=
-  This is
->     a u64, so is nice and easy to export through statx.
-> 2) A statx field for the uuid/fsid of the file system.  I'd like this be=
-cause
->     again, being able to easily stat a couple of files and tell they're =
-on the
->     same file system is a valuable thing.  We have a per-fs uuid that we=
- can
->     export here.
-> 3) A statx field for the uuid of the subvolume.  Our subvolumes have the=
-ir own
->     unique uuid.  This could be an alternative for the subvolume id opti=
-on, or an
->     addition.
+> > READ_ONCE() and WRITE_ONCE(), and expects races on these marked accesses
+> 
+> Missing "`"?
+> 
 
-No need for a full UUID, just a u64 is good enough.
+Yeah, but these are C macros, and here is the commit log, so I wasn't so
+sure I want to add "`", but I guess it's good for consistency.
 
-Although a full UUID for the subvolumes won't hurt and can reduce the
-need to call the btrfs specific ioctl just to receive the UUID.
+> > don't cause UB. And they are proven to have a lot of usages in kernel.
+> > 
+> > To close this gap, `read_once` and `write_once` are introduced, they
+> > have the same semantics as `READ_ONCE` and `WRITE_ONCE` especially
+> > regarding data races under the assumption that `read_volatile` and
+> 
+> I would separate implementation from specification. We specify
+> `read_once` and `write_once` to have the same semantics as `READ_ONCE`
+> and `WRITE_ONCE`. But we implement them using
+> `read_volatile`/`write_volatile`, so we might still encounter UB, but it
+> is still a sort of best effort. As soon as we have the actual thing in
+> Rust, we will switch the implementation.
+> 
 
+Sounds good, I will use this in the next version.
 
-My concern is, such new members would not be utilized by any other fs,
-would it cause some compatibility problem?
+> > `write_volatile` have the same behavior as a volatile pointer in C from
+> > a compiler point of view.
+> > 
+> > Longer term solution is to work with Rust language side for a better way
+> > to implement `read_once` and `write_once`. But so far, it should be good
+> > enough.
+> > 
+> > Suggested-by: Alice Ryhl <aliceryhl@google.com>
+> > Link: https://doc.rust-lang.org/std/ptr/fn.read_volatile.html#safety [1]
+> > Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+> > ---
+> > 
+> > Notice I also make the primitives only work on T: Copy, since I don't
+> > think Rust side and C side will use a !Copy type to communicate, but we
+> > can always remove that constrait later.
+> > 
+> > 
+> >  rust/kernel/prelude.rs |  2 ++
+> >  rust/kernel/types.rs   | 43 ++++++++++++++++++++++++++++++++++++++++++
+> >  2 files changed, 45 insertions(+)
+> > 
+> > diff --git a/rust/kernel/prelude.rs b/rust/kernel/prelude.rs
+> > index ae21600970b3..351ad182bc63 100644
+> > --- a/rust/kernel/prelude.rs
+> > +++ b/rust/kernel/prelude.rs
+> > @@ -38,3 +38,5 @@
+> >  pub use super::init::{InPlaceInit, Init, PinInit};
+> > 
+> >  pub use super::current;
+> > +
+> > +pub use super::types::{read_once, write_once};
+> 
+> Do we really want people to use these so often that they should be in
+> the prelude?
+> 
 
->
-> Either 1 or 3 are necessary to give userspace a way to tell they've wand=
-ered
-> into a different subvolume.  I'd like to have all 3, but I recognize tha=
-t may be
-> wishful thinking.  2 isn't necessary, but if we're going to go about mes=
-sing
-> with statx then I'd like to do it all at once, and I want this for the r=
-easons
-> stated above.
->
-> SEQUENCE OF EVENTS
-> ------------------
->
-> We do one of the statx changes, that rolls into a real kernel.  We run a=
-round
-> and submit patches for rsync and anything else we can think of to take a=
-dvantage
-> of the statx feature.
+The reason I prelude them is because that `READ_ONCE` and `WRITE_ONCE`
+have total ~7000 users in kernel, but now think about it, maybe it's
+better not.
 
-My main concern is, how older programs could handle this? Like programs
-utilizing stat() only, and for whatever reasons they don't bother to add
-statx() support.
-(Can vary from lack of maintenance to weird compatibility reasons)
+> Sure there will not really be any name conflicts, but I think an
+> explicit import might make sense.
+> 
+> > diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
+> > index d849e1979ac7..b0872f751f97 100644
+> > --- a/rust/kernel/types.rs
+> > +++ b/rust/kernel/types.rs
+> 
+> I don't think this should go into `types.rs`. But I do not have a good
+> name for the new module.
+> 
 
-Thus we still need such st_dev hack, until there is no real world
-programs utilizing vanilla stat() only.
-(Which everyone knows it's impossible)
+kernel::sync?
 
-Thanks,
-Qu
->
-> Then we wait, call it 2 kernel releases after the initial release.  Then=
- we go
-> and rip out the dev_t hack. >
-> Does this sound like a reasonable path forward to resolve everybody's co=
-ncerns?
-> I feel like I'm missing some other argument here, but I'm currently on v=
-acation
-> and can't think of what it is nor have the energy to go look it up at th=
-e
-> moment.  Thanks,
->
-> Josef
+> > @@ -432,3 +432,46 @@ pub enum Either<L, R> {
+> >      /// Constructs an instance of [`Either`] containing a value of type `R`.
+> >      Right(R),
+> >  }
+> > +
+> > +/// (Concurrent) Primitives to interact with C side, which are considered as marked access:
+> > +///
+> > +/// tools/memory-memory/Documentation/access-marking.txt
+> > +
+> 
+> Accidental empty line? Or is this meant as a comment for both
+> functions?
+> 
+
+Right, it's the documentation for both functions.
+
+> > +/// The counter part of C `READ_ONCE()`.
+> > +///
+> > +/// The semantics is exactly the same as `READ_ONCE()`, especially when used for intentional data
+> > +/// races.
+> 
+> It would be great if these semantics are either linked or spelled out
+> here. Ideally both.
+> 
+
+Actually I haven't found any document about `READ_ONCE()` races with
+writes is not UB: we do have document saying `READ_ONCE()` will disable
+KCSAN checks, but no document says (explicitly) that it's not a UB.
+
+> > +///
+> > +/// # Safety
+> > +///
+> > +/// * `src` must be valid for reads.
+> > +/// * `src` must be properly aligned.
+> > +/// * `src` must point to a properly initialized value of value `T`.
+> > +#[inline(always)]
+> > +pub unsafe fn read_once<T: Copy>(src: *const T) -> T {
+> 
+> Why only `T: Copy`?
+> 
+
+I actually explained this above, after "---" of the commit log, but
+maybe it's worth its own documentation? The reason that it only works
+with `T: Copy`, is that these primitives should be mostly used for
+C/Rust communication, and using a `T: !Copy` is probably wrong (or at
+least complicated) for communication, since users need to handle which
+one should be used after `read_once()`. This is in the same spirit as
+`read_volatile` documentation:
+
+```
+Like read, read_volatile creates a bitwise copy of T, regardless of
+whether T is Copy. If T is not Copy, using both the returned value and
+the value at *src can violate memory safety. However, storing non-Copy
+types in volatile memory is almost certainly incorrect.
+```
+
+I want to start with restrict usage.
+
+> > +    // SAFETY: the read is valid because of the function's safety requirement, plus the assumption
+> > +    // here is that 1) a volatile pointer dereference in C and 2) a `read_volatile` in Rust have the
+> > +    // same semantics, so this function should have the same behavior as `READ_ONCE()` regarding
+> > +    // data races.
+> 
+> I would explicitly state that we might have UB here due to data races.
+> But that we have not seen any invalid codegen and thus assume there to
+
+I'd rather not claim this (no invalid codegen), not because it's not
+true, but because it's not under our control. We have written doc in
+Rust says:
+
+```
+... so the precise semantics of what “volatile” means here is subject
+to change over time. That being said, the semantics will almost always
+end up pretty similar to C11’s definition of volatile.
+```
+
+, so we have some confidence to say `read_volatile` equals to a volatile
+read, and `write_volatile` equals to a volatile write. Therefore, we can
+assume they have the same behaviors as `READ_ONCE()` and `WRITE_ONCE()`,
+but that's it. Going futher to talk about codegen means we have more
+guarantee from Rust compiler implementation.
+
+In other words, we are not saying racing `read_volatile`s don't have
+UBs, we are saying racing `read_volatile`s behave the same as a volatile
+read on UBs.
+
+Regards,
+Boqun
+
+> be no UB (you might also want to write this in the commit message).
+> 
+> --
+> Cheers,
+> Benno
+> 
+> > +    unsafe { src.read_volatile() }
+> > +}
+> > +
+> > +/// The counter part of C `WRITE_ONCE()`.
+> > +///
+> > +/// The semantics is exactly the same as `WRITE_ONCE()`, especially when used for intentional data
+> > +/// races.
+> > +///
+> > +/// # Safety
+> > +///
+> > +/// * `dst` must be valid for writes.
+> > +/// * `dst` must be properly aligned.
+> > +#[inline(always)]
+> > +pub unsafe fn write_once<T: Copy>(dst: *mut T, value: T) {
+> > +    // SAFETY: the write is valid because of the function's safety requirement, plus the assumption
+> > +    // here is that 1) a write to a volatile pointer dereference in C and 2) a `write_volatile` in
+> > +    // Rust have the same semantics, so this function should have the same behavior as
+> > +    // `WRITE_ONCE()` regarding data races.
+> > +    unsafe {
+> > +        core::ptr::write_volatile(dst, value);
+> > +    }
+> > +}
+> > --
+> > 2.41.0
+> 
 
