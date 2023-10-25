@@ -1,140 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-1177-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1178-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 061547D6E66
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Oct 2023 16:06:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B19B47D6E73
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Oct 2023 16:10:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8947FB21195
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Oct 2023 14:06:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8D2F1C20E2E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Oct 2023 14:10:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DA6F28E0C;
-	Wed, 25 Oct 2023 14:06:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CF5528E26;
+	Wed, 25 Oct 2023 14:10:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="CRuGepNJ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Pa6Fidq+"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="e4mR/qwX"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9B0015486
-	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Oct 2023 14:06:35 +0000 (UTC)
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B092138
-	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Oct 2023 07:06:30 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id C2A4321DDC;
-	Wed, 25 Oct 2023 14:06:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1698242771; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=A0u5Mz7tLN8uPSS9lBs4LR/A1pXmk8vvjMRH07w8FzQ=;
-	b=CRuGepNJVN0HHC/zi8IqLfaOy4Ew5BzM8MYk4CmW+1RIZeiqJloFVGFvo2nv1y/gblAMzH
-	eGeP1yPcghgNwmCBV+smZp+gVwMqBe6t+iI7quS8CMdw5NIGMXuyn0piD7wFLBcBXT/tXB
-	bh7CDMzt5NIpWi5Vjp9/WysWIgucBI4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1698242771;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=A0u5Mz7tLN8uPSS9lBs4LR/A1pXmk8vvjMRH07w8FzQ=;
-	b=Pa6Fidq+GQUhCvYDhO/mRBi8I6FLSF/iRgl6UXckhVhUzoha7bVCfiSbe2k+JgZ2dTPfF+
-	urVaxmrTX9/Y7XCQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-	(No client certificate requested)
-	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id B3C7513524;
-	Wed, 25 Oct 2023 14:06:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-	by imap2.suse-dmz.suse.de with ESMTPSA
-	id 8p3aK9MgOWUYEwAAMHmgww
-	(envelope-from <jack@suse.cz>); Wed, 25 Oct 2023 14:06:11 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 359C2A05BC; Wed, 25 Oct 2023 16:06:11 +0200 (CEST)
-Date: Wed, 25 Oct 2023 16:06:11 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 10/10] blkdev: comment fs_holder_ops
-Message-ID: <20231025140611.i33e6drkj5xzje6s@quack3>
-References: <20231024-vfs-super-freeze-v2-0-599c19f4faac@kernel.org>
- <20231024-vfs-super-freeze-v2-10-599c19f4faac@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B2BC15486
+	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Oct 2023 14:10:41 +0000 (UTC)
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 672F71AD;
+	Wed, 25 Oct 2023 07:10:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=0YPa27INOC/N6qFWunK8b2Eoihh6tg8Tw/h1N8ujj4k=; b=e4mR/qwXL0HvoqDl3cYm8CxH26
+	lVxa1WXl8CX5DSEaRG1++Fx3BahQbLCd5oF1jDTQWen90bRt5kTM/QL6Ds7fYMuCfL6kcVfqgPrl6
+	mwZ/TBr4foZGzth1m10/v+sR2dvWZbJM9lHuSXaWQkR7QmFF6q7D4al59+kbg8nFXQp51bwOg1QsL
+	gY6sfwkOXQt5mgrb+REtBuGG4nv2+cJ8FgVLSY24Q7FtXlRuN8LPwCzdOQV6WywoGk16BClk6rh3S
+	LOAR5zSp6QbsEcD9+Kp58U2Wj961CkSDnszUYD8lsc0GjyVUg+c5dmV+ybllu/lchxSDQcrqi0AhJ
+	X83a1C3Q==;
+Received: from 2a02-8389-2341-5b80-39d3-4735-9a3c-88d8.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:39d3:4735:9a3c:88d8] helo=localhost)
+	by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+	id 1qveac-00CTwB-34;
+	Wed, 25 Oct 2023 14:10:31 +0000
+From: Christoph Hellwig <hch@lst.de>
+To: Jens Axboe <axboe@kernel.dk>,
+	Matthew Wilcox <willy@infradead.org>
+Cc: Ilya Dryomov <idryomov@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: add and use a per-mapping stable writes flag v2
+Date: Wed, 25 Oct 2023 16:10:16 +0200
+Message-Id: <20231025141020.192413-1-hch@lst.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231024-vfs-super-freeze-v2-10-599c19f4faac@kernel.org>
-Authentication-Results: smtp-out1.suse.de;
-	none
-X-Spam-Level: 
-X-Spam-Score: -6.60
-X-Spamd-Result: default: False [-6.60 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 NEURAL_HAM_LONG(-3.00)[-1.000];
-	 MIME_GOOD(-0.10)[text/plain];
-	 RCPT_COUNT_FIVE(0.00)[5];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 NEURAL_HAM_SHORT(-1.00)[-1.000];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_COUNT_TWO(0.00)[2];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-3.00)[99.99%]
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Tue 24-10-23 15:01:16, Christian Brauner wrote:
-> Add a comment to @fs_holder_ops that @holder must point to a superblock.
-> 
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+Hi all
 
-Looks good. Feel free to add:
+A while ago Ilya pointer out that since commit 1cb039f3dc16 ("bdi:
+replace BDI_CAP_STABLE_WRITES with a queue and a sb flag"), the stable
+write flag on the queue wasn't used for writes to the block devices
+nodes any more, and willy suggested fixing this by adding a stable write
+flags on each address_space.  This series implements this fix, and also
+fixes the stable write flag when the XFS RT device requires it, but the
+main device doesn't (which is probably more a theoretical than a
+practical problem).
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-								Honza
+Changes since v1:
+ - add a xfs cleanup patch
 
-
-> ---
->  include/linux/blkdev.h | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-> index 1bc776335ff8..abf71cce785c 100644
-> --- a/include/linux/blkdev.h
-> +++ b/include/linux/blkdev.h
-> @@ -1480,6 +1480,11 @@ struct blk_holder_ops {
->  	int (*thaw)(struct block_device *bdev);
->  };
->  
-> +/*
-> + * For filesystems using @fs_holder_ops, the @holder argument passed to
-> + * helpers used to open and claim block devices via
-> + * bd_prepare_to_claim() must point to a superblock.
-> + */
->  extern const struct blk_holder_ops fs_holder_ops;
->  
->  /*
-> 
-> -- 
-> 2.34.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Diffstat:
+ block/bdev.c            |    2 ++
+ fs/inode.c              |    2 ++
+ fs/xfs/xfs_inode.h      |    8 ++++++++
+ fs/xfs/xfs_ioctl.c      |   30 ++++++++++++++++++++----------
+ fs/xfs/xfs_iops.c       |    7 +++++++
+ include/linux/pagemap.h |   17 +++++++++++++++++
+ mm/page-writeback.c     |    2 +-
+ 7 files changed, 57 insertions(+), 11 deletions(-)
 
