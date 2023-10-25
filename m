@@ -1,133 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-1188-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1189-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3F6B7D6EE4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Oct 2023 16:40:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D58437D70A6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Oct 2023 17:19:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FF231C20E52
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Oct 2023 14:40:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 399E4B211EC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Oct 2023 15:19:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F8762AB2C;
-	Wed, 25 Oct 2023 14:40:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13EE72AB4C;
+	Wed, 25 Oct 2023 15:19:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eSOBcTG6"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZuUVTMSG";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cjhZlYDY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4268C2AB36
-	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Oct 2023 14:40:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B53EC433C8;
-	Wed, 25 Oct 2023 14:40:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1698244802;
-	bh=ZsyjdxTVs6itWoN60CajWTBiY55Mxf69XVsG6IddPiw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eSOBcTG6fmO/7Y94SFHz5tQHb29xFHidQPzjKqkf7U374cJqty9/mU48GewklkUou
-	 UCaKC2JOK3OnsiAAH5O1UMNDS7nRI2sGnB1PWUx/ztQlkLePEmatJKtfnSApZdcgRv
-	 JlI9saS06zcFPKUPQT28UPj2Dugk5uWD6VClw/Bu7h+U2x+SSKNwom3NlaPHC+bHzJ
-	 m6lJbrgEkF4DbVF/QtHGmMTGcEArPl5onx4KvDK8aAWXNEvoVtZ/xUU5CIG1jIysqe
-	 Sqy7UwwmNY6aGLBr/4PWVjl/WQNEDCqVywfzfcoQJhy63Cja+eDDcU6ykUB4IVzPgp
-	 DCNJDNDQM0hrg==
-Date: Wed, 25 Oct 2023 07:40:02 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Matthew Wilcox <willy@infradead.org>,
-	Ilya Dryomov <idryomov@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 4/4] xfs: respect the stable writes flag on the RT device
-Message-ID: <20231025144002.GD3195650@frogsfrogsfrogs>
-References: <20231025141020.192413-1-hch@lst.de>
- <20231025141020.192413-5-hch@lst.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A27C61DA5B
+	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Oct 2023 15:19:13 +0000 (UTC)
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27046129;
+	Wed, 25 Oct 2023 08:19:11 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 93B471FF79;
+	Wed, 25 Oct 2023 15:19:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1698247150; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=44S3QBGX+n9gobdLgmc7FmUctQwHLf+32LFQcUsZ8hs=;
+	b=ZuUVTMSGCJV3/GjgIHBAWf/Wn+ejp6Qv9xr/USGSYEgpSurICPnUuHeQxgsmqNhp1me2Gk
+	xKukBly7nlvuilbb+9FdptbW/aJiHOl7LjCGCeEH28BzfzGq2dcZTODLUFoCV5VZ7Gy5Xj
+	l3xJyuldDfYBmQ1U+MhV9vzA9Aa6lPw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1698247150;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=44S3QBGX+n9gobdLgmc7FmUctQwHLf+32LFQcUsZ8hs=;
+	b=cjhZlYDYIlya0fQ102Sh8CVhReRGICuKHsHkxeFbQi0AkT34Exg25H9DyKhExGILgmBAz+
+	mg5KmCzXK8kVmjBw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+	(No client certificate requested)
+	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 5B082138E9;
+	Wed, 25 Oct 2023 15:19:10 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+	by imap2.suse-dmz.suse.de with ESMTPSA
+	id bB1IEO4xOWVtNAAAMHmgww
+	(envelope-from <krisman@suse.de>); Wed, 25 Oct 2023 15:19:10 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org,  linux-ext4@vger.kernel.org,
+  linux-f2fs-devel@lists.sourceforge.net,  viro@zeniv.linux.org.uk,
+  tytso@mit.edu,  ebiggers@kernel.org,  jaegeuk@kernel.org
+Subject: Re: [PATCH v6 0/9] Support negative dentries on case-insensitive
+ ext4 and f2fs
+In-Reply-To: <20231025-selektiert-leibarzt-5d0070d85d93@brauner> (Christian
+	Brauner's message of "Wed, 25 Oct 2023 15:32:02 +0200")
+Organization: SUSE
+References: <20230816050803.15660-1-krisman@suse.de>
+	<20231025-selektiert-leibarzt-5d0070d85d93@brauner>
+Date: Wed, 25 Oct 2023 11:19:09 -0400
+Message-ID: <87lebq91ci.fsf@>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231025141020.192413-5-hch@lst.de>
+Content-Type: text/plain
 
-On Wed, Oct 25, 2023 at 04:10:20PM +0200, Christoph Hellwig wrote:
-> Update the per-folio stable writes flag dependening on which device an
-> inode resides on.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+Christian Brauner <brauner@kernel.org> writes:
 
-Looks good now,
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+> On Wed, 16 Aug 2023 01:07:54 -0400, Gabriel Krisman Bertazi wrote:
+>> This is v6 of the negative dentry on case-insensitive directories.
+>> Thanks Eric for the review of the last iteration.  This version
+>> drops the patch to expose the helper to check casefolding directories,
+>> since it is not necessary in ecryptfs and it might be going away.  It
+>> also addresses some documentation details, fix a build bot error and
+>> simplifies the commit messages.  See the changelog in each patch for
+>> more details.
+>> 
+>> [...]
+>
+> Ok, let's put it into -next so it sees some testing.
+> So it's too late for v6.7. Seems we forgot about this series.
+> Sorry about that.
 
---D
+Ah, that's a bummer :(. I wanted to ping earlier but stupidly assumed it
+was intentional for any reason.
 
+Considering this has been on the list since 2022 and only slightly
+changed, mostly touches case-insensitive enabled filesystems, and that
+we still didn't enter the merge window (let the alone the -rc stabilization
+period), would you consider queueing it on Linux-next today and, provided
+there are no merge conflicts, include it in the 6.7 pull request?  I'd
+rather not have it sit for another 3 months before inclusion.
+
+>
 > ---
->  fs/xfs/xfs_inode.h | 8 ++++++++
->  fs/xfs/xfs_ioctl.c | 8 ++++++++
->  fs/xfs/xfs_iops.c  | 7 +++++++
->  3 files changed, 23 insertions(+)
-> 
-> diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
-> index 0c5bdb91152e1c..682959c8f78cb0 100644
-> --- a/fs/xfs/xfs_inode.h
-> +++ b/fs/xfs/xfs_inode.h
-> @@ -561,6 +561,14 @@ extern void xfs_setup_inode(struct xfs_inode *ip);
->  extern void xfs_setup_iops(struct xfs_inode *ip);
->  extern void xfs_diflags_to_iflags(struct xfs_inode *ip, bool init);
->  
-> +static inline void xfs_update_stable_writes(struct xfs_inode *ip)
-> +{
-> +	if (bdev_stable_writes(xfs_inode_buftarg(ip)->bt_bdev))
-> +		mapping_set_stable_writes(VFS_I(ip)->i_mapping);
-> +	else
-> +		mapping_clear_stable_writes(VFS_I(ip)->i_mapping);
-> +}
-> +
->  /*
->   * When setting up a newly allocated inode, we need to call
->   * xfs_finish_inode_setup() once the inode is fully instantiated at
-> diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-> index be69e7be713e5c..535f6d38cdb540 100644
-> --- a/fs/xfs/xfs_ioctl.c
-> +++ b/fs/xfs/xfs_ioctl.c
-> @@ -1149,6 +1149,14 @@ xfs_ioctl_setattr_xflags(
->  	ip->i_diflags2 = i_flags2;
->  
->  	xfs_diflags_to_iflags(ip, false);
-> +
-> +	/*
-> +	 * Make the stable writes flag match that of the device the inode
-> +	 * resides on when flipping the RT flag.
-> +	 */
-> +	if (rtflag != XFS_IS_REALTIME_INODE(ip) && S_ISREG(VFS_I(ip)->i_mode))
-> +		xfs_update_stable_writes(ip);
-> +
->  	xfs_trans_ichgtime(tp, ip, XFS_ICHGTIME_CHG);
->  	xfs_trans_log_inode(tp, ip, XFS_ILOG_CORE);
->  	XFS_STATS_INC(mp, xs_ig_attrchg);
-> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-> index 2b3b05c28e9e48..b8ec045708c318 100644
-> --- a/fs/xfs/xfs_iops.c
-> +++ b/fs/xfs/xfs_iops.c
-> @@ -1298,6 +1298,13 @@ xfs_setup_inode(
->  	gfp_mask = mapping_gfp_mask(inode->i_mapping);
->  	mapping_set_gfp_mask(inode->i_mapping, (gfp_mask & ~(__GFP_FS)));
->  
-> +	/*
-> +	 * For real-time inodes update the stable write flags to that of the RT
-> +	 * device instead of the data device.
-> +	 */
-> +	if (S_ISREG(inode->i_mode) && XFS_IS_REALTIME_INODE(ip))
-> +		xfs_update_stable_writes(ip);
-> +
->  	/*
->  	 * If there is no attribute fork no ACL can exist on this inode,
->  	 * and it can't have any file capabilities attached to it either.
-> -- 
-> 2.39.2
-> 
+>
+> Applied to the vfs.casefold branch of the vfs/vfs.git tree.
+> Patches in the vfs.casefold branch should appear in linux-next soon.
+>
+> Please report any outstanding bugs that were missed during review in a
+> new review to the original patch series allowing us to drop it.
+>
+> It's encouraged to provide Acked-bys and Reviewed-bys even though the
+> patch has now been applied. If possible patch trailers will be updated.
+>
+> Note that commit hashes shown below are subject to change due to rebase,
+> trailer updates or similar. If in doubt, please check the listed branch.
+>
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+> branch: vfs.casefold
+>
+> [1/9] ecryptfs: Reject casefold directory inodes
+>       https://git.kernel.org/vfs/vfs/c/8512e7c7e665
+> [2/9] 9p: Split ->weak_revalidate from ->revalidate
+>       https://git.kernel.org/vfs/vfs/c/17f4423cb24a
+> [3/9] fs: Expose name under lookup to d_revalidate hooks
+>       https://git.kernel.org/vfs/vfs/c/24084e50e579
+> [4/9] fs: Add DCACHE_CASEFOLDED_NAME flag
+>       https://git.kernel.org/vfs/vfs/c/2daa2df800f8
+> [5/9] libfs: Validate negative dentries in case-insensitive directories
+>       https://git.kernel.org/vfs/vfs/c/8d879ccaf0f7
+> [6/9] libfs: Chain encryption checks after case-insensitive revalidation
+>       https://git.kernel.org/vfs/vfs/c/314e925d5a2c
+> [7/9] libfs: Merge encrypted_ci_dentry_ops and ci_dentry_ops
+>       https://git.kernel.org/vfs/vfs/c/07f820b77c58
+> [8/9] ext4: Enable negative dentries on case-insensitive lookup
+>       https://git.kernel.org/vfs/vfs/c/2562ec77f11e
+> [9/9] f2fs: Enable negative dentries on case-insensitive lookup
+>       https://git.kernel.org/vfs/vfs/c/39d2dd36a065
+
+Thanks,
+
+-- 
+Gabriel Krisman Bertazi
 
