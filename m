@@ -1,63 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-1251-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1252-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B5C37D8595
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Oct 2023 17:08:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C19D07D85E8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Oct 2023 17:23:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABCC41C20D85
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Oct 2023 15:08:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DD0D28207F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Oct 2023 15:23:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 534B52F507;
-	Thu, 26 Oct 2023 15:08:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 308C134CE8;
+	Thu, 26 Oct 2023 15:23:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OP/h0Aqf"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ceSji+GR"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B472E404
-	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Oct 2023 15:08:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F534C433C8;
-	Thu, 26 Oct 2023 15:08:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1698332884;
-	bh=VqXDsdvKgWVcI6gCnms2OyrbuxjN6ozmecLBnQ9oQYA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OP/h0AqfPQzeXetRSb/ZQX5maa+ICp3w7gdakpOjABJ3q65Np/7+DAYUUh1W3lUpT
-	 lE0G5CgxWtHqbcXYiIMxrzn0ylvFTU6VcsaKDJSgRTlfSbRckDZ4FLLGbdIXWbrTZP
-	 I/AGGg0wNrNMS6TL7qHesNiL7SVgclvHt8FtPMi8DFaI2ZLGrSJEfe8xyHsvhYz6Iw
-	 V0UZ4GLXjB27NcvSjO85XAlpbSXKz+42kQFbhygKOT5t5SztJXqxOfES9zjyjyUKfN
-	 2P8h2xQ9+cxQ4ABCfE6tIkk3ea2uH+2QibgknkMGmHdCRl/lVWTGqDOxK6bGLruSJx
-	 aPGn4LIF7dI9w==
-Date: Thu, 26 Oct 2023 17:08:00 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH RFC 0/6] fs,block: yield devices
-Message-ID: <20231026-zugreifen-impuls-15b38acf1a8c@brauner>
-References: <20231024-vfs-super-rework-v1-0-37a8aa697148@kernel.org>
- <20231025172057.kl5ajjkdo3qtr2st@quack3>
- <20231025-ersuchen-restbetrag-05047ba130b5@brauner>
- <20231026103503.ldupo3nhynjjkz45@quack3>
- <20231026-marsch-tierzucht-0221d75b18ea@brauner>
- <20231026130442.lvfsjilryuxnnrp6@quack3>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DB342DF66
+	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Oct 2023 15:23:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 868DAC433C8;
+	Thu, 26 Oct 2023 15:23:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1698333796;
+	bh=KJS2k1u4DDMw0/b0buiBWZM6zr1OPS6aOkhpGbQXye8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ceSji+GR/3DQAcdtE6H9wWp22qc4NvverisA9Ztwi69e9e4n25Ozw1cqokNGNXakU
+	 oNXIePJO4AI0jcLXVF67vxfZK6mZ9qGWNRxE09/3GneWky6VY7v+jU07Z63KZ9qz5c
+	 yVT6/ykSaiYJMKHpewmF5coyhy5FtJcG2tpiF4QY=
+Date: Thu, 26 Oct 2023 08:23:15 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Yang Li <yang.lee@linux.alibaba.com>, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, Abaci Robot <abaci@linux.alibaba.com>
+Subject: Re: [PATCH -next] fs: Remove unneeded semicolon
+Message-Id: <20231026082315.fd432f07d9db32642f78aeac@linux-foundation.org>
+In-Reply-To: <20231026150334.GA13945@redhat.com>
+References: <20231026005634.6581-1-yang.lee@linux.alibaba.com>
+	<20231026150334.GA13945@redhat.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20231026130442.lvfsjilryuxnnrp6@quack3>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-> your taste it could be also viewed as kind of layering violation so I'm not
-> 100% convinced this is definitely a way to go.
+On Thu, 26 Oct 2023 17:03:35 +0200 Oleg Nesterov <oleg@redhat.com> wrote:
 
-Yeah, I'm not convinced either. As I said, I really like that right now
-ti's a vfs thing only and we don't have specific requirements about how
-devices are closed which is really nice. So let's just leave it as is?
+> On 10/26, Yang Li wrote:
+> >
+> > @@ -3826,7 +3826,7 @@ static struct task_struct *first_tid(struct pid *pid, int tid, loff_t f_pos,
+> >  	for_each_thread(task, pos) {
+> >  		if (!nr--)
+> >  			goto found;
+> > -	};
+> > +	}
+> 
+> Ah, I forgot to remove this semicolon :/
+> 
+> This is on top of
+> 
+> 	document-while_each_thread-change-first_tid-to-use-for_each_thread.patch
+> 
+> perhaps this cleanup can be folded into the patch above along with Yang's sob ?
+
+The above is in mainline, so no squashing.  I added your acked-by.
 
