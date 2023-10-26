@@ -1,73 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-1268-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1269-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D1B07D89C6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Oct 2023 22:45:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AEF37D89E0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Oct 2023 22:56:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E891328211F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Oct 2023 20:45:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 116B4281967
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Oct 2023 20:56:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAE753AC11;
-	Thu, 26 Oct 2023 20:45:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 503C73B7BE;
+	Thu, 26 Oct 2023 20:56:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S+OrD9pA"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FCY+V4e9"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BF8C38DFE
-	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Oct 2023 20:45:48 +0000 (UTC)
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 324131A5;
-	Thu, 26 Oct 2023 13:45:46 -0700 (PDT)
-Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-4079ed65471so10035325e9.1;
-        Thu, 26 Oct 2023 13:45:46 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E6B038FA5
+	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Oct 2023 20:56:01 +0000 (UTC)
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B54461A5;
+	Thu, 26 Oct 2023 13:55:59 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id ffacd0b85a97d-31c5cac3ae2so978474f8f.3;
+        Thu, 26 Oct 2023 13:55:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698353144; x=1698957944; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1698353758; x=1698958558; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6+449a2LMBVKr6t6FQ1OLh0S7RzytdzZPG5w+nkbqKw=;
-        b=S+OrD9pAzRXORgLTRgLk/EOFIe3kFTRpJNkHlOYu8LxFpg3/HIAQFG5VDpGw2aoW90
-         dPUDAkI6bsOyJmHGmVPKHnFM1WMb+Mab1AxQd5oZxWv9JN4MJJx5T0tmkIaBIb94z1Zc
-         z+lJen8x4HxVJWt/eXSPzBKbPOe4qnUdKtbKIXRhFTPAon9t0SSjWx8rb2nNOrkzek3N
-         X43YzieQJR5Hlo2g+M+i/dx+O4FxVYoFrpGdy8sskKbx49zAbTvN+M52aRUch0XJZvMA
-         FWajU5HA1GYJURddiGwSpuIdOj4VqZRh9D2cxFhUDQkD+3nof2cc9BqxCZHFHhuzH6SJ
-         LpPQ==
+        bh=tMi4W6YmVE9+Uq6mWL07obv28BYYpRn7XsezstwpvPc=;
+        b=FCY+V4e9Nu28Ff3jvJv18Bvn7DOnCxH3PJH08wJ7l/M7pOIEBv9DFczYqqY3JPGVBB
+         PQIQfQAGTbW8xnOqc/qjIORx+woRzFT1x/FWEfLSVgV4bffEB1c+Gq7IqHSeSAn8na/z
+         nVBpvi94FJ42o/bYm7PYS82X1mCBRoxXdtS7ANhgBElos803XbWPGIdhbCtbywe6aq5k
+         TZtSCKYRLDvKVwIsQsVhH5oHaRXaqo6+9debQuZZGisf/PWzGbrdAmAOzF4oepn3MK07
+         OmILVNVmkfTXIpWBQhVJEPHEkzmH1UYw8IadI8Wbizcl1ZW70b64W0MfwlMd3mhyi0Rk
+         F/hA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698353144; x=1698957944;
+        d=1e100.net; s=20230601; t=1698353758; x=1698958558;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=6+449a2LMBVKr6t6FQ1OLh0S7RzytdzZPG5w+nkbqKw=;
-        b=rBMPsqLj5AGxEeCuKpaDQUE6ooG6HEIbOBHKTMeP1VvK9H+2wlXpHukAKHiR3nH+6Z
-         o2u4AvCnm/qcCz5n8dP3Pg6Q/2Sn6U8S+CRs2184ZwlovwMZudpTTIgPeVLva5K9XtLY
-         5gYYk/6c9T92ShG6p2mDHzzMhlwEJS5ggDswWZeig2Cr1Moh/4lo3+zhCVXzEYlCZNVw
-         tU6TVrbbq9C3Dly4rTB8j3tiMqJuBjpUQWLD7/wH2fB3I3Cg+ZobmTPN5Ljt13d8w4s7
-         YePU5NSxmI0A4aENCU11MrFUYuAgnw5zRLICQtMavg/GEAVI1He2mxwzghdgFvGyJu8F
-         JVLA==
-X-Gm-Message-State: AOJu0Ywfx7Fx6+tfLtuqaz4q2J8GOvOHD7g06QPscmZ9hoRbFo0yFdXf
-	e4vNqCnBDn+hyc0OyP5i10I=
-X-Google-Smtp-Source: AGHT+IFy+KJdB0xGlQxV53fIOH7wGZbdMRjer9mS5u8S9fWbuRh56qvprHOPo/NfR4hkUKslWsI8IA==
-X-Received: by 2002:a05:600c:154e:b0:405:4a78:a890 with SMTP id f14-20020a05600c154e00b004054a78a890mr754321wmg.8.1698353144271;
-        Thu, 26 Oct 2023 13:45:44 -0700 (PDT)
+        bh=tMi4W6YmVE9+Uq6mWL07obv28BYYpRn7XsezstwpvPc=;
+        b=XwbWDICgnbldHkj8ftTCmmgrxr7GtoJkmoGXkytVqxmYB0egltaT1g72g1zFEmHK60
+         hAFGJUkdLII1e8G6Bk02rhVFzt+S9ellwpEpSo3t/UmE7/t4020q17ivLl8PmFZJx2Zd
+         cHTL3WfAs565pzy0NBJdmmP1RwCyJm9wBDLwjeAhPZWf9XtOfqJ0LjSLIAQ7nFDk64yj
+         XQmEmRpqokGOstVQ/bvmmoKB3IwdEwd41BbZuywUK6A6imOYd8ugSEzHulFx28TKL+jj
+         Sqh++tKuGwpPUbYavy/SBFZqPg2eqWAH+a2CCvdRJkxbLELqI1IBFsKHGVMz1TTmHRsu
+         AVhA==
+X-Gm-Message-State: AOJu0Yy9YkwCx2DGz0bBfysOXTtf/TmDqrMl8rJ88Jf7+ftx9PvOsHtg
+	5mNQwvw+Iu8GZrmt/75ANx3zhhVQcuo=
+X-Google-Smtp-Source: AGHT+IHBLiRPdgBqiFtvORwvUa5V9+HHK7oJlw9WyRfDtBywXdUoY85Tc0OjIp60hOu/hTF/voryRQ==
+X-Received: by 2002:a5d:6b92:0:b0:32d:9a26:4d57 with SMTP id n18-20020a5d6b92000000b0032d9a264d57mr598765wrx.20.1698353757878;
+        Thu, 26 Oct 2023 13:55:57 -0700 (PDT)
 Received: from amir-ThinkPad-T480.lan ([5.29.249.86])
-        by smtp.gmail.com with ESMTPSA id i39-20020a05600c4b2700b00405391f485fsm3393155wmp.41.2023.10.26.13.45.43
+        by smtp.gmail.com with ESMTPSA id j15-20020adfb30f000000b0032d8eecf901sm250278wrd.3.2023.10.26.13.55.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Oct 2023 13:45:43 -0700 (PDT)
+        Thu, 26 Oct 2023 13:55:57 -0700 (PDT)
 From: Amir Goldstein <amir73il@gmail.com>
 To: Christian Brauner <brauner@kernel.org>
 Cc: Jeff Layton <jlayton@kernel.org>,
 	Chuck Lever <chuck.lever@oracle.com>,
 	linux-fsdevel@vger.kernel.org,
 	linux-nfs@vger.kernel.org,
-	kernel test robot <lkp@intel.com>,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] fs: fix build error with CONFIG_EXPORTFS=m or not defined
-Date: Thu, 26 Oct 2023 23:45:40 +0300
-Message-Id: <20231026204540.143217-1-amir73il@gmail.com>
+	Jeff Layton <jlayton@redhat.com>
+Subject: [PATCH] MAINTAINERS: create an entry for exportfs
+Date: Thu, 26 Oct 2023 23:55:53 +0300
+Message-Id: <20231026205553.143556-1-amir73il@gmail.com>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -77,160 +76,57 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Many of the filesystems that call the generic exportfs helpers do not
-select the EXPORTFS config.
+Split the exportfs entry from the nfsd entry and add myself as reviewer.
 
-Move generic_encode_ino32_fh() to libfs.c, same as generic_fh_to_*()
-to avoid having to fix all those config dependencies.
-
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202310262151.renqMvme-lkp@intel.com/
-Fixes: dfaf653dc415 ("exportfs: make ->encode_fh() a mandatory method for NFS export")
-Suggested-by: Arnd Bergmann <arnd@arndb.de>
+Suggested-by: Chuck Lever <chuck.lever@oracle.com>
+Acked-by: Chuck Lever <chuck.lever@oracle.com>
+Acked-by: Jeff Layton <jlayton@redhat.com>
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
 
 Christian,
 
-Soaking f_fsid in linux-next started to bring goodies.
-Please feel free to apply the fix as is or squash it.
+Chuck has suggested that I send this patch to you.
+If you prefer that Chuck merges this patch though his tree
+that's fine by me.
 
 Thanks,
 Amir.
 
- fs/exportfs/expfs.c      | 41 ----------------------------------------
- fs/libfs.c               | 41 ++++++++++++++++++++++++++++++++++++++++
- include/linux/exportfs.h |  9 ++-------
- 3 files changed, 43 insertions(+), 48 deletions(-)
+ MAINTAINERS | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/fs/exportfs/expfs.c b/fs/exportfs/expfs.c
-index 7d9fdcc187b7..3ae0154c5680 100644
---- a/fs/exportfs/expfs.c
-+++ b/fs/exportfs/expfs.c
-@@ -342,47 +342,6 @@ static int get_name(const struct path *path, char *name, struct dentry *child)
- 	return error;
- }
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 2894f0777537..a194e6b0bcd1 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8051,6 +8051,18 @@ F:	include/linux/fs_types.h
+ F:	include/uapi/linux/fs.h
+ F:	include/uapi/linux/openat2.h
  
--/**
-- * generic_encode_ino32_fh - generic export_operations->encode_fh function
-- * @inode:   the object to encode
-- * @fh:      where to store the file handle fragment
-- * @max_len: maximum length to store there (in 4 byte units)
-- * @parent:  parent directory inode, if wanted
-- *
-- * This generic encode_fh function assumes that the 32 inode number
-- * is suitable for locating an inode, and that the generation number
-- * can be used to check that it is still valid.  It places them in the
-- * filehandle fragment where export_decode_fh expects to find them.
-- */
--int generic_encode_ino32_fh(struct inode *inode, __u32 *fh, int *max_len,
--			    struct inode *parent)
--{
--	struct fid *fid = (void *)fh;
--	int len = *max_len;
--	int type = FILEID_INO32_GEN;
--
--	if (parent && (len < 4)) {
--		*max_len = 4;
--		return FILEID_INVALID;
--	} else if (len < 2) {
--		*max_len = 2;
--		return FILEID_INVALID;
--	}
--
--	len = 2;
--	fid->i32.ino = inode->i_ino;
--	fid->i32.gen = inode->i_generation;
--	if (parent) {
--		fid->i32.parent_ino = parent->i_ino;
--		fid->i32.parent_gen = parent->i_generation;
--		len = 4;
--		type = FILEID_INO32_GEN_PARENT;
--	}
--	*max_len = len;
--	return type;
--}
--EXPORT_SYMBOL_GPL(generic_encode_ino32_fh);
--
- #define FILEID_INO64_GEN_LEN 3
- 
- /**
-diff --git a/fs/libfs.c b/fs/libfs.c
-index 8117b24b929d..38950cce135b 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -1310,6 +1310,47 @@ ssize_t simple_attr_write_signed(struct file *file, const char __user *buf,
- }
- EXPORT_SYMBOL_GPL(simple_attr_write_signed);
- 
-+/**
-+ * generic_encode_ino32_fh - generic export_operations->encode_fh function
-+ * @inode:   the object to encode
-+ * @fh:      where to store the file handle fragment
-+ * @max_len: maximum length to store there (in 4 byte units)
-+ * @parent:  parent directory inode, if wanted
-+ *
-+ * This generic encode_fh function assumes that the 32 inode number
-+ * is suitable for locating an inode, and that the generation number
-+ * can be used to check that it is still valid.  It places them in the
-+ * filehandle fragment where export_decode_fh expects to find them.
-+ */
-+int generic_encode_ino32_fh(struct inode *inode, __u32 *fh, int *max_len,
-+			    struct inode *parent)
-+{
-+	struct fid *fid = (void *)fh;
-+	int len = *max_len;
-+	int type = FILEID_INO32_GEN;
++FILESYSTEMS [EXPORTFS]
++M:	Chuck Lever <chuck.lever@oracle.com>
++M:	Jeff Layton <jlayton@kernel.org>
++R:	Amir Goldstein <amir73il@gmail.com>
++L:	linux-fsdevel@vger.kernel.org
++L:	linux-nfs@vger.kernel.org
++S:	Supported
++F:	Documentation/filesystems/nfs/exporting.rst
++F:	fs/exportfs/
++F:	fs/fhandle.c
++F:	include/linux/exportfs.h
 +
-+	if (parent && (len < 4)) {
-+		*max_len = 4;
-+		return FILEID_INVALID;
-+	} else if (len < 2) {
-+		*max_len = 2;
-+		return FILEID_INVALID;
-+	}
-+
-+	len = 2;
-+	fid->i32.ino = inode->i_ino;
-+	fid->i32.gen = inode->i_generation;
-+	if (parent) {
-+		fid->i32.parent_ino = parent->i_ino;
-+		fid->i32.parent_gen = parent->i_generation;
-+		len = 4;
-+		type = FILEID_INO32_GEN_PARENT;
-+	}
-+	*max_len = len;
-+	return type;
-+}
-+EXPORT_SYMBOL_GPL(generic_encode_ino32_fh);
-+
- /**
-  * generic_fh_to_dentry - generic helper for the fh_to_dentry export operation
-  * @sb:		filesystem to do the file handle conversion on
-diff --git a/include/linux/exportfs.h b/include/linux/exportfs.h
-index 21bae8bfeef1..e0e69dafaa43 100644
---- a/include/linux/exportfs.h
-+++ b/include/linux/exportfs.h
-@@ -294,17 +294,12 @@ extern struct dentry *exportfs_decode_fh(struct vfsmount *mnt, struct fid *fid,
- /*
-  * Generic helpers for filesystems.
-  */
--#ifdef CONFIG_EXPORTFS
- int generic_encode_ino32_fh(struct inode *inode, __u32 *fh, int *max_len,
- 			    struct inode *parent);
--#else
--#define generic_encode_ino32_fh NULL
--#endif
--
--extern struct dentry *generic_fh_to_dentry(struct super_block *sb,
-+struct dentry *generic_fh_to_dentry(struct super_block *sb,
- 	struct fid *fid, int fh_len, int fh_type,
- 	struct inode *(*get_inode) (struct super_block *sb, u64 ino, u32 gen));
--extern struct dentry *generic_fh_to_parent(struct super_block *sb,
-+struct dentry *generic_fh_to_parent(struct super_block *sb,
- 	struct fid *fid, int fh_len, int fh_type,
- 	struct inode *(*get_inode) (struct super_block *sb, u64 ino, u32 gen));
- 
+ FINTEK F75375S HARDWARE MONITOR AND FAN CONTROLLER DRIVER
+ M:	Riku Voipio <riku.voipio@iki.fi>
+ L:	linux-hwmon@vger.kernel.org
+@@ -11420,7 +11432,6 @@ S:	Supported
+ W:	http://nfs.sourceforge.net/
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/cel/linux.git
+ F:	Documentation/filesystems/nfs/
+-F:	fs/exportfs/
+ F:	fs/lockd/
+ F:	fs/nfs_common/
+ F:	fs/nfsd/
 -- 
 2.34.1
 
