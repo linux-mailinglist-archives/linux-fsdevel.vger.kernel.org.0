@@ -1,109 +1,108 @@
-Return-Path: <linux-fsdevel+bounces-1235-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1236-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1717F7D81AA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Oct 2023 13:17:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16FE87D81FA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Oct 2023 13:45:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96E17B2145D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Oct 2023 11:17:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC11DB2140D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Oct 2023 11:45:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 281C12D05B;
-	Thu, 26 Oct 2023 11:17:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E71E2D78A;
+	Thu, 26 Oct 2023 11:45:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hLgA+35T"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WW3JxmYl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C1D2D03C
-	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Oct 2023 11:17:05 +0000 (UTC)
-Received: from mail-vs1-xe36.google.com (mail-vs1-xe36.google.com [IPv6:2607:f8b0:4864:20::e36])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D9CD1AC
-	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Oct 2023 04:17:04 -0700 (PDT)
-Received: by mail-vs1-xe36.google.com with SMTP id ada2fe7eead31-457d9ffc9d2so498602137.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Oct 2023 04:17:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1698319023; x=1698923823; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ADQcQPFXDFUAE1kDLSEymM4GykgZRpKmE6Mqe8TDGH4=;
-        b=hLgA+35TwPIRTqpwo25BV1IqB+22lDsO+ZzJFFejglYNU/9CBRxzasxR079HuJaP2f
-         Fi5D4lWHOm0QRKswoeNH/oI5IGtlaIB5zPrZ+BzqgDVRdZWp4QTDZ9C9NcFp0bd3YHhi
-         Fpvi/P1favuSuzE3GgqZSo0CrStCLNAdKijyAcDlXWWXtb2cd0I46eEkZ1072haxM8BG
-         IR00FZVGSJHkd7tBApkrlOHcrXgkT3bDe8mz64MTuvnd5lfBBTz51/6wwZ3mxIwJ3m1G
-         H9yUD698Em0cNN/z11Dtdbo483KqIquOuP3cffQ8KHFB3AzfC0gyGQrTdtbP65Qsh1/G
-         IZiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698319023; x=1698923823;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ADQcQPFXDFUAE1kDLSEymM4GykgZRpKmE6Mqe8TDGH4=;
-        b=gNg96zJjroLgpB3baojLUL1JV7PqS0r2V/G+3dhQKjU7JMNAbsjToUmd6XX5bjrsNn
-         44SmqdEK+VHCwcovCXlJiK+XGaA0xi28ZP3tVL6GF6LSHuAcXB6AZ7ywGgHVpjDqIk1H
-         f0xLiip//ztEIdkAby8+RyB4p3nxmBYmwoEbobwOMOFN1U/V/G8LMcVHv+EtRWxwgUin
-         G7WsshNvxP+k4Bt4nOKAk/NC9na3YbXVs9DuYLiQ0c4sMFUMrRRybnnYkCcX2SJkxGdM
-         Rg3ycPZJZw8Ssk3b0xSQJyZUZgsQxAtg69f1CHQZw2x8hw+GvnyVz2Mtck+6TaJUlr9N
-         0nSg==
-X-Gm-Message-State: AOJu0YyQccMkPMVA/XVffyvUZZ6OWtaTyHVUJXgoEqrg70Ql/hY9FL2V
-	OmGR9QWCYE7Ww0pIRpUk82kDO8me9u2g+JOx4RTdgQ==
-X-Google-Smtp-Source: AGHT+IFL1Bi1n9i8tyu/TR0kE59uAhq0MbAYLquMr3viL391nUxuNb4eUNFXaqX2lALhkyqgTfVTxU9ppHTJB0CpVFA=
-X-Received: by 2002:a67:e086:0:b0:450:cebb:4f15 with SMTP id
- f6-20020a67e086000000b00450cebb4f15mr1164753vsl.1.1698319023532; Thu, 26 Oct
- 2023 04:17:03 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A65B72D784
+	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Oct 2023 11:45:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE4F5C433C9;
+	Thu, 26 Oct 2023 11:45:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1698320713;
+	bh=2rKVJWmmi1F4DNOT5jynrO7RMtvnFJ5jxJhwoxo5hs8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=WW3JxmYltkMoKaju8fiGIB7A/t0VGnw8MzWpK+HW1jcBRdzASSY4iHByuHW4YXL9e
+	 V6OQ2VOEwiHJEa0rV5CFQTO23pFs3TqpnXUjmrQdIYjWHFG2Vr0/eFzVdmD+n5fu26
+	 9X1mS/liDEgzJRI9od/vdeOqnsh4cBh4bSb0imB8Bytvc35rP9hqb1w6YgvVRqGxR8
+	 AIgpWGBHcNc0SKY3tjqI+9w89DBYLLgghafWjO7OZQEmhOuTgDujiQP6RyugAD1WAJ
+	 rS6WOGcvN8SslR7B+DfpCiF6OgtNvOx+fZznGDjvUO4PomTL3H6TgQEII1SGH7XT/B
+	 krDYYDor6SJVg==
+From: Christian Brauner <brauner@kernel.org>
+To: Jan Kara <jack@suse.cz>,
+	Christoph Hellwig <hch@lst.de>,
+	"Darrick J. Wong" <djwong@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 00/10] Implement freeze and thaw as holder operations
+Date: Thu, 26 Oct 2023 13:45:05 +0200
+Message-Id: <20231026-unkommentiert-kultserie-60df05ed0ca7@brauner>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20231024-vfs-super-freeze-v2-0-599c19f4faac@kernel.org>
+References: <20231024-vfs-super-freeze-v2-0-599c19f4faac@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231025195339.1431894-1-boqun.feng@gmail.com>
-In-Reply-To: <20231025195339.1431894-1-boqun.feng@gmail.com>
-From: Marco Elver <elver@google.com>
-Date: Thu, 26 Oct 2023 13:16:25 +0200
-Message-ID: <CANpmjNN6PN7tNLuUKZXcTe5n=HOv9Po0er0cDhvP9x=uA7rTTw@mail.gmail.com>
-Subject: Re: [RFC] rust: types: Add read_once and write_once
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, llvm@lists.linux.dev, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Alice Ryhl <aliceryhl@google.com>, Alan Stern <stern@rowland.harvard.edu>, 
-	Andrea Parri <parri.andrea@gmail.com>, Will Deacon <will@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Nicholas Piggin <npiggin@gmail.com>, 
-	David Howells <dhowells@redhat.com>, Jade Alglave <j.alglave@ucl.ac.uk>, 
-	Luc Maranget <luc.maranget@inria.fr>, "Paul E. McKenney" <paulmck@kernel.org>, 
-	Akira Yokosawa <akiyks@gmail.com>, Daniel Lustig <dlustig@nvidia.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Tom Rix <trix@redhat.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, kent.overstreet@gmail.com, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Matthew Wilcox <willy@infradead.org>, 
-	Dave Chinner <david@fromorbit.com>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2017; i=brauner@kernel.org; h=from:subject:message-id; bh=2rKVJWmmi1F4DNOT5jynrO7RMtvnFJ5jxJhwoxo5hs8=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRaBVpbrPjFt2FJB6NnudTnrfdzX518sunP0SB7z/+fQiyX C85d0lHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRJi5GhpO7NjEmLFK8I5R6rKx/1Y oDC+KS7m86yRRWHyauJulUK8bwk/G/752qxBMq5X+m3ryzwTjxnG7F3jeV00LElwedDuRuZwcA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Wed, 25 Oct 2023 at 21:54, Boqun Feng <boqun.feng@gmail.com> wrote:
->
-> In theory, `read_volatile` and `write_volatile` in Rust can have UB in
-> case of the data races [1]. However, kernel uses volatiles to implement
-> READ_ONCE() and WRITE_ONCE(), and expects races on these marked accesses
-> don't cause UB. And they are proven to have a lot of usages in kernel.
->
-> To close this gap, `read_once` and `write_once` are introduced, they
-> have the same semantics as `READ_ONCE` and `WRITE_ONCE` especially
-> regarding data races under the assumption that `read_volatile` and
-> `write_volatile` have the same behavior as a volatile pointer in C from
-> a compiler point of view.
->
-> Longer term solution is to work with Rust language side for a better way
-> to implement `read_once` and `write_once`. But so far, it should be good
-> enough.
+On Tue, 24 Oct 2023 15:01:06 +0200, Christian Brauner wrote:
+> Hey Christoph,
+> Hey Jan,
+> Hey Darrick,
+> 
+> This is v2 and based on vfs.super. I'm sending this out right now
+> because frankly, shortly before the merge window is the time when I have
+> time to do something. Otherwise, I would've waited a bit.
+> 
+> [...]
 
-One thing you may also want to address is the ability to switch
-between READ_ONCE implementations depending on config. For one, arm64
-with LTO will promote READ_ONCE() to acquires.
+for v6.8
+
+---
+
+Applied to the vfs.super branch of the vfs/vfs.git tree.
+Patches in the vfs.super branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.super
+
+[01/10] fs: massage locking helpers
+        https://git.kernel.org/vfs/vfs/c/eebe374c4824
+[02/10] bdev: rename freeze and thaw helpers
+        https://git.kernel.org/vfs/vfs/c/48ebe79e5e5f
+[03/10] bdev: surface the error from sync_blockdev()
+        https://git.kernel.org/vfs/vfs/c/7cb1d5f9e92c
+[04/10] bdev: add freeze and thaw holder operations
+        https://git.kernel.org/vfs/vfs/c/bd05ce12dd8d
+[05/10] bdev: implement freeze and thaw holder operations
+        https://git.kernel.org/vfs/vfs/c/8246b9ef23c3
+[06/10] fs: remove get_active_super()
+        https://git.kernel.org/vfs/vfs/c/085b0e223302
+[07/10] super: remove bd_fsfreeze_sb
+        https://git.kernel.org/vfs/vfs/c/36d253481290
+[08/10] fs: remove unused helper
+        https://git.kernel.org/vfs/vfs/c/350e08366980
+[09/10] porting: document block device freeze and thaw changes
+        https://git.kernel.org/vfs/vfs/c/c3e5c6b60a75
+[10/10] blkdev: comment fs_holder_ops
+        https://git.kernel.org/vfs/vfs/c/15d2068af6f4
 
