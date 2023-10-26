@@ -1,178 +1,195 @@
-Return-Path: <linux-fsdevel+bounces-1223-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1224-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D20EF7D7C5D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Oct 2023 07:43:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62CBC7D7C7D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Oct 2023 07:50:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86B7F281E68
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Oct 2023 05:43:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BA33281E4A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Oct 2023 05:50:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F08E5D2FC;
-	Thu, 26 Oct 2023 05:43:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71F70F9FB;
+	Thu, 26 Oct 2023 05:50:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EAa/BcYs"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OdwvD1Ik"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B36A1C2D5
-	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Oct 2023 05:43:14 +0000 (UTC)
-Received: from mail-qv1-xf2e.google.com (mail-qv1-xf2e.google.com [IPv6:2607:f8b0:4864:20::f2e])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88C8A115;
-	Wed, 25 Oct 2023 22:43:12 -0700 (PDT)
-Received: by mail-qv1-xf2e.google.com with SMTP id 6a1803df08f44-66d17fd450aso13689756d6.1;
-        Wed, 25 Oct 2023 22:43:12 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1AE5C134
+	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Oct 2023 05:50:09 +0000 (UTC)
+Received: from mail-qv1-xf32.google.com (mail-qv1-xf32.google.com [IPv6:2607:f8b0:4864:20::f32])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E56B2187;
+	Wed, 25 Oct 2023 22:50:06 -0700 (PDT)
+Received: by mail-qv1-xf32.google.com with SMTP id 6a1803df08f44-66cfd3a0e61so3815156d6.1;
+        Wed, 25 Oct 2023 22:50:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698298991; x=1698903791; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1698299406; x=1698904206; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=D0wskKT4pWU48/4FUK3iMC6E9ayAZ0MFNFM/wSMas+E=;
-        b=EAa/BcYsnp7JMmmWLqeDiBuZKUR8iCzgz6lJRfU3FPBERY/yJ97BxxvxBiYeJLpLxV
-         8d65Fr1rip2LIo6dXGnHPK/TVzNNuVAyG4X7O+NbfhBXkl8FfqzSB+bSdjxfdg8el7Qg
-         twN9miUJNnTKlJXgVL2NEZDIHCFKYg20ifK740u0laWxKzJjzeEOSmWBeTpD6W58jHhj
-         /Z+fe8J1Js0mYQYFWBYWsfqKT6N2DafKzKp2pqQa+DXUcxSpAZm0Bm7opamexc/rpC1T
-         414U8roJ7U3gX0Fc+ko2NV1WKtAhuJqInUyA+UtVA2TmEtycnth+bsAqedSY0yHxEP71
-         RmhA==
+        bh=CeRsssLX7dJfUBNeIdDgiKFBegD9PBcBDM3KZdGAZHs=;
+        b=OdwvD1IkPzRsRe+G9dtWg0up68eJUi1QTrvJ1ngC9uKTkwfX1ZYhb4be0Qe19ljsSe
+         YtuSZ/pCgOBDLktV+WElFW6Kaehbb7KM6ckhT7CGiqpED9gFHZOfETCpAD7s2Tf5eT1N
+         EOr+bON/zp2nnwrjlvPxdZ1aZydnIVY5HYN3GxTbUgmp0fGwJM4oho6LnvZ6sRu5dz0x
+         wL7IlRtBkgUCbE/uXRa6JBO9StL/s0IoeWYyhea+IjIisb1gbkGIe0o7Q2/xS0admS3b
+         6KFDxwnXhIRuf/yzPriiDT76WsyqS6e5Tk6fyx4o+wuqdx5JEVG2Rna9GkBYHquiapgp
+         3Ygw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698298991; x=1698903791;
+        d=1e100.net; s=20230601; t=1698299406; x=1698904206;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=D0wskKT4pWU48/4FUK3iMC6E9ayAZ0MFNFM/wSMas+E=;
-        b=eEmbMQNik1I2c54Q5TKJdpEpYH8LZhg+23v3l/knJpIr/Lp2EUdwchgtYhXXVX5cR2
-         sTSsOoFaYqXZsF+PA1zlFRwh4GVspgjXJpY4m51j+33MeE39WnwN7d9zpvqvkGMlBPb0
-         6Y4jSMHUzE4wQREA6HFxvEQ54bQdunHcLgmIzg5+2c2oFHse7VXD/EgOJ3SIVpzdRuwe
-         Gtc1QOcXIeb5oksIol91xS9UJ2P2LGp0s4iRqxTFOTrgFc/b3KQ+kj7XP5HQihWMgnRw
-         CA7Amxf+On7X0HQB8ZDGgo0ViSCWV5NNong5rZKTOkapSSn5jiTcKz7gNEAp14jWl6ZG
-         vcWg==
-X-Gm-Message-State: AOJu0YwkcnbGVVBkAWBj/GTNZKtkdF9bPeVpgdYa5abct+Y+NfppBYio
-	KOLByHuaFsvrgvRQ6YMzas1hSZtugUwMnWlBPKU=
-X-Google-Smtp-Source: AGHT+IFtQlJkyk/SemAvlLy18H81rmH3bjGyS6GSbs3XB/X6xHM1ikIcbtxNFkrSUvjSK3z+n/Qk1ZPsdGmCwdu5uo4=
-X-Received: by 2002:a05:6214:242b:b0:66d:9987:68f9 with SMTP id
- gy11-20020a056214242b00b0066d998768f9mr2382116qvb.15.1698298991118; Wed, 25
- Oct 2023 22:43:11 -0700 (PDT)
+        bh=CeRsssLX7dJfUBNeIdDgiKFBegD9PBcBDM3KZdGAZHs=;
+        b=JhN+DWboF6g4KhoeRJjndsAiU3OdG4s0jEoc7A9qtVcmiIK41zuiVpBc3vFm6qlj/P
+         //Y063l93GDiWsb2Y/MrIEaquRDzRx+i2tVGk1KRE9mXm7LOSG0qUMEi+YXEsnm1o5X6
+         u0ptwhguNUSVVXS8Zi9erj9M3lbFYqTw6lsTGCKZ4nOXdh9QT9TFom7BygJoG7P1VmDJ
+         mMI8UsYmMEqgzn5IOnVk9qDQGF3Yr09cWgLE0RlSXPn8eJ1IkVTL0x9KckNkqr4mYDZm
+         URabknYesHrEOGRVRAayvfLxs53Uy6q2Deqvq77qhrvuVRjSUquabRmmFJ/lS2Vrpn4o
+         g/TQ==
+X-Gm-Message-State: AOJu0Yx1vKWGIZb104V7/y4ISHgKclHrJfI8oopm4NYytMMqcDUjgdvB
+	yxnGDaZAzZ4rfzSEjOwEGZ56okfo01pXLAtKBjk=
+X-Google-Smtp-Source: AGHT+IHHe80VCq7LPJqKZi989+2AwaWMuHLvdMzgUfWkrI/9aLUGbr0FD7Zxinv9IDha+XSDw3NCjy1US9CBynaAqxI=
+X-Received: by 2002:ad4:5c4a:0:b0:66d:627e:24c0 with SMTP id
+ a10-20020ad45c4a000000b0066d627e24c0mr23492679qva.38.1698299405872; Wed, 25
+ Oct 2023 22:50:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <eb3b9e71ee9c6d8e228b0927dec3ac9177b06ec6.camel@kernel.org>
- <ZTWfX3CqPy9yCddQ@dread.disaster.area> <61b32a4093948ae1ae8603688793f07de764430f.camel@kernel.org>
- <ZTcBI2xaZz1GdMjX@dread.disaster.area> <CAHk-=whphyjjLwDcEthOOFXXfgwGrtrMnW2iyjdQioV6YSMEPw@mail.gmail.com>
- <ZTc8tClCRkfX3kD7@dread.disaster.area> <CAOQ4uxhJGkZrUdUJ72vjRuLec0g8VqgRXRH=x7W9ogMU6rBxcQ@mail.gmail.com>
- <d539804a2a73ad70265c5fa599ecd663cd235843.camel@kernel.org>
- <ZTjMRRqmlJ+fTys2@dread.disaster.area> <2ef9ac6180e47bc9cc8edef20648a000367c4ed2.camel@kernel.org>
- <ZTnNCytHLGoJY9ds@dread.disaster.area>
-In-Reply-To: <ZTnNCytHLGoJY9ds@dread.disaster.area>
+References: <20231025135048.36153-1-amir73il@gmail.com> <ZTk1ffCMDe9GrJjC@infradead.org>
+ <20231025210654.GA2892534@perftesting> <628a975f-11a1-47f9-b2f8-8cbcfa812ef6@gmx.com>
+In-Reply-To: <628a975f-11a1-47f9-b2f8-8cbcfa812ef6@gmx.com>
 From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 26 Oct 2023 08:42:59 +0300
-Message-ID: <CAOQ4uxjJdpPQAUfSf1EVWu-wxtmU63X=cwgoNHrhY-Ls5KWo5g@mail.gmail.com>
-Subject: Re: [PATCH RFC 2/9] timekeeping: new interfaces for multigrain
- timestamp handing
-To: Dave Chinner <david@fromorbit.com>
-Cc: Jeff Layton <jlayton@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Kent Overstreet <kent.overstreet@linux.dev>, Christian Brauner <brauner@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, John Stultz <jstultz@google.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>, 
-	Chandan Babu R <chandan.babu@oracle.com>, "Darrick J. Wong" <djwong@kernel.org>, 
-	"Theodore Ts'o" <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, 
-	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Hugh Dickins <hughd@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.de>, 
-	David Howells <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mm@kvack.org, 
-	linux-nfs@vger.kernel.org
+Date: Thu, 26 Oct 2023 08:49:54 +0300
+Message-ID: <CAOQ4uxjbXg5hqk8r1Lp24rdkeimXS2_tZppreAeabzO0k8G8yg@mail.gmail.com>
+Subject: Re: [PATCH 0/3] fanotify support for btrfs sub-volumes
+To: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Cc: Josef Bacik <josef@toxicpanda.com>, Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>, 
+	Christian Brauner <brauner@kernel.org>, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>, 
+	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 26, 2023 at 5:21=E2=80=AFAM Dave Chinner <david@fromorbit.com> =
+On Thu, Oct 26, 2023 at 2:02=E2=80=AFAM Qu Wenruo <quwenruo.btrfs@gmx.com> =
 wrote:
 >
-> On Wed, Oct 25, 2023 at 08:25:35AM -0400, Jeff Layton wrote:
-> > On Wed, 2023-10-25 at 19:05 +1100, Dave Chinner wrote:
-> > > On Tue, Oct 24, 2023 at 02:40:06PM -0400, Jeff Layton wrote:
-> > > > On Tue, 2023-10-24 at 10:08 +0300, Amir Goldstein wrote:
-> > > > > On Tue, Oct 24, 2023 at 6:40=E2=80=AFAM Dave Chinner <david@fromo=
-rbit.com> wrote:
-> > > > > >
-> > > > > > On Mon, Oct 23, 2023 at 02:18:12PM -1000, Linus Torvalds wrote:
-> > > > > > > On Mon, 23 Oct 2023 at 13:26, Dave Chinner <david@fromorbit.c=
-om> wrote:
-> > > > > Does xfs_repair guarantee that changes of atime, or any inode cha=
-nges
-> > > > > for that matter, update i_version? No, it does not.
-> > > > > So IMO, "atime does not update i_version" is not an "on-disk form=
-at change",
-> > > > > it is a runtime behavior change, just like lazytime is.
-> > > >
-> > > > This would certainly be my preference. I don't want to break any
-> > > > existing users though.
-> > >
-> > > That's why I'm trying to get some kind of consensus on what
-> > > rules and/or atime configurations people are happy for me to break
-> > > to make it look to users like there's a viable working change
-> > > attribute being supplied by XFS without needing to change the on
-> > > disk format.
-> > >
+>
+>
+> On 2023/10/26 07:36, Josef Bacik wrote:
+> > On Wed, Oct 25, 2023 at 08:34:21AM -0700, Christoph Hellwig wrote:
+> >> On Wed, Oct 25, 2023 at 04:50:45PM +0300, Amir Goldstein wrote:
+> >>> Jan,
+> >>>
+> >>> This patch set implements your suggestion [1] for handling fanotify
+> >>> events for filesystems with non-uniform f_fsid.
+> >>
+> >> File systems nust never report non-uniform fsids (or st_dev) for that
+> >> matter.  btrfs is simply broken here and needs to be fixed.
 > >
-> > I agree that the only bone of contention is whether to count atime
-> > updates against the change attribute. I think we have consensus that al=
-l
-> > in-kernel users do _not_ want atime updates counted against the change
-> > attribute. The only real question is these "legacy" users of
-> > di_changecount.
+> > We keep going around and around on this so I'd like to get a set of ste=
+ps laid
+> > out for us to work towards to resolve this once and for all.
+> >
+> > HYSTERICAL RAISINS (why we do st_dev)
+> > -------------------------------------
+> >
+> > Chris made this decision forever ago because things like rsync would sc=
+rew up
+> > with snapshots and end up backing up the same thing over and over again=
+.  We saw
+> > it was using st_dev (as were a few other standard tools) to distinguish=
+ between
+> > file systems, so we abused this to make userspace happy.
+> >
+> > The other nice thing this provided was a solution for the fact that we =
+re-use
+> > inode numbers in the file system, as they're unique for the subvolume o=
+nly.
+> >
+> > PROBLEMS WE WANT TO SOLVE
+> > -------------------------
+> >
+> > 1) Stop abusing st_dev.  We actually want this as btrfs developers beca=
+use it's
+> >     kind of annoying to figure out which device is mounted when st_dev =
+doesn't
+> >     map to any of the devices in /proc/mounts.
+> >
+> > 2) Give user space a way to tell it's on a subvolume, so it can not be =
+confused
+> >     by the repeating inode numbers.
+> >
+> > POSSIBLE SOLUTIONS
+> > ------------------
+> >
+> > 1) A statx field for subvolume id.  The subvolume id's are unique to th=
+e file
+> >     system, so subvolume id + inode number is unique to the file system=
+.  This is
+> >     a u64, so is nice and easy to export through statx.
+> > 2) A statx field for the uuid/fsid of the file system.  I'd like this b=
+ecause
+> >     again, being able to easily stat a couple of files and tell they're=
+ on the
+> >     same file system is a valuable thing.  We have a per-fs uuid that w=
+e can
+> >     export here.
+> > 3) A statx field for the uuid of the subvolume.  Our subvolumes have th=
+eir own
+> >     unique uuid.  This could be an alternative for the subvolume id opt=
+ion, or an
+> >     addition.
 >
-> Please stop refering to "legacy users" of di_changecount. Whether
-> there are users or not is irrelevant - it is defined by the current
-> on-disk format specification, and as such there may be applications
-> we do not know about making use of the current behaviour.
+> No need for a full UUID, just a u64 is good enough.
 >
-> It's like a linux syscall - we can't remove them because there may
-> be some user we don't know about still using that old syscall. We
-> simply don't make changes that can potentially break user
-> applications like that.
+> Although a full UUID for the subvolumes won't hurt and can reduce the
+> need to call the btrfs specific ioctl just to receive the UUID.
 >
-> The on disk format is the same - there is software out that we don't
-> know about that expects a certain behaviour based on the
-> specification. We don't break the on disk format by making silent
-> behavioural changes - we require a feature flag to indicate
-> behaviour has changed so that applications can take appropriate
-> actions with stuff they don't understand.
 >
-> The example for this is the BIGTIME timestamp format change. The on
-> disk inode structure is physically unchanged, but the contents of
-> the timestamp fields are encoded very differently. Sure, the older
-> kernels can read the timestamp data without any sort of problem
-> occurring, except for the fact the timestamps now appear to be
-> completely corrupted.
+> My concern is, such new members would not be utilized by any other fs,
+> would it cause some compatibility problem?
 >
-> Changing the meaning of ithe contents of di_changecount is no
-> different. It might look OK and nothing crashes, but nothing can be
-> inferred from the value in the field because we don't know how it
-> has been modified.
+> >
+> > Either 1 or 3 are necessary to give userspace a way to tell they've wan=
+dered
+> > into a different subvolume.  I'd like to have all 3, but I recognize th=
+at may be
+> > wishful thinking.  2 isn't necessary, but if we're going to go about me=
+ssing
+> > with statx then I'd like to do it all at once, and I want this for the =
+reasons
+> > stated above.
+> >
+> > SEQUENCE OF EVENTS
+> > ------------------
+> >
+> > We do one of the statx changes, that rolls into a real kernel.  We run =
+around
+> > and submit patches for rsync and anything else we can think of to take =
+advantage
+> > of the statx feature.
+>
+> My main concern is, how older programs could handle this? Like programs
+> utilizing stat() only, and for whatever reasons they don't bother to add
+> statx() support.
+> (Can vary from lack of maintenance to weird compatibility reasons)
+>
+> Thus we still need such st_dev hack, until there is no real world
+> programs utilizing vanilla stat() only.
+> (Which everyone knows it's impossible)
 >
 
-I don't agree that this change is the same as BIGTIME change,
-but it is a good queue to ask:
-BIGTIME has an on-disk feature bit in super block that can be set on an
-existing filesystem (and not cleared?).
-BIGTIME also has an on-disk inode flag to specify the format in which a
-specific inode timestampts are stored.
+I agree it does not sound possible to change the world to know
+that the same st_dev,st_ino pair could belong to different objects.
 
-If we were to change the xfs on-disk to change the *meaning* (not the
-format that the counter is stored) of di_changecount, would the feature
-flag need be RO_COMPAT?
-Would this require a per-inode on-disk flag that declares the meaning
-of di_changecount on that specific inode?
-
-Neither of those changes is going to be very hard to do btw.
-Following the footsteps of the BIGTIME conversion, but without the
-need for an actual format convertors.
+One such program btw is diff - it will skip the comparison if both
+objects have the same st_dev,st_ino even if they are actually
+different objects with different data (i.e. a file and its old snapshot).
 
 Thanks,
 Amir.
