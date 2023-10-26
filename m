@@ -1,82 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-1218-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1219-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9D327D7AD5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Oct 2023 04:21:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 294D67D7ADC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Oct 2023 04:24:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41DAFB21345
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Oct 2023 02:21:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9AC1B212D1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Oct 2023 02:24:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDAE7BA25;
-	Thu, 26 Oct 2023 02:21:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CB948F5C;
+	Thu, 26 Oct 2023 02:24:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Ovwv1aiu"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="LujEJlb3"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F5278C11;
-	Thu, 26 Oct 2023 02:21:18 +0000 (UTC)
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAFC718B;
-	Wed, 25 Oct 2023 19:21:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
-	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=oXOuDkadsHdiYyK7tGohGzYZ8myugwNQ18xV61iZdGQ=; b=Ovwv1aiuReE2N/V/h/pLeUuNPC
-	S6BCKdeicCxuQvsGBeMLD6HBd40xLezQ8arKZpHx/s/kGgKRseekWWeWjmtT6vpPTZE0+ZUfCxECo
-	V+evCsGq39jbzoQEooW6RapIypf/2hs/Lg8gtUSQ8E/69xWgG02crtcq7ABMSGc/9zTUE0oHsm98U
-	omE7CiaC/qwpgGRlKf300wNrnD5pptrOoILWdki4Qper+YTcXbpSkBFdZsH6nTSL8zJ7MWjQKyGbz
-	7rHy1jgyfDevNJROMa8hE9aYCuzs3u0UeLUk+Fvt0g7Kt8Mb7ChYuVQoK11CG7HyEwEK+tlHKABNe
-	n/po3wRQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1qvpzn-005mne-0f;
-	Thu, 26 Oct 2023 02:21:15 +0000
-Date: Thu, 26 Oct 2023 03:21:15 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Xiubo Li <xiubli@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org
-Subject: [PATCH] ceph_wait_on_conflict_unlink(): grab reference before
- dropping ->d_lock
-Message-ID: <20231026022115.GK800259@ZenIV>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F92B2F44
+	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Oct 2023 02:24:19 +0000 (UTC)
+Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.220])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTP id E1BD6D8;
+	Wed, 25 Oct 2023 19:24:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=q1Nvz
+	lz4m5YlXKgzOVfLPIxG3pjGCPz8pjWhlQCBR3s=; b=LujEJlb3QzRohqXLqpoTC
+	akb+/G41SkLeuP2rMsamojGbRXUInr/Gwn3HpzqRsHB8hkhegxn+cR734zsvUsBp
+	JxzsNwmWyDOQd5AHdifxSOvj+jRc23yr6RWF2eFfW5UTusgjWiVRf50mnZaXlg0Q
+	XuwlOWQStG2rroXNT3JsSs=
+Received: from localhost.localdomain (unknown [106.13.245.201])
+	by zwqz-smtp-mta-g0-0 (Coremail) with SMTP id _____wCHLyrAzTll_Vn5BQ--.55683S2;
+	Thu, 26 Oct 2023 10:24:01 +0800 (CST)
+From: gaoyusong <a869920004@163.com>
+To: brauner@kernel.org,
+	viro@zeniv.linux.org.uk
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RESEND] fs: Fix typo in access_override_creds()
+Date: Thu, 26 Oct 2023 02:23:59 +0000
+Message-Id: <20231026022359.258507-1-a869920004@163.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wCHLyrAzTll_Vn5BQ--.55683S2
+X-Coremail-Antispam: 1Uf129KBjvdXoW7GFy7GFW3Kr43Zr43Zr4kCrg_yoWxCwc_Cw
+	4Iyr48Grs8tryIywn8WanYyF1Sg34FyF1rG34xJry3KryfZ3ZxuryDKrn7JrWUWr47K3s8
+	Xrn8ZFWDZF4I9jkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUnTlk3UUUUU==
+X-Originating-IP: [106.13.245.201]
+X-CM-SenderInfo: zdywmmasqqiki6rwjhhfrp/xtbB0wcV6VXl10aJVAABsV
 
-[at the moment in viro/vfs.git#fixes]
-Use of dget() after we'd dropped ->d_lock is too late - dentry might
-be gone by that point.
+Fix typo in access_override_creds(), modify non-RCY to non-RCU.
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: gaoyusong <a869920004@163.com>
 ---
- fs/ceph/mds_client.c | 2 +-
+ fs/open.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 615db141b6c4..293b93182955 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -861,8 +861,8 @@ int ceph_wait_on_conflict_unlink(struct dentry *dentry)
- 		if (!d_same_name(udentry, pdentry, &dname))
- 			goto next;
+diff --git a/fs/open.c b/fs/open.c
+index 98f6601fbac6..72eb20a8256a 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -442,7 +442,7 @@ static const struct cred *access_override_creds(void)
+ 	 * 'get_current_cred()' function), that will clear the
+ 	 * non_rcu field, because now that other user may be
+ 	 * expecting RCU freeing. But normal thread-synchronous
+-	 * cred accesses will keep things non-RCY.
++	 * cred accesses will keep things non-RCU.
+ 	 */
+ 	override_cred->non_rcu = 1;
  
-+		found = dget_dlock(udentry);
- 		spin_unlock(&udentry->d_lock);
--		found = dget(udentry);
- 		break;
- next:
- 		spin_unlock(&udentry->d_lock);
 -- 
-2.39.2
+2.34.1
 
 
