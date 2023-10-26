@@ -1,55 +1,76 @@
-Return-Path: <linux-fsdevel+bounces-1260-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1261-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9215E7D86E3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Oct 2023 18:45:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67F197D873D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Oct 2023 19:08:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E790B21077
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Oct 2023 16:44:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 215BB282063
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Oct 2023 17:08:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F234712B69;
-	Thu, 26 Oct 2023 16:44:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25D8038BBA;
+	Thu, 26 Oct 2023 17:08:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y35dPWwU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kvKAZN2M"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3014C440B
-	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Oct 2023 16:44:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 921A0C433C8;
-	Thu, 26 Oct 2023 16:44:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58792381C4;
+	Thu, 26 Oct 2023 17:08:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5A6EC433C7;
+	Thu, 26 Oct 2023 17:08:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1698338690;
-	bh=VkmD28XmKapcsmkLaNHg30vEdJW4Z2Gx2cq73Aex2YI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Y35dPWwUPLw+ExW99iaMXX/vYLtPHLPJnv2fEAO15fceuuI0FGyHEbdtgFMELLuhD
-	 l7Hj3Sy65wEyGS9JIhIgfqzKQw1ZUtWqBdULoDLrvRgKE4/Zrshcad6xatPlbQj/Q5
-	 on145ggPLMZzsDfEDyn/WpNdOefr5uMcY2aj62i7hbsXXf4SgYrSbOtREHx3fBzU78
-	 8N82x/gvxVPC9jVyFfwOT+Iji+05/84++zaAH2Xj1B5g/rkw8DyjgMKq9ntAZR/eZT
-	 PvHvKZOIon9Sl6kdCTtQohChP1j+wUG707WezLfeJFShpfFjaN0MEEUZ1HghXqOTEi
-	 TwMYTUFE/90Zg==
-Date: Thu, 26 Oct 2023 09:44:49 -0700
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Al Viro <viro@zeniv.linux.org.uk>,
-	linux-f2fs-devel@lists.sourceforge.net,
-	linux-fsdevel@vger.kernel.org, Chao Yu <chao@kernel.org>
-Subject: Re: [RFC] weirdness in f2fs_rename() with RENAME_WHITEOUT
-Message-ID: <ZTqXgdiK7DAyz_IB@google.com>
-References: <CAHk-=wjSbompMCgMwR2-MB59QDB+OZ7Ohp878QoDc9o7z4pbNg@mail.gmail.com>
- <20231011215138.GX800259@ZenIV>
- <20231011230105.GA92231@ZenIV>
- <CAHfrynNbfPtAjY4Y7N0cyWyH35dyF_BcpfR58ASCCC7=-TfSFw@mail.gmail.com>
- <20231012050209.GY800259@ZenIV>
- <20231012103157.mmn6sv4e6hfrqkai@quack3>
- <20231012145758.yopnkhijksae5akp@quack3>
- <20231012191551.GZ800259@ZenIV>
- <20231017055040.GN800259@ZenIV>
- <20231026161653.cunh4ojohq6mw2ye@quack3>
+	s=k20201202; t=1698340108;
+	bh=q5nu5IfnRwPtcWkLDIu4aKyLwlMTLZH09mIm5x2Tuis=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=kvKAZN2MMSkl1+CvCbw+bKVWIonlMLlGvoyOkrluhiKxg6aAKGv7elmEkFI6RMlk1
+	 L2WGU4VBOmRIzvFLMQIivxqRBZldlSs8hE8LrXKkZvVdM2jdW0IhKifYjRnNGI7dp0
+	 7GQYBSYrAQlElOlklY4PCPR1C1dNMK0Uw2AOLO2LFZDz38HOx9uPZRUVr74ZD42lkF
+	 uppRnkPjzY+r3oIpxavk/wSZbZ/WlJA9yD6XOQadktbY7anFw+dikPBP35tY9L6fPm
+	 qG6bVF1QQPHi3CLYEyTauxQqHXJDcKe4/mmhnOyBtQH8L5gr09L5S4iXS8vUROldXF
+	 udSXExCrBk2jA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id E3628CE0D12; Thu, 26 Oct 2023 10:08:27 -0700 (PDT)
+Date: Thu, 26 Oct 2023 10:08:27 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Gary Guo <gary@garyguo.net>, Boqun Feng <boqun.feng@gmail.com>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org, llvm@lists.linux.dev,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Andrea Parri <parri.andrea@gmail.com>,
+	Will Deacon <will@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+	David Howells <dhowells@redhat.com>,
+	Jade Alglave <j.alglave@ucl.ac.uk>,
+	Luc Maranget <luc.maranget@inria.fr>,
+	Akira Yokosawa <akiyks@gmail.com>,
+	Daniel Lustig <dlustig@nvidia.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Tom Rix <trix@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, kent.overstreet@gmail.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com,
+	Matthew Wilcox <willy@infradead.org>,
+	Dave Chinner <david@fromorbit.com>, linux-fsdevel@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [RFC] rust: types: Add read_once and write_once
+Message-ID: <272fb0fa-bff7-4ccf-bea1-fba388c5d512@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20231025195339.1431894-1-boqun.feng@gmail.com>
+ <20231026081345.GJ31411@noisy.programming.kicks-ass.net>
+ <20231026113610.1425be1b@eugeo>
+ <20231026111625.GK33965@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -58,67 +79,52 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231026161653.cunh4ojohq6mw2ye@quack3>
+In-Reply-To: <20231026111625.GK33965@noisy.programming.kicks-ass.net>
 
-On 10/26, Jan Kara wrote:
-> Jaegeuk, Chao, any comment on this? It really looks like a filesystem
-> corruption issue in f2fs when whiteouts are used...
-
-Thanks Al and Jan for headsup.
-Let us take a look as soon as possible.
-
+On Thu, Oct 26, 2023 at 01:16:25PM +0200, Peter Zijlstra wrote:
+> On Thu, Oct 26, 2023 at 11:36:10AM +0100, Gary Guo wrote:
 > 
-> 								Honza
+> > There's two reasons that we are using volatile read/write as opposed to
+> > relaxed atomic:
+> > * Rust lacks volatile atomics at the moment. Non-volatile atomics are
+> >   not sufficient because the compiler is allowed (although they
+> >   currently don't) optimise atomics. If you have two adjacent relaxed
+> >   loads, they could be merged into one.
 > 
-> On Tue 17-10-23 06:50:40, Al Viro wrote:
-> > [f2fs folks Cc'd]
-> > 
-> > 	There's something very odd in f2fs_rename();
-> > this:
-> >         f2fs_down_write(&F2FS_I(old_inode)->i_sem);
-> >         if (!old_dir_entry || whiteout)
-> >                 file_lost_pino(old_inode);
-> >         else   
-> >                 /* adjust dir's i_pino to pass fsck check */
-> >                 f2fs_i_pino_write(old_inode, new_dir->i_ino);
-> >         f2fs_up_write(&F2FS_I(old_inode)->i_sem);
-> > and this:
-> >                 if (old_dir != new_dir && !whiteout)
-> >                         f2fs_set_link(old_inode, old_dir_entry,
-> >                                                 old_dir_page, new_dir);
-> >                 else
-> >                         f2fs_put_page(old_dir_page, 0);
-> > The latter really stinks, especially considering
-> > struct dentry *f2fs_get_parent(struct dentry *child)
-> > {
-> >         struct page *page;
-> >         unsigned long ino = f2fs_inode_by_name(d_inode(child), &dotdot_name, &page);
-> > 
-> >         if (!ino) {
-> >                 if (IS_ERR(page))
-> >                         return ERR_CAST(page);
-> >                 return ERR_PTR(-ENOENT);
-> >         }
-> >         return d_obtain_alias(f2fs_iget(child->d_sb, ino));
-> > }
-> > 
-> > You want correct inumber in the ".." link.  And cross-directory
-> > rename does move the source to new parent, even if you'd been asked
-> > to leave a whiteout in the old place.
-> > 
-> > Why is that stuff conditional on whiteout?  AFAICS, that went into the
-> > tree in the same commit that added RENAME_WHITEOUT support on f2fs,
-> > mentioning "For now, we just try to follow the way that xfs/ext4 use"
-> > in commit message.  But ext4 does *NOT* do anything of that sort -
-> > at the time of that commit the relevant piece had been
-> >         if (old.dir_bh) {
-> > 		retval = ext4_rename_dir_finish(handle, &old, new.dir->i_ino);
-> > and old.dir_bh is set by
-> >                 retval = ext4_rename_dir_prepare(handle, &old);
-> > a few lines prior, which is not conditional upon the whiteout.
-> > 
-> > What am I missing there?
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+> Ah yes, that would be problematic, eg, if lifted out of a loop things
+> could go sideways fast.
+> 
+> > * Atomics only works for integer types determined by the platform. On
+> >   some 32-bit platforms you wouldn't be able to use 64-bit atomics at
+> >   all, and on x86 you get less optimal sequence since volatile load is
+> >   permitted to tear while atomic load needs to use LOCK CMPXCHG8B.
+> 
+> We only grudgingly allowed u64 READ_ONCE() on 32bit platforms because
+> the fallout was too numerous to fix. Some of them are probably bugs.
+> 
+> Also, I think cmpxchg8b without lock prefix would be sufficient, but
+> I've got too much of a head-ache to be sure. Worse is that we still
+> support targets without cmpxchg8b.
+
+Plus cmpxchg8b can be quite a bit heavier weight than READ_ONCE(),
+in some cases to the point that you would instead use some other
+concurrency design.
+
+> It might be interesting to make the Rust side more strict in this regard
+> and see where/when we run into trouble.
+
+And maybe have some other name for READ_ONCE() that is permitted to tear.
+
+> > * Atomics doesn't work for complex structs. Although I am not quite sure
+> >   of the value of supporting it.
+> 
+> So on the C side we mandate the size is no larger than machine word,
+> with the exception of the u64 on 32bit thing. We don't mandate strict
+> integer types because things like pte_t are wrapper types.
+
+On C-language atomics, people who have talked about implementing atomics
+for objects too large for tear-free loads and stores have tended to want
+ot invent locks.  :-(
+
+							Thanx, Paul
 
