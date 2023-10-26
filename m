@@ -1,196 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-1224-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1225-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62CBC7D7C7D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Oct 2023 07:50:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A67227D7D22
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Oct 2023 08:59:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BA33281E4A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Oct 2023 05:50:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45CDEB21340
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Oct 2023 06:59:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71F70F9FB;
-	Thu, 26 Oct 2023 05:50:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OdwvD1Ik"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 818AAC8C8;
+	Thu, 26 Oct 2023 06:59:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1AE5C134
-	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Oct 2023 05:50:09 +0000 (UTC)
-Received: from mail-qv1-xf32.google.com (mail-qv1-xf32.google.com [IPv6:2607:f8b0:4864:20::f32])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E56B2187;
-	Wed, 25 Oct 2023 22:50:06 -0700 (PDT)
-Received: by mail-qv1-xf32.google.com with SMTP id 6a1803df08f44-66cfd3a0e61so3815156d6.1;
-        Wed, 25 Oct 2023 22:50:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698299406; x=1698904206; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CeRsssLX7dJfUBNeIdDgiKFBegD9PBcBDM3KZdGAZHs=;
-        b=OdwvD1IkPzRsRe+G9dtWg0up68eJUi1QTrvJ1ngC9uKTkwfX1ZYhb4be0Qe19ljsSe
-         YtuSZ/pCgOBDLktV+WElFW6Kaehbb7KM6ckhT7CGiqpED9gFHZOfETCpAD7s2Tf5eT1N
-         EOr+bON/zp2nnwrjlvPxdZ1aZydnIVY5HYN3GxTbUgmp0fGwJM4oho6LnvZ6sRu5dz0x
-         wL7IlRtBkgUCbE/uXRa6JBO9StL/s0IoeWYyhea+IjIisb1gbkGIe0o7Q2/xS0admS3b
-         6KFDxwnXhIRuf/yzPriiDT76WsyqS6e5Tk6fyx4o+wuqdx5JEVG2Rna9GkBYHquiapgp
-         3Ygw==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DD588C15
+	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Oct 2023 06:59:33 +0000 (UTC)
+Received: from mail-oa1-f70.google.com (mail-oa1-f70.google.com [209.85.160.70])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 350DD192
+	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Oct 2023 23:59:32 -0700 (PDT)
+Received: by mail-oa1-f70.google.com with SMTP id 586e51a60fabf-1bf00f8cf77so649426fac.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Oct 2023 23:59:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698299406; x=1698904206;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CeRsssLX7dJfUBNeIdDgiKFBegD9PBcBDM3KZdGAZHs=;
-        b=JhN+DWboF6g4KhoeRJjndsAiU3OdG4s0jEoc7A9qtVcmiIK41zuiVpBc3vFm6qlj/P
-         //Y063l93GDiWsb2Y/MrIEaquRDzRx+i2tVGk1KRE9mXm7LOSG0qUMEi+YXEsnm1o5X6
-         u0ptwhguNUSVVXS8Zi9erj9M3lbFYqTw6lsTGCKZ4nOXdh9QT9TFom7BygJoG7P1VmDJ
-         mMI8UsYmMEqgzn5IOnVk9qDQGF3Yr09cWgLE0RlSXPn8eJ1IkVTL0x9KckNkqr4mYDZm
-         URabknYesHrEOGRVRAayvfLxs53Uy6q2Deqvq77qhrvuVRjSUquabRmmFJ/lS2Vrpn4o
-         g/TQ==
-X-Gm-Message-State: AOJu0Yx1vKWGIZb104V7/y4ISHgKclHrJfI8oopm4NYytMMqcDUjgdvB
-	yxnGDaZAzZ4rfzSEjOwEGZ56okfo01pXLAtKBjk=
-X-Google-Smtp-Source: AGHT+IHHe80VCq7LPJqKZi989+2AwaWMuHLvdMzgUfWkrI/9aLUGbr0FD7Zxinv9IDha+XSDw3NCjy1US9CBynaAqxI=
-X-Received: by 2002:ad4:5c4a:0:b0:66d:627e:24c0 with SMTP id
- a10-20020ad45c4a000000b0066d627e24c0mr23492679qva.38.1698299405872; Wed, 25
- Oct 2023 22:50:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1698303571; x=1698908371;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Mg4dqADrWVVQFvwUDMmazDT6n+A6BU7HqszKhe39EAk=;
+        b=AFdtBgfkiyfELH7COQ55APOXAQljSDwZwLkXzN//EXkCfbP4rI9OEmRsjV/Xq5cG3M
+         h+gSjW6XCF0y3rQ2LcJmiRAf6ZrO2GUShKawibrsX9uG+yoIOz/i8ZqaaXWxr3YzKYjt
+         dxUeRCRn9n9j9YKJvGqieBm46O8E1RwozmU0BkI1yM0s+Ao5I44Nr+uTMrDbjtILOiGH
+         pkQr72+Iy7nixDEioUkRz7ARAgNZj0RC1MQHkEiA7pfHs9uXtUrRvq1GC+G38qkrUH2B
+         h7RXx7PTqeMGq6C+8mApoLTESJ+Q3EhFXTWgDO0yq7Z76IIiShhlUqbioiwP2jVKqYCh
+         FKOA==
+X-Gm-Message-State: AOJu0Yx85DMDCX+EOBNsXeBMhvWaC9dGz1c5GBAsGKgC3vmcp11OHKl+
+	3hugr0Qpmk0puElJ/DXv3uONjlCJOU1CftTkDGab6q+DRqIz
+X-Google-Smtp-Source: AGHT+IHp42mn/AOQMp/Gy+pIgTER3CgUE07jlE0pfwGuoDZyiIaKHT4W8OY7jzoJ5tQHqlAfyspW2vZKdlZR85jhZJ/GMbMFDJg/
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231025135048.36153-1-amir73il@gmail.com> <ZTk1ffCMDe9GrJjC@infradead.org>
- <20231025210654.GA2892534@perftesting> <628a975f-11a1-47f9-b2f8-8cbcfa812ef6@gmx.com>
-In-Reply-To: <628a975f-11a1-47f9-b2f8-8cbcfa812ef6@gmx.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 26 Oct 2023 08:49:54 +0300
-Message-ID: <CAOQ4uxjbXg5hqk8r1Lp24rdkeimXS2_tZppreAeabzO0k8G8yg@mail.gmail.com>
-Subject: Re: [PATCH 0/3] fanotify support for btrfs sub-volumes
-To: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Cc: Josef Bacik <josef@toxicpanda.com>, Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>, 
-	Christian Brauner <brauner@kernel.org>, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>, 
-	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+X-Received: by 2002:a05:6870:179c:b0:1e9:a917:d59b with SMTP id
+ r28-20020a056870179c00b001e9a917d59bmr8164456oae.3.1698303571383; Wed, 25 Oct
+ 2023 23:59:31 -0700 (PDT)
+Date: Wed, 25 Oct 2023 23:59:31 -0700
+In-Reply-To: <0000000000000f188605ffdd9cf8@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000017dd680608991d75@google.com>
+Subject: Re: [syzbot] [f2fs?] possible deadlock in f2fs_add_inline_entry
+From: syzbot <syzbot+a4976ce949df66b1ddf1@syzkaller.appspotmail.com>
+To: arthurgrillo@riseup.net, chao@kernel.org, hdanton@sina.com, 
+	jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	lizhi.xu@windriver.com, mairacanal@riseup.net, mcanal@igalia.com, 
+	penguin-kernel@i-love.sakura.ne.jp, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 26, 2023 at 2:02=E2=80=AFAM Qu Wenruo <quwenruo.btrfs@gmx.com> =
-wrote:
->
->
->
-> On 2023/10/26 07:36, Josef Bacik wrote:
-> > On Wed, Oct 25, 2023 at 08:34:21AM -0700, Christoph Hellwig wrote:
-> >> On Wed, Oct 25, 2023 at 04:50:45PM +0300, Amir Goldstein wrote:
-> >>> Jan,
-> >>>
-> >>> This patch set implements your suggestion [1] for handling fanotify
-> >>> events for filesystems with non-uniform f_fsid.
-> >>
-> >> File systems nust never report non-uniform fsids (or st_dev) for that
-> >> matter.  btrfs is simply broken here and needs to be fixed.
-> >
-> > We keep going around and around on this so I'd like to get a set of ste=
-ps laid
-> > out for us to work towards to resolve this once and for all.
-> >
-> > HYSTERICAL RAISINS (why we do st_dev)
-> > -------------------------------------
-> >
-> > Chris made this decision forever ago because things like rsync would sc=
-rew up
-> > with snapshots and end up backing up the same thing over and over again=
-.  We saw
-> > it was using st_dev (as were a few other standard tools) to distinguish=
- between
-> > file systems, so we abused this to make userspace happy.
-> >
-> > The other nice thing this provided was a solution for the fact that we =
-re-use
-> > inode numbers in the file system, as they're unique for the subvolume o=
-nly.
-> >
-> > PROBLEMS WE WANT TO SOLVE
-> > -------------------------
-> >
-> > 1) Stop abusing st_dev.  We actually want this as btrfs developers beca=
-use it's
-> >     kind of annoying to figure out which device is mounted when st_dev =
-doesn't
-> >     map to any of the devices in /proc/mounts.
-> >
-> > 2) Give user space a way to tell it's on a subvolume, so it can not be =
-confused
-> >     by the repeating inode numbers.
-> >
-> > POSSIBLE SOLUTIONS
-> > ------------------
-> >
-> > 1) A statx field for subvolume id.  The subvolume id's are unique to th=
-e file
-> >     system, so subvolume id + inode number is unique to the file system=
-.  This is
-> >     a u64, so is nice and easy to export through statx.
-> > 2) A statx field for the uuid/fsid of the file system.  I'd like this b=
-ecause
-> >     again, being able to easily stat a couple of files and tell they're=
- on the
-> >     same file system is a valuable thing.  We have a per-fs uuid that w=
-e can
-> >     export here.
-> > 3) A statx field for the uuid of the subvolume.  Our subvolumes have th=
-eir own
-> >     unique uuid.  This could be an alternative for the subvolume id opt=
-ion, or an
-> >     addition.
->
-> No need for a full UUID, just a u64 is good enough.
->
-> Although a full UUID for the subvolumes won't hurt and can reduce the
-> need to call the btrfs specific ioctl just to receive the UUID.
->
->
-> My concern is, such new members would not be utilized by any other fs,
-> would it cause some compatibility problem?
->
-> >
-> > Either 1 or 3 are necessary to give userspace a way to tell they've wan=
-dered
-> > into a different subvolume.  I'd like to have all 3, but I recognize th=
-at may be
-> > wishful thinking.  2 isn't necessary, but if we're going to go about me=
-ssing
-> > with statx then I'd like to do it all at once, and I want this for the =
-reasons
-> > stated above.
-> >
-> > SEQUENCE OF EVENTS
-> > ------------------
-> >
-> > We do one of the statx changes, that rolls into a real kernel.  We run =
-around
-> > and submit patches for rsync and anything else we can think of to take =
-advantage
-> > of the statx feature.
->
-> My main concern is, how older programs could handle this? Like programs
-> utilizing stat() only, and for whatever reasons they don't bother to add
-> statx() support.
-> (Can vary from lack of maintenance to weird compatibility reasons)
->
-> Thus we still need such st_dev hack, until there is no real world
-> programs utilizing vanilla stat() only.
-> (Which everyone knows it's impossible)
->
+syzbot suspects this issue was fixed by commit:
 
-I agree it does not sound possible to change the world to know
-that the same st_dev,st_ino pair could belong to different objects.
+commit a0e6a017ab56936c0405fe914a793b241ed25ee0
+Author: Ma=C3=ADra Canal <mcanal@igalia.com>
+Date:   Tue May 23 12:32:08 2023 +0000
 
-One such program btw is diff - it will skip the comparison if both
-objects have the same st_dev,st_ino even if they are actually
-different objects with different data (i.e. a file and its old snapshot).
+    drm/vkms: Fix race-condition between the hrtimer and the atomic commit
 
-Thanks,
-Amir.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D166c090d6800=
+00
+start commit:   28f20a19294d Merge tag 'x86-urgent-2023-08-26' of git://gi.=
+.
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3D21a578092dd61d0=
+5
+dashboard link: https://syzkaller.appspot.com/bug?extid=3Da4976ce949df66b1d=
+df1
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D15a0934068000=
+0
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D118909eba80000
+
+If the result looks correct, please mark the issue as fixed by replying wit=
+h:
+
+#syz fix: drm/vkms: Fix race-condition between the hrtimer and the atomic c=
+ommit
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisectio=
+n
 
