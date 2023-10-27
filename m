@@ -1,133 +1,251 @@
-Return-Path: <linux-fsdevel+bounces-1327-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1328-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0658B7D90F1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 10:17:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD81A7D91B6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 10:37:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 886CD282494
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 08:17:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0ABA21C21049
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 08:37:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92AF3154AC;
-	Fri, 27 Oct 2023 08:17:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aHjwnsGI"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13959156E2;
+	Fri, 27 Oct 2023 08:37:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BD9515496
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 08:17:36 +0000 (UTC)
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25C78111
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 01:17:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1698394654;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+ouDL3Q+P4kOF4DRXdbPPiLhvDYpBpA3cyTxKCKn6rY=;
-	b=aHjwnsGIjbrji7QsyhvZbtcZKm652ld5XKqZCFotS7i35wbyFw05sfSeMuGrHAKXwnLEPF
-	ZSoAtxfXf1eSTRQC6e6RqK9SMvAQtV4ENE83a6xnIFcUspnz3O0VMTY3ptVxSZnAHP4bBk
-	+JEUeom+1/uz0FdrFreB7O5PVFPldiI=
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
- [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-274-2MWOJgg8NOSJcPM3xwDELg-1; Fri, 27 Oct 2023 04:17:32 -0400
-X-MC-Unique: 2MWOJgg8NOSJcPM3xwDELg-1
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-6b697b7f753so1708809b3a.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 01:17:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698394652; x=1698999452;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+ouDL3Q+P4kOF4DRXdbPPiLhvDYpBpA3cyTxKCKn6rY=;
-        b=Rs4O4ZwUxRa830CXMi3n+sqKBLbHy/LTD0ZbyOskwHTe3f4F5VCtJyJHOPOM423IX+
-         Nv5iejMEqsQBbXSLUVQpHEjhhN35XJ5dWnJdRU09S68jei9VVUf4qhHeDkO0iOyiNZFm
-         HPj4SetmX1qpl6Zu+s6977QAHdcEN2fBUWHnT48rGjk3Ru0/37BJUY4Lo9lS2uVpJ3bR
-         Ie6t4MviR762iZ0AhtTizaNWAuHya2xSjaggCmiLFqjx3tXfvaVDDPP5kKfKSvFX0QB5
-         i3PnY3Ms/xEjFmmsLh2YzjXE5e2rnQJ8Fwb0m5Ku5z5lKihkdRLwukZzB3KmdYqdd4MJ
-         8Ong==
-X-Gm-Message-State: AOJu0YwJDCps54jqiLnWxvExId1xoxVwCA5/RQR+59dAKmKmkYK/Y9cK
-	LtHzNDsN1TrSYeDHhv4mVC1GT8QokQHjYKTX04xt2KNp5Jz8XnToqnK8sQ+ofzXIdJ4JloBVyJA
-	B4eQELaAToloKwi7tGg1KgQDNq81zhfqDwvG4zs4B8A==
-X-Received: by 2002:a05:6a21:33a4:b0:14c:c393:692 with SMTP id yy36-20020a056a2133a400b0014cc3930692mr2704229pzb.7.1698394651762;
-        Fri, 27 Oct 2023 01:17:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHTt9SvLiPEi281c5qYNL3fkkUk1SSE30SNu0c6PnpZmbzcGnqGfiaie561R0D3GgR9kSHXh0Ays6TCRh7/8Kw=
-X-Received: by 2002:a05:6a21:33a4:b0:14c:c393:692 with SMTP id
- yy36-20020a056a2133a400b0014cc3930692mr2704213pzb.7.1698394651459; Fri, 27
- Oct 2023 01:17:31 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A233156DC
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 08:37:45 +0000 (UTC)
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E827106;
+	Fri, 27 Oct 2023 01:37:43 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.18.147.227])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4SGwgg2ZWrz9xqcl;
+	Fri, 27 Oct 2023 16:24:31 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwCX8JGqdjtlDvIBAw--.29710S2;
+	Fri, 27 Oct 2023 09:37:13 +0100 (CET)
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	chuck.lever@oracle.com,
+	jlayton@kernel.org,
+	neilb@suse.de,
+	kolga@netapp.com,
+	Dai.Ngo@oracle.com,
+	tom@talpey.com,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	zohar@linux.ibm.com,
+	dmitry.kasatkin@gmail.com,
+	dhowells@redhat.com,
+	jarkko@kernel.org,
+	stephen.smalley.work@gmail.com,
+	eparis@parisplace.org,
+	casey@schaufler-ca.com,
+	mic@digikod.net
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-nfs@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	keyrings@vger.kernel.org,
+	selinux@vger.kernel.org,
+	Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v4 00/23] security: Move IMA and EVM to the LSM infrastructure
+Date: Fri, 27 Oct 2023 10:35:35 +0200
+Message-Id: <20231027083558.484911-1-roberto.sassu@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231025140205.3586473-1-mszeredi@redhat.com> <20231025140205.3586473-3-mszeredi@redhat.com>
- <b69c1c17-35f9-351e-79a9-ef3ef5481974@themaw.net>
-In-Reply-To: <b69c1c17-35f9-351e-79a9-ef3ef5481974@themaw.net>
-From: Miklos Szeredi <mszeredi@redhat.com>
-Date: Fri, 27 Oct 2023 10:17:20 +0200
-Message-ID: <CAOssrKe76uZ5t714=Ta7GMLnZdS4QGm-fOfT9q5hNFe1fsDMVg@mail.gmail.com>
-Subject: Re: [PATCH v4 2/6] mounts: keep list of mounts in an rbtree
-To: Ian Kent <raven@themaw.net>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-api@vger.kernel.org, linux-man@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>, 
-	David Howells <dhowells@redhat.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <christian@brauner.io>, 
-	Amir Goldstein <amir73il@gmail.com>, Matthew House <mattlloydhouse@gmail.com>, 
-	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:LxC2BwCX8JGqdjtlDvIBAw--.29710S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxKF4xKr18uw15CrWrAr47Arb_yoW3XFW8pF
+	saga15A34DJFy7KrZ3AF4xu3WSgFZ5WrWUXr9xGry8A3Z0yr1FqFWjkryruryrGFWrXr10
+	q3ZFv3s8ur1qyFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkFb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IY
+	c2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s
+	026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF
+	0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0x
+	vE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2
+	jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UAkuxUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQADBF1jj5WUHAABsr
+X-CFilter-Loop: Reflected
 
-On Fri, Oct 27, 2023 at 5:12=E2=80=AFAM Ian Kent <raven@themaw.net> wrote:
->
-> On 25/10/23 22:02, Miklos Szeredi wrote:
+From: Roberto Sassu <roberto.sassu@huawei.com>
 
-> > The mnt.mnt_list is still used to set up the mount tree and for
-> > propagation, but not after the mount has been added to a namespace.  He=
-nce
-> > mnt_list can live in union with rb_node.  Use MNT_ONRB mount flag to
-> > validate that the mount is on the correct list.
->
-> Is that accurate, propagation occurs at mount and also at umount.
+IMA and EVM are not effectively LSMs, especially due to the fact that in
+the past they could not provide a security blob while there is another LSM
+active.
 
-When propagating a mount, the new mount's mnt_list is used as a head
-for the new propagated mounts.  These are then moved to the rb tree by
-commit_tree().
+That changed in the recent years, the LSM stacking feature now makes it
+possible to stack together multiple LSMs, and allows them to provide a
+security blob for most kernel objects. While the LSM stacking feature has
+some limitations being worked out, it is already suitable to make IMA and
+EVM as LSMs.
 
-When umounting there's a "to umount" list called tmp_list in
-umount_tree(), this list is used to collect direct umounts and then
-propagated umounts.  The direct umounts are added in umount_tree(),
-the propagated ones umount_one().
+In short, while this patch set is big, it does not make any functional
+change to IMA and EVM. IMA and EVM functions are called by the LSM
+infrastructure in the same places as before (except ima_post_path_mknod()),
+rather being hardcoded calls, and the inode metadata pointer is directly
+stored in the inode security blob rather than in a separate rbtree.
 
-Note: umount_tree() can be called on a not yet finished mount, in that
-case the mounts are still on mnt_list, so umount_tree() needs to deal
-with both.
+To avoid functional changes, it was necessary to keep the 'integrity' LSM
+in addition to the newly introduced 'ima' and 'evm' LSMs, despite there is
+no LSM ID assigned to it. There are two reasons: first, IMA and EVM still
+share the same inode metadata, and thus cannot directly reserve space in
+the security blob for it; second, someone needs to initialize 'ima' and
+'evm' exactly in this order, as the LSM infrastructure cannot guarantee
+that.
 
-> IDG how the change to umount_one() works, it looks like umount_list()
->
-> uses mnt_list. It looks like propagate_umount() is also using mnt_list.
->
->
-> Am I missing something obvious?
+The patch set is organized as follows.
 
-So when a mount is part of a namespace (either anonymous or not) it is
-on the rb tree, when not then it can temporarily be on mnt_list.
-MNT_ONRB flag is used to validate that the mount is on the list that
-we expect it to be on, but also to detect the case of the mount setup
-being aborted.
+Patches 1-9 make IMA and EVM functions suitable to be registered to the LSM
+infrastructure, by aligning function parameters.
 
-We could handle the second case differently, since we should be able
-to tell when we are removing the mount from a namespace and when we
-are aborting a mount, but this was the least invasive way to do this.
+Patches 10-18 add new LSM hooks in the same places where IMA and EVM
+functions are called, if there is no LSM hook already.
 
-Thanks,
-Miklos
+Patches 19-22 do the bulk of the work, introduce the new LSMs 'ima' and
+'evm', and move hardcoded calls to IMA, EVM and integrity functions to
+those LSMs. In addition, they reserve one slot for the 'evm' LSM to supply
+an xattr with the inode_init_security hook.
+
+Finally, patch 23 removes the rbtree used to bind integrity metadata to the
+inodes, and instead reserves a space in the inode security blob to store
+the pointer to that metadata. This also brings performance improvements due
+to retrieving metadata in constant time, as opposed to logarithmic.
+
+The patch set applies on top of lsm/next-queue, commit 0310640b00d2 ("lsm:
+don't yet account for IMA in LSM_CONFIG_COUNT calculation"), plus commits
+in linux-integrity/next-integrity-testing up to bc4532e9cd3b ("ima: detect
+changes to the backing overlay file").
+
+Changelog:
+
+v3:
+ - Drop 'ima: Align ima_post_path_mknod() definition with LSM
+   infrastructure' and 'ima: Align ima_post_create_tmpfile() definition
+   with LSM infrastructure', define the new LSM hooks with the same
+   IMA parameters instead (suggested by Mimi)
+ - Do IS_PRIVATE() check in security_path_post_mknod() and
+   security_inode_post_create_tmpfile() on the new inode rather than the
+   parent directory (in the post method it is available)
+ - Don't export ima_file_check() (suggested by Stefan)
+ - Remove redundant check of file mode in ima_post_path_mknod() (suggested
+   by Mimi)
+ - Mention that ima_post_path_mknod() is now conditionally invoked when
+   CONFIG_SECURITY_PATH=y (suggested by Mimi)
+ - Mention when a LSM hook will be introduced in the IMA/EVM alignment
+   patches (suggested by Mimi)
+ - Simplify the commit messages when introducing a new LSM hook
+ - Still keep the 'extern' in the function declaration, until the
+   declaration is removed (suggested by Mimi)
+ - Improve documentation of security_file_pre_free()
+ - Register 'ima' and 'evm' as standalone LSMs (suggested by Paul)
+ - Initialize the 'ima' and 'evm' LSMs from 'integrity', to keep the
+   original ordering of IMA and EVM functions as when they were hardcoded
+ - Return the IMA and EVM LSM IDs to 'integrity' for registration of the
+   integrity-specific hooks
+ - Reserve an xattr slot from the 'evm' LSM instead of 'integrity'
+ - Pass the LSM ID to init_ima_appraise_lsm()
+
+v2:
+ - Add description for newly introduced LSM hooks (suggested by Casey)
+ - Clarify in the description of security_file_pre_free() that actions can
+   be performed while the file is still open
+
+v1:
+ - Drop 'evm: Complete description of evm_inode_setattr()', 'fs: Fix
+   description of vfs_tmpfile()' and 'security: Introduce LSM_ORDER_LAST',
+   they were sent separately (suggested by Christian Brauner)
+ - Replace dentry with file descriptor parameter for
+   security_inode_post_create_tmpfile()
+ - Introduce mode_stripped and pass it as mode argument to
+   security_path_mknod() and security_path_post_mknod()
+ - Use goto in do_mknodat() and __vfs_removexattr_locked() (suggested by
+   Mimi)
+ - Replace __lsm_ro_after_init with __ro_after_init
+ - Modify short description of security_inode_post_create_tmpfile() and
+   security_inode_post_set_acl() (suggested by Stefan)
+ - Move security_inode_post_setattr() just after security_inode_setattr()
+   (suggested by Mimi)
+ - Modify short description of security_key_post_create_or_update()
+   (suggested by Mimi)
+ - Add back exported functions ima_file_check() and
+   evm_inode_init_security() respectively to ima.h and evm.h (reported by
+   kernel robot)
+ - Remove extern from prototype declarations and fix style issues
+ - Remove unnecessary include of linux/lsm_hooks.h in ima_main.c and
+   ima_appraise.c
+
+Roberto Sassu (23):
+  ima: Align ima_inode_post_setattr() definition with LSM infrastructure
+  ima: Align ima_file_mprotect() definition with LSM infrastructure
+  ima: Align ima_inode_setxattr() definition with LSM infrastructure
+  ima: Align ima_inode_removexattr() definition with LSM infrastructure
+  ima: Align ima_post_read_file() definition with LSM infrastructure
+  evm: Align evm_inode_post_setattr() definition with LSM infrastructure
+  evm: Align evm_inode_setxattr() definition with LSM infrastructure
+  evm: Align evm_inode_post_setxattr() definition with LSM
+    infrastructure
+  security: Align inode_setattr hook definition with EVM
+  security: Introduce inode_post_setattr hook
+  security: Introduce inode_post_removexattr hook
+  security: Introduce file_post_open hook
+  security: Introduce file_pre_free_security hook
+  security: Introduce path_post_mknod hook
+  security: Introduce inode_post_create_tmpfile hook
+  security: Introduce inode_post_set_acl hook
+  security: Introduce inode_post_remove_acl hook
+  security: Introduce key_post_create_or_update hook
+  ima: Move to LSM infrastructure
+  ima: Move IMA-Appraisal to LSM infrastructure
+  evm: Move to LSM infrastructure
+  integrity: Move integrity functions to the LSM infrastructure
+  integrity: Switch from rbtree to LSM-managed blob for
+    integrity_iint_cache
+
+ fs/attr.c                             |   5 +-
+ fs/file_table.c                       |   3 +-
+ fs/namei.c                            |  12 +-
+ fs/nfsd/vfs.c                         |   3 +-
+ fs/open.c                             |   1 -
+ fs/posix_acl.c                        |   5 +-
+ fs/xattr.c                            |   9 +-
+ include/linux/evm.h                   | 103 ----------
+ include/linux/ima.h                   | 142 --------------
+ include/linux/integrity.h             |  26 ---
+ include/linux/lsm_hook_defs.h         |  20 +-
+ include/linux/security.h              |  59 ++++++
+ include/uapi/linux/lsm.h              |   2 +
+ security/integrity/evm/evm_main.c     | 138 ++++++++++++--
+ security/integrity/iint.c             | 113 +++++------
+ security/integrity/ima/ima.h          |  11 ++
+ security/integrity/ima/ima_appraise.c |  37 +++-
+ security/integrity/ima/ima_main.c     |  96 ++++++++--
+ security/integrity/integrity.h        |  58 +++++-
+ security/keys/key.c                   |  10 +-
+ security/security.c                   | 261 ++++++++++++++++----------
+ security/selinux/hooks.c              |   3 +-
+ security/smack/smack_lsm.c            |   4 +-
+ 23 files changed, 614 insertions(+), 507 deletions(-)
+
+-- 
+2.34.1
 
 
