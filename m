@@ -1,226 +1,185 @@
-Return-Path: <linux-fsdevel+bounces-1387-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1388-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD5727D9EA3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 19:13:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C24F7D9F6A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 20:09:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F1822824DA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 17:13:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABD6C1C21012
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 18:09:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F35323985F;
-	Fri, 27 Oct 2023 17:13:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P31qe6Hf"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09A943B792;
+	Fri, 27 Oct 2023 18:09:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A67C2FE
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 17:13:14 +0000 (UTC)
-Received: from mail-oo1-xc2b.google.com (mail-oo1-xc2b.google.com [IPv6:2607:f8b0:4864:20::c2b])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD94F61B6;
-	Fri, 27 Oct 2023 10:13:12 -0700 (PDT)
-Received: by mail-oo1-xc2b.google.com with SMTP id 006d021491bc7-581e5a9413bso1263509eaf.1;
-        Fri, 27 Oct 2023 10:13:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698426792; x=1699031592; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=71KOnyhZFDvXLA/+wyHasn62dseja88kJnuT02RkV8w=;
-        b=P31qe6HfNILHItlsazKmFKaLTvd51KcfvYbviKaI3DYNSflR7ig5z+r4bdma/gCfur
-         wUB8AI8GkoK7MYyo2V0ijmt2wemwceePO+Ih8iJNDsKwzNllLXxcIHCSX8VEbgrt6OdU
-         NpAm6PSWl2aJ4QUCZzdkj04jJdRFUlqh/eI/vO7yXv8C7NfJFBtTU+voafFK4vEoi1Sg
-         ihLgc16dl5NPgaW3AGyn5lB/jLUYuTtxAFHNln1013hzWpT4Ok9GAUVu4No8AdNqOUG1
-         nnM8hJ3CrW+thUh/mfuC4VYNntP3+Hl1n3inT3QiWRbcFsphSslLA+/fnixsipnkrHkI
-         09XQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698426792; x=1699031592;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=71KOnyhZFDvXLA/+wyHasn62dseja88kJnuT02RkV8w=;
-        b=Zm5860mP2+OFxGbGi/yw1/zdGgRGQcTgck6Vn+toiV9jq9toS72JwvPB5pDvVeSu7W
-         K8FLDGi7J/qg6DskLaEWer1hDMoRwWzq6HJtV7C1rNAzC89mRgoipBJZZ6S+Xl7rl224
-         RjlyGt4flLr+FtJOvxCCn5qx9iG8ViS6Zoz+UqCyRFvaGkoLZ/TrcNCvVFibUGq5uPlp
-         JJIMl/u7fa1qUE5kX4tDvspy9uLG2hR3npN5/F7nnmNVrCnfPE8xJCNJrQltBRF9vhJn
-         4gELKTE7VjxJjXajSkrq59frC0UbcvsMqWMQubvnA413hix+uWoUd/G9911qC141xtWw
-         SZuQ==
-X-Gm-Message-State: AOJu0YyHkAvy4BvAnNewBckuEG/2/InTuYFzimSn+4MWFAjiXBgSHpUU
-	z7U29IFPW8PQIIvCINjWqsl3CMTUZoj8sd0BjqxlTDqI
-X-Google-Smtp-Source: AGHT+IH0oEA9gnYXSOWLyXkcdEfgSrXgIZ2fTX7JjiGKkr8RIbG5RB11MUCuTNwj+iO9h8dO3iDeSwxaVeMndjOVj7Y=
-X-Received: by 2002:a05:6820:1a08:b0:56c:d297:164c with SMTP id
- bq8-20020a0568201a0800b0056cd297164cmr3825808oob.4.1698426791893; Fri, 27 Oct
- 2023 10:13:11 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 704C339848
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 18:09:06 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTP id ACC19AC;
+	Fri, 27 Oct 2023 11:09:04 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E70AB1424;
+	Fri, 27 Oct 2023 11:09:45 -0700 (PDT)
+Received: from e124191.cambridge.arm.com (e124191.cambridge.arm.com [10.1.197.45])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 232DF3F64C;
+	Fri, 27 Oct 2023 11:09:02 -0700 (PDT)
+From: Joey Gouly <joey.gouly@arm.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: akpm@linux-foundation.org,
+	aneesh.kumar@linux.ibm.com,
+	broonie@kernel.org,
+	catalin.marinas@arm.com,
+	dave.hansen@linux.intel.com,
+	joey.gouly@arm.com,
+	maz@kernel.org,
+	oliver.upton@linux.dev,
+	shuah@kernel.org,
+	will@kernel.org,
+	kvmarm@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>
+Subject: [PATCH v2 00/20] Permission Overlay Extension
+Date: Fri, 27 Oct 2023 19:08:26 +0100
+Message-Id: <20231027180850.1068089-1-joey.gouly@arm.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Received: by 2002:a05:6802:48a:b0:4f0:1250:dd51 with HTTP; Fri, 27 Oct 2023
- 10:13:11 -0700 (PDT)
-In-Reply-To: <ZTYAUyiTYsX43O9F@dread.disaster.area>
-References: <20230509165657.1735798-1-kent.overstreet@linux.dev>
- <20230509165657.1735798-23-kent.overstreet@linux.dev> <20230523-zujubeln-heizsysteme-f756eefe663e@brauner>
- <20231019153040.lj3anuescvdprcq7@f> <20231019155958.7ek7oyljs6y44ah7@f>
- <ZTJmnsAxGDnks2aj@dread.disaster.area> <CAGudoHHqpk+1b6KqeFr6ptnm-578A_72Ng3H848WZP0GoyUQbw@mail.gmail.com>
- <ZTYAUyiTYsX43O9F@dread.disaster.area>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Fri, 27 Oct 2023 19:13:11 +0200
-Message-ID: <CAGudoHGzX2H4pUuDNYzYOf8s-HaZuAi7Dttpg_SqtXAgTw8tiw@mail.gmail.com>
-Subject: Re: (subset) [PATCH 22/32] vfs: inode cache conversion to hash-bl
-To: Dave Chinner <david@fromorbit.com>
-Cc: Christian Brauner <brauner@kernel.org>, Dave Chinner <dchinner@redhat.com>, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-bcachefs@vger.kernel.org, Kent Overstreet <kent.overstreet@linux.dev>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On 10/23/23, Dave Chinner <david@fromorbit.com> wrote:
-> On Fri, Oct 20, 2023 at 07:49:18PM +0200, Mateusz Guzik wrote:
->> On 10/20/23, Dave Chinner <david@fromorbit.com> wrote:
->> > On Thu, Oct 19, 2023 at 05:59:58PM +0200, Mateusz Guzik wrote:
->> >> > To be clear there is no urgency as far as I'm concerned, but I did
->> >> > run
->> >> > into something which is primarily bottlenecked by inode hash lock
->> >> > and
->> >> > looks like the above should sort it out.
->> >> >
->> >> > Looks like the patch was simply forgotten.
->> >> >
->> >> > tl;dr can this land in -next please
->> >>
->> >> In case you can't be arsed, here is something funny which may convince
->> >> you to expedite. ;)
->> >>
->> >> I did some benching by running 20 processes in parallel, each doing
->> >> stat
->> >> on a tree of 1 million files (one tree per proc, 1000 dirs x 1000
->> >> files,
->> >> so 20 mln inodes in total).  Box had 24 cores and 24G RAM.
->> >>
->> >> Best times:
->> >> Linux:          7.60s user 1306.90s system 1863% cpu 1:10.55 total
->> >> FreeBSD:        3.49s user 345.12s system 1983% cpu 17.573 total
->> >> OpenBSD:        5.01s user 6463.66s system 2000% cpu 5:23.42 total
->> >> DragonflyBSD:   11.73s user 1316.76s system 1023% cpu 2:09.78 total
->> >> OmniosCE:       9.17s user 516.53s system 1550% cpu 33.905 total
->> >>
->> >> NetBSD failed to complete the run, OOM-killing workers:
->> >> http://mail-index.netbsd.org/tech-kern/2023/10/19/msg029242.html
->> >> OpenBSD is shafted by a big kernel lock, so no surprise it takes a
->> >> long
->> >> time.
->> >>
->> >> So what I find funny is that Linux needed more time than OmniosCE (an
->> >> Illumos variant, fork of Solaris).
->> >>
->> >> It also needed more time than FreeBSD, which is not necessarily funny
->> >> but not that great either.
->> >>
->> >> All systems were mostly busy contending on locks and in particular
->> >> Linux
->> >> was almost exclusively busy waiting on inode hash lock.
->> >
->> > Did you bother to test the patch, or are you just complaining
->> > that nobody has already done the work for you?
->>
->> Why are you giving me attitude?
->
-> Look in the mirror, mate.
->
-> Starting off with a derogatory statement like:
->
-> "In case you can't be arsed, ..."
->
-> is a really good way to start a fight.
->
-> I don't think anyone working on this stuff couldn't be bothered to
-> get their lazy arses off their couches to get it merged. Though you
-> may not have intended it that way, that's exactly what "can't be
-> arsed" means.
->
-> I have not asked for this code to be merged because I'm not ready to
-> ask for it to be merged. I'm trying to be careful and cautious about
-> changing core kernel code that every linux installation out there
-> uses because I care about this code being robust and stable. That's
-> the exact opposite of "can't be arsed"....
->
-> Further, you have asked for code that is not ready to be merged to
-> be merged without reviewing it or even testing it to see if it
-> solved your reported problem. This is pretty basic stuff - it you
-> want it merged, then *you also need to put effort into getting it
-> merged* regardless of who wrote the code. TANSTAAFL.
->
-> But you've done neither - you've just made demands and thrown
-> hypocritical shade implying busy people working on complex code are
-> lazy arses.
->
+Hello everyone,
 
-So I took few days to take a look at this with a fresh eye and I see
-where the major disconnect is coming from, albeit still don't see how
-it came to be nor why it persists.
+This series implements the Permission Overlay Extension introduced in 2022
+VMSA enhancements [1]. It is based on v6.6-rc3.
 
-To my understanding your understanding is that I demand you carry the
-hash bl patch over the finish line and I'm rude about it as well.
+Changes since v1[2]:
+	# Added Kconfig option
+	# Added KVM support
+	# Move VM_PKEY* defines into arch/
+	# Add isb() for POR_EL0 context switch
+	# Added hwcap test, get-reg-list-test, signal frame handling test
 
-That is not my position here though.
+ptrace support is missing, I will add that for v3.
 
-For starters my opening e-mail was to Christian, not you. You are
-CC'ed as the patch author. It is responding to an e-mail which claimed
-the patch would land in -next, which to my poking around did not
-happen (and I checked it's not in master either). Since there was no
-other traffic about it that I could find, I figured it was probably
-forgotten. You may also notice the e-mail explicitly states:
-1. I have a case which runs into inode hash being a problem
-2. *there is no urgency*, I'm just asking what's up with the patch not
-getting anywhere.
+The Permission Overlay Extension allows to constrain permissions on memory
+regions. This can be used from userspace (EL0) without a system call or TLB
+invalidation.
 
-The follow up including a statement about "being arsed" once more was
-to Christian, not you and was rather "tongue in cheek".
+POE is used to implement the Memory Protection Keys [3] Linux syscall.
 
-If you know about Illumos, it is mostly slow and any serious
-performance work stopped there when Oracle closed the codebase over a
-decade ago. Or to put it differently, one has to be doing something
-really bad to not be faster today. And there was this bad -- the inode
-hash. I found it amusing and decided to share in addition to asking
-about the patch.
+The first few patches add the basic framework, then the PKEYS interface is
+implemented, and then the selftests are made to work on arm64.
 
-So no Dave, I'm not claiming the patch is not in because anyone is lazy.
+There was discussion about what the 'default' protection key value should be,
+I used disallow-all (apart from pkey 0), which matches what x86 does.
 
-Whether the patch is ready for reviews and whatnot is your call to
-make as the author.
+I have tested the modified protection_keys test on x86_64 [5], but not PPC.
+I haven't build tested the x86/ppc changes, will work on getting at least
+an x86 build environment working.
 
-To repeat from my previous e-mail I note the lock causes real problems
-in a real-world setting, it's not just microbenchmarks, but I'm in no
-position to test it against the actual workload (only the part I
-carved out into a benchmark, where it does help -- gets rid of the
-nasty back-to-back lock acquire, first to search for the inode and
-then to insert a new one).
+Thanks,
+Joey
 
-If your assessment is that more testing is needed, that makes sense
-and is again your call to make. I repeat again I can't help with this
-bit though. And if you don't think the effort is justified at the
-moment (or there are other things with higher priority), so be it.
+[1] https://community.arm.com/arm-community-blogs/b/architectures-and-processors-blog/posts/arm-a-profile-architecture-2022
+[2] https://lore.kernel.org/linux-arm-kernel/20230927140123.5283-1-joey.gouly@arm.com/
+[3] Documentation/core-api/protection-keys.rst
+[4] https://lore.kernel.org/linux-arm-kernel/20230919092850.1940729-7-mark.rutland@arm.com/#t
+[5] test_ptrace_modifies_pkru asserts for me on a Ubuntu 5.4 kernel, but does so before my changes as well
 
-It may be I'll stick around in general and if so it may be I'm going
-to run into you again.
-With this in mind:
+Joey Gouly (24):
+  arm64/sysreg: add system register POR_EL{0,1}
+  arm64/sysreg: update CPACR_EL1 register
+  arm64: cpufeature: add Permission Overlay Extension cpucap
+  arm64: disable trapping of POR_EL0 to EL2
+  arm64: context switch POR_EL0 register
+  KVM: arm64: Save/restore POE registers
+  arm64: enable the Permission Overlay Extension for EL0
+  arm64: add POIndex defines
+  arm64: define VM_PKEY_BIT* for arm64
+  arm64: mask out POIndex when modifying a PTE
+  arm64: enable ARCH_HAS_PKEYS on arm64
+  arm64: handle PKEY/POE faults
+  arm64: stop using generic mm_hooks.h
+  arm64: implement PKEYS support
+  arm64: add POE signal support
+  arm64: enable PKEY support for CPUs with S1POE
+  arm64: enable POE and PIE to coexist
+  kselftest/arm64: move get_header()
+  selftests: mm: move fpregs printing
+  selftests: mm: make protection_keys test work on arm64
+  kselftest/arm64: add HWCAP test for FEAT_S1POE
+  kselftest/arm64: parse POE_MAGIC in a signal frame
+  kselftest/arm64: Add test case for POR_EL0 signal frame records
+  KVM: selftests: get-reg-list: add Permission Overlay registers
 
-> Perhaps you should consider your words more carefully in future?
->
+ Documentation/arch/arm64/elf_hwcaps.rst       |   3 +
+ arch/arm64/Kconfig                            |  18 +++
+ arch/arm64/include/asm/cpufeature.h           |   6 +
+ arch/arm64/include/asm/el2_setup.h            |  10 +-
+ arch/arm64/include/asm/hwcap.h                |   1 +
+ arch/arm64/include/asm/kvm_arm.h              |   4 +-
+ arch/arm64/include/asm/kvm_host.h             |   4 +
+ arch/arm64/include/asm/mman.h                 |   8 +-
+ arch/arm64/include/asm/mmu.h                  |   2 +
+ arch/arm64/include/asm/mmu_context.h          |  51 ++++++-
+ arch/arm64/include/asm/page.h                 |  10 ++
+ arch/arm64/include/asm/pgtable-hwdef.h        |  10 ++
+ arch/arm64/include/asm/pgtable-prot.h         |   8 +-
+ arch/arm64/include/asm/pgtable.h              |  26 +++-
+ arch/arm64/include/asm/pkeys.h                | 110 ++++++++++++++
+ arch/arm64/include/asm/por.h                  |  33 +++++
+ arch/arm64/include/asm/processor.h            |   1 +
+ arch/arm64/include/asm/sysreg.h               |  16 ++
+ arch/arm64/include/asm/traps.h                |   1 +
+ arch/arm64/include/uapi/asm/hwcap.h           |   1 +
+ arch/arm64/include/uapi/asm/sigcontext.h      |   7 +
+ arch/arm64/kernel/cpufeature.c                |  23 +++
+ arch/arm64/kernel/cpuinfo.c                   |   1 +
+ arch/arm64/kernel/process.c                   |  19 +++
+ arch/arm64/kernel/signal.c                    |  51 +++++++
+ arch/arm64/kernel/traps.c                     |  12 +-
+ arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h    |  10 ++
+ arch/arm64/kvm/sys_regs.c                     |   2 +
+ arch/arm64/mm/fault.c                         |  44 +++++-
+ arch/arm64/mm/mmap.c                          |   9 ++
+ arch/arm64/mm/mmu.c                           |  40 +++++
+ arch/arm64/tools/cpucaps                      |   1 +
+ arch/arm64/tools/sysreg                       |  15 +-
+ arch/powerpc/include/asm/page.h               |  11 ++
+ arch/x86/include/asm/page.h                   |  10 ++
+ fs/proc/task_mmu.c                            |   2 +
+ include/linux/mm.h                            |  13 --
+ tools/testing/selftests/arm64/abi/hwcap.c     |  13 ++
+ .../testing/selftests/arm64/signal/.gitignore |   1 +
+ .../arm64/signal/testcases/poe_siginfo.c      |  86 +++++++++++
+ .../arm64/signal/testcases/testcases.c        |  27 +---
+ .../arm64/signal/testcases/testcases.h        |  28 +++-
+ .../selftests/kvm/aarch64/get-reg-list.c      |  14 ++
+ tools/testing/selftests/mm/Makefile           |   2 +-
+ tools/testing/selftests/mm/pkey-arm64.h       | 138 ++++++++++++++++++
+ tools/testing/selftests/mm/pkey-helpers.h     |   8 +
+ tools/testing/selftests/mm/pkey-powerpc.h     |   3 +
+ tools/testing/selftests/mm/pkey-x86.h         |   4 +
+ tools/testing/selftests/mm/protection_keys.c  |  29 ++--
+ 49 files changed, 880 insertions(+), 66 deletions(-)
+ create mode 100644 arch/arm64/include/asm/pkeys.h
+ create mode 100644 arch/arm64/include/asm/por.h
+ create mode 100644 tools/testing/selftests/arm64/signal/testcases/poe_siginfo.c
+ create mode 100644 tools/testing/selftests/mm/pkey-arm64.h
 
-On that front perhaps you could refrain from assuming someone is
-trying to call you names or whatnot. But more importantly if you
-consider an e-mail to be rude, you can call it out instead of
-escalating or responding in what you consider to be the same tone.
-
-All that said I'm bailing from this patchset.
-
-Cheers,
 -- 
-Mateusz Guzik <mjguzik gmail.com>
+2.25.1
+
 
