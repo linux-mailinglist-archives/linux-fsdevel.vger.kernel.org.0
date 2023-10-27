@@ -1,62 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-1447-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1437-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBE707DA051
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 20:25:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F39C7DA00A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 20:23:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A12912825C5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 18:25:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD374282676
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 18:23:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E76DB3DFF0;
-	Fri, 27 Oct 2023 18:25:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E22653DFE7;
+	Fri, 27 Oct 2023 18:23:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ix2AfYCW"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OsCynHN7"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92EDE3DFE1
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 18:25:46 +0000 (UTC)
-Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62E9B2108
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 11:23:20 -0700 (PDT)
-Received: by mail-yb1-xb49.google.com with SMTP id 3f1490d57ef6-da0c7d27fb0so1329291276.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 11:23:20 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F33B43DFE0
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 18:23:53 +0000 (UTC)
+Received: from mail-yw1-x1149.google.com (mail-yw1-x1149.google.com [IPv6:2607:f8b0:4864:20::1149])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6D8710F7
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 11:23:22 -0700 (PDT)
+Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-5a7af69a4baso20633657b3.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 11:23:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1698430999; x=1699035799; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1698431001; x=1699035801; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=yVf4MoQ+pgFottQ0gtqF7KbCgtXqLOOMhwiDUmO9tI4=;
-        b=ix2AfYCWSzN1bdrxAyi33qRQjavKq8nwxMaDU/CcG6wuKgr26X0rQ/n7Usbs7Yrcjv
-         91LiFtwyTgtf2pULZvgfUXMThlZ/iLcuFO3638AIAfsbWk+aB/4oMh6nTuwIPNDHHkIV
-         9NUGpbBinutdf56VN+QLFIB+4Fh5aJdMZMr+71f58+uUYpoOoswcf/ie0M3wWngBYg6q
-         yQPehE4QQvg3j51xWAuOX1arWwnVJ4X4SjPvjMmW7o3mCGfkU/dCKO0TlAqA48qSpI87
-         v2IbiNbknEBaZT/zITeqa8+7sjHtIEoXeGLxhwcqU6DYC5PCUwy9VZqpfKAh4PO4gEHt
-         c7Lw==
+        bh=Xz8kt0PqFUxEdWsVGTpKhvh/0bAOqOlDGpUeOhSMn4Y=;
+        b=OsCynHN7e3GIf2nZlVgAAzL9xfgOe12HvGyzelq0BaqcPUkHjvUGv7V/t3p6u/QB5d
+         XzbYUd3YxZB2GRFVjllNEhiSazwuH/T3RNc6rH72ctO3WrZBN+veVNBuhn6IKD73e2lE
+         tvOgu+tn7gQjA86uFzMPe6yMKXMdLIW0AUJchrmYdRKq9wuJUcOiZRVkaJikGs4e037u
+         eGQyoS7vy7aj5G3ebzZqFOuVT1Fz0WFlWN1E7+z9ix0Ikl3DYEhE3/8c/6mXqXlqmroo
+         4STkfpkHlkT/WIoWMIgbr8caZb/C5xe2b2Ti6oPQHUchCsnWKeY1kEFlI9aHTOebf/zw
+         EJVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698430999; x=1699035799;
+        d=1e100.net; s=20230601; t=1698431001; x=1699035801;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=yVf4MoQ+pgFottQ0gtqF7KbCgtXqLOOMhwiDUmO9tI4=;
-        b=ktEeI7+pT4LHha1j2Gj1JkHlxCY4ezzm2XY4xxClQfcVFACjrom2rvD12Bk7Qdg68K
-         jM7JJPfnhvXj10gjmWZZQSmYUKUee+Fhl4/fsLcFIms4OzaYRDHyFYy+hbmeD2L8ZHc8
-         NgOumbX9E9z5b/neF+4JewozjXoMdpNLlHKkfzTn8i88wetww1eTckvDmMi4nb6YBlC3
-         OhMZT24AsUuwhSdbYwaYqZBg+hAyGMQTlhTJ4wmHMcak5026i5fd5a98ZjEuMIamYytu
-         0WL9W3P72A7D4P3aYXsms1/EiGMZv1hzFlqckQOYOwL/NxhOa7gq2PrJLV+oMthwDVVD
-         yQJg==
-X-Gm-Message-State: AOJu0YwvsiZ8r5O12skXZ/qxaCHF9ZVRW3gix2IknH77XI9BQmXkiTuF
-	bvm2t50XCg1h7Jf6XaX3Sorf8uQF7ZE=
-X-Google-Smtp-Source: AGHT+IG9XwjMpXerybQ74hZWKPyWlQIkLL60UP7vz/JRGdDaUmVGZC9suFSomOjVdAtgwjkxyK2jTqS148U=
+        bh=Xz8kt0PqFUxEdWsVGTpKhvh/0bAOqOlDGpUeOhSMn4Y=;
+        b=XwCdhk3H2q0gVpm/eT60sz6E+wn21S68Q0ojMUriJgJCWveEEQVS/U7Sm7SwWsakyI
+         tcOZlenXEYbqswS5FQ5cLEeDC6KZ2HsSwHf59WSszO9TNoOd/fTk7GCKkCGTiIZ/KzS7
+         9DlzfASYcVqXQV5Q0delWYvCQYac1coMNDDFnmdEbAvuJAd7A0B5rIy+GNyWgT1UJaq+
+         ZolnFzuW0Hgw5TV/v+tSpybPwg6Uz3M8I/jmft0TLZT++gtbYGR6LneetYvjl0mumWwG
+         T5GHYgqSgld+BW7DaNxqDlPZKBfwSYLqqbOD6eD4nPcxlFiQdDC7ziIpMLAmH7EaoCBI
+         ceGg==
+X-Gm-Message-State: AOJu0Yzr/rURbMPinWADyvZByZh58TsxPwMPM5qnDNsrZqjl/46f4/WC
+	lQhOdrwOwZpaIYgTmKtuZ0au9sH0eo0=
+X-Google-Smtp-Source: AGHT+IElp9q5EmMXm2ScJmYLrQOoQHqoyljn7k2kapIAuiZd/nyrTEs2J8MXUI1aCi13+9HebXd80A1xuUo=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a25:2fce:0:b0:d9a:f3dc:7d19 with SMTP id
- v197-20020a252fce000000b00d9af3dc7d19mr60503ybv.11.1698430998960; Fri, 27 Oct
- 2023 11:23:18 -0700 (PDT)
+ (user=seanjc job=sendgmr) by 2002:a0d:e653:0:b0:5a7:be10:461d with SMTP id
+ p80-20020a0de653000000b005a7be10461dmr68754ywe.2.1698431001067; Fri, 27 Oct
+ 2023 11:23:21 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri, 27 Oct 2023 11:22:09 -0700
+Date: Fri, 27 Oct 2023 11:22:10 -0700
 In-Reply-To: <20231027182217.3615211-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -66,9 +66,9 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20231027182217.3615211-1-seanjc@google.com>
 X-Mailer: git-send-email 2.42.0.820.g83a721a137-goog
-Message-ID: <20231027182217.3615211-28-seanjc@google.com>
-Subject: [PATCH v13 27/35] KVM: selftests: Add helpers to convert guest memory
- b/w private and shared
+Message-ID: <20231027182217.3615211-29-seanjc@google.com>
+Subject: [PATCH v13 28/35] KVM: selftests: Add helpers to do
+ KVM_HC_MAP_GPA_RANGE hypercalls (x86)
 From: Sean Christopherson <seanjc@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
 	Oliver Upton <oliver.upton@linux.dev>, Huacai Chen <chenhuacai@kernel.org>, 
@@ -97,120 +97,51 @@ Content-Type: text/plain; charset="UTF-8"
 
 From: Vishal Annapurve <vannapurve@google.com>
 
-Add helpers to convert memory between private and shared via KVM's
-memory attributes, as well as helpers to free/allocate guest_memfd memory
-via fallocate().  Userspace, i.e. tests, is NOT required to do fallocate()
-when converting memory, as the attributes are the single source of true.
-Provide allocate() helpers so that tests can mimic a userspace that frees
-private memory on conversion, e.g. to prioritize memory usage over
-performance.
+Add helpers for x86 guests to invoke the KVM_HC_MAP_GPA_RANGE hypercall,
+which KVM will forward to userspace and thus can be used by tests to
+coordinate private<=>shared conversions between host userspace code and
+guest code.
 
 Signed-off-by: Vishal Annapurve <vannapurve@google.com>
-Co-developed-by: Sean Christopherson <seanjc@google.com>
+[sean: drop shared/private helpers (let tests specify flags)]
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- .../selftests/kvm/include/kvm_util_base.h     | 48 +++++++++++++++++++
- tools/testing/selftests/kvm/lib/kvm_util.c    | 28 +++++++++++
- 2 files changed, 76 insertions(+)
+ .../selftests/kvm/include/x86_64/processor.h      | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/tools/testing/selftests/kvm/include/kvm_util_base.h b/tools/testing/selftests/kvm/include/kvm_util_base.h
-index 9f861182c02a..1441fca6c273 100644
---- a/tools/testing/selftests/kvm/include/kvm_util_base.h
-+++ b/tools/testing/selftests/kvm/include/kvm_util_base.h
-@@ -333,6 +333,54 @@ static inline void vm_enable_cap(struct kvm_vm *vm, uint32_t cap, uint64_t arg0)
- 	vm_ioctl(vm, KVM_ENABLE_CAP, &enable_cap);
- }
+diff --git a/tools/testing/selftests/kvm/include/x86_64/processor.h b/tools/testing/selftests/kvm/include/x86_64/processor.h
+index 25bc61dac5fb..a84863503fcb 100644
+--- a/tools/testing/selftests/kvm/include/x86_64/processor.h
++++ b/tools/testing/selftests/kvm/include/x86_64/processor.h
+@@ -15,6 +15,7 @@
+ #include <asm/msr-index.h>
+ #include <asm/prctl.h>
  
-+static inline void vm_set_memory_attributes(struct kvm_vm *vm, uint64_t gpa,
-+					    uint64_t size, uint64_t attributes)
-+{
-+	struct kvm_memory_attributes attr = {
-+		.attributes = attributes,
-+		.address = gpa,
-+		.size = size,
-+		.flags = 0,
-+	};
-+
-+	/*
-+	 * KVM_SET_MEMORY_ATTRIBUTES overwrites _all_ attributes.  These flows
-+	 * need significant enhancements to support multiple attributes.
-+	 */
-+	TEST_ASSERT(!attributes || attributes == KVM_MEMORY_ATTRIBUTE_PRIVATE,
-+		    "Update me to support multiple attributes!");
-+
-+	vm_ioctl(vm, KVM_SET_MEMORY_ATTRIBUTES, &attr);
-+}
-+
-+
-+static inline void vm_mem_set_private(struct kvm_vm *vm, uint64_t gpa,
-+				      uint64_t size)
-+{
-+	vm_set_memory_attributes(vm, gpa, size, KVM_MEMORY_ATTRIBUTE_PRIVATE);
-+}
-+
-+static inline void vm_mem_set_shared(struct kvm_vm *vm, uint64_t gpa,
-+				     uint64_t size)
-+{
-+	vm_set_memory_attributes(vm, gpa, size, 0);
-+}
-+
-+void vm_guest_mem_fallocate(struct kvm_vm *vm, uint64_t gpa, uint64_t size,
-+			    bool punch_hole);
-+
-+static inline void vm_guest_mem_punch_hole(struct kvm_vm *vm, uint64_t gpa,
-+					   uint64_t size)
-+{
-+	vm_guest_mem_fallocate(vm, gpa, size, true);
-+}
-+
-+static inline void vm_guest_mem_allocate(struct kvm_vm *vm, uint64_t gpa,
-+					 uint64_t size)
-+{
-+	vm_guest_mem_fallocate(vm, gpa, size, false);
-+}
-+
- void vm_enable_dirty_ring(struct kvm_vm *vm, uint32_t ring_size);
- const char *vm_guest_mode_string(uint32_t i);
++#include <linux/kvm_para.h>
+ #include <linux/stringify.h>
  
-diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
-index 45050f54701a..a140aee8d0f5 100644
---- a/tools/testing/selftests/kvm/lib/kvm_util.c
-+++ b/tools/testing/selftests/kvm/lib/kvm_util.c
-@@ -1176,6 +1176,34 @@ void vm_mem_region_delete(struct kvm_vm *vm, uint32_t slot)
- 	__vm_mem_region_delete(vm, memslot2region(vm, slot), true);
- }
+ #include "../kvm_util.h"
+@@ -1194,6 +1195,20 @@ uint64_t kvm_hypercall(uint64_t nr, uint64_t a0, uint64_t a1, uint64_t a2,
+ uint64_t __xen_hypercall(uint64_t nr, uint64_t a0, void *a1);
+ void xen_hypercall(uint64_t nr, uint64_t a0, void *a1);
  
-+void vm_guest_mem_fallocate(struct kvm_vm *vm, uint64_t base, uint64_t size,
-+			    bool punch_hole)
++static inline uint64_t __kvm_hypercall_map_gpa_range(uint64_t gpa,
++						     uint64_t size, uint64_t flags)
 +{
-+	const int mode = FALLOC_FL_KEEP_SIZE | (punch_hole ? FALLOC_FL_PUNCH_HOLE : 0);
-+	struct userspace_mem_region *region;
-+	uint64_t end = base + size;
-+	uint64_t gpa, len;
-+	off_t fd_offset;
-+	int ret;
-+
-+	for (gpa = base; gpa < end; gpa += len) {
-+		uint64_t offset;
-+
-+		region = userspace_mem_region_find(vm, gpa, gpa);
-+		TEST_ASSERT(region && region->region.flags & KVM_MEM_PRIVATE,
-+			    "Private memory region not found for GPA 0x%lx", gpa);
-+
-+		offset = (gpa - region->region.guest_phys_addr);
-+		fd_offset = region->region.guest_memfd_offset + offset;
-+		len = min_t(uint64_t, end - gpa, region->region.memory_size - offset);
-+
-+		ret = fallocate(region->region.guest_memfd, mode, fd_offset, len);
-+		TEST_ASSERT(!ret, "fallocate() failed to %s at %lx (len = %lu), fd = %d, mode = %x, offset = %lx\n",
-+			    punch_hole ? "punch hole" : "allocate", gpa, len,
-+			    region->region.guest_memfd, mode, fd_offset);
-+	}
++	return kvm_hypercall(KVM_HC_MAP_GPA_RANGE, gpa, size >> PAGE_SHIFT, flags, 0);
 +}
 +
- /* Returns the size of a vCPU's kvm_run structure. */
- static int vcpu_mmap_sz(void)
- {
++static inline void kvm_hypercall_map_gpa_range(uint64_t gpa, uint64_t size,
++					       uint64_t flags)
++{
++	uint64_t ret = __kvm_hypercall_map_gpa_range(gpa, size, flags);
++
++	GUEST_ASSERT(!ret);
++}
++
+ void __vm_xsave_require_permission(uint64_t xfeature, const char *name);
+ 
+ #define vm_xsave_require_permission(xfeature)	\
 -- 
 2.42.0.820.g83a721a137-goog
 
