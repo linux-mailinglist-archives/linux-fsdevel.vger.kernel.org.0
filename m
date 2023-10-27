@@ -1,128 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-1365-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1366-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E0EE7D998D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 15:17:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 972587D9997
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 15:20:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 073962824D1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 13:17:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C79CF1C20F5B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 13:20:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B56091EB33;
-	Fri, 27 Oct 2023 13:17:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 545B41EB33;
+	Fri, 27 Oct 2023 13:20:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="K1r8e1Fe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PExWIOgS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45FED1EB23
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 13:17:39 +0000 (UTC)
-Received: from mail-qk1-x729.google.com (mail-qk1-x729.google.com [IPv6:2607:f8b0:4864:20::729])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DDA31BD
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 06:17:29 -0700 (PDT)
-Received: by mail-qk1-x729.google.com with SMTP id af79cd13be357-7789cb322deso154876585a.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 06:17:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1698412648; x=1699017448; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vfz2Bqs5iMW7RXtRSpeD8StEjBYEn/6IXOAwCBucGLc=;
-        b=K1r8e1FeR7Q5UC+xd6wvRiPCgY832yvvN8W/S55POL8SshumYtf/OdUC/WH75XVDZX
-         +501ktg9o9NDSw7qwq3I2UiIAFv5y66HZz6f71QOQuOtX4J9M6fII4/DZNvWbc2vUGRy
-         GPjeSC1JhsnOaJGDlWwW2OGiiIcUMKCZOQyPTtiCO4fTTNC0JsK9MVdK0EYHPlys8SLP
-         oOg0EWP+nIe0sRO67zXa9QgjuLLbo19HHWcEQ2jzZ6VpS4RmfQ+NihUQLKCIDSEmMqHR
-         zaTJXR7G3C6G0HG1Jd0gUheMVMkbS+AVWrhZwP/TiEoMhclbHnMqiqJmsWtFxLsL0nZS
-         hvVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698412648; x=1699017448;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vfz2Bqs5iMW7RXtRSpeD8StEjBYEn/6IXOAwCBucGLc=;
-        b=ek6cUu5mDsMl9cvPAcco7TZBGO69Zl+GfKbP7wfkWJK151aDLmhlc2SNh/EFeDVyWg
-         G5RDhwwMCj0JhQdb1x+zu2SP3xuvwH6boWjANV7PV8HYzBHvpqKu1eftiMZazGJKdg2N
-         ZUcMjQQAN5kJGxH7WXt20wDyMtKTg3aBeTgS7NHbmJ7Mmxo3Op2fTMV5EbKn8yK1uKsy
-         w8hxevCg08VPGknXYSJos4VOH0JmeWxE1vdPp2sd2w644G8wqLy83GNS69ZkE+lpZWEN
-         YF8dfL053s5MWA6te9Rz/2VnQinvXBommmub8Y7pZnkejl3Sw/GyeHw3YjGrFd4qg2tn
-         0hwQ==
-X-Gm-Message-State: AOJu0YyzuCxsYaXdCSggU67VXphzA7siTm64KgB3uQRrpHdmOGoNTp1/
-	+nkgK34h+pNiriPMM0N3Cllkaw==
-X-Google-Smtp-Source: AGHT+IH7/ohkWLF0+aCKgnhC2MdbpmoBu18H1F3h/HjHu/1SCtZzSSZKky/PkY5gCI2oXZZwMFd3oA==
-X-Received: by 2002:a05:620a:d8a:b0:778:8f9c:38e8 with SMTP id q10-20020a05620a0d8a00b007788f9c38e8mr2682344qkl.37.1698412648072;
-        Fri, 27 Oct 2023 06:17:28 -0700 (PDT)
-Received: from localhost (cpe-76-182-20-124.nc.res.rr.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id bq14-20020a05620a468e00b0076c8fd39407sm521741qkb.113.2023.10.27.06.17.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Oct 2023 06:17:27 -0700 (PDT)
-Date: Fri, 27 Oct 2023 09:17:26 -0400
-From: Josef Bacik <josef@toxicpanda.com>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
-	Christian Brauner <brauner@kernel.org>, Chris Mason <clm@fb.com>,
-	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 864651EB22
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 13:20:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 926BBC433C7;
+	Fri, 27 Oct 2023 13:20:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1698412813;
+	bh=ynGr84yTGGF9/gJAR3OQsPXTeVng460AC5JqZcxsnpE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=PExWIOgSZotTyc4Z2Of9v5971k2CrLjvfIm57CliR4zVCV35RIMKvubK+Ub6/hz+X
+	 sGCZjLggiQ4ImEm4h0pejx+ReoKuCRuZzgsws6Y5Yy59VRQlTcOfqcXOdPjrqCXcnQ
+	 mfT1F3UArhyoxCg7lrUEhhB6rjL41cmdg196uvY/B1VPdlaYcezj1u39W2DmowZxqZ
+	 0Cxwz0qeT+RSUNUWlxtPcgu9FG5EmTrMALGC6xAGbu3b/A6rHQbNCnBd5Gkx13DJW0
+	 f0DHAeVTqKO3l/VxnNPU4EjLknv+wntFDkjz8RjsJB11GKb3x+n5wz+vHUcG9IN26F
+	 CMyOcYm5j2r2A==
+From: Christian Brauner <brauner@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	"Darrick J. Wong" <djwong@kernel.org>,
 	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/3] fanotify support for btrfs sub-volumes
-Message-ID: <20231027131726.GA2915471@perftesting>
-References: <20231025135048.36153-1-amir73il@gmail.com>
- <ZTk1ffCMDe9GrJjC@infradead.org>
- <20231025210654.GA2892534@perftesting>
- <ZTtOmWEx5neNKkez@infradead.org>
+Subject: Re: [PATCH] fs: streamline thaw_super_locked
+Date: Fri, 27 Oct 2023 15:20:04 +0200
+Message-Id: <20231027-widmen-seefahrt-09d2dfc8d44f@brauner>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20231027064001.GA9469@lst.de>
+References: <20231024-vfs-super-freeze-v2-0-599c19f4faac@kernel.org> <20231027064001.GA9469@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZTtOmWEx5neNKkez@infradead.org>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=995; i=brauner@kernel.org; h=from:subject:message-id; bh=ynGr84yTGGF9/gJAR3OQsPXTeVng460AC5JqZcxsnpE=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRa72Rk+uficOBwkPICZ6mbqbMjbi6Z4OoZIV/5zafWtfhG fN3pjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgInwAbnzYrZcTXS6XqMw5Xb2+ttXnr d8rmWxvxpQF7ageOPXJWs+Mvxm+btLxjqeW7DLSexUM9+i3w0u57vvBDdO82A4UFy5oIUZAA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 26, 2023 at 10:46:01PM -0700, Christoph Hellwig wrote:
-> I think you're missing the point.  A bunch of statx fields might be
-> useful, but they are not solving the problem.  What you need is
-> a separate vfsmount per subvolume so that userspace sees when it
-> is crossing into it.  We probably can't force this onto existing
-> users, so it needs a mount, or even better on-disk option but without
-> that we're not getting anywhere.
+On Fri, 27 Oct 2023 08:40:01 +0200, Christoph Hellwig wrote:
+> Add a new out_unlock label to share code that just releases s_umount
+> and returns an error, and rename and reuse the out label that deactivates
+> the sb for one more case.
+> 
 > 
 
-We have this same discussion every time, and every time you stop responding
-after I point out the problems with it.
+Applied to the vfs.super branch of the vfs/vfs.git tree.
+Patches in the vfs.super branch should appear in linux-next soon.
 
-A per-subvolume vfsmount means that /proc/mounts /proc/$PID/mountinfo becomes
-insanely dumb.  I've got millions of machines in this fleet with thousands of
-subvolumes.  One of our workloads fires up several containers per task and runs
-multiple tasks per machine, so on the order of 10-20k subvolumes.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-So now I've got thousands of entries in /proc/mounts, and literally every system
-related tool parses /proc/mounts every 4 nanoseconds, now I'm significantly
-contributing to global warming from the massive amount of CPU usage that is
-burned parsing this stupid file.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-Additionally, now you're ending up with potentially sensitive information being
-leaked through /proc/mounts that you didn't expect to be leaked before.  I've
-got users complaining to be me because "/home/john/twilight_fanfic" showed up in
-their /proc/mounts.
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-And then there's the expiry thing.  Now they're just directories, reclaim works
-like it works for anything else.  With auto mounts they have to expire at some
-point, which makes them so much more heavier weight than we want to sign up for.
-Who knows what sort of scalability issues we'll run into.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.super
 
-There were some internal related things that went wrong with this when I tried a
-decade ago, I'm sure I could fix that by changing vfsmount, so I don't see that
-as a real blocker, but it's not as straightforward as just doing it.
-
-I have to support this file system in the real world, with real world stupidity
-happening that I can't control.  I wholeheartedly agree that the statx fields
-are not a direct fix, it's a comprimise.  It's a way forward to let the users
-who care about the distinction be able to get the information they need to make
-better decisions about what to do when they run into btrfs's weirdness.  It
-doesn't solve the st_dev problem today, or even for a couple of years, but it
-gives us a way to eventually change the st_dev thing.  Thanks,
-
-Josef
+[1/1] fs: streamline thaw_super_locked
+      https://git.kernel.org/vfs/vfs/c/6d0acff564f2
 
