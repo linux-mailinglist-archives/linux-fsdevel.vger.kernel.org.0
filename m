@@ -1,221 +1,152 @@
-Return-Path: <linux-fsdevel+bounces-1449-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1450-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB30C7DA099
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 20:36:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 912777DA0D4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 20:46:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F5F6B21518
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 18:36:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DF3F1C20F7F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 18:46:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7588B3D961;
-	Fri, 27 Oct 2023 18:36:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 910523B790;
+	Fri, 27 Oct 2023 18:46:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IMKhNzgH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XESBeEDO"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5B103D3B3
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 18:36:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DC3AC433C8;
-	Fri, 27 Oct 2023 18:36:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D96BC38FAE
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 18:46:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3952AC433C7;
+	Fri, 27 Oct 2023 18:46:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1698431797;
-	bh=+KCiqcUxhGzJk+V3uKLhq3+C5BdyzVXPbI2bbWul+qs=;
+	s=k20201202; t=1698432371;
+	bh=cTVhvKwFv7f70NItbRYb8qf7N9BSevmPLGCbpfnoi5I=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IMKhNzgHmvIFPnWw1Oj9ftPpTFIBtViMuPxR0m1P9FvW5JBwQExMqHwosZMROkd8D
-	 EsEc9Osf2Q6VpdNnDrQPtKp0oSf0bvEbh2ygddlSAo2SoX17kCiiOtlpu/9IEEfX+l
-	 sE9CdDoKEJ5OdfUmCd4Ow0hnSwLWyb2WmBrAIq8cvX3eEFb/R/W2K3Oc6oLdpsE1JP
-	 mhBHTeHzk8O0atk4gYpFBODSTYXxFz/4SNpR2ghM+m9ZKfuKPRRZdwVx3CbmprnUhs
-	 Gjm3AX6OXDZ5Uy7fyLAWwT5aa2eVUyz2eYydrLT9KrAqoVPW+pgoAQvLQo/Hex7AyJ
-	 NTlFZt3FqFexw==
-Date: Fri, 27 Oct 2023 11:36:36 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Dave Chinner <david@fromorbit.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Dave Chinner <dchinner@redhat.com>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-bcachefs@vger.kernel.org,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: (subset) [PATCH 22/32] vfs: inode cache conversion to hash-bl
-Message-ID: <20231027183636.GA11382@frogsfrogsfrogs>
-References: <20230509165657.1735798-1-kent.overstreet@linux.dev>
- <20230509165657.1735798-23-kent.overstreet@linux.dev>
- <20230523-zujubeln-heizsysteme-f756eefe663e@brauner>
- <20231019153040.lj3anuescvdprcq7@f>
- <20231019155958.7ek7oyljs6y44ah7@f>
- <ZTJmnsAxGDnks2aj@dread.disaster.area>
- <CAGudoHHqpk+1b6KqeFr6ptnm-578A_72Ng3H848WZP0GoyUQbw@mail.gmail.com>
- <ZTYAUyiTYsX43O9F@dread.disaster.area>
- <CAGudoHGzX2H4pUuDNYzYOf8s-HaZuAi7Dttpg_SqtXAgTw8tiw@mail.gmail.com>
+	b=XESBeEDOyBvXP89LvNCJztLsCMP4GqyewspPvIEW9YDiSCyeTcX8whnhYiXX3N0+4
+	 6ImRtZrFTKFqYZOTIIncTR/PLhdNmUqF5jNuvMp8+xAb/7Kc42fpL4sv0UBE9F1fAa
+	 Ufd3SO2RvLbpJmFjNuZSimPXUH5wb5mLgMtADsU8gtAqc00zqWdxTrR/oAy9S+5J2Y
+	 Gefh5JscaA+g39geoO6/0Fqiy3nznTFFjbE65k69G63PG8ayBiOytxdhScXOIRq4Ew
+	 oW4WPMtSprZrhrSUYio+kHXcFGD4PZPl+0Q7ZVthAsDL0HTU4KEwOShEgUfeixrp6r
+	 3SziP216wvLKQ==
+Date: Fri, 27 Oct 2023 20:46:05 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "Darrick J. Wong" <djwong@kernel.org>,
+	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+	Shirley Ma <shirley.ma@oracle.com>, hch@lst.de, jstancek@redhat.com,
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [GIT PULL] iomap: bug fixes for 6.6-rc7
+Message-ID: <20231027-gestiegen-saftig-2e636d251efa@brauner>
+References: <169786962623.1265253.5321166241579915281.stg-ugh@frogsfrogsfrogs>
+ <CAHk-=whNsCXwidLvx8u_JBH91=Z5EFw9FVj57HQ51P7uWs4yGQ@mail.gmail.com>
+ <20231023223810.GW3195650@frogsfrogsfrogs>
+ <20231024-flora-gerodet-8ec178f87fe9@brauner>
+ <20231026031325.GH3195650@frogsfrogsfrogs>
+ <CAHk-=whQHBdJTr9noNuRwMtFrWepMHhnq6EtcAypegi5aUkQnQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAGudoHGzX2H4pUuDNYzYOf8s-HaZuAi7Dttpg_SqtXAgTw8tiw@mail.gmail.com>
+In-Reply-To: <CAHk-=whQHBdJTr9noNuRwMtFrWepMHhnq6EtcAypegi5aUkQnQ@mail.gmail.com>
 
-On Fri, Oct 27, 2023 at 07:13:11PM +0200, Mateusz Guzik wrote:
-> On 10/23/23, Dave Chinner <david@fromorbit.com> wrote:
-> > On Fri, Oct 20, 2023 at 07:49:18PM +0200, Mateusz Guzik wrote:
-> >> On 10/20/23, Dave Chinner <david@fromorbit.com> wrote:
-> >> > On Thu, Oct 19, 2023 at 05:59:58PM +0200, Mateusz Guzik wrote:
-> >> >> > To be clear there is no urgency as far as I'm concerned, but I did
-> >> >> > run
-> >> >> > into something which is primarily bottlenecked by inode hash lock
-> >> >> > and
-> >> >> > looks like the above should sort it out.
-> >> >> >
-> >> >> > Looks like the patch was simply forgotten.
-> >> >> >
-> >> >> > tl;dr can this land in -next please
-> >> >>
-> >> >> In case you can't be arsed, here is something funny which may convince
-> >> >> you to expedite. ;)
-> >> >>
-> >> >> I did some benching by running 20 processes in parallel, each doing
-> >> >> stat
-> >> >> on a tree of 1 million files (one tree per proc, 1000 dirs x 1000
-> >> >> files,
-> >> >> so 20 mln inodes in total).  Box had 24 cores and 24G RAM.
-> >> >>
-> >> >> Best times:
-> >> >> Linux:          7.60s user 1306.90s system 1863% cpu 1:10.55 total
-> >> >> FreeBSD:        3.49s user 345.12s system 1983% cpu 17.573 total
-> >> >> OpenBSD:        5.01s user 6463.66s system 2000% cpu 5:23.42 total
-> >> >> DragonflyBSD:   11.73s user 1316.76s system 1023% cpu 2:09.78 total
-> >> >> OmniosCE:       9.17s user 516.53s system 1550% cpu 33.905 total
-> >> >>
-> >> >> NetBSD failed to complete the run, OOM-killing workers:
-> >> >> http://mail-index.netbsd.org/tech-kern/2023/10/19/msg029242.html
-> >> >> OpenBSD is shafted by a big kernel lock, so no surprise it takes a
-> >> >> long
-> >> >> time.
-> >> >>
-> >> >> So what I find funny is that Linux needed more time than OmniosCE (an
-> >> >> Illumos variant, fork of Solaris).
-> >> >>
-> >> >> It also needed more time than FreeBSD, which is not necessarily funny
-> >> >> but not that great either.
-> >> >>
-> >> >> All systems were mostly busy contending on locks and in particular
-> >> >> Linux
-> >> >> was almost exclusively busy waiting on inode hash lock.
-> >> >
-> >> > Did you bother to test the patch, or are you just complaining
-> >> > that nobody has already done the work for you?
-> >>
-> >> Why are you giving me attitude?
+On Thu, Oct 26, 2023 at 08:10:01AM -1000, Linus Torvalds wrote:
+> On Wed, 25 Oct 2023 at 17:13, Darrick J. Wong <djwong@kernel.org> wrote:
 > >
-> > Look in the mirror, mate.
-> >
-> > Starting off with a derogatory statement like:
-> >
-> > "In case you can't be arsed, ..."
-> >
-> > is a really good way to start a fight.
-> >
-> > I don't think anyone working on this stuff couldn't be bothered to
-> > get their lazy arses off their couches to get it merged. Though you
-> > may not have intended it that way, that's exactly what "can't be
-> > arsed" means.
-> >
-> > I have not asked for this code to be merged because I'm not ready to
-> > ask for it to be merged. I'm trying to be careful and cautious about
-> > changing core kernel code that every linux installation out there
-> > uses because I care about this code being robust and stable. That's
-> > the exact opposite of "can't be arsed"....
-> >
-> > Further, you have asked for code that is not ready to be merged to
-> > be merged without reviewing it or even testing it to see if it
-> > solved your reported problem. This is pretty basic stuff - it you
-> > want it merged, then *you also need to put effort into getting it
-> > merged* regardless of who wrote the code. TANSTAAFL.
-> >
-> > But you've done neither - you've just made demands and thrown
-> > hypocritical shade implying busy people working on complex code are
-> > lazy arses.
-> >
+> > Similar to what we just did with XFS, I propose breaking up the iomap
+> > Maintainer role into pieces that are more manageable by a single person.
+> > As RM, all you'd have to do is integrate reviewed patches and pull
+> > requests into one of your work branches.  That gives you final say over
+> > what goes in and how it goes in, instead of letting branches collide in
+> > for-next without warning.
 > 
-> So I took few days to take a look at this with a fresh eye and I see
-> where the major disconnect is coming from, albeit still don't see how
-> it came to be nor why it persists.
+> I _think_ what you are saying is that you'd like to avoid being both a
+> maintainer and a developer.
 > 
-> To my understanding your understanding is that I demand you carry the
-> hash bl patch over the finish line and I'm rude about it as well.
+> Now, I'm probably hugely biased and going by personal experience, but
+> I do think that doing double duty is the worst of both worlds, and
+> pointlessly stressful.
 > 
-> That is not my position here though.
+> As a maintainer, you have to worry about the big picture (things like
+> release timing, even if it's just a "is this a fix for this release,
+> or should it get queued for the next one") but also code-related
+> things like "we have two different things going on, let's sort them
+> out separately". Christian had that kind of issue just a couple of
+> days ago with the btrfs tree.
 > 
-> For starters my opening e-mail was to Christian, not you. You are
-> CC'ed as the patch author. It is responding to an e-mail which claimed
-> the patch would land in -next, which to my poking around did not
-> happen (and I checked it's not in master either). Since there was no
-> other traffic about it that I could find, I figured it was probably
-> forgotten. You may also notice the e-mail explicitly states:
-> 1. I have a case which runs into inode hash being a problem
-> 2. *there is no urgency*, I'm just asking what's up with the patch not
-> getting anywhere.
+> But then, as a developer, those are distractions and just add stress
+> and worry, and distract from whatever you're working on. As a
+> developer, the last thing you want to worry about is something else
+> than the actual technical issue you're trying to solve.
 > 
-> The follow up including a statement about "being arsed" once more was
-> to Christian, not you and was rather "tongue in cheek".
+> And obviously, there's a lot of overlap. A maintainer needs to be
+> _able_ to be a developer just to make good choices. And the whole
+> "maintainer vs developer" doesn't have to be two different people,
+> somebody might shift from one to the other simply because maybe they
+> enjoy both roles. Just not at the same time, all the time, having both
+> things putting different stress on you.
+> 
+> You can *kind* of see the difference in our git tree if you do
+> 
+>     git rev-list --count --author=XYZ --no-merges --since=1.year HEAD
+> 
+> to see "code authorship" (aka developer), vs
+> 
+>     git rev-list --count --committer=XYZ --since=1.year HEAD
+> 
+> which shows some kind of approximation of "maintainership". Obviously
+> there is overlap (potentially a lot of it) and the above isn't some
+> absolute thing, but you can see some patterns.
+> 
+> I personally wish we had more people who are maintainers _without_
+> having to worry too much about developing new code.  One of the issues
+> that keeps coming up is that companies don't always seem to appreciate
+> maintainership (which is a bit strange - the same companies may then
+> _love_ appreciateing managers, which is something very different but
+> has some of the same flavour to it).
+> 
+> And btw, I don't want to make that "I wish we had more maintainers" be
+> a value judgement. It's not that maintainers are somehow more
+> important than developers. I just think they are two fairly different
+> roles, and I think one person doing both puts unnecessary stress on
+> that person.
 
-I thought that was a very rude way to address Christian.
+I think most of us enjoy both. Personally, I always try to carve out
+time where I can work on stuff that I find interesting. It helps to stay
+sane and it helps with providing good reviews. It also helps being
+reminded how easy it is to code up bugs.
 
-Notice how he hasn't even given you a response?
+When there's an interesting series that morphes into larger subsystem
+massaging that's always great because that's a chance to collaborate and
+different people can take on different parts. And it usually means one
+does get a few patches in as well.
 
-"Hello, this patch improves performance for me on _______ workload.
-What needs to be done to get this ready for merging?  I'd like to
-take on that work."
+In a smaller subsystem it's probably ok to be main developer, reviewer,
+and developer at the same time. But in a busy subsystem that trias isn't
+sustainable. Let alone scaling that to multiple subsystems. 
 
---D
+One of the critical parts is review. Good reviews are often insanely
+expensive and they are very much a factor in burning people out. If one
+only ever reviews and the load never ends that's going to fsck with you
+in the long run.
 
-> If you know about Illumos, it is mostly slow and any serious
-> performance work stopped there when Oracle closed the codebase over a
-> decade ago. Or to put it differently, one has to be doing something
-> really bad to not be faster today. And there was this bad -- the inode
-> hash. I found it amusing and decided to share in addition to asking
-> about the patch.
-> 
-> So no Dave, I'm not claiming the patch is not in because anyone is lazy.
-> 
-> Whether the patch is ready for reviews and whatnot is your call to
-> make as the author.
-> 
-> To repeat from my previous e-mail I note the lock causes real problems
-> in a real-world setting, it's not just microbenchmarks, but I'm in no
-> position to test it against the actual workload (only the part I
-> carved out into a benchmark, where it does help -- gets rid of the
-> nasty back-to-back lock acquire, first to search for the inode and
-> then to insert a new one).
-> 
-> If your assessment is that more testing is needed, that makes sense
-> and is again your call to make. I repeat again I can't help with this
-> bit though. And if you don't think the effort is justified at the
-> moment (or there are other things with higher priority), so be it.
-> 
-> It may be I'll stick around in general and if so it may be I'm going
-> to run into you again.
-> With this in mind:
-> 
-> > Perhaps you should consider your words more carefully in future?
-> >
-> 
-> On that front perhaps you could refrain from assuming someone is
-> trying to call you names or whatnot. But more importantly if you
-> consider an e-mail to be rude, you can call it out instead of
-> escalating or responding in what you consider to be the same tone.
-> 
-> All that said I'm bailing from this patchset.
-> 
-> Cheers,
-> -- 
-> Mateusz Guzik <mjguzik gmail.com>
-> 
+A reviewer must be technically great, have design, context,
+maintainability, and wider context and future of the subsystem in mind,
+and not be afraid to have code changed or removed that they wrote (That
+last part really matters.), and also be ok with being publicly wrong in
+front of a whole bunch of smart people (Which I want to stress is
+absolutely fine and almost unavoidable.).
+
+But once you have a couple of good reviewers in a subsystem that you can
+really rely on that if they give an ack/rvb it's solid enough (not
+necessarily bug free even) that's really good. It not just takes away
+pressure it also means that it's possible for other
+reviewers/maintainers to go develop stuff themselves.
 
