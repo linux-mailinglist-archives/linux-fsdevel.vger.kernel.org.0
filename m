@@ -1,45 +1,45 @@
-Return-Path: <linux-fsdevel+bounces-1375-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1376-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65C467D9BCF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 16:43:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E83A7D9C01
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 16:47:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07236B21481
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 14:43:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A26B21C2108C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 14:47:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB98718E05;
-	Fri, 27 Oct 2023 14:43:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 711211EB39;
+	Fri, 27 Oct 2023 14:47:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O26UC/Uu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Al1HfaZl"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E20F1773E
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 14:42:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4474C433C8;
-	Fri, 27 Oct 2023 14:42:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B438918654
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 14:46:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41A35C433C7;
+	Fri, 27 Oct 2023 14:46:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1698417774;
-	bh=Fo/Q1tCDWCMX1UtKnc1Cp7UAgDSwFYYmaR8Bh6BaonY=;
+	s=k20201202; t=1698418007;
+	bh=Is8861coE2dMv1ozjLxtkdJ2o33KTHb/T1OB32cPMlI=;
 	h=From:To:Cc:Subject:Date:From;
-	b=O26UC/UuNw0xh6Zdv/uqfIDo9PzFFgslo71++vldE9+ovHIqcDtcdJ32DOklnNysD
-	 8vw8fNJ/Koxx0NIs4H3bUoW04tOt+U5nFt08FIbLWvIH7626CeDqFpsxRsTJ26qT4i
-	 AsGJhlHelTxBGjM3+OOdVG2Rg/6uFjZONyM1nB9jAo+P8u2PkJJmvTK33WXrsiHFJW
-	 RTPmxtr7U1qyd3Gmj6zWfeCKJDLaTiHzLAztaNDEIwgLDQwWi1s6QDVU4okFRXsR7P
-	 P7DnfSZvHM7Sp0kcivY0fqivsp2D4QAErP3xfOTJ8enJXdeMFIuzHXCc+c4wSO8y8K
-	 kSf0cgoU/fItw==
+	b=Al1HfaZlOyDX0AmQ6zkklGZSoiEFZg6G/MY0wPwA6qCyN9wZLByEbwgCCpizGCJnw
+	 LkYO73cNmSSqta9nN100y8U7QczB3MfZxqjqSlpQ9TGXN/HF/y63D8GGz9xcDRsF9L
+	 BEdkYb6MH82s0Ib1Croi2IybVsInVjs76mWflxtOQfSvMbXR/s6TvvGBltpWtJLLKM
+	 ddC1JCnuk1+IYw3hAXN8sBGFlhpdq5Vd4jdEUvkcnV7HQTJJkztioWDr5Y3WR0h+2J
+	 mVxIvcCrdSAcZjr5kZ7MMxKHX+AcOCbzTq+Dopz4cbAd4zEcERcgVbzf0qIfzhD9kn
+	 DyLdo0FUtwYeA==
 From: Christian Brauner <brauner@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Christian Brauner <brauner@kernel.org>,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [GIT PULL for v6.7] vfs io updates
-Date: Fri, 27 Oct 2023 16:42:35 +0200
-Message-Id: <20231027-vfs-io-82cd868e9b4f@brauner>
+Subject: [GIT PULL for v6.7] vfs xattr updates
+Date: Fri, 27 Oct 2023 16:44:00 +0200
+Message-Id: <20231027-vfs-xattr-6eeea5632c93@brauner>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -47,44 +47,23 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4203; i=brauner@kernel.org; h=from:subject:message-id; bh=bS0RKv9WrQ4+qTFajR4rqczirZYMqhCIdwgz1AYwIEk=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRanzpzjdFP5IDQkfiD9x6btUcWKmVN2dZx/XiV9Hr17uS4 lS1WHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABMpDGL4K2JfWBvDWxY5u0bUV17YyW e22pKr971PCV3/Fpp6/fH9Awz/XRrTfmROncllfFR3wxOBYzumuBtITJz5ezv/k5qzohIerAA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5883; i=brauner@kernel.org; h=from:subject:message-id; bh=L23UqZR0i6BQlmP1jQpRywpoX9dfv6WXNEUHjt3dBWk=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRan6n8YDzxrXO+/dKAVk7R6sYweYELntOzjseZCbeV7rz2 5sS3jlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIm0tzH8z9cR+n0gWfCFrK/gtijOKx MC4iOEk+uXdk9RaTT227r2KcMfzgRZixUpbzZOF+Z32Rr1xHU6g9ZkweYD3GI8hrsT3XSZAQ==
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 Hey Linus,
 
 /* Summary */
-This contain's David's iov_iter cleanup work to convert the iov_iter
-iteration macros to inline functions:
+The 's_xattr' field of 'struct super_block' currently requires a mutable
+table of 'struct xattr_handler' entries (although each handler itself is
+const). However, no code in vfs actually modifies the tables.
 
-* Remove last_offset from iov_iter as it was only used by ITER_PIPE.
-* Add a __user tag on copy_mc_to_user()'s dst argument on x86 to match
-  that on powerpc and get rid of a sparse warning.
-* Convert iter->user_backed to user_backed_iter() in the sound PCM
-  driver.
-* Convert iter->user_backed to user_backed_iter() in a couple of
-  infiniband drivers.
-* Renumber the type enum so that the ITER_* constants match the order in
-  iterate_and_advance*().
-* Since the preceding patch puts UBUF and IOVEC at 0 and 1, change
-  user_backed_iter() to just use the type value and get rid of the extra
-  flag.
-* Convert the iov_iter iteration macros to always-inline functions to
-  make the code easier to follow. It uses function pointers, but they
-  get optimised away.
-* Move the check for ->copy_mc to _copy_from_iter() and
-  copy_page_from_iter_atomic() rather than in memcpy_from_iter_mc()
-  where it gets repeated for every segment.  Instead, we check once and
-  invoke a side function that can use iterate_bvec() rather than
-  iterate_and_advance() and supply a different step function.
-* Move the copy-and-csum code to net/ where it can be in proximity with
-  the code that uses it.
-* Fold memcpy_and_csum() in to its two users.
-* Move csum_and_copy_from_iter_full() out of line and merge in
-  csum_and_copy_from_iter() since the former is the only caller of the
-  latter.
-* Move hash_and_copy_to_iter() to net/ where it can be with its only
-  caller.
+This changes the type of 's_xattr' to allow const tables, and modifies
+existing file systems to move their tables to .rodata. This is desirable
+because these tables contain entries with function pointers in them;
+moving them to .rodata makes it considerably less likely to be modified
+accidentally or maliciously at runtime.
 
 /* Testing */
 clang: Debian clang version 16.0.6 (16)
@@ -104,46 +83,112 @@ The following changes since commit ce9ecca0238b140b88f43859b211c9fdfd8e5b70:
 
 are available in the Git repository at:
 
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.7.iov_iter
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.7.xattr
 
-for you to fetch changes up to b5f0e20f444cd150121e0ce912ebd3f2dabd12bc:
+for you to fetch changes up to a640d888953cd18e8542283653c20160b601d69d:
 
-  iov_iter, net: Move hash_and_copy_to_iter() to net/ (2023-10-09 09:35:14 +0200)
+  const_structs.checkpatch: add xattr_handler (2023-10-12 17:14:11 +0200)
 
-Please consider pulling these changes from the signed vfs-6.7.iov_iter tag.
+Please consider pulling these changes from the signed vfs-6.7.xattr tag.
 
 Thanks!
 Christian
 
 ----------------------------------------------------------------
-vfs-6.7.iov_iter
+vfs-6.7.xattr
 
 ----------------------------------------------------------------
-David Howells (12):
-      iov_iter: Remove last_offset from iov_iter as it was for ITER_PIPE
-      iov_iter, x86: Be consistent about the __user tag on copy_mc_to_user()
-      sound: Fix snd_pcm_readv()/writev() to use iov access functions
-      infiniband: Use user_backed_iter() to see if iterator is UBUF/IOVEC
-      iov_iter: Renumber ITER_* constants
-      iov_iter: Derive user-backedness from the iterator type
-      iov_iter: Convert iterate*() to inline funcs
-      iov_iter: Don't deal with iter->copy_mc in memcpy_from_iter_mc()
-      iov_iter, net: Move csum_and_copy_to/from_iter() to net/
-      iov_iter, net: Fold in csum_and_memcpy()
-      iov_iter, net: Merge csum_and_copy_from_iter{,_full}() together
-      iov_iter, net: Move hash_and_copy_to_iter() to net/
+Thomas Weißschuh (1):
+      const_structs.checkpatch: add xattr_handler
 
- arch/x86/include/asm/uaccess.h           |   2 +-
- arch/x86/lib/copy_mc.c                   |   8 +-
- drivers/infiniband/hw/hfi1/file_ops.c    |   2 +-
- drivers/infiniband/hw/qib/qib_file_ops.c |   2 +-
- include/linux/iov_iter.h                 | 274 +++++++++++++++++++
- include/linux/skbuff.h                   |   3 +
- include/linux/uio.h                      |  34 +--
- lib/iov_iter.c                           | 437 ++++++++++---------------------
- net/core/datagram.c                      |  75 +++++-
- net/core/skbuff.c                        |  40 +++
- sound/core/pcm_native.c                  |   4 +-
- 11 files changed, 540 insertions(+), 341 deletions(-)
- create mode 100644 include/linux/iov_iter.h
+Wedson Almeida Filho (29):
+      xattr: make the xattr array itself const
+      ext4: move ext4_xattr_handlers to .rodata
+      9p: move xattr-related structs to .rodata
+      afs: move afs_xattr_handlers to .rodata
+      btrfs: move btrfs_xattr_handlers to .rodata
+      ceph: move ceph_xattr_handlers to .rodata
+      ecryptfs: move ecryptfs_xattr_handlers to .rodata
+      erofs: move erofs_xattr_handlers and xattr_handler_map to .rodata
+      ext2: move ext2_xattr_handlers and ext2_xattr_handler_map to .rodata
+      f2fs: move f2fs_xattr_handlers and f2fs_xattr_handler_map to .rodata
+      fuse: move fuse_xattr_handlers to .rodata
+      gfs2: move gfs2_xattr_handlers_max to .rodata
+      hfs: move hfs_xattr_handlers to .rodata
+      hfsplus: move hfsplus_xattr_handlers to .rodata
+      jffs2: move jffs2_xattr_handlers to .rodata
+      jfs: move jfs_xattr_handlers to .rodata
+      kernfs: move kernfs_xattr_handlers to .rodata
+      nfs: move nfs4_xattr_handlers to .rodata
+      ntfs3: move ntfs_xattr_handlers to .rodata
+      ocfs2: move ocfs2_xattr_handlers and ocfs2_xattr_handler_map to .rodata
+      orangefs: move orangefs_xattr_handlers to .rodata
+      reiserfs: move reiserfs_xattr_handlers to .rodata
+      smb: move cifs_xattr_handlers to .rodata
+      squashfs: move squashfs_xattr_handlers to .rodata
+      ubifs: move ubifs_xattr_handlers to .rodata
+      xfs: move xfs_xattr_handlers to .rodata
+      overlayfs: move xattr tables to .rodata
+      shmem: move shmem_xattr_handlers to .rodata
+      net: move sockfs_xattr_handlers to .rodata
+
+ fs/9p/xattr.c                    | 8 ++++----
+ fs/9p/xattr.h                    | 2 +-
+ fs/afs/internal.h                | 2 +-
+ fs/afs/xattr.c                   | 2 +-
+ fs/btrfs/xattr.c                 | 2 +-
+ fs/btrfs/xattr.h                 | 2 +-
+ fs/ceph/super.h                  | 2 +-
+ fs/ceph/xattr.c                  | 2 +-
+ fs/ecryptfs/ecryptfs_kernel.h    | 2 +-
+ fs/ecryptfs/inode.c              | 2 +-
+ fs/erofs/xattr.c                 | 2 +-
+ fs/erofs/xattr.h                 | 4 ++--
+ fs/ext2/xattr.c                  | 4 ++--
+ fs/ext2/xattr.h                  | 2 +-
+ fs/ext4/xattr.c                  | 2 +-
+ fs/ext4/xattr.h                  | 2 +-
+ fs/f2fs/xattr.c                  | 4 ++--
+ fs/f2fs/xattr.h                  | 2 +-
+ fs/fuse/fuse_i.h                 | 2 +-
+ fs/fuse/xattr.c                  | 2 +-
+ fs/gfs2/super.h                  | 4 ++--
+ fs/gfs2/xattr.c                  | 4 ++--
+ fs/hfs/attr.c                    | 2 +-
+ fs/hfs/hfs_fs.h                  | 2 +-
+ fs/hfsplus/xattr.c               | 2 +-
+ fs/hfsplus/xattr.h               | 2 +-
+ fs/jffs2/xattr.c                 | 2 +-
+ fs/jffs2/xattr.h                 | 2 +-
+ fs/jfs/jfs_xattr.h               | 2 +-
+ fs/jfs/xattr.c                   | 2 +-
+ fs/kernfs/inode.c                | 2 +-
+ fs/kernfs/kernfs-internal.h      | 2 +-
+ fs/nfs/nfs.h                     | 2 +-
+ fs/nfs/nfs4_fs.h                 | 2 +-
+ fs/nfs/nfs4proc.c                | 2 +-
+ fs/ntfs3/ntfs_fs.h               | 2 +-
+ fs/ntfs3/xattr.c                 | 2 +-
+ fs/ocfs2/xattr.c                 | 4 ++--
+ fs/ocfs2/xattr.h                 | 2 +-
+ fs/orangefs/orangefs-kernel.h    | 2 +-
+ fs/orangefs/xattr.c              | 2 +-
+ fs/overlayfs/super.c             | 4 ++--
+ fs/reiserfs/reiserfs.h           | 2 +-
+ fs/reiserfs/xattr.c              | 4 ++--
+ fs/smb/client/cifsfs.h           | 2 +-
+ fs/smb/client/xattr.c            | 2 +-
+ fs/squashfs/squashfs.h           | 2 +-
+ fs/squashfs/xattr.c              | 2 +-
+ fs/ubifs/ubifs.h                 | 2 +-
+ fs/ubifs/xattr.c                 | 2 +-
+ fs/xattr.c                       | 6 +++---
+ fs/xfs/xfs_xattr.c               | 2 +-
+ fs/xfs/xfs_xattr.h               | 2 +-
+ include/linux/fs.h               | 2 +-
+ include/linux/pseudo_fs.h        | 2 +-
+ mm/shmem.c                       | 2 +-
+ net/socket.c                     | 2 +-
+ scripts/const_structs.checkpatch | 1 +
+ 58 files changed, 71 insertions(+), 70 deletions(-)
 
