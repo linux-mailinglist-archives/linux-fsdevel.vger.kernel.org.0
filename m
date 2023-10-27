@@ -1,33 +1,33 @@
-Return-Path: <linux-fsdevel+bounces-1338-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1339-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EABAF7D91FA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 10:39:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 079277D9201
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 10:40:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 181911C21074
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 08:39:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38E551C2107C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 08:40:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E102A156E9;
-	Fri, 27 Oct 2023 08:39:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36B2C156F0;
+	Fri, 27 Oct 2023 08:40:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDC92156E1
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 08:39:48 +0000 (UTC)
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68C1610F9;
-	Fri, 27 Oct 2023 01:39:46 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.227])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4SGwk33llwz9y4SR;
-	Fri, 27 Oct 2023 16:26:35 +0800 (CST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04E7C156C6
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 08:39:59 +0000 (UTC)
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 996211721;
+	Fri, 27 Oct 2023 01:39:58 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.18.147.228])
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4SGwg31k87z9xxnS;
+	Fri, 27 Oct 2023 16:23:59 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwCX8JGqdjtlDvIBAw--.29710S12;
-	Fri, 27 Oct 2023 09:39:17 +0100 (CET)
+	by APP1 (Coremail) with SMTP id LxC2BwCX8JGqdjtlDvIBAw--.29710S13;
+	Fri, 27 Oct 2023 09:39:29 +0100 (CET)
 From: Roberto Sassu <roberto.sassu@huaweicloud.com>
 To: viro@zeniv.linux.org.uk,
 	brauner@kernel.org,
@@ -57,9 +57,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	selinux@vger.kernel.org,
 	Roberto Sassu <roberto.sassu@huawei.com>,
 	Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH v4 10/23] security: Introduce inode_post_setattr hook
-Date: Fri, 27 Oct 2023 10:35:45 +0200
-Message-Id: <20231027083558.484911-11-roberto.sassu@huaweicloud.com>
+Subject: [PATCH v4 11/23] security: Introduce inode_post_removexattr hook
+Date: Fri, 27 Oct 2023 10:35:46 +0200
+Message-Id: <20231027083558.484911-12-roberto.sassu@huaweicloud.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20231027083558.484911-1-roberto.sassu@huaweicloud.com>
 References: <20231027083558.484911-1-roberto.sassu@huaweicloud.com>
@@ -70,10 +70,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:LxC2BwCX8JGqdjtlDvIBAw--.29710S12
-X-Coremail-Antispam: 1UD129KBjvJXoWxurykAw17WFW5XF48Cw18AFb_yoWrWF4xpF
-	WrK3Z8Kw4rWFW7Wr1kJF47ua1SgFy5urWUZrW0gw1qyFn7tw1aqF4fK34jkr13GrW8Gr9I
-	q3ZFvrsxCr15AwUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:LxC2BwCX8JGqdjtlDvIBAw--.29710S13
+X-Coremail-Antispam: 1UD129KBjvJXoWxuryDWF4Utw4kuFy5XFWUurg_yoWrAw1UpF
+	45K3Z8Kr4rJFy7WryktF4Duw4I9FW3Wry7J3y2gw12yFn7Jr1IqFZIkF1UCry5JryjgF1q
+	q3ZFkrs5Cr15JwUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUBvb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
 	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
 	Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
@@ -87,20 +87,19 @@ X-Coremail-Antispam: 1UD129KBjvJXoWxurykAw17WFW5XF48Cw18AFb_yoWrWF4xpF
 	AIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI
 	42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z2
 	80aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07UZo7tUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgADBF1jj5GTmQACst
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQADBF1jj5WUYQAAsX
 X-CFilter-Loop: Reflected
 
 From: Roberto Sassu <roberto.sassu@huawei.com>
 
 In preparation for moving IMA and EVM to the LSM infrastructure, introduce
-the inode_post_setattr hook.
+the inode_post_removexattr hook.
 
-At inode_setattr hook, EVM verifies the file's existing HMAC value. At
-inode_post_setattr, EVM re-calculates the file's HMAC based on the modified
-file attributes and other file metadata.
+At inode_removexattr hook, EVM verifies the file's existing HMAC value. At
+inode_post_removexattr, EVM re-calculates the file's HMAC with the passed
+xattr removed and other file metadata.
 
-Other LSMs could similarly take some action after successful file attribute
-change.
+Other LSMs could similarly take some action after successful xattr removal.
 
 The new hook cannot return an error and cannot cause the operation to be
 reverted.
@@ -109,89 +108,94 @@ Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
 Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
- fs/attr.c                     |  1 +
+ fs/xattr.c                    |  9 +++++----
  include/linux/lsm_hook_defs.h |  2 ++
- include/linux/security.h      |  7 +++++++
- security/security.c           | 16 ++++++++++++++++
- 4 files changed, 26 insertions(+)
+ include/linux/security.h      |  5 +++++
+ security/security.c           | 14 ++++++++++++++
+ 4 files changed, 26 insertions(+), 4 deletions(-)
 
-diff --git a/fs/attr.c b/fs/attr.c
-index 9ecafb13a53b..ebd8d61a3b8b 100644
---- a/fs/attr.c
-+++ b/fs/attr.c
-@@ -502,6 +502,7 @@ int notify_change(struct mnt_idmap *idmap, struct dentry *dentry,
+diff --git a/fs/xattr.c b/fs/xattr.c
+index efd4736bc94b..5e065e66af21 100644
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -552,11 +552,12 @@ __vfs_removexattr_locked(struct mnt_idmap *idmap,
+ 		goto out;
  
- 	if (!error) {
- 		fsnotify_change(dentry, ia_valid);
-+		security_inode_post_setattr(idmap, dentry, ia_valid);
- 		ima_inode_post_setattr(idmap, dentry, ia_valid);
- 		evm_inode_post_setattr(idmap, dentry, ia_valid);
- 	}
+ 	error = __vfs_removexattr(idmap, dentry, name);
++	if (error)
++		goto out;
+ 
+-	if (!error) {
+-		fsnotify_xattr(dentry);
+-		evm_inode_post_removexattr(dentry, name);
+-	}
++	fsnotify_xattr(dentry);
++	security_inode_post_removexattr(dentry, name);
++	evm_inode_post_removexattr(dentry, name);
+ 
+ out:
+ 	return error;
 diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 751b084185ac..e9d66af8ce84 100644
+index e9d66af8ce84..6b15bb747440 100644
 --- a/include/linux/lsm_hook_defs.h
 +++ b/include/linux/lsm_hook_defs.h
-@@ -137,6 +137,8 @@ LSM_HOOK(int, 0, inode_follow_link, struct dentry *dentry, struct inode *inode,
- LSM_HOOK(int, 0, inode_permission, struct inode *inode, int mask)
- LSM_HOOK(int, 0, inode_setattr, struct mnt_idmap *idmap, struct dentry *dentry,
- 	 struct iattr *attr)
-+LSM_HOOK(void, LSM_RET_VOID, inode_post_setattr, struct mnt_idmap *idmap,
-+	 struct dentry *dentry, int ia_valid)
- LSM_HOOK(int, 0, inode_getattr, const struct path *path)
- LSM_HOOK(int, 0, inode_setxattr, struct mnt_idmap *idmap,
- 	 struct dentry *dentry, const char *name, const void *value,
+@@ -149,6 +149,8 @@ LSM_HOOK(int, 0, inode_getxattr, struct dentry *dentry, const char *name)
+ LSM_HOOK(int, 0, inode_listxattr, struct dentry *dentry)
+ LSM_HOOK(int, 0, inode_removexattr, struct mnt_idmap *idmap,
+ 	 struct dentry *dentry, const char *name)
++LSM_HOOK(void, LSM_RET_VOID, inode_post_removexattr, struct dentry *dentry,
++	 const char *name)
+ LSM_HOOK(int, 0, inode_set_acl, struct mnt_idmap *idmap,
+ 	 struct dentry *dentry, const char *acl_name, struct posix_acl *kacl)
+ LSM_HOOK(int, 0, inode_get_acl, struct mnt_idmap *idmap,
 diff --git a/include/linux/security.h b/include/linux/security.h
-index e567f910a1c2..f729e5c8f1fe 100644
+index f729e5c8f1fe..5c9c426962f0 100644
 --- a/include/linux/security.h
 +++ b/include/linux/security.h
-@@ -361,6 +361,8 @@ int security_inode_follow_link(struct dentry *dentry, struct inode *inode,
- int security_inode_permission(struct inode *inode, int mask);
- int security_inode_setattr(struct mnt_idmap *idmap,
- 			   struct dentry *dentry, struct iattr *attr);
-+void security_inode_post_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
-+				 int ia_valid);
- int security_inode_getattr(const struct path *path);
- int security_inode_setxattr(struct mnt_idmap *idmap,
- 			    struct dentry *dentry, const char *name,
-@@ -877,6 +879,11 @@ static inline int security_inode_setattr(struct mnt_idmap *idmap,
- 	return 0;
+@@ -380,6 +380,7 @@ int security_inode_getxattr(struct dentry *dentry, const char *name);
+ int security_inode_listxattr(struct dentry *dentry);
+ int security_inode_removexattr(struct mnt_idmap *idmap,
+ 			       struct dentry *dentry, const char *name);
++void security_inode_post_removexattr(struct dentry *dentry, const char *name);
+ int security_inode_need_killpriv(struct dentry *dentry);
+ int security_inode_killpriv(struct mnt_idmap *idmap, struct dentry *dentry);
+ int security_inode_getsecurity(struct mnt_idmap *idmap,
+@@ -940,6 +941,10 @@ static inline int security_inode_removexattr(struct mnt_idmap *idmap,
+ 	return cap_inode_removexattr(idmap, dentry, name);
  }
  
-+static inline void
-+security_inode_post_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
-+			    int ia_valid)
++static inline void security_inode_post_removexattr(struct dentry *dentry,
++						   const char *name)
 +{ }
 +
- static inline int security_inode_getattr(const struct path *path)
+ static inline int security_inode_need_killpriv(struct dentry *dentry)
  {
- 	return 0;
+ 	return cap_inode_need_killpriv(dentry);
 diff --git a/security/security.c b/security/security.c
-index da10da5fd79f..c8074b4f6d71 100644
+index c8074b4f6d71..2ee958afaf40 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -2215,6 +2215,22 @@ int security_inode_setattr(struct mnt_idmap *idmap,
+@@ -2445,6 +2445,20 @@ int security_inode_removexattr(struct mnt_idmap *idmap,
+ 	return evm_inode_removexattr(idmap, dentry, name);
  }
- EXPORT_SYMBOL_GPL(security_inode_setattr);
  
 +/**
-+ * security_inode_post_setattr() - Update the inode after a setattr operation
-+ * @idmap: idmap of the mount
++ * security_inode_post_removexattr() - Update the inode after a removexattr op
 + * @dentry: file
-+ * @ia_valid: file attributes set
++ * @name: xattr name
 + *
-+ * Update inode security field after successful setting file attributes.
++ * Update the inode after a successful removexattr operation.
 + */
-+void security_inode_post_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
-+				 int ia_valid)
++void security_inode_post_removexattr(struct dentry *dentry, const char *name)
 +{
 +	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
 +		return;
-+	call_void_hook(inode_post_setattr, idmap, dentry, ia_valid);
++	call_void_hook(inode_post_removexattr, dentry, name);
 +}
 +
  /**
-  * security_inode_getattr() - Check if getting file attributes is allowed
-  * @path: file
+  * security_inode_need_killpriv() - Check if security_inode_killpriv() required
+  * @dentry: associated dentry
 -- 
 2.34.1
 
