@@ -1,160 +1,201 @@
-Return-Path: <linux-fsdevel+bounces-1461-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1462-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71AB87DA418
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Oct 2023 01:30:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82BB07DA43C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Oct 2023 02:07:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EFEF8B2164F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 23:30:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED712B2169D
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Oct 2023 00:07:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64AA2405F7;
-	Fri, 27 Oct 2023 23:30:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBA44621;
+	Sat, 28 Oct 2023 00:07:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Wofbt4EW"
+	dkim=pass (2048-bit key) header.d=templeofstupid.com header.i=@templeofstupid.com header.b="Lsd3wiih"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B6E538BDF
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 23:30:24 +0000 (UTC)
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FEAD1B1
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 16:30:22 -0700 (PDT)
-Received: by mail-lj1-x232.google.com with SMTP id 38308e7fff4ca-2c509f2c46cso36562391fa.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 16:30:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1698449420; x=1699054220; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=7wvasZUGdzUlCp36t9CiD94Z2xAZIX3c5sqRXyMOP0U=;
-        b=Wofbt4EWs2KIYKOjM135GcRCNFbMQ6gs1IjGmmFbiEmqoVhW8EF6+mh1B70MY9MX4L
-         /CeeW24glpaJwqHwp44L5/UEqdkx5pY/U0+7bjBylRkHg7NtZS6Y0wFpvPTqafIChBoS
-         VKZWJCizQ4Hcd0zZX3kY8bh2+S8MXk7etEiVE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698449420; x=1699054220;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7wvasZUGdzUlCp36t9CiD94Z2xAZIX3c5sqRXyMOP0U=;
-        b=iGr5M716SnWheTz/l1nYQFRVYTSH6tqkuSU4B5fyALyzH+PiVU7X6GI7H4Wrebcuqe
-         WGo/Kx++/4YFckvkMw/tM6yimTwwtVJLED78UUDCZJZj63aYiZQBpMFI/y4xHVSTSsFm
-         YocaPsUVh6px/F51037GWSvdGdxHxQiGMSZUbnu2aLrNxSk9Ic+ypCeuQSIeUkKkA6JN
-         E1CHWkxh4tOgHlUS6UWa+Py81FMhBxPkRL6UZ1joL9Kgbr0/iYyNTNEgk/cGy7xnCkbD
-         +BcMnW+FhCkWqgL0MtbTvDwHKdLrCmT6BZosyyf5HoK1owOf+JMqq3+E7v8/mw4bEVTn
-         /K7w==
-X-Gm-Message-State: AOJu0Yyi65LFo6oWavjI5yIK7cZJH9hS4zBzIKuJcmMEMSWQUwzOtT1F
-	d+VSHJ9a8OwikhoKV0q2FCxZMs0ywydTD5WANcMklQ==
-X-Google-Smtp-Source: AGHT+IFL0aZA2cLAks58II2PjIs5mNB3GuGPPE8ggw3074p3v2Ma8klFw5T/Cmd3h9Wfw7ChLnZ70A==
-X-Received: by 2002:a2e:a793:0:b0:2c5:19e9:422c with SMTP id c19-20020a2ea793000000b002c519e9422cmr3431571ljf.24.1698449420238;
-        Fri, 27 Oct 2023 16:30:20 -0700 (PDT)
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
-        by smtp.gmail.com with ESMTPSA id p26-20020a2ea41a000000b002c2c21750e7sm453406ljn.17.2023.10.27.16.30.18
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Oct 2023 16:30:18 -0700 (PDT)
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-507be298d2aso3776519e87.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 16:30:18 -0700 (PDT)
-X-Received: by 2002:a05:6512:488a:b0:502:d743:8a6c with SMTP id
- eq10-20020a056512488a00b00502d7438a6cmr2813810lfb.9.1698449418278; Fri, 27
- Oct 2023 16:30:18 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8666237E
+	for <linux-fsdevel@vger.kernel.org>; Sat, 28 Oct 2023 00:07:00 +0000 (UTC)
+Received: from butterfly.pear.relay.mailchannels.net (butterfly.pear.relay.mailchannels.net [23.83.216.27])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EB831B9
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 17:06:58 -0700 (PDT)
+X-Sender-Id: dreamhost|x-authsender|kjlx@templeofstupid.com
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id 0EBF0501107
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 21:47:14 +0000 (UTC)
+Received: from pdx1-sub0-mail-a302.dreamhost.com (unknown [127.0.0.6])
+	(Authenticated sender: dreamhost)
+	by relay.mailchannels.net (Postfix) with ESMTPA id B86BA500F6B
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 21:47:13 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1698443233; a=rsa-sha256;
+	cv=none;
+	b=eq8O/MVN+C5Q3zG9QJloeAQMGMkpxUseiX3CFgQRZNRPSgBhFCuIfRR5HE1FO6yBoQMdW8
+	b2ka8qmrzwdPmBRXY+vRmxLCBRXWJuXy+Kx3hDXOjrhQOEer8OGYb8Co6sEhCqtKJX454R
+	FcVvBYHbUIKknRsahYOsebnLfLamikenzK8S6BPdp4mNe7B5Niudpvtw2hvtoHIiysuLhJ
+	bZo5DbH/w0OGfzIKEjRXnOGT4FLt3KdzYrEQne8qY5C/d3Ln2nenzHXmj8AiymrMitf/ix
+	xoFcDCODF6sNqC+I/ZjfoNrT5aM5XNmR+Yb/rZtjurVg2L0oPcy9Q0ZsoH6+uw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1698443233;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:dkim-signature;
+	bh=0kXzCiZbGPBTOEojx/2Lih4mxRwPi4XPavoOAgVaQRE=;
+	b=CtdSUzX9cJ4oZL0uCFIW67d2SRTlcfI9yM1YSxlSsOsOpQ/X6PJM5RV4yKJU3oRAxb+QdP
+	iE2nXwWZ9IXTQGL4jhlKwEwavYJo1mTX/6s870xU+c8LYgHeBM7WyOWKJz/yglknyw35dA
+	/Djt+xXy/DjNyFcmxfndS8AZ98mDmyzlqYnsclZAqC8kiRhGtcadiTXACes3U37B5OacJS
+	7vkmDwd5wXGokcCMV4SL5TSIk+LBuL5sWFIwKgV+hz/qvVdUx/4+ZY38tUaNKBrdHIBMlq
+	VSzNbtQjmaoRJAYnRdkWk6DqI9+EePVyj4xCNskPejWuf6TXabEi4cxkehxN3A==
+ARC-Authentication-Results: i=1;
+	rspamd-79d8cddc67-j5nfp;
+	auth=pass smtp.auth=dreamhost smtp.mailfrom=kjlx@templeofstupid.com
+X-Sender-Id: dreamhost|x-authsender|kjlx@templeofstupid.com
+X-MC-Relay: Good
+X-MailChannels-SenderId: dreamhost|x-authsender|kjlx@templeofstupid.com
+X-MailChannels-Auth-Id: dreamhost
+X-Little-Sponge: 0ef456e05ab8de5b_1698443233904_3492133301
+X-MC-Loop-Signature: 1698443233904:1041117626
+X-MC-Ingress-Time: 1698443233904
+Received: from pdx1-sub0-mail-a302.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.101.178.160 (trex/6.9.2);
+	Fri, 27 Oct 2023 21:47:13 +0000
+Received: from kmjvbox (c-73-231-176-24.hsd1.ca.comcast.net [73.231.176.24])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kjlx@templeofstupid.com)
+	by pdx1-sub0-mail-a302.dreamhost.com (Postfix) with ESMTPSA id 4SHGTs0RCNz13B
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 14:47:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=templeofstupid.com;
+	s=dreamhost; t=1698443233;
+	bh=0kXzCiZbGPBTOEojx/2Lih4mxRwPi4XPavoOAgVaQRE=;
+	h=Date:From:To:Cc:Subject:Content-Type;
+	b=Lsd3wiihPliiMMmYhtQI88cIJg9fimvqMqdgkwhuzk65lErIyUvlqM9dOPeNjjg/n
+	 KHUzIcX+k8Ky1dwm5dnJj6SxA0+hV6RoMyZ7url0UsC2bfIeH/CD6Kx9SehEx6RWgL
+	 lU3Vws/irQxz3fv+7JOYY2l58I3sGQuIgej8+ib9C19rlEsm6vAO9Rl2kPE5B9bz87
+	 qyjdkWy3JyUTmTR8E4H0KMUmbuw8YEqh7cVZYN/BrU52hL88b3QSmnLZYGGxflmjy9
+	 Wk8x3EWdbNkL8BLjo61mTFpaA57ObpiU5ACZySlWEyUv/ViP7xdDdv6QeFzwFAtnli
+	 MuN8OKCn3/u5w==
+Received: from johansen (uid 1000)
+	(envelope-from kjlx@templeofstupid.com)
+	id e00e5
+	by kmjvbox (DragonFly Mail Agent v0.12);
+	Fri, 27 Oct 2023 14:46:40 -0700
+Date: Fri, 27 Oct 2023 14:46:40 -0700
+From: Krister Johansen <kjlx@templeofstupid.com>
+To: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>,
+	Iurii Zaikin <yzaikin@google.com>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Cc: Douglas Anderson <dianders@chromium.org>,
+	Vlastimil Babka <vbabka@suse.cz>, Arnd Bergmann <arnd@arndb.de>,
+	Lecopzer Chen <lecopzer.chen@mediatek.com>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	David Hildenbrand <david@redhat.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Pingfan Liu <kernelfans@gmail.com>,
+	Michael Kelley <mikelley@microsoft.com>,
+	Petr Mladek <pmladek@suse.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	"Guilherme G. Piccoli" <kernel@gpiccoli.net>,
+	Mike Rapoport <rppt@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH 1/2] proc: sysctl: prevent aliased sysctls from getting
+ passed to init
+Message-ID: <960ced39bec87d22f264ab73eec3e3c1a95ec026.1698441495.git.kjlx@templeofstupid.com>
+References: <cover.1698441495.git.kjlx@templeofstupid.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <169786962623.1265253.5321166241579915281.stg-ugh@frogsfrogsfrogs>
- <CAHk-=whNsCXwidLvx8u_JBH91=Z5EFw9FVj57HQ51P7uWs4yGQ@mail.gmail.com>
- <20231023223810.GW3195650@frogsfrogsfrogs> <20231024-flora-gerodet-8ec178f87fe9@brauner>
- <20231026031325.GH3195650@frogsfrogsfrogs> <CAHk-=whQHBdJTr9noNuRwMtFrWepMHhnq6EtcAypegi5aUkQnQ@mail.gmail.com>
- <20231027-gestiegen-saftig-2e636d251efa@brauner>
-In-Reply-To: <20231027-gestiegen-saftig-2e636d251efa@brauner>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 27 Oct 2023 13:30:00 -1000
-X-Gmail-Original-Message-ID: <CAHk-=wivwYfw0DHn3HowHJPg0rkt2fVSdLwjbsX6dTPNoMWXNA@mail.gmail.com>
-Message-ID: <CAHk-=wivwYfw0DHn3HowHJPg0rkt2fVSdLwjbsX6dTPNoMWXNA@mail.gmail.com>
-Subject: Re: [GIT PULL] iomap: bug fixes for 6.6-rc7
-To: Christian Brauner <brauner@kernel.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, 
-	Shirley Ma <shirley.ma@oracle.com>, hch@lst.de, jstancek@redhat.com, 
-	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1698441495.git.kjlx@templeofstupid.com>
 
-On Fri, 27 Oct 2023 at 08:46, Christian Brauner <brauner@kernel.org> wrote:
->
-> One of the critical parts is review. Good reviews are often insanely
-> expensive and they are very much a factor in burning people out. If one
-> only ever reviews and the load never ends that's going to fsck with you
-> in the long run.
+The code that checks for unknown boot options is unaware of the sysctl
+alias facility, which maps bootparams to sysctl values.  If a user sets
+an old value that has a valid alias, a message about an invalid
+parameter will be printed during boot, and the parameter will get passed
+to init.  Fix by checking for the existence of aliased parameters in the
+unknown boot parameter code.  If an alias exists, don't return an error
+or pass the value to init.
 
-I absolutely despise the review requirement that several companies
-have. I very much understand why it happens, but I think it's actively
-detrimental to the workflow.
+Signed-off-by: Krister Johansen <kjlx@templeofstupid.com>
+Cc: stable@vger.kernel.org
+Fixes: 0a477e1ae21b ("kernel/sysctl: support handling command line aliases")
+---
+ fs/proc/proc_sysctl.c  | 7 +++++++
+ include/linux/sysctl.h | 6 ++++++
+ init/main.c            | 4 ++++
+ 3 files changed, 17 insertions(+)
 
-It's not just that reviewing is hard, the review requirement tends to
-be a serialization point where now you as a developer are waiting for
-others to review it, and those others are not nearly as motivated to
-do so or are easily going to be nitpicking about the non-critical
-things.
+diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+index c88854df0b62..1c9635dddb70 100644
+--- a/fs/proc/proc_sysctl.c
++++ b/fs/proc/proc_sysctl.c
+@@ -1592,6 +1592,13 @@ static const char *sysctl_find_alias(char *param)
+ 	return NULL;
+ }
+ 
++bool sysctl_is_alias(char *param)
++{
++	const char *alias = sysctl_find_alias(param);
++
++	return alias != NULL;
++}
++
+ /* Set sysctl value passed on kernel command line. */
+ static int process_sysctl_arg(char *param, char *val,
+ 			       const char *unused, void *arg)
+diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
+index 09d7429d67c0..61b40ea81f4d 100644
+--- a/include/linux/sysctl.h
++++ b/include/linux/sysctl.h
+@@ -242,6 +242,7 @@ extern void __register_sysctl_init(const char *path, struct ctl_table *table,
+ extern struct ctl_table_header *register_sysctl_mount_point(const char *path);
+ 
+ void do_sysctl_args(void);
++bool sysctl_is_alias(char *param);
+ int do_proc_douintvec(struct ctl_table *table, int write,
+ 		      void *buffer, size_t *lenp, loff_t *ppos,
+ 		      int (*conv)(unsigned long *lvalp,
+@@ -287,6 +288,11 @@ static inline void setup_sysctl_set(struct ctl_table_set *p,
+ static inline void do_sysctl_args(void)
+ {
+ }
++
++static inline bool sysctl_is_alias(char *param)
++{
++	return false;
++}
+ #endif /* CONFIG_SYSCTL */
+ 
+ int sysctl_max_threads(struct ctl_table *table, int write, void *buffer,
+diff --git a/init/main.c b/init/main.c
+index 436d73261810..e24b0780fdff 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -530,6 +530,10 @@ static int __init unknown_bootoption(char *param, char *val,
+ {
+ 	size_t len = strlen(param);
+ 
++	/* Handle params aliased to sysctls */
++	if (sysctl_is_alias(param))
++		return 0;
++
+ 	repair_env_string(param, val);
+ 
+ 	/* Handle obsolete-style parameters */
+-- 
+2.25.1
 
-So it's not just the reviewers that get burned out, I think the
-process ends up being horrific for developers too, and easily leads to
-the "let's send out version 17 of this patch based on previous
-review". At which point everybody is completely fed up with the whole
-process.
-
-And if it doesn't get to version 17, it's because the reviewers too
-have gotten so fed up that by version three they go "whatever, I've
-seen this before, they fixed the obvious thing I noticed, I'll mark it
-reviewed".
-
-The other dynamic with reviews is that you end up getting
-review-cliques, either due to company pressure or just a very natural
-"you review mine, I review yours" back-scratching.
-
-Don't get me wrong - it can work, and it can even work well, but I
-think the times it works really well is when people have gotten so
-used to each others, and know each other's quirks and workflows and
-they just work well together. But that also means that some people are
-having a much easier time getting reviews, because they are part of
-that "this group works well together" crowd.
-
-Maybe it's a necessary evil. I certainly do *not* think the "lone
-developer goes his own way" model works all that well. But the reason
-I said that I wish we had more maintainers, is that I think we would
-often be better off with not a "review process" back-and-forth. but a
-_pipeline_ through a few levels of maintainers.  Not the "hold things
-up and send it back to the developer" kind of thing, but "Oh, this
-looks fine, I'll just send it on - possibly with the fixes I think are
-needed".
-
-So I think a pipeline of "Signed-off-by" (or just merges) might be
-something to strive for as at least a partial replacement for reviews.
-
-Sure, you might get Acked-by's or Reviewed-by's or Tested-by's along
-the way *too*, or - when people are just merging directly through git
-- you'd just get a merge commit with commentary and perhaps extra
-stuff on top.
-
-Back when we started doing the whole "Signed-off-by" - for legal
-reasons, not development reasons - the big requirement for me was that
-"it needs to work as a pipeline, not as some kind of back-and-forth
-that holds up development". And I think the whole sign-off chain has
-worked really well, and we've never needed to use it for the original
-legal purposes (and hopefully just by virtue of it existing, we never
-will), but it has been a huge success from a development standpoint.
-When something goes wrong, I think it's been great to have that whole
-chain of how it got merged, and in fact one of my least favorite parts
-of git ended up being how we never made it easy to see the merge chain
-after it's been committed (you can technically get it with "git
-name-rev", but it sure is not obvious).
-
-I dunno. Maybe I'm just dreaming. But the complaints about reviews -
-or lack of them - do tend to come up a lot, and I feel like the whole
-review process is a very big part of the problem.
-
-                 Linus
 
