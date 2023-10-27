@@ -1,174 +1,160 @@
-Return-Path: <linux-fsdevel+bounces-1460-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1461-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 639377DA3F4
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Oct 2023 01:07:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 71AB87DA418
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Oct 2023 01:30:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05137B215C8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 23:07:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EFEF8B2164F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 23:30:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FE53405EB;
-	Fri, 27 Oct 2023 23:07:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64AA2405F7;
+	Fri, 27 Oct 2023 23:30:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=templeofstupid.com header.i=@templeofstupid.com header.b="RHzNmQMN"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Wofbt4EW"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01F3A3B794
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 23:07:22 +0000 (UTC)
-Received: from hamster.cherry.relay.mailchannels.net (hamster.cherry.relay.mailchannels.net [23.83.223.80])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24E3B1B1
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 16:07:20 -0700 (PDT)
-X-Sender-Id: dreamhost|x-authsender|kjlx@templeofstupid.com
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id A1F212C05C6
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 23:07:19 +0000 (UTC)
-Received: from pdx1-sub0-mail-a302.dreamhost.com (unknown [127.0.0.6])
-	(Authenticated sender: dreamhost)
-	by relay.mailchannels.net (Postfix) with ESMTPA id 6264A2C1129
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 23:07:19 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1698448039; a=rsa-sha256;
-	cv=none;
-	b=rjalx+WsmnaKCrh3jTzV/GROLH49B7lGJuimaOc8XP60ehe4U3X4bq1ojZgn7HhwzPn99g
-	GrCPCtUcMA/UQF0NeRwb8CNc1yqF5pb5ohlvBEpZ/RIyHd3Sj4KDZsj6j3NpvxbsPC/9Nj
-	gr9YNcAyEZs/aXjadDL3qGopq0DRBdt3hy2ze96BMM4QKeDRXip9q+KQINLyVGhCfE6vXv
-	8yaC4/y5CKIny0Uh21DdLvI09lEg1iwgmBim/4we+AOl2Isa8Uu/BYaJyxA4Crix2uQ/Ht
-	R2EzzNR7m3M5zSdUhxy2mEARISrgRh/2ZEf22Q5K04aSbaGidbTACSK0XgigGg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1698448039;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=/DyY7cJmX/lnCs62zn85UwYPi+9hM1KZgV6+bEf+HzQ=;
-	b=hTz+eZHfiGQffpJkpBEr5eH8y92zGKFqmJWKlSBfcepEOCaSVsQj5CXtQVpEUV6JB3kfSg
-	mLr+9i4KY1RMQT7/MkSCtxsb/xuFXTjx7EB/ydbFWfWlvdne/5FaQbAmqibEOFULEWqW06
-	L23/jCgaCqx0kgO/Wo26iVD0UV8jrxPVomJzytPgQrd4OUYvfWGWH8jJPo8h0InQnXpW/u
-	jQp0wUwnjLkr71NV0Zn+15JN1rDhzu3rGDAEKFatya3jWtXqEm5oEuxWvCOP2+ICayIqFv
-	spMsny26BaOZ2BvPe7QauMVEYY2nVs80NAN890Vp5KS9FImVzNbZd89q69qLhA==
-ARC-Authentication-Results: i=1;
-	rspamd-86646d89b6-gktc4;
-	auth=pass smtp.auth=dreamhost smtp.mailfrom=kjlx@templeofstupid.com
-X-Sender-Id: dreamhost|x-authsender|kjlx@templeofstupid.com
-X-MC-Relay: Good
-X-MailChannels-SenderId: dreamhost|x-authsender|kjlx@templeofstupid.com
-X-MailChannels-Auth-Id: dreamhost
-X-Vacuous-Illegal: 332963914685f96d_1698448039521_1204151499
-X-MC-Loop-Signature: 1698448039521:2143489904
-X-MC-Ingress-Time: 1698448039521
-Received: from pdx1-sub0-mail-a302.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.112.232.215 (trex/6.9.2);
-	Fri, 27 Oct 2023 23:07:19 +0000
-Received: from kmjvbox (c-73-231-176-24.hsd1.ca.comcast.net [73.231.176.24])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kjlx@templeofstupid.com)
-	by pdx1-sub0-mail-a302.dreamhost.com (Postfix) with ESMTPSA id 4SHJGG5JJkz13d
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 16:07:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=templeofstupid.com;
-	s=dreamhost; t=1698448038;
-	bh=/DyY7cJmX/lnCs62zn85UwYPi+9hM1KZgV6+bEf+HzQ=;
-	h=Date:From:To:Cc:Subject:Content-Type;
-	b=RHzNmQMNckqIXhiaHJ/ZVH+xZ3+FEh16zJhTgaWwzjQd2acjWz35NTvVOcYnAo+oD
-	 vERPoOyOwdQM2MEqvJZ9Ez+MxBqNjohBb6+Q35o8xpXlxRYiI3/uRNL1PZ/R8V0HsR
-	 +vN6W7u3ViUAEuYJ37+WMDEDIhk6a0HyLdTjxvtLDIWDT97hnq6fSjWGMWbS9HHPis
-	 BMTGu/FAnWlzN9yo+AQYCD6D21+XnbchQKvNQPkvD/JAkKNegJEtaho8jyVQXc8V2j
-	 4Dl5+anURU3aQdroGqtsX3T0efGmnVp5xzlNHggMyusw4ElsY1k7LdCS0TzA2Ibc0A
-	 m6todDjWvMKwA==
-Received: from johansen (uid 1000)
-	(envelope-from kjlx@templeofstupid.com)
-	id e00e5
-	by kmjvbox (DragonFly Mail Agent v0.12);
-	Fri, 27 Oct 2023 16:06:34 -0700
-Date: Fri, 27 Oct 2023 16:06:34 -0700
-From: Krister Johansen <kjlx@templeofstupid.com>
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>, Iurii Zaikin <yzaikin@google.com>,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Vlastimil Babka <vbabka@suse.cz>, Arnd Bergmann <arnd@arndb.de>,
-	Lecopzer Chen <lecopzer.chen@mediatek.com>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	David Hildenbrand <david@redhat.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Pingfan Liu <kernelfans@gmail.com>,
-	Michael Kelley <mikelley@microsoft.com>,
-	Petr Mladek <pmladek@suse.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	"Guilherme G. Piccoli" <kernel@gpiccoli.net>,
-	Mike Rapoport <rppt@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH 0/2] Triggering a softlockup panic during SMP boot
-Message-ID: <20231027230634.GE2105@templeofstupid.com>
-References: <cover.1698441495.git.kjlx@templeofstupid.com>
- <ZTw0CACF3jtT3/dX@bombadil.infradead.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B6E538BDF
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 23:30:24 +0000 (UTC)
+Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FEAD1B1
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 16:30:22 -0700 (PDT)
+Received: by mail-lj1-x232.google.com with SMTP id 38308e7fff4ca-2c509f2c46cso36562391fa.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 16:30:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1698449420; x=1699054220; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=7wvasZUGdzUlCp36t9CiD94Z2xAZIX3c5sqRXyMOP0U=;
+        b=Wofbt4EWs2KIYKOjM135GcRCNFbMQ6gs1IjGmmFbiEmqoVhW8EF6+mh1B70MY9MX4L
+         /CeeW24glpaJwqHwp44L5/UEqdkx5pY/U0+7bjBylRkHg7NtZS6Y0wFpvPTqafIChBoS
+         VKZWJCizQ4Hcd0zZX3kY8bh2+S8MXk7etEiVE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698449420; x=1699054220;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7wvasZUGdzUlCp36t9CiD94Z2xAZIX3c5sqRXyMOP0U=;
+        b=iGr5M716SnWheTz/l1nYQFRVYTSH6tqkuSU4B5fyALyzH+PiVU7X6GI7H4Wrebcuqe
+         WGo/Kx++/4YFckvkMw/tM6yimTwwtVJLED78UUDCZJZj63aYiZQBpMFI/y4xHVSTSsFm
+         YocaPsUVh6px/F51037GWSvdGdxHxQiGMSZUbnu2aLrNxSk9Ic+ypCeuQSIeUkKkA6JN
+         E1CHWkxh4tOgHlUS6UWa+Py81FMhBxPkRL6UZ1joL9Kgbr0/iYyNTNEgk/cGy7xnCkbD
+         +BcMnW+FhCkWqgL0MtbTvDwHKdLrCmT6BZosyyf5HoK1owOf+JMqq3+E7v8/mw4bEVTn
+         /K7w==
+X-Gm-Message-State: AOJu0Yyi65LFo6oWavjI5yIK7cZJH9hS4zBzIKuJcmMEMSWQUwzOtT1F
+	d+VSHJ9a8OwikhoKV0q2FCxZMs0ywydTD5WANcMklQ==
+X-Google-Smtp-Source: AGHT+IFL0aZA2cLAks58II2PjIs5mNB3GuGPPE8ggw3074p3v2Ma8klFw5T/Cmd3h9Wfw7ChLnZ70A==
+X-Received: by 2002:a2e:a793:0:b0:2c5:19e9:422c with SMTP id c19-20020a2ea793000000b002c519e9422cmr3431571ljf.24.1698449420238;
+        Fri, 27 Oct 2023 16:30:20 -0700 (PDT)
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
+        by smtp.gmail.com with ESMTPSA id p26-20020a2ea41a000000b002c2c21750e7sm453406ljn.17.2023.10.27.16.30.18
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 27 Oct 2023 16:30:18 -0700 (PDT)
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-507be298d2aso3776519e87.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 16:30:18 -0700 (PDT)
+X-Received: by 2002:a05:6512:488a:b0:502:d743:8a6c with SMTP id
+ eq10-20020a056512488a00b00502d7438a6cmr2813810lfb.9.1698449418278; Fri, 27
+ Oct 2023 16:30:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZTw0CACF3jtT3/dX@bombadil.infradead.org>
+References: <169786962623.1265253.5321166241579915281.stg-ugh@frogsfrogsfrogs>
+ <CAHk-=whNsCXwidLvx8u_JBH91=Z5EFw9FVj57HQ51P7uWs4yGQ@mail.gmail.com>
+ <20231023223810.GW3195650@frogsfrogsfrogs> <20231024-flora-gerodet-8ec178f87fe9@brauner>
+ <20231026031325.GH3195650@frogsfrogsfrogs> <CAHk-=whQHBdJTr9noNuRwMtFrWepMHhnq6EtcAypegi5aUkQnQ@mail.gmail.com>
+ <20231027-gestiegen-saftig-2e636d251efa@brauner>
+In-Reply-To: <20231027-gestiegen-saftig-2e636d251efa@brauner>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 27 Oct 2023 13:30:00 -1000
+X-Gmail-Original-Message-ID: <CAHk-=wivwYfw0DHn3HowHJPg0rkt2fVSdLwjbsX6dTPNoMWXNA@mail.gmail.com>
+Message-ID: <CAHk-=wivwYfw0DHn3HowHJPg0rkt2fVSdLwjbsX6dTPNoMWXNA@mail.gmail.com>
+Subject: Re: [GIT PULL] iomap: bug fixes for 6.6-rc7
+To: Christian Brauner <brauner@kernel.org>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, 
+	Shirley Ma <shirley.ma@oracle.com>, hch@lst.de, jstancek@redhat.com, 
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Oct 27, 2023 at 03:04:56PM -0700, Luis Chamberlain wrote:
-> On Fri, Oct 27, 2023 at 02:46:26PM -0700, Krister Johansen wrote:
-> > Hi,
-> > This pair of patches was the result of an unsuccessful attempt to set
-> > softlockup_panic before SMP boot.  The rationale for wanting to set this
-> > parameter is that some of the VMs that my team runs will occasionally
-> > get stuck while onlining the non-boot processors as part of SMP boot.
-> > 
-> > In the cases where this happens, we find out about it after the instance
-> > successfully boots; however, the machines can get stuck for tens of
-> > minutes at a time before finally completing onlining processors.  Since
-> > we pay per minute for many of these VMs there were two goals for setting
-> > this value on boot: first, fail fast and hope that a subsequent boot
-> > attempt will be successful.  Second, a panic is a little easier to keep
-> > track of, especially if we're scraping serial logs after the fact.  In
-> > essence, the goal is to trigger the failure earlier and hopefully get
-> > more useful information for further debugging the problem as well.
-> > 
-> > While testing to make sure that this value was getting correctly set on
-> > boot, I ran into a pair of surprises.  First, when the softlockup_panic
-> > parameter was migrated to a sysctl alias, it had the side effect of
-> > setting the parameter value after SMP boot has occurred, when it used to
-> > be set before this.  Second, testing revealed that even though the
-> > aliases were being correctly processed, the kernel was reporting the
-> > commandline arguments as unrecognized. This generated a message in the
-> > logs about an unrecognized parameter (even though it was) and the
-> > parameter was passed as an environment variable to init.
-> > 
-> > The first patch ensures that aliased sysctl arguments are not reported
-> > as unrecognized boot arguments.
-> > 
-> > The second patch moves the setting of softlockup_panic earlier in boot,
-> > where it can take effect before SMP boot beings.
-> 
-> Sounds all great but I only got the cover letter, so may be resend?
+On Fri, 27 Oct 2023 at 08:46, Christian Brauner <brauner@kernel.org> wrote:
+>
+> One of the critical parts is review. Good reviews are often insanely
+> expensive and they are very much a factor in burning people out. If one
+> only ever reviews and the load never ends that's going to fsck with you
+> in the long run.
 
-Apologies, I'm not sure quite what went wrong there.  I've resent the
-patches to the people in the To: of the original messages, in an attempt
-to avoid sending copies to everybody a second time.
+I absolutely despise the review requirement that several companies
+have. I very much understand why it happens, but I think it's actively
+detrimental to the workflow.
 
-The entire set seems to have made it to lore:
+It's not just that reviewing is hard, the review requirement tends to
+be a serialization point where now you as a developer are waiting for
+others to review it, and those others are not nearly as motivated to
+do so or are easily going to be nitpicking about the non-critical
+things.
 
-https://lore.kernel.org/linux-fsdevel/ZTw0CACF3jtT3%2FdX@bombadil.infradead.org/T/#r831972d73aad653c3b732e4e36e743cd53673847
+So it's not just the reviewers that get burned out, I think the
+process ends up being horrific for developers too, and easily leads to
+the "let's send out version 17 of this patch based on previous
+review". At which point everybody is completely fed up with the whole
+process.
 
-If you still haven't got the copies, please let me know and I'll see
-if there's something else I can do to get them to you.
+And if it doesn't get to version 17, it's because the reviewers too
+have gotten so fed up that by version three they go "whatever, I've
+seen this before, they fixed the obvious thing I noticed, I'll mark it
+reviewed".
 
-Sorry about this. :/
+The other dynamic with reviews is that you end up getting
+review-cliques, either due to company pressure or just a very natural
+"you review mine, I review yours" back-scratching.
 
--K
+Don't get me wrong - it can work, and it can even work well, but I
+think the times it works really well is when people have gotten so
+used to each others, and know each other's quirks and workflows and
+they just work well together. But that also means that some people are
+having a much easier time getting reviews, because they are part of
+that "this group works well together" crowd.
+
+Maybe it's a necessary evil. I certainly do *not* think the "lone
+developer goes his own way" model works all that well. But the reason
+I said that I wish we had more maintainers, is that I think we would
+often be better off with not a "review process" back-and-forth. but a
+_pipeline_ through a few levels of maintainers.  Not the "hold things
+up and send it back to the developer" kind of thing, but "Oh, this
+looks fine, I'll just send it on - possibly with the fixes I think are
+needed".
+
+So I think a pipeline of "Signed-off-by" (or just merges) might be
+something to strive for as at least a partial replacement for reviews.
+
+Sure, you might get Acked-by's or Reviewed-by's or Tested-by's along
+the way *too*, or - when people are just merging directly through git
+- you'd just get a merge commit with commentary and perhaps extra
+stuff on top.
+
+Back when we started doing the whole "Signed-off-by" - for legal
+reasons, not development reasons - the big requirement for me was that
+"it needs to work as a pipeline, not as some kind of back-and-forth
+that holds up development". And I think the whole sign-off chain has
+worked really well, and we've never needed to use it for the original
+legal purposes (and hopefully just by virtue of it existing, we never
+will), but it has been a huge success from a development standpoint.
+When something goes wrong, I think it's been great to have that whole
+chain of how it got merged, and in fact one of my least favorite parts
+of git ended up being how we never made it easy to see the merge chain
+after it's been committed (you can technically get it with "git
+name-rev", but it sure is not obvious).
+
+I dunno. Maybe I'm just dreaming. But the complaints about reviews -
+or lack of them - do tend to come up a lot, and I feel like the whole
+review process is a very big part of the problem.
+
+                 Linus
 
