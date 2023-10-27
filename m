@@ -1,148 +1,235 @@
-Return-Path: <linux-fsdevel+bounces-1381-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1382-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1D8F7D9D51
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 17:48:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 936C07D9D75
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 17:51:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA64EB21483
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 15:48:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3AF71C20FE6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 15:51:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CD4F37CBE;
-	Fri, 27 Oct 2023 15:47:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C2DE38BAB;
+	Fri, 27 Oct 2023 15:51:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TSswc8Di";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="IaX1h+tL"
+	dkim=pass (2048-bit key) header.d=alu.hr header.i=@alu.hr header.b="p2dSKeLx";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=alu.unizg.hr header.i=@alu.unizg.hr header.b="vXyuycej"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A312A1F5E7
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 15:47:33 +0000 (UTC)
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2618C121;
-	Fri, 27 Oct 2023 08:47:31 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id C8D851F88E;
-	Fri, 27 Oct 2023 15:47:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1698421649; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8Nmj/s/loPouymwiRbhBMVtrXINMw6cnS/bvt4Esb7k=;
-	b=TSswc8DiP9DxpCuRz3PwSblMhtz6wRCdufkFPVf/1Kx168M3T7e6n2I2SibvZeuJEAzNLg
-	AwtF+SQEg3x4eWZixa8Ma4MFMIt37UdGCitoAMxKewF6xYy6leV231IUYY0fzgrMfb+Omt
-	gVpVvKL3Zh9KTEyRImIvwZcMeXYtFmA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1698421649;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8Nmj/s/loPouymwiRbhBMVtrXINMw6cnS/bvt4Esb7k=;
-	b=IaX1h+tL2UqX2aL+ig0w7SNmVK1iUtrcXOBiQJZuxHJEwUnP3NAJJpvctNa+t81r3K/Dlx
-	Ti50Ml7gdp397GCg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-	(No client certificate requested)
-	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id B8A371358C;
-	Fri, 27 Oct 2023 15:47:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-	by imap2.suse-dmz.suse.de with ESMTPSA
-	id +dYLLZHbO2W1JAAAMHmgww
-	(envelope-from <jack@suse.cz>); Fri, 27 Oct 2023 15:47:29 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 3ACE2A05BC; Fri, 27 Oct 2023 17:47:29 +0200 (CEST)
-Date: Fri, 27 Oct 2023 17:47:29 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
-	Christian Brauner <brauner@kernel.org>, Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 0/3] fanotify support for btrfs sub-volumes
-Message-ID: <20231027154729.cxb5ojwqj7ss2gwl@quack3>
-References: <20231026155224.129326-1-amir73il@gmail.com>
- <ZTtOz8mr1ENl0i9q@infradead.org>
- <CAOQ4uxjbXhXZmCLTJcXopQikYZg+XxSDa0Of90MBRgRbW5Bhxg@mail.gmail.com>
- <ZTtTy0wITtw2W2vU@infradead.org>
- <CAOQ4uxigdYYCWopKjonxww-be9Rxv9H3_KfcMe3SktXAKoXq4g@mail.gmail.com>
- <ZTtnFe2W9vB04z46@infradead.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7FFD381A3
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 15:51:12 +0000 (UTC)
+Received: from domac.alu.hr (domac.alu.unizg.hr [161.53.235.3])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76F9F196;
+	Fri, 27 Oct 2023 08:51:07 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+	by domac.alu.hr (Postfix) with ESMTP id 3BDDA6019B;
+	Fri, 27 Oct 2023 17:51:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=alu.hr; s=mail;
+	t=1698421865; bh=bcp2l66R6isCMuWqZZo9LM2yUuFsYZafsOLfI4eojr8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=p2dSKeLx0S15csZSw5jy516VWtCZLVCvznNMWujGKxr5mdRaGGzDlGsFXxhTaX7Rc
+	 b/85ePFXxgoGX7TQNkekh5uq8cl6r68MaqzO1knOhP02Vpbxoa70uP8AXVPhnVZBII
+	 qtpZmzlXmOQdepXmKKn5z6t4ybsNyNErIUOBWcjSFUdgU3geH/Ncy+k+9UT8Jrqv23
+	 mf2wxWAs7/o1jj0l+9PpO0wgXJ5Q1YBXWu7VMB7lof9G88vUbpkOqjC7+4KGD4ccT9
+	 ARH6Oh3/z0HahT1ZbGFMbcofKMqfM6J4V0tsGnrDTuo29BNCcsMW4ael9vACEtTC/X
+	 Gq26bwOc4DXlA==
+X-Virus-Scanned: Debian amavisd-new at domac.alu.hr
+Received: from domac.alu.hr ([127.0.0.1])
+	by localhost (domac.alu.hr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id F2S1zlzVpZyA; Fri, 27 Oct 2023 17:51:02 +0200 (CEST)
+Received: from [IPV6:2001:b68:2:2600:646f:d9a1:a315:536c] (unknown [IPv6:2001:b68:2:2600:646f:d9a1:a315:536c])
+	by domac.alu.hr (Postfix) with ESMTPSA id 0754660197;
+	Fri, 27 Oct 2023 17:51:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=alu.unizg.hr; s=mail;
+	t=1698421862; bh=bcp2l66R6isCMuWqZZo9LM2yUuFsYZafsOLfI4eojr8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=vXyuycejpXwyGdwPS3vAJpQK8MRuc057Pqjh0f1kuS1WYzID6KOGPYFp3nWnHpEj9
+	 TUXmaJNf7WwuMDhWAwehw7+nqapnDWhW+F9suBMbpyw59q7gSMjCzI7a5Ph4HAhZ90
+	 P8F2g1wLi8+bBxBTNcEYANE79lsQVp8eijwcGo7YVz7UVnbMie/6BxKE8qIeC8Jddo
+	 praGi3VAjTWooGVFiNUczXb4yMCrt7Vm0FL88sIsKT163ikI4gr/5Z/fRweMA58ABf
+	 lyg0IG4JNkFTKf/pH50lUAvE0zfAj3tuH4joL7RSVI1RZTxqExtIXRMr0jZH1I3yra
+	 c9A0gxwSnmWmQ==
+Message-ID: <1e976d6e-b685-4adb-8bfb-6f7f910e5baf@alu.unizg.hr>
+Date: Fri, 27 Oct 2023 17:51:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZTtnFe2W9vB04z46@infradead.org>
-Authentication-Results: smtp-out2.suse.de;
-	none
-X-Spam-Level: 
-X-Spam-Score: -6.60
-X-Spamd-Result: default: False [-6.60 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 MIME_GOOD(-0.10)[text/plain];
-	 NEURAL_HAM_LONG(-3.00)[-1.000];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 NEURAL_HAM_SHORT(-1.00)[-1.000];
-	 RCPT_COUNT_SEVEN(0.00)[9];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_COUNT_TWO(0.00)[2];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-3.00)[100.00%];
-	 FREEMAIL_CC(0.00)[gmail.com,suse.cz,kernel.org,fb.com,toxicpanda.com,suse.com,vger.kernel.org]
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] lib/find: Make functions safe on changing bitmaps
+Content-Language: en-US
+To: Yury Norov <yury.norov@gmail.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: kernel test robot <oliver.sang@intel.com>, Jan Kara <jack@suse.cz>,
+ oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
+ ying.huang@intel.com, feng.tang@intel.com, fengwei.yin@intel.com,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Mirsad Todorovac <mirsad.todorovac@alu.unizg.hr>,
+ Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org
+References: <202310251458.48b4452d-oliver.sang@intel.com>
+ <374465d3-dceb-43b1-930e-dd4e9b7322d2@rasmusvillemoes.dk>
+ <ZTszoD6fhLvCewXn@yury-ThinkPad>
+From: Mirsad Todorovac <mirsad.todorovac@alu.hr>
+In-Reply-To: <ZTszoD6fhLvCewXn@yury-ThinkPad>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri 27-10-23 00:30:29, Christoph Hellwig wrote:
-> On Fri, Oct 27, 2023 at 09:33:19AM +0300, Amir Goldstein wrote:
-> > OK. You are blaming me for attempting to sneak in a broken feature
-> > and I have blamed you for trying take my patches hostage to
-> > promote your agenda.
+On 10/27/2023 5:51 AM, Yury Norov wrote:
+> On Wed, Oct 25, 2023 at 10:18:00AM +0200, Rasmus Villemoes wrote:
+>> On 25/10/2023 09.18, kernel test robot wrote:
+>>>
+>>>
+>>> Hello,
+>>>
+>>> kernel test robot noticed a 3.7% improvement of will-it-scale.per_thread_ops on:
+>>
+>> So with that, can we please just finally say "yeah, let's make the
+>> generic bitmap library functions correct
 > 
-> I'm not blaming you for anything.  But I absolutely reject spreading
-> this broken behavior to core.  That's why there is hard NAK on this
-> patchs. 
+> They are all correct already.
 > 
-> > 
-> > If that is the case, fanotify will need to continue reporting the fsid's
-> > exactly as the user observes them on the legacy btrfs filesystems.
-> > The v2 patches I posted are required to make that possible.
+>> and usable in more cases"
 > 
-> The point is tht you simply can't use fanotify on a btrfs file system
-> with the broken behavior.  That's what btrfs gets for doing this
-> broken behavior to start with.
+> See below.
+> 
+>> instead of worrying about random micro-benchmarks that just show
+>> you-win-some-you-lose-some.
+> 
+> That's I agree. I don't worry about either +2% or -3% benchmark, and
+> don't think that they alone can or can't justificate such a radical
+> change like making all find_bit functions volatile, and shutting down
+> a newborn KCSAN.
+> 
+> Keeping that in mind, my best guess is that Jan's and Misrad's test
+> that shows +2% was against stable bitmaps; and what robot measured
+> is most likely against heavily concurrent access to some bitmap in
+> the kernel.
+> 
+> I didn't look at both tests sources, but that at least makes some
+> sense, because if GCC optimizes code against properly described
+> memory correctly, this is exactly what we can expect.
+> 
+>> Yes, users will have to treat results from the find routines carefully
+>> if their bitmap may be concurrently modified. They do. Nobody wins if
+>> those users are forced to implement their own bitmap routines for their
+>> lockless algorithms.
+> 
+> Again, I agree with this point, and I'm trying to address exactly this.
+> 
+> I'm working on a series that introduces lockless find_bit functions
+> based on existing FIND_BIT() engine. It's not ready yet, but I hope
+> I'll submit it in the next merge window.
+> 
+> https://github.com/norov/linux/commits/find_and_bit
+> 
+> Now that we've got a test that presumably works faster if find_bit()
+> functions are all switched to be volatile, it would be great if we get
+> into details and understand:
+>   - what find_bit function or functions gives that gain in performance;
+>   - on what bitmap(s);
 
-Well, fanotify was never disabled on btrfs and presumably there are users.
-What we blocked (exactly out of caution to not spread questionable
-behavior) is placing of marks using a path whose fsid (from statfs(2)) is
-different from filesystem root fsid when using FID-mode fanotify group
-(i.e. groups where we report fsid + fhandle for each event instead of open
-file descriptor). So effectively people currently cannot place marks on
-non-root subvolume paths of btrfs for such fanotify groups.
+I am positive that your test_and_clear_bit() loop per bit wouldn't 
+improve performance. No insult, but it has to:
 
-Now given it is uncertain how exactly will filesystems end up presenting
-subvolumes to VFS (and consequently to userspace) I agree it is probably
-premature to allow placing superblock or mount marks on such paths because
-the meaning could change when btrfs changes its presentation and we'd be
-just adding ourselves more headaches with backward compatibility for no
-great reasons. But so far I see no good reason to keep forbidding adding
-inode marks on such paths as Amir suggests. I'll think about that.
+- LOCK the bus
+- READ the (byte/word/longword/quadword) from memory
+- TEST the bit and remember the result in FLAGS
+- CLEAR the bit
+- WRITE back the entire byte/word/longword/quadword
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+So, instead of speeding up, you'd end up reading 64 times in the worst 
+case where only the last bit in the quadword is set.
+
+What we need is this ffs() that expands to assembly instruction BSF
+(bit scan forward)
+
+  [1] https://www.felixcloutier.com/x86/bsf
+
+followed by a BTR (bit test and reset)
+
+  [2] https://www.felixcloutier.com/x86/btr
+
+Ideally, we'd have an instruction that does both, and atomic, or a way 
+to LOCK the bus for two instructions. But bad guys could use that to 
+stall all cores indefinitely:
+
+DON'T DO THIS!
+-----------------------------
+      LOCK
+loop:
+      BSF r16, m16/m32/m64
+      BTR m16/m32/m64, r16
+      JMP loop
+      UNLOCK
+-----------------------------
+
+This would better work with the hardware-assisted CAM locking device, 
+than stopping all cores from reading and writing on each memory barrier.
+
+But this is a long story.
+
+>   - is the reason in concurrent memory access (guess yes), and if so,
+>   - can we refactor the code to use lockless find_and_bit() functions
+>     mentioned above;
+>   - if not, how else can we address this.
+> 
+> If you or someone else have an extra time slot to get deeper into
+> that, I'll be really thankful.
+
+I don't know if the Linux kernel uses any advantage of a trasnactional 
+memory device if it finds one?
+
+The idea of each mutex() or even user-space futex() stalling all cores 
+to "asm LOCK CMPXCHG m8/m16/m32/m64, r8/r16/r32/r64" simply doesn't 
+scale well with i.e. 128 cores that have to wait for one long 
+read-modify-write cycle that bypasses cache and talks to very slow memory.
+
+I see some progress with per-CPU variables.
+
+[3] 
+https://stackoverflow.com/questions/58664496/locking-on-per-cpu-variable/67997961#67997961
+
+For multiprocessor system and to protect percpu variables, we can just 
+disable preemption and do local_irq_save. This way we avoid taking the 
+spinlock. Spinlock requires atomicity across multiple CPU's. With per 
+cpu variables it shall not be required.
+
+	local_irq_save(flags);
+	preempt_disable();
+	-- Modify the percpu variable
+	preempt_enable();
+	local_irq_restore(flags);
+
+That compiles roughly to:
+
+	unsigned long flags;
+
+	asm volatile("cli": : :"memory");
+	asm volatile(
+		"mrs	%0, " IRQMASK_REG_NAME_R " @local_save_flags"
+		: "=r" (flags) : : "memory", "cc");
+	preempt_count_inc();
+	__asm__ __volatile__("": : :"memory")  // barrier()
+	--- your stuff here ---
+	if (!(!(flags & X86_EFLAGS_IF))
+		asm volatile("sti": : :"memory");
+	__asm__ __volatile__("": : :"memory")  // barrier()
+	preempt_count_dec();
+
+With this code other CPUs can work in parallel. None of the CPU spins.
+
+If we take spinlock then we modify an atomic variable also other CPU 
+comes then it has to wait/spin if spinlock is acquired.
+
+Best regards,
+Mirsad
+
+
+> Thanks,
+> Yury
 
