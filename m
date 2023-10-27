@@ -1,45 +1,45 @@
-Return-Path: <linux-fsdevel+bounces-1374-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1375-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A4E67D9B81
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 16:34:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65C467D9BCF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 16:43:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AB331C210AD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 14:34:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07236B21481
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 14:43:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2699374C6;
-	Fri, 27 Oct 2023 14:34:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB98718E05;
+	Fri, 27 Oct 2023 14:43:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W59Cui+s"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O26UC/Uu"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00E30374C8
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 14:33:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65408C433C8;
-	Fri, 27 Oct 2023 14:33:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E20F1773E
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 14:42:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4474C433C8;
+	Fri, 27 Oct 2023 14:42:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1698417229;
-	bh=XtwBVpxwOzBBFzwktednvY+wvC5tqsoHYE/dsTsZi+A=;
+	s=k20201202; t=1698417774;
+	bh=Fo/Q1tCDWCMX1UtKnc1Cp7UAgDSwFYYmaR8Bh6BaonY=;
 	h=From:To:Cc:Subject:Date:From;
-	b=W59Cui+silA+bkCqaB4LVXiUAULBbO1iAcfW8qlFqqhJGjHiAKo0GwhKzuN6p4M5k
-	 NDfN3LhTY3ujwji06lqQo7grfiKJpX2wWjT22ehh9Luvicuf/Smq65Vx7J+3gi61W2
-	 Q7cXHQcDQ3S5MR5vS3QkdFRKQsuiK4PmsBIYIRS6snhyO6diMEMQ0hI43tT3cRYocF
-	 I5yFInjExXNrVR4NKFEzpIVL9JRC7JtXEDE1L44mrqfMSHf7uXxud4oltGRqVWek/C
-	 Pynkt+EZ0kMq57jhntIVGFOoDG2mPTgZRxt4OYMbjt04cxMX0fq+mmbM/Fk8gPGHIP
-	 K0Uo+jLgcwVdA==
+	b=O26UC/UuNw0xh6Zdv/uqfIDo9PzFFgslo71++vldE9+ovHIqcDtcdJ32DOklnNysD
+	 8vw8fNJ/Koxx0NIs4H3bUoW04tOt+U5nFt08FIbLWvIH7626CeDqFpsxRsTJ26qT4i
+	 AsGJhlHelTxBGjM3+OOdVG2Rg/6uFjZONyM1nB9jAo+P8u2PkJJmvTK33WXrsiHFJW
+	 RTPmxtr7U1qyd3Gmj6zWfeCKJDLaTiHzLAztaNDEIwgLDQwWi1s6QDVU4okFRXsR7P
+	 P7DnfSZvHM7Sp0kcivY0fqivsp2D4QAErP3xfOTJ8enJXdeMFIuzHXCc+c4wSO8y8K
+	 kSf0cgoU/fItw==
 From: Christian Brauner <brauner@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Christian Brauner <brauner@kernel.org>,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [GIT PULL for v6.7] autofs updates
-Date: Fri, 27 Oct 2023 16:33:41 +0200
-Message-Id: <20231027-vfs-autofs-018bbf11ed67@brauner>
+Subject: [GIT PULL for v6.7] vfs io updates
+Date: Fri, 27 Oct 2023 16:42:35 +0200
+Message-Id: <20231027-vfs-io-82cd868e9b4f@brauner>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -47,25 +47,44 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2388; i=brauner@kernel.org; h=from:subject:message-id; bh=XtwBVpxwOzBBFzwktednvY+wvC5tqsoHYE/dsTsZi+A=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRan9Lufb7oz+pFD46+TH/VYntfbq/bzBO/bkrVRk+ccuYj z4q/TB2lLAxiXAyyYoosDu0m4XLLeSo2G2VqwMxhZQIZwsDFKQAT0brByPDo+tLomTkn7x/nV55R6c pw3vr8PamvOxs9zt3aunhnhJcTI8PVV4+EDiXoJFZaL45rq36yZ8aEt6vqai54Pv5z7eYja11eAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4203; i=brauner@kernel.org; h=from:subject:message-id; bh=bS0RKv9WrQ4+qTFajR4rqczirZYMqhCIdwgz1AYwIEk=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRanzpzjdFP5IDQkfiD9x6btUcWKmVN2dZx/XiV9Hr17uS4 lS1WHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABMpDGL4K2JfWBvDWxY5u0bUV17YyW e22pKr971PCV3/Fpp6/fH9Awz/XRrTfmROncllfFR3wxOBYzumuBtITJz5ezv/k5qzohIerAA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
 Hey Linus,
 
 /* Summary */
-This ports autofs to the new mount api. The patchset has existed for
-quite a while but never made it upstream. Ian picked it back up.
+This contain's David's iov_iter cleanup work to convert the iov_iter
+iteration macros to inline functions:
 
-This also fixes a bug where fs_param_is_fd() was passed a garbage
-param->dirfd but it expected it to be set to the fd that was used to set
-param->file otherwise result->uint_32 contains nonsense. So make sure
-it's set.
-
-One less filesystem using the old mount api. We're getting there, albeit
-rather slow. The last remaining major filesystem that hasn't converted
-is btrfs. Patches exist - I even wrote them - but so far they haven't
-made it upstream.
+* Remove last_offset from iov_iter as it was only used by ITER_PIPE.
+* Add a __user tag on copy_mc_to_user()'s dst argument on x86 to match
+  that on powerpc and get rid of a sparse warning.
+* Convert iter->user_backed to user_backed_iter() in the sound PCM
+  driver.
+* Convert iter->user_backed to user_backed_iter() in a couple of
+  infiniband drivers.
+* Renumber the type enum so that the ITER_* constants match the order in
+  iterate_and_advance*().
+* Since the preceding patch puts UBUF and IOVEC at 0 and 1, change
+  user_backed_iter() to just use the type value and get rid of the extra
+  flag.
+* Convert the iov_iter iteration macros to always-inline functions to
+  make the code easier to follow. It uses function pointers, but they
+  get optimised away.
+* Move the check for ->copy_mc to _copy_from_iter() and
+  copy_page_from_iter_atomic() rather than in memcpy_from_iter_mc()
+  where it gets repeated for every segment.  Instead, we check once and
+  invoke a side function that can use iterate_bvec() rather than
+  iterate_and_advance() and supply a different step function.
+* Move the copy-and-csum code to net/ where it can be in proximity with
+  the code that uses it.
+* Fold memcpy_and_csum() in to its two users.
+* Move csum_and_copy_from_iter_full() out of line and merge in
+  csum_and_copy_from_iter() since the former is the only caller of the
+  latter.
+* Move hash_and_copy_to_iter() to net/ where it can be with its only
+  caller.
 
 /* Testing */
 clang: Debian clang version 16.0.6 (16)
@@ -85,38 +104,46 @@ The following changes since commit ce9ecca0238b140b88f43859b211c9fdfd8e5b70:
 
 are available in the Git repository at:
 
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.7.autofs
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.7.iov_iter
 
-for you to fetch changes up to d3c50061765d4b5616dc97f5804fc18122598a9b:
+for you to fetch changes up to b5f0e20f444cd150121e0ce912ebd3f2dabd12bc:
 
-  autofs: fix add autofs_parse_fd() (2023-10-24 11:04:45 +0200)
+  iov_iter, net: Move hash_and_copy_to_iter() to net/ (2023-10-09 09:35:14 +0200)
 
-Please consider pulling these changes from the signed vfs-6.7.autofs tag.
+Please consider pulling these changes from the signed vfs-6.7.iov_iter tag.
 
 Thanks!
 Christian
 
 ----------------------------------------------------------------
-vfs-6.7.autofs
+vfs-6.7.iov_iter
 
 ----------------------------------------------------------------
-Christian Brauner (1):
-      fsconfig: ensure that dirfd is set to aux
+David Howells (12):
+      iov_iter: Remove last_offset from iov_iter as it was for ITER_PIPE
+      iov_iter, x86: Be consistent about the __user tag on copy_mc_to_user()
+      sound: Fix snd_pcm_readv()/writev() to use iov access functions
+      infiniband: Use user_backed_iter() to see if iterator is UBUF/IOVEC
+      iov_iter: Renumber ITER_* constants
+      iov_iter: Derive user-backedness from the iterator type
+      iov_iter: Convert iterate*() to inline funcs
+      iov_iter: Don't deal with iter->copy_mc in memcpy_from_iter_mc()
+      iov_iter, net: Move csum_and_copy_to/from_iter() to net/
+      iov_iter, net: Fold in csum_and_memcpy()
+      iov_iter, net: Merge csum_and_copy_from_iter{,_full}() together
+      iov_iter, net: Move hash_and_copy_to_iter() to net/
 
-Ian Kent (9):
-      autofs: refactor autofs_prepare_pipe()
-      autofs: add autofs_parse_fd()
-      autofs: refactor super block info init
-      autofs: reformat 0pt enum declaration
-      autofs: refactor parse_options()
-      autofs: validate protocol version
-      autofs: convert autofs to use the new mount api
-      autofs: fix protocol sub version setting
-      autofs: fix add autofs_parse_fd()
-
- fs/autofs/autofs_i.h |  20 ++-
- fs/autofs/init.c     |   9 +-
- fs/autofs/inode.c    | 435 +++++++++++++++++++++++++++++++--------------------
- fs/fsopen.c          |   1 +
- 4 files changed, 283 insertions(+), 182 deletions(-)
+ arch/x86/include/asm/uaccess.h           |   2 +-
+ arch/x86/lib/copy_mc.c                   |   8 +-
+ drivers/infiniband/hw/hfi1/file_ops.c    |   2 +-
+ drivers/infiniband/hw/qib/qib_file_ops.c |   2 +-
+ include/linux/iov_iter.h                 | 274 +++++++++++++++++++
+ include/linux/skbuff.h                   |   3 +
+ include/linux/uio.h                      |  34 +--
+ lib/iov_iter.c                           | 437 ++++++++++---------------------
+ net/core/datagram.c                      |  75 +++++-
+ net/core/skbuff.c                        |  40 +++
+ sound/core/pcm_native.c                  |   4 +-
+ 11 files changed, 540 insertions(+), 341 deletions(-)
+ create mode 100644 include/linux/iov_iter.h
 
