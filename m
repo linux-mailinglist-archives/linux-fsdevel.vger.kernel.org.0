@@ -1,107 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-1315-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1316-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DD2C7D8EE3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 08:43:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4775E7D8F13
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 08:59:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DA981C20FD6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 06:43:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0254A282338
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 06:59:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 627E18F57;
-	Fri, 27 Oct 2023 06:43:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 566EE947E;
+	Fri, 27 Oct 2023 06:59:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lvDZLjX6"
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="kqwCA5H/";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OkSroYDB"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 251898F41
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 06:43:14 +0000 (UTC)
-Received: from mail-qv1-xf2a.google.com (mail-qv1-xf2a.google.com [IPv6:2607:f8b0:4864:20::f2a])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E172121;
-	Thu, 26 Oct 2023 23:43:13 -0700 (PDT)
-Received: by mail-qv1-xf2a.google.com with SMTP id 6a1803df08f44-66d36b2a247so11689706d6.1;
-        Thu, 26 Oct 2023 23:43:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698388992; x=1698993792; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T5uG6VL22c1tEm5EQWvWRaIRE/SGFemhnIPLZLh3Gcw=;
-        b=lvDZLjX6IkaMjRarHpvjYl5GeCXWwT5mSX5fdhLLMGMaHRtGB+Ra6p+Q0GNr1Pz2q0
-         u8e2nXw2LfpnFN9fIE+KJSyl93acOhR9P3/l266tdzEKa1MdDsbm8Dc5fSXcIOMmbBM8
-         bIoxT4Lp4ZRomZcLfi5icB9wMflRpf+GgbdKCgpSaKmKvxKiPliUpMQ1DnZI8A9HOXZF
-         fMnQd1+QrUovYIZSmhO+hbHldO3Ln4lnH+oTZRkBi8M9gRayHa6lPFXC2Jn7pYALvYeu
-         aaNCIVmPF3qUQbXlyRPdGcJlL8g7ce68nxDR+RzqfW7qelsZQDJ+RHLu07QYlUCfE8fz
-         XXjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698388992; x=1698993792;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=T5uG6VL22c1tEm5EQWvWRaIRE/SGFemhnIPLZLh3Gcw=;
-        b=uYL6Uqo5bgQzn6315du6UYJEvfDAcDCxsd2MqCaSlppvGvs/7eVG64Abpj5KovZk54
-         SRwV1zGL9g/aYwSd5yy0rjbDpyAOnChqZxAi7hOhA5+8KiLReYpsdTKIiThbIhOJUFH0
-         AoRcDuEwPK5NrqBoirgwqU0nBDvWVUkIdsDHZ1vv9U+BPTNZfXzbU4e9zNMi0ekDKgkg
-         hUmn0aeTiP1iCvnYnMGBg9yHeCsUuzxTuKjCuGloNzvvl4/BZl+Rf25O7Ymn/z4MPq6Y
-         ap0pbaA6inFmC25XkdWbX1Ir8MayrXsSjsUMH6e9gclT2T+HKBOtfsqdClb8GknBZrBA
-         jkHg==
-X-Gm-Message-State: AOJu0YwOVAtXsVbAyBKhDiFUS2RPiqmU75WHSZL5JGwfKb+KCUPXLP6Q
-	LVotiejUxTYAxhBxUCbXjUJ34DeNveBzTsQ8JTs=
-X-Google-Smtp-Source: AGHT+IGI9+jlBzvWTQSmXsRyASadZs15hk2tJyadDNdA9kqRqnQ2/A6wN8DCFC/4jghnDUmO35TaLX525p3PeQXVEnU=
-X-Received: by 2002:a05:6214:e4e:b0:655:d6af:1c32 with SMTP id
- o14-20020a0562140e4e00b00655d6af1c32mr1976846qvc.15.1698388992107; Thu, 26
- Oct 2023 23:43:12 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AED08F61
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 06:59:39 +0000 (UTC)
+Received: from wout3-smtp.messagingengine.com (wout3-smtp.messagingengine.com [64.147.123.19])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC5A9116;
+	Thu, 26 Oct 2023 23:59:38 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailout.west.internal (Postfix) with ESMTP id 6485D3200B20;
+	Fri, 27 Oct 2023 02:59:35 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Fri, 27 Oct 2023 02:59:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:sender
+	:subject:subject:to:to; s=fm2; t=1698389974; x=1698476374; bh=LC
+	OGIdEAA3K9vSNcOyI1UVHdJVWxI+vzkle3h6ak1Ik=; b=kqwCA5H/YNNXZ6ExP2
+	gT1/jTuL5V0O7Xo2qBo52CBgSrj13ts7QJgCGyBN4V9iuJTk7Hz339IXjeyHvBef
+	/SOCwgHvy9ltSDOiNRSzKhCBgOC/wWY1GvwHiwIvJwkAiRMxQnD/B639BIZhf0Qj
+	PdhEwdd4urZIj8yZakkiKRb14jS0cphiFmKT6/3MlpIOOVe4t0X3SfCuT1bkEpKw
+	x7Abe2cq9xRlQYLGARK7Bp738pWYdSOoHjFJY6NXjwgRr9R4Zul0PungSXb05hzj
+	dgQ0cHBa07Us4MQqLMCDkzKKGC+n4NGn2cXD3qjSEE9dAyK5/proG8dRIR4iUAsx
+	RPoA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:sender:subject
+	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+	:x-sasl-enc; s=fm3; t=1698389974; x=1698476374; bh=LCOGIdEAA3K9v
+	SNcOyI1UVHdJVWxI+vzkle3h6ak1Ik=; b=OkSroYDBiyBePX4B7uIH2e+32IS0X
+	4QZRV8PxECdgVB5X4wmpn7w4YS5oXaAliyYur/1zY9zBijYSfrUyZPIerVqkX8Rh
+	6wZ1YWy+3YHBNzFREPR4I6vqFMLE4UJp5mkkJzJS6ZC1EAFL4c11uAiCmechIxY1
+	FQIIAogF838aUgkrL5zF4ZvY2iAATzNir7WZAxXpH/6uPoAyikT+4QgwM9cIKMTl
+	ARscWzHbmCgl4VRNe8bfPobwSVEgwevhm+8/us1WRiOdYScntyR3N3ICzKtpBZQZ
+	jPU2Hqsm3ktff8hL4SD4B3NkS7C/AIjzpWWX5aItgvwlyRVNe2y1XYd8w==
+X-ME-Sender: <xms:1l87Za_qxOeSCYVYhme02ynv0pIvYg1RN2VXvVWe21syge4Wbae2Fg>
+    <xme:1l87ZatC-_zPOcpPHx3omUkOSn3b-5krJKMKNY_61nXg87qy2l-sRndTbvx_45KRy
+    C-Lk3dR5bjCRMjpLsI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrleefgdduudeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepvefhffeltdegheeffffhtdegvdehjedtgfekueevgfduffettedtkeekueef
+    hedunecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpe
+    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:1l87ZQBd5SsjxpNSMHjGoF4aj7vhp2yeyjhJ39O7x8Bz7l5CF1I0AQ>
+    <xmx:1l87ZScFGsMyyXz5atxiK3W7P0cAX-Rm_isri5VGGiahlw1L0pxiyA>
+    <xmx:1l87ZfP_7EA5xL21VCuAfV2rXvfLfqcvYde1RVRjtpktqj30M4U8Bw>
+    <xmx:1l87ZUo8efIeOGNQubI6CFhLydtiJlgTy6F8oHSZ70yGaaiqsWNaFw>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 1BCAEB60089; Fri, 27 Oct 2023 02:59:33 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.9.0-alpha0-1048-g9229b632c5-fm-20231019.001-g9229b632
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231023180801.2953446-1-amir73il@gmail.com> <20231023180801.2953446-4-amir73il@gmail.com>
- <ZTtTEw0VMJxoJFyA@infradead.org>
-In-Reply-To: <ZTtTEw0VMJxoJFyA@infradead.org>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 27 Oct 2023 09:43:01 +0300
-Message-ID: <CAOQ4uxj_R1KyYJqBXykCDUYZUEdXC3x0j1vZdOXsRcSb6dKaRg@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] exportfs: define FILEID_INO64_GEN* file handle types
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
-	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-Id: <4bef4861-d3eb-4d48-bd8f-b31a000c6904@app.fastmail.com>
+In-Reply-To: <20231026204540.143217-1-amir73il@gmail.com>
+References: <20231026204540.143217-1-amir73il@gmail.com>
+Date: Fri, 27 Oct 2023 08:59:13 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Amir Goldstein" <amir73il@gmail.com>,
+ "Christian Brauner" <brauner@kernel.org>
+Cc: "Jeff Layton" <jlayton@kernel.org>,
+ "Chuck Lever" <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org,
+ linux-nfs@vger.kernel.org, "kernel test robot" <lkp@intel.com>
+Subject: Re: [PATCH] fs: fix build error with CONFIG_EXPORTFS=m or not defined
+Content-Type: text/plain
 
-On Fri, Oct 27, 2023 at 9:05=E2=80=AFAM Christoph Hellwig <hch@infradead.or=
-g> wrote:
+On Thu, Oct 26, 2023, at 22:45, Amir Goldstein wrote:
+> Many of the filesystems that call the generic exportfs helpers do not
+> select the EXPORTFS config.
 >
-> On Mon, Oct 23, 2023 at 09:08:00PM +0300, Amir Goldstein wrote:
-> > Similar to the common FILEID_INO32* file handle types, define common
-> > FILEID_INO64* file handle types.
-> >
-> > The type values of FILEID_INO64_GEN and FILEID_INO64_GEN_PARENT are the
-> > values returned by fuse and xfs for 64bit ino encoded file handle types=
-.
+> Move generic_encode_ino32_fh() to libfs.c, same as generic_fh_to_*()
+> to avoid having to fix all those config dependencies.
 >
-> Please actually switch xfs to fully use the helpers instead of
-> duplicating the logic.
-
-I will follow up with another patch.
-
-> Presumable the same for fuse, but for that
-> I'd need to look at how it works for fuse right now and if there's not
-> some subtle differences.
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: 
+> https://lore.kernel.org/oe-kbuild-all/202310262151.renqMvme-lkp@intel.com/
+> Fixes: dfaf653dc415 ("exportfs: make ->encode_fh() a mandatory method 
+> for NFS export")
+> Suggested-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> ---
 >
+> Christian,
+>
+> Soaking f_fsid in linux-next started to bring goodies.
+> Please feel free to apply the fix as is or squash it.
 
-There are subtle differences:
-1. fuse encodes an internal nodeid - not i_ino
-2. fuse encodes the inode number as [low32,high32]
+I just confirmed that this fixes all the build regressions I
+see with your series, as expected, thanks for the fix
 
-It cannot use the generic helper.
-
-Thanks,
-Amir.
+Tested-by: Arnd Bergmann <arnd@arndb.de>
 
