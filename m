@@ -1,62 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-1422-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1423-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 096057D9FE5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 20:23:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46C297D9FE6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 20:23:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D22B1C210D8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 18:23:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F02A728263A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 18:23:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0372F3CD01;
-	Fri, 27 Oct 2023 18:22:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0126B3D39A;
+	Fri, 27 Oct 2023 18:22:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ROnluImD"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jNz8g3h8"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B703C68B
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 18:22:50 +0000 (UTC)
-Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5CE610F3
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 11:22:44 -0700 (PDT)
-Received: by mail-yb1-xb49.google.com with SMTP id 3f1490d57ef6-d99ec34829aso1716763276.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 11:22:44 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 684EE3D38B
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 18:22:54 +0000 (UTC)
+Received: from mail-yw1-x1149.google.com (mail-yw1-x1149.google.com [IPv6:2607:f8b0:4864:20::1149])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BFC71705
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 11:22:46 -0700 (PDT)
+Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-5a7ed6903a6so20450527b3.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 11:22:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1698430963; x=1699035763; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1698430965; x=1699035765; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=dSzaJ5MjV13E6q0DS9u4ZW54i690mbtysQRlTl8m4E8=;
-        b=ROnluImDhqyCn75qI+tqyi5myj8UyFdtYFi2+sxFPCe6XfNKrISKApRhFy9LtbfWuk
-         m4xPsDbnmyFaStrJZHGkZbJgGKe/vtBj7ZWgGsvUeRgdX2szG9NypNg5GJaH2Xgq21fy
-         kr8pLixtJWAxDK2FPXcdOYCNZY83gMqzfFsKwQYisWvHt5rClU00vYHbzVtt4OFNRP+P
-         tmviXu7EqUj6MmxJraqJ2x6W03Z/DQtyqykjgPaIO+qPdn5R80f5/t4MyEEZ0u2FemI5
-         xmwWE8hb2b9NCUU+o3LZzT0nBbEN2Co5ZA1Wf2BGR+PXT2QO2bj6fvZ1Fo4WShMW8Y4k
-         gUAQ==
+        bh=yZ4F+cCxLEA4PAApSP/v5UU01C7c86XBvQlNJK8gQkw=;
+        b=jNz8g3h8naX2HfYcFiDLgvpX0tWkk3a2xdTTOQ4PMqOOuyPdIQN+INWtO/Y3MU1uOA
+         TPApdR6K0cxVH5me7fr8t9/u7KngtbbHTY1qRElGDn2ummZtWW1HRKFrwi/WAaVW2DPT
+         0M0xImaGKcsjoDfaOKwKBKHkFbvbd08rjQpJbd+mX2B3BuDvcPncPaKObaV+mCTrfEY7
+         jriMkeR1P+muFZA2clrz+O9sZsEmdfl2TZkB6/XLLftAsura+BykuUYQXnsC7N4cD1W2
+         jnIdZ/yAKiywIWxEPvhEMjYVEyDzhXo1f5rbT+50aCu/YVBu47mGECveZ/JRjlqq6ZK0
+         2xyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698430963; x=1699035763;
+        d=1e100.net; s=20230601; t=1698430965; x=1699035765;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=dSzaJ5MjV13E6q0DS9u4ZW54i690mbtysQRlTl8m4E8=;
-        b=JrqvetWtqUkUKlQYqnB9sj2C7yrlIkA9Qd4vKSYJhTKhDQzmW5r753fkDXqB/6IsC8
-         qqg7DprXUhGeP2itF5AQ+iEf5R16/IAQSPryQ7ifbGrduKMlTe6f3z602APAPTOv9LGz
-         jy61j28+KWGZhxhFf8aCkkR5j4WSbSKu1n3W4cT9GwhheOQYdMdzO7uQwvu3MgcjtTKo
-         9+D519G2g6T8ERmQLak5yN8ZB9NsrNN3Ow6yjrqKC8/47gQdDidHGiymOnq8TC8c8vQ3
-         pJv/BbXuiGLkqlZ7r4dXZkchNwC9PNc5txPJdfOlRSGLnejjUoL5N8s9xmRdaq97VVtk
-         MJ6Q==
-X-Gm-Message-State: AOJu0YyXV4jO7fQisjpzeotJXfdLgArS5spZPfWd0VI08BxqnWD1uyuk
-	0r0DoWTdI/UyRize4SiGJrk555N8bAI=
-X-Google-Smtp-Source: AGHT+IE2yfyx6OwAXQ6PbUozSNKQr4HAB6CvBECxReNk+TNP1aa3zG1osU5Glk09o10tbDLcLiI8MNAMXYU=
+        bh=yZ4F+cCxLEA4PAApSP/v5UU01C7c86XBvQlNJK8gQkw=;
+        b=S0g1mdu40h50Q1hXrpPcrT6pxN0vRCChy8DJ5DtngJsmUdVoVc19dNJax90zEL6sWv
+         17JeSGHimvlSIxANLdnvnUPw2gIadiBk832gHO64L08O6iY6UJvH6sa2jVxOFrXEm2GN
+         cRE3X5i7oVq+lnQthacBnKoHiuBqAxXZkSUcq2O2OIWxp5dgedQOQcWzMA44EGNOAVHz
+         s91RLKZI4ipA1d6rZ+w93M4i5HMvHt9EcSdpKPleYSJNOXZXiJxHLP27YjA5kEvc4dUM
+         4M2MW7vpN+tELKhrxf72HFGsVcm1NER+7SO2uyfFDWg2x3aZePwNpXYhJITbTYFX6++X
+         HnBw==
+X-Gm-Message-State: AOJu0YxxF8/M3UPlgBzfX0t43p+DkyFdqpAzQykrAfK/vq5qKTAFYyvl
+	bWL1HTUUwWEZws32qdbCbVXqQzdiDuY=
+X-Google-Smtp-Source: AGHT+IGwuIwT1CUNj+EGBgkfDLIp57neyP6oJZbU4jqENzEgZhephR9TVXqJjgCFT4zzJuNYuq9lZ329bBo=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6902:1746:b0:d9a:59cb:8bed with SMTP id
- bz6-20020a056902174600b00d9a59cb8bedmr61033ybb.5.1698430963421; Fri, 27 Oct
- 2023 11:22:43 -0700 (PDT)
+ (user=seanjc job=sendgmr) by 2002:a81:a14c:0:b0:59b:e97e:f7e2 with SMTP id
+ y73-20020a81a14c000000b0059be97ef7e2mr73613ywg.4.1698430965278; Fri, 27 Oct
+ 2023 11:22:45 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri, 27 Oct 2023 11:21:51 -0700
+Date: Fri, 27 Oct 2023 11:21:52 -0700
 In-Reply-To: <20231027182217.3615211-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -66,9 +66,9 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20231027182217.3615211-1-seanjc@google.com>
 X-Mailer: git-send-email 2.42.0.820.g83a721a137-goog
-Message-ID: <20231027182217.3615211-10-seanjc@google.com>
-Subject: [PATCH v13 09/35] KVM: Add KVM_EXIT_MEMORY_FAULT exit to report
- faults to userspace
+Message-ID: <20231027182217.3615211-11-seanjc@google.com>
+Subject: [PATCH v13 10/35] KVM: Add a dedicated mmu_notifier flag for
+ reclaiming freed memory
 From: Sean Christopherson <seanjc@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
 	Oliver Upton <oliver.upton@linux.dev>, Huacai Chen <chenhuacai@kernel.org>, 
@@ -95,189 +95,159 @@ Cc: kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
 
-From: Chao Peng <chao.p.peng@linux.intel.com>
+Handle AMD SEV's kvm_arch_guest_memory_reclaimed() hook by having
+__kvm_handle_hva_range() return whether or not an overlapping memslot
+was found, i.e. mmu_lock was acquired.  Using the .on_unlock() hook
+works, but kvm_arch_guest_memory_reclaimed() needs to run after dropping
+mmu_lock, which makes .on_lock() and .on_unlock() asymmetrical.
 
-Add a new KVM exit type to allow userspace to handle memory faults that
-KVM cannot resolve, but that userspace *may* be able to handle (without
-terminating the guest).
+Use a small struct to return the tuple of the notifier-specific return,
+plus whether or not overlap was found.  Because the iteration helpers are
+__always_inlined, practically speaking, the struct will never actually be
+returned from a function call (not to mention the size of the struct will
+be two bytes in practice).
 
-KVM will initially use KVM_EXIT_MEMORY_FAULT to report implicit
-conversions between private and shared memory.  With guest private memory,
-there will be two kind of memory conversions:
-
-  - explicit conversion: happens when the guest explicitly calls into KVM
-    to map a range (as private or shared)
-
-  - implicit conversion: happens when the guest attempts to access a gfn
-    that is configured in the "wrong" state (private vs. shared)
-
-On x86 (first architecture to support guest private memory), explicit
-conversions will be reported via KVM_EXIT_HYPERCALL+KVM_HC_MAP_GPA_RANGE,
-but reporting KVM_EXIT_HYPERCALL for implicit conversions is undesriable
-as there is (obviously) no hypercall, and there is no guarantee that the
-guest actually intends to convert between private and shared, i.e. what
-KVM thinks is an implicit conversion "request" could actually be the
-result of a guest code bug.
-
-KVM_EXIT_MEMORY_FAULT will be used to report memory faults that appear to
-be implicit conversions.
-
-Note!  To allow for future possibilities where KVM reports
-KVM_EXIT_MEMORY_FAULT and fills run->memory_fault on _any_ unresolved
-fault, KVM returns "-EFAULT" (-1 with errno == EFAULT from userspace's
-perspective), not '0'!  Due to historical baggage within KVM, exiting to
-userspace with '0' from deep callstacks, e.g. in emulation paths, is
-infeasible as doing so would require a near-complete overhaul of KVM,
-whereas KVM already propagates -errno return codes to userspace even when
-the -errno originated in a low level helper.
-
-Report the gpa+size instead of a single gfn even though the initial usage
-is expected to always report single pages.  It's entirely possible, likely
-even, that KVM will someday support sub-page granularity faults, e.g.
-Intel's sub-page protection feature allows for additional protections at
-128-byte granularity.
-
-Link: https://lore.kernel.org/all/20230908222905.1321305-5-amoorthy@google.com
-Link: https://lore.kernel.org/all/ZQ3AmLO2SYv3DszH@google.com
-Cc: Anish Moorthy <amoorthy@google.com>
-Cc: David Matlack <dmatlack@google.com>
-Suggested-by: Sean Christopherson <seanjc@google.com>
-Co-developed-by: Yu Zhang <yu.c.zhang@linux.intel.com>
-Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
-Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
-Co-developed-by: Sean Christopherson <seanjc@google.com>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- Documentation/virt/kvm/api.rst | 41 ++++++++++++++++++++++++++++++++++
- arch/x86/kvm/x86.c             |  1 +
- include/linux/kvm_host.h       | 11 +++++++++
- include/uapi/linux/kvm.h       |  8 +++++++
- 4 files changed, 61 insertions(+)
+ virt/kvm/kvm_main.c | 53 +++++++++++++++++++++++++++++++--------------
+ 1 file changed, 37 insertions(+), 16 deletions(-)
 
-diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
-index ace984acc125..860216536810 100644
---- a/Documentation/virt/kvm/api.rst
-+++ b/Documentation/virt/kvm/api.rst
-@@ -6723,6 +6723,26 @@ array field represents return values. The userspace should update the return
- values of SBI call before resuming the VCPU. For more details on RISC-V SBI
- spec refer, https://github.com/riscv/riscv-sbi-doc.
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 3f5b7c2c5327..2bc04c8ae1f4 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -561,6 +561,19 @@ struct kvm_mmu_notifier_range {
+ 	bool may_block;
+ };
  
-+::
++/*
++ * The inner-most helper returns a tuple containing the return value from the
++ * arch- and action-specific handler, plus a flag indicating whether or not at
++ * least one memslot was found, i.e. if the handler found guest memory.
++ *
++ * Note, most notifiers are averse to booleans, so even though KVM tracks the
++ * return from arch code as a bool, outer helpers will cast it to an int. :-(
++ */
++typedef struct kvm_mmu_notifier_return {
++	bool ret;
++	bool found_memslot;
++} kvm_mn_ret_t;
 +
-+		/* KVM_EXIT_MEMORY_FAULT */
-+		struct {
-+			__u64 flags;
-+			__u64 gpa;
-+			__u64 size;
-+		} memory;
-+
-+KVM_EXIT_MEMORY_FAULT indicates the vCPU has encountered a memory fault that
-+could not be resolved by KVM.  The 'gpa' and 'size' (in bytes) describe the
-+guest physical address range [gpa, gpa + size) of the fault.  The 'flags' field
-+describes properties of the faulting access that are likely pertinent.
-+Currently, no flags are defined.
-+
-+Note!  KVM_EXIT_MEMORY_FAULT is unique among all KVM exit reasons in that it
-+accompanies a return code of '-1', not '0'!  errno will always be set to EFAULT
-+or EHWPOISON when KVM exits with KVM_EXIT_MEMORY_FAULT, userspace should assume
-+kvm_run.exit_reason is stale/undefined for all other error numbers.
-+
- ::
+ /*
+  * Use a dedicated stub instead of NULL to indicate that there is no callback
+  * function/handler.  The compiler technically can't guarantee that a real
+@@ -582,22 +595,25 @@ static const union kvm_mmu_notifier_arg KVM_MMU_NOTIFIER_NO_ARG;
+ 	     node;							     \
+ 	     node = interval_tree_iter_next(node, start, last))	     \
  
-     /* KVM_EXIT_NOTIFY */
-@@ -7757,6 +7777,27 @@ This capability is aimed to mitigate the threat that malicious VMs can
- cause CPU stuck (due to event windows don't open up) and make the CPU
- unavailable to host or other VMs.
+-static __always_inline int __kvm_handle_hva_range(struct kvm *kvm,
+-						  const struct kvm_mmu_notifier_range *range)
++static __always_inline kvm_mn_ret_t __kvm_handle_hva_range(struct kvm *kvm,
++							   const struct kvm_mmu_notifier_range *range)
+ {
+-	bool ret = false, locked = false;
++	struct kvm_mmu_notifier_return r = {
++		.ret = false,
++		.found_memslot = false,
++	};
+ 	struct kvm_gfn_range gfn_range;
+ 	struct kvm_memory_slot *slot;
+ 	struct kvm_memslots *slots;
+ 	int i, idx;
  
-+7.34 KVM_CAP_MEMORY_FAULT_INFO
-+------------------------------
-+
-+:Architectures: x86
-+:Returns: Informational only, -EINVAL on direct KVM_ENABLE_CAP.
-+
-+The presence of this capability indicates that KVM_RUN will fill
-+kvm_run.memory_fault if KVM cannot resolve a guest page fault VM-Exit, e.g. if
-+there is a valid memslot but no backing VMA for the corresponding host virtual
-+address.
-+
-+The information in kvm_run.memory_fault is valid if and only if KVM_RUN returns
-+an error with errno=EFAULT or errno=EHWPOISON *and* kvm_run.exit_reason is set
-+to KVM_EXIT_MEMORY_FAULT.
-+
-+Note: Userspaces which attempt to resolve memory faults so that they can retry
-+KVM_RUN are encouraged to guard against repeatedly receiving the same
-+error/annotated fault.
-+
-+See KVM_EXIT_MEMORY_FAULT for more information.
-+
- 8. Other capabilities.
- ======================
+ 	if (WARN_ON_ONCE(range->end <= range->start))
+-		return 0;
++		return r;
  
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 6409914428ca..ee3cd8c3c0ef 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -4518,6 +4518,7 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
- 	case KVM_CAP_ENABLE_CAP:
- 	case KVM_CAP_VM_DISABLE_NX_HUGE_PAGES:
- 	case KVM_CAP_IRQFD_RESAMPLE:
-+	case KVM_CAP_MEMORY_FAULT_INFO:
- 		r = 1;
- 		break;
- 	case KVM_CAP_EXIT_HYPERCALL:
-diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index 4e741ff27af3..96aa930536b1 100644
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -2327,4 +2327,15 @@ static inline void kvm_account_pgtable_pages(void *virt, int nr)
- /* Max number of entries allowed for each kvm dirty ring */
- #define  KVM_DIRTY_RING_MAX_ENTRIES  65536
+ 	/* A null handler is allowed if and only if on_lock() is provided. */
+ 	if (WARN_ON_ONCE(IS_KVM_NULL_FN(range->on_lock) &&
+ 			 IS_KVM_NULL_FN(range->handler)))
+-		return 0;
++		return r;
  
-+static inline void kvm_prepare_memory_fault_exit(struct kvm_vcpu *vcpu,
-+						 gpa_t gpa, gpa_t size)
-+{
-+	vcpu->run->exit_reason = KVM_EXIT_MEMORY_FAULT;
-+	vcpu->run->memory_fault.gpa = gpa;
-+	vcpu->run->memory_fault.size = size;
-+
-+	/* Flags are not (yet) defined or communicated to userspace. */
-+	vcpu->run->memory_fault.flags = 0;
-+}
-+
- #endif
-diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-index bd1abe067f28..7ae9987b48dd 100644
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@ -274,6 +274,7 @@ struct kvm_xen_exit {
- #define KVM_EXIT_RISCV_SBI        35
- #define KVM_EXIT_RISCV_CSR        36
- #define KVM_EXIT_NOTIFY           37
-+#define KVM_EXIT_MEMORY_FAULT     38
+ 	idx = srcu_read_lock(&kvm->srcu);
  
- /* For KVM_EXIT_INTERNAL_ERROR */
- /* Emulate instruction failed. */
-@@ -520,6 +521,12 @@ struct kvm_run {
- #define KVM_NOTIFY_CONTEXT_INVALID	(1 << 0)
- 			__u32 flags;
- 		} notify;
-+		/* KVM_EXIT_MEMORY_FAULT */
-+		struct {
-+			__u64 flags;
-+			__u64 gpa;
-+			__u64 size;
-+		} memory_fault;
- 		/* Fix the size of the union. */
- 		char padding[256];
+@@ -631,8 +647,8 @@ static __always_inline int __kvm_handle_hva_range(struct kvm *kvm,
+ 			gfn_range.end = hva_to_gfn_memslot(hva_end + PAGE_SIZE - 1, slot);
+ 			gfn_range.slot = slot;
+ 
+-			if (!locked) {
+-				locked = true;
++			if (!r.found_memslot) {
++				r.found_memslot = true;
+ 				KVM_MMU_LOCK(kvm);
+ 				if (!IS_KVM_NULL_FN(range->on_lock))
+ 					range->on_lock(kvm);
+@@ -640,14 +656,14 @@ static __always_inline int __kvm_handle_hva_range(struct kvm *kvm,
+ 				if (IS_KVM_NULL_FN(range->handler))
+ 					break;
+ 			}
+-			ret |= range->handler(kvm, &gfn_range);
++			r.ret |= range->handler(kvm, &gfn_range);
+ 		}
+ 	}
+ 
+-	if (range->flush_on_ret && ret)
++	if (range->flush_on_ret && r.ret)
+ 		kvm_flush_remote_tlbs(kvm);
+ 
+-	if (locked) {
++	if (r.found_memslot) {
+ 		KVM_MMU_UNLOCK(kvm);
+ 		if (!IS_KVM_NULL_FN(range->on_unlock))
+ 			range->on_unlock(kvm);
+@@ -655,8 +671,7 @@ static __always_inline int __kvm_handle_hva_range(struct kvm *kvm,
+ 
+ 	srcu_read_unlock(&kvm->srcu, idx);
+ 
+-	/* The notifiers are averse to booleans. :-( */
+-	return (int)ret;
++	return r;
+ }
+ 
+ static __always_inline int kvm_handle_hva_range(struct mmu_notifier *mn,
+@@ -677,7 +692,7 @@ static __always_inline int kvm_handle_hva_range(struct mmu_notifier *mn,
+ 		.may_block	= false,
  	};
-@@ -1203,6 +1210,7 @@ struct kvm_ppc_resize_hpt {
- #define KVM_CAP_ARM_EAGER_SPLIT_CHUNK_SIZE 228
- #define KVM_CAP_ARM_SUPPORTED_BLOCK_SIZES 229
- #define KVM_CAP_USER_MEMORY2 230
-+#define KVM_CAP_MEMORY_FAULT_INFO 231
  
- #ifdef KVM_CAP_IRQ_ROUTING
+-	return __kvm_handle_hva_range(kvm, &range);
++	return __kvm_handle_hva_range(kvm, &range).ret;
+ }
  
+ static __always_inline int kvm_handle_hva_range_no_flush(struct mmu_notifier *mn,
+@@ -696,7 +711,7 @@ static __always_inline int kvm_handle_hva_range_no_flush(struct mmu_notifier *mn
+ 		.may_block	= false,
+ 	};
+ 
+-	return __kvm_handle_hva_range(kvm, &range);
++	return __kvm_handle_hva_range(kvm, &range).ret;
+ }
+ 
+ static bool kvm_change_spte_gfn(struct kvm *kvm, struct kvm_gfn_range *range)
+@@ -798,7 +813,7 @@ static int kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
+ 		.end		= range->end,
+ 		.handler	= kvm_mmu_unmap_gfn_range,
+ 		.on_lock	= kvm_mmu_invalidate_begin,
+-		.on_unlock	= kvm_arch_guest_memory_reclaimed,
++		.on_unlock	= (void *)kvm_null_fn,
+ 		.flush_on_ret	= true,
+ 		.may_block	= mmu_notifier_range_blockable(range),
+ 	};
+@@ -830,7 +845,13 @@ static int kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
+ 	gfn_to_pfn_cache_invalidate_start(kvm, range->start, range->end,
+ 					  hva_range.may_block);
+ 
+-	__kvm_handle_hva_range(kvm, &hva_range);
++	/*
++	 * If one or more memslots were found and thus zapped, notify arch code
++	 * that guest memory has been reclaimed.  This needs to be done *after*
++	 * dropping mmu_lock, as x86's reclaim path is slooooow.
++	 */
++	if (__kvm_handle_hva_range(kvm, &hva_range).found_memslot)
++		kvm_arch_guest_memory_reclaimed(kvm);
+ 
+ 	return 0;
+ }
 -- 
 2.42.0.820.g83a721a137-goog
 
