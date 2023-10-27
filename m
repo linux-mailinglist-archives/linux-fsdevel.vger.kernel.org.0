@@ -1,117 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-1362-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1363-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D90AC7D9738
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 14:06:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A40567D990E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 14:56:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9ADCB21458
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 12:06:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D52731C20F7F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Oct 2023 12:56:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E2A1946C;
-	Fri, 27 Oct 2023 12:06:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 733EC179B2;
+	Fri, 27 Oct 2023 12:56:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I2oYKKgA"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EUy87ifH"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D89A519443
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 12:06:14 +0000 (UTC)
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EACAC9
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 05:06:13 -0700 (PDT)
-Received: by mail-pl1-x62f.google.com with SMTP id d9443c01a7336-1c9b70b9671so121135ad.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 05:06:13 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D36B945A
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 12:55:45 +0000 (UTC)
+Received: from mail-qv1-xf2c.google.com (mail-qv1-xf2c.google.com [IPv6:2607:f8b0:4864:20::f2c])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BD8D187;
+	Fri, 27 Oct 2023 05:55:44 -0700 (PDT)
+Received: by mail-qv1-xf2c.google.com with SMTP id 6a1803df08f44-66d332f23e4so13367506d6.0;
+        Fri, 27 Oct 2023 05:55:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1698408372; x=1699013172; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1698411343; x=1699016143; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=MQHQ463K822d0eu3lSUzX50hYKP6nmOhDBx20ObjtTc=;
-        b=I2oYKKgAC1sTJYcIs5n2w/uDCwCmxUcLpbJVQBcv31qrGHWyQ45G8uWgU0EpzwU65i
-         /aktVLo94NjG1Ceq+VaSXNAWK2kxF92RUlFOuV4ljVloYQsWeRDwNMRIMrWEV051HUYV
-         GS7SSB+Es8bwa2ttJgjDDopbgmqvC20qTKAn50Vb1XujZyYA1QaTXfdoGdE6183ARW4k
-         Zsi1eGiP2T7JLgzTh0VW+cSb/+dhiV0+RuHyciakgJ10Fk3KeXtvDAk/jYarg4bG3roK
-         Lxbvv5oBH/azAgWljC3DBSVf/qOVt/vD9aJPwp9P/3TgQHxxYqrt2M81nXh9OKh5ofI7
-         wbDA==
+        bh=3RRmUeiCvRSHcsxJCKASs1PrAktNtGUy04A9EKT5KbU=;
+        b=EUy87ifHp5zHg5LhP5NAIWVdKnWdaNLnMdcGU4QgRa4c+x6HCGEBOGsmz6n/dD9QwL
+         bdqDN3XGi0J5jZH7sz0CA5jmWTV9aF9mG9M+74Dm7jwwlBhtrV9h5jzxokvYLnMDmPgX
+         gtVb6dleuOUpwxp4/nvjvB31lhaxngoLT4sbTPCmWLoRwIcLJGChpHEcG48w3vz7Hzvn
+         D++I4o7Gn4/7Z64iR6MqLV7SW0hvxTpiwD4yCbhkMhJZe5aN8bsSKPju6v55Vr18Dhkb
+         fFBae72lnTo1fiOMQTsqIONFeLpMiQ0V+t6jfvP6EWxe+Kt59ZY9aHgpHLSqfSRq37IP
+         agxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698408372; x=1699013172;
+        d=1e100.net; s=20230601; t=1698411343; x=1699016143;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=MQHQ463K822d0eu3lSUzX50hYKP6nmOhDBx20ObjtTc=;
-        b=SyIH+fjdH85iUfAMhjnB5lr+YVPCDlZHLE2POSh+1Sgipx0Uwm3lSHN/wKrp4+fWGO
-         gdVFtaSqIg3wZwSfUMUhQp1pLiDen5iOVV9KqcGOM2DlPSp1hSdz5ZeDTGNE70hYXKLc
-         LYaEjjIOnCH60wlToBVh2/M7h7bMQ5IqlS62qPcVwgJ/10UjYHkOhkefYPVH0BmFEz/l
-         wm0F0GFZ2b8LhMtHqSfBbVg7j5qqCYEBS6DeYbhKRBondmsjaYe7iocuqe6wVYRakcPa
-         i78rkakL86iDcPHuGZYK+xY//KhEv3CZ7CH7KhGxQkyS2MJPDHyI3E6uySAAdaNQTZKa
-         5Xbw==
-X-Gm-Message-State: AOJu0Ywjr794SIpUmyB6WfBSSsduwoPac/CNiyMzRAy4LMg+aWZTUjYo
-	F5+0lvDhKUM3+vHypfqipY9Dd3Hx1jB5hfZEVhIN7A==
-X-Google-Smtp-Source: AGHT+IHaExLG43RBJIionRW/c9b84KpmLdtS6fNiD0MK5F1uxefsg3PebOwhWetdV53Pmmf6YDEOuPH/Hzj0pzzd92E=
-X-Received: by 2002:a17:902:ea0e:b0:1ca:209c:d7b9 with SMTP id
- s14-20020a170902ea0e00b001ca209cd7b9mr217852plg.2.1698408372181; Fri, 27 Oct
- 2023 05:06:12 -0700 (PDT)
+        bh=3RRmUeiCvRSHcsxJCKASs1PrAktNtGUy04A9EKT5KbU=;
+        b=Ck3xgqhDtORl/nnhKI3Ur9XaM7WqhK5dXBOQKmaHY9dkR5uAkluLhayJ+I7IOxSZSI
+         yrS8gTX8NNwGUIWjrXqpm8rV8z9gt+YzcJZ/fy/AYWtl5kfItPuUPa73yVvhbGhveHND
+         g576CMKmA3C1QcFkghzNz80dKFYHsX04EWFMrJfCAqj5qtFIlT6tfe/c7BXNeuFdwBsj
+         uFHmFp0qy+YcTkNGuYIkhxJEekisGswT5BQsG4M62DBsbQEtpdCAAhnR2NSIkFpGOYbd
+         0IuuBIKp13QMj8YT3fWOMNm/TnEg+rvOoGV7GbHJxJXo8bOJt0nTFY+bjBpwhzTAYwaq
+         b7/Q==
+X-Gm-Message-State: AOJu0Yy0p5MHrArEgsQMGv7kd1InMeIwGjKKAV0cHi92oiMUmiIBHr/V
+	SfcwHj3T39caKQSvN8//gtToLChsq7ugfg3zhSYtQYAD
+X-Google-Smtp-Source: AGHT+IEfcBCmWVyeW2UIwGeT/7eOWSuBo1A4xW/t7xM8WQD6QajXWLB2YpGeEw2WFU/QWXQcEjwo3z9pgsPrPNzVpn8=
+X-Received: by 2002:a05:6214:2406:b0:65b:232c:1546 with SMTP id
+ fv6-20020a056214240600b0065b232c1546mr3591642qvb.24.1698411343423; Fri, 27
+ Oct 2023 05:55:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20230704122727.17096-1-jack@suse.cz> <20230704125702.23180-1-jack@suse.cz>
- <20230822053523.GA8949@sol.localdomain> <20230822101154.7udsf4tdwtns2prj@quack3>
- <CANp29Y6uBuSzLXuCMGzVNZjT+xFqV4dtWKWb7GR7Opx__Diuzg@mail.gmail.com> <20231024111015.k4sbjpw5fa46k6il@quack3>
-In-Reply-To: <20231024111015.k4sbjpw5fa46k6il@quack3>
-From: Aleksandr Nogikh <nogikh@google.com>
-Date: Fri, 27 Oct 2023 14:06:00 +0200
-Message-ID: <CANp29Y7kB5rYqmig3bmzGkCc9CVZk9d=LVEPx9_Z+binfwzqEw@mail.gmail.com>
-Subject: Re: [PATCH 1/6] block: Add config option to not allow writing to
- mounted devices
-To: Jan Kara <jack@suse.cz>
-Cc: Eric Biggers <ebiggers@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-block@vger.kernel.org, Christoph Hellwig <hch@infradead.org>, 
-	Christian Brauner <brauner@kernel.org>, Jens Axboe <axboe@kernel.dk>, Kees Cook <keescook@google.com>, 
-	Ted Tso <tytso@mit.edu>, syzkaller <syzkaller@googlegroups.com>, 
-	Alexander Popov <alex.popov@linux.com>, linux-xfs@vger.kernel.org, 
-	linux-btrfs@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>
+References: <20231026205553.143556-1-amir73il@gmail.com> <ZTtT+8Hudc7HTSQt@infradead.org>
+ <CAOQ4uxh+hWrMrP5A=fGRMK7uTxFFPKvJRNu+=Sc3ygXA1PzxvQ@mail.gmail.com> <ZTtnMYJdfdIMuZnj@infradead.org>
+In-Reply-To: <ZTtnMYJdfdIMuZnj@infradead.org>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 27 Oct 2023 15:55:32 +0300
+Message-ID: <CAOQ4uxg-SWUsQp0cdpWRxJnwy3A0ZqnGy=RUkxqGh2SaKNa_mA@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: create an entry for exportfs
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Christian Brauner <brauner@kernel.org>, Jeff Layton <jlayton@kernel.org>, 
+	Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, Jeff Layton <jlayton@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-I see, thanks for sharing the details!
-
-We'll set CONFIG_BLK_DEV_WRITE_MOUNTED=3Dn on syzbot once the series is
-in linux-next.
-
-On Tue, Oct 24, 2023 at 1:10=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+On Fri, Oct 27, 2023 at 10:30=E2=80=AFAM Christoph Hellwig <hch@infradead.o=
+rg> wrote:
 >
-> Hi!
->
-> On Thu 19-10-23 11:16:55, Aleksandr Nogikh wrote:
-> > Thank you for the series!
+> On Fri, Oct 27, 2023 at 09:35:29AM +0300, Amir Goldstein wrote:
+> > On Fri, Oct 27, 2023 at 9:08=E2=80=AFAM Christoph Hellwig <hch@infradea=
+d.org> wrote:
+> > >
+> > > On Thu, Oct 26, 2023 at 11:55:53PM +0300, Amir Goldstein wrote:
+> > > > Split the exportfs entry from the nfsd entry and add myself as revi=
+ewer.
+> > >
+> > > I think exportfs is by now very much VFS code.
+> > >
 > >
-> > Have you already had a chance to push an updated version of it?
-> > I tried to search LKML, but didn't find anything.
+> > Yes, that's the idea of making it a vfs sub-entry in MAINTAINERS.
 > >
-> > Or did you decide to put it off until later?
+> > Is that an ACK? or did you mean that something needs to change
+> > in the patch?
 >
-> So there is preliminary series sitting in VFS tree that changes how block
-> devices are open. There are some conflicts with btrfs tree and bcachefs
-> merge that complicate all this (plus there was quite some churn in VFS
-> itself due to changing rules how block devices are open) so I didn't push
-> out the series that actually forbids opening of mounted block devices
-> because that would cause a "merge from hell" issues. I plan to push out t=
-he
-> remaining patches once the merge window closes and all the dependencies a=
-re
-> hopefully in a stable state. Maybe I can push out the series earlier base=
-d
-> on linux-next so that people can have a look at the current state.
+> I as mostly thinking of dropping the diretory and the separate entry.
+> That would also go along with your patch of making it a bool.
 >
->                                                                 Honza
-> --
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+> But if you feel strongly about that we can add you as an extra reviewer
+> for it :)
+
+I don't have a strong opinion about this.
+I am submitting this patch on behalf of the current export
+maintainers who requested to stay as maintainers of fs/exportfs
+and offered that I join as a reviewer of fs/exportfs.
+I cannot join as a reviewer of nfsd, hence this needs an entry.
+
+Thanks,
+Amir.
 
