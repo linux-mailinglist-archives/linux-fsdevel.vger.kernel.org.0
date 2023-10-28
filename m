@@ -1,446 +1,283 @@
-Return-Path: <linux-fsdevel+bounces-1502-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1503-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45EAA7DA989
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Oct 2023 23:16:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 604F97DAA15
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Oct 2023 00:43:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1EA7B20FE9
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Oct 2023 21:16:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41DB41C209C1
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Oct 2023 22:43:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AC5919456;
-	Sat, 28 Oct 2023 21:16:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Hmi+lFYm"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6AE417997;
+	Sat, 28 Oct 2023 22:43:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CEB51944D
-	for <linux-fsdevel@vger.kernel.org>; Sat, 28 Oct 2023 21:16:05 +0000 (UTC)
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DEDCD4C
-	for <linux-fsdevel@vger.kernel.org>; Sat, 28 Oct 2023 14:15:57 -0700 (PDT)
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20231028211555euoutp02602c6d6c59f285e57bb2960faf76e118~SYf6bAwkj0879208792euoutp02T
-	for <linux-fsdevel@vger.kernel.org>; Sat, 28 Oct 2023 21:15:55 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20231028211555euoutp02602c6d6c59f285e57bb2960faf76e118~SYf6bAwkj0879208792euoutp02T
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1698527755;
-	bh=vhkx9nEW1P7cUV8Zzx9SlNlxAL82sC2JgyqBVsGy9MY=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References:From;
-	b=Hmi+lFYmkHisLsZG4VbgvaPvoiedms0z5nZdt23VzeCaQ4zTch+cDcnZoKOkjZexm
-	 /vTxBQ0PS0S7S/vCmV+ontWsu8i0kpVGRzZBNKgTjMHBvhGggt2MHcoh0c1JqnGkqq
-	 ARbkmZY90/TNfseuHtaw6TXdEUBbIaXDncT5gR60=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20231028211555eucas1p2394b404cd93491ee5bf44a270047b733~SYf6NFJBV1224812248eucas1p2I;
-	Sat, 28 Oct 2023 21:15:55 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges3new.samsung.com (EUCPMTA) with SMTP id 9F.57.37758.B0A7D356; Sat, 28
-	Oct 2023 22:15:55 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20231028211553eucas1p1a93637df6c46692531894e26023920d5~SYf441zj70616106161eucas1p1Z;
-	Sat, 28 Oct 2023 21:15:53 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20231028211553eusmtrp28117a3ed7ca27591a873d3f9be3ed510~SYf44SkDt1141411414eusmtrp2i;
-	Sat, 28 Oct 2023 21:15:53 +0000 (GMT)
-X-AuditID: cbfec7f5-815ff7000002937e-10-653d7a0b230b
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id A1.01.25043.90A7D356; Sat, 28
-	Oct 2023 22:15:53 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20231028211553eusmtip2ab1bab33fda116438d8bc7115d2b0f8e~SYf4oIwLJ1182011820eusmtip2q;
-	Sat, 28 Oct 2023 21:15:53 +0000 (GMT)
-Received: from CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) by
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) with Microsoft SMTP
-	Server (TLS) id 15.0.1497.2; Sat, 28 Oct 2023 22:15:53 +0100
-Received: from CAMSVWEXC02.scsc.local ([::1]) by CAMSVWEXC02.scsc.local
-	([fe80::3c08:6c51:fa0a:6384%13]) with mapi id 15.00.1497.012; Sat, 28 Oct
-	2023 22:15:53 +0100
-From: Daniel Gomez <da.gomez@samsung.com>
-To: "minchan@kernel.org" <minchan@kernel.org>, "senozhatsky@chromium.org"
-	<senozhatsky@chromium.org>, "axboe@kernel.dk" <axboe@kernel.dk>,
-	"djwong@kernel.org" <djwong@kernel.org>, "willy@infradead.org"
-	<willy@infradead.org>, "hughd@google.com" <hughd@google.com>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "mcgrof@kernel.org"
-	<mcgrof@kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-block@vger.kernel.org"
-	<linux-block@vger.kernel.org>, "linux-xfs@vger.kernel.org"
-	<linux-xfs@vger.kernel.org>, "linux-fsdevel@vger.kernel.org"
-	<linux-fsdevel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>
-CC: "gost.dev@samsung.com" <gost.dev@samsung.com>, Pankaj Raghav
-	<p.raghav@samsung.com>, Daniel Gomez <da.gomez@samsung.com>
-Subject: [RFC PATCH 11/11] shmem: add per-block uptodate tracking
-Thread-Topic: [RFC PATCH 11/11] shmem: add per-block uptodate tracking
-Thread-Index: AQHaCePuWb31sxRneEm07VKavHLDZg==
-Date: Sat, 28 Oct 2023 21:15:52 +0000
-Message-ID: <20231028211518.3424020-12-da.gomez@samsung.com>
-In-Reply-To: <20231028211518.3424020-1-da.gomez@samsung.com>
-Accept-Language: en-US, en-GB
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [106.110.32.103]
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B371315ADA
+	for <linux-fsdevel@vger.kernel.org>; Sat, 28 Oct 2023 22:43:33 +0000 (UTC)
+Received: from mail-ot1-f80.google.com (mail-ot1-f80.google.com [209.85.210.80])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D76CD6
+	for <linux-fsdevel@vger.kernel.org>; Sat, 28 Oct 2023 15:43:31 -0700 (PDT)
+Received: by mail-ot1-f80.google.com with SMTP id 46e09a7af769-6ce53378ff9so4127994a34.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 28 Oct 2023 15:43:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698533010; x=1699137810;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kKaKu5M6rUWJh/V22wyQQBR72UTXCs6uvQVuL0NHfts=;
+        b=Mx+kJw0crrsYmE82L6JMqwYUZ+FxAuJKtb93qGmO3JBl0SrwqkbKAcbNLHlOiAgL8I
+         wOerPOzTYS3pn3pJ80XbnloQICJK0vmxjLBof1amRWdWlhMAk7GS56IE9HMmYk+STcqA
+         9aRcoqZ8J5XsU0mr2xwplsSNnzT3wQtBbgBef3SMZ7raNmPDH23jY4vlHR+WFe8c87E8
+         PHg9ndAWtpbYdXt8TCAHZ7P2HaHE4yklj+DFFB8joHmRsyiAGr4SgBZUKd48GilJxBX1
+         oeerdyp59607JB34tn2ATZp6TONEJQ2R6CqHE2gw2QDUCsFl6jUKJqLqitF9JgybvT58
+         SARA==
+X-Gm-Message-State: AOJu0YwrgSpDwLPzTTNGXYpzeVYsKotoFEGIwGjY+C+fYFCmOa+oY580
+	0zRwEh2DQp6Q4DGJYR8nNcoNPfrceK0VdZr4Xtjj94SQ4VPM
+X-Google-Smtp-Source: AGHT+IGKwmSwzHpWoYMQnqtejvR5tj1v/Fm5QD/4uFVJ2R0ycnP3BmYS+ecZGOcPw+BjAN7wforn14PtxPXE+zfPd1D2q82uAfex
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNKsWRmVeSWpSXmKPExsWy7djP87rcVbapBmfWC1nMWb+GzWL13X42
-	i8tP+Cyefupjsdh7S9tiz96TLBaXd81hs7i35j+rxa4/O9gtbkx4ymix7Ot7dovdGxexWfz+
-	MYfNgddjdsNFFo8Fm0o9Nq/Q8rh8ttRj06pONo9Nnyaxe5yY8ZvF4/MmuQCOKC6blNSczLLU
-	In27BK6Mw3f6mAtOelQ86drA0sB4zLqLkZNDQsBE4ury1exdjFwcQgIrGCUerZrOBOF8YZTY
-	sH8NG4TzmVGibfUpZpiWZ7vfMEMkljNKbG9qYYKrOnXzEdSwM4wST/ddZgdpERJYySjRsVoR
-	xGYT0JTYd3ITWJGIwGxWicOLOxhBEswCdRJrns1iAbGFBRwljj95BRYXEXCTmN3Sxgph60lc
-	XrkdbCiLgKrEyw872UBsXgEbiW1/D4PFOYHs+9+2g8UZBWQlHq38xQ4xX1zi1pP5TBA/CEos
-	mr0H6h8xiX+7HrJB2DoSZ68/YYSwDSS2Lt3HAmErSfzpWAh1p57EjalT2CBsbYllC18zQ9wg
-	KHFy5hMWkMckBP5xSrz4cBNqgYvEqs87oAYJS7w6voUdwpaR+L9zPtMERu1ZSO6bhWTHLCQ7
-	ZiHZsYCRZRWjeGppcW56arFxXmq5XnFibnFpXrpecn7uJkZgejv97/jXHYwrXn3UO8TIxMF4
-	iFGCg1lJhJfZ0SZViDclsbIqtSg/vqg0J7X4EKM0B4uSOK9qinyqkEB6YklqdmpqQWoRTJaJ
-	g1OqgUng8j/lnYXZ1UWJa+zn628q6ZS49+Y+y9T5ySabLx7Q2Zm2n39u0uuHi7Yf+m25qy3w
-	6l1D1Xvtj3Scef2zBTUkduoJ21zbXfP5D/903RUNvu/fhjEbus8QlfU+f+J/gqiJ7ZaA5j1P
-	PaIi3HcZSxwpujP18NwVPVfqPZY+3bHk9DTn3mJZUbsduSeKXx1w88lZJ/zCyVScv+Cm4Lkb
-	k45JGXGs265cM6GRWUTxv1198o4arnNq6rJLg/W22DWEiNz8YsF1kld26iSG/xfULRYm3Ppd
-	WOt7aK8qn7o5x5X8rSHdHyUyNgpVftCNtfp7PYrjpPS7rE3ZbWHbumVYi96vNJ7HvcOYd+/T
-	noY0UyWW4oxEQy3mouJEACbzI/neAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrCKsWRmVeSWpSXmKPExsVy+t/xe7qcVbapBvN/G1jMWb+GzWL13X42
-	i8tP+Cyefupjsdh7S9tiz96TLBaXd81hs7i35j+rxa4/O9gtbkx4ymix7Ot7dovdGxexWfz+
-	MYfNgddjdsNFFo8Fm0o9Nq/Q8rh8ttRj06pONo9Nnyaxe5yY8ZvF4/MmuQCOKD2bovzSklSF
-	jPziElulaEMLIz1DSws9IxNLPUNj81grI1MlfTublNSczLLUIn27BL2Mw3f6mAtOelQ86drA
-	0sB4zLqLkZNDQsBE4tnuN8wgtpDAUkaJ7++EIOIyEhu/XGWFsIUl/lzrYoOo+cgocfoHZxcj
-	F5B9hlHi4scH7BDOSkaJq7tXMoJUsQloSuw7uQksISIwm1Xi8OIOsASzQJ3EmmezWEBsYQFH
-	ieNPXoHFRQTcJGa3tLFC2HoSl1duZwexWQRUJV5+2Am2mlfARmLb38NAcQ6gbbkS/W2ZIGFO
-	oPD9b9vBShgFZCUerfzFDrFKXOLWk/lMEB8ISCzZc54ZwhaVePn4H9RnOhJnrz9hhLANJLYu
-	3ccCYStJ/OlYCHWynsSNqVPYIGxtiWULXzNDnCMocXLmE5YJjNKzkKybhaRlFpKWWUhaFjCy
-	rGIUSS0tzk3PLTbSK07MLS7NS9dLzs/dxAhMTtuO/dyyg3Hlq496hxiZOBgPMUpwMCuJ8DI7
-	2qQK8aYkVlalFuXHF5XmpBYfYjQFBtFEZinR5HxgeswriTc0MzA1NDGzNDC1NDNWEuf1LOhI
-	FBJITyxJzU5NLUgtgulj4uCUamAK8Su9t4A1dfL8zhPeLTrCNgEbXsyONbGd+tjGQCXox5HS
-	3rLggsakCS0Lb5R/8/w6v9qoWV59ZpHhI5PKzex/s4N2LgzfKCTwtXmeu++O+NKS+rTs/xNe
-	fCx2vZt1/MbtC/dVzD/KHvzYxihx+XiuvkDISXWGvHjGd8fP++3pealQ5nbry3GpXIHmBQVb
-	+e28FPN3Trm8YXJg2PpLr+aKvHbbLndBrS7/WkzNr0O3q1d1XrFQPPBX4vJEEYlrSQ8XyXk6
-	S7/ftyamem7b6TStFa02djtyb7rxKfxm8HzxRVFVPkG7be/Odbq3ZjPveaGa/uKs8j3FkxP3
-	mN+alyPDVFdftLSha/eDRJOLy8uUWIozEg21mIuKEwGITef91wMAAA==
-X-CMS-MailID: 20231028211553eucas1p1a93637df6c46692531894e26023920d5
-X-Msg-Generator: CA
-X-RootMTR: 20231028211553eucas1p1a93637df6c46692531894e26023920d5
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20231028211553eucas1p1a93637df6c46692531894e26023920d5
-References: <20230919135536.2165715-1-da.gomez@samsung.com>
-	<20231028211518.3424020-1-da.gomez@samsung.com>
-	<CGME20231028211553eucas1p1a93637df6c46692531894e26023920d5@eucas1p1.samsung.com>
+X-Received: by 2002:a05:6830:4687:b0:6c6:2b19:7270 with SMTP id
+ ay7-20020a056830468700b006c62b197270mr2352287otb.1.1698533010599; Sat, 28 Oct
+ 2023 15:43:30 -0700 (PDT)
+Date: Sat, 28 Oct 2023 15:43:30 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000bc767f0608ce8895@google.com>
+Subject: [syzbot] [ntfs3?] possible deadlock in indx_read
+From: syzbot <syzbot+1e19c0a6b5e324635721@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, ntfs3@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Current work in progress due to fsx regression (check below).
+Hello,
 
-Based on iomap per-block dirty and uptodate state track, add support
-for shmem_folio_state struct to track uptodate per-block when a folio is
-larger than a block. In shmem, this is when large folios is used, as one
-block is equal to one page in this context.
+syzbot found the following issue on:
 
-Add support for invalidate_folio, release_folio and is_partially_uptodate
-address space operations. The first two are needed to be able to free
-the new shmem_folio_state struct. The last callback is required for
-large folios when enabling per-block tracking.
+HEAD commit:    f017d9a92a73 Add linux-next specific files for 20231024
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=114f9135680000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8fd5ab06ad389b6f
+dashboard link: https://syzkaller.appspot.com/bug?extid=1e19c0a6b5e324635721
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
-This was spotted when running fstests for tmpfs and regress on
-generic/285 and generic/436 tests [1] with large folios support in the
-fallocate path without having per-block uptodate tracking.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-[1] tests:
-generic/285: src/seek_sanity_test/test09()
-generic/436: src/seek_sanity_test/test13()
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/feca2ffa52fd/disk-f017d9a9.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/c2643e9e7d02/vmlinux-f017d9a9.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/7492edb5b60c/bzImage-f017d9a9.xz
 
-How to reproduce:
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+1e19c0a6b5e324635721@syzkaller.appspotmail.com
 
-```sh
-mkdir -p /mnt/test-tmpfs
-./src/seek_sanity_test -s 9 -e 9 /mnt/test-tmpfs/file
-./src/seek_sanity_test -s 13 -e 13 /mnt/test-tmpfs/file
-umount /mnt/test-tmpfs
-```
+======================================================
+WARNING: possible circular locking dependency detected
+6.6.0-rc7-next-20231024-syzkaller #0 Not tainted
+------------------------------------------------------
+kworker/u4:0/24418 is trying to acquire lock:
+ffff888039a1e1c0 (&indx->run_lock){.+.+}-{3:3}, at: indx_read+0x251/0xcd0 fs/ntfs3/index.c:1066
 
-After per-block uptodate support is added, fsx regresion is found when
-running the following:
+but task is already holding lock:
+ffff888039a1e0e0 (&ni->ni_lock#2){+.+.}-{3:3}, at: ni_trylock fs/ntfs3/ntfs_fs.h:1144 [inline]
+ffff888039a1e0e0 (&ni->ni_lock#2){+.+.}-{3:3}, at: ni_update_parent fs/ntfs3/frecord.c:3230 [inline]
+ffff888039a1e0e0 (&ni->ni_lock#2){+.+.}-{3:3}, at: ni_write_inode+0x15a4/0x2850 fs/ntfs3/frecord.c:3321
 
-```sh
-mkdir -p /mnt/test-tmpfs
-mount -t tmpfs -o size=3D1G -o noswap tmpfs /mnt/test-tmpfs
-/root/xfstests-dev/ltp/fsx /mnt/test-tmpfs/file -d -N 1200 -X
-umount /mnt/test-tmpfs
-```
+which lock already depends on the new lock.
 
-Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
+
+the existing dependency chain (in reverse order) is:
+
+-> #4 (&ni->ni_lock#2){+.+.}-{3:3}:
+       __mutex_lock_common kernel/locking/mutex.c:603 [inline]
+       __mutex_lock+0x181/0x1330 kernel/locking/mutex.c:747
+       ntfs_set_state+0x1d2/0x6a0 fs/ntfs3/fsntfs.c:946
+       ni_remove_name+0x2ff/0x670 fs/ntfs3/frecord.c:2926
+       ntfs_unlink_inode+0x37a/0x740 fs/ntfs3/inode.c:1772
+       ntfs_rename+0x387/0xec0 fs/ntfs3/namei.c:288
+       vfs_rename+0xe20/0x1c30 fs/namei.c:4843
+       do_renameat2+0xc3c/0xdc0 fs/namei.c:4995
+       __do_sys_rename fs/namei.c:5041 [inline]
+       __se_sys_rename fs/namei.c:5039 [inline]
+       __x64_sys_rename+0x81/0xa0 fs/namei.c:5039
+       do_syscall_x64 arch/x86/entry/common.c:51 [inline]
+       do_syscall_64+0x3f/0x110 arch/x86/entry/common.c:82
+       entry_SYSCALL_64_after_hwframe+0x62/0x6a
+
+-> #3 (&ni->ni_lock#2/4){+.+.}-{3:3}:
+       __mutex_lock_common kernel/locking/mutex.c:603 [inline]
+       __mutex_lock+0x181/0x1330 kernel/locking/mutex.c:747
+       ni_lock fs/ntfs3/ntfs_fs.h:1124 [inline]
+       ntfs_fallocate+0x73d/0x1260 fs/ntfs3/file.c:499
+       vfs_fallocate+0x46c/0xe50 fs/open.c:324
+       ksys_fallocate fs/open.c:347 [inline]
+       __do_sys_fallocate fs/open.c:355 [inline]
+       __se_sys_fallocate fs/open.c:353 [inline]
+       __x64_sys_fallocate+0xd5/0x140 fs/open.c:353
+       do_syscall_x64 arch/x86/entry/common.c:51 [inline]
+       do_syscall_64+0x3f/0x110 arch/x86/entry/common.c:82
+       entry_SYSCALL_64_after_hwframe+0x62/0x6a
+
+-> #2 (mapping.invalidate_lock#5){++++}-{3:3}:
+       down_read+0x9c/0x470 kernel/locking/rwsem.c:1526
+       filemap_invalidate_lock_shared include/linux/fs.h:857 [inline]
+       filemap_fault+0x28c/0x3570 mm/filemap.c:3225
+       __do_fault+0x107/0x5f0 mm/memory.c:4268
+       do_read_fault mm/memory.c:4631 [inline]
+       do_fault mm/memory.c:4765 [inline]
+       do_pte_missing mm/memory.c:3733 [inline]
+       handle_pte_fault mm/memory.c:5041 [inline]
+       __handle_mm_fault+0x2682/0x3d60 mm/memory.c:5182
+       handle_mm_fault+0x474/0x9f0 mm/memory.c:5347
+       faultin_page mm/gup.c:956 [inline]
+       __get_user_pages+0x4b1/0x1480 mm/gup.c:1239
+       populate_vma_page_range+0x2d4/0x410 mm/gup.c:1677
+       __mm_populate+0x1d6/0x380 mm/gup.c:1786
+       mm_populate include/linux/mm.h:3379 [inline]
+       vm_mmap_pgoff+0x2cc/0x3b0 mm/util.c:551
+       ksys_mmap_pgoff+0x421/0x5a0 mm/mmap.c:1428
+       __do_sys_mmap arch/x86/kernel/sys_x86_64.c:93 [inline]
+       __se_sys_mmap arch/x86/kernel/sys_x86_64.c:86 [inline]
+       __x64_sys_mmap+0x125/0x190 arch/x86/kernel/sys_x86_64.c:86
+       do_syscall_x64 arch/x86/entry/common.c:51 [inline]
+       do_syscall_64+0x3f/0x110 arch/x86/entry/common.c:82
+       entry_SYSCALL_64_after_hwframe+0x62/0x6a
+
+-> #1 (&mm->mmap_lock){++++}-{3:3}:
+       __might_fault mm/memory.c:5958 [inline]
+       __might_fault+0x11b/0x190 mm/memory.c:5951
+       _copy_to_user+0x2b/0xb0 lib/usercopy.c:36
+       copy_to_user include/linux/uaccess.h:191 [inline]
+       fiemap_fill_next_extent+0x232/0x380 fs/ioctl.c:145
+       ni_fiemap+0x440/0xc00 fs/ntfs3/frecord.c:2065
+       ntfs_fiemap+0xc9/0x110 fs/ntfs3/file.c:1164
+       ioctl_fiemap fs/ioctl.c:220 [inline]
+       do_vfs_ioctl+0x339/0x1920 fs/ioctl.c:811
+       __do_sys_ioctl fs/ioctl.c:869 [inline]
+       __se_sys_ioctl fs/ioctl.c:857 [inline]
+       __x64_sys_ioctl+0x112/0x210 fs/ioctl.c:857
+       do_syscall_x64 arch/x86/entry/common.c:51 [inline]
+       do_syscall_64+0x3f/0x110 arch/x86/entry/common.c:82
+       entry_SYSCALL_64_after_hwframe+0x62/0x6a
+
+-> #0 (&indx->run_lock){.+.+}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3134 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+       validate_chain kernel/locking/lockdep.c:3868 [inline]
+       __lock_acquire+0x2e22/0x5dc0 kernel/locking/lockdep.c:5136
+       lock_acquire kernel/locking/lockdep.c:5753 [inline]
+       lock_acquire+0x1b1/0x530 kernel/locking/lockdep.c:5718
+       down_read+0x9c/0x470 kernel/locking/rwsem.c:1526
+       indx_read+0x251/0xcd0 fs/ntfs3/index.c:1066
+       indx_find+0x4a9/0x980 fs/ntfs3/index.c:1181
+       indx_update_dup+0x166/0x440 fs/ntfs3/index.c:2659
+       ni_update_parent fs/ntfs3/frecord.c:3233 [inline]
+       ni_write_inode+0x1650/0x2850 fs/ntfs3/frecord.c:3321
+       write_inode fs/fs-writeback.c:1473 [inline]
+       __writeback_single_inode+0xa84/0xe60 fs/fs-writeback.c:1690
+       writeback_sb_inodes+0x5a2/0x1090 fs/fs-writeback.c:1916
+       __writeback_inodes_wb+0xff/0x2d0 fs/fs-writeback.c:1987
+       wb_writeback+0x7fe/0xaa0 fs/fs-writeback.c:2094
+       wb_check_old_data_flush fs/fs-writeback.c:2198 [inline]
+       wb_do_writeback fs/fs-writeback.c:2251 [inline]
+       wb_workfn+0x9f8/0xfd0 fs/fs-writeback.c:2279
+       process_one_work+0x8a2/0x15e0 kernel/workqueue.c:2630
+       process_scheduled_works kernel/workqueue.c:2703 [inline]
+       worker_thread+0x8b6/0x1280 kernel/workqueue.c:2784
+       kthread+0x337/0x440 kernel/kthread.c:388
+       ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x11/0x20 arch/x86/entry/entry_64.S:242
+
+other info that might help us debug this:
+
+Chain exists of:
+  &indx->run_lock --> &ni->ni_lock#2/4 --> &ni->ni_lock#2
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&ni->ni_lock#2);
+                               lock(&ni->ni_lock#2/4);
+                               lock(&ni->ni_lock#2);
+  rlock(&indx->run_lock);
+
+ *** DEADLOCK ***
+
+5 locks held by kworker/u4:0/24418:
+ #0: ffff88814226d938 ((wq_completion)writeback){+.+.}-{0:0}, at: process_one_work+0x78a/0x15e0 kernel/workqueue.c:2605
+ #1: ffffc9000326fd80 ((work_completion)(&(&wb->dwork)->work)){+.+.}-{0:0}, at: process_one_work+0x7f4/0x15e0 kernel/workqueue.c:2606
+ #2: ffff888030fde0e0 (&type->s_umount_key#65){++++}-{3:3}, at: super_trylock_shared+0x1e/0xf0 fs/super.c:610
+ #3: ffff888039a1e840 (&ni->ni_lock#2){+.+.}-{3:3}, at: ni_trylock fs/ntfs3/ntfs_fs.h:1144 [inline]
+ #3: ffff888039a1e840 (&ni->ni_lock#2){+.+.}-{3:3}, at: ni_write_inode+0x1c6/0x2850 fs/ntfs3/frecord.c:3262
+ #4: ffff888039a1e0e0 (&ni->ni_lock#2){+.+.}-{3:3}, at: ni_trylock fs/ntfs3/ntfs_fs.h:1144 [inline]
+ #4: ffff888039a1e0e0 (&ni->ni_lock#2){+.+.}-{3:3}, at: ni_update_parent fs/ntfs3/frecord.c:3230 [inline]
+ #4: ffff888039a1e0e0 (&ni->ni_lock#2){+.+.}-{3:3}, at: ni_write_inode+0x15a4/0x2850 fs/ntfs3/frecord.c:3321
+
+stack backtrace:
+CPU: 1 PID: 24418 Comm: kworker/u4:0 Not tainted 6.6.0-rc7-next-20231024-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/06/2023
+Workqueue: writeback wb_workfn (flush-7:4)
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xd9/0x1b0 lib/dump_stack.c:106
+ check_noncircular+0x310/0x3f0 kernel/locking/lockdep.c:2187
+ check_prev_add kernel/locking/lockdep.c:3134 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+ validate_chain kernel/locking/lockdep.c:3868 [inline]
+ __lock_acquire+0x2e22/0x5dc0 kernel/locking/lockdep.c:5136
+ lock_acquire kernel/locking/lockdep.c:5753 [inline]
+ lock_acquire+0x1b1/0x530 kernel/locking/lockdep.c:5718
+ down_read+0x9c/0x470 kernel/locking/rwsem.c:1526
+ indx_read+0x251/0xcd0 fs/ntfs3/index.c:1066
+ indx_find+0x4a9/0x980 fs/ntfs3/index.c:1181
+ indx_update_dup+0x166/0x440 fs/ntfs3/index.c:2659
+ ni_update_parent fs/ntfs3/frecord.c:3233 [inline]
+ ni_write_inode+0x1650/0x2850 fs/ntfs3/frecord.c:3321
+ write_inode fs/fs-writeback.c:1473 [inline]
+ __writeback_single_inode+0xa84/0xe60 fs/fs-writeback.c:1690
+ writeback_sb_inodes+0x5a2/0x1090 fs/fs-writeback.c:1916
+ __writeback_inodes_wb+0xff/0x2d0 fs/fs-writeback.c:1987
+ wb_writeback+0x7fe/0xaa0 fs/fs-writeback.c:2094
+ wb_check_old_data_flush fs/fs-writeback.c:2198 [inline]
+ wb_do_writeback fs/fs-writeback.c:2251 [inline]
+ wb_workfn+0x9f8/0xfd0 fs/fs-writeback.c:2279
+ process_one_work+0x8a2/0x15e0 kernel/workqueue.c:2630
+ process_scheduled_works kernel/workqueue.c:2703 [inline]
+ worker_thread+0x8b6/0x1280 kernel/workqueue.c:2784
+ kthread+0x337/0x440 kernel/kthread.c:388
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x11/0x20 arch/x86/entry/entry_64.S:242
+ </TASK>
+
+
 ---
- mm/shmem.c | 169 +++++++++++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 159 insertions(+), 10 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index eb314927be78..fa67594495d5 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -132,6 +132,94 @@ struct shmem_options {
- #define SHMEM_SEEN_QUOTA 32
- };
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-+/*
-+ * Structure allocated for each folio to track per-block uptodate state.
-+ *
-+ * Like buffered-io shmem_folio_state struct but only for uptodate.
-+ */
-+struct shmem_folio_state {
-+	spinlock_t state_lock;
-+	unsigned long state[];
-+};
-+
-+static inline bool sfs_is_fully_uptodate(struct folio *folio,
-+					 struct shmem_folio_state *sfs)
-+{
-+	struct inode *inode =3D folio->mapping->host;
-+
-+	return bitmap_full(sfs->state, i_blocks_per_folio(inode, folio));
-+}
-+
-+static inline bool sfs_block_is_uptodate(struct shmem_folio_state *sfs,
-+					 unsigned int block)
-+{
-+	return test_bit(block, sfs->state);
-+}
-+
-+static void sfs_set_range_uptodate(struct folio *folio,
-+				   struct shmem_folio_state *sfs, size_t off,
-+				   size_t len)
-+{
-+	struct inode *inode =3D folio->mapping->host;
-+	unsigned int first_blk =3D off >> inode->i_blkbits;
-+	unsigned int last_blk =3D (off + len - 1) >> inode->i_blkbits;
-+	unsigned int nr_blks =3D last_blk - first_blk + 1;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&sfs->state_lock, flags);
-+	bitmap_set(sfs->state, first_blk, nr_blks);
-+	if (sfs_is_fully_uptodate(folio, sfs))
-+		folio_mark_uptodate(folio);
-+	spin_unlock_irqrestore(&sfs->state_lock, flags);
-+}
-+
-+static void shmem_set_range_uptodate(struct folio *folio, size_t off,
-+				     size_t len)
-+{
-+	struct shmem_folio_state *sfs =3D folio->private;
-+
-+	if (sfs)
-+		sfs_set_range_uptodate(folio, sfs, off, len);
-+	else
-+		folio_mark_uptodate(folio);
-+}
-+
-+static struct shmem_folio_state *sfs_alloc(struct inode *inode,
-+					   struct folio *folio, gfp_t gfp)
-+{
-+	struct shmem_folio_state *sfs =3D folio->private;
-+	unsigned int nr_blocks =3D i_blocks_per_folio(inode, folio);
-+
-+	if (sfs || nr_blocks <=3D 1)
-+		return sfs;
-+
-+	/*
-+	 * sfs->state tracks uptodate flag when the block size is smaller
-+	 * than the folio size.
-+	 */
-+	sfs =3D kzalloc(struct_size(sfs, state, BITS_TO_LONGS(nr_blocks)), gfp);
-+	if (!sfs)
-+		return sfs;
-+
-+	spin_lock_init(&sfs->state_lock);
-+	if (folio_test_uptodate(folio))
-+		bitmap_set(sfs->state, 0, nr_blocks);
-+	folio_attach_private(folio, sfs);
-+
-+	return sfs;
-+}
-+
-+static void sfs_free(struct folio *folio)
-+{
-+	struct shmem_folio_state *sfs =3D folio_detach_private(folio);
-+
-+	if (!sfs)
-+		return;
-+	WARN_ON_ONCE(sfs_is_fully_uptodate(folio, sfs) !=3D
-+		     folio_test_uptodate(folio));
-+	kfree(sfs);
-+}
-+
- #ifdef CONFIG_TMPFS
- static unsigned long shmem_default_max_blocks(void)
- {
-@@ -1495,7 +1583,7 @@ static int shmem_writepage(struct page *page, struct =
-writeback_control *wbc)
- 		}
- 		folio_zero_range(folio, 0, folio_size(folio));
- 		flush_dcache_folio(folio);
--		folio_mark_uptodate(folio);
-+		shmem_set_range_uptodate(folio, 0, folio_size(folio));
- 	}
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
- 	swap =3D folio_alloc_swap(folio);
-@@ -1676,6 +1764,7 @@ static struct folio *shmem_alloc_and_add_folio(gfp_t =
-gfp,
- 	struct shmem_inode_info *info =3D SHMEM_I(inode);
- 	unsigned int order =3D shmem_mapping_size_order(mapping, index, len,
- 						      SHMEM_SB(inode->i_sb));
-+	struct shmem_folio_state *sfs;
- 	struct folio *folio;
- 	long pages;
- 	int error;
-@@ -1755,6 +1844,10 @@ static struct folio *shmem_alloc_and_add_folio(gfp_t=
- gfp,
- 		}
- 	}
+If you want to overwrite bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-+	sfs =3D sfs_alloc(inode, folio, gfp);
-+	if (!sfs && i_blocks_per_folio(inode, folio) > 1)
-+		goto unlock;
-+
- 	trace_mm_shmem_add_to_page_cache(folio);
- 	shmem_recalc_inode(inode, pages, 0);
- 	folio_add_lru(folio);
-@@ -1818,7 +1911,7 @@ static int shmem_replace_folio(struct folio **foliop,=
- gfp_t gfp,
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
 
- 	__folio_set_locked(new);
- 	__folio_set_swapbacked(new);
--	folio_mark_uptodate(new);
-+	shmem_set_range_uptodate(new, 0, folio_size(new));
- 	new->swap =3D entry;
- 	folio_set_swapcache(new);
-
-@@ -2146,7 +2239,7 @@ static int shmem_get_folio_gfp(struct inode *inode, p=
-goff_t index,
- 		for (i =3D 0; i < n; i++)
- 			clear_highpage(folio_page(folio, i));
- 		flush_dcache_folio(folio);
--		folio_mark_uptodate(folio);
-+		shmem_set_range_uptodate(folio, 0, folio_size(folio));
- 	}
-
- 	/* Perhaps the file has been truncated since we checked */
-@@ -2788,13 +2881,18 @@ shmem_write_end(struct file *file, struct address_s=
-pace *mapping,
- 	if (pos + copied > inode->i_size)
- 		i_size_write(inode, pos + copied);
-
-+	if (unlikely(copied < len && !folio_test_uptodate(folio)))
-+		return 0;
-+
- 	if (!folio_test_uptodate(folio)) {
--		if (copied < folio_size(folio)) {
--			size_t from =3D offset_in_folio(folio, pos);
--			folio_zero_segments(folio, 0, from,
--					from + copied, folio_size(folio));
--		}
--		folio_mark_uptodate(folio);
-+		size_t from =3D offset_in_folio(folio, pos);
-+		if (!folio_test_large(folio) && copied < folio_size(folio))
-+			folio_zero_segments(folio, 0, from, from + copied,
-+					    folio_size(folio));
-+		if (folio_test_large(folio) && copied < PAGE_SIZE)
-+			folio_zero_segments(folio, from, from, from + copied,
-+					    folio_size(folio));
-+		shmem_set_range_uptodate(folio, from, len);
- 	}
- 	folio_mark_dirty(folio);
- 	folio_unlock(folio);
-@@ -2803,6 +2901,54 @@ shmem_write_end(struct file *file, struct address_sp=
-ace *mapping,
- 	return copied;
- }
-
-+void shmem_invalidate_folio(struct folio *folio, size_t offset, size_t len=
-)
-+{
-+	/*
-+	 * If we're invalidating the entire folio, clear the dirty state
-+	 * from it and release it to avoid unnecessary buildup of the LRU.
-+	 */
-+	if (offset =3D=3D 0 && len =3D=3D folio_size(folio)) {
-+		WARN_ON_ONCE(folio_test_writeback(folio));
-+		folio_cancel_dirty(folio);
-+		sfs_free(folio);
-+	}
-+}
-+
-+bool shmem_release_folio(struct folio *folio, gfp_t gfp_flags)
-+{
-+	sfs_free(folio);
-+	return true;
-+}
-+
-+/*
-+ * shmem_is_partially_uptodate checks whether blocks within a folio are
-+ * uptodate or not.
-+ *
-+ * Returns true if all blocks which correspond to the specified part
-+ * of the folio are uptodate.
-+ */
-+bool shmem_is_partially_uptodate(struct folio *folio, size_t from, size_t =
-count)
-+{
-+	struct shmem_folio_state *sfs =3D folio->private;
-+	struct inode *inode =3D folio->mapping->host;
-+	unsigned first, last, i;
-+
-+	if (!sfs)
-+		return false;
-+
-+	/* Caller's range may extend past the end of this folio */
-+	count =3D min(folio_size(folio) - from, count);
-+
-+	/* First and last blocks in range within folio */
-+	first =3D from >> inode->i_blkbits;
-+	last =3D (from + count - 1) >> inode->i_blkbits;
-+
-+	for (i =3D first; i <=3D last; i++)
-+		if (!sfs_block_is_uptodate(sfs, i))
-+			return false;
-+	return true;
-+}
-+
- static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *t=
-o)
- {
- 	struct file *file =3D iocb->ki_filp;
-@@ -3554,7 +3700,7 @@ static int shmem_symlink(struct mnt_idmap *idmap, str=
-uct inode *dir,
- 		inode->i_mapping->a_ops =3D &shmem_aops;
- 		inode->i_op =3D &shmem_symlink_inode_operations;
- 		memcpy(folio_address(folio), symname, len);
--		folio_mark_uptodate(folio);
-+		shmem_set_range_uptodate(folio, 0, folio_size(folio));
- 		folio_mark_dirty(folio);
- 		folio_unlock(folio);
- 		folio_put(folio);
-@@ -4524,6 +4670,9 @@ const struct address_space_operations shmem_aops =3D =
-{
- #ifdef CONFIG_MIGRATION
- 	.migrate_folio	=3D migrate_folio,
- #endif
-+	.invalidate_folio =3D shmem_invalidate_folio,
-+	.release_folio	=3D shmem_release_folio,
-+	.is_partially_uptodate =3D shmem_is_partially_uptodate,
- 	.error_remove_page =3D shmem_error_remove_page,
- };
- EXPORT_SYMBOL(shmem_aops);
---
-2.39.2
+If you want to undo deduplication, reply with:
+#syz undup
 
