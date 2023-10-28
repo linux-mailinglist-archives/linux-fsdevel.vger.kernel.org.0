@@ -1,68 +1,68 @@
-Return-Path: <linux-fsdevel+bounces-1493-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1495-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50F8A7DA97B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Oct 2023 23:16:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 359E07DA97F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Oct 2023 23:16:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71DF81C209CD
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Oct 2023 21:16:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59A471C20990
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Oct 2023 21:16:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F79018AE1;
-	Sat, 28 Oct 2023 21:15:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35CF918B10;
+	Sat, 28 Oct 2023 21:15:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="jjaWoMKm"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Mm7/kBdi"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88411B667
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DACCE17994
 	for <linux-fsdevel@vger.kernel.org>; Sat, 28 Oct 2023 21:15:45 +0000 (UTC)
 Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F869E6
-	for <linux-fsdevel@vger.kernel.org>; Sat, 28 Oct 2023 14:15:41 -0700 (PDT)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2908D9
+	for <linux-fsdevel@vger.kernel.org>; Sat, 28 Oct 2023 14:15:43 -0700 (PDT)
 Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20231028211539euoutp02587f3a611d700338187795ff6be84bc4~SYfrvmt7H0878908789euoutp02F
-	for <linux-fsdevel@vger.kernel.org>; Sat, 28 Oct 2023 21:15:39 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20231028211539euoutp02587f3a611d700338187795ff6be84bc4~SYfrvmt7H0878908789euoutp02F
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20231028211540euoutp02ccd2574008f16ae0e7fba5c1c8bc6dd7~SYfsIfodr0331103311euoutp02Z
+	for <linux-fsdevel@vger.kernel.org>; Sat, 28 Oct 2023 21:15:40 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20231028211540euoutp02ccd2574008f16ae0e7fba5c1c8bc6dd7~SYfsIfodr0331103311euoutp02Z
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1698527739;
-	bh=eR4ECi1C+RsYauRNG0Oa6wKRBmELNPkutLhe+B7jobc=;
+	s=mail20170921; t=1698527740;
+	bh=JNoJR/Xq7klfzP9hsOQ2xMnfdiLvLMoR5LEBEoVDOGw=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References:From;
-	b=jjaWoMKmpeL2sLoVtVIJ4rBEKLLd2KsJYQnpEHdBiXJriXoTywXG7JA0og2/7E9L4
-	 nh3HhyRmF4s0KfRNL2fV8cM/ugVIvmzKE6VHyE/hZDSmpARN7AkVO0+/3hrdTuAeGS
-	 B39ZTQ5pTxSF7SBjTBKGSvpsliXmO/RVLKc4DdkQ=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+	b=Mm7/kBdisYvKed+Ygjkzhy9JoYAi4fful3cwN1vo9Q93LupZh5jo6Qx+rmZQKHVPd
+	 DyzqzIDTQ4ta+ecdzC7gF4ZhT3ywHxbN9VgChrJTvJA8ynYNXCPcGdwAnG6/90wRR5
+	 OB4t5WBqrOK4IkC+G7LWapdYxKCBFI2bfx6akZgc=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
 	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20231028211538eucas1p2c2a45a33072dae2e110eb46cac041cea~SYfq672AJ1087910879eucas1p2A;
-	Sat, 28 Oct 2023 21:15:38 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges3new.samsung.com (EUCPMTA) with SMTP id DA.57.37758.AF97D356; Sat, 28
-	Oct 2023 22:15:38 +0100 (BST)
+	20231028211539eucas1p244eaee8bc62c90f79ee02e581ed59c80~SYfrfIuDH1224812248eucas1p22;
+	Sat, 28 Oct 2023 21:15:39 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id C0.20.11320.BF97D356; Sat, 28
+	Oct 2023 22:15:39 +0100 (BST)
 Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
 	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20231028211538eucas1p186e33f92dbea7030f14f7f79aa1b8d54~SYfqiRzRj2326023260eucas1p1N;
+	20231028211538eucas1p1456b4c759a9fed51a6a77fbf2c946011~SYfqobMTB1181011810eucas1p1C;
 	Sat, 28 Oct 2023 21:15:38 +0000 (GMT)
 Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
 	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20231028211538eusmtrp26da1062912af33695c737ab5cb5b69ed~SYfqhpNZo1141411414eusmtrp2Y;
+	20231028211538eusmtrp241d650d122083e72da8aaaa16e6632fb~SYfqnuS2Q1141411414eusmtrp2Z;
 	Sat, 28 Oct 2023 21:15:38 +0000 (GMT)
-X-AuditID: cbfec7f5-7ffff7000002937e-f7-653d79fa5a08
+X-AuditID: cbfec7f4-993ff70000022c38-82-653d79fb8a21
 Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id 2B.F0.25043.AF97D356; Sat, 28
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id 0C.F0.25043.AF97D356; Sat, 28
 	Oct 2023 22:15:38 +0100 (BST)
 Received: from CAMSVWEXC01.scsc.local (unknown [106.1.227.71]) by
 	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20231028211538eusmtip1dbcf26df78fa637ec241be47c974aeb8~SYfqUnhnc0467404674eusmtip1G;
+	20231028211538eusmtip1460431297fe820fa6ae8f8fd8d552ed5~SYfqdcDZX0467404674eusmtip1I;
 	Sat, 28 Oct 2023 21:15:38 +0000 (GMT)
 Received: from CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) by
 	CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) with Microsoft SMTP
-	Server (TLS) id 15.0.1497.2; Sat, 28 Oct 2023 22:15:37 +0100
+	Server (TLS) id 15.0.1497.2; Sat, 28 Oct 2023 22:15:38 +0100
 Received: from CAMSVWEXC02.scsc.local ([::1]) by CAMSVWEXC02.scsc.local
 	([fe80::3c08:6c51:fa0a:6384%13]) with mapi id 15.00.1497.012; Sat, 28 Oct
-	2023 22:15:36 +0100
+	2023 22:15:37 +0100
 From: Daniel Gomez <da.gomez@samsung.com>
 To: "minchan@kernel.org" <minchan@kernel.org>, "senozhatsky@chromium.org"
 	<senozhatsky@chromium.org>, "axboe@kernel.dk" <axboe@kernel.dk>,
@@ -76,11 +76,13 @@ To: "minchan@kernel.org" <minchan@kernel.org>, "senozhatsky@chromium.org"
 	<linux-fsdevel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>
 CC: "gost.dev@samsung.com" <gost.dev@samsung.com>, Pankaj Raghav
 	<p.raghav@samsung.com>, Daniel Gomez <da.gomez@samsung.com>
-Subject: [RFC PATCH 01/11] XArray: add cmpxchg order test
-Thread-Topic: [RFC PATCH 01/11] XArray: add cmpxchg order test
-Thread-Index: AQHaCePk2/Onfe3eA0ia1dQGCoKrAw==
-Date: Sat, 28 Oct 2023 21:15:35 +0000
-Message-ID: <20231028211518.3424020-2-da.gomez@samsung.com>
+Subject: [RFC PATCH 02/11] test_xarray: add tests for advanced multi-index
+ use
+Thread-Topic: [RFC PATCH 02/11] test_xarray: add tests for advanced
+	multi-index use
+Thread-Index: AQHaCePl1pHcrPV2xkWSZMmpwVjy+w==
+Date: Sat, 28 Oct 2023 21:15:37 +0000
+Message-ID: <20231028211518.3424020-3-da.gomez@samsung.com>
 In-Reply-To: <20231028211518.3424020-1-da.gomez@samsung.com>
 Accept-Language: en-US, en-GB
 Content-Language: en-US
@@ -97,99 +99,220 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNKsWRmVeSWpSXmKPExsWy7djP87q/Km1TDS60mFvMWb+GzWL13X42
-	i8tP+Cyefupjsdh7S9tiz96TLBaXd81hs7i35j+rxa4/O9gtbkx4ymix7Ot7dovdGxexWfz+
-	MYfNgddjdsNFFo8Fm0o9Nq/Q8rh8ttRj06pONo9Nnyaxe5yY8ZvF4/MmuQCOKC6blNSczLLU
-	In27BK6MV8/WsRU08lVMWbqLqYHxPXcXIyeHhICJxLkp75i6GLk4hARWMEq83rOKEcL5wigx
-	Z+M5ZpAqIYHPjBLr//HCdJzp+AbVsZxR4unkncwQDlDRlx3P2SGcM4wSR57tYoFwVjJK3H95
-	jwmkn01AU2LfyU1gVSICs1klDi/uYARJMAvUSax5NosFxBYWsJS4seoSK4gtImAn8fDWS3YI
-	W0/i3PVXbCA2i4CqxJPtG8BqeAWsJVae2gN2LKeAjcT9b9vBahgFZCUerfzFDjFfXOLWk/lM
-	EE8ISiyaDVEvISAm8W/XQzYIW0fi7PUnjBC2gcTWpftYIGwliT8dC6Hu1JO4MXUKG4StLbFs
-	4WtmiBsEJU7OfAL2sYRAE5fE2mc/2SGaXSRufFsAZQtLvDq+BcqWkfi/cz7TBEbtWUjum4Vk
-	xywkO2Yh2bGAkWUVo3hqaXFuemqxcV5quV5xYm5xaV66XnJ+7iZGYHo7/e/41x2MK1591DvE
-	yMTBeIhRgoNZSYSX2dEmVYg3JbGyKrUoP76oNCe1+BCjNAeLkjivaop8qpBAemJJanZqakFq
-	EUyWiYNTqoFJ9ZV/dd1GI93DtoE+27iP3VQ4ffXl/YronfulpAUW3vBc+Yoj+Y+QktapC9o9
-	ie4vzrw/zPHf4fX9CZc3CJTYPJzxyG6VhHtbSsXDEOb24DbWe1LLLR7t/HX6aaRDYMaDdekp
-	f93/HRLfkVxR4cRnJ/BOOF6Md4Vuk6RAxY6V+seDzR89vpE74Y+KXFHjuqJrpZtuHFk7S+G3
-	/sdX7B9O7Hqg65WeyVyWuM02XO/u7oK3nKvys4olVu68H3BARrXU0Nxyc12CU7RNWKK61RQH
-	/bBl0sXvlt6R2W211/bJ87PzE/ua/ecu2Lk661AG2/9GewfxVw6iSw4zJZyqF3wy383xsKyp
-	ksmlayuiXQKUWIozEg21mIuKEwF6TjHB3gMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGKsWRmVeSWpSXmKPExsVy+t/xu7q/Km1TDb7/lLKYs34Nm8Xqu/1s
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUxSYRTHe+By75Wi3cTyKTUbWS0sspZ1IzPbWvGl5Zq9zLUZixs5ERlI
+	7y9mNdMPVlamQKFmmkU5yJQUXMNZovbinNNMJZLMwZqZZC+aFlxrfvudc57z///P9uDMQDtr
+	AZ4sT6eUcrGMh7KR6uc/X60cO76JiqrvDyd1lQaUfNB7GSXbXbPJj19zEdLaHUlarHaEbK/V
+	oWSfYZJF1o6bMbLrykdAln0bwsg6YwlKjv3QoXEckTajDREVmdSix/f4ovaXapHpfjYqMn3N
+	w0RNBWOIaMS0MB5PZMdIKFnyEUq5KvYA+7DW0sBQfF52bDxfmAH0i3JAAA6JtbCpeBDkADYe
+	SNwDsHnEgdKFF8Brv51MuhgBsKJ0AMsBuH/ljWcv3S8HsM5pAf8f9Q89m9poBfDN0OiUVgWA
+	DfZR4HNEieWw3m7CfIMgQsuCDXcu+QdM4gw0DGgQH3OJeNiiuYv6OIjYDRtvtTJoFsCOARfm
+	Y4RYAr3N3f5MHGIjPNdzxtcOIGKgY7TGvwqIMPih4hdGywfDbpeeQV89B5ZoLUya58GJWidK
+	8wr4stMFaI6CT+7WIzTz4Pil4qmYAth14zpKcyQsK/b4dTh/Ne2FLsR3FyQy2dBaVTplthW2
+	jbpZNHOh+0UVRnMonHyqZ1wBkZpp+TTTPDTTPDTTPIoAch8EU2pVqpRSrZFTRwUqcapKLZcK
+	DqalmsDf39Yy8cJrBuXuYYENMHBgAxBn8oI4zC0xVCBHIj5+glKmJSnVMkplAyE4wgvmLJGE
+	U4GEVJxOpVCUglL+mzLwgAUZjOpHKyUPrT1K58yUB3Yzr8hSZYzu3R2q7jjZll3ae7V8MLfz
+	qXHNhNR6sSl/y3o+jtxEue8TLxz9cUo+Vp5XGv22tjKmtdGWIh2ubjW6Tg/aBcKLg4f6xrUl
+	t93b5i/qOu9+Fz4c0j2rSXg6TG8eqrwwaXHL3ktszoekN8iA5c34VMNlKhp3nQ0xJAu5LciG
+	7T0LHZzFEewvsQlZHfnpulzUU1iVxhGHZlnkNYzXRw5SO+I69u1KMEfHIUn8gtntmfu/VMQH
+	667pHddneOteLbeum1viiUrgJ/J3yIuWSsnn3ydkCnb9HoVDyorrU6TvNDZ3CrM2V0cgq/cm
+	ZfIQ1WHxaj5TqRL/Ac0u88TcAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrMKsWRmVeSWpSXmKPExsVy+t/xu7q/Km1TDX4+VbaYs34Nm8Xqu/1s
 	Fpef8Fk8/dTHYrH3lrbFnr0nWSwu75rDZnFvzX9Wi11/drBb3JjwlNFi2df37Ba7Ny5is/j9
 	Yw6bA6/H7IaLLB4LNpV6bF6h5XH5bKnHplWdbB6bPk1i9zgx4zeLx+dNcgEcUXo2RfmlJakK
-	GfnFJbZK0YYWRnqGlhZ6RiaWeobG5rFWRqZK+nY2Kak5mWWpRfp2CXoZr56tYyto5KuYsnQX
-	UwPje+4uRk4OCQETiTMd35i6GLk4hASWMkqcO7WZDSIhI7Hxy1VWCFtY4s+1LjaIoo+MEl0d
-	q6CcM4wSrxb9h3JWMkrMuvqRHaSFTUBTYt/JTewgCRGB2awShxd3MIIkmAXqJNY8m8UCYgsL
-	WErcWHUJbIeIgJ3Ew1sv2SFsPYlz11+B3cEioCrxZPsGsBpeAWuJlaf2MHcxcgBty5Xob8sE
-	CXMK2Ejc/7YdrJxRQFbi0cpf7BCrxCVuPZnPBPGCgMSSPeeZIWxRiZeP/0G9piNx9voTRgjb
-	QGLr0n0sELaSxJ+OhVAn60ncmDqFDcLWlli28DUzxDmCEidnPmGZwCg9C8m6WUhaZiFpmYWk
-	ZQEjyypGkdTS4tz03GIjveLE3OLSvHS95PzcTYzABLXt2M8tOxhXvvqod4iRiYPxEKMEB7OS
-	CC+zo02qEG9KYmVValF+fFFpTmrxIUZTYBBNZJYSTc4Hpsi8knhDMwNTQxMzSwNTSzNjJXFe
-	z4KORCGB9MSS1OzU1ILUIpg+Jg5OqQamtVN4di4qPqJW9uUiy9JTR6OSr77+oZN58HBy0mlj
-	rV2/wkqcnLi/Hmj1VTzpycA2fRuHyt1LNnszbn2vFJ8bua0+pNPuTkzxli/OPRdfr5O/Zr9u
-	4bfNfZ58P5nt92YmyEsFH3/sNP2aiJC23dSJnoa/W9+ryPQa+ixZMWVjxofg/+83lyowMH29
-	fFbh9dyvPAd4dnM67THTdqvzipjd8sfUpmPqg4vNn92ZS1iuJion6zwJPOIQksO5fJnqn7Zw
-	kVcx3Mvu7H/8/f2ErochM97c/v6E9eWUHOkY1k3uv+XuL1Z0CHta+1oldMaK+gfeAkqFCz+W
-	BJhWPH6WrvJD2nztj0ARLbfcNVZfC3pllViKMxINtZiLihMBJkEZzNkDAAA=
-X-CMS-MailID: 20231028211538eucas1p186e33f92dbea7030f14f7f79aa1b8d54
+	GfnFJbZK0YYWRnqGlhZ6RiaWeobG5rFWRqZK+nY2Kak5mWWpRfp2CXoZs/ccZip4q17xZ5pV
+	A+N8hS5GDg4JAROJC6/Duxi5OIQEljIC2YtZuhg5geIyEhu/XGWFsIUl/lzrYoMo+sgosWny
+	MUYI5wyjxNv3X6EyKxklThzYwAjSwiagKbHv5CZ2kISIwGxWicOLO8ASzAJ1EmuezQLbISzg
+	J3Hv5V+wuIhAqMT8e/fZIGw9iavPnrCD2CwCqhJfTt1iB7mVV8BaovFOHYgpJJAr0d+WCVLB
+	KWAjcf/bdrBORgFZiUcrf7FDbBKXuPVkPhPEBwISS/acZ4awRSVePv4H9ZmOxNnrTxghbAOJ
+	rUv3QX2vJPGnYyHUxXoSN6ZOYYOwtSWWLXwNNodXQFDi5MwnLBMYpWchWTcLScssJC2zkLQs
+	YGRZxSiSWlqcm55bbKRXnJhbXJqXrpecn7uJEZiath37uWUH48pXH/UOMTJxMB5ilOBgVhLh
+	ZXa0SRXiTUmsrEotyo8vKs1JLT7EaAoMoYnMUqLJ+cDkmFcSb2hmYGpoYmZpYGppZqwkzutZ
+	0JEoJJCeWJKanZpakFoE08fEwSnVwOR56tOqI322ddo/H6305LugNa/mya2Hyxc0Oi3gEFdW
+	UZ7jt1j8W86BIpYct9pKs70zLRRfv1ZmvbvC2O5pkmjS07f/Hjw3vyMR4yz34L5E/rfHL0OV
+	V63h/r9YtbzMbaXg0gkvN3g8e/xo04I7nQHsnJ+UH/Hd8uZMeN5pEevvt2/hm2o1o1nqc+sU
+	pzidqp2xRsrWPVXnxBxD3ztRS4+euZXkEnrUPurpY07DJyIdfT6Sr76yX5q3IuP2g/Vci8sP
+	Oq1JO6l0IMn21pXIqJZInytlrme27NPXfuiz9tDZ99MW/zsYY17ZM+NHotDxuOUxeZvPPWA5
+	+77ONrfFXWXjqZ/He39Oq3t8SXDefKNJSizFGYmGWsxFxYkAFE7R3dYDAAA=
+X-CMS-MailID: 20231028211538eucas1p1456b4c759a9fed51a6a77fbf2c946011
 X-Msg-Generator: CA
-X-RootMTR: 20231028211538eucas1p186e33f92dbea7030f14f7f79aa1b8d54
+X-RootMTR: 20231028211538eucas1p1456b4c759a9fed51a6a77fbf2c946011
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20231028211538eucas1p186e33f92dbea7030f14f7f79aa1b8d54
+X-CMS-RootMailID: 20231028211538eucas1p1456b4c759a9fed51a6a77fbf2c946011
 References: <20230919135536.2165715-1-da.gomez@samsung.com>
 	<20231028211518.3424020-1-da.gomez@samsung.com>
-	<CGME20231028211538eucas1p186e33f92dbea7030f14f7f79aa1b8d54@eucas1p1.samsung.com>
+	<CGME20231028211538eucas1p1456b4c759a9fed51a6a77fbf2c946011@eucas1p1.samsung.com>
 
-XArray multi-index entries do not keep track of the order stored once
-the entry is being marked as used (replaced with NULL). Add a test
-to check the order is actually lost.
+From: Luis Chamberlain <mcgrof@kernel.org>
 
-Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
-Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+The multi index selftests are great but they don't replicate
+how we deal with the page cache exactly, which makes it a bit
+hard to follow as the page cache uses the advanced API.
+
+Add tests which use the advanced API, mimicking what we do in the
+page cache, while at it, extend the example to do what is needed for
+min order support.
+
+Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+Tested-by: Daniel Gomez <da.gomez@samsung.com>
 ---
- lib/test_xarray.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ lib/test_xarray.c | 134 ++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 134 insertions(+)
 
 diff --git a/lib/test_xarray.c b/lib/test_xarray.c
-index e77d4856442c..6c22588963bc 100644
+index 6c22588963bc..22a687e33dc5 100644
 --- a/lib/test_xarray.c
 +++ b/lib/test_xarray.c
-@@ -423,6 +423,26 @@ static noinline void check_cmpxchg(struct xarray *xa)
- 	XA_BUG_ON(xa, !xa_empty(xa));
+@@ -694,6 +694,139 @@ static noinline void check_multi_store(struct xarray =
+*xa)
+ #endif
  }
 =20
-+static noinline void check_cmpxchg_order(struct xarray *xa)
++#ifdef CONFIG_XARRAY_MULTI
++static noinline void check_xa_multi_store_adv_add(struct xarray *xa,
++						  unsigned long index,
++						  unsigned int order,
++						  void *p)
 +{
-+	void *FIVE =3D xa_mk_value(5);
-+	unsigned int order =3D IS_ENABLED(CONFIG_XARRAY_MULTI) ? 15 : 1;
-+	void *old;
++	XA_STATE(xas, xa, index);
 +
-+	XA_BUG_ON(xa, !xa_empty(xa));
-+	XA_BUG_ON(xa, xa_store_index(xa, 5, GFP_KERNEL) !=3D NULL);
-+	XA_BUG_ON(xa, xa_insert(xa, 5, FIVE, GFP_KERNEL) !=3D -EBUSY);
-+	XA_BUG_ON(xa, xa_store_order(xa, 5, order, FIVE, GFP_KERNEL));
-+	XA_BUG_ON(xa, xa_get_order(xa, 5) !=3D order);
-+	XA_BUG_ON(xa, xa_get_order(xa, xa_to_value(FIVE)) !=3D order);
-+	old =3D xa_cmpxchg(xa, 5, FIVE, NULL, GFP_KERNEL);
-+	XA_BUG_ON(xa, old !=3D FIVE);
-+	XA_BUG_ON(xa, xa_get_order(xa, 5) !=3D 0);
-+	XA_BUG_ON(xa, xa_get_order(xa, xa_to_value(FIVE)) !=3D 0);
-+	XA_BUG_ON(xa, xa_get_order(xa, xa_to_value(old)) !=3D 0);
-+	XA_BUG_ON(xa, !xa_empty(xa));
++	xas_set_order(&xas, index, order);
++
++	do {
++		xas_lock_irq(&xas);
++
++		xas_store(&xas, p);
++		XA_BUG_ON(xa, xas_error(&xas));
++		XA_BUG_ON(xa, xa_load(xa, index) !=3D p);
++
++		xas_unlock_irq(&xas);
++	} while (xas_nomem(&xas, GFP_KERNEL));
++
++	XA_BUG_ON(xa, xas_error(&xas));
 +}
 +
- static noinline void check_reserve(struct xarray *xa)
++static noinline void check_xa_multi_store_adv_delete(struct xarray *xa,
++						     unsigned long index,
++						     unsigned int order)
++{
++	unsigned int nrpages =3D 1UL << order;
++	unsigned long base =3D round_down(index, nrpages);
++	XA_STATE(xas, xa, base);
++
++	xas_set_order(&xas, base, order);
++	xas_store(&xas, NULL);
++	xas_init_marks(&xas);
++}
++
++static unsigned long some_val =3D 0xdeadbeef;
++static unsigned long some_val_2 =3D 0xdeaddead;
++
++/* mimics the page cache */
++static noinline void check_xa_multi_store_adv(struct xarray *xa,
++					      unsigned long pos,
++					      unsigned int order)
++{
++	unsigned int nrpages =3D 1UL << order;
++	unsigned long index, base, next_index, next_next_index;
++	unsigned int i;
++
++	index =3D pos >> PAGE_SHIFT;
++	base =3D round_down(index, nrpages);
++	next_index =3D round_down(base + nrpages, nrpages);
++	next_next_index =3D round_down(next_index + nrpages, nrpages);
++
++	check_xa_multi_store_adv_add(xa, base, order, &some_val);
++
++	for (i =3D 0; i < nrpages; i++)
++		XA_BUG_ON(xa, xa_load(xa, base + i) !=3D &some_val);
++
++	XA_BUG_ON(xa, xa_load(xa, next_index) !=3D NULL);
++
++	/* Use order 0 for the next item */
++	check_xa_multi_store_adv_add(xa, next_index, 0, &some_val_2);
++	XA_BUG_ON(xa, xa_load(xa, next_index) !=3D &some_val_2);
++
++	/* Remove the next item */
++	check_xa_multi_store_adv_delete(xa, next_index, 0);
++
++	/* Now use order for a new pointer */
++	check_xa_multi_store_adv_add(xa, next_index, order, &some_val_2);
++
++	for (i =3D 0; i < nrpages; i++)
++		XA_BUG_ON(xa, xa_load(xa, next_index + i) !=3D &some_val_2);
++
++	check_xa_multi_store_adv_delete(xa, next_index, order);
++	check_xa_multi_store_adv_delete(xa, base, order);
++	XA_BUG_ON(xa, !xa_empty(xa));
++
++	/* starting fresh again */
++
++	/* let's test some holes now */
++
++	/* hole at base and next_next */
++	check_xa_multi_store_adv_add(xa, next_index, order, &some_val_2);
++
++	for (i =3D 0; i < nrpages; i++)
++		XA_BUG_ON(xa, xa_load(xa, base + i) !=3D NULL);
++
++	for (i =3D 0; i < nrpages; i++)
++		XA_BUG_ON(xa, xa_load(xa, next_index + i) !=3D &some_val_2);
++
++	for (i =3D 0; i < nrpages; i++)
++		XA_BUG_ON(xa, xa_load(xa, next_next_index + i) !=3D NULL);
++
++	check_xa_multi_store_adv_delete(xa, next_index, order);
++	XA_BUG_ON(xa, !xa_empty(xa));
++
++	/* hole at base and next */
++
++	check_xa_multi_store_adv_add(xa, next_next_index, order, &some_val_2);
++
++	for (i =3D 0; i < nrpages; i++)
++		XA_BUG_ON(xa, xa_load(xa, base + i) !=3D NULL);
++
++	for (i =3D 0; i < nrpages; i++)
++		XA_BUG_ON(xa, xa_load(xa, next_index + i) !=3D NULL);
++
++	for (i =3D 0; i < nrpages; i++)
++		XA_BUG_ON(xa, xa_load(xa, next_next_index + i) !=3D &some_val_2);
++
++	check_xa_multi_store_adv_delete(xa, next_next_index, order);
++	XA_BUG_ON(xa, !xa_empty(xa));
++}
++#endif
++
++static noinline void check_multi_store_advanced(struct xarray *xa)
++{
++#ifdef CONFIG_XARRAY_MULTI
++	unsigned int max_order =3D IS_ENABLED(CONFIG_XARRAY_MULTI) ? 20 : 1;
++	unsigned long end =3D ULONG_MAX/2;
++	unsigned long pos, i;
++
++	/*
++	 * About 117 million tests below.
++	 */
++	for (pos =3D 7; pos < end; pos =3D (pos * pos) + 564) {
++		for (i =3D 0; i < max_order; i++) {
++			check_xa_multi_store_adv(xa, pos, i);
++			check_xa_multi_store_adv(xa, pos + 157, i);
++		}
++	}
++#endif
++}
++
+ static noinline void check_xa_alloc_1(struct xarray *xa, unsigned int base=
+)
  {
- 	void *entry;
-@@ -1801,6 +1821,7 @@ static int xarray_checks(void)
- 	check_xas_erase(&array);
- 	check_insert(&array);
- 	check_cmpxchg(&array);
-+	check_cmpxchg_order(&array);
+ 	int i;
+@@ -1825,6 +1958,7 @@ static int xarray_checks(void)
  	check_reserve(&array);
  	check_reserve(&xa0);
  	check_multi_store(&array);
++	check_multi_store_advanced(&array);
+ 	check_get_order(&array);
+ 	check_xa_alloc();
+ 	check_find(&array);
 --=20
 2.39.2
 
