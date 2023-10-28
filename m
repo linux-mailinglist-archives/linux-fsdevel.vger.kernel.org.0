@@ -1,202 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-1484-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1485-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15FEE7DA826
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Oct 2023 18:56:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECFB07DA828
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Oct 2023 18:58:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5EB6B20C39
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Oct 2023 16:56:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 895F8B21108
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Oct 2023 16:58:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD701171BC;
-	Sat, 28 Oct 2023 16:56:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F54E17726;
+	Sat, 28 Oct 2023 16:58:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F4NDCBpd"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Zocf1mPD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1083A390
-	for <linux-fsdevel@vger.kernel.org>; Sat, 28 Oct 2023 16:56:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4325EC433C7;
-	Sat, 28 Oct 2023 16:56:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1698512204;
-	bh=BDwsYISfrL7tcyHbaI4k0MK+bB0Ei/xK8mDp2+qxeVk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F4NDCBpdnGLPECAQa3hBijmWMQAh0Denrs5mjee9OHnPw/ffp1pCJEYlEQpETsrp1
-	 kNuQl0Aske9dsIy336F6FhbAFvEazx4vzlXA352TZyV+d7yeBfbTyFYRoDAc+skyET
-	 zx9IUQdr1UbzZ4cUXxs3/OqRmxl2YJZieqjKUb0T8a5JimxTfYCatpW0M3KJjIe1oV
-	 w8Cz2KYaT+1/I/u/XOXEenTvuP7E1RXEfWaWqyfPUtzwWuvrF0Ze5BhMNzQVCeiUjV
-	 Cdxwi+ATTzFNVpPg1Ra9FGYp7yUJzrGB7uMldMilRh1vZD54dOHjtQkJJtzn3J/86U
-	 zwfAyre/JStag==
-Date: Sat, 28 Oct 2023 18:56:38 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>,
-	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-	Shirley Ma <shirley.ma@oracle.com>, hch@lst.de, jstancek@redhat.com,
-	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [GIT PULL] iomap: bug fixes for 6.6-rc7
-Message-ID: <20231028-zollfrei-abbrechen-50065dfed265@brauner>
-References: <169786962623.1265253.5321166241579915281.stg-ugh@frogsfrogsfrogs>
- <CAHk-=whNsCXwidLvx8u_JBH91=Z5EFw9FVj57HQ51P7uWs4yGQ@mail.gmail.com>
- <20231023223810.GW3195650@frogsfrogsfrogs>
- <20231024-flora-gerodet-8ec178f87fe9@brauner>
- <20231026031325.GH3195650@frogsfrogsfrogs>
- <CAHk-=whQHBdJTr9noNuRwMtFrWepMHhnq6EtcAypegi5aUkQnQ@mail.gmail.com>
- <20231027-gestiegen-saftig-2e636d251efa@brauner>
- <CAHk-=wivwYfw0DHn3HowHJPg0rkt2fVSdLwjbsX6dTPNoMWXNA@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37D021548D
+	for <linux-fsdevel@vger.kernel.org>; Sat, 28 Oct 2023 16:58:05 +0000 (UTC)
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53EC6D9
+	for <linux-fsdevel@vger.kernel.org>; Sat, 28 Oct 2023 09:58:02 -0700 (PDT)
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20231028165759euoutp020da9fb507d00eeb5aff7a47a5b37c13a~SU_tNUpaw1850618506euoutp02Y
+	for <linux-fsdevel@vger.kernel.org>; Sat, 28 Oct 2023 16:57:59 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20231028165759euoutp020da9fb507d00eeb5aff7a47a5b37c13a~SU_tNUpaw1850618506euoutp02Y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1698512279;
+	bh=G263tCHuDjJWOrwK6rEkPLZvqg9BXIQH5T/9FBnMH6E=;
+	h=Date:Subject:To:CC:From:In-Reply-To:References:From;
+	b=Zocf1mPDBLhG3gdgDail1+1Z52J6+grvuiHKQqiGOjlV/BmTuF8z2HF43j/RfVGSk
+	 k5KX0z4vGR9RhuhLuCkytRXwDmPYSR5veAC1av/wO4rMkv20FHUruEB84+YdXYnXW+
+	 URhGy3kxHbeQTku6e9id8c1fMTDxtdXEdsCAKeBU=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20231028165759eucas1p28f9e44a256911712dfde00b4fc25782e~SU_s5Pv423067730677eucas1p2a;
+	Sat, 28 Oct 2023 16:57:59 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id 05.77.42423.79D3D356; Sat, 28
+	Oct 2023 17:57:59 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20231028165758eucas1p2348332c8a754013fcb3e378c7ac8e5a7~SU_sDjzy23067330673eucas1p2S;
+	Sat, 28 Oct 2023 16:57:58 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20231028165758eusmtrp1516a860d449c05fefcb3a461e4b4d671~SU_sDAKzY1424814248eusmtrp1m;
+	Sat, 28 Oct 2023 16:57:58 +0000 (GMT)
+X-AuditID: cbfec7f2-a51ff7000002a5b7-4f-653d3d97707c
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id 88.5F.25043.69D3D356; Sat, 28
+	Oct 2023 17:57:58 +0100 (BST)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20231028165758eusmtip2883361337e9b28a56538d2314cb482f7~SU_r4vCDv0609306093eusmtip2h;
+	Sat, 28 Oct 2023 16:57:58 +0000 (GMT)
+Received: from [192.168.1.64] (106.210.248.118) by CAMSVWEXC02.scsc.local
+	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Sat, 28 Oct 2023 17:57:56 +0100
+Message-ID: <c7d07c6d-97a7-4ad1-bb74-d9a1a67613e8@samsung.com>
+Date: Sat, 28 Oct 2023 18:57:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wivwYfw0DHn3HowHJPg0rkt2fVSdLwjbsX6dTPNoMWXNA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] iomap: fix iomap_dio_zero() for fs bs > system page
+ size
+To: Hannes Reinecke <hare@suse.de>, Matthew Wilcox <willy@infradead.org>
+CC: Christoph Hellwig <hch@lst.de>, Pankaj Raghav <kernel@pankajraghav.com>,
+	<linux-xfs@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	<djwong@kernel.org>, <mcgrof@kernel.org>, <da.gomez@samsung.com>,
+	<gost.dev@samsung.com>, <david@fromorbit.com>
+Content-Language: en-US
+From: Pankaj Raghav <p.raghav@samsung.com>
+In-Reply-To: <3ce86ed7-2514-4d60-99b0-5029bcfb2126@suse.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [106.210.248.118]
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SaUwTURSF82am7RRTMhS0N6ISUaJiBIwaBwUjUXTwh0tijMG1gQlFS9EO
+	dY0GxY1NBdRqbVmqIqBiLBTZJAa1lIK44FJQQU0xkUis4gIURcqo4d937zv33XNeHolLSwXj
+	yXhVEqtWyZX+Qg+iwtLfMksbHs6G/LwmosstHYhudXjStcZsjC6+9gCjmz/2EnTtnUaCrh6s
+	FNH2012IdvXphYvFjM0ITFlRIGMqSRUyNW3JQuZhcQRT1rSf6TVNWi2K9giLZZXxu1h18KKt
+	Hgq91kbsuEDu+fCyQ5CM3gnTkJgEai6Y896gNORBSqkiBMV5gzhffENQdcKC8UUvAkfRDfRv
+	xGht/au6iqBn6Ifov8pg/DBysZSqRlDXPc/NEmoRnHltEbiZoALAef0izve9oPGCg3DzWMoP
+	OtvPi9zsTa2C+wYr5mYfioGTz62EewFOJWPw7kT7yDBOyaDdkTcsIkkhFQiHUkVuFFMLoW9A
+	zCtmwNHbLhHPfpBi5tcCNQVsjrcCng+Arbx9JCVQOWLI1xf+FS2FdL0N49kbuhvKRTxPgKac
+	DILn/dBld+H88BEEp6puCt0mYNjEyWYlr4mAY6eKCb7tCfYeL96PJ2RXaPHTKEA36iV0o4Lp
+	RkXQjYqQj4gSJGM1XEIcy81WsbuDOHkCp1HFBcUkJpjQ8Jdq+t3wtRIZur8E1SOMRPUISNzf
+	R4JHhLFSSax87z5WnbhFrVGyXD3yJQl/mSQg1o+VUnHyJHY7y+5g1f9OMVI8PhkLrnqjyRcM
+	RU7t2RirvTy5LWvw2aaulNqr5SuWV7qyh3Rer0rTJK8vL7sSxTxJTNc7OuQHvgaXFSy4f8sU
+	+R5xS1eKjXP7EgxRiswW+B72aUnD5ryqgpiZbxfkmr+nfp5mqGk7F2les7UCnCoTcfjXgO9a
+	ld6+L8uRvwEfg5tyb2Zsz9SmK9XWiRmMvf9Rn0wpu9vQuVMdINsYXD3vY81BONg6JzQ3SXEp
+	J9o35Iqm2TX9KHHeEue5OIu7uGl+jPWxOSe0jtxW8ir0hXNWZtQaV+DTs52TQhrp6HtbuhRt
+	tqTj48KcNPSzPYcIjakxWlPEpKwvCH+xrmxiS7OzcMCf4BTy2YG4mpP/AWsG8DbBAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCIsWRmVeSWpSXmKPExsVy+t/xe7rTbG1TDVo381lsOXaP0eLyEz6L
+	PYsmMVmsXH2UyeLMy88sFnv2nmSx2PVnB7vFjQlPGS1+/5jD5sDpcWqRhMfmFVoem1Z1snns
+	vtnA5nF2paPH5tPVHp83yQWwR+nZFOWXlqQqZOQXl9gqRRtaGOkZWlroGZlY6hkam8daGZkq
+	6dvZpKTmZJalFunbJehlzJl+iqVgJkfFs+v3WBsYH7J1MXJySAiYSCw6cZm5i5GLQ0hgKaPE
+	rlUnoBIyEhu/XGWFsIUl/lzrYoMo+sgocfrYbihnF6PEqRlfwKp4Bewkptw5BmazCKhKfFgz
+	mxkiLihxcuYTFhBbVEBe4v6tGewgtrCAr8SeiXfAbBEBD4m+qydYQIYyCzQwSTzsuAV10w8m
+	ibdzV4JVMQuIS9x6Mp+pi5GDg01AS6Kxkx3E5BSwlvjxixOiQlOidftvqGp5ieatEDdICChL
+	nHryAOqbWonPf58xTmAUnYXkvFlIFsxCMmoWklELGFlWMYqklhbnpucWG+kVJ+YWl+al6yXn
+	525iBEb3tmM/t+xgXPnqo94hRiYOxkOMEhzMSiK8zI42qUK8KYmVValF+fFFpTmpxYcYTYFh
+	NJFZSjQ5H5he8kriDc0MTA1NzCwNTC3NjJXEeT0LOhKFBNITS1KzU1MLUotg+pg4OKUamLJO
+	szrEljYbqRTZuThmxxq6b/AteNh9PGqGSN+qmfJBJo9mRW3eevaJ0sxpP0XqFPku85Se9bsg
+	znbYPdN10UEzEwexgvQXZWdaTh/fd9l3pUV9/OHiMOurAqlF96x+TT+ySG59p4dfVjDX3975
+	bo25a9eWtD5jZXf97LiIScPc9fzd9WE3CkJCuUv5Mp/3v9E1VAwvyTsikrcual6U/e6shbNX
+	nZr1PTj+OR97nzG/SOHWx5LlZ4497ulgzNlY68fZkp+6SPrJ359JxR48TnLCt6IPaRYoP74x
+	LdunQ0z38T2XU5vPS5/ouv/gytm70qefrEs1vefYZL/q+qGV0TPkoj23P+LUu2NXee2yEktx
+	RqKhFnNRcSIAnmFIrHcDAAA=
+X-CMS-MailID: 20231028165758eucas1p2348332c8a754013fcb3e378c7ac8e5a7
+X-Msg-Generator: CA
+X-RootMTR: 20231027051855eucas1p2e465ca6afc8d45dc0529f0798b8dd669
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20231027051855eucas1p2e465ca6afc8d45dc0529f0798b8dd669
+References: <20231026140832.1089824-1-kernel@pankajraghav.com>
+	<CGME20231027051855eucas1p2e465ca6afc8d45dc0529f0798b8dd669@eucas1p2.samsung.com>
+	<20231027051847.GA7885@lst.de>
+	<1e7e9810-9b06-48c4-aec8-d4817cca9d17@samsung.com>
+	<ZTuVVSD1FnQ7qPG5@casper.infradead.org>
+	<3d65652f-04c7-4240-9969-ba2d3869dbbf@samsung.com>
+	<3ce86ed7-2514-4d60-99b0-5029bcfb2126@suse.de>
 
-On Fri, Oct 27, 2023 at 01:30:00PM -1000, Linus Torvalds wrote:
-> On Fri, 27 Oct 2023 at 08:46, Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > One of the critical parts is review. Good reviews are often insanely
-> > expensive and they are very much a factor in burning people out. If one
-> > only ever reviews and the load never ends that's going to fsck with you
-> > in the long run.
-> 
-> I absolutely despise the review requirement that several companies
-> have. I very much understand why it happens, but I think it's actively
-> detrimental to the workflow.
-> 
-> It's not just that reviewing is hard, the review requirement tends to
-> be a serialization point where now you as a developer are waiting for
-> others to review it, and those others are not nearly as motivated to
-> do so or are easily going to be nitpicking about the non-critical
-> things.
-> 
-> So it's not just the reviewers that get burned out, I think the
-> process ends up being horrific for developers too, and easily leads to
-> the "let's send out version 17 of this patch based on previous
-> review". At which point everybody is completely fed up with the whole
-> process.
-> 
-> And if it doesn't get to version 17, it's because the reviewers too
-> have gotten so fed up that by version three they go "whatever, I've
-> seen this before, they fixed the obvious thing I noticed, I'll mark it
-> reviewed".
+>> -       bio = iomap_dio_alloc_bio(iter, dio, 1, REQ_OP_WRITE | REQ_SYNC | REQ_IDLE);
+>> +       if (len > PAGE_SIZE) {
+>> +               page = mm_get_huge_zero_page(current->mm);
+>> +               if (likely(page))
+>> +                       huge_page = true;
+>> +       }
+>> +
+>> +       if (!huge_page)
+>> +               page = ZERO_PAGE(0);
+>> +
+>> +       fallback = ((len > PAGE_SIZE) && !huge_page);
+>> +
+> That is pointless.
+> Bios can handle pages larger than PAGE_SIZE.
 
-You're talking about companies having review requirements for their
-internal project stuff, right? I haven't heard that there's any sort of
-review requirement with respect to the upstream kernel from companies.
+Yes, I know BIOs can handle large pages. But the point here is if we fail
+to allocate a huge zero page that can cover the complete large FSB ( > page size),
+then we need to use the statically allocated ZERO_PAGE (see the original patch)
+for multiple offsets covering the range.
 
-Sure, if you make it a requirement then it sucks because it's just
-another chore.
+Unless we have an API that can return a zero folio with arbitrary order(see also the
+reply from Willy), we can't use a bio with one vec for LBS support.
 
-I think we lack more reviewers for a multitude of reasons but to me one
-of the biggest is that we don't encourage the people to do it and
-there's no inherent reward to it. Sure, you get that RVB or ACK in the
-changelog but whatever. That neither gets you a job nor does it get you
-on LWN. So why bother.
-
-So often our reviewers are the people who have some sort of sense of
-ownership with respect to the subsystem. That's mostly the maintainers.
-
-You occassionally get the author of a patch series that sticks around
-and reviews stuff that they wrote. But that's not enough and then we're
-back to the problem that you can't effectively be maintainer, reviewer,
-and main developer.
-
-And yes, nitpicky review isn't really helpful and the goal shouldn't be
-to push a series to pointless version numbers before it can be merged.
-
-> 
-> The other dynamic with reviews is that you end up getting
-> review-cliques, either due to company pressure or just a very natural
-> "you review mine, I review yours" back-scratching.
-> 
-> Don't get me wrong - it can work, and it can even work well, but I
-> think the times it works really well is when people have gotten so
-> used to each others, and know each other's quirks and workflows and
-> they just work well together. But that also means that some people are
-> having a much easier time getting reviews, because they are part of
-> that "this group works well together" crowd.
-
-Yes, we certainly see that happening. And I really think that's overall
-a good thing. It shouldn't become an in-group out-group thing obviously
-so that needs to be carefully handled. But long-term trust between core
-developers and maintainers is key to subsystem health imho. And such
-quick review bounces are a sign of that. I don't think we actively see
-useless reviews that are just "scratch my back". The people who review
-often do it with sufficient fervor (for better or worse sometimes).
-
-That said, yes, it needs to be fair. But it's just natural that you feel
-more likely to throw a ACK or RVB to something someone did you know
-usually does good work and you know will come back to help you put out
-the fire they started.
-
-> 
-> Maybe it's a necessary evil. I certainly do *not* think the "lone
-
-I think it's just a natural development and it's on use to make sure it
-doesn't become some sort of group thing where it's five people from the
-same company that push their stuff upstream.
-
-> developer goes his own way" model works all that well. But the reason
-
-Yeah, so I do think that this is actually the bigger problem long term.
-Lone-wolf models are terrible. But I didn't grow up with lone-wolf
-projects so I have no strong attachment to such models in the first
-place. Maybe I judge that more harshly simply because of that.
-
-> I said that I wish we had more maintainers, is that I think we would
-> often be better off with not a "review process" back-and-forth. but a
-> _pipeline_ through a few levels of maintainers.  Not the "hold things
-> up and send it back to the developer" kind of thing, but "Oh, this
-> looks fine, I'll just send it on - possibly with the fixes I think are
-> needed".
-> 
-> So I think a pipeline of "Signed-off-by" (or just merges) might be
-> something to strive for as at least a partial replacement for reviews.
-> 
-> Sure, you might get Acked-by's or Reviewed-by's or Tested-by's along
-> the way *too*, or - when people are just merging directly through git
-> - you'd just get a merge commit with commentary and perhaps extra
-> stuff on top.
-
-And we kinda do that in some subsystems rather consequently. Networking
-does it at least and BPF does it with their subtrees and then BPF and
-its subtrees bubble up into networking and then into mainline.
-
-And that model seems to work well, yes. And it takes pressure of because
-it formalizes the whole maintenance thing a lot more.
-
-Idk if you've seen that but what we do for new stuff that gets added to
-vfs is that we have maintainership entries ala BPF so e.g.,
-FILESYSTEMS [EXPORTFS] - that patch is still in -next and the PR for
-that won't get sent before next week and then it lists the maintainers.
-But it's all part of vfs.git and they just bubble up the patches. We
-could just do that via sub merges even.
-
-> 
-> Back when we started doing the whole "Signed-off-by" - for legal
-> reasons, not development reasons - the big requirement for me was that
-> "it needs to work as a pipeline, not as some kind of back-and-forth
-> that holds up development". And I think the whole sign-off chain has
-> worked really well, and we've never needed to use it for the original
-> legal purposes (and hopefully just by virtue of it existing, we never
-> will), but it has been a huge success from a development standpoint.
-> When something goes wrong, I think it's been great to have that whole
-> chain of how it got merged, and in fact one of my least favorite parts
-> of git ended up being how we never made it easy to see the merge chain
-> after it's been committed (you can technically get it with "git
-> name-rev", but it sure is not obvious).
-> 
-> I dunno. Maybe I'm just dreaming. But the complaints about reviews -
-> or lack of them - do tend to come up a lot, and I feel like the whole
-> review process is a very big part of the problem.
-
-Yeah, certainly.
+--
+Pankaj
 
