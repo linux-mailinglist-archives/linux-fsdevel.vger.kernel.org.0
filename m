@@ -1,52 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-1470-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1471-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF4617DA4FC
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Oct 2023 05:03:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CC9A7DA527
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Oct 2023 06:47:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50F5D28284F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Oct 2023 03:03:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B279F2827E4
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Oct 2023 04:46:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4E6A5C;
-	Sat, 28 Oct 2023 03:03:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 866087FD;
+	Sat, 28 Oct 2023 04:46:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="CPFWTTmw"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="VX0ENCDh"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C871396
-	for <linux-fsdevel@vger.kernel.org>; Sat, 28 Oct 2023 03:03:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D1A5387
+	for <linux-fsdevel@vger.kernel.org>; Sat, 28 Oct 2023 04:46:51 +0000 (UTC)
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67B1919B2
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 20:03:13 -0700 (PDT)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41F1811B
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 21:46:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
 	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=awm+nPqyPW0TP6sRIUE6KcF8gq47l2asTjCPcT+FWOU=; b=CPFWTTmwRm8HJeQIx9hnqVWsO3
-	01BSANvGUtwmyCYROJD8POKreiSvI9vVGmAfdfdkLEPYBAU/4HDWi9W05f5LNQkVL1RTByiMmtjxV
-	P5ifu0MQ4ox4bprN1ZMgNbDTymAXRSMoNe9cq4JaW6Dg9pJuL/07KNxoABicWRvWYcS4xuJi67hhr
-	0j1dryyXDSmFk2xgnUqmNhwxFYgD1ZiTV/GfV/ZRdXtr85ML9zVa0sPlCUWUHSHmbMbulifOyIB8l
-	8GQqU9hLCC3tMsJpFCH3GGAQg3aFSIZiIKoEtq/u6WCZ5KcGLg2fOiCUW2P2cLufejwLthGcilx/w
-	qZwSVREQ==;
+	bh=SpA+rE8p7mmNlDFC4/WwEVr83oI44kkLgXBVqzS5x5E=; b=VX0ENCDhr8Npbk9TloO8GoQ00V
+	y7m6MvKumvIb8z/RgByZQeicQfHuONXbwNHJxdfZ7N4yG6LkiR55/peITfMcOJVduOjzXB96XY+6x
+	OzCs9llGe7EQhU5Evtj7jv6eQ1TCKgkIRn5Ooe7j/AaLFyTrkuSeStdXVsQym8D55OqvSOtfOO0BI
+	x6unkD5Tcj8cgN1BIRR61Gi0QWbHb6eC/LVc1iyVPki7NG7ZfCxQWUbCuqNDBTsuShO9Fc1U1fWDh
+	ju+k6yiPKAY5Z54dG8rVOORyXbmHrt9QBasHlyGYlY151DuRsW1gofomUhoYXtsVO4Y8w7xsmc1xg
+	NMqYW53Q==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1qwZbS-006r1W-1T;
-	Sat, 28 Oct 2023 03:03:10 +0000
-Date: Sat, 28 Oct 2023 04:03:10 +0100
+	id 1qwbDi-006ssm-0h;
+	Sat, 28 Oct 2023 04:46:46 +0000
+Date: Sat, 28 Oct 2023 05:46:46 +0100
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: Bernd Schubert <bschubert@ddn.com>
 Cc: linux-fsdevel@vger.kernel.org, bernd.schubert@fastmail.fm,
 	miklos@szeredi.hu, dsingh@ddn.com,
-	Horst Birthelmer <hbirthelmer@ddn.com>,
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v10 2/8] fuse: introduce atomic open
-Message-ID: <20231028030310.GR800259@ZenIV>
+	Christian Brauner <brauner@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>
+Subject: Re: [PATCH v10 4/8] [RFC] Allow atomic_open() on positive dentry
+ (w/o O_CREAT)
+Message-ID: <20231028044646.GS800259@ZenIV>
 References: <20231023183035.11035-1-bschubert@ddn.com>
- <20231023183035.11035-3-bschubert@ddn.com>
+ <20231023183035.11035-5-bschubert@ddn.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -55,252 +56,256 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231023183035.11035-3-bschubert@ddn.com>
+In-Reply-To: <20231023183035.11035-5-bschubert@ddn.com>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Mon, Oct 23, 2023 at 08:30:29PM +0200, Bernd Schubert wrote:
+On Mon, Oct 23, 2023 at 08:30:31PM +0200, Bernd Schubert wrote:
+
+> Previous patch allowed atomic-open on a positive dentry when
+> O_CREAT was set (in lookup_open). This adds in atomic-open
+> when O_CREAT is not set.
+> 
+> Code wise it would be possible to just drop the dentry in
+> open_last_lookups and then fall through to lookup_open.
+> But then this would add some overhead for dentry drop,
+> re-lookup and actually also call into d_revalidate.
+> So as suggested by Miklos, this adds a helper function
+> (atomic_revalidate_open) to immediately open the dentry
+> with atomic_open.
+> 
+> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
+> Cc: Miklos Szeredi <miklos@szeredi.hu>
+> Cc: Dharmendra Singh <dsingh@ddn.com>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: Amir Goldstein <amir73il@gmail.com>
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Cc: linux-fsdevel@vger.kernel.org
+> ---
+>  fs/namei.c | 66 +++++++++++++++++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 63 insertions(+), 3 deletions(-)
+
+This is bloody awful.
+ 
+> diff --git a/fs/namei.c b/fs/namei.c
+> index ff913e6b12b4..5e2d569ffe38 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -1614,10 +1614,11 @@ struct dentry *lookup_one_qstr_excl(const struct qstr *name,
+>  }
+>  EXPORT_SYMBOL(lookup_one_qstr_excl);
+>  
+> -static struct dentry *lookup_fast(struct nameidata *nd)
+> +static struct dentry *lookup_fast(struct nameidata *nd, bool *atomic_revalidate)
+
+Yechhh...  Note that absolute majority of calls will be nowhere near
+the case when that atomic_revalidate thing might possibly be set.
+
+>  {
+>  	struct dentry *dentry, *parent = nd->path.dentry;
+>  	int status = 1;
+> +	*atomic_revalidate = false;
+>  
+>  	/*
+>  	 * Rename seqlock is not required here because in the off chance
+> @@ -1659,6 +1660,10 @@ static struct dentry *lookup_fast(struct nameidata *nd)
+>  		dput(dentry);
+>  		return ERR_PTR(status);
+>  	}
+> +
+> +	if (status == D_REVALIDATE_ATOMIC)
+> +		*atomic_revalidate = true;
+> +
+>  	return dentry;
+>  }
+
+ 
+> @@ -1984,6 +1989,7 @@ static const char *handle_dots(struct nameidata *nd, int type)
+>  static const char *walk_component(struct nameidata *nd, int flags)
+>  {
+>  	struct dentry *dentry;
+> +	bool atomic_revalidate;
+>  	/*
+>  	 * "." and ".." are special - ".." especially so because it has
+>  	 * to be able to know about the current root directory and
+> @@ -1994,7 +2000,7 @@ static const char *walk_component(struct nameidata *nd, int flags)
+>  			put_link(nd);
+>  		return handle_dots(nd, nd->last_type);
+>  	}
+> -	dentry = lookup_fast(nd);
+> +	dentry = lookup_fast(nd, &atomic_revalidate);
+>  	if (IS_ERR(dentry))
+>  		return ERR_CAST(dentry);
+>  	if (unlikely(!dentry)) {
+> @@ -2002,6 +2008,9 @@ static const char *walk_component(struct nameidata *nd, int flags)
+>  		if (IS_ERR(dentry))
+>  			return ERR_CAST(dentry);
+>  	}
+> +
+> +	WARN_ON_ONCE(atomic_revalidate);
+> +
+>  	if (!(flags & WALK_MORE) && nd->depth)
+>  		put_link(nd);
+>  	return step_into(nd, flags, dentry);
+> @@ -3383,6 +3392,42 @@ static struct dentry *atomic_open(struct nameidata *nd, struct dentry *dentry,
+>  	return dentry;
+>  }
+  
+> +static struct dentry *atomic_revalidate_open(struct dentry *dentry,
+> +					     struct nameidata *nd,
+> +					     struct file *file,
+> +					     const struct open_flags *op,
+> +					     bool *got_write)
 > +{
-> +	int err;
-> +	struct inode *inode;
-> +	FUSE_ARGS(args);
-> +	struct fuse_mount *fm = get_fuse_mount(dir);
-> +	struct fuse_conn *fc = fm->fc;
-> +	struct fuse_forget_link *forget;
-> +	struct fuse_create_in inarg;
-> +	struct fuse_open_out outopen;
-> +	struct fuse_entry_out outentry;
-> +	struct fuse_inode *fi;
-> +	struct fuse_file *ff;
-> +	struct dentry *switched_entry = NULL, *alias = NULL;
-> +	DECLARE_WAIT_QUEUE_HEAD_ONSTACK(wq);
+> +	struct mnt_idmap *idmap;
+> +	struct dentry *dir = nd->path.dentry;
+> +	struct inode *dir_inode = dir->d_inode;
+> +	int open_flag = op->open_flag;
+> +	umode_t mode = op->mode;
 > +
-> +	/* Expect a negative dentry */
-> +	if (unlikely(d_inode(entry)))
-> +		goto fallback;
-> +
-> +	/* Userspace expects S_IFREG in create mode */
-> +	if ((flags & O_CREAT) && (mode & S_IFMT) != S_IFREG)
-> +		goto fallback;
+> +	if (unlikely(IS_DEADDIR(dir_inode)))
+> +		return ERR_PTR(-ENOENT);
 
-How could it get there with such mode?  We could check that
-in fs/namei.c:atomic_open() (with
-	if (WARN_ON_ONCE((open_flags & O_CREAT) && !S_ISREG(mode)))
-		error = -EINVAL; // for the lack of EWTFAREYOUSMOKING
-	else
-		error = dir->i_op->atomic_open(....)
-or something similar), but that doesn't belong in the method instances.
-And it really should never happen - that thing comes from op->mode and
-we have build_open_flags() doing this:
-        if (WILL_CREATE(flags)) {
-                if (how->mode & ~S_IALLUGO)
-                        return -EINVAL;
-                op->mode = how->mode | S_IFREG;
-        } else {
-                if (how->mode != 0)
-                        return -EINVAL;
-                op->mode = 0;
-        }
-so...  Are other instances doing the same kind of paranoia?  That BUG_ON()
-in current fuse_atomic_open() is bogus (and seriously misplaced)...
+What's the point of doing that check when there's nothing to stop
+directory from being removed right under you?  Note that similar
+check in lookup_open() is done after the caller has locked the
+damn thing.
 
-> +	forget = fuse_alloc_forget();
-> +	err = -ENOMEM;
-> +	if (!forget)
-> +		goto out_err;
+> +	file->f_mode &= ~FMODE_CREATED;
 > +
-> +	err = -ENOMEM;
-> +	ff = fuse_file_alloc(fm);
-> +	if (!ff)
-> +		goto out_put_forget_req;
-> +
-> +	if (!fc->dont_mask)
-> +		mode &= ~current_umask();
-> +
-> +	flags &= ~O_NOCTTY;
-> +	memset(&inarg, 0, sizeof(inarg));
-> +	memset(&outentry, 0, sizeof(outentry));
-> +	inarg.flags = flags;
-> +	inarg.mode = mode;
-> +	inarg.umask = current_umask();
-> +
-> +	if (fc->handle_killpriv_v2 && (flags & O_TRUNC) &&
-> +	    !(flags & O_EXCL) && !capable(CAP_FSETID)) {
-> +		inarg.open_flags |= FUSE_OPEN_KILL_SUIDGID;
-> +	}
-> +
-> +	args.opcode = FUSE_OPEN_ATOMIC;
-> +	args.nodeid = get_node_id(dir);
-> +	args.in_numargs = 2;
-> +	args.in_args[0].size = sizeof(inarg);
-> +	args.in_args[0].value = &inarg;
-> +	args.in_args[1].size = entry->d_name.len + 1;
-> +	args.in_args[1].value = entry->d_name.name;
-> +	args.out_numargs = 2;
-> +	args.out_args[0].size = sizeof(outentry);
-> +	args.out_args[0].value = &outentry;
-> +	args.out_args[1].size = sizeof(outopen);
-> +	args.out_args[1].value = &outopen;
-> +
-> +	if (flags & O_CREAT) {
-> +		err = get_create_ext(&args, dir, entry, mode);
-> +		if (err)
-> +			goto out_free_ff;
-> +	}
-> +
-> +	err = fuse_simple_request(fm, &args);
-> +	free_ext_value(&args);
-> +	if (err == -ENOSYS || err == -ELOOP) {
-> +		if (unlikely(err == -ENOSYS))
-> +			fc->no_open_atomic = 1;
-> +		goto free_and_fallback;
-> +	}
-> +
-> +	if (!err && !outentry.nodeid)
-> +		err = -ENOENT;
-> +
-> +	if (err)
-> +		goto out_free_ff;
-> +
-> +	err = -EIO;
-> +	if (invalid_nodeid(outentry.nodeid) || fuse_invalid_attr(&outentry.attr))
-> +		goto out_free_ff;
-> +
-> +	ff->fh = outopen.fh;
-> +	ff->nodeid = outentry.nodeid;
-> +	ff->open_flags = outopen.open_flags;
-> +	inode = fuse_iget(dir->i_sb, outentry.nodeid, outentry.generation,
-> +			  &outentry.attr, ATTR_TIMEOUT(&outentry), 0);
-> +	if (!inode) {
-> +		flags &= ~(O_CREAT | O_EXCL | O_TRUNC);
-> +		fuse_sync_release(NULL, ff, flags);
-> +		fuse_queue_forget(fm->fc, forget, outentry.nodeid, 1);
-> +		err = -ENOMEM;
-> +		goto out_err;
-> +	}
-> +
-> +	/* prevent racing/parallel lookup on a negative hashed */
-> +	if (!(flags & O_CREAT) && !d_in_lookup(entry)) {
+> +	if (WARN_ON_ONCE(open_flag & O_CREAT))
+> +		return ERR_PTR(-EINVAL);
 
-... in which case it has just passed ->d_revalidate()...
+Really.  With the only caller being under
 
-> +		d_drop(entry);
-> +		switched_entry = d_alloc_parallel(entry->d_parent,
-> +						   &entry->d_name, &wq);
-> +		if (IS_ERR(switched_entry)) {
-> +			err = PTR_ERR(switched_entry);
-> +			switched_entry = NULL;
-> +			goto out_free_ff;
-
-leaked inode?
-
-> +		}
-> +
-> +		if (unlikely(!d_in_lookup(switched_entry))) {
-> +			/* fall back */
-> +			dput(switched_entry);
-> +			switched_entry = NULL;
-> +			goto free_and_fallback;
-
-ditto, and I don't really understand what the hell is going on with
-dentry references here.  What is the intended behaviour in that case?
-
-> +		}
-> +
-> +		entry = switched_entry;
-> +	}
-> +
-> +	if (d_really_is_negative(entry)) {
-> +		d_drop(entry);
-> +		alias = d_exact_alias(entry, inode);
-
-What case is that about?  "We have an unhashed positive dentry with that
-exact name, parent and inode"?  Where would it have come from?
-
-Another thing: this does not consume an inode reference, no matter what
-gets returned,
-
-> +		if (!alias) {
-> +			alias = d_splice_alias(inode, entry);
-
-but that one *does* consume the inode reference; note the igrab() in
-nfs4 code where you've nicked that from...
-
-> +			if (IS_ERR(alias)) {
-> +				/*
-> +				 * Close the file in user space, but do not unlink it,
-> +				 * if it was created - with network file systems other
-> +				 * clients might have already accessed it.
-> +				 */
-> +				fi = get_fuse_inode(inode);
-
-... so this is asking for UAF.
-
-> +				fuse_sync_release(fi, ff, flags);
-> +				fuse_queue_forget(fm->fc, forget, outentry.nodeid, 1);
-> +				err = PTR_ERR(alias);
-> +				goto out_err;
-> +			}
-> +		}
-> +
-> +		if (alias)
-> +			entry = alias;
-> +	}
-
-... and here we have no way to tell if inode needs to be dropped.
+        int open_flag = op->open_flag;
+	...
+	if (!(open_flag & O_CREAT)) {
 
 > +
-> +	fuse_change_entry_timeout(entry, &outentry);
+> +	if (open_flag & (O_TRUNC | O_WRONLY | O_RDWR))
+> +		*got_write = !mnt_want_write(nd->path.mnt);
+> +	else
+> +		*got_write = false;
 > +
-> +	/*  File was indeed created */
-> +	if (outopen.open_flags & FOPEN_FILE_CREATED) {
-> +		if (!(flags & O_CREAT)) {
-> +			pr_debug("Server side bug, FOPEN_FILE_CREATED set "
-> +				 "without O_CREAT, ignoring.");
-> +		} else {
-> +			/* This should be always set when the file is created */
-> +			fuse_dir_changed(dir);
-> +			file->f_mode |= FMODE_CREATED;
-> +		}
-> +	}
+> +	if (!*got_write)
+> +		open_flag &= ~O_TRUNC;
 > +
-> +	if (S_ISDIR(mode))
-> +		ff->open_flags &= ~FOPEN_DIRECT_IO;
-> +	err = finish_open(file, entry, generic_file_open);
-> +	if (err) {
-> +		fi = get_fuse_inode(inode);
-> +		fuse_sync_release(fi, ff, flags);
-> +	} else {
-> +		file->private_data = ff;
-> +		fuse_finish_open(inode, file);
-> +	}
+> +	inode_lock_shared(dir->d_inode);
+> +	dentry = atomic_open(nd, dentry, file, open_flag, mode);
+> +	inode_unlock_shared(dir->d_inode);
+
+What will happen if you get that thing called with NULL ->i_op->atomic_open()?
 > +
-> +	kfree(forget);
+> +	return dentry;
 > +
-> +	if (switched_entry) {
-> +		d_lookup_done(switched_entry);
-> +		dput(switched_entry);
-> +	}
-> +
-> +	dput(alias);
-> +
-> +	return err;
-> +
-> +out_free_ff:
-> +	fuse_file_free(ff);
-> +out_put_forget_req:
-> +	kfree(forget);
-> +out_err:
-> +	if (switched_entry) {
-> +		d_lookup_done(switched_entry);
-> +		dput(switched_entry);
-> +	}
-> +
-> +	return err;
-> +
-> +free_and_fallback:
-> +	fuse_file_free(ff);
-> +	kfree(forget);
-> +fallback:
-> +	return fuse_create_open(dir, entry, file, flags, mode);
 > +}
+> +
+>  /*
+>   * Look up and maybe create and open the last component.
+>   *
+> @@ -3527,12 +3572,26 @@ static const char *open_last_lookups(struct nameidata *nd,
+>  	}
+>  
+>  	if (!(open_flag & O_CREAT)) {
+> +		bool atomic_revalidate;
+> +
+>  		if (nd->last.name[nd->last.len])
+>  			nd->flags |= LOOKUP_FOLLOW | LOOKUP_DIRECTORY;
+>  		/* we _can_ be in RCU mode here */
+> -		dentry = lookup_fast(nd);
+> +		dentry = lookup_fast(nd, &atomic_revalidate);
+>  		if (IS_ERR(dentry))
+>  			return ERR_CAST(dentry);
+> +		if (dentry && unlikely(atomic_revalidate)) {
+> +			/* The file system shall not claim to support atomic
+> +			 * revalidate in RCU mode
+> +			 */
+> +			if (WARN_ON_ONCE(nd->flags & LOOKUP_RCU)) {
+> +				dput(dentry);
+
+dput() under rcu_read_lock()?  For one thing, it's completely wrong
+as far as recovery strategy goes; we do *NOT* grab references under
+LOOKUP_RCU, so whatever we got here is not a counting reference.
+What's more, your comment is actively misleading - you set that
+atomic_revalidate thing in the very end of lookup_fast() and
+there is no way to get there with LOOKUP_RCU.  Look:
+
+static struct dentry *lookup_fast(struct nameidata *nd)
+{
+        ...
+        if (nd->flags & LOOKUP_RCU) {
+		...
+                status = d_revalidate(dentry, nd->flags);
+                if (likely(status > 0))
+                        return dentry;
+That's where we leave if we'd found and successfully
+revalidated a dentry in RCU mode.
+                if (!try_to_unlazy_next(nd, dentry))
+                        return ERR_PTR(-ECHILD);
+... and this is where we'd already left the RCU mode.
+                if (status == -ECHILD)
+                        /* we'd been told to redo it in non-rcu mode */
+                        status = d_revalidate(dentry, nd->flags);
+	} else {
+here we hadn't been in RCU mode to start with and we *never*
+switch from non-RCU to RCU.
+		...
+	}
+	// and here you set that flag of yours.
+
+So no matter what your ->d_revalidate() returns, you are
+not going to see atomic_... shite set in RCU mode.  It's not
+a matter of filesystem behaviour, contrary to your comment.
+
+> +				return ERR_PTR(-ECHILD);
+> +			}
+> +			dentry = atomic_revalidate_open(dentry, nd, file, op,
+> +							&got_write);
+> +			goto drop_write;
+> +		}
+>  		if (likely(dentry))
+>  			goto finish_lookup;
+>  
+> @@ -3569,6 +3628,7 @@ static const char *open_last_lookups(struct nameidata *nd,
+>  	else
+>  		inode_unlock_shared(dir->d_inode);
+>  
+> +drop_write:
+>  	if (got_write)
+>  		mnt_drop_write(nd->path.mnt);
+
+That helper of yours is a bad idea.  Control flow in that area is
+messy and hard to follow as it is, and we had _MANY_ bugs stemming
+from that.  You are making it harder to follow; this stuff really
+should've gone into lookup_open().
+
+And I really hate that 'atomic_revalidate' thing of yours.
+Especially since the reader gets to do major head-scratching about
+the WARN_ON_ONCE(atomic_revalidate) in walk_component().  Takes
+guessing that it's probably a matter of LOOKUP_OPEN *not* being
+there in walk_component() and always being there in the
+open_last_lookups() (we never get there for O_PATH opens, so
+op->intent will have it).  So at a guess you mean to have
+->d_revalidate() only return that magical value if LOOKUP_OPEN
+is present in flags.  Which seems to be the case, judging by
+the subsequent patches in the series.
+
+_IF_ we want to go in that direction, at least make it
+	if (status == THAT_MAGIC_VALUE) {
+		if (unlikely(!atomic_revalidate)) {
+			if (WARN_ON_ONCE(nd->flags & LOOKUP_OPEN))
+				// insane caller
+				;
+			else
+				// insane ->d_revalidate() instance
+				WARN_ON_ONCE(1);
+		} else {
+			*atomic_revalidate = true;
+		}
+	}
+and pass it NULL when calling it from walk_component().
+
+Again, I'm not at all sure it's a good idea to start with.  Hard to
+tell without seeing how it'll look after massage that would move
+that new call of atomic_open() down into lookup_open().
 
