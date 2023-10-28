@@ -1,60 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-1465-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1467-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39D177DA469
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Oct 2023 02:38:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D50837DA471
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Oct 2023 02:38:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDD6E1F23B75
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Oct 2023 00:38:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33011B215B2
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Oct 2023 00:38:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECE4763A4;
-	Sat, 28 Oct 2023 00:38:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DF8A39F;
+	Sat, 28 Oct 2023 00:38:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wRnrNLho"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MoGenRuy"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B15054C6E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC7575239
 	for <linux-fsdevel@vger.kernel.org>; Sat, 28 Oct 2023 00:38:33 +0000 (UTC)
 Received: from mail-yw1-x1149.google.com (mail-yw1-x1149.google.com [IPv6:2607:f8b0:4864:20::1149])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 220D41BC
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 17:38:30 -0700 (PDT)
-Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-5a7cc433782so23568187b3.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 17:38:30 -0700 (PDT)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BF79AB
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 17:38:32 -0700 (PDT)
+Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-5af16e00fadso23234657b3.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 17:38:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1698453509; x=1699058309; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1698453511; x=1699058311; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BD9lPzNt8hnQJcZ/hWgSWD/y67yszl3sQZlzVb4etk8=;
-        b=wRnrNLhowwwCtiquCs34cdBqrU1JXb5Ss+N2lIWxytefgi1RqBRzji+yXiCNmuI6a2
-         jC2tjMfyEAVDInZJ0z0offntxZQWshtRnBLUP0WEfWYzyU+Vyu3Qv+ti8qe7KJiHjq2k
-         xrWllxJVKdSZFtgbjOZVMnOzaUBGihOSiVSko2XHXipn1Fgqm/7MujSztMZvQW49CloW
-         nbWtbW+YF1p97INXPGE3MOTKqmpTUXePC+s1NqWDXwB6HU7DYrZ2n7/qAaLDAsm+FmSv
-         sTuKZq+cviYleiA5Gz9RQ7qdALxXER1w2BnldWayez+CiYdXc14Odd0dGwAYxekX4xv7
-         c2Tw==
+        bh=s1R+gkPO6QWaqP2nXLyUZQJ5I/za0dgAKVF5I8CkZ8w=;
+        b=MoGenRuyo4nfv3eG/+W2TGVWy3LqwicSEKy2wXR/9lXKmOqWVxFcjjzXvspsM1tASD
+         k6RBuyAZ9R99YE/B3j6vrNdwKX2g3WvJhCM/0rORbZt64i3CF+pjbrXNdqjsiKxGyhP4
+         4LGCzBrMpVyUAisxqFtwCm7gfWGLTdoMos3BwWnFNlqyC2lPzzz9Gv9HxGtVZh4pUAEg
+         z+gprFp78wOpuY9rwMBnhMOxfQSGGSwgr7kZRSh9jUV0BWVKQe8J9y0BElTwvTFOfhas
+         WoJbbYmBXt6HAzCEfs6A+jK1hGoOq3cRGUysCFHpwOSP1FxQkkVwcKn5bkHr4H4uXMS0
+         YRsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698453509; x=1699058309;
+        d=1e100.net; s=20230601; t=1698453511; x=1699058311;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BD9lPzNt8hnQJcZ/hWgSWD/y67yszl3sQZlzVb4etk8=;
-        b=cPF82sDPgj3otmzAOTb3fxDwJbjgI2Yi2rh7uqyPTTWKlYumFmu9Q6S214+bYnxuJv
-         pbnUVi/nsNMLzJ23DQNRbL6kdXDSBq/IZYw5hMWsqXa0e7hYIK8xJjxXrJlqiTxXZRKO
-         o7buC4BMLObhLYNJs3JOkHpE7ktVnPL5ReVQgwds2NvBUqG0asyDIuxj+h10PWh6j5ME
-         laAZIQ+VR4ZPsPx3i07cJihu2wc5h7Ysw3w1F6n8DHSno0Jsg7i7JBAJ5sLtLJuzV4MO
-         8oWuXS5u9VHVqzAa6mF4cUzQfO1OPk5e1Jzggj87a7vNeyvjIUPjj9QfdLU3HPdfMt6T
-         luqQ==
-X-Gm-Message-State: AOJu0Ywob2QS36nJrQfPKx/3NDTDrsh6vv/pSqDzIYV6UExeqspNNW3F
-	c7SnZkf+8PxQHIsAZjdLbFCHlk3/ZCk=
-X-Google-Smtp-Source: AGHT+IGmeKeXQi4pWbtj4gTgBBjJn+MEaX3ROLUS7uMooi9MoHIQXOo8pDwybtu05kFAWMGKkvzAZguj9E0=
+        bh=s1R+gkPO6QWaqP2nXLyUZQJ5I/za0dgAKVF5I8CkZ8w=;
+        b=kFX1OEs2TSlch6xTSz/9dlcEiVSjAr+VZ5go6be8shnIxLnG+7H9HdM8iTvWKiM8Dx
+         KEONqkmJIiqPjH7kVA/s91/j2lSioYpphbkpjbXwHcjxl4Znf5BuS3ss7IakAazNLWv3
+         fEW1AM1PLubKlAzqQdhE4Kq+BqWKJaZE9RRe9eUS/0BxXriln6kQJ55rIiY7td2fInOa
+         MAq8OCfew6RlO3wUKvAxSuUqoFO8nsnFsSxnt6XMnv1UDxSFMzbvnb9ZA0BX+2Pvy0fO
+         TqjeQ3xlBspedK80Fy8H9VuQId64J+6VkD7YiwFR4JG9Ua+xPg6NcS89G1sEnniGpnOS
+         5W+g==
+X-Gm-Message-State: AOJu0Ywe+u4vS2hSOdNaItv6A+0rHnlZTrktubz5ww5FPrwJRSW2FoBa
+	C5u2KKEUZ/XkCwjesAM0jngP5hG29KM=
+X-Google-Smtp-Source: AGHT+IH6BjNAe/I3oWPFyDFCzaaFiNnvB+GO/X2zJTyzdisgvbx30Yvihy8swuf1y6CJmKyolAmFsT8binI=
 X-Received: from surenb-desktop.mtv.corp.google.com ([2620:15c:211:201:cba3:7e7f:79e4:fa57])
- (user=surenb job=sendgmr) by 2002:a0d:db97:0:b0:5a7:b15a:1a7d with SMTP id
- d145-20020a0ddb97000000b005a7b15a1a7dmr86233ywe.2.1698453509335; Fri, 27 Oct
- 2023 17:38:29 -0700 (PDT)
-Date: Fri, 27 Oct 2023 17:38:13 -0700
+ (user=surenb job=sendgmr) by 2002:a81:4895:0:b0:5af:6717:1c52 with SMTP id
+ v143-20020a814895000000b005af67171c52mr94902ywa.0.1698453511616; Fri, 27 Oct
+ 2023 17:38:31 -0700 (PDT)
+Date: Fri, 27 Oct 2023 17:38:14 -0700
 In-Reply-To: <20231028003819.652322-1-surenb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -64,9 +64,9 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20231028003819.652322-1-surenb@google.com>
 X-Mailer: git-send-email 2.42.0.820.g83a721a137-goog
-Message-ID: <20231028003819.652322-4-surenb@google.com>
-Subject: [PATCH v4 3/5] selftests/mm: call uffd_test_ctx_clear at the end of
- the test
+Message-ID: <20231028003819.652322-5-surenb@google.com>
+Subject: [PATCH v4 4/5] selftests/mm: add uffd_test_case_ops to allow test
+ case-specific operations
 From: Suren Baghdasaryan <surenb@google.com>
 To: akpm@linux-foundation.org
 Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, shuah@kernel.org, 
@@ -80,90 +80,131 @@ Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, shuah@kernel.org,
 	kernel-team@android.com
 Content-Type: text/plain; charset="UTF-8"
 
-uffd_test_ctx_clear() is being called from uffd_test_ctx_init() to unmap
-areas used in the previous test run. This approach is problematic because
-while unmapping areas uffd_test_ctx_clear() uses page_size and nr_pages
-which might differ from one test run to another.
-Fix this by calling uffd_test_ctx_clear() after each test is done.
+Currently each test can specify unique operations using uffd_test_ops,
+however these operations are per-memory type and not per-test. Add
+uffd_test_case_ops which each test case can customize for its own needs
+regardless of the memory type being used. Post- and pre- allocation and
+release operations are added, some of which will be used in the next
+patch to implement test-specific customizations like area re-alignment,
+page size overrides and madvise after memory allocations but before
+memory is accessed.
 
 Signed-off-by: Suren Baghdasaryan <surenb@google.com>
 ---
- tools/testing/selftests/mm/uffd-common.c     | 4 +---
- tools/testing/selftests/mm/uffd-common.h     | 1 +
- tools/testing/selftests/mm/uffd-stress.c     | 5 ++++-
- tools/testing/selftests/mm/uffd-unit-tests.c | 1 +
- 4 files changed, 7 insertions(+), 4 deletions(-)
+ tools/testing/selftests/mm/uffd-common.c     | 25 ++++++++++++++++++++
+ tools/testing/selftests/mm/uffd-common.h     |  9 +++++++
+ tools/testing/selftests/mm/uffd-unit-tests.c |  2 ++
+ 3 files changed, 36 insertions(+)
 
 diff --git a/tools/testing/selftests/mm/uffd-common.c b/tools/testing/selftests/mm/uffd-common.c
-index 02b89860e193..583e5a4cc0fd 100644
+index 583e5a4cc0fd..69e6653ad255 100644
 --- a/tools/testing/selftests/mm/uffd-common.c
 +++ b/tools/testing/selftests/mm/uffd-common.c
-@@ -262,7 +262,7 @@ static inline void munmap_area(void **area)
- 	*area = NULL;
+@@ -17,6 +17,7 @@ bool map_shared;
+ bool test_uffdio_wp = true;
+ unsigned long long *count_verify;
+ uffd_test_ops_t *uffd_test_ops;
++uffd_test_case_ops_t *uffd_test_case_ops;
+ 
+ static int uffd_mem_fd_create(off_t mem_size, bool hugetlb)
+ {
+@@ -286,11 +287,17 @@ void uffd_test_ctx_clear(void)
+ 		uffd = -1;
+ 	}
+ 
++	if (uffd_test_case_ops && uffd_test_case_ops->pre_release)
++		uffd_test_case_ops->pre_release();
++
+ 	munmap_area((void **)&area_src);
+ 	munmap_area((void **)&area_src_alias);
+ 	munmap_area((void **)&area_dst);
+ 	munmap_area((void **)&area_dst_alias);
+ 	munmap_area((void **)&area_remap);
++
++	if (uffd_test_case_ops && uffd_test_case_ops->post_release)
++		uffd_test_case_ops->post_release();
  }
  
--static void uffd_test_ctx_clear(void)
-+void uffd_test_ctx_clear(void)
- {
- 	size_t i;
- 
-@@ -298,8 +298,6 @@ int uffd_test_ctx_init(uint64_t features, const char **errmsg)
+ int uffd_test_ctx_init(uint64_t features, const char **errmsg)
+@@ -298,6 +305,15 @@ int uffd_test_ctx_init(uint64_t features, const char **errmsg)
  	unsigned long nr, cpu;
  	int ret;
  
--	uffd_test_ctx_clear();
--
++	if (uffd_test_case_ops && uffd_test_case_ops->pre_alloc) {
++		ret = uffd_test_case_ops->pre_alloc();
++		if (ret) {
++			if (errmsg)
++				*errmsg = "pre-allocation operation failed";
++			return ret;
++		}
++	}
++
  	ret = uffd_test_ops->allocate_area((void **)&area_src, true);
  	ret |= uffd_test_ops->allocate_area((void **)&area_dst, false);
  	if (ret) {
+@@ -306,6 +322,15 @@ int uffd_test_ctx_init(uint64_t features, const char **errmsg)
+ 		return ret;
+ 	}
+ 
++	if (uffd_test_case_ops && uffd_test_case_ops->post_alloc) {
++		ret = uffd_test_case_ops->post_alloc();
++		if (ret) {
++			if (errmsg)
++				*errmsg = "post-allocation operation failed";
++			return ret;
++		}
++	}
++
+ 	ret = userfaultfd_open(&features);
+ 	if (ret) {
+ 		if (errmsg)
 diff --git a/tools/testing/selftests/mm/uffd-common.h b/tools/testing/selftests/mm/uffd-common.h
-index 7c4fa964c3b0..870776b5a323 100644
+index 870776b5a323..19930fd6682b 100644
 --- a/tools/testing/selftests/mm/uffd-common.h
 +++ b/tools/testing/selftests/mm/uffd-common.h
-@@ -105,6 +105,7 @@ extern uffd_test_ops_t *uffd_test_ops;
+@@ -90,6 +90,14 @@ struct uffd_test_ops {
+ };
+ typedef struct uffd_test_ops uffd_test_ops_t;
+ 
++struct uffd_test_case_ops {
++	int (*pre_alloc)(void);
++	int (*post_alloc)(void);
++	void (*pre_release)(void);
++	void (*post_release)(void);
++};
++typedef struct uffd_test_case_ops uffd_test_case_ops_t;
++
+ extern unsigned long nr_cpus, nr_pages, nr_pages_per_cpu, page_size;
+ extern char *area_src, *area_src_alias, *area_dst, *area_dst_alias, *area_remap;
+ extern int uffd, uffd_flags, finished, *pipefd, test_type;
+@@ -102,6 +110,7 @@ extern uffd_test_ops_t anon_uffd_test_ops;
+ extern uffd_test_ops_t shmem_uffd_test_ops;
+ extern uffd_test_ops_t hugetlb_uffd_test_ops;
+ extern uffd_test_ops_t *uffd_test_ops;
++extern uffd_test_case_ops_t *uffd_test_case_ops;
  
  void uffd_stats_report(struct uffd_args *args, int n_cpus);
  int uffd_test_ctx_init(uint64_t features, const char **errmsg);
-+void uffd_test_ctx_clear(void);
- int userfaultfd_open(uint64_t *features);
- int uffd_read_msg(int ufd, struct uffd_msg *msg);
- void wp_range(int ufd, __u64 start, __u64 len, bool wp);
-diff --git a/tools/testing/selftests/mm/uffd-stress.c b/tools/testing/selftests/mm/uffd-stress.c
-index 469e0476af26..7e83829bbb33 100644
---- a/tools/testing/selftests/mm/uffd-stress.c
-+++ b/tools/testing/selftests/mm/uffd-stress.c
-@@ -323,8 +323,10 @@ static int userfaultfd_stress(void)
- 		uffd_stats_reset(args, nr_cpus);
- 
- 		/* bounce pass */
--		if (stress(args))
-+		if (stress(args)) {
-+			uffd_test_ctx_clear();
- 			return 1;
-+		}
- 
- 		/* Clear all the write protections if there is any */
- 		if (test_uffdio_wp)
-@@ -354,6 +356,7 @@ static int userfaultfd_stress(void)
- 
- 		uffd_stats_report(args, nr_cpus);
- 	}
-+	uffd_test_ctx_clear();
- 
- 	return 0;
- }
 diff --git a/tools/testing/selftests/mm/uffd-unit-tests.c b/tools/testing/selftests/mm/uffd-unit-tests.c
-index 2709a34a39c5..e7d43c198041 100644
+index e7d43c198041..debc423bdbf4 100644
 --- a/tools/testing/selftests/mm/uffd-unit-tests.c
 +++ b/tools/testing/selftests/mm/uffd-unit-tests.c
-@@ -1319,6 +1319,7 @@ int main(int argc, char *argv[])
- 				continue;
- 			}
- 			test->uffd_fn(&args);
-+			uffd_test_ctx_clear();
- 		}
- 	}
+@@ -78,6 +78,7 @@ typedef struct {
+ 	uffd_test_fn uffd_fn;
+ 	unsigned int mem_targets;
+ 	uint64_t uffd_feature_required;
++	uffd_test_case_ops_t *test_case_ops;
+ } uffd_test_case_t;
  
+ static void uffd_test_report(void)
+@@ -185,6 +186,7 @@ uffd_setup_environment(uffd_test_args_t *args, uffd_test_case_t *test,
+ {
+ 	map_shared = mem_type->shared;
+ 	uffd_test_ops = mem_type->mem_ops;
++	uffd_test_case_ops = test->test_case_ops;
+ 
+ 	if (mem_type->mem_flag & (MEM_HUGETLB_PRIVATE | MEM_HUGETLB))
+ 		page_size = default_huge_page_size();
 -- 
 2.42.0.820.g83a721a137-goog
 
