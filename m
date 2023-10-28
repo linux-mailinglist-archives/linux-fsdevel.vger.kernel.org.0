@@ -1,68 +1,68 @@
-Return-Path: <linux-fsdevel+bounces-1494-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1496-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0B1B7DA97D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Oct 2023 23:16:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DC797DA980
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Oct 2023 23:16:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D61A1C20992
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Oct 2023 21:16:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FEBD28120E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Oct 2023 21:16:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85CA118AF4;
-	Sat, 28 Oct 2023 21:15:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B532B18C05;
+	Sat, 28 Oct 2023 21:15:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="VYigV6I+"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="d0BEWt0N"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22D9B17997
-	for <linux-fsdevel@vger.kernel.org>; Sat, 28 Oct 2023 21:15:46 +0000 (UTC)
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11F7EF3
-	for <linux-fsdevel@vger.kernel.org>; Sat, 28 Oct 2023 14:15:45 -0700 (PDT)
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20231028211543euoutp02fbe7cc60dc92446817cf957ddad059d2~SYfu8rZwA0878908789euoutp02M
-	for <linux-fsdevel@vger.kernel.org>; Sat, 28 Oct 2023 21:15:43 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20231028211543euoutp02fbe7cc60dc92446817cf957ddad059d2~SYfu8rZwA0878908789euoutp02M
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D2481863A
+	for <linux-fsdevel@vger.kernel.org>; Sat, 28 Oct 2023 21:15:48 +0000 (UTC)
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65ABFE1
+	for <linux-fsdevel@vger.kernel.org>; Sat, 28 Oct 2023 14:15:46 -0700 (PDT)
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20231028211545euoutp01503202edc99ab40a78560def43ba063a~SYfwxaJsR2292822928euoutp01X
+	for <linux-fsdevel@vger.kernel.org>; Sat, 28 Oct 2023 21:15:45 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20231028211545euoutp01503202edc99ab40a78560def43ba063a~SYfwxaJsR2292822928euoutp01X
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1698527743;
-	bh=8ofABjUQrTp1kzdTCcGf7BUaZhuxx/1pi/TdtpYF5D0=;
+	s=mail20170921; t=1698527745;
+	bh=/CvASZfCabc/Ew9WG/OE+/8Wt2GCjn+VDx2yMe2ZiFk=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References:From;
-	b=VYigV6I+Xlg2f6kz+xnces7qO2f0nE5tR01Ol4rTD112qHEJhBXjL2IHc3c+wZLc0
-	 4J5CPLxTCXq6Ef4vaHJ1aZ336J5ZiBJuzTVHj3DUHIMh8LafS+j7OlzIeMZQm0qVAT
-	 WE449o7Hrm2ASSKGptRHfU9DYe+D1wjPkqA1i5Rs=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+	b=d0BEWt0NRJ+q9fKwIT9WCJmLwnptxbJk8cHMt4E1+uBYIQAsZ8HmB0fV81C9HGMNh
+	 eplHCmHGAfK9UKuEM3ZkMU9SC9sskXWwIUvxl9OaeWtjnzZO7Uztce5QNGgW6Ll1S3
+	 V0XCcJJ7oPcp//iGDSuKTptzJTpA26oYwVacTJPc=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
 	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20231028211542eucas1p241e7ab5f2da4fdfc2cba9e250271dcbc~SYfuALImE1087910879eucas1p2E;
-	Sat, 28 Oct 2023 21:15:42 +0000 (GMT)
+	20231028211544eucas1p2dd80d12755f4916b3ddb921b0f269b68~SYfwUtLgi1224812248eucas1p27;
+	Sat, 28 Oct 2023 21:15:44 +0000 (GMT)
 Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges2new.samsung.com (EUCPMTA) with SMTP id A1.20.11320.EF97D356; Sat, 28
-	Oct 2023 22:15:42 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id FB.57.37758.00A7D356; Sat, 28
+	Oct 2023 22:15:44 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
 	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20231028211541eucas1p26663bd957cb449c7346b9dd00e33a20f~SYftgbGJH1224812248eucas1p26;
-	Sat, 28 Oct 2023 21:15:41 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20231028211541eusmtrp14898d07da8c7cf9ca684d016181d49c0~SYftf57WW0755507555eusmtrp1Z;
-	Sat, 28 Oct 2023 21:15:41 +0000 (GMT)
-X-AuditID: cbfec7f4-97dff70000022c38-85-653d79fec53a
+	20231028211543eucas1p2c980dda91fdccaa0b5af3734c357b2f7~SYfvYfPTw1090610906eucas1p2I;
+	Sat, 28 Oct 2023 21:15:43 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20231028211543eusmtrp23d56e547237e332334313cc821183188~SYfvX96w-1141411414eusmtrp2c;
+	Sat, 28 Oct 2023 21:15:43 +0000 (GMT)
+X-AuditID: cbfec7f5-7ffff7000002937e-ff-653d7a00f0a9
 Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id D1.52.10549.DF97D356; Sat, 28
-	Oct 2023 22:15:41 +0100 (BST)
-Received: from CAMSVWEXC01.scsc.local (unknown [106.1.227.71]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id DD.F0.25043.FF97D356; Sat, 28
+	Oct 2023 22:15:43 +0100 (BST)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
 	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20231028211541eusmtip17d9fe4ecde792d45fb6ab59803d2f652~SYftVSUg60467404674eusmtip1K;
-	Sat, 28 Oct 2023 21:15:41 +0000 (GMT)
+	20231028211543eusmtip1c2729878b21b7ae72b87f193ecb7dc7d~SYfvKXDWf0467404674eusmtip1M;
+	Sat, 28 Oct 2023 21:15:43 +0000 (GMT)
 Received: from CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) by
-	CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) with Microsoft SMTP
-	Server (TLS) id 15.0.1497.2; Sat, 28 Oct 2023 22:15:41 +0100
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) with Microsoft SMTP
+	Server (TLS) id 15.0.1497.2; Sat, 28 Oct 2023 22:15:42 +0100
 Received: from CAMSVWEXC02.scsc.local ([::1]) by CAMSVWEXC02.scsc.local
 	([fe80::3c08:6c51:fa0a:6384%13]) with mapi id 15.00.1497.012; Sat, 28 Oct
-	2023 22:15:40 +0100
+	2023 22:15:42 +0100
 From: Daniel Gomez <da.gomez@samsung.com>
 To: "minchan@kernel.org" <minchan@kernel.org>, "senozhatsky@chromium.org"
 	<senozhatsky@chromium.org>, "axboe@kernel.dk" <axboe@kernel.dk>,
@@ -76,13 +76,11 @@ To: "minchan@kernel.org" <minchan@kernel.org>, "senozhatsky@chromium.org"
 	<linux-fsdevel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>
 CC: "gost.dev@samsung.com" <gost.dev@samsung.com>, Pankaj Raghav
 	<p.raghav@samsung.com>, Daniel Gomez <da.gomez@samsung.com>
-Subject: [RFC PATCH 04/11] shmem: return number of pages beeing freed in
- shmem_free_swap
-Thread-Topic: [RFC PATCH 04/11] shmem: return number of pages beeing freed
-	in shmem_free_swap
-Thread-Index: AQHaCePnyXBbRf49wEefJYEMRSVIWA==
-Date: Sat, 28 Oct 2023 21:15:40 +0000
-Message-ID: <20231028211518.3424020-5-da.gomez@samsung.com>
+Subject: [RFC PATCH 05/11] shmem: account for large order folios
+Thread-Topic: [RFC PATCH 05/11] shmem: account for large order folios
+Thread-Index: AQHaCePog3tlS7SbBUi1hq/vgcoYwQ==
+Date: Sat, 28 Oct 2023 21:15:42 +0000
+Message-ID: <20231028211518.3424020-6-da.gomez@samsung.com>
 In-Reply-To: <20231028211518.3424020-1-da.gomez@samsung.com>
 Accept-Language: en-US, en-GB
 Content-Language: en-US
@@ -99,129 +97,147 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFKsWRmVeSWpSXmKPExsWy7djPc7r/Km1TDU6/4LCYs34Nm8Xqu/1s
-	Fpef8Fk8/dTHYrH3lrbFnr0nWSwu75rDZnFvzX9Wi11/drBb3JjwlNFi2df37Ba7Ny5is/j9
-	Yw6bA6/H7IaLLB4LNpV6bF6h5XH5bKnHplWdbB6bPk1i9zgx4zeLx+dNcgEcUVw2Kak5mWWp
-	Rfp2CVwZmze/Zir4K1xxbvFp1gbGh/xdjJwcEgImEjNnnmTtYuTiEBJYwShxbN8yJgjnC6PE
-	h1mfoTKfGSUmXdjKBNNyZvNrqMRyRoknKy4iVC39coAZpEpI4AyjxNmz6hCJlYwSDybfAWtn
-	E9CU2HdyEztIQkRgNqvE4cUdjCAJZoE6iTXPZrGA2MICURJLv58DmyQiEC8x48x+oGYOIFtP
-	4tRCHZAwi4CqxPdTm8BKeAWsJe5sW8AKYnMK2Ejc/7adDcRmFJCVeLTyFzvEeHGJW0/mQ70g
-	KLFo9h5mCFtM4t+uh2wQto7E2etPGCFsA4mtS/exQNhKEn86FkKdqSdxY+oUNghbW2LZwtdQ
-	NwhKnJz5hAXkLwmBJi6J/ml/WCGaXSRWXTrNDmELS7w6vgXKlpE4PbmHZQKj9iwk981CsmMW
-	kh2zkOxYwMiyilE8tbQ4Nz212CgvtVyvODG3uDQvXS85P3cTIzC5nf53/MsOxuWvPuodYmTi
-	YDzEKMHBrCTCy+xokyrEm5JYWZValB9fVJqTWnyIUZqDRUmcVzVFPlVIID2xJDU7NbUgtQgm
-	y8TBKdXA5LH5/BK/2XEvS0rDH+p7a7B1C6yv5pZ8Hrog9fpHIc7Xjh3THu8JEH6/46rF+0/P
-	5mefTb6oK9z4ecvG5UkRh+4rPDjgsbi8KLD//7rop+uf/D6qcVXAY33SL0aBpEXfze4yzMp6
-	wDntj7HrkZbeX9t2BXJs75mxSrZj26JTbnpNnfcuWpwOKZsifMdBc1Go2pKX9mwTW5cGRRTM
-	KPx6WXLJh58OjOyf9Fd3KqSVrairSrgVuXgH+7RwsVUfY3Q3hjyP/fDw5PNtdrHL0tY0rC5x
-	9F3XG/Lth9vc68G3E5wS5jVW/D8/V28Xa/vN7fl7BH4sX5fK6JGgKX94b9IG6bVvlnLo/qhM
-	kda/yPs5eaMSS3FGoqEWc1FxIgCyhiiy3QMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrMKsWRmVeSWpSXmKPExsVy+t/xu7p/K21TDV781bCYs34Nm8Xqu/1s
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrOKsWRmVeSWpSXmKPExsWy7djPc7oMVbapBvtfaVrMWb+GzWL13X42
+	i8tP+Cyefupjsdh7S9tiz96TLBaXd81hs7i35j+rxa4/O9gtbkx4ymix7Ot7dovdGxexWfz+
+	MYfNgddjdsNFFo8Fm0o9Nq/Q8rh8ttRj06pONo9Nnyaxe5yY8ZvF4/MmuQCOKC6blNSczLLU
+	In27BK6Mm39bmAveSFRMmHSIvYFxn0gXIyeHhICJRNfqZWxdjFwcQgIrGCUeXZjFCuF8YZT4
+	8uIPO0iVkMBnRom2zjCYjl/HJrJCxJczSpy9lQLRAFTz6P9BZgjnDKPEyS+7GSGclYwSl06+
+	BRvFJqApse/kJnaQhIjAbFaJw4s7GEESzAJ1EmuezWLpYuTgEBZwkHi7pAQkLCLgKnFtbQc7
+	SFhEQE9i6pdCkDCLgKrE72W7mUDCvALWEj+u1YGEOQVsJO5/284GYjMKyEo8WvmLHWK4uMSt
+	J/OZIB4QlFg0ew8zhC0m8W/XQzYIW0fi7PUnjBC2gcTWpftYIGwliT8dC6GO1JO4MXUKG4St
+	LbFs4WuwObxAM0/OfMIC8pWEQBeXxNeGLVDNLhI3fmxlh7CFJV4d3wJly0j83zmfaQKj9iwk
+	981CsmMWkh2zkOxYwMiyilE8tbQ4Nz212DgvtVyvODG3uDQvXS85P3cTIzCtnf53/OsOxhWv
+	PuodYmTiYDzEKMHBrCTCy+xokyrEm5JYWZValB9fVJqTWnyIUZqDRUmcVzVFPlVIID2xJDU7
+	NbUgtQgmy8TBKdXAtNDL3OBolMrUQi8T8Qdn9shfs7vHkFkwtcSANTi+wIvluOzn5//vHq26
+	d2PiTtEZnvwbxP4k3dJapy0YFeK0Z2+wuKXTqZoZYpzZOgwr7yxKcPHRu9afW7zANsUvIcxk
+	bc/+mM2XG6U23nXv+eL8keX04ln8ZYwlKy/Kq+28ynu3oNnpYZjtT+kZb3wfyc7Un6Bfs2BG
+	/e4LEiueCPd7ft21o+9ghuhf59pD85Ue925e6h/y8vr8vfz+gdaxXwplPgvL3X7+cZmuKgtf
+	WLtoY+uXz++Ct50r2KA7k7/4i5T4kj0lB/7vDDYWzCg1OuS7o+z4kn7mmcVWwaf258cZmLiU
+	cO+fs2zuv9g1qs21SizFGYmGWsxFxYkAMM+ictoDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrMKsWRmVeSWpSXmKPExsVy+t/xu7r/K21TDR58VLOYs34Nm8Xqu/1s
 	Fpef8Fk8/dTHYrH3lrbFnr0nWSwu75rDZnFvzX9Wi11/drBb3JjwlNFi2df37Ba7Ny5is/j9
 	Yw6bA6/H7IaLLB4LNpV6bF6h5XH5bKnHplWdbB6bPk1i9zgx4zeLx+dNcgEcUXo2RfmlJakK
-	GfnFJbZK0YYWRnqGlhZ6RiaWeobG5rFWRqZK+nY2Kak5mWWpRfp2CXoZmze/Zir4K1xxbvFp
-	1gbGh/xdjJwcEgImEmc2v2YFsYUEljJK7P4MFZeR2PjlKiuELSzx51oXWxcjF1DNR0aJrgP7
-	mSEazjBKTDhiC5FYySixc/EkdpAEm4CmxL6Tm9hBEiICs1klDi/uYARJMAvUSax5NosFxBYW
-	iJJY+v0c2CQRgXiJzn09QDUcQLaexKmFOiBhFgFVie+nNoGV8ApYS9zZtoAVpERIIFeivy0T
-	JMwpYCNx/9t2NhCbUUBW4tHKX+wQm8Qlbj2ZzwTxgIDEkj3nmSFsUYmXj/9BPaYjcfb6E0YI
-	20Bi69J9LBC2ksSfjoVQF+tJ3Jg6hQ3C1pZYtvA11DmCEidnPmGZwCg9C8m6WUhaZiFpmYWk
-	ZQEjyypGkdTS4tz03GJDveLE3OLSvHS95PzcTYzA1LTt2M/NOxjnvfqod4iRiYPxEKMEB7OS
-	CC+zo02qEG9KYmVValF+fFFpTmrxIUZTYBBNZJYSTc4HJse8knhDMwNTQxMzSwNTSzNjJXFe
-	z4KORCGB9MSS1OzU1ILUIpg+Jg5OqQYmmfIPt4terD4tu9SmM9LA3Cl3+rl9SbIbAh19csok
-	tTdrHQteNC8mwjyl+P6tJ4k7qlqZDJr1NVZr9BpOTLjBZH7d5fsBuftTpyqfOb2shdHht5SG
-	epxciZ3IgeYjy/arTw9P/KnP6X7P4siBiOmnTGbZJ+1Lf5qZsXyyQ0v7uf/rxW7yGvjcPJLJ
-	fKPhVLJB6AkOF4udC38f+i2vXs8R63PiQUOSqO/G5hNfeC55v05f5/yIxelO0gQ7ncoivYe2
-	QdOKOA6c5nj7m9FW57D0h8/XmfNub3GU5r+sVqZ49rt4lbXhhhMdbSvOqj3N330w1vbT/trU
-	/+EGZfWKps5m5+wP2Kdt0K769dNqyx8lluKMREMt5qLiRAAYunQX1gMAAA==
-X-CMS-MailID: 20231028211541eucas1p26663bd957cb449c7346b9dd00e33a20f
+	GfnFJbZK0YYWRnqGlhZ6RiaWeobG5rFWRqZK+nY2Kak5mWWpRfp2CXoZN/+2MBe8kaiYMOkQ
+	ewPjPpEuRk4OCQETiV/HJrJ2MXJxCAksZZQ4sO0AO0RCRmLjl6usELawxJ9rXWwQRR8ZJVq+
+	LITqOMMoceP4FnYIZyWjxKHGJ0wgLWwCmhL7Tm4CS4gIzGaVOLy4gxEkwSxQJ7Hm2SyWLkYO
+	DmEBB4m3S0pAwiICrhLX1nawg4RFBPQkpn4pBAmzCKhK/F62mwkkzCtgLfHjWh2IKSSQK9Hf
+	lglSwSlgI3H/23Y2EJtRQFbi0cpf7BB7xCVuPZnPBHG/gMSSPeeZIWxRiZeP/0H9pSNx9voT
+	RgjbQGLr0n0sELaSxJ+OhVD36kncmDqFDcLWlli28DXYHF4BQYmTM5+wTGCUnoVk3SwkLbOQ
+	tMxC0rKAkWUVo0hqaXFuem6xkV5xYm5xaV66XnJ+7iZGYGraduznlh2MK1991DvEyMTBeIhR
+	goNZSYSX2dEmVYg3JbGyKrUoP76oNCe1+BCjKTCEJjJLiSbnA5NjXkm8oZmBqaGJmaWBqaWZ
+	sZI4r2dBR6KQQHpiSWp2ampBahFMHxMHp1QDk/fytR9TvLfETli83Ur+17c7XmwevVNerzoz
+	Z1/Ty5XWT21PfvvuYcp9+YBq0ETujSeLm0Nj+X16t2jZG6VKuljv9GRZdeGRZdtL7rM7xNi3
+	ltXujS561NBpck7XdsuJ6es3aa+Z+e7m7rsRHCqxE5K18zqVLbdw6JvqFzHN491+aknSTaaI
+	VbL9v/1sdP+d5Fyx/27I3um6p1d8OMm7uM5QVbmrjm8Ly82mo8v+Ha0XdXDzNHHJ3SlnJWf0
+	4+OxtbGiwvlzZ7w5dtrzZ8sr973zpa8d+sIVfqbj6/QTS+Lzf2kG89xbIbi/VvGGbLfajIem
+	O2xv3Pd+fUjos8EHluizHJv9WW7Mkbp08RhbgLUSS3FGoqEWc1FxIgDmdKNI1gMAAA==
+X-CMS-MailID: 20231028211543eucas1p2c980dda91fdccaa0b5af3734c357b2f7
 X-Msg-Generator: CA
-X-RootMTR: 20231028211541eucas1p26663bd957cb449c7346b9dd00e33a20f
+X-RootMTR: 20231028211543eucas1p2c980dda91fdccaa0b5af3734c357b2f7
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20231028211541eucas1p26663bd957cb449c7346b9dd00e33a20f
+X-CMS-RootMailID: 20231028211543eucas1p2c980dda91fdccaa0b5af3734c357b2f7
 References: <20230919135536.2165715-1-da.gomez@samsung.com>
 	<20231028211518.3424020-1-da.gomez@samsung.com>
-	<CGME20231028211541eucas1p26663bd957cb449c7346b9dd00e33a20f@eucas1p2.samsung.com>
+	<CGME20231028211543eucas1p2c980dda91fdccaa0b5af3734c357b2f7@eucas1p2.samsung.com>
 
-Both shmem_free_swap callers expect the number of pages being freed. In
-the large folios context, this needs to support larger values other than
-0 (used as 1 page being freed) and -ENOENT (used as 0 pages being
-freed). In preparation for large folios adoption, make shmem_free_swap
-routine return the number of pages being freed. So, returning 0 in this
-context, means 0 pages being freed.
+From: Luis Chamberlain <mcgrof@kernel.org>
 
-Suggested-by: Matthew Wilcox <willy@infradead.org>
+shmem uses the shem_info_inode alloced, swapped to account
+for allocated pages and swapped pages. In preparation for large
+order folios adjust the accounting to use folio_nr_pages().
+
+This should produce no functional changes yet as larger order
+folios are not yet used or supported in shmem.
+
+Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
-Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
 ---
- mm/shmem.c | 21 ++++++++++++++-------
- 1 file changed, 14 insertions(+), 7 deletions(-)
+ mm/shmem.c | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
 diff --git a/mm/shmem.c b/mm/shmem.c
-index a2ac425b97ea..9f4c9b9286e5 100644
+index 9f4c9b9286e5..ab31d2880e5d 100644
 --- a/mm/shmem.c
 +++ b/mm/shmem.c
-@@ -827,18 +827,22 @@ static void shmem_delete_from_page_cache(struct folio=
- *folio, void *radswap)
- }
-=20
- /*
-- * Remove swap entry from page cache, free the swap and its page cache.
-+ * Remove swap entry from page cache, free the swap and its page cache. Re=
-turns
-+ * the number of pages being freed. 0 means entry not found in XArray (0 p=
-ages
-+ * being freed).
-  */
--static int shmem_free_swap(struct address_space *mapping,
-+static long shmem_free_swap(struct address_space *mapping,
- 			   pgoff_t index, void *radswap)
+@@ -856,16 +856,16 @@ unsigned long shmem_partial_swap_usage(struct address=
+_space *mapping,
+ 						pgoff_t start, pgoff_t end)
  {
- 	void *old;
-+	long swaps_freed =3D 1UL << xa_get_order(&mapping->i_pages, index);
+ 	XA_STATE(xas, &mapping->i_pages, start);
+-	struct page *page;
++	struct folio *folio;
+ 	unsigned long swapped =3D 0;
+ 	unsigned long max =3D end - 1;
 =20
- 	old =3D xa_cmpxchg_irq(&mapping->i_pages, index, radswap, NULL, 0);
- 	if (old !=3D radswap)
--		return -ENOENT;
-+		return 0;
- 	free_swap_and_cache(radix_to_swp_entry(radswap));
--	return 0;
-+
-+	return swaps_freed;
+ 	rcu_read_lock();
+-	xas_for_each(&xas, page, max) {
+-		if (xas_retry(&xas, page))
++	xas_for_each(&xas, folio, max) {
++		if (xas_retry(&xas, folio))
+ 			continue;
+-		if (xa_is_value(page))
+-			swapped++;
++		if (xa_is_value(folio))
++			swapped +=3D folio_nr_pages(folio);
+ 		if (xas.xa_index =3D=3D max)
+ 			break;
+ 		if (need_resched()) {
+@@ -1514,7 +1514,7 @@ static int shmem_writepage(struct page *page, struct =
+writeback_control *wbc)
+ 	if (add_to_swap_cache(folio, swap,
+ 			__GFP_HIGH | __GFP_NOMEMALLOC | __GFP_NOWARN,
+ 			NULL) =3D=3D 0) {
+-		shmem_recalc_inode(inode, 0, 1);
++		shmem_recalc_inode(inode, 0, folio_nr_pages(folio));
+ 		swap_shmem_alloc(swap);
+ 		shmem_delete_from_page_cache(folio, swp_to_radix_entry(swap));
+=20
+@@ -1828,6 +1828,7 @@ static void shmem_set_folio_swapin_error(struct inode=
+ *inode, pgoff_t index,
+ 	struct address_space *mapping =3D inode->i_mapping;
+ 	swp_entry_t swapin_error;
+ 	void *old;
++	long num_swap_pages;
+=20
+ 	swapin_error =3D make_poisoned_swp_entry();
+ 	old =3D xa_cmpxchg_irq(&mapping->i_pages, index,
+@@ -1837,13 +1838,14 @@ static void shmem_set_folio_swapin_error(struct ino=
+de *inode, pgoff_t index,
+ 		return;
+=20
+ 	folio_wait_writeback(folio);
++	num_swap_pages =3D folio_nr_pages(folio);
+ 	delete_from_swap_cache(folio);
+ 	/*
+ 	 * Don't treat swapin error folio as alloced. Otherwise inode->i_blocks
+ 	 * won't be 0 when inode is released and thus trigger WARN_ON(i_blocks)
+ 	 * in shmem_evict_inode().
+ 	 */
+-	shmem_recalc_inode(inode, -1, -1);
++	shmem_recalc_inode(inode, -num_swap_pages, -num_swap_pages);
+ 	swap_free(swap);
  }
 =20
- /*
-@@ -990,7 +994,7 @@ static void shmem_undo_range(struct inode *inode, loff_=
-t lstart, loff_t lend,
- 			if (xa_is_value(folio)) {
- 				if (unfalloc)
- 					continue;
--				nr_swaps_freed +=3D !shmem_free_swap(mapping,
-+				nr_swaps_freed +=3D shmem_free_swap(mapping,
- 							indices[i], folio);
- 				continue;
- 			}
-@@ -1057,14 +1061,17 @@ static void shmem_undo_range(struct inode *inode, l=
-off_t lstart, loff_t lend,
- 			folio =3D fbatch.folios[i];
+@@ -1928,7 +1930,7 @@ static int shmem_swapin_folio(struct inode *inode, pg=
+off_t index,
+ 	if (error)
+ 		goto failed;
 =20
- 			if (xa_is_value(folio)) {
-+				long swaps_freed;
-+
- 				if (unfalloc)
- 					continue;
--				if (shmem_free_swap(mapping, indices[i], folio)) {
-+				swaps_freed =3D shmem_free_swap(mapping, indices[i], folio);
-+				if (!swaps_freed) {
- 					/* Swap was replaced by page: retry */
- 					index =3D indices[i];
- 					break;
- 				}
--				nr_swaps_freed++;
-+				nr_swaps_freed +=3D swaps_freed;
- 				continue;
- 			}
+-	shmem_recalc_inode(inode, 0, -1);
++	shmem_recalc_inode(inode, 0, -folio_nr_pages(folio));
 =20
+ 	if (sgp =3D=3D SGP_WRITE)
+ 		folio_mark_accessed(folio);
+@@ -2684,7 +2686,7 @@ int shmem_mfill_atomic_pte(pmd_t *dst_pmd,
+ 	if (ret)
+ 		goto out_delete_from_cache;
+=20
+-	shmem_recalc_inode(inode, 1, 0);
++	shmem_recalc_inode(inode, folio_nr_pages(folio), 0);
+ 	folio_unlock(folio);
+ 	return 0;
+ out_delete_from_cache:
 --=20
 2.39.2
 
