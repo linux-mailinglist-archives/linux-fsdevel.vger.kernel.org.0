@@ -1,305 +1,162 @@
-Return-Path: <linux-fsdevel+bounces-1468-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1469-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49BC67DA472
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Oct 2023 02:38:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22F1E7DA4AC
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Oct 2023 03:36:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69E511C211C7
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Oct 2023 00:38:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 539211C211AF
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Oct 2023 01:36:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C1BAEB8;
-	Sat, 28 Oct 2023 00:38:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D32165C;
+	Sat, 28 Oct 2023 01:36:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BeSptafS"
+	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="fZYSL1Hh";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="F3HFKyzm"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA7838F63
-	for <linux-fsdevel@vger.kernel.org>; Sat, 28 Oct 2023 00:38:36 +0000 (UTC)
-Received: from mail-yw1-x1149.google.com (mail-yw1-x1149.google.com [IPv6:2607:f8b0:4864:20::1149])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AACD8D45
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 17:38:34 -0700 (PDT)
-Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-5a909b4e079so23417697b3.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Oct 2023 17:38:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1698453514; x=1699058314; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DPstGiI3zb7PZzW8m1s/TtyE02RR3fMaWMy1rl5jbQE=;
-        b=BeSptafSteAJ1GLueLN5Xs0S9464cQ+bGDix6+RjP+34ekltXa3wkWpIdTTHJr6Oxi
-         hQzW97G8IwhN0NY11Y7fCf3o9LT4dD7Iezc3c1emKdNj6lwrdY87tw/pS7mo8uxFimEp
-         TmWkXce2ZJWeP4ZCaeAm3jljkHHEiaAqRdwFQz52vos3qsswhARr34RI3opDXCU15+KL
-         q2PS8XEks8jIskgBxTYOxTKIF8+uZ6u4GkXUv6tMt24+/3mqL8wSzgyalnx8b4UIBPbO
-         hYFSq88kZ1QITcexW1GNbwenyIP6sdIlk4OhYOr2HD2zpx26YmvwCx85VVStEYvKDI/9
-         V+bQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698453514; x=1699058314;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DPstGiI3zb7PZzW8m1s/TtyE02RR3fMaWMy1rl5jbQE=;
-        b=d2PWc4M4GUQpVtVPtpRmdiQztO4bzgWqgHsbvJl7Kwv6FfVNarIj6R6wMra10ylVoE
-         v13WoJt7u/N048dARV0PayKmTTuYBgQjI8gl2/EOVX+h77CFFbdg0pV00WOVnUtQ3ebd
-         Er3ImyXCm7oHacxQ1cYHMWjcEcih4kBR2iuMvqwPfI018J1gWsK/oAj/KXyOPDdRvDvQ
-         siXzuKVQob4elV6JPSQolUPTyv7cnmoDtqsnYNafhBzpq3LGrQ23a50KjusSBmwtirMR
-         8NvgB847GNraq59k/NgoATyCejlMP6r9IPpHkGpqldVvsns+jtvX0yXBhqruxUii8c6O
-         GwAg==
-X-Gm-Message-State: AOJu0YxzUZJgkNwKhUaUxxsxM6sjK63WRnFm/LLL7xtzEp7Fius0J+kb
-	SWCHNndpBbGZvXj7QrS/Y0gDn3l1UZU=
-X-Google-Smtp-Source: AGHT+IHkyagOv7vQjaKfa8YJr6CBe53G6nlWj5O4BlA1iQSMbHSpme2yM6964WYBoEz45GQ9XcUSJSde3/4=
-X-Received: from surenb-desktop.mtv.corp.google.com ([2620:15c:211:201:cba3:7e7f:79e4:fa57])
- (user=surenb job=sendgmr) by 2002:a81:6d17:0:b0:59b:c6bb:babb with SMTP id
- i23-20020a816d17000000b0059bc6bbbabbmr87372ywc.6.1698453513868; Fri, 27 Oct
- 2023 17:38:33 -0700 (PDT)
-Date: Fri, 27 Oct 2023 17:38:15 -0700
-In-Reply-To: <20231028003819.652322-1-surenb@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FE3F635
+	for <linux-fsdevel@vger.kernel.org>; Sat, 28 Oct 2023 01:36:38 +0000 (UTC)
+Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69DD91A6;
+	Fri, 27 Oct 2023 18:36:36 -0700 (PDT)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+	by mailout.nyi.internal (Postfix) with ESMTP id 066505C0100;
+	Fri, 27 Oct 2023 21:36:34 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Fri, 27 Oct 2023 21:36:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:sender:subject:subject:to:to; s=fm2; t=
+	1698456994; x=1698543394; bh=KsUaa2dQRxZCNliH8E4IgB96uElIa6AZYOi
+	IzXKoc/g=; b=fZYSL1Hh4egXuicxkMFg+jLgSXE3ZgD8AFpH+th6BJTlZigkseO
+	mtkr17z5D5GSLqS3VGFVp3OeFx9U78fXmtLa9W0N/XHvBo5ajUNKShNtUDs7/sKd
+	ZV4tr0uGpIz8uPI45OdgM/w5KYporhOEOR24znvm/rirYuDF3x6YBc+zxbDplwcj
+	7eBteMNTZrNWsvL9HHyHvp/BuuTW1dNXe++6VfFOS27Qnk8Z+nS9kmlR+bgDjVzf
+	gzUPt1jW0vMwPsIsCCc5Gobwv8H4jeIM+R7sWGfp/qmKEDAGzJQ7Vn3acMbKXa6M
+	jPYyerd5HZZrgWis7rMj8zYIuHGTycY1cyQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:sender:subject:subject:to:to:x-me-proxy
+	:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1698456994; x=1698543394; bh=KsUaa2dQRxZCNliH8E4IgB96uElIa6AZYOi
+	IzXKoc/g=; b=F3HFKyzmmg9oxz/ntz+T5+XmYWDdcKhDALX/MCh6lte6GAO0rwY
+	RBcb9BjyHp8jfuTcYbT2DGUA7udnstUUZIewC+T0DtyeWdgMhJ1CexKem91iZYy6
+	UGw2pgxXP/vDrtoAus18DfE8shNHIcPiyWKBOSmk2oal3LptEcqVlRX5oMXDlu+F
+	AF3WjmY+PFO3tr/zpnWzGTezgZo9zPILxeYMg5+G5Z3PliD3q1tUvm7YPhNsNzVD
+	HoedNHyyAhNO8zmJjwOqJoRSuLUhPzLCExH6mpE/QFi0Bg+8usyrjuGQNliseQTW
+	6ABGQ2psafUCNfRw0eRgJHREBL0cIJ+Q2tA==
+X-ME-Sender: <xms:oWU8ZeXAoF6deDOgUPP8C37DgzNB5zqFhXIx_UUlwRxfnidgTS8Z2g>
+    <xme:oWU8Zan70Wjt7XusI4EdTk3INHaBCZEJTNlCgkgZlPjZw0Z6YaGz4P_VlXKBWXG_o
+    5b2IrLD46uq>
+X-ME-Received: <xmr:oWU8ZSZVrs7Ok5a2SVYQddVtyrDFBGeXIx6fztF1Qj5veEm0bWwUb_g9XUSv6pumVvon4v7pGkdUm-az3drwVgg2PHpCw3QRedu6TbUw3NTX1OazR_mEExRB>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrleehgdegjecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefkffggfgfuvfevfhfhjggtgfesthekredttdefjeenucfhrhhomhepkfgrnhcu
+    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpe
+    egvdetvedvfeeivdeuueejgeetvdehlefhheethfekgfejueffgeeugfekudfhjeenucev
+    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehrrghvvghnse
+    hthhgvmhgrfidrnhgvth
+X-ME-Proxy: <xmx:oWU8ZVXRpVhBFGvyoK3JORYTRAnTL3oJArZ07m9g1A_Y-w8QOstB-Q>
+    <xmx:oWU8ZYlDTKU5SN-q5rutlx_Ge-tniBq1-2UQr9mEKu7oWWOVtiafRQ>
+    <xmx:oWU8ZadzWHfaQcb9lqILEARfOFF8xBUCqVR_7FZPHZC2aNr_ddzUkA>
+    <xmx:omU8ZT-ELN39i8ylB1sZIrKCuC2WhY8InDf7as0RWilH3weOxiBTDQ>
+Feedback-ID: i31e841b0:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 27 Oct 2023 21:36:27 -0400 (EDT)
+Message-ID: <c938a7d9-aa9e-a3ad-a001-fb9022d21475@themaw.net>
+Date: Sat, 28 Oct 2023 09:36:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20231028003819.652322-1-surenb@google.com>
-X-Mailer: git-send-email 2.42.0.820.g83a721a137-goog
-Message-ID: <20231028003819.652322-6-surenb@google.com>
-Subject: [PATCH v4 5/5] selftests/mm: add UFFDIO_MOVE ioctl test
-From: Suren Baghdasaryan <surenb@google.com>
-To: akpm@linux-foundation.org
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, shuah@kernel.org, 
-	aarcange@redhat.com, lokeshgidra@google.com, peterx@redhat.com, 
-	david@redhat.com, hughd@google.com, mhocko@suse.com, axelrasmussen@google.com, 
-	rppt@kernel.org, willy@infradead.org, Liam.Howlett@oracle.com, 
-	jannh@google.com, zhangpeng362@huawei.com, bgeffon@google.com, 
-	kaleshsingh@google.com, ngeoffray@google.com, jdduke@google.com, 
-	surenb@google.com, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v4 2/6] mounts: keep list of mounts in an rbtree
+To: Miklos Szeredi <mszeredi@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-api@vger.kernel.org, linux-man@vger.kernel.org,
+ linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
+ David Howells <dhowells@redhat.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <christian@brauner.io>,
+ Amir Goldstein <amir73il@gmail.com>, Matthew House
+ <mattlloydhouse@gmail.com>, Florian Weimer <fweimer@redhat.com>,
+ Arnd Bergmann <arnd@arndb.de>
+References: <20231025140205.3586473-1-mszeredi@redhat.com>
+ <20231025140205.3586473-3-mszeredi@redhat.com>
+ <b69c1c17-35f9-351e-79a9-ef3ef5481974@themaw.net>
+ <CAOssrKe76uZ5t714=Ta7GMLnZdS4QGm-fOfT9q5hNFe1fsDMVg@mail.gmail.com>
+Content-Language: en-US
+From: Ian Kent <raven@themaw.net>
+In-Reply-To: <CAOssrKe76uZ5t714=Ta7GMLnZdS4QGm-fOfT9q5hNFe1fsDMVg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Add tests for new UFFDIO_MOVE ioctl which uses uffd to move source
-into destination buffer while checking the contents of both after
-the move. After the operation the content of the destination buffer
-should match the original source buffer's content while the source
-buffer should be zeroed. Separate tests are designed for PMD aligned and
-unaligned cases because they utilize different code paths in the kernel.
+On 27/10/23 16:17, Miklos Szeredi wrote:
+> On Fri, Oct 27, 2023 at 5:12 AM Ian Kent <raven@themaw.net> wrote:
+>> On 25/10/23 22:02, Miklos Szeredi wrote:
+>>> The mnt.mnt_list is still used to set up the mount tree and for
+>>> propagation, but not after the mount has been added to a namespace.  Hence
+>>> mnt_list can live in union with rb_node.  Use MNT_ONRB mount flag to
+>>> validate that the mount is on the correct list.
+>> Is that accurate, propagation occurs at mount and also at umount.
+> When propagating a mount, the new mount's mnt_list is used as a head
+> for the new propagated mounts.  These are then moved to the rb tree by
+> commit_tree().
+>
+> When umounting there's a "to umount" list called tmp_list in
+> umount_tree(), this list is used to collect direct umounts and then
+> propagated umounts.  The direct umounts are added in umount_tree(),
+> the propagated ones umount_one().
+>
+> Note: umount_tree() can be called on a not yet finished mount, in that
+> case the mounts are still on mnt_list, so umount_tree() needs to deal
+> with both.
+>
+>> IDG how the change to umount_one() works, it looks like umount_list()
+>>
+>> uses mnt_list. It looks like propagate_umount() is also using mnt_list.
+>>
+>>
+>> Am I missing something obvious?
+> So when a mount is part of a namespace (either anonymous or not) it is
+> on the rb tree, when not then it can temporarily be on mnt_list.
+> MNT_ONRB flag is used to validate that the mount is on the list that
+> we expect it to be on, but also to detect the case of the mount setup
+> being aborted.
+>
+> We could handle the second case differently, since we should be able
+> to tell when we are removing the mount from a namespace and when we
+> are aborting a mount, but this was the least invasive way to do this.
 
-Signed-off-by: Suren Baghdasaryan <surenb@google.com>
----
- tools/testing/selftests/mm/uffd-common.c     |  24 ++++
- tools/testing/selftests/mm/uffd-common.h     |   1 +
- tools/testing/selftests/mm/uffd-unit-tests.c | 141 +++++++++++++++++++
- 3 files changed, 166 insertions(+)
+Thanks for the explanation, what you've said is essentially what I
 
-diff --git a/tools/testing/selftests/mm/uffd-common.c b/tools/testing/selftests/mm/uffd-common.c
-index 69e6653ad255..98957fd788d8 100644
---- a/tools/testing/selftests/mm/uffd-common.c
-+++ b/tools/testing/selftests/mm/uffd-common.c
-@@ -643,6 +643,30 @@ int copy_page(int ufd, unsigned long offset, bool wp)
- 	return __copy_page(ufd, offset, false, wp);
- }
- 
-+int move_page(int ufd, unsigned long offset)
-+{
-+	struct uffdio_move uffdio_move;
-+
-+	if (offset >= nr_pages * page_size)
-+		err("unexpected offset %lu\n", offset);
-+	uffdio_move.dst = (unsigned long) area_dst + offset;
-+	uffdio_move.src = (unsigned long) area_src + offset;
-+	uffdio_move.len = page_size;
-+	uffdio_move.mode = UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES;
-+	uffdio_move.move = 0;
-+	if (ioctl(ufd, UFFDIO_MOVE, &uffdio_move)) {
-+		/* real retval in uffdio_move.move */
-+		if (uffdio_move.move != -EEXIST)
-+			err("UFFDIO_MOVE error: %"PRId64,
-+			    (int64_t)uffdio_move.move);
-+		wake_range(ufd, uffdio_move.dst, page_size);
-+	} else if (uffdio_move.move != page_size) {
-+		err("UFFDIO_MOVE error: %"PRId64, (int64_t)uffdio_move.move);
-+	} else
-+		return 1;
-+	return 0;
-+}
-+
- int uffd_open_dev(unsigned int flags)
- {
- 	int fd, uffd;
-diff --git a/tools/testing/selftests/mm/uffd-common.h b/tools/testing/selftests/mm/uffd-common.h
-index 19930fd6682b..c9526b2cb6b3 100644
---- a/tools/testing/selftests/mm/uffd-common.h
-+++ b/tools/testing/selftests/mm/uffd-common.h
-@@ -121,6 +121,7 @@ void wp_range(int ufd, __u64 start, __u64 len, bool wp);
- void uffd_handle_page_fault(struct uffd_msg *msg, struct uffd_args *args);
- int __copy_page(int ufd, unsigned long offset, bool retry, bool wp);
- int copy_page(int ufd, unsigned long offset, bool wp);
-+int move_page(int ufd, unsigned long offset);
- void *uffd_poll_thread(void *arg);
- 
- int uffd_open_dev(unsigned int flags);
-diff --git a/tools/testing/selftests/mm/uffd-unit-tests.c b/tools/testing/selftests/mm/uffd-unit-tests.c
-index debc423bdbf4..89e9529ce941 100644
---- a/tools/testing/selftests/mm/uffd-unit-tests.c
-+++ b/tools/testing/selftests/mm/uffd-unit-tests.c
-@@ -1064,6 +1064,133 @@ static void uffd_poison_test(uffd_test_args_t *targs)
- 	uffd_test_pass();
- }
- 
-+static void uffd_move_handle_fault(
-+	struct uffd_msg *msg, struct uffd_args *args)
-+{
-+	unsigned long offset;
-+
-+	if (msg->event != UFFD_EVENT_PAGEFAULT)
-+		err("unexpected msg event %u", msg->event);
-+
-+	if (msg->arg.pagefault.flags &
-+	    (UFFD_PAGEFAULT_FLAG_WP | UFFD_PAGEFAULT_FLAG_MINOR | UFFD_PAGEFAULT_FLAG_WRITE))
-+		err("unexpected fault type %llu", msg->arg.pagefault.flags);
-+
-+	offset = (char *)(unsigned long)msg->arg.pagefault.address - area_dst;
-+	offset &= ~(page_size-1);
-+
-+	if (move_page(uffd, offset))
-+		args->missing_faults++;
-+}
-+
-+static void uffd_move_test(uffd_test_args_t *targs)
-+{
-+	unsigned long nr;
-+	pthread_t uffd_mon;
-+	char c;
-+	unsigned long long count;
-+	struct uffd_args args = { 0 };
-+
-+	/* Prevent source pages from being mapped more than once */
-+	if (madvise(area_src, nr_pages * page_size, MADV_DONTFORK))
-+		err("madvise(MADV_DONTFORK) failure");
-+
-+	if (uffd_register(uffd, area_dst, nr_pages * page_size,
-+			  true, false, false))
-+		err("register failure");
-+
-+	args.handle_fault = uffd_move_handle_fault;
-+	if (pthread_create(&uffd_mon, NULL, uffd_poll_thread, &args))
-+		err("uffd_poll_thread create");
-+
-+	/*
-+	 * Read each of the pages back using the UFFD-registered mapping. We
-+	 * expect that the first time we touch a page, it will result in a missing
-+	 * fault. uffd_poll_thread will resolve the fault by moving source
-+	 * page to destination.
-+	 */
-+	for (nr = 0; nr < nr_pages; nr++) {
-+		/* Check area_src content */
-+		count = *area_count(area_src, nr);
-+		if (count != count_verify[nr])
-+			err("nr %lu source memory invalid %llu %llu\n",
-+			    nr, count, count_verify[nr]);
-+
-+		/* Faulting into area_dst should move the page */
-+		count = *area_count(area_dst, nr);
-+		if (count != count_verify[nr])
-+			err("nr %lu memory corruption %llu %llu\n",
-+			    nr, count, count_verify[nr]);
-+
-+		/* Re-check area_src content which should be empty */
-+		count = *area_count(area_src, nr);
-+		if (count != 0)
-+			err("nr %lu move failed %llu %llu\n",
-+			    nr, count, count_verify[nr]);
-+	}
-+
-+	if (write(pipefd[1], &c, sizeof(c)) != sizeof(c))
-+		err("pipe write");
-+	if (pthread_join(uffd_mon, NULL))
-+		err("join() failed");
-+
-+	if (args.missing_faults != nr_pages || args.minor_faults != 0)
-+		uffd_test_fail("stats check error");
-+	else
-+		uffd_test_pass();
-+}
-+
-+static int prevent_hugepages(void)
-+{
-+	/* This should be done before source area is populated */
-+	if (madvise(area_src, nr_pages * page_size, MADV_NOHUGEPAGE)) {
-+		/* Ignore if CONFIG_TRANSPARENT_HUGEPAGE=n */
-+		if (errno != EINVAL)
-+			return -errno;
-+	}
-+	return 0;
-+}
-+
-+struct uffd_test_case_ops uffd_move_test_case_ops = {
-+	.post_alloc = prevent_hugepages,
-+};
-+
-+#define ALIGN_UP(x, align_to) \
-+	(__typeof__(x))((((unsigned long)(x)) + ((align_to)-1)) & ~((align_to)-1))
-+
-+static char *orig_area_src, *orig_area_dst;
-+static int pmd_align_areas(void)
-+{
-+	orig_area_src = area_src;
-+	orig_area_dst = area_dst;
-+	area_src = ALIGN_UP(area_src, page_size);
-+	area_dst = ALIGN_UP(area_dst, page_size);
-+	nr_pages--;
-+
-+	return 0;
-+}
-+
-+static void pmd_restore_areas(void)
-+{
-+	area_src = orig_area_src;
-+	area_dst = orig_area_dst;
-+	nr_pages++;
-+}
-+
-+static int adjust_page_size(void)
-+{
-+	page_size = default_huge_page_size();
-+	nr_pages = UFFD_TEST_MEM_SIZE / page_size;
-+
-+	return 0;
-+}
-+
-+struct uffd_test_case_ops uffd_move_pmd_test_case_ops = {
-+	.pre_alloc = adjust_page_size,
-+	.post_alloc = pmd_align_areas,
-+	.pre_release = pmd_restore_areas,
-+};
-+
- /*
-  * Test the returned uffdio_register.ioctls with different register modes.
-  * Note that _UFFDIO_ZEROPAGE is tested separately in the zeropage test.
-@@ -1141,6 +1268,20 @@ uffd_test_case_t uffd_tests[] = {
- 		.mem_targets = MEM_ALL,
- 		.uffd_feature_required = 0,
- 	},
-+	{
-+		.name = "move",
-+		.uffd_fn = uffd_move_test,
-+		.mem_targets = MEM_ANON,
-+		.uffd_feature_required = UFFD_FEATURE_MOVE,
-+		.test_case_ops = &uffd_move_test_case_ops,
-+	},
-+	{
-+		.name = "move-pmd",
-+		.uffd_fn = uffd_move_test,
-+		.mem_targets = MEM_ANON,
-+		.uffd_feature_required = UFFD_FEATURE_MOVE,
-+		.test_case_ops = &uffd_move_pmd_test_case_ops,
-+	},
- 	{
- 		.name = "wp-fork",
- 		.uffd_fn = uffd_wp_fork_test,
--- 
-2.42.0.820.g83a721a137-goog
+understood reading the series.
 
+
+But I still haven't quite got this so I'll need to spend more time
+
+on this part of the patch series.
+
+
+That's not a problem, ;).
+
+
+Ian
+
+>
+> Thanks,
+> Miklos
+>
 
