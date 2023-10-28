@@ -1,138 +1,202 @@
-Return-Path: <linux-fsdevel+bounces-1483-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1484-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2329E7DA819
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Oct 2023 18:38:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15FEE7DA826
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Oct 2023 18:56:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A858C1F21ADF
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Oct 2023 16:38:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5EB6B20C39
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Oct 2023 16:56:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5130A15AD1;
-	Sat, 28 Oct 2023 16:37:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD701171BC;
+	Sat, 28 Oct 2023 16:56:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ryhl.io header.i=@ryhl.io header.b="MLN9dH3Y";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="a1lCYYoR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F4NDCBpd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B3D523A5;
-	Sat, 28 Oct 2023 16:37:55 +0000 (UTC)
-Received: from wout3-smtp.messagingengine.com (wout3-smtp.messagingengine.com [64.147.123.19])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14535ED;
-	Sat, 28 Oct 2023 09:37:54 -0700 (PDT)
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-	by mailout.west.internal (Postfix) with ESMTP id B70C73200312;
-	Sat, 28 Oct 2023 12:37:52 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Sat, 28 Oct 2023 12:37:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ryhl.io; h=cc:cc
-	:content-transfer-encoding:content-type:content-type:date:date
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:sender:subject:subject:to:to; s=fm3; t=
-	1698511072; x=1698597472; bh=dMa7bkda/jUzx0xX9fiF353eZ/NQo4woDy/
-	hHwVKMRo=; b=MLN9dH3YBA+tgJQfIbJgmZBbrKlBo6fTui7Fwsm/86yHJrW283q
-	844IWDT/W+PMPiGyQOFyst9/l3xxxqb1byVgAJe2SBzEXlUMQSjKAAf4ASE6o22W
-	7dASywHzD3GC04m/SCFWTqCFKRsfUQfAy8rcrGYgZZN3S11rkqH6mP7S4coPtBrf
-	knxiceI2/x4q+Vtur/E4aldZdViafpdABkuPoUjjkl7ZsdUlmNJomC58icxVr15I
-	bY62dwC5q2CyekqFqq0DUuO01f6Gqdatdm0O8FA796wd7mhaBHGKpIqkol6wowXc
-	n7sbOxAlsQgtajlxbr3m/Ho/p2Br64lt8FQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:sender:subject:subject:to:to:x-me-proxy
-	:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1698511072; x=1698597472; bh=dMa7bkda/jUzx0xX9fiF353eZ/NQo4woDy/
-	hHwVKMRo=; b=a1lCYYoRN3GQ5t/4tlbqR1Q5tD87I6Te/cBcAfy0I6C2dj5KoD4
-	rFdTVrSSAddteIXiUxbbU8rRpwI5imZ5kSJa8k61tapjao3ZgK5a1FVuyK/ufr4Z
-	YupMeRWVGyQiJyGt5iabCIi5FLCW9VEOnQsji+NdicRv2+o/SDztXbnJ5u2rJxYs
-	qGAWZBfGGWZA9eavIc/at3CAv+RXZil6mAnS8t2p9QYUHWlN93IbZBW7jX13gfnK
-	LcrUx0U/vbp/fg3IBVDgQxIcnQvdjWPrQDbfllXGVcqrJ3O8jsj8NNTIbTmjzQ1q
-	MeqOmxnTd8Ye9FGG8WX/lwS0Dh7kFaDyeXQ==
-X-ME-Sender: <xms:3zg9ZSP4Jf5Ja6tBeme7J6Vow__-AtFf4pvUlQvK2WiI_dFwIpEccg>
-    <xme:3zg9ZQ81VLWGJ0idsAD-WDUJ-qQ8zdNr9y9yfiSPbYhchCsNATRRttsXoqAvPtFIa
-    BP8E6XT94ckoKZlhg>
-X-ME-Received: <xmr:3zg9ZZRpur-O5M7hOmWg3jzjY3Nq12aRq57EJqUnpgfe2E2cb0kp-6q2HvVPWFRg5UeV75TRzq2VfnweVPc8890Y1Cvzn-hZXTb8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrleeigdejlecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomheptehlihgt
-    vgcutfihhhhluceorghlihgtvgesrhihhhhlrdhioheqnecuggftrfgrthhtvghrnhephf
-    eghfelgeffleegffffveegtdfhleetgeefveeihedufedtffffledufefhgeehnecuffho
-    mhgrihhnpehgihhthhhusgdrtghomhenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpegrlhhitggvsehrhihhlhdrihho
-X-ME-Proxy: <xmx:3zg9ZStYjQ6i05ZlXF2V0sizQlFuh0dA4Bv6OpKfv1Ceas8yOZ-dAA>
-    <xmx:3zg9ZafwTP3cpnxUAqtswRzvwx2-DJF9ltCjtWSd8kFysM1zlhKuVw>
-    <xmx:3zg9ZW0d0yb3NS5L9HJWqMMIPQ-S5qybUkQPvUU-iy99tyhx17UnPw>
-    <xmx:4Dg9ZRzf5rHXeBHlEjbIr_Rta3zupCLiNwQahtGKjGLIbcaPlgWj5w>
-Feedback-ID: i56684263:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 28 Oct 2023 12:37:49 -0400 (EDT)
-Message-ID: <4b19dd7d-b946-4a5c-8746-f7e9c2f55d25@ryhl.io>
-Date: Sat, 28 Oct 2023 18:39:04 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1083A390
+	for <linux-fsdevel@vger.kernel.org>; Sat, 28 Oct 2023 16:56:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4325EC433C7;
+	Sat, 28 Oct 2023 16:56:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1698512204;
+	bh=BDwsYISfrL7tcyHbaI4k0MK+bB0Ei/xK8mDp2+qxeVk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=F4NDCBpdnGLPECAQa3hBijmWMQAh0Denrs5mjee9OHnPw/ffp1pCJEYlEQpETsrp1
+	 kNuQl0Aske9dsIy336F6FhbAFvEazx4vzlXA352TZyV+d7yeBfbTyFYRoDAc+skyET
+	 zx9IUQdr1UbzZ4cUXxs3/OqRmxl2YJZieqjKUb0T8a5JimxTfYCatpW0M3KJjIe1oV
+	 w8Cz2KYaT+1/I/u/XOXEenTvuP7E1RXEfWaWqyfPUtzwWuvrF0Ze5BhMNzQVCeiUjV
+	 Cdxwi+ATTzFNVpPg1Ra9FGYp7yUJzrGB7uMldMilRh1vZD54dOHjtQkJJtzn3J/86U
+	 zwfAyre/JStag==
+Date: Sat, 28 Oct 2023 18:56:38 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "Darrick J. Wong" <djwong@kernel.org>,
+	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+	Shirley Ma <shirley.ma@oracle.com>, hch@lst.de, jstancek@redhat.com,
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [GIT PULL] iomap: bug fixes for 6.6-rc7
+Message-ID: <20231028-zollfrei-abbrechen-50065dfed265@brauner>
+References: <169786962623.1265253.5321166241579915281.stg-ugh@frogsfrogsfrogs>
+ <CAHk-=whNsCXwidLvx8u_JBH91=Z5EFw9FVj57HQ51P7uWs4yGQ@mail.gmail.com>
+ <20231023223810.GW3195650@frogsfrogsfrogs>
+ <20231024-flora-gerodet-8ec178f87fe9@brauner>
+ <20231026031325.GH3195650@frogsfrogsfrogs>
+ <CAHk-=whQHBdJTr9noNuRwMtFrWepMHhnq6EtcAypegi5aUkQnQ@mail.gmail.com>
+ <20231027-gestiegen-saftig-2e636d251efa@brauner>
+ <CAHk-=wivwYfw0DHn3HowHJPg0rkt2fVSdLwjbsX6dTPNoMWXNA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 04/19] rust: fs: introduce `FileSystem::super_params`
-Content-Language: en-US, da
-To: Benno Lossin <benno.lossin@proton.me>,
- Wedson Almeida Filho <wedsonaf@gmail.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Matthew Wilcox
- <willy@infradead.org>, Kent Overstreet <kent.overstreet@gmail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-fsdevel@vger.kernel.org, rust-for-linux@vger.kernel.org,
- Wedson Almeida Filho <walmeida@microsoft.com>
-References: <20231018122518.128049-1-wedsonaf@gmail.com>
- <20231018122518.128049-5-wedsonaf@gmail.com>
- <E5dn4WQzlLvA0snHR_r_i2h1IPRjiiTIwssBSR403Rda6JA2Fgd-7lOonQQ6Oz1DMqp45cvtDfyW0JwRFgSZurzvtXIk3KGNhtSBqvvBnF0=@proton.me>
-From: Alice Ryhl <alice@ryhl.io>
-In-Reply-To: <E5dn4WQzlLvA0snHR_r_i2h1IPRjiiTIwssBSR403Rda6JA2Fgd-7lOonQQ6Oz1DMqp45cvtDfyW0JwRFgSZurzvtXIk3KGNhtSBqvvBnF0=@proton.me>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wivwYfw0DHn3HowHJPg0rkt2fVSdLwjbsX6dTPNoMWXNA@mail.gmail.com>
 
-On 10/18/23 18:34, Benno Lossin wrote:>> +        from_result(|| {
->> +            // SAFETY: The C callback API guarantees that `fc_ptr` is valid.
->> +            let fc = unsafe { &mut *fc_ptr };
+On Fri, Oct 27, 2023 at 01:30:00PM -1000, Linus Torvalds wrote:
+> On Fri, 27 Oct 2023 at 08:46, Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > One of the critical parts is review. Good reviews are often insanely
+> > expensive and they are very much a factor in burning people out. If one
+> > only ever reviews and the load never ends that's going to fsck with you
+> > in the long run.
 > 
-> This safety comment is not enough, the pointer needs to be unique and
-> pointing to a valid value for this to be ok. I would recommend to do
-> this instead:
+> I absolutely despise the review requirement that several companies
+> have. I very much understand why it happens, but I think it's actively
+> detrimental to the workflow.
 > 
->      unsafe { addr_of_mut!((*fc_ptr).ops).write(&Tables::<T>::CONTEXT) };
-
-It doesn't really need to be unique. Or at least, that wording gives the 
-wrong intuition even if it's technically correct when you use the right 
-definition of "unique".
-
-To clarify what I mean: Using `ptr::write` on a raw pointer is valid if 
-and only if creating a mutable reference and using that to write is 
-valid. (Assuming the type has no destructor.)
-
-Of course, in this case you *also* have the difference of whether you 
-create a mutable to the entire struct or just the field.
->> +                // SAFETY: This is a newly-created inode. No other references to it exist, so it is
->> +                // safe to mutably dereference it.
->> +                let inode = unsafe { &mut *inode };
+> It's not just that reviewing is hard, the review requirement tends to
+> be a serialization point where now you as a developer are waiting for
+> others to review it, and those others are not nearly as motivated to
+> do so or are easily going to be nitpicking about the non-critical
+> things.
 > 
-> The inode also needs to be initialized and have valid values as its fields.
-> Not sure if this is kept and it would probably be better to keep using raw
-> pointers here.
+> So it's not just the reviewers that get burned out, I think the
+> process ends up being horrific for developers too, and easily leads to
+> the "let's send out version 17 of this patch based on previous
+> review". At which point everybody is completely fed up with the whole
+> process.
+> 
+> And if it doesn't get to version 17, it's because the reviewers too
+> have gotten so fed up that by version three they go "whatever, I've
+> seen this before, they fixed the obvious thing I noticed, I'll mark it
+> reviewed".
 
-My understanding is that this is just a safety invariant, and not a 
-validity invariant, so as long as the uninitialized memory is not read, 
-it's fine.
+You're talking about companies having review requirements for their
+internal project stuff, right? I haven't heard that there's any sort of
+review requirement with respect to the upstream kernel from companies.
 
-See e.g.:
-https://github.com/rust-lang/unsafe-code-guidelines/issues/346
+Sure, if you make it a requirement then it sucks because it's just
+another chore.
 
-Alice
+I think we lack more reviewers for a multitude of reasons but to me one
+of the biggest is that we don't encourage the people to do it and
+there's no inherent reward to it. Sure, you get that RVB or ACK in the
+changelog but whatever. That neither gets you a job nor does it get you
+on LWN. So why bother.
+
+So often our reviewers are the people who have some sort of sense of
+ownership with respect to the subsystem. That's mostly the maintainers.
+
+You occassionally get the author of a patch series that sticks around
+and reviews stuff that they wrote. But that's not enough and then we're
+back to the problem that you can't effectively be maintainer, reviewer,
+and main developer.
+
+And yes, nitpicky review isn't really helpful and the goal shouldn't be
+to push a series to pointless version numbers before it can be merged.
+
+> 
+> The other dynamic with reviews is that you end up getting
+> review-cliques, either due to company pressure or just a very natural
+> "you review mine, I review yours" back-scratching.
+> 
+> Don't get me wrong - it can work, and it can even work well, but I
+> think the times it works really well is when people have gotten so
+> used to each others, and know each other's quirks and workflows and
+> they just work well together. But that also means that some people are
+> having a much easier time getting reviews, because they are part of
+> that "this group works well together" crowd.
+
+Yes, we certainly see that happening. And I really think that's overall
+a good thing. It shouldn't become an in-group out-group thing obviously
+so that needs to be carefully handled. But long-term trust between core
+developers and maintainers is key to subsystem health imho. And such
+quick review bounces are a sign of that. I don't think we actively see
+useless reviews that are just "scratch my back". The people who review
+often do it with sufficient fervor (for better or worse sometimes).
+
+That said, yes, it needs to be fair. But it's just natural that you feel
+more likely to throw a ACK or RVB to something someone did you know
+usually does good work and you know will come back to help you put out
+the fire they started.
+
+> 
+> Maybe it's a necessary evil. I certainly do *not* think the "lone
+
+I think it's just a natural development and it's on use to make sure it
+doesn't become some sort of group thing where it's five people from the
+same company that push their stuff upstream.
+
+> developer goes his own way" model works all that well. But the reason
+
+Yeah, so I do think that this is actually the bigger problem long term.
+Lone-wolf models are terrible. But I didn't grow up with lone-wolf
+projects so I have no strong attachment to such models in the first
+place. Maybe I judge that more harshly simply because of that.
+
+> I said that I wish we had more maintainers, is that I think we would
+> often be better off with not a "review process" back-and-forth. but a
+> _pipeline_ through a few levels of maintainers.  Not the "hold things
+> up and send it back to the developer" kind of thing, but "Oh, this
+> looks fine, I'll just send it on - possibly with the fixes I think are
+> needed".
+> 
+> So I think a pipeline of "Signed-off-by" (or just merges) might be
+> something to strive for as at least a partial replacement for reviews.
+> 
+> Sure, you might get Acked-by's or Reviewed-by's or Tested-by's along
+> the way *too*, or - when people are just merging directly through git
+> - you'd just get a merge commit with commentary and perhaps extra
+> stuff on top.
+
+And we kinda do that in some subsystems rather consequently. Networking
+does it at least and BPF does it with their subtrees and then BPF and
+its subtrees bubble up into networking and then into mainline.
+
+And that model seems to work well, yes. And it takes pressure of because
+it formalizes the whole maintenance thing a lot more.
+
+Idk if you've seen that but what we do for new stuff that gets added to
+vfs is that we have maintainership entries ala BPF so e.g.,
+FILESYSTEMS [EXPORTFS] - that patch is still in -next and the PR for
+that won't get sent before next week and then it lists the maintainers.
+But it's all part of vfs.git and they just bubble up the patches. We
+could just do that via sub merges even.
+
+> 
+> Back when we started doing the whole "Signed-off-by" - for legal
+> reasons, not development reasons - the big requirement for me was that
+> "it needs to work as a pipeline, not as some kind of back-and-forth
+> that holds up development". And I think the whole sign-off chain has
+> worked really well, and we've never needed to use it for the original
+> legal purposes (and hopefully just by virtue of it existing, we never
+> will), but it has been a huge success from a development standpoint.
+> When something goes wrong, I think it's been great to have that whole
+> chain of how it got merged, and in fact one of my least favorite parts
+> of git ended up being how we never made it easy to see the merge chain
+> after it's been committed (you can technically get it with "git
+> name-rev", but it sure is not obvious).
+> 
+> I dunno. Maybe I'm just dreaming. But the complaints about reviews -
+> or lack of them - do tend to come up a lot, and I feel like the whole
+> review process is a very big part of the problem.
+
+Yeah, certainly.
 
