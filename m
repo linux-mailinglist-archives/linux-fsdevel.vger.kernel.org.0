@@ -1,136 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-1510-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1511-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 798AF7DAE45
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Oct 2023 21:46:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8A827DAEC8
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Oct 2023 23:20:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 304BB28151C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Oct 2023 20:46:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8A521C208A7
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Oct 2023 22:20:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1381C10953;
-	Sun, 29 Oct 2023 20:46:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D17D12E5D;
+	Sun, 29 Oct 2023 22:20:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="J+J7vOzD"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="EsX/3KWw"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84905D299;
-	Sun, 29 Oct 2023 20:46:39 +0000 (UTC)
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA101B6;
-	Sun, 29 Oct 2023 13:46:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
-	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=WDmAzo9+QKCs6bidBCjOfAWnOzKWHN56xcaNm45aYsg=; b=J+J7vOzDaNH/DoU/C03vQi1p6U
-	k15CryG4AE2paUu8p5lZjUWbOlxcz5JQe8Cc/D2zv03lFYH/WlYoEVsyfvwI6lzXEu/IxWMxxEkKw
-	FtIXITdU3kqDpZemQ6CByzQ/e0yukkuhhFqHJCNMHEB/EJQsRKYoloizfs1pApYDOutO17togsEkm
-	Y4UMaUulaI+wnfM8vi8SxoAE70jOCPuV73XJfVdOg6DNBLb0E1FbX+h47AhA8LSLrke85XHIAPQlD
-	Nk4vuZ2hIrzgqtXKiFdhYN8S7czN0hrAXLeUsUwzalofIBZW6QX/TJu/fBF0CA633FjycmAL/EEqF
-	V//5jVRQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1qxCg7-007ePd-0s;
-	Sun, 29 Oct 2023 20:46:35 +0000
-Date: Sun, 29 Oct 2023 20:46:35 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: ceph-devel@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org
-Subject: [RFC][PATCH] get rid of passing callbacks to ceph
- __dentry_leases_walk()
-Message-ID: <20231029204635.GV800259@ZenIV>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EE57107AE
+	for <linux-fsdevel@vger.kernel.org>; Sun, 29 Oct 2023 22:20:13 +0000 (UTC)
+Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E6C2B6;
+	Sun, 29 Oct 2023 15:20:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1698618010;
+	bh=BlLtvAP+MVVwR8wWxsfss4snd8c4GzSkTp0hPRbTWUY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=EsX/3KWwrncA6Nw6IaOA0C7YrDpDF3kM9bYomzwkv/w01dQlRYXOfj4pDnlSM//Xm
+	 yS2RIqpYoChK6/RtdwZ1il+poahh3+fOFG2IE8mjfh6Ebvm+VonlMFz4gTyOWCzmVU
+	 XpE/t2f7D6UNVtghNY7eFBUqt5yxmV8HCdcLEYM4BtUoxvJn+jcV8w34JuC84HLeK4
+	 ElAv1CgZnPrn7SOXrcqPbS1RussQOmKJLBsflyit9T602w1Xs8JlPNuO91eVVYDEsV
+	 mZgWTo81pHuwKVeo4tL9atTx/prZrbhAeMqxWRMOGotNCAyFQ/XHR8Z8opePboxBox
+	 P3fSjxbukjv6A==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4SJW6y4Yxrz4wnt;
+	Mon, 30 Oct 2023 09:20:10 +1100 (AEDT)
+Date: Mon, 30 Oct 2023 09:20:09 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL for v6.7] vfs super updates
+Message-ID: <20231030092009.0880e5f3@canb.auug.org.au>
+In-Reply-To: <20231027-vfs-super-aa4b9ecfd803@brauner>
+References: <20231027-vfs-super-aa4b9ecfd803@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: multipart/signed; boundary="Sig_/3YX7TPhXJEhErcOOAR0.W+M";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-__dentry_leases_walk() is gets a callback and calls it for
-a bunch of denties; there are exactly two callers and
-we already have a flag telling them apart - lwc->dir_lease.
+--Sig_/3YX7TPhXJEhErcOOAR0.W+M
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Seeing that indirect calls are costly these days, let's
-get rid of the callback and just call the right function
-directly.  Has a side benefit of saner signatures...
+Hi Christian,
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
-diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-index 854cbdd66661..30b06d171a40 100644
---- a/fs/ceph/dir.c
-+++ b/fs/ceph/dir.c
-@@ -1550,10 +1550,12 @@ struct ceph_lease_walk_control {
- 	unsigned long dir_lease_ttl;
- };
- 
-+static int __dir_lease_check(const struct dentry *, struct ceph_lease_walk_control *);
-+static int __dentry_lease_check(const struct dentry *);
-+
- static unsigned long
- __dentry_leases_walk(struct ceph_mds_client *mdsc,
--		     struct ceph_lease_walk_control *lwc,
--		     int (*check)(struct dentry*, void*))
-+		     struct ceph_lease_walk_control *lwc)
- {
- 	struct ceph_dentry_info *di, *tmp;
- 	struct dentry *dentry, *last = NULL;
-@@ -1581,7 +1583,10 @@ __dentry_leases_walk(struct ceph_mds_client *mdsc,
- 			goto next;
- 		}
- 
--		ret = check(dentry, lwc);
-+		if (lwc->dir_lease)
-+			ret = __dir_lease_check(dentry, lwc);
-+		else
-+			ret = __dentry_lease_check(dentry);
- 		if (ret & TOUCH) {
- 			/* move it into tail of dir lease list */
- 			__dentry_dir_lease_touch(mdsc, di);
-@@ -1638,7 +1643,7 @@ __dentry_leases_walk(struct ceph_mds_client *mdsc,
- 	return freed;
- }
- 
--static int __dentry_lease_check(struct dentry *dentry, void *arg)
-+static int __dentry_lease_check(const struct dentry *dentry)
- {
- 	struct ceph_dentry_info *di = ceph_dentry(dentry);
- 	int ret;
-@@ -1653,9 +1658,9 @@ static int __dentry_lease_check(struct dentry *dentry, void *arg)
- 	return DELETE;
- }
- 
--static int __dir_lease_check(struct dentry *dentry, void *arg)
-+static int __dir_lease_check(const struct dentry *dentry,
-+			     struct ceph_lease_walk_control *lwc)
- {
--	struct ceph_lease_walk_control *lwc = arg;
- 	struct ceph_dentry_info *di = ceph_dentry(dentry);
- 
- 	int ret = __dir_lease_try_check(dentry);
-@@ -1694,7 +1699,7 @@ int ceph_trim_dentries(struct ceph_mds_client *mdsc)
- 
- 	lwc.dir_lease = false;
- 	lwc.nr_to_scan  = CEPH_CAPS_PER_RELEASE * 2;
--	freed = __dentry_leases_walk(mdsc, &lwc, __dentry_lease_check);
-+	freed = __dentry_leases_walk(mdsc, &lwc);
- 	if (!lwc.nr_to_scan) /* more invalid leases */
- 		return -EAGAIN;
- 
-@@ -1704,7 +1709,7 @@ int ceph_trim_dentries(struct ceph_mds_client *mdsc)
- 	lwc.dir_lease = true;
- 	lwc.expire_dir_lease = freed < count;
- 	lwc.dir_lease_ttl = mdsc->fsc->mount_options->caps_wanted_delay_max * HZ;
--	freed +=__dentry_leases_walk(mdsc, &lwc, __dir_lease_check);
-+	freed +=__dentry_leases_walk(mdsc, &lwc);
- 	if (!lwc.nr_to_scan) /* more to check */
- 		return -EAGAIN;
- 
+On Sat, 28 Oct 2023 16:02:33 +0200 Christian Brauner <brauner@kernel.org> w=
+rote:
+>
+> The vfs.super tree originally contained a good chunk of the btrfs tree
+> as a merge - as mentioned elsewhere - since we had intended to depend on
+> work that Christoph did a few months ago. We had allowed btrfs to carry
+> the patches themselves.
+>=20
+> But it since became clear that btrfs/for-next likely does not contain
+> any of the patches there's zero reason for the original merge. So the
+> merge is dropped. It's not great because it's a late change but it's
+> better than bringing in a completely pointless merge.
+
+Can you please update what you are including in linux-next to match
+what you are asking Linus to merge.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/3YX7TPhXJEhErcOOAR0.W+M
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmU+2pkACgkQAVBC80lX
+0Gw9gwf8CC7/E0jJvFFSboQindi0UnvULAUNq7DtKhDRuDjTziENYj7yXweP4mRh
+DTNQG/gThoiu6mVD7ZU6ysSG+fKyxF7gAECFD2brddtD2RIAc1SmRxmKOaDVHNeG
+I/y1BE0IP0uRLHYM4XcWVnlwr9gBUGH/SJys/0TXA9ZcCkhvEa20gUcUUUVCch4g
+qNPz8CjMrbIyFMoc6ntoivizpAzOGHqShXUGRnrntHZOQf8wiveF+/lLbPyI9ORS
+vd3FI4DG3B7k+nZC3zd0JfC5pryNgVgMqz4cXAmlm8n+2I1m0vS9XGXHXdXiOvb1
+oVeNVn1HDfBxUqkl8izBa6QtpXCD5Q==
+=9U36
+-----END PGP SIGNATURE-----
+
+--Sig_/3YX7TPhXJEhErcOOAR0.W+M--
 
