@@ -1,126 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-1504-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1505-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7F987DABA6
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Oct 2023 08:55:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D05D7DABED
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Oct 2023 10:50:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9D371C209E9
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Oct 2023 07:55:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5675281699
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Oct 2023 09:50:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0F198C1F;
-	Sun, 29 Oct 2023 07:55:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E538F7E;
+	Sun, 29 Oct 2023 09:50:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="EkqDhVDJ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="sizkkXF5"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZNa/8tK5"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DAAB6AA0
-	for <linux-fsdevel@vger.kernel.org>; Sun, 29 Oct 2023 07:55:03 +0000 (UTC)
-Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEDA0C6;
-	Sun, 29 Oct 2023 00:55:01 -0700 (PDT)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailout.nyi.internal (Postfix) with ESMTP id B41935C00A0;
-	Sun, 29 Oct 2023 03:54:58 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Sun, 29 Oct 2023 03:54:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:sender:subject:subject:to:to; s=fm2; t=
-	1698566098; x=1698652498; bh=/m50Y+rbYOe+/u+NuOlj6FwAWgg2Uvh6yTt
-	Rk1Qprf8=; b=EkqDhVDJACNoU6wRzn66rAYv9DyqsUYEhPTmL/uTwO0gIhkg7Es
-	VeNWJFRvbWHXo7KcMh0pbKzXrfPCl5XBhYTEtxeh+iY5VvYoJdadY16dJjl4pirl
-	IiPP6o/hf4rZYavLMvBsiNcjX3ktJf442RyndcJANTxkH7e79FdHla4gzktrkC4i
-	AMkms1rbmiqIDggDDEoDWImdzrF+W9xMjzXXKtwwQgA/zVd5dcAx2WIrgWl+IlMX
-	GPCmLLi29uc85N4NxqsLvp5vOMVVIOa/Boap/geI9ufVKKjY+kCCVOdxztdGnjBm
-	gIxXsJerURGMi/gZf0ipzg6OpwCK+lqV1HA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:sender:subject:subject:to:to:x-me-proxy
-	:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1698566098; x=1698652498; bh=/m50Y+rbYOe+/u+NuOlj6FwAWgg2Uvh6yTt
-	Rk1Qprf8=; b=sizkkXF5DAuqb1Ca8YPHfuL4KHPCud1Q+ztptWBTUIXjBcywI4s
-	biuKzELoLUxaIqF3PuLVklvlz20mgsK1LU0N9UI6+QXo2376zCIUR9EptHjDNLsx
-	4eZCMzA+dGb1MBDM11SckZ4ysGDRyQ0m9DbGWn7tODf9uZEbJZ3GEY29Gf9Ezusd
-	akiKWRFRqSUZ28m5DEuNjueeFHq6dKG/9AFussgbil41ISBUeYhSYmHMG0LDU1yF
-	tAvuoOd2TMoDiyJREqgdvjuC4Z893R6DVmzk3dNs9CPy0HgbEUvSUj5FeefVHdgg
-	NBJhpqJ3Scj+hgqL3Pa9Jgb4sO++EX8Lw6A==
-X-ME-Sender: <xms:0g8-Zd4yL4AyyjAGdFTKoWmhzGW76z9N3m3QAMIAULyJsIeV33e-Kw>
-    <xme:0g8-Za44aqwDsAP9_GmBpEVrBTmt5_0zGQFSriP_TKb7rEIkMG8mR2jhhlyX7HX6U
-    CwSkmeGmxK8>
-X-ME-Received: <xmr:0g8-ZUfO7vNnZEoiMRjASwBdvmAi3IdUFJQNzLnULA6VpVg1HHpz5BCYAngIuLIS3QJE9qlCbxtBBmjT4G-vy4bmwMN02AAntI3bZQiFSL_VA9vwqRwyzApa>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrleejgdduvdekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkfffgggfvfevfhfhufgjtgfgsehtjeertddtfeejnecuhfhrohhmpefkrghn
-    ucfmvghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnh
-    epjeegkedvhfekueejgeefieejtdevledvtdelieevveekffejfedtvdehkeefjeeknecu
-    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprhgrvhgvnh
-    esthhhvghmrgifrdhnvght
-X-ME-Proxy: <xmx:0g8-ZWIKWWogw_SlOaeWI-djtMLIfBNtxO3hx0M3ifVdOZsiIvLn5g>
-    <xmx:0g8-ZRI82RECc4j7oEy2vxtZhyMWpv7kyzHPprq_QPz4-QFrQIMGdA>
-    <xmx:0g8-Zfxb9UKxB0op8Zb7n4sjszIkETWPgJSzqwDZXUB8_0iiI4lq5Q>
-    <xmx:0g8-ZYX5tNKDA9QkgJvGKtGSZzyC2JgdXRnY52cVOf31Hi2UmRa0bw>
-Feedback-ID: i31e841b0:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 29 Oct 2023 03:54:56 -0400 (EDT)
-Message-ID: <43ea4439-8cb9-8b0d-5e04-3bd5e85530f4@themaw.net>
-Date: Sun, 29 Oct 2023 15:54:52 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07EA720F5
+	for <linux-fsdevel@vger.kernel.org>; Sun, 29 Oct 2023 09:50:16 +0000 (UTC)
+Received: from mail-qt1-x82f.google.com (mail-qt1-x82f.google.com [IPv6:2607:f8b0:4864:20::82f])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EEBABD;
+	Sun, 29 Oct 2023 02:50:15 -0700 (PDT)
+Received: by mail-qt1-x82f.google.com with SMTP id d75a77b69052e-41b406523fcso27207371cf.2;
+        Sun, 29 Oct 2023 02:50:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1698573015; x=1699177815; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=P28X6pfw1YMZ50dMj1Z2ceMTILza4KIjApTCmG3AzCw=;
+        b=ZNa/8tK5loXuQdzdFRMKwZx6OxvXWVypBdiwDguYYvj1M1/ikN/NoqjtlSyagY00QW
+         MXIMDWjKHFnU9dS8aBts4MIgzfL99HpphDU3Kkx6MNGbslz5gvq1fy8P6DVh/h1vH5nM
+         zrZGTEkV67SiFoKoBwwNYCIZZDRsccksqGWfJfCoY6LsyiyP1RuXzbqqN8rBpNRg4JSt
+         daYRuyDZIdYeYd6dRYWy7d1Nm6SFeWYsFhPfdo1GMzFB0zMe8sTIMgrjtqNWZoi7Ms9w
+         JXfyPc7ud4sxDKb2tFPXS7x2gQ3XjTvf3jt9Qx6CjyZ4Ott4IS1wreouKZteAEBSCUom
+         suxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698573015; x=1699177815;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=P28X6pfw1YMZ50dMj1Z2ceMTILza4KIjApTCmG3AzCw=;
+        b=XXog1V/z0LEKaWywjEPtEm/P+5xlfwulywfygRayTAjM6qjcBeNBsTsK/LnkApk9oU
+         HrOFdmhrL8n+nhWtGXMomnWyTYFj6D2vra21u2jBaSMEMVvI+CLNXeTIi3G1TNvI7oo5
+         W+FoOENsIEJKFZrEOaZg3CVWXrOk4vElwOy0QhiqQ49jV++VttWxJ6cuEAhcQpAr4ivM
+         L3zzVxDXNryDucv/S5ovlirwa+BvJDE5nXifFdARb8Mah6TajTK/0ldbQvqidG8xkHYz
+         7kO2BdarFTBD2oLTl3ZkRAbUUStqTnSRVjGgoT6H9SZQsu8bxXD35FP5AiUYKWjW6gha
+         tJ/A==
+X-Gm-Message-State: AOJu0YwhTFJRtDTCwQGj+Ul9bXPKV1XJwsEKahpqVbqs8oK3BuAn2FF9
+	N1GBInOQekeoE9+7nQ8dwEB+vtsYZ/p4L0SsEs0=
+X-Google-Smtp-Source: AGHT+IEhLT56WPc+S0TNKePzSMVDfhsAdj3oeTPdHRnCAiMo6VgkOFkDEQZ9MGCGaGgSplkOdtT4/IKvtd8c03fauz0=
+X-Received: by 2002:ad4:5aea:0:b0:672:24bd:3e3f with SMTP id
+ c10-20020ad45aea000000b0067224bd3e3fmr969544qvh.31.1698573014724; Sun, 29 Oct
+ 2023 02:50:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-To: Christian Brauner <brauner@kernel.org>,
- Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- Bill O'Donnell <bodonnel@redhat.com>
-References: <20231027-vfs-autofs-018bbf11ed67@brauner>
-Content-Language: en-US
-From: Ian Kent <raven@themaw.net>
-Subject: Re: [GIT PULL for v6.7] autofs updates
-In-Reply-To: <20231027-vfs-autofs-018bbf11ed67@brauner>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20231023180801.2953446-1-amir73il@gmail.com> <20231023180801.2953446-3-amir73il@gmail.com>
+ <ZTtSrfBgioyrbWDH@infradead.org> <CAOQ4uxj_T9+0yTN1nFX+yzFUyLqeeO5n2mpKORf_NKf3Da8j-Q@mail.gmail.com>
+ <CAOQ4uxgeCAi77biCVLQR6iHQT1TAWjWAhJv5_y6i=nWVbdhAWA@mail.gmail.com> <20231028-zonen-gasbetrieben-47ed8e61adb0@brauner>
+In-Reply-To: <20231028-zonen-gasbetrieben-47ed8e61adb0@brauner>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Sun, 29 Oct 2023 11:50:03 +0200
+Message-ID: <CAOQ4uxh3y1s90d9=Ap2s1BknVpHig7tVX58-=zn=1Ui8WcPqDw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/4] exportfs: make ->encode_fh() a mandatory method
+ for NFS export
+To: Christian Brauner <brauner@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>, Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
+	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	David Sterba <dsterba@suse.com>, Luis de Bethencourt <luisbg@kernel.org>, 
+	Salah Triki <salah.triki@gmail.com>, Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>, 
+	"Theodore Ts'o" <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, 
+	Jaegeuk Kim <jaegeuk@kernel.org>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, 
+	Dave Kleikamp <shaggy@kernel.org>, David Woodhouse <dwmw2@infradead.org>, 
+	Richard Weinberger <richard@nod.at>, Anton Altaparmakov <anton@tuxera.com>, 
+	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, Steve French <sfrench@samba.org>, 
+	Phillip Lougher <phillip@squashfs.org.uk>, Evgeniy Dushistov <dushistov@mail.ru>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 27/10/23 22:33, Christian Brauner wrote:
-> Hey Linus,
+On Sat, Oct 28, 2023 at 5:16=E2=80=AFPM Christian Brauner <brauner@kernel.o=
+rg> wrote:
 >
-> /* Summary */
-> This ports autofs to the new mount api. The patchset has existed for
-> quite a while but never made it upstream. Ian picked it back up.
+> > Actually, Christian, since you already picked up the build fix and
+> > MAINTAINERS patch, cloud I bother you to fixup the commit
+> > message of this patch according to Christoph's request:
+> >
+> >     exportfs: make ->encode_fh() a mandatory method for NFS export
+> >
+> >     Rename the default helper for encoding FILEID_INO32_GEN* file handl=
+es
+> >     to generic_encode_ino32_fh() and convert the filesystems that used =
+the
+> >     default implementation to use the generic helper explicitly.
+> >
+> >     After this change, exportfs_encode_inode_fh() no longer has a defau=
+lt
+> >     implementation to encode FILEID_INO32_GEN* file handles.
+> >
+> >     This is a step towards allowing filesystems to encode non-decodeabl=
+e file
+> >     handles for fanotify without having to implement any export_operati=
+ons.
+> >
+> >
+> > Might as well add hch RVB on patch #1 while at it.
 >
-> This also fixes a bug where fs_param_is_fd() was passed a garbage
-> param->dirfd but it expected it to be set to the fd that was used to set
-> param->file otherwise result->uint_32 contains nonsense. So make sure
-> it's set.
->
-> One less filesystem using the old mount api. We're getting there, albeit
-> rather slow. The last remaining major filesystem that hasn't converted
-> is btrfs. Patches exist - I even wrote them - but so far they haven't
-> made it upstream.
+> Done, please check in vfs.f_fsid and yell if something is wrong.
 
-Yes, looks like about 39 still to be converted.
+I see no changes.
+Maybe you have forgotten to push the branch??
 
-
-Just for information, excluding btrfs, what would you like to see as the
-
-priority for conversion (in case me or any of my colleagues get a chance
-
-to spend a bit more time on it)?
-
-
-Ian
-
+Thanks,
+Amir.
 
