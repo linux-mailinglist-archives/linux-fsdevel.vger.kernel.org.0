@@ -1,122 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-1505-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1506-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D05D7DABED
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Oct 2023 10:50:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4995F7DAE27
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Oct 2023 21:12:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5675281699
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Oct 2023 09:50:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2BD6B20D69
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Oct 2023 20:11:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E538F7E;
-	Sun, 29 Oct 2023 09:50:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D928B11197;
+	Sun, 29 Oct 2023 20:11:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZNa/8tK5"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="H4Yk/YOz"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07EA720F5
-	for <linux-fsdevel@vger.kernel.org>; Sun, 29 Oct 2023 09:50:16 +0000 (UTC)
-Received: from mail-qt1-x82f.google.com (mail-qt1-x82f.google.com [IPv6:2607:f8b0:4864:20::82f])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EEBABD;
-	Sun, 29 Oct 2023 02:50:15 -0700 (PDT)
-Received: by mail-qt1-x82f.google.com with SMTP id d75a77b69052e-41b406523fcso27207371cf.2;
-        Sun, 29 Oct 2023 02:50:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698573015; x=1699177815; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P28X6pfw1YMZ50dMj1Z2ceMTILza4KIjApTCmG3AzCw=;
-        b=ZNa/8tK5loXuQdzdFRMKwZx6OxvXWVypBdiwDguYYvj1M1/ikN/NoqjtlSyagY00QW
-         MXIMDWjKHFnU9dS8aBts4MIgzfL99HpphDU3Kkx6MNGbslz5gvq1fy8P6DVh/h1vH5nM
-         zrZGTEkV67SiFoKoBwwNYCIZZDRsccksqGWfJfCoY6LsyiyP1RuXzbqqN8rBpNRg4JSt
-         daYRuyDZIdYeYd6dRYWy7d1Nm6SFeWYsFhPfdo1GMzFB0zMe8sTIMgrjtqNWZoi7Ms9w
-         JXfyPc7ud4sxDKb2tFPXS7x2gQ3XjTvf3jt9Qx6CjyZ4Ott4IS1wreouKZteAEBSCUom
-         suxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698573015; x=1699177815;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=P28X6pfw1YMZ50dMj1Z2ceMTILza4KIjApTCmG3AzCw=;
-        b=XXog1V/z0LEKaWywjEPtEm/P+5xlfwulywfygRayTAjM6qjcBeNBsTsK/LnkApk9oU
-         HrOFdmhrL8n+nhWtGXMomnWyTYFj6D2vra21u2jBaSMEMVvI+CLNXeTIi3G1TNvI7oo5
-         W+FoOENsIEJKFZrEOaZg3CVWXrOk4vElwOy0QhiqQ49jV++VttWxJ6cuEAhcQpAr4ivM
-         L3zzVxDXNryDucv/S5ovlirwa+BvJDE5nXifFdARb8Mah6TajTK/0ldbQvqidG8xkHYz
-         7kO2BdarFTBD2oLTl3ZkRAbUUStqTnSRVjGgoT6H9SZQsu8bxXD35FP5AiUYKWjW6gha
-         tJ/A==
-X-Gm-Message-State: AOJu0YwhTFJRtDTCwQGj+Ul9bXPKV1XJwsEKahpqVbqs8oK3BuAn2FF9
-	N1GBInOQekeoE9+7nQ8dwEB+vtsYZ/p4L0SsEs0=
-X-Google-Smtp-Source: AGHT+IEhLT56WPc+S0TNKePzSMVDfhsAdj3oeTPdHRnCAiMo6VgkOFkDEQZ9MGCGaGgSplkOdtT4/IKvtd8c03fauz0=
-X-Received: by 2002:ad4:5aea:0:b0:672:24bd:3e3f with SMTP id
- c10-20020ad45aea000000b0067224bd3e3fmr969544qvh.31.1698573014724; Sun, 29 Oct
- 2023 02:50:14 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38480CA78
+	for <linux-fsdevel@vger.kernel.org>; Sun, 29 Oct 2023 20:11:46 +0000 (UTC)
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59A13AC;
+	Sun, 29 Oct 2023 13:11:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=NHrqX2dC2lEhCtw3IxHryPs6MHyo/+ZGBHAb3HIxQc4=; b=H4Yk/YOzLJ3l9KWC52qtmtxpFo
+	dJ57w9BQ35z8V72QCTvP1nJSapmZxeQDHMsiAyzO/EtGniTRnuI5D7z5QoG6PmWimkfRDSxnuM5H6
+	lbjX0G8iBUW3ct7sl/MxKhuLLSMo3HLSB953r48DiSFyz2IImBg/sYyWH4bB8Inq0v601G9jpihOU
+	5/PMxD0OQiymEXQ8dRl8bHgQ5rlFpE7zqOBnmL6IySER6oUs1o2/IQn6GNMcnj3vtZf6eZpLjDVyy
+	sElUCa6DvWTJOlYziHJcF97elZewKiEP1ZSZ0o7x6MYB0T5px8sC1LDii5bIA5E50oMAh2TOGZ2/R
+	2xX+w1NA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+	id 1qxC8C-00HTDK-E7; Sun, 29 Oct 2023 20:11:32 +0000
+Date: Sun, 29 Oct 2023 20:11:32 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Daniel Gomez <da.gomez@samsung.com>
+Cc: "minchan@kernel.org" <minchan@kernel.org>,
+	"senozhatsky@chromium.org" <senozhatsky@chromium.org>,
+	"axboe@kernel.dk" <axboe@kernel.dk>,
+	"djwong@kernel.org" <djwong@kernel.org>,
+	"hughd@google.com" <hughd@google.com>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"mcgrof@kernel.org" <mcgrof@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"gost.dev@samsung.com" <gost.dev@samsung.com>,
+	Pankaj Raghav <p.raghav@samsung.com>
+Subject: Re: [RFC PATCH 01/11] XArray: add cmpxchg order test
+Message-ID: <ZT68dBiJKNLXLRZA@casper.infradead.org>
+References: <20230919135536.2165715-1-da.gomez@samsung.com>
+ <20231028211518.3424020-1-da.gomez@samsung.com>
+ <CGME20231028211538eucas1p186e33f92dbea7030f14f7f79aa1b8d54@eucas1p1.samsung.com>
+ <20231028211518.3424020-2-da.gomez@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231023180801.2953446-1-amir73il@gmail.com> <20231023180801.2953446-3-amir73il@gmail.com>
- <ZTtSrfBgioyrbWDH@infradead.org> <CAOQ4uxj_T9+0yTN1nFX+yzFUyLqeeO5n2mpKORf_NKf3Da8j-Q@mail.gmail.com>
- <CAOQ4uxgeCAi77biCVLQR6iHQT1TAWjWAhJv5_y6i=nWVbdhAWA@mail.gmail.com> <20231028-zonen-gasbetrieben-47ed8e61adb0@brauner>
-In-Reply-To: <20231028-zonen-gasbetrieben-47ed8e61adb0@brauner>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Sun, 29 Oct 2023 11:50:03 +0200
-Message-ID: <CAOQ4uxh3y1s90d9=Ap2s1BknVpHig7tVX58-=zn=1Ui8WcPqDw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4] exportfs: make ->encode_fh() a mandatory method
- for NFS export
-To: Christian Brauner <brauner@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>, Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
-	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	David Sterba <dsterba@suse.com>, Luis de Bethencourt <luisbg@kernel.org>, 
-	Salah Triki <salah.triki@gmail.com>, Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>, 
-	"Theodore Ts'o" <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, 
-	Jaegeuk Kim <jaegeuk@kernel.org>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, 
-	Dave Kleikamp <shaggy@kernel.org>, David Woodhouse <dwmw2@infradead.org>, 
-	Richard Weinberger <richard@nod.at>, Anton Altaparmakov <anton@tuxera.com>, 
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, Steve French <sfrench@samba.org>, 
-	Phillip Lougher <phillip@squashfs.org.uk>, Evgeniy Dushistov <dushistov@mail.ru>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231028211518.3424020-2-da.gomez@samsung.com>
 
-On Sat, Oct 28, 2023 at 5:16=E2=80=AFPM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> > Actually, Christian, since you already picked up the build fix and
-> > MAINTAINERS patch, cloud I bother you to fixup the commit
-> > message of this patch according to Christoph's request:
-> >
-> >     exportfs: make ->encode_fh() a mandatory method for NFS export
-> >
-> >     Rename the default helper for encoding FILEID_INO32_GEN* file handl=
-es
-> >     to generic_encode_ino32_fh() and convert the filesystems that used =
-the
-> >     default implementation to use the generic helper explicitly.
-> >
-> >     After this change, exportfs_encode_inode_fh() no longer has a defau=
-lt
-> >     implementation to encode FILEID_INO32_GEN* file handles.
-> >
-> >     This is a step towards allowing filesystems to encode non-decodeabl=
-e file
-> >     handles for fanotify without having to implement any export_operati=
-ons.
-> >
-> >
-> > Might as well add hch RVB on patch #1 while at it.
->
-> Done, please check in vfs.f_fsid and yell if something is wrong.
+On Sat, Oct 28, 2023 at 09:15:35PM +0000, Daniel Gomez wrote:
+> +static noinline void check_cmpxchg_order(struct xarray *xa)
+> +{
+> +	void *FIVE = xa_mk_value(5);
+> +	unsigned int order = IS_ENABLED(CONFIG_XARRAY_MULTI) ? 15 : 1;
 
-I see no changes.
-Maybe you have forgotten to push the branch??
+... have you tried this with CONFIG_XARRAY_MULTI deselected?
+I suspect it will BUG() because orders greater than 0 are not allowed.
 
-Thanks,
-Amir.
+> +	XA_BUG_ON(xa, !xa_empty(xa));
+> +	XA_BUG_ON(xa, xa_store_index(xa, 5, GFP_KERNEL) != NULL);
+> +	XA_BUG_ON(xa, xa_insert(xa, 5, FIVE, GFP_KERNEL) != -EBUSY);
+> +	XA_BUG_ON(xa, xa_store_order(xa, 5, order, FIVE, GFP_KERNEL));
+> +	XA_BUG_ON(xa, xa_get_order(xa, 5) != order);
+> +	XA_BUG_ON(xa, xa_get_order(xa, xa_to_value(FIVE)) != order);
+> +	old = xa_cmpxchg(xa, 5, FIVE, NULL, GFP_KERNEL);
+> +	XA_BUG_ON(xa, old != FIVE);
+> +	XA_BUG_ON(xa, xa_get_order(xa, 5) != 0);
+> +	XA_BUG_ON(xa, xa_get_order(xa, xa_to_value(FIVE)) != 0);
+> +	XA_BUG_ON(xa, xa_get_order(xa, xa_to_value(old)) != 0);
+> +	XA_BUG_ON(xa, !xa_empty(xa));
+
+I'm not sure this is a great test.  It definitely does do what you claim
+it will, but for example, it's possible that we might keep that
+information for other orders.  So maybe we should have another entry at
+(1 << order) that keeps the node around and could theoretically keep
+the order information around for the now-NULL entry?
 
