@@ -1,71 +1,71 @@
-Return-Path: <linux-fsdevel+bounces-1546-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1547-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13D147DBDD1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 17:28:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C8E97DBDDE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 17:31:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C58E1281597
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 16:28:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7C971C20BA8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 16:31:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 417D119446;
-	Mon, 30 Oct 2023 16:28:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A83F31944B;
+	Mon, 30 Oct 2023 16:31:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PzDdow5/"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V4f9PQj6"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B3B018E1E
-	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 16:28:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 234D61944C
+	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 16:31:18 +0000 (UTC)
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 915CAE1
-	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 09:27:58 -0700 (PDT)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38A4FDB
+	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 09:31:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1698683277;
+	s=mimecast20190719; t=1698683476;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=QJRzUGi0crPAdF+PsGr4fd82XBsUf26/RqsTLoK6Cc8=;
-	b=PzDdow5/Wb2YXgvu5Iime0LPp5xVYoWEfI6LnNKBDrY+fgcjqDnTNtER1Q/TyOIzW17SX3
-	Yav9ta0/6t1/oXJAQge7v3G2ijuel5JQUxYw7eI0+amUFBm1xBuQwrlMh5bz2aY0AVsbs4
-	MgBsNJZedzOvLJQo+UJjGD6yqyCJ4sk=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=AFGN4ziW+95DqCrq4ZKBGZMP1faea1+XydZr6yChQh0=;
+	b=V4f9PQj6Z/i66YvB1N+twFUqSx5LRLb2idfqzdveS/ek6yvhz2x8JWB+OU79tt7TevDp/f
+	VdUrfINutlwEuXfPsGyfCt7XtDl7EQg5ME9snSEjHax2qlK83djeA09CaUhIIpRix8Hs3k
+	8CI0zyuc7fJAmkIT4SGzsyYXbFpnZAo=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-425-uX7ut9tTNiWb8FUphV5g0Q-1; Mon, 30 Oct 2023 12:27:56 -0400
-X-MC-Unique: uX7ut9tTNiWb8FUphV5g0Q-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-407d3e55927so32545475e9.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 09:27:55 -0700 (PDT)
+ us-mta-619-eO49ZQS_O_6QUsQmV_3bzA-1; Mon, 30 Oct 2023 12:31:09 -0400
+X-MC-Unique: eO49ZQS_O_6QUsQmV_3bzA-1
+Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-507b0270b7fso4899922e87.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 09:31:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698683275; x=1699288075;
+        d=1e100.net; s=20230601; t=1698683468; x=1699288268;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QJRzUGi0crPAdF+PsGr4fd82XBsUf26/RqsTLoK6Cc8=;
-        b=KKFpBtB3tS/GqJjEYzOxaSifyN59x9Y7RXndC1GfJz4hmkoJYde162yBf7aG4NHJmD
-         YyY2mLAQ6v5puHgVRI6OTqEAjMzTNgWuLA45zTDKVgL5vQal4TaWnt3Y9h5DXHNI0zSi
-         BCBK1CgYD7NgsmB3UY6OiXh7OExqTGIiNBTUF9WmdJPhSVgxU4tmUSi/OdBXCiQgynZ0
-         CSH0h3kRTI3CGFnbUOlvNblHB2TJ/fU2pzdEtkHlyp+fly1CvEJ51KT8FadxYQAd7+lH
-         gvyPHl9YqSwAntuxIE0fommhdrouai2I9QIu891wC9X8lp1SXkIBFg4i9eTw5aQX0qMe
-         eDdg==
-X-Gm-Message-State: AOJu0Yx2tWsmgdH3omne8sRGvCJ3wps2STkCiBlPh57SL4PuL/zfk/uj
-	MTGDNNzxL2a7/8dhTTtOCLoQQG4FMYEkxIb/zClPz3M6XwJoK900+4Tcq48puuYYbFhcC3vYzlD
-	pp/mqIyI+tu8HmuKnzOQut3UWMA==
-X-Received: by 2002:a05:600c:5204:b0:408:3f61:cb4f with SMTP id fb4-20020a05600c520400b004083f61cb4fmr7847788wmb.23.1698683274959;
-        Mon, 30 Oct 2023 09:27:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHfa0KyfT9rBRGOGCePk10CmFCQx85iYerXM1uRezmX93sdvp3R2tcV7yoRdLLu5R9pLdpikw==
-X-Received: by 2002:a05:600c:5204:b0:408:3f61:cb4f with SMTP id fb4-20020a05600c520400b004083f61cb4fmr7847757wmb.23.1698683274613;
-        Mon, 30 Oct 2023 09:27:54 -0700 (PDT)
+        bh=AFGN4ziW+95DqCrq4ZKBGZMP1faea1+XydZr6yChQh0=;
+        b=NEICwMKIlp9iHU5PYiWufdnfCOmntL4RuC1zsaud9LyONSZkIWKpBSRriufVCEbaiv
+         GqlMkpfnEDpTUMTRzQ+5Cu0Ci2Ol/JO8btw4LrSysG3jGIWH8op8bdlzjA9DzjlL1SPd
+         5Uh6mB1jxjNL4HDQz25i3uapaZOVWZNANwyh+AFz+D8g/PHB3cx7UUh1PCqewqpYSRys
+         1FOBmbkXaSlww8jFGbvsF4Yzctsi2uLd7DyxFKULk6ETqfVuQiUxOqXOpV8a32RjwxC0
+         ulJaQKaCczDhyq6JR9HX/KN0XGxEFS2djpBxpENsEZWrzw8MeWwt9WHikLBYqCboFwdq
+         IYMg==
+X-Gm-Message-State: AOJu0YzOUeMZHNa7zgOYr66NfVvr9q2x3h+LciMLemosAMapma695OC6
+	trpGGCnkLxbWAgewkFsCyXwyGp07A98wDx3HsPUV3MVlCJukTXdsjqMiipkk1gP+zzFjpyFgwL4
+	fwu2NgJms/xrfqTk0DP0TxRPt6w==
+X-Received: by 2002:a05:6512:3287:b0:500:aed0:cb1b with SMTP id p7-20020a056512328700b00500aed0cb1bmr7326650lfe.24.1698683467872;
+        Mon, 30 Oct 2023 09:31:07 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGRdAajClQLfI8UNi2+tGCjjTj9MUSIZarD5jdmlcc1gAAUSTu27VbeMUcm58GL6U7UOb+lpQ==
+X-Received: by 2002:a05:6512:3287:b0:500:aed0:cb1b with SMTP id p7-20020a056512328700b00500aed0cb1bmr7326601lfe.24.1698683467485;
+        Mon, 30 Oct 2023 09:31:07 -0700 (PDT)
 Received: from [192.168.1.174] ([151.81.68.207])
-        by smtp.googlemail.com with ESMTPSA id u18-20020a05600c19d200b00401b242e2e6sm13160177wmq.47.2023.10.30.09.27.49
+        by smtp.googlemail.com with ESMTPSA id k16-20020a05600c0b5000b0040586360a36sm12945400wmr.17.2023.10.30.09.30.56
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Oct 2023 09:27:53 -0700 (PDT)
-Message-ID: <ac502d11-1fe8-45ec-bb91-02c94dbcd16d@redhat.com>
-Date: Mon, 30 Oct 2023 17:27:47 +0100
+        Mon, 30 Oct 2023 09:31:06 -0700 (PDT)
+Message-ID: <bd49d731-9231-44bb-9950-949ee95f3b7e@redhat.com>
+Date: Mon, 30 Oct 2023 17:30:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -73,8 +73,8 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v13 02/35] KVM: Assert that mmu_invalidate_in_progress
- *never* goes negative
+Subject: Re: [PATCH v13 03/35] KVM: Use gfn instead of hva for
+ mmu_notifier_retry
 Content-Language: en-US
 To: Sean Christopherson <seanjc@google.com>, Marc Zyngier <maz@kernel.org>,
  Oliver Upton <oliver.upton@linux.dev>, Huacai Chen <chenhuacai@kernel.org>,
@@ -105,7 +105,7 @@ Cc: kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  Isaku Yamahata <isaku.yamahata@gmail.com>,
  "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
 References: <20231027182217.3615211-1-seanjc@google.com>
- <20231027182217.3615211-3-seanjc@google.com>
+ <20231027182217.3615211-4-seanjc@google.com>
 From: Paolo Bonzini <pbonzini@redhat.com>
 Autocrypt: addr=pbonzini@redhat.com; keydata=
  xsEhBFRCcBIBDqDGsz4K0zZun3jh+U6Z9wNGLKQ0kSFyjN38gMqU1SfP+TUNQepFHb/Gc0E2
@@ -142,53 +142,24 @@ Autocrypt: addr=pbonzini@redhat.com; keydata=
  JBrdmNZSQDz0iKmSrx8xkoXYfA3bgtFN8WJH2xgFL28XnqY4M6dLhJwV3z08tPSRqYFm4NMP
  dRsn0/7oymhneL8RthIvjDDQ5ktUjMe8LtHr70OZE/TT88qvEdhiIVUogHdo4qBrk41+gGQh
  b906Dudw5YhTJFU3nC6bbF2nrLlB4C/XSiH76ZvqzV0Z/cAMBo5NF/w=
-In-Reply-To: <20231027182217.3615211-3-seanjc@google.com>
+In-Reply-To: <20231027182217.3615211-4-seanjc@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 10/27/23 20:21, Sean Christopherson wrote:
-> Move the assertion on the in-progress invalidation count from the primary
-> MMU's notifier path to KVM's common notification path, i.e. assert that
-> the count doesn't go negative even when the invalidation is coming from
-> KVM itself.
-> 
-> Opportunistically convert the assertion to a KVM_BUG_ON(), i.e. kill only
-> the affected VM, not the entire kernel.  A corrupted count is fatal to the
-> VM, e.g. the non-zero (negative) count will cause mmu_invalidate_retry()
-> to block any and all attempts to install new mappings.  But it's far from
-> guaranteed that an end() without a start() is fatal or even problematic to
-> anything other than the target VM, e.g. the underlying bug could simply be
-> a duplicate call to end().  And it's much more likely that a missed
-> invalidation, i.e. a potential use-after-free, would manifest as no
-> notification whatsoever, not an end() without a start().
+> From: Chao Peng <chao.p.peng@linux.intel.com> Currently in mmu_notifier 
+> invalidate path, hva range is recorded and then checked against by 
+> mmu_notifier_retry_hva() in the page fault handling path. However, for 
+> the to be introduced private memory, a page fault may not have a hva 
+> associated, checking gfn(gpa) makes more sense. For existing hva based 
+> shared memory, gfn is expected to also work. The only downside is when 
+> aliasing multiple gfns to a single hva, the current algorithm of 
+> checking multiple ranges could result in a much larger range being 
+> rejected. Such aliasing should be uncommon, so the impact is expected 
+> small.
 
 Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
 
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->   virt/kvm/kvm_main.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> index 0524933856d4..5a97e6c7d9c2 100644
-> --- a/virt/kvm/kvm_main.c
-> +++ b/virt/kvm/kvm_main.c
-> @@ -833,6 +833,7 @@ void kvm_mmu_invalidate_end(struct kvm *kvm, unsigned long start,
->   	 * in conjunction with the smp_rmb in mmu_invalidate_retry().
->   	 */
->   	kvm->mmu_invalidate_in_progress--;
-> +	KVM_BUG_ON(kvm->mmu_invalidate_in_progress < 0, kvm);
->   }
->   
->   static void kvm_mmu_notifier_invalidate_range_end(struct mmu_notifier *mn,
-> @@ -863,8 +864,6 @@ static void kvm_mmu_notifier_invalidate_range_end(struct mmu_notifier *mn,
->   	 */
->   	if (wake)
->   		rcuwait_wake_up(&kvm->mn_memslots_update_rcuwait);
-> -
-> -	BUG_ON(kvm->mmu_invalidate_in_progress < 0);
->   }
->   
->   static int kvm_mmu_notifier_clear_flush_young(struct mmu_notifier *mn,
+Paolo
 
 
