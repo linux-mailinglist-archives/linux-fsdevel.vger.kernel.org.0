@@ -1,90 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-1539-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1540-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDCE37DBAAC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 14:25:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B04797DBB34
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 14:59:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A906B20DF9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 13:25:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66F892815E2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 13:59:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34428168AC;
-	Mon, 30 Oct 2023 13:25:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15DBC17734;
+	Mon, 30 Oct 2023 13:58:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Cna6mS3W"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Pw/SRXYo"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3C46168A8
-	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 13:25:37 +0000 (UTC)
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50CDEA2;
-	Mon, 30 Oct 2023 06:25:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ilwoHemrW2teVoRctqXKwG4ZrUjujKvoTKzlqZcWFII=; b=Cna6mS3WD/044dWY1ZcTPlePc2
-	ayl50jQ93qL4q/McVYm7dN0DIWAkNhx63rJXmaej1Ypj1/l24BMqLmetBEraWrn/Rf2kxrAwkFyIU
-	oomWuv4lEWgEbQ0EooW8kdychF/VJlyVVVFH20IFDf4Ary4TWuoIzUmlMBkRMk9q5vwhUPf3Uf8RE
-	NqTzLXzgs94WH4RpCSzSa5eE3mMJlvilaGaS//GEX4NxxZjqnB7TCdAZ59Zj7wHhX6rBFW1/vWjHw
-	JxYOTIh75zlVe1R5N2YrFjdhid2XGMkyGoMtRfadzIhmKA+uF1zESBQSqNIDXgddiLkVZ8Z9/Jyna
-	J5gFnFVA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1qxSGj-003Ogt-24;
-	Mon, 30 Oct 2023 13:25:25 +0000
-Date: Mon, 30 Oct 2023 06:25:25 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
-	Christian Brauner <brauner@kernel.org>, Chris Mason <clm@fb.com>,
-	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/3] fanotify support for btrfs sub-volumes
-Message-ID: <ZT+uxSEh+nTZ2DEY@infradead.org>
-References: <20231025135048.36153-1-amir73il@gmail.com>
- <ZTk1ffCMDe9GrJjC@infradead.org>
- <20231025210654.GA2892534@perftesting>
- <ZTtOmWEx5neNKkez@infradead.org>
- <20231027131726.GA2915471@perftesting>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32008171D6
+	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 13:58:56 +0000 (UTC)
+Received: from mail-ed1-x54a.google.com (mail-ed1-x54a.google.com [IPv6:2a00:1450:4864:20::54a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB015C6
+	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 06:58:53 -0700 (PDT)
+Received: by mail-ed1-x54a.google.com with SMTP id 4fb4d7f45d1cf-5402e97fdd1so3320807a12.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 06:58:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1698674332; x=1699279132; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Pwv0nNI/GXb5sK6crMnTZzX7DXnGnuo4VkjJxSyGGBE=;
+        b=Pw/SRXYoxDLks3cmJ83KKdDUaLJOw/++8rzzczrv5QNwLvEh6F/aVJ4p8Vm04Tu5ST
+         uxoT1x1n7FxzK7ZAn2srR/K/yTwAfdbIeAYEuxwpyr3Iz/H/slZDCFi2x3TM/QbHZTXy
+         0fgOZvmzkr2c96W96XsJemLGGtK9rGVnG832Z7lJDXfDsrFvh/JIq2H20S+6La/asCPF
+         XE1qRMs36ns1Vpzu/g4yS1N+6xp03dknrCTZrLJeVBh3YUu4oo2IPGZHOgxkPVauPDlI
+         2wf2LzII9tsSqUiPPYy0trkBFEKk5NJ82FQCOhJbHqfx+Ys3qx8Y2dDSdi/Rg4roxr3W
+         FkGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698674332; x=1699279132;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Pwv0nNI/GXb5sK6crMnTZzX7DXnGnuo4VkjJxSyGGBE=;
+        b=L9IShNUvo4xuaUf2tR7g2wMSu2SYMPM6/+KuB5xg+2iRauivpXC1xi7crNXW3rAjw5
+         xTO/SAjI5gzPj9drfkN3Y5QMNfthyV1EPimVwhJmoYl1IPBnT6aVju66YtxwE15Dlymx
+         8EQcv1EXI8LSgNgdwhymmhW1og7l8GDTgcI+b4cWr0hVsTtu6/G7LnXqUUD5KryEoYpg
+         gYfDrhCg59J1hm38g2tWQlnd3KyEfcxcT9B7vILBsMX8CbtClp9N2xHt6dy1S8kMf/I9
+         nLPNtVP7JwTRAIOkF/wpdbiHEncBdbOED8D3o/hV+hyIsO2wNX1TSAuOxcra4oVXBACQ
+         ro4Q==
+X-Gm-Message-State: AOJu0YxuN32LHzKsfl86XBNhqJN0f7W9QaHHNy0itCrRH7Sn5PrtVw6a
+	R0/Cu90A6NrYyVuybm0tqwfnummQHW7O63g=
+X-Google-Smtp-Source: AGHT+IGNKlEATVPDh6rVqDOpRvWhA0c/AXkrrys3npUtceRNXpU/wxHpIZOuNkZ6upnlTs5QHBR1A23TFUXF5l4=
+X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:6c8])
+ (user=aliceryhl job=sendgmr) by 2002:a05:6402:f19:b0:53e:b944:d5ca with SMTP
+ id i25-20020a0564020f1900b0053eb944d5camr92691eda.0.1698674332155; Mon, 30
+ Oct 2023 06:58:52 -0700 (PDT)
+Date: Mon, 30 Oct 2023 13:58:49 +0000
+In-Reply-To: <ZTmelWlSncdtExXp@boqun-archlinux>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231027131726.GA2915471@perftesting>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Mime-Version: 1.0
+References: <ZTmelWlSncdtExXp@boqun-archlinux>
+X-Mailer: git-send-email 2.42.0.820.g83a721a137-goog
+Message-ID: <20231030135849.1587717-1-aliceryhl@google.com>
+Subject: Re: [RFC] rust: types: Add read_once and write_once
+From: Alice Ryhl <aliceryhl@google.com>
+To: boqun.feng@gmail.com
+Cc: a.hindborg@samsung.com, akiyks@gmail.com, alex.gaynor@gmail.com, 
+	aliceryhl@google.com, benno.lossin@proton.me, bjorn3_gh@protonmail.com, 
+	brauner@kernel.org, david@fromorbit.com, dhowells@redhat.com, 
+	dlustig@nvidia.com, elver@google.com, gary@garyguo.net, 
+	gregkh@linuxfoundation.org, j.alglave@ucl.ac.uk, joel@joelfernandes.org, 
+	kent.overstreet@gmail.com, linux-arch@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev, luc.maranget@inria.fr, nathan@kernel.org, 
+	ndesaulniers@google.com, npiggin@gmail.com, ojeda@kernel.org, 
+	parri.andrea@gmail.com, paulmck@kernel.org, peterz@infradead.org, 
+	rust-for-linux@vger.kernel.org, stern@rowland.harvard.edu, trix@redhat.com, 
+	viro@zeniv.linux.org.uk, wedsonaf@gmail.com, will@kernel.org, 
+	willy@infradead.org
+Content-Type: text/plain; charset="utf-8"
 
-On Fri, Oct 27, 2023 at 09:17:26AM -0400, Josef Bacik wrote:
-> We have this same discussion every time, and every time you stop responding
-> after I point out the problems with it.
+Boqun Feng <boqun.feng@gmail.com> writes:
+>> On Wed, Oct 25, 2023 at 09:51:28PM +0000, Benno Lossin wrote:
+>>> diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
+>>> index d849e1979ac7..b0872f751f97 100644
+>>> --- a/rust/kernel/types.rs
+>>> +++ b/rust/kernel/types.rs
+>> 
+>> I don't think this should go into `types.rs`. But I do not have a good
+>> name for the new module.
+> 
+> kernel::sync?
 
-I'm not sure why you think I stop responding when the action item is not
-for me.
+I think `kernel::sync` is a reasonable choice, but here's another
+possibility: Put them in the `bindings` crate.
 
-> A per-subvolume vfsmount means that /proc/mounts /proc/$PID/mountinfo becomes
-> insanely dumb.  I've got millions of machines in this fleet with thousands of
-> subvolumes.  One of our workloads fires up several containers per task and runs
-> multiple tasks per machine, so on the order of 10-20k subvolumes.
+Why? Well, they are a utility that intends to replicate the C
+`READ_ONCE` and `WRITE_ONCE` macros. All of our other methods that do
+the same thing for C functions are functions in the bindings crate.
 
-If you do not expose them in /proc/mounts and friends you don't have
-any way to show where the mount point or whatever barrier you want
-between different st_dev/fsid/etc is.  And you need that.
+Similarly, if we ever decide to reimplement a C function in Rust for
+performance/inlining reasons, then I also think that it is reasonable to
+put that Rust-reimplementation in the bindings crate. This approach also
+makes it easy to transparently handle cases where we only reimplement a
+function in Rust under some configurations.
 
-I've not seen any good alternative that keeps the invariant and doesn't
-break things.  If you think there is one please explain it, but no,
-adding new fields so that new software can see how we've broken all
-the old software is not the answer.
-
-A (not really) great partial answer would be to stop parsing the
-text mount information so much, at least for your workloads that
-definitively are little on the extreme side.  I think Miklos has been
-working on interface that could be useful for that.
+Alice
 
