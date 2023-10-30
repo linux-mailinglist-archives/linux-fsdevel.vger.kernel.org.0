@@ -1,186 +1,240 @@
-Return-Path: <linux-fsdevel+bounces-1587-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1588-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CB5D7DC200
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 22:36:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDF0C7DC22B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 22:53:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7B9CB20EFF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 21:36:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09B181C20B04
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 21:53:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 204391CA9D;
-	Mon, 30 Oct 2023 21:36:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 051901CFB1;
+	Mon, 30 Oct 2023 21:53:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ryhl.io header.i=@ryhl.io header.b="kZq3CYdK";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="f+g7inei"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="WKuJa6fH"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9E5223C3;
-	Mon, 30 Oct 2023 21:36:36 +0000 (UTC)
-Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C13FA9F;
-	Mon, 30 Oct 2023 14:36:34 -0700 (PDT)
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-	by mailout.nyi.internal (Postfix) with ESMTP id 5A9285C01D2;
-	Mon, 30 Oct 2023 17:36:32 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Mon, 30 Oct 2023 17:36:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ryhl.io; h=cc:cc
-	:content-transfer-encoding:content-type:content-type:date:date
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:sender:subject:subject:to:to; s=fm3; t=
-	1698701792; x=1698788192; bh=wIpBAZbF9GYPQMj2OF375tHBZiXVUABR09h
-	G0/JgIbs=; b=kZq3CYdK3XxvyaxDk4d98shUzS9yAy3MwcA0nZ7P2CfZty66PBs
-	QhwDsSp3cXeLxKL4hKi7BoH/AH04K4g7uJlvqAI71kvZjZG7S82OQ2S3T/yINgFE
-	3cVH1bGjLgMURw2vwOHV3W8silLW0lekHviXdJYhmuAGFPj7mccwQqNZSfdzv0p6
-	jQA4onG5cv7AMDUoGE91Ij4gAmw3emXRS8amDdox5kTPSBk4uK3aWKHvBCM7LhFw
-	VQWBUcMe130oN/NWlJ8IilnP1nT99E6SrXhRihymrhSbNhmmgjtUbGrSRHdc3e1o
-	NlVjyNcff76j8XjXnwnikppxoaIWM/9030g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:sender:subject:subject:to:to:x-me-proxy
-	:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1698701792; x=1698788192; bh=wIpBAZbF9GYPQMj2OF375tHBZiXVUABR09h
-	G0/JgIbs=; b=f+g7ineiNDskwpVnJ01oCjJ6GpwWtBxmbR6l8eTLVWqEtSyFXO7
-	5el3bvzRZ7Yzs0DdGqjz/uqO79ESZnePc+6CjtPUuWgNJyk72utYEBPonVaaxDrA
-	yq4x7+xJPJr8yzj5ZT4/aGZi1c53/L3FV9E7JSSTSBPk6Ft5jskN39liFW1qiyHr
-	mvtbQoR1R5RDtlTIqo7jQd9QbSpHLpTjiG/zexNSAHIPI5XO7+7dHhvGsn2yQOT4
-	zO1TO+KmrpSLKQCJgiA7bMCCoDWJXamlAWkkm8rSSDWPiCVfSBQKtf8nj3aORH7K
-	9yzRWyvTHFKoFUB5wOT7vReG4rII+5QtbcQ==
-X-ME-Sender: <xms:3yFAZXtkkTKV828XkN49wtZMux42IEVPxfpMm3RDI2EXwcGXKALD2w>
-    <xme:3yFAZYdmiLvfSUBLEFPKBOpoeurbRijaGM6zd20gfR_MiDOv4EJUnDqcrwCg-sx1N
-    knXhI2gDNT4aWfNlg>
-X-ME-Received: <xmr:3yFAZaxJBfOgki_A-FvKwxPob2pCFjkB7hcWh2foJgY3uaR5TfvnPguM6dHoorUWGt9FNfgV2KwRU3be8Su49kuebwTftMJvYIma>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedruddttddgudegkecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomheptehl
-    ihgtvgcutfihhhhluceorghlihgtvgesrhihhhhlrdhioheqnecuggftrfgrthhtvghrnh
-    epudejudduledvkeeuffdvtdejtdejtddthedtgeejuddvleefvddtkefguefgheefnecu
-    ffhomhgrihhnpehgihhthhhusgdrtghomhdprhhushhtqdhlrghnghdrohhrghenucevlh
-    hushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrlhhitggvsehr
-    hihhlhdrihho
-X-ME-Proxy: <xmx:3yFAZWNS5JBR1fN0ZIvbAmlqsRHiI6YHhRp-j4FfSAkvPGOcr2sI0w>
-    <xmx:3yFAZX_Kw9wi6ayJfuT6SKsF3XK-JeMadW_LXBCUX6geY5dRJ2YTNw>
-    <xmx:3yFAZWXuRTeW2z3Di2pAL0u4FaYAi3SH6NXV39ETQ_xgB7ccSD-5sQ>
-    <xmx:4CFAZTT1idgeFlkBelTEdQZuPETaNEoZo78dQa17RmD5o17_OcupYw>
-Feedback-ID: i56684263:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 30 Oct 2023 17:36:30 -0400 (EDT)
-Message-ID: <9acc17ed-437d-47a2-9721-8191b59304d8@ryhl.io>
-Date: Mon, 30 Oct 2023 22:36:28 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D9031CFA0
+	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 21:53:22 +0000 (UTC)
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD140F7
+	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 14:53:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=5ngNPdSEAvv4WCsaQtVmrA5E3GRMtPWdw8rCprylRBU=; b=WKuJa6fHO8vxDy4KaTLouBq/is
+	F5RyhzUMtEKGmn9e4ZuRniTh8d1eKEnvDo9vuuf2Z/huysbsB3xVfpHFb0BNJFuhyejRxaxAqIU/H
+	rKGVtGRu6bbcQcbfkkjDBbrqDbpdxNzdiKCndZfJfwQILSwWpbyFNq95hHvxgig3ybnlXLlmcYvPj
+	fdbUCNNkQe/XOxBuP5jhZCkNP9fimGPnYykbiVurbt1t8wG6eJ50G5Xy6p1vn1ZdaD/1EXzRbfhqq
+	+iPrtdGcDwN690FZ5RwPth7h7nkN95gXxRAqju8hraOFWUZK+uB7omsx/Ajik5vqIhQaedtyqI0LD
+	ctSBhAlg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1qxaCB-0089EJ-03;
+	Mon, 30 Oct 2023 21:53:15 +0000
+Date: Mon, 30 Oct 2023 21:53:15 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC] simplifying fast_dput(), dentry_kill() et.al.
+Message-ID: <20231030215315.GA1941809@ZenIV>
+References: <20231030003759.GW800259@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 04/19] rust: fs: introduce `FileSystem::super_params`
-Content-Language: en-US-large
-To: Benno Lossin <benno.lossin@proton.me>,
- Wedson Almeida Filho <wedsonaf@gmail.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Matthew Wilcox
- <willy@infradead.org>, Kent Overstreet <kent.overstreet@gmail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-fsdevel@vger.kernel.org, rust-for-linux@vger.kernel.org,
- Wedson Almeida Filho <walmeida@microsoft.com>
-References: <20231018122518.128049-1-wedsonaf@gmail.com>
- <20231018122518.128049-5-wedsonaf@gmail.com>
- <E5dn4WQzlLvA0snHR_r_i2h1IPRjiiTIwssBSR403Rda6JA2Fgd-7lOonQQ6Oz1DMqp45cvtDfyW0JwRFgSZurzvtXIk3KGNhtSBqvvBnF0=@proton.me>
- <4b19dd7d-b946-4a5c-8746-f7e9c2f55d25@ryhl.io>
- <5479e7c1-6616-4930-b33c-0075772c266e@proton.me>
-From: Alice Ryhl <alice@ryhl.io>
-In-Reply-To: <5479e7c1-6616-4930-b33c-0075772c266e@proton.me>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231030003759.GW800259@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On 10/30/23 09:21, Benno Lossin wrote:
-> On 28.10.23 18:39, Alice Ryhl wrote:
->> On 10/18/23 18:34, Benno Lossin wrote:>> +        from_result(|| {
->>>> +            // SAFETY: The C callback API guarantees that `fc_ptr` is valid.
->>>> +            let fc = unsafe { &mut *fc_ptr };
->>>
->>> This safety comment is not enough, the pointer needs to be unique and
->>> pointing to a valid value for this to be ok. I would recommend to do
->>> this instead:
->>>
->>>        unsafe { addr_of_mut!((*fc_ptr).ops).write(&Tables::<T>::CONTEXT) };
->>
->> It doesn't really need to be unique. Or at least, that wording gives the
->> wrong intuition even if it's technically correct when you use the right
->> definition of "unique".
->>
->> To clarify what I mean: Using `ptr::write` on a raw pointer is valid if
->> and only if creating a mutable reference and using that to write is
->> valid. (Assuming the type has no destructor.)
+On Mon, Oct 30, 2023 at 12:37:59AM +0000, Al Viro wrote:
+> 	Back in 2015 when fast_dput() got introduced, I'd been worried
+> about ->d_delete() being exposed to dentries with zero refcount.
+> To quote my reply to Linus back then,
 > 
-> I tried looking in the nomicon and UCG, but was not able to find this
-> statement, where is it from?
-
-Not sure where I got it from originally, but it follows from the tree 
-borrows reference:
-
-First, if the type is !Unpin, then the mutable reference gets the same 
-tag as the original pointer, so there's trivially no difference.
-
-The more interesting case is for Unpin types. Here, the creation of the 
-mutable reference corresponds to a read, and then there's the write of 
-the mutable reference itself. The write of the mutable reference itself 
-is equivalent to the `ptr::write` operation, since exactly the same tags 
-are considered to be affected by child writes and foreign writes. Next, 
-it must be shown that [read, write] is equivalent to just a write, which 
-can be shown by analyzing the tree borrows rules case-by-case.
-
-You can find a nice summary of tree borrows at the last page of:
-https://github.com/Vanille-N/tree-borrows/blob/master/full/main.pdf
-
-I'm pretty sure the same analysis works with stacked borrows.
-
->> Of course, in this case you *also* have the difference of whether you
->> create a mutable to the entire struct or just the field.
->>>> +                // SAFETY: This is a newly-created inode. No other references to it exist, so it is
->>>> +                // safe to mutably dereference it.
->>>> +                let inode = unsafe { &mut *inode };
->>>
->>> The inode also needs to be initialized and have valid values as its fields.
->>> Not sure if this is kept and it would probably be better to keep using raw
->>> pointers here.
->>
->> My understanding is that this is just a safety invariant, and not a
->> validity invariant, so as long as the uninitialized memory is not read,
->> it's fine.
->>
->> See e.g.:
->> https://github.com/rust-lang/unsafe-code-guidelines/issues/346
+> "The only potential nastiness I can see here is that filesystem with
+> ->d_delete() always returning 1 might be surprised by encountering
+> a hashed dentry with zero d_count.  I can't recall anything actually
+> sensitive to that, and there might very well be no such examples,
+> but in principle it might be a problem.  Might be a good idea to check
+> DCACHE_OP_DELETE before anything else..."
 > 
-> I'm not so sure that that discussion is finished and agreed upon. The
-> nomicon still writes "It is illegal to construct a reference to
-> uninitialized data" [1].
+> Looking at that again, that check was not a good idea.  Sure, ->d_delete()
+> instances could, in theory, check d_count (as BUG_ON(d_count(dentry) != 1)
+> or something equally useful) or, worse, drop and regain ->d_lock.
+> The latter would be rather hard to pull off safely, but it is not
+> impossible.  The thing is, none of the in-tree instances do anything of
+> that sort and I don't see any valid reasons why anyone would want to.
 > 
-> Using this pattern (&mut uninit to initialize data) is also dangerous
-> if the underlying type has drop impls, since then by doing
-> `foo.bar = baz;` you drop the old uninitialized value. Sure in
-> our bindings there are no types that implement drop (AFAIK) so
-> it is less of an issue.
+> And getting rid of that would, AFAICS, allow for much simpler rules
+> around __dentry_kill() and friends - we could hold rcu_read_lock
+> over the places where dentry_kill() drops/regains ->d_lock and
+> that would allow
+> 	* fast_dput() always decrementing refcount
+> 	* retain_dentry() never modifying it
+> 	* __dentry_kill() always called with refcount 0 (currently
+> it gets 1 from dentry_kill() and 0 in all other cases)
 > 
-> If we decide to do this, we should have a comment that explains that
-> this reference might point to uninitialized memory. Since otherwise
-> it might be easy to give the reference to another safe function that
-> then e.g. reads a bool.
+> Does anybody see any problems with something along the lines of the
+> (untested) patch below?  It would need to be carved up (and accompanied
+> by "thou shalt not play silly buggers with ->d_lockref in your
+> ->d_delete() instances" in D/f/porting), obviously, but I would really
+> like to get saner rules around refcount manipulations in there - as
+> it is, trying to document them gets very annoying.
 > 
-> [1]: https://doc.rust-lang.org/nomicon/unchecked-uninit.html
+> Comments?
 
-That's fair. I agree that we should explicitly decide whether or not to 
-allow this kind of thing.
+After fixing a couple of brainos, it seems to work.  See below:
 
-Alice
-
+diff --git a/fs/dcache.c b/fs/dcache.c
+index 9f471fdb768b..5e975a013508 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -680,7 +680,6 @@ static inline bool retain_dentry(struct dentry *dentry)
+ 		return false;
+ 
+ 	/* retain; LRU fodder */
+-	dentry->d_lockref.count--;
+ 	if (unlikely(!(dentry->d_flags & DCACHE_LRU_LIST)))
+ 		d_lru_add(dentry);
+ 	else if (unlikely(!(dentry->d_flags & DCACHE_REFERENCED)))
+@@ -709,7 +708,7 @@ EXPORT_SYMBOL(d_mark_dontcache);
+  * Returns dentry requiring refcount drop, or NULL if we're done.
+  */
+ static struct dentry *dentry_kill(struct dentry *dentry)
+-	__releases(dentry->d_lock)
++	__releases(dentry->d_lock) __releases(rcu)
+ {
+ 	struct inode *inode = dentry->d_inode;
+ 	struct dentry *parent = NULL;
+@@ -730,6 +729,7 @@ static struct dentry *dentry_kill(struct dentry *dentry)
+ 			goto slow_positive;
+ 		}
+ 	}
++	rcu_read_unlock();
+ 	__dentry_kill(dentry);
+ 	return parent;
+ 
+@@ -739,9 +739,8 @@ static struct dentry *dentry_kill(struct dentry *dentry)
+ 	spin_lock(&dentry->d_lock);
+ 	parent = lock_parent(dentry);
+ got_locks:
+-	if (unlikely(dentry->d_lockref.count != 1)) {
+-		dentry->d_lockref.count--;
+-	} else if (likely(!retain_dentry(dentry))) {
++	rcu_read_unlock();
++	if (likely(dentry->d_lockref.count == 0 && !retain_dentry(dentry))) {
+ 		__dentry_kill(dentry);
+ 		return parent;
+ 	}
+@@ -768,15 +767,7 @@ static inline bool fast_dput(struct dentry *dentry)
+ 	unsigned int d_flags;
+ 
+ 	/*
+-	 * If we have a d_op->d_delete() operation, we sould not
+-	 * let the dentry count go to zero, so use "put_or_lock".
+-	 */
+-	if (unlikely(dentry->d_flags & DCACHE_OP_DELETE))
+-		return lockref_put_or_lock(&dentry->d_lockref);
+-
+-	/*
+-	 * .. otherwise, we can try to just decrement the
+-	 * lockref optimistically.
++	 * try to decrement the lockref optimistically.
+ 	 */
+ 	ret = lockref_put_return(&dentry->d_lockref);
+ 
+@@ -787,8 +778,12 @@ static inline bool fast_dput(struct dentry *dentry)
+ 	 */
+ 	if (unlikely(ret < 0)) {
+ 		spin_lock(&dentry->d_lock);
+-		if (dentry->d_lockref.count > 1) {
+-			dentry->d_lockref.count--;
++		if (WARN_ON_ONCE(dentry->d_lockref.count <= 0)) {
++			spin_unlock(&dentry->d_lock);
++			return true;
++		}
++		dentry->d_lockref.count--;
++		if (dentry->d_lockref.count) {
+ 			spin_unlock(&dentry->d_lock);
+ 			return true;
+ 		}
+@@ -830,7 +825,7 @@ static inline bool fast_dput(struct dentry *dentry)
+ 	 */
+ 	smp_rmb();
+ 	d_flags = READ_ONCE(dentry->d_flags);
+-	d_flags &= DCACHE_REFERENCED | DCACHE_LRU_LIST |
++	d_flags &= DCACHE_REFERENCED | DCACHE_LRU_LIST | DCACHE_OP_DELETE |
+ 			DCACHE_DISCONNECTED | DCACHE_DONTCACHE;
+ 
+ 	/* Nothing to do? Dropping the reference was all we needed? */
+@@ -854,13 +849,6 @@ static inline bool fast_dput(struct dentry *dentry)
+ 		spin_unlock(&dentry->d_lock);
+ 		return true;
+ 	}
+-
+-	/*
+-	 * Re-get the reference we optimistically dropped. We hold the
+-	 * lock, and we just tested that it was zero, so we can just
+-	 * set it to 1.
+-	 */
+-	dentry->d_lockref.count = 1;
+ 	return false;
+ }
+ 
+@@ -903,10 +891,9 @@ void dput(struct dentry *dentry)
+ 		}
+ 
+ 		/* Slow case: now with the dentry lock held */
+-		rcu_read_unlock();
+-
+ 		if (likely(retain_dentry(dentry))) {
+ 			spin_unlock(&dentry->d_lock);
++			rcu_read_unlock();
+ 			return;
+ 		}
+ 
+@@ -918,14 +905,10 @@ EXPORT_SYMBOL(dput);
+ static void __dput_to_list(struct dentry *dentry, struct list_head *list)
+ __must_hold(&dentry->d_lock)
+ {
+-	if (dentry->d_flags & DCACHE_SHRINK_LIST) {
+-		/* let the owner of the list it's on deal with it */
+-		--dentry->d_lockref.count;
+-	} else {
++	if (!(dentry->d_flags & DCACHE_SHRINK_LIST)) {
+ 		if (dentry->d_flags & DCACHE_LRU_LIST)
+ 			d_lru_del(dentry);
+-		if (!--dentry->d_lockref.count)
+-			d_shrink_add(dentry, list);
++		d_shrink_add(dentry, list);
+ 	}
+ }
+ 
+@@ -1191,7 +1174,7 @@ void shrink_dentry_list(struct list_head *list)
+ 		rcu_read_unlock();
+ 		d_shrink_del(dentry);
+ 		parent = dentry->d_parent;
+-		if (parent != dentry)
++		if (parent != dentry && !--parent->d_lockref.count)
+ 			__dput_to_list(parent, list);
+ 		__dentry_kill(dentry);
+ 	}
+@@ -1638,7 +1621,8 @@ void shrink_dcache_parent(struct dentry *parent)
+ 			} else {
+ 				rcu_read_unlock();
+ 				parent = data.victim->d_parent;
+-				if (parent != data.victim)
++				if (parent != data.victim &&
++				    !--parent->d_lockref.count)
+ 					__dput_to_list(parent, &data.dispose);
+ 				__dentry_kill(data.victim);
+ 			}
 
