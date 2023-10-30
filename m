@@ -1,199 +1,171 @@
-Return-Path: <linux-fsdevel+bounces-1522-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1523-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FB167DB2EA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 06:45:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A2327DB2EE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 06:48:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2480B20D54
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 05:45:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CB491F21A32
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 05:48:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2267E1376;
-	Mon, 30 Oct 2023 05:45:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA89D1379;
+	Mon, 30 Oct 2023 05:48:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="kH1PljIw";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="lU/j/+Gs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fkq8yJUc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8026A1362
-	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 05:45:45 +0000 (UTC)
-Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C00D9BC;
-	Sun, 29 Oct 2023 22:45:43 -0700 (PDT)
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-	by mailout.west.internal (Postfix) with ESMTP id 01D4C3200988;
-	Mon, 30 Oct 2023 01:45:41 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Mon, 30 Oct 2023 01:45:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:sender:subject:subject:to:to; s=fm2; t=
-	1698644741; x=1698731141; bh=jaTWG66pDHoMbCEBoC0gkbfu5n/wvjRGKKr
-	6RONugiw=; b=kH1PljIwB4mx8xnaIGjwZChPF+ytCawKcocvOonU1W80TSZWp7A
-	mlndkyy1y+v/Pp5M1Ti83zkcRGcpZEX8qlYgTYvlWUISmO7ywFth8lvMO1TOM1PW
-	ESUBADIRp9beHdJ5/jRCsesd1tHJIl9C2+xvZtsLgEH51g1M0AsnI0UsqfBb+9rM
-	46Cyet41GCFc5y01IQJpT62gHDNEp8coBIY66tx86nQbOxtedlnqHFoWxaKYsW6M
-	7NBSWFS4kgLFziprja2mK1e0I7mfD/w5NfmRN7XI1jp93GE1UVTgUeG3BLSn5Pvd
-	s9F8Tx74suf3yQcN4y6tEb9ZiVtxjAaLvVQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:sender:subject:subject:to:to:x-me-proxy
-	:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1698644741; x=1698731141; bh=jaTWG66pDHoMbCEBoC0gkbfu5n/wvjRGKKr
-	6RONugiw=; b=lU/j/+GsBZjBEEfDrgUzeheIxy92PUsVQwlz9VpHBPNkyGeJuEp
-	Ie4cXb1MwbbxAZXN8YU+ms/igcfooRHZBD/kJqX3qsI3j4GlAs4O6qv8qVOqO9Jf
-	Q7AecRB79YnnBiICaFAAmthF6J1Hs3YGSG3DTxQZtOaAWsGTnI/fdiO2Xjr1wLc8
-	ASaFSONgTCewvWzr2QWqnM1/6YTeGbWt1AaNniaLvZr6NF3BE5EpiDfxGO3XArfY
-	n6vYrs47fmcxnPdnwueK8nerYpL3BgGYFf6euhUHPZFk6Fu0FSaI8Z09EG6Tqiqv
-	Q+Roqn/VyaZwP+74u0rJyQfLkxDneCowbRw==
-X-ME-Sender: <xms:BUM_ZQU51d17FuPrp3ucPlUeWHzV-9uuv0_BgNGCvO6i_zF4oqFTOA>
-    <xme:BUM_ZUnhlTPM7z25YGpWS2ZxZVSSSXtSQZGP2LG53JNy0eCzAf4i3UQ8sXg1U8RiY
-    LCswe_wm2w0>
-X-ME-Received: <xmr:BUM_ZUba5JMOj-Rr6g8_AzLmFqeUQI5LCVNIQ_07XT1UJRs6BHSEAltH0i9SrxeVqscCJI3GDopPxUEVj1eNOSETAJD-d8TO9GyWuPYDpYsGm2SuqB6ZDgve>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrleelgdekkecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefkffggfgfuhffvvehfjggtgfesthekredttdefjeenucfhrhhomhepkfgrnhcu
-    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpe
-    eiveelkefgtdegudefudeftdelteejtedvheeuleevvdeluefhuddtieegveelkeenucev
-    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehrrghvvghnse
-    hthhgvmhgrfidrnhgvth
-X-ME-Proxy: <xmx:BUM_ZfU_98WYEJc-r7pFTctcN3qRayb6W5zTEMzhBM-314_3kPDCCA>
-    <xmx:BUM_Zakd3BUGtYMBT6nyVbxOd4PgwA6e-6PQYWHvE2EeEFTJc7486w>
-    <xmx:BUM_ZUcTEXgs2896m8D2OQJzisVWovqy1u0DVriyrJmn-Z6jqYO-2Q>
-    <xmx:BUM_ZV9DDlqafNvwsJKyNuhtvxWaxOjawSSs8IN8BWocmKLJTS0ikQ>
-Feedback-ID: i31e841b0:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 30 Oct 2023 01:45:35 -0400 (EDT)
-Message-ID: <cbc065c0-1dc3-974f-6e48-483baaf750a3@themaw.net>
-Date: Mon, 30 Oct 2023 13:45:33 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C261366
+	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 05:48:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F175AC433C7;
+	Mon, 30 Oct 2023 05:48:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1698644923;
+	bh=mZcbWdyCAl0Q4TKuX6N13d1SYTzKqVvO0OX4SUagAOM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=fkq8yJUcZAeOKxV/o3XCUvz/IL7LJ/0pQsqZvANby9ZTH3w/FOkco7av0tUtJ4/ub
+	 1w5JDeYyWUV0AzRrlRDIjwLddHxKU0tFMqpKRkLhpU2/Xmc7ccTnUSEtBowonqL0NA
+	 d5OmytxcNaDYzs7dQ0SgflpuXBTmVb4Kgvf2SvSsU11W/qOFpDlc2ouGTfkRcgkbFt
+	 8xuFedbG2OFotR7xsCDPCNb2Sb/ncWRfpOUIyPQCzUiQtrDnm8XRzevbZIEvmw4HqU
+	 W5U1arafBW9JWnePc3jjwvRWpvqPDJ9PE96kynLWrLBt8V6GY8zDxdwyyhqLw4VaoC
+	 H1slbR2zBEQPA==
+User-agent: mu4e 1.8.10; emacs 27.1
+From: Chandan Babu R <chandanbabu@kernel.org>
+To: chandanbabu@kernel.org
+Cc: catherine.hoang@oracle.com,cheng.lin130@zte.com.cn,dan.j.williams@intel.com,dchinner@redhat.com,djwong@kernel.org,hch@lst.de,linux-fsdevel@vger.kernel.org,linux-xfs@vger.kernel.org,osandov@fb.com,ruansy.fnst@fujitsu.com
+Subject: [ANNOUNCE] xfs-linux: for-next updated to 22c2699cb068
+Date: Mon, 30 Oct 2023 11:16:37 +0530
+Message-ID: <87fs1s3bk6.fsf@debian-BULLSEYE-live-builder-AMD64>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v4 2/6] mounts: keep list of mounts in an rbtree
-Content-Language: en-US
-From: Ian Kent <raven@themaw.net>
-To: Miklos Szeredi <mszeredi@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-api@vger.kernel.org, linux-man@vger.kernel.org,
- linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
- David Howells <dhowells@redhat.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <christian@brauner.io>,
- Amir Goldstein <amir73il@gmail.com>, Matthew House
- <mattlloydhouse@gmail.com>, Florian Weimer <fweimer@redhat.com>,
- Arnd Bergmann <arnd@arndb.de>
-References: <20231025140205.3586473-1-mszeredi@redhat.com>
- <20231025140205.3586473-3-mszeredi@redhat.com>
- <b69c1c17-35f9-351e-79a9-ef3ef5481974@themaw.net>
- <CAOssrKe76uZ5t714=Ta7GMLnZdS4QGm-fOfT9q5hNFe1fsDMVg@mail.gmail.com>
- <c938a7d9-aa9e-a3ad-a001-fb9022d21475@themaw.net>
- <dfb5f3d5-8db8-34af-d605-14112e8cc485@themaw.net>
-In-Reply-To: <dfb5f3d5-8db8-34af-d605-14112e8cc485@themaw.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On 30/10/23 13:37, Ian Kent wrote:
-> On 28/10/23 09:36, Ian Kent wrote:
->> On 27/10/23 16:17, Miklos Szeredi wrote:
->>> On Fri, Oct 27, 2023 at 5:12 AM Ian Kent <raven@themaw.net> wrote:
->>>> On 25/10/23 22:02, Miklos Szeredi wrote:
->>>>> The mnt.mnt_list is still used to set up the mount tree and for
->>>>> propagation, but not after the mount has been added to a 
->>>>> namespace.  Hence
->>>>> mnt_list can live in union with rb_node.  Use MNT_ONRB mount flag to
->>>>> validate that the mount is on the correct list.
->>>> Is that accurate, propagation occurs at mount and also at umount.
->>> When propagating a mount, the new mount's mnt_list is used as a head
->>> for the new propagated mounts.  These are then moved to the rb tree by
->>> commit_tree().
->>>
->>> When umounting there's a "to umount" list called tmp_list in
->>> umount_tree(), this list is used to collect direct umounts and then
->>> propagated umounts.  The direct umounts are added in umount_tree(),
->>> the propagated ones umount_one().
->>>
->>> Note: umount_tree() can be called on a not yet finished mount, in that
->>> case the mounts are still on mnt_list, so umount_tree() needs to deal
->>> with both.
->>>
->>>> IDG how the change to umount_one() works, it looks like umount_list()
->>>>
->>>> uses mnt_list. It looks like propagate_umount() is also using 
->>>> mnt_list.
->>>>
->>>>
->>>> Am I missing something obvious?
->>> So when a mount is part of a namespace (either anonymous or not) it is
->>> on the rb tree, when not then it can temporarily be on mnt_list.
->>> MNT_ONRB flag is used to validate that the mount is on the list that
->>> we expect it to be on, but also to detect the case of the mount setup
->>> being aborted.
->>>
->>> We could handle the second case differently, since we should be able
->>> to tell when we are removing the mount from a namespace and when we
->>> are aborting a mount, but this was the least invasive way to do this.
->>
->> Thanks for the explanation, what you've said is essentially what I
->>
->> understood reading the series.
->>
->>
->> But I still haven't quite got this so I'll need to spend more time
->>
->> on this part of the patch series.
->>
->>
->> That's not a problem, ;).
->
-> After cloning your git tree and looking in there I don't see what
->
-> I was concerned about so I think I was confused by obscurity by
->
-> diff rather than seeing a real problem, ;)
->
->
-> Still that union worries me a little bit so I'll keep looking at
->
-> the code for a while.
+Hi folks,
 
-Is fs/namespace.c:iterate_mounts() a problem?
+The for-next branch of the xfs-linux repository at:
 
-It's called from:
+	https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
 
-1) ./kernel/audit_tree.c:709: if (iterate_mounts(compare_root,
-2) ./kernel/audit_tree.c:839:    err = iterate_mounts(tag_mount, tree, mnt);
-3) ./kernel/audit_tree.c:917:        failed = iterate_mounts(tag_mount, 
-tree, tagged);
+has just been updated.
 
+Patches often get missed, so please check if your outstanding patches
+were in this update. If they have not been in this update, please
+resubmit them to linux-xfs@vger.kernel.org so they can be picked up in
+the next update.
 
- From functions 1) audit_trim_trees(), 2) audit_add_tree_rule() and
+The new head of the for-next branch is commit:
 
-3) audit_tag_tree().
+22c2699cb068 mm, pmem, xfs: Introduce MF_MEM_PRE_REMOVE for unbind
 
+47 new commits:
 
->
->
->>
->>
->> Ian
->>
->>>
->>> Thanks,
->>> Miklos
->>>
->>
->
+Catherine Hoang (1):
+      [14a537983b22] xfs: allow read IO and FICLONE to run concurrently
+
+Chandan Babu R (6):
+      [d0e85e79d680] Merge tag 'realtime-fixes-6.7_2023-10-19' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.7-mergeA
+      [3ef52c010973] Merge tag 'clean-up-realtime-units-6.7_2023-10-19' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.7-mergeA
+      [9d4ca5afa604] Merge tag 'refactor-rt-unit-conversions-6.7_2023-10-19' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.7-mergeA
+      [035e32f7524d] Merge tag 'refactor-rtbitmap-macros-6.7_2023-10-19' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.7-mergeA
+      [830b4abfe2de] Merge tag 'refactor-rtbitmap-accessors-6.7_2023-10-19' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.7-mergeA
+      [9fa8753aa1f1] Merge tag 'rtalloc-speedups-6.7_2023-10-19' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.7-mergeA
+
+Cheng Lin (1):
+      [2b99e410b28f] xfs: introduce protection for drop nlink
+
+Christoph Hellwig (1):
+      [35dc55b9e80c] xfs: handle nimaps=0 from xfs_bmapi_write in xfs_alloc_file_space
+
+Darrick J. Wong (30):
+      [948806280594] xfs: bump max fsgeom struct version
+      [6c664484337b] xfs: hoist freeing of rt data fork extent mappings
+      [b73494fa9a30] xfs: prevent rt growfs when quota is enabled
+      [c2988eb5cff7] xfs: rt stubs should return negative errnos when rt disabled
+      [ddd98076d5c0] xfs: fix units conversion error in xfs_bmap_del_extent_delay
+      [f6a2dae2a1f5] xfs: make sure maxlen is still congruent with prod when rounding down
+      [13928113fc5b] xfs: move the xfs_rtbitmap.c declarations to xfs_rtbitmap.h
+      [a684c538bc14] xfs: convert xfs_extlen_t to xfs_rtxlen_t in the rt allocator
+      [fa5a38723086] xfs: create a helper to convert rtextents to rtblocks
+      [03f4de332e2e] xfs: convert rt bitmap/summary block numbers to xfs_fileoff_t
+      [68db60bf01c1] xfs: create a helper to compute leftovers of realtime extents
+      [f29c3e745dc2] xfs: convert rt bitmap extent lengths to xfs_rtbxlen_t
+      [2c2b981b737a] xfs: create a helper to convert extlen to rtextlen
+      [3d2b6d034f0f] xfs: rename xfs_verify_rtext to xfs_verify_rtbext
+      [5dc3a80d46a4] xfs: create helpers to convert rt block numbers to rt extent numbers
+      [2d5f216b77e3] xfs: convert rt extent numbers to xfs_rtxnum_t
+      [055641248f64] xfs: convert do_div calls to xfs_rtb_to_rtx helper calls
+      [5f57f7309d9a] xfs: create rt extent rounding helpers for realtime extent blocks
+      [90d98a6ada1d] xfs: convert the rtbitmap block and bit macros to static inline functions
+      [ef5a83b7e597] xfs: use shifting and masking when converting rt extents, if possible
+      [add3cddaea50] xfs: remove XFS_BLOCKWSIZE and XFS_BLOCKWMASK macros
+      [a9948626849c] xfs: convert open-coded xfs_rtword_t pointer accesses to helper
+      [097b4b7b64ef] xfs: convert rt summary macros to helpers
+      [312d61021b89] xfs: create a helper to handle logging parts of rt bitmap/summary blocks
+      [d0448fe76ac1] xfs: create helpers for rtbitmap block/wordcount computations
+      [97e993830a1c] xfs: use accessor functions for bitmap words
+      [bd85af280de6] xfs: create helpers for rtsummary block/wordcount computations
+      [663b8db7b025] xfs: use accessor functions for summary info words
+      [5b1d0ae9753f] xfs: simplify xfs_rtbuf_get calling conventions
+      [e2cf427c9149] xfs: simplify rt bitmap/summary block accessor functions
+
+Dave Chinner (1):
+      [41f33d82cfd3] xfs: consolidate realtime allocation arguments
+
+Omar Sandoval (6):
+      [e94b53ff699c] xfs: cache last bitmap block in realtime allocator
+      [e23aaf450de7] xfs: invert the realtime summary cache
+      [1b5d63963f98] xfs: return maximum free size from xfs_rtany_summary()
+      [ec5857bf0763] xfs: limit maxlen based on available space in xfs_rtallocate_extent_near()
+      [85fa2c774397] xfs: don't try redundant allocations in xfs_rtallocate_extent_near()
+      [e0f7422f54b0] xfs: don't look for end of extent further than necessary in xfs_rtallocate_extent_near()
+
+Shiyang Ruan (1):
+      [22c2699cb068] mm, pmem, xfs: Introduce MF_MEM_PRE_REMOVE for unbind
+
+Code Diffstat:
+
+ drivers/dax/super.c            |   3 +-
+ fs/xfs/libxfs/xfs_bmap.c       |  45 +++----
+ fs/xfs/libxfs/xfs_format.h     |  34 ++---
+ fs/xfs/libxfs/xfs_rtbitmap.c   | 803 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-----------------------------------------------------
+ fs/xfs/libxfs/xfs_rtbitmap.h   | 383 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/xfs/libxfs/xfs_sb.c         |   2 +
+ fs/xfs/libxfs/xfs_sb.h         |   2 +-
+ fs/xfs/libxfs/xfs_trans_resv.c |  10 +-
+ fs/xfs/libxfs/xfs_types.c      |   4 +-
+ fs/xfs/libxfs/xfs_types.h      |  10 +-
+ fs/xfs/scrub/bmap.c            |   2 +-
+ fs/xfs/scrub/fscounters.c      |   2 +-
+ fs/xfs/scrub/inode.c           |   3 +-
+ fs/xfs/scrub/rtbitmap.c        |  28 ++---
+ fs/xfs/scrub/rtsummary.c       |  72 ++++++-----
+ fs/xfs/scrub/trace.c           |   1 +
+ fs/xfs/scrub/trace.h           |  15 +--
+ fs/xfs/xfs_bmap_util.c         |  74 +++++------
+ fs/xfs/xfs_file.c              |  63 ++++++++--
+ fs/xfs/xfs_fsmap.c             |  15 +--
+ fs/xfs/xfs_inode.c             |  24 ++++
+ fs/xfs/xfs_inode.h             |   9 ++
+ fs/xfs/xfs_inode_item.c        |   3 +-
+ fs/xfs/xfs_ioctl.c             |   5 +-
+ fs/xfs/xfs_linux.h             |  12 ++
+ fs/xfs/xfs_mount.h             |   8 +-
+ fs/xfs/xfs_notify_failure.c    | 108 +++++++++++++++-
+ fs/xfs/xfs_ondisk.h            |   4 +
+ fs/xfs/xfs_reflink.c           |   4 +
+ fs/xfs/xfs_rtalloc.c           | 626 +++++++++++++++++++++++++++++++++++++++++++++----------------------------------------------
+ fs/xfs/xfs_rtalloc.h           |  94 ++------------
+ fs/xfs/xfs_super.c             |   3 +-
+ fs/xfs/xfs_trans.c             |   7 +-
+ include/linux/mm.h             |   1 +
+ mm/memory-failure.c            |  21 +++-
+ 35 files changed, 1547 insertions(+), 953 deletions(-)
+ create mode 100644 fs/xfs/libxfs/xfs_rtbitmap.h
 
