@@ -1,71 +1,71 @@
-Return-Path: <linux-fsdevel+bounces-1564-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1565-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F0A37DBEFE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 18:32:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 711E17DBF06
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 18:34:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A16BD1C20AFF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 17:32:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 718251C20B03
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 17:34:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3C57199BC;
-	Mon, 30 Oct 2023 17:32:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC1F5199B4;
+	Mon, 30 Oct 2023 17:34:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IyYlixsi"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aX7D2XIn"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4A1A199A6
-	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 17:32:00 +0000 (UTC)
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B692E9C
-	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 10:31:58 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B29BE199A5
+	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 17:34:21 +0000 (UTC)
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 755BC9F
+	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 10:34:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1698687117;
+	s=mimecast20190719; t=1698687259;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=3g1TVhpzsOzzHHVoXez8JAaDO7pX06gUTyU2b4+L2DI=;
-	b=IyYlixsiNWlGKrXB5enn4+dorl8uqg2Mts1Q9YjRWfwNiWp6Sk4VVg7Ma30ySQiMb8I0oN
-	T4h9w8/24va4fKDcRUUrG+U6OPg9LAHU8N6z5NHVwvGVcLUgma6HoG0dzruKFBr5mudWm+
-	TRXs3yRjBxxXzgzfYOju046hqrWAbMs=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=5fMqrw+qFhssxj8qhYVvLd8lvq+1o5oZc/SrI7TORTQ=;
+	b=aX7D2XInE3im0lFLJxafHhkRtxARBOstcwsapG6x2d3JTjdZ3VqRgF0QpSfg56C02KacZm
+	pb94k/ApH88eR4CYWHB9oRFIR3J+MFC9TQn4exSyFBvSUT5ZHAh3WI0BQYEa+5TwsVLdAa
+	uL16pDRgM8OREsxchxcUaW0idqhlPcs=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-445-a-SKHrDOOs6iHx6NEzWtlA-1; Mon, 30 Oct 2023 13:31:56 -0400
-X-MC-Unique: a-SKHrDOOs6iHx6NEzWtlA-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4084001846eso35339735e9.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 10:31:56 -0700 (PDT)
+ us-mta-80-g3620N_kPUSJCHIwJXY8eQ-1; Mon, 30 Oct 2023 13:34:17 -0400
+X-MC-Unique: g3620N_kPUSJCHIwJXY8eQ-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-32f7943913aso1204412f8f.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 10:34:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698687115; x=1699291915;
+        d=1e100.net; s=20230601; t=1698687256; x=1699292056;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3g1TVhpzsOzzHHVoXez8JAaDO7pX06gUTyU2b4+L2DI=;
-        b=Ra8rhAlyYvuD259t/RMlUL3rJDBqUUy7F/r2nyXe4S7SCIlBdfS3AB0DI/Ud95XjJU
-         27VTMBe7h4N/9POd0DeWeDKcsEMXEZtB6L9A23vH680BvnKDCD9MUDOEUvr6lqE7ZrdQ
-         I5HLe2Q/qb1OSqIOME2xbYeO/Maa8AnEhGac8+ZzU/ja5ax4a0rWgZtHhGOErn14f/3W
-         PinsoZsBoI2sUFe/+gHLQ+7nenw1mqSM+x9XPupSxQBBK4vcYY7potYWu7QuMicFH5Br
-         DYWnIWK/OYvl59FM/Qy4VfIuRn6lAe8FbTWJQr9j73tuI4ot0SGBtdN/x2nM2dbB9Iqt
-         qwIw==
-X-Gm-Message-State: AOJu0Yy7M0dbuDnC+DqRTkgRAfUBG+yhyLsUOlRZnsc0PSSgH3OgyQa7
-	hZy9HIfutJ2XrlMGD6PHEJ6aj+FXly1V7kl1ZdkzX6ijVrJ9DQqTjmCdOYyTENbjpDHURlMB0hc
-	grZUq7RUvVRET1fOKabAepgrJYQ==
-X-Received: by 2002:a05:600c:3b13:b0:405:3455:567e with SMTP id m19-20020a05600c3b1300b004053455567emr8489628wms.5.1698687115253;
-        Mon, 30 Oct 2023 10:31:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFOw2pwrz3emhHHPGzRcEZaKdyXE5ETYrjkl0hP08/axAOlUIY6MyqVTu78CJe3u248QTKzww==
-X-Received: by 2002:a05:600c:3b13:b0:405:3455:567e with SMTP id m19-20020a05600c3b1300b004053455567emr8489569wms.5.1698687114826;
-        Mon, 30 Oct 2023 10:31:54 -0700 (PDT)
+        bh=5fMqrw+qFhssxj8qhYVvLd8lvq+1o5oZc/SrI7TORTQ=;
+        b=AWlv4hQbuLPaG6WZd+LIqVN98YvWeEGpp0JvH1EZb2jBvnAsqpJFKLdTbjxGwRXZsG
+         oVvdVQPSekxpWBvj0uSjY9JwaNqsLva/8inCIZe+wtnxqVPg7IshtA3KkpUyH8SWRPm/
+         qTVBYjavUmdwqwqxUDRrqqC0qyLLccfcWMG+M9Rchyx2vK1rVuX6Vn3VhYtlqWLxfepz
+         bIufr4HuPUAqTg+aZfZCimB4LyNcxzqe6Pep+06W3duV05tUEryp+y3pxNxag0Ec2Hwn
+         FTQhIQpLsf9ZpzPp/4sxLr7MDkR+Ro6vhq/RuZ2+ZPTugIhZhAQBlJ1pebkBbYZ8zy7x
+         eQpQ==
+X-Gm-Message-State: AOJu0YxruUYT+RgN4AHBPgIb7dCf5PZaVVA8TD0gQN2pbuJgqPlgU6VP
+	9+YsD3aQZEfIw8fwy56KObsVXrI4LMHZUsnmC3Ac/5sPStNGjNNSpFY9lUQLvzpys6CQ+8Uidb4
+	m8s8XieR2v65T+6lw247V8JPq2w==
+X-Received: by 2002:a5d:674c:0:b0:32d:bc7d:c431 with SMTP id l12-20020a5d674c000000b0032dbc7dc431mr8595481wrw.1.1698687256656;
+        Mon, 30 Oct 2023 10:34:16 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGoSwHjCgF60i9p5iHFG+4s/5oKx7xoJBSRpuzoczO/1s/n65Z43CGXqwQnwC+DGZUjQ2L04A==
+X-Received: by 2002:a5d:674c:0:b0:32d:bc7d:c431 with SMTP id l12-20020a5d674c000000b0032dbc7dc431mr8595455wrw.1.1698687256340;
+        Mon, 30 Oct 2023 10:34:16 -0700 (PDT)
 Received: from [192.168.1.174] ([151.81.68.207])
-        by smtp.googlemail.com with ESMTPSA id c5-20020a05600c0a4500b004094d4292aesm449246wmq.18.2023.10.30.10.31.51
+        by smtp.googlemail.com with ESMTPSA id o26-20020a5d58da000000b0032d2489a399sm8695806wrf.49.2023.10.30.10.34.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Oct 2023 10:31:54 -0700 (PDT)
-Message-ID: <0731604e-8692-4c51-9427-78b4c629f9e9@redhat.com>
-Date: Mon, 30 Oct 2023 18:31:50 +0100
+        Mon, 30 Oct 2023 10:34:15 -0700 (PDT)
+Message-ID: <9bc69994-c98f-48e4-b956-08a8d98a6e6d@redhat.com>
+Date: Mon, 30 Oct 2023 18:34:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -73,8 +73,8 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v13 18/35] KVM: x86: "Reset" vcpu->run->exit_reason early
- in KVM_RUN
+Subject: Re: [PATCH v13 22/35] KVM: Allow arch code to track number of memslot
+ address spaces per VM
 Content-Language: en-US
 To: Sean Christopherson <seanjc@google.com>, Marc Zyngier <maz@kernel.org>,
  Oliver Upton <oliver.upton@linux.dev>, Huacai Chen <chenhuacai@kernel.org>,
@@ -105,7 +105,7 @@ Cc: kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  Isaku Yamahata <isaku.yamahata@gmail.com>,
  "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
 References: <20231027182217.3615211-1-seanjc@google.com>
- <20231027182217.3615211-19-seanjc@google.com>
+ <20231027182217.3615211-23-seanjc@google.com>
 From: Paolo Bonzini <pbonzini@redhat.com>
 Autocrypt: addr=pbonzini@redhat.com; keydata=
  xsEhBFRCcBIBDqDGsz4K0zZun3jh+U6Z9wNGLKQ0kSFyjN38gMqU1SfP+TUNQepFHb/Gc0E2
@@ -142,56 +142,20 @@ Autocrypt: addr=pbonzini@redhat.com; keydata=
  JBrdmNZSQDz0iKmSrx8xkoXYfA3bgtFN8WJH2xgFL28XnqY4M6dLhJwV3z08tPSRqYFm4NMP
  dRsn0/7oymhneL8RthIvjDDQ5ktUjMe8LtHr70OZE/TT88qvEdhiIVUogHdo4qBrk41+gGQh
  b906Dudw5YhTJFU3nC6bbF2nrLlB4C/XSiH76ZvqzV0Z/cAMBo5NF/w=
-In-Reply-To: <20231027182217.3615211-19-seanjc@google.com>
+In-Reply-To: <20231027182217.3615211-23-seanjc@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 10/27/23 20:22, Sean Christopherson wrote:
-> Initialize run->exit_reason to KVM_EXIT_UNKNOWN early in KVM_RUN to reduce
-> the probability of exiting to userspace with a stale run->exit_reason that
-> *appears* to be valid.
+> Let x86 track the number of address spaces on a per-VM basis so that KVM
+> can disallow SMM memslots for confidential VMs.  Confidentials VMs are
+> fundamentally incompatible with emulating SMM, which as the name suggests
+> requires being able to read and write guest memory and register state.
 > 
-> To support fd-based guest memory (guest memory without a corresponding
-> userspace virtual address), KVM will exit to userspace for various memory
-> related errors, which userspace *may* be able to resolve, instead of using
-> e.g. BUS_MCEERR_AR.  And in the more distant future, KVM will also likely
-> utilize the same functionality to let userspace "intercept" and handle
-> memory faults when the userspace mapping is missing, i.e. when fast gup()
-> fails.
-> 
-> Because many of KVM's internal APIs related to guest memory use '0' to
-> indicate "success, continue on" and not "exit to userspace", reporting
-> memory faults/errors to userspace will set run->exit_reason and
-> corresponding fields in the run structure fields in conjunction with a
-> a non-zero, negative return code, e.g. -EFAULT or -EHWPOISON.  And because
-> KVM already returns  -EFAULT in many paths, there's a relatively high
-> probability that KVM could return -EFAULT without setting run->exit_reason,
-> in which case reporting KVM_EXIT_UNKNOWN is much better than reporting
-> whatever exit reason happened to be in the run structure.
-> 
-> Note, KVM must wait until after run->immediate_exit is serviced to
-> sanitize run->exit_reason as KVM's ABI is that run->exit_reason is
-> preserved across KVM_RUN when run->immediate_exit is true.
-> 
-> Link: https://lore.kernel.org/all/20230908222905.1321305-1-amoorthy@google.com
-> Link: https://lore.kernel.org/all/ZFFbwOXZ5uI%2Fgdaf@google.com
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->   arch/x86/kvm/x86.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index ee3cd8c3c0ef..f41dbb1465a0 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -10963,6 +10963,7 @@ static int vcpu_run(struct kvm_vcpu *vcpu)
->   {
->   	int r;
->   
-> +	vcpu->run->exit_reason = KVM_EXIT_UNKNOWN;
->   	vcpu->arch.l1tf_flush_l1d = true;
->   
->   	for (;;) {
+> Disallowing SMM will simplify support for guest private memory, as KVM
+> will not need to worry about tracking memory attributes for multiple
+> address spaces (SMM is the only "non-default" address space across all
+> architectures).
 
 Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
 
