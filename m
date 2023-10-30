@@ -1,123 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-1532-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1533-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9FF37DB5C2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 10:06:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 879FC7DB5F0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 10:14:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75627281584
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 09:06:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40E5D281510
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 09:14:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B978FD52C;
-	Mon, 30 Oct 2023 09:06:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AggfYkFE"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB219D52A;
+	Mon, 30 Oct 2023 09:14:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB0FBD51B
-	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 09:06:36 +0000 (UTC)
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C59FBD
-	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 02:06:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1698656792;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=y0atX0+sSSXblFLFWLmbV5ArNow5LoKvzRBMtZdLmQk=;
-	b=AggfYkFE20GlBuawllO5ZB4I+LKFFFKPUq/NF+GXc8I5i5f9pi830IdWMZAtciqApXaA5m
-	ea9OBsgIlQdJBUf0lRMJV6FOXrHfsSXQZbdPdUvowt4SptHRtcfKrvZuDoGQ8y2RERIHxI
-	g3heZGPXu2M34kFdfexJwPBeSFAhmR0=
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com
- [209.85.210.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-101-PL0Vi1NwPTK_C4ce4EVK2w-1; Mon, 30 Oct 2023 05:06:30 -0400
-X-MC-Unique: PL0Vi1NwPTK_C4ce4EVK2w-1
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-6b9af7d41c6so2922744b3a.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 02:06:30 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D749BD50F
+	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 09:14:25 +0000 (UTC)
+Received: from mail-oa1-f72.google.com (mail-oa1-f72.google.com [209.85.160.72])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CBE4B7
+	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 02:14:24 -0700 (PDT)
+Received: by mail-oa1-f72.google.com with SMTP id 586e51a60fabf-1e9bc53c828so5884454fac.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 02:14:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698656789; x=1699261589;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=y0atX0+sSSXblFLFWLmbV5ArNow5LoKvzRBMtZdLmQk=;
-        b=Rvx+RGEQy9h6VHOQEF+dbpU3MLd0XdcPRgmQXSkVa/MG7cH0u/+gNZ2OpY1k7j0t2p
-         6lBRiepbYFeUuVzInFxWQTQ6mogbwF56urSpdiVozDEBH3ijdyVWsxgeDgc4tnA0VXxc
-         HLKeShNq2HVhdvviMquY68Ytq3VtM9RPEmeOi4V9b7mS8Gg2Z8QxS4+1VjSgZ7I8JOse
-         10ZtEdvp0QgOZMcPag3RPEZeqPedvfXpU94Zu027rTNgx3igh27bS9US1HQTMFPGi0UB
-         VZ6bAjqcQ7v03ScMqAGe7yOM09QDkRAbq+cyQqml4JGCkz9b+mQVu0YGr1LxfVsh49Yh
-         uPNQ==
-X-Gm-Message-State: AOJu0YwMCNEjsOhnjDZ3wQB/fU2Lm5F7Melv5ocRyZgsCdEfxfaZhac/
-	+BBqYIPGBpyKnCEMX7vvs/4hLdHt/ujYOkAZ6aKmCpCxapA1ayahofFfSPZR96KyjqhJ/ZBN8wR
-	MTTuCn2fLhuRpKmK6VMFJF+ptlaRbua/WuUasK0fHxMO9l7kidQ==
-X-Received: by 2002:a05:6a20:7d8a:b0:171:a8bc:74b2 with SMTP id v10-20020a056a207d8a00b00171a8bc74b2mr8574557pzj.7.1698656789545;
-        Mon, 30 Oct 2023 02:06:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGgI6VSfuoAE2RQro4OApKzTh51pBH7xn4E0oXjcNFufoZcmb5hUYyAZ9Iwz2uBJUgmSjdLrxau1bmihHZXQhg=
-X-Received: by 2002:a05:6a20:7d8a:b0:171:a8bc:74b2 with SMTP id
- v10-20020a056a207d8a00b00171a8bc74b2mr8574537pzj.7.1698656789216; Mon, 30 Oct
- 2023 02:06:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1698657263; x=1699262063;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=s/k6fj1Ok8H4018rsNJPpbDdWyWJ9Da6bFp5MK6zEd0=;
+        b=Zq2j4pz0NeWK6kKO2yH7xU8hMw1VgcgtXED80aZ8JDMOjW8HbH1SyD3/t2UvFxgo75
+         Ua61r4IicsA3NiHrJVSyErTlPWJoA7qclyq9Hgfk1OGvf2nanLvG3vgvr7bmJ7571pMS
+         W80mVawxhOE5ba+eKNTdbA/jKR60Appub+CtipdwTtNLayr5mUz0+er5qop1ZDz86cfs
+         UcFayichUgHDdkim5mHKBBMa5M9fE/37faKHdLD7if1XANb+X8RUDf/rEqjJ9X0dzTQJ
+         G1ZZRTQd2HZz8LBYba6lra7D9QnuDLWN2Aay3K8Onh8YRUS8PmP68XJZ8q+u9r69AfkL
+         fRAA==
+X-Gm-Message-State: AOJu0YzwDrlvTwF2+OUTpDEdv0vgWZnjvs10K+2hB/vJqWG/uSg41/So
+	vssbRrBYHT91IsCMC401yZQuaUdCaAvbC2MJ2veLz4Nuw8Te
+X-Google-Smtp-Source: AGHT+IGE0btxkEZJc7G/ff5dsBp090bjfC7wm7KwjEEeCTuNrZxMd2sit07dd2293WA7LTouUuT+diLd14C4L6e4bupeQirX6Tot
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231025140205.3586473-1-mszeredi@redhat.com> <20231025140205.3586473-3-mszeredi@redhat.com>
- <b69c1c17-35f9-351e-79a9-ef3ef5481974@themaw.net> <CAOssrKe76uZ5t714=Ta7GMLnZdS4QGm-fOfT9q5hNFe1fsDMVg@mail.gmail.com>
- <c938a7d9-aa9e-a3ad-a001-fb9022d21475@themaw.net> <dfb5f3d5-8db8-34af-d605-14112e8cc485@themaw.net>
- <cbc065c0-1dc3-974f-6e48-483baaf750a3@themaw.net>
-In-Reply-To: <cbc065c0-1dc3-974f-6e48-483baaf750a3@themaw.net>
-From: Miklos Szeredi <mszeredi@redhat.com>
-Date: Mon, 30 Oct 2023 10:06:18 +0100
-Message-ID: <CAOssrKdvTrPbnicFTiCiMNhKfdfwFEv4r_y1JeEe+H5V6LpkKg@mail.gmail.com>
-Subject: Re: [PATCH v4 2/6] mounts: keep list of mounts in an rbtree
-To: Ian Kent <raven@themaw.net>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-api@vger.kernel.org, linux-man@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>, 
-	David Howells <dhowells@redhat.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <christian@brauner.io>, 
-	Amir Goldstein <amir73il@gmail.com>, Matthew House <mattlloydhouse@gmail.com>, 
-	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>
+X-Received: by 2002:a05:6870:a2cf:b0:1e1:2f43:1dc6 with SMTP id
+ w15-20020a056870a2cf00b001e12f431dc6mr4767635oak.1.1698657263401; Mon, 30 Oct
+ 2023 02:14:23 -0700 (PDT)
+Date: Mon, 30 Oct 2023 02:14:23 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c7c3760608eb7633@google.com>
+Subject: [syzbot] Monthly kernfs report (Oct 2023)
+From: syzbot <syzbot+list13d3fa5604b774fe7d5f@syzkaller.appspotmail.com>
+To: gregkh@linuxfoundation.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tj@kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 30, 2023 at 6:45=E2=80=AFAM Ian Kent <raven@themaw.net> wrote:
+Hello kernfs maintainers/developers,
 
-> Is fs/namespace.c:iterate_mounts() a problem?
->
-> It's called from:
->
-> 1) ./kernel/audit_tree.c:709: if (iterate_mounts(compare_root,
-> 2) ./kernel/audit_tree.c:839:    err =3D iterate_mounts(tag_mount, tree, =
-mnt);
-> 3) ./kernel/audit_tree.c:917:        failed =3D iterate_mounts(tag_mount,
-> tree, tagged);
->
->
->  From functions 1) audit_trim_trees(), 2) audit_add_tree_rule() and
->
-> 3) audit_tag_tree().
+This is a 31-day syzbot report for the kernfs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/kernfs
 
-So that interface works like this:
+During the period, 0 new issues were detected and 0 were fixed.
+In total, 7 issues are still open and 20 have been fixed so far.
 
- - collect_mounts() creates a temporary copy of a mount tree, mounts
-are chained on mnt_list.
+Some of the still happening issues:
 
- - iterate_mounts() is used to do some work on the temporary tree
+Ref Crashes Repro Title
+<1> 168     Yes   WARNING in kernfs_remove_by_name_ns (3)
+                  https://syzkaller.appspot.com/bug?extid=93cbdd0ab421adc5275d
+<2> 47      Yes   KASAN: use-after-free Read in kernfs_next_descendant_post (2)
+                  https://syzkaller.appspot.com/bug?extid=6bc35f3913193fe7f0d3
+<3> 19      No    possible deadlock in lookup_slow (3)
+                  https://syzkaller.appspot.com/bug?extid=65459fd3b61877d717a3
 
- - drop_collected_mounts() frees the temporary tree
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-These mounts are never installed in a namespace.  My guess is that a
-private copy is used instead of the original mount tree to prevent
-races.
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
-Thanks,
-Miklos
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
 
+You may send multiple commands in a single email message.
 
