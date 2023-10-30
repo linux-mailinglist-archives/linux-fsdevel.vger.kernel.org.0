@@ -1,171 +1,178 @@
-Return-Path: <linux-fsdevel+bounces-1523-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1524-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A2327DB2EE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 06:48:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A93F87DB2F7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 06:50:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CB491F21A32
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 05:48:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 372B71F21A57
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 05:50:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA89D1379;
-	Mon, 30 Oct 2023 05:48:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fkq8yJUc"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35C911866;
+	Mon, 30 Oct 2023 05:50:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C261366
-	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 05:48:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F175AC433C7;
-	Mon, 30 Oct 2023 05:48:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1698644923;
-	bh=mZcbWdyCAl0Q4TKuX6N13d1SYTzKqVvO0OX4SUagAOM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=fkq8yJUcZAeOKxV/o3XCUvz/IL7LJ/0pQsqZvANby9ZTH3w/FOkco7av0tUtJ4/ub
-	 1w5JDeYyWUV0AzRrlRDIjwLddHxKU0tFMqpKRkLhpU2/Xmc7ccTnUSEtBowonqL0NA
-	 d5OmytxcNaDYzs7dQ0SgflpuXBTmVb4Kgvf2SvSsU11W/qOFpDlc2ouGTfkRcgkbFt
-	 8xuFedbG2OFotR7xsCDPCNb2Sb/ncWRfpOUIyPQCzUiQtrDnm8XRzevbZIEvmw4HqU
-	 W5U1arafBW9JWnePc3jjwvRWpvqPDJ9PE96kynLWrLBt8V6GY8zDxdwyyhqLw4VaoC
-	 H1slbR2zBEQPA==
-User-agent: mu4e 1.8.10; emacs 27.1
-From: Chandan Babu R <chandanbabu@kernel.org>
-To: chandanbabu@kernel.org
-Cc: catherine.hoang@oracle.com,cheng.lin130@zte.com.cn,dan.j.williams@intel.com,dchinner@redhat.com,djwong@kernel.org,hch@lst.de,linux-fsdevel@vger.kernel.org,linux-xfs@vger.kernel.org,osandov@fb.com,ruansy.fnst@fujitsu.com
-Subject: [ANNOUNCE] xfs-linux: for-next updated to 22c2699cb068
-Date: Mon, 30 Oct 2023 11:16:37 +0530
-Message-ID: <87fs1s3bk6.fsf@debian-BULLSEYE-live-builder-AMD64>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB6915D5
+	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 05:50:48 +0000 (UTC)
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05olkn2093.outbound.protection.outlook.com [40.92.89.93])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F5D0BD;
+	Sun, 29 Oct 2023 22:50:45 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=UOEmX6LvXdfCsU6fkRTwY63qiDAvQjWxepYojkoN7Pz1SHqgAOkLvDRnxguHQ0b3D2tgG3sloqiNG/F4urzPOwQQBciXAwkMswe2R6xqCIowpHZ1dVk+Mhu6WaSscE1SqNy+rIkwbpaGrOZ0uyf5dtxcRiOMXd6Yp3m58xeoVAXQ7kUprQfmhWs77Swu5rm1Uav3RzPS/D70jLvMf0A5tzoPW8V6OdfkNSn6JncXt1Q0AI3WmdLil0d3go88npz/JkrlOg8Xe42NDSv43bwPjz20B5qRzo+x3rDayKyfA/T5IYy85/EQKVrWFns7K2/W6jN17lIx/DlBaPIGF/rdew==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SYqA4IctbEkQT2KQ80rUDUKN8ziquz6/k+wW9c3GqA8=;
+ b=kSKQy93T4lnhy7xLL9lUKxkP/8MnEL4f0kPTheHzEQaHxqsdEIVmJvGDI7jDbGzRYZxqey6exOImZbfv8ArpmBGrZpfCepWJaSE+A0K0oySpN10D+bI+Z3BkTgnID5M+ltHzwQA5xeYGuf4xLfVkbG3u/DoT6ENPd776ds6hc5xIE3Ohw7VrpEKdHHCdSG6Vub70dO/443a9z947CHCu3aFaeceFwZSppIFKbM3CPVImJYWbe/AltDq2/rpXdVTJEu207szgLRi7zcth5HLXq9gHedBGQFifpxzF39gGr7k/nI6oJNYLt4jhojR7JKXLoD+r+9y+fN7IUf/6nJjyug==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+Received: from AS8P193MB1285.EURP193.PROD.OUTLOOK.COM (2603:10a6:20b:333::21)
+ by DB9P193MB1580.EURP193.PROD.OUTLOOK.COM (2603:10a6:10:2a5::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6933.26; Mon, 30 Oct
+ 2023 05:50:43 +0000
+Received: from AS8P193MB1285.EURP193.PROD.OUTLOOK.COM
+ ([fe80::b89e:5e18:1a08:409d]) by AS8P193MB1285.EURP193.PROD.OUTLOOK.COM
+ ([fe80::b89e:5e18:1a08:409d%6]) with mapi id 15.20.6933.027; Mon, 30 Oct 2023
+ 05:50:43 +0000
+Message-ID:
+ <AS8P193MB12857C4E9B8C7EEEA2506AF7E4A1A@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+Date: Mon, 30 Oct 2023 06:50:54 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Fix error handling in begin_new_exec
+Content-Language: en-US
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+ Kees Cook <keescook@chromium.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Christian Brauner <brauner@kernel.org>, linux-mm@kvack.org
+References: <AM8PR10MB47081071E64EAAB343196D5AE4399@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+ <87mts2kcrm.fsf@disp2133>
+From: Bernd Edlinger <bernd.edlinger@hotmail.de>
+In-Reply-To: <87mts2kcrm.fsf@disp2133>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TMN: [xmh7MVs1REkPjFB03ZFK1+1FxwbX7Jb9/ycdXtifm1V9gLtwxgGYXm0+4jr4W3u5]
+X-ClientProxiedBy: FR0P281CA0244.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:af::13) To AS8P193MB1285.EURP193.PROD.OUTLOOK.COM
+ (2603:10a6:20b:333::21)
+X-Microsoft-Original-Message-ID:
+ <d3b7f4c0-bb4d-45b4-8f43-70b9014ed5de@hotmail.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8P193MB1285:EE_|DB9P193MB1580:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7c5e6e80-2dea-405a-6754-08dbd90c275c
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	DmUd6cpr80h4kbg1MB4UUGzVPhP3NdIUaakqDVbiDs4tV1Xe4SjnoneUHJY8AGIPwoXYoaON2oSokXUUPtEQwiN7ExJzMA+jRgL1UtUAZ1i5CGf3Mb5iFnfhFos6q5wnQZD1MngY+JSy9BuxZdJXZXfhnRWcTqQzzxy0J/QIdZ+mNdQEOhV+mLzfN8I6SpNd0s6/eOT5Pa7HqjchJQH0Cp8CzHyMRyvdxzha5NLwD7p7a3x9FC2xnMNfegUXtly2yGEnkg2Xzo8IYHL2WxlqCHzntZCS113I61I1dTT9DlA36VeoSRrKwUTCBd8UInBee+ehbssWpIQ2JoWQ/7TT1pqy+GxJHEBkvjgrUe6pL7OUS7dwuGOYdvQYPQIELhLya8CRUCV6zKrPka4279XR4JEk5biXsojM26GX6qXFDSx2aUnOLD8N48fEsQpNrpusPSWD1nF4PSiwPwwR9scco6iU6NHKw9ew4uPpNjs8fVrVGO3hKHc2d7QIEg3pnFhbW5kUcZSXxD2g0RqTgDu46Z4w42cYHiwkKUOD2MYGCAgNyU94Sm4hv9F5e4MVXgmR
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dWM4K0QzWWFqbURMS0l3bGl6VzNGTUUvdG96Y2hVaDZQazJvcVI0dHIrdERN?=
+ =?utf-8?B?UTlMOTNOTWVkOW9wVXlkakgydTVsV25heFY0TmIzT0htWGVCaU8xYWlpMzI3?=
+ =?utf-8?B?YjMrUjFXSnh6UVQ2U0VHZ1VUVVMrQ1B5QndhYW1HWithMVRJVkZqUDlqR2FP?=
+ =?utf-8?B?emVTNGx1ajBXeFZ5RUhpV2Q3YnQrbU1PWnF4OEF0VlhvMHlOeXIyYnJ1aDRL?=
+ =?utf-8?B?cXlyckpQWlhaelFvSUowSE9yczNlMnlPWkV3OTRrdGJqbUpSbGVCL0Joa2g4?=
+ =?utf-8?B?UEdJR3VzZXlmZHVXdm92NE1pbSsvRlhTcHJoUGVhTTE3d21BdTRzakpvQWs3?=
+ =?utf-8?B?SkdIRFdkeE0rK1pSM2xYVnphQ3FkNXBMa2w3L3FzaURGVVA2blZpNGFIOUd6?=
+ =?utf-8?B?am9wbjNzVEJ2amhBeEVjbTVnS2M3c0ZVVkxYa29IVmd3bHRtbjAwR0kzT1J6?=
+ =?utf-8?B?TjJVTkp6UnZRdTA4dDVmaUdyMVVBUnIvOTRreXVjMGVwcmtKSlJjZ3RmVnd1?=
+ =?utf-8?B?MmhRakI3UWp1UFNGQTZka081ZDFGR0xCTHBQSGFsTlcrUWFTbDJ6N0JkMThM?=
+ =?utf-8?B?WFlUNzdGQXFvUkVRWGVtc0tyUCs2N3RScGtrTkxKSHlOV3ltdnR1ZTlLRHI3?=
+ =?utf-8?B?WFdMSnBWYkdhQUJ5dDBQWG5yTmUzZTNtaDU1Rno4SzZuMVBGbkFlMjVsS1NG?=
+ =?utf-8?B?ZHYzbXpBM3RGczVCaktqY2JVekt4UEF2TlRYU0JCN1dDdU5rU0pGaTBhWnUw?=
+ =?utf-8?B?dkhlRzlUUjRhWjNLVUlySzZwYXJKMGNKUTF0WERzcmNIMk9YQWNEOGpyVVNO?=
+ =?utf-8?B?bnBpM1NndlEyUVBuaDUvMWk1UFhNZDRMYUZCRDBGUHlCbmNuSEpBcCtqa3dU?=
+ =?utf-8?B?MlE2VXVaTVFTdVBLM01HQkUwVkNWNEpHQUplS0h1UmtGSUd5TVFqQUExdkc0?=
+ =?utf-8?B?Sjd0VENvS3poSEh5V0FReGFaVG9rcEhFVDhlODNrR0I3cFhDUS80a0FFb1gr?=
+ =?utf-8?B?MmlMdzEwRm5MaER4OXlGamkxdlVhSHhQWlZCV251WkFJMHRjQ2djbHdIcjc2?=
+ =?utf-8?B?WUxMZDErdEFDSWtvaVMwN3dXSVppMVJFRWFmMlAyRjFob0dXdXhJanVJMmRi?=
+ =?utf-8?B?NGhmWGZPTDFuNFNRVHA4YnJYR1ZVdWwwQkhyZTNHeHVWVUkxcDMyd1JRanV2?=
+ =?utf-8?B?Q3lBdE9VbmlJalk4cGpKSzN4eEN2VkpScktUTTVYcFBsbWQ2a2lJWUJHNTd6?=
+ =?utf-8?B?cjMxV0EzaXpZK1drcVV2R1J1WTJCVGtRS0RkRmhMY0d4ZTdKTm9WUDIrUUV3?=
+ =?utf-8?B?YTZIZnNYUlZoZ2VGVnU4c0ZrSUlWL2JCQ2lDWGpuZmM1MzI3cml5cU9yVHdT?=
+ =?utf-8?B?bnpManBVcFhMWG8yZTYzdkl4UGpTa3NzMmpyWExGMk9BN3hhVCtoeEQzOG8w?=
+ =?utf-8?B?VkhlTFBwRTl5N1BtVW9kbFJacnBMWnkzY2wxb3pwTFhaVGx2K0xMWXA5bUZW?=
+ =?utf-8?B?TjVwdnJrRXZQa2JscG5lUjBudVprL1N1MXBKMHF1STFFS29tVmxycmhjVlJP?=
+ =?utf-8?B?cFVXWjk2eFgwa2VZcEJJb1h6aEl3aE1XenVNZ1hHVC9JemhBMUZQWi92aVNv?=
+ =?utf-8?B?SVByckU0akVMd3FaV3ZFMmV6NW51b1MrcHdSQmExU2JQWmJ4eExOY3l5L1Vw?=
+ =?utf-8?B?QXRuZi8rMytzVXF5YmlQSDN5WjdEc29RYmp2YnhLcjFlWHZRcVljcnU5eHJU?=
+ =?utf-8?Q?iBnaKAxl8Zekgihwjg=3D?=
+X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-80ceb.templateTenant
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7c5e6e80-2dea-405a-6754-08dbd90c275c
+X-MS-Exchange-CrossTenant-AuthSource: AS8P193MB1285.EURP193.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2023 05:50:42.9661
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9P193MB1580
 
-Hi folks,
+Ping...
 
-The for-next branch of the xfs-linux repository at:
+On 6/6/21 21:34, Eric W. Biederman wrote:
+> Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
+> 
+>> If get_unused_fd_flags() fails, the error handling is incomplete
+>> because bprm->cred is already set to NULL, and therefore
+>> free_bprm will not unlock the cred_guard_mutex.
+>> Note there are two error conditions which end up here,
+>> one before and one after bprm->cred is cleared.
+> 
+> Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
+> 
+> Yuck.  I wonder if there is a less error prone idiom we could be using
+> here than testing bprm->cred in free_bprm.  Especially as this lock is
+> expected to stay held through setup_new_exec.
+> 
+> Something feels too clever here.
+> 
+>> Fixes: b8a61c9e7b4 ("exec: Generic execfd support")
 
-	https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
+Note, ./scripts/checkpatch.pl complains about the too
+short commit hash here, I overlooked that previously: 
+WARNING: Please use correct Fixes: style 'Fixes: <12 chars of sha1> ("<title line>")'
+ - ie: 'Fixes: b8a61c9e7b4a ("exec: Generic execfd support")'
 
-has just been updated.
+Could you please fix that before merging,
+the correct Fixes reference would be:
+Fixes: b8a61c9e7b4a ("exec: Generic execfd support")
 
-Patches often get missed, so please check if your outstanding patches
-were in this update. If they have not been in this update, please
-resubmit them to linux-xfs@vger.kernel.org so they can be picked up in
-the next update.
 
-The new head of the for-next branch is commit:
+Thanks
+Bernd.
 
-22c2699cb068 mm, pmem, xfs: Introduce MF_MEM_PRE_REMOVE for unbind
-
-47 new commits:
-
-Catherine Hoang (1):
-      [14a537983b22] xfs: allow read IO and FICLONE to run concurrently
-
-Chandan Babu R (6):
-      [d0e85e79d680] Merge tag 'realtime-fixes-6.7_2023-10-19' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.7-mergeA
-      [3ef52c010973] Merge tag 'clean-up-realtime-units-6.7_2023-10-19' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.7-mergeA
-      [9d4ca5afa604] Merge tag 'refactor-rt-unit-conversions-6.7_2023-10-19' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.7-mergeA
-      [035e32f7524d] Merge tag 'refactor-rtbitmap-macros-6.7_2023-10-19' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.7-mergeA
-      [830b4abfe2de] Merge tag 'refactor-rtbitmap-accessors-6.7_2023-10-19' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.7-mergeA
-      [9fa8753aa1f1] Merge tag 'rtalloc-speedups-6.7_2023-10-19' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.7-mergeA
-
-Cheng Lin (1):
-      [2b99e410b28f] xfs: introduce protection for drop nlink
-
-Christoph Hellwig (1):
-      [35dc55b9e80c] xfs: handle nimaps=0 from xfs_bmapi_write in xfs_alloc_file_space
-
-Darrick J. Wong (30):
-      [948806280594] xfs: bump max fsgeom struct version
-      [6c664484337b] xfs: hoist freeing of rt data fork extent mappings
-      [b73494fa9a30] xfs: prevent rt growfs when quota is enabled
-      [c2988eb5cff7] xfs: rt stubs should return negative errnos when rt disabled
-      [ddd98076d5c0] xfs: fix units conversion error in xfs_bmap_del_extent_delay
-      [f6a2dae2a1f5] xfs: make sure maxlen is still congruent with prod when rounding down
-      [13928113fc5b] xfs: move the xfs_rtbitmap.c declarations to xfs_rtbitmap.h
-      [a684c538bc14] xfs: convert xfs_extlen_t to xfs_rtxlen_t in the rt allocator
-      [fa5a38723086] xfs: create a helper to convert rtextents to rtblocks
-      [03f4de332e2e] xfs: convert rt bitmap/summary block numbers to xfs_fileoff_t
-      [68db60bf01c1] xfs: create a helper to compute leftovers of realtime extents
-      [f29c3e745dc2] xfs: convert rt bitmap extent lengths to xfs_rtbxlen_t
-      [2c2b981b737a] xfs: create a helper to convert extlen to rtextlen
-      [3d2b6d034f0f] xfs: rename xfs_verify_rtext to xfs_verify_rtbext
-      [5dc3a80d46a4] xfs: create helpers to convert rt block numbers to rt extent numbers
-      [2d5f216b77e3] xfs: convert rt extent numbers to xfs_rtxnum_t
-      [055641248f64] xfs: convert do_div calls to xfs_rtb_to_rtx helper calls
-      [5f57f7309d9a] xfs: create rt extent rounding helpers for realtime extent blocks
-      [90d98a6ada1d] xfs: convert the rtbitmap block and bit macros to static inline functions
-      [ef5a83b7e597] xfs: use shifting and masking when converting rt extents, if possible
-      [add3cddaea50] xfs: remove XFS_BLOCKWSIZE and XFS_BLOCKWMASK macros
-      [a9948626849c] xfs: convert open-coded xfs_rtword_t pointer accesses to helper
-      [097b4b7b64ef] xfs: convert rt summary macros to helpers
-      [312d61021b89] xfs: create a helper to handle logging parts of rt bitmap/summary blocks
-      [d0448fe76ac1] xfs: create helpers for rtbitmap block/wordcount computations
-      [97e993830a1c] xfs: use accessor functions for bitmap words
-      [bd85af280de6] xfs: create helpers for rtsummary block/wordcount computations
-      [663b8db7b025] xfs: use accessor functions for summary info words
-      [5b1d0ae9753f] xfs: simplify xfs_rtbuf_get calling conventions
-      [e2cf427c9149] xfs: simplify rt bitmap/summary block accessor functions
-
-Dave Chinner (1):
-      [41f33d82cfd3] xfs: consolidate realtime allocation arguments
-
-Omar Sandoval (6):
-      [e94b53ff699c] xfs: cache last bitmap block in realtime allocator
-      [e23aaf450de7] xfs: invert the realtime summary cache
-      [1b5d63963f98] xfs: return maximum free size from xfs_rtany_summary()
-      [ec5857bf0763] xfs: limit maxlen based on available space in xfs_rtallocate_extent_near()
-      [85fa2c774397] xfs: don't try redundant allocations in xfs_rtallocate_extent_near()
-      [e0f7422f54b0] xfs: don't look for end of extent further than necessary in xfs_rtallocate_extent_near()
-
-Shiyang Ruan (1):
-      [22c2699cb068] mm, pmem, xfs: Introduce MF_MEM_PRE_REMOVE for unbind
-
-Code Diffstat:
-
- drivers/dax/super.c            |   3 +-
- fs/xfs/libxfs/xfs_bmap.c       |  45 +++----
- fs/xfs/libxfs/xfs_format.h     |  34 ++---
- fs/xfs/libxfs/xfs_rtbitmap.c   | 803 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-----------------------------------------------------
- fs/xfs/libxfs/xfs_rtbitmap.h   | 383 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- fs/xfs/libxfs/xfs_sb.c         |   2 +
- fs/xfs/libxfs/xfs_sb.h         |   2 +-
- fs/xfs/libxfs/xfs_trans_resv.c |  10 +-
- fs/xfs/libxfs/xfs_types.c      |   4 +-
- fs/xfs/libxfs/xfs_types.h      |  10 +-
- fs/xfs/scrub/bmap.c            |   2 +-
- fs/xfs/scrub/fscounters.c      |   2 +-
- fs/xfs/scrub/inode.c           |   3 +-
- fs/xfs/scrub/rtbitmap.c        |  28 ++---
- fs/xfs/scrub/rtsummary.c       |  72 ++++++-----
- fs/xfs/scrub/trace.c           |   1 +
- fs/xfs/scrub/trace.h           |  15 +--
- fs/xfs/xfs_bmap_util.c         |  74 +++++------
- fs/xfs/xfs_file.c              |  63 ++++++++--
- fs/xfs/xfs_fsmap.c             |  15 +--
- fs/xfs/xfs_inode.c             |  24 ++++
- fs/xfs/xfs_inode.h             |   9 ++
- fs/xfs/xfs_inode_item.c        |   3 +-
- fs/xfs/xfs_ioctl.c             |   5 +-
- fs/xfs/xfs_linux.h             |  12 ++
- fs/xfs/xfs_mount.h             |   8 +-
- fs/xfs/xfs_notify_failure.c    | 108 +++++++++++++++-
- fs/xfs/xfs_ondisk.h            |   4 +
- fs/xfs/xfs_reflink.c           |   4 +
- fs/xfs/xfs_rtalloc.c           | 626 +++++++++++++++++++++++++++++++++++++++++++++----------------------------------------------
- fs/xfs/xfs_rtalloc.h           |  94 ++------------
- fs/xfs/xfs_super.c             |   3 +-
- fs/xfs/xfs_trans.c             |   7 +-
- include/linux/mm.h             |   1 +
- mm/memory-failure.c            |  21 +++-
- 35 files changed, 1547 insertions(+), 953 deletions(-)
- create mode 100644 fs/xfs/libxfs/xfs_rtbitmap.h
+>>
+>> Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
+>> ---
+>>  fs/exec.c | 3 +++
+>>  1 file changed, 3 insertions(+)
+>>
+>> diff --git a/fs/exec.c b/fs/exec.c
+>> index 18594f1..d8af85f 100644
+>> --- a/fs/exec.c
+>> +++ b/fs/exec.c
+>> @@ -1396,6 +1396,9 @@ int begin_new_exec(struct linux_binprm * bprm)
+>>  
+>>  out_unlock:
+>>  	up_write(&me->signal->exec_update_lock);
+>> +	if (!bprm->cred)
+>> +		mutex_unlock(&me->signal->cred_guard_mutex);
+>> +
+>>  out:
+>>  	return retval;
+>>  }
 
