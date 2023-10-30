@@ -1,71 +1,71 @@
-Return-Path: <linux-fsdevel+bounces-1551-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1552-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B7A17DBE15
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 17:38:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCA207DBE22
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 17:41:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD1481C20B0E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 16:38:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D5BB281423
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 16:41:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BB6718E3A;
-	Mon, 30 Oct 2023 16:38:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CA8218635;
+	Mon, 30 Oct 2023 16:41:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aBm6eZRy"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="X8veEWBo"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F84118AFB
-	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 16:38:19 +0000 (UTC)
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42F60F9
-	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 09:38:17 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA5661111
+	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 16:41:25 +0000 (UTC)
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 003A7DA
+	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 09:41:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1698683896;
+	s=mimecast20190719; t=1698684084;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=hJI+hdEWXbKa+M8W7tfHy5n3N8xPX6O0WbfIPeXfRTc=;
-	b=aBm6eZRyoqeJn0Oo8ofOusNplu2VxXbZ10coZ1RNpiM4zg3RGQ1D0JFJFdGGTTDHVlTPLE
-	RnmcVv53uyAL6OrvUlGbQvJYQK5tML31NjDgQhZ4ao0fqaduKt9OfM+tWBLhLyjHAOgsgR
-	O2akOUaUP73GGgJgvjY3IvxtHoMD3O0=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=1qD86SjQiO3H3vAQCvdS7OJd43FQkgaslFNJvoVP0YI=;
+	b=X8veEWBopxPRc5G2jJuYk8cjAtqSOJmUO4yTqJ94KQIE3JGn9kJpYymYzglgiR/ZSq8UK8
+	Csv1AIBi9XRonq+4gpGAozHJiMCb1xmzJP2exceR11UpialqVXNBBjCsHa1fE9XLRcPFyD
+	HjRVxIFJ+s/AATHF9w9qvQtfQF5vJcc=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-499-DZ4LM_4uP_6MNWYXwcHXjA-1; Mon, 30 Oct 2023 12:38:14 -0400
-X-MC-Unique: DZ4LM_4uP_6MNWYXwcHXjA-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4094cc441baso1626105e9.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 09:38:13 -0700 (PDT)
+ us-mta-528-UVbOasSNPGm11KxpCpN2ew-1; Mon, 30 Oct 2023 12:41:22 -0400
+X-MC-Unique: UVbOasSNPGm11KxpCpN2ew-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4094e5664a3so426345e9.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 09:41:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698683893; x=1699288693;
+        d=1e100.net; s=20230601; t=1698684081; x=1699288881;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hJI+hdEWXbKa+M8W7tfHy5n3N8xPX6O0WbfIPeXfRTc=;
-        b=BZV15k9I2ibFRR6omUoyv+7TbBnBZy1LJtyV9zR5/Z6mDmyge4ybeq97ZlnV+Pv4tL
-         /4Ajqc395Hl/AioSBBXtqIZGJGKbVeE1jXiehFc/DabwRZn0jN1NVcL5NOSpH1PftNZw
-         XyrWrH/M2S2LXtKFl/yuM2Wq45Yh+bpw/nJtxJ7uwLsKhHZgsjx6gQHj5//Yg1S1IU3T
-         mFlSifOQZ4JVbzpovDcFnGUmh9p/G1L264WyPXgcs1MrySr+qnjOrR/m1sMsp6ecBxNb
-         uWx898xcBsT3JJ/MDr9KB8uPJmCtaBKD5FZzbHblHOeAjE+DPOS3mNjOY+OVOWBqIguQ
-         7PgQ==
-X-Gm-Message-State: AOJu0YyP2WfRiUK9bZ+lcR494Qejo0H/04mCjhmtZNLSexvYv2/xznrv
-	eK42WLYx0XagZp/HPFP3rOkMkcqhUjGnDuTZR9D4xTO6XoEEN4zYvWdoaEiXSUTK33Tzbl6ATCT
-	G9xs00mOHxz1epXnG9NRUDbwlPg==
-X-Received: by 2002:a05:600c:4f53:b0:3fa:934c:8356 with SMTP id m19-20020a05600c4f5300b003fa934c8356mr8459637wmq.10.1698683892963;
-        Mon, 30 Oct 2023 09:38:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGZEMK/0a4y6GRranfUYFosow/+q05YMqexgnrNudyg+ulCeoJJOVHXdjy3BiTQsTruKVMBhA==
-X-Received: by 2002:a05:600c:4f53:b0:3fa:934c:8356 with SMTP id m19-20020a05600c4f5300b003fa934c8356mr8459576wmq.10.1698683892541;
-        Mon, 30 Oct 2023 09:38:12 -0700 (PDT)
+        bh=1qD86SjQiO3H3vAQCvdS7OJd43FQkgaslFNJvoVP0YI=;
+        b=bguKqyVwqFLw96cK0MeRCoQg7yDqfenAb9XC5nYq0Qd8KmV/Zy66MoJmL6ir0LGbxc
+         Z1b1XZSmzynzQyvPCZfE+O8jEEtLLy/awYJwgIJhMBCU/+qlTOl5vyG3IUoKk/z1SjVe
+         /PXowE6JeUtOuoKjzqzgRPM0AArRzwtZrw7WPc+dbWwnFF/ZQsFcGJ90EoEJtza2Kc4U
+         +sEo+TsywCCQnTW32XVB4fOjaesU8O3dgtpIcFN+wAFc2xLq0ax6KVbddAqaZBBBLjFw
+         Q3ALnxaEfhTmWqFan2kz9vixCvN3wRB0XkaOkLQBwt6l4T+ZE5Pv+WTeOlXW29HleePi
+         ncNg==
+X-Gm-Message-State: AOJu0YzwP9Bmhwe00dac0pwqpfN965Zegtl5+eyDMHfF61D5XfRzTvnG
+	5IWDBTb82dB+kEX/dng5EGTduQo2T1Gftzn9C7TeNyQRfoBtsDIKcUfXS0M9iiKf5UbgCc/Hqqa
+	9Zsuu+v3PmOa0OlpUHKEg7WPEnA==
+X-Received: by 2002:a05:600c:3544:b0:407:4944:76d1 with SMTP id i4-20020a05600c354400b00407494476d1mr8469577wmq.17.1698684081632;
+        Mon, 30 Oct 2023 09:41:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHTiSuFvoaldVvmzpOuJ7hrxnp8F0haU3J0TRB7XQQLTMncSBFWLoJ8VZmLvYEh0j61qNpd9w==
+X-Received: by 2002:a05:600c:3544:b0:407:4944:76d1 with SMTP id i4-20020a05600c354400b00407494476d1mr8469559wmq.17.1698684081249;
+        Mon, 30 Oct 2023 09:41:21 -0700 (PDT)
 Received: from [192.168.1.174] ([151.81.68.207])
-        by smtp.googlemail.com with ESMTPSA id m1-20020a05600c4f4100b004063d8b43e7sm13252825wmq.48.2023.10.30.09.37.48
+        by smtp.googlemail.com with ESMTPSA id h9-20020a05600c314900b0040849ce7116sm13117155wmo.43.2023.10.30.09.41.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Oct 2023 09:38:11 -0700 (PDT)
-Message-ID: <09966596-397a-47c6-8f43-610a1013d34a@redhat.com>
-Date: Mon, 30 Oct 2023 17:37:42 +0100
+        Mon, 30 Oct 2023 09:41:20 -0700 (PDT)
+Message-ID: <211d093f-4023-4a39-a23f-6d8543512675@redhat.com>
+Date: Mon, 30 Oct 2023 17:41:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -73,8 +73,7 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v13 07/35] KVM: Convert KVM_ARCH_WANT_MMU_NOTIFIER to
- CONFIG_KVM_GENERIC_MMU_NOTIFIER
+Subject: Re: [PATCH v13 08/35] KVM: Introduce KVM_SET_USER_MEMORY_REGION2
 Content-Language: en-US
 To: Sean Christopherson <seanjc@google.com>, Marc Zyngier <maz@kernel.org>,
  Oliver Upton <oliver.upton@linux.dev>, Huacai Chen <chenhuacai@kernel.org>,
@@ -105,7 +104,7 @@ Cc: kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  Isaku Yamahata <isaku.yamahata@gmail.com>,
  "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
 References: <20231027182217.3615211-1-seanjc@google.com>
- <20231027182217.3615211-8-seanjc@google.com>
+ <20231027182217.3615211-9-seanjc@google.com>
 From: Paolo Bonzini <pbonzini@redhat.com>
 Autocrypt: addr=pbonzini@redhat.com; keydata=
  xsEhBFRCcBIBDqDGsz4K0zZun3jh+U6Z9wNGLKQ0kSFyjN38gMqU1SfP+TUNQepFHb/Gc0E2
@@ -142,36 +141,32 @@ Autocrypt: addr=pbonzini@redhat.com; keydata=
  JBrdmNZSQDz0iKmSrx8xkoXYfA3bgtFN8WJH2xgFL28XnqY4M6dLhJwV3z08tPSRqYFm4NMP
  dRsn0/7oymhneL8RthIvjDDQ5ktUjMe8LtHr70OZE/TT88qvEdhiIVUogHdo4qBrk41+gGQh
  b906Dudw5YhTJFU3nC6bbF2nrLlB4C/XSiH76ZvqzV0Z/cAMBo5NF/w=
-In-Reply-To: <20231027182217.3615211-8-seanjc@google.com>
+In-Reply-To: <20231027182217.3615211-9-seanjc@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 10/27/23 20:21, Sean Christopherson wrote:
-> Convert KVM_ARCH_WANT_MMU_NOTIFIER into a Kconfig and select it where
-> appropriate to effectively maintain existing behavior.  Using a proper
-> Kconfig will simplify building more functionality on top of KVM's
-> mmu_notifier infrastructure.
 > 
-> Add a forward declaration of kvm_gfn_range to kvm_types.h so that
-> including arch/powerpc/include/asm/kvm_ppc.h's with CONFIG_KVM=n doesn't
-> generate warnings due to kvm_gfn_range being undeclared.  PPC defines
-> hooks for PR vs. HV without guarding them via #ifdeffery, e.g.
-> 
->   bool (*unmap_gfn_range)(struct kvm *kvm, struct kvm_gfn_range *range);
->   bool (*age_gfn)(struct kvm *kvm, struct kvm_gfn_range *range);
->   bool (*test_age_gfn)(struct kvm *kvm, struct kvm_gfn_range *range);
->   bool (*set_spte_gfn)(struct kvm *kvm, struct kvm_gfn_range *range);
-> 
-> Alternatively, PPC could forward declare kvm_gfn_range, but there's no
-> good reason not to define it in common KVM.
+> +		if (ioctl == KVM_SET_USER_MEMORY_REGION)
+> +			size = sizeof(struct kvm_userspace_memory_region);
 
-The new #define should also imply KVM_CAP_SYNC_MMU, or even: 
-KVM_CAP_SYNC_MMU should just be enabled by all architectures at this 
-point.  You don't need to care about it, I have a larger series for caps 
-that are enabled by all architectures and I'll post it for 6.8.
+This also needs a memset(&mem, 0, sizeof(mem)), otherwise the 
+out-of-bounds access of the commit message becomes a kernel stack read.
 
-Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
+Probably worth adding a check on valid flags here.
 
 Paolo
+
+> +		else
+> +			size = sizeof(struct kvm_userspace_memory_region2);
+> +
+> +		/* Ensure the common parts of the two structs are identical. */
+> +		SANITY_CHECK_MEM_REGION_FIELD(slot);
+> +		SANITY_CHECK_MEM_REGION_FIELD(flags);
+> +		SANITY_CHECK_MEM_REGION_FIELD(guest_phys_addr);
+> +		SANITY_CHECK_MEM_REGION_FIELD(memory_size);
+> +		SANITY_CHECK_MEM_REGION_FIELD(userspace_addr);
+>  
+
 
 
