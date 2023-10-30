@@ -1,364 +1,285 @@
-Return-Path: <linux-fsdevel+bounces-1582-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1583-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B24FE7DC11A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 21:22:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DC397DC12A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 21:26:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12803B20E40
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 20:22:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99D90B20EFA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 20:26:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB9EA1B284;
-	Mon, 30 Oct 2023 20:22:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B17D21CFA1;
+	Mon, 30 Oct 2023 20:25:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0VlrHSGh"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gZxGx5Jf"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5C5118E03
-	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 20:22:20 +0000 (UTC)
-Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEF2E10A
-	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 13:22:16 -0700 (PDT)
-Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-5ae143e08b1so45277967b3.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 13:22:16 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80CAE1CF84
+	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 20:25:55 +0000 (UTC)
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 619C7F9
+	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 13:25:53 -0700 (PDT)
+Received: by mail-yb1-xb49.google.com with SMTP id 3f1490d57ef6-d9a5a16fa94so4235319276.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 13:25:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1698697336; x=1699302136; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0MZDC0C692oKqu67pAXxbmQTWTZ0RHUdPxw5a4EVzJM=;
-        b=0VlrHSGhwJIJkMtZFxHFwGGbWJFDorb6gAu4FeP8UzhWC6LI3o3rn275cluUJjzhrU
-         WU0uYGc8cMV9zuP17dEcv90eosCcRFFhpzgLIQNjipUuX7p8zpuI6Rbi9mcIA4HBXx38
-         SREPRoWVKEATsdVRrYFFUUdon24wn5RL0+FkJ/42fPscZ2Lb3ky7NHPQ2Cgmq/GvL1ZG
-         sHKp59MQeO33YokwkhO+x1QvzgyQHMDrNIf4NbZZzAPYqjmjYpHPsLE8mhHRDCEgj/j/
-         xUJRVKTpXCxgCqpFzOo/QtW2l5RgJV3OpuqarEi9e8frRwznpiX3NFKQAmIjwA5i996n
-         Nb1g==
+        d=google.com; s=20230601; t=1698697552; x=1699302352; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nLe0geP8e2FVj4qDFmgiKe4HSQmMDr9vIKCdz5IJ0b8=;
+        b=gZxGx5Jf4pESioEERVkpiRgRf6GIeIS6jl+d8Yr7s6uQ9ZaHbHepyro/oMUFFdM4PR
+         BMawDbqaBfuJJZwkImn17Yrle2OYXjuDC3hlpP8Nxe4eJvpM0VUDwJSE/SogMF+NSvLi
+         gWZvE+pQnWh3F92G0skb5kQstwvro6UAGWFUqj7MoUxN2thrR6FKWG8NJEJyiSUAbBNN
+         22xpYyZ6+nFhjKYuGZK5PTrQfZ0Y9UsqzeVr3BtYcntUFnfWc7GYXKwABNZlq0byz7cX
+         uhkL28M6aJNIYED3UANCEqD6E16opDZksaIBtp89bM6rn7XZU3RHsfkKvjrL81sq8kpv
+         nFjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698697336; x=1699302136;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0MZDC0C692oKqu67pAXxbmQTWTZ0RHUdPxw5a4EVzJM=;
-        b=VZVdaTJXyxoMKLdQSz4wizvXmGSAkj1Et6mL6ntZEuymDSUtUO1eCCeFlDofivTT0U
-         x90cyLY1/QC5A7405AnbrbDpe+GCWRd0mOVKNCzPFj2vh6w22ayz9WLwnMP+7UpX7Fa1
-         vONRtRUG/gvIt9AhqFbXuEMkQFvnEsfaT5GO3P3mjieQRPLluT1btZqFbR0bmaDnxKhI
-         luYEpq97ZJa1icAVuYokC6X0w/VjHv7uWwozLCvwAzXTXAqdxcvHF7fCpFxIYd5B73xO
-         +/qTS4/+k0X/Rqvh0Hzbw2uv8JNixXdrWZJfB9QT/c1AOASFzbL0BAJ7XWT/aObF1mgF
-         oszg==
-X-Gm-Message-State: AOJu0YxGRAY8SXOBaA1+xUjJiumqIcpsubE7dADbdRBP6jU4FfUyQKEJ
-	pv1kensr1LsEuUeT12Q3lChiujPFvhEUWAF36KN6gA==
-X-Google-Smtp-Source: AGHT+IErTdQZnjT34lXTzXN3MzHAIzHtfhHdTZFEWa84Ne1hGq4DSlIR0kYYUcl8B03xzuvbq5tzsxkfTAgdkep7sF0=
-X-Received: by 2002:a81:a987:0:b0:5a7:be1d:7ad3 with SMTP id
- g129-20020a81a987000000b005a7be1d7ad3mr11134229ywh.1.1698697335636; Mon, 30
- Oct 2023 13:22:15 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1698697552; x=1699302352;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nLe0geP8e2FVj4qDFmgiKe4HSQmMDr9vIKCdz5IJ0b8=;
+        b=CTnNYPJJT2vva3eLgoBbaQSQtETZlYzKHh8be+hFf6ZTxCj1R5udvNhThtzm0L74Vm
+         cnCSgcL9/uV/IOzxbsVTtjbwVHuDTrU1sdRzbLpCLt8tWLeKY4flMI4a9peBWQeLiq+8
+         T+LT06/Rg/c6bWAjAspvEXVH9Bvjy8SnQkSzAhrmT2KHIE2ZlwvnLKFoH7c83sCUslPW
+         6M0Zr0iGRu0qeOJpkctTGV0wqdyaNl0pcRGyDbqRlX4MWAI1Y9d+kfyDDe8ghaMn5fpO
+         uqk2eQ9OLm3YU5775bZ31DX5bsEyz5vF0wMM4ONeth02l0piV5rrRhCJvjBDn/9+BANc
+         ODgg==
+X-Gm-Message-State: AOJu0YwSXGTxO7iz2ZenjHDWlhMfQg7shQtdpqIYuLgHx4Y06V3N78lb
+	InVXKZoJinX7rUk2m4WAu14hZCJn97w=
+X-Google-Smtp-Source: AGHT+IGlGqmQkLdJGZ9mJzjtHQ/qef61ty+xku12xbQ7aSZ0jjD/v7MM7HUcLrxp67U3zyWvPrrdlUHrpDU=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a25:84cc:0:b0:d89:42d7:e72d with SMTP id
+ x12-20020a2584cc000000b00d8942d7e72dmr15389ybm.3.1698697552520; Mon, 30 Oct
+ 2023 13:25:52 -0700 (PDT)
+Date: Mon, 30 Oct 2023 13:25:50 -0700
+In-Reply-To: <211d093f-4023-4a39-a23f-6d8543512675@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20231028003819.652322-1-surenb@google.com> <20231028003819.652322-6-surenb@google.com>
- <ZUAOpmVO3LMmge3S@x1n>
-In-Reply-To: <ZUAOpmVO3LMmge3S@x1n>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Mon, 30 Oct 2023 13:22:02 -0700
-Message-ID: <CAJuCfpEbrWVxfuqRxCrxB482-b=uUnZw2-gqmjxENBUqhCQb8A@mail.gmail.com>
-Subject: Re: [PATCH v4 5/5] selftests/mm: add UFFDIO_MOVE ioctl test
-To: Peter Xu <peterx@redhat.com>
-Cc: akpm@linux-foundation.org, viro@zeniv.linux.org.uk, brauner@kernel.org, 
-	shuah@kernel.org, aarcange@redhat.com, lokeshgidra@google.com, 
-	david@redhat.com, hughd@google.com, mhocko@suse.com, axelrasmussen@google.com, 
-	rppt@kernel.org, willy@infradead.org, Liam.Howlett@oracle.com, 
-	jannh@google.com, zhangpeng362@huawei.com, bgeffon@google.com, 
-	kaleshsingh@google.com, ngeoffray@google.com, jdduke@google.com, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20231027182217.3615211-1-seanjc@google.com> <20231027182217.3615211-9-seanjc@google.com>
+ <211d093f-4023-4a39-a23f-6d8543512675@redhat.com>
+Message-ID: <ZUARTvhpChFSGF9s@google.com>
+Subject: Re: [PATCH v13 08/35] KVM: Introduce KVM_SET_USER_MEMORY_REGION2
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Huacai Chen <chenhuacai@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Anup Patel <anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, kvm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Xiaoyao Li <xiaoyao.li@intel.com>, 
+	Xu Yilun <yilun.xu@intel.com>, Chao Peng <chao.p.peng@linux.intel.com>, 
+	Fuad Tabba <tabba@google.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
+	Anish Moorthy <amoorthy@google.com>, David Matlack <dmatlack@google.com>, 
+	Yu Zhang <yu.c.zhang@linux.intel.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
+	"=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>, Vlastimil Babka <vbabka@suse.cz>, 
+	Vishal Annapurve <vannapurve@google.com>, Ackerley Tng <ackerleytng@google.com>, 
+	Maciej Szmigiero <mail@maciej.szmigiero.name>, David Hildenbrand <david@redhat.com>, 
+	Quentin Perret <qperret@google.com>, Michael Roth <michael.roth@amd.com>, Wang <wei.w.wang@intel.com>, 
+	Liam Merwick <liam.merwick@oracle.com>, Isaku Yamahata <isaku.yamahata@gmail.com>, 
+	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Mon, Oct 30, 2023 at 1:14=E2=80=AFPM Peter Xu <peterx@redhat.com> wrote:
->
-> On Fri, Oct 27, 2023 at 05:38:15PM -0700, Suren Baghdasaryan wrote:
-> > Add tests for new UFFDIO_MOVE ioctl which uses uffd to move source
-> > into destination buffer while checking the contents of both after
-> > the move. After the operation the content of the destination buffer
-> > should match the original source buffer's content while the source
-> > buffer should be zeroed. Separate tests are designed for PMD aligned an=
-d
-> > unaligned cases because they utilize different code paths in the kernel=
-.
-> >
-> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > ---
-> >  tools/testing/selftests/mm/uffd-common.c     |  24 ++++
-> >  tools/testing/selftests/mm/uffd-common.h     |   1 +
-> >  tools/testing/selftests/mm/uffd-unit-tests.c | 141 +++++++++++++++++++
-> >  3 files changed, 166 insertions(+)
-> >
-> > diff --git a/tools/testing/selftests/mm/uffd-common.c b/tools/testing/s=
-elftests/mm/uffd-common.c
-> > index 69e6653ad255..98957fd788d8 100644
-> > --- a/tools/testing/selftests/mm/uffd-common.c
-> > +++ b/tools/testing/selftests/mm/uffd-common.c
-> > @@ -643,6 +643,30 @@ int copy_page(int ufd, unsigned long offset, bool =
-wp)
-> >       return __copy_page(ufd, offset, false, wp);
-> >  }
-> >
-> > +int move_page(int ufd, unsigned long offset)
-> > +{
-> > +     struct uffdio_move uffdio_move;
-> > +
-> > +     if (offset >=3D nr_pages * page_size)
-> > +             err("unexpected offset %lu\n", offset);
-> > +     uffdio_move.dst =3D (unsigned long) area_dst + offset;
-> > +     uffdio_move.src =3D (unsigned long) area_src + offset;
-> > +     uffdio_move.len =3D page_size;
-> > +     uffdio_move.mode =3D UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES;
-> > +     uffdio_move.move =3D 0;
-> > +     if (ioctl(ufd, UFFDIO_MOVE, &uffdio_move)) {
-> > +             /* real retval in uffdio_move.move */
-> > +             if (uffdio_move.move !=3D -EEXIST)
-> > +                     err("UFFDIO_MOVE error: %"PRId64,
-> > +                         (int64_t)uffdio_move.move);
-> > +             wake_range(ufd, uffdio_move.dst, page_size);
-> > +     } else if (uffdio_move.move !=3D page_size) {
-> > +             err("UFFDIO_MOVE error: %"PRId64, (int64_t)uffdio_move.mo=
-ve);
-> > +     } else
-> > +             return 1;
-> > +     return 0;
-> > +}
-> > +
-> >  int uffd_open_dev(unsigned int flags)
-> >  {
-> >       int fd, uffd;
-> > diff --git a/tools/testing/selftests/mm/uffd-common.h b/tools/testing/s=
-elftests/mm/uffd-common.h
-> > index 19930fd6682b..c9526b2cb6b3 100644
-> > --- a/tools/testing/selftests/mm/uffd-common.h
-> > +++ b/tools/testing/selftests/mm/uffd-common.h
-> > @@ -121,6 +121,7 @@ void wp_range(int ufd, __u64 start, __u64 len, bool=
- wp);
-> >  void uffd_handle_page_fault(struct uffd_msg *msg, struct uffd_args *ar=
-gs);
-> >  int __copy_page(int ufd, unsigned long offset, bool retry, bool wp);
-> >  int copy_page(int ufd, unsigned long offset, bool wp);
-> > +int move_page(int ufd, unsigned long offset);
-> >  void *uffd_poll_thread(void *arg);
-> >
-> >  int uffd_open_dev(unsigned int flags);
-> > diff --git a/tools/testing/selftests/mm/uffd-unit-tests.c b/tools/testi=
-ng/selftests/mm/uffd-unit-tests.c
-> > index debc423bdbf4..89e9529ce941 100644
-> > --- a/tools/testing/selftests/mm/uffd-unit-tests.c
-> > +++ b/tools/testing/selftests/mm/uffd-unit-tests.c
-> > @@ -1064,6 +1064,133 @@ static void uffd_poison_test(uffd_test_args_t *=
-targs)
-> >       uffd_test_pass();
-> >  }
-> >
-> > +static void uffd_move_handle_fault(
-> > +     struct uffd_msg *msg, struct uffd_args *args)
-> > +{
-> > +     unsigned long offset;
-> > +
-> > +     if (msg->event !=3D UFFD_EVENT_PAGEFAULT)
-> > +             err("unexpected msg event %u", msg->event);
-> > +
-> > +     if (msg->arg.pagefault.flags &
-> > +         (UFFD_PAGEFAULT_FLAG_WP | UFFD_PAGEFAULT_FLAG_MINOR | UFFD_PA=
-GEFAULT_FLAG_WRITE))
-> > +             err("unexpected fault type %llu", msg->arg.pagefault.flag=
-s);
-> > +
-> > +     offset =3D (char *)(unsigned long)msg->arg.pagefault.address - ar=
-ea_dst;
-> > +     offset &=3D ~(page_size-1);
-> > +
-> > +     if (move_page(uffd, offset))
-> > +             args->missing_faults++;
-> > +}
-> > +
-> > +static void uffd_move_test(uffd_test_args_t *targs)
-> > +{
-> > +     unsigned long nr;
-> > +     pthread_t uffd_mon;
-> > +     char c;
-> > +     unsigned long long count;
-> > +     struct uffd_args args =3D { 0 };
-> > +
-> > +     /* Prevent source pages from being mapped more than once */
-> > +     if (madvise(area_src, nr_pages * page_size, MADV_DONTFORK))
-> > +             err("madvise(MADV_DONTFORK) failure");
-> > +
-> > +     if (uffd_register(uffd, area_dst, nr_pages * page_size,
-> > +                       true, false, false))
-> > +             err("register failure");
-> > +
-> > +     args.handle_fault =3D uffd_move_handle_fault;
-> > +     if (pthread_create(&uffd_mon, NULL, uffd_poll_thread, &args))
-> > +             err("uffd_poll_thread create");
-> > +
-> > +     /*
-> > +      * Read each of the pages back using the UFFD-registered mapping.=
- We
-> > +      * expect that the first time we touch a page, it will result in =
-a missing
-> > +      * fault. uffd_poll_thread will resolve the fault by moving sourc=
-e
-> > +      * page to destination.
-> > +      */
-> > +     for (nr =3D 0; nr < nr_pages; nr++) {
-> > +             /* Check area_src content */
-> > +             count =3D *area_count(area_src, nr);
-> > +             if (count !=3D count_verify[nr])
-> > +                     err("nr %lu source memory invalid %llu %llu\n",
-> > +                         nr, count, count_verify[nr]);
-> > +
-> > +             /* Faulting into area_dst should move the page */
-> > +             count =3D *area_count(area_dst, nr);
-> > +             if (count !=3D count_verify[nr])
-> > +                     err("nr %lu memory corruption %llu %llu\n",
-> > +                         nr, count, count_verify[nr]);
-> > +
-> > +             /* Re-check area_src content which should be empty */
-> > +             count =3D *area_count(area_src, nr);
-> > +             if (count !=3D 0)
-> > +                     err("nr %lu move failed %llu %llu\n",
-> > +                         nr, count, count_verify[nr]);
-> > +     }
-> > +
-> > +     if (write(pipefd[1], &c, sizeof(c)) !=3D sizeof(c))
-> > +             err("pipe write");
-> > +     if (pthread_join(uffd_mon, NULL))
-> > +             err("join() failed");
-> > +
-> > +     if (args.missing_faults !=3D nr_pages || args.minor_faults !=3D 0=
-)
-> > +             uffd_test_fail("stats check error");
-> > +     else
-> > +             uffd_test_pass();
-> > +}
-> > +
-> > +static int prevent_hugepages(void)
-> > +{
-> > +     /* This should be done before source area is populated */
-> > +     if (madvise(area_src, nr_pages * page_size, MADV_NOHUGEPAGE)) {
-> > +             /* Ignore if CONFIG_TRANSPARENT_HUGEPAGE=3Dn */
-> > +             if (errno !=3D EINVAL)
-> > +                     return -errno;
-> > +     }
-> > +     return 0;
-> > +}
-> > +
-> > +struct uffd_test_case_ops uffd_move_test_case_ops =3D {
-> > +     .post_alloc =3D prevent_hugepages,
-> > +};
-> > +
-> > +#define ALIGN_UP(x, align_to) \
-> > +     (__typeof__(x))((((unsigned long)(x)) + ((align_to)-1)) & ~((alig=
-n_to)-1))
-> > +
-> > +static char *orig_area_src, *orig_area_dst;
-> > +static int pmd_align_areas(void)
-> > +{
-> > +     orig_area_src =3D area_src;
-> > +     orig_area_dst =3D area_dst;
-> > +     area_src =3D ALIGN_UP(area_src, page_size);
-> > +     area_dst =3D ALIGN_UP(area_dst, page_size);
-> > +     nr_pages--;
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static void pmd_restore_areas(void)
-> > +{
-> > +     area_src =3D orig_area_src;
-> > +     area_dst =3D orig_area_dst;
-> > +     nr_pages++;
-> > +}
->
-> Please stop using more global variables.. uffd tests are even less
-> maintainable.
->
-> Maybe you can consider add a flag for uffd_test_ctx_init()?  For allocati=
-ng
-> either small/thp/default?
+On Mon, Oct 30, 2023, Paolo Bonzini wrote:
+> On 10/27/23 20:21, Sean Christopherson wrote:
+> > 
+> > +		if (ioctl == KVM_SET_USER_MEMORY_REGION)
+> > +			size = sizeof(struct kvm_userspace_memory_region);
+> 
+> This also needs a memset(&mem, 0, sizeof(mem)), otherwise the out-of-bounds
+> access of the commit message becomes a kernel stack read.
 
-I was considering that but was not sure which way would be more
-preferable - using these new callbacks or adding new page size
-requirements. I'll change to the latter.
+Ouch.  There's some irony.  Might be worth doing memset(&mem, -1, sizeof(mem))
+though as '0' is a valid file descriptor and a valid file offset.
 
->
->
-> > +
-> > +static int adjust_page_size(void)
-> > +{
-> > +     page_size =3D default_huge_page_size();
->
-> This is hacky too, currently page_size is the real page_size backing the
-> memory.
->
-> To make thp test simple, maybe just add one more test to MOVE a large chu=
-nk
-> to replace the thp test, which may contain a few thps?  It also doesn't
-> need to be fault based.
+> Probably worth adding a check on valid flags here.
 
-Sorry, I didn't get your suggestion. Could you please clarify? Which
-thp test are you referring to?
+Definitely needed.  There's a very real bug here.  But rather than duplicate flags
+checking or plumb @ioctl all the way to __kvm_set_memory_region(), now that we
+have the fancy guard(mutex) and there are no internal calls to kvm_set_memory_region(),
+what if we:
 
-Thanks,
-Suren.
+  1. Acquire/release slots_lock in __kvm_set_memory_region()
+  2. Call kvm_set_memory_region() from x86 code for the internal memslots
+  3. Disallow *any* flags for internal memslots
+  4. Open code check_memory_region_flags in kvm_vm_ioctl_set_memory_region()
+  5. Pass @ioctl to kvm_vm_ioctl_set_memory_region() and allow KVM_MEM_PRIVATE
+     only for KVM_SET_USER_MEMORY_REGION2
 
->
-> > +     nr_pages =3D UFFD_TEST_MEM_SIZE / page_size;
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +struct uffd_test_case_ops uffd_move_pmd_test_case_ops =3D {
-> > +     .pre_alloc =3D adjust_page_size,
-> > +     .post_alloc =3D pmd_align_areas,
-> > +     .pre_release =3D pmd_restore_areas,
-> > +};
-> > +
-> >  /*
-> >   * Test the returned uffdio_register.ioctls with different register mo=
-des.
-> >   * Note that _UFFDIO_ZEROPAGE is tested separately in the zeropage tes=
-t.
-> > @@ -1141,6 +1268,20 @@ uffd_test_case_t uffd_tests[] =3D {
-> >               .mem_targets =3D MEM_ALL,
-> >               .uffd_feature_required =3D 0,
-> >       },
-> > +     {
-> > +             .name =3D "move",
-> > +             .uffd_fn =3D uffd_move_test,
-> > +             .mem_targets =3D MEM_ANON,
-> > +             .uffd_feature_required =3D UFFD_FEATURE_MOVE,
-> > +             .test_case_ops =3D &uffd_move_test_case_ops,
-> > +     },
-> > +     {
-> > +             .name =3D "move-pmd",
-> > +             .uffd_fn =3D uffd_move_test,
-> > +             .mem_targets =3D MEM_ANON,
-> > +             .uffd_feature_required =3D UFFD_FEATURE_MOVE,
-> > +             .test_case_ops =3D &uffd_move_pmd_test_case_ops,
-> > +     },
-> >       {
-> >               .name =3D "wp-fork",
-> >               .uffd_fn =3D uffd_wp_fork_test,
-> > --
-> > 2.42.0.820.g83a721a137-goog
-> >
->
-> --
-> Peter Xu
->
+E.g. this over ~5 patches
+
+---
+ arch/x86/kvm/x86.c       |  2 +-
+ include/linux/kvm_host.h |  4 +--
+ virt/kvm/kvm_main.c      | 65 +++++++++++++++++-----------------------
+ 3 files changed, 29 insertions(+), 42 deletions(-)
+
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index e3eb608b6692..dd3e2017366c 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -12478,7 +12478,7 @@ void __user * __x86_set_memory_region(struct kvm *kvm, int id, gpa_t gpa,
+ 		m.guest_phys_addr = gpa;
+ 		m.userspace_addr = hva;
+ 		m.memory_size = size;
+-		r = __kvm_set_memory_region(kvm, &m);
++		r = kvm_set_memory_region(kvm, &m);
+ 		if (r < 0)
+ 			return ERR_PTR_USR(r);
+ 	}
+diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+index 687589ce9f63..fbb98efe8200 100644
+--- a/include/linux/kvm_host.h
++++ b/include/linux/kvm_host.h
+@@ -1170,7 +1170,7 @@ static inline bool kvm_memslot_iter_is_valid(struct kvm_memslot_iter *iter, gfn_
+  *   -- just change its flags
+  *
+  * Since flags can be changed by some of these operations, the following
+- * differentiation is the best we can do for __kvm_set_memory_region():
++ * differentiation is the best we can do for __kvm_set_memory_region().
+  */
+ enum kvm_mr_change {
+ 	KVM_MR_CREATE,
+@@ -1181,8 +1181,6 @@ enum kvm_mr_change {
+ 
+ int kvm_set_memory_region(struct kvm *kvm,
+ 			  const struct kvm_userspace_memory_region2 *mem);
+-int __kvm_set_memory_region(struct kvm *kvm,
+-			    const struct kvm_userspace_memory_region2 *mem);
+ void kvm_arch_free_memslot(struct kvm *kvm, struct kvm_memory_slot *slot);
+ void kvm_arch_memslots_updated(struct kvm *kvm, u64 gen);
+ int kvm_arch_prepare_memory_region(struct kvm *kvm,
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 23633984142f..39ceee2f67f2 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -1608,28 +1608,6 @@ static void kvm_replace_memslot(struct kvm *kvm,
+ 	}
+ }
+ 
+-static int check_memory_region_flags(struct kvm *kvm,
+-				     const struct kvm_userspace_memory_region2 *mem)
+-{
+-	u32 valid_flags = KVM_MEM_LOG_DIRTY_PAGES;
+-
+-	if (kvm_arch_has_private_mem(kvm))
+-		valid_flags |= KVM_MEM_PRIVATE;
+-
+-	/* Dirty logging private memory is not currently supported. */
+-	if (mem->flags & KVM_MEM_PRIVATE)
+-		valid_flags &= ~KVM_MEM_LOG_DIRTY_PAGES;
+-
+-#ifdef __KVM_HAVE_READONLY_MEM
+-	valid_flags |= KVM_MEM_READONLY;
+-#endif
+-
+-	if (mem->flags & ~valid_flags)
+-		return -EINVAL;
+-
+-	return 0;
+-}
+-
+ static void kvm_swap_active_memslots(struct kvm *kvm, int as_id)
+ {
+ 	struct kvm_memslots *slots = kvm_get_inactive_memslots(kvm, as_id);
+@@ -2014,11 +1992,9 @@ static bool kvm_check_memslot_overlap(struct kvm_memslots *slots, int id,
+  * space.
+  *
+  * Discontiguous memory is allowed, mostly for framebuffers.
+- *
+- * Must be called holding kvm->slots_lock for write.
+  */
+-int __kvm_set_memory_region(struct kvm *kvm,
+-			    const struct kvm_userspace_memory_region2 *mem)
++static int __kvm_set_memory_region(struct kvm *kvm,
++				   const struct kvm_userspace_memory_region2 *mem)
+ {
+ 	struct kvm_memory_slot *old, *new;
+ 	struct kvm_memslots *slots;
+@@ -2028,9 +2004,7 @@ int __kvm_set_memory_region(struct kvm *kvm,
+ 	int as_id, id;
+ 	int r;
+ 
+-	r = check_memory_region_flags(kvm, mem);
+-	if (r)
+-		return r;
++	guard(mutex)(&kvm->slots_lock);
+ 
+ 	as_id = mem->slot >> 16;
+ 	id = (u16)mem->slot;
+@@ -2139,27 +2113,42 @@ int __kvm_set_memory_region(struct kvm *kvm,
+ 	kfree(new);
+ 	return r;
+ }
+-EXPORT_SYMBOL_GPL(__kvm_set_memory_region);
+ 
+ int kvm_set_memory_region(struct kvm *kvm,
+ 			  const struct kvm_userspace_memory_region2 *mem)
+ {
+-	int r;
++	/* Flags aren't supported for KVM-internal memslots. */
++	if (WARN_ON_ONCE(mem->flags))
++		return -EINVAL;
+ 
+-	mutex_lock(&kvm->slots_lock);
+-	r = __kvm_set_memory_region(kvm, mem);
+-	mutex_unlock(&kvm->slots_lock);
+-	return r;
++	return __kvm_set_memory_region(kvm, mem);
+ }
+ EXPORT_SYMBOL_GPL(kvm_set_memory_region);
+ 
+-static int kvm_vm_ioctl_set_memory_region(struct kvm *kvm,
++static int kvm_vm_ioctl_set_memory_region(struct kvm *kvm, unsigned int ioctl,
+ 					  struct kvm_userspace_memory_region2 *mem)
+ {
++	u32 valid_flags = KVM_MEM_LOG_DIRTY_PAGES;
++
++	if (ioctl == KVM_SET_USER_MEMORY_REGION2 &&
++	    kvm_arch_has_private_mem(kvm))
++		valid_flags |= KVM_MEM_PRIVATE;
++
++	/* Dirty logging private memory is not currently supported. */
++	if (mem->flags & KVM_MEM_PRIVATE)
++		valid_flags &= ~KVM_MEM_LOG_DIRTY_PAGES;
++
++#ifdef __KVM_HAVE_READONLY_MEM
++	valid_flags |= KVM_MEM_READONLY;
++#endif
++
++	if (mem->flags & ~valid_flags)
++		return -EINVAL;
++
+ 	if ((u16)mem->slot >= KVM_USER_MEM_SLOTS)
+ 		return -EINVAL;
+ 
+-	return kvm_set_memory_region(kvm, mem);
++	return __kvm_set_memory_region(kvm, mem);
+ }
+ 
+ #ifndef CONFIG_KVM_GENERIC_DIRTYLOG_READ_PROTECT
+@@ -5145,7 +5134,7 @@ static long kvm_vm_ioctl(struct file *filp,
+ 		if (copy_from_user(&mem, argp, size))
+ 			goto out;
+ 
+-		r = kvm_vm_ioctl_set_memory_region(kvm, &mem);
++		r = kvm_vm_ioctl_set_memory_region(kvm, ioctl, &mem);
+ 		break;
+ 	}
+ 	case KVM_GET_DIRTY_LOG: {
+
+base-commit: 881375a408c0f4ea451ff14545b59216d2923881
+-- 
+
 
