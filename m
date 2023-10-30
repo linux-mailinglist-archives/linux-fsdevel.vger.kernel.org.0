@@ -1,60 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-1568-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1569-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0E127DBFA6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 19:20:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 547C87DBFCC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 19:24:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E15D61C20B4F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 18:20:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FC4C28148F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 18:24:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D01819BB4;
-	Mon, 30 Oct 2023 18:20:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8120519BAE;
+	Mon, 30 Oct 2023 18:23:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vMBjNLJL"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="evnelxo6"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E10119BA8
-	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 18:20:16 +0000 (UTC)
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDAD6C1
-	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 11:20:14 -0700 (PDT)
-Received: by mail-lf1-x136.google.com with SMTP id 2adb3069b0e04-507e85ebf50so6717387e87.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 11:20:14 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FA8E16408
+	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 18:23:56 +0000 (UTC)
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76844C9
+	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 11:21:43 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-40806e40fccso31935035e9.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 11:21:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1698690013; x=1699294813; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1698690100; x=1699294900; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EYDArYAPbuwvLuQnLMgYzD5G3hQJ3JuyTKb70j8k5kM=;
-        b=vMBjNLJLnNwZ92n0kiLKy/KDvv6bmRWazPVY7EzuCAXijQXOd/L6nvrX2ZWXjw+lNq
-         4G5yJaJPhMqxsSmWmQroKSm+2R3tkccCRs0o978wCj0l5sy5+qU6vjM8CCHZZW53vydq
-         p5Q03CC8DatEWTV07ALKn+wiFR2o2FRnMzJbqLuMgJ2Ub5QuR13k3/n1s73F50qjfkJW
-         jYiv09MpMPkZEbaNGpQQ9n6vWpNk1OHs0sffooFU3t8jPASRTjzGdPCT9bTwlS4yKF0n
-         0udHFnJONG3fQytXR4K5Q+c/1vSUxumJ6xHiwhVUu+7gs9M3D3ejbpd+PQJLXSO5jHDJ
-         abyA==
+        bh=+/9ggluaJ++InohprDPxvdU7Uw478trPLaD3bhLrtl4=;
+        b=evnelxo6BHvIfCZLkH2HljZAClVdE9ks4A0+VrbC9RPeA11urFDr2tenj96AWZwyAh
+         DNKriGKjs9z0/Hk0iHZ0UUznlW7GwojmeUQiLnk94LmHovwxp7wxg2l7CYsRx1SpCGFv
+         pt3EXezQdlu6PGaOfE1jrpG0yuNNjiMI9gr9GDTgXE3MLzq9zulE+JC6y4uKSSnluXR/
+         QMCW4L/fWQzumgtidJ2PxovL03srHOZS+U+lRsLxX6zbILHMPnqfBJeIjteHqxv9Oxyn
+         8p0gUE7P6cWiwtideNc5db/5PLVCeUnyqICIf+JlPh0ZwsKZQBMRxrpeLPVSO3XCEyHA
+         YsGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698690013; x=1699294813;
+        d=1e100.net; s=20230601; t=1698690100; x=1699294900;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EYDArYAPbuwvLuQnLMgYzD5G3hQJ3JuyTKb70j8k5kM=;
-        b=n/MKdShkh5rtQ8HFPWm1QSA+yt85dqCiJanKg6Ua8nnZ5+MeX9M5Euf337e8Ef2GXA
-         saKBfADz66lLCHx4etk7MOKpFWgxZ9WRTEf21m3BJcMWI+F+RbYRoHqQabhjA9eRY0DV
-         ryX6vp7mSDcZBf22YNHbyPLkWdWpiniBI4HlTXQ1gsVQCiEOE0EJ62T5H150NTIfeSRv
-         +JnMbHQXKVCOA1OHkidXI/5OoLrJIUvgvUyXllbbhQZ+5jztZ3r9jxrS8Id7LF04+r/v
-         6OcPRUjfaim/hpKeJNQLpGeKQnZU5PTjCcc6wPLpE6CJtBDr8jrHAKSyWpytsPmVWOZl
-         8hAg==
-X-Gm-Message-State: AOJu0Yw2uCxNqiVRpZXLdYEksz6Y6lqTDIIwPKHV3HPzu3RPB1HHprXN
-	rOD1zyc1Th/+85jxdFSQwxANyXqBrgORgtC28EsMog==
-X-Google-Smtp-Source: AGHT+IGWQtTaV5Bzkdlkn1e/3Zt5UNsfNX/Ijo670f/udb747Y9rnFPe4I+UgnAkk/OF+ECMZnUUXa4ItRfh9V5jdaA=
-X-Received: by 2002:a05:6512:10cb:b0:507:aaa9:b080 with SMTP id
- k11-20020a05651210cb00b00507aaa9b080mr9836391lfg.33.1698690012887; Mon, 30
- Oct 2023 11:20:12 -0700 (PDT)
+        bh=+/9ggluaJ++InohprDPxvdU7Uw478trPLaD3bhLrtl4=;
+        b=BIeRlyrBWUO1eM3uKE6HgB4ro1UInmD1izt8sScl/Ykd4sF744zBcz6xBSli1nV2u6
+         FnE5wXNpHyvxaBFo+oMThd8WJ4/4FHkZhZlOHVP2nZj6We/ReHQB038OjuZsHpI8cD0P
+         AoSbJCxD20yy423GhUk5IzhEOCaQpf835Qhc5IgdbOrZydP5qfEkl/c9fMj5sFaOn7w7
+         JTcpS5ckw1FTqrBRVq7CLTpqkb9i3qoEGP1DTvwZ6k66dN62Es5QYGAtjL9usqmEoGDB
+         TACQhUi/RLHav12yJXH8eDkGjD9bTTAZIjAnAHxgAwJHG7DCemU0x10cxQBBFht3CRa2
+         qj6g==
+X-Gm-Message-State: AOJu0Yx0QqgKFyOqL997BX21tfRpAhOK33GunptP6+T3DTqnvzr+/90J
+	ZQky4iHXmhzb5uyNr3ycgBnGk9VOTW5GENfF0xH9aQ==
+X-Google-Smtp-Source: AGHT+IEmwHEAyRl4O1ADBUXlJ8Ir1QajxdHcmQhP1+JwZ6AL7EQf1l2WpAn/vfiQDkHuuhxFizw+5mWU1UT2yp1CF+k=
+X-Received: by 2002:a05:600c:524a:b0:408:4160:1528 with SMTP id
+ fc10-20020a05600c524a00b0040841601528mr8760818wmb.30.1698690100370; Mon, 30
+ Oct 2023 11:21:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,14 +62,14 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20231027182217.3615211-1-seanjc@google.com> <20231027182217.3615211-4-seanjc@google.com>
- <ZT_fnAcDAvuPCwws@google.com>
-In-Reply-To: <ZT_fnAcDAvuPCwws@google.com>
+ <ZT_fnAcDAvuPCwws@google.com> <CABgObfYM4nyb1K3xJVGvV+eQmZoLPAmz2-=1CG8++pCwvVW7Qg@mail.gmail.com>
+In-Reply-To: <CABgObfYM4nyb1K3xJVGvV+eQmZoLPAmz2-=1CG8++pCwvVW7Qg@mail.gmail.com>
 From: David Matlack <dmatlack@google.com>
-Date: Mon, 30 Oct 2023 11:19:43 -0700
-Message-ID: <CALzav=cjq_MbJgi3DMytVWwZLFxEPi1dp7YiBYRBw-sRf2+BLw@mail.gmail.com>
+Date: Mon, 30 Oct 2023 11:21:12 -0700
+Message-ID: <CALzav=djOS8T7AmUa3A7QmP1f0xAm2W-KRDmOov_H8ps77A2qA@mail.gmail.com>
 Subject: Re: [PATCH v13 03/35] KVM: Use gfn instead of hva for mmu_notifier_retry
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Sean Christopherson <seanjc@google.com>, Marc Zyngier <maz@kernel.org>, 
 	Oliver Upton <oliver.upton@linux.dev>, Huacai Chen <chenhuacai@kernel.org>, 
 	Michael Ellerman <mpe@ellerman.id.au>, Anup Patel <anup@brainfault.org>, 
 	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
@@ -94,16 +94,41 @@ Cc: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 30, 2023 at 9:53=E2=80=AFAM David Matlack <dmatlack@google.com>=
- wrote:
+On Mon, Oct 30, 2023 at 10:01=E2=80=AFAM Paolo Bonzini <pbonzini@redhat.com=
+> wrote:
 >
-> On 2023-10-27 11:21 AM, Sean Christopherson wrote:
-> > From: Chao Peng <chao.p.peng@linux.intel.com>
+> On Mon, Oct 30, 2023 at 5:53=E2=80=AFPM David Matlack <dmatlack@google.co=
+m> wrote:
 > >
-> > +void kvm_mmu_invalidate_range_add(struct kvm *kvm, gfn_t start, gfn_t =
-end);
+> > On 2023-10-27 11:21 AM, Sean Christopherson wrote:
+> > > From: Chao Peng <chao.p.peng@linux.intel.com>
+> > >
+> > > Currently in mmu_notifier invalidate path, hva range is recorded and
+> > > then checked against by mmu_notifier_retry_hva() in the page fault
+> > > handling path. However, for the to be introduced private memory, a pa=
+ge
+> >                           ^^^^^^^^^^^^^^^^^^^^^^^^
+> >
+> > Is there a missing word here?
 >
-> What is the reason to separate range_add() from begin()?
+> No but there could be missing hyphens ("for the to-be-introduced
+> private memory"); possibly a "soon" could help parsing and that is
+> what you were talking about?
 
-Nevermind, I see how it's needed in kvm_mmu_unmap_gfn_range().
+Ah that explains it :)
+
+>
+> > >       if (likely(kvm->mmu_invalidate_in_progress =3D=3D 1)) {
+> > > +             kvm->mmu_invalidate_range_start =3D INVALID_GPA;
+> > > +             kvm->mmu_invalidate_range_end =3D INVALID_GPA;
+> >
+> > I don't think this is incorrect, but I was a little suprised to see thi=
+s
+> > here rather than in end() when mmu_invalidate_in_progress decrements to
+> > 0.
+>
+> I think that would be incorrect on the very first start?
+
+Good point. KVM could initialize start/end before registering
+notifiers, but that's extra code.
 
