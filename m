@@ -1,121 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-1584-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1585-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DE267DC13F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 21:35:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D16BE7DC18E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 22:05:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FEE9B20E1B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 20:35:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3E0C1C20B74
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 21:05:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 979741C2A9;
-	Mon, 30 Oct 2023 20:35:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9082A1BDE9;
+	Mon, 30 Oct 2023 21:05:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HFZ8w83a"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bEW+nkfR"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4858718AFB
-	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 20:35:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA341C28F
+	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 21:05:18 +0000 (UTC)
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42775F9
-	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 13:35:34 -0700 (PDT)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCA5EED
+	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 14:05:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1698698133;
+	s=mimecast20190719; t=1698699915;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=HQqQywcIq3pleqCdkmZJnvq+aD96AGHUCBNW1Pk+bxA=;
-	b=HFZ8w83a8uh/pxxjf+G5cwo3dFA0HkrRrFOabM87Ze9mO6pTdRD1SxcH5fI4VQPjmEUIJ7
-	5iwKQ3b/WJ+m3d5soo2PGM9e2hfg9vYxKbvFFEBjTJ1djk8Wd/34nrnNuqMoetTndeWmgS
-	W11HADr153CPknUU06z3de5rrzGk+20=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=1JmURPcvLtSqLUUbFA7SrmnbERd26AC5lme3Qx7nOkM=;
+	b=bEW+nkfRZw1fTRzn6LzOi+Dq+Y0lvS7dvJ78R5MV8IRVQGo5QiY5IoE4wZ3V7wdbcMogEp
+	iU8e+Q8GuD67t7tqpqXRS5doZRP+4NDg1u0td4IdT1u49omv6pbLzI7SV1QDW5F3tn2Njw
+	10hCaqFea/MJ+SbkvYPD7p4LukN+3DA=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-685-oVaJEcZVP2SPsD0l8S7Nog-1; Mon, 30 Oct 2023 16:35:31 -0400
-X-MC-Unique: oVaJEcZVP2SPsD0l8S7Nog-1
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-637948b24bdso15294376d6.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 13:35:31 -0700 (PDT)
+ us-mta-443-JGg-KlClN1y1wCX4VCYyhw-1; Mon, 30 Oct 2023 17:05:14 -0400
+X-MC-Unique: JGg-KlClN1y1wCX4VCYyhw-1
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-1cc41aed6a5so11566635ad.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 14:05:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698698131; x=1699302931;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HQqQywcIq3pleqCdkmZJnvq+aD96AGHUCBNW1Pk+bxA=;
-        b=Ihuu26LLPKSCAjzQxrrqujsAOFUsPgi5ynsjK1+wBZB4YgpGu9bsQXXkO2Mx4u7rX4
-         icquf04jqg9AF1Bis1X6Ru9v9bNn4vokTO3yl2Q+bbuPybsZmh2EqYMU4SUaj/yLRSkR
-         bKqT46MgGzuy9/wVXm/c5AFgEY++kvMucrRVkbZD0VbJCzPNjrfEDcGm1xcZS057d0D1
-         WwMBXPnnWogw0uVCBLCZ61hrOxanvH7zK5C0eAl3ePECt1Jw6zv74eik/Ty0PeichXOH
-         wnsx0F7HYEwmkqVW/OdaW5bKBKRen/n0b0UfrdsQ5Cm27aRY9RJi1KpGuAmJYOkeeK0N
-         L40A==
-X-Gm-Message-State: AOJu0Yz8/3QeWQ/AfPnUwOiKqB+qGVT9pytrvtpRTBFLx9ng7YmniRBx
-	k9T3dMrwQazKVcVWB3UuQjPgGq5YMoRDnKz97hOFO4BqS4uzVBaLsj6qFZpEFJm9MQ/WFGUGDgB
-	EOE4Q65PvuaNyfN3GEkYroVALZw==
-X-Received: by 2002:a0c:f78c:0:b0:66d:6111:5c5c with SMTP id s12-20020a0cf78c000000b0066d61115c5cmr11465045qvn.3.1698698130993;
-        Mon, 30 Oct 2023 13:35:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHoHYJYrlsiTilKNNDCIy4gwl3kNblk99zpaZUZAXSFQUfkN4dW93Dg1VUo6nUBxJv7RxuZhg==
-X-Received: by 2002:a0c:f78c:0:b0:66d:6111:5c5c with SMTP id s12-20020a0cf78c000000b0066d61115c5cmr11465017qvn.3.1698698130723;
-        Mon, 30 Oct 2023 13:35:30 -0700 (PDT)
-Received: from x1n (cpe5c7695f3aee0-cm5c7695f3aede.cpe.net.cable.rogers.com. [99.254.144.39])
-        by smtp.gmail.com with ESMTPSA id cx15-20020a056214188f00b0066cfadfb796sm2362777qvb.107.2023.10.30.13.35.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Oct 2023 13:35:30 -0700 (PDT)
-Date: Mon, 30 Oct 2023 16:35:27 -0400
-From: Peter Xu <peterx@redhat.com>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: akpm@linux-foundation.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
-	shuah@kernel.org, aarcange@redhat.com, lokeshgidra@google.com,
-	david@redhat.com, hughd@google.com, mhocko@suse.com,
-	axelrasmussen@google.com, rppt@kernel.org, willy@infradead.org,
-	Liam.Howlett@oracle.com, jannh@google.com, zhangpeng362@huawei.com,
-	bgeffon@google.com, kaleshsingh@google.com, ngeoffray@google.com,
-	jdduke@google.com, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH v4 5/5] selftests/mm: add UFFDIO_MOVE ioctl test
-Message-ID: <ZUATjxr2i7zVfL8I@x1n>
-References: <20231028003819.652322-1-surenb@google.com>
- <20231028003819.652322-6-surenb@google.com>
- <ZUAOpmVO3LMmge3S@x1n>
- <CAJuCfpEbrWVxfuqRxCrxB482-b=uUnZw2-gqmjxENBUqhCQb8A@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1698699912; x=1699304712;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1JmURPcvLtSqLUUbFA7SrmnbERd26AC5lme3Qx7nOkM=;
+        b=wcLwBiiIEtBKx3CRyluiDYfH1QoXe/HP9NLy/DblsIxgxAbyXovioD+dykeSxrmbkD
+         qtLlGVQx2qcOIy759vtNsR1ZZBd45xaJWP3+/DtrmRR+LOTmdZK4MYs7pvup9ZZ9TR7P
+         YXnWzi8PGNjvXihje0vUI/TcS2JX/mY0hh0Xa0R//Hbmxw9KjoRxmYlNfc6+xucdVp01
+         o1Nw6dQpR7oFnMtetK2MikfXSu2luxuvW7eGBN9BfWQgeWeO7CmFYkIR8+Wfudd14/wL
+         hgiMOSZyczIbhntuPb3ugTtXdqe/GzrwCWx38M69GvTWHVDCa9enEDvBkO5m9lZRWn+E
+         uCnQ==
+X-Gm-Message-State: AOJu0Yzbzl7x4aSC4Bo6KqZI+4QfZofTlAMYNPMD6VUWmTb4+bR9QmM5
+	ZM0ng1OKwhOqsqhhl1jOQ6BNyR+5LM31aeZsyRH1oPjPhmjQKstgrTiMiXzLfk0Nocb9rb+tZwf
+	0zil9ksQ/mC4tE3Z6q5pDZuPdgjymS+D3H+fCzpPNhc5wueF12nBN
+X-Received: by 2002:a17:902:bf44:b0:1ca:c490:8537 with SMTP id u4-20020a170902bf4400b001cac4908537mr8378139pls.14.1698699912570;
+        Mon, 30 Oct 2023 14:05:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHzbZk3QaOS4ZLoC9Xi0ie7QckJKqDxiUMckdm8KX4ydz1J+XDcKYN3ZT+xrDzl974H1L6JMnNQ06VhK1wjIKY=
+X-Received: by 2002:a17:902:bf44:b0:1ca:c490:8537 with SMTP id
+ u4-20020a170902bf4400b001cac4908537mr8378130pls.14.1698699912248; Mon, 30 Oct
+ 2023 14:05:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAJuCfpEbrWVxfuqRxCrxB482-b=uUnZw2-gqmjxENBUqhCQb8A@mail.gmail.com>
+References: <0000000000000c44b0060760bd00@google.com> <000000000000c92c0d06082091ee@google.com>
+ <20231025032133.GA1247614@ZenIV>
+In-Reply-To: <20231025032133.GA1247614@ZenIV>
+From: Andreas Gruenbacher <agruenba@redhat.com>
+Date: Mon, 30 Oct 2023 22:05:00 +0100
+Message-ID: <CAHc6FU4Zd0szGBzZBx212K4MgjFJAEMwD1jbTraw0ihMG14Z2w@mail.gmail.com>
+Subject: Re: [syzbot] [gfs2?] WARNING: suspicious RCU usage in gfs2_permission
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: syzbot <syzbot+3e5130844b0c0e2b4948@syzkaller.appspotmail.com>, 
+	cluster-devel@redhat.com, gfs2@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, postmaster@duagon.onmicrosoft.com, 
+	rpeterso@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 30, 2023 at 01:22:02PM -0700, Suren Baghdasaryan wrote:
-> > > +static int adjust_page_size(void)
-> > > +{
-> > > +     page_size = default_huge_page_size();
+Al,
+
+On Wed, Oct 25, 2023 at 5:29=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> w=
+rote:
+> On Fri, Oct 20, 2023 at 12:10:38AM -0700, syzbot wrote:
+> > syzbot has bisected this issue to:
 > >
-> > This is hacky too, currently page_size is the real page_size backing the
-> > memory.
+> > commit 0abd1557e21c617bd13fc18f7725fc6363c05913
+> > Author: Al Viro <viro@zeniv.linux.org.uk>
+> > Date:   Mon Oct 2 02:33:44 2023 +0000
 > >
-> > To make thp test simple, maybe just add one more test to MOVE a large chunk
-> > to replace the thp test, which may contain a few thps?  It also doesn't
-> > need to be fault based.
-> 
-> Sorry, I didn't get your suggestion. Could you please clarify? Which
-> thp test are you referring to?
+> >     gfs2: fix an oops in gfs2_permission
+> >
+> > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D10b21c33=
+680000
+> > start commit:   2dac75696c6d Add linux-next specific files for 20231018
+> > git tree:       linux-next
+> > final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D12b21c33=
+680000
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D14b21c33680=
+000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D6f8545e1ef7=
+a2b66
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D3e5130844b0c0=
+e2b4948
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D101c8d096=
+80000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D11a07475680=
+000
+> >
+> > Reported-by: syzbot+3e5130844b0c0e2b4948@syzkaller.appspotmail.com
+> > Fixes: 0abd1557e21c ("gfs2: fix an oops in gfs2_permission")
+> >
+> > For information about bisection process see: https://goo.gl/tpsmEJ#bise=
+ction
+>
+> Complaints about rcu_dereference() outside of rcu_read_lock().
+>
+> We could replace that line with
+>         if (mask & MAY_NOT_BLOCK)
+>                 gl =3D rcu_dereference(ip->i_gl);
+>         else
+>                 gl =3D ip->i_gl;
+> or by any equivalent way to tell lockdep it ought to STFU.
 
-The new "move-pmd" test.
+the following should do then, right?
 
-I meant maybe it makes sense to have one separate MOVE test for when one
-ioctl(MOVE) covers a large range which can cover some thps.  Then that will
-trigger thp paths.  Assuming the fault paths are already covered in the
-generic "move" test.
+    gl =3D rcu_dereference_check(ip->i_gl, !(mask & MAY_NOT_BLOCK));
+
+> BTW, the amount of rcu_dereference_protected(..., true) is somewhat depre=
+ssing...
+>
+> Probably need to turn
+>                 ip->i_gl =3D NULL;
+> in the end of gfs2_evict_inode() into rcu_assign_pointer(ip->i_gl, NULL);
+
+That's what commit 0abd1557e21c6 does already so there's nothing to fix, ri=
+ght?
+
+> and transpose it with the previous line -
+>                 gfs2_glock_put_eventually(ip->i_gl);
+>
+> I don't think it really matters in this case, though - destruction of the=
+ object
+> it used to point to is delayed in all cases.  Matter of taste (and lockde=
+p
+> false positives)...
+
+I don't understand. What would lockdep complain about here?
 
 Thanks,
-
--- 
-Peter Xu
+Andreas
 
 
