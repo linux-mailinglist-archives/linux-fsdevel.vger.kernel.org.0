@@ -1,105 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-1534-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1535-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A85397DB7AA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 11:17:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC3627DB7FE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 11:25:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E4242814FA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 10:17:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 181C11C20A4F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Oct 2023 10:25:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6605A10A39;
-	Mon, 30 Oct 2023 10:17:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7D4711C93;
+	Mon, 30 Oct 2023 10:25:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="Ikef2hso"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vMQoW8NT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0835D379
-	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 10:17:02 +0000 (UTC)
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AEFB30CA
-	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 03:16:59 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-9c3aec5f326so1124748566b.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 03:16:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1698661018; x=1699265818; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=AThZyGO6UG20hmjHcpACaf8i+znXal5Y8kmwc7kkktQ=;
-        b=Ikef2hsolRHbAopLeUoyRZERha0ByCvzxydECzx05Mk4FCsjrpD5h6Sc7Xvz5XjKU5
-         OEcQpV69Z16e+ZQRgRjXdjS2ehce/3Fbj469hnr53OUb1iJ1naYFOw2y/K6zeg5XzSEb
-         evw7zMvmdayyF6DwG9IJ4Jk9p9M/FH4yZdIeM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698661018; x=1699265818;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AThZyGO6UG20hmjHcpACaf8i+znXal5Y8kmwc7kkktQ=;
-        b=BE1A5ah8yheIdH22S4uOkB+LObJl4Kx5moQKup4fuO0mjtKJlossVotJzgXDEMtBNv
-         5ZUz6V0JtrcPePMpHGKTKdQPOC9MM5TGLDYhNFLhAyYfLBbiJZR72Pkba4eayzg8Idi6
-         AlogrJwbEAqFKK9AkKohsKiN3jBKfnaOvrVLGX1qIahVfRg/sCR/8IiQ7iqDEtYn6VG7
-         m20mSPhfycrQfp2fd6JJfInsJOyh7Rb85KFNMKb6DtF3nbzULI14G32TiNCoNY+8zIFK
-         f8+j7VkZnO6APNTonal72+YCqEm3M6JyvPgRI3eG1FtHWPBohDgy+/HQiATPRwCyOQ1L
-         rXgg==
-X-Gm-Message-State: AOJu0YwJ+9DTTtXHseuqrxPPYVbUg71BeiSqCQK3zfizWU7OvAoKCz5c
-	kTfUgXb469VJuNCCKQgW6CuAqbrFVY2iWq03A5FKBg==
-X-Google-Smtp-Source: AGHT+IFjFiqYa075j+WRuX8k36PDoTVqgoa+OQv8/JcQndPEhCd0z3tvTVL3+CF3LXq1dHiEIuxEOYsswiC3HRDedwY=
-X-Received: by 2002:a17:907:1c2a:b0:9bd:bdfd:e17a with SMTP id
- nc42-20020a1709071c2a00b009bdbdfde17amr9013118ejc.6.1698661017674; Mon, 30
- Oct 2023 03:16:57 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A0011196
+	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 10:25:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32A40C433C9;
+	Mon, 30 Oct 2023 10:24:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1698661501;
+	bh=HwZC9pP22kn0OW2U98JRm5leuqIjcFYJqSB6SiV2Igo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vMQoW8NTpxWDJGXQJQUyW78lIpBQ7gAE0+SzCObomFGyGRsggebsZMp8JkGKRtTbT
+	 2Wb++X6JGoGFycht3sxazi53zoDfSN8j8yNlrIYVhS2+jCaBQdmkNKxucl0/Xz5Ija
+	 g+W4kzcozgxzag64nxmFIhoO0NeOCQkjmxII85cj1u3wIzZwA3nWHccuAMMqaKCAxc
+	 5FLDoX0vi15Ot4EjT5fwFAaR1uuGNsIdjxKHbqfP3TYftwgEOgC4LIj/xf3L65z9aN
+	 MbyzOSwJl9cfXPKSSid7UaeE+L/k4gCtiZUjPA2Il6rNMZwLCocMesmWhsqoDwhgZn
+	 1ZZtTnI7WwEnQ==
+Date: Mon, 30 Oct 2023 11:24:57 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Ian Kent <raven@themaw.net>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bill O'Donnell <bodonnel@redhat.com>
+Subject: Re: [GIT PULL for v6.7] autofs updates
+Message-ID: <20231030-imponieren-tierzucht-1d1ef70bce3f@brauner>
+References: <20231027-vfs-autofs-018bbf11ed67@brauner>
+ <43ea4439-8cb9-8b0d-5e04-3bd5e85530f4@themaw.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231016160902.2316986-1-amir73il@gmail.com> <CAOQ4uxh=cLySge6htd+DnJrqAKF=C_oJYfVrbpvQGik0wR-+iw@mail.gmail.com>
-In-Reply-To: <CAOQ4uxh=cLySge6htd+DnJrqAKF=C_oJYfVrbpvQGik0wR-+iw@mail.gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Mon, 30 Oct 2023 11:16:46 +0100
-Message-ID: <CAJfpegtZGC93-ydnFEt1Gzk+Yy5peJ-osuZD8GRYV4c+WPu0EQ@mail.gmail.com>
-Subject: Re: [PATCH v14 00/12] FUSE passthrough for file io
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, Daniel Rosenberg <drosen@google.com>, 
-	Paul Lawrence <paullawrence@google.com>, Alessio Balsini <balsini@android.com>, 
-	Christian Brauner <brauner@kernel.org>, fuse-devel@lists.sourceforge.net, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <43ea4439-8cb9-8b0d-5e04-3bd5e85530f4@themaw.net>
 
-On Thu, 19 Oct 2023 at 16:33, Amir Goldstein <amir73il@gmail.com> wrote:
+On Sun, Oct 29, 2023 at 03:54:52PM +0800, Ian Kent wrote:
+> On 27/10/23 22:33, Christian Brauner wrote:
+> > Hey Linus,
+> > 
+> > /* Summary */
+> > This ports autofs to the new mount api. The patchset has existed for
+> > quite a while but never made it upstream. Ian picked it back up.
+> > 
+> > This also fixes a bug where fs_param_is_fd() was passed a garbage
+> > param->dirfd but it expected it to be set to the fd that was used to set
+> > param->file otherwise result->uint_32 contains nonsense. So make sure
+> > it's set.
+> > 
+> > One less filesystem using the old mount api. We're getting there, albeit
+> > rather slow. The last remaining major filesystem that hasn't converted
+> > is btrfs. Patches exist - I even wrote them - but so far they haven't
+> > made it upstream.
+> 
+> Yes, looks like about 39 still to be converted.
+> 
+> 
+> Just for information, excluding btrfs, what would you like to see as the
+> 
+> priority for conversion (in case me or any of my colleagues get a chance
+> 
+> to spend a bit more time on it)?
 
-> generic/120 tests -o noatime and fails because atime is
-> updated (on the backing file).
-> This is a general FUSE issue and passthrough_hp --nocache fails
-> the same test (i.e. it only passed because of attribute cache).
->
-> generic/080, generic/215 both test for c/mtime updates after mapped writes.
-> It is not surprising that backing file passthrough fails these tests -
-> there is no "passthrough getattr" like overlayfs and there is no opportunity
-> to invalidate the FUSE inode attribute cache.
+I think one way to prioritize them is by how likely they are to have
+(more than a couple) active users.
 
-This is what POSIX has to say:
+So recently I've done overlayfs because aside from btrfs that was
+probably one of the really actively used filesystems that hadn't yet
+been converted. And that did surface some regression
 
-"The last data modification and last file status change timestamps of
-a file that is mapped with MAP_SHARED and PROT_WRITE shall be marked
-for update at some point in the interval between a write reference to
-the mapped region and the next call to msync() with MS_ASYNC or
-MS_SYNC for that portion of the file by any process. If there is no
-such call and if the underlying file is modified as a result of a
-write reference, then these timestamps shall be marked for update at
-some time after the write reference."
+So 9p, fat, devpts, f2fs, zonefs, ext2 are pretty obvious targets.
+Judging from experience, the more mount options a filesystem has the
+bigger the conversion patch will usually be.
 
-Not sure if the test is doing msync(), but invalidating cached c/mtime
-on msync() shouldn't be too hard (msync -> fsync).
+Another way is by function. For example, we expose mount_bdev() which is
+basically the legacy version of get_tree_bdev(). And they sort of are
+almost copies of each other. So converting all callers to the new mount
+api means we can get rid of mount_bdev(). But that's like 25 of the
+remaining 39.
 
-While the standard doesn't seem to require updating c/mtime on
-mumap(2) if there was a modification, that might also make sense in
-practice.
-
-Thanks,
-Miklos
+But in the end any filesystem that is converted is great.
 
