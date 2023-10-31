@@ -1,117 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-1633-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1634-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 442767DCBD9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Oct 2023 12:31:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EB3E7DCC1E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Oct 2023 12:47:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F089728170D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Oct 2023 11:31:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74BE4B20F91
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Oct 2023 11:47:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 932031A734;
-	Tue, 31 Oct 2023 11:31:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 789B31BDE1;
+	Tue, 31 Oct 2023 11:47:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VKSEaqGa"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EJgcO3uJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5F19156C1
-	for <linux-fsdevel@vger.kernel.org>; Tue, 31 Oct 2023 11:31:41 +0000 (UTC)
-Received: from mail-ot1-x32f.google.com (mail-ot1-x32f.google.com [IPv6:2607:f8b0:4864:20::32f])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1158891;
-	Tue, 31 Oct 2023 04:31:40 -0700 (PDT)
-Received: by mail-ot1-x32f.google.com with SMTP id 46e09a7af769-6ce2b6b3cb6so3721170a34.3;
-        Tue, 31 Oct 2023 04:31:40 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FE1C1A73C
+	for <linux-fsdevel@vger.kernel.org>; Tue, 31 Oct 2023 11:47:36 +0000 (UTC)
+Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6AF991;
+	Tue, 31 Oct 2023 04:47:35 -0700 (PDT)
+Received: by mail-pl1-x636.google.com with SMTP id d9443c01a7336-1cc58219376so15104295ad.1;
+        Tue, 31 Oct 2023 04:47:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698751899; x=1699356699; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=zYGDhB/um96+OSL3bdNH6Xb1xNttdqBHEeOQYlAiy+4=;
-        b=VKSEaqGanVQNrWpcmf21+Tk4hgKRzDH83SR7GX1RqcbDUxCcW84D6P96siXTiGYQrT
-         0eXNjl8CyMqL+TlaO3JRZ9Ajy87IHVAlUHQKKYjC0lJ5r1vtf7Q6JNnMlhMCuYkSZQCH
-         yYZjMGtfCBxYnYTxUL/lgFlEUpWNRXDPkZ7b2v5kOJRqngsy0k/oAWaRxN+gZKDvaZDE
-         pp0V1oJAt7IiffnbWnpZFLAMm7Z9y4RKaJXguyGCW9R7yYkC/SY8eRqUkHgDfdePXp2w
-         je92RUl54APIbkeDwgrR2en5Ge/DmiSq/Z/g7tWSbUZtlEO27sUR+EOvq96LUtPF+ibQ
-         9Pdw==
+        d=gmail.com; s=20230601; t=1698752855; x=1699357655; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3C17UJiVwd6DOa03RYkc0No/IhhZUWEzgYPRcFfwfdM=;
+        b=EJgcO3uJFikFayJPOBxdndx2o1Y81EMmkHIhmkF42b1a6A14uoFIhsX1oUBYNEWBt4
+         2iqxfqkyOo4pDcsunXaxsAxhu9Dk+Favvp8G1m8ZuW3imREFfh5UxhgQ58VA+cRIkItf
+         UwafJ9/SdlRS5DM1XNuZa+DLktMdYkEsl7I7l3s29AzqgTQX/2RacolIIfIHOs1PrdBf
+         wHf6W8tUQQ3EM7xZt17Q2sqxkwUYDRk0mPv9uwVd2p+sRpfEXMJjznbadfOADTnjYniX
+         4SMdwIMkzXJ33Z+YN7kS1/9cIUDQ8bsNZFMMsGIkC84OFdD16lSEqppIduyCBamu7yOF
+         OCHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698751899; x=1699356699;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1698752855; x=1699357655;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=zYGDhB/um96+OSL3bdNH6Xb1xNttdqBHEeOQYlAiy+4=;
-        b=NrcK82KUZkYEtgSyKznQrpuJdPNt1wq5Odfj08ZehjOndNKw1baVZrNO3XvNDhyo2X
-         +7d4mazDfG1vQFKmFulmjkDJ/gnvV36LMxsxEdGlw4cFXYFCsIA7xFoO5GYQQxWLuV99
-         4Sj85gwVJsWaKe5Ycn4mlYwkR4mVAU4z/NdKmYj+RW3TYyNohuMK2utYLIEWG3YXomBl
-         Uy+rUherVgf4EksI0pDtr82mKrmedkqMnD3iqig9eUySd7tdjzazn5Khjizl4qUUDYka
-         /+FN2YutgSJC/zYPhYrHk+hjB4Y8UWd55DwoNKhUYjcO1pi7ov/zzbE+GuDHvYkVWs8V
-         cXFQ==
-X-Gm-Message-State: AOJu0YyMc7wQkxNjiQJMFuIPZ/50ahA9+dLQqqG1aQ/BxH23EuQWFJhs
-	HjFke5I/hgXGL0NJ3QT4eee5MtHSqsUYNRqhgDc=
-X-Google-Smtp-Source: AGHT+IHuYP72qDA7lV1u5U+Et4v2vvDxnY6s+Al6fXDbgkiWs9zjXI2/VLFe0hP5lM6ClxyT2yA6zMq4AXtgvsttkaM=
-X-Received: by 2002:a05:6830:1e99:b0:6be:ea3e:367 with SMTP id
- n25-20020a0568301e9900b006beea3e0367mr13025879otr.23.1698751899308; Tue, 31
- Oct 2023 04:31:39 -0700 (PDT)
+        bh=3C17UJiVwd6DOa03RYkc0No/IhhZUWEzgYPRcFfwfdM=;
+        b=uKPTgG+sRhBiYhx60YHO18kOQE761hAYKOlW7NvDJ6afsqXWa0pZyejE8lQCTd8Mjk
+         TdvKOxL2qh27E5Nu98WNJ5PxwB37AqvkI8ssDDKqtonxmYfcr6sffWBCHs+BHI63jHYh
+         aobJcoQVXuxdO28gwSBGPGMyZJVoUG1Jpr9GxbJSuAVDsE3WMMxDIqqb3qqlPDz5AwoK
+         pLw08DYz+qR/b6bIFowtjwCr2mrFh80zgSsrk6owKb1Uqutyz9svFSr67okwQVY2lWwZ
+         0wwygv8egHXF0WRVcUE5esBdr1CBqOa/E+2Pse7wi60ZxPUpP0uYnTD/7KcLlYs9JZBs
+         p7kg==
+X-Gm-Message-State: AOJu0Yzs/zESH+Sj9ljfZhk/TNW7vBT5muUZap9nGBI2ZGUeEG1YlV5T
+	TYHKAl6pUD6r1FEo58cKOLs=
+X-Google-Smtp-Source: AGHT+IHGD0OVTJ2k1R9HRR8YcAOyu3CWnt5QT3tNviymPi26+SleD2bMuWNlKjwZksiHiC2sIXi8dw==
+X-Received: by 2002:a17:903:807:b0:1cc:2a23:cbab with SMTP id kr7-20020a170903080700b001cc2a23cbabmr10730665plb.27.1698752855137;
+        Tue, 31 Oct 2023 04:47:35 -0700 (PDT)
+Received: from debian.me ([103.131.18.64])
+        by smtp.gmail.com with ESMTPSA id b15-20020a170902d50f00b001c9b8f76a89sm1165904plg.82.2023.10.31.04.47.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 31 Oct 2023 04:47:34 -0700 (PDT)
+Received: by debian.me (Postfix, from userid 1000)
+	id 98CE8819BFD9; Tue, 31 Oct 2023 18:47:31 +0700 (WIB)
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Filesystems Development <linux-fsdevel@vger.kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Yusong Gao <a869920004@163.com>,
+	Bagas Sanjaya <bagasdotme@gmail.com>
+Subject: [PATCH] fs: Clarify "non-RCY" in access_override_creds() comment
+Date: Tue, 31 Oct 2023 18:47:28 +0700
+Message-ID: <20231031114728.41485-1-bagasdotme@gmail.com>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Received: by 2002:a8a:d1:0:b0:4f0:1250:dd51 with HTTP; Tue, 31 Oct 2023
- 04:31:38 -0700 (PDT)
-In-Reply-To: <20231031-proviant-anrollen-d2245037ce97@brauner>
-References: <20230509165657.1735798-1-kent.overstreet@linux.dev>
- <20230509165657.1735798-23-kent.overstreet@linux.dev> <20230523-zujubeln-heizsysteme-f756eefe663e@brauner>
- <20231019153040.lj3anuescvdprcq7@f> <20231019155958.7ek7oyljs6y44ah7@f>
- <ZTJmnsAxGDnks2aj@dread.disaster.area> <CAGudoHHqpk+1b6KqeFr6ptnm-578A_72Ng3H848WZP0GoyUQbw@mail.gmail.com>
- <ZTYAUyiTYsX43O9F@dread.disaster.area> <CAGudoHGzX2H4pUuDNYzYOf8s-HaZuAi7Dttpg_SqtXAgTw8tiw@mail.gmail.com>
- <20231031-proviant-anrollen-d2245037ce97@brauner>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Tue, 31 Oct 2023 12:31:38 +0100
-Message-ID: <CAGudoHEw+JRNB_qfdam2LM-3KLWiQu369ewQFO=hnpQ7qALmbA@mail.gmail.com>
-Subject: Re: (subset) [PATCH 22/32] vfs: inode cache conversion to hash-bl
-To: Christian Brauner <brauner@kernel.org>
-Cc: Dave Chinner <david@fromorbit.com>, Dave Chinner <dchinner@redhat.com>, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-bcachefs@vger.kernel.org, Kent Overstreet <kent.overstreet@linux.dev>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1037; i=bagasdotme@gmail.com; h=from:subject; bh=u5ekTWI8pmEnF9ckTR+SSRBAZyiP/895cBZE6O+O9IE=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDKkOL7585ZvKVbn7cL/DDeUtT30jX25+fFTS6/yK7z2yZ ibMSxQdOkpZGMS4GGTFFFkmJfI1nd5lJHKhfa0jzBxWJpAhDFycAjAR810M/+MP7PR/1MgsPqcv 4avC3T+rFKT3FTvZGS9xmsPWZFZo3sjIcLQq2dJmnUTCqYzu6P4W3TMvL6w7pWnNKb59q9VrFUE mbgA=
+X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
+Content-Transfer-Encoding: 8bit
 
-On 10/31/23, Christian Brauner <brauner@kernel.org> wrote:
->> The follow up including a statement about "being arsed" once more was
->> to Christian, not you and was rather "tongue in cheek".
->
-> Fyi, I can't be arsed to be talked to like that.
->
+The term is originally intended as a joke that stands for "non-racy".
+This trips new contributors who mistake it for RCU typo [1].
 
-Maybe there is a language or cultural barrier at play here and the
-above comes off to you as inflammatory.
+Replace the term with more-explicit wording.
 
-I assumed the tone here is rather informal. For example here is an
-excerpt from your response to me in another thread:
-> You're all driving me nuts. ;)
+Link: https://lore.kernel.org/r/20231030-debatten-nachrangig-f58abcdac530@brauner/
+Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+---
+ fs/open.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-I assumed this was not a serious statement and the "being arsed" thing
-was written by me in the same spirit. I find it surprising there is a
-strong reaction to it, but I can only explain why.
+diff --git a/fs/open.c b/fs/open.c
+index 98f6601fbac65e..a89c64629aacf4 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -442,7 +442,8 @@ static const struct cred *access_override_creds(void)
+ 	 * 'get_current_cred()' function), that will clear the
+ 	 * non_rcu field, because now that other user may be
+ 	 * expecting RCU freeing. But normal thread-synchronous
+-	 * cred accesses will keep things non-RCY.
++	 * cred accesses will keep things non-racy to avoid RCU
++	 * freeing.
+ 	 */
+ 	override_cred->non_rcu = 1;
+ 
 
-All that said, I have some patches I intend to submit in the
-foreseeable future. I am going to make sure to stick to more
-professional tone.
-
->> Whether the patch is ready for reviews and whatnot is your call to
->> make as the author.
->
-> This is basically why that patch never staid in -next. Dave said this
-> patch is meaningless without his other patchs and I had no reason to
-> doubt that claim nor currently the cycles to benchmark and disprove it.
->
-
-That makes sense, thanks.
-
+base-commit: 7f680e5f256f346a5d3cd83a17c84bb6bc950008
 -- 
-Mateusz Guzik <mjguzik gmail.com>
+An old man doll... just what I always wanted! - Clara
+
 
