@@ -1,163 +1,159 @@
-Return-Path: <linux-fsdevel+bounces-1625-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1626-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55DD97DCACA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Oct 2023 11:28:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 129F17DCAD8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Oct 2023 11:30:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA9A3B20F5E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Oct 2023 10:28:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90138B20FCA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Oct 2023 10:30:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92E3D199C9;
-	Tue, 31 Oct 2023 10:28:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC4C41A73A;
+	Tue, 31 Oct 2023 10:30:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CLJ3APHB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ev4ne27U"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FFA0199A0
-	for <linux-fsdevel@vger.kernel.org>; Tue, 31 Oct 2023 10:28:49 +0000 (UTC)
-Received: from mail-yw1-x112e.google.com (mail-yw1-x112e.google.com [IPv6:2607:f8b0:4864:20::112e])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A215BA2
-	for <linux-fsdevel@vger.kernel.org>; Tue, 31 Oct 2023 03:28:47 -0700 (PDT)
-Received: by mail-yw1-x112e.google.com with SMTP id 00721157ae682-5afa5dbc378so36955757b3.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Oct 2023 03:28:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698748127; x=1699352927; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dfz1GsV9zfBfe1Ea3lnlRV40Da9oIl9PaWl+Bzs03xA=;
-        b=CLJ3APHBRdigpJU/iYvJziyTd/rfryQwid1XUUV7r0Y8Y6+zTgYpzinSej8oqxCZP9
-         +RpLmuR8G3v9wTf0KOBs5x8mK3S5hyvvIycNHw+ENalGxG1qrUffOegKD4+//xqmYG2G
-         L5nGWTXYQLZHy7L4fMFD22LwGIcNJRUYKa4SA8p/WKYI+WufD8xe1UTq1uU0iBao05My
-         SoJEYZkxVotwrYO3FcevAfUvqVwlIrh9lc+adprejOzsDeJUTXWUQhQ9K80ASOgBagi+
-         gvmkwL3aemoL3uEMpeNw5TTywgmDlPEzqriaKhwRg/1uA8ZYH0ad0NwbrI5Ic1CB0hm/
-         QENQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698748127; x=1699352927;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dfz1GsV9zfBfe1Ea3lnlRV40Da9oIl9PaWl+Bzs03xA=;
-        b=xHb5sBmPKY3XzkkqantQncz9NEt47UfLCVWOSXJmC3vxwcmOSzLYQMQMiTMabWKEXX
-         5D4/6EyG9syF7Plcr8tsnWMoqQ9bTjS7m/H0HPJOSckaTzbg35NqkN5aAUibqCJD+4GG
-         E12wZpoe+NHeG2wpQQB/8KsNzOG/qOZhTEz+1aiYWAvCEw9ehmE14o2KOKIMRNLECWYK
-         dpY84MY4qm47EB444pCvYNBqtVeO5HIK7XDgnoOfShA/sYGrNcCVzWssJ4Xpcvq2Gh7M
-         AQMqXz/Tx6mdErhwdE/vIuepVpHA1IDlpAFVAOrVSRoJjmgt7yHH7+2SJPIPvM8GvO4v
-         7Tbw==
-X-Gm-Message-State: AOJu0YwzEGsEZJZPs3k0HcMH8fUOiPX5n5J3r9BToIHHaCTGszfSvqaw
-	BZe06lgW9CnOMlolvJxC/xzT2csormnEi8T7Ssg=
-X-Google-Smtp-Source: AGHT+IFrBgA4hvfPpYuS4ERL5lrjy6s0mm9YgmfOMJExTKw1VkZoat6yna1wTedxdbcjl8B8S9PoTtR82DlT7ANwC9o=
-X-Received: by 2002:a25:410e:0:b0:d9c:a3b8:f39d with SMTP id
- o14-20020a25410e000000b00d9ca3b8f39dmr9182909yba.65.1698748126638; Tue, 31
- Oct 2023 03:28:46 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E80D1A727
+	for <linux-fsdevel@vger.kernel.org>; Tue, 31 Oct 2023 10:30:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90139C433C7;
+	Tue, 31 Oct 2023 10:30:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1698748235;
+	bh=qK3DGIVN30CKCk3p1WZsI6EB6xDHe02lYO5vyQjhTno=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ev4ne27UuOjVqfb069C6Kp8q4wAkmqKcHOZnhZaz5Lffycjx2yIUBuXCcCDsZ3siX
+	 G6uZQ1wsxRqji+Ao4acLNfn7DtHmozcJ0m7EO8jW5X/YYhq22IFP39o7dmX++eG8GZ
+	 IZwju4kgUE3lclL0INhItoadbL3vBe4mee/EtII7AqeLfU5XHjH0nOWc0QYeshRPcF
+	 FGChyjaNxpd0vtlynXUqoMiMbw8j9kPCxNzUPey3vCutJlX2MPWSiD4TdqWdGGL/iw
+	 gK6TpA/2/Xvo0xlstAK5oDPQpbyVNuK44iuuzwyWOkwPH25mCgGfBluTv4lRxgt4gO
+	 /MmCASuSt/BVQ==
+Date: Tue, 31 Oct 2023 11:30:21 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Dave Chinner <david@fromorbit.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	John Stultz <jstultz@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Chandan Babu R <chandan.babu@oracle.com>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Theodore Ts'o <tytso@mit.edu>,
+	Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	Hugh Dickins <hughd@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.de>,
+	David Howells <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org,
+	linux-mm@kvack.org, linux-nfs@vger.kernel.org
+Subject: Re: [PATCH RFC 2/9] timekeeping: new interfaces for multigrain
+ timestamp handing
+Message-ID: <20231031-jobverlust-auberginen-04f47d380f59@brauner>
+References: <CAOQ4uxhJGkZrUdUJ72vjRuLec0g8VqgRXRH=x7W9ogMU6rBxcQ@mail.gmail.com>
+ <d539804a2a73ad70265c5fa599ecd663cd235843.camel@kernel.org>
+ <ZTjMRRqmlJ+fTys2@dread.disaster.area>
+ <2ef9ac6180e47bc9cc8edef20648a000367c4ed2.camel@kernel.org>
+ <ZTnNCytHLGoJY9ds@dread.disaster.area>
+ <6df5ea54463526a3d898ed2bd8a005166caa9381.camel@kernel.org>
+ <ZUAwFkAizH1PrIZp@dread.disaster.area>
+ <CAHk-=wg4jyTxO8WWUc1quqSETGaVsPHh8UeFUROYNwU-fEbkJg@mail.gmail.com>
+ <ZUBbj8XsA6uW8ZDK@dread.disaster.area>
+ <CAOQ4uxgSRw26J+MPK-zhysZX9wBkXFRNx+n1bwnQwykCJ1=F4Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231016160902.2316986-1-amir73il@gmail.com> <CAOQ4uxh=cLySge6htd+DnJrqAKF=C_oJYfVrbpvQGik0wR-+iw@mail.gmail.com>
- <CAJfpegtZGC93-ydnFEt1Gzk+Yy5peJ-osuZD8GRYV4c+WPu0EQ@mail.gmail.com>
-In-Reply-To: <CAJfpegtZGC93-ydnFEt1Gzk+Yy5peJ-osuZD8GRYV4c+WPu0EQ@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 31 Oct 2023 12:28:35 +0200
-Message-ID: <CAOQ4uxjYLta7_fJc90C4=tPUxTw-WR2v9du8JHTVdsy_iZnFmA@mail.gmail.com>
-Subject: Re: [PATCH v14 00/12] FUSE passthrough for file io
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, Daniel Rosenberg <drosen@google.com>, 
-	Paul Lawrence <paullawrence@google.com>, Alessio Balsini <balsini@android.com>, 
-	Christian Brauner <brauner@kernel.org>, fuse-devel@lists.sourceforge.net, 
-	linux-fsdevel@vger.kernel.org, Dave Chinner <david@fromorbit.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxgSRw26J+MPK-zhysZX9wBkXFRNx+n1bwnQwykCJ1=F4Q@mail.gmail.com>
 
-On Mon, Oct 30, 2023 at 12:16=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu>=
- wrote:
->
-> On Thu, 19 Oct 2023 at 16:33, Amir Goldstein <amir73il@gmail.com> wrote:
->
-> > generic/120 tests -o noatime and fails because atime is
-> > updated (on the backing file).
-> > This is a general FUSE issue and passthrough_hp --nocache fails
-> > the same test (i.e. it only passed because of attribute cache).
+On Tue, Oct 31, 2023 at 09:03:57AM +0200, Amir Goldstein wrote:
+> On Tue, Oct 31, 2023 at 3:42 AM Dave Chinner <david@fromorbit.com> wrote:
 > >
-> > generic/080, generic/215 both test for c/mtime updates after mapped wri=
-tes.
-> > It is not surprising that backing file passthrough fails these tests -
-> > there is no "passthrough getattr" like overlayfs and there is no opport=
-unity
-> > to invalidate the FUSE inode attribute cache.
->
-> This is what POSIX has to say:
->
-> "The last data modification and last file status change timestamps of
-> a file that is mapped with MAP_SHARED and PROT_WRITE shall be marked
-> for update at some point in the interval between a write reference to
-> the mapped region and the next call to msync() with MS_ASYNC or
-> MS_SYNC for that portion of the file by any process. If there is no
-> such call and if the underlying file is modified as a result of a
-> write reference, then these timestamps shall be marked for update at
-> some time after the write reference."
->
-> Not sure if the test is doing msync(), but invalidating cached c/mtime
-> on msync() shouldn't be too hard (msync -> fsync).
->
+> [...]
+> > .... and what is annoying is that that the new i_version just a
+> > glorified ctime change counter. What we should be fixing is ctime -
+> > integrating this change counting into ctime would allow us to make
+> > i_version go away entirely. i.e. We don't need a persistent ctime
+> > change counter if the ctime has sufficient resolution or persistent
+> > encoding that it does not need an external persistent change
+> > counter.
+> >
+> > That was reasoning behind the multi-grain timestamps. While the mgts
+> > implementation was flawed, the reasoning behind it certainly isn't.
+> > We should be trying to get rid of i_version by integrating it into
+> > ctime updates, not arguing how atime vs i_version should work.
+> >
+> > > So I don't think the issue here is "i_version" per se. I think in a
+> > > vacuum, the best option of i_version is pretty obvious.  But if you
+> > > want i_version to track di_changecount, *then* you end up with that
+> > > situation where the persistence of atime matters, and i_version needs
+> > > to update whenever a (persistent) atime update happens.
+> >
+> > Yet I don't want i_version to track di_changecount.
+> >
+> > I want to *stop supporting i_version altogether* in XFS.
+> >
+> > I want i_version as filesystem internal metadata to die completely.
+> >
+> > I don't want to change the on disk format to add a new i_version
+> > field because we'll be straight back in this same siutation when the
+> > next i_version bug is found and semantics get changed yet again.
+> >
+> > Hence if we can encode the necessary change attributes into ctime,
+> > we can drop VFS i_version support altogether.  Then the "atime bumps
+> > i_version" problem also goes away because then we *don't use
+> > i_version*.
+> >
+> > But if we can't get the VFS to do this with ctime, at least we have
+> > the abstractions available to us (i.e. timestamp granularity and
+> > statx change cookie) to allow XFS to implement this sort of
+> > ctime-with-integrated-change-counter internally to the filesystem
+> > and be able to drop i_version support....
+> >
+> 
+> I don't know if it was mentioned before in one of the many threads,
+> but there is another benefit of ctime-with-integrated-change-counter
+> approach - it is the ability to extend the solution with some adaptations
+> also to mtime.
+> 
+> The "change cookie" is used to know if inode metadata cache should
+> be invalidated and mtime is often used to know if data cache should
+> be invalidated, or if data comparison could be skipped (e.g. rsync).
+> 
+> The difference is that mtime can be set by user, so using lower nsec
+> bits for modification counter would require to truncate the user set
+> time granularity to 100ns - that is probably acceptable, but only as
+> an opt-in behavior.
+> 
+> The special value 0 for mtime-change-counter could be reserved for
+> mtime that was set by the user or for upgrade of existing inode,
+> where 0 counter means that mtime cannot be trusted as an accurate
+> data modification-cookie.
+> 
+> This feature is going to be useful for the vfs HSM implementation [1]
+> that I am working on and it actually rhymes with the XFS DMAPI
+> patches that were never fully merged upstream.
+> 
+> Speaking on behalf of my employer, we would love to see the data
+> modification-cookie feature implemented, whether in vfs or in xfs.
+> 
+> *IF* the result on this thread is that the chosen solution is
+> ctime-with-change-counter in XFS
+> *AND* if there is agreement among XFS developers to extend it with
+> an opt-in mkfs/mount option to 100ns-mtime-with-change-counter in XFS
+> *THEN* I think I will be able to allocate resources to drive this xfs work.
 
-These tests do not do msync.
-
-Specifically, test generic/080 encodes an expectation that
-c/mtime will be changed for mmaped write following mmaped read.
-Not sure where this expectation is coming from?
-
-
-Author: Omer Zilberberg <omzg@plexistor.com>
-Date:   Wed Apr 1 15:39:36 2015 +1100
-
-    generic: test that mmap-write updates c/mtime
-
-    When using mmap() for file i/o, writing to the file should update
-    it's c/mtime. Specifically if we first mmap-read from a page, then
-    memap-write to the same page.
-
-    This test was failing for the initial submission of DAX because
-    pfn based mapping do not have an page_mkwrite called for them.
-    The new Kernel patches that introduce pfn_mkwrite fixes this test.
-
-    Test adapted from a script originally written by Dave Chinner.
-
-
-> While the standard doesn't seem to require updating c/mtime on
-> mumap(2) if there was a modification, that might also make sense in
-> practice.
-
-Makes sense.
-
-I was thinking about a cache coherency model for FUSE passthough:
-At any given point, if we have access to a backing file, we can compare
-the backing file's inode timestamps with those of the FUSE inode.
-
-If the timestamps differ, we do not copy them over to FUSE inode,
-as overlayfs does, but we invalidate the FUSE attribute cache.
-We can perform this checkup on open() release() flush() fsync()
-and at other points, such as munmap() instead of unconditionally
-invalidating attribute cache.
-
-I already used tha model for atime update:
-
-       /* Mimic atime update policy of backing inode, not the actual value =
-*/
-       if (!timespec64_equal(&backing_inode->i_atime, &inode->i_atime))
-               fuse_invalidate_atime(inode);
-
-Do you think that can work?
-Do you think that the server should be able to configure this behavior
-or we can do it by default?
-
-Thanks,
-Amir.
+If it can be solved within XFS then this would be preferable.
 
