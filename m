@@ -1,160 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-1638-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1639-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D33617DCCF4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Oct 2023 13:31:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18FAB7DCD2B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Oct 2023 13:47:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3CA41C20C35
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Oct 2023 12:31:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA31728176F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Oct 2023 12:47:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F065F1DDD5;
-	Tue, 31 Oct 2023 12:31:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i4omrioL"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BBEA1C3A;
+	Tue, 31 Oct 2023 12:47:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAA501DDCD
-	for <linux-fsdevel@vger.kernel.org>; Tue, 31 Oct 2023 12:31:50 +0000 (UTC)
-Received: from mail-qv1-xf2f.google.com (mail-qv1-xf2f.google.com [IPv6:2607:f8b0:4864:20::f2f])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63A9E97
-	for <linux-fsdevel@vger.kernel.org>; Tue, 31 Oct 2023 05:31:49 -0700 (PDT)
-Received: by mail-qv1-xf2f.google.com with SMTP id 6a1803df08f44-66cfd874520so32690866d6.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Oct 2023 05:31:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698755508; x=1699360308; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aSQkZktU84qtEfxnTBKl2VJ38L8KSRr6ZhztrYySHak=;
-        b=i4omrioLsaUgFUQv8PC5xZpPLXMpFzqAspzNU6+BOLkLaTNjRsapq5eLODndy2d3ya
-         uxHR/MzdLJHV/e6BGw6Kc1MlHxxnzi/uYAMx+uqZjKqOPRCVujfhh544hqt401sonNPG
-         wKV+p6daOc+lILnBIHe5MvIMJw9ln17SPHzc7fBAHRTTqQc0R99kWPbWCrktovNehTz9
-         1dzMNz5xI8s6R8FDMLV502YilA6+vpga8M4P+ybAooCccf/YxJ/Tl+6JOgg2WSeXIcJ2
-         J6WVq6HqgJtc7ZYGlv0YL48fielKl/szELbc5JhygaKu3V4wYVmqNdiP0pL+nFBBFwJW
-         EkVg==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA282A57
+	for <linux-fsdevel@vger.kernel.org>; Tue, 31 Oct 2023 12:47:18 +0000 (UTC)
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12B28C2;
+	Tue, 31 Oct 2023 05:47:17 -0700 (PDT)
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-5a7eef0b931so53665537b3.0;
+        Tue, 31 Oct 2023 05:47:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698755508; x=1699360308;
+        d=1e100.net; s=20230601; t=1698756436; x=1699361236;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=aSQkZktU84qtEfxnTBKl2VJ38L8KSRr6ZhztrYySHak=;
-        b=tTE1gROFfFVUg1RPsbXg2y8B1l/GGfcNON0OdpmPKILeSU8n2BLXlOiFaaQlGzExL7
-         clis+tURJQAgFyNOBZNk7EzcXIXdp1CXVr+YeoXpkkUD+rq2UlnTmRzkaXXM1E+IVMd2
-         wUBp1ElhrckoI3wsY+1uxo0fQdsDB6Cv1yOmTrwsNRygnw3v+hEG99fYD1sisKqQucct
-         vW/SnkG2Z1pdjg+EE080BrJcotwO2xw87UHf+b62pDjJnp3jyJ4rx1hWZS+Uc+wghp7t
-         icbZ/k175CfrEWjrdX0hyiOsFNd/C6X7dZvX8GUgjdvxns8p54U7advW2K/0FgdglYZT
-         d0DQ==
-X-Gm-Message-State: AOJu0Yze9XW7cAjA9nuUKcf9So42rUwTtRSkIPilDu3m1buaVPDsYSzP
-	YjlOYNk/u4qxtN7I0Mq15t0o2R82Wp8rQyc1H44=
-X-Google-Smtp-Source: AGHT+IEQo/NxPPzBhcgfG6JMAK0YFwl58ubjRn35tqFXSbzXoU9lQlYVs+nq6nKoxTrVnVHHlAiszSqHI3fq0t0cUHM=
-X-Received: by 2002:ad4:5961:0:b0:656:51b9:990e with SMTP id
- eq1-20020ad45961000000b0065651b9990emr15348025qvb.57.1698755508435; Tue, 31
- Oct 2023 05:31:48 -0700 (PDT)
+        bh=Dtpwqyp0A02VdCSa2nK6MzwPbTqa+e280XT4tyuC4zk=;
+        b=YF3qas8q/OxGaXVMDiv5OlZ9BeuRPsRHg3ZAY8CLlL8jeuvCt0H2MFsaRnb3BH9gnZ
+         l7iE3/SzpT74JysnnS6PN1FfTtl3GMYkvnSfml9WRsm9nUmunXiEeULi42FjpjrS+CC+
+         V0d4Zx/ydd9tUNxpHk7KQIenBzXq7CrdlIHGMJCZY8DgnARsOKPLTB2Q0cA6c+CmDQQO
+         x2r94QXrtDzIab9dqVM4CqgpOU7NHcZuwSG7McHjrdxFujicpV3T1GPqqZj0Mvs3+SEV
+         93NIdSHpyrzn+pMdiyutGlb4UeR/YaWNBz05Mxk91BA7JFF9LlC/KSV2l602HJfkKGxg
+         pv+Q==
+X-Gm-Message-State: AOJu0YwjJfFXS51CTdJCbDNiftUZ82f+z2Tmf4fywrtmgRTQbDda4Qjg
+	gRPt4xG+ke87qcnjXsKoHLbcnYSEP0YxXQ==
+X-Google-Smtp-Source: AGHT+IGv50Jyg14I5ATij6XR9WTbTLhs4fH0g+tTx6SOrSqaEvL/HtGcU6fZoSOSQK42fXtVM3WXZw==
+X-Received: by 2002:a05:690c:714:b0:5a8:d86f:bb3f with SMTP id bs20-20020a05690c071400b005a8d86fbb3fmr13720875ywb.8.1698756436034;
+        Tue, 31 Oct 2023 05:47:16 -0700 (PDT)
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com. [209.85.219.181])
+        by smtp.gmail.com with ESMTPSA id t8-20020a0dea08000000b0059b085c4051sm741572ywe.85.2023.10.31.05.47.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 31 Oct 2023 05:47:15 -0700 (PDT)
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-d9a4c0d89f7so5110330276.1;
+        Tue, 31 Oct 2023 05:47:15 -0700 (PDT)
+X-Received: by 2002:a25:fc16:0:b0:d9b:4f28:f6ce with SMTP id
+ v22-20020a25fc16000000b00d9b4f28f6cemr10853098ybd.1.1698756435614; Tue, 31
+ Oct 2023 05:47:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231016160902.2316986-1-amir73il@gmail.com> <CAOQ4uxh=cLySge6htd+DnJrqAKF=C_oJYfVrbpvQGik0wR-+iw@mail.gmail.com>
- <CAJfpegtZGC93-ydnFEt1Gzk+Yy5peJ-osuZD8GRYV4c+WPu0EQ@mail.gmail.com>
- <CAOQ4uxjYLta7_fJc90C4=tPUxTw-WR2v9du8JHTVdsy_iZnFmA@mail.gmail.com> <CAJfpegufvtaBaK8p+Q3v=9Qoeob3WamWBye=1BwGniRsvO5HZg@mail.gmail.com>
-In-Reply-To: <CAJfpegufvtaBaK8p+Q3v=9Qoeob3WamWBye=1BwGniRsvO5HZg@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 31 Oct 2023 14:31:36 +0200
-Message-ID: <CAOQ4uxj+myANTk2C+_tk_YNLe748i2xA0HMZ7FKCuw7W5RUCuA@mail.gmail.com>
-Subject: Re: [PATCH v14 00/12] FUSE passthrough for file io
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, Daniel Rosenberg <drosen@google.com>, 
-	Paul Lawrence <paullawrence@google.com>, Alessio Balsini <balsini@android.com>, 
-	Christian Brauner <brauner@kernel.org>, fuse-devel@lists.sourceforge.net, 
-	linux-fsdevel@vger.kernel.org, Dave Chinner <david@fromorbit.com>
+References: <20231030145540.pjkggoiddobyjicq@moria.home.lan>
+In-Reply-To: <20231030145540.pjkggoiddobyjicq@moria.home.lan>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 31 Oct 2023 13:47:02 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXpwMdLuoWsNGa8qacT_5Wv-vSTz0xoBR5n_fnD9cNOuQ@mail.gmail.com>
+Message-ID: <CAMuHMdXpwMdLuoWsNGa8qacT_5Wv-vSTz0xoBR5n_fnD9cNOuQ@mail.gmail.com>
+Subject: Re: [GIT PULL] bcachefs for v6.7
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-bcachefs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 31, 2023 at 1:17=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu> =
-wrote:
->
-> On Tue, 31 Oct 2023 at 11:28, Amir Goldstein <amir73il@gmail.com> wrote:
->
-> > These tests do not do msync.
-> >
-> > Specifically, test generic/080 encodes an expectation that
-> > c/mtime will be changed for mmaped write following mmaped read.
-> > Not sure where this expectation is coming from?
->
-> Probably because "update on first store" is the de-facto standard on
-> linux (filemap_page_mkwrite -> file_update_time).
->
-> Thinking about it, the POSIX text is a bit sloppy, I think this is
-> what it wanted to say:
->
-> "The last data modification and last file status change timestamps of
-> a file that is mapped with MAP_SHARED and PROT_WRITE shall be marked
-> for update at some point in the interval between the _first_ write refere=
-nce to
-> the mapped region _since_the_last_msync()_ call and the next call to msyn=
-c()
-> ..."
->
-> Otherwise the linux behavior would be non-conforming.
->
-> > I was thinking about a cache coherency model for FUSE passthough:
-> > At any given point, if we have access to a backing file, we can compare
-> > the backing file's inode timestamps with those of the FUSE inode.
->
-> Yes, that makes sense as long as there's a 1:1 mapping between backing
-> files and backed files.
->
-> It's not the case for e.g. a blockdev backed fs.   But current
-> patchset doesn't support that mode yet, so I don't think we need to
-> care now.
->
-> > If the timestamps differ, we do not copy them over to FUSE inode,
-> > as overlayfs does, but we invalidate the FUSE attribute cache.
-> > We can perform this checkup on open() release() flush() fsync()
-> > and at other points, such as munmap() instead of unconditionally
-> > invalidating attribute cache.
->
-> This check can be done directly in  fuse_update_get_attr(), no?
->
+Hi Kent,
 
-Current patch set does not implement "backing inode" for FUSE inode,
-so this only works for fuse_update_attributes() (with a file).
-We do not do cached read/write/readdir in fuse passthrough mode
-that leaves only lseek/llseek(), so I assume it's not what you meant.
-
-IOW, we need to conditionally call fuse_invalidate_attr_mask()
-at occasions that we have a backing file/inode.
-
-> > I already used tha model for atime update:
-> >
-> >        /* Mimic atime update policy of backing inode, not the actual va=
-lue */
-> >        if (!timespec64_equal(&backing_inode->i_atime, &inode->i_atime))
-> >                fuse_invalidate_atime(inode);
-> >
-> > Do you think that can work?
-> > Do you think that the server should be able to configure this behavior
-> > or we can do it by default?
+On Mon, Oct 30, 2023 at 3:56=E2=80=AFPM Kent Overstreet
+<kent.overstreet@linux.dev> wrote:
+> The following changes since commit 0bb80ecc33a8fb5a682236443c1e740d5c917d=
+1d:
 >
-> I think this can be the default, and as we generalize the passthrough
-> behavior we'll add the necessary controls.
+>   Linux 6.6-rc1 (2023-09-10 16:28:41 -0700)
 >
+> are available in the Git repository at:
+>
+>   https://evilpiepirate.org/git/bcachefs.git tags/bcachefs-2023-10-30
+>
+> for you to fetch changes up to b827ac419721a106ae2fccaa40576b0594edad92:
+>
+>   exportfs: Change bcachefs fid_type enum to avoid conflicts (2023-10-26 =
+16:41:00 -0400)
+>
+> ----------------------------------------------------------------
+> Initial bcachefs pull request for 6.7-rc1
+>
+> Here's the bcachefs filesystem pull request.
+>
+> One new patch since last week: the exportfs constants ended up
+> conflicting with other filesystems that are also getting added to the
+> global enum, so switched to new constants picked by Amir.
+>
+> I'll also be sending another pull request later on in the cycle bringing
+> things up to date my master branch that people are currently running;
+> that will be restricted to fs/bcachefs/, naturally.
+>
+> Testing - fstests as well as the bcachefs specific tests in ktest:
+>   https://evilpiepirate.org/~testdashboard/ci?branch=3Dbcachefs-for-upstr=
+eam
+>
+> It's also been soaking in linux-next, which resulted in a whole bunch of
+> smatch complaints and fixes and a patch or two from Kees.
+>
+> The only new non fs/bcachefs/ patch is the objtool patch that adds
+> bcachefs functions to the list of noreturns. The patch that exports
+> osq_lock() has been dropped for now, per Ingo.
 
-OK, I will try to add this and see if that also solved the 2 failing tests.
-It should solve the mmaped write test because the tests do
-stat()/open()/mmap()/mem-write/close()/stat()
+Thanks for your PR!
 
-So it's the close/flush that is going to update mtime, even though that's
-not the POSIX semantics, it is a bit like the NFS close-to-open (cto)
-semantics regarding data cache coherency.
+>  fs/bcachefs/mean_and_variance.c                 |  159 ++
+>  fs/bcachefs/mean_and_variance.h                 |  198 ++
+>  fs/bcachefs/mean_and_variance_test.c            |  240 ++
 
-Thanks,
-Amir.
+Looking into missing dependencies for MEAN_AND_VARIANCE_UNIT_TEST and
+failing mean_and_variance tests, this does not seem to match what was
+submitted for public review?
+
+Lore only has:
+"[PATCH 31/32] lib: add mean and variance module."
+https://lore.kernel.org/all/20230509165657.1735798-32-kent.overstreet@linux=
+.dev/
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
