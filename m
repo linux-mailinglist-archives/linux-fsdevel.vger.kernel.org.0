@@ -1,70 +1,66 @@
-Return-Path: <linux-fsdevel+bounces-1641-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1642-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A15557DCD51
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Oct 2023 13:55:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 464607DCE48
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Oct 2023 14:55:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF10C1C20C41
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Oct 2023 12:55:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 730E01C20C19
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Oct 2023 13:55:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79B3512E7D;
-	Tue, 31 Oct 2023 12:55:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE6B01DDCF;
+	Tue, 31 Oct 2023 13:55:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fc9r3Hnh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BlTYxX8b"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D46125C4
-	for <linux-fsdevel@vger.kernel.org>; Tue, 31 Oct 2023 12:55:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33947C433C8;
-	Tue, 31 Oct 2023 12:55:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49B2B1DDC1
+	for <linux-fsdevel@vger.kernel.org>; Tue, 31 Oct 2023 13:55:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 927C6C433C8;
+	Tue, 31 Oct 2023 13:55:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1698756932;
-	bh=s7UBSmOan5oLtMhAz9UbCJu2Vxkj6b+7mYph/6f2OQ4=;
+	s=k20201202; t=1698760512;
+	bh=qIx7b2aoxjsw7TSGPFkMkmmuPqzNI4IGu1YwuirwcKE=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=Fc9r3HnhP2vrDNKoCbIYyj3IJrXZ1Gm3bIlLEPBLpBVAkLstdVfLk6/LS2vex+SSO
-	 IditxlTPlqhQJJBWOO4+9OnQvTpiyYVst57FnePcyEXPbPf6WafvGffAsLZsmjSeLk
-	 TA7XVfrRoSpIxjCKtKIzdMUQZaDByKBL3fVP/bni2e6bgRUy0dsa2oaqhYVI3GaSD5
-	 PGrVhNmfxijl1WfwMkaFeLulhpH5WRmskhcrN5LVFtQ9v9FPE8kO4eFEI9JeukVXxV
-	 Gz1bmq0XjkkizrBM9/eo9IILVDmb28ZOBoHHxY6PHPZm35yM391OYl8lssPbx3jcZG
-	 dGJal2gIxTzgQ==
-Message-ID: <34e2c1231f54309c204c5b67e1999dfe1a00fceb.camel@kernel.org>
+	b=BlTYxX8bg/TyNm9k1G7hqu+6cgvScqLMmrYdwjXbvP2dLhoZwu81/Hd86RFZNrRU0
+	 1xr5Y7vFw1ElqKWf1uTmJEmuJvF5L9j3yFfh7ymcf50H/LGvdULGaZ9r81Rim15VMH
+	 4BUULsumVrnHeBwimSaTDD/NGbj2ueM3Eg/nxhkdFB1V+ajGM0vsdulmLTlFZNgwMn
+	 vt13jgmtUQuW2BcVFTQDAsGHT0Gmcoujtaha2sh9SXpVB++uDD9vrm6H7Cx6inillP
+	 sk1nXdn297tkqDQqx2pR+3iapmU6fN1aVLAWEUbQ/flcaA2j5xZmgzrdZMzAsb7osR
+	 s91m60OYKHeag==
+Message-ID: <b0cd1f921c2c9d9e76cb324c6fa7c48747eafaed.camel@kernel.org>
 Subject: Re: [PATCH RFC 2/9] timekeeping: new interfaces for multigrain
  timestamp handing
 From: Jeff Layton <jlayton@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Dave Chinner <david@fromorbit.com>, Amir Goldstein <amir73il@gmail.com>,
-  Linus Torvalds <torvalds@linux-foundation.org>, Kent Overstreet
- <kent.overstreet@linux.dev>, Christian Brauner <brauner@kernel.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>, John Stultz <jstultz@google.com>,
- Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>,
- Chandan Babu R <chandan.babu@oracle.com>, "Darrick J. Wong"
- <djwong@kernel.org>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger
- <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, Josef Bacik
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Alexander Viro
+ <viro@zeniv.linux.org.uk>, John Stultz <jstultz@google.com>, Thomas
+ Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>, Chandan
+ Babu R <chandan.babu@oracle.com>, "Darrick J. Wong" <djwong@kernel.org>,
+ Dave Chinner <david@fromorbit.com>, Theodore Ts'o <tytso@mit.edu>, Andreas
+ Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, Josef Bacik
  <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Hugh Dickins
- <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, Jan Kara
- <jack@suse.de>, David Howells <dhowells@redhat.com>, 
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, 
- linux-btrfs@vger.kernel.org, linux-mm@kvack.org, linux-nfs@vger.kernel.org
-Date: Tue, 31 Oct 2023 08:55:28 -0400
-In-Reply-To: <20231031122201.kmxzttzfbearu6iu@quack3>
-References: 
-	<CAHk-=whphyjjLwDcEthOOFXXfgwGrtrMnW2iyjdQioV6YSMEPw@mail.gmail.com>
-	 <ZTc8tClCRkfX3kD7@dread.disaster.area>
-	 <CAOQ4uxhJGkZrUdUJ72vjRuLec0g8VqgRXRH=x7W9ogMU6rBxcQ@mail.gmail.com>
-	 <d539804a2a73ad70265c5fa599ecd663cd235843.camel@kernel.org>
-	 <ZTjMRRqmlJ+fTys2@dread.disaster.area>
-	 <2ef9ac6180e47bc9cc8edef20648a000367c4ed2.camel@kernel.org>
-	 <ZTnNCytHLGoJY9ds@dread.disaster.area>
-	 <6df5ea54463526a3d898ed2bd8a005166caa9381.camel@kernel.org>
-	 <ZUAwFkAizH1PrIZp@dread.disaster.area>
-	 <d5965ba7ed012433a9914ba38a6046f2ddb015ac.camel@kernel.org>
-	 <20231031122201.kmxzttzfbearu6iu@quack3>
+ <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, Amir
+ Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.de>, David Howells
+ <dhowells@redhat.com>,  linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org,  linux-xfs@vger.kernel.org,
+ linux-ext4@vger.kernel.org,  linux-btrfs@vger.kernel.org,
+ linux-mm@kvack.org, linux-nfs@vger.kernel.org
+Date: Tue, 31 Oct 2023 09:55:09 -0400
+In-Reply-To: <20231031-stark-klar-0bab5f9ab4dc@brauner>
+References: <20231018-mgtime-v1-0-4a7a97b1f482@kernel.org>
+	 <20231018-mgtime-v1-2-4a7a97b1f482@kernel.org>
+	 <CAHk-=wixObEhBXM22JDopRdt7Z=tGGuizq66g4RnUmG9toA2DA@mail.gmail.com>
+	 <d6162230b83359d3ed1ee706cc1cb6eacfb12a4f.camel@kernel.org>
+	 <CAHk-=wiKJgOg_3z21Sy9bu+3i_34S86r8fd6ngvJpZDwa-ww8Q@mail.gmail.com>
+	 <5f96e69d438ab96099bb67d16b77583c99911caa.camel@kernel.org>
+	 <20231019-fluor-skifahren-ec74ceb6c63e@brauner>
+	 <0a1a847af4372e62000b259e992850527f587205.camel@kernel.org>
+	 <20231031-stark-klar-0bab5f9ab4dc@brauner>
 Content-Type: text/plain; charset="ISO-8859-15"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
@@ -75,62 +71,73 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Tue, 2023-10-31 at 13:22 +0100, Jan Kara wrote:
-> On Tue 31-10-23 07:04:53, Jeff Layton wrote:
-> > On Tue, 2023-10-31 at 09:37 +1100, Dave Chinner wrote:
-> > > I have suggested mechanisms for using masked off bits of timestamps
-> > > to encode sub-timestamp granularity change counts and keep them
-> > > invisible to userspace and then not using i_version at all for XFS.
-> > > This avoids all the problems that the multi-grain timestamp
-> > > infrastructure exposed due to variable granularity of user visible
-> > > timestamps and ordering across inodes with different granularity.
-> > > This is potentially a general solution, too.
+On Tue, 2023-10-31 at 11:26 +0100, Christian Brauner wrote:
+> On Thu, Oct 19, 2023 at 07:28:48AM -0400, Jeff Layton wrote:
+> > On Thu, 2023-10-19 at 11:29 +0200, Christian Brauner wrote:
+> > > > Back to your earlier point though:
+> > > >=20
+> > > > Is a global offset really a non-starter? I can see about doing some=
+thing
+> > > > per-superblock, but ktime_get_mg_coarse_ts64 should be roughly as c=
+heap
+> > > > as ktime_get_coarse_ts64. I don't see the downside there for the no=
+n-
+> > > > multigrain filesystems to call that.
+> > >=20
+> > > I have to say that this doesn't excite me. This whole thing feels a b=
+it
+> > > hackish. I think that a change version is the way more sane way to go=
+.
+> > >=20
 > >=20
-> > I don't really understand this at all, but trying to do anything with
-> > fine-grained timestamps will just run into a lot of the same problems w=
-e
-> > hit with the multigrain work. If you still see this as a path forward,
-> > maybe you can describe it more detail?
+> > What is it about this set that feels so much more hackish to you? Most
+> > of this set is pretty similar to what we had to revert. Is it just the
+> > timekeeper changes? Why do you feel those are a problem?
 >=20
-> Dave explained a bit more details here [1] like:
+> So I think that the multi-grain timestamp work was well intended but it
+> was ultimately a mistake. Because we added code that complicated
+> timestamp timestamp handling in the vfs to a point where the costs
+> clearly outweighed the benefits.
 >=20
-> Another options is for XFS to play it's own internal tricks with
-> [cm]time granularity and turn off i_version. e.g. limit external
-> timestamp visibility to 1us and use the remaining dozen bits of the
-> ns field to hold a change counter for updates within a single coarse
-> timer tick. This guarantees the timestamp changes within a coarse
-> tick for the purposes of change detection, but we don't expose those
-> bits to applications so applications that compare timestamps across
-> inodes won't get things back to front like was happening with the
-> multi-grain timestamps....
-> -
+> And I don't think that this direction is worth going into. This whole
+> thread ultimately boils down to complicating generic infrastructure
+> quite extensively for nfs to handle exposing xfs without forcing an
+> on-disk format change. That's even fine.
 >=20
-> So as far as I understand Dave wants to effectively persist counter in lo=
-w
-> bits of ctime and expose ctime+counter as its change cookie. I guess that
-> could work and what makes the complexity manageable compared to full
-> multigrain timestamps is the fact that we have one filesystem, one on-dis=
-k
-> format etc. The only slight trouble could be that if we previously handed
-> out something in low bits of ctime for XFS, we need to keep handing the
-> same thing out until the inode changes (i.e., no rounding until the momen=
-t
-> inode changes) as the old timestamp could be stored somewhere externally
-> and compared.
->=20
-> 								Honza
->=20
-> [1] https://lore.kernel.org/all/ZTjMRRqmlJ+fTys2@dread.disaster.area/
->=20
->=20
+> That's not a problem but in the same way I don't think the solution is
+> just stuffing this complexity into the vfs. IOW, if we make this a vfs
+> problem then at the lowest possible cost and not by changing how
+> timestamps work for everyone even if it's just internal.
 
-Got it. That makes sense and could probably be made to work.
-Doing that all in XFS won't be simple though. You'll need to reimplement
-stuff like file_modified() and file_update_time(). Those get called from
-deep within the VFS and from page fault handlers.
+I'll point out that this last posting I did was an RFC. It was invasive
+to the timekeeping code, but I don't think that's a hard requirement for
+doing this.
 
-FWIW, that's the main reason the multigrain work was so invasive, even
-though it was a filesystem-specific feature.
---=20
+I do appreciate the feedback on this version of the series (particularly
+from Thomas who gave a great technical reason why this approach was
+wrong), but I don't think we necessarily have to give up on the whole
+idea because this particular implementation was too costly.
+
+The core idea for fixing the problem with the original series is sane,
+IMO. There is nothing wrong with simply making it that when we stamp a
+file with a fine-grained timestamp that we consider that a floor for all
+later timestamp updates. The only real question is how to keep that
+(global) fine-grained floor offset at a low cost. I think that's a
+solvable problem.
+
+I also believe that real, measurable fine-grained timestamp differences
+are worthwhile for other use cases beyond NFS. Everyone was pointing out
+the problems with lagging timestamps vs. make and rsync, but that's a
+double-edged sword. With the current always coarse-grained timestamps,
+the ordering of files written within the same jiffy can't be determined
+since their timestamps will be identical. We could conceivably change
+that with this series.
+
+That said, if this has no chance of ever being merged, then I won't
+bother working on it further, and we can try to pursue something that is
+(maybe) XFS-specific.
+
+Let me know, either way.
+--
 Jeff Layton <jlayton@kernel.org>
 
