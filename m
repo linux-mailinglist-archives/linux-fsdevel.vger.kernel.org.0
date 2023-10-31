@@ -1,232 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-1673-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1674-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 211A77DD81D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Oct 2023 23:17:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 90A9F7DD81E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Oct 2023 23:18:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96112B20FB3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Oct 2023 22:17:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E444CB20FC4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Oct 2023 22:18:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 234FD27443;
-	Tue, 31 Oct 2023 22:17:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CC1627445;
+	Tue, 31 Oct 2023 22:18:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U/HXjC4K"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78FD91C3F
-	for <linux-fsdevel@vger.kernel.org>; Tue, 31 Oct 2023 22:17:07 +0000 (UTC)
-Received: from mail.stoffel.org (mail.stoffel.org [172.104.24.175])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AFF8F4;
-	Tue, 31 Oct 2023 15:17:06 -0700 (PDT)
-Received: from quad.stoffel.org (097-095-183-072.res.spectrum.com [97.95.183.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
-	(No client certificate requested)
-	by mail.stoffel.org (Postfix) with ESMTPSA id 7A4C01E135;
-	Tue, 31 Oct 2023 18:17:05 -0400 (EDT)
-Received: by quad.stoffel.org (Postfix, from userid 1000)
-	id 28373A8B07; Tue, 31 Oct 2023 18:17:05 -0400 (EDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8874C22311
+	for <linux-fsdevel@vger.kernel.org>; Tue, 31 Oct 2023 22:18:21 +0000 (UTC)
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38B44ED
+	for <linux-fsdevel@vger.kernel.org>; Tue, 31 Oct 2023 15:18:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1698790699;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kfYGCdpNkdX5yz1jUhkJ/3qqRF866UiTHuuzMPk/uy0=;
+	b=U/HXjC4KoPV/Btr64/oDMmCFswL4JdEWUn4iFg7PbR6UdUT1dd6oFwZb7jZHNNWz7DNOLc
+	IJOCnsxuYILAR6fmdvARcSHeDfsbBnkn+LUGE/ZMRrZUi0MZcHESk15m8WxqI5yX5haiHd
+	rYEWAv/sukBArIm1PoLdvJz0Oh2u6PE=
+Received: from mail-ua1-f70.google.com (mail-ua1-f70.google.com
+ [209.85.222.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-132-Z5g8-2OVPCeGRnlS3FGDlg-1; Tue, 31 Oct 2023 18:18:17 -0400
+X-MC-Unique: Z5g8-2OVPCeGRnlS3FGDlg-1
+Received: by mail-ua1-f70.google.com with SMTP id a1e0cc1a2514c-7b9b70dd2beso1338039241.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Oct 2023 15:18:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698790697; x=1699395497;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kfYGCdpNkdX5yz1jUhkJ/3qqRF866UiTHuuzMPk/uy0=;
+        b=KSUxT4vC/+gVY4gv8t1TU7t0pff9fGdNrfZug2BCqAJjhjAOv78OhRuotlVz5rEYPi
+         89e1fXtf25fZOY3P0HY4YWf2RC74JPddnYehlT3GebFvIuHh1Mrn+kFF3TBeWXmmbT/K
+         oerijNzBod1gnoWLmMbzFCTzklYn0VrSpJDIsCp73c1D+nzc7U0oDYOA1/GFLUmkjk9V
+         OeCqHn9eiChDB/MKINnsrYFV7aUId4VoIkkSeLFYrm5Bnty1QjOhFkLcRqBvDDi+5v9n
+         ffRma5/+AmY1lMB01bxaQl6CbrJM9+o3Q6/XWMZmoGdl+VHPX1B6BaJMEQFU+CQx04Sy
+         hVbw==
+X-Gm-Message-State: AOJu0YxDG9cj4WBdLvhSK5X6sRuKS+d/Ammbdzifg76kpLWZIkdJqDqn
+	nsozCkKE6aTQlyxEFEPuMPFH1XUVlVAV8GZtMPWa6djkiCx3n51ggclhfOL+GMqH4sCJfSDs6SU
+	yT2MgDi1wCQpzOwC/r3lrdS+KQtODdCf5MEYktbJVlg==
+X-Received: by 2002:a67:c218:0:b0:44e:99a2:a42 with SMTP id i24-20020a67c218000000b0044e99a20a42mr9981758vsj.11.1698790697103;
+        Tue, 31 Oct 2023 15:18:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGQrBiQJHLqXrbYP+Ue59NphHDME9ef8CfXr1engDM3UMhS/wxqjXJBm4DCAAdJKCtZSXIUO7Qf2zwxIf8biNY=
+X-Received: by 2002:a67:c218:0:b0:44e:99a2:a42 with SMTP id
+ i24-20020a67c218000000b0044e99a20a42mr9981736vsj.11.1698790696825; Tue, 31
+ Oct 2023 15:18:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20231027182217.3615211-1-seanjc@google.com> <20231027182217.3615211-17-seanjc@google.com>
+ <CA+EHjTzj4drYKONVOLP19DYpJ4O8kSXcFzw2AKier1QdcFKx_Q@mail.gmail.com> <ZUF8A5KpwpA6IKUH@google.com>
+In-Reply-To: <ZUF8A5KpwpA6IKUH@google.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Tue, 31 Oct 2023 23:18:04 +0100
+Message-ID: <CABgObfbLonVYk2WE4TC6-J_0ShanY7TbcLXStxji=XDU+9qQ7g@mail.gmail.com>
+Subject: Re: [PATCH v13 16/35] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
+ guest-specific backing memory
+To: Sean Christopherson <seanjc@google.com>
+Cc: Fuad Tabba <tabba@google.com>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Huacai Chen <chenhuacai@kernel.org>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Anup Patel <anup@brainfault.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, kvm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Xiaoyao Li <xiaoyao.li@intel.com>, 
+	Xu Yilun <yilun.xu@intel.com>, Chao Peng <chao.p.peng@linux.intel.com>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, Anish Moorthy <amoorthy@google.com>, 
+	David Matlack <dmatlack@google.com>, Yu Zhang <yu.c.zhang@linux.intel.com>, 
+	Isaku Yamahata <isaku.yamahata@intel.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	Vlastimil Babka <vbabka@suse.cz>, Vishal Annapurve <vannapurve@google.com>, 
+	Ackerley Tng <ackerleytng@google.com>, Maciej Szmigiero <mail@maciej.szmigiero.name>, 
+	David Hildenbrand <david@redhat.com>, Quentin Perret <qperret@google.com>, 
+	Michael Roth <michael.roth@amd.com>, Wang <wei.w.wang@intel.com>, 
+	Liam Merwick <liam.merwick@oracle.com>, Isaku Yamahata <isaku.yamahata@gmail.com>, 
+	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Message-ID: <25921.31969.127938.469728@quad.stoffel.home>
-Date: Tue, 31 Oct 2023 18:17:05 -0400
-From: "John Stoffel" <john@stoffel.org>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: John Stoffel <john@stoffel.org>,
-    Geert Uytterhoeven <geert@linux-m68k.org>,
-    Linus Torvalds <torvalds@linux-foundation.org>,
-    linux-bcachefs@vger.kernel.org,
-    linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org,
-    Kees Cook <keescook@chromium.org>
-Subject: Re: [GIT PULL] bcachefs for v6.7
-In-Reply-To: <20231031221126.5wejfggu7gg2y3n4@moria.home.lan>
-References: <25921.30263.150556.245226@quad.stoffel.home>
-	<20231031221126.5wejfggu7gg2y3n4@moria.home.lan>
-X-Mailer: VM 8.2.0b under 27.1 (x86_64-pc-linux-gnu)
 
->>>>> "Kent" =3D=3D Kent Overstreet <kent.overstreet@linux.dev> writes:=
+On Tue, Oct 31, 2023 at 11:13=E2=80=AFPM Sean Christopherson <seanjc@google=
+.com> wrote:
+> On Tue, Oct 31, 2023, Fuad Tabba wrote:
+> > On Fri, Oct 27, 2023 at 7:23=E2=80=AFPM Sean Christopherson <seanjc@goo=
+gle.com> wrote:
+> Since we now know that at least pKVM will use guest_memfd for shared memo=
+ry, and
+> odds are quite good that "regular" VMs will also do the same, i.e. will w=
+ant
+> guest_memfd with the concept of private memory, I agree that we should av=
+oid
+> PRIVATE.
+>
+> Though I vote for KVM_MEM_GUEST_MEMFD (or KVM_MEM_GUEST_MEMFD_VALID or
+> KVM_MEM_USE_GUEST_MEMFD).  I.e. do our best to avoid ambiguity between re=
+ferring
+> to "guest memory" at-large and guest_memfd.
 
+I was going to propose KVM_MEM_HAS_GUESTMEMFD.  Any option
+is okay for me so, if no one complains, I'll go for KVM_MEM_GUESTMEMFD
+(no underscore because I found the repeated "_MEM" distracting).
 
-> On Tue, Oct 31, 2023 at 05:48:39PM -0400, John Stoffel wrote:
->>=20
->> Using latest HEAD from linux git (commit
->> 5a6a09e97199d6600d31383055f9d43fbbcbe86f (HEAD -> master,
->> origin/master, origin/HEAD), and the following config, I get this
->> failure when compiling on x86_64 Debian Bullseye (11):
->>=20
->>=20
->> CC      fs/bcachefs/btree_io.o
->> In file included from fs/bcachefs/btree_io.c:11:
->> fs/bcachefs/btree_io.c: In function =E2=80=98bch2_btree_post_write_c=
-leanup=E2=80=99:
->> fs/bcachefs/btree_update_interior.h:274:36: error: array subscript 0=
- is outside the bounds of an interior zero-length array =E2=80=98struct=
- bkey_packed[0]=E2=80=99 [-Werror=3Dzero-length-bounds]
->> 274 |   __bch_btree_u64s_remaining(c, b, &bne->keys.start[0]);
->> |                                    ^~~~~~~~~~~~~~~~~~~
->> In file included from fs/bcachefs/bcachefs.h:206,
->> from fs/bcachefs/btree_io.c:3:
->> fs/bcachefs/bcachefs_format.h:2344:21: note: while referencing =E2=80=
-=98start=E2=80=99
->> 2344 |  struct bkey_packed start[0];
->> |                     ^~~~~
->> In file included from fs/bcachefs/btree_io.c:11:
->> fs/bcachefs/btree_io.c: In function =E2=80=98bch2_btree_init_next=E2=
-=80=99:
->> fs/bcachefs/btree_update_interior.h:274:36: error: array subscript 0=
- is outside the bounds of an interior zero-length array =E2=80=98struct=
- bkey_packed[0]=E2=80=99 [-Werror=3Dzero-length-bounds]
->> 274 |   __bch_btree_u64s_remaining(c, b, &bne->keys.start[0]);
->> |                                    ^~~~~~~~~~~~~~~~~~~
->> In file included from fs/bcachefs/bcachefs.h:206,
->> from fs/bcachefs/btree_io.c:3:
->> fs/bcachefs/bcachefs_format.h:2344:21: note: while referencing =E2=80=
-=98start=E2=80=99
->> 2344 |  struct bkey_packed start[0];
->> |                     ^~~~~
->> cc1: all warnings being treated as errors
->> make[4]: *** [scripts/Makefile.build:243: fs/bcachefs/btree_io.o] Er=
-ror 1
->> make[3]: *** [scripts/Makefile.build:480: fs/bcachefs] Error 2
->> make[2]: *** [scripts/Makefile.build:480: fs] Error 2
->> make[1]: *** [/local/src/kernel/git/linux/Makefile:1913: .] Error 2
->> make: *** [Makefile:234: __sub-make] Error 2
+Paolo
 
-> It seems gcc 10 complains in situations gcc 11 does not.
-
-> I've got the following patch running through my testing automation no=
-w:
-
-> -- >8 --
-> From: Kent Overstreet <kent.overstreet@linux.dev>
-> Date: Tue, 31 Oct 2023 18:05:22 -0400
-> Subject: [PATCH] bcachefs: Fix build errors with gcc 10
-
-> gcc 10 seems to complain about array bounds in situations where gcc 1=
-1
-> does not - curious.
-
-> This unfortunately requires adding some casts for now; we may
-> investigate getting rid of our __u64 _data[] VLA in a future patch so=
-
-> that our start[0] members can be VLAs.
-
-> Reported-by: John Stoffel <john@stoffel.org>
-> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
-
-> diff --git a/fs/bcachefs/bcachefs_format.h b/fs/bcachefs/bcachefs_for=
-mat.h
-> index 29b000c6b7e1..5b44598b9df9 100644
-> --- a/fs/bcachefs/bcachefs_format.h
-> +++ b/fs/bcachefs/bcachefs_format.h
-> @@ -1617,9 +1617,7 @@ struct journal_seq_blacklist_entry {
-=20
->  struct bch_sb_field_journal_seq_blacklist {
->  =09struct bch_sb_field=09field;
-> -
-> -=09struct journal_seq_blacklist_entry start[0];
-> -=09__u64=09=09=09_data[];
-> +=09struct journal_seq_blacklist_entry start[];
->  };
-=20
->  struct bch_sb_field_errors {
-> diff --git a/fs/bcachefs/btree_trans_commit.c b/fs/bcachefs/btree_tra=
-ns_commit.c
-> index 8140b6e6e9a6..32693f7c6221 100644
-> --- a/fs/bcachefs/btree_trans_commit.c
-> +++ b/fs/bcachefs/btree_trans_commit.c
-> @@ -681,7 +681,7 @@ bch2_trans_commit_write_locked(struct btree_trans=
- *trans, unsigned flags,
->  =09=09=09=09=09=09       BCH_JSET_ENTRY_overwrite,
-i-> btree_id, i->level,
-i-> old_k.u64s);
-> -=09=09=09=09bkey_reassemble(&entry->start[0],
-> +=09=09=09=09bkey_reassemble((struct bkey_i *) entry->start,
->  =09=09=09=09=09=09(struct bkey_s_c) { &i->old_k, i->old_v });
->  =09=09=09}
-=20
-> @@ -689,7 +689,7 @@ bch2_trans_commit_write_locked(struct btree_trans=
- *trans, unsigned flags,
->  =09=09=09=09=09       BCH_JSET_ENTRY_btree_keys,
-i-> btree_id, i->level,
-i-> k->k.u64s);
-> -=09=09=09bkey_copy(&entry->start[0], i->k);
-> +=09=09=09bkey_copy((struct bkey_i *) entry->start, i->k);
->  =09=09}
-=20
->  =09=09trans_for_each_wb_update(trans, wb) {
-> @@ -697,7 +697,7 @@ bch2_trans_commit_write_locked(struct btree_trans=
- *trans, unsigned flags,
->  =09=09=09=09=09       BCH_JSET_ENTRY_btree_keys,
-wb-> btree, 0,
-wb-> k.k.u64s);
-> -=09=09=09bkey_copy(&entry->start[0], &wb->k);
-> +=09=09=09bkey_copy((struct bkey_i *) entry->start, &wb->k);
->  =09=09}
-=20
->  =09=09if (trans->journal_seq)
-> diff --git a/fs/bcachefs/btree_update_interior.c b/fs/bcachefs/btree_=
-update_interior.c
-> index d029e0348c91..89ada89eafe7 100644
-> --- a/fs/bcachefs/btree_update_interior.c
-> +++ b/fs/bcachefs/btree_update_interior.c
-> @@ -2411,7 +2411,7 @@ void bch2_journal_entry_to_btree_root(struct bc=
-h_fs *c, struct jset_entry *entry
-=20
-r-> level =3D entry->level;
-r-> alive =3D true;
-> -=09bkey_copy(&r->key, &entry->start[0]);
-> +=09bkey_copy(&r->key, (struct bkey_i *) entry->start);
-=20
->  =09mutex_unlock(&c->btree_root_lock);
->  }
-> diff --git a/fs/bcachefs/btree_update_interior.h b/fs/bcachefs/btree_=
-update_interior.h
-> index 5e0a467fe905..d92b3cf5f5e0 100644
-> --- a/fs/bcachefs/btree_update_interior.h
-> +++ b/fs/bcachefs/btree_update_interior.h
-> @@ -271,7 +271,7 @@ static inline struct btree_node_entry *want_new_b=
-set(struct bch_fs *c,
->  =09struct btree_node_entry *bne =3D max(write_block(b),
->  =09=09=09(void *) btree_bkey_last(b, bset_tree_last(b)));
->  =09ssize_t remaining_space =3D
-> -=09=09__bch_btree_u64s_remaining(c, b, &bne->keys.start[0]);
-> +=09=09__bch_btree_u64s_remaining(c, b, bne->keys.start);
-=20
->  =09if (unlikely(bset_written(b, bset(b, t)))) {
->  =09=09if (remaining_space > (ssize_t) (block_bytes(c) >> 3))
-> diff --git a/fs/bcachefs/recovery.c b/fs/bcachefs/recovery.c
-> index f73338f37bf1..9600b8083175 100644
-> --- a/fs/bcachefs/recovery.c
-> +++ b/fs/bcachefs/recovery.c
-> @@ -226,7 +226,7 @@ static int journal_replay_entry_early(struct bch_=
-fs *c,
-=20
->  =09=09if (entry->u64s) {
-r-> level =3D entry->level;
-> -=09=09=09bkey_copy(&r->key, &entry->start[0]);
-> +=09=09=09bkey_copy(&r->key, (struct bkey_i *) entry->start);
-r-> error =3D 0;
->  =09=09} else {
-r-> error =3D -EIO;
-
-
-So this fixes the compile error, thanks!  Sorry for not reporting the
-gcc version better.  And it also compiles nicely when I remove all the
-BACHEFS .config entries, accept all the defaults from 'make oldconfig'
-and re-compile.
-
-Cheers,
-John
 
