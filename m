@@ -1,92 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-1615-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1617-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F388C7DC4EF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Oct 2023 04:42:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D3BB7DC61E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Oct 2023 06:51:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F813B20D5C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Oct 2023 03:42:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC36D28172A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Oct 2023 05:51:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93E395668;
-	Tue, 31 Oct 2023 03:42:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31D65DDA8;
+	Tue, 31 Oct 2023 05:51:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="QNGs8imC"
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="VZPDHsPh"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1B97524B
-	for <linux-fsdevel@vger.kernel.org>; Tue, 31 Oct 2023 03:42:20 +0000 (UTC)
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 984E5DA
-	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 20:42:15 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-99c3c8adb27so770270066b.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 20:42:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1698723734; x=1699328534; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=E2Ob+plhOA44ddqftKTuU+U1KwqHcLgVEWBguJbBUkY=;
-        b=QNGs8imCK9ibE8W68twgbWK8u0P6RFFhak4Nfcqb/TSNTI/mEcPhf9nPu2pe31S0Rp
-         gjMLbO73K7sh9JjgeI3YcdW/6YCawRZry1orj7vyQrTTOImEC7xwT+3UPQxtE+nwl/BR
-         cBaihdLt8X7RW/rEab+7WfXVwxe/yl9Aqe858=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698723734; x=1699328534;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=E2Ob+plhOA44ddqftKTuU+U1KwqHcLgVEWBguJbBUkY=;
-        b=As+xmvCThdwvjt4opP3TIQXZvdQjwjmCojFi9uasSBpSUN2D0HoO+VmpW7qe1odxBl
-         eghdm5FJjmtH+HaLJ0fmintP4epE/yfzRjAvuKYTU8uddtATuIf2m+mYS2dM30Sq31S7
-         YMKBqZd7RMya3zf/Vh6dXM26ptt8ekeg1d/OJDzNm12ou2dkD32jNxI3iILsShZXxBYc
-         7bXd0jf+imH/Mv9y20OLOp4EFr6/4Pp5RJrfqZYfqgVRBd+Yodgeamg+axeUx+itv2FQ
-         trh+spIrDy23o7TRF4D/oBOtGb2mwJxpge0E0bZPZXEW5HZ+9YgiwDQYRxyfqNVGLAx4
-         MAeQ==
-X-Gm-Message-State: AOJu0YzWlAHXhm6NMdaM83S0zl5SpLAkey7FvDSB01K9OfOJgdG/yLM/
-	Wj+TRlyhviGz+UqBk4u2iQO2hgpyEdVSNPDg3piLUCax
-X-Google-Smtp-Source: AGHT+IEujV2NvXohGZKgLbR9uIi/qJRFxNDlS9VOFupkqF/V+dR8gHAUELNHDb9sCXTm2kTqHgaECQ==
-X-Received: by 2002:a17:906:a198:b0:9d3:f436:6804 with SMTP id s24-20020a170906a19800b009d3f4366804mr2593142ejy.29.1698723733817;
-        Mon, 30 Oct 2023 20:42:13 -0700 (PDT)
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com. [209.85.218.45])
-        by smtp.gmail.com with ESMTPSA id y12-20020a17090629cc00b0098ce63e36e9sm240070eje.16.2023.10.30.20.42.13
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Oct 2023 20:42:13 -0700 (PDT)
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-9c773ac9b15so770505766b.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 20:42:13 -0700 (PDT)
-X-Received: by 2002:a17:907:934a:b0:9c7:4e5d:12c5 with SMTP id
- bv10-20020a170907934a00b009c74e5d12c5mr9475622ejc.61.1698723732824; Mon, 30
- Oct 2023 20:42:12 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9DAAD2FE
+	for <linux-fsdevel@vger.kernel.org>; Tue, 31 Oct 2023 05:51:35 +0000 (UTC)
+Received: from out203-205-221-209.mail.qq.com (out203-205-221-209.mail.qq.com [203.205.221.209])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76C19F1;
+	Mon, 30 Oct 2023 22:51:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1698731485; bh=YOE1CEYLTV+5Z4E3X8qtxb3jDwIjdoXcB64mVSFktCE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=VZPDHsPhfkMD4erz5am4zdXCjxlwMEcuYqyMa6cM2zYnOqeoKj3WqKrp/tRaSqEox
+	 1CigSbcVz5r2XpcrKz5sY8syCML8qQ1WpoGk61bSSbOTUFzBB5BAnZIZDVXy7LkMLK
+	 GTSV60l+K0+ySBVBY0CbSK/stlCXuzRjoG3pDpKU=
+Received: from pek-lxu-l1.wrs.com ([111.198.228.56])
+	by newxmesmtplogicsvrsza7-0.qq.com (NewEsmtp) with SMTP
+	id 9C395891; Tue, 31 Oct 2023 13:39:03 +0800
+X-QQ-mid: xmsmtpt1698730743td4nu5bjp
+Message-ID: <tencent_69E996EDCACDBC79A66CB02F956C3494D80A@qq.com>
+X-QQ-XMAILINFO: NY/MPejODIJVwMZyVr9V3VNsFdifSYsIfhL8+4p9Ht9L6383Lo7Lsd1/Pz3IzP
+	 ewGSGuo8GuivlwgoWuq6fs2zWuRXn4bpE32t1o84dRRsQ1KAjUVkXryZP7CeUrw9dO9H7GDP7wdq
+	 f1IvWkxYUO3UzQQoej9CKtb0ltBqnSdiQRSFvo+iYJLh17USV201VVkm857QFrqg6j2PFOIw3ZpH
+	 AMDaiTwIWuJnuslWfgXMcfcWtS+hB0g0W3IjHE3AYyS+d3zLdvp08kR6ZJ8sAYAV8MXZq3CEIQ2d
+	 t2oJ2IVgnI6C2A8UCL3r6JMhOzbjSL/FLIbFaALKWUj2vm1aZx4+ksg1LPDGepjPDwYtcT9glVTT
+	 UVdzgDLQe2RT1LH9yHAdxsoZrzLHQ2aWjHFZFJuN311uIecC+GnGRp2vAmPvwUE/tOa6JGWE5jqt
+	 AW8/0AQbRL3moUurK668oqWc02E/IC8RCJhuBgBHEEB3dNIGakxo+cUYorpo5JxfHGPzcYay0lZC
+	 lxCIGBsWi81T/7xLC/AZB39G8giG0i69qjKBtNCO4Ng5nGfojRjc2h9O+vrZZGLDRAQEGCgKgyZ0
+	 6PI60iDPEk6Qn5aTspK2McsdimqtEEBb9li9CeQHJTUdGbTg8GLiTGSNkAV3pxCDAFviurmydfYp
+	 pW8KcGa7tnMXmukrfpY7dKoX2NBrPdRYxB/yNtURGtxjPQG4wSBReZzHmj1MlVKHGD2qLIGNHiV+
+	 fJJGZjGlnEZ2DdEhZw3hw3LCEBTfmeBFfJxfF4I/eJpvHS4FvbdzRvkKJqJukIVGGnBQnVeGbDdO
+	 oNW/c2W8PFsdEXtro4KQdTz3FAyxkHzM4L8MXgo7InnjKxrZCms3G9vdxR1u1SwZtSmLc4i8Gq04
+	 fCTCdixvPJRwBTXWcJTaBD0GQq7YV1Y2OBIz1z6GNoXwzvJAlkFP9XEZ8/Di8m8w==
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+01cf2dbcbe2022454388@syzkaller.appspotmail.com
+Cc: jfs-discussion@lists.sourceforge.net,
+	linux-fsdevel@vger.kernel.org,
+	shaggy@kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH] jfs: fix uaf in jfs_evict_inode
+Date: Tue, 31 Oct 2023 13:39:04 +0800
+X-OQ-MSGID: <20231031053903.2661789-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.42.0
+In-Reply-To: <0000000000007b8bed0608abc6c2@google.com>
+References: <0000000000007b8bed0608abc6c2@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231030003759.GW800259@ZenIV> <20231030215315.GA1941809@ZenIV>
- <CAHk-=wjGv_rgc8APiBRBAUpNsisPdUV3Jwco+hp3=M=-9awrjQ@mail.gmail.com>
- <67ded994-b001-4e9b-e2c9-530e201096d5@linux.alibaba.com> <CAHk-=whCga8BeQnJ3ZBh_Hfm9ctba_wpF444LpwRybVNMzO6Dw@mail.gmail.com>
- <20231031032625.GB1957730@ZenIV>
-In-Reply-To: <20231031032625.GB1957730@ZenIV>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 30 Oct 2023 17:41:55 -1000
-X-Gmail-Original-Message-ID: <CAHk-=wiYnp=F4basZu269_xuof1ycFsCPntNcEWsGbAkmq_Yxg@mail.gmail.com>
-Message-ID: <CAHk-=wiYnp=F4basZu269_xuof1ycFsCPntNcEWsGbAkmq_Yxg@mail.gmail.com>
-Subject: Re: [RFC] simplifying fast_dput(), dentry_kill() et.al.
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Gao Xiang <hsiangkao@linux.alibaba.com>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, 30 Oct 2023 at 17:26, Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> BTW, is there any reason for -128 for marking them dead?  Looks like
-> -1 wouldn't be any worse...
+When the execution of diMount(ipimap) fails, the object ipimap that has been
+released may be accessed in diFreeSpecial(). Asynchronous ipimap release occurs
+when rcu_core() calls jfs_free_node().
 
-It's *much* too long ago, but I have this dim memory of simply wanting
-to make sure that "dead" was clearly separate from "underflow".
+Therefore, when diMount(ipimap) fails, sbi->ipimap should not be initialized as
+ipimap.
 
-                  Linus
+Reported-and-tested-by: syzbot+01cf2dbcbe2022454388@syzkaller.appspotmail.com
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ fs/jfs/jfs_mount.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/fs/jfs/jfs_mount.c b/fs/jfs/jfs_mount.c
+index 415eb65a36ff..9b5c6a20b30c 100644
+--- a/fs/jfs/jfs_mount.c
++++ b/fs/jfs/jfs_mount.c
+@@ -172,15 +172,15 @@ int jfs_mount(struct super_block *sb)
+ 	}
+ 	jfs_info("jfs_mount: ipimap:0x%p", ipimap);
+ 
+-	/* map further access of per fileset inodes by the fileset inode */
+-	sbi->ipimap = ipimap;
+-
+ 	/* initialize fileset inode allocation map */
+ 	if ((rc = diMount(ipimap))) {
+ 		jfs_err("jfs_mount: diMount failed w/rc = %d", rc);
+ 		goto err_ipimap;
+ 	}
+ 
++	/* map further access of per fileset inodes by the fileset inode */
++	sbi->ipimap = ipimap;
++
+ 	return rc;
+ 
+ 	/*
+-- 
+2.25.1
+
 
