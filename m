@@ -1,83 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-1665-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1666-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2FE77DD702
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Oct 2023 21:22:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A12FD7DD70C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Oct 2023 21:27:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 024F01C20C7D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Oct 2023 20:22:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0AD11C20D21
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Oct 2023 20:27:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B88F7225AB;
-	Tue, 31 Oct 2023 20:22:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C2D7225B1;
+	Tue, 31 Oct 2023 20:27:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Wo9lFuiN"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70790224E2
-	for <linux-fsdevel@vger.kernel.org>; Tue, 31 Oct 2023 20:22:05 +0000 (UTC)
-Received: from mail-ot1-f71.google.com (mail-ot1-f71.google.com [209.85.210.71])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EC70F5
-	for <linux-fsdevel@vger.kernel.org>; Tue, 31 Oct 2023 13:22:04 -0700 (PDT)
-Received: by mail-ot1-f71.google.com with SMTP id 46e09a7af769-6ce28132979so203015a34.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Oct 2023 13:22:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698783723; x=1699388523;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ABxS/Y/dEawUUeKH6gAmQ1oQDLcOIlAS+uqExwFT3Yw=;
-        b=uorQcqvObXJ+NlZksWkwKByrCEJPBF6Jw0CWdNCg+4b970vclzrXWhwmsaaITIR5uj
-         kTQy/1+0uGflmHTw6m3PUHiX3gz+JP81ogq6POmJNXqn1NkT8reOr8w3NbSGVHkAp7Xk
-         kzh+WSPRrg28ThH/bQNChTpNeXtb73z3id33b9WK+drEXn5FEDWd6tJsrgTY76qw9VXN
-         rhdlxjGhIbqOx47hnMGq9pjbaOxtTv7tpOjOMvepjy2AWQ6pX/krXq3rZJbpkUxQYRtH
-         U0fWMjCBVoZKc9CZLYikB7zKbZxMgiWJt/7srEjVARA0ysuQN5vi4NVq8mGLDyfEurTQ
-         xq8Q==
-X-Gm-Message-State: AOJu0YyaWfRBgDz2UiP4jQLBxQKekt7zQEZUq2qMuewtB2b7t4NPRSWX
-	BW6AF+y3P5Ifz2EQ7Frq0fYaC4/Gz5i5TWiGfC2X4ChxoLIO
-X-Google-Smtp-Source: AGHT+IGb7b5+s5UWXuPaOfwbI5gjTxsrXeswNqM5+abNosVgXBYVP27oyqTOzSqlnYSpScnMXbpfJavMqzWhIqrVn1kjNJ71QDEp
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EFAA11195;
+	Tue, 31 Oct 2023 20:27:24 +0000 (UTC)
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67B1DE4;
+	Tue, 31 Oct 2023 13:27:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=J24EvlKL0HTV1heFD4NanY/502+VJ56TUzZ3rmsx9yE=; b=Wo9lFuiN+tfkVPX49uRGez4hyH
+	pG0l/rW81DbJuj66DwFPin39Dl56jTX5KQzu05WHnDAgpTYPL7hb7vfyD5fRtr51+9lElDrvYaMsD
+	TGkDyBtHFZLpqwN5z6XEXObeg6bGTHCAQY3gjbyTWmCaSKKBLeKeKDIxTEhoh1RtNWwg7ZDxu62JQ
+	yo/AXubuf0t85nkv+tFHGtZi3rt9aAVOs0Tk033CXvZB7Y8ZUuWczlhNhDoGKuXSJa9hFTMeEuIwO
+	XeqfEXv05OSNVqpXmv1i69SfIWx55wA3BbBY+2XvdS79r6ggFJmb+ihfMqtewfqSnagfr90c1YiF8
+	J7371lqw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+	id 1qxvJy-00C5Ur-MW; Tue, 31 Oct 2023 20:26:42 +0000
+Date: Tue, 31 Oct 2023 20:26:42 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Sourav Panda <souravpanda@google.com>
+Cc: corbet@lwn.net, gregkh@linuxfoundation.org, rafael@kernel.org,
+	akpm@linux-foundation.org, mike.kravetz@oracle.com,
+	muchun.song@linux.dev, rppt@kernel.org, david@redhat.com,
+	rdunlap@infradead.org, chenlinxuan@uniontech.com,
+	yang.yang29@zte.com.cn, tomas.mudrunka@gmail.com,
+	bhelgaas@google.com, ivan@cloudflare.com, pasha.tatashin@soleen.com,
+	yosryahmed@google.com, hannes@cmpxchg.org, shakeelb@google.com,
+	kirill.shutemov@linux.intel.com, wangkefeng.wang@huawei.com,
+	adobriyan@gmail.com, vbabka@suse.cz, Liam.Howlett@oracle.com,
+	surenb@google.com, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-mm@kvack.org, weixugc@google.com
+Subject: Re: [PATCH v3 1/1] mm: report per-page metadata information
+Message-ID: <ZUFjAj8Liaa/Ijmm@casper.infradead.org>
+References: <20231031174459.459480-1-souravpanda@google.com>
+ <20231031174459.459480-2-souravpanda@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6808:150e:b0:3b2:e7b3:5fc5 with SMTP id
- u14-20020a056808150e00b003b2e7b35fc5mr1621301oiw.3.1698783723868; Tue, 31 Oct
- 2023 13:22:03 -0700 (PDT)
-Date: Tue, 31 Oct 2023 13:22:03 -0700
-In-Reply-To: <00000000000019db4e05e9712237@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000695613060908e8ed@google.com>
-Subject: Re: [syzbot] [ntfs3] kernel panic: stack is corrupted in lock_acquire (2)
-From: syzbot <syzbot+db99576f362a5c1e9f7a@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, ntfs3@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231031174459.459480-2-souravpanda@google.com>
 
-syzbot suspects this issue was fixed by commit:
+On Tue, Oct 31, 2023 at 10:44:59AM -0700, Sourav Panda wrote:
+> +++ b/mm/hugetlb.c
+> @@ -1790,6 +1790,10 @@ static void __update_and_free_hugetlb_folio(struct hstate *h,
+>  		destroy_compound_gigantic_folio(folio, huge_page_order(h));
+>  		free_gigantic_folio(folio, huge_page_order(h));
+>  	} else {
+> +#ifndef CONFIG_SPARSEMEM_VMEMMAP
+> +		__mod_node_page_state(NODE_DATA(page_to_nid(&folio->page)),
+> +				      NR_PAGE_METADATA, -huge_page_order(h));
+> +#endif
 
-commit 4ad5c924df6cd6d85708fa23f9d9a2b78a2e428e
-Author: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Date:   Fri Sep 22 10:07:59 2023 +0000
+surely,
+		__node_stat_sub_folio(folio, NR_PAGE_METADATA)
 
-    fs/ntfs3: Allow repeated call to ntfs3_put_sbi
+> @@ -2175,7 +2179,9 @@ static struct folio *alloc_buddy_hugetlb_folio(struct hstate *h,
+>  		__count_vm_event(HTLB_BUDDY_PGALLOC_FAIL);
+>  		return NULL;
+>  	}
+> -
+> +#ifndef CONFIG_SPARSEMEM_VMEMMAP
+> +	__mod_node_page_state(NODE_DATA(nid), NR_PAGE_METADATA, huge_page_order(h));
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=125d173b680000
-start commit:   45a3e24f65e9 Linux 6.4-rc7
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e74b395fe4978721
-dashboard link: https://syzkaller.appspot.com/bug?extid=db99576f362a5c1e9f7a
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1734eb5b280000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12ddb22f280000
+	__node_stat_add_folio(folio, NR_PAGE_METADATA)
 
-If the result looks correct, please mark the issue as fixed by replying with:
+(create the folio first ...)
 
-#syz fix: fs/ntfs3: Allow repeated call to ntfs3_put_sbi
+> +		__mod_node_page_state(NODE_DATA(page_to_nid(page)),
+> +				      NR_PAGE_METADATA, 1);
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Are you allergic to page_pgdat()?
+
+> @@ -1656,6 +1657,8 @@ static void __init alloc_node_mem_map(struct pglist_data *pgdat)
+>  			panic("Failed to allocate %ld bytes for node %d memory map\n",
+>  			      size, pgdat->node_id);
+>  		pgdat->node_mem_map = map + offset;
+> +		mod_node_early_perpage_metadata(pgdat->node_id,
+> +						PAGE_ALIGN(size) >> PAGE_SHIFT);
+
+I swear I said to use DIV_ROUND_UP().  Yes, I did:
+
+https://lore.kernel.org/linux-mm/ZS%2Fm1KRwTLkcJY8y@casper.infradead.org/
+
+Why have you done something different and claimed I said to do it?
+You've annoyed me now; I shan't review the rest of this.
 
