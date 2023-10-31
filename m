@@ -1,186 +1,219 @@
-Return-Path: <linux-fsdevel+bounces-1667-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1668-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 441E27DD762
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Oct 2023 21:49:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CA0E7DD7CB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Oct 2023 22:36:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7472F1C20CAC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Oct 2023 20:49:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E25D91F21877
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Oct 2023 21:36:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA68C22EE2;
-	Tue, 31 Oct 2023 20:49:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F4A724A06;
+	Tue, 31 Oct 2023 21:36:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MR0SspFZ"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vPTQTo4+"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2CC3225D3;
-	Tue, 31 Oct 2023 20:49:33 +0000 (UTC)
-Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41BD31B1;
-	Tue, 31 Oct 2023 13:49:31 -0700 (PDT)
-Received: by mail-yb1-xb2c.google.com with SMTP id 3f1490d57ef6-d9ac9573274so5682466276.0;
-        Tue, 31 Oct 2023 13:49:31 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C3BA249ED
+	for <linux-fsdevel@vger.kernel.org>; Tue, 31 Oct 2023 21:36:41 +0000 (UTC)
+Received: from mail-pl1-x64a.google.com (mail-pl1-x64a.google.com [IPv6:2607:f8b0:4864:20::64a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 816A2C9
+	for <linux-fsdevel@vger.kernel.org>; Tue, 31 Oct 2023 14:36:39 -0700 (PDT)
+Received: by mail-pl1-x64a.google.com with SMTP id d9443c01a7336-1cc5ef7e815so15926625ad.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Oct 2023 14:36:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698785370; x=1699390170; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=UEKIn1EcPqCI5NkayxDOClFglax7lJCCgowr0cBZZO8=;
-        b=MR0SspFZ0V2Pg8TzthKbLS/IuX6qbQxoZdKybTI2KKKhWCXlz0FaTzAKHjbn0XDQC9
-         fDIFo3IZTay+RyAFZmZFVBvnGjcO0ONvSv0Dw3Yjc9tY5VOpv+ylYdJ5Q7t+yMec4p5P
-         2WmF0GzjzyHRJDR6s1fkk9qVm1ytxPGJpI8PUQ5qeOZpTG7roG8EARdtPAvCiNs1yvoX
-         2MmOKtC4I7NCQx23cq1lXXwHY25N4bOQhgBOh+5jUY12BReUDDyFtjWc2hG3seDYHW4O
-         k/8MqKp1sEHCAj38fn5Lmi3SCyvZCump9QUkvwVTUWj8jO9v/QIH+JWi4hwguwq3N5D+
-         jRZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698785370; x=1699390170;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=google.com; s=20230601; t=1698788199; x=1699392999; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=UEKIn1EcPqCI5NkayxDOClFglax7lJCCgowr0cBZZO8=;
-        b=NtzVezT6Ole0Cdd6fG9Sj3SHSSgY/idkrZe3nhma2lOJ6p4FFOIC7AcrIFpgm1fUyp
-         txkY7WtSV0XqOlj1YERct4Ql5pEDRCim/jR7Xx5Y8y8PZERJJr4IOCt2jvCxL1r+LdR0
-         bi7RTfc6EkDlAnc5GhoZS9G0FiftnCNm8UgJKKbphFCmFVCedvOBBOoiMPKm5adXL92A
-         YAa3guhFDFnWF+kIIEkIKKLWRA2VCHABmuIJispV+jTMDNFqRnkNsbDrQ6I0vEC+pauc
-         sUJc8jMbdHPqsJMF5f7StyeZL01WDfJ374E+f+IYBYXNfWZbWrxOM66OiCJTFP7sgzmf
-         zxqw==
-X-Gm-Message-State: AOJu0YwVlgLpRB+c0w0IwOvbnkEJkrWloj7EJocTNayU0JwV69yMtctw
-	pSQQ4QuGBfroJWtGGtiMBq1lUHf3Rfw2iGa8Fik=
-X-Google-Smtp-Source: AGHT+IGKzgiNyqCnRO8+p8zvWUss0xsNjob8K35mKfNJAMx0WZcnBRtmtllkujAsR7c1usRJ88CinZSrTmO5ryugbsc=
-X-Received: by 2002:a25:8706:0:b0:d9b:90bf:e74b with SMTP id
- a6-20020a258706000000b00d9b90bfe74bmr12074102ybl.7.1698785370169; Tue, 31 Oct
- 2023 13:49:30 -0700 (PDT)
+        bh=qwUJsYeIlwqw805rRX9kqL0ratglmWsD95jLONcl2+Q=;
+        b=vPTQTo4+Lbze4ruoqvra7qc16oGm5+RnY3vtIOlUyWdbMZKdohUG34DqMmDD1ROoTK
+         tFhKZY9gFy4uAD49KfZCbRJd6JTNCwRKaUYf+GE4HHdILp51xOM2fu73R5CkCWmdbHOj
+         7EvZXgciFKycMEyS1QIANIRo7+Dtljxj1COHbhI4M+RxBX893PsrTlX8KbUeX9QFrdE5
+         W9WeYB2rvox2W3e2B8BrsA/CqwSGeixVpBpifZ8X5U3JFyoP8RUhbNoRo2LYD+LWDwli
+         02Yh6PlBVp+lL/auqu0+l2jKaav9YP7cE43MbnUIe/k6YJJ1oMBTdYKqJtvmcgyPHIML
+         QCXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698788199; x=1699392999;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=qwUJsYeIlwqw805rRX9kqL0ratglmWsD95jLONcl2+Q=;
+        b=lcjxGWHYbB2EfyQPyX0WEhIAiYbOqJHE6eIMR956V6ZWD1bLLaojJgQ861gPIhROHF
+         anRYlTYIn31ls0odh7gRUasWFVbY6m+rfjQe+/nYoNgNzW6lbcMAVCWBlxGyenchLZQk
+         XmO7DfEcsYAbi37vp+oqDc4lctdloQjYGzRUJ7Rc9HPpQSnhh2N43ZaWHeLrsv3jA+q2
+         XHY/Mx8cPAucv/RHibak8ebP/9h6iQUnDWlnZX8/pC3hyDaF949VyG0j6Looh95zNfKG
+         9XaqiojFyylFqRA2xvML+rokCl1vPdghDW/KxTgHDkJdL6x429niIQp3kFovBfqZHRcO
+         sbFA==
+X-Gm-Message-State: AOJu0YznOR00oCt10eQcBtKunCzN7pMub1CynGht/770S/l914L2vKVF
+	3n4aNzyMoRTbYZAwDROvuQ/1QGcC/lU=
+X-Google-Smtp-Source: AGHT+IErbOn1a7ghsHO7PXtEmrexZ1Aq9PA/AfhJ0FeZy4uT6qmhxk4RVfIH9rjSv+2WH3z2AoAxZzd2jeI=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:903:2609:b0:1b8:8c7:31e6 with SMTP id
+ jd9-20020a170903260900b001b808c731e6mr249399plb.1.1698788199022; Tue, 31 Oct
+ 2023 14:36:39 -0700 (PDT)
+Date: Tue, 31 Oct 2023 14:36:37 -0700
+In-Reply-To: <ZUFGRyQEuWj4RJS0@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20231018122518.128049-1-wedsonaf@gmail.com> <20231018122518.128049-7-wedsonaf@gmail.com>
- <OjZkAoZLnJc9yA0MENJhQx_32ptXZ1cLAFjEnEFog05C4pEmaAUHaA6wBvCFXWtaXbrNN5upFFi3ohQ6neLklIXZBURaYLlQYf3-2gscw_s=@proton.me>
- <ZTHPOfy4dhj0x5ch@boqun-archlinux> <vT8j_VVzNv0Cx7iTO9OobT9H8zEc_I-dxmh2sF6GZWqRQ0nhjnaNZqtWPtYm37wOhwGek2vLUYwAM-jJ83AZEe8TXMDx9N6pZ3mZW1WdNNw=@proton.me>
- <ZTP06kdjBQzZ3KYD@Boquns-Mac-mini.home> <ZTQDztmY0ivPcGO/@casper.infradead.org>
- <ZTQnpeFcPwMoEcgO@Boquns-Mac-mini.home> <ZTYE0PSDwITrWMHv@dread.disaster.area>
- <CANeycqq49Ubj-3BKcUaMOKeEwFastZzC17z_uk_VE3RDDv2wfw@mail.gmail.com> <ZT8VG0MTKNNpGDOC@dread.disaster.area>
-In-Reply-To: <ZT8VG0MTKNNpGDOC@dread.disaster.area>
-From: Wedson Almeida Filho <wedsonaf@gmail.com>
-Date: Tue, 31 Oct 2023 17:49:19 -0300
-Message-ID: <CANeycqpwFs3Sfz86ngG-ysQuP1-MzVdkMNZPFXWUgvBrphdiAQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 06/19] rust: fs: introduce `FileSystem::init_root`
-To: Dave Chinner <david@fromorbit.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Matthew Wilcox <willy@infradead.org>, 
-	Benno Lossin <benno.lossin@proton.me>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Kent Overstreet <kent.overstreet@gmail.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-fsdevel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, Wedson Almeida Filho <walmeida@microsoft.com>, 
-	Marco Elver <elver@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <20231027182217.3615211-1-seanjc@google.com> <20231027182217.3615211-17-seanjc@google.com>
+ <ZUFGRyQEuWj4RJS0@google.com>
+Message-ID: <ZUFzZf-YmCRYP6qo@google.com>
+Subject: Re: [PATCH v13 16/35] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
+ guest-specific backing memory
+From: Sean Christopherson <seanjc@google.com>
+To: David Matlack <dmatlack@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Huacai Chen <chenhuacai@kernel.org>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Anup Patel <anup@brainfault.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, kvm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Xiaoyao Li <xiaoyao.li@intel.com>, 
+	Xu Yilun <yilun.xu@intel.com>, Chao Peng <chao.p.peng@linux.intel.com>, 
+	Fuad Tabba <tabba@google.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
+	Anish Moorthy <amoorthy@google.com>, Yu Zhang <yu.c.zhang@linux.intel.com>, 
+	Isaku Yamahata <isaku.yamahata@intel.com>, 
+	"=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>, Vlastimil Babka <vbabka@suse.cz>, 
+	Vishal Annapurve <vannapurve@google.com>, Ackerley Tng <ackerleytng@google.com>, 
+	Maciej Szmigiero <mail@maciej.szmigiero.name>, David Hildenbrand <david@redhat.com>, 
+	Quentin Perret <qperret@google.com>, Michael Roth <michael.roth@amd.com>, Wang <wei.w.wang@intel.com>, 
+	Liam Merwick <liam.merwick@oracle.com>, Isaku Yamahata <isaku.yamahata@gmail.com>, 
+	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 29 Oct 2023 at 23:29, Dave Chinner <david@fromorbit.com> wrote:
->
-> On Mon, Oct 23, 2023 at 09:55:08AM -0300, Wedson Almeida Filho wrote:
-> > On Mon, 23 Oct 2023 at 02:29, Dave Chinner <david@fromorbit.com> wrote:
-> > > IOWs, if you follow the general rule that any inode->i_state access
-> > > (read or write) needs to hold inode->i_lock, you probably won't
-> > > screw up.
-> >
-> > I don't see filesystems doing this though. In particular, see
-> > iget_locked() -- if a new inode is returned, then it is locked, but if
-> > a cached one is found, it's not locked.
->
-> I did say "if you follow the general rule".
->
-> And where there is a "general rule" there is the implication that
-> there are special cases where the "general rule" doesn't get
-> applied, yes? :)
+On Tue, Oct 31, 2023, David Matlack wrote:
+> On 2023-10-27 11:21 AM, Sean Christopherson wrote:
+> > Introduce an ioctl(), KVM_CREATE_GUEST_MEMFD, to allow creating file-ba=
+sed
+> > memory that is tied to a specific KVM virtual machine and whose primary
+> > purpose is to serve guest memory.
+> >=20
+> > A guest-first memory subsystem allows for optimizations and enhancement=
+s
+> > that are kludgy or outright infeasible to implement/support in a generi=
+c
+> > memory subsystem.  With guest_memfd, guest protections and mapping size=
+s
+> > are fully decoupled from host userspace mappings.   E.g. KVM currently
+> > doesn't support mapping memory as writable in the guest without it also
+> > being writable in host userspace, as KVM's ABI uses VMA protections to
+> > define the allow guest protection.  Userspace can fudge this by
+> > establishing two mappings, a writable mapping for the guest and readabl=
+e
+> > one for itself, but that=E2=80=99s suboptimal on multiple fronts.
+> >=20
+> > Similarly, KVM currently requires the guest mapping size to be a strict
+> > subset of the host userspace mapping size, e.g. KVM doesn=E2=80=99t sup=
+port
+> > creating a 1GiB guest mapping unless userspace also has a 1GiB guest
+> > mapping.  Decoupling the mappings sizes would allow userspace to precis=
+ely
+> > map only what is needed without impacting guest performance, e.g. to
+> > harden against unintentional accesses to guest memory.
+> >=20
+> > Decoupling guest and userspace mappings may also allow for a cleaner
+> > alternative to high-granularity mappings for HugeTLB, which has reached=
+ a
+> > bit of an impasse and is unlikely to ever be merged.
+> >=20
+> > A guest-first memory subsystem also provides clearer line of sight to
+> > things like a dedicated memory pool (for slice-of-hardware VMs) and
+> > elimination of "struct page" (for offload setups where userspace _never=
+_
+> > needs to mmap() guest memory).
+>=20
+> All of these use-cases involve using guest_memfd for shared pages, but
+> this entire series sets up KVM to only use guest_memfd for private
+> pages.
+>=20
+> For example, the per-page attributes are a property of a KVM VM, not the
+> underlying guest_memfd. So that implies we will need separate
+> guest_memfds for private and shared pages. But a given memslot can have
+> a mix of private and shared pages. So that implies a memslot will need
+> to support 2 guest_memfds?
 
-Sure. But when you say "if _you_ do X", it gives me the impression
-that I have a choice. But if want to use `iget_locked`, I don't have
-the option to follow the "general rule" you state.
+Yes, someday this may be true.  Allowing guest_memfd (it was probably calle=
+d
+something else at that point) for "regular" memory was discussed in I think=
+ v10?
+We made a concious decision to defer supporting 2 guest_memfds because it i=
+sn't strictly
+necessary to support the TDX/SNP use cases for which all of this was initia=
+lly
+designed, and adding a second guest_memfd and the infrastructure needed to =
+let
+userspace map a guest_memfd can be done on top with minimal overhead.
 
-I guess I have the option to ignore `iget_locked`. :)
+> But the UAPI only allows 1 and uses the HVA for shared mappings.
+>=20
+> My initial reaction after reading through this series is that the
+> per-page private/shared should be a property of the guest_memfd, not the
+> VM. Maybe it would even be cleaner in the long-run to make all memory
+> attributes a property of the guest_memfd. That way we can scope the
+> support to only guest_memfds and not have to worry about making per-page
+> attributes work with "legacy" HVA-based memslots.
 
-> I_NEW is the exception to the general rule, and very few people
-> writing filesystems actually know about it let alone care about
-> it...
-<snip>
-> All of them are perfectly fine.
+Making the private vs. shared state a property of the guest_memfd doesn't w=
+ork
+for TDX and SNP.  We (upstream x86 and KVM maintainers) have taken a hard s=
+tance
+that in-place conversion will not be allowed for TDX/SNP due to the ease wi=
+th
+which a misbehaving userspace and/or guest can crash the host.
 
-I'm not sure I agree with this. They may be fine, but I wouldn't say
-perfectly. :)
+We'd also be betting that there would *never* be a use case for per-gfn att=
+ributes
+for non-standard memory, e.g. virtio-gpu buffers, any kind of device memory=
+, etc.
 
-> I_NEW is the bit we use to synchronise inode initialisation - we
-> have to ensure there is only a single initialisation running while
-> there are concurrent lookups that can find the inode whilst it is
-> being initialised. We cannot hold a spin lock over inode
-> initialisation (it may have to do IO!), so we set the I_NEW flag
-> under the i_lock and the inode_hash_lock during hash insertion so
-> that they are set atomically from the hash lookup POV. If the inode
-> is then found in cache, wait_on_inode() does the serialisation
-> against the running initialisation indicated by the __I_NEW bit in
-> the i_state word.
->
-> Hence if the caller of iget_locked() ever sees I_NEW, it is
-> guaranteed to have exclusive access to the inode and -must- first
-> initialise the inode and then call unlock_new_inode() when it has
-> completed. It doesn't need to hold inode->i_lock in this case
-> because there's nothing it needs to serialise against as
-> iget_locked() has already done all that work.
->
-> If the inode is found in cache by iget_locked, then the
-> wait_on_inode() call is guaranteed to ensure that I_NEW is not set
-> when it returns. The atomic bit operations on __I_NEW and the memory
-> barriers in unlock_new_inode() plays an important part in this
-> dance, and they guarantee that I_NEW has been cleared before
-> iget_locked() returns. No need for inode->i_lock to be held in this
-> case, either, because iget_locked() did all the serialisation for
-> us.
+We'd also effectively be signing up to either support swap and page migrati=
+on in
+guest_memfd, or make those mutually exclusive with per-gfn attributes too.
 
-Thanks for explanation!
+guest_memfd is only intended for guest DRAM, and if I get my way, will neve=
+r support
+swap (page migration is less scary).  I.e. guest_memfd isn't intended to be=
+ a
+one-size-fits-all solution, nor is it intended to wholesale replace memslot=
+s,
+which is effectively what we'd be doing by deprecating hva-based guest memo=
+ry.
 
-Let's consider the case when I call `inode_get`, and it finds an inode
-that _has_ been fully initialised before, so I_NEW is not set in
-inode->i_state and the inode is _not_ locked.
+And ignoring all that, the ABI would end up being rather bizarre due to way=
+ guest_memfd
+interacts with memslots.  guest_memfd itself has no real notion of gfns, i.=
+e. the
+shared vs. private state would be tied to a file offset, not a gfn.  That's=
+ a solvable
+problem, e.g. we could make a gfn:offset binding "sticky", but that would e=
+dd extra
+complexity to the ABI, and AFAICT wouldn't buy us that much, if anything.
 
-But the only means of checking that is by inspecting the i_state
-field, so I do something like:
+> Maybe can you sketch out how you see this proposal being extensible to
+> using guest_memfd for shared mappings?
 
-if (!(inode->i_state & I_NEW))
-    return inode;
+For in-place conversions, e.g. pKVM, no additional guest_memfd is needed.  =
+What's
+missing there is the ability to (safely) mmap() guest_memfd, e.g. KVM needs=
+ to
+ensure there are no outstanding references when converting back to private.
 
-But now suppose that while I'm doing a naked load on inode->i_state,
-another cpu is running concurrently and happens to be holding the
-inode->i_lock, so it is within its right to write to inode->i_state,
-for example through a call to __inode_add_lru, which has the
-following:
-
-inode->i_state |= I_REFERENCED;
-
-So we have a thread doing a naked read and another thread doing a
-naked write, no ordering between them.
-
-Would you agree that this is a data race? (Note that I'm not asking if
-"it will be ok" or "the compilers today generate the right code", I'm
-asking merely if you agree this is a data race.)
-
-If you do, then you'd have to agree that we are in undefined-behaviour
-territory. I can quote the spec if you'd like.
-
-Anyway, the discussion here is that this is also undefined behaviour
-in Rust. And we're trying really hard to avoid that. Of course, in
-cases like this there's not much we can do on the Rust side alone so
-the conclusion now appears to be that we'll introduce helper functions
-for this now and live with it. If one day we have a better solution,
-we'll update just one place.
-
-But we want the be very deliberate about these. We don't want to
-accidentally introduce data races (and therefore potential undefined
-behaviour).
-
-Cheers,
--Wedson
+For TDX/SNP, assuming we don't find a performant and robust way to do in-pl=
+ace
+conversions, a second fd+offset pair would be needed.
 
