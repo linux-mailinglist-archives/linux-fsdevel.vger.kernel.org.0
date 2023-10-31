@@ -1,165 +1,147 @@
-Return-Path: <linux-fsdevel+bounces-1662-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1663-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80A847DD5FE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Oct 2023 19:24:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2A1E7DD6B6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Oct 2023 20:43:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7AD8B21016
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Oct 2023 18:24:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D82D01C20CAE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Oct 2023 19:43:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D932022309;
-	Tue, 31 Oct 2023 18:24:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pXXCc/Ey"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 171B82232C;
+	Tue, 31 Oct 2023 19:43:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BD3B21364
-	for <linux-fsdevel@vger.kernel.org>; Tue, 31 Oct 2023 18:24:15 +0000 (UTC)
-Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF6F1E6
-	for <linux-fsdevel@vger.kernel.org>; Tue, 31 Oct 2023 11:24:13 -0700 (PDT)
-Received: by mail-pl1-x632.google.com with SMTP id d9443c01a7336-1cc1e1e74beso42095955ad.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Oct 2023 11:24:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1698776653; x=1699381453; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=fA4BSuC8POmGjMQJ0k8vnna5BPAxY9Ekm8SCU7EDDBY=;
-        b=pXXCc/EymZAI1UfbBeV5XR71rJrHgRQDUI+akFhgXsPfgrMeKf3TltpNq883kc+Ihu
-         1qmVyqyIJuErRmSkaVwfEL8WigX4tzxKfuYTviGsSTGl6jekGQ71OKEZ7bpv5cYxYL8l
-         LLsSt+Tpm3NOmyuXbcLqSLtimYgKpEfLzmdJARApIikDo0k5vQcc0DwflTL8jMw/uDs8
-         aXRDjVO3HuVdjkVUEJ75WF1WkeoDES5/XCb8dAxlwOO4J3Qu8nLSFlhdv/IacwLrtgX1
-         jePZ+d1Bh7cLoCKTRLq/EIe+IX92jP3G1HMuSH0Yb+88y6p2TuvEwJIpd8mVDEhfXIwR
-         Rmhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698776653; x=1699381453;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fA4BSuC8POmGjMQJ0k8vnna5BPAxY9Ekm8SCU7EDDBY=;
-        b=K2/J9St8QQnHonevPqp9ggd38pujGhWtT5akwvaZFlw3sCqZuLAWeLi+F2iA44TUEz
-         Hk25pXk0uPc2jC4KEPcLyM8+cHzN+FGWOGvP5mec0QZfRvx3/SFokKvXQA/7FhqlxJkW
-         3qAYA/WBs4vSCuSzSE3bhWvTzGfEGnkOkHTd8OuOszKHe6J8VjWaxLdIUN9feqhrhPF4
-         NWy4jzEyZr9Ha2jQePoxnM2HSSiiUlhs9ndp/6Opk7a1TGAOzsW7iQbAc2Oo0VR0TtsF
-         VscQ+i6WIqmNIL72KG63NuaUWfJ87jTwVanVIyT16j8iA19xoyG1Epgl4rfZXJ+R1LTD
-         5+jg==
-X-Gm-Message-State: AOJu0Yz4rryjwoK6nGhSzBuxVawb77QvpgghO9MYyHG2GcMEb2t6WcrW
-	AUjhr/fHgE+QilYg4i1wwj2rmw==
-X-Google-Smtp-Source: AGHT+IFxkiDdZGGfHsdazjXYZcfW0cI1Huw/6T3VggKB9s0vUh/sA7Jolgtag5oCOtU2pTLnT1L5FA==
-X-Received: by 2002:a17:902:ecca:b0:1cc:54b5:b4fa with SMTP id a10-20020a170902ecca00b001cc54b5b4famr5681643plh.18.1698776652868;
-        Tue, 31 Oct 2023 11:24:12 -0700 (PDT)
-Received: from google.com (175.199.125.34.bc.googleusercontent.com. [34.125.199.175])
-        by smtp.gmail.com with ESMTPSA id 13-20020a170902c20d00b001c5dea67c26sm1620267pll.233.2023.10.31.11.24.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Oct 2023 11:24:11 -0700 (PDT)
-Date: Tue, 31 Oct 2023 11:24:07 -0700
-From: David Matlack <dmatlack@google.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Anup Patel <anup@brainfault.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>, kvm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, Xiaoyao Li <xiaoyao.li@intel.com>,
-	Xu Yilun <yilun.xu@intel.com>,
-	Chao Peng <chao.p.peng@linux.intel.com>,
-	Fuad Tabba <tabba@google.com>, Jarkko Sakkinen <jarkko@kernel.org>,
-	Anish Moorthy <amoorthy@google.com>,
-	Yu Zhang <yu.c.zhang@linux.intel.com>,
-	Isaku Yamahata <isaku.yamahata@intel.com>,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Vishal Annapurve <vannapurve@google.com>,
-	Ackerley Tng <ackerleytng@google.com>,
-	Maciej Szmigiero <mail@maciej.szmigiero.name>,
-	David Hildenbrand <david@redhat.com>,
-	Quentin Perret <qperret@google.com>,
-	Michael Roth <michael.roth@amd.com>, Wang <wei.w.wang@intel.com>,
-	Liam Merwick <liam.merwick@oracle.com>,
-	Isaku Yamahata <isaku.yamahata@gmail.com>,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [PATCH v13 16/35] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
- guest-specific backing memory
-Message-ID: <ZUFGRyQEuWj4RJS0@google.com>
-References: <20231027182217.3615211-1-seanjc@google.com>
- <20231027182217.3615211-17-seanjc@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7EC322309
+	for <linux-fsdevel@vger.kernel.org>; Tue, 31 Oct 2023 19:43:09 +0000 (UTC)
+Received: from mail.stoffel.org (mail.stoffel.org [172.104.24.175])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B54483;
+	Tue, 31 Oct 2023 12:43:07 -0700 (PDT)
+Received: from quad.stoffel.org (097-095-183-072.res.spectrum.com [97.95.183.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.stoffel.org (Postfix) with ESMTPSA id 5EB591E12B;
+	Tue, 31 Oct 2023 15:43:05 -0400 (EDT)
+Received: by quad.stoffel.org (Postfix, from userid 1000)
+	id 80C85A8B01; Tue, 31 Oct 2023 15:43:04 -0400 (EDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20231027182217.3615211-17-seanjc@google.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Message-ID: <25921.22728.501691.76305@quad.stoffel.home>
+Date: Tue, 31 Oct 2023 15:43:04 -0400
+From: "John Stoffel" <john@stoffel.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Dave Chinner <david@fromorbit.com>,
+    Linus Torvalds  <torvalds@linux-foundation.org>,
+    Amir Goldstein <amir73il@gmail.com>,
+    Kent Overstreet  <kent.overstreet@linux.dev>,
+    Christian Brauner <brauner@kernel.org>,
+    Alexander Viro <viro@zeniv.linux.org.uk>,
+    John Stultz <jstultz@google.com>,
+    Thomas Gleixner <tglx@linutronix.de>,
+    Stephen Boyd <sboyd@kernel.org>,
+    Chandan Babu R <chandan.babu@oracle.com>,
+    "Darrick J. Wong"  <djwong@kernel.org>,
+    Theodore Ts'o <tytso@mit.edu>,
+    Andreas Dilger  <adilger.kernel@dilger.ca>,
+    Chris Mason <clm@fb.com>,
+    Josef Bacik  <josef@toxicpanda.com>,
+    David Sterba <dsterba@suse.com>,
+    Hugh Dickins  <hughd@google.com>,
+    Andrew Morton <akpm@linux-foundation.org>,
+    Jan Kara  <jack@suse.de>,
+    David Howells <dhowells@redhat.com>,
+    linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org,
+    linux-xfs@vger.kernel.org,
+    linux-ext4@vger.kernel.org,
+    linux-btrfs@vger.kernel.org,
+    linux-mm@kvack.org,
+    linux-nfs@vger.kernel.org
+Subject: Re: [PATCH RFC 2/9] timekeeping: new interfaces for multigrain
+ timestamp handing
+In-Reply-To: <b4c04efdde3bc7d107d0bdc68e100a94942aca3c.camel@kernel.org>
+References: <CAHk-=whphyjjLwDcEthOOFXXfgwGrtrMnW2iyjdQioV6YSMEPw@mail.gmail.com>
+	<ZTc8tClCRkfX3kD7@dread.disaster.area>
+	<CAOQ4uxhJGkZrUdUJ72vjRuLec0g8VqgRXRH=x7W9ogMU6rBxcQ@mail.gmail.com>
+	<d539804a2a73ad70265c5fa599ecd663cd235843.camel@kernel.org>
+	<ZTjMRRqmlJ+fTys2@dread.disaster.area>
+	<2ef9ac6180e47bc9cc8edef20648a000367c4ed2.camel@kernel.org>
+	<ZTnNCytHLGoJY9ds@dread.disaster.area>
+	<6df5ea54463526a3d898ed2bd8a005166caa9381.camel@kernel.org>
+	<ZUAwFkAizH1PrIZp@dread.disaster.area>
+	<CAHk-=wg4jyTxO8WWUc1quqSETGaVsPHh8UeFUROYNwU-fEbkJg@mail.gmail.com>
+	<ZUBbj8XsA6uW8ZDK@dread.disaster.area>
+	<b4c04efdde3bc7d107d0bdc68e100a94942aca3c.camel@kernel.org>
+X-Mailer: VM 8.2.0b under 27.1 (x86_64-pc-linux-gnu)
 
-On 2023-10-27 11:21 AM, Sean Christopherson wrote:
-> Introduce an ioctl(), KVM_CREATE_GUEST_MEMFD, to allow creating file-based
-> memory that is tied to a specific KVM virtual machine and whose primary
-> purpose is to serve guest memory.
-> 
-> A guest-first memory subsystem allows for optimizations and enhancements
-> that are kludgy or outright infeasible to implement/support in a generic
-> memory subsystem.  With guest_memfd, guest protections and mapping sizes
-> are fully decoupled from host userspace mappings.   E.g. KVM currently
-> doesn't support mapping memory as writable in the guest without it also
-> being writable in host userspace, as KVM's ABI uses VMA protections to
-> define the allow guest protection.  Userspace can fudge this by
-> establishing two mappings, a writable mapping for the guest and readable
-> one for itself, but that’s suboptimal on multiple fronts.
-> 
-> Similarly, KVM currently requires the guest mapping size to be a strict
-> subset of the host userspace mapping size, e.g. KVM doesn’t support
-> creating a 1GiB guest mapping unless userspace also has a 1GiB guest
-> mapping.  Decoupling the mappings sizes would allow userspace to precisely
-> map only what is needed without impacting guest performance, e.g. to
-> harden against unintentional accesses to guest memory.
-> 
-> Decoupling guest and userspace mappings may also allow for a cleaner
-> alternative to high-granularity mappings for HugeTLB, which has reached a
-> bit of an impasse and is unlikely to ever be merged.
-> 
-> A guest-first memory subsystem also provides clearer line of sight to
-> things like a dedicated memory pool (for slice-of-hardware VMs) and
-> elimination of "struct page" (for offload setups where userspace _never_
-> needs to mmap() guest memory).
+>>>>> "Jeff" == Jeff Layton <jlayton@kernel.org> writes:
 
-All of these use-cases involve using guest_memfd for shared pages, but
-this entire series sets up KVM to only use guest_memfd for private
-pages.
+> On Tue, 2023-10-31 at 12:42 +1100, Dave Chinner wrote:
+>> On Mon, Oct 30, 2023 at 01:11:56PM -1000, Linus Torvalds wrote:
+>> > On Mon, 30 Oct 2023 at 12:37, Dave Chinner <david@fromorbit.com> wrote:
+>> > > 
+>> > > If XFS can ignore relatime or lazytime persistent updates for given
+>> > > situations, then *we don't need to make periodic on-disk updates of
+>> > > atime*. This makes the whole problem of "persistent atime update bumps
+>> > > i_version" go away because then we *aren't making persistent atime
+>> > > updates* except when some other persistent modification that bumps
+>> > > [cm]time occurs.
+>> > 
+>> > Well, I think this should be split into two independent questions:
+>> > 
+>> >  (a) are relatime or lazytime atime updates persistent if nothing else changes?
+>> 
+>> They only become persistent after 24 hours or, in the case of
+>> relatime, immediately persistent if mtime < atime (i.e. read after a
+>> modification). Those are the only times that the VFS triggers
+>> persistent writeback of atime, and it's the latter case (mtime <
+>> atime) that is the specific trigger that exposed the problem with
+>> atime bumping i_version in the first place.
+>> 
+>> >  (b) do atime updates _ever_ update i_version *regardless* of relatime
+>> > or lazytime?
+>> > 
+>> > and honestly, I think the best answer to (b) would be that "no,
+>> > i_version should simply not change for atime updates". And I think
+>> > that answer is what it is because no user of i_version seems to want
+>> > it.
+>> 
+>> As I keep repeating: Repeatedly stating that "atime should not bump
+>> i_version" does not address the questions I'm asking *at all*.
+>> 
+>> > Now, the reason it's a single question for you is that apparently for
+>> > XFS, the only thing that matters is "inode was written to disk" and
+>> > that "di_changecount" value is thus related to the persistence of
+>> > atime updates, but splitting di_changecount out to be a separate thing
+>> > from i_version seems to be on the table, so I think those two things
+>> > really could be independent issues.
+>> 
+>> Wrong way around - we'd have to split i_version out from
+>> di_changecount. It's i_version that has changed semantics, not
+>> di_changecount, and di_changecount behaviour must remain unchanged.
+>> 
 
-For example, the per-page attributes are a property of a KVM VM, not the
-underlying guest_memfd. So that implies we will need separate
-guest_memfds for private and shared pages. But a given memslot can have
-a mix of private and shared pages. So that implies a memslot will need
-to support 2 guest_memfds? But the UAPI only allows 1 and uses the HVA
-for shared mappings.
+> I have to take issue with your characterization of this. The
+> requirements for NFS's change counter have not changed. Clearly there
+> was a breakdown in communications when it was first implemented in Linux
+> that caused atime updates to get counted in the i_version value, but
+> that was never intentional and never by design.
 
-My initial reaction after reading through this series is that the
-per-page private/shared should be a property of the guest_memfd, not the
-VM. Maybe it would even be cleaner in the long-run to make all memory
-attributes a property of the guest_memfd. That way we can scope the
-support to only guest_memfds and not have to worry about making per-page
-attributes work with "legacy" HVA-based memslots.
+This has been bugging me, but all the references to NFS really mean
+NFSv4.1 or newer, correct?  I can't see how any of this affects NFSv3
+at all, and that's probably the still dominant form of NFS, right?  
 
-Maybe can you sketch out how you see this proposal being extensible to
-using guest_memfd for shared mappings?
+John
 
