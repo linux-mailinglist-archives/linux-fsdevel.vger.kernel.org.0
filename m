@@ -1,147 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-1663-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1664-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2A1E7DD6B6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Oct 2023 20:43:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9CA17DD6F2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Oct 2023 21:14:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D82D01C20CAE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Oct 2023 19:43:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AFE428188D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Oct 2023 20:14:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 171B82232C;
-	Tue, 31 Oct 2023 19:43:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E62B7225AB;
+	Tue, 31 Oct 2023 20:14:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NEwQVD8e"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7EC322309
-	for <linux-fsdevel@vger.kernel.org>; Tue, 31 Oct 2023 19:43:09 +0000 (UTC)
-Received: from mail.stoffel.org (mail.stoffel.org [172.104.24.175])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B54483;
-	Tue, 31 Oct 2023 12:43:07 -0700 (PDT)
-Received: from quad.stoffel.org (097-095-183-072.res.spectrum.com [97.95.183.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.stoffel.org (Postfix) with ESMTPSA id 5EB591E12B;
-	Tue, 31 Oct 2023 15:43:05 -0400 (EDT)
-Received: by quad.stoffel.org (Postfix, from userid 1000)
-	id 80C85A8B01; Tue, 31 Oct 2023 15:43:04 -0400 (EDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C551DFE8;
+	Tue, 31 Oct 2023 20:14:23 +0000 (UTC)
+Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A58F1F5;
+	Tue, 31 Oct 2023 13:14:20 -0700 (PDT)
+Received: by mail-yb1-xb2b.google.com with SMTP id 3f1490d57ef6-d9ac31cb051so5541260276.3;
+        Tue, 31 Oct 2023 13:14:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1698783260; x=1699388060; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=hH/Y3bTLE66gvwan6iYnqa0I9rCjLlt9oT6IPVZRNMg=;
+        b=NEwQVD8elMXf7is88L6G0OKdcFsHHeSrOlPKlksFgg/sc9Kj5GsTo2C9VYcpCybXLC
+         3DQxlCGHE3bda5JmLvCIwRALXaQtYppY6Wy7kstXTDy99mok16uQiJXIWAoZZF4mJS6W
+         4tGTHCJcbQR4VNlRBjz34ZWXZobIN6ek5RD/3wclS1xtGihlX3SKMz18OexMbsCD2x7T
+         lEroAbp843P9BQauWOT0lRtT1KVqt1sSloHwbgWOCbEHiCEfmkcODjR1yE5N7XiVIBao
+         RvBRFgAGhBDpCD9vc+tzHhW6J7UwHha/e4Hb8aqAr2MU1g5dUEbez0O/lePTCEIXrz/U
+         Ad+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698783260; x=1699388060;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hH/Y3bTLE66gvwan6iYnqa0I9rCjLlt9oT6IPVZRNMg=;
+        b=GYGcP6CsorwlMrLtOtktW4XA9Zd3OYT+Cf2DmLIAjz5vYd28nfh6JfH70a/NR06lvg
+         pEjijBvLvTmcwJclXnGEnZAmoDe7YPCmob5eWn2PxEl9BlamC9KaUlqw+znJfCI2TtIP
+         cknXraPfh2ZtaKGyQyCWyHlcYTlIY0B/ygY69wESOmParI72wL2YaPj4aCNpENNpmazO
+         UU8Xk5T//fiQI2oFDf2JdzNXrHEf/J7Bs1LNKins2+l+cB8lFryDsyrcGcnH3vU4tQCY
+         oHz2DcCUmNwI1bcYAxHLcuj4EQufjtH7JUCchpzxccF39J8zpWzY1JowANqe2Dn7xaqp
+         mxCw==
+X-Gm-Message-State: AOJu0YzjRUFcWjt16bSUKUBI3kqdjJWkR0XQbEalnUtpLjn7kVnRrrbA
+	ZiWZdRkupdEDZC+r1j0pzcjI2pF4Bu0peBJJX6s=
+X-Google-Smtp-Source: AGHT+IEapJom88s2TF5FkEIzywMTyVpY+Ly1D4FOxirRlEOTtJl5AcNvRFjFpIQAtXZ3uxwB+mlHG9bB9Y0w8yLp2es=
+X-Received: by 2002:a25:aa47:0:b0:d9a:5895:2c74 with SMTP id
+ s65-20020a25aa47000000b00d9a58952c74mr12278461ybi.42.1698783259737; Tue, 31
+ Oct 2023 13:14:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Message-ID: <25921.22728.501691.76305@quad.stoffel.home>
-Date: Tue, 31 Oct 2023 15:43:04 -0400
-From: "John Stoffel" <john@stoffel.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Dave Chinner <david@fromorbit.com>,
-    Linus Torvalds  <torvalds@linux-foundation.org>,
-    Amir Goldstein <amir73il@gmail.com>,
-    Kent Overstreet  <kent.overstreet@linux.dev>,
-    Christian Brauner <brauner@kernel.org>,
-    Alexander Viro <viro@zeniv.linux.org.uk>,
-    John Stultz <jstultz@google.com>,
-    Thomas Gleixner <tglx@linutronix.de>,
-    Stephen Boyd <sboyd@kernel.org>,
-    Chandan Babu R <chandan.babu@oracle.com>,
-    "Darrick J. Wong"  <djwong@kernel.org>,
-    Theodore Ts'o <tytso@mit.edu>,
-    Andreas Dilger  <adilger.kernel@dilger.ca>,
-    Chris Mason <clm@fb.com>,
-    Josef Bacik  <josef@toxicpanda.com>,
-    David Sterba <dsterba@suse.com>,
-    Hugh Dickins  <hughd@google.com>,
-    Andrew Morton <akpm@linux-foundation.org>,
-    Jan Kara  <jack@suse.de>,
-    David Howells <dhowells@redhat.com>,
-    linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org,
-    linux-xfs@vger.kernel.org,
-    linux-ext4@vger.kernel.org,
-    linux-btrfs@vger.kernel.org,
-    linux-mm@kvack.org,
-    linux-nfs@vger.kernel.org
-Subject: Re: [PATCH RFC 2/9] timekeeping: new interfaces for multigrain
- timestamp handing
-In-Reply-To: <b4c04efdde3bc7d107d0bdc68e100a94942aca3c.camel@kernel.org>
-References: <CAHk-=whphyjjLwDcEthOOFXXfgwGrtrMnW2iyjdQioV6YSMEPw@mail.gmail.com>
-	<ZTc8tClCRkfX3kD7@dread.disaster.area>
-	<CAOQ4uxhJGkZrUdUJ72vjRuLec0g8VqgRXRH=x7W9ogMU6rBxcQ@mail.gmail.com>
-	<d539804a2a73ad70265c5fa599ecd663cd235843.camel@kernel.org>
-	<ZTjMRRqmlJ+fTys2@dread.disaster.area>
-	<2ef9ac6180e47bc9cc8edef20648a000367c4ed2.camel@kernel.org>
-	<ZTnNCytHLGoJY9ds@dread.disaster.area>
-	<6df5ea54463526a3d898ed2bd8a005166caa9381.camel@kernel.org>
-	<ZUAwFkAizH1PrIZp@dread.disaster.area>
-	<CAHk-=wg4jyTxO8WWUc1quqSETGaVsPHh8UeFUROYNwU-fEbkJg@mail.gmail.com>
-	<ZUBbj8XsA6uW8ZDK@dread.disaster.area>
-	<b4c04efdde3bc7d107d0bdc68e100a94942aca3c.camel@kernel.org>
-X-Mailer: VM 8.2.0b under 27.1 (x86_64-pc-linux-gnu)
+References: <20231018122518.128049-1-wedsonaf@gmail.com> <ZT7BPUAxsHQ/H/Hm@casper.infradead.org>
+In-Reply-To: <ZT7BPUAxsHQ/H/Hm@casper.infradead.org>
+From: Wedson Almeida Filho <wedsonaf@gmail.com>
+Date: Tue, 31 Oct 2023 17:14:08 -0300
+Message-ID: <CANeycqrm1KCH=hOf2WyCg8BVZkX3DnPpaA3srrajgRfz0x=PiQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 00/19] Rust abstractions for VFS
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Kent Overstreet <kent.overstreet@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	linux-fsdevel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	Wedson Almeida Filho <walmeida@microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
 
->>>>> "Jeff" == Jeff Layton <jlayton@kernel.org> writes:
+On Sun, 29 Oct 2023 at 17:32, Matthew Wilcox <willy@infradead.org> wrote:
+> > impl FileSystem for MyFS {
+> >     fn super_params(sb: &NewSuperBlock<Self>) -> Result<SuperParams<Self::Data>>;
+> >     fn init_root(sb: &SuperBlock<Self>) -> Result<ARef<INode<Self>>>;
+> >     fn read_dir(inode: &INode<Self>, emitter: &mut DirEmitter) -> Result;
+> >     fn lookup(parent: &INode<Self>, name: &[u8]) -> Result<ARef<INode<Self>>>;
+> >     fn read_folio(inode: &INode<Self>, folio: LockedFolio<'_>) -> Result;
+> > }
+>
+> Does it make sense to describe filesystem methods like this?  As I
+> understand (eg) how inodes are laid out, we typically malloc a
+>
+> foofs_inode {
+>         x; y; z;
+>         struct inode vfs_inode;
+> };
+>
+> and then the first line of many functions that take an inode is:
+>
+>         struct ext2_inode_info *ei = EXT2_I(dir);
+>
+> That feels like unnecessary boilerplate, and might lead to questions like
+> "What if I'm passed an inode that isn't an ext2 inode".  Do we want to
+> always pass in the foofs_inode instead of the inode?
 
-> On Tue, 2023-10-31 at 12:42 +1100, Dave Chinner wrote:
->> On Mon, Oct 30, 2023 at 01:11:56PM -1000, Linus Torvalds wrote:
->> > On Mon, 30 Oct 2023 at 12:37, Dave Chinner <david@fromorbit.com> wrote:
->> > > 
->> > > If XFS can ignore relatime or lazytime persistent updates for given
->> > > situations, then *we don't need to make periodic on-disk updates of
->> > > atime*. This makes the whole problem of "persistent atime update bumps
->> > > i_version" go away because then we *aren't making persistent atime
->> > > updates* except when some other persistent modification that bumps
->> > > [cm]time occurs.
->> > 
->> > Well, I think this should be split into two independent questions:
->> > 
->> >  (a) are relatime or lazytime atime updates persistent if nothing else changes?
->> 
->> They only become persistent after 24 hours or, in the case of
->> relatime, immediately persistent if mtime < atime (i.e. read after a
->> modification). Those are the only times that the VFS triggers
->> persistent writeback of atime, and it's the latter case (mtime <
->> atime) that is the specific trigger that exposed the problem with
->> atime bumping i_version in the first place.
->> 
->> >  (b) do atime updates _ever_ update i_version *regardless* of relatime
->> > or lazytime?
->> > 
->> > and honestly, I think the best answer to (b) would be that "no,
->> > i_version should simply not change for atime updates". And I think
->> > that answer is what it is because no user of i_version seems to want
->> > it.
->> 
->> As I keep repeating: Repeatedly stating that "atime should not bump
->> i_version" does not address the questions I'm asking *at all*.
->> 
->> > Now, the reason it's a single question for you is that apparently for
->> > XFS, the only thing that matters is "inode was written to disk" and
->> > that "di_changecount" value is thus related to the persistence of
->> > atime updates, but splitting di_changecount out to be a separate thing
->> > from i_version seems to be on the table, so I think those two things
->> > really could be independent issues.
->> 
->> Wrong way around - we'd have to split i_version out from
->> di_changecount. It's i_version that has changed semantics, not
->> di_changecount, and di_changecount behaviour must remain unchanged.
->> 
+We're well aligned here. :)
 
-> I have to take issue with your characterization of this. The
-> requirements for NFS's change counter have not changed. Clearly there
-> was a breakdown in communications when it was first implemented in Linux
-> that caused atime updates to get counted in the i_version value, but
-> that was never intentional and never by design.
+Note that the type is `&INode<Self>` -- `Self` is an alias for the
+type implementing this filesystem. For example, in tarfs, the type is
+really `&INode<TarFs>`, so it is what you're asking for: the TarFs
+filesystem only sees TarFs inodes and superblocks (through the
+FileSystem trait, maybe they have to deal with other inodes for other
+reasons).
 
-This has been bugging me, but all the references to NFS really mean
-NFSv4.1 or newer, correct?  I can't see how any of this affects NFSv3
-at all, and that's probably the still dominant form of NFS, right?  
+In fact, when you have inode of type `INode<TarFs>`, and you have a call like:
 
-John
+let d = inode.data();
+
+What you get back has the type declared in `TarFs::INodeData`.
+Similarly, if you do:
+
+let d = inode.super_block().data();
+
+What you get back has the type declared in `TarFs::Data`.
+
+So all `container_of` calls are hidden away, and we store super-block
+data in `s_fs_info` and inode data by having a new struct that
+contains the data the fs wants plus a struct inode (this is done with
+generics, it's called `INodeWithData`). This is required for type
+safety: you always get the right type. If someone changes the type in
+one place but forgets to change it in another place, they'll get a
+compilation error.
+
+> Also, I see you're passing an inode to read_dir.  Why did you decide to
+> do that?  There's information in the struct file that's either necessary
+> or useful to have in the filesystem.  Maybe not in toy filesystems, but eg
+> network filesystems need user credentials to do readdir, which are stored
+> in struct file.  Block filesystems store readahead data in struct file.
+
+Because the two file systems we have don't use anything from `struct
+file` beyond the inode.
+
+Passing a `file` to `read_dir` would require us to introduce an
+unnecessary abstraction that no one uses, which we've been told not to
+do.
+
+There is no technical reason that makes it impractical though. We can
+add it when the need arises.
 
