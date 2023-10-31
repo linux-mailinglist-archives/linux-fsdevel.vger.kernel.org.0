@@ -1,84 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-1614-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1615-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AA057DC4DB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Oct 2023 04:26:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F388C7DC4EF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Oct 2023 04:42:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA6462815B1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Oct 2023 03:26:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F813B20D5C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Oct 2023 03:42:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2406653B8;
-	Tue, 31 Oct 2023 03:26:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93E395668;
+	Tue, 31 Oct 2023 03:42:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="ZG/4ErlP"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="QNGs8imC"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F3F53A0
-	for <linux-fsdevel@vger.kernel.org>; Tue, 31 Oct 2023 03:26:35 +0000 (UTC)
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3617EC6
-	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 20:26:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=JPobaY23QJvqYxxVObTgBoYolDqpmggkh18ssUtk/2k=; b=ZG/4ErlPNi77EulYA5ALg0OJ0+
-	FXx1zQaGe5KljS7XtFmCpqG65GTa75cXfmD+VNya3lFKAQBWlVKwdwwH1qwtod0vPpnPyG6mzZPYO
-	XzmnyDPq+NQbEhHlHBqCN+a5pl3jqgBqXEdE9qHI/i4me9K0shunErWPeO9F4+qf8sJwMTzw8s4zD
-	U3Kz+kdObp6JsoXOKPaFx3emVleS2amyLGAsTUpIshZRV6aqZY/41YstERGcwTaAVoUOjScpGR29m
-	I6daWbmvQeCOEmjLRPnrciOBkI2K7H6Ol5+ImujTuwlm8sJv6e8n0AnIjwCs0d3jzs+lAeZKtRyuR
-	rpvsXhQQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1qxfOb-008HX9-0f;
-	Tue, 31 Oct 2023 03:26:25 +0000
-Date: Tue, 31 Oct 2023 03:26:25 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Gao Xiang <hsiangkao@linux.alibaba.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC] simplifying fast_dput(), dentry_kill() et.al.
-Message-ID: <20231031032625.GB1957730@ZenIV>
-References: <20231030003759.GW800259@ZenIV>
- <20231030215315.GA1941809@ZenIV>
- <CAHk-=wjGv_rgc8APiBRBAUpNsisPdUV3Jwco+hp3=M=-9awrjQ@mail.gmail.com>
- <67ded994-b001-4e9b-e2c9-530e201096d5@linux.alibaba.com>
- <CAHk-=whCga8BeQnJ3ZBh_Hfm9ctba_wpF444LpwRybVNMzO6Dw@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1B97524B
+	for <linux-fsdevel@vger.kernel.org>; Tue, 31 Oct 2023 03:42:20 +0000 (UTC)
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 984E5DA
+	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 20:42:15 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-99c3c8adb27so770270066b.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 20:42:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1698723734; x=1699328534; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=E2Ob+plhOA44ddqftKTuU+U1KwqHcLgVEWBguJbBUkY=;
+        b=QNGs8imCK9ibE8W68twgbWK8u0P6RFFhak4Nfcqb/TSNTI/mEcPhf9nPu2pe31S0Rp
+         gjMLbO73K7sh9JjgeI3YcdW/6YCawRZry1orj7vyQrTTOImEC7xwT+3UPQxtE+nwl/BR
+         cBaihdLt8X7RW/rEab+7WfXVwxe/yl9Aqe858=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698723734; x=1699328534;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=E2Ob+plhOA44ddqftKTuU+U1KwqHcLgVEWBguJbBUkY=;
+        b=As+xmvCThdwvjt4opP3TIQXZvdQjwjmCojFi9uasSBpSUN2D0HoO+VmpW7qe1odxBl
+         eghdm5FJjmtH+HaLJ0fmintP4epE/yfzRjAvuKYTU8uddtATuIf2m+mYS2dM30Sq31S7
+         YMKBqZd7RMya3zf/Vh6dXM26ptt8ekeg1d/OJDzNm12ou2dkD32jNxI3iILsShZXxBYc
+         7bXd0jf+imH/Mv9y20OLOp4EFr6/4Pp5RJrfqZYfqgVRBd+Yodgeamg+axeUx+itv2FQ
+         trh+spIrDy23o7TRF4D/oBOtGb2mwJxpge0E0bZPZXEW5HZ+9YgiwDQYRxyfqNVGLAx4
+         MAeQ==
+X-Gm-Message-State: AOJu0YzWlAHXhm6NMdaM83S0zl5SpLAkey7FvDSB01K9OfOJgdG/yLM/
+	Wj+TRlyhviGz+UqBk4u2iQO2hgpyEdVSNPDg3piLUCax
+X-Google-Smtp-Source: AGHT+IEujV2NvXohGZKgLbR9uIi/qJRFxNDlS9VOFupkqF/V+dR8gHAUELNHDb9sCXTm2kTqHgaECQ==
+X-Received: by 2002:a17:906:a198:b0:9d3:f436:6804 with SMTP id s24-20020a170906a19800b009d3f4366804mr2593142ejy.29.1698723733817;
+        Mon, 30 Oct 2023 20:42:13 -0700 (PDT)
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com. [209.85.218.45])
+        by smtp.gmail.com with ESMTPSA id y12-20020a17090629cc00b0098ce63e36e9sm240070eje.16.2023.10.30.20.42.13
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Oct 2023 20:42:13 -0700 (PDT)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-9c773ac9b15so770505766b.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Oct 2023 20:42:13 -0700 (PDT)
+X-Received: by 2002:a17:907:934a:b0:9c7:4e5d:12c5 with SMTP id
+ bv10-20020a170907934a00b009c74e5d12c5mr9475622ejc.61.1698723732824; Mon, 30
+ Oct 2023 20:42:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=whCga8BeQnJ3ZBh_Hfm9ctba_wpF444LpwRybVNMzO6Dw@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <20231030003759.GW800259@ZenIV> <20231030215315.GA1941809@ZenIV>
+ <CAHk-=wjGv_rgc8APiBRBAUpNsisPdUV3Jwco+hp3=M=-9awrjQ@mail.gmail.com>
+ <67ded994-b001-4e9b-e2c9-530e201096d5@linux.alibaba.com> <CAHk-=whCga8BeQnJ3ZBh_Hfm9ctba_wpF444LpwRybVNMzO6Dw@mail.gmail.com>
+ <20231031032625.GB1957730@ZenIV>
+In-Reply-To: <20231031032625.GB1957730@ZenIV>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 30 Oct 2023 17:41:55 -1000
+X-Gmail-Original-Message-ID: <CAHk-=wiYnp=F4basZu269_xuof1ycFsCPntNcEWsGbAkmq_Yxg@mail.gmail.com>
+Message-ID: <CAHk-=wiYnp=F4basZu269_xuof1ycFsCPntNcEWsGbAkmq_Yxg@mail.gmail.com>
+Subject: Re: [RFC] simplifying fast_dput(), dentry_kill() et.al.
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Gao Xiang <hsiangkao@linux.alibaba.com>, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Oct 30, 2023 at 05:02:32PM -1000, Linus Torvalds wrote:
+On Mon, 30 Oct 2023 at 17:26, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> BTW, is there any reason for -128 for marking them dead?  Looks like
+> -1 wouldn't be any worse...
 
-> look, if USE_CMPXCHG_LOCKREF is false (on UP, or if spinlock are big
-> because of spinlock debugging, or whatever), lockref_put_return() will
-> *always* fail, expecting the caller to deal with that failure.
-> 
-> So doing a lockref_put_return() without dealing with the failure case
-> is FUNDAMENTALLY BROKEN.
-> 
-> Yes, it's an odd function. It's a function that is literally designed
-> for that dcache use-case, where we have a fast-path and a slow path,
-> and the "lockref_put_return() fails" is the slow-path that needs to
-> take the spinlock and do it carefully.
-> 
-> You *cannot* use that function without failure handling. Really.
+It's *much* too long ago, but I have this dim memory of simply wanting
+to make sure that "dead" was clearly separate from "underflow".
 
-Put another way, it's a fastpath-only thing.  Not sure how much use
-would it be to slap __must_check on it; a warning along the lines
-of "DON'T USE UNLESS YOU HAVE READ <archive link>" in lockref.h
-might be useful.
-
-BTW, is there any reason for -128 for marking them dead?  Looks like
--1 wouldn't be any worse...
+                  Linus
 
