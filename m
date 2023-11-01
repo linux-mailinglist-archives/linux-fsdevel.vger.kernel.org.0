@@ -1,133 +1,145 @@
-Return-Path: <linux-fsdevel+bounces-1725-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1726-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D8F27DE05D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Nov 2023 12:32:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11FD27DE06C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Nov 2023 12:39:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D1C71C20D68
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Nov 2023 11:32:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 934AAB21131
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Nov 2023 11:39:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E12111A6;
-	Wed,  1 Nov 2023 11:32:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D4FB111B9;
+	Wed,  1 Nov 2023 11:38:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="XNLINxVc"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AbceKytz"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15587C8E2
-	for <linux-fsdevel@vger.kernel.org>; Wed,  1 Nov 2023 11:32:49 +0000 (UTC)
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D933FD
-	for <linux-fsdevel@vger.kernel.org>; Wed,  1 Nov 2023 04:32:45 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-9cf83c044b7so932850866b.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Nov 2023 04:32:45 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2441119B
+	for <linux-fsdevel@vger.kernel.org>; Wed,  1 Nov 2023 11:38:56 +0000 (UTC)
+Received: from mail-yw1-x112c.google.com (mail-yw1-x112c.google.com [IPv6:2607:f8b0:4864:20::112c])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 415F0F7;
+	Wed,  1 Nov 2023 04:38:55 -0700 (PDT)
+Received: by mail-yw1-x112c.google.com with SMTP id 00721157ae682-5a7afd45199so68560487b3.0;
+        Wed, 01 Nov 2023 04:38:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1698838363; x=1699443163; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=M+re5r6pgYsT+VpL/978qoxVyEmYWKtmPI7O/HCFWkY=;
-        b=XNLINxVctfEgx/7WYsvnglDrd4RMbiRtYHjN81fUs7K5r01kxL515qg/+lIbcDSxsA
-         RIDzNoOzPCol6Ov/jAjaH7fbRmnXOGQ3+iwP0u9U04i4IgBajx5TSwzY6h5tNBxhO+8p
-         ZBKao5eqvMhyLSGPGvKOg8rmnt8oA7yUm0Flg=
+        d=gmail.com; s=20230601; t=1698838734; x=1699443534; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m59jZyxH1gZ4IkJNBzdNka8KVbsaoVT0nyeW9BoP3MY=;
+        b=AbceKytzbEm1fI6aJYaC1xgszi8ZaazKEewzYxEeIa1ryBQcvsQOrXMWoRCCtA1pZ9
+         xsRT6HfikEC13gutV14GgKFexrHw2ErdRcXEw++19GFKFn/iXSFPWGwtpeKOuMLORAzi
+         ImKVLOFcGgiDOvJXQ32c1gkFN1dQQzDLOsMu3J+UnF7O3wv8vr1GwiMK8t7yGT2YAA/1
+         x2fXufvwli5f4k3NfrLLRrTf0Uy6j+9QGZYKKngmgwzcwK8BEG6HM+qRZ01lphBr1EwC
+         L6OAQEEoL8mSAmPJ2a/3hyHMhcOyEbVTQRf1qzR64eVYw2+n0hcBKelPoQZiXZ9yrGdB
+         KLSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698838363; x=1699443163;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=M+re5r6pgYsT+VpL/978qoxVyEmYWKtmPI7O/HCFWkY=;
-        b=KcjKvgqOxBSBr4AwpSru2iLq7lfSKfKxh5aOyXHRzhqcJ5l80aO3RY+8VezkjK2/1e
-         vB1ixUajjjj27hz4LGoMU8MdrZmWyYaURAYVqt/H88LAQUhrBNw6GS/b5YRlCpGZitnf
-         wFNMOg2W8ENmi4FUukD2m3prZtzbwCGWdL58evGaD3PFUxYcAJWwIY+Dv/TaxUxDszMf
-         nPjkKA5TIxQiY31RK8vVvgz5asX+5EEK0ABSprgkrvbX2GiYEvJHV2Ro+V4Z5yFWcvGN
-         lp7h9hgKU4HjCca0GTAMZrtnWI/xiwXhXDII5UCyHPy4rio1r9Fop+Lk007WTDMzv2Ah
-         FHvw==
-X-Gm-Message-State: AOJu0YwMbakYb3gC8m5lFgRLXs+y86iGV4QTEaDU68MzYG8yHtgobvX1
-	5/kSa0CO4oAGzP5GpIP1PtxpYj4QPdT4/3dFXXvz7Q==
-X-Google-Smtp-Source: AGHT+IGN7lEZfOpz/jeB3GVirGnYWeDVh3Db2YIbTFMzNSXXH5np65E5qhSv6m6O9RDdFYqVNtCbWTwtlK6TswPJ9Yg=
-X-Received: by 2002:a17:907:25c6:b0:9b2:82d2:a2db with SMTP id
- ae6-20020a17090725c600b009b282d2a2dbmr1481692ejc.28.1698838363449; Wed, 01
- Nov 2023 04:32:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1698838734; x=1699443534;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=m59jZyxH1gZ4IkJNBzdNka8KVbsaoVT0nyeW9BoP3MY=;
+        b=LHuLGLA8sPOhw2N+B3J0HXaBHCsw8MH1HJbkNQinAYvMIvK0Wztp2A7OnjDfd0G3/e
+         oGQvx+++BBKadAQXF0fEQ25qFn2uaR7E7oUdXrQYLGCEErqZiRQZbCJcORCsaHFsWrrj
+         j99x9CRlXGGDPjEZqUnracHP9iMiDaOWAq9VKYEmzKwaqqqfeFphMFowsJPbOSldYyPe
+         C5vaRYCvi55jtgMei4TBIrEh28xNEcpB7t7EqFt4/zwMrGf39NER4jhZgbbQfjSFKqEr
+         AmBf/XONrEgGmHYQGnyK1qYKX+WpGl6QJ2P8624oiDB6rZqpcw8oKjomIPn2xcpwZynr
+         g9Cw==
+X-Gm-Message-State: AOJu0Yy4kgZCJ7nwc78gR/YwxCT+a6wRIpxzf3doDasep0DvBKOXx73Q
+	DW0nuY+B5+tVKC+2dwiz2pcj5VLL2R3g3K2bTmM=
+X-Google-Smtp-Source: AGHT+IGPiQGs2flMchmrpUm3exXHwdHaIxqaR1nEgkE1E5+9YOWUy0Mc758PsX3a/8WhBl38xRZWvkoZHjkiwWqRbg8=
+X-Received: by 2002:a81:ae09:0:b0:5a7:dad7:61dd with SMTP id
+ m9-20020a81ae09000000b005a7dad761ddmr15318204ywh.20.1698838734410; Wed, 01
+ Nov 2023 04:38:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231016160902.2316986-1-amir73il@gmail.com> <CAOQ4uxh=cLySge6htd+DnJrqAKF=C_oJYfVrbpvQGik0wR-+iw@mail.gmail.com>
- <CAJfpegtZGC93-ydnFEt1Gzk+Yy5peJ-osuZD8GRYV4c+WPu0EQ@mail.gmail.com>
- <CAOQ4uxjYLta7_fJc90C4=tPUxTw-WR2v9du8JHTVdsy_iZnFmA@mail.gmail.com>
- <CAJfpegufvtaBaK8p+Q3v=9Qoeob3WamWBye=1BwGniRsvO5HZg@mail.gmail.com>
- <CAOQ4uxj+myANTk2C+_tk_YNLe748i2xA0HMZ7FKCuw7W5RUCuA@mail.gmail.com>
- <CAJfpegs1v=JKaEREORbTsvyTe02_DgkFhNSEJKR6xpjUW1NBDg@mail.gmail.com> <CAOQ4uxiBu8bZ4URhwKuMeHB_Oykz2LHY8mXA1eB3FBoeM_Vs6w@mail.gmail.com>
-In-Reply-To: <CAOQ4uxiBu8bZ4URhwKuMeHB_Oykz2LHY8mXA1eB3FBoeM_Vs6w@mail.gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 1 Nov 2023 12:32:32 +0100
-Message-ID: <CAJfpegtr1yOYKOW0GLkow_iALMc_A0+CUaErZasQunAfJ7NFzw@mail.gmail.com>
-Subject: Re: [PATCH v14 00/12] FUSE passthrough for file io
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, Daniel Rosenberg <drosen@google.com>, 
-	Paul Lawrence <paullawrence@google.com>, Alessio Balsini <balsini@android.com>, 
-	Christian Brauner <brauner@kernel.org>, fuse-devel@lists.sourceforge.net, 
-	linux-fsdevel@vger.kernel.org, Dave Chinner <david@fromorbit.com>
+References: <ZTjMRRqmlJ+fTys2@dread.disaster.area> <2ef9ac6180e47bc9cc8edef20648a000367c4ed2.camel@kernel.org>
+ <ZTnNCytHLGoJY9ds@dread.disaster.area> <6df5ea54463526a3d898ed2bd8a005166caa9381.camel@kernel.org>
+ <ZUAwFkAizH1PrIZp@dread.disaster.area> <CAHk-=wg4jyTxO8WWUc1quqSETGaVsPHh8UeFUROYNwU-fEbkJg@mail.gmail.com>
+ <ZUBbj8XsA6uW8ZDK@dread.disaster.area> <CAOQ4uxgSRw26J+MPK-zhysZX9wBkXFRNx+n1bwnQwykCJ1=F4Q@mail.gmail.com>
+ <3d6a4c21626e6bbb86761a6d39e0fafaf30a4a4d.camel@kernel.org>
+ <ZUF4NTxQXpkJADxf@dread.disaster.area> <20231101101648.zjloqo5su6bbxzff@quack3>
+In-Reply-To: <20231101101648.zjloqo5su6bbxzff@quack3>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 1 Nov 2023 13:38:41 +0200
+Message-ID: <CAOQ4uxgGxtErFEcSdxoFDnZZ1XfmVKn2LT1dQcJqhNj5_rnC6A@mail.gmail.com>
+Subject: Re: [PATCH RFC 2/9] timekeeping: new interfaces for multigrain
+ timestamp handing
+To: Jan Kara <jack@suse.cz>
+Cc: Dave Chinner <david@fromorbit.com>, Jeff Layton <jlayton@kernel.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Kent Overstreet <kent.overstreet@linux.dev>, 
+	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	John Stultz <jstultz@google.com>, Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>, 
+	Chandan Babu R <chandan.babu@oracle.com>, "Darrick J. Wong" <djwong@kernel.org>, 
+	"Theodore Ts'o" <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, 
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Hugh Dickins <hughd@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.de>, 
+	David Howells <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mm@kvack.org, 
+	linux-nfs@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 31 Oct 2023 at 18:44, Amir Goldstein <amir73il@gmail.com> wrote:
-
-> In that case, we would be able to "attach" the fuse_backing object
-> to fuse_inode on CREATE response. If we end up with a backing map
-> conflict at this point, we can return -EBUSY error to the user and forget
-> the inode, but the server would have no easy feedback on its mistake.
-> Also, -EBUSY to user would be confusing if user did not request O_EXCL.
-
-I think -EIO is more appropriate.  Server is broken, WARN_ON_ONCE
-could also be used to indicate that.
-
-> Do you consider the described "atomic_open conflict" case an API problem?
+On Wed, Nov 1, 2023 at 12:16=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
 >
-> It is true that with v14 patches that do not enforce backing inode conflicts,
-> the attribute coherency model that I proposed may result in attribute
-> cache thrashing if the backing inode of a fuse inode is ambiguous.
+> On Wed 01-11-23 08:57:09, Dave Chinner wrote:
+> > 5. When-ever the inode is persisted, the timestamp is copied to the
+> > on-disk structure and the current change counter is folded in.
+> >
+> >       This means the on-disk structure always contains the latest
+> >       change attribute that has been persisted, just like we
+> >       currently do with i_version now.
+> >
+> > 6. When-ever we read the inode off disk, we split the change counter
+> > from the timestamp and update the appropriate internal structures
+> > with this information.
+> >
+> >       This ensures that the VFS and userspace never see the change
+> >       counter implementation in the inode timestamps.
 >
-> Do you have an idea how to handle this case elegantly?
+> OK, but is this compatible with the current XFS behavior? AFAICS currentl=
+y
+> XFS sets sb->s_time_gran to 1 so timestamps currently stored on disk will
+> have some mostly random garbage in low bits of the ctime. Now if you look
+> at such inode with a kernel using this new scheme, stat(2) will report
+> ctime with low bits zeroed-out so if the ctime fetched in the old kernel =
+was
+> stored in some external database and compared to the newly fetched ctime,=
+ it
+> will appear that ctime has gone backwards... Maybe we don't care but it i=
+s
+> a user visible change that can potentially confuse something.
 
-Let me add some perspective.
+See xfs_inode_has_bigtime() and auto-upgrade of inode format in
+xfs_inode_item_precommit().
 
-Currently we have FOPEN_DIRECT_IO that disables caching.  My feeling
-when dealing with this interface is that it was a mistake to make this
-a property of the open file.  It should insted be a property of the
-inode and all open file instances should respect this property
-equally.  It makes no sense to have one file do cached reads while the
-other is doing direct writes, etc.  Also it should be possible to turn
-this on or off for all open file instances at any time.
+In the case of BIGTIME inode format, admin needs to opt-in to
+BIGTIME format conversion by setting an INCOMPAT_BIGTIME
+sb feature flag.
 
-Passthrough is similar, I think.  At any point in time all I/O should either be
+I imagine that something similar (inode flag + sb flag) would need
+to be done for the versioned-timestamp, but I think that in that case,
+the feature flag could be RO_COMPAT - there is no harm in exposing
+made-up nsec lower bits if fs would be mounted read-only on an old
+kernel, is there?
 
- - cached
- - direct
- - passthrough to a specific backing file
+The same RO_COMPAT feature flag could also be used to determine
+s_time_gran, because IIUC, s_time_gran for timestamp updates
+is uniform across all inodes.
 
-Allowing these to be mixed leads to confusing semantics, especially
-cached and non-cached
-
-OTOH allowing passthrough to be switched on at any point in time
-presents challenges.   If passthrough is turned on for an inode that
-didn't have it previously means that the backing file needs to be set
-up before the actual I/O.    So it's definitely more complex than just
-setting up the backing at open.  But I feel that longer term we'll end
-up with a better interface.
-
-For the first version we can just bypass this whole mess, and say that
-passthrough can only be turned on for the first open.  I.e. if there
-are already open instances and passthrough has not yet been set up,
-then FOPEN_PASSTHROUGH will be ignored.  Similarly if it has already
-been set up, then the lack of FOPEN_PASSTHROUGH is also ignored.
-
-Hmm?
+I know that Dave said he wants to avoid changing on-disk format,
+but I am hoping that this well defined and backward compat with
+lazy upgrade, on-disk format change may be acceptable?
 
 Thanks,
-Miklos
+Amir.
 
