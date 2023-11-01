@@ -1,118 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-1756-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1762-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BF9C7DE58A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Nov 2023 18:43:47 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 960F07DE5EF
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Nov 2023 19:19:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 479D22818BE
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Nov 2023 17:43:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1BF6DB2110F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Nov 2023 18:19:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B7718C2A;
-	Wed,  1 Nov 2023 17:43:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9399718E0D;
+	Wed,  1 Nov 2023 18:19:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cGvBoQWo";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="25+c9h+a"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="J3lVdNXS"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32D9718025
-	for <linux-fsdevel@vger.kernel.org>; Wed,  1 Nov 2023 17:43:36 +0000 (UTC)
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39F1710F;
-	Wed,  1 Nov 2023 10:43:28 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id C87EF1F750;
-	Wed,  1 Nov 2023 17:43:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1698860606; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=InyU6IkAENGRjX63BgJMYCZOVDU0Rjela/KjykemRY8=;
-	b=cGvBoQWo6D5nEnFeGQgDTCi7QnT4wupD/QljAmbwDHbcZn1j72Fs027p3jgbph1PW1A1Ov
-	4RGDW1H9TO1gKksQUlT2Dfv5TC1rlywu/rq+NpGM3uj8f/fWoVoq61jAxnpacxHmwRogtv
-	9/Rwa1jVqfe7TEruhKZlCtnL88z5wrU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1698860606;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=InyU6IkAENGRjX63BgJMYCZOVDU0Rjela/KjykemRY8=;
-	b=25+c9h+abDDuZy8BL0dq8HZ5e9TOM6rvIzab1fUAvdd5zInZqzbrBG7auy13t6iaXx6be+
-	2t0bBScapqHCRUAA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-	(No client certificate requested)
-	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id B9C3F13ACD;
-	Wed,  1 Nov 2023 17:43:26 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-	by imap2.suse-dmz.suse.de with ESMTPSA
-	id SEVWLT6OQmUxYQAAMHmgww
-	(envelope-from <jack@suse.cz>); Wed, 01 Nov 2023 17:43:26 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id F21E3A07C6; Wed,  1 Nov 2023 18:43:25 +0100 (CET)
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: <linux-fsdevel@vger.kernel.org>,
-	<linux-block@vger.kernel.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@infradead.org>,
-	Kees Cook <keescook@google.com>,
-	syzkaller <syzkaller@googlegroups.com>,
-	Alexander Popov <alex.popov@linux.com>,
-	<linux-xfs@vger.kernel.org>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Jan Kara <jack@suse.cz>
-Subject: [PATCH 7/7] ext4: Block writes to journal device
-Date: Wed,  1 Nov 2023 18:43:12 +0100
-Message-Id: <20231101174325.10596-7-jack@suse.cz>
-X-Mailer: git-send-email 2.35.3
-In-Reply-To: <20231101173542.23597-1-jack@suse.cz>
-References: <20231101173542.23597-1-jack@suse.cz>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CC01A28
+	for <linux-fsdevel@vger.kernel.org>; Wed,  1 Nov 2023 18:19:17 +0000 (UTC)
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFD73DA
+	for <linux-fsdevel@vger.kernel.org>; Wed,  1 Nov 2023 11:19:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=JNVqajZE9s9Rjqc94EB9Bs1LpG80undJrQ0GNdUt8t4=; b=J3lVdNXSLaoU9sU8nyMAWx1+nB
+	QSMw74tZq+5Ym1LavIO1fxWiGuqXwaeiF3lxB/+laHIk99hQjhECtrngrscTeOX77C3OaWUGfCwIt
+	LZ8FNgItj0njeK1S+X3ZsKzGNbJVG3oUBMGnsGz8ZWvVxU8M7DYYR/miikfES3dkp7IEqpdG/8tQf
+	EusdfqJwBJ+xkGEZefDyJQrrZnxSViSZ6nhwhmGu5gsxeKjPgp5sUyWU0DCWMzEWM+OvQLpZdRrNi
+	OxWO2Ler0gGZtFjK1apULfiYvFsNst6yaus/iQ07X5+IZ9MfGFcbnMrTE5WvGddJtRmalwmy6DJS+
+	YrmNY6yg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1qyFo6-009Mwb-35;
+	Wed, 01 Nov 2023 18:19:11 +0000
+Date: Wed, 1 Nov 2023 18:19:10 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 09/15] fold the call of retain_dentry() into fast_dput()
+Message-ID: <20231101181910.GH1957730@ZenIV>
+References: <20231031061226.GC1957730@ZenIV>
+ <20231101062104.2104951-1-viro@zeniv.linux.org.uk>
+ <20231101062104.2104951-9-viro@zeniv.linux.org.uk>
+ <20231101084535.GG1957730@ZenIV>
+ <CAHk-=wgP27-D=2YvYNQd3OBfBDWK6sb_urYdt6xEPKiev6y_2Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=868; i=jack@suse.cz; h=from:subject; bh=HuGESsNPSj9Qv49kiHt3CDXd9GHUB2GbWU0FnD28gkY=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBlQo4wQ8aD+R/KnoCeojDhZLI5knNBhVsl/OjJ/o0Z +jjVtsuJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCZUKOMAAKCRCcnaoHP2RA2bkqCA DeV0ajP8MvFxfY0SoPVdnFN+Ci0WI0FX3TtMOzHvHlDPwzVSS295Td2GrHVubbNYSOWjLVrwpGyMA4 kcw2C27bO5IRVJk1QfgND8bVdjQoUJ86gkkHIqn3DR5rWR0DrOUTI3McIIB40TyiqgLwUbFPX8AECn bqxoM3P/HvtT4+6P5fo1hHxSwo4aV8skY99gz6jtizORzxzu5wSvbhaqpcH92xUAwjlu5D5BDDDhyE iQWsrne50JSw2iZaHLv8CaB2ofc2CUNj1TvxPr5vqbVXPG/AloXQaIwtcjesSinypusiMIepQzRzXz FU/ETjwNyO43qynz7or1O0fn6F1jO+
-X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wgP27-D=2YvYNQd3OBfBDWK6sb_urYdt6xEPKiev6y_2Q@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Ask block layer to not allow other writers to open block device used
-for ext4 journal.
+On Wed, Nov 01, 2023 at 07:30:34AM -1000, Linus Torvalds wrote:
+> On Tue, 31 Oct 2023 at 22:45, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> > On Wed, Nov 01, 2023 at 06:20:58AM +0000, Al Viro wrote:
+> > > Calls of retain_dentry() happen immediately after getting false
+> > > from fast_dput() and getting true from retain_dentry() is
+> > > treated the same way as non-zero refcount would be treated by
+> > > fast_dput() - unlock dentry and bugger off.
+> > >
+> > > Doing that in fast_dput() itself is simpler.
+> >
+> > FWIW, I wonder if it would be better to reorganize it a bit -
+> 
+> Hmm. Yes. Except I don't love how the retaining logic is then duplicated.
 
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- fs/ext4/super.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Er...  That change would be an equivalent transformation - the same duplication
+is there right now...
 
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 439e37ac219b..f96398f8aac9 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -5855,8 +5855,9 @@ static struct bdev_handle *ext4_get_journal_blkdev(struct super_block *sb,
- 	struct ext4_super_block *es;
- 	int errno;
- 
--	bdev_handle = bdev_open_by_dev(j_dev, BLK_OPEN_READ | BLK_OPEN_WRITE,
--				       sb, &fs_holder_ops);
-+	bdev_handle = bdev_open_by_dev(j_dev,
-+		BLK_OPEN_READ | BLK_OPEN_WRITE | BLK_OPEN_RESTRICT_WRITES,
-+		sb, &fs_holder_ops);
- 	if (IS_ERR(bdev_handle)) {
- 		ext4_msg(sb, KERN_ERR,
- 			 "failed to open journal device unknown-block(%u,%u) %ld",
--- 
-2.35.3
+> Could we perhaps at least try to share the dentry flag tests between
+> the "real" retain_dentry() code and the lockless version?
 
+Umm...  There are 3 groups:
+
+DONTCACHE, DISCONNECTED - hard false
+!LRU_LIST, !REFERENCED - not an obstacle to true, but need to take locks
+OP_DELETE - can't tell without asking filesystem, which would need ->d_lock.
+
+gcc-12 on x86 turns the series of ifs into
+        movl    %edi, %eax
+	andl    $32832, %eax
+	cmpl    $32832, %eax
+	jne     .L17
+	andl    $168, %edi
+	jne     .L17
+instead of combining that into
+        andl    $33000, %edi
+	cmpl    $32832, %edi
+	jne     .L17
+
+OTOH, that's not much of pessimization...  Up to you.
+
+
+> > Another thing: would you mind
+> >
+> > #if USE_CMPXCHG_LOCKREF
+> > extern int lockref_put_return(struct lockref *);
+> > #else
+> > static inline int lockref_put_return(struct lockref *l)
+> > {
+> >         return -1;
+> > }
+> > #endif
+> >
+> > in include/linux/lockref.h?  Would be useful on DEBUG_SPINLOCK configs...
+> 
+> The above sounds like a good idea, not only for better code generation
+> for the debug case, but because it would have possibly made the erofs
+> misuse more obvious to people.
+
+To make it even more obvious, perhaps rename it as well?  I.e.
+
+/*
+ * unlike the rest of these primitives, the one below does *not* contain
+ * a fallback; caller needs to take care of handling that.
+ */
+#if USE_CMPXCHG_LOCKREF
+extern int __lockref_put_return(struct lockref *);
+#else
+static inline int __lockref_put_return(struct lockref *l)
+{
+	return -1;
+}
+#endif
 
