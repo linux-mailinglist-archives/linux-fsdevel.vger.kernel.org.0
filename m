@@ -1,287 +1,181 @@
-Return-Path: <linux-fsdevel+bounces-1706-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1707-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEFFF7DDD38
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Nov 2023 08:31:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 704657DDD8F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Nov 2023 09:09:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5885EB2113B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Nov 2023 07:30:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1ADB6B2105C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Nov 2023 08:09:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B65D563AD;
-	Wed,  1 Nov 2023 07:30:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8A286AA5;
+	Wed,  1 Nov 2023 08:08:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Byn+WNzB"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bSmshpaH"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B3346105;
-	Wed,  1 Nov 2023 07:30:48 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.100])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35023E4;
-	Wed,  1 Nov 2023 00:30:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1698823843; x=1730359843;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=38bUYl9zGRcXqgO3kvm3wpVN8MNciUwqMVCV5OnvF8E=;
-  b=Byn+WNzBAcKevBhPJnkljzqtxWgD8jtZ4CUsssURhfsjeMDAnnl1lJsd
-   WeARez1jdkWJjb+d0+v77SKTE2V5s3TYeDnOHPcjNgpG/TyUqUHF/FZVA
-   V0Pg2DUv7kxMfzV0HnP9QvGqO0/M38+LOXoJjofR2ztB1eyQVXWqf2uxn
-   mSI53gmzkjANgVYjglC6xtwKCrng92j1tbOm81oiPi3ZpW0/pi6b/+Ie0
-   l1Eqt8LAszCJak6oz5D+EOHuFN7aBZOY4kU+JzWWgm11s0Bv3gFBSYCdr
-   eIHdrJ9wAhel80TlC9VQk99oFbw0jxg0uPBD+ek9hUuSJlxebkR3CbBnQ
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10880"; a="454923841"
-X-IronPort-AV: E=Sophos;i="6.03,267,1694761200"; 
-   d="scan'208";a="454923841"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2023 00:30:42 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10880"; a="884461159"
-X-IronPort-AV: E=Sophos;i="6.03,267,1694761200"; 
-   d="scan'208";a="884461159"
-Received: from binbinwu-mobl.ccr.corp.intel.com (HELO [10.238.10.126]) ([10.238.10.126])
-  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2023 00:30:30 -0700
-Message-ID: <b2e1f4ed-9954-4bea-b5b5-04b0041df5ec@linux.intel.com>
-Date: Wed, 1 Nov 2023 15:30:12 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FDFE63CD
+	for <linux-fsdevel@vger.kernel.org>; Wed,  1 Nov 2023 08:08:52 +0000 (UTC)
+Received: from mail-yw1-x112e.google.com (mail-yw1-x112e.google.com [IPv6:2607:f8b0:4864:20::112e])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F22198;
+	Wed,  1 Nov 2023 01:08:50 -0700 (PDT)
+Received: by mail-yw1-x112e.google.com with SMTP id 00721157ae682-5a7af20c488so64963377b3.1;
+        Wed, 01 Nov 2023 01:08:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1698826129; x=1699430929; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zgfbgSEobRatousrajtd1MKUo9GGvoyPH04y8/doDqo=;
+        b=bSmshpaHqz69KlnSBF23evOG2ixqxGimlctyYwj96sd1Os0sj2q0p9hi7rkx0gz5yk
+         +/FGVs7nPSQqpAK/L+fpVCwu+sOOs+XWabzheoecZC4sz5OboWOc/RN6TLnoDezuGyng
+         3Ku+3/8xsfMWgFcldahZszhGkzCUhis7bb+olWSgy2/7tI8jJWh3DkpnUtIt+Un5hl4/
+         HGaNMmgQwb3IFNlHanYSkzuKw/Jp1HX+dvVh1OqpB8UfopKo+H5b+w3qbdRyi+nTP/aU
+         cMGY9sod9V36+1tEBiYk3oIrx0cuFLjfXO82QCfsZL879W4NlE8jaAkMy75sbPE0xV3C
+         nGGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698826129; x=1699430929;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zgfbgSEobRatousrajtd1MKUo9GGvoyPH04y8/doDqo=;
+        b=e3kZjzbIjhYs4IQ5EO9QNH9fZmPrd4kseSyCmYku8ba++99kC/6NjULlqFUtvGxQ4m
+         a5PgdEafPdPrtOgYJmph+l4ny0IGhFLIIXiTQSnYjhO03gDLNbV5pt0ic55wP5vIN/ZC
+         p0gvWl3+StAgFxEJJOIPuukUWVg/TteZUVXUe+dWiJgVDUgWVSTu3oSS/MDgT/iUqfM3
+         MxaIsg3IZDIMM3Yc/tit2Y49koUcWJqmT0W4Tqp6sjetwTtCp5sPl/aLjKtYt+Xepx9z
+         ekEA28gKXRvfKHXtnHXBwPcdB8ecmCfEk5LELLYUB3yaNiE9PccMuW3yv+yfKf8Bn1Bn
+         5Bjg==
+X-Gm-Message-State: AOJu0Yx4veOE6HB3N0iw8LNFPExNv76VnDgvtjRGH7PAl/a8p4nI+oWs
+	fuIpnSDZ0Jum9egRu4CRxvtfhTSjd8g7sBpHhuA=
+X-Google-Smtp-Source: AGHT+IGRBUWRysQM9zIevnqz2kXSdSgC1kLwK+R6pM3Ky1i1gtJgobEMFWL1l8JxKMDWCm+cTvXeqLv8Z+MqOa/srO4=
+X-Received: by 2002:a81:4109:0:b0:5a7:aa16:6b05 with SMTP id
+ o9-20020a814109000000b005a7aa166b05mr13757515ywa.33.1698826129298; Wed, 01
+ Nov 2023 01:08:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v13 09/35] KVM: Add KVM_EXIT_MEMORY_FAULT exit to report
- faults to userspace
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
- Oliver Upton <oliver.upton@linux.dev>, Huacai Chen <chenhuacai@kernel.org>,
- Michael Ellerman <mpe@ellerman.id.au>, Anup Patel <anup@brainfault.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Andrew Morton <akpm@linux-foundation.org>, kvm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
- linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Xiaoyao Li <xiaoyao.li@intel.com>,
- Xu Yilun <yilun.xu@intel.com>, Chao Peng <chao.p.peng@linux.intel.com>,
- Fuad Tabba <tabba@google.com>, Jarkko Sakkinen <jarkko@kernel.org>,
- Anish Moorthy <amoorthy@google.com>, David Matlack <dmatlack@google.com>,
- Yu Zhang <yu.c.zhang@linux.intel.com>,
- Isaku Yamahata <isaku.yamahata@intel.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8?=
- =?UTF-8?Q?n?= <mic@digikod.net>, Vlastimil Babka <vbabka@suse.cz>,
- Vishal Annapurve <vannapurve@google.com>,
- Ackerley Tng <ackerleytng@google.com>,
- Maciej Szmigiero <mail@maciej.szmigiero.name>,
- David Hildenbrand <david@redhat.com>, Quentin Perret <qperret@google.com>,
- Michael Roth <michael.roth@amd.com>, Wang <wei.w.wang@intel.com>,
- Liam Merwick <liam.merwick@oracle.com>,
- Isaku Yamahata <isaku.yamahata@gmail.com>,
- "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-References: <20231027182217.3615211-1-seanjc@google.com>
- <20231027182217.3615211-10-seanjc@google.com>
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20231027182217.3615211-10-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <CAOQ4uxhJGkZrUdUJ72vjRuLec0g8VqgRXRH=x7W9ogMU6rBxcQ@mail.gmail.com>
+ <d539804a2a73ad70265c5fa599ecd663cd235843.camel@kernel.org>
+ <ZTjMRRqmlJ+fTys2@dread.disaster.area> <2ef9ac6180e47bc9cc8edef20648a000367c4ed2.camel@kernel.org>
+ <ZTnNCytHLGoJY9ds@dread.disaster.area> <6df5ea54463526a3d898ed2bd8a005166caa9381.camel@kernel.org>
+ <ZUAwFkAizH1PrIZp@dread.disaster.area> <CAHk-=wg4jyTxO8WWUc1quqSETGaVsPHh8UeFUROYNwU-fEbkJg@mail.gmail.com>
+ <ZUBbj8XsA6uW8ZDK@dread.disaster.area> <CAOQ4uxgSRw26J+MPK-zhysZX9wBkXFRNx+n1bwnQwykCJ1=F4Q@mail.gmail.com>
+ <20231031231250.GA1205221@frogsfrogsfrogs>
+In-Reply-To: <20231031231250.GA1205221@frogsfrogsfrogs>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 1 Nov 2023 10:08:37 +0200
+Message-ID: <CAOQ4uxh0rBzNm=OK3DNPyiybm2Jdac4aLYKGHAeDZn_A1HGd0Q@mail.gmail.com>
+Subject: Re: [PATCH RFC 2/9] timekeeping: new interfaces for multigrain
+ timestamp handing
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Dave Chinner <david@fromorbit.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Jeff Layton <jlayton@kernel.org>, Kent Overstreet <kent.overstreet@linux.dev>, 
+	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	John Stultz <jstultz@google.com>, Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>, 
+	Chandan Babu R <chandan.babu@oracle.com>, "Theodore Ts'o" <tytso@mit.edu>, 
+	Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, 
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Hugh Dickins <hughd@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.de>, 
+	David Howells <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mm@kvack.org, 
+	linux-nfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Nov 1, 2023 at 1:12=E2=80=AFAM Darrick J. Wong <djwong@kernel.org> =
+wrote:
+>
+> On Tue, Oct 31, 2023 at 09:03:57AM +0200, Amir Goldstein wrote:
+> > On Tue, Oct 31, 2023 at 3:42=E2=80=AFAM Dave Chinner <david@fromorbit.c=
+om> wrote:
+> > >
+> > [...]
+> > > .... and what is annoying is that that the new i_version just a
+> > > glorified ctime change counter. What we should be fixing is ctime -
+> > > integrating this change counting into ctime would allow us to make
+> > > i_version go away entirely. i.e. We don't need a persistent ctime
+> > > change counter if the ctime has sufficient resolution or persistent
+> > > encoding that it does not need an external persistent change
+> > > counter.
+> > >
+> > > That was reasoning behind the multi-grain timestamps. While the mgts
+> > > implementation was flawed, the reasoning behind it certainly isn't.
+> > > We should be trying to get rid of i_version by integrating it into
+> > > ctime updates, not arguing how atime vs i_version should work.
+> > >
+> > > > So I don't think the issue here is "i_version" per se. I think in a
+> > > > vacuum, the best option of i_version is pretty obvious.  But if you
+> > > > want i_version to track di_changecount, *then* you end up with that
+> > > > situation where the persistence of atime matters, and i_version nee=
+ds
+> > > > to update whenever a (persistent) atime update happens.
+> > >
+> > > Yet I don't want i_version to track di_changecount.
+> > >
+> > > I want to *stop supporting i_version altogether* in XFS.
+> > >
+> > > I want i_version as filesystem internal metadata to die completely.
+> > >
+> > > I don't want to change the on disk format to add a new i_version
+> > > field because we'll be straight back in this same siutation when the
+> > > next i_version bug is found and semantics get changed yet again.
+> > >
+> > > Hence if we can encode the necessary change attributes into ctime,
+> > > we can drop VFS i_version support altogether.  Then the "atime bumps
+> > > i_version" problem also goes away because then we *don't use
+> > > i_version*.
+> > >
+> > > But if we can't get the VFS to do this with ctime, at least we have
+> > > the abstractions available to us (i.e. timestamp granularity and
+> > > statx change cookie) to allow XFS to implement this sort of
+> > > ctime-with-integrated-change-counter internally to the filesystem
+> > > and be able to drop i_version support....
+> > >
+> >
+> > I don't know if it was mentioned before in one of the many threads,
+> > but there is another benefit of ctime-with-integrated-change-counter
+> > approach - it is the ability to extend the solution with some adaptatio=
+ns
+> > also to mtime.
+> >
+> > The "change cookie" is used to know if inode metadata cache should
+> > be invalidated and mtime is often used to know if data cache should
+> > be invalidated, or if data comparison could be skipped (e.g. rsync).
+> >
+> > The difference is that mtime can be set by user, so using lower nsec
+> > bits for modification counter would require to truncate the user set
+> > time granularity to 100ns - that is probably acceptable, but only as
+> > an opt-in behavior.
+> >
+> > The special value 0 for mtime-change-counter could be reserved for
+> > mtime that was set by the user or for upgrade of existing inode,
+> > where 0 counter means that mtime cannot be trusted as an accurate
+> > data modification-cookie.
+>
+> What about write faults on an mmap region?  The first ro->rw transition
+> results in an mtime update, but not again until the page gets cleaned.
+>
 
+That problem is out of scope. As is the issue of whether mtime is updated
+before or after the data modification.
+For all practical matter, HSM (or any backup/sync software) could fsync
+data of file before testing its mtime.
+I am working on an additional mechanism (sb_start_write_srcu) which
+HSM can use to close the rest of the possible TOCTOU races.
 
-On 10/28/2023 2:21 AM, Sean Christopherson wrote:
-> From: Chao Peng <chao.p.peng@linux.intel.com>
->
-> Add a new KVM exit type to allow userspace to handle memory faults that
-> KVM cannot resolve, but that userspace *may* be able to handle (without
-> terminating the guest).
->
-> KVM will initially use KVM_EXIT_MEMORY_FAULT to report implicit
-> conversions between private and shared memory.  With guest private memory,
-> there will be two kind of memory conversions:
->
->    - explicit conversion: happens when the guest explicitly calls into KVM
->      to map a range (as private or shared)
->
->    - implicit conversion: happens when the guest attempts to access a gfn
->      that is configured in the "wrong" state (private vs. shared)
->
-> On x86 (first architecture to support guest private memory), explicit
-> conversions will be reported via KVM_EXIT_HYPERCALL+KVM_HC_MAP_GPA_RANGE,
-> but reporting KVM_EXIT_HYPERCALL for implicit conversions is undesriable
-> as there is (obviously) no hypercall, and there is no guarantee that the
-> guest actually intends to convert between private and shared, i.e. what
-> KVM thinks is an implicit conversion "request" could actually be the
-> result of a guest code bug.
->
-> KVM_EXIT_MEMORY_FAULT will be used to report memory faults that appear to
-> be implicit conversions.
->
-> Note!  To allow for future possibilities where KVM reports
-> KVM_EXIT_MEMORY_FAULT and fills run->memory_fault on _any_ unresolved
-> fault, KVM returns "-EFAULT" (-1 with errno == EFAULT from userspace's
-> perspective), not '0'!
-Is "-EHWPOISON" case not considered unresolved, so it is not mentioned here?
+The problem that modification-cookie needs to solve is the coarse grained
+mtime timestamp, very much like change-cookie for ctime and additionally
+it needs to solve the problem that HSM needs to know if the mtime
+timestamp was generated by the filesystem or set by the user.
 
-> Due to historical baggage within KVM, exiting to
-> userspace with '0' from deep callstacks, e.g. in emulation paths, is
-> infeasible as doing so would require a near-complete overhaul of KVM,
-> whereas KVM already propagates -errno return codes to userspace even when
-> the -errno originated in a low level helper.
->
-> Report the gpa+size instead of a single gfn even though the initial usage
-> is expected to always report single pages.  It's entirely possible, likely
-> even, that KVM will someday support sub-page granularity faults, e.g.
-> Intel's sub-page protection feature allows for additional protections at
-> 128-byte granularity.
->
-> Link: https://lore.kernel.org/all/20230908222905.1321305-5-amoorthy@google.com
-> Link: https://lore.kernel.org/all/ZQ3AmLO2SYv3DszH@google.com
-> Cc: Anish Moorthy <amoorthy@google.com>
-> Cc: David Matlack <dmatlack@google.com>
-> Suggested-by: Sean Christopherson <seanjc@google.com>
-> Co-developed-by: Yu Zhang <yu.c.zhang@linux.intel.com>
-> Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
-> Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
-> Co-developed-by: Sean Christopherson <seanjc@google.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->   Documentation/virt/kvm/api.rst | 41 ++++++++++++++++++++++++++++++++++
->   arch/x86/kvm/x86.c             |  1 +
->   include/linux/kvm_host.h       | 11 +++++++++
->   include/uapi/linux/kvm.h       |  8 +++++++
->   4 files changed, 61 insertions(+)
->
-> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
-> index ace984acc125..860216536810 100644
-> --- a/Documentation/virt/kvm/api.rst
-> +++ b/Documentation/virt/kvm/api.rst
-> @@ -6723,6 +6723,26 @@ array field represents return values. The userspace should update the return
->   values of SBI call before resuming the VCPU. For more details on RISC-V SBI
->   spec refer, https://github.com/riscv/riscv-sbi-doc.
->   
-> +::
-> +
-> +		/* KVM_EXIT_MEMORY_FAULT */
-> +		struct {
-> +			__u64 flags;
-> +			__u64 gpa;
-> +			__u64 size;
-> +		} memory;
-> +
-> +KVM_EXIT_MEMORY_FAULT indicates the vCPU has encountered a memory fault that
-> +could not be resolved by KVM.  The 'gpa' and 'size' (in bytes) describe the
-> +guest physical address range [gpa, gpa + size) of the fault.  The 'flags' field
-> +describes properties of the faulting access that are likely pertinent.
-> +Currently, no flags are defined.
-> +
-> +Note!  KVM_EXIT_MEMORY_FAULT is unique among all KVM exit reasons in that it
-> +accompanies a return code of '-1', not '0'!  errno will always be set to EFAULT
-> +or EHWPOISON when KVM exits with KVM_EXIT_MEMORY_FAULT, userspace should assume
-> +kvm_run.exit_reason is stale/undefined for all other error numbers.
-> +
->   ::
->   
->       /* KVM_EXIT_NOTIFY */
-> @@ -7757,6 +7777,27 @@ This capability is aimed to mitigate the threat that malicious VMs can
->   cause CPU stuck (due to event windows don't open up) and make the CPU
->   unavailable to host or other VMs.
->   
-> +7.34 KVM_CAP_MEMORY_FAULT_INFO
-> +------------------------------
-> +
-> +:Architectures: x86
-> +:Returns: Informational only, -EINVAL on direct KVM_ENABLE_CAP.
-> +
-> +The presence of this capability indicates that KVM_RUN will fill
-> +kvm_run.memory_fault if KVM cannot resolve a guest page fault VM-Exit, e.g. if
-> +there is a valid memslot but no backing VMA for the corresponding host virtual
-> +address.
-> +
-> +The information in kvm_run.memory_fault is valid if and only if KVM_RUN returns
-> +an error with errno=EFAULT or errno=EHWPOISON *and* kvm_run.exit_reason is set
-> +to KVM_EXIT_MEMORY_FAULT.
-> +
-> +Note: Userspaces which attempt to resolve memory faults so that they can retry
-> +KVM_RUN are encouraged to guard against repeatedly receiving the same
-> +error/annotated fault.
-> +
-> +See KVM_EXIT_MEMORY_FAULT for more information.
-> +
->   8. Other capabilities.
->   ======================
->   
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 6409914428ca..ee3cd8c3c0ef 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -4518,6 +4518,7 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
->   	case KVM_CAP_ENABLE_CAP:
->   	case KVM_CAP_VM_DISABLE_NX_HUGE_PAGES:
->   	case KVM_CAP_IRQFD_RESAMPLE:
-> +	case KVM_CAP_MEMORY_FAULT_INFO:
->   		r = 1;
->   		break;
->   	case KVM_CAP_EXIT_HYPERCALL:
-> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-> index 4e741ff27af3..96aa930536b1 100644
-> --- a/include/linux/kvm_host.h
-> +++ b/include/linux/kvm_host.h
-> @@ -2327,4 +2327,15 @@ static inline void kvm_account_pgtable_pages(void *virt, int nr)
->   /* Max number of entries allowed for each kvm dirty ring */
->   #define  KVM_DIRTY_RING_MAX_ENTRIES  65536
->   
-> +static inline void kvm_prepare_memory_fault_exit(struct kvm_vcpu *vcpu,
-> +						 gpa_t gpa, gpa_t size)
-> +{
-> +	vcpu->run->exit_reason = KVM_EXIT_MEMORY_FAULT;
-> +	vcpu->run->memory_fault.gpa = gpa;
-> +	vcpu->run->memory_fault.size = size;
-> +
-> +	/* Flags are not (yet) defined or communicated to userspace. */
-> +	vcpu->run->memory_fault.flags = 0;
-> +}
-> +
->   #endif
-> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-> index bd1abe067f28..7ae9987b48dd 100644
-> --- a/include/uapi/linux/kvm.h
-> +++ b/include/uapi/linux/kvm.h
-> @@ -274,6 +274,7 @@ struct kvm_xen_exit {
->   #define KVM_EXIT_RISCV_SBI        35
->   #define KVM_EXIT_RISCV_CSR        36
->   #define KVM_EXIT_NOTIFY           37
-> +#define KVM_EXIT_MEMORY_FAULT     38
->   
->   /* For KVM_EXIT_INTERNAL_ERROR */
->   /* Emulate instruction failed. */
-> @@ -520,6 +521,12 @@ struct kvm_run {
->   #define KVM_NOTIFY_CONTEXT_INVALID	(1 << 0)
->   			__u32 flags;
->   		} notify;
-> +		/* KVM_EXIT_MEMORY_FAULT */
-> +		struct {
-> +			__u64 flags;
-> +			__u64 gpa;
-> +			__u64 size;
-> +		} memory_fault;
->   		/* Fix the size of the union. */
->   		char padding[256];
->   	};
-> @@ -1203,6 +1210,7 @@ struct kvm_ppc_resize_hpt {
->   #define KVM_CAP_ARM_EAGER_SPLIT_CHUNK_SIZE 228
->   #define KVM_CAP_ARM_SUPPORTED_BLOCK_SIZES 229
->   #define KVM_CAP_USER_MEMORY2 230
-> +#define KVM_CAP_MEMORY_FAULT_INFO 231
->   
->   #ifdef KVM_CAP_IRQ_ROUTING
->   
-
+Thanks,
+Amir.
 
