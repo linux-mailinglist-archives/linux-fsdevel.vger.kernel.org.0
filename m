@@ -1,170 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-1712-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1713-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFC167DDEBE
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Nov 2023 10:52:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 887567DDF17
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Nov 2023 11:11:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC7AC1C20C87
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Nov 2023 09:52:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D1E71C20D44
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Nov 2023 10:11:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EAF9D26B;
-	Wed,  1 Nov 2023 09:52:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L0ID5BAX"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50EE0101DB;
+	Wed,  1 Nov 2023 10:11:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 685D27475
-	for <linux-fsdevel@vger.kernel.org>; Wed,  1 Nov 2023 09:52:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1632C433C7;
-	Wed,  1 Nov 2023 09:52:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1698832343;
-	bh=gr9/ISQr++i5nHb8Hma92GyRHRag1n7JMO5W53UdNA0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L0ID5BAXhrIgl1T6GbN5L7EC/39F7BVlTSDBcEUg0LFcc8OywJD/pjIRn53soG65z
-	 xCg0F+xEp1WTlpPybXZ8hKcaSQao6h06/x4dzarvju8PeGSNz9XnJMchxyJeZFXOPY
-	 WQECPTDIb6W7XnJomtqJoal8d7ABjM0jJlt2VtbbIuoIxqYhZazPMQBz3k/xSTcE5r
-	 fBMD0v0AGKg0U62x6s8Q4TqG6nV2PCyVgTVDWGcyHwFjYzBhgi/rF9xkix+M7Y0Bl2
-	 D1XoNMDByksZo81YgBCwFBAJE0T2afVSxQeI2QSqWEurPorOu6pTn2CQgAL1vwSfNp
-	 9rqw05KDFSeHg==
-Date: Wed, 1 Nov 2023 10:52:18 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Josef Bacik <josef@toxicpanda.com>,
-	Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
-	Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/3] fanotify support for btrfs sub-volumes
-Message-ID: <20231101-neigen-storch-cde3b0671902@brauner>
-References: <20231025210654.GA2892534@perftesting>
- <ZTtOmWEx5neNKkez@infradead.org>
- <20231027131726.GA2915471@perftesting>
- <ZT+uxSEh+nTZ2DEY@infradead.org>
- <20231031-faktor-wahlparty-5daeaf122c5e@brauner>
- <ZUDxli5HTwDP6fqu@infradead.org>
- <20231031-anorak-sammeln-8b1c4264f0db@brauner>
- <ZUE0CWQWdpGHm81L@infradead.org>
- <20231101-nutzwert-hackbeil-bbc2fa2898ae@brauner>
- <590e421a-a209-41b6-ad96-33b3d1789643@gmx.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB04529AB
+	for <linux-fsdevel@vger.kernel.org>; Wed,  1 Nov 2023 10:11:34 +0000 (UTC)
+Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com [209.85.167.200])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED0DB102
+	for <linux-fsdevel@vger.kernel.org>; Wed,  1 Nov 2023 03:11:28 -0700 (PDT)
+Received: by mail-oi1-f200.google.com with SMTP id 5614622812f47-3b56bf3d7a9so1862930b6e.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Nov 2023 03:11:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698833488; x=1699438288;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bXahSEUy+14xsn/d7aszM5fHvVZhAbvct7hqKP00aRo=;
+        b=Djp7oklg7c1loH+z28woeMlq45KkhKFkFChtHBPMbpb5PTZxGjOyowxLdh+mFi/lbE
+         Q+vx0I82Fe+R0A2FRERhnnM/sXlihRX2bI5HKrLr2cyIZ1j7dthogUthHgzrB8Iis/9Z
+         BLPTv8+Xw4/9+0fdGDRkEAch91dPXOicANs2H1Oo93T3JEA4zvOfLAO1QZRQZSCwNQ5m
+         h1+Xd2Oz4o1v8OEswQyGqfY7Uv57FziaPV4LbcXZyrKUIu12Z541riNKG8ByAbERCBNX
+         Mr2dmJnzACqLiaz72Jh+sT0bQ/4ZFDwDu2l0jbIXFyDZN6evgkAmRvy12bmdkD0JcWYz
+         aeEg==
+X-Gm-Message-State: AOJu0Yx5M+JJFKXwYGU6gEq/b7arAuG+YuTX8H+JQkmprAVFnJWWv7At
+	xnrCSOlZkrJHLnBylxnRIjPd9oHS/HumnELRDf8a+BcQ072+
+X-Google-Smtp-Source: AGHT+IHoUKW4bJUZ+erPsgzbUz4MYK9ApwlDolBOgA5uUtcaQW9W9XQTqwf1JwXc/sUY4YarLT7VQ2PSP0V0yntlF9W/7m+rcUJx
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <590e421a-a209-41b6-ad96-33b3d1789643@gmx.com>
+X-Received: by 2002:a05:6808:f0b:b0:3ae:532c:e93a with SMTP id
+ m11-20020a0568080f0b00b003ae532ce93amr5515798oiw.11.1698833488314; Wed, 01
+ Nov 2023 03:11:28 -0700 (PDT)
+Date: Wed, 01 Nov 2023 03:11:28 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009a89f30609147ef3@google.com>
+Subject: [syzbot] Monthly nilfs report (Oct 2023)
+From: syzbot <syzbot+listfef7805b7a90b5da7492@syzkaller.appspotmail.com>
+To: konishi.ryusuke@gmail.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-nilfs@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Nov 01, 2023 at 07:11:53PM +1030, Qu Wenruo wrote:
-> 
-> 
-> On 2023/11/1 18:46, Christian Brauner wrote:
-> > On Tue, Oct 31, 2023 at 10:06:17AM -0700, Christoph Hellwig wrote:
-> > > On Tue, Oct 31, 2023 at 01:50:46PM +0100, Christian Brauner wrote:
-> > > > So this is effectively a request for:
-> > > > 
-> > > > btrfs subvolume create /mnt/subvol1
-> > > > 
-> > > > to create vfsmounts? IOW,
-> > > > 
-> > > > mkfs.btrfs /dev/sda
-> > > > mount /dev/sda /mnt
-> > > > btrfs subvolume create /mnt/subvol1
-> > > > btrfs subvolume create /mnt/subvol2
-> > > > 
-> > > > would create two new vfsmounts that are exposed in /proc/<pid>/mountinfo
-> > > > afterwards?
-> > > 
-> > > Yes.
-> > > 
-> > > > That might be odd. Because these vfsmounts aren't really mounted, no?
-> > > 
-> > > Why aren't they?
-> > > 
-> > > > And so you'd be showing potentially hundreds of mounts in
-> > > > /proc/<pid>/mountinfo that you can't unmount?
-> > > 
-> > > Why would you not allow them to be unmounted?
-> > > 
-> > > > And even if you treat them as mounted what would unmounting mean?
-> > > 
-> > > The code in btrfs_lookup_dentry that does a hand crafted version
-> > > of the file system / subvolume crossing (the location.type !=
-> > > BTRFS_INODE_ITEM_KEY one) would not be executed.
-> > 
-> > So today, when we do:
-> > 
-> > mkfs.btrfs -f /dev/sda
-> > mount -t btrfs /dev/sda /mnt
-> > btrfs subvolume create /mnt/subvol1
-> > btrfs subvolume create /mnt/subvol2
-> > 
-> > Then all subvolumes are always visible under /mnt.
-> > IOW, you can't hide them other than by overmounting or destroying them.
-> > 
-> > If we make subvolumes vfsmounts then we very likely alter this behavior
-> > and I see two obvious options:
-> > 
-> > (1) They are fake vfsmounts that can't be unmounted:
-> > 
-> >      umount /mnt/subvol1 # returns -EINVAL
-> > 
-> >      This retains the invariant that every subvolume is always visible
-> >      from the filesystems root, i.e., /mnt will include /mnt/subvol{1,}
-> 
-> I'd like to go this option. But I still have a question.
-> 
-> How do we properly unmount a btrfs?
-> Do we have some other way to record which subvolume is really mounted
-> and which is just those place holder?
+Hello nilfs maintainers/developers,
 
-So the downside of this really is that this would be custom btrfs
-semantics. Having mounts in /proc/<pid>/mountinfo that you can't unmount
-only happens in weird corner cases today:
+This is a 31-day syzbot report for the nilfs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/nilfs
 
-* mounts inherited during unprivileged mount namespace creation
-* locked mounts
+During the period, 0 new issues were detected and 0 were fixed.
+In total, 6 issues are still open and 36 have been fixed so far.
 
-Both of which are pretty inelegant and effectively only exist because of
-user namespaces. So if we can avoid proliferating such semantics it
-would be preferable.
+Some of the still happening issues:
 
-I think it would also be rather confusing for userspace to be presented
-with a bunch of mounts in /proc/<pid>/mountinfo that it can't do
-anything with.
+Ref Crashes Repro Title
+<1> 366     Yes   kernel BUG at fs/buffer.c:LINE!
+                  https://syzkaller.appspot.com/bug?extid=cfed5b56649bddf80d6e
+<2> 337     Yes   WARNING in nilfs_sufile_set_segment_usage
+                  https://syzkaller.appspot.com/bug?extid=14e9f834f6ddecece094
+<3> 224     No    INFO: task hung in path_openat (7)
+                  https://syzkaller.appspot.com/bug?extid=950a0cdaa2fdd14f5bdc
+<4> 105     Yes   INFO: task hung in nilfs_detach_log_writer
+                  https://syzkaller.appspot.com/bug?extid=e3973c409251e136fdd0
+<5> 6       Yes   kernel BUG in end_buffer_async_write
+                  https://syzkaller.appspot.com/bug?extid=5c04210f7c7f897c1e7f
 
-> > (2) They are proper vfsmounts:
-> > 
-> >      umount /mnt/subvol1 # succeeds
-> > 
-> >      This retains standard semantics for userspace about anything that
-> >      shows up in /proc/<pid>/mountinfo but means that after
-> >      umount /mnt/subvol1 succeeds, /mnt/subvol1 won't be accessible from
-> >      the filesystem root /mnt anymore.
-> > 
-> > Both options can be made to work from a purely technical perspective,
-> > I'm asking which one it has to be because it isn't clear just from the
-> > snippets in this thread.
-> > 
-> > One should also point out that if each subvolume is a vfsmount, then say
-> > a btrfs filesystems with 1000 subvolumes which is mounted from the root:
-> > 
-> > mount -t btrfs /dev/sda /mnt
-> > 
-> > could be exploded into 1000 individual mounts. Which many users might not want.
-> 
-> Can we make it dynamic? AKA, the btrfs_insert_fs_root() is the perfect
-> timing here.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Probably, it would be an automount. Though I would have to recheck that
-code to see how exactly that would work but roughly, when you add the
-inode for the subvolume you raise S_AUTOMOUNT on it and then you add
-.d_automount for btrfs.
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
