@@ -1,73 +1,73 @@
-Return-Path: <linux-fsdevel+bounces-1729-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1730-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 743B97DE117
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Nov 2023 13:47:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AC417DE11E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Nov 2023 13:51:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D65A28182C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Nov 2023 12:47:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEB76B20B4A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Nov 2023 12:51:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EE2D12E4A;
-	Wed,  1 Nov 2023 12:47:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EBA512B8B;
+	Wed,  1 Nov 2023 12:51:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tkZvBXUU"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ly5ncPVN"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB40512B90
-	for <linux-fsdevel@vger.kernel.org>; Wed,  1 Nov 2023 12:47:04 +0000 (UTC)
-Received: from mail-qk1-x72e.google.com (mail-qk1-x72e.google.com [IPv6:2607:f8b0:4864:20::72e])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC52913E
-	for <linux-fsdevel@vger.kernel.org>; Wed,  1 Nov 2023 05:47:02 -0700 (PDT)
-Received: by mail-qk1-x72e.google.com with SMTP id af79cd13be357-778a20df8c3so469994885a.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Nov 2023 05:47:02 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3913011187
+	for <linux-fsdevel@vger.kernel.org>; Wed,  1 Nov 2023 12:51:05 +0000 (UTC)
+Received: from mail-qv1-xf2a.google.com (mail-qv1-xf2a.google.com [IPv6:2607:f8b0:4864:20::f2a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57410F4
+	for <linux-fsdevel@vger.kernel.org>; Wed,  1 Nov 2023 05:51:03 -0700 (PDT)
+Received: by mail-qv1-xf2a.google.com with SMTP id 6a1803df08f44-66d0252578aso43233036d6.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Nov 2023 05:51:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1698842822; x=1699447622; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1698843062; x=1699447862; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=i1rvjvqySA8gfoAJ2h4xCVn6r+FVikEwY0ryqbt6qgE=;
-        b=tkZvBXUU99Y6DGHqlV7CmraXsSkiESOXpXjHCqzaKtwOaO25j+k+op3nuWbLqAzLJv
-         msff5vgM4xSZGonWvuWKFT/X2NUlwOri+dw2rbRjgxDXjPkef20VwIeful3u/iFk+ZEf
-         tvWyN8ZIVEdnb2ds+/NaelJwumxeiLs924jPtosp40oDqOC1W8+ebv8ACD69AmjtNOn/
-         U2uu/w6nzTzmwhfFI37qaV2Gu0NWrErmtjh4mvJgEYX5mh/eBhRmL/2p0lRRVZeGvDfI
-         KctXwUfDd6Yof1leqTQuWhsPISmIpLC/BGFxNNCTKyjMni9XTcTJZwY5LdOWf7FXWTV9
-         Wptw==
+        bh=DytdUoCbq8poGHKLHOEtAO0D5dohgKyWvCysCxFt+wY=;
+        b=ly5ncPVNpoivFRlisDYz8Hb0PEqnyA/XOL1PFjBsoMHY4MzfhZ3R17TRt0h1EkyEjz
+         3QGvMwZiZRm8l3mc+UdgKXe/WYbIWHxqBvZIQo2mWBKNOBMlLFsjwJ0befWTql4jonoG
+         1Wg/Z+yLAslqneYeBHQ5zucEBKpJyIbaJdUNH7+LJhCgzEdEarVuzPc9RVGAX+8Vpylw
+         mJspx/gpqRRQgO1xL7LV87CebmifDkfrPTYfrcb1F/lScnAIFMrxitVvih55oReziExH
+         /0KH9vi34r91y0hTLMtzcT20rw+kEP6Sp4Z+eGh6I+Fb9chg1XmiyRmdav/2p217PYdA
+         4z1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698842822; x=1699447622;
+        d=1e100.net; s=20230601; t=1698843062; x=1699447862;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=i1rvjvqySA8gfoAJ2h4xCVn6r+FVikEwY0ryqbt6qgE=;
-        b=GxjxgZ2OYe/uVQ12FzVZdWyDlZnL2Kz1yrdHxlNhynDf7/hvFR8WV6HCDJbeHBRHjp
-         Pwc2FvWxPcXy9G1tR+v3YgWcIC3EQMKDF8xJ0z0npAJbz4NjhZxpBqO2zQQrau1ljZs5
-         HGGtD/EyhQzt/SdLdisFeelym+2qFzJq1kL0Fxn9iUuueOy7lOAzKiHzDXkhMjdNwzsR
-         y1u7j8YOQKMYeohFG6Ror5UZewcODzE32tJWC88nDr47A+tHpptoYwKIJ+CQJ6BUTRgE
-         cpDNCIrtw4t1kjzBTpuo2EMw2ST5l36Ol7XYMZUYV0DNQvllFYjX7JEiS97LLjZUiVwl
-         XbTw==
-X-Gm-Message-State: AOJu0Yz+vrzMc3pWsIzSjfZF6F5F6iOcVYeChrQs+x7fejFfkVHBDe7p
-	mDkhxHzjqMuW6tt1Tjr6F4Thujm74QAQdtRf7wja4g==
-X-Google-Smtp-Source: AGHT+IEwNefwVjOpplfsdA5Dp0BgUdMFZ8Gr0x2pIdj0EOquTk7Lrcu3yjtemmSczlmcSeWnvG38gd5iU/oYIFP7LzQ=
-X-Received: by 2002:ad4:5de9:0:b0:65d:31e:b810 with SMTP id
- jn9-20020ad45de9000000b0065d031eb810mr19758846qvb.34.1698842821613; Wed, 01
- Nov 2023 05:47:01 -0700 (PDT)
+        bh=DytdUoCbq8poGHKLHOEtAO0D5dohgKyWvCysCxFt+wY=;
+        b=WwNQGLNUw9y+LelIB3s99Ib0I3Qgo+dveMe0DxgDKNO40ISyaSiPZUDH33bqJXA4uW
+         3tvLNJ+xleBMuMRmpSXhJR0I9M49UIpPXVIPL2Oj/6TSsFaHB1YA/RX7pO7FkmapN0s3
+         M6iZS0zJ1FafYN7YDyd2yU/jMDVV+67bHSmSMdFsAALXOWyuJl6wWuKbooWUUxBWoIl5
+         H8rGtN7eRmJRepY5jJSJ3e3EAD/IEbbdbc1nYWb83XlD+EFxLBof5owQNL9jTRtpxRgR
+         NecNpkq5xKu+kENmLrBZJ1iVHTe/GO28MoyuyHE+NWd8PG28TrTpCDm5EJS5h6CPm9zw
+         d7lg==
+X-Gm-Message-State: AOJu0YyWkyLDbcQJCBbMk1fcvkhaqrGd1yCeC0o4kPp7DHA4fnzgXDQB
+	Mgqf4tjNGy4u+/bLWEAWj45hQUOiiM4okhVFJRanBA==
+X-Google-Smtp-Source: AGHT+IF4xR6L8cVnqFnyZjdEh5XAFhWOV7M0s6Xt9NyBBttGvtAf21ACAZmexGcVd+eTPklAY7PiFjol+SoHUZLf4NM=
+X-Received: by 2002:a05:6214:262e:b0:66f:bd35:e889 with SMTP id
+ gv14-20020a056214262e00b0066fbd35e889mr16003984qvb.60.1698843062295; Wed, 01
+ Nov 2023 05:51:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231027182217.3615211-1-seanjc@google.com> <20231027182217.3615211-3-seanjc@google.com>
-In-Reply-To: <20231027182217.3615211-3-seanjc@google.com>
+References: <20231027182217.3615211-1-seanjc@google.com> <20231027182217.3615211-5-seanjc@google.com>
+In-Reply-To: <20231027182217.3615211-5-seanjc@google.com>
 From: Fuad Tabba <tabba@google.com>
-Date: Wed, 1 Nov 2023 12:46:25 +0000
-Message-ID: <CA+EHjTycVAL11xCKQAfm-q4NGbgSH7yMswu+c1XaJdyhUh61zw@mail.gmail.com>
-Subject: Re: [PATCH v13 02/35] KVM: Assert that mmu_invalidate_in_progress
- *never* goes negative
+Date: Wed, 1 Nov 2023 12:50:26 +0000
+Message-ID: <CA+EHjTxW3P+_fejO6emoZ1=c9EkWJUH63-ffmSumh=6P6MbTqQ@mail.gmail.com>
+Subject: Re: [PATCH v13 04/35] KVM: WARN if there are dangling MMU
+ invalidations at VM destruction
 To: Sean Christopherson <seanjc@google.com>
 Cc: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
 	Oliver Upton <oliver.upton@linux.dev>, Huacai Chen <chenhuacai@kernel.org>, 
@@ -97,24 +97,18 @@ Content-Transfer-Encoding: quoted-printable
 On Fri, Oct 27, 2023 at 7:22=E2=80=AFPM Sean Christopherson <seanjc@google.=
 com> wrote:
 >
-> Move the assertion on the in-progress invalidation count from the primary
-> MMU's notifier path to KVM's common notification path, i.e. assert that
-> the count doesn't go negative even when the invalidation is coming from
-> KVM itself.
+> Add an assertion that there are no in-progress MMU invalidations when a
+> VM is being destroyed, with the exception of the scenario where KVM
+> unregisters its MMU notifier between an .invalidate_range_start() call an=
+d
+> the corresponding .invalidate_range_end().
 >
-> Opportunistically convert the assertion to a KVM_BUG_ON(), i.e. kill only
-> the affected VM, not the entire kernel.  A corrupted count is fatal to th=
-e
-> VM, e.g. the non-zero (negative) count will cause mmu_invalidate_retry()
-> to block any and all attempts to install new mappings.  But it's far from
-> guaranteed that an end() without a start() is fatal or even problematic t=
-o
-> anything other than the target VM, e.g. the underlying bug could simply b=
-e
-> a duplicate call to end().  And it's much more likely that a missed
-> invalidation, i.e. a potential use-after-free, would manifest as no
-> notification whatsoever, not an end() without a start().
+> KVM can't detect unpaired calls from the mmu_notifier due to the above
+> exception waiver, but the assertion can detect KVM bugs, e.g. such as the
+> bug that *almost* escaped initial guest_memfd development.
 >
+> Link: https://lore.kernel.org/all/e397d30c-c6af-e68f-d18e-b4e3739c5389@li=
+nux.intel.com
 > Signed-off-by: Sean Christopherson <seanjc@google.com>
 > ---
 
@@ -124,33 +118,33 @@ Tested-by: Fuad Tabba <tabba@google.com>
 Cheers,
 /fuad
 
->  virt/kvm/kvm_main.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+>  virt/kvm/kvm_main.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
 >
 > diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> index 0524933856d4..5a97e6c7d9c2 100644
+> index 1a577a25de47..4dba682586ee 100644
 > --- a/virt/kvm/kvm_main.c
 > +++ b/virt/kvm/kvm_main.c
-> @@ -833,6 +833,7 @@ void kvm_mmu_invalidate_end(struct kvm *kvm, unsigned=
- long start,
->          * in conjunction with the smp_rmb in mmu_invalidate_retry().
+> @@ -1356,9 +1356,16 @@ static void kvm_destroy_vm(struct kvm *kvm)
+>          * No threads can be waiting in kvm_swap_active_memslots() as the
+>          * last reference on KVM has been dropped, but freeing
+>          * memslots would deadlock without this manual intervention.
+> +        *
+> +        * If the count isn't unbalanced, i.e. KVM did NOT unregister its=
+ MMU
+> +        * notifier between a start() and end(), then there shouldn't be =
+any
+> +        * in-progress invalidations.
 >          */
->         kvm->mmu_invalidate_in_progress--;
-> +       KVM_BUG_ON(kvm->mmu_invalidate_in_progress < 0, kvm);
->  }
->
->  static void kvm_mmu_notifier_invalidate_range_end(struct mmu_notifier *m=
-n,
-> @@ -863,8 +864,6 @@ static void kvm_mmu_notifier_invalidate_range_end(str=
-uct mmu_notifier *mn,
->          */
->         if (wake)
->                 rcuwait_wake_up(&kvm->mn_memslots_update_rcuwait);
-> -
-> -       BUG_ON(kvm->mmu_invalidate_in_progress < 0);
->  }
->
->  static int kvm_mmu_notifier_clear_flush_young(struct mmu_notifier *mn,
+>         WARN_ON(rcuwait_active(&kvm->mn_memslots_update_rcuwait));
+> -       kvm->mn_active_invalidate_count =3D 0;
+> +       if (kvm->mn_active_invalidate_count)
+> +               kvm->mn_active_invalidate_count =3D 0;
+> +       else
+> +               WARN_ON(kvm->mmu_invalidate_in_progress);
+>  #else
+>         kvm_flush_shadow_all(kvm);
+>  #endif
 > --
 > 2.42.0.820.g83a721a137-goog
 >
