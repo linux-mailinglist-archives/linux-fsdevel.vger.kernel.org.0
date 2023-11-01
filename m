@@ -1,206 +1,253 @@
-Return-Path: <linux-fsdevel+bounces-1727-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1728-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AFA67DE08E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Nov 2023 12:53:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F9877DE115
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Nov 2023 13:46:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEB2D2818A0
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Nov 2023 11:53:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56CCA28189C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Nov 2023 12:46:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3983111CA1;
-	Wed,  1 Nov 2023 11:53:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 957F4101D1;
+	Wed,  1 Nov 2023 12:46:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="Pnw3+9M2";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="j3DY1HJp"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KDcfelv5"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14C0E15B9
-	for <linux-fsdevel@vger.kernel.org>; Wed,  1 Nov 2023 11:53:07 +0000 (UTC)
-Received: from wout4-smtp.messagingengine.com (wout4-smtp.messagingengine.com [64.147.123.20])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A4AEFD;
-	Wed,  1 Nov 2023 04:52:59 -0700 (PDT)
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-	by mailout.west.internal (Postfix) with ESMTP id C93063200922;
-	Wed,  1 Nov 2023 07:52:57 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Wed, 01 Nov 2023 07:52:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:sender:subject:subject:to:to; s=fm2; t=
-	1698839577; x=1698925977; bh=UUCVuGrNRCpcYFlCbcFf5lEpE2lBBdg3YBm
-	yL9tLv7w=; b=Pnw3+9M2zJBysq/HCrWzx++7ioXU9uVt9gLf1TTb65umX/Z6dOV
-	SG17X48MblnRmVI41ZNT/JpWQAS0FKfHWv7Ewfq69XeVHp1o+20611cF9pTq+okA
-	7TzsfvQrVFFnDos8SOAbchT6lomSWwCqAK+1kGYJMy9q09pv7pANZsMOlrJYK8LC
-	8jQ5sG3489NO3cDvYOiA0Fy4g3b882mo2ByojssF5Wi5dyphDuf3v0YCDG/w3byo
-	UBEs7pLgUky5Ax2brNploXC3yf9o5OiQYC2BwVLeqkTrzSljeafU4Row5iQ1RzoV
-	LEo0PdpTLCYPfvr8mIVAhvoRiCaG2cd3X3A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:sender:subject:subject:to:to:x-me-proxy
-	:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1698839577; x=1698925977; bh=UUCVuGrNRCpcYFlCbcFf5lEpE2lBBdg3YBm
-	yL9tLv7w=; b=j3DY1HJpugv1lnyf3YyQZd9LwANx1zrD0s9o9OWQwCl4UWNUJj1
-	+Z/N7cmBYHwaHWi9qx5KaVq7j+Ob8BIssvpyvEO/IOykqgZxJq2EaWQZZD6Xa0jX
-	vqFAX3a4Towiyd93qBkd8z0IlIrdjy/dguh1UFTKq0hJAGH+VWSGVMoYh2mvc+C0
-	y53v+2VNjdz5zgYkM0yDMyJSEoRGGDC1T1+rzCxQo/I2WfCuHuJLg0p3UGCOvWlx
-	HMUmHueKPRHL+/F1FMOV9l6ygDPirpokP6Wcz6y+wNNbh5oc2L+Gw+PrBMK8je8B
-	hM/qslLy94j3DYrgyJ2UCEwi10ORO2EZb7g==
-X-ME-Sender: <xms:GDxCZSVDRhakPUwHplcfCdn8-0e2PhOPLYDGGqox1mDlqlUG5pyG1g>
-    <xme:GDxCZenwT-BwnaS8Ar2pKF-v-TqgPwUPw4iJT7wH_07WPtDfQoZlY9_7b7RWgVLVd
-    W_wW6MP4xw5>
-X-ME-Received: <xmr:GDxCZWZBp3A8Z_ICpzAdODM99RENy_x-LkA3DVeLkNod880-Cvb3sH0SOFSRaXRW0rTS4MAkcAHH-OEnPCB3vXlEy5Q_K-UuTZOZU2zIBPimlFFaH1fq6LLK>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedruddtgedgfeefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtfeejnecuhfhrohhmpefkrghn
-    ucfmvghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnh
-    epueegveehueejjedvgeeiheekueduhffgueejgfevgedujeeiieegteehkeehvdeknecu
-    ffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurf
-    grrhgrmhepmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
-X-ME-Proxy: <xmx:GDxCZZXo4z5kNc6XnNyH4o0miOeP6iTv9TfcdFsdrY6G95Tjba3h5g>
-    <xmx:GDxCZcmpn2Uh44xi6H5exAuw0b8VrQDA8N65yEXNZv85Rsw-xlkZ5g>
-    <xmx:GDxCZed8uAsJ2BfDDbcucJRdj_HIrDNECoekeV7-TZeJ_ykg1Je_DA>
-    <xmx:GTxCZX-EHKpQt_nr_DkCej8VOQIUrVVTbkN_8GL9Z2m4z-YblRG5Bg>
-Feedback-ID: i31e841b0:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 1 Nov 2023 07:52:49 -0400 (EDT)
-Message-ID: <374433e3-ab72-64a3-0fa0-ab455268e5e0@themaw.net>
-Date: Wed, 1 Nov 2023 19:52:45 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37FB6567B
+	for <linux-fsdevel@vger.kernel.org>; Wed,  1 Nov 2023 12:46:42 +0000 (UTC)
+Received: from mail-qt1-x82c.google.com (mail-qt1-x82c.google.com [IPv6:2607:f8b0:4864:20::82c])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5BD2DC
+	for <linux-fsdevel@vger.kernel.org>; Wed,  1 Nov 2023 05:46:40 -0700 (PDT)
+Received: by mail-qt1-x82c.google.com with SMTP id d75a77b69052e-41cc7b67419so48303991cf.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Nov 2023 05:46:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1698842800; x=1699447600; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mygXGcRJ5YlWP61Tr7KN5KWyfhmOoXTRmQYYFZqOKKI=;
+        b=KDcfelv5DOHAm+W83U3D2+TJfUcylSuZ5QNl5MGBSIxGMmaqRq9grA/fOI8iIX6yni
+         jBOvRGcqd5a1e+zOG5TNZLAUwT/5CQ11eCiOdEZ+BbnpA3QP/XYjCwbXmoV6URdfjIb9
+         CeGPhCDK8FtUkEMAvNEITSNWjdLu9LfYZRR2NeyPY7pVPZXCCmNN1v1AQZKpUzGQI4VB
+         mFmBQ7927BloxVIN5C4SYzt7pXl8EtwQgABAceY+dfJ7fVRqeGlWsIO4oY2kArO4SXcR
+         yWR0HrpYOyY+UEKAC4XrMl4KAnH/jKWBv3BDAe6+4dL5Mf5obJXbirtxRg+gII9nlGT9
+         X8bw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698842800; x=1699447600;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mygXGcRJ5YlWP61Tr7KN5KWyfhmOoXTRmQYYFZqOKKI=;
+        b=tp5madxuv4vkZ0mT7ZLdaTov6wgy85Mdz85Wg8+BKiOJgUTyZIDq0ptN+QIRMH4qGe
+         kahimd8jiH5Td7LfGtED4rju063HLGLZUhX1HOTOsOvkuOJXljoRAzPvEth682Bcmgmw
+         d/3mSIJ00E4leD2f++HD7edJBLTPVS1N5MoL//jxyqRbklCmXrYIxj6H4cU5W/8nd81V
+         SRDcSWS7SzOZaYmjpRIEXd1Ny2tunf0YP7dT5nhoR476lKl2B8jDfcSn1dly5Wop70iq
+         mpXiT68YWwOWDbgX0bMMRPcDo6OQPy3tYuOdCaYjwQO+3nROZXhDHYddF+iZFnbwAH4v
+         gDdw==
+X-Gm-Message-State: AOJu0YwXUkkAIsWOGrEahxAOGPiPSfWDg6h0iuI0meSaZ5SuYpksz2pj
+	mEeu2mnMxou0TSB2vIFhleWCnct2/Ex64IVvmvLC2w==
+X-Google-Smtp-Source: AGHT+IHd9N8dL6zdz3IA97hhnoDYG1Yv2Mx5veJZKoCg3Vt6EBcnFz3FSACXzGNwepp4FUZ865yy59BtQyGtgdViYUM=
+X-Received: by 2002:a05:6214:f6c:b0:671:739e:e2fa with SMTP id
+ iy12-20020a0562140f6c00b00671739ee2famr13258176qvb.59.1698842799599; Wed, 01
+ Nov 2023 05:46:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v4 0/6] querying mount attributes
-To: Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
- linux-man@vger.kernel.org, linux-security-module@vger.kernel.org,
- Karel Zak <kzak@redhat.com>, David Howells <dhowells@redhat.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <christian@brauner.io>,
- Amir Goldstein <amir73il@gmail.com>, Matthew House
- <mattlloydhouse@gmail.com>, Florian Weimer <fweimer@redhat.com>,
- Arnd Bergmann <arnd@arndb.de>
-References: <20231025140205.3586473-1-mszeredi@redhat.com>
-Content-Language: en-US
-From: Ian Kent <raven@themaw.net>
-In-Reply-To: <20231025140205.3586473-1-mszeredi@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20231027182217.3615211-1-seanjc@google.com> <20231027182217.3615211-2-seanjc@google.com>
+In-Reply-To: <20231027182217.3615211-2-seanjc@google.com>
+From: Fuad Tabba <tabba@google.com>
+Date: Wed, 1 Nov 2023 12:46:02 +0000
+Message-ID: <CA+EHjTy5tmgGmVNGTX4a2Engb+r1AQizsMxwb8xqOi1f9+VQLA@mail.gmail.com>
+Subject: Re: [PATCH v13 01/35] KVM: Tweak kvm_hva_range and hva_handler_t to
+ allow reusing for gfn ranges
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Huacai Chen <chenhuacai@kernel.org>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Anup Patel <anup@brainfault.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, kvm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Xiaoyao Li <xiaoyao.li@intel.com>, 
+	Xu Yilun <yilun.xu@intel.com>, Chao Peng <chao.p.peng@linux.intel.com>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, Anish Moorthy <amoorthy@google.com>, 
+	David Matlack <dmatlack@google.com>, Yu Zhang <yu.c.zhang@linux.intel.com>, 
+	Isaku Yamahata <isaku.yamahata@intel.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	Vlastimil Babka <vbabka@suse.cz>, Vishal Annapurve <vannapurve@google.com>, 
+	Ackerley Tng <ackerleytng@google.com>, Maciej Szmigiero <mail@maciej.szmigiero.name>, 
+	David Hildenbrand <david@redhat.com>, Quentin Perret <qperret@google.com>, 
+	Michael Roth <michael.roth@amd.com>, Wang <wei.w.wang@intel.com>, 
+	Liam Merwick <liam.merwick@oracle.com>, Isaku Yamahata <isaku.yamahata@gmail.com>, 
+	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 25/10/23 22:01, Miklos Szeredi wrote:
-> Implement mount querying syscalls agreed on at LSF/MM 2023.
+On Fri, Oct 27, 2023 at 7:22=E2=80=AFPM Sean Christopherson <seanjc@google.=
+com> wrote:
 >
-> Features:
+> Rework and rename "struct kvm_hva_range" into "kvm_mmu_notifier_range" so
+> that the structure can be used to handle notifications that operate on gf=
+n
+> context, i.e. that aren't tied to a host virtual address.  Rename the
+> handler typedef too (arguably it should always have been gfn_handler_t).
 >
->   - statx-like want/got mask
->   - allows returning ascii strings (fs type, root, mount point)
->   - returned buffer is relocatable (no pointers)
+> Practically speaking, this is a nop for 64-bit kernels as the only
+> meaningful change is to store start+end as u64s instead of unsigned longs=
+.
 >
-> Still missing:
->   - man pages
->   - kselftest
->
-> Please find the test utility at the end of this mail.
->
->    Usage: statmnt [-l|-r] [-u] (mnt_id|path)
->
-> Git tree:
->
->    git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git#statmount-v4
->
->
-> Changes v3..v4:
->
->   - incorporate patch moving list of mounts to an rbtree
->   - wire up syscalls for all archs
->   - add LISTMOUNT_RECURSIVE (depth first iteration of mount tree)
->   - add LSMT_ROOT (list root instead of a specific mount ID)
->   - list_for_each_entry_del() moved to a separate patchset
->
-> Changes v1..v3:
->
->   - rename statmnt(2) -> statmount(2)
->   - rename listmnt(2) -> listmount(2)
->   - make ABI 32bit compatible by passing 64bit args in a struct (tested on
->     i386 and x32)
->   - only accept new 64bit mount IDs
->   - fix compile on !CONFIG_PROC_FS
->   - call security_sb_statfs() in both syscalls
->   - make lookup_mnt_in_ns() static
->   - add LISTMOUNT_UNREACHABLE flag to listmnt() to explicitly ask for
->     listing unreachable mounts
->   - remove .sb_opts
->   - remove subtype from .fs_type
->   - return the number of bytes used (including strings) in .size
->   - rename .mountpoint -> .mnt_point
->   - point strings by an offset against char[] VLA at the end of the struct.
->     E.g. printf("fs_type: %s\n", st->str + st->fs_type);
->   - don't save string lengths
->   - extend spare space in struct statmnt (complete size is now 512 bytes)
->
->
-> Miklos Szeredi (6):
->    add unique mount ID
->    mounts: keep list of mounts in an rbtree
->    namespace: extract show_path() helper
->    add statmount(2) syscall
->    add listmount(2) syscall
->    wire up syscalls for statmount/listmount
->
->   arch/alpha/kernel/syscalls/syscall.tbl      |   3 +
->   arch/arm/tools/syscall.tbl                  |   3 +
->   arch/arm64/include/asm/unistd32.h           |   4 +
->   arch/ia64/kernel/syscalls/syscall.tbl       |   3 +
->   arch/m68k/kernel/syscalls/syscall.tbl       |   3 +
->   arch/microblaze/kernel/syscalls/syscall.tbl |   3 +
->   arch/mips/kernel/syscalls/syscall_n32.tbl   |   3 +
->   arch/mips/kernel/syscalls/syscall_n64.tbl   |   3 +
->   arch/mips/kernel/syscalls/syscall_o32.tbl   |   3 +
->   arch/parisc/kernel/syscalls/syscall.tbl     |   3 +
->   arch/powerpc/kernel/syscalls/syscall.tbl    |   3 +
->   arch/s390/kernel/syscalls/syscall.tbl       |   3 +
->   arch/sh/kernel/syscalls/syscall.tbl         |   3 +
->   arch/sparc/kernel/syscalls/syscall.tbl      |   3 +
->   arch/x86/entry/syscalls/syscall_32.tbl      |   3 +
->   arch/x86/entry/syscalls/syscall_64.tbl      |   2 +
->   arch/xtensa/kernel/syscalls/syscall.tbl     |   3 +
->   fs/internal.h                               |   2 +
->   fs/mount.h                                  |  27 +-
->   fs/namespace.c                              | 573 ++++++++++++++++----
->   fs/pnode.c                                  |   2 +-
->   fs/proc_namespace.c                         |  13 +-
->   fs/stat.c                                   |   9 +-
->   include/linux/mount.h                       |   5 +-
->   include/linux/syscalls.h                    |   8 +
->   include/uapi/asm-generic/unistd.h           |   8 +-
->   include/uapi/linux/mount.h                  |  65 +++
->   include/uapi/linux/stat.h                   |   1 +
->   28 files changed, 635 insertions(+), 129 deletions(-)
+> Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
+> Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
 
-Looks ok to me,covers the primary cases I needed when I worked
+Reviewed-by: Fuad Tabba <tabba@google.com>
+Tested-by: Fuad Tabba <tabba@google.com>
 
-on using fsinfo() in systemd.
+Cheers,
+/fuad
 
 
-Karel, is there anything missing you would need for adding
-
-libmount support?
-
-
-Reviewed-by: Ian Kent <raven@themaw.net>
-
-
+>  virt/kvm/kvm_main.c | 34 +++++++++++++++++++---------------
+>  1 file changed, 19 insertions(+), 15 deletions(-)
+>
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index 486800a7024b..0524933856d4 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -541,18 +541,22 @@ static inline struct kvm *mmu_notifier_to_kvm(struc=
+t mmu_notifier *mn)
+>         return container_of(mn, struct kvm, mmu_notifier);
+>  }
+>
+> -typedef bool (*hva_handler_t)(struct kvm *kvm, struct kvm_gfn_range *ran=
+ge);
+> +typedef bool (*gfn_handler_t)(struct kvm *kvm, struct kvm_gfn_range *ran=
+ge);
+>
+>  typedef void (*on_lock_fn_t)(struct kvm *kvm, unsigned long start,
+>                              unsigned long end);
+>
+>  typedef void (*on_unlock_fn_t)(struct kvm *kvm);
+>
+> -struct kvm_hva_range {
+> -       unsigned long start;
+> -       unsigned long end;
+> +struct kvm_mmu_notifier_range {
+> +       /*
+> +        * 64-bit addresses, as KVM notifiers can operate on host virtual
+> +        * addresses (unsigned long) and guest physical addresses (64-bit=
+).
+> +        */
+> +       u64 start;
+> +       u64 end;
+>         union kvm_mmu_notifier_arg arg;
+> -       hva_handler_t handler;
+> +       gfn_handler_t handler;
+>         on_lock_fn_t on_lock;
+>         on_unlock_fn_t on_unlock;
+>         bool flush_on_ret;
+> @@ -581,7 +585,7 @@ static const union kvm_mmu_notifier_arg KVM_MMU_NOTIF=
+IER_NO_ARG;
+>              node =3D interval_tree_iter_next(node, start, last))      \
+>
+>  static __always_inline int __kvm_handle_hva_range(struct kvm *kvm,
+> -                                                 const struct kvm_hva_ra=
+nge *range)
+> +                                                 const struct kvm_mmu_no=
+tifier_range *range)
+>  {
+>         bool ret =3D false, locked =3D false;
+>         struct kvm_gfn_range gfn_range;
+> @@ -608,9 +612,9 @@ static __always_inline int __kvm_handle_hva_range(str=
+uct kvm *kvm,
+>                         unsigned long hva_start, hva_end;
+>
+>                         slot =3D container_of(node, struct kvm_memory_slo=
+t, hva_node[slots->node_idx]);
+> -                       hva_start =3D max(range->start, slot->userspace_a=
+ddr);
+> -                       hva_end =3D min(range->end, slot->userspace_addr =
++
+> -                                                 (slot->npages << PAGE_S=
+HIFT));
+> +                       hva_start =3D max_t(unsigned long, range->start, =
+slot->userspace_addr);
+> +                       hva_end =3D min_t(unsigned long, range->end,
+> +                                       slot->userspace_addr + (slot->npa=
+ges << PAGE_SHIFT));
+>
+>                         /*
+>                          * To optimize for the likely case where the addr=
+ess
+> @@ -660,10 +664,10 @@ static __always_inline int kvm_handle_hva_range(str=
+uct mmu_notifier *mn,
+>                                                 unsigned long start,
+>                                                 unsigned long end,
+>                                                 union kvm_mmu_notifier_ar=
+g arg,
+> -                                               hva_handler_t handler)
+> +                                               gfn_handler_t handler)
+>  {
+>         struct kvm *kvm =3D mmu_notifier_to_kvm(mn);
+> -       const struct kvm_hva_range range =3D {
+> +       const struct kvm_mmu_notifier_range range =3D {
+>                 .start          =3D start,
+>                 .end            =3D end,
+>                 .arg            =3D arg,
+> @@ -680,10 +684,10 @@ static __always_inline int kvm_handle_hva_range(str=
+uct mmu_notifier *mn,
+>  static __always_inline int kvm_handle_hva_range_no_flush(struct mmu_noti=
+fier *mn,
+>                                                          unsigned long st=
+art,
+>                                                          unsigned long en=
+d,
+> -                                                        hva_handler_t ha=
+ndler)
+> +                                                        gfn_handler_t ha=
+ndler)
+>  {
+>         struct kvm *kvm =3D mmu_notifier_to_kvm(mn);
+> -       const struct kvm_hva_range range =3D {
+> +       const struct kvm_mmu_notifier_range range =3D {
+>                 .start          =3D start,
+>                 .end            =3D end,
+>                 .handler        =3D handler,
+> @@ -771,7 +775,7 @@ static int kvm_mmu_notifier_invalidate_range_start(st=
+ruct mmu_notifier *mn,
+>                                         const struct mmu_notifier_range *=
+range)
+>  {
+>         struct kvm *kvm =3D mmu_notifier_to_kvm(mn);
+> -       const struct kvm_hva_range hva_range =3D {
+> +       const struct kvm_mmu_notifier_range hva_range =3D {
+>                 .start          =3D range->start,
+>                 .end            =3D range->end,
+>                 .handler        =3D kvm_unmap_gfn_range,
+> @@ -835,7 +839,7 @@ static void kvm_mmu_notifier_invalidate_range_end(str=
+uct mmu_notifier *mn,
+>                                         const struct mmu_notifier_range *=
+range)
+>  {
+>         struct kvm *kvm =3D mmu_notifier_to_kvm(mn);
+> -       const struct kvm_hva_range hva_range =3D {
+> +       const struct kvm_mmu_notifier_range hva_range =3D {
+>                 .start          =3D range->start,
+>                 .end            =3D range->end,
+>                 .handler        =3D (void *)kvm_null_fn,
+> --
+> 2.42.0.820.g83a721a137-goog
 >
 
