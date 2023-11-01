@@ -1,142 +1,129 @@
-Return-Path: <linux-fsdevel+bounces-1722-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1723-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 978447DDFFB
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Nov 2023 11:59:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A1407DE033
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Nov 2023 12:13:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37BABB21124
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Nov 2023 10:59:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B38DD1F215DE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Nov 2023 11:13:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADBB010970;
-	Wed,  1 Nov 2023 10:59:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11C941119E;
+	Wed,  1 Nov 2023 11:13:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CBUGIDfG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sy4Rxi2O"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD6FD10954
-	for <linux-fsdevel@vger.kernel.org>; Wed,  1 Nov 2023 10:59:17 +0000 (UTC)
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11282F7
-	for <linux-fsdevel@vger.kernel.org>; Wed,  1 Nov 2023 03:59:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1698836355;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ChCUMS4Z0zFJSSZC7NvVm2TXc5lFEMGFDVYjPFXyk18=;
-	b=CBUGIDfGcAFMcZVYl+tBbboYHDpWHw/EJDSJpOT1YWgV6RztNp1jUfgg9Kus9rvMOWgsZW
-	dlGM3ahyK4vfdMbXdXvK8drvEVoJkU0zj59ai6E45scT+mHeBXuvCl1vK5IFBV3+9qR69A
-	0ficsu3p7bvpgmjNsWPOgoXckLAHlQ4=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-619-GPrBBKmSOYqloPi4uInolw-1; Wed, 01 Nov 2023 06:59:13 -0400
-X-MC-Unique: GPrBBKmSOYqloPi4uInolw-1
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-9d223144f23so269035966b.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Nov 2023 03:59:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698836352; x=1699441152;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ChCUMS4Z0zFJSSZC7NvVm2TXc5lFEMGFDVYjPFXyk18=;
-        b=MaI+tO1f2JXmW14PgGfnEOTWyhOakDHc2bNa2rLqTNVmWu/kFKqQe/eLrDTTfKdJT1
-         mUYqIprH7oncgtLK7D0RSJWJk8H6dehIl/HY/Ie1YHS4Ih2cY/9KE50S4Z2sBRS19m8n
-         1t0J76twmJPAcErqt0OphXyeCNf77H3A9IZsMB9jfm/bz7TSEtB2RNyxi0PMJgWBIPxs
-         +EgLb4bjMD9uoKm/7N+17rigtFP9ccvr4KIcAk0UK0WzzUP5bjZ2Coq4Sz0SAvzAjQfr
-         l0pCdBdEEww5BjQMmP75y4wuzs/iUPennMiPE4gYvm9JhBRM1wTc2pH+5hcbYbknMJSa
-         i4pg==
-X-Gm-Message-State: AOJu0YyyTacEbdc7povvh8/u38JvFGknuZAHKe+DcKF4+XYlItcYuYGn
-	6XF/xro7nyXYRUxy4V27NiBNCmB7cffSLfEBNsiBFeDd158MVntbHEGgViFqOznzp/moPPcDAEV
-	hiT15VKeSvmN2BTppPGacKr2Q8A==
-X-Received: by 2002:a17:907:a44:b0:9be:b668:5700 with SMTP id be4-20020a1709070a4400b009beb6685700mr1473980ejc.58.1698836352534;
-        Wed, 01 Nov 2023 03:59:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHN4iF493a6l6vf8pkc7Vcdp9JsgvmrZwNhMEkxLmF5mmGf3XNHFkTZfmDTINO03oYIYYz4pw==
-X-Received: by 2002:a17:907:a44:b0:9be:b668:5700 with SMTP id be4-20020a1709070a4400b009beb6685700mr1473967ejc.58.1698836352277;
-        Wed, 01 Nov 2023 03:59:12 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a22-20020a1709062b1600b0099ddc81903asm2265963ejg.221.2023.11.01.03.59.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Nov 2023 03:59:11 -0700 (PDT)
-Message-ID: <24e0ae5c-26bb-6efa-d59a-262541d2a452@redhat.com>
-Date: Wed, 1 Nov 2023 11:59:10 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E9AA11181
+	for <linux-fsdevel@vger.kernel.org>; Wed,  1 Nov 2023 11:13:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5860EC433C9;
+	Wed,  1 Nov 2023 11:13:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1698837215;
+	bh=N6UVVns/VSWJvvvj6Jyp/eMunRO6kModQGgkQaRIaQ8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=sy4Rxi2OPF+XMY89X0x7G4Df22/7CmUQqn3N+1UFEGdivQpNgTMq7V0eFIjbhlHy4
+	 NJ+SneIU7hLdENdE8i3xuGqt0DWisuf6j6dMTpH7rt7+f+c2HLH/QpGZmSSy3tDHAo
+	 jkWxzsSGXF/Iy/Fvavj8jPNeeb2Hjqn3mLGNLuoWIjzIktyHko0WNwy7mYWoooIl2x
+	 RqL8ijcizyWd4X8B4FZ6xFYCT5zjiKLKFbOmKaggI1Nb8kxSM5Sz8h+dl8NYx6VOAr
+	 AJ3E120jL+X3i0qStXrxsrApc40u3MiIjSxus9h6cZ4HXOQZHOtSo4SzklF7i/nZHc
+	 NuRLHu3IY++mg==
+From: Christian Brauner <brauner@kernel.org>
+To: Miklos Szeredi <mszeredi@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-api@vger.kernel.org,
+	linux-man@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	Karel Zak <kzak@redhat.com>,
+	Ian Kent <raven@themaw.net>,
+	David Howells <dhowells@redhat.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Matthew House <mattlloydhouse@gmail.com>,
+	Florian Weimer <fweimer@redhat.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v4 0/6] querying mount attributes
+Date: Wed,  1 Nov 2023 12:13:22 +0100
+Message-Id: <20231101-urenkel-banal-b232d7a3cbe8@brauner>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20231025140205.3586473-1-mszeredi@redhat.com>
+References: <20231025140205.3586473-1-mszeredi@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH 1/2] vboxsf: Avoid an spurious warning if load_nls_xxx()
- fails
-Content-Language: en-US, nl
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Christoph Hellwig <hch@infradead.org>, Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-fsdevel@vger.kernel.org
-References: <d09eaaa4e2e08206c58a1a27ca9b3e81dc168773.1698835730.git.christophe.jaillet@wanadoo.fr>
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <d09eaaa4e2e08206c58a1a27ca9b3e81dc168773.1698835730.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2563; i=brauner@kernel.org; h=from:subject:message-id; bh=N6UVVns/VSWJvvvj6Jyp/eMunRO6kModQGgkQaRIaQ8=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ6GZ289OXCtbZoBr++dRPd5U8zfzd2E9PQv/qguNnzmCyb I9fzjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgImsX8nI8G7S4mBTpv1PprLka33dfK jgxsVD9lziqkscTjw5GpmzpZuRYbnXm9lXvtvfKju9Ii6KS9eKb9+Pl6nfWMLjLzsILdXeywYA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-Hi Christophe,
-
-On 11/1/23 11:49, Christophe JAILLET wrote:
-> If an load_nls_xxx() function fails a few lines above, the 'sbi->bdi_id' is
-> still 0.
-> So, in the error handling path, we will call ida_simple_remove(..., 0)
-> which is not allocated yet.
+On Wed, 25 Oct 2023 16:01:58 +0200, Miklos Szeredi wrote:
+> Implement mount querying syscalls agreed on at LSF/MM 2023.
 > 
-> In order to prevent a spurious "ida_free called for id=0 which is not
-> allocated." message, tweak the error handling path and add a new label.
+> Features:
 > 
-> Fixes: 0fd169576648 ("fs: Add VirtualBox guest shared folder (vboxsf) support")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-
-Thank you, both patches look good to me:
-
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-
-for the series.
-
-Regards,
-
-Hans
-
-
-
-> ---
->  fs/vboxsf/super.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>  - statx-like want/got mask
+>  - allows returning ascii strings (fs type, root, mount point)
+>  - returned buffer is relocatable (no pointers)
 > 
-> diff --git a/fs/vboxsf/super.c b/fs/vboxsf/super.c
-> index 1fb8f4df60cb..9848af78215b 100644
-> --- a/fs/vboxsf/super.c
-> +++ b/fs/vboxsf/super.c
-> @@ -151,7 +151,7 @@ static int vboxsf_fill_super(struct super_block *sb, struct fs_context *fc)
->  		if (!sbi->nls) {
->  			vbg_err("vboxsf: Count not load '%s' nls\n", nls_name);
->  			err = -EINVAL;
-> -			goto fail_free;
-> +			goto fail_destroy_idr;
->  		}
->  	}
->  
-> @@ -224,6 +224,7 @@ static int vboxsf_fill_super(struct super_block *sb, struct fs_context *fc)
->  		ida_simple_remove(&vboxsf_bdi_ida, sbi->bdi_id);
->  	if (sbi->nls)
->  		unload_nls(sbi->nls);
-> +fail_destroy_idr:
->  	idr_destroy(&sbi->ino_idr);
->  	kfree(sbi);
->  	return err;
+> [...]
 
+I think we should start showing clear signs of commitment to this. In
+absence of strong objections I don't see a reason to let this rot on
+list until we forget about it. Maybe this will entice people to provide
+more reviews as well.
+
+It's all pretty close to what we discussed at LSFMM23 and we stated that
+we aim to merge something by the end of the year. Let's see if that can
+actually happen.
+
+I don't have huge quarrels with this. Yes, there's stuff I'd like to see
+done differently but nothing I consider blockers. So let's get this
+into -next once rc1 is out so it can get a full cycle of exposure.
+
+I've renamed struct statmnt to struct statmount to align with statx()
+and struct statx. I also renamed struct stmt_state to struct kstatmount
+as that's how we usually do this. And I renamed struct __mount_arg to
+struct mnt_id_req and dropped the comment. Libraries can expose this in
+whatever form they want but we'll also have direct consumers. I'd rather
+have this struct be underscore free and officially sanctioned.
+
+---
+
+Applied to the vfs.mount branch of the vfs/vfs.git tree.
+Patches in the vfs.mount branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.master
+
+[1/6] add unique mount ID
+      https://git.kernel.org/vfs/vfs/c/ec873c3baa0c
+[2/6] mounts: keep list of mounts in an rbtree
+      https://git.kernel.org/vfs/vfs/c/f15247ad234c
+[3/6] namespace: extract show_path() helper
+      https://git.kernel.org/vfs/vfs/c/6e5f64ac5382
+[4/6] add statmount(2) syscall
+      https://git.kernel.org/vfs/vfs/c/edf3b2ac1bd5
+[5/6] add listmount(2) syscall
+      https://git.kernel.org/vfs/vfs/c/4412ca803757
+[6/6] wire up syscalls for statmount/listmount
+      https://git.kernel.org/vfs/vfs/c/d0a56e829d2c
 
