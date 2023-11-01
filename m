@@ -1,190 +1,166 @@
-Return-Path: <linux-fsdevel+bounces-1735-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1736-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E1467DE170
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Nov 2023 14:23:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CC447DE1B6
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Nov 2023 14:42:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41EC6281415
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Nov 2023 13:23:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8CD02812E8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Nov 2023 13:41:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D91CF134AC;
-	Wed,  1 Nov 2023 13:23:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D10D413AC7;
+	Wed,  1 Nov 2023 13:41:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LvKq7waN"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="R2O+hzqr"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E05F12B94
-	for <linux-fsdevel@vger.kernel.org>; Wed,  1 Nov 2023 13:23:17 +0000 (UTC)
-Received: from mail-qv1-xf36.google.com (mail-qv1-xf36.google.com [IPv6:2607:f8b0:4864:20::f36])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B61C1F7
-	for <linux-fsdevel@vger.kernel.org>; Wed,  1 Nov 2023 06:23:15 -0700 (PDT)
-Received: by mail-qv1-xf36.google.com with SMTP id 6a1803df08f44-66d0760cd20so7550036d6.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Nov 2023 06:23:15 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6F84101D7
+	for <linux-fsdevel@vger.kernel.org>; Wed,  1 Nov 2023 13:41:49 +0000 (UTC)
+Received: from mail-yw1-x1149.google.com (mail-yw1-x1149.google.com [IPv6:2607:f8b0:4864:20::1149])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8155CC1
+	for <linux-fsdevel@vger.kernel.org>; Wed,  1 Nov 2023 06:41:47 -0700 (PDT)
+Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-5b1ff96d5b9so43152187b3.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Nov 2023 06:41:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698844995; x=1699449795; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/4fcy9A6CWiBl7YwYtJtqB8YpJwWi5nJtV4b+JSmgPs=;
-        b=LvKq7waNv1AI/cVFlIN4UOEMKpR4iMChpQs4yHBLk3DEbMAPwj1dMZyMen78Z+uRTi
-         bZl+mQ5XL3AeeMt5bl8A3MAi+IeATgPzYSO6EUP2Lkg523GfcH/bPg1v5VIGDpaxVgTe
-         Gl5qgwg542wG9lzpGe9sAJSZvEfwvOqW/TmHuSa7hFbBx1IAkvaAFjdG+bu25KSUkJ73
-         lIX8r16fvBN5mjqBtEYKKCn3PQkfmljdIuxlr88cHsOFSF6Tqvm+vwfHVTmvaARnRLku
-         0VMPh98pg1uH1D+1pShDAMsOqgpyQM8So2S2T/3ELGOhHBvHNU943otQ3WEEe2whHHKL
-         99Gw==
+        d=google.com; s=20230601; t=1698846106; x=1699450906; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nFf6aEaGwk5ej5JezQy0IgMN87WPAcTCXufwbiE3fug=;
+        b=R2O+hzqrfXKjpVkCK7WWKNStZqPyF2cdxKhoLb11/ctjZo5ZPSp0q11vTaRIMqKh+G
+         rTGHEntcK74whLXVzkwTEfg4kXFGvDFoyHYkdR0w4NkG++ha3FYomi7HyzXNxjoxUIK2
+         kcKweF9pJ+NEs74UZBMULXVN7G7SWL8wASy0+pNCqSNNPT1zkqvQfLHK78Y20NUzPNkc
+         zAZ09oqc5lZHgiYL4DmQPGFbydmLOB6LzfwncWQjpui3CcXu6Wc1sVfHimGhI82PhfIb
+         /7xN434TnAp+9QvKT0AHhWkz3sCvRmyo2aHZIig6PpsFsT18SvRKUf81x8cwxHJJ0j8r
+         nrVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698844995; x=1699449795;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/4fcy9A6CWiBl7YwYtJtqB8YpJwWi5nJtV4b+JSmgPs=;
-        b=ig/lShxG+g1Iw6YuA6WHC62/klpy6S2ox1e/KzOHTXpx7A4vZPS2sKK/VFQ378RsRo
-         RcYjnT7UOnii/5QSsMW+PEFmYjkN8lrrXoJ1RpxrY0J2pDNFmg2yW6/enT+2HSZ/ap47
-         w1Q8IsxXtZFYgksMbe89byoYgBp3Hyw/leqPTQ684O5DD+AolBOSYbKagUJ3SP56nANS
-         y1JXSOqV5YPX3tCt4OfV9B79VTQtu7jWxS2Fo8iV4eRDUo0CcaEnO0AjQGQDFR1bs20q
-         eyeUrN/Zjuc2LAfcI8S2wyg3JKMHYbHs8Ik3z1+wouu47uTZxmnvzz52LQYzhdFeDX5l
-         ZrBQ==
-X-Gm-Message-State: AOJu0YwKHA92mo0in7aEAox9XytZjyZiwe+p8t7TF9qF41oqCGIT5kiN
-	RtC0hBNIsEDHsk1TAzFcybDzm8mjPzZVMWjZlMU=
-X-Google-Smtp-Source: AGHT+IEvZT6kbJWo0E2WKeLZlPiKAJpx9WU0CTc6Pqa6cICGlCkg2EZsHnFA0ilEwykbgGVZ51fsvHt2un8GCYg7b7w=
-X-Received: by 2002:ad4:5c4f:0:b0:66d:9945:5a93 with SMTP id
- a15-20020ad45c4f000000b0066d99455a93mr8592202qva.9.1698844994670; Wed, 01 Nov
- 2023 06:23:14 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1698846106; x=1699450906;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nFf6aEaGwk5ej5JezQy0IgMN87WPAcTCXufwbiE3fug=;
+        b=qRxojpMJwOeh2WDL0Voa9vxtIfyLS8EYc0ls5jPr9l9EFk2jsnPm5zLadeKMXQwQC5
+         ktTadna1f9NWFUFpHQLhNeR7DxPpYEcuREnJoWqVe+keGEbxQTmRewsLfSlRhd7UUqKW
+         5xSl1orE6Grf3NjM7EpkfjEj1r9Y5Qtr39HuCITVO0MGDVAt+1K7xs5vvo6gcKYHG+Al
+         j0mYZRzVwrwreKUZPmJVZ9ccj0ZfiwV+R1YudEDo/jtBXXBAzfQm6hiM+ASalciMbt5l
+         jHCEfc4y8J/ecFBFTiUW5difhAwslEQ/ZfiRfv13I38mMJcTksczIgMIo3LNXZjTOHkt
+         2sgA==
+X-Gm-Message-State: AOJu0Yw5ZXiVk71KfwwFLZ2+bPlrqOswo9Fic32Kfe0WWlChVfyxgleM
+	ACX8PXrzllfWFrAwCuwLIrbfwP8HzII=
+X-Google-Smtp-Source: AGHT+IEsRM1yQnQClQeVqyoNLxT9cYgRny7PWezkHcY0wXTm/cdeLyJgnrb+5OZENHYJQKvQlFBt8yx8E+I=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a0d:e689:0:b0:5a7:bfcf:2cb8 with SMTP id
+ p131-20020a0de689000000b005a7bfcf2cb8mr314827ywe.1.1698846106686; Wed, 01 Nov
+ 2023 06:41:46 -0700 (PDT)
+Date: Wed, 1 Nov 2023 06:41:45 -0700
+In-Reply-To: <92ba7ddd-2bc8-4a8d-bd67-d6614b21914f@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20231016160902.2316986-1-amir73il@gmail.com> <CAOQ4uxh=cLySge6htd+DnJrqAKF=C_oJYfVrbpvQGik0wR-+iw@mail.gmail.com>
- <CAJfpegtZGC93-ydnFEt1Gzk+Yy5peJ-osuZD8GRYV4c+WPu0EQ@mail.gmail.com>
- <CAOQ4uxjYLta7_fJc90C4=tPUxTw-WR2v9du8JHTVdsy_iZnFmA@mail.gmail.com>
- <CAJfpegufvtaBaK8p+Q3v=9Qoeob3WamWBye=1BwGniRsvO5HZg@mail.gmail.com>
- <CAOQ4uxj+myANTk2C+_tk_YNLe748i2xA0HMZ7FKCuw7W5RUCuA@mail.gmail.com>
- <CAJfpegs1v=JKaEREORbTsvyTe02_DgkFhNSEJKR6xpjUW1NBDg@mail.gmail.com>
- <CAOQ4uxiBu8bZ4URhwKuMeHB_Oykz2LHY8mXA1eB3FBoeM_Vs6w@mail.gmail.com> <CAJfpegtr1yOYKOW0GLkow_iALMc_A0+CUaErZasQunAfJ7NFzw@mail.gmail.com>
-In-Reply-To: <CAJfpegtr1yOYKOW0GLkow_iALMc_A0+CUaErZasQunAfJ7NFzw@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 1 Nov 2023 15:23:02 +0200
-Message-ID: <CAOQ4uxjbj4fQr9=wxRR8a5vNp-vo+_JjK6uHizZPyNFiN1jh4w@mail.gmail.com>
-Subject: Re: [PATCH v14 00/12] FUSE passthrough for file io
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, Daniel Rosenberg <drosen@google.com>, 
-	Paul Lawrence <paullawrence@google.com>, Alessio Balsini <balsini@android.com>, 
-	Christian Brauner <brauner@kernel.org>, fuse-devel@lists.sourceforge.net, 
-	linux-fsdevel@vger.kernel.org, Dave Chinner <david@fromorbit.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20231027182217.3615211-1-seanjc@google.com> <20231027182217.3615211-18-seanjc@google.com>
+ <7c0844d8-6f97-4904-a140-abeabeb552c1@intel.com> <ZUEML6oJXDCFJ9fg@google.com>
+ <92ba7ddd-2bc8-4a8d-bd67-d6614b21914f@intel.com>
+Message-ID: <ZUJVfCkIYYFp5VwG@google.com>
+Subject: Re: [PATCH v13 17/35] KVM: Add transparent hugepage support for
+ dedicated guest memory
+From: Sean Christopherson <seanjc@google.com>
+To: Xiaoyao Li <xiaoyao.li@intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Huacai Chen <chenhuacai@kernel.org>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Anup Patel <anup@brainfault.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, kvm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Xu Yilun <yilun.xu@intel.com>, 
+	Chao Peng <chao.p.peng@linux.intel.com>, Fuad Tabba <tabba@google.com>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, Anish Moorthy <amoorthy@google.com>, 
+	David Matlack <dmatlack@google.com>, Yu Zhang <yu.c.zhang@linux.intel.com>, 
+	Isaku Yamahata <isaku.yamahata@intel.com>, 
+	"=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>, Vlastimil Babka <vbabka@suse.cz>, 
+	Vishal Annapurve <vannapurve@google.com>, Ackerley Tng <ackerleytng@google.com>, 
+	Maciej Szmigiero <mail@maciej.szmigiero.name>, David Hildenbrand <david@redhat.com>, 
+	Quentin Perret <qperret@google.com>, Michael Roth <michael.roth@amd.com>, Wang <wei.w.wang@intel.com>, 
+	Liam Merwick <liam.merwick@oracle.com>, Isaku Yamahata <isaku.yamahata@gmail.com>, 
+	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Wed, Nov 1, 2023 at 1:32=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu> w=
-rote:
+On Wed, Nov 01, 2023, Xiaoyao Li wrote:
+> On 10/31/2023 10:16 PM, Sean Christopherson wrote:
+> > On Tue, Oct 31, 2023, Xiaoyao Li wrote:
+> > > On 10/28/2023 2:21 AM, Sean Christopherson wrote:
+> > > > Extended guest_memfd to allow backing guest memory with transparent
+> > > > hugepages. Require userspace to opt-in via a flag even though there's no
+> > > > known/anticipated use case for forcing small pages as THP is optional,
+> > > > i.e. to avoid ending up in a situation where userspace is unaware that
+> > > > KVM can't provide hugepages.
+> > > 
+> > > Personally, it seems not so "transparent" if requiring userspace to opt-in.
+> > > 
+> > > People need to 1) check if the kernel built with TRANSPARENT_HUGEPAGE
+> > > support, or check is the sysfs of transparent hugepage exists; 2)get the
+> > > maximum support hugepage size 3) ensure the size satisfies the alignment;
+> > > before opt-in it.
+> > > 
+> > > Even simpler, userspace can blindly try to create guest memfd with
+> > > transparent hugapage flag. If getting error, fallback to create without the
+> > > transparent hugepage flag.
+> > > 
+> > > However, it doesn't look transparent to me.
+> > 
+> > The "transparent" part is referring to the underlying kernel mechanism, it's not
+> > saying anything about the API.  The "transparent" part of THP is that the kernel
+> > doesn't guarantee hugepages, i.e. whether or not hugepages are actually used is
+> > (mostly) transparent to userspace.
+> > 
+> > Paolo also isn't the biggest fan[*], but there are also downsides to always
+> > allowing hugepages, e.g. silent failure due to lack of THP or unaligned size,
+> > and there's precedent in the form of MADV_HUGEPAGE.
+> > 
+> > [*] https://lore.kernel.org/all/84a908ae-04c7-51c7-c9a8-119e1933a189@redhat.com
+> 
+> But it's different than MADV_HUGEPAGE, in a way. Per my understanding, the
+> failure of MADV_HUGEPAGE is not fatal, user space can ignore it and
+> continue.
 >
-> On Tue, 31 Oct 2023 at 18:44, Amir Goldstein <amir73il@gmail.com> wrote:
->
-> > In that case, we would be able to "attach" the fuse_backing object
-> > to fuse_inode on CREATE response. If we end up with a backing map
-> > conflict at this point, we can return -EBUSY error to the user and forg=
-et
-> > the inode, but the server would have no easy feedback on its mistake.
-> > Also, -EBUSY to user would be confusing if user did not request O_EXCL.
->
-> I think -EIO is more appropriate.  Server is broken, WARN_ON_ONCE
-> could also be used to indicate that.
->
+> However, the failure of KVM_GUEST_MEMFD_ALLOW_HUGEPAGE is fatal, which leads
+> to failure of guest memfd creation.
 
-WARN_ON is a kernel assertion - we should not use it for user possible
-wrong inputs. we can use pr_warn_ratelimited().
+Failing KVM_CREATE_GUEST_MEMFD isn't truly fatal, it just requires different
+action from userspace, i.e. instead of ignoring the error, userspace could redo
+KVM_CREATE_GUEST_MEMFD with KVM_GUEST_MEMFD_ALLOW_HUGEPAGE=0.
 
-According to your suggestion below that FOPEN_PASSTHROUGH
-is an advice flag, we can simply ignore the conflicting passthrough request
-and keep passthrough on the existing backing file without any feedback
-to the user or server. I can live with that.
+We could make the behavior more like MADV_HUGEPAGE, e.g. theoretically we could
+extend fadvise() with FADV_HUGEPAGE, or add a guest_memfd knob/ioctl() to let
+userspace provide advice/hints after creating a guest_memfd.  But I suspect that
+guest_memfd would be the only user of FADV_HUGEPAGE, and IMO a post-creation hint
+is actually less desirable.
 
-> > Do you consider the described "atomic_open conflict" case an API proble=
-m?
-> >
-> > It is true that with v14 patches that do not enforce backing inode conf=
-licts,
-> > the attribute coherency model that I proposed may result in attribute
-> > cache thrashing if the backing inode of a fuse inode is ambiguous.
-> >
-> > Do you have an idea how to handle this case elegantly?
->
-> Let me add some perspective.
->
-> Currently we have FOPEN_DIRECT_IO that disables caching.  My feeling
-> when dealing with this interface is that it was a mistake to make this
-> a property of the open file.  It should insted be a property of the
-> inode and all open file instances should respect this property
-> equally.  It makes no sense to have one file do cached reads while the
-> other is doing direct writes, etc.  Also it should be possible to turn
-> this on or off for all open file instances at any time.
->
-> Passthrough is similar, I think.  At any point in time all I/O should eit=
-her be
->
->  - cached
->  - direct
->  - passthrough to a specific backing file
->
-> Allowing these to be mixed leads to confusing semantics, especially
-> cached and non-cached
->
-> OTOH allowing passthrough to be switched on at any point in time
-> presents challenges.   If passthrough is turned on for an inode that
-> didn't have it previously means that the backing file needs to be set
-> up before the actual I/O.    So it's definitely more complex than just
-> setting up the backing at open.  But I feel that longer term we'll end
-> up with a better interface.
->
-> For the first version we can just bypass this whole mess, and say that
-> passthrough can only be turned on for the first open.  I.e. if there
-> are already open instances and passthrough has not yet been set up,
-> then FOPEN_PASSTHROUGH will be ignored.  Similarly if it has already
-> been set up, then the lack of FOPEN_PASSTHROUGH is also ignored.
->
-> Hmm?
+KVM_GUEST_MEMFD_ALLOW_HUGEPAGE will fail only if userspace didn't provide a
+compatible size or the kernel doesn't support THP.  An incompatible size is likely
+a userspace bug, and for most setups that want to utilize guest_memfd, lack of THP
+support is likely a configuration bug.  I.e. many/most uses *want* failures due to
+KVM_GUEST_MEMFD_ALLOW_HUGEPAGE to be fatal.
 
-Sounds like a small change, which will work fine with the example server
-as well as with my in-house server requirement for regular files.
+> For current implementation, I think maybe KVM_GUEST_MEMFD_DESIRE_HUGEPAGE
+> fits better than KVM_GUEST_MEMFD_ALLOW_HUGEPAGE? or maybe *PREFER*?
 
-However, I can imagine users wanting to do passthrough for read-only
-fd without doing passthrough for read-write fd, for example, if data is
-never manipulated by the server, but it is inspected on write.
-I wonder if this model fits the existing use of Android applications with
-the v12 patches.
+Why?  Verbs like "prefer" and "desire" aren't a good fit IMO because they suggest
+the flag is a hint, and hints are usually best effort only, i.e. are ignored if
+there is a fundamental incompatibility.
 
-I have one problem with my in-house server and passthough of readdir.
-readdir passthrough cannot do readdirplus to populate inode cache.
-For readdir of a large, read-mostly directory, cached readdir is preferred
-because of readdirplus.
-For a large, write-often directory, when only readdir is needed, readdir
-passthough is preferred.
-No one size fits all here.
-
-My in-house server chooses whether to do readdir passthrough based
-on userspace hint regarding readdir vs. readdirplus.
-
-Since directory has no "write modes" and since FOPEN_CACHE_DIR
-is going to stay per-fd, I do not really see a problem with allowing
-readdir passthrough and cached/uncached readdir on the same inode.
-Do you see a problem with that?
-
-I don't mind dropping the last readdir passthrough patch for the first
-version, if you want to take more time to think this over.
-I'd just like to know that there is a path forward to make conditional
-passthrough per fd possible in future versions.
-
-BTW, the FUSE BPF patches that map a backing inode to
-fuse inode allow fallback to server depending on BPF program result.
-
-Thoughts?
-
-Thanks,
-Amir.
+"Allow" isn't perfect, e.g. I would much prefer a straight KVM_GUEST_MEMFD_USE_HUGEPAGES
+or KVM_GUEST_MEMFD_HUGEPAGES flag, but I wanted the name to convey that KVM doesn't
+(yet) guarantee hugepages.  I.e. KVM_GUEST_MEMFD_ALLOW_HUGEPAGE is stronger than
+a hint, but weaker than a requirement.  And if/when KVM supports a dedicated memory
+pool of some kind, then we can add KVM_GUEST_MEMFD_REQUIRE_HUGEPAGE.
 
