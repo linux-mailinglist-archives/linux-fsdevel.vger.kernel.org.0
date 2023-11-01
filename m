@@ -1,106 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-1714-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1715-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6418A7DDF1E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Nov 2023 11:13:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 225557DDF39
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Nov 2023 11:17:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9DB6EB2110E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Nov 2023 10:13:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D83BB210D3
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Nov 2023 10:17:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66020101EC;
-	Wed,  1 Nov 2023 10:13:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57C6F101DE;
+	Wed,  1 Nov 2023 10:16:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cIDBQeCe";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="mvEEW889"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2804E6FAB
-	for <linux-fsdevel@vger.kernel.org>; Wed,  1 Nov 2023 10:13:31 +0000 (UTC)
-Received: from mail-ot1-f71.google.com (mail-ot1-f71.google.com [209.85.210.71])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20E21F3
-	for <linux-fsdevel@vger.kernel.org>; Wed,  1 Nov 2023 03:13:25 -0700 (PDT)
-Received: by mail-ot1-f71.google.com with SMTP id 46e09a7af769-6ce2cce763eso806858a34.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Nov 2023 03:13:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698833605; x=1699438405;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=H0X5+nC7jNHDCCTzWCwWOWfQ3Z6jzhEzmqgYVwfBxgs=;
-        b=lrsBTjNVNhA3dwdhIT6NJDaIW3W0E2FWK5NFkFbUJAa4065Grk5gwsS6J7ss8ojgId
-         RbttYwsKiUD3VgR5uH9jXqASd+gPa044gQ6p43ItycTwfZFqvGb1WCm+EKp4sxcfR1h8
-         Gv5Zsn/3F4ovDugMrNDOj1My5jzwEhoX149aTbzQQytyhteWE8syycb7s01qBs0RLQ8X
-         Rql1hhCb3VqcEkoU+cjZj49FNWyahWr9wtVtHi+xDNGXWMuKIlx8XI57LTjafRVgn7AS
-         fTfJQZ/Bqqm+a5ZCdKMWMLnh353J4xpmZh5ni+Db26z0YDcrvjEGlIiupHinEWmlwsFs
-         lO2w==
-X-Gm-Message-State: AOJu0YwlEOYKffMFKQGuHDW3dPipIPNz/43U2DEXBtpg3nA6lMQvbvux
-	z/J+eAiorPdGqqk6p3iLB7cma0/aaHp99i2d+h/Ew6m78VN1
-X-Google-Smtp-Source: AGHT+IGFSKBn9JzoyB4reWv8CcgGNMZjtRCfcFyjCHWO02tqqZSwfzmDuaO0vGgnMepapskNikf7cVBGP2rDCjV+nWJppqSTDRz1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CEBD29AB
+	for <linux-fsdevel@vger.kernel.org>; Wed,  1 Nov 2023 10:16:55 +0000 (UTC)
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C15C102;
+	Wed,  1 Nov 2023 03:16:51 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 80D4E21A62;
+	Wed,  1 Nov 2023 10:16:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1698833809; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CFpkczKLmbO7DBmC+KuusmYf1M81/8uEj5OEO9u0an8=;
+	b=cIDBQeCeT6F/rRtPtuWsaxhbXCw/Oy8Nd3TyqIdVXqkKWHuejYiCFHWbJG36hEldNK/gE3
+	PmAIxp18ujdwD778pBZ/fbbmaGxjbOGZeg065cemuCDzPnGNMI05uyPZkJArv7AoMBGwNW
+	DccVThknuJ0/4feaYznjvdWoDckhhmY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1698833809;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CFpkczKLmbO7DBmC+KuusmYf1M81/8uEj5OEO9u0an8=;
+	b=mvEEW889xoYvMMVwNIK0/VQCeU1UNx7tGnXGVlAFU0jWGpNvK1Hq0sOak6HpTutwkrFEmF
+	VSu8elpoFbhhjyDA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+	(No client certificate requested)
+	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 6E0F51348D;
+	Wed,  1 Nov 2023 10:16:49 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+	by imap2.suse-dmz.suse.de with ESMTPSA
+	id +FrRGpElQmX8GwAAMHmgww
+	(envelope-from <jack@suse.cz>); Wed, 01 Nov 2023 10:16:49 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id EF5D5A06E3; Wed,  1 Nov 2023 11:16:48 +0100 (CET)
+Date: Wed, 1 Nov 2023 11:16:48 +0100
+From: Jan Kara <jack@suse.cz>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Jeff Layton <jlayton@kernel.org>, Amir Goldstein <amir73il@gmail.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	John Stultz <jstultz@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Chandan Babu R <chandan.babu@oracle.com>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Theodore Ts'o <tytso@mit.edu>,
+	Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	Hugh Dickins <hughd@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.de>,
+	David Howells <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org,
+	linux-mm@kvack.org, linux-nfs@vger.kernel.org
+Subject: Re: [PATCH RFC 2/9] timekeeping: new interfaces for multigrain
+ timestamp handing
+Message-ID: <20231101101648.zjloqo5su6bbxzff@quack3>
+References: <ZTjMRRqmlJ+fTys2@dread.disaster.area>
+ <2ef9ac6180e47bc9cc8edef20648a000367c4ed2.camel@kernel.org>
+ <ZTnNCytHLGoJY9ds@dread.disaster.area>
+ <6df5ea54463526a3d898ed2bd8a005166caa9381.camel@kernel.org>
+ <ZUAwFkAizH1PrIZp@dread.disaster.area>
+ <CAHk-=wg4jyTxO8WWUc1quqSETGaVsPHh8UeFUROYNwU-fEbkJg@mail.gmail.com>
+ <ZUBbj8XsA6uW8ZDK@dread.disaster.area>
+ <CAOQ4uxgSRw26J+MPK-zhysZX9wBkXFRNx+n1bwnQwykCJ1=F4Q@mail.gmail.com>
+ <3d6a4c21626e6bbb86761a6d39e0fafaf30a4a4d.camel@kernel.org>
+ <ZUF4NTxQXpkJADxf@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6830:8d6:b0:6c6:2b19:7270 with SMTP id
- z22-20020a05683008d600b006c62b197270mr532346otg.1.1698833605405; Wed, 01 Nov
- 2023 03:13:25 -0700 (PDT)
-Date: Wed, 01 Nov 2023 03:13:25 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000953abd0609148558@google.com>
-Subject: [syzbot] Monthly ntfs3 report (Oct 2023)
-From: syzbot <syzbot+listbc4ef25e49f52c411bed@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, ntfs3@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZUF4NTxQXpkJADxf@dread.disaster.area>
 
-Hello ntfs3 maintainers/developers,
+On Wed 01-11-23 08:57:09, Dave Chinner wrote:
+> 5. When-ever the inode is persisted, the timestamp is copied to the
+> on-disk structure and the current change counter is folded in.
+> 
+> 	This means the on-disk structure always contains the latest
+> 	change attribute that has been persisted, just like we
+> 	currently do with i_version now.
+> 
+> 6. When-ever we read the inode off disk, we split the change counter
+> from the timestamp and update the appropriate internal structures
+> with this information.
+> 
+> 	This ensures that the VFS and userspace never see the change
+> 	counter implementation in the inode timestamps.
 
-This is a 31-day syzbot report for the ntfs3 subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/ntfs3
+OK, but is this compatible with the current XFS behavior? AFAICS currently
+XFS sets sb->s_time_gran to 1 so timestamps currently stored on disk will
+have some mostly random garbage in low bits of the ctime. Now if you look
+at such inode with a kernel using this new scheme, stat(2) will report
+ctime with low bits zeroed-out so if the ctime fetched in the old kernel was
+stored in some external database and compared to the newly fetched ctime, it
+will appear that ctime has gone backwards... Maybe we don't care but it is
+a user visible change that can potentially confuse something.
 
-During the period, 3 new issues were detected and 0 were fixed.
-In total, 56 issues are still open and 28 have been fixed so far.
-
-Some of the still happening issues:
-
-Ref  Crashes Repro Title
-<1>  11317   Yes   VFS: Busy inodes after unmount (use-after-free)
-                   https://syzkaller.appspot.com/bug?extid=0af00f6a2cba2058b5db
-<2>  3613    Yes   KASAN: slab-out-of-bounds Read in ntfs_iget5
-                   https://syzkaller.appspot.com/bug?extid=b4084c18420f9fad0b4f
-<3>  2014    Yes   possible deadlock in ni_fiemap
-                   https://syzkaller.appspot.com/bug?extid=c300ab283ba3bc072439
-<4>  1786    Yes   KASAN: out-of-bounds Write in end_buffer_read_sync
-                   https://syzkaller.appspot.com/bug?extid=3f7f291a3d327486073c
-<5>  1358    Yes   possible deadlock in attr_data_get_block
-                   https://syzkaller.appspot.com/bug?extid=36bb70085ef6edc2ebb9
-<6>  1347    Yes   possible deadlock in ntfs_set_state
-                   https://syzkaller.appspot.com/bug?extid=f91c29a5d5a01ada051a
-<7>  825     No    possible deadlock in ntfs_mark_rec_free
-                   https://syzkaller.appspot.com/bug?extid=f83f0dbef763c426e3cf
-<8>  626     Yes   possible deadlock in mi_read
-                   https://syzkaller.appspot.com/bug?extid=bc7ca0ae4591cb2550f9
-<9>  531     Yes   possible deadlock in filemap_fault
-                   https://syzkaller.appspot.com/bug?extid=7736960b837908f3a81d
-<10> 482     Yes   possible deadlock in ntfs_fiemap
-                   https://syzkaller.appspot.com/bug?extid=96cee7d33ca3f87eee86
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
