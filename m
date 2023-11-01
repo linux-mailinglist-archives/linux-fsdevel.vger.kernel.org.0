@@ -1,65 +1,65 @@
-Return-Path: <linux-fsdevel+bounces-1759-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1760-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D28BA7DE58E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Nov 2023 18:43:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B6877DE58D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Nov 2023 18:43:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D3EAB2124C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Nov 2023 17:43:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BB561C20DF1
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Nov 2023 17:43:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 023CF18E21;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F68D18E22;
 	Wed,  1 Nov 2023 17:43:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="APcl+86O";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="acpl0gTt"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qfnzs8DT";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qNX80e5R"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C29F1805C
-	for <linux-fsdevel@vger.kernel.org>; Wed,  1 Nov 2023 17:43:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD22A18656
+	for <linux-fsdevel@vger.kernel.org>; Wed,  1 Nov 2023 17:43:37 +0000 (UTC)
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39E4710E;
-	Wed,  1 Nov 2023 10:43:28 -0700 (PDT)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56CFC115;
+	Wed,  1 Nov 2023 10:43:33 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7001621A3E;
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B881A21A41;
 	Wed,  1 Nov 2023 17:43:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
 	t=1698860606; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=gAPb7AUyS8Sa7nt7J0Gh+N9Q7PPxJ73EwS5LWyR+yVM=;
-	b=APcl+86OgTYkYFTAidJBzWL2x20ZzMNtZySekTI6YWTeppZB7Y4e7/WdgH+iOJMutGP3zu
-	Is8213PlPglYz+YI2u8WE6M3MKyBimVDHCbZ7gaUa0iWRAI8xXx8cCeqrheMpIRjBa/4Je
-	Z9EwxItfKVNdRNJRNm0E9PxJ+s1Ux/E=
+	bh=BsxXilB8VtCWD9uJ48g6IisnMmSxhnqquY6XcPZlAKQ=;
+	b=qfnzs8DT7yNoCyRCiEfgwweelCcCNnhDKYjy65J8od5FjaRZYtuQ+qQJhVUCDKTN3Ky0kS
+	UhI8vabTpxc8luwHCzWIUJCnps+IwZP9QtTy5BDSSldLovGbrXcHaGu3Kf97dp+LDqjFD2
+	D4mtr1ewM2NojGSIJlu+zDox8YodfSM=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
 	s=susede2_ed25519; t=1698860606;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=gAPb7AUyS8Sa7nt7J0Gh+N9Q7PPxJ73EwS5LWyR+yVM=;
-	b=acpl0gTtnUUfB0RLR987knsM3JWjNCcCaQIlp1lqN/WIm18XtbHrdBJUfLRa4ymF1R/Je5
-	erXEyBrAeLoIdsDw==
+	bh=BsxXilB8VtCWD9uJ48g6IisnMmSxhnqquY6XcPZlAKQ=;
+	b=qNX80e5RN09U7lmTJyabsszy6iJuhCmAGejuFXQWPv9qncGkn6WSRUk3YoTtlkdm5lnPIT
+	ozEvR31D4EutLUCg==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
 	(No client certificate requested)
-	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 5D6BF1348D;
+	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id A9C821348D;
 	Wed,  1 Nov 2023 17:43:26 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
 	by imap2.suse-dmz.suse.de with ESMTPSA
-	id Z0fHFj6OQmUmYQAAMHmgww
+	id d8FuKT6OQmUuYQAAMHmgww
 	(envelope-from <jack@suse.cz>); Wed, 01 Nov 2023 17:43:26 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id DCEFBA0767; Wed,  1 Nov 2023 18:43:25 +0100 (CET)
+	id E3E89A076D; Wed,  1 Nov 2023 18:43:25 +0100 (CET)
 From: Jan Kara <jack@suse.cz>
 To: Christian Brauner <brauner@kernel.org>
 Cc: <linux-fsdevel@vger.kernel.org>,
@@ -71,14 +71,10 @@ Cc: <linux-fsdevel@vger.kernel.org>,
 	Alexander Popov <alex.popov@linux.com>,
 	<linux-xfs@vger.kernel.org>,
 	Dmitry Vyukov <dvyukov@google.com>,
-	Jan Kara <jack@suse.cz>,
-	linux-btrfs@vger.kernel.org,
-	David Sterba <dsterba@suse.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	Chris Mason <clm@fb.com>
-Subject: [PATCH 4/7] btrfs: Do not restrict writes to btrfs devices
-Date: Wed,  1 Nov 2023 18:43:09 +0100
-Message-Id: <20231101174325.10596-4-jack@suse.cz>
+	Jan Kara <jack@suse.cz>
+Subject: [PATCH 5/7] fs: Block writes to mounted block devices
+Date: Wed,  1 Nov 2023 18:43:10 +0100
+Message-Id: <20231101174325.10596-5-jack@suse.cz>
 X-Mailer: git-send-email 2.35.3
 In-Reply-To: <20231101173542.23597-1-jack@suse.cz>
 References: <20231101173542.23597-1-jack@suse.cz>
@@ -88,38 +84,31 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1121; i=jack@suse.cz; h=from:subject; bh=pEwCsUz1St/xR0Od9vpX4Oa1kDf92xqHr2SB5l976Yo=; b=owGbwMvMwME4Z+4qdvsUh5uMp9WSGFKd+nSniFlMt2oqNUz5OS2/U2bLxGidPevbJ87jnfaswy5H WWlTJ6MxCwMjB4OsmCLL6siL2tfmGXVtDdWQgRnEygQyhYGLUwAmErmcg6E7l9vGnE2y5kiInuaXRk ONX2yCO/I8b98Se81raHnQ391Bcl3pL6/Q33lXDR2SU546nn/p/OhW88bZjWduTU1uuRtV326zrfBl okbCR24mwW3X0hd7N81oN8xcGz6F8Y44d8rKl6Ir9A/P5dX+0rP49Zm9lp4b/jpWvtyifEy9zlP6tS aHZsuf/ZVr7+fH3H8ucyIvKJNjY0PuzfZApy25Xnlh1ZO0+D72Tjsa31Gwr0N8cS17SNif8pSIQxqf vE8wR811a6yL4Z6YrO8ccCdgX2RKaaWxaqK15av25kZm/dmbf1/czBEV8cgs91FZTsxnVz6pvy+374 rola7g9p66++++vRG6b+xSbz0GAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=744; i=jack@suse.cz; h=from:subject; bh=T/eItSVb7GcAYjznkgJHNYn7HD+3ITlTRTvdImRwJ2E=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBlQo4ubiwBwif8qp1536oKopFx3GfrPsJ5t7c/7aOj 1jG1waqJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCZUKOLgAKCRCcnaoHP2RA2TkYCA DrJ56qaR1IQHLAf07UimuEs8suyyRufEgDz9zttWEJ7ZIIN0LmxsFinrw7ZJWHbbV/DrKpB0oeX/Uh xE8r6AHulGkMbasTJNABoZDxovW6HqZ8QEWh+1/RdG5p6NloxvvMCdDHILjDQwJtQN6eDfdGuAVjSI q3WTHOfnkh6x6cpuQWEUwTLQWm8FBAOb2sKa3PQaN2Qnus+ukMGqF0JZhX9JpkO46S9ielqaiW3ZUi xuyR4j/7LyNTtjxEDWuQwZT62dkwA3JgaNu6tr1+Gvc1svvBjzwVgf/8pldrHC3dC5i+lmG53BCZTx wzY85qVmI3fqOg587aQp0FyMKTd0oh
 X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
 Content-Transfer-Encoding: 8bit
 
-Btrfs device probing code needs adaptation so that it works when writes
-are restricted to its mounted devices. Since btrfs maintainer wants to
-merge these changes through btrfs tree and there are review bandwidth
-issues with that, let's not block all other filesystems and just not
-restrict writes to btrfs devices for now.
+Ask block layer to block writes to block devices mounted by filesystems.
 
-CC: linux-btrfs@vger.kernel.org
-CC: David Sterba <dsterba@suse.com>
-CC: Josef Bacik <josef@toxicpanda.com>
-CC: Chris Mason <clm@fb.com>
 Signed-off-by: Jan Kara <jack@suse.cz>
 ---
- fs/btrfs/super.c | 2 ++
- 1 file changed, 2 insertions(+)
+ include/linux/blkdev.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-index 6ecf78d09694..0ceeb9517177 100644
---- a/fs/btrfs/super.c
-+++ b/fs/btrfs/super.c
-@@ -1403,6 +1403,8 @@ static struct dentry *btrfs_mount_root(struct file_system_type *fs_type,
- 			return ERR_PTR(error);
- 	}
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index 0e0c0186aa32..9f6c3373f9fc 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -1494,7 +1494,8 @@ extern const struct blk_holder_ops fs_holder_ops;
+  * as stored in sb->s_flags.
+  */
+ #define sb_open_mode(flags) \
+-	(BLK_OPEN_READ | (((flags) & SB_RDONLY) ? 0 : BLK_OPEN_WRITE))
++	(BLK_OPEN_READ | BLK_OPEN_RESTRICT_WRITES | \
++	 (((flags) & SB_RDONLY) ? 0 : BLK_OPEN_WRITE))
  
-+	/* No support for restricting writes to btrfs devices yet... */
-+	mode &= ~BLK_OPEN_RESTRICT_WRITES;
- 	/*
- 	 * Setup a dummy root and fs_info for test/set super.  This is because
- 	 * we don't actually fill this stuff out until open_ctree, but we need
+ struct bdev_handle {
+ 	struct block_device *bdev;
 -- 
 2.35.3
 
