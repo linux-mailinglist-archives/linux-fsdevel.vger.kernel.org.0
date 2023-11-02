@@ -1,72 +1,71 @@
-Return-Path: <linux-fsdevel+bounces-1849-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1850-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16F387DF6F6
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 16:47:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 375897DF6FF
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 16:49:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81B54B212FC
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 15:47:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6942C1C20F88
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 15:49:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABF921D52B;
-	Thu,  2 Nov 2023 15:47:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FBEB1D53A;
+	Thu,  2 Nov 2023 15:48:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RtaEO8iy"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TcBZMnGm"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E8C1CF9C
-	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 15:47:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB951D529
+	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 15:48:55 +0000 (UTC)
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9D8E185
-	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 08:47:44 -0700 (PDT)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7FCC196
+	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 08:48:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1698940064;
+	s=mimecast20190719; t=1698940133;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=oJmds8NpMYR077/qYm0AkkAJkl9e2cZ92kDZE2Ii8D4=;
-	b=RtaEO8iyMqhqOM6HFXoVkaEVXWBSJxP/OiOo8nxuG9Jo+quDr12/P26pmIdhjqjRl0M709
-	X7S6loDaPuBbe981M4Kw5ChXj3FkTvB0dCT/IMkroq7EDZ7okSSxYogFdmd9EX4RtlJx5M
-	9mJoH3g9sIcjajSzpNTHpQX6NuwWSew=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=bDYfxJY1gaw7RnFMn6xzv+L48r7jo/5hW3rLClryTog=;
+	b=TcBZMnGmsYbQrpoA8QaEmyVl47Go9IXo/HBge6ljOO82iM2iuRC+Ya+kU044qMswnBP2oE
+	qlj5AGEe9GI2b7rI4vB6fxVqlD8HSLhxC5/124COl2f8QeW9agBJBRD0S/RBqp4pnrPlSm
+	LmfkxWbDNS4XHPLvda5efkkuvG8AdhM=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-43-pswMAb0MOguRFkaxuYdygQ-1; Thu, 02 Nov 2023 11:47:42 -0400
-X-MC-Unique: pswMAb0MOguRFkaxuYdygQ-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-408524e2368so7018535e9.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Nov 2023 08:47:42 -0700 (PDT)
+ us-mta-531-1Vm_P_10NbW0kO3iASKx_Q-1; Thu, 02 Nov 2023 11:48:51 -0400
+X-MC-Unique: 1Vm_P_10NbW0kO3iASKx_Q-1
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-779ffb552eeso110230485a.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Nov 2023 08:48:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698940061; x=1699544861;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :references:cc:to:content-language:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oJmds8NpMYR077/qYm0AkkAJkl9e2cZ92kDZE2Ii8D4=;
-        b=QMB8vcatIzViNPdbz42kCROwRjFPYVlz22nJ10Xb7vPErJLZFcAuArS/leucqngZEQ
-         PUy+8a/PFKxid75KasnQ4lynxL9lssVbI78+AYlrXV0+bbQJWF871fpzBOYLaqqpfpln
-         g3b4aoO3l8dh6ip1YSAAtmnf0w7lp0hyJwyXXwFgHze/VovlepIN2/HtloDX19XQMZYS
-         Q4RQnpMYv5uT125eercpBXo7YTvz4taVD2J83nG95gLOZBM3h7LmJFgsaT84gpBRWE3S
-         UM5MCy24m/dpPDHj7tMfDAy2V1tAy4z6DCz5iVCWi7ft5b+EMZ/R9zAD19BOYEg5RAox
-         8KOw==
-X-Gm-Message-State: AOJu0YwWncaWH7AMV+IJeYro0/oxtA3LDDaBZgPy0TzAloh6ahLU/Eds
-	IyrIxssvAtL50k8aWqegc5jHCKZVXO/uHx4tFxDqPeHqF5fbOhakdv10sPYAFxKljxFAE3AFz9n
-	Yg48Rverfz7ct1st3clt8fitSCQ==
-X-Received: by 2002:a05:600c:3502:b0:407:8e85:899f with SMTP id h2-20020a05600c350200b004078e85899fmr15830947wmq.16.1698940061390;
-        Thu, 02 Nov 2023 08:47:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGOCzssmUk/tJw4NAOHqAirTLWSJvlMpbAFjBemCO93pbhRqq0e+/haFrydEEYvw/ckXBd9kw==
-X-Received: by 2002:a05:600c:3502:b0:407:8e85:899f with SMTP id h2-20020a05600c350200b004078e85899fmr15830908wmq.16.1698940060957;
-        Thu, 02 Nov 2023 08:47:40 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c716:3000:f155:cef2:ff4d:c7? (p200300cbc7163000f155cef2ff4d00c7.dip0.t-ipconnect.de. [2003:cb:c716:3000:f155:cef2:ff4d:c7])
-        by smtp.gmail.com with ESMTPSA id z2-20020adff742000000b00326dd5486dcsm2790857wrp.107.2023.11.02.08.47.39
+        d=1e100.net; s=20230601; t=1698940131; x=1699544931;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bDYfxJY1gaw7RnFMn6xzv+L48r7jo/5hW3rLClryTog=;
+        b=GtO3eZWbcppxf4SFV0L6L9v07nUKFLEcNVrUALluprur1EK4A0T5N2FH9av7UbcNvw
+         qhXHx6euIIdTXMpmS72jfNSeoR92z8gybPPJE9uQ6hU84ycA8lE8pEOd9hu+UegctFHD
+         k3Hmi3WTi2H6JRQHPI/oSL4uBodbfzgYww4XyNcewNdYla/3n7CR62JUAPaGCvPW94er
+         kJFMdZTZGbjfY2rWzsv/+cEif2ldiQWZ8NUbXRRLZLJ2wF1DQWYjZDgtABzH8K6oHfiq
+         9pstUM0Rd/KtVYEL1OjZTXQYSiMD40jRaZDxgGxx4He/fYEKdTDhtiNz+TNpvSO4glSq
+         Z0mw==
+X-Gm-Message-State: AOJu0Yx7Cc7M9DJXdCQm5Vaiyd1Ewtql0PBQK4h1/450qiph407DJsZM
+	JeuUJE47jvgeiZ/S5z06OOCnBoPawSMr9En2e2+QtxjKJRMGsDHLCYErCCQGUgGEyHIu0YJWmeV
+	usUfTT5jDu4vFL3Klzbq42J2aWQ==
+X-Received: by 2002:a05:620a:8404:b0:76f:456:3916 with SMTP id pc4-20020a05620a840400b0076f04563916mr16196075qkn.43.1698940131030;
+        Thu, 02 Nov 2023 08:48:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGqtKxPa6ov2/TGHeca6u2VwNNxhp886CBhsTSKw0SJ9In1XWY7oX/tNvp/RnEBykosnX1E5Q==
+X-Received: by 2002:a05:620a:8404:b0:76f:456:3916 with SMTP id pc4-20020a05620a840400b0076f04563916mr16196036qkn.43.1698940130729;
+        Thu, 02 Nov 2023 08:48:50 -0700 (PDT)
+Received: from [192.168.1.174] ([151.48.250.237])
+        by smtp.googlemail.com with ESMTPSA id m2-20020a05620a290200b00767da10efb6sm39016qkp.97.2023.11.02.08.48.43
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Nov 2023 08:47:40 -0700 (PDT)
-Message-ID: <1e99ff39-b1cf-48b8-8b6d-ba5391e00db5@redhat.com>
-Date: Thu, 2 Nov 2023 16:47:38 +0100
+        Thu, 02 Nov 2023 08:48:50 -0700 (PDT)
+Message-ID: <6642c379-1023-4716-904f-4bbf076744c2@redhat.com>
+Date: Thu, 2 Nov 2023 16:48:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -74,141 +73,102 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/1] mm: report per-page metadata information
+Subject: Re: [PATCH v13 16/35] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
+ guest-specific backing memory
 Content-Language: en-US
-To: Wei Xu <weixugc@google.com>, Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: Sourav Panda <souravpanda@google.com>, corbet@lwn.net,
- gregkh@linuxfoundation.org, rafael@kernel.org, akpm@linux-foundation.org,
- mike.kravetz@oracle.com, muchun.song@linux.dev, rppt@kernel.org,
- rdunlap@infradead.org, chenlinxuan@uniontech.com, yang.yang29@zte.com.cn,
- tomas.mudrunka@gmail.com, bhelgaas@google.com, ivan@cloudflare.com,
- yosryahmed@google.com, hannes@cmpxchg.org, shakeelb@google.com,
- kirill.shutemov@linux.intel.com, wangkefeng.wang@huawei.com,
- adobriyan@gmail.com, vbabka@suse.cz, Liam.Howlett@oracle.com,
- surenb@google.com, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-mm@kvack.org, willy@infradead.org, Greg Thelen <gthelen@google.com>
-References: <20231101230816.1459373-1-souravpanda@google.com>
- <20231101230816.1459373-2-souravpanda@google.com>
- <CAAPL-u_enAt7f9XUpwYNKkCOxz2uPbMrnE2RsoDFRcKwZdnRFQ@mail.gmail.com>
- <CA+CK2bC3rSGOoT9p_VmWMT8PBWYbp7Jo7Tp2FffGrJp-hX9xCg@mail.gmail.com>
- <CAAPL-u-4D5YKuVOsyfpDUR+PbaA3MOJmNtznS77bposQSNPjnA@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <CAAPL-u-4D5YKuVOsyfpDUR+PbaA3MOJmNtznS77bposQSNPjnA@mail.gmail.com>
+To: David Matlack <dmatlack@google.com>,
+ Sean Christopherson <seanjc@google.com>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+ Huacai Chen <chenhuacai@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>,
+ Anup Patel <anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Andrew Morton <akpm@linux-foundation.org>, kvm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+ linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Xiaoyao Li <xiaoyao.li@intel.com>,
+ Xu Yilun <yilun.xu@intel.com>, Chao Peng <chao.p.peng@linux.intel.com>,
+ Fuad Tabba <tabba@google.com>, Jarkko Sakkinen <jarkko@kernel.org>,
+ Anish Moorthy <amoorthy@google.com>, Yu Zhang <yu.c.zhang@linux.intel.com>,
+ Isaku Yamahata <isaku.yamahata@intel.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8?=
+ =?UTF-8?Q?n?= <mic@digikod.net>, Vlastimil Babka <vbabka@suse.cz>,
+ Vishal Annapurve <vannapurve@google.com>,
+ Ackerley Tng <ackerleytng@google.com>,
+ Maciej Szmigiero <mail@maciej.szmigiero.name>,
+ David Hildenbrand <david@redhat.com>, Quentin Perret <qperret@google.com>,
+ Michael Roth <michael.roth@amd.com>, Wang <wei.w.wang@intel.com>,
+ Liam Merwick <liam.merwick@oracle.com>,
+ Isaku Yamahata <isaku.yamahata@gmail.com>,
+ "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+References: <20231027182217.3615211-1-seanjc@google.com>
+ <20231027182217.3615211-17-seanjc@google.com> <ZUFGRyQEuWj4RJS0@google.com>
+ <ZUFzZf-YmCRYP6qo@google.com>
+ <CALzav=d9eXZfK=op7A=UftbpuPpUbxqV6CmkqqxxBNuNsUU4nw@mail.gmail.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ xsEhBFRCcBIBDqDGsz4K0zZun3jh+U6Z9wNGLKQ0kSFyjN38gMqU1SfP+TUNQepFHb/Gc0E2
+ CxXPkIBTvYY+ZPkoTh5xF9oS1jqI8iRLzouzF8yXs3QjQIZ2SfuCxSVwlV65jotcjD2FTN04
+ hVopm9llFijNZpVIOGUTqzM4U55sdsCcZUluWM6x4HSOdw5F5Utxfp1wOjD/v92Lrax0hjiX
+ DResHSt48q+8FrZzY+AUbkUS+Jm34qjswdrgsC5uxeVcLkBgWLmov2kMaMROT0YmFY6A3m1S
+ P/kXmHDXxhe23gKb3dgwxUTpENDBGcfEzrzilWueOeUWiOcWuFOed/C3SyijBx3Av/lbCsHU
+ Vx6pMycNTdzU1BuAroB+Y3mNEuW56Yd44jlInzG2UOwt9XjjdKkJZ1g0P9dwptwLEgTEd3Fo
+ UdhAQyRXGYO8oROiuh+RZ1lXp6AQ4ZjoyH8WLfTLf5g1EKCTc4C1sy1vQSdzIRu3rBIjAvnC
+ tGZADei1IExLqB3uzXKzZ1BZ+Z8hnt2og9hb7H0y8diYfEk2w3R7wEr+Ehk5NQsT2MPI2QBd
+ wEv1/Aj1DgUHZAHzG1QN9S8wNWQ6K9DqHZTBnI1hUlkp22zCSHK/6FwUCuYp1zcAEQEAAc0j
+ UGFvbG8gQm9uemluaSA8cGJvbnppbmlAcmVkaGF0LmNvbT7CwU0EEwECACMFAlRCcBICGwMH
+ CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRB+FRAMzTZpsbceDp9IIN6BIA0Ol7MoB15E
+ 11kRz/ewzryFY54tQlMnd4xxfH8MTQ/mm9I482YoSwPMdcWFAKnUX6Yo30tbLiNB8hzaHeRj
+ jx12K+ptqYbg+cevgOtbLAlL9kNgLLcsGqC2829jBCUTVeMSZDrzS97ole/YEez2qFpPnTV0
+ VrRWClWVfYh+JfzpXmgyhbkuwUxNFk421s4Ajp3d8nPPFUGgBG5HOxzkAm7xb1cjAuJ+oi/K
+ CHfkuN+fLZl/u3E/fw7vvOESApLU5o0icVXeakfSz0LsygEnekDbxPnE5af/9FEkXJD5EoYG
+ SEahaEtgNrR4qsyxyAGYgZlS70vkSSYJ+iT2rrwEiDlo31MzRo6Ba2FfHBSJ7lcYdPT7bbk9
+ AO3hlNMhNdUhoQv7M5HsnqZ6unvSHOKmReNaS9egAGdRN0/GPDWr9wroyJ65ZNQsHl9nXBqE
+ AukZNr5oJO5vxrYiAuuTSd6UI/xFkjtkzltG3mw5ao2bBpk/V/YuePrJsnPFHG7NhizrxttB
+ nTuOSCMo45pfHQ+XYd5K1+Cv/NzZFNWscm5htJ0HznY+oOsZvHTyGz3v91pn51dkRYN0otqr
+ bQ4tlFFuVjArBZcapSIe6NV8C4cEiSTOwE0EVEJx7gEIAMeHcVzuv2bp9HlWDp6+RkZe+vtl
+ KwAHplb/WH59j2wyG8V6i33+6MlSSJMOFnYUCCL77bucx9uImI5nX24PIlqT+zasVEEVGSRF
+ m8dgkcJDB7Tps0IkNrUi4yof3B3shR+vMY3i3Ip0e41zKx0CvlAhMOo6otaHmcxr35sWq1Jk
+ tLkbn3wG+fPQCVudJJECvVQ//UAthSSEklA50QtD2sBkmQ14ZryEyTHQ+E42K3j2IUmOLriF
+ dNr9NvE1QGmGyIcbw2NIVEBOK/GWxkS5+dmxM2iD4Jdaf2nSn3jlHjEXoPwpMs0KZsgdU0pP
+ JQzMUMwmB1wM8JxovFlPYrhNT9MAEQEAAcLBMwQYAQIACQUCVEJx7gIbDAAKCRB+FRAMzTZp
+ sadRDqCctLmYICZu4GSnie4lKXl+HqlLanpVMOoFNnWs9oRP47MbE2wv8OaYh5pNR9VVgyhD
+ OG0AU7oidG36OeUlrFDTfnPYYSF/mPCxHttosyt8O5kabxnIPv2URuAxDByz+iVbL+RjKaGM
+ GDph56ZTswlx75nZVtIukqzLAQ5fa8OALSGum0cFi4ptZUOhDNz1onz61klD6z3MODi0sBZN
+ Aj6guB2L/+2ZwElZEeRBERRd/uommlYuToAXfNRdUwrwl9gRMiA0WSyTb190zneRRDfpSK5d
+ usXnM/O+kr3Dm+Ui+UioPf6wgbn3T0o6I5BhVhs4h4hWmIW7iNhPjX1iybXfmb1gAFfjtHfL
+ xRUr64svXpyfJMScIQtBAm0ihWPltXkyITA92ngCmPdHa6M1hMh4RDX+Jf1fiWubzp1voAg0
+ JBrdmNZSQDz0iKmSrx8xkoXYfA3bgtFN8WJH2xgFL28XnqY4M6dLhJwV3z08tPSRqYFm4NMP
+ dRsn0/7oymhneL8RthIvjDDQ5ktUjMe8LtHr70OZE/TT88qvEdhiIVUogHdo4qBrk41+gGQh
+ b906Dudw5YhTJFU3nC6bbF2nrLlB4C/XSiH76ZvqzV0Z/cAMBo5NF/w=
+In-Reply-To: <CALzav=d9eXZfK=op7A=UftbpuPpUbxqV6CmkqqxxBNuNsUU4nw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 02.11.23 16:43, Wei Xu wrote:
-> On Wed, Nov 1, 2023 at 7:58 PM Pasha Tatashin <pasha.tatashin@soleen.com> wrote:
+On 10/31/23 23:39, David Matlack wrote:
+>>> Maybe can you sketch out how you see this proposal being extensible to
+>>> using guest_memfd for shared mappings?
+>> For in-place conversions, e.g. pKVM, no additional guest_memfd is needed.  What's
+>> missing there is the ability to (safely) mmap() guest_memfd, e.g. KVM needs to
+>> ensure there are no outstanding references when converting back to private.
 >>
->> On Wed, Nov 1, 2023 at 7:40 PM Wei Xu <weixugc@google.com> wrote:
->>>
->>> On Wed, Nov 1, 2023 at 4:08 PM Sourav Panda <souravpanda@google.com> wrote:
->>>>
->>>> Adds a new per-node PageMetadata field to
->>>> /sys/devices/system/node/nodeN/meminfo
->>>> and a global PageMetadata field to /proc/meminfo. This information can
->>>> be used by users to see how much memory is being used by per-page
->>>> metadata, which can vary depending on build configuration, machine
->>>> architecture, and system use.
->>>>
->>>> Per-page metadata is the amount of memory that Linux needs in order to
->>>> manage memory at the page granularity. The majority of such memory is
->>>> used by "struct page" and "page_ext" data structures. In contrast to
->>>> most other memory consumption statistics, per-page metadata might not
->>>> be included in MemTotal. For example, MemTotal does not include memblock
->>>> allocations but includes buddy allocations. While on the other hand,
->>>> per-page metadata would include both memblock and buddy allocations.
->>>
->>> I expect that the new PageMetadata field in meminfo should help break
->>> down the memory usage of a system (MemUsed, or MemTotal - MemFree),
->>> similar to the other fields in meminfo.
->>>
->>> However, given that PageMetadata includes per-page metadata allocated
->>> from not only the buddy allocator, but also the memblock allocations,
->>> and MemTotal doesn't include memory reserved by memblock allocations,
->>> I wonder how a user can actually use this new PageMetadata to break
->>> down the system memory usage.  BTW, it is not robust to assume that
->>> all memblock allocations are for per-page metadata.
->>>
->>
->> Hi Wei,
->>
->>> Here are some ideas to address this problem:
->>>
->>> - Only report the buddy allocations for per-page medata in PageMetadata, or
->>
->> Making PageMetadata not to contain all per-page memory but just some
->> is confusing, especially right after boot it would always be 0, as all
->> struct pages are all coming from memblock during boot, yet we know we
->> have allocated tons of memory for struct pages.
->>
->>> - Report per-page metadata in two separate fields in meminfo, one for
->>> buddy allocations and another for memblock allocations, or
->>
->> This is also going to be confusing for the users, it is really
->> implementation detail which allocator was used to allocate struct
->> pages, and having to trackers is not going to improve things.
->>
->>> - Change MemTotal/MemUsed to include the memblock reserved memory as well.
->>
->> I think this is the right solution for an existing bug: MemTotal
->> should really include memblock reserved memory.
-> 
-> Adding reserved memory to MemTotal is a cleaner approach IMO as well.
-> But it changes the semantics of MemTotal, which may have compatibility
-> issues.
+>> For TDX/SNP, assuming we don't find a performant and robust way to do in-place
+>> conversions, a second fd+offset pair would be needed.
+> Is there a way to support non-in-place conversions within a single guest_memfd?
 
-I object.
+For TDX/SNP, you could have a hook from KVM_SET_MEMORY_ATTRIBUTES to 
+guest memory.  The hook would invalidate now-private parts if they have 
+a VMA, causing a SIGSEGV/EFAULT if the host touches them.
 
--- 
-Cheers,
+It would forbid mappings from multiple gfns to a single offset of the 
+guest_memfd, because then the shared vs. private attribute would be tied 
+to the offset.  This should not be a problem; for example, in the case 
+of SNP, the RMP already requires a single mapping from host physical 
+address to guest physical address.
 
-David / dhildenb
+Paolo
 
 
