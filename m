@@ -1,128 +1,129 @@
-Return-Path: <linux-fsdevel+bounces-1865-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1864-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCD0B7DF87B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 18:15:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2C157DF86E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 18:12:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF126B212D5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 17:14:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4AC91C2040F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 17:12:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9595E1DFCC;
-	Thu,  2 Nov 2023 17:14:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 861F81DFCE;
+	Thu,  2 Nov 2023 17:12:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="AWiMwHvX";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FRaFnjVz"
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="FWvTot97"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 300501DFC0
-	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 17:14:51 +0000 (UTC)
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84F1B184;
-	Thu,  2 Nov 2023 10:14:46 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A0F631F8D4;
-	Thu,  2 Nov 2023 17:14:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1698945284;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gFHFH90Sk24oByP56Xhe8dLZYrPFog06RyTMXGwb5VY=;
-	b=AWiMwHvXmyW2ol5xb9RxZsGHoeNBsdCR9Ujz75Gprin5gFeHrYvMjDnFItsDi8b1+Q3mSm
-	6k68l6qeYc2ccCgJIuyKWcMhDzrkn6r56yerl6AMNPM172JQrri3XTuILm/xWvY8/Mwvt9
-	qUme59hMeDK5xbOJKhGAgFzHRNppxWM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1698945284;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gFHFH90Sk24oByP56Xhe8dLZYrPFog06RyTMXGwb5VY=;
-	b=FRaFnjVzE97PXWsv6PAmQo+mM/iXmKRloWmIS0puoqBSHS+CGg3ZGwticcVZxQA5FJCnlM
-	gC8ZuOJto7l0zUBQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-	(No client certificate requested)
-	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 577CE13584;
-	Thu,  2 Nov 2023 17:14:44 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-	by imap2.suse-dmz.suse.de with ESMTPSA
-	id yxWbFATZQ2ULYgAAMHmgww
-	(envelope-from <dsterba@suse.cz>); Thu, 02 Nov 2023 17:14:44 +0000
-Date: Thu, 2 Nov 2023 18:07:45 +0100
-From: David Sterba <dsterba@suse.cz>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Qu Wenruo <quwenruo.btrfs@gmx.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
-	Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/3] fanotify support for btrfs sub-volumes
-Message-ID: <20231102170745.GF11264@suse.cz>
-Reply-To: dsterba@suse.cz
-References: <20231031-faktor-wahlparty-5daeaf122c5e@brauner>
- <ZUDxli5HTwDP6fqu@infradead.org>
- <20231031-anorak-sammeln-8b1c4264f0db@brauner>
- <ZUE0CWQWdpGHm81L@infradead.org>
- <20231101-nutzwert-hackbeil-bbc2fa2898ae@brauner>
- <590e421a-a209-41b6-ad96-33b3d1789643@gmx.com>
- <20231101-neigen-storch-cde3b0671902@brauner>
- <20231102051349.GA3292886@perftesting>
- <20231102-ankurbeln-eingearbeitet-cbeb018bfedc@brauner>
- <20231102123446.GA3305034@perftesting>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C9801DFC5
+	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 17:12:21 +0000 (UTC)
+Received: from mail-qt1-x82e.google.com (mail-qt1-x82e.google.com [IPv6:2607:f8b0:4864:20::82e])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC301133
+	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 10:12:12 -0700 (PDT)
+Received: by mail-qt1-x82e.google.com with SMTP id d75a77b69052e-41cc535cd5cso6254971cf.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Nov 2023 10:12:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google; t=1698945132; x=1699549932; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/hH8SjbUIXGq+UF4UxExRqQ+IVCN5t4ykfPIyUiPH38=;
+        b=FWvTot97iNaUk34pLKY6RcPdDB6uB+6Nkxu/1gNnBoQMYWZhraEWEno08JMoD+icya
+         /4sa8SzCHvQSVHuPDCv1gYrwugQh4kj1g6dkDloI2TLJFjvRWdXwtoSi7GKHcVriN6Dh
+         zm5qbeTHTxZBfNmXW5ldlq1oHsjcNBXMgVUQSj9JzEXPRzeGOWggi7DYYJ4VlOnRDuXF
+         P7kC0rjAZLAa4pmlnwK8hgJHJsXXRLB2NJDB6d8uQm8NcL8SJbGOsyk08OG0ElWfDzWd
+         kINNf7HlpxAA2dVoCBf2cjxCM8zXjz2H7/PtWfCYyq9/u/sSeIrrFbqMVOjCE/oB1oDl
+         cxyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698945132; x=1699549932;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/hH8SjbUIXGq+UF4UxExRqQ+IVCN5t4ykfPIyUiPH38=;
+        b=r5bb1fJ5UEgUnWxhNtV8jX/b6Fl2qSpFOrSsSN5V5YQSY1MDZwO5UgfCXqu5x15I3B
+         s3GKDWYXrd/FA9PFLmHFXgQzcC0eMhihvFf4+iTK//rfcG2hom7sFlnSRoziqhAZPduJ
+         Vq1Qe/ZqskBTEaknWQ13fyMFgdI/IySZcwk2J2TCuoYUZGY/aauJaqzR0QPRqMsJfNFd
+         FQc0gRJWatJtY8DjqVyKtUGk1kHotTPrC1z79TA+hyhUbY6n1WzYhm9HN7e8BKC96eZS
+         VgGC9D1WlM/NVVHkyGtmpzzbp/cglhUPzIAS9ituXYJaVK9yA2FUVud4QJYrk75qDu8B
+         yp6w==
+X-Gm-Message-State: AOJu0YybwnPrXOyrVa3fBamOWtFjj9XUAcxuYmBa0b/mizyfGM4Dfs13
+	vhSRnI0+GaBVWpzaX/4zxaUSrwVAaRdavlTfwK7QTg==
+X-Google-Smtp-Source: AGHT+IHAJDw6t6f/1p5DCXhVNF5ZYBOAfpGF1Lzb87c+hYmXwYQhEflST5W0X8DLq3sBT2hMJLQQMPPBAaeVNc99U4k=
+X-Received: by 2002:ac8:5bc6:0:b0:41e:2db3:a066 with SMTP id
+ b6-20020ac85bc6000000b0041e2db3a066mr23182516qtb.45.1698945131763; Thu, 02
+ Nov 2023 10:12:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231102123446.GA3305034@perftesting>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+References: <20231101230816.1459373-1-souravpanda@google.com>
+ <20231101230816.1459373-2-souravpanda@google.com> <CAAPL-u_enAt7f9XUpwYNKkCOxz2uPbMrnE2RsoDFRcKwZdnRFQ@mail.gmail.com>
+ <CA+CK2bC3rSGOoT9p_VmWMT8PBWYbp7Jo7Tp2FffGrJp-hX9xCg@mail.gmail.com>
+ <CAAPL-u-4D5YKuVOsyfpDUR+PbaA3MOJmNtznS77bposQSNPjnA@mail.gmail.com>
+ <1e99ff39-b1cf-48b8-8b6d-ba5391e00db5@redhat.com> <CA+CK2bDo6an35R8Nu-d99pbNQMEAw_t0yUm0Q+mJNwOJ1EdqQg@mail.gmail.com>
+ <025ef794-91a9-4f0c-9eb6-b0a4856fa10a@redhat.com> <CA+CK2bDJDGaAK8ZmHtpr79JjJyNV5bM6TSyg84NLu2z+bCaEWg@mail.gmail.com>
+ <99113dee-6d4d-4494-9eda-62b1faafdbae@redhat.com> <CA+CK2bApoY+trxxNW8FBnwyKnX6RVkrMZG4AcLEC2Nj6yZ6HEw@mail.gmail.com>
+ <b71b28b9-1d41-4085-99f8-04d85892967e@redhat.com>
+In-Reply-To: <b71b28b9-1d41-4085-99f8-04d85892967e@redhat.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Thu, 2 Nov 2023 13:11:34 -0400
+Message-ID: <CA+CK2bCNRJXm2kEjsN=5a_M8twai4TJX3vpd72uOHFLGaDLg4g@mail.gmail.com>
+Subject: Re: [PATCH v5 1/1] mm: report per-page metadata information
+To: David Hildenbrand <david@redhat.com>
+Cc: Wei Xu <weixugc@google.com>, Sourav Panda <souravpanda@google.com>, corbet@lwn.net, 
+	gregkh@linuxfoundation.org, rafael@kernel.org, akpm@linux-foundation.org, 
+	mike.kravetz@oracle.com, muchun.song@linux.dev, rppt@kernel.org, 
+	rdunlap@infradead.org, chenlinxuan@uniontech.com, yang.yang29@zte.com.cn, 
+	tomas.mudrunka@gmail.com, bhelgaas@google.com, ivan@cloudflare.com, 
+	yosryahmed@google.com, hannes@cmpxchg.org, shakeelb@google.com, 
+	kirill.shutemov@linux.intel.com, wangkefeng.wang@huawei.com, 
+	adobriyan@gmail.com, vbabka@suse.cz, Liam.Howlett@oracle.com, 
+	surenb@google.com, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	willy@infradead.org, Greg Thelen <gthelen@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Nov 02, 2023 at 08:34:46AM -0400, Josef Bacik wrote:
-> On Thu, Nov 02, 2023 at 10:48:35AM +0100, Christian Brauner wrote:
-> > > We'll be converted to the new mount API tho, so I suppose that's something.
-> > > Thanks,
-> > 
-> > Just in case you forgot about it. I did send a patch to convert btrfs to
-> > the new mount api in June:
-> > 
-> > https://lore.kernel.org/all/20230626-fs-btrfs-mount-api-v1-0-045e9735a00b@kernel.org
-> > 
-> 
-> Yeah Daan told me about this after I had done the bulk of the work.  I
-> shamelessly stole the dup idea, I had been doing something uglier.
-> 
-> > Can I ask you to please please copy just two things from that series:
-> > 
-> > (1) Please get rid of the second filesystems type.
-> > (2) Please fix the silent remount behavior when mounting a subvolume.
-> >
-> 
-> Yeah I've gotten rid of the second file system type, the remount thing is odd,
-> I'm going to see if I can get away with not bringing that over.  I *think* it's
-> because the standard distro way of doing things is to do
-> 
-> mount -o ro,subvol=/my/root/vol /
-> mount -o rw,subvol=/my/home/vol /home
-> <boot some more>
-> mount -o remount,rw /
-> 
-> but I haven't messed with it yet to see if it breaks.  That's on the list to
-> investigate today.  Thanks,
+> > Wei, noticed that all other fields in /proc/meminfo are part of
+> > MemTotal, but this new field may be not (depending where struct pages
+>
+> I could have sworn that I pointed that out in a previous version and
+> requested to document that special case in the patch description. :)
 
-It's a use case for distros, 0723a0473fb4 ("btrfs: allow mounting btrfs
-subvolumes with different ro/rw options"), the functionality should
-be preserved else it's a regression.
+Sounds, good we will document that parts of per-page may not be part
+of MemTotal.
+
+> > are allocated), so what would be the best way to export page metadata
+> > without redefining MemTotal? Keep the new field in /proc/meminfo but
+> > be ok that it is not part of MemTotal or do two counters? If we do two
+> > counters, we will still need to keep one that is a buddy allocator in
+> > /proc/meminfo and the other one somewhere outside?
+>
+> IMHO, we should just leave MemTotal alone ("memory managed by the buddy
+> that could actually mostly get freed up and reused -- although that's
+> not completely true") and have a new counter that includes any system
+> memory (MemSystem? but as we learned, as separate files), including most
+> memblock allocations/reservations as well (metadata, early pagetables,
+> initrd, kernel, ...).
+>
+> The you would actually know how much memory the system is using
+> (exclusing things like crashmem, mem=, ...).
+>
+> That part is tricky, though -- I recall there are memblock reservations
+> that are similar to the crashkernel -- which is why the current state is
+> to account memory when it's handed to the buddy under MemTotal -- which
+> is straight forward and simply.
+
+It may be simplified if we define MemSystem as all the usable memory
+provided by firmware to Linux kernel.
+For BIOS it would be the "usable" ranges in the original e820 memory
+list before it's been modified by the kernel based on the parameters.
+
+For device-tree architectures, it would be the memory binding provided
+by the original device tree from the firmware.
+
+Pasha
 
