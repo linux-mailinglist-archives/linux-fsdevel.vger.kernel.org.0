@@ -1,204 +1,165 @@
-Return-Path: <linux-fsdevel+bounces-1811-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1812-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07D6D7DF0D3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 12:04:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA1337DF0E0
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 12:07:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B555D281A71
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 11:03:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1560C1C20EF8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 11:07:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96D631429E;
-	Thu,  2 Nov 2023 11:03:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82E6E14A94;
+	Thu,  2 Nov 2023 11:07:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q7sseUwt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ys3UFDvr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DD6B1426B
-	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 11:03:47 +0000 (UTC)
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 521B5DE
-	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 04:03:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1698923025;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=o+sUvKh0Fq9LjCXdXIyTK4b/elLQxFDSaWn4T3QHjyo=;
-	b=Q7sseUwtWEEI0egtOu8UQU3mCkNiq7VM/SJXS6Q575qofflvGnxctjBcnccBX7o/sJJFVf
-	dCEv8xdgMtfhkKKf9Rz1F+upuvMRLoBzGyvndsLT5HJfZcc5p/FJakVkHLU8+Jwf/KcaCY
-	W4PxzFg+IZ+4UW1vC2jByOrmig+yFPg=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-638-d6CWbcDTNZamJgevcLvghw-1; Thu, 02 Nov 2023 07:03:44 -0400
-X-MC-Unique: d6CWbcDTNZamJgevcLvghw-1
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-9ba247e03aeso53522266b.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Nov 2023 04:03:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698923023; x=1699527823;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=o+sUvKh0Fq9LjCXdXIyTK4b/elLQxFDSaWn4T3QHjyo=;
-        b=XzwlMc1LPEBEEWc4k5CZObpHMr+Z/QuAO/ZCkdqhGoNw2D8DiLtOJhKwpcGZc6+cfj
-         DkROM5X3YOMqJK/qqTsjfYS9fVnYUVEFNhfmn9WeGr3yylbg3fS2ApCCBdix9uo/RsmS
-         VxlAlLC25jU9C0xfg9WXr89zyPbZYMRGZQM27G1iuR0VsZiuRJlFP/89dXQUens4A/JN
-         2syGo2xlRG7S1PJO6WoH0Es04MaK/NdSLjfuUGVI/jm0YRSp2fCbwrj0JK8uzWn3oqyO
-         tmeVcQWKPhTvntYeapdvHUbM8TMKQc9fSrGvF2bqJswOUhMLL2W4LhlTrViT7uKlQpE3
-         Nc9w==
-X-Gm-Message-State: AOJu0Yz4Odgi+I+8EsRkSfYY3AuRCpRAIFD+tDrWMlzEEqlhh1dnPM6I
-	1oGaoByDYVvRKj+tdspsn4R8z1M6lCOO/1ijxrW6VZnt8kLTVqg1TyFSlh32dkTxYnaXB5awo+6
-	pU8jPZ2IVrlORzWW2HxAVrnSNJQ==
-X-Received: by 2002:a17:907:7b99:b0:9be:30c2:b8fd with SMTP id ne25-20020a1709077b9900b009be30c2b8fdmr4830854ejc.66.1698923023216;
-        Thu, 02 Nov 2023 04:03:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGAextU6brGleAr873WsCzugduD1+qH+WMku84F2ppJAKPGqD6aYcxwyzrmazywVumiiQ5fXg==
-X-Received: by 2002:a17:907:7b99:b0:9be:30c2:b8fd with SMTP id ne25-20020a1709077b9900b009be30c2b8fdmr4830827ejc.66.1698923022777;
-        Thu, 02 Nov 2023 04:03:42 -0700 (PDT)
-Received: from ?IPV6:2001:b07:6468:f312:9af8:e5f5:7516:fa89? ([2001:b07:6468:f312:9af8:e5f5:7516:fa89])
-        by smtp.googlemail.com with ESMTPSA id hk22-20020a170906c9d600b0099cb0a7098dsm1010698ejb.19.2023.11.02.04.03.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Nov 2023 04:03:42 -0700 (PDT)
-Message-ID: <496b78bb-ad12-4eed-a62c-8c2fd725ec61@redhat.com>
-Date: Thu, 2 Nov 2023 12:03:39 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC4D114A81
+	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 11:07:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68060C433C8;
+	Thu,  2 Nov 2023 11:07:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1698923272;
+	bh=vBZ6CoC27DKlXXWJLILSuWZxK3TJ0ywpD+ZBkYaJZtE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ys3UFDvrxSk/TgQWj3Z4ue146ufUssLjQ3jWQ9812Cf+TsSdnH7QVrcAN/GXw8R1H
+	 XYrDoYD179s3rNuQHGdNzfVdhlXb5B54Oe0ityBLEdoolmhZve6qbgsk4IJmfcUf50
+	 eHbK/lAZCbQqQPqZYMHM2lqMZVozFo7d9UVU8oKQWwyGPf1yRJAdQ07AY6foN/w6Xv
+	 PWFd3O3NBHx4pdXQpy6ePxwLMQjlEHowZo8X4y2+ilXt6K91GbUsjPcxs6RDkPLwQo
+	 Y1poKa1RP3sD7x6Te+ASVNZMZiLdRKyp+USEiDUxEQGqr3l7TXZn8M44IEuCQC9C4T
+	 I8yGWFbXO92VQ==
+Date: Thu, 2 Nov 2023 12:07:47 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Josef Bacik <josef@toxicpanda.com>,
+	Christoph Hellwig <hch@infradead.org>
+Cc: Qu Wenruo <quwenruo.btrfs@gmx.com>, Amir Goldstein <amir73il@gmail.com>,
+	Jan Kara <jack@suse.cz>, Chris Mason <clm@fb.com>,
+	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 0/3] fanotify support for btrfs sub-volumes
+Message-ID: <20231102-schafsfell-denkzettel-08da41113e24@brauner>
+References: <20231027131726.GA2915471@perftesting>
+ <ZT+uxSEh+nTZ2DEY@infradead.org>
+ <20231031-faktor-wahlparty-5daeaf122c5e@brauner>
+ <ZUDxli5HTwDP6fqu@infradead.org>
+ <20231031-anorak-sammeln-8b1c4264f0db@brauner>
+ <ZUE0CWQWdpGHm81L@infradead.org>
+ <20231101-nutzwert-hackbeil-bbc2fa2898ae@brauner>
+ <590e421a-a209-41b6-ad96-33b3d1789643@gmx.com>
+ <20231101-neigen-storch-cde3b0671902@brauner>
+ <20231102051349.GA3292886@perftesting>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v13 09/35] KVM: Add KVM_EXIT_MEMORY_FAULT exit to report
- faults to userspace
-Content-Language: en-US
-To: "Huang, Kai" <kai.huang@intel.com>,
- "Christopherson,, Sean" <seanjc@google.com>
-Cc: "Li, Xiaoyao" <xiaoyao.li@intel.com>,
- "kvm-riscv@lists.infradead.org" <kvm-riscv@lists.infradead.org>,
- "mic@digikod.net" <mic@digikod.net>,
- "liam.merwick@oracle.com" <liam.merwick@oracle.com>,
- "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- "Yamahata, Isaku" <isaku.yamahata@intel.com>,
- "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
- "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
- "david@redhat.com" <david@redhat.com>,
- "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
- "amoorthy@google.com" <amoorthy@google.com>,
- "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
- "tabba@google.com" <tabba@google.com>,
- "kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "oliver.upton@linux.dev" <oliver.upton@linux.dev>,
- "michael.roth@amd.com" <michael.roth@amd.com>,
- "chao.p.peng@linux.intel.com" <chao.p.peng@linux.intel.com>,
- "palmer@dabbelt.com" <palmer@dabbelt.com>,
- "chenhuacai@kernel.org" <chenhuacai@kernel.org>,
- "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
- "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
- "Annapurve, Vishal" <vannapurve@google.com>, "vbabka@suse.cz"
- <vbabka@suse.cz>, "mail@maciej.szmigiero.name" <mail@maciej.szmigiero.name>,
- "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
- "maz@kernel.org" <maz@kernel.org>, "willy@infradead.org"
- <willy@infradead.org>, "dmatlack@google.com" <dmatlack@google.com>,
- "anup@brainfault.org" <anup@brainfault.org>,
- "yu.c.zhang@linux.intel.com" <yu.c.zhang@linux.intel.com>,
- "Xu, Yilun" <yilun.xu@intel.com>, "qperret@google.com" <qperret@google.com>,
- "brauner@kernel.org" <brauner@kernel.org>,
- "isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>,
- "ackerleytng@google.com" <ackerleytng@google.com>,
- "jarkko@kernel.org" <jarkko@kernel.org>,
- "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>, "Wang, Wei W"
- <wei.w.wang@intel.com>, "akpm@linux-foundation.org"
- <akpm@linux-foundation.org>
-References: <20231027182217.3615211-1-seanjc@google.com>
- <20231027182217.3615211-10-seanjc@google.com>
- <482bfea6f54ea1bb7d1ad75e03541d0ba0e5be6f.camel@intel.com>
- <ZUKMsOdg3N9wmEzy@google.com>
- <64e3764e36ba7a00d94cc7db1dea1ef06b620aaf.camel@intel.com>
- <32cb71700aedcbd1f65276cf44a601760ffc364b.camel@intel.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-In-Reply-To: <32cb71700aedcbd1f65276cf44a601760ffc364b.camel@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20231102051349.GA3292886@perftesting>
 
-On 11/2/23 10:35, Huang, Kai wrote:
-> IIUC KVM can already handle the case of poisoned
-> page by sending signal to user app: 
+> Btw I'm working on this, mostly to show Christoph it doesn't do what he thinks
+> it does.
 > 
-> 	static int kvm_handle_error_pfn(struct kvm_vcpu *vcpu, 
-> 			struct kvm_page_fault *fault)                                               
-> 	{       
-> 		...
+> However I ran into some weirdness where I need to support the new mount API, so
+> that's what I've been doing since I wandered away from this thread.  I should
+> have that done tomorrow, and then I was going to do the S_AUTOMOUNT thing ontop
+> of that.
 > 
->        		if (fault->pfn == KVM_PFN_ERR_HWPOISON) {
->               		kvm_send_hwpoison_signal(fault->slot, fault->gfn);
->                 	return RET_PF_RETRY;                                          
->         	}
-> 	}
+> But I have the same questions as you Christian, I'm not entirely sure how this
+> is supposed to be better.  Even if they show up in /proc/mounts, it's not going
+> to do anything useful for the applications that don't check /proc/mounts to see
+> if they've wandered into a new mount.  I also don't quite understand how NFS
+> suddenly knows it's wandered into a new mount with a vfsmount.
 
-EHWPOISON is not implemented by this series, so it should be left out of 
-the documentation.
+So the subvolumes-as-vfsmount solution was implemented already a few
+years ago. I looked at that patchset and the crucial point in the
+solution was patch [1].
 
+show_mountinfo() is called under namespace_sem (see fs/namespace.c).
+That thing is crucial for all mount namespaces, mount propagation and so
+on. We can't cause IO under that unless we want to allow to trivially
+deadlock the whole system by tricking us into talking to an unresponsive
+NFS server or similar. And all vfs_getattr*() flavours can legitimately
+cause IO even with AT_STATX_DONT_SYNC.
 
-> Currently as mentioned above when
-> vepc fault handler cannot allocate EPC page KVM returns -EFAULT to Qemu, and
-> Qemu prints ...
-> 
-> 	...: Bad address
-> 	<dump guest cpu registers>
-> 
-> ... which is nonsense.
-> 
-> If we can use memory_fault.flags (or is 'fault_reason' a better name?) to carry
-> a specific value for EPC to let Qemu know and Qemu can then do more reasonable
-> things.
+So exposing this via /proc/<pid>/mountinfo doesn't work. But that means
+even if you make it a separate vfsmount you need to epose the device
+information through another interface.
 
-Yes, that's a good idea that can be implemented on top.
+But at that point we really need to ask if it makes sense to use
+vfsmounts per subvolume in the first place:
 
-Paolo
+(1) We pollute /proc/<pid>/mountinfo with a lot of mounts.
+(2) By calling ->getattr() from show_mountinfo() we open the whole
+    system up to deadlocks.
+(3) We change btrfs semantics drastically to the point where they need a
+    new mount, module, or Kconfig option.
+(4) We make (initial) lookup on btrfs subvolumes more heavyweight
+    because you need to create a mount for the subvolume.
+
+So right now, I don't see how we can make this work even if the concept
+doesn't seem necessarily wrong.
+
+Even if we were to go through with this and make each subvolume a
+vfsmount but then don't expose the ->getattr() device numbers in
+/proc/<pid>/mountinfo but instead add a separate retrieval method via
+statx() we'd be creating even more confusion for userspace by showing
+different device numbers in /proc/<pid>/mountinfo than in statx().
+
+[1]:
+
+Subject:        [PATCH 01/11] VFS: show correct dev num in mountinfo
+Date:	 	Wed, 28 Jul 2021 08:37:45 +1000
+Message-ID:	<162742546548.32498.10889023150565429936.stgit@noble.brown>
+
+/proc/$PID/mountinfo contains a field for the device number of the
+filesystem at each mount.
+
+This is taken from the superblock ->s_dev field, which is correct for
+every filesystem except btrfs.  A btrfs filesystem can contain multiple
+subvols which each have a different device number.  If (a directory
+within) one of these subvols is mounted, the device number reported in
+mountinfo will be different from the device number reported by stat().
+
+This confuses some libraries and tools such as, historically, findmnt.
+Current findmnt seems to cope with the strangeness.
+
+So instead of using ->s_dev, call vfs_getattr_nosec() and use the ->dev
+provided.  As there is no STATX flag to ask for the device number, we
+pass a request mask for zero, and also ask the filesystem to avoid
+syncing with any remote service.
+
+Signed-off-by: NeilBrown <neilb@suse.de>
+---
+ fs/proc_namespace.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
+index 392ef5162655..f342a0231e9e 100644
+--- a/fs/proc_namespace.c
++++ b/fs/proc_namespace.c
+@@ -138,10 +138,16 @@ static int show_mountinfo(struct seq_file *m, struct vfsmount *mnt)
+ 	struct mount *r = real_mount(mnt);
+ 	struct super_block *sb = mnt->mnt_sb;
+ 	struct path mnt_path = { .dentry = mnt->mnt_root, .mnt = mnt };
++	struct kstat stat;
+ 	int err;
+ 
++	/* We only want ->dev, and there is no STATX flag for that,
++	 * so ask for nothing and assume we get ->dev
++	 */
++	vfs_getattr_nosec(&mnt_path, &stat, 0, AT_STATX_DONT_SYNC);
++
+ 	seq_printf(m, "%i %i %u:%u ", r->mnt_id, r->mnt_parent->mnt_id,
+-		   MAJOR(sb->s_dev), MINOR(sb->s_dev));
++		   MAJOR(stat.dev), MINOR(stat.dev));
+ 	if (sb->s_op->show_path) {
+ 		err = sb->s_op->show_path(m, mnt->mnt_root);
+ 		if (err)
 
 
