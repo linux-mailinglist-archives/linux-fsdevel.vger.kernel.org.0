@@ -1,130 +1,108 @@
-Return-Path: <linux-fsdevel+bounces-1887-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1888-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 640767DFBF6
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 22:22:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 583937DFC02
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 22:32:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EAC21C21036
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 21:22:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4C041F228B4
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 21:32:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E2A621352;
-	Thu,  2 Nov 2023 21:22:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D660322307;
+	Thu,  2 Nov 2023 21:32:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="eVip9fRF"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xgRMslaT"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51C3421374
-	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 21:22:01 +0000 (UTC)
-Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0B60195
-	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 14:21:56 -0700 (PDT)
-Received: from [192.168.1.18] ([86.243.2.178])
-	by smtp.orange.fr with ESMTPA
-	id yf8Rqp7S1uQcKyf8RqIfdN; Thu, 02 Nov 2023 22:21:53 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1698960113;
-	bh=lug65i9SpeCxzvrYTmUZ5JS3Ay8/Kn/DlLaH6z3IhH8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=eVip9fRFNHWDPpYoUlO67CGTnE5aVD6Ok7JeiqTgUzBtEMpoqVHN+1iWRvnokiG2P
-	 czruQufq+8nreAWpibk4+WCd0Cov/lPQcJscEMSSMIEsGh8ALpTUebqffPgeqChcsa
-	 8Exa7B9LYwVUUUI3w/nzuwfcyAVZislOh6guKhCm1zo2tAqiziVgvhsFGYkOKjUvqH
-	 T2oJvZ6DEF/ZkAavYyvi2zpKPutTtFhampzhJAT2KPhF0rq74P8jcTAFL5Qtd8VNQE
-	 sTWWEvkjWSU9Ki5PRahWbR1gIO0DZ0Nzmjtp0pRIfju6UwwxLQgsB5ayjX/WpXEdTi
-	 GiHD3fvjEeAdg==
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 02 Nov 2023 22:21:53 +0100
-X-ME-IP: 86.243.2.178
-Message-ID: <95fdad28-95d5-4720-811b-8bbef8600830@wanadoo.fr>
-Date: Thu, 2 Nov 2023 22:21:51 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D36F222301
+	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 21:32:46 +0000 (UTC)
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC453195
+	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 14:32:42 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-9d10972e63eso212166166b.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Nov 2023 14:32:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1698960761; x=1699565561; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Vq5NPo4MczJen086IQAvce9UPFocIswVxg9xIedCGQw=;
+        b=xgRMslaT1VfBaZkQ3faINVjc8DK09pbRq+078Ra9cm8HShgS9Yn5RydVFqI+QM9znk
+         RlVzg7etf8M5Hjbpd69AbTwZtg0TpPg0J/QRDzjN5iNCkDEO6YY1a8VVLkDG8y32St16
+         4PyTJKsiogtPLZvPTCF5GBhco3Pw2NaKkTAMAV8De2SPe5f5UrZvLotWvdj1Blpb8A0N
+         XL78pkZGq52OrQ0Xb36Ui+wPT/umzNj5EkqT/iJJ6ng19etQRvVYn+L4zu8qqxFciOkM
+         ipw1zJ0xqZyHQnbzNhU2Uvv2/Novby1zLlO0I1vW0gsu4eJzx2e7U6wCfz73AXCppLV2
+         WH6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698960761; x=1699565561;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Vq5NPo4MczJen086IQAvce9UPFocIswVxg9xIedCGQw=;
+        b=bLYsR2y0oW2JPklRdIgBQjNGBJYc/6fUMjdkhfKnVf3i4r01pNK7il7TvIHQ+TIEnz
+         wnKpJIyx8MFgqYwBA28ZVBdS+NV9fU4UjvJAKShg0x8Eat0W0IEbETO0fSZX5V+piTpe
+         IdBERJi9bLuLCFJ3j3MN9MwBF3KAczHcp83fiWZvUCDaNqirFeTEI0HLUX2LCSpN50wt
+         fB+yCp8Vt+40Bd7Tk1E/oRasqEqdxxHADW/7ABugwct05Hfm7qs1YJ6NgPfpuQt5Qw7Z
+         2r3SrhawHsDvYIlgPhYQfa0i0jYwmteX1UA1T9ZbYgg9SRah7ZbyN5l9CLLq1JWlblME
+         gKpA==
+X-Gm-Message-State: AOJu0YzDsNHu27nHxxjKm5ASfPRdkNSyM+PV/neiO28p+owGPUYXxtUs
+	H7ftRMvdY/tGUrJCpBlbE8lcDuf/YMRrqMyS/YOxvg==
+X-Google-Smtp-Source: AGHT+IGyZP9u6aAbNP6NikHtNCgyA7xGVqp3DPsClZgLA9ftj3/+w+BBKe6H9xBGihWxGn5Wl/jeqaf7Czg+Qc1ZkLA=
+X-Received: by 2002:a17:907:954f:b0:9c4:4b20:44a1 with SMTP id
+ ex15-20020a170907954f00b009c44b2044a1mr3798351ejc.65.1698960760931; Thu, 02
+ Nov 2023 14:32:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] vboxsf: Avoid an spurious warning if load_nls_xxx()
- fails
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Hans de Goede <hdegoede@redhat.com>, Christoph Hellwig
- <hch@infradead.org>, Al Viro <viro@zeniv.linux.org.uk>,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-fsdevel@vger.kernel.org
-References: <d09eaaa4e2e08206c58a1a27ca9b3e81dc168773.1698835730.git.christophe.jaillet@wanadoo.fr>
- <ZUOWS6Vr0rg4VVIb@casper.infradead.org>
-Content-Language: fr, en-US
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <ZUOWS6Vr0rg4VVIb@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20231028003819.652322-1-surenb@google.com> <20231028003819.652322-4-surenb@google.com>
+ <ZUAOsn9Fj/qCo+xg@x1n>
+In-Reply-To: <ZUAOsn9Fj/qCo+xg@x1n>
+From: Axel Rasmussen <axelrasmussen@google.com>
+Date: Thu, 2 Nov 2023 14:32:02 -0700
+Message-ID: <CAJHvVcibtwWom6w=jdYa+712ZEVM3Kcy9RQwgfgHi8b=1nF9jg@mail.gmail.com>
+Subject: Re: [PATCH v4 3/5] selftests/mm: call uffd_test_ctx_clear at the end
+ of the test
+To: Peter Xu <peterx@redhat.com>
+Cc: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org, viro@zeniv.linux.org.uk, 
+	brauner@kernel.org, shuah@kernel.org, aarcange@redhat.com, 
+	lokeshgidra@google.com, david@redhat.com, hughd@google.com, mhocko@suse.com, 
+	rppt@kernel.org, willy@infradead.org, Liam.Howlett@oracle.com, 
+	jannh@google.com, zhangpeng362@huawei.com, bgeffon@google.com, 
+	kaleshsingh@google.com, ngeoffray@google.com, jdduke@google.com, 
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Le 02/11/2023 à 13:30, Matthew Wilcox a écrit :
-> On Wed, Nov 01, 2023 at 11:49:48AM +0100, Christophe JAILLET wrote:
->> If an load_nls_xxx() function fails a few lines above, the 'sbi->bdi_id' is
->> still 0.
->> So, in the error handling path, we will call ida_simple_remove(..., 0)
->> which is not allocated yet.
->>
->> In order to prevent a spurious "ida_free called for id=0 which is not
->> allocated." message, tweak the error handling path and add a new label.
-> 
-> That's not spurious!
+On Mon, Oct 30, 2023 at 1:14=E2=80=AFPM Peter Xu <peterx@redhat.com> wrote:
+>
+> On Fri, Oct 27, 2023 at 05:38:13PM -0700, Suren Baghdasaryan wrote:
+> > uffd_test_ctx_clear() is being called from uffd_test_ctx_init() to unma=
+p
+> > areas used in the previous test run. This approach is problematic becau=
+se
+> > while unmapping areas uffd_test_ctx_clear() uses page_size and nr_pages
+> > which might differ from one test run to another.
+> > Fix this by calling uffd_test_ctx_clear() after each test is done.
+> >
+> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+>
+> Reviewed-by: Peter Xu <peterx@redhat.com>
 
-My fault, as a non-native English speaking man.
-I've always sought that spurious was meaning "odd" or "strange", but I 
-was wrong :(
+Looks correct to me as well. Thanks for fixing this, Suren!
 
-Here, a better wording could be "to prevent an un-expected "ida..."".
-Is that ok for you?
+Reviewed-by: Axel Rasmussen <axelrasmussen@google.com>
 
-Or the last sentence could shortened to only "In order to fix it, tweak 
-the error handling path and add a new label.".
-
-CJ
-
-> You're freeing something that wasn't allocated.
-> A good quality malloc allocation will warn you if you free() a random
-> pointer.  I agree with everything abuot this patch (and the next) except
-> for the changelog.
-> 
->> Fixes: 0fd169576648 ("fs: Add VirtualBox guest shared folder (vboxsf) support")
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->>   fs/vboxsf/super.c | 3 ++-
->>   1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/vboxsf/super.c b/fs/vboxsf/super.c
->> index 1fb8f4df60cb..9848af78215b 100644
->> --- a/fs/vboxsf/super.c
->> +++ b/fs/vboxsf/super.c
->> @@ -151,7 +151,7 @@ static int vboxsf_fill_super(struct super_block *sb, struct fs_context *fc)
->>   		if (!sbi->nls) {
->>   			vbg_err("vboxsf: Count not load '%s' nls\n", nls_name);
->>   			err = -EINVAL;
->> -			goto fail_free;
->> +			goto fail_destroy_idr;
->>   		}
->>   	}
->>   
->> @@ -224,6 +224,7 @@ static int vboxsf_fill_super(struct super_block *sb, struct fs_context *fc)
->>   		ida_simple_remove(&vboxsf_bdi_ida, sbi->bdi_id);
->>   	if (sbi->nls)
->>   		unload_nls(sbi->nls);
->> +fail_destroy_idr:
->>   	idr_destroy(&sbi->ino_idr);
->>   	kfree(sbi);
->>   	return err;
->> -- 
->> 2.34.1
->>
->>
-> 
-> 
-
+>
+> --
+> Peter Xu
+>
 
