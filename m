@@ -1,355 +1,214 @@
-Return-Path: <linux-fsdevel+bounces-1825-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1826-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD83B7DF446
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 14:49:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09BD47DF455
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 14:53:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AB26281B72
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 13:48:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61705281C5C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 13:53:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8990C18E3E;
-	Thu,  2 Nov 2023 13:48:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7519F1DA4F;
+	Thu,  2 Nov 2023 13:53:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="i2pEmtEN";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="M0TljGHO"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bAr5ZI3R"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E25CA18E2D
-	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 13:48:50 +0000 (UTC)
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9276195
-	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 06:48:44 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 4321A21A4C;
-	Thu,  2 Nov 2023 13:48:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1698932923; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ubiSME8bsfVSDj7/Y+TrKWdyzuRT0XCbDYgi7aZ7Ass=;
-	b=i2pEmtENzRjR9K3dVbjdC//I1IvqCXx6ucHwOgeclLLGk/7nEqwrr0B+48MhHRBEIH8RZ3
-	k1w93of53GL9IfIPHiAX3I+pzxX4xBPu9kVYjAdTMpdt9JA/3cBry4d+b/yaW1jCrXrP2W
-	ghT08RtJ0mY+GkGP0FFVkYVA1Z1cYa4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1698932923;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ubiSME8bsfVSDj7/Y+TrKWdyzuRT0XCbDYgi7aZ7Ass=;
-	b=M0TljGHOTYgJP1yukpUWBAUt1GNQzMRzRITizm4sxo+o2cplzLQ1HiLQnjqdmVNk6F5dDC
-	Gsu7wfTtVQvraQAw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-	(No client certificate requested)
-	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 34AB8138EC;
-	Thu,  2 Nov 2023 13:48:43 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-	by imap2.suse-dmz.suse.de with ESMTPSA
-	id C5jODLuoQ2UOfAAAMHmgww
-	(envelope-from <jack@suse.cz>); Thu, 02 Nov 2023 13:48:43 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id B7D49A06E3; Thu,  2 Nov 2023 14:48:42 +0100 (CET)
-Date: Thu, 2 Nov 2023 14:48:42 +0100
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH] fs: make s_count atomic_t
-Message-ID: <20231102134842.tu26pykjpzgi4veo@quack3>
-References: <20231027-neurologie-miterleben-a8c52a745463@brauner>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89CB81DA32
+	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 13:53:04 +0000 (UTC)
+Received: from mail-qk1-x734.google.com (mail-qk1-x734.google.com [IPv6:2607:f8b0:4864:20::734])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 952AA186
+	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 06:53:01 -0700 (PDT)
+Received: by mail-qk1-x734.google.com with SMTP id af79cd13be357-77896da2118so51942285a.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Nov 2023 06:53:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1698933180; x=1699537980; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8MiH+OD80Lz6N2WkoQWVzzSH5wdFrVwABmyWNvMjndg=;
+        b=bAr5ZI3Rhqn44ga41KdTnAzjxnBdKbpmQ6ngHcC6eLA71WIv1eGpAjpfkKzCcyQ4XR
+         rLxO107v7Gk4VcuFbk/vOdMRI/xJG4m1QH+BsbZe5mv8fgoJS+cz4eCGeiX0WqzjRX4K
+         fFMteW9ANBVofNd53WmbrTVz6it6mW2BaLakP910RadGv45Rhu8YHuYrWuOCC2hngjrA
+         3rIhLy+ZL0fcuGFjLxu2QiKn2kOXJIRRXhrLyTcJK6VM958Wj5smKQT5/4ZyfVGE/zCo
+         r3n6LVfyacMkAEKUKgrboLU9O5ItddXORiilY1KCjgwYAFyTGTEGV80nSjAO4ysIJV7q
+         acxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698933180; x=1699537980;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8MiH+OD80Lz6N2WkoQWVzzSH5wdFrVwABmyWNvMjndg=;
+        b=wkmcGkhea3bBxvzbha6kHFObgCO4RUIHNx0fGu2GgUr4Pw63jB0qLXAewYGqbY8wMa
+         9FliU1iTG8nCeUESiDPy+u2WwMGZTwsKPYXAi8VGTVR6tYGHd3Yr2MsOHuK9ZdF2SXWp
+         5lx5uK4v4al5zqBrs6P1pylZwtPi6RQ2l8S7568AujM4+7Q6hXkj1UVTAZRbWdKWXkPr
+         Pvi6vmybK6qMSu78tfQM6R0Ugs2/RaIcatWvAqybKNYM/joT5Me859t0h6/T7TtfRdF3
+         GiZ/bCIIWOcInP9gutiMRcj/Wp5VWg4wxLYH32LJljzK1srYfLxhWL/E7kjv6EzkIU6e
+         nPZQ==
+X-Gm-Message-State: AOJu0Yz2fj88bBLMGK5ltlwdVLHlk2V8OasaKugpY+WRkT2CeKcz2DgL
+	qxNBmLyVCfNiswhdbnFLbzeck6mI7sNlToB0nMUgwg==
+X-Google-Smtp-Source: AGHT+IHABEQi7q2gF4GYbu+6KWyVOhp4LTc7vcuWRR/ds6omy7P2Nr93O+4ItCwG4g8ZUZhgbGUZVOPe8u3aj0mVGQs=
+X-Received: by 2002:ad4:5761:0:b0:672:4e8c:9aa5 with SMTP id
+ r1-20020ad45761000000b006724e8c9aa5mr14682447qvx.47.1698933180583; Thu, 02
+ Nov 2023 06:53:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231027-neurologie-miterleben-a8c52a745463@brauner>
+References: <20231027182217.3615211-1-seanjc@google.com> <20231027182217.3615211-17-seanjc@google.com>
+ <CA+EHjTzj4drYKONVOLP19DYpJ4O8kSXcFzw2AKier1QdcFKx_Q@mail.gmail.com>
+ <ZUF8A5KpwpA6IKUH@google.com> <CA+EHjTwTT9cFzYTtwT43nLJS01Sgt0NqzUgKAnfo2fiV3tEvXg@mail.gmail.com>
+ <ZULJYg5cf1UrNq3e@google.com>
+In-Reply-To: <ZULJYg5cf1UrNq3e@google.com>
+From: Fuad Tabba <tabba@google.com>
+Date: Thu, 2 Nov 2023 13:52:23 +0000
+Message-ID: <CA+EHjTzGzXnfXHh0m5iHt9m3BxerkUS56EVPDA_az6n2FRnk3w@mail.gmail.com>
+Subject: Re: [PATCH v13 16/35] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
+ guest-specific backing memory
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Huacai Chen <chenhuacai@kernel.org>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Anup Patel <anup@brainfault.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, kvm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Xiaoyao Li <xiaoyao.li@intel.com>, 
+	Xu Yilun <yilun.xu@intel.com>, Chao Peng <chao.p.peng@linux.intel.com>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, Anish Moorthy <amoorthy@google.com>, 
+	David Matlack <dmatlack@google.com>, Yu Zhang <yu.c.zhang@linux.intel.com>, 
+	Isaku Yamahata <isaku.yamahata@intel.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	Vlastimil Babka <vbabka@suse.cz>, Vishal Annapurve <vannapurve@google.com>, 
+	Ackerley Tng <ackerleytng@google.com>, Maciej Szmigiero <mail@maciej.szmigiero.name>, 
+	David Hildenbrand <david@redhat.com>, Quentin Perret <qperret@google.com>, 
+	Michael Roth <michael.roth@amd.com>, Wang <wei.w.wang@intel.com>, 
+	Liam Merwick <liam.merwick@oracle.com>, Isaku Yamahata <isaku.yamahata@gmail.com>, 
+	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri 27-10-23 11:35:20, Christian Brauner wrote:
-> So, I believe we can drop the sb_lock in bdev_super_lock() for all
-> holder operations if we turn s_count into an atomic. It will slightly
-> change semantics for list walks like iterate_supers() but imho that's
-> fine. It'll mean that list walkes need a acquire sb_lock, then try to
-> get reference via atomic_inc_not_zero().
-> 
-> The logic there is simply that if you still found the superblock on the
-> list then yes, someone could now concurrently drop s_count to zero
-> behind your back. But because you hold sb_lock they can't remove it from
-> the list behind your back.
-> 
-> So if you now fail atomic_inc_not_zero() then you know that someone
-> concurrently managed to drop the ref to zero and wants to remove that sb
-> from the list. So you just ignore that super block and go on walking the
-> list. If however, you manage to get an active reference things are fine
-> and you can try to trade that temporary reference for an active
-> reference. So my theory at least...
-> 
-> Yes, ofc we add atomics but for superblocks we shouldn't care especially
-> we have less and less list walkers. Both get_super() and
-> get_active_super() are gone after all.
-> 
-> I'm running xfstests as I'm sending this and I need to start finishing
-> PRs so in RFC mode. Thoughts?
-> 
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+On Wed, Nov 1, 2023 at 9:55=E2=80=AFPM Sean Christopherson <seanjc@google.c=
+om> wrote:
+>
+> On Wed, Nov 01, 2023, Fuad Tabba wrote:
+> > > > > @@ -1034,6 +1034,9 @@ static void kvm_destroy_dirty_bitmap(struct=
+ kvm_memory_slot *memslot)
+> > > > >  /* This does not remove the slot from struct kvm_memslots data s=
+tructures */
+> > > > >  static void kvm_free_memslot(struct kvm *kvm, struct kvm_memory_=
+slot *slot)
+> > > > >  {
+> > > > > +       if (slot->flags & KVM_MEM_PRIVATE)
+> > > > > +               kvm_gmem_unbind(slot);
+> > > > > +
+> > > >
+> > > > Should this be called after kvm_arch_free_memslot()? Arch-specific =
+ode
+> > > > might need some of the data before the unbinding, something I thoug=
+ht
+> > > > might be necessary at one point for the pKVM port when deleting a
+> > > > memslot, but realized later that kvm_invalidate_memslot() ->
+> > > > kvm_arch_guest_memory_reclaimed() was the more logical place for it=
+.
+> > > > Also, since that seems to be the pattern for arch-specific handlers=
+ in
+> > > > KVM.
+> > >
+> > > Maybe?  But only if we can about symmetry between the allocation and =
+free paths
+> > > I really don't think kvm_arch_free_memslot() should be doing anything=
+ beyond a
+> > > "pure" free.  E.g. kvm_arch_free_memslot() is also called after movin=
+g a memslot,
+> > > which hopefully we never actually have to allow for guest_memfd, but =
+any code in
+> > > kvm_arch_free_memslot() would bring about "what if" questions regardi=
+ng memslot
+> > > movement.  I.e. the API is intended to be a "free arch metadata assoc=
+iated with
+> > > the memslot".
+> > >
+> > > Out of curiosity, what does pKVM need to do at kvm_arch_guest_memory_=
+reclaimed()?
+> >
+> > It's about the host reclaiming ownership of guest memory when tearing
+> > down a protected guest. In pKVM, we currently teardown the guest and
+> > reclaim its memory when kvm_arch_destroy_vm() is called. The problem
+> > with guestmem is that kvm_gmem_unbind() could get called before that
+> > happens, after which the host might try to access the unbound guest
+> > memory. Since the host hasn't reclaimed ownership of the guest memory
+> > from hyp, hilarity ensues (it crashes).
+> >
+> > Initially, I hooked reclaim guest memory to kvm_free_memslot(), but
+> > then I needed to move the unbind later in the function. I realized
+> > later that kvm_arch_guest_memory_reclaimed() gets called earlier (at
+> > the right time), and is more aptly named.
+>
+> Aha!  I suspected that might be the case.
+>
+> TDX and SNP also need to solve the same problem of "reclaiming" memory be=
+fore it
+> can be safely accessed by the host.  The plan is to add an arch hook (or =
+two?)
+> into guest_memfd that is invoked when memory is freed from guest_memfd.
+>
+> Hooking kvm_arch_guest_memory_reclaimed() isn't completely correct as del=
+eting a
+> memslot doesn't *guarantee* that guest memory is actually reclaimed (whic=
+h reminds
+> me, we need to figure out a better name for that thing before introducing
+> kvm_arch_gmem_invalidate()).
 
-So in principle I agree we can get rid of some sb_lock use if we convert
-sb->s_count to an atomic type. However does this bring any significant
-benefit? I would not expect sb_lock to be contended and as you say you need
-to be more careful about the races then so that is a reason against such
-change.
+I see. I'd assumed that that was what you're using. I agree that it's
+not completely correct, so for the moment, I assume that if that
+happens we have a misbehaving host, teardown the guest and reclaim its
+memory.
 
-								Honza
+> The effective false positives aren't fatal for the current usage because =
+the hook
+> is used only for x86 SEV guests to flush caches.  An unnecessary flush ca=
+n cause
+> performance issues, but it doesn't affect correctness. For TDX and SNP, a=
+nd IIUC
+> pKVM, false positives are fatal because KVM could assign memory back to t=
+he host
+> that is still owned by guest_memfd.
 
-> ---
->  fs/super.c         | 93 ++++++++++++++++++++++++++--------------------
->  include/linux/fs.h |  2 +-
->  2 files changed, 53 insertions(+), 42 deletions(-)
-> 
-> diff --git a/fs/super.c b/fs/super.c
-> index 71e5e61cfc9e..c58de6bb5633 100644
-> --- a/fs/super.c
-> +++ b/fs/super.c
-> @@ -375,7 +375,7 @@ static struct super_block *alloc_super(struct file_system_type *type, int flags,
->  	INIT_LIST_HEAD(&s->s_inodes_wb);
->  	spin_lock_init(&s->s_inode_wblist_lock);
->  
-> -	s->s_count = 1;
-> +	atomic_set(&s->s_count, 1);
->  	atomic_set(&s->s_active, 1);
->  	mutex_init(&s->s_vfs_rename_mutex);
->  	lockdep_set_class(&s->s_vfs_rename_mutex, &type->s_vfs_rename_key);
-> @@ -409,19 +409,6 @@ static struct super_block *alloc_super(struct file_system_type *type, int flags,
->  /*
->   * Drop a superblock's refcount.  The caller must hold sb_lock.
->   */
-> -static void __put_super(struct super_block *s)
-> -{
-> -	if (!--s->s_count) {
-> -		list_del_init(&s->s_list);
-> -		WARN_ON(s->s_dentry_lru.node);
-> -		WARN_ON(s->s_inode_lru.node);
-> -		WARN_ON(!list_empty(&s->s_mounts));
-> -		security_sb_free(s);
-> -		put_user_ns(s->s_user_ns);
-> -		kfree(s->s_subtype);
-> -		call_rcu(&s->rcu, destroy_super_rcu);
-> -	}
-> -}
->  
->  /**
->   *	put_super	-	drop a temporary reference to superblock
-> @@ -430,10 +417,20 @@ static void __put_super(struct super_block *s)
->   *	Drops a temporary reference, frees superblock if there's no
->   *	references left.
->   */
-> -void put_super(struct super_block *sb)
-> +void put_super(struct super_block *s)
->  {
-> +	if (!atomic_dec_and_test(&s->s_count))
-> +		return;
-> +
->  	spin_lock(&sb_lock);
-> -	__put_super(sb);
-> +	list_del_init(&s->s_list);
-> +	WARN_ON(s->s_dentry_lru.node);
-> +	WARN_ON(s->s_inode_lru.node);
-> +	WARN_ON(!list_empty(&s->s_mounts));
-> +	security_sb_free(s);
-> +	put_user_ns(s->s_user_ns);
-> +	kfree(s->s_subtype);
-> +	call_rcu(&s->rcu, destroy_super_rcu);
->  	spin_unlock(&sb_lock);
->  }
->  
-> @@ -548,8 +545,11 @@ static bool grab_super(struct super_block *sb)
->  {
->  	bool locked;
->  
-> -	sb->s_count++;
-> +	locked = atomic_inc_not_zero(&sb->s_count);
->  	spin_unlock(&sb_lock);
-> +	if (!locked)
-> +		return false;
-> +
->  	locked = super_lock_excl(sb);
->  	if (locked) {
->  		if (atomic_inc_not_zero(&sb->s_active)) {
-> @@ -908,19 +908,20 @@ static void __iterate_supers(void (*f)(struct super_block *))
->  		/* Pairs with memory marrier in super_wake(). */
->  		if (smp_load_acquire(&sb->s_flags) & SB_DYING)
->  			continue;
-> -		sb->s_count++;
-> +		if (!atomic_inc_not_zero(&sb->s_count))
-> +			continue;
->  		spin_unlock(&sb_lock);
->  
->  		f(sb);
->  
-> -		spin_lock(&sb_lock);
->  		if (p)
-> -			__put_super(p);
-> +			put_super(p);
->  		p = sb;
-> +		spin_lock(&sb_lock);
->  	}
-> -	if (p)
-> -		__put_super(p);
->  	spin_unlock(&sb_lock);
-> +	if (p)
-> +		put_super(p);
->  }
->  /**
->   *	iterate_supers - call function for all active superblocks
-> @@ -938,7 +939,8 @@ void iterate_supers(void (*f)(struct super_block *, void *), void *arg)
->  	list_for_each_entry(sb, &super_blocks, s_list) {
->  		bool locked;
->  
-> -		sb->s_count++;
-> +		if (!atomic_inc_not_zero(&sb->s_count))
-> +			continue;
->  		spin_unlock(&sb_lock);
->  
->  		locked = super_lock_shared(sb);
-> @@ -948,14 +950,14 @@ void iterate_supers(void (*f)(struct super_block *, void *), void *arg)
->  			super_unlock_shared(sb);
->  		}
->  
-> -		spin_lock(&sb_lock);
->  		if (p)
-> -			__put_super(p);
-> +			put_super(p);
->  		p = sb;
-> +		spin_lock(&sb_lock);
->  	}
-> -	if (p)
-> -		__put_super(p);
->  	spin_unlock(&sb_lock);
-> +	if (p)
-> +		put_super(p);
->  }
->  
->  /**
-> @@ -976,7 +978,8 @@ void iterate_supers_type(struct file_system_type *type,
->  	hlist_for_each_entry(sb, &type->fs_supers, s_instances) {
->  		bool locked;
->  
-> -		sb->s_count++;
-> +		if (!atomic_inc_not_zero(&sb->s_count))
-> +			continue;
->  		spin_unlock(&sb_lock);
->  
->  		locked = super_lock_shared(sb);
-> @@ -986,14 +989,14 @@ void iterate_supers_type(struct file_system_type *type,
->  			super_unlock_shared(sb);
->  		}
->  
-> -		spin_lock(&sb_lock);
->  		if (p)
-> -			__put_super(p);
-> +			put_super(p);
->  		p = sb;
-> +		spin_lock(&sb_lock);
->  	}
-> -	if (p)
-> -		__put_super(p);
->  	spin_unlock(&sb_lock);
-> +	if (p)
-> +		put_super(p);
->  }
->  
->  EXPORT_SYMBOL(iterate_supers_type);
-> @@ -1007,7 +1010,8 @@ struct super_block *user_get_super(dev_t dev, bool excl)
->  		if (sb->s_dev ==  dev) {
->  			bool locked;
->  
-> -			sb->s_count++;
-> +			if (!atomic_inc_not_zero(&sb->s_count))
-> +				continue;
->  			spin_unlock(&sb_lock);
->  			/* still alive? */
->  			locked = super_lock(sb, excl);
-> @@ -1017,8 +1021,8 @@ struct super_block *user_get_super(dev_t dev, bool excl)
->  				super_unlock(sb, excl);
->  			}
->  			/* nope, got unmounted */
-> +			put_super(sb);
->  			spin_lock(&sb_lock);
-> -			__put_super(sb);
->  			break;
->  		}
->  	}
-> @@ -1387,20 +1391,27 @@ static struct super_block *bdev_super_lock(struct block_device *bdev, bool excl)
->  	__releases(&bdev->bd_holder_lock)
->  {
->  	struct super_block *sb = bdev->bd_holder;
-> -	bool locked;
-> +	bool active;
->  
->  	lockdep_assert_held(&bdev->bd_holder_lock);
->  	lockdep_assert_not_held(&sb->s_umount);
->  	lockdep_assert_not_held(&bdev->bd_disk->open_mutex);
->  
-> -	/* Make sure sb doesn't go away from under us */
-> -	spin_lock(&sb_lock);
-> -	sb->s_count++;
-> -	spin_unlock(&sb_lock);
-> +	active = atomic_inc_not_zero(&sb->s_count);
->  
->  	mutex_unlock(&bdev->bd_holder_lock);
->  
-> -	locked = super_lock(sb, excl);
-> +	/*
-> +	 * The bd_holder_lock guarantees that @sb is still valid.
-> +	 * sb->s_count can't be zero. If it were it would mean that we
-> +	 * found a block device that has bdev->bd_holder set to a
-> +	 * superblock that's about to be freed. IOW, there's a UAF
-> +	 * somewhere...
-> +	 */
-> +	if (WARN_ON_ONCE(!active))
-> +		return NULL;
-> +
-> +	active = super_lock(sb, excl);
->  
->  	/*
->  	 * If the superblock wasn't already SB_DYING then we hold
-> @@ -1408,7 +1419,7 @@ static struct super_block *bdev_super_lock(struct block_device *bdev, bool excl)
->           */
->  	put_super(sb);
->  
-> -	if (!locked)
-> +	if (!active)
->  		return NULL;
->  
->  	if (!sb->s_root || !(sb->s_flags & SB_ACTIVE)) {
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 5174e821d451..68e453c155af 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1201,7 +1201,7 @@ struct super_block {
->  	unsigned long		s_magic;
->  	struct dentry		*s_root;
->  	struct rw_semaphore	s_umount;
-> -	int			s_count;
-> +	atomic_t		s_count;
->  	atomic_t		s_active;
->  #ifdef CONFIG_SECURITY
->  	void                    *s_security;
-> -- 
-> 2.34.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Yup.
+
+> E.g. a misbehaving userspace could prematurely delete a memslot.  And the=
+ more
+> fun example is intrahost migration, where the plan is to allow pointing m=
+ultiple
+> guest_memfd files at a single guest_memfd inode:
+> https://lore.kernel.org/all/cover.1691446946.git.ackerleytng@google.com
+>
+> There was a lot of discussion for this, but it's scattered all over the p=
+lace.
+> The TL;DR is is that the inode will represent physical memory, and a file=
+ will
+> represent a given "struct kvm" instance's view of that memory.  And so th=
+e memory
+> isn't reclaimed until the inode is truncated/punched.
+>
+> I _think_ this reflects the most recent plan from the guest_memfd side:
+> https://lore.kernel.org/all/1233d749211c08d51f9ca5d427938d47f008af1f.1689=
+893403.git.isaku.yamahata@intel.com
+
+Thanks for pointing that out. I think this might be the way to go.
+I'll have a closer look at this and see how to get it to work with
+pKVM.
+
+Cheers,
+/fuad
 
