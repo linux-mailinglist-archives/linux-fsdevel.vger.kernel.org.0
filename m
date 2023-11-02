@@ -1,122 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-1821-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1822-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69ED17DF289
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 13:35:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C43697DF2B8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 13:48:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF223B210F6
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 12:34:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E219281AC1
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 12:48:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7123318E2F;
-	Thu,  2 Nov 2023 12:34:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E0BE569F;
+	Thu,  2 Nov 2023 12:48:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="0h7hv6aG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O1jJwRfj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B48318E17
-	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 12:34:52 +0000 (UTC)
-Received: from mail-ua1-x932.google.com (mail-ua1-x932.google.com [IPv6:2607:f8b0:4864:20::932])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A869C19B3
-	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 05:34:50 -0700 (PDT)
-Received: by mail-ua1-x932.google.com with SMTP id a1e0cc1a2514c-7aae07e7ba4so315134241.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Nov 2023 05:34:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1698928489; x=1699533289; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2c34fKw/9t7JAP3kNbJzjzeexVOlerIjyNZal3u1tAQ=;
-        b=0h7hv6aGOzpKjDRBtrkPHqrYAUBIEbi8FFM4ik1YI7ygYpi7PEW9cXHc1xqowUJ7PI
-         JFraYsgDaXl5Joq6eiv0tCnqovvbCIJnvPz7EanZbaiusEHkI7psGgZZJssqkmGtk0e2
-         PPNDBe87NN6tT2m7yTA8VDnWNoTt/dvCWx/NLcyjZev+Zv6OUi28AkgOrIIlYj4Ya3Hk
-         n/Af51JGgL+A8r5r0aZNRsE8xKSvEzZKyAxvJodtLWWEM6hVkLj0aJTWkx+DRM6PpVJI
-         bkkQ5MYMyg0WDOLM1OKNILpRkL6OUB+y65elQOCxP2qKVR/WX1zQX9JGcdV6PocG/4zV
-         kT0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698928489; x=1699533289;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2c34fKw/9t7JAP3kNbJzjzeexVOlerIjyNZal3u1tAQ=;
-        b=pnnpz/q3X2WTnzK9+TGg1u0gQWUKogOoDq818Y/N//71oMlkykfqg3fF9/rTaJ8tvq
-         aHHbQxhB9bhL0KzkN9TEMptCqM+6651JGbuq6FhLosuZ+9bsIq9c6htekzeKTsMKlP6I
-         OcQjm2yEAQ6OXxACdBmSlcKX6GIgi+mumMPyXCQG+bH+8Ft8btdAo3W+PdIZoEMs8WLW
-         hlxcBgrwD9qGnodqCR/63iq6o1+5xIyPo5SENaoEKNUykjAoYnKqr4+7vv8XZESR4YwX
-         JhUmJgMJ/gawLXdiVs4f+SjMaNhHG2qjNdLzRMYbckQyKTzpdJgK/i+1iLK0JZmLjWYT
-         v4Fg==
-X-Gm-Message-State: AOJu0Yz40mfDc+uXpCsXI3xOzutCeeY2MRnq9h6oyGGx/XvvWMyRHt0R
-	6KNhiUXzNAsUukGuVm4tPbNgYAKrK55OmnXiqu6sdw==
-X-Google-Smtp-Source: AGHT+IFLpof8u4AiPvmB/KBJkXrg7+KlDfo/GoxQzMtQwyJ3Ov65fn+BZKeQMD1aZ/DForcLRBD4LQ==
-X-Received: by 2002:a67:e092:0:b0:45d:56e0:7178 with SMTP id f18-20020a67e092000000b0045d56e07178mr2029493vsl.2.1698928489698;
-        Thu, 02 Nov 2023 05:34:49 -0700 (PDT)
-Received: from localhost (cpe-76-182-20-124.nc.res.rr.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id w4-20020a0562140b2400b0066d132b1c8bsm2312706qvj.102.2023.11.02.05.34.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Nov 2023 05:34:48 -0700 (PDT)
-Date: Thu, 2 Nov 2023 08:34:46 -0400
-From: Josef Bacik <josef@toxicpanda.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Qu Wenruo <quwenruo.btrfs@gmx.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
-	Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/3] fanotify support for btrfs sub-volumes
-Message-ID: <20231102123446.GA3305034@perftesting>
-References: <ZT+uxSEh+nTZ2DEY@infradead.org>
- <20231031-faktor-wahlparty-5daeaf122c5e@brauner>
- <ZUDxli5HTwDP6fqu@infradead.org>
- <20231031-anorak-sammeln-8b1c4264f0db@brauner>
- <ZUE0CWQWdpGHm81L@infradead.org>
- <20231101-nutzwert-hackbeil-bbc2fa2898ae@brauner>
- <590e421a-a209-41b6-ad96-33b3d1789643@gmx.com>
- <20231101-neigen-storch-cde3b0671902@brauner>
- <20231102051349.GA3292886@perftesting>
- <20231102-ankurbeln-eingearbeitet-cbeb018bfedc@brauner>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0BD2FB6
+	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 12:48:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5862C433C9;
+	Thu,  2 Nov 2023 12:48:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1698929300;
+	bh=6xeGbI1L+DfUU9h5pLLEoRq/boiO9OMP2yYIoh7hJ5I=;
+	h=From:To:Cc:Subject:Date:From;
+	b=O1jJwRfjZruxvUj0hqU9Y6g/JHMxGzSFXyKuDtSiTkl5uO2K/T8mc8cJfC2HE10CL
+	 9S1wFbm92AJPptjq5Nu35AHGU/AUiqx1MstMHyp0TAiZG+dO6g+Ey2EnBJGPT/Ko4v
+	 sGyu4v9lWaYhm1Bc0D5RqkUWg5xFhwTBLTWMgb1UHXr1+Z/dCAlTz2QS+umODv2TKS
+	 b0g6rS3KovF9ytieekI+cgGqWHVsrOVY5QhkUicDxaNKUK3zK+DNs+QXUceKFgXOZD
+	 z+FW7pRJcQFz/2f5pOGgyOK9vGDpRCurMpTkLIgg6TMQGZOF/HLlnUw/8Cjq4Vylqm
+	 h74Wn0BteriEw==
+User-agent: mu4e 1.8.10; emacs 27.1
+From: Chandan Babu R <chandanbabu@kernel.org>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk, axboe@kernel.dk, linux-block@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, djwong@kernel.org,
+ linux-xfs@vger.kernel.org, dchinner@fromorbit.com
+Subject: [BUG REPORT] next-20231102: generic/311 fails on XFS with external log
+Date: Thu, 02 Nov 2023 18:06:10 +0530
+Message-ID: <87bkccnwxc.fsf@debian-BULLSEYE-live-builder-AMD64>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231102-ankurbeln-eingearbeitet-cbeb018bfedc@brauner>
+Content-Type: text/plain
 
-On Thu, Nov 02, 2023 at 10:48:35AM +0100, Christian Brauner wrote:
-> > We'll be converted to the new mount API tho, so I suppose that's something.
-> > Thanks,
-> 
-> Just in case you forgot about it. I did send a patch to convert btrfs to
-> the new mount api in June:
-> 
-> https://lore.kernel.org/all/20230626-fs-btrfs-mount-api-v1-0-045e9735a00b@kernel.org
-> 
+Hi,
 
-Yeah Daan told me about this after I had done the bulk of the work.  I
-shamelessly stole the dup idea, I had been doing something uglier.
+generic/311 consistently fails when executing on a kernel built from
+next-20231102.
 
-> Can I ask you to please please copy just two things from that series:
-> 
-> (1) Please get rid of the second filesystems type.
-> (2) Please fix the silent remount behavior when mounting a subvolume.
->
+The following is the fstests config file that was used during testing.
 
-Yeah I've gotten rid of the second file system type, the remount thing is odd,
-I'm going to see if I can get away with not bringing that over.  I *think* it's
-because the standard distro way of doing things is to do
+export FSTYP=xfs
 
-mount -o ro,subvol=/my/root/vol /
-mount -o rw,subvol=/my/home/vol /home
-<boot some more>
-mount -o remount,rw /
+export TEST_DEV=/dev/loop0
+export TEST_DIR=/mnt/test
+export TEST_LOGDEV=/dev/loop2
 
-but I haven't messed with it yet to see if it breaks.  That's on the list to
-investigate today.  Thanks,
+export SCRATCH_DEV=/dev/loop1
+export SCRATCH_MNT=/mnt/scratch
+export SCRATCH_LOGDEV=/dev/loop3
 
-Josef
+export USE_EXTERNAL=yes
+
+export MKFS_OPTIONS="-f -m crc=1,reflink=1,rmapbt=1, -i sparse=1 -lsize=1g"
+
+
+The following is the contents obtained from 311.out.bad.
+
+QA output created by 311
+Running test 1 buffered, normal suspend
+Random seed is 1
+ee6103415276cde95544b11b2675f132
+device-mapper: suspend ioctl on flakey-logtest  failed: Device or resource busy
+Command failed.
+failed to suspend flakey-logtest
+
+
+Git bisect revealed the following to be the first bad commit,
+
+abcb2b94cce4fb7a8f84278e8da4d726837439d1
+Author:     Christian Brauner <brauner@kernel.org>
+AuthorDate: Wed Sep 27 15:21:16 2023 +0200
+Commit:     Christian Brauner <brauner@kernel.org>
+CommitDate: Sat Oct 28 13:29:24 2023 +0200
+
+bdev: implement freeze and thaw holder operations
+
+The old method of implementing block device freeze and thaw operations
+required us to rely on get_active_super() to walk the list of all
+superblocks on the system to find any superblock that might use the
+block device. This is wasteful and not very pleasant overall.
+
+Now that we can finally go straight from block device to owning
+superblock things become way simpler.
+
+Link: https://lore.kernel.org/r/20231024-vfs-super-freeze-v2-5-599c19f4faac@kernel.org
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+
+--
+Chandan
 
