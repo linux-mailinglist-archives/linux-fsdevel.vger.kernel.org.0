@@ -1,253 +1,155 @@
-Return-Path: <linux-fsdevel+bounces-1797-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1798-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF0D37DEF2B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 10:48:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33FB57DEF46
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 10:56:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B153B21210
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 09:48:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E55B1C20E6C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 09:56:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25B0C125A3;
-	Thu,  2 Nov 2023 09:48:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE3B8125C3;
+	Thu,  2 Nov 2023 09:56:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TIUu8G6o"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qutiQvaG";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UQreemB+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E49A748E
-	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 09:48:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEFABC433C8;
-	Thu,  2 Nov 2023 09:48:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1698918520;
-	bh=89TbdRFGRsSQbmSE8vqh8YsvVTrLMcZh5MiD6xIF4HI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TIUu8G6o6eEg4qosxpSMpA+fMG23bSU+C6m1frHIyQhy2Z4LM6vcBGihZI7LbG/XE
-	 bpjwEfJNkR2vmmOjEPEo1U/hvrwyVUq/JGF4jjBN7W2u097OTOuyQf3MGAVX73zfXk
-	 OFyQniTliQZ8kgZZB/ZuAT0IlUPBTWCWJ+wl7RL/vBM+jf/eikNGe2znhqAIcUPcm0
-	 Ihn/+igfDZFlBH05x2Jt8vFeAvtEQQvEya+BzDEWEOKgTsQ1+sPitfrQfdVIkug2DC
-	 9YnYYITj95byYjDGLgBfpQpfWeOvFRQ45CNK4nXtGkInA7DLFtv2v1WPbeullQy51A
-	 Geprxtt/PyrKQ==
-Date: Thu, 2 Nov 2023 10:48:35 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: Qu Wenruo <quwenruo.btrfs@gmx.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
-	Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/3] fanotify support for btrfs sub-volumes
-Message-ID: <20231102-ankurbeln-eingearbeitet-cbeb018bfedc@brauner>
-References: <20231027131726.GA2915471@perftesting>
- <ZT+uxSEh+nTZ2DEY@infradead.org>
- <20231031-faktor-wahlparty-5daeaf122c5e@brauner>
- <ZUDxli5HTwDP6fqu@infradead.org>
- <20231031-anorak-sammeln-8b1c4264f0db@brauner>
- <ZUE0CWQWdpGHm81L@infradead.org>
- <20231101-nutzwert-hackbeil-bbc2fa2898ae@brauner>
- <590e421a-a209-41b6-ad96-33b3d1789643@gmx.com>
- <20231101-neigen-storch-cde3b0671902@brauner>
- <20231102051349.GA3292886@perftesting>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 004EA6FA5
+	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 09:55:56 +0000 (UTC)
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F47813E;
+	Thu,  2 Nov 2023 02:55:52 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D752F21878;
+	Thu,  2 Nov 2023 09:55:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1698918950; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=T5pRlUTGfYRuroKFEMEmJ57hIq3rhMsknidCix2gKl0=;
+	b=qutiQvaGsOQab0v2di7F+0A+4UnE3dlg1s6Dc8JWqH82ej9F/Hscve/EuDIIa9YGfCeh5D
+	g0zoi/ItgT+6HSryTvGRO4kSMrPZnTGeu6CX4/NAzyUULW0QjxoyATW2kYdWghdm546x0q
+	E8dx9htPDLSjzAXbZjaWb6ICvTui8BI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1698918950;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=T5pRlUTGfYRuroKFEMEmJ57hIq3rhMsknidCix2gKl0=;
+	b=UQreemB+E0uLx6UT+sZKc/0hHY0LMusZa0aq/V9EuW9VGPv+CBxgXLrad9ABB5R6QZEBhv
+	l5G+GZ++ekve+qBw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+	(No client certificate requested)
+	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id BE12E138EC;
+	Thu,  2 Nov 2023 09:55:50 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+	by imap2.suse-dmz.suse.de with ESMTPSA
+	id A59fLiZyQ2UoeAAAMHmgww
+	(envelope-from <jack@suse.cz>); Thu, 02 Nov 2023 09:55:50 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 36F76A06E3; Thu,  2 Nov 2023 10:55:50 +0100 (CET)
+Date: Thu, 2 Nov 2023 10:55:50 +0100
+From: Jan Kara <jack@suse.cz>
+To: Brian Foster <bfoster@redhat.com>
+Cc: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+	Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@infradead.org>,
+	Kees Cook <keescook@google.com>,
+	syzkaller <syzkaller@googlegroups.com>,
+	Alexander Popov <alex.popov@linux.com>, linux-xfs@vger.kernel.org,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	linux-bcachefs@vger.kernel.org
+Subject: Re: [PATCH 1/7] bcachefs: Convert to bdev_open_by_path()
+Message-ID: <20231102095550.5hofpgzwbzx4ewqx@quack3>
+References: <20231101173542.23597-1-jack@suse.cz>
+ <20231101174325.10596-1-jack@suse.cz>
+ <ZUKggpzckTAKkyMl@bfoster>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231102051349.GA3292886@perftesting>
+In-Reply-To: <ZUKggpzckTAKkyMl@bfoster>
 
-> We'll be converted to the new mount API tho, so I suppose that's something.
-> Thanks,
+Hi Brian,
 
-Just in case you forgot about it. I did send a patch to convert btrfs to
-the new mount api in June:
+On Wed 01-11-23 15:01:22, Brian Foster wrote:
+> On Wed, Nov 01, 2023 at 06:43:06PM +0100, Jan Kara wrote:
+> > Convert bcachefs to use bdev_open_by_path() and pass the handle around.
+> > 
+> > CC: Kent Overstreet <kent.overstreet@linux.dev>
+> > CC: Brian Foster <bfoster@redhat.com>
+> > CC: linux-bcachefs@vger.kernel.org
+> > Signed-off-by: Jan Kara <jack@suse.cz>
+> > ---
+> >  fs/bcachefs/super-io.c    | 19 ++++++++++---------
+> >  fs/bcachefs/super_types.h |  1 +
+> >  2 files changed, 11 insertions(+), 9 deletions(-)
+> > 
+> > diff --git a/fs/bcachefs/super-io.c b/fs/bcachefs/super-io.c
+> > index 332d41e1c0a3..01a32c41a540 100644
+> > --- a/fs/bcachefs/super-io.c
+> > +++ b/fs/bcachefs/super-io.c
+> ...
+> > @@ -685,21 +685,22 @@ int bch2_read_super(const char *path, struct bch_opts *opts,
+> >  	if (!opt_get(*opts, nochanges))
+> >  		sb->mode |= BLK_OPEN_WRITE;
+> >  
+> > -	sb->bdev = blkdev_get_by_path(path, sb->mode, sb->holder, &bch2_sb_handle_bdev_ops);
+> > -	if (IS_ERR(sb->bdev) &&
+> > -	    PTR_ERR(sb->bdev) == -EACCES &&
+> > +	sb->bdev_handle = bdev_open_by_path(path, sb->mode, sb->holder, &bch2_sb_handle_bdev_ops);
+> > +	if (IS_ERR(sb->bdev_handle) &&
+> > +	    PTR_ERR(sb->bdev_handle) == -EACCES &&
+> >  	    opt_get(*opts, read_only)) {
+> >  		sb->mode &= ~BLK_OPEN_WRITE;
+> >  
+> > -		sb->bdev = blkdev_get_by_path(path, sb->mode, sb->holder, &bch2_sb_handle_bdev_ops);
+> > -		if (!IS_ERR(sb->bdev))
+> > +		sb->bdev_handle = bdev_open_by_path(path, sb->mode, sb->holder, &bch2_sb_handle_bdev_ops);
+> > +		if (!IS_ERR(sb->bdev_handle))
+> >  			opt_set(*opts, nochanges, true);
+> >  	}
+> >  
+> > -	if (IS_ERR(sb->bdev)) {
+> > -		ret = PTR_ERR(sb->bdev);
+> > +	if (IS_ERR(sb->bdev_handle)) {
+> > +		ret = PTR_ERR(sb->bdev_handle);
+> >  		goto out;
+> >  	}
+> > +	sb->bdev = sb->bdev_handle->bdev;
+> >  
+> >  	ret = bch2_sb_realloc(sb, 0);
+> >  	if (ret) {
+> 
+> This all seems reasonable to me, but should bcachefs use sb_open_mode()
+> somewhere in here to involve use of the restrict writes flag in the
+> first place? It looks like bcachefs sort of open codes bits of
+> mount_bdev() so it isn't clear the flag would be used anywhere...
 
-https://lore.kernel.org/all/20230626-fs-btrfs-mount-api-v1-0-045e9735a00b@kernel.org
+Yes, so AFAICS bcachefs will not get the write restriction from the changes
+in the generic code. Using sb_open_mode() in bcachefs would fix that but
+given the 'noexcl' and 'nochanges' mount options it will not be completely
+seamless anyway. I guess once the generic changes are in, bcachefs can
+decide how exactly it wants to set the BLK_OPEN_RESTRICT_WRITES flag. Or if
+you already have an opinion, we can just add the patch to this series.
 
-Can I ask you to please please copy just two things from that series:
-
-(1) Please get rid of the second filesystems type.
-(2) Please fix the silent remount behavior when mounting a subvolume.
-
-You might need my first patch for that from that series for (2).
-
-+static int btrfs_get_tree_common(struct fs_context *fc)
-+{
-+	struct vfsmount *root_mnt = NULL;
-+	struct fs_context *root_fc;
-+	struct dentry *root_dentry;
-+	struct btrfs_fs_context *ctx = fc->fs_private;
-+	int ret;
-+
-+	if (WARN_ON(ctx->phase != BTRFS_FS_CONTEXT_PREPARE))
-+		return -EINVAL;
-+
-+	root_fc = vfs_dup_fs_context(fc);
-+	if (IS_ERR(root_fc))
-+		return PTR_ERR(root_fc);
-+
-+	/*
-+	 * We've duplicated the security mount options above and we only
-+	 * need them to be set when we really create a new superblock.
-+	 * They're irrelevant when we mount the subvolume as the
-+	 * superblock does already exist at that point. So free the
-+	 * security blob here.
-+	 */
-+	security_free_mnt_opts(&fc->security);
-+	fc->security = NULL;
-+
-+	/* Create the superblock so we can mount a subtree later. */
-+	ctx->phase = BTRFS_FS_CONTEXT_SUPER;
-+
-+	root_mnt = fc_mount(root_fc);
-+	if (PTR_ERR_OR_ZERO(root_mnt) == -EBUSY) {
-+		bool ro2rw = !(root_fc->sb_flags & SB_RDONLY);
-+
-+		if (ro2rw)
-+			root_fc->sb_flags |= SB_RDONLY;
-+		else
-+			root_fc->sb_flags &= ~SB_RDONLY;
-+
-+		root_mnt = fc_mount(root_fc);
-+		if (IS_ERR(root_mnt)) {
-+			put_fs_context(root_fc);
-+			return PTR_ERR(root_mnt);
-+		}
-+		ctx->root_mnt = root_mnt;
-+
-+		/*
-+		 * Ever since commit 0723a0473fb4 ("btrfs: allow
-+		 * mounting btrfs subvolumes with different ro/rw
-+		 * options") the following works:
-+		 *
-+		 *        (i) mount /dev/sda3 -o subvol=foo,ro /mnt/foo
-+		 *       (ii) mount /dev/sda3 -o subvol=bar,rw /mnt/bar
-+		 *
-+		 * which looks nice and innocent but is actually pretty
-+		 * intricate and deserves a long comment.
-+		 *
-+		 * On another filesystem a subvolume mount is close to
-+		 * something like:
-+		 *
-+		 *	(iii) # create rw superblock + initial mount
-+		 *	      mount -t xfs /dev/sdb /opt/
-+		 *
-+		 *	      # create ro bind mount
-+		 *	      mount --bind -o ro /opt/foo /mnt/foo
-+		 *
-+		 *	      # unmount initial mount
-+		 *	      umount /opt
-+		 *
-+		 * Of course, there's some special subvolume sauce and
-+		 * there's the fact that the sb->s_root dentry is really
-+		 * swapped after mount_subtree(). But conceptually it's
-+		 * very close and will help us understand the issue.
-+		 *
-+		 * The old mount api didn't cleanly distinguish between
-+		 * a mount being made ro and a superblock being made ro.
-+		 * The only way to change the ro state of either object
-+		 * was by passing MS_RDONLY. If a new mount was created
-+		 * via mount(2) such as:
-+		 *
-+		 *      mount("/dev/sdb", "/mnt", "xfs", MS_RDONLY, NULL);
-+		 *
-+		 * the MS_RDONLY flag being specified had two effects:
-+		 *
-+		 * (1) MNT_READONLY was raised -> the resulting mount
-+		 *     got @mnt->mnt_flags |= MNT_READONLY raised.
-+		 *
-+		 * (2) MS_RDONLY was passed to the filesystem's mount
-+		 *     method and the filesystems made the superblock
-+		 *     ro. Note, how SB_RDONLY has the same value as
-+		 *     MS_RDONLY and is raised whenever MS_RDONLY is
-+		 *     passed through mount(2).
-+		 *
-+		 * Creating a subtree mount via (iii) ends up leaving a
-+		 * rw superblock with a subtree mounted ro.
-+		 *
-+		 * But consider the effect on the old mount api on btrfs
-+		 * subvolume mounting which combines the distinct step
-+		 * in (iii) into a a single step.
-+		 *
-+		 * By issuing (i) both the mount and the superblock are
-+		 * turned ro. Now when (ii) is issued the superblock is
-+		 * ro and thus even if the mount created for (ii) is rw
-+		 * it wouldn't help. Hence, btrfs needed to transition
-+		 * the superblock from ro to rw for (ii) which it did
-+		 * using an internal remount call (a bold choice...).
-+		 *
-+		 * IOW, subvolume mounting was inherently messy due to
-+		 * the ambiguity of MS_RDONLY in mount(2). Note, this
-+		 * ambiguity has mount(8) always translate "ro" to
-+		 * MS_RDONLY. IOW, in both (i) and (ii) "ro" becomes
-+		 * MS_RDONLY when passed by mount(8) to mount(2).
-+		 *
-+		 * Enter the new mount api. The new mount api
-+		 * disambiguates making a mount ro and making a
-+		 * superblock ro.
-+		 *
-+		 * (3) To turn a mount ro the MOUNT_ATTR_RDONLY flag can
-+		 *     be used with either fsmount() or mount_setattr().
-+		 *     This is a pure VFS level change for a specific
-+		 *     mount or mount tree that is never seen by the
-+		 *     filesystem itself.
-+		 *
-+		 * (4) To turn a superblock ro the "ro" flag must be
-+		 *     used with fsconfig(FSCONFIG_SET_FLAG, "ro"). This
-+		 *     option is seen by the filesytem in fc->sb_flags.
-+		 *
-+		 * This disambiguation has rather positive consequences.
-+		 * Mounting a subvolume ro will not also turn the
-+		 * superblock ro. Only the mount for the subvolume will
-+		 * become ro.
-+		 *
-+		 * So, if the superblock creation request comes from the
-+		 * new mount api the caller must've explicitly done:
-+		 *
-+		 *      fsconfig(FSCONFIG_SET_FLAG, "ro")
-+		 *      fsmount/mount_setattr(MOUNT_ATTR_RDONLY)
-+		 *
-+		 * IOW, at some point the caller must have explicitly
-+		 * turned the whole superblock ro and we shouldn't just
-+		 * undo it like we did for the old mount api. In any
-+		 * case, it lets us avoid this nasty hack in the new
-+		 * mount api.
-+		 *
-+		 * Consequently, the remounting hack must only be used
-+		 * for requests originating from the old mount api and
-+		 * should be marked for full deprecation so it can be
-+		 * turned off in a couple of years.
-+		 *
-+		 * The new mount api has no reason to support this hack.
-+		 */
-+		if (root_fc->oldapi && ro2rw) {
-+			/*
-+			 * This magic internal remount is a pretty bold
-+			 * move as the VFS reserves the right to protect
-+			 * ro->rw transitions on the VFS layer similar
-+			 * to how it protects rw->ro transitions.
-+			 */
-+			ret = btrfs_legacy_reconfigure(root_fc);
-+			if (ret)
-+				root_mnt = ERR_PTR(ret);
-+		}
-+	}
-+	put_fs_context(root_fc);
-+	if (IS_ERR(root_mnt))
-+		return PTR_ERR(root_mnt);
-+	ctx->root_mnt = root_mnt;
-+
-+	root_dentry = mount_subvol(fc);
-+	if (IS_ERR(root_dentry))
-+		return PTR_ERR(root_dentry);
-+
-+	fc->root = root_dentry;
-+	return 0;
-+}
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
