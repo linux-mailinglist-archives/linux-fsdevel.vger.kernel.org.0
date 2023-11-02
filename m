@@ -1,103 +1,90 @@
-Return-Path: <linux-fsdevel+bounces-1840-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1841-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D8137DF625
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 16:18:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D761B7DF68C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 16:35:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA4C9281B33
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 15:18:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8352DB21272
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 15:35:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED9421C29D;
-	Thu,  2 Nov 2023 15:18:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A6971CF86;
+	Thu,  2 Nov 2023 15:35:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="qb9ZXZl7"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BGiOLDfw"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4823719BDE
-	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 15:18:09 +0000 (UTC)
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 845AF13D
-	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 08:18:04 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-9a6190af24aso164634766b.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Nov 2023 08:18:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1698938283; x=1699543083; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Hi6BGbaajC0NEJYmO6rk7RlnqCChXrOH9lm+rlx8Qc8=;
-        b=qb9ZXZl7lWJosECGESF0gUm23qyl5+K97Ir2SXQ4m0XrPEr9PdEM/s8RPIDPQWNJTo
-         9QdKzlZka5Ey2hkCPIgnEhbi9xr6t+wIY3zPOhBUD9trTmSiQpOzm+b5pWngIkQ2+Mxk
-         Pqr7kaAQvwM0Z4t1YTJJadHWJoyXbxcuIa4VA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698938283; x=1699543083;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Hi6BGbaajC0NEJYmO6rk7RlnqCChXrOH9lm+rlx8Qc8=;
-        b=QzR8aBGz2w7tUALvbQI4oZ6+882NjdnF7LZjtImQdEsJjg8ylVZ7r2ISoplYY4spkP
-         YLI0ikVWO2S3qVIgpa/9zG/sB9CMfLiJFW/5+EwKwhOoHN4CO2ULyoU+CkncpZOLqwuQ
-         +qve2elzO/4F7aGl3GuhAZtvo2szzNBlTr+si5PTUNY8fJtnYXgY7etZfck39aPE+eus
-         RJH6Jle+cJ5EldydOKLgYdAzjPjI61Koq8sykphEQGDvNyrBjXPLAmVUjvs8IoyJLeq4
-         9s0aylxfuukmj7dkgbfBdXUDQ8UT9xyYMzgzvyGlTh1ur29gWveFOg/G4P5vs8/f0J7o
-         c4VQ==
-X-Gm-Message-State: AOJu0YxDIKsmNVO1gAIXPsbTRLy7UOoANIpYVkp1qNMDUfqvoPFA6rND
-	ClZUfdTcfSOeiYKYpJ/EmxSwl1HLu+f3zFs3tNx2/g==
-X-Google-Smtp-Source: AGHT+IFSz/TJ2waNg6ELwtl1jRTKf9TUnDv883tJKjv5rWxyrAJaMmUOyYZSvLJiqW+vLgnkKpulWFoYptGHPCkyqM4=
-X-Received: by 2002:a17:907:7f06:b0:9be:6ff7:1287 with SMTP id
- qf6-20020a1709077f0600b009be6ff71287mr5143198ejc.57.1698938282819; Thu, 02
- Nov 2023 08:18:02 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CA8B6ABD
+	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 15:35:28 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.88])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C01A1138
+	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 08:35:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1698939323; x=1730475323;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=7TnWc5cu1rXOOadSPTnE1cG3GqE2CTV6A8R/grTOLa0=;
+  b=BGiOLDfwqcw706EkjyEgUotBbAiM40mDPpmK/Sy6oe5U7Nx8GLwCapdh
+   aZPX2BqHRFO3Mut6JWy7wHWvEuiwRJk4YbKf5HQQf/V0sUefRzJTcnfuz
+   AwZ4EKBKBXoI4HP9AaKnMDQCX4e2PPgiQof8Nq269pGQWQF61Y4rxSmHa
+   08aPMj2XM9m63hsx9ghe7HweKOUP00nTODutF92xWGG5NNEMQYsF7Z+zs
+   0DtIgy5HqxjXkD+XEH6XTa3xL7xGmYwGNBhMmPPJOJ6IyPcky46KGdtTg
+   rOrakfMDaiFiEWkZKPGKlYDPTo8myYlWhGKqUpSb6ojMKu227diYr965i
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10882"; a="419848015"
+X-IronPort-AV: E=Sophos;i="6.03,271,1694761200"; 
+   d="scan'208";a="419848015"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Nov 2023 08:35:23 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.03,271,1694761200"; 
+   d="scan'208";a="9042463"
+Received: from mwajdecz-mobl.ger.corp.intel.com ([10.249.131.152])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Nov 2023 08:35:22 -0700
+From: Michal Wajdeczko <michal.wajdeczko@intel.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: Michal Wajdeczko <michal.wajdeczko@intel.com>,
+	Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH 0/3] ida: Allow allocations of contiguous IDs
+Date: Thu,  2 Nov 2023 16:34:52 +0100
+Message-Id: <20231102153455.1252-1-michal.wajdeczko@intel.com>
+X-Mailer: git-send-email 2.21.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231031144043.68534-1-winters.zc@antgroup.com>
-In-Reply-To: <20231031144043.68534-1-winters.zc@antgroup.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 2 Nov 2023 16:17:51 +0100
-Message-ID: <CAJfpegtjNj+W1F4j_eBAij_yYLsC9A3=LgNvUymSykHR5EvvoA@mail.gmail.com>
-Subject: Re: [PATCH v1 0/2] fuse: Introduce sysfs APIs to flush or resend
- pending requests
-To: =?UTF-8?B?6LW15pmo?= <winters.zc@antgroup.com>
-Cc: linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, 31 Oct 2023 at 15:41, =E8=B5=B5=E6=99=A8 <winters.zc@antgroup.com> =
-wrote:
->
-> After the fuse daemon crashes, the fuse mount point becomes inaccessible.
-> In some production environments, a watchdog daemon is used to preserve
-> the FUSE connection's file descriptor (fd). When the FUSE daemon crashes,
-> a new FUSE daemon is restarted and takes over the fd from the watchdog
-> daemon, allowing it to continue providing services.
->
-> However, if any inflight requests are lost during the crash, the user
-> process becomes stuck as it does not receive any replies.
->
-> To resolve this issue, this patchset introduces two sysfs APIs that enabl=
-e
-> flushing or resending these pending requests for recovery. The flush
-> operation ends the pending request and returns an error to the
-> application, allowing the stuck user process to recover. While returning
-> an error may not be suitable for all scenarios, the resend API can be use=
-d
-> to resend the these pending requests.
->
-> When using the resend API, FUSE daemon needs to ensure proper recording
-> and avoidance of processing duplicate non-idempotent requests to prevent
-> potential consistency issues.
+Some drivers (like i915) may require allocations of contiguous ranges
+of IDs, while current IDA supports only single ID allocation and does
+not guarantee that next returned ID will be next to the previous one.
 
-Do we need both the resend and the flush APIs?  I think the flush
-functionality can easily be implemented with the resend API, no?
+Extend implementation of IDA to allow allocation of arbitrary number
+of contiguous IDs and add some basic KUnit test coverage.
 
-Thanks,
-Miklos
+Cc: Matthew Wilcox <willy@infradead.org>
+
+Michal Wajdeczko (3):
+  ida: Introduce ida_weight()
+  ida: Introduce ida_alloc_group_range()
+  ida: Add kunit based tests for new IDA functions
+
+ include/linux/idr.h |   4 +
+ lib/Kconfig.debug   |  12 +++
+ lib/Makefile        |   1 +
+ lib/ida_kunit.c     | 140 ++++++++++++++++++++++++++
+ lib/idr.c           | 240 +++++++++++++++++++++++++++++++++++---------
+ 5 files changed, 351 insertions(+), 46 deletions(-)
+ create mode 100644 lib/ida_kunit.c
+
+-- 
+2.25.1
+
 
