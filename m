@@ -1,98 +1,145 @@
-Return-Path: <linux-fsdevel+bounces-1851-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1852-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 138407DF70B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 16:51:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DCA37DF711
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 16:52:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9ECA1C20F31
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 15:51:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAB9C28135C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 15:52:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAF121D53C;
-	Thu,  2 Nov 2023 15:51:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF68E1D554;
+	Thu,  2 Nov 2023 15:52:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="HnPsTwnd"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RN0UVusd"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A673E1D529
-	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 15:51:01 +0000 (UTC)
-Received: from mail-qt1-x82f.google.com (mail-qt1-x82f.google.com [IPv6:2607:f8b0:4864:20::82f])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 971C0138
-	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 08:50:43 -0700 (PDT)
-Received: by mail-qt1-x82f.google.com with SMTP id d75a77b69052e-41e1921da84so5500031cf.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Nov 2023 08:50:43 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0AC61D529
+	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 15:52:14 +0000 (UTC)
+Received: from mail-pl1-x64a.google.com (mail-pl1-x64a.google.com [IPv6:2607:f8b0:4864:20::64a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3A73198
+	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 08:51:57 -0700 (PDT)
+Received: by mail-pl1-x64a.google.com with SMTP id d9443c01a7336-1cc1ddb34ccso9055095ad.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Nov 2023 08:51:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1698940242; x=1699545042; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=1wB7K/cyK7ekdFksdqw2ZnrHbBqOSSiCpIC9jyTtwpo=;
-        b=HnPsTwndmznOfFuVOWXHx8ct/WrvBsPK5x/xLIx5VeUKtyb62e+cXmBq3CiPuVdLjN
-         a2jpmZFUz/l+eCljwhEANCYRD36X2YtOA10ZRrpxipMD5rta6iiEh1nPAeg6557YEGDf
-         7IW5o8OhO/mIuevLjUaz7bfhXTP+ej6/fn2pWFSvuBpwP1QOojfV0G0fD3d01PJUdPUV
-         LvRGJHkEoo+Lnw53MAhNEYaxQxi/3pb3Ar78Q0ZstWFEzAEqDQVawsWQS2r42rT2mexC
-         PDQUPO4R2WSiFFVWcUrxTKxLuDEQGuKt8Z2hTAggmQlUvTBWKuAqT1PWYEU51+5iiT1b
-         MYVw==
+        d=google.com; s=20230601; t=1698940317; x=1699545117; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=n3KS4TORQ08dXaJsqxd4Pb+jR6Q6AdhcH6h0cpJ7xRs=;
+        b=RN0UVusdj7tpK4hQeFYbhvaU4omd5amSOlKVxzal4e/nLCstlMRgxT8KS/lWr65n+r
+         6KNMcJ1uKXesH49i3odou+YkBwJ/tIhElW36o05O1Ng3MGOW1zTOynUX0OWlSK9iMlHj
+         OJMx4TYtkPZdEEKgufM2y157tcR2VvjSNNRsDidCaRHU/7AGqt2eLsOIb0GjDh4h5UkI
+         d3xSLnn7aKg34XyKrRvm0qT7UzZTcqDYj4o2l8TTa90NNHoGCdJWPnuATWPv334jHVIS
+         in4oABR4fLBPKErRzF5sU0/Cy34MuQs7nc5sUT00ipFmdSGxD/NyK8sttyJUHhWQTYBy
+         +O1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698940242; x=1699545042;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1wB7K/cyK7ekdFksdqw2ZnrHbBqOSSiCpIC9jyTtwpo=;
-        b=FsQfWvQeadyJXg+PgzTE69VcD8+y1W3PRd2Fs82PzupMuYaU6jwhLWoP/gTKa82300
-         u7UvhpQRGHwViBGKrWPN6wWaubYmC89hRh+Ruk0zIGnRzaDDDot/LJp+PQ1/gtnd8nYV
-         ACQ34V9gi18EaLayZWT+hK7pjEYJ4T7HmyJiie64o4QCtqv99jZjos1dT+lK0Y1Sg4Hb
-         uvviXO4xM0QpfFjNb8xJ6HJO2g5XL3qQYrGeFCI70fcFJGqNjXbWpAQ509pXR8oA26bi
-         xMebikK6Bt5txWlUCgNzRSvdl+sZFIb4KYjUG33gsMiYrjYRNTe+CPuZVNa22L9ucXFX
-         Hkng==
-X-Gm-Message-State: AOJu0YzNvUklJ7tnSVxQBLkJeDZ48lozjXFxo9+ftMXN4Xe8xpc4KN2t
-	mwyg5ZOL5qgb+8PH235FYHZDuXKgp5yPlcCWP7t8+A==
-X-Google-Smtp-Source: AGHT+IGeKyqz4S48dOlmrzV0IcLt/Pz5O88FAxRlS/vj9uMFuB0NwFTsg8gf0j3/eylhtue3lIsgsrkZbl6P7Iv8sPE=
-X-Received: by 2002:ac8:5f06:0:b0:418:797:20b6 with SMTP id
- x6-20020ac85f06000000b00418079720b6mr19045388qta.5.1698940242486; Thu, 02 Nov
- 2023 08:50:42 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1698940317; x=1699545117;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=n3KS4TORQ08dXaJsqxd4Pb+jR6Q6AdhcH6h0cpJ7xRs=;
+        b=SrLTDdzOof+lObI3KPTDpxWOC/fdx8ezl6iDDvHghHU5rY6TlGgqibOkDuF79M3+G5
+         WTh8h4KS8WgxIP8zTM6oLp6/C6jIX+3ZXilMdbx+/WqYLno5iF+XxRKunRo0Fnu5OIvu
+         W02UfMzZjeaiIqfdz4R19Zc6ingDy5rr2YWY+61iBXyBjOyLPg7C7z3n8SnbKijxYRMp
+         MCIQjJ4iZc1cN+WcAMmbUZkCLonrnN8QnRhh5WCCmY+HZ7lrdQkZdQc+4psXz8bawR5G
+         MF7LUwXIrVlGkj6y6Fc0nr1GLZguSlsun+8E4Bcgttn6MN+f86quYhQVTzfSkZPsS3fR
+         hpQw==
+X-Gm-Message-State: AOJu0YwkIMFjnSrQ6Qw0BAkxxm6cJ7IeFtaEnqkWRbJqjBF+nDdPRPne
+	3qLcysFChMSHcju0MpOh+MNXY2s0Z/g=
+X-Google-Smtp-Source: AGHT+IFDcwl4s8UdqmTM5rWncqnvjP5M1c0a+jaZEj3IxvzEAcY13jClAPWsClQownnFGH/6j2HG46oUm7Q=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:902:efd1:b0:1c6:2b9d:570b with SMTP id
+ ja17-20020a170902efd100b001c62b9d570bmr344133plb.7.1698940317130; Thu, 02 Nov
+ 2023 08:51:57 -0700 (PDT)
+Date: Thu, 2 Nov 2023 08:51:55 -0700
+In-Reply-To: <33686031-c1df-4ef5-a6ac-1aab7f5c656e@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20231101230816.1459373-1-souravpanda@google.com>
- <20231101230816.1459373-2-souravpanda@google.com> <CAAPL-u_enAt7f9XUpwYNKkCOxz2uPbMrnE2RsoDFRcKwZdnRFQ@mail.gmail.com>
- <CA+CK2bC3rSGOoT9p_VmWMT8PBWYbp7Jo7Tp2FffGrJp-hX9xCg@mail.gmail.com>
- <CAAPL-u-4D5YKuVOsyfpDUR+PbaA3MOJmNtznS77bposQSNPjnA@mail.gmail.com> <1e99ff39-b1cf-48b8-8b6d-ba5391e00db5@redhat.com>
-In-Reply-To: <1e99ff39-b1cf-48b8-8b6d-ba5391e00db5@redhat.com>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Thu, 2 Nov 2023 11:50:05 -0400
-Message-ID: <CA+CK2bDo6an35R8Nu-d99pbNQMEAw_t0yUm0Q+mJNwOJ1EdqQg@mail.gmail.com>
-Subject: Re: [PATCH v5 1/1] mm: report per-page metadata information
-To: David Hildenbrand <david@redhat.com>
-Cc: Wei Xu <weixugc@google.com>, Sourav Panda <souravpanda@google.com>, corbet@lwn.net, 
-	gregkh@linuxfoundation.org, rafael@kernel.org, akpm@linux-foundation.org, 
-	mike.kravetz@oracle.com, muchun.song@linux.dev, rppt@kernel.org, 
-	rdunlap@infradead.org, chenlinxuan@uniontech.com, yang.yang29@zte.com.cn, 
-	tomas.mudrunka@gmail.com, bhelgaas@google.com, ivan@cloudflare.com, 
-	yosryahmed@google.com, hannes@cmpxchg.org, shakeelb@google.com, 
-	kirill.shutemov@linux.intel.com, wangkefeng.wang@huawei.com, 
-	adobriyan@gmail.com, vbabka@suse.cz, Liam.Howlett@oracle.com, 
-	surenb@google.com, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
-	willy@infradead.org, Greg Thelen <gthelen@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <20231027182217.3615211-1-seanjc@google.com> <20231027182217.3615211-10-seanjc@google.com>
+ <482bfea6f54ea1bb7d1ad75e03541d0ba0e5be6f.camel@intel.com>
+ <ZUKMsOdg3N9wmEzy@google.com> <33686031-c1df-4ef5-a6ac-1aab7f5c656e@intel.com>
+Message-ID: <ZUPFmwWjPFlXRlPi@google.com>
+Subject: Re: [PATCH v13 09/35] KVM: Add KVM_EXIT_MEMORY_FAULT exit to report
+ faults to userspace
+From: Sean Christopherson <seanjc@google.com>
+To: Xiaoyao Li <xiaoyao.li@intel.com>
+Cc: Kai Huang <kai.huang@intel.com>, 
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, 
+	"brauner@kernel.org" <brauner@kernel.org>, "oliver.upton@linux.dev" <oliver.upton@linux.dev>, 
+	"chenhuacai@kernel.org" <chenhuacai@kernel.org>, 
+	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>, "palmer@dabbelt.com" <palmer@dabbelt.com>, 
+	"maz@kernel.org" <maz@kernel.org>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
+	"mpe@ellerman.id.au" <mpe@ellerman.id.au>, "willy@infradead.org" <willy@infradead.org>, 
+	"anup@brainfault.org" <anup@brainfault.org>, 
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
+	"kvm-riscv@lists.infradead.org" <kvm-riscv@lists.infradead.org>, "mic@digikod.net" <mic@digikod.net>, 
+	"liam.merwick@oracle.com" <liam.merwick@oracle.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	Isaku Yamahata <isaku.yamahata@intel.com>, 
+	"kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>, "david@redhat.com" <david@redhat.com>, 
+	"tabba@google.com" <tabba@google.com>, "amoorthy@google.com" <amoorthy@google.com>, 
+	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, 
+	"michael.roth@amd.com" <michael.roth@amd.com>, "kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>, 
+	"chao.p.peng@linux.intel.com" <chao.p.peng@linux.intel.com>, 
+	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, Vishal Annapurve <vannapurve@google.com>, 
+	"vbabka@suse.cz" <vbabka@suse.cz>, "mail@maciej.szmigiero.name" <mail@maciej.szmigiero.name>, 
+	"yu.c.zhang@linux.intel.com" <yu.c.zhang@linux.intel.com>, "qperret@google.com" <qperret@google.com>, 
+	"dmatlack@google.com" <dmatlack@google.com>, Yilun Xu <yilun.xu@intel.com>, 
+	"isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>, 
+	"ackerleytng@google.com" <ackerleytng@google.com>, "jarkko@kernel.org" <jarkko@kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, Wei W Wang <wei.w.wang@intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
-> > Adding reserved memory to MemTotal is a cleaner approach IMO as well.
-> > But it changes the semantics of MemTotal, which may have compatibility
-> > issues.
->
-> I object.
+On Thu, Nov 02, 2023, Xiaoyao Li wrote:
+> On 11/2/2023 1:36 AM, Sean Christopherson wrote:
+> > > KVM_CAP_MEMORY_FAULT_INFO is x86 only, is it better to put this function to
+> > > <asm/kvm_host.h>?
+> > I'd prefer to keep it in generic code, as it's highly likely to end up there
+> > sooner than later.  There's a known use case for ARM (exit to userspace on missing
+> > userspace mapping[*]), and I'm guessing pKVM (also ARM) will also utilize this API.
+> > 
+> > [*]https://lore.kernel.org/all/20230908222905.1321305-8-amoorthy@google.com
+> 
+> I wonder how this CAP is supposed to be checked in userspace, for guest
+> memfd case? 
 
-Could you please elaborate what you object (and why): you object that
-it will have compatibility issues, or  you object to include memblock
-reserves into MemTotal?
+It's basically useless for guest_memfd.
 
-Thanks,
-Pasha
+> 	if (!kvm_check_extension(s, KVM_CAP_MEMORY_FAULT_INFO) &&
+> 	    run->exit_reason == KVM_EXIT_MEMORY_FAULT)
+> 		abort("unexpected KVM_EXIT_MEMORY_FAULT");
+> 
+> In my implementation of QEMU patches, I find it's unnecessary. When
+> userspace gets an exit with KVM_EXIT_MEMORY_FAULT, it implies
+> "KVM_CAP_MEMORY_FAULT_INFO".
+> 
+> So I don't see how it is necessary in this series. Whether it's necessary or
+> not for [*], I don't have the answer but we can leave the discussion to that
+> patch series.
+
+It's not strictly necessary there either.
+
+However, Oliver felt (and presumably still feels) quite strongly, and I agree,
+that neither reporting extra information shouldn't be tightly coupled to
+KVM_CAP_EXIT_ON_MISSING or KVM_CAP_GUEST_MEMFD.
+
+E.g. if userspace develops a "standalone" use case for KVM_CAP_MEMORY_FAULT_INFO,
+userspace should be able to check for support without having to take a dependency
+on KVM_CAP_GUEST_MEMFD, especially since because KVM_CAP_GUEST_MEMFD may not be
+supported, i.e. userspace should be able to do:
+
+	if (!kvm_check_extension(s, KVM_CAP_MEMORY_FAULT_INFO))
+		abort("KVM_CAP_MEMORY_FAULT_INFO required for fancy feature XYZ");
+
+
 
