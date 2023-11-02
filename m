@@ -1,157 +1,285 @@
-Return-Path: <linux-fsdevel+bounces-1793-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1795-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E399C7DED66
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 08:33:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B7F07DEE6B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 09:54:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 723C2B2121B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 07:33:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D45DC281A0E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 08:54:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01B5263DD;
-	Thu,  2 Nov 2023 07:33:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44B7A79D6;
+	Thu,  2 Nov 2023 08:54:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="VfdSPl8r"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m+hy2ybY"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B8763C6
-	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 07:33:11 +0000 (UTC)
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C17A12C
-	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 00:33:03 -0700 (PDT)
-Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20231102073258epoutp048eee0f55e5998cd805ac812852f3a8ed~Tvfz_Ot8F2492224922epoutp04V
-	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 07:32:58 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20231102073258epoutp048eee0f55e5998cd805ac812852f3a8ed~Tvfz_Ot8F2492224922epoutp04V
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1698910378;
-	bh=2uq5roYA4bWfG77dHMjfTPvdeRh/sgiL6PttJPkNnY4=;
-	h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
-	b=VfdSPl8rmfkcmAu1Wn6KwAv47s+nj0C9jx+u17LMq2+RRDnxpgqmLMbDk0/dGZ68M
-	 iNefLHOSGEvbZF9KE3++m6Bcc/P+pmEr2jeqhD9ifz4o1etHHUM07itstuvfub6GJJ
-	 X9hgcLMUa0w4d3eou192oyPE1zdosw2Px4KnEEzE=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas2p3.samsung.com (KnoxPortal) with ESMTP id
-	20231102073257epcas2p3a697640ebe49bc897c2b1220d8bd8d6a~TvfzLGdGt2967329673epcas2p3E;
-	Thu,  2 Nov 2023 07:32:57 +0000 (GMT)
-Received: from epsmges2p4.samsung.com (unknown [182.195.36.102]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4SLbFP29hlz4x9QB; Thu,  2 Nov
-	2023 07:32:57 +0000 (GMT)
-X-AuditID: b6c32a48-1d26ea8000002587-47-654350a991a5
-Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
-	epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-	4A.E8.09607.9A053456; Thu,  2 Nov 2023 16:32:57 +0900 (KST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7998B79C2
+	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 08:54:13 +0000 (UTC)
+Received: from mail-qv1-xf2c.google.com (mail-qv1-xf2c.google.com [IPv6:2607:f8b0:4864:20::f2c])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAC4E191;
+	Thu,  2 Nov 2023 01:54:02 -0700 (PDT)
+Received: by mail-qv1-xf2c.google.com with SMTP id 6a1803df08f44-66d24ccc6f2so15255736d6.0;
+        Thu, 02 Nov 2023 01:54:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1698915242; x=1699520042; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T/kZLfpDPN/1t+qmfSry72Fhhn1LC5NXJUO2FF/ULTs=;
+        b=m+hy2ybYDG/bIqimtdG6X+dVlpyx73YdC12KKUk0Mrzov2J2VZk8JXh/i6sIc4P7+a
+         oujbo3lXlxHpoK54NNNWeCenP8Ox3K4tX7Hwr6SINZ4v/OaHexAj+BztFmqgpFzOJcAA
+         ORjgyADB2zNc8Ki75Ji56FVdSghsL7ojE1O43znjXMHRfxdetNVMD3A/L4wn4e7HUkEn
+         AU/dPQbxSU8AO8A0RUc//xcYpNIOgdLnmNwEp8u+kHsujUD0nKvMO+YWj3PqT2cQy0Nq
+         FS+Pt9h5tZYAYiI+8CpJ46Wdw6o9apU4VbhaSuOEwCL7FTssggWTRnrsDLExZRK4IxmS
+         /lXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698915242; x=1699520042;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=T/kZLfpDPN/1t+qmfSry72Fhhn1LC5NXJUO2FF/ULTs=;
+        b=GQQfkvDVf4sRPNyxh2m9D0mJ0ZpEx+K+h2Ri3n2pmv2Gvd+I+KD/DFRCJ8pOqAo0si
+         tM8+k6QHxPRzu1uydv3K6NTaVxkaiTx5xaGcKYvvK7UBKHXuNkwKdpbhRPi21DubmmE+
+         O93EcXDv11WMIwyyMVDmsOqftGpdeZjpf8kK1tYnER9zVzZPgA7E1o6q1BgB3LUoL+8m
+         IOn6Zu7mMfsYd7LWOiDHa7KsIDF+kC9V+RsA19Fsi/mHo1w0g+0vvFEleyT5sr539uPj
+         TKz5zLiSROt60DGC+D291cb44O5folNdRExu8232aHR+wbSXprXI7Q/c6JsXEFGgdtfg
+         nuVA==
+X-Gm-Message-State: AOJu0YwULiREWDDHJ38O/+y+5ouKE39DuuDHzNI6qmQwxGCf1ofCtKvi
+	tkigKqevVtikFYs0D1svClkjmyBEecbmpbNTNgw=
+X-Google-Smtp-Source: AGHT+IEzkB09uKn7erKXfRFE8esxLTA61UblTRaM+fV5HqU7BE3uPKIeE8DyU20j5xYwX6FahngMsM8FKJcgR04aNy8=
+X-Received: by 2002:a05:6214:1307:b0:66d:327:bf8f with SMTP id
+ pn7-20020a056214130700b0066d0327bf8fmr7686346qvb.30.1698915241636; Thu, 02
+ Nov 2023 01:54:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Subject: RE:(2) (2) [PATCH v3 01/14] fs: Move enum rw_hint into a new header
- file
-Reply-To: daejun7.park@samsung.com
-Sender: Daejun Park <daejun7.park@samsung.com>
-From: Daejun Park <daejun7.park@samsung.com>
-To: Bart Van Assche <bvanassche@acm.org>, Daejun Park
-	<daejun7.park@samsung.com>, KANCHAN JOSHI <joshi.k@samsung.com>, Jens Axboe
-	<axboe@kernel.dk>
-CC: "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "Martin K .
- Petersen" <martin.petersen@oracle.com>, Christoph Hellwig <hch@lst.de>,
-	Niklas Cassel <Niklas.Cassel@wdc.com>, Avri Altman <Avri.Altman@wdc.com>,
-	Bean Huo <huobean@gmail.com>, Jan Kara <jack@suse.cz>, Christian Brauner
-	<brauner@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu
-	<chao@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jeff Layton
-	<jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, Seonghun Kim
-	<seonghun-sui.kim@samsung.com>, Jorn Lee <lunar.lee@samsung.com>, Sung-Jun
-	Park <sungjun07.park@samsung.com>, Hyunji Jeon <hyunji.jeon@samsung.com>,
-	Dongwoo Kim <dongwoo7565.kim@samsung.com>, Seongcheol Hong
-	<sc01.hong@samsung.com>, Jaeheon Lee <jaeheon7.lee@samsung.com>, Wonjong
-	Song <wj3.song@samsung.com>, JinHwan Park <jh.i.park@samsung.com>, Yonggil
-	Song <yonggil.song@samsung.com>, Soonyoung Kim <overmars.kim@samsung.com>,
-	Shinwoo Park <sw_kr.park@samsung.com>, Seokhwan Kim <sukka.kim@samsung.com>
-X-Priority: 3
-X-Content-Kind-Code: NORMAL
-In-Reply-To: <c06b2624-b05b-48d4-840d-beb208aa33dc@acm.org>
-X-CPGS-Detection: blocking_info_exchange
-X-Drm-Type: N,general
-X-Msg-Generator: Mail
-X-Msg-Type: PERSONAL
-X-Reply-Demand: N
-Message-ID: <20231102073155epcms2p3d1e288b7b81e213fbb32ecc0cc48e094@epcms2p3>
-Date: Thu, 02 Nov 2023 16:31:55 +0900
-X-CMS-MailID: 20231102073155epcms2p3d1e288b7b81e213fbb32ecc0cc48e094
+MIME-Version: 1.0
+References: <ZTtOmWEx5neNKkez@infradead.org> <20231027131726.GA2915471@perftesting>
+ <ZT+uxSEh+nTZ2DEY@infradead.org> <20231031-faktor-wahlparty-5daeaf122c5e@brauner>
+ <ZUDxli5HTwDP6fqu@infradead.org> <20231031-anorak-sammeln-8b1c4264f0db@brauner>
+ <ZUE0CWQWdpGHm81L@infradead.org> <20231101-nutzwert-hackbeil-bbc2fa2898ae@brauner>
+ <590e421a-a209-41b6-ad96-33b3d1789643@gmx.com> <20231101-neigen-storch-cde3b0671902@brauner>
+ <20231102051349.GA3292886@perftesting>
+In-Reply-To: <20231102051349.GA3292886@perftesting>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 2 Nov 2023 10:53:49 +0200
+Message-ID: <CAOQ4uxietLxuv+gEb=k+Q1s+MYSS=af7kzOu6J_YXwxhWmhjsQ@mail.gmail.com>
+Subject: Re: [PATCH 0/3] fanotify support for btrfs sub-volumes
+To: Josef Bacik <josef@toxicpanda.com>, Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Christian Brauner <brauner@kernel.org>, Qu Wenruo <quwenruo.btrfs@gmx.com>, 
+	Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>, Chris Mason <clm@fb.com>, 
+	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-X-CPGSPASS: Y
-X-CPGSPASS: Y
-X-Brightmail-Tracker: H4sIAAAAAAAAA22Tf1DTdRjH7/uDbcCNvg60D3AQzrSAgI0b7IMBqVB9C0jKs0zPYMe+B8TY
-	1jYIjWqXR/wMxGvNRvxKDmSIE4RFosjPwGInBtiBQZBwiDRBMI6dDtrYyP7ov9fzvvfzPPc8
-	zz0MjFVO92CkihWUTCwQsWlOuL7Hlx9QHx9FcYwqZzhvGqXBhokSGlzoWUbgN0smDP6iMqBw
-	Y2IOhfPdvlA79R6s0w46wPqGPhR+Z1CisLH/MQrL1KdQOKPTYPDcoCcsWc/FoalWS4d9G0Ya
-	vDbuD69eu4HDwt/aaPDG+Xs4rOtfR+HUk7t0uHZGDu//LIILa95Qm1eOwHz1BRwu/l2Dw5vm
-	fgeYV2DGoOpmL7pvJzk8EkP+qJmgk8OGDLJZm08j28eUNPLh7DhOFrdoEXKwqpdOrjR7k7md
-	hSjZPGNE452PpoWnUAIhJfOhxEkSYao4OYIdcyghKiEklMMN4IZBPttHLEinItjRsfEBr6WK
-	LNth+2QKRBkWKV4gl7ODIsNlkgwF5ZMikSsi2JRUKJLypYFyQbo8Q5wcKKYUe7kcTnCIxZiY
-	lvLlwJCDdNkl60yuka5EclwKEEcGIHhg+voKWoA4MVhEGwIerVVbAgaDSWwD5jZXq8eVOASG
-	DGbcyiyCDXS3NHSbHgjGpy8gVqYRLwH1wB90ax03Qo0A0+IqzRpgRLEjyKvW4LZuTHA2d9bO
-	nuCHutbNbEfiZXBp4Ve6TX8RrNV+hdl4OxhrMNK3ePGnSsTGbiBn0mD3bANTpna77g7ulDfb
-	/RKwMVJn52yg76ywcxC4ndeE24aMA6vGE1YZJ3aD2nKd3RINKgv1myUxwh/UVi9gVjtG+ALd
-	lSArAmIX6B3HbQ4XkNdjpm8NqGx6/L/cVjGD2ngPuGjSoaeRXZqni9b8p5fmaa8qBNMiOyip
-	PD2ZkgdLef/eNkmS3oxs/okf2YaUGZcCuxGUgXQjgIGx3Zg9IfsoFlMoOHGSkkkSZBkiSt6N
-	hFimLMU8tidJLI8mViRweWEcXmgolx8cwuGzn2VO5pQLWUSyQEGlUZSUkm3loQxHDyWa+Zef
-	dJSjmBOudJxa3evM0D+IzkQjKn11RU4ftOw2lDBPu66g6HRr6ZhvUeSlgS8+rTrSl/XZyEGv
-	lvDQD5X3rgq8ij+pL2otfWdilL+kDNJzJ3auZidGvitQnY/VT3oe66555Zku1YHRu1nrTp6X
-	ec+7tGmiVE269Z4/v66m3qx/eMD7rPmk+q3kY9mke2Fj19s7hhPfaPy8LubwwY7VrsLS45cX
-	FjrLjsSF1YhCb2FHWf4fua78/vpcbFjfcX/TC4fjmMJHT8ZHF6+/agyOH8q/30HtcW/3Kt3f
-	PMt7Tm24OH/l+zvu59KHpEtesw+iids+7wfS1ipE6fxq9se69f3fmljLbFyeIuD6YTK54B98
-	LwIWsAQAAA==
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20231017204823epcas5p2798d17757d381aaf7ad4dd235f3f0da3
-References: <c06b2624-b05b-48d4-840d-beb208aa33dc@acm.org>
-	<9b0990ec-a3c9-48c0-b312-8c07c727e326@acm.org>
-	<20231017204739.3409052-1-bvanassche@acm.org>
-	<20231017204739.3409052-2-bvanassche@acm.org>
-	<b3058ce6-e297-b4c3-71d4-4b76f76439ba@samsung.com>
-	<20231101063910epcms2p18f991db15958f246fa1654f2d412e176@epcms2p1>
-	<CGME20231017204823epcas5p2798d17757d381aaf7ad4dd235f3f0da3@epcms2p3>
 
-Hi Bart,
+On Thu, Nov 2, 2023 at 7:13=E2=80=AFAM Josef Bacik <josef@toxicpanda.com> w=
+rote:
+>
+> On Wed, Nov 01, 2023 at 10:52:18AM +0100, Christian Brauner wrote:
+> > On Wed, Nov 01, 2023 at 07:11:53PM +1030, Qu Wenruo wrote:
+> > >
+> > >
+> > > On 2023/11/1 18:46, Christian Brauner wrote:
+> > > > On Tue, Oct 31, 2023 at 10:06:17AM -0700, Christoph Hellwig wrote:
+> > > > > On Tue, Oct 31, 2023 at 01:50:46PM +0100, Christian Brauner wrote=
+:
+> > > > > > So this is effectively a request for:
+> > > > > >
+> > > > > > btrfs subvolume create /mnt/subvol1
+> > > > > >
+> > > > > > to create vfsmounts? IOW,
+> > > > > >
+> > > > > > mkfs.btrfs /dev/sda
+> > > > > > mount /dev/sda /mnt
+> > > > > > btrfs subvolume create /mnt/subvol1
+> > > > > > btrfs subvolume create /mnt/subvol2
+> > > > > >
+> > > > > > would create two new vfsmounts that are exposed in /proc/<pid>/=
+mountinfo
+> > > > > > afterwards?
+> > > > >
+> > > > > Yes.
+> > > > >
+> > > > > > That might be odd. Because these vfsmounts aren't really mounte=
+d, no?
+> > > > >
+> > > > > Why aren't they?
+> > > > >
+> > > > > > And so you'd be showing potentially hundreds of mounts in
+> > > > > > /proc/<pid>/mountinfo that you can't unmount?
+> > > > >
+> > > > > Why would you not allow them to be unmounted?
+> > > > >
+> > > > > > And even if you treat them as mounted what would unmounting mea=
+n?
+> > > > >
+> > > > > The code in btrfs_lookup_dentry that does a hand crafted version
+> > > > > of the file system / subvolume crossing (the location.type !=3D
+> > > > > BTRFS_INODE_ITEM_KEY one) would not be executed.
+> > > >
+> > > > So today, when we do:
+> > > >
+> > > > mkfs.btrfs -f /dev/sda
+> > > > mount -t btrfs /dev/sda /mnt
+> > > > btrfs subvolume create /mnt/subvol1
+> > > > btrfs subvolume create /mnt/subvol2
+> > > >
+> > > > Then all subvolumes are always visible under /mnt.
+> > > > IOW, you can't hide them other than by overmounting or destroying t=
+hem.
+> > > >
+> > > > If we make subvolumes vfsmounts then we very likely alter this beha=
+vior
+> > > > and I see two obvious options:
+> > > >
+> > > > (1) They are fake vfsmounts that can't be unmounted:
+> > > >
+> > > >      umount /mnt/subvol1 # returns -EINVAL
+> > > >
+> > > >      This retains the invariant that every subvolume is always visi=
+ble
+> > > >      from the filesystems root, i.e., /mnt will include /mnt/subvol=
+{1,}
+> > >
+> > > I'd like to go this option. But I still have a question.
+> > >
+> > > How do we properly unmount a btrfs?
+> > > Do we have some other way to record which subvolume is really mounted
+> > > and which is just those place holder?
+> >
+> > So the downside of this really is that this would be custom btrfs
+> > semantics. Having mounts in /proc/<pid>/mountinfo that you can't unmoun=
+t
+> > only happens in weird corner cases today:
+> >
+> > * mounts inherited during unprivileged mount namespace creation
+> > * locked mounts
+> >
+> > Both of which are pretty inelegant and effectively only exist because o=
+f
+> > user namespaces. So if we can avoid proliferating such semantics it
+> > would be preferable.
+> >
+> > I think it would also be rather confusing for userspace to be presented
+> > with a bunch of mounts in /proc/<pid>/mountinfo that it can't do
+> > anything with.
+> >
+> > > > (2) They are proper vfsmounts:
+> > > >
+> > > >      umount /mnt/subvol1 # succeeds
+> > > >
+> > > >      This retains standard semantics for userspace about anything t=
+hat
+> > > >      shows up in /proc/<pid>/mountinfo but means that after
+> > > >      umount /mnt/subvol1 succeeds, /mnt/subvol1 won't be accessible=
+ from
+> > > >      the filesystem root /mnt anymore.
+> > > >
+> > > > Both options can be made to work from a purely technical perspectiv=
+e,
+> > > > I'm asking which one it has to be because it isn't clear just from =
+the
+> > > > snippets in this thread.
+> > > >
+> > > > One should also point out that if each subvolume is a vfsmount, the=
+n say
+> > > > a btrfs filesystems with 1000 subvolumes which is mounted from the =
+root:
+> > > >
+> > > > mount -t btrfs /dev/sda /mnt
+> > > >
+> > > > could be exploded into 1000 individual mounts. Which many users mig=
+ht not want.
+> > >
+> > > Can we make it dynamic? AKA, the btrfs_insert_fs_root() is the perfec=
+t
+> > > timing here.
+> >
+> > Probably, it would be an automount. Though I would have to recheck that
+> > code to see how exactly that would work but roughly, when you add the
+> > inode for the subvolume you raise S_AUTOMOUNT on it and then you add
+> > .d_automount for btrfs.
+>
+> Btw I'm working on this, mostly to show Christoph it doesn't do what he t=
+hinks
+> it does.
+>
+> However I ran into some weirdness where I need to support the new mount A=
+PI, so
+> that's what I've been doing since I wandered away from this thread.  I sh=
+ould
+> have that done tomorrow, and then I was going to do the S_AUTOMOUNT thing=
+ ontop
+> of that.
+>
+> But I have the same questions as you Christian, I'm not entirely sure how=
+ this
+> is supposed to be better.  Even if they show up in /proc/mounts, it's not=
+ going
+> to do anything useful for the applications that don't check /proc/mounts =
+to see
+> if they've wandered into a new mount.  I also don't quite understand how =
+NFS
+> suddenly knows it's wandered into a new mount with a vfsmount.
+>
 
->On 10/31/23 23:39, Daejun Park wrote:
->>> On 10/30/23 04:11, Kanchan Joshi wrote:
->>>> On 10/18/2023 2:17 AM, Bart Van Assche wrote:
->>> Thanks for having taken a look at this patch series. Jens asked for dat=
-a
->>> that shows that this patch series improves performance. Is this
->>> something Samsung can help with?
->>=C2=A0=0D=0A>>=20We=20analyzed=20the=20NAND=20block=20erase=20counter=20w=
-ith=20and=20without=20stream=20separation=0D=0A>>=20through=20a=20long-term=
-=20workload=20in=20F2FS.=0D=0A>>=20The=20analysis=20showed=20that=20the=20e=
-rase=20counter=20is=20reduced=20by=20approximately=2040%=0D=0A>>=20with=20s=
-tream=20seperation.=0D=0A>>=20Long-term=20workload=20is=20a=20scenario=20wh=
-ere=20erase=20and=20write=20are=20repeated=20by=0D=0A>>=20stream=20after=20=
-performing=20precondition=20fill=20for=20each=20temperature=20of=20F2FS.=0D=
-=0A>=0D=0A>Hi=20Daejun,=0D=0A>=0D=0A>Thank=20you=20for=20having=20shared=20=
-this=20data.=20This=20is=20very=20helpful.=20Since=20I'm=0D=0A>not=20famili=
-ar=20with=20the=20erase=20counter:=20does=20the=20above=20data=20perhaps=20=
-mean=0D=0A>that=20write=20amplification=20is=20reduced=20by=2040%=20in=20th=
-e=20workload=20that=20has=20been=0D=0A>examined?=0D=0A=0D=0AWAF=20is=20not=
-=20only=20caused=20by=20GC.=20It=20is=20also=20caused=20by=20other=20reason=
-s.=0D=0ADuring=20device=20GC,=20the=20valid=20pages=20in=20the=20victim=20b=
-lock=20are=20migrated,=20and=20a=0D=0Alower=20erase=20counter=20means=20tha=
-t=20the=20effective=20GC=20is=20performed=20by=20selecting=0D=0Aa=20victim=
-=20block=20with=20a=20small=20number=20of=20invalid=20pages.=0D=0AThus,=20i=
-t=20can=20be=20said=20that=20the=20WAF=20can=20be=20decreased=20about=2040%=
-=20by=20selecting=0D=0Afewer=20victim=20blocks=20during=20device=20GC.=0D=
-=0A=0D=0AThanks,=0D=0A=0D=0ADaejun=0D=0A=0D=0A>=0D=0A>Thanks,=0D=0A>=0D=0A>=
-Bart.=0D=0A
+IIUC, the NFS server communicated the same/different filesystem to the clie=
+nt
+by means of an FSID. This is not the same f_fsid from statfs(), it's the FS=
+ID
+communicated to nfsd server from /etc/exports or guessed by nfsd server
+for blockdev fs. IIRC, the NFS FSID is 128bit (?).
+
+If we implemented the s_op->get_fsid() method that Jan has suggested [1],
+we could make it mean -
+"nfsd, please use this as the NFS FSID instead of assuming the all inodes o=
+n
+ this sb should be presented to the client as a uniform FSID".
+
+[1] https://lore.kernel.org/linux-fsdevel/20231025135048.36153-2-amir73il@g=
+mail.com/
+
+> At this point I'm tired of it being brought up in every conversation wher=
+e we
+> try to expose more information to the users.  So I'll write the patches a=
+nd as
+> long as they don't break anything we can merge it, but I don't think it'l=
+l make
+> a single bit of difference.
+>
+> We'll be converted to the new mount API tho, so I suppose that's somethin=
+g.
+
+Horray!
+
+I had just noticed that since Monday, we have a new fs on the block with
+multiple subvol on the same sb - bcachefs.
+
+I took a look at bch2_statfs(), bch2_encode_fh() and bch2_getattr() and
+I can't help wondering, what's different from btrfs?
+
+Kent,
+
+Is inode->v.i_ino unique for all inodes in bcachefs sb
+and inode->ei_inode.bi_inum unique within a subvol?
+If so, how is a cloned inode number allocated?
+
+BTW1: bch2_statfs() open codes uuid_to_fsid().
+BTW2: Any reason why bcache fs uses  bch_sb.uuid and not sb.s_uuid?
+
+If you publish bch_sb.uuid to vfs via sb.s_uuid, you can use
+bcachefs as a layer in overlayfs for advance features like
+NFS export of overlayfs - with s_uuid, those features will not
+be available for overlayfs over bcachefs.
+
+Thanks,
+Amir.
 
