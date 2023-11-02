@@ -1,51 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-1820-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1821-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C33B57DF26D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 13:30:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69ED17DF289
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 13:35:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F18791C20F0C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 12:30:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF223B210F6
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 12:34:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0DD918E34;
-	Thu,  2 Nov 2023 12:30:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7123318E2F;
+	Thu,  2 Nov 2023 12:34:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pTHDt05l"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="0h7hv6aG"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CA1F18E27;
-	Thu,  2 Nov 2023 12:30:17 +0000 (UTC)
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B96F4137;
-	Thu,  2 Nov 2023 05:30:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=lLbEJjW9cmFlpV3shV0/lRN5bbIbbVeY+zCDD51WFMw=; b=pTHDt05lcN/Cquxk27BSdyCKgy
-	hzNRR4QinKiGSXAT+IvNDIldJJss87ffYgIHYqGWe7fkQJzfVfWVAmqcKYjo5QW15CWq0u59MUihn
-	h2bKPJMu4MRWcgPl8ZiIlyIEoGDnEougjsws6T/D40F/HB6pPn+HJTg62MGa5fiRnKOvCbXPhzsSh
-	tRaYFDh46FTFcvpSzkTKCviXehU/1CUav+ATjAzMWf5BC/65dJTg5yFLVYZ1U4bHiTU7OoCJBejvv
-	63covoTNDX8ZnRkSKNGOtl2gkFc4ePV5QLeaNOdmdnfFQK3GRq+bFLrxvs56WghPaAURYyAAsZZ12
-	7Ch5wJxQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-	id 1qyWpn-004Qbg-9a; Thu, 02 Nov 2023 12:30:03 +0000
-Date: Thu, 2 Nov 2023 12:30:03 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Hans de Goede <hdegoede@redhat.com>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B48318E17
+	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 12:34:52 +0000 (UTC)
+Received: from mail-ua1-x932.google.com (mail-ua1-x932.google.com [IPv6:2607:f8b0:4864:20::932])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A869C19B3
+	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 05:34:50 -0700 (PDT)
+Received: by mail-ua1-x932.google.com with SMTP id a1e0cc1a2514c-7aae07e7ba4so315134241.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Nov 2023 05:34:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1698928489; x=1699533289; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2c34fKw/9t7JAP3kNbJzjzeexVOlerIjyNZal3u1tAQ=;
+        b=0h7hv6aGOzpKjDRBtrkPHqrYAUBIEbi8FFM4ik1YI7ygYpi7PEW9cXHc1xqowUJ7PI
+         JFraYsgDaXl5Joq6eiv0tCnqovvbCIJnvPz7EanZbaiusEHkI7psGgZZJssqkmGtk0e2
+         PPNDBe87NN6tT2m7yTA8VDnWNoTt/dvCWx/NLcyjZev+Zv6OUi28AkgOrIIlYj4Ya3Hk
+         n/Af51JGgL+A8r5r0aZNRsE8xKSvEzZKyAxvJodtLWWEM6hVkLj0aJTWkx+DRM6PpVJI
+         bkkQ5MYMyg0WDOLM1OKNILpRkL6OUB+y65elQOCxP2qKVR/WX1zQX9JGcdV6PocG/4zV
+         kT0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698928489; x=1699533289;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2c34fKw/9t7JAP3kNbJzjzeexVOlerIjyNZal3u1tAQ=;
+        b=pnnpz/q3X2WTnzK9+TGg1u0gQWUKogOoDq818Y/N//71oMlkykfqg3fF9/rTaJ8tvq
+         aHHbQxhB9bhL0KzkN9TEMptCqM+6651JGbuq6FhLosuZ+9bsIq9c6htekzeKTsMKlP6I
+         OcQjm2yEAQ6OXxACdBmSlcKX6GIgi+mumMPyXCQG+bH+8Ft8btdAo3W+PdIZoEMs8WLW
+         hlxcBgrwD9qGnodqCR/63iq6o1+5xIyPo5SENaoEKNUykjAoYnKqr4+7vv8XZESR4YwX
+         JhUmJgMJ/gawLXdiVs4f+SjMaNhHG2qjNdLzRMYbckQyKTzpdJgK/i+1iLK0JZmLjWYT
+         v4Fg==
+X-Gm-Message-State: AOJu0Yz40mfDc+uXpCsXI3xOzutCeeY2MRnq9h6oyGGx/XvvWMyRHt0R
+	6KNhiUXzNAsUukGuVm4tPbNgYAKrK55OmnXiqu6sdw==
+X-Google-Smtp-Source: AGHT+IFLpof8u4AiPvmB/KBJkXrg7+KlDfo/GoxQzMtQwyJ3Ov65fn+BZKeQMD1aZ/DForcLRBD4LQ==
+X-Received: by 2002:a67:e092:0:b0:45d:56e0:7178 with SMTP id f18-20020a67e092000000b0045d56e07178mr2029493vsl.2.1698928489698;
+        Thu, 02 Nov 2023 05:34:49 -0700 (PDT)
+Received: from localhost (cpe-76-182-20-124.nc.res.rr.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id w4-20020a0562140b2400b0066d132b1c8bsm2312706qvj.102.2023.11.02.05.34.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Nov 2023 05:34:48 -0700 (PDT)
+Date: Thu, 2 Nov 2023 08:34:46 -0400
+From: Josef Bacik <josef@toxicpanda.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Qu Wenruo <quwenruo.btrfs@gmx.com>,
 	Christoph Hellwig <hch@infradead.org>,
-	Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/2] vboxsf: Avoid an spurious warning if load_nls_xxx()
- fails
-Message-ID: <ZUOWS6Vr0rg4VVIb@casper.infradead.org>
-References: <d09eaaa4e2e08206c58a1a27ca9b3e81dc168773.1698835730.git.christophe.jaillet@wanadoo.fr>
+	Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
+	Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 0/3] fanotify support for btrfs sub-volumes
+Message-ID: <20231102123446.GA3305034@perftesting>
+References: <ZT+uxSEh+nTZ2DEY@infradead.org>
+ <20231031-faktor-wahlparty-5daeaf122c5e@brauner>
+ <ZUDxli5HTwDP6fqu@infradead.org>
+ <20231031-anorak-sammeln-8b1c4264f0db@brauner>
+ <ZUE0CWQWdpGHm81L@infradead.org>
+ <20231101-nutzwert-hackbeil-bbc2fa2898ae@brauner>
+ <590e421a-a209-41b6-ad96-33b3d1789643@gmx.com>
+ <20231101-neigen-storch-cde3b0671902@brauner>
+ <20231102051349.GA3292886@perftesting>
+ <20231102-ankurbeln-eingearbeitet-cbeb018bfedc@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -54,51 +85,38 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d09eaaa4e2e08206c58a1a27ca9b3e81dc168773.1698835730.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20231102-ankurbeln-eingearbeitet-cbeb018bfedc@brauner>
 
-On Wed, Nov 01, 2023 at 11:49:48AM +0100, Christophe JAILLET wrote:
-> If an load_nls_xxx() function fails a few lines above, the 'sbi->bdi_id' is
-> still 0.
-> So, in the error handling path, we will call ida_simple_remove(..., 0)
-> which is not allocated yet.
+On Thu, Nov 02, 2023 at 10:48:35AM +0100, Christian Brauner wrote:
+> > We'll be converted to the new mount API tho, so I suppose that's something.
+> > Thanks,
 > 
-> In order to prevent a spurious "ida_free called for id=0 which is not
-> allocated." message, tweak the error handling path and add a new label.
+> Just in case you forgot about it. I did send a patch to convert btrfs to
+> the new mount api in June:
+> 
+> https://lore.kernel.org/all/20230626-fs-btrfs-mount-api-v1-0-045e9735a00b@kernel.org
+> 
 
-That's not spurious!  You're freeing something that wasn't allocated.
-A good quality malloc allocation will warn you if you free() a random
-pointer.  I agree with everything abuot this patch (and the next) except
-for the changelog.
+Yeah Daan told me about this after I had done the bulk of the work.  I
+shamelessly stole the dup idea, I had been doing something uglier.
 
-> Fixes: 0fd169576648 ("fs: Add VirtualBox guest shared folder (vboxsf) support")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  fs/vboxsf/super.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> Can I ask you to please please copy just two things from that series:
 > 
-> diff --git a/fs/vboxsf/super.c b/fs/vboxsf/super.c
-> index 1fb8f4df60cb..9848af78215b 100644
-> --- a/fs/vboxsf/super.c
-> +++ b/fs/vboxsf/super.c
-> @@ -151,7 +151,7 @@ static int vboxsf_fill_super(struct super_block *sb, struct fs_context *fc)
->  		if (!sbi->nls) {
->  			vbg_err("vboxsf: Count not load '%s' nls\n", nls_name);
->  			err = -EINVAL;
-> -			goto fail_free;
-> +			goto fail_destroy_idr;
->  		}
->  	}
->  
-> @@ -224,6 +224,7 @@ static int vboxsf_fill_super(struct super_block *sb, struct fs_context *fc)
->  		ida_simple_remove(&vboxsf_bdi_ida, sbi->bdi_id);
->  	if (sbi->nls)
->  		unload_nls(sbi->nls);
-> +fail_destroy_idr:
->  	idr_destroy(&sbi->ino_idr);
->  	kfree(sbi);
->  	return err;
-> -- 
-> 2.34.1
-> 
-> 
+> (1) Please get rid of the second filesystems type.
+> (2) Please fix the silent remount behavior when mounting a subvolume.
+>
+
+Yeah I've gotten rid of the second file system type, the remount thing is odd,
+I'm going to see if I can get away with not bringing that over.  I *think* it's
+because the standard distro way of doing things is to do
+
+mount -o ro,subvol=/my/root/vol /
+mount -o rw,subvol=/my/home/vol /home
+<boot some more>
+mount -o remount,rw /
+
+but I haven't messed with it yet to see if it breaks.  That's on the list to
+investigate today.  Thanks,
+
+Josef
 
